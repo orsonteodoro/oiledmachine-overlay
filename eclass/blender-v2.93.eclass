@@ -708,13 +708,6 @@ _src_configure() {
 	local mycmakeargs=()
 	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH="${EPREFIX}/$(get_dest)" )
 
-	if use cycles-network ; then
-ewarn
-ewarn "Cycles Networking support does not work at all even for CPU rendering."
-ewarn "For ebuild / upstream developers only."
-ewarn
-	fi
-
 	unset CMAKE_INCLUDE_PATH
 	unset CMAKE_LIBRARY_PATH
 	unset CMAKE_PREFIX_PATH
