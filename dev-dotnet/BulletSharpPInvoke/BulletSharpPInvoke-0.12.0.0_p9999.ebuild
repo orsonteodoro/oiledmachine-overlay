@@ -41,6 +41,7 @@ LINUX_MUSL_ERIDS="${LINUX_MUSL_MARCH[@]/#/dotnet_linux_musl_}"
 OSX_MARCH=( arm64 x64 ) # dotnet runtimes available
 OSX_ERIDS="${OSX_MARCH[@]/#/dotnet_osx_}"
 
+# Not supported by ebuild because of dotnet workload install uwp missing
 # Based on Wikipedia
 UWP_MARCH=( arm arm64 x64 x86)
 UWP_ERIDS="${UWP_MARCH[@]/#/dotnet_uap_}"
@@ -195,8 +196,8 @@ S="${WORKDIR}/${PN}-${PV}"
 DOTNET_SUPPORTED_SDKS=("dotnet-sdk-bin-6.0")
 
 get_crid_platform() {
-	local erid="${1}"
-	local cplatform="${erid%-*}"
+	local hrid="${1}"
+	local cplatform="${hrid%-*}"
 	cplatform="${cplatform/uwp/win}"
 	echo "${cplatform}"
 }
@@ -362,8 +363,38 @@ src_configure() {
 	done
 }
 
+_init_workloads() {
+	unset workloads
+	declare -A workloads=(
+		[android]="0"
+		[ios]="0"
+		[macos]="0"
+	)
+	local erid
+	for erid in ${ERIDS[@]} ; do
+		if use "${erid}" ; then
+			local hrid=$(get_hrid "${erid}")
+			local cplatform=$(get_crid_platform "${hrid}")
+			[[ "${cplatform}" == "android" ]] && workloads[android]=1
+			[[ "${cplatform}" == "ios" && "${native_hrid}" =~ "win" ]] && workloads[ios]=1 # Not available from Linux
+			[[ "${cplatform}" == "osx" ]] && workloads[macos]=1
+		fi
+	done
+
+	# Only download once per platform
+	for k in ${!workloads[@]} ; do
+		if [[ "${workloads[${k}]}" == "1" ]] ; then
+			dotnet workload install "${k}" || die
+		fi
+	done
+}
+
 src_compile() {
 	local configuration=$(usex debug "Debug" "Release")
+
+	# Disabled until restore is sorted out
+	#_init_workloads
+
 	local erid
 	for erid in ${ERIDS[@]} ; do
 		if use "${erid}" ; then
@@ -481,12 +512,12 @@ src_install() {
 			local garch=$(get_garch "${erid}")
 			export CHOST=$(get_abi_CHOST "${garch}")
 			export BUILD_DIR="${S}-${hrid}"
-			local d="/opt/${SDK}/shared/${PN}.Host.${hrid}/${MY_PV}"
+			local d="/opt/${SDK}/shared/${PN}.${hrid}/${MY_PV}/${TARGET_FRAMEWORK}"
 			insinto "${d}"
 			exeinto "${d}"
 			_install_libbulletc
 			_install_wrapper
-			_install_nupkg
+			use nupkg && _install_nupkg
 		fi
 	done
 
