@@ -412,7 +412,7 @@ ewarn
 check_cpu() {
 	if [[ ! -e "${BROOT}/proc/cpuinfo" ]] \
 		|| [[ "${CHOST}" != "${CBUILD}" ]] \
-		|| ! use linux_kernel ; then
+		|| ! use kernel_linux ; then
 ewarn
 ewarn "Skipping cpu checks.  The compiled program may exhibit runtime failure."
 ewarn
