@@ -84,7 +84,6 @@ gen_openexr_pairs() {
 	done
 }
 
-
 RDEPEND+="
 	|| ( $(gen_openexr_pairs) )
 	>=dev-cpp/robin-map-0.6.2
@@ -227,6 +226,20 @@ src_prepare() {
 	cmake_comment_add_subdirectory src/fonts
 }
 
+get_tbb_slot() {
+	if ! use tbb ; then
+		echo "-1"
+	elif use openvdb && has_version "<media-gfx/openvdb-9" ; then
+		echo ${LEGACY_TBB_SLOT}
+	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+		echo ${ONETBB_SLOT}
+	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+		echo ${LEGACY_TBB_SLOT}
+	else
+		echo "-1"
+	fi
+}
+
 src_configure() {
 	# Build with SIMD support
 	local cpufeature
@@ -300,19 +313,19 @@ src_configure() {
 		)
 	fi
 
-	if ! use tbb ; then
-		:;
-	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+	local use_tbb=$(get_tbb_slot)
+
+	if [[ "${use_tbb}" == "${ONETBB_SLOT}" ]] ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR=/usr/include
-			-DTBB_LIBRARY=/usr/$(get_libdir)
+			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include"
+			-DTBB_LIBRARY="${ESYSROOT}/usr/$(get_libdir)"
 		)
 		sed -i -e "s|tbb/tbb_stddef.h|oneapi/tbb/version.h|g" \
 			"src/cmake/modules/FindTBB.cmake" || die
-	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+	elif [[ "${use_tbb}" == "${LEGACY_TBB_SLOT}" ]] ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR=/usr/include/tbb/${LEGACY_TBB_SLOT}
-			-DTBB_LIBRARY=/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}
+			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}"
+			-DTBB_LIBRARY="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
 		)
 	fi
 
@@ -332,18 +345,16 @@ src_install() {
 	for dir in "${FONT_S[@]}"; do
 		doins "${dir}"/*.ttf
 	done
-	if ! use tbb ; then
-		:;
-	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		:;
-	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+
+	local use_tbb=$(get_tbb_slot)
+	if [[ "${use_tbb}" == "${LEGACY_TBB_SLOT}" ]] ; then
 		for f in $(find "${ED}") ; do
 			test -L "${f}" && continue
 			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
 				einfo "Old rpath for ${f}:"
 				patchelf --print-rpath "${f}" || die
 				einfo "Setting rpath for ${f}"
-				patchelf --set-rpath "/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
+				patchelf --set-rpath "${EROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
 					"${f}" || die
 			fi
 		done
