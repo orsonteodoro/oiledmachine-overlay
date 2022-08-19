@@ -1378,7 +1378,7 @@ wipe_pgo_profile() {
 einfo
 einfo "Wiping previous PGO profile"
 einfo
-		local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}"
+		local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})"
 		find "${pgo_data_dir}" -type f -delete
 	fi
 }
@@ -1391,7 +1391,7 @@ delete_old_pgo_profiles() {
 				# Don't delete permissions
 				continue
 			fi
-			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}"
+			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})"
 			if [[ -e "${pgo_data_dir}" ]] ; then
 				rm -rf "${pgo_data_dir}" || true
 			fi
