@@ -257,6 +257,7 @@ eerror
 		die
 	fi
 	einfo " -- USING .NET ${TARGET_FRAMEWORK} FRAMEWORK -- "
+	[[ "${USE}" =~ ("android"|"ios"|"macos"|"uap"|"win") ]] && die "Linux only supported for now.  Disable all other platforms."
 }
 
 src_unpack() {

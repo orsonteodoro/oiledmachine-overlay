@@ -278,6 +278,7 @@ eerror "Supported SDK versions: ${DOTNET_SUPPORTED_SDKS[@]}"
 eerror
 		die
 	fi
+	[[ "${USE}" =~ ("android"|"ios"|"macos"|"uap"|"win") ]] && die "Linux only supported for now.  Disable all other platforms."
 }
 
 src_unpack() {
@@ -502,7 +503,6 @@ src_compile() {
 	local configuration=$(usex debug "Debug" "Release")
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
-	[[ "${USE}" =~ ("android"|"ios"|"macos"|"uap"|"win") ]] && die "Linux only supported for now.  Disable all other platforms."
 	#_init_workloads
 
 	local native_hrid="$(get_native_hrid)"
