@@ -7,8 +7,9 @@ MY_PN="MonoGame"
 MY_PV="3.8.1_HOTFIX"
 MY_P="${PN}-${MY_PV}"
 
-inherit git-r3
+inherit git-r3 multilib
 
+# Multiple frameworks actually but highest is required
 FRAMEWORK="6.0"
 UAP_VERSION_MIN="10.0"
 
@@ -101,6 +102,7 @@ LINUX_MUSL_ERIDS="${LINUX_MUSL_MARCH[@]/#/dotnet_linux_musl_}"
 OSX_MARCH=( x64 ) # Based on CI
 OSX_ERIDS="${OSX_MARCH[@]/#/dotnet_osx_}"
 
+# Not supported by ebuild because of dotnet workload install uwp missing
 # UWP_MARCH=( arm arm64 x64 x86 ) # Based on Wikipedia
 UWP_MARCH=( x64 ) # Guess
 UWP_ERIDS="${UWP_MARCH[@]/#/dotnet_uwp_}"
@@ -121,8 +123,8 @@ ERIDS=(
 	${WIN_ERIDS[@]}
 )
 
-IUSE+=" ${ERIDS[@]} "
-REQUIRED_USE+="
+IUSE+=" ${ERIDS[@]}"
+AREQUIRED_USE+="
 	|| (
 		${ERIDS[@]}
 	)
@@ -195,7 +197,8 @@ BDEPEND+="
 IUSE+="
 	${PLATFORMS[@]}
 	debug
-	+linux
+	developer
+	nupkg
 "
 
 SRC_URI=""
@@ -206,20 +209,20 @@ RESTRICT="mirror"
 DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-6.0" )
 
 get_crid_platform() {
-	local erid="${1}"
-	local cplatform="${erid%-*}"
+	local hrid="${1}"
+	local cplatform="${hrid%-*}"
 	cplatform="${cplatform/uwp/win}"
 	echo "${cplatform}"
 }
 
 get_hrid_platform() {
-	local erid="${1}"
-	echo "${erid%-*}"
+	local hrid="${1}"
+	echo "${hrid%-*}"
 }
 
 get_hrid_arch() {
-	local erid="${1}"
-	echo "${erid##*-}"
+	local hrid="${1}"
+	echo "${hrid##*-}"
 }
 
 # erid_arch -> Gentoo arch
@@ -295,19 +298,214 @@ prun() {
 	"${args[@]}" || die
 }
 
+get_deploy_type() {
+	echo "publish"
+	use nupkg "pack"
+}
+
+_dotnet() {
+	local command="${1}"
+	local project="${2}"
+
+	local extra_args=()
+	if [[ "${project}" =~ "Templates.VSExtension" ]] ; then
+		extra_args+=( -t:PackageAddin )
+	fi
+
+	if [[ "${command}" == "publish" && "${project}" =~ "MonoGame.Templates.VSExtension.csproj" ]] ; then
+		extra_args+=( -f net472 )
+	elif [[ "${command}" == "publish" && "${project}" =~ "MonoGame.Templates.CSharp.csproj" ]] ; then
+		extra_args+=( -f netstandard2.0 )
+	elif [[ "${command}" == "publish" && "${project}" =~ "MonoGame.Packaging.Flatpak.csproj" ]] ; then
+		extra_args+=( -f netstandard2.0 )
+	elif [[ "${command}" == "publish" ]] ; then
+		extra_args+=( -f ${tfm} )
+	fi
+
+	if [[ \
+		   "${command}" == "build" \
+		|| "${command}" == "pack" \
+		|| "${command}" == "publish" \
+	]] ; then
+		extra_args+=(
+			--runtime "${crid}"
+		)
+	fi
+
+	if [[ "${command}" =~ "msbuild" ]] ; then
+		prun \
+		dotnet "${command}" "${project}" \
+			-p:Configuration=${configuration} \
+			-p:RuntimeIdentifiers=${crid} \
+			-p:PublishReadyToRun=false \
+			-p:TieredCompilation=false \
+			${extra_args[@]}
+	else
+		if [[ "${command}" == "build" || "${command}" == "publish" ]] ; then
+			extra_args+=(
+				--self-contained false
+			)
+		elif [[ "${command}" == "pack" ]] ; then
+			extra_args+=(
+				-t:Pack
+			)
+		fi
+
+		prun \
+		dotnet "${command}" "${project}" \
+			-c "${configuration}" \
+			-p:PublishReadyToRun=false \
+			-p:TieredCompilation=false \
+			${extra_args[@]}
+	fi
+}
+
+_build_build_tools() {
+	local build_tools_A=(
+		"Tools/MonoGame.Content.Builder/MonoGame.Content.Builder.csproj"
+		"Tools/MonoGame.Effect.Compiler/MonoGame.Effect.Compiler.csproj"
+		"Tools/MonoGame.Content.Builder.Task/MonoGame.Content.Builder.Task.csproj"
+		"Tools/MonoGame.Packaging.Flatpak/MonoGame.Packaging.Flatpak.csproj"
+	)
+
+	local p
+	for p in ${build_tools_A[@]} ; do
+		_dotnet "${deploy_type}" "${p}"
+	done
+
+	local arch2
+	if [[ "${harch}" =~ "win" ]] ; then
+		arch2="Windows"
+	elif [[ "${harch}" =~ "osx" ]] ; then
+		arch2="Mac"
+	else
+		arch2="Linux"
+	fi
+
+	_dotnet "${deploy_type}" "Tools/MonoGame.Content.Builder.Editor/MonoGame.Content.Builder.Editor.${arch2}.csproj"
+	_dotnet "${deploy_type}" "Tools/MonoGame.Content.Builder.Editor.Launcher/MonoGame.Content.Builder.Editor.Launcher.${arch2}.csproj"
+	_dotnet "${deploy_type}" "Tools/MonoGame.Content.Builder.Editor.Launcher.Bootstrap/MonoGame.Content.Builder.Editor.Launcher.Bootstrap.csproj"
+}
+
+_build_content_pipeline() {
+	_dotnet "${deploy_type}" "Tools/MonoGame.Effect.Compiler/MonoGame.Effect.Compiler.csproj"
+	_dotnet "${deploy_type}" "MonoGame.Framework.Content.Pipeline/MonoGame.Framework.Content.Pipeline.csproj"
+}
+
+_build_templates() {
+	local templates=(
+		"Templates/MonoGame.Templates.CSharp/MonoGame.Templates.CSharp.csproj"
+		"Templates/MonoGame.Templates.VSMacExtension/MonoGame.Templates.VSMacExtension.csproj"
+		"Templates/MonoGame.Templates.VSExtension/MonoGame.Templates.VSExtension.csproj"
+	)
+	local p
+	for p in ${templates[@]} ; do
+		if [[ "${p}" =~ "Templates.CSharp" ]] ; then
+			_dotnet "${deploy_type}" "${p}"
+		elif [[ "${p}" =~ "Templates.VSExtension" && "${native_hrid}" =~ "win" ]] ; then
+			_dotnet "msbuild" "${p}"
+		elif [[ "${p}" =~ "Templates.VSMacExtension" ]] && has_version "dev-util/monodevelop" ; then
+			_dotnet "build" "${p}"
+		fi
+	done
+}
+
+_build_init() {
+	export MGFXC_WINE_PATH="${HOME}/.winemonogame"
+}
+
+_build_console_check() {
+	[[ "${hrid_native}" =~ "win" ]] || return
+	_dotnet "build" "MonoGame.Framework/MonoGame.Framework.ConsoleCheck.csproj"
+}
+
+_run_tests() {
+	# Run test with virtx?
+	if [[ "${native_hrid}" =~ "win" ]] ; then
+		_dotnet "run" "Tests/MonoGame.Tests.WindowsDX.csproj"
+	elif [[ "${native_hrid}" =~ "osx" ]] ; then
+		_dotnet "run" "Tests/MonoGame.Tests.DesktopGL.csproj"
+	elif [[ "${native_hrid}" =~ "linux" ]] ; then
+		_dotnet "run" "Tests/MonoGame.Tests.DesktopGL.csproj"
+	fi
+	_dotnet "run" "Tools/MonoGame.Tools.Tests/MonoGame.Tools.Tests.csproj"
+}
+
+get_native_hrid() {
+	# Based on gcc -dumpmachine
+	local arch="${CBUILD%%-*}"
+	if [[ "${CBUILD}" =~ "linux" ]] ; then
+		echo "linux-${arch}"
+	elif [[ "${CBUILD}" =~ ("apple"|"darwin") ]] ; then
+		echo "osx-${arch}"
+	elif [[ "${CBUILD}" =~ ("cygwin"|"mingw") ]] ; then
+		echo "win-${arch}"
+	else
+		echo "unknown-unknown"
+	fi
+}
+
+_build_monogame_framework() {
+	unset monogame_framework
+	declare -A monogame_framework=(
+		[android]="MonoGame.Framework/MonoGame.Framework.Android.csproj"
+		[linux]="MonoGame.Framework/MonoGame.Framework.DesktopGL.csproj"
+		[linux-musl]="MonoGame.Framework/MonoGame.Framework.DesktopGL.csproj"
+		[ios]="MonoGame.Framework/MonoGame.Framework.iOS.csproj"
+		[osx]="MonoGame.Framework/MonoGame.Framework.DesktopGL.csproj"
+		[uwp]="MonoGame.Framework/MonoGame.Framework.WindowsUniversal.csproj"
+		[win]="MonoGame.Framework/MonoGame.Framework.WindowsDX.csproj"
+	)
+	_dotnet "${deploy_type}" "${monogame_framework[${hplatform}]}"
+}
+
+src_prepare() {
+	default
+	local configuration=$(usex debug "Debug" "Release")
+	local erid
+	for erid in ${ERIDS[@]} ; do
+		if use "${erid}" ; then
+			local hrid=$(get_hrid "${erid}")
+			cp -a "${S}" "${S}_${hrid}_${configuration}" || die
+		fi
+	done
+}
+
+_init_workloads() {
+	unset workloads
+	declare -A workloads=(
+		[android]="0"
+		[ios]="0"
+		[macos]="0"
+	)
+	local erid
+	for erid in ${ERIDS[@]} ; do
+		if use "${erid}" ; then
+			local hrid=$(get_hrid "${erid}")
+			local cplatform=$(get_crid_platform "${hrid}")
+			[[ "${cplatform}" == "android" ]] && workloads[android]=1
+			[[ "${cplatform}" == "ios" && "${native_hrid}" =~ "win" ]] && workloads[ios]=1 # Not available from Linux
+			[[ "${cplatform}" == "osx" ]] && workloads[macos]=1
+		fi
+	done
+
+	# Only download once per platform
+	for k in ${!workloads[@]} ; do
+		if [[ "${workloads[${k}]}" == "1" ]] ; then
+			# Bug dotnet restore cannnot use it
+			dotnet workload install "${k}" || die
+		fi
+	done
+}
+
 src_compile() {
 	local configuration=$(usex debug "Debug" "Release")
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
-	declare -A platforms=(
-		[android]="MonoGame.Framework.Android.sln"
-		[linux]="MonoGame.Tools.Linux.sln"
-		[linux-musl]="MonoGame.Tools.Linux.sln"
-		[ios]="MonoGame.Framework.iOS.sln"
-		[osx]="MonoGame.Tools.Mac.sln"
-		[uwp]="MonoGame.Framework.WindowsUniversal.sln"
-		[win]="MonoGame.Framework.WindowsDX.sln"
-	)
+	[[ "${USE}" =~ ("android"|"ios"|"macos"|"uap"|"win") ]] && die "Linux only supported for now.  Disable all other platforms."
+	#_init_workloads
+
+	local native_hrid="$(get_native_hrid)"
 
 	# It's still a mess or porting.
 	# It doesn't fully disclose all the RID or microarches
@@ -316,34 +514,172 @@ src_compile() {
 	for erid in ${ERIDS[@]} ; do
 		if use "${erid}" ; then
 			local hrid=$(get_hrid "${erid}")
+			pushd "${S}_${hrid}_${configuration}" || die
 			local crid=$(get_crid "${erid}")
-			local harch=$(get_hrid_arch "${hrid}")
 			local hplatform=$(get_hrid_platform "${hrid}")
-			prun \
-			dotnet publish "${platforms[${hplatform}]}" ${args[@]} \
-				-c "${configuration}" \
-				-r "${crid}" \
-				-o "${S}_${hrid}_${configuration}_build" \
-				-p:PublishReadyToRun=false \
-				-p:TieredCompilation=false \
-				--self-contained
+
+			local garch=$(get_garch "${erid}")
+			export CHOST=$(get_abi_CHOST "${garch}")
+
+			local tfm
+			local tfm2
+			if [[ "${hplatform}" =~ ("uwp") ]] ; then
+				tfm="uap${UAP_VERSION_MIN}"
+				tfm2="v6.0"
+			elif [[ "${hplatform}" =~ ("iossimulator") ]] ; then
+				tfm="net${FRAMEWORK}-ios"
+				tfm2="v6.0"
+			elif [[ "${hplatform}" =~ ("android"|"ios"|"windows") ]] ; then
+				tfm="net${FRAMEWORK}-${hplatform}"
+				tfm2="v6.0"
+			else
+				tfm="net${FRAMEWORK}"
+				tfm2="v6.0"
+			fi
+
+			# Corresponds to build.cake
+			local deploy_type
+			for deploy_type in $(get_deploy_type) ; do
+				_build_init
+				_build_console_check
+				_build_monogame_framework
+				_build_content_pipeline
+				_build_build_tools
+				_build_templates
+			done
+
+			if [[ "${CHOST}" == "${CBUILD}" && "${hrid}" == "${native_hrid}" ]] ; then
+				_run_tests
+			fi
+			popd || die
 		fi
 	done
-	ewarn "WIP (Under Construction)"
-	die
+}
+
+add_nupkg() {
+	local x
+	for x in $(find "${S}_${hrid}_${configuration}/Artifacts/${ns}" -name "*.nupkg") ; do
+		doins "${x}"
+	done
+}
+
+add_ns() {
+	local namespace="${1}"
+	local d
+	[[ -e "${S}_${hrid}_${configuration}/Artifacts/${ns}" ]] || return
+	for d in $(find "${S}_${hrid}_${configuration}/Artifacts/${ns}" \
+		-name "publish" \
+		-type d) ; do
+		if [[ "${d}" =~ "publish" ]] ; then
+			# Really messy.  Needs to get rid of incompatible microarches.
+			doins -r "${d}/"*
+		fi
+	done
+}
+
+_install() {
+	local NS=(
+		"MonoGame.Framework.Android"
+		"MonoGame.Framework.DesktopGL"
+		"MonoGame.Framework.iOS"
+		"MonoGame.Framework.WindowsDX"
+
+		"MonoGame.Templates.CSharp"
+
+		"MonoGame.Effect.Compiler"
+		"MonoGame.Framework.Content.Pipeline"
+		"MonoGame.Packaging.Flatpak"
+
+		"MonoGame.Content.Builder"
+		"MonoGame.Content.Builder.Task"
+		"MonoGame.Content.Builder.Editor.Windows"
+		"MonoGame.Content.Builder.Editor.Launcher.Windows"
+		"MonoGame.Content.Builder.Editor.Mac"
+		"MonoGame.Content.Builder.Editor.Launcher.Mac"
+		"MonoGame.Content.Builder.Editor.Linux"
+		"MonoGame.Content.Builder.Editor.Launcher.Linux"
+		"MonoGame.Content.Builder.Editor.Launcher.Bootstrap"
+	)
+
+	# These namespaces are usually split in nupkg.
+	# Split here also
+	local ns
+	for ns in ${NS[@]} ; do
+		local tfm=""
+		if [[ "${ns}" =~ "MonoGame.".*"Android" ]] ; then
+			tfm="net${FRAMEWORK}-macos"
+		elif [[ "${ns}" =~ "MonoGame.".*"iOS" ]] ; then
+			tfm="net${FRAMEWORK}-ios"
+		elif [[ "${ns}" =~ "MonoGame.".*"Mac" ]] ; then
+			tfm="net${FRAMEWORK}-macos"
+		elif [[ "${ns}" =~ "MonoGame.".*"WindowsUniversal" ]] ; then
+			tfm="uap${UAP_VERSION_MIN}"
+		elif [[ "${ns}" =~ "MonoGame.".*"Windows" ]] ; then
+			tfm="net${FRAMEWORK}-windows"
+		elif [[ "${ns}" =~ "MonoGame.Packaging.Flatpak" ]] ; then
+			tfm="netstandard2.0"
+		elif [[ "${ns}" =~ "MonoGame.Templates.CSharp" ]] ; then
+			tfm="netstandard2.0"
+		elif [[ "${ns}" =~ "MonoGame.Templates.VSExtension" ]] ; then
+			tfm="net472"
+		else
+			tfm="net${FRAMEWORK}"
+		fi
+		insinto "/opt/${SDK}/shared/${ns}.${hrid}/${MY_PV}/${tfm}"
+		add_ns "${p}"
+		insinto "/opt/${SDK}/packs/${ns}.${hrid}/${MY_PV}/${tfm}"
+		use nupkg && add_nupkg "${p}"
+
+		# Remove junk files output by from dotnet publish.
+if false ; then # Untested
+		for f in $(find "${ED}/opt/${SDK}/shared/${ns}.${hrid}/${MY_PV}/${tfm}" -type f) ; do
+			if file "${f}" | grep -q -e "PE32 executable (DLL).*Mono/.Net assembly" ; then
+				continue # .dll
+			elif ! [[ "${hrid}" =~ "uap-x64" ]] && strings "${f}" | grep -q -e "mrm_pri2" ; then
+				# file doesn't support pri file magic yet used with uap
+				rm -rf "${f}" # .pri
+			elif [[ "${hrid}" != "android-arm" ]] && file "${f}" | grep -q -e "ELF.*shared object.*EABI5" ; then
+				rm -rf "${f}" # .so
+			elif [[ "${hrid}" != "android-arm64" ]] && file "${f}" | grep -q -e "ELF.*shared object.*aarch64" ; then
+				rm -rf "${f}" # .so
+			elif [[ "${hrid}" != "android-arm64" && "${hrid}" != "linux-x64" ]] && file "${f}" | grep -q -e "ELF.*shared object.*x86-64" ; then
+				rm -rf "${f}" # .so
+			elif [[ "${hrid}" != "android-x86" && "${hrid}" != "linux-x86" ]] && file "${f}" | grep -q -e "ELF.*shared object.*80386" ; then
+				rm -rf "${f}" # .so
+			elif [[ "${hrid}" != "linux-x64" ]] && file "${f}" | grep -q -e "ELF.*executable.*x86-64.*Linux" ; then
+				rm -rf "${f}" # executable
+			elif [[ "${hrid}" != "android-x64" ]] && file "${f}" | grep -q -e "ELF.*executable.*x86-64" ; then
+				rm -rf "${f}" # executable
+			elif [[ "${hrid}" != "android-x86" ]] && file "${f}" | grep -q -e "ELF.*executable.*80386" ; then
+				rm -rf "${f}" # executable
+			elif [[ "${hrid}" != "ios-arm" ]] && file "${f}" | grep -q -E -e "arm(|_v7):.*dynamically linked shared library" ; then
+				rm -rf "${f}" # dylib
+			elif [[ "${hrid}" != "ios-arm64" ]] && file "${f}" | grep -q -E -e "arm64(|e):.*dynamically linked shared library" ; then
+				rm -rf "${f}" # dylib
+			elif [[ "${hrid}" != "osx-x64" ]] && file "${f}" | grep -q -e "x86_64:.*dynamically linked shared library" ; then
+				rm -rf "${f}" # dylib
+			elif [[ "${hrid}" != "osx-x64" ]] && file "${f}" | grep -q -e "Mach-O.*x86_64 executable" ; then
+				rm -rf "${f}" # executable
+			elif [[ "${hrid}" != "win-x64" ]] && file "${f}" | grep -q -e "PE32\+ executable (console)" ; then
+				rm -rf "${f}" # .exe
+			elif [[ "${hrid}" != "win-x64" ]] && file "${f}" | grep -q -e "PE32\+ executable (console)" ; then
+				rm -rf "${f}" # .exe
+			fi
+		done
+fi
+	done
 }
 
 src_install() {
 	local configuration=$(usex debug "Debug" "Release")
 	local erid
-	for erid in ${ERIDS} ; do
+	for erid in ${ERIDS[@]} ; do
 		if use "${erid}" ; then
 			local hrid=$(get_hrid "${erid}")
 			local crid=$(get_crid "${erid}")
-			local harch=$(get_hrid_arch "${hrid}")
 			local hplatform=$(get_hrid_platform "${hrid}")
-			insinto "/opt/${SDK}/shared/${MY_PN}.Host.${crid}/${MY_PV}"
-			doins -r "${S}_${hrid}_${configuration}_build/"*
+			local x
+			_install
 		fi
 	done
 
@@ -363,8 +699,6 @@ src_install() {
 	# arm is armv7 or if building for alpine [musl] armv6 or armv7
 	#
 
-	# Native
-
 einfo
 einfo "Restoring file permissions"
 einfo
@@ -375,8 +709,13 @@ einfo
 			fperms 0775 "${path}"
 		elif file "${x}" | grep -q "shared object" ; then
 			fperms 0775 "${path}"
+		elif file "${x}" | grep -q "shared library" ; then
+			fperms 0775 "${path}"
 		fi
 	done
+	if ! use developer ; then
+		find "${ED}" -name "*.pdb" -delete
+	fi
 }
 
 pkg_posinst() {
