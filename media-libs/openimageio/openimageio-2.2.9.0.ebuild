@@ -254,7 +254,10 @@ src_configure() {
 		-DUSE_OPENGL=$(usex opengl)
 		-DUSE_OPENVDB=$(usex openvdb)
 		-DUSE_PNG=$(usex png)
-		-DUSE_PTEX=$(usex ptex)
+
+		# The FindPtex.cmake is missing
+		-DUSE_PTEX=OFF
+
 		-DUSE_PYTHON=$(usex python)
 		-DUSE_TBB=$(usex tbb)
 		-DUSE_WEBP=$(usex webp)
