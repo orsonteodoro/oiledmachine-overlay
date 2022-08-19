@@ -22,8 +22,10 @@ CPU_FLAGS=(
 	${ARM_CPU_FLAGS[@]/#/cpu_flags_arm_}
 )
 IUSE+="
-clang -compact-polys custom-cflags debug doc doc-docfiles doc-html doc-images
-doc-man gcc ispc raymask -ssp static-libs +tbb tutorials ${CPU_FLAGS[@]%:*}
+${CPU_FLAGS[@]%:*}
+backface-culling clang -compact-polys custom-cflags debug doc doc-docfiles
+doc-html doc-images doc-man +filter-function gcc ispc raymask -ssp static-libs
++tbb tutorials
 "
 REQUIRED_USE+=" ^^ ( clang gcc )"
 MIN_CLANG_V="3.3" # for c++11
@@ -216,9 +218,9 @@ eerror
 		-DCMAKE_C_COMPILER=${CC}
 		-DCMAKE_CXX_COMPILER=${CXX}
 		-DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON
-		-DEMBREE_BACKFACE_CULLING=OFF			# default
+		-DEMBREE_BACKFACE_CULLING=$(usex backface-culling)
 		-DEMBREE_COMPACT_POLYS=$(usex compact-polys)
-		-DEMBREE_FILTER_FUNCTION=ON			# default
+		-DEMBREE_FILTER_FUNCTION=$(usex filter-function)
 		-DEMBREE_GEOMETRY_CURVE=ON			# default
 		-DEMBREE_GEOMETRY_GRID=ON			# default
 		-DEMBREE_GEOMETRY_INSTANCE=ON			# default
