@@ -718,6 +718,11 @@ _src_configure() {
 	# TODO: migrate blender-libs changes from blender-v2.83 once LLVM-10 is deprecated
 
 	mycmakeargs+=(
+# Fixes
+#CMake Error: The inter-target dependency graph contains the following strongly connected component (cycle):
+#  "cycles_bvh" of type SHARED_LIBRARY
+		-DBUILD_SHARED_LIBS=OFF
+
 		-DPYTHON_VERSION="${EPYTHON/python/}"
 		-DPYTHON_LIBRARY="$(python_get_library_path)"
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"

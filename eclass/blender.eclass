@@ -635,7 +635,7 @@ einfo
 			sed -i -e '/-DGLEW_STATIC/d' "${file}"
 		fi
 	done < <(find . -type f -name "CMakeLists.txt" -print0)
-	IFS=$' \n\t'
+	export IFS=$' \t\n'
 
 	sed -i -e "s|bf_intern_glew_mx|bf_intern_glew_mx \${GLEW_LIBRARY}|g" \
 		intern/cycles/app/CMakeLists.txt || die

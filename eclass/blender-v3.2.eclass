@@ -589,7 +589,6 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-3.0.0-intern-ghost-fix-typo-in-finding-XF86VMODE.patch"
 	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
-	"${FILESDIR}/${PN}-3.2.2-static-cyclic-avoidance.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -743,6 +742,11 @@ _src_configure() {
 
 	# WITH_INPUT_IME is default ON upstream but only supports non-linux
 	mycmakeargs+=(
+# Fixes
+#CMake Error: The inter-target dependency graph contains the following strongly connected component (cycle):
+#  "cycles_bvh" of type SHARED_LIBRARY
+		-DBUILD_SHARED_LIBS=OFF
+
 		-DPYTHON_VERSION="${EPYTHON/python/}"
 		-DPYTHON_LIBRARY="$(python_get_library_path)"
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
