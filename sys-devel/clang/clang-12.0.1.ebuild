@@ -578,10 +578,20 @@ _configure() {
 	BUILD_DIR="${WORKDIR}/x/y/clang-${MULTILIB_ABI_FLAG}.${ABI}"
 
 	if [[ "${PGO_PHASE}" == "pgv" ]] ; then
+		if use bootstrap || tc-is-cross-compiler ; then
+			mycmakeargs+=(
+				-DCMAKE_C_COMPILER="${EPREFIX}/usr/bin/${CHOST}-gcc"
+				-DCMAKE_CXX_COMPILER="${EPREFIX}/usr/bin/${CHOST}-g++"
+				-DCMAKE_ASM_COMPILER="${EPREFIX}/usr/bin/${CHOST}-gcc"
+			)
+		else
+			mycmakeargs+=(
+				-DCMAKE_C_COMPILER=${CHOST}-gcc
+				-DCMAKE_CXX_COMPILER=${CHOST}-g++
+				-DCMAKE_ASM_COMPILER=${CHOST}-gcc
+			)
+		fi
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER=gcc
-			-DCMAKE_CXX_COMPILER=g++
-			-DCMAKE_ASM_COMPILER=gcc
 			-DCOMPILER_RT_BUILD_LIBFUZZER=OFF
 			-DCOMPILER_RT_BUILD_SANITIZERS=OFF
 			-DCOMPILER_RT_BUILD_XRAY=OFF
@@ -676,14 +686,24 @@ _configure() {
 			-DLLVM_USE_LINKER=lld
 		)
 	elif [[ "${PGO_PHASE}" == "pg0" ]] ; then
-		if [[ "${CC}" =~ "clang" ]] ; then
+		if use bootstrap || tc-is-cross-compiler ; then
+			mycmakeargs+=(
+				-DCMAKE_C_COMPILER="${EPREFIX}/usr/bin/${CHOST}-gcc"
+				-DCMAKE_CXX_COMPILER="${EPREFIX}/usr/bin/${CHOST}-g++"
+				-DCMAKE_ASM_COMPILER="${EPREFIX}/usr/bin/${CHOST}-gcc"
+			)
+		fi
+
+		if [[ -z "${CC}" || "${CC}" =~ "gcc" ]] \
+			|| use bootstrap \
+			|| tc-is-cross-compiler ; then
+			mycmakeargs+=(
+				-DLLVM_ENABLE_LTO=$(usex lto "On" "Off")
+			)
+		elif [[ "${CC}" =~ "clang" ]] ; then
 			mycmakeargs+=(
 				-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
 				-DLLVM_USE_LINKER=lld
-			)
-		elif [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
-			mycmakeargs+=(
-				-DLLVM_ENABLE_LTO=$(usex lto "On" "Off")
 			)
 		fi
 	fi
