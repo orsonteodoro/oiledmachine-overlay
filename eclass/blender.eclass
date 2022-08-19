@@ -410,9 +410,8 @@ ewarn
 }
 
 check_cpu() {
-	if [[ ! -e "${BROOT}/proc/cpuinfo" ]] \
-		|| [[ "${CHOST}" != "${CBUILD}" ]] \
-		|| ! use kernel_linux ; then
+	if use kernel_linux \
+		&& [[ ! -e "${BROOT}/proc/cpuinfo" ]] ; then
 ewarn
 ewarn "Skipping cpu checks.  The compiled program may exhibit runtime failure."
 ewarn
@@ -568,28 +567,30 @@ eerror
 
 check_optimal_compiler_for_cycles_x86() {
 	if [[ "${ABI}" == "x86" ]] ; then
+		#
 		# Cycles says that a bug might be in in gcc so use clang or icc.
 		# If you use gcc, it will not optimize cycles except with maybe sse2.
+		#
 		if [[ -n "${BLENDER_CC_ALT}" && -n "${BLENDER_CXX_ALT}" ]] ; then
-			export CC=${BLENDER_CC_ALT}
-			export CXX=${BLENDER_CXX_ALT}
+			export CC="${BLENDER_CC_ALT}"
+			export CXX="${BLENDER_CXX_ALT}"
 		elif [[ -n "${CC}" && -n "${CXX}" ]] \
-			&& [[ ! ( "${CC}" =~ gcc ) ]] \
+			&& [[ ! ( "${CC}" =~ "gcc" ) ]] \
 			&& [[ ! ( "${CXX}" =~ "g++" ) ]] ; then
 			# Defined by user from per-package environmental variables.
 			export CC
 			export CXX
 		elif has_version 'sys-devel/clang' ; then
-			export CC=clang
-			export CXX=clang++
+			export CC="${CHOST}-clang"
+			export CXX="${CHOST}-clang++"
 		elif has_version 'dev-lang/icc' ; then
-			export CC=icc
-			export CXX=icpc
+			export CC="icc"
+			export CXX="icpc"
 		fi
 	else
 		if [[ ! -n "${CC}" || ! -n "${CXX}" ]] ; then
-			export CC=$(tc-getCC $(get_abi_CHOST "${ABI}"))
-			export CXX=$(tc-getCXX $(get_abi_CHOST "${ABI}"))
+			export CC="$(tc-getCC ${CHOST})"
+			export CXX="$(tc-getCXX ${CHOST})"
 		fi
 	fi
 
@@ -614,6 +615,7 @@ _prepare_pgo() {
 		cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
 	fi
 	touch "${pgo_data_dir2}/compiler_fingerprint" || die
+	addpredict "/var/lib/pgo-profiles"
 }
 
 blender_src_prepare() {
