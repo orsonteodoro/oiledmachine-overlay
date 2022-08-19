@@ -395,8 +395,8 @@ RDEPEND+="
 	)
 	embree? (
 		>=media-libs/embree-3.13.3:=\
-[cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,raymask,\
-static-libs]
+[backface-culling(-),compact-polys(-),cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,\
+cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 	)
 	ffmpeg? (
 		>=media-video/ffmpeg-5:=\
