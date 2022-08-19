@@ -100,7 +100,7 @@ eerror
 
 pkg_setup() {
 	export CMAKE_BUILD_TYPE=$(usex debug "RelWithDebInfo" "Release")
-	if use linux_kernel ; then
+	if use kernel_linux ; then
 		CONFIG_CHECK="~TRANSPARENT_HUGEPAGE"
 		WARNING_TRANSPARENT_HUGEPAGE=\
 "Not enabling Transparent Hugepages (CONFIG_TRANSPARENT_HUGEPAGE) will impact "\
