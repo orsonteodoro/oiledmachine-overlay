@@ -14,13 +14,25 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 SRC_URI="https://github.com/embree/embree/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 SLOT_MAJ="3"
 SLOT="${SLOT_MAJ}/${PV}"
-X86_CPU_FLAGS=( sse2:sse2 sse4_2:sse4_2 avx:avx avx2:avx2
-avx512skx:avx512skx avx512:avx512 )
+
+X86_CPU_FLAGS=(
+	sse2:sse2
+	sse4_2:sse4_2
+	avx:avx
+	avx2:avx2
+	avx512f:avx512f
+	avx512vl:avx512vl
+	avx512bw:avx512bw
+	avx512dq:avx512dq
+	avx512cd:avx512cd
+
+)
 ARM_CPU_FLAGS=( neon:neon neon2x:neon2x )
 CPU_FLAGS=(
 	${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 	${ARM_CPU_FLAGS[@]/#/cpu_flags_arm_}
 )
+
 IUSE+="
 ${CPU_FLAGS[@]%:*}
 backface-culling clang -compact-polys custom-cflags debug doc doc-docfiles
@@ -30,7 +42,71 @@ doc-html doc-images doc-man +filter-function gcc ispc raymask -ssp static-libs
 REQUIRED_USE+="
 	^^ ( clang gcc )
 	|| ( ${CPU_FLAGS[@]%:*} )
+
+	cpu_flags_x86_sse4_2? (
+		cpu_flags_x86_sse2
+	)
+
+	cpu_flags_x86_avx? (
+		cpu_flags_x86_sse4_2
+	)
+
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_avx
+	)
+
+	cpu_flags_arm_neon? (
+		cpu_flags_x86_sse2
+	)
+
+	cpu_flags_arm_neon2x? (
+		cpu_flags_x86_avx2
+	)
+
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512cd
+	)
+
+	cpu_flags_x86_avx512vl? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512cd
+	)
+
+	cpu_flags_x86_avx512bw? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512cd
+	)
+
+	cpu_flags_x86_avx512dq? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+	)
+
+	cpu_flags_x86_avx512cd? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+	)
 "
+# For ISAs, see https://github.com/embree/embree/blob/v3.13.4/common/sys/sysinfo.h#L153
+# All flags required for proper reporting in
+# https://github.com/embree/embree/blob/v3.13.4/common/cmake/check_isa.cpp
+
 MIN_CLANG_V="3.3" # for c++11
 MIN_CLANG_V_AVX512SKX="3.6" # for -march=skx
 MIN_GCC_V="4.8.1" # for c++11
@@ -44,10 +120,7 @@ BDEPEND+="
 	virtual/pkgconfig
 	clang? (
 		>=sys-devel/clang-${MIN_CLANG_V}
-		cpu_flags_x86_avx512skx? (
-			>=sys-devel/clang-${MIN_CLANG_V_AVX512SKX}
-		)
-		cpu_flags_x86_avx512? (
+		cpu_flags_x86_avx512dq? (
 			>=sys-devel/clang-${MIN_CLANG_V_AVX512SKX}
 		)
 	)
@@ -65,10 +138,7 @@ BDEPEND+="
 	)
 	gcc? (
 		>=sys-devel/gcc-${MIN_GCC_V}
-		cpu_flags_x86_avx512skx? (
-			>=sys-devel/gcc-${MIN_GCC_V_AVX512SKX}
-		)
-		cpu_flags_x86_avx512? (
+		cpu_flags_x86_avx512dq? (
 			>=sys-devel/gcc-${MIN_GCC_V_AVX512SKX}
 		)
 	)
@@ -133,7 +203,7 @@ pkg_setup() {
 			chcxx "Clang" "${MIN_CLANG_V}" "c++11"
 		fi
 		if ver_test ${cc_v} -lt ${MIN_CLANG_V_AVX512SKX} \
-			&& use cpu_flags_x86_avx512skx ; then
+			&& use cpu_flags_x86_avx512dq ; then
 			chcxx "Clang" "${MIN_CLANG_V_AVX512SKX}" "AVX512-SKX"
 		fi
 	else
@@ -145,7 +215,7 @@ pkg_setup() {
 				chcxx "GCC" "${MIN_GCC_V}" "c++11"
 			fi
 			if ver_test ${cc_v} -lt ${MIN_GCC_V_AVX512SKX} \
-				&& use cpu_flags_x86_avx512skx ; then
+				&& use cpu_flags_x86_avx512dq ; then
 				chcxx "GCC" "${MIN_GCC_V_AVX512SKX}" "AVX512-SKX"
 			fi
 		else
@@ -239,7 +309,22 @@ eerror
 		-DEMBREE_IGNORE_INVALID_RAYS=OFF		# default
 		-DEMBREE_ISA_AVX=$(usex cpu_flags_x86_avx)
 		-DEMBREE_ISA_AVX2=$(usex cpu_flags_x86_avx2)
-		-DEMBREE_ISA_AVX512=$(usex cpu_flags_x86_avx512skx ON $(usex cpu_flags_x86_avx512 ON OFF))
+		-DEMBREE_ISA_AVX512=$(usex cpu_flags_x86_avx512f \
+			$(usex cpu_flags_x86_avx512cd \
+				$(usex cpu_flags_x86_avx512dq \
+					$(usex cpu_flags_x86_avx512bw \
+						$(usex cpu_flags_x86_avx512vl \
+							ON \
+							OFF \
+						) \
+						OFF \
+					) \
+					OFF \
+				) \
+				OFF \
+			) \
+			OFF \
+				     )
 		-DEMBREE_ISA_NEON=$(usex cpu_flags_arm_neon)
 		-DEMBREE_ISA_NEON2X=$(usex cpu_flags_arm_neon2x)
 		-DEMBREE_ISA_SSE2=$(usex cpu_flags_x86_sse2)
@@ -268,9 +353,12 @@ eerror
 		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="NEON2X" )
 	elif use cpu_flags_arm_neon ; then
 		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="NEON" )
-	elif use cpu_flags_x86_avx512skx ; then
-		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="AVX512SKX" )
-	elif use cpu_flags_x86_avx512 ; then
+	elif use cpu_flags_x86_avx512f \
+		&& use cpu_flags_x86_avx512cd \
+		&& use cpu_flags_x86_avx512dq \
+		&& use cpu_flags_x86_avx512bw \
+		&& use cpu_flags_x86_avx512vl
+	then
 		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="AVX512" )
 	elif use cpu_flags_x86_avx2 ; then
 		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="AVX2" )
