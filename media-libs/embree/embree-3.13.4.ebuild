@@ -55,14 +55,6 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx
 	)
 
-	cpu_flags_arm_neon? (
-		cpu_flags_x86_sse2
-	)
-
-	cpu_flags_arm_neon2x? (
-		cpu_flags_x86_avx2
-	)
-
 	cpu_flags_x86_avx512f? (
 		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512vl
