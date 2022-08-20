@@ -1368,6 +1368,7 @@ delete_old_pgo_profiles() {
 			fi
 			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/${pv}/${API_VERSION}"
 			if [[ -e "${pgo_data_dir}" ]] ; then
+einfo "Removing old PGO profile for =${CATEGORY}/${PN}-${pvr}"
 				rm -rf "${pgo_data_dir}" || true
 			fi
 		done

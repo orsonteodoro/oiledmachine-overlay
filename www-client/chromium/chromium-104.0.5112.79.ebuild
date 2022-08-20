@@ -2972,7 +2972,7 @@ remove_old_pgo_profiles() {
 			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/${pv}"
 			if [[ -n "${pgo_data_dir}" ]] \
 				&& realpath -e "${pgo_data_dir}" 2>/dev/null ; then
-				einfo "Removing PGO profile for ${pvr}"
+einfo "Removing old PGO profile for =${CATEGORY}/${PN}-${pvr}"
 				rm -rf "${pgo_data_dir}" || die
 			fi
 		done
