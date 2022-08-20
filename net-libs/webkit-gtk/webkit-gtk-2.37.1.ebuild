@@ -1415,9 +1415,6 @@ einfo
 	check_geolocation
 
 	use pgo && wipe_pgo_profile
-}
-
-pkg_postrm() {
 	delete_old_pgo_profiles
 }
 
