@@ -623,7 +623,6 @@ _prepare_pgo() {
 		cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
 	fi
 	touch "${pgo_data_dir2}/compiler_fingerprint" || die
-	addpredict "${EPREFIX}/var/lib/pgo-profiles"
 }
 
 _get_impls() {
@@ -1098,6 +1097,7 @@ _pgo_configure() {
 	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
 	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
 	mkdir -p "${ED}/${pgo_data_dir}" || die
+	use pgo && addpredict "${EPREFIX}/var/lib/pgo-profiles"
 	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		if tc-is-clang ; then
 			append-flags -fprofile-generate="${pgo_data_dir}"
@@ -1352,15 +1352,6 @@ fecho1
 	if use pgo ; then
 		local pgo_data_dir="/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
 		dodir "${pgo_data_dir}"
-		if tc-is-gcc ; then
-			"${CC}" -dumpmachine > "${ED}${pgo_data_dir}/compiler" || die
-			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${ED}${pgo_data_dir}/compiler_fingerprint" || die
-		elif tc-is-clang ; then
-			"${CC}" -dumpmachine > "{ED}${pgo_data_dir}/compiler" || die
-			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${ED}${pgo_data_dir}/compiler_fingerprint" || die
-		fi
 	fi
 }
 
@@ -1399,6 +1390,16 @@ einfo "Wiping previous PGO profile"
 einfo
 		local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})"
 		find "${pgo_data_dir}" -type f -delete
+
+		if tc-is-gcc ; then
+			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+				> "${pgo_data_dir}/compiler_fingerprint" || die
+		elif tc-is-clang ; then
+			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+				> "${pgo_data_dir}/compiler_fingerprint" || die
+		fi
 	fi
 }
 
