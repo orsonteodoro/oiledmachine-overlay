@@ -1612,7 +1612,6 @@ _prepare_pgo() {
 		cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
 	fi
 	touch "${pgo_data_dir2}/compiler_fingerprint" || die
-	addpredict "${EPREFIX}/var/lib/pgo-profiles"
 }
 
 src_prepare() {
@@ -2470,6 +2469,7 @@ einfo
 
 	# The PGO data must not be wiped by the sandbox or generated in the sandbox.
 	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
+	use pgo-full && addpredict "${EPREFIX}/var/lib/pgo-profiles"
 	if ! use pgo-full || tc-is-cross-compiler ; then
 		:;
 	elif [[ "${PGO_PHASE}" == "PGI" ]] ; then
@@ -2957,15 +2957,6 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	if use pgo-full ; then
 		local pgo_data_dir="/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
 		dodir "${pgo_data_dir}"
-		if tc-is-gcc ; then
-			"${CC}" -dumpmachine > "${ED}${pgo_data_dir}/compiler" || die
-			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${ED}${pgo_data_dir}/compiler_fingerprint" || die
-		elif tc-is-clang ; then
-			"${CC}" -dumpmachine > "${ED}${pgo_data_dir}/compiler" || die
-			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${ED}${pgo_data_dir}/compiler_fingerprint" || die
-		fi
 	fi
 }
 
@@ -3075,11 +3066,31 @@ einfo "to your ~/.bashrc or ~/.xinitrc and relogging."
 einfo
 }
 
+wipe_pgo_profile() {
+	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
+einfo
+einfo "Wiping previous PGO profile"
+einfo
+		local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
+		find "${pgo_data_dir}" -type f -delete
+		if tc-is-gcc ; then
+			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+				> "${pgo_data_dir}/compiler_fingerprint" || die
+		elif tc-is-clang ; then
+			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+				> "${pgo_data_dir}/compiler_fingerprint" || die
+		fi
+	fi
+}
+
 pkg_postinst() {
 	xdg_icon_cache_update
 	xdg_desktop_database_update
 	readme.gentoo_print_elog
 
+	use pgo && wipe_pgo_profile
 	if ! use headless; then
 		if use vaapi ; then
 # It says 3 args:
