@@ -1330,15 +1330,6 @@ multilib_src_install() {
 	if use pgo ; then
 		local pgo_data_dir="/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
 		dodir "${pgo_data_dir}"
-		if tc-is-gcc ; then
-			"${CC}" -dumpmachine > "${ED}${pgo_data_dir}/compiler" || die
-			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${ED}${pgo_data_dir}/compiler_fingerprint" || die
-		elif tc-is-clang ; then
-			"${CC}" -dumpmachine > "${ED}${pgo_data_dir}/compiler" || die
-			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${ED}${pgo_data_dir}/compiler_fingerprint" || die
-		fi
 	fi
 }
 
@@ -1349,6 +1340,20 @@ einfo "Wiping previous PGO profile"
 einfo
 		local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}"
 		find "${pgo_data_dir}" -type f -delete
+
+		id_pgo_compiler() {
+			pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
+			if tc-is-gcc ; then
+				"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
+				"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+					> "${pgo_data_dir}/compiler_fingerprint" || die
+			elif tc-is-clang ; then
+				"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
+				"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+					> "${pgo_data_dir}/compiler_fingerprint" || die
+			fi
+		}
+		multilib_foreach_abi id_pgo_compiler
 	fi
 }
 
