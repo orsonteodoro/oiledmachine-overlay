@@ -1,3 +1,16 @@
+License header for tutorials/external/catch.hpp:
+
+/*
+ *  Catch v2.7.2
+ *  Generated: 2019-04-22 23:13:14.687465
+ *  ----------------------------------------------------------
+ *  This file has been merged from multiple headers. Please don't edit it directly
+ *  Copyright (c) 2019 Two Blue Cubes Ltd. All rights reserved.
+ *
+ *  Distributed under the Boost Software License, Version 1.0. (See accompanying
+ *  file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+ */
+
 diff -urp embree-3.13.2.orig/tutorials/external/catch.hpp embree-3.13.2/tutorials/external/catch.hpp
 --- embree-3.13.2.orig/tutorials/external/catch.hpp	2021-10-26 09:31:08.000000000 -0700
 +++ embree-3.13.2/tutorials/external/catch.hpp	2021-11-25 23:52:05.962950710 -0800

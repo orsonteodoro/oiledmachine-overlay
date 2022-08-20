@@ -4,6 +4,11 @@ CMake Error at common/cmake/installTBB.cmake:5 (INSTALL):
 Call Stack (most recent call first):
   common/tasking/CMakeLists.txt:56 (include)
 
+License header for common/tasking/CMakeLists.txt:
+
+## Copyright 2009-2021 Intel Corporation
+## SPDX-License-Identifier: Apache-2.0
+
 --- embree-3.13.4.orig/common/tasking/CMakeLists.txt	2022-06-14 22:13:52.000000000 -0700
 +++ embree-3.13.4/common/tasking/CMakeLists.txt	2022-07-05 22:17:46.596606886 -0700
 @@ -21,7 +21,7 @@ ELSEIF (TASKING_TBB)

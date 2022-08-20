@@ -1,15 +1,18 @@
+# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-inherit cmake flag-o-matic linux-info toolchain-funcs
+inherit cmake flag-o-matic linux-info toolchain-funcs virtualx
 
 DESCRIPTION="Collection of high-performance ray tracing kernels"
 HOMEPAGE="https://github.com/embree/embree"
-LICENSE="Apache-2.0
-	 tutorials? ( Apache-2.0 MIT )
-	 static-libs? ( BSD BZIP2 MIT ZLIB )"
+LICENSE="
+	Apache-2.0
+	tutorials? ( Apache-2.0 MIT )
+	static-libs? ( BSD BZIP2 MIT ZLIB )
+"
 KEYWORDS="~amd64 ~arm64 ~x86"
 SRC_URI="https://github.com/embree/embree/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 SLOT_MAJ="3"
@@ -35,14 +38,15 @@ CPU_FLAGS=(
 
 IUSE+="
 ${CPU_FLAGS[@]%:*}
-backface-culling clang -compact-polys custom-cflags debug doc doc-docfiles
-doc-html doc-images doc-man +filter-function gcc ispc raymask -ssp static-libs
-+tbb tutorials
+-allow-auto-vectorization -allow-strict-aliasing backface-culling clang
+-compact-polys -custom-cflags custom-optimization debug doc doc-docfiles
+doc-html doc-images doc-man +hardened +filter-function gcc ispc raymask pgo -ssp
+static-libs +tbb test tutorials
 "
 REQUIRED_USE+="
 	^^ ( clang gcc )
 	|| ( ${CPU_FLAGS[@]%:*} )
-
+	pgo? ( tutorials )
 	cpu_flags_x86_sse4_2? (
 		cpu_flags_x86_sse2
 	)
@@ -155,12 +159,19 @@ DEPEND+="
 	)
 "
 RDEPEND+=" ${DEPEND}"
+BDEPEND+="
+	pgo? (
+		x11-base/xorg-server[xvfb]
+		x11-apps/xhost
+	)
+"
 DOCS=( CHANGELOG.md README.md readme.pdf )
 CMAKE_BUILD_TYPE=Release
 PATCHES=(
 	"${FILESDIR}/${PN}-3.13.0-findtbb-more-debug-messages.patch"
 	"${FILESDIR}/${PN}-3.13.0-findtbb-alt-lib-path.patch"
 	"${FILESDIR}/${PN}-3.13.4-tbb-alt-config.patch"
+	"${FILESDIR}/${PN}-3.13.4-customize-flags.patch"
 )
 
 chcxx() {
@@ -238,12 +249,55 @@ src_prepare() {
 	# disable RPM package building
 	sed -e 's|CPACK_RPM_PACKAGE_RELEASE 1|CPACK_RPM_PACKAGE_RELEASE 0|' \
 		-i CMakeLists.txt || die
-	# change -O3 settings for various compilers
-	sed -e 's|-O3|-O2|' -i \
-		"${S}"/common/cmake/{clang,gnu,intel,ispc}.cmake || die
 }
 
-src_configure() {
+_cmake_clean() {
+	[[ -e "${BUILD_DIR}" ]] || return
+	rm -rf "${BUILD_DIR}" || die
+}
+
+_pgo_configure() {
+	filter-flags '-fprofile*'
+	local pgo_data_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+	mkdir -p "${ED}/${pgo_data_dir}" || die
+	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
+einfo "DEBUG:  Added PGI flags"
+		if tc-is-clang ; then
+			PGO_CXX_FLAGS+=" -fprofile-generate=\"${pgo_data_dir}\""
+		elif tc-is-gcc ; then
+			PGO_CXX_FLAGS+=" -fprofile-generate -fprofile-dir=\"${pgo_data_dir}\""
+		else
+eerror
+eerror "Only GCC and Clang are supported for PGO."
+eerror
+			die
+		fi
+	elif [[ "${PGO_PHASE}" == "PGO" ]] ; then
+einfo "DEBUG:  Added PGO flags"
+		if tc-is-clang ; then
+einfo
+einfo "Merging PGO data to generate a PGO profile"
+einfo
+			if ! ls "${BUILD_DIR}/"*.profraw 2>/dev/null 1>/dev/null ; then
+eerror
+eerror "Missing *.profraw files"
+eerror
+				die
+			fi
+			llvm-profdata merge -output="${pgo_data_dir}/custom-pgo.profdata" \
+				"${pgo_data_dir}" || die
+			PGO_CXX_FLAGS+=" -fprofile-use=\"${pgo_data_dir}/custom-pgo.profdata\""
+		elif tc-is-gcc ; then
+			PGO_CXX_FLAGS+=" -fprofile-use -fprofile-dir=\"${pgo_data_dir}\""
+		fi
+	fi
+}
+
+_configure() {
+einfo
+einfo "PGO PHASE:  ${PGO_PHASE}"
+einfo
+	_cmake_clean
 	strip-unsupported-flags
 
 	if tc-is-clang && ! use clang ; then
@@ -253,6 +307,8 @@ eerror
 		die
 	fi
 
+	PGO_CXX_FLAGS=""
+	PGO_LDFLAGS=""
 	if ! use custom-cflags ; then
 		strip-flags
 		filter-flags "-frecord-gcc-switches"
@@ -260,6 +316,7 @@ eerror
 		filter-ldflags "-Wl,-O1"
 		filter-ldflags "-Wl,--defsym=__gentoo_check_ldflags__=0"
 	fi
+	_pgo_configure
 
 	# NOTE: You can make embree accept custom CXXFLAGS by turning off
 	# EMBREE_IGNORE_CMAKE_CXX_FLAGS. However, the linking will fail if you use
@@ -281,8 +338,14 @@ eerror
 #
 # The build currently only works with their own C{,XX}FLAGS,
 # not respecting user flags.
-#		-DEMBREE_IGNORE_CMAKE_CXX_FLAGS=OFF
 	local mycmakeargs=(
+		# Both have the same numbers with or without optimization flag
+		# with embree_test and embree_verify
+		-DALLOW_AUTO_VECTORIZATION=$(usex allow-auto-vectorization)
+		-DALLOW_STRICT_ALIASING=$(usex allow-strict-aliasing)
+
+		-DHARDENED=$(usex hardened)
+
 		-DBUILD_TESTING:BOOL=OFF
 		-DCMAKE_C_COMPILER="${CC}"
 		-DCMAKE_CXX_COMPILER="${CXX}"
@@ -298,6 +361,7 @@ eerror
 		-DEMBREE_GEOMETRY_SUBDIVISION=ON		# default
 		-DEMBREE_GEOMETRY_TRIANGLE=ON			# default
 		-DEMBREE_GEOMETRY_USER=ON			# default
+		-DEMBREE_IGNORE_CMAKE_CXX_FLAGS=$(use custom-cflags OFF ON)
 		-DEMBREE_IGNORE_INVALID_RAYS=OFF		# default
 		-DEMBREE_ISA_AVX=$(usex cpu_flags_x86_avx)
 		-DEMBREE_ISA_AVX2=$(usex cpu_flags_x86_avx2)
@@ -330,6 +394,21 @@ eerror
 		-DEMBREE_TASKING_SYSTEM:STRING=$(usex tbb "TBB" "INTERNAL")
 		-DEMBREE_TUTORIALS=$(usex tutorials)
 	)
+
+	local last_o=$(echo "${CFLAGS}" \
+		| tr " " "\n" \
+		| grep -E -e "-O(0|1|2|3|4|Ofast)( |$)" \
+		| tail -n 1)
+	if use custom-optimization ; then
+		mycmakeargs+=( -DCUSTOM_OPTIMIZATION_LEVEL="${last_o}" )
+	fi
+
+	if use pgo ; then
+		mycmakeargs+=(
+			-DPGO_CXX_FLAGS="${PGO_CXX_FLAGS}"
+			-DPGO_LDFLAGS="${PGO_LDFLAGS}"
+		)
+	fi
 
 	if use tutorials; then
 		use ispc && \
@@ -383,9 +462,10 @@ eerror
 	cmake_src_configure
 }
 
-src_compile() {
+_compile() {
 	cmake_src_compile
-	if use doc ; then
+	if [[ "${PGO_PHASE}" == "PGO" || "${PGO_PHASE}" == "NO_PGO" ]] \
+		&& use doc ; then
 		pushd doc || die
 			if use doc-images ; then
 				einfo "Building doc/images"
@@ -407,10 +487,163 @@ src_compile() {
 	fi
 }
 
+_get_cbuild_isas() {
+	if use kernel_linux ; then
+		if grep -q -E -e "sse2( |$)" "${BROOT}/proc/cpuinfo" && use cpu_flags_x86_sse2 ; then
+			echo "sse2"
+		elif grep -q -E -e "sse42( |$)" "${BROOT}/proc/cpuinfo" && use cpu_flags_x86_sse4_2 ; then
+			echo "sse4.2"
+		elif grep -q -E -e "avx( |$)" "${BROOT}/proc/cpuinfo" && use cpu_flags_x86_avx ; then
+			echo "avx"
+		elif grep -q -E -e "avx2( |$)" "${BROOT}/proc/cpuinfo" && use cpu_flags_x86_avx2 ; then
+			echo "avx2"
+		elif grep -q -E -e "avx512f( |$)" "${BROOT}/proc/cpuinfo" \
+			&& grep -q -E -e "avx512vl( |$)" "${BROOT}/proc/cpuinfo" \
+			&& grep -q -E -e "avx512bw( |$)" "${BROOT}/proc/cpuinfo" \
+			&& grep -q -E -e "avx512dq( |$)" "${BROOT}/proc/cpuinfo" \
+			&& grep -q -E -e "avx512cd( |$)" "${BROOT}/proc/cpuinfo" \
+			&& use cpu_flags_x86_avx512f \
+			&& use cpu_flags_x86_avx512bw \
+			&& use cpu_flags_x86_avx512dq \
+			&& use cpu_flags_x86_avx512cd
+		then
+			echo "avx512"
+		fi
+	else
+eerror
+eerror "Kernel of CPU not supported for GPU yet."
+eerror
+		die
+	fi
+}
+
+_run_tutorial() {
+	local duration="${1}"
+	local tutorial_path="${2}"
+	local name=$(basename "${tutorial_path}")
+	local now=$(date +"%s")
+	local done_at=$((${now} + ${duration}))
+	local done_at_s=$(date --date="@${done_at}")
+einfo
+einfo "Running '${name}' tutorial for ${duration}s to be completed at"
+einfo "${done_at_s}"
+einfo
+cat <<EOF > "run.sh"
+#!${EPREFIX}/bin/bash
+"${tutorial_path}" \
+	--isa ${isa} \
+	--threads ${threads} &
+pid=\$!
+now=\$(date +"%s")
+while (( \${now} < ${done_at} )) \
+	&& ps -p \${pid} 2>/dev/null 1>/dev/null ; do
+	sleep 1
+	now=\$(date +"%s")
+done
+ps -p \${pid} 2>/dev/null 1>/dev/null \
+	&& kill -9 \${pid}
+true
+EOF
+	chmod +x "run.sh" || die
+	virtx ./run.sh
+	rm run.sh || die
+	if grep -q -r -e "cannot connect to X server" "${T}/build.log" ; then
+eerror
+eerror "Detected cannot connect to X server."
+eerror
+		die
+	fi
+}
+
+_get_time_override() {
+	duration=${default_time}
+	for entry in ${time_override[@]} ; do
+		local name="${entry%:*}"
+		local time="${entry#*:}"
+		if [[ "${f}" =~ "${name}" ]] ; then
+			duration=${time}
+			break
+		fi
+	done
+	echo "${duration}"
+}
+
+_train() {
+	# Sandbox violation prevention
+	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache"
+	export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
+	for x in $(find /dev/input -name "event*") ; do
+		einfo "Adding \`addwrite ${x}\` sandbox rule"
+		addwrite "${x}"
+	done
+
+	local default_time=120 # seconds
+	local Atime_override=(
+		"bvh_builder:86"
+		"embree_verify:$((21*60))"
+	) # exename:seconds
+
+	local ncpus=$(lscpu | grep "CPU(s)" | head -n 1 | grep -E -o -e "[0-9]+")
+	local tpc=$(lscpu | grep "Thread(s) per core" | head -n 1 | grep -E -o -e "[0-9]+")
+	local threads=$(( ${ncpus} * ${tpc} ))
+
+	einfo "Threads Per Core (TPC):  ${tpc}"
+	einfo "nCPUS:  ${ncpus}"
+	einfo "Threads:  ${threads}"
+
+	local isa
+	local f
+	for f in $(find "${BUILD_DIR}" -maxdepth 1 -executable -type f | sort) ; do
+		for isa in $(_get_cbuild_isas) ; do
+			local duration=$(_get_time_override)
+			_run_tutorial ${duration} "${f}"
+		done
+	done
+}
+
+src_compile() {
+	if use pgo ; then
+		PGO_PHASE="PGI"
+		_configure
+		_compile
+		_train
+		PGO_PHASE="PGO"
+		_configure
+		_compile
+	else
+		PGO_PHASE="NO_PGO"
+		_configure
+		_compile
+	fi
+}
+
+src_test() {
+# All tests passed (15 assertions in 13 test cases)
+	einfo "Running embree_tests"
+	"embree_tests" || die
+
+	if use tutorials ; then
+ewarn
+ewarn "The embree_verify is expected to fail.  To install, add test-fail-continue to"
+ewarn "FEATURES as a per package envvar."
+ewarn
+# Tests passed: 5110
+# Tests failed: 521
+# Tests failed and ignored: 48
+		einfo "Running embree_verify"
+		"embree_verify" || die
+	fi
+}
+
 src_install() {
 	cmake_src_install
 
-	doenvd "${FILESDIR}"/99${PN}${SLOT_MAJ}
+	cat <<EOF > "${T}/99${PN}${SLOT_MAJ}"
+CPATH="${EPREFIX}/usr/include/embree${SLOT_MAJ}"
+PATH="${EPREFIX}/usr/bin/embree${SLOT_MAJ}"
+EOF
+
+	doenvd "${T}/99${PN}${SLOT_MAJ}"
 
 	docinto docs
 	if use doc ; then
@@ -462,4 +695,6 @@ einfo
 	fi
 }
 
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-multislot-tbb
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-multislot-tbb, pgo, test
+# OILEDMACHINE-OVERLAY-META-TAGS:  profile-guided-optimization
