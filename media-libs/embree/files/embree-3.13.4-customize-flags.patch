@@ -52,7 +52,7 @@ diff -urp embree-3.13.4.orig/common/cmake/clang.cmake embree-3.13.4/common/cmake
 +  ELSE()                                                                # oteodoro:  added line
 +    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-strict-aliasing")      # oteodoro:  added line
 +  ENDIF()                                                               # oteodoro:  added line
-+  IF(NOT ALLOW_AUTO_VECTORIZER)                                         # oteodoro:  added line.  On trial
++  IF(NOT ALLOW_AUTO_VECTORIZATION)                                      # oteodoro:  added line.  On trial
 +    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-vectorize")       # disable auto vectorizer # Why? did not state in comment or code reviewed
 +# oteodoro:  added line.  Both embree_test and embree_verify report the same numbers with or without auto-vectorization.
 +  ENDIF()                                                               # oteodoro:  added line
@@ -158,7 +158,7 @@ diff -urp embree-3.13.4.orig/common/cmake/gnu.cmake embree-3.13.4/common/cmake/g
 +ELSE()                                                                # oteodoro:  added line
 +  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-strict-aliasing")      # oteodoro:  added line
 +ENDIF()                                                               # oteodoro:  added line
-+IF(NOT ALLOW_AUTO_VECTORIZER)                                         # oteodoro:  added line.  On trial
++IF(NOT ALLOW_AUTO_VECTORIZATION)                                      # oteodoro:  added line.  On trial
 +  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-vectorize")       # disable auto vectorizer # oteodoro:  indent.  why?  no message in commit and no code review.
 +# oteodoro:  added line.  Both embree_test and embree_verify report the same numbers with or without auto-vectorization.
 +ENDIF()                                                               # oteodoro:  added line.

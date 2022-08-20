@@ -183,6 +183,11 @@ eerror
 }
 
 pkg_setup() {
+	if use allow-auto-vectorization ; then
+ewarn
+ewarn "The allow-auto-vectorization is undergoing retesting.  Do not enable."
+ewarn
+	fi
 	export CMAKE_BUILD_TYPE=$(usex debug "RelWithDebInfo" "Release")
 	if use kernel_linux ; then
 		CONFIG_CHECK="~TRANSPARENT_HUGEPAGE"
@@ -578,7 +583,7 @@ _train() {
 	done
 
 	local default_time=120 # seconds
-	local Atime_override=(
+	local time_override=(
 		"bvh_builder:86"
 		"embree_verify:$((21*60))"
 	) # exename:seconds
