@@ -86,7 +86,7 @@ fi
 
 X86_CPU_FLAGS=( mmx:mmx sse:sse sse2:sse2 sse3:sse3 ssse3:ssse3 lzcnt:lzcnt \
 sse4_1:sse4_1 sse4_2:sse4_2 avx:avx f16c:f16c fma:fma bmi:bmi avx2:avx2 \
-avx512f:avx512f avx512er:avx512er avx512dq:avx512dq )
+avx512f:avx512f avx512dq:avx512dq avx512er:avx512er avx512bf16:avx512bf16 )
 CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
 IUSE+=" ${CPU_FLAGS[@]%:*}"
 IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
@@ -177,6 +177,9 @@ REQUIRED_USE_EIGEN="
 		cpu_flags_x86_avx512f
 	)
 	cpu_flags_x86_avx512dq? (
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512bf16? (
 		cpu_flags_x86_avx512f
 	)
 	cpu_flags_x86_avx512f? (
@@ -454,6 +457,8 @@ ewarn
 	local has_avx512er="$?"
 	grep -q -i -E -e 'avx512dq( |$)' "${BROOT}/proc/cpuinfo" # 2017
 	local has_avx512dq="$?"
+	grep -q -i -E -e 'avx512bf16( |$)' "${BROOT}/proc/cpuinfo" # 2020
+	local has_avx512bf16="$?"
 
 	# We cancel building to prevent runtime errors with dependencies
 	# that may not do sufficient runtime checks for cpu types like eigen.
@@ -560,7 +565,13 @@ eerror
 
 	if use cpu_flags_x86_avx512dq ; then
 		if [[ "${has_avx512dq}" != "0" ]] ; then
-			cpuflag_die "avx512q"
+			cpuflag_die "avx512dq"
+		fi
+	fi
+
+	if use cpu_flags_x86_avx512bf16 ; then
+		if [[ "${has_avx512bf16}" != "0" ]] ; then
+			cpuflag_die "avx512bf16"
 		fi
 	fi
 }
