@@ -815,6 +815,7 @@ _prepare_pgo() {
 		cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
 	fi
 	touch "${pgo_data_dir2}/compiler_fingerprint" || die
+	addpredict "${EPREFIX}/var/lib/pgo-profiles"
 }
 
 src_prepare() {
@@ -1349,16 +1350,16 @@ multilib_src_install() {
 	_install_licenses
 
 	if use pgo ; then
-		local pgo_data_dir="${ED}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
+		local pgo_data_dir="/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
 		dodir "${pgo_data_dir}"
 		if tc-is-gcc ; then
-			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine > "${ED}${pgo_data_dir}/compiler" || die
 			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${pgo_data_dir}/compiler_fingerprint" || die
+				> "${ED}${pgo_data_dir}/compiler_fingerprint" || die
 		elif tc-is-clang ; then
-			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine > "${ED}${pgo_data_dir}/compiler" || die
 			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${pgo_data_dir}/compiler_fingerprint" || die
+				> "${ED}${pgo_data_dir}/compiler_fingerprint" || die
 		fi
 	fi
 }
