@@ -796,7 +796,6 @@ _prepare_pgo() {
 		cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
 	fi
 	touch "${pgo_data_dir2}/compiler_fingerprint" || die
-	addpredict "${EPREFIX}/var/lib/pgo-profiles"
 }
 
 src_prepare() {
@@ -1157,6 +1156,7 @@ einfo
 	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
 	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
 	mkdir -p "${ED}/${pgo_data_dir}" || die
+	use pgo && addpredict "${EPREFIX}/var/lib/pgo-profiles"
 	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		if tc-is-clang ; then
 			append-flags -fprofile-generate="${pgo_data_dir}"
@@ -1343,7 +1343,7 @@ multilib_src_install() {
 }
 
 wipe_pgo_profile() {
-	if [[ "${PGO_PHASE}" =~ "PGI" ]] ; then
+	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 einfo
 einfo "Wiping previous PGO profile"
 einfo
