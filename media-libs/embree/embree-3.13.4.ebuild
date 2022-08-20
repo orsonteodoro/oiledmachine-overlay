@@ -44,6 +44,9 @@ BDEPEND+="
 		cpu_flags_x86_avx512skx? (
 			>=sys-devel/clang-${MIN_CLANG_V_AVX512SKX}
 		)
+		cpu_flags_x86_avx512? (
+			>=sys-devel/clang-${MIN_CLANG_V_AVX512SKX}
+		)
 	)
 	doc? (
 		app-text/pandoc
@@ -60,6 +63,9 @@ BDEPEND+="
 	gcc? (
 		>=sys-devel/gcc-${MIN_GCC_V}
 		cpu_flags_x86_avx512skx? (
+			>=sys-devel/gcc-${MIN_GCC_V_AVX512SKX}
+		)
+		cpu_flags_x86_avx512? (
 			>=sys-devel/gcc-${MIN_GCC_V_AVX512SKX}
 		)
 	)
@@ -86,7 +92,7 @@ DEPEND+="
 RDEPEND+=" ${DEPEND}"
 DOCS=( CHANGELOG.md README.md readme.pdf )
 CMAKE_BUILD_TYPE=Release
-PATCHES_=(
+PATCHES=(
 	"${FILESDIR}/${PN}-3.13.0-findtbb-more-debug-messages.patch"
 	"${FILESDIR}/${PN}-3.13.0-findtbb-alt-lib-path.patch"
 	"${FILESDIR}/${PN}-3.13.4-tbb-alt-config.patch"
@@ -162,7 +168,6 @@ ewarn
 }
 
 src_prepare() {
-	eapply ${PATCHES_[@]}
 	cmake_src_prepare
 
 	# disable RPM package building
@@ -214,8 +219,8 @@ eerror
 #		-DEMBREE_IGNORE_CMAKE_CXX_FLAGS=OFF
 	local mycmakeargs=(
 		-DBUILD_TESTING:BOOL=OFF
-		-DCMAKE_C_COMPILER=${CC}
-		-DCMAKE_CXX_COMPILER=${CXX}
+		-DCMAKE_C_COMPILER="${CC}"
+		-DCMAKE_CXX_COMPILER="${CXX}"
 		-DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON
 		-DEMBREE_BACKFACE_CULLING=$(usex backface-culling)
 		-DEMBREE_COMPACT_POLYS=$(usex compact-polys)
@@ -229,6 +234,13 @@ eerror
 		-DEMBREE_GEOMETRY_TRIANGLE=ON			# default
 		-DEMBREE_GEOMETRY_USER=ON			# default
 		-DEMBREE_IGNORE_INVALID_RAYS=OFF		# default
+		-DEMBREE_ISA_AVX=$(usex cpu_flags_x86_avx)
+		-DEMBREE_ISA_AVX2=$(usex cpu_flags_x86_avx2)
+		-DEMBREE_ISA_AVX512=$(usex cpu_flags_x86_avx512skx ON $(usex cpu_flags_x86_avx512 ON OFF))
+		-DEMBREE_ISA_NEON=$(usex cpu_flags_arm_neon)
+		-DEMBREE_ISA_NEON2X=$(usex cpu_flags_arm_neon2x)
+		-DEMBREE_ISA_SSE2=$(usex cpu_flags_x86_sse2)
+		-DEMBREE_ISA_SSE42=$(usex cpu_flags_x86_sse4_2)
 		-DEMBREE_ISPC_SUPPORT=$(usex ispc)
 		-DEMBREE_RAY_MASK=$(usex raymask)
 		-DEMBREE_RAY_PACKETS=ON				# default
