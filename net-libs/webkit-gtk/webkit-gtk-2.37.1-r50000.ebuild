@@ -1384,13 +1384,14 @@ einfo
 
 delete_old_pgo_profiles() {
 	if [[ -n "${REPLACING_VERSIONS}" ]] ; then
-		local pv
-		for pv in ${REPLACING_VERSIONS} ; do
-			if ver_test $(ver_cut 1-2 "${pv}") -eq $(ver_cut 1-2 "${PV}") ; then
+		local pvr
+		for pvr in ${REPLACING_VERSIONS} ; do
+			local pv=$(ver_cut 1-2 "${pvr}")
+			if ver_test ${pv} -eq $(ver_cut 1-2 "${PV}") ; then
 				# Don't delete permissions
 				continue
 			fi
-			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}"
+			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/${pv}/${API_VERSION}"
 			if [[ -e "${pgo_data_dir}" ]] ; then
 				rm -rf "${pgo_data_dir}" || true
 			fi
