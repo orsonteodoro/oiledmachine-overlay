@@ -183,11 +183,6 @@ eerror
 }
 
 pkg_setup() {
-	if use allow-auto-vectorization ; then
-ewarn
-ewarn "The allow-auto-vectorization is undergoing retesting.  Do not enable."
-ewarn
-	fi
 	export CMAKE_BUILD_TYPE=$(usex debug "RelWithDebInfo" "Release")
 	if use kernel_linux ; then
 		CONFIG_CHECK="~TRANSPARENT_HUGEPAGE"
@@ -632,6 +627,8 @@ ewarn
 ewarn "The embree_verify is expected to fail.  To install, add test-fail-continue to"
 ewarn "FEATURES as a per package envvar."
 ewarn
+# SSE2.ray_masks  [FAILED]
+# SSE2.sphere_filter_multi_hit_tests ... [FAILED]
 # Tests passed: 5110
 # Tests failed: 521
 # Tests failed and ignored: 48
