@@ -2965,7 +2965,7 @@ remove_old_pgo_profiles() {
 		local pvr
 		for pvr in ${REPLACING_VERSIONS} ; do
 			einfo "Removing PGO profile(s)"
-			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
+			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pvr})"
 			if [[ -n "${pgo_data_dir}" ]] \
 				&& realpath -e "${pgo_data_dir}" 2>/dev/null ; then
 				rm -rf "${pgo_data_dir}" || die
