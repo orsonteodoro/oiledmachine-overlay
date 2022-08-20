@@ -1612,6 +1612,7 @@ _prepare_pgo() {
 		cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
 	fi
 	touch "${pgo_data_dir2}/compiler_fingerprint" || die
+	addpredict "${EPREFIX}/var/lib/pgo-profiles"
 }
 
 src_prepare() {
@@ -2954,16 +2955,16 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	_install_licenses
 
 	if use pgo-full ; then
-		local pgo_data_dir="${ED}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
+		local pgo_data_dir="/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
 		dodir "${pgo_data_dir}"
 		if tc-is-gcc ; then
-			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine > "${ED}${pgo_data_dir}/compiler" || die
 			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${pgo_data_dir}/compiler_fingerprint" || die
+				> "${ED}${pgo_data_dir}/compiler_fingerprint" || die
 		elif tc-is-clang ; then
-			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine > "${ED}${pgo_data_dir}/compiler" || die
 			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${pgo_data_dir}/compiler_fingerprint" || die
+				> "${ED}${pgo_data_dir}/compiler_fingerprint" || die
 		fi
 	fi
 }
