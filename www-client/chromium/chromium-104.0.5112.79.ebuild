@@ -2964,10 +2964,15 @@ remove_old_pgo_profiles() {
 	if [[ -n "${REPLACING_VERSIONS}" ]] ; then
 		local pvr
 		for pvr in ${REPLACING_VERSIONS} ; do
-			einfo "Removing PGO profile(s)"
-			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pvr})"
+			local pv=$(ver_cut 1-2 "${pvr}")
+			if ver_test ${pv} -eq $(ver_cut 1-2 "${PV}") ; then
+				# Don't delete permissions
+				continue
+			fi
+			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/${pv}"
 			if [[ -n "${pgo_data_dir}" ]] \
 				&& realpath -e "${pgo_data_dir}" 2>/dev/null ; then
+				einfo "Removing PGO profile for ${pvr}"
 				rm -rf "${pgo_data_dir}" || die
 			fi
 		done
