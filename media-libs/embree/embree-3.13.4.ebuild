@@ -27,7 +27,10 @@ backface-culling clang -compact-polys custom-cflags debug doc doc-docfiles
 doc-html doc-images doc-man +filter-function gcc ispc raymask -ssp static-libs
 +tbb tutorials
 "
-REQUIRED_USE+=" ^^ ( clang gcc )"
+REQUIRED_USE+="
+	^^ ( clang gcc )
+	|| ( ${CPU_FLAGS[@]%:*} )
+"
 MIN_CLANG_V="3.3" # for c++11
 MIN_CLANG_V_AVX512SKX="3.6" # for -march=skx
 MIN_GCC_V="4.8.1" # for c++11
