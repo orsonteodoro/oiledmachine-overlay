@@ -2960,24 +2960,23 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	fi
 }
 
-remove_pgo_profiles() {
-	local pvr
-	for pvr in ${REPLACING_VERSIONS} ; do
-		einfo "Removing PGO profile(s)"
-		local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
-		if [[ -n "${pgo_data_dir}" ]] \
-			&& realpath -e "${pgo_data_dir}" 2>/dev/null ; then
-			rm -rf "${pgo_data_dir}" || die
-		fi
-	done
+remove_old_pgo_profiles() {
+	if [[ -n "${REPLACING_VERSIONS}" ]] ; then
+		local pvr
+		for pvr in ${REPLACING_VERSIONS} ; do
+			einfo "Removing PGO profile(s)"
+			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
+			if [[ -n "${pgo_data_dir}" ]] \
+				&& realpath -e "${pgo_data_dir}" 2>/dev/null ; then
+				rm -rf "${pgo_data_dir}" || die
+			fi
+		done
+	fi
 }
 
 pkg_postrm() {
 	xdg_icon_cache_update
 	xdg_desktop_database_update
-	if [[ -n "${REPLACING_VERSIONS}" ]] ; then
-		use pgo-full && remove_pgo_profiles
-	fi
 }
 
 print_vaapi_support() {
@@ -3090,7 +3089,8 @@ pkg_postinst() {
 	xdg_desktop_database_update
 	readme.gentoo_print_elog
 
-	use pgo && wipe_pgo_profile
+	use pgo-full && wipe_pgo_profile
+	remove_old_pgo_profiles
 	if ! use headless; then
 		if use vaapi ; then
 # It says 3 args:
