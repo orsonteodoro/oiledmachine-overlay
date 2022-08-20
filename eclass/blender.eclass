@@ -615,6 +615,11 @@ _prepare_pgo() {
 	addpredict "/var/lib/pgo-profiles"
 }
 
+_get_impls() {
+	use build_creator && echo "build_creator"
+	use build_headless && echo "build_headless"
+}
+
 blender_src_prepare() {
 	cd "${S}" || die
 	cmake_src_prepare
@@ -645,7 +650,7 @@ einfo
 	    -i doc/doxygen/Doxyfile || die
 
 	local impl
-	for impl in ${IMPLS[@]} ; do
+	for impl in $(_get_impls) ; do
 		_prepare_pgo
 	done
 }
@@ -730,10 +735,9 @@ blender_configure_linker_flags() {
 
 blender_configure_simd_cycles() {
 	if ver_test $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
-		local lineno=$(grep -n "embree_avx2" FindEmbree.cmake | cut -f 1 -d ":")
 		if [[ -e "${ESYSROOT}/usr/$(get_libdir)/libembree_avx512.a" ]] ; then
 			# Avoid missing symbols
-			sed -i -e "${lineno}i    embree_avx512" \
+			sed -i -e "/embree_avx2$/a    embree_avx512" \
 				build_files/cmake/Modules/FindEmbree.cmake || die
 		fi
 
@@ -1116,7 +1120,7 @@ eerror
 
 blender_src_compile() {
 	local impl
-	for impl in ${IMPLS[@]} ; do
+	for impl in $(_get_impls) ; do
 		_ORIG_PATH="${PATH}"
 		export PGO_PHASE=$(get_pgo_phase)
 		_src_configure
@@ -1146,7 +1150,7 @@ einfo
 
 blender_src_test() {
 	local impl
-	for impl in ${IMPLS[@]} ; do
+	for impl in $(_get_impls) ; do
 		_src_test
 	done
 }
@@ -1353,7 +1357,7 @@ fecho1
 
 blender_src_install() {
 	local impl
-	for impl in ${IMPLS[@]} ; do
+	for impl in $(_get_impls) ; do
 		_src_install
 	done
 	local ed_icon_hc="${ED}/usr/share/icons/hicolor"
