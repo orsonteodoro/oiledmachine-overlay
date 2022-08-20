@@ -730,18 +730,25 @@ blender_configure_linker_flags() {
 
 blender_configure_simd_cycles() {
 	if ver_test $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
-		if ! has_version 'media-libs/embree[cpu_flags_x86_avx]' ; then
-			sed -i -e "/embree_avx/d" \
+		local lineno=$(grep -n "embree_avx2" FindEmbree.cmake | cut -f 1 -d ":")
+		if [[ -e "${ESYSROOT}/usr/$(get_libdir)/libembree_avx512.a" ]] ; then
+			# Avoid missing symbols
+			sed -i -e "${lineno}i    embree_avx512" \
 				build_files/cmake/Modules/FindEmbree.cmake || die
 		fi
 
-		if ! has_version 'media-libs/embree[cpu_flags_x86_avx2]' ; then
-			sed -i -e "/embree_avx2/d" \
+		if [[ ! -e "${ESYSROOT}/usr/$(get_libdir)/libembree_avx.a" ]] ; then
+			sed -i -e "/embree_avx$/d" \
 				build_files/cmake/Modules/FindEmbree.cmake || die
 		fi
 
-		if ! has_version 'media-libs/embree[cpu_flags_x86_sse4_2]' ; then
-			sed -i -e "/embree_sse42/d" \
+		if [[ ! -e "${ESYSROOT}/usr/$(get_libdir)/libembree_avx2.a" ]] ; then
+			sed -i -e "/embree_avx2$/d" \
+				build_files/cmake/Modules/FindEmbree.cmake || die
+		fi
+
+		if [[ ! -e "${ESYSROOT}/usr/$(get_libdir)/libembree_sse42.a" ]] ; then
+			sed -i -e "/embree_sse42$/d" \
 				build_files/cmake/Modules/FindEmbree.cmake || die
 		fi
 	fi
@@ -764,17 +771,17 @@ blender_configure_simd_cycles() {
 		fi
 
 		if ! use cpu_flags_x86_sse2 ; then
-			sed -i -e "/WITH_KERNEL_SSE2/d" \
+			sed -i -e "/WITH_KERNEL_SSE2$/d" \
 				intern/cycles/CMakeLists.txt || die
 		fi
 
 		if ! use cpu_flags_x86_sse3 ; then
-			sed -i -e "/WITH_KERNEL_SSE3/d" \
+			sed -i -e "/WITH_KERNEL_SSE3$/d" \
 				intern/cycles/CMakeLists.txt || die
 		fi
 
 		if ! use cpu_flags_x86_sse4_1 ; then
-			sed -i -e "/WITH_KERNEL_SSE41/d" \
+			sed -i -e "/WITH_KERNEL_SSE41$/d" \
 				intern/cycles/CMakeLists.txt || die
 		fi
 
@@ -812,7 +819,7 @@ blender_configure_simd_cycles() {
 
 		if [[ "${ABI}" == "x86" ]] && grep -q -F -e "WITH_KERNEL_SSE41" intern/cycles/CMakeLists.txt ; then
 			# See intern/cycles/util/util_optimization.h for reason why it was axed in x86 (32-bit)..
-			sed -i -e "/WITH_KERNEL_SSE41/d" \
+			sed -i -e "/WITH_KERNEL_SSE41$/d" \
 				intern/cycles/CMakeLists.txt || die
 		fi
 
