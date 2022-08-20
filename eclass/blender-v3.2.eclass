@@ -730,7 +730,7 @@ _src_configure() {
 	fi
 
 	local mycmakeargs=()
-	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH="${EPREFIX}/$(get_dest)" )
+	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH="${EPREFIX}$(get_dest)" )
 
 	unset CMAKE_INCLUDE_PATH
 	unset CMAKE_LIBRARY_PATH

@@ -1249,8 +1249,8 @@ _src_install() {
 
 	local d_dest=$(get_dest)
 	if [[ "${impl}" == "build_creator" ]] ; then
-		if [[ -e "${ED}/${d_dest}/blender-thumbnailer.py" ]] ; then
-			python_fix_shebang "${ED}/${d_dest}/blender-thumbnailer.py"
+		if [[ -e "${ED}${d_dest}/blender-thumbnailer.py" ]] ; then
+			python_fix_shebang "${ED}${d_dest}/blender-thumbnailer.py"
 		fi
 		python_optimize "${ED}/usr/share/${PN}/${SLOT_MAJ}/scripts"
 	fi
@@ -1263,7 +1263,7 @@ _src_install() {
 		sed -i -e "s|Exec=blender|Exec=${EPREFIX}/usr/bin/${PN}-${SLOT_MAJ}|g" "${menu_file}" || die
 		sed -i -e "s|Icon=blender|Icon=blender-${SLOT_MAJ}|g" "${menu_file}" || die
 		if [[ -n "${IS_LTS}" && "${IS_LTS}" == "1" ]] ; then
-			touch "${ED}/${d_dest}/.lts"
+			touch "${ED}${d_dest}/.lts"
 		fi
 	fi
 
@@ -1315,7 +1315,7 @@ fecho1 "# Dependency of direct shared dependencies:"
 fecho1
 
 		# List dependency of those direct dependencies
-		echo -e $(for f in $(cat "${ED}/${d_dest}/README.3rdparty_deps" \
+		echo -e $(for f in $(cat "${ED}${d_dest}/README.3rdparty_deps" \
 				| sed -e "/^#/d" ) ; do \
 				ldd "${f}" \
 					| cut -f 2 -d ">" \
