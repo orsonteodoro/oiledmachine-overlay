@@ -2010,61 +2010,6 @@ einfo
 		&& multilib_copy_sources
 }
 
-meets_pgo_requirements() {
-	if use pgo ; then
-		local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
-		local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-
-		# Has same compiler?
-		if tc-is-gcc ; then
-			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
-			local expected=$(cat "${pgo_data_dir2}/compiler_fingerprint")
-			if [[ "${actual}" != "${expected}" ]] ; then
-				return 1
-			fi
-		elif tc-is-clang ; then
-			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
-			local expected=$(cat "${pgo_data_dir2}/compiler_fingerprint")
-			if [[ "${actual}" != "${expected}" ]] ; then
-				return 1
-			fi
-		else
-			return 2
-			ewarn "Compiler is not supported."
-		fi
-
-		# Has profile?
-		if tc-is-gcc && find "${pgo_data_dir2}" -name "*.gcda" \
-			2>/dev/null 1>/dev/null ; then
-			:; # pass
-		elif tc-is-clang && find "${pgo_data_dir2}" -name "*.profraw" \
-			2>/dev/null 1>/dev/null ; then
-			:; # pass
-		else
-			return 1
-		fi
-
-		return 0
-	fi
-	return 1
-}
-
-get_pgo_phase() {
-	local result="NO_PGO"
-	meets_pgo_requirements
-	local ret=$?
-	if ! use pgo ; then
-		result="NO_PGO"
-	elif use pgo && (( ${ret} == 0 )) ; then
-		result="PGO"
-	elif use pgo && (( ${ret} == 1 )) ; then
-		result="PGI"
-	elif use pgo && (( ${ret} == 2 )) ; then
-		result="NO_PGO"
-	fi
-	echo "${result}"
-}
-
 _configure_pgx() {
 	local chost=$(get_abi_CHOST ${ABI})
 
@@ -2676,19 +2621,6 @@ einfo "When you are done updating, comment out GEN_ABOUT_CREDITS."
 einfo
 		die
 	fi
-}
-
-_get_pythonpath() {
-	local pp=(
-		"${BUILD_DIR}/third_party/catapult/common/py_utils"
-		"${BUILD_DIR}/third_party/catapult/telemetry/telemetry"
-		"${BUILD_DIR}/third_party/catapult/telemetry/third_party/png"
-		"${BUILD_DIR}/third_party/catapult/telemetry/third_party/pyfakefs"
-		"${BUILD_DIR}/third_party/catapult/third_party/typ"
-		"${BUILD_DIR}/third_party/catapult/tracing"
-		"${BUILD_DIR}/tools/perf"
-	)
-	echo $(echo "${pp}" | tr " " ":")
 }
 
 multilib_src_compile() {
