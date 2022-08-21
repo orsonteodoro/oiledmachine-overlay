@@ -1032,7 +1032,7 @@ blender_src_compile() {
 	local impl
 	for impl in $(_get_impls) ; do
 		_ORIG_PATH="${PATH}"
-		export PGO_PHASE=$(get_pgo_phase)
+		export PGO_PHASE=$(epgo_get_phase)
 einfo
 einfo "PGO_PHASE:  ${PGO_PHASE}"
 einfo

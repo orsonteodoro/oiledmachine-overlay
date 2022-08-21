@@ -52,12 +52,14 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     performance benefit relative to -O3.  (At the best case [or outlier cases],
     PGO can be +40% benefit but usually in atypical scenarios some of which are
     related to throughput.)
+    
 
     If you choose to do the distro's Full PGO, it will double compilation time.
     What this means is if you built Chromium in 36 hrs expect it optimized in
     72 hours plus training time.  This implementation just does it passively,
     but the time to optimize is just 36 hours with some weeks we can skip
-    instrumentation step.
+    instrumentation step.  When active training, the training step may take
+    +20 minutes depending on how it was implemented.
 
     Steps required
 
@@ -77,20 +79,18 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     130ms (or .13s) in reduction in delay.  Human reaction time is 250 ms.
 
     This ebuild fork version of PGO will allow reuse of generated profiles for
-    the same BUILD in major.minor.build.patch, but may allow to select to reuse
-    PGO profiles based on either same major.minor, BUILD, reuse profile by
-    point release.   The prebuilt profile is
-    often reused between patch versions.
+    the same BUILD in major.minor.build.patch.  The prebuilt profile is often
+    reused between patch versions.
 
-    Most ebuild developers use 3 step PGO.  Every time a package is emerged, the
-    standard PGO ebuild always runs 3 steps - instrument, train, rebuild on
-    every emerge.   In this implementation, we run always 1 step but we schedule
-    based on configurable event based model.  When a version change happens we
-    use instrumentation.  When the select version components doesn't change, we
-    use optimized rebuild.  The granularity of update again is selectable via
-    the CR_PGO_REFRESH_MODE.  The idea is to maximize enjoyment of the product
+    Most ebuild developers use 3 step PGO in one emerge.  Every time a package
+    is emerged, the standard PGO ebuild always runs 3 steps - instrument, train,
+    rebuild on every emerge.   In this implementation, we run always 1 step but
+    we schedule based on events.  When a version change happens we instrument.
+    When the right combo is present (profile, same compiler, same build number),
+    we use optimized rebuild.  The idea is to maximize enjoyment of the product
     but that can only happen when we actually use the product.  Adding more
-    build time decreases enjoyment.  The training step is done passively.
+    build time decreases enjoyment.  The training step is done passively, so
+    can enjoy and train at the same time uninterrupted.
 
     Diagram
 
@@ -100,11 +100,7 @@ Distro PGO        t             t           t              t
                   o             o           o              o
  vs
 
-EPGO (build)      i      t      o     t     i        t     o
-
- vs
-
-EPGO (major)      i      t      o     t     o        t     o
+EPGO              i      t      o           i              o
 
  vs
 
@@ -116,25 +112,6 @@ Prebuilt    it    o             o           o              o
 
     Usually, they're 2-3 releases per same build number.
 
-    PGO data directories
-
-      ${ESYSROOT}/var/chromium/major.minor.build.patch/${ABI}
-
-    This data directory may have mixed versions that would annoy some compilers.
-    It may be removed to fix that issue.
-
-
-    Per package environment variables:
-
-    CR_PGO_REFRESH_MODE can be set to determine period of reusable profiles in
-    USE=pgo-full to the following:
-
-      major - A PGO profile is reusable in the same major version.
-      major-minor - A PGO profile is reusable in the same major.minor version
-      build - A PGO profile is reusable in the same major.minor.build version
-              (default)
-      patch - A PGO profile is reusable in the same major.minor.build.patch
-              version
 
     References:
       --lto-O2 is too large - https://github.com/chromium/chromium/commit/da072d13b2a1cc8459c29aa4e52584a4491a4ad6
@@ -187,6 +164,9 @@ Prebuilt    it    o             o           o              o
       Allow for customized PGO training.   You must supply your local
       implementation using the Telemetry testing framework as a per-package
       patch and the test must be named custom.sh placed in ${S}.
+    </flag>
+    <flag name="epgo">
+      Build using the Event Based PGO (Profile Guided Optimization) strategy
     </flag>
     <flag name="hangouts">
       Enable support for Hangouts and features such as screen sharing

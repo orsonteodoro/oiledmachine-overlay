@@ -206,10 +206,10 @@ ewarn
 	return 1
 }
 
-# @FUNCTION: get_pgo_phase
+# @FUNCTION: epgo_get_phase
 # @DESCRIPTION:
 # Reports the current PGO phase
-get_pgo_phase() {
+epgo_get_phase() {
 	local result="NO_PGO"
 	EPGO_SUFFIX=${EPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
 	_epgo_meets_pgo_requirements

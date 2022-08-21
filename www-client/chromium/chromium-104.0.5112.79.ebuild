@@ -17,13 +17,14 @@ it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr sv sw ta te th tr
 uk ur vi zh-CN zh-TW
 "
 
+EPGO_PV=$(ver_cut 1-3 ${PV})
 LLVM_MAX_SLOT=15
 LLVM_MIN_SLOT=15 # The pregenerated PGO profile needs profdata version 8
 CR_CLANG_SLOT_OFFICIAL=15
 LLVM_SLOTS=(${LLVM_MAX_SLOT}) # [inclusive, inclusive] high to low
 inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils \
 python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
-inherit llvm multilib multilib-minimal # Added by the oiledmachine-overlay
+inherit epgo llvm multilib multilib-minimal # Added by the oiledmachine-overlay
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
@@ -260,7 +261,7 @@ IUSE+=" +partitionalloc libcmalloc"
 IUSE_LIBCXX=( bundled-libcxx system-libstdcxx )
 IUSE+=" ${IUSE_LIBCXX[@]} +bundled-libcxx branch-protection-standard +cfi-vcall
 cfi-cast +cfi-icall +clang +pre-check-llvm +pre-check-vaapi lto-opt +pgo
--pgo-full shadowcallstack"
+shadowcallstack"
 # perf-opt
 _ABIS=(
 	abi_x86_32
@@ -349,7 +350,7 @@ REQUIRED_USE+="
 	)
 	official? (
 		pgo
-		!pgo-full
+		!epgo
 		!debug
 		!system-ffmpeg
 		!system-harfbuzz
@@ -367,9 +368,9 @@ REQUIRED_USE+="
 	)
 	pgo? (
 		clang
-		!pgo-full
+		!epgo
 	)
-	pgo-full? (
+	epgo? (
 		!pgo
 	)
 	ppc64? (
@@ -1552,20 +1553,7 @@ ewarn "using only the bundled-libcxx instead."
 ewarn
 	fi
 
-	if use full-pgo ; then
-		if [[ -z "${EPGO_GROUP}" ]] ; then
-eerror
-eerror "The EPGO_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
-eerror "in a per-package env file.  Users who are not a member of this group"
-eerror "cannot generate PGO profile data with this program."
-eerror
-eerror "Example:"
-eerror
-eerror "  EPGO_GROUP=\"epgo\""
-eerror
-			die
-		fi
-	fi
+	epgo_setup
 
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
@@ -1614,16 +1602,6 @@ eerror "LLVM_SLOTS, CR_CLANG_SLOT_OFFICIAL variables."
 eerror
 		die
 	fi
-}
-
-_prepare_pgo() {
-	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
-	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-	mkdir -p "${pgo_data_dir2}" || die
-	if [[ -e "${pgo_data_dir}" ]] ; then
-		cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
-	fi
-	touch "${pgo_data_dir2}/compiler_fingerprint" || die
 }
 
 src_prepare() {
@@ -2086,7 +2064,8 @@ get_pgo_phase() {
 _configure_pgx() {
 	local chost=$(get_abi_CHOST ${ABI})
 
-	_prepare_pgo
+	EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
+	epgo_src_prepare
 
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
@@ -2479,26 +2458,11 @@ einfo
 		fi
 	fi
 
-	# The PGO data must not be wiped by the sandbox or generated in the sandbox.
-	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
-	use pgo-full && addpredict "${EPREFIX}/var/lib/pgo-profiles"
 	if ! use pgo-full || tc-is-cross-compiler ; then
 		:;
-	elif [[ "${PGO_PHASE}" == "PGI" ]] ; then
-		if tc-is-clang ; then
-			append-flags -fprofile-generate="${pgo_data_dir}"
-		else
-			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
-		fi
-	elif [[ "${PGO_PHASE}" == "PGO" ]] ; then
-		mkdir -p "${T}/pgo-${ABI}" || die
-		if tc-is-clang ; then
-			llvm-profdata merge -output="${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
-				"${pgo_data_dir}" || die
-			append-flags -fprofile-use="${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata"
-		else
-			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${pgo_data_dir}"
-		fi
+	else
+		EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
+		epgo_src_configure
 	fi
 
 	# Explicitly disable ICU data file support for system-icu/headless builds.
@@ -2612,13 +2576,8 @@ einfo
 # See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
 # See also https://github.com/chromium/chromium/blob/104.0.5112.79/docs/pgo.md
 # profile-instr-use is clang which that file assumes but gcc doesn't have.
-	if tc-is-cross-compiler ; then
+	if tc-is-cross-compiler || use epgo ; then
 		myconf_gn+=" chrome_pgo_phase=0"
-	elif use pgo-full ; then
-		myconf_gn+=" chrome_pgo_phase=0"
-		mkdir -p "${BUILD_DIR}/chrome/build/pgo_profiles" || die
-		# This mod is to allow both clang and gcc PGO but the build
-		# scripts only do clang PGO.
 	elif use pgo && tc-is-clang && ver_test $(clang-version) -ge 11 ; then
 		# The profile data is already shipped so use it.
 		# PGO profile location: chrome/build/pgo_profiles/chrome-linux-*.profdata
@@ -2750,7 +2709,8 @@ multilib_src_compile() {
 	#	--use-system-cmake \
 	#	--without-android || die
 
-	export PGO_PHASE=$(get_pgo_phase)
+	EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
+	export PGO_PHASE=$(epgo_get_phase)
 einfo
 einfo "PGO_PHASE:  ${PGO_PHASE}"
 einfo
@@ -2969,31 +2929,8 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	# have been present in the listed the the .html (about:credits) file
 	_install_licenses
 
-	if use pgo-full ; then
-		local pgo_data_dir="/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
-		keepdir "${pgo_data_dir}"
-		fowners root:${EPGO_GROUP} "${pgo_data_dir}"
-		fperms 0775 "${pgo_data_dir}"
-	fi
-}
-
-remove_old_pgo_profiles() {
-	if [[ -n "${REPLACING_VERSIONS}" ]] ; then
-		local pvr
-		for pvr in ${REPLACING_VERSIONS} ; do
-			local pv=$(ver_cut 1-2 "${pvr}")
-			if ver_test ${pv} -eq $(ver_cut 1-2 "${PV}") ; then
-				# Don't delete permissions
-				continue
-			fi
-			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/${pv}"
-			if [[ -n "${pgo_data_dir}" ]] \
-				&& realpath -e "${pgo_data_dir}" 2>/dev/null ; then
-einfo "Removing old PGO profile for =${CATEGORY}/${PN}-${pvr}"
-				rm -rf "${pgo_data_dir}" || die
-			fi
-		done
-	fi
+	EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
+	epgo_src_install
 }
 
 pkg_postrm() {
@@ -3087,32 +3024,12 @@ einfo "to your ~/.bashrc or ~/.xinitrc and relogging."
 einfo
 }
 
-wipe_pgo_profile() {
-	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
-einfo
-einfo "Wiping previous PGO profile"
-einfo
-		local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
-		find "${pgo_data_dir}" -type f -delete
-		if tc-is-gcc ; then
-			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
-			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${pgo_data_dir}/compiler_fingerprint" || die
-		elif tc-is-clang ; then
-			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
-			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${pgo_data_dir}/compiler_fingerprint" || die
-		fi
-	fi
-}
-
 pkg_postinst() {
 	xdg_icon_cache_update
 	xdg_desktop_database_update
 	readme.gentoo_print_elog
 
-	use pgo-full && wipe_pgo_profile
-	remove_old_pgo_profiles
+	epgo_pkg_postinst
 	if ! use headless; then
 		if use vaapi ; then
 # It says 3 args:
