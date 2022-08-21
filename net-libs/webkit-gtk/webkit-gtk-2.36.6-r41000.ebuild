@@ -768,12 +768,6 @@ eerror "QA:  Update IUSE, *DEPENDS, options, KEYWORDS, patches"
 eerror
 #		die
 	fi
-	if use pgo ; then
-ewarn
-ewarn "The PGO use flag is a Work In Progress (WIP) and is not production"
-ewarn "ready."
-ewarn
-	fi
 	epgo_setup
 }
 

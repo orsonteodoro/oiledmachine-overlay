@@ -42,6 +42,9 @@ inherit toolchain-funcs
 # New groups can be epgo, pgo, etc.
 _epgo_check_pgo() {
 	if use epgo ; then
+ewarn
+ewarn "PGO support is still (WIP)."
+ewarn
 		if [[ -z "${EPGO_GROUP}" ]] ; then
 eerror
 eerror "The EPGO_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
