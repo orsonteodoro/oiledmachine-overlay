@@ -249,14 +249,14 @@ epgo_src_install() {
 
 		if tc-is-gcc ; then
 			"${CC}" -dumpmachine \
-				> "${pgo_data_suffix_dir}/compiler" || die
+				> "${ED}/${pgo_data_suffix_dir}/compiler" || die
 			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${pgo_data_suffix_dir}/compiler_fingerprint" || die
+				> "${ED}/${pgo_data_suffix_dir}/compiler_fingerprint" || die
 		elif tc-is-clang ; then
 			"${CC}" -dumpmachine \
-				> "${pgo_data_suffix_dir}/compiler" || die
+				> "${ED}/${pgo_data_suffix_dir}/compiler" || die
 			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${pgo_data_suffix_dir}/compiler_fingerprint" || die
+				> "${ED}/${pgo_data_suffix_dir}/compiler_fingerprint" || die
 		fi
 	fi
 }
