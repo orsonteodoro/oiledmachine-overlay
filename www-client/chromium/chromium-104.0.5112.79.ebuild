@@ -1552,16 +1552,16 @@ ewarn "using only the bundled-libcxx instead."
 ewarn
 	fi
 
-	if use pgo ; then
+	if use full-pgo ; then
 		if [[ -z "${EPGO_GROUP}" ]] ; then
 eerror
 eerror "The EPGO_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
 eerror "in a per-package env file.  Users who are not a member of this group"
-eerror "cannot run the PGI version of the program."
+eerror "cannot generate PGO profile data with this program."
 eerror
 eerror "Example:"
 eerror
-eerror "  EPGO_GROUP=\"users\""
+eerror "  EPGO_GROUP=\"epgo\""
 eerror
 			die
 		fi
