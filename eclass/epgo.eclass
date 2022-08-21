@@ -27,7 +27,8 @@ esac
 # @ECLASS_VARIABLE: EPGO_FORCE_PGI
 # @DESCRIPTION:
 # Temporarily set to 1 to build with PGI flags.
-EPGO_FORCE_PGI=${EPGO_FORCE_PGI:-0}
+# Example:
+# EPGO_FORCE_PGI=1 emerge foo
 
 # @ECLASS_VARIABLE: EPGO_SUFFIX
 # @DESCRIPTION:
