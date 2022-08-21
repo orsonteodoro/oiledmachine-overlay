@@ -35,7 +35,8 @@ EPGO_FORCE_PGI=${EPGO_FORCE_PGI:-0}
 # (cmake-multilib, multilib-minimal, multilib-build, meson-multilib)
 # just before calls to epgo_src_configure, epgo_get_phase, epgo_src_install.
 # Sets the suffix to isolate PGO profiles (e.g. 32-bit, 64-bit).  Different
-# implementations should attach _${impl} to the examples below.
+# implementations should attach and define impl like one of the examples
+# below.
 # EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"}
 # EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl}"}
 # EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl1}_${impl2}"}
