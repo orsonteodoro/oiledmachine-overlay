@@ -317,6 +317,23 @@ eerror
 	fi
 }
 
+check_pgo() {
+	if use pgo ; then
+		if [[ -z "${EPGO_GROUP}" ]] ; then
+eerror
+eerror "The EPGO_GROUP must be defined either in /etc/portage/make.conf or"
+eerror "in a per-package env file.  Users who are not a member of this group"
+eerror "cannot run the PGI version of the program."
+eerror
+eerror "Example:"
+eerror
+eerror "  EPGO_GROUP=\"users\""
+eerror
+			die
+		fi
+	fi
+}
+
 blender_pkg_setup() {
 	llvm_pkg_setup
 	blender_check_requirements
@@ -325,6 +342,7 @@ blender_pkg_setup() {
 	check_optimal_compiler_for_cycles_x86
 	check_embree
 	check_compiler
+	check_pgo
 	if declare -f _blender_pkg_setup > /dev/null ; then
 		_blender_pkg_setup
 	fi
@@ -1352,10 +1370,27 @@ fecho1
 	if use pgo ; then
 		local pgo_data_dir="/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
 		keepdir "${pgo_data_dir}"
+		fowners root:${EPGO_GROUP} "${pgo_data_dir}"
+		fperms 0775 "${pgo_data_dir}"
+	fi
+
+	if use openvdb ; then
+		local openvdb_rpath=$(patchelf --print-rpath $(realpath "${EPREFIX}/usr/$(get_libdir)/libopenvdb.so"))
+		if [[ "${openvdb_rpath}" =~ "${EPREFIX}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" ]] ; then
+			patchelf --set-rpath "${EPREFIX}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
+				"${ED}${d_dest}/blender" || die
+		fi
+	elif use usd ; then
+		local openusd_rpath=$(patchelf --print-rpath $(realpath "/usr/$(get_libdir)/openusd/lib/libusd_usd_ms.so"))
+		if [[ "${openusd_rpath}" =~ "${EPREFIX}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" ]] ; then
+			patchelf --set-rpath "${EPREFIX}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
+				"${ED}${d_dest}/blender" || die
+		fi
 	fi
 }
 
 blender_src_install() {
+	export STRIP="${BROOT}/usr/true" # preserve rpath
 	local impl
 	for impl in $(_get_impls) ; do
 		_src_install

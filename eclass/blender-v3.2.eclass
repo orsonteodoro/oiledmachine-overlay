@@ -53,6 +53,9 @@ IUSE+=" "$(gen_llvm_iuse) # same as Mesa and LLVM latest stable keyword \
 FFMPEG_IUSE+=" +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 
+ONETBB_SLOT="0"
+LEGACY_TBB_SLOT="2"
+
 CLANG_MIN="8.0"
 GCC_MIN="9.3"
 inherit blender
@@ -273,9 +276,6 @@ gen_openexr_pairs() {
 
 EXTRA_DEPENDS="
 "
-
-ONETBB_SLOT="0"
-LEGACY_TBB_SLOT="2"
 
 BOOST_V="1.78"
 LIBOGG_V="1.3.5"
@@ -547,6 +547,7 @@ BDEPEND+="
 		>=sys-devel/gcc-${GCC_MIN}
 	)
 	>=dev-util/cmake-3.10
+	  dev-util/patchelf
 	  virtual/pkgconfig
 	asan? (
 		|| (
