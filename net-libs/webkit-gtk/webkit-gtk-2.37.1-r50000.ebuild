@@ -19,7 +19,7 @@ LLVM_SLOTS=(14 13)
 CMAKE_MAKEFILE_GENERATOR="ninja"
 PYTHON_COMPAT=( python3_{8..11} )
 USE_RUBY="ruby26 ruby27 ruby30 ruby31 "
-inherit check-reqs cmake desktop flag-o-matic git-r3 gnome2 linux-info llvm \
+inherit check-reqs cmake desktop epgo flag-o-matic git-r3 gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs
 
 DESCRIPTION="Open source web browser engine (GTK 4)"
@@ -72,14 +72,6 @@ LICENSE="
 		openssl
 		QU-fft
 		sigslot
-	)
-	pgo? (
-		all-rights-reserved
-		BSD
-		BSD-2
-		GPL-2+
-		LGPL-2+
-		LGPL-2.1+
 	)
 " # \
 # emerge does not understand ^^ when applied to licenses, but you should only \
@@ -281,7 +273,7 @@ aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dav1d +dfg-jit +doc
 -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
 hardened +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
 +libhyphen +libnotify -libwebrtc lto -mediastream +minibrowser +opengl openmp
-pgo +pulseaudio -seccomp -spell test thunder +unified-builds variation-fonts
++pulseaudio -seccomp -spell test thunder +unified-builds variation-fonts
 +v4l wayland +webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver
 +webgl -webgl2 webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
 "
@@ -323,7 +315,6 @@ REQUIRED_USE+="
 	opengl? (
 		!gles2
 	)
-	pgo? ( minibrowser )
 	pulseaudio? ( gstreamer )
 	thunder? ( eme )
 	v4l? ( gstreamer mediastream )
@@ -810,30 +801,7 @@ ewarn "The PGO use flag is a Work In Progress (WIP) and is not production"
 ewarn "ready."
 ewarn
 	fi
-	if use pgo ; then
-		if [[ -z "${EPGO_GROUP}" ]] ; then
-eerror
-eerror "The EPGO_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
-eerror "in a per-package env file.  Users who are not a member of this group"
-eerror "cannot generate PGO profile data with this program."
-eerror
-eerror "Example:"
-eerror
-eerror "  EPGO_GROUP=\"epgo\""
-eerror
-			die
-		fi
-	fi
-}
-
-_prepare_pgo() {
-	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
-	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-	mkdir -p "${pgo_data_dir2}" || die
-	if [[ -e "${pgo_data_dir}" ]] ; then
-		cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
-	fi
-	touch "${pgo_data_dir2}/compiler_fingerprint" || die
+	epgo_setup
 }
 
 src_prepare() {
@@ -842,64 +810,10 @@ src_prepare() {
 	gnome2_src_prepare
 
 	prepare_abi() {
-		_prepare_pgo
+		EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${API_VERSION}"
+		epgo_src_prepare
 	}
 	multilib_foreach_abi prepare_abi
-}
-
-meets_pgo_requirements() {
-	if use pgo ; then
-		local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
-		local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-
-		# Has same compiler?
-		if tc-is-gcc ; then
-			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
-			local expected=$(cat "${pgo_data_dir2}/compiler_fingerprint")
-			if [[ "${actual}" != "${expected}" ]] ; then
-				return 1
-			fi
-		elif tc-is-clang ; then
-			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
-			local expected=$(cat "${pgo_data_dir2}/compiler_fingerprint")
-			if [[ "${actual}" != "${expected}" ]] ; then
-				return 1
-			fi
-		else
-			return 2
-			ewarn "Compiler is not supported."
-		fi
-
-		# Has profile?
-		if tc-is-gcc && find "${pgo_data_dir2}" -name "*.gcda" \
-			2>/dev/null 1>/dev/null ; then
-			:; # pass
-		elif tc-is-clang && find "${pgo_data_dir2}" -name "*.profraw" \
-			2>/dev/null 1>/dev/null ; then
-			:; # pass
-		else
-			return 1
-		fi
-
-		return 0
-	fi
-	return 1
-}
-
-get_pgo_phase() {
-	local result="NO_PGO"
-	meets_pgo_requirements
-	local ret=$?
-	if ! use pgo ; then
-		result="NO_PGO"
-	elif use pgo && (( ${ret} == 0 )) ; then
-		result="PGO"
-	elif use pgo && (( ${ret} == 1 )) ; then
-		result="PGI"
-	elif use pgo && (( ${ret} == 2 )) ; then
-		result="NO_PGO"
-	fi
-	echo "${result}"
 }
 
 _config_pgx() {
@@ -1192,40 +1106,8 @@ einfo
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
 
-#	local pgo_data_dir="${T}/pgo-${ABI}"
-	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
-	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-	mkdir -p "${ED}/${pgo_data_dir}" || die
-	use pgo && addpredict "${EPREFIX}/var/lib/pgo-profiles"
-	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
-		if tc-is-clang ; then
-			append-flags -fprofile-generate="${pgo_data_dir}"
-		elif tc-is-gcc ; then
-			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
-		else
-eerror
-eerror "Only GCC and Clang are supported for PGO."
-eerror
-			die
-		fi
-	elif [[ "${PGO_PHASE}" == "PGO" ]] ; then
-		if tc-is-clang ; then
-einfo
-einfo "Merging PGO data to generate a PGO profile"
-einfo
-			if ! ls "${BUILD_DIR}/"*.profraw 2>/dev/null 1>/dev/null ; then
-eerror
-eerror "Missing *.profraw files"
-eerror
-				die
-			fi
-			llvm-profdata merge -output="${pgo_data_dir}/custom-pgo.profdata" \
-				"${pgo_data_dir}" || die
-			append-flags -fprofile-use="${pgo_data_dir}/custom-pgo.profdata"
-		elif tc-is-gcc ; then
-			append-flags -fprofile-use -fprofile-dir="${pgo_data_dir}"
-		fi
-	fi
+	EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${API_VERSION}"
+	epgo_src_configure
 
 	if is-flag -O0 ; then
 ewarn
@@ -1251,7 +1133,8 @@ multilib_src_compile() {
 	einfo "CC=${CC}"
 	einfo "CXX=${CXX}"
 
-	export PGO_PHASE=$(get_pgo_phase)
+	EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${API_VERSION}"
+	export PGO_PHASE=$(epgo_get_phase)
 einfo
 einfo "PGO_PHASE:  ${PGO_PHASE}"
 einfo
@@ -1370,54 +1253,8 @@ multilib_src_install() {
 
 	_install_licenses
 
-	if use pgo ; then
-		local pgo_data_dir="/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
-		keepdir "${pgo_data_dir}"
-		fowners root:${EPGO_GROUP} "${pgo_data_dir}"
-		fperms 0775 "${pgo_data_dir}"
-	fi
-}
-
-wipe_pgo_profile() {
-	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
-einfo
-einfo "Wiping previous PGO profile"
-einfo
-		local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}"
-		find "${pgo_data_dir}" -type f -delete
-
-		id_pgo_compiler() {
-			pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
-			if tc-is-gcc ; then
-				"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
-				"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-					> "${pgo_data_dir}/compiler_fingerprint" || die
-			elif tc-is-clang ; then
-				"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
-				"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-					> "${pgo_data_dir}/compiler_fingerprint" || die
-			fi
-		}
-		multilib_foreach_abi id_pgo_compiler
-	fi
-}
-
-delete_old_pgo_profiles() {
-	if [[ -n "${REPLACING_VERSIONS}" ]] ; then
-		local pvr
-		for pvr in ${REPLACING_VERSIONS} ; do
-			local pv=$(ver_cut 1-2 "${pvr}")
-			if ver_test ${pv} -eq $(ver_cut 1-2 "${PV}") ; then
-				# Don't delete permissions
-				continue
-			fi
-			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/${pv}/${API_VERSION}"
-			if [[ -e "${pgo_data_dir}" ]] ; then
-einfo "Removing old PGO profile for =${CATEGORY}/${PN}-${pvr}"
-				rm -rf "${pgo_data_dir}" || true
-			fi
-		done
-	fi
+	EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${API_VERSION}"
+	epgo_src_install
 }
 
 pkg_postinst() {
@@ -1439,8 +1276,7 @@ einfo
 	fi
 	check_geolocation
 
-	use pgo && wipe_pgo_profile
-	delete_old_pgo_profiles
+	epgo_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

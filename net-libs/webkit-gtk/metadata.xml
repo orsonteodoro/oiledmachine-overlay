@@ -164,6 +164,9 @@ Traditional      i        i          i         i        i       i
     <flag name="egl">
       Enable EGL support.
     </flag>
+    <flag name="epgo">
+      Performs 1 step Profile Guided Optimization (PGO) per patch release.
+    </flag>
     <flag name="examples">
       Install the MiniBrowser example application.
     </flag>
@@ -217,9 +220,6 @@ Traditional      i        i          i         i        i       i
     </flag>
     <flag name="openmp">
       Use OpenMP to accelerate SVG filters.
-    </flag>
-    <flag name="pgo">
-      Performs 1 step Profile Guided Optimization (PGO) per release.
     </flag>
     <flag name="pulseaudio">
       Adds PulseAudio and microphone support.
