@@ -1,3 +1,4 @@
+# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -889,3 +890,5 @@ _src_configure() {
 
 	cmake_src_configure
 }
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

@@ -1,3 +1,4 @@
+# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -782,6 +783,20 @@ ewarn "The PGO use flag is a Work In Progress (WIP) and is not production"
 ewarn "ready."
 ewarn
 	fi
+	if use pgo ; then
+		if [[ -z "${EPGO_GROUP}" ]] ; then
+eerror
+eerror "The EPGO_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
+eerror "in a per-package env file.  Users who are not a member of this group"
+eerror "cannot run the PGI version of the program."
+eerror
+eerror "Example:"
+eerror
+eerror "  EPGO_GROUP=\"users\""
+eerror
+			die
+		fi
+	fi
 }
 
 _prepare_pgo() {
@@ -1326,6 +1341,8 @@ multilib_src_install() {
 	if use pgo ; then
 		local pgo_data_dir="/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
 		keepdir "${pgo_data_dir}"
+		fowners root:${EPGO_GROUP} "${pgo_data_dir}"
+		fperms 0775 "${pgo_data_dir}"
 	fi
 }
 
@@ -1394,5 +1411,6 @@ einfo
 	delete_old_pgo_profiles
 }
 
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  license-transparency, webvtt, avif
 # OILEDMACHINE-OVERLAY-META-WIP:  pgo, webrtc
