@@ -28,15 +28,6 @@ net-libs/grpc test
 # python2 only
 net-libs/libsoup test-websockets
 
-# in development, pgo trainer needs testing/debugging
-media-gfx/blender pgo
-
-# in development, pgo trainer is unfinished
-www-client/chromium pgo-full
-
-# in development, pgo trainer is unfinished
-net-libs/webkit-gtk pgo
-
 # Prevents libpng from being built, breaks pngfix when zlib libs are being replaced
 # Prevents loading of precompiled www browser
 # cfi-cross-dso is only allowed for clang only profiles.
@@ -85,4 +76,3 @@ sys-auth/pam-python test
 
 # Allow to install debug export profiles
 dev-games/godot-export-templates-bin -debug
-

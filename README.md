@@ -147,12 +147,13 @@ The following list contains ebuilds modified by this overlay with PGO (Profile
 Guided Optimization) support, with additional patches from others listed in
 the metadata.xml.
 
+* media-libs/embree
 * media-libs/libaom
 * media-libs/libjpeg-turbo
 * media-libs/libspng
 * media-libs/libvpx
 * media-video/ffmpeg
-* media-gfx/blender (WIP)
+* media-gfx/blender
 * net-libs/nodejs
 * sci-physics/bullet
 * sys-devel/clang (WIP)
