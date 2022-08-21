@@ -321,7 +321,7 @@ check_pgo() {
 	if use pgo ; then
 		if [[ -z "${EPGO_GROUP}" ]] ; then
 eerror
-eerror "The EPGO_GROUP must be defined either in /etc/portage/make.conf or"
+eerror "The EPGO_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
 eerror "in a per-package env file.  Users who are not a member of this group"
 eerror "cannot run the PGI version of the program."
 eerror
