@@ -239,7 +239,6 @@ epgo_src_install() {
 		keepdir "${pgo_data_suffix_dir}"
 		fowners root:${EPGO_GROUP} "${pgo_data_suffix_dir}"
 		fperms 0775 "${pgo_data_suffix_dir}"
-		keepdir "${PGO}"
 
 		if [[ -z "${CC}" ]] ; then
 			# It should be done earlier.
