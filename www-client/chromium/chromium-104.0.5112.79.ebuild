@@ -2462,7 +2462,7 @@ einfo
 		fi
 	fi
 
-	if ! use pgo-full || tc-is-cross-compiler ; then
+	if ! use epgo || tc-is-cross-compiler ; then
 		:;
 	else
 		EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
