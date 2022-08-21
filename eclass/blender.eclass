@@ -15,7 +15,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-inherit check-reqs cmake flag-o-matic llvm pax-utils \
+inherit check-reqs cmake epgo flag-o-matic llvm pax-utils \
 	python-single-r1 toolchain-funcs xdg
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
@@ -93,7 +93,6 @@ IUSE+=" ${CPU_FLAGS[@]%:*}"
 IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
 IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
 IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
-IUSE+=" pgo"
 # Assets categories are listed in https://www.blender.org/download/demo-files/
 
 # At the source code level, they mix the sse2 intrinsics functions up with the
@@ -318,23 +317,6 @@ eerror
 	fi
 }
 
-check_pgo() {
-	if use pgo ; then
-		if [[ -z "${EPGO_GROUP}" ]] ; then
-eerror
-eerror "The EPGO_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
-eerror "in a per-package env file.  Users who are not a member of this group"
-eerror "cannot generate PGO profile data with this program."
-eerror
-eerror "Example:"
-eerror
-eerror "  EPGO_GROUP=\"epgo\""
-eerror
-			die
-		fi
-	fi
-}
-
 blender_pkg_setup() {
 	llvm_pkg_setup
 	blender_check_requirements
@@ -343,7 +325,7 @@ blender_pkg_setup() {
 	check_optimal_compiler_for_cycles_x86
 	check_embree
 	check_compiler
-	check_pgo
+	epgo_setup
 	if declare -f _blender_pkg_setup > /dev/null ; then
 		_blender_pkg_setup
 	fi
@@ -634,16 +616,6 @@ IMPLS=(
 IUSE+=" ${IMPLS[@]} "
 REQUIRED_USE+=" || ( ${IMPLS[@]} ) "
 
-_prepare_pgo() {
-	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
-	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-	mkdir -p "${pgo_data_dir2}" || die
-	if [[ -e "${pgo_data_dir}" ]] ; then
-		cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
-	fi
-	touch "${pgo_data_dir2}/compiler_fingerprint" || die
-}
-
 _get_impls() {
 	use build_creator && echo "build_creator"
 	use build_headless && echo "build_headless"
@@ -680,7 +652,7 @@ einfo
 
 	local impl
 	for impl in $(_get_impls) ; do
-		_prepare_pgo
+		epgo_src_prepare
 	done
 }
 
@@ -984,61 +956,6 @@ blender_configure_optix() {
 	fi
 }
 
-meets_pgo_requirements() {
-	if use pgo ; then
-		local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
-		local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-
-		# Has same compiler?
-		if tc-is-gcc ; then
-			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
-			local expected=$(cat "${pgo_data_dir2}/compiler_fingerprint")
-			if [[ "${actual}" != "${expected}" ]] ; then
-				return 1
-			fi
-		elif tc-is-clang ; then
-			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
-			local expected=$(cat "${pgo_data_dir2}/compiler_fingerprint")
-			if [[ "${actual}" != "${expected}" ]] ; then
-				return 1
-			fi
-		else
-			return 2
-			ewarn "Compiler is not supported."
-		fi
-
-		# Has profile?
-		if tc-is-gcc && find "${pgo_data_dir2}" -name "*.gcda" \
-			2>/dev/null 1>/dev/null ; then
-			:; # pass
-		elif tc-is-clang && find "${pgo_data_dir2}" -name "*.profraw" \
-			2>/dev/null 1>/dev/null ; then
-			:; # pass
-		else
-			return 1
-		fi
-
-		return 0
-	fi
-	return 1
-}
-
-get_pgo_phase() {
-	local result="NO_PGO"
-	meets_pgo_requirements
-	local ret=$?
-	if ! use pgo ; then
-		result="NO_PGO"
-	elif use pgo && (( ${ret} == 0 )) ; then
-		result="PGO"
-	elif use pgo && (( ${ret} == 1 )) ; then
-		result="PGI"
-	elif use pgo && (( ${ret} == 2 )) ; then
-		result="NO_PGO"
-	fi
-	echo "${result}"
-}
-
 blender_src_configure() { :; }
 
 _src_compile() {
@@ -1111,43 +1028,6 @@ einfo
 	rm -rf "${D}" || die
 }
 
-_pgo_configure() {
-	filter-flags '-fprofile*'
-	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
-	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-	mkdir -p "${ED}/${pgo_data_dir}" || die
-	use pgo && addpredict "${EPREFIX}/var/lib/pgo-profiles"
-	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
-		if tc-is-clang ; then
-			append-flags -fprofile-generate="${pgo_data_dir}"
-		elif tc-is-gcc ; then
-			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
-		else
-eerror
-eerror "Only GCC and Clang are supported for PGO."
-eerror
-			die
-		fi
-	elif [[ "${PGO_PHASE}" == "PGO" ]] ; then
-		if tc-is-clang ; then
-einfo
-einfo "Merging PGO data to generate a PGO profile"
-einfo
-			if ! ls "${BUILD_DIR}/"*.profraw 2>/dev/null 1>/dev/null ; then
-eerror
-eerror "Missing *.profraw files"
-eerror
-				die
-			fi
-			llvm-profdata merge -output="${pgo_data_dir}/custom-pgo.profdata" \
-				"${pgo_data_dir}" || die
-			append-flags -fprofile-use="${pgo_data_dir}/custom-pgo.profdata"
-		elif tc-is-gcc ; then
-			append-flags -fprofile-use -fprofile-dir="${pgo_data_dir}"
-		fi
-	fi
-}
-
 blender_src_compile() {
 	local impl
 	for impl in $(_get_impls) ; do
@@ -1156,6 +1036,7 @@ blender_src_compile() {
 einfo
 einfo "PGO_PHASE:  ${PGO_PHASE}"
 einfo
+		epgo_src_configure
 		_src_configure
 		_src_compile
 		if [[ "${impl}" == "build_creator" ]] ; then
@@ -1371,12 +1252,7 @@ fecho1
 	install_licenses
 	use doc && install_readmes
 
-	if use pgo ; then
-		local pgo_data_dir="/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
-		keepdir "${pgo_data_dir}"
-		fowners root:${EPGO_GROUP} "${pgo_data_dir}"
-		fperms 0775 "${pgo_data_dir}"
-	fi
+	epgo_src_install
 
 	if use openvdb ; then
 		local openvdb_rpath=$(patchelf --print-rpath $(realpath "${EPREFIX}/usr/$(get_libdir)/libopenvdb.so"))
@@ -1420,44 +1296,6 @@ blender_src_install() {
 		mv "${ED}/usr/share/doc/blender"{,-${SLOT_MAJ}} || die
 	fi
 	mv "${ED}/usr/share/man/man1/blender"{,-${SLOT_MAJ}}".1" || die
-}
-
-wipe_pgo_profile() {
-	if [[ "${PGO_PHASE}" =~ "PGI" ]] ; then
-einfo
-einfo "Wiping previous PGO profile"
-einfo
-		local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})"
-		find "${pgo_data_dir}" -type f -delete
-
-		if tc-is-gcc ; then
-			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
-			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${pgo_data_dir}/compiler_fingerprint" || die
-		elif tc-is-clang ; then
-			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
-			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${pgo_data_dir}/compiler_fingerprint" || die
-		fi
-	fi
-}
-
-delete_old_pgo_profiles() {
-	if [[ -n "${REPLACING_VERSIONS}" ]] ; then
-		local pvr
-		for pvr in ${REPLACING_VERSIONS} ; do
-			local pv=$(ver_cut 1-2 "${pvr}")
-			if ver_test ${pv} -eq $(ver_cut 1-2 "${PV}") ; then
-				# Don't delete permissions
-				continue
-			fi
-			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/${pv}"
-			if [[ -e "${pgo_data_dir}" ]] ; then
-einfo "Removing old PGO profile for =${CATEGORY}/${PN}-${pvr}"
-				rm -rf "${pgo_data_dir}" || true
-			fi
-		done
-	fi
 }
 
 blender_pkg_postinst() {
@@ -1505,8 +1343,7 @@ ewarn
 		fi
 	fi
 
-	use pgo && wipe_pgo_profile
-	delete_old_pgo_profiles
+	epgo_pkg_postinst
 }
 
 blender_pkg_postrm() {
