@@ -32,7 +32,7 @@ EPGO_PV=${EPGO_PV:-${_EPGO_PV}}
 EPGO_CATPN_DATA_DIR=${EPGO_DATA_DIR:-"${EPGO_PROFILES_DIR}/${CATEGORY}/${PN}"}
 EPGO_DATA_DIR=${EPGO_DATA_DIR:-"${EPGO_PROFILES_DIR}/${CATEGORY}/${PN}/${EPGO_PV}"}
 
-inherit toolchain-funcs
+inherit flag-o-matic toolchain-funcs
 
 # @FUNCTION: _epgo_check_pgo
 # @DESCRIPTION:
