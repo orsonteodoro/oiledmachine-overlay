@@ -348,10 +348,8 @@ REQUIRED_USE+="
 		clang
 	)
 	official? (
-		^^ (
-			pgo
-			pgo-full
-		)
+		pgo
+		!pgo-full
 		!debug
 		!system-ffmpeg
 		!system-harfbuzz
@@ -372,7 +370,6 @@ REQUIRED_USE+="
 		!pgo-full
 	)
 	pgo-full? (
-		clang
 		!pgo
 	)
 	ppc64? (
@@ -2603,10 +2600,10 @@ einfo
 	if tc-is-cross-compiler ; then
 		myconf_gn+=" chrome_pgo_phase=0"
 	elif use pgo-full ; then
-		myconf_gn+=" chrome_pgo_phase=${PGO_PHASE}"
+		myconf_gn+=" chrome_pgo_phase=0"
 		mkdir -p "${BUILD_DIR}/chrome/build/pgo_profiles" || die
-		[[ "${PGO_PHASE}" == "2" ]] && \
-		myconf_gn+=" pgo_data_path=\"${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata\""
+		# This mod is to allow both clang and gcc PGO but the build
+		# scripts only do clang PGO.
 	elif use pgo && tc-is-clang && ver_test $(clang-version) -ge 11 ; then
 		# The profile data is already shipped so use it.
 		# PGO profile location: chrome/build/pgo_profiles/chrome-linux-*.profdata
