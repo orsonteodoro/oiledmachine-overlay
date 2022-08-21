@@ -2751,6 +2751,9 @@ multilib_src_compile() {
 	#	--without-android || die
 
 	export PGO_PHASE=$(get_pgo_phase)
+einfo
+einfo "PGO_PHASE:  ${PGO_PHASE}"
+einfo
 	_configure_pgx
 	_update_licenses
 	_build_pgx

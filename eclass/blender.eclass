@@ -1153,6 +1153,9 @@ blender_src_compile() {
 	for impl in $(_get_impls) ; do
 		_ORIG_PATH="${PATH}"
 		export PGO_PHASE=$(get_pgo_phase)
+einfo
+einfo "PGO_PHASE:  ${PGO_PHASE}"
+einfo
 		_src_configure
 		_src_compile
 		if [[ "${impl}" == "build_creator" ]] ; then

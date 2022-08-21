@@ -1249,6 +1249,9 @@ multilib_src_compile() {
 	einfo "CXX=${CXX}"
 
 	export PGO_PHASE=$(get_pgo_phase)
+einfo
+einfo "PGO_PHASE:  ${PGO_PHASE}"
+einfo
 	_config_pgx
 	_compile_pgx
 }
