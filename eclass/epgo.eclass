@@ -2,7 +2,7 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: epgo-single.eclass
+# @ECLASS: epgo.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
 # @BLURB: EPGO
@@ -24,17 +24,58 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+# @ECLASS_VARIABLE: EPGO_FORCE_PGI
+# @DESCRIPTION:
+# Temporarily set to 1 to build with PGI flags.
+EPGO_FORCE_PGI=${EPGO_FORCE_PGI:-0}
+
+# @ECLASS_VARIABLE: EPGO_SUFFIX
+# @DESCRIPTION:
+# This variable should be expliclity set with multibuild based ebuilds
+# (cmake-multilib, multilib-minimal, multilib-build, meson-multilib)
+# just before calls to epgo_src_configure, epgo_get_phase, epgo_src_install.
+# Sets the suffix to isolate PGO profiles (e.g. 32-bit, 64-bit).  Different
+# implementations should attach _${impl} to the examples below.
+# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"}
+# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl}"}
+# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl1}_${impl2}"}
+# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl1}_${impl2}_${impl3}"}
+
 IUSE+=" epgo"
 
+# @ECLASS_VARIABLE: EPGO_PROFILES_DIR
+# @DESCRIPTION:
+# Sets the location do dump PGO profiles.
 EPGO_PROFILES_DIR=${EPGO_PROFILES_DIR:-"/var/lib/pgo-profiles"}
+
+# @ECLASS_VARIABLE: _EPGO_PV
+# @INTERNAL
+# @DESCRIPTION:
+# Default PV with breaking changes when bumped.
 _EPGO_PV=$(ver_cut 1-2 ${PV}) # default
+
+# @ECLASS_VARIABLE: EPGO_PV
+# @DESCRIPTION:
+# Set to the PV range which can cause breakage when bumped.  Excludes non
+# breaking patch versions.
 EPGO_PV=${EPGO_PV:-${_EPGO_PV}}
-EPGO_CATPN_DATA_DIR=${EPGO_DATA_DIR:-"${EPGO_PROFILES_DIR}/${CATEGORY}/${PN}"}
-EPGO_DATA_DIR=${EPGO_DATA_DIR:-"${EPGO_PROFILES_DIR}/${CATEGORY}/${PN}/${EPGO_PV}"}
+
+# @ECLASS_VARIABLE: _EPGO_CATPN_DATA_DIR
+# @INTERNAL
+# @DESCRIPTION:
+# The path to the program PGO profile with general package id specificity.
+_EPGO_CATPN_DATA_DIR=${_EPGO_CATPN_DATA_DIR:-"${EPGO_PROFILES_DIR}/${CATEGORY}/${PN}"}
+
+# @ECLASS_VARIABLE: _EPGO_DATA_DIR
+# @INTERNAL
+# @DESCRIPTION:
+# The path to the program PGO profile with version specificity.
+_EPGO_DATA_DIR=${_EPGO_DATA_DIR:-"${EPGO_PROFILES_DIR}/${CATEGORY}/${PN}/${EPGO_PV}"}
 
 inherit flag-o-matic toolchain-funcs
 
 # @FUNCTION: _epgo_check_pgo
+# @INTERNAL
 # @DESCRIPTION:
 # Checks the preferred trainer group.
 # You can use an existing or completely isolated group.
@@ -68,10 +109,11 @@ epgo_setup() {
 }
 
 # @FUNCTION: _epgo_prepare_pgo
+# @INTERNAL
 # @DESCRIPTION:
 # Copies an existing profile snapshot into build space.
 _epgo_prepare_pgo() {
-	local pgo_data_suffix_dir="${EPREFIX}${EPGO_DATA_DIR}/${EPGO_SUFFIX}"
+	local pgo_data_suffix_dir="${EPREFIX}${_EPGO_DATA_DIR}/${EPGO_SUFFIX}"
 	local pgo_data_staging_dir="${T}/pgo-${EPGO_SUFFIX}"
 
 	mkdir -p "${pgo_data_staging_dir}" || die
@@ -94,11 +136,12 @@ epgo_src_prepare() {
 }
 
 # @FUNCTION: _epgo_configure
+# @INTERNAL
 # @DESCRIPTION:
 # Setup compiler flags
 _epgo_configure() {
 	filter-flags '-fprofile*'
-	local pgo_data_suffix_dir="${EPREFIX}${EPGO_DATA_DIR}/${EPGO_SUFFIX}"
+	local pgo_data_suffix_dir="${EPREFIX}${_EPGO_DATA_DIR}/${EPGO_SUFFIX}"
 	local pgo_data_staging_dir="${T}/pgo-${EPGO_SUFFIX}"
 	mkdir -p "${ED}/${pgo_data_dir}" || die
 	use epgo && addpredict "${EPREFIX}${EPGO_PROFILES_DIR}"
@@ -142,6 +185,7 @@ epgo_src_configure() {
 }
 
 # @FUNCTION: _epgo_meets_pgo_requirements
+# @INTERNAL
 # @DESCRIPTION:
 # Checks if requirements are met
 _epgo_meets_pgo_requirements() {
@@ -219,6 +263,8 @@ epgo_get_phase() {
 	local ret=$?
 	if ! use epgo ; then
 		result="NO_PGO"
+	elif use epgo && [[ "${EPGO_FORCE_PGI}" == "1" ]] ; then
+		result="PGI"
 	elif use epgo && (( ${ret} == 0 )) ; then
 		result="PGO"
 	elif use epgo && (( ${ret} == 1 )) ; then
@@ -235,7 +281,7 @@ epgo_get_phase() {
 epgo_src_install() {
 	if use epgo ; then
 		EPGO_SUFFIX=${EPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
-		local pgo_data_suffix_dir="${EPGO_DATA_DIR}/${EPGO_SUFFIX}"
+		local pgo_data_suffix_dir="${_EPGO_DATA_DIR}/${EPGO_SUFFIX}"
 		keepdir "${pgo_data_suffix_dir}"
 		fowners root:${EPGO_GROUP} "${pgo_data_suffix_dir}"
 		fperms 0775 "${pgo_data_suffix_dir}"
@@ -261,6 +307,7 @@ epgo_src_install() {
 }
 
 # @FUNCTION: _epgo_wipe_pgo_profile
+# @INTERNAL
 # @DESCRIPTION:
 # Reinitalizes the PGO profile immediately after PGI built
 _epgo_wipe_pgo_profile() {
@@ -268,7 +315,7 @@ _epgo_wipe_pgo_profile() {
 einfo
 einfo "Wiping previous PGO profile"
 einfo
-		local pgo_data_dir="${EROOT}${EPGO_DATA_DIR}"
+		local pgo_data_dir="${EROOT}${_EPGO_DATA_DIR}"
 		find "${pgo_data_dir}" -type f \
 			-not -name "compiler_fingerprint" \
 			-not -name "compiler" \
@@ -277,6 +324,7 @@ einfo
 }
 
 # @FUNCTION: _epgo_delete_old_pgo_profiles
+# @INTERNAL
 # @DESCRIPTION:
 # Deletes all old pgo profiles
 _epgo_delete_old_pgo_profiles() {
@@ -288,7 +336,7 @@ _epgo_delete_old_pgo_profiles() {
 				# Don't delete permissions
 				continue
 			fi
-			local pgo_data_dir="${EROOT}${EPGO_CATPN_DATA_DIR}/${pv}"
+			local pgo_data_dir="${EROOT}${_EPGO_CATPN_DATA_DIR}/${pv}"
 			if [[ -e "${pgo_data_dir}" ]] ; then
 einfo "Removing old PGO profile for =${CATEGORY}/${PN}-${pvr}"
 				rm -rf "${pgo_data_dir}" || true
