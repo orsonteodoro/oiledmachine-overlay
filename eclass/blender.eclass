@@ -1286,7 +1286,7 @@ _src_install() {
 		fi
 		cat <<EOF > "${T}/${PN}${suffix}-${SLOT_MAJ}"
 #!${EPREFIX}/bin/bash
-export PYTHONPATH="${EPREFIX}/usr/lib/${EPYTHON}:${EPREFIX}/usr/lib/${EPYTHON}/lib-dynload:${EPREFIX}/usr/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
+export PYTHONPATH="${EPREFIX}/usr/lib/${EPYTHON}:${EPREFIX}/usr/lib/${EPYTHON}/lib-dynload:${EPREFIX}/usr/lib/${EPYTHON}/site-packages:\${PYTHONPATH}"
 BLENDER_EXTERN_DRACO_LIBRARY_PATH="${EPREFIX}/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages"
 "${EPREFIX}${d_dest}/blender" --python-use-system-env "\$@"
 EOF
