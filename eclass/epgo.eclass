@@ -47,7 +47,7 @@ IUSE+=" epgo"
 
 # @ECLASS_VARIABLE: EPGO_PROFILES_DIR
 # @DESCRIPTION:
-# Sets the location do dump PGO profiles.
+# Sets the location to dump PGO profiles.
 EPGO_PROFILES_DIR=${EPGO_PROFILES_DIR:-"/var/lib/pgo-profiles"}
 
 # @ECLASS_VARIABLE: _EPGO_PV
