@@ -1553,6 +1553,10 @@ ewarn "using only the bundled-libcxx instead."
 ewarn
 	fi
 
+einfo "To remove the hard USE mask for the builtin pgo profile:"
+einfo "mkdir -p ${EPREFIX}/etc/portage/profile"
+einfo "echo \"www-client/chromium -pgo\" >> ${EPREFIX}/etc/portage/profile/package.use.mask"
+
 	epgo_setup
 
 	for a in $(multilib_get_enabled_abis) ; do
