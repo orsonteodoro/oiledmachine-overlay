@@ -2953,7 +2953,7 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 
 	if use pgo-full ; then
 		local pgo_data_dir="/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
-		dodir "${pgo_data_dir}"
+		keepdir "${pgo_data_dir}"
 	fi
 }
 

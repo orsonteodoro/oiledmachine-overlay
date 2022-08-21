@@ -1351,7 +1351,7 @@ fecho1
 
 	if use pgo ; then
 		local pgo_data_dir="/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
-		dodir "${pgo_data_dir}"
+		keepdir "${pgo_data_dir}"
 	fi
 }
 
