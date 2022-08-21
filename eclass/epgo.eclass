@@ -204,6 +204,7 @@ einfo "CC=${CC}"
 einfo "CXX=${CXX}"
 einfo
 
+		touch "${pgo_data_staging_dir}/compiler_fingerprint" || die
 		# Has same compiler?
 		if tc-is-gcc ; then
 			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
