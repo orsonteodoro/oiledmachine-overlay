@@ -1552,6 +1552,21 @@ ewarn "using only the bundled-libcxx instead."
 ewarn
 	fi
 
+	if use pgo ; then
+		if [[ -z "${EPGO_GROUP}" ]] ; then
+eerror
+eerror "The EPGO_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
+eerror "in a per-package env file.  Users who are not a member of this group"
+eerror "cannot run the PGI version of the program."
+eerror
+eerror "Example:"
+eerror
+eerror "  EPGO_GROUP=\"users\""
+eerror
+			die
+		fi
+	fi
+
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
 	done
@@ -2954,6 +2969,8 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	if use pgo-full ; then
 		local pgo_data_dir="/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
 		keepdir "${pgo_data_dir}"
+		fowners root:${EPGO_GROUP} "${pgo_data_dir}"
+		fperms 0775 "${pgo_data_dir}"
 	fi
 }
 
