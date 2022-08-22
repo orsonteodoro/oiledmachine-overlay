@@ -236,81 +236,16 @@ eerror
 	meson_src_configure
 }
 
-_install_header_license() {
-	local dir_path=$(dirname "${1}")
-	local file_name=$(basename "${1}")
-	local license_name="${2}"
-	local length="${3}"
-	d="${dir_path}"
-	dl="licenses/${d}"
-	docinto "${dl}"
-	mkdir -p "${T}/${dl}" || die
-	head -n ${length} "${S}/${d}/${file_name}" > \
-		"${T}/${dl}/${license_name}" || die
-	dodoc "${T}/${dl}/${license_name}"
-}
-
-_install_header_license_mid() {
-	local dir_path=$(dirname "${1}")
-	local file_name=$(basename "${1}")
-	local license_name="${2}"
-	local start="${3}"
-	local length="${4}"
-	d="${dir_path}"
-	dl="licenses/${d}"
-	docinto "${dl}"
-	mkdir -p "${T}/${dl}" || die
-	tail -n +${start} "${S}/${d}/${file_name}" \
-		| head -n ${length} > \
-		"${T}/${dl}/${license_name}" || die
-	dodoc "${T}/${dl}/${license_name}"
-}
-
-# @FUNCTION: _install_licenses
-# @DESCRIPTION:
-# Installs licenses and copyright notices from third party rust cargo
-# packages and other internal packages.
-_install_licenses() {
-	local tag="${1}"
-	local license_path_prefix="${2}"
-	[[ -f "${T}/.copied_licenses_${tag}" ]] && return
-
-	einfo "Copying third party licenses and copyright notices for ${tag}"
-	export IFS=$'\n'
-	for f in $(find "${license_path_prefix}" \
-	  -iname "*licens*" -type f \
-	  -o -iname "*licenc*" \
-	  -o -iname "*copyright*" \
-	  -o -iname "*copying*" \
-	  -o -iname "*patent*" \
-	  -o -iname "ofl.txt" \
-	  -o -iname "*notice*" \
-	  -o -iname "*author*" \
-	  -o -iname "*CONTRIBUTORS*" \
-	  ) $(grep -i -G -l \
-		-e "copyright" \
-		-e "licens" \
-		-e "licenc" \
-		-e "warrant" \
-		$(find "${license_path_prefix}" -iname "*readme*")) ; \
-	do
-		if [[ -f "${f}" ]] ; then
-			d=$(dirname "${f}" | sed -e "s|^${license_path_prefix}||")
-		else
-			d=$(echo "${f}" | sed -e "s|^${license_path_prefix}||")
-		fi
-		docinto "licenses/${tag}/${d}"
-		dodoc -r "${f}"
-	done
-	export IFS=$' \t\n'
-
-	touch "${T}/.copied_licenses_${tag}"
-}
-
 multilib_src_install() {
 	meson_src_install
-	_install_licenses "third_party_cargo" "${HOME}/.cargo"
-	_install_licenses "sources" "${S}"
+
+	LCNR_SOURCE="${HOME}/.cargo"
+	LCNR_TAG="third_party_cargo"
+	lcnr_install_files
+
+	LCNR_SOURCE="${S}"
+	LCNR_TAG="sources"
+	lcnr_install_files
 }
 
 multilib_src_test() {

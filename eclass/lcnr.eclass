@@ -18,6 +18,10 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+# @ECLASS_VARIABLE: LCNR_TAG
+# @DESCRIPTION:
+# Separate recursive searches with a tag
+
 # @ECLASS_VARIABLE: LCNR_COPY_ONCE
 # @DESCRIPTION:
 # Tranverse the entire project source once
@@ -79,13 +83,17 @@ ewarn "QA:  ${LCNR_SOURCE}/${d}/${file_name} is missing"
 # Installs a licenses or copyright notices from packages and other internal
 # packages.
 lcnr_install_files() {
-	local filename="${T}/.copied_licenses_or_copyright_notices"
+	local filename="${T}/.copied_licenses_or_copyright_notices_${LCNR_TAG}"
 	if [[ "${LCNR_COPY_ONCE}" == "1" ]] ; then
 		# Only traverse once.
 		[[ -f "${filename}" ]] && return
 	fi
+	local message_extension=""
+	if [[ -n "${LCNR_TAG}" ]] ; then
+		message_extension=" for ${LCNR_TAG}"
+	fi
 einfo
-einfo "Copying third party licenses and copyright notices"
+einfo "Copying third party licenses and copyright notices${message_extension}"
 einfo
 	export IFS=$'\n'
 	local f
@@ -106,11 +114,15 @@ einfo
 	do
 		local d
 		if [[ -f "${f}" ]] ; then
-			d=$(dirname "${f}" | sed -e "s|^${S}||")
+			d=$(dirname "${f}" | sed -e "s|^${LCNR_SOURCE}||")
 		else
-			d=$(echo "${f}" | sed -e "s|^${S}||")
+			d=$(echo "${f}" | sed -e "s|^${LCNR_SOURCE}||")
 		fi
-		docinto "licenses/${d}"
+		if [[ -n "${LCNR_TAG}" ]] ; then
+			docinto "licenses/${LCNR_TAG}/${d}"
+		else
+			docinto "licenses/${d}"
+		fi
 		dodoc -r "${f}"
 	done
 	export IFS=$' \t\n'
@@ -155,9 +167,9 @@ einfo
 	do
 		local d
 		if [[ -f "${f}" ]] ; then
-			d=$(dirname "${f}" | sed -e "s|^${S}||")
+			d=$(dirname "${f}" | sed -e "s|^${LCNR_SOURCE}||")
 		else
-			d=$(echo "${f}" | sed -e "s|^${S}||")
+			d=$(echo "${f}" | sed -e "s|^${LCNR_SOURCE}||")
 		fi
 		docinto "readmes/${d}"
 		dodoc -r "${f}"
