@@ -5,10 +5,10 @@
 # @ECLASS: tpgo.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
-# @BLURB: EPGO
+# @BLURB: traditional 3 step PGO in one emerge
 # @DESCRIPTION:
 # This ebuild is to perform a traditional 3 step PGO per emerge.
-# It exists to increase the deployment of PGO and to educate about the
+# It exists to increase the deployment of PGO and to educate about
 # mysterious PGO support.
 
 # When to use this eclass?
@@ -37,7 +37,9 @@
 # }
 #	to
 #
-# _src_configure() { :; }
+# _src_configure() { ... }  # Rename
+# src_configure() { :; }    # Added
+#
 #
 # multilib_src_configure {
 #	...
@@ -47,11 +49,13 @@
 #
 # _src_configure() {
 #	configure_abi {
+#		tpgo_src_configure
 #		...
 #	}
 #	foreach_multilib_abi
 #	configure_abi
-# }
+# }                      # Renamed
+# src_configure) { :; }  # Added
 #
 #
 # Any *prepare() with sed edits needs to be converted
@@ -61,31 +65,34 @@
 # }
 #	to
 #
-# _src_prepare() { :; }
+# _src_prepare() { ... }  # Renamed
+# src_prepare() { :; }    # Added
 #
 #
 # Any *compile() needs needs to be converted
 #
-# src_configure() {
+# src_compile() {
 #	...
 # }
 #	to
 #
-# _src_configure() { :; }
+# _src_compile() { :; }              # Renamed
+# src_compile() { src_compile ... }  # Changed
 #
-# multilib_src_configure {
+#
+# multilib_src_compile {
 #	...
 # }
 #
 #	to
 #
-# _src_configure() {
-#	configure_abi {
+# src_compile() {
+#	compile_abi {
+#               tpgo_src_compile
 #		...
 #	}
-#	foreach_multilib_abi
-#	configure_abi
-# }
+#	foreach_multilib_abi compile_abi
+# }                                       # Renamed and changed
 #
 # If an ebuild uses multiple multibuild derivatives, it should be converted into
 # nested loops.
@@ -95,6 +102,14 @@
 # @ECLASS_VARIABLE: TPGO_USE_X
 # @DESCRIPTION:
 # Runs GUI in X.  You can use console apps in this also.
+
+# @ECLASS_VARIABLE: TPGO_SANDBOX_EXCEPTION_GLSL
+# @DESCRIPTION:
+# Add sandbox exceptions for GLSL.
+
+# @ECLASS_VARIABLE: TPGO_SANDBOX_EXCEPTION_INPUT
+# @DESCRIPTION:
+# Add sandbox exceptions for input.
 
 inherit flag-o-matic toolchain-funcs
 if [[ "${TPGO_USE_X}" == "1" ]] ;then
@@ -112,6 +127,9 @@ BDEPEND+="
 	)
 "
 
+# @ECLASS_VARIABLE: TPGO_TEST_DURATION
+# @DESCRIPTION:
+# The timebox in seconds for a trainer.
 TPGO_TEST_DURATION=${TPGO_TEST_DURATION:-120} # 2 min
 
 # @FUNCTION: tpgo_get_trainer_exe
@@ -146,6 +164,7 @@ eerror
 }
 
 # @FUNCTION: _tpgo_configure
+# @INTERNAL
 # @DESCRIPTION:
 # Sets up PGO flags
 _tpgo_configure() {
@@ -181,13 +200,15 @@ _tpgo_configure() {
 }
 
 # @FUNCTION: _tpgo_cmake_clean
+# @INTERNAL
 # @DESCRIPTION:
 # Clears the build directory for a cmake based project.
 # You must add this before cmake_src_configure
 # The _pre_tpgo_set_clean hook can be used to override BUILD_DIR
 _tpgo_cmake_clean() {
 	[[ -n ${_CMAKE_ECLASS} || -n ${_CMAKE_UTILS_ECLASS} ]] || return
-	declare -f _pre_tpgo_set_clean > /dev/null || ewarn "_pre_tpgo_set_clean should be defined"
+	declare -f _pre_tpgo_set_clean > /dev/null \
+		|| ewarn "_pre_tpgo_set_clean should be defined if BUILD_DIR is changed"
 	declare -f _pre_tpgo_set_clean > /dev/null && _pre_tpgo_set_clean
 	[[ -e "${BUILD_DIR}" ]] || return
 	cd "${CMAKE_USE_DIR}" || die
@@ -195,6 +216,7 @@ _tpgo_cmake_clean() {
 }
 
 # @FUNCTION: _tpgo_autotools_clean
+# @INTERNAL
 # @DESCRIPTION:
 # Clears the build directory for autotools based project.
 # It assumes the current directory is the build directory
@@ -244,6 +266,7 @@ tpgo_src_configure() {
 }
 
 # @FUNCTION: _tpgo_run_trainer
+# @INTERNAL
 # @DESCRIPTION:
 # Runs the trainer executable
 #
@@ -307,7 +330,7 @@ einfo
 	fi
 
 cat > "run.sh" <<EOF
-#!/bin/sh
+#!${EPREFIX}/bin/sh
 
 # Using & will prevent stall
 echo "cmd:  \"${trainer_exe}\" ${trainer_args[@]}"
@@ -342,6 +365,7 @@ eerror
 }
 
 # @FUNCTION: _tpgo_train_default
+# @INTERNAL
 # @DESCRIPTION:
 # Runs the default trainer program
 # The default trainer will just run all the programs in a timebox
@@ -381,12 +405,16 @@ eerror
 #
 _tpgo_train_default() {
 	# Sandbox violation prevention
-	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache"
-	export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
-	for x in $(find "${BROOT}/dev/input" "${ESYSROOT}/dev/input" -name "event*") ; do
-		einfo "Adding \`addwrite ${x}\` sandbox rule"
-		addwrite "${x}"
-	done
+	if [[ "${TPGO_SANDBOX_EXCEPTION_GLSL}" == "1" ]] ; then
+		export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache"
+		export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
+	fi
+	if [[ "${TPGO_SANDBOX_EXCEPTION_INPUT}" == "1" ]] ; then
+		for x in $(find "${BROOT}/dev/input" "${ESYSROOT}/dev/input" -name "event*") ; do
+			einfo "Adding \`addwrite ${x}\` sandbox rule"
+			addwrite "${x}"
+		done
+	fi
 
 	TPGO_SUFFIX=${TPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
 	local pgo_data_dir="${T}/pgo-${TPGO_SUFFIX}"
@@ -443,6 +471,7 @@ eerror
 }
 
 # @FUNCTION: _tpgo_train
+# @INTERNAL
 # @DESCRIPTION:
 # Runs the PGO training program.
 # You may define _tpgo_train_custom handler to perform your
@@ -463,7 +492,7 @@ _tpgo_train() {
 # It is recommended to use (nested) loops instead of event handlers.
 # The event handlers/eclass hide the information away from you.
 
-# @FUNCTION: tpgo_compile
+# @FUNCTION: tpgo_src_compile
 # @DESCRIPTION:
 # The compile phase.  If using cmake, you must explicitly assign
 # CMAKE_USE_DIR and BUILD_DIR within each _src_* since tpgo_compile
@@ -496,7 +525,7 @@ _tpgo_train() {
 #
 # src_compile() {
 #	compile_abi() {
-#		tpgo_compile
+#		tpgo_src_compile
 #	}
 #	multilib_foreach_abi compile_abi
 # }
@@ -505,7 +534,7 @@ _tpgo_train() {
 #	tpgo_compile
 # }
 #
-tpgo_compile() {
+tpgo_src_compile() {
 	if use pgo ; then
 		PGO_PHASE="PGI"
 		declare -f _src_pre_pgi > /dev/null && _src_pre_pgi
@@ -528,7 +557,7 @@ tpgo_compile() {
 }
 
 if [[ "${TPGO_MULTILIB}" == "1" ]] ; then
-# @FUNCTION: tpgo_multilib_compile
+# @FUNCTION: tpgo_multilib_src_compile
 # @DESCRIPTION:
 # This is for simple ebuilds.  For more advanced ebuilds
 # use tpgo_compile instead.
@@ -563,9 +592,9 @@ if [[ "${TPGO_MULTILIB}" == "1" ]] ; then
 # src_compile() {
 #	tpgo_multilib_compile
 # }
-tpgo_multilib_compile() {
+tpgo_multilib_src_compile() {
 	tpgo_compile_abi() {
-		tpgo_compile
+		tpgo_src_compile
 	}
 	multilib_foreach_abi tpgo_compile_abi
 }

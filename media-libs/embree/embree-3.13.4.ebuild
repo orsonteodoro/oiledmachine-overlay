@@ -4,7 +4,9 @@
 
 EAPI=8
 
-inherit cmake flag-o-matic linux-info toolchain-funcs virtualx
+TPGO_USE_X=1
+TPGO_TEST_DURATION=120
+inherit cmake flag-o-matic linux-info toolchain-funcs tpgo
 
 DESCRIPTION="Collection of high-performance ray tracing kernels"
 HOMEPAGE="https://github.com/embree/embree"
@@ -40,7 +42,7 @@ IUSE+="
 ${CPU_FLAGS[@]%:*}
 -allow-auto-vectorization -allow-strict-aliasing backface-culling clang
 -compact-polys -custom-cflags custom-optimization debug doc doc-docfiles
-doc-html doc-images doc-man +hardened +filter-function gcc ispc raymask pgo -ssp
+doc-html doc-images doc-man +hardened +filter-function gcc ispc raymask -ssp
 static-libs +tbb test tutorials
 "
 REQUIRED_USE+="
@@ -241,6 +243,7 @@ ewarn "Building package may exhibit random failures with doc-html USE flag."
 ewarn "Emerge and try again."
 ewarn
 	fi
+	tpgo_setup
 }
 
 src_prepare() {
@@ -251,55 +254,14 @@ src_prepare() {
 		-i CMakeLists.txt || die
 }
 
-_cmake_clean() {
-	[[ -e "${BUILD_DIR}" ]] || return
-	rm -rf "${BUILD_DIR}" || die
-}
+src_configure() { :; }
 
-_pgo_configure() {
-	filter-flags '-fprofile*'
-	local pgo_data_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-	mkdir -p "${ED}/${pgo_data_dir}" || die
-	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
-einfo "DEBUG:  Added PGI flags"
-		if tc-is-clang ; then
-			PGO_CXX_FLAGS+=" -fprofile-generate=\"${pgo_data_dir}\""
-		elif tc-is-gcc ; then
-			PGO_CXX_FLAGS+=" -fprofile-generate -fprofile-dir=\"${pgo_data_dir}\""
-		else
-eerror
-eerror "Only GCC and Clang are supported for PGO."
-eerror
-			die
-		fi
-	elif [[ "${PGO_PHASE}" == "PGO" ]] ; then
-einfo "DEBUG:  Added PGO flags"
-		if tc-is-clang ; then
-einfo
-einfo "Merging PGO data to generate a PGO profile"
-einfo
-			if ! ls "${BUILD_DIR}/"*.profraw 2>/dev/null 1>/dev/null ; then
-eerror
-eerror "Missing *.profraw files"
-eerror
-				die
-			fi
-			llvm-profdata merge -output="${pgo_data_dir}/custom-pgo.profdata" \
-				"${pgo_data_dir}" || die
-			PGO_CXX_FLAGS+=" -fprofile-use=\"${pgo_data_dir}/custom-pgo.profdata\""
-		elif tc-is-gcc ; then
-			PGO_CXX_FLAGS+=" -fprofile-use -fprofile-dir=\"${pgo_data_dir}\""
-		fi
-	fi
-}
-
-_configure() {
+_src_configure() {
 einfo
 einfo "PGO PHASE:  ${PGO_PHASE}"
 einfo
-	_cmake_clean
 	strip-unsupported-flags
-
+	tpgo_src_configure
 	if tc-is-clang && ! use clang ; then
 eerror
 eerror "Enable the clang USE flag or switch to GCC."
@@ -316,7 +278,6 @@ eerror
 		filter-ldflags "-Wl,-O1"
 		filter-ldflags "-Wl,--defsym=__gentoo_check_ldflags__=0"
 	fi
-	_pgo_configure
 
 	# NOTE: You can make embree accept custom CXXFLAGS by turning off
 	# EMBREE_IGNORE_CMAKE_CXX_FLAGS. However, the linking will fail if you use
@@ -462,7 +423,7 @@ eerror
 	cmake_src_configure
 }
 
-_compile() {
+_src_compile() {
 	cmake_src_compile
 	if [[ "${PGO_PHASE}" == "PGO" || "${PGO_PHASE}" == "NO_PGO" ]] \
 		&& use doc ; then
@@ -517,50 +478,18 @@ eerror
 	fi
 }
 
-_run_tutorial() {
-	local duration="${1}"
-	local tutorial_path="${2}"
-	local name=$(basename "${tutorial_path}")
-	local now=$(date +"%s")
-	local done_at=$((${now} + ${duration}))
-	local done_at_s=$(date --date="@${done_at}")
-einfo
-einfo "Running '${name}' tutorial for ${duration}s to be completed at"
-einfo "${done_at_s}"
-einfo
-cat <<EOF > "run.sh"
-#!${EPREFIX}/bin/bash
-"${tutorial_path}" \
-	--isa ${isa} \
-	--threads ${threads} &
-pid=\$!
-now=\$(date +"%s")
-while (( \${now} < ${done_at} )) \
-	&& ps -p \${pid} 2>/dev/null 1>/dev/null ; do
-	sleep 1
-	now=\$(date +"%s")
-done
-ps -p \${pid} 2>/dev/null 1>/dev/null \
-	&& kill -9 \${pid}
-true
-EOF
-	chmod +x "run.sh" || die
-	virtx ./run.sh
-	rm run.sh || die
-	if grep -q -r -e "cannot connect to X server" "${T}/build.log" ; then
-eerror
-eerror "Detected cannot connect to X server."
-eerror
-		die
-	fi
-}
-
 _get_time_override() {
-	duration=${default_time}
+	local trainer="${1}"
+	local time_override=(
+		"bvh_builder:86"
+		"embree_verify:$((21*60))"
+	) # exename:seconds
+
+	local duration=${TPGO_TEST_DURATION}
 	for entry in ${time_override[@]} ; do
 		local name="${entry%:*}"
 		local time="${entry#*:}"
-		if [[ "${f}" =~ "${name}" ]] ; then
+		if [[ "${trainer%:*}" =~ "${name}" ]] ; then
 			duration=${time}
 			break
 		fi
@@ -568,53 +497,43 @@ _get_time_override() {
 	echo "${duration}"
 }
 
-_train() {
-	# Sandbox violation prevention
-	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache"
-	export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
-	for x in $(find /dev/input -name "event*") ; do
-		einfo "Adding \`addwrite ${x}\` sandbox rule"
-		addwrite "${x}"
-	done
-
-	local default_time=120 # seconds
-	local time_override=(
-		"bvh_builder:86"
-		"embree_verify:$((21*60))"
-	) # exename:seconds
-
-	local ncpus=$(lscpu | grep "CPU(s)" | head -n 1 | grep -E -o -e "[0-9]+")
-	local tpc=$(lscpu | grep "Thread(s) per core" | head -n 1 | grep -E -o -e "[0-9]+")
-	local threads=$(( ${ncpus} * ${tpc} ))
-
-	einfo "Threads Per Core (TPC):  ${tpc}"
-	einfo "nCPUS:  ${ncpus}"
-	einfo "Threads:  ${threads}"
-
+tpgo_trainer_list() {
 	local isa
 	local f
 	for f in $(find "${BUILD_DIR}" -maxdepth 1 -executable -type f | sort) ; do
 		for isa in $(_get_cbuild_isas) ; do
-			local duration=$(_get_time_override)
-			_run_tutorial ${duration} "${f}"
+			echo "${f}:${isa}"
 		done
 	done
 }
 
+tpgo_get_trainer_exe() {
+	local trainer="${1}"
+	echo "${trainer%:*}"
+}
+
+tpgo_get_trainer_args() {
+	local trainer="${1}"
+	local isa="${trainer#*:}"
+	local ncpus=$(lscpu | grep "CPU(s)" | head -n 1 | grep -E -o -e "[0-9]+")
+	local tpc=$(lscpu | grep "Thread(s) per core" | head -n 1 | grep -E -o -e "[0-9]+")
+	local threads=$(( ${ncpus} * ${tpc} ))
+
+#	einfo "Threads Per Core (TPC):  ${tpc}"
+#	einfo "nCPUS:  ${ncpus}"
+#	einfo "Threads:  ${threads}"
+
+	echo --isa ${isa} --threads ${threads}
+}
+
+tpgo_override_duration() {
+	local trainer="${1}"
+	local duration=$(_get_time_override "${trainer}")
+	echo "${duration}"
+}
+
 src_compile() {
-	if use pgo ; then
-		PGO_PHASE="PGI"
-		_configure
-		_compile
-		_train
-		PGO_PHASE="PGO"
-		_configure
-		_compile
-	else
-		PGO_PHASE="NO_PGO"
-		_configure
-		_compile
-	fi
+	tpgo_src_compile
 }
 
 src_test() {

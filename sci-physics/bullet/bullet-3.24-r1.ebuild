@@ -478,7 +478,7 @@ tpgo_get_trainer_exe() {
 }
 
 src_compile() {
-	tpgo_multilib_compile
+	tpgo_multilib_src_compile
 	if use doc; then
 		doxygen || die
 		HTML_DOCS+=( html/. )

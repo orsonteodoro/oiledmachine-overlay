@@ -140,7 +140,7 @@ src_compile() {
 			export EMESON_SOURCE="${S}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 # See https://github.com/randy408/libspng/blob/master/docs/build.md#profile-guided-optimization
-			tpgo_compile
+			tpgo_src_compile
 		done
 	}
 	multilib_foreach_abi compile_abi
