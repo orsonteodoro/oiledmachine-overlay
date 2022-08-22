@@ -183,7 +183,7 @@ get_asset_ids() {
 	done
 }
 
-__check_video() {
+__check_video_codecs() {
 	if use pgo && has_version "media-video/ffmpeg" ; then
 		if ! has_version "media-video/ffmpeg[libaom]" ; then
 			ewarn "You need to emerge ffmpeg with libaom for pgo training."
@@ -193,12 +193,18 @@ __check_video() {
 		if ! ( ffmpeg -formats 2>&1 | grep -q -e "E.*webm .*WebM" ) ; then
 			ewarn "Missing WebM support from ffmpeg for PGO training"
 		fi
+	fi
+}
+
+__check_video() {
+	if use pgo && has_version "media-video/ffmpeg" ; then
 		if [[ -z "${video_asset_path}" ]] ; then
 eerror
-eerror "${id} is missing the abspath to your av1 video as a"
-eerror "per-package envvar.  The video must be 3840x2160 resolution,"
-eerror "60fps, >= 3 seconds."
+eerror "${id} is missing the absolute path to your av1 video as a per-package"
+eerror "environment variable."
 eerror
+#eerror "The video must be 3840x2160 resolution, 60fps, >= 3 seconds."
+#eerror
 			die
 		else
 			einfo "${id}=${video_asset_path}"
@@ -208,14 +214,14 @@ eerror
 			if false && ! ( ffprobe "${video_asset_path}" 2>&1 \
 				| grep -q -e "3840x2160" ) ; then
 eerror
-eerror "The PGO video sample must be 3840x2160."
+eerror "The PGO video sample must be 3840x2160 for ${id}."
 eerror
 				die
 			fi
 			if false && ! ( ffprobe "${video_asset_path}" 2>&1 \
 				| grep -q -E -e ", (59|60)[.0-9]* fps" ) ; then
 eerror
-eerror "The PGO video sample must be >=59 fps."
+eerror "The PGO video sample must be >=59 fps for ${id}."
 eerror
 				die
 			fi
@@ -234,7 +240,7 @@ eerror
 			local t=$((${h} + ${m} + ${s}))
 			if (( ${t} < 3 )) ; then
 eerror
-eerror "The PGO video sample must be >= 3 seconds."
+eerror "The PGO video sample must be >= 3 seconds for ${id}."
 eerror
 				die
 			fi
@@ -248,6 +254,7 @@ eerror
 }
 
 check_video() {
+	__check_video_codecs
 	local id
 	for id in $(get_asset_ids) ; do
 		local video_asset_path="${!id}"
