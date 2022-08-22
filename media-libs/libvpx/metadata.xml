@@ -49,6 +49,9 @@
          see below for details.
     (5) Re-emerge this package with the pgo USE flag enabled.
 
+    The LIBVPX_ASSET_LIMIT can be use to lift the asset limits for PGO
+    training.  Currently it is set at 100.
+
     A user may supply a custom.sh via a per-package patch to set up multiple
     encoding settings which may include threading or tiling configurations
     or favorite quality setting.  See the ebuild for the FFmpeg template

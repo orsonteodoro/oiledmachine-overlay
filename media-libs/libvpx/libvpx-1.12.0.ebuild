@@ -191,7 +191,7 @@ get_asset_ids() {
 	done
 }
 
-__check_video() {
+__check_video_codec() {
 	if use pgo && has_version "media-video/ffmpeg" ; then
 		if ! has_version "media-video/ffmpeg[vpx]" ; then
 			ewarn "You need to emerge ffmpeg with vpx for pgo training."
@@ -201,6 +201,11 @@ __check_video() {
 		if ! ( ffmpeg -formats 2>&1 | grep -q -e "E.*webm .*WebM" ) ; then
 			ewarn "Missing WebM support from ffmpeg"
 		fi
+	fi
+}
+
+__check_video() {
+	if use pgo && has_version "media-video/ffmpeg" ; then
 		if [[ -z "${libvpx_asset_path}" ]] ; then
 eerror
 eerror "${id} is missing the abspath to your vp8/vp9 video as a"
@@ -254,7 +259,8 @@ eerror
 }
 
 __pgo_setup() {
-	export LIBVPX_PGO_VIDEO=${LIBVPX_PGO_VIDEO:-100}
+	export LIBVPX_ASSET_LIMIT=${LIBVPX_ASSET_LIMIT:-100}
+	__check_video_codec
 	local id
 	for id in $(get_asset_ids) ; do
 		local libvpx_asset_path="${!id}"
@@ -292,11 +298,8 @@ get_multiabi_ffmpeg() {
 
 has_ffmpeg() {
 	local x=$(get_multiabi_ffmpeg)
-	if [[ -n "${x}" && -e "${x}" ]] ; then
-		return 0
-	else
-		return 1
-	fi
+	[[ -n "${x}" && -e "${x}" ]] && return 0
+	return 1
 }
 
 has_codec_requirements() {
@@ -313,11 +316,8 @@ has_codec_requirements() {
 }
 
 tpgo_meets_requirements() {
-	if has_ffmpeg && has_codec_requirements ; then
-		return 0
-	else
-		return 1
-	fi
+	has_ffmpeg && has_codec_requirements && return 0
+	return 1
 }
 
 # The order does matter in PGO.
@@ -656,8 +656,7 @@ _trainer_plan_constrained_quality() {
 		die "Unrecognized implementation of vpx"
 	fi
 
-	if use pgo \
-		&& tpgo_meets_requirements ; then
+	if use pgo && tpgo_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
 			local libvpx_asset_path="${!id}"
@@ -782,8 +781,7 @@ _trainer_plan_2_pass_constrained_quality() {
 		die "Unrecognized implementation of vpx"
 	fi
 
-	if use pgo \
-		&& tpgo_meets_requirements ; then
+	if use pgo && tpgo_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
 			local libvpx_asset_path="${!id}"
@@ -1004,8 +1002,7 @@ _trainer_plan_lossless() {
 		die "Unrecognized implementation of vpx"
 	fi
 
-	if use pgo \
-		&& tpgo_meets_requirements ; then
+	if use pgo && tpgo_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
 			local libvpx_asset_path="${!id}"
