@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-inherit flag-o-matic llvm toolchain-funcs multilib-minimal
+inherit flag-o-matic llvm multilib-minimal toolchain-funcs tpgo
 
 # To create a new testdata tarball:
 # 1. Unpack source tarball or checkout git tag
@@ -184,7 +184,7 @@ PATCHES=(
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
 
-pkg_setup() {
+__pgo_setup() {
 	if use pgo && has_version "media-video/ffmpeg" ; then
 		if ! has_version "media-video/ffmpeg[vpx]" ; then
 			ewarn "You need to emerge ffmpeg with vpx for pgo training."
@@ -244,7 +244,12 @@ eerror "the proper codec is supported for that file"
 eerror
 		fi
 	fi
+}
+
+pkg_setup() {
+	__pgo_setup
 	llvm_pkg_setup
+	tpgo_setup
 }
 
 get_abi_use() {
@@ -291,7 +296,7 @@ has_codec_requirements() {
 	return 1
 }
 
-has_pgo_requirement() {
+tpgo_meets_requirements() {
 	if has_ffmpeg && has_codec_requirements ; then
 		return 0
 	else
@@ -299,6 +304,9 @@ has_pgo_requirement() {
 	fi
 }
 
+# The order does matter in PGO.
+# Since we cannot combine a static library with the encoder app during PGO
+# training, we have to reuse the shared PGO profile.
 get_lib_types() {
 	echo "shared"
 	use static-libs && echo "static"
@@ -377,7 +385,7 @@ is_cfi_supported() {
 	return 1
 }
 
-configure_pgx() {
+_src_configure() {
 	[[ -f Makefile ]] && emake clean
 	unset CODECS #357487
 
@@ -427,31 +435,7 @@ configure_pgx() {
 	fi
 
 	autofix_flags
-
-	export FFMPEG=$(get_multiabi_ffmpeg)
-	local pgo_data_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-	mkdir -p "${pgo_data_dir}" || die
-	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
-		&& has_pgo_requirement ; then
-		einfo "Setting up PGI"
-		if tc-is-clang ; then
-			append-flags -fprofile-generate="${pgo_data_dir}"
-			append-ldflags -fprofile-generate="${pgo_data_dir}"
-		else
-			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
-		fi
-	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] \
-		&& has_pgo_requirement ; then
-		einfo "Setting up PGO"
-		if tc-is-clang ; then
-			llvm-profdata merge -output="${pgo_data_dir}/pgo-custom.profdata" \
-				"${pgo_data_dir}" || die
-			append-flags -fprofile-use="${pgo_data_dir}/pgo-custom.profdata"
-			append-ldflags -fprofile-use="${pgo_data_dir}/pgo-custom.profdata"
-		else
-			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${pgo_data_dir}"
-		fi
-	fi
+	tpgo_src_configure
 
 	# #498364: sse doesn't work without sse2 enabled,
 	local myconfargs=(
@@ -587,7 +571,7 @@ configure_pgx() {
 		myconfargs+=( --disable-examples --disable-install-docs --disable-docs )
 	fi
 
-	if use pgo && has_pgo_requirement && tc-is-gcc && [[ "${PGO_PHASE}" == "pgi" ]] ; then
+	if use pgo && tpgo_meets_requirements && tc-is-gcc && [[ "${PGO_PHASE}" == "pgi" ]] ; then
 		myconfargs+=( --enable-gcov )
 	fi
 
@@ -603,6 +587,10 @@ configure_pgx() {
 
 	echo "${S}"/configure "${myconfargs[@]}" >&2
 	"${S}"/configure "${myconfargs[@]}"
+}
+
+_src_pre_train() {
+	export FFMPEG=$(get_multiabi_ffmpeg)
 }
 
 _vdecode() {
@@ -653,7 +641,7 @@ _trainer_plan_constrained_quality() {
 	fi
 
 	if use pgo \
-		&& has_pgo_requirement ; then
+		&& tpgo_meets_requirements ; then
 		einfo "Running PGO trainer for ${encoding_codec} for 1 pass constrained quality"
 		local cmd
 		einfo "Encoding as 720p for 3 sec, 30 fps"
@@ -775,7 +763,7 @@ _trainer_plan_2_pass_constrained_quality() {
 	fi
 
 	if use pgo \
-		&& has_pgo_requirement ; then
+		&& tpgo_meets_requirements ; then
 		einfo "Running PGO trainer for ${encoding_codec} for 2 pass constrained quality"
 		local cmd
 		einfo "Encoding as 720p for 3 sec, 30 fps"
@@ -993,7 +981,7 @@ _trainer_plan_lossless() {
 	fi
 
 	if use pgo \
-		&& has_pgo_requirement ; then
+		&& tpgo_meets_requirements ; then
 		einfo "Running PGO trainer for ${encoding_codec} for lossless"
 		einfo "Encoding for lossless"
 		local cmd
@@ -1013,7 +1001,8 @@ _trainer_plan_lossless() {
 	fi
 }
 
-run_trainer() {
+tpgo_train_custom() {
+	[[ "${lib_type}" == "static" ]] || return # Reuse the shared PGO profile
 	if use pgo-trainer-constrained-quality ; then
 		_trainer_plan_constrained_quality "libvpx"
 		_trainer_plan_constrained_quality "libvpx-vp9"
@@ -1032,11 +1021,15 @@ run_trainer() {
 	fi
 }
 
-compile_pgx() {
+_src_compile() {
 	# build verbose by default and do not build examples that will not be installed
 	# disable stripping of debug info, bug #752057
 	# (only works as long as upstream does not use non-gnu strip)
 	emake verbose=yes GEN_EXAMPLES= HAVE_GNU_STRIP=no
+}
+
+_src_post_pgo() {
+	export PGO_RAN=1
 }
 
 src_compile() {
@@ -1046,31 +1039,7 @@ src_compile() {
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
-			if use pgo \
-				&& has_pgo_requirement ; then
-				if [[ "${lib_type}" == "shared" ]] ; then
-					PGO_PHASE="pgi"
-					configure_pgx
-					compile_pgx
-					run_trainer
-				fi
-				local pgo_data_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-				if (( $(find "${pgo_data_dir}" 2>/dev/null | wc -l) > 0 )) ; then
-					PGO_PHASE="pgo"
-					[[ "${lib_type}" == "static" ]] \
-						&& ewarn "Reusing PGO data from shared-libs"
-				else
-					ewarn "No PGO data found.  Skipping PGO build and building normally."
-					unset PGO_PHASE
-				fi
-				configure_pgx
-				compile_pgx
-				export PGO_RAN=1
-			else
-				ewarn "Not using PGO for ${ABI}"
-				configure_pgx
-				compile_pgx
-			fi
+			tpgo_src_compile
 		done
 	}
 	multilib_foreach_abi compile_abi
