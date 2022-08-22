@@ -19,6 +19,8 @@
 # If the package doesn't contain benchmarks, demos, examples or has
 # hours build times use the epgo eclass instead.
 #
+# If the app uses a GUI but doesn't require X but wayland, use the epgo eclass
+# instead.
 
 # The current EAPI is not designed for traditional 3 step PGO.
 # Certain things should be disabled or be changed in order for it to work
@@ -90,7 +92,14 @@
 # Reason why is because multibuild and derivatives are broken by design.
 # It is trying to cover up the n^k design (aka antipattern).
 
-inherit flag-o-matic toolchain-funcs virtualx
+# @ECLASS_VARIABLE: TPGO_USE_X
+# @DESCRIPTION:
+# Runs GUI in X.  You can use console apps in this also.
+
+inherit flag-o-matic toolchain-funcs
+if [[ "${TPGO_USE_X}" == "1" ]] ;then
+	inherit virtualx
+fi
 if [[ "${TPGO_MULTILIB}" == "1" ]] ; then
 	inherit multilib-build
 fi
@@ -315,14 +324,20 @@ ps -p \${pid} 2>/dev/null 1>/dev/null \
 true
 EOF
 	chmod +x "run.sh" || die
-	virtx ./run.sh
-	rm run.sh || die
-	if grep -q -r -e "cannot connect to X server" "${T}/build.log" ; then
+	if [[ "${TPGO_USE_X}" == "1" ]] ; then
+		virtx ./run.sh
+
+		if grep -q -r -e "cannot connect to X server" \
+			"${T}/build.log" ; then
 eerror
-eerror "Detected cannot connect to X server."
+eerror "Detected cannot connect to the X server."
 eerror
-		die
+			die
+		fi
+	else
+		./run.sh
 	fi
+	rm run.sh || die
 }
 
 # @FUNCTION: _tpgo_train_default

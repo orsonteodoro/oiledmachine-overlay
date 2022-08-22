@@ -8,7 +8,8 @@
 # @BLURB: EPGO
 # @DESCRIPTION:
 # This ebuild is to perform a PGO step on every point release.
-# It exist to reduce the time cost.
+# It exist to reduce the time cost.  Wayland only apps should use this
+# instead of the tpgo eclass.
 
 # It is preferred to have this as a bashrc.  Due to a lack of ABI bashrc hooks
 # in multilib_src_configure or any derivative of multibuild*, it must be done in
