@@ -52,7 +52,7 @@ MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 
 inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info \
-	llvm multiprocessing pax-utils python-any-r1 toolchain-funcs \
+	lcnr llvm multiprocessing pax-utils python-any-r1 toolchain-funcs \
 	virtualx xdg
 inherit multilib-minimal rust-toolchain
 
@@ -1378,123 +1378,64 @@ multilib_src_compile() {
 		|| die
 }
 
-_install_header_license() {
-	local dir_path=$(dirname "${1}")
-	local file_name=$(basename "${1}")
-	local license_name="${2}"
-	local length="${3}"
-	d="${dir_path}"
-	dl="licenses/${d}"
-	docinto "${dl}"
-	mkdir -p "${T}/${dl}" || die
-	head -n ${length} "${S}/${d}/${file_name}" > \
-		"${T}/${dl}/${license_name}" || die
-	dodoc "${T}/${dl}/${license_name}"
-}
-
-_install_header_license_mid() {
-	local dir_path=$(dirname "${1}")
-	local file_name=$(basename "${1}")
-	local license_name="${2}"
-	local start="${3}"
-	local length="${4}"
-	d="${dir_path}"
-	dl="licenses/${d}"
-	docinto "${dl}"
-	mkdir -p "${T}/${dl}" || die
-	tail -n +${start} "${S}/${d}/${file_name}" \
-		| head -n ${length} > \
-		"${T}/${dl}/${license_name}" || die
-	dodoc "${T}/${dl}/${license_name}"
-}
-
 # @FUNCTION: _install_licenses
 # @DESCRIPTION:
 # Installs licenses and copyright notices from third party rust cargo
 # packages and other internal packages.
 _install_licenses() {
-	[[ -f "${T}/.copied_licenses" ]] && return
+	lcnr_install_files
 
-	einfo "Copying third party licenses and copyright notices"
-	export IFS=$'\n'
-	for f in $(find "${S}" \
-	  -iname "*licens*" -type f \
-	  -o -iname "*licenc*" \
-	  -o -iname "*copyright*" \
-	  -o -iname "*copying*" \
-	  -o -iname "*patent*" \
-	  -o -iname "ofl.txt" \
-	  -o -iname "*notice*" \
-	  -o -iname "*author*" \
-	  -o -iname "*CONTRIBUTORS*" \
-	  ) $(grep -i -G -l \
-		-e "copyright" \
-		-e "licens" \
-		-e "licenc" \
-		-e "warrant" \
-		$(find "${S}" -iname "*readme*")) ; \
-	do
-		if [[ -f "${f}" ]] ; then
-			d=$(dirname "${f}" | sed -e "s|^${S}||")
-		else
-			d=$(echo "${f}" | sed -e "s|^${S}||")
-		fi
-		docinto "licenses/${d}"
-		dodoc -r "${f}"
-	done
-	export IFS=$' \t\n'
-
-	_install_header_license \
+	lcnr_install_header \
 		"modules/fdlibm/src/math_private.h" \
 		"SunPro.LICENSE" \
 		10
-	_install_header_license \
+	lcnr_install_header \
 		"js/src/tests/test262/built-ins/RegExp/S15.10.2_A1_T1.js" \
 		"S15.10.2_A1_T1.js.LICENSE" \
 		17
-	_install_header_license \
+	lcnr_install_header \
 		"testing/web-platform/tests/css/tools/w3ctestlib/catalog/xhtml11.dtd" \
 		"xhtml11.dtd.LICENSE" \
 		27
 
 	# Duped because of must not alter clause
-	_install_header_license \
+	lcnr_install_header \
 		"gfx/sfntly/cpp/src/test/tinyxml/tinyxml.cpp" \
 		"tinyxml.LICENSE1" \
 		23
-	_install_header_license \
+	lcnr_install_header \
 		"gfx/sfntly/cpp/src/test/tinyxml/tinyxmlerror.cpp" \
 		"tinyxml.LICENSE2" \
 		23
-	_install_header_license \
+	lcnr_install_header \
 		"gfx/sfntly/cpp/src/test/tinyxml/tinyxml.h" \
 		"tinyxml.LICENSE3" \
 		23
-	_install_header_license \
+	lcnr_install_header \
 		"gfx/sfntly/cpp/src/test/tinyxml/tinystr.cpp" \
 		"tinyxml.LICENSE4" \
 		22
 
-	_install_header_license \
+	lcnr_install_header \
 		"third_party/msgpack/include/msgpack/predef/compiler/ibm.h" \
 		"ibm.h.copyright_notice" \
 		6
 
-	_install_header_license \
+	lcnr_install_header \
 		"media/ffvpx/libavutil/adler32.c" \
 		"adler32.c.LICENSE" \
 		22
 
-	_install_header_license \
+	lcnr_install_header \
 		"js/src/octane/box2d.js" \
 		"box2d.LICENSE" \
 		19
 
-	_install_header_license \
+	lcnr_install_header \
 		"devtools/client/shared/vendor/jszip.js" \
 		"jszip.js.LICENSE1" \
 		11
-	_install_header_license_mid \
+	lcnr_install_mid \
 		"devtools/client/shared/vendor/jszip.js" \
 		"jszip.js.LICENSE2" \
 		5689 \
@@ -1503,33 +1444,33 @@ _install_licenses() {
 	# Duped because of must not alter clause
 	for f in $(grep -r -l -F -e "origin of this software" \
 		media/libjpeg) ; do
-		_install_header_license \
+		lcnr_install_header \
 			$(echo "${f}" | sed -e "s|^./||g") \
 			$(basename "${f}")".LICENSE" \
 			32
 	done
 
-	_install_header_license \
+	lcnr_install_header \
 		"mfbt/Span.h" \
 		"Span.h.LICENSE" \
 		15
 
-	_install_header_license \
+	lcnr_install_header \
 		"media/openmax_dl/dl/api/omxtypes.h" \
 		"omxtypes.h.LICENSE" \
 		31
 
-	_install_header_license \
+	lcnr_install_header \
 		"devtools/client/shared/widgets/CubicBezierWidget.js" \
 		"CubicBezierWidget.js.LICENSE" \
 		21
 
-	_install_header_license \
+	lcnr_install_header \
 		"netwerk/dns/nsIDNKitInterface.h" \
 		"nsIDNKitInterface.h.LICENSE" \
 		41
 
-	_install_header_license \
+	lcnr_install_header \
 		"gfx/qcms/qcms.h" \
 		"qcms.h.LICENSE" \
 		41

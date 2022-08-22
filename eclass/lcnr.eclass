@@ -37,13 +37,17 @@ lcnr_install_header() {
 	local license_name="${2}"
 	local length="${3}"
 einfo "Copying header copyright notice: file=${1}, length=${length}"
-	d="${dir_path}"
-	dl="licenses/${d}"
-	docinto "${dl}"
-	mkdir -p "${T}/${dl}" || die
-	head -n ${length} "${S}/${d}/${file_name}" > \
-		"${T}/${dl}/${license_name}" || die
-	dodoc "${T}/${dl}/${license_name}"
+	local d="${dir_path}"
+	local dl="licenses/${d}"
+	if [[ -e "${LCNR_SOURCE}/${d}/${file_name}" ]] ; then
+		docinto "${dl}"
+		mkdir -p "${T}/${dl}" || die
+		head -n ${length} "${LCNR_SOURCE}/${d}/${file_name}" > \
+			"${T}/${dl}/${license_name}" || die
+		dodoc "${T}/${dl}/${license_name}"
+	else
+ewarn "QA:  ${LCNR_SOURCE}/${d}/${file_name} is missing"
+	fi
 }
 
 # @FUNCTION: lcnr_get_mid
@@ -56,14 +60,18 @@ lcnr_install_mid() {
 	local start="${3}"
 	local length="${4}"
 einfo "Copying middle copyright notice: file=${1}, start=${start}, length=${length}"
-	d="${dir_path}"
-	dl="licenses/${d}"
-	docinto "${dl}"
-	mkdir -p "${T}/${dl}" || die
-	tail -n +${start} "${S}/${d}/${file_name}" \
-		| head -n ${length} > \
-		"${T}/${dl}/${license_name}" || die
-	dodoc "${T}/${dl}/${license_name}"
+	local d="${dir_path}"
+	local dl="licenses/${d}"
+	if [[ -e "${LCNR_SOURCE}/${d}/${file_name}" ]] ; then
+		docinto "${dl}"
+		mkdir -p "${T}/${dl}" || die
+		tail -n +${start} "${LCNR_SOURCE}/${d}/${file_name}" \
+			| head -n ${length} > \
+			"${T}/${dl}/${license_name}" || die
+		dodoc "${T}/${dl}/${license_name}"
+	else
+ewarn "QA:  ${LCNR_SOURCE}/${d}/${file_name} is missing"
+	fi
 }
 
 # @FUNCTION: lcnr_install_files
@@ -80,6 +88,7 @@ einfo
 einfo "Copying third party licenses and copyright notices"
 einfo
 	export IFS=$'\n'
+	local f
 	for f in $(find "${LCNR_SOURCE}" \
 		-iname "*licen*" \
 		-o -iname "*copyright*" \
@@ -93,8 +102,9 @@ einfo
 		-e "copyright" \
 		-e "licen" \
 		-e "warrant" \
-		$(find "${S}" -iname "*readme*")) ; \
+		$(find "${LCNR_SOURCE}" -iname "*readme*")) ; \
 	do
+		local d
 		if [[ -f "${f}" ]] ; then
 			d=$(dirname "${f}" | sed -e "s|^${S}||")
 		else
@@ -124,6 +134,7 @@ einfo
 einfo "Copying readmes"
 einfo
 	export IFS=$'\n'
+	local f
 	for f in $(find "${LCNR_SOURCE}" \
 		-iname "*.pdf" \
 		-o -iname "*bug*report*.md" \
@@ -142,6 +153,7 @@ einfo
 		-o -ipath "*/docs/*" \
 	) ; \
 	do
+		local d
 		if [[ -f "${f}" ]] ; then
 			d=$(dirname "${f}" | sed -e "s|^${S}||")
 		else
