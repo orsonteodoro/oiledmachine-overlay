@@ -644,25 +644,53 @@ build_separate_libffmpeg() {
 	use opencl
 }
 
-pgo_check_video() {
-	if [[ -z "${FFMPEG_PGO_VIDEO}" ]] ; then
+gen_video_sample_identifiers() {
+	local types=(
+		VIDEO_FANTASY
+		VIDEO_REALISM
+	)
+	local t
+	for t in ${types[@]} ; do
+		for i in $(seq 0 ${MAX_ASSETS_PER_TYPE}) ; do
+			echo "FFMPEG_PGO_${t}_${i}"
+		done
+	done
+}
+
+gen_audio_sample_identifiers() {
+	local types=(
+		VOICE
+		RADIO
+		MUSIC_INSTRUMENTAL
+		VOCAL_MUSIC
+	)
+	local t
+	for t in ${types[@]} ; do
+		for i in $(seq 0 ${MAX_ASSETS_PER_TYPE}) ; do
+			echo "FFMPEG_PGO_AUDIO_${t}_${i}"
+		done
+	done
+}
+
+_pgo_check_video() {
+	if [[ -z "${video_sample_path}" ]] ; then
 eerror
-eerror "FFMPEG_PGO_VIDEO is missing the abspath to your video as a"
-eerror "per-package envvar.  The video must be 3840x2160 resolution,"
-eerror "60fps, >= 3 seconds."
+eerror "${id} is missing the abspath to your video as a per-package envvar."
 eerror
+#eerror "The video must be 3840x2160 resolution, 60fps, >= 3 seconds."
+#eerror
 		die
 	fi
-	if ffprobe "${FFMPEG_PGO_VIDEO}" 2>/dev/null 1>/dev/null ; then
+	if ffprobe "${video_sample_path}" 2>/dev/null 1>/dev/null ; then
 		einfo "Verifying asset requirements"
-		if ! ( ffprobe "${FFMPEG_PGO_VIDEO}" 2>&1 \
+		if false && ! ( ffprobe "${video_sample_path}" 2>&1 \
 			| grep -q -e "3840x2160" ) ; then
 eerror
 eerror "The PGO video sample must be 3840x2160."
 eerror
 			die
 		fi
-		if ! ( ffprobe "${FFMPEG_PGO_VIDEO}" 2>&1 \
+		if false && ! ( ffprobe "${video_sample_path}" 2>&1 \
 			| grep -q -E -e ", (59|60)[.0-9]* fps" ) ; then
 eerror
 eerror "The PGO video sample must be >=59 fps."
@@ -670,7 +698,7 @@ eerror
 			die
 		fi
 
-		local d=$(ffprobe "${FFMPEG_PGO_VIDEO}" 2>&1 \
+		local d=$(ffprobe "${video_sample_path}" 2>&1 \
 			| grep -E -e "Duration" \
 			| cut -f 4 -d " " \
 			| sed -e "s|,||g" \
@@ -688,78 +716,47 @@ eerror "The PGO video sample must be >= 3 seconds."
 eerror
 			die
 		else
-einfo "${FFMPEG_PGO_VIDEO} is accepted as a PGO trainer asset."
+einfo "${video_sample_path} is accepted as a PGO trainer asset."
 		fi
 	else
 eerror
-eerror "${FFMPEG_PGO_VIDEO} is possibly not a valid video file.  Ensure that"
+eerror "${video_sample_path} is possibly not a valid video file.  Ensure that"
 eerror "the proper codec is supported for that file in ${PN}."
 eerror
 	fi
 }
 
-AUDIO_SAMPLES_SUFFIX=(
-	VOICE_00
-	VOICE_01
-	VOICE_02
-	VOICE_03
-	VOICE_04
-	VOICE_05
-	VOICE_06
-	VOICE_07
-	VOICE_08
-	VOICE_09
-	VOICE_10
-	RADIO_00
-	RADIO_01
-	RADIO_02
-	RADIO_03
-	RADIO_04
-	RADIO_05
-	RADIO_06
-	RADIO_07
-	RADIO_08
-	RADIO_09
-	RADIO_10
-	MUSIC_INSTRUMENTAL_00
-	MUSIC_INSTRUMENTAL_01
-	MUSIC_INSTRUMENTAL_02
-	MUSIC_INSTRUMENTAL_03
-	MUSIC_INSTRUMENTAL_04
-	MUSIC_INSTRUMENTAL_05
-	MUSIC_INSTRUMENTAL_06
-	MUSIC_INSTRUMENTAL_07
-	MUSIC_INSTRUMENTAL_08
-	MUSIC_INSTRUMENTAL_09
-	MUSIC_INSTRUMENTAL_10
-	VOCAL_MUSIC_00
-	VOCAL_MUSIC_01
-	VOCAL_MUSIC_02
-	VOCAL_MUSIC_03
-	VOCAL_MUSIC_04
-	VOCAL_MUSIC_05
-	VOCAL_MUSIC_06
-	VOCAL_MUSIC_07
-	VOCAL_MUSIC_08
-	VOCAL_MUSIC_09
-	VOCAL_MUSIC_10
-)
+pgo_check_video() {
+	local id
+	for id in $(gen_video_sample_identifiers) ; do
+		local video_sample_path="${!id}"
+		if [[ -z "${video_sample_path}" ]] ; then
+			ewarn "Skipping ${id}."
+			continue
+		fi
+		if [[ ! -f "${video_sample_path}" ]] ; then
+			ewarn "Skipping ${id} asset with no asset located at ${video_sample_path}."
+			continue
+		fi
+		_pgo_check_video
+	done
+}
 
 pgo_check_audio() {
-	for s in ${AUDIO_SAMPLES_SUFFIX[@]} ; do
-		local t="FFMPEG_PGO_AUDIO_${s}"
-		local audio_sample="${!t}"
-		if [[ -z "${audio_sample}" ]] ; then
-			ewarn "Skipping ${t}."
+	local id
+	for id in $(gen_audio_sample_identifiers) ; do
+		local audio_sample_path="${!id}"
+		if [[ -z "${audio_sample_path}" ]] ; then
+			ewarn "Skipping ${id}."
 			continue
 		fi
-		if [[ ! -f "${audio_sample}" ]] ; then
-			ewarn "Skipping ${t} asset with no asset located at ${audio_sample}."
+		if [[ ! -f "${audio_sample_path}" ]] ; then
+			ewarn "Skipping ${id} asset with no asset located at ${audio_sample_path}."
 			continue
 		fi
-		if ffprobe "${audio_sample}" 2>/dev/null 1>/dev/null ; then
+		if ffprobe "${audio_sample_path}" 2>/dev/null 1>/dev/null ; then
 			einfo "Verifying asset requirements"
-			local d=$(ffprobe "${audio_sample}" 2>&1 \
+			local d=$(ffprobe "${audio_sample_path}" 2>&1 \
 				| grep -E -e "Duration" \
 				| cut -f 4 -d " " \
 				| sed -e "s|,||g" \
@@ -777,10 +774,10 @@ eerror "The PGO audio sample must be >= 30 seconds."
 eerror
 				die
 			fi
-einfo "${audio_sample} is accepted as a PGO trainer asset."
+einfo "${audio_sample_path} is accepted as a PGO trainer asset."
 		else
 eerror
-eerror "${t} is possibly not a valid audio file.  Ensure that"
+eerror "${id} is possibly not a valid audio file.  Ensure that"
 eerror "the proper codec is supported for that file in ${PN}."
 eerror
 		fi
@@ -788,6 +785,7 @@ eerror
 }
 
 pkg_setup() {
+	MAX_ASSETS_PER_TYPE=${MAX_ASSETS_PER_TYPE:-100} # You must update gen_autosample_suffix
 	if use pgo && has_version "media-video/ffmpeg" ; then
 		ewarn "The PGO use flag is a Work In Progress (WIP)"
 		if [[ -n "${FFMPEG_PGO_VIDEO_CODECS}" ]] ; then
@@ -878,17 +876,17 @@ has_ffmpeg() {
 }
 
 has_codec_requirement() {
-	codecs_found=1
-	for s in ${AUDIO_SAMPLES_SUFFIX[@]} ; do
-		local t="FFMPEG_PGO_AUDIO_${s}"
-		local audio_sample="${!t}"
-		if [[ -z "${audio_sample}" ]] ; then
+	local codecs_found=1
+	local id
+	for id in $(gen_audio_sample_identifiers) ; do
+		local audio_sample_path="${!id}"
+		if [[ -z "${audio_sample_path}" ]] ; then
 			continue
 		fi
-		if [[ ! -f "${audio_sample}" ]] ; then
+		if [[ ! -f "${audio_sample_path}" ]] ; then
 			continue
 		fi
-		if ffprobe "${audio_sample}" 2>/dev/null 1>/dev/null ; then
+		if ffprobe "${audio_sample_path}" 2>/dev/null 1>/dev/null ; then
 			codecs_found=0
 		fi
 	done
@@ -1371,109 +1369,113 @@ _trainer_plan_video_constrained_quality() {
 
 	if use pgo \
 		&& tpgo_meets_requirements ; then
-		einfo "Running PGO trainer for ${encoding_codec} for 1 pass constrained quality"
-		local cmd
-		einfo "Encoding as 720p for 3 sec, 30 fps"
-		cmd=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 1485k -minrate 512k -b:v 1024k \
-			-vf scale=w=-1:h=720 \
-			${training_args} \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.${extension}" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd[@]}" || die
-		_vdecode "720p, 30 fps"
+		local id
+		for id in $(gen_video_sample_identifiers) ; do
+			local video_sample_path="${!id}"
+			einfo "Running PGO trainer for ${encoding_codec} for 1 pass constrained quality"
+			local cmd
+			einfo "Encoding as 720p for 3 sec, 30 fps"
+			cmd=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 1485k -minrate 512k -b:v 1024k \
+				-vf scale=w=-1:h=720 \
+				${training_args} \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.${extension}" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd[@]}" || die
+			_vdecode "720p, 30 fps"
 
-		einfo "Encoding as 720p for 3 sec, 60 fps"
-		cmd=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=720 \
-			${training_args} \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.${extension}" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd[@]}" || die
-		_vdecode "720p, 60 fps"
+			einfo "Encoding as 720p for 3 sec, 60 fps"
+			cmd=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=720 \
+				${training_args} \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.${extension}" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd[@]}" || die
+			_vdecode "720p, 60 fps"
 
-		einfo "Encoding as 1080p for 3 sec, 30 fps"
-		cmd=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=1080 \
-			${training_args} \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.${extension}" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd[@]}" || die
-		_vdecode "1080p, 30 fps"
+			einfo "Encoding as 1080p for 3 sec, 30 fps"
+			cmd=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=1080 \
+				${training_args} \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.${extension}" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd[@]}" || die
+			_vdecode "1080p, 30 fps"
 
-		einfo "Encoding as 1080p for 3 sec, 60 fps"
-		cmd=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 4350k -minrate 1500k -b:v 3000k \
-			-vf scale=w=-1:h=1080 \
-			${training_args} \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.${extension}" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd[@]}" || die
-		_vdecode "1080p, 60 fps"
+			einfo "Encoding as 1080p for 3 sec, 60 fps"
+			cmd=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 4350k -minrate 1500k -b:v 3000k \
+				-vf scale=w=-1:h=1080 \
+				${training_args} \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.${extension}" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd[@]}" || die
+			_vdecode "1080p, 60 fps"
 
-		einfo "Encoding as 4k for 3 sec, 30 fps"
-		cmd=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 17400k -minrate 6000k -b:v 12000k \
-			-vf scale=w=-1:h=2160 \
-			${training_args} \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.${extension}" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd[@]}" || die
-		_vdecode "4k, 30 fps"
+			einfo "Encoding as 4k for 3 sec, 30 fps"
+			cmd=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 17400k -minrate 6000k -b:v 12000k \
+				-vf scale=w=-1:h=2160 \
+				${training_args} \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.${extension}" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd[@]}" || die
+			_vdecode "4k, 30 fps"
 
-		einfo "Encoding as 4k for 3 sec, 60 fps"
-		cmd=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 26100k -minrate 9000k -b:v 18000k \
-			-vf scale=w=-1:h=2160 \
-			${training_args} \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.${extension}" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd[@]}" || die
-		_vdecode "4k, 60 fps"
+			einfo "Encoding as 4k for 3 sec, 60 fps"
+			cmd=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 26100k -minrate 9000k -b:v 18000k \
+				-vf scale=w=-1:h=2160 \
+				${training_args} \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.${extension}" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd[@]}" || die
+			_vdecode "4k, 60 fps"
+		done
 	fi
 }
 
@@ -1492,205 +1494,209 @@ _trainer_plan_video_2_pass_constrained_quality() {
 
 	if use pgo \
 		&& tpgo_meets_requirements ; then
-		einfo "Running PGO trainer for ${encoding_codec} for 2 pass constrained quality"
-		local cmd
-		einfo "Encoding as 720p for 3 sec, 30 fps"
-		cmd1=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 1485k -minrate 512k -b:v 1024k \
-			-vf scale=w=-1:h=720 \
-			${training_args} \
-			-pass 1 \
-			-an \
-			-r 30 \
-			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 1485k -minrate 512k -b:v 1024k \
-			-vf scale=w=-1:h=720 \
-			${training_args} \
-			-pass 2 \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.${extension}" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd2[@]}" || die
-		_vdecode "720p, 30 fps"
+		local id
+		for id in $(gen_video_sample_identifiers) ; do
+			local video_sample_path="${!id}"
+			einfo "Running PGO trainer for ${encoding_codec} for 2 pass constrained quality"
+			local cmd
+			einfo "Encoding as 720p for 3 sec, 30 fps"
+			cmd1=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 1485k -minrate 512k -b:v 1024k \
+				-vf scale=w=-1:h=720 \
+				${training_args} \
+				-pass 1 \
+				-an \
+				-r 30 \
+				-t 3 \
+				-f null /dev/null )
+			cmd2=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 1485k -minrate 512k -b:v 1024k \
+				-vf scale=w=-1:h=720 \
+				${training_args} \
+				-pass 2 \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.${extension}" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd1[@]}" || die
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd2[@]}" || die
+			_vdecode "720p, 30 fps"
 
-		einfo "Encoding as 720p for 3 sec, 60 fps"
-		cmd1=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=720 \
-			${training_args} \
-			-pass 1 \
-			-an \
-			-r 60 \
-			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=720 \
-			${training_args} \
-			-pass 2 \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.${extension}" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd2[@]}" || die
-		_vdecode "720p, 60 fps"
+			einfo "Encoding as 720p for 3 sec, 60 fps"
+			cmd1=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=720 \
+				${training_args} \
+				-pass 1 \
+				-an \
+				-r 60 \
+				-t 3 \
+				-f null /dev/null )
+			cmd2=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=720 \
+				${training_args} \
+				-pass 2 \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.${extension}" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd1[@]}" || die
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd2[@]}" || die
+			_vdecode "720p, 60 fps"
 
-		einfo "Encoding as 1080p for 3 sec, 30 fps"
-		cmd1=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=1080 \
-			${training_args} \
-			-pass 1 \
-			-an \
-			-r 30 \
-			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=1080 \
-			${training_args} \
-			-pass 2 \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.${extension}" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd2[@]}" || die
-		_vdecode "1080p, 30 fps"
+			einfo "Encoding as 1080p for 3 sec, 30 fps"
+			cmd1=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=1080 \
+				${training_args} \
+				-pass 1 \
+				-an \
+				-r 30 \
+				-t 3 \
+				-f null /dev/null )
+			cmd2=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=1080 \
+				${training_args} \
+				-pass 2 \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.${extension}" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd1[@]}" || die
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd2[@]}" || die
+			_vdecode "1080p, 30 fps"
 
-		einfo "Encoding as 1080p for 3 sec, 60 fps"
-		cmd1=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 4350k -minrate 1500k -b:v 3000k \
-			-vf scale=w=-1:h=1080 \
-			${training_args} \
-			-pass 1 \
-			-an \
-			-r 60 \
-			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 4350k -minrate 1500k -b:v 3000k \
-			-vf scale=w=-1:h=1080 \
-			${training_args} \
-			-pass 2 \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.${extension}" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd2[@]}" || die
-		_vdecode "1080p, 60 fps"
+			einfo "Encoding as 1080p for 3 sec, 60 fps"
+			cmd1=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 4350k -minrate 1500k -b:v 3000k \
+				-vf scale=w=-1:h=1080 \
+				${training_args} \
+				-pass 1 \
+				-an \
+				-r 60 \
+				-t 3 \
+				-f null /dev/null )
+			cmd2=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 4350k -minrate 1500k -b:v 3000k \
+				-vf scale=w=-1:h=1080 \
+				${training_args} \
+				-pass 2 \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.${extension}" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd1[@]}" || die
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd2[@]}" || die
+			_vdecode "1080p, 60 fps"
 
-		einfo "Encoding as 4k for 3 sec, 30 fps"
-		cmd1=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 17400k -minrate 6000k -b:v 12000k \
-			-vf scale=w=-1:h=2160 \
-			${training_args} \
-			-pass 1 \
-			-an \
-			-r 30 \
-			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 17400k -minrate 6000k -b:v 12000k \
-			-vf scale=w=-1:h=2160 \
-			${training_args} \
-			-pass 2 \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.${extension}" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd2[@]}" || die
-		_vdecode "4k, 30 fps"
+			einfo "Encoding as 4k for 3 sec, 30 fps"
+			cmd1=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 17400k -minrate 6000k -b:v 12000k \
+				-vf scale=w=-1:h=2160 \
+				${training_args} \
+				-pass 1 \
+				-an \
+				-r 30 \
+				-t 3 \
+				-f null /dev/null )
+			cmd2=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 17400k -minrate 6000k -b:v 12000k \
+				-vf scale=w=-1:h=2160 \
+				${training_args} \
+				-pass 2 \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.${extension}" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd1[@]}" || die
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd2[@]}" || die
+			_vdecode "4k, 30 fps"
 
-		einfo "Encoding as 4k for 3 sec, 60 fps"
-		cmd1=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 26100k -minrate 9000k -b:v 18000k \
-			-vf scale=w=-1:h=2160 \
-			${training_args} \
-			-pass 1 \
-			-an \
-			-r 60 \
-			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 26100k -minrate 9000k -b:v 18000k \
-			-vf scale=w=-1:h=2160 \
-			${training_args} \
-			-pass 2 \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.${extension}" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd2[@]}" || die
-		_vdecode "4k, 60 fps"
+			einfo "Encoding as 4k for 3 sec, 60 fps"
+			cmd1=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 26100k -minrate 9000k -b:v 18000k \
+				-vf scale=w=-1:h=2160 \
+				${training_args} \
+				-pass 1 \
+				-an \
+				-r 60 \
+				-t 3 \
+				-f null /dev/null )
+			cmd2=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 26100k -minrate 9000k -b:v 18000k \
+				-vf scale=w=-1:h=2160 \
+				${training_args} \
+				-pass 2 \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.${extension}" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd1[@]}" || die
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd2[@]}" || die
+			_vdecode "4k, 60 fps"
+		done
 	fi
 }
 
@@ -1716,15 +1722,15 @@ _trainer_plan_audio_lossless() {
 
 	if use pgo \
 		&& tpgo_meets_requirements ; then
-		for s in ${AUDIO_SAMPLES_SUFFIX[@]} ; do
-			local t="FFMPEG_PGO_AUDIO_${s}"
-			local audio_sample="${!t}"
-			if [[ -z "${audio_sample}" || ! -f "${audio_sample}" ]] ; then
-				ewarn "Skipping ${t}"
+		local id
+		for id in $(gen_audio_sample_identifiers) ; do
+			local audio_sample_path="${!id}"
+			if [[ -z "${audio_sample_path}" || ! -f "${audio_sample_path}" ]] ; then
+				ewarn "Skipping ${id}"
 				continue
 			fi
-			if ! ffprobe "${audio_sample}" 2>/dev/null 1>/dev/null ; then
-				ewarn "Skipping ${t} with path ${audio_sample}.  Decoding not possible or bad file."
+			if ! ffprobe "${audio_sample_path}" 2>/dev/null 1>/dev/null ; then
+				ewarn "Skipping ${id} with path ${audio_sample_path}.  Decoding not possible or bad file."
 				continue
 			fi
 
@@ -1741,7 +1747,7 @@ _trainer_plan_audio_lossless() {
 			local cmd
 			cmd=( "${FFMPEG}" \
 				-y \
-				-i "${audio_sample}" \
+				-i "${audio_sample_path}" \
 				-c:v ${encoding_codec} \
 				${training_args} \
 				-t 3 \
@@ -1772,22 +1778,26 @@ _trainer_plan_video_lossless() {
 
 	if use pgo \
 		&& tpgo_meets_requirements ; then
-		einfo "Running PGO trainer for ${encoding_codec} for lossless"
-		einfo "Encoding for lossless video"
-		local cmd
-		cmd=( "${FFMPEG}" \
-			-y \
-			-i "${FFMPEG_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			${codec_args[@]} \
-			${training_args} \
-			-an \
-			-t 3 \
-			"${T}/test.${extension}" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd[@]}" || die
-		_vdecode "lossless"
+		local id
+		for id in $(gen_video_sample_identifiers) ; do
+			local video_sample_path="${!id}"
+			einfo "Running PGO trainer for ${encoding_codec} for lossless"
+			einfo "Encoding for lossless video"
+			local cmd
+			cmd=( "${FFMPEG}" \
+				-y \
+				-i "${video_sample_path}" \
+				-c:v ${encoding_codec} \
+				${codec_args[@]} \
+				${training_args} \
+				-an \
+				-t 3 \
+				"${T}/test.${extension}" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd[@]}" || die
+			_vdecode "lossless"
+		done
 	fi
 }
 
@@ -1817,15 +1827,15 @@ _trainer_plan_audio_cbr() {
 		return
 	fi
 
-	for s in ${AUDIO_SAMPLES_SUFFIX[@]} ; do
-		local t="FFMPEG_PGO_AUDIO_${s}"
-		local audio_sample="${!t}"
-		if [[ -z "${audio_sample}" || ! -f "${audio_sample}" ]] ; then
-			ewarn "Skipping ${t}"
+	local id
+	for id in $(gen_audio_sample_identifiers) ; do
+		local audio_sample_path="${!id}"
+		if [[ -z "${audio_sample_path}" || ! -f "${audio_sample_path}" ]] ; then
+			ewarn "Skipping ${id}"
 			continue
 		fi
-		if ! ffprobe "${audio_sample}" 2>/dev/null 1>/dev/null ; then
-			ewarn "Skipping ${t} with path ${audio_sample}.  Decoding not possible or bad file."
+		if ! ffprobe "${audio_sample_path}" 2>/dev/null 1>/dev/null ; then
+			ewarn "Skipping ${id} with path ${audio_sample_path}.  Decoding not possible or bad file."
 			continue
 		fi
 
@@ -1838,10 +1848,10 @@ _trainer_plan_audio_cbr() {
 		fi
 
 		for bitrate in ${!cbr_table} ; do
-			einfo "Encoding as CBR for 3 sec, ${bitrate} kbps for ${audio_sample}"
+			einfo "Encoding as CBR for 3 sec, ${bitrate} kbps for ${audio_sample_path}"
 			cmd=( "${FFMPEG}" \
 				-y \
-				-i "${audio_sample}" \
+				-i "${audio_sample_path}" \
 				-vn \
 				-c:a ${encoding_codec} \
 				-b:a ${bitrate}k
@@ -1890,15 +1900,15 @@ _trainer_plan_audio_vbr() {
 		return
 	fi
 
-	for s in ${AUDIO_SAMPLES_SUFFIX[@]} ; do
-		local t="FFMPEG_PGO_AUDIO_${s}"
-		local audio_sample="${!t}"
-		if [[ -z "${audio_sample}" || ! -f "${audio_sample}" ]] ; then
-			ewarn "Skipping ${t}"
+	local id
+	for id in $(gen_audio_sample_identifiers) ; do
+		local audio_sample_path="${!id}"
+		if [[ -z "${audio_sample_path}" || ! -f "${audio_sample_path}" ]] ; then
+			ewarn "Skipping ${id}"
 			continue
 		fi
-		if ! ffprobe "${audio_sample}" 2>/dev/null 1>/dev/null ; then
-			ewarn "Skipping ${t} with path ${audio_sample}.  Decoding not possible or bad file."
+		if ! ffprobe "${audio_sample_path}" 2>/dev/null 1>/dev/null ; then
+			ewarn "Skipping ${id} with path ${audio_sample_path}.  Decoding not possible or bad file."
 			continue
 		fi
 
@@ -1911,10 +1921,10 @@ _trainer_plan_audio_vbr() {
 		fi
 
 		for setting in ${!vbr_table} ; do
-			einfo "Encoding as VBR for 3 sec with ${setting} setting for ${audio_sample}"
+			einfo "Encoding as VBR for 3 sec with ${setting} setting for ${audio_sample_path}"
 			cmd=( "${FFMPEG}" \
 				-y \
-				-i "${audio_sample}" \
+				-i "${audio_sample_path}" \
 				-vn \
 				-c:a ${encoding_codec} \
 				${!vbr_option} ${setting} \
@@ -2017,10 +2027,6 @@ tpgo_train_custom() {
 	fi
 }
 
-_src_post_pgo() {
-	export PGO_RAN=1
-}
-
 _src_compile() {
 	cd "${BUILD_DIR}" || die
 	emake V=1
@@ -2051,6 +2057,10 @@ _src_pre_pgi() {
 
 _src_pre_pgo() {
 	export MY_ED="${ED}"
+}
+
+_src_post_pgo() {
+	export PGO_RAN=1
 }
 
 _src_pre_train() {

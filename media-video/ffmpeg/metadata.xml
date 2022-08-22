@@ -10,8 +10,8 @@
 	enablement of PGO optimization.
 
 	USE flag status:
-		pgo - in development
-		cfi - in development
+		pgo - done
+		cfi - done
 
 	PGO optimization requires several steps:
 	(1) Fetch assets to train with.  They should be licensed under
@@ -23,53 +23,14 @@
 	sufficient coverage of dynamic range.
 	(2) Emerge FFmpeg the first time to get the PGO toolchain
 	installed.
-	(3) Configure the following variables:
+	(3) Configure the following variables, replacing i with a unpadded number:
 
-		FFMPEG_PGO_VIDEO
-		FFMPEG_PGO_AUDIO_VOICE_00
-		FFMPEG_PGO_AUDIO_VOICE_01
-		FFMPEG_PGO_AUDIO_VOICE_02
-		FFMPEG_PGO_AUDIO_VOICE_03
-		FFMPEG_PGO_AUDIO_VOICE_04
-		FFMPEG_PGO_AUDIO_VOICE_05
-		FFMPEG_PGO_AUDIO_VOICE_06
-		FFMPEG_PGO_AUDIO_VOICE_07
-		FFMPEG_PGO_AUDIO_VOICE_08
-		FFMPEG_PGO_AUDIO_VOICE_09
-		FFMPEG_PGO_AUDIO_VOICE_10
-		FFMPEG_PGO_AUDIO_RADIO_00
-		FFMPEG_PGO_AUDIO_RADIO_01
-		FFMPEG_PGO_AUDIO_RADIO_02
-		FFMPEG_PGO_AUDIO_RADIO_03
-		FFMPEG_PGO_AUDIO_RADIO_04
-		FFMPEG_PGO_AUDIO_RADIO_05
-		FFMPEG_PGO_AUDIO_RADIO_06
-		FFMPEG_PGO_AUDIO_RADIO_07
-		FFMPEG_PGO_AUDIO_RADIO_08
-		FFMPEG_PGO_AUDIO_RADIO_09
-		FFMPEG_PGO_AUDIO_RADIO_10
-		FFMPEG_PGO_AUDIO_MUSIC_INSTRUMENTAL_00
-		FFMPEG_PGO_AUDIO_MUSIC_INSTRUMENTAL_01
-		FFMPEG_PGO_AUDIO_MUSIC_INSTRUMENTAL_02
-		FFMPEG_PGO_AUDIO_MUSIC_INSTRUMENTAL_03
-		FFMPEG_PGO_AUDIO_MUSIC_INSTRUMENTAL_04
-		FFMPEG_PGO_AUDIO_MUSIC_INSTRUMENTAL_05
-		FFMPEG_PGO_AUDIO_MUSIC_INSTRUMENTAL_06
-		FFMPEG_PGO_AUDIO_MUSIC_INSTRUMENTAL_07
-		FFMPEG_PGO_AUDIO_MUSIC_INSTRUMENTAL_08
-		FFMPEG_PGO_AUDIO_MUSIC_INSTRUMENTAL_09
-		FFMPEG_PGO_AUDIO_MUSIC_INSTRUMENTAL_10
-		FFMPEG_PGO_AUDIO_VOCAL_MUSIC_00
-		FFMPEG_PGO_AUDIO_VOCAL_MUSIC_01
-		FFMPEG_PGO_AUDIO_VOCAL_MUSIC_02
-		FFMPEG_PGO_AUDIO_VOCAL_MUSIC_03
-		FFMPEG_PGO_AUDIO_VOCAL_MUSIC_04
-		FFMPEG_PGO_AUDIO_VOCAL_MUSIC_05
-		FFMPEG_PGO_AUDIO_VOCAL_MUSIC_06
-		FFMPEG_PGO_AUDIO_VOCAL_MUSIC_07
-		FFMPEG_PGO_AUDIO_VOCAL_MUSIC_08
-		FFMPEG_PGO_AUDIO_VOCAL_MUSIC_09
-		FFMPEG_PGO_AUDIO_VOCAL_MUSIC_10
+		FFMPEG_PGO_VIDEO_REALISM_i
+		FFMPEG_PGO_VIDEO_FANTASY_i
+		FFMPEG_PGO_AUDIO_VOICE_i
+		FFMPEG_PGO_AUDIO_RADIO_i
+		FFMPEG_PGO_AUDIO_MUSIC_INSTRUMENTAL_i
+		FFMPEG_PGO_AUDIO_VOCAL_MUSIC_i
 
 	to the abspath to your asset(s). Only one asset can be used for each
 	variable.  The reason for the long list is to ensure dynamic range
@@ -85,6 +46,10 @@
 	FFMPEG_PGO_CODECNAME_ARGS, FFMPEG_PGO_CODECNAME_ARGS_LOSSLESS,
 	per-package envvars.  See below for details.
 	(5) Emerge FFmpeg again with an optimized PGO build.
+
+	FFMPEG_MAX_ASSETS_PER_TYPE is a number of assets per *_i type.
+	Currently it is set to 100 but can be expanded to more than
+	that.
 	
 	FFMPEG_PGO_VIDEO_CODECS is a string separated list of elements.
 	Each element is in this format vencoder:vdecoder:ext:tags.
@@ -102,10 +67,10 @@
 	FFMPEG_PGO_AUDIO_CODECS is a string separated list of elements.
 	Each element is in this format ascenario:aencoder:adecoder:ext:tags.
 
+	  The value of ascenario can be voice, radio, music.
 	  The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*"
 	  The value of adecoder matches  mpv --ad=help
 	  The value of ext matches  ffmpeg -formats
-	  The value of a ascenario can be voice, radio, music.
 	  The value of tags may be added for pgo-custom-audio providing metadata
 	  for enablement of special optimization options.  Multiple tags
 	  may be appended by comma and spaces replaced with _.
