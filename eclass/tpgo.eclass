@@ -286,12 +286,12 @@ tpgo_src_configure() {
 _tpgo_run_trainer() {
 	local duration="${1}"
 	shift 1
-	local name="${@}"
+	local trainer="${@}"
 	local now=$(date +"%s")
 	local done_at=$((${now} + ${duration}))
 	local done_at_s=$(date --date="@${done_at}")
 einfo
-einfo "Running '${name}' demo for ${duration}s to be completed at"
+einfo "Running '${trainer}' trainer for ${duration}s to be completed at"
 einfo "${done_at_s}"
 einfo
 	declare -f tpgo_get_trainer_exe > /dev/null \
@@ -310,6 +310,7 @@ cat > "run.sh" <<EOF
 #!/bin/sh
 
 # Using & will prevent stall
+echo "cmd:  \"${trainer_exe}\" ${trainer_args[@]}"
 "${trainer_exe}" ${trainer_args[@]} &
 pid=\$!
 

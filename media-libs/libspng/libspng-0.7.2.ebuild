@@ -4,7 +4,7 @@
 
 EAPI=8
 
-inherit flag-o-matic meson multilib-build toolchain-funcs
+inherit flag-o-matic meson multilib-build toolchain-funcs tpgo
 
 DESCRIPTION="libspng is a C library for reading and writing Portable Network
 Graphics (PNG) format files with a focus on security and ease of use."
@@ -51,6 +51,10 @@ PATCHES=(
 	"${FILESDIR}/libspng-0.6.2-disable-target-clones.patch"
 )
 
+pkg_setup() {
+	tpgo_setup
+}
+
 src_unpack() {
 	unpack ${A}
 	if use pgo ; then
@@ -67,6 +71,12 @@ src_unpack() {
 }
 
 _src_configure() {
+	cd "${EMESON_SOURCE}" || die
+	append-cppflags -I"${EPREFIX}/usr/include/miniz"
+	local d="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}-${lib_type}"
+	mkdir -p "${d}" || die
+	tpgo_src_configure
+
 	local emesonargs=(
 		-Duse_miniz=$(usex zlib "false" "true")
 		$(meson_feature threads multithreading)
@@ -74,6 +84,7 @@ _src_configure() {
 		$(meson_use opt enable_opt)
 		$(meson_use test dev_build)
 		--buildtype release
+		$(tpgo_meson_src_configure)
 	)
 	if [[ "${lib_type}" == "shared" ]] ; then
 		emesonargs+=(
@@ -86,52 +97,33 @@ _src_configure() {
 			-Dstatic_zlib=true
 		)
 	fi
-	meson_src_configure ${1}
-}
-
-_configure_pgx() {
-	cd "${EMESON_SOURCE}" || die
-	append-cppflags -I"${EPREFIX}/usr/include/miniz"
-	local d="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}-${lib_type}"
-	mkdir -p "${d}" || die
-	filter-flags '-fprofile*'
-	local arg=""
-	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] ; then
-		einfo "Instrumenting a PGO build"
-		if tc-is-clang ; then
-			append-cflags -fprofile-generate="${d}"
-		else
-			append-cflags -fprofile-generate -fprofile-dir="${d}"
-		fi
-	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] ; then
-		einfo "Optimizing a PGO build"
-		if tc-is-clang ; then
-			llvm-profdata merge -output="${d}/code.profdata" \
-				"${d}" || die
-			append-cflags -fprofile-use="${d}/code.profdata"
-		else
-			append-cflags -fprofile-use -fprofile-correction -fprofile-dir="${d}"
-		fi
-		arg="--wipe"
-	else
-		einfo "Building as normal"
-	fi
-	_src_configure ${arg}
+	meson_src_configure
 }
 
 src_configure() {
 	:;
 }
 
-_run_trainer() {
-	pushd "${BUILD_DIR}/examples" || die
-		./example ../../benchmark_images/medium_rgb8.png || die
-		./example ../../benchmark_images/medium_rgba8.png || die
-		./example ../../benchmark_images/large_palette.png || die
-	popd
+tpgo_trainer_list() {
+	seq 0 2 | tr " " "\n"
 }
 
-_compile() {
+declare -A ARGS=(
+	[0]="${WORKDIR}/benchmark_images/medium_rgb8.png"
+	[1]="${WORKDIR}/benchmark_images/medium_rgba8.png"
+	[2]="${WORKDIR}/benchmark_images/large_palette.png"
+)
+
+tpgo_get_trainer_args() {
+	local trainer="${1}"
+	echo "${ARGS[${trainer}]}"
+}
+
+tpgo_get_trainer_exe() {
+	echo "examples/example"
+}
+
+_src_compile() {
 	cd "${BUILD_DIR}" || die
 	meson_src_compile
 }
@@ -147,20 +139,8 @@ src_compile() {
 		for lib_type in $(get_lib_types) ; do
 			export EMESON_SOURCE="${S}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-			if use pgo ; then
 # See https://github.com/randy408/libspng/blob/master/docs/build.md#profile-guided-optimization
-				PGO_PHASE="pgi"
-				_configure_pgx
-				_compile
-				_run_trainer
-				PGO_PHASE="pgo"
-				_configure_pgx
-				_compile
-			else
-				PGO_PHASE="pg0"
-				_configure_pgx
-				_compile
-			fi
+			tpgo_compile
 		done
 	}
 	multilib_foreach_abi compile_abi
