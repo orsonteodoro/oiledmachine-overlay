@@ -2008,13 +2008,17 @@ einfo
 
 	(( ${NABIS} > 1 )) \
 		&& multilib_copy_sources
+
+	prepare_abi() {
+		EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
+		epgo_src_prepare
+	}
+
+	multilib_foreach_abi prepare_abi
 }
 
 _configure_pgx() {
 	local chost=$(get_abi_CHOST ${ABI})
-
-	EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
-	epgo_src_prepare
 
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
