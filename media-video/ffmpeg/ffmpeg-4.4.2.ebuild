@@ -21,7 +21,7 @@ if [ "${PV#9999}" != "${PV}" ] ; then
 	EGIT_REPO_URI="https://git.ffmpeg.org/ffmpeg.git"
 fi
 
-inherit flag-o-matic multilib multilib-minimal toolchain-funcs ${SCM}
+inherit flag-o-matic multilib multilib-minimal toolchain-funcs tpgo ${SCM}
 inherit llvm
 
 DESCRIPTION="Complete solution to record/convert/stream audio and video. Includes libavcodec"
@@ -798,6 +798,7 @@ pkg_setup() {
 		fi
 	fi
 	llvm_pkg_setup
+	tpgo_setup
 }
 
 get_lib_types() {
@@ -894,12 +895,11 @@ has_codec_requirement() {
 	return ${codecs_found}
 }
 
-has_pgo_requirement() {
+tpgo_meets_requirements() {
 	if has_ffmpeg && has_codec_requirement ; then
 		return 0
-	else
-		return 1
 	fi
+	return 1
 }
 
 append_all() {
@@ -944,7 +944,7 @@ is_cfi_supported() {
 	return 1
 }
 
-configure_pgx() {
+_src_configure() {
 	local myconf=( )
 	local extra_libs=( )
 
@@ -982,6 +982,7 @@ configure_pgx() {
 		'-Wl,-z,relro'
 
 	autofix_flags
+	tpgo_src_configure
 
 	set_cfi() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
@@ -1072,29 +1073,6 @@ configure_pgx() {
 	fi
 
 	export FFMPEG=$(get_multiabi_ffmpeg)
-	local pgo_data_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-	mkdir -p "${pgo_data_dir}" || die
-	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
-		&& has_pgo_requirement ; then
-		einfo "Setting up PGI"
-		if tc-is-clang ; then
-			append-flags -fprofile-generate="${pgo_data_dir}"
-			append-ldflags -fprofile-generate="${pgo_data_dir}" # It needs to link to libclang_rt.profile-xxx.a
-		else
-			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
-		fi
-	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] \
-		&& has_pgo_requirement ; then
-		einfo "Setting up PGO"
-		if tc-is-clang ; then
-			llvm-profdata merge -output="${pgo_data_dir}/code.profdata" \
-				"${pgo_data_dir}" || die
-			append-flags -fprofile-use="${pgo_data_dir}/code.profdata"
-			append-ldflags -fprofile-use="${pgo_data_dir}/code.profdata"
-		else
-			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${pgo_data_dir}"
-		fi
-	fi
 
 	# Licensing of external packages
 	# See https://github.com/FFmpeg/FFmpeg/blob/n4.4/configure#L1735
@@ -1392,7 +1370,7 @@ _trainer_plan_video_constrained_quality() {
 	fi
 
 	if use pgo \
-		&& has_pgo_requirement ; then
+		&& tpgo_meets_requirements ; then
 		einfo "Running PGO trainer for ${encoding_codec} for 1 pass constrained quality"
 		local cmd
 		einfo "Encoding as 720p for 3 sec, 30 fps"
@@ -1513,7 +1491,7 @@ _trainer_plan_video_2_pass_constrained_quality() {
 	fi
 
 	if use pgo \
-		&& has_pgo_requirement ; then
+		&& tpgo_meets_requirements ; then
 		einfo "Running PGO trainer for ${encoding_codec} for 2 pass constrained quality"
 		local cmd
 		einfo "Encoding as 720p for 3 sec, 30 fps"
@@ -1737,7 +1715,7 @@ _trainer_plan_audio_lossless() {
 	fi
 
 	if use pgo \
-		&& has_pgo_requirement ; then
+		&& tpgo_meets_requirements ; then
 		for s in ${AUDIO_SAMPLES_SUFFIX[@]} ; do
 			local t="FFMPEG_PGO_AUDIO_${s}"
 			local audio_sample="${!t}"
@@ -1793,7 +1771,7 @@ _trainer_plan_video_lossless() {
 	[[ "${encoding_codec}" =~ "vp9" ]] && codec_args+=( -lossless 1 )
 
 	if use pgo \
-		&& has_pgo_requirement ; then
+		&& tpgo_meets_requirements ; then
 		einfo "Running PGO trainer for ${encoding_codec} for lossless"
 		einfo "Encoding for lossless video"
 		local cmd
@@ -2022,7 +2000,14 @@ run_trainer_video_codecs() {
 	done
 }
 
-run_trainer() {
+tpgo_train_custom() {
+	local btype="${lib_type/-*}"
+	if multilib_is_native_abi ; then
+		export FFMPEG="${ED}/usr/bin/ffmpeg-${btype}"
+	else
+		export FFMPEG="${ED}/usr/bin/ffmpeg-${btype}-${ABI}"
+	fi
+	export MY_ED="${ED}"
 	# Currently only full codecs supported.
 	if [[ -n "${FFMPEG_PGO_AUDIO_CODECS}" ]] ; then
 		run_trainer_audio_codecs
@@ -2032,7 +2017,7 @@ run_trainer() {
 	fi
 }
 
-compile_pgx() {
+_src_compile() {
 	cd "${BUILD_DIR}" || die
 	emake V=1
 
@@ -2056,9 +2041,26 @@ compile_pgx() {
 	fi
 }
 
-clean_pgx() {
+_src_pre_pgi() {
+	export MY_ED=""
+}
+
+_src_pre_pgo() {
+	export MY_ED="${ED}"
+}
+
+_src_pre_train() {
+	einfo "Installing image into sandbox staging area"
+	_install
+}
+
+_src_post_train() {
 	einfo "Clearing old sandboxed image"
 	rm -rf "${ED}" || die
+}
+
+_src_post_pgo() {
+	export PGO_RAN=1
 }
 
 src_compile() {
@@ -2068,31 +2070,7 @@ src_compile() {
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			einfo "Build type is ${lib_type}"
-			if use pgo \
-				&& has_pgo_requirement ; then
-				export MY_ED=""
-				PGO_PHASE="pgi"
-				configure_pgx
-				compile_pgx
-				install_pgx
-				local btype="${lib_type/-*}"
-				if multilib_is_native_abi ; then
-					export FFMPEG="${ED}/usr/bin/ffmpeg-${btype}"
-				else
-					export FFMPEG="${ED}/usr/bin/ffmpeg-${btype}-${ABI}"
-				fi
-				export MY_ED="${ED}"
-				run_trainer
-				clean_pgx
-				PGO_PHASE="pgo"
-				configure_pgx
-				compile_pgx
-				export PGO_RAN=1
-			else
-				PGO_PHASE="pg0"
-				configure_pgx
-				compile_pgx
-			fi
+			tpgo_src_compile
 		done
 	}
 	multilib_foreach_abi compile_abi
@@ -2118,11 +2096,6 @@ ${BUILD_DIR}/libavresample" \
 		done
 	}
 	multilib_foreach_abi test_abi
-}
-
-install_pgx() {
-	einfo "Installing image into sandbox staging area"
-	_install
 }
 
 _install() {
@@ -2151,7 +2124,7 @@ _install() {
 		for i in "${FFTOOLS[@]}" ; do
 			if use fftools_${i} ; then
 				einfo "Running dobin tools/${i}$(get_exeext)"
-				if [[ "${PGO_PHASE}" == "pgi" ]] ; then
+				if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 					# Bugged dobin
 					mkdir -p "${ED}/usr/bin" || die
 					cp -a "tools/${i}$(get_exeext)" \

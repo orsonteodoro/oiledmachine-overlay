@@ -111,6 +111,19 @@
 # @DESCRIPTION:
 # Add sandbox exceptions for input.
 
+# @FUNCTION: tpgo_meets_requirements
+# @RETURN:
+# 0 - as the exit code if it has installed assets and training dependencies
+# 1 - as the exit code if it did not install assets or did not install dependencies
+# @DESCRIPTION:
+# Reports if the prerequisites to train are met.  The implication is that if it
+# doesn't have the assets, or doesn't have the training tool, or doesn't have
+# the dependency to that training tool, it will fall back to as if PGO=-pgo.
+# Example scenario:  dynamic linking to be train with a separate package with
+# app that uses the dynamic library.  If the app is not installed, then
+# we skip both PGI and PGO and fallback to normal merging sequence.
+#
+
 inherit flag-o-matic toolchain-funcs
 if [[ "${TPGO_USE_X}" == "1" ]] ;then
 	inherit virtualx
@@ -120,12 +133,14 @@ if [[ "${TPGO_MULTILIB}" == "1" ]] ; then
 fi
 
 IUSE+=" pgo"
-BDEPEND+="
-	pgo? (
-		x11-base/xorg-server[xvfb]
-		x11-apps/xhost
-	)
-"
+if [[ "${TPGO_USE_X}" == "1" ]] ;then
+	BDEPEND+="
+		pgo? (
+			x11-base/xorg-server[xvfb]
+			x11-apps/xhost
+		)
+	"
+fi
 
 # @ECLASS_VARIABLE: TPGO_TEST_DURATION
 # @DESCRIPTION:
@@ -552,7 +567,9 @@ einfo
 		declare -f _src_configure > /dev/null && _src_configure
 		declare -f _src_compile > /dev/null && _src_compile
 		declare -f _src_post_pgi > /dev/null && _src_post_pgi
+		declare -f _src_pre_train > /dev/null && _src_pre_train
 		_tpgo_train
+		declare -f _src_post_train > /dev/null && _src_post_train
 		PGO_PHASE="PGO"
 		declare -f _src_pre_pgo > /dev/null && _src_prep_pgo
 		declare -f _src_prepare > /dev/null && _src_prepare

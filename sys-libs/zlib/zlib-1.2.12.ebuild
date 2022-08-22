@@ -569,7 +569,7 @@ _src_configure() {
 		fi
 	fi
 
-	if use pgo && tc-is-gcc && [[ $(tpgo_meets_requirements) == "1" && "${PGO_PHASE}" == "PGO" ]] ; then
+	if use pgo && tc-is-gcc && tpgo_meets_requirements && [[  "${PGO_PHASE}" == "PGO" ]] ; then
 		if use minizip ; then
 			# Apply, only during configure.
 			append-flags -Wno-error=coverage-mismatch
@@ -666,7 +666,7 @@ _src_compile() {
 _run_trainer_images_zlib() {
 	local mode="${1}"
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	[[ $(tpgo_meets_requirements) == "1" ]] || return
+	tpgo_meets_requirements || return
 	einfo "Running image compression PGO training for ${ABI} for zlib"
 	if multilib_is_native_abi ; then
 		export PIGZEXE="pigz"
@@ -878,7 +878,7 @@ _run_trainer_images_zlib() {
 
 _run_trainer_text_zlib() {
 	local mode="${1}"
-	[[ $(tpgo_meets_requirements) == "1" ]] || return
+	tpgo_meets_requirements || return
 	einfo "Running text compression PGO training for ${ABI} for zlib"
 	if multilib_is_native_abi ; then
 		export PIGZEXE="pigz"
@@ -948,7 +948,7 @@ _run_trainer_text_zlib() {
 }
 
 _run_trainer_text_minizip() {
-	[[ $(tpgo_meets_requirements) == "1" ]] || return
+	tpgo_meets_requirements || return
 	einfo "Running text compression PGO training for ${ABI} for minizip"
 	export MINIZIP="minizip"
 	export MINIUNZIP="miniunzip"
@@ -1019,7 +1019,7 @@ _run_trainer_text_minizip() {
 
 _run_trainer_binary_zlib() {
 	local mode="${1}"
-	[[ $(tpgo_meets_requirements) == "1" ]] || return
+	tpgo_meets_requirements || return
 	einfo "Running binary compression PGO training for ${ABI} for zlib"
 	if multilib_is_native_abi ; then
 		export PIGZEXE="pigz"
@@ -1080,7 +1080,7 @@ _run_trainer_binary_zlib() {
 }
 
 _run_trainer_binary_minizip() {
-	[[ $(tpgo_meets_requirements) == "1" ]] || return
+	tpgo_meets_requirements || return
 	einfo "Running binary compression PGO training for ${ABI} for minizip"
 	export MINIZIP="minizip"
 	export MINIUNZIP="miniunzip"
@@ -1251,13 +1251,12 @@ einfo
 }
 
 tpgo_meets_requirements() {
-	local ret="0"
 	if multilib_is_native_abi && which pigz 2>/dev/null 1>/dev/null ; then
-		ret="1"
+		return 0
 	elif ! multilib_is_native_abi && which pigz-${ABI} 2>/dev/null 1>/dev/null ; then
-		ret="1"
+		return 0
 	fi
-	echo "${ret}"
+	return 1
 }
 
 src_compile() {
@@ -1280,13 +1279,19 @@ sed_macros() {
 	sed -i -r 's:\<(O[FN])\>:_Z_\1:g' "$@" || die
 }
 
-_src_post_pgi() {
+_src_pre_train() {
 	einfo "Installing ${lib_type} into sandbox for ${ABI}"
 	_install
+}
 
+_src_post_train() {
 	einfo "Wiping sandbox image"
 	rm -rf "${ED}" || die
 	cd "${S}" || die
+}
+
+_src_post_pgo() {
+	export PGO_RAN=1
 }
 
 _install() {
