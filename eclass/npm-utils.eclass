@@ -18,6 +18,8 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+inherit lcnr
+
 # ############## START Per-package environmental variables #####################
 
 # Anything with := is likely a environmental variable setting
@@ -652,13 +654,11 @@ npm-utils_install_header_license() {
 	local file_name=$(basename "${1}")
 	local license_name="${2}"
 	local length="${3}"
-	d="${dir_path}"
-	dl="licenses/${d}"
-	docinto "${dl}"
-	mkdir -p "${T}/${dl}" || die
-	head -n ${length} "${S}/${d}/${file_name}" > \
-		"${T}/${dl}/${license_name}" || die
-	dodoc "${T}/${dl}/${license_name}"
+	lcn_install_header \
+		"${dir_path}" \
+		"${file_name}" \
+		"${license_name}" \
+		"${length}"
 }
 
 # @FUNCTION: npm-utils_install_license_mid
@@ -670,14 +670,12 @@ npm-utils_install_license_mid() {
 	local license_name="${2}"
 	local start="${3}"
 	local length="${4}"
-	d="${dir_path}"
-	dl="licenses/${d}"
-	docinto "${dl}"
-	mkdir -p "${T}/${dl}" || die
-	tail -n +${start} "${S}/${d}/${file_name}" \
-		| head -n ${length} > \
-		"${T}/${dl}/${license_name}" || die
-	dodoc "${T}/${dl}/${license_name}"
+	lcnr_install_mid \
+		"${dir_path}" \
+		"${file_name}" \
+		"${license_name}" \
+		"${start}" \
+		"${length}"
 }
 
 # @FUNCTION: npm-utils_install_licenses
@@ -685,32 +683,7 @@ npm-utils_install_license_mid() {
 # Installs all licenses from main package and micropackages
 # Standardizes the process.
 npm-utils_install_licenses() {
-	OIFS="${IFS}"
-	export IFS=$'\n'
-	for f in $(find "${S}" \
-	  -iname "*licen*" -type f \
-	  -o -iname "*copyright*" \
-	  -o -iname "*copying*" \
-	  -o -iname "*patent*" \
-	  -o -iname "ofl.txt" \
-	  -o -iname "*notice*" \
-	  -o -iname "*authors*" \
-	  -o -iname "*CONTRIBUTORS*" \
-	  ) $(grep -i -G -l \
-		-e "copyright" \
-		-e "licen" \
-		-e "warrant" \
-		$(find "${S}" -iname "*readme*")) ; \
-	do
-		if [[ -f "${f}" ]] ; then
-			d=$(dirname "${f}" | sed -e "s|^${S}||")
-		else
-			d=$(echo "${f}" | sed -e "s|^${S}||")
-		fi
-		docinto "licenses/${d}"
-		dodoc -r "${f}"
-	done
-	export IFS="${OIFS}"
+	lcnr_install_files
 }
 
 # @FUNCTION: npm-utils_install_readmes
@@ -718,35 +691,7 @@ npm-utils_install_licenses() {
 # Installs all readmes including those from micropackages.  Standardizes the
 # process.
 npm-utils_install_readmes() {
-	OIFS="${IFS}"
-	export IFS=$'\n'
-	for f in $(find "${S}" \
-	  -iname "*.pdf" \
-	  -o -iname "*bug*report*.md" \
-	  -o -iname "*changelog*" \
-	  -o -iname "*changes*" \
-	  -o -iname "*code*of*conduct*" \
-	  -o -iname "*contributing*" \
-	  -o -iname "*feature*request*.md" \
-	  -o -iname "*governance*" \
-	  -o -iname "*history*" \
-	  -o -iname "*issue*template*.md" \
-	  -o -iname "*language*.md" \
-	  -o -iname "*pull*request*template*.md" \
-	  -o -iname "*readme*" \
-	  -o -ipath "*/doc/*" \
-	  -o -ipath "*/docs/*" \
-	  ) ; \
-	do
-		if [[ -f "${f}" ]] ; then
-			d=$(dirname "${f}" | sed -e "s|^${S}||")
-		else
-			d=$(echo "${f}" | sed -e "s|^${S}||")
-		fi
-		docinto "readmes/${d}"
-		dodoc -r "${f}"
-	done
-	export IFS="${OIFS}"
+	lcnr_install_readmes
 }
 
 # @FUNCTION: npm-utils_is_nodejs_header_exe_same
