@@ -13,7 +13,7 @@ LICENSE="BSD-2
 	test? ( libpng2 )"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
 SLOT="0/${PV}"
-IUSE+=" doc examples pgo +opt -static-libs -test -threads zlib"
+IUSE+=" doc examples +opt -static-libs -test -threads zlib"
 REQUIRED_USE+=" pgo? ( examples )"
 DEPEND+=" virtual/libc
 	 test? ( >=media-libs/libpng-1.6 )
