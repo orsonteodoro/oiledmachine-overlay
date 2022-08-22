@@ -184,7 +184,14 @@ PATCHES=(
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
 
-__pgo_setup() {
+get_asset_ids() {
+	local i
+	for i in $(seq 0 ${LIBVPX_ASSET_LIMIT}) ; do
+		echo "LIBVPX_PGO_VIDEO_${i}"
+	done
+}
+
+__check_video() {
 	if use pgo && has_version "media-video/ffmpeg" ; then
 		if ! has_version "media-video/ffmpeg[vpx]" ; then
 			ewarn "You need to emerge ffmpeg with vpx for pgo training."
@@ -194,24 +201,24 @@ __pgo_setup() {
 		if ! ( ffmpeg -formats 2>&1 | grep -q -e "E.*webm .*WebM" ) ; then
 			ewarn "Missing WebM support from ffmpeg"
 		fi
-		if [[ -z "${LIBVPX_PGO_VIDEO}" ]] ; then
+		if [[ -z "${libvpx_asset_path}" ]] ; then
 eerror
-eerror "LIBVPX_PGO_VIDEO is missing the abspath to your vp8/vp9 video as a"
+eerror "${id} is missing the abspath to your vp8/vp9 video as a"
 eerror "per-package envvar.  The video must be 3840x2160 resolution,"
 eerror "60fps, >= 3 seconds."
 eerror
 			die
 		fi
-		if ffprobe "${LIBVPX_PGO_VIDEO}" 2>/dev/null 1>/dev/null ; then
+		if ffprobe "${libvpx_asset_path}" 2>/dev/null 1>/dev/null ; then
 			einfo "Verifying asset requirements"
-			if ! ( ffprobe "${LIBVPX_PGO_VIDEO}" 2>&1 \
+			if false && ! ( ffprobe "${libvpx_asset_path}" 2>&1 \
 				| grep -q -e "3840x2160" ) ; then
 eerror
 eerror "The PGO video sample must be 3840x2160."
 eerror
 				die
 			fi
-			if ! ( ffprobe "${LIBVPX_PGO_VIDEO}" 2>&1 \
+			if false && ! ( ffprobe "${libvpx_asset_path}" 2>&1 \
 				| grep -q -E -e ", (59|60)[.0-9]* fps" ) ; then
 eerror
 eerror "The PGO video sample must be >=59 fps."
@@ -219,7 +226,7 @@ eerror
 				die
 			fi
 
-			local d=$(ffprobe "${LIBVPX_PGO_VIDEO}" 2>&1 \
+			local d=$(ffprobe "${libvpx_asset_path}" 2>&1 \
 				| grep -E -e "Duration" \
 				| cut -f 4 -d " " \
 				| sed -e "s|,||g" \
@@ -239,11 +246,20 @@ eerror
 			fi
 		else
 eerror
-eerror "${LIBVPX_PGO_VIDEO} is possibly not a valid video file.  Ensure that"
+eerror "${libvpx_asset_path} is possibly not a valid video file.  Ensure that"
 eerror "the proper codec is supported for that file"
 eerror
 		fi
 	fi
+}
+
+__pgo_setup() {
+	export LIBVPX_PGO_VIDEO=${LIBVPX_PGO_VIDEO:-100}
+	local id
+	for id in $(get_asset_ids) ; do
+		local libvpx_asset_path="${!id}"
+		__check_video
+	done
 }
 
 pkg_setup() {
@@ -642,109 +658,113 @@ _trainer_plan_constrained_quality() {
 
 	if use pgo \
 		&& tpgo_meets_requirements ; then
-		einfo "Running PGO trainer for ${encoding_codec} for 1 pass constrained quality"
-		local cmd
-		einfo "Encoding as 720p for 3 sec, 30 fps"
-		cmd=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 1485k -minrate 512k -b:v 1024k \
-			-vf scale=w=-1:h=720 \
-			${training_args} \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd[@]}" || die
-		_vdecode "720p, 30 fps"
+		local id
+		for id in $(get_asset_ids) ; do
+			local libvpx_asset_path="${!id}"
+			einfo "Running PGO trainer for ${encoding_codec} for 1 pass constrained quality"
+			local cmd
+			einfo "Encoding as 720p for 3 sec, 30 fps"
+			cmd=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 1485k -minrate 512k -b:v 1024k \
+				-vf scale=w=-1:h=720 \
+				${training_args} \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.webm" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd[@]}" || die
+			_vdecode "720p, 30 fps"
 
-		einfo "Encoding as 720p for 3 sec, 60 fps"
-		cmd=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=720 \
-			${training_args} \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd[@]}" || die
-		_vdecode "720p, 60 fps"
+			einfo "Encoding as 720p for 3 sec, 60 fps"
+			cmd=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=720 \
+				${training_args} \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.webm" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd[@]}" || die
+			_vdecode "720p, 60 fps"
 
-		einfo "Encoding as 1080p for 3 sec, 30 fps"
-		cmd=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=1080 \
-			${training_args} \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd[@]}" || die
-		_vdecode "1080p, 30 fps"
+			einfo "Encoding as 1080p for 3 sec, 30 fps"
+			cmd=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=1080 \
+				${training_args} \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.webm" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd[@]}" || die
+			_vdecode "1080p, 30 fps"
 
-		einfo "Encoding as 1080p for 3 sec, 60 fps"
-		cmd=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 4350k -minrate 1500k -b:v 3000k \
-			-vf scale=w=-1:h=1080 \
-			${training_args} \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd[@]}" || die
-		_vdecode "1080p, 60 fps"
+			einfo "Encoding as 1080p for 3 sec, 60 fps"
+			cmd=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 4350k -minrate 1500k -b:v 3000k \
+				-vf scale=w=-1:h=1080 \
+				${training_args} \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.webm" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd[@]}" || die
+			_vdecode "1080p, 60 fps"
 
-		einfo "Encoding as 4k for 3 sec, 30 fps"
-		cmd=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 17400k -minrate 6000k -b:v 12000k \
-			-vf scale=w=-1:h=2160 \
-			${training_args} \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd[@]}" || die
-		_vdecode "4k, 30 fps"
+			einfo "Encoding as 4k for 3 sec, 30 fps"
+			cmd=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 17400k -minrate 6000k -b:v 12000k \
+				-vf scale=w=-1:h=2160 \
+				${training_args} \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.webm" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd[@]}" || die
+			_vdecode "4k, 30 fps"
 
-		einfo "Encoding as 4k for 3 sec, 60 fps"
-		cmd=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 26100k -minrate 9000k -b:v 18000k \
-			-vf scale=w=-1:h=2160 \
-			${training_args} \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd[@]}" || die
-		_vdecode "4k, 60 fps"
+			einfo "Encoding as 4k for 3 sec, 60 fps"
+			cmd=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 26100k -minrate 9000k -b:v 18000k \
+				-vf scale=w=-1:h=2160 \
+				${training_args} \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.webm" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd[@]}" || die
+			_vdecode "4k, 60 fps"
+		done
 	fi
 }
 
@@ -764,205 +784,209 @@ _trainer_plan_2_pass_constrained_quality() {
 
 	if use pgo \
 		&& tpgo_meets_requirements ; then
-		einfo "Running PGO trainer for ${encoding_codec} for 2 pass constrained quality"
-		local cmd
-		einfo "Encoding as 720p for 3 sec, 30 fps"
-		cmd1=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 1485k -minrate 512k -b:v 1024k \
-			-vf scale=w=-1:h=720 \
-			${training_args} \
-			-pass 1 \
-			-an \
-			-r 30 \
-			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 1485k -minrate 512k -b:v 1024k \
-			-vf scale=w=-1:h=720 \
-			${training_args} \
-			-pass 2 \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd2[@]}" || die
-		_vdecode "720p, 30 fps"
+		local id
+		for id in $(get_asset_ids) ; do
+			local libvpx_asset_path="${!id}"
+			einfo "Running PGO trainer for ${encoding_codec} for 2 pass constrained quality"
+			local cmd
+			einfo "Encoding as 720p for 3 sec, 30 fps"
+			cmd1=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 1485k -minrate 512k -b:v 1024k \
+				-vf scale=w=-1:h=720 \
+				${training_args} \
+				-pass 1 \
+				-an \
+				-r 30 \
+				-t 3 \
+				-f null /dev/null )
+			cmd2=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 1485k -minrate 512k -b:v 1024k \
+				-vf scale=w=-1:h=720 \
+				${training_args} \
+				-pass 2 \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.webm" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd1[@]}" || die
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd2[@]}" || die
+			_vdecode "720p, 30 fps"
 
-		einfo "Encoding as 720p for 3 sec, 60 fps"
-		cmd1=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=720 \
-			${training_args} \
-			-pass 1 \
-			-an \
-			-r 60 \
-			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=720 \
-			${training_args} \
-			-pass 2 \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd2[@]}" || die
-		_vdecode "720p, 60 fps"
+			einfo "Encoding as 720p for 3 sec, 60 fps"
+			cmd1=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=720 \
+				${training_args} \
+				-pass 1 \
+				-an \
+				-r 60 \
+				-t 3 \
+				-f null /dev/null )
+			cmd2=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=720 \
+				${training_args} \
+				-pass 2 \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.webm" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd1[@]}" || die
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd2[@]}" || die
+			_vdecode "720p, 60 fps"
 
-		einfo "Encoding as 1080p for 3 sec, 30 fps"
-		cmd1=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=1080 \
-			${training_args} \
-			-pass 1 \
-			-an \
-			-r 30 \
-			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=1080 \
-			${training_args} \
-			-pass 2 \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd2[@]}" || die
-		_vdecode "1080p, 30 fps"
+			einfo "Encoding as 1080p for 3 sec, 30 fps"
+			cmd1=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=1080 \
+				${training_args} \
+				-pass 1 \
+				-an \
+				-r 30 \
+				-t 3 \
+				-f null /dev/null )
+			cmd2=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=1080 \
+				${training_args} \
+				-pass 2 \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.webm" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd1[@]}" || die
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd2[@]}" || die
+			_vdecode "1080p, 30 fps"
 
-		einfo "Encoding as 1080p for 3 sec, 60 fps"
-		cmd1=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 4350k -minrate 1500k -b:v 3000k \
-			-vf scale=w=-1:h=1080 \
-			${training_args} \
-			-pass 1 \
-			-an \
-			-r 60 \
-			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 4350k -minrate 1500k -b:v 3000k \
-			-vf scale=w=-1:h=1080 \
-			${training_args} \
-			-pass 2 \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd2[@]}" || die
-		_vdecode "1080p, 60 fps"
+			einfo "Encoding as 1080p for 3 sec, 60 fps"
+			cmd1=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 4350k -minrate 1500k -b:v 3000k \
+				-vf scale=w=-1:h=1080 \
+				${training_args} \
+				-pass 1 \
+				-an \
+				-r 60 \
+				-t 3 \
+				-f null /dev/null )
+			cmd2=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 4350k -minrate 1500k -b:v 3000k \
+				-vf scale=w=-1:h=1080 \
+				${training_args} \
+				-pass 2 \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.webm" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd1[@]}" || die
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd2[@]}" || die
+			_vdecode "1080p, 60 fps"
 
-		einfo "Encoding as 4k for 3 sec, 30 fps"
-		cmd1=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 17400k -minrate 6000k -b:v 12000k \
-			-vf scale=w=-1:h=2160 \
-			${training_args} \
-			-pass 1 \
-			-an \
-			-r 30 \
-			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 17400k -minrate 6000k -b:v 12000k \
-			-vf scale=w=-1:h=2160 \
-			${training_args} \
-			-pass 2 \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd2[@]}" || die
-		_vdecode "4k, 30 fps"
+			einfo "Encoding as 4k for 3 sec, 30 fps"
+			cmd1=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 17400k -minrate 6000k -b:v 12000k \
+				-vf scale=w=-1:h=2160 \
+				${training_args} \
+				-pass 1 \
+				-an \
+				-r 30 \
+				-t 3 \
+				-f null /dev/null )
+			cmd2=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 17400k -minrate 6000k -b:v 12000k \
+				-vf scale=w=-1:h=2160 \
+				${training_args} \
+				-pass 2 \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.webm" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd1[@]}" || die
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd2[@]}" || die
+			_vdecode "4k, 30 fps"
 
-		einfo "Encoding as 4k for 3 sec, 60 fps"
-		cmd1=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 26100k -minrate 9000k -b:v 18000k \
-			-vf scale=w=-1:h=2160 \
-			${training_args} \
-			-pass 1 \
-			-an \
-			-r 60 \
-			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-maxrate 26100k -minrate 9000k -b:v 18000k \
-			-vf scale=w=-1:h=2160 \
-			${training_args} \
-			-pass 2 \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd2[@]}" || die
-		_vdecode "4k, 60 fps"
+			einfo "Encoding as 4k for 3 sec, 60 fps"
+			cmd1=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 26100k -minrate 9000k -b:v 18000k \
+				-vf scale=w=-1:h=2160 \
+				${training_args} \
+				-pass 1 \
+				-an \
+				-r 60 \
+				-t 3 \
+				-f null /dev/null )
+			cmd2=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-maxrate 26100k -minrate 9000k -b:v 18000k \
+				-vf scale=w=-1:h=2160 \
+				${training_args} \
+				-pass 2 \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.webm" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd1[@]}" || die
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd2[@]}" || die
+			_vdecode "4k, 60 fps"
+		done
 	fi
 }
 
@@ -982,22 +1006,26 @@ _trainer_plan_lossless() {
 
 	if use pgo \
 		&& tpgo_meets_requirements ; then
-		einfo "Running PGO trainer for ${encoding_codec} for lossless"
-		einfo "Encoding for lossless"
-		local cmd
-		cmd=( "${FFMPEG}" \
-			-y \
-			-i "${LIBVPX_PGO_VIDEO}" \
-			-c:v ${encoding_codec} \
-			-lossless 1 \
-			${training_args} \
-			-an \
-			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
-		"${cmd[@]}" || die
-		_vdecode "lossless"
+		local id
+		for id in $(get_asset_ids) ; do
+			local libvpx_asset_path="${!id}"
+			einfo "Running PGO trainer for ${encoding_codec} for lossless"
+			einfo "Encoding for lossless"
+			local cmd
+			cmd=( "${FFMPEG}" \
+				-y \
+				-i "${libvpx_asset_path}" \
+				-c:v ${encoding_codec} \
+				-lossless 1 \
+				${training_args} \
+				-an \
+				-t 3 \
+				"${T}/test.webm" )
+			einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
+			LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${cmd[@]}" || die
+			_vdecode "lossless"
+		done
 	fi
 }
 

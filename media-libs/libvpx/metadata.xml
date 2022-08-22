@@ -38,9 +38,10 @@
     (2) Build the trainer toolchain depending on this library corresponding
         to the package and USE flags above.
     (3) Acquire a video that is either CC0-1.0, public domain, or your own
-        personal video asset that is 4k, 60 fps, 5 seconds long.
-    (4a) Set LIBVPX_PGO_VIDEO as a per-package envvar with the abspath to
-        the asset.
+        personal video asset is at least 3 seconds long.
+    (4a) Set LIBVPX_PGO_VIDEO_i, replacing i with an unpadded number, as
+        a per-package environment variable with the absolute path to the
+        asset.
     (4b) Set LIBVPX_VP8_PGO_TRAINING_ARGS,
 	LIBVPX_VP9_PGO_TRAINING_ARGS,
 	LIBVPX_VP8_PGO_TRAINING_ARGS_LOSSLESS,
@@ -57,8 +58,8 @@
     pattern.  Consider also extending it with your live streaming settings.
 
     You may supply a LIBVPX_VP8_PGO_TRAINING_ARGS and/or
-    LIBVPX_VP9_PGO_TRAINING_ARGS as a per package envvar to tell ffmpeg
-    which multicore, multithreading, tiling settings to use as the default.
+    LIBVPX_VP9_PGO_TRAINING_ARGS as a per package environment variable to tell
+    ffmpeg which multicore, multithreading, tiling settings to use as the default.
     It must be a string.  Example
 
       LIBVPX_VP8_PGO_TRAINING_ARGS=" -threads 8"
