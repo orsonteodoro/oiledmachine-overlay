@@ -948,7 +948,7 @@ _src_configure() {
 	local myconf=( )
 	local extra_libs=( )
 
-	einfo "configure_pgx is ${lib_type} with PGO_PHASE=${PGO_PHASE}"
+	einfo "Configuring ${lib_type} with PGO_PHASE=${PGO_PHASE}"
 
 	if use clang ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
