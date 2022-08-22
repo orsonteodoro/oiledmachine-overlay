@@ -123,6 +123,8 @@
 # app that uses the dynamic library.  If the app is not installed, then
 # we skip both PGI and PGO and fallback to normal merging sequence.
 #
+# This function is actually a user defined event handler and optional.
+#
 
 inherit flag-o-matic toolchain-funcs
 if [[ "${TPGO_USE_X}" == "1" ]] ;then
@@ -227,8 +229,16 @@ _tpgo_cmake_clean() {
 		|| ewarn "_pre_tpgo_set_clean should be defined if BUILD_DIR is changed"
 	declare -f _pre_tpgo_set_clean > /dev/null && _pre_tpgo_set_clean
 	[[ -e "${BUILD_DIR}" ]] || return
-	cd "${CMAKE_USE_DIR}" || die
-	rm -rf "${BUILD_DIR}" || die
+
+	if [[ -n "${CMAKE_IN_SOURCE_BUILD}" \
+		|| "${CMAKE_USE_DIR}" == "${BUILD_DIR}" ]] ; then
+		# TODO:  test
+		eninja -t clean
+		find "${BUILD_DIR}" -name "CMakeCache.txt" -delete || true
+	else
+		cd "${CMAKE_USE_DIR}" || die
+		rm -rf "${BUILD_DIR}" || die
+	fi
 }
 
 # @FUNCTION: _tpgo_autotools_clean

@@ -33,12 +33,15 @@
     (2) Build the trainer toolchain depending on this library corresponding
         to the package and USE flags above.
     (3) Acquire a video that is either CC0-1.0, public domain, or your own
-        personal video asset that is 4k, 60 fps, 5 seconds long.
-    (4a) Set LIBAOM_PGO_VIDEO as a per-package envvar with the abspath to
-        the asset.
+        personal video asset that is at least 3 seconds long.
+    (4a) Set LIBAOM_PGO_VIDEO_i, replacing i with an unpadded number, as a
+         per-package environment varable with the absolute path to the asset.
     (4b) Set LIBAOM_PGO_TRAINING_ARGS and/or
 	LIBAOM_PGO_TRAINING_ARGS_LOSSLESS, see below for details.
     (5) Re-emerge this package with the pgo USE flag enabled.
+
+    LIBAOM_PGO_MAX_ASSETS can be used to change the max number of assets to
+    train with.  Currently it is set to 100.
 
     A user may supply a custom.sh via a per-package patch to set up multiple
     encoding settings which may include threading or tiling configurations
@@ -48,8 +51,8 @@
     include the desired the pixel format like 10 bit yuv420p10le if that
     follows your typical use pattern.
 
-    You may supply a LIBAOM_PGO_TRAINING_ARGS as a per package envvar to
-    tell ffmpeg which multicore, multithreading, tiling settings to use as
+    You may supply a LIBAOM_PGO_TRAINING_ARGS as a per package environment
+    variable to tell ffmpeg which multicore, multithreading, tiling settings to use as
     the default.  It must be a string.  Example
 
       LIBAOM_PGO_TRAINING_ARGS=" -cpu-used 8 -tile-columns 2 -tile-rows 2 -threads 8"

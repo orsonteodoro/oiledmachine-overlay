@@ -5,7 +5,7 @@ EAPI=8
 
 CMAKE_ECLASS=cmake
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake-multilib flag-o-matic python-any-r1 toolchain-funcs
+inherit cmake-multilib flag-o-matic python-any-r1 toolchain-funcs tpgo
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
@@ -176,11 +176,14 @@ RESTRICT="strip"
 # Tests need more wiring up
 RESTRICT+=" !test? ( test ) test"
 
-pkg_setup() {
-	if use chromium ; then
-		einfo "The chromium USE flag is in testing."
-	fi
+get_asset_ids() {
+	local i
+	for i in $(seq 0 ${LIBAOM_PGO_MAX_ASSETS}) ; do
+		echo "LIBAOM_PGO_VIDEO_i"
+	done
+}
 
+__check_video() {
 	if use pgo && has_version "media-video/ffmpeg" ; then
 		if ! has_version "media-video/ffmpeg[libaom]" ; then
 			ewarn "You need to emerge ffmpeg with libaom for pgo training."
@@ -190,26 +193,26 @@ pkg_setup() {
 		if ! ( ffmpeg -formats 2>&1 | grep -q -e "E.*webm .*WebM" ) ; then
 			ewarn "Missing WebM support from ffmpeg for PGO training"
 		fi
-		if [[ -z "${LIBAOM_PGO_VIDEO}" ]] ; then
+		if [[ -z "${video_asset_path}" ]] ; then
 eerror
-eerror "LIBAOM_PGO_VIDEO is missing the abspath to your av1 video as a"
+eerror "${id} is missing the abspath to your av1 video as a"
 eerror "per-package envvar.  The video must be 3840x2160 resolution,"
 eerror "60fps, >= 3 seconds."
 eerror
 			die
 		else
-			einfo "LIBAOM_PGO_VIDEO=${LIBAOM_PGO_VIDEO}"
+			einfo "${id}=${video_asset_path}"
 		fi
-		if ffprobe "${LIBAOM_PGO_VIDEO}" 2>/dev/null 1>/dev/null ; then
+		if ffprobe "${video_asset_path}" 2>/dev/null 1>/dev/null ; then
 			einfo "Verifying asset requirements"
-			if ! ( ffprobe "${LIBAOM_PGO_VIDEO}" 2>&1 \
+			if false && ! ( ffprobe "${video_asset_path}" 2>&1 \
 				| grep -q -e "3840x2160" ) ; then
 eerror
 eerror "The PGO video sample must be 3840x2160."
 eerror
 				die
 			fi
-			if ! ( ffprobe "${LIBAOM_PGO_VIDEO}" 2>&1 \
+			if false && ! ( ffprobe "${video_asset_path}" 2>&1 \
 				| grep -q -E -e ", (59|60)[.0-9]* fps" ) ; then
 eerror
 eerror "The PGO video sample must be >=59 fps."
@@ -217,7 +220,7 @@ eerror
 				die
 			fi
 
-			local d=$(ffprobe "${LIBAOM_PGO_VIDEO}" 2>&1 \
+			local d=$(ffprobe "${video_asset_path}" 2>&1 \
 				| grep -E -e "Duration" \
 				| cut -f 4 -d " " \
 				| sed -e "s|,||g" \
@@ -237,16 +240,34 @@ eerror
 			fi
 		else
 eerror
-eerror "${LIBAOM_PGO_VIDEO} is possibly not a valid video file.  Ensure that"
+eerror "${video_asset_path} is possibly not a valid video file.  Ensure that"
 eerror "the proper codec is supported for that file in ffmpeg."
 eerror
 		fi
 	fi
 }
 
+check_video() {
+	local id
+	for id in $(get_asset_ids) ; do
+		local video_asset_path="${!id}"
+		__check_video
+	done
+}
+
+pkg_setup() {
+	LIBAOM_PGO_MAX_ASSETS=${LIBAOM_PGO_MAX_ASSETS:-100}
+	if use chromium ; then
+		einfo "The chromium USE flag is in testing."
+	fi
+	check_video
+	tpgo_setup
+}
+
+# The order does matter with PGO.
 get_lib_types() {
-	echo "shared-libs"
-	use static-libs && echo "static-libs"
+	echo "shared"
+	use static-libs && echo "static"
 }
 
 src_prepare() {
@@ -307,7 +328,7 @@ has_ffmpeg() {
 has_codec_requirements() {
 	local meets_input_req=0
 	local meets_output_req=0
-	if ffprobe "${LIBAOM_PGO_VIDEO}" 2>/dev/null 1>/dev/null ; then
+	if ffprobe "${video_asset_path}" 2>/dev/null 1>/dev/null ; then
 		meets_input_req=1
 	fi
 	if ( ffmpeg -formats 2>&1 | grep -q -e "E.*webm .*WebM" ) ; then
@@ -317,12 +338,9 @@ has_codec_requirements() {
 	return 1
 }
 
-has_pgo_requirement() {
-	if has_ffmpeg && has_codec_requirements ; then
-		return 0
-	else
-		return 1
-	fi
+tpgo_meets_requirements() {
+	has_ffmpeg && has_codec_requirements && return 0
+	return 1
 }
 
 src_configure() { :; }
@@ -337,7 +355,7 @@ append_lto() {
 	if tc-is-clang ; then
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
-		[[ "${lib_type}" == "static-libs" ]] \
+		[[ "${lib_type}" == "static" ]] \
 			&& append_all -fsplit-lto-unit
 	else
 		append-flags -flto
@@ -361,15 +379,15 @@ is_hardened_gcc() {
 
 is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${lib_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		return 0
-	elif use cfi-cross-dso && [[ "${lib_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
 		return 0
 	fi
 	return 1
 }
 
-configure_pgx() {
+_src_configure() {
 	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cd "${CMAKE_USE_DIR}" || die
@@ -414,39 +432,19 @@ configure_pgx() {
 		# -static-libc++ which does not exist.
                 append-cxxflags -stdlib=libc++
                 append-ldflags -stdlib=libc++
-		[[ "${lib_type}" == "shared-libs" ]] \
+		[[ "${lib_type}" == "shared" ]] \
 			&& append-ldflags -lc++
-		[[ "${lib_type}" == "static-libs" ]] \
+		[[ "${lib_type}" == "static" ]] \
 			&& append-ldflags -static-libstdc++
 	elif ! tc-is-clang && use libcxx ; then
 		die "libcxx requires clang++"
 	fi
 
 	autofix_flags
+	tpgo_src_configure
 
 	tc-export CC CXX
-	export FFMPEG=$(get_multiabi_ffmpeg)
-	local pgo_data_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-	mkdir -p "${pgo_data_dir}" || die
-	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
-		&& has_pgo_requirement ; then
-		einfo "Setting up PGI"
-		if tc-is-clang ; then
-			append-flags -fprofile-generate="${pgo_data_dir}"
-		else
-			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
-		fi
-	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] \
-		&& has_pgo_requirement ; then
-		einfo "Setting up PGO"
-		if tc-is-clang ; then
-			llvm-profdata merge -output="${pgo_data_dir}/pgo-custom.profdata" \
-				"${pgo_data_dir}" || die
-			append-flags -fprofile-use="${pgo_data_dir}/pgo-custom.profdata"
-		else
-			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${pgo_data_dir}"
-		fi
-	fi
+
 	local mycmakeargs=(
 		-DENABLE_DOCS=$(multilib_native_usex doc ON OFF)
 		-DENABLE_TESTS=$(usex test)
@@ -479,7 +477,7 @@ configure_pgx() {
 			mycmakeargs+=( -DCFI_CAST=$(usex cfi-cast) )
 			#mycmakeargs+=( -DCFI_ICALL=$(usex cfi-icall) )
 			mycmakeargs+=( -DCFI_VCALL=$(usex cfi-vcall) )
-			if [[ "${lib_type}" == "shared-libs" ]] ; then
+			if [[ "${lib_type}" == "shared" ]] ; then
 				mycmakeargs+=( -DCROSS_DSO_CFI=$(usex cfi-cross-dso) )
 			fi
 			mycmakeargs+=( -DCFI_EXCEPTIONS="-fno-sanitize=cfi-icall" ) # Prevent Illegal instruction with /usr/bin/aomdec --help
@@ -488,7 +486,7 @@ configure_pgx() {
 						-fsanitize=shadow-call-stack
 	}
 
-	if use chromium && [[ "${lib_type}" == "static-libs" ]] ; then
+	if use chromium && [[ "${lib_type}" == "static" ]] ; then
 		mycmakeargs+=(
 			-DAOM_AS_FLAGS="-DCHROMIUM"
 			-DENABLE_NASM=ON
@@ -522,7 +520,7 @@ configure_pgx() {
 		fi
 	fi
 
-	if [[ "${lib_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		mycmakeargs+=(
 			-DBUILD_SHARED_LIBS=OFF
 		)
@@ -540,7 +538,7 @@ configure_pgx() {
 		if use static-libs ; then
 			# Build only once
 			# If static-libs, then use CFI basic mode, else use CFI Cross-DSO mode.
-			if [[ "${lib_type}" == "static-libs" ]] ; then
+			if [[ "${lib_type}" == "static" ]] ; then
 				mycmakeargs+=(
 					-DENABLE_EXAMPLES=$(multilib_native_usex examples ON OFF)
 				)
@@ -607,342 +605,352 @@ eerror
 }
 
 _trainer_plan_constrained_quality() {
-	if use pgo \
-		&& has_pgo_requirement ; then
-		einfo "Running PGO trainer for 1 pass constrained quality"
-		local cmd
-		einfo "Encoding as 720p for 3 sec, 30 fps"
-		cmd=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 1485k -minrate 512k -b:v 1024k \
-			-vf scale=w=-1:h=720 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.webm"
-		)
-		"${cmd[@]}" || die
-		_vdecode "720p, 30 fps"
+	if use pgo && tpgo_meets_requirements ; then
+		local id
+		for id in $(get_asset_ids) ; do
+			local video_asset_path="${!id}"
+			einfo "Running PGO trainer for 1 pass constrained quality"
+			local cmd
+			einfo "Encoding as 720p for 3 sec, 30 fps"
+			cmd=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 1485k -minrate 512k -b:v 1024k \
+				-vf scale=w=-1:h=720 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.webm"
+			)
+			"${cmd[@]}" || die
+			_vdecode "720p, 30 fps"
 
-		einfo "Encoding as 720p for 3 sec, 60 fps"
-		cmd=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=720 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.webm"
-		)
-		"${cmd[@]}" || die
-		_vdecode "720p, 60 fps"
+			einfo "Encoding as 720p for 3 sec, 60 fps"
+			cmd=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=720 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.webm"
+			)
+			"${cmd[@]}" || die
+			_vdecode "720p, 60 fps"
 
-		einfo "Encoding as 1080p for 3 sec, 30 fps"
-		cmd=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=1080 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.webm"
-		)
-		"${cmd[@]}" || die
-		_vdecode "1080p, 30 fps"
+			einfo "Encoding as 1080p for 3 sec, 30 fps"
+			cmd=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=1080 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.webm"
+			)
+			"${cmd[@]}" || die
+			_vdecode "1080p, 30 fps"
 
-		einfo "Encoding as 1080p for 3 sec, 60 fps"
-		cmd=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 4350k -minrate 1500k -b:v 3000k \
-			-vf scale=w=-1:h=1080 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.webm"
-		)
-		"${cmd[@]}" || die
-		_vdecode "1080p, 60 fps"
+			einfo "Encoding as 1080p for 3 sec, 60 fps"
+			cmd=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 4350k -minrate 1500k -b:v 3000k \
+				-vf scale=w=-1:h=1080 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.webm"
+			)
+			"${cmd[@]}" || die
+			_vdecode "1080p, 60 fps"
 
-		einfo "Encoding as 4k for 3 sec, 30 fps"
-		cmd=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 17400k -minrate 6000k -b:v 12000k \
-			-vf scale=w=-1:h=2160 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.webm"
-		)
-		"${cmd[@]}" || die
-		_vdecode "4k, 30 fps"
+			einfo "Encoding as 4k for 3 sec, 30 fps"
+			cmd=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 17400k -minrate 6000k -b:v 12000k \
+				-vf scale=w=-1:h=2160 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.webm"
+			)
+			"${cmd[@]}" || die
+			_vdecode "4k, 30 fps"
 
-		einfo "Encoding as 4k for 3 sec, 60 fps"
-		cmd=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 26100k -minrate 9000k -b:v 18000k \
-			-vf scale=w=-1:h=2160 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.webm"
-		)
-		"${cmd[@]}" || die
-		_vdecode "4k, 60 fps"
+			einfo "Encoding as 4k for 3 sec, 60 fps"
+			cmd=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 26100k -minrate 9000k -b:v 18000k \
+				-vf scale=w=-1:h=2160 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.webm"
+			)
+			"${cmd[@]}" || die
+			_vdecode "4k, 60 fps"
+		done
 	fi
 }
 
 _trainer_plan_2_pass_constrained_quality() {
-	if use pgo \
-		&& has_pgo_requirement ; then
-		einfo "Running PGO trainer for 2 pass constrained quality"
-		local cmd
-		einfo "Encoding as 720p for 3 sec, 30 fps"
-		cmd1=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 1485k -minrate 512k -b:v 1024k \
-			-vf scale=w=-1:h=720 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-pass 1 \
-			-an \
-			-r 30 \
-			-t 3 \
-			-f null /dev/null
-		)
-		cmd2=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 1485k -minrate 512k -b:v 1024k \
-			-vf scale=w=-1:h=720 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-pass 2 \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.webm"
-		)
-		"${cmd1[@]}" || die
-		"${cmd2[@]}" || die
-		_vdecode "720p, 30 fps"
+	if use pgo && tpgo_meets_requirements ; then
+		local id
+		for id in $(get_asset_ids) ; do
+			local video_asset_path="${!id}"
+			einfo "Running PGO trainer for 2 pass constrained quality"
+			local cmd
+			einfo "Encoding as 720p for 3 sec, 30 fps"
+			cmd1=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 1485k -minrate 512k -b:v 1024k \
+				-vf scale=w=-1:h=720 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-pass 1 \
+				-an \
+				-r 30 \
+				-t 3 \
+				-f null /dev/null
+			)
+			cmd2=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 1485k -minrate 512k -b:v 1024k \
+				-vf scale=w=-1:h=720 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-pass 2 \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.webm"
+			)
+			"${cmd1[@]}" || die
+			"${cmd2[@]}" || die
+			_vdecode "720p, 30 fps"
 
-		einfo "Encoding as 720p for 3 sec, 60 fps"
-		cmd1=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=720 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-pass 1 \
-			-an \
-			-r 60 \
-			-t 3 \
-			-f null /dev/null
-		)
-		cmd2=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=720 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-pass 2 \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.webm"
-		)
-		"${cmd1[@]}" || die
-		"${cmd2[@]}" || die
-		_vdecode "720p, 60 fps"
+			einfo "Encoding as 720p for 3 sec, 60 fps"
+			cmd1=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=720 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-pass 1 \
+				-an \
+				-r 60 \
+				-t 3 \
+				-f null /dev/null
+			)
+			cmd2=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=720 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-pass 2 \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.webm"
+			)
+			"${cmd1[@]}" || die
+			"${cmd2[@]}" || die
+			_vdecode "720p, 60 fps"
 
-		einfo "Encoding as 1080p for 3 sec, 30 fps"
-		cmd1=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=1080 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-pass 1 \
-			-an \
-			-r 30 \
-			-t 3 \
-			-f null /dev/null
-		)
-		cmd2=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 2610k -minrate 900k -b:v 1800k \
-			-vf scale=w=-1:h=1080 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-pass 2 \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.webm"
-		)
-		"${cmd1[@]}" || die
-		"${cmd2[@]}" || die
-		_vdecode "1080p, 30 fps"
+			einfo "Encoding as 1080p for 3 sec, 30 fps"
+			cmd1=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=1080 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-pass 1 \
+				-an \
+				-r 30 \
+				-t 3 \
+				-f null /dev/null
+			)
+			cmd2=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 2610k -minrate 900k -b:v 1800k \
+				-vf scale=w=-1:h=1080 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-pass 2 \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.webm"
+			)
+			"${cmd1[@]}" || die
+			"${cmd2[@]}" || die
+			_vdecode "1080p, 30 fps"
 
-		einfo "Encoding as 1080p for 3 sec, 60 fps"
-		cmd1=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 4350k -minrate 1500k -b:v 3000k \
-			-vf scale=w=-1:h=1080 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-pass 1 \
-			-an \
-			-r 60 \
-			-t 3 \
-			-f null /dev/null
-		)
-		cmd2=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 4350k -minrate 1500k -b:v 3000k \
-			-vf scale=w=-1:h=1080 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-pass 2 \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.webm"
-		)
-		"${cmd1[@]}" || die
-		"${cmd2[@]}" || die
-		_vdecode "1080p, 60 fps"
+			einfo "Encoding as 1080p for 3 sec, 60 fps"
+			cmd1=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 4350k -minrate 1500k -b:v 3000k \
+				-vf scale=w=-1:h=1080 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-pass 1 \
+				-an \
+				-r 60 \
+				-t 3 \
+				-f null /dev/null
+			)
+			cmd2=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 4350k -minrate 1500k -b:v 3000k \
+				-vf scale=w=-1:h=1080 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-pass 2 \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.webm"
+			)
+			"${cmd1[@]}" || die
+			"${cmd2[@]}" || die
+			_vdecode "1080p, 60 fps"
 
-		einfo "Encoding as 4k for 3 sec, 30 fps"
-		cmd1=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 17400k -minrate 6000k -b:v 12000k \
-			-vf scale=w=-1:h=2160 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-pass 1 \
-			-an \
-			-r 30 \
-			-t 3 \
-			-f null /dev/null
-		)
-		cmd2=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 17400k -minrate 6000k -b:v 12000k \
-			-vf scale=w=-1:h=2160 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-pass 2 \
-			-an \
-			-r 30 \
-			-t 3 \
-			"${T}/test.webm"
-		)
-		"${cmd1[@]}" || die
-		"${cmd2[@]}" || die
-		_vdecode "4k, 30 fps"
+			einfo "Encoding as 4k for 3 sec, 30 fps"
+			cmd1=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 17400k -minrate 6000k -b:v 12000k \
+				-vf scale=w=-1:h=2160 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-pass 1 \
+				-an \
+				-r 30 \
+				-t 3 \
+				-f null /dev/null
+			)
+			cmd2=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 17400k -minrate 6000k -b:v 12000k \
+				-vf scale=w=-1:h=2160 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-pass 2 \
+				-an \
+				-r 30 \
+				-t 3 \
+				"${T}/test.webm"
+			)
+			"${cmd1[@]}" || die
+			"${cmd2[@]}" || die
+			_vdecode "4k, 30 fps"
 
-		einfo "Encoding as 4k for 3 sec, 60 fps"
-		cmd1=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 26100k -minrate 9000k -b:v 18000k \
-			-vf scale=w=-1:h=2160 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-pass 1 \
-			-an \
-			-r 60 \
-			-t 3 \
-			-f null /dev/null
-		)
-		cmd2=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-maxrate 26100k -minrate 9000k -b:v 18000k \
-			-vf scale=w=-1:h=2160 \
-			${LIBAOM_PGO_TRAINING_ARGS} \
-			-pass 2 \
-			-an \
-			-r 60 \
-			-t 3 \
-			"${T}/test.webm"
-		)
-		"${cmd1[@]}" || die
-		"${cmd2[@]}" || die
-		_vdecode "4k, 60 fps"
+			einfo "Encoding as 4k for 3 sec, 60 fps"
+			cmd1=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 26100k -minrate 9000k -b:v 18000k \
+				-vf scale=w=-1:h=2160 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-pass 1 \
+				-an \
+				-r 60 \
+				-t 3 \
+				-f null /dev/null
+			)
+			cmd2=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-maxrate 26100k -minrate 9000k -b:v 18000k \
+				-vf scale=w=-1:h=2160 \
+				${LIBAOM_PGO_TRAINING_ARGS} \
+				-pass 2 \
+				-an \
+				-r 60 \
+				-t 3 \
+				"${T}/test.webm"
+			)
+			"${cmd1[@]}" || die
+			"${cmd2[@]}" || die
+			_vdecode "4k, 60 fps"
+		done
 	fi
 }
 
 _trainer_plan_lossless() {
-	if use pgo \
-		&& has_pgo_requirement ; then
-		einfo "Running PGO trainer for lossless"
-		local cmd
-		einfo "Encoding for lossless"
-		cmd=(
-			"${FFMPEG}" \
-			-y \
-			-i "${LIBAOM_PGO_VIDEO}" \
-			-c:v libaom-av1 \
-			-crf 0 \
-			${LIBAOM_PGO_TRAINING_ARGS_LOSSLESS} \
-			-an \
-			-t 3 \
-			"${T}/test.webm"
-		)
-		"${cmd[@]}" || die
-		_vdecode "lossless"
+	if use pgo && tpgo_meets_requirements ; then
+		local id
+		for id in $(get_asset_ids) ; do
+			local video_asset_path="${!id}"
+			einfo "Running PGO trainer for lossless"
+			local cmd
+			einfo "Encoding for lossless"
+			cmd=(
+				"${FFMPEG}" \
+				-y \
+				-i "${video_asset_path}" \
+				-c:v libaom-av1 \
+				-crf 0 \
+				${LIBAOM_PGO_TRAINING_ARGS_LOSSLESS} \
+				-an \
+				-t 3 \
+				"${T}/test.webm"
+			)
+			"${cmd[@]}" || die
+			_vdecode "lossless"
+		done
 	fi
 }
 
-run_trainer() {
+tpgo_train_custom() {
+	[[ "${lib_type}" == "static" ]] && return
 	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	export LD_LIBRARY_PATH="${BUILD_DIR}"
@@ -961,41 +969,25 @@ run_trainer() {
 	unset LD_LIBRARY_PATH
 }
 
-compile_pgx() {
+_src_compile() {
 	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cd "${BUILD_DIR}" || die
 	cmake_src_compile
 }
 
+_src_pre_train() {
+	export FFMPEG=$(get_multiabi_ffmpeg)
+}
+
+_src_post_pgo() {
+	export PGO_RAN=1
+}
+
 src_compile() {
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
-			if use pgo \
-				&& has_pgo_requirement ; then
-				if [[ "${lib_type}" == "shared-libs" ]] ; then
-					PGO_PHASE="pgi"
-					configure_pgx
-					compile_pgx
-					run_trainer
-				fi
-				local pgo_data_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-				if (( $(find "${pgo_data_dir}" 2>/dev/null | wc -l) > 0 )) ; then
-					PGO_PHASE="pgo"
-					[[ "${lib_type}" == "static-libs" ]] \
-						&& ewarn "Reusing PGO data from shared-libs"
-				else
-					ewarn "No PGO data found.  Skipping PGO build and building normally."
-					unset PGO_PHASE
-				fi
-				configure_pgx
-				compile_pgx
-				export PGO_RAN=1
-			else
-				ewarn "Not using PGO for ${ABI}"
-				configure_pgx
-				compile_pgx
-			fi
+			tpgo_src_compile
 		done
 	}
 	multilib_foreach_abi compile_abi
