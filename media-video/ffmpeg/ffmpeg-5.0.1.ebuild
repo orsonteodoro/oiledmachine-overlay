@@ -644,7 +644,7 @@ build_separate_libffmpeg() {
 	use opencl
 }
 
-gen_video_sample_identifiers() {
+get_video_sample_ids() {
 	local types=(
 		VIDEO_FANTASY
 		VIDEO_REALISM
@@ -657,7 +657,7 @@ gen_video_sample_identifiers() {
 	done
 }
 
-gen_audio_sample_identifiers() {
+get_audio_sample_ids() {
 	local types=(
 		VOICE
 		RADIO
@@ -675,7 +675,8 @@ gen_audio_sample_identifiers() {
 _pgo_check_video() {
 	if [[ -z "${video_sample_path}" ]] ; then
 eerror
-eerror "${id} is missing the abspath to your video as a per-package envvar."
+eerror "${id} is missing the abspath to your video as a per-package environment"
+eerror "variable."
 eerror
 #eerror "The video must be 3840x2160 resolution, 60fps, >= 3 seconds."
 #eerror
@@ -686,14 +687,14 @@ eerror
 		if false && ! ( ffprobe "${video_sample_path}" 2>&1 \
 			| grep -q -e "3840x2160" ) ; then
 eerror
-eerror "The PGO video sample must be 3840x2160."
+eerror "The PGO video sample must be 3840x2160 for ${id}."
 eerror
 			die
 		fi
 		if false && ! ( ffprobe "${video_sample_path}" 2>&1 \
 			| grep -q -E -e ", (59|60)[.0-9]* fps" ) ; then
 eerror
-eerror "The PGO video sample must be >=59 fps."
+eerror "The PGO video sample must be >=59 fps for ${id}."
 eerror
 			die
 		fi
@@ -712,11 +713,11 @@ eerror
 		local t=$((${h} + ${m} + ${s}))
 		if (( ${t} < 3 )) ; then
 eerror
-eerror "The PGO video sample must be >= 3 seconds."
+eerror "The PGO video sample must be >= 3 seconds for ${id}."
 eerror
 			die
 		else
-einfo "${video_sample_path} is accepted as a PGO trainer asset."
+einfo "${video_sample_path} is accepted as a PGO trainer asset for ${id}."
 		fi
 	else
 eerror
@@ -728,7 +729,7 @@ eerror
 
 pgo_check_video() {
 	local id
-	for id in $(gen_video_sample_identifiers) ; do
+	for id in $(get_video_sample_ids) ; do
 		local video_sample_path="${!id}"
 		if [[ -z "${video_sample_path}" ]] ; then
 			ewarn "Skipping ${id}."
@@ -744,7 +745,7 @@ pgo_check_video() {
 
 pgo_check_audio() {
 	local id
-	for id in $(gen_audio_sample_identifiers) ; do
+	for id in $(get_audio_sample_ids) ; do
 		local audio_sample_path="${!id}"
 		if [[ -z "${audio_sample_path}" ]] ; then
 			ewarn "Skipping ${id}."
@@ -868,17 +869,14 @@ get_multiabi_ffmpeg() {
 
 has_ffmpeg() {
 	local x=$(get_multiabi_ffmpeg)
-	if [[ -n "${x}" && -e "${x}" ]] ; then
-		return 0
-	else
-		return 1
-	fi
+	[[ -n "${x}" && -e "${x}" ]] && return 0
+	return 1
 }
 
 has_codec_requirement() {
 	local codecs_found=1
 	local id
-	for id in $(gen_audio_sample_identifiers) ; do
+	for id in $(get_audio_sample_ids) ; do
 		local audio_sample_path="${!id}"
 		if [[ -z "${audio_sample_path}" ]] ; then
 			continue
@@ -1367,10 +1365,9 @@ _trainer_plan_video_constrained_quality() {
 		training_args="${!envvar}"
 	fi
 
-	if use pgo \
-		&& tpgo_meets_requirements ; then
+	if use pgo && tpgo_meets_requirements ; then
 		local id
-		for id in $(gen_video_sample_identifiers) ; do
+		for id in $(get_video_sample_ids) ; do
 			local video_sample_path="${!id}"
 			einfo "Running PGO trainer for ${encoding_codec} for 1 pass constrained quality"
 			local cmd
@@ -1492,10 +1489,9 @@ _trainer_plan_video_2_pass_constrained_quality() {
 		training_args="${!envvar}"
 	fi
 
-	if use pgo \
-		&& tpgo_meets_requirements ; then
+	if use pgo && tpgo_meets_requirements ; then
 		local id
-		for id in $(gen_video_sample_identifiers) ; do
+		for id in $(get_video_sample_ids) ; do
 			local video_sample_path="${!id}"
 			einfo "Running PGO trainer for ${encoding_codec} for 2 pass constrained quality"
 			local cmd
@@ -1720,10 +1716,9 @@ _trainer_plan_audio_lossless() {
 		training_args="${!envvar}"
 	fi
 
-	if use pgo \
-		&& tpgo_meets_requirements ; then
+	if use pgo && tpgo_meets_requirements ; then
 		local id
-		for id in $(gen_audio_sample_identifiers) ; do
+		for id in $(get_audio_sample_ids) ; do
 			local audio_sample_path="${!id}"
 			if [[ -z "${audio_sample_path}" || ! -f "${audio_sample_path}" ]] ; then
 				ewarn "Skipping ${id}"
@@ -1776,10 +1771,9 @@ _trainer_plan_video_lossless() {
 
 	[[ "${encoding_codec}" =~ "vp9" ]] && codec_args+=( -lossless 1 )
 
-	if use pgo \
-		&& tpgo_meets_requirements ; then
+	if use pgo && tpgo_meets_requirements ; then
 		local id
-		for id in $(gen_video_sample_identifiers) ; do
+		for id in $(get_video_sample_ids) ; do
 			local video_sample_path="${!id}"
 			einfo "Running PGO trainer for ${encoding_codec} for lossless"
 			einfo "Encoding for lossless video"
@@ -1828,7 +1822,7 @@ _trainer_plan_audio_cbr() {
 	fi
 
 	local id
-	for id in $(gen_audio_sample_identifiers) ; do
+	for id in $(get_audio_sample_ids) ; do
 		local audio_sample_path="${!id}"
 		if [[ -z "${audio_sample_path}" || ! -f "${audio_sample_path}" ]] ; then
 			ewarn "Skipping ${id}"
@@ -1901,7 +1895,7 @@ _trainer_plan_audio_vbr() {
 	fi
 
 	local id
-	for id in $(gen_audio_sample_identifiers) ; do
+	for id in $(get_audio_sample_ids) ; do
 		local audio_sample_path="${!id}"
 		if [[ -z "${audio_sample_path}" || ! -f "${audio_sample_path}" ]] ; then
 			ewarn "Skipping ${id}"
