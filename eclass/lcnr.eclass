@@ -20,7 +20,8 @@ esac
 
 # @ECLASS_VARIABLE: LCNR_TAG
 # @DESCRIPTION:
-# Separate recursive searches with a tag
+# Separate recursive searches with a tag.  In addition install the recursive
+# search in its own sub folder.
 
 # @ECLASS_VARIABLE: LCNR_COPY_ONCE
 # @DESCRIPTION:
@@ -31,6 +32,11 @@ LCNR_COPY_ONCE=${LCNR_COPY_ONCE:-1}
 # @DESCRIPTION:
 # The default source location to recursively search
 LCNR_SOURCE=${LCNR_SOURCE:-${S}}
+
+# @ECLASS_VARIABLE: LCNR_ADD_GH_DEV_FILES
+# @DESCRIPTION:
+# Add development documentation such as bug report templates or
+# version control documentation
 
 # @FUNCTION: lcnr_install_header
 # @DESCRIPTION:
@@ -81,7 +87,7 @@ ewarn "QA:  ${LCNR_SOURCE}/${d}/${file_name} is missing"
 # @FUNCTION: lcnr_install_files
 # @DESCRIPTION:
 # Installs a licenses or copyright notices from packages and other internal
-# packages.
+# packages recursively.
 lcnr_install_files() {
 	local filename="${T}/.copied_licenses_or_copyright_notices_${LCNR_TAG}"
 	if [[ "${LCNR_COPY_ONCE}" == "1" ]] ; then
@@ -134,35 +140,47 @@ einfo
 
 # @FUNCTION: lcnr_install_readmes
 # @DESCRIPTION:
-# Installs all readmes including those from micropackages.  Standardizes the
-# process.
+# Installs all readmes including those from micropackages recursively.
+# Standardizes the process.
 lcnr_install_readmes() {
-	local filename="${T}/.copied_readmes"
+	local filename="${T}/.copied_readmes_${LCNR_TAG}"
 	if [[ "${LCNR_COPY_ONCE}" == "1" ]] ; then
 		# Only traverse once.
 		[[ -f "${filename}" ]] && return
 	fi
+	local message_extension=""
+	if [[ -n "${LCNR_TAG}" ]] ; then
+		message_extension=" for ${LCNR_TAG}"
+	fi
 einfo
-einfo "Copying readmes"
+einfo "Copying readmes${message_extension}"
 einfo
+
+	local extra_args=()
+	if [[ "${LCNR_ADD_GH_DEV_FILES}" == "1" ]] ; then
+		extra_args=(
+			-o -iname "*bug*report*.md"
+			-o -iname "*feature*request*.md"
+			-o -iname "*issue*template*.md"
+			-o -iname "*pull*request*template*.md"
+			-o -iname "*code*of*conduct*"
+		)
+	fi
+
 	export IFS=$'\n'
 	local f
 	for f in $(find "${LCNR_SOURCE}" \
 		-iname "*.pdf" \
-		-o -iname "*bug*report*.md" \
 		-o -iname "*changelog*" \
 		-o -iname "*changes*" \
-		-o -iname "*code*of*conduct*" \
 		-o -iname "*contributing*" \
-		-o -iname "*feature*request*.md" \
 		-o -iname "*governance*" \
 		-o -iname "*history*" \
-		-o -iname "*issue*template*.md" \
 		-o -iname "*language*.md" \
-		-o -iname "*pull*request*template*.md" \
 		-o -iname "*readme*" \
 		-o -ipath "*/doc/*" \
 		-o -ipath "*/docs/*" \
+		${extra_args[@]} \
 	) ; \
 	do
 		local d
@@ -171,7 +189,11 @@ einfo
 		else
 			d=$(echo "${f}" | sed -e "s|^${LCNR_SOURCE}||")
 		fi
-		docinto "readmes/${d}"
+		if [[ -n "${LCNR_TAG}" ]] ; then
+			docinto "readmes/${LCNR_TAG}/${d}"
+		else
+			docinto "readmes/${d}"
+		fi
 		dodoc -r "${f}"
 	done
 	export IFS=$' \t\n'
