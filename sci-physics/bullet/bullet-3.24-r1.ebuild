@@ -8,7 +8,7 @@ TPGO_USE_X=1
 TPGO_MULTILIB=1
 TPGO_TEST_DURATION=20
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake flag-o-matic multilib-build python-single-r1 toolchain-funcs tpgo
+inherit cmake flag-o-matic lcnr multilib-build python-single-r1 toolchain-funcs tpgo
 
 DESCRIPTION="Continuous Collision Detection and Physics Library"
 HOMEPAGE="http://www.bulletphysics.com/"
@@ -486,34 +486,6 @@ src_compile() {
 	fi
 }
 
-_install_licenses() {
-	export IFS=$'\n'
-	for f in $(find "${S}" \
-		-iname "*licen*" -type f \
-		-o -iname "*copyright*" \
-		-o -iname "*copying*" \
-		-o -iname "*patent*" \
-		-o -iname "ofl.txt" \
-		-o -iname "*notice*" \
-		-o -iname "*author*" \
-		-o -iname "*CONTRIBUTORS*" \
-	) $(grep -i -G -l \
-		-e "copyright" \
-		-e "licen" \
-		-e "warrant" \
-		$(find "${S}" -iname "*readme*")) ; \
-	do
-		if [[ -f "${f}" ]] ; then
-			d=$(dirname "${f}" | sed -e "s|^${S}||")
-		else
-			d=$(echo "${f}" | sed -e "s|^${S}||")
-		fi
-		docinto "licenses/${d}"
-		dodoc -r "${f}"
-	done
-	export IFS=$' \t\n'
-}
-
 sanitize_rpaths()
 {
 einfo
@@ -606,7 +578,7 @@ echo "/usr/share/${PN}/demos" \
 	>> "${ED}/usr/share/${PN}/examples/readme.txt" || die
 	fi
 	einstalldocs
-	_install_licenses
+	lcnr_install_files
 	fix_tbb_rpath
 	sanitize_rpaths
 }
