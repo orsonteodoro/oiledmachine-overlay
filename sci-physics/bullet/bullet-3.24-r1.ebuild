@@ -4,8 +4,10 @@
 
 EAPI=8
 
+TPGO_MULTILIB=1
+TPGO_TEST_DURATION=20
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake flag-o-matic multilib-build python-single-r1 toolchain-funcs virtualx
+inherit cmake flag-o-matic multilib-build python-single-r1 toolchain-funcs tpgo
 
 DESCRIPTION="Continuous Collision Detection and Physics Library"
 HOMEPAGE="http://www.bulletphysics.com/"
@@ -255,7 +257,6 @@ IUSE+="
 	+obj2sdf
 	-openmp
 	-openvr
-	pgo
 	-python
 	+serialize
 	-tbb
@@ -310,10 +311,6 @@ BDEPEND+="
 	${CDEPEND}
 	dev-util/patchelf
 	doc? ( app-doc/doxygen[dot] )
-	pgo? (
-		x11-base/xorg-server[xvfb]
-		x11-apps/xhost
-	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-2.85-soversion.patch"
@@ -336,6 +333,8 @@ einfo "/etc/portage/profile/package.use.mask:"
 einfo
 einfo "  sci-physics/bullet -tbb"
 einfo
+	tpgo_setup
+	python-single-r1_pkg_setup
 }
 
 src_prepare() {
@@ -344,13 +343,10 @@ src_prepare() {
 	sed -i -e 's/GENERATE_HTMLHELP.*//g' Doxyfile || die
 }
 
-_configure() {
+_src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
-	if [[ "${PGO_PHASE}" == "pgo" ]] ; then
-		cd "${BUILD_DIR}" || die
-		rm -rf "${BUILD_DIR}" || die
-	fi
+	tpgo_src_configure
 	cd "${CMAKE_USE_DIR}" || die
 	local mycmakeargs=(
 		-DBUILD_BULLET2_DEMOS=$(usex demos)
@@ -390,48 +386,18 @@ eerror "oiledmachine-overlay."
 eerror
 		die
 	fi
-	if [[ "${PGO_PHASE}" == "pg0" ]] ; then
+	if [[ "${PGO_PHASE}" == "NO_PGO" ]] ; then
 einfo
 einfo "Skipping PGO / Normal build"
 einfo
-	elif [[ "${PGO_PHASE}" == "pgi" ]] ; then
+	elif [[ "${PGO_PHASE}" == "PGI" ]] ; then
 einfo
 einfo "Instrumenting build"
 einfo
-	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
+	elif [[ "${PGO_PHASE}" == "PGO" ]] ; then
 einfo
 einfo "Optimizing build"
 einfo
-	fi
-
-	filter-flags -fprofile*
-	local pgo_datadir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-	mkdir -p "${pgo_datadir}" || die # Make first demo produce a PGO profile?
-	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] ; then
-		einfo "Setting up PGI"
-		if tc-is-clang ; then
-			append-flags \
-				-fprofile-generate="${pgo_datadir}"
-		else
-			append-flags \
-				-fprofile-generate \
-				-fprofile-dir="${pgo_datadir}"
-		fi
-	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] ; then
-		einfo "Setting up PGO"
-		if tc-is-clang ; then
-			llvm-profdata \
-				merge \
-				-output="${pgo_datadir}/pgo-custom.profdata" \
-				"${pgo_datadir}" || die
-			append-flags \
-				-fprofile-use="${pgo_datadir}/pgo-custom.profdata"
-		else
-			append-flags \
-				-fprofile-correction \
-				-fprofile-use \
-				-fprofile-dir="${pgo_datadir}"
-		fi
 	fi
 
 	cmake_src_configure
@@ -439,14 +405,14 @@ einfo
 
 src_configure() { :; }
 
-_compile() {
+_src_compile() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 	cd "${BUILD_DIR}" || die
 	cmake_src_compile
 }
 
-_set_demo() {
+tpgo_pre_trainer() {
 	local name="${@}"
 cat > 0_Bullet3Demo.txt <<EOF
 --start_demo_name=${name}
@@ -459,43 +425,8 @@ cat > 0_Bullet3Demo.txt <<EOF
 EOF
 }
 
-_run_demo() {
-	local duration="${1}"
-	shift 1
-	local name="${@}"
-	local now=$(date +"%s")
-	local done_at=$((${now} + ${duration}))
-	local done_at_s=$(date --date="@${done_at}")
-einfo
-einfo "Running '${name}' demo for ${duration}s to be completed at"
-einfo "${done_at_s}"
-einfo
-cat > "run.sh" <<EOF
-#!/bin/sh
-
-# Using & will prevent stall
-examples/ExampleBrowser/App_ExampleBrowser &
-pid=\$!
-
-now=\$(date +"%s")
-while (( \${now} < ${done_at} )) \
-	&& ps -p \${pid} 2>/dev/null 1>/dev/null ; do
-	sleep 1
-	now=\$(date +"%s")
-done
-ps -p \${pid} 2>/dev/null 1>/dev/null \
-	&& kill -9 \${pid}
-true
-EOF
-	chmod +x "run.sh" || die
-	virtx ./run.sh
-	rm run.sh || die
-	if grep -q -r -e "cannot connect to X server" "${T}/build.log" ; then
-eerror
-eerror "Detected cannot connect to X server."
-eerror
-		die
-	fi
+tpgo_post_trainer() {
+	rm 0_Bullet3Demo.txt
 }
 
 is_benchmark_demo() {
@@ -516,7 +447,7 @@ is_benchmark_demo() {
 	IFS=$'\n'
 	local y
 	for y in ${benchmark_demos[@]} ; do
-		if [[ "${x}" == "${y}" ]] ; then
+		if [[ "${trainer}" == "${y}" ]] ; then
 			IFS=$' \n\r\t'
 			return 0
 		fi
@@ -525,81 +456,28 @@ is_benchmark_demo() {
 	return 1
 }
 
-_train() {
-	# Sandbox violation prevention
-	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache"
-	export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
-	for x in $(find /dev/input -name "event*") ; do
-		einfo "Adding \`addwrite ${x}\` sandbox rule"
-		addwrite "${x}"
-	done
+tpgo_trainer_list() {
+	grep "ExampleEntry([01]" \
+		"${S}/examples/ExampleBrowser/ExampleEntries.cpp" \
+		| cut -f 2 -d '"' \
+		| sort
+}
 
-	local pgo_datadir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-	IFS=$'\n'
-	local x
-	for x in $(grep "ExampleEntry([01]" \
-			"${S}/examples/ExampleBrowser/ExampleEntries.cpp" \
-			| cut -f 2 -d '"' \
-			| sort) ; do
-		local duration=20 # seconds
-		if is_benchmark_demo "${x}" ; then
-			duration=180 # 3 min
-		fi
-		_set_demo "${x}"
-		_run_demo "${duration}" "${x}"
-		rm 0_Bullet3Demo.txt || die
-		if use pgo &&  tc-is-gcc ; then
-			if ! find "${pgo_datadir}" -name "*.gcda" \
-				2>/dev/null 1>/dev/null ; then
-ewarn
-ewarn "Didn't generate a PGO profile"
-ewarn
-			fi
-		elif use pgo && tc-is-clang ; then
-			if ! find "${pgo_datadir}" -name "*.profraw" \
-				2>/dev/null 1>/dev/null ; then
-ewarn
-ewarn "Didn't generate a PGO profile"
-ewarn
-			fi
-		fi
-	done
-	IFS=$' \n\r\t'
-	if use pgo && tc-is-gcc ; then
-		if ! find "${pgo_datadir}" -name "*.gcda" ; then
-eerror
-eerror "Didn't generate a PGO profile"
-eerror
-			die
-		fi
-	elif use pgo && tc-is-clang ; then
-		if ! find "${pgo_datadir}" -name "*.profraw" ; then
-eerror
-eerror "Didn't generate a PGO profile"
-eerror
-			die
-		fi
+tpgo_override_duration() {
+	local trainer="${1}"
+	if is_benchmark_demo "${1}" ; then
+		echo "180" # 3 min
+	else
+		echo "20" # seconds
 	fi
 }
 
+tpgo_get_trainer_exe() {
+	echo "examples/ExampleBrowser/App_ExampleBrowser"
+}
+
 src_compile() {
-	compile_abi() {
-		if use pgo ; then
-			# PGO on average is 10% performance benefit
-			PGO_PHASE="pgi"
-			_configure
-			_compile
-			_train
-			PGO_PHASE="pgo"
-			_configure
-			_compile
-		else
-			PGO_PHASE="pg0"
-			_configure
-			_compile
-		fi
-	}
-	multilib_foreach_abi compile_abi
+	tpgo_multilib_compile
 	if use doc; then
 		doxygen || die
 		HTML_DOCS+=( html/. )

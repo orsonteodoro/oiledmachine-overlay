@@ -1,0 +1,556 @@
+# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+# @ECLASS: tpgo.eclass
+# @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
+# @SUPPORTED_EAPIS: 7 8
+# @BLURB: EPGO
+# @DESCRIPTION:
+# This ebuild is to perform a traditional 3 step PGO per emerge.
+# It exists to increase the deployment of PGO and to educate about the
+# mysterious PGO support.
+
+# When to use this eclass?
+#
+# Only use if the build times are short like in 1 hr and the package has
+# benchmarks, demos, examples.
+#
+# If the package doesn't contain benchmarks, demos, examples or has
+# hours build times use the epgo eclass instead.
+#
+
+# The current EAPI is not designed for traditional 3 step PGO.
+# Certain things should be disabled or be changed in order for it to work
+# properly.
+
+# Required
+#
+# These are required to prevent calling the default handler.
+#
+# Any event based *configure() needs to be disabled/converted.
+#
+# src_configure() {
+#	...
+# }
+#	to
+#
+# _src_configure() { :; }
+#
+# multilib_src_configure {
+#	...
+# }
+#
+#	to
+#
+# _src_configure() {
+#	configure_abi {
+#		...
+#	}
+#	foreach_multilib_abi
+#	configure_abi
+# }
+#
+#
+# Any *prepare() with sed edits needs to be converted
+#
+# src_prepare() {
+#	...
+# }
+#	to
+#
+# _src_prepare() { :; }
+#
+#
+# Any *compile() needs needs to be converted
+#
+# src_configure() {
+#	...
+# }
+#	to
+#
+# _src_configure() { :; }
+#
+# multilib_src_configure {
+#	...
+# }
+#
+#	to
+#
+# _src_configure() {
+#	configure_abi {
+#		...
+#	}
+#	foreach_multilib_abi
+#	configure_abi
+# }
+#
+# If an ebuild uses multiple multibuild derivatives, it should be converted into
+# nested loops.
+# Reason why is because multibuild and derivatives are broken by design.
+# It is trying to cover up the n^k design (aka antipattern).
+
+inherit flag-o-matic toolchain-funcs virtualx
+if [[ "${TPGO_MULTILIB}" == "1" ]] ; then
+	inherit multilib-build
+fi
+
+IUSE+=" pgo"
+BDEPEND+="
+	pgo? (
+		x11-base/xorg-server[xvfb]
+		x11-apps/xhost
+	)
+"
+
+TPGO_TEST_DURATION=${TPGO_TEST_DURATION:-120} # 2 min
+
+# @FUNCTION: tpgo_get_trainer_exe
+# @DESCRIPTION:
+# Performs checks and recommend workarounds to broken EAPI to unbreak PGO
+tpgo_setup() {
+	declare -f tpgo_get_trainer_exe > /dev/null \
+		|| die "tpgo_get_trainer_exe must be defined"
+	declare -f tpgo_trainer_list > /dev/null \
+		|| die "tpgo_trainer_list must be defined"
+
+	if (( $(declare -f src_configure | wc -c) > 29 )) ; then
+eerror
+eerror "src_configure must be nop and renamed."
+eerror
+eerror "Rename src_configure -> _src_configure()."
+eerror "Add src_configure() { :; }"
+eerror
+		die
+	fi
+
+	if (( $(declare -f multilib_src_configure | wc -c) > 38 )) ; then
+eerror
+eerror "multilib_src_configure must be renamed."
+eerror
+eerror "Rename multilib_src_configure -> _src_configure()."
+eerror "Add src_configure() { :; }"
+eerror ""
+eerror
+		die
+	fi
+}
+
+# @FUNCTION: _tpgo_configure
+# @DESCRIPTION:
+# Sets up PGO flags
+_tpgo_configure() {
+	filter-flags -fprofile*
+	local pgo_data_dir="${T}/pgo-${TPGO_SUFFIX}"
+	mkdir -p "${pgo_data_dir}" || die # Make first demo produce a PGO profile?
+	if use pgo && [[ "${PGO_PHASE}" == "PGI" ]] ; then
+		einfo "Setting up PGI"
+		if tc-is-clang ; then
+			append-flags \
+				-fprofile-generate="${pgo_data_dir}"
+		else
+			append-flags \
+				-fprofile-generate \
+				-fprofile-dir="${pgo_data_dir}"
+		fi
+	elif use pgo && [[ "${PGO_PHASE}" == "PGO" ]] ; then
+		einfo "Setting up PGO"
+		if tc-is-clang ; then
+			llvm-profdata \
+				merge \
+				-output="${pgo_data_dir}/pgo-custom.profdata" \
+				"${pgo_data_dir}" || die
+			append-flags \
+				-fprofile-use="${pgo_data_dir}/pgo-custom.profdata"
+		else
+			append-flags \
+				-fprofile-correction \
+				-fprofile-use \
+				-fprofile-dir="${pgo_data_dir}"
+		fi
+	fi
+}
+
+# @FUNCTION: _tpgo_cmake_clean
+# @DESCRIPTION:
+# Clears the build directory for a cmake based project.
+# You must add this before cmake_src_configure
+# The _pre_tpgo_set_clean hook can be used to override BUILD_DIR
+_tpgo_cmake_clean() {
+	[[ -n ${_CMAKE_ECLASS} || -n ${_CMAKE_UTILS_ECLASS} ]] || return
+	declare -f _pre_tpgo_set_clean > /dev/null || ewarn "_pre_tpgo_set_clean should be defined"
+	declare -f _pre_tpgo_set_clean > /dev/null && _pre_tpgo_set_clean
+	[[ -e "${BUILD_DIR}" ]] || return
+	cd "${CMAKE_USE_DIR}" || die
+	rm -rf "${BUILD_DIR}" || die
+}
+
+# @FUNCTION: _tpgo_autotools_clean
+# @DESCRIPTION:
+# Clears the build directory for autotools based project.
+# It assumes the current directory is the build directory
+# The _pre_tpgo_set_clean can be used to change into the build directory.
+_tpgo_autotools_clean() {
+	declare -f _pre_tpgo_set_clean > /dev/null && _pre_tpgo_set_clean
+	emake clean
+}
+
+# @FUNCTION: tpgo_meson_src_configure
+# @DESCRIPTION:
+# Add this in emesonargs
+# Example:
+# emesonargs=(
+#	....
+#	$(tpgo_meson_src_configure)
+# )
+# emesonargs+=( $(tpgo_meson_src_configure) )
+#
+# You still need to call tpgo_src_configure before meson_src_configure.
+#
+tpgo_meson_src_configure() {
+	if [[ "${PGO_PHASE}" == "PGO" ]] ; then
+		echo "--wipe"
+	fi
+}
+
+# @FUNCTION: tpgo_src_configure
+# @DESCRIPTION:
+# You must call in _src_configure before cmake_src_configure
+# It will wipe the build directory if out of source build for PGO and setup
+# flags. The idea is to remove all .o files or .a files before building the
+# final.  This is to prevent the possibility of already built skips when
+# building PGO image.
+#
+tpgo_src_configure() {
+	TPGO_SUFFIX=${TPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
+	if declare -f _tpgo_custom_clear > /dev/null ; then
+		_tpgo_custom_clean
+	elif [[ -n ${_CMAKE_ECLASS} || -n ${_CMAKE_UTILS_ECLASS} ]] ; then
+		_tpgo_cmake_clean
+	elif [[ -n ${_AUTOTOOLS_ECLASS} ]] ; then
+		_tpgo_autotools_clean
+	fi
+
+	_tpgo_configure
+}
+
+# @FUNCTION: _tpgo_run_trainer
+# @DESCRIPTION:
+# Runs the trainer executable
+#
+# A PGO trainer is a program that is either a benchmark, a demo, or a sample
+# program.  This program will generate a PGO profile but doesn't have to be
+# designed to generate PGO profiles.
+#
+# User defined event handlers:
+#
+# tpgo_get_trainer_exe (REQUIRED)
+#
+#   Summary:
+#
+#     The executable to use for training echoed as a string using the first
+#     arg as
+#
+#   Args:
+#
+#     trainer - produced from tpgo_trainer_list
+#
+#   Returns:
+#
+#     string - The echoed relpath relative to BUILD_DIR or abspath of the program.
+#
+# tpgo_get_trainer_args (optional)
+#
+#  Summary:
+#
+#   Outputs the trainer args that correspond to the trainer provided as the
+#   first arg.
+#
+#   Args:
+#
+#     trainer - produced from tpgo_trainer_list
+#
+#   Returns:
+#
+#     strings - list of arguments to be collected by a bash array
+#
+_tpgo_run_trainer() {
+	local duration="${1}"
+	shift 1
+	local name="${@}"
+	local now=$(date +"%s")
+	local done_at=$((${now} + ${duration}))
+	local done_at_s=$(date --date="@${done_at}")
+einfo
+einfo "Running '${name}' demo for ${duration}s to be completed at"
+einfo "${done_at_s}"
+einfo
+	declare -f tpgo_get_trainer_exe > /dev/null \
+		|| die "tpgo_get_trainer_exe must be defined"
+	local trainer_exe=$(tpgo_get_trainer_exe "${trainer}")
+
+	local trainer_args=()
+
+	if declare -f tpgo_get_trainer_args > /dev/null ; then
+		trainer_args=(
+			$(tpgo_get_trainer_args "${trainer}")
+		)
+	fi
+
+cat > "run.sh" <<EOF
+#!/bin/sh
+
+# Using & will prevent stall
+"${trainer_exe}" ${trainer_args[@]} &
+pid=\$!
+
+now=\$(date +"%s")
+while (( \${now} < ${done_at} )) \
+	&& ps -p \${pid} 2>/dev/null 1>/dev/null ; do
+	sleep 1
+	now=\$(date +"%s")
+done
+ps -p \${pid} 2>/dev/null 1>/dev/null \
+	&& kill -9 \${pid}
+true
+EOF
+	chmod +x "run.sh" || die
+	virtx ./run.sh
+	rm run.sh || die
+	if grep -q -r -e "cannot connect to X server" "${T}/build.log" ; then
+eerror
+eerror "Detected cannot connect to X server."
+eerror
+		die
+	fi
+}
+
+# @FUNCTION: _tpgo_train_default
+# @DESCRIPTION:
+# Runs the default trainer program
+# The default trainer will just run all the programs in a timebox
+# When the timebox expires, it moves on the next one.
+#
+# User definable event handlers:
+#
+#  tpgo_trainer_list (REQUIRED)
+#
+#    Summary:
+#
+#      Echos all programs to be run.
+#
+#    Returns:
+#
+#      A newline separated list of names
+#
+#  tpgo_pre_trainer (optional)
+#
+#    Summary:
+#
+#      Pre setup before executing trainer
+#
+#    Arg:
+#
+#      trainer - name of a trainer produced by tpgo_trainer_list
+#
+#  tpgo_post_trainer (optional)
+#
+#    Summary:
+#
+#      Cleanup function immediately after trainer
+#
+#    Arg:
+#
+#      trainer - name of a trainer produced by tpgo_trainer_list
+#
+_tpgo_train_default() {
+	# Sandbox violation prevention
+	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache"
+	export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
+	for x in $(find "${BROOT}/dev/input" "${ESYSROOT}/dev/input" -name "event*") ; do
+		einfo "Adding \`addwrite ${x}\` sandbox rule"
+		addwrite "${x}"
+	done
+
+	TPGO_SUFFIX=${TPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
+	local pgo_data_dir="${T}/pgo-${TPGO_SUFFIX}"
+
+	declare -f tpgo_trainer_list > /dev/null \
+		|| die "tpgo_trainer_list must be defined"
+
+	IFS=$'\n'
+	local trainer
+	for trainer in $(tpgo_trainer_list) ; do
+		duration=${TPGO_TEST_DURATION}
+		declare -f tpgo_override_duration > /dev/null \
+			&& duration=$(tpgo_override_duration "${trainer}")
+		declare -f tpgo_pre_trainer > /dev/null \
+			&& tpgo_pre_trainer "${trainer}"
+		_tpgo_run_trainer "${duration}" "${trainer}"
+		declare -f tpgo_post_trainer > /dev/null \
+			&& tpgo_post_trainer "${trainer}"
+		# We would like to use tc-is-clang tc-is-gcc but it is broken.
+		# Even after inspecting the log, it is over-engineered and
+		# gross.
+		if use pgo && [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
+			if ! find "${pgo_data_dir}" -name "*.gcda" \
+				2>/dev/null 1>/dev/null ; then
+ewarn
+ewarn "Didn't generate a PGO profile"
+ewarn
+			fi
+		elif use pgo && [[ "${CC}" =~ "clang" ]] ; then
+			if ! find "${pgo_data_dir}" -name "*.profraw" \
+				2>/dev/null 1>/dev/null ; then
+ewarn
+ewarn "Didn't generate a PGO profile"
+ewarn
+			fi
+		fi
+	done
+	IFS=$' \n\r\t'
+	if use pgo && [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
+		if ! find "${pgo_data_dir}" -name "*.gcda" ; then
+eerror
+eerror "Didn't generate a PGO profile"
+eerror
+			die
+		fi
+	elif use pgo && [[ "${CC}" =~ "clang" ]] ; then
+		if ! find "${pgo_data_dir}" -name "*.profraw" ; then
+eerror
+eerror "Didn't generate a PGO profile"
+eerror
+			die
+		fi
+	fi
+}
+
+# @FUNCTION: _tpgo_train
+# @DESCRIPTION:
+# Runs the PGO training program.
+# You may define _tpgo_train_custom handler to perform your
+# own training.
+#
+# User defined event handlers:
+#
+#   tpgo_train_custom (optional)
+#
+_tpgo_train() {
+	if declare -f tpgo_train_custom > /dev/null ; then
+		tpgo_train_custom
+	else
+		_tpgo_train_default
+	fi
+}
+
+# It is recommended to use (nested) loops instead of event handlers.
+# The event handlers/eclass hide the information away from you.
+
+# @FUNCTION: tpgo_compile
+# @DESCRIPTION:
+# The compile phase.  If using cmake, you must explicitly assign
+# CMAKE_USE_DIR and BUILD_DIR within each _src_* since tpgo_compile
+# will decide which ones to call.
+#
+# Overriding _src_prepare is optional and not recommended.  You may just stick
+# to src_prepare() instead.
+#
+# This creates a hook system for PGO.  You must call this within src_compile()
+# You can use _src_pre_pgi, _src_post_pgi to add additional pgi steps for internal dependencies.
+# You can use _src_pre_pgo, _src_post_pgo to add additional pgo steps for internal dependencies.
+# Examples:
+#
+# _src_configure() {
+#	CMAKE_USE_DIR="${S}"
+#	BUILD_DIR="${S}"
+#	cd "${CMAKE_USE_DIR}" || die
+#	tpgo_src_configure
+#	echo "hello prepare world";
+#	cmake_src_configure
+# }
+#
+# _src_compile() {
+#	CMAKE_USE_DIR="${S}"
+#	BUILD_DIR="${S}"
+#	cd "${BUILD_DIR}" || die
+#	echo "hello compile world";
+#	cmake_src_compile
+# }
+#
+# src_compile() {
+#	compile_abi() {
+#		tpgo_compile
+#	}
+#	multilib_foreach_abi compile_abi
+# }
+#
+# src_compile() {
+#	tpgo_compile
+# }
+#
+tpgo_compile() {
+	if use pgo ; then
+		PGO_PHASE="PGI"
+		declare -f _src_pre_pgi > /dev/null && _src_pre_pgi
+		declare -f _src_prepare > /dev/null && _src_prepare
+		declare -f _src_configure > /dev/null && _src_configure
+		declare -f _src_compile > /dev/null && _src_compile
+		declare -f _src_post_pgi > /dev/null && _src_post_pgi
+		_tpgo_train
+		PGO_PHASE="PGO"
+		declare -f _src_pre_pgo > /dev/null && _src_prep_pgo
+		declare -f _src_prepare > /dev/null && _src_prepare
+		declare -f _src_configure > /dev/null && _src_configure
+		declare -f _src_compile > /dev/null && _src_compile
+		declare -f _src_post_pgo > /dev/null && _src_post_pgo
+	else
+		declare -f _src_prepare > /dev/null && _src_prepare
+		declare -f _src_configure > /dev/null && _src_configure
+		declare -f _src_compile > /dev/null && _src_compile
+	fi
+}
+
+if [[ "${TPGO_MULTILIB}" == "1" ]] ; then
+# @FUNCTION: tpgo_multilib_compile
+# @DESCRIPTION:
+# This is for simple ebuilds.  For more advanced ebuilds
+# use tpgo_compile instead.
+# Example:
+#
+# TPGO_MULTILIB=1
+# inherit autotools tpgo
+#
+# src_prepare() {
+#	prepare_abi() {
+#		cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
+#	}
+#	multilib_foreach_prepare prepare_abi
+# }
+#
+# _src_configure() {
+#	BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+#	cd "${BUILD_DIR}" || die
+#	tpgo_src_configure
+#	echo "hello prepare world";
+#	local myconf=( ... )
+#	econf ${myconf[@]}
+# }
+#
+# _src_compile() {
+#	BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+#	cd "${BUILD_DIR}" || die
+#	echo "hello compile world";
+#	emake
+# }
+#
+# src_compile() {
+#	tpgo_multilib_compile
+# }
+tpgo_multilib_compile() {
+	tpgo_compile_abi() {
+		tpgo_compile
+	}
+	multilib_foreach_abi tpgo_compile_abi
+}
+fi
