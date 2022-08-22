@@ -136,10 +136,12 @@ TPGO_TEST_DURATION=${TPGO_TEST_DURATION:-120} # 2 min
 # @DESCRIPTION:
 # Performs checks and recommend workarounds to broken EAPI to unbreak PGO
 tpgo_setup() {
-	declare -f tpgo_get_trainer_exe > /dev/null \
-		|| die "tpgo_get_trainer_exe must be defined"
-	declare -f tpgo_trainer_list > /dev/null \
-		|| die "tpgo_trainer_list must be defined"
+	if ! declare -f tpgo_train_custom > /dev/null ; then
+		declare -f tpgo_get_trainer_exe > /dev/null \
+			|| die "tpgo_get_trainer_exe must be defined"
+		declare -f tpgo_trainer_list > /dev/null \
+			|| die "tpgo_trainer_list must be defined"
+	fi
 
 	if (( $(declare -f src_configure | wc -c) > 29 )) ; then
 eerror
@@ -157,7 +159,6 @@ eerror "multilib_src_configure must be renamed."
 eerror
 eerror "Rename multilib_src_configure -> _src_configure()."
 eerror "Add src_configure() { :; }"
-eerror ""
 eerror
 		die
 	fi
@@ -254,12 +255,14 @@ tpgo_meson_src_configure() {
 #
 tpgo_src_configure() {
 	TPGO_SUFFIX=${TPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
-	if declare -f _tpgo_custom_clear > /dev/null ; then
-		_tpgo_custom_clean
-	elif [[ -n ${_CMAKE_ECLASS} || -n ${_CMAKE_UTILS_ECLASS} ]] ; then
-		_tpgo_cmake_clean
-	elif [[ -n ${_AUTOTOOLS_ECLASS} ]] ; then
-		_tpgo_autotools_clean
+	if [[ "${PGO_PHASE}" == "PGO" ]] ; then
+		if declare -f _tpgo_custom_clean > /dev/null ; then
+			_tpgo_custom_clean
+		elif [[ -n ${_CMAKE_ECLASS} || -n ${_CMAKE_UTILS_ECLASS} ]] ; then
+			_tpgo_cmake_clean
+		elif [[ -n ${_AUTOTOOLS_ECLASS} ]] ; then
+			_tpgo_autotools_clean
+		fi
 	fi
 
 	_tpgo_configure
@@ -535,7 +538,14 @@ _tpgo_train() {
 # }
 #
 tpgo_src_compile() {
-	if use pgo ; then
+	local is_pgoable="1"
+	if declare -f tpgo_meets_requirements > /dev/null ; then
+		is_pgoable=$(tpgo_meets_requirements)
+	fi
+einfo
+einfo "is_pgoable=${is_pgoable}"
+einfo
+	if use pgo && [[ "${is_pgoable}" == "1" ]] ; then
 		PGO_PHASE="PGI"
 		declare -f _src_pre_pgi > /dev/null && _src_pre_pgi
 		declare -f _src_prepare > /dev/null && _src_prepare

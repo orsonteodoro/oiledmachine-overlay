@@ -7,7 +7,7 @@ EAPI=8
 # Worth keeping an eye on 'develop' branch upstream for possible backports.
 AUTOTOOLS_AUTO_DEPEND="no"
 VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}"/usr/share/openpgp-keys/madler.asc
-inherit autotools flag-o-matic multilib-minimal toolchain-funcs usr-ldscript verify-sig
+inherit autotools flag-o-matic multilib-minimal toolchain-funcs tpgo usr-ldscript verify-sig
 
 CYGWINPATCHES=(
 	"https://github.com/cygwinports/zlib/raw/22a3462cae33a82ad966ea0a7d6cbe8fc1368fec/1.2.11-gzopen_w.patch -> ${PN}-1.2.11-cygwin-gzopen_w.patch"
@@ -365,14 +365,15 @@ pkg_setup() {
 
 	if [[ -z "${ZLIB_PRECAUTIONS_TAKEN}" ]] ; then
 		eerror "Please read the metadata.xml in the zlib folder before preceeding."
-		eerror "Once read, you need to add ZLIB_PRECAUTIONS_TAKEN=1 in /etc/make.conf"
+		eerror "Once read, you need to add ZLIB_PRECAUTIONS_TAKEN=1 in ${EROOT}/etc/make.conf"
 		die
 	fi
 	if [[ -n "${ZLIB_PRECAUTIONS_TAKEN}" && "${ZLIB_PRECAUTIONS_TAKEN}" != "1" ]] ; then
 		eerror "Please read the metadata.xml in the zlib folder before preceeding."
-		eerror "Once read, you need to add ZLIB_PRECAUTIONS_TAKEN=1 in /etc/make.conf"
+		eerror "Once read, you need to add ZLIB_PRECAUTIONS_TAKEN=1 in ${EROOT}/etc/make.conf"
 		die
 	fi
+	tpgo_setup
 }
 
 src_prepare() {
@@ -458,14 +459,19 @@ is_cfi_supported() {
 	return 1
 }
 
-_configure_pgx() {
-	[[ -f Makefile && "${PGO_PHASE}" == "pgo" ]] \
+_tpgo_custom_clean() {
+	einfo "Ran _tpgo_custom_clean"
+	[[ -f Makefile ]] \
 		&& grep -q -e "^clean:" Makefile \
 		&& emake clean
 	use minizip \
-		&& [[ -f contrib/minizip/Makefile && "${PGO_PHASE}" == "pgo" ]] \
+		&& [[ -f contrib/minizip/Makefile ]] \
 		&& grep -q -e "^clean:" contrib/minizip/Makefile \
 		&& emake clean -C contrib/minizip
+}
+
+_src_configure() {
+	einfo "Called _src_configure"
 	cd "${BUILD_DIR}" || die
 	if use clang && is_clang_ready ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
@@ -508,6 +514,7 @@ _configure_pgx() {
 		'-Wno-error=*'
 
 	autofix_flags
+	tpgo_src_configure
 
 	set_cfi() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
@@ -562,32 +569,17 @@ _configure_pgx() {
 		fi
 	fi
 
-	local pgo_data_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-	mkdir -p "${pgo_data_dir}" || die
-	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
-		&& has_pgo_requirement ; then
-		einfo "Setting up PGI"
-		if tc-is-clang ; then
-			append-flags -fprofile-generate="${pgo_data_dir}"
-		else
-			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
-		fi
-	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] \
-		&& has_pgo_requirement ; then
-		einfo "Setting up PGO"
-		if tc-is-clang ; then
-			llvm-profdata merge -output="${pgo_data_dir}/pgo-custom.profdata" \
-				"${pgo_data_dir}" || die
-			append-flags -fprofile-use="${pgo_data_dir}/pgo-custom.profdata"
-		else
-			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${pgo_data_dir}"
-			if use minizip ; then
-				# Apply, only during configure.
-				append-flags -Wno-error=coverage-mismatch
-				append-flags -Wbackend-plugin # It should be okay if no code changes.
-			fi
+	if use pgo && tc-is-gcc && [[ $(tpgo_meets_requirements) == "1" && "${PGO_PHASE}" == "PGO" ]] ; then
+		if use minizip ; then
+			# Apply, only during configure.
+			append-flags -Wno-error=coverage-mismatch
+			append-flags $(test-flags -Wbackend-plugin) # It should be okay if no code changes.
 		fi
 	fi
+
+einfo "CC=${CC}"
+einfo "CXX=${CXX}"
+einfo "CPP=${CPP}"
 
 	case ${CHOST} in
 	*-mingw*|mingw*|*-cygwin*)
@@ -613,7 +605,6 @@ _configure_pgx() {
 		einfo "Configuring zlib for ${lib_type} for ${ABI}"
 		# not an autoconf script, so can't use econf
 		echoit "${S}"/configure "${myconf[@]}" || die
-		;;
 	esac
 
 	if use minizip ; then
@@ -643,7 +634,7 @@ _configure_pgx() {
 	fi
 }
 
-_build_pgx() {
+_src_compile() {
 	einfo "Compiling ${lib_type} for ${ABI}"
 	cd "${BUILD_DIR}" || die
 	einfo "Building zlib ${lib_type} for ${ABI}"
@@ -675,7 +666,7 @@ _build_pgx() {
 _run_trainer_images_zlib() {
 	local mode="${1}"
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	( ! has_pgo_requirement ) && return
+	[[ $(tpgo_meets_requirements) == "1" ]] || return
 	einfo "Running image compression PGO training for ${ABI} for zlib"
 	if multilib_is_native_abi ; then
 		export PIGZEXE="pigz"
@@ -887,7 +878,7 @@ _run_trainer_images_zlib() {
 
 _run_trainer_text_zlib() {
 	local mode="${1}"
-	( ! has_pgo_requirement ) && return
+	[[ $(tpgo_meets_requirements) == "1" ]] || return
 	einfo "Running text compression PGO training for ${ABI} for zlib"
 	if multilib_is_native_abi ; then
 		export PIGZEXE="pigz"
@@ -899,9 +890,9 @@ _run_trainer_text_zlib() {
 	mkdir -p "${T}/sandbox" || die
 	cd "${T}/sandbox" || die
 	local N=270 # 30 * 9 compression levels
-	if [[ -d /usr/include/linux ]] ; then
+	if [[ -d "${EPREFIX}/usr/include/linux" ]] ; then
 		local c=0
-		for f in $(find /usr/include/linux -type f | shuf) ; do
+		for f in $(find "${EPREFIX}/usr/include/linux" -type f | shuf) ; do
 			if [[ -f "${f}" && ! -L "${f}" ]] ; then
 				#einfo "Adding ${f} to the compression sandbox"
 				cp -a "${f}" "${T}/sandbox" || die
@@ -912,9 +903,9 @@ _run_trainer_text_zlib() {
 			(( ${c} >= ${N} )) && break
 		done
 		rm -rf "${T}/sandbox-headers" || die
-	elif [[ -d /usr/lib/gcc/${CHOST}/$(gcc-version).0/include ]] ; then
+	elif [[ -d "${EPREFIX}/usr/lib/gcc/${CHOST}/$(gcc-version).0/include" ]] ; then
 		local c=0
-		for f in $(find /usr/lib/gcc/${CHOST}/$(gcc-version).0/include -type f | shuf) ; do
+		for f in $(find "${EPREFIX}/usr/lib/gcc/${CHOST}/$(gcc-version).0/include" -type f | shuf) ; do
 			if [[ -f "${f}" && ! -L "${f}" ]] ; then
 				#einfo "Adding ${f} to the compression sandbox"
 				cp -a "${f}" "${T}/sandbox" || die
@@ -925,7 +916,7 @@ _run_trainer_text_zlib() {
 			(( ${c} >= ${N} )) && break
 		done
 	else
-		die "Missing /usr/include/linux or /usr/lib/gcc/${CHOST}/$(gcc-version).0/include for PGO training"
+		die "Missing ${EPREFIX}/usr/include/linux or ${EPREFIX}/usr/lib/gcc/${CHOST}/$(gcc-version).0/include for PGO training"
 	fi
 	einfo "zlib text compression/decompression training for ${mode} compression level(s)"
 	local L=1
@@ -957,7 +948,7 @@ _run_trainer_text_zlib() {
 }
 
 _run_trainer_text_minizip() {
-	( ! has_pgo_requirement ) && return
+	[[ $(tpgo_meets_requirements) == "1" ]] || return
 	einfo "Running text compression PGO training for ${ABI} for minizip"
 	export MINIZIP="minizip"
 	export MINIUNZIP="miniunzip"
@@ -983,9 +974,9 @@ _run_trainer_text_minizip() {
 			compression_level=$((${RANDOM} % 10))
 		fi
 		einfo "Progress ${i}/${N}, max_files_in_archive = ${max_files_in_archive}, compression_level = ${compression_level}"
-		if [[ -d /usr/include/linux ]] ; then
+		if [[ -d "${EPREFIX}/usr/include/linux" ]] ; then
 			local c=0
-			for f in $(find /usr/include/linux -type f | shuf) ; do
+			for f in $(find "${EPREFIX}/usr/include/linux" -type f | shuf) ; do
 				if [[ -f "${f}" && ! -L "${f}" ]] ; then
 					#einfo "Adding ${f} to the compression sandbox"
 					cp -a "${f}" "${T}/sandbox" || die
@@ -996,9 +987,9 @@ _run_trainer_text_minizip() {
 				(( ${c} >= ${max_files_in_archive} )) && break # arbitrary
 			done
 			rm -rf "${T}/sandbox-headers" || die
-		elif [[ -d /usr/lib/gcc/${CHOST}/$(gcc-version).0/include ]] ; then
+		elif [[ -d "${EPREFIX}/usr/lib/gcc/${CHOST}/$(gcc-version).0/include" ]] ; then
 			local c=0
-			for f in $(find /usr/lib/gcc/${CHOST}/$(gcc-version).0/include -type f | shuf) ; do
+			for f in $(find "${EPREFIX}/usr/lib/gcc/${CHOST}/$(gcc-version).0/include" -type f | shuf) ; do
 				if [[ -f "${f}" && ! -L "${f}" ]] ; then
 					#einfo "Adding ${f} to the compression sandbox"
 					cp -a "${f}" "${T}/sandbox" || die
@@ -1009,7 +1000,7 @@ _run_trainer_text_minizip() {
 				(( ${c} >= ${max_files_in_archive} )) && break # arbitrary
 			done
 		else
-			die "Missing /usr/include/linux or /usr/lib/gcc/${CHOST}/$(gcc-version).0/include for PGO training"
+			die "Missing ${EPREFIX}/usr/include/linux or ${EPREFIX}/usr/lib/gcc/${CHOST}/$(gcc-version).0/include for PGO training"
 		fi
 		#einfo "minizip text compression training"
 		local cmd=( "${MINIZIP}" -o -${compression_level} example.zip $(find "${T}/sandbox" -type f) )
@@ -1028,7 +1019,7 @@ _run_trainer_text_minizip() {
 
 _run_trainer_binary_zlib() {
 	local mode="${1}"
-	( ! has_pgo_requirement ) && return
+	[[ $(tpgo_meets_requirements) == "1" ]] || return
 	einfo "Running binary compression PGO training for ${ABI} for zlib"
 	if multilib_is_native_abi ; then
 		export PIGZEXE="pigz"
@@ -1039,12 +1030,12 @@ _run_trainer_binary_zlib() {
 	#einfo "Preparing training sandbox"
 	mkdir -p "${T}/sandbox" || die
 	cd "${T}/sandbox" || die
-	[[ ! -d /usr/bin/ ]] && die "missing /usr/bin/ for PGO training"
+	[[ ! -d "${EPREFIX}/usr/bin/" ]] && die "Missing ${EPREFIX}/usr/bin/ for PGO training"
 	# ~391 = 9 compression levels * stats rule of 30 samples [per each level of compression] * 1.45
 	# (additional files from weeding out 45% junk files 3/10 to 6/10 is ~45%)
 	# Cut short because some files may be gigabytes
 	local c=0
-	for f in $(find /usr/bin/ -maxdepth 1 -type f | shuf) ; do
+	for f in $(find "${EPREFIX}/usr/bin/" -maxdepth 1 -type f | shuf) ; do
 		if readelf -h "${f}" 2>/dev/null 1>/dev/null && [[ ! -L "${f}" ]] ; then
 			local filesize=$(stat -c "%s" "${f}")
 			if (( ${filesize} < 26214400 )) ; then
@@ -1089,12 +1080,12 @@ _run_trainer_binary_zlib() {
 }
 
 _run_trainer_binary_minizip() {
-	( ! has_pgo_requirement ) && return
+	[[ $(tpgo_meets_requirements) == "1" ]] || return
 	einfo "Running binary compression PGO training for ${ABI} for minizip"
 	export MINIZIP="minizip"
 	export MINIUNZIP="miniunzip"
 
-	[[ ! -d /usr/bin/ ]] && die "missing /usr/bin/ for PGO training"
+	[[ ! -d "${EPREFIX}/usr/bin/" ]] && die "Missing ${EPREFIX}/usr/bin/ for PGO training"
 
 	# Binary version:  This test will simulate compressing an entire folder
 	# of files, then it will decompress this single file.
@@ -1146,16 +1137,24 @@ _run_trainer_binary_minizip() {
 
 _run_trainer_custom() {
 	if [[ ! -e "pgo-custom.sh" ]] ; then
-		die "Missing pgo-custom.sh"
+eerror
+eerror "Missing pgo-custom.sh"
+eerror
+		die
 	else
-		ewarn "Always use a sandbox in ${T} when using pgo-custom"
+ewarn
+ewarn "Always use a sandbox in ${T} when using pgo-custom"
+ewarn
 		chmod +x "pgo-custom.sh" || die
 		chown portage:portage "pgo-custom.sh" || die
 		./pgo-custom.sh || die
 	fi
 }
 
-_run_trainers() {
+tpgo_train_custom() {
+einfo
+einfo "Running trainer"
+einfo
 	export PATH="${S}/contrib/minizip:${PATH_orig}"
 	export LD_LIBRARY_PATH="${ED}/usr/$(get_libdir)"
 	if use pgo-trainer-zlib-binary-all ; then
@@ -1251,50 +1250,25 @@ _run_trainers() {
 	fi
 }
 
-has_pgo_requirement() {
+tpgo_meets_requirements() {
+	local ret="0"
 	if multilib_is_native_abi && which pigz 2>/dev/null 1>/dev/null ; then
-		return 0
+		ret="1"
 	elif ! multilib_is_native_abi && which pigz-${ABI} 2>/dev/null 1>/dev/null ; then
-		return 0
+		ret="1"
 	fi
-	return 1
+	echo "${ret}"
 }
 
 src_compile() {
 	export PATH_orig="${ED}/usr/bin:${PATH}"
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
+			einfo "ABI=${ABI} lib_type=${lib_type}"
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
-			if use pgo && has_pgo_requirement ; then
-				PGO_PHASE="pgi"
-				if [[ "${lib_type}" == "shared" ]] ; then
-					_configure_pgx
-					_build_pgx
-					# This technique currently works on shared, but the generated profiling data
-					# may be compatible with static.
-					_install_pgx
-					_run_trainers
-					_clean_pgx
-				fi
-				local pgo_data_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-				if (( $(find "${pgo_data_dir}" -type f 2>/dev/null | wc -l) > 0 )) ; then
-					PGO_PHASE="pgo"
-					[[ "${lib_type}" == "static" ]] \
-						&& ewarn "Reusing PGO data from shared-libs"
-				else
-					ewarn "No PGO data found.  Skipping PGO build and building normally."
-					unset PGO_PHASE
-				fi
-				_configure_pgx
-				_build_pgx
-				export RAN_PGO=1
-			else
-				einfo "Skipping PGO training for ${ABI}"
-				_configure_pgx
-				_build_pgx
-			fi
+			tpgo_src_compile
 		done
 	}
 	multilib_foreach_abi compile_abi
@@ -1306,12 +1280,10 @@ sed_macros() {
 	sed -i -r 's:\<(O[FN])\>:_Z_\1:g' "$@" || die
 }
 
-_install_pgx() {
+_src_post_pgi() {
 	einfo "Installing ${lib_type} into sandbox for ${ABI}"
 	_install
-}
 
-_clean_pgx() {
 	einfo "Wiping sandbox image"
 	rm -rf "${ED}" || die
 	cd "${S}" || die
@@ -1342,7 +1314,7 @@ _install() {
 		emake -C "${S}/contrib/minizip" install DESTDIR="${D}"
 		sed_macros "${ED}"/usr/include/minizip/*.h
 		if use minizip-utils && multilib_is_native_abi ; then
-			if [[ "${PGO_PHASE}" == "pgi" ]] ; then
+			if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 				# Bugs
 				mkdir -p "${ED}/usr/bin" || die
 				cp -a contrib/minizip/miniunzip \
