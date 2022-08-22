@@ -19,7 +19,7 @@ LLVM_SLOTS=(14 13)
 CMAKE_MAKEFILE_GENERATOR="ninja"
 PYTHON_COMPAT=( python3_{8..11} )
 USE_RUBY="ruby26 ruby27 ruby30 ruby31 "
-inherit check-reqs cmake desktop epgo flag-o-matic git-r3 gnome2 linux-info llvm \
+inherit check-reqs cmake desktop epgo flag-o-matic git-r3 gnome2 lcnr linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs
 
 DESCRIPTION="Open source web browser engine (GTK+3 with libsoup3)"
@@ -1117,77 +1117,6 @@ multilib_src_test() {
 	cmake_src_test
 }
 
-_install_header_license() {
-	local dir_path=$(dirname "${1}")
-	local file_name=$(basename "${1}")
-	local license_name="${2}"
-	local length="${3}"
-	d="${dir_path}"
-	dl="licenses/${d}"
-	docinto "${dl}"
-	mkdir -p "${T}/${dl}" || die
-	head -n ${length} "${S}/${d}/${file_name}" > \
-		"${T}/${dl}/${license_name}" || die
-	dodoc "${T}/${dl}/${license_name}"
-}
-
-_install_header_license_mid() {
-	local dir_path=$(dirname "${1}")
-	local file_name=$(basename "${1}")
-	local license_name="${2}"
-	local start="${3}"
-	local length="${4}"
-	d="${dir_path}"
-	dl="licenses/${d}"
-	docinto "${dl}"
-	mkdir -p "${T}/${dl}" || die
-	tail -n +${start} "${S}/${d}/${file_name}" \
-		| head -n ${length} > \
-		"${T}/${dl}/${license_name}" || die
-	dodoc "${T}/${dl}/${license_name}"
-}
-
-# @FUNCTION: _install_licenses
-# @DESCRIPTION:
-# Installs licenses and copyright notices from third party rust cargo
-# packages and other internal packages.
-_install_licenses() {
-	[[ -f "${T}/.copied_licenses" ]] && return
-
-einfo
-einfo "Copying third party licenses and copyright notices"
-einfo
-	export IFS=$'\n'
-	for f in $(find "${S}" \
-	  -iname "*licens*" -type f \
-	  -o -iname "*licenc*" \
-	  -o -iname "*copyright*" \
-	  -o -iname "*copying*" \
-	  -o -iname "*patent*" \
-	  -o -iname "ofl.txt" \
-	  -o -iname "*notice*" \
-	  -o -iname "*author*" \
-	  -o -iname "*CONTRIBUTORS*" \
-	  ) $(grep -i -G -l \
-		-e "copyright" \
-		-e "licens" \
-		-e "licenc" \
-		-e "warrant" \
-		$(find "${S}" -iname "*readme*")) ; \
-	do
-		if [[ -f "${f}" ]] ; then
-			d=$(dirname "${f}" | sed -e "s|^${S}||")
-		else
-			d=$(echo "${f}" | sed -e "s|^${S}||")
-		fi
-		docinto "licenses/${d}"
-		dodoc -r "${f}"
-	done
-	export IFS=$' \t\n'
-
-	touch "${T}/.copied_licenses"
-}
-
 multilib_src_install() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
@@ -1216,7 +1145,7 @@ multilib_src_install() {
 		doins -r "${T}/langs/${l}"
 	done
 
-	_install_licenses
+	lcnr_install_files
 
 	EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${API_VERSION}"
 	epgo_src_install
