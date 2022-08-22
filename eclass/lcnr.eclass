@@ -13,6 +13,11 @@
 # and dedupe copyright notices, but currently the prototype script has false
 # positives.
 
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
+
 # @ECLASS_VARIABLE: LCNR_COPY_ONCE
 # @DESCRIPTION:
 # Tranverse the entire project source once
