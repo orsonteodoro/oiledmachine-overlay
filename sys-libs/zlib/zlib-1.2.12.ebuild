@@ -236,6 +236,9 @@ PATCHES=(
 	"${FILESDIR}"/${P}-CRC-buggy-input.patch
 )
 
+# The order does matter with USE=pgo
+# Shared comes first so that static can reuse the shared-lib PGO profile if
+# the compiler allows it.
 get_lib_types() {
 	echo "shared"
 	use static-libs && echo "static"
@@ -1152,6 +1155,7 @@ ewarn
 }
 
 tpgo_train_custom() {
+	[[ "${lib_type}" == "static" ]] && return # Reuse shared PGO profile
 einfo
 einfo "Running trainer"
 einfo
