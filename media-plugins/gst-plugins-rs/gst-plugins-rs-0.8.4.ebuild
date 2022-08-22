@@ -7,7 +7,7 @@ EAPI=8
 # This is a live snapshot based on version in Cargo.toml and date of latest commit in master branch.
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit flag-o-matic llvm meson multilib-minimal
+inherit flag-o-matic lcnr llvm meson multilib-minimal
 
 DESCRIPTION="Various GStreamer plugins written in Rust"
 HOMEPAGE="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs"
