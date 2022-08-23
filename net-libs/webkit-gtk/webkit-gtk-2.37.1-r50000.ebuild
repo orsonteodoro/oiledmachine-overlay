@@ -1103,7 +1103,7 @@ einfo
 	EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${API_VERSION}"
 	epgo_src_configure
 
-	if is-flag -O0 ; then
+	if is-flagq -O0 ; then
 ewarn
 ewarn "Upstream doesn't like it when -O0 is used, but we allow it."
 ewarn
