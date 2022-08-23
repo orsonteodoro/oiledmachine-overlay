@@ -182,7 +182,7 @@ eerror
 eerror "Rename multilib_src_configure -> _src_configure()."
 eerror "Add src_configure() { :; }"
 eerror
-		die
+#		die
 	fi
 }
 
