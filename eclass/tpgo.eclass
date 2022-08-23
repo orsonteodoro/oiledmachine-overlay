@@ -582,7 +582,7 @@ tpgo_src_compile() {
 einfo
 einfo "is_pgoable=${is_pgoable}"
 einfo
-	if use pgo && (( "${is_pgoable}" == 1 )) ; then
+	if use pgo && (( ${is_pgoable} == 1 )) ; then
 		PGO_PHASE="PGI"
 		declare -f _src_pre_pgi > /dev/null && _src_pre_pgi
 		declare -f _src_prepare > /dev/null && _src_prepare
@@ -599,6 +599,7 @@ einfo
 		declare -f _src_compile > /dev/null && _src_compile
 		declare -f _src_post_pgo > /dev/null && _src_post_pgo
 	else
+		PGO_PHASE="NO_PGO"
 		declare -f _src_prepare > /dev/null && _src_prepare
 		declare -f _src_configure > /dev/null && _src_configure
 		declare -f _src_compile > /dev/null && _src_compile

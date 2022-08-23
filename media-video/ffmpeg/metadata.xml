@@ -23,8 +23,11 @@
 	installed.
 	(3) Configure the following variables, replacing i with a unpadded number:
 
-		FFMPEG_PGO_VIDEO_REALISM_i
 		FFMPEG_PGO_VIDEO_FANTASY_i
+		FFMPEG_PGO_VIDEO_FILM_i
+		FFMPEG_PGO_VIDEO_GRAINY_i
+		FFMPEG_PGO_VIDEO_REALISM_i
+		FFMPEG_PGO_VIDEO_STREAMING_i
 		FFMPEG_PGO_AUDIO_VOICE_i
 		FFMPEG_PGO_AUDIO_RADIO_i
 		FFMPEG_PGO_AUDIO_MUSIC_INSTRUMENTAL_i
@@ -45,13 +48,17 @@
 	per-package envvars.  See below for details.
 	(5) Emerge FFmpeg again with an optimized PGO build.
 
+	(Planning) FFMPEG_PGO_VIDEO_STREAMING_i is the v4l device to train for
+	codec streaming.
+
 	FFMPEG_MAX_ASSETS_PER_TYPE is a number of assets per *_i type.
 	Currently it is set to 100 but can be expanded to more than
 	that.
 	
 	FFMPEG_PGO_VIDEO_CODECS is a string separated list of elements.
-	Each element is in this format vencoder:vdecoder:ext:tags.
+	Each element is in this format vscenario:vencoder:vdecoder:ext:tags.
 
+	  The value of vscenario can be fantasy, film, grainy, streaming, realism.
 	  The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*"
 	  The value of vdecoder matches  mpv --vd=help
 	  The value of ext matches  ffmpeg -formats
@@ -60,7 +67,7 @@
 	  may be appended by comma and spaces replaced with _.
 
 	Example:
-	FFMPEG_PGO_VIDEO_CODECS=" libvpx-vp9:libvpx-vp9:webm:"
+	FFMPEG_PGO_VIDEO_CODECS=" fantasy:libvpx-vp9:libvpx-vp9:webm: realism:libvpx-vp9:libvpx-vp9:webm:"
 
 	FFMPEG_PGO_AUDIO_CODECS is a string separated list of elements.
 	Each element is in this format ascenario:aencoder:adecoder:ext:tags.
