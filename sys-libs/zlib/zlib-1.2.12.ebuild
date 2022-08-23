@@ -237,17 +237,6 @@ pkg_setup() {
 	if [[ "${IUSE}" =~ "pgo-trainer-zlib-images-" ]] ; then
 		check_img_converter
 	fi
-
-	if [[ -z "${ZLIB_PRECAUTIONS_TAKEN}" ]] ; then
-		eerror "Please read the metadata.xml in the zlib folder before preceeding."
-		eerror "Once read, you need to add ZLIB_PRECAUTIONS_TAKEN=1 in ${EROOT}/etc/make.conf"
-		die
-	fi
-	if [[ -n "${ZLIB_PRECAUTIONS_TAKEN}" && "${ZLIB_PRECAUTIONS_TAKEN}" != "1" ]] ; then
-		eerror "Please read the metadata.xml in the zlib folder before preceeding."
-		eerror "Once read, you need to add ZLIB_PRECAUTIONS_TAKEN=1 in ${EROOT}/etc/make.conf"
-		die
-	fi
 	tpgo_setup
 }
 

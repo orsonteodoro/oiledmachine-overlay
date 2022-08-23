@@ -16,61 +16,7 @@
     <remote-id type="cpe">cpe:/a:gnu:zlib</remote-id>
   </upstream>
   <longdescription>
-    This ebuild fork introduces hardening flags and PGO.
-
-    IMPORTANT:
-
-    *NECESSARY PRECAUTION*:
-    The zlib library is a essential and core toolchain library if
-    built incorrectly can prevent from using emerge, running the compiler,
-    even possibly break the init process.  Before emerging
-    this ebuild fork, it is necessary to have a rescue CD and an
-    uncompressed image of the zlib package.  Using a compressed tarball
-    dependent on zlib will not work.
-
-    The CFI Cross-DSO (aka shared-lib CFI) is experimental quality
-    and can bork a system with problems mentioned above if
-    linkage is incomplete.
-
-    Borking is a similar condition to bricking except one may
-    fix/rebuild the installation, while bricking means it is
-    practically astronomically impossible or irreversibly impossible.
-
-    Repeated must haves:
-    (1)  Rescue CD
-    (2)  All keys and procedures to access WiFi and encrypted devices.
-    (3)  Verified the procedures in 2 indeed work and are correct.
-    (4)  Uncompressed backup copy of the zlib image without
-         CFI Cross-DSO built with only GCC without the clang USE flag.
-         This is obtained with the command:
-    USE="-clang" emerge -1vO --quickpkg-direct y --root=/bak sys-libs/zlib
-
-    To restore the image:
-    cp -aT /bak /
-
-      or
-
-    Copy the *.so or every file one-by-one from /bak back into / with
-    the same relative path.
-
-    You should test the zlib is working by re-emerging twice this same
-    package before rebooting.  If it fails, to work you can replace
-    the working copy before rebooting.
-
-    Once you taken the necessary precautions you may add
-    ZLIB_PRECAUTIONS_TAKEN=1 to /etc/make.conf
-    and maybe enable the cfi-cross-dso USE flag.
-
-    These changes and this ebuild are under the GPL-2 license and come
-    with NO WARRANTY.
-
-
-    Only use the cfi* and pgo USE flags after the stage 3 or stage 4
-    bootstrapping process.  If you have problems during or before
-    "emerge -e @system" try temporarly adding to your
-    /etc/portage/package.use/zlib the line "sys-libs/zlib -pgo -clang"
-    and disabling the trainers.  After emerging @system, you can
-    then remove that line.
+    This ebuild fork introduces PGO.
 
     PGO instructions
     (1) emerge the zlib ebuild without pgo USE flag
@@ -106,16 +52,6 @@ ${PORTAGE_DISTDIR}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp}
     permissive or license compatible.
   </longdescription>
   <use>
-    <flag name="cfi">Build with full CFI with all schemes</flag>
-    <flag name="cfi-cast">Build with cfi-cast</flag>
-    <flag name="cfi-cross-dso">Build shared libs with CFI Cross-DSO mode</flag>
-    <flag name="cfi-icall">Build with cfi-icall</flag>
-    <flag name="cfi-vcall">Build with cfi-vcall</flag>
-    <flag name="hardened">Build with Full RELRO, noexecstack, SSP.
-      For the non-hardened profile, set USE_HARDENED_PROFILE_DEFAULTS=1 in
-      make.conf to use the hardened profile settings or fallback to the browser
-      defaults.  See ebuild for details.</flag>
-    <flag name="lto">Use link time optimization.</flag>
     <flag name="minizip">Include the minizip library for quick and dirty zip
       extraction</flag>
     <flag name="minizip-utils">Include the minizip demo frontends</flag>
@@ -179,7 +115,5 @@ ${PORTAGE_DISTDIR}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp}
       files for zlib only with compression level 1</flag>
     <flag name="pgo-trainer-zlib-text-random">Run the PGO trainer against binary
       files for zlib only with random compression levels</flag>
-    <flag name="shadowcallstack">Enable backward edge protection (arm64
-      only)</flag>
   </use>
 </pkgmetadata>
