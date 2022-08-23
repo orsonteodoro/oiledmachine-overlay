@@ -160,6 +160,7 @@ __pgo_setup() {
 	local id
 	for id in $(get_asset_ids) ; do
 		local libvpx_asset_path="${!id}"
+		[[ -e "libvpx_asset_path" ]] || continue
 		__check_video
 	done
 }
@@ -408,6 +409,7 @@ _trainer_plan_constrained_quality() {
 		local id
 		for id in $(get_asset_ids) ; do
 			local libvpx_asset_path="${!id}"
+			[[ -e "libvpx_asset_path" ]] || continue
 			einfo "Running PGO trainer for ${encoding_codec} for 1 pass constrained quality"
 			local cmd
 			einfo "Encoding as 720p for 3 sec, 30 fps"
@@ -533,6 +535,7 @@ _trainer_plan_2_pass_constrained_quality() {
 		local id
 		for id in $(get_asset_ids) ; do
 			local libvpx_asset_path="${!id}"
+			[[ -e "libvpx_asset_path" ]] || continue
 			einfo "Running PGO trainer for ${encoding_codec} for 2 pass constrained quality"
 			local cmd
 			einfo "Encoding as 720p for 3 sec, 30 fps"
@@ -754,6 +757,7 @@ _trainer_plan_lossless() {
 		local id
 		for id in $(get_asset_ids) ; do
 			local libvpx_asset_path="${!id}"
+			[[ -e "libvpx_asset_path" ]] || continue
 			einfo "Running PGO trainer for ${encoding_codec} for lossless"
 			einfo "Encoding for lossless"
 			local cmd
