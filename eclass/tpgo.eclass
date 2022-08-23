@@ -131,6 +131,16 @@ TPGO_CONFIGURE_DONT_SET_FLAGS=${TPGO_CONFIGURE_DONT_SET_FLAGS:-0}
 # This function is actually a user defined event handler and optional.
 #
 
+# TIPS:
+
+# If a library package is disjoint from the app package and the library package
+# doesn't contain a trainer app, then use LD_LIBRARY_PATH to load the PGIed
+# library in _src_pre_train to priorize the PGI library before the system
+# library, but the app should be prebuilt with the matching depending library
+# so the symbols are consistent.  Also, use the tpgo_meets_requirements and
+# PDEPEND to prevent disruption of user work.  If this is too difficult to sort
+# out, use the epgo eclass instead.
+
 inherit flag-o-matic toolchain-funcs
 if [[ "${TPGO_USE_X}" == "1" ]] ;then
 	inherit virtualx
@@ -569,6 +579,12 @@ _tpgo_train() {
 # src_compile() {
 #	tpgo_compile
 # }
+#
+# The _src_pre_train is intended for LD_LIBRARY_PATH linker overrides
+# and staged installs into ED.
+#
+# The _src_post_train is intended to wipe the staged installs in ED
+# or to clear the LD_LIBRARY_PATH.
 #
 tpgo_src_compile() {
 	local is_pgoable=1
