@@ -58,7 +58,6 @@ LICENSE="
 		BSD
 		BSD-2
 		ZLIB
-		cfi? ( Apache-2.0-with-LLVM-exceptions MIT )
 		libcaca? ( GPL-2 ISC LGPL-2.1 WTFPL-2 )
 		zimg? ( WTFPL-2 )
 	)
@@ -296,7 +295,6 @@ IUSE+=" pgo
 	pgo-trainer-video-constrained-quality
 	pgo-trainer-video-lossless
 "
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang cfi-cross-dso hardened lto shadowcallstack"
 
 # Strings for CPU features in the useflag[:configure_option] form
 # if :configure_option isn't set, it will use 'useflag' as configure option
@@ -409,7 +407,7 @@ RDEPEND+="
 	)
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
 	jpeg2k? ( >=media-libs/openjpeg-2:2[${MULTILIB_USEDEP}] )
-	libaom? ( >=media-libs/libaom-1.0.0-r1:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,clang?,hardened?,shadowcallstack?,${MULTILIB_USEDEP}] )
+	libaom? ( >=media-libs/libaom-1.0.0-r1:=[${MULTILIB_USEDEP}] )
 	libaribb24? ( >=media-libs/aribb24-1.0.3-r2[${MULTILIB_USEDEP}] )
 	libass? ( >=media-libs/libass-0.11.0:=[${MULTILIB_USEDEP}] )
 	libcaca? ( >=media-libs/libcaca-0.99_beta18-r1[${MULTILIB_USEDEP}] )
@@ -451,7 +449,7 @@ RDEPEND+="
 		>=media-libs/libvorbis-1.3.3-r1[${MULTILIB_USEDEP}]
 		>=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}]
 	)
-	vpx? ( >=media-libs/libvpx-1.4.0:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,clang?,hardened?,shadowcallstack?,${MULTILIB_USEDEP}] )
+	vpx? ( >=media-libs/libvpx-1.4.0:=[${MULTILIB_USEDEP}] )
 	vulkan? ( >=media-libs/vulkan-loader-1.2.189:=[${MULTILIB_USEDEP}] )
 	X? (
 		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
@@ -462,10 +460,9 @@ RDEPEND+="
 	postproc? ( !media-libs/libpostproc )
 	zeromq? ( >=net-libs/zeromq-4.1.6 )
 	zimg? ( >=media-libs/zimg-2.7.4:=[${MULTILIB_USEDEP}] )
-	zlib? ( >=sys-libs/zlib-1.2.8-r1[hardened?,${MULTILIB_USEDEP}] )
+	zlib? ( >=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}] )
 	zvbi? ( >=media-libs/zvbi-0.2.35[${MULTILIB_USEDEP}] )
-" # CFI is optional for systemwide zlib CFI because it only works on clang only linux
-#	zlib? ( >=sys-libs/zlib-1.2.8-r1[cfi?,cfi-icall?,cfi-cast?,cfi-vcall?,hardened?,shadowcallstack?,${MULTILIB_USEDEP}] )
+"
 
 RDEPEND+="
 		openssl? (
@@ -478,96 +475,10 @@ RDEPEND+="
 		!openssl? ( gnutls? ( >=net-libs/gnutls-2.12.23-r6:=[${MULTILIB_USEDEP}] ) )
 "
 
-_seq() {
-	local min=${1}
-	local max=${2}
-	local i=${min}
-	while (( ${i} <= ${max} )) ; do
-		echo "${i}"
-		i=$(( ${i} + 1 ))
-	done
-}
-
-gen_cfi_bdepend() {
-	local min=${1}
-	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			>=sys-devel/lld-${v}
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
-		)
-		     "
-	done
-}
-
-gen_shadowcallstack_bdepend() {
-	local min=${1}
-	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			>=sys-devel/lld-${v}
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*:=[shadowcallstack?]
-		)
-		     "
-	done
-}
-
-gen_lto_bdepend() {
-	local min=${1}
-	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP}]
-			>=sys-devel/lld-${v}
-		)
-		"
-	done
-}
-
-gen_libcxx_depend() {
-	local min=${1}
-	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			libcxx? (
-				>=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,clang?,hardened?,shadowcallstack?,static-libs?,${MULTILIB_USEDEP}]
-			)
-		)
-		"
-	done
-}
-
 DEPEND+="
 	ladspa? ( >=media-libs/ladspa-sdk-1.13-r2[${MULTILIB_USEDEP}] )
 	v4l? ( sys-kernel/linux-headers )
 "
-
-BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
-BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
-BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
 # += for verify-sig above
 BDEPEND+="
@@ -594,13 +505,7 @@ REQUIRED_USE+="
 	test? ( encode )
 	${GPL_REQUIRED_USE}
 	${CPU_REQUIRED_USE}"
-# Linking utils with only CFI Cross-DSO (.so).
 REQUIRED_USE+="
-	cfi? ( clang lto )
-	cfi-cast? ( clang cfi-vcall lto static-libs )
-	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
-	cfi-icall? ( clang cfi-vcall lto static-libs )
-	cfi-vcall? ( clang lto static-libs )
 	pgo? (
 		|| (
 			pgo-custom-audio
@@ -620,7 +525,6 @@ REQUIRED_USE+="
 	pgo-trainer-video-2-pass-constrained-quality? ( pgo )
 	pgo-trainer-video-constrained-quality? ( pgo )
 	pgo-trainer-video-lossless? ( pgo )
-	shadowcallstack? ( clang )
 "
 RESTRICT="
 	!test? ( test )
@@ -805,19 +709,6 @@ get_lib_types() {
 	use static-libs && echo "static"
 }
 
-has_cfi() {
-	local name="${1}"
-	local ldflags_lib="${2}"
-	if has_version "${1}[cfi]" \
-		|| has_version "${1}[cfi-icall]" \
-		|| has_version "${1}[cfi-vcall]" \
-		|| has_version "${1}[cfi-cast]" \
-		|| has_cfi_lib "${ldflags_lib}" ; then
-		return 0
-	fi
-	return 1
-}
-
 src_prepare() {
 	if [[ "${PV%_p*}" != "${PV}" ]] ; then # Snapshot
 		export revision=git-N-${FFMPEG_REVISION}
@@ -838,16 +729,9 @@ src_prepare() {
 		for lib_type in $(get_lib_types) ; do
 			einfo "Copying sources to ${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			cp -a "${S_orig}" "${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
-
 		done
 	}
 	multilib_foreach_abi prepare_abi
-}
-
-get_abi_use() {
-	for p in $(multilib_get_enabled_abi_pairs) ; do
-		[[ "${p}" =~ "${ABI}"$ ]] && echo "${p}" | cut -f 1 -d "."
-	done
 }
 
 get_native_abi_use() {
@@ -860,7 +744,7 @@ get_multiabi_ffmpeg() {
 	local btype="${lib_type/-*}"
 	if multilib_is_native_abi && has_version "media-video/ffmpeg[$(get_native_abi_use)]" ; then
 		echo "${MY_ED}/usr/bin/ffmpeg-shared"
-	elif ! multilib_is_native_abi && has_version "media-video/ffmpeg[$(get_abi_use ${ABI})]" ; then
+	elif ! multilib_is_native_abi && has_version "media-video/ffmpeg[${MULTILIB_ABI_FLAG}]" ; then
 		echo "${MY_ED}/usr/bin/ffmpeg-shared-${ABI}"
 	else
 		echo ""
@@ -903,172 +787,22 @@ append_all() {
 	append-ldflags ${@}
 }
 
-append_lto() {
-	filter-flags '-flto=*' '-fuse-ld=*'
-	if tc-is-clang ; then
-		append-flags -flto=thin
-		append-ldflags -fuse-ld=lld -flto=thin
-		[[ "${lib_type}" == "static" ]] \
-			&& append_all -fsplit-lto-unit
-	else
-		append-flags -flto
-		append-ldflags -flto
-	fi
-}
-
-is_hardened_clang() {
-	if tc-is-clang && clang --version 2>/dev/null | grep -q -e "Hardened:" ; then
-		return 0
-	fi
-	return 1
-}
-
-is_hardened_gcc() {
-	if tc-is-gcc && gcc --version 2>/dev/null | grep -q -e "Hardened" ; then
-		return 0
-	fi
-	return 1
-}
-
-is_cfi_supported() {
-	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${lib_type}" == "static" ]] ; then
-		return 0
-	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
-		return 0
-	fi
-	return 1
-}
-
 _src_configure() {
 	local myconf=( )
 	local extra_libs=( )
 
 	einfo "Configuring ${lib_type} with PGO_PHASE=${PGO_PHASE}"
 
-	if use clang ; then
-		CC="clang $(get_abi_CFLAGS ${ABI})"
-		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
-		AR=llvm-ar
-		AS=llvm-as
-		NM=llvm-nm
-		RANLIB=llvm-ranlib
-		READELF=llvm-readelf
-		LD="${CC}"
-	fi
-	if tc-is-clang && ! use clang ; then
-		die "You must enable the clang USE flag or remove clang/clang++ from CC/CXX."
-	fi
-
-	export CC CXX AR AS NM RANDLIB READELF LD
-
-	filter-flags \
-		'--param=ssp-buffer-size=*' \
-		'-f*sanitize*' \
-		'-f*stack*' \
-		'-f*visibility*' \
-		'-fprofile*' \
-		'-fsplit-lto-unit' \
-		'-lubsan' \
-		'-stdlib=libc++' \
-		'-Wl,--allow-shlib-undefined' \
-		'-Wl,-lubsan' \
-		'-Wl,-z,noexecstack' \
-		'-Wl,-z,now' \
-		'-Wl,-z,relro'
-
-	autofix_flags
 	tpgo_src_configure
-
-	set_cfi() {
-		# The cfi enables all cfi schemes, but the selective tries to balance
-		# performance and security while maintaining a performance limit.
-		if tc-is-clang && is_cfi_supported ; then
-			if [[ "${lib_type}" == "static" ]] ; then
-				append_all -fvisibility=hidden
-			elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
-				append_all -fvisibility=default
-			fi
-			if use cfi ; then
-				append_all -fsanitize=cfi
-			else
-				use cfi-cast && append_all \
-							-fsanitize=cfi-derived-cast \
-							-fsanitize=cfi-unrelated-cast
-				#use cfi-icall && append_all \
-				#			-fsanitize=cfi-icall
-				use cfi-vcall && append_all \
-							-fsanitize=cfi-vcall
-			fi
-			[[ "${USE}" =~ "cfi" ]] && append-ldflags -Wl,-lubsan
-			append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with ffprobe
-			use cfi-cross-dso \
-				&& [[ "${lib_type}" == "shared" ]] \
-				&& append_all -fsanitize-cfi-cross-dso
-		fi
-		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
-						-fsanitize=shadow-call-stack
-	}
+	strip-flag-value "cfi-icall"
+	if tc-is-clang && has_version "sys-libs/compiler-rt-sanitizer[cfi]" ; then
+		append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with ffprobe
+	fi
 
 	# Silence ld.lld: error: libavcodec/libavcodec.so: undefined reference to vpx_codec_get_caps
 	# Error happens when linking -lvpx and -lopenh264 together to make ffprobe_g.  Removing -lopenh264 fixes it.
 	# -lopenh264 has no reference to libvpx, so lld is buggy.
 	append-ldflags -Wl,--allow-shlib-undefined
-
-	use hardened && append-ldflags -Wl,-z,noexecstack
-	use lto && append_lto
-	if is_hardened_gcc ; then
-		:;
-	elif is_hardened_clang ; then
-		set_cfi
-	else
-		set_cfi
-		# The cfi enables all cfi schemes, but the selective tries to balance
-		# performance and security while maintaining a performance limit.
-		# Use -fno-sanitize-trap= for debugging
-		if use hardened ; then
-			if [[ -n "${USE_HARDENED_PROFILE_DEFAULTS}" \
-				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
-				append-cppflags -D_FORTIFY_SOURCE=2
-				append-flags $(test-flags-CC -fstack-clash-protection)
-				append-flags --param=ssp-buffer-size=4 \
-						-fstack-protector-strong
-				append-flags -fPIE
-				myconf+=(
-					--extra-ldexeflags="-fPIE"
-					--extra-ldexeflags="-pie"
-				)
-			elif [[ -n "${USE_HARDENED_PACKAGE_DEFAULTS}" \
-				&& "${USE_HARDENED_PACKAGE_DEFAULTS}" == "1" ]] ; then
-				# Package settings (PIE (-fPIE -pie), SSP (-fstack-protector-all), Full RELRO,
-				# _FORITIFY_SOURCE=2, -fno-strict-overflow)
-				myconf+=( --hardened )
-			else
-				# Browser equivalent security settings
-				append-ldflags -Wl,-z,relro -Wl,-z,now
-				append-ldflags --param=ssp-buffer-size=4 \
-						-fstack-protector
-				append-flags -fPIE
-				myconf+=(
-					--extra-ldexeflags="-fPIE"
-					--extra-ldexeflags="-pie"
-				)
-			fi
-		fi
-	fi
-
-	if use hardened ; then
-		# Fixes:
-# ld.lld: error: can't create dynamic relocation R_386_32 against local symbol \
-# in readonly segment; recompile object files with -fPIC or pass \
-# '-Wl,-z,notext' to allow text relocations in the output
-		append-ldflags -fPIC
-#		append-ldflags -Wl,-z,notext
-		#append-cppflags -DBROKEN_RELOCATIONS=1 # https://trac.ffmpeg.org/ticket/7878
-		use clang && append-ldflags -Wl,-error-limit=0
-	fi
-
-	export FFMPEG=$(get_multiabi_ffmpeg)
 
 	# Licensing of external packages
 	# See https://github.com/FFmpeg/FFmpeg/blob/n4.4/configure#L1735
@@ -2060,6 +1794,7 @@ _src_post_pgo() {
 _src_pre_train() {
 	einfo "Installing image into sandbox staging area"
 	_install
+	export FFMPEG=$(get_multiabi_ffmpeg)
 }
 
 _src_post_train() {
@@ -2187,27 +1922,6 @@ ewarn
 ewarn "You are not allowed to redistribute this binary."
 ewarn
 	fi
-
-	if use cfi-cross-dso ; then
-ewarn "Using cfi-cross-dso requires a rebuild of the app with only the clang"
-ewarn "compiler."
-	fi
-
-	if [[ "${USE}" =~ "cfi" ]] && use static-libs ; then
-ewarn "Using cfi with static-libs requires the app be built with only the clang"
-ewarn "compiler."
-	fi
-
-	if use lto && use static-libs ; then
-		if tc-is-clang ; then
-ewarn "You are only allowed to static link this library with clang."
-		elif tc-is-gcc ; then
-ewarn "You are only allowed to static link this library with gcc."
-		else
-ewarn "You are only allowed to static link this library with CC=${CC}"
-ewarn "CXX=${CXX}."
-		fi
-	fi
 }
 
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  hardened, pgo, cfi, lto, license-compatibility-correctness
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  pgo, cfi-exceptions, license-compatibility-correctness
