@@ -787,6 +787,8 @@ append_all() {
 	append-ldflags ${@}
 }
 
+src_configure() { :; }
+
 _src_configure() {
 	local myconf=( )
 	local extra_libs=( )
