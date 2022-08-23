@@ -79,7 +79,7 @@
 	FFMPEG_PGO_CODECNAME_ARGS
 	FFMPEG_PGO_CODECNAME_ARGS_LOSSLESS
 
-	FFMPEG_PGO_VIDEO_CODECS=" voice:libopus:libopus:webm: music:libvorbis:libvorbis:ogg:high_profile"
+	FFMPEG_PGO_AUDIO_CODECS=" voice:libopus:libopus:webm: music:libvorbis:libvorbis:ogg:high_profile"
 
 	replacing CODECNAME with uppercases and hyphens with underscores.
 	For example, if one wanted to train an imaginary codec libfoo-bar,
