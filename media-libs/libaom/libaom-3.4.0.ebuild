@@ -97,17 +97,6 @@ __check_video_codecs() {
 
 __check_video() {
 	if use pgo && has_version "media-video/ffmpeg" ; then
-		if [[ -z "${video_asset_path}" ]] ; then
-eerror
-eerror "${id} is missing the absolute path to your av1 video as a per-package"
-eerror "environment variable."
-eerror
-#eerror "The video must be 3840x2160 resolution, 60fps, >= 3 seconds."
-#eerror
-			die
-		else
-			einfo "${id}=${video_asset_path}"
-		fi
 		if ffprobe "${video_asset_path}" 2>/dev/null 1>/dev/null ; then
 			einfo "Verifying asset requirements"
 			if false && ! ( ffprobe "${video_asset_path}" 2>&1 \
@@ -157,6 +146,7 @@ check_video() {
 	local id
 	for id in $(get_asset_ids) ; do
 		local video_asset_path="${!id}"
+		[[ -e "${video_asset_path}" ]] || continue
 		__check_video
 	done
 }
@@ -389,6 +379,7 @@ _trainer_plan_constrained_quality() {
 		local id
 		for id in $(get_asset_ids) ; do
 			local video_asset_path="${!id}"
+			[[ -e "${video_asset_path}" ]] || continue
 			einfo "Running PGO trainer for 1 pass constrained quality"
 			local cmd
 			einfo "Encoding as 720p for 3 sec, 30 fps"
@@ -501,6 +492,7 @@ _trainer_plan_2_pass_constrained_quality() {
 		local id
 		for id in $(get_asset_ids) ; do
 			local video_asset_path="${!id}"
+			[[ -e "${video_asset_path}" ]] || continue
 			einfo "Running PGO trainer for 2 pass constrained quality"
 			local cmd
 			einfo "Encoding as 720p for 3 sec, 30 fps"
@@ -709,6 +701,7 @@ _trainer_plan_lossless() {
 		local id
 		for id in $(get_asset_ids) ; do
 			local video_asset_path="${!id}"
+			[[ -e "${video_asset_path}" ]] || continue
 			einfo "Running PGO trainer for lossless"
 			local cmd
 			einfo "Encoding for lossless"
