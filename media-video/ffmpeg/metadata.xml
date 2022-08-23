@@ -6,12 +6,10 @@
 	<email>media-video@gentoo.org</email>
 </maintainer>
 <longdescription>
-	The oiledmachine-overlay provides this ebuild for CFI hardening and
-	enablement of PGO optimization.
+	The oiledmachine-overlay provides this ebuild for PGO optimization.
 
 	USE flag status:
 		pgo - done
-		cfi - done
 
 	PGO optimization requires several steps:
 	(1) Fetch assets to train with.  They should be licensed under
@@ -135,55 +133,9 @@
 	additional per-package envvar assets.  See the ebuild
 	for ways to execute the sandboxed FFmpeg and ways to use
 	the variables.
-
-	One may choose Full CFI (cfi USE flag alone), or a balanced
-	performant CFI with specific combo of options (all or some of
-	cfi-cast, cfi-icall, cfi-vcall) at the expense of security.
-	Either cfi-vcall or cfi is necessary for forward edge
-	protection.  Backward edge protection is provided by the
-	shadow-call-stack USE flag.
-
-
-	Binary hardening:
-
-	Hardening is required for some production www browsers to mitigate
-	against attacks from untrusted assets.
-
-	For hardened profiles, it will fall back to the implied hardened profile
-	with noexecstack.
-
-	For non-hardened profiles, there is more flexibility depending on speed
-	and security tradeoff choice.  The below are mutually exclusive.
-	For more details, see the ebuild.  The differences are really the stack
-	protection levels and mitigation against newer threats.
-
-	# Apply default hardened distro settings on non-hardened profiles
-	hardened USE flag ON, envar: USE_HARDENED_PROFILE_DEFAULTS=1
-
-	# Apply hardened upstream settings on non-hardened profiles
-	hardened USE flag ON, envar: USE_HARDENED_PACKAGE_DEFAULTS=1
-
-	# Use hardened browser settings on non-hardened profiles
-	hardened USE flag ON, envar: unset USE_HARDENED_PROFILE_DEFAULTS and
-	unset USE_HARDENED_PACKAGE_DEFAULTS
-
-	All hardened profiles and hardened USE flag users will include
-	nonexecstack.  The default settings already cover and meet or exceed
-	the browser security expectations, but you still need to enable
-	the hardened USE flag to meet the security requirements of the
-	browser.
 </longdescription>
 <use>
 	<!-- added to ebuild by oiledmachine-overlay -->
-	<flag name="cfi">Build with full CFI with all schemes</flag>
-	<flag name="cfi-cast">Build with cfi-cast</flag>
-	<flag name="cfi-icall">Build with cfi-icall</flag>
-	<flag name="cfi-vcall">Build with cfi-vcall with forward edge
-		protection.</flag>
-        <flag name="cross-dso-cfi">Build shared libs with Cross-DSO CFI mode</flag>
-	<flag name="full-relro">Build with Full RELRO</flag>
-	<flag name="libcxx">Link against the more secured libcxx package.</flag>
-	<flag name="lto">Use link time optimization.</flag>
 	<flag name="pgo-custom-audio">Use a custom profile guided optimization
 		script to train video codecs with.  Use this for video filter
 		training as well.</flag>
