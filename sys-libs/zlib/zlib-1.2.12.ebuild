@@ -313,14 +313,14 @@ _src_configure() {
 	cd "${BUILD_DIR}" || die
 	tpgo_src_configure
 
-	if has_version "sys-libs/glibc" ; then
-		for value in cfi-vcall cfi-nvcall cfi-derived-cast cfi-unrelated-cast cfi ; do
-			if is-flagq "-fsanitize=*${value}" ; then
-				einfo "Removing"
-				strip-flag-value "${value}"
-			fi
-		done
-	fi
+	# It doesn't work for elibc_glibc and gcc combo.
+	for value in cfi-vcall cfi-nvcall cfi-derived-cast cfi-unrelated-cast cfi ; do
+		if is-flagq "-fsanitize=*${value}" ; then
+			einfo "Removing"
+			strip-flag-value "${value}"
+		fi
+	done
+	filter-flags -fsanitize-cfi-cross-dso
 
 	local flag
 	for flag in CFLAGS CXXFLAGS LDFLAGS ; do
