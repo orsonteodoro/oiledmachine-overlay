@@ -1,5 +1,5 @@
 #!/bin/bash
-EPREFIX=${EPREFIX:=""}
+EPREFIX=__EPREFIX__
 ACTIVE_VERSION=$(grep -r -e "#define NODE_MAJOR_VERSION" \
 	"${EPREFIX}/usr/include/node/node_version.h" | cut -f 3 -d " ")
 NODE_VERSION=${NODE_VERSION:-${ACTIVE_VERSION}}

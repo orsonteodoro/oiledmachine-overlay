@@ -5,10 +5,12 @@
 # For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V18.md
 
 EAPI=8
+
+TPGO_CONFIGURE_DONT_SET_FLAGS=1
 PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="threads(+)"
 inherit bash-completion-r1 flag-o-matic ninja-utils pax-utils python-any-r1 \
-toolchain-funcs xdg-utils
+toolchain-funcs tpgo xdg-utils
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
 LICENSE="Apache-1.1 Apache-2.0 Artistic-2 BSD BSD-2 icu-71.1 ISC MIT openssl unicode ZLIB"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
@@ -200,6 +202,7 @@ ewarn "The benchmark/path/resolve-win32.js may not reflect typical usage."
 ewarn "Consider adding it to the NODEJS_EXCLUDED_BENCHMARKS."
 ewarn
 	fi
+	tpgo_setup
 }
 
 LTO_TYPE="none"
@@ -225,26 +228,26 @@ src_prepare() {
 
 	# -O3 removal breaks _FORITIFY_SOURCE
 	if use custom-optimization ; then
-		if is-flag -O0; then
+		if is-flagq -O0; then
 			ewarn "Using -O0 may disable _FORITIFY_SOURCE lowering security"
 			use pgo && ewarn "Using -O0 with PGO is uncommon"
 			sed -i -e "s|'-O3'|'-O0'|g" common.gypi node.gypi || die
-		elif is-flag -O1; then
+		elif is-flagq -O1; then
 			use pgo && ewarn "Using -O1 with PGO is uncommon"
 			sed -i -e "s|'-O3'|'-O1'|g" common.gypi node.gypi || die
-		elif is-flag -O2; then
+		elif is-flagq -O2; then
 			use pgo && ewarn "Using -O2 with PGO is uncommon"
 			sed -i -e "s|'-O3'|'-O2'|g" common.gypi node.gypi || die
-		elif is-flag -O3; then
+		elif is-flagq -O3; then
 			sed -i -e "s|'-O3'|'-O3'|g" common.gypi node.gypi || die
-		elif is-flag -O4; then
+		elif is-flagq -O4; then
 			sed -i -e "s|'-O3'|'-O4'|g" common.gypi node.gypi || die
-		elif is-flag -Ofast; then
+		elif is-flagq -Ofast; then
 			sed -i -e "s|'-O3'|'-Ofast'|g" common.gypi node.gypi || die
-		elif is-flag -Os; then
+		elif is-flagq -Os; then
 			use pgo && ewarn "Using -Os with PGO is uncommon"
 			sed -i -e "s|'-O3'|'-Os'|g" common.gypi node.gypi || die
-		elif is-flag -Oz; then
+		elif is-flagq -Oz; then
 			use pgo && ewarn "Using -Oz with PGO is uncommon"
 			sed -i -e "s|'-O3'|'-Oz'|g" common.gypi node.gypi || die
 		fi
@@ -277,9 +280,9 @@ src_prepare() {
 	fi
 
 	# Save before using filter-flag
-	if is-flag -flto=thin; then
+	if is-flagq -flto=thin; then
 		LTO_TYPE="thin"
-	elif is-flag -flto; then
+	elif is-flagq -flto; then
 		LTO_TYPE="full"
 	fi
 
@@ -288,9 +291,34 @@ src_prepare() {
 
 src_configure() { :; }
 
-configure_pgx() {
+__pgo_configure() {
+	if [[ "${CC}" =~ "clang" ]] ; then
+ewarn
+ewarn "PGO clang support is experimental"
+ewarn
+	fi
+	export PGO_PROFILE_DIR="${T}/pgo-${ABI}"
+	export PGO_PROFILE_PROFDATA="${PGO_PROFILE_DIR}/pgo-custom.profdata"
+	mkdir -p "${PGO_PROFILE_DIR}" || die
+	if [[ "${PGO_PHASE}" == "PGO" && "${CC}" =~ "clang" ]] ; then
+# The "counter overflow" is either a discared result or a saturated max value.
+einfo
+einfo "Converting .profraw -> .profdata"
+einfo
+		llvm-profdata merge \
+			-output="${PGO_PROFILE_DIR}/pgo-custom.profdata" \
+			"${PGO_PROFILE_DIR}" || die
+	fi
+	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
+		myconf+=( --enable-pgo-generate )
+	elif [[ "${PGO_PHASE}" == "PGO" ]] ; then
+		myconf+=( --enable-pgo-use )
+	fi
+}
+
+_src_configure() {
 	export ENINJA_BUILD_DIR="out/"$(usex debug "Debug" "Release")
-	[[ "${PGO_PHASE}" == "pgo" ]] && eninja -C ${ENINJA_BUILD_DIR} -t clean
+	tpgo_src_configure
 	xdg_environment_reset
 
 	local myconf=(
@@ -325,30 +353,7 @@ configure_pgx() {
 	fi
 	use inspector || myconf+=( --without-inspector )
 	use npm || myconf+=( --without-npm )
-	if use pgo ; then
-		if [[ "${CC}" =~ "clang" ]] ; then
-ewarn
-ewarn "PGO clang support is experimental"
-ewarn
-		fi
-		export PGO_PROFILE_DIR="${T}/pgo-${ABI}"
-		export PGO_PROFILE_PROFDATA="${PGO_PROFILE_DIR}/pgo-custom.profdata"
-		mkdir -p "${PGO_PROFILE_DIR}" || die
-		if [[ "${PGO_PHASE}" == "pgo" && "${CC}" =~ "clang" ]] ; then
-# The "counter overflow" is either a discared result or a saturated max value.
-einfo
-einfo "Converting .profraw -> .profdata"
-einfo
-			llvm-profdata merge \
-				-output="${PGO_PROFILE_DIR}/pgo-custom.profdata" \
-				"${PGO_PROFILE_DIR}" || die
-		fi
-		if [[ "${PGO_PHASE}" == "pgi" ]] ; then
-			myconf+=( --enable-pgo-generate )
-		elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
-			myconf+=( --enable-pgo-use )
-		fi
-	fi
+	use pgo && __pgo_configure
 
 	autofix_flags
 
@@ -360,16 +365,8 @@ einfo
 		myconf+=( --without-ssl )
 	fi
 
-	local myarch=""
-	case ${ABI} in
-		amd64) myarch="x64";;
-		arm) myarch="arm";;
-		arm64) myarch="arm64";;
-		ppc64) myarch="ppc64";;
-		x32) myarch="x32";;
-		x86) myarch="ia32";;
-		*) myarch="${ABI}";;
-	esac
+	local myarch="${ABI/amd64/x64}"
+	myarch="${ABI/x86/ia32}"
 
 	GYP_DEFINES="linux_use_gold_flags=0
 		linux_use_bundled_binutils=0
@@ -396,7 +393,7 @@ einfo
 	fi
 }
 
-build_pgx() {
+_src_compile() {
 	eninja -C ${ENINJA_BUILD_DIR}
 }
 
@@ -411,7 +408,7 @@ init_local_npm() {
 			npm install wrk@${WRK_V} || die
 			mkdir -p "${S}/node_modules/.bin" || die
 			cat > "${S}/node_modules/.bin/wrk" <<EOF
-#!/bin/bash
+#!${EPREFIX}/bin/bash
 node "${S}/node_modules/wrk/index.js" "\${@}"
 EOF
 			chmod +x "${S}/node_modules/.bin/wrk" || die
@@ -423,7 +420,7 @@ EOF
 	fi
 }
 
-run_trainers() {
+tpgo_train_custom() {
 	local benchmark=( $(grep -l -r -e "createBenchmark" "benchmark" | sort) )
 	unset accepted
 	declare -A accepted
@@ -522,30 +519,17 @@ eerror
 	fi
 }
 
-pgi_wipe() {
-	rm -rf "${ED}" || die
-}
-
-pgi_install() {
+_src_pre_train() {
 	einfo "Installing sandboxed PGI image"
 	src_install
 }
 
+_src_post_train() {
+	rm -rf "${ED}" || die
+}
+
 src_compile() {
-	if use pgo ; then
-		PGO_PHASE="pgi"
-		configure_pgx
-		build_pgx
-		pgi_install
-		run_trainers
-		pgi_wipe
-		PGO_PHASE="pgo"
-		configure_pgx
-		build_pgx
-	else
-		configure_pgx
-		build_pgx
-	fi
+	tpgo_src_compile
 }
 
 src_install() {
@@ -556,7 +540,7 @@ src_install() {
 	${EPYTHON} tools/install.py install "${D}" "${EPREFIX}/usr" || die
 
 	mv "${ED}"/usr/bin/node{,${SLOT_MAJOR}} || die
-	if [[ "${PGO_PHASE}" == "pgi" ]] ; then
+	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		dosym node${SLOT_MAJOR} /usr/bin/node
 	fi
 	pax-mark -m "${ED}"/usr/bin/node${SLOT_MAJOR}
@@ -668,6 +652,7 @@ einfo
 		eselect nodejs set node${SLOT_MAJOR}
 	fi
 	cp "${FILESDIR}/node-multiplexer-v5" "${EROOT}/usr/bin/node" || die
+	sed -i -e "s|__EPREFIX__|${EPREFIX}|g" "${EROOT}/usr/bin/node" || die
 	chmod 0755 /usr/bin/node || die
 	chown root:root /usr/bin/node || die
 	grep -q -F "NODE_VERSION" "${EROOT}/usr/bin/node" || die "Wrapper did not copy."

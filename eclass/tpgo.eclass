@@ -111,6 +111,11 @@
 # @DESCRIPTION:
 # Add sandbox exceptions for input.
 
+# @ECLASS_VARIABLE: TPGO_CONFIGURE_DONT_SET_FLAGS
+# @DESCRIPTION:
+# Lets the project decide how to add PGO flags and merge profile.
+TPGO_CONFIGURE_DONT_SET_FLAGS=${TPGO_CONFIGURE_DONT_SET_FLAGS:-0}
+
 # @FUNCTION: tpgo_meets_requirements
 # @RETURN:
 # 0 - as the exit code if it has installed assets and training dependencies
@@ -290,7 +295,9 @@ tpgo_src_configure() {
 		fi
 	fi
 
-	_tpgo_configure
+	if [[ "${TPGO_CONFIGURE_DONT_SET_FLAGS}" != "1" ]] ; then
+		_tpgo_configure
+	fi
 }
 
 # @FUNCTION: _tpgo_run_trainer
