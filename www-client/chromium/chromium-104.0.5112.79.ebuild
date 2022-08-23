@@ -341,6 +341,9 @@ REQUIRED_USE+="
 		!system-libstdcxx
 		bundled-libcxx
 		partitionalloc
+		!amd64? (
+			!cfi
+		)
 		amd64? (
 			cfi
 		)
@@ -456,8 +459,15 @@ gen_bdepend_llvm() {
 			>=sys-devel/lld-${s}
 			=sys-libs/compiler-rt-${s}*
 			=sys-libs/compiler-rt-sanitizers-${s}*:=[shadowcallstack?]
-			cfi? (
-				=sys-libs/compiler-rt-sanitizers-${s}*:=[cfi]
+			official? (
+				amd64? (
+					=sys-libs/compiler-rt-sanitizers-${s}*:=[cfi]
+				)
+			)
+			!official? (
+				cfi? (
+					=sys-libs/compiler-rt-sanitizers-${s}*:=[cfi]
+				)
 			)
 		"
 		o_all+=" ( ${t} ) "
@@ -2429,16 +2439,34 @@ ewarn
 
 # See https://github.com/chromium/chromium/blob/104.0.5112.79/build/config/sanitizers/BUILD.gn#L196
 # See https://github.com/chromium/chromium/blob/104.0.5112.79/tools/mb/mb_config.pyl#L2950
-	if use cfi ; then
+	if use official ; then
+		# Forced because it is the final official settings.
+		if [[ "${ABI}" == "amd64" ]] ; then
+			myconf_gn+=" is_cfi=true"
+			myconf_gn+=" use_cfi_icall=true"
+			myconf_gn+=" use_cfi_cast=false"
+		else
+			myconf_gn+=" is_cfi=false"
+			myconf_gn+=" use_cfi_cast=false"
+			myconf_gn+=" use_cfi_icall=false"
+		fi
+	elif use cfi ; then
 		myconf_gn+=" is_cfi=true"
 
-		if [[ "${USE_CFI_CAST}" == "1" ]] ; then
+		local cfi_cast_default="false"
+		local cfi_icall_default="false"
+
+		if [[ "${ABI}" == "amd64" ]] ; then
+			cfi_icall_default="true"
+		fi
+
+		if [[ "${USE_CFI_CAST:-${cfi_cast_default}}" == "1" ]] ; then
 			myconf_gn+=" use_cfi_cast=true"
 		else
 			myconf_gn+=" use_cfi_cast=false"
 		fi
 
-		if [[ "${USE_CFI_ICALL}" == "1" ]] ; then
+		if [[ "${USE_CFI_ICALL:-${cfi_icall_default}}" == "1" ]] ; then
 			myconf_gn+=" use_cfi_icall=true"
 		else
 			myconf_gn+=" use_cfi_icall=false"

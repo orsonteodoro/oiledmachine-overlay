@@ -156,10 +156,16 @@ Prebuilt    it    o             o           o              o
       The estimated impact is around 1% CPU overhead, around 15% or less code
       size increase.  When a violation is encountered, the program aborts.
 
-      Additional ebuild per-package environment variables:
+      Additional ebuild per-package environment variables if USE=-official:
 
-        USE_CFI_ICALL - 1 to enable (default if cfi enabled), 0 to disable cfi-icall
-        USE_CFI_CAST - 1 to enable (default if cfi enabled), 0 to disable cfi-cast
+        USE_CFI_ICALL - 1 to enable, 0 to disable cfi-icall
+        USE_CFI_CAST - 1 to enable, 0 to disable cfi-cast
+
+      For the official build settings, it is fixed based on the ABI.
+
+      For x86-64 it is cfi-vcall=true, cfi-icall=true, cfi-cast=false
+      All other microarches are all false.
+
     </flag>
     <flag name="component-build">
       Split build into more shared libraries to speed up linking. Mostly
