@@ -421,6 +421,7 @@ _trainer_plan_constrained_quality() {
 			local video_asset_path="${!id}"
 			[[ -e "${video_asset_path}" ]] || continue
 			einfo "Running PGO trainer for 1 pass constrained quality"
+			local e
 			for e in ${L[@]} ; do
 				_trainer_plan_constrained_quality_training_session "${e}"
 			done
@@ -491,6 +492,7 @@ _trainer_plan_2_pass_constrained_quality() {
 			local video_asset_path="${!id}"
 			[[ -e "${video_asset_path}" ]] || continue
 			einfo "Running PGO trainer for 2 pass constrained quality"
+			local e
 			for e in ${L[@]} ; do
 				_trainer_plan_2_pass_constrained_quality_training_session "${e}"
 			done
@@ -528,7 +530,6 @@ tpgo_train_custom() {
 	[[ "${lib_type}" == "static" ]] && return
 	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-	export LD_LIBRARY_PATH="${BUILD_DIR}"
 	if use pgo-trainer-constrained-quality ; then
 		_trainer_plan_constrained_quality
 	fi
@@ -541,7 +542,6 @@ tpgo_train_custom() {
 	if use pgo-custom ; then
 		_trainer_plan_custom
 	fi
-	unset LD_LIBRARY_PATH
 }
 
 _src_compile() {
@@ -552,7 +552,12 @@ _src_compile() {
 }
 
 _src_pre_train() {
+	export LD_LIBRARY_PATH="${BUILD_DIR}"
 	export FFMPEG=$(get_multiabi_ffmpeg)
+}
+
+_src_post_train() {
+	unset LD_LIBRARY_PATH
 }
 
 _src_post_pgo() {
