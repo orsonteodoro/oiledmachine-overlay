@@ -937,4 +937,22 @@ autofix_flags() {
 	strip-unsupported-flags
 }
 
+# @FUNCTION: strip-flag-value
+# @DESCRIPTION:
+# Removes a value from an option
+# -fsanitize=cfi,asan -> -fsanitize=asan
+strip-flag-value() {
+	local value="${1}"
+	for flag in ADAFLAGS CFLAGS CPPFLAGS CXXFLAGS CCASFLAGS FFLAGS FCFLAGS LDFLAGS ; do
+		local t=$(echo "${!flag}" \
+			| sed  -r -e "s#(,|=)${value}#\1#g" \
+			| sed -r -e "s|[,]+|,|g" \
+			| sed -e "s|=,|=|g" \
+			| sed -r -e "s#,( |$)#\1#g")
+		: "${flag}"="${t}"
+        done
+	export ADAFLAGS CFLAGS CPPFLAGS CXXFLAGS CCASFLAGS FFLAGS FCFLAGS LDFLAGS
+}
+
+
 fi

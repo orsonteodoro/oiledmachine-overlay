@@ -29,7 +29,6 @@ LICENSE="ZLIB"
 SLOT="0/1" # subslot = SONAME
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="minizip minizip-utils static-libs"
-IUSE+=" cfi -cfi-cross-dso cfi-cast cfi-icall cfi-vcall clang hardened lto shadowcallstack"
 IUSE+="
 	pgo
 	pgo-custom
@@ -58,19 +57,7 @@ IUSE+="
 	pgo-trainer-zlib-text-min
 	pgo-trainer-zlib-text-random
 "
-# Link utilities with CFI Cross-DSO (.so) or Basic mode (.a)
 REQUIRED_USE="
-	!cfi-cross-dso? (
-		cfi? ( static-libs )
-		cfi-cast? ( static-libs )
-		cfi-icall? ( static-libs )
-		cfi-vcall? ( static-libs )
-	)
-	cfi? ( clang lto )
-	cfi-cast? ( clang lto cfi-vcall )
-	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
-	cfi-icall? ( clang lto cfi-vcall )
-	cfi-vcall? ( clang lto )
 	pgo? (
 		minizip? ( minizip-utils )
 		|| (
@@ -124,7 +111,6 @@ REQUIRED_USE="
 	pgo-trainer-minizip-text-max-compression? ( pgo minizip )
 	pgo-trainer-minizip-text-short? ( pgo minizip )
 	pgo-trainer-minizip-text-store? ( pgo minizip )
-	shadowcallstack? ( clang )
 "
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
@@ -147,64 +133,6 @@ _seq() {
 		i=$(( ${i} + 1 ))
 	done
 }
-
-gen_cfi_bdepend() {
-	local min=${1}
-	local max=${2}
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			>=sys-devel/lld-${v}
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
-		)
-		     "
-	done
-}
-
-gen_shadowcallstack_bdepend() {
-	local min=${1}
-	local max=${2}
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			>=sys-devel/lld-${v}
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*:=[shadowcallstack?]
-		)
-		     "
-	done
-}
-
-gen_lto_bdepend() {
-	local min=${1}
-	local max=${2}
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP}]
-			>=sys-devel/lld-${v}
-		)
-		"
-	done
-}
-
-# Avoid circular dependency problem, after building llvm/clang it should be fine
-PDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
-PDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-PDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-PDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-PDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-PDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
-PDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
 BDEPEND+=" minizip? ( ${AUTOTOOLS_DEPEND} )
 	verify-sig? ( sec-keys/openpgp-keys-madler )"
@@ -242,62 +170,6 @@ PATCHES=(
 get_lib_types() {
 	echo "shared"
 	use static-libs && echo "static"
-}
-
-is_clang_ready() {
-	for v in $(seq 10 14) ; do
-		if has_version "sys-devel/clang:${v}" \
-			&& has_version "sys-devel/llvm:${v}" \
-			&& has_version "=sys-devel/clang-runtime-${v}*" \
-			&& has_version ">=sys-devel/lld-${v}"
-		then
-			return 0
-		fi
-	done
-	return 1
-}
-
-is_lto_ready() {
-	for v in $(seq 11 14) ; do
-		if has_version "sys-devel/clang:${v}" \
-			&& has_version "sys-devel/llvm:${v}" \
-			&& has_version "=sys-devel/clang-runtime-${v}*" \
-			&& has_version ">=sys-devel/lld-${v}"
-		then
-			return 0
-		fi
-	done
-	return 1
-}
-
-is_cfi_ready() {
-	for v in $(seq 12 14) ; do
-		if has_version "sys-devel/clang:${v}" \
-			&& has_version "sys-devel/llvm:${v}" \
-			&& has_version "=sys-devel/clang-runtime-${v}*[compiler-rt,sanitize]" \
-			&& has_version ">=sys-devel/lld-${v}" \
-			&& has_version "=sys-libs/compiler-rt-${v}*" \
-			&& has_version "=sys-libs/compiler-rt-sanitizers-${v}*[cfi]"
-		then
-			return 0
-		fi
-	done
-	return 1
-}
-
-is_scs_ready() {
-	for v in $(seq 12 14) ; do
-		if has_version "sys-devel/clang:${v}" \
-			&& has_version "sys-devel/llvm:${v}" \
-			&& has_version "=sys-devel/clang-runtime-${v}*[compiler-rt,sanitize]" \
-			&& has_version ">=sys-devel/lld-${v}" \
-			&& has_version "=sys-libs/compiler-rt-${v}*" \
-			&& has_version "=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack]"
-		then
-			return 0
-		fi
-	done
-	return 1
 }
 
 check_img_converter() {
@@ -423,44 +295,7 @@ append_all() {
 	append-ldflags ${@}
 }
 
-append_lto() {
-	filter-flags '-flto*' '-fuse-ld=*'
-	if tc-is-clang && is_lto_ready ; then
-		append-flags -flto=thin -fuse-ld=lld
-		append-ldflags -fuse-ld=lld -flto=thin
-		[[ "${lib_type}" == "static" ]] \
-			&& append_all -fsplit-lto-unit
-	else
-		append-flags -flto
-		append-ldflags -flto
-	fi
-}
-
 src_configure() { :; }
-
-is_hardened_clang() {
-	if tc-is-clang && clang --version 2>/dev/null | grep -q -e "Hardened:" ; then
-		return 0
-	fi
-	return 1
-}
-
-is_hardened_gcc() {
-	if tc-is-gcc && gcc --version 2>/dev/null | grep -q -e "Hardened" ; then
-		return 0
-	fi
-	return 1
-}
-
-is_cfi_supported() {
-	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${lib_type}" == "static" ]] ; then
-		return 0
-	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
-		return 0
-	fi
-	return 1
-}
 
 _tpgo_custom_clean() {
 	einfo "Ran _tpgo_custom_clean"
@@ -476,101 +311,26 @@ _tpgo_custom_clean() {
 _src_configure() {
 	einfo "Called _src_configure"
 	cd "${BUILD_DIR}" || die
-	if use clang && is_clang_ready ; then
-		CC="clang $(get_abi_CFLAGS ${ABI})"
-		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
-		AR=llvm-ar
-		AS=llvm-as
-		NM=llvm-nm
-		RANLIB=llvm-ranlib
-		READELF=llvm-readelf
-		LD="ld.lld"
-	else
-		CC="gcc $(get_abi_CFLAGS ${ABI})"
-		CXX="g++ $(get_abi_CFLAGS ${ABI})"
-		AR="ar"
-		AS="as"
-		NM="nm"
-		RANLIB="ranlib"
-		READELF="readelf"
-		LD="ld.bfd"
-	fi
-	if tc-is-clang && ! use clang ; then
-		die "You must enable the clang USE flag or remove clang/clang++ from CC/CXX."
-	fi
-
-	export CC CXX AR AS NM RANDLIB READELF LD
-
-	filter-flags \
-		'--param=ssp-buffer-size=*' \
-		'-f*sanitize*' \
-		'-f*stack*' \
-		'-f*visibility*' \
-		'-fprofile*' \
-		'-fsplit-lto-unit' \
-		'-lubsan' \
-		'-stdlib=libc++' \
-		'-Wl,-lubsan' \
-		'-Wl,-z,noexecstack' \
-		'-Wl,-z,now' \
-		'-Wl,-z,relro' \
-		'-Wno-error=*'
-
-	autofix_flags
 	tpgo_src_configure
 
-	set_cfi() {
-		# The cfi enables all cfi schemes, but the selective tries to balance
-		# performance and security while maintaining a performance limit.
-		if tc-is-clang && is_cfi_supported ; then
-			if [[ "${lib_type}" == "static" ]] ; then
-				append_all -fvisibility=hidden
-			elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
-				append_all -fvisibility=default
+	if has_version "sys-libs/glibc" ; then
+		for value in cfi-vcall cfi-nvcall cfi-derived-cast cfi-unrelated-cast cfi ; do
+			if is-flagq "-fsanitize=*${value}" ; then
+				einfo "Removing"
+				strip-flag-value "${value}"
 			fi
-			if use cfi ; then
-				append_all -fsanitize=cfi
-			else
-				use cfi-cast && append_all \
-							-fsanitize=cfi-derived-cast \
-							-fsanitize=cfi-unrelated-cast
-				use cfi-icall && append_all \
-							-fsanitize=cfi-icall
-				use cfi-vcall && append_all \
-							-fsanitize=cfi-vcall
-			fi
-			[[ "${USE}" =~ "cfi" ]] && append_all -Wl,-lubsan
-			use cfi-cross-dso \
-				&& [[ "${lib_type}" == "shared" ]] \
-				&& append_all -fsanitize-cfi-cross-dso
-		fi
-		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
-						-fsanitize=shadow-call-stack
-	}
-
-	use hardened && append-ldflags -Wl,-z,noexecstack
-	use lto && append_lto
-	if is_hardened_gcc ; then
-		# Already done in hardened gcc
-		:;
-	elif is_hardened_clang ; then
-		set_cfi
-	else
-		set_cfi
-		if use hardened ; then
-			append-ldflags -Wl,-z,relro -Wl,-z,now
-			if [[ -n "${USE_HARDENED_PROFILE_DEFAULTS}" \
-				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
-				append-cppflags -D_FORTIFY_SOURCE=2
-				append-flags $(test-flags-CC -fstack-clash-protection)
-				append-flags --param=ssp-buffer-size=4 \
-						-fstack-protector-strong
-			else
-				append-flags --param=ssp-buffer-size=4 \
-						-fstack-protector
-			fi
-		fi
+		done
 	fi
+
+	local flag
+	for flag in CFLAGS CXXFLAGS LDFLAGS ; do
+		if [[ "${!flag}" =~ "cfi" ]] ; then
+eerror
+eerror "Remove all cfi flags from ${flag}"
+eerror
+			die
+		fi
+	done
 
 	if use pgo && tc-is-gcc && tpgo_meets_requirements && [[  "${PGO_PHASE}" == "PGO" ]] ; then
 		if use minizip ; then
@@ -579,10 +339,6 @@ _src_configure() {
 			append-flags $(test-flags -Wbackend-plugin) # It should be okay if no code changes.
 		fi
 	fi
-
-einfo "CC=${CC}"
-einfo "CXX=${CXX}"
-einfo "CPP=${CPP}"
 
 	case ${CHOST} in
 	*-mingw*|mingw*|*-cygwin*)
@@ -1375,69 +1131,7 @@ elog "No PGO optimization performed.  Please re-emerge this package."
 elog "The following package must be installed before PGOing this package:"
 elog "  app-arch/pigz[$(get_arch_enabled_use_flags)]"
 	fi
-
-	# CFI and LTO is only allowed in (musl based) clang only linux.
-
-	if use cfi-cross-dso ; then
-ewarn "Using cfi-cross-dso requires a rebuild of the app with only the clang"
-ewarn "compiler."
-	fi
-
-	if [[ "${USE}" =~ "cfi" ]] && use static-libs ; then
-ewarn "Using cfi with static-libs requires the app be built with only the clang"
-ewarn "compiler."
-	fi
-
-	if use lto && use static-libs ; then
-		if tc-is-clang ; then
-ewarn "You are only allowed to static link this library with clang."
-		elif tc-is-gcc ; then
-ewarn "You are only allowed to static link this library with gcc."
-		else
-ewarn "You are only allowed to static link this library with CC=${CC}"
-ewarn "CXX=${CXX}."
-		fi
-	fi
-
-	if ( use cfi || use cfi-cast || use cfi-icall || use cfi-vcall ) \
-		&& ! is_cfi_ready ; then
-ewarn
-ewarn "A circular depends was avoided, but you still need to re-emerge this"
-ewarn "package after LLVM for CFI support then rebuild all CFI dependants"
-ewarn "of this package."
-ewarn
-	fi
-
-	if use clang && ! is_clang_ready ; then
-ewarn
-ewarn "A circular depends was avoided, but you still need to re-emerge this"
-ewarn "package after LLVM."
-ewarn
-	fi
-
-	if use lto && ! is_lto_ready ; then
-ewarn
-ewarn "A circular depends was avoided, but you still need to re-emerge this"
-ewarn "package after LLVM for LTO support."
-ewarn
-	fi
-
-	if use shadowcallstack && ! is_scs_ready ; then
-ewarn
-ewarn "A circular depends was avoided, but you still need to re-emerge this"
-ewarn "package after LLVM for shadowcallstack support."
-ewarn
-	fi
-	if use static-libs &&
-		( ! is_cfi_ready || ! is_clang_ready || ! is_lto_ready \
-		|| ! is_scs_ready ) ; then
-ewarn
-ewarn "A circular depends was avoided, but you may need to re-emerge this"
-ewarn "package optimized/protected after emerging clang and then re-emerge"
-ewarn "dependencies that use this package's static-libs."
-ewarn
-	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  ebuild, pgo, cfi (disabled), lto, install-minizip-bin
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  ebuild, pgo, cfi-exceptions, install-minizip-bin

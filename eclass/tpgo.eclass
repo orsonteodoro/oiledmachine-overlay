@@ -563,14 +563,18 @@ _tpgo_train() {
 # }
 #
 tpgo_src_compile() {
-	local is_pgoable="1"
+	local is_pgoable=1
 	if declare -f tpgo_meets_requirements > /dev/null ; then
-		is_pgoable=$(tpgo_meets_requirements)
+		if tpgo_meets_requirements ; then
+			is_pgoable=1
+		else
+			is_pgoable=0
+		fi
 	fi
 einfo
 einfo "is_pgoable=${is_pgoable}"
 einfo
-	if use pgo && [[ "${is_pgoable}" == "1" ]] ; then
+	if use pgo && (( "${is_pgoable}" == 1 )) ; then
 		PGO_PHASE="PGI"
 		declare -f _src_pre_pgi > /dev/null && _src_pre_pgi
 		declare -f _src_prepare > /dev/null && _src_prepare
