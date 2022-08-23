@@ -1150,6 +1150,7 @@ _trainer_plan_video_constrained_quality() {
 			local video_sample_path="${!id}"
 			[[ -e "${video_sample_path}" ]] || continue
 			einfo "Running PGO trainer for ${encoding_codec} for 1 pass constrained quality"
+			local e
 			for e in ${L[@]} ; do
 				_trainer_plan_video_constrained_quality_training_session "${e}"
 			done
@@ -1232,6 +1233,7 @@ _trainer_plan_video_2_pass_constrained_quality() {
 			local video_sample_path="${!id}"
 			[[ -e "${video_sample_path}" ]] || continue
 			einfo "Running PGO trainer for ${encoding_codec} for 2 pass constrained quality"
+			local e
 			for e in ${L[@]} ; do
 				_trainer_plan_video_2_pass_constrained_quality_training_session "${e}"
 			done
