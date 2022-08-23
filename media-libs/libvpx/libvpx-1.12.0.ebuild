@@ -422,12 +422,12 @@ _trainer_plan_constrained_quality() {
 _trainer_plan_constrained_quality() {
 	# TODO: mobile resolutions
 	local L=(
-		"30;1280;720;3;1485k;512;1024"
-		"60;1280;720;3;2610k;900;1800"
-		"30;1920;1080;3;2610k;900;1800"
-		"60;1920;1080;3;4350k;1500;3000"
-		"30;3840;2160;3;17400k;6000;12000"
-		"60;3840;2160;3;26100k;9000;18000"
+		"30;1280;720;3;1485;512;1024k"
+		"60;1280;720;3;2610;900;1800k"
+		"30;1920;1080;3;2610;900;1800k"
+		"60;1920;1080;3;4350;1500;3000k"
+		"30;3840;2160;3;17400;6000;12000k"
+		"60;3840;2160;3;26100;9000;18000k"
 	)
 
 	local encoding_codec="${1}"
@@ -469,47 +469,47 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 	local avgrate=$(echo "${entry}" | cut -f 7 -d ";")
 
 	local cmd
-	einfo "Encoding as 720p for 3 sec, 30 fps"
+	einfo "Encoding as ${height}p for ${duration} sec, ${fps} fps"
 	cmd1=( "${FFMPEG}" \
 		-y \
 		-i "${libvpx_asset_path}" \
 		-c:v ${encoding_codec} \
-		-maxrate 1485k -minrate 512k -b:v 1024k \
-		-vf scale=w=-1:h=720 \
+		-maxrate ${maxrate} -minrate ${minrate} -b:v ${avgrate} \
+		-vf scale=w=-1:h=${height} \
 		${training_args} \
 		-pass 1 \
 		-an \
-		-r 30 \
-		-t 3 \
+		-r ${fps} \
+		-t ${duration} \
 		-f null /dev/null )
 	cmd2=( "${FFMPEG}" \
 		-y \
 		-i "${libvpx_asset_path}" \
 		-c:v ${encoding_codec} \
-		-maxrate 1485k -minrate 512k -b:v 1024k \
-		-vf scale=w=-1:h=720 \
+		-maxrate ${maxrate} -minrate ${minrate} -b:v ${avgrate} \
+		-vf scale=w=-1:h=${height} \
 		${training_args} \
 		-pass 2 \
 		-an \
-		-r 30 \
-		-t 3 \
+		-r ${fps} \
+		-t ${duration} \
 		"${T}/test.webm" )
 	einfo "${cmd1[@]}"
 	"${cmd1[@]}" || die
 	einfo "${cmd2[@]}"
 	"${cmd2[@]}" || die
-	_vdecode "720p, 30 fps"
+	_vdecode "${height}p, ${fps} fps"
 }
 
 _trainer_plan_2_pass_constrained_quality() {
 	# TODO: mobile resolutions
 	local L=(
-		"30;1280;720;3;1485k;512;1024"
-		"60;1280;720;3;2610k;900;1800"
-		"30;1920;1080;3;2610k;900;1800"
-		"60;1920;1080;3;4350k;1500;3000"
-		"30;3840;2160;3;17400k;6000;12000"
-		"60;3840;2160;3;26100k;9000;18000"
+		"30;1280;720;3;1485;512;1024k"
+		"60;1280;720;3;2610;900;1800k"
+		"30;1920;1080;3;2610;900;1800k"
+		"60;1920;1080;3;4350;1500;3000k"
+		"30;3840;2160;3;17400;6000;12000k"
+		"60;3840;2160;3;26100;9000;18000k"
 	)
 
 	local encoding_codec="${1}"
