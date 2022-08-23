@@ -191,9 +191,6 @@ eerror
 # @DESCRIPTION:
 # Sets up PGO flags
 _tpgo_configure() {
-	filter-flags -fprofile*
-	local pgo_data_dir="${T}/pgo-${TPGO_SUFFIX}"
-	mkdir -p "${pgo_data_dir}" || die # Make first demo produce a PGO profile?
 	if use pgo && [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		einfo "Setting up PGI"
 		if tc-is-clang ; then
@@ -294,6 +291,10 @@ tpgo_src_configure() {
 			_tpgo_autotools_clean
 		fi
 	fi
+
+	filter-flags -fprofile*
+	local pgo_data_dir="${T}/pgo-${TPGO_SUFFIX}"
+	mkdir -p "${pgo_data_dir}" || die # Make first demo produce a PGO profile?
 
 	if [[ "${TPGO_CONFIGURE_DONT_SET_FLAGS}" != "1" ]] ; then
 		_tpgo_configure
