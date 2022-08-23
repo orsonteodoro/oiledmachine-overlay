@@ -26,27 +26,15 @@ SLOT="0/7"
 KEYWORDS="~amd64 ~arm ~arm64 ~ia64 ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux"
 IUSE="cpu_flags_ppc_vsx3 doc +highbitdepth postproc static-libs test +threads"
 IUSE+=" svc +examples"
-IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang chromium hardened libcxx lto pie shadowcallstack"
-IUSE+=" pgo
+IUSE+="
+	chromium
+	pgo
 	pgo-custom
 	pgo-trainer-2-pass-constrained-quality
 	pgo-trainer-constrained-quality
 	pgo-trainer-lossless
 "
-# Link utils to either CFI Cross-DSO (.so) or Basic (.a)
 REQUIRED_USE="
-	!cfi-cross-dso? (
-		cfi? ( static-libs )
-		cfi-cast? ( static-libs )
-		cfi-icall? ( static-libs )
-		cfi-vcall? ( static-libs )
-	)
-	cfi? ( clang lto )
-	cfi-cast? ( clang lto cfi-vcall )
-	cfi-icall? ( clang lto cfi-vcall )
-	cfi-vcall? ( clang lto )
-	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
-	pie? ( hardened )
 	pgo? (
 		|| (
 			pgo-custom
@@ -60,102 +48,10 @@ REQUIRED_USE="
 	pgo-trainer-constrained-quality? ( pgo )
 	pgo-trainer-lossless? ( pgo )
 	test? ( threads )
-	shadowcallstack? ( clang )
 "
 
 # Disable test phase when USE="-test"
-# checksec says that no CFI with strip, but present after compile.
 RESTRICT="!test? ( test ) strip"
-
-_seq() {
-	local min=${1}
-	local max=${2}
-	local i=${min}
-	while (( ${i} <= ${max} )) ; do
-		echo "${i}"
-		i=$(( ${i} + 1 ))
-	done
-}
-
-gen_cfi_bdepend() {
-	local min=${1}
-	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			>=sys-devel/lld-${v}
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
-		)
-		     "
-	done
-}
-
-gen_shadowcallstack_bdepend() {
-	local min=${1}
-	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			>=sys-devel/lld-${v}
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*:=[shadowcallstack?]
-		)
-		     "
-	done
-}
-
-gen_lto_bdepend() {
-	local min=${1}
-	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP}]
-			>=sys-devel/lld-${v}
-		)
-		"
-	done
-}
-
-gen_libcxx_depend() {
-	local min=${1}
-	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			libcxx? (
-				>=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,clang?,hardened?,shadowcallstack?,static-libs?,${MULTILIB_USEDEP}]
-			)
-		)
-		"
-	done
-}
-
-RDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
-DEPEND+=" ${RDEPEND}"
-
-BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
-BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
-BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
-BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
 BDEPEND="
 	dev-lang/perl
@@ -349,7 +245,7 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
-src_configure() {
+add_sandbox_exceptions() {
 	# https://bugs.gentoo.org/show_bug.cgi?id=384585
 	# https://bugs.gentoo.org/show_bug.cgi?id=465988
 	# copied from php-pear-r1.eclass
@@ -359,98 +255,19 @@ src_configure() {
 	addpredict /session_mm_cli0.sem #nowarn
 }
 
+src_configure() { :; }
+
 append_all() {
 	append-flags ${@}
 	append-ldflags ${@}
-}
-
-append_lto() {
-	filter-flags '-flto*' '-fuse-ld=*'
-	if tc-is-clang ; then
-		append-flags -flto=thin
-		append-ldflags -fuse-ld=lld -flto=thin
-		[[ "${lib_type}" == "static" ]] \
-			&& append_all -fsplit-lto-unit
-	else
-		append-flags -flto
-		append-ldflags -flto
-	fi
-}
-
-is_hardened_clang() {
-	if tc-is-clang && clang --version 2>/dev/null | grep -q -e "Hardened:" ; then
-		return 0
-	fi
-	return 1
-}
-
-is_hardened_gcc() {
-	if tc-is-gcc && gcc --version 2>/dev/null | grep -q -e "Hardened" ; then
-		return 0
-	fi
-	return 1
-}
-
-is_cfi_supported() {
-	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${lib_type}" == "static" ]] ; then
-		return 0
-	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
-		return 0
-	fi
-	return 1
 }
 
 _src_configure() {
 	[[ -f Makefile ]] && emake clean
 	unset CODECS #357487
 
-	if use clang ; then
-		CC="clang $(get_abi_CFLAGS ${ABI})"
-		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
-		AR=llvm-ar
-		AS=llvm-as
-		NM=llvm-nm
-		RANLIB=llvm-ranlib
-		READELF=llvm-readelf
-		unset LD
-	fi
-	if tc-is-clang && ! use clang ; then
-		die "You must enable the clang USE flag or remove clang/clang++ from CC/CXX."
-	fi
+	add_sandbox_exceptions
 
-	export CC CXX AR AS NM RANDLIB READELF LD
-
-	filter-flags \
-		'--param=ssp-buffer-size=*' \
-		'-f*sanitize*' \
-		'-f*stack*' \
-		'-f*visibility*' \
-		'-fprofile*' \
-		'-fsplit-lto-unit' \
-		'-lc++' \
-		'-lubsan' \
-		'-static-libstdc++' \
-		'-stdlib=libc++' \
-		'-Wl,-lubsan' \
-		'-Wl,-z,noexecstack' \
-		'-Wl,-z,now' \
-		'-Wl,-z,relro'
-
-	if tc-is-clang && use libcxx && [[ "${USE}" =~ "cfi" ]] ; then
-		# The -static-libstdc++ is a misnomer.  It also means \
-		# -static-libc++ which does not exist.
-                append-cxxflags -stdlib=libc++
-                append-ldflags -stdlib=libc++
-		[[ "${lib_type}" == "shared" ]] \
-			&& append-ldflags -lc++
-		[[ "${lib_type}" == "static" ]] \
-			&& append-ldflags -static-libstdc++
-	elif ! tc-is-clang && use libcxx ; then
-		die "libcxx requires clang++"
-	fi
-
-	autofix_flags
 	tpgo_src_configure
 
 	# #498364: sse doesn't work without sse2 enabled,
@@ -469,69 +286,16 @@ _src_configure() {
 		$(use_enable highbitdepth vp9-highbitdepth)
 	)
 
-	set_cfi() {
-		# The cfi enables all cfi schemes, but the selective tries to balance
-		# performance and security while maintaining a performance limit.
-		if tc-is-clang && is_cfi_supported ; then
-			if [[ "${lib_type}" == "static" ]] ; then
-				append_all -fvisibility=hidden
-			elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
-				append_all -fvisibility=default
-			fi
-			if use cfi ; then
-				append_all -fsanitize=cfi
-				append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with vpxenc --help
-			else
-				use cfi-cast && append_all \
-							-fsanitize=cfi-derived-cast \
-							-fsanitize=cfi-unrelated-cast
-				#use cfi-icall && append_all \
-				#			-fsanitize=cfi-icall
-				use cfi-vcall && append_all \
-							-fsanitize=cfi-vcall
-			fi
-			[[ "${USE}" =~ "cfi" ]] && append-ldflags -Wl,-lubsan
-			use cfi-cross-dso \
-				&& [[ "${lib_type}" == "shared" ]] \
-				&& append_all -fsanitize-cfi-cross-dso
-		fi
-		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
-						-fsanitize=shadow-call-stack
-	}
+	if has_version "sys-libs/compiler-rt-sanitizers[cfi]" ; then
+		strip-flag-value "cfi-icall"
+		append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with vpxenc --help
+	fi
 
 	if use chromium && [[ "${lib_type}" == "static" ]] ; then
 		export ASFLAGS="-DCHROMIUM"
 		myconfargs+=( --as=nasm )
 	else
 		unset ASFLAGS
-	fi
-
-	use hardened && append-ldflags -Wl,-z,noexecstack
-	use lto && append_lto
-	if is_hardened_gcc ; then
-		:;
-	elif is_hardened_clang ; then
-		set_cfi
-	else
-		set_cfi
-		if use hardened ; then
-			if [[ -n "${USE_HARDENED_PROFILE_DEFAULTS}" \
-				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
-				#append-cppflags -D_FORTIFY_SOURCE=2 # override by package which disables default
-				append-flags $(test-flags-CC -fstack-clash-protection)
-				append-flags --param=ssp-buffer-size=4 \
-						-fstack-protector-strong
-			else
-				append-flags --param=ssp-buffer-size=4 \
-						-fstack-protector
-			fi
-			append-ldflags -Wl,-z,relro -Wl,-z,now
-
-			if use pie ; then
-				ewarn "-pie hasn't been tested"
-				append-ldflags -pie
-			fi
-		fi
 	fi
 
 	if [[ "${lib_type}" == "shared" ]] ; then
@@ -587,18 +351,8 @@ _src_configure() {
 		myconfargs+=( --disable-examples --disable-install-docs --disable-docs )
 	fi
 
-	if use pgo && tpgo_meets_requirements && tc-is-gcc && [[ "${PGO_PHASE}" == "pgi" ]] ; then
+	if use pgo && tpgo_meets_requirements && tc-is-gcc && [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		myconfargs+=( --enable-gcov )
-	fi
-
-	unset EXELDFLAGS
-	if is_hardened_clang || is_hardened_gcc ; then
-		:;
-	elif use hardened ; then
-		export EXELDFLAGS="-pie"
-	fi
-	if [[ "${USE}" =~ "cfi" && "${lib_type}" == "static" ]] ; then
-		myconfargs+=( --enable-cfi )
 	fi
 
 	echo "${S}"/configure "${myconfargs[@]}" >&2
@@ -1112,27 +866,6 @@ elog "No PGO optimization performed.  Please re-emerge this package."
 elog "The following package must be installed before PGOing this package:"
 elog "  media-video/ffmpeg[encode,vpx,$(get_arch_enabled_use_flags)]"
 	fi
-
-	if use cfi-cross-dso ; then
-ewarn "Using cfi-cross-dso requires a rebuild of the app with only the clang"
-ewarn "compiler."
-	fi
-
-	if [[ "${USE}" =~ "cfi" ]] && use static-libs ; then
-ewarn "Using cfi with static-libs requires the app be built with only the clang"
-ewarn "compiler."
-	fi
-
-	if use lto && use static-libs ; then
-		if tc-is-clang ; then
-ewarn "You are only allowed to static link this library with clang."
-		elif tc-is-gcc ; then
-ewarn "You are only allowed to static link this library with gcc."
-		else
-ewarn "You are only allowed to static link this library with CC=${CC}"
-ewarn "CXX=${CXX}."
-		fi
-	fi
 }
 
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  hardened, cfi, lto, pgo
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  pgo, cfi-exceptions
