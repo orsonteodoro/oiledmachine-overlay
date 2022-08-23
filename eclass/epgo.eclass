@@ -44,6 +44,11 @@ esac
 # EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl1}_${impl2}"}
 # EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl1}_${impl2}_${impl3}"}
 
+# TIPS:
+
+# If using GCC PGO, you may need to add -lgcov to LIBS or modify the build
+# files but only in PGI phase.
+
 IUSE+=" epgo"
 
 # @ECLASS_VARIABLE: EPGO_PROFILES_DIR

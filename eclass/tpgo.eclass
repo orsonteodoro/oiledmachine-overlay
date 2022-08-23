@@ -141,6 +141,9 @@ TPGO_CONFIGURE_DONT_SET_FLAGS=${TPGO_CONFIGURE_DONT_SET_FLAGS:-0}
 # PDEPEND to prevent disruption of user work.  If this is too difficult to sort
 # out, use the epgo eclass instead.
 
+# If using GCC PGO, you may need to add -lgcov to LIBS or modify the build
+# files but only in PGI phase.
+
 inherit flag-o-matic toolchain-funcs
 if [[ "${TPGO_USE_X}" == "1" ]] ;then
 	inherit virtualx
