@@ -11,7 +11,7 @@
     <email>media-video@gentoo.org</email>
   </maintainer>
   <longdescription>
-    This ebuild fork will allow use of LTO and PGO for this library.
+    This ebuild fork will allow use of PGO for this library.
     Currently it only optimizes the default settings, but may be PGO
     optimized for multithreaded through pgo-custom USE flag or changing
     the LIBAOM_PGO_TRAINING_ARGS explained at the end of this description.
@@ -73,24 +73,11 @@
     You should only pick PGO trainers that reflect typical use or it may
     result in performance degration.
 
-    The CFI USE flag only does forward edge.  For backward edge protection
-    use the shadowcallstack USE flag (only available for arm64).
   </longdescription>
   <use>
     <flag name="asm">Use the optimized assembly based code paths</flag>
-    <flag name="cfi">Build with full CFI with all schemes</flag>
-    <flag name="cfi-cast">Build with cfi-cast</flag>
-    <flag name="cfi-icall">Build with cfi-icall</flag>
-    <flag name="cfi-vcall">Build with cfi-vcall</flag>
-    <flag name="cross-dso-cfi">Build shared libs with Cross-DSO CFI mode</flag>
     <flag name="chromium">Prevent symbol conflicts in the browser
       (testing)</flag>
-    <flag name="hardened">Build with Full RELRO, noexecstack, SSP.
-      For the non-hardened profile, set USE_HARDENED_PROFILE_DEFAULTS=1 in
-      make.conf to use the hardened profile settings or fallback to the browser
-      defaults.  See ebuild for details.</flag>
-    <flag name="libcxx">Link against the more secured libcxx package.</flag>
-    <flag name="lto">Use link time optimization.</flag>
     <flag name="pgo">Use profile guided optimization.</flag>
     <flag name="pgo-custom">Use a custom profile guided optimization script to
       train with.</flag>
@@ -100,7 +87,5 @@
     <flag name="pgo-trainer-constrained-quality">Use the 1 pass constrained
       quality PGO trainer.  (ebuild maintainer recommended)</flag>
     <flag name="pgo-trainer-lossless">Use the lossless PGO trainer.</flag>
-    <flag name="shadowcallstack">Enable backward edge protection (arm64
-      only)</flag>
   </use>
 </pkgmetadata>
