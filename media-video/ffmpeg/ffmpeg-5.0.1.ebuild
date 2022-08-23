@@ -551,7 +551,6 @@ build_separate_libffmpeg() {
 get_video_sample_ids() {
 	local types=(
 		VIDEO_FANTASY
-		VIDEO_FILM
 		VIDEO_GRAINY
 		VIDEO_REALISM
 		VIDEO_STREAMING
@@ -1135,14 +1134,14 @@ _trainer_plan_video_constrained_quality() {
 		training_args="${!envvar}"
 	fi
 
-	unset L
+	# TODO: mobile bitrate
 	declare L=(
-		"30;1280;720;3;1485k;512k;1024k"
-		"60;1280;720;3;2610k;900k;1800k"
-		"30;1920;1080;3;2610k;900k;1800k"
-		"60;1920;1080;3;4350k;1500k;3000k"
-		"30;3840;2160;3;17400k;6000k;12000k"
-		"60;3840;2160;3;26100k;9000k;18000k"
+		"30;1280;720;3;1485k;512;1024"
+		"60;1280;720;3;2610k;900;1800"
+		"30;1920;1080;3;2610k;900;1800"
+		"60;1920;1080;3;4350k;1500;3000"
+		"30;3840;2160;3;17400k;6000;12000"
+		"60;3840;2160;3;26100k;9000;18000"
 	)
 
 	if use pgo && tpgo_meets_requirements ; then
@@ -1217,13 +1216,14 @@ _trainer_plan_video_2_pass_constrained_quality() {
 		training_args="${!envvar}"
 	fi
 
+	# TODO: mobile bitrate
 	local L=(
-		"30;1280;720;3;1485k;512k;1024k"
-		"60;1280;720;3;2610k;900k;1800k"
-		"30;1920;1080;3;2610k;900k;1800k"
-		"60;1920;1080;3;4350k;1500k;3000k"
-		"30;3840;2160;3;17400k;6000k;12000k"
-		"60;3840;2160;3;26100k;9000k;18000k"
+		"30;1280;720;3;1485k;512;1024"
+		"60;1280;720;3;2610k;900;1800"
+		"30;1920;1080;3;2610k;900;1800"
+		"60;1920;1080;3;4350k;1500;3000"
+		"30;3840;2160;3;17400k;6000;12000"
+		"60;3840;2160;3;26100k;9000;18000"
 	)
 
 	if use pgo && tpgo_meets_requirements ; then

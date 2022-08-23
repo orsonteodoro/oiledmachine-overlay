@@ -24,7 +24,6 @@
 	(3) Configure the following variables, replacing i with a unpadded number:
 
 		FFMPEG_PGO_VIDEO_FANTASY_i
-		FFMPEG_PGO_VIDEO_FILM_i
 		FFMPEG_PGO_VIDEO_GRAINY_i
 		FFMPEG_PGO_VIDEO_REALISM_i
 		FFMPEG_PGO_VIDEO_STREAMING_i
@@ -50,6 +49,9 @@
 
 	(Planning) FFMPEG_PGO_VIDEO_STREAMING_i is the v4l device to train for
 	codec streaming.
+
+	(Planning) FFMPEG_PGO_MOBILE_STREAMING_i is a sample for mobile
+	training.
 
 	FFMPEG_MAX_ASSETS_PER_TYPE is a number of assets per *_i type.
 	Currently it is set to 100 but can be expanded to more than
