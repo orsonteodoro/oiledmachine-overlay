@@ -4,8 +4,7 @@
 EAPI=8
 
 CMAKE_ECLASS=cmake
-inherit cmake-multilib java-pkg-opt-2
-inherit flag-o-matic
+inherit cmake-multilib java-pkg-opt-2 flag-o-matic toolchain-funcs tpgo
 
 DESCRIPTION="MMX, SSE, and SSE2 SIMD accelerated JPEG library"
 HOMEPAGE="https://libjpeg-turbo.org/ https://sourceforge.net/projects/libjpeg-turbo/"
@@ -20,7 +19,6 @@ if [[ "$(ver_cut 3)" -lt 90 ]] ; then
 	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris ~x86-solaris"
 fi
 IUSE="+asm cpu_flags_arm_neon java static-libs"
-IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack"
 IUSE+="
 	pgo
 	pgo-custom
@@ -45,19 +43,7 @@ IUSE+="
 	pgo-trainer-grayscale
 	pgo-trainer-transformations
 "
-# Link utils with CFI Cross-DSO (.so) or Basic mode (.a).
 REQUIRED_USE="
-	!cfi-cross-dso? (
-		cfi? ( static-libs )
-		cfi-cast? ( static-libs )
-		cfi-icall? ( static-libs )
-		cfi-vcall? ( static-libs )
-	)
-	cfi? ( clang lto )
-	cfi-cast? ( clang lto cfi-vcall )
-	cfi-icall? ( clang lto cfi-vcall )
-	cfi-vcall? ( clang lto )
-	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
 	pgo? (
 		pgo-trainer-decode
 		|| (
@@ -105,80 +91,14 @@ REQUIRED_USE="
 	pgo-trainer-decode? ( pgo )
 	pgo-trainer-grayscale? ( pgo )
 	pgo-trainer-transformations? ( pgo )
-	shadowcallstack? ( clang )
 "
 
 ASM_DEPEND="|| ( dev-lang/nasm dev-lang/yasm )"
 
-COMMON_DEPEND="!media-libs/jpeg:0
-	!media-libs/jpeg:62"
-
-_seq() {
-	local min=${1}
-	local max=${2}
-	local i=${min}
-	while (( ${i} <= ${max} )) ; do
-		echo "${i}"
-		i=$(( ${i} + 1 ))
-	done
-}
-
-gen_cfi_bdepend() {
-	local min=${1}
-	local max=${2}
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			>=sys-devel/lld-${v}
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
-		)
-		     "
-	done
-}
-
-gen_shadowcallstack_bdepend() {
-	local min=${1}
-	local max=${2}
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			>=sys-devel/lld-${v}
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*:=[shadowcallstack?]
-		)
-		     "
-	done
-}
-
-gen_lto_bdepend() {
-	local min=${1}
-	local max=${2}
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP}]
-			>=sys-devel/lld-${v}
-		)
-		"
-	done
-}
-
-BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
-BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
-BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
+COMMON_DEPEND="
+	!media-libs/jpeg:0
+	!media-libs/jpeg:62
+"
 
 BDEPEND+="
 	>=dev-util/cmake-3.16.5
@@ -229,6 +149,7 @@ pkg_setup() {
 	fi
 	ewarn "Install may fail.  \`emerge -C ${PN}\` then \`emerge -1 =${P}\`."
 	ewarn "PGO may randomly fail with CFI.  Disable the pgo USE flag to fix it."
+	tpgo_setup
 }
 
 get_lib_types() {
@@ -252,7 +173,7 @@ EOF
 	java-pkg-opt-2_src_prepare
 }
 
-has_pgo_requirement() {
+tpgo_meets_requirements() {
 	return $(is_pgo_ready)
 }
 
@@ -261,135 +182,17 @@ append_all() {
 	append-ldflags ${@}
 }
 
-append_lto() {
-	filter-flags '-flto*' '-fuse-ld=*'
-	if tc-is-clang ; then
-		append-flags -flto=thin
-		append-ldflags -fuse-ld=lld -flto=thin
-		[[ "${lib_type}" == "static" ]] \
-			&& append_all -fsplit-lto-unit
-	else
-		append-flags -flto
-		append-ldflags -flto
-	fi
-}
-
-is_hardened_clang() {
-	if tc-is-clang && clang --version 2>/dev/null | grep -q -e "Hardened:" ; then
-		return 0
-	fi
-	return 1
-}
-
-is_hardened_gcc() {
-	if tc-is-gcc && gcc --version 2>/dev/null | grep -q -e "Hardened" ; then
-		return 0
-	fi
-	return 1
-}
-
 src_configure() { :; }
 
-is_cfi_supported() {
-	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${lib_type}" == "static" ]] ; then
-		return 0
-	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
-		return 0
-	fi
-	return 1
-}
-
-_configure_pgx() {
+_src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cd "${CMAKE_USE_DIR}" || die
 	local mycmakeargs=()
-	if use clang ; then
-		CC="clang $(get_abi_CFLAGS ${ABI})"
-		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
-		AR=llvm-ar
-		AS=llvm-as
-		NM=llvm-nm
-		RANLIB=llvm-ranlib
-		READELF=llvm-readelf
-		LD="ld.lld"
-	fi
-	if tc-is-clang && ! use clang ; then
-		die "You must enable the clang USE flag or remove clang/clang++ from CC/CXX."
-	fi
 
-	export CC CXX AR AS NM RANDLIB READELF LD
-
-	filter-flags \
-		'--param=ssp-buffer-size=*' \
-		'-f*sanitize*' \
-		'-f*stack*' \
-		'-f*visibility*' \
-		'-lubsan' \
-		'-fprofile*' \
-		'-fsplit-lto-unit' \
-		'-Wl,-lubsan' \
-		'-Wl,-z,noexecstack' \
-		'-Wl,-z,now' \
-		'-Wl,-z,relro'
-
-	autofix_flags
-
-	set_cfi() {
-		# The cfi enables all cfi schemes, but the selective tries to balance
-		# performance and security while maintaining a performance limit.
-		if tc-is-clang && is_cfi_supported ; then
-			if [[ "${USE}" =~ "cfi" && "${lib_type}" == "static" ]] ; then
-				append_all -fvisibility=hidden
-			elif use cfi-cross-dso && [[ "${USE}" =~ "cfi" && "${lib_type}" == "shared" ]] ; then
-				append_all -fvisibility=default
-			fi
-			if use cfi ; then
-				append_all -fsanitize=cfi
-			else
-				use cfi-cast && append_all \
-							-fsanitize=cfi-derived-cast \
-							-fsanitize=cfi-unrelated-cast
-				#use cfi-icall && append_all \
-				#			-fsanitize=cfi-icall
-				use cfi-vcall && append_all \
-							-fsanitize=cfi-vcall
-			fi
-			[[ "${USE}" =~ "cfi" ]] && append-ldflags -Wl,-lubsan
-			append_all -fno-sanitize=cfi-icall # breaks precompiled cef based apps
-			use cfi-cross-dso \
-				&& [[ "${USE}" =~ "cfi" && "${lib_type}" == "shared" ]] \
-				&& append_all -fsanitize-cfi-cross-dso
-		fi
-		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
-						-fsanitize=shadow-call-stack
-	}
-
-	use hardened && append-ldflags -Wl,-z,noexecstack
-	use lto && append_lto
-	if is_hardened_gcc ; then
-		:;
-	elif is_hardened_clang ; then
-		set_cfi
-	else
-		set_cfi
-		if use hardened ; then
-			append-ldflags -Wl,-z,relro -Wl,-z,now
-			if [[ -n "${USE_HARDENED_PROFILE_DEFAULTS}" \
-				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
-				append-cppflags -D_FORTIFY_SOURCE=2
-				append-flags $(test-flags-CC -fstack-clash-protection)
-				append-flags --param=ssp-buffer-size=4 \
-						-fstack-protector-strong
-			else
-				append-flags --param=ssp-buffer-size=4 \
-						-fstack-protector
-			fi
-			mycmakeargs+=(
-				-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS} -pie"
-			)
-		fi
+	strip-flag-value "cfi-icall"
+	if has_version "sys-libs/compiler-rt-sanitizers[cfi]" ; then
+		append_all -fno-sanitize=cfi-icall # breaks precompiled cef based apps
 	fi
 
 	if use static-libs && [[ "${lib_type}" == "static" ]] ;then
@@ -404,28 +207,13 @@ _configure_pgx() {
 		)
 	fi
 
-	local pgo_data_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-	mkdir -p "${pgo_data_dir}" || die
-	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
-		&& has_pgo_requirement ; then
-		einfo "Setting up PGI"
-		if tc-is-clang ; then
-			append-flags -fprofile-generate="${pgo_data_dir}" -Wno-backend-plugin
+	tpgo_src_configure
+	if use pgo && tc-is-clang ; then
+		append-flags $(test-flags -Wno-backend-plugin)
+		if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 			if ver_test $(clang-major-version) -ge 11 ; then
 				append-flags -mllvm -vp-counters-per-site=8
 			fi
-		else
-			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
-		fi
-	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] \
-		&& has_pgo_requirement ; then
-		einfo "Setting up PGO"
-		if tc-is-clang ; then
-			llvm-profdata merge -output="${pgo_data_dir}/code.profdata" \
-				"${pgo_data_dir}" || die
-			append-flags -fprofile-use="${pgo_data_dir}/code.profdata" -Wno-backend-plugin
-		else
-			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${pgo_data_dir}"
 		fi
 	fi
 
@@ -471,13 +259,15 @@ _configure_pgx() {
 	cmake_src_configure
 }
 
-_compile_pgx() {
+_src_compile() {
+	export CMAKE_USE_DIR="${S}"
+	export BUILD_DIR="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cmake_src_compile
 }
 
-_run_trainers() {
+tpgo_train_custom() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export LD_LIBRARY_PATH="${D}/usr/$(get_libdir)"
+	export LD_LIBRARY_PATH="${ED}/usr/$(get_libdir)"
 	local sandbox_path="${T}/sandbox"
 	mkdir -p "${sandbox_path}" || die
 	local p
@@ -581,51 +371,28 @@ _run_trainers() {
 	rm -rf "${sandbox_path}" || die
 }
 
-src_compile() {
-	export PATH="${D}/usr/bin:${PATH}"
-	compile_abi() {
-		for lib_type in $(get_lib_types) ; do
-			if use pgo && has_pgo_requirement ; then
-				PGO_PHASE="pgi"
-				if [[ "${lib_type}" == "shared" ]] ; then
-					_configure_pgx
-					_compile_pgx
-					# This technique currently works on shared, but the generated profiling data
-					# may be compatible with static.
-					_install_pgx
-					_run_trainers
-					_clean_pgx
-				fi
-				local pgo_data_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-				if (( $(find "${pgo_data_dir}" 2>/dev/null | wc -l) > 0 )) ; then
-					PGO_PHASE="pgo"
-					[[ "${lib_type}" == "static" ]] \
-						&& ewarn "Reusing PGO data from shared-libs"
-				else
-					ewarn "No PGO data found.  Skipping PGO build and building normally."
-					unset PGO_PHASE
-				fi
-				_configure_pgx
-				_compile_pgx
-				export PGO_RAN=1
-			else
-				einfo "Skipping PGO training for ${ABI}"
-				_configure_pgx
-				_compile_pgx
-			fi
-		done
-	}
-	multilib_foreach_abi compile_abi
-}
-
-_install_pgx() {
+_src_pre_train() {
 	einfo "Installing image into sandbox staging area"
 	_install
 }
 
-_clean_pgx() {
+_src_post_train() {
 	einfo "Resetting sandbox staging area"
 	rm -rf "${ED}" || die
+}
+
+_src_post_pgo() {
+	export PGO_RAN=1
+}
+
+src_compile() {
+	export PATH="${ED}/usr/bin:${PATH}"
+	compile_abi() {
+		for lib_type in $(get_lib_types) ; do
+			tpgo_src_compile
+		done
+	}
+	multilib_foreach_abi compile_abi
 }
 
 _install() {
@@ -677,26 +444,5 @@ pkg_postinst() {
 elog "No PGO optimization performed.  Please re-emerge this package."
 elog "The following package must be installed before PGOing this package:"
 elog "  jpeg assets placed in ${distdir}/pgo/assets/jpeg"
-	fi
-
-	if use cfi-cross-dso ; then
-ewarn "Using cfi-cross-dso requires a rebuild of the app with only the clang"
-ewarn "compiler."
-	fi
-
-	if [[ "${USE}" =~ "cfi" ]] && use static-libs ; then
-ewarn "Using cfi with static-libs requires the app be built with only the clang"
-ewarn "compiler."
-	fi
-
-	if use lto && use static-libs ; then
-		if tc-is-clang ; then
-ewarn "You are only allowed to static link this library with clang."
-		elif tc-is-gcc ; then
-ewarn "You are only allowed to static link this library with gcc."
-		else
-ewarn "You are only allowed to static link this library with CC=${CC}"
-ewarn "CXX=${CXX}."
-		fi
 	fi
 }
