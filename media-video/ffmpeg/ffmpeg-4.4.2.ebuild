@@ -987,11 +987,6 @@ _src_configure() {
 	echo "${@}"
 	"${@}" || die
 
-	if [[ -f Makefile && "${PGO_PHASE}" == "pgo" ]] ; then
-		einfo "Cleaning build"
-		emake clean
-	fi
-
 	if multilib_is_native_abi && use chromium && build_separate_libffmpeg; then
 		einfo "Configuring for Chromium"
 		mkdir -p ../chromium || die
