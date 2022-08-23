@@ -911,11 +911,9 @@ _src_configure() {
 		break
 	done
 
-	if use lto && tc-is-clang ; then
-		:;
-	elif use lto && ! tc-is-clang ; then
+	if is-flagq "-flto*" && [[ "${ABI}" != "x86" ]] ; then
 		# LTO support, bug #566282, bug #754654
-		is-flagq "-flto*" && myconf+=( "--enable-lto" )
+		myconf+=( "--enable-lto" )
 		filter-flags "-flto*"
 	fi
 
