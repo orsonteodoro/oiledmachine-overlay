@@ -1504,21 +1504,24 @@ run_trainer_audio_codecs() {
 				"${audio_scenario}" \
 				"${encode_codec}" \
 				"${decode_codec}" \
-				"${container_extension}"
+				"${container_extension}" \
+				"${tags}"
 		fi
 		if use pgo-trainer-audio-vbr ; then
 			_trainer_plan_audio_vbr \
 				"${audio_scenario}" \
 				"${encode_codec}" \
 				"${decode_codec}" \
-				"${container_extension}"
+				"${container_extension}" \
+				"${tags}"
 		fi
 		if use pgo-trainer-audio-lossless ; then
 			_trainer_plan_audio_lossless \
 				"${audio_scenario}" \
 				"${encode_codec}" \
 				"${decode_codec}" \
-				"${container_extension}"
+				"${container_extension}" \
+				"${tags}"
 		fi
 		if use pgo-custom-audio ; then
 			_trainer_plan_audio_custom \

@@ -66,7 +66,8 @@
 	  The value of ext matches  ffmpeg -formats
 	  The value of tags may be added for pgo-custom-video providing metadata
 	  for enablement of special optimization options.  Multiple tags
-	  may be appended by comma and spaces replaced with _.
+	  may be appended by comma and spaces replaced with _.  Tags can
+	  be filtered with bash regex to apply extra args.
 
 	Example:
 	FFMPEG_PGO_VIDEO_CODECS=" fantasy:libvpx-vp9:libvpx-vp9:webm: realism:libvpx-vp9:libvpx-vp9:webm:"
@@ -80,7 +81,8 @@
 	  The value of ext matches  ffmpeg -formats
 	  The value of tags may be added for pgo-custom-audio providing metadata
 	  for enablement of special optimization options.  Multiple tags
-	  may be appended by comma and spaces replaced with _.
+	  may be appended by comma and spaces replaced with _.  Tags can
+	  be filtered with bash regex to apply extra args.
 
 	Each codec can be supplied additional per-package envvar args to
 	pass to ffmpeg in this general form:
