@@ -635,6 +635,7 @@ pgo_check_video() {
 	local id
 	for id in $(get_video_sample_ids) ; do
 		local video_sample_path="${!id}"
+		[[ -e "${video_sample_path}" ]] || continue
 		if [[ -z "${video_sample_path}" ]] ; then
 			ewarn "Skipping ${id}."
 			continue
@@ -651,6 +652,7 @@ pgo_check_audio() {
 	local id
 	for id in $(get_audio_sample_ids) ; do
 		local audio_sample_path="${!id}"
+		[[ -e "${audio_sample_path}" ]] || continue
 		if [[ -z "${audio_sample_path}" ]] ; then
 			ewarn "Skipping ${id}."
 			continue
@@ -762,12 +764,8 @@ has_codec_requirement() {
 	local id
 	for id in $(get_audio_sample_ids) ; do
 		local audio_sample_path="${!id}"
-		if [[ -z "${audio_sample_path}" ]] ; then
-			continue
-		fi
-		if [[ ! -f "${audio_sample_path}" ]] ; then
-			continue
-		fi
+		[[ -e "${audio_sample_path}" ]] || continue
+		[[ -z "${audio_sample_path}" ]] && continue
 		if ffprobe "${audio_sample_path}" 2>/dev/null 1>/dev/null ; then
 			codecs_found=0
 		fi
@@ -1098,6 +1096,7 @@ _trainer_plan_video_constrained_quality() {
 		local id
 		for id in $(get_video_sample_ids) ; do
 			local video_sample_path="${!id}"
+			[[ -e "${video_sample_path}" ]] || continue
 			einfo "Running PGO trainer for ${encoding_codec} for 1 pass constrained quality"
 			local cmd
 			einfo "Encoding as 720p for 3 sec, 30 fps"
@@ -1222,6 +1221,7 @@ _trainer_plan_video_2_pass_constrained_quality() {
 		local id
 		for id in $(get_video_sample_ids) ; do
 			local video_sample_path="${!id}"
+			[[ -e "${video_sample_path}" ]] || continue
 			einfo "Running PGO trainer for ${encoding_codec} for 2 pass constrained quality"
 			local cmd
 			einfo "Encoding as 720p for 3 sec, 30 fps"
@@ -1449,6 +1449,7 @@ _trainer_plan_audio_lossless() {
 		local id
 		for id in $(get_audio_sample_ids) ; do
 			local audio_sample_path="${!id}"
+			[[ -e "${audio_sample_path}" ]] || continue
 			if [[ -z "${audio_sample_path}" || ! -f "${audio_sample_path}" ]] ; then
 				ewarn "Skipping ${id}"
 				continue
@@ -1504,6 +1505,7 @@ _trainer_plan_video_lossless() {
 		local id
 		for id in $(get_video_sample_ids) ; do
 			local video_sample_path="${!id}"
+			[[ -e "${video_sample_path}" ]] || continue
 			einfo "Running PGO trainer for ${encoding_codec} for lossless"
 			einfo "Encoding for lossless video"
 			local cmd
@@ -1553,6 +1555,7 @@ _trainer_plan_audio_cbr() {
 	local id
 	for id in $(get_audio_sample_ids) ; do
 		local audio_sample_path="${!id}"
+		[[ -e "${audio_sample_path}" ]] || continue
 		if [[ -z "${audio_sample_path}" || ! -f "${audio_sample_path}" ]] ; then
 			ewarn "Skipping ${id}"
 			continue
@@ -1626,6 +1629,7 @@ _trainer_plan_audio_vbr() {
 	local id
 	for id in $(get_audio_sample_ids) ; do
 		local audio_sample_path="${!id}"
+		[[ -e "${audio_sample_path}" ]] || continue
 		if [[ -z "${audio_sample_path}" || ! -f "${audio_sample_path}" ]] ; then
 			ewarn "Skipping ${id}"
 			continue
