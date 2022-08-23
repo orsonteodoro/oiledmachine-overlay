@@ -20,106 +20,7 @@ LICENSE="BSD"
 SLOT="0/${PV}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="debug doc examples static-libs test"
-IUSE+=" cfi cfi-cross-dso cfi-cast cfi-icall cfi-vcall clang hardened libcxx lto shadowcallstack"
 RESTRICT="!test? ( test )"
-# Link the examples and utilties with cfi-cross-dso or basic-cfi
-REQUIRED_USE="
-	!cfi-cross-dso? (
-		cfi? ( static-libs )
-		cfi-cast? ( static-libs )
-		cfi-icall? ( static-libs )
-		cfi-vcall? ( static-libs )
-	)
-	cfi? ( clang lto )
-	cfi-cast? ( clang lto cfi-vcall )
-	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
-	cfi-icall? ( clang lto cfi-vcall )
-	cfi-vcall? ( clang lto )
-	shadowcallstack? ( clang )"
-
-_seq() {
-	local min=${1}
-	local max=${2}
-	local i=${min}
-	while (( ${i} <= ${max} )) ; do
-		echo "${i}"
-		i=$(( ${i} + 1 ))
-	done
-}
-
-gen_cfi_bdepend() {
-	local min=${1}
-	local max=${2}
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			>=sys-devel/lld-${v}
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
-		)
-		     "
-	done
-}
-
-gen_shadowcallstack_bdepend() {
-	local min=${1}
-	local max=${2}
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			>=sys-devel/lld-${v}
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*:=[shadowcallstack?]
-		)
-		     "
-	done
-}
-
-gen_lto_bdepend() {
-	local min=${1}
-	local max=${2}
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP}]
-			>=sys-devel/lld-${v}
-		)
-		"
-	done
-}
-
-gen_libcxx_depend() {
-	local min=${1}
-	local max=${2}
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			libcxx? ( >=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,clang?,hardened?,shadowcallstack?,static-libs?,${MULTILIB_USEDEP}] )
-		)
-		"
-	done
-}
-
-RDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
-DEPEND+=" ${RDEPEND}"
-
-BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
-BDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
-BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
-BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
 BDEPEND+=" ${PYTHON_DEPS}
 	sys-devel/autoconf-archive
@@ -168,16 +69,6 @@ src_prepare() {
 		-e 's:icudefs.mk :icudefs.mk Doxyfile:' \
 		configure.ac || die
 
-	if is_hardened_clang || is_hardened_gcc ; then
-		:; # Already applied by default
-	elif use hardened ; then
-		eapply "${FILESDIR}/extra/icu-69.1-pie.patch" # added by oiledmachine-overlay
-	fi
-
-	if [[ "${USE}" =~ "cfi" ]] && ! use cfi-cross-dso ; then
-		eapply "${FILESDIR}/extra/icu-69.1-static-build.patch" # added by oiledmachine-overlay
-	fi
-
 	eautoreconf
 
 	prepare_abi() {
@@ -194,33 +85,6 @@ src_prepare() {
 append_all() {
 	append-flags ${@}
 	append-ldflags ${@}
-}
-
-append_lto() {
-	filter-flags '-flto*' '-fuse-ld=*'
-	if tc-is-clang ; then
-		append-flags -flto=thin
-		append-ldflags -fuse-ld=lld -flto=thin
-		[[ "${lib_type}" == "static" ]] \
-			&& append_all -fsplit-lto-unit
-	else
-		append-flags -flto
-		append-ldflags -flto
-	fi
-}
-
-is_hardened_clang() {
-	if tc-is-clang && clang --version 2>/dev/null | grep -q -e "Hardened:" ; then
-		return 0
-	fi
-	return 1
-}
-
-is_hardened_gcc() {
-	if tc-is-gcc && gcc --version 2>/dev/null | grep -q -e "Hardened" ; then
-		return 0
-	fi
-	return 1
 }
 
 src_configure() {
@@ -254,125 +118,30 @@ src_configure() {
 	multilib_foreach_abi configure_abi
 }
 
-is_cfi_supported() {
-	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${lib_type}" == "static" ]] ; then
-		return 0
-	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
-		return 0
-	fi
-	return 1
-}
-
 _configure_abi() {
-	if use clang ; then
-		CC="clang $(get_abi_CFLAGS ${ABI})"
-		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
-		AR=llvm-ar
-		AS=llvm-as
-		NM=llvm-nm
-		RANLIB=llvm-ranlib
-		READELF=llvm-readelf
-		LD="${CC}"
-	fi
-	if tc-is-clang && ! use clang ; then
-		die "You must enable the clang USE flag or remove clang/clang++ from CC/CXX."
-	fi
-
-	export CC CXX AR AS NM RANDLIB READELF LD
-
 	filter-flags \
-		'--param=ssp-buffer-size=*' \
-		'-DU_STATIC_IMPLEMENTATION' \
-		'-f*sanitize*' \
-		'-f*stack*' \
-		'-f*visibility*' \
-		'-fsplit-lto-unit' \
-		'-lubsan' \
-		'-stdlib=libc++' \
-		'-Wl,-lubsan' \
-		'-Wl,-z,noexecstack' \
-		'-Wl,-z,now' \
-		'-Wl,-z,relro'
+		"-Wno-unused-command-line-argument" \
+		"-DDHAVE_DLOPEN=0" \
+		"-DU_DISABLE_RENAMING=1" \
+		"-DU_STATIC_IMPLEMENTATION"
 
-	autofix_flags
-
-	if tc-is-clang && use libcxx && [[ "${USE}" =~ "cfi" ]] ; then
-		# The -static-libstdc++ is a misnomer.  It also means \
-		# -static-libc++ which does not exist.
-		append-cxxflags -stdlib=libc++
-		append-ldflags -stdlib=libc++
-		if [[ "${lib_type}" == "shared" ]] ; then
-			append-ldflags -lc++
-		fi
-		if [[ "${lib_type}" == "static" ]] ; then
-			append-cxxflags -Wno-unused-command-line-argument
-			append-cppflags -DDHAVE_DLOPEN=0 -DU_DISABLE_RENAMING=1 -DU_STATIC_IMPLEMENTATION
-			append-ldflags -Wno-unused-command-line-argument
-			append-ldflags -static-libstdc++
-		fi
-	elif ! tc-is-clang && use libcxx ; then
-		die "libcxx requires clang++"
+	if [[ "${lib_type}" == "static" ]] ; then
+		append_all -Wno-unused-command-line-argument
+		append-cppflags -DDHAVE_DLOPEN=0 -DU_DISABLE_RENAMING=1 -DU_STATIC_IMPLEMENTATION
 	fi
 
-	set_cfi() {
-		if tc-is-clang && is_cfi_supported ; then
-			if [[ "${lib_type}" == "static" ]] ; then
-				append_all -fvisibility=hidden
-			elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
-				append_all -fvisibility=default
-			fi
-			if use cfi ; then
-				append_all -fsanitize=cfi
-			else
-				use cfi-cast && append_all \
-							-fsanitize=cfi-derived-cast \
-							-fsanitize=cfi-unrelated-cast
-				use cfi-icall && append_all \
-							-fsanitize=cfi-icall
-				use cfi-vcall && append_all \
-							-fsanitize=cfi-vcall
-			fi
-			[[ "${USE}" =~ "cfi" ]] && append-ldflags -Wl,-lubsan
-			if use cfi-cross-dso \
-				&& [[ "${lib_type}" == "shared" ]] ; then
-				export ESHAREDLIBCFLAGS="-fsanitize-cfi-cross-dso"
-				export ESHAREDLIBCXXFLAGS="-fsanitize-cfi-cross-dso"
-				export ELD_SOOPTIONS="-fsanitize-cfi-cross-dso"
-			else
-				export ESHAREDLIBCFLAGS=""
-				export ESHAREDLIBCXXFLAGS=""
-				export ELD_SOOPTIONS=""
-			fi
-			append_all -fno-sanitize=cfi-icall # Build time failure when running tools
-			append_all -fno-sanitize=cfi-nvcall # Breaks toolutil
+	# CFI Breaks building vte
+	for value in cfi-vcall cfi-nvcall cfi-derived-cast cfi-unrelated-cast cfi ; do
+		if is-flagq "-fsanitize=*${value}" ; then
+			einfo "Removing"
+			strip-flag-value "${value}"
 		fi
-		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
-						-fsanitize=shadow-call-stack
-	}
+	done
+	filter-flag -fsanitize-cfi-cross-dso
 
-	use hardened && append-ldflags -Wl,-z,noexecstack
-	use lto && append_lto
-	if is_hardened_gcc ; then
-		:;
-	elif is_hardened_clang ; then
-		set_cfi
-	else
-		set_cfi
-		if use hardened ; then
-			append-ldflags -Wl,-z,relro -Wl,-z,now
-			if [[ -n "${USE_HARDENED_PROFILE_DEFAULTS}" \
-				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
-				append-cppflags -D_FORTIFY_SOURCE=2
-				append-flags $(test-flags-CC -fstack-clash-protection)
-				append-flags --param=ssp-buffer-size=4 \
-						-fstack-protector-strong
-			else
-				append-flags --param=ssp-buffer-size=4 \
-						-fstack-protector
-			fi
-		fi
-	fi
+	export ESHAREDLIBCFLAGS=""
+	export ESHAREDLIBCXXFLAGS=""
+	export ELD_SOOPTIONS=""
 
 	local myeconfargs=(
 		--disable-renaming
@@ -396,38 +165,10 @@ _configure_abi() {
 		)
 	fi
 
-	if [[ ! ( "${USE}" =~ "cfi" ) ]] ; then
-		myeconfargs+=(
-			--enable-extras
-			--enable-tools
-		)
-	elif use cfi-cross-dso ; then
-		if [[ "${lib_type}" == "shared" ]] ; then
-			# Link against CFI Cross DSO (.so)
-			myeconfargs+=(
-				--enable-extras
-				--enable-tools
-			)
-		else
-			myeconfargs+=(
-				--disable-extras
-				--disable-tools
-			)
-		fi
-	else
-		if [[ "${lib_type}" == "static" ]] ; then
-			# Link against Basic mode (.a)
-			myeconfargs+=(
-				--enable-extras
-				--enable-tools
-			)
-		else
-			myeconfargs+=(
-				--disable-extras
-				--disable-tools
-			)
-		fi
-	fi
+	myeconfargs+=(
+		--enable-extras
+		--enable-tools
+	)
 
 	tc-is-cross-compiler && myeconfargs+=(
 		--with-cross-build="${WORKDIR}"/host
@@ -516,27 +257,6 @@ ewarn
 ewarn "static-lib consumers require -DU_STATIC_IMPLEMENTATION"
 ewarn
 	fi
-
-	if use cfi-cross-dso ; then
-ewarn "Using cfi-cross-dso requires a rebuild of the app with only the clang"
-ewarn "compiler."
-	fi
-
-	if [[ "${USE}" =~ "cfi" ]] && use static-libs ; then
-ewarn "Using cfi with static-libs requires the app be built with only the clang"
-ewarn "compiler."
-	fi
-
-	if use lto && use static-libs ; then
-		if tc-is-clang ; then
-ewarn "You are only allowed to static link this library with clang."
-		elif tc-is-gcc ; then
-ewarn "You are only allowed to static link this library with gcc."
-		else
-ewarn "You are only allowed to static link this library with CC=${CC}"
-ewarn "CXX=${CXX}."
-		fi
-	fi
 }
 
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  hardening, cfi, lto
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  cfi patch
