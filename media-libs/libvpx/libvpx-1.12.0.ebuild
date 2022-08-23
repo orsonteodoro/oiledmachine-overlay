@@ -170,12 +170,6 @@ pkg_setup() {
 	tpgo_setup
 }
 
-get_abi_use() {
-	for p in $(multilib_get_enabled_abi_pairs) ; do
-		[[ "${p}" =~ "${ABI}"$ ]] && echo "${p}" | cut -f 1 -d "."
-	done
-}
-
 get_native_abi_use() {
 	for p in $(multilib_get_enabled_abi_pairs) ; do
 		[[ "${p}" =~ "${DEFAULT_ABI}"$ ]] && echo "${p}" | cut -f 1 -d "."
@@ -185,7 +179,7 @@ get_native_abi_use() {
 get_multiabi_ffmpeg() {
 	if multilib_is_native_abi && has_version "media-video/ffmpeg[$(get_native_abi_use)]" ; then
 		echo "${EPREFIX}/usr/bin/ffmpeg"
-	elif ! multilib_is_native_abi && has_version "media-video/ffmpeg[$(get_abi_use ${ABI})]" ; then
+	elif ! multilib_is_native_abi && has_version "media-video/ffmpeg[${MULTILIB_ABI_FLAG}]" ; then
 		echo "${EPREFIX}/usr/bin/ffmpeg-${ABI}"
 	else
 		echo ""
