@@ -25,7 +25,6 @@ IUSE="doc examples test"
 IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3"
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
 IUSE="${IUSE} cpu_flags_arm_neon"
-IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened libcxx lto shadowcallstack static-libs"
 IUSE+=" +asm"
 IUSE+=" pgo pgo-custom
 	pgo-trainer-2-pass-constrained-quality
@@ -33,21 +32,9 @@ IUSE+=" pgo pgo-custom
 	pgo-trainer-lossless
 	chromium
 "
-# Link libraries with CFI Cross-DSO (.so) or Basic mode (.a)
 REQUIRED_USE="
-	!cfi-cross-dso? (
-		cfi? ( static-libs )
-		cfi-cast? ( static-libs )
-		cfi-icall? ( static-libs )
-		cfi-vcall? ( static-libs )
-	)
 	cpu_flags_x86_sse2? ( cpu_flags_x86_mmx )
 	cpu_flags_x86_ssse3? ( cpu_flags_x86_sse2 )
-	cfi? ( clang lto )
-	cfi-cast? ( clang lto cfi-vcall )
-	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
-	cfi-icall? ( clang lto cfi-vcall )
-	cfi-vcall? ( clang lto )
 	pgo? (
 		|| (
 			pgo-custom
@@ -60,95 +47,7 @@ REQUIRED_USE="
 	pgo-trainer-2-pass-constrained-quality? ( pgo )
 	pgo-trainer-constrained-quality? ( pgo )
 	pgo-trainer-lossless? ( pgo )
-	shadowcallstack? ( clang )
 "
-
-_seq() {
-	local min=${1}
-	local max=${2}
-	local i=${min}
-	while (( ${i} <= ${max} )) ; do
-		echo "${i}"
-		i=$(( ${i} + 1 ))
-	done
-}
-
-gen_cfi_bdepend() {
-	local min=${1}
-	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			>=sys-devel/lld-${v}
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi?]
-		)
-		     "
-	done
-}
-
-gen_shadowcallstack_bdepend() {
-	local min=${1}
-	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			>=sys-devel/lld-${v}
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*:=[shadowcallstack?]
-		)
-		     "
-	done
-}
-
-gen_lto_bdepend() {
-	local min=${1}
-	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP}]
-			>=sys-devel/lld-${v}
-		)
-		"
-	done
-}
-
-gen_libcxx_depend() {
-	local min=${1}
-	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			libcxx? (
-				>=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,clang?,hardened?,shadowcallstack?,static-libs?,${MULTILIB_USEDEP}]
-			)
-		)
-		"
-	done
-}
-
-RDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
-DEPEND+=" ${RDEPEND}"
-
-BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
-BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
-BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
-BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
 BDEPEND+="
 	>=dev-util/cmake-3.7
@@ -281,11 +180,15 @@ src_prepare() {
 	export CMAKE_USE_DIR="${S}"
 	cd "${CMAKE_USE_DIR}" || die
 	cmake_src_prepare
-	if use clang && use lto ; then
+	if tc-is-clang \
+		&& has_version "sys-devel/lld" \
+		&& [[ "${CFLAGS}" =~ "-flto" ]] ; then
 		sed -i -e "s|-fuse-ld=gold|-fuse-ld=lld|g" \
 			build/cmake/sanitizers.cmake || die
 	fi
-	if use cfi ; then
+	if tc-is-clang \
+		&& has_version "sys-libs/compiler-rt-sanitizers[cfi]" \
+		&& [[ "${CFLAGS}" =~ "-fsanitize".*"cfi" ]] ; then
 		sed -i -e "s|-fno-sanitize-trap=cfi||g" \
 			build/cmake/sanitizers.cmake || die
 		if use static-libs ; then
@@ -301,12 +204,6 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
-get_abi_use() {
-	for p in $(multilib_get_enabled_abi_pairs) ; do
-		[[ "${p}" =~ "${ABI}"$ ]] && echo "${p}" | cut -f 1 -d "."
-	done
-}
-
 get_native_abi_use() {
 	for p in $(multilib_get_enabled_abi_pairs) ; do
 		[[ "${p}" =~ "${DEFAULT_ABI}"$ ]] && echo "${p}" | cut -f 1 -d "."
@@ -316,7 +213,7 @@ get_native_abi_use() {
 get_multiabi_ffmpeg() {
 	if multilib_is_native_abi && has_version "media-video/ffmpeg[$(get_native_abi_use)]" ; then
 		echo "${EPREFIX}/usr/bin/ffmpeg"
-	elif ! multilib_is_native_abi && has_version "media-video/ffmpeg[$(get_abi_use ${ABI})]" ; then
+	elif ! multilib_is_native_abi && has_version "media-video/ffmpeg[${MULTILIB_ABI_FLAG}]" ; then
 		echo "${EPREFIX}/usr/bin/ffmpeg-${ABI}"
 	else
 		echo ""
@@ -357,97 +254,10 @@ append_all() {
 	append-ldflags ${@}
 }
 
-append_lto() {
-	filter-flags '-flto*' '-fuse-ld=*'
-	if tc-is-clang ; then
-		append-flags -flto=thin
-		append-ldflags -fuse-ld=lld -flto=thin
-		[[ "${lib_type}" == "static" ]] \
-			&& append_all -fsplit-lto-unit
-	else
-		append-flags -flto
-		append-ldflags -flto
-	fi
-}
-
-is_hardened_clang() {
-	if tc-is-clang && clang --version 2>/dev/null | grep -q -e "Hardened:" ; then
-		return 0
-	fi
-	return 1
-}
-
-is_hardened_gcc() {
-	if tc-is-gcc && gcc --version 2>/dev/null | grep -q -e "Hardened" ; then
-		return 0
-	fi
-	return 1
-}
-
-is_cfi_supported() {
-	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${lib_type}" == "static" ]] ; then
-		return 0
-	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
-		return 0
-	fi
-	return 1
-}
-
 _src_configure() {
 	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cd "${CMAKE_USE_DIR}" || die
-	[[ -f build.ninja ]] && eninja clean
-	find "${BUILD_DIR}" -name "CMakeCache.txt" -delete 2>/dev/null
-
-	if use clang ; then
-		CC="clang $(get_abi_CFLAGS ${ABI})"
-		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
-		AR=llvm-ar
-		AS=llvm-as
-		NM=llvm-nm
-		RANLIB=llvm-ranlib
-		READELF=llvm-readelf
-		unset LD
-	fi
-	if tc-is-clang && ! use clang ; then
-		die "You must enable the clang USE flag or remove clang/clang++ from CC/CXX."
-	fi
-
-	export CC CXX AR AS NM RANDLIB READELF LD
-
-	filter-flags \
-		'--param=ssp-buffer-size=*' \
-		'-f*sanitize*' \
-		'-f*stack*' \
-		'-f*visibility*' \
-		'-fprofile*' \
-		'-fsplit-lto-unit' \
-		'-lc++' \
-		'-ldl' \
-		'-lubsan' \
-		'-static-libc++' \
-		'-stdlib=libc++' \
-		'-Wl,-lubsan' \
-		'-Wl,-z,noexecstack' \
-		'-Wl,-z,now' \
-		'-Wl,-z,relro'
-
-	if tc-is-clang && use libcxx && [[ "${USE}" =~ "cfi" ]] ; then
-		# The -static-libstdc++ is a misnomer.  It also means \
-		# -static-libc++ which does not exist.
-                append-cxxflags -stdlib=libc++
-                append-ldflags -stdlib=libc++
-		[[ "${lib_type}" == "shared" ]] \
-			&& append-ldflags -lc++
-		[[ "${lib_type}" == "static" ]] \
-			&& append-ldflags -static-libstdc++
-	elif ! tc-is-clang && use libcxx ; then
-		die "libcxx requires clang++"
-	fi
-
-	autofix_flags
 	tpgo_src_configure
 
 	tc-export CC CXX
@@ -475,23 +285,11 @@ _src_configure() {
 		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2 ON OFF)
 	)
 
-	set_cfi() {
-		# The cfi enables all cfi schemes, but the selective tries to balance
-		# performance and security while maintaining a performance limit.
-		if tc-is-clang && is_cfi_supported ; then
-			mycmakeargs+=( -DSANITIZE=cfi )
-			mycmakeargs+=( -DCFI=$(usex cfi) )
-			mycmakeargs+=( -DCFI_CAST=$(usex cfi-cast) )
-			#mycmakeargs+=( -DCFI_ICALL=$(usex cfi-icall) )
-			mycmakeargs+=( -DCFI_VCALL=$(usex cfi-vcall) )
-			if [[ "${lib_type}" == "shared" ]] ; then
-				mycmakeargs+=( -DCROSS_DSO_CFI=$(usex cfi-cross-dso) )
-			fi
-			mycmakeargs+=( -DCFI_EXCEPTIONS="-fno-sanitize=cfi-icall" ) # Prevent Illegal instruction with /usr/bin/aomdec --help
-		fi
-		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
-						-fsanitize=shadow-call-stack
-	}
+	if tc-is-clang && has_version "sys-libs/compiler-rt-sanitizers[cfi]" ; then
+		# Prevent Illegal instruction with /usr/bin/aomdec --help
+		strip-flag-value "strip-flag-value"
+		append_all -fno-sanitize=cfi-icall
+	fi
 
 	if use chromium && [[ "${lib_type}" == "static" ]] ; then
 		mycmakeargs+=(
@@ -500,31 +298,6 @@ _src_configure() {
 		)
 	else
 		mycmakeargs+=( -DENABLE_NASM=OFF )
-	fi
-	use hardened && append-ldflags -Wl,-z,noexecstack
-	use lto && append_lto
-	if is_hardened_gcc ; then
-		:;
-	elif is_hardened_clang ; then
-		set_cfi
-	else
-		set_cfi
-		if use hardened ; then
-			if [[ -n "${USE_HARDENED_PROFILE_DEFAULTS}" \
-				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
-				append-cppflags -D_FORTIFY_SOURCE=2
-				append-flags $(test-flags-CC -fstack-clash-protection)
-				append-flags --param=ssp-buffer-size=4 \
-						-fstack-protector-strong
-			else
-				append-flags --param=ssp-buffer-size=4 \
-						-fstack-protector
-			fi
-			append-ldflags -Wl,-z,relro -Wl,-z,now
-			mycmakeargs+=(
-				-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS} -pie"
-			)
-		fi
 	fi
 
 	if [[ "${lib_type}" == "static" ]] ; then
@@ -537,7 +310,7 @@ _src_configure() {
 		)
 	fi
 
-	if [[ ! ( "${USE}" =~ "cfi" ) ]] ; then
+	if ! [[ "${CFLAGS}" =~ "-fsanitize=".*"cfi" ]] ; then
 		mycmakeargs+=(
 			-DENABLE_EXAMPLES=$(multilib_native_usex examples ON OFF)
 		)
@@ -1043,26 +816,5 @@ pkg_postinst() {
 elog "No PGO optimization performed.  Please re-emerge this package."
 elog "The following package must be installed before PGOing this package:"
 elog "  media-video/ffmpeg[encode,libaom,$(get_arch_enabled_use_flags)]"
-	fi
-
-	if use cfi-cross-dso ; then
-ewarn "Using cfi-cross-dso requires a rebuild of the app with only the clang"
-ewarn "compiler."
-	fi
-
-	if [[ "${USE}" =~ "cfi" ]] && use static-libs ; then
-ewarn "Using cfi with static-libs requires the app be built with only the clang"
-ewarn "compiler."
-	fi
-
-	if use lto && use static-libs ; then
-		if tc-is-clang ; then
-ewarn "You are only allowed to static link this library with clang."
-		elif tc-is-gcc ; then
-ewarn "You are only allowed to static link this library with gcc."
-		else
-ewarn "You are only allowed to static link this library with CC=${CC}"
-ewarn "CXX=${CXX}."
-		fi
 	fi
 }

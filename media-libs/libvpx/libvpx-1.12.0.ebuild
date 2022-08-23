@@ -286,7 +286,7 @@ _src_configure() {
 		$(use_enable highbitdepth vp9-highbitdepth)
 	)
 
-	if has_version "sys-libs/compiler-rt-sanitizers[cfi]" ; then
+	if tc-is-clang && has_version "sys-libs/compiler-rt-sanitizers[cfi]" ; then
 		strip-flag-value "cfi-icall"
 		append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with vpxenc --help
 	fi
