@@ -1179,7 +1179,7 @@ multilib_src_configure() {
 	if use debug ; then
 		mozconfig_add_options_ac '+debug' --disable-optimize
 	else
-		if is-flag '-g*' ; then
+		if is-flagq '-g*' ; then
 			if use clang ; then
 				mozconfig_add_options_ac 'from CFLAGS' --enable-debug-symbols=$(get-flag '-g*')
 			else
@@ -1189,15 +1189,15 @@ multilib_src_configure() {
 			mozconfig_add_options_ac 'Gentoo default' --disable-debug-symbols
 		fi
 
-		if is-flag '-O0' ; then
+		if is-flagq '-O0' ; then
 			mozconfig_add_options_ac "from CFLAGS" --enable-optimize=-O0
-		elif is-flag '-O4' ; then
+		elif is-flagq '-O4' ; then
 			mozconfig_add_options_ac "from CFLAGS" --enable-optimize=-O4
-		elif is-flag '-O3' ; then
+		elif is-flagq '-O3' ; then
 			mozconfig_add_options_ac "from CFLAGS" --enable-optimize=-O3
-		elif is-flag '-O1' ; then
+		elif is-flagq '-O1' ; then
 			mozconfig_add_options_ac "from CFLAGS" --enable-optimize=-O1
-		elif is-flag '-Os' ; then
+		elif is-flagq '-Os' ; then
 			mozconfig_add_options_ac "from CFLAGS" --enable-optimize=-Os
 		else
 			mozconfig_add_options_ac "Gentoo default" --enable-optimize=-O2
