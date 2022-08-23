@@ -374,324 +374,126 @@ eerror
 	fi
 }
 
+_trainer_plan_constrained_quality_training_session() {
+	local entry="${1}"
+
+	local fps=$(echo "${entry}" | cut -f 1 -d ";")
+	local width=$(echo "${entry}" | cut -f 2 -d ";")
+	local height=$(echo "${entry}" | cut -f 3 -d ";")
+	local duration=$(echo "${entry}" | cut -f 4 -d ";")
+	local maxrate=$(echo "${entry}" | cut -f 5 -d ";")
+	local minrate=$(echo "${entry}" | cut -f 6 -d ";")
+	local avgrate=$(echo "${entry}" | cut -f 7 -d ";")
+
+	local cmd
+	einfo "Encoding as ${height}p for ${duration} sec, ${fps} fps"
+	cmd=(
+		"${FFMPEG}" \
+		-y \
+		-i "${video_asset_path}" \
+		-c:v libaom-av1 \
+		-maxrate ${maxrate} -minrate ${minrate} -b:v ${avgrate} \
+		-vf scale=w=-1:h=${height} \
+		${LIBAOM_PGO_TRAINING_ARGS} \
+		-an \
+		-r ${fps} \
+		-t ${duration} \
+		"${T}/test.webm"
+	)
+	"${cmd[@]}" || die
+	_vdecode "${height}p, ${fps} fps"
+}
+
 _trainer_plan_constrained_quality() {
+	# TODO: mobile resolutions
+	local L=(
+		"30;1280;720;3;1485k;512;1024"
+		"60;1280;720;3;2610k;900;1800"
+		"30;1920;1080;3;2610k;900;1800"
+		"60;1920;1080;3;4350k;1500;3000"
+		"30;3840;2160;3;17400k;6000;12000"
+		"60;3840;2160;3;26100k;9000;18000"
+	)
+
 	if use pgo && tpgo_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
 			local video_asset_path="${!id}"
 			[[ -e "${video_asset_path}" ]] || continue
 			einfo "Running PGO trainer for 1 pass constrained quality"
-			local cmd
-			einfo "Encoding as 720p for 3 sec, 30 fps"
-			cmd=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 1485k -minrate 512k -b:v 1024k \
-				-vf scale=w=-1:h=720 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-an \
-				-r 30 \
-				-t 3 \
-				"${T}/test.webm"
-			)
-			"${cmd[@]}" || die
-			_vdecode "720p, 30 fps"
-
-			einfo "Encoding as 720p for 3 sec, 60 fps"
-			cmd=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 2610k -minrate 900k -b:v 1800k \
-				-vf scale=w=-1:h=720 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-an \
-				-r 60 \
-				-t 3 \
-				"${T}/test.webm"
-			)
-			"${cmd[@]}" || die
-			_vdecode "720p, 60 fps"
-
-			einfo "Encoding as 1080p for 3 sec, 30 fps"
-			cmd=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 2610k -minrate 900k -b:v 1800k \
-				-vf scale=w=-1:h=1080 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-an \
-				-r 30 \
-				-t 3 \
-				"${T}/test.webm"
-			)
-			"${cmd[@]}" || die
-			_vdecode "1080p, 30 fps"
-
-			einfo "Encoding as 1080p for 3 sec, 60 fps"
-			cmd=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 4350k -minrate 1500k -b:v 3000k \
-				-vf scale=w=-1:h=1080 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-an \
-				-r 60 \
-				-t 3 \
-				"${T}/test.webm"
-			)
-			"${cmd[@]}" || die
-			_vdecode "1080p, 60 fps"
-
-			einfo "Encoding as 4k for 3 sec, 30 fps"
-			cmd=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 17400k -minrate 6000k -b:v 12000k \
-				-vf scale=w=-1:h=2160 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-an \
-				-r 30 \
-				-t 3 \
-				"${T}/test.webm"
-			)
-			"${cmd[@]}" || die
-			_vdecode "4k, 30 fps"
-
-			einfo "Encoding as 4k for 3 sec, 60 fps"
-			cmd=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 26100k -minrate 9000k -b:v 18000k \
-				-vf scale=w=-1:h=2160 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-an \
-				-r 60 \
-				-t 3 \
-				"${T}/test.webm"
-			)
-			"${cmd[@]}" || die
-			_vdecode "4k, 60 fps"
+			for e in ${L[@]} ; do
+				_trainer_plan_constrained_quality_training_session "${e}"
+			done
 		done
 	fi
 }
 
+_trainer_plan_2_pass_constrained_quality_training_session() {
+	local entry="${1}"
+
+	local fps=$(echo "${entry}" | cut -f 1 -d ";")
+	local width=$(echo "${entry}" | cut -f 2 -d ";")
+	local height=$(echo "${entry}" | cut -f 3 -d ";")
+	local duration=$(echo "${entry}" | cut -f 4 -d ";")
+	local maxrate=$(echo "${entry}" | cut -f 5 -d ";")
+	local minrate=$(echo "${entry}" | cut -f 6 -d ";")
+	local avgrate=$(echo "${entry}" | cut -f 7 -d ";")
+
+	local cmd
+	einfo "Encoding as ${height}p for ${duration} sec, ${fps} fps"
+	cmd1=(
+		"${FFMPEG}" \
+		-y \
+		-i "${video_asset_path}" \
+		-c:v libaom-av1 \
+		-maxrate ${maxrate} -minrate ${minrate} -b:v ${avgrate} \
+		-vf scale=w=-1:h=${height} \
+		${LIBAOM_PGO_TRAINING_ARGS} \
+		-pass 1 \
+		-an \
+		-r ${fps} \
+		-t ${duration} \
+		-f null /dev/null
+	)
+	cmd2=(
+		"${FFMPEG}" \
+		-y \
+		-i "${video_asset_path}" \
+		-c:v libaom-av1 \
+		-maxrate ${maxrate} -minrate ${minrate} -b:v ${avgrate} \
+		-vf scale=w=-1:h=${height} \
+		${LIBAOM_PGO_TRAINING_ARGS} \
+		-pass 2 \
+		-an \
+		-r ${fps} \
+		-t ${duration} \
+		"${T}/test.webm"
+	)
+	"${cmd1[@]}" || die
+	"${cmd2[@]}" || die
+	_vdecode "${height}p, ${fps} fps"
+}
+
 _trainer_plan_2_pass_constrained_quality() {
+	# TODO: mobile resolutions
+	local L=(
+		"30;1280;720;3;1485k;512;1024"
+		"60;1280;720;3;2610k;900;1800"
+		"30;1920;1080;3;2610k;900;1800"
+		"60;1920;1080;3;4350k;1500;3000"
+		"30;3840;2160;3;17400k;6000;12000"
+		"60;3840;2160;3;26100k;9000;18000"
+	)
+
 	if use pgo && tpgo_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
 			local video_asset_path="${!id}"
 			[[ -e "${video_asset_path}" ]] || continue
 			einfo "Running PGO trainer for 2 pass constrained quality"
-			local cmd
-			einfo "Encoding as 720p for 3 sec, 30 fps"
-			cmd1=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 1485k -minrate 512k -b:v 1024k \
-				-vf scale=w=-1:h=720 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-pass 1 \
-				-an \
-				-r 30 \
-				-t 3 \
-				-f null /dev/null
-			)
-			cmd2=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 1485k -minrate 512k -b:v 1024k \
-				-vf scale=w=-1:h=720 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-pass 2 \
-				-an \
-				-r 30 \
-				-t 3 \
-				"${T}/test.webm"
-			)
-			"${cmd1[@]}" || die
-			"${cmd2[@]}" || die
-			_vdecode "720p, 30 fps"
-
-			einfo "Encoding as 720p for 3 sec, 60 fps"
-			cmd1=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 2610k -minrate 900k -b:v 1800k \
-				-vf scale=w=-1:h=720 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-pass 1 \
-				-an \
-				-r 60 \
-				-t 3 \
-				-f null /dev/null
-			)
-			cmd2=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 2610k -minrate 900k -b:v 1800k \
-				-vf scale=w=-1:h=720 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-pass 2 \
-				-an \
-				-r 60 \
-				-t 3 \
-				"${T}/test.webm"
-			)
-			"${cmd1[@]}" || die
-			"${cmd2[@]}" || die
-			_vdecode "720p, 60 fps"
-
-			einfo "Encoding as 1080p for 3 sec, 30 fps"
-			cmd1=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 2610k -minrate 900k -b:v 1800k \
-				-vf scale=w=-1:h=1080 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-pass 1 \
-				-an \
-				-r 30 \
-				-t 3 \
-				-f null /dev/null
-			)
-			cmd2=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 2610k -minrate 900k -b:v 1800k \
-				-vf scale=w=-1:h=1080 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-pass 2 \
-				-an \
-				-r 30 \
-				-t 3 \
-				"${T}/test.webm"
-			)
-			"${cmd1[@]}" || die
-			"${cmd2[@]}" || die
-			_vdecode "1080p, 30 fps"
-
-			einfo "Encoding as 1080p for 3 sec, 60 fps"
-			cmd1=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 4350k -minrate 1500k -b:v 3000k \
-				-vf scale=w=-1:h=1080 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-pass 1 \
-				-an \
-				-r 60 \
-				-t 3 \
-				-f null /dev/null
-			)
-			cmd2=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 4350k -minrate 1500k -b:v 3000k \
-				-vf scale=w=-1:h=1080 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-pass 2 \
-				-an \
-				-r 60 \
-				-t 3 \
-				"${T}/test.webm"
-			)
-			"${cmd1[@]}" || die
-			"${cmd2[@]}" || die
-			_vdecode "1080p, 60 fps"
-
-			einfo "Encoding as 4k for 3 sec, 30 fps"
-			cmd1=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 17400k -minrate 6000k -b:v 12000k \
-				-vf scale=w=-1:h=2160 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-pass 1 \
-				-an \
-				-r 30 \
-				-t 3 \
-				-f null /dev/null
-			)
-			cmd2=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 17400k -minrate 6000k -b:v 12000k \
-				-vf scale=w=-1:h=2160 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-pass 2 \
-				-an \
-				-r 30 \
-				-t 3 \
-				"${T}/test.webm"
-			)
-			"${cmd1[@]}" || die
-			"${cmd2[@]}" || die
-			_vdecode "4k, 30 fps"
-
-			einfo "Encoding as 4k for 3 sec, 60 fps"
-			cmd1=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 26100k -minrate 9000k -b:v 18000k \
-				-vf scale=w=-1:h=2160 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-pass 1 \
-				-an \
-				-r 60 \
-				-t 3 \
-				-f null /dev/null
-			)
-			cmd2=(
-				"${FFMPEG}" \
-				-y \
-				-i "${video_asset_path}" \
-				-c:v libaom-av1 \
-				-maxrate 26100k -minrate 9000k -b:v 18000k \
-				-vf scale=w=-1:h=2160 \
-				${LIBAOM_PGO_TRAINING_ARGS} \
-				-pass 2 \
-				-an \
-				-r 60 \
-				-t 3 \
-				"${T}/test.webm"
-			)
-			"${cmd1[@]}" || die
-			"${cmd2[@]}" || die
-			_vdecode "4k, 60 fps"
+			for e in ${L[@]} ; do
+				_trainer_plan_2_pass_constrained_quality_training_session "${e}"
+			done
 		done
 	fi
 }
