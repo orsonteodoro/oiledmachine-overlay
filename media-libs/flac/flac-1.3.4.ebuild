@@ -37,11 +37,8 @@ get_lib_types() {
 src_prepare() {
 	default
 
-	if is_hardened_clang || is_hardened_gcc ; then
-		:;
-	elif use hardened ; then
-		eapply "${FILESDIR}/flac-1.3.3-pie.patch"
-	fi
+	# Assumes we are using the hardened toolchain.
+	#use hardened && eapply "${FILESDIR}/flac-1.3.3-pie.patch"
 	eautoreconf
 
 	prepare_abi() {
