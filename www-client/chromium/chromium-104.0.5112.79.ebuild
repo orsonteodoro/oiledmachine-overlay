@@ -259,9 +259,8 @@ IUSE+=" +partitionalloc libcmalloc"
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
 #
 IUSE_LIBCXX=( bundled-libcxx system-libstdcxx )
-IUSE+=" ${IUSE_LIBCXX[@]} +bundled-libcxx branch-protection-standard +cfi-vcall
-cfi-cast +cfi-icall +clang +pre-check-llvm +pre-check-vaapi lto-opt +pgo
-shadowcallstack"
+IUSE+=" ${IUSE_LIBCXX[@]} +bundled-libcxx branch-protection-standard +cfi
++clang +pre-check-llvm +pre-check-vaapi lto-opt +pgo shadowcallstack"
 # perf-opt
 _ABIS=(
 	abi_x86_32
@@ -296,9 +295,7 @@ REQUIRED_USE+="
 		libcmalloc
 	)
 	!clang? (
-		!cfi-cast
-		!cfi-icall
-		!cfi-vcall
+		!cfi
 		!shadowcallstack
 	)
 	!headless (
@@ -320,21 +317,7 @@ REQUIRED_USE+="
 	branch-protection-standard? (
 		arm64
 	)
-	cfi-cast? (
-		!system-ffmpeg
-		!system-harfbuzz
-		!system-icu
-		!system-libstdcxx
-		cfi-vcall
-	)
-	cfi-icall? (
-		!system-ffmpeg
-		!system-harfbuzz
-		!system-icu
-		!system-libstdcxx
-		cfi-vcall
-	)
-	cfi-vcall? (
+	cfi? (
 		!system-ffmpeg
 		!system-harfbuzz
 		!system-icu
@@ -359,8 +342,7 @@ REQUIRED_USE+="
 		bundled-libcxx
 		partitionalloc
 		amd64? (
-			cfi-icall
-			cfi-vcall
+			cfi
 		)
 	)
 	partitionalloc? (
@@ -389,13 +371,7 @@ REQUIRED_USE+="
 		clang
 	)
 	system-libstdcxx? (
-		!cfi-cast
-	)
-	system-libstdcxx? (
-		!cfi-icall
-	)
-	system-libstdcxx? (
-		!cfi-vcall
+		!cfi
 	)
 	vaapi? ( proprietary-codecs )
 	video_cards_amdgpu? (
@@ -480,13 +456,7 @@ gen_bdepend_llvm() {
 			>=sys-devel/lld-${s}
 			=sys-libs/compiler-rt-${s}*
 			=sys-libs/compiler-rt-sanitizers-${s}*:=[shadowcallstack?]
-			cfi-cast? (
-				=sys-libs/compiler-rt-sanitizers-${s}*:=[cfi]
-			)
-			cfi-icall? (
-				=sys-libs/compiler-rt-sanitizers-${s}*:=[cfi]
-			)
-			cfi-vcall? (
+			cfi? (
 				=sys-libs/compiler-rt-sanitizers-${s}*:=[cfi]
 			)
 		"
@@ -1393,7 +1363,7 @@ ewarn "Wayland by setting DISABLE_OZONE_PLATFORM=true in /etc/chromium/default."
 ewarn
 	fi
 
-	if ! use amd64 && [[ "${USE}" =~ cfi ]] ; then
+	if ! use amd64 && [[ "${USE}" =~ "cfi" ]] ; then
 ewarn
 ewarn "All variations of the cfi USE flags are not defaults for this platform."
 ewarn "Disable them if problematic."
@@ -1407,20 +1377,14 @@ eerror
 		die
 	fi
 
-	if ( \
-		use cfi-cast \
-		|| use cfi-vcall \
-		|| use cfi-icall \
-	) \
-		&& tc-is-cross-compiler ; then
+	if use cfi && tc-is-cross-compiler ; then
 eerror
-eerror "Do not use USE=cfi-cast, USE=cfi-vcall, USE=cfi-icall with"
-eerror "cross-compiling."
+eerror "Do not use USE=cfi with cross-compiling."
 eerror
 		die
 	fi
 
-	if use official || ( use clang && use cfi-vcall && use pgo ) ; then
+	if use official || ( use clang && use cfi && use pgo ) ; then
 		# sys-devel/lld-13 was ~20 mins for v8_context_snapshot_generator
 		# sys-devel/lld-12 was ~4 hrs for v8_context_snapshot_generator
 ewarn
@@ -1948,9 +1912,7 @@ ewarn
 		keeplibs+=( third_party/swiftshader/third_party/llvm-10.0 )
 	fi
 	if ! use system-libstdcxx \
-		|| use cfi-cast \
-		|| use cfi-icall \
-		|| use cfi-vcall \
+		|| use cfi \
 		|| use official ; then
 		keeplibs+=( third_party/libxml )
 		keeplibs+=( third_party/libxslt )
@@ -2179,9 +2141,7 @@ einfo
 	fi
 	# [C]
 	if ! use system-libstdcxx \
-		|| use cfi-cast \
-		|| use cfi-icall \
-		|| use cfi-vcall \
+		|| use cfi \
 		|| use official ; then
 		# Unbundling breaks cfi-icall and cfi-cast.
 		# Unbundling weakens the security because it removes
@@ -2236,13 +2196,7 @@ ewarn
 	# Do not use bundled clang.
 	# Trying to use gold results in linker crash.
 	myconf_gn+=" use_gold=false use_sysroot=false"
-	if use official \
-		&& ( \
-			use cfi-cast \
-			|| use cfi-icall \
-			|| use cfi-vcall \
-		) \
-		|| use bundled-libcxx ; then
+	if use official && use cfi || use bundled-libcxx ; then
 		# If you didn't do systemwide CFI Cross-DSO, it must be static.
 		myconf_gn+=" use_custom_libcxx=true"
 	else
@@ -2474,22 +2428,25 @@ ewarn
 
 
 # See https://github.com/chromium/chromium/blob/104.0.5112.79/build/config/sanitizers/BUILD.gn#L196
-	if use cfi-vcall ; then
+# See https://github.com/chromium/chromium/blob/104.0.5112.79/tools/mb/mb_config.pyl#L2950
+	if use cfi ; then
 		myconf_gn+=" is_cfi=true"
+
+		if [[ "${USE_CFI_CAST}" == "1" ]] ; then
+			myconf_gn+=" use_cfi_cast=true"
+		else
+			myconf_gn+=" use_cfi_cast=false"
+		fi
+
+		if [[ "${USE_CFI_ICALL}" == "1" ]] ; then
+			myconf_gn+=" use_cfi_icall=true"
+		else
+			myconf_gn+=" use_cfi_icall=false"
+		fi
+
 	else
 		myconf_gn+=" is_cfi=false"
-	fi
-
-# See https://github.com/chromium/chromium/blob/104.0.5112.79/tools/mb/mb_config.pyl#L2950
-	if use cfi-cast ; then
-		myconf_gn+=" use_cfi_cast=true"
-	else
 		myconf_gn+=" use_cfi_cast=false"
-	fi
-
-	if use cfi-icall ; then
-		myconf_gn+=" use_cfi_icall=true"
-	else
 		myconf_gn+=" use_cfi_icall=false"
 	fi
 

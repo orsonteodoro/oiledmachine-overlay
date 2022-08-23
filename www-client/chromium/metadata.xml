@@ -36,7 +36,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     USE flag quality status:
 
       cfi - production ready
-      cfi-iuse - production ready
       lto-opt - works if enough total memory
       official - production ready previously but undergoing retesting
       pgo - production ready
@@ -140,21 +139,27 @@ Prebuilt    it    o             o           o              o
       on clang implies ThinLTO on.  (See the lto-opt USE flag description for
       memory requirements if out-of-memory (OOM) problems.)
     </flag>
-    <flag name="cfi-cast">
+    <flag name="cfi">
+      cfi-cast:
       Compile the build with mitigation against possible bad casting
       vulnerabilities.  When a violation is encountered, the program aborts.
-    </flag>
-    <flag name="cfi-icall">
+
+      cfi-icall:
       Compile the build with bad function cast checks and non static function
       pointers checks.  When a violation is encountered, the program aborts.
-    </flag>
-    <flag name="cfi-vcall">
+
+      cfi-vcall:
       Compile the build with Clang Control Flow Integrity (CFI) security
       protections to mitigate against arbitrary code execution caused by from
       memory corruption attempts from forward edge attacks from virtual
       functions.  For backward edge protection see shadowcallstack USE flag.
       The estimated impact is around 1% CPU overhead, around 15% or less code
       size increase.  When a violation is encountered, the program aborts.
+
+      Additional ebuild per-package environment variables:
+
+        USE_CFI_ICALL - 1 to enable (default if cfi enabled), 0 to disable cfi-icall
+        USE_CFI_CAST - 1 to enable (default if cfi enabled), 0 to disable cfi-cast
     </flag>
     <flag name="component-build">
       Split build into more shared libraries to speed up linking. Mostly
