@@ -172,17 +172,17 @@ mozconfig_init() {
 		mozconfig_annotate "less than -O2 causes a breakage on arm with gcc-6" --enable-optimize=-O2
 	elif use custom-optimization || [[ ${ARCH} =~ (alpha|ia64) ]]; then
 		# Set optimization level based on CFLAGS
-		if is-flag -O0; then
+		if is-flagq -O0; then
 			mozconfig_annotate "from CFLAGS" --enable-optimize=-O0
 		elif [[ ${ARCH} == ppc ]] && has_version '>=sys-libs/glibc-2.8'; then
 			mozconfig_annotate "more than -O1 segfaults on ppc with glibc-2.8" --enable-optimize=-O1
-		elif is-flag -O4; then
+		elif is-flagq -O4; then
 			mozconfig_annotate "from CFLAGS" --enable-optimize=-O4
-		elif is-flag -O3; then
+		elif is-flagq -O3; then
 			mozconfig_annotate "from CFLAGS" --enable-optimize=-O3
-		elif is-flag -O1; then
+		elif is-flagq -O1; then
 			mozconfig_annotate "from CFLAGS" --enable-optimize=-O1
-		elif is-flag -Os; then
+		elif is-flagq -Os; then
 			mozconfig_annotate "from CFLAGS" --enable-optimize=-Os
 		else
 			mozconfig_annotate "Gentoo's default optimization" --enable-optimize=-O2
