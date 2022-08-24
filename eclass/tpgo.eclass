@@ -183,17 +183,19 @@ _TPGO_DATA_DIR=${_TPGO_DATA_DIR:-"${TPGO_PROFILES_DIR}/${CATEGORY}/${PN}/${EPGO_
 # 1 for reuse, 0 for no reuse
 # Only the user can decide.  Do not set it in the ebuild.
 
-# @ECLASS_VARIABLE: TPGO_SUFFIX
+# @ECLASS_VARIABLE: TPGO_IMPLS (OPTIONAL)
 # @DESCRIPTION:
 # This sets the suffix for multilib or different implementations.  It should be
 # explicitly be set just before every tpgo_src_prepare, tpgo_src_configure,
 # tpgo_src_compile, tpgo_src_install.
 # Examples:
 #
-# TPGO_SUFFIX=${MULTILIB_ABI_FLAG}.${ABI}"
+# impl="headless"
+# TPGO_IMPLS="_${impl}"
 # tpgo_src_prepare
 #
-# TPGO_SUFFIX=${MULTILIB_ABI_FLAG}.${ABI}_${impl}"
+# impl="simd"
+# TPGO_IMPLS="_${impl}"
 # tpgo_src_prepare
 #
 
@@ -282,8 +284,8 @@ ewarn
 # @DESCRIPTION:
 # Copies an existing profile snapshot into build space.
 _tpgo_prepare_pgo() {
-	local pgo_data_suffix_dir="${EPREFIX}${_TPGO_DATA_DIR}/${TPGO_SUFFIX}"
-	local pgo_data_staging_dir="${T}/pgo-${TPGO_SUFFIX}"
+	local pgo_data_suffix_dir="${EPREFIX}${_TPGO_DATA_DIR}/${_TPGO_SUFFIX}"
+	local pgo_data_staging_dir="${T}/pgo-${_TPGO_SUFFIX}"
 
 	mkdir -p "${pgo_data_staging_dir}" || die
 	if [[ -e "${pgo_data_suffix_dir}" ]] ; then
@@ -300,7 +302,7 @@ _tpgo_prepare_pgo() {
 # TPGO_IMPL to divide PGO profiles if impl exists for example headless and
 # non-headless builds.
 tpgo_src_prepare() {
-	TPGO_SUFFIX=${TPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
+	_TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TPGO_IMPLS}"
 	_tpgo_prepare_pgo
 }
 
@@ -401,7 +403,7 @@ tpgo_meson_src_configure() {
 # building PGO image.
 #
 tpgo_src_configure() {
-	TPGO_SUFFIX=${TPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
+	_TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TPGO_IMPLS}"
 	if [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		if declare -f _tpgo_custom_clean > /dev/null ; then
 			_tpgo_custom_clean
@@ -413,7 +415,7 @@ tpgo_src_configure() {
 	fi
 
 	filter-flags -fprofile*
-	local pgo_data_staging_dir="${T}/pgo-${TPGO_SUFFIX}"
+	local pgo_data_staging_dir="${T}/pgo-${_TPGO_SUFFIX}"
 	mkdir -p "${pgo_data_staging_dir}" || die # Make first demo produce a PGO profile?
 
 	if [[ "${TPGO_CONFIGURE_DONT_SET_FLAGS}" != "1" ]] ; then
@@ -572,8 +574,8 @@ _tpgo_train_default() {
 		done
 	fi
 
-	TPGO_SUFFIX=${TPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
-	local pgo_data_staging_dir="${T}/pgo-${TPGO_SUFFIX}"
+	_TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TPGO_IMPLS}"
+	local pgo_data_staging_dir="${T}/pgo-${_TPGO_SUFFIX}"
 
 	declare -f tpgo_trainer_list > /dev/null \
 		|| die "tpgo_trainer_list must be defined"
@@ -651,7 +653,7 @@ _tpgo_train() {
 # Checks if requirements are met for profile reuse, skipping PGI and PGT
 _tpgo_is_profile_reusable() {
 	if use pgo ; then
-		local pgo_data_staging_dir="${T}/pgo-${TPGO_SUFFIX}"
+		local pgo_data_staging_dir="${T}/pgo-${_TPGO_SUFFIX}"
 
 		if [[ -z "${CC}" ]] ; then
 # This shouldn't set the CC but we have to for -dumpmachine.
@@ -769,7 +771,7 @@ ewarn
 # or to clear the LD_LIBRARY_PATH.
 #
 tpgo_src_compile() {
-	TPGO_SUFFIX=${TPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
+	_TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TPGO_IMPLS}"
 	local is_pgoable=1
 	if declare -f tpgo_meets_requirements > /dev/null ; then
 		if tpgo_meets_requirements ; then
@@ -870,8 +872,8 @@ fi
 # Saves the profile to skip instrumentation on patch releases
 tpgo_src_install() {
 	if use pgo && [[ "${TPGO_PROFILES_REUSE:-1}" == "1" ]] ; then
-		TPGO_SUFFIX=${TPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
-		local pgo_data_suffix_dir="${_EPGO_DATA_DIR}/${TPGO_SUFFIX}"
+		_TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TPGO_IMPLS}"
+		local pgo_data_suffix_dir="${_EPGO_DATA_DIR}/${_TPGO_SUFFIX}"
 		keepdir "${pgo_data_suffix_dir}"
 
 		if [[ -z "${CC}" ]] ; then

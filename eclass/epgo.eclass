@@ -31,7 +31,7 @@ esac
 # Example:
 # EPGO_FORCE_PGI=1 emerge foo
 
-# @ECLASS_VARIABLE: EPGO_SUFFIX
+# @ECLASS_VARIABLE: EPGO_IMPLS (OPTIONAL)
 # @DESCRIPTION:
 # This variable should be expliclity set with multibuild based ebuilds
 # (cmake-multilib, multilib-minimal, multilib-build, meson-multilib)
@@ -40,13 +40,13 @@ esac
 # Sets the suffix to isolate PGO profiles (e.g. 32-bit, 64-bit).  Different
 # implementations should attach and define impl like one of the examples
 # below.
-# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
-# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl}"
-# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl1}_${impl2}"
-# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl1}_${impl2}_${impl3}"
+# EPGO_IMPLS="_${impl}"
+# EPGO_IMPLS="_${impl1}_${impl2}"
+# EPGO_IMPLS="_${impl1}_${impl2}_${impl3}"
 #
 # Example:
-# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
+# impl="headless"
+# EPGO_IMPLS="_${impl}"
 # epgo_src_prepare
 #
 
@@ -127,8 +127,8 @@ epgo_setup() {
 # @DESCRIPTION:
 # Copies an existing profile snapshot into build space.
 _epgo_prepare_pgo() {
-	local pgo_data_suffix_dir="${EPREFIX}${_EPGO_DATA_DIR}/${EPGO_SUFFIX}"
-	local pgo_data_staging_dir="${T}/pgo-${EPGO_SUFFIX}"
+	local pgo_data_suffix_dir="${EPREFIX}${_EPGO_DATA_DIR}/${_EPGO_SUFFIX}"
+	local pgo_data_staging_dir="${T}/pgo-${_EPGO_SUFFIX}"
 
 	mkdir -p "${pgo_data_staging_dir}" || die
 	if [[ -e "${pgo_data_suffix_dir}" ]] ; then
@@ -145,7 +145,7 @@ _epgo_prepare_pgo() {
 # EPGO_IMPL to divide PGO profiles if impl exists for example headless and
 # non-headless builds.
 epgo_src_prepare() {
-	EPGO_SUFFIX=${EPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
+	_EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${EPGO_IMPLS}"
 	_epgo_prepare_pgo
 }
 
@@ -155,8 +155,8 @@ epgo_src_prepare() {
 # Setup compiler flags
 _epgo_configure() {
 	filter-flags '-fprofile*'
-	local pgo_data_suffix_dir="${EPREFIX}${_EPGO_DATA_DIR}/${EPGO_SUFFIX}"
-	local pgo_data_staging_dir="${T}/pgo-${EPGO_SUFFIX}"
+	local pgo_data_suffix_dir="${EPREFIX}${_EPGO_DATA_DIR}/${_EPGO_SUFFIX}"
+	local pgo_data_staging_dir="${T}/pgo-${_EPGO_SUFFIX}"
 	mkdir -p "${ED}/${pgo_data_dir}" || die
 	use epgo && addpredict "${EPREFIX}${EPGO_PROFILES_DIR}"
 	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
@@ -194,7 +194,7 @@ eerror
 # @DESCRIPTION:
 # You must call this in *src_configure
 epgo_src_configure() {
-	EPGO_SUFFIX=${EPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
+	_EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${EPGO_IMPLS}"
 	_epgo_configure
 }
 
@@ -204,7 +204,7 @@ epgo_src_configure() {
 # Checks if requirements are met
 _epgo_meets_pgo_requirements() {
 	if use epgo ; then
-		local pgo_data_staging_dir="${T}/pgo-${EPGO_SUFFIX}"
+		local pgo_data_staging_dir="${T}/pgo-${_EPGO_SUFFIX}"
 
 		if [[ -z "${CC}" ]] ; then
 # This shouldn't set the CC but we have to for -dumpmachine.
@@ -274,7 +274,7 @@ ewarn
 # Reports the current PGO phase
 epgo_get_phase() {
 	local result="NO_PGO"
-	EPGO_SUFFIX=${EPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
+	_EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${EPGO_IMPLS}"
 	_epgo_meets_pgo_requirements
 	local ret=$?
 	if ! use epgo ; then
@@ -296,8 +296,8 @@ epgo_get_phase() {
 # You must call it in *src_install
 epgo_src_install() {
 	if use epgo ; then
-		EPGO_SUFFIX=${EPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
-		local pgo_data_suffix_dir="${_EPGO_DATA_DIR}/${EPGO_SUFFIX}"
+		_EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${EPGO_IMPLS}"
+		local pgo_data_suffix_dir="${_EPGO_DATA_DIR}/${_EPGO_SUFFIX}"
 		keepdir "${pgo_data_suffix_dir}"
 		fowners root:${EPGO_GROUP} "${pgo_data_suffix_dir}"
 		fperms 0775 "${pgo_data_suffix_dir}"
