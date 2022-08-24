@@ -73,6 +73,13 @@
     You should only pick PGO trainers that reflect typical use or it may
     result in performance degration.
 
+    Additional environment variables
+
+    LIBAOM_PGO_BPP_MAX - The maximum bits per pixel corresponding to motion.
+			 The typical is 0.15, but the default is 1.0
+    LIBAOM_PGO_BPP_MAX - The minimum bits per pixel corresponding to stationary.
+			 The defualt is 0.05.
+
   </longdescription>
   <use>
     <flag name="asm">Use the optimized assembly based code paths</flag>

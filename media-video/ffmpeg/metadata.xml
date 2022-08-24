@@ -134,6 +134,14 @@
 	Not doing so will result in increased code size and performance
 	degradation.
 
+	Additional environment variables:
+
+	FFMPEG_PGO_BPP_MAX - Bits per pixel corresponding to motion.  Higher
+	  means more quality.  0.15 is typical max.  The default is 1.0.
+
+	FFMPEG_PGO_BPP_MIN - Bits per pixel corresponding to stationary. 
+	  The default is 0.5.
+
 	Since it would be impratical to permute and PGO train the
 	possible features and settings of the software to PGO optimize, the
 	pgo-custom-audio and pgo-custom-video USE flags were provided to

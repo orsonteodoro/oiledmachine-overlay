@@ -381,9 +381,12 @@ _trainer_plan_constrained_quality_training_session() {
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local duration=$(echo "${entry}" | cut -f 4 -d ";")
-	local maxrate=$(echo "${entry}" | cut -f 5 -d ";")
-	local minrate=$(echo "${entry}" | cut -f 6 -d ";")
-	local avgrate=$(echo "${entry}" | cut -f 7 -d ";")
+	local max_bpp=${LIBAOM_PGO_BPP_MAX:-1.0}
+	local min_bpp=${LIBAOM_PGO_BPP_MAX:-0.5}
+	local avg_bpp=$(python -c "print((${max_bpp}+${min_bpp})/2)")
+	local maxrate=$(python -c "print(${width}*${height}*${fps}*${LIBAOM_PGO_BPP_MAX})") # moving
+	local minrate=$(python -c "print(${width}*${height}*${fps}*${LIBAOM_PGO_BPP_MIN})") # stationary
+	local avgrate=$(python -c "print(${width}*${height}*${fps}*${avg_bpp}")"k" # average BPP (bits per pixel)
 
 	local cmd
 	einfo "Encoding as ${height}p for ${duration} sec, ${fps} fps"
@@ -405,14 +408,21 @@ _trainer_plan_constrained_quality_training_session() {
 }
 
 _trainer_plan_constrained_quality() {
-	# TODO: mobile resolutions
 	local L=(
-		"30;1280;720;3;1485;512;1024k"
-		"60;1280;720;3;2610;900;1800k"
-		"30;1920;1080;3;2610;900;1800k"
-		"60;1920;1080;3;4350;1500;3000k"
-		"30;3840;2160;3;17400;6000;12000k"
-		"60;3840;2160;3;26100;9000;18000k"
+		"30;426;240;3"
+		"60;426;240;3"
+		"30;640;360;3"
+		"60;640;360;3"
+		"30;854;480;3"
+		"60;854;480;3"
+		"30;1280;720;3"
+		"60;1280;720;3"
+		"30;1920;1080;3"
+		"60;1920;1080;3"
+		"30;2560;1440;3"
+		"60;2560;1440;3"
+		"30;3840;2160;3"
+		"60;3840;2160;3"
 	)
 
 	if use pgo && tpgo_meets_requirements ; then
@@ -436,9 +446,12 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local duration=$(echo "${entry}" | cut -f 4 -d ";")
-	local maxrate=$(echo "${entry}" | cut -f 5 -d ";")
-	local minrate=$(echo "${entry}" | cut -f 6 -d ";")
-	local avgrate=$(echo "${entry}" | cut -f 7 -d ";")
+	local max_bpp=${LIBAOM_PGO_BPP_MAX:-1.0}
+	local min_bpp=${LIBAOM_PGO_BPP_MAX:-0.5}
+	local avg_bpp=$(python -c "print((${max_bpp}+${min_bpp})/2)")
+	local maxrate=$(python -c "print(${width}*${height}*${fps}*${LIBAOM_PGO_BPP_MAX})") # moving
+	local minrate=$(python -c "print(${width}*${height}*${fps}*${LIBAOM_PGO_BPP_MIN})") # stationary
+	local avgrate=$(python -c "print(${width}*${height}*${fps}*${avg_bpp}")"k" # average BPP (bits per pixel)
 
 	local cmd
 	einfo "Encoding as ${height}p for ${duration} sec, ${fps} fps"
@@ -476,14 +489,21 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 }
 
 _trainer_plan_2_pass_constrained_quality() {
-	# TODO: mobile resolutions
 	local L=(
-		"30;1280;720;3;1485;512;1024k"
-		"60;1280;720;3;2610;900;1800k"
-		"30;1920;1080;3;2610;900;1800k"
-		"60;1920;1080;3;4350;1500;3000k"
-		"30;3840;2160;3;17400;6000;12000k"
-		"60;3840;2160;3;26100;9000;18000k"
+		"30;426;240;3"
+		"60;426;240;3"
+		"30;640;360;3"
+		"60;640;360;3"
+		"30;854;480;3"
+		"60;854;480;3"
+		"30;1280;720;3"
+		"60;1280;720;3"
+		"30;1920;1080;3"
+		"60;1920;1080;3"
+		"30;2560;1440;3"
+		"60;2560;1440;3"
+		"30;3840;2160;3"
+		"60;3840;2160;3"
 	)
 
 	if use pgo && tpgo_meets_requirements ; then
