@@ -1610,6 +1610,10 @@ ewarn
 		"${FILESDIR}/chromium-cross-compile.patch"
 	)
 
+	if use epgo ; then
+		ceapply "${FILESDIR}/extra-patches/chromium-104.0.5112.79-gcc-pgo-link-gcov.patch"
+	fi
+
 	if use clang ; then
 		if tc-is-clang ; then # Duplicate conditional is for testing reasons
 			# Using gcc with these patches results in this error:
@@ -2380,6 +2384,7 @@ einfo
 	else
 		EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
 		epgo_src_configure
+		[[ "${PGO_PHASE}" == "PGI" ]] && myconf_gn+=" gcc_pgi=true"
 	fi
 
 	# Explicitly disable ICU data file support for system-icu/headless builds.
