@@ -294,6 +294,7 @@ IUSE+=" pgo
 	pgo-trainer-video-2-pass-constrained-quality
 	pgo-trainer-video-constrained-quality
 	pgo-trainer-video-lossless
+	pgo-trainer-video-streaming
 "
 
 # Strings for CPU features in the useflag[:configure_option] form
@@ -525,6 +526,8 @@ REQUIRED_USE+="
 	pgo-trainer-video-2-pass-constrained-quality? ( pgo )
 	pgo-trainer-video-constrained-quality? ( pgo )
 	pgo-trainer-video-lossless? ( pgo )
+	pgo-trainer-video-streaming ( pgo libv4l )
+	!pgo-trainer-video-streaming
 "
 RESTRICT="
 	!test? ( test )
