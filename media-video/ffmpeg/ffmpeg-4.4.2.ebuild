@@ -1101,10 +1101,10 @@ _trainer_plan_video_constrained_quality_training_session() {
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local duration=$(echo "${entry}" | cut -f 4 -d ";")
 	local max_bpp=${FFMPEG_PGO_BPP_MAX:-1.0}
-	local min_bpp=${FFMPEG_PGO_BPP_MAX:-0.5}
+	local min_bpp=${FFMPEG_PGO_BPP_MIN:-0.5}
 	local avg_bpp=$(python -c "print((${max_bpp}+${min_bpp})/2)")
-	local maxrate=$(python -c "print(${width}*${height}*${fps}*${FFMPEG_PGO_BPP_MAX})") # moving
-	local minrate=$(python -c "print(${width}*${height}*${fps}*${FFMPEG_PGO_BPP_MIN})") # stationary
+	local maxrate=$(python -c "print(${width}*${height}*${fps}*${max_bpp})") # moving
+	local minrate=$(python -c "print(${width}*${height}*${fps}*${min_bpp})") # stationary
 	local avgrate=$(python -c "print(${width}*${height}*${fps}*${avg_bpp}")"k" # average BPP (bits per pixel)
 
 	einfo "Encoding as ${height}p for ${duration} sec, ${fps} fps"
@@ -1179,10 +1179,10 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local duration=$(echo "${entry}" | cut -f 4 -d ";")
 	local max_bpp=${FFMPEG_PGO_BPP_MAX:-1.0}
-	local min_bpp=${FFMPEG_PGO_BPP_MAX:-0.5}
+	local min_bpp=${FFMPEG_PGO_BPP_MIN:-0.5}
 	local avg_bpp=$(python -c "print((${max_bpp}+${min_bpp})/2)")
-	local maxrate=$(python -c "print(${width}*${height}*${fps}*${FFMPEG_PGO_BPP_MAX})") # moving
-	local minrate=$(python -c "print(${width}*${height}*${fps}*${FFMPEG_PGO_BPP_MIN})") # stationary
+	local maxrate=$(python -c "print(${width}*${height}*${fps}*${max_bpp})") # moving
+	local minrate=$(python -c "print(${width}*${height}*${fps}*${min_bpp})") # stationary
 	local avgrate=$(python -c "print(${width}*${height}*${fps}*${avg_bpp}")"k" # average BPP (bits per pixel)
 
 	local cmd
