@@ -171,6 +171,12 @@ EOF
 
 	cmake_src_prepare
 	java-pkg-opt-2_src_prepare
+
+	prepare_abi() {
+		TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
+		tpgo_src_prepare
+	}
+	multilib_foreach_abi prepare_abi
 }
 
 tpgo_meets_requirements() {
@@ -207,6 +213,7 @@ _src_configure() {
 		)
 	fi
 
+	TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
 	tpgo_src_configure
 	if use pgo && tc-is-clang ; then
 		append-flags $(test-flags -Wno-backend-plugin)
@@ -389,6 +396,7 @@ src_compile() {
 	export PATH="${ED}/usr/bin:${PATH}"
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
+			TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
 			tpgo_src_compile
 		done
 	}
@@ -432,6 +440,8 @@ src_install() {
 			export BUILD_DIR="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			_install
+			TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
+			tpgo_src_install
 		done
 	}
 	multilib_foreach_abi install_abi
