@@ -103,6 +103,10 @@
 # @DESCRIPTION:
 # Runs GUI in X.  You can use console apps in this also.
 
+# @ECLASS_VARIABLE: TPGO_NO_X_DEPENDS
+# @DESCRIPTION:
+# Disables X depends
+
 # @ECLASS_VARIABLE: TPGO_SANDBOX_EXCEPTION_GLSL
 # @DESCRIPTION:
 # Add sandbox exceptions for GLSL.
@@ -144,6 +148,41 @@ TPGO_CONFIGURE_DONT_SET_FLAGS=${TPGO_CONFIGURE_DONT_SET_FLAGS:-0}
 # If using GCC PGO, you may need to add -lgcov to LIBS or modify the build
 # files but only in PGI phase.
 
+# @ECLASS_VARIABLE: TPGO_PROFILES_DIR
+# @DESCRIPTION:
+# Sets the location to dump PGO profiles.
+TPGO_PROFILES_DIR=${TPGO_PROFILES_DIR:-"/var/lib/pgo-profiles"}
+
+# @ECLASS_VARIABLE: _TPGO_PV
+# @INTERNAL
+# @DESCRIPTION:
+# Default PV with breaking changes when bumped.
+_TPGO_PV=$(ver_cut 1-2 ${PV}) # default
+
+# @ECLASS_VARIABLE: TPGO_PV
+# @DESCRIPTION:
+# Set to the PV range which can cause breakage when bumped.  Excludes non
+# breaking patch versions.
+TPGO_PV=${TPGO_PV:-${_TPGO_PV}}
+
+# @ECLASS_VARIABLE: _TPGO_CATPN_DATA_DIR
+# @INTERNAL
+# @DESCRIPTION:
+# The path to the program PGO profile with general package id specificity.
+_TPGO_CATPN_DATA_DIR=${_TPGO_CATPN_DATA_DIR:-"${TPGO_PROFILES_DIR}/${CATEGORY}/${PN}"}
+
+# @ECLASS_VARIABLE: _TPGO_DATA_DIR
+# @INTERNAL
+# @DESCRIPTION:
+# The path to the program PGO profile with version specificity.
+_TPGO_DATA_DIR=${_TPGO_DATA_DIR:-"${TPGO_PROFILES_DIR}/${CATEGORY}/${PN}/${EPGO_PV}"}
+
+# @ECLASS_VARIABLE: TPGO_PROFILES_REUSE
+# @DESCRIPTION:
+# Allow to enable or disable profile reuse.
+# 1 for reuse, 0 for no reuse
+# Only the user can decide.  Do not set it in the ebuild.
+
 inherit flag-o-matic toolchain-funcs
 if [[ "${TPGO_USE_X}" == "1" ]] ;then
 	inherit virtualx
@@ -152,15 +191,30 @@ if [[ "${TPGO_MULTILIB}" == "1" ]] ; then
 	inherit multilib-build
 fi
 
+__VIRTX_BDEPENDS="
+	x11-base/xorg-server[xvfb]
+	x11-apps/xhost
+"
+
 IUSE+=" pgo"
-if [[ "${TPGO_USE_X}" == "1" ]] ;then
+if [[ "${TPGO_USE_X}" == "1" && "${TPGO_NO_X_DEPENDS}" != "1" ]] ;then
 	BDEPEND+="
 		pgo? (
-			x11-base/xorg-server[xvfb]
-			x11-apps/xhost
+			${__VIRTX_BDEPENDS}
 		)
 	"
 fi
+
+tpgo-check-x() {
+	local pkg
+	for pkg in ${__VIRTX_BDEPENDS[@]} ; do
+		if ! has_version "${pkg}" ; then
+ewarn
+ewarn "${pkg} is required for PGO"
+ewarn
+		fi
+	done
+}
 
 # @ECLASS_VARIABLE: TPGO_TEST_DURATION
 # @DESCRIPTION:
@@ -197,37 +251,76 @@ eerror "Add src_configure() { :; }"
 eerror
 #		die
 	fi
+	if (( $(declare -f _src_configure | wc -c) == 0 )) ; then
+ewarn
+ewarn "_src_configure should be defined"
+ewarn
+	fi
+	if (( $(declare -f _src_compile | wc -c) == 0 )) ; then
+ewarn
+ewarn "_src_configure should be defined"
+ewarn
+	fi
+}
+
+# @FUNCTION: _tpgo_prepare_pgo
+# @INTERNAL
+# @DESCRIPTION:
+# Copies an existing profile snapshot into build space.
+_tpgo_prepare_pgo() {
+	local pgo_data_suffix_dir="${EPREFIX}${_TPGO_DATA_DIR}/${TPGO_SUFFIX}"
+	local pgo_data_staging_dir="${T}/pgo-${TPGO_SUFFIX}"
+
+	mkdir -p "${pgo_data_staging_dir}" || die
+	if [[ -e "${pgo_data_suffix_dir}" ]] ; then
+		cp -aT "${pgo_data_suffix_dir}" "${pgo_data_staging_dir}" || die
+	fi
+	touch "${pgo_data_staging_dir}/compiler_fingerprint" || die
+}
+
+# @FUNCTION: tpgo_src_prepare
+# @DESCRIPTION:
+# You must call this inside the multibuild loop in src_prepare or in a
+# *src_prepare multibuild variant.  It has to be inside the loop so that the
+# TPGO_IMPL can divide the pgo profile per ABI or module.  You must define
+# TPGO_IMPL to divide PGO profiles if impl exists for example headless and
+# non-headless builds.
+tpgo_src_prepare() {
+	TPGO_SUFFIX=${TPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
+	_tpgo_prepare_pgo
 }
 
 # @FUNCTION: _tpgo_configure
 # @INTERNAL
 # @DESCRIPTION:
 # Sets up PGO flags
+# Note:  -fprofile-correction may break build system detection of -pthread.  Just
+# use filter-flags -fprofile-correction if it complains about mutex.
 _tpgo_configure() {
 	if use pgo && [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		einfo "Setting up PGI"
 		if tc-is-clang ; then
 			append-flags \
-				-fprofile-generate="${pgo_data_dir}"
+				-fprofile-generate="${pgo_data_staging_dir}"
 		else
 			append-flags \
 				-fprofile-generate \
-				-fprofile-dir="${pgo_data_dir}"
+				-fprofile-dir="${pgo_data_staging_dir}"
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		einfo "Setting up PGO"
 		if tc-is-clang ; then
 			llvm-profdata \
 				merge \
-				-output="${pgo_data_dir}/pgo-custom.profdata" \
-				"${pgo_data_dir}" || die
+				-output="${pgo_data_staging_dir}/pgo-custom.profdata" \
+				"${pgo_data_staging_dir}" || die
 			append-flags \
-				-fprofile-use="${pgo_data_dir}/pgo-custom.profdata"
+				-fprofile-use="${pgo_data_staging_dir}/pgo-custom.profdata"
 		else
 			append-flags \
 				-fprofile-correction \
 				-fprofile-use \
-				-fprofile-dir="${pgo_data_dir}"
+				-fprofile-dir="${pgo_data_staging_dir}"
 		fi
 	fi
 }
@@ -306,8 +399,8 @@ tpgo_src_configure() {
 	fi
 
 	filter-flags -fprofile*
-	local pgo_data_dir="${T}/pgo-${TPGO_SUFFIX}"
-	mkdir -p "${pgo_data_dir}" || die # Make first demo produce a PGO profile?
+	local pgo_data_staging_dir="${T}/pgo-${TPGO_SUFFIX}"
+	mkdir -p "${pgo_data_staging_dir}" || die # Make first demo produce a PGO profile?
 
 	if [[ "${TPGO_CONFIGURE_DONT_SET_FLAGS}" != "1" ]] ; then
 		_tpgo_configure
@@ -466,7 +559,7 @@ _tpgo_train_default() {
 	fi
 
 	TPGO_SUFFIX=${TPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
-	local pgo_data_dir="${T}/pgo-${TPGO_SUFFIX}"
+	local pgo_data_staging_dir="${T}/pgo-${TPGO_SUFFIX}"
 
 	declare -f tpgo_trainer_list > /dev/null \
 		|| die "tpgo_trainer_list must be defined"
@@ -486,14 +579,14 @@ _tpgo_train_default() {
 		# Even after inspecting the log, it is over-engineered and
 		# gross.
 		if use pgo && [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
-			if ! find "${pgo_data_dir}" -name "*.gcda" \
+			if ! find "${pgo_data_staging_dir}" -name "*.gcda" \
 				2>/dev/null 1>/dev/null ; then
 ewarn
 ewarn "Didn't generate a PGO profile"
 ewarn
 			fi
 		elif use pgo && [[ "${CC}" =~ "clang" ]] ; then
-			if ! find "${pgo_data_dir}" -name "*.profraw" \
+			if ! find "${pgo_data_staging_dir}" -name "*.profraw" \
 				2>/dev/null 1>/dev/null ; then
 ewarn
 ewarn "Didn't generate a PGO profile"
@@ -503,14 +596,14 @@ ewarn
 	done
 	IFS=$' \t\n'
 	if use pgo && [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
-		if ! find "${pgo_data_dir}" -name "*.gcda" ; then
+		if ! find "${pgo_data_staging_dir}" -name "*.gcda" ; then
 eerror
 eerror "Didn't generate a PGO profile"
 eerror
 			die
 		fi
 	elif use pgo && [[ "${CC}" =~ "clang" ]] ; then
-		if ! find "${pgo_data_dir}" -name "*.profraw" ; then
+		if ! find "${pgo_data_staging_dir}" -name "*.profraw" ; then
 eerror
 eerror "Didn't generate a PGO profile"
 eerror
@@ -537,6 +630,78 @@ _tpgo_train() {
 		_tpgo_train_default
 	fi
 }
+
+# @FUNCTION: _tpgo_is_profile_reusable
+# @INTERNAL
+# @DESCRIPTION:
+# Checks if requirements are met for profile reuse, skipping PGI and PGT
+_tpgo_is_profile_reusable() {
+	if use pgo ; then
+		local pgo_data_staging_dir="${T}/pgo-${TPGO_SUFFIX}"
+
+		if [[ -z "${CC}" ]] ; then
+# This shouldn't set the CC but we have to for -dumpmachine.
+			export CC=$(tc-getCC)
+			export CXX=$(tc-getCXX)
+		fi
+einfo
+einfo "CC=${CC}"
+einfo "CXX=${CXX}"
+einfo
+
+		touch "${pgo_data_staging_dir}/compiler_fingerprint" \
+			|| die "You must call tpgo_src_prepare before calling tpgo_src_compile"
+		# Has same compiler?
+		if tc-is-gcc ; then
+			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
+			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
+			if [[ "${actual}" != "${expected}" ]] ; then
+ewarn
+ewarn "GCC incompatable:"
+ewarn
+ewarn "actual: ${actual}"
+ewarn "expected: ${expected}"
+ewarn
+				return 1
+			fi
+		elif tc-is-clang ; then
+			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
+			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
+			if [[ "${actual}" != "${expected}" ]] ; then
+ewarn
+ewarn "Clang incompatable:"
+ewarn
+ewarn "actual: ${actual}"
+ewarn "expected: ${expected}"
+ewarn
+				return 1
+			fi
+		else
+			return 2
+ewarn
+ewarn "Compiler is not supported."
+ewarn
+		fi
+
+		# Has profile?
+		if tc-is-gcc && find "${pgo_data_staging_dir}" -name "*.gcda" \
+			2>/dev/null 1>/dev/null ; then
+			:; # pass
+		elif tc-is-clang && find "${pgo_data_staging_dir}" -name "*.profraw" \
+			2>/dev/null 1>/dev/null ; then
+			:; # pass
+		else
+ewarn
+ewarn "NO PGO PROFILE"
+ewarn
+			return 1
+		fi
+
+		return 0
+	fi
+	return 1
+}
+
 
 # It is recommended to use (nested) loops instead of event handlers.
 # The event handlers/eclass hide the information away from you.
@@ -590,6 +755,7 @@ _tpgo_train() {
 # or to clear the LD_LIBRARY_PATH.
 #
 tpgo_src_compile() {
+	TPGO_SUFFIX=${TPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
 	local is_pgoable=1
 	if declare -f tpgo_meets_requirements > /dev/null ; then
 		if tpgo_meets_requirements ; then
@@ -601,16 +767,32 @@ tpgo_src_compile() {
 einfo
 einfo "is_pgoable=${is_pgoable}"
 einfo
+
+	local skip_pgi="no"
+	_tpgo_is_profile_reusable
+	local ret_reuse="$?" # 0 = yes, 1 = no, 2 = unsupported_compiler
+	if [[ "${TPGO_PROFILES_REUSE:-1}" != "1" ]] ; then
+		:;
+	elif [[ "${ret_reuse}" == "0" ]] ; then
+		skip_pgi="yes"
+	fi
+
+einfo
+einfo "is_profile_reusable=${skip_pgi} "
+einfo
+
 	if use pgo && (( ${is_pgoable} == 1 )) ; then
-		PGO_PHASE="PGI"
-		declare -f _src_pre_pgi > /dev/null && _src_pre_pgi
-		declare -f _src_prepare > /dev/null && _src_prepare
-		declare -f _src_configure > /dev/null && _src_configure
-		declare -f _src_compile > /dev/null && _src_compile
-		declare -f _src_post_pgi > /dev/null && _src_post_pgi
-		declare -f _src_pre_train > /dev/null && _src_pre_train
-		_tpgo_train
-		declare -f _src_post_train > /dev/null && _src_post_train
+		if [[ "${skip_pgi}" == "no" ]] ; then
+			PGO_PHASE="PGI"
+			declare -f _src_pre_pgi > /dev/null && _src_pre_pgi
+			declare -f _src_prepare > /dev/null && _src_prepare
+			declare -f _src_configure > /dev/null && _src_configure
+			declare -f _src_compile > /dev/null && _src_compile
+			declare -f _src_post_pgi > /dev/null && _src_post_pgi
+			declare -f _src_pre_train > /dev/null && _src_pre_train
+			_tpgo_train
+			declare -f _src_post_train > /dev/null && _src_post_train
+		fi
 		PGO_PHASE="PGO"
 		declare -f _src_pre_pgo > /dev/null && _src_prep_pgo
 		declare -f _src_prepare > /dev/null && _src_prepare
@@ -668,3 +850,37 @@ tpgo_multilib_src_compile() {
 	multilib_foreach_abi tpgo_compile_abi
 }
 fi
+
+# @FUNCTION: tpgo_src_install
+# @DESCRIPTION:
+# Saves the profile to skip instrumentation on patch releases
+tpgo_src_install() {
+	if use pgo && [[ "${TPGO_PROFILES_REUSE:-1}" == "1" ]] ; then
+		TPGO_SUFFIX=${TPGO_SUFFIX:-"${MULTILIB_ABI_FLAG}.${ABI}"}
+		local pgo_data_suffix_dir="${_EPGO_DATA_DIR}/${TPGO_SUFFIX}"
+		keepdir "${pgo_data_suffix_dir}"
+
+		if [[ -z "${CC}" ]] ; then
+			# It should be done earlier.
+			export CC=$(tc-getCC)
+			export CXX=$(tc-getCXX)
+		fi
+
+		cp -aT \
+			"${pgo_data_staging_dir}" \
+			"${pgo_data_suffix_dir}" \
+			|| die
+
+		if tc-is-gcc ; then
+			"${CC}" -dumpmachine \
+				> "${ED}/${pgo_data_suffix_dir}/compiler" || die
+			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+				> "${ED}/${pgo_data_suffix_dir}/compiler_fingerprint" || die
+		elif tc-is-clang ; then
+			"${CC}" -dumpmachine \
+				> "${ED}/${pgo_data_suffix_dir}/compiler" || die
+			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+				> "${ED}/${pgo_data_suffix_dir}/compiler_fingerprint" || die
+		fi
+	fi
+}

@@ -4,7 +4,9 @@
 
 EAPI=8
 
-inherit flag-o-matic autotools multilib-minimal
+TPGO_USE_X=0
+TPGO_NO_X_DEPENDS=1
+inherit flag-o-matic autotools multilib-minimal toolchain-funcs tpgo virtualx
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
@@ -19,16 +21,14 @@ DESCRIPTION="A vector graphics library with cross-device output support"
 HOMEPAGE="https://www.cairographics.org/ https://gitlab.freedesktop.org/cairo/cairo"
 LICENSE="|| ( LGPL-2.1 MPL-1.1 )"
 SLOT="0"
-IUSE="X aqua debug gles2-only +glib opengl static-libs +svg utils valgrind"
+IUSE="X aqua debug gles2-only +glib opengl static-libs +svg test utils valgrind"
 # gtk-doc regeneration doesn't seem to work with out-of-source builds
 #[[ ${PV} == *9999* ]] && IUSE="${IUSE} doc" # API docs are provided in tarball, no need to regenerate
 
-# Test causes a circular depend on gtk+... since gtk+ needs cairo but test needs gtk+ so we need to block it
-RESTRICT="test"
-
 BDEPEND="
 	virtual/pkgconfig
-	>=sys-devel/libtool-2"
+	>=sys-devel/libtool-2
+"
 RDEPEND="
 	>=dev-libs/lzo-2.06-r1[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.10.92[${MULTILIB_USEDEP}]
@@ -45,9 +45,12 @@ RDEPEND="
 		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libxcb-1.9.1[${MULTILIB_USEDEP}]
-	)"
-DEPEND="${RDEPEND}
-	X? ( x11-base/xorg-proto )"
+	)
+"
+DEPEND="
+	${RDEPEND}
+	X? ( x11-base/xorg-proto )
+"
 #[[ ${PV} == *9999* ]] && DEPEND="${DEPEND}
 #	doc? (
 #		>=dev-util/gtk-doc-1.6
@@ -66,6 +69,11 @@ PATCHES=(
 	"${FILESDIR}"/${P}-strings.patch
 	"${FILESDIR}"/${PN}-1.16.0-check-redefinition-xrender.patch
 )
+
+pkg_setup() {
+	tpgo_setup
+	use pgo && use X && tpgo-check-x
+}
 
 src_prepare() {
 	default
@@ -87,16 +95,36 @@ src_prepare() {
 	fi
 
 	eautoreconf
+
+	prepare_abi() {
+		cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
+		tpgo_src_prepare
+	}
+
+	multilib_foreach_abi prepare_abi
 }
 
-multilib_src_configure() {
+src_configure() { :; }
+
+_src_configure() {
+	cd "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
+	[[ -e "Makefile" ]] && emake clean
+	tpgo_src_configure
+	filter-flags -fprofile-correction # breaks build
 	local myopts
+
+        if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then
+                append-flags -Wno-error=coverage-mismatch
+		append-ldflags -Wno-error=coverage-mismatch
+        fi
 
 	[[ ${CHOST} == *-interix* ]] && append-flags -D_REENTRANT
 
 	# [[ ${PV} == *9999* ]] && myopts+=" $(use_enable doc gtk-doc)"
 
-	ECONF_SOURCE="${S}" \
+	export CFLAGS CXXFLAGS
+
+	ECONF_SOURCE="${S}-${MULTILIB_ABI_FLAG}.${ABI}" \
 	econf \
 		$(use_with X x) \
 		$(use_enable X tee) \
@@ -129,10 +157,51 @@ multilib_src_configure() {
 		${myopts}
 }
 
+_src_compile() {
+	cd "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
+	emake
+}
+
+src_compile() {
+	compile_abi() {
+		cd "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
+		TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
+		tpgo_src_compile
+	}
+	multilib_foreach_abi compile_abi
+}
+
+tpgo_meets_requirements() {
+	use X && ( \
+		   ! has_version "x11-base/xorg-server[xvfb]" \
+		&& ! has_version "x11-apps/xhost" \
+	) && return 1
+	return 0
+}
+
+tpgo_train_custom() {
+	make test || true
+}
+
+src_install() {
+	multilib-minimal_src_install
+	install_abi() {
+		tpgo_src_install
+	}
+	multilib_foreach_abi install_abi
+}
+
+src_test() {
+	test_abi() {
+		emake test
+	}
+	multilib_foreach_abi test_abi
+}
+
 multilib_src_install_all() {
 	find "${D}" -name '*.la' -delete || die
 	einstalldocs
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
-# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  apply-patch-bugfix
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  apply-patch-bugfix, pgo
