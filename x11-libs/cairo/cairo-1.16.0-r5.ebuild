@@ -110,7 +110,6 @@ _src_configure() {
 	cd "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
 	[[ -e "Makefile" ]] && emake clean
 	tpgo_src_configure
-	filter-flags -fprofile-correction # breaks build
 	local myopts
 
         if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then

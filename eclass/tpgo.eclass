@@ -310,8 +310,6 @@ tpgo_src_prepare() {
 # @INTERNAL
 # @DESCRIPTION:
 # Sets up PGO flags
-# Note:  -fprofile-correction may break build system detection of -pthread.  Just
-# use filter-flags -fprofile-correction if it complains about mutex.
 _tpgo_configure() {
 	if use pgo && [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		einfo "Setting up PGI"
