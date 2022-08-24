@@ -1244,7 +1244,7 @@ is_profdata_compatible() {
 
 # Check the system for security weaknesses.
 check_deps_cfi_cross_dso() {
-	if ! use cfi-vcall ; then
+	if ! use cfi ; then
 einfo
 einfo "Skipping CFI Cross-DSO checks"
 einfo
