@@ -189,6 +189,7 @@ src_prepare() {
 		for lib_type in $(get_lib_types) ; do
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			cp -a "${S}" "${CMAKE_USE_DIR}" || die
+			tpgo_src_prepare
 		done
 	}
 	multilib_foreach_abi prepare_abi
@@ -615,6 +616,7 @@ src_install() {
 				local HTML_DOCS=( "${BUILD_DIR}"/docs/html/. )
 			fi
 			cmake_src_install
+			tpgo_src_install
 		done
 	}
 	multilib_foreach_abi install_abi
