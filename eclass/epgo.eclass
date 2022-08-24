@@ -49,6 +49,8 @@ esac
 # If using GCC PGO, you may need to add -lgcov to LIBS or modify the build
 # files but only in PGI phase.
 
+inherit flag-o-matic toolchain-funcs
+
 IUSE+=" epgo"
 
 # @ECLASS_VARIABLE: EPGO_PROFILES_DIR
@@ -79,8 +81,6 @@ _EPGO_CATPN_DATA_DIR=${_EPGO_CATPN_DATA_DIR:-"${EPGO_PROFILES_DIR}/${CATEGORY}/$
 # @DESCRIPTION:
 # The path to the program PGO profile with version specificity.
 _EPGO_DATA_DIR=${_EPGO_DATA_DIR:-"${EPGO_PROFILES_DIR}/${CATEGORY}/${PN}/${EPGO_PV}"}
-
-inherit flag-o-matic toolchain-funcs
 
 # @FUNCTION: _epgo_check_pgo
 # @INTERNAL

@@ -501,7 +501,7 @@ ewarn
 			fi
 		fi
 	done
-	IFS=$' \n\r\t'
+	IFS=$' \t\n'
 	if use pgo && [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
 		if ! find "${pgo_data_dir}" -name "*.gcda" ; then
 eerror
