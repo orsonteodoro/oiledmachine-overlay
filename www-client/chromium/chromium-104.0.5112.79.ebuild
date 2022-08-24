@@ -1986,7 +1986,6 @@ einfo
 		&& multilib_copy_sources
 
 	prepare_abi() {
-		EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
 		epgo_src_prepare
 	}
 
@@ -2382,7 +2381,6 @@ einfo
 	if ! use epgo || tc-is-cross-compiler ; then
 		:;
 	else
-		EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
 		epgo_src_configure
 		[[ "${PGO_PHASE}" == "PGI" ]] && myconf_gn+=" gcc_pgi=true"
 	fi
@@ -2639,7 +2637,6 @@ multilib_src_compile() {
 	#	--use-system-cmake \
 	#	--without-android || die
 
-	EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
 	export PGO_PHASE=$(epgo_get_phase)
 einfo
 einfo "PGO_PHASE:  ${PGO_PHASE}"
@@ -2785,7 +2782,6 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	# have been present in the listed the the .html (about:credits) file
 	lcnr_install_files
 
-	EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
 	epgo_src_install
 }
 

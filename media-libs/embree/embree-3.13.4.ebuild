@@ -252,6 +252,7 @@ src_prepare() {
 	# disable RPM package building
 	sed -e 's|CPACK_RPM_PACKAGE_RELEASE 1|CPACK_RPM_PACKAGE_RELEASE 0|' \
 		-i CMakeLists.txt || die
+	tpgo_src_prepare
 }
 
 src_configure() { :; }
@@ -606,6 +607,7 @@ EOF
 			fi
 		done
 	fi
+	tpgo_src_install
 }
 
 pkg_postinst() {

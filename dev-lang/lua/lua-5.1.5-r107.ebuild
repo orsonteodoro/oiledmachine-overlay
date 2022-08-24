@@ -91,6 +91,7 @@ src_prepare() {
 			-e 's:/usr/local:'${EPREFIX}'/usr:' \
 			-e "s:\([/\"]\)\<lib\>:\1$(get_libdir):g" \
 			etc/lua.pc src/luaconf.h || die
+		tpgo_src_prepare
 	}
 	multilib_foreach_abi prepare_abi
 }
@@ -174,6 +175,7 @@ _install() {
 
 multilib_src_install() {
 	_install
+	tpgo_src_install
 }
 
 multilib_src_install_all() {

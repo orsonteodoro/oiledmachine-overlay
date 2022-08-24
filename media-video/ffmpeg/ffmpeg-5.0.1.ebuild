@@ -736,6 +736,7 @@ src_prepare() {
 		for lib_type in $(get_lib_types) ; do
 			einfo "Copying sources to ${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			cp -a "${S_orig}" "${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
+			tpgo_src_prepare
 		done
 	}
 	multilib_foreach_abi prepare_abi
@@ -1774,6 +1775,7 @@ src_install() {
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			_install
+			tpgo_src_install
 		done
 	}
 	multilib_foreach_abi install_abi

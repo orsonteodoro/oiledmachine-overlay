@@ -243,6 +243,7 @@ LICENSE="
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~riscv ~x86"
 
 API_VERSION="5.0"
+EPGO_IMPLS="_${API_VERSION}"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
@@ -781,7 +782,6 @@ src_prepare() {
 	gnome2_src_prepare
 
 	prepare_abi() {
-		EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${API_VERSION}"
 		epgo_src_prepare
 	}
 	multilib_foreach_abi prepare_abi
@@ -1075,7 +1075,6 @@ einfo
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
 
-	EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${API_VERSION}"
 	epgo_src_configure
 
 	if is-flagq -O0 ; then
@@ -1102,7 +1101,6 @@ multilib_src_compile() {
 	einfo "CC=${CC}"
 	einfo "CXX=${CXX}"
 
-	EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${API_VERSION}"
 	export PGO_PHASE=$(epgo_get_phase)
 einfo
 einfo "PGO_PHASE:  ${PGO_PHASE}"
@@ -1151,7 +1149,6 @@ multilib_src_install() {
 
 	lcnr_install_files
 
-	EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${API_VERSION}"
 	epgo_src_install
 }
 

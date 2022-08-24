@@ -159,6 +159,7 @@ src_install() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			meson_src_install
+			tpgo_src_install
 		done
 	}
 	multilib_foreach_abi install_abi

@@ -342,6 +342,10 @@ src_prepare() {
 	cmake_src_prepare
 	# Allow to generate docs
 	sed -i -e 's/GENERATE_HTMLHELP.*//g' Doxyfile || die
+	prepare_abi() {
+		tpgo_src_prepare
+	}
+	multilib_foreach_abi prepare_abi
 }
 
 _src_configure() {
@@ -566,6 +570,7 @@ src_install() {
 			insinto "/usr/share/${PN}/demos/pybullet"
 			doins -r "${CMAKE_USE_DIR}/examples/pybullet/gym"
 		fi
+		tpgo_src_install
 	}
 	multilib_foreach_abi install_abi
 	cd "${S}" || die
