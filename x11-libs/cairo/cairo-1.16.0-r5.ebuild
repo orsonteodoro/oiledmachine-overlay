@@ -98,6 +98,7 @@ src_prepare() {
 
 	prepare_abi() {
 		cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
+		TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
 		tpgo_src_prepare
 	}
 
@@ -109,6 +110,7 @@ src_configure() { :; }
 _src_configure() {
 	cd "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
 	[[ -e "Makefile" ]] && emake clean
+	TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
 	tpgo_src_configure
 	filter-flags -fprofile-correction # breaks build
 	local myopts
@@ -186,6 +188,7 @@ tpgo_train_custom() {
 src_install() {
 	multilib-minimal_src_install
 	install_abi() {
+		TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
 		tpgo_src_install
 	}
 	multilib_foreach_abi install_abi

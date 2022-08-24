@@ -35,14 +35,20 @@ esac
 # @DESCRIPTION:
 # This variable should be expliclity set with multibuild based ebuilds
 # (cmake-multilib, multilib-minimal, multilib-build, meson-multilib)
-# just before calls to epgo_src_configure, epgo_get_phase, epgo_src_install.
+# just before every call to epgo_src_prepare, epgo_src_configure, epgo_get_phase,
+# epgo_src_install.
 # Sets the suffix to isolate PGO profiles (e.g. 32-bit, 64-bit).  Different
 # implementations should attach and define impl like one of the examples
 # below.
-# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"}
-# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl}"}
-# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl1}_${impl2}"}
-# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl1}_${impl2}_${impl3}"}
+# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
+# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl}"
+# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl1}_${impl2}"
+# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}_${impl1}_${impl2}_${impl3}"
+#
+# Example:
+# EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}"
+# epgo_src_prepare
+#
 
 # TIPS:
 

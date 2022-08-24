@@ -183,6 +183,20 @@ _TPGO_DATA_DIR=${_TPGO_DATA_DIR:-"${TPGO_PROFILES_DIR}/${CATEGORY}/${PN}/${EPGO_
 # 1 for reuse, 0 for no reuse
 # Only the user can decide.  Do not set it in the ebuild.
 
+# @ECLASS_VARIABLE: TPGO_SUFFIX
+# @DESCRIPTION:
+# This sets the suffix for multilib or different implementations.  It should be
+# explicitly be set just before every tpgo_src_prepare, tpgo_src_configure,
+# tpgo_src_compile, tpgo_src_install.
+# Examples:
+#
+# TPGO_SUFFIX=${MULTILIB_ABI_FLAG}.${ABI}"
+# tpgo_src_prepare
+#
+# TPGO_SUFFIX=${MULTILIB_ABI_FLAG}.${ABI}_${impl}"
+# tpgo_src_prepare
+#
+
 inherit flag-o-matic toolchain-funcs
 if [[ "${TPGO_USE_X}" == "1" ]] ;then
 	inherit virtualx
