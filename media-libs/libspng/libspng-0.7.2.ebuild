@@ -70,6 +70,14 @@ src_unpack() {
 	fi
 }
 
+src_prepare() {
+	default
+	prepare_abi() {
+		tpgo_src_prepare
+	}
+	multilib_foreach_abi prepare_abi
+}
+
 _src_configure() {
 	cd "${EMESON_SOURCE}" || die
 	append-cppflags -I"${EPREFIX}/usr/include/miniz"
