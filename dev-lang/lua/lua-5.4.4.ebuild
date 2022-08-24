@@ -18,6 +18,9 @@ SLOT="5.4"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
 IUSE="+deprecated readline test test-complete"
 IUSE+=" static-libs"
+REQUIRED_USE="
+	pgo? ( test )
+"
 
 COMMON_DEPEND="
 	>=app-eselect/eselect-lua-3
@@ -83,6 +86,9 @@ src_configure() { :; }
 
 _src_configure() {
 	tpgo_src_configure
+	if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then
+		append-flags -Wno-error=coverage-mismatch
+	fi
 	econf
 }
 
@@ -186,7 +192,7 @@ _src_post_train() {
 }
 
 tpgo_trainer_list() {
-	ls "${S}-${MULTILIB_ABI_FLAG}.${ABI}/test/"*"lua" || die
+	ls "${WORKDIR}/lua-${TEST_PV}-tests/"*".lua" || die
 }
 
 tpgo_get_trainer_exe() {

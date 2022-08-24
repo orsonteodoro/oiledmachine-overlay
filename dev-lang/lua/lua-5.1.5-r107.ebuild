@@ -151,7 +151,7 @@ _src_post_train() {
 }
 
 tpgo_trainer_list() {
-	ls "${S}-${MULTILIB_ABI_FLAG}.${ABI}/test/"*"lua" || die
+	ls "${S}-${MULTILIB_ABI_FLAG}.${ABI}/test/"*".lua" || die
 }
 
 tpgo_get_trainer_exe() {
