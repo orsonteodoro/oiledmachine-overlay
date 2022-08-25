@@ -314,6 +314,8 @@ epgo_src_install() {
 			export CXX=$(tc-getCXX)
 		fi
 
+		CC=$(echo "${CC}" | cut -f 1 -d " ")
+
 		if tc-is-gcc ; then
 			"${CC}" -dumpmachine \
 				> "${ED}/${pgo_data_suffix_dir}/compiler" || die

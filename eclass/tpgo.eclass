@@ -893,6 +893,8 @@ tpgo_src_install() {
 			"${ED}/${pgo_data_suffix_dir}" \
 			|| die
 
+		CC=$(echo "${CC}" | cut -f 1 -d " ")
+
 		if tc-is-gcc ; then
 			"${CC}" -dumpmachine \
 				> "${ED}/${pgo_data_suffix_dir}/compiler" || die
