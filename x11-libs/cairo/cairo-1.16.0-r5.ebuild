@@ -4,6 +4,7 @@
 
 EAPI=8
 
+TPGO_CONFIGURE_DONT_SET_FLAGS=1
 TPGO_USE_X=0
 TPGO_NO_X_DEPENDS=1
 inherit flag-o-matic autotools multilib-minimal toolchain-funcs tpgo virtualx
@@ -68,11 +69,12 @@ PATCHES=(
 	"${FILESDIR}"/${P}-ft-Use-FT_Done_MM_Var-instead-of-free-when-available.patch
 	"${FILESDIR}"/${P}-strings.patch
 	"${FILESDIR}"/${PN}-1.16.0-check-redefinition-xrender.patch
+	"${FILESDIR}"/${PN}-1.16.0-pthread-test-change.patch
+	"${FILESDIR}"/${PN}-1.16.0-pthread-test-remove-flags.patch
 )
 
 pkg_setup() {
 	tpgo_setup
-	use pgo && use X && tpgo-check-x
 }
 
 src_prepare() {
@@ -106,10 +108,42 @@ src_prepare() {
 
 src_configure() { :; }
 
+_tpgo_configure() {
+	local pgo_data_suffix_dir="${EPREFIX}${_TPGO_DATA_DIR}/${_TPGO_SUFFIX}"
+	local pgo_data_staging_dir="${T}/pgo-${_TPGO_SUFFIX}"
+	if use pgo && [[ "${PGO_PHASE}" == "PGI" ]] ; then
+		einfo "Setting up PGI"
+		if tc-is-clang ; then
+			append-flags \
+				-fprofile-generate="${pgo_data_staging_dir}"
+		else
+			append-flags \
+				-fprofile-generate \
+				-fprofile-dir="${pgo_data_staging_dir}"
+		fi
+	elif use pgo && [[ "${PGO_PHASE}" == "PGO" ]] ; then
+		einfo "Setting up PGO"
+		if tc-is-clang ; then
+			llvm-profdata \
+				merge \
+				-output="${pgo_data_staging_dir}/pgo-custom.profdata" \
+				"${pgo_data_staging_dir}" || die
+			append-flags \
+				-fprofile-use="${pgo_data_staging_dir}/pgo-custom.profdata"
+		else
+			append-flags \
+				-fprofile-correction \
+				-fprofile-use \
+				-fprofile-dir="${pgo_data_staging_dir}"
+		fi
+	fi
+}
+
 _src_configure() {
 	cd "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
-	[[ -e "Makefile" ]] && emake clean
+
 	tpgo_src_configure
+	_tpgo_configure
 	local myopts
 
         if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then
@@ -120,8 +154,6 @@ _src_configure() {
 	[[ ${CHOST} == *-interix* ]] && append-flags -D_REENTRANT
 
 	# [[ ${PV} == *9999* ]] && myopts+=" $(use_enable doc gtk-doc)"
-
-	export CFLAGS CXXFLAGS
 
 	ECONF_SOURCE="${S}-${MULTILIB_ABI_FLAG}.${ABI}" \
 	econf \
@@ -169,16 +201,18 @@ src_compile() {
 	multilib_foreach_abi compile_abi
 }
 
-tpgo_meets_requirements() {
-	use X && ( \
-		   ! has_version "x11-base/xorg-server[xvfb]" \
-		&& ! has_version "x11-apps/xhost" \
-	) && return 1
-	return 0
+tpgo_train_custom() {
+#	sed -r -i -e "s|am__EXEEXT_([0-9]) = any2ppm|am__EXEEXT_\1 = |g" test/Makefile || die
+	make test || true
 }
 
-tpgo_train_custom() {
-	make test || true
+_tpgo_custom_clean() {
+	# Still not deterministic
+	einfo "Cleaning copy"
+	cd "${WORKDIR}" || die
+	rm -rf "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
+	cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
+	cd "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
 }
 
 src_install() {

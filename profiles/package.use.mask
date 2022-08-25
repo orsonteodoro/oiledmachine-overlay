@@ -76,6 +76,3 @@ sys-auth/pam-python test
 
 # Allow to install debug export profiles
 dev-games/godot-export-templates-bin -debug
-
-# Bug during config tests in PGO step
-x11-libs/cairo pgo

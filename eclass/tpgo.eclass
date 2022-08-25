@@ -808,7 +808,7 @@ einfo
 			declare -f _src_post_train > /dev/null && _src_post_train
 		fi
 		PGO_PHASE="PGO"
-		declare -f _src_pre_pgo > /dev/null && _src_prep_pgo
+		declare -f _src_pre_pgo > /dev/null && _src_pre_pgo
 		declare -f _src_prepare > /dev/null && _src_prepare
 		declare -f _src_configure > /dev/null && _src_configure
 		declare -f _src_compile > /dev/null && _src_compile
