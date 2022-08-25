@@ -393,7 +393,7 @@ _tpgo_autotools_clean() {
 # You still need to call tpgo_src_configure before meson_src_configure.
 #
 tpgo_meson_src_configure() {
-	if [[ "${PGO_PHASE}" == "PGO" ]] ; then
+	if [[ "${PGO_PHASE}" == "PGO" ]] && [[ -e "${BUILD_DIR}/build.ninja" ]] ; then
 		echo "--wipe"
 	fi
 }
@@ -877,7 +877,7 @@ fi
 tpgo_src_install() {
 	if use pgo && [[ "${TPGO_PROFILES_REUSE:-1}" == "1" ]] ; then
 		_TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TPGO_IMPLS}"
-		local pgo_data_suffix_dir="${_EPGO_DATA_DIR}/${_TPGO_SUFFIX}"
+		local pgo_data_suffix_dir="${_TPGO_DATA_DIR}/${_TPGO_SUFFIX}"
 		local pgo_data_staging_dir="${T}/pgo-${_TPGO_SUFFIX}"
 		keepdir "${pgo_data_suffix_dir}"
 
@@ -887,9 +887,10 @@ tpgo_src_install() {
 			export CXX=$(tc-getCXX)
 		fi
 
+		dodir "${pgo_data_suffix_dir}"
 		cp -aT \
 			"${pgo_data_staging_dir}" \
-			"${pgo_data_suffix_dir}" \
+			"${ED}/${pgo_data_suffix_dir}" \
 			|| die
 
 		if tc-is-gcc ; then
