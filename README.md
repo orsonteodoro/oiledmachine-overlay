@@ -156,14 +156,37 @@ the metadata.xml.
 * media-video/ffmpeg
 * media-gfx/blender
 * net-libs/nodejs
+* net-libs/webkit-gtk (WIP, in testing with EPGO)
 * sci-physics/bullet
 * sys-devel/clang (WIP)
 * sys-devel/llvm (WIP)
 * sys-kernel/ot-sources
 * sys-kernel/genkernel
 * sys-libs/zlib
-* www-client/chromium (1 stage PGO yes, 3 stage PGO WIP)
-* net-libs/webkit-gtk (WIP)
+* www-client/chromium (1 stage PGO yes, in testing with EPGO)
+* x11-libs/cairo
+
+## PGO per-package options
+
+Additional packages that use the tpgo (three step PGO) and epgo (event based
+PGO) have additional options that can be changed on a per-package level.
+
+Details about setting up per-package environment variables see the
+[package.env](https://wiki.gentoo.org/wiki//etc/portage/package.env) link.
+
+More details can be found in 
+[tpgo.eclass] (https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/tpgo.eclass)
+[epgo.eclass] (https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/epgo.eclass)
+
+EPGO_PORTABLE / TPGO_PORTABLE - 1 to build untouched functions optimized for
+speed, 0 to retain touched functions as optimized for size.
+
+EPGO_PROFILES_DIR / TPGO_PROFILES_DIR - Change the default PGO profile
+directory.  The default is `/var/lib/pgo-profiles`.  You may delete individual
+profiles to reset the PGO process.
+
+TPGO_PROFILES_REUSE - 1 to allow for PGO profile reuse for 1 step re-emerges or
+future patch release, 0 to disallow PGO profile reuse and force 3 step PGO.
 
 ## Packages
 
