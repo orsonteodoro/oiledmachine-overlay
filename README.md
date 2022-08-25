@@ -185,6 +185,7 @@ Events that may trigger PGO (optimized builds):
 - Presence of a PGO profile
 - Same compiler signature in PGI and PGO phases
 - New patch releases
+
 If a PGI event is observed, PGI takes precedence.
 
 Packages that inherit the tpgo.eclass may skip to 1 step based on same
