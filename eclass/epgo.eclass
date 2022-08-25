@@ -221,12 +221,13 @@ einfo
 einfo "CC=${CC}"
 einfo "CXX=${CXX}"
 einfo
+		_CC="${CC% *}"
 
 		touch "${pgo_data_staging_dir}/compiler_fingerprint" \
 			|| die "You must call epgo_src_prepare before calling epgo_get_phase"
 		# Has same compiler?
 		if tc-is-gcc ; then
-			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
+			local actual=$("${_CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 ewarn
@@ -238,7 +239,7 @@ ewarn
 				return 1
 			fi
 		elif tc-is-clang ; then
-			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
+			local actual=$("${_CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 ewarn
@@ -314,7 +315,7 @@ epgo_src_install() {
 			export CXX=$(tc-getCXX)
 		fi
 
-		CC=$(echo "${CC}" | cut -f 1 -d " ")
+		CC="${CC% *}"
 
 		if tc-is-gcc ; then
 			"${CC}" -dumpmachine \
