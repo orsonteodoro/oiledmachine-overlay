@@ -102,7 +102,7 @@ _EPGO_DATA_DIR=${_EPGO_DATA_DIR:-"${EPGO_PROFILES_DIR}/${CATEGORY}/${PN}/${EPGO_
 _epgo_check_pgo() {
 	if use epgo ; then
 ewarn
-ewarn "PGO support is still (WIP)."
+ewarn "EPGO support is still a Work In Progress (WIP)."
 ewarn
 		if [[ -z "${EPGO_GROUP}" ]] ; then
 eerror

@@ -127,7 +127,7 @@ TPGO_CONFIGURE_DONT_SET_FLAGS=${TPGO_CONFIGURE_DONT_SET_FLAGS:-0}
 # @DESCRIPTION:
 # Reports if the prerequisites to train are met.  The implication is that if it
 # doesn't have the assets, or doesn't have the training tool, or doesn't have
-# the dependency to that training tool, it will fall back to as if PGO=-pgo.
+# the dependency to that training tool, it will fall back to as if USE=-pgo.
 # Example scenario:  dynamic linking to be train with a separate package with
 # app that uses the dynamic library.  If the app is not installed, then
 # we skip both PGI and PGO and fallback to normal merging sequence.

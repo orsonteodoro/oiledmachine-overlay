@@ -5,7 +5,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake llvm.org multilib-minimal pax-utils python-any-r1 \
+inherit cmake ebolt epgo llvm.org multilib-minimal pax-utils python-any-r1 \
 	toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils
 
@@ -30,13 +30,8 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
 KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="debug doc exegesis +gold libedit +libffi ncurses test xar xml z3 ${ALL_LLVM_TARGETS[*]}"
-IUSE+=" +bootstrap -dump lto pgo pgo_trainer_build_self pgo_trainer_test_suite r3"
+IUSE+=" +bootstrap -dump r3"
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
-REQUIRED_USE+="
-	pgo? ( || ( pgo_trainer_build_self pgo_trainer_test_suite ) )
-	pgo_trainer_build_self? ( pgo )
-	pgo_trainer_test_suite? ( pgo )
-"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
@@ -48,30 +43,37 @@ RDEPEND="
 	ncurses? ( >=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}] )
 	xar? ( app-arch/xar )
 	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
-	z3? ( >=sci-mathematics/z3-4.7.1:0=[${MULTILIB_USEDEP}] )"
-DEPEND="${RDEPEND}
-	gold? ( sys-libs/binutils-libs )"
+	z3? ( >=sci-mathematics/z3-4.7.1:0=[${MULTILIB_USEDEP}] )
+"
+DEPEND="
+	${RDEPEND}
+	gold? ( sys-libs/binutils-libs )
+"
 BDEPEND="
+	${PYTHON_DEPS}
 	dev-lang/perl
 	>=dev-util/cmake-3.16
 	sys-devel/gnuconfig
-	kernel_Darwin? (
-		<sys-libs/libcxx-$(ver_cut 1-3).9999
-		>=sys-devel/binutils-apple-5.1
+	doc? (
+		$(python_gen_any_dep '
+			dev-python/recommonmark[${PYTHON_USEDEP}]
+			dev-python/sphinx[${PYTHON_USEDEP}]
+		')
 	)
-	doc? ( $(python_gen_any_dep '
-		dev-python/recommonmark[${PYTHON_USEDEP}]
-		dev-python/sphinx[${PYTHON_USEDEP}]
-	') )
+	kernel_Darwin? (
+		>=sys-devel/binutils-apple-5.1
+		<sys-libs/libcxx-$(ver_cut 1-3).9999
+	)
 	libffi? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
-	lto? ( sys-devel/lld )
-	pgo? ( sys-devel/lld )
-	${PYTHON_DEPS}"
+"
 # There are no file collisions between these versions but having :0
 # installed means llvm-config there will take precedence.
-RDEPEND="${RDEPEND}
-	!sys-devel/llvm:0"
-PDEPEND="sys-devel/llvm-common
+RDEPEND="
+	${RDEPEND}
+	!sys-devel/llvm:0
+"
+PDEPEND="
+	sys-devel/llvm-common
 	gold? ( >=sys-devel/llvmgold-${SLOT} )
 "
 PATCHES=(
@@ -82,19 +84,6 @@ LLVM_COMPONENTS=( llvm )
 LLVM_MANPAGES=pregenerated
 LLVM_PATCHSET=12.0.1
 llvm.org_set_globals
-#if [[ ${PV} == *.9999 ]] ; then
-EGIT_REPO_URI_LLVM_TEST_SUITE="https://github.com/llvm/llvm-test-suite.git"
-EGIT_BRANCH_LLVM_TEST_SUITE="release/${SLOT}.x"
-EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-llvmorg-${PV/_/-}}"
-#else
-#SRC_URI+="
-#pgo_trainer_test_suite? (
-#https://github.com/llvm/llvm-test-suite/archive/refs/tags/llvmorg-${PV/_/-}.tar.gz
-#	-> llvm-test-suite-${PV/_/-}.tar.gz
-#)
-#"
-#fi
-# llvm-test-suite tarball is disabled until download problems are resolved.
 
 pkg_setup() {
 	python_setup
@@ -103,30 +92,18 @@ pkg_setup() {
 		if which "${clang_path}" 2>/dev/null 1>/dev/null && "${clang_path}" --help \
 			| grep "symbol lookup error" ; then
 eerror
-eerror "The bootstrap USE flag must be used or set CC=gcc and CXX=g++"
+eerror "Unemerge this package and re-emerge it.  Use GCC to build this package."
 eerror
 			die
 		fi
 	fi
-	if use pgo ; then
-		if ! has_version ">=clang-${PV}:${SLOT}" ; then
-# Many of these problems (extra ebuild code, overbuilding, overchecking) would"
-# have been avoided if this was a monolithic package.
-eerror
-eerror "PGO requires >=clang-${PV}:${SLOT} be installed because build scripts"
-eerror "can only use the clang PGO only compiler flags."
-eerror
-			die
-		fi
-	fi
-	use pgo && ewarn "The pgo USE flag is a Work In Progress (WIP)"
-	use pgo_trainer_build_self && ewarn "The pgo_trainer_build_self USE flag has not been tested."
-	use pgo_trainer_test_suite && ewarn "The pgo_trainer_test_suite USE flag has not been tested."
 
 ewarn
 ewarn "To avoid long linking delays, close programs that produce unexpectedly"
 ewarn "high disk activity (web browsers) and possibly switch to -j1."
 ewarn
+	epgo_setup
+	ebolt_setup
 }
 
 python_check_deps() {
@@ -230,18 +207,6 @@ check_distribution_components() {
 
 src_unpack() {
 	llvm.org_src_unpack
-#	if use pgo_trainer_test_suite && [[ ${PV} == *.9999 ]] ; then
-	if use pgo_trainer_test_suite ; then
-		EGIT_REPO_URI="${EGIT_REPO_URI_LLVM_TEST_SUITE}" \
-		EGIT_BRANCH="${EGIT_BRANCH_LLVM_TEST_SUITE}" \
-		EGIT_COMMIT="${EGIT_COMMIT_LLVM_TEST_SUITE}" \
-		git-r3_fetch
-		EGIT_REPO_URI="${EGIT_REPO_URI_LLVM_TEST_SUITE}" \
-		EGIT_BRANCH="${EGIT_BRANCH_LLVM_TEST_SUITE}" \
-		EGIT_COMMIT="${EGIT_COMMIT_LLVM_TEST_SUITE}" \
-		EGIT_CHECKOUT_DIR="${WORKDIR}/test-suite" \
-		git-r3_checkout
-	fi
 }
 
 src_prepare() {
@@ -256,9 +221,11 @@ src_prepare() {
 
 	llvm.org_src_prepare
 
-	export CFLAGS_BAK="${CFLAGS}"
-	export CXXFLAGS_BAK="${CXXFLAGS}"
-	export LDFLAGS_BAK="${LDFLAGS}"
+	prepare_abi() {
+		epgo_src_prepare
+		ebolt_src_prepare
+	}
+	multilib_foreach_abi prepare_abi
 }
 
 # Is LLVM being linked against libc++?
@@ -413,71 +380,15 @@ bool_trans() {
 
 src_configure() { :; }
 
-_cmake_clean() {
-	[[ ! -d "${BUILD_DIR}" ]] && return
-	rm -rf "${BUILD_DIR}" || die
-}
-
-setup_gcc() {
-	# Force gcc to skip a LLVM rebuild without the disabled-peepholes patch.
-	export CC=gcc
-	export CXX=g++
-
-	use test && filter-flags '-f*-aggressive-loop-optimizations'
-	autofix_flags # translate retpoline, strip unsupported flags during switch
-}
-
-setup_clang() {
-	export CC=clang-${SLOT}
-	export CXX=clang++-${SLOT}
-	autofix_flags # translate retpoline, strip unsupported flags during switch
-}
-
 _configure() {
-	einfo "Called _configure()"
-	use pgo && einfo "PGO_PHASE=${PGO_PHASE}"
-	if use pgo && ! has_version ">=sys-devel/clang-${PV}:${SLOT}[${MULTILIB_ABI_FLAG}]" ; then
-		eerror
-		eerror "PGO requires >=sys-devel/clang-${PV}:${SLOT}[${MULTILIB_ABI_FLAG}]"
-		eerror
-		eerror "For correct steps to PGOing see the metadata.xml or"
-		eerror
-		eerror "  \`epkginfo -x ${PN}::oiledmachine-overlay\`"
-		eerror
-		die
-	fi
-
+	epgo_src_configure
+	ebolt_src_configure
+	mkdir -p "${BUILD_DIR}" || die # strange?
+	cd "${BUILD_DIR}" || die
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
 		ffi_cflags=$($(tc-getPKG_CONFIG) --cflags-only-I libffi)
 		ffi_ldflags=$($(tc-getPKG_CONFIG) --libs-only-L libffi)
-	fi
-
-	if [[ "${PGO_PHASE}" == "pgv" ]] || tc-is-cross-compiler ; then
-		strip-flags
-	else
-		einfo "Restoring *FLAGS"
-		export CFLAGS="${CFLAGS_BAK}"
-		export CXXFLAGS="${CXXFLAGS_BAK}"
-		export LDFLAGS="${LDFLAGS_BAK}"
-	fi
-
-	filter-flags \
-		'-flto*' \
-		'-fuse-ld*'
-
-	if [[ "${PGO_PHASE}" == "pg0" ]] ; then
-		if use bootstrap ; then
-			setup_gcc
-		elif [[ "${CC}" == "clang" ]] ; then
-			setup_clang
-		else
-			setup_gcc
-		fi
-	elif [[ "${PGO_PHASE}" == "pgv" ]] ; then
-		setup_gcc
-	elif [[ "${PGO_PHASE}" =~ ("pgi"|"pgt"|"pgo") ]] ; then
-		setup_clang
 	fi
 
 	# workaround BMI bug in gcc-7 (fixed in 7.4)
@@ -547,16 +458,7 @@ _configure() {
 		-DOCAMLFIND=NO
 	)
 
-	local slot=""
-	if use pgo ; then
-		if [[ "${PGO_PHASE}" =~ ("pgo"|"pg0") ]] ; then
-			slot="${SLOT}"
-		else
-			slot="${PGO_PHASE}"
-		fi
-	else
-		slot="${SLOT}"
-	fi
+	local slot="${SLOT}"
 	mycmakeargs+=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${slot}"
 	)
@@ -617,160 +519,22 @@ _configure() {
 	fi
 
 	local slot_prev="${SLOT}"
-	if [[ "${PGO_PHASE}" == "pgv" ]] ; then
-		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${CHOST}-gcc"
-			-DCMAKE_CXX_COMPILER="${CHOST}-g++"
-			-DCMAKE_ASM_COMPILER="${CHOST}-gcc"
-		)
-		mycmakeargs+=(
-			-DCOMPILER_RT_BUILD_LIBFUZZER=OFF
-			-DCOMPILER_RT_BUILD_SANITIZERS=OFF
-			-DCOMPILER_RT_BUILD_XRAY=OFF
-			-DLLVM_BUILD_INSTRUMENTED=OFF
-			-DLLVM_ENABLE_LTO=Off
-		)
-	elif [[ "${PGO_PHASE}" == "pgi" ]] ; then
-		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang"
-			-DCMAKE_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang++"
-			-DLLVM_BUILD_INSTRUMENTED=ON
-			-DLLVM_ENABLE_LTO=Off
-			-DLLVM_USE_LINKER=lld
-		)
-	elif [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
-		# Use the package itself as the asset for training.
-		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang"
-			-DCMAKE_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang++"
-			-DLLVM_BUILD_INSTRUMENTED=OFF
-			-DLLVM_ENABLE_LTO=Off
-			-DLLVM_USE_LINKER=lld
-		)
-	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
-		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang"
-			-DCMAKE_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang++"
-			-DLLVM_BUILD_INSTRUMENTED=OFF
-			-DLLVM_ENABLE_LTO=Off
-			-DLLVM_USE_LINKER=lld
-			-DTEST_SUITE_BENCHMARKING_ONLY=ON
-			-DTEST_SUITE_PROFILE_GENERATE=ON
-			-DTEST_SUITE_RUN_TYPE=Train
-		)
-	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
-		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang"
-			-DCMAKE_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang++"
-			-DLLVM_BUILD_INSTRUMENTED=OFF
-			-DLLVM_ENABLE_LTO=Off
-			-DLLVM_USE_LINKER=lld
-			-DTEST_SUITE_PROFILE_GENERATE=OFF
-			-DTEST_SUITE_PROFILE_USE=ON
-			-DTEST_SUITE_RUN_TYPE=ref
-		)
-	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
-		einfo "Merging .profraw -> .profdata"
-		"${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/llvm-profdata" merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
-		append-ldflags -Wl,--emit-relocs
-		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang"
-			-DCMAKE_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang++"
-			-DLLVM_BUILD_INSTRUMENTED=OFF
-			-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
-			-DLLVM_PROFDATA_FILE="${T}/pgo-custom.profdata"
-			-DLLVM_USE_LINKER=lld
-		)
-	elif [[ "${PGO_PHASE}" == "pg0" ]] ; then
-		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${CHOST}-gcc"
-			-DCMAKE_CXX_COMPILER="${CHOST}-g++"
-			-DCMAKE_ASM_COMPILER="${CHOST}-gcc"
-		)
-		if [[ -z "${CC}" || "${CC}" =~ "gcc" ]] \
-			|| use bootstrap || tc-is-cross-compiler ; then
-			mycmakeargs+=(
-				-DLLVM_ENABLE_LTO=$(usex lto "On" "Off")
-			)
-		elif [[ "${CC}" =~ "clang" ]] ; then
-			mycmakeargs+=(
-				-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
-				-DLLVM_USE_LINKER=lld
-			)
-		fi
-	fi
-	_cmake_clean
-
-	if [[ "${PGO_PHASE}" =~ "pgt_test_suite" ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/test-suite"
-		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
-		_cmake_clean
-		mkdir -p "${BUILD_DIR}" || die
-		cd "${BUILD_DIR}" || die
-		[[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] && _cmake_clean
-		cmake_src_configure
-		CMAKE_USE_DIR="${WORKDIR}/llvm"
-		BUILD_DIR="${BUILD_DIR_BAK}"
-		cd "${BUILD_DIR}" || die
-	fi
+	mycmakeargs+=(
+		-DCMAKE_C_COMPILER="${CHOST}-gcc"
+		-DCMAKE_CXX_COMPILER="${CHOST}-g++"
+		-DCMAKE_ASM_COMPILER="${CHOST}-gcc"
+	)
 
 	cmake_src_configure
 
 	multilib_is_native_abi && check_distribution_components
 }
 
-declare -Ax EMESSAGE_COMPILE=(
-	[pgv]="Building vanilla ${PN}"
-	[pgi]="Building instrumented ${PN}"
-	[pgt_build_self]="Running PGO trainer:  Build itself"
-	[pgt_test_suite_inst]="Running PGO trainer:   test-suite instrumenting"
-	[pgt_test_suite_train]="Running PGO trainer:   test-suite training"
-	[pgt_test_suite_opt]="Running PGO trainer:   test-suite optimization"
-	[pgo]="Building PGOed ${PN}"
-)
-
 _compile() {
 	einfo "Called _compile()"
 	cd "${BUILD_DIR}" || die
-	if [[ "${PGO_PHASE}" =~ ("pgv"|"pgi"|"pgt_"|"pgo") ]] ; then
-		use pgo && einfo "${EMESSAGE_COMPILE[${PGO_PHASE}]} for ${ABI}"
-	fi
-	if [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
-		cmake_build distribution
-	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/test-suite"
-		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
-		cd "${BUILD_DIR}" || die
-		# Profile the PGI step
-		cmake_build
-		BUILD_DIR="${BUILD_DIR_BAK}"
-		cd "${BUILD_DIR}" || die
-	elif [[ "${PGO_PHASE}" == "pgt_test_suite_train" ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/test-suite"
-		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
-		cd "${BUILD_DIR}" || die
-		cmake_build check-lit
-		"${BUILD_DIR_BAK}/bin/llvm-lit" .
-		BUILD_DIR="${BUILD_DIR_BAK}"
-		cd "${BUILD_DIR}" || die
-	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/test-suite"
-		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
-		cd "${BUILD_DIR}" || die
-		# Profile the PGO step
-		cmake_build
-		cmake_build check-lit
-		"${BUILD_DIR_BAK}/bin/llvm-lit" -o result.json .
-		BUILD_DIR="${BUILD_DIR_BAK}"
-		cd "${BUILD_DIR}" || die
-	else
-		cmake_build distribution
-		use test && cmake_build test-depends
-	fi
+	cmake_build distribution
+	use test && cmake_build test-depends
 
 	pax-mark m "${BUILD_DIR}"/bin/llvm-rtdyld
 	pax-mark m "${BUILD_DIR}"/bin/lli
@@ -783,76 +547,19 @@ _compile() {
 	fi
 }
 
-_build_final() {
-	wo=1
-	ph=0
-	s_idx=7
-	if use pgo ; then
-		if use bootstrap ; then
-			PGO_PHASE="pgv"
-			_configure
-			_compile
-			_install
-		fi
-		PGO_PHASE="pgi"
-		_configure
-		_compile
-		_install
-		if use pgo_trainer_build_self ; then
-			PGO_PHASE="pgt_build_self"
-			_configure
-			_compile
-			_install
-		fi
-		if use pgo_trainer_test_suite ; then
-			PGO_PHASE="pgt_test_suite_inst"
-			_configure
-			_compile
-			_install
-			PGO_PHASE="pgt_test_suite_train"
-			_configure
-			_compile
-			_install
-			PGO_PHASE="pgt_test_suite_opt"
-			_configure
-			_compile
-			_install
-		fi
-		PGO_PHASE="pgo"
-		_configure
-		_compile
-		_install
-		use test && _test
-	else
-		PGO_PHASE="pg0"
-		_configure
-		_compile
-		_install
-		use test && _test
-	fi
-}
-
-_build_abi() {
-	PATH_ORIG="${PATH}"
-	local wo
-	local ph
-	local s_idx
-	_build_final
-}
-
 src_compile() {
 	_compile_abi() {
 		export BUILD_DIR="${WORKDIR}/${P}_build-${MULTILIB_ABI_FLAG}.${ABI}"
-		mkdir -p "${BUILD_DIR}" || die
-		cd "${BUILD_DIR}" || die
-		_build_abi
+		local PGO_PHASE=$(epgo_get_phase)
+		local BOLT_PHASE=$(ebolt_get_phase)
+		_configure
+		_compile
+		_install
 	}
 	multilib_foreach_abi _compile_abi
 }
 
-src_test() { :; }
-
-_test() {
+src_test() {
 	einfo "Called _test()"
 	cd "${BUILD_DIR}" || die
 	# respect TMPDIR!
@@ -876,7 +583,7 @@ src_install() {
 	mv "${ED}"/usr/include "${ED}"/usr/lib/llvm/${SLOT}/include || die
 }
 
-_install() {
+multilib_src_install() {
 	einfo "Called _install()"
 	cd "${BUILD_DIR}" || die
 	DESTDIR=${D} cmake_build install-distribution
@@ -885,10 +592,9 @@ _install() {
 	rm -rf "${ED}"/usr/include || die
 	mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
 	LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
-}
-
-multilib_src_install() {
-	_install
+	epgo_src_install
+	local BOLT_PHASE=$(ebolt_get_phase)
+	ebolt_src_install
 }
 
 multilib_src_install_all() {
