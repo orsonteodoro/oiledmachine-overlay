@@ -159,6 +159,7 @@ the metadata.xml.
 * net-libs/webkit-gtk (WIP, in testing with EPGO)
 * sci-physics/bullet
 * sys-devel/clang (WIP)
+* sys-devel/lld (WIP)
 * sys-devel/llvm (WIP)
 * sys-kernel/ot-sources
 * sys-kernel/genkernel

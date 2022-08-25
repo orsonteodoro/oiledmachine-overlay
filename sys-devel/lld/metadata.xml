@@ -53,6 +53,14 @@ sys-devel/clang:14 llvm-14-commit.conf
   https://github.com/llvm/llvm-project/commit/ADD_40_DIGIT_COMMIT_HERE
   </longdescription>
   <use>
-    <flag name="hardened">Enables Full RELRO by default</flag>
+    <flag name="hardened">
+      Enables Full RELRO by default.
+    </flag>
+    <flag name="epgo">
+      Bulids with the event based Profile Guided Optimization strategy.
+    </flag>
+    <flag name="epgo">
+      Bulids with the event based BOLT strategy.
+    </flag>
   </use>
 </pkgmetadata>

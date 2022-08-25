@@ -5,7 +5,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake flag-o-matic llvm llvm.org python-any-r1
+inherit cmake ebolt epgo flag-o-matic llvm llvm.org python-any-r1
 
 DESCRIPTION="The LLVM linker (link editor)"
 HOMEPAGE="https://llvm.org/"
@@ -22,10 +22,14 @@ RESTRICT="!test? ( test )"
 RDEPEND="~sys-devel/llvm-${PV}"
 DEPEND="${RDEPEND}"
 BDEPEND="
+	ebolt? (
+		>=sys-devel/llvm-14[bolt]
+	)
 	test? (
 		>=dev-util/cmake-3.16
 		$(python_gen_any_dep "~dev-python/lit-${PV}[\${PYTHON_USEDEP}]")
-	)"
+	)
+"
 
 LLVM_COMPONENTS=( lld cmake libunwind/include/mach-o )
 LLVM_TEST_COMPONENTS=( llvm/utils/{lit,unittest} )
@@ -42,6 +46,8 @@ python_check_deps() {
 pkg_setup() {
 	LLVM_MAX_SLOT=${PV%%.*} llvm_pkg_setup
 	use test && python-any-r1_pkg_setup
+	epgo_setup
+	ebolt_setup
 }
 
 src_unpack() {
@@ -61,9 +67,15 @@ src_prepare() {
 		ewarn "The hardened USE flag and Full RELRO default ON patch is in testing."
 		eapply ${HARDENED_PATCHES[@]}
 	fi
+	epgo_src_prepare
+	ebolt_src_prepare
 }
 
 src_configure() {
+	PGO_PHASE=$(epgo_get_phase)
+	BOLT_PHASE=$(ebolt_get_phase)
+	epgo_src_configure
+	ebolt_src_configure
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
@@ -88,5 +100,12 @@ src_test() {
 	cmake_build check-lld
 }
 
+src_install() {
+	BOLT_PHASE=$(ebolt_get_phase)
+	cmake_src_install
+	epgo_src_install
+	ebolt_src_install
+}
+
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
-# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  patches, hardened, full-relo, versioning-mod
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  patches, hardened, full-relo, versioning-mod, pgo, bolt
