@@ -166,7 +166,31 @@ the metadata.xml.
 * www-client/chromium (1 stage PGO yes, in testing with EPGO)
 * x11-libs/cairo
 
-## PGO per-package options
+### EPGO
+
+Some ebuilds will use 3 step PGO per emerge.  Others will use EPGO which
+does 1 phase per emerge with the epgo USE flag.  No extra effort is required for
+EPGO.
+
+In EPGO, training is done passively.  Instrumentation is or optimized based on
+rules or events.
+
+Events triggering PGI (instrumentation):
+- Different compiler signatures between PGI and PGO.
+- Version bumps that cause breakage or internal dependency updates which are
+typically minor versions.
+- Forced PGI with EPGO_FORCE_PGI
+
+Events that may trigger PGO (optimized builds):
+- Presence of a PGO profile
+- Same compiler signature in PGI and PGO phases
+- New patch releases
+If a PGI event is observed, PGI takes precedence.
+
+Packages that inherit the tpgo.eclass may skip to 1 step based on same
+EPGO event rules.
+
+### PGO per-package options
 
 Additional packages that use the tpgo (three step PGO) and epgo (event based
 PGO) have additional options that can be changed on a per-package level.
@@ -187,6 +211,12 @@ profiles to reset the PGO process.
 
 TPGO_PROFILES_REUSE - 1 to allow for PGO profile reuse for 1 step re-emerges or
 future patch release, 0 to disallow PGO profile reuse and force 3 step PGO.
+It should be use temporarily.  If build-time is unreliable for PGO, setting it
+to 0 may help.
+
+EPGO_FORCE_PGI - 1 to reset to PGI temporarily.  Remember to remove the flag or
+set it to 0 after being PGIed.  If build-time is unreliable for PGO, try setting
+it to 1.
 
 ## Packages
 
