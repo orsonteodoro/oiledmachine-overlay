@@ -4,7 +4,6 @@
 
 EAPI=8
 
-TPGO_CONFIGURE_DONT_SET_FLAGS=1
 TPGO_USE_X=0
 TPGO_NO_X_DEPENDS=1
 inherit flag-o-matic autotools multilib-minimal toolchain-funcs tpgo virtualx
@@ -108,42 +107,10 @@ src_prepare() {
 
 src_configure() { :; }
 
-_tpgo_configure() {
-	local pgo_data_suffix_dir="${EPREFIX}${_TPGO_DATA_DIR}/${_TPGO_SUFFIX}"
-	local pgo_data_staging_dir="${T}/pgo-${_TPGO_SUFFIX}"
-	if use pgo && [[ "${PGO_PHASE}" == "PGI" ]] ; then
-		einfo "Setting up PGI"
-		if tc-is-clang ; then
-			append-flags \
-				-fprofile-generate="${pgo_data_staging_dir}"
-		else
-			append-flags \
-				-fprofile-generate \
-				-fprofile-dir="${pgo_data_staging_dir}"
-		fi
-	elif use pgo && [[ "${PGO_PHASE}" == "PGO" ]] ; then
-		einfo "Setting up PGO"
-		if tc-is-clang ; then
-			llvm-profdata \
-				merge \
-				-output="${pgo_data_staging_dir}/pgo-custom.profdata" \
-				"${pgo_data_staging_dir}" || die
-			append-flags \
-				-fprofile-use="${pgo_data_staging_dir}/pgo-custom.profdata"
-		else
-			append-flags \
-				-fprofile-correction \
-				-fprofile-use \
-				-fprofile-dir="${pgo_data_staging_dir}"
-		fi
-	fi
-}
-
 _src_configure() {
 	cd "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
 
 	tpgo_src_configure
-	_tpgo_configure
 	local myopts
 
         if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then

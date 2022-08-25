@@ -88,6 +88,10 @@ _EPGO_CATPN_DATA_DIR=${_EPGO_CATPN_DATA_DIR:-"${EPGO_PROFILES_DIR}/${CATEGORY}/$
 # The path to the program PGO profile with version specificity.
 _EPGO_DATA_DIR=${_EPGO_DATA_DIR:-"${EPGO_PROFILES_DIR}/${CATEGORY}/${PN}/${EPGO_PV}"}
 
+# @ECLASS_VARIABLE: EPGO_PORTABLE
+# @DESCRIPTION:
+# Optimize for speed for untouched functions
+
 # @FUNCTION: _epgo_check_pgo
 # @INTERNAL
 # @DESCRIPTION:
@@ -164,6 +168,7 @@ _epgo_configure() {
 			append-flags -fprofile-generate="${pgo_data_suffix_dir}"
 		elif tc-is-gcc ; then
 			append-flags -fprofile-generate -fprofile-dir="${pgo_data_suffix_dir}"
+			[[ "${EPGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
 		else
 eerror
 eerror "Only GCC and Clang are supported for PGO."
@@ -186,6 +191,7 @@ eerror
 			append-flags -fprofile-use="${pgo_data_staging_dir}/custom-pgo.profdata"
 		elif tc-is-gcc ; then
 			append-flags -fprofile-use -fprofile-dir="${pgo_data_staging_dir}"
+			[[ "${EPGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
 		fi
 	fi
 }

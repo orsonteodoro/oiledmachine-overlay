@@ -199,6 +199,10 @@ _TPGO_DATA_DIR=${_TPGO_DATA_DIR:-"${TPGO_PROFILES_DIR}/${CATEGORY}/${PN}/${EPGO_
 # tpgo_src_prepare
 #
 
+# @ECLASS_VARIABLE: TPGO_PORTABLE
+# @DESCRIPTION:
+# Optimize for speed for untouched functions
+
 inherit flag-o-matic toolchain-funcs
 if [[ "${TPGO_USE_X}" == "1" ]] ;then
 	inherit virtualx
@@ -320,6 +324,7 @@ _tpgo_configure() {
 			append-flags \
 				-fprofile-generate \
 				-fprofile-dir="${pgo_data_staging_dir}"
+			[[ "${TPGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		einfo "Setting up PGO"
@@ -335,6 +340,7 @@ _tpgo_configure() {
 				-fprofile-correction \
 				-fprofile-use \
 				-fprofile-dir="${pgo_data_staging_dir}"
+			[[ "${TPGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
 		fi
 	fi
 }
@@ -872,6 +878,7 @@ tpgo_src_install() {
 	if use pgo && [[ "${TPGO_PROFILES_REUSE:-1}" == "1" ]] ; then
 		_TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TPGO_IMPLS}"
 		local pgo_data_suffix_dir="${_EPGO_DATA_DIR}/${_TPGO_SUFFIX}"
+		local pgo_data_staging_dir="${T}/pgo-${_TPGO_SUFFIX}"
 		keepdir "${pgo_data_suffix_dir}"
 
 		if [[ -z "${CC}" ]] ; then
