@@ -227,14 +227,14 @@ build to completion first.  Then, do a BOLT optimized build.  Both BOLT and PGO
 each require 3 steps;
 
 PGO steps:
--instrumentation
--training
--optimization
+- instrumentation
+- training
+- optimization
 
 BOLT steps:
--instrument
--collection (aka training)
--optimize
+- instrument
+- collection (aka training)
+- optimize
 
 So follow the 6 steps from top to bottom to properly combine them.
 The ebuild has access to `emerge --config package_name` to optimize BOLT
