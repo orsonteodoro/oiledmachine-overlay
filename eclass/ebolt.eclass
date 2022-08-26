@@ -325,11 +325,25 @@ is_abi_same() {
 # @DESCRIPTION:
 # Check if ABIs can be bolted
 is_abi_boltable() {
-	local p="${path}"
 	# Only x86-64 and aarch supported supported
 	if [[ "${ABI}" == "amd64" ]] ; then
 		return 0
 	elif [[ "${ABI}" == "arm64" ]] ; then
+		return 0
+	fi
+	ewarn "Unsupported ABI: ${p}"
+	return 1
+}
+
+# @FUNCTION: is_file_boltable
+# @DESCRIPTION:
+# Check if files ABI supported
+is_file_boltable() {
+	local p="${path}"
+	# Only x86-64 and aarch supported supported
+	if file "${p}" | grep -q "ELF.*x86-64" ; then
+		return 0
+	elif file "${p}" | grep -q "ELF.*aarch64" ; then
 		return 0
 	fi
 	ewarn "Unsupported ABI: ${p}"
@@ -491,9 +505,9 @@ _bolt_optimization() {
 			local bn=$(basename "${p}")
 			is_bolt_banned "${bn}" && continue
 			local is_boltable=0
-			if file "${p}" | grep -q "ELF.*executable" ; then
+			if file "${p}" | grep -q "ELF.*executable" && is_file_boltable "${p}" ; then
 				is_boltable=1
-			elif file "${p}" | grep -q "ELF.*shared object" ; then
+			elif file "${p}" | grep -q "ELF.*shared object" && is_file_boltable "${p}" ; then
 				is_boltable=1
 			fi
 			if (( ${is_boltable} == 1 )) ; then
