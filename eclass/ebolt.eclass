@@ -561,7 +561,7 @@ _bolt_optimization() {
 	done
 }
 
-# @FUNCTION: ebolt_pkg_postinst
+# @FUNCTION: ebolt_pkg_config
 # @DESCRIPTION:
 # Optimizes binaries for BOLT
 ebolt_pkg_config() {
