@@ -22,6 +22,31 @@
     the default.
 
 
+    PGO
+
+    Steps to optimize:
+    1. Bootstrap the build to rid of bugs and symbol errors.
+    2. Instrument the build
+    3. Train.  Just set lld as the default compiler and emerge a couple
+       of ebuilds.
+    4. Optimize the build
+
+
+    BOLT
+
+    Steps to optimize
+    1. Bootstrap if you haven't yet
+    2. Instrument the build
+    3. Train
+    4. Optimize the build
+
+
+    BOLT + PGO.
+
+    We recommend doing PGO to completion first then BOLT to completion
+    afterwards.
+
+
     Deterministic reliable builds
 
     Due to the problematic design of the live ebuild system, it
@@ -57,7 +82,7 @@ sys-devel/clang:14 llvm-14-commit.conf
       Enables Full RELRO by default.
     </flag>
     <flag name="epgo">
-      Bulids with the event based Profile Guided Optimization strategy.
+      Builds with the event based Profile Guided Optimization strategy.
     </flag>
     <flag name="epgo">
       Bulids with the event based BOLT strategy.

@@ -56,7 +56,6 @@ BDEPEND="
 	sys-devel/gnuconfig
 	bolt? (
 		>=dev-util/perf-4.5
-		sys-devel/lld
 	)
 	doc? (
 		$(python_gen_any_dep '
@@ -79,6 +78,9 @@ RDEPEND="
 PDEPEND="
 	sys-devel/llvm-common
 	binutils-plugin? ( >=sys-devel/llvmgold-${SLOT} )
+	bolt? (
+		sys-devel/lld
+	)
 "
 PATCHES=(
 	"${FILESDIR}/llvm-14.0.0.9999-stop-triple-spam.patch"

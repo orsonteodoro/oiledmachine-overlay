@@ -11,31 +11,6 @@
     <email>llvm@gentoo.org</email>
   </maintainer>
   <longdescription>
-    The goal of the Clang project is to create a new C, C++, Objective C and
-    Objective C++ front-end for the LLVM compiler.
-
-    Features and Goals
-
-    Some of the goals for the project include the following:
-
-    End-User Features:
-    Fast compiles and low memory use
-    Expressive diagnostics
-    GCC compatibility
-    Utility and Applications:
-
-    Modular library based architecture
-    Support diverse clients (refactoring, static analysis, code generation, etc)
-    Allow tight integration with IDEs
-    Use the LLVM BSD License
-    Internal Design and Implementation:
-
-    A real-world, production quality compiler
-    A simple and hackable code base
-    A single unified parser for C, Objective C, C++, and Objective C++
-    Conformance with C/C++/ObjC and their variants
-
-
     The oiledmachine overlay modifies these ebuilds for hardened support to
     ensure that packages built with clang/llvm are properly protected with the
     equivalent security defaults as its counterpart (Hardened GCC 10.3.0).
@@ -73,38 +48,35 @@
     proper CFI build.
 
 
-    PGO notes:
+    PGO notes
 
-    Choose one of the correct steps to building a PGO optimized build:
+    General steps:
 
-    As clang[-bootstrap] USE flag:
-
-      1. emerge -1 llvm-${PV}[bootstrap,-pgo,abi0,...,abiN]
-      2. emerge -1 lld
-      3. emerge -1 clang-${PV}[-pgo,abi0,...,abiN]
-      4. emerge -1 llvm-${PV}[-bootstrap,pgo,pgo_trainer...]
-      5. emerge -1 clang-${PV}[-bootstrap,pgo,abi0,...,abiN,pgo_trainer...]
-
-    As clang[+bootstrap] USE flag:
-
-      1. emerge -1 llvm-${PV}[bootstrap,-pgo,abi0,...,abiN]
-      2. emerge -1 lld
-      3. emerge -1 clang-${PV}[bootstrap,pgo,abi0,...,abiN,pgo_trainer...]
-      4. emerge -1 llvm-${PV}[-bootstrap,pgo,pgo_trainer...]
-
-    Both llvm-${PV} and clang-${PV} have matching ${PV}s (or commits) within the
-      same slots to avoid missing symbols.
-    The abi0, ..., abiN set must match in llvm-${PV} and in clang-${PV}.
-    PGO trainer(s) must be chosen that reflect typical use.
+      1. Bootstrap the llvm toolchain using the system compiler
+      2. Build an instrumented build.
+      3. Train with real world examples such as emerging a sample of world,
+         compile shaders, compile WASM (aka HTML5 games)
+      4. Build an optimized build
 
 
-    BOLT optimized builds notes:
+    BOLT notes
 
     BOLT optimized builds require specific CPUs with LBR support in its current
     form.
 
+    To optimize for BOLT, use the same steps as PGO and the ebuild
+    will automatically optimize using events such as version bumps or
+    compiler signature differences.
 
-    LTO+PGO+BOLT (ebuild mod in development)
+    General steps
+
+    1. Instrument
+    2. Train
+    3. Optimize
+
+    When performing BOLT+PGO, we recommend performing PGO to completion
+    first then BOLT to completion.
+
 
     Deterministic reliable builds
 
@@ -146,36 +118,40 @@ sys-devel/clang:14 llvm-14-commit.conf
 [2] https://llvm.org/docs/HowToBuildWithPGO.html
   </longdescription>
   <use>
-    <flag name="bolt">Build an optimized build that combines
-      PGO with LTO with BOLT.  This will build the compiler 5 times which
-      may take 5 days to complete on slower machines, but upstream claims it
-      may result in around 20-50% runtime performance gain.[1]
+    <flag name="epgo">
+      Use event based Profile Guided Optimization to optimize the ebuild.
+      One PGO step per emerge is performed.  When a patch version bump
+      happens, it does only the PGO step.  It may result in 20% build
+      reduction with the optimized build.
     </flag>
-    <flag name="bootstrap">Use the upstream recommendations for bootstrapping.
-      </flag>
-    <flag name="default-compiler-rt">Use compiler-rt instead of libgcc as the
-      default rtlib for clang</flag>
-    <flag name="default-libcxx">Use libc++ instead of libstdc++ as the default
-      stdlib for clang</flag>
-    <flag name="default-lld">Use lld as the default linker for clang</flag>
-    <flag name="hardened">Match the hardened default on settings from hardened
-      GCC</flag>
-    <flag name="lto">Build with Link Time Optimization</flag>
-    <flag name="jemalloc">Use jemalloc for better concurrency to improve
-      processing time during the BOLT optimization phase</flag>
-    <flag name="pgo">Build with Profile Guided Optimization which may reduce
-      compile times of other packages by 20%, with the PGOed llvm package.
-      </flag>
-    <flag name="pgo_trainer_build_self">Trains and generates a PGO profile by
-      building the source code itself</flag>
-    <flag name="pgo_trainer_test_suite">Runs the test-suite to build a
-      PGO profile from built benchmarks examples.</flag>
-    <flag name="tcmalloc">Use TCMalloc for better concurrency to improve
-      processing time during the BOLT optimization phase</flag>
-    <flag name="static-analyzer">Install the Clang static analyzer</flag>
-
-    <flag name="rN">(INTERNAL USE ONLY: oiledmachine-overlay) bumped revisions
-      to reuse ccache [for faster rebuilds on very large packages] while
-      applying ebuild fixes.</flag>
+    <flag name="ebolt">
+      Optimize code layout for better cache and branch prediction.  This may
+      improve performance by 15%.  This uses event based bolt where one
+      step is performed per emerge.  To progress to the next step you
+      re-emerge the ebuild with the BOLT training perf profile.
+    </flag>
+    <flag name="default-compiler-rt">
+      Use compiler-rt instead of libgcc as the default rtlib for clang
+    </flag>
+    <flag name="default-libcxx">
+      Use libc++ instead of libstdc++ as the default stdlib for clang
+    </flag>
+    <flag name="default-lld">
+      Use lld as the default linker for clang
+    </flag>
+    <flag name="hardened">
+      Match the hardened default on settings from hardened GCC
+    </flag>
+    <flag name="pgo">
+      Build with Profile Guided Optimization which may reduce compile times of
+      other packages by 20%, with the PGOed llvm package.
+    </flag>
+    <flag name="static-analyzer">
+      Install the Clang static analyzer
+    </flag>
+    <flag name="rN">
+      (INTERNAL USE ONLY: oiledmachine-overlay) bumped revisions to reuse ccache
+      [for faster rebuilds on very large packages] while applying ebuild fixes.
+    </flag>
   </use>
 </pkgmetadata>

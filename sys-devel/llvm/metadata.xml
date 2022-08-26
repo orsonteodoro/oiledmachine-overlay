@@ -36,11 +36,11 @@
     1.  Bootstrap (resulting in proper built toolchain)
     2.  Switch clang as primary compiler.
     3.  Instrument all Clang / LLVM packages with EPGO.
-    4.  Emerge/train a sample of world (10 representative packages and some
-        apps that train the shader compiler or alternative compiler
-        toolchains that use LLVM as backend) training the compiler toolchain
-    5.  Re-emerge again as optimized in the next point release or after step
-        4 is completed.
+    4.  Emerge/train a sample of world (emerge packages, compile shader
+        programs by running games or building 3D models, build WASM HTML5
+        games), training the compiler toolchain
+    5.  Re-emerge again as optimized in the next point release or after
+        training is completed.
 
 
     BOLT (Experimental / WIP)
@@ -50,22 +50,16 @@
 
     BOLT optimized builds steps:
 
-    1.  emerge -1 llvm-${PV}:${SLOT}[bolt]
-    2.  emerge -1 lld
-    3.  emerge -1 clang:${PV}:${SLOT}[bolt]
-    3.  emerge -1 llvm:${PV}:${SLOT}[bolt,ebolt]
-    4.  train the LLVM library by either emerging, compiling shaders, compiling
-        wasm based programs.
+    1.  Bootstrap
+    2.  Emerge the ebuild with the bolt and ebolt use flag
+    4.  Train the LLVM library by either emerging, compiling shaders, compiling
+        WASM (aka HTML5 games) based games.
     5.  emerge --config =llvm-${PV}[bolt,ebolt]  # Fastest
                      or
         emerge =llvm-${PV}[bolt,ebolt] # Deterministic reliable
 
-    Both clang must be built with the same ${SLOT} as llvm, but the llvm backend
-    should be the same version or commit as the one used to build with clang.
-    BOLT profiling is done within the clang package.  This profile(s) is then
-    used in step 4 to generate an optimized libLLVM.so.  libLLVM.so contains the
-    binary code (or brains) used as the optimization backend for clang.
-
+    When doing BOLT+PGO, we recommend doing PGO first to completion then BOLT to
+    completion.
 
     References:
     [1] https://llvm.org/docs/HowToBuildWithPGO.html
@@ -82,7 +76,7 @@
     <flag name="bolt">
       Build the Binary Optimization and Layout Tool to improve CPU caching and
       branch prediction using execution sampling data used to optimize code
-      layout.  (EXPERIMENTAL)
+      layout.  This may improve performance by 15%  (EXPERIMENTAL)
     </flag>
     <flag name="dump">
       Build with dump functions to print additional (debugging) information
@@ -96,7 +90,8 @@
       you want to complete the final step.
     </flag>
     <flag name="epgo">
-      Perform 1 step Event based PGO.
+      Perform 1 step Event based PGO.  When 3 steps are performed to completion,
+      it may reduce compile times by 20%.
     </flag>
     <flag name="exegesis">
       Enable performance counter support for llvm-exegesis tool that can be

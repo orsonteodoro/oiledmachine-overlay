@@ -57,7 +57,6 @@ BDEPEND="
 	sys-devel/gnuconfig
 	bolt? (
 		>=dev-util/perf-4.5
-		sys-devel/lld
 	)
 	doc? (
 		$(python_gen_any_dep '
@@ -70,6 +69,11 @@ BDEPEND="
 		<sys-libs/libcxx-$(ver_cut 1-3).9999
 	)
 	libffi? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
+"
+PDEPEND+="
+	bolt? (
+		sys-devel/lld
+	)
 "
 # There are no file collisions between these versions but having :0
 # installed means llvm-config there will take precedence.
