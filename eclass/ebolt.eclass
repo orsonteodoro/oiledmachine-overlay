@@ -408,7 +408,7 @@ ebolt_src_install() {
 				is_abi_same "${p}" || continue
 				if (( ${is_boltable} == 1 )) ; then
 					# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
-					einfo "BOLT vanilla -> instrumented:  ${p}"
+					einfo "vanilla -> BOLT instrumented:  ${p}"
 					"${_EBOLT_MALLOC_LIB}" llvm-bolt \
 						"${p}" \
 						-instrument \
@@ -434,7 +434,7 @@ ebolt_src_install() {
 				is_abi_same "${p}" || continue
 				if (( ${is_boltable} == 1 )) ; then
 					local bn=$(basename "${p}")
-					einfo "BOLT vanilla -> optimized:  ${p}"
+					einfo "vanilla -> BOLT optimized:  ${p}"
 					"${_EBOLT_MALLOC_LIB}" llvm-bolt \
 						"${p}" \
 						-o "${p}.bolt" \
