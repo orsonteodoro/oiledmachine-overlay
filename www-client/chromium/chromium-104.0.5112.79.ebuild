@@ -24,7 +24,7 @@ CR_CLANG_SLOT_OFFICIAL=15
 LLVM_SLOTS=(${LLVM_MAX_SLOT}) # [inclusive, inclusive] high to low
 inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils \
 python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
-inherit epgo llvm multilib multilib-minimal # Added by the oiledmachine-overlay
+inherit epgo ebolt llvm multilib multilib-minimal # Added by the oiledmachine-overlay
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
@@ -1532,6 +1532,7 @@ einfo "mkdir -p ${EPREFIX}/etc/portage/profile"
 einfo "echo \"www-client/chromium -pgo\" >> ${EPREFIX}/etc/portage/profile/package.use.mask"
 
 	epgo_setup
+	ebolt_setup
 
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
@@ -1987,6 +1988,7 @@ einfo
 
 	prepare_abi() {
 		epgo_src_prepare
+		ebolt_src_prepare
 	}
 
 	multilib_foreach_abi prepare_abi
@@ -2385,6 +2387,8 @@ einfo
 		[[ "${PGO_PHASE}" == "PGI" ]] && myconf_gn+=" gcc_pgi=true"
 	fi
 
+	use ebolt && ebolt_src_configure
+
 	# Explicitly disable ICU data file support for system-icu/headless builds.
 	if use system-icu || use headless; then
 		myconf_gn+=" icu_use_data_file=false"
@@ -2638,6 +2642,7 @@ multilib_src_compile() {
 	#	--without-android || die
 
 	export PGO_PHASE=$(epgo_get_phase)
+	export EBOLT_PHASE=$(ebolt_get_phase)
 einfo
 einfo "PGO_PHASE:  ${PGO_PHASE}"
 einfo
@@ -2782,7 +2787,9 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	# have been present in the listed the the .html (about:credits) file
 	lcnr_install_files
 
+	local EBOLT_PHASE=$(ebolt_get_phase)
 	epgo_src_install
+	ebolt_src_install
 }
 
 pkg_postrm() {
