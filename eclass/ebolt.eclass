@@ -371,7 +371,7 @@ ebolt_src_install() {
 				local is_boltable=0
 				if file "${p}" | grep -q "ELF.*executable" ; then
 					is_boltable=1
-				elif file "${p}" | grep -q "ELF.*executable" ; then
+				elif file "${p}" | grep -q "ELF.*shared object" ; then
 					is_boltable=1
 				fi
 				if (( ${is_boltable} == 1 )) ; then
@@ -456,7 +456,7 @@ _bolt_optimization() {
 			local is_boltable=0
 			if file "${p}" | grep -q "ELF.*executable" ; then
 				is_boltable=1
-			elif file "${p}" | grep -q "ELF.*executable" ; then
+			elif file "${p}" | grep -q "ELF.*shared object" ; then
 				is_boltable=1
 			fi
 			if (( ${is_boltable} == 1 )) ; then
