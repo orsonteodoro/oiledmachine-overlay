@@ -112,7 +112,7 @@ src_configure() {
 	:;
 }
 
-tpgo_trainer_list() {
+train_trainer_list() {
 	seq 0 2 | tr " " "\n"
 }
 
