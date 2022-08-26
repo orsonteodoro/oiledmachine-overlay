@@ -4,6 +4,7 @@
 
 EAPI=8
 
+EBOLT_DISABLE_BDEPEND=1
 PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake ebolt epgo llvm.org multilib-minimal pax-utils python-any-r1 \
 	toolchain-funcs

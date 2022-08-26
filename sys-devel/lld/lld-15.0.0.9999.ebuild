@@ -4,6 +4,7 @@
 
 EAPI=8
 
+EBOLT_DISABLE_BDEPEND=1
 PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake ebolt epgo flag-o-matic llvm llvm.org python-any-r1
 

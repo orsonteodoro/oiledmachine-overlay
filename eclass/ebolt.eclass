@@ -21,6 +21,16 @@ IUSE+=" ebolt"
 RESTRICT+=" strip" # Don't strip static-libs
 EXPORT_FUNCTIONS pkg_config
 
+# @ECLASS_VARIABLE: EBOLT_DISABLE_BDEPEND
+# @DESCRIPTION:
+# Disable BDEPEND to avoid possible circular dependency
+
+if [[ "${EBOLT_DISABLE_BDEPEND}" != "1" ]] ; then
+BDEPEND+="
+	>=sys-devel/llvm-14[bolt]
+"
+fi
+
 # @ECLASS_VARIABLE: EBOLT_EXCLUDE_BINS
 # @DESCRIPTION:
 # A space separated list of basenames executables or shared libraries not to
