@@ -1,0 +1,18 @@
+#!/bin/bash
+
+fun() {
+	local fun_name="${1}"
+	grep -q "${fun_name}" "${x}" || echo "missing ${fun_name} for ${x}"
+}
+
+main() {
+	for x in $(grep -l -r --exclude-dir=.git "tpgo" $(find . -name "*.ebuild" -o -name "*.eclass")) ; do
+		fun "tpgo_setup"
+		fun "tpgo_src_prepare"
+		fun "tpgo_src_configure"
+		fun "tpgo_src_compile"
+		fun "tpgo_src_install"
+		fun "tpgo_pkg_postinst"
+	done
+}
+main

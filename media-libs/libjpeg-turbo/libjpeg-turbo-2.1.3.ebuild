@@ -451,4 +451,5 @@ elog "No PGO optimization performed.  Please re-emerge this package."
 elog "The following package must be installed before PGOing this package:"
 elog "  jpeg assets placed in ${distdir}/pgo/assets/jpeg"
 	fi
+	tpgo_pkg_postinst
 }

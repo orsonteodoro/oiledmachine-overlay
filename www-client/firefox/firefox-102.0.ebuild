@@ -1767,6 +1767,7 @@ einfo
 einfo "WebGL performance is suboptimal and runs at ~40 FPS.  There is currently"
 einfo "no fix for this."
 einfo
+	ebolt_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

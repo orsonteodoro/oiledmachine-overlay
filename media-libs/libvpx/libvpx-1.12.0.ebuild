@@ -693,6 +693,7 @@ elog "No PGO optimization performed.  Please re-emerge this package."
 elog "The following package must be installed before PGOing this package:"
 elog "  media-video/ffmpeg[encode,vpx,$(get_arch_enabled_use_flags)]"
 	fi
+	tpgo_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  pgo, cfi-exceptions

@@ -624,6 +624,8 @@ pkg_postinst() {
 	elog "Some of them are vim integration scripts (with instructions inside)."
 	elog "The run-clang-tidy.py script requires the following additional package:"
 	elog "  dev-python/pyyaml"
+	epgo_pkg_postinst
+	ebolt_pkg_postinst
 }
 
 pkg_postrm() {

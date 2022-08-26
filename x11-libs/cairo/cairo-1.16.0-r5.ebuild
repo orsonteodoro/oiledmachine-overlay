@@ -202,5 +202,9 @@ multilib_src_install_all() {
 	einstalldocs
 }
 
+pkg_postinst() {
+	tpgo_pkg_postinst
+}
+
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  apply-patch-bugfix, pgo

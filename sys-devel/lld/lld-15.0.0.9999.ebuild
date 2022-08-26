@@ -108,5 +108,10 @@ src_install() {
 	ebolt_src_install
 }
 
+pkg_postinst() {
+	epgo_pkg_postinst
+	ebolt_pkg_postinst
+}
+
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  patches, hardened, full-relo, versioning-mod, pgo, bolt

@@ -2889,6 +2889,7 @@ pkg_postinst() {
 	readme.gentoo_print_elog
 
 	epgo_pkg_postinst
+	ebolt_pkg_postinst
 	if ! use headless; then
 		if use vaapi ; then
 # It says 3 args:

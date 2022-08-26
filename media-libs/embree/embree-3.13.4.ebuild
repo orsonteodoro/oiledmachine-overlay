@@ -616,6 +616,7 @@ einfo
 einfo "The tutorial sources have been installed at /usr/share/${PN}/tutorials"
 einfo
 	fi
+	tpgo_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

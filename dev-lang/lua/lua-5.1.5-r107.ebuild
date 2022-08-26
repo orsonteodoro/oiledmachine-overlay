@@ -32,6 +32,10 @@ MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/lua${SLOT}/luaconf.h
 )
 
+pkg_setup() {
+	tpgo_setup
+}
+
 src_prepare() {
 	PATCHES=(
 		"${FILESDIR}/lua-5.1.5-make.patch"
@@ -214,6 +218,7 @@ pkg_postinst() {
 			einfo "Install app-emacs/lua-mode for lua support for emacs"
 		fi
 	fi
+	tpgo_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  apply-urho3d-patch allow-static-libs, pgo

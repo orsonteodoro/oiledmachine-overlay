@@ -5,7 +5,6 @@
 EAPI=8
 
 TPGO_USE_X=1
-TPGO_MULTILIB=1
 TPGO_TEST_DURATION=20
 PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake flag-o-matic lcnr multilib-build python-single-r1 toolchain-funcs tpgo
@@ -482,7 +481,10 @@ tpgo_get_trainer_exe() {
 }
 
 src_compile() {
-	tpgo_multilib_src_compile
+	compile_abi() {
+		tpgo_src_compile
+	}
+	multilib_foreach_abi compile_abi
 	if use doc; then
 		doxygen || die
 		HTML_DOCS+=( html/. )
@@ -605,6 +607,7 @@ einfo "  ${EPYTHON} /usr/share/bullet/demos/examples/pybullet/examples/inverse_k
 einfo
 		fi
 	fi
+	tpgo_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

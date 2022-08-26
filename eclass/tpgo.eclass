@@ -909,3 +909,11 @@ tpgo_src_install() {
 		fi
 	fi
 }
+
+# @FUNCTION: tpgo_pkg_postinst
+# @DESCRIPTION:
+# NOP for now, but it could be used for QA, linting, fixes, cleanup.
+tpgo_pkg_postinst() {
+	# placeholder
+	:;
+}

@@ -1799,6 +1799,7 @@ ewarn
 ewarn "You are not allowed to redistribute this binary."
 ewarn
 	fi
+	tpgo_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  pgo, cfi-exceptions, license-compatibility-correctness

@@ -175,4 +175,8 @@ src_install() {
 	dodoc LICENSE
 }
 
+pkg_postinst() {
+	tpgo_pkg_postinst
+}
+
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

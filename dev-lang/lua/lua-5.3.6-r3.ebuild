@@ -45,6 +45,10 @@ PATCHES=(
 	"${FILESDIR}/lua-5.3.6-make.patch"
 )
 
+pkg_setup() {
+	tpgo_setup
+}
+
 src_prepare() {
 	default
 	# use glibtool on Darwin (versus Apple libtool)
@@ -263,6 +267,7 @@ pkg_postinst() {
 			einfo "Install app-emacs/lua-mode for lua support for emacs"
 		fi
 	fi
+	tpgo_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  allow-static-libs, pgo
