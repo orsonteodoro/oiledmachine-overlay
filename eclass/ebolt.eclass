@@ -273,11 +273,11 @@ ebolt_get_phase() {
 		local retu=$?
 	fi
 
-	if [[ -n ""
-
 	if ! use ebolt ; then
 		result="NO_BOLT"
 	elif use ebolt && [[ -n "${LLVM_MAX_SLOT}" ]] && (( ${LLVM_MAX_SLOT} < 14 )) ; then
+		result="NO_BOLT"
+	elif is_abi_boltable ; then
 		result="NO_BOLT"
 	elif use ebolt && (( ${retu} == 1 )) ; then
 		result="NO_BOLT"
@@ -293,6 +293,9 @@ ebolt_get_phase() {
 	echo "${result}"
 }
 
+# @FUNCTION: is_bolt_banned
+# @DESCRIPTION:
+# Check if the executable or library is not allowed to be BOLT
 is_bolt_banned() {
 	local needle="${1}"
 	for haystack in ${EBOLT_EXCLUDE_BINS} ; do
@@ -300,6 +303,36 @@ is_bolt_banned() {
 			return 0
 		fi
 	done
+	return 1
+}
+
+# @FUNCTION: is_abi_same
+# @DESCRIPTION:
+# Check if ABIs are the same and supported
+is_abi_same() {
+	local p="${path}"
+	# Only x86-64 and aarch supported supported
+	if file "${p}" | grep -q "ELF.*x86-64" && [[ "${ABI}" == "amd64" ]] ; then
+		return 0
+	elif file "${p}" | grep -q "ELF.*aarch64" && [[ "${ABI}" == "arm64" ]] ; then
+		return 0
+	fi
+	ewarn "Unsupported ABI: ${p}"
+	return 1
+}
+
+# @FUNCTION: is_abi_boltable
+# @DESCRIPTION:
+# Check if ABIs can be bolted
+is_abi_boltable() {
+	local p="${path}"
+	# Only x86-64 and aarch supported supported
+	if [[ "${ABI}" == "amd64" ]] ; then
+		return 0
+	elif [[ "${ABI}" == "arm64" ]] ; then
+		return 0
+	fi
+	ewarn "Unsupported ABI: ${p}"
 	return 1
 }
 
@@ -319,6 +352,7 @@ ebolt_src_install() {
 	if use ebolt ; then
 		_EBOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${EBOLT_IMPLS}"
 		local bolt_data_suffix_dir="${_EBOLT_DATA_DIR}/${_EBOLT_SUFFIX}"
+		local bolt_data_staging_dir="${T}/bolt-${_EBOLT_SUFFIX}"
 		keepdir "${bolt_data_suffix_dir}"
 		fowners root:${EBOLT_GROUP} "${bolt_data_suffix_dir}"
 		fperms 0775 "${bolt_data_suffix_dir}"
@@ -350,6 +384,7 @@ ebolt_src_install() {
 				elif file "${p}" | grep -q "ELF.*shared object" ; then
 					is_boltable=1
 				fi
+				is_abi_same "${p}" || continue
 				if (( ${is_boltable} == 1 )) ; then
 					# See also https://github.com/facebookincubator/BOLT/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
 					einfo "BOLT vanilla -> instrumented:  ${p}"
@@ -375,6 +410,7 @@ ebolt_src_install() {
 				elif file "${p}" | grep -q "ELF.*shared object" ; then
 					is_boltable=1
 				fi
+				is_abi_same "${p}" || continue
 				if (( ${is_boltable} == 1 )) ; then
 					local bn=$(basename "${p}")
 					einfo "BOLT vanilla -> optimized:  ${p}"
