@@ -352,6 +352,7 @@ ebolt_src_install() {
 				fi
 				if (( ${is_boltable} == 1 )) ; then
 					# See also https://github.com/facebookincubator/BOLT/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
+					einfo "BOLT vanilla -> instrumented:  ${p}"
 					"${_EBOLT_MALLOC_LIB}" llvm-bolt \
 						"${p}" \
 						-instrument \
@@ -376,6 +377,7 @@ ebolt_src_install() {
 				fi
 				if (( ${is_boltable} == 1 )) ; then
 					local bn=$(basename "${p}")
+					einfo "BOLT vanilla -> optimized:  ${p}"
 					"${_EBOLT_MALLOC_LIB}" llvm-bolt \
 						"${p}" \
 						-o "${p}.bolt" \
@@ -443,7 +445,6 @@ ebolt_pkg_postinst() {
 
 _bolt_optimization() {
 	# At this point we assume instrumented already.
-	einfo "BOLT optimizatizing"
 	# The grep is not friendly with Win systems.
 	for p in $(grep "obj" "${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS" \
 		| cut -f 2 -d " ") ; do
@@ -461,6 +462,7 @@ _bolt_optimization() {
 			fi
 			if (( ${is_boltable} == 1 )) ; then
 				local bn=$(basename "${p}")
+				einfo "BOLT instrumented -> optimized:  ${p}"
 				"${_EBOLT_MALLOC_LIB}" llvm-bolt \
 					"${p}" \
 					-o "${p}.bolt" \
