@@ -400,7 +400,7 @@ ebolt_src_install() {
 				fi
 				is_abi_same "${p}" || continue
 				if (( ${is_boltable} == 1 )) ; then
-					# See also https://github.com/facebookincubator/BOLT/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
+					# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
 					einfo "BOLT vanilla -> instrumented:  ${p}"
 					"${_EBOLT_MALLOC_LIB}" llvm-bolt \
 						"${p}" \
