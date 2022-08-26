@@ -413,7 +413,7 @@ ebolt_src_install() {
 						"${p}" \
 						-instrument \
 						-o "${p}.bolt" \
-						-instrumentation-file "${bolt_data_suffix_dir}/${bn}.fdata" \
+						-instrumentation-file "${EPREFIX}${bolt_data_suffix_dir}/${bn}.fdata" \
 						|| die
 					mv "${p}" "${p}.orig" || die
 					mv "${p}.bolt" "${p}" || die
@@ -501,6 +501,8 @@ ebolt_pkg_postinst() {
 }
 
 _bolt_optimization() {
+	use ebolt || return
+	local success=1
 	# At this point we assume instrumented already.
 	# The grep is not friendly with Win systems
 	# FIXME:  Specifically, if the path contains a space, it may not work correctly.
@@ -520,24 +522,68 @@ _bolt_optimization() {
 			fi
 			if (( ${is_boltable} == 1 )) ; then
 				local bn=$(basename "${p}")
+				if [[ ! -e "${p}.orig" ]] ; then
+					cp -a "${p}" "${p}".orig || true
+				fi
 				einfo "BOLT instrumented -> optimized:  ${p}"
-				"${_EBOLT_MALLOC_LIB}" llvm-bolt \
+				if ! "${_EBOLT_MALLOC_LIB}" llvm-bolt \
 					"${p}" \
 					-o "${p}.bolt" \
-					-data="${bolt_data_staging_dir}/${bn}.fdata" \
+					-data="${EPREFIX}${bolt_data_staging_dir}/${bn}.fdata" \
 					-reorder-blocks=cache+ \
 					-reorder-functions=hfsort \
 					-split-functions=2 \
 					-split-all-cold \
 					-split-eh \
-					-dyno-stats || die
-				rm "${p}" || die
-				mv "${p}.bolt" "${p}" || die
+					-dyno-stats ; then
+					success=0
+					break
+				fi
 			fi
 		fi
 	done
+
+	# We do an atomic replace otherwise undo.
+	if (( ${success} == 1 )) ; then
+einfo
+einfo "Merging BOLT"
+einfo
+		for p in $(grep "obj" "${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS" \
+			| cut -f 2 -d " ") ; do
+			if [[ -e "${p}.bolt" ]] ; then
+				rm "${p}"
+				mv "${p}.bolt" "${p}"
+				rm "${p}.orig"
+			fi
+		done
+	else
+einfo
+einfo "Detected failure.  Undoing BOLT."
+einfo
+		for p in $(grep "obj" "${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS" \
+			| cut -f 2 -d " ") ; do
+			if [[ -e "${p}.orig" ]] ; then
+				mv "${p}.orig" "${p}"
+				rm "${p}.bolt" || true
+			fi
+		done
+	fi
 }
 
+# @FUNCTION: ebolt_pkg_postinst
+# @DESCRIPTION:
+# Optimizes binaries for BOLT
 ebolt_pkg_config() {
-	_bolt_optimization
+	if [[ -n "${_MULTILIB_BUILD_ECLASS}" ]] ; then
+		pkg_config_abi() {
+			_EBOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${EBOLT_IMPLS}"
+			local bolt_data_suffix_dir="${_EBOLT_DATA_DIR}/${_EBOLT_SUFFIX}"
+			_bolt_optimization
+		}
+		multilib_foreach_abi pkg_config_abi
+	else
+		_EBOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${EBOLT_IMPLS}"
+		local bolt_data_suffix_dir="${_EBOLT_DATA_DIR}/${_EBOLT_SUFFIX}"
+		_bolt_optimization
+	fi
 }

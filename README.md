@@ -238,11 +238,7 @@ BOLT steps:
 
 So follow the 6 steps from top to bottom to properly combine them.
 The ebuild has access to `emerge --config package_name` to optimize BOLT
-instrumented ebuilds avoiding long compile-times, but it comes with the
-risk of breaking because there is no undo option at the moment.  If you
-require more determinism or reliability into the live system so it
-blocks failed BOLT optimized builds into the live system, we recommend
-using a re-emerge instead.
+instrumented ebuilds avoiding long compile-times.
 
 ## Packages
 
