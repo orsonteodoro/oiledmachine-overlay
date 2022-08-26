@@ -1612,7 +1612,7 @@ ewarn
 	done
 }
 
-tpgo_train_custom() {
+train_trainer_custom() {
 	local btype="${lib_type/-*}"
 	if multilib_is_native_abi ; then
 		export FFMPEG="${ED}/usr/bin/ffmpeg-${btype}"

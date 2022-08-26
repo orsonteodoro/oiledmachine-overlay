@@ -197,15 +197,15 @@ _src_post_train() {
 	export PATH="${PATH_BAK}"
 }
 
-tpgo_trainer_list() {
+train_trainer_list() {
 	ls "${WORKDIR}/lua-${TEST_PV}-tests/"*".lua" || die
 }
 
-tpgo_get_trainer_exe() {
+train_get_trainer_exe() {
 	realpath -e "${ED}/usr/bin/lua${SLOT}" || die
 }
 
-tpgo_get_trainer_args() {
+train_get_trainer_args() {
 	local trainer="${1}"
 	echo "${trainer}"
 }

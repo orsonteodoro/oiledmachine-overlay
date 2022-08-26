@@ -900,7 +900,7 @@ ewarn
 	fi
 }
 
-tpgo_train_custom() {
+train_trainer_custom() {
 	[[ "${lib_type}" == "static" ]] && return # Reuse shared PGO profile
 einfo
 einfo "Running trainer"

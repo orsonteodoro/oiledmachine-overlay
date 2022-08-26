@@ -598,7 +598,7 @@ _trainer_plan_lossless() {
 	fi
 }
 
-tpgo_train_custom() {
+train_trainer_custom() {
 	[[ "${lib_type}" == "static" ]] || return # Reuse the shared PGO profile
 	if use pgo-trainer-constrained-quality ; then
 		_trainer_plan_constrained_quality "libvpx"

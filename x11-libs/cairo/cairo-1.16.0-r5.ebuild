@@ -4,8 +4,8 @@
 
 EAPI=8
 
-TPGO_USE_X=0
-TPGO_NO_X_DEPENDS=1
+TRAIN_USE_X=0
+TRAIN_NO_X_DEPENDS=1
 inherit flag-o-matic autotools multilib-minimal toolchain-funcs tpgo virtualx
 
 if [[ ${PV} == *9999* ]]; then
@@ -168,7 +168,7 @@ src_compile() {
 	multilib_foreach_abi compile_abi
 }
 
-tpgo_train_custom() {
+train_trainer_custom() {
 #	sed -r -i -e "s|am__EXEEXT_([0-9]) = any2ppm|am__EXEEXT_\1 = |g" test/Makefile || die
 	make test || true
 }

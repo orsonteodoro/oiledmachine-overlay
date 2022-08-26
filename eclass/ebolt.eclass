@@ -2,7 +2,7 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: bolt.eclass
+# @ECLASS: ebolt.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # Help wanted!  Requires co-maintainer or testers.
 # @SUPPORTED_EAPIS: 7 8

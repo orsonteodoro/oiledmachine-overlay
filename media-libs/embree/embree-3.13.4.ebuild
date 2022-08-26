@@ -4,8 +4,8 @@
 
 EAPI=8
 
-TPGO_USE_X=1
-TPGO_TEST_DURATION=120
+TRAIN_USE_X=1
+TRAIN_TEST_DURATION=120
 inherit cmake flag-o-matic linux-info toolchain-funcs tpgo
 
 DESCRIPTION="Collection of high-performance ray tracing kernels"
@@ -498,7 +498,7 @@ _get_time_override() {
 	echo "${duration}"
 }
 
-tpgo_trainer_list() {
+train_trainer_list() {
 	local isa
 	local f
 	for f in $(find "${BUILD_DIR}" -maxdepth 1 -executable -type f | sort) ; do
@@ -508,12 +508,12 @@ tpgo_trainer_list() {
 	done
 }
 
-tpgo_get_trainer_exe() {
+train_get_trainer_exe() {
 	local trainer="${1}"
 	echo "${trainer%:*}"
 }
 
-tpgo_get_trainer_args() {
+train_get_trainer_args() {
 	local trainer="${1}"
 	local isa="${trainer#*:}"
 	local ncpus=$(lscpu | grep "CPU(s)" | head -n 1 | grep -E -o -e "[0-9]+")
@@ -527,7 +527,7 @@ tpgo_get_trainer_args() {
 	echo --isa ${isa} --threads ${threads}
 }
 
-tpgo_override_duration() {
+train_override_duration() {
 	local trainer="${1}"
 	local duration=$(_get_time_override "${trainer}")
 	echo "${duration}"

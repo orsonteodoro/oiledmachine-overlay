@@ -122,12 +122,12 @@ declare -A ARGS=(
 	[2]="${WORKDIR}/benchmark_images/large_palette.png"
 )
 
-tpgo_get_trainer_args() {
+train_get_trainer_args() {
 	local trainer="${1}"
 	echo "${ARGS[${trainer}]}"
 }
 
-tpgo_get_trainer_exe() {
+train_get_trainer_exe() {
 	echo "examples/example"
 }
 

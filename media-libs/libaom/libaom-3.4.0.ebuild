@@ -547,7 +547,7 @@ _trainer_plan_lossless() {
 	fi
 }
 
-tpgo_train_custom() {
+train_trainer_custom() {
 	[[ "${lib_type}" == "static" ]] && return
 	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"

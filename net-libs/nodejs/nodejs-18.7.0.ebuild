@@ -287,6 +287,7 @@ src_prepare() {
 	fi
 
 	default
+	tpgo_src_prepare
 }
 
 src_configure() { :; }
@@ -420,7 +421,7 @@ EOF
 	fi
 }
 
-tpgo_train_custom() {
+train_trainer_custom() {
 	local benchmark=( $(grep -l -r -e "createBenchmark" "benchmark" | sort) )
 	unset accepted
 	declare -A accepted
@@ -619,6 +620,7 @@ src_install() {
 		rm -rf "${ED}/usr/$(get_libdir)/node_modules/corepack" || die
 		rm -rf "${ED}/usr/bin/corepack" || die
 	fi
+	tpgo_src_install
 }
 
 src_test() {
@@ -662,6 +664,7 @@ einfo "\`eselect nodejs\` in order to compile against the headers matching the"
 einfo "corresponding SLOT.  This means that you cannot compile with different"
 einfo "SLOTS simultaneously."
 einfo
+	tpgo_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multislot, pgo

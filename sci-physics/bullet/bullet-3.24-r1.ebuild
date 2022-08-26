@@ -4,8 +4,8 @@
 
 EAPI=8
 
-TPGO_USE_X=1
-TPGO_TEST_DURATION=20
+TRAIN_USE_X=1
+TRAIN_TEST_DURATION=20
 PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake flag-o-matic lcnr multilib-build python-single-r1 toolchain-funcs tpgo
 
@@ -416,7 +416,7 @@ _src_compile() {
 	cmake_src_compile
 }
 
-tpgo_pre_trainer() {
+train_pre_trainer() {
 	local name="${@}"
 cat > 0_Bullet3Demo.txt <<EOF
 --start_demo_name=${name}
@@ -429,7 +429,7 @@ cat > 0_Bullet3Demo.txt <<EOF
 EOF
 }
 
-tpgo_post_trainer() {
+train_post_trainer() {
 	rm 0_Bullet3Demo.txt
 }
 
@@ -460,14 +460,14 @@ is_benchmark_demo() {
 	return 1
 }
 
-tpgo_trainer_list() {
+train_trainer_list() {
 	grep "ExampleEntry([01]" \
 		"${S}/examples/ExampleBrowser/ExampleEntries.cpp" \
 		| cut -f 2 -d '"' \
 		| sort
 }
 
-tpgo_override_duration() {
+train_override_duration() {
 	local trainer="${1}"
 	if is_benchmark_demo "${1}" ; then
 		echo "180" # 3 min
@@ -476,7 +476,7 @@ tpgo_override_duration() {
 	fi
 }
 
-tpgo_get_trainer_exe() {
+train_get_trainer_exe() {
 	echo "examples/ExampleBrowser/App_ExampleBrowser"
 }
 

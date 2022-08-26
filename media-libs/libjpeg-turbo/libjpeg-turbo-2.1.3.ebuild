@@ -270,7 +270,7 @@ _src_compile() {
 	cmake_src_compile
 }
 
-tpgo_train_custom() {
+train_trainer_custom() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export LD_LIBRARY_PATH="${ED}/usr/$(get_libdir)"
 	local sandbox_path="${T}/sandbox"

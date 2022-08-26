@@ -99,22 +99,6 @@
 # Reason why is because multibuild and derivatives are broken by design.
 # It is trying to cover up the n^k design (aka antipattern).
 
-# @ECLASS_VARIABLE: TPGO_USE_X
-# @DESCRIPTION:
-# Runs GUI in X.  You can use console apps in this also.
-
-# @ECLASS_VARIABLE: TPGO_NO_X_DEPENDS
-# @DESCRIPTION:
-# Disables X depends
-
-# @ECLASS_VARIABLE: TPGO_SANDBOX_EXCEPTION_GLSL
-# @DESCRIPTION:
-# Add sandbox exceptions for GLSL.
-
-# @ECLASS_VARIABLE: TPGO_SANDBOX_EXCEPTION_INPUT
-# @DESCRIPTION:
-# Add sandbox exceptions for input.
-
 # @ECLASS_VARIABLE: TPGO_CONFIGURE_DONT_SET_FLAGS
 # @DESCRIPTION:
 # Lets the project decide how to add PGO flags and merge profile.
@@ -203,27 +187,12 @@ _TPGO_DATA_DIR=${_TPGO_DATA_DIR:-"${TPGO_PROFILES_DIR}/${CATEGORY}/${PN}/${EPGO_
 # @DESCRIPTION:
 # Optimize for speed for untouched functions
 
-inherit flag-o-matic toolchain-funcs
-if [[ "${TPGO_USE_X}" == "1" ]] ;then
-	inherit virtualx
-fi
+inherit flag-o-matic toolchain-funcs train
 if [[ "${TPGO_MULTILIB}" == "1" ]] ; then
 	inherit multilib-build
 fi
 
-__VIRTX_BDEPENDS="
-	x11-base/xorg-server[xvfb]
-	x11-apps/xhost
-"
-
 IUSE+=" pgo"
-if [[ "${TPGO_USE_X}" == "1" && "${TPGO_NO_X_DEPENDS}" != "1" ]] ;then
-	BDEPEND+="
-		pgo? (
-			${__VIRTX_BDEPENDS}
-		)
-	"
-fi
 
 tpgo-check-x() {
 	local pkg
@@ -236,21 +205,11 @@ ewarn
 	done
 }
 
-# @ECLASS_VARIABLE: TPGO_TEST_DURATION
-# @DESCRIPTION:
-# The timebox in seconds for a trainer.
-TPGO_TEST_DURATION=${TPGO_TEST_DURATION:-120} # 2 min
-
-# @FUNCTION: tpgo_get_trainer_exe
+# @FUNCTION: tpgo_setup
 # @DESCRIPTION:
 # Performs checks and recommend workarounds to broken EAPI to unbreak PGO
 tpgo_setup() {
-	if ! declare -f tpgo_train_custom > /dev/null ; then
-		declare -f tpgo_get_trainer_exe > /dev/null \
-			|| die "tpgo_get_trainer_exe must be defined"
-		declare -f tpgo_trainer_list > /dev/null \
-			|| die "tpgo_trainer_list must be defined"
-	fi
+	train_setup
 
 	if (( $(declare -f src_configure | wc -c) > 29 )) ; then
 eerror
@@ -427,229 +386,6 @@ tpgo_src_configure() {
 	fi
 }
 
-# @FUNCTION: _tpgo_run_trainer
-# @INTERNAL
-# @DESCRIPTION:
-# Runs the trainer executable
-#
-# A PGO trainer is a program that is either a benchmark, a demo, or a sample
-# program.  This program will generate a PGO profile but doesn't have to be
-# designed to generate PGO profiles.
-#
-# User defined event handlers:
-#
-# tpgo_get_trainer_exe (REQUIRED)
-#
-#   Summary:
-#
-#     The executable to use for training echoed as a string using the first
-#     arg as
-#
-#   Args:
-#
-#     trainer - produced from tpgo_trainer_list
-#
-#   Returns:
-#
-#     string - The echoed relpath relative to BUILD_DIR or abspath of the program.
-#
-# tpgo_get_trainer_args (optional)
-#
-#  Summary:
-#
-#   Outputs the trainer args that correspond to the trainer provided as the
-#   first arg.
-#
-#   Args:
-#
-#     trainer - produced from tpgo_trainer_list
-#
-#   Returns:
-#
-#     strings - list of arguments to be collected by a bash array
-#
-_tpgo_run_trainer() {
-	local duration="${1}"
-	shift 1
-	local trainer="${@}"
-	local now=$(date +"%s")
-	local done_at=$((${now} + ${duration}))
-	local done_at_s=$(date --date="@${done_at}")
-einfo
-einfo "Running '${trainer}' trainer for ${duration}s to be completed at"
-einfo "${done_at_s}"
-einfo
-	declare -f tpgo_get_trainer_exe > /dev/null \
-		|| die "tpgo_get_trainer_exe must be defined"
-	local trainer_exe=$(tpgo_get_trainer_exe "${trainer}")
-
-	local trainer_args=()
-
-	if declare -f tpgo_get_trainer_args > /dev/null ; then
-		trainer_args=(
-			$(tpgo_get_trainer_args "${trainer}")
-		)
-	fi
-
-cat > "run.sh" <<EOF
-#!${EPREFIX}/bin/sh
-
-# Using & will prevent stall
-echo "cmd:  \"${trainer_exe}\" ${trainer_args[@]}"
-"${trainer_exe}" ${trainer_args[@]} &
-pid=\$!
-
-now=\$(date +"%s")
-while (( \${now} < ${done_at} )) \
-	&& ps -p \${pid} 2>/dev/null 1>/dev/null ; do
-	sleep 1
-	now=\$(date +"%s")
-done
-ps -p \${pid} 2>/dev/null 1>/dev/null \
-	&& kill -9 \${pid}
-true
-EOF
-	chmod +x "run.sh" || die
-	if [[ "${TPGO_USE_X}" == "1" ]] ; then
-		virtx ./run.sh
-
-		if grep -q -r -e "cannot connect to X server" \
-			"${T}/build.log" ; then
-eerror
-eerror "Detected cannot connect to the X server."
-eerror
-			die
-		fi
-	else
-		./run.sh
-	fi
-	rm run.sh || die
-}
-
-# @FUNCTION: _tpgo_train_default
-# @INTERNAL
-# @DESCRIPTION:
-# Runs the default trainer program
-# The default trainer will just run all the programs in a timebox
-# When the timebox expires, it moves on the next one.
-#
-# User definable event handlers:
-#
-#  tpgo_trainer_list (REQUIRED)
-#
-#    Summary:
-#
-#      Echos all programs to be run.
-#
-#    Returns:
-#
-#      A newline separated list of names
-#
-#  tpgo_pre_trainer (optional)
-#
-#    Summary:
-#
-#      Pre setup before executing trainer
-#
-#    Arg:
-#
-#      trainer - name of a trainer produced by tpgo_trainer_list
-#
-#  tpgo_post_trainer (optional)
-#
-#    Summary:
-#
-#      Cleanup function immediately after trainer
-#
-#    Arg:
-#
-#      trainer - name of a trainer produced by tpgo_trainer_list
-#
-_tpgo_train_default() {
-	# Sandbox violation prevention
-	if [[ "${TPGO_SANDBOX_EXCEPTION_GLSL}" == "1" ]] ; then
-		export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache"
-		export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
-	fi
-	if [[ "${TPGO_SANDBOX_EXCEPTION_INPUT}" == "1" ]] ; then
-		for x in $(find "${BROOT}/dev/input" "${ESYSROOT}/dev/input" -name "event*") ; do
-			einfo "Adding \`addwrite ${x}\` sandbox rule"
-			addwrite "${x}"
-		done
-	fi
-
-	_TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TPGO_IMPLS}"
-	local pgo_data_staging_dir="${T}/pgo-${_TPGO_SUFFIX}"
-
-	declare -f tpgo_trainer_list > /dev/null \
-		|| die "tpgo_trainer_list must be defined"
-
-	IFS=$'\n'
-	local trainer
-	for trainer in $(tpgo_trainer_list) ; do
-		duration=${TPGO_TEST_DURATION}
-		declare -f tpgo_override_duration > /dev/null \
-			&& duration=$(tpgo_override_duration "${trainer}")
-		declare -f tpgo_pre_trainer > /dev/null \
-			&& tpgo_pre_trainer "${trainer}"
-		_tpgo_run_trainer "${duration}" "${trainer}"
-		declare -f tpgo_post_trainer > /dev/null \
-			&& tpgo_post_trainer "${trainer}"
-		# We would like to use tc-is-clang tc-is-gcc but it is broken.
-		# Even after inspecting the log, it is over-engineered and
-		# gross.
-		if use pgo && [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
-			if ! find "${pgo_data_staging_dir}" -name "*.gcda" \
-				2>/dev/null 1>/dev/null ; then
-ewarn
-ewarn "Didn't generate a PGO profile"
-ewarn
-			fi
-		elif use pgo && [[ "${CC}" =~ "clang" ]] ; then
-			if ! find "${pgo_data_staging_dir}" -name "*.profraw" \
-				2>/dev/null 1>/dev/null ; then
-ewarn
-ewarn "Didn't generate a PGO profile"
-ewarn
-			fi
-		fi
-	done
-	IFS=$' \t\n'
-	if use pgo && [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
-		if ! find "${pgo_data_staging_dir}" -name "*.gcda" ; then
-eerror
-eerror "Didn't generate a PGO profile"
-eerror
-			die
-		fi
-	elif use pgo && [[ "${CC}" =~ "clang" ]] ; then
-		if ! find "${pgo_data_staging_dir}" -name "*.profraw" ; then
-eerror
-eerror "Didn't generate a PGO profile"
-eerror
-			die
-		fi
-	fi
-}
-
-# @FUNCTION: _tpgo_train
-# @INTERNAL
-# @DESCRIPTION:
-# Runs the PGO training program.
-# You may define _tpgo_train_custom handler to perform your
-# own training.
-#
-# User defined event handlers:
-#
-#   tpgo_train_custom (optional)
-#
-_tpgo_train() {
-	if declare -f tpgo_train_custom > /dev/null ; then
-		tpgo_train_custom
-	else
-		_tpgo_train_default
-	fi
-}
 
 # @FUNCTION: _tpgo_is_profile_reusable
 # @INTERNAL
@@ -810,8 +546,9 @@ einfo
 			declare -f _src_configure > /dev/null && _src_configure
 			declare -f _src_compile > /dev/null && _src_compile
 			declare -f _src_post_pgi > /dev/null && _src_post_pgi
+			_tpgo_src_pre_train
 			declare -f _src_pre_train > /dev/null && _src_pre_train
-			_tpgo_train
+			_src_train
 			declare -f _src_post_train > /dev/null && _src_post_train
 		fi
 		PGO_PHASE="PGO"
@@ -871,6 +608,61 @@ tpgo_multilib_src_compile() {
 	multilib_foreach_abi tpgo_compile_abi
 }
 fi
+
+# @FUNCTION: _tpgo_src_pre_train
+# @INTERNAL
+# @DESCRIPTION:
+# Initalize training specifically for TPGO
+_tpgo_src_pre_train() {
+	_TRAIN_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TRAIN_IMPLS}"
+	local pgo_data_staging_dir="${T}/pgo-${_TRAIN_SUFFIX}"
+}
+
+# @FUNCTION: train_verify_profile_warn
+# @INTERNAL
+# @DESCRIPTION:
+# Verify that a PGO profile was created and warn if some training didn't
+# generate a profile in the middle of the training run.
+train_verify_profile_warn() {
+	if use pgo && [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
+		if ! find "${pgo_data_staging_dir}" -name "*.gcda" \
+			2>/dev/null 1>/dev/null ; then
+ewarn
+ewarn "Didn't generate a PGO profile"
+ewarn
+		fi
+	elif use pgo && [[ "${CC}" =~ "clang" ]] ; then
+		if ! find "${pgo_data_staging_dir}" -name "*.profraw" \
+			2>/dev/null 1>/dev/null ; then
+ewarn
+ewarn "Didn't generate a PGO profile"
+ewarn
+		fi
+	fi
+}
+
+# @FUNCTION: train_verify_profile_fatal
+# @INTERNAL
+# @DESCRIPTION:
+# Verify that a PGO profile was created at the end of training
+# if not then die.
+train_verify_profile_fatal() {
+	if use pgo && [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
+		if ! find "${pgo_data_staging_dir}" -name "*.gcda" ; then
+eerror
+eerror "Didn't generate a PGO profile"
+eerror
+			die
+		fi
+	elif use pgo && [[ "${CC}" =~ "clang" ]] ; then
+		if ! find "${pgo_data_staging_dir}" -name "*.profraw" ; then
+eerror
+eerror "Didn't generate a PGO profile"
+eerror
+			die
+		fi
+	fi
+}
 
 # @FUNCTION: tpgo_src_install
 # @DESCRIPTION:
