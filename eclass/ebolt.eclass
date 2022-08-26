@@ -273,7 +273,11 @@ ebolt_get_phase() {
 		local retu=$?
 	fi
 
+	if [[ -n ""
+
 	if ! use ebolt ; then
+		result="NO_BOLT"
+	elif use ebolt && [[ -n "${LLVM_MAX_SLOT}" ]] && (( ${LLVM_MAX_SLOT} < 14 )) ; then
 		result="NO_BOLT"
 	elif use ebolt && (( ${retu} == 1 )) ; then
 		result="NO_BOLT"
