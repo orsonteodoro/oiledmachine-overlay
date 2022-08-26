@@ -520,6 +520,7 @@ _bolt_optimization() {
 			elif file "${p}" | grep -q "ELF.*shared object" && is_file_boltable "${p}" ; then
 				is_boltable=1
 			fi
+			is_abi_same "${p}" || continue
 			if (( ${is_boltable} == 1 )) ; then
 				local bn=$(basename "${p}")
 				if [[ ! -e "${p}.orig" ]] ; then
@@ -529,7 +530,7 @@ _bolt_optimization() {
 				if ! "${_EBOLT_MALLOC_LIB}" llvm-bolt \
 					"${p}" \
 					-o "${p}.bolt" \
-					-data="${EPREFIX}${bolt_data_staging_dir}/${bn}.fdata" \
+					-data="${EPREFIX}${bolt_data_suffix_dir}/${bn}.fdata" \
 					-reorder-blocks=cache+ \
 					-reorder-functions=hfsort \
 					-split-functions=2 \
