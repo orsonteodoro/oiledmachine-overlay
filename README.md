@@ -220,6 +220,30 @@ EPGO_FORCE_PGI - 1 to reset to PGI temporarily.  Remember to remove the flag or
 set it to 0 after being PGIed.  If build-time is unreliable for PGO, try setting
 it to 1.
 
+### BOLT + PGO
+
+Some packages may allow BOLT and PGO.  Upstream recommends building the PGO
+build to completion first.  Then, do a BOLT optimized build.  Both BOLT and PGO
+each require 3 steps;
+
+PGO steps:
+-instrumentation
+-training
+-optimization
+
+BOLT steps:
+-instrument
+-collection (aka training)
+-optimize
+
+So follow the 6 steps from top to bottom to properly combine them.
+The ebuild has access to `emerge --config package_name` to optimize BOLT
+instrumented ebuilds avoiding long compile-times, but it comes with the
+risk of breaking because there is no undo option at the moment.  If you
+require more determinism or reliability into the live system so it
+blocks failed BOLT optimized builds into the live system, we recommend
+using a re-emerge instead.
+
 ## Packages
 
 | package | description |
