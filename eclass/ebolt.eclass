@@ -495,7 +495,8 @@ ebolt_pkg_postinst() {
 
 _bolt_optimization() {
 	# At this point we assume instrumented already.
-	# The grep is not friendly with Win systems.
+	# The grep is not friendly with Win systems
+	# FIXME:  Specifically, if the path contains a space, it may not work correctly.
 	for p in $(grep "obj" "${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS" \
 		| cut -f 2 -d " ") ; do
 		# Always assume optimized or not
