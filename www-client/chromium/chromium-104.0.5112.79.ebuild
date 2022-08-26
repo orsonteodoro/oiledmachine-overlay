@@ -2642,7 +2642,7 @@ multilib_src_compile() {
 	#	--without-android || die
 
 	export PGO_PHASE=$(epgo_get_phase)
-	export EBOLT_PHASE=$(ebolt_get_phase)
+	export BOLT_PHASE=$(ebolt_get_phase)
 einfo
 einfo "PGO_PHASE:  ${PGO_PHASE}"
 einfo
@@ -2787,7 +2787,7 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	# have been present in the listed the the .html (about:credits) file
 	lcnr_install_files
 
-	local EBOLT_PHASE=$(ebolt_get_phase)
+	local BOLT_PHASE=$(ebolt_get_phase)
 	epgo_src_install
 	ebolt_src_install
 }

@@ -508,7 +508,7 @@ _bolt_optimization() {
 		| cut -f 2 -d " ") ; do
 		# Always assume optimized or not
 		PGO_PHASE_CONFIG=$(get_pgo_phase_config)
-		if [[ "${BOLT_PHASE_CONFIG}" == "OPT" ]] ; then
+		if [[ "${BOLT_PHASE}" == "OPT" ]] ; then
 			[[ -L "${p}" ]] && continue
 			local bn=$(basename "${p}")
 			is_bolt_banned "${bn}" && continue

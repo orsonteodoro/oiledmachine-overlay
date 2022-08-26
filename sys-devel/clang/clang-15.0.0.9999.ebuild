@@ -355,7 +355,7 @@ _gcc_fullversion() {
 }
 
 _configure() {
-	local EBOLT_PHASE=$(ebolt_get_phase)
+	local BOLT_PHASE=$(ebolt_get_phase)
 	epgo_src_configure
 	ebolt_src_configure
 	local llvm_version=$(llvm-config --version) || die
@@ -614,7 +614,7 @@ _install() {
 multilib_src_install() {
 	BUILD_DIR="${WORKDIR}/x/y/clang-${MULTILIB_ABI_FLAG}.${ABI}"
 	_install
-	local EBOLT_PHASE=$(ebolt_get_phase)
+	local BOLT_PHASE=$(ebolt_get_phase)
 	epgo_src_install
 	ebolt_src_install
 }
