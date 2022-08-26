@@ -502,10 +502,10 @@ ebolt_pkg_postinst() {
 
 _bolt_optimization() {
 	use ebolt || return
-	local success=1
 	# At this point we assume instrumented already.
 	# The grep is not friendly with Win systems
 	# FIXME:  Specifically, if the path contains a space, it may not work correctly.
+	local p
 	for p in $(grep "obj" "${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS" \
 		| cut -f 2 -d " ") ; do
 		# Always assume optimized or not
@@ -536,38 +536,28 @@ _bolt_optimization() {
 					-split-all-cold \
 					-split-eh \
 					-dyno-stats ; then
-					success=0
-					break
+					touch "${p}.bolt_failed"
 				fi
 			fi
 		fi
 	done
 
-	# We do an atomic replace otherwise undo.
-	if (( ${success} == 1 )) ; then
-einfo
-einfo "Merging BOLT"
-einfo
-		for p in $(grep "obj" "${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS" \
-			| cut -f 2 -d " ") ; do
-			if [[ -e "${p}.bolt" ]] ; then
-				rm "${p}"
-				mv "${p}.bolt" "${p}"
-				rm "${p}.orig"
-			fi
-		done
-	else
-einfo
-einfo "Detected failure.  Undoing BOLT."
-einfo
-		for p in $(grep "obj" "${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS" \
-			| cut -f 2 -d " ") ; do
-			if [[ -e "${p}.orig" ]] ; then
-				mv "${p}.orig" "${p}"
-				rm "${p}.bolt" || true
-			fi
-		done
-	fi
+	# Using best effort to BOLT while undoing failed optimization.
+	for p in $(grep "obj" "${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS" \
+		| cut -f 2 -d " ") ; do
+		if [[ -e "${p}.bolt_failed" ]] ; then
+			einfo "Undoing BOLT failure for ${p}"
+			mv "${p}.orig" "${p}"
+			rm "${p}.bolt" || true
+			rm "${p}.bolt_failed"
+		fi
+		if [[ -e "${p}.bolt" ]] ; then
+			einfo "Replacing with BOLT optimized for ${p}"
+			rm "${p}"
+			mv "${p}.bolt" "${p}"
+			rm "${p}.orig"
+		fi
+	done
 }
 
 # @FUNCTION: ebolt_pkg_postinst
