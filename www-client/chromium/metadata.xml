@@ -176,6 +176,12 @@ Prebuilt    it    o             o           o              o
       implementation using the Telemetry testing framework as a per-package
       patch and the test must be named custom.sh placed in ${S}.
     </flag>
+    <flag name="ebolt">
+      Use the event based BOLT to optimize the package. (EXPERIMENTAL)
+      This will optimize the layout of the program to make better uses
+      of cache use and branch prediction.  BOLT benefits the most for programs
+      with 100+ MB in size.
+    </flag>
     <flag name="epgo">
       Build using the Event Based PGO (Profile Guided Optimization) strategy
     </flag>
