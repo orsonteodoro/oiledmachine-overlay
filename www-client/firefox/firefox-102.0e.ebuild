@@ -55,7 +55,7 @@ MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info \
 	lcnr llvm multiprocessing pax-utils python-any-r1 toolchain-funcs \
 	virtualx xdg
-inherit multilib-minimal rust-toolchain
+inherit ebolt multilib-minimal rust-toolchain
 
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 
@@ -785,6 +785,7 @@ eerror
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
 	done
+	ebolt_setup
 }
 
 src_unpack() {
@@ -920,6 +921,7 @@ src_prepare() {
 		else
 			ewarn "Using objdump from cbuild"
 		fi
+		ebolt_src_prepare
 	}
 
 	multilib_foreach_abi _src_prepare
@@ -990,6 +992,9 @@ multilib_src_configure() {
 		# that no unsupported flags are set
 		strip-unsupported-flags
 	fi
+
+	BOLT_PHASE=$(ebolt_get_phase)
+	ebolt_src_configure
 
 	# Ensure we use correct toolchain
 	export HOST_CC="$(tc-getBUILD_CC)"
@@ -1639,6 +1644,8 @@ multilib_src_install() {
 		"${ED}/usr/bin/${PN}-${ABI}" \
 		|| die
 	_install_licenses
+	BOLT_PHASE=$(ebolt_get_phase)
+	ebolt_src_install
 }
 
 pkg_preinst() {

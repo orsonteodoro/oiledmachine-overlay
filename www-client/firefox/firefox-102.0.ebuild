@@ -54,7 +54,7 @@ MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info \
 	lcnr llvm multiprocessing pax-utils python-any-r1 toolchain-funcs \
 	virtualx xdg
-inherit multilib-minimal rust-toolchain
+inherit ebolt multilib-minimal rust-toolchain
 
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 
@@ -368,7 +368,8 @@ RDEPEND="
 			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP}]
 		)
 	)
-	selinux? ( sec-policy/selinux-mozilla )"
+	selinux? ( sec-policy/selinux-mozilla )
+"
 
 DEPEND="
 	${CDEPEND}
@@ -381,7 +382,8 @@ DEPEND="
 	X? (
 		x11-libs/libICE[${MULTILIB_USEDEP}]
 		x11-libs/libSM[${MULTILIB_USEDEP}]
-	)"
+	)
+"
 RESTRICT="mirror"
 
 S="${WORKDIR}/${PN}-${PV%_*}"
@@ -776,6 +778,7 @@ eerror
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
 	done
+	ebolt_setup
 }
 
 src_unpack() {
@@ -911,6 +914,7 @@ src_prepare() {
 		else
 			ewarn "Using objdump from cbuild"
 		fi
+		ebolt_src_prepare
 	}
 
 	multilib_foreach_abi _src_prepare
@@ -981,6 +985,9 @@ multilib_src_configure() {
 		# that no unsupported flags are set
 		strip-unsupported-flags
 	fi
+
+	BOLT_PHASE=$(ebolt_get_phase)
+	ebolt_src_configure
 
 	# Ensure we use correct toolchain
 	export HOST_CC="$(tc-getBUILD_CC)"
@@ -1630,6 +1637,8 @@ multilib_src_install() {
 		"${ED}/usr/bin/${PN}-${ABI}" \
 		|| die
 	_install_licenses
+	BOLT_PHASE=$(ebolt_get_phase)
+	ebolt_src_install
 }
 
 pkg_preinst() {
@@ -1758,8 +1767,8 @@ einfo
 einfo "WebGL performance is suboptimal and runs at ~40 FPS.  There is currently"
 einfo "no fix for this."
 einfo
-
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild, new-patches
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, license-completness, license-transparency
