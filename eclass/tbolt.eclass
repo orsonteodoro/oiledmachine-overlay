@@ -15,10 +15,11 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+LLVM_SLOTS=(16 15 14)
 inherit flag-o-matic toolchain-funcs train
 
 IUSE+=" bolt"
-RESTRICT+=" strip" # Don't strip static-libs
+RESTRICT+=" strip" # Don't strip at all
 
 # @ECLASS_VARIABLE: TBOLT_DISABLE_BDEPEND
 # @DESCRIPTION:
@@ -63,6 +64,17 @@ _TBOLT_CATPN_DATA_DIR=${_TBOLT_CATPN_DATA_DIR:-"${TBOLT_PROFILES_DIR}/${CATEGORY
 # @DESCRIPTION:
 # The path to the program BOLT profile with version specificity.
 _TBOLT_DATA_DIR=${_TBOLT_DATA_DIR:-"${TBOLT_PROFILES_DIR}/${CATEGORY}/${PN}/${TBOLT_PV}"}
+
+# @ECLASS_VARIABLE: _TBOLT_PATH
+# @INTERNAL
+# @DESCRIPTION:
+# Allow disjointed PATH to llvm-bolt while respecting LLVM_MAX_SLOT
+_TBOLT_PATH="" # Set in tbolt_setup
+
+# @ECLASS_VARIABLE: TBOLT_SLOT
+# @DESCRIPTION:
+# Force a particular LLVM slot for llvm-slot.  This is for compatiblity for BOLT profiles.
+# The preference is auto selection to the highest enabled.
 
 # @FUNCTION: tbolt_meets_requirements
 # @RETURN:
@@ -145,6 +157,22 @@ _setup_malloc() {
 	fi
 }
 
+# @FUNCTION: _setup_llvm
+# @DESCRIPTION:
+# Setup PATH for llvm-bolt
+_setup_llvm() {
+	if [[ -n "${TBOLT_SLOT}" ]] ; then
+		_TBOLT_PATH="${ESYSROOT}/usr/lib/llvm/${TBOLT_SLOT}/bin"
+	elif [[ -z "${LLVM_MAX_SLOT}" ]] ; then
+		for s in ${LLVM_SLOTS[@]} ; do
+			if has_version "sys-devel/llvm:${s}[bolt]" ; then
+				_TBOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
+				break
+			fi
+		done
+	fi
+}
+
 # @FUNCTION: tbolt_setup
 # @DESCRIPTION:
 # You must call this in pkg_setup
@@ -152,6 +180,7 @@ tbolt_setup() {
 	_tbolt_check_bolt
 	_setup_malloc
 	train_setup
+	_setup_llvm
 }
 
 # @FUNCTION: _tbolt_prepare_bolt
@@ -166,7 +195,7 @@ _tbolt_prepare_bolt() {
 	if [[ -e "${bolt_data_suffix_dir}" ]] ; then
 		cp -aT "${bolt_data_suffix_dir}" "${bolt_data_staging_dir}" || die
 	fi
-	touch "${bolt_data_staging_dir}/compiler_fingerprint" || die
+	touch "${bolt_data_staging_dir}/llvm_bolt_fingerprint" || die
 }
 
 # @FUNCTION: tbolt_src_prepare
@@ -191,15 +220,6 @@ tbolt_src_configure() {
 			'-Wl,-q'
 		append-flags -fno-reorder-blocks-and-partition
 		append-ldflags -fno-reorder-blocks-and-partition
-
-		if [[ "${BOLT_PHASE}" == "INST" ]] ; then
-			:;
-		elif [[ "${BOLT_PHASE}" == "OPT" ]] ; then
-			"llvm-profdata" \
-				merge \
-				-output="${bolt_data_staging_dir}/merged.fdata" \
-				"${bolt_data_staging_dir}/"*".perf" || die
-		fi
 	fi
 }
 
@@ -213,41 +233,30 @@ _tbolt_meets_bolt_requirements() {
 
 		has_version "sys-devel/llvm[bolt]" || return 2
 
-		if [[ -z "${CC}" ]] ; then
-# This shouldn't set the CC but we have to for -dumpmachine.
-			export CC=$(tc-getCC)
-			export CXX=$(tc-getCXX)
-		fi
-einfo
-einfo "CC=${CC}"
-einfo "CXX=${CXX}"
-einfo
-		_CC="${CC% *}"
+		# Actually, you can use GCC.
 
-		touch "${bolt_data_staging_dir}/compiler_fingerprint" \
-			|| die "You must call tbolt_src_prepare before calling tbolt_get_phase"
-		# Has same compiler?
-		if tc-is-clang ; then
-			local actual=$("${_CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
-			local expected=$(cat "${bolt_data_staging_dir}/compiler_fingerprint")
-			if [[ "${actual}" != "${expected}" ]] ; then
+		touch "${pgo_data_staging_dir}/llvm_bolt_fingerprint" \
+			|| die "You must call ebolt_src_prepare before calling ebolt_get_phase"
+		local actual=$("${_TBOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " ")
+		local expected=$(cat "${pgo_data_staging_dir}/llvm_bolt_fingerprint")
+		if [[ "${actual}" != "${expected}" ]] ; then
+# This check is done because of BOLT profile compatibility.
 ewarn
-ewarn "Clang incompatable:"
+ewarn "llvm-bolt incompatable:"
 ewarn
 ewarn "actual: ${actual}"
 ewarn "expected: ${expected}"
 ewarn
-				return 1
-			fi
+			return 1
 		else
 			return 2
 ewarn
-ewarn "Compiler is not supported."
+ewarn "llvm-bolt fingerprint mismatch"
 ewarn
 		fi
 
 		# Has profile?
-		if tc-is-clang && find "${bolt_data_staging_dir}" -name "*.perf" \
+		if find "${bolt_data_staging_dir}" -name "*.perf" \
 			2>/dev/null 1>/dev/null ; then
 			:; # pass
 		else
@@ -282,8 +291,6 @@ tbolt_get_phase() {
 
 	if ! use bolt ; then
 		result="NO_BOLT"
-	elif use bolt && [[ -n "${LLVM_MAX_SLOT}" ]] && (( ${LLVM_MAX_SLOT} < 14 )) ; then
-		result="NO_BOLT"
 	elif is_abi_boltable ; then
 		result="NO_BOLT"
 	elif use bolt && (( ${retu} == 1 )) ; then
@@ -317,11 +324,17 @@ _tbolt_inst_tree() {
 		elif file "${p}" | grep -q "ELF.*shared object" ; then
 			is_boltable=1
 		fi
+		if is_stripped "${p}" ; then
+eerror
+eerror "The package has prestripped binaries.  Patch is required.  Detected in ${p}"
+eerror
+			die
+		fi
 		is_abi_same "${p}" || continue
 		if (( ${is_boltable} == 1 )) ; then
 			# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
 			einfo "vanilla -> BOLT instrumented:  ${p}"
-			"${_TBOLT_MALLOC_LIB}" llvm-bolt \
+			"${_TBOLT_MALLOC_LIB}" "${_TBOLT_PATH}/llvm-bolt" \
 				"${p}" \
 				-instrument \
 				-o "${p}.bolt" \
@@ -350,11 +363,17 @@ _tbolt_opt_tree() {
 		elif file "${p}" | grep -q "ELF.*shared object" ; then
 			is_boltable=1
 		fi
+		if is_stripped "${p}" ; then
+eerror
+eerror "The package has stripped binaries for ${p}"
+eerror
+			die
+		fi
 		is_abi_same "${p}" || continue
 		if (( ${is_boltable} == 1 )) ; then
 			local bn=$(basename "${p}")
 			einfo "vanilla -> BOLT optimized:  ${p}"
-			"${_TBOLT_MALLOC_LIB}" llvm-bolt \
+			"${_TBOLT_MALLOC_LIB}" "${_TBOLT_PATH}/llvm-bolt" \
 				"${p}" \
 				-o "${p}.bolt" \
 				-data="${bolt_data_staging_dir}/${bn}.fdata" \
@@ -452,12 +471,12 @@ einfo
 		# Assumes vanilla -> PGO -> BOLT
 		if [[ "${PGO_PHASE}" == "PGO" ]] ; then
 			if [[ "${skip_inst}" == "no" ]] ; then
-				_tbolt_inst_tree
+				_tbolt_inst_tree "${BUILD_DIR}"
 				declare -f _src_pre_train > /dev/null && _src_pre_train
 				_src_train
 				declare -f _src_post_train > /dev/null && _src_post_train
 			fi
-			_tbolt_opt_tree
+			_tbolt_opt_tree "${BUILD_DIR}"
 		fi
 	elif use bolt && (( ${is_boltable} == 1 )) ; then
 		# Assumes vanilla -> BOLT
@@ -467,7 +486,7 @@ einfo
 			declare -f _src_prepare > /dev/null && _src_prepare
 			declare -f _src_configure > /dev/null && _src_configure
 			declare -f _src_compile > /dev/null && _src_compile
-			_tbolt_inst_tree
+			_tbolt_inst_tree "${BUILD_DIR}"
 			declare -f _src_post_inst > /dev/null && _src_post_inst
 			declare -f _src_pre_train > /dev/null && _src_pre_train
 			_src_train
@@ -478,7 +497,7 @@ einfo
 		declare -f _src_prepare > /dev/null && _src_prepare
 		declare -f _src_configure > /dev/null && _src_configure
 		declare -f _src_compile > /dev/null && _src_compile
-		_tbolt_opt_tree
+		_tbolt_opt_tree "${BUILD_DIR}"
 		declare -f _src_post_opt > /dev/null && _src_post_opt
 	else
 		BOLT_PHASE="NO_BOLT"
@@ -505,7 +524,7 @@ is_bolt_banned() {
 # @DESCRIPTION:
 # Check if ABIs are the same and supported
 is_abi_same() {
-	local p="${path}"
+	local p="${1}"
 	# Only x86-64 and aarch supported supported
 	if file "${p}" | grep -q "ELF.*x86-64" && [[ "${ABI}" == "amd64" ]] ; then
 		return 0
@@ -534,7 +553,7 @@ is_abi_boltable() {
 # @DESCRIPTION:
 # Check if files ABI supported
 is_file_boltable() {
-	local p="${path}"
+	local p="${1}"
 	# Only x86-64 and aarch supported supported
 	if file "${p}" | grep -q "ELF.*x86-64" ; then
 		return 0
@@ -543,6 +562,14 @@ is_file_boltable() {
 	fi
 	ewarn "Unsupported ABI: ${p}"
 	return 1
+}
+
+# @FUNCTION: is_stripped
+# @DESCRIPTION:
+# Check if the file has been STRIPed
+is_stripped() {
+	local p="${1}"
+	readelf -s "${p}" | grep -q ".symtab"
 }
 
 # @FUNCTION: tbolt_src_install
@@ -566,20 +593,10 @@ tbolt_src_install() {
 		fowners root:${TBOLT_GROUP} "${bolt_data_suffix_dir}"
 		fperms 0775 "${bolt_data_suffix_dir}"
 
-		if [[ -z "${CC}" ]] ; then
-			# It should be done earlier.
-			export CC=$(tc-getCC)
-			export CXX=$(tc-getCXX)
-		fi
-
-		CC="${CC% *}"
-
-		if tc-is-clang ; then
-			"${CC}" -dumpmachine \
-				> "${ED}/${bolt_data_suffix_dir}/compiler" || die
-			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${ED}/${bolt_data_suffix_dir}/compiler_fingerprint" || die
-		fi
+		"${_TBOLT_PATH}/llvm-bolt" --version \
+			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_version" || die
+		"${_TBOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " " \
+			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_fingerprint" || die
 	fi
 }
 
@@ -594,8 +611,8 @@ einfo "Wiping previous BOLT profile"
 einfo
 		local bolt_data_dir="${EROOT}${_TBOLT_DATA_DIR}"
 		find "${bolt_data_dir}" -type f \
-			-not -name "compiler_fingerprint" \
-			-not -name "compiler" \
+			-not -name "llvm_bolt_fingerprint" \
+			-not -name "llvm_bolt_version" \
 			-delete
 	fi
 }
