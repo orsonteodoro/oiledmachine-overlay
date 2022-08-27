@@ -565,7 +565,7 @@ _src_compile() {
 
 src_compile() {
 	_compile_abi() {
-		export BUILD_DIR="${WORKDIR}/${P}_build-${MULTILIB_ABI_FLAG}.${ABI}"
+		export BUILD_DIR="${WORKDIR}/${PN}_build-${MULTILIB_ABI_FLAG}.${ABI}"
 		uopts_src_compile
 	}
 	multilib_foreach_abi _compile_abi
