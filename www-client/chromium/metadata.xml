@@ -135,7 +135,7 @@ trainer
 
 # How to build as if like 3 step:
 #!/bin/bash
-emerge -1vuDN "chromium[epgo,-ebolt]" # PGI
+emerge -vuDN "chromium[epgo,-ebolt]" # PGI
 # Run trainer in limited user
 emerge -1vO "chromium[epgo,ebolt]" # PGO, bolt_pgi
 # Run trainer in limited user
