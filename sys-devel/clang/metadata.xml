@@ -86,7 +86,6 @@ PORTAGE_DIR="/usr/portage"
 SLOT=14
 
 trainer() {
-	# Set in per-package.env:
 	export CC="clang-${SLOT}"
 	export CXX="clang++-${SLOT}"
 	export LD="clang-${SLOT}"
@@ -107,7 +106,12 @@ trainer() {
 
 		export CFLAGS="-march=native -O3 -flto=thin -pipe"
 		export CXXFLAGS="-march=native -O3 -flto=thin -pipe"
-		export LDFLAGS="-march=native -O3 -flto -pipe"
+		export LDFLAGS="-march=native -O3 -fuse-ld=lld -flto=thin -pipe"
+		ebuild $(realpath ./clang-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
+
+		export CFLAGS="-march=native -O3 -flto=thin -pipe"
+		export CXXFLAGS="-march=native -O3 -flto=thin -pipe"
+		export LDFLAGS="-march=native -O3 -fuse-ld=lld -flto=thin -pipe"
 		ebuild $(realpath ./clang-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
 	popd
 	pushd "${OVERLAY_DIR}/media-libs/mesa"
