@@ -66,10 +66,13 @@ trainer() {
 		export LDFLAGS="-O2 -fuse-ld=lld -flto=thin -pipe"
 		ebuild $(realpath ./lld-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
 	popd
+
+	# Static linking should be trained.  Try
+	emerge -1vuDN dev-lang/go
 }
 
 main() {
-	emerge -1vuDN "sys-devel/lld:${SLOT}[-epgo]"
+	emerge -1vuDN "sys-devel/lld:${SLOT}[-epgo,-ebolt]"
 	emerge -1vO "sys-devel/lld:${SLOT}[epgo,-ebolt]"
 	trainer
 	emerge -1vO "sys-devel/lld:${SLOT}[epgo,ebolt]"
