@@ -192,7 +192,7 @@ If a PGI event is observed, PGI takes precedence.
 Packages that inherit the tpgo.eclass may skip to 1 step based on same
 EPGO event rules.
 
-### uopts per-package options
+### uopts per-package options and UOPTS flags
 
 Additional packages that use the tpgo (three step PGO) and epgo (event based
 PGO) have additional options that can be changed on a per-package level.
@@ -201,8 +201,20 @@ Details about setting up per-package environment variables see the
 [package.env](https://wiki.gentoo.org/wiki//etc/portage/package.env) link.
 
 More details can be found in 
-[tpgo.eclass] (https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/tpgo.eclass)
-[epgo.eclass] (https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/epgo.eclass)
+[epgo.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/epgo.eclass)
+[tpgo.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/tpgo.eclass)
+[ebolt.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ebolt.eclass)
+[tbolt.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/tbolt.eclass)
+
+USE flags:
+
+* epgo - Build with 1 step PGO in one emerge
+* pgo - Build with three step 3 PGO in one emerge
+* ebolt - Build with 1 step BOLT in one emerge
+* bolt - Build with three step 3 BOLT in one emerge
+
+Note:  The bolt eclasses cannot be completed due to lack of hardware.  Community
+help is needed to finish it and test it.
 
 #### PGO environment variables
 
@@ -233,18 +245,35 @@ build to completion first.  Then, do a BOLT optimized build.  Both BOLT and PGO
 each require 3 steps;
 
 PGO steps:
-- instrumentation
-- training
-- optimization
+- instrumentation (PGI)
+- training (PGT)
+- optimization (PGO)
 
 BOLT steps:
-- instrument
+- instrument (INST)
 - collection (aka training)
-- optimize
+- optimize (OPT)
 
-So follow the 6 steps from top to bottom to properly combine them.
-The ebuild has access to `emerge --config package_name` to optimize BOLT
-instrumented ebuilds avoiding long compile-times.
+Follow the 6 steps from top to bottom to properly combine them if using epgo
+and ebolt.  The ebuild has access to `emerge --config package_name` to optimize
+BOLT instrumented ebuilds avoiding long compile-times.
+
+For those that prefer three step, the same can be achieved with a shell script.
+Try epgo + ebolt try something like:
+
+```
+#!/bin/bash
+emerge -1vuDN PN
+USE="epgo" emerge -1vO PN
+echo "done training?" ; read
+USE="epgo" emerge -1vO PN
+USE="epgo ebolt" emerge -1vO PN
+echo "done training?" ; read
+USE="epgo ebolt" emerge --config PN
+```
+
+For those that do 3 step with USE="bolt pgo", the uopts.eclass will
+automatically handle all 6 steps if it fortunate enough to come with a trainer.
 
 ## Packages
 
