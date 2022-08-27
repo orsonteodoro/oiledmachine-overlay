@@ -51,6 +51,8 @@ MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 
+UOPTS_SUPPORT_TBOLT=0
+UOPTS_SUPPORT_TPGO=0
 inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info \
 	lcnr llvm multiprocessing pax-utils python-any-r1 toolchain-funcs \
 	virtualx xdg
