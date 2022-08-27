@@ -13,7 +13,7 @@ SLOT="0/${PV}"
 KEYWORDS="~amd64 ~ppc ~x86"
 IUSE+=" ${LUA_COMPAT[@]/#/lua_targets_}" # for some reason the lua eclass looks broken
 IUSE+=" +asan +c11 c89 c99 c++98 c++11 +c++14 +cgi gnu17 -cxx +caching
-debug doc -duktape -ipv6 -lto -lua -serve_no_files +server_executable
+debug doc -duktape -ipv6 -lua -serve_no_files +server_executable
 -server_stats +ssl ssl_1_0 +ssl_1_1 static-libs -test -websockets -zlib"
 REQUIRED_USE+="
 	lua? ( ${LUA_REQUIRED_USE} gnu17 )
@@ -170,6 +170,14 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
+_usex_lto() {
+	if is-flagq '-flto*' ; then
+		echo "ON"
+	else
+		echo "OFF"
+	fi
+}
+
 _configure() {
 	# CIVETWEB_CXX_STANDARD auto is c++14 > c++11 > c++98 depending on
 	#   the compiler
@@ -177,6 +185,7 @@ _configure() {
 	# CIVETWEB_LUA_VERSION is either 5.1.5 5.2.4 5.3.5 5.4.0 based
 	#   on src/third_party/lua-<PV>
 
+	filter-flags '-flto*'
 	local mycmakeargs=(
 		-D_GET_LIBDIR=$(get_libdir)
 		-DCIVETWEB_BUILD_TESTING=$(usex test)
@@ -187,7 +196,7 @@ _configure() {
 				) \
 			) \
 		)
-		-DCIVETWEB_CXX_ENABLE_LTO=$(usex lto)
+		-DCIVETWEB_CXX_ENABLE_LTO=$(_usex_lto)
 		-DCIVETWEB_CXX_STANDARD=$(usex c++14 c++14 \
 						$(usex c++11 c++11 \
 							$(usex c++98 c++11 auto) \
