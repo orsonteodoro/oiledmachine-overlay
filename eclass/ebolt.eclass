@@ -71,6 +71,10 @@ _EBOLT_DATA_DIR=${_EBOLT_DATA_DIR:-"${EBOLT_PROFILES_DIR}/${CATEGORY}/${PN}/${EB
 # Allow disjointed PATH to llvm-bolt while respecting LLVM_MAX_SLOT
 _EBOLT_PATH="" # Set in ebolt_setup
 
+# @ECLASS_VARIABLE: EBOLT_OPTIMIZATIONS
+# @DESCRIPTION:
+# Allow to override the default BOLT optimization setting
+
 # @ECLASS_VARIABLE: EBOLT_SLOT
 # @DESCRIPTION:
 # Force a particular LLVM slot for llvm-slot.  This is for compatiblity for BOLT profiles.
@@ -180,6 +184,8 @@ ebolt_setup() {
 	_ebolt_check_bolt
 	_setup_malloc
 	_setup_llvm
+
+	export EBOLT_OPTIMIZATIONS=${EBOLT_OPTIMIZATIONS:-"-reorder-blocks=cache+ -reorder-functions=hfsort -split-functions=2 -split-all-cold -split-eh -dyno-stats"}
 }
 
 # @FUNCTION: _ebolt_prepare_bolt
@@ -458,18 +464,15 @@ eerror
 					die
 				fi
 				if (( ${is_boltable} == 1 )) ; then
+					local args=( ${EBOLT_OPTIMIZATIONS} )
 					local bn=$(basename "${p}")
 					einfo "vanilla -> BOLT optimized:  ${p}"
 					"${_EBOLT_MALLOC_LIB}" "${_EBOLT_PATH}/llvm-bolt" \
 						"${p}" \
 						-o "${p}.bolt" \
 						-data="${bolt_data_staging_dir}/${bn}.fdata" \
-						-reorder-blocks=cache+ \
-						-reorder-functions=hfsort \
-						-split-functions=2 \
-						-split-all-cold \
-						-split-eh \
-						-dyno-stats || die
+						${args[@]} \
+						|| die
 					rm "${p}" || die
 					mv "${p}.bolt" "${p}" || die
 				fi
@@ -551,6 +554,7 @@ ewarn "Skipping ${p}.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch
 				continue
 			fi
 			if (( ${is_boltable} == 1 )) ; then
+				local args=( ${EBOLT_OPTIMIZATIONS} )
 				local bn=$(basename "${p}")
 				if [[ ! -e "${p}.orig" ]] ; then
 					cp -a "${p}" "${p}".orig || true
@@ -560,12 +564,7 @@ ewarn "Skipping ${p}.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch
 					"${p}" \
 					-o "${p}.bolt" \
 					-data="${EPREFIX}${bolt_data_suffix_dir}/${bn}.fdata" \
-					-reorder-blocks=cache+ \
-					-reorder-functions=hfsort \
-					-split-functions=2 \
-					-split-all-cold \
-					-split-eh \
-					-dyno-stats ; then
+					${args[@]} ; then
 					touch "${p}.bolt_failed"
 				fi
 			fi

@@ -76,6 +76,10 @@ _TBOLT_PATH="" # Set in tbolt_setup
 # Force a particular LLVM slot for llvm-slot.  This is for compatiblity for BOLT profiles.
 # The preference is auto selection to the highest enabled.
 
+# @ECLASS_VARIABLE: TBOLT_OPTIMIZATIONS
+# @DESCRIPTION:
+# Allow to override the default BOLT optimization setting
+
 # @FUNCTION: tbolt_meets_requirements
 # @RETURN:
 # 0 - as the exit code if it has installed assets and training dependencies
@@ -181,6 +185,7 @@ tbolt_setup() {
 	_setup_malloc
 	train_setup
 	_setup_llvm
+	export TBOLT_OPTIMIZATIONS=${TBOLT_OPTIMIZATIONS:-"-reorder-blocks=cache+ -reorder-functions=hfsort -split-functions=2 -split-all-cold -split-eh -dyno-stats"}
 }
 
 # @FUNCTION: _tbolt_prepare_bolt
@@ -371,18 +376,15 @@ eerror
 		fi
 		is_abi_same "${p}" || continue
 		if (( ${is_boltable} == 1 )) ; then
+			local args=( ${TBOLT_OPTIMIZATIONS} )
 			local bn=$(basename "${p}")
 			einfo "vanilla -> BOLT optimized:  ${p}"
 			"${_TBOLT_MALLOC_LIB}" "${_TBOLT_PATH}/llvm-bolt" \
 				"${p}" \
 				-o "${p}.bolt" \
 				-data="${bolt_data_staging_dir}/${bn}.fdata" \
-				-reorder-blocks=cache+ \
-				-reorder-functions=hfsort \
-				-split-functions=2 \
-				-split-all-cold \
-				-split-eh \
-				-dyno-stats || die
+				${args[@]} \
+				|| die
 			rm "${p}" || die
 			mv "${p}.bolt" "${p}" || die
 		fi
