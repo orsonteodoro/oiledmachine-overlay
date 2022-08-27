@@ -91,6 +91,10 @@ _UOPTS_PGO_DATA_DIR=${_UOPTS_PGO_DATA_DIR:-"${UOPTS_PGO_PROFILES_DIR}/${CATEGORY
 # @DESCRIPTION:
 # Optimize for speed for untouched functions
 
+# @ECLASS_VARIABLE: UOPTS_PGO_EVENT_BASED
+# @DESCRIPTION:
+# Optimize for speed for untouched event handlers.
+
 # @FUNCTION: _epgo_check_pgo
 # @INTERNAL
 # @DESCRIPTION:
@@ -173,7 +177,8 @@ _epgo_configure() {
 			append-flags -fprofile-generate="${pgo_data_suffix_dir}"
 		elif tc-is-gcc ; then
 			append-flags -fprofile-generate -fprofile-dir="${pgo_data_suffix_dir}"
-			[[ "${UOPTS_PGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
+			[[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] \
+				&& append-flags -fprofile-partial-training
 		else
 eerror
 eerror "Only GCC and Clang are supported for PGO."
@@ -196,7 +201,8 @@ eerror
 			append-flags -fprofile-use="${pgo_data_staging_dir}/custom-pgo.profdata"
 		elif tc-is-gcc ; then
 			append-flags -fprofile-use -fprofile-dir="${pgo_data_staging_dir}"
-			[[ "${UOPTS_PGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
+			[[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] \
+				&& append-flags -fprofile-partial-training
 		fi
 	fi
 }

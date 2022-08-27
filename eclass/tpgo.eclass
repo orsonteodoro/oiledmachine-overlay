@@ -172,6 +172,10 @@ _UOPTS_PGO_DATA_DIR=${_UOPTS_PGO_DATA_DIR:-"${UOPTS_PGO_PROFILES_DIR}/${CATEGORY
 # @DESCRIPTION:
 # Optimize for speed for untouched functions
 
+# @ECLASS_VARIABLE: UOPTS_PGO_EVENT_BASED
+# @DESCRIPTION:
+# Optimize for speed for untouched event handlers.
+
 # @ECLASS_VARIABLE: UOPTS_PGO_FORCE_PGI
 # @DESCRIPTION:
 # Allow to enable or disable profile reuse.
@@ -192,10 +196,6 @@ _UOPTS_PGO_DATA_DIR=${_UOPTS_PGO_DATA_DIR:-"${UOPTS_PGO_PROFILES_DIR}/${CATEGORY
 # UOPTS_IMPLS="_${impl}"
 # tpgo_src_prepare
 #
-
-# @ECLASS_VARIABLE: UOPTS_PGO_PORTABLE
-# @DESCRIPTION:
-# Optimize for speed for untouched functions
 
 inherit flag-o-matic toolchain-funcs train
 
@@ -296,7 +296,8 @@ _tpgo_configure() {
 			append-flags \
 				-fprofile-generate \
 				-fprofile-dir="${pgo_data_staging_dir}"
-			[[ "${UOPTS_PGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
+			[[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] \
+				&& append-flags -fprofile-partial-training
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		einfo "Setting up PGO"
@@ -312,7 +313,8 @@ _tpgo_configure() {
 				-fprofile-correction \
 				-fprofile-use \
 				-fprofile-dir="${pgo_data_staging_dir}"
-			[[ "${UOPTS_PGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
+			[[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] \
+				&& append-flags -fprofile-partial-training
 		fi
 	fi
 }

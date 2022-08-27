@@ -227,7 +227,10 @@ is `/var/lib/pgo-profiles`.  You may delete individual profiles to reset the PGO
 process.
 
 UOPTS_PGO_PORTABLE - 1 to build untouched functions optimized for speed, 0 to
-retain touched functions as optimized for size.
+retain untouched functions as optimized for size.
+
+UOPTS_PGO_EVENT_BASED - 1 to build untouch event handler functions optimized for
+speed, 0 to retain untouched functions as optimized for size.
 
 #### BOLT environment variables
 
