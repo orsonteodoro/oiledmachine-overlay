@@ -67,7 +67,7 @@ gen_iuse_pgo() {
 }
 
 IUSE+=" acorn corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu
-inspector lto npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap
+inspector npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap
 test
 
 $(gen_iuse_pgo)
@@ -288,14 +288,62 @@ src_prepare() {
 	fi
 
 	# Save before using filter-flag
-	if is-flagq -flto=thin; then
-		LTO_TYPE="thin"
-	elif is-flagq -flto; then
-		LTO_TYPE="full"
-	fi
+	export LTO_TYPE=$(_get_lto_type)
 
 	default
 	uopts_src_prepare
+}
+
+_get_lto_type() {
+	local s=$(clang-major-version)
+	if ! is-flagq '-flto*' ; then
+		echo "none"
+	elif is-flagq '-fuse-ld=lld' \
+		&& is-flagq '-flto=thin' \
+		&& test-flag '-flto=thin' \
+		&& test-flag-CCLD '-fuse-ld=lld' ; then
+		echo "thinlto"
+	elif tc-is-clang \
+		&& is-flagq '-fuse-ld=gold' \
+		&& is-flagq '-flto=full' \
+		&& test-flag '-flto=full' \
+		&& test-flag-CCLD '-fuse-ld=gold' ; then
+		echo "gold"
+	elif is-flagq '-fuse-ld=gold' \
+		&& is-flagq '-flto' \
+		&& test-flag '-flto=full' \
+		&& test-flag-CCLD '-fuse-ld=gold' ; then
+		echo "gold"
+	elif tc-is-clang \
+		&& is-flagq '-fuse-ld=bfd' \
+		&& is-flagq '-flto=full' \
+		&& test-flag '-flto=full' ; then
+		echo "bfd"
+	elif is-flagq '-fuse-ld=bfd' \
+		&& is-flagq '-flto' ; then
+		echo "bfd"
+	elif tc-is-clang \
+		&& has_version "sys-devel/lld" \
+		&& test-flag '-flto=thin' \
+		&& test-flag-CCLD '-fuse-ld=lld' ; then
+		echo "thinlto"
+	elif tc-is-clang \
+		&& has_version "sys-devel/binutils[gold,plugins]" \
+		&& has_version "sys-devel/llvm:${s}[binutils-plugin]" \
+		&& has_version ">=sys-devel/llvmgold-${s}" \
+		&& test-flag '-flto=full' \
+		&& test-flag-CCLD '-fuse-ld=gold' ; then
+		echo "gold"
+	elif tc-is-clang \
+		&& has_version "sys-devel/binutils[gold,plugins]" \
+		&& has_version "sys-devel/llvm:${s}[gold]" \
+		&& has_version ">=sys-devel/llvmgold-${s}" \
+		&& test-flag '-flto=full' \
+		&& test-flag-CCLD '-fuse-ld=gold' ; then
+		echo "gold"
+	else
+		echo "bfd"
+	fi
 }
 
 src_configure() { :; }
@@ -338,13 +386,11 @@ _src_configure() {
 		--shared-nghttp2
 		--shared-zlib
 	)
-	use lto && myconf+=( --enable-lto )
-	if use lto && [[ "${LTO_TYPE}" =~ "thin" ]] ; then
-		myconf+=( --with-thinlto )
-	elif use lto && [[ "${LTO_TYPE}" =~ "full" ]] \
-		&& has_version "sys-devel/binutils[gold,plugins]" ; then
-		myconf+=( --with-goldlto )
-	fi
+	is-flagq '-flto*' && myconf+=( --enable-lto )
+	[[ "${LTO_TYPE}" =~ "thinlto" ]] \
+		&& myconf+=( --with-thinlto )
+	[[ "${LTO_TYPE}" =~ "gold" ]] \
+		&& myconf+=( --with-goldlto )
 
 	# LTO compiler flags are handled by configure.py itself
 	filter-flags '-flto*' \
