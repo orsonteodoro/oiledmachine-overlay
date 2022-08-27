@@ -112,6 +112,37 @@ Prebuilt    it    o             o           o              o
     Usually, they're 2-3 releases per same build number.
 
 
+Draft training with epgo
+
+# Run trainer in non-root
+#!/bin/bash
+trainer() {
+	# We recommend the ones you visit only.  Examples only:
+	chromium url_to_search_engine
+	chromium url_to_social_media
+	chromium url_to_video_site
+	chromium url_to_streaming_with_running_video
+	chromium url_to_live_stream_video
+	chromium url_to_radio_station
+	chromium url_to_games
+	...
+	chromium urlN
+
+	# Do multi tabs also
+}
+trainer
+## DONE
+
+# How to build as if like 3 step:
+#!/bin/bash
+emerge -1vuDN "chromium[epgo,-ebolt]" # PGI
+# Run trainer in limited user
+emerge -1vO "chromium[epgo,ebolt]" # PGO, bolt_pgi
+# Run trainer in limited user
+emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
+## DONE
+
+
     References:
       --lto-O2 is too large - https://github.com/chromium/chromium/commit/da072d13b2a1cc8459c29aa4e52584a4491a4ad6
       CFI - https://www.chromium.org/developers/testing/control-flow-integrity
