@@ -32,7 +32,7 @@ GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+mysql/-mysql})
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+pdf/-pdf})
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+sdl2/-sdl2})
 IUSE+=" ${GAMBAS_MODULES_DEFAULTS[@]} debug doc +glsl +glu +ide +jit +glsl
-lto +sge smtp +webkit"
++sge smtp +webkit"
 # The remove_stable_not_finished is intentionally kept disabled.
 # The remove_deprecated is intentionally kept disabled until upstream removes it.
 # The USE flags below have no config options but are removed manually.
@@ -273,9 +273,17 @@ src_prepare() {
 
 CODE_QUALITY_REPORT=
 
+_use_enable_lto() {
+	if is-flagq '-flto*' ; then
+		echo "--enable-lto"
+	else
+		echo "--disable-lto"
+	fi
+}
+
 src_configure() {
 	# Upstream will supply -O flags.
-	filter-flags -O*
+	filter-flags '-O*' '-flto*'
 
 	econf \
 		--disable-jitllvm \
@@ -283,6 +291,7 @@ src_configure() {
 		--disable-gtk2 \
 		--disable-gtkopengl \
 		--disable-sqlite2 \
+		$(_use_enable_lto) \
 		$(use_enable bzip2) \
 		$(use_enable bzip2 bzlib2) \
 		$(use_enable cairo) \
@@ -299,7 +308,6 @@ src_configure() {
 		$(use_enable httpd) \
 		$(use_enable imlib2 image_imlib) \
 		$(use_enable imlib2 imageimlib) \
-		$(use_enable lto) \
 		$(use_enable mime) \
 		$(use_enable mysql) \
 		$(use_enable network net) \
