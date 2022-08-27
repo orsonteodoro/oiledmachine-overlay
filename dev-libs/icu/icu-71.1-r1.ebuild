@@ -133,7 +133,7 @@ _configure_abi() {
 	# CFI Breaks building vte
 	for value in cfi-vcall cfi-nvcall cfi-derived-cast cfi-unrelated-cast cfi ; do
 		if is-flagq "-fsanitize=*${value}" ; then
-			einfo "Removing"
+			einfo "Removing ${value}"
 			strip-flag-value "${value}"
 		fi
 	done

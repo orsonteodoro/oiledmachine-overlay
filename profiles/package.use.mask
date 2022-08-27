@@ -11,10 +11,6 @@ liri-base/liri-meta appcenter
 # Untested.  Please report back to remove hard use mask
 >=sys-kernel/genkernel-4 subdir_mount
 
-# Broken, poorly maintained through several versions of Blender
-media-gfx/blender cycles-network
-media-plugins/cycles network
-
 # Untested.  You may disable this USE hard block at your own risk.
 games-misc/enigma android macos mingw32 mingw64 wine
 
@@ -28,45 +24,16 @@ net-libs/grpc test
 # python2 only
 net-libs/libsoup test-websockets
 
-# Prevents libpng from being built, breaks pngfix when zlib libs are being replaced
-# Prevents loading of precompiled www browser
-# cfi-cross-dso is only allowed for clang only profiles.
-sys-libs/zlib cfi-cross-dso
-sys-libs/zlib cfi
-sys-libs/zlib cfi-vcall
-sys-libs/zlib cfi-icall
-sys-libs/zlib cfi-cast
-
-# Breaks building vte
-# ==367==ERROR: SanitizerTool failed to allocate noreserve 0x0 (0) bytes of CFI shadow (error code: 22)
-dev-libs/icu cfi-cross-dso
-dev-libs/icu cfi
-dev-libs/icu cfi-vcall
-dev-libs/icu cfi-icall
-dev-libs/icu cfi-cast
-
 # For pam plugin
 sys-fs/ecryptfs-utils -suid
 
-# Prevent the possibly of bad generated code with the forward port of disable-peepholes patch
-# (only a concern only for >= llvm 13) and undoing emerges without the patch.
-# Hard USE mask removal dependent on unit tests
->=sys-devel/llvm-13 souper
-
-# Prevent the use of bad disable-peepholes.
-# Hard USE mask removal dependent on unit tests in llvm-13
-sys-devel/souper llvm-15 llvm-14 llvm-13
-
-# For souper defaults or assertions or testing
+# For assertions or testing
 sys-devel/clang -debug
 sys-devel/lld -debug
 sys-devel/llvm -debug
 sys-libs/compiler-rt -debug
 sys-libs/compiler-rt-sanitizers -debug
 sys-libs/libomp -debug
-
-# Connect problem
-sys-devel/souper tcp
 
 # Build time failures
 =sys-kernel/ot-sources-5.15* prjc

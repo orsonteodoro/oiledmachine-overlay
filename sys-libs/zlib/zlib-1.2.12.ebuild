@@ -303,10 +303,12 @@ _src_configure() {
 	cd "${BUILD_DIR}" || die
 	uopts_src_configure
 
+	# Prevents libpng from being built, breaks pngfix when zlib libs are being replaced
+	# Prevents loading of precompiled www browser
 	# It doesn't work for elibc_glibc and gcc combo.
 	for value in cfi-vcall cfi-nvcall cfi-derived-cast cfi-unrelated-cast cfi ; do
 		if is-flagq "-fsanitize=*${value}" ; then
-			einfo "Removing"
+			einfo "Removing ${value}"
 			strip-flag-value "${value}"
 		fi
 	done
