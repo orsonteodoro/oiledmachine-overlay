@@ -1191,6 +1191,11 @@ einfo
 	check_geolocation
 
 	uopts_pkg_postinst
+
+einfo
+einfo "See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"
+einfo "for proper building with PGO+BOLT"
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

@@ -131,6 +131,37 @@ Traditional      i        i          i         i        i       i
       *=optional step
 
 
+Draft training with epgo
+
+# Run trainer in non-root
+#!/bin/bash
+trainer() {
+	# We recommend the ones you visit only.  Examples only:
+	minibrowser url_to_search_engine
+	minibrowser url_to_social_media
+	minibrowser url_to_video_site
+	minibrowser url_to_streaming_with_running_video
+	minibrowser url_to_live_stream_video
+	minibrowser url_to_radio_station
+	minibrowser url_to_games
+	...
+	minibrowser urlN
+
+	# Do multi tabs also
+}
+trainer
+## DONE
+
+# How to build as if like 3 step:
+#!/bin/bash
+emerge -vuDN "webkit-gtk[epgo,-ebolt]" # PGI
+# Run trainer in limited user
+emerge -1vO "webkit-gtk[epgo,ebolt]" # PGO, bolt_pgi
+# Run trainer in limited user
+emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
+## DONE
+
+
 
     Additional sources:
 
