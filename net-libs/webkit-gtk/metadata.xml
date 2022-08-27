@@ -137,15 +137,15 @@ Draft training with epgo
 #!/bin/bash
 trainer() {
 	# We recommend the ones you visit only.  Examples only:
-	minibrowser url_to_search_engine
-	minibrowser url_to_social_media
-	minibrowser url_to_video_site
-	minibrowser url_to_streaming_with_running_video
-	minibrowser url_to_live_stream_video
-	minibrowser url_to_radio_station
-	minibrowser url_to_games
+	timeout 120 minibrowser url_to_search_engine
+	timeout 30 minibrowser url_to_social_media
+	timeout 30 minibrowser url_to_video_site
+	timeout 30 minibrowser url_to_streaming_with_running_video
+	timeout 30 minibrowser url_to_live_stream_video
+	timeout 30 minibrowser url_to_radio_station
+	timeout 30 minibrowser url_to_games
 	...
-	minibrowser urlN
+	timeout 30 minibrowser urlN
 
 	# Do multi tabs also
 }

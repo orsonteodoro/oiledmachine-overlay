@@ -2930,7 +2930,7 @@ einfo
 
 einfo
 einfo "See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"
-einfo "for a possible PGO+BOLT trainer script and proper building"
+einfo "for proper building with PGO+BOLT"
 einfo
 }
 
