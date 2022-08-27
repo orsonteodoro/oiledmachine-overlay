@@ -625,5 +625,3 @@ ebolt_pkg_config() {
 		_pkg_config_bolt_optimization
 	fi
 }
-
-EXPORT_FUNCTIONS pkg_config

@@ -13,6 +13,11 @@
 
 # Flexible for future expansion
 
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
+
 _UOPTS_ECLASS=1
 
 UOPTS_SUPPORT_EPGO=${UOPTS_SUPPORT_EPGO:-1}
@@ -227,3 +232,5 @@ uopts_pkg_postinst() {
 uopts_pkg_config() {
 	[[ "${UOPTS_SUPPORT_EPGO}" == "1" ]] && epgo_pkg_postinst
 }
+
+EXPORT_FUNCTIONS pkg_config
