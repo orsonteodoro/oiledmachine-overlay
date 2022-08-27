@@ -266,8 +266,7 @@ Try epgo + ebolt try something like:
 emerge -1vuDN PN
 USE="epgo" emerge -1vO PN
 echo "done training?" ; read
-USE="epgo" emerge -1vO PN
-USE="epgo ebolt" emerge -1vO PN
+USE="epgo ebolt" emerge -1vO PN  # You can combine at this point.
 echo "done training?" ; read
 USE="epgo ebolt" emerge --config PN
 ```
