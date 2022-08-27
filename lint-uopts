@@ -5,9 +5,16 @@ fun() {
 	grep -q "${fun_name}" "${x}" || echo "missing ${fun_name} for ${x}"
 }
 
+sym_warn() {
+	local sym_name="${1}"
+	grep -q "${sym_name}" "${x}" && echo "contains ${sym_name} symbol for ${x}"
+}
+
 main() {
-	for x in $(grep -l -r --exclude-dir=.git "tpgo" $(find . -name "*.ebuild" -o -name "*.eclass")) ; do
+	for x in $(grep -l -r --exclude-dir=.git "uopts" $(find . -name "*.ebuild" -o -name "*.eclass")) ; do
 		fun "tpgo_setup"
+		sym_warn "PGO_PHASE"
+		sym_warn "BOLT_PHASE"
 		fun "tpgo_src_prepare"
 		fun "tpgo_src_configure"
 		fun "tpgo_src_compile"

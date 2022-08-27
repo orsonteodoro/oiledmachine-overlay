@@ -192,7 +192,7 @@ If a PGI event is observed, PGI takes precedence.
 Packages that inherit the tpgo.eclass may skip to 1 step based on same
 EPGO event rules.
 
-### PGO per-package options
+### uopts per-package options
 
 Additional packages that use the tpgo (three step PGO) and epgo (event based
 PGO) have additional options that can be changed on a per-package level.
@@ -204,21 +204,27 @@ More details can be found in
 [tpgo.eclass] (https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/tpgo.eclass)
 [epgo.eclass] (https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/epgo.eclass)
 
-EPGO_PORTABLE / TPGO_PORTABLE - 1 to build untouched functions optimized for
-speed, 0 to retain touched functions as optimized for size.
+#### PGO environment variables
 
-EPGO_PROFILES_DIR / TPGO_PROFILES_DIR - Change the default PGO profile
-directory.  The default is `/var/lib/pgo-profiles`.  You may delete individual
-profiles to reset the PGO process.
+UOPTS_PGO_FORCE_PGI - 1 to reset to PGI temporarily.  Remember to remove the
+flag or set it to 0 after being PGIed.  If build-time is unreliable for PGO, try
+setting it to 1.
 
-TPGO_PROFILES_REUSE - 1 to allow for PGO profile reuse for 1 step re-emerges or
-future patch release, 0 to disallow PGO profile reuse and force 3 step PGO.
-It should be use temporarily.  If build-time is unreliable for PGO, setting it
-to 0 may help.
+UOPTS_PGO_PROFILES_DIR - Change the default PGO profile directory.  The default
+is `/var/lib/pgo-profiles`.  You may delete individual profiles to reset the PGO
+process.
 
-EPGO_FORCE_PGI - 1 to reset to PGI temporarily.  Remember to remove the flag or
-set it to 0 after being PGIed.  If build-time is unreliable for PGO, try setting
-it to 1.
+UOPTS_PGO_PORTABLE - 1 to build untouched functions optimized for speed, 0 to
+retain touched functions as optimized for size.
+
+#### BOLT environment variables
+
+UOPTS_BOLT_FORCE_INST - 1 to reset to INST temporarily.
+
+UOPTS_BOLT_PROFILES_DIR - Change the default BOLT profile directory.
+
+UOPTS_BOLT_SLOT - force to use a particular LLVM slot number to maintain
+compatibility with the BOLT profile.
 
 ### BOLT + PGO
 

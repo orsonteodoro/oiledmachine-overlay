@@ -25,28 +25,27 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-# @ECLASS_VARIABLE: EPGO_FORCE_PGI
+_EPGO_ECLASS=1
+
+# @ECLASS_VARIABLE: UOPTS_PGO_FORCE_PGI
 # @DESCRIPTION:
 # Temporarily set to 1 to build with PGI flags.
 # Example:
-# EPGO_FORCE_PGI=1 emerge foo
+# UOPTS_PGO_FORCE_PGI=1 emerge foo
 
-# @ECLASS_VARIABLE: EPGO_IMPLS (OPTIONAL)
+# @ECLASS_VARIABLE: UOPTS_IMPLS (OPTIONAL)
 # @DESCRIPTION:
-# This variable should be expliclity set with multibuild based ebuilds
-# (cmake-multilib, multilib-minimal, multilib-build, meson-multilib)
-# just before every call to epgo_src_prepare, epgo_src_configure, epgo_get_phase,
-# epgo_src_install.
+# This variable should be expliclity before calling any epgo function.
 # Sets the suffix to isolate PGO profiles (e.g. 32-bit, 64-bit).  Different
 # implementations should attach and define impl like one of the examples
 # below.
-# EPGO_IMPLS="_${impl}"
-# EPGO_IMPLS="_${impl1}_${impl2}"
-# EPGO_IMPLS="_${impl1}_${impl2}_${impl3}"
+# UOPTS_IMPLS="_${impl}"
+# UOPTS_IMPLS="_${impl1}_${impl2}"
+# UOPTS_IMPLS="_${impl1}_${impl2}_${impl3}"
 #
 # Example:
 # impl="headless"
-# EPGO_IMPLS="_${impl}"
+# UOPTS_IMPLS="_${impl}"
 # epgo_src_prepare
 #
 
@@ -59,36 +58,36 @@ inherit flag-o-matic toolchain-funcs
 
 IUSE+=" epgo"
 
-# @ECLASS_VARIABLE: EPGO_PROFILES_DIR
+# @ECLASS_VARIABLE: UOPTS_PGO_PROFILES_DIR
 # @DESCRIPTION:
 # Sets the location to dump PGO profiles.
-EPGO_PROFILES_DIR=${EPGO_PROFILES_DIR:-"/var/lib/pgo-profiles"}
+UOPTS_PGO_PROFILES_DIR=${UOPTS_PGO_PROFILES_DIR:-"/var/lib/pgo-profiles"}
 
-# @ECLASS_VARIABLE: _EPGO_PV
+# @ECLASS_VARIABLE: _UOPTS_PGO_PV
 # @INTERNAL
 # @DESCRIPTION:
 # Default PV with breaking changes when bumped.
-_EPGO_PV=$(ver_cut 1-2 ${PV}) # default
+_UOPTS_PGO_PV=$(ver_cut 1-2 ${PV}) # default
 
-# @ECLASS_VARIABLE: EPGO_PV
+# @ECLASS_VARIABLE: UOPTS_PGO_PV
 # @DESCRIPTION:
 # Set to the PV range which can cause breakage when bumped.  Excludes non
 # breaking patch versions.
-EPGO_PV=${EPGO_PV:-${_EPGO_PV}}
+UOPTS_PGO_PV=${UOPTS_PGO_PV:-${_UOPTS_PGO_PV}}
 
-# @ECLASS_VARIABLE: _EPGO_CATPN_DATA_DIR
+# @ECLASS_VARIABLE: _UOPTS_PGO_CATPN_DATA_DIR
 # @INTERNAL
 # @DESCRIPTION:
 # The path to the program PGO profile with general package id specificity.
-_EPGO_CATPN_DATA_DIR=${_EPGO_CATPN_DATA_DIR:-"${EPGO_PROFILES_DIR}/${CATEGORY}/${PN}"}
+_UOPTS_PGO_CATPN_DATA_DIR=${_UOPTS_PGO_CATPN_DATA_DIR:-"${UOPTS_PGO_PROFILES_DIR}/${CATEGORY}/${PN}"}
 
-# @ECLASS_VARIABLE: _EPGO_DATA_DIR
+# @ECLASS_VARIABLE: _UOPTS_PGO_DATA_DIR
 # @INTERNAL
 # @DESCRIPTION:
 # The path to the program PGO profile with version specificity.
-_EPGO_DATA_DIR=${_EPGO_DATA_DIR:-"${EPGO_PROFILES_DIR}/${CATEGORY}/${PN}/${EPGO_PV}"}
+_UOPTS_PGO_DATA_DIR=${_UOPTS_PGO_DATA_DIR:-"${UOPTS_PGO_PROFILES_DIR}/${CATEGORY}/${PN}/${UOPTS_PGO_PV}"}
 
-# @ECLASS_VARIABLE: EPGO_PORTABLE
+# @ECLASS_VARIABLE: UOPTS_PGO_PORTABLE
 # @DESCRIPTION:
 # Optimize for speed for untouched functions
 
@@ -104,15 +103,15 @@ _epgo_check_pgo() {
 ewarn
 ewarn "EPGO support is still a Work In Progress (WIP)."
 ewarn
-		if [[ -z "${EPGO_GROUP}" ]] ; then
+		if [[ -z "${UOPTS_PGO_GROUP}" ]] ; then
 eerror
-eerror "The EPGO_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
+eerror "The UOPTS_PGO_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
 eerror "in a per-package env file.  Users who are not a member of this group"
 eerror "cannot generate PGO profile data with this program."
 eerror
 eerror "Example:"
 eerror
-eerror "  EPGO_GROUP=\"epgo\""
+eerror "  UOPTS_PGO_GROUP=\"epgo\""
 eerror
 			die
 		fi
@@ -124,6 +123,12 @@ eerror
 # You must call this in pkg_setup
 epgo_setup() {
 	_epgo_check_pgo
+
+	if [[ -z "${_UOPTS_ECLASS}" ]] ; then
+eerror "The epgo.eclass must be used with uopts.eclass.  Do not inherit epgo"
+eerror "directly."
+		die
+	fi
 }
 
 # @FUNCTION: _epgo_prepare_pgo
@@ -131,8 +136,8 @@ epgo_setup() {
 # @DESCRIPTION:
 # Copies an existing profile snapshot into build space.
 _epgo_prepare_pgo() {
-	local pgo_data_suffix_dir="${EPREFIX}${_EPGO_DATA_DIR}/${_EPGO_SUFFIX}"
-	local pgo_data_staging_dir="${T}/pgo-${_EPGO_SUFFIX}"
+	local pgo_data_suffix_dir="${EPREFIX}${_UOPTS_PGO_DATA_DIR}/${_UOPTS_PGO_SUFFIX}"
+	local pgo_data_staging_dir="${T}/pgo-${_UOPTS_PGO_SUFFIX}"
 
 	mkdir -p "${pgo_data_staging_dir}" || die
 	if [[ -e "${pgo_data_suffix_dir}" ]] ; then
@@ -145,11 +150,11 @@ _epgo_prepare_pgo() {
 # @DESCRIPTION:
 # You must call this inside the multibuild loop in src_prepare or in a
 # *src_prepare multibuild variant.  It has to be inside the loop so that the
-# EPGO_IMPL can divide the pgo profile per ABI or module.  You must define
-# EPGO_IMPL to divide PGO profiles if impl exists for example headless and
+# UOPTS_IMPLS can divide the pgo profile per ABI or module.  You must define
+# UOPTS_IMPLS to divide PGO profiles if impl exists for example headless and
 # non-headless builds.
 epgo_src_prepare() {
-	_EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${EPGO_IMPLS}"
+	_UOPTS_PGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
 	_epgo_prepare_pgo
 }
 
@@ -159,16 +164,16 @@ epgo_src_prepare() {
 # Setup compiler flags
 _epgo_configure() {
 	filter-flags '-fprofile*'
-	local pgo_data_suffix_dir="${EPREFIX}${_EPGO_DATA_DIR}/${_EPGO_SUFFIX}"
-	local pgo_data_staging_dir="${T}/pgo-${_EPGO_SUFFIX}"
+	local pgo_data_suffix_dir="${EPREFIX}${_UOPTS_PGO_DATA_DIR}/${_UOPTS_PGO_SUFFIX}"
+	local pgo_data_staging_dir="${T}/pgo-${_UOPTS_PGO_SUFFIX}"
 	mkdir -p "${ED}/${pgo_data_dir}" || die
-	use epgo && addpredict "${EPREFIX}${EPGO_PROFILES_DIR}"
+	use epgo && addpredict "${EPREFIX}${UOPTS_PGO_PROFILES_DIR}"
 	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		if tc-is-clang ; then
 			append-flags -fprofile-generate="${pgo_data_suffix_dir}"
 		elif tc-is-gcc ; then
 			append-flags -fprofile-generate -fprofile-dir="${pgo_data_suffix_dir}"
-			[[ "${EPGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
+			[[ "${UOPTS_PGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
 		else
 eerror
 eerror "Only GCC and Clang are supported for PGO."
@@ -191,7 +196,7 @@ eerror
 			append-flags -fprofile-use="${pgo_data_staging_dir}/custom-pgo.profdata"
 		elif tc-is-gcc ; then
 			append-flags -fprofile-use -fprofile-dir="${pgo_data_staging_dir}"
-			[[ "${EPGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
+			[[ "${UOPTS_PGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
 		fi
 	fi
 }
@@ -200,7 +205,7 @@ eerror
 # @DESCRIPTION:
 # You must call this in *src_configure
 epgo_src_configure() {
-	_EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${EPGO_IMPLS}"
+	_UOPTS_PGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
 	_epgo_configure
 }
 
@@ -210,7 +215,7 @@ epgo_src_configure() {
 # Checks if requirements are met
 _epgo_meets_pgo_requirements() {
 	if use epgo ; then
-		local pgo_data_staging_dir="${T}/pgo-${_EPGO_SUFFIX}"
+		local pgo_data_staging_dir="${T}/pgo-${_UOPTS_PGO_SUFFIX}"
 
 		if [[ -z "${CC}" ]] ; then
 # This shouldn't set the CC but we have to for -dumpmachine.
@@ -281,12 +286,12 @@ ewarn
 # Reports the current PGO phase
 epgo_get_phase() {
 	local result="NO_PGO"
-	_EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${EPGO_IMPLS}"
+	_UOPTS_PGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
 	_epgo_meets_pgo_requirements
 	local ret=$?
 	if ! use epgo ; then
 		result="NO_PGO"
-	elif use epgo && [[ "${EPGO_FORCE_PGI}" == "1" ]] ; then
+	elif use epgo && [[ "${UOPTS_PGO_FORCE_PGI}" == "1" ]] ; then
 		result="PGI"
 	elif use epgo && (( ${ret} == 0 )) ; then
 		result="PGO"
@@ -303,10 +308,10 @@ epgo_get_phase() {
 # You must call it in *src_install
 epgo_src_install() {
 	if use epgo ; then
-		_EPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${EPGO_IMPLS}"
-		local pgo_data_suffix_dir="${_EPGO_DATA_DIR}/${_EPGO_SUFFIX}"
+		_UOPTS_PGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
+		local pgo_data_suffix_dir="${_UOPTS_PGO_DATA_DIR}/${_UOPTS_PGO_SUFFIX}"
 		keepdir "${pgo_data_suffix_dir}"
-		fowners root:${EPGO_GROUP} "${pgo_data_suffix_dir}"
+		fowners root:${UOPTS_PGO_GROUP} "${pgo_data_suffix_dir}"
 		fperms 0775 "${pgo_data_suffix_dir}"
 
 		if [[ -z "${CC}" ]] ; then
@@ -340,7 +345,7 @@ _epgo_wipe_pgo_profile() {
 einfo
 einfo "Wiping previous PGO profile"
 einfo
-		local pgo_data_dir="${EROOT}${_EPGO_DATA_DIR}"
+		local pgo_data_dir="${EROOT}${_UOPTS_PGO_DATA_DIR}"
 		find "${pgo_data_dir}" -type f \
 			-not -name "compiler_fingerprint" \
 			-not -name "compiler" \
@@ -361,7 +366,7 @@ _epgo_delete_old_pgo_profiles() {
 				# Don't delete permissions
 				continue
 			fi
-			local pgo_data_dir="${EROOT}${_EPGO_CATPN_DATA_DIR}/${pv}"
+			local pgo_data_dir="${EROOT}${_UOPTS_PGO_CATPN_DATA_DIR}/${pv}"
 			if [[ -e "${pgo_data_dir}" ]] ; then
 einfo "Removing old PGO profile for =${CATEGORY}/${PN}-${pvr}"
 				rm -rf "${pgo_data_dir}" || true

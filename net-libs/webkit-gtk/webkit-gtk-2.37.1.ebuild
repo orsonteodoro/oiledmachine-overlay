@@ -19,8 +19,10 @@ LLVM_SLOTS=(14 13)
 CMAKE_MAKEFILE_GENERATOR="ninja"
 PYTHON_COMPAT=( python3_{8..11} )
 USE_RUBY="ruby26 ruby27 ruby30 ruby31 "
-inherit check-reqs cmake desktop epgo flag-o-matic git-r3 gnome2 lcnr linux-info llvm \
-multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs
+UOPTS_SUPPORT_TBOLT=0
+UOPTS_SUPPORT_TPGO=0
+inherit check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr linux-info llvm \
+multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs uopts
 
 DESCRIPTION="Open source web browser engine (GTK+3 with libsoup2)"
 HOMEPAGE="https://www.webkitgtk.org"
@@ -243,7 +245,7 @@ LICENSE="
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~riscv ~x86"
 
 API_VERSION="4.0"
-EPGO_IMPLS="_${API_VERSION}"
+UOPTS_IMPLS="_${API_VERSION}"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
@@ -792,7 +794,7 @@ eerror "QA:  Update IUSE, *DEPENDS, options, KEYWORDS, patches"
 eerror
 #		die
 	fi
-	epgo_setup
+	uopts_setup
 }
 
 src_prepare() {
@@ -801,12 +803,12 @@ src_prepare() {
 	gnome2_src_prepare
 
 	prepare_abi() {
-		epgo_src_prepare
+		uopts_src_prepare
 	}
 	multilib_foreach_abi prepare_abi
 }
 
-_config_pgx() {
+_src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 	if [[ -e "${BUILD_DIR}" ]] ; then
@@ -1096,7 +1098,7 @@ einfo
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
 
-	epgo_src_configure
+	uopts_src_configure
 
 	if is-flagq -O0 ; then
 ewarn
@@ -1108,26 +1110,22 @@ ewarn
 	WK_USE_CCACHE=NO cmake_src_configure
 }
 
-_compile_pgx() {
+_src_compile() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 	cd "${BUILD_DIR}" || die
 	cmake_src_compile
 }
 
-multilib_src_compile() {
-	export CC=$(tc-getCC ${CTARGET:-${CHOST}})
-	export CXX=$(tc-getCXX ${CTARGET:-${CHOST}})
-
-	einfo "CC=${CC}"
-	einfo "CXX=${CXX}"
-
-	export PGO_PHASE=$(epgo_get_phase)
-einfo
-einfo "PGO_PHASE:  ${PGO_PHASE}"
-einfo
-	_config_pgx
-	_compile_pgx
+src_compile() {
+	compile_abi() {
+		export CC=$(tc-getCC ${CTARGET:-${CHOST}})
+		export CXX=$(tc-getCXX ${CTARGET:-${CHOST}})
+		einfo "CC=${CC}"
+		einfo "CXX=${CXX}"
+		uopts_src_compile
+	}
+	multilib_foreach_abi compile_abi
 }
 
 multilib_src_test() {
@@ -1170,7 +1168,7 @@ multilib_src_install() {
 
 	lcnr_install_files
 
-	epgo_src_install
+	uopts_src_install
 }
 
 pkg_postinst() {
@@ -1192,7 +1190,7 @@ einfo
 	fi
 	check_geolocation
 
-	epgo_pkg_postinst
+	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

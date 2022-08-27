@@ -4,7 +4,7 @@
 EAPI=8
 
 CMAKE_ECLASS=cmake
-inherit cmake-multilib java-pkg-opt-2 flag-o-matic toolchain-funcs tpgo
+inherit cmake-multilib java-pkg-opt-2 flag-o-matic toolchain-funcs uopts
 
 DESCRIPTION="MMX, SSE, and SSE2 SIMD accelerated JPEG library"
 HOMEPAGE="https://libjpeg-turbo.org/ https://sourceforge.net/projects/libjpeg-turbo/"
@@ -149,7 +149,7 @@ pkg_setup() {
 	fi
 	ewarn "Install may fail.  \`emerge -C ${PN}\` then \`emerge -1 =${P}\`."
 	ewarn "PGO may randomly fail with CFI.  Disable the pgo USE flag to fix it."
-	tpgo_setup
+	uopts_setup
 }
 
 get_lib_types() {
@@ -173,7 +173,7 @@ EOF
 	java-pkg-opt-2_src_prepare
 
 	prepare_abi() {
-		tpgo_src_prepare
+		uopts_src_prepare
 	}
 	multilib_foreach_abi prepare_abi
 }
@@ -212,7 +212,7 @@ _src_configure() {
 		)
 	fi
 
-	tpgo_src_configure
+	uopts_src_configure
 	if use pgo && tc-is-clang ; then
 		append-flags $(test-flags -Wno-backend-plugin)
 		if [[ "${PGO_PHASE}" == "PGI" ]] ; then
@@ -394,7 +394,7 @@ src_compile() {
 	export PATH="${ED}/usr/bin:${PATH}"
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
-			tpgo_src_compile
+			uopts_src_compile
 		done
 	}
 	multilib_foreach_abi compile_abi
@@ -437,7 +437,7 @@ src_install() {
 			export BUILD_DIR="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			_install
-			tpgo_src_install
+			uopts_src_install
 		done
 	}
 	multilib_foreach_abi install_abi
@@ -451,5 +451,5 @@ elog "No PGO optimization performed.  Please re-emerge this package."
 elog "The following package must be installed before PGOing this package:"
 elog "  jpeg assets placed in ${distdir}/pgo/assets/jpeg"
 	fi
-	tpgo_pkg_postinst
+	uopts_pkg_postinst
 }

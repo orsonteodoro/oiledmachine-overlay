@@ -5,7 +5,7 @@ EAPI=8
 
 CMAKE_ECLASS=cmake
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake-multilib flag-o-matic python-any-r1 toolchain-funcs tpgo
+inherit cmake-multilib flag-o-matic python-any-r1 toolchain-funcs uopts
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
@@ -157,7 +157,7 @@ pkg_setup() {
 		einfo "The chromium USE flag is in testing."
 	fi
 	check_video
-	tpgo_setup
+	uopts_setup
 }
 
 # The order does matter with PGO.
@@ -189,7 +189,7 @@ src_prepare() {
 		for lib_type in $(get_lib_types) ; do
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			cp -a "${S}" "${CMAKE_USE_DIR}" || die
-			tpgo_src_prepare
+			uopts_src_prepare
 		done
 	}
 	multilib_foreach_abi prepare_abi
@@ -249,7 +249,7 @@ _src_configure() {
 	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cd "${CMAKE_USE_DIR}" || die
-	tpgo_src_configure
+	uopts_src_configure
 
 	tc-export CC CXX
 
@@ -588,7 +588,7 @@ _src_post_pgo() {
 src_compile() {
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
-			tpgo_src_compile
+			uopts_src_compile
 		done
 	}
 	multilib_foreach_abi compile_abi
@@ -616,7 +616,7 @@ src_install() {
 				local HTML_DOCS=( "${BUILD_DIR}"/docs/html/. )
 			fi
 			cmake_src_install
-			tpgo_src_install
+			uopts_src_install
 		done
 	}
 	multilib_foreach_abi install_abi
@@ -639,5 +639,5 @@ elog "No PGO optimization performed.  Please re-emerge this package."
 elog "The following package must be installed before PGOing this package:"
 elog "  media-video/ffmpeg[encode,libaom,$(get_arch_enabled_use_flags)]"
 	fi
-	tpgo_pkg_postinst
+	uopts_pkg_postinst
 }

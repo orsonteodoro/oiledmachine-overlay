@@ -54,7 +54,7 @@ MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info \
 	lcnr llvm multiprocessing pax-utils python-any-r1 toolchain-funcs \
 	virtualx xdg
-inherit ebolt multilib-minimal rust-toolchain
+inherit multilib-minimal rust-toolchain uopts
 
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 
@@ -778,7 +778,7 @@ eerror
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
 	done
-	ebolt_setup
+	uopts_setup
 }
 
 src_unpack() {
@@ -914,7 +914,7 @@ src_prepare() {
 		else
 			ewarn "Using objdump from cbuild"
 		fi
-		ebolt_src_prepare
+		uopts_src_prepare
 	}
 
 	multilib_foreach_abi _src_prepare
@@ -986,8 +986,7 @@ multilib_src_configure() {
 		strip-unsupported-flags
 	fi
 
-	BOLT_PHASE=$(ebolt_get_phase)
-	ebolt_src_configure
+	uopts_src_configure
 
 	# Ensure we use correct toolchain
 	export HOST_CC="$(tc-getBUILD_CC)"
@@ -1637,8 +1636,7 @@ multilib_src_install() {
 		"${ED}/usr/bin/${PN}-${ABI}" \
 		|| die
 	_install_licenses
-	BOLT_PHASE=$(ebolt_get_phase)
-	ebolt_src_install
+	uopts_src_install
 }
 
 pkg_preinst() {
@@ -1767,7 +1765,7 @@ einfo
 einfo "WebGL performance is suboptimal and runs at ~40 FPS.  There is currently"
 einfo "no fix for this."
 einfo
-	ebolt_pkg_postinst
+	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

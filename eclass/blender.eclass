@@ -15,8 +15,10 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-inherit check-reqs cmake epgo flag-o-matic llvm pax-utils \
-	python-single-r1 toolchain-funcs xdg
+UOPTS_SUPPORT_TPGO=0
+UOPTS_SUPPORT_TBOLT=0
+inherit check-reqs cmake flag-o-matic llvm pax-utils \
+	python-single-r1 toolchain-funcs xdg uopts
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
@@ -325,7 +327,7 @@ blender_pkg_setup() {
 	check_optimal_compiler_for_cycles_x86
 	check_embree
 	check_compiler
-	epgo_setup
+	uopts_setup
 	if declare -f _blender_pkg_setup > /dev/null ; then
 		_blender_pkg_setup
 	fi
@@ -652,7 +654,7 @@ einfo
 
 	local impl
 	for impl in $(_get_impls) ; do
-		epgo_src_prepare
+		uopts_src_prepare
 	done
 }
 
@@ -1036,7 +1038,7 @@ blender_src_compile() {
 einfo
 einfo "PGO_PHASE:  ${PGO_PHASE}"
 einfo
-		epgo_src_configure
+		uopts_src_configure
 		_src_configure
 		_src_compile
 		if [[ "${impl}" == "build_creator" ]] ; then
@@ -1252,7 +1254,7 @@ fecho1
 	install_licenses
 	use doc && install_readmes
 
-	epgo_src_install
+	uopts_src_install
 
 	if use openvdb ; then
 		local openvdb_rpath=$(patchelf --print-rpath $(realpath "${EPREFIX}/usr/$(get_libdir)/libopenvdb.so"))
@@ -1343,7 +1345,7 @@ ewarn
 		fi
 	fi
 
-	epgo_pkg_postinst
+	uopts_pkg_postinst
 }
 
 blender_pkg_postrm() {

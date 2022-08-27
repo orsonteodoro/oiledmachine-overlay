@@ -4,7 +4,7 @@
 
 EAPI=8
 
-inherit flag-o-matic meson multilib-build toolchain-funcs tpgo
+inherit flag-o-matic meson multilib-build toolchain-funcs uopts
 
 DESCRIPTION="libspng is a C library for reading and writing Portable Network
 Graphics (PNG) format files with a focus on security and ease of use."
@@ -52,7 +52,7 @@ PATCHES=(
 )
 
 pkg_setup() {
-	tpgo_setup
+	uopts_setup
 }
 
 src_unpack() {
@@ -73,7 +73,7 @@ src_unpack() {
 src_prepare() {
 	default
 	prepare_abi() {
-		tpgo_src_prepare
+		uopts_src_prepare
 	}
 	multilib_foreach_abi prepare_abi
 }
@@ -83,7 +83,7 @@ _src_configure() {
 	append-cppflags -I"${EPREFIX}/usr/include/miniz"
 	local d="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}-${lib_type}"
 	mkdir -p "${d}" || die
-	tpgo_src_configure
+	uopts_src_configure
 
 	local emesonargs=(
 		-Duse_miniz=$(usex zlib "false" "true")
@@ -148,7 +148,7 @@ src_compile() {
 			export EMESON_SOURCE="${S}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 # See https://github.com/randy408/libspng/blob/master/docs/build.md#profile-guided-optimization
-			tpgo_src_compile
+			uopts_src_compile
 		done
 	}
 	multilib_foreach_abi compile_abi
@@ -167,7 +167,7 @@ src_install() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			meson_src_install
-			tpgo_src_install
+			uopts_src_install
 		done
 	}
 	multilib_foreach_abi install_abi
@@ -176,7 +176,7 @@ src_install() {
 }
 
 pkg_postinst() {
-	tpgo_pkg_postinst
+	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

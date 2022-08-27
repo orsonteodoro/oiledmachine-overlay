@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit multilib multilib-minimal portability toolchain-funcs tpgo
+inherit multilib multilib-minimal portability toolchain-funcs uopts
 
 DESCRIPTION="A powerful light-weight programming language designed for extending applications"
 HOMEPAGE="https://www.lua.org/"
@@ -33,7 +33,7 @@ MULTILIB_WRAPPED_HEADERS=(
 )
 
 pkg_setup() {
-	tpgo_setup
+	uopts_setup
 }
 
 src_prepare() {
@@ -95,7 +95,7 @@ src_prepare() {
 			-e 's:/usr/local:'${EPREFIX}'/usr:' \
 			-e "s:\([/\"]\)\<lib\>:\1$(get_libdir):g" \
 			etc/lua.pc src/luaconf.h || die
-		tpgo_src_prepare
+		uopts_src_prepare
 	}
 	multilib_foreach_abi prepare_abi
 }
@@ -103,7 +103,7 @@ src_prepare() {
 src_configure() { :; }
 
 _src_configure() {
-	tpgo_src_configure
+	uopts_src_configure
 }
 
 _src_compile() {
@@ -136,7 +136,7 @@ _src_compile() {
 src_compile() {
 	compile_abi() {
 		cd "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
-		tpgo_src_compile
+		uopts_src_compile
 	}
 
 	multilib_foreach_abi compile_abi
@@ -179,7 +179,7 @@ _install() {
 
 multilib_src_install() {
 	_install
-	tpgo_src_install
+	uopts_src_install
 }
 
 multilib_src_install_all() {
@@ -218,7 +218,7 @@ pkg_postinst() {
 			einfo "Install app-emacs/lua-mode for lua support for emacs"
 		fi
 	fi
-	tpgo_pkg_postinst
+	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  apply-urho3d-patch allow-static-libs, pgo

@@ -17,14 +17,16 @@ it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr sv sw ta te th tr
 uk ur vi zh-CN zh-TW
 "
 
-EPGO_PV=$(ver_cut 1-3 ${PV})
+UOPTS_PGO_PV=$(ver_cut 1-3 ${PV})
 LLVM_MAX_SLOT=15
 LLVM_MIN_SLOT=15 # The pregenerated PGO profile needs profdata version 8
 CR_CLANG_SLOT_OFFICIAL=15
 LLVM_SLOTS=(${LLVM_MAX_SLOT}) # [inclusive, inclusive] high to low
+UOPTS_SUPPORT_TPGO=0
+UOPTS_SUPPORT_TBOLT=0
 inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils \
 python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
-inherit epgo ebolt llvm multilib multilib-minimal # Added by the oiledmachine-overlay
+inherit llvm multilib multilib-minimal uopts # Added by the oiledmachine-overlay
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
@@ -1531,8 +1533,7 @@ einfo "To remove the hard USE mask for the builtin pgo profile:"
 einfo "mkdir -p ${EPREFIX}/etc/portage/profile"
 einfo "echo \"www-client/chromium -pgo\" >> ${EPREFIX}/etc/portage/profile/package.use.mask"
 
-	epgo_setup
-	ebolt_setup
+	uopts_setup
 
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
@@ -1987,14 +1988,13 @@ einfo
 		&& multilib_copy_sources
 
 	prepare_abi() {
-		epgo_src_prepare
-		ebolt_src_prepare
+		uopts_src_prepare
 	}
 
 	multilib_foreach_abi prepare_abi
 }
 
-_configure_pgx() {
+_src_configure() {
 	local chost=$(get_abi_CHOST ${ABI})
 
 	# Calling this here supports resumption via FEATURES=keepwork
@@ -2383,11 +2383,10 @@ einfo
 	if ! use epgo || tc-is-cross-compiler ; then
 		:;
 	else
-		epgo_src_configure
 		[[ "${PGO_PHASE}" == "PGI" ]] && myconf_gn+=" gcc_pgi=true"
 	fi
 
-	use ebolt && ebolt_src_configure
+	uopts_src_configure
 
 	# Explicitly disable ICU data file support for system-icu/headless builds.
 	if use system-icu || use headless; then
@@ -2542,7 +2541,7 @@ einfo
 	"$@" || die
 }
 
-_build() {
+_eninja() {
 	local ninja_into="${1}"
 	local target_id="${2}"
 	local pax_path="${3}"
@@ -2556,42 +2555,6 @@ einfo
 	if [[ -n "${pax_path}" ]] ; then
 		pax-mark m "${pax_path}"
 	fi
-}
-
-_build_pgx() {
-	if [[ -f out/Release/chromedriver ]] ; then
-		rm out/Release/chromedriver || die
-	fi
-	if [[ -f out/Release/chromedriver.unstripped ]] ; then
-		rm out/Release/chromedriver.unstripped || die
-	fi
-	if [[ -f out/Release/build.ninja ]] ; then
-		pushd out/Release || popd
-einfo
-einfo "Cleaning out build"
-einfo
-			eninja -t clean
-		popd
-	fi
-	# Build mksnapshot and pax-mark it.
-	local x
-	for x in mksnapshot v8_context_snapshot_generator; do
-		if tc-is-cross-compiler ; then
-			_build "out/Release" "host/${x}" "out/Release/host/${x}"
-		else
-			_build "out/Release" "${x}" "out/Release/${x}"
-		fi
-	done
-
-	# Even though ninja autodetects number of CPUs, we respect
-	# user's options, for debugging with -j 1 or any other reason.
-	_build "out/Release" "chrome" "out/Release/chrome"
-	_build "out/Release" "chromedriver" ""
-	if use suid ; then
-		_build "out/Release" "chrome_sandbox" ""
-	fi
-
-	mv out/Release/chromedriver{.unstripped,} || die
 }
 
 _update_licenses() {
@@ -2619,7 +2582,7 @@ einfo
 	fi
 }
 
-multilib_src_compile() {
+_src_compile() {
 	if (( ${NABIS} == 1 )) ; then
 		export BUILD_DIR="${S}"
 		cd "${BUILD_DIR}" || die
@@ -2641,14 +2604,41 @@ multilib_src_compile() {
 	#	--use-system-cmake \
 	#	--without-android || die
 
-	export PGO_PHASE=$(epgo_get_phase)
-	export BOLT_PHASE=$(ebolt_get_phase)
-einfo
-einfo "PGO_PHASE:  ${PGO_PHASE}"
-einfo
-	_configure_pgx
 	_update_licenses
-	_build_pgx
+
+	if [[ -f out/Release/chromedriver ]] ; then
+		rm out/Release/chromedriver || die
+	fi
+	if [[ -f out/Release/chromedriver.unstripped ]] ; then
+		rm out/Release/chromedriver.unstripped || die
+	fi
+	if [[ -f out/Release/build.ninja ]] ; then
+		pushd out/Release || popd
+einfo
+einfo "Cleaning out build"
+einfo
+			eninja -t clean
+		popd
+	fi
+	# Build mksnapshot and pax-mark it.
+	local x
+	for x in mksnapshot v8_context_snapshot_generator; do
+		if tc-is-cross-compiler ; then
+			_eninja "out/Release" "host/${x}" "out/Release/host/${x}"
+		else
+			_eninja "out/Release" "${x}" "out/Release/${x}"
+		fi
+	done
+
+	# Even though ninja autodetects number of CPUs, we respect
+	# user's options, for debugging with -j 1 or any other reason.
+	_eninja "out/Release" "chrome" "out/Release/chrome"
+	_eninja "out/Release" "chromedriver" ""
+	if use suid ; then
+		_eninja "out/Release" "chrome_sandbox" ""
+	fi
+
+	mv out/Release/chromedriver{.unstripped,} || die
 
 	# Build manpage; bug #684550
 	sed -e 's|@@PACKAGE@@|chromium-browser|g;
@@ -2787,9 +2777,14 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	# have been present in the listed the the .html (about:credits) file
 	lcnr_install_files
 
-	local BOLT_PHASE=$(ebolt_get_phase)
-	epgo_src_install
-	ebolt_src_install
+	uopts_src_install
+}
+
+src_compile() {
+	compile_abi() {
+		uopts_src_compile
+	}
+	multilib_foreach_abi compile_abi
 }
 
 pkg_postrm() {
@@ -2888,8 +2883,7 @@ pkg_postinst() {
 	xdg_desktop_database_update
 	readme.gentoo_print_elog
 
-	epgo_pkg_postinst
-	ebolt_pkg_postinst
+	uopts_pkg_postinst
 	if ! use headless; then
 		if use vaapi ; then
 # It says 3 args:

@@ -21,8 +21,8 @@ if [ "${PV#9999}" != "${PV}" ] ; then
 	EGIT_REPO_URI="https://git.ffmpeg.org/ffmpeg.git"
 fi
 
-inherit flag-o-matic multilib multilib-minimal toolchain-funcs tpgo ${SCM}
-inherit llvm
+inherit flag-o-matic multilib multilib-minimal toolchain-funcs ${SCM}
+inherit llvm uopts
 
 DESCRIPTION="Complete solution to record/convert/stream audio and video. Includes libavcodec"
 HOMEPAGE="https://ffmpeg.org/"
@@ -708,7 +708,7 @@ pkg_setup() {
 		fi
 	fi
 	llvm_pkg_setup
-	tpgo_setup
+	uopts_setup
 }
 
 get_lib_types() {
@@ -736,7 +736,7 @@ src_prepare() {
 		for lib_type in $(get_lib_types) ; do
 			einfo "Copying sources to ${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			cp -a "${S_orig}" "${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
-			tpgo_src_prepare
+			uopts_src_prepare
 		done
 	}
 	multilib_foreach_abi prepare_abi
@@ -799,7 +799,7 @@ _src_configure() {
 
 	einfo "Configuring ${lib_type} with PGO_PHASE=${PGO_PHASE}"
 
-	tpgo_src_configure
+	uopts_src_configure
 	strip-flag-value "cfi-icall"
 	if tc-is-clang && has_version "sys-libs/compiler-rt-sanitizer[cfi]" ; then
 		append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with ffprobe
@@ -1685,7 +1685,7 @@ src_compile() {
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			einfo "Build type is ${lib_type}"
-			tpgo_src_compile
+			uopts_src_compile
 		done
 	}
 	multilib_foreach_abi compile_abi
@@ -1775,7 +1775,7 @@ src_install() {
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			_install
-			tpgo_src_install
+			uopts_src_install
 		done
 	}
 	multilib_foreach_abi install_abi
@@ -1799,7 +1799,7 @@ ewarn
 ewarn "You are not allowed to redistribute this binary."
 ewarn
 	fi
-	tpgo_pkg_postinst
+	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  pgo, cfi-exceptions, license-compatibility-correctness

@@ -10,7 +10,7 @@ TPGO_CONFIGURE_DONT_SET_FLAGS=1
 PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="threads(+)"
 inherit bash-completion-r1 flag-o-matic ninja-utils pax-utils python-any-r1 \
-toolchain-funcs tpgo xdg-utils
+toolchain-funcs uopts xdg-utils
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
 LICENSE="Apache-1.1 Apache-2.0 Artistic-2 BSD BSD-2 icu-70.1 ISC MIT openssl unicode ZLIB"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
@@ -206,7 +206,7 @@ ewarn "The benchmark/path/resolve-win32.js may not reflect typical usage."
 ewarn "Consider adding it to the NODEJS_EXCLUDED_BENCHMARKS."
 ewarn
 	fi
-	tpgo_setup
+	uopts_setup
 }
 
 LTO_TYPE="none"
@@ -291,7 +291,7 @@ src_prepare() {
 	fi
 
 	default
-	tpgo_src_prepare
+	uopts_src_prepare
 }
 
 src_configure() { :; }
@@ -323,7 +323,7 @@ einfo
 
 _src_configure() {
 	export ENINJA_BUILD_DIR="out/"$(usex debug "Debug" "Release")
-	tpgo_src_configure
+	uopts_src_configure
 	xdg_environment_reset
 
 	local myconf=(
@@ -534,7 +534,7 @@ _src_post_train() {
 }
 
 src_compile() {
-	tpgo_src_compile
+	uopts_src_compile
 }
 
 src_install() {
@@ -629,7 +629,7 @@ src_install() {
 		rm -rf "${ED}/usr/$(get_libdir)/node_modules/corepack" || die
 		rm -rf "${ED}/usr/bin/corepack" || die
 	fi
-	tpgo_src_install
+	uopts_src_install
 }
 
 src_test() {
@@ -673,7 +673,7 @@ einfo "\`eselect nodejs\` in order to compile against the headers matching the"
 einfo "corresponding SLOT.  This means that you cannot compile with different"
 einfo "SLOTS simultaneously."
 einfo
-	tpgo_pkg_postinst
+	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multislot, pgo

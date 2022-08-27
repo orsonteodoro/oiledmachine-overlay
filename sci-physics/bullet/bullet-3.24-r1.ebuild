@@ -7,7 +7,7 @@ EAPI=8
 TRAIN_USE_X=1
 TRAIN_TEST_DURATION=20
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake flag-o-matic lcnr multilib-build python-single-r1 toolchain-funcs tpgo
+inherit cmake flag-o-matic lcnr multilib-build python-single-r1 toolchain-funcs uopts
 
 DESCRIPTION="Continuous Collision Detection and Physics Library"
 HOMEPAGE="http://www.bulletphysics.com/"
@@ -333,7 +333,7 @@ einfo "/etc/portage/profile/package.use.mask:"
 einfo
 einfo "  sci-physics/bullet -tbb"
 einfo
-	tpgo_setup
+	uopts_setup
 	python-single-r1_pkg_setup
 }
 
@@ -342,7 +342,7 @@ src_prepare() {
 	# Allow to generate docs
 	sed -i -e 's/GENERATE_HTMLHELP.*//g' Doxyfile || die
 	prepare_abi() {
-		tpgo_src_prepare
+		uopts_src_prepare
 	}
 	multilib_foreach_abi prepare_abi
 }
@@ -350,7 +350,7 @@ src_prepare() {
 _src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
-	tpgo_src_configure
+	uopts_src_configure
 	cd "${CMAKE_USE_DIR}" || die
 	local mycmakeargs=(
 		-DBUILD_BULLET2_DEMOS=$(usex demos)
@@ -482,7 +482,7 @@ train_get_trainer_exe() {
 
 src_compile() {
 	compile_abi() {
-		tpgo_src_compile
+		uopts_src_compile
 	}
 	multilib_foreach_abi compile_abi
 	if use doc; then
@@ -572,7 +572,7 @@ src_install() {
 			insinto "/usr/share/${PN}/demos/pybullet"
 			doins -r "${CMAKE_USE_DIR}/examples/pybullet/gym"
 		fi
-		tpgo_src_install
+		uopts_src_install
 	}
 	multilib_foreach_abi install_abi
 	cd "${S}" || die
@@ -607,7 +607,7 @@ einfo "  ${EPYTHON} /usr/share/bullet/demos/examples/pybullet/examples/inverse_k
 einfo
 		fi
 	fi
-	tpgo_pkg_postinst
+	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

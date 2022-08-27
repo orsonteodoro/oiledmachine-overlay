@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-inherit flag-o-matic llvm multilib-minimal toolchain-funcs tpgo
+inherit flag-o-matic llvm multilib-minimal toolchain-funcs uopts
 
 # To create a new testdata tarball:
 # 1. Unpack source tarball or checkout git tag
@@ -168,7 +168,7 @@ __pgo_setup() {
 pkg_setup() {
 	__pgo_setup
 	llvm_pkg_setup
-	tpgo_setup
+	uopts_setup
 }
 
 get_native_abi_use() {
@@ -235,7 +235,7 @@ src_prepare() {
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			einfo "Copying to ${S}"
 			cp -a "${S_orig}" "${S}" || die
-			tpgo_src_prepare
+			uopts_src_prepare
 		done
 	}
 	multilib_foreach_abi prepare_abi
@@ -264,7 +264,7 @@ _src_configure() {
 
 	add_sandbox_exceptions
 
-	tpgo_src_configure
+	uopts_src_configure
 
 	# #498364: sse doesn't work without sse2 enabled,
 	local myconfargs=(
@@ -644,7 +644,7 @@ src_compile() {
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
-			tpgo_src_compile
+			uopts_src_compile
 		done
 	}
 	multilib_foreach_abi compile_abi
@@ -672,7 +672,7 @@ src_install() {
 			cd "${BUILD_DIR}" || die
 			emake verbose=yes GEN_EXAMPLES= DESTDIR="${D}" install
 			multilib_is_native_abi && use doc && dodoc -r docs/html
-			tpgo_src_install
+			uopts_src_install
 		done
 	}
 	multilib_foreach_abi install_abi
@@ -693,7 +693,7 @@ elog "No PGO optimization performed.  Please re-emerge this package."
 elog "The following package must be installed before PGOing this package:"
 elog "  media-video/ffmpeg[encode,vpx,$(get_arch_enabled_use_flags)]"
 	fi
-	tpgo_pkg_postinst
+	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  pgo, cfi-exceptions

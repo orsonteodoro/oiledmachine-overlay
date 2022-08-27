@@ -6,7 +6,7 @@ EAPI=8
 
 TRAIN_USE_X=1
 TRAIN_TEST_DURATION=120
-inherit cmake flag-o-matic linux-info toolchain-funcs tpgo
+inherit cmake flag-o-matic linux-info toolchain-funcs uopts
 
 DESCRIPTION="Collection of high-performance ray tracing kernels"
 HOMEPAGE="https://github.com/embree/embree"
@@ -243,7 +243,7 @@ ewarn "Building package may exhibit random failures with doc-html USE flag."
 ewarn "Emerge and try again."
 ewarn
 	fi
-	tpgo_setup
+	uopts_setup
 }
 
 src_prepare() {
@@ -252,7 +252,7 @@ src_prepare() {
 	# disable RPM package building
 	sed -e 's|CPACK_RPM_PACKAGE_RELEASE 1|CPACK_RPM_PACKAGE_RELEASE 0|' \
 		-i CMakeLists.txt || die
-	tpgo_src_prepare
+	uopts_src_prepare
 }
 
 src_configure() { :; }
@@ -262,7 +262,7 @@ einfo
 einfo "PGO PHASE:  ${PGO_PHASE}"
 einfo
 	strip-unsupported-flags
-	tpgo_src_configure
+	uopts_src_configure
 	if tc-is-clang && ! use clang ; then
 eerror
 eerror "Enable the clang USE flag or switch to GCC."
@@ -486,7 +486,7 @@ _get_time_override() {
 		"embree_verify:$((21*60))"
 	) # exename:seconds
 
-	local duration=${TPGO_TEST_DURATION}
+	local duration=${TRAIN_TEST_DURATION}
 	for entry in ${time_override[@]} ; do
 		local name="${entry%:*}"
 		local time="${entry#*:}"
@@ -534,7 +534,7 @@ train_override_duration() {
 }
 
 src_compile() {
-	tpgo_src_compile
+	uopts_src_compile
 }
 
 src_test() {
@@ -607,7 +607,7 @@ EOF
 			fi
 		done
 	fi
-	tpgo_src_install
+	uopts_src_install
 }
 
 pkg_postinst() {
@@ -616,7 +616,7 @@ einfo
 einfo "The tutorial sources have been installed at /usr/share/${PN}/tutorials"
 einfo
 	fi
-	tpgo_pkg_postinst
+	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

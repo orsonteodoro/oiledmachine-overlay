@@ -4,11 +4,13 @@
 
 EAPI=8
 
-EBOLT_DISABLE_BDEPEND=1
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake ebolt epgo llvm.org multilib-minimal pax-utils python-any-r1 \
+UOPTS_BOLT_DISABLE_BDEPEND=1
+UOPTS_SUPPORT_TBOLT=0
+UOPTS_SUPPORT_TPGO=0
+inherit cmake llvm.org multilib-minimal pax-utils python-any-r1 \
 	toolchain-funcs
-inherit flag-o-matic git-r3 ninja-utils
+inherit flag-o-matic git-r3 ninja-utils uopts
 
 DESCRIPTION="Low Level Virtual Machine"
 HOMEPAGE="https://llvm.org/"
@@ -113,8 +115,7 @@ ewarn
 ewarn "To avoid long linking delays, close programs that produce unexpectedly"
 ewarn "high disk activity (web browsers) and possibly switch to -j1."
 ewarn
-	epgo_setup
-	ebolt_setup
+	uopts_setup
 }
 
 python_check_deps() {
@@ -231,8 +232,7 @@ src_prepare() {
 	llvm.org_src_prepare
 
 	prepare_abi() {
-		epgo_src_prepare
-		ebolt_src_prepare
+		uopts_src_prepare
 	}
 	multilib_foreach_abi prepare_abi
 }
@@ -395,9 +395,8 @@ bool_trans() {
 
 src_configure() { :; }
 
-_configure() {
-	epgo_src_configure
-	ebolt_src_configure
+_src_configure() {
+	uopts_src_configure
 	mkdir -p "${BUILD_DIR}" || die # strange?
 	cd "${BUILD_DIR}" || die
 	local ffi_cflags ffi_ldflags
@@ -552,8 +551,7 @@ _configure() {
 	multilib_is_native_abi && check_distribution_components
 }
 
-_compile() {
-	einfo "Called _compile()"
+_src_compile() {
 	cd "${BUILD_DIR}" || die
 	cmake_build distribution
 	use test && cmake_build test-depends
@@ -572,17 +570,12 @@ _compile() {
 src_compile() {
 	_compile_abi() {
 		export BUILD_DIR="${WORKDIR}/${P}_build-${MULTILIB_ABI_FLAG}.${ABI}"
-		local PGO_PHASE=$(epgo_get_phase)
-		local BOLT_PHASE=$(ebolt_get_phase)
-		_configure
-		_compile
-		_install
+		uopts_src_compile
 	}
 	multilib_foreach_abi _compile_abi
 }
 
 src_test() {
-	einfo "Called _test()"
 	cd "${BUILD_DIR}" || die
 	# respect TMPDIR!
 	local -x LIT_PRESERVES_TMP=1
@@ -612,7 +605,6 @@ src_install() {
 }
 
 multilib_src_install() {
-	einfo "Called _install()"
 	cd "${BUILD_DIR}" || die
 	DESTDIR=${D} cmake_build install-distribution
 
@@ -620,9 +612,7 @@ multilib_src_install() {
 	rm -rf "${ED}"/usr/include || die
 	mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
 	LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
-	epgo_src_install
-	local BOLT_PHASE=$(ebolt_get_phase)
-	ebolt_src_install
+	uopts_src_install
 }
 
 multilib_src_install_all() {
@@ -646,8 +636,7 @@ pkg_postinst() {
 	elog "packages:"
 	elog "  dev-python/pygments (for opt-viewer)"
 	elog "  dev-python/pyyaml (for all of them)"
-	epgo_pkg_postinst
-	ebolt_pkg_postinst
+	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

@@ -4,9 +4,11 @@
 
 EAPI=8
 
-EBOLT_DISABLE_BDEPEND=1
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake ebolt epgo flag-o-matic llvm llvm.org python-any-r1
+UOPTS_BOLT_DISABLE_BDEPEND=1
+UOPTS_SUPPORT_TBOLT=0
+UOPTS_SUPPORT_TPGO=0
+inherit cmake flag-o-matic llvm llvm.org python-any-r1 uopts
 
 DESCRIPTION="The LLVM linker (link editor)"
 HOMEPAGE="https://llvm.org/"
@@ -47,8 +49,7 @@ python_check_deps() {
 pkg_setup() {
 	LLVM_MAX_SLOT=${PV%%.*} llvm_pkg_setup
 	use test && python-any-r1_pkg_setup
-	epgo_setup
-	ebolt_setup
+	uopts_setup
 }
 
 src_unpack() {
@@ -68,15 +69,11 @@ src_prepare() {
 		ewarn "The hardened USE flag and Full RELRO default ON patch is in testing."
 		eapply ${HARDENED_PATCHES[@]}
 	fi
-	epgo_src_prepare
-	ebolt_src_prepare
+	uopts_src_prepare
 }
 
-src_configure() {
-	PGO_PHASE=$(epgo_get_phase)
-	BOLT_PHASE=$(ebolt_get_phase)
-	epgo_src_configure
-	ebolt_src_configure
+_src_configure() {
+	uopts_src_configure
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
@@ -96,21 +93,26 @@ src_configure() {
 	cmake_src_configure
 }
 
+_src_compile() {
+	cmake_src_compile
+}
+
+src_compile() {
+	uopts_src_compile
+}
+
 src_test() {
 	local -x LIT_PRESERVES_TMP=1
 	cmake_build check-lld
 }
 
 src_install() {
-	BOLT_PHASE=$(ebolt_get_phase)
 	cmake_src_install
-	epgo_src_install
-	ebolt_src_install
+	uopts_src_install
 }
 
 pkg_postinst() {
-	epgo_pkg_postinst
-	ebolt_pkg_postinst
+	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

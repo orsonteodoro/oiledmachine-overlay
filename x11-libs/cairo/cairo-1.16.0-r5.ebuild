@@ -6,7 +6,7 @@ EAPI=8
 
 TRAIN_USE_X=0
 TRAIN_NO_X_DEPENDS=1
-inherit flag-o-matic autotools multilib-minimal toolchain-funcs tpgo virtualx
+inherit flag-o-matic autotools multilib-minimal toolchain-funcs uopts virtualx
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
@@ -73,7 +73,7 @@ PATCHES=(
 )
 
 pkg_setup() {
-	tpgo_setup
+	uopts_setup
 }
 
 src_prepare() {
@@ -99,7 +99,7 @@ src_prepare() {
 
 	prepare_abi() {
 		cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
-		tpgo_src_prepare
+		uopts_src_prepare
 	}
 
 	multilib_foreach_abi prepare_abi
@@ -110,7 +110,7 @@ src_configure() { :; }
 _src_configure() {
 	cd "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
 
-	tpgo_src_configure
+	uopts_src_configure
 	local myopts
 
         if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then
@@ -163,7 +163,7 @@ _src_compile() {
 src_compile() {
 	compile_abi() {
 		cd "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
-		tpgo_src_compile
+		uopts_src_compile
 	}
 	multilib_foreach_abi compile_abi
 }
@@ -185,7 +185,7 @@ _tpgo_custom_clean() {
 src_install() {
 	multilib-minimal_src_install
 	install_abi() {
-		tpgo_src_install
+		uopts_src_install
 	}
 	multilib_foreach_abi install_abi
 }
@@ -203,7 +203,7 @@ multilib_src_install_all() {
 }
 
 pkg_postinst() {
-	tpgo_pkg_postinst
+	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

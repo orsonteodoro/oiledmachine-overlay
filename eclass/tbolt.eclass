@@ -15,68 +15,70 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+_TBOLT_ECLASS=1
+
 LLVM_SLOTS=(16 15 14)
 inherit flag-o-matic toolchain-funcs train
 
 IUSE+=" bolt"
 RESTRICT+=" strip" # Don't strip at all
 
-# @ECLASS_VARIABLE: TBOLT_DISABLE_BDEPEND
+# @ECLASS_VARIABLE: UOPTS_BOLT_DISABLE_BDEPEND
 # @DESCRIPTION:
 # Disable BDEPEND to avoid possible circular dependency
 
-if [[ "${TBOLT_DISABLE_BDEPEND}" != "1" ]] ; then
+if [[ "${UOPTS_BOLT_DISABLE_BDEPEND}" != "1" ]] ; then
 BDEPEND+="
 	>=sys-devel/llvm-14[bolt]
 "
 fi
 
-# @ECLASS_VARIABLE: TBOLT_EXCLUDE_BINS
+# @ECLASS_VARIABLE: UOPTS_BOLT_EXCLUDE_BINS
 # @DESCRIPTION:
 # A space separated list of basenames executables or shared libraries not to
 # instrument.
 
-# @ECLASS_VARIABLE: TBOLT_PROFILES_DIR
+# @ECLASS_VARIABLE: UOPTS_BOLT_PROFILES_DIR
 # @DESCRIPTION:
 # Sets the location to dump BOLT profiles.
-TBOLT_PROFILES_DIR=${TBOLT_PROFILES_DIR:-"/var/lib/bolt-profiles"}
+UOPTS_BOLT_PROFILES_DIR=${UOPTS_BOLT_PROFILES_DIR:-"/var/lib/bolt-profiles"}
 
-# @ECLASS_VARIABLE: _TBOLT_PV
+# @ECLASS_VARIABLE: _UOPTS_BOLT_PV
 # @INTERNAL
 # @DESCRIPTION:
 # Default PV with breaking changes when bumped.
-_TBOLT_PV=$(ver_cut 1-2 ${PV}) # default
+_UOPTS_BOLT_PV=$(ver_cut 1-2 ${PV}) # default
 
-# @ECLASS_VARIABLE: TBOLT_PV
+# @ECLASS_VARIABLE: UOPTS_BOLT_PV
 # @DESCRIPTION:
 # Set to the PV range which can cause breakage when bumped.  Excludes non
 # breaking patch versions.
-TBOLT_PV=${TBOLT_PV:-${_TBOLT_PV}}
+UOPTS_BOLT_PV=${UOPTS_BOLT_PV:-${_UOPTS_BOLT_PV}}
 
-# @ECLASS_VARIABLE: _TBOLT_CATPN_DATA_DIR
+# @ECLASS_VARIABLE: _UOPTS_BOLT_CATPN_DATA_DIR
 # @INTERNAL
 # @DESCRIPTION:
 # The path to the program BOLT profile with general package id specificity.
-_TBOLT_CATPN_DATA_DIR=${_TBOLT_CATPN_DATA_DIR:-"${TBOLT_PROFILES_DIR}/${CATEGORY}/${PN}"}
+_UOPTS_BOLT_CATPN_DATA_DIR=${_UOPTS_BOLT_CATPN_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEGORY}/${PN}"}
 
-# @ECLASS_VARIABLE: _TBOLT_DATA_DIR
+# @ECLASS_VARIABLE: _UOPTS_BOLT_DATA_DIR
 # @INTERNAL
 # @DESCRIPTION:
 # The path to the program BOLT profile with version specificity.
-_TBOLT_DATA_DIR=${_TBOLT_DATA_DIR:-"${TBOLT_PROFILES_DIR}/${CATEGORY}/${PN}/${TBOLT_PV}"}
+_UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEGORY}/${PN}/${UOPTS_BOLT_PV}"}
 
-# @ECLASS_VARIABLE: _TBOLT_PATH
+# @ECLASS_VARIABLE: _UOPTS_BOLT_PATH
 # @INTERNAL
 # @DESCRIPTION:
 # Allow disjointed PATH to llvm-bolt while respecting LLVM_MAX_SLOT
-_TBOLT_PATH="" # Set in tbolt_setup
+_UOPTS_BOLT_PATH="" # Set in tbolt_setup
 
-# @ECLASS_VARIABLE: TBOLT_SLOT
+# @ECLASS_VARIABLE: UOPTS_BOLT_SLOT
 # @DESCRIPTION:
 # Force a particular LLVM slot for llvm-slot.  This is for compatiblity for BOLT profiles.
 # The preference is auto selection to the highest enabled.
 
-# @ECLASS_VARIABLE: TBOLT_OPTIMIZATIONS
+# @ECLASS_VARIABLE: UOPTS_BOLT_OPTIMIZATIONS
 # @DESCRIPTION:
 # Allow to override the default BOLT optimization setting
 
@@ -95,7 +97,7 @@ _TBOLT_PATH="" # Set in tbolt_setup
 # This function is actually a user defined event handler and optional.
 #
 
-# @ECLASS_VARIABLE: TBOLT_MALLOC
+# @ECLASS_VARIABLE: UOPTS_BOLT_MALLOC
 # @DESCRIPTION:
 # Chooses the preferred malloc
 #
@@ -114,15 +116,15 @@ _tbolt_check_bolt() {
 ewarn
 ewarn "BOLT support is still a Work In Progress (WIP)."
 ewarn
-		if [[ -z "${TBOLT_GROUP}" ]] ; then
+		if [[ -z "${UOPTS_BOLT_GROUP}" ]] ; then
 eerror
-eerror "The TBOLT_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
+eerror "The UOPTS_BOLT_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
 eerror "in a per-package env file.  Users who are not a member of this group"
 eerror "cannot generate a BOLT profile data with this program."
 eerror
 eerror "Example:"
 eerror
-eerror "  TBOLT_GROUP=\"tbolt\""
+eerror "  UOPTS_BOLT_GROUP=\"tbolt\""
 eerror
 			die
 		fi
@@ -145,19 +147,19 @@ eerror
 }
 
 _setup_malloc() {
-	[[ -z "${TBOLT_MALLOC}" ]] && TBOLT_MALLOC="auto"
+	[[ -z "${UOPTS_BOLT_MALLOC}" ]] && UOPTS_BOLT_MALLOC="auto"
 
 	if [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so" \
-		&& "${TBOLT_MALLOC}" =~ ("auto"|"jemalloc") ]] ; then
-		export _TBOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so"
+		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"jemalloc") ]] ; then
+		export _UOPTS_BOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so"
 	elif [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" \
-		&& "${TBOLT_MALLOC}" =~ ("auto"|"jemalloc-minimal") ]] ; then
-		export _TBOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so"
+		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"jemalloc-minimal") ]] ; then
+		export _UOPTS_BOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so"
 	elif [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so" \
-		&& "${TBOLT_MALLOC}" =~ ("auto"|"tcmalloc") ]] ; then
-		export _TBOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so"
+		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"tcmalloc") ]] ; then
+		export _UOPTS_BOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so"
 	else
-		export _TBOLT_MALLOC_LIB=""
+		export _UOPTS_BOLT_MALLOC_LIB=""
 	fi
 }
 
@@ -165,12 +167,12 @@ _setup_malloc() {
 # @DESCRIPTION:
 # Setup PATH for llvm-bolt
 _setup_llvm() {
-	if [[ -n "${TBOLT_SLOT}" ]] ; then
-		_TBOLT_PATH="${ESYSROOT}/usr/lib/llvm/${TBOLT_SLOT}/bin"
+	if [[ -n "${UOPTS_BOLT_SLOT}" ]] ; then
+		_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${UOPTS_BOLT_SLOT}/bin"
 	elif [[ -z "${LLVM_MAX_SLOT}" ]] ; then
 		for s in ${LLVM_SLOTS[@]} ; do
 			if has_version "sys-devel/llvm:${s}[bolt]" ; then
-				_TBOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
+				_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
 				break
 			fi
 		done
@@ -185,7 +187,13 @@ tbolt_setup() {
 	_setup_malloc
 	train_setup
 	_setup_llvm
-	export TBOLT_OPTIMIZATIONS=${TBOLT_OPTIMIZATIONS:-"-reorder-blocks=cache+ -reorder-functions=hfsort -split-functions=2 -split-all-cold -split-eh -dyno-stats"}
+	export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=cache+ -reorder-functions=hfsort -split-functions=2 -split-all-cold -split-eh -dyno-stats"}
+
+	if [[ -z "${_UOPTS_ECLASS}" ]] ; then
+eerror "tbolt.eclass must be used with uopts.eclass.  Do not inherit tbolt"
+eerror "directly."
+		die
+	fi
 }
 
 # @FUNCTION: _tbolt_prepare_bolt
@@ -193,8 +201,8 @@ tbolt_setup() {
 # @DESCRIPTION:
 # Copies an existing profile snapshot into build space.
 _tbolt_prepare_bolt() {
-	local bolt_data_suffix_dir="${EPREFIX}${_TBOLT_DATA_DIR}/${_TBOLT_SUFFIX}"
-	local bolt_data_staging_dir="${T}/bolt-${_TBOLT_SUFFIX}"
+	local bolt_data_suffix_dir="${EPREFIX}${_UOPTS_BOLT_DATA_DIR}/${_UOPTS_BOLT_SUFFIX}"
+	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 
 	mkdir -p "${bolt_data_staging_dir}" || die
 	if [[ -e "${bolt_data_suffix_dir}" ]] ; then
@@ -207,17 +215,17 @@ _tbolt_prepare_bolt() {
 # @DESCRIPTION:
 # You must call this inside the multibuild loop in src_prepare or in a
 # *src_prepare multibuild variant.  It has to be inside the loop so that the
-# TBOLT_IMPL can divide the bolt profile per ABI or module.  You must define
-# TBOLT_IMPL to divide BOLT profiles if impl exists for example headless and
+# UOPTS_IMPLS can divide the bolt profile per ABI or module.  You must define
+# UOPTS_IMPLS to divide BOLT profiles if impl exists for example headless and
 # non-headless builds.
 tbolt_src_prepare() {
-	_TBOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TBOLT_IMPLS}"
+	_UOPTS_BOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
 	_tbolt_prepare_bolt
 }
 
 tbolt_src_configure() {
-	local bolt_data_suffix_dir="${EPREFIX}${_TBOLT_DATA_DIR}/${_TBOLT_SUFFIX}"
-	local bolt_data_staging_dir="${T}/bolt-${_TBOLT_SUFFIX}"
+	local bolt_data_suffix_dir="${EPREFIX}${_UOPTS_BOLT_DATA_DIR}/${_UOPTS_BOLT_SUFFIX}"
+	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 	if use bolt ; then
 		filter-flags \
 			'-f*reorder-blocks-and-partition' \
@@ -234,7 +242,7 @@ tbolt_src_configure() {
 # Checks if requirements are met
 _tbolt_meets_bolt_requirements() {
 	if use bolt ; then
-		local bolt_data_staging_dir="${T}/bolt-${_TBOLT_SUFFIX}"
+		local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 
 		has_version "sys-devel/llvm[bolt]" || return 2
 
@@ -242,7 +250,7 @@ _tbolt_meets_bolt_requirements() {
 
 		touch "${pgo_data_staging_dir}/llvm_bolt_fingerprint" \
 			|| die "You must call ebolt_src_prepare before calling ebolt_get_phase"
-		local actual=$("${_TBOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " ")
+		local actual=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " ")
 		local expected=$(cat "${pgo_data_staging_dir}/llvm_bolt_fingerprint")
 		if [[ "${actual}" != "${expected}" ]] ; then
 # This check is done because of BOLT profile compatibility.
@@ -284,7 +292,7 @@ tbolt_get_phase() {
 	# GATHER / TRAIN
 	# OPTIMIZE
 	local result="NO_BOLT"
-	_TBOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TBOLT_IMPLS}"
+	_UOPTS_BOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
 	_tbolt_meets_bolt_requirements
 	local ret=$?
 
@@ -300,7 +308,7 @@ tbolt_get_phase() {
 		result="NO_BOLT"
 	elif use bolt && (( ${retu} == 1 )) ; then
 		result="NO_BOLT"
-	elif use bolt && [[ "${TBOLT_FORCE_PGI}" == "1" ]] ; then
+	elif use bolt && [[ "${UOPTS_BOLT_FORCE_INST}" == "1" ]] ; then
 		result="INST"
 	elif use bolt && (( ${ret} == 0 )) ; then
 		result="OPT"
@@ -339,7 +347,7 @@ eerror
 		if (( ${is_boltable} == 1 )) ; then
 			# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
 			einfo "vanilla -> BOLT instrumented:  ${p}"
-			"${_TBOLT_MALLOC_LIB}" "${_TBOLT_PATH}/llvm-bolt" \
+			"${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
 				"${p}" \
 				-instrument \
 				-o "${p}.bolt" \
@@ -376,10 +384,10 @@ eerror
 		fi
 		is_abi_same "${p}" || continue
 		if (( ${is_boltable} == 1 )) ; then
-			local args=( ${TBOLT_OPTIMIZATIONS} )
+			local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
 			local bn=$(basename "${p}")
 			einfo "vanilla -> BOLT optimized:  ${p}"
-			"${_TBOLT_MALLOC_LIB}" "${_TBOLT_PATH}/llvm-bolt" \
+			"${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
 				"${p}" \
 				-o "${p}.bolt" \
 				-data="${bolt_data_staging_dir}/${bn}.fdata" \
@@ -391,130 +399,12 @@ eerror
 	done
 }
 
-# @FUNCTION: tbolt_src_compile
-# @DESCRIPTION:
-# The compile phase.  If using cmake, you must explicitly assign
-# CMAKE_USE_DIR and BUILD_DIR within each _src_* since tbolt_compile
-# will decide which ones to call.
-#
-# Overriding _src_prepare is optional and not recommended.  You may just stick
-# to src_prepare() instead.
-#
-# This creates a hook system for PGO.  You must call this within src_compile()
-# You can use _src_pre_inst, _src_post_inst to add additional inst steps for internal dependencies.
-# You can use _src_pre_opt, _src_post_opt to add additional pgo steps for internal dependencies.
-# Examples:
-#
-# _src_configure() {
-#	CMAKE_USE_DIR="${S}"
-#	BUILD_DIR="${S}"
-#	cd "${CMAKE_USE_DIR}" || die
-#	tpgo_src_configure
-#	tbolt_src_configure
-#	echo "hello prepare world";
-#	cmake_src_configure
-# }
-#
-# _src_compile() {
-#	CMAKE_USE_DIR="${S}"
-#	BUILD_DIR="${S}"
-#	cd "${BUILD_DIR}" || die
-#	echo "hello compile world";
-#	cmake_src_compile
-# }
-#
-# src_compile() {
-#	compile_abi() {
-#		tpgo_src_compile
-#		tbolt_src_compile
-#	}
-#	multilib_foreach_abi compile_abi
-# }
-#
-# src_compile() {
-#	tpgo_src_compile
-#	tbolt_src_compile
-# }
-#
-# The _src_pre_train is intended for LD_LIBRARY_PATH linker overrides
-# and staged installs into ED.
-#
-# The _src_post_train is intended to wipe the staged installs in ED
-# or to clear the LD_LIBRARY_PATH.
-#
-tbolt_src_compile() {
-	_TBOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TBOLT_IMPLS}"
-	local is_boltable=1
-	if declare -f tbolt_meets_requirements > /dev/null ; then
-		if tbolt_meets_requirements ; then
-			is_boltable=1
-		else
-			is_boltable=0
-		fi
-	fi
-einfo
-einfo "is_boltable=${is_boltable}"
-einfo
-
-	local skip_inst="no"
-	_tbolt_is_profile_reusable
-	local ret_reuse="$?" # 0 = yes, 1 = no, 2 = unsupported_compiler
-	if [[ "${TBOLT_PROFILES_REUSE:-1}" != "1" ]] ; then
-		:;
-	elif [[ "${ret_reuse}" == "0" ]] ; then
-		skip_inst="yes"
-	fi
-
-einfo
-einfo "is_profile_reusable=${skip_inst} "
-einfo
-
-	if has pgo && use pgo && use bolt && (( ${is_boltable} == 1 )) ; then
-		# Assumes vanilla -> PGO -> BOLT
-		if [[ "${PGO_PHASE}" == "PGO" ]] ; then
-			if [[ "${skip_inst}" == "no" ]] ; then
-				_tbolt_inst_tree "${BUILD_DIR}"
-				declare -f _src_pre_train > /dev/null && _src_pre_train
-				_src_train
-				declare -f _src_post_train > /dev/null && _src_post_train
-			fi
-			_tbolt_opt_tree "${BUILD_DIR}"
-		fi
-	elif use bolt && (( ${is_boltable} == 1 )) ; then
-		# Assumes vanilla -> BOLT
-		if [[ "${skip_inst}" == "no" ]] ; then
-			BOLT_PHASE="INST"
-			declare -f _src_pre_inst > /dev/null && _src_pre_inst
-			declare -f _src_prepare > /dev/null && _src_prepare
-			declare -f _src_configure > /dev/null && _src_configure
-			declare -f _src_compile > /dev/null && _src_compile
-			_tbolt_inst_tree "${BUILD_DIR}"
-			declare -f _src_post_inst > /dev/null && _src_post_inst
-			declare -f _src_pre_train > /dev/null && _src_pre_train
-			_src_train
-			declare -f _src_post_train > /dev/null && _src_post_train
-		fi
-		BOLT_PHASE="OPT"
-		declare -f _src_pre_opt > /dev/null && _src_pre_opt
-		declare -f _src_prepare > /dev/null && _src_prepare
-		declare -f _src_configure > /dev/null && _src_configure
-		declare -f _src_compile > /dev/null && _src_compile
-		_tbolt_opt_tree "${BUILD_DIR}"
-		declare -f _src_post_opt > /dev/null && _src_post_opt
-	else
-		BOLT_PHASE="NO_BOLT"
-		declare -f _src_prepare > /dev/null && _src_prepare
-		declare -f _src_configure > /dev/null && _src_configure
-		declare -f _src_compile > /dev/null && _src_compile
-	fi
-}
-
 # @FUNCTION: is_bolt_banned
 # @DESCRIPTION:
 # Check if the executable or library is not allowed to be BOLT
 is_bolt_banned() {
 	local needle="${1}"
-	for haystack in ${TBOLT_EXCLUDE_BINS} ; do
+	for haystack in ${UOPTS_BOLT_EXCLUDE_BINS} ; do
 		if [[ "${haystack}" == "${needle}" ]] ; then
 			return 0
 		fi
@@ -588,16 +478,16 @@ is_stripped() {
 #
 tbolt_src_install() {
 	if use bolt ; then
-		_TBOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TBOLT_IMPLS}"
-		local bolt_data_suffix_dir="${_TBOLT_DATA_DIR}/${_TBOLT_SUFFIX}"
-		local bolt_data_staging_dir="${T}/bolt-${_TBOLT_SUFFIX}"
+		_UOPTS_BOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
+		local bolt_data_suffix_dir="${_UOPTS_BOLT_DATA_DIR}/${_UOPTS_BOLT_SUFFIX}"
+		local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 		keepdir "${bolt_data_suffix_dir}"
-		fowners root:${TBOLT_GROUP} "${bolt_data_suffix_dir}"
+		fowners root:${UOPTS_BOLT_GROUP} "${bolt_data_suffix_dir}"
 		fperms 0775 "${bolt_data_suffix_dir}"
 
-		"${_TBOLT_PATH}/llvm-bolt" --version \
+		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_version" || die
-		"${_TBOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " " \
+		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " " \
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_fingerprint" || die
 	fi
 }
@@ -611,7 +501,7 @@ _tbolt_wipe_bolt_profile() {
 einfo
 einfo "Wiping previous BOLT profile"
 einfo
-		local bolt_data_dir="${EROOT}${_TBOLT_DATA_DIR}"
+		local bolt_data_dir="${EROOT}${_UOPTS_BOLT_DATA_DIR}"
 		find "${bolt_data_dir}" -type f \
 			-not -name "llvm_bolt_fingerprint" \
 			-not -name "llvm_bolt_version" \
@@ -632,7 +522,7 @@ _tbolt_delete_old_bolt_profiles() {
 				# Don't delete permissions
 				continue
 			fi
-			local bolt_data_dir="${EROOT}${_TBOLT_CATPN_DATA_DIR}/${pv}"
+			local bolt_data_dir="${EROOT}${_UOPTS_BOLT_CATPN_DATA_DIR}/${pv}"
 			if [[ -e "${bolt_data_dir}" ]] ; then
 einfo "Removing old BOLT profile for =${CATEGORY}/${PN}-${pvr}"
 				rm -rf "${bolt_data_dir}" || true

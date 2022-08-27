@@ -7,7 +7,7 @@ EAPI=8
 # Worth keeping an eye on 'develop' branch upstream for possible backports.
 AUTOTOOLS_AUTO_DEPEND="no"
 VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}"/usr/share/openpgp-keys/madler.asc
-inherit autotools flag-o-matic multilib-minimal toolchain-funcs tpgo usr-ldscript verify-sig
+inherit autotools flag-o-matic multilib-minimal toolchain-funcs uopts usr-ldscript verify-sig
 
 CYGWINPATCHES=(
 	"https://github.com/cygwinports/zlib/raw/22a3462cae33a82ad966ea0a7d6cbe8fc1368fec/1.2.11-gzopen_w.patch -> ${PN}-1.2.11-cygwin-gzopen_w.patch"
@@ -237,7 +237,7 @@ pkg_setup() {
 	if [[ "${IUSE}" =~ "pgo-trainer-zlib-images-" ]] ; then
 		check_img_converter
 	fi
-	tpgo_setup
+	uopts_setup
 }
 
 src_prepare() {
@@ -272,7 +272,7 @@ src_prepare() {
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			einfo "Copying to ${S}"
 			cp -a "${S_orig}" "${S}" || die
-			tpgo_src_prepare
+			uopts_src_prepare
 		done
 	}
 	multilib_foreach_abi prepare_abi
@@ -301,7 +301,7 @@ _tpgo_custom_clean() {
 _src_configure() {
 	einfo "Called _src_configure"
 	cd "${BUILD_DIR}" || die
-	tpgo_src_configure
+	uopts_src_configure
 
 	# It doesn't work for elibc_glibc and gcc combo.
 	for value in cfi-vcall cfi-nvcall cfi-derived-cast cfi-unrelated-cast cfi ; do
@@ -1017,7 +1017,7 @@ src_compile() {
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
-			tpgo_src_compile
+			uopts_src_compile
 		done
 	}
 	multilib_foreach_abi compile_abi
@@ -1097,7 +1097,7 @@ src_install() {
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			_install
-			tpgo_src_install
+			uopts_src_install
 		done
 	}
 	multilib_foreach_abi install_abi
@@ -1122,7 +1122,7 @@ elog "No PGO optimization performed.  Please re-emerge this package."
 elog "The following package must be installed before PGOing this package:"
 elog "  app-arch/pigz[$(get_arch_enabled_use_flags)]"
 	fi
-	tpgo_pkg_postinst
+	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

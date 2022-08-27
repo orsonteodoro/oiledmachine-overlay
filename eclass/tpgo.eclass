@@ -11,6 +11,13 @@
 # It exists to increase the deployment of PGO and to educate about
 # mysterious PGO support.
 
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
+
+_TPGO_ECLASS=1
+
 # When to use this eclass?
 #
 # Only use if the build times are short like in 1 hr and the package has
@@ -132,65 +139,65 @@ TPGO_CONFIGURE_DONT_SET_FLAGS=${TPGO_CONFIGURE_DONT_SET_FLAGS:-0}
 # If using GCC PGO, you may need to add -lgcov to LIBS or modify the build
 # files but only in PGI phase.
 
-# @ECLASS_VARIABLE: TPGO_PROFILES_DIR
+# @ECLASS_VARIABLE: UOPTS_PGO_PROFILES_DIR
 # @DESCRIPTION:
 # Sets the location to dump PGO profiles.
-TPGO_PROFILES_DIR=${TPGO_PROFILES_DIR:-"/var/lib/pgo-profiles"}
+UOPTS_PGO_PROFILES_DIR=${UOPTS_PGO_PROFILES_DIR:-"/var/lib/pgo-profiles"}
 
-# @ECLASS_VARIABLE: _TPGO_PV
+# @ECLASS_VARIABLE: _UOPTS_PGO_PV
 # @INTERNAL
 # @DESCRIPTION:
 # Default PV with breaking changes when bumped.
-_TPGO_PV=$(ver_cut 1-2 ${PV}) # default
+_UOPTS_PGO_PV=$(ver_cut 1-2 ${PV}) # default
 
-# @ECLASS_VARIABLE: TPGO_PV
+# @ECLASS_VARIABLE: UOPTS_PGO_PV
 # @DESCRIPTION:
 # Set to the PV range which can cause breakage when bumped.  Excludes non
 # breaking patch versions.
-TPGO_PV=${TPGO_PV:-${_TPGO_PV}}
+UOPTS_PGO_PV=${UOPTS_PGO_PV:-${_UOPTS_PGO_PV}}
 
-# @ECLASS_VARIABLE: _TPGO_CATPN_DATA_DIR
+# @ECLASS_VARIABLE: _UOPTS_PGO_CATPN_DATA_DIR
 # @INTERNAL
 # @DESCRIPTION:
 # The path to the program PGO profile with general package id specificity.
-_TPGO_CATPN_DATA_DIR=${_TPGO_CATPN_DATA_DIR:-"${TPGO_PROFILES_DIR}/${CATEGORY}/${PN}"}
+_UOPTS_PGO_CATPN_DATA_DIR=${_UOPTS_PGO_CATPN_DATA_DIR:-"${UOPTS_PGO_PROFILES_DIR}/${CATEGORY}/${PN}"}
 
-# @ECLASS_VARIABLE: _TPGO_DATA_DIR
+# @ECLASS_VARIABLE: _UOPTS_PGO_DATA_DIR
 # @INTERNAL
 # @DESCRIPTION:
 # The path to the program PGO profile with version specificity.
-_TPGO_DATA_DIR=${_TPGO_DATA_DIR:-"${TPGO_PROFILES_DIR}/${CATEGORY}/${PN}/${EPGO_PV}"}
+_UOPTS_PGO_DATA_DIR=${_UOPTS_PGO_DATA_DIR:-"${UOPTS_PGO_PROFILES_DIR}/${CATEGORY}/${PN}/${UOPTS_PGO_PV}"}
 
-# @ECLASS_VARIABLE: TPGO_PROFILES_REUSE
+# @ECLASS_VARIABLE: UOPTS_PGO_PORTABLE
+# @DESCRIPTION:
+# Optimize for speed for untouched functions
+
+# @ECLASS_VARIABLE: UOPTS_PGO_FORCE_PGI
 # @DESCRIPTION:
 # Allow to enable or disable profile reuse.
 # 1 for reuse, 0 for no reuse
 # Only the user can decide.  Do not set it in the ebuild.
 
-# @ECLASS_VARIABLE: TPGO_IMPLS (OPTIONAL)
+# @ECLASS_VARIABLE: UOPTS_IMPLS (OPTIONAL)
 # @DESCRIPTION:
 # This sets the suffix for multilib or different implementations.  It should be
-# explicitly be set just before every tpgo_src_prepare, tpgo_src_configure,
-# tpgo_src_compile, tpgo_src_install.
+# explicitly be set before adding calling any tpgo.eclass function.
 # Examples:
 #
 # impl="headless"
-# TPGO_IMPLS="_${impl}"
+# UOPTS_IMPLS="_${impl}"
 # tpgo_src_prepare
 #
 # impl="simd"
-# TPGO_IMPLS="_${impl}"
+# UOPTS_IMPLS="_${impl}"
 # tpgo_src_prepare
 #
 
-# @ECLASS_VARIABLE: TPGO_PORTABLE
+# @ECLASS_VARIABLE: UOPTS_PGO_PORTABLE
 # @DESCRIPTION:
 # Optimize for speed for untouched functions
 
 inherit flag-o-matic toolchain-funcs train
-if [[ "${TPGO_MULTILIB}" == "1" ]] ; then
-	inherit multilib-build
-fi
 
 IUSE+=" pgo"
 
@@ -240,6 +247,12 @@ ewarn
 ewarn "_src_configure should be defined"
 ewarn
 	fi
+
+	if [[ -z "${_UOPTS_ECLASS}" ]] ; then
+eerror "The tpgo.eclass must be used with uopts.eclass.  Do not inherit tpgo"
+eerror "directly."
+		die
+	fi
 }
 
 # @FUNCTION: _tpgo_prepare_pgo
@@ -247,8 +260,8 @@ ewarn
 # @DESCRIPTION:
 # Copies an existing profile snapshot into build space.
 _tpgo_prepare_pgo() {
-	local pgo_data_suffix_dir="${EPREFIX}${_TPGO_DATA_DIR}/${_TPGO_SUFFIX}"
-	local pgo_data_staging_dir="${T}/pgo-${_TPGO_SUFFIX}"
+	local pgo_data_suffix_dir="${EPREFIX}${_UOPTS_PGO_DATA_DIR}/${_UOPTS_PGO_SUFFIX}"
+	local pgo_data_staging_dir="${T}/pgo-${_UOPTS_PGO_SUFFIX}"
 
 	mkdir -p "${pgo_data_staging_dir}" || die
 	if [[ -e "${pgo_data_suffix_dir}" ]] ; then
@@ -261,11 +274,11 @@ _tpgo_prepare_pgo() {
 # @DESCRIPTION:
 # You must call this inside the multibuild loop in src_prepare or in a
 # *src_prepare multibuild variant.  It has to be inside the loop so that the
-# TPGO_IMPL can divide the pgo profile per ABI or module.  You must define
-# TPGO_IMPL to divide PGO profiles if impl exists for example headless and
+# UOPTS_BOLT_IMPLS can divide the pgo profile per ABI or module.  You must define
+# UOPTS_BOLT_IMPLS to divide PGO profiles if impl exists for example headless and
 # non-headless builds.
 tpgo_src_prepare() {
-	_TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TPGO_IMPLS}"
+	_UOPTS_PGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
 	_tpgo_prepare_pgo
 }
 
@@ -283,7 +296,7 @@ _tpgo_configure() {
 			append-flags \
 				-fprofile-generate \
 				-fprofile-dir="${pgo_data_staging_dir}"
-			[[ "${TPGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
+			[[ "${UOPTS_PGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		einfo "Setting up PGO"
@@ -299,7 +312,7 @@ _tpgo_configure() {
 				-fprofile-correction \
 				-fprofile-use \
 				-fprofile-dir="${pgo_data_staging_dir}"
-			[[ "${TPGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
+			[[ "${UOPTS_PGO_PORTABLE}" == "1" ]] && append-flags -fprofile-partial-training
 		fi
 	fi
 }
@@ -366,7 +379,7 @@ tpgo_meson_src_configure() {
 # building PGO image.
 #
 tpgo_src_configure() {
-	_TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TPGO_IMPLS}"
+	_UOPTS_PGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
 	if [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		if declare -f _tpgo_custom_clean > /dev/null ; then
 			_tpgo_custom_clean
@@ -378,7 +391,7 @@ tpgo_src_configure() {
 	fi
 
 	filter-flags -fprofile*
-	local pgo_data_staging_dir="${T}/pgo-${_TPGO_SUFFIX}"
+	local pgo_data_staging_dir="${T}/pgo-${_UOPTS_PGO_SUFFIX}"
 	mkdir -p "${pgo_data_staging_dir}" || die # Make first demo produce a PGO profile?
 
 	if [[ "${TPGO_CONFIGURE_DONT_SET_FLAGS}" != "1" ]] ; then
@@ -393,7 +406,7 @@ tpgo_src_configure() {
 # Checks if requirements are met for profile reuse, skipping PGI and PGT
 _tpgo_is_profile_reusable() {
 	if use pgo ; then
-		local pgo_data_staging_dir="${T}/pgo-${_TPGO_SUFFIX}"
+		local pgo_data_staging_dir="${T}/pgo-${_UOPTS_PGO_SUFFIX}"
 
 		if [[ -z "${CC}" ]] ; then
 # This shouldn't set the CC but we have to for -dumpmachine.
@@ -463,152 +476,6 @@ ewarn
 # It is recommended to use (nested) loops instead of event handlers.
 # The event handlers/eclass hide the information away from you.
 
-# @FUNCTION: tpgo_src_compile
-# @DESCRIPTION:
-# The compile phase.  If using cmake, you must explicitly assign
-# CMAKE_USE_DIR and BUILD_DIR within each _src_* since tpgo_compile
-# will decide which ones to call.
-#
-# Overriding _src_prepare is optional and not recommended.  You may just stick
-# to src_prepare() instead.
-#
-# This creates a hook system for PGO.  You must call this within src_compile()
-# You can use _src_pre_pgi, _src_post_pgi to add additional pgi steps for internal dependencies.
-# You can use _src_pre_pgo, _src_post_pgo to add additional pgo steps for internal dependencies.
-# Examples:
-#
-# _src_configure() {
-#	CMAKE_USE_DIR="${S}"
-#	BUILD_DIR="${S}"
-#	cd "${CMAKE_USE_DIR}" || die
-#	tpgo_src_configure
-#	echo "hello prepare world";
-#	cmake_src_configure
-# }
-#
-# _src_compile() {
-#	CMAKE_USE_DIR="${S}"
-#	BUILD_DIR="${S}"
-#	cd "${BUILD_DIR}" || die
-#	echo "hello compile world";
-#	cmake_src_compile
-# }
-#
-# src_compile() {
-#	compile_abi() {
-#		tpgo_src_compile
-#	}
-#	multilib_foreach_abi compile_abi
-# }
-#
-# src_compile() {
-#	tpgo_compile
-# }
-#
-# The _src_pre_train is intended for LD_LIBRARY_PATH linker overrides
-# and staged installs into ED.
-#
-# The _src_post_train is intended to wipe the staged installs in ED
-# or to clear the LD_LIBRARY_PATH.
-#
-tpgo_src_compile() {
-	_TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TPGO_IMPLS}"
-	local is_pgoable=1
-	if declare -f tpgo_meets_requirements > /dev/null ; then
-		if tpgo_meets_requirements ; then
-			is_pgoable=1
-		else
-			is_pgoable=0
-		fi
-	fi
-einfo
-einfo "is_pgoable=${is_pgoable}"
-einfo
-
-	local skip_pgi="no"
-	_tpgo_is_profile_reusable
-	local ret_reuse="$?" # 0 = yes, 1 = no, 2 = unsupported_compiler
-	if [[ "${TPGO_PROFILES_REUSE:-1}" != "1" ]] ; then
-		:;
-	elif [[ "${ret_reuse}" == "0" ]] ; then
-		skip_pgi="yes"
-	fi
-
-einfo
-einfo "is_profile_reusable=${skip_pgi} "
-einfo
-
-	if use pgo && (( ${is_pgoable} == 1 )) ; then
-		if [[ "${skip_pgi}" == "no" ]] ; then
-			PGO_PHASE="PGI"
-			declare -f _src_pre_pgi > /dev/null && _src_pre_pgi
-			declare -f _src_prepare > /dev/null && _src_prepare
-			declare -f _src_configure > /dev/null && _src_configure
-			declare -f _src_compile > /dev/null && _src_compile
-			declare -f _src_post_pgi > /dev/null && _src_post_pgi
-			_tpgo_src_pre_train
-			declare -f _src_pre_train > /dev/null && _src_pre_train
-			_src_train
-			declare -f _src_post_train > /dev/null && _src_post_train
-		fi
-		PGO_PHASE="PGO"
-		declare -f _src_pre_pgo > /dev/null && _src_pre_pgo
-		declare -f _src_prepare > /dev/null && _src_prepare
-		declare -f _src_configure > /dev/null && _src_configure
-		declare -f _src_compile > /dev/null && _src_compile
-		declare -f _src_post_pgo > /dev/null && _src_post_pgo
-	else
-		PGO_PHASE="NO_PGO"
-		declare -f _src_prepare > /dev/null && _src_prepare
-		declare -f _src_configure > /dev/null && _src_configure
-		declare -f _src_compile > /dev/null && _src_compile
-	fi
-}
-
-if [[ "${TPGO_MULTILIB}" == "1" ]] ; then
-# @FUNCTION: tpgo_multilib_src_compile
-# @DESCRIPTION:
-# This is for simple ebuilds.  For more advanced ebuilds
-# use tpgo_compile instead.
-# Example:
-#
-# TPGO_MULTILIB=1
-# inherit autotools tpgo
-#
-# src_prepare() {
-#	prepare_abi() {
-#		cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
-#	}
-#	multilib_foreach_prepare prepare_abi
-# }
-#
-# _src_configure() {
-#	BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
-#	cd "${BUILD_DIR}" || die
-#	tpgo_src_configure
-#	echo "hello prepare world";
-#	local myconf=( ... )
-#	econf ${myconf[@]}
-# }
-#
-# _src_compile() {
-#	BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
-#	cd "${BUILD_DIR}" || die
-#	echo "hello compile world";
-#	emake
-# }
-#
-# src_compile() {
-#	tpgo_multilib_compile
-# }
-tpgo_multilib_src_compile() {
-	tpgo_compile_abi() {
-		tpgo_src_compile
-	}
-	multilib_foreach_abi tpgo_compile_abi
-}
-fi
-
 # @FUNCTION: _tpgo_src_pre_train
 # @INTERNAL
 # @DESCRIPTION:
@@ -668,10 +535,10 @@ eerror
 # @DESCRIPTION:
 # Saves the profile to skip instrumentation on patch releases
 tpgo_src_install() {
-	if use pgo && [[ "${TPGO_PROFILES_REUSE:-1}" == "1" ]] ; then
-		_TPGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TPGO_IMPLS}"
-		local pgo_data_suffix_dir="${_TPGO_DATA_DIR}/${_TPGO_SUFFIX}"
-		local pgo_data_staging_dir="${T}/pgo-${_TPGO_SUFFIX}"
+	if use pgo ; then
+		_UOPTS_PGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
+		local pgo_data_suffix_dir="${_UOPTS_PGO_DATA_DIR}/${_UOPTS_PGO_SUFFIX}"
+		local pgo_data_staging_dir="${T}/pgo-${_UOPTS_PGO_SUFFIX}"
 		keepdir "${pgo_data_suffix_dir}"
 
 		if [[ -z "${CC}" ]] ; then

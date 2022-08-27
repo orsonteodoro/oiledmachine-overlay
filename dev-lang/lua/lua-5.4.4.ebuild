@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit autotools multilib multilib-minimal portability toolchain-funcs tpgo
+inherit autotools multilib multilib-minimal portability toolchain-funcs uopts
 
 DESCRIPTION="A powerful light-weight programming language designed for extending applications"
 HOMEPAGE="https://www.lua.org/"
@@ -46,7 +46,7 @@ PATCHES=(
 )
 
 pkg_setup() {
-	tpgo_setup
+	uopts_setup
 }
 
 src_prepare() {
@@ -82,7 +82,7 @@ src_prepare() {
 			-e "s:\(define LUA_CDIR\s*LUA_ROOT \"\)lib:\1$(get_libdir):" \
 			src/luaconf.h \
 		|| die "failed patching luaconf.h"
-		tpgo_src_prepare
+		uopts_src_prepare
 	}
 	multilib_foreach_abi prepare_abi
 }
@@ -90,7 +90,7 @@ src_prepare() {
 src_configure() { :; }
 
 _src_configure() {
-	tpgo_src_configure
+	uopts_src_configure
 	if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		append-flags -Wno-error=coverage-mismatch
 	fi
@@ -133,7 +133,7 @@ _src_compile() {
 src_compile() {
 	compile_abi() {
 		cd "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
-		tpgo_src_compile
+		uopts_src_compile
 	}
 
 	multilib_foreach_abi compile_abi
@@ -181,7 +181,7 @@ _install() {
 
 multilib_src_install() {
 	_install
-	tpgo_src_install
+	uopts_src_install
 }
 
 _src_pre_train() {
@@ -264,7 +264,7 @@ pkg_postinst() {
 			einfo "Install app-emacs/lua-mode for lua support for emacs"
 		fi
 	fi
-	tpgo_pkg_postinst
+	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  allow-static-libs, pgo

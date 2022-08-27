@@ -4,11 +4,13 @@
 
 EAPI=8
 
-EBOLT_DISABLE_BDEPEND=1
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake ebolt epgo llvm llvm.org multilib multilib-minimal \
+UOPTS_BOLT_DISABLE_BDEPEND=1
+UOPTS_SUPPORT_TBOLT=0
+UOPTS_SUPPORT_TPGO=0
+inherit cmake llvm llvm.org multilib multilib-minimal \
 	prefix python-single-r1 toolchain-funcs
-inherit flag-o-matic git-r3 ninja-utils
+inherit flag-o-matic git-r3 ninja-utils uopts
 
 DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="https://llvm.org/"
@@ -170,8 +172,7 @@ ewarn
 ewarn "To avoid long linking delays, close programs that produce unexpectedly"
 ewarn "high disk activity (web browsers) and possibly switch to -j1."
 ewarn
-	epgo_setup
-	ebolt_setup
+	uopts_setup
 }
 
 src_unpack() {
@@ -209,8 +210,7 @@ src_prepare() {
 		lib/Driver/ToolChains/Darwin.cpp || die
 
 	prepare_abi() {
-		epgo_src_prepare
-		ebolt_src_prepare
+		uopts_src_prepare
 	}
 	multilib_foreach_abi prepare_abi
 }
@@ -353,10 +353,8 @@ _gcc_fullversion() {
 	gcc --version | head -n 1 | grep -o -E -e "[0-9_p.]+" | head -n 1
 }
 
-_configure() {
-	local BOLT_PHASE=$(ebolt_get_phase)
-	epgo_src_configure
-	ebolt_src_configure
+_src_configure() {
+	uopts_src_configure
 	local llvm_version=$(llvm-config --version) || die
 	local clang_version=$(ver_cut 1-3 "${llvm_version}")
 
@@ -504,7 +502,7 @@ _configure() {
 	multilib_is_native_abi && check_distribution_components
 }
 
-_compile() {
+_src_compile() {
 	cd "${BUILD_DIR}" || die
 
 	# Includes pgt_build_self
@@ -519,10 +517,7 @@ _compile() {
 
 src_compile() {
 	compile_abi() {
-		local PGO_PHASE=$(epgo_get_phase)
-		_configure
-		_compile
-		_install
+		uopts_src_compile
 	}
 	multilib_foreach_abi compile_abi
 }
@@ -586,7 +581,9 @@ src_install() {
 	done
 }
 
-_install() {
+multilib_src_install() {
+	BUILD_DIR="${WORKDIR}/x/y/clang-${MULTILIB_ABI_FLAG}.${ABI}"
+
 	cd "${BUILD_DIR}" || die
 	DESTDIR=${D} cmake_build install-distribution
 
@@ -608,14 +605,8 @@ _install() {
 		cp -aT "${ED}"/usr/include/clang-tidy "${T}/" || die
 		rm -rf "${ED}"/usr/include/clang-tidy || die
 	fi
-}
 
-multilib_src_install() {
-	BUILD_DIR="${WORKDIR}/x/y/clang-${MULTILIB_ABI_FLAG}.${ABI}"
-	_install
-	local BOLT_PHASE=$(ebolt_get_phase)
-	epgo_src_install
-	ebolt_src_install
+	uopts_src_install
 }
 
 multilib_src_install_all() {
@@ -642,8 +633,7 @@ pkg_postinst() {
 	elog "Some of them are vim integration scripts (with instructions inside)."
 	elog "The run-clang-tidy.py script requires the following additional package:"
 	elog "  dev-python/pyyaml"
-	epgo_pkg_postinst
-	ebolt_pkg_postinst
+	uopts_pkg_postinst
 }
 
 pkg_postrm() {
