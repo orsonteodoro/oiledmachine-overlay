@@ -461,7 +461,7 @@ is_file_boltable() {
 # Check if the file has been STRIPed
 is_stripped() {
 	local p="${1}"
-	readelf -s "${p}" | grep -q ".symtab"
+	! readelf -s "${p}" | grep -q ".symtab"
 }
 
 # @FUNCTION: tbolt_src_install
