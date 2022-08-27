@@ -230,7 +230,8 @@ UOPTS_PGO_PORTABLE - 1 to build untouched functions optimized for speed, 0 to
 retain untouched functions as optimized for size.
 
 UOPTS_PGO_EVENT_BASED - 1 to build untouch event handler functions optimized for
-speed, 0 to retain untouched functions as optimized for size.
+speed, 0 to retain untouched functions as optimized for size.  Do not use unless
+you encounter a performance regression.
 
 #### BOLT environment variables
 

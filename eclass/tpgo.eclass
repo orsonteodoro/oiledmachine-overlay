@@ -170,11 +170,12 @@ _UOPTS_PGO_DATA_DIR=${_UOPTS_PGO_DATA_DIR:-"${UOPTS_PGO_PROFILES_DIR}/${CATEGORY
 
 # @ECLASS_VARIABLE: UOPTS_PGO_PORTABLE
 # @DESCRIPTION:
-# Optimize for speed for untouched functions
+# Optimize for speed for untouched functions.
 
 # @ECLASS_VARIABLE: UOPTS_PGO_EVENT_BASED
 # @DESCRIPTION:
-# Optimize for speed for untouched event handlers.
+# Optimize for speed for untouched event handlers.  Do not use unless you
+# encounter a performance regression.
 
 # @ECLASS_VARIABLE: UOPTS_PGO_FORCE_PGI
 # @DESCRIPTION:
