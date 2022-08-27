@@ -180,7 +180,7 @@ Events triggering PGI (instrumentation):
 - Different compiler signatures between PGI and PGO.
 - Version bumps that cause breakage or internal dependency updates which are
 typically minor versions.
-- Forced PGI with EPGO_FORCE_PGI
+- Forced PGI with UOPTS_PGO_FORCE_PGI
 
 Events that may trigger PGO (optimized builds):
 - Presence of a PGO profile
