@@ -7,7 +7,6 @@
 dev-dotnet/assimp-net
 dev-dotnet/atitextureconverter
 dev-dotnet/beatdetectorforgames
-dev-dotnet/BulletSharpPInvoke
 dev-dotnet/farseer-physics-engine
 dev-dotnet/fna
 dev-dotnet/freeimagenet
