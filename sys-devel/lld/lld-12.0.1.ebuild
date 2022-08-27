@@ -107,6 +107,10 @@ src_install() {
 
 pkg_postinst() {
 	uopts_pkg_postinst
+einfo
+einfo "See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"
+einfo "for a possible PGO+BOLT trainer script"
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

@@ -608,12 +608,16 @@ pkg_postinst() {
 		eselect compiler-shadow update all
 	fi
 
-	elog "You can find additional utility scripts in:"
-	elog "  ${EROOT}/usr/lib/llvm/${SLOT}/share/clang"
-	elog "Some of them are vim integration scripts (with instructions inside)."
-	elog "The run-clang-tidy.py script requires the following additional package:"
-	elog "  dev-python/pyyaml"
+elog "You can find additional utility scripts in:"
+elog "  ${EROOT}/usr/lib/llvm/${SLOT}/share/clang"
+elog "Some of them are vim integration scripts (with instructions inside)."
+elog "The run-clang-tidy.py script requires the following additional package:"
+elog "  dev-python/pyyaml"
 	uopts_pkg_postinst
+einfo
+einfo "See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"
+einfo "for a possible PGO+BOLT trainer script"
+einfo
 }
 
 pkg_postrm() {

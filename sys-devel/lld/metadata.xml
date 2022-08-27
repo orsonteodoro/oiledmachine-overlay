@@ -21,7 +21,6 @@
     needs to check the build logs to see if the program unecessarily overrides
     the default.
 
-
     PGO
 
     Steps to optimize:
@@ -40,12 +39,51 @@
     3. Train
     4. Optimize the build
 
-
     BOLT + PGO.
 
     We recommend doing PGO to completion first then BOLT to completion
     afterwards.
 
+
+    Draft sample script with buildself trainer
+
+#!/bin/bash
+SLOT=13
+OVERLAY_DIR="/usr/local/oiledmachine-overlay"
+
+trainer() {
+	pushd "${OVERLAY_DIR}/sys-devel"
+		export CC="clang-${SLOT}"
+		export CXX="clang++-${SLOT}"
+		export LD="clang-${SLOT}"
+		export CFLAGS="-O2 -pipe"
+		export CXXFLAGS="-O2 -pipe"
+		export LDFLAGS="-O2 -pipe"
+		ebuild $(realpath ./lld-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
+	popd
+	pushd "${OVERLAY_DIR}/sys-devel"
+		export CC="clang-${SLOT}"
+		export CXX="clang++-${SLOT}"
+		export LD="clang-${SLOT}"
+		export CFLAGS="-O2 -flto=thin -pipe"
+		export CXXFLAGS="-O2 -flto=thin -ipe"
+		export LDFLAGS="-O2 -flto=thin"
+		ebuild $(realpath ./lld-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
+	popd
+}
+
+main() {
+	emerge -1vuDN "sys-devel/lld:${SLOT}[-epgo]"
+	emerge -1vO "sys-devel/lld:${SLOT}[epgo,-ebolt]"
+	trainer
+	emerge -1vO "sys-devel/lld:${SLOT}[epgo,ebolt]"
+	trainer
+	emerge -1vO "sys-devel/lld:${SLOT}[epgo,ebolt]"
+}
+
+main
+
+#DONE
 
     Deterministic reliable builds
 
@@ -81,11 +119,11 @@ sys-devel/clang:14 llvm-14-commit.conf
     <flag name="hardened">
       Enables Full RELRO by default.
     </flag>
-    <flag name="epgo">
-      Builds with the event based Profile Guided Optimization strategy.
+    <flag name="ebolt">
+      Builds with the event based BOLT strategy.
     </flag>
     <flag name="epgo">
-      Bulids with the event based BOLT strategy.
+      Builds with the event based Profile Guided Optimization strategy.
     </flag>
   </use>
 </pkgmetadata>

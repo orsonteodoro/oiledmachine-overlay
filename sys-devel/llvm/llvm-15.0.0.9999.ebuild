@@ -586,7 +586,6 @@ src_install() {
 	if use ebolt ; then
 		# For BOLT requirements, see
 # https://github.com/llvm/llvm-project/tree/main/bolt#input-binary-requirements
-#
 		export STRIP="${BROOT}/bin/true"
 	fi
 	local MULTILIB_CHOST_TOOLS=(
@@ -630,13 +629,17 @@ multilib_src_install_all() {
 }
 
 pkg_postinst() {
-	elog "You can find additional opt-viewer utility scripts in:"
-	elog "  ${EROOT}/usr/lib/llvm/${SLOT}/share/opt-viewer"
-	elog "To use these scripts, you will need Python along with the following"
-	elog "packages:"
-	elog "  dev-python/pygments (for opt-viewer)"
-	elog "  dev-python/pyyaml (for all of them)"
+elog "You can find additional opt-viewer utility scripts in:"
+elog "  ${EROOT}/usr/lib/llvm/${SLOT}/share/opt-viewer"
+elog "To use these scripts, you will need Python along with the following"
+elog "packages:"
+elog "  dev-python/pygments (for opt-viewer)"
+elog "  dev-python/pyyaml (for all of them)"
 	uopts_pkg_postinst
+einfo
+einfo "See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"
+einfo "for a possible PGO+BOLT trainer script"
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

@@ -61,6 +61,71 @@
     When doing BOLT+PGO, we recommend doing PGO first to completion then BOLT to
     completion.
 
+
+    Draft sample script
+
+#!/bin/bash
+OVERLAY_DIR="/usr/local/oiledmachine-overlay"
+PORTAGE_DIR="/usr/portage"
+SLOT=14
+
+trainer() {
+	# Set in per-package.env:
+	export CC="clang-${SLOT}"
+	export CXX="clang++-${SLOT}"
+	export LD="clang-${SLOT}"
+
+	# Here you need to train the -O* levels but we train the parser.
+	# The actual brains/algorithms of the compiler are in the llvm library.
+	# The trainer program here is way better than what is promoted by upstream.
+	pushd "${OVERLAY_DIR}/sys-devel/clang"
+		export CFLAGS="-march=native -O2 -pipe"
+		export CXXFLAGS="-march=native -O2 -pipe"
+		export LDFLAGS="-march=native -O2 -pipe"
+		ebuild $(realpath ./clang-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
+
+		export CFLAGS="-march=native -O3 -pipe"
+		export CXXFLAGS="-march=native -O3 -pipe"
+		export LDFLAGS="-march=native -O3 -pipe"
+		ebuild $(realpath ./clang-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
+
+		export CFLAGS="-march=native -O3 -flto=thin -pipe"
+		export CXXFLAGS="-march=native -O3 -flto=thin -pipe"
+		export LDFLAGS="-march=native -O3 -flto -pipe"
+		ebuild $(realpath ./clang-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
+	popd
+	pushd "${OVERLAY_DIR}/media-libs/mesa"
+		ebuild $(realpath ./mesa-22*.ebuild | tail -n 1) clean unpack prepare compile
+	popd
+
+	# Duration in seconds
+	timeout 30 blender project1.blend  -f 1,3,5,7,9,11 -E CYCLES
+
+	# Run opencl programs with timeout 180
+	timeout $((60*5)) bitcoin_miner
+	timeout $((60*5)) distributed_computing_project
+
+	timeout $((60*5)) benchmark_demo_with_shader_programs
+
+	# Build with WASM
+	pushd "${OVERLAY_DIR}/dev-games/gdevelop"
+		ebuild $(realpath ./gdevelop-*.ebuild | tail -n 1) clean unpack prepare compile
+	popd
+}
+
+main() {
+	emerge -1vuDN "sys-devel/llvm:${SLOT}[-epgo,-ebolt]"
+	emerge -1vO "sys-devel/llvm:${SLOT}[epgo,-ebolt]" # pgi
+	trainer
+	emerge -1vO "sys-devel/llvm:${SLOT}[epgo,ebolt]" # pgo, bolt_inst
+	trainer
+	emerge --config "sys-devel/llvm:${SLOT}[epgo,ebolt]" # bolt_opt
+}
+
+main
+### DONE
+
+
     References:
     [1] https://llvm.org/docs/HowToBuildWithPGO.html
 
