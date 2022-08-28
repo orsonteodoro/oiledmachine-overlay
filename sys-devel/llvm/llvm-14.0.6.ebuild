@@ -29,6 +29,7 @@ IUSE+=" bolt +bootstrap -dump jemalloc tcmalloc r3"
 REQUIRED_USE="
 	jemalloc? ( bolt )
 	tcmalloc? ( bolt )
+	!amd64? ( !arm64? ( !bolt ) )
 "
 RESTRICT="!test? ( test )"
 
@@ -172,7 +173,7 @@ check_distribution_components() {
 						;;
 					# BOLT static libs
 					bolt_rt)
-						use bolt || continue
+						( use amd64 && use bolt ) || continue
 						;;
 					# meta-targets
 					distribution|llvm-libraries)
@@ -369,7 +370,8 @@ get_distribution_components() {
 				docs-llvm-man
 			)
 		fi
-		use bolt && out+=(
+		( use amd64 || use arm64 ) \
+		&& use bolt && out+=(
 			llvm-bolt
 			llvm-bolt-heatmap
 			llvm-boltdiff
