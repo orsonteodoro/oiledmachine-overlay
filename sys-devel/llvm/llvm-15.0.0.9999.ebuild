@@ -73,11 +73,6 @@ BDEPEND="
 	)
 	libffi? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
 "
-PDEPEND+="
-	bolt? (
-		sys-devel/lld
-	)
-"
 # There are no file collisions between these versions but having :0
 # installed means llvm-config there will take precedence.
 RDEPEND="
@@ -176,6 +171,10 @@ check_distribution_components() {
 					LLVM*)
 						continue
 						;;
+					# BOLT static libs
+					bolt_rt)
+						use bolt || continue
+						;;
 					# meta-targets
 					distribution|llvm-libraries)
 						continue
@@ -269,6 +268,10 @@ get_distribution_components() {
 		LLVMDemangle
 		LLVMSupport
 		LLVMTableGen
+	)
+	use bolt && use amd64 && out=(
+		# static libs
+		bolt_rt
 	)
 
 	if multilib_is_native_abi; then
@@ -372,10 +375,15 @@ get_distribution_components() {
 				docs-llvm-man
 			)
 		fi
+		use bolt && out+=(
+			llvm-bolt
+			llvm-bolt-heatmap
+			llvm-boltdiff
+			perf2bolt
+		)
 		use doc && out+=(
 			docs-llvm-html
 		)
-
 		use binutils-plugin && out+=(
 			LLVMgold
 		)
@@ -426,7 +434,6 @@ _src_configure() {
 	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
 	export CFLAGS="$(get_abi_CFLAGS ${ABI}) ${CFLAGS}"
 	export CXXFLAGS="$(get_abi_CFLAGS ${ABI}) ${CXXFLAGS}"
-	autofix_flags # translate retpoline, strip unsupported flags during switch
 	einfo "CFLAGS=${CFLAGS}"
 	einfo "CXXFLAGS=${CXXFLAGS}"
 

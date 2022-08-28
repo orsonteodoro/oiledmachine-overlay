@@ -405,7 +405,6 @@ _src_configure() {
 	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
 	export CFLAGS="$(get_abi_CFLAGS ${ABI}) ${CFLAGS}"
 	export CXXFLAGS="$(get_abi_CFLAGS ${ABI}) ${CXXFLAGS}"
-	autofix_flags # translate retpoline, strip unsupported flags during switch
 	einfo "CFLAGS=${CFLAGS}"
 	einfo "CXXFLAGS=${CXXFLAGS}"
 

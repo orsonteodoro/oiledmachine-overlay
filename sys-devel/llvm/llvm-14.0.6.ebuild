@@ -81,9 +81,6 @@ RDEPEND="
 PDEPEND="
 	sys-devel/llvm-common
 	binutils-plugin? ( >=sys-devel/llvmgold-${SLOT} )
-	bolt? (
-		sys-devel/lld
-	)
 "
 PATCHES=(
 	"${FILESDIR}/llvm-14.0.0.9999-stop-triple-spam.patch"
@@ -172,6 +169,10 @@ check_distribution_components() {
 					# static libs
 					LLVM*)
 						continue
+						;;
+					# BOLT static libs
+					bolt_rt)
+						use bolt || continue
 						;;
 					# meta-targets
 					distribution|llvm-libraries)
@@ -266,6 +267,10 @@ get_distribution_components() {
 		LLVMDemangle
 		LLVMSupport
 		LLVMTableGen
+	)
+	use bolt && use amd64 && out=(
+		# static libs
+		bolt_rt
 	)
 
 	if multilib_is_native_abi; then
@@ -368,10 +373,15 @@ get_distribution_components() {
 				docs-llvm-man
 			)
 		fi
+		use bolt && out+=(
+			llvm-bolt
+			llvm-bolt-heatmap
+			llvm-boltdiff
+			perf2bolt
+		)
 		use doc && out+=(
 			docs-llvm-html
 		)
-
 		use binutils-plugin && out+=(
 			LLVMgold
 		)
@@ -422,7 +432,6 @@ _src_configure() {
 	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
 	export CFLAGS="$(get_abi_CFLAGS ${ABI}) ${CFLAGS}"
 	export CXXFLAGS="$(get_abi_CFLAGS ${ABI}) ${CXXFLAGS}"
-	autofix_flags # translate retpoline, strip unsupported flags during switch
 	einfo "CFLAGS=${CFLAGS}"
 	einfo "CXXFLAGS=${CXXFLAGS}"
 
