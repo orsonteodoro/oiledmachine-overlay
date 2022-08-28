@@ -10,14 +10,11 @@ inherit cmake-multilib llvm llvm.org python-any-r1 toolchain-funcs
 
 DESCRIPTION="Low level support for a standard C++ library"
 HOMEPAGE="https://libcxxabi.llvm.org/"
-
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
 KEYWORDS=""
 IUSE="+libunwind static-libs test"
 IUSE+=" hardened r8"
-RESTRICT="!test? ( test )"
-
 RDEPEND="
 	libunwind? (
 		|| (
@@ -27,20 +24,20 @@ RDEPEND="
 	)
 "
 DEPEND+=" ${RDEPEND}"
-PATCHES=(
-	"${FILESDIR}/libcxxabi-15.0.0.9999-hardened.patch"
-	"${FILESDIR}/libcxx-13.0.0.9999-hardened.patch"
-)
-S="${WORKDIR}"
-# Don't strip CFI from .so files
-RESTRICT="strip"
-
 BDEPEND+="
 	test? (
 		>=sys-devel/clang-3.9.0
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)
 "
+S="${WORKDIR}"
+RESTRICT="!test? ( test )"
+# Don't strip CFI from .so files
+RESTRICT+=" strip"
+PATCHES=(
+	"${FILESDIR}/libcxxabi-15.0.0.9999-hardened.patch"
+	"${FILESDIR}/libcxx-13.0.0.9999-hardened.patch"
+)
 
 LLVM_COMPONENTS=( runtimes libcxx{abi,} llvm/cmake cmake )
 LLVM_TEST_COMPONENTS=( llvm/utils/llvm-lit )
