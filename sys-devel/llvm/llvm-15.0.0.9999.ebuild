@@ -25,10 +25,8 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
 KEYWORDS=""
 IUSE="+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3"
-IUSE+=" bolt +bootstrap -dump jemalloc tcmalloc r4"
+IUSE+=" bolt +bootstrap -dump r4"
 REQUIRED_USE="
-	jemalloc? ( bolt )
-	tcmalloc? ( bolt )
 	!amd64? ( !arm64? ( !bolt ) )
 "
 PROPERTIES="live"
@@ -49,10 +47,6 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	binutils-plugin? ( sys-libs/binutils-libs )
-	bolt? (
-		jemalloc? ( dev-libs/jemalloc )
-		tcmalloc? ( dev-util/google-perftools )
-	)
 "
 BDEPEND="
 	${PYTHON_DEPS}
@@ -714,8 +708,10 @@ pkg_postinst() {
 einfo
 einfo "You can find additional opt-viewer utility scripts in:"
 einfo "  ${EROOT}/usr/lib/llvm/${SLOT}/share/opt-viewer"
+einfo
 einfo "To use these scripts, you will need Python along with the following"
 einfo "packages:"
+einfo
 einfo "  dev-python/pygments (for opt-viewer)"
 einfo "  dev-python/pyyaml (for all of them)"
 einfo

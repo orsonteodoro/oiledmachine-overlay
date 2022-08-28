@@ -656,8 +656,10 @@ pkg_postinst() {
 einfo
 einfo "You can find additional opt-viewer utility scripts in:"
 einfo "  ${EROOT}/usr/lib/llvm/${SLOT}/share/opt-viewer"
+einfo
 einfo "To use these scripts, you will need Python along with the following"
 einfo "packages:"
+einfo
 einfo "  dev-python/pygments (for opt-viewer)"
 einfo "  dev-python/pyyaml (for all of them)"
 einfo
