@@ -268,10 +268,6 @@ get_distribution_components() {
 		LLVMSupport
 		LLVMTableGen
 	)
-	use bolt && use amd64 && out=(
-		# static libs
-		bolt_rt
-	)
 
 	if multilib_is_native_abi; then
 		out+=(
@@ -378,6 +374,10 @@ get_distribution_components() {
 			llvm-bolt-heatmap
 			llvm-boltdiff
 			perf2bolt
+		)
+		use bolt && use amd64 && out=(
+			# static libs
+			bolt_rt
 		)
 		use doc && out+=(
 			docs-llvm-html
