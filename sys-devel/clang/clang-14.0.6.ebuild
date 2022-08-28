@@ -75,6 +75,19 @@ LLVM_PATCHSET=${PV}
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 
+REQUIRED_USE+="
+	amd64? ( llvm_targets_X86 )
+	arm? ( llvm_targets_ARM )
+	arm64? ( llvm_targets_AArch64 )
+	m68k? ( llvm_targets_M68k )
+	mips? ( llvm_targets_Mips )
+	ppc? ( llvm_targets_PowerPC )
+	ppc64? ( llvm_targets_PowerPC )
+	riscv? ( llvm_targets_RISCV )
+	sparc? ( llvm_targets_Sparc )
+	x86? ( llvm_targets_X86 )
+"
+
 gen_rdepend() {
 	local f
 	for f in ${ALL_LLVM_TARGET_FLAGS[@]} ; do
@@ -197,6 +210,9 @@ einfo
 	local t
 	for t in ${ALL_LLVM_TARGET_FLAGS[@]} ; do
 einfo "echo \"${CATEGORY}/${PN} -${t}\" >> ${EROOT}/etc/portage/profile/package.use.force"
+	done
+	for t in ${ALL_LLVM_EXPERIMENTAL_TARGETS[@]/#/llvm_targets_} ; do
+einfo "echo \"${CATEGORY}/${PN} -${t}\" >> ${EROOT}/etc/portage/profile/package.use.mask"
 	done
 einfo
 einfo "However, some packages still need some or all of these.  Some are"

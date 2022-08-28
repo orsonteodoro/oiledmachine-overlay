@@ -80,6 +80,19 @@ LLVM_PATCHSET=${PV/_/-}
 LLVM_USE_TARGETS=provide
 llvm.org_set_globals
 
+REQUIRED_USE+="
+	amd64? ( llvm_targets_X86 )
+	arm? ( llvm_targets_ARM )
+	arm64? ( llvm_targets_AArch64 )
+	m68k? ( llvm_targets_M68k )
+	mips? ( llvm_targets_Mips )
+	ppc? ( llvm_targets_PowerPC )
+	ppc64? ( llvm_targets_PowerPC )
+	riscv? ( llvm_targets_RISCV )
+	sparc? ( llvm_targets_Sparc )
+	x86? ( llvm_targets_X86 )
+"
+
 pkg_setup() {
 	python_setup
 	if [[ "${CC}" == "clang" ]] ; then
