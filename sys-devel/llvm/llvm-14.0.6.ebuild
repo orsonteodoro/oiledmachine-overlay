@@ -377,7 +377,7 @@ get_distribution_components() {
 			llvm-boltdiff
 			perf2bolt
 		)
-		use bolt && use amd64 && out=(
+		use bolt && use amd64 && out+=(
 			# static libs
 			bolt_rt
 		)
