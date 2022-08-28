@@ -107,6 +107,9 @@ einfo
 	for t in ${ALL_LLVM_TARGET_FLAGS[@]} ; do
 einfo "echo \"${CATEGORY}/${PN} -${t}\" >> ${EROOT}/etc/portage/profile/package.use.force"
 	done
+	for t in ${ALL_LLVM_EXPERIMENTAL_TARGETS[@]/#/llvm_targets_} ; do
+einfo "echo \"${CATEGORY}/${PN} -${t}\" >> ${EROOT}/etc/portage/profile/package.use.mask"
+	done
 einfo
 einfo "However, some packages still need some or all of these.  Some are"
 einfo "mentioned in bug #767700."

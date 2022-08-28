@@ -62,6 +62,22 @@ pkg_setup() {
 	LLVM_MAX_SLOT=${PV%%.*} llvm_pkg_setup
 	use test && python-any-r1_pkg_setup
 	uopts_setup
+
+# See https://bugs.gentoo.org/767700
+einfo
+einfo "To remove the hard USE mask for llvm_targets_*, do:"
+einfo
+	local t
+	for t in ${ALL_LLVM_TARGET_FLAGS[@]} ; do
+einfo "echo \"${CATEGORY}/${PN} -${t}\" >> ${EROOT}/etc/portage/profile/package.use.force"
+	done
+	for t in ${ALL_LLVM_EXPERIMENTAL_TARGETS[@]/#/llvm_targets_} ; do
+einfo "echo \"${CATEGORY}/${PN} -${t}\" >> ${EROOT}/etc/portage/profile/package.use.mask"
+	done
+einfo
+einfo "However, some packages still need some or all of these.  Some are"
+einfo "mentioned in bug #767700."
+einfo
 }
 
 src_unpack() {
