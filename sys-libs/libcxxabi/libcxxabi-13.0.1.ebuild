@@ -15,13 +15,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
 KEYWORDS="amd64 arm arm64 ~riscv ~x86 ~x64-macos"
 IUSE="+libunwind static-libs test"
-IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack"
-REQUIRED_USE+="
-	cfi? ( clang lto )
-	cfi-cast? ( clang lto cfi-vcall )
-	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
-	cfi-icall? ( clang lto cfi-vcall )
-	cfi-vcall? ( clang lto )"
+IUSE+=" hardened"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
@@ -30,88 +24,23 @@ RDEPEND="
 			>=sys-libs/libunwind-1.0.1-r1[static-libs?,${MULTILIB_USEDEP}]
 			>=sys-libs/llvm-libunwind-3.9.0-r1[static-libs?,${MULTILIB_USEDEP}]
 		)
-	)"
+	)
+"
 DEPEND+=" ${RDEPEND}"
-PATCHES=( "${FILESDIR}/libcxxabi-13.0.0.9999-hardened.patch"
-	  "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
+PATCHES=(
+	"${FILESDIR}/libcxxabi-13.0.0.9999-hardened.patch"
+	"${FILESDIR}/libcxx-13.0.0.9999-hardened.patch"
+)
 S="${WORKDIR}"
 # Don't strip CFI from .so files
 RESTRICT="strip"
 
-_seq() {
-	local min=${1}
-	local max=${2}
-	local i=${min}
-	while (( ${i} <= ${max} )) ; do
-		echo "${i}"
-		i=$(( ${i} + 1 ))
-	done
-}
-
-gen_cfi_bdepend() {
-	local min=${1}
-	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			>=sys-devel/lld-${v}
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
-		)
-		     "
-	done
-}
-
-gen_shadowcallstack_bdepend() {
-	local min=${1}
-	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			>=sys-devel/lld-${v}
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*:=[shadowcallstack?]
-		)
-		     "
-	done
-}
-
-gen_lto_bdepend() {
-	local min=${1}
-	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
-		echo "
-		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP}]
-			>=sys-devel/lld-${v}
-		)
-		"
-	done
-}
-
-BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 15) ) )"
-BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 15) ) )"
-BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 15) ) )"
-BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 15) ) )"
-BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 15) ) )"
-BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 15) ) ) )"
-BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 15) ) ) )"
-
 BDEPEND+="
-	test? ( >=sys-devel/clang-3.9.0
+	test? (
+		>=sys-devel/clang-3.9.0
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
-	)"
+	)
+"
 
 LLVM_COMPONENTS=( libcxx{abi,} llvm/cmake )
 llvm.org_set_globals
@@ -162,24 +91,94 @@ is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
 	if [[ "${lib_type}" == "static" ]] ; then
 		return 0
-	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
+	elif is-flagq '-fsanitize-cfi-cross-dso' && [[ "${lib_type}" == "shared" ]] ; then
 		return 0
 	fi
 	return 1
 }
 
-_configure_abi() {
-	if use clang ; then
-		export CC="clang $(get_abi_CFLAGS ${ABI})"
-		export CXX="clang++ $(get_abi_CFLAGS ${ABI})"
-		export NM=llvm-nm
-		export AR=llvm-ar
-		export READELF=llvm-readelf
-		export AS=llvm-as
-		export LD="${CC}"
-	fi
+has_sanitizer_option() {
+	local needle="${1}"
+	for haystack in $(echo "${CFLAGS}" \
+		| grep -E -e "-fsanitize=[a-z,]+( |$)" \
+		| sed -e "s|-fsanitize||g" | tr "," "\n") ; do
+		[[ "${haystack}" == "${needle}" ]] && return 0
+	done
+	return 1
+}
 
-	autofix_flags
+_usex_cfi() {
+	local s=$(clang-major-version)
+	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+		&& has_sanitizer_option "cfi" ; then
+		echo "ON"
+	else
+		echo "OFF"
+	fi
+}
+
+_usex_cfi_cast() {
+	local s=$(clang-major-version)
+	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+		&& ( \
+			has_sanitizer_option "cfi-derived-cast" \
+			|| has_sanitizer_option "cfi-unrelated-cast" \
+		) ; then
+		echo "ON"
+	else
+		echo "OFF"
+	fi
+}
+
+_usex_cfi_icall() {
+	local s=$(clang-major-version)
+	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+		&& has_sanitizer_option "cfi-icall" ; then
+		echo "ON"
+	else
+		echo "OFF"
+	fi
+}
+
+_usex_cfi_vcall() {
+	local s=$(clang-major-version)
+	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+		&& has_sanitizer_option "cfi-vcall" ; then
+		echo "ON"
+	else
+		echo "OFF"
+	fi
+}
+
+_usex_cfi_cross_dso() {
+	local s=$(clang-major-version)
+	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+		&& is-flagq '-fsanitize-cfi-cross-dso' ; then
+		echo "ON"
+	else
+		echo "OFF"
+	fi
+}
+
+_usex_shadowcallstack() {
+	local s=$(clang-major-version)
+	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[shadowcallstack]" \
+		&& has_sanitizer_option "shadow-call-stack" ; then
+		echo "ON"
+	else
+		echo "OFF"
+	fi
+}
+
+_usex_lto() {
+	if is-flagq '-flto*' ; then
+		echo "ON"
+	else
+		echo "OFF"
+	fi
+}
+
+_configure_abi() {
 	filter-flags \
 		'--param=ssp-buffer-size=*' \
 		'-f*sanitize*' \
@@ -219,22 +218,22 @@ _configure_abi() {
 		# probably because gcc & clang are bundling their own unwind.h
 		-DLIBCXXABI_LIBUNWIND_INCLUDES="${EPREFIX}"/usr/include
 		-DLIBCXXABI_TARGET_TRIPLE="${CHOST}"
-		-DLTO=$(usex lto)
+		-DLTO=$(_usex_lto)
 		-DNOEXECSTACK=$(usex hardened)
 	)
 
 	set_cfi() {
 		if tc-is-clang && is_cfi_supported ; then
 			mycmakeargs+=(
-				-DCFI=$(usex cfi)
-				-DCFI_CAST=$(usex cfi-cast)
-				-DCFI_ICALL=$(usex cfi-icall)
-				-DCFI_VCALL=$(usex cfi-vcall)
-				-DCROSS_DSO_CFI=$(usex cfi-cross-dso)
+				-DCFI=$(_usex_cfi)
+				-DCFI_CAST=$(_usex_cfi_cast)
+				-DCFI_ICALL=$(_usex_cfi_icall)
+				-DCFI_VCALL=$(_usex_cfi_vcall)
+				-DCROSS_DSO_CFI=$(_usex_cfi_cross_dso)
 			)
 		fi
 		mycmakeargs+=(
-			-DSHADOW_CALL_STACK=$(usex shadowcallstack)
+			-DSHADOW_CALL_STACK=$(_usex_shadowcallstack)
 		)
 	}
 
@@ -303,23 +302,23 @@ wrap_libcxx() {
 		-DLIBCXX_HAS_GCC_S_LIB=OFF
 		-DLIBCXX_INCLUDE_TESTS=OFF
 		-DLIBCXX_TARGET_TRIPLE="${CHOST}"
-		-DLTO=$(usex lto)
+		-DLTO=$(_usex_lto)
 		-DNOEXECSTACK=$(usex hardened)
 	)
 
 	set_cfi() {
 		if tc-is-clang && is_cfi_supported ; then
 			mycmakeargs+=(
-				-DCFI=$(usex cfi)
-				-DCFI_CAST=$(usex cfi-cast)
-				-DCFI_EXCEPTIONS="-fno-sanitize=cfi-icall"
+				-DCFI=$(_usex_cfi)
+				-DCFI_CAST=$(_usex_cfi_cast)
 				-DCFI_ICALL=OFF
-				-DCFI_VCALL=$(usex cfi-vcall)
-				-DCROSS_DSO_CFI=$(usex cfi-cross-dso)
+				-DCFI_EXCEPTIONS="-fno-sanitize=cfi-icall"
+				-DCFI_VCALL=$(_usex_cfi_vcall)
+				-DCROSS_DSO_CFI=$(_usex_cfi_cross_dso)
 			)
 		fi
 		mycmakeargs+=(
-			-DSHADOW_CALL_STACK=$(usex shadowcallstack)
+			-DSHADOW_CALL_STACK=$(_usex_shadowcallstack)
 		)
 	}
 
@@ -405,24 +404,34 @@ src_install() {
 }
 
 pkg_postinst() {
-	if use cfi-cross-dso ; then
+	if is-flagq '-fsanitize-cfi-cross-dso' ; then
+ewarn
 ewarn "Using cfi-cross-dso requires a rebuild of the app with only the clang"
 ewarn "compiler."
+ewarn
 	fi
 
 	if [[ "${USE}" =~ "cfi" ]] && use static-libs ; then
+ewarn
 ewarn "Using cfi with static-libs requires the app be built with only the clang"
 ewarn "compiler."
+ewarn
 	fi
 
 	if use lto && use static-libs ; then
 		if tc-is-clang ; then
+ewarn
 ewarn "You are only allowed to static link this library with clang."
+ewarn
 		elif tc-is-gcc ; then
+ewarn
 ewarn "You are only allowed to static link this library with gcc."
+ewarn
 		else
+ewarn
 ewarn "You are only allowed to static link this library with CC=${CC}"
 ewarn "CXX=${CXX}."
+ewarn
 		fi
 	fi
 }
