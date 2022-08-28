@@ -142,6 +142,28 @@ einfo
 einfo "However, some packages still need some or all of these.  Some are"
 einfo "mentioned in bug #767700."
 einfo
+
+	if ! use llvm_targets_AMDGPU ; then
+ewarn
+ewarn "There is a high rebuild cost if llvm_targets_AMDGPU is not enabled now"
+ewarn "before building sys-libs/libomp[offload,llvm_targets_AMDGPU]."
+ewarn "Plus, the libomp does not do proper USE flag checks for this flag."
+ewarn
+	fi
+	if ! use llvm_targets_NVPTX ; then
+ewarn
+ewarn "There is a high rebuild cost if llvm_targets_NVPTX is not enabled now"
+ewarn "before building sys-libs/libomp[cuda,offload,llvm_targets_NVPTX]."
+ewarn "Plus, the libomp ebuild does not do proper USE flag checks for this"
+ewarn "flag."
+ewarn
+	fi
+	if ! use llvm_targets_WebAssembly ; then
+ewarn
+ewarn "There is a high rebuild cost if llvm_targets_WebAssembly is not enabled"
+ewarn "now before building dev-util/emscripten."
+ewarn
+	fi
 }
 
 python_check_deps() {
@@ -168,16 +190,19 @@ check_live_ebuild() {
 	done
 
 	if [[ ${exp_targets[*]} != ${ALL_LLVM_EXPERIMENTAL_TARGETS[*]} ]]; then
-		eqawarn "ALL_LLVM_EXPERIMENTAL_TARGETS is outdated!"
-		eqawarn "    Have: ${ALL_LLVM_EXPERIMENTAL_TARGETS[*]}"
-		eqawarn "Expected: ${exp_targets[*]}"
-		eqawarn
+eqawarn
+eqawarn "ALL_LLVM_EXPERIMENTAL_TARGETS is outdated!"
+eqawarn "    Have: ${ALL_LLVM_EXPERIMENTAL_TARGETS[*]}"
+eqawarn "Expected: ${exp_targets[*]}"
+eqawarn
 	fi
 
 	if [[ ${prod_targets[*]} != ${ALL_LLVM_PRODUCTION_TARGETS[*]} ]]; then
-		eqawarn "ALL_LLVM_PRODUCTION_TARGETS is outdated!"
-		eqawarn "    Have: ${ALL_LLVM_PRODUCTION_TARGETS[*]}"
-		eqawarn "Expected: ${prod_targets[*]}"
+eqawarn
+eqawarn "ALL_LLVM_PRODUCTION_TARGETS is outdated!"
+eqawarn "    Have: ${ALL_LLVM_PRODUCTION_TARGETS[*]}"
+eqawarn "Expected: ${prod_targets[*]}"
+eqawarn
 	fi
 }
 
@@ -199,7 +224,11 @@ check_distribution_components() {
 					LLVMDemangle|LLVMSupport|LLVMTableGen)
 						;;
 					# BOLT static libs
-					LLVMBOLT*|bolt_rt)
+					LLVMBOLT*)
+						( ( use amd64 || use arm64 ) && use bolt ) || continue
+						;;
+					# BOLT static libs
+					bolt_rt)
 						( use amd64 && use bolt ) || continue
 						;;
 					# static libs
@@ -237,9 +266,11 @@ check_distribution_components() {
 		done
 
 		if [[ ${#add[@]} -gt 0 || ${#remove[@]} -gt 0 ]]; then
-			eqawarn "get_distribution_components() is outdated!"
-			eqawarn "   Add: ${add[*]}"
-			eqawarn "Remove: ${remove[*]}"
+eqawarn
+eqawarn "get_distribution_components() is outdated!"
+eqawarn "   Add: ${add[*]}"
+eqawarn "Remove: ${remove[*]}"
+eqawarn
 		fi
 		cd - >/dev/null || die
 	fi
@@ -405,12 +436,6 @@ get_distribution_components() {
 		use bolt && use amd64 && out+=(
 			# static libs
 			bolt_rt
-			LLVMBOLTCore
-			LLVMBOLTRewrite
-			LLVMBOLTRuntimeLibs
-			LLVMBOLTUtils
-			LLVMBOLTProfile
-			LLVMBOLTPasses
 		)
 		use amd64 && use bolt && out+=(
 			LLVMBOLTTargetX86
@@ -420,10 +445,14 @@ get_distribution_components() {
 		)
 		( use amd64 || use arm64 ) \
 		&& use bolt && out+=(
-			llvm-bolt
-			llvm-bolt-heatmap
-			llvm-boltdiff
-			perf2bolt
+			LLVMBOLTCore
+			LLVMBOLTRewrite
+			LLVMBOLTRuntimeLibs
+			LLVMBOLTUtils
+			LLVMBOLTProfile
+			LLVMBOLTPasses
+			bolt
+			merge-fdata
 		)
 		use doc && out+=(
 			docs-llvm-html
@@ -478,8 +507,10 @@ _src_configure() {
 	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
 	export CFLAGS="$(get_abi_CFLAGS ${ABI}) ${CFLAGS}"
 	export CXXFLAGS="$(get_abi_CFLAGS ${ABI}) ${CXXFLAGS}"
-	einfo "CFLAGS=${CFLAGS}"
-	einfo "CXXFLAGS=${CXXFLAGS}"
+einfo
+einfo "CFLAGS=${CFLAGS}"
+einfo "CXXFLAGS=${CXXFLAGS}"
+einfo
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
@@ -680,12 +711,14 @@ multilib_src_install_all() {
 }
 
 pkg_postinst() {
-elog "You can find additional opt-viewer utility scripts in:"
-elog "  ${EROOT}/usr/lib/llvm/${SLOT}/share/opt-viewer"
-elog "To use these scripts, you will need Python along with the following"
-elog "packages:"
-elog "  dev-python/pygments (for opt-viewer)"
-elog "  dev-python/pyyaml (for all of them)"
+einfo
+einfo "You can find additional opt-viewer utility scripts in:"
+einfo "  ${EROOT}/usr/lib/llvm/${SLOT}/share/opt-viewer"
+einfo "To use these scripts, you will need Python along with the following"
+einfo "packages:"
+einfo "  dev-python/pygments (for opt-viewer)"
+einfo "  dev-python/pyyaml (for all of them)"
+einfo
 	uopts_pkg_postinst
 einfo
 einfo "See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"

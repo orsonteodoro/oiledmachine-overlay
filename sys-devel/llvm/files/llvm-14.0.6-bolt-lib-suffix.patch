@@ -1,0 +1,20 @@
+--- a/bolt/runtime/CMakeLists.txt.orig	2022-06-22 09:46:24.000000000 -0700
++++ b/bolt/runtime/CMakeLists.txt	2022-08-28 12:40:30.674668261 -0700
+@@ -27,8 +27,8 @@ target_include_directories(bolt_rt_instr
+ target_compile_options(bolt_rt_hugify PRIVATE -ffreestanding -fno-exceptions -fno-rtti -fno-stack-protector)
+ target_include_directories(bolt_rt_hugify PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+ 
+-install(TARGETS bolt_rt_instr DESTINATION lib)
+-install(TARGETS bolt_rt_hugify DESTINATION lib)
++install(TARGETS bolt_rt_instr DESTINATION lib${LLVM_LIBDIR_SUFFIX})  # oteodoro:  added LLVM_LIBDIR_SUFFIX
++install(TARGETS bolt_rt_hugify DESTINATION lib${LLVM_LIBDIR_SUFFIX}) # otoeodro:  added LLVM_LIBDIR_SUFFIX
+ 
+ if (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*")
+   add_library(bolt_rt_instr_osx STATIC
+@@ -42,5 +42,5 @@ if (CMAKE_CXX_COMPILER_ID MATCHES ".*Cla
+     -fno-exceptions
+     -fno-rtti
+     -fno-stack-protector)
+-  install(TARGETS bolt_rt_instr_osx DESTINATION lib)
++  install(TARGETS bolt_rt_instr_osx DESTINATION lib${LLVM_LIBDIR_SUFFIX})  # oteodoro:  added LLVM_LIBDIR_SUFFIX
+ endif()
