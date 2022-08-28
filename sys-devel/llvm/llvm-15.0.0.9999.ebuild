@@ -402,16 +402,16 @@ get_distribution_components() {
 				docs-llvm-man
 			)
 		fi
+		use bolt && use amd64 && out+=(
+			# static libs
+			bolt_rt
+		)
 		( use amd64 || use arm64 ) \
 		&& use bolt && out+=(
 			llvm-bolt
 			llvm-bolt-heatmap
 			llvm-boltdiff
 			perf2bolt
-		)
-		use bolt && use amd64 && out+=(
-			# static libs
-			bolt_rt
 		)
 		use doc && out+=(
 			docs-llvm-html
