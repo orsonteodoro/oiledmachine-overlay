@@ -196,13 +196,13 @@ check_distribution_components() {
 					# TableGen lib + deps
 					LLVMDemangle|LLVMSupport|LLVMTableGen)
 						;;
+					# BOLT static libs
+					LLVMBOLT*|bolt_rt)
+						( use amd64 && use bolt ) || continue
+						;;
 					# static libs
 					LLVM*)
 						continue
-						;;
-					# BOLT static libs
-					bolt_rt)
-						( use amd64 && use bolt ) || continue
 						;;
 					# meta-targets
 					distribution|llvm-libraries)
@@ -402,6 +402,18 @@ get_distribution_components() {
 		use bolt && use amd64 && out+=(
 			# static libs
 			bolt_rt
+			LLVMBOLTCore
+			LLVMBOLTRewrite
+			LLVMBOLTRuntimeLibs
+			LLVMBOLTUtils
+			LLVMBOLTProfile
+			LLVMBOLTPasses
+		)
+		use amd64 && use bolt && out+=(
+			LLVMBOLTTargetX86
+		)
+		use arm64 && use bolt && out+=(
+			LLVMBOLTTargetAArch64
 		)
 		( use amd64 || use arm64 ) \
 		&& use bolt && out+=(
