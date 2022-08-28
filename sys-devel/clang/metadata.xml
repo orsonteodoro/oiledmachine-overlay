@@ -113,7 +113,9 @@ trainer() {
 		export CXXFLAGS="-march=native -O3 -flto=thin -pipe"
 		export LDFLAGS="-march=native -O3 -fuse-ld=lld -flto=thin -pipe"
 		ebuild $(realpath ./clang-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
+
 	popd
+
 	pushd "${OVERLAY_DIR}/media-libs/mesa"
 		ebuild $(realpath ./mesa-22*.ebuild | tail -n 1) clean unpack prepare compile
 	popd

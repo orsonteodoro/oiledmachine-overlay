@@ -153,11 +153,6 @@ ewarn "See \`epkginfo -x sys-devel/clang::oiledmachine-overlay\` or the"
 ewarn "metadata.xml to see how to accomplish this."
 ewarn
 
-ewarn
-ewarn "To avoid long linking delays, close programs that produce unexpectedly"
-ewarn "high disk activity (web browsers) and possibly switch to -j1."
-ewarn
-
 	if [[ "${CC}" == "clang" ]] ; then
 		local clang_path="clang-${SLOT}"
 		if which "${clang_path}" 2>/dev/null 1>/dev/null && "${clang_path}" --help \
@@ -173,7 +168,21 @@ ewarn
 ewarn "To avoid long linking delays, close programs that produce unexpectedly"
 ewarn "high disk activity (web browsers) and possibly switch to -j1."
 ewarn
+
 	uopts_setup
+
+# See https://bugs.gentoo.org/767700
+einfo
+einfo "To remove the hard USE mask for llvm_targets_*, do:"
+einfo
+	local t
+	for t in ${ALL_LLVM_TARGET_FLAGS[@]} ; do
+einfo "echo \"${CATEGORY}/${PN} -${t}\" >> ${EROOT}/etc/portage/profile/package.use.force"
+	done
+einfo
+einfo "However, some packages still need some or all of these.  Some are"
+einfo "mentioned in bug #767700."
+einfo
 }
 
 src_unpack() {

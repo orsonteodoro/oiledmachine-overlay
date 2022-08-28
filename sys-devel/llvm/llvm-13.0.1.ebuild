@@ -98,6 +98,19 @@ ewarn "To avoid long linking delays, close programs that produce unexpectedly"
 ewarn "high disk activity (web browsers) and possibly switch to -j1."
 ewarn
 	uopts_setup
+
+# See https://bugs.gentoo.org/767700
+einfo
+einfo "To remove the hard USE mask for llvm_targets_*, do:"
+einfo
+	local t
+	for t in ${ALL_LLVM_TARGET_FLAGS[@]} ; do
+einfo "echo \"${CATEGORY}/${PN} -${t}\" >> ${EROOT}/etc/portage/profile/package.use.force"
+	done
+einfo
+einfo "However, some packages still need some or all of these.  Some are"
+einfo "mentioned in bug #767700."
+einfo
 }
 
 python_check_deps() {
