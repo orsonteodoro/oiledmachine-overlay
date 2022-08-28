@@ -8,8 +8,8 @@ PYTHON_COMPAT=( python3_{8..11} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
-inherit cmake llvm llvm.org multilib multilib-minimal \
-	prefix python-single-r1 toolchain-funcs
+inherit cmake llvm llvm.org multilib multilib-minimal prefix python-single-r1
+inherit toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils uopts
 
 DESCRIPTION="C language family frontend for LLVM"
@@ -25,7 +25,7 @@ IUSE="
 debug default-compiler-rt default-libcxx doc llvm-libunwind
 +static-analyzer test xml
 "
-IUSE+=" +bootstrap hardened r3"
+IUSE+=" hardened r3"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+="
 	hardened? ( !test )
@@ -123,13 +123,6 @@ PDEPEND+=" "$(gen_pdepend)
 pkg_setup() {
 	LLVM_MAX_SLOT=${SLOT} llvm_pkg_setup
 	python-single-r1_pkg_setup
-	if ! use bootstrap && ! has_version "sys-devel/clang:${SLOT}" ; then
-eerror
-eerror "Disabling the bootstrap USE flag requires a previous install of"
-eerror "clang:${SLOT}.  Enable the bootstrap USE flag to fix this problem."
-eerror
-		die
-	fi
 	if tc-is-gcc ; then
 		local gcc_slot=$(best_version "sys-devel/gcc" \
 			| sed -e "s|sys-devel/gcc-||g")
@@ -222,7 +215,9 @@ src_prepare() {
 	BUILD_DIR="${WORKDIR}/x/y/clang"
 	llvm.org_src_prepare
 	if use hardened ; then
-		ewarn "The hardened USE flag and associated patches are still in testing."
+ewarn
+ewarn "The hardened USE flag and associated patches are still in testing."
+ewarn
 		eapply ${PATCHES_HARDENED[@]}
 		eapply "${FILESDIR}/clang-14.0.0.9999-cross-dso-cfi-link-with-shared.patch"
 		local hardened_features="PIE, SSP, _FORITIFY_SOURCE=2, Full RELRO"
@@ -230,10 +225,14 @@ src_prepare() {
 			eapply "${FILESDIR}/clang-12.0.1-enable-FCP-by-default.patch"
 			hardened_features+=", SCP"
 		elif use arm64 ; then
-			ewarn "arm64 -fstack-clash-protection is not default ON.  The feature is still"
-			ewarn "in development."
+ewarn
+ewarn "arm64 -fstack-clash-protection is not default ON.  The feature is still"
+ewarn "in development."
+ewarn
 		fi
-		ewarn "The Full RELRO default on is in testing."
+ewarn
+ewarn "The Full RELRO default on is in testing."
+ewarn
 		sed -i -e "s|__HARDENED_FEATURES__|${hardened_features}|g" \
 			lib/Driver/Driver.cpp || die
 	fi
@@ -302,9 +301,11 @@ check_distribution_components() {
 		done
 
 		if [[ ${#add[@]} -gt 0 || ${#remove[@]} -gt 0 ]]; then
-			eqawarn "get_distribution_components() is outdated!"
-			eqawarn "   Add: ${add[*]}"
-			eqawarn "Remove: ${remove[*]}"
+eqawarn
+eqawarn "get_distribution_components() is outdated!"
+eqawarn "   Add: ${add[*]}"
+eqawarn "Remove: ${remove[*]}"
+eqawarn
 		fi
 		cd - >/dev/null || die
 	fi
@@ -404,8 +405,11 @@ _src_configure() {
 		# Build time bug with gcc 10.3.0, 11.2.0:
 		# internal compiler error: maximum number of LRA assignment passes is achieved (30)
 
-		ewarn "Detected <=sys-devel/gcc-11.2.1_p20220112.  Downgrading to -Os to avoid bug."
-		ewarn "Re-emerge >=sys-devel/gcc-11.2.1_p20220112 for a more optimized build with >= -O2."
+ewarn
+ewarn "Detected <=sys-devel/gcc-11.2.1_p20220112.  Downgrading to -Os to avoid"
+ewarn "bug.  Re-emerge >=sys-devel/gcc-11.2.1_p20220112 for a more optimized"
+ewarn "build with >= -O2."
+ewarn
 		replace-flags '-O3' '-Os'
 		replace-flags '-O2' '-Os'
 	fi
@@ -422,19 +426,19 @@ _src_configure() {
 	export CFLAGS="$(get_abi_CFLAGS ${ABI}) ${CFLAGS}"
 	export CXXFLAGS="$(get_abi_CFLAGS ${ABI}) ${CXXFLAGS}"
 
-	einfo
-	einfo "*FLAGS for ${ABI}:"
-	einfo
-	einfo "  CFLAGS=${CFLAGS}"
-	einfo "  CXXFLAGS=${CXXFLAGS}"
-	einfo "  LDFLAGS=${LDFLAGS}"
-	einfo "  PATH=${PATH}"
+einfo
+einfo "*FLAGS for ${ABI}:"
+einfo
+einfo "  CFLAGS=${CFLAGS}"
+einfo "  CXXFLAGS=${CXXFLAGS}"
+einfo "  LDFLAGS=${LDFLAGS}"
+einfo "  PATH=${PATH}"
 	if tc-is-cross-compiler ; then
-		einfo "  IS_CROSS_COMPILE=True"
+einfo "  IS_CROSS_COMPILE=True"
 	else
-		einfo "  IS_CROSS_COMPILE=False"
+einfo "  IS_CROSS_COMPILE=False"
 	fi
-	einfo
+einfo
 
 	local mycmakeargs=(
 		# relative to bindir
@@ -558,7 +562,9 @@ src_compile() {
 
 multilib_src_test() {
 	if use hardened ; then
+ewarn
 ewarn "Tests are broken with the enable-SSP-and-PIE-by-default.patch"
+ewarn
 	fi
 	# respect TMPDIR!
 	local -x LIT_PRESERVES_TMP=1
@@ -654,11 +660,16 @@ pkg_postinst() {
 		eselect compiler-shadow update all
 	fi
 
-elog "You can find additional utility scripts in:"
-elog "  ${EROOT}/usr/lib/llvm/${SLOT}/share/clang"
-elog "Some of them are vim integration scripts (with instructions inside)."
-elog "The run-clang-tidy.py script requires the following additional package:"
-elog "  dev-python/pyyaml"
+einfo
+einfo "You can find additional utility scripts in:"
+einfo
+einfo "  ${EROOT}/usr/lib/llvm/${SLOT}/share/clang"
+einfo
+einfo "Some of them are vim integration scripts (with instructions inside)."
+einfo "The run-clang-tidy.py script requires the following additional package:"
+einfo
+einfo "  dev-python/pyyaml"
+einfo
 	uopts_pkg_postinst
 einfo
 einfo "See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"
