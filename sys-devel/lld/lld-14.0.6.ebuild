@@ -35,7 +35,19 @@ BDEPEND="
 
 LLVM_COMPONENTS=( lld cmake libunwind/include/mach-o )
 LLVM_TEST_COMPONENTS=( llvm/utils/{lit,unittest} )
+LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
+
+gen_rdepend() {
+	local f
+	for f in ${ALL_LLVM_TARGET_FLAGS[@]} ; do
+		echo  "
+			~sys-devel/llvm-${PV}:$(ver_cut 1 ${PV})=[${f}=]
+		"
+	done
+}
+RDEPEND+=" "$(gen_rdepend)
+
 HARDENED_PATCHES=(
 	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-version-info.patch"

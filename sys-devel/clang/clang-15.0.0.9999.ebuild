@@ -22,7 +22,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="$(ver_cut 1)"
 KEYWORDS=""
 IUSE="
-debug default-compiler-rt default-libcxx default-lld doc llvm-libunwind
+debug default-compiler-rt default-libcxx doc llvm-libunwind
 +static-analyzer test xml
 "
 IUSE+=" +bootstrap hardened jemalloc tcmalloc r4"
@@ -34,7 +34,7 @@ REQUIRED_USE+="
 PROPERTIES="live"
 RESTRICT="!test? ( test )"
 
-RDEPEND="
+RDEPEND+="
 	${PYTHON_DEPS}
 	~sys-devel/llvm-${PV}:${SLOT}=[debug=,${MULTILIB_USEDEP}]
 	ebolt? ( ~sys-devel/llvm-${PV}:${SLOT}=[bolt,debug=,${MULTILIB_USEDEP}] )
@@ -51,7 +51,7 @@ BDEPEND="
 	doc? ( dev-python/sphinx )
 	xml? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
 "
-PDEPEND="
+PDEPEND+="
 	sys-devel/clang-common
 	~sys-devel/clang-runtime-${PV}
 	default-compiler-rt? (
@@ -60,7 +60,6 @@ PDEPEND="
 		!llvm-libunwind? ( sys-libs/libunwind )
 	)
 	default-libcxx? ( >=sys-libs/libcxx-${PV} )
-	default-lld? ( sys-devel/lld )
 "
 
 LLVM_COMPONENTS=(
@@ -76,6 +75,27 @@ LLVM_TEST_COMPONENTS=(
 LLVM_PATCHSET=9999-r3
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
+
+gen_rdepend() {
+	local f
+	for f in ${ALL_LLVM_TARGET_FLAGS[@]} ; do
+		echo  "
+			~sys-devel/llvm-${PV}:${SLOT}=[${f}=]
+		"
+	done
+}
+RDEPEND+=" "$(gen_rdepend)
+
+gen_pdepend() {
+	local f
+	for f in ${ALL_LLVM_TARGET_FLAGS[@]} ; do
+		echo  "
+			>=sys-devel/lld-${SLOT}[${f}=]
+		"
+	done
+}
+PDEPEND+=" "$(gen_pdepend)
+
 PATCHES_HARDENED=(
 	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
 	"${FILESDIR}/clang-13.0.0_rc2-change-SSP-buffer-size-to-4.patch"

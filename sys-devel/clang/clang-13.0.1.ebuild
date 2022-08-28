@@ -22,7 +22,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="$(ver_cut 1)"
 KEYWORDS="amd64 arm arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x64-macos"
 IUSE="
-debug default-compiler-rt default-libcxx default-lld doc llvm-libunwind
+debug default-compiler-rt default-libcxx doc llvm-libunwind
 +static-analyzer test xml
 "
 IUSE+=" +bootstrap hardened r3"
@@ -32,7 +32,7 @@ REQUIRED_USE+="
 "
 RESTRICT="!test? ( test )"
 
-RDEPEND="
+RDEPEND+="
 	${PYTHON_DEPS}
 	~sys-devel/llvm-${PV}:${SLOT}=[debug=,${MULTILIB_USEDEP}]
 	static-analyzer? ( dev-lang/perl:* )
@@ -46,7 +46,7 @@ BDEPEND="
 	doc? ( dev-python/sphinx )
 	xml? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
 "
-PDEPEND="
+PDEPEND+="
 	sys-devel/clang-common
 	~sys-devel/clang-runtime-${PV}
 	default-compiler-rt? (
@@ -55,7 +55,6 @@ PDEPEND="
 		!llvm-libunwind? ( sys-libs/libunwind )
 	)
 	default-libcxx? ( >=sys-libs/libcxx-${PV} )
-	default-lld? ( sys-devel/lld )
 "
 
 LLVM_COMPONENTS=( clang clang-tools-extra )
@@ -76,6 +75,26 @@ PATCHES_HARDENED=(
 )
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
+
+gen_rdepend() {
+	local f
+	for f in ${ALL_LLVM_TARGET_FLAGS[@]} ; do
+		echo  "
+			~sys-devel/llvm-${PV}:${SLOT}=[${f}=]
+		"
+	done
+}
+RDEPEND+=" "$(gen_rdepend)
+
+gen_pdepend() {
+	local f
+	for f in ${ALL_LLVM_TARGET_FLAGS[@]} ; do
+		echo  "
+			>=sys-devel/lld-${SLOT}[${f}=]
+		"
+	done
+}
+PDEPEND+=" "$(gen_pdepend)
 
 # Multilib notes:
 # 1. ABI_* flags control ABIs libclang* is built for only.
