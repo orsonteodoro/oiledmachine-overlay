@@ -43,7 +43,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       shadowcallstack - needs testing... not tested due to lack of hardware
         (report back if it works)
 
-
     Event based Full PGO (EPGO)
 
     Event based Full PGO (i.e. 1 step PGO) is not complete in this ebuild fork
@@ -157,8 +156,11 @@ emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
     <bugs-to>https://www.chromium.org/for-testers/bug-reporting-guidelines</bugs-to>
   </upstream>
   <use>
-    <flag name="branch-protection-standard">
-      Enables branch protection features (available on armv8.3 and above only)
+    <flag name="branch-protection">
+      Enables branch protection features (available on armv8.5 [arm64] and above
+      only) which are enabled by default.  If you disable the official USE flag,
+      you may customize it via CFLAGS with your preference prioritized more than
+      the official settings.
     </flag>
     <flag name="bundled-libcxx">
       Build against the internal libc++ for proper cfi-icall and cfi-icast
@@ -187,6 +189,15 @@ emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       The estimated impact is around 1% CPU overhead, around 15% or less code
       size increase.  When a violation is encountered, the program aborts.
 
+      The abort is a way to halt more dangerous code execution.
+
+      shadow-call-stack:
+      Allows for backward edge protections against return address overwrites
+      that could lead to arbitrary code execution.  (Experimental, arm64 only)
+      Use -fsanitize=shadow-call-stack to activate this protection.
+
+      Arm64 users, see also the branch-protection USE flag.
+
       Additional ebuild per-package environment variables if USE=-official:
 
         USE_CFI_ICALL - 1 to enable, 0 to disable cfi-icall
@@ -195,8 +206,8 @@ emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       For the official build settings, it is fixed based on the ABI.
 
       For x86-64 it is cfi-vcall=true, cfi-icall=true, cfi-cast=false
-      All other microarches are all false.
-
+      All other microarches are all false, but you may customize via the
+      -fsanitize= compiler flag with the cfi USE flag.
     </flag>
     <flag name="component-build">
       Split build into more shared libraries to speed up linking. Mostly
@@ -209,9 +220,9 @@ emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
     </flag>
     <flag name="ebolt">
       Use the event based BOLT to optimize the package. (EXPERIMENTAL)
-      This will optimize the layout of the program to make better uses
-      of cache use and branch prediction.  BOLT benefits the most for programs
-      with 100+ MB in size.
+      This will optimize the layout of the program to make better utilization
+      of cache use and branch prediction.  BOLT benefits the most for
+      programs with 100+ MB in size.
     </flag>
     <flag name="epgo">
       Build using the Event Based PGO (Profile Guided Optimization) strategy
@@ -278,10 +289,6 @@ emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
     <flag name="proprietary-codecs">
       Enables use of patent-encumbered audio and video formats.  Build flags
       associate AAC, H264, and others as proprietary
-    </flag>
-    <flag name="shadowcallstack">
-      Allow for backward edge protections against return address overwrites that
-      could lead to arbitrary code execution.  (Experimental, arm64 only)
     </flag>
     <flag name="screencast">
       Enable support for remote desktop and screen cast using

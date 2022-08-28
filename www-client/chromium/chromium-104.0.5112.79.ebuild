@@ -233,10 +233,13 @@ KEYWORDS="amd64 arm64 ~x86" # Waiting for server to upload tarball
 CPU_FLAGS_ARM=( neon )
 CPU_FLAGS_X86=( sse2 ssse3 sse4_2 )
 # CFI Basic (.a) mode requires all third party modules built as static.
-IUSE="${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_} ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
+IUSE="
+${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_}
+${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 +X component-build cups -debug gtk4 +hangouts headless +js-type-check kerberos
 +official pic +proprietary-codecs pulseaudio screencast selinux +suid
--system-ffmpeg -system-icu -system-harfbuzz -system-png +vaapi wayland widevine"
+-system-ffmpeg -system-icu -system-harfbuzz -system-png +vaapi wayland widevine
+"
 IUSE+=" weston r0"
 # What is considered a proprietary codec can be found at:
 #   https://github.com/chromium/chromium/blob/104.0.5112.79/media/filters/BUILD.gn#L160
@@ -245,9 +248,10 @@ IUSE+=" weston r0"
 #     Upstream doesn't consider MP3 proprietary, but this ebuild does.
 #   https://github.com/chromium/chromium/blob/104.0.5112.79/media/base/supported_types.cc#L284
 # Codec upstream default: https://github.com/chromium/chromium/blob/104.0.5112.79/tools/mb/mb_config_expectations/chromium.linux.json#L89
-IUSE+=" video_cards_amdgpu video_cards_intel video_cards_iris
-video_cards_i965 video_cards_nouveau video_cards_nvidia
-video_cards_r600 video_cards_radeonsi" # For VA-API
+IUSE+="
+video_cards_amdgpu video_cards_intel video_cards_iris video_cards_i965
+video_cards_nouveau video_cards_nvidia video_cards_r600 video_cards_radeonsi
+" # For VA-API
 IUSE+=" +partitionalloc libcmalloc"
 #
 # For cfi-vcall, cfi-icall defaults status, see \
@@ -261,8 +265,10 @@ IUSE+=" +partitionalloc libcmalloc"
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
 #
 IUSE_LIBCXX=( bundled-libcxx system-libstdcxx )
-IUSE+=" ${IUSE_LIBCXX[@]} +bundled-libcxx branch-protection-standard +cfi
-+clang +pre-check-llvm +pre-check-vaapi lto-opt +pgo shadowcallstack"
+IUSE+="
+${IUSE_LIBCXX[@]} +bundled-libcxx branch-protection +cfi +clang +pre-check-llvm
++pre-check-vaapi lto-opt +pgo
+"
 # perf-opt
 _ABIS=(
 	abi_x86_32
@@ -271,8 +277,8 @@ _ABIS=(
 	abi_mips_n32
 	abi_mips_n64
 	abi_mips_o32
-	abi_ppc_32
-	abi_ppc_64
+#	abi_ppc_32
+#	abi_ppc_64
 	abi_s390_32
 	abi_s390_64
 )
@@ -298,7 +304,6 @@ REQUIRED_USE+="
 	)
 	!clang? (
 		!cfi
-		!shadowcallstack
 	)
 	!headless (
 		|| (
@@ -310,13 +315,10 @@ REQUIRED_USE+="
 		!system-ffmpeg
 		!vaapi
 	)
-	amd64? (
-		!shadowcallstack
-	)
 	bundled-libcxx? (
 		clang
 	)
-	branch-protection-standard? (
+	branch-protection? (
 		arm64
 	)
 	cfi? (
@@ -349,6 +351,9 @@ REQUIRED_USE+="
 		amd64? (
 			cfi
 		)
+		arm64? (
+			branch-protection
+		)
 	)
 	partitionalloc? (
 		!component-build
@@ -360,9 +365,6 @@ REQUIRED_USE+="
 	epgo? (
 		!pgo
 	)
-	ppc64? (
-		!shadowcallstack
-	)
 	pre-check-llvm? (
 		clang
 	)
@@ -371,9 +373,6 @@ REQUIRED_USE+="
 	)
 	screencast? (
 		wayland
-	)
-	shadowcallstack? (
-		clang
 	)
 	system-libstdcxx? (
 		!cfi
@@ -394,9 +393,6 @@ REQUIRED_USE+="
 	widevine? (
 		!arm64
 		!ppc64
-	)
-	x86? (
-		!shadowcallstack
 	)
 "
 
@@ -460,7 +456,6 @@ gen_bdepend_llvm() {
 			=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${s}
 			=sys-libs/compiler-rt-${s}*
-			=sys-libs/compiler-rt-sanitizers-${s}*:=[shadowcallstack?]
 			official? (
 				amd64? (
 					=sys-libs/compiler-rt-sanitizers-${s}*:=[cfi]
@@ -1181,8 +1176,11 @@ ewarn
 	else
 		# For not installed
 		local compiler_rt_sanitizers_args=()
-		[[ "${USE}" =~ "cfi" ]] && compiler_rt_sanitizers_args+=( cfi ubsan )
-		use shadowcallstack && compiler_rt_sanitizers_args+=( shadowcallstack )
+		[[ "${USE}" =~ "cfi" ]] \
+			&& compiler_rt_sanitizers_args+=( cfi ubsan )
+		use arm64 \
+			&& has_sanitizer_option "shadow-call-stack" \
+			&& compiler_rt_sanitizers_args+=( shadowcallstack )
 		if (( ${#compiler_rt_sanitizers_args[@]} > 0 )) ; then
 			local args=$(echo "${compiler_rt_sanitizers_args[@]}" \
 				| tr " " ",")
@@ -1626,7 +1624,7 @@ ewarn
 		fi
 	fi
 
-	if use arm64 && use shadowcallstack ; then
+	if use arm64 && has_sanitizer_option "shadow-call-stack" ; then
 		ceapply "${FILESDIR}/extra-patches/chromium-94-arm64-shadow-call-stack.patch"
 	fi
 
@@ -1992,6 +1990,16 @@ einfo
 	}
 
 	multilib_foreach_abi prepare_abi
+}
+
+has_sanitizer_option() {
+	local needle="${1}"
+	for haystack in $(echo "${CFLAGS}" \
+		| grep -E -e "-fsanitize=[a-z,]+( |$)" \
+		| sed -e "s|-fsanitize||g" | tr "," "\n") ; do
+		[[ "${haystack}" == "${needle}" ]] && return 0
+	done
+	return 1
 }
 
 _src_configure() {
@@ -2425,6 +2433,7 @@ ewarn
 ewarn "Using ThinLTO"
 ewarn
 		myconf_gn+=" use_thin_lto=true "
+		filter-flags '-Wl,--lto-O*'
 		use lto-opt && myconf_gn+=" thin_lto_enable_optimizations=true"
 	else
 		# gcc doesn't like -fsplit-lto-unit and -fwhole-program-vtables
@@ -2457,39 +2466,102 @@ ewarn
 			myconf_gn+=" use_cfi_icall=false"
 		fi
 	elif use cfi ; then
-		myconf_gn+=" is_cfi=true"
+		local is_cfi_custom=0
+		local f
+		local F=(
+			"cfi"
+			"cfi-derived-cast"
+			"cfi-icall"
+			"cfi-underived-cast"
+			"cfi-vcall"
+		)
+		for f in ${F[@]} ; do
+			if has_sanitizer_option "${f}" ; then
+				is_cfi_custom=1
+			fi
+		done
 
-		local cfi_cast_default="false"
-		local cfi_icall_default="false"
+		if (( ${is_cfi_custom} == 1 )) ; then
+			# Change by CFLAGS
+			if has_sanitizer_option "cfi-vcall" ; then
+				myconf_gn+=" is_cfi=true"
+			fi
 
-		if [[ "${ABI}" == "amd64" ]] ; then
-			cfi_icall_default="true"
-		fi
+			if has_sanitizer_option "cfi-derived-cast" \
+				|| has_sanitizer_option "cfi-unrelated-cast" ; then
+				myconf_gn+=" use_cfi_cast=true"
+			else
+				myconf_gn+=" use_cfi_cast=false"
+			fi
 
-		if [[ "${USE_CFI_CAST:-${cfi_cast_default}}" == "1" ]] ; then
-			myconf_gn+=" use_cfi_cast=true"
+			if has_sanitizer_option "cfi-icall" ; then
+				myconf_gn+=" use_cfi_icall=true"
+			else
+				myconf_gn+=" use_cfi_icall=false"
+			fi
 		else
-			myconf_gn+=" use_cfi_cast=false"
-		fi
+			# Fallback to autoset in non-official
+			myconf_gn+=" is_cfi=true"
 
-		if [[ "${USE_CFI_ICALL:-${cfi_icall_default}}" == "1" ]] ; then
-			myconf_gn+=" use_cfi_icall=true"
-		else
-			myconf_gn+=" use_cfi_icall=false"
-		fi
+			local cfi_cast_default="false"
+			local cfi_icall_default="false"
 
+			if [[ "${ABI}" == "amd64" ]] ; then
+				cfi_icall_default="true"
+			fi
+
+			# Allow change by environment variables
+			if [[ "${USE_CFI_CAST:-${cfi_cast_default}}" == "1" ]] ; then
+				myconf_gn+=" use_cfi_cast=true"
+			else
+				myconf_gn+=" use_cfi_cast=false"
+			fi
+
+			if [[ "${USE_CFI_ICALL:-${cfi_icall_default}}" == "1" ]] ; then
+				myconf_gn+=" use_cfi_icall=true"
+			else
+				myconf_gn+=" use_cfi_icall=false"
+			fi
+		fi
 	else
 		myconf_gn+=" is_cfi=false"
 		myconf_gn+=" use_cfi_cast=false"
 		myconf_gn+=" use_cfi_icall=false"
 	fi
+	# Dedupe flags
+	strip-flag-value "cfi-vcall"
+	strip-flag-value "cfi-icall"
+	strip-flag-value "cfi-derived-cast"
+	strip-flag-value "cfi-unrelated-cast"
 
-	if use arm64 && use branch-protection-standard ; then
-		myconf_gn+=" arm_control_flow_integrity=standard"
+	if use arm64 ; then
+		if use official ; then
+			myconf_gn+=" arm_control_flow_integrity=standard"
+		else
+			if is-flagq "-mbranch-protection=standard" ; then
+				myconf_gn+=" arm_control_flow_integrity=standard"
+			elif is-flagq "-mbranch-protection=pac-ret" ; then
+				myconf_gn+=" arm_control_flow_integrity=pac"
+			elif is-flagq "-mbranch-protection=*" ; then
+				# Allow for a different option
+				:;
+			elif use branch-protection ; then
+				myconf_gn+=" arm_control_flow_integrity=standard"
+			else
+				myconf_gn+=" arm_control_flow_integrity=none"
+			fi
+		fi
+		# Dedupe flags
+		filter-flags '-mbranch-protection=*'
+		if use branch-protection || use official ; then
+			filter-flags '-Wl,-z,force-bti'
+		fi
 	fi
 
-	if use arm64 && use shadowcallstack ; then
+	if use arm64 \
+		&& has_sanitizer_option "shadow-call-stack" ; then
 		myconf_gn+=" use_shadow_call_stack=true"
+		strip-flag-value "shadow-call-stack" # Dedupe flag
 	fi
 
 	if use pgo ; then
@@ -2935,5 +3007,5 @@ einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, build-32-bit-on-64-bit, license-completeness, license-transparency, prebuilt-pgo-access, shadowcallstack-option-access, disable-simd-on-old-microarches-with-zlib, allow-cfi-with-official-build-settings, branch-protection-standard-access
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, build-32-bit-on-64-bit, license-completeness, license-transparency, prebuilt-pgo-access, shadowcallstack-option-access, disable-simd-on-old-microarches-with-zlib, allow-cfi-with-official-build-settings, branch-protection-access
 # OILEDMACHINE-OVERLAY-META-WIP: event-based-full-pgo
