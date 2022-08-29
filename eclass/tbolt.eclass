@@ -232,7 +232,7 @@ tbolt_src_configure() {
 			'-Wl,--emit-relocs' \
 			'-Wl,-q'
 		append-flags -fno-reorder-blocks-and-partition
-		append-ldflags -fno-reorder-blocks-and-partition
+		append-ldflags -fno-reorder-blocks-and-partition -Wl,-q
 	fi
 }
 
