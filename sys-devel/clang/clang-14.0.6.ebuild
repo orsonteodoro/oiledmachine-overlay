@@ -437,6 +437,20 @@ ewarn
 	export CFLAGS="$(get_abi_CFLAGS ${ABI}) ${CFLAGS}"
 	export CXXFLAGS="$(get_abi_CFLAGS ${ABI}) ${CXXFLAGS}"
 
+	# [Err 8]: control flow integrity check for type '.*' failed during non-virtual call (vtable address 0x[0-9a-z]+)
+	# [Err 5]: runtime error: control flow integrity check for type '.*' failed during cast to unrelated type (vtable address 0x[0-9a-z]+)
+	# sys-devel/clang no-cfi-nvcall.conf no-cfi-cast.conf # Build time failures: [Err 8] with llvm header, [Err 5] with gcc header
+	if tc-is-clang ; then
+		strip-flag-value 'cfi-derived-cast'
+		strip-flag-value 'cfi-unrelated-cast'
+		strip-flag-value 'cfi-nvcall'
+		if is-flagq "-fsanitize=*cfi" ; then
+			append-flags -fno-sanitize=cfi-nvcall
+			append-flags -fno-sanitize=cfi-derived-cast
+			append-flags -fno-sanitize=cfi-unrelated-cast
+		fi
+	fi
+
 einfo
 einfo "*FLAGS for ${ABI}:"
 einfo
