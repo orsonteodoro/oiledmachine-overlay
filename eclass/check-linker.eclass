@@ -9,7 +9,7 @@
 # @DESCRIPTION:
 # Deduped linker checks
 
-inherit flag-o-matic
+inherit flag-o-matic toolchain-funcs
 
 case ${EAPI:-0} in
 	[78]) ;;
