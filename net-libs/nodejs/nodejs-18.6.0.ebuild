@@ -330,7 +330,7 @@ _src_configure() {
 	is-flagq '-flto*' && myconf+=( --enable-lto )
 	[[ "${LTO_TYPE}" =~ "thinlto" ]] \
 		&& myconf+=( --with-thinlto )
-	[[ "${LTO_TYPE}" =~ "gold" ]] \
+	[[ "${LTO_TYPE}" =~ "goldlto" ]] \
 		&& myconf+=( --with-goldlto )
 
 	# LTO compiler flags are handled by configure.py itself

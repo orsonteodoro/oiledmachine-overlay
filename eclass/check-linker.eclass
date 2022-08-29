@@ -37,21 +37,22 @@ check-linker_get_lto_type() {
 		&& is-flagq '-flto=full' \
 		&& test-flag '-flto=full' \
 		&& test-flag-CCLD '-fuse-ld=gold' ; then
-		echo "gold"
+		echo "goldlto"
 	elif tc-is-gcc \
 		&& is-flagq '-fuse-ld=gold' \
 		&& is-flagq '-flto' \
 		&& test-flag '-flto' \
 		&& test-flag-CCLD '-fuse-ld=gold' ; then
-		echo "gold"
+		echo "goldlto"
 	elif tc-is-clang \
 		&& is-flagq '-fuse-ld=bfd' \
 		&& is-flagq '-flto=full' \
 		&& test-flag '-flto=full' ; then
-		echo "bfd"
-	elif is-flagq '-fuse-ld=bfd' \
+		echo "bfdlto"
+	elif tc-is-gcc \
+		&& is-flagq '-fuse-ld=bfd' \
 		&& is-flagq '-flto' ; then
-		echo "bfd"
+		echo "bfdlto"
 	elif tc-is-clang \
 		&& has_version "sys-devel/lld" \
 		&& test-flag '-flto=thin' \
@@ -63,15 +64,15 @@ check-linker_get_lto_type() {
 		&& has_version ">=sys-devel/llvmgold-${s}" \
 		&& test-flag '-flto=full' \
 		&& test-flag-CCLD '-fuse-ld=gold' ; then
-		echo "gold"
+		echo "goldlto"
 	elif tc-is-clang \
 		&& has_version "sys-devel/binutils[gold,plugins]" \
 		&& has_version "sys-devel/llvm:${s}[gold]" \
 		&& has_version ">=sys-devel/llvmgold-${s}" \
 		&& test-flag '-flto=full' \
 		&& test-flag-CCLD '-fuse-ld=gold' ; then
-		echo "gold"
+		echo "goldlto"
 	else
-		echo "bfd"
+		echo "none"
 	fi
 }
