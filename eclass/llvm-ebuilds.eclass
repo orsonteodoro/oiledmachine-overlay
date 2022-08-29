@@ -75,6 +75,7 @@ ewarn
 ewarn
 ewarn "Switching to -fuse-ld=gold"
 ewarn
+				append-ldflags "-fuse-ld=gold"
 			else
 ewarn
 ewarn "Switching to -fuse-ld=bfd"
