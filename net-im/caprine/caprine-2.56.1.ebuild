@@ -4,8 +4,8 @@
 
 EAPI=8
 
-ELECTRON_APP_ELECTRON_V="10.4.7"
-ELECTRON_APP_TYPESCRIPT_V="4.4.4"
+ELECTRON_APP_ELECTRON_V="20.0.3"
+ELECTRON_APP_TYPESCRIPT_V="4.7.4"
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 
 inherit desktop electron-app
@@ -15,7 +15,7 @@ HOMEPAGE="https://github.com/sindresorhus/caprine"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0"
-BDEPEND+=" >=net-libs/nodejs-14[npm]" # based on their CI
+BDEPEND+=" >=net-libs/nodejs-16[npm]" # based on their CI
 SRC_URI="
 https://github.com/sindresorhus/caprine/archive/v${PV}.tar.gz
 	-> ${PN}-${PV}.tar.gz
