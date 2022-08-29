@@ -3,7 +3,7 @@
 
 EAPI=8
 
-K_GENPATCHES_VER="3"
+K_GENPATCHES_VER="6"
 PATCH_PROJC_VER="5.19-r0"
 PATCH_RT_VER="5.19-rt10"
 
@@ -16,4 +16,4 @@ inherit ot-kernel-v5.19
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
 # OILEDMACHINE-OVERLAY-META-TAGS:  see-eclass-for-full-details
-# OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec
+# OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
