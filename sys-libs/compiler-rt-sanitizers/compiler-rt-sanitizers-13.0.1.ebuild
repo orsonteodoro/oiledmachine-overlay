@@ -6,6 +6,7 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
 inherit check-reqs cmake flag-o-matic llvm llvm.org python-any-r1
+inherit llvm-ebuilds
 
 DESCRIPTION="Compiler runtime libraries for clang (sanitizers & xray)"
 HOMEPAGE="https://llvm.org/"
@@ -109,6 +110,7 @@ src_prepare() {
 }
 
 src_configure() {
+	llvm-ebuilds_fix_toolchain
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
