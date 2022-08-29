@@ -441,13 +441,27 @@ ewarn
 	# [Err 5]: runtime error: control flow integrity check for type '.*' failed during cast to unrelated type (vtable address 0x[0-9a-z]+)
 	# sys-devel/clang no-cfi-nvcall.conf no-cfi-cast.conf # Build time failures: [Err 8] with llvm header, [Err 5] with gcc header
 	if tc-is-clang ; then
-		strip-flag-value 'cfi-derived-cast'
-		strip-flag-value 'cfi-unrelated-cast'
-		strip-flag-value 'cfi-nvcall'
 		if is-flagq "-fsanitize=*cfi" ; then
-			append-flags -fno-sanitize=cfi-nvcall
-			append-flags -fno-sanitize=cfi-derived-cast
-			append-flags -fno-sanitize=cfi-unrelated-cast
+ewarn
+ewarn "Using -fsanitize=cfi without"
+ewarn "-fno-sanitize=cfi-nvcall,cfi-derived-cast,cfi-unrelated-cast"
+ewarn "may break build."
+ewarn
+		fi
+		if is-flagq "-fsanitize=*cfi-nvcall" ; then
+ewarn
+ewarn "Using -fsanitize=cfi-nvcall may break build."
+ewarn
+		fi
+		if is-flagq "-fsanitize=*cfi-derived-cast" ; then
+ewarn
+ewarn "Using -fsanitize=cfi-derived-cast may break build."
+ewarn
+		fi
+		if is-flagq "-fsanitize=*cfi-unrelated-cast" ; then
+ewarn
+ewarn "Using -fsanitize=cfi-unrelated-cast may break build."
+ewarn
 		fi
 	fi
 
