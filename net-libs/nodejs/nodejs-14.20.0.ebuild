@@ -9,8 +9,9 @@ EAPI=8
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
 PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="threads(+)"
-inherit bash-completion-r1 flag-o-matic ninja-utils pax-utils python-any-r1 \
-toolchain-funcs uopts xdg-utils
+inherit bash-completion-r1 flag-o-matic ninja-utils pax-utils python-any-r1
+inherit toolchain-funcs uopts xdg-utils
+inherit check-linker
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
 LICENSE="Apache-1.1 Apache-2.0 Artistic-2 BSD BSD-2 icu-70.1 ISC MIT openssl unicode ZLIB"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
@@ -284,62 +285,10 @@ src_prepare() {
 	fi
 
 	# Save before using filter-flag
-	export LTO_TYPE=$(_get_lto_type)
+	export LTO_TYPE=$(check-linker_get_lto_type)
 
 	default
 	uopts_src_prepare
-}
-
-_get_lto_type() {
-	local s=$(clang-major-version)
-	if ! is-flagq '-flto*' ; then
-		echo "none"
-	elif is-flagq '-fuse-ld=lld' \
-		&& is-flagq '-flto=thin' \
-		&& test-flag '-flto=thin' \
-		&& test-flag-CCLD '-fuse-ld=lld' ; then
-		echo "thinlto"
-	elif tc-is-clang \
-		&& is-flagq '-fuse-ld=gold' \
-		&& is-flagq '-flto=full' \
-		&& test-flag '-flto=full' \
-		&& test-flag-CCLD '-fuse-ld=gold' ; then
-		echo "gold"
-	elif is-flagq '-fuse-ld=gold' \
-		&& is-flagq '-flto' \
-		&& test-flag '-flto=full' \
-		&& test-flag-CCLD '-fuse-ld=gold' ; then
-		echo "gold"
-	elif tc-is-clang \
-		&& is-flagq '-fuse-ld=bfd' \
-		&& is-flagq '-flto=full' \
-		&& test-flag '-flto=full' ; then
-		echo "bfd"
-	elif is-flagq '-fuse-ld=bfd' \
-		&& is-flagq '-flto' ; then
-		echo "bfd"
-	elif tc-is-clang \
-		&& has_version "sys-devel/lld" \
-		&& test-flag '-flto=thin' \
-		&& test-flag-CCLD '-fuse-ld=lld' ; then
-		echo "thinlto"
-	elif tc-is-clang \
-		&& has_version "sys-devel/binutils[gold,plugins]" \
-		&& has_version "sys-devel/llvm:${s}[binutils-plugin]" \
-		&& has_version ">=sys-devel/llvmgold-${s}" \
-		&& test-flag '-flto=full' \
-		&& test-flag-CCLD '-fuse-ld=gold' ; then
-		echo "gold"
-	elif tc-is-clang \
-		&& has_version "sys-devel/binutils[gold,plugins]" \
-		&& has_version "sys-devel/llvm:${s}[gold]" \
-		&& has_version ">=sys-devel/llvmgold-${s}" \
-		&& test-flag '-flto=full' \
-		&& test-flag-CCLD '-fuse-ld=gold' ; then
-		echo "gold"
-	else
-		echo "bfd"
-	fi
 }
 
 src_configure() { :; }
