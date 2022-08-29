@@ -296,7 +296,8 @@ src_prepare() {
 				> "${T}/llvm-commit-bdba3d0.patch.t" || die
 			mv "${T}/llvm-commit-bdba3d0.patch"{.t,} || die
 			eapply "${T}/llvm-commit-bdba3d0.patch"
-			eapply "${FILESDIR}/llvm-14.0.6-bolt-lib-suffix.patch"
+			eapply "${FILESDIR}/llvm-14.0.6-bolt_rt-libdir.patch"
+			eapply "${FILESDIR}/llvm-14.0.6-bolt-set-cmake-libdir.patch"
 		popd
 	fi
 
@@ -720,6 +721,7 @@ multilib_src_install_all() {
 pkg_postinst() {
 einfo
 einfo "You can find additional opt-viewer utility scripts in:"
+einfo
 einfo "  ${EROOT}/usr/lib/llvm/${SLOT}/share/opt-viewer"
 einfo
 einfo "To use these scripts, you will need Python along with the following"

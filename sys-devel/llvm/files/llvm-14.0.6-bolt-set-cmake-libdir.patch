@@ -1,0 +1,10 @@
+--- a/bolt/CMakeLists.txt.orig	2022-08-29 11:54:34.213700246 -0700
++++ b/bolt/CMakeLists.txt	2022-08-29 11:57:58.322129100 -0700
+@@ -49,6 +49,7 @@ if (BOLT_ENABLE_RUNTIME)
+                -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                -DCMAKE_BUILD_TYPE=Release
+                -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
++               -DCMAKE_INSTALL_LIBDIR=lib${LLVM_LIBDIR_SUFFIX} # oteodoro:  added line
+                -DCMAKE_INSTALL_PREFIX=${LLVM_BINARY_DIR}
+     BUILD_ALWAYS True
+     )

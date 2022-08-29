@@ -1,6 +1,6 @@
 
-Backport of 34fe6ddce11e4e0e31a96669ab5f200e5fb8a747 for 14.x
-URI:  https://github.com/llvm/llvm-project/commit/34fe6ddce11e4e0e31a96669ab5f200e5fb8a747
+Backport of 90dcdc4b6e7d86cb3d5049bd766aecddd549dd7d for 14.x
+URI:  https://github.com/llvm/llvm-project/commit/90dcdc4b6e7d86cb3d5049bd766aecddd549dd7d
 
 --- a/bolt/runtime/CMakeLists.txt	2022-06-22 09:46:24.000000000 -0700
 +++ b/bolt/runtime/CMakeLists.txt	2022-08-28 15:08:41.605181747 -0700

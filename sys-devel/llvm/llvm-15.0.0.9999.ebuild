@@ -274,6 +274,11 @@ src_prepare() {
 	check_live_ebuild
 
 	llvm.org_src_prepare
+	if use bolt ; then
+		pushd "${WORKDIR}" || die
+			eapply "${FILESDIR}/llvm-14.0.6-bolt-set-cmake-libdir.patch"
+		popd
+	fi
 
 	prepare_abi() {
 		uopts_src_prepare
@@ -696,6 +701,7 @@ multilib_src_install_all() {
 pkg_postinst() {
 einfo
 einfo "You can find additional opt-viewer utility scripts in:"
+einfo
 einfo "  ${EROOT}/usr/lib/llvm/${SLOT}/share/opt-viewer"
 einfo
 einfo "To use these scripts, you will need Python along with the following"

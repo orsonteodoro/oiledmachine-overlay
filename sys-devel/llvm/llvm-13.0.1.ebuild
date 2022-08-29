@@ -456,6 +456,7 @@ einfo "CFLAGS=${CFLAGS}"
 einfo "CXXFLAGS=${CXXFLAGS}"
 einfo
 
+	echo ${libdir#lib} > ""
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
 		# disable appending VCS revision to the version to improve
@@ -644,6 +645,7 @@ multilib_src_install_all() {
 pkg_postinst() {
 einfo
 einfo "You can find additional opt-viewer utility scripts in:"
+einfo
 einfo "  ${EROOT}/usr/lib/llvm/${SLOT}/share/opt-viewer"
 einfo
 einfo "To use these scripts, you will need Python along with the following"
