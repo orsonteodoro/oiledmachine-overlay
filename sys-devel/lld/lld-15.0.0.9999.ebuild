@@ -9,6 +9,7 @@ UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 inherit cmake flag-o-matic llvm llvm.org python-any-r1 uopts
+inherit llvm-ebuilds
 
 DESCRIPTION="The LLVM linker (link editor)"
 HOMEPAGE="https://llvm.org/"
@@ -115,6 +116,7 @@ src_prepare() {
 }
 
 _src_configure() {
+	llvm-ebuilds_fix_toolchain
 	uopts_src_configure
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"

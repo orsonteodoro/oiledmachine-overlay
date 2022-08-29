@@ -11,6 +11,7 @@ UOPTS_SUPPORT_TPGO=0
 inherit cmake llvm llvm.org multilib multilib-minimal prefix python-single-r1
 inherit toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils uopts
+inherit llvm-ebuilds
 
 DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="https://llvm.org/"
@@ -402,6 +403,7 @@ _gcc_fullversion() {
 }
 
 _src_configure() {
+	llvm-ebuilds_fix_toolchain
 	uopts_src_configure
 	local llvm_version=$(llvm-config --version) || die
 	local clang_version=$(ver_cut 1-3 "${llvm_version}")
@@ -541,9 +543,9 @@ einfo
 	BUILD_DIR="${WORKDIR}/x/y/clang-${MULTILIB_ABI_FLAG}.${ABI}"
 
 	mycmakeargs+=(
-		-DCMAKE_C_COMPILER="${CHOST}-gcc"
-		-DCMAKE_CXX_COMPILER="${CHOST}-g++"
-		-DCMAKE_ASM_COMPILER="${CHOST}-gcc"
+		-DCMAKE_C_COMPILER="${CC}"
+		-DCMAKE_CXX_COMPILER="${CXX}"
+		-DCMAKE_ASM_COMPILER="${CC}"
 	)
 
 	mkdir -p "${BUILD_DIR}" || die

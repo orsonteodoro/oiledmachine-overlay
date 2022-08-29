@@ -8,9 +8,9 @@ PYTHON_COMPAT=( python3_{8..11} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
-inherit cmake llvm.org multilib-minimal pax-utils python-any-r1 \
-	toolchain-funcs
+inherit cmake llvm.org multilib-minimal pax-utils python-any-r1 toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils uopts
+inherit llvm-ebuilds
 
 DESCRIPTION="Low Level Virtual Machine"
 HOMEPAGE="https://llvm.org/"
@@ -104,17 +104,6 @@ REQUIRED_USE+="
 
 pkg_setup() {
 	python_setup
-	if [[ "${CC}" == "clang" ]] ; then
-		local clang_path="clang-${SLOT}"
-		if which "${clang_path}" 2>/dev/null 1>/dev/null && "${clang_path}" --help \
-			| grep "symbol lookup error" ; then
-eerror
-eerror "Unemerge this package and re-emerge it.  Use GCC to build this package."
-eerror
-			die
-		fi
-	fi
-
 ewarn
 ewarn "To avoid long linking delays, close programs that produce unexpectedly"
 ewarn "high disk activity (web browsers) and possibly switch to -j1."
@@ -471,6 +460,7 @@ bool_trans() {
 src_configure() { :; }
 
 _src_configure() {
+	llvm-ebuilds_fix_toolchain
 	uopts_src_configure
 	mkdir -p "${BUILD_DIR}" || die # strange?
 	cd "${BUILD_DIR}" || die
@@ -612,11 +602,10 @@ einfo
 		)
 	fi
 
-	local slot_prev="${SLOT}"
 	mycmakeargs+=(
-		-DCMAKE_C_COMPILER="${CHOST}-gcc"
-		-DCMAKE_CXX_COMPILER="${CHOST}-g++"
-		-DCMAKE_ASM_COMPILER="${CHOST}-gcc"
+		-DCMAKE_C_COMPILER="${CC}"
+		-DCMAKE_CXX_COMPILER="${CXX}"
+		-DCMAKE_ASM_COMPILER="${CC}"
 	)
 
 	cmake_src_configure
