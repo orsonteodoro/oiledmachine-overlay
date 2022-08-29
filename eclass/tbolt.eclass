@@ -231,8 +231,9 @@ tbolt_src_configure() {
 			'-f*reorder-blocks-and-partition' \
 			'-Wl,--emit-relocs' \
 			'-Wl,-q'
-		append-flags -fno-reorder-blocks-and-partition
-		append-ldflags -fno-reorder-blocks-and-partition -Wl,-q
+		append-flags $(test-flag -fno-reorder-blocks-and-partition)
+		append-ldflags $(test-flag-CCLD -fno-reorder-blocks-and-partition) \
+			-Wl,--emit-relocs
 	fi
 }
 
