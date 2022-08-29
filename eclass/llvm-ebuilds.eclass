@@ -23,6 +23,9 @@ ewarn
 ewarn "Detected symbol lookup error for CC=${CC}"
 ewarn "Switching to default compiler toolchain (GCC)"
 ewarn
+ewarn "Any -fsanitizer=cfi* applied needs =${CATEGORY}/${P} be rebuild with"
+ewarn "clang after all missing symbols have been resolved."
+ewarn
 			export CC="${CHOST}-gcc"
 			export CXX="${CHOST}-g++"
 			local L=(
@@ -44,9 +47,14 @@ ewarn
 			strip-unsupported-flags
 		fi
 	fi
-	if is-flagq '-flto*' ; then
+	if tc-is-gcc && is-flagq '-flto*' ; then
+#
+# We allow -flto for clang so that it can use CFI, but disallow -flto when"
+# using GCC.
+#
 einfo
-einfo "Removing lto flags to avoid possible IR incompatibilities"
+einfo "Removing lto flags to avoid possible IR incompatibilities with"
+einfo "static-libs."
 einfo
 		filter-flags "-flto*"
 	fi
@@ -86,4 +94,3 @@ ewarn
 		fi
 	fi
 }
-
