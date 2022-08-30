@@ -312,7 +312,7 @@ is_bolt_banned() {
 # Check if ABIs are the same and supported
 is_abi_same() {
 	local p="${1}"
-	# Only x86-64 and aarch supported supported
+	# Only x86-64 and aarch64 supported supported
 	if file "${p}" | grep -q "ELF.*x86-64" && [[ "${ABI}" == "amd64" ]] ; then
 		return 0
 	elif file "${p}" | grep -q "ELF.*aarch64" && [[ "${ABI}" == "arm64" ]] ; then
@@ -326,7 +326,7 @@ is_abi_same() {
 # @DESCRIPTION:
 # Check if ABIs can be bolted
 is_abi_boltable() {
-	# Only x86-64 and aarch supported supported
+	# Only x86-64 and aarch64 supported supported
 	if [[ "${ABI}" == "amd64" ]] ; then
 		return 0
 	elif [[ "${ABI}" == "arm64" ]] ; then
@@ -341,7 +341,7 @@ is_abi_boltable() {
 # Check if files ABI supported
 is_file_boltable() {
 	local p="${1}"
-	# Only x86-64 and aarch supported supported
+	# Only x86-64 and aarch64 supported supported
 	if file "${p}" | grep -q "ELF.*x86-64" ; then
 		return 0
 	elif file "${p}" | grep -q "ELF.*aarch64" ; then
@@ -376,6 +376,8 @@ _src_compile_bolt_inst() {
 				is_boltable=1
 			elif file "${p}" | grep -q "ELF.*shared object" ; then
 				is_boltable=1
+			else
+				continue
 			fi
 			is_abi_same "${p}" || continue
 			if is_stripped "${p}" ; then
@@ -387,12 +389,11 @@ eerror
 			if (( ${is_boltable} == 1 )) ; then
 				# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
 				einfo "vanilla -> BOLT instrumented:  ${p}"
-				"${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
+				LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
 					"${p}" \
 					-instrument \
 					-o "${p}.bolt" \
-					-instrumentation-file "${EPREFIX}${bolt_data_suffix_dir}/${bn}.fdata" \
-					|| die
+					-instrumentation-file "${EPREFIX}${bolt_data_suffix_dir}/${bn}.fdata" || die
 				mv "${p}" "${p}.orig" || die
 				mv "${p}.bolt" "${p}" || die
 			fi
@@ -415,6 +416,8 @@ _src_compile_bolt_opt() {
 				is_boltable=1
 			elif file "${p}" | grep -q "ELF.*shared object" ; then
 				is_boltable=1
+			else
+				continue
 			fi
 			is_abi_same "${p}" || continue
 			if is_stripped "${p}" ; then
@@ -427,12 +430,11 @@ eerror
 				local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
 				local bn=$(basename "${p}")
 				einfo "vanilla -> BOLT optimized:  ${p}"
-				"${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
+				LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
 					"${p}" \
 					-o "${p}.bolt" \
 					-data="${bolt_data_staging_dir}/${bn}.fdata" \
-					${args[@]} \
-					|| die
+					${args[@]} || die
 				rm "${p}" || die
 				mv "${p}.bolt" "${p}" || die
 			fi
@@ -542,6 +544,8 @@ _pkg_config_bolt_optimization() {
 				is_boltable=1
 			elif file "${p}" | grep -q "ELF.*shared object" && is_file_boltable "${p}" ; then
 				is_boltable=1
+			else
+				continue
 			fi
 			is_abi_same "${p}" || continue
 			if is_stripped "${p}" ; then
@@ -555,7 +559,7 @@ ewarn "Skipping ${p}.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch
 					cp -a "${p}" "${p}".orig || true
 				fi
 				einfo "BOLT instrumented -> optimized:  ${p}"
-				if ! "${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
+				if ! LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
 					"${p}" \
 					-o "${p}.bolt" \
 					-data="${EPREFIX}${bolt_data_suffix_dir}/${bn}.fdata" \

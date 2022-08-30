@@ -162,6 +162,7 @@ einfo
 	fi
 
 	if has pgo ${USE} && use pgo && (( ${is_pgoable} == 1 )) && [[ -n "${_TPGO_ECLASS}" ]] ; then
+		TRAIN_MUTEX="tpgo"
 		if [[ "${skip_pgi}" == "no" ]] ; then
 			PGO_PHASE="PGI"
 			declare -f _src_pre_pgi > /dev/null && _src_pre_pgi
@@ -181,6 +182,7 @@ einfo
 		declare -f _src_compile > /dev/null && _src_compile
 		declare -f _src_post_pgo > /dev/null && _src_post_pgo
 	else
+		TRAIN_MUTEX="epgo_and_ebolt"
 		# The Fallback
 		PGO_PHASE="NO_PGO"
 		BOLT_PHASE="NO_BOLT"
@@ -196,14 +198,21 @@ einfo
 	fi
 
 	if has bolt ${USE} && use bolt && (( ${is_boltable} == 1 )) && [[ -n "${_TBOLT_ECLASS}" ]] ; then
+		TRAIN_MUTEX="tbolt"
 		if [[ "${skip_inst}" == "no" ]] ; then
+			BOLT_PHASE="INST"
 			_tbolt_inst_tree "${BUILD_DIR}"
 			declare -f _src_pre_train > /dev/null && _src_pre_train
 			_src_train
 			declare -f _src_post_train > /dev/null && _src_post_train
 		fi
+		BOLT_PHASE="OPT"
 		_tbolt_opt_tree "${BUILD_DIR}"
 	elif has ebolt ${USE} && use ebolt && [[ -n "${_EBOLT_ECLASS}" ]] ; then
+		TRAIN_MUTEX="ebolt"
+		if has ebolt ${USE} && use ebolt ; then
+			BOLT_PHASE=$(epgo_get_phase)
+		fi
 		has ebolt ${USE} && use ebolt && _src_compile_bolt_inst
 		has ebolt ${USE} && use ebolt && _src_compile_bolt_opt
 	fi
