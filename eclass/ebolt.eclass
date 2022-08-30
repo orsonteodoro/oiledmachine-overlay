@@ -133,15 +133,6 @@ ewarn
 ewarn "The ebuilds only support BOLT for Linux at the moment."
 ewarn
 		fi
-
-		if use amd64 \
-			&& perf record -e cpu-clock -j any -o /dev/null -- ls \
-			| grep -q -e "PMU Hardware doesn't support sampling/overflow-interrupts" ; then
-eerror
-eerror "Your CPU needs LBR (Last Branch Record) support.  Please disable the"
-eerror "ebolt USE flag."
-eerror
-		fi
 	fi
 }
 
@@ -268,7 +259,7 @@ ewarn
 		fi
 
 		# Has profile?
-		if find "${bolt_data_staging_dir}" -name "*.perf" \
+		if find "${bolt_data_staging_dir}" -name "*.fdata" \
 			2>/dev/null 1>/dev/null ; then
 			:; # pass
 		else

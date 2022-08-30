@@ -213,9 +213,6 @@ USE flags:
 * ebolt - Build with 1 step BOLT in one emerge
 * bolt - Build with three step 3 BOLT in one emerge
 
-Note:  The bolt eclasses cannot be completed due to lack of hardware.  Community
-help is needed to finish it and test it.
-
 #### PGO environment variables
 
 UOPTS_PGO_FORCE_PGI - 1 to reset to PGI temporarily.  Remember to remove the
