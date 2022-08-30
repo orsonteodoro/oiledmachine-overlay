@@ -18,7 +18,7 @@ esac
 _TBOLT_ECLASS=1
 
 LLVM_SLOTS=(16 15 14)
-inherit flag-o-matic toolchain-funcs train
+inherit flag-o-matic toolchain-funcs
 
 IUSE+=" bolt"
 RESTRICT+=" strip" # Don't strip at all
@@ -149,6 +149,8 @@ tbolt_setup() {
 	_tbolt_check_bolt
 	_setup_malloc
 	train_setup
+	register_verify_profile_warn "tbolt_train_verify_profile_warn"
+	register_verify_profile_fatal "tbolt_train_verify_profile_fatal"
 	_setup_llvm
 	export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=cache+ -reorder-functions=hfsort -split-functions=2 -split-all-cold -split-eh -dyno-stats"}
 
@@ -186,6 +188,9 @@ tbolt_src_prepare() {
 	_tbolt_prepare_bolt
 }
 
+# @FUNCTION: tbolt_src_prepare
+# @DESCRIPTION:
+# Applies compiler flags required for proper BOLT support.
 tbolt_src_configure() {
 	local bolt_data_suffix_dir="${EPREFIX}${_UOPTS_BOLT_DATA_DIR}/${_UOPTS_BOLT_SUFFIX}"
 	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
@@ -194,9 +199,12 @@ tbolt_src_configure() {
 			'-f*reorder-blocks-and-partition' \
 			'-Wl,--emit-relocs' \
 			'-Wl,-q'
-		append-flags $(test-flags -fno-reorder-blocks-and-partition)
-		append-ldflags $(test-flag-CCLD -fno-reorder-blocks-and-partition) \
-			-Wl,--emit-relocs
+
+		if tc-is-gcc ; then
+			append-flags -fno-reorder-blocks-and-partition
+			append-ldflags -fno-reorder-blocks-and-partition
+		fi
+		append-ldflags -Wl,--emit-relocs
 	fi
 }
 
@@ -327,6 +335,40 @@ eerror
 			mv "${p}.bolt" "${p}" || die
 		fi
 	done
+}
+
+# @FUNCTION: tbolt_train_verify_profile_warn
+# @INTERNAL
+# @DESCRIPTION:
+# Verify that a OPT profile was created and warn if some training didn't
+# generate a profile in the middle of the training run.
+tbolt_train_verify_profile_warn() {
+	[[ "${skip_inst}" == "yes" ]] && return
+	if use bolt ; then
+		if ! find "${pgo_data_staging_dir}" -name "*.fdata" \
+			2>/dev/null 1>/dev/null ; then
+ewarn
+ewarn "Didn't generate a BOLT profile"
+ewarn
+		fi
+	fi
+}
+
+# @FUNCTION: tbolt_train_verify_profile_fatal
+# @INTERNAL
+# @DESCRIPTION:
+# Verify that a OPT profile was created at the end of training
+# if not then die.
+tbolt_train_verify_profile_fatal() {
+	[[ "${skip_inst}" == "yes" ]] && return
+	if use bolt; then
+		if ! find "${pgo_data_staging_dir}" -name "*.fdata" ; then
+eerror
+eerror "Didn't generate a BOLT profile"
+eerror
+			die
+		fi
+	fi
 }
 
 # @FUNCTION: is_bolt_banned

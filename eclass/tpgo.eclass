@@ -183,7 +183,7 @@ _UOPTS_PGO_DATA_DIR=${_UOPTS_PGO_DATA_DIR:-"${UOPTS_PGO_PROFILES_DIR}/${CATEGORY
 # tpgo_src_prepare
 #
 
-inherit flag-o-matic toolchain-funcs train
+inherit flag-o-matic toolchain-funcs
 
 IUSE+=" pgo"
 
@@ -203,6 +203,8 @@ ewarn
 # Performs checks and recommend workarounds to broken EAPI to unbreak PGO
 tpgo_setup() {
 	train_setup
+	register_verify_profile_warn "tpgo_train_verify_profile_warn"
+	register_verify_profile_fatal "tpgo_train_verify_profile_fatal"
 
 	if (( $(declare -f src_configure | wc -c) > 29 )) ; then
 eerror
@@ -473,12 +475,13 @@ _tpgo_src_pre_train() {
 	local pgo_data_staging_dir="${T}/pgo-${_TRAIN_SUFFIX}"
 }
 
-# @FUNCTION: train_verify_profile_warn
+# @FUNCTION: tpgo_train_verify_profile_warn
 # @INTERNAL
 # @DESCRIPTION:
 # Verify that a PGO profile was created and warn if some training didn't
 # generate a profile in the middle of the training run.
-train_verify_profile_warn() {
+tpgo_train_verify_profile_warn() {
+	[[ "${skip_pgi}" == "yes" ]] && return
 	if use pgo && [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
 		if ! find "${pgo_data_staging_dir}" -name "*.gcda" \
 			2>/dev/null 1>/dev/null ; then
@@ -496,12 +499,13 @@ ewarn
 	fi
 }
 
-# @FUNCTION: train_verify_profile_fatal
+# @FUNCTION: tpgo_train_verify_profile_fatal
 # @INTERNAL
 # @DESCRIPTION:
 # Verify that a PGO profile was created at the end of training
 # if not then die.
-train_verify_profile_fatal() {
+tpgo_train_verify_profile_fatal() {
+	[[ "${skip_pgi}" == "yes" ]] && return
 	if use pgo && [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
 		if ! find "${pgo_data_staging_dir}" -name "*.gcda" ; then
 eerror

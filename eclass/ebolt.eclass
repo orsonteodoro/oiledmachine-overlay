@@ -197,17 +197,24 @@ ebolt_src_prepare() {
 	_ebolt_prepare_bolt
 }
 
+# @FUNCTION: ebolt_src_configure
+# @DESCRIPTION:
+# Applies compiler flags required for proper BOLT support.
 ebolt_src_configure() {
 	local bolt_data_suffix_dir="${EPREFIX}${_UOPTS_BOLT_DATA_DIR}/${_UOPTS_BOLT_SUFFIX}"
 	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 	if use ebolt ; then
+		# Apply unconditionally especially if build scripts force gcc.
 		filter-flags \
 			'-f*reorder-blocks-and-partition' \
 			'-Wl,--emit-relocs' \
 			'-Wl,-q'
-		append-flags $(test-flags -fno-reorder-blocks-and-partition)
-		append-ldflags $(test-flag-CCLD -fno-reorder-blocks-and-partition) \
-			-Wl,--emit-relocs
+
+		if tc-is-gcc ; then
+			append-flags -fno-reorder-blocks-and-partition
+			append-ldflags -fno-reorder-blocks-and-partition
+		fi
+		append-ldflags -Wl,--emit-relocs
 	fi
 }
 

@@ -13,6 +13,9 @@
 # You may, however, use some event handlers such as train_trainer_custom
 # in the ebuild context.
 
+# Only one train instance allowed.
+TRAIN_MUTEX="none" # It can only be tpgo, tbolt, or none.
+
 if [[ "${TRAIN_USE_X}" == "1" ]] ;then
 	inherit virtualx
 fi
@@ -241,6 +244,29 @@ eerror
 # _src_post_train
 #
 
+VERIFY_FUNCTIONS_WARN=()
+VERIFY_FUNCTIONS_FATAL=()
+
+# @FUNCTION: register_verify_profile_warn
+# @DESCRIPTION:
+# The adds the verify missing profile function warning check to the list.
+register_verify_profile_warn() {
+	local f="${1}"
+	VERIFY_FUNCTIONS_WARN+=( "${f}" )
+}
+
+
+# @FUNCTION: _train_trainer_default
+# @DESCRIPTION:
+# The adds the verify missing profile function fatal check to the list.
+register_verify_profile_fatal() {
+	local f="${1}"
+	VERIFY_FUNCTIONS_FATAL+=( "${f}" )
+}
+
+# @FUNCTION: _train_trainer_default
+# @DESCRIPTION:
+# The default trainer function manager
 _train_trainer_default() {
 	# Sandbox violation prevention
 	if [[ "${TRAIN_SANDBOX_EXCEPTION_GLSL}" == "1" ]] ; then
@@ -271,13 +297,21 @@ _train_trainer_default() {
 		# We would like to use tc-is-clang tc-is-gcc but it is broken.
 		# Even after inspecting the log, it is over-engineered and
 		# gross.
-		if declare -f train_verify_profile_warn ; then
-			train_verify_profile_warn
+		if (( ${#VERIFY_FUNCTIONS_WARN[@]} > 0 )) ; then
+			for f in ${VERIFY_FUNCTIONS_WARN[@]} ; do
+				if [[ "${f}" =~ ^"${TRAIN_MUTEX}" ]] ; then
+					"${f}"
+				fi
+			done
 		fi
 	done
 	IFS=$' \t\n'
-	if declare -f train_verify_profile_fatal ; then
-		train_verify_profile_fatal
+	if (( ${#VERIFY_FUNCTIONS_FATAL[@]} > 0 )) ; then
+		for f in ${VERIFY_FUNCTIONS_FATAL[@]} ; do
+			if [[ "${f}" =~ ^"${TRAIN_MUTEX}" ]] ; then
+				"${f}"
+			fi
+		done
 	fi
 }
 

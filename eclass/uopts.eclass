@@ -25,6 +25,11 @@ UOPTS_SUPPORT_EBOLT=${UOPTS_SUPPORT_EBOLT:-1}
 UOPTS_SUPPORT_TPGO=${UOPTS_SUPPORT_TPGO:-1}
 UOPTS_SUPPORT_TBOLT=${UOPTS_SUPPORT_TBOLT:-1}
 
+if [[ "${UOPTS_SUPPORT_TPGO}" == "1" \
+	|| "${UOPTS_SUPPORT_TBOLT}" == "1" ]] ; then
+	inherit train
+fi
+
 if [[ "${UOPTS_SUPPORT_EPGO}" == "1" ]] ; then
 	inherit epgo
 fi
@@ -208,8 +213,6 @@ einfo
 # @DESCRIPTION:
 # Installs instrumented profiles for faster rebuilds
 uopts_src_install() {
-	[[ -n "${_EBOLT_ECLASS}" ]] && export PGO_PHASE=$(ebolt_get_phase)
-	[[ -n "${_TBOLT_ECLASS}" ]] && export PGO_PHASE=$(tbolt_get_phase)
 	[[ "${UOPTS_SUPPORT_EPGO}" == "1" ]] && epgo_src_install
 	[[ "${UOPTS_SUPPORT_EBOLT}" == "1" ]] && ebolt_src_install
 	[[ "${UOPTS_SUPPORT_TPGO}" == "1" ]] && tpgo_src_install
