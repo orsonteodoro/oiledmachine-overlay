@@ -269,11 +269,11 @@ ewarn
 		fi
 
 		# Has profile?
-		if tc-is-gcc && find "${pgo_data_staging_dir}" -name "*.gcda" \
-			2>/dev/null 1>/dev/null ; then
+		local nlines1=$(find "${pgo_data_staging_dir}" -name "*.gcda" | wc -l)
+		local nlines2=$(find "${pgo_data_staging_dir}" -name "*.profraw" | wc -l)
+		if tc-is-gcc && (( ${nlines1} > 0 )) ; then
 			:; # pass
-		elif tc-is-clang && find "${pgo_data_staging_dir}" -name "*.profraw" \
-			2>/dev/null 1>/dev/null ; then
+		elif tc-is-clang && (( ${nlines2} > 0 ))  ; then
 			:; # pass
 		else
 ewarn

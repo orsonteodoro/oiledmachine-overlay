@@ -7,6 +7,8 @@ EAPI=8
 TRAIN_USE_X=1
 TRAIN_TEST_DURATION=20
 PYTHON_COMPAT=( python3_{8..11} )
+UOPTS_BOLT_EXCLUDE_BINS+="libOpenGLWindow.so" # \
+# examples/OpenGLWindow/opengl_fontstashcallbacks.cpp:93: virtual void InternalOpenGL2RenderCallbacks::updateTexture(sth_texture*, sth_glyph*, int, int): Assertion `glGetError() == GL_NO_ERROR' failed.
 inherit cmake flag-o-matic lcnr multilib-build python-single-r1 toolchain-funcs uopts
 
 DESCRIPTION="Continuous Collision Detection and Physics Library"
@@ -326,6 +328,8 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	use ebolt && ewarn "The ebolt USE flag may not generate a BOLT profile."
+	use bolt && ewarn "The bolt USE flag may not generate a BOLT profile."
 	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
 einfo
 einfo "To hard unmask the USE=tbb add the following line to"
@@ -390,19 +394,10 @@ eerror "oiledmachine-overlay."
 eerror
 		die
 	fi
-	if [[ "${PGO_PHASE}" == "NO_PGO" ]] ; then
 einfo
-einfo "Skipping PGO / Normal build"
+einfo "PGO_PHASE=${PGO_PHASE}"
+einfo "BOLT_PHASE=${BOLT_PHASE}"
 einfo
-	elif [[ "${PGO_PHASE}" == "PGI" ]] ; then
-einfo
-einfo "Instrumenting build"
-einfo
-	elif [[ "${PGO_PHASE}" == "PGO" ]] ; then
-einfo
-einfo "Optimizing build"
-einfo
-	fi
 
 	cmake_src_configure
 }
@@ -585,6 +580,7 @@ echo "/usr/share/${PN}/demos" \
 	>> "${ED}/usr/share/${PN}/examples/readme.txt" || die
 	fi
 	einstalldocs
+	LCNR_SOURCE="${WORKDIR}/${PN}$(ver_cut 1 ${PV})-${PV}"
 	lcnr_install_files
 	fix_tbb_rpath
 	sanitize_rpaths

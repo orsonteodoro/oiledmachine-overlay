@@ -446,11 +446,11 @@ ewarn
 		fi
 
 		# Has profile?
-		if tc-is-gcc && find "${pgo_data_staging_dir}" -name "*.gcda" \
-			2>/dev/null 1>/dev/null ; then
+		local nlines1=$(find "${pgo_data_staging_dir}" -name "*.gcda" | wc -l)
+		local nlines2=$(find "${pgo_data_staging_dir}" -name "*.profraw" | wc -l)
+		if tc-is-gcc && (( ${nlines1} > 0 )) ; then
 			:; # pass
-		elif tc-is-clang && find "${pgo_data_staging_dir}" -name "*.profraw" \
-			2>/dev/null 1>/dev/null ; then
+		elif tc-is-clang && (( ${nlines2} > 0 )) ; then
 			:; # pass
 		else
 ewarn
@@ -485,15 +485,15 @@ _tpgo_src_pre_train() {
 tpgo_train_verify_profile_warn() {
 	[[ "${skip_pgi}" == "yes" ]] && return
 	if use pgo && [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
-		if ! find "${pgo_data_staging_dir}" -name "*.gcda" \
-			2>/dev/null 1>/dev/null ; then
+		local nlines=$(find "${pgo_data_staging_dir}" -name "*.gcda" | wc -l)
+		if (( ${nlines} == 0 )) ; then
 ewarn
 ewarn "Didn't generate a PGO profile"
 ewarn
 		fi
 	elif use pgo && [[ "${CC}" =~ "clang" ]] ; then
-		if ! find "${pgo_data_staging_dir}" -name "*.profraw" \
-			2>/dev/null 1>/dev/null ; then
+		local nlines=$(find "${pgo_data_staging_dir}" -name "*.profraw" | wc -l)
+		if (( ${nlines} == 0 )) ; then
 ewarn
 ewarn "Didn't generate a PGO profile"
 ewarn
@@ -509,14 +509,16 @@ ewarn
 tpgo_train_verify_profile_fatal() {
 	[[ "${skip_pgi}" == "yes" ]] && return
 	if use pgo && [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
-		if ! find "${pgo_data_staging_dir}" -name "*.gcda" ; then
+		local nlines=$(find "${pgo_data_staging_dir}" -name "*.gcda" | wc -l)
+		if (( ${nlines} == 0 )) ; then
 eerror
 eerror "Didn't generate a PGO profile"
 eerror
 			die
 		fi
 	elif use pgo && [[ "${CC}" =~ "clang" ]] ; then
-		if ! find "${pgo_data_staging_dir}" -name "*.profraw" ; then
+		local nlines=$(find "${pgo_data_staging_dir}" -name "*.profraw" | wc -l)
+		if (( ${nlines} == 0 )) ; then
 eerror
 eerror "Didn't generate a PGO profile"
 eerror

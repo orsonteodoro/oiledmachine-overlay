@@ -121,12 +121,12 @@ ewarn
 _setup_malloc() {
 	[[ -z "${UOPTS_BOLT_MALLOC}" ]] && UOPTS_BOLT_MALLOC="auto"
 
-	if [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so" \
-		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"jemalloc") ]] ; then
-		export _UOPTS_BOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so"
-	elif [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" \
+	if [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" \
 		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"jemalloc-minimal") ]] ; then
 		export _UOPTS_BOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so"
+	elif [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so" \
+		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"jemalloc") ]] ; then
+		export _UOPTS_BOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so"
 	elif [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so" \
 		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"tcmalloc") ]] ; then
 		export _UOPTS_BOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so"
@@ -227,10 +227,10 @@ _ebolt_meets_bolt_requirements() {
 
 		# Actually, you can use GCC.
 
-		touch "${pgo_data_staging_dir}/llvm_bolt_fingerprint" \
+		touch "${bolt_data_staging_dir}/llvm_bolt_fingerprint" \
 			|| die "You must call ebolt_src_prepare before calling ebolt_get_phase"
 		local actual=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " ")
-		local expected=$(cat "${pgo_data_staging_dir}/llvm_bolt_fingerprint")
+		local expected=$(cat "${bolt_data_staging_dir}/llvm_bolt_fingerprint")
 		if [[ "${actual}" != "${expected}" ]] ; then
 # This check is done because of BOLT profile compatibility.
 ewarn
@@ -248,8 +248,8 @@ ewarn
 		fi
 
 		# Has profile?
-		if find "${bolt_data_staging_dir}" -name "*.fdata" \
-			2>/dev/null 1>/dev/null ; then
+		local nlines=$(find "${bolt_data_staging_dir}" -name "*.fdata")
+		if (( ${nlines} > 0 )) ; then
 			:; # pass
 		else
 ewarn
@@ -541,7 +541,7 @@ _pkg_config_bolt_optimization() {
 	for p in $(grep "obj" "${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS" \
 		| cut -f 2 -d " ") ; do
 		# Always assume optimized or not
-		PGO_PHASE_CONFIG=$(get_pgo_phase_config)
+		BOLT_PHASE=$(ebolt_get_phase)
 		if [[ "${BOLT_PHASE}" == "OPT" ]] ; then
 			[[ -L "${p}" ]] && continue
 			local bn=$(basename "${p}")

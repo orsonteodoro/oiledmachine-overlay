@@ -109,12 +109,12 @@ ewarn
 _setup_malloc() {
 	[[ -z "${UOPTS_BOLT_MALLOC}" ]] && UOPTS_BOLT_MALLOC="auto"
 
-	if [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so" \
-		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"jemalloc") ]] ; then
-		export _UOPTS_BOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so"
-	elif [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" \
+	if [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" \
 		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"jemalloc-minimal") ]] ; then
 		export _UOPTS_BOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so"
+	elif [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so" \
+		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"jemalloc") ]] ; then
+		export _UOPTS_BOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so"
 	elif [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so" \
 		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"tcmalloc") ]] ; then
 		export _UOPTS_BOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so"
@@ -241,8 +241,8 @@ ewarn
 		fi
 
 		# Has profile?
-		if find "${bolt_data_staging_dir}" -name "*.fdata" \
-			2>/dev/null 1>/dev/null ; then
+		local nlines=$(find "${bolt_data_staging_dir}" -name "*.fdata" | wc -l)
+		if (( ${nlines} > 0 )) ; then
 			:; # pass
 		else
 ewarn
@@ -349,7 +349,7 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 # Initalize training specifically for TBOLT
 _tbolt_src_pre_train() {
 	local _TBOLT_TRAIN_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TRAIN_IMPLS}"
-	export tbolt_data_staging_dir="${T}/pgo-${_TBOLT_TRAIN_SUFFIX}"
+	export tbolt_data_staging_dir="${T}/bolt-${_TBOLT_TRAIN_SUFFIX}"
 }
 
 # @FUNCTION: tbolt_train_verify_profile_warn
@@ -360,8 +360,9 @@ _tbolt_src_pre_train() {
 tbolt_train_verify_profile_warn() {
 	[[ "${skip_inst}" == "yes" ]] && return
 	if use bolt ; then
-		if ! find "${tbolt_data_staging_dir}" -name "*.fdata" \
-			2>/dev/null 1>/dev/null ; then
+		einfo "tbolt_data_staging_dir=${tbolt_data_staging_dir}"
+		local nlines=$(find "${tbolt_data_staging_dir}" -name "*.fdata")
+		if (( ${nlines} == 0 )) ; then
 ewarn
 ewarn "Didn't generate a BOLT profile"
 ewarn
@@ -377,7 +378,9 @@ ewarn
 tbolt_train_verify_profile_fatal() {
 	[[ "${skip_inst}" == "yes" ]] && return
 	if use bolt; then
-		if ! find "${tbolt_data_staging_dir}" -name "*.fdata" ; then
+		einfo "tbolt_data_staging_dir=${tbolt_data_staging_dir}"
+		local nlines=$(find "${tbolt_data_staging_dir}" -name "*.fdata")
+		if (( ${nlines} == 0 )) ; then
 eerror
 eerror "Didn't generate a BOLT profile"
 eerror
