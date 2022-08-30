@@ -215,11 +215,11 @@ tbolt_src_configure() {
 	fi
 }
 
-# @FUNCTION: _tbolt_meets_bolt_requirements
+# @FUNCTION: _tbolt_is_profile_reusable
 # @INTERNAL
 # @DESCRIPTION:
 # Checks if requirements are met
-_tbolt_meets_bolt_requirements() {
+_tbolt_is_profile_reusable() {
 	if use bolt ; then
 		local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 
@@ -261,42 +261,6 @@ ewarn
 		return 0
 	fi
 	return 1
-}
-
-# @FUNCTION: tbolt_get_phase
-# @DESCRIPTION:
-# Reports the current BOLT phase
-tbolt_get_phase() {
-	# INSTRUMENT
-	# GATHER / TRAIN
-	# OPTIMIZE
-	local result="NO_BOLT"
-	_UOPTS_BOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
-	_tbolt_meets_bolt_requirements
-	local ret=$?
-
-	local retu=-1
-	if declare -f tbolt_meets_requirements > /dev/null ; then
-		tbolt_meets_requirements
-		local retu=$?
-	fi
-
-	if ! use bolt ; then
-		result="NO_BOLT"
-	elif is_abi_boltable ; then
-		result="NO_BOLT"
-	elif use bolt && (( ${retu} == 1 )) ; then
-		result="NO_BOLT"
-	elif use bolt && [[ "${UOPTS_BOLT_FORCE_INST}" == "1" ]] ; then
-		result="INST"
-	elif use bolt && (( ${ret} == 0 )) ; then
-		result="OPT"
-	elif use bolt && (( ${ret} == 1 )) ; then
-		result="INST"
-	elif use bolt && (( ${ret} == 2 )) ; then
-		result="NO_BOLT"
-	fi
-	echo "${result}"
 }
 
 # @FUNCTION: _tbolt_inst_tree
