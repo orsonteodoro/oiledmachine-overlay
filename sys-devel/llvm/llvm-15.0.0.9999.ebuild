@@ -35,7 +35,6 @@ RESTRICT="!test? ( test )"
 RDEPEND="
 	sys-libs/zlib:0=[${MULTILIB_USEDEP}]
 	binutils-plugin? ( >=sys-devel/binutils-2.31.1-r4:*[plugins] )
-	bolt? ( >=dev-util/perf-4.5 )
 	exegesis? ( dev-libs/libpfm:= )
 	libedit? ( dev-libs/libedit:0=[${MULTILIB_USEDEP}] )
 	libffi? ( >=dev-libs/libffi-3.0.13-r1:0=[${MULTILIB_USEDEP}] )
@@ -53,9 +52,6 @@ BDEPEND="
 	dev-lang/perl
 	>=dev-util/cmake-3.16
 	sys-devel/gnuconfig
-	bolt? (
-		>=dev-util/perf-4.5
-	)
 	doc? (
 		$(python_gen_any_dep '
 			dev-python/recommonmark[${PYTHON_USEDEP}]
@@ -277,6 +273,7 @@ src_prepare() {
 	if use bolt ; then
 		pushd "${WORKDIR}" || die
 			eapply "${FILESDIR}/llvm-14.0.6-bolt-set-cmake-libdir.patch"
+			eapply "${FILESDIR}/llvm-14.0.6-bolt_rt-RuntimeLibrary.cpp-path.patch"
 		popd
 	fi
 
