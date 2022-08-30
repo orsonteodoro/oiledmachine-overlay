@@ -181,6 +181,7 @@ Events triggering PGI (instrumentation):
 - Version bumps that cause breakage or internal dependency updates which are
 typically minor versions.
 - Forced PGI with UOPTS_PGO_FORCE_PGI
+- Differences in {C,CXX,LD}FLAGS.  (via -frecord-gcc-switches tracking) [planned]
 
 Events that may trigger PGO (optimized builds):
 - Presence of a PGO profile

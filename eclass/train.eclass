@@ -247,19 +247,21 @@ eerror
 VERIFY_FUNCTIONS_WARN=()
 VERIFY_FUNCTIONS_FATAL=()
 
-# @FUNCTION: register_verify_profile_warn
+# @FUNCTION: subscribe_verify_profile_warn
 # @DESCRIPTION:
-# The adds the verify missing profile function warning check to the list.
-register_verify_profile_warn() {
+# Subscribes the event handler function to the verify missing profile warn event.
+# The event handler function should never call die.
+subscribe_verify_profile_warn() {
 	local f="${1}"
 	VERIFY_FUNCTIONS_WARN+=( "${f}" )
 }
 
 
-# @FUNCTION: _train_trainer_default
+# @FUNCTION: subscribe_verify_profile_fatal
 # @DESCRIPTION:
-# The adds the verify missing profile function fatal check to the list.
-register_verify_profile_fatal() {
+# Subscribes the event handler function to the verify missing profile fatal event.
+# The event handler function is responsible to call the die function.
+subscribe_verify_profile_fatal() {
 	local f="${1}"
 	VERIFY_FUNCTIONS_FATAL+=( "${f}" )
 }

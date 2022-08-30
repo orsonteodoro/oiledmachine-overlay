@@ -203,8 +203,8 @@ ewarn
 # Performs checks and recommend workarounds to broken EAPI to unbreak PGO
 tpgo_setup() {
 	train_setup
-	register_verify_profile_warn "tpgo_train_verify_profile_warn"
-	register_verify_profile_fatal "tpgo_train_verify_profile_fatal"
+	subscribe_verify_profile_warn "tpgo_train_verify_profile_warn"
+	subscribe_verify_profile_fatal "tpgo_train_verify_profile_fatal"
 
 	if (( $(declare -f src_configure | wc -c) > 29 )) ; then
 eerror

@@ -146,8 +146,8 @@ tbolt_setup() {
 	_tbolt_check_bolt
 	_setup_malloc
 	train_setup
-	register_verify_profile_warn "tbolt_train_verify_profile_warn"
-	register_verify_profile_fatal "tbolt_train_verify_profile_fatal"
+	subscribe_verify_profile_warn "tbolt_train_verify_profile_warn"
+	subscribe_verify_profile_fatal "tbolt_train_verify_profile_fatal"
 	_setup_llvm
 	export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=cache+ -reorder-functions=hfsort -split-functions=2 -split-all-cold -split-eh -dyno-stats"}
 
@@ -294,7 +294,7 @@ ewarn "Missing .rela.text skipping ${p}"
 				-o "${p}.bolt" \
 				-instrumentation-file "${bolt_data_staging_dir}/${bn}.fdata" || die
 			mv "${p}" "${p}.orig" || die
-			cp "${p}.bolt" "${p}" || die
+			mv "${p}.bolt" "${p}" || die
 		fi
 	done
 }
