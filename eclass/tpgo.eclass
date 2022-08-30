@@ -409,6 +409,13 @@ einfo "CXX=${CXX}"
 einfo
 		_CC="${CC% *}"
 
+		if ! tc-is-gcc && ! tc-is-clang ; then
+ewarn
+ewarn "Compiler is not supported."
+ewarn
+			return 2
+		fi
+
 		touch "${pgo_data_staging_dir}/compiler_fingerprint" \
 			|| die "You must call tpgo_src_prepare before calling tpgo_src_compile"
 		# Has same compiler?
@@ -436,11 +443,6 @@ ewarn "expected: ${expected}"
 ewarn
 				return 1
 			fi
-		else
-			return 2
-ewarn
-ewarn "Compiler is not supported."
-ewarn
 		fi
 
 		# Has profile?
@@ -471,8 +473,8 @@ ewarn
 # @DESCRIPTION:
 # Initalize training specifically for TPGO
 _tpgo_src_pre_train() {
-	_TRAIN_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TRAIN_IMPLS}"
-	local pgo_data_staging_dir="${T}/pgo-${_TRAIN_SUFFIX}"
+	local _TPGO_TRAIN_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TRAIN_IMPLS}"
+	export pgo_data_staging_dir="${T}/pgo-${_TPGO_TRAIN_SUFFIX}"
 }
 
 # @FUNCTION: tpgo_train_verify_profile_warn

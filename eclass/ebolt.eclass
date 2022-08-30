@@ -97,9 +97,6 @@ _UOPTS_BOLT_PATH="" # Set in ebolt_setup
 
 _ebolt_check_bolt() {
 	if use ebolt ; then
-ewarn
-ewarn "BOLT support is still a Work In Progress (WIP)."
-ewarn
 		if [[ -z "${UOPTS_BOLT_GROUP}" ]] ; then
 eerror
 eerror "The UOPTS_BOLT_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
@@ -359,6 +356,14 @@ is_stripped() {
 	! readelf -s "${p}" | grep -q ".symtab"
 }
 
+# @FUNCTION: has_relocs
+# @DESCRIPTION:
+# Check if the file has relocations
+has_relocs() {
+	local p="${1}"
+	readelf -r "${p}" | grep -q ".rela.text"
+}
+
 # @FUNCTION: _src_compile_bolt_inst
 # @DESCRIPTION:
 # Instrument the build tree
@@ -381,10 +386,12 @@ _src_compile_bolt_inst() {
 			fi
 			is_abi_same "${p}" || continue
 			if is_stripped "${p}" ; then
-eerror
-eerror "The package has prestripped binaries.  Patch is required.  Detected in ${p}"
-eerror
-				die
+ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch.  Skipping ${p}"
+				continue
+			fi
+			if ! has_relocs "${p}" ; then
+ewarn "Missing .rela.text.  Skipping ${p}"
+				continue
 			fi
 			if (( ${is_boltable} == 1 )) ; then
 				# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
@@ -421,11 +428,11 @@ _src_compile_bolt_opt() {
 			fi
 			is_abi_same "${p}" || continue
 			if is_stripped "${p}" ; then
-eerror
-eerror "The package has stripped binaries for ${p}"
-eerror
-				die
+ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch.  Skipping ${p}"
+				continue
 			fi
+			local bn=$(basename "${p}")
+			[[ -e "${bolt_data_staging_dir}/${bn}.fdata" ]] || continue
 			if (( ${is_boltable} == 1 )) ; then
 				local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
 				local bn=$(basename "${p}")
@@ -549,12 +556,13 @@ _pkg_config_bolt_optimization() {
 			fi
 			is_abi_same "${p}" || continue
 			if is_stripped "${p}" ; then
-ewarn "Skipping ${p}.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch"
+ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch.  Skipping ${p}"
 				continue
 			fi
+			local bn=$(basename "${p}")
+			[[ -e "${bolt_data_staging_dir}/${bn}.fdata" ]] || continue
 			if (( ${is_boltable} == 1 )) ; then
 				local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
-				local bn=$(basename "${p}")
 				if [[ ! -e "${p}.orig" ]] ; then
 					cp -a "${p}" "${p}".orig || true
 				fi

@@ -202,6 +202,7 @@ einfo
 			BOLT_PHASE="INST"
 			_tbolt_inst_tree "${BUILD_DIR}"
 			declare -f _src_pre_train > /dev/null && _src_pre_train
+			_tbolt_src_pre_train
 			_src_train
 			declare -f _src_post_train > /dev/null && _src_post_train
 		fi

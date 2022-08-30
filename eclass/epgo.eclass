@@ -105,9 +105,6 @@ _UOPTS_PGO_DATA_DIR=${_UOPTS_PGO_DATA_DIR:-"${UOPTS_PGO_PROFILES_DIR}/${CATEGORY
 # New groups can be epgo, pgo, etc.
 _epgo_check_pgo() {
 	if use epgo ; then
-ewarn
-ewarn "EPGO support is still a Work In Progress (WIP)."
-ewarn
 		if [[ -z "${UOPTS_PGO_GROUP}" ]] ; then
 eerror
 eerror "The UOPTS_PGO_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
@@ -235,6 +232,13 @@ einfo "CXX=${CXX}"
 einfo
 		_CC="${CC% *}"
 
+		if ! tc-is-gcc && ! tc-is-clang ; then
+ewarn
+ewarn "Compiler is not supported."
+ewarn
+			return 2
+		fi
+
 		touch "${pgo_data_staging_dir}/compiler_fingerprint" \
 			|| die "You must call epgo_src_prepare before calling epgo_get_phase"
 		# Has same compiler?
@@ -262,11 +266,6 @@ ewarn "expected: ${expected}"
 ewarn
 				return 1
 			fi
-		else
-			return 2
-ewarn
-ewarn "Compiler is not supported."
-ewarn
 		fi
 
 		# Has profile?

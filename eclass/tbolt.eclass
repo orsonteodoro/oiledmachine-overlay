@@ -98,9 +98,6 @@ _UOPTS_BOLT_PATH="" # Set in tbolt_setup
 
 _tbolt_check_bolt() {
 	if use bolt ; then
-ewarn
-ewarn "BOLT support is still a Work In Progress (WIP)."
-ewarn
 		if ! use kernel_linux ; then
 ewarn
 ewarn "The ebuilds only support BOLT for Linux at the moment."
@@ -222,6 +219,14 @@ _tbolt_is_profile_reusable() {
 
 		touch "${bolt_data_staging_dir}/llvm_bolt_fingerprint" \
 			|| die "You must call tbolt_src_prepare before calling tbolt_get_phase"
+
+		if ! tc-is-gcc && ! tc-is-clang ; then
+ewarn
+ewarn "Compiler is not supported."
+ewarn
+			return 2
+		fi
+
 		local actual=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " ")
 		local expected=$(cat "${bolt_data_staging_dir}/llvm_bolt_fingerprint")
 		if [[ "${actual}" != "${expected}" ]] ; then
@@ -233,11 +238,6 @@ ewarn "actual: ${actual}"
 ewarn "expected: ${expected}"
 ewarn
 			return 1
-		else
-			return 2
-ewarn
-ewarn "llvm-bolt fingerprint mismatch"
-ewarn
 		fi
 
 		# Has profile?
@@ -277,10 +277,12 @@ _tbolt_inst_tree() {
 			continue
 		fi
 		if is_stripped "${p}" ; then
-eerror
-eerror "The package has prestripped binaries.  Patch is required.  Detected in ${p}"
-eerror
-			die
+ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch.  Skipping ${p}"
+			continue
+		fi
+		if ! has_relocs "${p}" ; then
+ewarn "Missing .rela.text skipping ${p}"
+			continue
 		fi
 		is_abi_same "${p}" || continue
 		if (( ${is_boltable} == 1 )) ; then
@@ -292,7 +294,7 @@ eerror
 				-o "${p}.bolt" \
 				-instrumentation-file "${bolt_data_staging_dir}/${bn}.fdata" || die
 			mv "${p}" "${p}.orig" || die
-			mv "${p}.bolt" "${p}" || die
+			cp "${p}.bolt" "${p}" || die
 		fi
 	done
 }
@@ -305,7 +307,7 @@ _tbolt_opt_tree() {
 	[[ "${BOLT_PHASE}" == "OPT" ]] || return
 	local tree="${1}"
 	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
-	for p in $(find "${tree}" -type f) ; do
+	for p in $(find "${tree}" -type f -not -name "*.orig") ; do
 		[[ -L "${p}" ]] && continue
 		local bn=$(basename "${p}")
 		is_bolt_banned "${bn}" && continue
@@ -317,26 +319,37 @@ _tbolt_opt_tree() {
 		else
 			continue
 		fi
-		if is_stripped "${p}" ; then
-eerror
-eerror "The package has stripped binaries for ${p}"
-eerror
-			die
-		fi
 		is_abi_same "${p}" || continue
+		if is_stripped "${p}" ; then
+ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch.  Skipping ${p}"
+			continue
+		fi
+		local bn=$(basename "${p}")
+		[[ -e "${bolt_data_staging_dir}/${bn}.fdata" ]] || continue
 		if (( ${is_boltable} == 1 )) ; then
 			local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
-			local bn=$(basename "${p}")
 			einfo "vanilla -> BOLT optimized:  ${p}"
+			if [[ "${skip_inst}" == "yes" ]] ; then
+				mv "${p}"{,.orig} || die
+			fi
+			rm -rf "${p}" || die
 			LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
-				"${p}" \
-				-o "${p}.bolt" \
+				"${p}.orig" \
+				-o "${p}" \
 				-data="${bolt_data_staging_dir}/${bn}.fdata" \
 				${args[@]} || die
-			rm "${p}" || die
-			mv "${p}.bolt" "${p}" || die
+			rm "${p}.orig" || die
 		fi
 	done
+}
+
+# @FUNCTION: _tbolt_src_pre_train
+# @INTERNAL
+# @DESCRIPTION:
+# Initalize training specifically for TBOLT
+_tbolt_src_pre_train() {
+	local _TBOLT_TRAIN_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${TRAIN_IMPLS}"
+	export tbolt_data_staging_dir="${T}/pgo-${_TBOLT_TRAIN_SUFFIX}"
 }
 
 # @FUNCTION: tbolt_train_verify_profile_warn
@@ -347,7 +360,7 @@ eerror
 tbolt_train_verify_profile_warn() {
 	[[ "${skip_inst}" == "yes" ]] && return
 	if use bolt ; then
-		if ! find "${pgo_data_staging_dir}" -name "*.fdata" \
+		if ! find "${tbolt_data_staging_dir}" -name "*.fdata" \
 			2>/dev/null 1>/dev/null ; then
 ewarn
 ewarn "Didn't generate a BOLT profile"
@@ -364,7 +377,7 @@ ewarn
 tbolt_train_verify_profile_fatal() {
 	[[ "${skip_inst}" == "yes" ]] && return
 	if use bolt; then
-		if ! find "${pgo_data_staging_dir}" -name "*.fdata" ; then
+		if ! find "${tbolt_data_staging_dir}" -name "*.fdata" ; then
 eerror
 eerror "Didn't generate a BOLT profile"
 eerror
@@ -436,6 +449,14 @@ is_file_boltable() {
 is_stripped() {
 	local p="${1}"
 	! readelf -s "${p}" | grep -q ".symtab"
+}
+
+# @FUNCTION: has_relocs
+# @DESCRIPTION:
+# Check if the file has relocations
+has_relocs() {
+	local p="${1}"
+	readelf -r "${p}" | grep -q ".rela.text"
 }
 
 # @FUNCTION: tbolt_src_install
