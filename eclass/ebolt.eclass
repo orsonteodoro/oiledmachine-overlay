@@ -248,7 +248,7 @@ ewarn
 		fi
 
 		# Has profile?
-		local nlines=$(find "${bolt_data_staging_dir}" -name "*.fdata")
+		local nlines=$(find "${bolt_data_staging_dir}" -name "*.fdata" | wc -l)
 		if (( ${nlines} > 0 )) ; then
 			:; # pass
 		else

@@ -361,7 +361,7 @@ tbolt_train_verify_profile_warn() {
 	[[ "${skip_inst}" == "yes" ]] && return
 	if use bolt ; then
 		einfo "tbolt_data_staging_dir=${tbolt_data_staging_dir}"
-		local nlines=$(find "${tbolt_data_staging_dir}" -name "*.fdata")
+		local nlines=$(find "${tbolt_data_staging_dir}" -name "*.fdata" | wc -l)
 		if (( ${nlines} == 0 )) ; then
 ewarn
 ewarn "Didn't generate a BOLT profile"
@@ -379,7 +379,7 @@ tbolt_train_verify_profile_fatal() {
 	[[ "${skip_inst}" == "yes" ]] && return
 	if use bolt; then
 		einfo "tbolt_data_staging_dir=${tbolt_data_staging_dir}"
-		local nlines=$(find "${tbolt_data_staging_dir}" -name "*.fdata")
+		local nlines=$(find "${tbolt_data_staging_dir}" -name "*.fdata" | wc -l)
 		if (( ${nlines} == 0 )) ; then
 eerror
 eerror "Didn't generate a BOLT profile"
