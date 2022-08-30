@@ -54,6 +54,20 @@ TRAIN_TEST_DURATION=${TRAIN_TEST_DURATION:-120} # 2 min
 # @DESCRIPTION:
 # Add sandbox exceptions for input.
 
+# @FUNCTION: train_meets_requirements
+# @RETURN:
+# 0 - as the exit code if it has installed assets and training dependencies
+# 1 - as the exit code if it did not install assets or did not install dependencies
+# @DESCRIPTION:
+# Reports if the prerequisites to train are met.  The implication is that if it
+# doesn't have the assets, or doesn't have the training tool, or doesn't have
+# the dependency to that training tool, it will fall back to as if USE="-pgo -bolt".
+# Example scenario:  dynamic linking to be train with a separate package with
+# app that uses the dynamic library.  If the app is not installed, then
+# fallback to normal merging sequence.
+#
+# This function is actually a user defined event handler and optional.
+
 # @FUNCTION: train_setup
 # @DESCRIPTION:
 # Checks for ebuild flaws or if prereqs are met

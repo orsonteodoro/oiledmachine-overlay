@@ -324,7 +324,7 @@ eerror
 		fi
 	done
 
-	if use pgo && tc-is-gcc && tpgo_meets_requirements && [[  "${PGO_PHASE}" == "PGO" ]] ; then
+	if use pgo && tc-is-gcc && train_meets_requirements && [[  "${PGO_PHASE}" == "PGO" ]] ; then
 		if use minizip ; then
 			# Apply, only during configure.
 			append-flags -Wno-error=coverage-mismatch
@@ -417,8 +417,8 @@ _src_compile() {
 _run_trainer_images_zlib() {
 	local mode="${1}"
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	tpgo_meets_requirements || return
-	einfo "Running image compression PGO training for ${ABI} for zlib"
+	train_meets_requirements || return
+	einfo "Running image compression training for ${ABI} for zlib"
 	if multilib_is_native_abi ; then
 		export PIGZEXE="pigz"
 	else
@@ -524,7 +524,7 @@ _run_trainer_images_zlib() {
 		done
 		rm -rf "${T}/sandbox-headers" || die
 	else
-		die "Missing at least one ${distdir}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp} folder for PGO training"
+		die "Missing at least one ${distdir}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp} folder for training"
 	fi
 
 	einfo "zlib image compression/decompress all compression levels training for ${mode} compression level(s)"
@@ -629,8 +629,8 @@ _run_trainer_images_zlib() {
 
 _run_trainer_text_zlib() {
 	local mode="${1}"
-	tpgo_meets_requirements || return
-	einfo "Running text compression PGO training for ${ABI} for zlib"
+	train_meets_requirements || return
+	einfo "Running text compression training for ${ABI} for zlib"
 	if multilib_is_native_abi ; then
 		export PIGZEXE="pigz"
 	else
@@ -667,7 +667,7 @@ _run_trainer_text_zlib() {
 			(( ${c} >= ${N} )) && break
 		done
 	else
-		die "Missing ${EPREFIX}/usr/include/linux or ${EPREFIX}/usr/lib/gcc/${CHOST}/$(gcc-version).0/include for PGO training"
+		die "Missing ${EPREFIX}/usr/include/linux or ${EPREFIX}/usr/lib/gcc/${CHOST}/$(gcc-version).0/include for training"
 	fi
 	einfo "zlib text compression/decompression training for ${mode} compression level(s)"
 	local L=1
@@ -699,8 +699,8 @@ _run_trainer_text_zlib() {
 }
 
 _run_trainer_text_minizip() {
-	tpgo_meets_requirements || return
-	einfo "Running text compression PGO training for ${ABI} for minizip"
+	train_meets_requirements || return
+	einfo "Running text compression training for ${ABI} for minizip"
 	export MINIZIP="minizip"
 	export MINIUNZIP="miniunzip"
 
@@ -751,7 +751,7 @@ _run_trainer_text_minizip() {
 				(( ${c} >= ${max_files_in_archive} )) && break # arbitrary
 			done
 		else
-			die "Missing ${EPREFIX}/usr/include/linux or ${EPREFIX}/usr/lib/gcc/${CHOST}/$(gcc-version).0/include for PGO training"
+			die "Missing ${EPREFIX}/usr/include/linux or ${EPREFIX}/usr/lib/gcc/${CHOST}/$(gcc-version).0/include for training"
 		fi
 		#einfo "minizip text compression training"
 		local cmd=( "${MINIZIP}" -o -${compression_level} example.zip $(find "${T}/sandbox" -type f) )
@@ -770,8 +770,8 @@ _run_trainer_text_minizip() {
 
 _run_trainer_binary_zlib() {
 	local mode="${1}"
-	tpgo_meets_requirements || return
-	einfo "Running binary compression PGO training for ${ABI} for zlib"
+	train_meets_requirements || return
+	einfo "Running binary compression training for ${ABI} for zlib"
 	if multilib_is_native_abi ; then
 		export PIGZEXE="pigz"
 	else
@@ -781,7 +781,7 @@ _run_trainer_binary_zlib() {
 	#einfo "Preparing training sandbox"
 	mkdir -p "${T}/sandbox" || die
 	cd "${T}/sandbox" || die
-	[[ ! -d "${EPREFIX}/usr/bin/" ]] && die "Missing ${EPREFIX}/usr/bin/ for PGO training"
+	[[ ! -d "${EPREFIX}/usr/bin/" ]] && die "Missing ${EPREFIX}/usr/bin/ for training"
 	# ~391 = 9 compression levels * stats rule of 30 samples [per each level of compression] * 1.45
 	# (additional files from weeding out 45% junk files 3/10 to 6/10 is ~45%)
 	# Cut short because some files may be gigabytes
@@ -831,12 +831,12 @@ _run_trainer_binary_zlib() {
 }
 
 _run_trainer_binary_minizip() {
-	tpgo_meets_requirements || return
-	einfo "Running binary compression PGO training for ${ABI} for minizip"
+	train_meets_requirements || return
+	einfo "Running binary compression training for ${ABI} for minizip"
 	export MINIZIP="minizip"
 	export MINIUNZIP="miniunzip"
 
-	[[ ! -d "${EPREFIX}/usr/bin/" ]] && die "Missing ${EPREFIX}/usr/bin/ for PGO training"
+	[[ ! -d "${EPREFIX}/usr/bin/" ]] && die "Missing ${EPREFIX}/usr/bin/ for training"
 
 	# Binary version:  This test will simulate compressing an entire folder
 	# of files, then it will decompress this single file.
@@ -1002,7 +1002,7 @@ einfo
 	fi
 }
 
-tpgo_meets_requirements() {
+train_meets_requirements() {
 	if multilib_is_native_abi && which pigz 2>/dev/null 1>/dev/null ; then
 		return 0
 	elif ! multilib_is_native_abi && which pigz-${ABI} 2>/dev/null 1>/dev/null ; then

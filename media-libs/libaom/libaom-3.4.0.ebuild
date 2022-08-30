@@ -233,7 +233,7 @@ has_codec_requirements() {
 	return 1
 }
 
-tpgo_meets_requirements() {
+train_meets_requirements() {
 	has_ffmpeg && has_codec_requirements && return 0
 	return 1
 }
@@ -426,12 +426,12 @@ _trainer_plan_constrained_quality() {
 		"60;3840;2160;3"
 	)
 
-	if use pgo && tpgo_meets_requirements ; then
+	if train_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
 			local video_asset_path="${!id}"
 			[[ -e "${video_asset_path}" ]] || continue
-			einfo "Running PGO trainer for 1 pass constrained quality"
+			einfo "Running trainer for 1 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
 				_trainer_plan_constrained_quality_training_session "${e}"
@@ -507,12 +507,12 @@ _trainer_plan_2_pass_constrained_quality() {
 		"60;3840;2160;3"
 	)
 
-	if use pgo && tpgo_meets_requirements ; then
+	if train_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
 			local video_asset_path="${!id}"
 			[[ -e "${video_asset_path}" ]] || continue
-			einfo "Running PGO trainer for 2 pass constrained quality"
+			einfo "Running trainer for 2 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
 				_trainer_plan_2_pass_constrained_quality_training_session "${e}"
@@ -522,12 +522,12 @@ _trainer_plan_2_pass_constrained_quality() {
 }
 
 _trainer_plan_lossless() {
-	if use pgo && tpgo_meets_requirements ; then
+	if train_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
 			local video_asset_path="${!id}"
 			[[ -e "${video_asset_path}" ]] || continue
-			einfo "Running PGO trainer for lossless"
+			einfo "Running trainer for lossless"
 			local cmd
 			einfo "Encoding for lossless"
 			cmd=(

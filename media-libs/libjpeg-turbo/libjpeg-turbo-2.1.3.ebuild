@@ -178,7 +178,7 @@ EOF
 	multilib_foreach_abi prepare_abi
 }
 
-tpgo_meets_requirements() {
+trainer_meets_requirements() {
 	return $(is_pgo_ready)
 }
 

@@ -206,7 +206,7 @@ has_codec_requirements() {
 	return 1
 }
 
-tpgo_meets_requirements() {
+train_meets_requirements() {
 	has_ffmpeg && has_codec_requirements && return 0
 	return 1
 }
@@ -347,7 +347,7 @@ _src_configure() {
 		myconfargs+=( --disable-examples --disable-install-docs --disable-docs )
 	fi
 
-	if use pgo && tpgo_meets_requirements && tc-is-gcc && [[ "${PGO_PHASE}" == "PGI" ]] ; then
+	if train_meets_requirements && tc-is-gcc && [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		myconfargs+=( --enable-gcov )
 	fi
 
@@ -454,12 +454,12 @@ _trainer_plan_constrained_quality() {
 		die "Unrecognized implementation of vpx"
 	fi
 
-	if use pgo && tpgo_meets_requirements ; then
+	if train_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
 			local libvpx_asset_path="${!id}"
 			[[ -e "libvpx_asset_path" ]] || continue
-			einfo "Running PGO trainer for ${encoding_codec} for 1 pass constrained quality"
+			einfo "Running trainer for ${encoding_codec} for 1 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
 				_trainer_plan_constrained_quality_training_session "${e}"
@@ -546,12 +546,12 @@ _trainer_plan_2_pass_constrained_quality() {
 		die "Unrecognized implementation of vpx"
 	fi
 
-	if use pgo && tpgo_meets_requirements ; then
+	if train_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
 			local libvpx_asset_path="${!id}"
 			[[ -e "libvpx_asset_path" ]] || continue
-			einfo "Running PGO trainer for ${encoding_codec} for 2 pass constrained quality"
+			einfo "Running trainer for ${encoding_codec} for 2 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
 				_trainer_plan_constrained_quality_training_session "${e}"
@@ -574,12 +574,12 @@ _trainer_plan_lossless() {
 		die "Unrecognized implementation of vpx"
 	fi
 
-	if use pgo && tpgo_meets_requirements ; then
+	if train_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
 			local libvpx_asset_path="${!id}"
 			[[ -e "libvpx_asset_path" ]] || continue
-			einfo "Running PGO trainer for ${encoding_codec} for lossless"
+			einfo "Running trainer for ${encoding_codec} for lossless"
 			einfo "Encoding for lossless"
 			local cmd
 			cmd=( "${FFMPEG}" \

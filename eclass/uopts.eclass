@@ -98,8 +98,8 @@ uopts_src_compile() {
 	local skip_pgi="no"
 	if has pgo ${USE} && [[ -n "${_TPGO_ECLASS}" ]] ; then
 		_UOPTS_PGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_PGO_IMPLS}"
-		if declare -f tpgo_meets_requirements > /dev/null ; then
-			if tpgo_meets_requirements ; then
+		if declare -f train_meets_requirements > /dev/null ; then
+			if train_meets_requirements ; then
 				is_pgoable=1
 			else
 				is_pgoable=0
@@ -126,8 +126,8 @@ einfo
 	local skip_inst="no"
 	if has bolt ${USE} && [[ -n "${_TBOLT_ECLASS}" ]] ; then
 		_TBOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_BOLT_IMPLS}"
-		if declare -f tbolt_meets_requirements > /dev/null ; then
-			if tbolt_meets_requirements ; then
+		if declare -f train_meets_requirements > /dev/null ; then
+			if train_meets_requirements ; then
 				is_boltable=1
 			else
 				is_boltable=0

@@ -626,7 +626,7 @@ eerror "The PGO video sample must be >= 3 seconds for ${id}."
 eerror
 			die
 		else
-einfo "${video_sample_path} is accepted as a PGO trainer asset for ${id}."
+einfo "${video_sample_path} is accepted as a trainer asset for ${id}."
 		fi
 	else
 eerror
@@ -686,7 +686,7 @@ eerror "The PGO audio sample must be >= 30 seconds."
 eerror
 				die
 			fi
-einfo "${audio_sample_path} is accepted as a PGO trainer asset."
+einfo "${audio_sample_path} is accepted as a trainer asset."
 		else
 eerror
 eerror "${id} is possibly not a valid audio file.  Ensure that"
@@ -779,7 +779,7 @@ has_codec_requirement() {
 	return ${codecs_found}
 }
 
-tpgo_meets_requirements() {
+train_meets_requirements() {
 	if has_ffmpeg && has_codec_requirement ; then
 		return 0
 	fi
@@ -1158,12 +1158,12 @@ _trainer_plan_video_constrained_quality() {
 		"60;3840;2160;3"
 	)
 
-	if use pgo && tpgo_meets_requirements ; then
+	if train_meets_requirements ; then
 		local id
 		for id in $(get_video_sample_ids) ; do
 			local video_sample_path="${!id}"
 			[[ -e "${video_sample_path}" ]] || continue
-			einfo "Running PGO trainer for ${encoding_codec} for 1 pass constrained quality"
+			einfo "Running trainer for ${encoding_codec} for 1 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
 				_trainer_plan_video_constrained_quality_training_session "${e}"
@@ -1251,12 +1251,12 @@ _trainer_plan_video_2_pass_constrained_quality() {
 		"60;3840;2160;3"
 	)
 
-	if use pgo && tpgo_meets_requirements ; then
+	if train_meets_requirements ; then
 		local id
 		for id in $(get_video_sample_ids) ; do
 			local video_sample_path="${!id}"
 			[[ -e "${video_sample_path}" ]] || continue
-			einfo "Running PGO trainer for ${encoding_codec} for 2 pass constrained quality"
+			einfo "Running trainer for ${encoding_codec} for 2 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
 				_trainer_plan_video_2_pass_constrained_quality_training_session "${e}"
@@ -1286,7 +1286,7 @@ _trainer_plan_audio_lossless() {
 		training_args="${!envvar}"
 	fi
 
-	if use pgo && tpgo_meets_requirements ; then
+	if train_meets_requirements ; then
 		local id
 		for id in $(get_audio_sample_ids) ; do
 			local audio_sample_path="${!id}"
@@ -1308,7 +1308,7 @@ _trainer_plan_audio_lossless() {
 				continue
 			fi
 
-			einfo "Running PGO trainer for ${encoding_codec} for lossless"
+			einfo "Running trainer for ${encoding_codec} for lossless"
 			einfo "Encoding for lossless audio"
 			local cmd
 			cmd=( "${FFMPEG}" \
@@ -1343,12 +1343,12 @@ _trainer_plan_video_lossless() {
 
 	[[ "${encoding_codec}" =~ "vp9" ]] && codec_args+=( -lossless 1 )
 
-	if use pgo && tpgo_meets_requirements ; then
+	if train_meets_requirements ; then
 		local id
 		for id in $(get_video_sample_ids) ; do
 			local video_sample_path="${!id}"
 			[[ -e "${video_sample_path}" ]] || continue
-			einfo "Running PGO trainer for ${encoding_codec} for lossless"
+			einfo "Running trainer for ${encoding_codec} for lossless"
 			einfo "Encoding for lossless video"
 			local cmd
 			cmd=( "${FFMPEG}" \
@@ -1466,14 +1466,14 @@ _trainer_plan_audio_vbr() {
 
 	local vbr_option="FFMPEG_PGO_VBR_OPTION_${vbr_suffix}"
 	if [[ -z "${!vbr_option}" ]] ; then
-		ewarn "Missing VBR option for ${encoding_codec}.  Skipping PGO training."
+		ewarn "Missing VBR option for ${encoding_codec}.  Skipping training."
 		return
 	fi
 
 	local vbr_table="FFMPEG_PGO_VBR_TABLE_${vbr_suffix}_${audio_scenario^^}"
 	einfo "vbr_table=${vbr_table}"
 	if [[ -z "${!vbr_table}" ]] ; then
-		ewarn "Missing VBR table for ${encoding_codec}.  Skipping PGO training."
+		ewarn "Missing VBR table for ${encoding_codec}.  Skipping training."
 		return
 	fi
 

@@ -81,21 +81,6 @@ _UOPTS_BOLT_PATH="" # Set in ebolt_setup
 # Force a particular LLVM slot for llvm-slot.  This is for compatiblity for BOLT profiles.
 # The preference is auto selection to the highest enabled.
 
-# @FUNCTION: ebolt_meets_requirements
-# @RETURN:
-# 0 - as the exit code if it has installed assets and training dependencies
-# 1 - as the exit code if it did not install assets or did not install dependencies
-# @DESCRIPTION:
-# Reports if the prerequisites to train are met.  The implication is that if it
-# doesn't have the assets, or doesn't have the training tool, or doesn't have
-# the dependency to that training tool, it will fall back to as if USE=-ebolt.
-# Example scenario:  dynamic linking to be train with a separate package with
-# app that uses the dynamic library.  If the app is not installed, then
-# we skip both INST and OPT and fallback to normal merging sequence.
-#
-# This function is actually a user defined event handler and optional.
-#
-
 # @ECLASS_VARIABLE: UOPTS_BOLT_MALLOC
 # @DESCRIPTION:
 # Chooses the preferred malloc
@@ -286,17 +271,9 @@ ebolt_get_phase() {
 	_ebolt_meets_bolt_requirements
 	local ret=$?
 
-	local retu=-1
-	if declare -f ebolt_meets_requirements > /dev/null ; then
-		ebolt_meets_requirements
-		local retu=$?
-	fi
-
 	if ! use ebolt ; then
 		result="NO_BOLT"
 	elif is_abi_boltable ; then
-		result="NO_BOLT"
-	elif use ebolt && (( ${retu} == 1 )) ; then
 		result="NO_BOLT"
 	elif use ebolt && [[ "${UOPTS_BOLT_FORCE_INST}" == "1" ]] ; then
 		result="INST"

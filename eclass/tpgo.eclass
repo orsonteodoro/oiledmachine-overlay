@@ -111,28 +111,13 @@ _TPGO_ECLASS=1
 # Lets the project decide how to add PGO flags and merge profile.
 TPGO_CONFIGURE_DONT_SET_FLAGS=${TPGO_CONFIGURE_DONT_SET_FLAGS:-0}
 
-# @FUNCTION: tpgo_meets_requirements
-# @RETURN:
-# 0 - as the exit code if it has installed assets and training dependencies
-# 1 - as the exit code if it did not install assets or did not install dependencies
-# @DESCRIPTION:
-# Reports if the prerequisites to train are met.  The implication is that if it
-# doesn't have the assets, or doesn't have the training tool, or doesn't have
-# the dependency to that training tool, it will fall back to as if USE=-pgo.
-# Example scenario:  dynamic linking to be train with a separate package with
-# app that uses the dynamic library.  If the app is not installed, then
-# we skip both PGI and PGO and fallback to normal merging sequence.
-#
-# This function is actually a user defined event handler and optional.
-#
-
 # TIPS:
 
 # If a library package is disjoint from the app package and the library package
 # doesn't contain a trainer app, then use LD_LIBRARY_PATH to load the PGIed
 # library in _src_pre_train to priorize the PGI library before the system
 # library, but the app should be prebuilt with the matching depending library
-# so the symbols are consistent.  Also, use the tpgo_meets_requirements and
+# so the symbols are consistent.  Also, use the train_meets_requirements and
 # PDEPEND to prevent disruption of user work.  If this is too difficult to sort
 # out, use the epgo eclass instead.
 

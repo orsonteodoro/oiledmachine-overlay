@@ -82,21 +82,6 @@ _UOPTS_BOLT_PATH="" # Set in tbolt_setup
 # @DESCRIPTION:
 # Allow to override the default BOLT optimization setting
 
-# @FUNCTION: tbolt_meets_requirements
-# @RETURN:
-# 0 - as the exit code if it has installed assets and training dependencies
-# 1 - as the exit code if it did not install assets or did not install dependencies
-# @DESCRIPTION:
-# Reports if the prerequisites to train are met.  The implication is that if it
-# doesn't have the assets, or doesn't have the training tool, or doesn't have
-# the dependency to that training tool, it will fall back to as if USE=-tbolt.
-# Example scenario:  dynamic linking to be train with a separate package with
-# app that uses the dynamic library.  If the app is not installed, then
-# we skip both INST and OPT and fallback to normal merging sequence.
-#
-# This function is actually a user defined event handler and optional.
-#
-
 # @ECLASS_VARIABLE: UOPTS_BOLT_MALLOC
 # @DESCRIPTION:
 # Chooses the preferred malloc
