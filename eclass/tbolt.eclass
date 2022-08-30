@@ -116,19 +116,6 @@ _tbolt_check_bolt() {
 ewarn
 ewarn "BOLT support is still a Work In Progress (WIP)."
 ewarn
-		if [[ -z "${UOPTS_BOLT_GROUP}" ]] ; then
-eerror
-eerror "The UOPTS_BOLT_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
-eerror "in a per-package env file.  Users who are not a member of this group"
-eerror "cannot generate a BOLT profile data with this program."
-eerror
-eerror "Example:"
-eerror
-eerror "  UOPTS_BOLT_GROUP=\"tbolt\""
-eerror
-			die
-		fi
-
 		if ! use kernel_linux ; then
 ewarn
 ewarn "The ebuilds only support BOLT for Linux at the moment."
@@ -319,6 +306,7 @@ tbolt_get_phase() {
 _tbolt_inst_tree() {
 	[[ "${BOLT_PHASE}" == "INST" ]] || return
 	local tree="${1}"
+	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 	for p in $(find "${tree}" -type f) ; do
 		[[ -L "${p}" ]] && continue
 		local bn=$(basename "${p}")
@@ -343,7 +331,7 @@ eerror
 				"${p}" \
 				-instrument \
 				-o "${p}.bolt" \
-				-instrumentation-file "${EPREFIX}${bolt_data_suffix_dir}/${bn}.fdata" \
+				-instrumentation-file "${bolt_data_staging_dir}/${bn}.fdata" \
 				|| die
 			mv "${p}" "${p}.orig" || die
 			mv "${p}.bolt" "${p}" || die
@@ -358,6 +346,7 @@ eerror
 _tbolt_opt_tree() {
 	[[ "${BOLT_PHASE}" == "OPT" ]] || return
 	local tree="${1}"
+	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 	for p in $(find "${tree}" -type f) ; do
 		[[ -L "${p}" ]] && continue
 		local bn=$(basename "${p}")
@@ -474,8 +463,11 @@ tbolt_src_install() {
 		local bolt_data_suffix_dir="${_UOPTS_BOLT_DATA_DIR}/${_UOPTS_BOLT_SUFFIX}"
 		local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 		keepdir "${bolt_data_suffix_dir}"
-		fowners root:${UOPTS_BOLT_GROUP} "${bolt_data_suffix_dir}"
-		fperms 0775 "${bolt_data_suffix_dir}"
+
+		cp -aT \
+			"${bolt_data_staging_dir}" \
+			"${ED}/${bolt_data_suffix_dir}" \
+			|| die
 
 		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_version" || die
