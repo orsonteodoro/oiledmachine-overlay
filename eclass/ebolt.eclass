@@ -220,7 +220,7 @@ ebolt_src_configure() {
 			'-f*reorder-blocks-and-partition' \
 			'-Wl,--emit-relocs' \
 			'-Wl,-q'
-		append-flags $(test-flag -fno-reorder-blocks-and-partition)
+		append-flags $(test-flags -fno-reorder-blocks-and-partition)
 		append-ldflags $(test-flag-CCLD -fno-reorder-blocks-and-partition) \
 			-Wl,--emit-relocs
 	fi

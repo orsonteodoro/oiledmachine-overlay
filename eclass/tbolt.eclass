@@ -209,7 +209,7 @@ tbolt_src_configure() {
 			'-f*reorder-blocks-and-partition' \
 			'-Wl,--emit-relocs' \
 			'-Wl,-q'
-		append-flags $(test-flag -fno-reorder-blocks-and-partition)
+		append-flags $(test-flags -fno-reorder-blocks-and-partition)
 		append-ldflags $(test-flag-CCLD -fno-reorder-blocks-and-partition) \
 			-Wl,--emit-relocs
 	fi
@@ -227,10 +227,10 @@ _tbolt_is_profile_reusable() {
 
 		# Actually, you can use GCC.
 
-		touch "${pgo_data_staging_dir}/llvm_bolt_fingerprint" \
-			|| die "You must call ebolt_src_prepare before calling ebolt_get_phase"
+		touch "${bolt_data_staging_dir}/llvm_bolt_fingerprint" \
+			|| die "You must call tbolt_src_prepare before calling tbolt_get_phase"
 		local actual=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " ")
-		local expected=$(cat "${pgo_data_staging_dir}/llvm_bolt_fingerprint")
+		local expected=$(cat "${bolt_data_staging_dir}/llvm_bolt_fingerprint")
 		if [[ "${actual}" != "${expected}" ]] ; then
 # This check is done because of BOLT profile compatibility.
 ewarn
