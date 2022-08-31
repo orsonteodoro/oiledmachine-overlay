@@ -267,7 +267,7 @@ _tbolt_inst_tree() {
 	[[ "${BOLT_PHASE}" == "INST" ]] || return
 	local tree="${1}"
 	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
-	for p in $(find "${tree}" -type f) ; do
+	for p in $(find "${tree}" -type f -not -name "*.orig") ; do
 		[[ -L "${p}" ]] && continue
 		local bn=$(basename "${p}")
 		is_bolt_banned "${bn}" && continue
@@ -291,13 +291,16 @@ ewarn "Missing .rela.text skipping ${p}"
 		if (( ${is_boltable} == 1 )) ; then
 			# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
 			einfo "vanilla -> BOLT instrumented:  ${p}"
+			if [[ ! -e "${p}.orig" ]] ; then
+				mv "${p}"{,.orig} || die
+			else
+				ewarn "${p}.orig existed and BUILD_DIR was not completely wiped."
+			fi
 			LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
-				"${p}" \
+				"${p}.orig" \
 				-instrument \
-				-o "${p}.bolt" \
+				-o "${p}" \
 				-instrumentation-file "${bolt_data_staging_dir}/${bn}.fdata" || die
-			mv "${p}" "${p}.orig" || die
-			mv "${p}.bolt" "${p}" || die
 		fi
 	done
 }
@@ -328,7 +331,12 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 			continue
 		fi
 		local bn=$(basename "${p}")
-		[[ -e "${bolt_data_staging_dir}/${bn}.fdata" ]] || continue
+		if [[ ! -e "${bolt_data_staging_dir}/${bn}.fdata" ]] ; then
+			if [[ -e "${p}.orig" ]] ; then
+				mv "${p}"{.orig,} || die
+			fi
+			continue
+		fi
 		if (( ${is_boltable} == 1 )) ; then
 			local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
 			einfo "vanilla -> BOLT optimized:  ${p}"
@@ -341,7 +349,7 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 				-o "${p}" \
 				-data="${bolt_data_staging_dir}/${bn}.fdata" \
 				${args[@]} || die
-			rm "${p}.orig" || die
+			rm -rf "${p}.orig" || die
 		fi
 	done
 }
@@ -366,7 +374,7 @@ tbolt_train_verify_profile_warn() {
 		local nlines=$(find "${tbolt_data_staging_dir}" -name "*.fdata" | wc -l)
 		if (( ${nlines} == 0 )) ; then
 ewarn
-ewarn "Didn't generate a BOLT profile"
+ewarn "Failed to generate a BOLT profile."
 ewarn
 		fi
 	fi
@@ -383,7 +391,7 @@ tbolt_train_verify_profile_fatal() {
 		local nlines=$(find "${tbolt_data_staging_dir}" -name "*.fdata" | wc -l)
 		if (( ${nlines} == 0 )) ; then
 eerror
-eerror "Didn't generate a BOLT profile"
+eerror "Failed to generate a BOLT profile."
 eerror
 			if [[ "${ABI}" =~ ("amd64"|"arm64") ]] ; then
 				die
@@ -484,6 +492,8 @@ _disallow_instrumented() {
 		if readelf -p ".note.bolt_info" "${p}" \
 			| grep -E -i -e "-instrument( |$)" ; then
 eerror
+eerror "The instrumented binary:  ${p}"
+eerror
 eerror "Detected instrumented binary in D the image which can lead to @system"
 eerror "failure.  This indicates a bug in the tbolt.eclass not properly"
 eerror "reverting back to the original binary.  Disable the bolt USE flag"
@@ -523,6 +533,9 @@ tbolt_src_install() {
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_version" || die
 		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " " \
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_fingerprint" || die
+
+		# Never strip.  If you do it will segfault.
+		export STRIP="true"
 	fi
 }
 

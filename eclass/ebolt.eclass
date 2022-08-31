@@ -435,7 +435,12 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 				continue
 			fi
 			local bn=$(basename "${p}")
-			[[ -e "${bolt_data_staging_dir}/${bn}.fdata" ]] || continue
+			if [[ ! -e "${bolt_data_staging_dir}/${bn}.fdata" ]] ; then
+				if [[ -e "${p}.orig" ]] ; then
+					mv "${p}"{.orig,} || die
+				fi
+				continue
+			fi
 			if (( ${is_boltable} == 1 )) ; then
 				local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
 				local bn=$(basename "${p}")
@@ -485,6 +490,9 @@ ebolt_src_install() {
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_version" || die
 		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " " \
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_fingerprint" || die
+
+		# Never strip.  If you do it will segfault.
+		export STRIP="true"
 	fi
 }
 
@@ -563,11 +571,16 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 				continue
 			fi
 			local bn=$(basename "${p}")
-			[[ -e "${bolt_data_staging_dir}/${bn}.fdata" ]] || continue
+			if [[ ! -e "${bolt_data_staging_dir}/${bn}.fdata" ]] ; then
+				if [[ -e "${p}.orig" ]] ; then
+					mv "${p}"{.orig,} || die
+				fi
+				continue
+			fi
 			if (( ${is_boltable} == 1 )) ; then
 				local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
 				if [[ ! -e "${p}.orig" ]] ; then
-					cp -a "${p}" "${p}".orig || true
+					cp -a "${p}" "${p}.orig" || true
 				fi
 				einfo "BOLT instrumented -> optimized:  ${p}"
 				if ! LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
@@ -587,14 +600,13 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 		if [[ -e "${p}.bolt_failed" ]] ; then
 			einfo "Undoing BOLT failure for ${p}"
 			mv "${p}.orig" "${p}"
-			rm "${p}.bolt" || true
-			rm "${p}.bolt_failed"
+			rm -rf "${p}.bolt" \
+				"${p}.bolt_failed"
 		fi
 		if [[ -e "${p}.bolt" ]] ; then
 			einfo "Replacing with BOLT optimized for ${p}"
-			rm "${p}"
 			mv "${p}.bolt" "${p}"
-			rm "${p}.orig"
+			rm -rf "${p}.orig"
 		fi
 	done
 }

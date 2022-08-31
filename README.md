@@ -214,6 +214,18 @@ USE flags:
 * ebolt - Build with 1 step BOLT in one emerge
 * bolt - Build with three step 3 BOLT in one emerge
 
+No stripping:
+
+BOLTed binaries should never be STRIPed of .bolt.org* sections.  If you see that
+portage did strip add either add FEATURES="${FEATURES} nostrip" on a per-package
+level or modify the portage package to with -w -K .bolt.org* with changes on
+DEF_STRIP_FLAGS in
+[estrip](https://github.com/gentoo/portage/blob/master/bin/estrip#L177)
+or
+${EPREFIX}/usr/lib/portage/${EPYTHON}/estrip (see also:
+`equery f estrip | grep python`).  To prevent segfaults, we set STRIP=true
+in the eclass but from experience, it may not always work.
+
 #### PGO environment variables
 
 UOPTS_PGO_FORCE_PGI - 1 to reset to PGI temporarily.  Remember to remove the

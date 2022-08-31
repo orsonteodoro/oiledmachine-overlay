@@ -162,7 +162,7 @@ einfo
 	fi
 
 	if has pgo ${USE} && use pgo && (( ${is_pgoable} == 1 )) && [[ -n "${_TPGO_ECLASS}" ]] ; then
-		TRAIN_MUTEX="tpgo"
+		TRAIN_MUX="tpgo"
 		if [[ "${skip_pgi}" == "no" ]] ; then
 			PGO_PHASE="PGI"
 			declare -f _src_pre_pgi > /dev/null && _src_pre_pgi
@@ -197,7 +197,7 @@ einfo
 	fi
 
 	if has bolt ${USE} && use bolt && (( ${is_boltable} == 1 )) && [[ -n "${_TBOLT_ECLASS}" ]] ; then
-		TRAIN_MUTEX="tbolt"
+		TRAIN_MUX="tbolt"
 		if [[ "${skip_inst}" == "no" ]] ; then
 			BOLT_PHASE="INST"
 			_tbolt_inst_tree "${BUILD_DIR}"

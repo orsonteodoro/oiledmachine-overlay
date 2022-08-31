@@ -14,7 +14,7 @@
 # in the ebuild context.
 
 # Only one train instance allowed.
-TRAIN_MUTEX="none" # It can only be tpgo, tbolt, or none.
+TRAIN_MUX="none" # It can only be tpgo, tbolt, ebolt, epgo, none.
 
 if [[ "${TRAIN_USE_X}" == "1" ]] ;then
 	inherit virtualx
@@ -301,7 +301,7 @@ _train_trainer_default() {
 		# gross.
 		if (( ${#VERIFY_FUNCTIONS_WARN[@]} > 0 )) ; then
 			for f in ${VERIFY_FUNCTIONS_WARN[@]} ; do
-				if [[ "${f}" =~ ^"${TRAIN_MUTEX}" ]] ; then
+				if [[ "${f}" =~ ^"${TRAIN_MUX}" ]] ; then
 					"${f}"
 				fi
 			done
@@ -310,7 +310,7 @@ _train_trainer_default() {
 	IFS=$' \t\n'
 	if (( ${#VERIFY_FUNCTIONS_FATAL[@]} > 0 )) ; then
 		for f in ${VERIFY_FUNCTIONS_FATAL[@]} ; do
-			if [[ "${f}" =~ ^"${TRAIN_MUTEX}" ]] ; then
+			if [[ "${f}" =~ ^"${TRAIN_MUX}" ]] ; then
 				"${f}"
 			fi
 		done
