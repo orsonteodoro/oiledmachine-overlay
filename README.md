@@ -217,12 +217,12 @@ USE flags:
 No stripping:
 
 BOLTed binaries should never be STRIPed of .bolt.org* sections.  If you see that
-portage did strip add either add FEATURES="${FEATURES} nostrip" on a per-package
-level or modify the portage package to with -w -K .bolt.org* with changes on
-DEF_STRIP_FLAGS in
+portage did strip add either FEATURES="${FEATURES} nostrip" on a per-package
+level or modify the portage package with a per-package patch to with changes
+`w -K .bolt.org*` with the DEF_STRIP_FLAGS variable in
 [estrip](https://github.com/gentoo/portage/blob/master/bin/estrip#L177)
 or
-`${EPREFIX}/usr/lib/portage/${EPYTHON}/estrip` (see also:
+in installed version `${EPREFIX}/usr/lib/portage/${EPYTHON}/estrip` (see also:
 `equery f estrip | grep python`).  To prevent segfaults, we set STRIP=true
 in the eclass but from experience, it may not always work.
 
