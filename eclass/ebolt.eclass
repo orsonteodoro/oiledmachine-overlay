@@ -155,6 +155,9 @@ _setup_llvm() {
 # @DESCRIPTION:
 # You must call this in pkg_setup
 ebolt_setup() {
+ewarn
+ewarn "The ebolt USE flag is still Work In Progress (WIP)."
+ewarn
 	_ebolt_check_bolt
 	_setup_malloc
 	_setup_llvm

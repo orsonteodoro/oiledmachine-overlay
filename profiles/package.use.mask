@@ -43,3 +43,6 @@ sys-auth/pam-python test
 
 # Allow to install debug export profiles
 dev-games/godot-export-templates-bin -debug
+
+# Dangerous, not ready yet due to eclass problems
+sys-libs/zlib bolt ebolt

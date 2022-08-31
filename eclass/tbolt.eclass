@@ -143,6 +143,9 @@ _setup_llvm() {
 # @DESCRIPTION:
 # You must call this in pkg_setup
 tbolt_setup() {
+ewarn
+ewarn "The bolt USE flag is still Work In Progress (WIP)."
+ewarn
 	_tbolt_check_bolt
 	_setup_malloc
 	train_setup
