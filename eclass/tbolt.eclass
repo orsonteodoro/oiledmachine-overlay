@@ -473,7 +473,7 @@ has_relocs() {
 # A similar problem happens in GCC PGO but handled gracefully.
 _disallow_instrumented() {
 	local p
-	for p in $(find "${ED}" -type f) ; then
+	for p in $(find "${D}" -type f) ; do
 		if file "${p}" | grep -q "ELF.*executable" ; then
 			:;
 		elif file "${p}" | grep -q "ELF.*shared object" ; then
@@ -484,14 +484,14 @@ _disallow_instrumented() {
 		if readelf -p ".note.bolt_info" "${p}" \
 			| grep -E -i -e "-instrument( |$)" ; then
 eerror
-eerror "Detected instrumented binary in ED the image which can lead to @system"
+eerror "Detected instrumented binary in D the image which can lead to @system"
 eerror "failure.  This indicates a bug in the tbolt.eclass not properly"
 eerror "reverting back to the original binary.  Disable the bolt USE flag"
 eerror "or wait for a fix."
 eerror
 			die
 		fi
-	fi
+	done
 }
 
 # @FUNCTION: tbolt_src_install
