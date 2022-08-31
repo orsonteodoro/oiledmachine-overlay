@@ -222,7 +222,7 @@ level or modify the portage package to with -w -K .bolt.org* with changes on
 DEF_STRIP_FLAGS in
 [estrip](https://github.com/gentoo/portage/blob/master/bin/estrip#L177)
 or
-${EPREFIX}/usr/lib/portage/${EPYTHON}/estrip (see also:
+`${EPREFIX}/usr/lib/portage/${EPYTHON}/estrip` (see also:
 `equery f estrip | grep python`).  To prevent segfaults, we set STRIP=true
 in the eclass but from experience, it may not always work.
 
