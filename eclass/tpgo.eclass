@@ -488,14 +488,14 @@ tpgo_train_verify_profile_warn() {
 		local nlines=$(find "${pgo_data_staging_dir}" -name "*.gcda" | wc -l)
 		if (( ${nlines} == 0 )) ; then
 ewarn
-ewarn "Didn't generate a PGO profile"
+ewarn "Failed to generate a PGO profile."
 ewarn
 		fi
 	elif use pgo && [[ "${CC}" =~ "clang" ]] ; then
 		local nlines=$(find "${pgo_data_staging_dir}" -name "*.profraw" | wc -l)
 		if (( ${nlines} == 0 )) ; then
 ewarn
-ewarn "Didn't generate a PGO profile"
+ewarn "Failed to generate a PGO profile."
 ewarn
 		fi
 	fi
