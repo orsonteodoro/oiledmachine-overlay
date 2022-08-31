@@ -214,12 +214,12 @@ USE flags:
 * ebolt - Build with 1 step BOLT in one emerge
 * bolt - Build with three step 3 BOLT in one emerge
 
-No stripping:
+No stripping BOLT:
 
 BOLTed binaries should never be STRIPed of .bolt.org* sections.  If you see that
 portage did strip add either FEATURES="${FEATURES} nostrip" on a per-package
-level or modify the portage package with a per-package patch to with changes
-`-w -K .bolt.org*` with the DEF_STRIP_FLAGS variable in
+level or modify the portage package with a per-package patch to with
+`-w -K .bolt.org*` changes with the DEF_STRIP_FLAGS variable in
 [estrip](https://github.com/gentoo/portage/blob/master/bin/estrip#L177)
 or
 in installed version `${EPREFIX}/usr/lib/portage/${EPYTHON}/estrip` (see also:
