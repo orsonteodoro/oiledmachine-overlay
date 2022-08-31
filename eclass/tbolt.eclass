@@ -465,9 +465,38 @@ has_relocs() {
 	readelf -r "${p}" | grep -q ".rela.text"
 }
 
+# @FUNCTION: _disallow_instrumented
+# @DESCRIPTION:
+# Allowing instrumented to pass is dangerous for any @system or toolchain
+# referenced package.  The reason why is because the bolt will break the system library
+# or compiler program due to the missing profile folder and exhibit strange behavior.
+# A similar problem happens in GCC PGO but handled gracefully.
+_disallow_instrumented() {
+	local p
+	for p in $(find "${ED}" -type f) ; then
+		if file "${p}" | grep -q "ELF.*executable" ; then
+			:;
+		elif file "${p}" | grep -q "ELF.*shared object" ; then
+			:;
+		else
+			continue
+		fi
+		if readelf -p ".note.bolt_info" "${p}" \
+			| grep -E -i -e "-instrument( |$)" ; then
+eerror
+eerror "Detected instrumented binary in ED the image which can lead to @system"
+eerror "failure.  This indicates a bug in the tbolt.eclass not properly"
+eerror "reverting back to the original binary.  Disable the bolt USE flag"
+eerror "or wait for a fix."
+eerror
+			die
+		fi
+	fi
+}
+
 # @FUNCTION: tbolt_src_install
 # @DESCRIPTION:
-# You must call it in *src_install
+# You must call it in *src_install after *_src_install, emake install
 #
 # User defined event handlers:
 #
@@ -479,6 +508,7 @@ has_relocs() {
 #
 tbolt_src_install() {
 	if use bolt ; then
+		_disallow_instrumented
 		_UOPTS_BOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
 		local bolt_data_suffix_dir="${_UOPTS_BOLT_DATA_DIR}/${_UOPTS_BOLT_SUFFIX}"
 		local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
