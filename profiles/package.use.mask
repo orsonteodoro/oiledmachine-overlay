@@ -44,5 +44,6 @@ sys-auth/pam-python test
 # Allow to install debug export profiles
 dev-games/godot-export-templates-bin -debug
 
-# Dangerous, not ready yet due to eclass problems
+# It was tested but generated no BOLT profile for reasons of missing
+# .rela.text sections.
 sys-libs/zlib bolt ebolt
