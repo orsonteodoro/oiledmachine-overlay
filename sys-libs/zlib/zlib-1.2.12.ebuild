@@ -1071,25 +1071,16 @@ _install() {
 		emake -C "${S}/contrib/minizip" install DESTDIR="${D}"
 		sed_macros "${ED}"/usr/include/minizip/*.h
 		if use minizip-utils && multilib_is_native_abi ; then
-			if [[ "${PGO_PHASE}" == "PGI" ]] ; then
-				# Bugs
-				mkdir -p "${ED}/usr/bin" || die
-				cp -a contrib/minizip/miniunzip \
-					"${ED}/usr/bin" || die
-				cp -a contrib/minizip/minizip \
-					"${ED}/usr/bin" || die
-				chmod 0755 "${ED}/usr/bin/minizip" || die
-				chmod 0755 "${ED}/usr/bin/miniunzip" || die
-			else
-				dobin contrib/minizip/miniunzip
-				dobin contrib/minizip/minizip
-			fi
+			# Bugs
+			mkdir -p "${ED}/usr/bin" || die
+			cp -a contrib/minizip/miniunzip \
+				"${ED}/usr/bin" || die
+			cp -a contrib/minizip/minizip \
+				"${ED}/usr/bin" || die
+			chmod 0755 "${ED}/usr/bin/minizip" || die
+			chmod 0755 "${ED}/usr/bin/miniunzip" || die
 		fi
 	fi
-
-	#if [[ "${lib_type}" == "shared" ]] ; then
-	#	rm -f "${ED}"/usr/$(get_libdir)/lib{z,minizip}.{a,la} || die #419645
-	#fi
 }
 
 src_install() {
@@ -1107,6 +1098,7 @@ src_install() {
 	cd "${S}" || die
 	dodoc FAQ README ChangeLog doc/*.txt
 	use minizip && dodoc contrib/minizip/*.txt
+	find "${ED}" -type f -name '*.la' -delete || die
 }
 
 get_arch_enabled_use_flags() {

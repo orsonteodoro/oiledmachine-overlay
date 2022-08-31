@@ -23,8 +23,8 @@
     (2) emerge pigz
     (3) emerge with pgo USE flag and at least one trainer USE flag.
         For web, the default compression levels are recommended.  Also,
-        consider 8 and max for image compression if using png often
-        used on the web.
+        consider 8 and max for image compression if using png, which
+        are often used on the web.
 
     The pgo-custom USE flag can be extended for your particular
     typical use pattern.  For example, you may add a custom script
