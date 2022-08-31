@@ -387,7 +387,9 @@ tbolt_train_verify_profile_fatal() {
 eerror
 eerror "Didn't generate a BOLT profile"
 eerror
-			die
+			if [[ "${ABI}" =~ ("amd64"|"arm64") ]] ; then
+				die
+			fi
 		fi
 	fi
 }
