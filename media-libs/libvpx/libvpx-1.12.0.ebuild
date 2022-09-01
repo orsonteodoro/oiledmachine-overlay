@@ -661,13 +661,15 @@ ewarn "No PGO optimization performed.  Please re-emerge this package."
 ewarn
 ewarn "The following package must be installed before PGOing this package:"
 ewarn
-ewarn "    media-video/ffmpeg[encode,vpx,$(get_arch_enabled_use_flags)]"
+ewarn "  media-video/ffmpeg[encode,vpx,$(get_arch_enabled_use_flags)]"
 ewarn
-ewarn "Further PGO training details can be found in:"
-ewarn
-ewarn "  README.md of this overlay"
-ewarn "  metadata.xml of this package (or \`epkginfo -x ${CATEGORY}/${PN}::oiledmachine-overlay\`)"
-ewarn
+
+einfo
+einfo "Further PGO training details can be found in:"
+einfo
+einfo "  The README.md of this overlay."
+einfo "  The metadata.xml of this package (or \`epkginfo -x ${CATEGORY}/${PN}::oiledmachine-overlay\`)."
+einfo
 	fi
 	uopts_pkg_postinst
 }
