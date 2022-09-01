@@ -29,24 +29,24 @@ IUSE+=" svc +examples"
 IUSE+="
 	chromium
 	pgo
-	pgo-custom
-	pgo-trainer-2-pass-constrained-quality
-	pgo-trainer-constrained-quality
-	pgo-trainer-lossless
+	trainer-custom
+	trainer-2-pass-constrained-quality
+	trainer-constrained-quality
+	trainer-lossless
 "
 REQUIRED_USE="
 	pgo? (
 		|| (
-			pgo-custom
-			pgo-trainer-2-pass-constrained-quality
-			pgo-trainer-constrained-quality
-			pgo-trainer-lossless
+			trainer-custom
+			trainer-2-pass-constrained-quality
+			trainer-constrained-quality
+			trainer-lossless
 		)
 	)
-	pgo-custom? ( pgo )
-	pgo-trainer-2-pass-constrained-quality? ( pgo )
-	pgo-trainer-constrained-quality? ( pgo )
-	pgo-trainer-lossless? ( pgo )
+	trainer-custom? ( pgo )
+	trainer-2-pass-constrained-quality? ( pgo )
+	trainer-constrained-quality? ( pgo )
+	trainer-lossless? ( pgo )
 	test? ( threads )
 "
 
@@ -379,13 +379,13 @@ _trainer_plan_custom() {
 		die "Unrecognized implementation of vpx"
 	fi
 
-	if use pgo-custom && [[ -e "pgo-custom.sh" ]] ; then
-		chown portage:portage pgo-custom.sh || die
-		chmod +x pgo-custom || die
-		./pgo-custom.sh || die
-	elif use pgo-custom && [[ ! -e "pgo-custom.sh" ]] ; then
+	if use trainer-custom && [[ -e "trainer-custom.sh" ]] ; then
+		chown portage:portage trainer-custom.sh || die
+		chmod +x trainer-custom || die
+		./trainer-custom.sh || die
+	elif use trainer-custom && [[ ! -e "trainer-custom.sh" ]] ; then
 eerror
-eerror "Could not find pgo-custom.sh in ${S}"
+eerror "Could not find trainer-custom.sh in ${S}"
 eerror
 		die
 	fi
@@ -600,19 +600,19 @@ _trainer_plan_lossless() {
 
 train_trainer_custom() {
 	[[ "${lib_type}" == "static" ]] || return # Reuse the shared PGO profile
-	if use pgo-trainer-constrained-quality ; then
+	if use trainer-constrained-quality ; then
 		_trainer_plan_constrained_quality "libvpx"
 		_trainer_plan_constrained_quality "libvpx-vp9"
 	fi
-	if use pgo-trainer-2-pass-constrained-quality ; then
+	if use trainer-2-pass-constrained-quality ; then
 		_trainer_plan_2_pass_constrained_quality "libvpx"
 		_trainer_plan_2_pass_constrained_quality "libvpx-vp9"
 	fi
-	if use pgo-trainer-lossless ; then
+	if use trainer-lossless ; then
 		_trainer_plan_lossless "libvpx"
 		_trainer_plan_lossless "libvpx-vp9"
 	fi
-	if use pgo-custom ; then
+	if use trainer-custom ; then
 		_trainer_plan_custom "libvpx"
 		_trainer_plan_custom "libvpx-vp9"
 	fi
