@@ -62,6 +62,7 @@ MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
 
+UOPTS_SUPPORT_EPGO=0 # Recheck if allowed
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info llvm multiprocessing
@@ -1014,7 +1015,7 @@ _fix_paths() {
 }
 
 LTO_TYPE=""
-multilib_src_configure() {
+_src_configure() {
 	if (( ${NABIS} == 1 )) ; then
 		export BUILD_DIR="${S}"
 		cd "${BUILD_DIR}" || die
@@ -1495,7 +1496,7 @@ einfo "Build RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 	./mach configure || die
 }
 
-multilib_src_compile() {
+_src_compile() {
 	if (( ${NABIS} == 1 )) ; then
 		export BUILD_DIR="${S}"
 		cd "${BUILD_DIR}" || die
@@ -1524,6 +1525,13 @@ multilib_src_compile() {
 
 	${virtx_cmd} ./mach build --verbose \
 		|| die
+}
+
+src_compile() {
+	compile_abi() {
+		uopts_src_compile
+	}
+	multilib_foreach_abi compile_abi
 }
 
 # @FUNCTION: _install_licenses

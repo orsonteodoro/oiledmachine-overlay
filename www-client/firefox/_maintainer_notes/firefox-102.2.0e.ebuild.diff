@@ -1,5 +1,5 @@
---- firefox-102.2.0.ebuild.orig	2022-08-31 14:30:23.000000000 -0700
-+++ firefox-102.2.0e.ebuild	2022-08-31 21:57:01.776334640 -0700
+--- firefox-102.2.0.ebuild.orig	2022-09-01 00:51:20.000000000 -0700
++++ firefox-102.2.0e.ebuild	2022-09-01 00:51:08.927175082 -0700
 @@ -1,8 +1,31 @@
 +# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
  # Copyright 1999-2022 Gentoo Authors
@@ -41,13 +41,14 @@
  MOZ_PV_SUFFIX=
  if [[ ${PV} =~ (_(alpha|beta|rc).*)$ ]] ; then
  	MOZ_PV_SUFFIX=${BASH_REMATCH[1]}
-@@ -37,22 +60,30 @@ MOZ_P="${MOZ_PN}-${MOZ_PV}"
+@@ -37,22 +60,31 @@ MOZ_P="${MOZ_PN}-${MOZ_PV}"
  MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
  MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
  
 -inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info \
 -	llvm multiprocessing pax-utils python-any-r1 toolchain-funcs \
 -	virtualx xdg
++UOPTS_SUPPORT_EPGO=0 # Recheck if allowed
 +UOPTS_SUPPORT_TBOLT=0
 +UOPTS_SUPPORT_TPGO=0
 +inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info llvm multiprocessing
@@ -78,7 +79,7 @@
  
  DESCRIPTION="Firefox Web Browser"
  HOMEPAGE="https://www.mozilla.com/firefox"
-@@ -61,138 +92,315 @@ KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+@@ -61,138 +93,315 @@ KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
  
  SLOT="esr"
  LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -491,7 +492,7 @@
  
  # Allow MOZ_GMP_PLUGIN_LIST to be set in an eclass or
  # overridden in the enviromnent (advanced hackers only)
-@@ -202,25 +410,25 @@ fi
+@@ -202,25 +411,25 @@ fi
  
  llvm_check_deps() {
  	if ! has_version -b "sys-devel/clang:${LLVM_SLOT}" ; then
@@ -523,7 +524,7 @@
  }
  
  MOZ_LANGS=(
-@@ -303,7 +511,7 @@ moz_clear_vendor_checksums() {
+@@ -303,7 +512,7 @@ moz_clear_vendor_checksums() {
  		die "${FUNCNAME} requires exact one argument"
  	fi
  
@@ -532,7 +533,7 @@
  
  	sed -i \
  		-e 's/\("files":{\)[^}]*/\1/' \
-@@ -333,16 +541,33 @@ moz_install_xpi() {
+@@ -333,16 +542,33 @@ moz_install_xpi() {
  
  		# Determine extension ID
  		if [[ -f "${xpi_tmp_dir}/install.rdf" ]] ; then
@@ -572,7 +573,7 @@
  		newins "${xpi_file}" "${emid}.xpi"
  	done
  }
-@@ -405,12 +630,16 @@ pkg_pretend() {
+@@ -405,12 +631,16 @@ pkg_pretend() {
  	if [[ ${MERGE_TYPE} != binary ]] ; then
  		if use pgo ; then
  			if ! has usersandbox $FEATURES ; then
@@ -591,7 +592,7 @@
  			CHECKREQS_DISK_BUILD="13500M"
  		else
  			CHECKREQS_DISK_BUILD="6600M"
-@@ -420,16 +649,20 @@ pkg_pretend() {
+@@ -420,16 +650,20 @@ pkg_pretend() {
  	fi
  }
  
@@ -614,7 +615,7 @@
  			CHECKREQS_DISK_BUILD="13500M"
  		else
  			CHECKREQS_DISK_BUILD="6400M"
-@@ -439,24 +672,56 @@ pkg_setup() {
+@@ -439,24 +673,56 @@ pkg_setup() {
  
  		llvm_pkg_setup
  
@@ -689,7 +690,7 @@
  			fi
  		fi
  
-@@ -506,8 +771,9 @@ pkg_setup() {
+@@ -506,8 +772,9 @@ pkg_setup() {
  
  		if ! mountpoint -q /dev/shm ; then
  			# If /dev/shm is not available, configure is known to fail with
@@ -701,7 +702,7 @@
  		fi
  
  		# Google API keys (see http://www.chromium.org/developers/how-tos/api-keys)
-@@ -535,6 +801,43 @@ pkg_setup() {
+@@ -535,6 +802,43 @@ pkg_setup() {
  	CONFIG_CHECK="~SECCOMP"
  	WARNING_SECCOMP="CONFIG_SECCOMP not set! This system will be unable to play DRM-protected content."
  	linux-info_pkg_setup
@@ -745,7 +746,7 @@
  }
  
  src_unpack() {
-@@ -547,20 +850,67 @@ src_unpack() {
+@@ -547,20 +851,67 @@ src_unpack() {
  
  	for _src_file in ${A} ; do
  		if [[ ${_src_file} == *.xpi ]]; then
@@ -817,7 +818,7 @@
  	# Allow user to apply any additional patches without modifing ebuild
  	eapply_user
  
-@@ -579,63 +929,156 @@ src_prepare() {
+@@ -579,63 +930,157 @@ src_prepare() {
  		"${S}"/intl/icu_sources_data.py \
  		|| die "sed failed to set num_cores"
  
@@ -927,7 +928,8 @@
  }
  
 -src_configure() {
-+multilib_src_configure() {
++LTO_TYPE=""
++_src_configure() {
 +	if (( ${NABIS} == 1 )) ; then
 +		export BUILD_DIR="${S}"
 +		cd "${BUILD_DIR}" || die
@@ -999,7 +1001,7 @@
  		NM=gcc-nm
  		RANLIB=gcc-ranlib
  	fi
-@@ -646,18 +1089,24 @@ src_configure() {
+@@ -646,18 +1091,24 @@ src_configure() {
  		strip-unsupported-flags
  	fi
  
@@ -1028,7 +1030,7 @@
  
  	# python/mach/mach/mixin/process.py fails to detect SHELL
  	export SHELL="${EPREFIX}/bin/bash"
-@@ -665,8 +1114,8 @@ src_configure() {
+@@ -665,8 +1116,8 @@ src_configure() {
  	# Set state path
  	export MOZBUILD_STATE_PATH="${BUILD_DIR}"
  
@@ -1039,7 +1041,7 @@
  
  	# Initialize MOZCONFIG
  	mozconfig_add_options_ac '' --enable-application=browser
-@@ -689,28 +1138,35 @@ src_configure() {
+@@ -689,28 +1140,35 @@ src_configure() {
  		--enable-release \
  		--enable-system-ffi \
  		--enable-system-pixman \
@@ -1080,7 +1082,7 @@
  		mozconfig_add_options_ac '' --enable-rust-simd
  	fi
  
-@@ -723,40 +1179,46 @@ src_configure() {
+@@ -723,40 +1181,46 @@ src_configure() {
  		mozconfig_add_options_ac '' --enable-sandbox
  	fi
  
@@ -1139,7 +1141,7 @@
  	fi
  
  	mozconfig_use_with system-av1
-@@ -787,44 +1249,60 @@ src_configure() {
+@@ -787,44 +1251,63 @@ src_configure() {
  	use pulseaudio && myaudiobackends+="pulseaudio,"
  	! use pulseaudio && myaudiobackends+="alsa,"
  
@@ -1162,9 +1164,12 @@
  
 -	if use lto ; then
 -		if use clang ; then
-+	local lto_type=$(check-linker_get_lto_type)
-+	if is-flagq '-flto*' || use pgo ; then
-+		if tc-is-clang && [[ "${lto_type}" == "thinlto" ]] ; then
++	if [[ -z "${LTO_TYPE}" ]] ; then
++		LTO_TYPE=$(check-linker_get_lto_type)
++	fi
++	if use pgo \
++		|| [[ "${LTO_TYPE}" =~ ("thinlto"|"bfdlto") ]] ; then
++		if tc-is-clang && [[ "${LTO_TYPE}" == "thinlto" ]] ; then
  			# Upstream only supports lld when using clang
 -			mozconfig_add_options_ac "forcing ld=lld due to USE=clang and USE=lto" --enable-linker=lld
 -
@@ -1215,7 +1220,7 @@
  		fi
  	fi
  
-@@ -835,28 +1313,37 @@ src_configure() {
+@@ -835,28 +1318,37 @@ src_configure() {
  	if use debug ; then
  		mozconfig_add_options_ac '+debug' --disable-optimize
  	else
@@ -1269,7 +1274,7 @@
  		fi
  	fi
  
-@@ -870,7 +1357,7 @@ src_configure() {
+@@ -870,7 +1362,7 @@ src_configure() {
  	if use cpu_flags_arm_neon ; then
  		mozconfig_add_options_ac '+cpu_flags_arm_neon' --with-fpu=neon
  
@@ -1278,7 +1283,7 @@
  			# thumb options aren't supported when using clang, bug 666966
  			mozconfig_add_options_ac '+cpu_flags_arm_neon' \
  				--with-thumb=yes \
-@@ -878,18 +1365,18 @@ src_configure() {
+@@ -878,18 +1370,18 @@ src_configure() {
  		fi
  	fi
  
@@ -1300,7 +1305,7 @@
  		# https://bugzilla.mozilla.org/show_bug.cgi?id=1482204
  		# https://bugzilla.mozilla.org/show_bug.cgi?id=1483822
  		# toolkit/moz.configure Elfhack section: target.cpu in ('arm', 'x86', 'x86_64')
-@@ -903,11 +1390,13 @@ src_configure() {
+@@ -903,11 +1395,13 @@ src_configure() {
  		fi
  
  		if [[ -n ${disable_elf_hack} ]] ; then
@@ -1316,7 +1321,7 @@
  			append-cxxflags -fno-tree-loop-vectorize
  		fi
  	fi
-@@ -916,19 +1405,26 @@ src_configure() {
+@@ -916,19 +1410,26 @@ src_configure() {
  	case "${ARCH}" in
  		arm)
  			# Reduce the memory requirements for linking
@@ -1326,7 +1331,7 @@
  				:;
 -			elif use lto ; then
 -				append-ldflags -Wl,--no-keep-memory
-+			elif is-flagq '-flto*' ; then
++			elif [[ "${LTO_TYPE}" == "bfdlto" ]] ; then
 +				append-ldflags \
 +					-Wl,--no-keep-memory
  			else
@@ -1347,7 +1352,7 @@
  	fi
  
  	# Allow elfhack to work in combination with unstripped binaries
-@@ -955,17 +1451,27 @@ src_configure() {
+@@ -955,17 +1456,27 @@ src_configure() {
  
  	# Portage sets XARGS environment variable to "xargs -r" by default which
  	# breaks build system's check_prog() function which doesn't support arguments
@@ -1382,12 +1387,12 @@
  
  	# Handle EXTRA_CONF and show summary
  	local ac opt hash reason
-@@ -992,7 +1498,16 @@ src_configure() {
+@@ -992,7 +1503,16 @@ src_configure() {
  	./mach configure || die
  }
  
 -src_compile() {
-+multilib_src_compile() {
++_src_compile() {
 +	if (( ${NABIS} == 1 )) ; then
 +		export BUILD_DIR="${S}"
 +		cd "${BUILD_DIR}" || die
@@ -1400,22 +1405,20 @@
  	local virtx_cmd=
  
  	if use pgo ; then
-@@ -1004,18 +1519,130 @@ src_compile() {
- 		addpredict /root
- 	fi
- 
--	local -x GDK_BACKEND=x11
-+	if ! use X && use wayland; then
-+		local -x GDK_BACKEND=wayland
-+	else
-+		local -x GDK_BACKEND=x11
-+	fi
+@@ -1008,14 +1528,130 @@ src_compile() {
  
  	${virtx_cmd} ./mach build --verbose \
  		|| die
- }
- 
--src_install() {
++
++}
++
++src_compile() {
++	compile_abi() {
++		uopts_src_compile
++	}
++	multilib_foreach_abi compile_abi
++}
++
 +# @FUNCTION: _install_licenses
 +# @DESCRIPTION:
 +# Installs licenses and copyright notices from third party rust cargo
@@ -1514,8 +1517,9 @@
 +		41
 +
 +	touch "${T}/.copied_licenses"
-+}
-+
+ }
+ 
+-src_install() {
 +multilib_src_install() {
 +	if (( ${NABIS} == 1 )) ; then
 +		export BUILD_DIR="${S}"
@@ -1536,7 +1540,7 @@
  
  	DESTDIR="${D}" ./mach install || die
  
-@@ -1041,9 +1668,9 @@ src_install() {
+@@ -1041,9 +1677,9 @@ src_install() {
  	local GENTOO_PREFS="${ED}${PREFS_DIR}/gentoo-prefs.js"
  
  	# Set dictionary path to use system hunspell
@@ -1549,7 +1553,7 @@
  
  	# Force hwaccel prefs if USE=hwaccel is enabled
  	if use hwaccel ; then
-@@ -1052,31 +1679,31 @@ src_install() {
+@@ -1052,31 +1688,31 @@ src_install() {
  		|| die "failed to add prefs to force hardware-accelerated rendering to all-gentoo.js"
  
  		if use wayland; then
@@ -1594,7 +1598,7 @@
  	fi
  
  	# Install language packs
-@@ -1087,16 +1714,16 @@ src_install() {
+@@ -1087,16 +1723,16 @@ src_install() {
  
  	# Install geckodriver
  	if use geckodriver ; then
@@ -1615,7 +1619,7 @@
  	local icon_symbolic_file="${FILESDIR}/icon/firefox-symbolic.svg"
  
  	insinto /usr/share/icons/hicolor/symbolic/apps
-@@ -1115,10 +1742,10 @@ src_install() {
+@@ -1115,10 +1751,10 @@ src_install() {
  	done
  
  	# Install menu
@@ -1629,7 +1633,7 @@
  	local icon="${PN}"
  	local use_wayland="false"
  
-@@ -1141,16 +1768,20 @@ src_install() {
+@@ -1141,16 +1777,20 @@ src_install() {
  
  	# Install wrapper script
  	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
@@ -1652,7 +1656,7 @@
  }
  
  pkg_preinst() {
-@@ -1159,7 +1790,7 @@ pkg_preinst() {
+@@ -1159,7 +1799,7 @@ pkg_preinst() {
  	# If the apulse libs are available in MOZILLA_FIVE_HOME then apulse
  	# does not need to be forced into the LD_LIBRARY_PATH
  	if use pulseaudio && has_version ">=media-sound/apulse-0.1.12-r4" ; then
@@ -1661,7 +1665,7 @@
  		local lib
  		pushd "${ED}${MOZILLA_FIVE_HOME}" &>/dev/null || die
  		for lib in ../apulse/libpulse{.so{,.0},-simple.so{,.0}} ; do
-@@ -1177,20 +1808,23 @@ pkg_postinst() {
+@@ -1177,20 +1817,23 @@ pkg_postinst() {
  	xdg_pkg_postinst
  
  	if ! use gmp-autoupdate ; then
@@ -1693,7 +1697,7 @@
  	fi
  
  	local show_doh_information
-@@ -1214,54 +1848,88 @@ pkg_postinst() {
+@@ -1214,54 +1857,88 @@ pkg_postinst() {
  	fi
  
  	if [[ -n "${show_doh_information}" ]] ; then
