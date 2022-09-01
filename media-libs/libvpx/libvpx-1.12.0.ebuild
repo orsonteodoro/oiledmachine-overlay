@@ -29,7 +29,6 @@ IUSE+=" svc +examples"
 IUSE+="
 	chromium
 	pgo
-	trainer-custom
 	trainer-2-pass-constrained-quality
 	trainer-constrained-quality
 	trainer-lossless
@@ -37,13 +36,11 @@ IUSE+="
 REQUIRED_USE="
 	pgo? (
 		|| (
-			trainer-custom
 			trainer-2-pass-constrained-quality
 			trainer-constrained-quality
 			trainer-lossless
 		)
 	)
-	trainer-custom? ( pgo )
 	trainer-2-pass-constrained-quality? ( pgo )
 	trainer-constrained-quality? ( pgo )
 	trainer-lossless? ( pgo )
@@ -83,7 +80,7 @@ S_orig="${WORKDIR}/${P}"
 get_asset_ids() {
 	local i
 	for i in $(seq 0 ${LIBVPX_ASSET_LIMIT}) ; do
-		echo "LIBVPX_PGO_VIDEO_${i}"
+		echo "LIBVPX_TRAINING_VIDEO_${i}"
 	done
 }
 
@@ -196,7 +193,7 @@ has_ffmpeg() {
 has_codec_requirements() {
 	local meets_input_req=0
 	local meets_output_req=0
-	if ffprobe "${LIBAOM_PGO_VIDEO}" 2>/dev/null 1>/dev/null ; then
+	if ffprobe "${LIBAOM_TRAINING_VIDEO}" 2>/dev/null 1>/dev/null ; then
 		meets_input_req=1
 	fi
 	if ( ffmpeg -formats 2>&1 | grep -q -e "E.*webm .*WebM" ) ; then
@@ -365,32 +362,6 @@ _vdecode() {
 	"${cmd[@]}" || die
 }
 
-_trainer_plan_custom() {
-	local encoding_codec="${1}"
-	local decoding_codec
-	local training_args
-	if [[ "${encoding_codec}" == "libvpx" ]] ; then
-		decoding_codec="libvpx"
-		training_args=${LIBVPX_VP8_PGO_TRAINING_ARGS}
-	elif [[ "${encoding_codec}" == "libvpx-vp9" ]] ; then
-		decoding_codec="libvpx-vp9"
-		training_args=${LIBVPX_VP9_PGO_TRAINING_ARGS}
-	else
-		die "Unrecognized implementation of vpx"
-	fi
-
-	if use trainer-custom && [[ -e "trainer-custom.sh" ]] ; then
-		chown portage:portage trainer-custom.sh || die
-		chmod +x trainer-custom || die
-		./trainer-custom.sh || die
-	elif use trainer-custom && [[ ! -e "trainer-custom.sh" ]] ; then
-eerror
-eerror "Could not find trainer-custom.sh in ${S}"
-eerror
-		die
-	fi
-}
-
 _trainer_plan_constrained_quality() {
 	local entry="${1}"
 
@@ -398,8 +369,8 @@ _trainer_plan_constrained_quality() {
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local duration=$(echo "${entry}" | cut -f 4 -d ";")
-	local max_bpp=${LIBVPX_PGO_BPP_MAX:-1.0}
-	local min_bpp=${LIBVPX_PGO_BPP_MIN:-0.5}
+	local max_bpp=${LIBVPX_TRAINING_BPP_MAX:-1.0}
+	local min_bpp=${LIBVPX_TRAINING_BPP_MIN:-0.5}
 	local avg_bpp=$(python -c "print((${max_bpp}+${min_bpp})/2)")
 	local maxrate=$(python -c "print(${width}*${height}*${fps}*${max_bpp})")"k" # moving
 	local minrate=$(python -c "print(${width}*${height}*${fps}*${min_bpp})")"k" # stationary
@@ -446,10 +417,10 @@ _trainer_plan_constrained_quality() {
 	local training_args
 	if [[ "${encoding_codec}" == "libvpx" ]] ; then
 		decoding_codec="libvpx"
-		training_args=${LIBVPX_VP8_PGO_TRAINING_ARGS}
+		training_args=${LIBVPX_VP8_TRAINING_ARGS}
 	elif [[ "${encoding_codec}" == "libvpx-vp9" ]] ; then
 		decoding_codec="libvpx-vp9"
-		training_args=${LIBVPX_VP9_PGO_TRAINING_ARGS}
+		training_args=${LIBVPX_VP9_TRAINING_ARGS}
 	else
 		die "Unrecognized implementation of vpx"
 	fi
@@ -475,8 +446,8 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local duration=$(echo "${entry}" | cut -f 4 -d ";")
-	local max_bpp=${LIBVPX_PGO_BPP_MAX:-1.0}
-	local min_bpp=${LIBVPX_PGO_BPP_MIN:-0.5}
+	local max_bpp=${LIBVPX_TRAINING_BPP_MAX:-1.0}
+	local min_bpp=${LIBVPX_TRAINING_BPP_MIN:-0.5}
 	local avg_bpp=$(python -c "print((${max_bpp}+${min_bpp})/2)")
 	local maxrate=$(python -c "print(${width}*${height}*${fps}*${max_bpp})")"k" # moving
 	local minrate=$(python -c "print(${width}*${height}*${fps}*${min_bpp})")"k" # stationary
@@ -538,10 +509,10 @@ _trainer_plan_2_pass_constrained_quality() {
 	local training_args
 	if [[ "${encoding_codec}" == "libvpx" ]] ; then
 		decoding_codec="libvpx"
-		training_args=${LIBVPX_VP8_PGO_TRAINING_ARGS}
+		training_args=${LIBVPX_VP8_TRAINING_ARGS}
 	elif [[ "${encoding_codec}" == "libvpx-vp9" ]] ; then
 		decoding_codec="libvpx-vp9"
-		training_args=${LIBVPX_VP9_PGO_TRAINING_ARGS}
+		training_args=${LIBVPX_VP9_TRAINING_ARGS}
 	else
 		die "Unrecognized implementation of vpx"
 	fi
@@ -566,10 +537,10 @@ _trainer_plan_lossless() {
 	local training_args
 	if [[ "${encoding_codec}" == "libvpx" ]] ; then
 		decoding_codec="libvpx"
-		training_args=${LIBVPX_VP8_PGO_TRAINING_ARGS_LOSSLESS}
+		training_args=${LIBVPX_VP8_TRAINING_ARGS_LOSSLESS}
 	elif [[ "${encoding_codec}" == "libvpx-vp9" ]] ; then
 		decoding_codec="libvpx-vp9"
-		training_args=${LIBVPX_VP9_PGO_TRAINING_ARGS_LOSSLESS}
+		training_args=${LIBVPX_VP9_TRAINING_ARGS_LOSSLESS}
 	else
 		die "Unrecognized implementation of vpx"
 	fi
@@ -611,10 +582,6 @@ train_trainer_custom() {
 	if use trainer-lossless ; then
 		_trainer_plan_lossless "libvpx"
 		_trainer_plan_lossless "libvpx-vp9"
-	fi
-	if use trainer-custom ; then
-		_trainer_plan_custom "libvpx"
-		_trainer_plan_custom "libvpx-vp9"
 	fi
 }
 
@@ -689,9 +656,18 @@ get_arch_enabled_use_flags() {
 
 pkg_postinst() {
 	if use pgo && [[ -z "${PGO_RAN}" ]] ; then
-elog "No PGO optimization performed.  Please re-emerge this package."
-elog "The following package must be installed before PGOing this package:"
-elog "  media-video/ffmpeg[encode,vpx,$(get_arch_enabled_use_flags)]"
+ewarn
+ewarn "No PGO optimization performed.  Please re-emerge this package."
+ewarn
+ewarn "The following package must be installed before PGOing this package:"
+ewarn
+ewarn "    media-video/ffmpeg[encode,vpx,$(get_arch_enabled_use_flags)]"
+ewarn
+ewarn "Further PGO training details can be found in:"
+ewarn
+ewarn "  README.md of this overlay"
+ewarn "  metadata.xml of this package (or \`epkginfo -x ${CATEGORY}/${PN}::oiledmachine-overlay\`)"
+ewarn
 	fi
 	uopts_pkg_postinst
 }
