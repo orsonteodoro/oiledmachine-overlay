@@ -526,7 +526,7 @@ REQUIRED_USE+="
 	pgo-trainer-video-2-pass-constrained-quality? ( pgo )
 	pgo-trainer-video-constrained-quality? ( pgo )
 	pgo-trainer-video-lossless? ( pgo )
-	pgo-trainer-video-streaming ( pgo libv4l )
+	pgo-trainer-video-streaming? ( pgo libv4l )
 	!pgo-trainer-video-streaming
 "
 RESTRICT="
