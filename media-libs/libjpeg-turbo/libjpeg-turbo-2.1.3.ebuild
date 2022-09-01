@@ -21,76 +21,76 @@ fi
 IUSE="+asm cpu_flags_arm_neon java static-libs"
 IUSE+="
 	pgo
-	pgo-custom
-	pgo-trainer-70-pct-quality-baseline
-	pgo-trainer-75-pct-quality-baseline
-	pgo-trainer-80-pct-quality-baseline
-	pgo-trainer-90-pct-quality-baseline
-	pgo-trainer-95-pct-quality-baseline
-	pgo-trainer-98-pct-quality-baseline
-	pgo-trainer-99-pct-quality-baseline
-	pgo-trainer-100-pct-quality-baseline
-	pgo-trainer-70-pct-quality-progressive
-	pgo-trainer-75-pct-quality-progressive
-	pgo-trainer-80-pct-quality-progressive
-	pgo-trainer-90-pct-quality-progressive
-	pgo-trainer-95-pct-quality-progressive
-	pgo-trainer-98-pct-quality-progressive
-	pgo-trainer-99-pct-quality-progressive
-	pgo-trainer-100-pct-quality-progressive
-	pgo-trainer-crop
-	pgo-trainer-decode
-	pgo-trainer-grayscale
-	pgo-trainer-transformations
+	trainer-custom
+	trainer-70-pct-quality-baseline
+	trainer-75-pct-quality-baseline
+	trainer-80-pct-quality-baseline
+	trainer-90-pct-quality-baseline
+	trainer-95-pct-quality-baseline
+	trainer-98-pct-quality-baseline
+	trainer-99-pct-quality-baseline
+	trainer-100-pct-quality-baseline
+	trainer-70-pct-quality-progressive
+	trainer-75-pct-quality-progressive
+	trainer-80-pct-quality-progressive
+	trainer-90-pct-quality-progressive
+	trainer-95-pct-quality-progressive
+	trainer-98-pct-quality-progressive
+	trainer-99-pct-quality-progressive
+	trainer-100-pct-quality-progressive
+	trainer-crop
+	trainer-decode
+	trainer-grayscale
+	trainer-transformations
 "
 REQUIRED_USE="
 	pgo? (
-		pgo-trainer-decode
+		trainer-decode
 		|| (
-			pgo-custom
-			pgo-trainer-70-pct-quality-baseline
-			pgo-trainer-75-pct-quality-baseline
-			pgo-trainer-80-pct-quality-baseline
-			pgo-trainer-90-pct-quality-baseline
-			pgo-trainer-95-pct-quality-baseline
-			pgo-trainer-98-pct-quality-baseline
-			pgo-trainer-99-pct-quality-baseline
-			pgo-trainer-100-pct-quality-baseline
-			pgo-trainer-70-pct-quality-progressive
-			pgo-trainer-75-pct-quality-progressive
-			pgo-trainer-80-pct-quality-progressive
-			pgo-trainer-90-pct-quality-progressive
-			pgo-trainer-95-pct-quality-progressive
-			pgo-trainer-98-pct-quality-progressive
-			pgo-trainer-99-pct-quality-progressive
-			pgo-trainer-100-pct-quality-progressive
-			pgo-trainer-crop
-			pgo-trainer-decode
-			pgo-trainer-grayscale
-			pgo-trainer-transformations
+			trainer-custom
+			trainer-70-pct-quality-baseline
+			trainer-75-pct-quality-baseline
+			trainer-80-pct-quality-baseline
+			trainer-90-pct-quality-baseline
+			trainer-95-pct-quality-baseline
+			trainer-98-pct-quality-baseline
+			trainer-99-pct-quality-baseline
+			trainer-100-pct-quality-baseline
+			trainer-70-pct-quality-progressive
+			trainer-75-pct-quality-progressive
+			trainer-80-pct-quality-progressive
+			trainer-90-pct-quality-progressive
+			trainer-95-pct-quality-progressive
+			trainer-98-pct-quality-progressive
+			trainer-99-pct-quality-progressive
+			trainer-100-pct-quality-progressive
+			trainer-crop
+			trainer-decode
+			trainer-grayscale
+			trainer-transformations
 		)
 	)
-	pgo-custom? ( pgo )
-	pgo-trainer-70-pct-quality-baseline? ( pgo )
-	pgo-trainer-75-pct-quality-baseline? ( pgo )
-	pgo-trainer-80-pct-quality-baseline? ( pgo )
-	pgo-trainer-90-pct-quality-baseline? ( pgo )
-	pgo-trainer-95-pct-quality-baseline? ( pgo )
-	pgo-trainer-98-pct-quality-baseline? ( pgo )
-	pgo-trainer-99-pct-quality-baseline? ( pgo )
-	pgo-trainer-100-pct-quality-baseline? ( pgo )
-	pgo-trainer-70-pct-quality-progressive? ( pgo )
-	pgo-trainer-75-pct-quality-progressive? ( pgo )
-	pgo-trainer-80-pct-quality-progressive? ( pgo )
-	pgo-trainer-90-pct-quality-progressive? ( pgo )
-	pgo-trainer-95-pct-quality-progressive? ( pgo )
-	pgo-trainer-98-pct-quality-progressive? ( pgo )
-	pgo-trainer-99-pct-quality-progressive? ( pgo )
-	pgo-trainer-100-pct-quality-progressive? ( pgo )
-	pgo-trainer-crop? ( pgo )
-	pgo-trainer-decode? ( pgo )
-	pgo-trainer-grayscale? ( pgo )
-	pgo-trainer-transformations? ( pgo )
+	trainer-custom? ( pgo )
+	trainer-70-pct-quality-baseline? ( pgo )
+	trainer-75-pct-quality-baseline? ( pgo )
+	trainer-80-pct-quality-baseline? ( pgo )
+	trainer-90-pct-quality-baseline? ( pgo )
+	trainer-95-pct-quality-baseline? ( pgo )
+	trainer-98-pct-quality-baseline? ( pgo )
+	trainer-99-pct-quality-baseline? ( pgo )
+	trainer-100-pct-quality-baseline? ( pgo )
+	trainer-70-pct-quality-progressive? ( pgo )
+	trainer-75-pct-quality-progressive? ( pgo )
+	trainer-80-pct-quality-progressive? ( pgo )
+	trainer-90-pct-quality-progressive? ( pgo )
+	trainer-95-pct-quality-progressive? ( pgo )
+	trainer-98-pct-quality-progressive? ( pgo )
+	trainer-99-pct-quality-progressive? ( pgo )
+	trainer-100-pct-quality-progressive? ( pgo )
+	trainer-crop? ( pgo )
+	trainer-decode? ( pgo )
+	trainer-grayscale? ( pgo )
+	trainer-transformations? ( pgo )
 "
 
 ASM_DEPEND="|| ( dev-lang/nasm dev-lang/yasm )"
@@ -282,19 +282,19 @@ train_trainer_custom() {
                                 | sed -r -e "s|\.jpg|.bmp$|g" -e "s|\.jpeg|.bmp$|"
 		)
 
-		if use pgo-trainer-decode ; then
+		if use trainer-decode ; then
 			einfo "Decoding image jpeg -> bmp"
 			djpeg -verbose "${p}" > "${sandbox_path}/${bn_bmp}" || die
 		fi
 
 		for pct in 70 75 80 90 95 98 99 100 ; do
-			if use "pgo-trainer-${pct}-pct-quality-baseline" ; then
+			if use "trainer-${pct}-pct-quality-baseline" ; then
 				einfo "Encoding image bmp -> baseline jpeg with ${pct}% quality"
 				cjpeg -verbose -quality ${pct} "${sandbox_path}/${bn_bmp}" > "${sandbox_path}/t-${bn}" || die
 				einfo "Decoding image baseline jpeg with ${pct}% (default) -> bmp"
 				djpeg -verbose "${sandbox_path}/t-${bn}" > "${sandbox_path}/t-${bn_bmp}" || die
 			fi
-			if use "pgo-trainer-${pct}-pct-quality-progressive" ; then
+			if use "trainer-${pct}-pct-quality-progressive" ; then
 				einfo "Encoding image bmp -> progressive jpeg with ${pct}% quality"
 				cjpeg -verbose -progressive -quality ${pct} "${sandbox_path}/${bn_bmp}" > "${sandbox_path}/t-${bn}" || die
 				einfo "Decoding image progressive jpeg with ${pct}% (default) -> bmp"
@@ -306,7 +306,7 @@ train_trainer_custom() {
 			fi
 		done
 
-		if use pgo-trainer-transformations ; then
+		if use trainer-transformations ; then
 			einfo "Flipping horizontal"
 			jpegtran -verbose -flip horizontal "${p}" > "${sandbox_path}/${bn}" || die
 			einfo "Flipping vertical"
@@ -329,12 +329,12 @@ train_trainer_custom() {
 				mv "${sandbox_path}/t-${bn}" "${sandbox_path}/${bn}" || die
 			done
 		fi
-		if use pgo-trainer-grayscale ; then
+		if use trainer-grayscale ; then
 			einfo "Converting to grayscale"
 			jpegtran -verbose -grayscale "${p}" > "${sandbox_path}/${bn}" || die
 		fi
 
-		if use pgo-trainer-crop ; then
+		if use trainer-crop ; then
 			cp -a "${p}" "${sandbox_path}/orig-${bn}" || die
 
 			local w=$(jpegtran -flip horizontal -verbose "${sandbox_path}/orig-${bn}" 2>&1 \
@@ -368,7 +368,7 @@ train_trainer_custom() {
 			done
 		fi
 
-		if use pgo-custom ; then
+		if use trainer-custom ; then
 			chmod +x "${S}/custom.sh" || die
 			./custom.sh || die
 		fi
