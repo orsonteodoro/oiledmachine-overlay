@@ -1013,6 +1013,7 @@ _fix_paths() {
 	tc-export CC CXX
 }
 
+LTO_TYPE=""
 multilib_src_configure() {
 	if (( ${NABIS} == 1 )) ; then
 		export BUILD_DIR="${S}"
@@ -1255,9 +1256,12 @@ einfo "Building without Mozilla API key ..."
 			--enable-default-toolkit=cairo-gtk3
 	fi
 
-	local lto_type=$(check-linker_get_lto_type)
-	if is-flagq '-flto*' || use pgo ; then
-		if tc-is-clang && [[ "${lto_type}" == "thinlto" ]] ; then
+	if [[ -z "${LTO_TYPE}" ]] ; then
+		LTO_TYPE=$(check-linker_get_lto_type)
+	fi
+	if use pgo \
+		|| [[ "${LTO_TYPE}" =~ ("thinlto"|"bfdlto") ]] ; then
+		if tc-is-clang && [[ "${LTO_TYPE}" == "thinlto" ]] ; then
 			# Upstream only supports lld when using clang
 			mozconfig_add_options_ac \
 				"forcing ld=lld due to USE=clang and USE=lto" \
@@ -1401,7 +1405,7 @@ einfo "Forcing -fno-tree-loop-vectorize to workaround GCC bug, see bug 758446 ..
 			if tc-is-clang ; then
 				# Nothing to do
 				:;
-			elif is-flagq '-flto*' ; then
+			elif [[ "${LTO_TYPE}" == "bfdlto" ]] ; then
 				append-ldflags \
 					-Wl,--no-keep-memory
 			else
