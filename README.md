@@ -297,7 +297,7 @@ Requirements
 
 - A directory `/etc/portage/trainers/${CATEGORY}/${PN}`
 - A main script `/etc/portage/trainers/${CATEGORY}/${PN}/main.sh`
-- Proper permissions:  directories 755 or 750 or 700, data 644 or 640 or 600, scripts 755 or 700 or 750.
+- Proper permissions:  directories 755 or 750 or 700, data 644 or 640 or 600, scripts 755 or 750 or 700.
 - Proper ownership:  root:root
 - rhash installed
 - Hashes stored in `/etc/portage/trainers/${CATEGORY}/${PN}/Manifest`
