@@ -6,7 +6,7 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.1)
+# ab = WEBKITGTK_API_VERSION version (5.0)
 # c = reserved
 # de = ebuild revision
 
@@ -24,7 +24,7 @@ UOPTS_SUPPORT_TPGO=0
 inherit check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs uopts
 
-DESCRIPTION="Open source web browser engine (GTK+3 with libsoup3)"
+DESCRIPTION="Open source web browser engine (GTK 4)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
@@ -244,15 +244,15 @@ LICENSE="
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~riscv ~x86"
 
-API_VERSION="4.1"
+API_VERSION="5.0"
 UOPTS_IMPLS="_${API_VERSION}"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 4.1
-CURRENT="2"
-AGE="2"
+# WEBKITGTK_API_VERSION is 5.0
+CURRENT="0"
+AGE="0"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=5.0/0  GTK4 SOUP*
@@ -272,14 +272,13 @@ uk vi zh_CN
 
 IUSE+="
 ${LANGS[@]/#/l10n_}
-aqua avif +bmalloc -cache-partitioning -cache-partitioning cpu_flags_arm_thumb2
-dav1d +dfg-jit +doc -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring
-+gstreamer gstwebrtc hardened +introspection +javascriptcore +jit +journald
-+jpeg2k jpegxl +lcms +libhyphen +libnotify -libwebrtc lto -mediastream
-+minibrowser +opengl openmp +pulseaudio -seccomp -spell test thunder
-+unified-builds variation-fonts +v4l wayland +webassembly +webassembly-b3-jit
-+webcore +webcrypto -webdriver +webgl -webgl2 webm-eme -webrtc webvtt -webxr
-+woff2 +X +yarr-jit
+aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dav1d +dfg-jit +doc
+-eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
+hardened +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
++libhyphen -libwebrtc lto -mediastream +minibrowser +opengl openmp
++pulseaudio -seccomp -spell test thunder +unified-builds variation-fonts
++v4l wayland +webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver
++webgl -webgl2 webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
 "
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
@@ -411,6 +410,7 @@ RDEPEND+="
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
+	>=gui-libs/gtk-3.98.5:4[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.8.0:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.4.2:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-0.9.18:=[icu(+),${MULTILIB_USEDEP}]
@@ -421,7 +421,6 @@ RDEPEND+="
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
-	>=x11-libs/gtk+-3.22.0:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	avif? ( >=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}] )
 	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
 	geolocation? ( >=app-misc/geoclue-0.12.99:2.0 )
@@ -457,7 +456,6 @@ RDEPEND+="
 	jpeg2k? ( >=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}] )
 	jpegxl? ( media-libs/libjxl[${MULTILIB_USEDEP}] )
 	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
-	libnotify? ( >=x11-libs/libnotify-0.7.7[${MULTILIB_USEDEP}] )
 	opengl? (
 		!kernel_Winnt? ( >=media-libs/mesa-${MESA_V}[egl(+),${MULTILIB_USEDEP}] )
 		virtual/opengl[${MULTILIB_USEDEP}]
@@ -489,7 +487,6 @@ RDEPEND+="
 	webgl? (
 		|| (
 			>=media-libs/mesa-${MESA_V}[${MULTILIB_USEDEP}]
-			>=x11-libs/libdrm-2.4.107[${MULTILIB_USEDEP}]
 		)
 	)
 	webm-eme? ( ${OCDM_WV} )
@@ -636,6 +633,10 @@ ewarn
 }
 
 pkg_setup() {
+ewarn
+ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
+ewarn "It is currently not recommended due to rendering bug(s)."
+ewarn
 einfo
 einfo "This is the unstable branch."
 einfo
@@ -725,8 +726,8 @@ echo "${actual_list_raw}"
 }
 
 EXPECTED_BUILD_FINGERPRINT="\
-701d81992160af88a320e27226915531da0c17d221b16fff370beb7dc75615b9\
-ece9dff979ab427e8fca45f7c598524383c077d235c5645224d0a0e2c87553af"
+0d13d401733d998df04997b9a1123b914dad318882acf9c4cdcccd1b80baaa13\
+b91bb7bbe62e2f3641dd75a1bca904acde6784139d14e38704a7981d746c93ab"
 EXPECTED_BUILD_FINGERPRINT_WEBRTC="\
 ce7a0164ea0da74de32de8eeac7e541c29355542710f270c2fc6125309315194\
 2c3acd8d773264875d99304da31c28ec05e5c97ee9af6a352504fb37fa59d8c3"
@@ -925,13 +926,11 @@ eerror
 		-DENABLE_WEBGL2=$(usex webgl2)
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
-		-DUSE_ANGLE_WEBGL=$(usex webgl)
 		-DUSE_AVIF=$(usex avif)
-		-DUSE_GTK4=OFF
+		-DUSE_GTK4=ON
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
-		-DUSE_LIBNOTIFY=$(usex libnotify)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)

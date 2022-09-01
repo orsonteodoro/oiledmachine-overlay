@@ -6,7 +6,7 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (5.0)
+# ab = WEBKITGTK_API_VERSION version (4.0)
 # c = reserved
 # de = ebuild revision
 
@@ -24,7 +24,7 @@ UOPTS_SUPPORT_TPGO=0
 inherit check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs uopts
 
-DESCRIPTION="Open source web browser engine (GTK 4)"
+DESCRIPTION="Open source web browser engine (GTK+3 with libsoup2)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
@@ -244,15 +244,15 @@ LICENSE="
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~riscv ~x86"
 
-API_VERSION="5.0"
+API_VERSION="4.0"
 UOPTS_IMPLS="_${API_VERSION}"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 5.0
-CURRENT="0"
-AGE="0"
+# WEBKITGTK_API_VERSION is 4.0
+CURRENT="93"
+AGE="56"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=5.0/0  GTK4 SOUP*
@@ -406,17 +406,17 @@ RDEPEND+="
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
-	>=gui-libs/gtk-3.98.5:4[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.8.0:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.4.2:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-0.9.18:=[icu(+),${MULTILIB_USEDEP}]
 	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.99.9:3.0[introspection?,${MULTILIB_USEDEP}]
+	>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
+	>=x11-libs/gtk+-3.22.0:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	avif? ( >=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}] )
 	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
 	geolocation? ( >=app-misc/geoclue-0.12.99:2.0 )
@@ -626,10 +626,6 @@ ewarn
 }
 
 pkg_setup() {
-ewarn
-ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
-ewarn "It is currently not recommended due to rendering bug(s)."
-ewarn
 einfo
 einfo "This is the stable branch."
 einfo
@@ -705,8 +701,8 @@ echo "${actual_list_raw}"
 }
 
 EXPECTED_BUILD_FINGERPRINT="\
-afcf44c78dee18876ed552828ecbf71c004c0eae8f23bab19a1b0e02b9ea4db6\
-8fdfbe7da1fce0109bab98c64b9b3a3b83ce8b9087d900931be766df94d13e41"
+0d5ee379865b617d3dc8452bae62c5d921f5924fcc23b9843c0c84ac71f25aa5\
+228ab5671e747bdb73ff93dd5550512ce777089af1466ef3c005801a2e551c50"
 EXPECTED_BUILD_FINGERPRINT_WEBRTC="\
 ce7a0164ea0da74de32de8eeac7e541c29355542710f270c2fc6125309315194\
 2c3acd8d773264875d99304da31c28ec05e5c97ee9af6a352504fb37fa59d8c3"
@@ -905,7 +901,7 @@ eerror
 		-DPORT=GTK
 		-DUSE_ANGLE_WEBGL=$(usex webgl)
 		-DUSE_AVIF=$(usex avif)
-		-DUSE_GTK4=ON
+		-DUSE_GTK4=OFF
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
@@ -913,7 +909,7 @@ eerror
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=OFF
+		-DUSE_SOUP2=ON
 		-DUSE_WOFF2=$(usex woff2)
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
 # WPE renderer is used to implement accelerated compositing under wayland

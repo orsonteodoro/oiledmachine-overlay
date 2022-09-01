@@ -10,7 +10,7 @@ EAPI=8
 # c = reserved
 # de = ebuild revision
 
-# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/WebKit/Configurations/Version.xcconfig
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.36.6/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
 LLVM_MAX_SLOT=14 # This should not be more than Mesa's package LLVM_MAX_SLOT
@@ -272,13 +272,13 @@ uk vi zh_CN
 
 IUSE+="
 ${LANGS[@]/#/l10n_}
-aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dav1d +dfg-jit +doc
--eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
-hardened +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
-+libhyphen +libnotify -libwebrtc lto -mediastream +minibrowser +opengl openmp
-+pulseaudio -seccomp -spell test thunder +unified-builds variation-fonts
-+v4l wayland +webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver
-+webgl -webgl2 webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
+aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dav1d +dfg-jit -eme
++ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer -gtk-doc hardened
++introspection +jit +journald +jpeg2k jpegxl +lcms +libhyphen +libnotify
+-libwebrtc lto -mediastream -minibrowser +opengl openmp +pulseaudio -seccomp
+-spell test thunder +unified-builds variation-fonts +v4l wayland +webassembly
++webassembly-b3-jit +webcrypto -webdriver +webgl -webgl2 webm-eme -webrtc webvtt
+-webxr +woff2 +X +yarr-jit
 "
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
@@ -310,10 +310,6 @@ REQUIRED_USE+="
 			opengl
 		)
 	)
-	gstwebrtc? (
-		gstreamer
-		webrtc
-	)
 	hardened? ( !jit )
 	opengl? (
 		!gles2
@@ -339,14 +335,13 @@ REQUIRED_USE+="
 		thunder
 	)
 	webrtc? (
-		^^ ( gstwebrtc libwebrtc )
+		libwebrtc
 		mediastream
 	)
 	webvtt? ( gstreamer )
 	webxr? ( webgl )
 	yarr-jit? ( jit )
 "
-# libwebrtc requires git clone or the fix the tarball to contain the libwebrtc folder.
 
 # cannot use introspection for 32 webkit on 64 bit because it requires 32 bit
 # libs/build for python from gobject-introspection.  It produces this error:
@@ -357,13 +352,13 @@ REQUIRED_USE+="
 # This means also you cannot use the geolocation feature.
 
 # For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.36.6/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.36.6/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.36.6/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.36.6/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.36.6/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.36.6/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.36.6/Tools/gtk/install-dependencies
 #   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
 #   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
 
@@ -398,11 +393,12 @@ MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.36.6
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 RDEPEND+="
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
+	>=dev-libs/atk-2.16.0[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-61.2:=[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-${GLIB_V}:2[${MULTILIB_USEDEP}]
 	>=dev-libs/gmp-6.1.2[-pgo(-),${MULTILIB_USEDEP}]
@@ -434,13 +430,8 @@ RDEPEND+="
 >=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
 		media-plugins/gst-plugins-meta:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
 		>=media-plugins/gst-plugins-opus-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
-		>=media-plugins/gst-transcoder-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
 		dav1d? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},dav1d]
-		)
-		gstwebrtc? (
-			>=media-plugins/gst-plugins-webrtc-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
-			>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
 		)
 		webvtt? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]
@@ -544,17 +535,17 @@ BDEPEND+="
 	>=dev-lang/ruby-1.9
 	>=sys-devel/bison-3.0.4
 	>=sys-devel/gettext-0.19.8.1[${MULTILIB_USEDEP}]
+	>=dev-util/gperf-3.0.1
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	virtual/perl-Carp
 	virtual/perl-Data-Dumper
 	virtual/perl-JSON-PP
-	doc? ( dev-util/gi-docgen )
 	geolocation? ( >=dev-util/gdbus-codegen-${GLIB_V} )
+	gtk-doc? ( >=dev-util/gtk-doc-1.27 )
 	lto? (
 		|| ( $(gen_bdepend_clang) )
 	)
 	thunder? ( net-libs/thunder )
-	webcore? ( >=dev-util/gperf-3.0.1 )
 "
 #	test? (
 #		>=dev-python/pygobject-3.26.1:3[python_targets_python2_7]
@@ -598,7 +589,7 @@ einfo
 		fi
 
 		if ! test-flag-CXX -std=c++20 ; then
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/OptionsCommon.cmake
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.36.6/Source/cmake/OptionsCommon.cmake
 eerror
 eerror "You need at least GCC 8.3.x or Clang >= 6 for C++20-specific compiler"
 eerror "flags"
@@ -640,7 +631,7 @@ ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
 ewarn "It is currently not recommended due to rendering bug(s)."
 ewarn
 einfo
-einfo "This is the unstable branch."
+einfo "This is the stable branch."
 einfo
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
@@ -693,20 +684,6 @@ ewarn
 ewarn "WebRTC support is currently in development and feature incomplete."
 ewarn
 	fi
-
-	if ! use webcore ; then
-ewarn
-ewarn "Disabling webcore disables rendering support."
-ewarn "Only disable if you want JavaScript support."
-ewarn
-	fi
-
-	if ! use javascriptcore ; then
-ewarn
-ewarn "Disabling webcore disables website scripts completely"
-ewarn "or any contemporary websites."
-ewarn
-	fi
 }
 
 _check_langs() {
@@ -728,8 +705,8 @@ echo "${actual_list_raw}"
 }
 
 EXPECTED_BUILD_FINGERPRINT="\
-701d81992160af88a320e27226915531da0c17d221b16fff370beb7dc75615b9\
-ece9dff979ab427e8fca45f7c598524383c077d235c5645224d0a0e2c87553af"
+0d5ee379865b617d3dc8452bae62c5d921f5924fcc23b9843c0c84ac71f25aa5\
+228ab5671e747bdb73ff93dd5550512ce777089af1466ef3c005801a2e551c50"
 EXPECTED_BUILD_FINGERPRINT_WEBRTC="\
 ce7a0164ea0da74de32de8eeac7e541c29355542710f270c2fc6125309315194\
 2c3acd8d773264875d99304da31c28ec05e5c97ee9af6a352504fb37fa59d8c3"
@@ -901,14 +878,13 @@ eerror
 		-DENABLE_API_TESTS=$(usex test)
 		-DENABLE_BUBBLEWRAP_SANDBOX=$(usex seccomp)
 		-DENABLE_CACHE_PARTITIONING=$(usex cache-partitioning)
-		-DENABLE_DOCUMENTATION=$(usex doc)
 		-DENABLE_ENCRYPTED_MEDIA=$(usex eme)
 		-DENABLE_GAMEPAD=$(usex gamepad)
 		-DENABLE_GEOLOCATION=$(multilib_native_usex geolocation) # \
 # Runtime optional (talks over dbus service)
 		-DENABLE_GLES2=$(usex gles2)
+		-DENABLE_GTKDOC=$(usex gtk-doc)
 		-DENABLE_INTROSPECTION=$(multilib_native_usex introspection)
-		-DENABLE_JAVASCRIPTCORE=$(usex javascriptcore)
 		-DENABLE_JOURNALD_LOG=$(usex journald)
 		-DENABLE_MEDIA_STREAM=$(usex mediastream)
 		-DENABLE_MINIBROWSER=$(usex minibrowser)
@@ -922,7 +898,6 @@ eerror
 		-DENABLE_WEB_CRYPTO=$(usex webcrypto)
 		-DENABLE_WEB_RTC=$(usex webrtc)
 		-DENABLE_WEBASSEMBLY=$(usex webassembly)
-		-DENABLE_WEBCORE=$(usex webcore)
 		-DENABLE_WEBDRIVER=$(usex webdriver)
 		-DENABLE_WEBGL=$(usex webgl)
 		-DENABLE_WEBGL2=$(usex webgl2)
