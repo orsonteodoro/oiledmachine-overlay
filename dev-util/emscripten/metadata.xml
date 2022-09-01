@@ -2,24 +2,30 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- only on the oiledmachine-overlay -->
+    <!-- Ebuild Only on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <maintainer type="person">
-    <!-- obtained from the science overlay -->
-    <!-- originator -->
+    <!-- Obtained from the science overlay -->
+    <!-- Originator -->
     <email>harald.weiner@jku.at</email>
     <name>Harald Weiner</name>
   </maintainer>
   <upstream>
     <maintainer>
-      <!-- for a full list see 
-           https://github.com/emscripten-core/emscripten/blob/master/AUTHORS -->
+      <!--
+           For a full list see 
+           https://github.com/emscripten-core/emscripten/blob/master/AUTHORS
+      -->
       <name>The Emscripten Authors</name>
     </maintainer>
-    <bugs-to>https://github.com/emscripten-core/emscripten/issues</bugs-to>
-    <changelog>https://github.com/emscripten-core/emscripten/blob/main/ChangeLog.md</changelog>
+    <bugs-to>
+      https://github.com/emscripten-core/emscripten/issues
+    </bugs-to>
+    <changelog>
+      https://github.com/emscripten-core/emscripten/blob/main/ChangeLog.md
+    </changelog>
     <remote-id type="github">emscripten-core/emscripten</remote-id>
   </upstream>
   <longdescription>
@@ -28,7 +34,8 @@
     This ebuild tracks only the highest point releases corresponding to
     the corresponding LLVM version up to the latest current stable LLVM.
 
-    LLVM 15 (dev) - 3.1.17, 3.1.16
+    LLVM 16 (dev) - 3.1.20
+    LLVM 15 (dev) - 3.1.17
     LLVM 14 (stable) - 3.1.3
     LLVM 13 (stable) - 2.0.26
 
@@ -39,22 +46,32 @@
     release may be found in the next version bump.
   </longdescription>
   <use>
-    <flag name="asmjs">Adds asm.js output support.  This is deprecated.
-      </flag>
-    <flag name="closure-compiler">Fetches and builds the Closure Compiler
-      for minification.</flag>
-    <flag name="closure_compiler_java">Prefers using the Java version of
-      Closure Compiler.</flag>
-    <flag name="closure_compiler_native">Prefers using the native version of
-      Closure Compiler.</flag>
-    <flag name="closure_compiler_nodejs">Prefers using the Node.js version of
-      Closure Compiler.</flag>
-    <flag name="system-closure-compiler">Uses the system's Closure Compiler
-      instead of the internal version.</flag>
-    <flag name="native-optimizer">Builds the native optimizer used after
-      Emscripten has finish compilation.</flag>
-    <flag name="test">Run tests</flag>
-    <flag name="wasm">Adds WebAssembly output support.  Recommended upstream.
-      </flag>
+    <flag name="asmjs">
+      Adds asm.js output support.  This is deprecated.
+    </flag>
+    <flag name="closure-compiler">
+      Fetches and builds the Closure Compiler for minification.
+    </flag>
+    <flag name="closure_compiler_java">
+      Prefers using the Java version of Closure Compiler.
+    </flag>
+    <flag name="closure_compiler_native">
+      Prefers using the native version of Closure Compiler.
+    </flag>
+    <flag name="closure_compiler_nodejs">
+      Prefers using the Node.js version of Closure Compiler.
+    </flag>
+    <flag name="system-closure-compiler">
+      Uses the system's Closure Compiler instead of the internal version.
+    </flag>
+    <flag name="native-optimizer">
+      Builds the native optimizer used after Emscripten has finish compilation.
+    </flag>
+    <flag name="test">
+      Run tests
+    </flag>
+    <flag name="wasm">
+      Adds WebAssembly output support.  Recommended upstream.
+    </flag>
   </use>
 </pkgmetadata>

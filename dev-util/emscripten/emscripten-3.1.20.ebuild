@@ -4,15 +4,15 @@
 EAPI=8
 
 # For requirements, see
-# https://github.com/emscripten-core/emscripten/blob/3.1.16/site/source/docs/building_from_source/toolchain_what_is_needed.rst
+# https://github.com/emscripten-core/emscripten/blob/3.1.20/site/source/docs/building_from_source/toolchain_what_is_needed.rst
 
 # For the closure-compiler-npm version see:
-# https://github.com/emscripten-core/emscripten/blob/3.1.16/package.json
+# https://github.com/emscripten-core/emscripten/blob/3.1.20/package.json
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/3.1.16/tools/config_template.py
+# https://github.com/emscripten-core/emscripten/blob/3.1.20/tools/config_template.py
 
-LLVM_V=15
+LLVM_V=16
 LLVM_MAX_SLOT=${LLVM_V}
 PYTHON_COMPAT=( python3_{8..11} )
 inherit flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1 \
@@ -123,13 +123,13 @@ REQUIRED_USE+="
 	)
 "
 # See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/3.1.16/tools/building.py EXPECTED_BINARYEN_VERSION
+# See also https://github.com/emscripten-core/emscripten/blob/3.1.20/tools/building.py EXPECTED_BINARYEN_VERSION
 JAVA_V="11" # See https://github.com/google/closure-compiler/blob/v20220502/.github/workflows/ci.yaml#L43
 # See https://github.com/google/closure-compiler-npm/blob/v20220502.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
-# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.16/package.json
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.16/tools/shared.py#L50
-# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.16/tools/shared.py#L43
+# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.20/package.json
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.20/tools/shared.py#L50
+# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.20/tools/shared.py#L43
 BINARYEN_V="109"
 JDK_DEPEND="
 	|| (
@@ -199,7 +199,7 @@ TEST="${WORKDIR}/test/"
 DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
 _PATCHES=(
-	"${FILESDIR}/emscripten-3.1.14-set-wrappers-path.patch"
+	"${FILESDIR}/emscripten-3.1.20-set-wrappers-path.patch"
 	"${FILESDIR}/emscripten-2.0.14-gentoo-wasm-ld-path.patch"
 )
 EMSCRIPTEN_CONFIG_V="2.0.26"
@@ -435,7 +435,7 @@ src_install() {
 	# See tools/install.py
 	find "${S}" \
 	\( \
-		-path "*/tests/third_party/*" \
+		-path "*/test/third_party/*" \
 		-o -name "site" \
 		-o -name "Makefile" \
 		-o -name ".git" \
