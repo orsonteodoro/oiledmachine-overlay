@@ -303,10 +303,12 @@ Requirements
 - Hashes stored in `/etc/portage/trainers/${CATEGORY}/${PN}/Manifest`
 
 Manifest format:
+```
 DIST relpath1 byte_size1 BLAKE2B hash1 SHA512 hash2
 DIST relpath2 byte_size2 BLAKE2B hash1 SHA512 hash2
 ...
 DIST relpathN byte_sizeN BLAKE2B hash1 SHA512 hash2
+```
 
 relpath is the relative path to the file.
 
