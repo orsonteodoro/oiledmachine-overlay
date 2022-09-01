@@ -2006,6 +2006,7 @@ has_sanitizer_option() {
 	return 1
 }
 
+LTO_TYPE=""
 _src_configure() {
 	local chost=$(get_abi_CHOST ${ABI})
 
@@ -2410,8 +2411,10 @@ einfo
 
 	# Enable official builds
 	myconf_gn+=" is_official_build=$(usex official true false)"
-	local lto_type=$(check-linker_get_lto_type)
-	if ( tc-is-clang && [[ "${lto_type}" == "thinlto" ]] ) \
+	if [[ -z "${LTO_TYPE}" ]] ; then
+		LTO_TYPE=$(check-linker_get_lto_type)
+	fi
+	if ( tc-is-clang && [[ "${LTO_TYPE}" == "thinlto" ]] ) \
 		|| use cfi \
 		|| ( use official && [[ "${PGO_PHASE}" != "PGI" ]] ) ; then
 ewarn
@@ -2440,6 +2443,7 @@ ewarn
 
 # See https://github.com/chromium/chromium/blob/105.0.5195.52/build/config/sanitizers/BUILD.gn#L196
 # See https://github.com/chromium/chromium/blob/105.0.5195.52/tools/mb/mb_config.pyl#L2950
+	local is_cfi_custom=0
 	if use official ; then
 		# Forced because it is the final official settings.
 		if [[ "${ABI}" == "amd64" ]] ; then
@@ -2452,7 +2456,6 @@ ewarn
 			myconf_gn+=" use_cfi_icall=false"
 		fi
 	elif use cfi ; then
-		local is_cfi_custom=0
 		local f
 		local F=(
 			"cfi"
@@ -2519,6 +2522,17 @@ ewarn
 	strip-flag-value "cfi-icall"
 	strip-flag-value "cfi-derived-cast"
 	strip-flag-value "cfi-unrelated-cast"
+
+	if [[ "${myconf_gn}" =~ "is_cfi=true" ]] \
+		|| has_sanitizer_option "cfi" \
+		|| (( ${is_cfi_custom} == 1 )) ; then
+		if ! [[ "${LTO_TYPE}" =~ ("thinlto"|"goldlto") ]] ; then
+eerror
+eerror "CFI requires ThinLTO or Gold LTO."
+eerror
+			die
+		fi
+	fi
 
 	if use arm64 ; then
 		if use official ; then
