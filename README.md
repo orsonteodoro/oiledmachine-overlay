@@ -310,7 +310,8 @@ DIST relpath2 byte_size2 BLAKE2B hash1 SHA512 hash2
 DIST relpathN byte_sizeN BLAKE2B hash1 SHA512 hash2
 ```
 
-relpath is the relative path to the file.
+relpath is the relative path to the file.  Path references should be relative.
+The script folder will be copied to `${WORKDIR}/trainer` and run from there.
 
 Hashes can be obtain with the rhash package.
 

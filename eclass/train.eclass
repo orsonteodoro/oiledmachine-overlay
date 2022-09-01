@@ -502,6 +502,8 @@ _train_custom() {
 		mkdir -p "${WORKDIR}/trainer" || die
 		cp -aT "${script_dir}" "${WORKDIR}/trainer" || die
 		chmod +x "${script_dir}/main.sh"
-		./main.sh || die
+		pushd "${script_dir}" || die
+			./main.sh || die
+		popd
 	fi
 }
