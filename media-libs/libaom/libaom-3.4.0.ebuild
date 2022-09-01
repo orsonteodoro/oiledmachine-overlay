@@ -26,10 +26,10 @@ IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
 IUSE="${IUSE} cpu_flags_arm_neon"
 IUSE+=" +asm"
-IUSE+=" pgo pgo-custom
-	pgo-trainer-2-pass-constrained-quality
-	pgo-trainer-constrained-quality
-	pgo-trainer-lossless
+IUSE+=" pgo
+	trainer-2-pass-constrained-quality
+	trainer-constrained-quality
+	trainer-lossless
 	chromium
 "
 REQUIRED_USE="
@@ -37,16 +37,14 @@ REQUIRED_USE="
 	cpu_flags_x86_ssse3? ( cpu_flags_x86_sse2 )
 	pgo? (
 		|| (
-			pgo-custom
-			pgo-trainer-2-pass-constrained-quality
-			pgo-trainer-constrained-quality
-			pgo-trainer-lossless
+			trainer-2-pass-constrained-quality
+			trainer-constrained-quality
+			trainer-lossless
 		)
 	)
-	pgo-custom? ( pgo )
-	pgo-trainer-2-pass-constrained-quality? ( pgo )
-	pgo-trainer-constrained-quality? ( pgo )
-	pgo-trainer-lossless? ( pgo )
+	trainer-2-pass-constrained-quality? ( pgo )
+	trainer-constrained-quality? ( pgo )
+	trainer-lossless? ( pgo )
 "
 
 BDEPEND+="
@@ -77,8 +75,8 @@ RESTRICT+=" !test? ( test ) test"
 
 get_asset_ids() {
 	local i
-	for i in $(seq 0 ${LIBAOM_PGO_MAX_ASSETS}) ; do
-		echo "LIBAOM_PGO_VIDEO_i"
+	for i in $(seq 0 ${LIBAOM_TRAINING_MAX_ASSETS}) ; do
+		echo "LIBAOM_TRAINING_VIDEO_i"
 	done
 }
 
@@ -152,7 +150,7 @@ check_video() {
 }
 
 pkg_setup() {
-	LIBAOM_PGO_MAX_ASSETS=${LIBAOM_PGO_MAX_ASSETS:-100}
+	LIBAOM_TRAINING_MAX_ASSETS=${LIBAOM_TRAINING_MAX_ASSETS:-100}
 	if use chromium ; then
 		einfo "The chromium USE flag is in testing."
 	fi
@@ -362,19 +360,6 @@ _vdecode() {
 	"${cmd[@]}" || die
 }
 
-_trainer_plan_custom() {
-	if use pgo-custom && [[ -e "pgo-custom.sh" ]] ; then
-		chown portage:portage pgo-custom.sh || die
-		chmod +x pgo-custom || die
-		./pgo-custom.sh || die
-	elif use pgo-custom && [[ ! -e "pgo-custom.sh" ]] ; then
-eerror
-eerror "Could not find pgo-custom.sh in ${S}"
-eerror
-		die
-	fi
-}
-
 _trainer_plan_constrained_quality_training_session() {
 	local entry="${1}"
 
@@ -382,8 +367,8 @@ _trainer_plan_constrained_quality_training_session() {
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local duration=$(echo "${entry}" | cut -f 4 -d ";")
-	local max_bpp=${LIBAOM_PGO_BPP_MAX:-1.0}
-	local min_bpp=${LIBAOM_PGO_BPP_MIN:-0.5}
+	local max_bpp=${LIBAOM_TRAINING_BPP_MAX:-1.0}
+	local min_bpp=${LIBAOM_TRAINING_BPP_MIN:-0.5}
 	local avg_bpp=$(python -c "print((${max_bpp}+${min_bpp})/2)")
 	local maxrate=$(python -c "print(${width}*${height}*${fps}*${max_bpp})")"k" # moving
 	local minrate=$(python -c "print(${width}*${height}*${fps}*${min_bpp})")"k" # stationary
@@ -398,7 +383,7 @@ _trainer_plan_constrained_quality_training_session() {
 		-c:v libaom-av1 \
 		-maxrate ${maxrate} -minrate ${minrate} -b:v ${avgrate} \
 		-vf scale=w=-1:h=${height} \
-		${LIBAOM_PGO_TRAINING_ARGS} \
+		${LIBAOM_TRAINING_ARGS} \
 		-an \
 		-r ${fps} \
 		-t ${duration} \
@@ -447,8 +432,8 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local duration=$(echo "${entry}" | cut -f 4 -d ";")
-	local max_bpp=${LIBAOM_PGO_BPP_MAX:-1.0}
-	local min_bpp=${LIBAOM_PGO_BPP_MIN:-0.5}
+	local max_bpp=${LIBAOM_TRAINING_BPP_MAX:-1.0}
+	local min_bpp=${LIBAOM_TRAINING_BPP_MIN:-0.5}
 	local avg_bpp=$(python -c "print((${max_bpp}+${min_bpp})/2)")
 	local maxrate=$(python -c "print(${width}*${height}*${fps}*${max_bpp})")"k" # moving
 	local minrate=$(python -c "print(${width}*${height}*${fps}*${min_bpp})")"k" # stationary
@@ -463,7 +448,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 		-c:v libaom-av1 \
 		-maxrate ${maxrate} -minrate ${minrate} -b:v ${avgrate} \
 		-vf scale=w=-1:h=${height} \
-		${LIBAOM_PGO_TRAINING_ARGS} \
+		${LIBAOM_TRAINING_ARGS} \
 		-pass 1 \
 		-an \
 		-r ${fps} \
@@ -477,7 +462,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 		-c:v libaom-av1 \
 		-maxrate ${maxrate} -minrate ${minrate} -b:v ${avgrate} \
 		-vf scale=w=-1:h=${height} \
-		${LIBAOM_PGO_TRAINING_ARGS} \
+		${LIBAOM_TRAINING_ARGS} \
 		-pass 2 \
 		-an \
 		-r ${fps} \
@@ -536,7 +521,7 @@ _trainer_plan_lossless() {
 				-i "${video_asset_path}" \
 				-c:v libaom-av1 \
 				-crf 0 \
-				${LIBAOM_PGO_TRAINING_ARGS_LOSSLESS} \
+				${LIBAOM_TRAINING_ARGS_LOSSLESS} \
 				-an \
 				-t 3 \
 				"${T}/test.webm"
@@ -551,17 +536,14 @@ train_trainer_custom() {
 	[[ "${lib_type}" == "static" ]] && return
 	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-	if use pgo-trainer-constrained-quality ; then
+	if use trainer-constrained-quality ; then
 		_trainer_plan_constrained_quality
 	fi
-	if use pgo-trainer-2-pass-constrained-quality ; then
+	if use trainer-2-pass-constrained-quality ; then
 		_trainer_plan_2_pass_constrained_quality
 	fi
-	if use pgo-trainer-lossless ; then
+	if use trainer-lossless ; then
 		_trainer_plan_lossless
-	fi
-	if use pgo-custom ; then
-		_trainer_plan_custom
 	fi
 }
 
@@ -635,9 +617,20 @@ get_arch_enabled_use_flags() {
 
 pkg_postinst() {
 	if use pgo && [[ -z "${PGO_RAN}" ]] ; then
-elog "No PGO optimization performed.  Please re-emerge this package."
-elog "The following package must be installed before PGOing this package:"
-elog "  media-video/ffmpeg[encode,libaom,$(get_arch_enabled_use_flags)]"
+ewarn
+ewarn "No PGO optimization performed.  Please re-emerge this package."
+ewarn
+ewarn
+ewarn "The following package must be installed before PGOing this package:"
+ewarn
+ewarn "  media-video/ffmpeg[encode,libaom,$(get_arch_enabled_use_flags)]"
+ewarn
+ewarn
+ewarn "Further PGO training details can be found in:"
+ewarn
+ewarn "  README.md of this overlay"
+ewarn "  metadata.xml of this package (or \`epkginfo -x ${CATEGORY}/${PN}::oiledmachine-overlay\`)"
+ewarn
 	fi
 	uopts_pkg_postinst
 }

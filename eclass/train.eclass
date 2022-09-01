@@ -332,8 +332,176 @@ _train_trainer_default() {
 #
 _src_train() {
 	if declare -f train_trainer_custom > /dev/null ; then
-		train_trainer_custom
+		train_trainer_custom # ebuild custom trainer
 	else
 		_train_trainer_default
+	fi
+
+	local script_dir="${ESYSROOT}/etc/portage/trainers/${CATEGORY}/${PN}"
+	if [[ -d "${script_dir}" && -e "${script_dir}/main.sh" ]] ; then
+		_train_custom # admin custom trainer
+	fi
+}
+
+# @FUNCTION: _train_file_checker
+# @INTERNAL
+# @DESCRIPTION:
+# Checks a trainer script for proper owner and permissions
+_train_file_checker() {
+	local script_path="${1}"
+	local _chmod=$(stat -c "%a" "${script_path}")
+	local _chmod_o=$(stat -c "%a" "${script_path}" | cut -c 3)
+	local _chown=$(stat -c "%U:%G" "${script_path}")
+	if [[ ! -e "${script_path}" ]] ; then
+eerror
+eerror "Could not find trainer script."
+eerror "It needs to be placed in ${script_path}"
+eerror
+		die
+	fi
+
+	# Yes we allow binaries, assuming they are in house built.
+	if file "${script_path}" | grep -E -q "(executable|script)" \
+		&& ! [[ "${_chmod_o}" =~ ("5"|"0") ]] ; then
+eerror
+eerror "The file permissions are not acceptable.  Do not allow others to write"
+eerror "to the script."
+eerror
+eerror "Path:  ${script_path}"
+eerror "Type:  executable or script"
+eerror
+eerror "Actual permissions: ${_chmod}"
+eerror "Expected permissions:  755 or 750 or 700"
+eerror
+eerror "Before fixing the permissions, check the script contents for malicious"
+eerror "code before fixing permissions."
+eerror
+		die
+	fi
+
+	# Users can bring their own data or assets
+	if ! ( file "${script_path}" | grep -E -q "(executable|script)" ) \
+		&& ! [[ "${_chmod_o}" =~ ("4"|"0") ]] ; then
+eerror
+eerror "The file permissions are not acceptable.  Do not allow others to write"
+eerror "to the script."
+eerror
+eerror "Path:  ${script_path}"
+eerror "Type:  data"
+eerror
+eerror "Actual permissions: ${_chmod}"
+eerror "Expected permissions:  644 or 640 or 600"
+eerror
+eerror "Before fixing the permissions, check the data contents for malicious"
+eerror "shellcode before fixing permissions."
+eerror
+		die
+	fi
+
+
+	if [[ "${_chown}" == "root:root" ]] ; then
+		:;
+	elif [[ "${_chown}" == "portage:portage" ]] ; then
+		:;
+	else
+eerror
+eerror "Expected owner:  root:root or portage:portage"
+eerror "Actual owner:  ${_chown}"
+eerror
+eerror "Trainer script file owner is unacceptable."
+eerror
+eerror "Before fixing the ownership, check the script contents for malicious"
+eerror "code before fixing permissions."
+eerror
+		die
+	fi
+}
+
+# @FUNCTION: _train_check_scripts
+# @INTERNAL
+# @DESCRIPTION:
+# Checks the custom trainer scripts for proper permissions
+_train_check_scripts() {
+	local f
+	for f in $(find "${script_dir}" -type f) ; do
+		_train_file_checker "${f}"
+	done
+	_train_verify_custom_hashes
+	for p in $(find "${script_dir}" -type d) ; do
+		achmod=$(stat -c "%s" "${p}")
+		aowner=$(stat -c "%U:%G" "${p}")
+
+		if ! [[ "${achmod}" =~ ("755"|"750"|"700") ]] \
+			&& [[ "${aowner}" != "root:root" ]] ; then
+eerror
+eerror "Incorrect directory permissions"
+eerror
+eerror "Directory:  ${p}"
+eerror
+eerror "Expected:  755 or 750 or 700"
+eerror "Actual:  ${achmod}"
+eerror
+eerror "Expected:  root:root"
+eerror "Actual:  ${aowner}"
+eerror
+			die
+		fi
+	done
+}
+
+# @FUNCTION: _train_verify_manfiest
+# @INTERNAL
+# @DESCRIPTION:
+# Checks the custom trainer scripts for proper hashing
+_train_verify_manifest() {
+	local f
+	local manifest="${script_dir}/Manifest"
+	for f in $(find "${script_dir}" -not -name "Manifest") ; do
+		local esize=$(grep "DIST ${f} " "${manifest}" | cut -f 3 -d " ")
+		local eblake2b=$(grep "DIST ${f} " "${manifest}" | cut -f 5 -d " ")
+		local esha512=$(grep "DIST ${f} " "${manifest}" | cut -f 7 -d " ")
+		local asize=$(stat -c "%s" "${f}")
+		local ablake2b=$(rhash --blake2b "${f}" | cut -f 1 -d " ")
+		local asha512=$(rhash --sha512 "${f}" | cut -f 1 -d " ")
+
+		if [[ "${esize}" == "${asize}" \
+			&& "${eblake2b}" == "${ablake2b}" \
+			&& "${asha512}" == "${esha512}" ]] ; then
+			:; # pass
+		else
+eerror
+eerror "Failed file verification"
+eerror
+eerror "File:  ${f}"
+eerror
+eerror "Actual size:  ${asize}"
+eerror "Expected size:  ${esize}"
+eerror
+eerror "Actual blake2b:  ${ablake2b}"
+eerror "Expected blake2b:  ${eblake2b}"
+eerror
+eerror "Actual sha512:  ${asha512}"
+eerror "Expected sha512:  ${esha512}"
+eerror
+			die
+		fi
+	done
+}
+
+# @FUNCTION: _train_pre_custom
+# @INTERNAL
+# @DESCRIPTION:
+# Runs the custom trainer
+_train_custom() {
+	has_version "app-crypt/rhash" || return
+	local script_dir="${ESYSROOT}/etc/portage/trainers/${CATEGORY}/${PN}"
+	[[ -e "${script_dir}/Manifest" ]] || return
+	[[ -e "${script_dir}/main.sh" ]] || return
+	_train_check_scripts
+	if [[ -d "${script_dir}" ]] && [[ -e "${script_dir}/main.sh" ]] ; then
+		mkdir -p "${WORKDIR}/trainer" || die
+		cp -aT "${script_dir}" "${WORKDIR}/trainer" || die
+		chmod +x "${script_dir}/main.sh"
+		./main.sh || die
 	fi
 }

@@ -288,6 +288,31 @@ USE="epgo ebolt" emerge --config PN
 For those that do 3 step with USE="bolt pgo", the uopts.eclass will
 automatically handle all 6 steps if it fortunate enough to come with a trainer.
 
+### Custom trainer ###
+
+Ebuilds that inherit tpgo or tbolt eclass can use a per-package custom trainer
+script, similar to the ideas of a per-package patch.
+
+- A directory `/etc/portage/trainers/${CATEGORY}/${PN}`
+- A main script `/etc/portage/trainers/${CATEGORY}/${PN}/main.sh`
+- Proper permissions:  directories 755, data 644, scripts 750 or 755.
+- Proper ownership:  root:root
+- rhash installed
+- Hashes stored in `/etc/portage/trainers/${CATEGORY}/${PN}/Manifest`
+
+Manifest format:
+DIST relpath1 byte_size1 BLAKE2B hash1 SHA512 hash2
+DIST relpath2 byte_size2 BLAKE2B hash1 SHA512 hash2
+...
+DIST relpathN byte_sizeN BLAKE2B hash1 SHA512 hash2
+
+relpath is the relative path to the file.
+
+Hashes can be obtain with the rhash package.
+
+You can place custom assets, shell scripts, etc.  But the main.sh script
+should be a bash script.
+
 ## Packages
 
 | package | description |
