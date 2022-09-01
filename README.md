@@ -293,6 +293,8 @@ automatically handle all 6 steps if it fortunate enough to come with a trainer.
 Ebuilds that inherit tpgo or tbolt eclass can use a per-package custom trainer
 script, similar to the ideas of a per-package patch.
 
+Requirements
+
 - A directory `/etc/portage/trainers/${CATEGORY}/${PN}`
 - A main script `/etc/portage/trainers/${CATEGORY}/${PN}/main.sh`
 - Proper permissions:  directories 755, data 644, scripts 750 or 755.
