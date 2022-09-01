@@ -28,10 +28,9 @@ LICENSE="ZLIB"
 # similar name exist but under different licensing.
 SLOT="0/1" # subslot = SONAME
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
-IUSE="minizip minizip-utils static-libs"
+IUSE="minizip minizip-utils static-libs backup-copy"
 IUSE+="
 	pgo
-	trainer-custom
 	trainer-minizip-binary-long
 	trainer-minizip-binary-max-compression
 	trainer-minizip-binary-short
@@ -61,7 +60,6 @@ REQUIRED_USE="
 	pgo? (
 		minizip? ( minizip-utils )
 		|| (
-			trainer-custom
 			trainer-minizip-binary-long
 			trainer-minizip-binary-max-compression
 			trainer-minizip-binary-short
@@ -87,7 +85,6 @@ REQUIRED_USE="
 			trainer-zlib-text-random
 		)
 	)
-	trainer-custom? ( pgo )
 	trainer-zlib-binary-all? ( pgo )
 	trainer-zlib-binary-default? ( pgo )
 	trainer-zlib-binary-max? ( pgo )
@@ -175,7 +172,7 @@ get_lib_types() {
 check_img_converter() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	has_image_folder() {
-		if [[ -d "${distdir}/pgo/assets/png" ]] ; then
+		if [[ -d "${distdir}/trainer/assets/png" ]] ; then
 			return 0
 		fi
 		return 1
@@ -187,11 +184,11 @@ check_img_converter() {
 		local c=0
 
 		local search_path=()
-		if [[ -d "${distdir}/pgo/assets/png" ]] ; then
-			search_path+=( "${distdir}/pgo/assets/png" )
+		if [[ -d "${distdir}/trainer/assets/png" ]] ; then
+			search_path+=( "${distdir}/trainer/assets/png" )
 		fi
-		if [[ -d "${distdir}/pgo/assets/tiff" ]] ; then
-			search_path+=( "${distdir}/pgo/assets/tiff" )
+		if [[ -d "${distdir}/trainer/assets/tiff" ]] ; then
+			search_path+=( "${distdir}/trainer/assets/tiff" )
 		fi
 
 		for f in $(find ${search_path} -type f \
@@ -234,6 +231,23 @@ check_img_converter() {
 }
 
 pkg_setup() {
+ewarn
+ewarn "If you use experimental features, patches, optimizations, please make a"
+ewarn "backup of the package first.  Not doing so may make your computer"
+ewarn "unbootable.  This copy should be already uncompressed."
+ewarn
+ewarn "In an event that the ebuild breaks, DO NOT REBOOT the computer but"
+ewarn "try to replace the broken /$(get_libdir)/libz.so.${PV} with a"
+ewarn "working copy matching the ABI and SOVERSION."
+ewarn
+ewarn "A backup copy can be made with USE=backup-copy with the previous"
+ewarn "install.  It is important that the previous build to be replaced is"
+ewarn "working properly for this to work."
+ewarn
+ewarn "Emerge this package twice to see if the patch/optimization works"
+ewarn "properly."
+ewarn
+sleep 15
 	if [[ "${IUSE}" =~ "trainer-zlib-images-" ]] ; then
 		check_img_converter
 	fi
@@ -429,31 +443,31 @@ _run_trainer_images_zlib() {
 	mkdir -p "${T}/sandbox" || die
 	cd "${T}/sandbox" || die
 	local N=270 # 30 * 9 compression levels
-	local MAX_FILES_IN_ARCHIVE=${MINIZIP_PGO_MAX_FILES:=500} # arbitrary
+	local MAX_FILES_IN_ARCHIVE=${MINIZIP_TRAINING_MAX_FILES:=500} # arbitrary
 
 	has_image_folder() {
-		if [[ -d "${distdir}/pgo/assets/avif" ]] ; then
+		if [[ -d "${distdir}/trainer/assets/avif" ]] ; then
 			return 0
 		fi
-		if [[ -d "${distdir}/pgo/assets/bmp" ]] ; then
+		if [[ -d "${distdir}/trainer/assets/bmp" ]] ; then
 			return 0
 		fi
-		if [[ -d "${distdir}/pgo/assets/gif" ]] ; then
+		if [[ -d "${distdir}/trainer/assets/gif" ]] ; then
 			return 0
 		fi
-		if [[ -d "${distdir}/pgo/assets/images" ]] ; then
+		if [[ -d "${distdir}/trainer/assets/images" ]] ; then
 			return 0
 		fi
-		if [[ -d "${distdir}/pgo/assets/jpeg" ]] ; then
+		if [[ -d "${distdir}/trainer/assets/jpeg" ]] ; then
 			return 0
 		fi
-		if [[ -d "${distdir}/pgo/assets/png" ]] ; then
+		if [[ -d "${distdir}/trainer/assets/png" ]] ; then
 			return 0
 		fi
-		if [[ -d "${distdir}/pgo/assets/svg" ]] ; then
+		if [[ -d "${distdir}/trainer/assets/svg" ]] ; then
 			return 0
 		fi
-		if [[ -d "${distdir}/pgo/assets/webp" ]] ; then
+		if [[ -d "${distdir}/trainer/assets/webp" ]] ; then
 			return 0
 		fi
 		return 1
@@ -463,38 +477,38 @@ _run_trainer_images_zlib() {
 		local c=0
 
 		local search_path=()
-		if [[ -d "${distdir}/pgo/assets/apng" ]] ; then
-			search_path+=( "${distdir}/pgo/assets/apng" )
+		if [[ -d "${distdir}/trainer/assets/apng" ]] ; then
+			search_path+=( "${distdir}/trainer/assets/apng" )
 		fi
-		if [[ -d "${distdir}/pgo/assets/avif" ]] ; then
-			search_path+=( "${distdir}/pgo/assets/avif" )
+		if [[ -d "${distdir}/trainer/assets/avif" ]] ; then
+			search_path+=( "${distdir}/trainer/assets/avif" )
 		fi
-		if [[ -d "${distdir}/pgo/assets/bmp" ]] ; then
-			search_path+=( "${distdir}/pgo/assets/bmp" )
+		if [[ -d "${distdir}/trainer/assets/bmp" ]] ; then
+			search_path+=( "${distdir}/trainer/assets/bmp" )
 		fi
-		if [[ -d "${distdir}/pgo/assets/gif" ]] ; then
-			search_path+=( "${distdir}/pgo/assets/gif" )
+		if [[ -d "${distdir}/trainer/assets/gif" ]] ; then
+			search_path+=( "${distdir}/trainer/assets/gif" )
 		fi
-		if [[ -d "${distdir}/pgo/assets/ico" ]] ; then
-			search_path+=( "${distdir}/pgo/assets/ico" )
+		if [[ -d "${distdir}/trainer/assets/ico" ]] ; then
+			search_path+=( "${distdir}/trainer/assets/ico" )
 		fi
-		if [[ -d "${distdir}/pgo/assets/images" ]] ; then
-			search_path+=( "${distdir}/pgo/assets/images" )
+		if [[ -d "${distdir}/trainer/assets/images" ]] ; then
+			search_path+=( "${distdir}/trainer/assets/images" )
 		fi
-		if [[ -d "${distdir}/pgo/assets/jpeg" ]] ; then
-			search_path+=( "${distdir}/pgo/assets/jpeg" )
+		if [[ -d "${distdir}/trainer/assets/jpeg" ]] ; then
+			search_path+=( "${distdir}/trainer/assets/jpeg" )
 		fi
-		if [[ -d "${distdir}/pgo/assets/png" ]] ; then
-			search_path+=( "${distdir}/pgo/assets/png" )
+		if [[ -d "${distdir}/trainer/assets/png" ]] ; then
+			search_path+=( "${distdir}/trainer/assets/png" )
 		fi
-		if [[ -d "${distdir}/pgo/assets/svg" ]] ; then
-			search_path+=( "${distdir}/pgo/assets/svg" )
+		if [[ -d "${distdir}/trainer/assets/svg" ]] ; then
+			search_path+=( "${distdir}/trainer/assets/svg" )
 		fi
-		if [[ -d "${distdir}/pgo/assets/tiff" ]] ; then
-			search_path+=( "${distdir}/pgo/assets/tiff" )
+		if [[ -d "${distdir}/trainer/assets/tiff" ]] ; then
+			search_path+=( "${distdir}/trainer/assets/tiff" )
 		fi
-		if [[ -d "${distdir}/pgo/assets/webp" ]] ; then
-			search_path+=( "${distdir}/pgo/assets/webp" )
+		if [[ -d "${distdir}/trainer/assets/webp" ]] ; then
+			search_path+=( "${distdir}/trainer/assets/webp" )
 		fi
 
 		for f in $(find ${search_path} -type f \
@@ -524,7 +538,7 @@ _run_trainer_images_zlib() {
 		done
 		rm -rf "${T}/sandbox-headers" || die
 	else
-		die "Missing at least one ${distdir}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp} folder for training"
+		die "Missing at least one ${distdir}/trainer/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp} folder for training"
 	fi
 
 	einfo "zlib image compression/decompress all compression levels training for ${mode} compression level(s)"
@@ -710,7 +724,7 @@ _run_trainer_text_minizip() {
 	# it will decompress this single file.
 	# It does it 300 times for various directory sizes for about 30
 	# times per compression level.
-	local MAX_FILES_IN_ARCHIVE=${MINIZIP_PGO_MAX_FILES:=500} # arbitrary
+	local MAX_FILES_IN_ARCHIVE=${MINIZIP_TRAINING_MAX_FILES:=500} # arbitrary
 	for i in $(seq 1 ${N}) ; do
 		#einfo "Preparing training sandbox"
 		mkdir -p "${T}/sandbox" || die
@@ -840,7 +854,7 @@ _run_trainer_binary_minizip() {
 
 	# Binary version:  This test will simulate compressing an entire folder
 	# of files, then it will decompress this single file.
-	local MAX_FILES_IN_ARCHIVE=${MINIZIP_PGO_MAX_FILES:=500} # arbitrary
+	local MAX_FILES_IN_ARCHIVE=${MINIZIP_TRAINING_MAX_FILES:=500} # arbitrary
 	for i in $(seq 1 ${N}) ; do
 		#einfo "Preparing training sandbox"
 		mkdir -p "${T}/sandbox" || die
@@ -884,22 +898,6 @@ _run_trainer_binary_minizip() {
 		#einfo "Clearing sandbox"
 		rm -rf "${T}/sandbox" || die
 	done
-}
-
-_run_trainer_custom() {
-	if [[ ! -e "trainer-custom.sh" ]] ; then
-eerror
-eerror "Missing trainer-custom.sh"
-eerror
-		die
-	else
-ewarn
-ewarn "Always use a sandbox in ${T} when using trainer-custom"
-ewarn
-		chmod +x "trainer-custom.sh" || die
-		chown portage:portage "trainer-custom.sh" || die
-		./trainer-custom.sh || die
-	fi
 }
 
 train_trainer_custom() {
@@ -958,47 +956,44 @@ einfo
 		_run_trainer_text_zlib "random"
 	fi
 	if use trainer-minizip-binary-long ; then
-		local N=${MINIZIP_PGO_LONG_N_ITERATIONS:=300}
+		local N=${MINIZIP_TRAINING_LONG_N_ITERATIONS:=300}
 		_run_trainer_binary_minizip
 	fi
 	if use trainer-minizip-binary-max-compression ; then
-		local N=${MINIZIP_PGO_SHORT_N_ITERATIONS:=30}
+		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
 		local max_compression=1
 		_run_trainer_binary_minizip
 		unset max_compression
 	fi
 	if use trainer-minizip-binary-short ; then
-		local N=${MINIZIP_PGO_SHORT_N_ITERATIONS:=30}
+		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
 		_run_trainer_binary_minizip
 	fi
 	if use trainer-minizip-binary-store ; then
-		local N=${MINIZIP_PGO_SHORT_N_ITERATIONS:=30}
+		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
 		local store_only=1
 		_run_trainer_binary_minizip
 		unset store_only
 	fi
 	if use trainer-minizip-text-long ; then
-		local N=${MINIZIP_PGO_LONG_N_ITERATIONS:=300}
+		local N=${MINIZIP_TRAINING_LONG_N_ITERATIONS:=300}
 		_run_trainer_text_minizip
 	fi
 	if use trainer-minizip-text-max-compression ; then
-		local N=${MINIZIP_PGO_SHORT_N_ITERATIONS:=30}
+		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
 		local max_compression=1
 		_run_trainer_text_minizip
 		unset max_compression
 	fi
 	if use trainer-minizip-text-short ; then
-		local N=${MINIZIP_PGO_SHORT_N_ITERATIONS:=30}
+		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
 		_run_trainer_text_minizip
 	fi
 	if use trainer-minizip-text-store ; then
-		local N=${MINIZIP_PGO_SHORT_N_ITERATIONS:=30}
+		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
 		local store_only=1
 		_run_trainer_text_minizip
 		unset store_only
-	fi
-	if use trainer-custom ; then
-		_run_trainer_custom
 	fi
 }
 
@@ -1019,6 +1014,13 @@ src_compile() {
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
+
+			if [[ "${lib_type}" == "static" ]] ; then
+				uopts_n_training
+			else
+				uopts_y_training
+			fi
+
 			uopts_src_compile
 		done
 	}
@@ -1091,6 +1093,18 @@ src_install() {
 			cd "${BUILD_DIR}" || die
 			_install
 			uopts_src_install
+			if use backup-copy ; then
+				local p=$(realpath "${ESYSROOT}/$(get_libdir)/libz.so.1")
+				einfo "DEBUG:  p=${p}"
+				if [[ -e "${p}" ]] ; then
+					einfo "Making backup of ${p}"
+					exeinto "/$(get_libdir)"
+					local bn=$(basename "${p}")
+					newexe "${p}" "${bn}.bak"
+				else
+					ewarn "No backup made for ${ABI}"
+				fi
+			fi
 		done
 	}
 	multilib_foreach_abi install_abi
@@ -1112,11 +1126,23 @@ get_arch_enabled_use_flags() {
 
 pkg_postinst() {
 	if use pgo && [[ -z "${PGO_RAN}" ]] ; then
-elog "No PGO optimization performed.  Please re-emerge this package."
-elog "The following package must be installed before PGOing this package:"
-elog "  app-arch/pigz[$(get_arch_enabled_use_flags)]"
+ewarn
+ewarn "No PGO optimization performed.  Please re-emerge this package."
+ewarn
+ewarn
+ewarn "The following package must be installed before PGOing this package:"
+ewarn
+ewarn "  app-arch/pigz[$(get_arch_enabled_use_flags)]"
+ewarn
 	fi
 	uopts_pkg_postinst
+
+einfo
+einfo "Further PGO training details can be found in:"
+einfo
+einfo "  The README.md of this overlay."
+einfo "  The metadata.xml of this package (or \`epkginfo -x ${CATEGORY}/${PN}::oiledmachine-overlay\`)."
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

@@ -26,32 +26,33 @@
         consider 8 and max for image compression if using png, which
         are often used on the web.
 
-    The pgo-custom USE flag can be extended for your particular
-    typical use pattern.  For example, you may add a custom script
-    to optimize for web use.  You will need to supply your own
-    custom per-package user patch and it must be placed in ${S}.
-
     You may set the following per-package envvars:
 
-    MINIZIP_PGO_SHORT_N_ITERATIONS=X, where X >= 1 will only affect the
+    MINIZIP_TRAINING_SHORT_N_ITERATIONS=X, where X >= 1 will only affect the
     trainer-...-short, trainer-...-store,
     trainer-...-max-compression USE flags.  The default is 30.
 
-    MINIZIP_PGO_LONG_N_ITERATIONS=X, where X >= 1 will only affect the
+    MINIZIP_TRAINING_LONG_N_ITERATIONS=X, where X >= 1 will only affect the
     trainer-...-long USE flags.  The default is 300.
 
-    MINIZIP_PGO_MAX_FILES=N, where N >= 1 will limit the number of
+    MINIZIP_TRAINING_MAX_FILES=N, where N >= 1 will limit the number of
     files to add to archived binary zip files.  The default is
     500.
 
     At least one
-${PORTAGE_DISTDIR}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp}
+${PORTAGE_DISTDIR}/trainer/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp}
     folder is required for trainer-zlib-images USE flag.
     Image assets will not be provided but you may provide your own
     or obtain them from the web if they are marked public domain or
-    permissive or license compatible.
+    permissive or license compatible.  See the ebuild for the exact details
+    of asset placement.
+
+    For custom training see README.md in the overlay.
   </longdescription>
   <use>
+    <flag name="backup-copy">
+      Make a backup copy of the previous libz.so
+    </flag>
     <flag name="minizip">
       Include the minizip library for quick and dirty zip extraction
     </flag>

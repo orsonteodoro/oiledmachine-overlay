@@ -71,6 +71,7 @@ eerror "You cannot use ebolt and bolt at the same time."
 eerror
 		die
 	fi
+	export _UOPTS_REQUIRE_TRAINING=1
 }
 
 # @FUNCTION: uopts_src_prepare
@@ -92,6 +93,22 @@ uopts_src_configure() {
 	[[ "${UOPTS_SUPPORT_EBOLT}" == "1" ]] && ebolt_src_configure
 	[[ "${UOPTS_SUPPORT_TPGO}" == "1" ]] && tpgo_src_configure
 	[[ "${UOPTS_SUPPORT_TBOLT}" == "1" ]] && tbolt_src_configure
+}
+
+# @FUNCTION: uopts_y_training
+# @DESCRIPTION:
+# Mark the build as requiring PGI and PGO training.
+# This is to mark shared libs or exe builds as trainable.
+uopts_y_training() {
+	export _UOPTS_REQUIRE_TRAINING=1
+}
+
+# @FUNCTION: uopts_n_training
+# @DESCRIPTION:
+# Mark the build as requiring PGI and PGO training.
+# This is to mark static libs builds as untrainable.
+uopts_n_training() {
+	export _UOPTS_REQUIRE_TRAINING=0
 }
 
 # @FUNCTION: uopts_src_compile
@@ -163,7 +180,7 @@ einfo
 
 	if has pgo ${USE} && use pgo && (( ${is_pgoable} == 1 )) && [[ -n "${_TPGO_ECLASS}" ]] ; then
 		TRAIN_MUX="tpgo"
-		if [[ "${skip_pgi}" == "no" ]] ; then
+		if [[ "${skip_pgi}" == "no" ]] && (( ${_UOPTS_REQUIRE_TRAINING} == 1 )) ; then
 			PGO_PHASE="PGI"
 			declare -f _src_pre_pgi > /dev/null && _src_pre_pgi
 			declare -f _src_prepare > /dev/null && _src_prepare
@@ -196,7 +213,9 @@ einfo
 		declare -f _src_compile > /dev/null && _src_compile
 	fi
 
-	if has bolt ${USE} && use bolt && (( ${is_boltable} == 1 )) && [[ -n "${_TBOLT_ECLASS}" ]] ; then
+	if ! [[ "${ABI}" =~ ("arm64"|"amd64") ]] ; then
+		:; # Skip trainer
+	elif has bolt ${USE} && use bolt && (( ${is_boltable} == 1 )) && [[ -n "${_TBOLT_ECLASS}" ]] ; then
 		TRAIN_MUX="tbolt"
 		if [[ "${skip_inst}" == "no" ]] ; then
 			BOLT_PHASE="INST"
