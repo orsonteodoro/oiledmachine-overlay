@@ -61,12 +61,12 @@ ${PORTAGE_DISTDIR}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp}
     <flag name="pgo">
       Build with Profiled Guided Optimizations
     </flag>
-    <flag name="pgo-custom">
-      Run a custom PGO optimization script
+    <flag name="trainer-custom">
+      Run a custom trainer script
     </flag>
     <flag name="trainer-minizip-binary-long">
       Run the trainer against text files for minizip only with N=300 so that
-      each compression level is PGO trained fairly
+      each compression level is trained fairly
     </flag>
     <flag name="trainer-minizip-binary-max-compression">
       Run the trainer against text files for minizip only abridged training with
@@ -82,7 +82,7 @@ ${PORTAGE_DISTDIR}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp}
     </flag>
     <flag name="trainer-minizip-text-long">
       Run the trainer against binary files for minizip only with N=300 so that
-      each compression level is PGO trained fairly
+      each compression level is trained fairly
     </flag>
     <flag name="trainer-minizip-text-max-compression">
       Run the trainer against binary files for minizip only abridged training

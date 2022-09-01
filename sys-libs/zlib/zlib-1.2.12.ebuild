@@ -31,7 +31,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~riscv ~
 IUSE="minizip minizip-utils static-libs"
 IUSE+="
 	pgo
-	pgo-custom
+	trainer-custom
 	trainer-minizip-binary-long
 	trainer-minizip-binary-max-compression
 	trainer-minizip-binary-short
@@ -61,7 +61,7 @@ REQUIRED_USE="
 	pgo? (
 		minizip? ( minizip-utils )
 		|| (
-			pgo-custom
+			trainer-custom
 			trainer-minizip-binary-long
 			trainer-minizip-binary-max-compression
 			trainer-minizip-binary-short
@@ -87,7 +87,7 @@ REQUIRED_USE="
 			trainer-zlib-text-random
 		)
 	)
-	pgo-custom? ( pgo )
+	trainer-custom? ( pgo )
 	trainer-zlib-binary-all? ( pgo )
 	trainer-zlib-binary-default? ( pgo )
 	trainer-zlib-binary-max? ( pgo )
@@ -887,18 +887,18 @@ _run_trainer_binary_minizip() {
 }
 
 _run_trainer_custom() {
-	if [[ ! -e "pgo-custom.sh" ]] ; then
+	if [[ ! -e "trainer-custom.sh" ]] ; then
 eerror
-eerror "Missing pgo-custom.sh"
+eerror "Missing trainer-custom.sh"
 eerror
 		die
 	else
 ewarn
-ewarn "Always use a sandbox in ${T} when using pgo-custom"
+ewarn "Always use a sandbox in ${T} when using trainer-custom"
 ewarn
-		chmod +x "pgo-custom.sh" || die
-		chown portage:portage "pgo-custom.sh" || die
-		./pgo-custom.sh || die
+		chmod +x "trainer-custom.sh" || die
+		chown portage:portage "trainer-custom.sh" || die
+		./trainer-custom.sh || die
 	fi
 }
 
@@ -997,7 +997,7 @@ einfo
 		_run_trainer_text_minizip
 		unset store_only
 	fi
-	if use pgo-custom ; then
+	if use trainer-custom ; then
 		_run_trainer_custom
 	fi
 }
