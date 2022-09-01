@@ -570,6 +570,13 @@ _src_post_pgo() {
 src_compile() {
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
+
+			if [[ "${lib_type}" == "static" ]] ; then
+				uopts_n_training
+			else
+				uopts_y_training
+			fi
+
 			uopts_src_compile
 		done
 	}
