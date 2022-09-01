@@ -44,27 +44,27 @@ G_BLACKLIST="/etc/portage/npm-secaudit-blacklist"
 # Stable versions list https://www.electronjs.org/docs/latest/tutorial/support#currently-supported-versions
 # See also:  https://raw.githubusercontent.com/electron/releases/master/lite.json
 
+# Track "Security:" or "CVE" in https://www.electronjs.org/releases/nightly?version=22
+G_CVE_PATCHED_ELECTRON_22="22.0.0-nightly.20220831" # Nightly
+
 # Track "Security:" or "CVE" in https://www.electronjs.org/releases/nightly?version=21
-G_CVE_PATCHED_ELECTRON_21="21.0.0-nightly.20220617" # Nightly
+G_CVE_PATCHED_ELECTRON_21="21.0.0-nightly.20220802" # Nightly
 
 # Track "Security:" or "CVE" in https://www.electronjs.org/releases/nightly?version=20
-G_CVE_PATCHED_ELECTRON_20="20.0.0-nightly.20220524" # Nightly
+G_CVE_PATCHED_ELECTRON_20="20.1.1" # Nightly
 
 # Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=19
-G_CVE_PATCHED_ELECTRON_19="19.0.4" # Stable
+G_CVE_PATCHED_ELECTRON_19="19.0.15" # Stable
 
 # Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=18
-G_CVE_PATCHED_ELECTRON_18="18.3.4" # Stable
-
-# Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=17
-G_CVE_PATCHED_ELECTRON_17="17.4.7" # Stable
+G_CVE_PATCHED_ELECTRON_18="18.3.11" # Stable
 
 # Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
-G_CVE_PATCHED_NODE_16_E21="16.15.1" # latest, has security fix(es)
-G_CVE_PATCHED_NODE_16_E20="16.15.0" # old, has security fix(es)
-G_CVE_PATCHED_NODE_16_E19="16.14.2" # old, has security fix(es)
-G_CVE_PATCHED_NODE_16_E18="16.13.2" # old, has security fix(es)
-G_CVE_PATCHED_NODE_16_E17="16.13.0" # old, unpatched
+G_CVE_PATCHED_NODE_16_E22="16.17.0" # latest, has inherited security fix(es)
+G_CVE_PATCHED_NODE_16_E21="16.16.0" # was a security release
+G_CVE_PATCHED_NODE_16_E20="16.15.0" # old
+G_CVE_PATCHED_NODE_16_E19="16.14.2" # old
+G_CVE_PATCHED_NODE_16_E18="16.13.2" # old
 
 # These Chromium desktop versions listed are non vulnerable versions:
 # Reason why is to minimize vulnerability checks in this eclass.
@@ -76,11 +76,12 @@ G_CVE_PATCHED_NODE_16_E17="16.13.0" # old, unpatched
 
 # Stable channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
-G_LATEST_CHROMIUM_104="104.0.5073.0" # E21 ; dev
-G_LATEST_CHROMIUM_103="103.0.5044.0" # E20 ; dev
-G_LATEST_CHROMIUM_102="102.0.5005.63" # E19 ; EOL
+G_LATEST_CHROMIUM_106="106.0.5216.0" # E22 ; dev.  no vulnerabilies reported for dev builds
+G_LATEST_CHROMIUM_105="105.0.5187.0" # E21 ; not receiving latest security fixes
+G_LATEST_CHROMIUM_104="104.0.5112.102" # E21 ; EOL
+G_LATEST_CHROMIUM_103="102.0.5005.167" # E20 ; EOL
+G_LATEST_CHROMIUM_102="100.0.4896.160" # E19 ; EOL
 #G_LATEST_CHROMIUM_100="100.0.4896.160" # E18 ; EOL
-#G_LATEST_CHROMIUM_98="98.0.4758.141" # E17 ; EOL
 
 H_INFO="\
 $(basename $BASH_SOURCE) ${G_VERSION}
@@ -324,10 +325,21 @@ function electron_version_audit() {
 
 	local is_vulnerable=0
 	# Check Electron
-	if is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-ge" 20 ; then
+	if is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-ge" 21 ; then
+		# E22 Nightly
 		# E21 Nightly
-		# E20 Nightly
 		:; # Auto pass since no vulnerabilites reported for beta and nightly but only on stable releases
+
+	# Stable E20
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 20 \
+		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_20} ; then
+		:; # Patched / Passed
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 20 \
+		&& is_x_op_y ${ELECTRON_V} "-lt" ${G_CVE_PATCHED_ELECTRON_20} ; then
+		# Unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} is not receiving proper security updates."
+		is_vulnerable=1
 
 	# Stable E19
 	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 19 \
@@ -351,16 +363,6 @@ function electron_version_audit() {
 "Electron ${ELECTRON_V} is not receiving proper security updates."
 		is_vulnerable=1
 
-	# Stable E17
-	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 17 \
-		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_17} ; then
-		:; # Patched / Passed
-	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 17 \
-		&& is_x_op_y ${ELECTRON_V} "-lt" ${G_CVE_PATCHED_ELECTRON_17} ; then
-		# Unpatched
-		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} is not receiving proper security updates."
-		is_vulnerable=1
 	else
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} has already reached End Of Life (EOL)."
@@ -369,8 +371,22 @@ function electron_version_audit() {
 
 	# Check Node.js EOL
 
-	# Dev E21
+	# Dev E22
 	if is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${NODE_V} "-ge" ${G_CVE_PATCHED_NODE_16_E22} \
+		&& is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 22 ; then
+		:; # Passed / Patched
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${NODE_V} "-lt" ${G_CVE_PATCHED_NODE_16_E22} \
+		is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 22 ; then
+		# Unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
+security updates."
+		is_vulnerable=1
+
+	# Dev E21
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
 		&& is_x_op_y ${NODE_V} "-ge" ${G_CVE_PATCHED_NODE_16_E21} \
 		&& is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 21 ; then
 		:; # Passed / Patched
@@ -383,7 +399,7 @@ function electron_version_audit() {
 security updates."
 		is_vulnerable=1
 
-	# Dev E20
+	# Stable E20
 	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
 		&& is_x_op_y ${NODE_V} "-ge" ${G_CVE_PATCHED_NODE_16_E20} \
 		&& is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 20 ; then
@@ -425,20 +441,6 @@ security updates."
 security updates."
 		is_vulnerable=1
 
-	# Stable E17
-	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
-		&& is_x_op_y ${NODE_V} "-ge" ${G_CVE_PATCHED_NODE_16_E17} \
-		&& is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 17 ; then
-		:; # Passed / Patched
-	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
-		&& is_x_op_y ${NODE_V} "-lt" ${G_CVE_PATCHED_NODE_16_E17} \
-		is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 17 ; then
-		# Unpatched
-		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
-security updates."
-		is_vulnerable=1
-
 	else
 		# Check Node.js EOL
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
@@ -448,9 +450,9 @@ security updates."
 
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
-	if is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-ge" 103 ; then
+	if is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-ge" 106 ; then
 		:; # Auto-pass because vulnerabilities are not announced in beta and dev channels
-	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 102 ; then
+	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 105 ; then
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
