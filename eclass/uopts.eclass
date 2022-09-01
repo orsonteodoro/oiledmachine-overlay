@@ -254,6 +254,20 @@ uopts_pkg_postinst() {
 	[[ "${UOPTS_SUPPORT_EBOLT}" == "1" ]] && ebolt_pkg_postinst
 	[[ "${UOPTS_SUPPORT_TPGO}" == "1" ]] && tpgo_pkg_postinst
 	[[ "${UOPTS_SUPPORT_TBOLT}" == "1" ]] && tbolt_pkg_postinst
+
+	if \
+		( has bolt && use bolt ) \
+		|| ( has ebolt && use ebolt ) \
+		|| ( has epgo && use pgo ) \
+		|| ( has pgo && use pgo ) \
+	; then
+einfo
+einfo "Further training details can be found in:"
+einfo
+einfo "  The README.md of this overlay."
+einfo "  The metadata.xml of this package (or \`epkginfo -x ${CATEGORY}/${PN}::oiledmachine-overlay\`)."
+einfo
+	fi
 }
 
 # @FUNCTION: uopts_pkg_config

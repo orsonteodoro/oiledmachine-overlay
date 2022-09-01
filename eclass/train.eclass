@@ -426,10 +426,10 @@ _train_check_scripts() {
 	for f in $(find "${script_dir}" -type f) ; do
 		_train_file_checker "${f}"
 	done
-	_train_verify_custom_hashes
+	_train_verify_manifest
 	for p in $(find "${script_dir}" -type d) ; do
-		achmod=$(stat -c "%s" "${p}")
-		aowner=$(stat -c "%U:%G" "${p}")
+		local achmod=$(stat -c "%s" "${p}")
+		local aowner=$(stat -c "%U:%G" "${p}")
 
 		if ! [[ "${achmod}" =~ ("755"|"750"|"700") ]] \
 			&& [[ "${aowner}" != "root:root" ]] ; then
@@ -456,6 +456,7 @@ eerror
 _train_verify_manifest() {
 	local f
 	local manifest="${script_dir}/Manifest"
+	_train_file_checker "${manifest}"
 	for f in $(find "${script_dir}" -not -name "Manifest") ; do
 		local esize=$(grep "DIST ${f} " "${manifest}" | cut -f 3 -d " ")
 		local eblake2b=$(grep "DIST ${f} " "${manifest}" | cut -f 5 -d " ")
