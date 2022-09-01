@@ -24,7 +24,7 @@
 
     Assets for training are not provided.  You may provide
     your own by adding assets to the
-    ${PORTAGE_DIR}/distfiles/pgo/assets/jpeg folder.  It is recommend
+    ${PORTAGE_DIR}/distfiles/trainer/assets/jpeg folder.  It is recommend
     to use your own images or public domain images for training.
 
     One may extend the training by providing a per-package
@@ -37,11 +37,12 @@
     on typical use but used typically for content creators.  75% is the
     default without quality setting.  Using trainers that don't reflect
     typical use may result in a performance regression.
+
+    For custom trainer support see the README.md in the overlay.
   </longdescription>
   <use>
     <!-- added to ebuild by oiledmachine-overlay -->
     <flag name="asm">Build with SIMD acceleration</flag>
-    <flag name="trainer-custom">Runs training with a custom script</flag>
     <flag name="trainer-70-pct-quality-baseline">Trains with 70% quality
       baseline for encode and decode for offline</flag>
     <flag name="trainer-75-pct-quality-baseline">Trains with 75% quality

@@ -21,7 +21,6 @@ fi
 IUSE="+asm cpu_flags_arm_neon java static-libs"
 IUSE+="
 	pgo
-	trainer-custom
 	trainer-70-pct-quality-baseline
 	trainer-75-pct-quality-baseline
 	trainer-80-pct-quality-baseline
@@ -47,7 +46,6 @@ REQUIRED_USE="
 	pgo? (
 		trainer-decode
 		|| (
-			trainer-custom
 			trainer-70-pct-quality-baseline
 			trainer-75-pct-quality-baseline
 			trainer-80-pct-quality-baseline
@@ -70,7 +68,6 @@ REQUIRED_USE="
 			trainer-transformations
 		)
 	)
-	trainer-custom? ( pgo )
 	trainer-70-pct-quality-baseline? ( pgo )
 	trainer-75-pct-quality-baseline? ( pgo )
 	trainer-80-pct-quality-baseline? ( pgo )
@@ -127,10 +124,10 @@ S="${WORKDIR}/${P}"
 
 is_pgo_ready() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	if [[ ! -d "${distdir}/pgo/assets/jpeg" ]] ; then
+	if [[ ! -d "${distdir}/trainer/assets/jpeg" ]] ; then
 		return 1
 	fi
-	if (( $(find "${distdir}/pgo/assets/jpeg" \( -iname "*.jpg" -o -iname "*.jpeg" \) | wc -l) == 0 )); then
+	if (( $(find "${distdir}/trainer/assets/jpeg" \( -iname "*.jpg" -o -iname "*.jpeg" \) | wc -l) == 0 )); then
 		return 1
 	fi
 	return 0
@@ -140,7 +137,7 @@ pkg_setup() {
 	if use pgo && ! is_pgo_ready ; then
 		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 		ewarn
-		ewarn "Missing PGO assets.  PGO assets should be placed in ${distdir}/pgo/assets/jpeg"
+		ewarn "Missing PGO assets.  PGO assets should be placed in ${distdir}/trainer/assets/jpeg"
 		ewarn "and relatively the same dimension and quality that you typically USE."
 		ewarn
 	fi
@@ -276,7 +273,7 @@ train_trainer_custom() {
 	local sandbox_path="${T}/sandbox"
 	mkdir -p "${sandbox_path}" || die
 	local p
-	for p in $(find "${distdir}/pgo/assets/jpeg" \( -iname "*.jpg" -o -iname "*.jpeg" \)) ; do
+	for p in $(find "${distdir}/trainer/assets/jpeg" \( -iname "*.jpg" -o -iname "*.jpeg" \)) ; do
 		local bn=$(basename "${p}")
 		local bn_bmp=$(basename "${p}" \
                                 | sed -r -e "s|\.jpg|.bmp$|g" -e "s|\.jpeg|.bmp$|"
@@ -367,11 +364,6 @@ train_trainer_custom() {
 					"${p}" > "${sandbox_path}/t-${bn}" || die
 			done
 		fi
-
-		if use trainer-custom ; then
-			chmod +x "${S}/custom.sh" || die
-			./custom.sh || die
-		fi
 	done
 	rm -rf "${sandbox_path}" || die
 }
@@ -436,6 +428,13 @@ src_install() {
 			export CMAKE_USE_DIR="${S}"
 			export BUILD_DIR="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
+
+			if [[ "${lib_type}" == "static" ]] ; then
+				uopts_n_training
+			else
+				uopts_y_training
+			fi
+
 			_install
 			uopts_src_install
 		done
@@ -447,9 +446,20 @@ src_install() {
 pkg_postinst() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	if use pgo && [[ -z "${PGO_RAN}" ]] ; then
-elog "No PGO optimization performed.  Please re-emerge this package."
-elog "The following package must be installed before PGOing this package:"
-elog "  jpeg assets placed in ${distdir}/pgo/assets/jpeg"
+ewarn
+ewarn "No PGO optimization performed.  Please re-emerge this package."
+ewarn
+ewarn "The following package must be installed before PGOing this package:"
+ewarn
+ewarn "  jpeg assets placed in ${distdir}/trainer/assets/jpeg"
+ewarn
+
+einfo
+einfo "Further PGO training details can be found in:"
+einfo
+einfo "  The README.md of this overlay."
+einfo "  The metadata.xml of this package (or \`epkginfo -x ${CATEGORY}/${PN}::oiledmachine-overlay\`)."
+einfo
 	fi
 	uopts_pkg_postinst
 }
