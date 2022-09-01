@@ -458,6 +458,12 @@ _train_verify_manifest() {
 	local manifest="${script_dir}/Manifest"
 	_train_file_checker "${manifest}"
 	for f in $(find "${script_dir}" -not -name "Manifest") ; do
+		if ! grep -q "DIST ${f}" "${manifest}" ; then
+eerror
+eerror "Missing Manifest entry for ${f}"
+eerror
+			die
+		fi
 		local esize=$(grep "DIST ${f} " "${manifest}" | cut -f 3 -d " ")
 		local eblake2b=$(grep "DIST ${f} " "${manifest}" | cut -f 5 -d " ")
 		local esha512=$(grep "DIST ${f} " "${manifest}" | cut -f 7 -d " ")
