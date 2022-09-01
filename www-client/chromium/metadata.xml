@@ -167,11 +167,6 @@ emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       protection.  This also builds libcxx with CFI, Full RELRO, noexecstack,
       SSP security features.  This is the upstream default.
     </flag>
-    <flag name="clang">
-      Uses Clang and allows access to Clang or LLVM related USE flags.  Turning
-      on clang implies ThinLTO on.  (See the lto-opt USE flag description for
-      memory requirements if out-of-memory (OOM) problems.)
-    </flag>
     <flag name="cfi">
       cfi-cast:
       Compile the build with mitigation against possible bad casting
