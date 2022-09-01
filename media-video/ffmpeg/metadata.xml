@@ -24,14 +24,14 @@
 	installed.
 	(3) Configure the following variables, replacing i with a unpadded number:
 
-		FFMPEG_TRAIN_VIDEO_FANTASY_i
-		FFMPEG_TRAIN_VIDEO_GRAINY_i
-		FFMPEG_TRAIN_VIDEO_REALISM_i
-		FFMPEG_TRAIN_VIDEO_STREAMING_i
-		FFMPEG_TRAIN_AUDIO_VOICE_i
-		FFMPEG_TRAIN_AUDIO_RADIO_i
-		FFMPEG_TRAIN_AUDIO_MUSIC_INSTRUMENTAL_i
-		FFMPEG_TRAIN_AUDIO_VOCAL_MUSIC_i
+		FFMPEG_TRAINING_VIDEO_FANTASY_i
+		FFMPEG_TRAINING_VIDEO_GRAINY_i
+		FFMPEG_TRAINING_VIDEO_REALISM_i
+		FFMPEG_TRAINING_VIDEO_STREAMING_i
+		FFMPEG_TRAINING_AUDIO_VOICE_i
+		FFMPEG_TRAINING_AUDIO_RADIO_i
+		FFMPEG_TRAINING_AUDIO_MUSIC_INSTRUMENTAL_i
+		FFMPEG_TRAINING_AUDIO_VOCAL_MUSIC_i
 
 	to the abspath to your asset(s). Only one asset can be used for each
 	variable.  The reason for the long list is to ensure dynamic range
@@ -43,44 +43,44 @@
 	contemporary music or scenarios also gets optimized.  One may
 	inadvertantly cover women radio quality but inadvertantly
 	deoptimize for male or lgtbtqia.
-	(4) Setup FFMPEG_TRAIN_VIDEO_CODECS, FFMPEG_TRAIN_AUDIO_CODECS,
-	FFMPEG_TRAIN_CODECNAME_ARGS, FFMPEG_TRAIN_CODECNAME_ARGS_LOSSLESS,
+	(4) Setup FFMPEG_TRAINING_VIDEO_CODECS, FFMPEG_TRAINING_AUDIO_CODECS,
+	FFMPEG_TRAINING_CODECNAME_ARGS, FFMPEG_TRAINING_CODECNAME_ARGS_LOSSLESS,
 	per-package envvars.  See below for details.
 	(5) Emerge FFmpeg again with an optimized PGO build.
 
-	(Planning) FFMPEG_TRAIN_VIDEO_STREAMING_i is the v4l device to train for
+	(Planning) FFMPEG_TRAINING_VIDEO_STREAMING_i is the v4l device to train for
 	codec streaming.
 
-	(Planning) FFMPEG_TRAIN_MOBILE_STREAMING_i is a sample for mobile
+	(Planning) FFMPEG_TRAINING_MOBILE_STREAMING_i is a sample for mobile
 	training.
 
 	FFMPEG_MAX_ASSETS_PER_TYPE is a number of assets per *_i type.
 	Currently it is set to 100 but can be expanded to more than
 	that.
 	
-	FFMPEG_TRAIN_VIDEO_CODECS is a string separated list of elements.
+	FFMPEG_TRAINING_VIDEO_CODECS is a string separated list of elements.
 	Each element is in this format vscenario:vencoder:vdecoder:ext:tags.
 
 	  The value of vscenario can be fantasy, film, grainy, streaming, realism.
 	  The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*"
 	  The value of vdecoder matches  mpv --vd=help
 	  The value of ext matches  ffmpeg -formats
-	  The value of tags may be added for pgo-custom-video providing metadata
+	  The value of tags may be added for custom trainers providing metadata
 	  for enablement of special optimization options.  Multiple tags
 	  may be appended by comma and spaces replaced with _.  Tags can
 	  be filtered with bash regex to apply extra args.
 
 	Example:
-	FFMPEG_TRAIN_VIDEO_CODECS=" fantasy:libvpx-vp9:libvpx-vp9:webm: realism:libvpx-vp9:libvpx-vp9:webm:"
+	FFMPEG_TRAINING_VIDEO_CODECS=" fantasy:libvpx-vp9:libvpx-vp9:webm: realism:libvpx-vp9:libvpx-vp9:webm:"
 
-	FFMPEG_TRAIN_AUDIO_CODECS is a string separated list of elements.
+	FFMPEG_TRAINING_AUDIO_CODECS is a string separated list of elements.
 	Each element is in this format ascenario:aencoder:adecoder:ext:tags.
 
 	  The value of ascenario can be voice, radio, music.
 	  The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*"
 	  The value of adecoder matches  mpv --ad=help
 	  The value of ext matches  ffmpeg -formats
-	  The value of tags may be added for pgo-custom-audio providing metadata
+	  The value of tags may be added for custom trainers providing metadata
 	  for enablement of special optimization options.  Multiple tags
 	  may be appended by comma and spaces replaced with _.  Tags can
 	  be filtered with bash regex to apply extra args.
@@ -88,15 +88,15 @@
 	Each codec can be supplied additional per-package envvar args to
 	pass to ffmpeg in this general form:
 
-	FFMPEG_TRAIN_CODECNAME_ARGS
-	FFMPEG_TRAIN_CODECNAME_ARGS_LOSSLESS
+	FFMPEG_TRAINING_CODECNAME_ARGS
+	FFMPEG_TRAINING_CODECNAME_ARGS_LOSSLESS
 
-	FFMPEG_TRAIN_AUDIO_CODECS=" voice:libopus:libopus:webm: music:libvorbis:libvorbis:ogg:high_profile"
+	FFMPEG_TRAINING_AUDIO_CODECS=" voice:libopus:libopus:webm: music:libvorbis:libvorbis:ogg:high_profile"
 
 	replacing CODECNAME with uppercases and hyphens with underscores.
 	For example, if one wanted to train an imaginary codec libfoo-bar,
-	you need to set the variables FFMPEG_TRAIN_LIBFOO_BAR_ARGS
-	or FFMPEG_TRAIN_LIBFOO_BAR_ARGS_LOSSLESS.  These args correspond to
+	you need to set the variables FFMPEG_TRAINING_LIBFOO_BAR_ARGS
+	or FFMPEG_TRAINING_LIBFOO_BAR_ARGS_LOSSLESS.  These args correspond to
 	additional  ffmpeg -h full  codec settings for that codec.  You
 	should change them to the type of performance or quality settings
 	you want to use typically.  Setting the -crf or the -threads is
@@ -105,7 +105,7 @@
 	The variables with _LOSSLESS suffix should only add arguments that
 	modify performance and not the framerate or quality.
 
-	Both FFMPEG_TRAIN_VIDEO_CODECS and FFMPEG_TRAIN_AUDIO_CODECS are for
+	Both FFMPEG_TRAINING_VIDEO_CODECS and FFMPEG_TRAINING_AUDIO_CODECS are for
 	use only for the ffmpeg codebase.  Using another external codec
 	in an external ebuild requires that ebuild be modified for
 	PGO.
@@ -116,9 +116,9 @@
 	only discrete values for PGO training.
 
 	# Use this to support 64 kbps, 128 kbps, 256 kbps, 320 kbps, 1411 kbps
-	FFMPEG_TRAIN_CBR_TABLE_FOO_MUSIC="128 256 320 1411"
-	FFMPEG_TRAIN_CBR_TABLE_FOO_RADIO="64"
-	FFMPEG_TRAIN_CBR_TABLE_FOO_VOICE="32"
+	FFMPEG_TRAINING_CBR_TABLE_FOO_MUSIC="128 256 320 1411"
+	FFMPEG_TRAINING_CBR_TABLE_FOO_RADIO="64"
+	FFMPEG_TRAINING_CBR_TABLE_FOO_VOICE="32"
 
 	The codec will match the suffix with the asset scenario to
 	not waste time on unlikely parings encountered in the real world.
@@ -127,9 +127,9 @@
 	the ffmpeg option and the value.
 
 	# Train with -vbr 1, -vbr 2, -vbr 3, -vbr 4
-	FFMPEG_TRAIN_VBR_OPTION_FOO="-vbr"
-	FFMPEG_TRAIN_VBR_TABLE_LIBFOO_FOO_MUSIC="7 8 9"
-	FFMPEG_TRAIN_VBR_TABLE_LIBFOO_FOO_RADIO="2 3"
+	FFMPEG_TRAINING_VBR_OPTION_FOO="-vbr"
+	FFMPEG_TRAINING_VBR_TABLE_LIBFOO_FOO_MUSIC="7 8 9"
+	FFMPEG_TRAINING_VBR_TABLE_LIBFOO_FOO_RADIO="2 3"
 
 	It is recommended to only train codecs that reflect typical use.
 	Not doing so will result in increased code size and performance
@@ -137,31 +137,22 @@
 
 	Additional environment variables:
 
-	FFMPEG_TRAIN_BPP_MAX - Bits per pixel corresponding to motion.  Higher
+	FFMPEG_TRAINING_BPP_MAX - Bits per pixel corresponding to motion.  Higher
 	  means more quality.  0.15 is typical max.  The default is 1.0.
 
-	FFMPEG_TRAIN_BPP_MIN - Bits per pixel corresponding to stationary. 
+	FFMPEG_TRAINING_BPP_MIN - Bits per pixel corresponding to stationary. 
 	  The default is 0.5.
 
 	Since it would be impratical to permute and PGO train the
-	possible features and settings of the software to PGO optimize, the
-	pgo-custom-audio and pgo-custom-video USE flags were provided to
-	allow people to script their own PGO trainers.  A per-package
-	patch must be provided as well as the pgo-custom-audio.sh
-	for the pgo-custom-audio USE flag and/or pgo-custom-video.sh
-	for the pgo-custom-video USE flag of ${S}.  You may also define
+	possible features and settings of the software to PGO optimize,
+	custom training is provided (See README.md of overlay) to
+	allow people to script their own trainers.  You may also define
 	additional per-package envvar assets.  See the ebuild
 	for ways to execute the sandboxed FFmpeg and ways to use
 	the variables.
 </longdescription>
 <use>
 	<!-- added to ebuild by oiledmachine-overlay -->
-	<flag name="trainer-custom-audio">Use a custom
-		script to train video codecs with.  Use this for video filter
-		training as well.</flag>
-	<flag name="trainer-custom-video">Use a custom
-		script to train video codecs with.  Use this for audio filter
-		training as well.</flag>
 	<flag name="trainer-audio-cbr">Use the CBR audio trainer.</flag>
 	<flag name="trainer-audio-vbr">Use the VBR audio trainer.</flag>
 	<flag name="trainer-audio-lossless">Use the lossless audio

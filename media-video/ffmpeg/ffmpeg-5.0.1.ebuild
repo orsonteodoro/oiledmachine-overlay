@@ -561,7 +561,7 @@ get_video_sample_ids() {
 	local t
 	for t in ${types[@]} ; do
 		for i in $(seq 0 ${MAX_ASSETS_PER_TYPE}) ; do
-			echo "FFMPEG_TRAIN_${t}_${i}"
+			echo "FFMPEG_TRAINING_${t}_${i}"
 		done
 	done
 }
@@ -576,7 +576,7 @@ get_audio_sample_ids() {
 	local t
 	for t in ${types[@]} ; do
 		for i in $(seq 0 ${MAX_ASSETS_PER_TYPE}) ; do
-			echo "FFMPEG_TRAIN_AUDIO_${t}_${i}"
+			echo "FFMPEG_TRAINING_AUDIO_${t}_${i}"
 		done
 	done
 }
@@ -700,10 +700,10 @@ pkg_setup() {
 	MAX_ASSETS_PER_TYPE=${MAX_ASSETS_PER_TYPE:-100} # You must update gen_autosample_suffix
 	if use pgo && has_version "media-video/ffmpeg" ; then
 		ewarn "The PGO use flag is a Work In Progress (WIP)"
-		if [[ -n "${FFMPEG_TRAIN_VIDEO_CODECS}" ]] ; then
+		if [[ -n "${FFMPEG_TRAINING_VIDEO_CODECS}" ]] ; then
 			pgo_check_video
 		fi
-		if [[ -n "${FFMPEG_TRAIN_AUDIO_CODECS}" ]] ; then
+		if [[ -n "${FFMPEG_TRAINING_AUDIO_CODECS}" ]] ; then
 			pgo_check_audio
 		fi
 	fi
@@ -1030,70 +1030,6 @@ _vdecode() {
 	"${cmd[@]}" || die
 }
 
-_trainer_plan_audio_custom() {
-	local audio_scenario="${1}"
-	local encoding_codec="${2}"
-	local decoding_codec="${3}"
-	local extension="${4}"
-	local tags="${5}"
-	local training_args=
-	local training_args_lossless=
-
-	local name="${encoding_codec^^}"
-	name="${name//-/_}"
-	local envvar="FFMPEG_TRAIN_${name}_ARGS"
-	if [[ -n "${!envvar}" ]] ; then
-		training_args="${!envvar}"
-	fi
-	local envvar="FFMPEG_TRAIN_${name}_ARGS_LOSSLESS"
-	if [[ -n "${!envvar}" ]] ; then
-		training_args_lossless="${!envvar}"
-	fi
-
-	if use trainer-audio && [[ -e "trainer-audio.sh" ]] ; then
-		chown portage:portage trainer-audio.sh || die
-		chmod +x trainer-audio || die
-		./trainer-audio.sh || die
-	elif use trainer-audio && [[ ! -e "trainer-audio.sh" ]] ; then
-eerror
-eerror "Could not find trainer-audio.sh in ${S}"
-eerror
-		die
-	fi
-}
-
-_trainer_plan_video_custom() {
-	local video_scenario="${1}"
-	local encoding_codec="${2}"
-	local decoding_codec="${3}"
-	local ext="${4}"
-	local tags="${5}"
-	local training_args=
-	local training_args_lossless=
-
-	local name="${encoding_codec^^}"
-	name="${name//-/_}"
-	local envvar="FFMPEG_TRAIN_${name}_ARGS"
-	if [[ -n "${!envvar}" ]] ; then
-		training_args="${!envvar}"
-	fi
-	local envvar="FFMPEG_TRAIN_${name}_ARGS_LOSSLESS"
-	if [[ -n "${!envvar}" ]] ; then
-		training_args_lossless="${!envvar}"
-	fi
-
-	if use trainer-video && [[ -e "trainer-video.sh" ]] ; then
-		chown portage:portage trainer-video.sh || die
-		chmod +x trainer-video || die
-		./trainer-video.sh || die
-	elif use trainer-video && [[ ! -e "trainer-video.sh" ]] ; then
-eerror
-eerror "Could not find trainer-video.sh in ${S}"
-eerror
-		die
-	fi
-}
-
 _trainer_plan_video_constrained_quality_training_session() {
 	local entry="${1}"
 
@@ -1101,8 +1037,8 @@ _trainer_plan_video_constrained_quality_training_session() {
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local duration=$(echo "${entry}" | cut -f 4 -d ";")
-	local max_bpp=${FFMPEG_TRAIN_BPP_MAX:-1.0}
-	local min_bpp=${FFMPEG_TRAIN_BPP_MIN:-0.5}
+	local max_bpp=${FFMPEG_TRAINING_BPP_MAX:-1.0}
+	local min_bpp=${FFMPEG_TRAINING_BPP_MIN:-0.5}
 	local avg_bpp=$(python -c "print((${max_bpp}+${min_bpp})/2)")
 	local maxrate=$(python -c "print(${width}*${height}*${fps}*${max_bpp})")"k" # moving
 	local minrate=$(python -c "print(${width}*${height}*${fps}*${min_bpp})")"k" # stationary
@@ -1136,7 +1072,7 @@ _trainer_plan_video_constrained_quality() {
 
 	local name="${encoding_codec^^}"
 	name="${name//-/_}"
-	local envvar="FFMPEG_TRAIN_${name}_ARGS"
+	local envvar="FFMPEG_TRAINING_${name}_ARGS"
 	if [[ -n "${!envvar}" ]] ; then
 		training_args="${!envvar}"
 	fi
@@ -1179,8 +1115,8 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local duration=$(echo "${entry}" | cut -f 4 -d ";")
-	local max_bpp=${FFMPEG_TRAIN_BPP_MAX:-1.0}
-	local min_bpp=${FFMPEG_TRAIN_BPP_MIN:-0.5}
+	local max_bpp=${FFMPEG_TRAINING_BPP_MAX:-1.0}
+	local min_bpp=${FFMPEG_TRAINING_BPP_MIN:-0.5}
 	local avg_bpp=$(python -c "print((${max_bpp}+${min_bpp})/2)")
 	local maxrate=$(python -c "print(${width}*${height}*${fps}*${max_bpp})")"k" # moving
 	local minrate=$(python -c "print(${width}*${height}*${fps}*${min_bpp})")"k" # stationary
@@ -1229,7 +1165,7 @@ _trainer_plan_video_2_pass_constrained_quality() {
 
 	local name="${encoding_codec^^}"
 	name="${name//-/_}"
-	local envvar="FFMPEG_TRAIN_${name}_ARGS"
+	local envvar="FFMPEG_TRAINING_${name}_ARGS"
 	if [[ -n "${!envvar}" ]] ; then
 		training_args="${!envvar}"
 	fi
@@ -1281,7 +1217,7 @@ _trainer_plan_audio_lossless() {
 
 	local name="${encoding_codec^^}"
 	name="${name//-/_}"
-	local envvar="FFMPEG_TRAIN_${name}_ARGS_LOSSLESS"
+	local envvar="FFMPEG_TRAINING_${name}_ARGS_LOSSLESS"
 	if [[ -n "${!envvar}" ]] ; then
 		training_args="${!envvar}"
 	fi
@@ -1336,7 +1272,7 @@ _trainer_plan_video_lossless() {
 
 	local name="${encoding_codec^^}"
 	name="${name//-/_}"
-	local envvar="FFMPEG_TRAIN_${name}_ARGS_LOSSLESS"
+	local envvar="FFMPEG_TRAINING_${name}_ARGS_LOSSLESS"
 	if [[ -n "${!envvar}" ]] ; then
 		training_args="${!envvar}"
 	fi
@@ -1390,14 +1326,14 @@ _trainer_plan_audio_cbr() {
 
 	local name="${encoding_codec^^}"
 	name="${name//-/_}"
-	local envvar="FFMPEG_TRAIN_${name}_ARGS"
+	local envvar="FFMPEG_TRAINING_${name}_ARGS"
 	if [[ -n "${!envvar}" ]] ; then
 		training_args="${!envvar}"
 	fi
 
 	local cbr_suffix="${encoding_codec^^}"
 	cbr_suffix="${cbr_suffix//-/_}"
-	local cbr_table="FFMPEG_TRAIN_CBR_TABLE_${cbr_suffix}_${audio_scenario^^}"
+	local cbr_table="FFMPEG_TRAINING_CBR_TABLE_${cbr_suffix}_${audio_scenario^^}"
 	if [[ -z "${!cbr_table}" ]] ; then
 		ewarn "Missing CBR table for ${encoding_codec}"
 		return
@@ -1456,7 +1392,7 @@ _trainer_plan_audio_vbr() {
 
 	local name="${encoding_codec^^}"
 	name="${name//-/_}"
-	local envvar="FFMPEG_TRAIN_${name}_ARGS"
+	local envvar="FFMPEG_TRAINING_${name}_ARGS"
 	if [[ -n "${!envvar}" ]] ; then
 		training_args="${!envvar}"
 	fi
@@ -1464,13 +1400,13 @@ _trainer_plan_audio_vbr() {
 	local vbr_suffix="${encoding_codec^^}"
 	vbr_suffix="${vbr_suffix//-/_}"
 
-	local vbr_option="FFMPEG_TRAIN_VBR_OPTION_${vbr_suffix}"
+	local vbr_option="FFMPEG_TRAINING_VBR_OPTION_${vbr_suffix}"
 	if [[ -z "${!vbr_option}" ]] ; then
 		ewarn "Missing VBR option for ${encoding_codec}.  Skipping training."
 		return
 	fi
 
-	local vbr_table="FFMPEG_TRAIN_VBR_TABLE_${vbr_suffix}_${audio_scenario^^}"
+	local vbr_table="FFMPEG_TRAINING_VBR_TABLE_${vbr_suffix}_${audio_scenario^^}"
 	einfo "vbr_table=${vbr_table}"
 	if [[ -z "${!vbr_table}" ]] ; then
 		ewarn "Missing VBR table for ${encoding_codec}.  Skipping training."
@@ -1517,7 +1453,7 @@ _trainer_plan_audio_vbr() {
 }
 
 run_trainer_audio_codecs() {
-	for codec in ${FFMPEG_TRAIN_AUDIO_CODECS} ; do
+	for codec in ${FFMPEG_TRAINING_AUDIO_CODECS} ; do
 		local audio_scenario=$(echo "${codec}" | cut -f 1 -d ":")
 		local encode_codec=$(echo "${codec}" | cut -f 2 -d ":")
 		local decode_codec=$(echo "${codec}" | cut -f 3 -d ":")
@@ -1547,14 +1483,6 @@ run_trainer_audio_codecs() {
 				"${container_extension}" \
 				"${tags}"
 		fi
-		if use trainer-audio ; then
-			_trainer_plan_audio_custom \
-				"${audio_scenario}" \
-				"${encode_codec}" \
-				"${decode_codec}" \
-				"${container_extension}" \
-				"${tags}"
-		fi
 	done
 }
 
@@ -1563,7 +1491,7 @@ ewarn
 ewarn "The format for environment variables has changed recently."
 ewarn "See metadata.xml or \`epkginfo -x =${CATEGORY}/${PN}-${PVR}::oiledmachine-overlay\` for details."
 ewarn
-	for codec in ${FFMPEG_TRAIN_VIDEO_CODECS} ; do
+	for codec in ${FFMPEG_TRAINING_VIDEO_CODECS} ; do
 		local video_scenario=$(echo "${codec}" | cut -f 1 -d ":")
 		local encode_codec=$(echo "${codec}" | cut -f 2 -d ":")
 		local decode_codec=$(echo "${codec}" | cut -f 3 -d ":")
@@ -1601,32 +1529,7 @@ ewarn
 				"${container_extension}" \
 				"${tags}"
 		fi
-		if use trainer-video ; then
-			_trainer_plan_video_custom \
-				"${video_scenario}" \
-				"${encode_codec}" \
-				"${decode_codec}" \
-				"${container_extension}" \
-				"${tags}"
-		fi
 	done
-}
-
-train_trainer_custom() {
-	local btype="${lib_type/-*}"
-	if multilib_is_native_abi ; then
-		export FFMPEG="${ED}/usr/bin/ffmpeg-${btype}"
-	else
-		export FFMPEG="${ED}/usr/bin/ffmpeg-${btype}-${ABI}"
-	fi
-	export MY_ED="${ED}"
-	# Currently only full codecs supported.
-	if [[ -n "${FFMPEG_TRAIN_AUDIO_CODECS}" ]] ; then
-		run_trainer_audio_codecs
-	fi
-	if [[ -n "${FFMPEG_TRAIN_VIDEO_CODECS}" ]] ; then
-		run_trainer_video_codecs
-	fi
 }
 
 _src_compile() {
@@ -1804,6 +1707,12 @@ ewarn "You are not allowed to redistribute this binary."
 ewarn
 	fi
 	uopts_pkg_postinst
+einfo
+einfo "Further PGO training details can be found in:"
+einfo
+einfo "  The README.md of this overlay."
+einfo "  The metadata.xml of this package (or \`epkginfo -x ${CATEGORY}/${PN}::oiledmachine-overlay\`)."
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  pgo, cfi-exceptions, license-compatibility-correctness
