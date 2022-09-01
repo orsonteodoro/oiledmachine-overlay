@@ -7,9 +7,11 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20220626"
+VERSION="20220831"
 PN="emscripten"
 
+# 3.1.18 llvm 16 ; node 4.1.1 ; binaryen 109
+# 3.1.17 llvm 15 ; node 4.1.1 ; binaryen 109
 # 3.1.14 llvm 15 ; node 4.1.1 ; binaryen 109
 # 3.1.11 llvm 15 ; node 4.1.1 ; binaryen 108
 # 3.1.8 llvm 15 ; node 4.1.1 ; binaryen 105
@@ -180,10 +182,15 @@ find_targets() {
 				| sed -e "s|clang-||")
                         llvm_major="${llvm_slot}"
                         llvm_major_minor=$(echo "${llvm_v}" | cut -f 1-2 -d '.')
-                        if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.4" \
+			# Also set the llvm conditional block in set_config()
+                        if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.18" \
+                            && [[ "${llvm_major}" -ge 16 ]] ; then
+                            echo "emscripten-${em_v},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.18" \
+                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.4" \
                             && [[ "${llvm_major}" -ge 15 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.2" \
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.4" \
                             && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.27" \
                             && [[ "${llvm_major}" -ge 14 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
@@ -373,7 +380,11 @@ set_config() {
         __EMSDK_BINARYEN_VERSION__="90"
     fi
 
-    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.4" ; then
+    # Also set the llvm conditional chain in find_targets()
+    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.18" ; then
+        __EMSDK_LLVM_VERSION__="16"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.18" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.4" ; then
         __EMSDK_LLVM_VERSION__="15"
     elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.4" \
         && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.27" ; then
