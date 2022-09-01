@@ -453,13 +453,6 @@ ewarn "The following package must be installed before PGOing this package:"
 ewarn
 ewarn "  jpeg assets placed in ${distdir}/trainer/assets/jpeg"
 ewarn
-
-einfo
-einfo "Further PGO training details can be found in:"
-einfo
-einfo "  The README.md of this overlay."
-einfo "  The metadata.xml of this package (or \`epkginfo -x ${CATEGORY}/${PN}::oiledmachine-overlay\`)."
-einfo
 	fi
 	uopts_pkg_postinst
 }

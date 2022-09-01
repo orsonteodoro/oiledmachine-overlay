@@ -670,13 +670,6 @@ ewarn "The following package must be installed before PGOing this package:"
 ewarn
 ewarn "  media-video/ffmpeg[encode,vpx,$(get_arch_enabled_use_flags)]"
 ewarn
-
-einfo
-einfo "Further PGO training details can be found in:"
-einfo
-einfo "  The README.md of this overlay."
-einfo "  The metadata.xml of this package (or \`epkginfo -x ${CATEGORY}/${PN}::oiledmachine-overlay\`)."
-einfo
 	fi
 	uopts_pkg_postinst
 }

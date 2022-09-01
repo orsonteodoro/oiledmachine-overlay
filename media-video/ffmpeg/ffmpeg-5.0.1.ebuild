@@ -1707,12 +1707,6 @@ ewarn "You are not allowed to redistribute this binary."
 ewarn
 	fi
 	uopts_pkg_postinst
-einfo
-einfo "Further PGO training details can be found in:"
-einfo
-einfo "  The README.md of this overlay."
-einfo "  The metadata.xml of this package (or \`epkginfo -x ${CATEGORY}/${PN}::oiledmachine-overlay\`)."
-einfo
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  pgo, cfi-exceptions, license-compatibility-correctness
