@@ -1533,6 +1533,23 @@ ewarn
 	done
 }
 
+train_trainer_custom() {
+	local btype="${lib_type/-*}"
+	if multilib_is_native_abi ; then
+		export FFMPEG="${ED}/usr/bin/ffmpeg-${btype}"
+	else
+		export FFMPEG="${ED}/usr/bin/ffmpeg-${btype}-${ABI}"
+	fi
+	export MY_ED="${ED}"
+	# Currently only full codecs supported.
+	if [[ -n "${FFMPEG_TRAINING_AUDIO_CODECS}" ]] ; then
+		run_trainer_audio_codecs
+	fi
+	if [[ -n "${FFMPEG_TRAINING_VIDEO_CODECS}" ]] ; then
+		run_trainer_video_codecs
+	fi
+}
+
 _src_compile() {
 	cd "${BUILD_DIR}" || die
 	emake V=1
