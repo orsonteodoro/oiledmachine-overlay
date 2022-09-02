@@ -1097,7 +1097,7 @@ _get_resolutions() {
 
 # common name for height
 _cheight() {
-	local height
+	local height="${1}"
 	if [[ "${height}" == "480" ]] ; then
 		echo "SD (480p)"
 	elif [[ "${height}" == "720" ]] ; then
