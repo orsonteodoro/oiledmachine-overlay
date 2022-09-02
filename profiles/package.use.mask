@@ -47,3 +47,7 @@ dev-games/godot-export-templates-bin -debug
 # It was tested but generated no BOLT profile for reasons of missing
 # .rela.text sections.
 sys-libs/zlib bolt ebolt
+
+# Broken instrumented builds which cause stall.  Still trying to find
+# exe/.so exclusion(s)
+x11-libs/cairo bolt ebolt
