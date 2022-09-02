@@ -471,9 +471,9 @@ eerror
 		die
 	fi
 
-	local avgrate=$(python -c "import math;print(${b} + 2*pow(10,-7)*(${width}*${height}*${fps}) * 125)")"k"
-	local maxrate=$(python -c "print(${avgrate}*1.45)")"k" # moving
-	local minrate=$(python -c "print(${avgrate}*0.5)")"k" # stationary
+	local avgrate=$(python -c "import math;print(${b} + 2*pow(10,-7)*(${width}*${height}*${fps}) * 125)")
+	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
+	local minrate=$(python -c "print(${avgrate}*0.5)") # stationary
 
 	local cheight=$(_cheight "${height}")
 
@@ -483,7 +483,7 @@ eerror
 		-y \
 		-i "${libvpx_asset_path}" \
 		-c:v ${encoding_codec} \
-		-maxrate ${maxrate} -minrate ${minrate} -b:v ${avgrate} \
+		-maxrate ${maxrate}k -minrate ${minrate}k -b:v ${avgrate}k \
 		-vf scale=w=-1:h=${height} \
 		${training_args} \
 		-an \
@@ -567,9 +567,9 @@ eerror
 		die
 	fi
 
-	local avgrate=$(python -c "import math;print(${b} + 2*pow(10,-7)*(${width}*${height}*${fps}) * 125)")"k"
-	local maxrate=$(python -c "print(${avgrate}*1.45)")"k" # moving
-	local minrate=$(python -c "print(${avgrate}*0.5)")"k" # stationary
+	local avgrate=$(python -c "import math;print(${b} + 2*pow(10,-7)*(${width}*${height}*${fps}) * 125)")
+	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
+	local minrate=$(python -c "print(${avgrate}*0.5)") # stationary
 
 	local cheight=$(_cheight "${height}")
 
@@ -579,7 +579,7 @@ eerror
 		-y \
 		-i "${libvpx_asset_path}" \
 		-c:v ${encoding_codec} \
-		-maxrate ${maxrate} -minrate ${minrate} -b:v ${avgrate} \
+		-maxrate ${maxrate}k -minrate ${minrate}k -b:v ${avgrate}k \
 		-vf scale=w=-1:h=${height} \
 		${training_args} \
 		-pass 1 \
@@ -592,7 +592,7 @@ eerror
 		-y \
 		-i "${libvpx_asset_path}" \
 		-c:v ${encoding_codec} \
-		-maxrate ${maxrate} -minrate ${minrate} -b:v ${avgrate} \
+		-maxrate ${maxrate}k -minrate ${minrate}k -b:v ${avgrate}k \
 		-vf scale=w=-1:h=${height} \
 		${training_args} \
 		-pass 2 \
