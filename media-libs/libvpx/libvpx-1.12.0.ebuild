@@ -580,6 +580,7 @@ eerror
 		-vf scale=w=-1:h=${height} \
 		${training_args} \
 		-pass 1 \
+		${extra_args[@]} \
 		-an \
 		-r ${fps} \
 		-t ${duration} \
@@ -592,6 +593,7 @@ eerror
 		-vf scale=w=-1:h=${height} \
 		${training_args} \
 		-pass 2 \
+		${extra_args[@]} \
 		-an \
 		-r ${fps} \
 		-t ${duration} \
