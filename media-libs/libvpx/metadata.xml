@@ -82,7 +82,7 @@
     Additional environment variables
 
     LIBVPX_TRAINING_BPP_MAX - The maximum bits per pixel corresponding to motion.
-			 The typical is 0.15, but the default is 1.0
+			 The typical is 0.15, but the default is 0.10
     LIBVPX_TRAINING_BPP_MAX - The minimum bits per pixel corresponding to stationary.
 			 The defualt is 0.05.
 
