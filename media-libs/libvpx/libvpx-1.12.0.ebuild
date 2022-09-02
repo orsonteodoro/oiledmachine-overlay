@@ -377,7 +377,10 @@ _vdecode() {
 # HDR avg bitrate 60 fps: f(w*h*60) -> y KB/s
 # python -c "import math;print(5.0483 + 2*pow(10,-7)*(w*h*60) * 125)"
 
-# For streaming avg bitrate multiply by 0.75
+# For live streaming:
+# ls_maxrate=avgrate*0.75
+# ls_avgrate=avgrate*0.5625
+# ls_minrate=avgrate*0.375
 
 # Remove the 125 for Mb/s
 
