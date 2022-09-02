@@ -149,6 +149,7 @@ pkg_setup() {
 	uopts_setup
 }
 
+# The order does matter with PGO.
 get_lib_types() {
 	echo "shared"
 	use static-libs && echo "static"
@@ -188,7 +189,7 @@ src_configure() { :; }
 
 _src_configure() {
 	export CMAKE_USE_DIR="${S}"
-	export BUILD_DIR="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cd "${CMAKE_USE_DIR}" || die
 	local mycmakeargs=()
 
@@ -263,7 +264,7 @@ _src_configure() {
 
 _src_compile() {
 	export CMAKE_USE_DIR="${S}"
-	export BUILD_DIR="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cmake_src_compile
 }
 
@@ -386,6 +387,11 @@ src_compile() {
 	export PATH="${ED}/usr/bin:${PATH}"
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
+			if [[ "${lib_type}" == "static" ]] ; then
+				uopts_n_training
+			else
+				uopts_y_training
+			fi
 			uopts_src_compile
 		done
 	}
@@ -426,15 +432,8 @@ src_install() {
 	install_abi() {
 		for lib_type in $(get_lib_types) ; do
 			export CMAKE_USE_DIR="${S}"
-			export BUILD_DIR="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
-
-			if [[ "${lib_type}" == "static" ]] ; then
-				uopts_n_training
-			else
-				uopts_y_training
-			fi
-
 			_install
 			uopts_src_install
 		done

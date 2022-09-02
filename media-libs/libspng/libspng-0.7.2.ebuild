@@ -136,9 +136,10 @@ _src_compile() {
 	meson_src_compile
 }
 
+# The order does matter with PGO.
 get_lib_types() {
-	use static-libs && echo "static"
 	echo "shared"
+	use static-libs && echo "static"
 }
 
 src_compile() {
@@ -148,6 +149,11 @@ src_compile() {
 			export EMESON_SOURCE="${S}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 # See https://github.com/randy408/libspng/blob/master/docs/build.md#profile-guided-optimization
+			if [[ "${lib_type}" == "static" ]] ; then
+				uopts_n_training
+			else
+				uopts_y_training
+			fi
 			uopts_src_compile
 		done
 	}

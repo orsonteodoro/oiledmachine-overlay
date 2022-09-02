@@ -711,6 +711,7 @@ pkg_setup() {
 	uopts_setup
 }
 
+# The order does matter with PGO.
 get_lib_types() {
 	echo "shared"
 	use static-libs && echo "static"
@@ -1588,6 +1589,13 @@ src_compile() {
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			einfo "Build type is ${lib_type}"
+
+			if [[ "${lib_type}" == "static" ]] ; then
+				uopts_n_training
+			else
+				uopts_y_training
+			fi
+
 			uopts_src_compile
 		done
 	}

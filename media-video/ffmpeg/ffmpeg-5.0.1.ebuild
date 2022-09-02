@@ -1588,6 +1588,13 @@ src_compile() {
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			einfo "Build type is ${lib_type}"
+
+			if [[ "${lib_type}" == "static" ]] ; then
+				uopts_n_training
+			else
+				uopts_y_training
+			fi
+
 			uopts_src_compile
 		done
 	}
