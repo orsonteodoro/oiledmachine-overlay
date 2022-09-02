@@ -360,22 +360,119 @@ _vdecode() {
 	"${cmd[@]}" || die
 }
 
+# minrate = 0.5 * avgrate
+# maxrate = 1.45 * avgrate
+
+# SDR avg bitrate 30 fps: f(w*h*30) -> y KB/s
+# python -c "import math;print(0.2071 + 2*pow(10,-7)*(w*h*30) * 125)"
+
+# SDR avg bitrate 60 fps: f(w*h*60) -> y KB/s
+# python -c "import math;print(2.0231 + 2*pow(10,-7)*(w*h*60) * 125)"
+
+# HDR avg bitrate 30 fps: f(w*h*30) -> y KB/s
+# python -c "import math;print(3.5083 + 2*pow(10,-7)*(w*h*60) * 125)"
+
+# HDR avg bitrate 60 fps: f(w*h*60) -> y KB/s
+# python -c "import math;print(5.0483 + 2*pow(10,-7)*(w*h*60) * 125)"
+
+# For streaming avg bitrate multiply by 0.75
+
+# Remove the 125 for Mb/s
+
+_get_resolutions() {
+	local L=(
+		"30;426;240;sdr"
+		"60;426;240;sdr"
+		"30;640;360;sdr"
+		"60;640;360;sdr"
+		"30;854;480;sdr"
+		"60;854;480;sdr"
+		"30;1280;720;sdr"
+		"60;1280;720;sdr"
+		"30;1920;1080;sdr"
+		"60;1920;1080;sdr"
+		"30;2560;1440;sdr"
+		"60;2560;1440;sdr"
+		"30;3840;2160;sdr"
+		"60;3840;2160;sdr"
+		"30;7680;4320;sdr"
+		"60;7680;4320;sdr"
+
+		"30;1280;720;hdr"
+		"60;1280;720;hdr"
+		"30;1920;1080;hdr"
+		"60;1920;1080;hdr"
+		"30;2560;1440;hdr"
+		"60;2560;1440;hdr"
+		"30;3840;2160;hdr"
+		"60;3840;2160;hdr"
+		"30;7680;4320;hdr"
+		"60;7680;4320;hdr"
+	)
+
+	local e
+	if [[ -n "${LIBAOM_TRAINER_CUSTOM_RESOLUTIONS}" ]] ; then
+		for e in ${LIBAOM_TRAINER_CUSTOM_RESOLUTIONS} ; do
+			echo "${e}"
+		done
+	else
+		for e in ${L[@]} ; do
+			echo "${e}"
+		done
+	fi
+}
+
+# common name for height
+_cheight() {
+	local height
+	if [[ "${height}" == "480" ]] ; then
+		echo "SD (480p)"
+	elif [[ "${height}" == "720" ]] ; then
+		echo "HD (720p)"
+	elif [[ "${height}" == "1080" ]] ; then
+		echo "FHD (1080p)"
+	elif [[ "${height}" == "1440" ]] ; then
+		echo "QHD (1440p)"
+	elif [[ "${height}" == "2160" ]] ; then
+		echo "4K"
+	elif [[ "${height}" == "4320" ]] ; then
+		echo "8K"
+	else
+		echo "${height}p"
+	fi
+}
+
 _trainer_plan_constrained_quality_training_session() {
 	local entry="${1}"
 
 	local fps=$(echo "${entry}" | cut -f 1 -d ";")
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
-	local duration=$(echo "${entry}" | cut -f 4 -d ";")
-	local max_bpp=${LIBAOM_TRAINING_BPP_MAX:-0.1}
-	local min_bpp=${LIBAOM_TRAINING_BPP_MIN:-0.05}
-	local avg_bpp=$(python -c "print((${max_bpp}+${min_bpp})/2)")
-	local maxrate=$(python -c "print(${width}*${height}*${fps}/1000*${max_bpp})")"k" # moving
-	local minrate=$(python -c "print(${width}*${height}*${fps}/1000*${min_bpp})")"k" # stationary
-	local avgrate=$(python -c "print(${width}*${height}*${fps}/1000*${avg_bpp})")"k" # average BPP (bits per pixel)
+	local dynamic_range=$(echo "${entry}" | cut -f 4 -d ";")
+	local duration="3"
+
+	local b
+	if [[ "${dynamic_range}" == "sdr" && "${fps}" == "30" ]] ; then
+		b="0.2071"
+	elif [[ "${dynamic_range}" == "sdr" && "${fps}" == "60" ]] ; then
+		b="2.0231"
+	elif [[ "${dynamic_range}" == "hdr" ]] ; then
+		# 2 pass required
+		return
+	else
+eerror
+eerror "Wrong value for dynamic_range or fps"
+eerror
+		die
+	fi
+
+	local avgrate=$(python -c "import math;print(${b} + 2*pow(10,-7)*(${width}*${height}*${fps}) * 125)")"k"
+	local maxrate=$(python -c "print(${avgrate}*1.45)")"k" # moving
+	local minrate=$(python -c "print(${avgrate}*0.5)")"k" # stationary
 
 	local cmd
-	einfo "Encoding as ${height}p for ${duration} sec, ${fps} fps"
+	local cheight=$(_cheight "${height}")
+	einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
 	cmd=(
 		"${FFMPEG}" \
 		-y \
@@ -390,25 +487,12 @@ _trainer_plan_constrained_quality_training_session() {
 		"${T}/test.webm"
 	)
 	"${cmd[@]}" || die
-	_vdecode "${height}p, ${fps} fps"
+	_vdecode "${cheight} ${fps} fps"
 }
 
 _trainer_plan_constrained_quality() {
 	local L=(
-		"30;426;240;3"
-		"60;426;240;3"
-		"30;640;360;3"
-		"60;640;360;3"
-		"30;854;480;3"
-		"60;854;480;3"
-		"30;1280;720;3"
-		"60;1280;720;3"
-		"30;1920;1080;3"
-		"60;1920;1080;3"
-		"30;2560;1440;3"
-		"60;2560;1440;3"
-		"30;3840;2160;3"
-		"60;3840;2160;3"
+		$(_get_resolutions)
 	)
 
 	if train_meets_requirements ; then
@@ -431,16 +515,45 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 	local fps=$(echo "${entry}" | cut -f 1 -d ";")
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
-	local duration=$(echo "${entry}" | cut -f 4 -d ";")
-	local max_bpp=${LIBAOM_TRAINING_BPP_MAX:-0.1}
-	local min_bpp=${LIBAOM_TRAINING_BPP_MIN:-0.05}
-	local avg_bpp=$(python -c "print((${max_bpp}+${min_bpp})/2)")
-	local maxrate=$(python -c "print(${width}*${height}*${fps}/1000*${max_bpp})")"k" # moving
-	local minrate=$(python -c "print(${width}*${height}*${fps}/1000*${min_bpp})")"k" # stationary
-	local avgrate=$(python -c "print(${width}*${height}*${fps}/1000*${avg_bpp})")"k" # average BPP (bits per pixel)
+	local dynamic_range=$(echo "${entry}" | cut -f 4 -d ";")
+	local duration="3"
+
+	local extra_args=()
+	local hdr_args=(
+		# See libavfilter/vf_setparams.c
+		# Target HDR10
+		-color_primaries bt2020
+		-color_range limited # video
+		-color_trc smpte2084
+		-colorspace bt2020nc
+		-pix_fmt yuv420p10le
+	)
+
+	local b
+	if [[ "${dynamic_range}" == "sdr" && "${fps}" == "30" ]] ; then
+		b="0.2071"
+	elif [[ "${dynamic_range}" == "sdr" && "${fps}" == "60" ]] ; then
+		b="2.0231"
+	elif [[ "${dynamic_range}" == "hdr" && "${fps}" == "30" ]] ; then
+		b="3.5083"
+		extra_args=( ${hdr_args[@]} )
+	elif [[ "${dynamic_range}" == "hdr" && "${fps}" == "60" ]] ; then
+		b="5.0483"
+		extra_args=( ${hdr_args[@]} )
+	else
+eerror
+eerror "Wrong value for dynamic_range or fps"
+eerror
+		die
+	fi
+
+	local avgrate=$(python -c "import math;print(${b} + 2*pow(10,-7)*(${width}*${height}*${fps}) * 125)")"k"
+	local maxrate=$(python -c "print(${avgrate}*1.45)")"k" # moving
+	local minrate=$(python -c "print(${avgrate}*0.5)")"k" # stationary
 
 	local cmd
-	einfo "Encoding as ${height}p for ${duration} sec, ${fps} fps"
+	local cheight=$(_cheight "${height}")
+	einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
 	cmd1=(
 		"${FFMPEG}" \
 		-y \
@@ -450,6 +563,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 		-vf scale=w=-1:h=${height} \
 		${LIBAOM_TRAINING_ARGS} \
 		-pass 1 \
+		${extra_args[@]} \
 		-an \
 		-r ${fps} \
 		-t ${duration} \
@@ -464,6 +578,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 		-vf scale=w=-1:h=${height} \
 		${LIBAOM_TRAINING_ARGS} \
 		-pass 2 \
+		${extra_args[@]} \
 		-an \
 		-r ${fps} \
 		-t ${duration} \
@@ -471,25 +586,12 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 	)
 	"${cmd1[@]}" || die
 	"${cmd2[@]}" || die
-	_vdecode "${height}p, ${fps} fps"
+	_vdecode "${cheight} ${fps} fps"
 }
 
 _trainer_plan_2_pass_constrained_quality() {
 	local L=(
-		"30;426;240;3"
-		"60;426;240;3"
-		"30;640;360;3"
-		"60;640;360;3"
-		"30;854;480;3"
-		"60;854;480;3"
-		"30;1280;720;3"
-		"60;1280;720;3"
-		"30;1920;1080;3"
-		"60;1920;1080;3"
-		"30;2560;1440;3"
-		"60;2560;1440;3"
-		"30;3840;2160;3"
-		"60;3840;2160;3"
+		$(_get_resolutions)
 	)
 
 	if train_meets_requirements ; then

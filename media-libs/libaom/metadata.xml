@@ -73,12 +73,22 @@
     You should only pick PGO trainers that reflect typical use or it may
     result in performance degration.
 
-    Additional environment variables
 
-    LIBAOM_TRAINING_BPP_MAX - The maximum bits per pixel corresponding to motion.
-			 The typical is 0.15, but the default is 0.10
-    LIBAOM_TRAINING_BPP_MAX - The minimum bits per pixel corresponding to stationary.
-			 The defualt is 0.05.
+    Custom training resolutions
+
+    Set LIBAOM_TRAINER_CUSTOM_RESOLUTIONS as a space separated list of sublists.
+
+    Sublist format:
+    fps;width;height;dynamic_range
+
+    dynamic range - sdr or hdr only
+    fps - 30 or 60 only
+
+    Example:
+    LIBAOM_TRAINER_CUSTOM_RESOLUTIONS="30;1280;720;sdr 60;1280;720;sdr"
+
+    Setting this will override the defaults which trains all.
+
 
     For custom training details, see README.md of this overlay.
 

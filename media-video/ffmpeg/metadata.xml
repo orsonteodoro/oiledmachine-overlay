@@ -135,21 +135,29 @@
 	Not doing so will result in increased code size and performance
 	degradation.
 
-	Additional environment variables:
 
-	FFMPEG_TRAINING_BPP_MAX - Bits per pixel corresponding to motion.  Higher
-	  means more quality.  0.15 is typical max.  The default is 0.10.
+	Custom training resolutions
 
-	FFMPEG_TRAINING_BPP_MIN - Bits per pixel corresponding to stationary. 
-	  The default is 0.5.
+	Set FFMPEG_TRAINER_CUSTOM_RESOLUTIONS as a space separated list of sublists.
+
+	Sublist format:
+	fps;width;height;dynamic_range
+
+	dynamic range - sdr or hdr only
+	fps - 30 or 60 only
+
+	Example:
+	FFMPEG_TRAINER_CUSTOM_RESOLUTIONS="30;1280;720;sdr 60;1280;720;sdr"
+
+	Setting this will override the defaults which trains all.
+
 
 	Since it would be impratical to permute and PGO train the
 	possible features and settings of the software to PGO optimize,
 	custom training is provided (See README.md of overlay) to
 	allow people to script their own trainers.  You may also define
-	additional per-package envvar assets.  See the ebuild
-	for ways to execute the sandboxed FFmpeg and ways to use
-	the variables.
+	additional per-package envvar assets.  See the ebuild for ways
+        to use the variables.
 </longdescription>
 <use>
 	<!-- added to ebuild by oiledmachine-overlay -->
