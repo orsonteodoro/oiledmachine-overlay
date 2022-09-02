@@ -217,12 +217,14 @@ eerror
 	fi
 
 	if (( $(declare -f multilib_src_configure | wc -c) > 38 )) ; then
-eerror
-eerror "multilib_src_configure must be renamed."
-eerror
-eerror "Rename multilib_src_configure -> _src_configure()."
-eerror "Add src_configure() { :; }"
-eerror
+ewarn
+ewarn "multilib_src_configure must be renamed."
+ewarn
+ewarn "Rename multilib_src_configure -> _src_configure()."
+ewarn "Add src_configure() { :; }"
+ewarn
+ewarn "This message may be a false positive."
+ewarn
 #		die
 	fi
 	if (( $(declare -f _src_configure | wc -c) == 0 )) ; then
