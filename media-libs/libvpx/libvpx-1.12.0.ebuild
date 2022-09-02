@@ -374,7 +374,7 @@ _trainer_plan_constrained_quality() {
 	local avg_bpp=$(python -c "print((${max_bpp}+${min_bpp})/2)")
 	local maxrate=$(python -c "print(${width}*${height}*${fps}*${max_bpp})")"k" # moving
 	local minrate=$(python -c "print(${width}*${height}*${fps}*${min_bpp})")"k" # stationary
-	local avgrate=$(python -c "print(${width}*${height}*${fps}*${avg_bpp}")"k" # average BPP (bits per pixel)
+	local avgrate=$(python -c "print(${width}*${height}*${fps}*${avg_bpp})")"k" # average BPP (bits per pixel)
 
 	local cmd
 	einfo "Encoding as ${height}p for ${duration} sec, ${fps} fps"
@@ -451,7 +451,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 	local avg_bpp=$(python -c "print((${max_bpp}+${min_bpp})/2)")
 	local maxrate=$(python -c "print(${width}*${height}*${fps}*${max_bpp})")"k" # moving
 	local minrate=$(python -c "print(${width}*${height}*${fps}*${min_bpp})")"k" # stationary
-	local avgrate=$(python -c "print(${width}*${height}*${fps}*${avg_bpp}")"k" # average BPP (bits per pixel)
+	local avgrate=$(python -c "print(${width}*${height}*${fps}*${avg_bpp})")"k" # average BPP (bits per pixel)
 
 	local cmd
 	einfo "Encoding as ${height}p for ${duration} sec, ${fps} fps"
