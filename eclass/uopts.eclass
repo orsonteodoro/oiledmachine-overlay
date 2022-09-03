@@ -54,13 +54,13 @@ uopts_setup() {
 
 	if ( has ebolt ${IUSE} && use ebolt ) || ( has bolt ${IUSE} && use bolt ) ; then
 einfo
-einfo "If the build fails, try \`UOPT_BOLT_FORCE_INST=1 emerge =${CATEGORY}/${P}\`"
+einfo "If the build fails, try \`UOPT_BOLT_FORCE_INST=1 emerge -1 =${CATEGORY}/${P}\`"
 einfo
 	fi
 
 	if ( has epgo ${IUSE} && use epgo ) || ( has pgo ${IUSE} && use pgo ) ; then
 einfo
-einfo "If the build fails, try \`UOPTS_PGO_FORCE_PGI=1 emerge =${CATEGORY}/${P}\`"
+einfo "If the build fails, try \`UOPTS_PGO_FORCE_PGI=1 emerge -1 =${CATEGORY}/${P}\`"
 einfo
 	fi
 
