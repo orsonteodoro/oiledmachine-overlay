@@ -39,9 +39,16 @@
         to the package and USE flags above.
     (3) Acquire a video that is either CC0-1.0, public domain, or your own
         personal video asset is at least 3 seconds long.
-    (4a) Set LIBVPX_TRAINING_VIDEO_i, replacing i with an unpadded number, as
-        a per-package environment variable with the absolute path to the
-        asset.
+    (4a) Place the video in one of these groups
+
+        LIBVPX_TRAINING_VIDEO_CGI_i        # Computer Generated Imagery
+        LIBVPX_TRAINING_VIDEO_GENERAL_i
+        LIBVPX_TRAINING_VIDEO_GAMING_i
+        LIBVPX_TRAINING_VIDEO_GRAINY_i
+        LIBVPX_TRAINING_VIDEO_SCREENCAST_i
+
+        replacing i with an unpadded number, as a per-package environment
+        variable with the absolute path to the asset.
     (4b) Set LIBVPX_VP8_TRAINING_ARGS,
 	LIBVPX_VP9_TRAINING_ARGS,
 	LIBVPX_VP8_TRAINING_ARGS_LOSSLESS,

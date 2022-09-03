@@ -34,8 +34,16 @@
         to the package and USE flags above.
     (3) Acquire a video that is either CC0-1.0, public domain, or your own
         personal video asset that is at least 3 seconds long.
-    (4a) Set LIBAOM_TRAINING_VIDEO_i, replacing i with an unpadded number, as a
-         per-package environment varable with the absolute path to the asset.
+    (4a) Set assets in one of the 3 categories:
+
+         LIBAOM_TRAINING_VIDEO_CGI_i          # Computer Generated Imagery
+         LIBAOM_TRAINING_VIDEO_GAMING_i
+         LIBAOM_TRAINING_VIDEO_GENERAL_i
+         LIBAOM_TRAINING_VIDEO_GRAINY_i
+         LIBAOM_TRAINING_VIDEO_SCREENCAST_i
+
+         replacing i with an unpadded number, as a per-package environment
+         varable with the absolute path to the asset.
     (4b) Set LIBAOM_TRAINING_ARGS and/or
 	LIBAOM_TRAINING_ARGS_LOSSLESS, see below for details.
     (5) Re-emerge this package with the pgo USE flag enabled.

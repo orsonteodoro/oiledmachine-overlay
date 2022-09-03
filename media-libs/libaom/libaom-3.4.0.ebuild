@@ -74,9 +74,18 @@ RESTRICT="strip"
 RESTRICT+=" !test? ( test ) test"
 
 get_asset_ids() {
-	local i
-	for i in $(seq 0 ${LIBAOM_TRAINING_MAX_ASSETS}) ; do
-		echo "LIBAOM_TRAINING_VIDEO_i"
+	local types=(
+		VIDEO_CGI
+		VIDEO_GAMING
+		VIDEO_GRAINY
+		VIDEO_GENERAL
+		VIDEO_SCREENCAST
+	)
+	local t
+	for t in ${types[@]} ; do
+		for i in $(seq 0 ${MAX_ASSETS_PER_TYPE}) ; do
+			echo "LIBAOM_TRAINING_${t}_${i}"
+		done
 	done
 }
 
@@ -473,6 +482,14 @@ _trainer_plan_constrained_quality_training_session() {
 	[[ "${fps}" == "60" ]] && m60fps="1.5"
 	[[ "${dynamic_range}" == "hdr" ]] && return
 
+	if [[ "${id}" =~ ("CGI"|"GAMING"|"SCREENCAST") ]] ; then
+		extra_args+=( --tune-content=screen )
+	elif [[ "${id}" =~ "GRAINY" ]] ; then
+		extra_args+=( --tune-content=film )
+	elif [[ "${id}" =~ "GENERAL" ]] ; then
+		extra_args+=( --tune-content=default )
+	fi
+
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
 	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
 	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
@@ -541,7 +558,18 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 	local m60fps="1"
 
 	[[ "${fps}" == "60" ]] && m60fps="1.5"
-	[[ "${dynamic_range}" == "hdr" ]] && mhdr="1.25"
+	if [[ "${dynamic_range}" == "hdr" ]] ; then
+		extra_args+=( ${hdr_args[@]} )
+		mhdr="1.25"
+	fi
+
+	if [[ "${id}" =~ ("CGI"|"GAMING"|"SCREENCAST") ]] ; then
+		extra_args+=( --tune-content=screen )
+	elif [[ "${id}" =~ "GRAINY" ]] ; then
+		extra_args+=( --tune-content=film )
+	elif [[ "${id}" =~ "GENERAL" ]] ; then
+		extra_args+=( --tune-content=default )
+	fi
 
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
 	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${mhdr} * ${m60fps} * 1000)")

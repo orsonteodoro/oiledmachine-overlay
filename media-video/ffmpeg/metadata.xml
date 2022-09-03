@@ -24,9 +24,13 @@
 	installed.
 	(3) Configure the following variables, replacing i with a unpadded number:
 
+		FFMPEG_TRAINING_VIDEO_CGI_i               # Computer Generated Imagery
+		FFMPEG_TRAINING_VIDEO_SCREENCAST_i
 		FFMPEG_TRAINING_VIDEO_FANTASY_i
+		FFMPEG_TRAINING_VIDEO_GAMING_i
 		FFMPEG_TRAINING_VIDEO_GRAINY_i
 		FFMPEG_TRAINING_VIDEO_REALISM_i
+		FFMPEG_TRAINING_VIDEO_STILL_i             # Same image used from start to finish in podcasting or music
 		FFMPEG_TRAINING_AUDIO_VOICE_i
 		FFMPEG_TRAINING_AUDIO_RADIO_i
 		FFMPEG_TRAINING_AUDIO_MUSIC_INSTRUMENTAL_i

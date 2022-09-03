@@ -582,9 +582,12 @@ get_av_device_ids() {
 
 get_video_sample_ids() {
 	local types=(
+		VIDEO_CGI
 		VIDEO_FANTASY
+		VIDEO_GAMING
 		VIDEO_GRAINY
 		VIDEO_REALISM
+		VIDEO_SCREENCAST
 	)
 	local t
 	for t in ${types[@]} ; do
@@ -792,6 +795,7 @@ pkg_setup() {
 	uopts_setup
 }
 
+# The order does matter with PGO.
 get_lib_types() {
 	echo "shared"
 	use static-libs && echo "static"
@@ -1279,6 +1283,26 @@ _trainer_plan_video_constrained_quality_training_session() {
 	[[ "${fps}" == "60" ]] && m60fps="1.5"
 	[[ "${dynamic_range}" == "hdr" ]] && return
 
+	if [[ "${encoding_codec}" =~ "x264" ]] ; then
+		if [[ "${id}" =~ ("CGI"|"FANTASY") ]] ; then
+			extra_args+=( --tune animation )
+		elif [[ "${id}" =~ "GRAINY" ]] ; then
+			extra_args+=( --tune grain )
+		elif [[ "${id}" =~ "REALISM" ]] ; then
+			extra_args+=( --tune film )
+		elif [[ "${id}" =~ "STILL" ]] ; then
+			extra_args+=( --tune stillimage )
+		fi
+	fi
+
+	if [[ "${encoding_codec}" =~ ("aom"|"vpx"|"vp9") ]] ; then
+		if [[ "${id}" =~ ("CGI"|"GAMING"|"SCREENCAST") ]] ; then
+			extra_args+=( --tune-content=screen )
+		elif [[ "${id}" =~ "GRAINY" ]] ; then
+			extra_args+=( --tune-content=film )
+		fi
+	fi
+
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
 	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
 	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
@@ -1365,7 +1389,30 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 	local m60fps="1"
 
 	[[ "${fps}" == "60" ]] && m60fps="1.5"
-	[[ "${dynamic_range}" == "hdr" ]] && mhdr="1.25"
+	if [[ "${dynamic_range}" == "hdr" ]] ; then
+		extra_args+=( ${hdr_args[@]} )
+		mhdr="1.25"
+	fi
+
+	if [[ "${encoding_codec}" =~ "x264" ]] ; then
+		if [[ "${id}" =~ ("CGI"|"FANTASY") ]] ; then
+			extra_args+=( --tune animation )
+		elif [[ "${id}" =~ "GRAINY" ]] ; then
+			extra_args+=( --tune grain )
+		elif [[ "${id}" =~ "REALISM" ]] ; then
+			extra_args+=( --tune film )
+		elif [[ "${id}" =~ "STILL" ]] ; then
+			extra_args+=( --tune stillimage )
+		fi
+	fi
+
+	if [[ "${encoding_codec}" =~ ("aom"|"vpx"|"vp9") ]] ; then
+		if [[ "${id}" =~ ("CGI"|"GAMING"|"SCREENCAST") ]] ; then
+			extra_args+=( --tune-content=screen )
+		elif [[ "${id}" =~ "GRAINY" ]] ; then
+			extra_args+=( --tune-content=film )
+		fi
+	fi
 
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
 	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${mhdr} * ${m60fps} * 1000)")
@@ -1569,14 +1616,15 @@ _trainer_plan_av_streaming_training_session() {
 
 	local extra_args=()
 
-	if ! [[ "${vencoding_codec}" =~ ("av1"|"h264"|"theora"|"vp9"|"vpx"|"x264"|"x265") ]] ; then
+	if ! [[ "${vencoding_codec}" =~ ("264"|"265"|"av1"|"theora"|"vp9"|"vpx") ]] ; then
 eerror
 eerror "Invalid video codec for av-streaming training."
 eerror
 		return
 	fi
 
-	if ! [[ "${aencoding_codec}" =~ ("aac"|"mp3"|"none") ]] && [[ "${enable_audio}" =~ ("on"|"1") ]] ; then
+	if ! [[ "${aencoding_codec}" =~ ("aac"|"mp3"|"none"|"opus") ]] \
+		&& [[ "${enable_audio}" =~ ("on"|"1") ]] ; then
 eerror
 eerror "Invalid audio codec for av-streaming training."
 eerror
@@ -1591,22 +1639,29 @@ eerror
 	local mq_avgrate=$(python -c "import math;print((${lq_avgrate}+${hq_avgrate})/2)")
 
 	local bandwidth_limit=$(python -c "print(${FFMPEG_TRAINING_STREAMING_UPLOAD_BANDWIDTH:-1.05} * 1000)")
-	local total_bitrate=$(python -c "print(${avgrate} + ${abitrate})")
 
 	if [[ "${enable_audio}" =~ ("on"|"1") ]] ; then
-		extra_args=(
+		extra_args+=(
 			-c:a ${aencoding_codec}
 			-b:a ${abitrate}k
 			-ar $(python -c "print(int(${asample_rate}*1000))")
 		)
 	else
-		extra_args=(
+		extra_args+=(
 			-an
 		)
 	fi
 
 	if [[ -z "${container}" ]] ; then
 		container="mp4"
+	fi
+
+	if [[ "${vencoding_codec}" =~ "x264" ]] ; then
+		extra_args+=( --tune zerolatency )
+	fi
+
+	if [[ "${vencoding_codec}" =~ ("vpx"|"vp9") ]] ; then
+		extra_args+=( -deadline realtime )
 	fi
 
 	local idx=0
