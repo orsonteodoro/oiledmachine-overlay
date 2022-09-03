@@ -52,13 +52,13 @@ uopts_setup() {
 	[[ "${UOPTS_SUPPORT_TPGO}" == "1" ]] && tpgo_setup
 	[[ "${UOPTS_SUPPORT_TBOLT}" == "1" ]] && tbolt_setup
 
-	if ( has ebolt && use ebolt ) || ( has bolt && use bolt ) ; then
+	if ( has ebolt ${USE} && use ebolt ) || ( has bolt ${USE} && use bolt ) ; then
 einfo
 einfo "If the build fails, try \`UOPT_BOLT_FORCE_INST=1 emerge =${CATEGORY}/${P}\`"
 einfo
 	fi
 
-	if ( has epgo && use epgo ) || ( has pgo && use pgo ) ; then
+	if ( has epgo ${USE} && use epgo ) || ( has pgo ${USE} && use pgo ) ; then
 einfo
 einfo "If the build fails, try \`UOPTS_PGO_FORCE_PGI=1 emerge =${CATEGORY}/${P}\`"
 einfo
