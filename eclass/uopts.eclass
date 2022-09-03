@@ -52,21 +52,21 @@ uopts_setup() {
 	[[ "${UOPTS_SUPPORT_TPGO}" == "1" ]] && tpgo_setup
 	[[ "${UOPTS_SUPPORT_TBOLT}" == "1" ]] && tbolt_setup
 
-	if ( has ebolt ${USE} && use ebolt ) || ( has bolt ${USE} && use bolt ) ; then
+	if ( has ebolt ${IUSE} && use ebolt ) || ( has bolt ${IUSE} && use bolt ) ; then
 einfo
 einfo "If the build fails, try \`UOPT_BOLT_FORCE_INST=1 emerge =${CATEGORY}/${P}\`"
 einfo
 	fi
 
-	if ( has epgo ${USE} && use epgo ) || ( has pgo ${USE} && use pgo ) ; then
+	if ( has epgo ${IUSE} && use epgo ) || ( has pgo ${IUSE} && use pgo ) ; then
 einfo
 einfo "If the build fails, try \`UOPTS_PGO_FORCE_PGI=1 emerge =${CATEGORY}/${P}\`"
 einfo
 	fi
 
 	if \
-		has epgo ${USE} && use epgo \
-		&& has pgo ${USE} && use pgo \
+		has epgo ${IUSE} && use epgo \
+		&& has pgo ${IUSE} && use pgo \
 		&& [[ -n "${_EPGO_ECLASS}" && -n "${_TPGO_ECLASS}" ]] ; then
 eerror
 eerror "You cannot use epgo and pgo at the same time."
@@ -74,8 +74,8 @@ eerror
 		die
 	fi
 	if \
-		has ebolt ${USE} && use ebolt \
-		&& has bolt ${USE} && use bolt \
+		has ebolt ${IUSE} && use ebolt \
+		&& has bolt ${IUSE} && use bolt \
 		&& [[ -n "${_EBOLT_ECLASS}" && -n "${_TBOLT_ECLASS}" ]] ; then
 # You are allow to use ebolt and bolt in llvm ebuilds.
 eerror
@@ -130,7 +130,7 @@ uopts_n_training() {
 uopts_src_compile() {
 	local is_pgoable=1
 	local skip_pgi="no"
-	if has pgo ${USE} && [[ -n "${_TPGO_ECLASS}" ]] ; then
+	if has pgo ${IUSE} && [[ -n "${_TPGO_ECLASS}" ]] ; then
 		_UOPTS_PGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_PGO_IMPLS}"
 		if declare -f train_meets_requirements > /dev/null ; then
 			if train_meets_requirements ; then
@@ -158,7 +158,7 @@ einfo
 
 	local is_boltable=1
 	local skip_inst="no"
-	if has bolt ${USE} && [[ -n "${_TBOLT_ECLASS}" ]] ; then
+	if has bolt ${IUSE} && [[ -n "${_TBOLT_ECLASS}" ]] ; then
 		_TBOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_BOLT_IMPLS}"
 		if declare -f train_meets_requirements > /dev/null ; then
 			if train_meets_requirements ; then
@@ -186,11 +186,11 @@ einfo
 
 	local PGO_PHASE="NO_PGO"
 	local BOLT_PHASE="NO_BOLT"
-	if has ebolt ${USE} && use ebolt ; then
+	if has ebolt ${IUSE} && use ebolt ; then
 		BOLT_PHASE=$(epgo_get_phase)
 	fi
 
-	if has pgo ${USE} && use pgo && (( ${is_pgoable} == 1 )) && [[ -n "${_TPGO_ECLASS}" ]] ; then
+	if has pgo ${IUSE} && use pgo && (( ${is_pgoable} == 1 )) && [[ -n "${_TPGO_ECLASS}" ]] ; then
 		TRAIN_MUX="tpgo"
 		if [[ "${skip_pgi}" == "no" ]] && (( ${_UOPTS_REQUIRE_TRAINING} == 1 )) ; then
 			PGO_PHASE="PGI"
@@ -214,10 +214,10 @@ einfo
 		# The Fallback
 		PGO_PHASE="NO_PGO"
 		BOLT_PHASE="NO_BOLT"
-		if has epgo ${USE} && use epgo ; then
+		if has epgo ${IUSE} && use epgo ; then
 			PGO_PHASE=$(epgo_get_phase)
 		fi
-		if has ebolt ${USE} && use ebolt ; then
+		if has ebolt ${IUSE} && use ebolt ; then
 			BOLT_PHASE=$(epgo_get_phase)
 		fi
 		declare -f _src_prepare > /dev/null && _src_prepare
@@ -227,7 +227,7 @@ einfo
 
 	if ! [[ "${ABI}" =~ ("arm64"|"amd64") ]] ; then
 		:; # Skip trainer
-	elif has bolt ${USE} && use bolt && (( ${is_boltable} == 1 )) && [[ -n "${_TBOLT_ECLASS}" ]] ; then
+	elif has bolt ${IUSE} && use bolt && (( ${is_boltable} == 1 )) && [[ -n "${_TBOLT_ECLASS}" ]] ; then
 		TRAIN_MUX="tbolt"
 		if [[ "${skip_inst}" == "no" ]] ; then
 			BOLT_PHASE="INST"
@@ -239,12 +239,12 @@ einfo
 		fi
 		BOLT_PHASE="OPT"
 		_tbolt_opt_tree "${BUILD_DIR}"
-	elif has ebolt ${USE} && use ebolt && [[ -n "${_EBOLT_ECLASS}" ]] ; then
-		if has ebolt ${USE} && use ebolt ; then
+	elif has ebolt ${IUSE} && use ebolt && [[ -n "${_EBOLT_ECLASS}" ]] ; then
+		if has ebolt ${IUSE} && use ebolt ; then
 			BOLT_PHASE=$(epgo_get_phase)
 		fi
-		has ebolt ${USE} && use ebolt && _src_compile_bolt_inst
-		has ebolt ${USE} && use ebolt && _src_compile_bolt_opt
+		has ebolt ${IUSE} && use ebolt && _src_compile_bolt_inst
+		has ebolt ${IUSE} && use ebolt && _src_compile_bolt_opt
 	fi
 }
 
