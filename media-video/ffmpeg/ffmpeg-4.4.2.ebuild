@@ -1285,21 +1285,21 @@ _trainer_plan_video_constrained_quality_training_session() {
 
 	if [[ "${encoding_codec}" =~ "x264" ]] ; then
 		if [[ "${id}" =~ ("CGI"|"FANTASY") ]] ; then
-			extra_args+=( --tune animation )
+			extra_args+=( -tune animation )
 		elif [[ "${id}" =~ "GRAINY" ]] ; then
-			extra_args+=( --tune grain )
+			extra_args+=( -tune grain )
 		elif [[ "${id}" =~ "REALISM" ]] ; then
-			extra_args+=( --tune film )
+			extra_args+=( -tune film )
 		elif [[ "${id}" =~ "STILL" ]] ; then
-			extra_args+=( --tune stillimage )
+			extra_args+=( -tune stillimage )
 		fi
 	fi
 
 	if [[ "${encoding_codec}" =~ ("aom"|"vpx"|"vp9") ]] ; then
 		if [[ "${id}" =~ ("CGI"|"GAMING"|"SCREENCAST") ]] ; then
-			extra_args+=( --tune-content=screen )
+			extra_args+=( -tune-content 1 ) # 1=screen
 		elif [[ "${id}" =~ "GRAINY" ]] ; then
-			extra_args+=( --tune-content=film )
+			extra_args+=( -tune-content 2 ) # 2=film
 		fi
 	fi
 
@@ -1396,21 +1396,21 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 
 	if [[ "${encoding_codec}" =~ "x264" ]] ; then
 		if [[ "${id}" =~ ("CGI"|"FANTASY") ]] ; then
-			extra_args+=( --tune animation )
+			extra_args+=( -tune animation )
 		elif [[ "${id}" =~ "GRAINY" ]] ; then
-			extra_args+=( --tune grain )
+			extra_args+=( -tune grain )
 		elif [[ "${id}" =~ "REALISM" ]] ; then
-			extra_args+=( --tune film )
+			extra_args+=( -tune film )
 		elif [[ "${id}" =~ "STILL" ]] ; then
-			extra_args+=( --tune stillimage )
+			extra_args+=( -tune stillimage )
 		fi
 	fi
 
 	if [[ "${encoding_codec}" =~ ("aom"|"vpx"|"vp9") ]] ; then
 		if [[ "${id}" =~ ("CGI"|"GAMING"|"SCREENCAST") ]] ; then
-			extra_args+=( --tune-content=screen )
+			extra_args+=( -tune-content 1 ) # 1=screen
 		elif [[ "${id}" =~ "GRAINY" ]] ; then
-			extra_args+=( --tune-content=film )
+			extra_args+=( -tune-content 2 ) # 2=film
 		fi
 	fi
 
@@ -1657,7 +1657,7 @@ eerror
 	fi
 
 	if [[ "${vencoding_codec}" =~ "x264" ]] ; then
-		extra_args+=( --tune zerolatency )
+		extra_args+=( -tune zerolatency )
 	fi
 
 	if [[ "${vencoding_codec}" =~ ("vpx"|"vp9") ]] ; then

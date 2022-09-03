@@ -483,11 +483,11 @@ _trainer_plan_constrained_quality_training_session() {
 	[[ "${dynamic_range}" == "hdr" ]] && return
 
 	if [[ "${id}" =~ ("CGI"|"GAMING"|"SCREENCAST") ]] ; then
-		extra_args+=( --tune-content=screen )
+		extra_args+=( -tune-content 1 ) # 1=screen
 	elif [[ "${id}" =~ "GRAINY" ]] ; then
-		extra_args+=( --tune-content=film )
+		extra_args+=( -tune-content 2 ) # 2=film
 	elif [[ "${id}" =~ "GENERAL" ]] ; then
-		extra_args+=( --tune-content=default )
+		extra_args+=( -tune-content 0 ) # 0=default
 	fi
 
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
@@ -564,11 +564,11 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 	fi
 
 	if [[ "${id}" =~ ("CGI"|"GAMING"|"SCREENCAST") ]] ; then
-		extra_args+=( --tune-content=screen )
+		extra_args+=( -tune-content 1 ) # 1=screen
 	elif [[ "${id}" =~ "GRAINY" ]] ; then
-		extra_args+=( --tune-content=film )
+		extra_args+=( -tune-content 2 ) # 2=film
 	elif [[ "${id}" =~ "GENERAL" ]] ; then
-		extra_args+=( --tune-content=default )
+		extra_args+=( -tune-content 0 ) # 0=default
 	fi
 
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
