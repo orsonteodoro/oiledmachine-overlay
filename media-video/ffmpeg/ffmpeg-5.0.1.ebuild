@@ -1586,32 +1586,12 @@ eerror
 	[[ -z "${abitrate}" ]] && abitrate="0"
 
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
-	local avgrate=$(python -c "import math;print((1.800 + 4.340*pow(10,-8)*(${width}*${height}*30)) * ${m60fps} * 1000)")
+	local lq_avgrate=$(python -c "import math;print((0.3 + 4.34*pow(10,-8)*(${width}*${height}*30)) * ${m60fps} * 1000)")
+	local hq_avgrate=$(python -c "import math;print((1.5 + 3.62*pow(10,-8)*(${width}*${height}*30)) * ${m60fps} * 1000)")
+	local mq_avgrate=$(python -c "import math;print((${lq_avgrate}+${hq_avgrate})/2)")
 
 	local bandwidth_limit=$(python -c "print(${FFMPEG_TRAINING_STREAMING_UPLOAD_BANDWIDTH:-1.05} * 1000)")
 	local total_bitrate=$(python -c "print(${avgrate} + ${abitrate})")
-	if ! python -c "if ${total_bitrate} > ${bandwidth_limit}: exit(1)" ; then
-ewarn
-ewarn "Rejected LOD exceeding upstream limit"
-ewarn
-ewarn "width=${width}"
-ewarn "height=${height}"
-ewarn "fps=${fps}"
-ewarn "vbitrate=${avgrate} kbps"
-ewarn "vencoding_codec=${vencoding_codec}"
-ewarn "vdecoding_codec=${vdecoding_codec}"
-ewarn
-ewarn "asample_rate=${asample_rate} kHz"
-ewarn "abitrate=${abitrate} kbps"
-ewarn "enable_audio=${enable_audio}"
-ewarn "aencoding_codec=${aencoding_codec}"
-ewarn "adecoding_codec=${adecoding_codec}"
-ewarn
-ewarn "total_bitrate=${total_bitrate} kbps"
-ewarn "bandwidth_limit=${bandwidth_limit} kbps"
-ewarn
-		return
-	fi
 
 	if [[ "${enable_audio}" =~ ("on"|"1") ]] ; then
 		extra_args=(
@@ -1629,25 +1609,56 @@ ewarn
 		container="mp4"
 	fi
 
-	local cheight=$(_cheight "${height}")
-	einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
-	local cmd
-	cmd=(
-		"${FFMPEG}" \
-		-y \
-		-i "${capture_path}" \
-		-c:v ${vencoding_codec} \
-		-maxrate ${avgrate}k -minrate ${avgrate}k -b:v ${avgrate}k \
-		-vf scale=w=-1:h=${height} \
-		${extra_args[@]} \
-		${training_args} \
-		-r ${fps} \
-		-t ${duration} \
-		-f ${container} \
-		"${T}/test.${container}"
-	)
-	einfo "${cmd[@]}"
-	"${cmd[@]}" || die
+	local idx=0
+	for avgrate in ${lq_avgrate} ${mq_avgrate} ${hq_avgrate} ; do
+		local total_bitrate=$(python -c "print(${avgrate} + ${abitrate})")
+		if ! python -c "if ${total_bitrate} > ${bandwidth_limit}: exit(1)" ; then
+ewarn
+ewarn "Rejected LOD exceeding upstream limit"
+ewarn
+ewarn "width=${width}"
+ewarn "height=${height}"
+ewarn "fps=${fps}"
+ewarn "vbitrate=${avgrate} kbps"
+ewarn "vencoding_codec=${vencoding_codec}"
+ewarn "vdecoding_codec=${vdecoding_codec}"
+ewarn
+ewarn "enable_audio=${enable_audio}"
+ewarn "abitrate=${abitrate} kbps"
+ewarn "asample_rate=${asample_rate} kHz"
+ewarn "aencoding_codec=${aencoding_codec}"
+ewarn "adecoding_codec=${adecoding_codec}"
+ewarn
+ewarn "total_bitrate=${total_bitrate} kbps"
+ewarn "bandwidth_limit=${bandwidth_limit} kbps"
+ewarn
+			continue
+		fi
+
+		(( ${idx} == 0 )) && msg_quality="low quality"
+		(( ${idx} == 1 )) && msg_quality="mid quality"
+		(( ${idx} == 2 )) && msg_quality="high quality"
+		local cheight=$(_cheight "${height}")
+		einfo "Encoding ${msg_quality} (${avgrate} kbps) as ${cheight} for ${duration} sec, ${fps} fps"
+		local cmd
+		cmd=(
+			"${FFMPEG}" \
+			-y \
+			-i "${capture_path}" \
+			-c:v ${vencoding_codec} \
+			-maxrate ${avgrate}k -minrate ${avgrate}k -b:v ${avgrate}k \
+			-vf scale=w=-1:h=${height} \
+			${extra_args[@]} \
+			${training_args} \
+			-r ${fps} \
+			-t ${duration} \
+			-f ${container} \
+			"${T}/test.${container}"
+		)
+		einfo "${cmd[@]}"
+		"${cmd[@]}" || die
+		idx=$((${idx} + 1))
+	done
 }
 
 _get_av_level_of_detail() {
