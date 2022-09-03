@@ -27,11 +27,12 @@
 		FFMPEG_TRAINING_VIDEO_FANTASY_i
 		FFMPEG_TRAINING_VIDEO_GRAINY_i
 		FFMPEG_TRAINING_VIDEO_REALISM_i
-		FFMPEG_TRAINING_VIDEO_STREAMING_i
 		FFMPEG_TRAINING_AUDIO_VOICE_i
 		FFMPEG_TRAINING_AUDIO_RADIO_i
 		FFMPEG_TRAINING_AUDIO_MUSIC_INSTRUMENTAL_i
 		FFMPEG_TRAINING_AUDIO_VOCAL_MUSIC_i
+		FFMPEG_TRAINING_AV_DEVICE_i
+		FFMPEG_TRAINING_AV_MICROPHONE_i
 
 	to the abspath to your asset(s). Only one asset can be used for each
 	variable.  The reason for the long list is to ensure dynamic range
@@ -60,9 +61,10 @@
 	
 	FFMPEG_TRAINING_VIDEO_CODECS is a string separated list of elements.
 	Each element is in this format vscenario:vencoder:vdecoder:ext:tags.
+	Empty elements are shown as :: for inner or : for outer.
 
 	  The value of vscenario can be fantasy, film, grainy, streaming, realism.
-	  The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*"
+	  The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*" in parens
 	  The value of vdecoder matches  mpv --vd=help
 	  The value of ext matches  ffmpeg -formats
 	  The value of tags may be added for custom trainers providing metadata
@@ -70,14 +72,17 @@
 	  may be appended by comma and spaces replaced with _.  Tags can
 	  be filtered with bash regex to apply extra args.
 
+	* VA-API codecs are currently not supported for training in the ebuild level.
+
 	Example:
 	FFMPEG_TRAINING_VIDEO_CODECS=" fantasy:libvpx-vp9:libvpx-vp9:webm: realism:libvpx-vp9:libvpx-vp9:webm:"
 
 	FFMPEG_TRAINING_AUDIO_CODECS is a string separated list of elements.
 	Each element is in this format ascenario:aencoder:adecoder:ext:tags.
+	Empty elements are shown as :: for inner or : for outer.
 
 	  The value of ascenario can be voice, radio, music.
-	  The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*"
+	  The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*" in parens
 	  The value of adecoder matches  mpv --ad=help
 	  The value of ext matches  ffmpeg -formats
 	  The value of tags may be added for custom trainers providing metadata
@@ -136,9 +141,47 @@
 	degradation.
 
 
+	Audio Video (AV) capture training
+
+	FFMPEG_TRAINING_AV_CODECS must be set as a space separated list of elements.
+
+	Each element is in the format avscenario:vencoder:vdecoder:aencoder:adecoder:container:tags
+	Empty elements are shown as :: for inner or : for outer.
+
+	  The value of avscenario can be live-streaming
+	  The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*" in parens
+	  The value of vdecoder matches  mpv --vd=help ; you may specify none
+	  The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*" in parens
+	  The value of adecoder matches  mpv --ad=help ; you may specify none
+	  The value of container matches  ffmpeg -formats ; if you don't know put unknown.
+	  The value of tags may be added for custom trainers providing metadata
+	  for enablement of special optimization options.  Multiple tags
+	  may be appended by comma and spaces replaced with _.  Tags can
+	  be filtered with bash regex to apply extra args.
+
+	* VA-API codecs are currently not supported for training in the ebuild level.
+	* The decoders may be used in the future for simulating video conferencing
+	* The avscenario may be expanded to include video-conferencing.
+	* live-streaming assumes client side only.  No network training currently.
+	* The permissions for /dev/video* require either portage be in the video
+	  group or Access Control List (ACL) of the /dev/video* have portage with
+	  rw- permission in order to to do training with the capture device.
+	  
+
+	See the above section how to setup these variables.
+
+
+	AV environment variables
+
+	FFMPEG_TRAINING_STREAMING_UPLOAD_BANDWIDTH - Upload bandwidth in Mbps
+	(megabits) that the host machine supports.  Anything exceeding that
+	will not be trained.  Decimal values supported.
+
+
 	Custom training resolutions
 
-	Set FFMPEG_TRAINER_CUSTOM_RESOLUTIONS as a space separated list of sublists.
+	Set FFMPEG_TRAINER_CUSTOM_RESOLUTIONS as a space separated list of sublists
+	to control training Video On Demand (VOD).
 
 	Sublist format:
 	fps;width;height;dynamic_range
@@ -149,6 +192,19 @@
 	Example:
 	FFMPEG_TRAINER_CUSTOM_RESOLUTIONS="30;1280;720;sdr 60;1280;720;sdr"
 
+	Set FFMPEG_TRAINER_CUSTOM_AV_LOD as a space separated list of sublists
+	for level of detail for streaming:
+
+	Sublist format:
+	fps;width;height;bitrate;sample_rate;microphone
+
+	Example:
+	FFMPEG_TRAINER_CUSTOM_AV_LOD="30;1980;1080;128;44.1;on 30;640;360;128;44.1;on"	
+
+	bitrate is in Kbps (kilobits per second).
+	sample rate is in kHZ (kilohertz).
+
+
 	Setting this will override the defaults which trains all.
 
 
@@ -158,6 +214,7 @@
 	allow people to script their own trainers.  You may also define
 	additional per-package envvar assets.  See the ebuild for ways
         to use the variables.
+
 </longdescription>
 <use>
 	<!-- added to ebuild by oiledmachine-overlay -->

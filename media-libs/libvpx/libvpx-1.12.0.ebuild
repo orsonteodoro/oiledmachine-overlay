@@ -380,13 +380,12 @@ _vdecode() {
 # python -c "import math;print((1.513*pow(10,-7)*(60*${w}*${h})+0.489281109) * 1000)"
 
 # CQ avgrate 30 fps
-# python -c "import math;print((4.95*pow(10,-8)*(30*${w}*${h})-0.2412601555) * 1000)"
-
-# CQ avgrate 30 fps
-# python -c "import math;print((4.95*pow(10,-8)*(30*${w}*${h})-0.2412601555) * 1000)"
+# python -c "import math;print(abs(4.95*pow(10,-8)*(30*${w}*${h})-0.2412601555) * 1000)"
+# For 426x240 res it will make a negative bitrate, but the magnitude is similar
+# in orders of magnitude to the expected.
 
 # CQ avgrate 60 fps ; around CQ_30fps * 1.5
-# python -c "import math;print((3.78*pow(10,-8)*(60*${w}*${h})-0.5334458035) * 1000)"
+# python -c "import math;print(abs(3.78*pow(10,-8)*(60*${w}*${h})-0.5334458035) * 1000)"
 
 # For live streaming:
 
@@ -394,6 +393,8 @@ _vdecode() {
 # python -c "import math;print((3.300 + 2.170*pow(10,-8)*(w*h*60)) * 1000)"
 # 30FPS
 # python -c "import math;print((1.800 + 4.340*pow(10,-8)*(w*h*30)) * 1000)"
+
+# You can obtain the above formulas using point-slope or curve fitting.
 
 # Remove the 1000 for Mb/s
 
@@ -475,7 +476,7 @@ _trainer_plan_constrained_quality() {
 	[[ "${dynamic_range}" == "hdr" ]] && return
 
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
-	local avgrate=$(python -c "import math;print((4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
+	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
 	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
 	local minrate=$(python -c "print(${avgrate}*0.5)") # stationary
 
@@ -561,7 +562,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 	[[ "${dynamic_range}" == "hdr" ]] && mhdr="1.25"
 
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
-	local avgrate=$(python -c "import math;print((4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${mhdr} * ${m60fps} * 1000)")
+	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${mhdr} * ${m60fps} * 1000)")
 	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
 	local minrate=$(python -c "print(${avgrate}*0.5)") # stationary
 

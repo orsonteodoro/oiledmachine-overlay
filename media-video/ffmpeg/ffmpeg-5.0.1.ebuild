@@ -294,7 +294,7 @@ IUSE+=" pgo
 	trainer-video-2-pass-constrained-quality
 	trainer-video-constrained-quality
 	trainer-video-lossless
-	trainer-video-streaming
+	trainer-av-streaming
 "
 
 # Strings for CPU features in the useflag[:configure_option] form
@@ -430,7 +430,7 @@ RDEPEND+="
 	pulseaudio? ( >=media-sound/pulseaudio-2.1-r1[gdbm?,${MULTILIB_USEDEP}] )
 	rubberband? ( >=media-libs/rubberband-1.8.1-r1[${MULTILIB_USEDEP}] )
 	samba? ( >=net-fs/samba-3.6.23-r1[client,${MULTILIB_USEDEP}] )
-	sdl? ( media-libs/libsdl2[sound,video,${MULTILIB_USEDEP}] )
+	sdl? ( media-libs/libsdl2[X?,sound,threads,video,${MULTILIB_USEDEP}] )
 	sndio? ( media-sound/sndio:=[${MULTILIB_USEDEP}] )
 	speex? ( >=media-libs/speex-1.2_rc1-r1[${MULTILIB_USEDEP}] )
 	srt? ( >=net-libs/srt-1.3.0:=[${MULTILIB_USEDEP}] )
@@ -505,7 +505,8 @@ REQUIRED_USE+="
 	fftools_cws2fws? ( zlib )
 	test? ( encode )
 	${GPL_REQUIRED_USE}
-	${CPU_REQUIRED_USE}"
+	${CPU_REQUIRED_USE}
+"
 REQUIRED_USE+="
 	pgo? (
 		|| (
@@ -517,6 +518,7 @@ REQUIRED_USE+="
 			trainer-video-2-pass-constrained-quality
 			trainer-video-constrained-quality
 			trainer-video-lossless
+			trainer-av-streaming
 		)
 	)
 	trainer-video? ( pgo )
@@ -526,8 +528,22 @@ REQUIRED_USE+="
 	trainer-video-2-pass-constrained-quality? ( pgo )
 	trainer-video-constrained-quality? ( pgo )
 	trainer-video-lossless? ( pgo )
-	trainer-video-streaming? ( pgo libv4l )
-	!trainer-video-streaming
+	trainer-av-streaming? (
+		encode
+		pgo
+		|| (
+			openh264
+			opus
+			rav1e
+			svt-av1
+			theora
+			vaapi
+			vorbis
+			vpx
+			x264
+			x265
+		)
+	)
 "
 RESTRICT="
 	!test? ( test )
@@ -551,12 +567,24 @@ build_separate_libffmpeg() {
 	use opencl
 }
 
+get_av_device_ids() {
+	local types=(
+		AV_DEVICE
+		AV_MICROPHONE
+	)
+	local t
+	for t in ${types[@]} ; do
+		for i in $(seq 0 ${MAX_ASSETS_PER_TYPE}) ; do
+			echo "FFMPEG_TRAINING_${t}_${i}"
+		done
+	done
+}
+
 get_video_sample_ids() {
 	local types=(
 		VIDEO_FANTASY
 		VIDEO_GRAINY
 		VIDEO_REALISM
-		VIDEO_STREAMING
 	)
 	local t
 	for t in ${types[@]} ; do
@@ -696,6 +724,56 @@ eerror
 	done
 }
 
+_pgo_check_av() {
+	if [[ -z "${capture_path}" ]] ; then
+eerror
+eerror "${id} is missing the abspath to your capture device as a per-package"
+eerror "environment variable."
+eerror
+		die
+	fi
+	if ! ffprobe "${capture_path}" 2>/dev/null 1>/dev/null ; then
+eerror
+eerror "Capture device is not working.  Disable or remove ${id}."
+eerror
+		die
+	else
+einfo "${capture_path} is accepted as a training device for ${id}."
+	fi
+	if ! [[ "${capture_path}" =~ "/dev/video" ]] ; then
+		:;
+	elif grep -q "^video:.*portage" "${EROOT}/etc/group" ; then
+		:;
+	elif which getfacl 2>/dev/null 1>/dev/null \
+		&& getfacl "${capture_path}" \
+		| grep -q "user:portage:rw" ; then
+		:;
+	else
+eerror
+eerror "The user portage must be in the video group or have ACL set to"
+eerror "user:portage:rw- for training ${capture_path}"
+eerror
+		die
+	fi
+}
+
+pgo_check_av() {
+	local id
+	for id in $(get_av_device_ids) ; do
+		local capture_path="${!id}"
+		[[ -e "${capture_path}" ]] || continue
+		if [[ -z "${capture_path}" ]] ; then
+#			ewarn "Skipping ${id}."
+			continue
+		fi
+		if [[ ! -e "${capture_path}" ]] ; then
+			ewarn "Skipping ${id} device with no device located at ${capture_path}."
+			continue
+		fi
+		_pgo_check_av
+	done
+}
+
 pkg_setup() {
 	MAX_ASSETS_PER_TYPE=${MAX_ASSETS_PER_TYPE:-100} # You must update gen_autosample_suffix
 	if use pgo && has_version "media-video/ffmpeg" ; then
@@ -705,6 +783,9 @@ pkg_setup() {
 		fi
 		if [[ -n "${FFMPEG_TRAINING_AUDIO_CODECS}" ]] ; then
 			pgo_check_audio
+		fi
+		if [[ -n "${FFMPEG_TRAINING_AV_CODECS}" ]] ; then
+			pgo_check_av
 		fi
 	fi
 	llvm_pkg_setup
@@ -766,20 +847,75 @@ has_ffmpeg() {
 }
 
 has_codec_requirement() {
-	local codecs_found=1
+	local acodecs_found=1
+	local vcodecs_found=1
+	local capture_found=1
 	local id
+	local has_video_samples=0
+	local has_audio_samples=0
+	local has_capture_device=0
 	for id in $(get_audio_sample_ids) ; do
 		local audio_sample_path="${!id}"
 		[[ -e "${audio_sample_path}" ]] || continue
 		[[ -z "${audio_sample_path}" ]] && continue
-		if ffprobe "${audio_sample_path}" 2>/dev/null 1>/dev/null ; then
-			codecs_found=0
+		if ! ffprobe "${audio_sample_path}" 2>/dev/null 1>/dev/null ; then
+			acodecs_found=0
 		fi
+		has_audio_samples=1
 	done
-	return ${codecs_found}
+	for id in $(get_video_sample_ids) ; do
+		local video_sample_path="${!id}"
+		[[ -e "${video_sample_path}" ]] || continue
+		[[ -z "${video_sample_path}" ]] && continue
+		if ! ffprobe "${video_sample_path}" 2>/dev/null 1>/dev/null ; then
+			vcodecs_found=0
+		fi
+		has_video_samples=1
+	done
+
+	for id in $(get_video_sample_ids) ; do
+		local capture_path="${!id}"
+		[[ -e "${capture_path}" ]] || continue
+		[[ -z "${capture_path}" ]] && continue
+		addwrite "${capture_path}"
+		if ! ffprobe "${capture_path}" 2>/dev/null 1>/dev/null ; then
+			capture_found=0
+		fi
+		has_capture_device=1
+	done
+
+	einfo "acodecs_found=${acodecs_found}"
+	einfo "vcodecs_found=${vcodecs_found}"
+	einfo "capture_found=${capture_found}"
+	einfo "has_audio_samples=${has_audio_samples}"
+	einfo "has_video_samples=${has_video_samples}"
+	einfo "has_capture_device=${has_capture_device}"
+	if (( ${has_audio_samples} == 1 && ${acodecs_found} == 1 \
+		&& ${has_video_samples} == 1 && ${vcodecs_found} == 1 \
+		&& ${has_capture_device} == 1 && ${capture_found} == 1 \
+		)) ; then
+		return 0
+	elif (( ${has_audio_samples} == 1 && ${acodecs_found} == 1 )) ; then
+		return 0
+	elif (( ${has_video_samples} == 1 && ${vcodecs_found} == 1 )) ; then
+		return 0
+	elif (( ${has_capture_device} == 1 && ${capture_found} == 1 )) ; then
+		return 0
+	else
+		return 1
+	fi
 }
 
 train_meets_requirements() {
+	local player=0
+	local codecs=0
+	if has_ffmpeg ; then
+		player=1
+	fi
+	if has_codec_requirement ; then
+		codecs=1
+	fi
+	einfo "has_ffmpeg=${player} has_codec_requirement=${codecs}"
 	if has_ffmpeg && has_codec_requirement ; then
 		return 0
 	fi
@@ -1048,13 +1184,12 @@ _vdecode() {
 # python -c "import math;print((1.513*pow(10,-7)*(60*${w}*${h})+0.489281109) * 1000)"
 
 # CQ avgrate 30 fps
-# python -c "import math;print((4.95*pow(10,-8)*(30*${w}*${h})-0.2412601555) * 1000)"
-
-# CQ avgrate 30 fps
-# python -c "import math;print((4.95*pow(10,-8)*(30*${w}*${h})-0.2412601555) * 1000)"
+# python -c "import math;print(abs(4.95*pow(10,-8)*(30*${w}*${h})-0.2412601555) * 1000)"
+# For 426x240 res it will make a negative bitrate, but the magnitude is similar
+# in orders of magnitude to the expected.
 
 # CQ avgrate 60 fps ; around CQ_30fps * 1.5
-# python -c "import math;print((3.78*pow(10,-8)*(60*${w}*${h})-0.5334458035) * 1000)"
+# python -c "import math;print(abs(3.78*pow(10,-8)*(60*${w}*${h})-0.5334458035) * 1000)"
 
 # For live streaming:
 
@@ -1062,6 +1197,8 @@ _vdecode() {
 # python -c "import math;print((3.300 + 2.170*pow(10,-8)*(w*h*60)) * 1000)"
 # 30FPS
 # python -c "import math;print((1.800 + 4.340*pow(10,-8)*(w*h*30)) * 1000)"
+
+# You can obtain the above formulas using point-slope or curve fitting.
 
 # Remove the 1000 for Mb/s
 
@@ -1143,7 +1280,7 @@ _trainer_plan_video_constrained_quality_training_session() {
 	[[ "${dynamic_range}" == "hdr" ]] && return
 
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
-	local avgrate=$(python -c "import math;print((4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
+	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
 	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
 	local minrate=$(python -c "print(${avgrate}*0.5)") # stationary
 
@@ -1231,7 +1368,7 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 	[[ "${dynamic_range}" == "hdr" ]] && mhdr="1.25"
 
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
-	local avgrate=$(python -c "import math;print((4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${mhdr} * ${m60fps} * 1000)")
+	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${mhdr} * ${m60fps} * 1000)")
 	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
 	local minrate=$(python -c "print(${avgrate}*0.5)") # stationary
 
@@ -1414,13 +1551,167 @@ _trainer_plan_video_lossless() {
 	fi
 }
 
-_trainer_plan_video_streaming () {
-	local audio_scenario="${1}"
-	local encoding_codec="${2}"
-	local decoding_codec="${3}"
-	local extension="${4}"
-	local tags="${5}"
-	einfo "STUB (unfinished): _trainer_plan_video_streaming"
+_trainer_plan_av_streaming_training_session() {
+	local entry="${1}"
+
+	local fps=$(echo "${entry}" | cut -f 1 -d ";")
+	local width=$(echo "${entry}" | cut -f 2 -d ";")
+	local height=$(echo "${entry}" | cut -f 3 -d ";")
+	local abitrate=$(echo "${entry}" | cut -f 4 -d ";")
+	local asample_rate=$(echo "${entry}" | cut -f 5 -d ";")
+	local enable_audio=$(echo "${entry}" | cut -f 6 -d ";")
+	local duration="3"
+
+	local m60fps="1"
+
+	[[ "${fps}" == "60" ]] && m60fps="1.5"
+	[[ "${dynamic_range}" == "hdr" ]] && return
+
+	local extra_args=()
+
+	if ! [[ "${vencoding_codec}" =~ ("av1"|"h264"|"theora"|"vp9"|"vpx"|"x264"|"x265") ]] ; then
+eerror
+eerror "Invalid video codec for av-streaming training."
+eerror
+		return
+	fi
+
+	if ! [[ "${aencoding_codec}" =~ ("aac"|"mp3"|"none") ]] && [[ "${enable_audio}" =~ ("on"|"1") ]] ; then
+eerror
+eerror "Invalid audio codec for av-streaming training."
+eerror
+		return
+	fi
+
+	[[ -z "${abitrate}" ]] && abitrate="0"
+
+	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
+	local avgrate=$(python -c "import math;print((1.800 + 4.340*pow(10,-8)*(${width}*${height}*30)) * ${m60fps} * 1000)")
+
+	local bandwidth_limit=$(python -c "print(${FFMPEG_TRAINING_STREAMING_UPLOAD_BANDWIDTH:-1.05} * 1000)")
+	local total_bitrate=$(python -c "print(${avgrate} + ${abitrate})")
+	if ! python -c "if ${total_bitrate} > ${bandwidth_limit}: exit(1)" ; then
+ewarn
+ewarn "Rejected LOD exceeding upstream limit"
+ewarn
+ewarn "width=${width}"
+ewarn "height=${height}"
+ewarn "fps=${fps}"
+ewarn "vbitrate=${avgrate} kbps"
+ewarn "vencoding_codec=${vencoding_codec}"
+ewarn "vdecoding_codec=${vdecoding_codec}"
+ewarn
+ewarn "asample_rate=${asample_rate} kHz"
+ewarn "abitrate=${abitrate} kbps"
+ewarn "enable_audio=${enable_audio}"
+ewarn "aencoding_codec=${aencoding_codec}"
+ewarn "adecoding_codec=${adecoding_codec}"
+ewarn
+ewarn "total_bitrate=${total_bitrate} kbps"
+ewarn "bandwidth_limit=${bandwidth_limit} kbps"
+ewarn
+		return
+	fi
+
+	if [[ "${enable_audio}" =~ ("on"|"1") ]] ; then
+		extra_args=(
+			-c:a ${aencoding_codec}
+			-b:a ${abitrate}k
+			-ar $(python -c "print(int(${asample_rate}*1000))")
+		)
+	else
+		extra_args=(
+			-an
+		)
+	fi
+
+	if [[ -z "${container}" ]] ; then
+		container="mp4"
+	fi
+
+	local cheight=$(_cheight "${height}")
+	einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
+	local cmd
+	cmd=(
+		"${FFMPEG}" \
+		-y \
+		-i "${capture_path}" \
+		-c:v ${vencoding_codec} \
+		-maxrate ${avgrate}k -minrate ${avgrate}k -b:v ${avgrate}k \
+		-vf scale=w=-1:h=${height} \
+		${extra_args[@]} \
+		${training_args} \
+		-r ${fps} \
+		-t ${duration} \
+		-f ${container} \
+		"${T}/test.${container}"
+	)
+	einfo "${cmd[@]}"
+	"${cmd[@]}" || die
+}
+
+_get_av_level_of_detail() {
+	local L=(
+		# Only desktop gaming or screencasting for now
+		"30;1980;1080;128;44.1;on"
+		"64;1980;1080;128;44.1;on"
+		"30;1280;720;128;44.1;on"
+		"64;1280;720;128;44.1;on"
+		"30;854;480;128;44.1;on"
+		"30;640;360;128;44.1;on"
+	)
+
+	local e
+	if [[ -n "${FFMPEG_TRAINER_CUSTOM_AV_LOD}" ]] ; then
+		for e in ${FFMPEG_TRAINER_CUSTOM_AV_LOD} ; do
+			echo "${e}"
+		done
+	else
+		for e in ${L[@]} ; do
+			echo "${e}"
+		done
+	fi
+}
+
+_trainer_plan_av_streaming() {
+	local av_scenario="${1}"
+	local vencoding_codec="${2}"
+	local vdecoding_codec="${3}"
+	local aencoding_codec="${4}"
+	local adecoding_codec="${5}"
+	local container="${6}"
+	local tags="${7}"
+	local training_args=
+
+ewarn
+ewarn "trainer-av-streaming is a Work In Progress (WIP)"
+ewarn
+
+	local name="${encoding_codec^^}"
+	name="${name//-/_}"
+	local envvar="FFMPEG_TRAINING_${name}_ARGS"
+	if [[ -n "${!envvar}" ]] ; then
+		training_args="${!envvar}"
+	fi
+
+	local L=(
+		$(_get_av_level_of_detail)
+	)
+
+	if train_meets_requirements ; then
+		local id
+		for id in $(get_av_device_ids) ; do
+			local capture_path="${!id}"
+			[[ -e "${capture_path}" ]] || continue
+			addwrite "${capture_path}"
+			addread "${capture_path}"
+			einfo "Running streaming trainer for ${capture_path} with ${vencoding_codec}, ${aencoding_codec}, ${container} for CBR"
+			local e
+			for e in ${L[@]} ; do
+				_trainer_plan_av_streaming_training_session "${e}"
+			done
+		done
+	fi
 }
 
 _trainer_plan_audio_cbr() {
@@ -1636,12 +1927,26 @@ ewarn
 				"${container_extension}" \
 				"${tags}"
 		fi
-		if use trainer-video-streaming ; then
-			_trainer_plan_video_streaming \
-				"${video_scenario}" \
-				"${encode_codec}" \
-				"${decode_codec}" \
-				"${container_extension}" \
+	done
+}
+
+run_trainer_av_codecs() {
+	for codec in ${FFMPEG_TRAINING_AV_CODECS} ; do
+		local av_scenario=$(echo "${codec}" | cut -f 1 -d ":")
+		local vencode_codec=$(echo "${codec}" | cut -f 2 -d ":")
+		local vdecode_codec=$(echo "${codec}" | cut -f 3 -d ":")
+		local aencode_codec=$(echo "${codec}" | cut -f 4 -d ":")
+		local adecode_codec=$(echo "${codec}" | cut -f 5 -d ":")
+		local container=$(echo "${codec}" | cut -f 6 -d ":")
+		local tags=$(echo "${codec}" | cut -f 6 -d ":")
+		if use trainer-av-streaming ; then
+			_trainer_plan_av_streaming \
+				"${av_scenario}" \
+				"${vencode_codec}" \
+				"${vdecode_codec}" \
+				"${aencode_codec}" \
+				"${adecode_codec}" \
+				"${container}" \
 				"${tags}"
 		fi
 	done
@@ -1661,6 +1966,9 @@ train_trainer_custom() {
 	fi
 	if [[ -n "${FFMPEG_TRAINING_VIDEO_CODECS}" ]] ; then
 		run_trainer_video_codecs
+	fi
+	if [[ -n "${FFMPEG_TRAINING_AV_CODECS}" ]] ; then
+		run_trainer_av_codecs
 	fi
 }
 
