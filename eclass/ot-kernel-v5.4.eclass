@@ -268,7 +268,7 @@ SRC_URI+="
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
-	if has zen-tune ${IUSE_EFFECTIVE} ; then
+	if has zen-tune ${IUSE} ; then
 		if use zen-tune ; then
 ewarn
 ewarn "The zen-tune patch might cause lock up or slow io under heavy load like"
