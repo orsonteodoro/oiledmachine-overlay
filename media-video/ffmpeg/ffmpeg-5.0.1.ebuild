@@ -1185,7 +1185,7 @@ _vdecode() {
 
 # CQ avgrate 30 fps
 # python -c "import math;print(abs(4.95*pow(10,-8)*(30*${w}*${h})-0.2412601555) * 1000)"
-# For 426x240 res it will make a negative bitrate, but the magnitude is similar
+# For 320x240 res it will make a negative bitrate, but the magnitude is similar
 # in orders of magnitude to the expected.
 
 # CQ avgrate 60 fps ; around CQ_30fps * 1.5
