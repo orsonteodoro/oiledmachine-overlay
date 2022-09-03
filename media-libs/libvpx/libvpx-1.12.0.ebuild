@@ -365,24 +365,37 @@ _vdecode() {
 # minrate = 0.5 * avgrate
 # maxrate = 1.45 * avgrate
 
+# VOD (Video On Demand)
+
 # SDR avg bitrate 30 fps: f(w*h*30) -> y KB/s
-# python -c "import math;print(0.2071 + 2*pow(10,-7)*(w*h*30) * 125)"
+# python -c "import math;print((1.614*pow(10,-7)*(30*${w}*${h})+0.1796635641) * 1000)"
 
 # SDR avg bitrate 60 fps: f(w*h*60) -> y KB/s
-# python -c "import math;print(2.0231 + 2*pow(10,-7)*(w*h*60) * 125)"
+# python -c "import math;print((1.21*pow(10,-7)*(60*${w}*${h})+0.3846756483) * 1000)"
 
 # HDR avg bitrate 30 fps: f(w*h*30) -> y KB/s
-# python -c "import math;print(3.5083 + 2*pow(10,-7)*(w*h*60) * 125)"
+# python -c "import math;print((2.017*pow(10,-7)*(30*${w}*${h})+0.2336395874) * 1000)"
 
 # HDR avg bitrate 60 fps: f(w*h*60) -> y KB/s
-# python -c "import math;print(5.0483 + 2*pow(10,-7)*(w*h*60) * 125)"
+# python -c "import math;print((1.513*pow(10,-7)*(60*${w}*${h})+0.489281109) * 1000)"
+
+# CQ avgrate 30 fps
+# python -c "import math;print((4.95*pow(10,-8)*(30*${w}*${h})-0.2412601555) * 1000)"
+
+# CQ avgrate 30 fps
+# python -c "import math;print((4.95*pow(10,-8)*(30*${w}*${h})-0.2412601555) * 1000)"
+
+# CQ avgrate 60 fps ; around CQ_30fps * 1.5
+# python -c "import math;print((3.78*pow(10,-8)*(60*${w}*${h})-0.5334458035) * 1000)"
 
 # For live streaming:
-# ls_maxrate=avgrate*0.75
-# ls_avgrate=avgrate*0.5625
-# ls_minrate=avgrate*0.375
 
-# Remove the 125 for Mb/s
+# 60FPS
+# python -c "import math;print((3.300 + 2.170*pow(10,-8)*(w*h*60)) * 1000)"
+# 30FPS
+# python -c "import math;print((1.800 + 4.340*pow(10,-8)*(w*h*30)) * 1000)"
+
+# Remove the 1000 for Mb/s
 
 _get_resolutions() {
 	local L=(
@@ -456,22 +469,13 @@ _trainer_plan_constrained_quality() {
 	local dynamic_range=$(echo "${entry}" | cut -f 4 -d ";")
 	local duration="3"
 
-	local b
-	if [[ "${dynamic_range}" == "sdr" && "${fps}" == "30" ]] ; then
-		b="0.2071"
-	elif [[ "${dynamic_range}" == "sdr" && "${fps}" == "60" ]] ; then
-		b="2.0231"
-	elif [[ "${dynamic_range}" == "hdr" ]] ; then
-		# 2 pass required
-		return
-	else
-eerror
-eerror "Wrong value for dynamic_range or fps"
-eerror
-		die
-	fi
+	local m60fps="1"
 
-	local avgrate=$(python -c "import math;print(${b} + 2*pow(10,-7)*(${width}*${height}*${fps}) * 125)")
+	[[ "${fps}" == "60" ]] && m60fps="1.5"
+	[[ "${dynamic_range}" == "hdr" ]] && return
+
+	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
+	local avgrate=$(python -c "import math;print((4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
 	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
 	local minrate=$(python -c "print(${avgrate}*0.5)") # stationary
 
@@ -549,25 +553,15 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 	if [[ "${dynamic_range}" == "hdr" ]] ; then
 		hdr_args+=( -profile:v 2 ) # 4:2:0 chroma subsampling
 	fi
-	local b
-	if [[ "${dynamic_range}" == "sdr" && "${fps}" == "30" ]] ; then
-		b="0.2071"
-	elif [[ "${dynamic_range}" == "sdr" && "${fps}" == "60" ]] ; then
-		b="2.0231"
-	elif [[ "${dynamic_range}" == "hdr" && "${fps}" == "30" ]] ; then
-		b="3.5083"
-		extra_args=( ${hdr_args[@]} )
-	elif [[ "${dynamic_range}" == "hdr" && "${fps}" == "60" ]] ; then
-		b="5.0483"
-		extra_args=( ${hdr_args[@]} )
-	else
-eerror
-eerror "Wrong value for dynamic_range or fps"
-eerror
-		die
-	fi
 
-	local avgrate=$(python -c "import math;print(${b} + 2*pow(10,-7)*(${width}*${height}*${fps}) * 125)")
+	local mhdr="1"
+	local m60fps="1"
+
+	[[ "${fps}" == "60" ]] && m60fps="1.5"
+	[[ "${dynamic_range}" == "hdr" ]] && mhdr="1.25"
+
+	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
+	local avgrate=$(python -c "import math;print((4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${mhdr} * ${m60fps} * 1000)")
 	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
 	local minrate=$(python -c "print(${avgrate}*0.5)") # stationary
 
