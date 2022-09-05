@@ -371,42 +371,6 @@ _vdecode() {
 	"${cmd[@]}" || die
 }
 
-# minrate = 0.5 * avgrate
-# maxrate = 1.45 * avgrate
-
-# VOD (Video On Demand)
-
-# SDR avg bitrate 30 fps: f(w*h*30) -> y KB/s
-# python -c "import math;print((1.614*pow(10,-7)*(30*${w}*${h})+0.1796635641) * 1000)"
-
-# SDR avg bitrate 60 fps: f(w*h*60) -> y KB/s
-# python -c "import math;print((1.21*pow(10,-7)*(60*${w}*${h})+0.3846756483) * 1000)"
-
-# HDR avg bitrate 30 fps: f(w*h*30) -> y KB/s
-# python -c "import math;print((2.017*pow(10,-7)*(30*${w}*${h})+0.2336395874) * 1000)"
-
-# HDR avg bitrate 60 fps: f(w*h*60) -> y KB/s
-# python -c "import math;print((1.513*pow(10,-7)*(60*${w}*${h})+0.489281109) * 1000)"
-
-# CQ avgrate 30 fps
-# python -c "import math;print(abs(4.95*pow(10,-8)*(30*${w}*${h})-0.2412601555) * 1000)"
-# For 426x240 res it will make a negative bitrate, but the magnitude is similar
-# in orders of magnitude to the expected.
-
-# CQ avgrate 60 fps ; around CQ_30fps * 1.5
-# python -c "import math;print(abs(3.78*pow(10,-8)*(60*${w}*${h})-0.5334458035) * 1000)"
-
-# For live streaming:
-
-# 60FPS
-# python -c "import math;print((3.300 + 2.170*pow(10,-8)*(w*h*60)) * 1000)"
-# 30FPS
-# python -c "import math;print((1.800 + 4.340*pow(10,-8)*(w*h*30)) * 1000)"
-
-# You can obtain the above formulas using point-slope or curve fitting.
-
-# Remove the 1000 for Mb/s
-
 _get_resolutions() {
 	local L=(
 		"30;426;240;sdr"
@@ -484,6 +448,8 @@ _trainer_plan_constrained_quality() {
 	[[ "${fps}" == "60" ]] && m60fps="1.5"
 	[[ "${dynamic_range}" == "hdr" ]] && return
 
+	local extra_args=()
+
 	if [[ "${id}" =~ ("CGI"|"GAMING"|"SCREENCAST") ]] ; then
 		extra_args+=( -tune-content 1 ) # 1=screen
 	elif [[ "${id}" =~ "GRAINY" ]] ; then
@@ -492,6 +458,18 @@ _trainer_plan_constrained_quality() {
 		extra_args+=( -tune-content 0 ) # 0=default
 	fi
 
+	local pf=$(ffprobe -show_entries stream=pix_fmt "${libvpx_asset_path}" 2>/dev/null \
+		| grep "pix_fmt" \
+		| cut -f 2 -d "=")
+	if [[ "${pf}" =~ ("422"|"444") ]] ; then
+		extra_args+=( -profile:v 1 ) # 4:2:2 or 4:4:4 8 bit chroma subsampling
+		extra_args+=( -pix_fmt yuv422p )
+	else
+		extra_args+=( -profile:v 0 ) # 4:2:0 8 bit chroma subsampling
+		extra_args+=( -pix_fmt yuv420p )
+	fi
+
+	# Formula based on point slope linear curve fitting.  Drop 1000 for Mbps.
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
 	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
 	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
@@ -557,24 +535,50 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local dynamic_range=$(echo "${entry}" | cut -f 4 -d ";")
 	local duration="3"
-
-	local extra_args=()
-	local hdr_args=(
-		# See libavfilter/vf_setparams.c
-		# Target HDR10
-		-color_primaries bt2020
-		-color_range limited # video
-		-color_trc smpte2084
-		-colorspace bt2020nc
-		-pix_fmt yuv420p10le
-	)
 	local mhdr="1"
 	local m60fps="1"
+	local bits=""
+
+	local extra_args=()
+
+	local pf=$(ffprobe -show_entries stream=pix_fmt "${libvpx_asset_path}" 2>/dev/null \
+		| grep "pix_fmt" \
+		| cut -f 2 -d "=")
 
 	if [[ "${dynamic_range}" == "hdr" ]] ; then
-		hdr_args+=( -profile:v 2 ) # 4:2:0 chroma subsampling
-		extra_args+=( ${hdr_args[@]} )
+		extra_args+=(
+			# See libavfilter/vf_setparams.c
+			# Target HDR10
+			-color_primaries bt2020
+			-color_range limited # video
+			-color_trc smpte2084
+			-colorspace bt2020nc
+		)
 		mhdr="1.25"
+		bits="10le"
+	else
+		bits="" # 8 bit
+	fi
+
+	# Rounding color complexity rules
+	# Higher complexity or larger gamuts goes up
+	# Old complexity or smaller gamuts  goes down
+	if [[ "${dynamic_range}" == "hdr" ]] ; then
+		if [[ "${pf}" =~ ("422"|"444") ]] ; then
+			extra_args+=( -profile:v 3 ) # 4:2:2 or 4:4:4 10/12 bit chroma subsampling
+			extra_args+=( -pix_fmt yuv422p${bits} )
+		else
+			extra_args+=( -profile:v 2 ) # 4:2:0 10/12 bit chroma subsampling
+			extra_args+=( -pix_fmt yuv420p${bits} )
+		fi
+	else
+		if [[ "${pf}" =~ ("422"|"444") ]] ; then
+			extra_args+=( -profile:v 1 ) # 4:2:2 or "4:4:4" 8 bit chroma subsampling
+			extra_args+=( -pix_fmt yuv422p )
+		else
+			extra_args+=( -profile:v 0 ) # 4:2:0 8 bit chroma subsampling
+			extra_args+=( -pix_fmt yuv420p )
+		fi
 	fi
 
 	[[ "${fps}" == "60" ]] && m60fps="1.5"
@@ -587,6 +591,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 		extra_args+=( -tune-content 0 ) # 0=default
 	fi
 
+	# Formula based on point slope linear curve fitting.  Drop 1000 for Mbps.
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
 	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${mhdr} * ${m60fps} * 1000)")
 	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving

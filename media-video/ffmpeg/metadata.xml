@@ -19,7 +19,8 @@
 	For audio training, pick 3 samples 15 seconds each.
 	These high quality samples will be used to generate lower
 	quality samples.  The long 30 second requirement is to ensure
-	sufficient coverage of dynamic range.
+	sufficient coverage of dynamic range.  In addition, the sample
+	will decide the code paths of the chroma subsample to train.
 	(2) Emerge FFmpeg the first time to get the PGO toolchain
 	installed.
 	(3) Configure the following variables, replacing i with a unpadded number:
@@ -163,7 +164,6 @@
 	  may be appended by comma and spaces replaced with _.  Tags can
 	  be filtered with bash regex to apply extra args.
 
-	* VA-API codecs are currently not supported for training in the ebuild level.
 	* The decoders may be used in the future for simulating video conferencing
 	* The avscenario may be expanded to include video-conferencing.
 	* live-streaming assumes client side only.  No network training currently.
@@ -180,6 +180,53 @@
 	FFMPEG_TRAINING_STREAMING_UPLOAD_BANDWIDTH - Upload bandwidth in Mbps
 	(megabits) that the host machine supports.  Anything exceeding that
 	will not be trained.  Decimal values supported.
+
+	FFMPEG_TRAINER_AV_STREAMING_LC - This is a weighted function formula
+	that uses a weighted sum for sorting recommendations.  You must
+	place the formula in single quotes.  This can be used to control the
+	recommended codec or preference for fps or quality or other aspects
+	based on sum of subscores.  The score without the bonus is maxed out
+	on 300 Mbps.  If the term exceeds that number, then it is a dominator
+	term and has more influence over sorting the list with higher numbers
+	climbing to more to the top of recommended.  The idea is to boost
+	the score of aspects that you are more interested in.  Some people
+	are more interested in audio.  Others may be interested in quality.
+	Some may prefer FPS over quality.
+
+	Available variables:
+
+	  ${actual_frames} - actual frames produced in timeboxed 3 seconds
+	  ${abitrate} -- audio bitrate in kbps.  Some sites cap it at 256 kbps.
+	  ${asample_rate} -- audio sample rate.  Some sites cap it at 44.8 kHz.
+	  ${aquality} -- 1-based index for quality.  Has 3 levels.
+	  ${expected_frames} - expected frames.
+	  ${is_30fps} -- 1 for true
+	  ${is_60fps} -- 1 for true
+	  ${fps} -- frames per second.  Max is 60
+	  ${mic} -- 1 for true
+	  ${total_bitrate} -- in kbps summing the audio and video bitrates
+
+        * It is recommended to normalize the variables from [0,1].
+	* It may be left unset, it will fall back to the total bitrate.
+	* If set, the score formula is replaced with your formula starting
+	  at zero score.
+	* Have at least one term dominating the total_bitrate in order
+	  to be satisfied about recommendation sorting.  Total bitrates
+	  may range from 6000 to 60000 for live streaming.
+	* You may want to leave the total_bitrate in so that the worst case
+	  sorting if all other terms are zeroed or are too small, it can be
+	  still be sorted in a satisfactory way with it as fallback, or
+	  as a way to break ties with scores sharing the same score
+	  with just dominating factors.
+
+	General formula:
+	score = a_1*x_1 + a_2*x_2 + .... + a_n*x_n, where a_i are weights and x_i
+	are one of the variables above of your choosing.
+
+	Example:
+	FFMPEG_TRAINER_AV_STREAMING_LC='200000*${is_60fps} + 100000*(${aquality}/3) + ${total_bitrate}'
+
+	This formula just says I like 60 fps more than quality.
 
 
 	Custom training resolutions
@@ -203,14 +250,30 @@
 	fps;width;height;bitrate;sample_rate;microphone
 
 	Example:
-	FFMPEG_TRAINER_CUSTOM_AV_LOD="30;1980;1080;128;44.1;on 30;640;360;128;44.1;on"	
+	FFMPEG_TRAINER_CUSTOM_AV_LOD="30;1980;1080;128;44.1;1 30;640;360;128;44.1;1"	
 
 	bitrate is in Kbps (kilobits per second).
 	sample rate is in kHZ (kilohertz).
 
-
 	Setting this will override the defaults which trains all.
 
+
+	Environment variables related to training
+
+	FFMPEG_TRAINING_264_HW_LEVEL_SUPPORTED - A space delimited list of hw
+	supported levels.  Check the technical manual for details.
+
+	FFMPEG_TRAINING_256_PRESET - a string representing speed to compression
+	ratio.  See the wiki for details under preset.  (This may be changed or
+	removed and appied to FFMPEG_TRAINER_CUSTOM_AV_LOD instead).  Currently
+	allowed only for trainer-av-streaming USE flag.
+	Examples:
+	FFMPEG_TRAINING_256_PRESET="superfast" # blocky artifacts
+	FFMPEG_TRAINING_256_PRESET="ultrafast" # unsharp edges but fast encoding
+	FFMPEG_TRAINING_256_PRESET="medium" # default
+	
+
+	Custom training
 
 	Since it would be impratical to permute and PGO train the
 	possible features and settings of the software to PGO optimize,

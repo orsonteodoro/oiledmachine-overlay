@@ -38,7 +38,9 @@
     (2) Build the trainer toolchain depending on this library corresponding
         to the package and USE flags above.
     (3) Acquire a video that is either CC0-1.0, public domain, or your own
-        personal video asset is at least 3 seconds long.
+        personal video asset is at least 3 seconds long.  The choice of
+	the asset will decide whether or not a particular chroma subsample
+	code paths will be trained.
     (4a) Place the video in one of these groups
 
         LIBVPX_TRAINING_VIDEO_CGI_i        # Computer Generated Imagery

@@ -33,7 +33,8 @@
     (2) Build the trainer toolchain depending on this library corresponding
         to the package and USE flags above.
     (3) Acquire a video that is either CC0-1.0, public domain, or your own
-        personal video asset that is at least 3 seconds long.
+        personal video asset that is at least 3 seconds long.  The asset
+	will determine whether or not that chroma subsample will be trained.
     (4a) Set assets in one of the 3 categories:
 
          LIBAOM_TRAINING_VIDEO_CGI_i          # Computer Generated Imagery

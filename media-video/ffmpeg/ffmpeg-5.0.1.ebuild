@@ -490,6 +490,7 @@ BDEPEND+="
 	cuda? ( >=sys-devel/clang-7[llvm_targets_NVPTX] )
 	doc? ( sys-apps/texinfo )
 	test? ( net-misc/wget sys-devel/bc )
+	trainer-av-streaming? ( vaapi? ( media-video/libva-utils[vainfo] ) )
 "
 
 PDEPEND+="
@@ -753,8 +754,13 @@ einfo "${capture_path} is accepted as a training device for ${id}."
 		:;
 	else
 eerror
-eerror "The user portage must be in the video group or have ACL set to"
-eerror "user:portage:rw- for training ${capture_path}"
+eerror "A change in permissions is required:"
+eerror
+eerror "\`gpasswd -a portage video\`                    # to add portage to the video group."
+eerror
+eerror " or"
+eerror
+eerror "\`setfacl -m user:portage:rw ${capture_path}\`  # to set ACL permission of file."
 eerror
 		die
 	fi
@@ -1158,53 +1164,17 @@ _src_configure() {
 
 _adecode() {
 	einfo "Decoding ${1}"
-	cmd=( "${FFMPEG}" -i "${T}/test.${extension}" -f null - )
+	cmd=( "${FFMPEG}" -i "${T}/traintemp/test.${extension}" -f null - )
 	einfo "${cmd[@]}"
 	"${cmd[@]}" || die
 }
 
 _vdecode() {
 	einfo "Decoding ${1}"
-	cmd=( "${FFMPEG}" -i "${T}/test.${extension}" -f null - )
+	cmd=( "${FFMPEG}" -i "${T}/traintemp/test.${extension}" -f null - )
 	einfo "${cmd[@]}"
 	"${cmd[@]}" || die
 }
-
-# minrate = 0.5 * avgrate
-# maxrate = 1.45 * avgrate
-
-# VOD (Video On Demand)
-
-# SDR avg bitrate 30 fps: f(w*h*30) -> y KB/s
-# python -c "import math;print((1.614*pow(10,-7)*(30*${w}*${h})+0.1796635641) * 1000)"
-
-# SDR avg bitrate 60 fps: f(w*h*60) -> y KB/s
-# python -c "import math;print((1.21*pow(10,-7)*(60*${w}*${h})+0.3846756483) * 1000)"
-
-# HDR avg bitrate 30 fps: f(w*h*30) -> y KB/s
-# python -c "import math;print((2.017*pow(10,-7)*(30*${w}*${h})+0.2336395874) * 1000)"
-
-# HDR avg bitrate 60 fps: f(w*h*60) -> y KB/s
-# python -c "import math;print((1.513*pow(10,-7)*(60*${w}*${h})+0.489281109) * 1000)"
-
-# CQ avgrate 30 fps
-# python -c "import math;print(abs(4.95*pow(10,-8)*(30*${w}*${h})-0.2412601555) * 1000)"
-# For 320x240 res it will make a negative bitrate, but the magnitude is similar
-# in orders of magnitude to the expected.
-
-# CQ avgrate 60 fps ; around CQ_30fps * 1.5
-# python -c "import math;print(abs(3.78*pow(10,-8)*(60*${w}*${h})-0.5334458035) * 1000)"
-
-# For live streaming:
-
-# 60FPS
-# python -c "import math;print((3.300 + 2.170*pow(10,-8)*(w*h*60)) * 1000)"
-# 30FPS
-# python -c "import math;print((1.800 + 4.340*pow(10,-8)*(w*h*30)) * 1000)"
-
-# You can obtain the above formulas using point-slope or curve fitting.
-
-# Remove the 1000 for Mb/s
 
 _get_resolutions() {
 	local L=(
@@ -1269,6 +1239,110 @@ _cheight() {
 	fi
 }
 
+_get_264_level() {
+	local fps="${1}"
+	local width="${1}"
+	local height="${1}"
+
+	# We don't do the full because it is unlikely.
+	# Only common resolutions and frame rates.
+
+	if (( \
+		   ( ${fps} == 60 && ${width} == 8192 && ${height} == 4320 ) \
+		|| ( ${fps} == 60 && ${width} == 7680 && ${height} == 4320 ) \
+		)) ; then
+		echo "6.1"
+	elif (( \
+		   ( ${fps} == 30 && ${width} == 8192 && ${height} == 4320 ) \
+		|| ( ${fps} == 30 && ${width} == 7680 && ${height} == 4320 ) \
+		)) ; then
+		echo "6"
+	elif (( \
+		   ( ${fps} == 60 && ${width} == 3840 && ${height} == 2160 ) \
+		|| ( ${fps} == 60 && ${width} == 4096 && ${height} == 2048 ) \
+		|| ( ${fps} == 60 && ${width} == 4096 && ${height} == 2160 ) \
+		)) ; then
+		echo "5.2"
+	elif (( \
+		   ( ${fps} == 30 && ${width} == 3840 && ${height} == 2160 ) \
+		|| ( ${fps} == 30 && ${width} == 4096 && ${height} == 2048 ) \
+		)) ; then
+		echo "5.1"
+	elif (( \
+		   ( ${fps} == 30 && ${width} == 2560 && ${height} == 1920 ) \
+		   ( ${fps} == 60 && ${width} == 2048 && ${height} == 1080 ) \
+		)) ; then
+		echo "5"
+	elif (( \
+		   ( ${fps} == 60 && ${width} == 2048 && ${height} == 1080 ) \
+		|| ( ${fps} == 60 && ${width} == 1920 && ${height} == 1080 ) \
+		)) ; then
+		echo "4.2"
+	elif (( \
+		   ( ${fps} == 30 && ${width} == 1920 && ${height} == 1080 ) \
+		|| ( ${fps} == 30 && ${width} == 2048 && ${height} == 1024 ) \
+		|| ( ${fps} == 60 && ${width} == 1280 && ${height} == 720 ) \
+		)) ; then
+		echo "4.1"
+	elif (( \
+		   ( ${fps} == 30 && ${width} == 2048 && ${height} == 1024 ) \
+		|| ( ${fps} == 30 && ${width} == 1920 && ${height} == 1080 ) \
+		|| ( ${fps} == 60 && ${width} == 1280 && ${height} == 720 ) \
+		)) ; then
+		echo "4"
+
+	elif (( \
+		( ${fps} == 60 && ${width} == 1280 && ${height} == 720 ) \
+		)) ; then
+		echo "3.2"
+	elif (( \
+		( ${fps} == 30 && ${width} == 1280 && ${height} == 720 ) \
+		)) ; then
+		echo "3.1"
+	elif (( \
+		( ${fps} == 30 && ${width} == 720 && ${height} == 480 ) \
+		( ${fps} == 60 && ${width} == 352 && ${height} == 480 ) \
+		)) ; then
+		echo "3"
+
+	elif (( \
+		( ${fps} == 30 && ${wdith} == 352 && ${height} == 480 ) \
+		)) ; then
+		echo "2.2"
+
+	elif (( \
+		( ${fps} == 30 && ${width} == 352 && ${height} == 288 ) \
+		)) ; then
+		echo "1.3"
+
+	elif (( \
+		( ${fps} == 30 && ${width} == 176 && ${height} == 144 ) \
+		)) ; then
+		echo "1.1"
+
+	elif (( \
+		( ${fps} == 30 && ${width} == 128  && ${height} == 96 ) \
+		)) ; then
+		echo "1b" # 128 kbps
+
+	elif (( \
+		( ${fps} == 30 && ${width} == 128 && ${height} == 96 ) \
+		)) ; then
+		echo "1" # 64 kbps
+
+
+	fi
+}
+
+_has_hw_264_level_support() {
+	local level="${1}"
+	local hw_level
+	for hw_level in ${FFMPEG_TRAINING_264_HW_LEVEL_SUPPORTED} ; do
+		[[ "${hw_level}" == "${level}" ]] && return 0
+	done
+	return 1
+}
+
 _trainer_plan_video_constrained_quality_training_session() {
 	local entry="${1}"
 
@@ -1277,11 +1351,88 @@ _trainer_plan_video_constrained_quality_training_session() {
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local dynamic_range=$(echo "${entry}" | cut -f 4 -d ";")
 	local duration="3"
+	local bits="" # 8 bit
 
 	local m60fps="1"
 
 	[[ "${fps}" == "60" ]] && m60fps="1.5"
 	[[ "${dynamic_range}" == "hdr" ]] && return
+
+	local extra_args=()
+
+	local pf=$(ffprobe -show_entries stream=pix_fmt "${video_sample_path}" 2>/dev/null \
+		| grep "pix_fmt" \
+		| cut -f 2 -d "=")
+
+	if [[ "${encoding_codec}" =~ ("openh264") ]] ; then
+		if [[ "${ABI}" == "arm" && "${CHOST}" =~ ("arm4"|"arm5"|"arm6") ]] ; then
+			extra_args+=( -profile:v constrained_baseline )
+		elif [[ "${ABI}" == "arm" ]] ; then
+			extra_args+=( -profile:v main ) # armv7
+		elif [[ "${ABI}" == "arm64" ]] && (( ${height} <= 1080 )) ; then
+			extra_args+=( -profile:v main )
+		elif [[ "${ABI}" == "arm64" ]] ; then
+			extra_args+=( -profile:v high )
+		elif [[ "${ABI}" == "x86" ]] ; then
+			extra_args+=( -profile:v high )
+		elif [[ "${ABI}" == "x64" ]] ; then
+			extra_args+=( -profile:v high )
+		else
+			extra_args+=( -profile:v main )
+		fi
+		extra_args+=( -pix_fmt yuv420p )
+	elif [[ "${encoding_codec}" =~ ("x264") ]] ; then
+		if [[ "${ABI}" == "arm" && "${CHOST}" =~ ("arm4"|"arm5"|"arm6") ]] ; then
+			extra_args+=( -profile:v baseline )
+		elif [[ "${ABI}" == "arm" ]] ; then
+			extra_args+=( -profile:v main ) # armv7
+		elif [[ "${ABI}" == "arm64" ]] && (( ${height} <= 1080 )) ; then
+			extra_args+=( -profile:v main )
+		elif [[ "${ABI}" == "arm64" ]] ; then
+			extra_args+=( -profile:v high )
+		elif [[ "${ABI}" == "x86" ]] ; then
+			extra_args+=( -profile:v high )
+		elif [[ "${ABI}" == "x64" ]] ; then
+			if [[ "${pf}" =~ "444" ]] ; then
+				extra_args+=( -profile:v high444 ) # <= 12 bits
+			elif [[ "${pf}" =~ "422" ]] ; then
+				extra_args+=( -profile:v high422 ) # <= 10 bits
+			elif [[ "${pf}" =~ "p10" ]] ; then
+				extra_args+=( -profile:v high10 )  # 4:2:0 <= 10 bits
+			else
+				extra_args+=( -profile:v high )    # 4:2:0 8 bits
+			fi
+		else
+			extra_args+=( -profile:v main )
+		fi
+		extra_args+=( -pix_fmt yuv420p )
+		local level=$(_get_264_level "${fps}" "${width}" "${height}")
+		if [[ -n "${level}" ]] && _has_hw_264_level_support "${level}" ; then
+			extra_args+=( -level:v ${level} )
+		fi
+	fi
+
+	if [[ "${encoding_codec}" =~ ("vp9"|"vpx") \
+		&& "${dynamic_range}" == "sdr" ]] ; then
+		if [[ "${pf}" =~ ("422"|"444") ]] ; then
+			extra_args+=( -profile:v 1 ) # 4:2:2 8 bit chroma subsampling
+			extra_args+=( -pix_fmt yuv422p )
+		else
+			extra_args+=( -profile:v 0 ) # 4:2:0 8 bit chroma subsampling
+			extra_args+=( -pix_fmt yuv420p )
+		fi
+	fi
+
+	if [[ "${encoding_codec}" =~ ("aom") ]] ; then
+		if [[ "${pf}" =~ "444" ]] ; then
+			extra_args+=( -profile:v 1 ) # 4:4:4 8/10 bit chroma subsampling
+		elif [[ "${pf}" =~ "422" ]] ; then
+			extra_args+=( -profile:v 2 ) # 4:2:2 8/10/12 bit chroma subsampling; or 12 bit 4:0:0, 4:4:4
+		else
+			extra_args+=( -profile:v 0 ) # 4:2:0 or 4:0:0 8/10 bit chroma subsampling
+		fi
+		extra_args+=( -pix_fmt yuv420p )
+	fi
 
 	if [[ "${encoding_codec}" =~ "x264" ]] ; then
 		if [[ "${id}" =~ ("CGI"|"FANTASY") ]] ; then
@@ -1303,6 +1454,7 @@ _trainer_plan_video_constrained_quality_training_session() {
 		fi
 	fi
 
+	# Formula based on point slope linear curve fitting.  Drop 1000 for Mbps.
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
 	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
 	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
@@ -1317,12 +1469,12 @@ _trainer_plan_video_constrained_quality_training_session() {
 		-i "${video_sample_path}" \
 		-c:v ${encoding_codec} \
 		-maxrate ${maxrate}k -minrate ${minrate}k -b:v ${avgrate}k \
-		-vf scale=w=-1:h=${height} \
+		-vf "scale=w=-1:h=${height}" \
 		${training_args} \
 		-an \
 		-r ${fps} \
 		-t ${duration} \
-		"${T}/test.${extension}"
+		"${T}/traintemp/test.${extension}"
 	)
 	einfo "${cmd[@]}"
 	"${cmd[@]}" || die
@@ -1336,6 +1488,13 @@ _trainer_plan_video_constrained_quality() {
 	local extension="${4}"
 	local tags="${5}"
 	local training_args=
+
+	if [[ "${encoding_codec}" =~ "vaapi" ]] ; then
+eerror
+eerror "VA-API training not supported at the moment"
+eerror
+		return
+	fi
 
 	local name="${encoding_codec^^}"
 	name="${name//-/_}"
@@ -1370,29 +1529,118 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local dynamic_range=$(echo "${entry}" | cut -f 4 -d ";")
 	local duration="3"
-
-	local extra_args=()
-	local hdr_args=(
-		# See libavfilter/vf_setparams.c
-		# Target HDR10
-		-color_primaries bt2020
-		-color_range limited # video
-		-color_trc smpte2084
-		-colorspace bt2020nc
-		-pix_fmt yuv420p10le
-	)
-	if [[ "${dynamic_range}" == "hdr" \
-		&& ( "${encoding_codec}" == "libvpx-vp9" || "${encoding_codec}" == "libvpx") ]] ; then
-		hdr_args+=( -profile:v 2 ) # 4:2:0 chroma subsampling
-	fi
 	local mhdr="1"
 	local m60fps="1"
+	local bits=""
 
-	[[ "${fps}" == "60" ]] && m60fps="1.5"
+	local extra_args=()
+
 	if [[ "${dynamic_range}" == "hdr" ]] ; then
-		extra_args+=( ${hdr_args[@]} )
+		extra_args+=(
+			# See libavfilter/vf_setparams.c
+			# Target HDR10
+			-color_primaries bt2020
+			-color_range limited # video
+			-color_trc smpte2084
+			-colorspace bt2020nc
+		)
 		mhdr="1.25"
 	fi
+
+	local pf=$(ffprobe -show_entries stream=pix_fmt "${video_sample_path}" 2>/dev/null \
+		| grep "pix_fmt" \
+		| cut -f 2 -d "=")
+
+	if [[ "${dynamic_range}" == "hdr" ]] ; then
+		if [[ "${pf}" =~ "p12" && "${encoding_codec}" =~ ("aom") ]] ; then
+			bits="12"
+		else
+			bits="10"
+		fi
+		bits="${bits}le"
+		[[ "${ABI}" =~ "arm" ]] && continue
+	else
+		bits="8" # 8 bits
+	fi
+
+	if [[ "${encoding_codec}" =~ ("openh264") ]] ; then
+		if [[ "${ABI}" == "arm" && "${CHOST}" =~ ("arm4"|"arm5"|"arm6") ]] ; then
+			extra_args+=( -profile:v constrained_baseline )
+		elif [[ "${ABI}" == "arm" ]] ; then
+			extra_args+=( -profile:v main ) # armv7
+		elif [[ "${ABI}" == "arm64" ]] && (( ${height} <= 1080 )) ; then
+			extra_args+=( -profile:v main )
+		elif [[ "${ABI}" == "arm64" ]] ; then
+			extra_args+=( -profile:v high )
+		elif [[ "${ABI}" == "x86" ]] ; then
+			extra_args+=( -profile:v high )
+		elif [[ "${ABI}" == "x64" ]] ; then
+			extra_args+=( -profile:v high )
+		else
+			extra_args+=( -profile:v main )
+		fi
+		extra_args+=( -pix_fmt yuv420p${bits} )
+	elif [[ "${encoding_codec}" =~ ("x264") ]] ; then
+		if [[ "${ABI}" == "arm" && "${CHOST}" =~ ("arm4"|"arm5"|"arm6") ]] ; then
+			extra_args+=( -profile:v baseline )
+		elif [[ "${ABI}" == "arm" ]] ; then
+			extra_args+=( -profile:v main ) # armv7
+		elif [[ "${ABI}" == "arm64" ]] && (( ${height} <= 1080 )) ; then
+			extra_args+=( -profile:v main )
+		elif [[ "${ABI}" == "arm64" ]] ; then
+			extra_args+=( -profile:v high )
+		elif [[ "${ABI}" == "x86" ]] ; then
+			extra_args+=( -profile:v high )
+		elif [[ "${ABI}" == "x64" ]] ; then
+			if [[ "${pf}" =~ "444" ]] ; then
+				extra_args+=( -profile:v high444 ) # <= 12 bits
+			elif [[ "${pf}" =~ "422" ]] ; then
+				extra_args+=( -profile:v high422 ) # <= 10 bits
+			elif [[ "${pf}" =~ "p10" ]] ; then
+				extra_args+=( -profile:v high10 )  # 4:2:0 <= 10 bits
+			else
+				extra_args+=( -profile:v high )    # 4:2:0 8 bits
+			fi
+		else
+			extra_args+=( -profile:v main )
+		fi
+		extra_args+=( -pix_fmt yuv420p${bits} )
+	fi
+
+	if [[ "${encoding_codec}" =~ ("vpx"|"vp9") ]] ; then
+		if [[ "${dynamic_range}" == "hdr" ]] ; then
+			if [[ "${pf}" =~ ("422"|"444") ]] ; then
+				extra_args+=( -profile:v 3 ) # 4:2:2 10/12 bit chroma subsampling
+				extra_args+=( -pix_fmt yuv422p${bits} )
+			else
+				extra_args+=( -profile:v 2 ) # 4:2:0 10/12 bit chroma subsampling
+				extra_args+=( -pix_fmt yuv420p${bits} )
+			fi
+		else
+			if [[ "${pf}" =~ ("422"|"444") ]] ; then
+				extra_args+=( -profile:v 1 ) # 4:2:2 8 bit chroma subsampling
+				extra_args+=( -pix_fmt yuv422p${bits} )
+			else
+				extra_args+=( -profile:v 0 ) # 4:2:0 8 bit chroma subsampling
+				extra_args+=( -pix_fmt yuv420p${bits} )
+			fi
+		fi
+	fi
+
+	if [[ "${encoding_codec}" =~ ("aom") ]] ; then
+		if [[ "${pf}" =~ "444" ]] ; then
+			extra_args+=( -profile:v 1 ) # 4:4:4 8/10 bit chroma subsampling
+			extra_args+=( -pix_fmt yuv422p${bits} )
+		elif [[ "${pf}" =~ "422" ]] ; then
+			extra_args+=( -profile:v 2 ) # 4:2:2 8/10/12 bit chroma subsampling; or 12 bit 4:0:0, 4:4:4
+			extra_args+=( -pix_fmt yuv422p${bits} )
+		else
+			extra_args+=( -profile:v 0 ) # 4:2:0 or 4:0:0 8/10 bit chroma subsampling
+			extra_args+=( -pix_fmt yuv420p${bits} )
+		fi
+	fi
+
+	[[ "${fps}" == "60" ]] && m60fps="1.5"
 
 	if [[ "${encoding_codec}" =~ "x264" ]] ; then
 		if [[ "${id}" =~ ("CGI"|"FANTASY") ]] ; then
@@ -1414,6 +1662,7 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 		fi
 	fi
 
+	# Formula based on point slope linear curve fitting.  Drop 1000 for Mbps.
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
 	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${mhdr} * ${m60fps} * 1000)")
 	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
@@ -1428,7 +1677,7 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 		-i "${video_sample_path}" \
 		-c:v ${encoding_codec} \
 		-maxrate ${maxrate}k -minrate ${minrate}k -b:v ${avgrate}k \
-		-vf scale=w=-1:h=${height} \
+		-vf "scale=w=-1:h=${height}" \
 		${training_args} \
 		-pass 1 \
 		${extra_args[@]} \
@@ -1443,14 +1692,14 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 		-i "${video_sample_path}" \
 		-c:v ${encoding_codec} \
 		-maxrate ${maxrate}k -minrate ${minrate}k -b:v ${avgrate}k \
-		-vf scale=w=-1:h=${height} \
+		-vf "scale=w=-1:h=${height}" \
 		${training_args} \
 		-pass 2 \
 		${extra_args[@]} \
 		-an \
 		-r ${fps} \
 		-t ${duration} \
-		"${T}/test.${extension}"
+		"${T}/traintemp/test.${extension}"
 	)
 	einfo "${cmd1[@]}"
 	"${cmd1[@]}" || die
@@ -1466,6 +1715,13 @@ _trainer_plan_video_2_pass_constrained_quality() {
 	local extension="${4}"
 	local tags="${5}"
 	local training_args=
+
+	if [[ "${encoding_codec}" =~ "vaapi" ]] ; then
+eerror
+eerror "VA-API training not supported at the moment"
+eerror
+		return
+	fi
 
 	local name="${encoding_codec^^}"
 	name="${name//-/_}"
@@ -1545,7 +1801,7 @@ _trainer_plan_audio_lossless() {
 				-c:v ${encoding_codec} \
 				${training_args} \
 				-t 3 \
-				"${T}/test.${extension}"
+				"${T}/traintemp/test.${extension}"
 			)
 			einfo "${cmd[@]}"
 			"${cmd[@]}" || die
@@ -1589,7 +1845,7 @@ _trainer_plan_video_lossless() {
 				${training_args} \
 				-an \
 				-t 3 \
-				"${T}/test.${extension}"
+				"${T}/traintemp/test.${extension}"
 			)
 			einfo "${cmd[@]}"
 			"${cmd[@]}" || die
@@ -1598,6 +1854,87 @@ _trainer_plan_video_lossless() {
 	fi
 }
 
+# Full list of hw accelerated image processing
+# ffmpeg -filters | grep vaapi
+_is_hw_scaling_supported() {
+	local encoding_format="${1}"
+	if use vaapi && ffmpeg -filters 2>/dev/null \
+		| grep -q -F -e "scale_vaapi" \
+		&& vainfo 2>/dev/null \
+		| grep -q -F -e "VAEntrypointVideoProc" \
+		&& vainfo 2>/dev/null \
+                | grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
+                && ffmpeg -hide_banner -encoders 2>/dev/null \
+                        | grep -q -F -e "${encoding_format,,}_vaapi" ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+_is_vaapi_allowed() {
+	local encoding_format="${1}"
+	if use vaapi && vainfo 2>/dev/null \
+		| grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
+		&& ffmpeg -hide_banner -encoders 2>/dev/null \
+			| grep -q -F -e "${encoding_format,,}_vaapi" ; then
+		return 0
+	fi
+	return 1
+}
+
+_get_vaapi_render_device() {
+	if [[ -n "${FFMPEG_TRAINER_VAAPI_DEVICE}" ]] ; then
+		if vainfo --display drm --device "${FFMPEG_TRAINER_VAAPI_DEVICE}" 2>/dev/null 1>/dev/null ; then
+echo "${FFMPEG_TRAINER_VAAPI_DEVICE}"
+		else
+eerror
+eerror "Error accessing device"
+eerror
+			die
+		fi
+		return
+	fi
+	local d
+	for d in ls /dev/dri/render* ; do
+		if [[ -n "${d}" ]] && vainfo --display drm --device "${d}" 2>/dev/null 1>/dev/null ; then
+			echo "${d}"
+			return
+		fi
+	done
+eerror
+eerror "Cannot find vaapi render device"
+eerror
+	die
+}
+
+_has_camera_resolution() {
+	local device="${1}"
+	local width="${2}"
+	local height="${2}"
+	ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 | grep -q -e "${width}x${height}"
+}
+
+if ! has ffmpeg_pkg_die ${EBUILD_DEATH_HOOKS} ; then
+        EBUILD_DEATH_HOOKS+=" ffmpeg_pkg_die";
+fi
+
+ffmpeg_pkg_die() {
+	_wipe_data
+}
+
+_wipe_data() {
+	# May contain sensitive data
+	local p
+	for p in $(find "${T}/traintemp") ; do
+		if [[ -e "${p}" ]] ; then
+			einfo "Wiped sensitive camera/screencast data"
+			shred --remove=wipesync "${p}"
+		fi
+	done
+}
+
+LIVE_STREAMING_REPORT_CARD=""
 _trainer_plan_av_streaming_training_session() {
 	local entry="${1}"
 
@@ -1606,9 +1943,12 @@ _trainer_plan_av_streaming_training_session() {
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local abitrate=$(echo "${entry}" | cut -f 4 -d ";")
 	local asample_rate=$(echo "${entry}" | cut -f 5 -d ";")
-	local enable_audio=$(echo "${entry}" | cut -f 6 -d ";")
+	local mic=$(echo "${entry}" | cut -f 6 -d ";")
 	local duration="3"
 
+	[[ -z "${abitrate}" ]] && abitrate=0
+	[[ -z "${asample_rate}" ]] && asample_rate=0
+	[[ -z "${mic}" ]] && mic=0
 	local m60fps="1"
 
 	[[ "${fps}" == "60" ]] && m60fps="1.5"
@@ -1623,8 +1963,8 @@ eerror
 		return
 	fi
 
-	if ! [[ "${aencoding_codec}" =~ ("aac"|"mp3"|"none"|"opus") ]] \
-		&& [[ "${enable_audio}" =~ ("on"|"1") ]] ; then
+	if ! [[ "${aencoding_codec}" =~ ("aac"|"flac"|"mp3"|"none"|"opus") ]] \
+		&& [[ "${mic}" =~ ("1") ]] ; then
 eerror
 eerror "Invalid audio codec for av-streaming training."
 eerror
@@ -1633,14 +1973,15 @@ eerror
 
 	[[ -z "${abitrate}" ]] && abitrate="0"
 
+	# Formula based on point slope linear curve fitting.  Drop 1000 for Mbps.
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
-	local lq_avgrate=$(python -c "import math;print((0.3 + 4.34*pow(10,-8)*(${width}*${height}*30)) * ${m60fps} * 1000)")
-	local hq_avgrate=$(python -c "import math;print((1.5 + 3.62*pow(10,-8)*(${width}*${height}*30)) * ${m60fps} * 1000)")
+	local lq_avgrate=$(python -c "import math;print((4.66*pow(10,-8)*(30*${width}*${height})+0.2780469436) * ${m60fps} * 1000)")
+	local hq_avgrate=$(python -c "import math;print((7.3*pow(10,-8)*(30*${width}*${height})+1.4952679804) * ${m60fps} * 1000)")
 	local mq_avgrate=$(python -c "import math;print((${lq_avgrate}+${hq_avgrate})/2)")
 
 	local bandwidth_limit=$(python -c "print(${FFMPEG_TRAINING_STREAMING_UPLOAD_BANDWIDTH:-1.05} * 1000)")
 
-	if [[ "${enable_audio}" =~ ("on"|"1") ]] ; then
+	if [[ "${mic}" =~ ("1") ]] ; then
 		extra_args+=(
 			-c:a ${aencoding_codec}
 			-b:a ${abitrate}k
@@ -1656,75 +1997,262 @@ eerror
 		container="mp4"
 	fi
 
+	if [[ "${vencoding_codec}" =~ ("openh264") ]] ; then
+		if [[ "${ABI}" == "arm" && "${CHOST}" =~ ("arm4"|"arm5"|"arm6") ]] ; then
+			extra_args+=( -profile:v constrained_baseline )
+		elif [[ "${ABI}" == "arm" ]] ; then
+			extra_args+=( -profile:v main ) # armv7
+		elif [[ "${ABI}" == "arm64" ]] && (( ${height} <= 1080 )) ; then
+			extra_args+=( -profile:v main )
+		elif [[ "${ABI}" == "arm64" ]] ; then
+			extra_args+=( -profile:v high )
+		elif [[ "${ABI}" == "x86" ]] ; then
+			extra_args+=( -profile:v high )
+		elif [[ "${ABI}" == "x64" ]] ; then
+			extra_args+=( -profile:v high )
+		else
+			extra_args+=( -profile:v main )
+		fi
+		extra_args+=( -pix_fmt yuv420p )
+	elif [[ "${vencoding_codec}" =~ ("x264") ]] ; then
+		if [[ "${ABI}" == "arm" && "${CHOST}" =~ ("arm4"|"arm5"|"arm6") ]] ; then
+			extra_args+=( -profile:v baseline )
+		elif [[ "${ABI}" == "arm" ]] ; then
+			extra_args+=( -profile:v main ) # armv7
+		elif [[ "${ABI}" == "arm64" ]] && (( ${height} <= 1080 )) ; then
+			extra_args+=( -profile:v main )
+		elif [[ "${ABI}" == "arm64" ]] ; then
+			extra_args+=( -profile:v high )
+		elif [[ "${ABI}" == "x86" ]] ; then
+			extra_args+=( -profile:v high )
+		elif [[ "${ABI}" == "x64" ]] ; then
+			extra_args+=( -profile:v high )
+		else
+			extra_args+=( -profile:v main )
+		fi
+		extra_args+=( -pix_fmt yuv420p )
+		if [[ -n "${FFMPEG_TRAINING_256_PRESET}" ]] ; then
+			extra_args+=( -preset ${FFMPEG_TRAINING_256_PRESET} )
+		fi
+	fi
+
+	if [[ "${encoding_codec}" =~ ("vp9"|"vpx") ]] ; then
+		extra_args+=( -profile:v 0 ) # 4:2:0 8 bit chroma subsampling
+		extra_args+=( -pix_fmt yuv420p )
+	fi
+
+	if [[ "${encoding_codec}" =~ ("aom") ]] ; then
+		extra_args+=( -profile:v 0 ) # 4:2:0 8 bit chroma subsampling
+		extra_args+=( -pix_fmt yuv420p )
+	fi
+
+	if [[ "${container}" =~ ("mp4") ]] ; then
+		extra_args+=(
+			-movflags empty_moov
+			-movflags frag_keyframe
+		)
+	fi
+
+	if [[ "${vencoding_codec}" =~ ("aom") ]] ; then
+		extra_args+=( -usage realtime )
+	fi
+
 	if [[ "${vencoding_codec}" =~ "x264" ]] ; then
 		extra_args+=( -tune zerolatency )
 	fi
 
 	if [[ "${vencoding_codec}" =~ ("vpx"|"vp9") ]] ; then
-		extra_args+=( -deadline realtime )
+		extra_args+=(
+			-deadline realtime
+			-quality realtime
+		)
+	fi
+
+	if [[ "${vencoding_codec}" =~ ("h264_vaapi") ]] ; then
+		local profile_main=$(ffmpeg -help encoder=h264_vaapi 2>/dev/null \
+			| grep -E -o -e "constrained_baseline[[:space:]]+[0-9]+" \
+			| sed -r -e "s|[[:space:]]+| |g" \
+			| cut -f 2 -d " ")
+		local profile_constrained_baseline=$(ffmpeg -help encoder=h264_vaapi 2>/dev/null \
+			| grep -E -o -e "main[[:space:]]+[0-9]+" \
+			| sed -r -e "s|[[:space:]]+| |g" \
+			| cut -f 2 -d " ")
+		local profile_high=$(ffmpeg -help encoder=h264_vaapi 2>/dev/null \
+			| grep -E -o -e "high[[:space:]]+[0-9]+" \
+			| sed -r -e "s|[[:space:]]+| |g" \
+			| cut -f 2 -d " ")
+		if (( ${height} < 720 )) ; then
+			extra_args+=( -profile:v ${profile_main} )
+		else
+			extra_args+=( -profile:v ${profile_high} )
+		fi
+	elif [[ "${vencoding_codec}" =~ ("h264_vaapi") ]] ; then
+# ...like to add more but lack test hardware.
+eerror
+eerror "VA_API codec ${vencoding_codec} is not supported on the ebuild level."
+eerror "Skipping."
+eerror
+		continue
+	fi
+
+	local input_source=()
+
+	# Use DISPLAY=:0 ffplay test.mp4 -an to check
+	local input_source_type=""
+	if ! _has_camera_resolution ; then
+ewarn
+ewarn "Camera does not have resolution skipping."
+ewarn "Falling back to screen capture."
+ewarn
+# TODO check sandbox permission
+		input_source_type="screen"
+		if pgrep X ; then
+			input_source=(
+				-f x11grab
+				-i :0
+			)
+		else
+			input_source=(
+				-f kmsgrab
+				-i -
+			)
+		fi
+	else
+		input_source_type="camera"
+		input_source=(
+			-f v4l2
+			-video_size ${width}x${height}
+			-i "${capture_path}"
+		)
 	fi
 
 	local idx=0
 	for avgrate in ${lq_avgrate} ${mq_avgrate} ${hq_avgrate} ; do
 		local total_bitrate=$(python -c "print(${avgrate} + ${abitrate})")
-		if ! python -c "if ${total_bitrate} > ${bandwidth_limit}: exit(1)" ; then
-ewarn
-ewarn "Rejected LOD exceeding upstream limit"
-ewarn
-ewarn "width=${width}"
-ewarn "height=${height}"
-ewarn "fps=${fps}"
-ewarn "vbitrate=${avgrate} kbps"
-ewarn "vencoding_codec=${vencoding_codec}"
-ewarn "vdecoding_codec=${vdecoding_codec}"
-ewarn
-ewarn "enable_audio=${enable_audio}"
-ewarn "abitrate=${abitrate} kbps"
-ewarn "asample_rate=${asample_rate} kHz"
-ewarn "aencoding_codec=${aencoding_codec}"
-ewarn "adecoding_codec=${adecoding_codec}"
-ewarn
-ewarn "total_bitrate=${total_bitrate} kbps"
-ewarn "bandwidth_limit=${bandwidth_limit} kbps"
-ewarn
-			continue
-		fi
-
 		(( ${idx} == 0 )) && msg_quality="low quality"
 		(( ${idx} == 1 )) && msg_quality="mid quality"
 		(( ${idx} == 2 )) && msg_quality="high quality"
 		local cheight=$(_cheight "${height}")
-		einfo "Encoding ${msg_quality} (${avgrate} kbps) as ${cheight} for ${duration} sec, ${fps} fps"
+
 		local cmd
-		cmd=(
-			"${FFMPEG}" \
-			-y \
-			-i "${capture_path}" \
-			-c:v ${vencoding_codec} \
-			-maxrate ${avgrate}k -minrate ${avgrate}k -b:v ${avgrate}k \
-			-vf scale=w=-1:h=${height} \
-			${extra_args[@]} \
-			${training_args} \
-			-r ${fps} \
-			-t ${duration} \
-			-f ${container} \
-			"${T}/test.${container}"
-		)
-		einfo "${cmd[@]}"
-		"${cmd[@]}" || die
+		if [[ "${vencoding_codec}" =~ "h264_vaapi" ]] ; then
+			ewarn "VA-API training is WIP"
+			# TODO: match same output as the non-vaapi
+			# TODO: pick proper camera resolution
+			local custom_filters=""
+			custom_filters+="scale_vaapi=w=${width}:h=-1"
+			cmd=(
+				"${FFMPEG}" \
+				-y \
+				-hwaccel vaapi \
+				-hwaccel_device $(_get_vaapi_render_device) \
+				-hwaccel_output_format vaapi \
+				${input_source[@]} \
+				-vf "${custom_filters}" \
+				-c:v ${vencoding_codec} \
+				-r ${fps} \
+				-t ${duration} \
+				-f ${container} \
+				"${T}/traintemp/test.${container}"
+			)
+		else
+			cmd=(
+				"${FFMPEG}" \
+				-y \
+				${input_source[@]} \
+				-c:v ${vencoding_codec} \
+				-maxrate ${avgrate}k -minrate ${avgrate}k -b:v ${avgrate}k \
+				-vf "scale=w=-1:h=${height}" \
+				-force_key_frames "expr:gte(t,n_forced*2)" \
+				-bufsize ${avgrate}k \
+				${extra_args[@]} \
+				${training_args} \
+				-r ${fps} \
+				-t ${duration} \
+				-f ${container} \
+				"${T}/traintemp/test.${container}"
+			)
+		fi
+
+		if ! python -c "if ${total_bitrate} > ${bandwidth_limit}: exit(1)" ; then
+ewarn
+ewarn "Rejected encoder settings exceeding upload rate limits (total_bitrate: ${total_bitrate} kbps, ${bandwidth_limit} kbps)"
+ewarn
+ewarn "${cmd[@]}"
+ewarn
+			continue
+		else
+einfo
+einfo "Encoding ${msg_quality} (${avgrate} kbps) as ${cheight} for ${duration} sec, ${fps} fps"
+einfo
+einfo "${cmd[@]}"
+einfo
+		fi
+
+# The initial startup and buffering causes latency issue maybe caused by both
+# PGI and the ffmpeg program.
+		local lag=15
+		timeout $((${duration} * ${lag})) "${cmd[@]}"
+		if ! ffprobe -count_frames -show_entries stream=nb_read_frames -i "${T}/traintemp/test.${container}" 2>/dev/null ; then
+#
+# The idea was to have a list of encoding settings considered live stream
+# quality that delivered 30/60 fps in 1 second or met the movie quality
+# framerate of 24 fps and report it back to the user.  Anything that
+# violated that was rejected.
+#
+eerror
+eerror "Rejected.  Encoder settings cannot keep up."
+eerror
+			_wipe_data
+			continue
+		fi
+
+		local actual_frames=$(ffprobe -count_frames -show_entries  stream=nb_read_frames -i "${T}/traintemp/test.${container}" 2>/dev/null \
+			| grep "nb_read_frames.*" \
+			| cut -f 2 -d "=")
+		local expected_frames=$(python -c "print(int(${fps} * ${duration} * (25/30)))")
+
+		# You can change this as a weighted linear combo so that
+		# you prioritize the preference of image quality or FPS.
+		# score = w_1*x_1 + w_2*x_2 + ... + w_N*x_N
+		local bonus=0
+		local aquality=$((${i}+1))
+		local is_30fps=0
+		local is_60fps=0
+		(( ${fps} == 30 )) && is_30fps=1
+		(( ${fps} == 60 )) && is_60fps=1
+		local score
+		if [[ -n "${FFMPEG_TRAINER_AV_STREAMING_LC}" ]] ; then
+			local t=$(eval "echo ${FFMPEG_TRAINER_AV_STREAMING_LC}")
+			score=$(python -c "print(int(${t}))")
+		else
+			score=$(python -c "print(int(${total_bitrate}))")
+		fi
+
+		if (( ${actual_frames} >= ${expected_frames}  )) ; then
+			LIVE_STREAMING_REPORT_CARD+="${score} ${cmd[@]}\n"
+		else
+ewarn
+ewarn "Encoding is not above frame minimal.  Combo not suitable for live streaming."
+ewarn
+ewarn "Actual frame count:  ${actual_frames}"
+ewarn "Expected frame count:  ${expected_frames}"
+ewarn
+		fi
 		idx=$((${idx} + 1))
+		_wipe_data
 	done
 }
 
 _get_av_level_of_detail() {
 	local L=(
 		# Only desktop gaming or screencasting for now
-		"30;1980;1080;128;44.1;on"
-		"64;1980;1080;128;44.1;on"
-		"30;1280;720;128;44.1;on"
-		"64;1280;720;128;44.1;on"
-		"30;854;480;128;44.1;on"
-		"30;640;360;128;44.1;on"
+		"30;1980;1080;128;44.1;1"
+		"64;1980;1080;128;44.1;1"
+		"30;1280;720;128;44.1;1"
+		"64;1280;720;128;44.1;1"
+		"30;854;480;128;44.1;1"
+		"30;640;360;128;44.1;1"
 	)
 
 	local e
@@ -1839,7 +2367,7 @@ _trainer_plan_audio_cbr() {
 				-b:a ${bitrate}k
 				${training_args} \
 				-t 3 \
-				"${T}/test.${extension}"
+				"${T}/traintemp/test.${extension}"
 			)
 			einfo "${cmd[@]}"
 			"${cmd[@]}" || die
@@ -1915,7 +2443,7 @@ _trainer_plan_audio_vbr() {
 				${!vbr_option} ${setting} \
 				${training_args} \
 				-t 3 \
-				"${T}/test.${extension}"
+				"${T}/traintemp/test.${extension}"
 			)
 			einfo "${cmd[@]}"
 			"${cmd[@]}" || die
@@ -2220,6 +2748,11 @@ ewarn "You are not allowed to redistribute this binary."
 ewarn
 	fi
 	uopts_pkg_postinst
+	if use trainer-av-streaming ; then
+einfo "The recommended live streaming settings all of which met deadlines:"
+echo -e "${LIVE_STREAMING_REPORT_CARD}" | sort | sed -e "/^$/d"
+einfo "The top most is the most recommended.  The ones that follow are runner-ups."
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  pgo, cfi-exceptions, license-compatibility-correctness
