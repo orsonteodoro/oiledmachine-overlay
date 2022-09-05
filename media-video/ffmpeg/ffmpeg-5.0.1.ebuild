@@ -2046,13 +2046,6 @@ eerror
 		extra_args+=( -pix_fmt yuv420p )
 	fi
 
-	if [[ "${container}" =~ ("mp4") ]] ; then
-		extra_args+=(
-			-movflags empty_moov
-			-movflags frag_keyframe
-		)
-	fi
-
 	if [[ "${vencoding_codec}" =~ ("aom") ]] ; then
 		extra_args+=( -usage realtime )
 	fi
