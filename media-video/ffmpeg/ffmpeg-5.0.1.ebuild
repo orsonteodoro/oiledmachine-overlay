@@ -2222,8 +2222,8 @@ eerror
 		(( ${fps} == 30 )) && is_30fps=1
 		(( ${fps} == 60 )) && is_60fps=1
 		local score
-		if [[ -n "${FFMPEG_TRAINER_AV_STREAMING_LC}" ]] ; then
-			local t=$(eval "echo ${FFMPEG_TRAINER_AV_STREAMING_LC}")
+		if [[ -n "${FFMPEG_TRAINER_AV_STREAMING_WS}" ]] ; then
+			local t=$(eval "echo ${FFMPEG_TRAINER_AV_STREAMING_WS}")
 			score=$(python -c "print(int(${t}))")
 		else
 			score=$(python -c "print(int(${total_bitrate}))")

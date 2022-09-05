@@ -190,7 +190,7 @@
 	(megabits) that the host machine supports.  Anything exceeding that
 	will not be trained.  Decimal values supported.
 
-	FFMPEG_TRAINER_AV_STREAMING_LC - This is a weighted function formula
+	FFMPEG_TRAINER_AV_STREAMING_WS - This is a weighted function formula
 	that uses a weighted sum for sorting recommendations.  You must
 	place the formula in single quotes.  This can be used to control the
 	recommended codec or preference for fps or quality or other aspects
@@ -272,7 +272,7 @@
 	FFMPEG_TRAINING_264_HW_LEVEL_SUPPORTED - A space delimited list of hw
 	supported levels.  Check the technical manual for details.
 
-	FFMPEG_TRAINING_256_PRESET - a string representing speed to compression
+	FFMPEG_TRAINING_256_PRESET - A string representing speed to compression
 	ratio.  See the wiki for details under preset.  (This may be changed or
 	removed and appied to FFMPEG_TRAINER_CUSTOM_AV_LOD instead).  Currently
 	allowed only for trainer-av-streaming USE flag.
@@ -280,16 +280,21 @@
 	FFMPEG_TRAINING_256_PRESET="superfast" # blocky artifacts
 	FFMPEG_TRAINING_256_PRESET="ultrafast" # unsharp edges but fast encoding
 	FFMPEG_TRAINING_256_PRESET="medium" # default
+
+	FFMPEG_TRAINER_VAAPI_DEVICE - The override path to the VA-API
+	render device.  If you have multiple VA-API capable devices
+	and slowest or one with less hardware accelerated codecs and
+	was auto chosen you can pick manually the better one.
 	
 
 	Custom training
 
-	Since it would be impratical to permute and PGO train the
-	possible features and settings of the software to PGO optimize,
-	custom training is provided (See README.md of overlay) to
-	allow people to script their own trainers.  You may also define
-	additional per-package envvar assets.  See the ebuild for ways
-        to use the variables.
+	Since it would be impratical to permute and PGO train all the possible
+	features and settings of the software, customized PGO training is
+	provided (See README.md of overlay) to allow people to script their own
+	trainers.  You may also define additional per-package environment
+	variable assigned assets.  See the ebuild for ways to use the
+	variables.
 
 </longdescription>
 <use>
