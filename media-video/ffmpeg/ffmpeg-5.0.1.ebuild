@@ -2036,12 +2036,12 @@ eerror
 		fi
 	fi
 
-	if [[ "${encoding_codec}" =~ ("vp9"|"vpx") ]] ; then
+	if [[ "${vencoding_codec}" =~ ("vp9"|"vpx") ]] ; then
 		extra_args+=( -profile:v 0 ) # 4:2:0 8 bit chroma subsampling
 		extra_args+=( -pix_fmt yuv420p )
 	fi
 
-	if [[ "${encoding_codec}" =~ ("aom") ]] ; then
+	if [[ "${vencoding_codec}" =~ ("aom") ]] ; then
 		extra_args+=( -profile:v 0 ) # 4:2:0 8 bit chroma subsampling
 		extra_args+=( -pix_fmt yuv420p )
 	fi
