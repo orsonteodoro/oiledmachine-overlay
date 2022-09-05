@@ -148,6 +148,15 @@
 
 	Audio Video (AV) capture training
 
+	This is accessible via the trainer-av-streaming USE flag.  Note
+	it will require access to either camera, X11, or KMS.  The reason why
+	is to reduce CPU load that may result in decoding other assets and
+	to similate or replicate the conditions similar to live streaming.
+	It also requires some permission changes for the portage account
+	such as either adding portage to video group or changing the /dev/video*
+	device with +rw ACL changes for portage in order to capture from the
+	camera.
+
 	FFMPEG_TRAINING_AV_CODECS must be set as a space separated list of elements.
 
 	Each element is in the format avscenario:vencoder:vdecoder:aencoder:adecoder:container:tags
@@ -296,6 +305,11 @@
 		constrained quality video trainer.</flag>
 	<flag name="trainer-video-lossless">Use the lossless video
 		trainer.</flag>
+	<flag name="trainer-av-streaming">Use the audio video stream trainer.
+		This will access the camera, X11, or active KMS plane as sources
+		of data.  Currently it will train for bitrates requested by live
+		streaming websites, but it may be updated later to
+		train the network connections.</flag>
 	<flag name="ssp">Build with stack smashing protection</flag>
 	<!-- For license compatibility checking -->
 	<!-- Deal with the restrictive first then back to the permissive. -->
