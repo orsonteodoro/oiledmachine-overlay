@@ -1926,7 +1926,7 @@ ffmpeg_pkg_die() {
 _wipe_data() {
 	# May contain sensitive data
 	local p
-	for p in $(find "${T}/traintemp") ; do
+	for p in $(find "${T}/traintemp" -type f) ; do
 		if [[ -e "${p}" ]] ; then
 			einfo "Wiped sensitive camera/screencast data"
 			shred --remove=wipesync "${p}"
