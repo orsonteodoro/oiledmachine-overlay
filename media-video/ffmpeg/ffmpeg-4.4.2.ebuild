@@ -2616,6 +2616,7 @@ _src_post_train() {
 }
 
 src_compile() {
+	mkdir -p "${T}/traintemp" || die
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
@@ -2633,6 +2634,7 @@ src_compile() {
 		done
 	}
 	multilib_foreach_abi compile_abi
+	_wipe_data
 }
 
 src_test() {

@@ -228,11 +228,15 @@ has_ffmpeg() {
 }
 
 has_codec_requirements() {
-	local meets_input_req=0
+	local meets_input_req=1
 	local meets_output_req=0
-	if ffprobe "${video_asset_path}" 2>/dev/null 1>/dev/null ; then
-		meets_input_req=1
-	fi
+	for id in $(get_asset_ids) ; do
+		local video_asset_path="${!id}"
+		[[ ! -e "${video_asset_path}" ]] && continue
+		if ! ffprobe "${video_asset_path}" 2>/dev/null 1>/dev/null ; then
+			meets_input_req=0
+		fi
+	done
 	if ( ffmpeg -formats 2>&1 | grep -q -e "E.*webm .*WebM" ) ; then
 		meets_output_req=1
 	fi
@@ -365,7 +369,7 @@ _src_configure() {
 
 _vdecode() {
 	einfo "Decoding ${1}"
-	cmd=( "${FFMPEG}" -i "${T}/test.webm" -f null - )
+	cmd=( "${FFMPEG}" -i "${T}/traintemp/test.webm" -f null - )
 	"${cmd[@]}" || die
 }
 
@@ -447,7 +451,7 @@ _trainer_plan_constrained_quality_training_session() {
 	[[ "${fps}" == "60" ]] && m60fps="1.5"
 	[[ "${dynamic_range}" == "hdr" ]] && return
 
-	local pf=$(ffprobe -show_entries stream=pix_fmt "${libvpx_asset_path}" 2>/dev/null \
+	local pf=$(ffprobe -show_entries stream=pix_fmt "${video_asset_path}" 2>/dev/null \
 		| grep "pix_fmt" \
 		| cut -f 2 -d "=")
 
@@ -490,7 +494,7 @@ _trainer_plan_constrained_quality_training_session() {
 		-an \
 		-r ${fps} \
 		-t ${duration} \
-		"${T}/test.webm"
+		"${T}/traintemp/test.webm"
 	)
 	"${cmd[@]}" || die
 	_vdecode "${cheight} ${fps} fps"
@@ -531,7 +535,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 
 	[[ "${fps}" == "60" ]] && m60fps="1.5"
 
-	local pf=$(ffprobe -show_entries stream=pix_fmt "${libvpx_asset_path}" 2>/dev/null \
+	local pf=$(ffprobe -show_entries stream=pix_fmt "${video_asset_path}" 2>/dev/null \
 		| grep "pix_fmt" \
 		| cut -f 2 -d "=")
 
@@ -612,7 +616,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 		-an \
 		-r ${fps} \
 		-t ${duration} \
-		"${T}/test.webm"
+		"${T}/traintemp/test.webm"
 	)
 	"${cmd1[@]}" || die
 	"${cmd2[@]}" || die
@@ -656,7 +660,7 @@ _trainer_plan_lossless() {
 				${LIBAOM_TRAINING_ARGS_LOSSLESS} \
 				-an \
 				-t 3 \
-				"${T}/test.webm"
+				"${T}/traintemp/test.webm"
 			)
 			"${cmd[@]}" || die
 			_vdecode "lossless"
@@ -677,6 +681,25 @@ train_trainer_custom() {
 	if use trainer-lossless ; then
 		_trainer_plan_lossless
 	fi
+}
+
+if ! has libaom_pkg_die ${EBUILD_DEATH_HOOKS} ; then
+        EBUILD_DEATH_HOOKS+=" libaom_pkg_die";
+fi
+
+libaom_pkg_die() {
+	_wipe_data
+}
+
+_wipe_data() {
+	# May contain sensitive data
+	local p
+	for p in $(find "${T}/traintemp") ; do
+		if [[ -e "${p}" ]] ; then
+			einfo "Wiping possibly sensitive training data"
+			shred --remove=wipesync "${p}"
+		fi
+	done
 }
 
 _src_compile() {
@@ -700,6 +723,7 @@ _src_post_pgo() {
 }
 
 src_compile() {
+	mkdir -p "${T}/traintemp" || die
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
 
@@ -713,6 +737,7 @@ src_compile() {
 		done
 	}
 	multilib_foreach_abi compile_abi
+	_wipe_data
 }
 
 src_test() {

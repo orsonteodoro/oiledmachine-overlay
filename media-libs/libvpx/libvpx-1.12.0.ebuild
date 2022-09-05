@@ -108,7 +108,7 @@ __check_video_codec() {
 
 __check_video() {
 	if use pgo && has_version "media-video/ffmpeg" ; then
-		if [[ -z "${libvpx_asset_path}" ]] ; then
+		if [[ -z "${video_asset_path}" ]] ; then
 eerror
 eerror "${id} is missing the abspath to your vp8/vp9 video as a"
 eerror "per-package envvar.  The video must be 3840x2160 resolution,"
@@ -116,16 +116,16 @@ eerror "60fps, >= 3 seconds."
 eerror
 			die
 		fi
-		if ffprobe "${libvpx_asset_path}" 2>/dev/null 1>/dev/null ; then
+		if ffprobe "${video_asset_path}" 2>/dev/null 1>/dev/null ; then
 			einfo "Verifying asset requirements"
-			if false && ! ( ffprobe "${libvpx_asset_path}" 2>&1 \
+			if false && ! ( ffprobe "${video_asset_path}" 2>&1 \
 				| grep -q -e "3840x2160" ) ; then
 eerror
 eerror "The PGO video sample must be 3840x2160."
 eerror
 				die
 			fi
-			if false && ! ( ffprobe "${libvpx_asset_path}" 2>&1 \
+			if false && ! ( ffprobe "${video_asset_path}" 2>&1 \
 				| grep -q -E -e ", (59|60)[.0-9]* fps" ) ; then
 eerror
 eerror "The PGO video sample must be >=59 fps."
@@ -133,7 +133,7 @@ eerror
 				die
 			fi
 
-			local d=$(ffprobe "${libvpx_asset_path}" 2>&1 \
+			local d=$(ffprobe "${video_asset_path}" 2>&1 \
 				| grep -E -e "Duration" \
 				| cut -f 4 -d " " \
 				| sed -e "s|,||g" \
@@ -153,7 +153,7 @@ eerror
 			fi
 		else
 eerror
-eerror "${libvpx_asset_path} is possibly not a valid video file.  Ensure that"
+eerror "${video_asset_path} is possibly not a valid video file.  Ensure that"
 eerror "the proper codec is supported for that file"
 eerror
 		fi
@@ -165,8 +165,8 @@ __pgo_setup() {
 	__check_video_codec
 	local id
 	for id in $(get_asset_ids) ; do
-		local libvpx_asset_path="${!id}"
-		[[ -e "libvpx_asset_path" ]] || continue
+		local video_asset_path="${!id}"
+		[[ -e "${video_asset_path}" ]] || continue
 		__check_video
 	done
 }
@@ -200,11 +200,16 @@ has_ffmpeg() {
 }
 
 has_codec_requirements() {
-	local meets_input_req=0
+	local meets_input_req=1
 	local meets_output_req=0
-	if ffprobe "${LIBAOM_TRAINING_VIDEO}" 2>/dev/null 1>/dev/null ; then
-		meets_input_req=1
-	fi
+	local id
+	for id in $(get_asset_ids) ; do
+		local video_asset_path="${!id}"
+		[[ ! -e "${video_asset_path}" ]] && continue
+		if ! ffprobe "${video_asset_path}" 2>/dev/null 1>/dev/null ; then
+			meets_input_req=0
+		fi
+	done
 	if ( ffmpeg -formats 2>&1 | grep -q -e "E.*webm .*WebM" ) ; then
 		meets_output_req=1
 	fi
@@ -367,7 +372,7 @@ _src_pre_train() {
 
 _vdecode() {
 	einfo "Decoding ${1}"
-	cmd=( "${FFMPEG}" -i "${T}/test.webm" -f null - )
+	cmd=( "${FFMPEG}" -i "${T}/traintemp/test.webm" -f null - )
 	"${cmd[@]}" || die
 }
 
@@ -458,7 +463,7 @@ _trainer_plan_constrained_quality() {
 		extra_args+=( -tune-content 0 ) # 0=default
 	fi
 
-	local pf=$(ffprobe -show_entries stream=pix_fmt "${libvpx_asset_path}" 2>/dev/null \
+	local pf=$(ffprobe -show_entries stream=pix_fmt "${video_asset_path}" 2>/dev/null \
 		| grep "pix_fmt" \
 		| cut -f 2 -d "=")
 	if [[ "${pf}" =~ ("422"|"444") ]] ; then
@@ -481,7 +486,7 @@ _trainer_plan_constrained_quality() {
 	einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
 	cmd=( "${FFMPEG}" \
 		-y \
-		-i "${libvpx_asset_path}" \
+		-i "${video_asset_path}" \
 		-c:v ${encoding_codec} \
 		-maxrate ${maxrate}k -minrate ${minrate}k -b:v ${avgrate}k \
 		-vf scale=w=-1:h=${height} \
@@ -489,7 +494,7 @@ _trainer_plan_constrained_quality() {
 		-an \
 		-r ${fps} \
 		-t ${duration} \
-		"${T}/test.webm" )
+		"${T}/traintemp/test.webm" )
 	einfo "${cmd[@]}"
 	"${cmd[@]}" || die
 	_vdecode "${cheight}, ${fps} fps"
@@ -516,8 +521,8 @@ _trainer_plan_constrained_quality() {
 	if train_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
-			local libvpx_asset_path="${!id}"
-			[[ -e "libvpx_asset_path" ]] || continue
+			local video_asset_path="${!id}"
+			[[ -e "${video_asset_path}" ]] || continue
 			einfo "Running trainer for ${encoding_codec} for 1 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
@@ -541,7 +546,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 
 	local extra_args=()
 
-	local pf=$(ffprobe -show_entries stream=pix_fmt "${libvpx_asset_path}" 2>/dev/null \
+	local pf=$(ffprobe -show_entries stream=pix_fmt "${video_asset_path}" 2>/dev/null \
 		| grep "pix_fmt" \
 		| cut -f 2 -d "=")
 
@@ -603,7 +608,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 	einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
 	cmd1=( "${FFMPEG}" \
 		-y \
-		-i "${libvpx_asset_path}" \
+		-i "${video_asset_path}" \
 		-c:v ${encoding_codec} \
 		-maxrate ${maxrate}k -minrate ${minrate}k -b:v ${avgrate}k \
 		-vf scale=w=-1:h=${height} \
@@ -616,7 +621,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 		-f null /dev/null )
 	cmd2=( "${FFMPEG}" \
 		-y \
-		-i "${libvpx_asset_path}" \
+		-i "${video_asset_path}" \
 		-c:v ${encoding_codec} \
 		-maxrate ${maxrate}k -minrate ${minrate}k -b:v ${avgrate}k \
 		-vf scale=w=-1:h=${height} \
@@ -626,7 +631,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 		-an \
 		-r ${fps} \
 		-t ${duration} \
-		"${T}/test.webm" )
+		"${T}/traintemp/test.webm" )
 	einfo "${cmd1[@]}"
 	"${cmd1[@]}" || die
 	einfo "${cmd2[@]}"
@@ -655,8 +660,8 @@ _trainer_plan_2_pass_constrained_quality() {
 	if train_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
-			local libvpx_asset_path="${!id}"
-			[[ -e "libvpx_asset_path" ]] || continue
+			local video_asset_path="${!id}"
+			[[ -e "${video_asset_path}" ]] || continue
 			einfo "Running trainer for ${encoding_codec} for 2 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
@@ -683,20 +688,20 @@ _trainer_plan_lossless() {
 	if train_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
-			local libvpx_asset_path="${!id}"
-			[[ -e "libvpx_asset_path" ]] || continue
+			local video_asset_path="${!id}"
+			[[ -e "${video_asset_path}" ]] || continue
 			einfo "Running trainer for ${encoding_codec} for lossless"
 			einfo "Encoding for lossless"
 			local cmd
 			cmd=( "${FFMPEG}" \
 				-y \
-				-i "${libvpx_asset_path}" \
+				-i "${video_asset_path}" \
 				-c:v ${encoding_codec} \
 				-lossless 1 \
 				${training_args} \
 				-an \
 				-t 3 \
-				"${T}/test.webm" )
+				"${T}/traintemp/test.webm" )
 			einfo "${cmd[@]}"
 			"${cmd[@]}" || die
 			_vdecode "lossless"
@@ -739,7 +744,27 @@ _src_post_pgo() {
 	export PGO_RAN=1
 }
 
+if ! has libvpx_pkg_die ${EBUILD_DEATH_HOOKS} ; then
+        EBUILD_DEATH_HOOKS+=" libvpx_pkg_die";
+fi
+
+libvpx_pkg_die() {
+	_wipe_data
+}
+
+_wipe_data() {
+	# May contain sensitive data
+	local p
+	for p in $(find "${T}/traintemp") ; do
+		if [[ -e "${p}" ]] ; then
+			einfo "Wiping possibly sensitive training data"
+			shred --remove=wipesync "${p}"
+		fi
+	done
+}
+
 src_compile() {
+	mkdir -p "${T}/traintemp" || die
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
 			einfo "Build type is ${lib_type}"
@@ -757,6 +782,7 @@ src_compile() {
 		done
 	}
 	multilib_foreach_abi compile_abi
+	_wipe_data
 }
 
 src_test() {
