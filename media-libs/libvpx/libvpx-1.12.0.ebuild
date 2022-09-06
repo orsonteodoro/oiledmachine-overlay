@@ -408,8 +408,8 @@ _get_resolutions() {
 	)
 
 	local e
-	if [[ -n "${LIBVPX_TRAINER_CUSTOM_RESOLUTIONS}" ]] ; then
-		for e in ${LIBVPX_TRAINER_CUSTOM_RESOLUTIONS} ; do
+	if [[ -n "${LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS}" ]] ; then
+		for e in ${LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS} ; do
 			echo "${e}"
 		done
 	else

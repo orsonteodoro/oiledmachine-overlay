@@ -405,8 +405,8 @@ _get_resolutions() {
 	)
 
 	local e
-	if [[ -n "${LIBAOM_TRAINER_CUSTOM_RESOLUTIONS}" ]] ; then
-		for e in ${LIBAOM_TRAINER_CUSTOM_RESOLUTIONS} ; do
+	if [[ -n "${LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS}" ]] ; then
+		for e in ${LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS} ; do
 			echo "${e}"
 		done
 	else

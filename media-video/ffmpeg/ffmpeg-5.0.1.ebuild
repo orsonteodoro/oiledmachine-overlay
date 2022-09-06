@@ -21,6 +21,7 @@ if [ "${PV#9999}" != "${PV}" ] ; then
 	EGIT_REPO_URI="https://git.ffmpeg.org/ffmpeg.git"
 fi
 
+TRAIN_SANDBOX_EXCEPTION_VAAPI=1
 inherit flag-o-matic multilib multilib-minimal toolchain-funcs ${SCM}
 inherit llvm uopts
 
@@ -531,6 +532,7 @@ REQUIRED_USE+="
 	trainer-video-lossless? ( pgo )
 	trainer-av-streaming? (
 		encode
+		kernel_linux
 		pgo
 		|| (
 			openh264
@@ -544,6 +546,9 @@ REQUIRED_USE+="
 			x264
 			x265
 		)
+	)
+	!kernel_linux? (
+		trainer-av-streaming
 	)
 "
 RESTRICT="
@@ -799,6 +804,23 @@ pkg_setup() {
 	fi
 	llvm_pkg_setup
 	uopts_setup
+
+	if use trainer-av-streaming && has pid-sandbox ${FEATURES} ; then
+eerror
+eerror "You must disable the pid-sandbox for USE=trainer-av-streaming"
+eerror "for screencast PGO/BOLT training."
+eerror
+eerror "Add a per-package environment rule with the following additions or"
+eerror "changes..."
+eerror
+eerror "${EROOT}/etc/portage/env/no-pid-sandbox.conf:"
+eerror "FEATURE=\"\${FEATURES} -pid-sandbox\""
+eerror
+eerror "${EROOT}/etc/portage/package.env:"
+eerror "${CATEGORY}/${PN} no-pid-sandbox.conf"
+eerror
+		die
+	fi
 }
 
 # The order does matter with PGO.
@@ -1208,8 +1230,8 @@ _get_resolutions() {
 	)
 
 	local e
-	if [[ -n "${FFMPEG_TRAINER_CUSTOM_RESOLUTIONS}" ]] ; then
-		for e in ${FFMPEG_TRAINER_CUSTOM_RESOLUTIONS} ; do
+	if [[ -n "${FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS}" ]] ; then
+		for e in ${FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS} ; do
 			echo "${e}"
 		done
 	else
@@ -1329,8 +1351,6 @@ _get_264_level() {
 		( ${fps} == 30 && ${width} == 128 && ${height} == 96 ) \
 		)) ; then
 		echo "1" # 64 kbps
-
-
 	fi
 }
 
@@ -1412,7 +1432,7 @@ _trainer_plan_video_constrained_quality_training_session() {
 		fi
 	fi
 
-	if [[ "${encoding_codec}" =~ ("vp9"|"vpx") \
+	if [[ "${encoding_codec}" =~ ("libvpx-vp9"|"libvpx") \
 		&& "${dynamic_range}" == "sdr" ]] ; then
 		if [[ "${pf}" =~ ("422"|"444") ]] ; then
 			extra_args+=( -profile:v 1 ) # 4:2:2 8 bit chroma subsampling
@@ -1423,7 +1443,7 @@ _trainer_plan_video_constrained_quality_training_session() {
 		fi
 	fi
 
-	if [[ "${encoding_codec}" =~ ("aom") ]] ; then
+	if [[ "${encoding_codec}" =~ ("libaom-av1") ]] ; then
 		if [[ "${pf}" =~ "444" ]] ; then
 			extra_args+=( -profile:v 1 ) # 4:4:4 8/10 bit chroma subsampling
 		elif [[ "${pf}" =~ "422" ]] ; then
@@ -1446,7 +1466,7 @@ _trainer_plan_video_constrained_quality_training_session() {
 		fi
 	fi
 
-	if [[ "${encoding_codec}" =~ ("aom"|"vpx"|"vp9") ]] ; then
+	if [[ "${encoding_codec}" =~ ("libaom-av1"|"libvpx"|"libvpx-vp9") ]] ; then
 		if [[ "${id}" =~ ("CGI"|"GAMING"|"SCREENCAST") ]] ; then
 			extra_args+=( -tune-content 1 ) # 1=screen
 		elif [[ "${id}" =~ "GRAINY" ]] ; then
@@ -1552,7 +1572,7 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 		| cut -f 2 -d "=")
 
 	if [[ "${dynamic_range}" == "hdr" ]] ; then
-		if [[ "${pf}" =~ "p12" && "${encoding_codec}" =~ ("aom") ]] ; then
+		if [[ "${pf}" =~ "p12" && "${encoding_codec}" =~ ("libaom-av1") ]] ; then
 			bits="12"
 		else
 			bits="10"
@@ -1607,7 +1627,7 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 		extra_args+=( -pix_fmt yuv420p${bits} )
 	fi
 
-	if [[ "${encoding_codec}" =~ ("vpx"|"vp9") ]] ; then
+	if [[ "${encoding_codec}" =~ ("libvpx"|"libvpx-vp9") ]] ; then
 		if [[ "${dynamic_range}" == "hdr" ]] ; then
 			if [[ "${pf}" =~ ("422"|"444") ]] ; then
 				extra_args+=( -profile:v 3 ) # 4:2:2 10/12 bit chroma subsampling
@@ -1627,7 +1647,7 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 		fi
 	fi
 
-	if [[ "${encoding_codec}" =~ ("aom") ]] ; then
+	if [[ "${encoding_codec}" =~ ("libaom-av1") ]] ; then
 		if [[ "${pf}" =~ "444" ]] ; then
 			extra_args+=( -profile:v 1 ) # 4:4:4 8/10 bit chroma subsampling
 			extra_args+=( -pix_fmt yuv422p${bits} )
@@ -1654,7 +1674,7 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 		fi
 	fi
 
-	if [[ "${encoding_codec}" =~ ("aom"|"vpx"|"vp9") ]] ; then
+	if [[ "${encoding_codec}" =~ ("libaom-av1"|"libvpx"|"libvpx-vp9") ]] ; then
 		if [[ "${id}" =~ ("CGI"|"GAMING"|"SCREENCAST") ]] ; then
 			extra_args+=( -tune-content 1 ) # 1=screen
 		elif [[ "${id}" =~ "GRAINY" ]] ; then
@@ -1826,7 +1846,7 @@ _trainer_plan_video_lossless() {
 		training_args="${!envvar}"
 	fi
 
-	[[ "${encoding_codec}" =~ "vp9" ]] && codec_args+=( -lossless 1 )
+	[[ "${encoding_codec}" =~ "libvpx-vp9" ]] && codec_args+=( -lossless 1 )
 
 	if train_meets_requirements ; then
 		local id
@@ -1856,37 +1876,40 @@ _trainer_plan_video_lossless() {
 
 # Full list of hw accelerated image processing
 # ffmpeg -filters | grep vaapi
-_is_hw_scaling_supported() {
+_has_vaapi_scaling() {
 	local encoding_format="${1}"
-	if use vaapi && ffmpeg -filters 2>/dev/null \
-		| grep -q -F -e "scale_vaapi" \
-		&& vainfo 2>/dev/null \
-		| grep -q -F -e "VAEntrypointVideoProc" \
-		&& vainfo 2>/dev/null \
-                | grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
-                && ffmpeg -hide_banner -encoders 2>/dev/null \
-                        | grep -q -F -e "${encoding_format,,}_vaapi" ; then
+	local vaapi_device=$(_get_vaapi_render_device)
+	if use vaapi \
+		&& ffmpeg -filters 2>/dev/null \
+			| grep -q -F -e "scale_vaapi" \
+		&& vainfo --display drm --device "${vaapi_device}" 2>/dev/null \
+			| grep -q -F -e "VAEntrypointVideoProc" \
+		&& vainfo --display drm --device "${vaapi_device}" 2>/dev/null \
+			| grep -q -G -e "${encoding_format^^}.*VAEntrypointEncSlice" \
+		&& ffmpeg -help encoder=${encoding_format,,}_vaapi 2>/dev/null \
+			| grep -q -e "AVOptions" ; then
 		return 0
 	else
 		return 1
 	fi
 }
 
-_is_vaapi_allowed() {
+_has_vaapi_codec() {
 	local encoding_format="${1}"
-	if use vaapi && vainfo 2>/dev/null \
-		| grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
-		&& ffmpeg -hide_banner -encoders 2>/dev/null \
-			| grep -q -F -e "${encoding_format,,}_vaapi" ; then
+	if use vaapi \
+		&& vainfo --display drm --device "${vaapi_device}" 2>/dev/null \
+			| grep -q -G -e "${encoding_format^^}.*VAEntrypointEncSlice" \
+		&& ffmpeg -help encoder=${encoding_format,,}_vaapi 2>/dev/null \
+			| grep -q -e "AVOptions" ; then
 		return 0
 	fi
 	return 1
 }
 
 _get_vaapi_render_device() {
-	if [[ -n "${FFMPEG_TRAINER_VAAPI_DEVICE}" ]] ; then
-		if vainfo --display drm --device "${FFMPEG_TRAINER_VAAPI_DEVICE}" 2>/dev/null 1>/dev/null ; then
-echo "${FFMPEG_TRAINER_VAAPI_DEVICE}"
+	if [[ -n "${FFMPEG_TRAINING_VAAPI_DEVICE}" ]] ; then
+		if vainfo --display drm --device "${FFMPEG_TRAINING_VAAPI_DEVICE}" 2>/dev/null 1>/dev/null ; then
+echo "${FFMPEG_TRAINING_VAAPI_DEVICE}"
 		else
 eerror
 eerror "Error accessing device"
@@ -1934,6 +1957,38 @@ _wipe_data() {
 	done
 }
 
+_get_x11_display() {
+	if [[ -n "${FFMPEG_TRAINING_X11_DISPLAY}" ]] ; then
+		echo "${FFMPEG_TRAINING_X11_DISPLAY}"
+		return
+	fi
+	local x
+	for x in "${ESYSROOT}"/proc/*/environ ; do
+		if stat -c "%U:%G" "${x}" | grep -q "root:root" \
+			&& strings "${x}" | grep -q -e "^DISPLAY=" ; then
+			strings "${x}" | grep -e "^DISPLAY=" | head -n 1 | cut -f 2 -d "="
+			return
+		fi
+	done
+}
+
+_get_all_vaapi_devices() {
+	local x
+	local card_i=0
+	if [[ -n "${FFMPEG_TRAINING_VAAPI_DEVICE}" ]] ; then
+		echo "-init_hw_device"
+		echo "vaapi=card${card_i}:${FFMPEG_TRAINING_VAAPI_DEVICE}"
+	else
+		for x in $(find /dev/dri -name "render*") ; do
+			if vainfo --display drm --device "${x}" 2>/dev/null 1>/dev/null ; then
+				echo "-init_hw_device"
+				echo "card${card_i}:${x}"
+				card_i=$((${card_i} + 1))
+			fi
+		done
+	fi
+}
+
 LIVE_STREAMING_REPORT_CARD=""
 _trainer_plan_av_streaming_training_session() {
 	local entry="${1}"
@@ -1952,11 +2007,11 @@ _trainer_plan_av_streaming_training_session() {
 	local m60fps="1"
 
 	[[ "${fps}" == "60" ]] && m60fps="1.5"
-	[[ "${dynamic_range}" == "hdr" ]] && return
 
-	local extra_args=()
+	local vextra_args=()
+	local aextra_args=()
 
-	if ! [[ "${vencoding_codec}" =~ ("264"|"265"|"av1"|"theora"|"vp9"|"vpx") ]] ; then
+	if ! [[ "${vencoding_codec}" =~ ("264"|"265"|"av1"|"theora"|"libvpx-vp9"|"libvpx") ]] ; then
 eerror
 eerror "Invalid video codec for av-streaming training."
 eerror
@@ -1982,13 +2037,13 @@ eerror
 	local bandwidth_limit=$(python -c "print(${FFMPEG_TRAINING_STREAMING_UPLOAD_BANDWIDTH:-1.05} * 1000)")
 
 	if [[ "${mic}" =~ ("1") ]] ; then
-		extra_args+=(
+		aextra_args+=(
 			-c:a ${aencoding_codec}
 			-b:a ${abitrate}k
 			-ar $(python -c "print(int(${asample_rate}*1000))")
 		)
 	else
-		extra_args+=(
+		aextra_args+=(
 			-an
 		)
 	fi
@@ -1999,85 +2054,73 @@ eerror
 
 	if [[ "${vencoding_codec}" =~ ("openh264") ]] ; then
 		if [[ "${ABI}" == "arm" && "${CHOST}" =~ ("arm4"|"arm5"|"arm6") ]] ; then
-			extra_args+=( -profile:v constrained_baseline )
+			vextra_args+=( -profile:v constrained_baseline )
 		elif [[ "${ABI}" == "arm" ]] ; then
-			extra_args+=( -profile:v main ) # armv7
+			vextra_args+=( -profile:v main ) # armv7
 		elif [[ "${ABI}" == "arm64" ]] && (( ${height} <= 1080 )) ; then
-			extra_args+=( -profile:v main )
+			vextra_args+=( -profile:v main )
 		elif [[ "${ABI}" == "arm64" ]] ; then
-			extra_args+=( -profile:v high )
+			vextra_args+=( -profile:v high )
 		elif [[ "${ABI}" == "x86" ]] ; then
-			extra_args+=( -profile:v high )
+			vextra_args+=( -profile:v high )
 		elif [[ "${ABI}" == "x64" ]] ; then
-			extra_args+=( -profile:v high )
+			vextra_args+=( -profile:v high )
 		else
-			extra_args+=( -profile:v main )
+			vextra_args+=( -profile:v main )
 		fi
-		extra_args+=( -pix_fmt yuv420p )
+		vextra_args+=( -pix_fmt yuv420p )
 	elif [[ "${vencoding_codec}" =~ ("x264") ]] ; then
 		if [[ "${ABI}" == "arm" && "${CHOST}" =~ ("arm4"|"arm5"|"arm6") ]] ; then
-			extra_args+=( -profile:v baseline )
+			vextra_args+=( -profile:v baseline )
 		elif [[ "${ABI}" == "arm" ]] ; then
-			extra_args+=( -profile:v main ) # armv7
+			vextra_args+=( -profile:v main ) # armv7
 		elif [[ "${ABI}" == "arm64" ]] && (( ${height} <= 1080 )) ; then
-			extra_args+=( -profile:v main )
+			vextra_args+=( -profile:v main )
 		elif [[ "${ABI}" == "arm64" ]] ; then
-			extra_args+=( -profile:v high )
+			vextra_args+=( -profile:v high )
 		elif [[ "${ABI}" == "x86" ]] ; then
-			extra_args+=( -profile:v high )
+			vextra_args+=( -profile:v high )
 		elif [[ "${ABI}" == "x64" ]] ; then
-			extra_args+=( -profile:v high )
+			vextra_args+=( -profile:v high )
 		else
-			extra_args+=( -profile:v main )
+			vextra_args+=( -profile:v main )
 		fi
-		extra_args+=( -pix_fmt yuv420p )
+		vextra_args+=( -pix_fmt yuv420p )
 		if [[ -n "${FFMPEG_TRAINING_256_PRESET}" ]] ; then
-			extra_args+=( -preset ${FFMPEG_TRAINING_256_PRESET} )
+			vextra_args+=( -preset ${FFMPEG_TRAINING_256_PRESET} )
 		fi
 	fi
 
-	if [[ "${vencoding_codec}" =~ ("vp9"|"vpx") ]] ; then
-		extra_args+=( -profile:v 0 ) # 4:2:0 8 bit chroma subsampling
-		extra_args+=( -pix_fmt yuv420p )
+	if [[ "${vencoding_codec}" =~ ("libvpx-vp9"|"libvpx") ]] ; then
+		vextra_args+=( -profile:v 0 ) # 4:2:0 8 bit chroma subsampling
+		vextra_args+=( -pix_fmt yuv420p )
 	fi
 
-	if [[ "${vencoding_codec}" =~ ("aom") ]] ; then
-		extra_args+=( -profile:v 0 ) # 4:2:0 8 bit chroma subsampling
-		extra_args+=( -pix_fmt yuv420p )
+	if [[ "${vencoding_codec}" =~ ("libaom-av1") ]] ; then
+		vextra_args+=( -profile:v 0 ) # 4:2:0 8 bit chroma subsampling
+		vextra_args+=( -pix_fmt yuv420p )
 	fi
 
-	if [[ "${vencoding_codec}" =~ ("aom") ]] ; then
-		extra_args+=( -usage realtime )
+	if [[ "${vencoding_codec}" =~ ("libaom-av1") ]] ; then
+		vextra_args+=( -usage realtime )
 	fi
 
 	if [[ "${vencoding_codec}" =~ "x264" ]] ; then
-		extra_args+=( -tune zerolatency )
+		vextra_args+=( -tune zerolatency )
 	fi
 
-	if [[ "${vencoding_codec}" =~ ("vpx"|"vp9") ]] ; then
-		extra_args+=(
+	if [[ "${vencoding_codec}" =~ ("libvpx"|"libvpx-vp9") ]] ; then
+		vextra_args+=(
 			-deadline realtime
 			-quality realtime
 		)
 	fi
 
 	if [[ "${vencoding_codec}" =~ ("h264_vaapi") ]] ; then
-		local profile_main=$(ffmpeg -help encoder=h264_vaapi 2>/dev/null \
-			| grep -E -o -e "constrained_baseline[[:space:]]+[0-9]+" \
-			| sed -r -e "s|[[:space:]]+| |g" \
-			| cut -f 2 -d " ")
-		local profile_constrained_baseline=$(ffmpeg -help encoder=h264_vaapi 2>/dev/null \
-			| grep -E -o -e "main[[:space:]]+[0-9]+" \
-			| sed -r -e "s|[[:space:]]+| |g" \
-			| cut -f 2 -d " ")
-		local profile_high=$(ffmpeg -help encoder=h264_vaapi 2>/dev/null \
-			| grep -E -o -e "high[[:space:]]+[0-9]+" \
-			| sed -r -e "s|[[:space:]]+| |g" \
-			| cut -f 2 -d " ")
 		if (( ${height} < 720 )) ; then
-			extra_args+=( -profile:v ${profile_main} )
+			vextra_args+=( -profile:v main )
 		else
-			extra_args+=( -profile:v ${profile_high} )
+			vextra_args+=( -profile:v high )
 		fi
 	elif [[ "${vencoding_codec}" =~ ("h264_vaapi") ]] ; then
 # ...like to add more but lack test hardware.
@@ -2092,17 +2135,17 @@ eerror
 
 	# Use DISPLAY=:0 ffplay test.mp4 -an to check
 	local input_source_type=""
-	if ! _has_camera_resolution ; then
+	local hw_mjpeg_decode=${FFMPEG_TRAINING_HW_INPUT_DECODE:-0}
+	if ! _has_camera_resolution "${capture_path}" "${width}" "${height}" ; then
 ewarn
 ewarn "Camera does not have resolution skipping."
 ewarn "Falling back to screen capture."
 ewarn
-# TODO check sandbox permission
 		input_source_type="screen"
 		if pgrep X ; then
 			input_source=(
 				-f x11grab
-				-i :0
+				-i $(_get_x11_display)
 			)
 		else
 			input_source=(
@@ -2112,6 +2155,7 @@ ewarn
 		fi
 	else
 		input_source_type="camera"
+		local mjpeg_arg=()
 		input_source=(
 			-f v4l2
 			-video_size ${width}x${height}
@@ -2119,31 +2163,47 @@ ewarn
 		)
 	fi
 
-	local idx=0
+	local vquality_i=1
 	for avgrate in ${lq_avgrate} ${mq_avgrate} ${hq_avgrate} ; do
 		local total_bitrate=$(python -c "print(${avgrate} + ${abitrate})")
-		(( ${idx} == 0 )) && msg_quality="low quality"
-		(( ${idx} == 1 )) && msg_quality="mid quality"
-		(( ${idx} == 2 )) && msg_quality="high quality"
+		(( ${vquality_i} == 1 )) && msg_quality="low quality"
+		(( ${vquality_i} == 2 )) && msg_quality="mid quality"
+		(( ${vquality_i} == 3 )) && msg_quality="high quality"
 		local cheight=$(_cheight "${height}")
 
 		local cmd
 		if [[ "${vencoding_codec}" =~ "h264_vaapi" ]] ; then
 			ewarn "VA-API training is WIP"
-			# TODO: match same output as the non-vaapi
-			# TODO: pick proper camera resolution
 			local custom_filters=""
-			custom_filters+="scale_vaapi=w=${width}:h=-1"
+
+			local vaapi_args=()
+			if [[ "${vencoding_codec}" == "h264_vaapi" ]] ; then
+				vaapi_args=(
+					$(_get_all_vaapi_devices)
+					-hwaccel vaapi
+					-hwaccel_output_format vaapi
+					-hwaccel_device card0
+					-filter_hw_device card0
+				)
+				if [[ "${input_source_type}" == "screen" ]] && ! _has_vaapi_scaling "H264" ; then
+					custom_filters+="scale=w=${width}:h=${height},"
+				fi
+				custom_filters+="format=vaapi,hwupload"
+				if [[ "${input_source_type}" == "screen" ]] && _has_vaapi_scaling "H264" ; then
+					custom_filters+=",scale_vaapi=w=${width}:h=${height}"
+				fi
+			fi
+
 			cmd=(
 				"${FFMPEG}" \
 				-y \
-				-hwaccel vaapi \
-				-hwaccel_device $(_get_vaapi_render_device) \
-				-hwaccel_output_format vaapi \
+				${vaapi_args[@]} \
 				${input_source[@]} \
 				-vf "${custom_filters}" \
 				-c:v ${vencoding_codec} \
+				${vextra_args[@]} \
 				-r ${fps} \
+				${aextra_args[@]} \
 				-t ${duration} \
 				-f ${container} \
 				"${T}/traintemp/test.${container}"
@@ -2153,14 +2213,15 @@ ewarn
 				"${FFMPEG}" \
 				-y \
 				${input_source[@]} \
+				-vf "scale=w=-1:h=${height}" \
 				-c:v ${vencoding_codec} \
 				-maxrate ${avgrate}k -minrate ${avgrate}k -b:v ${avgrate}k \
-				-vf "scale=w=-1:h=${height}" \
 				-force_key_frames "expr:gte(t,n_forced*2)" \
 				-bufsize ${avgrate}k \
-				${extra_args[@]} \
+				${vextra_args[@]} \
 				${training_args} \
 				-r ${fps} \
+				${aextra_args[@]} \
 				-t ${duration} \
 				-f ${container} \
 				"${T}/traintemp/test.${container}"
@@ -2173,7 +2234,7 @@ ewarn "Rejected encoder settings exceeding upload rate limits (total_bitrate: ${
 ewarn
 ewarn "${cmd[@]}"
 ewarn
-			continue
+#			continue
 		else
 einfo
 einfo "Encoding ${msg_quality} (${avgrate} kbps) as ${cheight} for ${duration} sec, ${fps} fps"
@@ -2186,7 +2247,7 @@ einfo
 # PGI and the ffmpeg program.
 		local lag=15
 		timeout $((${duration} * ${lag})) "${cmd[@]}"
-		if ! ffprobe -count_frames -show_entries stream=nb_read_frames -i "${T}/traintemp/test.${container}" 2>/dev/null ; then
+		if ! ffprobe -count_frames -show_entries stream=nb_read_frames -i "${T}/traintemp/test.${container}" 2>/dev/null 1>/dev/null ; then
 #
 # The idea was to have a list of encoding settings considered live stream
 # quality that delivered 30/60 fps in 1 second or met the movie quality
@@ -2209,14 +2270,14 @@ eerror
 		# you prioritize the preference of image quality or FPS.
 		# score = w_1*x_1 + w_2*x_2 + ... + w_N*x_N
 		local bonus=0
-		local aquality=$((${i}+1))
+		local vquality=${vquality_i}
 		local is_30fps=0
 		local is_60fps=0
 		(( ${fps} == 30 )) && is_30fps=1
 		(( ${fps} == 60 )) && is_60fps=1
 		local score
-		if [[ -n "${FFMPEG_TRAINER_AV_STREAMING_WS}" ]] ; then
-			local t=$(eval "echo ${FFMPEG_TRAINER_AV_STREAMING_WS}")
+		if [[ -n "${FFMPEG_TRAINING_AV_STREAMING_WS}" ]] ; then
+			local t=$(eval "echo ${FFMPEG_TRAINING_AV_STREAMING_WS}")
 			score=$(python -c "print(int(${t}))")
 		else
 			score=$(python -c "print(int(${total_bitrate}))")
@@ -2232,7 +2293,7 @@ ewarn "Actual frame count:  ${actual_frames}"
 ewarn "Expected frame count:  ${expected_frames}"
 ewarn
 		fi
-		idx=$((${idx} + 1))
+		vquality_i=$((${vquality_i} + 1))
 		_wipe_data
 	done
 }
@@ -2249,8 +2310,8 @@ _get_av_level_of_detail() {
 	)
 
 	local e
-	if [[ -n "${FFMPEG_TRAINER_CUSTOM_AV_LOD}" ]] ; then
-		for e in ${FFMPEG_TRAINER_CUSTOM_AV_LOD} ; do
+	if [[ -n "${FFMPEG_TRAINING_CUSTOM_STREAMING_RESOLUTIONS}" ]] ; then
+		for e in ${FFMPEG_TRAINING_CUSTOM_STREAMING_RESOLUTIONS} ; do
 			echo "${e}"
 		done
 	else
@@ -2609,6 +2670,7 @@ _src_post_train() {
 }
 
 src_compile() {
+	export DISPLAY=":0"
 	mkdir -p "${T}/traintemp" || die
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
@@ -2747,6 +2809,15 @@ ewarn
 einfo "The recommended live streaming settings all of which met deadlines:"
 echo -e "${LIVE_STREAMING_REPORT_CARD}" | sort | sed -e "/^$/d"
 einfo "The top most is the most recommended.  The ones that follow are runner-ups."
+ewarn
+ewarn
+ewarn "The sandbox state should be restored to the default state after training."
+ewarn
+ewarn "The portage should be removed from the video group after training."
+ewarn
+ewarn "The /dev/video* should have portage removed from ACL permissions after"
+ewarn "training."
+ewarn
 	fi
 }
 

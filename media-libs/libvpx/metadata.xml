@@ -91,7 +91,7 @@
 
     Custom training resolutions
 
-    Set LIBVPX_TRAINER_CUSTOM_RESOLUTIONS as a space separated list of sublists.
+    Set LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS as a space separated list of sublists.
 
     Sublist format:
     fps;width;height;dynamic_range
@@ -100,7 +100,7 @@
     fps - 30 or 60 only
 
     Example:
-    LIBVPX_TRAINER_CUSTOM_RESOLUTIONS="30;1280;720;sdr 60;1280;720;sdr"
+    LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS="30;1280;720;sdr 60;1280;720;sdr"
 
     Setting this will override the defaults which trains all.
 

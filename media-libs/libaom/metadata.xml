@@ -85,7 +85,7 @@
 
     Custom training resolutions
 
-    Set LIBAOM_TRAINER_CUSTOM_RESOLUTIONS as a space separated list of sublists.
+    Set LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS as a space separated list of sublists.
 
     Sublist format:
     fps;width;height;dynamic_range
@@ -94,7 +94,7 @@
     fps - 30 or 60 only
 
     Example:
-    LIBAOM_TRAINER_CUSTOM_RESOLUTIONS="30;1280;720;sdr 60;1280;720;sdr"
+    LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS="30;1280;720;sdr 60;1280;720;sdr"
 
     Setting this will override the defaults which trains all.
 

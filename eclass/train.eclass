@@ -270,18 +270,6 @@ subscribe_verify_profile_fatal() {
 # @DESCRIPTION:
 # The default trainer function manager
 _train_trainer_default() {
-	# Sandbox violation prevention
-	if [[ "${TRAIN_SANDBOX_EXCEPTION_GLSL}" == "1" ]] ; then
-		export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache"
-		export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
-	fi
-	if [[ "${TRAIN_SANDBOX_EXCEPTION_INPUT}" == "1" ]] ; then
-		for x in $(find "${BROOT}/dev/input" "${ESYSROOT}/dev/input" -name "event*") ; do
-			einfo "Adding \`addwrite ${x}\` sandbox rule"
-			addwrite "${x}"
-		done
-	fi
-
 	declare -f train_trainer_list > /dev/null \
 		|| die "train_trainer_list must be defined"
 
@@ -317,6 +305,42 @@ _train_trainer_default() {
 	fi
 }
 
+# @FUNCTION: _train_sandbox_exceptions
+# @INTERNAL
+# @DESCRIPTION:
+# Adds common sandbox exceptions that interfere with training.
+_train_sandbox_exceptions() {
+	# Sandbox violation prevention
+	if [[ "${TRAIN_SANDBOX_EXCEPTION_GLSL}" == "1" ]] ; then
+		export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache"
+		export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
+		mkdir -p "${MESA_GLSL_CACHE_DIR}" || die
+	fi
+	if [[ "${TRAIN_SANDBOX_EXCEPTION_VAAPI}" == "1" ]] ; then
+		# ACCESS DENIED:  mkdir:         /var/lib/portage/home/.cache
+		export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache"
+		export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
+		mkdir -p "${MESA_GLSL_CACHE_DIR}" || die
+
+		addpredict /dev/dri
+
+#		local d
+#		for d in $(find "${BROOT}/dev/dri" "${ESYSROOT}/dev/dri" -name "render*") ; do
+#			einfo "Adding \`addwrite ${d}\` sandbox rule"
+#			addwrite "${d}"
+#			einfo "Adding \`addread ${d}\` sandbox rule"
+#			addread "${d}"
+#		done
+	fi
+	if [[ "${TRAIN_SANDBOX_EXCEPTION_INPUT}" == "1" ]] ; then
+		local x
+		for x in $(find "${BROOT}/dev/input" "${ESYSROOT}/dev/input" -name "event*") ; do
+			einfo "Adding \`addwrite ${x}\` sandbox rule"
+			addwrite "${x}"
+		done
+	fi
+}
+
 # @FUNCTION: _src_train
 # @INTERNAL
 # @DESCRIPTION:
@@ -331,6 +355,8 @@ _train_trainer_default() {
 #   train_trainer_custom (optional)
 #
 _src_train() {
+	_train_sandbox_exceptions
+
 	if declare -f train_trainer_custom > /dev/null ; then
 		train_trainer_custom # ebuild custom trainer
 	else
