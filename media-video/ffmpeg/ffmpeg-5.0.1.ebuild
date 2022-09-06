@@ -1982,7 +1982,7 @@ _get_all_vaapi_devices() {
 		for x in $(find /dev/dri -name "render*") ; do
 			if vainfo --display drm --device "${x}" 2>/dev/null 1>/dev/null ; then
 				echo "-init_hw_device"
-				echo "card${card_i}:${x}"
+				echo "vaapi=card${card_i}:${x}"
 				card_i=$((${card_i} + 1))
 			fi
 		done
@@ -2188,7 +2188,7 @@ ewarn
 				if [[ "${input_source_type}" == "screen" ]] && ! _has_vaapi_scaling "H264" ; then
 					custom_filters+="scale=w=${width}:h=${height},"
 				fi
-				custom_filters+="format=vaapi,hwupload"
+				custom_filters+="format=nv12|vaapi,hwupload"
 				if [[ "${input_source_type}" == "screen" ]] && _has_vaapi_scaling "H264" ; then
 					custom_filters+=",scale_vaapi=w=${width}:h=${height}"
 				fi
