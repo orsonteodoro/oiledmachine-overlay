@@ -821,16 +821,12 @@ ewarn
 # trap fn TERM
 # which are useful for secure wipe of sensitive data.
 
-eerror
-eerror "You must disable the pid-sandbox for USE=trainer-av-streaming"
-eerror "for screencast PGO/BOLT training."
-
 ewarn
 ewarn "Please read"
 ewarn
 ewarn "metadata.xml in this package folder"
 ewarn
-ewarn "or"
+ewarn "  or"
 ewarn
 ewarn "\`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"
 ewarn
@@ -840,10 +836,14 @@ ewarn
 		sleep 15
 	fi
 
-	if use trainer-av-streaming && ( has pid-sandbox ${FEATURES} || has ipc-sandbox ${FEATURES} ) ; then
+	if use trainer-av-streaming \
+		&& ( has pid-sandbox ${FEATURES} || has ipc-sandbox ${FEATURES} ) ; then
 eerror
 eerror "You must disable the pid-sandbox for USE=trainer-av-streaming"
 eerror "for screencast PGO/BOLT training."
+eerror
+eerror "pid-sandbox is required for checking if X11 is being used."
+eerror "ipc-sandbox is required for x11grab."
 eerror
 eerror "Add a per-package environment rule with the following additions or"
 eerror "changes..."
