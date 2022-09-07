@@ -321,16 +321,7 @@ _train_sandbox_exceptions() {
 		export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache"
 		export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
 		mkdir -p "${MESA_GLSL_CACHE_DIR}" || die
-
 		addpredict /dev/dri
-
-#		local d
-#		for d in $(find "${BROOT}/dev/dri" "${ESYSROOT}/dev/dri" -name "render*") ; do
-#			einfo "Adding \`addwrite ${d}\` sandbox rule"
-#			addwrite "${d}"
-#			einfo "Adding \`addread ${d}\` sandbox rule"
-#			addread "${d}"
-#		done
 	fi
 	if [[ "${TRAIN_SANDBOX_EXCEPTION_INPUT}" == "1" ]] ; then
 		local x

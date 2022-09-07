@@ -83,7 +83,7 @@ get_asset_ids() {
 	)
 	local t
 	for t in ${types[@]} ; do
-		for i in $(seq 0 ${MAX_ASSETS_PER_TYPE}) ; do
+		for i in $(seq 0 ${LIBAOM_TRAINING_MAX_ASSETS_PER_TYPE}) ; do
 			echo "LIBAOM_TRAINING_${t}_${i}"
 		done
 	done
@@ -159,7 +159,7 @@ check_video() {
 }
 
 pkg_setup() {
-	LIBAOM_TRAINING_MAX_ASSETS=${LIBAOM_TRAINING_MAX_ASSETS:-100}
+	LIBAOM_TRAINING_MAX_ASSETS_PER_TYPE=${LIBAOM_TRAINING_MAX_ASSETS_PER_TYPE:-100}
 	if use chromium ; then
 		einfo "The chromium USE flag is in testing."
 	fi

@@ -491,7 +491,12 @@ BDEPEND+="
 	cuda? ( >=sys-devel/clang-7[llvm_targets_NVPTX] )
 	doc? ( sys-apps/texinfo )
 	test? ( net-misc/wget sys-devel/bc )
-	trainer-av-streaming? ( vaapi? ( media-video/libva-utils[vainfo] ) )
+	trainer-av-streaming? (
+		vaapi? (
+			media-video/libva-utils[vainfo]
+			>=x11-libs/libva-1.2.1-r1:0=[X,drm,${MULTILIB_USEDEP}]
+		)
+	)
 "
 
 PDEPEND+="
@@ -580,7 +585,7 @@ get_av_device_ids() {
 	)
 	local t
 	for t in ${types[@]} ; do
-		for i in $(seq 0 ${MAX_ASSETS_PER_TYPE}) ; do
+		for i in $(seq 0 ${FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE}) ; do
 			echo "FFMPEG_TRAINING_${t}_${i}"
 		done
 	done
@@ -597,7 +602,7 @@ get_video_sample_ids() {
 	)
 	local t
 	for t in ${types[@]} ; do
-		for i in $(seq 0 ${MAX_ASSETS_PER_TYPE}) ; do
+		for i in $(seq 0 ${FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE}) ; do
 			echo "FFMPEG_TRAINING_${t}_${i}"
 		done
 	done
@@ -612,7 +617,7 @@ get_audio_sample_ids() {
 	)
 	local t
 	for t in ${types[@]} ; do
-		for i in $(seq 0 ${MAX_ASSETS_PER_TYPE}) ; do
+		for i in $(seq 0 ${FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE}) ; do
 			echo "FFMPEG_TRAINING_AUDIO_${t}_${i}"
 		done
 	done
@@ -789,7 +794,7 @@ pgo_check_av() {
 }
 
 pkg_setup() {
-	MAX_ASSETS_PER_TYPE=${MAX_ASSETS_PER_TYPE:-100} # You must update gen_autosample_suffix
+	FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE=${FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE:-100} # You must update gen_autosample_suffix
 	if use pgo && has_version "media-video/ffmpeg" ; then
 		ewarn "The PGO use flag is a Work In Progress (WIP)"
 		if [[ -n "${FFMPEG_TRAINING_VIDEO_CODECS}" ]] ; then
@@ -805,7 +810,17 @@ pkg_setup() {
 	llvm_pkg_setup
 	uopts_setup
 
-	if use trainer-av-streaming && has pid-sandbox ${FEATURES} ; then
+	if use trainer-av-streaming && ( has pid-sandbox ${FEATURES} || has ipc-sandbox ${FEATURES} ) ; then
+ewarn
+ewarn "trainer-av-streaming is WIP"
+ewarn "Do not use until hooks for (secure) _wipe_data callbacks are fixed."
+ewarn
+# Portage not allow:
+# trap fn INIT
+# trap fn QUIT
+# trap fn TERM
+# which are useful for secure wipe of sensitive data.
+
 eerror
 eerror "You must disable the pid-sandbox for USE=trainer-av-streaming"
 eerror "for screencast PGO/BOLT training."
@@ -816,8 +831,11 @@ eerror
 eerror "${EROOT}/etc/portage/env/no-pid-sandbox.conf:"
 eerror "FEATURE=\"\${FEATURES} -pid-sandbox\""
 eerror
+eerror "${EROOT}/etc/portage/env/no-ipc-sandbox.conf:"
+eerror "FEATURE=\"\${FEATURES} -ipc-sandbox\""
+eerror
 eerror "${EROOT}/etc/portage/package.env:"
-eerror "${CATEGORY}/${PN} no-pid-sandbox.conf"
+eerror "${CATEGORY}/${PN} no-pid-sandbox.conf no-ipc-sandbox.conf"
 eerror
 		die
 	fi
@@ -1144,7 +1162,7 @@ _src_configure() {
 	echo "CXXFLAGS=${CXXFLAGS}"
 	echo "LDFLAGS=${LDFLAGS}"
 
-	if use pgo && [[ "${PGO_PHASE}" == "PGI" ]] ; then
+	if use pgo ; then
 		extra_libs+=( --extra-libs="-lgcov" )
 	fi
 
@@ -1876,73 +1894,127 @@ _trainer_plan_video_lossless() {
 
 # Full list of hw accelerated image processing
 # ffmpeg -filters | grep vaapi
-_has_vaapi_scaling() {
-	local encoding_format="${1}"
-	local vaapi_device=$(_get_vaapi_render_device)
-	if use vaapi \
-		&& ffmpeg -filters 2>/dev/null \
-			| grep -q -F -e "scale_vaapi" \
-		&& vainfo --display drm --device "${vaapi_device}" 2>/dev/null \
-			| grep -q -F -e "VAEntrypointVideoProc" \
-		&& vainfo --display drm --device "${vaapi_device}" 2>/dev/null \
-			| grep -q -G -e "${encoding_format^^}.*VAEntrypointEncSlice" \
-		&& ffmpeg -help encoder=${encoding_format,,}_vaapi 2>/dev/null \
-			| grep -q -e "AVOptions" ; then
-		return 0
-	else
-		return 1
-	fi
-}
-
-_has_vaapi_codec() {
-	local encoding_format="${1}"
-	if use vaapi \
-		&& vainfo --display drm --device "${vaapi_device}" 2>/dev/null \
-			| grep -q -G -e "${encoding_format^^}.*VAEntrypointEncSlice" \
-		&& ffmpeg -help encoder=${encoding_format,,}_vaapi 2>/dev/null \
-			| grep -q -e "AVOptions" ; then
-		return 0
-	fi
-	return 1
-}
-
-_get_vaapi_render_device() {
-	if [[ -n "${FFMPEG_TRAINING_VAAPI_DEVICE}" ]] ; then
-		if vainfo --display drm --device "${FFMPEG_TRAINING_VAAPI_DEVICE}" 2>/dev/null 1>/dev/null ; then
-echo "${FFMPEG_TRAINING_VAAPI_DEVICE}"
-		else
-eerror
-eerror "Error accessing device"
-eerror
-			die
-		fi
-		return
-	fi
+_get_vaapi_postproc_device() {
 	local d
-	for d in ls /dev/dri/render* ; do
-		if [[ -n "${d}" ]] && vainfo --display drm --device "${d}" 2>/dev/null 1>/dev/null ; then
+	for d in ls "${ESYSROOT}/dev/dri/render"* ; do
+		if [[ -n "${d}" ]] && vainfo --display drm --device "${d}" 2>/dev/null 1>/dev/null \
+			&& vainfo --display drm --device "${d}" 2>/dev/null \
+				| grep -q -e ".*VideoProc"  ; then
 			echo "${d}"
 			return
 		fi
 	done
-eerror
-eerror "Cannot find vaapi render device"
-eerror
-	die
+}
+
+_get_vaapi_dec_device() {
+	local encoding_format="${1}"
+	local profile="${2}"
+	profile="${profile,,}"
+	profile="${profile^}"
+	local d
+	for d in ls "${ESYSROOT}/dev/dri/render"* ; do
+		if [[ -n "${d}" ]] && vainfo --display drm --device "${d}" 2>/dev/null 1>/dev/null \
+			&& vainfo --display drm --device "${d}" 2>/dev/null \
+				| grep -q -e "${encoding_format^^}${profile}.*VLD"  ; then
+			echo "${d}"
+			return
+		fi
+	done
+}
+
+_get_vaapi_enc_device() {
+	local encoding_format="${1}"
+	local profile="${2}"
+	profile="${profile,,}"
+	profile="${profile^}"
+	local d
+	for d in ls "${ESYSROOT}/dev/dri/render"* ; do
+		if [[ -n "${d}" ]] && vainfo --display drm --device "${d}" 2>/dev/null 1>/dev/null \
+			&& vainfo --display drm --device "${d}" 2>/dev/null \
+				| grep -q -e "${encoding_format^^}${profile}.*EncSlice"  ; then
+			echo "${d}"
+			return
+		fi
+	done
+}
+
+_get_vaapi_enc_dec_device() {
+	local encoding_format="${1}"
+	local profile="${2}"
+	profile="${profile,,}"
+	profile="${profile^}"
+	local d
+	for d in ls "${ESYSROOT}/dev/dri/render"* ; do
+		if [[ -n "${d}" ]] && vainfo --display drm --device "${d}" 2>/dev/null 1>/dev/null \
+			&& vainfo --display drm --device "${d}" 2>/dev/null \
+				| grep -q -e "${encoding_format^^}${profile}.*EncSlice" \
+			&& vainfo --display drm --device "${d}" 2>/dev/null \
+				| grep -q -e "${encoding_format^^}${profile}.*VLD" ; then
+			echo "${d}"
+			return
+		fi
+	done
+}
+
+_get_vaapi_enc_dec_pp_device() {
+	local encoding_format="${1}"
+	local profile="${2}"
+	profile="${profile,,}"
+	profile="${profile^}"
+	local d
+	for d in ls "${ESYSROOT}/dev/dri/render"* ; do
+		if [[ -n "${d}" ]] && vainfo --display drm --device "${d}" 2>/dev/null 1>/dev/null \
+			&& vainfo --display drm --device "${d}" 2>/dev/null \
+				| grep -q -e "${encoding_format^^}${profile}.*EncSlice" \
+			&& vainfo --display drm --device "${d}" 2>/dev/null \
+				| grep -q -e "${encoding_format^^}${profile}.*VLD" \
+			&& vainfo --display drm --device "${d}" 2>/dev/null \
+				| grep -q -e ".*VideoProc" ; then
+			echo "${d}"
+			return
+		fi
+	done
 }
 
 _has_camera_resolution() {
 	local device="${1}"
-	local width="${2}"
-	local height="${2}"
+	local width="${3}"
+	local height="${4}"
 	ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 | grep -q -e "${width}x${height}"
 }
 
+_has_camera_codec_resolution() {
+	local device="${1}"
+	local codec="${2}"
+	local width="${3}"
+	local height="${4}"
+	if [[ "${codec}" =~ "264" ]] ; then
+		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 | grep -E -q -e "H\.264 :.*${width}x${height}"
+	elif [[ "${codec}" =~ ("mjpeg"|"mjpg") ]] ; then
+		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 | grep -E -q -e "MJPEG :.*${width}x${height}"
+	else
+		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 | grep -E -q -e "${codec} :.*${width}x${height}"
+	fi
+}
+
+_has_camera_codec() {
+	local device="${1}"
+	local codec="${2}"
+	if [[ "${codec}" =~ "264" ]] ; then
+		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 | grep -E -q -e "H\.264 : [0-9]"
+	elif [[ "${codec}" =~ ("mjpeg"|"mjpg") ]] ; then
+		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 | grep -E -q -e "MJPEG : [0-9]"
+	else
+		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 | grep -E -q -e "${codec} : [0-9]"
+	fi
+}
+
 if ! has ffmpeg_pkg_die ${EBUILD_DEATH_HOOKS} ; then
-        EBUILD_DEATH_HOOKS+=" ffmpeg_pkg_die";
+	EBUILD_DEATH_HOOKS+=" ffmpeg_pkg_die"
 fi
 
 ffmpeg_pkg_die() {
+	einfo "Called ffmpeg_pkg_die()"
 	_wipe_data
 }
 
@@ -1963,30 +2035,13 @@ _get_x11_display() {
 		return
 	fi
 	local x
-	for x in "${ESYSROOT}"/proc/*/environ ; do
+	for x in "${ESYSROOT}/proc/"*"/environ" ; do
 		if stat -c "%U:%G" "${x}" | grep -q "root:root" \
 			&& strings "${x}" | grep -q -e "^DISPLAY=" ; then
 			strings "${x}" | grep -e "^DISPLAY=" | head -n 1 | cut -f 2 -d "="
 			return
 		fi
 	done
-}
-
-_get_all_vaapi_devices() {
-	local x
-	local card_i=0
-	if [[ -n "${FFMPEG_TRAINING_VAAPI_DEVICE}" ]] ; then
-		echo "-init_hw_device"
-		echo "vaapi=card${card_i}:${FFMPEG_TRAINING_VAAPI_DEVICE}"
-	else
-		for x in $(find /dev/dri -name "render*") ; do
-			if vainfo --display drm --device "${x}" 2>/dev/null 1>/dev/null ; then
-				echo "-init_hw_device"
-				echo "vaapi=card${card_i}:${x}"
-				card_i=$((${card_i} + 1))
-			fi
-		done
-	fi
 }
 
 LIVE_STREAMING_REPORT_CARD=""
@@ -2135,8 +2190,32 @@ eerror
 
 	# Use DISPLAY=:0 ffplay test.mp4 -an to check
 	local input_source_type=""
-	local hw_mjpeg_decode=${FFMPEG_TRAINING_HW_INPUT_DECODE:-0}
-	if ! _has_camera_resolution "${capture_path}" "${width}" "${height}" ; then
+	local camera_codec=""
+
+	if [[ "${vencoding_codec}" =~ ("h264") ]] ; then
+		camera_codec="h264"
+	elif [[ "${vencoding_codec}" =~ ("mjpeg") ]] ; then
+		camera_codec="mjpeg"
+	fi
+
+	if _has_camera_codec_resolution "${capture_path}" "${camera_codec}" "${width}" "${height}" ; then
+		input_source_type="camera-${camera_codec}"
+		input_source=(
+			-f v4l2
+			-input_format ${camera_codec}
+			-framerate ${fps}
+			-video_size ${width}x${height}
+			-i "${capture_path}"
+		)
+	elif _has_camera_resolution "${capture_path}" "${width}" "${height}" ; then
+		input_source_type="camera-raw"
+		input_source=(
+			-f v4l2
+			-framerate ${fps}
+			-video_size ${width}x${height}
+			-i "${capture_path}"
+		)
+	else
 ewarn
 ewarn "Camera does not have resolution skipping."
 ewarn "Falling back to screen capture."
@@ -2153,14 +2232,6 @@ ewarn
 				-i -
 			)
 		fi
-	else
-		input_source_type="camera"
-		local mjpeg_arg=()
-		input_source=(
-			-f v4l2
-			-video_size ${width}x${height}
-			-i "${capture_path}"
-		)
 	fi
 
 	local vquality_i=1
@@ -2171,27 +2242,58 @@ ewarn
 		(( ${vquality_i} == 3 )) && msg_quality="high quality"
 		local cheight=$(_cheight "${height}")
 
+		local ENC=(
+			"av1_vaapi"
+			"h264_vaapi"
+			"hevc_vaapi"
+			"mjpeg_vaapi"
+			"mpeg2_vaapi"
+			"vp8_vaapi"
+			"vp9_vaapi"
+		)
+
+		is_vaapi_encoder() {
+			local needle="${1}"
+			local x
+			for x in ${ENC[@]} ; do
+				[[ "${x}" == "${needle}" ]] && return 0
+			done
+			return 1
+		}
+
+		local vaapi_codec_name="${vencoding_codec%_*}"
+		vaapi_codec_name="${vaapi_codec_name^^}"
+		vaapi_dev=$(_get_vaapi_enc_dec_pp_device "${vaapi_codec_name}" "")
+
 		local cmd
-		if [[ "${vencoding_codec}" =~ "h264_vaapi" ]] ; then
+		if is_vaapi_encoder "${vencoding_codec}" \
+			&& [[ "${input_source_type}" =~ ("camera-mjpeg"|"camera-raw"|"screen") && -n "${vaapi_dev}" ]] ; then
 			ewarn "VA-API training is WIP"
 			local custom_filters=""
 
 			local vaapi_args=()
-			if [[ "${vencoding_codec}" == "h264_vaapi" ]] ; then
-				vaapi_args=(
-					$(_get_all_vaapi_devices)
-					-hwaccel vaapi
-					-hwaccel_output_format vaapi
-					-hwaccel_device card0
+			local vaapi_codec
+			local _vaapi_codec
+
+			local vaapi_scale_alg=${FFMPEG_TRAINER_VAAPI_SCALE_ALG:-gpu}
+			vaapi_args=(
+				-init_hw_device
+				vaapi=card0:${vaapi_dev}
+				-hwaccel vaapi
+				-hwaccel_output_format vaapi
+				-hwaccel_device card0
+			)
+			if [[ "${input_source_type}" == "screen" \
+				&& "${vaapi_scale_alg,,}" == "cpu" ]] ; then
+				custom_filters+="scale=w=${width}:h=${height},"
+			fi
+			custom_filters+="format=nv12|vaapi,hwupload"
+			if [[ "${input_source_type}" == "screen" \
+				&& "${vaapi_scale_alg,,}" =~ ("gpu"|"igp") ]] ; then
+				vaapi_args+=(
 					-filter_hw_device card0
 				)
-				if [[ "${input_source_type}" == "screen" ]] && ! _has_vaapi_scaling "H264" ; then
-					custom_filters+="scale=w=${width}:h=${height},"
-				fi
-				custom_filters+="format=nv12|vaapi,hwupload"
-				if [[ "${input_source_type}" == "screen" ]] && _has_vaapi_scaling "H264" ; then
-					custom_filters+=",scale_vaapi=w=${width}:h=${height}"
-				fi
+				custom_filters+=",scale_vaapi=w=${width}:h=${height}"
 			fi
 
 			cmd=(
@@ -2202,6 +2304,19 @@ ewarn
 				-vf "${custom_filters}" \
 				-c:v ${vencoding_codec} \
 				${vextra_args[@]} \
+				-r ${fps} \
+				${aextra_args[@]} \
+				-t ${duration} \
+				-f ${container} \
+				"${T}/traintemp/test.${container}"
+			)
+		elif [[ "${input_source_type}" =~ "camera-h264" ]] ; then
+			cmd=(
+				"${FFMPEG}" \
+				-y \
+				${input_source[@]} \
+				-force_key_frames "expr:gte(t,n_forced*2)" \
+				${training_args} \
 				-r ${fps} \
 				${aextra_args[@]} \
 				-t ${duration} \

@@ -87,7 +87,7 @@ get_asset_ids() {
 	)
 	local t
 	for t in ${types[@]} ; do
-		for i in $(seq 0 ${LIBVPX_ASSET_LIMIT}) ; do
+		for i in $(seq 0 ${LIBVPX_TRAINING_MAX_ASSETS_PER_TYPE}) ; do
 			echo "LIBVPX_TRAINING_${t}_${i}"
 		done
 	done
@@ -161,7 +161,7 @@ eerror
 }
 
 __pgo_setup() {
-	export LIBVPX_ASSET_LIMIT=${LIBVPX_ASSET_LIMIT:-100}
+	export LIBVPX_TRAINING_MAX_ASSETS_PER_TYPE=${LIBVPX_TRAINING_MAX_ASSETS_PER_TYPE:-100}
 	__check_video_codec
 	local id
 	for id in $(get_asset_ids) ; do
@@ -510,10 +510,10 @@ _trainer_plan_constrained_quality() {
 	local training_args
 	if [[ "${encoding_codec}" == "libvpx" ]] ; then
 		decoding_codec="libvpx"
-		training_args=${LIBVPX_VP8_TRAINING_ARGS}
+		training_args=${LIBVPX_TRAINING_VP8_ARGS}
 	elif [[ "${encoding_codec}" == "libvpx-vp9" ]] ; then
 		decoding_codec="libvpx-vp9"
-		training_args=${LIBVPX_VP9_TRAINING_ARGS}
+		training_args=${LIBVPX_TRAINING_VP9_ARGS}
 	else
 		die "Unrecognized implementation of vpx"
 	fi
@@ -649,10 +649,10 @@ _trainer_plan_2_pass_constrained_quality() {
 	local training_args
 	if [[ "${encoding_codec}" == "libvpx" ]] ; then
 		decoding_codec="libvpx"
-		training_args=${LIBVPX_VP8_TRAINING_ARGS}
+		training_args=${LIBVPX_TRAINING_VP8_ARGS}
 	elif [[ "${encoding_codec}" == "libvpx-vp9" ]] ; then
 		decoding_codec="libvpx-vp9"
-		training_args=${LIBVPX_VP9_TRAINING_ARGS}
+		training_args=${LIBVPX_TRAINING_VP9_ARGS}
 	else
 		die "Unrecognized implementation of vpx"
 	fi
@@ -677,10 +677,10 @@ _trainer_plan_lossless() {
 	local training_args
 	if [[ "${encoding_codec}" == "libvpx" ]] ; then
 		decoding_codec="libvpx"
-		training_args=${LIBVPX_VP8_TRAINING_ARGS_LOSSLESS}
+		training_args=${LIBVPX_TRAINING_VP8_ARGS_LOSSLESS}
 	elif [[ "${encoding_codec}" == "libvpx-vp9" ]] ; then
 		decoding_codec="libvpx-vp9"
-		training_args=${LIBVPX_VP9_TRAINING_ARGS_LOSSLESS}
+		training_args=${LIBVPX_TRAINING_VP9_ARGS_LOSSLESS}
 	else
 		die "Unrecognized implementation of vpx"
 	fi

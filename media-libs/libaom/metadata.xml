@@ -11,17 +11,15 @@
     <email>media-video@gentoo.org</email>
   </maintainer>
   <longdescription>
-    This ebuild fork will allow use of PGO for this library.
-    Currently it only optimizes the default settings, but may be PGO
-    optimized for multithreaded a custom trainer script or changing
-    the LIBAOM_TRAINING_ARGS explained at the end of this description.
-    For 32-bit PGO training, you may install the ffmpeg fork from the
-    oiledmachine-overlay or fork your own ffmpeg ebuild with modifications
-    to installation so that the 32-bit binary does not get clobbered
-    by the native install.  The expected paths are ffmpeg-x86 or in
+    This ebuild fork will allow use of PGO for this library.  Currently it only
+    optimizes the default settings, but may be PGO optimized for multithreaded a
+    custom trainer script or changing the LIBAOM_TRAINING_ARGS explained at the 
+    end of this description.  For 32-bit PGO training, you may install the
+    ffmpeg fork from the oiledmachine-overlay or fork your own ffmpeg ebuild
+    with modifications to installation so that the 32-bit binary does not get
+    clobbered by the native install.  The expected paths are ffmpeg-x86 or in
     general ffmpeg-${ABI}.  The trainer will generate PGO data for both
-    encoding and decoding that will be fed back into the optimized
-    version.
+    encoding and decoding that will be fed back into the optimized version.
 
     PGOing this package requires the following packages before running
     the trainer:
@@ -49,19 +47,19 @@
 	LIBAOM_TRAINING_ARGS_LOSSLESS, see below for details.
     (5) Re-emerge this package with the pgo USE flag enabled.
 
-    LIBAOM_TRAINING_MAX_ASSETS can be used to change the max number of assets to
-    train with.  Currently it is set to 100.
+    LIBAOM_TRAINING_MAX_ASSETS_PER_TYPE can be used to change the max number of
+    assets to train with.  Currently it is set to 100.
 
     A user may supply a custom.sh via a per-package patch to set up multiple
-    encoding settings which may include threading or tiling configurations
-    or favorite quality setting.  See the ebuild for the FFmpeg template
-    in the ebuild which could be extended with different args and placed
-    in your custom.sh file.  Consider adding more generation rules that
-    include the desired the pixel format like 10 bit yuv420p10le if that
-    follows your typical use pattern.
+    encoding settings which may include threading or tiling configurations or
+    favorite quality setting.  See the ebuild for the FFmpeg template in the
+    ebuild which could be extended with different args and placed in your
+    custom.sh file.  Consider adding more generation rules that include the
+    desired the pixel format like 10 bit yuv420p10le if that follows your
+    typical use pattern.
 
-    You may supply a LIBAOM_TRAINING_ARGS as a per package environment
-    variable to tell ffmpeg which multicore, multithreading, tiling settings to use as
+    You may supply a LIBAOM_TRAINING_ARGS as a per package environment variable
+    to tell ffmpeg which multicore, multithreading, tiling settings to use as
     the default.  It must be a string.  Example
 
       LIBAOM_TRAINING_ARGS=" -cpu-used 8 -tile-columns 2 -tile-rows 2 -threads 8"
@@ -85,7 +83,8 @@
 
     Custom training resolutions
 
-    Set LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS as a space separated list of sublists.
+    Set LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS as a space separated list of
+    sublists.
 
     Sublist format:
     fps;width;height;dynamic_range
@@ -103,15 +102,25 @@
 
   </longdescription>
   <use>
-    <flag name="asm">Use the optimized assembly based code paths</flag>
-    <flag name="chromium">Prevent symbol conflicts in the browser
-      (testing)</flag>
-    <flag name="pgo">Use profile guided optimization.</flag>
-    <flag name="trainer-2-pass-constrained-quality">Performs an addtional
-      2 pass training.  Two pass improves quality and rate control.  This step
-      can be skipped for live streamers.</flag>
-    <flag name="trainer-constrained-quality">Use the 1 pass constrained
-      quality trainer.  (ebuild maintainer recommended)</flag>
-    <flag name="trainer-lossless">Use the lossless trainer.</flag>
+    <flag name="asm">
+      Use the optimized assembly based code paths
+    </flag>
+    <flag name="chromium">
+      Prevent symbol conflicts in the browser (testing)
+    </flag>
+    <flag name="pgo">
+      Use profile guided optimization.
+    </flag>
+    <flag name="trainer-2-pass-constrained-quality">
+      Performs an addtional 2 pass training.  Two pass improves quality and rate
+      control.  This step can be skipped for live streamers.
+    </flag>
+    <flag name="trainer-constrained-quality">
+      Use the 1 pass constrained quality trainer.  (ebuild maintainer
+      recommended)
+    </flag>
+    <flag name="trainer-lossless">
+      Use the lossless trainer.
+    </flag>
   </use>
 </pkgmetadata>

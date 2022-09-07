@@ -16,20 +16,19 @@
     <name>Chromium in Gentoo Project</name>
   </maintainer>
   <longdescription>
-    This ebuild fork will allow use of PGO for this library.
-    Currently it only optimizes the default settings, but may be PGO
-    optimized for multithreaded through the custom trainer or changing
-    the LIBVPX_VP8_TRAINING_ARGS or LIBVPX_VP9_TRAINING_ARGS
-    explained at the end of this description.  To do 32-bit PGO training,
-    you need the modified FFmpeg ebuild from the oiledmachine overlay or
-    your own forked ebuild that will not clobber the 32-bit installation
-    with just the native.  The expected names of the binary should be
-    ffmpeg-x86 or ffmpeg-${ABI}.  The trainer will generate PGO data for
-    both encoding and decoding that will be fed back into the optimized
+    This ebuild fork will allow use of PGO for this library.  Currently it only
+    optimizes the default settings, but may be PGO optimized for multithreaded
+    through the custom trainer or changing the LIBVPX_TRAINING_VP8_ARGS or
+    LIBVPX_TRAINING_VP9_ARGS explained at the end of this description.  To do
+    32-bit PGO training, you need the modified FFmpeg ebuild from the
+    oiledmachine overlay or your own forked ebuild that will not clobber the
+    32-bit installation with just the native.  The expected names of the binary
+    should be ffmpeg-x86 or ffmpeg-${ABI}.  The trainer will generate PGO data
+    for both encoding and decoding that will be fed back into the optimized
     version.
 
-    PGOing this package requires the following packages before running
-    the trainer:
+    PGOing this package requires the following packages before running the
+    trainer:
 
       media-video/ffmpeg[encode,vpx]
 
@@ -43,23 +42,26 @@
 	code paths will be trained.
     (4a) Place the video in one of these groups
 
-        LIBVPX_TRAINING_VIDEO_CGI_i        # Computer Generated Imagery
-        LIBVPX_TRAINING_VIDEO_GENERAL_i
-        LIBVPX_TRAINING_VIDEO_GAMING_i
-        LIBVPX_TRAINING_VIDEO_GRAINY_i
-        LIBVPX_TRAINING_VIDEO_SCREENCAST_i
+		LIBVPX_TRAINING_VIDEO_CGI_i        # Computer Generated Imagery
+		LIBVPX_TRAINING_VIDEO_GENERAL_i
+		LIBVPX_TRAINING_VIDEO_GAMING_i
+		LIBVPX_TRAINING_VIDEO_GRAINY_i
+		LIBVPX_TRAINING_VIDEO_SCREENCAST_i
 
         replacing i with an unpadded number, as a per-package environment
         variable with the absolute path to the asset.
-    (4b) Set LIBVPX_VP8_TRAINING_ARGS,
-	LIBVPX_VP9_TRAINING_ARGS,
-	LIBVPX_VP8_TRAINING_ARGS_LOSSLESS,
-	LIBVPX_VP9_TRAINING_ARGS_LOSSLESS,
-         see below for details.
+    (4b) Set...
+
+		LIBVPX_TRAINING_VP8_ARGS,
+		LIBVPX_TRAINING_VP9_ARGS,
+		LIBVPX_TRAINING_VP8_ARGS_LOSSLESS,
+		LIBVPX_TRAINING_VP9_ARGS_LOSSLESS,
+
+         See below for details on how to properly set these values.
     (5) Re-emerge this package with the pgo USE flag enabled.
 
-    The LIBVPX_ASSET_LIMIT can be use to lift the asset limits for PGO
-    training.  Currently it is set at 100.
+    The LIBVPX_TRAINING_MAX_ASSETS_PER_TYPE can be use to lift the asset limits
+    for PGO training.  Currently it is set at 100.
 
     A user may supply a custom.sh via a per-package patch to set up multiple
     encoding settings which may include threading or tiling configurations
@@ -69,20 +71,21 @@
     include the desired the pixel format that follows your typical use
     pattern.  Consider also extending it with your live streaming settings.
 
-    You may supply a LIBVPX_VP8_TRAINING_ARGS and/or
-    LIBVPX_VP9_TRAINING_ARGS as a per package environment variable to tell
-    ffmpeg which multicore, multithreading, tiling settings to use as the default.
-    It must be a string.  Example
+    You may supply a LIBVPX_TRAINING_VP8_ARGS and/or LIBVPX_TRAINING_VP9_ARGS as
+    a per package environment variable to tell ffmpeg which multicore,
+    multithreading, tiling settings to use as the default.  It must be a string.
 
-      LIBVPX_VP8_TRAINING_ARGS=" -threads 8"
-      LIBVPX_VP9_TRAINING_ARGS=" -tile-columns 2 -tile-rows 2 -threads 8"
+    Example
+
+      LIBVPX_TRAINING_VP8_ARGS=" -threads 8"
+      LIBVPX_TRAINING_VP9_ARGS=" -tile-columns 2 -tile-rows 2 -threads 8"
 
     For a full list see `ffmpeg -h full | less`
 
-    The LIBVPX_VP8_TRAINING_ARGS_LOSSLESS and
-    LIBVPX_VP9_TRAINING_ARGS_LOSSLESS are only allowed to adjust
-    performance options but not any changes in quality.  Also, these
-    settings are not allowed to modify the dimensions or drop frames.
+    The LIBVPX_TRAINING_VP8_ARGS_LOSSLESS and LIBVPX_TRAINING_VP9_ARGS_LOSSLESS
+    are only allowed to adjust performance options but not any changes in
+    quality.  Also, these settings are not allowed to modify the dimensions or
+    drop frames.
 
     It is only recommended to use trainers that reflect your own personal
     typical use.  Using trainers with non-typical use patterns may degrade
@@ -91,7 +94,8 @@
 
     Custom training resolutions
 
-    Set LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS as a space separated list of sublists.
+    Set LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS as a space separated list of
+    sublists.
 
     Sublist format:
     fps;width;height;dynamic_range
@@ -132,9 +136,8 @@
     <flag name="postproc">
       Enable additional post processing filters
     </flag>
-    <flag name="svc">Enable spatial-svc support (experimental)</flag>
+    <flag name="svc">
+      Enable spatial-svc support (experimental)
+    </flag>
   </use>
-  <upstream>
-    <remote-id type="cpe">cpe:/a:john_koleszar:libvpx</remote-id>
-  </upstream>
 </pkgmetadata>
