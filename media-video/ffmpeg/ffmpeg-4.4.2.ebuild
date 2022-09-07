@@ -810,12 +810,37 @@ pkg_setup() {
 	llvm_pkg_setup
 	uopts_setup
 
-	if use trainer-av-streaming && ( has pid-sandbox ${FEATURES} || has ipc-sandbox ${FEATURES} ) ; then
+	if use trainer-av-streaming ; then
 ewarn
 ewarn "trainer-av-streaming is WIP"
 ewarn "Do not use until hooks for (secure) _wipe_data callbacks are fixed."
 ewarn
+# Portage not allow:
+# trap fn INIT
+# trap fn QUIT
+# trap fn TERM
+# which are useful for secure wipe of sensitive data.
 
+eerror
+eerror "You must disable the pid-sandbox for USE=trainer-av-streaming"
+eerror "for screencast PGO/BOLT training."
+
+ewarn
+ewarn "Please read"
+ewarn
+ewarn "metadata.xml in this package folder"
+ewarn
+ewarn "or"
+ewarn
+ewarn "\`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"
+ewarn
+ewarn "to see the security risk/implications involved in this kind of training"
+ewarn "and to mitigate against sensitive data leaks."
+ewarn
+		sleep 15
+	fi
+
+	if use trainer-av-streaming && ( has pid-sandbox ${FEATURES} || has ipc-sandbox ${FEATURES} ) ; then
 eerror
 eerror "You must disable the pid-sandbox for USE=trainer-av-streaming"
 eerror "for screencast PGO/BOLT training."
@@ -2216,7 +2241,7 @@ ewarn "Camera does not have resolution skipping."
 ewarn "Falling back to screen capture."
 ewarn
 		input_source_type="screen"
-		if pgrep X ; then
+		if pgrep X 2>/dev/null 1>/dev/null ; then
 			input_source=(
 				-f x11grab
 				-i $(_get_x11_display)

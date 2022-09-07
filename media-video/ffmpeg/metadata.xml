@@ -168,8 +168,9 @@
 	trap INT, trap QUIT, trap HUP, etc support, some mitigation can be
 	achieved but not total especially in brownout or low battery
 	situation.  It is recommended to only use this training only during
-	controlled setting when no passwords or private accounts are being
-	used.
+	a single user controlled setting when passwords, private accounts,
+	personal identifiable information are not being used or not being
+	exposed.
 	
 
 	FFMPEG_TRAINING_AV_CODECS must be set as a space separated list of elements.
