@@ -834,6 +834,13 @@ ewarn "to see the security risk/implications involved in this kind of training"
 ewarn "and to mitigate against sensitive data leaks."
 ewarn
 		sleep 15
+
+		if [[ -z ${FFMPEG_TRAINING_X11_DISPLAY} ]] ; then
+			export FFMPEG_TRAINING_X11_DISPLAY=":0"
+		fi
+einfo
+einfo "FFMPEG_TRAINING_X11_DISPLAY=\"${FFMPEG_TRAINING_X11_DISPLAY}\""
+einfo
 	fi
 
 	if use trainer-av-streaming \
@@ -2055,14 +2062,6 @@ _get_x11_display() {
 		echo "${FFMPEG_TRAINING_X11_DISPLAY}"
 		return
 	fi
-	local x
-	for x in "${ESYSROOT}/proc/"*"/environ" ; do
-		if stat -c "%U:%G" "${x}" | grep -q "root:root" \
-			&& strings "${x}" | grep -q -e "^DISPLAY=" ; then
-			strings "${x}" | grep -e "^DISPLAY=" | head -n 1 | cut -f 2 -d "="
-			return
-		fi
-	done
 }
 
 LIVE_STREAMING_REPORT_CARD=""
