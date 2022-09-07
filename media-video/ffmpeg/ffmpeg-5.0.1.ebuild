@@ -815,10 +815,11 @@ ewarn
 ewarn "trainer-av-streaming is WIP"
 ewarn "Do not use until hooks for (secure) _wipe_data callbacks are fixed."
 ewarn
-# Portage not allow:
-# trap fn INIT
-# trap fn QUIT
-# trap fn TERM
+# The Portage PMS does not allow:
+# trap fn INT for CTRL+C
+# trap fn QUIT for debug
+# trap fn TERM for normal/graceful close
+# trap fn HUP for logoff/shutdown
 # which are useful for secure wipe of sensitive data.
 
 ewarn
