@@ -39,7 +39,7 @@ LICENSE="ZLIB all-rights-reserved
 # Some assets are public domain but not mentioned in the LICENSE variable
 #   to not to give the impression the whole entire package is public domain.
 
-# In src/video/x11/imKStoUCS.c,
+# In src/events/imKStoUCS.c,
 #   include/SDL_opengl.h,
 #   The standard MIT license* does not have all rights reserved.
 #   *https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses/MIT
@@ -364,11 +364,11 @@ multilib_src_install_all() {
 		dodoc "${T}/SDL_yuv_sw.c.LICENSE"
 
 		if use X ; then
-			head -n 25 src/video/x11/imKStoUCS.c > \
+			head -n 25 src/events/imKStoUCS.c > \
 				"${T}/imKStoUCS.c.LICENSE" || die
 			docinto licenses/src/video/x11
 			dodoc "${T}/imKStoUCS.c.LICENSE"
-			head -n 28 src/video/x11/imKStoUCS.h > \
+			head -n 28 src/events/imKStoUCS.h > \
 				"${T}/imKStoUCS.h.LICENSE" || die
 			docinto licenses/src/video/x11
 			dodoc "${T}/imKStoUCS.h.LICENSE"
