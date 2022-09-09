@@ -6,7 +6,6 @@
 # undergoing rennovation with the dotnet.eclass
 dev-dotnet/assimp-net
 dev-dotnet/atitextureconverter
-dev-dotnet/beatdetectorforgames
 dev-dotnet/farseer-physics-engine
 dev-dotnet/freeimagenet
 dev-dotnet/gnome-sharp
