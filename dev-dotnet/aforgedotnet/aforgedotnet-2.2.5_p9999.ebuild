@@ -24,7 +24,7 @@ RDEPEND+="
 	kinect? ( dev-libs/libfreenect )
 "
 DEPEND+=" ${RDEPEND}"
-IUSE="${USE_DOTNET} debug developer gac kinect ximea"
+IUSE="${USE_DOTNET} developer gac kinect ximea"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 ) net40"
 SLOT="0/${PV}"
 RESTRICT="mirror"
@@ -116,10 +116,10 @@ _mydoins() {
 		"$(pwd)/Sources/${name}/AForge.${name}.snk"
 	fi
 	if [[ -z "${name}" ]] ; then
-		doins ${configuration}/AForge.dll
+		doexe ${configuration}/AForge.dll
 		egacinstall "${S}/${configuration}/AForge.dll"
 	else
-		doins ${configuration}/AForge.${name}.dll
+		doexe ${configuration}/AForge.${name}.dll
 		egacinstall "${S}/${configuration}/AForge.${name}.dll"
 	fi
 	if use kinect ; then
@@ -160,7 +160,8 @@ _mydoins() {
 }
 
 src_install() {
-	local configuration=$(usex debug "Debug" "Release")
+	local configuration="Release"
+	exeinto "/usr/lib/mono/${FRAMEWORK}"
 	insinto "/usr/lib/mono/${FRAMEWORK}"
 	_mydoins Vision
 	_mydoins MachineLearning

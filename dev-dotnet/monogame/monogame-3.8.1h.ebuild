@@ -7,7 +7,7 @@ MY_PN="MonoGame"
 MY_PV="3.8.1_HOTFIX"
 MY_P="${PN}-${MY_PV}"
 
-inherit git-r3 multilib
+inherit git-r3
 
 # Multiple frameworks actually but highest is required
 FRAMEWORK="6.0"
@@ -206,6 +206,7 @@ SLOT="0/${PV}"
 S="${WORKDIR}/${MY_P}"
 RESTRICT="mirror"
 
+# The dotnet-sdk-bin supports only 1 ABI at a time.
 DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-6.0" )
 
 get_crid_platform() {

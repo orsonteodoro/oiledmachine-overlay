@@ -4,7 +4,7 @@
 
 EAPI=7
 
-inherit cmake flag-o-matic git-r3 multilib
+inherit cmake flag-o-matic git-r3
 
 MY_PV="$(ver_cut 1-4 ${PV})"
 
@@ -193,6 +193,8 @@ SRC_URI+=" "$(gen_src_uris)
 SLOT="0/${PV}"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
+
+# The dotnet-sdk-bin supports only one ABI at a time?
 DOTNET_SUPPORTED_SDKS=("dotnet-sdk-bin-6.0")
 
 get_crid_platform() {

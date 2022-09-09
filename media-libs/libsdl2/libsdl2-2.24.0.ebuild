@@ -9,7 +9,9 @@ MY_P="SDL2-${PV}"
 DESCRIPTION="Simple Direct Media Layer"
 HOMEPAGE="https://www.libsdl.org/"
 LICENSE_HIDAPI="|| ( BSD GPL-3 HIDAPI )"
-LICENSE="ZLIB all-rights-reserved
+LICENSE="
+	ZLIB
+	all-rights-reserved
 	BSD
 	BrownUn_UnCalifornia_ErikCorry
 	CPL-1.0
@@ -21,7 +23,8 @@ LICENSE="ZLIB all-rights-reserved
 	cpu_flags_arm_neon? ( MIT ZLIB pixman-arm-asm.h )
 	hidapi-hidraw? ( ${LICENSE_HIDAPI} )
 	hidapi-libusb? ( ${LICENSE_HIDAPI} )
-	video? ( X? ( MIT all-rights-reserved ) )"
+	video? ( X? ( MIT all-rights-reserved ) )
+"
 # project default license is ZLIB
 
 # In test/testhaptic.c,
@@ -51,15 +54,18 @@ LICENSE="ZLIB all-rights-reserved
 #   contain all rights reserved without mentioned terms or corresponding license
 #   and are transported with the tarball.
 
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~riscv ~sparc ~x86"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 SLOT="0/${PV}"
 IUSE="alsa aqua -armv6-simd cpu_flags_arm_v6 cpu_flags_arm_v7
 -cpu_flags_arm_neon cpu_flags_ppc_altivec cpu_flags_x86_3dnow
 cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 custom-cflags dbus doc
 fcitx4 gles1 gles2 haptic +hidapi-hidraw -hidapi-libusb ibus jack +joystick
 kms libsamplerate nas opengl oss pipewire pulseaudio sndio +sound static-libs
-+threads udev +video video_cards_vc4 vulkan wayland X xinerama xscreensaver"
++threads udev +video video_cards_vc4 vulkan wayland X xscreensaver"
+IUSE+=" -libdecor +openurl +nls"
+# libdecor is not in main repo but in community repos
 REQUIRED_USE="
+	|| ( joystick udev )
 	alsa? ( sound )
 	fcitx4? ( dbus )
 	gles1? ( video )
@@ -75,8 +81,11 @@ REQUIRED_USE="
 	sndio? ( sound )
 	vulkan? ( video )
 	wayland? ( gles2 )
-	xinerama? ( X )
-	xscreensaver? ( X )"
+	xscreensaver? ( X )
+"
+# See https://github.com/libsdl-org/SDL/blob/release-2.0.22/.github/workflows/main.yml#L38
+# https://github.com/libsdl-org/SDL/blob/release-2.0.22/docs/README-linux.md
+# U 20.04
 CDEPEND="
 	alsa? ( >=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}] )
 	dbus? ( >=sys-apps/dbus-1.6.18-r1[${MULTILIB_USEDEP}] )
@@ -84,12 +93,13 @@ CDEPEND="
 	gles1? ( media-libs/mesa[${MULTILIB_USEDEP},gles1] )
 	gles2? ( >=media-libs/mesa-9.1.6[${MULTILIB_USEDEP},gles2] )
 	hidapi-libusb? ( >=dev-libs/libusb-1.0.9 )
-	ibus? ( app-i18n/ibus )
+	ibus? ( >=app-i18n/ibus-1.5.22 )
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
 	kms? (
 		>=x11-libs/libdrm-2.4.82[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-9.0.0[${MULTILIB_USEDEP},gbm(+)]
 	)
+	libdecor? ( >=gui-libs/libdecor-0.1.0 )
 	libsamplerate? ( media-libs/libsamplerate[${MULTILIB_USEDEP}] )
 	nas? (
 		>=media-libs/nas-1.9.4[${MULTILIB_USEDEP}]
@@ -99,28 +109,31 @@ CDEPEND="
 		>=virtual/opengl-7.0-r1[${MULTILIB_USEDEP}]
 		>=virtual/glu-9.0-r1[${MULTILIB_USEDEP}]
 	)
+	openurl? ( x11-misc/xdg-utils )
 	pipewire? ( media-video/pipewire:=[${MULTILIB_USEDEP}] )
 	pulseaudio? ( >=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP}] )
 	sndio? ( media-sound/sndio:=[${MULTILIB_USEDEP}] )
 	udev? ( >=virtual/libudev-208:=[${MULTILIB_USEDEP}] )
 	wayland? (
-		>=dev-libs/wayland-1.0.6[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-1.18[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-9.1.6[${MULTILIB_USEDEP},egl(+),gles2,wayland]
-		>=x11-libs/libxkbcommon-0.2.0[${MULTILIB_USEDEP}]
+		>=x11-libs/libxkbcommon-0.5.0[${MULTILIB_USEDEP}]
 	)
 	X? (
 		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libXcursor-1.1.14[${MULTILIB_USEDEP}]
 		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
+		>=x11-libs/libXfixes-6.0.0[${MULTILIB_USEDEP}]
 		>=x11-libs/libXi-1.7.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libXrandr-1.4.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libXxf86vm-1.1.3[${MULTILIB_USEDEP}]
-		xinerama? ( >=x11-libs/libXinerama-1.1.3[${MULTILIB_USEDEP}] )
 		xscreensaver? ( >=x11-libs/libXScrnSaver-1.2.2-r1[${MULTILIB_USEDEP}] )
-	)"
-RDEPEND="${CDEPEND}
+	)
+"
+RDEPEND="
+	${CDEPEND}
 	vulkan? ( media-libs/vulkan-loader )"
-DEPEND="${CDEPEND}
+DEPEND="
+	${CDEPEND}
 	ibus? ( dev-libs/glib:2[${MULTILIB_USEDEP}] )
 	vulkan? ( dev-util/vulkan-headers )
 	X? ( x11-base/xorg-proto )
@@ -131,6 +144,7 @@ BDEPEND="
 		app-doc/doxygen
 		media-gfx/graphviz
 	)
+	wayland? ( >=dev-util/wayland-scanner-1.20 )
 "
 MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/SDL2/SDL_config.h
@@ -141,6 +155,7 @@ MULTILIB_WRAPPED_HEADERS=(
 SRC_URI="https://www.libsdl.org/release/${MY_P}.tar.gz"
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.0.16-static-libs.patch
+	"${FILESDIR}"/${PN}-2.24.0-cmake-target-fixes.patch
 )
 
 S="${WORKDIR}/${MY_P}"
@@ -180,8 +195,9 @@ multilib_src_configure() {
 	use custom-cflags || strip-flags
 
 	if use ibus; then
-		local -x IBUS_CFLAGS=\
-"-I${ESYSROOT}/usr/include/ibus-1.0 -I${ESYSROOT}/usr/include/glib-2.0 \
+		local -x IBUS_CFLAGS="\
+-I${ESYSROOT}/usr/include/ibus-1.0 \
+-I${ESYSROOT}/usr/include/glib-2.0 \
 -I${ESYSROOT}/usr/$(get_libdir)/glib-2.0/include"
 	fi
 
@@ -197,7 +213,7 @@ multilib_src_configure() {
 		$(use_enable haptic)
 		--enable-power
 		--enable-filesystem
-		$(use_enable threads)
+		$(use_enable threads pthreads)
 		--enable-timers
 		--enable-file
 		--enable-loadso
@@ -215,6 +231,7 @@ multilib_src_configure() {
 		$(use_enable jack)
 		--disable-jack-shared
 		--disable-esd
+		$(use_enable libdecor)
 		$(use_enable pipewire)
 		--disable-pipewire-shared
 		$(use_enable pulseaudio)
@@ -223,6 +240,8 @@ multilib_src_configure() {
 		$(use_enable libsamplerate)
 		$(use_enable nas)
 		--disable-nas-shared
+		$(use_enable nls locale)
+		$(use_enable openurl misc)
 		$(use_enable sndio)
 		--disable-sndio-shared
 		$(use_enable sound diskaudio)
@@ -234,12 +253,11 @@ multilib_src_configure() {
 		--disable-x11-shared
 		$(use_enable X video-x11-xcursor)
 		$(use_enable X video-x11-xdbe)
-		$(use_enable xinerama video-x11-xinerama)
+		$(use_enable X video-x11-xfixes)
 		$(use_enable X video-x11-xinput)
 		$(use_enable X video-x11-xrandr)
 		$(use_enable xscreensaver video-x11-scrnsaver)
 		$(use_enable X video-x11-xshape)
-		$(use_enable X video-x11-vm)
 		$(use_enable aqua video-cocoa)
 		--disable-video-directfb
 		--disable-fusionsound
@@ -309,7 +327,6 @@ multilib_src_install_all() {
 	find "${ED}" -type f -name "*.la" -delete || die
 
 	dodoc {BUGS,CREDITS,README-SDL,TODO,WhatsNew}.txt README.md docs/README*.md
-	doman debian/sdl2-config.1
 	use doc && dodoc -r docs/output/html/
 
 	docinto licenses

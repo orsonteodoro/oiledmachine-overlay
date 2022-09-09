@@ -9,7 +9,9 @@ MY_P="SDL2-${PV}"
 DESCRIPTION="Simple Direct Media Layer"
 HOMEPAGE="https://www.libsdl.org/"
 LICENSE_HIDAPI="|| ( BSD GPL-3 HIDAPI )"
-LICENSE="ZLIB all-rights-reserved
+LICENSE="
+	ZLIB
+	all-rights-reserved
 	BSD
 	BrownUn_UnCalifornia_ErikCorry
 	CPL-1.0
@@ -21,7 +23,8 @@ LICENSE="ZLIB all-rights-reserved
 	cpu_flags_arm_neon? ( MIT ZLIB pixman-arm-asm.h )
 	hidapi-hidraw? ( ${LICENSE_HIDAPI} )
 	hidapi-libusb? ( ${LICENSE_HIDAPI} )
-	video? ( X? ( MIT all-rights-reserved ) )"
+	video? ( X? ( MIT all-rights-reserved ) )
+"
 # project default license is ZLIB
 
 # In test/testhaptic.c,
@@ -78,7 +81,8 @@ REQUIRED_USE="
 	vulkan? ( video )
 	wayland? ( gles2 )
 	xinerama? ( X )
-	xscreensaver? ( X )"
+	xscreensaver? ( X )
+"
 # See https://github.com/libsdl-org/SDL/blob/release-2.0.22/.github/workflows/main.yml#L38
 # https://github.com/libsdl-org/SDL/blob/release-2.0.22/docs/README-linux.md
 # U 20.04
@@ -124,10 +128,14 @@ CDEPEND="
 		>=x11-libs/libXxf86vm-1.1.3[${MULTILIB_USEDEP}]
 		xinerama? ( >=x11-libs/libXinerama-1.1.3[${MULTILIB_USEDEP}] )
 		xscreensaver? ( >=x11-libs/libXScrnSaver-1.2.2-r1[${MULTILIB_USEDEP}] )
-	)"
-RDEPEND="${CDEPEND}
-	vulkan? ( media-libs/vulkan-loader )"
-DEPEND="${CDEPEND}
+	)
+"
+RDEPEND="
+	${CDEPEND}
+	vulkan? ( media-libs/vulkan-loader )
+"
+DEPEND="
+	${CDEPEND}
 	ibus? ( dev-libs/glib:2[${MULTILIB_USEDEP}] )
 	vulkan? ( dev-util/vulkan-headers )
 	X? ( x11-base/xorg-proto )
@@ -321,7 +329,6 @@ multilib_src_install_all() {
 	find "${ED}" -type f -name "*.la" -delete || die
 
 	dodoc {BUGS,CREDITS,README-SDL,TODO,WhatsNew}.txt README.md docs/README*.md
-	doman debian/sdl2-config.1
 	use doc && dodoc -r docs/output/html/
 
 	docinto licenses

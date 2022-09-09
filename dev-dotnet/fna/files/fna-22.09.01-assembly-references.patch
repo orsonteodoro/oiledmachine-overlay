@@ -1,0 +1,48 @@
+diff -urp FNA-22.09.01.orig/FNA.Core.csproj FNA-22.09.01/FNA.Core.csproj
+--- FNA-22.09.01.orig/FNA.Core.csproj	2022-09-01 20:32:02.000000000 -0700
++++ FNA-22.09.01/FNA.Core.csproj	2022-09-08 21:03:51.639464280 -0700
+@@ -336,9 +336,17 @@
+ 		<Compile Include="src\Vector2.cs" />
+ 		<Compile Include="src\Vector3.cs" />
+ 		<Compile Include="src\Vector4.cs" />
+-		<Compile Include="lib\SDL2-CS\src\SDL2.cs" />
+-		<Compile Include="lib\FAudio\csharp\FAudio.cs" />
+-		<Compile Include="lib\Theorafile\csharp\Theorafile.cs" />
++	</ItemGroup>
++	<ItemGroup>
++		<Reference Include="SDL2-CS">
++			<HintPath>$(SDL2CSPath)</HintPath>
++		</Reference>
++		<Reference Include="FAudio-CS">
++			<HintPath>$(FAudioCSPath)</HintPath>
++		</Reference>
++		<Reference Include="Theorafile-CS">
++			<HintPath>$(TheorafileCSPath)</HintPath>
++		</Reference>
+ 	</ItemGroup>
+ 	<ItemGroup>
+ 		<None Include="app.config" />
+diff -urp FNA-22.09.01.orig/FNA.csproj FNA-22.09.01/FNA.csproj
+--- FNA-22.09.01.orig/FNA.csproj	2022-09-01 20:32:02.000000000 -0700
++++ FNA-22.09.01/FNA.csproj	2022-09-08 21:04:45.049571356 -0700
+@@ -406,9 +406,17 @@
+     <Compile Include="src\Vector2.cs" />
+     <Compile Include="src\Vector3.cs" />
+     <Compile Include="src\Vector4.cs" />
+-    <Compile Include="lib\SDL2-CS\src\SDL2.cs" />
+-    <Compile Include="lib\FAudio\csharp\FAudio.cs" />
+-    <Compile Include="lib\Theorafile\csharp\Theorafile.cs" />
++  </ItemGroup>
++  <ItemGroup>
++    <Reference Include="SDL2-CS">
++      <HintPath>$(SDL2CSPath)</HintPath>
++    </Reference>
++    <Reference Include="FAudio-CS">
++      <HintPath>$(FAudioCSPath)</HintPath>
++    </Reference>
++    <Reference Include="Theorafile-CS">
++	  <HintPath>$(TheorafileCSPath)</HintPath>
++    </Reference>
+   </ItemGroup>
+   <ItemGroup>
+     <None Include="app.config">

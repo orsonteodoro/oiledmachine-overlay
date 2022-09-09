@@ -1,0 +1,100 @@
+diff -urp FNA3D-22.09.orig/CMakeLists.txt FNA3D-22.09/CMakeLists.txt
+--- FNA3D-22.09.orig/CMakeLists.txt	2022-09-01 07:02:12.000000000 -0700
++++ FNA3D-22.09/CMakeLists.txt	2022-09-08 08:59:14.627069012 -0700
+@@ -7,6 +7,7 @@ project(FNA3D C)
+ option(BUILD_SHARED_LIBS "Build shared library" ON)
+ option(TRACING_SUPPORT "Build with tracing enabled" OFF)
+ option(BUILD_DXVK_NATIVE "Enable support for dxvk-native" OFF)
++option(EXTERNAL_MOJOSHADER "Use external mojoshader" ON)
+ 
+ # Version
+ SET(LIB_MAJOR_VERSION "0")
+@@ -100,6 +101,8 @@ add_library(FNA3D
+ 	src/FNA3D_PipelineCache.c
+ 	src/FNA3D_Tracing.c
+ )
++
++if(NOT EXTERNAL_MOJOSHADER)
+ add_library(mojoshader STATIC
+ 	MojoShader/mojoshader.c
+ 	MojoShader/mojoshader_effects.c
+@@ -112,19 +115,22 @@ add_library(mojoshader STATIC
+ 	MojoShader/profiles/mojoshader_profile_hlsl.c
+ 	MojoShader/profiles/mojoshader_profile_spirv.c
+ )
++endif()
+ if(TRACING_SUPPORT)
+ 	add_executable(fna3d_replay replay/replay.c)
+ 	target_link_libraries(fna3d_replay FNA3D)
+-	target_include_directories(fna3d_replay PUBLIC
+-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/MojoShader>
+-	)
++	if(NOT EXTERNAL_MOJOSHADER)
++		target_include_directories(fna3d_replay PUBLIC
++			$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/MojoShader>
++		)
++	endif()
+ endif()
+ 
+ # Build flags
+ if(NOT MSVC)
+ 	set_property(TARGET FNA3D PROPERTY COMPILE_FLAGS "-std=gnu99 -Wall -Wno-strict-aliasing -pedantic")
+ endif()
+-if(BUILD_SHARED_LIBS)
++if(BUILD_SHARED_LIBS AND NOT EXTERNAL_MOJOSHADER)
+ 	set_property(TARGET mojoshader PROPERTY POSITION_INDEPENDENT_CODE ON)
+ endif()
+ 
+@@ -141,16 +147,20 @@ if(BUILD_DXVK_NATIVE)
+ 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../dxvk-native/include/native/windows>
+ 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../dxvk-native/include/native/wsi>
+ 	)
++	if(NOT EXTERNAL_MOJOSHADER)
++		target_include_directories(mojoshader PUBLIC
++			$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../dxvk-native/include/native/directx>
++			$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../dxvk-native/include/native/windows>
++			$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../dxvk-native/include/native/wsi>
++		)
++	endif()
++endif()
++if(NOT EXTERNAL_MOJOSHADER)
+ 	target_include_directories(mojoshader PUBLIC
+-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../dxvk-native/include/native/directx>
+-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../dxvk-native/include/native/windows>
+-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../dxvk-native/include/native/wsi>
++		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/MojoShader>
++		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Vulkan-Headers/include>
+ 	)
+ endif()
+-target_include_directories(mojoshader PUBLIC
+-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/MojoShader>
+-	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Vulkan-Headers/include>
+-)
+ 
+ # MinGW builds should statically link libgcc
+ if(MINGW)
+@@ -178,15 +188,21 @@ else()
+ 	if (TARGET SDL2::SDL2)
+ 		message(STATUS "using TARGET SDL2::SDL2")
+ 		target_link_libraries(FNA3D PUBLIC SDL2::SDL2)
+-		target_link_libraries(mojoshader PUBLIC SDL2::SDL2)
++		if(NOT EXTERNAL_MOJOSHADER)
++			target_link_libraries(mojoshader PUBLIC SDL2::SDL2)
++		endif()
+ 	elseif (TARGET SDL2)
+ 		message(STATUS "using TARGET SDL2")
+ 		target_link_libraries(FNA3D PUBLIC SDL2)
+-		target_link_libraries(mojoshader PUBLIC SDL2)
++		if(NOT EXTERNAL_MOJOSHADER)
++			target_link_libraries(mojoshader PUBLIC SDL2)
++		endif()
+ 	else()
+ 		message(STATUS "no TARGET SDL2::SDL2, or SDL2, using variables")
+ 		target_include_directories(FNA3D PUBLIC "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIRS}>")
+-		target_include_directories(mojoshader PUBLIC "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIRS}>")
++		if(NOT EXTERNAL_MOJOSHADER)
++			target_include_directories(mojoshader PUBLIC "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIRS}>")
++		endif()
+ 		target_link_libraries(FNA3D PUBLIC ${SDL2_LIBRARIES})
+ 	endif()
+ endif()

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Only for this ebuild fork on the oildmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <use>
+    <flag name="audio-firmware">
+      Download audio firmware.
+    </flag>
+    <flag name="bindist">
+      Build libfreenect in a legally-redistributable manner (only affects audio)
+    </flag>
+    <flag name="c_sync">
+      Build c synchronous library
+    </flag>
+    <flag name="csharp">
+      Build C# wrapper
+    </flag>
+    <flag name="cxx">
+      Build C++ Library (currently header only)
+    </flag>
+    <flag name="doc">
+      Install documentation
+    </flag>
+    <flag name="examples">
+      Build example programs
+    </flag>
+    <flag name="fakenect">
+      Build fakenect mock library
+    </flag>
+    <flag name="opencv">
+      Build OpenCV wrapper
+    </flag>
+    <flag name="openni2">
+      Build libfreenect driver for OpenNI2
+    </flag>
+    <flag name="python">
+      Build Python extensions
+    </flag>
+  </use>
+  <upstream>
+    <remote-id type="github">OpenKinect/libfreenect</remote-id>
+  </upstream>
+</pkgmetadata>

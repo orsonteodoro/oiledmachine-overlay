@@ -1,0 +1,73 @@
+diff -urp tiledsharp-0.15.0.0_p9999.orig/TiledSharp/TiledSharp.csproj tiledsharp-0.15.0.0_p9999/TiledSharp/TiledSharp.csproj
+--- tiledsharp-0.15.0.0_p9999.orig/TiledSharp/TiledSharp.csproj	2022-09-08 18:33:38.168802388 -0700
++++ tiledsharp-0.15.0.0_p9999/TiledSharp/TiledSharp.csproj	2022-09-08 18:39:17.261839518 -0700
+@@ -4,12 +4,10 @@
+     <ProjectGuid>{C01DB4EC-5078-4EC7-BAD4-1A17E22C8E48}</ProjectGuid>
+     <ProductVersion>9.0.21022</ProductVersion>
+     <SchemaVersion>2.0</SchemaVersion>
+-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
++    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+     <OutputType>Library</OutputType>
+     <AppDesignerFolder>Properties</AppDesignerFolder>
+-    <RootNamespace>tiled</RootNamespace>
+-    <AssemblyName>tiled-csharp</AssemblyName>
+     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+     <TargetFrameworkProfile>
+     </TargetFrameworkProfile>
+@@ -22,8 +20,30 @@
+     </FileUpgradeFlags>
+     <OldToolsVersion>3.5</OldToolsVersion>
+     <UpgradeBackupLocation />
++    <IsWindows Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' == 'true'">true</IsWindows> 
++    <IsLinux Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' == 'true'">true</IsLinux> 
+   </PropertyGroup>
+-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU' And '$(IsLinux)'=='true'">
++    <DebugSymbols>true</DebugSymbols>
++    <OutputPath>bin\Debug\</OutputPath>
++    <DefineConstants>DEBUG;TRACE;LINUX</DefineConstants>
++    <NoStdLib>true</NoStdLib>
++    <DebugType>full</DebugType>
++    <PlatformTarget>AnyCPU</PlatformTarget>
++    <UseVSHostingProcess>false</UseVSHostingProcess>
++    <ErrorReport>prompt</ErrorReport>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU' And '$(IsLinux)'=='true'">
++    <OutputPath>bin\Release\</OutputPath>
++    <DefineConstants>TRACE;LINUX</DefineConstants>
++    <Optimize>true</Optimize>
++    <NoStdLib>true</NoStdLib>
++    <DebugType>pdbonly</DebugType>
++    <PlatformTarget>AnyCPU</PlatformTarget>
++    <UseVSHostingProcess>false</UseVSHostingProcess>
++    <ErrorReport>prompt</ErrorReport>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU' And '$(IsWindows)'=='true'">
+     <DebugSymbols>true</DebugSymbols>
+     <OutputPath>bin\Debug\</OutputPath>
+     <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+@@ -33,7 +53,7 @@
+     <UseVSHostingProcess>false</UseVSHostingProcess>
+     <ErrorReport>prompt</ErrorReport>
+   </PropertyGroup>
+-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU' And '$(IsWindows)'=='true'">
+     <OutputPath>bin\Release\</OutputPath>
+     <DefineConstants>TRACE;WINDOWS</DefineConstants>
+     <Optimize>true</Optimize>
+@@ -43,8 +63,13 @@
+     <UseVSHostingProcess>false</UseVSHostingProcess>
+     <ErrorReport>prompt</ErrorReport>
+   </PropertyGroup>
+-  <ItemGroup>
++  <ItemGroup Condition="'$(IsLinux)'=='true'">
++    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" />
++  </ItemGroup>
++  <ItemGroup Condition="'$(IsWindows)'=='true'">
+     <Reference Include="mscorlib" />
++  </ItemGroup>
++  <ItemGroup>
+     <Reference Include="System" />
+     <Reference Include="System.Core">
+       <RequiredTargetFramework>4.0</RequiredTargetFramework>

@@ -1,0 +1,21 @@
+diff -urp sdl2-cs-9999.orig/src/SDL2.cs sdl2-cs-9999/src/SDL2.cs
+--- sdl2-cs-9999.orig/src/SDL2.cs	2022-09-08 21:16:53.674321027 -0700
++++ sdl2-cs-9999/src/SDL2.cs	2022-09-08 21:18:30.962160383 -0700
+@@ -70,7 +70,7 @@ namespace SDL2
+ 		/* Used for heap allocated string marshaling.
+ 		 * Returned byte* must be free'd with FreeHGlobal.
+ 		 */
+-		internal static unsafe byte* Utf8EncodeHeap(string str)
++		public static unsafe byte* Utf8EncodeHeap(string str)
+ 		{
+ 			if (str == null)
+ 			{
+@@ -161,7 +161,7 @@ namespace SDL2
+ 		internal static extern IntPtr SDL_malloc(IntPtr size);
+ 
+ 		[DllImport(nativeLibName, CallingConvention = CallingConvention.Cdecl)]
+-		internal static extern void SDL_free(IntPtr memblock);
++		public static extern void SDL_free(IntPtr memblock);
+ 
+ 		/* Buffer.BlockCopy is not available in every runtime yet. Also,
+ 		 * using memcpy directly can be a compatibility issue in other

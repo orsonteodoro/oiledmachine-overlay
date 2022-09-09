@@ -1,0 +1,34 @@
+diff -urp tiledsharp-0.15.0.0_p9999.orig/TiledSharp/TiledSharp.csproj tiledsharp-0.15.0.0_p9999/TiledSharp/TiledSharp.csproj
+--- tiledsharp-0.15.0.0_p9999.orig/TiledSharp/TiledSharp.csproj	2022-09-08 15:28:15.820856496 -0700
++++ tiledsharp-0.15.0.0_p9999/TiledSharp/TiledSharp.csproj	2022-09-08 15:43:49.021677033 -0700
+@@ -65,6 +65,9 @@
+     <Compile Include="src\TiledCore.cs" />
+     <Compile Include="src\Tileset.cs" />
+   </ItemGroup>
++  <PropertyGroup>
++    <OutputPath>bin\$(Configuration)\$(Platform)</OutputPath>
++  </PropertyGroup>
+   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+   <!--
+       To modify your build process, add your task inside one of the targets below and uncomment it.
+@@ -74,4 +77,4 @@
+       <Target Name="AfterBuild">
+       </Target>
+     -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp tiledsharp-0.15.0.0_p9999.orig/TiledSharp.Test/TiledSharp.Test.csproj tiledsharp-0.15.0.0_p9999/TiledSharp.Test/TiledSharp.Test.csproj
+--- tiledsharp-0.15.0.0_p9999.orig/TiledSharp.Test/TiledSharp.Test.csproj	2022-09-08 15:28:15.892859326 -0700
++++ tiledsharp-0.15.0.0_p9999/TiledSharp.Test/TiledSharp.Test.csproj	2022-09-08 15:43:44.317491252 -0700
+@@ -21,4 +21,8 @@
+     <None Update="assets/minimal.tmx" CopyToOutputDirectory="PreserveNewest" />
+   </ItemGroup>
+ 
+-</Project>
+\ No newline at end of file
++  <PropertyGroup>
++    <OutputPath>bin\$(Configuration)\$(Platform)</OutputPath>
++  </PropertyGroup>
++
++</Project>

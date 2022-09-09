@@ -8,12 +8,10 @@ dev-dotnet/assimp-net
 dev-dotnet/atitextureconverter
 dev-dotnet/beatdetectorforgames
 dev-dotnet/farseer-physics-engine
-dev-dotnet/fna
 dev-dotnet/freeimagenet
 dev-dotnet/gnome-sharp
 dev-dotnet/gtk-sharp
 dev-dotnet/gwen-dotnet
-dev-dotnet/libfreenect
 dev-dotnet/libgit2sharp
 dev-dotnet/lidgren-network-gen3
 dev-dotnet/mono-addins

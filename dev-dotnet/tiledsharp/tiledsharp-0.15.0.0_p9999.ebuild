@@ -9,6 +9,7 @@ MY_PN="TiledSharp"
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/marshallward/TiledSharp.git"
 
+USE_DOTNET="net40"
 inherit dotnet eutils mono git-r3
 
 DESCRIPTION="C# library for parsing and importing TMX and TSX files generated
@@ -16,11 +17,10 @@ by Tiled, a tile map generation tool."
 HOMEPAGE="https://github.com/marshallward/TiledSharp"
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
-USE_DOTNET="net35 net40 net45 test"
-IUSE+=" ${USE_DOTNET} debug developer doc"
+IUSE+=" ${USE_DOTNET} doc test"
 REQUIRED_USE+="
 	^^ ( ${USE_DOTNET} )
-	test? ( ^^ ( net35 net40 net45 ) )
+	test? ( ^^ ( ${USE_DOTNET} ) )
 "
 BDEPEND+="
 	dev-dotnet/dotnet-sdk-bin
@@ -38,9 +38,10 @@ RESTRICT="mirror"
 TOOLS_VERSION="Current"
 DOCS=( LICENSE NOTICE CHANGELOG README.rst )
 
-#PATCHES=(
-#	"${FILESDIR}/tiledsharp-0.15.0.0_p9999-csproj-changes.patch"
-#)
+PATCHES=(
+	"${FILESDIR}/${PN}-0.15.0.0_p9999-set-output-path.patch"
+	"${FILESDIR}/${PN}-0.15.0.0_p9999-linux-tiledsharp-csproj.patch"
+)
 unset LFRAMEWORK
 # Lookup table for USE flag framework -> dotnet cli framework
 declare -A LFRAMEWORK=(
@@ -48,10 +49,14 @@ declare -A LFRAMEWORK=(
 	[4.0]="net40"
 	[4.5]="net45"
 )
+EXPECTED_BUILDFILES="\
+8e3f126a176e19bcc0180b96c9c6aaa34d039649071e604c13689345692c82a1\
+3a16e31916afe71b9b08e21d0f40523dc22fdc95264aa0f062187e968511b771\
+"
 
 pkg_setup() {
-	if ls /opt/dotnet-sdk-bin-*/dotnet 2>/dev/null 1>/dev/null ; then
-		local p=$(ls /opt/dotnet-sdk-bin-*/dotnet | head -n 1)
+	if ls "${EROOT}/opt/dotnet-sdk-bin-"*"/dotnet" 2>/dev/null 1>/dev/null ; then
+		local p=$(ls "${EROOT}/opt/dotnet-sdk-bin-"*"/dotnet" | head -n 1)
 		export PATH="$(dirname ${p}):${PATH}"
 	else
 eerror
@@ -97,11 +102,24 @@ eerror "This was supposed to be EOL."
 eerror
 		die
 	fi
+
+	local actual_buildfiles=$(cat $(find "${S}" -name "*.csproj" | sort) | sha512sum | cut -f 1 -d " ")
+	if [[ "${actual_buildfiles}" != "${EXPECTED_BUILDFILES}" ]] ; then
+eerror
+eerror "Actual version:  ${actual_buildfiles}"
+eerror "Expected version:  ${EXPECTED_BUILDFILES}"
+eerror
+eerror "This was supposed to be EOL, but there has been a change in the"
+eerror "buildfiles.  This indicates that a new dependency, feature, install"
+eerror "section, etc has changed."
+eerror
+		die
+	fi
 }
 
 src_compile() {
 	einfo "FRAMEWORK=${FRAMEWORK}"
-	local configuration=$(usex debug "Debug" "Release")
+	local configuration="Release"
 	dotnet build "TiledSharp/TiledSharp.csproj" \
 		-f ${LFRAMEWORK["${FRAMEWORK}"]} \
 		-c ${configuration} || die
@@ -116,43 +134,13 @@ src_compile() {
 	fi
 }
 
-# Copy and sanitize permissions
-copy_next_to_file() {
-	local source="${1}"
-	local attachment="${2}"
-	local bn_attachment=$(basename "${attachment}")
-	local permissions="${3}"
-	local owner="${4}"
-	local fingerprint=$(sha256sum "${source}" | cut -f 1 -d " ")
-	for x in $(find "${ED}" -type f) ; do
-		[[ -L "${x}" ]] && continue
-		x_fingerprint=$(sha256sum "${x}" | cut -f 1 -d " ")
-		if [[ "${fingerprint}" == "${x_fingerprint}" ]] ; then
-			local destdir=$(dirname "${x}")
-			cp -a "${attachment}" "${destdir}" || die
-			chmod "${permissions}" "${destdir}/${bn_attachment}" || die
-			chown "${owner}" "${destdir}/${bn_attachment}" || die
-einfo
-einfo "Copied ${attachment} -> ${destdir}"
-einfo
-		fi
-	done
-}
-
 src_install() {
-	local configuration=$(usex debug "Debug" "Release")
+	local configuration="Release"
 	local framework="${LFRAMEWORK[${FRAMEWORK}]}"
+	exeinto "/usr/lib/mono/${framework}"
 	insinto "/usr/lib/mono/${framework}"
-	local p="TiledSharp/bin/${configuration}/${framework}"
-	doins "${p}/TiledSharp.dll"
-	if use developer ; then
-		doins "${p}/TiledSharp.pdb"
-		copy_next_to_file \
-			"$(pwd)/${p}/TiledSharp.dll" \
-			"$(pwd)/${p}/TiledSharp.pdb" \
-			0644 \
-			root:root
-	fi
+	local p=$(realpath "TiledSharp/bin/${configuration}/"*)
+	doexe "${p}/TiledSharp.dll"
 	use doc && dodoc -r docs/html
 	einstalldocs
 }

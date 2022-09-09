@@ -2,11 +2,11 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- For this ebuild only on the oiledmachine-overlay -->
+    <!-- Only for this ebuild on the oildmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">marshallward/TiledSharp</remote-id>
+    <remote-id type="github">FNA-XNA/FNA</remote-id>
   </upstream>
 </pkgmetadata>
