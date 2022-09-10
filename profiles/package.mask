@@ -14,7 +14,6 @@ dev-dotnet/gwen-dotnet
 dev-dotnet/libgit2sharp
 dev-dotnet/lidgren-network-gen3
 dev-dotnet/mono-addins
-dev-dotnet/monogame-extended
 dev-dotnet/ndesk-options
 dev-dotnet/nvorbis
 dev-dotnet/opentk
