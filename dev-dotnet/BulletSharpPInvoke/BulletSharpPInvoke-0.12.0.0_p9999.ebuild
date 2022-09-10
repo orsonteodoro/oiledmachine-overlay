@@ -2,19 +2,19 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit cmake flag-o-matic git-r3
 
 MY_PV="$(ver_cut 1-4 ${PV})"
 
 TARGET_FRAMEWORK="netstandard2.1"
-FRAMEWORK="6.0"
+DOTNET_V="6.0"
 DESCRIPTION=".NET wrapper for the Bullet physics library using Platform Invoke"
 HOMEPAGE="http://andrestraks.github.io/BulletSharp/"
 LICENSE="MIT ZLIB"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
-IUSE+=" debug developer nupkg test"
+IUSE+=" developer nupkg test"
 
 # For dotnet runtimes, see https://github.com/dotnet/runtime/blob/main/src/libraries/Microsoft.NETCore.Platforms/src/runtime.json
 # For CI and supported platforms, see https://github.com/MonoGame/MonoGame/blob/v3.8.1_HOTFIX/build.cake
@@ -61,7 +61,7 @@ ERIDS=(
 	${WIN_ERIDS[@]}
 )
 
-IUSE+=" ${ERIDS[@]} "
+IUSE+=" ${ERIDS[@]} mono"
 REQUIRED_USE+="
 	|| (
 		${ERIDS[@]}
@@ -133,15 +133,16 @@ gen_uwp_required_use() {
 REQUIRED_USE+=" "$(gen_uwp_required_use)
 
 RDEPEND="
+	mono? ( >=dev-lang/mono-6.4 )
 	~sci-physics/bullet-3.24
-	>=dev-dotnet/dotnet-sdk-bin-${FRAMEWORK}:${FRAMEWORK}
+	>=dev-dotnet/dotnet-sdk-bin-${DOTNET_V}:${DOTNET_V}
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
 	~sci-physics/bullet-3.24
-	>=dev-dotnet/dotnet-sdk-bin-${FRAMEWORK}:${FRAMEWORK}
+	>=dev-dotnet/dotnet-sdk-bin-${DOTNET_V}:${DOTNET_V}
 	dev-util/patchelf
 "
 
@@ -195,7 +196,7 @@ RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 
 # The dotnet-sdk-bin supports only one ABI at a time?
-DOTNET_SUPPORTED_SDKS=("dotnet-sdk-bin-6.0")
+DOTNET_SUPPORTED_SDKS=("dotnet-sdk-bin-${DOTNET_V}")
 
 get_crid_platform() {
 	local hrid="${1}"
@@ -258,7 +259,7 @@ eerror "Supported SDK versions: ${DOTNET_SUPPORTED_SDKS[@]}"
 eerror
 		die
 	fi
-	einfo " -- USING .NET ${TARGET_FRAMEWORK} FRAMEWORK -- "
+	einfo " -- USING ${TARGET_FRAMEWORK} FRAMEWORK -- "
 	[[ "${USE}" =~ ("android"|"ios"|"macos"|"uap"|"win") ]] && die "Linux only supported for now.  Disable all other platforms."
 }
 
@@ -360,7 +361,6 @@ src_configure() {
 			export CMAKE_USE_DIR="${S}-${hrid}/libbulletc"
 			export BUILD_DIR="${S}-${hrid}/libbulletc"
 			cd "${CMAKE_USE_DIR}" || die
-			einfo "DEBUG: ${CMAKE_USE_DIR}"
 			cmake_src_configure
 		fi
 	done
@@ -393,7 +393,7 @@ _init_workloads() {
 }
 
 src_compile() {
-	local configuration=$(usex debug "Debug" "Release")
+	local configuration="Release"
 
 	# Disabled until restore is sorted out
 	#_init_workloads
@@ -441,6 +441,11 @@ _mydoins() {
 	doexe "${dll_path}"
 	doins $(echo "${dll_path}" | sed -e "s|.dll|.deps.json|g")
 	use developer && doins $(echo "${dll_path}" | sed -e "s|.dll|.pdb|g")
+	if use mono ; then
+		dodir "/usr/lib/mono/${TARGET_FRAMEWORK}"
+		local bn=$(basename "${dll_path}")
+		dosym "${d}/${bn}" "/usr/lib/mono/${TARGET_FRAMEWORK}/${bn}"
+	fi
 }
 
 _install_libbulletc() {
@@ -504,9 +509,10 @@ _install_nupkg() {
 	doins "BulletSharp/bin/Release/BulletSharp.$(ver_cut 1-3 ${MY_PV}).nupkg"
 }
 
+_LLP=()
 src_install() {
 	export STRIP="${EPREFIX}/usr/true" # Don't strip rpath
-	local configuration=$(usex debug "Debug" "Release")
+	local configuration="Release"
 	local erid
 	for erid in ${ERIDS[@]} ; do
 		if use "${erid}" ; then
@@ -516,6 +522,7 @@ src_install() {
 			export CHOST=$(get_abi_CHOST "${garch}")
 			export BUILD_DIR="${S}-${hrid}"
 			local d="/opt/${SDK}/shared/${PN}.${hrid}/${MY_PV}/${TARGET_FRAMEWORK}"
+			_LLP+=( "${d}" )
 			insinto "${d}"
 			exeinto "${d}"
 			_install_libbulletc
@@ -524,6 +531,23 @@ src_install() {
 		fi
 	done
 
+	if ! use developer ; then
+		find "${ED}" \( -name "*.pdb" -o -name "*.xml" \) -delete
+	fi
+}
+
+pkg_postinst() {
+	local d
+	for d in ${_LLP[@]} ; do
+#
+# We don't do it systemwide via env.d because it may conflict with the system
+# package.
+#
+einfo
+einfo "You must manually set LD_LIBRARY_PATH=\"${d}:\${LD_LIBRARY_PATH}\""
+einfo "in order for P/Invoke to work properly."
+einfo
+	done
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

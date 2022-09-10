@@ -10,7 +10,7 @@ EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/marshallward/TiledSharp.git"
 
 USE_DOTNET="net40"
-inherit dotnet eutils mono git-r3
+inherit dotnet git-r3
 
 DESCRIPTION="C# library for parsing and importing TMX and TSX files generated
 by Tiled, a tile map generation tool."
@@ -55,6 +55,7 @@ EXPECTED_BUILDFILES="\
 "
 
 pkg_setup() {
+	dotnet_pkg_setup
 	if ls "${EROOT}/opt/dotnet-sdk-bin-"*"/dotnet" 2>/dev/null 1>/dev/null ; then
 		local p=$(ls "${EROOT}/opt/dotnet-sdk-bin-"*"/dotnet" | head -n 1)
 		export PATH="$(dirname ${p}):${PATH}"
@@ -65,7 +66,6 @@ eerror
 		die
 	fi
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
-	dotnet_pkg_setup
 	if has network-sandbox ${FEATURES} ; then
 eerror
 eerror "Building requires network-sandbox to be disabled in FEATURES on a"
@@ -73,15 +73,6 @@ eerror "per-package level."
 eerror
 		die
 	fi
-}
-
-src_configure() {
-	default
-	for x in $(find . -name "*.csproj") ; do
-		sed -i -e "s|netstandard2.0;||g" "${x}" || die
-		sed -i -e "s|netcoreapp2.0;||g" "${x}" || die
-		sed -i -e "s|netcoreapp2.1;||g" "${x}" || die
-	done
 }
 
 src_unpack() {
@@ -126,7 +117,8 @@ src_compile() {
 	if use test ; then
 		dotnet build "TiledSharp.Test/TiledSharp.Test.csproj" \
 			-f ${LFRAMEWORK["${FRAMEWORK}"]} \
-			-c ${configuration} || die
+			-c ${configuration} \
+			|| die
 	fi
 	if use doc ; then
 		cd docs || die
@@ -136,9 +128,8 @@ src_compile() {
 
 src_install() {
 	local configuration="Release"
-	local framework="${LFRAMEWORK[${FRAMEWORK}]}"
-	exeinto "/usr/lib/mono/${framework}"
-	insinto "/usr/lib/mono/${framework}"
+	exeinto "/usr/lib/mono/${FRAMEWORK}"
+	insinto "/usr/lib/mono/${FRAMEWORK}"
 	local p=$(realpath "TiledSharp/bin/${configuration}/"*)
 	doexe "${p}/TiledSharp.dll"
 	use doc && dodoc -r docs/html

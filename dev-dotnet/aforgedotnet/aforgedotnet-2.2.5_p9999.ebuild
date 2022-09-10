@@ -10,7 +10,7 @@ EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/andrewkirillov/AForge.NET.git"
 USE_DOTNET="net40"
 
-inherit dotnet eutils gac mono git-r3
+inherit dotnet gac mono git-r3
 
 DESCRIPTION="AForge.NET Framework is a C# framework designed for developers and
 researchers in the fields of Computer Vision and Artificial Intelligence - 
@@ -25,7 +25,7 @@ RDEPEND+="
 "
 DEPEND+=" ${RDEPEND}"
 IUSE="${USE_DOTNET} developer gac kinect ximea"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 ) net40"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
 SLOT="0/${PV}"
 RESTRICT="mirror"
 SRC_URI=""

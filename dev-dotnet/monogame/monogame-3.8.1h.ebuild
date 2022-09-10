@@ -10,7 +10,7 @@ MY_P="${PN}-${MY_PV}"
 inherit git-r3
 
 # Multiple frameworks actually but highest is required
-FRAMEWORK="6.0"
+DOTNET_V="6.0"
 UAP_VERSION_MIN="10.0"
 
 DESCRIPTION="One framework for creating powerful cross-platform games."
@@ -181,7 +181,7 @@ REQUIRED_USE+=" "$(gen_uwp_required_use)
 
 # The dev-dotnet/dotnet-sdk-bin ebuild supports only one march
 RDEPEND+="
-	>=dev-dotnet/dotnet-sdk-bin-${FRAMEWORK}:${FRAMEWORK}
+	>=dev-dotnet/dotnet-sdk-bin-${DOTNET_V}:${DOTNET_V}
 	media-libs/libpng
 	sys-devel/gcc[openmp]
 	sys-libs/zlib[minizip]
@@ -191,12 +191,11 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-dotnet/dotnet-sdk-bin-${FRAMEWORK}:${FRAMEWORK}
+	>=dev-dotnet/dotnet-sdk-bin-${DOTNET_V}:${DOTNET_V}
 "
 
 IUSE+="
 	${PLATFORMS[@]}
-	debug
 	developer
 	nupkg
 "
@@ -463,7 +462,7 @@ _build_monogame_framework() {
 
 src_prepare() {
 	default
-	local configuration=$(usex debug "Debug" "Release")
+	local configuration="Release"
 	local erid
 	for erid in ${ERIDS[@]} ; do
 		if use "${erid}" ; then
@@ -501,7 +500,7 @@ _init_workloads() {
 }
 
 src_compile() {
-	local configuration=$(usex debug "Debug" "Release")
+	local configuration="Release"
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 	#_init_workloads
@@ -528,13 +527,13 @@ src_compile() {
 				tfm="uap${UAP_VERSION_MIN}"
 				tfm2="v6.0"
 			elif [[ "${hplatform}" =~ ("iossimulator") ]] ; then
-				tfm="net${FRAMEWORK}-ios"
+				tfm="net${DOTNET_V}-ios"
 				tfm2="v6.0"
 			elif [[ "${hplatform}" =~ ("android"|"ios"|"windows") ]] ; then
-				tfm="net${FRAMEWORK}-${hplatform}"
+				tfm="net${DOTNET_V}-${hplatform}"
 				tfm2="v6.0"
 			else
-				tfm="net${FRAMEWORK}"
+				tfm="net${DOTNET_V}"
 				tfm2="v6.0"
 			fi
 
@@ -608,15 +607,15 @@ _install() {
 	for ns in ${NS[@]} ; do
 		local tfm=""
 		if [[ "${ns}" =~ "MonoGame.".*"Android" ]] ; then
-			tfm="net${FRAMEWORK}-macos"
+			tfm="net${DOTNET_V}-macos"
 		elif [[ "${ns}" =~ "MonoGame.".*"iOS" ]] ; then
-			tfm="net${FRAMEWORK}-ios"
+			tfm="net${DOTNET_V}-ios"
 		elif [[ "${ns}" =~ "MonoGame.".*"Mac" ]] ; then
-			tfm="net${FRAMEWORK}-macos"
+			tfm="net${DOTNET_V}-macos"
 		elif [[ "${ns}" =~ "MonoGame.".*"WindowsUniversal" ]] ; then
 			tfm="uap${UAP_VERSION_MIN}"
 		elif [[ "${ns}" =~ "MonoGame.".*"Windows" ]] ; then
-			tfm="net${FRAMEWORK}-windows"
+			tfm="net${DOTNET_V}-windows"
 		elif [[ "${ns}" =~ "MonoGame.Packaging.Flatpak" ]] ; then
 			tfm="netstandard2.0"
 		elif [[ "${ns}" =~ "MonoGame.Templates.CSharp" ]] ; then
@@ -624,11 +623,12 @@ _install() {
 		elif [[ "${ns}" =~ "MonoGame.Templates.VSExtension" ]] ; then
 			tfm="net472"
 		else
-			tfm="net${FRAMEWORK}"
+			tfm="net${DOTNET_V}"
 		fi
 		insinto "/opt/${SDK}/shared/${ns}.${hrid}/${MY_PV}/${tfm}"
-		add_ns "${p}"
+		add_ns "${ns}"
 		insinto "/opt/${SDK}/packs/${ns}.${hrid}/${MY_PV}/${tfm}"
+
 		use nupkg && add_nupkg "${p}"
 
 		# Remove junk files output by from dotnet publish.
@@ -672,7 +672,7 @@ fi
 }
 
 src_install() {
-	local configuration=$(usex debug "Debug" "Release")
+	local configuration="Release"
 	local erid
 	for erid in ${ERIDS[@]} ; do
 		if use "${erid}" ; then
@@ -715,11 +715,11 @@ einfo
 		fi
 	done
 	if ! use developer ; then
-		find "${ED}" -name "*.pdb" -delete
+		find "${ED}" \( -name "*.pdb" -o -name "*.xml" \) -delete
 	fi
 }
 
-pkg_posinst() {
+pkg_postinst() {
 ewarn
 ewarn "Security Notice:"
 ewarn
@@ -736,6 +736,20 @@ ewarn
 ewarn "FFMpeg 2.2:  https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=ffmpeg%202.2&search_type=all"
 ewarn "libpng:  https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=1.6.34%20libpng&search_type=all"
 ewarn
+
+	local libdirs=$(find "${ED}" -name "*.so*" -exec bash -c "dirname {}" \; \
+		| uniq \
+		| tr "\n" ":" \
+		| sed -e "s|${ED}||g")
+
+#
+# We don't do it systemwide via env.d because it may conflict with the system
+# package.
+#
+einfo
+einfo "You must manually set LD_LIBRARY_PATH=\"${libdirs}:\${LD_LIBRARY_PATH}\""
+einfo "in order for P/Invoke to work properly."
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

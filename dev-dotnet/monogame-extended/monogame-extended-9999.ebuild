@@ -2,10 +2,10 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-FRAMEWORK="6.0"
-inherit dotnet git-r3
+DOTNET_V="6.0"
+inherit git-r3
 
 DESCRIPTION="MonoGame.Extended are classes and extensions to make MonoGame more
 awesome"
@@ -13,11 +13,14 @@ HOMEPAGE="http://www.monogameextended.net/"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 PROJECT_NAME="MonoGame.Extended"
-USE_DOTNET="net60"
-IUSE="${USE_DOTNET} developer"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
+TARGET_FRAMEWORK="net60"
+IUSE="${TARGET_FRAMEWORK} developer"
+REQUIRED_USE="|| ( ${TARGET_FRAMEWORK} )"
 RDEPEND="
 	>=dev-dotnet/monogame-3.8.1h
+"
+BDEPEND="
+	>=dev-dotnet/dotnet-sdk-bin-${DOTNET_V}:${DOTNET_V}
 "
 DEPEND="${RDEPEND}"
 SRC_URI=""
@@ -26,7 +29,7 @@ S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
 # The dotnet-sdk-bin supports only 1 ABI at a time.
-DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-6.0" )
+DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-${DOTNET_V}" )
 
 EGIT_REPO_URI="https://github.com/craftworkgames/MonoGame.Extended.git"
 EGIT_BRANCH="develop"
@@ -58,6 +61,7 @@ eerror "Supported SDK versions: ${DOTNET_SUPPORTED_SDKS[@]}"
 eerror
 		die
 	fi
+	einfo " -- USING .NET ${TARGET_FRAMEWORK} -- "
 }
 
 src_unpack() {
@@ -67,7 +71,7 @@ src_unpack() {
 		"${S}/src/cs/MonoGame.Extended/MonoGame.Extended.csproj" \
 		| sed "s|[<>]|^|g" \
 		| cut -f 3 -d "^")
-	local EXPECTED_TFM="net6.0"
+	local EXPECTED_TFM="net${DOTNET_V}"
 	if [[ "${actual_tfm}" != "${EXPECTED_TFM}" ]] ; then
 eerror
 eerror "TFM mismatch"
@@ -96,7 +100,7 @@ NS=(
 src_compile() {
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
 	local configuration="Release"
-	local tfm="net6.0"
+	local tfm="net${DOTNET_V}"
 	local x
 	for ns in ${NS[@]} ; do
 		einfo "Building ${ns}"
@@ -110,7 +114,7 @@ src_compile() {
 
 src_install() {
 	local configuration="Release"
-	local tfm="net6.0"
+	local tfm="net${DOTNET_V}"
 
 	local ns
 	for ns in ${NS[@]} ; do

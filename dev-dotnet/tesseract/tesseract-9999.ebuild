@@ -2,29 +2,31 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-FRAMEWORK="6.0"
-USE_DOTNET="netstandard20"
-inherit dotnet eutils git-r3 mono
+DOTNET_PV="6.0"
+TARGET_FRAMEWORK="netstandard20"
+inherit git-r3
 
 DESCRIPTION="A .Net wrapper for tesseract-ocr"
 HOMEPAGE="https://github.com/charlesw/tesseract"
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE=" ${USE_DOTNET} developer mono"
-REQUIRED_USE=" || ( ${USE_DOTNET} )"
+IUSE=" ${TARGET_FRAMEWORK} developer mono"
+REQUIRED_USE=" || ( ${TARGET_FRAMEWORK} )"
 EXPECTED_LEPTONICA_PV="1.80.0"
 EXPECTED_TESSERACT_PV="4.1.1"
 RDEPEND="
-	mono? ( >=dev-lang/mono-6.4 )
+	mono? (
+		>=dev-lang/mono-5.4
+	)
 	=app-text/tesseract-$(ver_cut 1-2 ${EXPECTED_TESSERACT_PV})*
 	~media-libs/leptonica-${EXPECTED_LEPTONICA_PV}
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
-	>=dev-dotnet/dotnet-sdk-bin-${FRAMEWORK}:${FRAMEWORK}
+	>=dev-dotnet/dotnet-sdk-bin-${DOTNET_PV}:${DOTNET_PV}
 "
 SRC_URI=""
 S="${WORKDIR}/${PN}-${PV}"
@@ -35,7 +37,7 @@ EGIT_COMMIT="HEAD"
 MY_PV="${EXPECTED_TESSERACT_PV}"
 
 # The dotnet-sdk-bin supports only 1 ABI at a time.
-DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-6.0" )
+DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-${DOTNET_PV}" )
 
 unset M
 declare -A M=(
@@ -68,6 +70,7 @@ eerror "Supported SDK versions: ${DOTNET_SUPPORTED_SDKS[@]}"
 eerror
 		die
 	fi
+	einfo " -- USING ${TARGET_FRAMEWORK} FRAMEWORK -- "
 }
 
 src_unpack() {
@@ -83,6 +86,7 @@ src_unpack() {
 		| tail -n 1 \
 		| grep -E -o  -e "[0-9]+\.[0-9]+\.[0-9]+" \
 		| tail -n 1)
+	einfo "Inspecting tesseract version change"
 	if ver_test "${actual_tesseract_pv}" -ne "${EXPECTED_TESSERACT_PV}" ; then
 eerror
 eerror "Version change detected for tesseract dependency"
@@ -92,6 +96,7 @@ eerror "Actual pv:  ${EXPECTED_TESSERACT_PV}"
 eerror
 		die
 	fi
+	einfo "Inspecting leptonica version change"
 	if ver_test "${actual_leptonica_pv}" -ne "${EXPECTED_LEPTONICA_PV}" ; then
 eerror
 eerror "Version change detected for leptonica dependency"
@@ -108,12 +113,12 @@ src_compile() {
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
 	dotnet publish \
 		"src/Tesseract/Tesseract.csproj" \
-		-f ${M[${USE_DOTNET}]} \
+		-f ${M[${TARGET_FRAMEWORK}]} \
 		-p:Configuration="${configuration}" \
 		|| die
 	dotnet publish \
 		"src/Tesseract.Drawing/Tesseract.Drawing.csproj" \
-		-f ${M[${USE_DOTNET}]} \
+		-f ${M[${TARGET_FRAMEWORK}]} \
 		-p:Configuration="${configuration}" \
 		|| die
 }
@@ -209,7 +214,7 @@ _install_mono() {
 	insinto "/usr/lib/mono/${s}"
 	exeinto "/usr/lib/mono/${s}"
 
-	local tfm="${M[${USE_DOTNET}]}"
+	local tfm="${M[${TARGET_FRAMEWORK}]}"
 	dodir /usr/lib/mono/${tfm}
 	dosym /opt/${SDK}/shared/Tesseract/${MY_PV}/${tfm}/Tesseract.dll \
 		/usr/lib/mono/${tfm}/Tesseract.dll
@@ -236,7 +241,7 @@ _install_mono() {
 
 _install_dotnet_sdk() {
 	[[ -e "${ESYSROOT}/opt/${s}" ]] || die
-	local tfm="${M[${USE_DOTNET}]}"
+	local tfm="${M[${TARGET_FRAMEWORK}]}"
 
 	local NS=(
 		"Tesseract"

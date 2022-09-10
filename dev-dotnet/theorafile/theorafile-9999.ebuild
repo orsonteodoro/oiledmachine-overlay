@@ -5,7 +5,7 @@ EAPI=7
 
 MY_PV="$(ver_cut 1-3 ${PV})"
 
-inherit dotnet eutils git-r3 multilib-minimal
+inherit dotnet git-r3 multilib-minimal
 
 DESCRIPTION="Theorafile - Ogg Theora Video Decoder Library"
 HOMEPAGE="https://github.com/FNA-XNA/Theorafile"
@@ -14,7 +14,7 @@ KEYWORDS="~amd64 ~x86"
 PROJECT_NAME="Theorafile"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 USE_DOTNET="net40"
-IUSE="${USE_DOTNET} debug"
+IUSE="${USE_DOTNET}"
 REQUIRED_USE="net40"
 RDEPEND="
 	dev-lang/mono[${MULTILIB_USEDEP}]
@@ -99,7 +99,7 @@ src_compile() {
 }
 
 src_install() {
-	local configuration=$(usex debug "Debug" "Release")
+	local configuration="Release"
 	install_abi() {
 		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_net${FRAMEWORK}"
 		cd "${BUILD_DIR}"
