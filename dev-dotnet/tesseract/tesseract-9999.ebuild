@@ -274,7 +274,7 @@ einfo
 		fi
 	done
 	if ! use developer ; then
-		find "${ED}" -name "*.pdb" -delete
+		find "${ED}" \( -name "*.pdb" -o -name "*.xml" \) -delete
 	fi
 }
 
