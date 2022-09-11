@@ -33,6 +33,7 @@ REQUIRED_USE="
 		!hello-world
 		!testbed
 	)
+	mono? ( standalone )
 	!net50
 " # net50 not tested
 RDEPEND="
@@ -276,7 +277,7 @@ src_compile() {
 _get_publish() {
 	local ns="${1}"
 	if [[ "${ns}" =~ "ContentPipelines" ]] ; then
-		echo "src/bin/${tfm}/publish"
+		echo "src/bin/${mtfm}/publish"
 	elif [[ "${ns}" == "VelcroPhysics.MonoGame" ]] ; then
 		echo "src/VelcroPhysics/bin/${configuration}/${tfm}/publish"
 	elif [[ "${ns}" == "VelcroPhysics" ]] ; then
@@ -295,14 +296,19 @@ src_install() {
 		insinto "/opt/${SDK}/shared/${ns}/${PV}/${tfm}"
 		doins -r $(_get_publish "${ns}")/*
 		if use mono ; then
-# The 4.5 folder contains latest runtime (4.7.2) or highest *-api (reference
-# assembly) # https://www.mono-project.com/docs/about-mono/releases/4.4.0/
-			[[ "${tfm}" == "net6.0" ]] && mtfm="4.5"
-			[[ "${tfm}" == "net5.0" ]] && mtfm="4.5"
-			[[ "${ns}" =~ "ContentPipelines" ]] && ns2="${ns/ContentPipelines/Content}"
+			local mtfm=""
+			# Mono only supports <= .NET 4.8.x and netstandard 2.0
+			# See https://www.mono-project.com/docs/about-mono/releases/4.4.0/
+			# for why 4.5 is used for latest .NET. runtimes and x.y-api for
+			# runtime assemblies (used only for build time metadata only).
+			[[ "${tfm}" == "net6.0" ]] && continue # Not compatible
+			[[ "${tfm}" == "net5.0" ]] && continue # Not compatible
+			[[ "${tfm}" == "netstandard2.0" ]] && mtfm="4.5"
+			local ns2="${ns}"
+			ns2="${ns/ContentPipelines/Content}"
 			dodir "/usr/lib/mono/${tfm}"
 			dosym "/opt/${SDK}/shared/${ns}/${PV}/${tfm}/Genbox.${ns2}.dll" \
-				"/usr/lib/mono/${mtfm}/${ns}.dll"
+				"/usr/lib/mono/${mtfm}/${ns2}.dll"
 		fi
 	done
 	dodoc "LICENSE.txt" "MONOGAME LICENSE.txt" "README.md"
