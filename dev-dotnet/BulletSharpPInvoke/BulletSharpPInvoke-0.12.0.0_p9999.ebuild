@@ -187,7 +187,6 @@ https://github.com/bulletphysics/bullet3/archive/refs/tags/${pv}.tar.gz
 }
 
 PATCHES=(
-	"${FILESDIR}/BulletSharpPInvoke-0.12_p9999-bullet-versioning.patch"
 )
 
 SRC_URI+=" "$(gen_src_uris)
@@ -312,8 +311,11 @@ src_prepare() {
 			libbulletc/CMakeLists.txt || die
 	fi
 
+	cd "${S}" || die
+	eapply "${FILESDIR}/BulletSharpPInvoke-0.12_p9999-bullet-versioning.patch"
+
 	export CMAKE_USE_DIR="${S}/libbulletc"
-	cd "${CMAKE_USE_DIR}"
+	cd "${CMAKE_USE_DIR}" || die
 	cmake_src_prepare
 
 	local erid
