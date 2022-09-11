@@ -306,7 +306,7 @@ src_install() {
 			[[ "${tfm}" == "netstandard2.0" ]] && mtfm="4.5"
 			local ns2="${ns}"
 			ns2="${ns/ContentPipelines/Content}"
-			dodir "/usr/lib/mono/${tfm}"
+			dodir "/usr/lib/mono/${mtfm}"
 			dosym "/opt/${SDK}/shared/${ns}/${PV}/${tfm}/Genbox.${ns2}.dll" \
 				"/usr/lib/mono/${mtfm}/${ns2}.dll"
 		fi
