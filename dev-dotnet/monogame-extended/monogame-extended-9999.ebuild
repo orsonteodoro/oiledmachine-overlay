@@ -118,8 +118,8 @@ src_install() {
 
 	local ns
 	for ns in ${NS[@]} ; do
-		insinto "/opt/${SDK}/${ns}/${MY_PV}/${tfm}"
-		exeinto "/opt/${SDK}/${ns}/${MY_PV}/${tfm}"
+		insinto "/opt/${SDK}/shared/${ns}/${MY_PV}/${tfm}"
+		exeinto "/opt/${SDK}/shared/${ns}/${MY_PV}/${tfm}"
 		if [[ "${ns}" =~ "MonoGame.Extended.Content.Pipeline" ]] ; then
 			doins -r "src/cs/${ns}/bin/${tfm}/publish/"*
 		else
