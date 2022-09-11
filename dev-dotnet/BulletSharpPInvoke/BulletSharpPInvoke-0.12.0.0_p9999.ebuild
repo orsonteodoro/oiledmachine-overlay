@@ -442,9 +442,18 @@ _mydoins() {
 	doins $(echo "${dll_path}" | sed -e "s|.dll|.deps.json|g")
 	use developer && doins $(echo "${dll_path}" | sed -e "s|.dll|.pdb|g")
 	if use mono ; then
-		dodir "/usr/lib/mono/${TARGET_FRAMEWORK}"
+#
+# See https://www.mono-project.com/docs/about-mono/releases/4.4.0/
+# for explanation why 4.5 is used as a folder for runtime assemblies including
+# the latest 4.8.x.
+#
+# For reassurance for .NET Standard 2.1 support, see
+# https://www.mono-project.com/docs/about-mono/releases/6.4.0/#net-standard-21-support
+#
+		local mtfm="4.5"
+		dodir "/usr/lib/mono/${mtfm}"
 		local bn=$(basename "${dll_path}")
-		dosym "${d}/${bn}" "/usr/lib/mono/${TARGET_FRAMEWORK}/${bn}"
+		dosym "${d}/${bn}" "/usr/lib/mono/${mtfm}/${bn}"
 	fi
 }
 
