@@ -645,7 +645,9 @@ prune_marches_bin() {
 			rm -vrf "${f}" # dylib
 		elif [[ "${hrid}" != "osx-x64" ]] && file "${f}" | grep -q -e "Mach-O.*x86_64 executable" ; then
 			rm -vrf "${f}" # executable
-		elif [[ "${hrid}" != "win-x64" ]] && file "${f}" | grep -q -e "PE32\+ executable (console)" ; then
+		elif [[ "${hrid}" != "win-x86" ]] && file "${f}" | grep -q -e "PE32 executable.*Windows" ; then
+			rm -vrf "${f}" # .exe
+		elif [[ "${hrid}" != "win-x64" ]] && file "${f}" | grep -q -e "PE32\+ executable.*Windows" ; then
 			rm -vrf "${f}" # .exe
 		fi
 	done
