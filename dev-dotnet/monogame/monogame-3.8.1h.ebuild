@@ -124,8 +124,8 @@ ERIDS=(
 )
 
 IUSE+=" ${ERIDS[@]}"
-AREQUIRED_USE+="
-	|| (
+REQUIRED_USE+="
+	^^ (
 		${ERIDS[@]}
 	)
 	elibc_Cygwin? (
@@ -519,7 +519,6 @@ src_compile() {
 			local hplatform=$(get_hrid_platform "${hrid}")
 
 			local garch=$(get_garch "${erid}")
-			export CHOST=$(get_abi_CHOST "${garch}")
 
 			local tfm
 			local tfm2
@@ -573,6 +572,81 @@ add_ns() {
 		if [[ "${d}" =~ "publish" ]] ; then
 			# Really messy.  Needs to get rid of incompatible microarches.
 			doins -r "${d}/"*
+		fi
+	done
+}
+
+# Deletes all other march folders != target carch
+prune_marches_folders() {
+	local path="${1}"
+	local carch="${2}" # Target microarch
+	local MARCH=(
+		"arm"
+		"arm64"
+		"armel"
+		"armv6"
+		"loongarch64"
+		"mips64"
+		"ppc64le"
+		"s390x"
+		"x64"
+		"x86"
+	)
+
+	local march
+	for march in ${MARCH[@]} ; do
+		local d
+		for d in $(find "${path}" -type d -name "${march}") ; do
+			local a
+			a=$(basename "${d}")
+			if [[ "${a}" != "${carch}" ]] ; then
+				rm -vrf "${d}" || true
+			fi
+		done
+	done
+}
+
+# Deletes all other march .so/bin/assemblies != target hrid
+prune_marches_bin() {
+	local hrid="${1}"
+	# Remove junk files output by from dotnet publish.
+	einfo "Pruning binaries for non-native arches"
+	for f in $(find "${ED}/opt/${SDK}/shared/${ns}.${hrid}/${MY_PV}/${tfm}" -type f) ; do
+		if file "${f}" | grep -q -e "PE32 executable (DLL).*Mono/.Net assembly" ; then
+			continue # .dll
+		elif ! [[ "${hrid}" =~ "uap-x64" ]] && strings "${f}" | grep -q -e "mrm_pri2" ; then
+			# file doesn't support pri file magic yet used with uap
+			rm -vrf "${f}" # .pri
+		elif [[ "${hrid}" != "android-arm" ]] && file "${f}" | grep -q -e "ELF.*shared object.*EABI5" ; then
+			rm -vrf "${f}" # .so
+		elif [[ "${hrid}" != "android-arm64" ]] && file "${f}" | grep -q -e "ELF.*shared object.*aarch64" ; then
+			rm -vrf "${f}" # .so
+		elif [[ "${hrid}" != "android-arm64" && "${hrid}" != "linux-x64" ]] && file "${f}" | grep -q -e "ELF.*shared object.*x86-64" ; then
+			rm -vrf "${f}" # .so
+		elif [[ "${hrid}" != "android-x86" && "${hrid}" != "linux-x86" ]] && file "${f}" | grep -q -e "ELF.*shared object.*80386" ; then
+			rm -vrf "${f}" # .so
+		elif [[ "${hrid}" != "linux-x64" ]] && file "${f}" | grep -q -e "ELF.*executable.*x86-64.*Linux" ; then
+			rm -vrf "${f}" # executable
+		elif [[ "${hrid}" != "linux-x86" ]] && file "${f}" | grep -q -e "ELF.*executable.*80386.*Linux" ; then
+			rm -vrf "${f}" # executable
+		elif [[ "${hrid}" != "linux-x64" ]] && file "${f}" | grep -q -e "ELF.*executable.*x86-64" && readelf -n "${f}" | grep -q -e "Linux" ; then
+			rm -vrf "${f}" # executable
+		elif [[ "${hrid}" != "linux-x86" ]] && file "${f}" | grep -q -e "ELF.*executable.*80386" && readelf -n "${f}" | grep -q -e "Linux" ; then
+			rm -vrf "${f}" # executable
+		elif [[ "${hrid}" != "android-x64" ]] && file "${f}" | grep -q -e "ELF.*executable.*x86-64" && readelf -n "${f}" | grep -q -e "Android" ; then
+			rm -vrf "${f}" # executable
+		elif [[ "${hrid}" != "android-x86" ]] && file "${f}" | grep -q -e "ELF.*executable.*80386" && readelf -n "${f}" | grep -q -e "Android" ; then
+			rm -vrf "${f}" # executable
+		elif [[ "${hrid}" != "ios-arm" ]] && file "${f}" | grep -q -E -e "arm(|_v7):.*dynamically linked shared library" ; then
+			rm -vrf "${f}" # dylib
+		elif [[ "${hrid}" != "ios-arm64" ]] && file "${f}" | grep -q -E -e "arm64(|e):.*dynamically linked shared library" ; then
+			rm -vrf "${f}" # dylib
+		elif [[ "${hrid}" != "osx-x64" ]] && file "${f}" | grep -q -e "x86_64:.*dynamically linked shared library" ; then
+			rm -vrf "${f}" # dylib
+		elif [[ "${hrid}" != "osx-x64" ]] && file "${f}" | grep -q -e "Mach-O.*x86_64 executable" ; then
+			rm -vrf "${f}" # executable
+		elif [[ "${hrid}" != "win-x64" ]] && file "${f}" | grep -q -e "PE32\+ executable (console)" ; then
+			rm -vrf "${f}" # .exe
 		fi
 	done
 }
@@ -631,43 +705,9 @@ _install() {
 
 		use nupkg && add_nupkg "${p}"
 
-		# Remove junk files output by from dotnet publish.
-if false ; then # Untested
-		for f in $(find "${ED}/opt/${SDK}/shared/${ns}.${hrid}/${MY_PV}/${tfm}" -type f) ; do
-			if file "${f}" | grep -q -e "PE32 executable (DLL).*Mono/.Net assembly" ; then
-				continue # .dll
-			elif ! [[ "${hrid}" =~ "uap-x64" ]] && strings "${f}" | grep -q -e "mrm_pri2" ; then
-				# file doesn't support pri file magic yet used with uap
-				rm -rf "${f}" # .pri
-			elif [[ "${hrid}" != "android-arm" ]] && file "${f}" | grep -q -e "ELF.*shared object.*EABI5" ; then
-				rm -rf "${f}" # .so
-			elif [[ "${hrid}" != "android-arm64" ]] && file "${f}" | grep -q -e "ELF.*shared object.*aarch64" ; then
-				rm -rf "${f}" # .so
-			elif [[ "${hrid}" != "android-arm64" && "${hrid}" != "linux-x64" ]] && file "${f}" | grep -q -e "ELF.*shared object.*x86-64" ; then
-				rm -rf "${f}" # .so
-			elif [[ "${hrid}" != "android-x86" && "${hrid}" != "linux-x86" ]] && file "${f}" | grep -q -e "ELF.*shared object.*80386" ; then
-				rm -rf "${f}" # .so
-			elif [[ "${hrid}" != "linux-x64" ]] && file "${f}" | grep -q -e "ELF.*executable.*x86-64.*Linux" ; then
-				rm -rf "${f}" # executable
-			elif [[ "${hrid}" != "android-x64" ]] && file "${f}" | grep -q -e "ELF.*executable.*x86-64" ; then
-				rm -rf "${f}" # executable
-			elif [[ "${hrid}" != "android-x86" ]] && file "${f}" | grep -q -e "ELF.*executable.*80386" ; then
-				rm -rf "${f}" # executable
-			elif [[ "${hrid}" != "ios-arm" ]] && file "${f}" | grep -q -E -e "arm(|_v7):.*dynamically linked shared library" ; then
-				rm -rf "${f}" # dylib
-			elif [[ "${hrid}" != "ios-arm64" ]] && file "${f}" | grep -q -E -e "arm64(|e):.*dynamically linked shared library" ; then
-				rm -rf "${f}" # dylib
-			elif [[ "${hrid}" != "osx-x64" ]] && file "${f}" | grep -q -e "x86_64:.*dynamically linked shared library" ; then
-				rm -rf "${f}" # dylib
-			elif [[ "${hrid}" != "osx-x64" ]] && file "${f}" | grep -q -e "Mach-O.*x86_64 executable" ; then
-				rm -rf "${f}" # executable
-			elif [[ "${hrid}" != "win-x64" ]] && file "${f}" | grep -q -e "PE32\+ executable (console)" ; then
-				rm -rf "${f}" # .exe
-			elif [[ "${hrid}" != "win-x64" ]] && file "${f}" | grep -q -e "PE32\+ executable (console)" ; then
-				rm -rf "${f}" # .exe
-			fi
-		done
-fi
+		einfo "Pruning non-native microarchitecture folders"
+		prune_marches_bin "${hrid}"
+		prune_marches_folders "${ED}/opt/${SDK}/shared/${ns}.${hrid}/${MY_PV}/${tfm}" "${crid#*-}"
 	done
 }
 

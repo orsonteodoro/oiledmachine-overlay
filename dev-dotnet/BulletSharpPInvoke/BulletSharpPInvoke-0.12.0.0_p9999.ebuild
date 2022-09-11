@@ -63,7 +63,7 @@ ERIDS=(
 
 IUSE+=" ${ERIDS[@]} mono"
 REQUIRED_USE+="
-	|| (
+	^^ (
 		${ERIDS[@]}
 	)
 	elibc_Cygwin? (
@@ -338,7 +338,6 @@ src_configure() {
 			# Only allow for native for now
 			[[ "${hplatform}" == "linux" ]] || continue
 			local garch=$(get_garch "${erid}")
-			export CHOST=$(get_abi_CHOST "${garch}")
 			if [[ "${hplatform}" == "linux" ]] ; then
 				export CC="${CHOST}-gcc"
 				export CXX="${CHOST}-g++"
@@ -410,7 +409,6 @@ src_compile() {
 			# Only allow for native for now
 			einfo "hplatform=${hplatform}"
 			local garch=$(get_garch "${erid}")
-			export CHOST=$(get_abi_CHOST "${garch}")
 			if [[ "${hplatform}" == "linux" ]] ; then
 				export CC="${CHOST}-gcc"
 				export CXX="${CHOST}-g++"
@@ -432,7 +430,7 @@ eerror
 			# Build C# wrapper
 			export BUILD_DIR="${S}-${hrid}"
 			cd "${BUILD_DIR}/BulletSharp" || die
-			DOTNET_CLI_TELEMETRY_OPTOUT=1
+			export DOTNET_CLI_TELEMETRY_OPTOUT=1
 			dotnet publish "BulletSharp.sln" -c ${configuration} -r ${crid} --sc -o "${BUILD_DIR}/publish" || die
 		fi
 	done
