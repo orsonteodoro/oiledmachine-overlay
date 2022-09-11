@@ -211,31 +211,33 @@ prune_marches() {
 }
 
 _install_mono() {
-	insinto "/usr/lib/mono/${s}"
-	exeinto "/usr/lib/mono/${s}"
-
 	local tfm="${M[${TARGET_FRAMEWORK}]}"
-	dodir /usr/lib/mono/${tfm}
+# See explanation why 4.5 (for latest runtime assemblies) is being used
+# https://www.mono-project.com/docs/about-mono/releases/4.4.0/
+	local mtfm="4.5"
+	insinto "/usr/lib/mono/${mtfm}"
+	exeinto "/usr/lib/mono/${mtfm}"
+	dodir /usr/lib/mono/${mtfm}
 	dosym /opt/${SDK}/shared/Tesseract/${MY_PV}/${tfm}/Tesseract.dll \
-		/usr/lib/mono/${tfm}/Tesseract.dll
+		/usr/lib/mono/${mtfm}/Tesseract.dll
 	dosym /opt/${SDK}/shared/Tesseract.Drawing/${MY_PV}/${tfm}/Tesseract.Drawing.dll \
-		/usr/lib/mono/${tfm}/Tesseract.Drawing.dll
+		/usr/lib/mono/${mtfm}/Tesseract.Drawing.dll
 
 	dosym /opt/${SDK}/shared/Tesseract/${MY_PV}/${tfm}/Tesseract.dll \
-		/usr/lib/mono/${tfm}/Tesseract.dll
+		/usr/lib/mono/${mtfm}/Tesseract.dll
 
 	local narch=$(get_march "${CHOST}")
 	local v
 	v="${EXPECTED_LEPTONICA_PV}"
-	if [[ ! -e "${EPREFIX}/usr/lib/mono/${tfm}/leptonica-${v}.dll" ]] ; then
+	if [[ ! -e "${ESYSROOT}/usr/lib/mono/${mtfm}/leptonica-${v}.dll" ]] ; then
 		dosym /opt/${SDK}/shared/Tesseract/${MY_PV}/${tfm}/${narch}/leptonica-${v}.dll \
-			/usr/lib/mono/${tfm}/leptonica-${v}.dll
+			/usr/lib/mono/${mtfm}/leptonica-${v}.dll
 	fi
 	v=$(ver_cut 1-2 "${EXPECTED_TESSERACT_PV}")
 	v="${v/.}"
-	if [[ ! -e "${EPREFIX}/usr/lib/mono/${tfm}/tesseract${v}.dll" ]] ; then
+	if [[ ! -e "${ESYSROOT}/usr/lib/mono/${mtfm}/tesseract${v}.dll" ]] ; then
 		dosym /opt/${SDK}/shared/Tesseract/${MY_PV}/${tfm}/${narch}/tesseract${v}.dll \
-			/usr/lib/mono/${tfm}/tesseract${v}.dll
+			/usr/lib/mono/${mtfm}/tesseract${v}.dll
 	fi
 }
 
