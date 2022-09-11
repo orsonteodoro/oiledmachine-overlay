@@ -277,7 +277,7 @@ src_compile() {
 _get_publish() {
 	local ns="${1}"
 	if [[ "${ns}" =~ "ContentPipelines" ]] ; then
-		echo "src/bin/${mtfm}/publish"
+		echo "src/bin/${tfm}/publish"
 	elif [[ "${ns}" == "VelcroPhysics.MonoGame" ]] ; then
 		echo "src/VelcroPhysics/bin/${configuration}/${tfm}/publish"
 	elif [[ "${ns}" == "VelcroPhysics" ]] ; then
@@ -297,10 +297,12 @@ src_install() {
 		doins -r $(_get_publish "${ns}")/*
 		if use mono ; then
 			local mtfm=""
-			# Mono only supports <= .NET 4.8.x and netstandard 2.0
-			# See https://www.mono-project.com/docs/about-mono/releases/4.4.0/
-			# for why 4.5 is used for latest .NET. runtimes and x.y-api for
-			# runtime assemblies (used only for build time metadata only).
+#
+# Mono only supports <= .NET 4.8.x and <= .NET Standard 2.1
+# See https://www.mono-project.com/docs/about-mono/releases/4.4.0/
+# for why the 4.5 folder is used for the latest .NET runtimes and x.y-api for
+# reference assemblies (that are only for build time metadata only).
+#
 			[[ "${tfm}" == "net6.0" ]] && continue # Not compatible
 			[[ "${tfm}" == "net5.0" ]] && continue # Not compatible
 			[[ "${tfm}" == "netstandard2.0" ]] && mtfm="4.5"
