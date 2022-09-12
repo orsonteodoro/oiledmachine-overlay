@@ -9,7 +9,6 @@ dev-dotnet/atitextureconverter
 dev-dotnet/farseer-physics-engine
 dev-dotnet/freeimagenet
 dev-dotnet/gnome-sharp
-dev-dotnet/gtk-sharp
 dev-dotnet/gwen-dotnet
 dev-dotnet/libgit2sharp
 dev-dotnet/lidgren-network-gen3
