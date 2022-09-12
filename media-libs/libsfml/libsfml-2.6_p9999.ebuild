@@ -19,7 +19,7 @@ LICENSE="
 "
 # The extra licenses are due to the prebuilt libraries in extlibs
 # See https://github.com/SFML/SFML/blob/2.6.x/license.md#external-libraries-used-by-sfml
-# Missing copyright notices for BSD
+# See headers for copyright notices for BSD.
 # all-rights-reserved Boost-1.0 - extlibs/headers/catch.hpp
 # The Boost-1.0 license template doesn't contain all rights reserved
 
@@ -133,7 +133,7 @@ S="${WORKDIR}/${P}"
 EXPECTED_DEPENDS="\
 490b9b7c315763a3fa5bfe5123371de4c5a7bace6bc1e39db2cd270c2a7fb2b8\
 353c5bc684d32ae577ce31c90aa9199d66191fe3344cc59dc52c99f5f62f1c72"
-RESTRICT="fetch" # Missing BSD copyright notices
+RESTRICT=""  # See headers for copyright notices
 PATCHES=(
 	"${FILESDIR}/libsfml-2.6x_p9999-drm-null.patch"
 )
@@ -221,7 +221,7 @@ src_configure() {
 	if use elibc_bionic || ( use elibc_Darwin && use ios ) ; then
 		mycmakeargs+=( -DSFML_OPENGL_ES=TRUE )
 	else
-		mycmakeargs+=( -DSFML_OPENGL_ES=FLASE )
+		mycmakeargs+=( -DSFML_OPENGL_ES=FALSE )
 	fi
 	if use drm ; then
 		mycmakeargs+=( -DSFML_USE_DRM=TRUE )

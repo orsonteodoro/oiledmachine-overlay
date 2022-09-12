@@ -18,7 +18,6 @@ dev-dotnet/ndesk-options
 dev-dotnet/nvorbis
 dev-dotnet/opentk
 dev-dotnet/pvrtexlibnet
-dev-dotnet/sfmldotnet
 dev-dotnet/sharpfont
 dev-dotnet/sharpnav
 dev-dotnet/tesseract

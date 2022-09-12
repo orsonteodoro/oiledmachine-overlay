@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <longdescription lang="en">
+    SFML is C++ and main library doing the heavy lifting.
+
+    CSFML are bindings for C and make it possible to use SFML in C.
+  </longdescription>
+  <upstream>
+    <remote-id type="github">SFML/CSFML</remote-id>
+  </upstream>
+</pkgmetadata>

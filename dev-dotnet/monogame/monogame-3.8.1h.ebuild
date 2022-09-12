@@ -647,7 +647,7 @@ prune_marches_bin() {
 			rm -vrf "${f}" # executable
 		elif [[ "${hrid}" != "win-x86" ]] && file "${f}" | grep -q -e "PE32 executable.*Windows" ; then
 			rm -vrf "${f}" # .exe
-		elif [[ "${hrid}" != "win-x64" ]] && file "${f}" | grep -q -e "PE32\+ executable.*Windows" ; then
+		elif [[ "${hrid}" != "win-x64" ]] && file "${f}" | grep -q -e "PE32[+] executable.*Windows" ; then
 			rm -vrf "${f}" # .exe
 		fi
 	done

@@ -1,0 +1,10 @@
+--- SFML-2.5.1/src/SFML/Window/EglContext.hpp.orig	2022-09-11 19:07:18.731106626 -0700
++++ SFML-2.5.1/src/SFML/Window/EglContext.hpp	2022-09-11 19:08:49.722770532 -0700
+@@ -33,6 +33,7 @@
+ #include <SFML/Window/EGLCheck.hpp>
+ #include <SFML/Window/GlContext.hpp>
+ #include <SFML/OpenGL.hpp>
++#include <X11/Xutil.h>
+ 
+ 
+ namespace sf
