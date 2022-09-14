@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Only for this ebuild fork on the oildmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+  </longdescription>
+  <upstream>
+    <remote-id type="github">mono/msbuild</remote-id>
+  </upstream>
+  <use>
+    <flag name="symlink">
+      Add compatibility symlinks to /usr/bin
+    </flag>
+  </use>
+  <slots>
+    <slot name="16">
+      For Mono
+    </slot>
+    <slot name="17">
+      For .NET 6+
+    </slot>
+  </slots>
+</pkgmetadata>

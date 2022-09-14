@@ -1,0 +1,139 @@
+diff -urp sharpnav-1.0.0_alpha2_p9999.orig/Source/SharpNav/SharpNav.csproj sharpnav-1.0.0_alpha2_p9999/Source/SharpNav/SharpNav.csproj
+--- sharpnav-1.0.0_alpha2_p9999.orig/Source/SharpNav/SharpNav.csproj	2022-09-14 15:25:59.815139762 -0700
++++ sharpnav-1.0.0_alpha2_p9999/Source/SharpNav/SharpNav.csproj	2022-09-14 15:27:48.627424046 -0700
+@@ -76,29 +76,29 @@
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="Newtonsoft.Json">
+-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
++      <HintPath>$(NuGetPackageRoot2)\packages\newtonsoft.json\8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+     </Reference>
+     <Reference Include="YamlDotNet">
+-      <HintPath>..\packages\YamlDotNet.Signed.3.8.0\lib\net35\YamlDotNet.dll</HintPath>
++      <HintPath>$(NuGetPackageRoot2)\packages\yamldotnet.signed\3.8.0\lib\net35\YamlDotNet.dll</HintPath>
+     </Reference>
+   </ItemGroup>
+   <!-- Configuration specific items -->
+   <ItemGroup Condition="'$(Configuration)' == 'OpenTK'">
+     <Reference Include="OpenTK">
+-      <HintPath>..\packages\OpenTK.1.1.2225.0\lib\net20\OpenTK.dll</HintPath>
++      <HintPath>$(NuGetPackageRoot2)\packages\opentk\1.1.2225\lib\net20\OpenTK.dll</HintPath>
+     </Reference>
+   </ItemGroup>
+   <ItemGroup Condition="'$(Configuration)' == 'SharpDX'">
+     <Reference Include="SharpDX">
+-      <HintPath>..\packages\SharpDX.3.0.2\lib\net45\SharpDX.dll</HintPath>
++      <HintPath>$(NuGetPackageRoot2)\packages\sharpdx\3.0.2\lib\net45\SharpDX.dll</HintPath>
+     </Reference>
+     <Reference Include="SharpDX.Mathematics">
+-      <HintPath>..\packages\SharpDX.Mathematics.3.0.2\lib\net45\SharpDX.Mathematics.dll</HintPath>
++      <HintPath>$(NuGetPackageRoot2)\packages\sharpdx.mathematics\3.0.2\lib\net45\SharpDX.Mathematics.dll</HintPath>
+     </Reference>
+   </ItemGroup>
+   <ItemGroup Condition="'$(Configuration)' == 'MonoGame'">
+     <Reference Include="MonoGame.Framework, Version=3.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.Portable.3.2.99.1-Beta\lib\portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10\MonoGame.Framework.dll</HintPath>
++      <HintPath>$(NuGetPackageRoot2)\packages\monogame.framework.portable\3.2.99.1-beta\lib\portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10\MonoGame.Framework.dll</HintPath>
+       <Private>True</Private>
+     </Reference>
+   </ItemGroup>
+@@ -204,4 +204,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp sharpnav-1.0.0_alpha2_p9999.orig/Source/SharpNav.CLI/SharpNav.CLI.csproj sharpnav-1.0.0_alpha2_p9999/Source/SharpNav.CLI/SharpNav.CLI.csproj
+--- sharpnav-1.0.0_alpha2_p9999.orig/Source/SharpNav.CLI/SharpNav.CLI.csproj	2022-09-14 15:25:59.775138187 -0700
++++ sharpnav-1.0.0_alpha2_p9999/Source/SharpNav.CLI/SharpNav.CLI.csproj	2022-09-14 15:27:53.123601067 -0700
+@@ -40,7 +40,7 @@
+   </PropertyGroup>
+   <ItemGroup>
+     <Reference Include="Mono.Options">
+-      <HintPath>..\packages\Mono.Options.4.4.0.0\lib\net4-client\Mono.Options.dll</HintPath>
++      <HintPath>$(NuGetPackageRoot2)\packages\mono.options\4.4.0\lib\net4-client\Mono.Options.dll</HintPath>
+     </Reference>
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+@@ -72,4 +72,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp sharpnav-1.0.0_alpha2_p9999.orig/Source/SharpNav.Examples/SharpNav.Examples.csproj sharpnav-1.0.0_alpha2_p9999/Source/SharpNav.Examples/SharpNav.Examples.csproj
+--- sharpnav-1.0.0_alpha2_p9999.orig/Source/SharpNav.Examples/SharpNav.Examples.csproj	2022-09-14 15:25:59.779138345 -0700
++++ sharpnav-1.0.0_alpha2_p9999/Source/SharpNav.Examples/SharpNav.Examples.csproj	2022-09-14 15:27:51.859551299 -0700
+@@ -70,7 +70,7 @@
+       <HintPath>..\..\Dependencies\Gwen.Renderer.OpenTK.dll</HintPath>
+     </Reference>
+     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\packages\OpenTK.1.1.2349.61993\lib\NET40\OpenTK.dll</HintPath>
++      <HintPath>$(NuGetPackageRoot2)\packages\opentk\1.1.2349.61993\lib\NET40\OpenTK.dll</HintPath>
+       <Private>True</Private>
+     </Reference>
+     <Reference Include="System" />
+@@ -127,4 +127,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp sharpnav-1.0.0_alpha2_p9999.orig/Source/SharpNav.Tests/SharpNav.Tests.csproj sharpnav-1.0.0_alpha2_p9999/Source/SharpNav.Tests/SharpNav.Tests.csproj
+--- sharpnav-1.0.0_alpha2_p9999.orig/Source/SharpNav.Tests/SharpNav.Tests.csproj	2022-09-14 15:25:59.791138817 -0700
++++ sharpnav-1.0.0_alpha2_p9999/Source/SharpNav.Tests/SharpNav.Tests.csproj	2022-09-14 15:27:50.595501533 -0700
+@@ -81,36 +81,36 @@
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="Newtonsoft.Json">
+-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
++      <HintPath>$(NuGetPackageRoot2)\packages\newtonsoft.json\8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+     </Reference>
+     <Reference Include="nunit.framework">
+-      <HintPath>..\packages\NUnit.3.2.1\lib\net45\nunit.framework.dll</HintPath>
++      <HintPath>$(NuGetPackageRoot2)\packages\nunit\3.2.1\lib\net45\nunit.framework.dll</HintPath>
+     </Reference>
+   </ItemGroup>
+   <ItemGroup Condition="'$(Configuration)' == 'SharpDX'">
+     <Reference Include="SharpDX">
+-      <HintPath>..\packages\SharpDX.3.0.2\lib\net45\SharpDX.dll</HintPath>
++      <HintPath>$(NuGetPackageRoot2)\packages\sharpdx\3.0.2\lib\net45\SharpDX.dll</HintPath>
+     </Reference>
+     <Reference Include="SharpDX.Mathematics">
+-      <HintPath>..\packages\SharpDX.Mathematics.3.0.2\lib\net45\SharpDX.Mathematics.dll</HintPath>
++      <HintPath>$(NuGetPackageRoot2)\packages\sharpdx.mathematics\3.0.2\lib\net45\SharpDX.Mathematics.dll</HintPath>
+     </Reference>
+   </ItemGroup>
+   <ItemGroup Condition="'$(Configuration)' == 'OpenTK'">
+ 	<Reference Include="OpenTK">
+-		<HintPath>..\packages\OpenTK.1.1.2225.0\lib\net20\OpenTK.dll</HintPath>
++		<HintPath>$(NuGetPackageRoot2)\packages\opentk\1.1.2225\lib\net20\OpenTK.dll</HintPath>
+ 	</Reference>
+   </ItemGroup>
+   <ItemGroup Condition="'$(Configuration)' == 'MonoGame'">
+ 	<Reference Include="MonoGame.Framework, Version=3.5.1.1679, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.5.1.1679\lib\net40\MonoGame.Framework.dll</HintPath>
++      <HintPath>$(NuGetPackageRoot2)\packages\monogame.framework.desktopgl\3.5.1.1679\lib\net40\MonoGame.Framework.dll</HintPath>
+       <Private>True</Private>
+     </Reference>
+     <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.5.1.1679\lib\net40\NVorbis.dll</HintPath>
++      <HintPath>$(NuGetPackageRoot2)\packages\monogame.framework.desktopgl\3.5.1.1679\lib\net40\NVorbis.dll</HintPath>
+       <Private>True</Private>
+     </Reference>
+ 	<Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.5.1.1679\lib\net40\OpenTK.dll</HintPath>
++      <HintPath>$(NuGetPackageRoot2)\packages\monogame.framework.desktopgl\3.5.1.1679\lib\net40\OpenTK.dll</HintPath>
+       <Private>True</Private>
+     </Reference>
+   </ItemGroup>
+@@ -156,4 +156,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>

@@ -4,15 +4,14 @@
 
 EAPI=7
 
-DOTNET_PV="6.0"
-inherit dotnet eutils git-r3
+inherit eutils git-r3
 
 DESCRIPTION="SharpNav is advanced pathfinding for C#"
 HOMEPAGE="http://sharpnav.com"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 PROJECT_NAME="SharpNav"
-USE_DOTNET="net46"
+USE_DOTNET="net451"
 UCONFIGURATIONS=(
 	MonoGame
 	OpenTK
@@ -57,7 +56,7 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 BDEPEND+="
-	>=dev-dotnet/dotnet-sdk-bin-${DOTNET_PV}:${DOTNET_PV}
+	dev-dotnet/msbuild-bin:16[symlink]
 "
 SRC_URI=""
 S="${WORKDIR}/${P}"
@@ -66,22 +65,11 @@ EGIT_REPO_URI="https://github.com/Robmaister/SharpNav.git"
 EGIT_BRANCH="master"
 EGIT_COMMIT="HEAD"
 
-# The dotnet-sdk-bin supports only 1 ABI at a time.
-DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-${DOTNET_PV}" )
-
 PATCHES=(
-	"${FILESDIR}/${PN}-1.0.0_alpha2_p9999-deps-update-v2.patch"
-	"${FILESDIR}/${PN}-9999.20161023-yamldotnet-5.1.0.patch"
-	"${FILESDIR}/${PN}-9999.20161023-embedded-resource-v2.patch"
-	# FIXME:  Update deps-update for SharpDX, tests
+	"${FILESDIR}/${PN}-1.0.0_alpha2_p9999-deps-update-v3.patch"
 )
 
 pkg_setup() {
-	# Broken examples
-	ewarn "Package is WIP"
-
-	use sharpdx && ewarn "SharpDX support is incomplete in the ebuild level."
-	dotnet_pkg_setup
 	if has network-sandbox ${FEATURES} ; then
 eerror
 eerror "Building requires network-sandbox to be disabled in FEATURES on a"
@@ -89,47 +77,6 @@ eerror "per-package level."
 eerror
 		die
 	fi
-
-	local found=0
-	for sdk in ${DOTNET_SUPPORTED_SDKS[@]} ; do
-		if [[ -e "${EPREFIX}/opt/${sdk}" ]] ; then
-			export SDK="${sdk}"
-			export PATH="${EPREFIX}/opt/${sdk}:${PATH}"
-			found=1
-			break
-		fi
-	done
-	if (( ${found} != 1 )) ; then
-eerror
-eerror "You need a dotnet SDK."
-eerror
-eerror "Supported SDK versions: ${DOTNET_SUPPORTED_SDKS[@]}"
-eerror
-		die
-	fi
-}
-
-# Copy and sanitize permissions
-copy_next_to_file() {
-	local source="${1}"
-	local attachment="${2}"
-	local bn_attachment=$(basename "${attachment}")
-	local permissions="${3}"
-	local owner="${4}"
-	local fingerprint=$(sha256sum "${source}" | cut -f 1 -d " ")
-	for x in $(find "${ED}" -type f) ; do
-		[[ -L "${x}" ]] && continue
-		x_fingerprint=$(sha256sum "${x}" | cut -f 1 -d " ")
-		if [[ "${fingerprint}" == "${x_fingerprint}" ]] ; then
-			local destdir=$(dirname "${x}")
-			cp -a "${attachment}" "${destdir}" || die
-			chmod "${permissions}" "${destdir}/${bn_attachment}" || die
-			chown "${owner}" "${destdir}/${bn_attachment}" || die
-einfo
-einfo "Copied ${attachment} -> ${destdir}"
-einfo
-		fi
-	done
 }
 
 EXPECTED_BUILD_FILES="\
@@ -176,16 +123,8 @@ src_prepare() {
 			Source/SharpNav/Geometry/Intersection.cs || die
 	fi
 
-	local f
-	for f in $(find "${S}" -name "*.csproj") ; do
-		einfo "Editing ${f}:  4.5.1 -> 4.7.1"
-		sed -i -e "s|TargetFrameworkVersion>v4.5.1|TargetFrameworkVersion>v4.7.1|g" "${f}" || die
-	done
-
 	sed -i -e "s|AssemblyName>SharpNav|AssemblyName>SharpNav.CLI|g" \
 		"${S}/Source/SharpNav.CLI/SharpNav.CLI.csproj" || die
-	rm -f "${S}/Source/SharpNav.Examples/Properties/Resources.Designer.cs" \
-		|| die
 
 	local uc
 	for uc in $(_get_configration) ; do
@@ -238,7 +177,6 @@ prun() {
 
 src_compile() {
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
-#	export DisableOutOfProcTaskHost=true
 
 	local uc
 	for uc in $(_get_configration) ; do
@@ -249,12 +187,15 @@ src_compile() {
 				if use "${uc,,}" && ns_has_configuration "${ns}" "${uc}" ; then
 					einfo "Restoring ${ns}"
 					prun \
-					dotnet msbuild \
+					msbuild \
 						"${ns}/${ns}.csproj" \
+						-restore:True \
+						-p:RestorePackagesConfig=true \
 						-t:restore \
-						-p:Configuration="${uc}" \
 						-p:Platform=AnyCPU \
-						-p:NuGetPackageRoot2="${HOME}/.nuget"
+						-p:Configuration="${uc}" \
+						-p:NuGetPackageRoot2="${HOME}/.nuget" \
+						/p:SolutionDir="${S}_${uc}"
 				elif use "${uc,,}" && ! ns_has_configuration "${ns}" "${uc}" ; then
 					ewarn "${ns} does not have ${uc} configuration"
 				fi
@@ -270,7 +211,7 @@ src_compile() {
 				if use "${uc,,}" && ns_has_configuration "${ns}" "${uc}" ; then
 					einfo "Building ${ns}"
 					prun \
-					dotnet msbuild \
+					msbuild \
 						"${ns}/${ns}.csproj" \
 						-t:build \
 						-p:Configuration="${uc}" \
