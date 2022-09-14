@@ -5,14 +5,14 @@
 EAPI=7
 
 DOTNET_PV="6.0"
-inherit dotnet eutils gac git-r3
+inherit dotnet eutils git-r3
 
 DESCRIPTION="SharpNav is advanced pathfinding for C#"
 HOMEPAGE="http://sharpnav.com"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 PROJECT_NAME="SharpNav"
-USE_DOTNET="net45"
+USE_DOTNET="net46"
 UCONFIGURATIONS=(
 	MonoGame
 	OpenTK
@@ -22,12 +22,11 @@ UCONFIGURATIONS=(
 IUSE="
 ${USE_DOTNET}
 ${UCONFIGURATIONS[@],,}
-developer +gac extras tests
+cli-client developer examples extras gui-client
 "
 REQUIRED_USE="
 	|| ( ${USE_DOTNET} )
 	|| ( ${UCONFIGURATIONS[@],,} )
-	gac? ( net45 )
 	sharpdx? (
 		|| (
 			elibc_mingw
@@ -38,6 +37,15 @@ REQUIRED_USE="
 SLOT="0/${PV}"
 RDEPEND="
 	dev-dotnet/gwen-dotnet
+	examples? (
+		opentk? (
+			media-libs/freealut
+			media-libs/libsdl2
+			virtual/opencl
+			virtual/opengl
+			x11-libs/libX11
+		)
+	)
 	monogame? (
 		dev-dotnet/monogame
 		dev-dotnet/nvorbis
@@ -61,7 +69,18 @@ EGIT_COMMIT="HEAD"
 # The dotnet-sdk-bin supports only 1 ABI at a time.
 DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-${DOTNET_PV}" )
 
+PATCHES=(
+	"${FILESDIR}/${PN}-1.0.0_alpha2_p9999-deps-update-v2.patch"
+	"${FILESDIR}/${PN}-9999.20161023-yamldotnet-5.1.0.patch"
+	"${FILESDIR}/${PN}-9999.20161023-embedded-resource-v2.patch"
+	# FIXME:  Update deps-update for SharpDX, tests
+)
+
 pkg_setup() {
+	# Broken examples
+	ewarn "Package is WIP"
+
+	use sharpdx && ewarn "SharpDX support is incomplete in the ebuild level."
 	dotnet_pkg_setup
 	if has network-sandbox ${FEATURES} ; then
 eerror
@@ -144,19 +163,9 @@ _get_configration() {
 
 src_prepare() {
 	default
-	local suffix
-	for suffix in $(_get_configration) ; do
-		cp -a "${S}" "${S}_${suffix}" || die
-	done
-}
-
-Asrc_prepare() {
-	default
-	eapply "${FILESDIR}/${PN}-9999.20161023-refs-1.patch"
-	eapply "${FILESDIR}/${PN}-9999.20161023-refs-2.patch"
 
 	# Disable for the unit tests
-	if use tests ; then
+	if has tests ${IUSE} && use tests ; then
 		sed -i -r -e "s|internal|public|g" \
 			Source/SharpNav/MathHelper.cs || die
 		sed -i -r -e "s|internal|public|g" \
@@ -165,21 +174,50 @@ Asrc_prepare() {
 			Source/SharpNav/Geometry/Containment.cs || die
 		sed -i -r -e "s|internal|public|g" \
 			Source/SharpNav/Geometry/Intersection.cs || die
-		eapply "${FILESDIR}/${PN}-9999.20161023-mathhelper-pi.patch"
-		eapply "${FILESDIR}/${PN}-9999.20161023-missing-nunit-ref.patch"
-	else
-		eapply "${FILESDIR}/${PN}-9999.20161013-no-tests.patch"
 	fi
 
+	local f
+	for f in $(find "${S}" -name "*.csproj") ; do
+		einfo "Editing ${f}:  4.5.1 -> 4.7.1"
+		sed -i -e "s|TargetFrameworkVersion>v4.5.1|TargetFrameworkVersion>v4.7.1|g" "${f}" || die
+	done
+
+	sed -i -e "s|AssemblyName>SharpNav|AssemblyName>SharpNav.CLI|g" \
+		"${S}/Source/SharpNav.CLI/SharpNav.CLI.csproj" || die
+	rm -f "${S}/Source/SharpNav.Examples/Properties/Resources.Designer.cs" \
+		|| die
+
+	local uc
+	for uc in $(_get_configration) ; do
+		cp -a "${S}" "${S}_${uc}" || die
+
+	done
 }
 
 NS=(
 	"SharpNav"
-	"SharpNav.CLI"
 	"SharpNav.Examples"
 	"SharpNav.GUI"
-#	"SharpNav.Tests"
+	"SharpNav.Tests"
+	"SharpNav.CLI"
 )
+
+_get_NS() {
+	local ns
+	for ns in ${NS[@]} ; do
+		if [[ "${ns}" == "SharpNav.CLI" ]] ; then
+			use cli-client && echo "${ns}"
+		elif [[ "${ns}" == "SharpNav.Examples" ]] ; then
+			use examples && echo "${ns}"
+		elif [[ "${ns}" == "SharpNav.GUI" ]] ; then
+			use gui-client && echo "${ns}"
+		elif [[ "${ns}" == "SharpNav.Tests" ]] ; then
+			has "test" "${IUSE}" && use test && echo "${ns}"
+		else
+			echo "${ns}"
+		fi
+	done
+}
 
 # From dotnet.eclass removing /p:Configuration
 _exbuild() {
@@ -187,79 +225,207 @@ _exbuild() {
 	xbuild "$@" /tv:4.0 /p:TargetFrameworkVersion=v"${FRAMEWORK}" || die
 }
 
-src_compile() {
-	export DOTNET_CLI_TELEMETRY_OPTOUT=1
-	local ns
-	for ns in ${NS[@]} ; do
-		local uc
-		for uc in $(_get_configration) ; do
-			pushd "${S}_${uc}" || die
-				cd "Source" || die
-				if use "${uc,,}" ; then
-					dotnet msbuild \
-						"${ns}/${ns}.csproj" \
-						-t:restore \
-						-p:RestorePackagesConfig=true \
-						-p:Configuration="${uc}" \
-						-p:Platform=AnyCPU \
-						|| die
-					_exbuild \
-						/p:Configuration="${uc}" \
-						/p:Platform=AnyCPU \
-						"${ns}/${ns}.csproj" \
-						|| die
-				fi
-			popd
-		done
-	done
+ns_has_configuration() {
+	local ns="${1}"
+	local configuration="${2}"
+	grep -q "${configuration}" "${ns}/${ns}.csproj"
 }
 
+prun() {
+	einfo "cmd:  ${@}"
+	${@} || die
+}
 
-src_install() {
-	local configuration="Release"
-	exeinto "/usr/lib/mono/4.5"
-	insinto "/usr/lib/mono/4.5"
-	d_base="${d}"
-
-	die
+src_compile() {
+	export DOTNET_CLI_TELEMETRY_OPTOUT=1
+#	export DisableOutOfProcTaskHost=true
 
 	local uc
 	for uc in $(_get_configration) ; do
 		pushd "${S}_${uc}" || die
-			if use "${uc}" ; then
-		                egacinstall "${WORKDIR}/${uc}/SharpNav.dll" \
-					"${PN}/${uc}"
-				insinto "${d_base}/${uc}"
-				doins "${WORKDIR}/${uc}/SharpNav.dll"
-				if use developer ; then
-					doins "${WORKDIR}/${uc}/SharpNav.dll.mdb"
-					doins "${WORKDIR}/${uc}/SharpNav.XML"
-					copy_next_to_file \
-						"${WORKDIR}/${uc}/SharpNav.dll" \
-						"${WORKDIR}/${uc}/SharpNav.dll.mdb"
-						644 \
-						root:root
-					copy_next_to_file \
-						"${WORKDIR}/${uc}/SharpNav.dll" \
-						"${WORKDIR}/${uc}/SharpNav.XML"
-						644 \
-						root:root
+			cd "Source" || die
+			local ns
+			for ns in $(_get_NS) ; do
+				if use "${uc,,}" && ns_has_configuration "${ns}" "${uc}" ; then
+					einfo "Restoring ${ns}"
+					prun \
+					dotnet msbuild \
+						"${ns}/${ns}.csproj" \
+						-t:restore \
+						-p:Configuration="${uc}" \
+						-p:Platform=AnyCPU \
+						-p:NuGetPackageRoot2="${HOME}/.nuget"
+				elif use "${uc,,}" && ! ns_has_configuration "${ns}" "${uc}" ; then
+					ewarn "${ns} does not have ${uc} configuration"
 				fi
-				if use extras && [[ "${uc}" == "Standalone" ]] ; then
-					insinto "${d_base}/bin"
-					doins \
-				"Binaries/Clients/GUI/${uc}/SharpNavGUI.exe"
-					doins \
-				"Binaries/Clients/CLI/${uc}/SharpNav.exe"
+			done
+		popd
+	done
+
+	local uc
+	for uc in $(_get_configration) ; do
+		pushd "${S}_${uc}" || die
+			cd "Source" || die
+			for ns in $(_get_NS) ; do
+				if use "${uc,,}" && ns_has_configuration "${ns}" "${uc}" ; then
+					einfo "Building ${ns}"
+					prun \
+					dotnet msbuild \
+						"${ns}/${ns}.csproj" \
+						-t:build \
+						-p:Configuration="${uc}" \
+						-p:Platform=AnyCPU \
+						-p:NuGetPackageRoot2="${HOME}/.nuget"
+				elif use "${uc,,}" && ! ns_has_configuration "${ns}" "${uc}" ; then
+					ewarn "${ns} does not have ${uc} configuration"
 				fi
-			fi
+			done
 		popd
 	done
 }
 
-pkg_postinst() {
-	einfo "The standalone dll is placed in the gac but the other"
-	einfo "(MonoGame and OpenTK) dlls have been placed outside the gac"
+get_march() {
+	local chost="${1}"
+	if [[ "${chost}" =~ "arm".*"hf" ]] ; then
+		echo "arm"
+	elif [[ "${chost}" =~ "arm" ]] ; then
+		echo "armel"
+	elif [[ "${chost}" =~ "armv6" ]] ; then
+		echo "armv6"
+	elif [[ "${chost}" =~ "aaarch" ]] ; then
+		echo "arm64"
+	elif [[ "${chost}" =~ "loongarch64" ]] ; then
+		echo "loongarch64"
+	elif [[ "${chost}" =~ "s390x" ]] ; then
+		echo "s390x"
+	elif [[ "${chost}" =~ "powerpc64le" ]] ; then
+		echo "ppc64le"
+	elif [[ "${chost}" =~ "mips64el" ]] ; then
+		echo "mips64" # LE
+	elif [[ "${chost}" =~ "x86_64" ]] ; then
+		echo "x64"
+	elif [[ "${chost}" =~ i[3456]86 ]] ; then
+		echo "x86"
+	else
+eerror
+eerror "Microarch is not supported"
+eerror
+eerror "CHOST:  ${CHOST}"
+eerror "Supported and expected microarches:  ${MARCH[@]}"
+eerror
+		die
+	fi
+}
+
+_prune_marches() {
+	local path="${1}"
+	local MARCH=(
+		"arm"
+		"arm64"
+		"armel"
+		"armv6"
+		"loongarch64"
+		"mips64"
+		"ppc64le"
+		"s390x"
+		"x64"
+		"x86"
+	)
+
+	local narch=$(get_march "${CHOST}")
+
+	einfo "Pruning non-native microarchitectures"
+	local march
+	for march in ${MARCH[@]} ; do
+		local d
+		for d in $(find "${path}" -type d -name "${march}") ; do
+			local a
+			a=$(basename "${d}")
+			if [[ "${a}" != "${narch}" ]] ; then
+				rm -vrf "${d}" || true
+			fi
+		done
+	done
+}
+
+_install_dir() {
+	local dir="${1}"
+	[[ -d "${dir}" ]] && doins -r "${dir}"/*
+}
+
+_install_files() {
+	local uc="${1}"
+	local ns="${2}"
+
+	local assembly_folder="4.5"
+	if [[ "${uc}" == "Standalone" ]] && [[ "${ns}" == "SharpNav.CLI" ]] ; then
+		insinto "/usr/lib/mono/${assembly_folder}/SharpNav/Standalone/CLI"
+		_install_dir "Binaries/Clients/CLI/Standalone"
+	fi
+	if [[ "${uc}" == "Standalone" ]] && [[ "${ns}" == "SharpNav.GUI" ]] ; then
+		insinto "/usr/lib/mono/${assembly_folder}/SharpNav/Standalone/GUI"
+		_install_dir "Binaries/Clients/GUI/Standalone"
+	fi
+	if [[ "${uc}" == "Standalone" ]] && [[ "${ns}" == "SharpNav.Examples" ]] ; then
+		insinto "/usr/lib/mono/${assembly_folder}/SharpNav/Standalone/Examples"
+		_install_dir "Binaries/Examples/Standalone"
+	fi
+	if [[ "${uc}" == "Standalone" ]] && [[ "${ns}" == "SharpNav" ]] ; then
+		insinto "/usr/lib/mono/${assembly_folder}/SharpNav/Standalone/lib/net451"
+		_install_dir "Binaries/SharpNav/Standalone"
+	fi
+	if [[ "${uc}" == "MonoGame" ]] && [[ "${ns}" == "SharpNav" ]] ; then
+		insinto "/usr/lib/mono/${assembly_folder}/SharpNav/MonoGame/lib/net451"
+		_install_dir "Binaries/SharpNav/MonoGame"
+	fi
+	if [[ "${uc}" == "OpenTK" ]] && [[ "${ns}" == "Examples" ]] ; then
+		insinto "/usr/lib/mono/${assembly_folder}/SharpNav/OpenTK/Examples"
+		_install_dir "Binaries/Examples/OpenTK"
+	fi
+	if [[ "${uc}" == "OpenTK" ]] && [[ "${ns}" == "SharpNav" ]] ; then
+		insinto "/usr/lib/mono/${assembly_folder}/SharpNav/OpenTK/lib/net451"
+		_install_dir "Binaries/SharpNav/OpenTK"
+	fi
+	if [[ "${uc}" == "SharpDX" ]] && [[ "${ns}" == "SharpNav" ]] ; then
+		insinto "/usr/lib/mono/${assembly_folder}/SharpNav/SharpDX/lib/net451"
+		_install_dir "Binaries/SharpNav/SharpDX"
+	fi
+}
+
+_fix_permissions() {
+einfo
+einfo "Restoring file permissions"
+einfo
+	local x
+	for x in $(find "${ED}") ; do
+		local path=$(echo "${x}" | sed -e "s|${ED}||g")
+		if file "${x}" | grep -q "executable" ; then
+			fperms 0775 "${path}"
+		elif file "${x}" | grep -q "shared object" ; then
+			fperms 0775 "${path}"
+		elif file "${x}" | grep -q "shared library" ; then
+			fperms 0775 "${path}"
+		fi
+	done
+}
+
+src_install() {
+	local configuration="Release"
+
+	local uc
+	for uc in $(_get_configration) ; do
+		pushd "${S}_${uc}" || die
+			local ns
+			for ns in $(_get_NS) ; do
+				_install_files "${uc}" "${ns}"
+			done
+		popd
+	done
+	_prune_marches "${ED}"
+	_fix_permissions
+	if ! use developer ; then
+		find "${ED}" \( -name "*.pdb" -o -name "*xml" \) -delete
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

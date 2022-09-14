@@ -1,0 +1,31 @@
+diff -urp sharpnav-1.0.0_alpha2_p9999.orig/Source/SharpNav.Examples/SharpNav.Examples.csproj sharpnav-1.0.0_alpha2_p9999/Source/SharpNav.Examples/SharpNav.Examples.csproj
+--- sharpnav-1.0.0_alpha2_p9999.orig/Source/SharpNav.Examples/SharpNav.Examples.csproj	2022-09-13 23:37:47.027526451 -0700
++++ sharpnav-1.0.0_alpha2_p9999/Source/SharpNav.Examples/SharpNav.Examples.csproj	2022-09-13 23:39:37.119890667 -0700
+@@ -27,6 +27,7 @@
+     <UseApplicationTrust>false</UseApplicationTrust>
+     <BootstrapperEnabled>true</BootstrapperEnabled>
+     <TargetFrameworkProfile />
++    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+   </PropertyGroup>
+   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+     <PlatformTarget>AnyCPU</PlatformTarget>
+@@ -78,6 +79,7 @@
+     <Reference Include="System.Core" />
+     <Reference Include="Microsoft.CSharp" />
+     <Reference Include="System.Drawing" />
++    <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
+   </ItemGroup>
+   <ItemGroup>
+     <Compile Include="AgentCylinder.cs" />
+@@ -117,6 +119,11 @@
+   <ItemGroup>
+     <EmbeddedResource Include="Properties\Resources.resx">
+       <Generator>ResXFileCodeGenerator</Generator>
++      <PublicClass>true</PublicClass>
++      <StronglyTypedFileName>Properites\Resources.Designer.cs</StronglyTypedFileName>
++      <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
++      <StronglyTypedNamespace>SharpNav.Examples</StronglyTypedNamespace>
++      <StronglyTypedClassName>Resource</StronglyTypedClassName>
+       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+     </EmbeddedResource>
+   </ItemGroup>
