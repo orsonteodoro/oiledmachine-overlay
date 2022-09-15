@@ -45,7 +45,7 @@ zh-Hant
 )
 IUSE="
 ${LANGS[@]/#/l10n_}
-symlink
+replace-vulnerable-dll symlink
 "
 REQUIRED_USE="
 	l10n_en
@@ -143,14 +143,4 @@ EOF
 	cat "${DISTDIR}/dotnet-runtime-6c0cdd8-PATENTS.TXT" \
 		> "${T}/licenses/dotnet-runtime-PATENTS.TXT"
 	dodoc "${T}/licenses/dotnet-runtime-PATENTS.TXT"
-}
-
-pkg_postinst() {
-# See for dependencies https://github.com/mono/msbuild/blob/v16.9.0/eng/Packages.props
-# See https://www.nuget.org/packages/System.Security.Cryptography.Xml/4.7.0
-ewarn
-ewarn "Security notice:"
-ewarn
-ewarn "This package may contain vulnerabilities in System.Security.Cryptography.Xml (4.7.0)"
-ewarn
 }
