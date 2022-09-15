@@ -45,7 +45,7 @@ zh-Hant
 )
 IUSE="
 ${LANGS[@]/#/l10n_}
-replace-vulnerable-dll symlink
+symlink
 "
 REQUIRED_USE="
 	l10n_en
