@@ -15,7 +15,7 @@ LICENSE="
 	MIT
 	unicode
 	ZLIB
-	W3C-softare-and-document-notice-and-license
+	W3C-Software-and-Document-Notice-and-License
 "
 #
 # https://github.com/mono/msbuild/blob/v16.9.0/LICENSE
