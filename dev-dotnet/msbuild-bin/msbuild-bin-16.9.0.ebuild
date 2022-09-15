@@ -73,7 +73,7 @@ https://raw.githubusercontent.com/NuGet/NuGet.Client/${NUGET_COMMON_PV}/LICENSE.
 https://raw.githubusercontent.com/dotnet/runtime/6c0cdd82ed0566f77abd4fcd95b80886efce9779/PATENTS.TXT
 	-> dotnet-runtime-6c0cdd8-PATENTS.TXT
 https://globalcdn.nuget.org/packages/system.security.cryptography.xml.4.7.0.nupkg
-https://github.com/dotnet/runtime/blob/v5.0.0/THIRD-PARTY-NOTICES.TXT
+https://raw.githubusercontent.com/dotnet/runtime/v5.0.0/THIRD-PARTY-NOTICES.TXT
 	-> dotnet-runtime-5.0.0-THIRD-PARTY-NOTICES.TXT
 "
 S="${WORKDIR}/msbuild"
