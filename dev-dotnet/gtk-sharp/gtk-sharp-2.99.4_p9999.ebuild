@@ -30,15 +30,15 @@ RDEPEND="
 	!dev-dotnet/gtk-sharp-docs
 	!dev-dotnet/gtk-sharp-gapi
 	!dev-dotnet/pango-sharp
-	>=dev-lang/mono-3.2.8
 	>=dev-libs/glib-2.32:2
+	>=x11-libs/gtk+-3:3
+	>=dev-lang/mono-3.2.8
 	dev-libs/atk
 	dev-perl/XML-LibXML
 	gnome-base/libglade
 	x11-libs/cairo
 	x11-libs/gdk-pixbuf
 	x11-libs/pango
-	>=x11-libs/gtk+-3:3
 	virtual/libc
 	virtual/pkgconfig
 "
@@ -47,6 +47,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-lang/mono-3.2.8
+	sys-devel/gcc
 "
 SLOT="3"
 SRC_URI=""
@@ -127,8 +128,7 @@ src_prepare() {
 src_configure() {
 	local myconf=()
 	! use static-libs && myconf+=( --disable-static )
-	econf \
-		${myconf[@]}
+	econf ${myconf[@]}
 }
 
 src_compile() {
@@ -142,3 +142,5 @@ src_install() {
 	einstalldocs
 	# TODO: fix prefix for shebang, and abspaths
 }
+
+# OILEDMACHINE-OVERLAY-META-TAGS:  orphaned
