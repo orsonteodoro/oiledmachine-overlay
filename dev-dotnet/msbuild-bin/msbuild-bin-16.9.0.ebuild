@@ -73,6 +73,8 @@ https://raw.githubusercontent.com/NuGet/NuGet.Client/${NUGET_COMMON_PV}/LICENSE.
 https://raw.githubusercontent.com/dotnet/runtime/6c0cdd82ed0566f77abd4fcd95b80886efce9779/PATENTS.TXT
 	-> dotnet-runtime-6c0cdd8-PATENTS.TXT
 https://globalcdn.nuget.org/packages/system.security.cryptography.xml.4.7.0.nupkg
+https://github.com/dotnet/runtime/blob/v5.0.0/THIRD-PARTY-NOTICES.TXT
+	-> dotnet-runtime-5.0.0-THIRD-PARTY-NOTICES.TXT
 "
 S="${WORKDIR}/msbuild"
 RESTRICT="mirror"
@@ -140,6 +142,7 @@ EOF
 	# Third party licenses
 	dodoc "${DISTDIR}/Nuget.Common-LICENSE.txt"
 	dodoc "${T}/licenses/dotnet-runtime-4.7.0-THIRD-PARTY-NOTICES.TXT"
+	dodoc "${DISTDIR}/licenses/dotnet-runtime-5.0.0-THIRD-PARTY-NOTICES.TXT"
 	cat "${DISTDIR}/dotnet-runtime-6c0cdd8-PATENTS.TXT" \
 		> "${T}/licenses/dotnet-runtime-PATENTS.TXT"
 	dodoc "${T}/licenses/dotnet-runtime-PATENTS.TXT"
