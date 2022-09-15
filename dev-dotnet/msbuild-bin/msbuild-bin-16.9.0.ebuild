@@ -8,7 +8,7 @@ DESCRIPTION="MSBuild is the build platform for .NET and VS."
 HOMEPAGE="https://github.com/mono/msbuild"
 LICENSE="
 	( MIT all-rights-reserved )
-	Apache-2.0
+	( Apache-2.0 all-rights-reserved )
 "
 # https://github.com/mono/msbuild/blob/v16.9.0/LICENSE
 # https://github.com/mono/msbuild/blob/xplat-master/THIRDPARTYNOTICES.txt
@@ -45,9 +45,17 @@ RDEPEND="
 DEPEND="${RDEPEND}"
 BDEPEND=""
 MONO_PV="6.12.0.137"
+NUGET_COMMON_PV="5.9.0.7122"
 SRC_URI="
 https://github.com/mono/msbuild/releases/download/v${PV}/mono_msbuild_${MONO_PV}.zip
 	-> ${P}.zip
+https://raw.githubusercontent.com/mono/msbuild/v${PV}/LICENSE
+	-> ${P}-LICENSE
+https://raw.githubusercontent.com/mono/msbuild/v${PV}/THIRDPARTYNOTICES.txt
+	-> ${P}-THIRDPARTYNOTICES.txt
+https://raw.githubusercontent.com/NuGet/NuGet.Client/${NUGET_COMMON_PV}/LICENSE.txt
+	-> Nuget.Common-LICENSE.txt
+
 "
 S="${WORKDIR}/msbuild"
 RESTRICT="mirror"
@@ -100,4 +108,9 @@ ABSOLUTE_PATH=\$(realpath "\${BASH_SOURCE[0]}")
 MSBUILD_SRC_DIR=\$(dirname "\${ABSOLUTE_PATH}")
 mono \${MONO_OPTIONS} "\${MSBUILD_SRC_DIR}/MSBuild.dll" "\${@}"
 EOF
+	dodoc "${DISTDIR}/${P}-LICENSE"
+	dodoc "${DISTDIR}/${P}-THIRDPARTYNOTICES.txt"
+
+	# Third party licenses
+	dodoc "${DISTDIR}/Nuget.Common-LICENSE.txt"
 }
