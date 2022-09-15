@@ -13,6 +13,7 @@ LICENSE="
 	BSD
 	DOTNET-libraries-and-runtime-components-patents
 	MIT
+	Ms-PL
 	unicode
 	ZLIB
 	W3C-Software-and-Document-Notice-and-License
@@ -25,6 +26,7 @@ LICENSE="
 #
 #   https://github.com/mono/msbuild/blob/v16.9.0/eng/Packages.props
 #
+# Ms-PL - Ionic.Zip.dll
 KEYWORDS="~amd64"
 SLOT="$(ver_cut 1)"
 LANGS=(
@@ -75,6 +77,12 @@ https://raw.githubusercontent.com/dotnet/runtime/6c0cdd82ed0566f77abd4fcd95b8088
 https://globalcdn.nuget.org/packages/system.security.cryptography.xml.4.7.0.nupkg
 https://raw.githubusercontent.com/dotnet/runtime/v5.0.0/THIRD-PARTY-NOTICES.TXT
 	-> dotnet-runtime-5.0.0-THIRD-PARTY-NOTICES.TXT
+https://raw.githubusercontent.com/xamarin/mqtt/a308d2434d8f05df35987f988807d0ea78243ecf/LICENSE
+	-> mqtt-a308d24-LICENSE
+https://raw.githubusercontent.com/MobileEssentials/Merq/v1.1.17-rc/LICENSE
+	-> Merq-1.0.0-LICENSE
+https://raw.githubusercontent.com/jbevain/cecil/0.11.1/LICENSE.txt
+	-> Mono.Cecil-0.11.1-LICENSE.txt
 "
 S="${WORKDIR}/msbuild"
 RESTRICT="mirror"
@@ -146,4 +154,10 @@ EOF
 	cat "${DISTDIR}/dotnet-runtime-6c0cdd8-PATENTS.TXT" \
 		> "${T}/licenses/dotnet-runtime-PATENTS.TXT"
 	dodoc "${T}/licenses/dotnet-runtime-PATENTS.TXT"
+	dodoc "${DISTDIR}/mqtt-a308d24-LICENSE"
+	dodoc "${DISTDIR}/Mono.Cecil-0.11.1-LICENSE.txt"
+
+	# Same as v1.1.17-rc, v1.1.15-rc (d297683)
+	dodoc "${DISTDIR}/Merq-1.0.0-LICENSE"
+
 }
