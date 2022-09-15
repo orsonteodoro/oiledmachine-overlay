@@ -9,9 +9,22 @@ HOMEPAGE="https://github.com/mono/msbuild"
 LICENSE="
 	( MIT all-rights-reserved )
 	( Apache-2.0 all-rights-reserved )
+	BSD-2
+	BSD
+	DOTNET-libraries-and-runtime-components-patents
+	MIT
+	unicode
+	ZLIB
+	W3C-softare-and-document-notice-and-license
 "
+#
 # https://github.com/mono/msbuild/blob/v16.9.0/LICENSE
 # https://github.com/mono/msbuild/blob/xplat-master/THIRDPARTYNOTICES.txt
+#
+# For project names for reverse lookup of licenses, see
+#
+#   https://github.com/mono/msbuild/blob/v16.9.0/eng/Packages.props
+#
 KEYWORDS="~amd64"
 SLOT="$(ver_cut 1)"
 LANGS=(
@@ -43,7 +56,9 @@ RDEPEND="
 	>=dev-lang/mono-6.12
 "
 DEPEND="${RDEPEND}"
-BDEPEND=""
+BDEPEND="
+	app-arch/unzip
+"
 MONO_PV="6.12.0.137"
 NUGET_COMMON_PV="5.9.0.7122"
 SRC_URI="
@@ -55,10 +70,21 @@ https://raw.githubusercontent.com/mono/msbuild/v${PV}/THIRDPARTYNOTICES.txt
 	-> ${P}-THIRDPARTYNOTICES.txt
 https://raw.githubusercontent.com/NuGet/NuGet.Client/${NUGET_COMMON_PV}/LICENSE.txt
 	-> Nuget.Common-LICENSE.txt
-
+https://raw.githubusercontent.com/dotnet/runtime/6c0cdd82ed0566f77abd4fcd95b80886efce9779/PATENTS.TXT
+	-> dotnet-runtime-6c0cdd8-PATENTS.TXT
+https://globalcdn.nuget.org/packages/system.security.cryptography.xml.4.7.0.nupkg
 "
 S="${WORKDIR}/msbuild"
 RESTRICT="mirror"
+
+src_unpack() {
+	unpack ${P}.zip
+	mkdir -p "${T}/licenses"
+
+	# Repo missing 4.x tags
+	unzip -p "${DISTDIR}/system.security.cryptography.xml.4.7.0.nupkg" THIRD-PARTY-NOTICES.TXT \
+		> "${T}/licenses/dotnet-runtime-4.7.0-THIRD-PARTY-NOTICES.TXT" || die
+}
 
 src_configure() { :; }
 src_compile() { :; }
@@ -113,4 +139,18 @@ EOF
 
 	# Third party licenses
 	dodoc "${DISTDIR}/Nuget.Common-LICENSE.txt"
+	dodoc "${T}/licenses/dotnet-runtime-4.7.0-THIRD-PARTY-NOTICES.TXT"
+	cat "${DISTDIR}/dotnet-runtime-6c0cdd8-PATENTS.TXT" \
+		> "${T}/licenses/dotnet-runtime-PATENTS.TXT"
+	dodoc "${T}/licenses/dotnet-runtime-PATENTS.TXT"
+}
+
+pkg_postinst() {
+# See for dependencies https://github.com/mono/msbuild/blob/v16.9.0/eng/Packages.props
+# See https://www.nuget.org/packages/System.Security.Cryptography.Xml/4.7.0
+ewarn
+ewarn "Security notice:"
+ewarn
+ewarn "This package may contain vulnerabilities in System.Security.Cryptography.Xml (4.7.0)"
+ewarn
 }
