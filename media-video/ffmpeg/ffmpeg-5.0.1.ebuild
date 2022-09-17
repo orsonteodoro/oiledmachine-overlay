@@ -553,7 +553,7 @@ REQUIRED_USE+="
 		)
 	)
 	!kernel_linux? (
-		trainer-av-streaming
+		!trainer-av-streaming
 	)
 "
 RESTRICT="
