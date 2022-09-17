@@ -195,7 +195,8 @@ gen_relicense() {
 	esac
 }
 
-# Distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp]
+# The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].
+# The distro has rubberband as GPL-2 only but the source is GPL-2+.
 
 REQUIRED_USE_VERSION3="^^ ( gpl3 gpl3x lgpl3 lgpl3x )"
 LICENSE_REQUIRED_USE="
@@ -256,7 +257,7 @@ LICENSE_REQUIRED_USE="
 		gdbm? ( $(gen_relicense lgpl2_1) )
 	)
 	rav1e? ( apache2_0 )
-	rubberband? ( gpl2 )
+	rubberband? ( $(gen_relicense gpl2x) )
 	samba? ( gpl3 )
 	srt? ( mpl2_0 )
 	ssh? ( $(gen_relicense lgpl2_1) )
