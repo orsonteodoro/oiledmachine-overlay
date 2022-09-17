@@ -206,7 +206,7 @@ CONFIGURE_LICENSES_RECOGNIZED="
 LICENSE_REQUIRED_USE="
 	${CONFIGURE_LICENSES_RECOGNIZED}
 	!gpl? ( $(gen_relicense lgpl2_1) )
-	apache2_0? ( ^^ ( gpl3 lgpl3 ) !gpl2 !lgpl2_1 )
+	apache2_0? ( ^^ ( gpl3 gpl3x lgpl3 lgpl3x ) !gpl2 !lgpl2_1 )
 	amr? ( apache2_0 version3 )
 	cdio? ( gpl3x $(gen_relicense gpl2x) $(gen_relicense lgpl2_1) )
 	codec2? ( $(gen_relicense lgpl2_1) )
