@@ -74,7 +74,7 @@ fi
 # foo is added to IUSE.
 FFMPEG_FLAG_MAP=(
 		+bzip2:bzlib cpudetection:runtime-cpudetect debug gcrypt +gnutls gmp
-		+gpl hardcoded-tables +iconv libxml2 lzma +network opencl
+		+gpl2x hardcoded-tables +iconv libxml2 lzma +network opencl
 		openssl +postproc samba:libsmbclient sdl:ffplay sdl:sdl2 vaapi vdpau vulkan
 		X:xlib X:libxcb X:libxcb-shm X:libxcb-xfixes +zlib
 		# libavdevice options
@@ -117,7 +117,7 @@ IUSE+=" alsa chromium doc +encode oss pic sndio static-libs test v4l
 # For some license compatibililty notes, see
 #   https://github.com/FFmpeg/FFmpeg/blob/master/LICENSE.md#external-libraries
 #   https://github.com/FFmpeg/FFmpeg/blob/master/LICENSE.md#incompatible-libraries
-IUSE+=" apache2_0 +gpl2 gpl2x gpl3 gpl3x lgpl2 lgpl2x lgpl2_1 lgpl2_1x lgpl3 lgpl3x mpl2_0 nonfree version3"
+IUSE+=" apache2_0 +gpl2 gpl2x gpl3 gpl3x lgpl2 lgpl2x lgpl2_1 lgpl2_1x lgpl3 lgpl3x mpl2_0 nonfree"
 IUSE+=" gdbm jack2 jack-audio-connection-kit opencl-icd-loader pipewire" # deep dependencies
 IUSE+="
 	gpl2x_to_gpl3
@@ -195,24 +195,20 @@ gen_relicense() {
 	esac
 }
 
-# The gpl USE flag is for compatibility for other ebuilds.  It should be
-# replaced because of ambiguity (GPL-2 vs GPL-3) needs to be sorted for the
-# Apache-2.0 license.
-CONFIGURE_LICENSES_RECOGNIZED="
-	!debug? ( ^^ ( gpl3x lgpl3x gpl2x lgpl2_1x ) )
-	debug? ( || ( nonfree gpl3x lgpl3x gpl2x lgpl2_1x ) )
-" # in the configure it is mutex but this ebuild treats as inclusive OR which
-# was the same behavior as the original ebuild.
+# Distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+ AND GPL-3+ [baltan.cpp]
+
+REQUIRED_USE_VERSION3="^^ ( gpl3 gpl3x lgpl3 lgpl3x )"
 LICENSE_REQUIRED_USE="
-	${CONFIGURE_LICENSES_RECOGNIZED}
-	!gpl? ( $(gen_relicense lgpl2_1) )
-	apache2_0? ( ^^ ( gpl3 gpl3x lgpl3 lgpl3x ) !gpl2 !lgpl2_1 )
-	amr? ( apache2_0 version3 )
+	!apache2_0? ( $(gen_relicense lgpl2_1) )
+	apache2_0? ( $(gen_relicense lgpl2_1x) )
+	apache2_0? ( ${REQUIRED_USE_VERSION3} !gpl2 !lgpl2_1 )
+	amr? ( apache2_0 ${REQUIRED_USE_VERSION3} )
 	cdio? ( gpl3x $(gen_relicense gpl2x) $(gen_relicense lgpl2_1) )
-	codec2? ( $(gen_relicense lgpl2_1) )
 	chromaprint? ( $(gen_relicense lgpl2_1) )
+	codec2? ( $(gen_relicense lgpl2_1) )
+	cuda? ( nonfree )
 	encode? (
-		amrenc? ( apache2_0 version3 )
+		amrenc? ( apache2_0 ${REQUIRED_USE_VERSION3} )
 		kvazaar? ( $(gen_relicense lgpl2_1) )
 		mp3? ( $(gen_relicense lgplx2_1) )
 		twolame? ( gpl2 )
@@ -221,13 +217,12 @@ LICENSE_REQUIRED_USE="
 		xvid? ( gpl2 )
 	)
 	fdk? ( !gpl2 !gpl3 nonfree )
-	frei0r? ( gpl2 )
+	frei0r? ( $(gen_relicense gpl2x) gpl3x )
 	fribidi? ( $(gen_relicense lgpl2_1x) )
 	gcrypt? ( $(gen_relicense lgpl2_1) )
 	gme? ( $(gen_relicense lgpl2_1) )
-	gmp? ( || ( $(gen_relicense gpl2x) $(gen_relicense lgpl3x) ) version3 )
-	gpl? ( || ( gpl2 gpl2x ) )
-	gpl2? ( !lgpl3 !lgpl3x !gpl3 gpl )
+	gmp? ( || ( $(gen_relicense gpl2x) $(gen_relicense lgpl3x) ) ${REQUIRED_USE_VERSION3} )
+	gpl2? ( !lgpl3 !lgpl3x !gpl3 )
 	gpl3? ( !gpl2 )
 	gpl3x? ( !gpl2 )
 	jack? (
@@ -238,17 +233,16 @@ LICENSE_REQUIRED_USE="
 	iec61883? ( || ( $(gen_relicense lgpl2_1) gpl2 ) $(gen_relicense lgpl2_1) )
 	ieee1394? ( $(gen_relicense lgpl2_1) )
 	lgpl3? ( !gpl2 )
-	libaribb24? ( $(gen_relicense lgpl3) version3 )
+	libaribb24? ( $(gen_relicense lgpl3) ${REQUIRED_USE_VERSION3} )
 	libcaca? ( gpl2 $(gen_relicense lgpl2_1) )
 	librtmp? ( gpl2 $(gen_relicense lgpl2_1) )
 	libsoxr? ( $(gen_relicense lgpl2_1) )
 	libtesseract? ( apache2_0 )
 	libv4l? ( $(gen_relicense lgpl2_1x) )
 	lzma? ( $(gen_relicense lgpl2_1x) $(gen_relicense gpl2x) )
-	nonfree? ( !gpl2 !gpl3 )
+	nonfree? ( !gpl2 !gpl2x !gpl3 !gpl3x )
 	openal? ( $(gen_relicense lgpl2x) )
 	openssl? (
-		nonfree
 		!apache2_0? ( !gpl2 !gpl2x !gpl3 !gpl3x )
 		apache2_0? ( !gpl2 || ( gpl3 gpl3x lgpl3 lgpl3x ) )
 	)
@@ -267,7 +261,6 @@ LICENSE_REQUIRED_USE="
 	ssh? ( $(gen_relicense lgpl2_1) )
 	svg? ( $(gen_relicense lgpl2x) )
 	truetype? ( $(gen_relicense gpl2x) )
-	version3? ( ^^ ( gpl3 gpl3x lgpl3 lgpl3x ) )
 	vidstab? ( $(gen_relicense gpl2x) )
 	vulkan? ( apache2_0 )
 	zeromq? ( $(gen_relicense lgpl3) )
@@ -508,8 +501,10 @@ PDEPEND+="
 # GPL_REQUIRED_USE moved to LICENSE_REQUIRED_USE
 REQUIRED_USE+="
 	cuda? ( nvenc )
+	gnutls? ( !openssl )
 	libv4l? ( v4l )
 	fftools_cws2fws? ( zlib )
+	openssl? ( !gnutls )
 	test? ( encode )
 	${GPL_REQUIRED_USE}
 	${CPU_REQUIRED_USE}
@@ -1025,6 +1020,13 @@ append_all() {
 	append-ldflags ${@}
 }
 
+_is_version3() {
+	if use gpl3 || use gpl3x || use lgpl3 || use lgpl3x ; then
+		return 0
+	fi
+	return 1
+}
+
 src_configure() { :; }
 
 _src_configure() {
@@ -1052,7 +1054,7 @@ _src_configure() {
 	# Allow external Apache-2.0, GPL-3, LGPL-3 packages together under GPL-3 or LGPL-3.
 	# Linking to a GPL-3 will upgrade LGPL-2.1 to GPL-3/GPL-3+.
 	# Linking to a non GPL package will upgrade LGPL-2.1 to LGPL-3/LGPL-3+.
-	use version3 && myconf+=( --enable-version3 )
+	_is_version3 && myconf+=( --enable-version3 )
 
 	if use gpl3 || use gpl3x ; then
 		:;
@@ -1077,7 +1079,7 @@ _src_configure() {
 		use amr && myconf+=( --enable-version3 )
 		use gmp && myconf+=( --enable-version3 )
 		use libaribb24 && myconf+=( --enable-version3 )
-		use fdk && use gpl && myconf+=( --enable-nonfree )
+		use fdk && use gpl2x && myconf+=( --enable-nonfree )
 	}
 	# original_licensing_enablement # enables function if uncommented
 
