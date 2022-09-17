@@ -74,7 +74,7 @@ fi
 # foo is added to IUSE.
 FFMPEG_FLAG_MAP=(
 		+bzip2:bzlib cpudetection:runtime-cpudetect debug gcrypt +gnutls gmp
-		+gpl2x:gpl hardcoded-tables +iconv libxml2 lzma +network opencl
+		hardcoded-tables +iconv libxml2 lzma +network opencl
 		openssl +postproc samba:libsmbclient sdl:ffplay sdl:sdl2 vaapi vdpau vulkan
 		X:xlib X:libxcb X:libxcb-shm X:libxcb-xfixes +zlib
 		# libavdevice options
@@ -1019,8 +1019,24 @@ append_all() {
 	append-ldflags ${@}
 }
 
+_is_gpl() {
+	if use gpl2 || use gpl2x || use gpl3 || use gpl3x ; then
+		return 0
+	fi
+	return 1
+}
+
+# By definition of configure script
+_is_lgplv3() {
+	if use lgpl3 || use lgpl3x ; then
+		return 0
+	fi
+	return 1
+}
+
+# By definition of configure script
 _is_version3() {
-	if use gpl3 || use gpl3x || use lgpl3 || use lgpl3x ; then
+	if ( _is_gpl && ( use gpl3 || use gpl3x ) ) || _is_lgplv3 ; then
 		return 0
 	fi
 	return 1
@@ -1048,19 +1064,9 @@ _src_configure() {
 	# Licensing of external packages
 	# See https://github.com/FFmpeg/FFmpeg/blob/n4.4/configure#L1735
 	use nonfree && myconf+=( --enable-nonfree )
-
-	# See https://github.com/FFmpeg/FFmpeg/blob/n4.4/configure#L1742
-	# Allow external Apache-2.0, GPL-3, LGPL-3 packages together under GPL-3 or LGPL-3.
-	# Linking to a GPL-3 will upgrade LGPL-2.1 to GPL-3/GPL-3+.
-	# Linking to a non GPL package will upgrade LGPL-2.1 to LGPL-3/LGPL-3+.
+	_is_gpl && myconf+=( --enable-gpl )
 	_is_version3 && myconf+=( --enable-version3 )
-
-	if use gpl3 || use gpl3x ; then
-		:;
-	elif use gpl2 || use gpl2x ; then
-		# See https://github.com/FFmpeg/FFmpeg/blob/n4.4/configure#L1721
-		myconf+=( --enable-gpl ) # gpl in --enable-gpl refers to gpl2 or gpl2x
-	fi
+	_is_lgplv3 && myconf+=( --enable-lgplv3 )
 
 	original_licensing_enablement() {
 		use openssl && myconf+=( --enable-nonfree )
