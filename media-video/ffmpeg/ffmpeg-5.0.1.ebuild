@@ -431,7 +431,7 @@ RDEPEND+="
 	pulseaudio? ( >=media-sound/pulseaudio-2.1-r1[gdbm?,${MULTILIB_USEDEP}] )
 	rubberband? ( >=media-libs/rubberband-1.8.1-r1[${MULTILIB_USEDEP}] )
 	samba? ( >=net-fs/samba-3.6.23-r1[client,${MULTILIB_USEDEP}] )
-	sdl? ( media-libs/libsdl2[X?,sound,threads,video,${MULTILIB_USEDEP}] )
+	sdl? ( <media-libs/libsdl2-2.24[X?,sound,threads,video,${MULTILIB_USEDEP}] )
 	sndio? ( media-sound/sndio:=[${MULTILIB_USEDEP}] )
 	speex? ( >=media-libs/speex-1.2_rc1-r1[${MULTILIB_USEDEP}] )
 	srt? ( >=net-libs/srt-1.3.0:=[${MULTILIB_USEDEP}] )
@@ -811,16 +811,23 @@ pkg_setup() {
 	uopts_setup
 
 	if use trainer-av-streaming ; then
+		if false && ! grep -q "register_sanitize_hook" $(realpath "${EROOT}/usr/lib/portage/"*"/bashrc-functions.sh") ; then
+eerror
+eerror "You need to use either:"
+eerror
+eerror "emerge -1v =sys-apps/portage::oiledmachine-overlay"
+eerror
+eerror "  or"
+eerror
+eerror "copy the portage-3.0.30-sanitize-hooks.patch to"
+eerror "/etc/portage/patches/${CATEGORY}/portage"
+eerror
+			die
+		fi
 ewarn
 ewarn "trainer-av-streaming is WIP"
 ewarn "Do not use until hooks for (secure) _wipe_data callbacks are fixed."
 ewarn
-# The Portage PMS does not allow:
-# trap fn INT for CTRL+C
-# trap fn QUIT for debug
-# trap fn TERM for normal/graceful close
-# trap fn HUP for logoff/shutdown
-# which are useful for secure wipe of sensitive data.
 
 ewarn
 ewarn "Please read"
@@ -2038,12 +2045,13 @@ _has_camera_codec() {
 	fi
 }
 
-if ! has ffmpeg_pkg_die ${EBUILD_DEATH_HOOKS} ; then
-	EBUILD_DEATH_HOOKS+=" ffmpeg_pkg_die"
+if ! has ffmpeg_pkg_sanitize ${EBUILD_SANITIZE_HOOKS} ; then
+	EBUILD_SANITIZE_HOOKS+=" ffmpeg_pkg_sanitize"
 fi
 
-ffmpeg_pkg_die() {
-	einfo "Called ffmpeg_pkg_die()"
+ffmpeg_pkg_sanitize() {
+	einfo "Called ffmpeg_pkg_sanitize()"
+	echo "${T}/omt"
 	_wipe_data
 }
 
@@ -2806,7 +2814,6 @@ _src_post_train() {
 }
 
 src_compile() {
-	export DISPLAY=":0"
 	mkdir -p "${T}/traintemp" || die
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
