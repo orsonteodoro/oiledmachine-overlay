@@ -250,7 +250,7 @@ LICENSE_REQUIRED_USE="
 	openssl? (
 		nonfree
 		!apache2_0? ( !gpl2 !gpl2x !gpl3 !gpl3x )
-		apache2_0? ( !gpl2 )
+		apache2_0? ( !gpl2 || ( gpl3 gpl3x lgpl3 lgpl3x ) )
 	)
 	opencl? (
 		opencl-icd-loader? ( apache2_0 )
