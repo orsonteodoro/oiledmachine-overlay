@@ -196,7 +196,12 @@ gen_relicense() {
 }
 
 # The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].
+# The distro has rtmpdump as LGPL-2.1 tools? ( GPL-2 ) but the source is LGPL-2.1+ tools? ( GPL-2+ ).
 # The distro has rubberband as GPL-2 only but the source is GPL-2+.
+# The distro has twolame as GPL-2 only but the source is LGPL-2.1+.
+# The distro has x264 as GPL-2 only but the source is GPL-2+.
+# The distro has x265 as GPL-2 only but the source is GPL-2+.
+# The distro has xvid as GPL-2 only but the source is GPL-2+.
 
 REQUIRED_USE_VERSION3="^^ ( gpl3 gpl3x lgpl3 lgpl3x )"
 LICENSE_REQUIRED_USE="
@@ -212,10 +217,10 @@ LICENSE_REQUIRED_USE="
 		amrenc? ( apache2_0 ${REQUIRED_USE_VERSION3} )
 		kvazaar? ( $(gen_relicense lgpl2_1) )
 		mp3? ( $(gen_relicense lgpl2_1x) )
-		twolame? ( gpl2 )
-		x264? ( gpl2 )
-		x265? ( gpl2 )
-		xvid? ( gpl2 )
+		twolame? ( $(gen_relicense lgpl2_1x) )
+		x264? ( $(gen_relicense gpl2x) )
+		x265? ( $(gen_relicense gpl2x) )
+		xvid? ( $(gen_relicense gpl2x) )
 	)
 	fdk? ( !gpl2 !gpl3 nonfree )
 	frei0r? ( $(gen_relicense gpl2x) gpl3x $(gen_relicense lgpl2_1x) )
@@ -236,7 +241,7 @@ LICENSE_REQUIRED_USE="
 	lgpl3? ( !gpl2 )
 	libaribb24? ( $(gen_relicense lgpl3) ${REQUIRED_USE_VERSION3} )
 	libcaca? ( gpl2 $(gen_relicense lgpl2_1) )
-	librtmp? ( gpl2 $(gen_relicense lgpl2_1) )
+	librtmp? ( $(gen_relicense gpl2x) $(gen_relicense lgpl2_1x) )
 	libsoxr? ( $(gen_relicense lgpl2_1) )
 	libtesseract? ( apache2_0 )
 	libv4l? ( $(gen_relicense lgpl2_1x) )
@@ -251,7 +256,7 @@ LICENSE_REQUIRED_USE="
 	opencl? (
 		opencl-icd-loader? ( apache2_0 )
 	)
-	postproc? ( gpl2 )
+	postproc? ( $(gen_relicense gpl2x) $(gen_relicense lgpl2_1x) )
 	pulseaudio? (
 		!gdbm? ( gpl2 )
 		gdbm? ( $(gen_relicense lgpl2_1) )
