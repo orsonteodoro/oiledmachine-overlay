@@ -1066,7 +1066,6 @@ _src_configure() {
 	use nonfree && myconf+=( --enable-nonfree )
 	_is_gpl && myconf+=( --enable-gpl )
 	_is_version3 && myconf+=( --enable-version3 )
-	_is_lgplv3 && myconf+=( --enable-lgplv3 )
 
 	original_licensing_enablement() {
 		use openssl && myconf+=( --enable-nonfree )
