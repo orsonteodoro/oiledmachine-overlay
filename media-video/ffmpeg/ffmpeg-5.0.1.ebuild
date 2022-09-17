@@ -195,7 +195,7 @@ gen_relicense() {
 	esac
 }
 
-# Distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+ AND GPL-3+ [baltan.cpp]
+# Distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp]
 
 REQUIRED_USE_VERSION3="^^ ( gpl3 gpl3x lgpl3 lgpl3x )"
 LICENSE_REQUIRED_USE="
@@ -210,14 +210,14 @@ LICENSE_REQUIRED_USE="
 	encode? (
 		amrenc? ( apache2_0 ${REQUIRED_USE_VERSION3} )
 		kvazaar? ( $(gen_relicense lgpl2_1) )
-		mp3? ( $(gen_relicense lgplx2_1) )
+		mp3? ( $(gen_relicense lgpl2_1x) )
 		twolame? ( gpl2 )
 		x264? ( gpl2 )
 		x265? ( gpl2 )
 		xvid? ( gpl2 )
 	)
 	fdk? ( !gpl2 !gpl3 nonfree )
-	frei0r? ( $(gen_relicense gpl2x) gpl3x )
+	frei0r? ( $(gen_relicense gpl2x) gpl3x $(gen_relicense lgpl2_1x) )
 	fribidi? ( $(gen_relicense lgpl2_1x) )
 	gcrypt? ( $(gen_relicense lgpl2_1) )
 	gme? ( $(gen_relicense lgpl2_1) )
