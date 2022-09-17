@@ -205,7 +205,6 @@ gen_relicense() {
 
 REQUIRED_USE_VERSION3="^^ ( gpl3 gpl3x lgpl3 lgpl3x )"
 LICENSE_REQUIRED_USE="
-	!apache2_0? ( $(gen_relicense lgpl2_1) )
 	apache2_0? ( $(gen_relicense lgpl2_1x) )
 	apache2_0? ( ${REQUIRED_USE_VERSION3} !gpl2 !lgpl2_1 )
 	amr? ( apache2_0 ${REQUIRED_USE_VERSION3} )
