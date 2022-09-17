@@ -7,7 +7,7 @@ MY_PN="MonoGame"
 MY_PV="3.8.1_HOTFIX"
 MY_P="${PN}-${MY_PV}"
 
-inherit git-r3
+inherit git-r3 lcnr
 
 # Multiple frameworks actually but highest is required
 DOTNET_V="6.0"
@@ -759,6 +759,14 @@ einfo
 	if ! use developer ; then
 		find "${ED}" \( -name "*.pdb" -o -name "*.xml" \) -delete
 	fi
+
+	LCNR_SOURCE="${HOME}/.nuget"
+	LCNR_TAG="third_party"
+	lcnr_install_files
+
+	LCNR_SOURCE="${S}"
+	LCNR_TAG="sources"
+	lcnr_install_files
 }
 
 pkg_postinst() {

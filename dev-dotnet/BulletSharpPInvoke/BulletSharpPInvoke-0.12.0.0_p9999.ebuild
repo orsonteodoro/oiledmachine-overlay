@@ -4,7 +4,7 @@
 
 EAPI=8
 
-inherit cmake flag-o-matic git-r3
+inherit cmake flag-o-matic git-r3 lcnr
 
 MY_PV="$(ver_cut 1-4 ${PV})"
 
@@ -543,6 +543,20 @@ src_install() {
 	if ! use developer ; then
 		find "${ED}" \( -name "*.pdb" -o -name "*.xml" \) -delete
 	fi
+
+	if [[ -e "${HOME}/.nuget" ]] ; then
+		LCNR_SOURCE="${HOME}/.nuget"
+		LCNR_TAG="third_party"
+		lcnr_install_files
+	fi
+
+	LCNR_SOURCE="${S}"
+	LCNR_TAG="sources"
+	lcnr_install_files
+
+	LCNR_SOURCE="${WORKDIR}/bullet"
+	LCNR_TAG="bullet"
+	lcnr_install_files
 }
 
 pkg_postinst() {

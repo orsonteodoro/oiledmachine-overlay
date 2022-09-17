@@ -10,7 +10,7 @@ EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/marshallward/TiledSharp.git"
 
 USE_DOTNET="net40"
-inherit dotnet git-r3
+inherit dotnet git-r3 lcnr
 
 DESCRIPTION="C# library for parsing and importing TMX and TSX files generated
 by Tiled, a tile map generation tool."
@@ -36,7 +36,7 @@ SRC_URI=""
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 TOOLS_VERSION="Current"
-DOCS=( LICENSE NOTICE CHANGELOG README.rst )
+DOCS=( CHANGELOG README.rst )
 
 PATCHES=(
 	"${FILESDIR}/${PN}-0.15.0.0_p9999-set-output-path.patch"
@@ -134,6 +134,16 @@ src_install() {
 	doexe "${p}/TiledSharp.dll"
 	use doc && dodoc -r docs/html
 	einstalldocs
+
+	if [[ "${HOME}/.nuget" ]] ; then
+		LCNR_SOURCE="${HOME}/.nuget"
+		LCNR_TAG="third_party"
+		lcnr_install_files
+	fi
+
+	LCNR_SOURCE="${S}"
+	LCNR_TAG="sources"
+	lcnr_install_files
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

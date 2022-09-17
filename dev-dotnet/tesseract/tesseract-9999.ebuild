@@ -6,7 +6,7 @@ EAPI=8
 
 DOTNET_PV="6.0"
 TARGET_FRAMEWORK="netstandard20"
-inherit git-r3
+inherit git-r3 lcnr
 
 DESCRIPTION="A .Net wrapper for tesseract-ocr"
 HOMEPAGE="https://github.com/charlesw/tesseract"
@@ -283,6 +283,16 @@ einfo
 	if ! use developer ; then
 		find "${ED}" \( -name "*.pdb" -o -name "*.xml" \) -delete
 	fi
+
+	if [[ -e "${HOME}/.nuget" ]] ; then
+		LCNR_SOURCE="${HOME}/.nuget"
+		LCNR_TAG="third_party"
+		lcnr_install_files
+	fi
+
+	LCNR_SOURCE="${S}"
+	LCNR_TAG="sources"
+	lcnr_install_files
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

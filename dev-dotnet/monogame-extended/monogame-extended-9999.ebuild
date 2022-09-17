@@ -5,7 +5,7 @@
 EAPI=8
 
 DOTNET_V="6.0"
-inherit git-r3
+inherit git-r3 lcnr
 
 DESCRIPTION="MonoGame.Extended are classes and extensions to make MonoGame more
 awesome"
@@ -145,7 +145,17 @@ einfo
 			fperms 0775 "${path}"
 		fi
 	done
-	dodoc LICENSE README.md
+	dodoc README.md
+
+	if [[ -e "${HOME}/.nuget" ]] ; then
+		LCNR_SOURCE="${HOME}/.nuget"
+		LCNR_TAG="third_party"
+		lcnr_install_files
+	fi
+
+	LCNR_SOURCE="${S}"
+	LCNR_TAG="sources"
+	lcnr_install_files
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

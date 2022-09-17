@@ -4,7 +4,7 @@
 
 EAPI=8
 
-inherit git-r3
+inherit git-r3 lcnr
 
 DESCRIPTION="High performance 2D collision detection system with realistic
 physics responses."
@@ -313,7 +313,17 @@ src_install() {
 				"/usr/lib/mono/${mtfm}/${ns2}.dll"
 		fi
 	done
-	dodoc "LICENSE.txt" "MONOGAME LICENSE.txt" "README.md"
+	dodoc "README.md"
+
+	if [[ -e "${HOME}/.nuget" ]] ; then
+		LCNR_SOURCE="${HOME}/.nuget"
+		LCNR_TAG="third_party"
+		lcnr_install_files
+	fi
+
+	LCNR_SOURCE="${S}"
+	LCNR_TAG="sources"
+	lcnr_install_files
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

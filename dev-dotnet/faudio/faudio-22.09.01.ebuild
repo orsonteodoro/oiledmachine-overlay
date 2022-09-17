@@ -6,7 +6,7 @@ EAPI=7
 
 USE_DOTNET="net40"
 CMAKE_MAKEFILE_GENERATOR="emake"
-inherit cmake-multilib dotnet
+inherit cmake-multilib dotnet lcnr
 
 DESCRIPTION="FAudio - Accuracy-focused XAudio reimplementation for open platforms"
 HOMEPAGE="http://fna-xna.github.io/"
@@ -44,8 +44,6 @@ _install_libs() {
 	cmake-multilib_src_install
 	docinto readmes
 	dodoc README
-	docinto license
-	dodoc LICENSE
 }
 
 _install_assembly() {
@@ -56,11 +54,19 @@ _install_assembly() {
 	doins csharp/bin/${configuration}/FAudio-CS.dll.config
 	docinto readmes/csharp
 	dodoc csharp/README
-	docinto license/csharp
-	dodoc csharp/LICENSE
 }
 
 src_install() {
 	_install_libs
 	_install_assembly
+
+	if [[ -e "${HOME}/.nuget" ]] ; then
+		LCNR_SOURCE="${HOME}/.nuget"
+		LCNR_TAG="third_party"
+		lcnr_install_files
+	fi
+
+	LCNR_SOURCE="${S}"
+	LCNR_TAG="sources"
+	lcnr_install_files
 }
