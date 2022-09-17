@@ -431,7 +431,7 @@ RDEPEND+="
 	pulseaudio? ( >=media-sound/pulseaudio-2.1-r1[gdbm?,${MULTILIB_USEDEP}] )
 	rubberband? ( >=media-libs/rubberband-1.8.1-r1[${MULTILIB_USEDEP}] )
 	samba? ( >=net-fs/samba-3.6.23-r1[client,${MULTILIB_USEDEP}] )
-	sdl? ( <media-libs/libsdl2-2.24[X?,sound,threads,video,${MULTILIB_USEDEP}] )
+	sdl? ( <media-libs/libsdl2-3[X?,sound,threads,video,${MULTILIB_USEDEP}] )
 	sndio? ( media-sound/sndio:=[${MULTILIB_USEDEP}] )
 	speex? ( >=media-libs/speex-1.2_rc1-r1[${MULTILIB_USEDEP}] )
 	srt? ( >=net-libs/srt-1.3.0:=[${MULTILIB_USEDEP}] )
@@ -565,9 +565,21 @@ RESTRICT="
 S="${WORKDIR}/${P/_/-}"
 S_orig="${WORKDIR}/${P/_/-}"
 
+SRC_URI+="
+https://github.com/FFmpeg/FFmpeg/commit/e5163b1d34381a3319214a902ef1df923dd2eeba.patch
+	-> ${PN}-e5163b1.patch
+https://github.com/FFmpeg/FFmpeg/commit/c6fdbe26ef30fff817581e5ed6e078d96111248a.patch
+	-> ${PN}-c6fdbe2.patch
+"
+
+# c6fdbe2 - configure: fix SDL2 version check for pkg_config fallback
+# e5163b1 - configure: extend SDL check to accept all 2.x versions
+
 PATCHES=(
 	"${FILESDIR}"/chromium-r1.patch
 	"${FILESDIR}"/${PN}-5.0-backport-ranlib-build-fix.patch
+	"${DISTDIR}/${PN}-e5163b1.patch"
+	"${DISTDIR}/${PN}-c6fdbe2.patch"
 )
 
 MULTILIB_WRAPPED_HEADERS=(
