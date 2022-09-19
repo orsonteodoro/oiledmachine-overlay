@@ -1634,11 +1634,7 @@ _install_licenses() {
 	touch "${T}/.copied_licenses"
 }
 
-multilib_src_install() {
-	if (( ${NABIS} == 1 )) ; then
-		export BUILD_DIR="${S}"
-	fi
-
+_src_install() {
 	local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})
 	local chost=$(get_abi_CHOST ${ABI})
 	_fix_paths
@@ -1787,6 +1783,16 @@ einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
 		|| die
 	_install_licenses
 	uopts_src_install
+}
+
+src_install() {
+	install_abi() {
+		if (( ${NABIS} == 1 )) ; then
+			export BUILD_DIR="${S}"
+		fi
+		_src_install
+	}
+	multilib_foreach_abi install_abi
 }
 
 pkg_preinst() {
