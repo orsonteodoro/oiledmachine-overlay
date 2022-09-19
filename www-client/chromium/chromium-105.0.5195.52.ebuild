@@ -2763,12 +2763,7 @@ _src_compile() {
 		out/Release/chromium-browser-chromium.desktop || die
 }
 
-multilib_src_install() {
-	if (( ${NABIS} == 1 )) ; then
-		export BUILD_DIR="${S}"
-		cd "${BUILD_DIR}" || die
-	fi
-
+_src_install() {
 	local CHROMIUM_HOME="/usr/$(get_libdir)/chromium-browser"
 	exeinto "${CHROMIUM_HOME}"
 	doexe out/Release/chrome
@@ -2873,6 +2868,17 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	lcnr_install_files
 
 	uopts_src_install
+}
+
+src_install() {
+	install_abi() {
+		if (( ${NABIS} == 1 )) ; then
+			export BUILD_DIR="${S}"
+			cd "${BUILD_DIR}" || die
+		fi
+		_src_install
+	}
+	multilib_foreach_abi install_abi
 }
 
 src_compile() {
