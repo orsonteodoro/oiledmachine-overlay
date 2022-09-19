@@ -93,7 +93,7 @@ SLOT="0"
 KEYWORDS="amd64 ~arm ~arm64 ~ppc ~ppc64 -riscv x86 ~amd64-linux"
 PGO_TRAINERS="
 	mono-managed-trainer
-	mono-unmanaged-trainer
+	mono-native-trainer
 	mcs-trainer
 "
 IUSE+=" ${PGO_TRAINERS[@]}"
@@ -240,7 +240,7 @@ src_compile() {
 
 train_trainer_list() {
 	use mono-managed-trainer && echo "mono-managed-trainer"
-	use mono-unmanaged-trainer && echo "mono-unmanaged-trainer"
+	use mono-native-trainer && echo "mono-native-trainer"
 	use mcs-trainer && echo "mcs-trainer"
 }
 
@@ -254,13 +254,13 @@ EOF
 chmod +x "${S}/mono-managed-trainer" || die
 }
 
-_pre_trainer_mono_unmanaged() {
-cat <<EOF > "${S}/mono-unmanaged-trainer" || die
+_pre_trainer_mono_native() {
+cat <<EOF > "${S}/mono-native-trainer" || die
 #!${EPREFIX}/bin/bash
 cd "${S}/mono/unit-tests"
 make check || true
 EOF
-chmod +x "${S}/mono-unmanaged-trainer" || die
+chmod +x "${S}/mono-native-trainer" || die
 }
 
 _pre_trainer_mcs() {
@@ -274,7 +274,7 @@ chmod +x "${S}/mcs-trainer" || die
 
 _src_pre_train() {
 	use mono-managed-trainer && _pre_trainer_mono_managed
-	use mono-unmanaged-trainer && _pre_trainer_mono_unmanaged
+	use mono-native-trainer && _pre_trainer_mono_native
 	use mcs-trainer && _pre_trainer_mcs
 }
 

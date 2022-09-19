@@ -32,6 +32,15 @@
     <flag name="tpgo">
       Perform 3 step PGO optimization (TESTING)
     </flag>
+    <flag name="mono-managed-trainer">
+      PGO train the Mono runtime using managed C#.
+    </flag>
+    <flag name="mono-native-trainer">
+      PGO train the Mono runtime using native C.
+    </flag>
+    <flag name="mcs-trainer">
+      PGO Train the MCS (aka Mono C# compiler).
+    </flag>
     <flag name="xen">
       Make mono generate code that is considerably faster on xen VMs but
       slightly slower on for normal systems.
