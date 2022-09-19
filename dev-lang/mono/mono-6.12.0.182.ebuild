@@ -305,11 +305,11 @@ multilib_src_test() {
 }
 
 src_install() {
-	if (( ${NABIS} == 1 )) ; then
-		export BUILD_DIR="${S}"
-		cd "${BUILD_DIR}" || die
-	fi
 	install_abi() {
+		if (( ${NABIS} == 1 )) ; then
+			export BUILD_DIR="${S}"
+			cd "${BUILD_DIR}" || die
+		fi
 		emake install DESTDIR="${D}"
 #
 # Remove files not respecting LDFLAGS and that we are not supposed to
