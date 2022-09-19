@@ -91,7 +91,18 @@ LICENSE="
 
 SLOT="0"
 KEYWORDS="amd64 ~arm ~arm64 ~ppc ~ppc64 -riscv x86 ~amd64-linux"
+PGO_TRAINERS="
+	mono-managed-trainer
+	mono-unmanaged-trainer
+	mcs-trainer
+"
+IUSE+=" ${PGO_TRAINERS[@]}"
 IUSE+=" doc minimal nls pax-kernel xen"
+REQUIRED_USE+="
+	pgo? (
+		|| ( ${PGO_TRAINERS[@]} )
+	)
+"
 
 # Note: mono works incorrect with older versions of libgdiplus
 # Details on dotnet overlay issue: https://github.com/gentoo/dotnet/issues/429
