@@ -32,6 +32,9 @@
     <flag name="tpgo">
       Perform 3 step PGO optimization (TESTING)
     </flag>
+    <flag name="mono-benchmark-trainer">
+      PGO train the Mono runtime using benchmarks.
+    </flag>
     <flag name="mono-managed-trainer">
       PGO train the Mono runtime using managed C#.
     </flag>
