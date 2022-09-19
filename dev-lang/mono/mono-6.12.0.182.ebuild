@@ -92,6 +92,7 @@ LICENSE="
 SLOT="0"
 KEYWORDS="amd64 ~arm ~arm64 ~ppc ~ppc64 -riscv x86 ~amd64-linux"
 PGO_TRAINERS="
+	mono-benchmark-trainer
 	mono-managed-trainer
 	mono-native-trainer
 	mcs-trainer
@@ -239,11 +240,20 @@ src_compile() {
 }
 
 train_trainer_list() {
+	use mono-benchmark-trainer && echo "mono-benchmark-trainer"
 	use mono-managed-trainer && echo "mono-managed-trainer"
 	use mono-native-trainer && echo "mono-native-trainer"
 	use mcs-trainer && echo "mcs-trainer"
 }
 
+_pre_trainer_mono_benchmark() {
+cat <<EOF > "${S}/mono-benchmark-trainer" || die
+#!${EPREFIX}/bin/bash
+cd "${S}/mono/benchmark"
+make run-test || true
+EOF
+chmod +x "${S}/mono-benchmark-trainer" || die
+}
 
 _pre_trainer_mono_managed() {
 cat <<EOF > "${S}/mono-managed-trainer" || die
@@ -273,6 +283,7 @@ chmod +x "${S}/mcs-trainer" || die
 }
 
 _src_pre_train() {
+	use mono-benchmark-trainer && _pre_trainer_mono_benchmark
 	use mono-managed-trainer && _pre_trainer_mono_managed
 	use mono-native-trainer && _pre_trainer_mono_native
 	use mcs-trainer && _pre_trainer_mcs
@@ -292,22 +303,26 @@ multilib_src_test() {
 	emake check
 }
 
-multilib_src_install() {
+src_install() {
 	if (( ${NABIS} == 1 )) ; then
 		export BUILD_DIR="${S}"
 		cd "${BUILD_DIR}" || die
 	fi
-	emake install DESTDIR="${D}"
+	install_abi() {
+		emake install DESTDIR="${D}"
 #
 # Remove files not respecting LDFLAGS and that we are not supposed to
 # provide, see Fedora mono.spec and
 # http://www.mail-archive.com/mono-devel-list@lists.ximian.com/msg24870.html
 # for reference.
 #
-	rm -f "${ED}"/usr/lib/mono/{2.0,4.5}/mscorlib.dll.so || die
-	rm -f "${ED}"/usr/lib/mono/{2.0,4.5}/mcs.exe.so || die
+		rm -f "${ED}"/usr/lib/mono/{2.0,4.5}/mscorlib.dll.so || die
+		rm -f "${ED}"/usr/lib/mono/{2.0,4.5}/mcs.exe.so || die
 
-	uopts_src_install
+		uopts_src_install
+	}
+	multilib_foreach_abi install_abi
+	multilib_src_install_all
 }
 
 multilib_src_install_all() {
