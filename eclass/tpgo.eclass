@@ -325,7 +325,9 @@ _tpgo_cmake_clean() {
 	if [[ -n "${CMAKE_IN_SOURCE_BUILD}" \
 		|| "${CMAKE_USE_DIR}" == "${BUILD_DIR}" ]] ; then
 		# TODO:  test
-		eninja -t clean
+		if [[ -e "build.ninja" ]] && grep -q -e "^build clean:" "build.ninja" ; then
+			eninja -t clean
+		fi
 		find "${BUILD_DIR}" -name "CMakeCache.txt" -delete || true
 	else
 		cd "${CMAKE_USE_DIR}" || die
@@ -341,7 +343,9 @@ _tpgo_cmake_clean() {
 # The _pre_tpgo_set_clean can be used to change into the build directory.
 _tpgo_autotools_clean() {
 	declare -f _pre_tpgo_set_clean > /dev/null && _pre_tpgo_set_clean
-	emake clean
+	if [[ -e "Makefile" ]] && grep -q -e "^clean:" "Makefile" ; then
+		emake clean
+	fi
 }
 
 # @FUNCTION: tpgo_meson_src_configure
