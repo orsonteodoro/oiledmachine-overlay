@@ -148,6 +148,7 @@ Guided Optimization) support, with additional patches from others listed in
 the metadata.xml.
 
 * dev-lang/lua
+* dev-lang/mono
 * media-libs/embree
 * media-libs/libaom
 * media-libs/libjpeg-turbo

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- only for this ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- distro request: maintainer-needed -->
+  <longdescription>
+    This fork is for security updates (with latest stable) and PGO support.
+
+    See also
+
+      https://github.com/orsonteodoro/oiledmachine-overlay#epgo
+      https://github.com/orsonteodoro/oiledmachine-overlay#custom-trainer
+
+    for details on PGO support and custom PGO training.
+  </longdescription>
+  <upstream>
+    <remote-id type="github">mono/mono</remote-id>
+    <changelog>https://www.mono-project.com/docs/about-mono/releases/</changelog>
+  </upstream>
+  <use>
+    <flag name="pax-kernel">
+      Enable if the user plans to run the package under a pax enabled hardened
+      kernel
+    </flag>
+    <flag name="epgo">
+      Perform 1 step PGO optimization (TESTING/EXPERIMENTAL)
+    </flag>
+    <flag name="tpgo">
+      Perform 3 step PGO optimization (TESTING)
+    </flag>
+    <flag name="xen">
+      Make mono generate code that is considerably faster on xen VMs but
+      slightly slower on for normal systems.
+    </flag>
+  </use>
+</pkgmetadata>

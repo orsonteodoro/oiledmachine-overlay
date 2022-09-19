@@ -1,0 +1,16 @@
+--- a/mono/unit-tests/Makefile.am.orig	2022-06-14 13:36:03.000000000 -0700
++++ b/mono/unit-tests/Makefile.am	2022-09-18 20:11:51.220953184 -0700
+@@ -124,11 +124,11 @@ test_embed_invoke_DEPENDENCIES = test-em
+ 
+ check_PROGRAMS = test-sgen-qsort test-memfuncs test-mono-linked-list-set test-conc-hashtable test-mono-handle	\
+ 		 test-path \
+-		 test-mono-callspec test-mono-string test-mono-embed test-embed-invoke
++		 test-mono-string test-mono-embed test-embed-invoke
+ 
+ TESTS = test-sgen-qsort test-memfuncs test-mono-linked-list-set test-conc-hashtable test-mono-handle \
+ 	test-path \
+-	test-mono-callspec test-mono-string test-mono-embed test-embed-invoke
++	test-mono-string test-mono-embed test-embed-invoke
+ 
+ AM_TESTS_ENVIRONMENT = export MONO_PATH=$(mcs_topdir)/class/lib/build;
+ 
