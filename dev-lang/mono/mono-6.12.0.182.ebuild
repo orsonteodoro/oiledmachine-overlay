@@ -75,6 +75,7 @@ LICENSE="
 # gcc-runtime-library-exception-3.1
 #   https://github.com/mono/mono/blob/mono-6.12.0.122/mono/mini/decompose.c#L966
 #   https://github.com/mono/mono/blob/mono-6.12.0.122/THIRD-PARTY-NOTICES.TXT#L69
+# GPL-2+ mono/benchmark/logic.cs
 # GPL-2+-with-libtool-exception external/bdwgc/libtool
 # GPL-2+ GPL-3+ GPL-3+-with-libtool-exception external/bdwgc/libtool
 # GPL-2+-with-linking-exception mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs
