@@ -8,7 +8,7 @@ EAPI=7
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_EBOLT=0
 
-TRAIN_TEST_DURATION=3600 # 60 min
+TRAIN_TEST_DURATION=1800 # 30 min
 CHECKREQS_DISK_BUILD="4500M"
 inherit autotools check-reqs linux-info mono-env pax-utils multilib-minimal
 inherit lcnr toolchain-funcs uopts
