@@ -835,6 +835,7 @@ eerror
 		fi
 	fi
 
+	local a
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
 	done
