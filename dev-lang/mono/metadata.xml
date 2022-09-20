@@ -29,8 +29,27 @@
     <flag name="epgo">
       Perform 1 step PGO optimization (TESTING/EXPERIMENTAL)
     </flag>
+    <flag name="jemalloc">
+      Enable Jemalloc for faster concurrent memory allocations on desktop for
+      the Mono runtime.  You may choose to set MONO_USE_JEMALLOC environment
+      variable to enable jemalloc conditionally on demand.
+    </flag>
+    <flag name="jemalloc-default">
+      Makes Jemalloc as the default memory allocator for the Mono runtime.
+    </flag>
+    <flag name="jemalloc-assert">
+      Enable runtime checks for memory correctness.
+    </flag>
     <flag name="tpgo">
       Perform 3 step PGO optimization (TESTING)
+    </flag>
+    <flag name="acceptance-test-coreclr-trainer">
+      PGO train the Mono runtime using CoreCLR tests suite not with the CoreCLR
+      library.
+    </flag>
+    <flag name="acceptance-tests-microbench-trainer">
+      PGO train the Mono runtime using a third-party microbenchmark test suite
+      based on the Debian shootout, used in comparing language performance.
     </flag>
     <flag name="mono-benchmark-trainer">
       PGO train the Mono runtime using benchmarks.

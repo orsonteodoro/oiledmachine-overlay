@@ -12,6 +12,7 @@ TRAIN_TEST_DURATION=1800 # 30 min
 CHECKREQS_DISK_BUILD="4500M"
 inherit autotools check-reqs linux-info mono-env pax-utils multilib-minimal
 inherit lcnr toolchain-funcs uopts
+# inherit git-r3
 
 DESCRIPTION="Mono runtime and class libraries, a C# compiler/interpreter"
 HOMEPAGE="https://mono-project.com"
@@ -21,6 +22,7 @@ HOMEPAGE="https://mono-project.com"
 # found in the tarball.
 LICENSE="
 	MIT
+	( MIT UoI-NCSA )
 	Apache-1.1
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -45,7 +47,6 @@ LICENSE="
 	ISC
 	LGPL-2.1
 	LGPL-2.1-with-linking-exception
-	( MIT UoI-NCSA )
 	Mono-gc_allocator.h
 	Mono-patents
 	MPL-1.1
@@ -54,6 +55,28 @@ LICENSE="
 	OSL-3.0
 	SunPro
 	ZLIB
+	acceptance-tests-coreclr-trainer? (
+		( MIT all-rights-reserved )
+		DOTNET-libraries-and-runtime-components-patents
+		MIT
+	)
+	acceptance-tests-microbench-trainer? (
+		( all-rights-reserved CDDL-1.1 )
+		( all-rights-reserved MIT GPL-2+ )
+		all-rights-reserved
+		Apache-2.0
+		BSD
+		BSD-2
+		CDDL-1.1
+		MIT
+		GPL-2+
+	)
+	jemalloc? (
+		custom
+		BSD
+		GPL-3+
+		HPND
+	)
 "
 # The GPL-2, GPL-2+*, GPL-3* apply to build files and not for binary only
 # distribution after install.
@@ -64,24 +87,35 @@ LICENSE="
 # something like "version 2." or "version 2 of the license." without the word
 # "later".
 
+# all-rights-reserved - acceptance-tests/DebianShootoutMono/external/FlameGraph/stackcollapse-java-exceptions.pl
+# all-rights-reserved, CDDL-1.1 - acceptance-tests/DebianShootoutMono/FlameGraph/flamegraph.pl
 # Apache-1.1 - external/ikvm/THIRD_PARTY_README
 # Apache-2.0-with-LLVM-exceptions - mono/tools/offsets-tool/clang/enumerations.py
+# Apache-2.0 - acceptance-tests/DebianShootoutMono/external/FlameGraph/files.pl
 # APSL-2 BSD-4 - support/ios/net/route.h
 # BSD - mono/utils/bsearch.c
 # BSD ISC openssl custom -- boringssl
 #   custom - ssl/ssl_lib.c
+# BSD-2 - jemalloc
 # BSD-2 - mono/utils/freebsd-elf64.h
 # BSD-2 SunPro - support/libm/complex.c
+# CDDL-1.1 - acceptance-tests/DebianShootoutMono/external/FlameGraph/dev/hotcoldgraph.pl
 # gcc-runtime-library-exception-3.1
 #   https://github.com/mono/mono/blob/mono-6.12.0.122/mono/mini/decompose.c#L966
 #   https://github.com/mono/mono/blob/mono-6.12.0.122/THIRD-PARTY-NOTICES.TXT#L69
+# custom - mono/utils/jemalloc/Makefile.in
 # GPL-2+ mono/benchmark/logic.cs
+# GPL-2+ - acceptance-tests/DebianShootoutMono/external/FlameGraph/stackcollapse-bpftrace.pl
 # GPL-2+-with-libtool-exception external/bdwgc/libtool
 # GPL-2+ GPL-3+ GPL-3+-with-libtool-exception external/bdwgc/libtool
-# GPL-2+-with-linking-exception mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs
+# GPL-3 - mono/utils/jemalloc/jemalloc/build-aux/config.guess
+# GPL-2+-with-linking-exception - mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs
 # GPL-3+-with-autoconf-exception - external/bdwgc/libatomic_ops/config.guess
+# HPND - mono/utils/jemalloc/jemalloc/build-aux/install-sh
 # LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
 # MIT UoI-NCSA - external/llvm-project/libunwind/src/EHHeaderParser.hpp
+# MIT all-rights-reserved - acceptance-tests/coreclr/THIRD-PARTY-NOTICES
+#   The distro license template does not have all rights reserved for the MIT license.
 # openssl - external/boringssl/crypto/ecdh/ecdh.c
 # OSL-3.0 - external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/StackFilter.cs
 # ZLIB - external/ikvm ; lists paths/names with different licenses but these files are removed or not present (option disabled by godot-mono-builds)
@@ -93,14 +127,18 @@ LICENSE="
 SLOT="0"
 KEYWORDS="amd64 ~arm ~arm64 ~ppc ~ppc64 -riscv x86 ~amd64-linux"
 PGO_TRAINERS="
+	acceptance-tests-coreclr-trainer
+	acceptance-tests-microbench-trainer
 	mono-benchmark-trainer
 	mono-managed-trainer
 	mono-native-trainer
 	mcs-trainer
 "
 IUSE+=" ${PGO_TRAINERS[@]}"
-IUSE+=" doc minimal nls pax-kernel xen"
+IUSE+=" doc jemalloc jemalloc-assert jemalloc-default minimal nls pax-kernel xen"
 REQUIRED_USE+="
+	jemalloc-default? ( jemalloc )
+	jemalloc-assert? ( jemalloc )
 	pgo? (
 		|| ( ${PGO_TRAINERS[@]} )
 	)
@@ -108,6 +146,13 @@ REQUIRED_USE+="
 
 # Note: mono works incorrect with older versions of libgdiplus
 # Details on dotnet overlay issue: https://github.com/gentoo/dotnet/issues/429
+
+# Internal is required because of function prefix to allow both system alloc and
+# Jemalloc to coexist.
+JEMALLOC_PV="5.3.0" # 5.0.1 (circa 2018) was the upstream selected.
+# SECURITY:  Bump every time a vulnerability fix is announced.
+# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=jemalloc&search_type=all
+
 DEPEND+="
 	app-crypt/mit-krb5[${MULTILIB_USEDEP}]
 	sys-libs/zlib[${MULTILIB_USEDEP}]
@@ -123,14 +168,42 @@ BDEPEND+="
 	sys-devel/bc
 	virtual/yacc
 	pax-kernel? ( sys-apps/elfix )
+	mono-benchmark-trainer? (
+		sys-process/time
+	)
 "
 
-SRC_URI="https://download.mono-project.com/sources/mono/${P}.tar.xz"
+MONO_CORECLR_COMMIT="90f7060935732bb624e1f325d23f63072433725f"
+XMRNBENCHMARKER_COMMIT="97f618cd585af549dd861b7c142656c496f6a89b"
+DEBIANSHOOTOUTMONO_COMMIT="3fde2ced806c1fe7eed81120a40d99474fa009f0"
+BENCHMARKDOTNET_COMMIT="96ed005c57605cb8f005b6941c4d83453912eb75"
+FLAMEGRAPH_COMMIT="f857ebc94bfe2a9bfdc4f1536ebacfb7466f69ba"
+SRC_URI="
+https://download.mono-project.com/sources/mono/${P}.tar.xz
+jemalloc? (
+	https://github.com/jemalloc/jemalloc/archive/refs/tags/${JEMALLOC_PV}.tar.gz
+		-> jemalloc-${JEMALLOC_PV}.tar.gz
+)
+acceptance-tests-coreclr-trainer? (
+	https://github.com/mono/coreclr/archive/${MONO_CORECLR_COMMIT}.tar.gz
+		-> mono-coreclr-${MONO_CORECLR_COMMIT:0:7}.tar.gz
+)
+acceptance-tests-microbench-trainer? (
+	https://github.com/alexanderkyte/DebianShootoutMono/archive/${DEBIANSHOOTOUTMONO_COMMIT}.tar.gz
+		-> DebianShootoutMono-${DEBIANSHOOTOUTMONO_COMMIT:0:7}.tar.gz
+	https://github.com/alexanderkyte/BenchmarkDotNet/archive/${BENCHMARKDOTNET_COMMIT}.tar.gz
+		-> BenchmarkDotNet-${BENCHMARKDOTNET_COMMIT:0:7}.tar.gz
+	https://github.com/brendangregg/FlameGraph/archive/${FLAMEGRAPH_COMMIT}.tar.gz
+		-> FlameGraph-${FLAMEGRAPH_COMMIT:0:7}.tar.gz
+
+)
+"
 
 PATCHES=(
 	"${FILESDIR}/${PN}-5.12-try-catch.patch"
 	"${FILESDIR}/${PN}-6.12.0.122-disable-automagic-ccache.patch"
 	"${FILESDIR}/${PN}-6.12.0.182-disable-test-mono-callspec.patch"
+	"${FILESDIR}/${PN}-6.12.0.182-mono-benchmark-missing-main.patch"
 )
 
 pkg_pretend() {
@@ -157,10 +230,60 @@ pkg_setup() {
 	check-reqs_pkg_setup
 	uopts_setup
 
+	if \
+	( \
+		   use acceptance-tests-coreclr-trainer \
+		|| use acceptance-tests-microbench-trainer \
+	) && \
+	has network-sandbox ${FEATURES} ; then
+eerror
+eerror "Building with acceptance-tests requires network-sandbox to be disabled"
+eerror "in FEATURES on a per-package level."
+eerror
+		die
+	fi
+
 	local a
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
 	done
+}
+
+src_unpack() {
+	unpack ${P}.tar.xz
+	if use jemalloc ; then
+		unpack jemalloc-${JEMALLOC_PV}.tar.gz
+		mv "${WORKDIR}/jemalloc-${JEMALLOC_PV}" \
+			"${S}/mono/utils/jemalloc/jemalloc" || die
+	fi
+
+	if use acceptance-tests-coreclr-trainer ; then
+		unpack mono-coreclr-${MONO_CORECLR_COMMIT:0:7}.tar.gz
+		mv "${WORKDIR}/coreclr-${MONO_CORECLR_COMMIT}" "${S}/acceptance-tests/coreclr" || die
+
+#		EGIT_REPO_URI="https://github.com/mono/coreclr.git"
+#		EGIT_BRANCH="mono"
+#		EGIT_COMMIT="90f7060935732bb624e1f325d23f63072433725f"
+#		EGIT_CHECKOUT_DIR="${S}/acceptance-tests/coreclr"
+#		git-r3_fetch
+#		git-r3_checkout
+	fi
+	if use acceptance-tests-microbench-trainer ; then
+		unpack DebianShootoutMono-${DEBIANSHOOTOUTMONO_COMMIT:0:7}.tar.gz
+		unpack BenchmarkDotNet-${BENCHMARKDOTNET_COMMIT:0:7}.tar.gz
+		unpack FlameGraph-${FLAMEGRAPH_COMMIT:0:7}.tar.gz
+		mv "${WORKDIR}/DebianShootoutMono-${DEBIANSHOOTOUTMONO_COMMIT}" "${S}/acceptance-tests/DebianShootoutMono" || die
+		mkdir -p "${S}/acceptance-tests/DebianShootoutMono/external" || die
+		mv "${WORKDIR}/BenchmarkDotNet-${BENCHMARKDOTNET_COMMIT}" "${S}/acceptance-tests/DebianShootoutMono/external/BenchmarkDotNet" || die
+		mv "${WORKDIR}/FlameGraph-${FLAMEGRAPH_COMMIT}" "${S}/acceptance-tests/DebianShootoutMono/external/FlameGraph" || die
+
+#		EGIT_REPO_URI="https://github.com/alexanderkyte/DebianShootoutMono.git"
+#		EGIT_BRANCH="release_11_15_2018"
+#		EGIT_COMMIT="3fde2ced806c1fe7eed81120a40d99474fa009f0"
+#		EGIT_CHECKOUT_DIR="${S}/acceptance-tests/DebianShootoutMono"
+#		git-r3_fetch
+#		git-r3_checkout
+	fi
 }
 
 src_prepare() {
@@ -211,6 +334,9 @@ _src_configure() {
 		--without-ikvm-native
 		$(use_enable nls)
 		$(use_with doc mcs-docs)
+		$(use_with jemalloc)
+		$(use_with jemalloc-assert jemalloc_assert)
+		$(use_with jemalloc-default jemalloc_always)
 		$(use_with xen xen_opt)
 	)
 
@@ -241,10 +367,30 @@ src_compile() {
 }
 
 train_trainer_list() {
+	use acceptance-tests-coreclr-trainer && echo "acceptance-tests-coreclr-trainer"
+	use acceptance-tests-microbench-trainer && echo "acceptance-tests-microbench-trainer"
 	use mono-benchmark-trainer && echo "mono-benchmark-trainer"
 	use mono-managed-trainer && echo "mono-managed-trainer"
 	use mono-native-trainer && echo "mono-native-trainer"
 	use mcs-trainer && echo "mcs-trainer"
+}
+
+_pre_trainer_acceptance_tests_coreclr() {
+cat <<EOF > "${S}/acceptance-tests-coreclr-trainer" || die
+#!${EPREFIX}/bin/bash
+cd "${S}/acceptance-tests"
+make check-coreclr || true
+EOF
+chmod +x "${S}/acceptance-tests-coreclr-trainer" || die
+}
+
+_pre_trainer_acceptance_tests_microbench() {
+cat <<EOF > "${S}/acceptance-test-microbench-trainer" || die
+#!${EPREFIX}/bin/bash
+cd "${S}/acceptance-tests"
+make check-microbench || true
+EOF
+chmod +x "${S}/acceptance-test-microbench-trainer" || die
 }
 
 _pre_trainer_mono_benchmark() {
@@ -284,6 +430,8 @@ chmod +x "${S}/mcs-trainer" || die
 }
 
 _src_pre_train() {
+	use acceptance-tests-coreclr-trainer && _pre_trainer_acceptance_tests_coreclr
+	use acceptance-tests-microbench-trainer && _pre_trainer_acceptance_tests_microbench
 	use mono-benchmark-trainer && _pre_trainer_mono_benchmark
 	use mono-managed-trainer && _pre_trainer_mono_managed
 	use mono-native-trainer && _pre_trainer_mono_native
@@ -293,6 +441,11 @@ _src_pre_train() {
 train_get_trainer_exe() {
 	local trainer="${1}"
 	echo "${S}/${trainer}"
+}
+
+train_override_duration() {
+	local trainer="${1}"
+	echo "1800" # 30 min
 }
 
 multilib_src_test() {
