@@ -900,6 +900,16 @@ eerror
 	fi
 }
 
+_get_s() {
+	local d
+	if (( ${NABIS} == 1 )) ; then
+		d="${S}"
+	else
+		d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+	fi
+	echo "${d}"
+}
+
 src_prepare() {
 	if is-flagq '-flto*' ; then
 		rm -fv "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
@@ -971,11 +981,7 @@ einfo "Removing pre-built binaries ..."
 	(( ${NABIS} > 1 )) && multilib_copy_sources
 
 	_src_prepare() {
-		if (( ${NABIS} == 1 )) ; then
-			export BUILD_DIR="${S}"
-		fi
-
-		cd "${BUILD_DIR}" || die
+		cd $(_get_s) || die
 		local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})	# builder machine
 		local chost=$(get_abi_CHOST ${ABI})		# target machine
 		# Only ${cbuild}-objdump exists because in true multilib
@@ -984,7 +990,7 @@ einfo "Removing pre-built binaries ..."
 			# sed-in toolchain prefix
 			sed -i \
 				-e "s/objdump/${chost}-objdump/" \
-				"${BUILD_DIR}"/python/mozbuild/mozbuild/configure/check_debug_ranges.py \
+				python/mozbuild/mozbuild/configure/check_debug_ranges.py \
 				|| die "sed failed to set toolchain prefix"
 einfo "Using ${chost}-objdump for chost"
 		else
@@ -992,7 +998,7 @@ einfo "Using ${chost}-objdump for chost"
 			# sed-in toolchain prefix
 			sed -i \
 				-e "s/objdump/${cbuild}-objdump/" \
-				"${BUILD_DIR}"/python/mozbuild/mozbuild/configure/check_debug_ranges.py \
+				python/mozbuild/mozbuild/configure/check_debug_ranges.py \
 				|| die "sed failed to set toolchain prefix"
 ewarn "Using ${cbuild}-objdump for cbuild"
 		fi
@@ -1002,16 +1008,19 @@ ewarn "Using ${cbuild}-objdump for cbuild"
 	multilib_foreach_abi _src_prepare
 }
 
-# corrections based on the ABI being compiled
+# Corrections based on the ABI being compiled
+# Preconditions:
+#   chost must be defined
+#   cwd is ABI's S
 _fix_paths() {
 	# For proper rust cargo cross-compile for libloading and glslopt
 	export PKG_CONFIG=${chost}-pkg-config
 	export CARGO_CFG_TARGET_ARCH=$(echo ${chost} | cut -f 1 -d "-")
 	export MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
-	export BUILD_OBJ_DIR="${BUILD_DIR}/ff"
+	export BUILD_OBJ_DIR="$(pwd)/ff"
 
 	# Set MOZCONFIG
-	export MOZCONFIG="${BUILD_DIR}/.mozconfig"
+	export MOZCONFIG="$(pwd)/.mozconfig"
 
 	# for rust crates libloading and glslopt
 	if tc-is-clang ; then
@@ -1026,10 +1035,8 @@ _fix_paths() {
 
 LTO_TYPE=""
 _src_configure() {
-	if (( ${NABIS} == 1 )) ; then
-		export BUILD_DIR="${S}"
-		cd "${BUILD_DIR}" || die
-	fi
+	local s=$(_get_s)
+	cd "${s}" || die
 
 	local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})
 	local chost=$(get_abi_CHOST ${ABI})
@@ -1114,7 +1121,7 @@ einfo
 	export SHELL="${EPREFIX}/bin/bash"
 
 	# Set state path
-	export MOZBUILD_STATE_PATH="${BUILD_DIR}"
+	export MOZBUILD_STATE_PATH="${s}"
 
 	# MOZCONFIG is dynamically generated per ABI in _fix_paths().
 	#
@@ -1181,44 +1188,44 @@ einfo
 		mozconfig_add_options_ac '' --enable-sandbox
 	fi
 
-	if [[ -s "${BUILD_DIR}/api-google.key" ]] ; then
+	if [[ -s "${s}/api-google.key" ]] ; then
 		local key_origin="Gentoo default"
-		if [[ $(cat "${BUILD_DIR}/api-google.key" \
+		if [[ $(cat "${s}/api-google.key" \
 			| md5sum \
 			| awk '{ print $1 }') != "${GAPI_KEY_MD5}" ]] ; then
 			key_origin="User value"
 		fi
 
 		mozconfig_add_options_ac "${key_origin}" \
-			--with-google-safebrowsing-api-keyfile="${BUILD_DIR}/api-google.key"
+			--with-google-safebrowsing-api-keyfile="${s}/api-google.key"
 	else
 einfo "Building without Google API key ..."
 	fi
 
-	if [[ -s "${BUILD_DIR}/api-location.key" ]] ; then
+	if [[ -s "${s}/api-location.key" ]] ; then
 		local key_origin="Gentoo default"
-		if [[ $(cat "${BUILD_DIR}/api-location.key" \
+		if [[ $(cat "${s}/api-location.key" \
 			| md5sum \
 			| awk '{ print $1 }') != "${GLOCATIONAPI_KEY_MD5}" ]] ; then
 			key_origin="User value"
 		fi
 
 		mozconfig_add_options_ac "${key_origin}" \
-			--with-google-location-service-api-keyfile="${BUILD_DIR}/api-location.key"
+			--with-google-location-service-api-keyfile="${s}/api-location.key"
 	else
 einfo "Building without Location API key ..."
 	fi
 
-	if [[ -s "${BUILD_DIR}/api-mozilla.key" ]] ; then
+	if [[ -s "${s}/api-mozilla.key" ]] ; then
 		local key_origin="Gentoo default"
-		if [[ $(cat "${BUILD_DIR}/api-mozilla.key" \
+		if [[ $(cat "${s}/api-mozilla.key" \
 			| md5sum \
 			| awk '{ print $1 }') != "${MAPI_KEY_MD5}" ]] ; then
 			key_origin="User value"
 		fi
 
 		mozconfig_add_options_ac "${key_origin}" \
-			--with-mozilla-api-keyfile="${BUILD_DIR}/api-mozilla.key"
+			--with-mozilla-api-keyfile="${s}/api-mozilla.key"
 	else
 einfo "Building without Mozilla API key ..."
 	fi
@@ -1376,7 +1383,7 @@ einfo "Building without Mozilla API key ..."
 		if ! use system-libvpx ; then
 			sed -i \
 				-e "s|softfp|hard|" \
-				"${BUILD_DIR}"/media/libvpx/moz.build \
+				"${s}"/media/libvpx/moz.build \
 				|| die
 		fi
 	fi
@@ -1504,15 +1511,12 @@ einfo "Build RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 }
 
 _src_compile() {
-	if (( ${NABIS} == 1 )) ; then
-		export BUILD_DIR="${S}"
-		cd "${BUILD_DIR}" || die
-	fi
+	local s=$(_get_s)
+	cd "${s}" || die
 
 	local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})
 	local chost=$(get_abi_CHOST ${ABI})
 	_fix_paths
-	cd "${BUILD_DIR}" || die
 	local virtx_cmd=
 
 	if use pgo ; then
@@ -1639,10 +1643,11 @@ _install_licenses() {
 }
 
 _src_install() {
+	local s=$(_get_s)
+	cd "${s}" || die
 	local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})
 	local chost=$(get_abi_CHOST ${ABI})
 	_fix_paths
-	cd "${BUILD_DIR}" || die
 	# xpcshell is getting called during install
 	pax-mark m \
 		"${BUILD_OBJ_DIR}"/dist/bin/xpcshell \
@@ -1728,7 +1733,7 @@ einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
 	fi
 
 	# Install icons
-	local icon_srcdir="${BUILD_DIR}/browser/branding/official"
+	local icon_srcdir="${s}/browser/branding/official"
 	local icon_symbolic_file="${FILESDIR}/icon/firefox-symbolic.svg"
 
 	insinto /usr/share/icons/hicolor/symbolic/apps
@@ -1791,9 +1796,6 @@ einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
 
 src_install() {
 	install_abi() {
-		if (( ${NABIS} == 1 )) ; then
-			export BUILD_DIR="${S}"
-		fi
 		_src_install
 	}
 	multilib_foreach_abi install_abi
