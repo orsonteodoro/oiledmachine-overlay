@@ -1,0 +1,12 @@
+--- a/acceptance-tests/Makefile.in.orig	2022-09-20 09:27:36.099141534 -0700
++++ b/acceptance-tests/Makefile.in	2022-09-20 11:02:42.452445060 -0700
+@@ -5814,6 +5814,9 @@ test-$(1)::
+ 	@echo "   $(2)_PATH=$($(2)_PATH) => $(abspath $($(2)_PATH))"
+ 
+ reset-$(1)::
++	true
++
++disabled-reset-$(1)::
+ 	@if test -d $($(2)_PATH); then \
+ 		if ! (cd $($(2)_PATH) && git show $(NEEDED_$(2)_VERSION) >/dev/null 2>&1 && git log -1 $(NEEDED_$(2)_REMOTE/NEEDED_$(2)_BRANCH) >/dev/null 2>&1) ; then \
+ 			echo "*** git fetch `basename $$($(2)_PATH)`" && (cd $($(2)_PATH) && git fetch); \

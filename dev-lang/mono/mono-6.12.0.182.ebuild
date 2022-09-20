@@ -203,6 +203,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-6.12.0.122-disable-automagic-ccache.patch"
 	"${FILESDIR}/${PN}-6.12.0.182-disable-test-mono-callspec.patch"
 	"${FILESDIR}/${PN}-6.12.0.182-mono-benchmark-missing-main.patch"
+	"${FILESDIR}/${PN}-6.12.0.122-acceptance-tests-disable-reset.patch"
 )
 
 pkg_pretend() {
@@ -375,57 +376,63 @@ train_trainer_list() {
 }
 
 _pre_trainer_acceptance_tests_coreclr() {
-cat <<EOF > "${S}/acceptance-tests-coreclr-trainer" || die
+	local use_id="acceptance-tests-coreclr-trainer"
+cat <<EOF > "${S}/${use_id}" || die
 #!${EPREFIX}/bin/bash
 cd "${S}/acceptance-tests"
 make check-coreclr || true
 EOF
-chmod +x "${S}/acceptance-tests-coreclr-trainer" || die
+chmod +x "${S}/${use_id}" || die
 }
 
 _pre_trainer_acceptance_tests_microbench() {
-cat <<EOF > "${S}/acceptance-test-microbench-trainer" || die
+	local use_id="acceptance-tests-microbench-trainer"
+cat <<EOF > "${S}/${use_id}" || die
 #!${EPREFIX}/bin/bash
 cd "${S}/acceptance-tests"
 make check-microbench || true
 EOF
-chmod +x "${S}/acceptance-test-microbench-trainer" || die
+chmod +x "${S}/${use_id}" || die
 }
 
 _pre_trainer_mono_benchmark() {
-cat <<EOF > "${S}/mono-benchmark-trainer" || die
+	local use_id="mono-benchmark-trainer"
+cat <<EOF > "${S}/${use_id}" || die
 #!${EPREFIX}/bin/bash
 cd "${S}/mono/benchmark"
 make run-test || true
 EOF
-chmod +x "${S}/mono-benchmark-trainer" || die
+chmod +x "${S}/${use_id}" || die
 }
 
 _pre_trainer_mono_managed() {
-cat <<EOF > "${S}/mono-managed-trainer" || die
+	local use_id="mono-managed-trainer"
+cat <<EOF > "${S}/${use_id}" || die
 #!${EPREFIX}/bin/bash
 cd "${S}/mono/tests"
 make check || true
 EOF
-chmod +x "${S}/mono-managed-trainer" || die
+chmod +x "${S}/${use_id}" || die
 }
 
 _pre_trainer_mono_native() {
-cat <<EOF > "${S}/mono-native-trainer" || die
+	local use_id="mono-native-trainer"
+cat <<EOF > "${S}/${use_id}" || die
 #!${EPREFIX}/bin/bash
 cd "${S}/mono/unit-tests"
 make check || true
 EOF
-chmod +x "${S}/mono-native-trainer" || die
+chmod +x "${S}/${use_id}" || die
 }
 
 _pre_trainer_mcs() {
-cat <<EOF > "${S}/mcs-trainer" || die
+	local use_id="mcs-trainer"
+cat <<EOF > "${S}/${use_id}" || die
 #!${EPREFIX}/bin/bash
 cd "${S}/mcs/tests"
 make run-test || true
 EOF
-chmod +x "${S}/mcs-trainer" || die
+chmod +x "${S}/${use_id}" || die
 }
 
 _src_pre_train() {
