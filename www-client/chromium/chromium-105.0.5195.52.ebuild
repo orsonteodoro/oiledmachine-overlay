@@ -1986,8 +1986,7 @@ einfo
 
 	verify_clang_commit
 
-	(( ${NABIS} > 1 )) \
-		&& multilib_copy_sources
+	(( ${NABIS} > 1 )) && multilib_copy_sources
 
 	prepare_abi() {
 		uopts_src_prepare
@@ -2652,12 +2651,12 @@ einfo
 		# because of new features.
 		local license_file_name="${PN}-"$(ver_cut 1-3 ${PV})".x"
 		local fp=$(sha512sum \
-"${BUILD_DIR}/out/Release/gen/components/resources/about_credits.html" \
+"${s}/out/Release/gen/components/resources/about_credits.html" \
 			| cut -f 1 -d " ")
 einfo
 einfo "Update the license file with"
 einfo
-einfo "  \`cp -a ${BUILD_DIR}/out/Release/gen/components/resources/about_credits.html \
+einfo "  \`cp -a ${s}/out/Release/gen/components/resources/about_credits.html \
 ${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
 einfo
 einfo "Update ebuild with"
@@ -2688,11 +2687,19 @@ einfo
 	fi
 }
 
-_src_compile() {
+_get_s() {
+	local d
 	if (( ${NABIS} == 1 )) ; then
-		export BUILD_DIR="${S}"
-		cd "${BUILD_DIR}" || die
+		d="${S}"
+	else
+		d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 	fi
+	echo "${d}"
+}
+
+_src_compile() {
+	export s=$(_get_s)
+	cd "${s}" || die
 
 	# Final link uses lots of file descriptors.
 	ulimit -n 2048
@@ -2870,22 +2877,20 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	uopts_src_install
 }
 
-src_install() {
-	install_abi() {
-		if (( ${NABIS} == 1 )) ; then
-			export BUILD_DIR="${S}"
-			cd "${BUILD_DIR}" || die
-		fi
-		_src_install
-	}
-	multilib_foreach_abi install_abi
-}
-
 src_compile() {
 	compile_abi() {
 		uopts_src_compile
 	}
 	multilib_foreach_abi compile_abi
+}
+
+src_install() {
+	install_abi() {
+		export s=$(_get_s)
+		cd "${s}" || die
+		_src_install
+	}
+	multilib_foreach_abi install_abi
 }
 
 pkg_postrm() {
