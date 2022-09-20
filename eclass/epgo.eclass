@@ -29,7 +29,8 @@ _EPGO_ECLASS=1
 
 # @ECLASS_VARIABLE: UOPTS_PGO_FORCE_PGI
 # @DESCRIPTION:
-# Temporarily set to 1 to build with PGI flags.
+# Temporarily set to 1 to build with PGI (instrumentation) flags.
+# Only the user can decide.  Do not set it in the ebuild.
 # Example:
 # UOPTS_PGO_FORCE_PGI=1 emerge foo
 
@@ -142,7 +143,9 @@ _epgo_prepare_pgo() {
 	local pgo_data_staging_dir="${T}/pgo-${_UOPTS_PGO_SUFFIX}"
 
 	mkdir -p "${pgo_data_staging_dir}" || die
-	if [[ -e "${pgo_data_suffix_dir}" ]] ; then
+	if [[ "${UOPTS_PGO_FORCE_PGI}" == "1" ]] ; then
+		:;
+	elif [[ -e "${pgo_data_suffix_dir}" ]] ; then
 		cp -aT "${pgo_data_suffix_dir}" "${pgo_data_staging_dir}" || die
 	fi
 	touch "${pgo_data_staging_dir}/compiler_fingerprint" || die

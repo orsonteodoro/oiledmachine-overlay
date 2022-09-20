@@ -164,9 +164,10 @@ _UOPTS_PGO_DATA_DIR=${_UOPTS_PGO_DATA_DIR:-"${UOPTS_PGO_PROFILES_DIR}/${CATEGORY
 
 # @ECLASS_VARIABLE: UOPTS_PGO_FORCE_PGI
 # @DESCRIPTION:
-# Allow to enable or disable profile reuse.
-# 1 for reuse, 0 for no reuse
+# Temporarily set to 1 to build with PGI (instrumentation) flags.
 # Only the user can decide.  Do not set it in the ebuild.
+# Example:
+# UOPTS_PGO_FORCE_PGI=1 emerge foo
 
 # @ECLASS_VARIABLE: UOPTS_IMPLS (OPTIONAL)
 # @DESCRIPTION:
@@ -254,7 +255,9 @@ _tpgo_prepare_pgo() {
 	local pgo_data_staging_dir="${T}/pgo-${_UOPTS_PGO_SUFFIX}"
 
 	mkdir -p "${pgo_data_staging_dir}" || die
-	if [[ -e "${pgo_data_suffix_dir}" ]] ; then
+	if [[ "${UOPTS_PGO_FORCE_PGI}" == "1" ]] ; then
+		:;
+	elif [[ -e "${pgo_data_suffix_dir}" ]] ; then
 		cp -aT "${pgo_data_suffix_dir}" "${pgo_data_staging_dir}" || die
 	fi
 	touch "${pgo_data_staging_dir}/compiler_fingerprint" || die

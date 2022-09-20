@@ -54,7 +54,7 @@ uopts_setup() {
 
 	local instr_vars=""
 	if ( has ebolt ${IUSE} && use ebolt ) || ( has bolt ${IUSE} && use bolt ) ; then
-		instr_vars+=" UOPT_BOLT_FORCE_INST=1"
+		instr_vars+=" UOPTS_BOLT_FORCE_INST=1"
 	fi
 
 	if ( has epgo ${IUSE} && use epgo ) || ( has pgo ${IUSE} && use pgo ) ; then
@@ -176,7 +176,7 @@ einfo
 
 		_tbolt_is_profile_reusable
 		local ret_reuse="$?" # 0 = yes, 1 = no, 2 = unsupported_compiler
-		if [[ "${UOPT_BOLT_FORCE_INST:-0}" == "1" ]] ; then
+		if [[ "${UOPTS_BOLT_FORCE_INST:-0}" == "1" ]] ; then
 			:;
 		elif [[ "${ret_reuse}" == "0" ]] ; then
 			skip_inst="yes"

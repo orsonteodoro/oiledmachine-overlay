@@ -95,6 +95,13 @@ _UOPTS_BOLT_PATH="" # Set in ebolt_setup
 #   unset - auto detection fallback
 #
 
+# @ECLASS_VARIABLE: UOPTS_BOLT_FORCE_INST
+# @DESCRIPTION:
+# Temporarily set to 1 to build with instrument flags.
+# Only the user can decide.  Do not set it in the ebuild.
+# Example:
+# UOPTS_BOLT_FORCE_INST=1 emerge foo
+
 _ebolt_check_bolt() {
 	if use ebolt ; then
 		if [[ -z "${UOPTS_BOLT_GROUP}" ]] ; then
@@ -179,7 +186,9 @@ _ebolt_prepare_bolt() {
 	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 
 	mkdir -p "${bolt_data_staging_dir}" || die
-	if [[ -e "${bolt_data_suffix_dir}" ]] ; then
+	if [[ "${UOPTS_BOLT_FORCE_INST}" == "1" ]] ; then
+		:;
+	elif [[ -e "${bolt_data_suffix_dir}" ]] ; then
 		cp -aT "${bolt_data_suffix_dir}" "${bolt_data_staging_dir}" || die
 	fi
 	touch "${bolt_data_staging_dir}/llvm_bolt_fingerprint" || die
