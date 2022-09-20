@@ -206,6 +206,21 @@ PATCHES=(
 	"${FILESDIR}/${PN}-6.12.0.122-acceptance-tests-disable-reset.patch"
 )
 
+_get_build_dir() {
+	local d
+	if (( ${NABIS} == 1 )) ; then
+		d="${S}"
+	else
+		d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+	fi
+	echo "${d}"
+}
+
+_get_s() {
+	_get_build_dir
+}
+
+
 pkg_pretend() {
 	linux-info_pkg_setup
 
@@ -357,10 +372,7 @@ _src_compile() {
 
 src_compile() {
 	compile_abi() {
-		if (( ${NABIS} == 1 )) ; then
-			export BUILD_DIR="${S}"
-			cd "${BUILD_DIR}" || die
-		fi
+		cd $(_get_build_dir) || die
 		uopts_src_compile
 	}
 	multilib_foreach_abi compile_abi
@@ -377,62 +389,68 @@ train_trainer_list() {
 
 _pre_trainer_acceptance_tests_coreclr() {
 	local use_id="acceptance-tests-coreclr-trainer"
-cat <<EOF > "${S}/${use_id}" || die
+	local d=$(_get_s)
+cat <<EOF > "${d}/${use_id}" || die
 #!${EPREFIX}/bin/bash
-cd "${S}/acceptance-tests"
+cd "${d}/acceptance-tests"
 make check-coreclr || true
 EOF
-chmod +x "${S}/${use_id}" || die
+chmod +x "${d}/${use_id}" || die
 }
 
 _pre_trainer_acceptance_tests_microbench() {
 	local use_id="acceptance-tests-microbench-trainer"
-cat <<EOF > "${S}/${use_id}" || die
+	local d=$(_get_s)
+cat <<EOF > "${d}/${use_id}" || die
 #!${EPREFIX}/bin/bash
-cd "${S}/acceptance-tests"
+cd "${d}/acceptance-tests"
 make check-microbench || true
 EOF
-chmod +x "${S}/${use_id}" || die
+chmod +x "${d}/${use_id}" || die
 }
 
 _pre_trainer_mono_benchmark() {
 	local use_id="mono-benchmark-trainer"
-cat <<EOF > "${S}/${use_id}" || die
+	local d=$(_get_s)
+cat <<EOF > "${d}/${use_id}" || die
 #!${EPREFIX}/bin/bash
-cd "${S}/mono/benchmark"
+cd "${d}/mono/benchmark"
 make run-test || true
 EOF
-chmod +x "${S}/${use_id}" || die
+chmod +x "${d}/${use_id}" || die
 }
 
 _pre_trainer_mono_managed() {
 	local use_id="mono-managed-trainer"
-cat <<EOF > "${S}/${use_id}" || die
+	local d=$(_get_s)
+cat <<EOF > "${d}/${use_id}" || die
 #!${EPREFIX}/bin/bash
-cd "${S}/mono/tests"
+cd "${d}/mono/tests"
 make check || true
 EOF
-chmod +x "${S}/${use_id}" || die
+chmod +x "${d}/${use_id}" || die
 }
 
 _pre_trainer_mono_native() {
 	local use_id="mono-native-trainer"
-cat <<EOF > "${S}/${use_id}" || die
+	local d=$(_get_s)
+cat <<EOF > "${d}/${use_id}" || die
 #!${EPREFIX}/bin/bash
-cd "${S}/mono/unit-tests"
+cd "${d}/mono/unit-tests"
 make check || true
 EOF
-chmod +x "${S}/${use_id}" || die
+chmod +x "${d}/${use_id}" || die
 }
 
 _pre_trainer_mcs() {
 	local use_id="mcs-trainer"
-cat <<EOF > "${S}/${use_id}" || die
+	local d=$(_get_s)
+cat <<EOF > "${d}/${use_id}" || die
 #!${EPREFIX}/bin/bash
-cd "${S}/mcs/tests"
+cd "${d}/mcs/tests"
 make run-test || true
 EOF
-chmod +x "${S}/${use_id}" || die
+chmod +x "${d}/${use_id}" || die
 }
 
 _src_pre_train() {
@@ -455,20 +473,14 @@ train_override_duration() {
 }
 
 multilib_src_test() {
-	if (( ${NABIS} == 1 )) ; then
-		export BUILD_DIR="${S}"
-		cd "${BUILD_DIR}" || die
-	fi
+	cd $(_get_build_dir) || die
 	cd mcs/tests || die
 	emake check
 }
 
 src_install() {
 	install_abi() {
-		if (( ${NABIS} == 1 )) ; then
-			export BUILD_DIR="${S}"
-			cd "${BUILD_DIR}" || die
-		fi
+		cd $(_get_build_dir) || die
 		emake install DESTDIR="${D}"
 #
 # Remove files not respecting LDFLAGS and that we are not supposed to
