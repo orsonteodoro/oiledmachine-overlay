@@ -103,13 +103,13 @@ LICENSE="
 #   https://github.com/mono/mono/blob/mono-6.12.0.122/mono/mini/decompose.c#L966
 #   https://github.com/mono/mono/blob/mono-6.12.0.122/THIRD-PARTY-NOTICES.TXT#L69
 # custom - mono/utils/jemalloc/Makefile.in
-# GPL-2+ mono/benchmark/logic.cs
 # GPL-2+ - acceptance-tests/DebianShootoutMono/external/FlameGraph/stackcollapse-bpftrace.pl
-# GPL-2+-with-libtool-exception external/bdwgc/libtool
+# GPL-3+ - mono/utils/jemalloc/jemalloc/build-aux/config.guess
 # GPL-2+ GPL-3+ GPL-3+-with-libtool-exception external/bdwgc/libtool
-# GPL-3 - mono/utils/jemalloc/jemalloc/build-aux/config.guess
-# GPL-2+-with-linking-exception - mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs
+# GPL-2+ mono/benchmark/logic.cs
 # GPL-3+-with-autoconf-exception - external/bdwgc/libatomic_ops/config.guess
+# GPL-2+-with-libtool-exception external/bdwgc/libtool
+# GPL-2+-with-linking-exception - mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs
 # HPND - mono/utils/jemalloc/jemalloc/build-aux/install-sh
 # LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
 # MIT UoI-NCSA - external/llvm-project/libunwind/src/EHHeaderParser.hpp
