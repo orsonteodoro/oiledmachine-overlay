@@ -422,6 +422,7 @@ gen_depend_llvm() {
 	local o_all=""
 	local t=""
 	local o_official=""
+	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		t="
 			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
@@ -805,8 +806,8 @@ CR_CLANG_USED_UNIX_TIMESTAMP="1657154520" # Cached.  Use below to obtain this. \
 contains_slotted_major_version() {
 	# For sys-devel/llvm:x slot style
 	local live_pkgs_=(
-		sys-devel/llvm
-		sys-devel/clang
+		"sys-devel/llvm"
+		"sys-devel/clang"
 	)
 	local x="${1}"
 	local p
@@ -819,8 +820,8 @@ contains_slotted_major_version() {
 contains_slotted_triple_version() {
 	# For sys-libs/compiler-rt-sanitizers:x.y.z slot style
 	local live_pkgs_=(
-		sys-libs/compiler-rt
-		sys-libs/compiler-rt-sanitizers
+		"sys-libs/compiler-rt"
+		"sys-libs/compiler-rt-sanitizers"
 	)
 	local x="${1}"
 	local p
@@ -833,8 +834,8 @@ contains_slotted_triple_version() {
 contains_slotted_zero() {
 	# For sys-devel/llvm:0 slot style
 	local live_pkgs_=(
-		sys-libs/libomp
-		sys-devel/lld
+		"sys-libs/libomp"
+		"sys-devel/lld"
 	)
 	local x="${1}"
 	local p
@@ -1062,12 +1063,12 @@ einfo
 	# sys-devel/lld:0
 	local live_pkgs=(
 		# Do not change the order!
-		sys-devel/llvm
-		sys-libs/libomp
-		sys-devel/lld
-		sys-devel/clang
-		sys-libs/compiler-rt
-		sys-libs/compiler-rt-sanitizers
+		"sys-devel/llvm"
+		"sys-libs/libomp"
+		"sys-devel/lld"
+		"sys-devel/clang"
+		"sys-libs/compiler-rt"
+		"sys-libs/compiler-rt-sanitizers"
 	)
 
 	unset emerged_llvm_timestamps
@@ -1191,9 +1192,11 @@ ewarn
 
 get_pregenerated_profdata_version()
 {
-	test -e "${S}/chrome/build/pgo_profiles/chrome-linux-"*".profdata" || die
+	local s
+	s=$(_get_s)
+	test -e "${s}/chrome/build/pgo_profiles/chrome-linux-"*".profdata" || die
 	echo $(od -An -j 8 -N 1 -t d1 \
-		"${S}/chrome/build/pgo_profiles/chrome-linux-"*".profdata" \
+		"${s}/chrome/build/pgo_profiles/chrome-linux-"*".profdata" \
 		| grep -E -o -e "[0-9]+")
 }
 
@@ -1218,7 +1221,7 @@ get_llvm_profdata_version_info()
 		fi
 		ver=${v}
 		profdata_v=$(wget -q -O - \
-https://raw.githubusercontent.com/llvm/llvm-project/${llvm_version}/llvm/include/llvm/ProfileData/InstrProfData.inc \
+"https://raw.githubusercontent.com/llvm/llvm-project/${llvm_version}/llvm/include/llvm/ProfileData/InstrProfData.inc" \
 			| grep "INSTR_PROF_INDEX_VERSION" \
 			| head -n 1 \
 			| grep -E -o -e "[0-9]+")
@@ -2879,6 +2882,7 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 
 src_compile() {
 	compile_abi() {
+		cd $(_get_s) || die
 		uopts_src_compile
 	}
 	multilib_foreach_abi compile_abi
@@ -2886,8 +2890,7 @@ src_compile() {
 
 src_install() {
 	install_abi() {
-		export s=$(_get_s)
-		cd "${s}" || die
+		cd $(_get_s) || die
 		_src_install
 	}
 	multilib_foreach_abi install_abi
