@@ -2691,13 +2691,11 @@ einfo
 }
 
 _get_s() {
-	local d
 	if (( ${NABIS} == 1 )) ; then
-		d="${S}"
+		echo "${S}"
 	else
-		d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+		echo "${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 	fi
-	echo "${d}"
 }
 
 _src_compile() {

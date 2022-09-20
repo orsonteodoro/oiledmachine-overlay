@@ -206,20 +206,17 @@ PATCHES=(
 	"${FILESDIR}/${PN}-6.12.0.122-acceptance-tests-disable-reset.patch"
 )
 
-_get_build_dir() {
-	local d
-	if (( ${NABIS} == 1 )) ; then
-		d="${S}"
-	else
-		d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
-	fi
-	echo "${d}"
-}
-
 _get_s() {
-	_get_build_dir
+	if (( ${NABIS} == 1 )) ; then
+		echo "${S}"
+	else
+		echo "${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+	fi
 }
 
+_get_build_dir() {
+	_get_s
+}
 
 pkg_pretend() {
 	linux-info_pkg_setup
