@@ -62,7 +62,6 @@ LICENSE="
 	)
 	acceptance-tests-microbench-trainer? (
 		( all-rights-reserved CDDL-1.1 )
-		( all-rights-reserved MIT GPL-2+ )
 		all-rights-reserved
 		Apache-2.0
 		BSD
