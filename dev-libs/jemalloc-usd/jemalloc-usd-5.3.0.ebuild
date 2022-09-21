@@ -19,7 +19,18 @@ SRC_URI="
 https://github.com/jemalloc/jemalloc/releases/download/${PV}/${MY_PN}-${PV}.tar.bz2
 "
 
-LICENSE="BSD"
+LICENSE="
+	BSD-2
+	BSD
+	custom
+	GPL-3+
+	HPND
+"
+# custom - m4/ax_cxx_compile_stdcxx.m4
+# BSD - include/msvc_compat/C99/stdint.h
+# BSD-2 - COPYING
+# GPL-3+ - build-aux/config.guess
+# HPND - build-aux/install-sh
 SLOT="0/2"
 #KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~ppc ~ppc64 ~riscv ~s390 ~x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris"
 KEYWORDS="~loong ~sparc"
