@@ -34,6 +34,9 @@
       the Mono runtime.  You may choose to set MONO_USE_JEMALLOC environment
       variable to enable jemalloc conditionally on demand.
     </flag>
+    <flag name="jemalloc-custom-cflags">
+      Allow to override upstream optimization and debug flags.
+    </flag>
     <flag name="jemalloc-default">
       Makes Jemalloc as the default memory allocator for the Mono runtime.
     </flag>

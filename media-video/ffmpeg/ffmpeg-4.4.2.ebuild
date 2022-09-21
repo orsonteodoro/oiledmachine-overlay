@@ -2942,10 +2942,13 @@ src_install() {
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			_install
+			multilib_prepare_wrappers
+			multilib_check_headers
 			uopts_src_install
 		done
 	}
 	multilib_foreach_abi install_abi
+	multilib_install_wrappers
 
 	dodoc Changelog README.md CREDITS doc/*.txt doc/APIchanges
 	[ -f "RELEASE_NOTES" ] && dodoc "RELEASE_NOTES"

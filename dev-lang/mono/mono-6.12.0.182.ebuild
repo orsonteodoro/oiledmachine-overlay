@@ -71,9 +71,9 @@ LICENSE="
 		GPL-2+
 	)
 	jemalloc? (
-		custom
-		BSD
 		BSD-2
+		BSD
+		custom
 		GPL-3+
 		HPND
 	)
@@ -137,14 +137,22 @@ PGO_TRAINERS="
 	mcs-trainer
 "
 IUSE+=" ${PGO_TRAINERS[@]}"
-IUSE+=" doc jemalloc jemalloc-assert jemalloc-default minimal nls pax-kernel xen"
+IUSE+=" doc jemalloc jemalloc-assert jemalloc-custom-cflags jemalloc-default minimal nls pax-kernel xen"
+gen_pgo_trainers_required_use() {
+	local u
+	for u in ${PGO_TRAINERS[@]} ; do
+		echo "${u}? ( pgo )"
+	done
+}
 REQUIRED_USE+="
 	jemalloc-default? ( jemalloc )
 	jemalloc-assert? ( jemalloc )
+	jemalloc-custom-cflags? ( jemalloc )
 	pgo? (
 		|| ( ${PGO_TRAINERS[@]} )
 	)
 "
+REQUIRED_USE+=" "$(gen_pgo_trainers_required_use)
 
 # Note: mono works incorrect with older versions of libgdiplus
 # Details on dotnet overlay issue: https://github.com/gentoo/dotnet/issues/429
@@ -328,6 +336,18 @@ src_prepare() {
 	fi
 
 	default
+
+	if use jemalloc ; then
+		if use jemalloc-custom-cflags ; then
+			pushd "${S}/mono/utils/jemalloc/jemalloc" || die
+				eapply "${FILESDIR}/jemalloc-5.3.0-gentoo-fixups.patch"
+			popd
+			if ! use jemalloc-assert ; then
+				sed -i -e "/-g3/d" \
+					"${S}/mono/utils/jemalloc/jemalloc/configure.ac" || die
+			fi
+		fi
+	fi
 
 	# PATCHES contains configure.ac patch
 	eautoreconf

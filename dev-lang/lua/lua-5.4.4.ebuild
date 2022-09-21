@@ -139,6 +139,32 @@ src_compile() {
 	multilib_foreach_abi compile_abi
 }
 
+_src_pre_train() {
+	_install
+	export LD_LIBRARY_PATH="${ED}/usr/$(get_libdir)"
+	export PATH_BAK="${PATH}"
+	export PATH="${ED}/usr/bin:${PATH}"
+}
+
+_src_post_train() {
+	rm -rf "${ED}" || die
+	unset LD_LIBRARY_PATH
+	export PATH="${PATH_BAK}"
+}
+
+train_trainer_list() {
+	ls "${WORKDIR}/lua-${TEST_PV}-tests/"*".lua" || die
+}
+
+train_get_trainer_exe() {
+	realpath -e "${ED}/usr/bin/lua${SLOT}" || die
+}
+
+train_get_trainer_args() {
+	local trainer="${1}"
+	echo "${trainer}"
+}
+
 _install() {
 	cd "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
 	emake INSTALL_TOP="${ED}/usr" INSTALL_LIB="${ED}/usr/$(get_libdir)" \
@@ -182,32 +208,6 @@ _install() {
 multilib_src_install() {
 	_install
 	uopts_src_install
-}
-
-_src_pre_train() {
-	_install
-	export LD_LIBRARY_PATH="${ED}/usr/$(get_libdir)"
-	export PATH_BAK="${PATH}"
-	export PATH="${ED}/usr/bin:${PATH}"
-}
-
-_src_post_train() {
-	rm -rf "${ED}" || die
-	unset LD_LIBRARY_PATH
-	export PATH="${PATH_BAK}"
-}
-
-train_trainer_list() {
-	ls "${WORKDIR}/lua-${TEST_PV}-tests/"*".lua" || die
-}
-
-train_get_trainer_exe() {
-	realpath -e "${ED}/usr/bin/lua${SLOT}" || die
-}
-
-train_get_trainer_args() {
-	local trainer="${1}"
-	echo "${trainer}"
 }
 
 multilib_src_install_all() {

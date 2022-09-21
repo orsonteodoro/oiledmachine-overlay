@@ -12,13 +12,7 @@
     <name>Gentoo Mozilla Team</name>
   </maintainer>
   <longdescription>
-    This ebuild fork adds patches necessary to make jemalloc it work with
-    openusd package and changes necessary to avoid merge conflicts with the
-    jemalloc package.
-
-    It was decided to keep this one with -mtls-dialect=gnu2 separate from the
-    original to avoid possible complications or avoid introducing new bugs
-    systemwide.
+    This is an ebuild fork to PGO optimize this library.
 
     With pgo and epgo USE flags disabled, 12 functions are manually expanded or
     shrunk.  Details can be found in commit
@@ -30,6 +24,10 @@
     </flag>
     <flag name="custom-cflags">
       Allow to override upstream optimization flags
+
+      If disabled:
+      GCC will use -O3 and -funroll-loops
+      Other compilers will use equivalent to -O1
     </flag>
     <flag name="ebolt">
       Perform 1 step BOLT optimization in one emerge with training done

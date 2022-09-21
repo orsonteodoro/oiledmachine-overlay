@@ -4,13 +4,6 @@
 
 EAPI=8
 
-# This ebuild exists to prevent:
-# ImportError: /usr/lib64/libjemalloc.so.2: cannot allocate memory in static TLS block
-# for openusd ebuild-package.
-
-# Same as jemalloc ebuild from gentoo-overlay but with the mtls-dialect-gnu
-# patch.
-
 # PGOing this library is justified because the size of the library is over a
 # 1000 4k pages in size.
 
@@ -18,7 +11,6 @@ TRAIN_TEST_DURATION=1800 # 30 min
 inherit autotools multilib-minimal
 inherit uopts
 
-MY_PN="jemalloc"
 DESCRIPTION="Jemalloc is a general-purpose scalable concurrent allocator"
 HOMEPAGE="http://jemalloc.net/ https://github.com/jemalloc/jemalloc"
 LICENSE="
@@ -50,11 +42,8 @@ REQUIRED_USE+="
 	stress-test-trainer? ( pgo )
 "
 HTML_DOCS=( doc/jemalloc.html )
-SRC_URI="https://github.com/jemalloc/jemalloc/releases/download/${PV}/${MY_PN}-${PV}.tar.bz2"
-PATCHES=(
-	"${FILESDIR}/${MY_PN}-5.2.1-mtls-dialect-gnu2-7036e64.patch"
-)
-S="${WORKDIR}/${MY_PN}-${PV}"
+SRC_URI="https://github.com/jemalloc/jemalloc/releases/download/${PV}/${P}.tar.bz2"
+
 MULTILIB_WRAPPED_HEADERS=( /usr/include/jemalloc/jemalloc.h )
 
 pkg_setup() {
@@ -116,7 +105,6 @@ _src_configure() {
 		tc-is-gcc && append-flags -Wno-error=coverage-mismatch
 	fi
 	local myconf=(
-		--prefix=/usr/$(get_libdir)/openusd
 		$(use_enable debug)
 		$(use_enable lazy-lock)
 		$(use_enable prof)
@@ -219,7 +207,6 @@ multilib_src_install_all() {
 			"${ED}"/usr/$(get_libdir)/libjemalloc.2.dylib || die
 	fi
 	use static-libs || find "${ED}" -name '*.a' -delete
-	rm -rf "${ED}/usr/share/man" || die
 }
 
 pkg_postinst() {
@@ -227,4 +214,3 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META-TAGS: PGO
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  install-location

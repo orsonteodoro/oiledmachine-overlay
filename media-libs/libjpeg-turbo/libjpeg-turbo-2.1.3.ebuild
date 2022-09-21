@@ -435,10 +435,13 @@ src_install() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			_install
+			multilib_prepare_wrappers
+			multilib_check_headers
 			uopts_src_install
 		done
 	}
 	multilib_foreach_abi install_abi
+	multilib_install_wrappers
 	_install_once
 }
 
