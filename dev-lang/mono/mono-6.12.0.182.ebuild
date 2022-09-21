@@ -473,18 +473,37 @@ train_get_trainer_exe() {
 
 train_override_duration() {
 	local trainer="${1}"
-	# 10 min slack for older computers
+	# 10 min slack is added for older computers.
 	if [[ "${trainer}" == "acceptance-tests-coreclr-trainer" ]] ; then
-		echo "22940" # 7 hrs.  3000 * 5 sec per file + 1 hr slack
+# real	234m55.992s
+# user	748m11.238s
+# sys	14m25.457s
+		echo "18000" # 4 hrs + 1 hr slack.
 	elif [[ "${trainer}" == "acceptance-tests-microbench-trainer" ]] ; then
-		echo "1140" # 19 min; completes around 9 min
-# TODO:  Fill out based on actual numbers
-#	elif [[ "${trainer}" == "mono-benchmark-trainer" ]] ; then
-#		echo "" #  min
-#	elif [[ "${trainer}" == "mono-managed-trainer" ]] ; then
-#		echo "" #  min
-#	elif [[ "${trainer}" == "mono-native-trainer" ]] ; then
-#		echo "" #  min
+# real	9m35.200s
+# user	15m54.854s
+# sys	0m12.760s
+		echo "1140" # 19 min
+	elif [[ "${trainer}" == "mono-benchmark-trainer" ]] ; then
+# real	2m44.450s
+# user	2m39.598s
+# sys	0m4.267s
+		echo "780" # 13 min
+	elif [[ "${trainer}" == "mono-managed-trainer" ]] ; then
+# real	26m47.029s
+# user	63m6.389s
+# sys	3m57.119s
+		echo "2160" # 36 min
+	elif [[ "${trainer}" == "mono-native-trainer" ]] ; then
+# real	1m37.212s
+# user	3m30.138s
+# sys	0m4.229s
+		echo "720" # 12 min
+	elif [[ "${trainer}" == "mcs-trainer" ]] ; then
+# real	11m16.586s
+# user	15m58.958s
+# sys	0m23.959s
+		echo "1320" # 22 min
 	else
 		echo "1800" # 30 min
 	fi
