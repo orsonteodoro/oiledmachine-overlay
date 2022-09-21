@@ -45,7 +45,8 @@ IUSE+=" ${TRAINERS[@]}"
 IUSE+=" custom-cflags debug lazy-lock prof static-libs stats test xmalloc"
 REQUIRED_USE+="
 	!custom-cflags? ( !bolt !ebolt !epgo !pgo )
-	pgo? ( || ( ${TRAINERS[@]} ) )
+	pgo? ( || ( ${TRAINERS[@]} ) custom-cflags )
+	bolt? ( custom-cflags )
 	test-trainer? ( pgo )
 	stress-test-trainer? ( pgo )
 "
