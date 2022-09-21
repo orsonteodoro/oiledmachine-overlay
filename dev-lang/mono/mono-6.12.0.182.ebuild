@@ -73,6 +73,7 @@ LICENSE="
 	jemalloc? (
 		custom
 		BSD
+		BSD-2
 		GPL-3+
 		HPND
 	)
@@ -98,11 +99,13 @@ LICENSE="
 # BSD-2 - jemalloc
 # BSD-2 - mono/utils/freebsd-elf64.h
 # BSD-2 SunPro - support/libm/complex.c
+# BSD-2 - mono/utils/jemalloc/jemalloc/COPYING
 # CDDL-1.1 - acceptance-tests/DebianShootoutMono/external/FlameGraph/dev/hotcoldgraph.pl
 # gcc-runtime-library-exception-3.1
 #   https://github.com/mono/mono/blob/mono-6.12.0.122/mono/mini/decompose.c#L966
 #   https://github.com/mono/mono/blob/mono-6.12.0.122/THIRD-PARTY-NOTICES.TXT#L69
 # custom - mono/utils/jemalloc/Makefile.in
+# custom - mono/utils/jemalloc/jemalloc/m4/ax_cxx_compile_stdcxx.m4
 # GPL-2+ - acceptance-tests/DebianShootoutMono/external/FlameGraph/stackcollapse-bpftrace.pl
 # GPL-3+ - mono/utils/jemalloc/jemalloc/build-aux/config.guess
 # GPL-2+ GPL-3+ GPL-3+-with-libtool-exception external/bdwgc/libtool
