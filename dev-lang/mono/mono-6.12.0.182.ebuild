@@ -269,14 +269,15 @@ src_unpack() {
 			"${S}/mono/utils/jemalloc/jemalloc" || die
 	fi
 
+	mkdir -p "${S}/acceptance-tests/external"
 	if use acceptance-tests-coreclr-trainer ; then
 		unpack mono-coreclr-${MONO_CORECLR_COMMIT:0:7}.tar.gz
-		mv "${WORKDIR}/coreclr-${MONO_CORECLR_COMMIT}" "${S}/acceptance-tests/coreclr" || die
+		mv "${WORKDIR}/coreclr-${MONO_CORECLR_COMMIT}" "${S}/acceptance-tests/external/coreclr" || die
 
 #		EGIT_REPO_URI="https://github.com/mono/coreclr.git"
 #		EGIT_BRANCH="mono"
 #		EGIT_COMMIT="90f7060935732bb624e1f325d23f63072433725f"
-#		EGIT_CHECKOUT_DIR="${S}/acceptance-tests/coreclr"
+#		EGIT_CHECKOUT_DIR="${S}/acceptance-tests/external/coreclr"
 #		git-r3_fetch
 #		git-r3_checkout
 	fi
@@ -284,15 +285,15 @@ src_unpack() {
 		unpack DebianShootoutMono-${DEBIANSHOOTOUTMONO_COMMIT:0:7}.tar.gz
 		unpack BenchmarkDotNet-${BENCHMARKDOTNET_COMMIT:0:7}.tar.gz
 		unpack FlameGraph-${FLAMEGRAPH_COMMIT:0:7}.tar.gz
-		mv "${WORKDIR}/DebianShootoutMono-${DEBIANSHOOTOUTMONO_COMMIT}" "${S}/acceptance-tests/DebianShootoutMono" || die
-		mkdir -p "${S}/acceptance-tests/DebianShootoutMono/external" || die
-		mv "${WORKDIR}/BenchmarkDotNet-${BENCHMARKDOTNET_COMMIT}" "${S}/acceptance-tests/DebianShootoutMono/external/BenchmarkDotNet" || die
-		mv "${WORKDIR}/FlameGraph-${FLAMEGRAPH_COMMIT}" "${S}/acceptance-tests/DebianShootoutMono/external/FlameGraph" || die
+		mv "${WORKDIR}/DebianShootoutMono-${DEBIANSHOOTOUTMONO_COMMIT}" "${S}/acceptance-tests/external/DebianShootoutMono" || die
+		mkdir -p "${S}/acceptance-tests/external/DebianShootoutMono/external" || die
+		mv "${WORKDIR}/BenchmarkDotNet-${BENCHMARKDOTNET_COMMIT}" "${S}/acceptance-tests/external/DebianShootoutMono/external/BenchmarkDotNet" || die
+		mv "${WORKDIR}/FlameGraph-${FLAMEGRAPH_COMMIT}" "${S}/acceptance-tests/external/DebianShootoutMono/external/FlameGraph" || die
 
 #		EGIT_REPO_URI="https://github.com/alexanderkyte/DebianShootoutMono.git"
 #		EGIT_BRANCH="release_11_15_2018"
 #		EGIT_COMMIT="3fde2ced806c1fe7eed81120a40d99474fa009f0"
-#		EGIT_CHECKOUT_DIR="${S}/acceptance-tests/DebianShootoutMono"
+#		EGIT_CHECKOUT_DIR="${S}/acceptance-tests/external/DebianShootoutMono"
 #		git-r3_fetch
 #		git-r3_checkout
 	fi
@@ -466,7 +467,21 @@ train_get_trainer_exe() {
 
 train_override_duration() {
 	local trainer="${1}"
-	echo "1800" # 30 min
+	# 10 min slack for older computers
+	if [[ "${trainer}" == "acceptance-tests-coreclr-trainer" ]] ; then
+		echo "22940" # 7 hrs.  3000 * 5 sec per file + 1 hr slack
+	elif [[ "${trainer}" == "acceptance-tests-microbench-trainer" ]] ; then
+		echo "1140" # 19 min; completes around 9 min
+# TODO:  Fill out based on actual numbers
+#	elif [[ "${trainer}" == "mono-benchmark-trainer" ]] ; then
+#		echo "" #  min
+#	elif [[ "${trainer}" == "mono-managed-trainer" ]] ; then
+#		echo "" #  min
+#	elif [[ "${trainer}" == "mono-native-trainer" ]] ; then
+#		echo "" #  min
+	else
+		echo "1800" # 30 min
+	fi
 }
 
 multilib_src_test() {
