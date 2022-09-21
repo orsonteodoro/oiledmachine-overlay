@@ -45,7 +45,7 @@
     </flag>
     <flag name="acceptance-test-coreclr-trainer">
       PGO train the Mono runtime using CoreCLR tests suite not with the CoreCLR
-      library.
+      library.  Time to build this test can be hours.
     </flag>
     <flag name="acceptance-tests-microbench-trainer">
       PGO train the Mono runtime using a third-party microbenchmark test suite

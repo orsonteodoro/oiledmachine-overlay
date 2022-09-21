@@ -255,6 +255,12 @@ eerror
 		die
 	fi
 
+	if use acceptance-tests-coreclr-trainer ; then
+ewarn
+ewarn "Time to build acceptance-tests-coreclr-trainer test may take hours."
+ewarn
+	fi
+
 	local a
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
