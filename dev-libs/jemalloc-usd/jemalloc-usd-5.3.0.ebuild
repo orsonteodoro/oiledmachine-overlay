@@ -88,7 +88,7 @@ _add_gcov() {
 	local d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 	local f
 	for f in Makefile Makefile.in ; do
-einfo "Editing ${f} -pthread -> -lgcov -pthread"
+einfo "Editing ${f}:  Adding -lgcov"
 		sed -i -e "s|EXTRA_LDFLAGS :=|EXTRA_LDFLAGS := -lgcov|g" \
 			"${d}/${f}" || die
 	done
@@ -98,7 +98,7 @@ _remove_gcov() {
 	local d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 	local f
 	for f in Makefile Makefile.in ; do
-einfo "Editing ${f}:  removing -lgcov"
+einfo "Editing ${f}:  Removing -lgcov"
 		sed -i -e "s|EXTRA_LDFLAGS := -lgcov|EXTRA_LDFLAGS :=|g" \
 			"${d}/${f}" || die
 	done
