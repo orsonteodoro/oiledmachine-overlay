@@ -563,7 +563,7 @@ elif [[ -n "${ELECTRON_APP_VUE_V}" ]] \
 COMMON_DEPEND+=" =net-libs/nodejs-17*" # ^17.0.41
 fi
 
-if [[ -n "${ELECTRON_APP_VUE_CORE_V}" ]] && ( \
+if [[ -n "${ELECTRON_APP_VUE_CORE_V}" ]] &&
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -eq 3.0.0 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-10*"
 elif [[ -n "${ELECTRON_APP_VUE_CORE_V}" ]] && ( \
