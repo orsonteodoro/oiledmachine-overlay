@@ -8,6 +8,9 @@ PYTHON_COMPAT=( python3_{8..11} )
 CMAKE_IN_SOURCE_BUILD=1
 
 inherit cmake flag-o-matic python-r1
+if [[ ${PV} =~ 9999 ]] ; then
+	inherit git-r3
+fi
 
 DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE="https://ycm-core.github.io/ycmd/"
@@ -44,12 +47,10 @@ LICENSE="
 			dom4j
 			EPL-1.0
 			EPL-2.0
-			icu-64.2
 			JDOM
 			MIT
 			all-rights-reserved
 			MPL-1.1
-			unicode
 			W3C
 			W3C-document
 		)
@@ -61,9 +62,6 @@ LICENSE="
 			CC-BY-SA-4.0
 			ISC
 		)
-	)
-	javascriptreact? (
-		typescript
 	)
 	libclang? (
 		!system-libclang? (
@@ -93,11 +91,12 @@ LICENSE="
 				Apache-2.0
 			)
 			Apache-2.0
+			Apache-2.0-with-LLVM-exceptions
 			BSD
 			BSD-1
 			BSD-2
 			BSD-4
-			CC-BY-SA-4.0
+			CC-BY-4.0
 			GPL-2-with-linking-exception
 			LGPL-2.1
 			libcurl
@@ -125,22 +124,6 @@ LICENSE="
 		DOTNET-libraries-and-runtime-components-patents
 		Mono-patents
 	)
-	!system-pathtools? (
-		BSD
-		MIT
-	)
-	!system-requests? (
-		Apache-2.0
-		BSD
-		LGPL-2.1+
-		MIT
-		MPL-2.0
-		PSF-2
-		unicode
-	)
-	!system-waitress? (
-		ZPL
-	)
 	!system-watchdog? (
 		Apache-2.0
 	)
@@ -154,20 +137,17 @@ LICENSE="
 			W3C
 		)
 	)
-	typescriptreact? (
-		typescript
-	)
 	test? (
 		BSD
 		GPL-3+
 	)
 "
 
-# Apache-2.0 with all-rights-reserved third_party/tsserver/lib64/node_modules/typescript/CopyrightNotice.txt [3]
+# Apache-2.0 with all-rights-reserved third_party/tsserver/node_modules/typescript/CopyrightNotice.txt [3]
 # The original Apache-2.0 license does not contain all rights reserved
 
 # Additional typescript licenses can be found in
-#   third_party/tsserver/lib64/node_modules/typescript/ThirdPartyNoticeText.txt
+#   third_party/tsserver/node_modules/typescript/ThirdPartyNoticeText.txt
 
 # Third party tern dependencies:
 # MIT all-rights-reserved third_party/tern_runtime/node_modules/string_decoder/LICENSE [1]
@@ -187,17 +167,20 @@ LICENSE="
 # Licenses for the rust USE flag are repeated for the rust USE flag because of
 #   multiple packages.
 #
-# BSD third_party/rls/share/doc/rust/html/nomicon/highlight.js
+# Apache-2.0-with-LLVM-exceptions third_party/rust-analyzer/lib/rustlib/src/rust/src/llvm-project/libunwind
+# Apache-2.0 third_party/rust-analyzer/share/doc/rust/html/nomicon/fonts/OPEN-SANS-LICENSE.txt
+# BSD third_party/rust-analyzer/share/doc/rust/html/nomicon/highlight.js
+# CC-BY-4.0 third_party/rust-analyzer/share/doc/rust/html/nomicon/favicon.svg
 # MIT Apache-2.0 \
-#   third_party/rls/lib/rustlib/src/rust/library/stdarch \
-#   third_party/rls/lib/rustlib/src/rust/library/stdarch/crates/core_arch \
-#   third_party/rls/lib/rustlib/src/rust/library/stdarch/crates/std_detect \
-#   third_party/rls/lib/rustlib/src/rust/library/backtrace
-# MIT Apache-2.0 CC-BY-SA-4.0 third_party/rls/share/doc/rust/html/embedded-book/intro/index.html
-# OFL-1.1 MIT third_party/rls/share/doc/rust/html/nomicon/FontAwesome/css/font-awesome.css
-# OFL-1.1 with all rights reserved third_party/rls/share/doc/rust/html/SourceSerifPro-LICENSE.md [2]
+#   third_party/rust-analyzer/lib/rustlib/src/rust/library/stdarch \
+#   third_party/rust-analyzer/lib/rustlib/src/rust/library/stdarch/crates/core_arch \
+#   third_party/rust-analyzer/lib/rustlib/src/rust/library/stdarch/crates/std_detect \
+#   third_party/rust-analyzer/lib/rustlib/src/rust/library/backtrace
+# OFL-1.1 MIT third_party/rust-analyzer/share/doc/rust/html/nomicon/FontAwesome/css/font-awesome.css
+# OFL-1.1 third_party/rust-analyzer/share/doc/rust/html/nomicon/fonts/SOURCE-CODE-PRO-LICENSE.txt
+# OFL-1.1 with all rights reserved third_party/rust-analyzer/share/doc/rust/html/SourceSerifPro-LICENSE.md [2]
 # openssl GPL-2-with-linking-exception MIT LGPL-2.1 BSD libcurl Unlicense ZLIB \
-#   third_party/rls/share/doc/cargo/LICENSE-THIRD-PARTY
+#   third_party/rust-analyzer/share/doc/cargo/LICENSE-THIRD-PARTY
 
 # [2] The OFL-1.1 does not come with all rights reserved
 
@@ -205,11 +188,11 @@ LICENSE="
 #   Apache-2.0 BSD PSF-2 - scipy-sphinx-theme
 #   Apache-2.0 MIT - jedi
 
-# In jdt-language-server-0.54.0-202004152304.tar.gz,
+# In jdt-language-server-0.68.0-202101202016.tar.gz
 # MIT with all rights reserved [1] \
-#   ./org.eclipse.m2e.maven.runtime.slf4j.simple_1.15.0.20200304-0718/about_files/slf4j-simple-LICENSE.txt
+#   ./org.eclipse.m2e.maven.runtime.slf4j.simple_1.16.0.20200610-1735/about_files/slf4j-simple-LICENSE.txt
 # MIT with all rights reserved [1] \
-#   ./org.slf4j.api_1.7.2.v20121108-1250/about_files/SLF4J-LICENSE.txt
+#   ./org.slf4j.api_1.7.30.v20200204-2150/about_files/SLF4J-LICENSE.txt
 
 # [1] There is no all rights reserved in the vanilla MIT license.
 
@@ -234,25 +217,27 @@ LICENSE="
 # Live ebuilds do not get KEYWORDed.  No tagged version in repo.
 # Versioning based on CORE_VERSION.
 
-# Dependencies assume U 18.04
+# Dependencies assume U 20.04
 # For dependencies, see also
-# https://github.com/ycm-core/ycmd/blob/ef48cfe1b63bcc07b88e537fb5b6d17b513e319c/azure/linux/install_dependencies.sh
+# https://github.com/ycm-core/ycmd/blob/fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/azure/linux/install_dependencies.sh
 
 SLOT_MAJ=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJ}/${PVR}"
 IUSE+="
 c clangd csharp cuda cxx debug developer doc examples go java javascript
-javascriptreact libclang minimal netcore netfx objc objcxx python rust
-system-bottle system-boost system-clangd system-go-tools system-jdtls
-system-jedi system-libclang system-mono system-mrab-regex system-requests
-system-pathtools system-rust system-rust system-tern system-typescript
-system-waitress system-watchdog test typescript typescriptreact vim
+libclang minimal netcore netfx objc objcxx python rust system-abseil
+system-bottle system-clangd system-go-tools system-jdtls system-jedi
+system-libclang system-mono system-mrab-regex system-requests system-rust
+system-rust system-tern system-typescript system-watchdog test typescript vim
 "
-CLANG_PV="10.0"
+CLANG_PV="14.0"
 CLANG_PV_MAJ=$(ver_cut 1 ${CLANG_PV})
 PV_MAJ=$(ver_cut 1 ${PV})
+# Missing rust-analyzer (aka rust-analyzer-preview) from rust packages because
+# it is only available on nightly.  Forced nightly.
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
+	!system-rust
 	c? (
 		|| (
 			clangd
@@ -342,52 +327,50 @@ REQUIRED_USE+="
 	system-tern? (
 		javascript
 	)
+	test? (
+		system-requests
+	)
 "
 
-# Versions must match
-# https://github.com/ycm-core/ycmd/blob/ef48cfe1b63bcc07b88e537fb5b6d17b513e319c/cpp/BoostParts/boost/version.hpp
-# The hash is based on ${EGIT_COMMIT}.
-
-# gopls is 0.4.2
+# gopls is 0.9.4
 # See build.py for dependency versions.
-# See https://github.com/golang/tools/releases?after=gopls%2Fv0.4.2
+# See https://github.com/golang/tools/releases?after=gopls%2Fv0.9.4
 
-# For the rust version see src/bootstrap/channel.rs in https://github.com/rust-lang
+# For the rust version see src/version in https://github.com/rust-lang
 # and build.py in archive for nightly date.  Use committer-date:YYYY-MM-DD to search
 
 # For omnisharp-roslyn min requirements, see
-# .netcore version https://github.com/OmniSharp/omnisharp-roslyn/blob/v1.35.3/.pipelines/init.yml
-# .netfx version https://github.com/OmniSharp/omnisharp-roslyn/blob/v1.35.3/azure-pipelines.yml
+# .netcore version https://github.com/OmniSharp/omnisharp-roslyn/blob/v1.35.4/.pipelines/init.yml
+# .netfx version https://github.com/OmniSharp/omnisharp-roslyn/blob/v1.35.4/azure-pipelines.yml
 
 # Last update for
-# https://github.com/ycm-core/ycmd/blob/ef48cfe1b63bcc07b88e537fb5b6d17b513e319c/build.py
-# Jul 2, 2020
+# https://github.com/ycm-core/ycmd/commits/master/third_party
+# Mar 31, 2022
 
-EGIT_COMMIT="ef48cfe1b63bcc07b88e537fb5b6d17b513e319c" # Last commit before the CORE_VERSION is 44.
+# Last update for
+# https://github.com/ycm-core/ycmd/blob/master/build.py
+# Aug 29, 2022
+
+#EGIT_COMMIT="HEAD" # The lastest commit snapshot
 #EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
-EGIT_COMMIT_FLASK_SPHINX_THEMES="3d964b660442e23faedf801caed6e3c7bd42d5c9"
+EGIT_COMMIT_ABSEIL_CPP="3b4a16abad2c2ddc494371cc39a2946e36d35d11"
+EGIT_COMMIT_MRAB_REGEX="fa9def53cf920ed9343a0afab54d5075d4c75394"
 EGIT_COMMIT_NUMPYDOC="c8513c5db6088a305711851519f944b33f7e1b25"
-EGIT_COMMIT_PATHTOOLS="a3522fc61b00ee2d992ca375c600513bfb9020e9"
 EGIT_COMMIT_SCIPY_SPHINX_THEME="bc3b4b8383d4cd676fe75b7ca8c3e11d6afa8d97"
 EGIT_COMMIT_TYPESHED="d38645247816f862cafeed21a8f4466d306aacf3"
-EGIT_COMMIT_YCMD_CORE_REGEX="cc538bb6d0fcf0a6411537a5522d13cc9b86789d"
 BOTTLE_PV="0.12.18"
 CLANGD_PV="${CLANG_PV_MAJ}.0.0"
-CHARDET_PV="3.0.4"
 CMAKE_PV="3.14"
-GOPLS_PV="0.4.2"
-IDNA_PV="2.8"
-JDTLS_PV="0.54.0-202004152304" # MILESTONE-TIMESTAMP in build.py
-JEDI_PV="0.17.0"
-OMNISHARP_PV="1.35.3"
-PARSO_PV="0.7.0"
-PYTHON_CERTIFI_V="2019.11.28"
-REQUESTS_PV="2.22.0"
-RUST_PV="nightly-2020-04-17"
+DJANGO_STUBS_PV="jedi-v1"
+GOPLS_PV="0.9.4"
+JDTLS_PV="1.14.0-202207211651" # MILESTONE-TIMESTAMP in build.py
+JEDI_PV="0.18.0"
+OMNISHARP_PV="1.37.11"
 LIBCLANG_PV="${CLANG_PV_MAJ}.0.0"
-URLLIB3_PV="1.25.8"
-WATCHDOG_PV="0.10.2"
-WAITRESS_PV="1.4.3"
+MRAB_REGEX_PV="2021.10.23" # bf5e239
+PARSO_PV="0.8.1"
+RUST_PV="nightly-2022-08-17"
+WATCHDOG_PV="2.1.9"
 
 RDEPEND_NODEJS="net-libs/nodejs"
 BDEPEND_NODEJS="net-libs/nodejs[npm]"
@@ -396,22 +379,25 @@ DEPEND+="
 	csharp? (
 		system-mono? (
 			netfx? (
-				>=dev-lang/mono-6.8.0
+				>=dev-lang/mono-6.10.0
 			)
 			netcore? (
-				>=dev-lang/mono-6.8.0
+				>=dev-lang/mono-6.10.0
 				>=dev-dotnet/dotnetcore-sdk-bin-3.1.201:3.1
 			)
 		)
 	)
 	java? (
-		virtual/jre:1.8
+		virtual/jre:17
 	)
 	javascript? (
 		${RDEPEND_NODEJS}
 	)
-	system-boost? (
-		>=dev-libs/boost-1.72:=[python,threads,${PYTHON_USEDEP}]
+	system-abseil? (
+		|| (
+			~dev-cpp/abseil-cpp-20211102.0
+			~dev-cpp/abseil-cpp-20220623.0
+		)
 	)
 	system-bottle? (
 		>=dev-python/bottle-${BOTTLE_PV}[${PYTHON_USEDEP}]
@@ -420,7 +406,7 @@ DEPEND+="
 		>=sys-devel/clang-${CLANGD_PV}:${CLANG_PV_MAJ}
 	)
 	system-go-tools? (
-		>=dev-go/go-tools-0_pre20210119
+		>=dev-go/go-tools-0_pre20200701
 	)
 	system-jdtls? (
 		>=dev-java/jdt-${JDTLS_PV%-*}
@@ -434,25 +420,16 @@ DEPEND+="
 		>=sys-devel/clang-${LIBCLANG_PV}:${CLANG_PV_MAJ}
 	)
 	system-mrab-regex? (
-		>=dev-python/regex-2019.06.08[${PYTHON_USEDEP}]
-	)
-	system-pathtools? (
-		>=dev-python/pathtools-0.1.1_pre20161006
-	)
-	system-requests? (
-		>=dev-python/requests-${REQUESTS_PV}[${PYTHON_USEDEP}]
+		>=dev-python/regex-2020.10.15[${PYTHON_USEDEP}]
 	)
 	system-rust? (
-		>=dev-lang/rust-1.44.0_pre20200417[rls]
+		>=dev-lang/rust-1.58.0_pre20211026[clippy,rustfmt]
 	)
 	system-tern? (
 		>=dev-nodejs/tern-0.21.0
 	)
 	system-typescript? (
-		>=dev-lang/typescript-3.8.3
-	)
-	system-waitress? (
-		>=dev-python/waitress-${WAITRESS_PV}[${PYTHON_USEDEP}]
+		>=dev-lang/typescript-4.7
 	)
 	system-watchdog? (
 		>=dev-python/watchdog-${WATCHDOG_PV}
@@ -465,14 +442,15 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	${PYTHON_DEPS}
 	|| (
-		>=sys-devel/gcc-4.8
-		>=sys-devel/clang-3.9
+		>=sys-devel/gcc-8
+		>=sys-devel/clang-7
 	)
 	>=dev-util/cmake-${CMAKE_PV}
 	javascript? (
 		${BDEPEND_NODEJS}
 	)
 	test? (
+		>=dev-cpp/gtest-1.10
 		>=dev-python/codecov-2.0.5[${PYTHON_USEDEP}]
 		>=dev-python/coverage-4.2[${PYTHON_USEDEP}]
 		>=dev-python/flake8-3.0[${PYTHON_USEDEP}]
@@ -482,6 +460,9 @@ BDEPEND+="
 		>=dev-python/pyhamcrest-1.10.1[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
+		dev-python/pytest-rerunfailures[${PYTHON_USEDEP}]
+		dev-python/pytest-xdist[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
 		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}]
 	)
 	typescript? (
@@ -494,78 +475,73 @@ BDEPEND+="
 # For rust installers see,
 #   https://forge.rust-lang.org/infra/other-installation-methods.html
 # For rust precompiled binaries see,
-#   https://static.rust-lang.org/dist/2020-04-17/channel-rust-nightly.toml
+#   https://static.rust-lang.org/dist/2021-10-26/channel-rust-nightly.toml
 # For more info on Rust Release Channels see,
 #   https://forge.rust-lang.org/infra/channel-layout.html
 
 YCMD_FN="${P}-${EGIT_COMMIT:0:7}.tar.gz"
+ABSEIL_FN="abseil-cpp-${EGIT_COMMIT_ABSEIL_CPP:0:7}.tar.gz"
 BOTTLE_FN="bottle-${BOTTLE_PV}.tar.gz"
-CHARDET_FN="chardet-${CHARDET_PV}.tar.gz"
-FLASK_SPHINX_THEMES_FN="flask-sphinx-themes-${EGIT_COMMIT_FLASK_SPHINX_THEMES:0:7}.tar.gz"
-IDNA_FN="idna-${IDNA_PV}.tar.gz"
-JEDI_FN="jedi-${JEDI_PV}.tar.gz"
+DJANGO_STUBS_FN="django-stubs-${DJANGO_STUBS_PV}.tar.gz"
+MRAB_REGEX_FN="mrab-regex-${MRAB_REGEX_PV}-${EGIT_COMMIT_MRAB_REGEX:0:12}.zip"
 NUMPYDOC_FN="numpydoc-${EGIT_COMMIT_NUMPYDOC:0:7}.tar.gz"
+JEDI_FN="jedi-${JEDI_PV}.tar.gz"
 PARSO_FN="parso-${PARSO_PV}.tar.gz"
-PATHTOOLS_FN="pathtools-${EGIT_COMMIT_PATHTOOLS:0:7}.tar.gz"
-PYTHON_CERTIFI_FN="python-certifi-${PYTHON_CERTIFI_V}.tar.gz"
-REQUESTS_FN="requests-${REQUESTS_PV}.tar.gz"
 SCIPY_SPHINX_THEME_FN="scipy-sphinx-theme-${EGIT_COMMIT_SCIPY_SPHINX_THEME:0:7}.tar.gz"
 TYPESHED_FN="typeshed-${EGIT_COMMIT_TYPESHED:0:7}.tar.gz"
-URLLIB3_FN="urllib3-${URLLIB3_PV}.tar.gz"
-WAITRESS_FN="waitress-${WAITRESS_PV}.tar.gz"
 WATCHDOG_FN="watchdog-${WATCHDOG_PV}.tar.gz"
-YCMD_CORE_REGEX_FN="ycm-core-regex-${EGIT_COMMIT_YCMD_CORE_REGEX:0:7}.tar.gz"
 
-SRC_URI="
+# For the gtest version see:
+# https://github.com/ycm-core/ycmd/blob/df3d7eb67e533f5d82cf4084fe4defc3a5c3f159/cpp/ycm/tests/CMakeLists.txt
+
+# https://github.com/llvm/llvm-project/releases/download/llvmorg-${CLANG_PV_MAJ}.0.0/clang-${CLANG_PV_MAJ}.0.0.src.tar.xz
+if [[ ${PV} =~ 9999 ]] ; then
+	:;
+else
+	SRC_URI+="
 https://github.com/ycm-core/ycmd/archive/${EGIT_COMMIT}.tar.gz
 	-> ${YCMD_FN}
-https://github.com/bottlepy/bottle/archive/refs/tags/${BOTTLE_PV}.tar.gz
+https://github.com/bottlepy/bottle/archive/refs/tags/0.12.18.tar.gz
 	-> ${BOTTLE_FN}
-https://github.com/chardet/chardet/archive/refs/tags/${CHARDET_PV}.tar.gz
-	-> ${CHARDET_FN}
-https://github.com/pallets/flask-sphinx-themes/archive/${EGIT_COMMIT_FLASK_SPHINX_THEMES}.tar.gz
-	-> ${FLASK_SPHINX_THEMES_FN}
-https://github.com/kjd/idna/archive/refs/tags/v${IDNA_PV}.tar.gz
-	-> ${IDNA_FN}
-https://github.com/davidhalter/jedi/archive/refs/tags/v${JEDI_PV}.tar.gz
-	-> ${JEDI_FN}
+https://github.com/davidhalter/django-stubs/archive/refs/tags/${DJANGO_STUBS_PV}.tar.gz
+	-> ${DJANGO_STUBS_FN}
+https://bitbucket.org/mrabarnett/mrab-regex/get/${EGIT_COMMIT_MRAB_REGEX}.zip
+	-> ${MRAB_REGEX_FN}
 https://github.com/numpy/numpydoc/archive/${EGIT_COMMIT_NUMPYDOC}.tar.gz
 	-> ${NUMPYDOC_FN}
+https://github.com/davidhalter/jedi/archive/refs/tags/v${JEDI_PV}.tar.gz
+	-> ${JEDI_FN}
 https://github.com/davidhalter/parso/archive/refs/tags/v${PARSO_PV}.tar.gz
 	-> ${PARSO_FN}
-https://github.com/gorakhargosh/pathtools/archive/${EGIT_COMMIT_PATHTOOLS}.tar.gz
-	-> ${PATHTOOLS_FN}
-https://github.com/certifi/python-certifi/archive/refs/tags/${PYTHON_CERTIFI_V}.tar.gz
-	-> ${PYTHON_CERTIFI_FN}
-https://github.com/psf/requests/archive/refs/tags/v${REQUESTS_PV}.tar.gz
-	-> ${REQUESTS_FN}
 https://github.com/scipy/scipy-sphinx-theme/archive/${EGIT_COMMIT_SCIPY_SPHINX_THEME}.tar.gz
 	-> ${SCIPY_SPHINX_THEME_FN}
 https://github.com/davidhalter/typeshed/archive/${EGIT_COMMIT_TYPESHED}.tar.gz
 	-> ${TYPESHED_FN}
-https://github.com/urllib3/urllib3/archive/refs/tags/${URLLIB3_PV}.tar.gz
-	-> ${URLLIB3_FN}
-https://github.com/Pylons/waitress/archive/refs/tags/v${WAITRESS_PV}.tar.gz
-	-> ${WAITRESS_FN}
 https://github.com/gorakhargosh/watchdog/archive/refs/tags/v${WATCHDOG_PV}.tar.gz
 	-> ${WATCHDOG_FN}
-https://github.com/ycm-core/regex/archive/${EGIT_COMMIT_YCMD_CORE_REGEX}.tar.gz
-	-> ${YCMD_CORE_REGEX_FN}
+"
+fi
+
+SRC_URI+="
+	!system-abseil? (
+https://github.com/abseil/abseil-cpp/archive/${EGIT_COMMIT_ABSEIL_CPP}.tar.gz
+	-> ${ABSEIL_FN}
+	)
 	!system-clangd? (
 		clangd? (
 			amd64? (
 				elibc_glibc? (
-https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_PV}-x86_64-unknown-linux-gnu.tar.bz2
+https://github.com/ycm-core/llvm/releases/download/${CLANGD_PV}/clangd-${CLANGD_PV}-x86_64-unknown-linux-gnu.tar.bz2
 				)
 			)
 			arm64? (
 				elibc_glibc? (
-https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_PV}-aarch64-linux-gnu.tar.bz2
+https://github.com/ycm-core/llvm/releases/download/${CLANGD_PV}/clangd-${CLANGD_PV}-aarch64-linux-gnu.tar.bz2
 				)
 			)
 			arm? (
 				elibc_glibc? (
-https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_PV}-armv7a-linux-gnueabihf.tar.bz2
+https://github.com/ycm-core/llvm/releases/download/${CLANGD_PV}/clangd-${CLANGD_PV}-armv7a-linux-gnueabihf.tar.bz2
 				)
 			)
 		)
@@ -574,17 +550,17 @@ https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_PV}-armv7a-linux-gnueabih
 		libclang? (
 			amd64? (
 				elibc_glibc? (
-https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_PV}-x86_64-unknown-linux-gnu.tar.bz2
+https://github.com/ycm-core/llvm/releases/download/${LIBCLANG_PV}/libclang-${LIBCLANG_PV}-x86_64-unknown-linux-gnu.tar.bz2
 				)
 			)
 			arm? (
 				elibc_glibc? (
-https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_PV}-armv7a-linux-gnueabihf.tar.bz2
+https://github.com/ycm-core/llvm/releases/download/${LIBCLANG_PV}/libclang-${LIBCLANG_PV}-armv7a-linux-gnueabihf.tar.bz2
 				)
 			)
 			arm64? (
 				elibc_glibc? (
-https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_PV}-aarch64-linux-gnu.tar.bz2
+https://github.com/ycm-core/llvm/releases/download/${LIBCLANG_PV}/libclang-${LIBCLANG_PV}-aarch64-linux-gnu.tar.bz2
 				)
 			)
 		)
@@ -599,7 +575,7 @@ https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v${OMNISHARP_PV}
 	)
 	java? (
 		!system-jdtls? (
-https://download.eclipse.org/jdtls/milestones/$(ver_cut 1-3 ${JDTLS_PV})/jdt-language-server-${JDTLS_PV}.tar.gz
+http://download.eclipse.org/jdtls/snapshots/jdt-language-server-${JDTLS_PV}.tar.gz
 		)
 	)
 	rust? (
@@ -639,26 +615,23 @@ SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc rust-docs x86_64-unknown-linux-gnu)
 SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc rust-std x86_64-unknown-linux-gnu)
 SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc rustc x86_64-unknown-linux-gnu)
 SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc rustfmt x86_64-unknown-linux-gnu)
-SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc rls x86_64-unknown-linux-gnu)
-SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc rust-analysis x86_64-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc rust-analyzer x86_64-unknown-linux-gnu)
 
 SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl cargo x86_64-unknown-linux-musl)
 SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl clippy x86_64-unknown-linux-musl)
-#SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl rust-docs x86_64-unknown-linux-musl)
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl rust-docs x86_64-unknown-linux-musl)
 SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl rust-std x86_64-unknown-linux-musl)
 SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl rustc x86_64-unknown-linux-musl)
 SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl rustfmt x86_64-unknown-linux-musl)
-SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl rls x86_64-unknown-linux-musl)
-SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl rust-analysis x86_64-unknown-linux-musl)
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl rust-analyzer x86_64-unknown-linux-musl)
 
 SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc cargo aarch64-unknown-linux-gnu)
 SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc clippy aarch64-unknown-linux-gnu)
-#SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc rust-docs aarch64-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc rust-docs aarch64-unknown-linux-gnu)
 SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc rust-std aarch64-unknown-linux-gnu)
 SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc rustc aarch64-unknown-linux-gnu)
 SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc rustfmt aarch64-unknown-linux-gnu)
-SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc rls aarch64-unknown-linux-gnu)
-SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc rust-analysis aarch64-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc rust-analyzer aarch64-unknown-linux-gnu)
 
 SRC_URI+=" "$(gen_rust_dls arm elibc_glibc cargo armv7-unknown-linux-gnueabihf)
 SRC_URI+=" "$(gen_rust_dls arm elibc_glibc clippy armv7-unknown-linux-gnueabihf)
@@ -666,8 +639,7 @@ SRC_URI+=" "$(gen_rust_dls arm elibc_glibc clippy armv7-unknown-linux-gnueabihf)
 SRC_URI+=" "$(gen_rust_dls arm elibc_glibc rust-std armv7-unknown-linux-gnueabihf)
 SRC_URI+=" "$(gen_rust_dls arm elibc_glibc rustc armv7-unknown-linux-gnueabihf)
 SRC_URI+=" "$(gen_rust_dls arm elibc_glibc rustfmt armv7-unknown-linux-gnueabihf)
-SRC_URI+=" "$(gen_rust_dls arm elibc_glibc rls armv7-unknown-linux-gnueabihf)
-SRC_URI+=" "$(gen_rust_dls arm elibc_glibc rust-analysis armv7-unknown-linux-gnueabihf)
+SRC_URI+=" "$(gen_rust_dls arm elibc_glibc rust-analyzer armv7-unknown-linux-gnueabihf)
 
 SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc cargo i686-unknown-linux-gnu)
 SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc clippy i686-unknown-linux-gnu)
@@ -675,8 +647,7 @@ SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc rust-docs i686-unknown-linux-gnu)
 SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc rust-std i686-unknown-linux-gnu)
 SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc rustc i686-unknown-linux-gnu)
 SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc rustfmt i686-unknown-linux-gnu)
-SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc rls i686-unknown-linux-gnu)
-SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc rust-analysis i686-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc rust-analyzer i686-unknown-linux-gnu)
 
 gen_go_dl_gh_url()
 {
@@ -704,39 +675,41 @@ https://github.com/${uri_frag}/archive/refs/tags/${tag}.tar.gz
 
 }
 
-SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/tools/gopls golang/tools gopls/v0.4.2) # only the folder
-SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/tools golang/tools v0.0.0-20200701133321-6ddc6be4d35f) # the entire project
-SRC_URI+=" "$(gen_go_dl_gh_url honnef.co/go/tools dominikh/go-tools v0.0.1-2020.1.4)
-SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/xerrors golang/xerrors  v0.0.0-20191204190536-9bdfabe68543)
+SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/tools/gopls golang/tools gopls/v0.6.4) # only the folder
+SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/tools golang/tools v0.1.1-0.20210119222907-0a1a9685734a) # the entire project
+SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/xerrors golang/xerrors v0.0.0-20200804184101-5ec99f83aff1)
+SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/sys golang/sys v0.0.0-20210119212857-b64e53b001e4)
+SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/mod golang/mod v0.4.0)
+SRC_URI+=" "$(gen_go_dl_gh_url honnef.co/go/tools dominikh/go-tools v0.0.1-2020.1.6)
+SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/sync golang/sync v0.0.0-20201020160332-67f06af15bc9)
 SRC_URI+=" "$(gen_go_dl_gh_url github.com/sergi/go-diff sergi/go-diff v1.1.0)
+SRC_URI+=" "$(gen_go_dl_gh_url mvdan.cc/gofumpt mvdan/gofumpt v0.1.0)
 SRC_URI+=" "$(gen_go_dl_gh_url mvdan.cc/xurls/v2 mvdan/xurls v2.2.0)
-SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/mod golang/mod v0.2.0)
-SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/sync golang/sync v0.0.0-20190911185100-cd5d95a43a6e)
+SRC_URI+=" "$(gen_go_dl_gh_url github.com/google/go-cmp google/go-cmp v0.5.4)
 SRC_URI+=" "$(gen_go_dl_gh_url github.com/BurntSushi/toml BurntSushi/toml v0.3.1)
 
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
-S_BAK="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+
+if [[ ${PV} =~ 9999 ]] ; then
+	S="${WORKDIR}/${P}"
+	S_BAK="${WORKDIR}/${P}"
+else
+	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+	S_BAK="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+fi
 S_BOTTLE="${WORKDIR}/bottle-${BOTTLE_PV}"
-S_CHARDET="${WORKDIR}/chardet-${CHARDET_PV}"
-S_FLASK_SPHINX_THEMES="${WORKDIR}/flask-sphinx-themes-${EGIT_COMMIT_FLASK_SPHINX_THEMES}"
 S_GO="${S}/third_party/go"
-S_IDNA="${WORKDIR}/idna-${IDNA_PV}"
-S_JEDI="${WORKDIR}/jedi-${JEDI_PV}"
+S_DJANGO_STUBS="${WORKDIR}/django-stubs-${DJANGO_STUBS_PV}"
+S_MRAB_REGEX="${WORKDIR}/mrabarnett-mrab-regex-${EGIT_COMMIT_MRAB_REGEX:0:12}"
 S_NUMPYDOC="${WORKDIR}/numpydoc-${EGIT_COMMIT_NUMPYDOC}"
+S_JEDI="${WORKDIR}/jedi-${JEDI_PV}"
 S_PARSO="${WORKDIR}/parso-${PARSO_PV}"
-S_PATHTOOLS="${WORKDIR}/pathtools-${EGIT_COMMIT_PATHTOOLS}"
-S_PYTHON_CERTIFI="${WORKDIR}/python-certifi-${PYTHON_CERTIFI_V}"
-S_REQUESTS="${WORKDIR}/requests-${REQUESTS_PV}"
-S_RUST="${S}/third_party/rls"
+S_RUST="${S}/third_party/rust-analyzer"
 S_SCIPY_SPHINX_THEME="${WORKDIR}/scipy-sphinx-theme-${EGIT_COMMIT_SCIPY_SPHINX_THEME}"
 S_TYPESHED="${WORKDIR}/typeshed-${EGIT_COMMIT_TYPESHED}"
-S_URLLIB3="${WORKDIR}/urllib3-${URLLIB3_PV}"
-S_WAITRESS="${WORKDIR}/waitress-${WAITRESS_PV}"
 S_WATCHDOG="${WORKDIR}/watchdog-${WATCHDOG_PV}"
-S_YCM_CORE_REGEX="${WORKDIR}/regex-${EGIT_COMMIT_YCMD_CORE_REGEX}"
-
 RESTRICT="mirror"
 DOCS=( JAVA_SUPPORT.md README.md )
+PROPERTIES="live"
 BD_REL="ycmd/${SLOT_MAJ}"
 BD_ABS=""
 
@@ -757,7 +730,7 @@ eerror
 		if [[ -z "${EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH}" ]] ; then
 eerror
 eerror "You need to define EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH as a"
-eerror "per-package envvar.  You must include the EPREFIX if cross-compiling."
+eerror "per-package envvar.  Do not include the EPREFIX."
 eerror
 			die
 		fi
@@ -788,91 +761,180 @@ eerror
 	fi
 }
 
+check_version() {
+	local name="${1}"
+	local actual_version="${2}"
+	local expected_version="${3}"
+	if [[ "${actual_version}" != "${expected_version}" ]] ; then
+eerror
+eerror "${name}'s expected version:  ${expected_version}"
+eerror "${name}'s actual version:  ${actual_version}"
+eerror
+eerror "Detected a version mismatch.  Tell the ebuild maintainer to about this."
+eerror
+eerror "QA actions required:"
+eerror
+eerror "  Ebuild version bump"
+eerror "  .patch and pkg_prepare() correctness verification"
+eerror "  *DEPENDs, IUSE, LICENSE updates"
+eerror
+		die
+	fi
+}
+
+unpack_abseil() {
+	pushd "${WORKDIR}" || die
+		unpack "${ABSEIL_FN}"
+		mv "abseil-cpp-${EGIT_COMMIT_ABSEIL_CPP}" \
+			"${S}/cpp/absl" || die
+	popd
+}
+
+verify_versions() {
+	# This is necessary for deterministic live ebuilds.
+	if ! use system-abseil ; then
+		actual_pv=$(grep "GIT_TAG" "cpp/CMakeLists.txt" \
+			| grep -E -o -e "[0-9a-f]{40}")
+		expected_pv="${EGIT_COMMIT_ABSEIL_CPP}"
+		check_version "Abseil" "${actual_pv}" "${expected_pv}"
+	fi
+	if use clangd ; then
+		actual_pv=$(grep "CLANGD_VERSION =" "build.py" \
+			| cut -f 2 -d "'")
+		expected_pv="${CLANGD_PV}"
+		check_version "clangd" "${actual_pv}" "${expected_pv}"
+	fi
+
+	actual_pv=$(grep "cmake_minimum_required" "cpp/CMakeLists.txt" \
+		| grep -E -o -e "[0-9.]+")
+	expected_pv="${CMAKE_PV}"
+	check_version "CMake" "${actual_pv}" "${expected_pv}"
+
+	if use rust ; then
+		actual_pv=$(grep "RUST_TOOLCHAIN =" "build.py" \
+			| cut -f 2 -d "'")
+		expected_pv="${RUST_PV}"
+		check_version "Rust" "${actual_pv}" "${expected_pv}"
+	fi
+
+	if use java ; then
+		local pv
+		local bts
+		pv=$(grep "JDTLS_MILESTONE =" "build.py" | cut -f 2 -d "'")
+		bts=$(grep "JDTLS_BUILD_STAMP =" "build.py" | cut -f 2 -d "'")
+		actual_pv="${pv}-${bts}"
+		expected_pv="${JDTLS_PV}"
+		check_version "jdtls" "${actual_pv}" "${expected_pv}"
+	fi
+	if use csharp ; then
+		actual_pv=$(grep "/omnisharp.http-linux-x64" "build.py" \
+			| cut -f 3 -d "/" \
+			| sed -e "s|v||g")
+		expected_pv="${OMNISHARP_PV}"
+		check_version "OmniSharp-Roslyn" "${actual_pv}" "${expected_pv}"
+	fi
+
+	local range=$(grep -r -e "Python3 " cpp/CMakeLists.txt | cut -f 3 -d " ")
+	if [[ "${range}" =~ "..." ]] ; then
+		local min=$(grep -r -e "Python3 " cpp/CMakeLists.txt \
+			| cut -f 3 -d " " \
+			| sed -E -e "s|[.]{3}|-|g" \
+			| cut -f 1 -d "-")
+		local max=$(grep -r -e "Python3 " cpp/CMakeLists.txt \
+			| cut -f 3 -d " " \
+			| sed -E -e "s|[.]{3}|-|g" \
+			| cut -f 2 -d "-")
+		if ver_test ${EPYTHON/python} -lt ${min} \
+			|| ver_test ${EPYTHON/python} -gt ${max} ; then
+eerror
+eerror "Python's expected range:  ${range}"
+eerror "Python's actual range:  ${EPYTHON/python}"
+eerror
+			die
+		fi
+	else
+		local min=$(grep -r -e "Python3 " cpp/CMakeLists.txt \
+			| cut -f 3 -d " " \
+			| sed -E -e "s|[.]{3}|-|g" \
+			| cut -f 1 -d "-")
+		if ver_test ${EPYTHON/python} -lt ${min} ; then
+eerror
+eerror "Python's expected minimum version:  ${min}"
+eerror "Python's actual version:  ${EPYTHON/python}"
+eerror
+			die
+		fi
+	fi
+}
+
 src_unpack() {
-	# Manually unpacked to prevent double unpack with Rust or Go.
-	unpack ${YCMD_FN} \
-		${BOTTLE_FN} \
-		${CHARDET_FN} \
-		${FLASK_SPHINX_THEMES_FN} \
-		${IDNA_FN} \
-		${JEDI_FN} \
-		${NUMPYDOC_FN} \
-		${PARSO_FN} \
-		${PATHTOOLS_FN} \
-		${PYTHON_CERTIFI_FN} \
-		${REQUESTS_FN} \
-		${SCIPY_SPHINX_THEME_FN} \
-		${TYPESHED_FN} \
-		${URLLIB3_FN} \
-		${WAITRESS_FN} \
-		${WATCHDOG_FN} \
-		${YCMD_CORE_REGEX_FN}
+	local actual_version
+	local expected_version
+	if [[ ${PV} =~ 9999 ]] ; then
+		EGIT_BRANCH="master"
+		EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
+		git-r3_fetch
+		git-r3_checkout
+
+		actual_version=$(cat "${S}/CORE_VERSION")
+		expected_version=$(ver_cut 1 ${PV})
+		check_version "${PN}" "${actual_version}" "${expected_version}"
+	else
+		# Manually unpacked to prevent double unpack with Rust or Go.
+		unpack \
+			${YCMD_FN[@]} \
+			${BOTTLE_FN} \
+			${DJANGO_STUBS_FN} \
+			${MRAB_REGEX_FN} \
+			${NUMPYDOC_FN} \
+			${JEDI_FN} \
+			${PARSO_FN} \
+			${SCIPY_SPHINX_THEME_FN} \
+			${TYPESHED_FN} \
+			${WATCHDOG_FN}
+	fi
 
 	cd "${S}" || die
-	rm -rf \
-		third_party/bottle \
-		third_party/cregex \
-		third_party/jedi_deps/jedi \
-		third_party/jedi_deps/numpydoc \
-		third_party/jedi_deps/numpydoc/doc/scipy-sphinx-theme \
-		third_party/jedi_deps/parso \
-		third_party/jedi_deps/jedi/jedi/third_party/typeshed \
-		third_party/requests_deps/certifi \
-		third_party/requests_deps/chardet \
-		third_party/requests_deps/idna \
-		third_party/requests_deps/requests \
-		third_party/requests_deps/urllib3 \
-		third_party/waitress \
-		third_party/watchdog_deps/pathtools \
-		third_party/watchdog_deps/pathtools/docs/source/_themes \
-		third_party/watchdog_deps/watchdog \
-		|| die
 
-	if ! use system-bottle ; then
-		mv "${S_BOTTLE}" \
-			third_party/bottle || die
-	fi
-	if ! use system-mrab-regex ; then
-		mv "${S_YCM_CORE_REGEX}" \
-			third_party/cregex || die
-	fi
-	if ! use system-jedi && use python ; then
-		mv "${S_JEDI}" \
-			third_party/jedi_deps/jedi || die
-		mv "${S_NUMPYDOC}" \
-			third_party/jedi_deps/numpydoc || die
-		mv "${S_SCIPY_SPHINX_THEME}" \
-			third_party/jedi_deps/numpydoc/doc/scipy-sphinx-theme || die
-		mv "${S_PARSO}" \
-			third_party/jedi_deps/parso || die
-		mv "${S_TYPESHED}" \
-			third_party/jedi_deps/jedi/jedi/third_party/typeshed || die
-	fi
-	if ! use system-requests ; then
-		mv "${S_PYTHON_CERTIFI}" \
-			third_party/requests_deps/certifi || die
-		mv "${S_CHARDET}" \
-			third_party/requests_deps/chardet || die
-		mv "${S_IDNA}" \
-			third_party/requests_deps/idna || die
-		mv "${S_REQUESTS}" \
-			third_party/requests_deps/requests || die
-		mv "${S_URLLIB3}" \
-			third_party/requests_deps/urllib3 || die
-	fi
-	if ! use system-waitress ; then
-		mv "${S_WAITRESS}" \
-			third_party/waitress || die
-	fi
-	if ! use system-watchdog ; then
-		if ! use system-pathtools ; then
-			mv "${S_PATHTOOLS}" \
-				third_party/watchdog_deps/pathtools || die
-			mv "${S_FLASK_SPHINX_THEMES}" \
-				third_party/watchdog_deps/pathtools/docs/source/_themes || die
+	if [[ ! ( ${PV} =~ 9999 ) ]] ; then
+		rm -rf \
+			third_party/bottle \
+			third_party/jedi_deps/jedi \
+			third_party/jedi_deps/numpydoc \
+			third_party/jedi_deps/numpydoc/doc/scipy-sphinx-theme \
+			third_party/jedi_deps/parso \
+			third_party/jedi_deps/jedi/jedi/third_party/typeshed \
+			third_party/jedi_deps/jedi/jedi/third_party/django-stubs \
+			third_party/mrab-regex \
+			third_party/watchdog_deps/watchdog \
+			|| die
+
+		if ! use system-bottle ; then
+			mv "${S_BOTTLE}" \
+				third_party/bottle || die
 		fi
-		mv "${S_WATCHDOG}" \
-			third_party/watchdog_deps/watchdog || die
+		if ! use system-jedi && use python ; then
+			mv "${S_JEDI}" \
+				third_party/jedi_deps/jedi || die
+			mv "${S_NUMPYDOC}" \
+				third_party/jedi_deps/numpydoc || die
+			mv "${S_SCIPY_SPHINX_THEME}" \
+				third_party/jedi_deps/numpydoc/doc/scipy-sphinx-theme || die
+			mv "${S_PARSO}" \
+				third_party/jedi_deps/parso || die
+			mv "${S_TYPESHED}" \
+				third_party/jedi_deps/jedi/jedi/third_party/typeshed || die
+			mv "${S_DJANGO_STUBS}" \
+				third_party/jedi_deps/jedi/jedi/third_party/django-stubs || die
+		fi
+		if ! use system-mrab-regex ; then
+			mv "${S_MRAB_REGEX}" \
+				third_party/mrab-regex || die
+		fi
+		if ! use system-watchdog ; then
+			mv "${S_WATCHDOG}" \
+				third_party/watchdog_deps/watchdog || die
+		fi
 	fi
 
 	if use clangd && ! use system-clangd ; then
@@ -944,6 +1006,12 @@ src_unpack() {
 	if use rust && ! use system-rust ; then
 		_install_rust_locally
 	fi
+
+	if ! use system-abseil ; then
+		unpack_abseil
+	fi
+
+	verify_versions
 }
 
 unpack_go_pkg()
@@ -973,14 +1041,17 @@ einfo
 
 unpack_gopls()
 {
-	unpack_go_pkg golang.org/x/tools/gopls golang/tools gopls/v0.4.2
-	unpack_go_pkg golang.org/x/tools golang/tools v0.0.0-20200701133321-6ddc6be4d35f
-	unpack_go_pkg honnef.co/go/tools dominikh/go-tools v0.0.1-2020.1.4
-	unpack_go_pkg golang.org/x/xerrors golang/xerrors v0.0.0-20191204190536-9bdfabe68543
+	unpack_go_pkg golang.org/x/tools/gopls golang/tools gopls/v0.6.4
+	unpack_go_pkg golang.org/x/tools golang/tools v0.1.1-0.20210119222907-0a1a9685734a
+	unpack_go_pkg golang.org/x/xerrors golang/xerrors v0.0.0-20200804184101-5ec99f83aff1
+	unpack_go_pkg golang.org/x/sys golang/sys v0.0.0-20210119212857-b64e53b001e4
+	unpack_go_pkg golang.org/x/mod golang/mod v0.4.0
+	unpack_go_pkg honnef.co/go/tools dominikh/go-tools v0.0.1-2020.1.6
+	unpack_go_pkg golang.org/x/sync golang/sync v0.0.0-20201020160332-67f06af15bc9
 	unpack_go_pkg github.com/sergi/go-diff sergi/go-diff v1.1.0
+	unpack_go_pkg mvdan.cc/gofumpt mvdan/gofumpt v0.1.0
 	unpack_go_pkg mvdan.cc/xurls/v2 mvdan/xurls v2.2.0
-	unpack_go_pkg golang.org/x/mod golang/mod v0.2.0
-	unpack_go_pkg golang.org/x/sync golang/sync v0.0.0-20190911185100-cd5d95a43a6e
+	unpack_go_pkg github.com/google/go-cmp google/go-cmp v0.5.4
 	unpack_go_pkg github.com/BurntSushi/toml BurntSushi/toml v0.3.1
 }
 
@@ -1037,12 +1108,11 @@ _install_rust_locally()
 				if use elibc_glibc ; then
 		unpack_rust_pkg cargo aarch64-unknown-linux-gnu
 		unpack_rust_pkg clippy aarch64-unknown-linux-gnu clippy-preview
-		#unpack_rust_pkg rust-docs aarch64-unknown-linux-gnu
+		unpack_rust_pkg rust-docs aarch64-unknown-linux-gnu
 		unpack_rust_pkg rust-std aarch64-unknown-linux-gnu rust-std-aarch64-unknown-linux-gnu
 		unpack_rust_pkg rustc aarch64-unknown-linux-gnu
 		unpack_rust_pkg rustfmt aarch64-unknown-linux-gnu rustfmt-preview
-		unpack_rust_pkg rls aarch64-unknown-linux-gnu rls-preview
-		unpack_rust_pkg rust-analysis aarch64-unknown-linux-gnu rust-analysis-aarch64-unknown-linux-gnu
+		unpack_rust_pkg rust-analyzer aarch64-unknown-linux-gnu rust-analyzer-preview
 				fi
 				;;
 			armv7a*h*)
@@ -1053,8 +1123,7 @@ _install_rust_locally()
 		unpack_rust_pkg rust-std armv7-unknown-linux-gnueabihf rust-std-armv7-unknown-linux-gnueabihf
 		unpack_rust_pkg rustc armv7-unknown-linux-gnueabihf
 		unpack_rust_pkg rustfmt armv7-unknown-linux-gnueabihf rustfmt-preview
-		unpack_rust_pkg rls armv7-unknown-linux-gnueabihf rls-preview
-		unpack_rust_pkg rust-analysis armv7-unknown-linux-gnueabihf rust-analysis-armv7-unknown-linux-gnueabihf
+		unpack_rust_pkg rust-analyzer armv7-unknown-linux-gnueabihf rust-analyzer-preview
 				fi
 				;;
 			x86_64*)
@@ -1065,18 +1134,16 @@ _install_rust_locally()
 		unpack_rust_pkg rust-std x86_64-unknown-linux-gnu rust-std-x86_64-unknown-linux-gnu
 		unpack_rust_pkg rustc x86_64-unknown-linux-gnu
 		unpack_rust_pkg rustfmt x86_64-unknown-linux-gnu rustfmt-preview
-		unpack_rust_pkg rls x86_64-unknown-linux-gnu rls-preview
-		unpack_rust_pkg rust-analysis x86_64-unknown-linux-gnu rust-analysis-x86_64-unknown-linux-gnu
+		unpack_rust_pkg rust-analyzer x86_64-unknown-linux-gnu rust-analyzer-preview
 				fi
 				if use elibc_musl ; then
 		unpack_rust_pkg cargo x86_64-unknown-linux-musl
 		unpack_rust_pkg clippy x86_64-unknown-linux-musl clippy-preview
-		#unpack_rust_pkg rust-docs x86_64-unknown-linux-musl
+		unpack_rust_pkg rust-docs x86_64-unknown-linux-musl
 		unpack_rust_pkg rust-std x86_64-unknown-linux-musl rust-std-x86_64-unknown-linux-musl
 		unpack_rust_pkg rustc x86_64-unknown-linux-musl
 		unpack_rust_pkg rustfmt x86_64-unknown-linux-musl rustfmt-preview
-		unpack_rust_pkg rls x86_64-unknown-linux-musl rls-preview
-		unpack_rust_pkg rust-analysis x86_64-unknown-linux-musl rust-analysis-x86_64-unknown-linux-musl
+		unpack_rust_pkg rust-analyzer x86_64-unknown-linux-musl rust-analyzer-preview
 				fi
 				;;
 			x86*)
@@ -1087,16 +1154,13 @@ _install_rust_locally()
 		unpack_rust_pkg rust-std i686-unknown-linux-gnu rust-std-i686-unknown-linux-gnu
 		unpack_rust_pkg rustc i686-unknown-linux-gnu
 		unpack_rust_pkg rustfmt i686-unknown-linux-gnu rustfmt-preview
-		unpack_rust_pkg rls i686-unknown-linux-gnu rls-preview
-		unpack_rust_pkg rust-analysis i686-unknown-linux-gnu rust-analysis-i686-unknown-linux-gnu
+		unpack_rust_pkg rust-analyzer i686-unknown-linux-gnu rust-analyzer-preview
 				fi
 				;;
 			*)
 eerror
-eerror
 eerror "chost: ${CHOST}"
 eerror "arch: ${arch}"
-eerror
 eerror "Please use the system-rust USE flag instead"
 eerror
 				die
@@ -1156,11 +1220,12 @@ src_prepare() {
 	default
 	local sitedir="$(python_get_sitedir)"
 	_check_abi_supported
-	eapply "${FILESDIR}/${PN}-42_p20200108-skip-thirdparty-check.patch"
-	eapply "${FILESDIR}/${PN}-43_p20200516-system-third-party.patch"
-	eapply "${FILESDIR}/${PN}-43_p20200516-system-global-config.patch"
+	eapply "${FILESDIR}/${PN}-44_p20210408-skip-thirdparty-check.patch"
+	eapply "${FILESDIR}/${PN}-44_p20210408-system-third-party.patch"
+	eapply "${FILESDIR}/${PN}-45_p20220706-system-global-config.patch"
+	eapply "${FILESDIR}/${PN}-45_p20220706-disable-fetch-abseil.patch"
 
-	cat "${FILESDIR}/default_settings.json.43_p20200623" \
+	cat "${FILESDIR}/default_settings.json.44_p20200907" \
 		> ycmd/default_settings.json || die
 
 	if use clangd ; then
@@ -1272,6 +1337,20 @@ src_configure() {
 				"${BD_ABS}/third_party/go/bin/gopls"
 		fi
 
+		local jp=""
+		  if [[ -L "${EPREFIX}/usr/lib/jvm/icedtea-bin-11" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/icedtea-bin-11"
+		elif [[ -L "${EPREFIX}/usr/lib/jvm/icedtea-11" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/icedtea-11"
+		elif [[ -L "${EPREFIX}/usr/lib/jvm/openjdk-11" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/openjdk-11"
+		elif [[ -L "${EPREFIX}/usr/lib/jvm/openjdk-bin-11" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/openjdk-bin-11"
+		fi
+		[[ -n "${jp}" ]] && jp="${bp}/bin/java"
+		sed -i -e "s|___JAVA_PATH___|${jp}|g" \
+			ycmd/default_settings.json || die
+
 		if use system-jdtls && use java ; then
 			ycmd_config_use_system JDT
 			ycmd_config_set_default_src_path \
@@ -1369,17 +1448,18 @@ EXTERNAL_LIBCLANG_PATH \"${EPREFIX}/usr/lib/llvm/${CLANG_PV_MAJ}/$(get_libdir)/l
 		if use system-rust ; then
 			ycmd_config_use_system RUST
 			ycmd_config_set_default_src_path \
-				"___SYSTEM_RLS_PATH___" \
-				"${EPREFIX}/usr/bin/rls"
+				"___SYSTEM_RA_PATH___" \
+				"${EPREFIX}/usr/bin/rust-analyzer"
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_RUSTC_PATH___" \
 				"${EPREFIX}/usr/bin/rustc"
 			ycmd_config_set_default_json_path \
-				"___RLS_PATH___" \
-				"${EPREFIX}/usr/bin/rls"
+				"___RUST_TC_ROOT___" \
+				"/usr"
+		else
 			ycmd_config_set_default_json_path \
-				"___RUSTC_PATH___" \
-				"${EPREFIX}/usr/bin/rustc"
+				"___RUST_TC_ROOT___" \
+				"${BD_ABS}/third_party/rust-analyzer"
 		fi
 
 		if use system-tern ; then
@@ -1400,14 +1480,7 @@ EXTERNAL_LIBCLANG_PATH \"${EPREFIX}/usr/lib/llvm/${CLANG_PV_MAJ}/$(get_libdir)/l
 		else
 			ycmd_config_set_default_json_path \
 				"___TSSERVER_PATH___" \
-"${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
-		fi
-
-		if use system-waitress ; then
-			ycmd_config_use_system WAITRESS
-			ycmd_config_set_default_src_path \
-				"___SYSTEM_WAITRESS_PATH___" \
-				"${sitedir}/waitress"
+"${BD_ABS}/third_party/tsserver/node_modules/typescript/bin/tsserver"
 		fi
 
 		if use system-watchdog ; then
@@ -1447,6 +1520,7 @@ src_compile() {
 		fi
 
 		local myargs=(
+			--verbose
 		)
 		if use c || use cxx || use objc || use objcxx ; then
 			if use clangd ; then
@@ -1476,15 +1550,13 @@ src_compile() {
 #		if use rust && ! use system-rust ; then
 #			myargs+=( --rust-completer )
 #		fi
-		if use system-boost ; then
-			myargs+=( --system-boost )
-		fi
 		if use system-libclang ; then
 			myargs+=( --system-libclang )
 		fi
 		if use typescript && ! use system-typescript ; then
 			myargs+=( --ts-completer )
 		fi
+		einfo "pwd="$(pwd)
 		einfo "Running:  ${EPYTHON} build.py ${myargs[@]}"
 		${EPYTHON} build.py ${myargs[@]}
 
@@ -1541,7 +1613,7 @@ _shrink_install() {
 		)
 	fi
 	local arg_legal=(
-		    -iname "*AUTHORS*"
+		   -iname "*AUTHORS*"
 		-o -iname "*CHANGELOG*"
 		-o -iname "*CONTRIBUT*"
 		-o -iname "*COPYING*"
@@ -1555,8 +1627,7 @@ _shrink_install() {
 einfo
 einfo "Cleaning third_party"
 einfo
-	find {third_party/bottle,third_party/jedi_deps,\
-third_party/requests_deps,third_party/waitress,ycmd} \
+	find {third_party/bottle,third_party/jedi_deps,ycmd} \
 		! \( \
 			   -name "*.py" \
 			-o -name "*.pyc" \
@@ -1601,7 +1672,8 @@ einfo
 einfo
 einfo "Cleaning regex"
 einfo
-		find third_party/cregex \
+		rm -rf third_party/mrab-regex || die
+		find third_party/regex-build \
 			! \( \
 				   -name "*.so" \
 				-o -path "*/*.egg-info/*" \
@@ -1610,20 +1682,12 @@ einfo
 				-o ${arg_legal[@]} \
 			\) \
 			-exec rm -f "{}" + 2>/dev/null
-			# Only 3 supported upstream
-			rm -rf third_party/cregex/regex_2 || die
 	fi
 	if use system-watchdog ; then
 einfo
 einfo "Cleaning watchdog"
 einfo
 		rm -rf third_party/watchdog_deps/watchdog || die
-	fi
-	if use system-pathtools ; then
-einfo
-einfo "Cleaning pathtools"
-einfo
-		rm -rf third_party/watchdog_deps/pathtools || die
 	fi
 
 einfo
@@ -1655,6 +1719,7 @@ einfo
 		\) \
 		-exec rm -rf "{}" +
 	if use rust && ! use system-rust ; then
+		# TODO
 		rm -rf "third_party/rls/lib/rustlib/src/rust/src/stdarch/ci" \
 			|| die
 	fi
@@ -1693,9 +1758,6 @@ einfo
 		if ! use javascript ; then
 			rm -rf javascript || die
 		fi
-		if ! use javascriptreact ; then
-			rm -rf javascriptreact || die
-		fi
 		if ! use objc ; then
 			rm -rf objc || die
 		fi
@@ -1709,10 +1771,7 @@ einfo
 			rm -rf rust || die
 		fi
 		if ! use typescript ; then
-			rm -rf typescript || die
-		fi
-		if ! use typescriptreact ; then
-			rm -rf typescriptreact || die
+			rm -rf typescript typescriptreact || die
 		fi
 		if ! use vim ; then
 			rm -rf general/ultisnips_completer.py || die
@@ -1733,7 +1792,6 @@ einfo
 			"third_party/tern_runtime/node_modules/errno/build.js" \
 			|| die
 	fi
-	rm -rf third_party/requests_deps/urllib3/dummyserver || die
 	rm -rf third_party/generic_server || die
 
 einfo
@@ -1784,7 +1842,7 @@ src_install() {
 		python_moduleinto "${BD_REL}"
 		python_domodule CORE_VERSION
 		exeinto "${BD_ABS}"
-		doexe ycm_core.so
+		doexe $(ls ycm_core.cpython-*-*.so)
 		if use minimal ; then
 			_shrink_install
 		fi
@@ -1833,15 +1891,13 @@ src_install() {
 		fi
 
 		if ! use system-mrab-regex ; then
-			python_domodule third_party/cregex
-		fi
-
-		if ! use system-requests ; then
-			python_domodule third_party/requests_deps
+			python_domodule third_party/regex-build
+			pushd "${ED}${BD_ABS}/third_party/regex-build/regex" || die
+			popd
 		fi
 
 		if ! use system-rust && use rust ; then
-			python_domodule third_party/rls
+			python_domodule third_party/rust-analyzer
 		fi
 
 		if ! use system-tern && use javascript ; then
@@ -1852,15 +1908,7 @@ src_install() {
 			python_domodule third_party/tsserver
 		fi
 
-		if ! use system-waitress ; then
-			python_domodule third_party/waitress
-		fi
-
 		if ! use system-watchdog ; then
-			if ! use system-pathtools ; then
-				python_moduleinto "${BD_REL}/third_party/watchdog_deps"
-				python_domodule third_party/watchdog_deps/pathtools
-			fi
 			python_moduleinto "${BD_REL}/third_party/watchdog_deps/watchdog/build"
 			python_domodule third_party/watchdog_deps/watchdog/build/lib3
 		fi

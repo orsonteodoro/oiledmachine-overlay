@@ -332,9 +332,9 @@ REQUIRED_USE+="
 	)
 "
 
-# gopls is 0.4.1
+# gopls is 0.9.4
 # See build.py for dependency versions.
-# See https://github.com/golang/tools/releases?after=gopls%2Fv0.4.2
+# See https://github.com/golang/tools/releases?after=gopls%2Fv0.9.4
 
 # For the rust version see src/version in https://github.com/rust-lang
 # and build.py in archive for nightly date.  Use committer-date:YYYY-MM-DD to search
@@ -344,14 +344,10 @@ REQUIRED_USE+="
 # .netfx version https://github.com/OmniSharp/omnisharp-roslyn/blob/v1.35.4/azure-pipelines.yml
 
 # Last update for
-# https://github.com/ycm-core/ycmd/commits/master/third_party
-# Mar 31, 2022
+# https://github.com/ycm-core/ycmd/blob/2ee41000a28fb6b2ae00985c231896b6d072af86/build.py
+# Aug 22, 2022
 
-# Last update for
-# https://github.com/ycm-core/ycmd/blob/master/build.py
-# Mar 31, 2022
-
-#EGIT_COMMIT="df3d7eb67e533f5d82cf4084fe4defc3a5c3f159" # The lastest commit snapshot
+EGIT_COMMIT="2ee41000a28fb6b2ae00985c231896b6d072af86" # The lastest commit snapshot
 #EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
 EGIT_COMMIT_ABSEIL_CPP="3b4a16abad2c2ddc494371cc39a2946e36d35d11"
 EGIT_COMMIT_MRAB_REGEX="fa9def53cf920ed9343a0afab54d5075d4c75394"
@@ -362,14 +358,14 @@ BOTTLE_PV="0.12.18"
 CLANGD_PV="${CLANG_PV_MAJ}.0.0"
 CMAKE_PV="3.14"
 DJANGO_STUBS_PV="jedi-v1"
-GOPLS_PV="0.6.4"
+GOPLS_PV="0.9.4"
 JDTLS_PV="1.6.0-202110200520" # MILESTONE-TIMESTAMP in build.py
 JEDI_PV="0.18.0"
 OMNISHARP_PV="1.37.11"
 LIBCLANG_PV="${CLANG_PV_MAJ}.0.0"
 MRAB_REGEX_PV="2020.10.15" # fa9def5
 PARSO_PV="0.8.1"
-RUST_PV="nightly-2021-10-26"
+RUST_PV="nightly-2022-08-17"
 WATCHDOG_PV="2.0.1"
 
 RDEPEND_NODEJS="net-libs/nodejs"
@@ -429,7 +425,7 @@ DEPEND+="
 		>=dev-nodejs/tern-0.21.0
 	)
 	system-typescript? (
-		>=dev-lang/typescript-4.5
+		>=dev-lang/typescript-4.7
 	)
 	system-watchdog? (
 		>=dev-python/watchdog-${WATCHDOG_PV}
@@ -1601,14 +1597,19 @@ src_test() {
 _shrink_install() {
 	local arg_docs=( -false )
 	if use doc ; then
-		arg_docs=( -ipath "*/*doc*/*" )
+		arg_docs=(
+			-ipath "*/*doc*/*"
+		)
 	fi
 	local arg_developer=( -false )
 	if use developer ; then
-		arg_developer=( -iname "*CODE_OF_CONDUCT*"
-		-o -iname "*TODO*" )
+		arg_developer=(
+			   -iname "*CODE_OF_CONDUCT*"
+			-o -iname "*TODO*"
+		)
 	fi
-	local arg_legal=( -iname "*AUTHORS*"
+	local arg_legal=(
+		   -iname "*AUTHORS*"
 		-o -iname "*CHANGELOG*"
 		-o -iname "*CONTRIBUT*"
 		-o -iname "*COPYING*"
@@ -1617,12 +1618,14 @@ _shrink_install() {
 		-o -iname "*licen*"
 		-o -iname "*NOTICE*"
 		-o -iname "*PATENTS*"
-		-o -iname "*README*" )
+		-o -iname "*README*"
+	)
 einfo
 einfo "Cleaning third_party"
 einfo
 	find {third_party/bottle,third_party/jedi_deps,ycmd} \
-		! \( -name "*.py" \
+		! \( \
+			   -name "*.py" \
 			-o -name "*.pyc" \
 			-o -name "*.pyi" \
 			-o -name "*.so" \
@@ -1631,7 +1634,8 @@ einfo
 			-o -path "*/*.egg-info/*" \
 			-o ${arg_docs[@]} \
 			-o ${arg_developer[@]} \
-			-o ${arg_legal[@]} \) \
+			-o ${arg_legal[@]} \
+		\) \
 		-exec rm -f "{}" + 2>/dev/null
 	rm -rf third_party/jedi_deps/jedi/scripts || die
 	rm -rf third_party/bottle/plugins || die
@@ -1640,7 +1644,8 @@ einfo
 einfo "Cleaning omnisharp-roslyn"
 einfo
 		find third_party/omnisharp-roslyn \
-			! \(	-name "*.dll" \
+			! \(	\
+				   -name "*.dll" \
 				-o -name "*.so" \
 				-o -name "*.config" \
 				-o -name "*.pdb" \
@@ -1650,7 +1655,8 @@ einfo
 				-o -name "machine.config" \
 				-o ${arg_docs[@]} \
 				-o ${arg_developer[@]} \
-				-o ${arg_legal[@]} \) \
+				-o ${arg_legal[@]} \
+			\) \
 			-exec rm -f "{}" + 2>/dev/null
 		if ! use system-mono ; then
 			rm -rf third_party/omnisharp-roslyn/{bin,lib,etc} || die
@@ -1664,11 +1670,13 @@ einfo "Cleaning regex"
 einfo
 		rm -rf third_party/mrab-regex || die
 		find third_party/regex-build \
-			! \( -name "*.so" \
+			! \( \
+				   -name "*.so" \
 				-o -path "*/*.egg-info/*" \
 				-o -name "*.pyc" \
 				-o -name "*.py" \
-				-o ${arg_legal[@]} \) \
+				-o ${arg_legal[@]} \
+			\) \
 			-exec rm -f "{}" + 2>/dev/null
 	fi
 	if use system-watchdog ; then
@@ -1687,15 +1695,20 @@ einfo
 einfo
 einfo "Cleaning out go folders"
 einfo
-		find third_party/go ! \( -executable \
-			-o ${arg_legal[@]} \) \
+		find third_party/go \
+			! \( \
+				-executable \
+				-o ${arg_legal[@]} \
+			\) \
 			-exec rm "{}" +
 	fi
 
 einfo
 einfo "Cleaning out VCS, CI, testing"
 einfo
-	find . \( -name ".git*" \
+	find . \
+		\( \
+			   -name ".git*" \
 			-o -name "azure" \
 			-o -name "azure-pipelines.yml" \
 			-o -name "_travis" \
@@ -1710,7 +1723,10 @@ einfo
 einfo
 einfo "Cleaning out installer files"
 einfo
-	find . \( -name "setup.py" \) \
+	find . \
+		\( \
+			-name "setup.py" \
+		\) \
 		-exec rm -rf "{}" +
 
 einfo
@@ -1761,8 +1777,11 @@ einfo
 einfo
 einfo "Cleaning out test files"
 einfo
-	find . \( -name "conftest.py" \
-			-o -name "test.py" \) \
+	find . \
+		\( \
+			   -name "conftest.py" \
+			-o -name "test.py" \
+		\) \
 		-delete
 	if use javascript && ! use system-tern ; then
 		rm -rf "third_party/tern_runtime/node_modules/tern/bin/test" \

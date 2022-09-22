@@ -329,9 +329,9 @@ REQUIRED_USE+="
 	)
 "
 
-# gopls is 0.4.1
+# gopls is 0.6.4
 # See build.py for dependency versions.
-# See https://github.com/golang/tools/releases?after=gopls%2Fv0.4.2
+# See https://github.com/golang/tools/releases?after=gopls%2Fv0.6.4
 
 # For the rust version see src/version in https://github.com/rust-lang
 # and build.py in archive for nightly date.  Use committer-date:YYYY-MM-DD to search
@@ -339,6 +339,10 @@ REQUIRED_USE+="
 # For omnisharp-roslyn min requirements, see
 # .netcore version https://github.com/OmniSharp/omnisharp-roslyn/blob/v1.35.4/.pipelines/init.yml
 # .netfx version https://github.com/OmniSharp/omnisharp-roslyn/blob/v1.35.4/azure-pipelines.yml
+
+# Last update for
+# https://github.com/ycm-core/ycmd/blob/6f2f818364bb5c52f60e720741ff583bf77b4cd5/build.py
+# Apr 1, 2022
 
 EGIT_COMMIT="6f2f818364bb5c52f60e720741ff583bf77b4cd5" # The last pull request (batch of related commits) before the CORE_VERSION is 45.
 #EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
@@ -1459,14 +1463,19 @@ src_test() {
 _shrink_install() {
 	local arg_docs=( -false )
 	if use doc ; then
-		arg_docs=( -ipath "*/*doc*/*" )
+		arg_docs=(
+			-ipath "*/*doc*/*"
+		)
 	fi
 	local arg_developer=( -false )
 	if use developer ; then
-		arg_developer=( -iname "*CODE_OF_CONDUCT*"
-		-o -iname "*TODO*" )
+		arg_developer=(
+			   -iname "*CODE_OF_CONDUCT*"
+			-o -iname "*TODO*"
+		)
 	fi
-	local arg_legal=( -iname "*AUTHORS*"
+	local arg_legal=(
+		   -iname "*AUTHORS*"
 		-o -iname "*CHANGELOG*"
 		-o -iname "*CONTRIBUT*"
 		-o -iname "*COPYING*"
@@ -1475,12 +1484,14 @@ _shrink_install() {
 		-o -iname "*licen*"
 		-o -iname "*NOTICE*"
 		-o -iname "*PATENTS*"
-		-o -iname "*README*" )
+		-o -iname "*README*"
+	)
 einfo
 einfo "Cleaning third_party"
 einfo
 	find {third_party/bottle,third_party/jedi_deps,ycmd} \
-		! \( -name "*.py" \
+		! \( \
+			   -name "*.py" \
 			-o -name "*.pyc" \
 			-o -name "*.pyi" \
 			-o -name "*.so" \
@@ -1489,7 +1500,8 @@ einfo
 			-o -path "*/*.egg-info/*" \
 			-o ${arg_docs[@]} \
 			-o ${arg_developer[@]} \
-			-o ${arg_legal[@]} \) \
+			-o ${arg_legal[@]} \
+		\) \
 		-exec rm -f "{}" + 2>/dev/null
 	rm -rf third_party/jedi_deps/jedi/scripts || die
 	rm -rf third_party/bottle/plugins || die
@@ -1498,7 +1510,8 @@ einfo
 einfo "Cleaning omnisharp-roslyn"
 einfo
 		find third_party/omnisharp-roslyn \
-			! \(	-name "*.dll" \
+			! \( \
+				   -name "*.dll" \
 				-o -name "*.so" \
 				-o -name "*.config" \
 				-o -name "*.pdb" \
@@ -1508,7 +1521,8 @@ einfo
 				-o -name "machine.config" \
 				-o ${arg_docs[@]} \
 				-o ${arg_developer[@]} \
-				-o ${arg_legal[@]} \) \
+				-o ${arg_legal[@]} \
+			\) \
 			-exec rm -f "{}" + 2>/dev/null
 		if ! use system-mono ; then
 			rm -rf third_party/omnisharp-roslyn/{bin,lib,etc} || die
@@ -1522,11 +1536,13 @@ einfo "Cleaning regex"
 einfo
 		rm -rf third_party/mrab-regex || die
 		find third_party/regex-build \
-			! \( -name "*.so" \
+			! \( \
+				   -name "*.so" \
 				-o -path "*/*.egg-info/*" \
 				-o -name "*.pyc" \
 				-o -name "*.py" \
-				-o ${arg_legal[@]} \) \
+				-o ${arg_legal[@]} \
+			\) \
 			-exec rm -f "{}" + 2>/dev/null
 	fi
 	if use system-watchdog ; then
@@ -1545,15 +1561,20 @@ einfo
 einfo
 einfo "Cleaning out go folders"
 einfo
-		find third_party/go ! \( -executable \
-			-o ${arg_legal[@]} \) \
+		find third_party/go \
+			! \( \
+				-executable \
+				-o ${arg_legal[@]} \
+			\) \
 			-exec rm "{}" +
 	fi
 
 einfo
 einfo "Cleaning out VCS, CI, testing"
 einfo
-	find . \( -name ".git*" \
+	find . \
+		\( \
+			   -name ".git*" \
 			-o -name "azure" \
 			-o -name "azure-pipelines.yml" \
 			-o -name "_travis" \
@@ -1568,7 +1589,10 @@ einfo
 einfo
 einfo "Cleaning out installer files"
 einfo
-	find . \( -name "setup.py" \) \
+	find . \
+		\( \
+			-name "setup.py" \
+		\) \
 		-exec rm -rf "{}" +
 
 einfo
@@ -1619,8 +1643,11 @@ einfo
 einfo
 einfo "Cleaning out test files"
 einfo
-	find . \( -name "conftest.py" \
-			-o -name "test.py" \) \
+	find . \
+		\( \
+			   -name "conftest.py" \
+			-o -name "test.py" \
+		\) \
 		-delete
 	if use javascript && ! use system-tern ; then
 		rm -rf "third_party/tern_runtime/node_modules/tern/bin/test" \
