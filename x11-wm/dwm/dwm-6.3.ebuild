@@ -8,25 +8,36 @@ inherit toolchain-funcs
 
 DESCRIPTION="a dynamic window manager for X11"
 HOMEPAGE="https://dwm.suckless.org/"
-LICENSE="MIT
+LICENSE="
+	MIT
 	mod_fibonacci? ( all-rights-reserved )
-	mod_rotatestack? ( all-rights-reserved )"
+	mod_rotatestack? ( all-rights-reserved )
+"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
-IUSE="  xinerama
-	mod_fibonacci mod_rotatestack mod_sizehintsoff"
+IUSE="
+	xinerama
+	mod_fibonacci mod_rotatestack mod_sizehintsoff
+	savedconfig
+"
 SLOT="0"
-RDEPEND="media-libs/fontconfig
+RDEPEND="
+	media-libs/fontconfig
 	x11-libs/libX11
 	x11-libs/libXft
-	xinerama? ( x11-libs/libXinerama )"
-DEPEND="${RDEPEND}
-	xinerama? ( x11-base/xorg-proto )"
+	xinerama? ( x11-libs/libXinerama )
+"
+DEPEND="
+	${RDEPEND}
+	xinerama? ( x11-base/xorg-proto )
+"
 FIBONACCI_FN="dwm-fibonacci-5.8.2.diff"
 ROTATESTACK_FN="dwm-rotatestack-20161021-ab9571b.diff"
 DWM_FN="${P}.tar.gz"
-SRC_URI="https://dl.suckless.org/${PN}/${DWM_FN}
-	mod_fibonacci? ( ${FIBONACCI_FN} )
-	mod_rotatestack? ( ${ROTATESTACK_FN} )"
+SRC_URI="
+https://dl.suckless.org/${PN}/${DWM_FN}
+mod_fibonacci? ( ${FIBONACCI_FN} )
+mod_rotatestack? ( ${ROTATESTACK_FN} )
+"
 RESTRICT="fetch"
 
 _boilerplate_dl_link_hints() {
