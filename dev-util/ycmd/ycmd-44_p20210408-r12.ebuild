@@ -45,6 +45,7 @@ LICENSE="
 			EPL-1.0
 			EPL-2.0
 			JDOM
+			LGPL-2.1
 			MIT
 			all-rights-reserved
 			MPL-1.1
