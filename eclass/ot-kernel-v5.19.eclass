@@ -689,7 +689,7 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "cfi-5.18-a09066b.patch" ]] ; then
 		# 343e289 is the same as a09066b
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-343e289-fix-for-5.15.patch"
-	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.18-c6ef88b.patch" ]] ; then
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.19-c6ef88b.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
 	elif [[ "${path}" =~ "cfi-x86-5.17-fb19148.patch" ]] ; then
@@ -716,9 +716,9 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "cfi-5.18-3cb32c4.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-3cb32c4-fix-for-5.18.patch"
-	elif [[ "${path}" =~ "3ff0ac8" ]] ; then
-einfo "See ${path}"
-		die
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.19-3ff0ac8.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-3ff0ac8-fix-for-5.19.10.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

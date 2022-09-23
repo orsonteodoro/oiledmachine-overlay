@@ -958,6 +958,7 @@ eerror
 ot-kernel_use() {
 	local u
 	for u in ${OT_KERNEL_USE} ; do
+		[[ "${u}" =~ ^"-" ]] && continue
 		has ${u} ${IUSE} || continue
 		use ${u} && [[ "${1}" == "${u}" ]] && return 0
 	done
@@ -5880,6 +5881,7 @@ ot-kernel_src_configure() {
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_load_config
+		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		local config="${OT_KERNEL_CONFIG}"
@@ -6491,6 +6493,7 @@ ot-kernel_src_compile() {
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_load_config
+		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		local build_flag="${OT_KERNEL_BUILD}" # Can be 0, 1, true, false, yes, no, nobuild, build, unset
 		local config="${OT_KERNEL_CONFIG}"
@@ -6648,6 +6651,7 @@ ot-kernel_src_install() {
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_load_config
+		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		local build_flag="${OT_KERNEL_BUILD}" # Can be 0, 1, true, false, yes, no, nobuild, build, unset
 		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
@@ -6748,6 +6752,7 @@ ot-kernel_pkg_postinst() {
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_load_config
+		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		if [[ -e "${BUILD_DIR}/certs/signing_key.pem" ]] ; then
