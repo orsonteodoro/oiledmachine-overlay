@@ -583,7 +583,7 @@ ZENSAUCE_URIS=$(gen_zensauce_uris "${PATCH_ZENSAUCE_COMMITS[@]}")
 
 if ver_test ${PV} -eq ${K_MAJOR_MINOR} ; then
 KERNEL_NO_POINT_RELEASE="1"
-elif ver_test ${PV} -eq ${K_MAJOR_MINOR}.0 ; then
+elif ver_test ${PV} -eq ${K_MAJOR_MINOR}.1 ; then
 KERNEL_0_TO_1_ONLY="1"
 fi
 
@@ -906,7 +906,11 @@ verify_profraw_compatibility() {
 		"14.0.3" \
 		"14.0.4" \
 		"14.0.5" \
+		"14.0.6" \
+		"15.0.0" \
+		"15.0.1" \
 		"15.0.0.9999" \
+		"16.0.0.9999" \
 	; do
 		(! has_version "~sys-devel/llvm-${v}" ) && continue
 		local llvm_version
@@ -1610,8 +1614,9 @@ apply_uksm() {
 # Applies all the point releases
 apply_vanilla_point_releases() {
 	[[ -n "${KERNEL_NO_POINT_RELEASE}" \
-		&& "${KERNEL_NO_POINT_RELEASE}" == "1" ]] || return
+		&& "${KERNEL_NO_POINT_RELEASE}" == "1" ]] && return
 
+	einfo "Applying vanilla point releases"
 	# genpatches places kernel incremental patches starting at 1000
 	local a
 	for a in ${KERNEL_PATCH_FNS_NOEXT[@]} ; do
@@ -1684,6 +1689,27 @@ eerror
 eerror "Reason:  ${msg}"
 eerror
 			die
+}
+
+# @FUNCTION: verify_point_release
+# @DESCRIPTION:
+# Checks if the final point release was applied.
+# If not it will break genkernel.
+verify_point_release() {
+	local c0=$(grep "^VERSION = " "${BUILD_DIR}/Makefile" | cut -f 2 -d "=" | sed -e "s| ||g")
+	local c1=$(grep "^PATCHLEVEL = " "${BUILD_DIR}/Makefile" | cut -f 2 -d "=" | sed -e "s| ||g")
+	local c2=$(grep "^SUBLEVEL = " "${BUILD_DIR}/Makefile" | cut -f 2 -d "=" | sed -e "s| ||g")
+	local actual_pv="${c0}.${c1}.${c2}"
+	local expected_pv=$(ver_cut 1-3 "${PV}")
+	if [[ "${expected_pv}" != "${actual_pv}" ]] ; then
+eerror
+eerror "Applying point release patches failed."
+eerror
+eerror "Actual PV:  ${actual_pv}"
+eerror "Expected PV:  ${expected_pv}"
+eerror
+		die
+	fi
 }
 
 # @FUNCTION: ot-kernel_src_unpack
@@ -1783,6 +1809,7 @@ einfo
 	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 	mv "linux-${K_MAJOR_MINOR}" "${BUILD_DIR}" || die
 	apply_vanilla_point_releases
+	verify_point_release
 }
 
 # @FUNCTION: apply_all_patchsets
@@ -4084,6 +4111,9 @@ ot-kernel_set_kconfig_pgo() {
 		# See grep -r -e "INSTR_PROF_RAW_VERSION" /usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc
 		if (( ${llvm_slot} >= 15 && ${clang_v_maj} >= 15 )) ; then
 			einfo "Using profraw v8 for >= LLVM 15"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
+		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.6" ; then
+			einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.5" ; then
 			einfo "Using profraw v8 for LLVM 14"

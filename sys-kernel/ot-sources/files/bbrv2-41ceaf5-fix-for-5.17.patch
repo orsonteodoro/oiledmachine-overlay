@@ -2,6 +2,8 @@
 # Original commit:  41ceaf5611bf5b9384e3f2aec5b591d5734126f9
 # URL:  https://github.com/google/bbr/commit/41ceaf5611bf5b9384e3f2aec5b591d5734126f9
 
+License header:
+
 net/ipv4/tcp_rate.c:
 // SPDX-License-Identifier: GPL-2.0-only
 

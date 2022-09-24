@@ -1,0 +1,20 @@
+License header:
+
+tools/objtool/check.c:
+// SPDX-License-Identifier: GPL-2.0-or-later
+/*
+ * Copyright (C) 2015-2017 Josh Poimboeuf <jpoimboe@redhat.com>
+ */
+
+--- a/tools/objtool/check.c.orig	2022-09-23 21:55:05.078964367 -0700
++++ b/tools/objtool/check.c	2022-09-23 21:56:12.021597953 -0700
+@@ -4117,7 +4117,8 @@ static int validate_ibt(struct objtool_f
+ 		    !strcmp(sec->name, "__bug_table")			||
+ 		    !strcmp(sec->name, "__ex_table")			||
+ 		    !strcmp(sec->name, "__jump_table")			||
+-		    !strcmp(sec->name, "__mcount_loc"))
++		    !strcmp(sec->name, "__mcount_loc")			||
++		    !strcmp(sec->name, ".kcfi_traps"))
+ 			continue;
+ 
+ 		list_for_each_entry(reloc, &sec->reloc->reloc_list, list)

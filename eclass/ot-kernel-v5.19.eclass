@@ -681,44 +681,63 @@ ot-kernel_filter_patch_cb() {
 			"${FILESDIR}/cfi-x86-3bc6889-makefile-fix-for-5.15.patch"
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/clang-pgo-support-profraw-v6-to-v8.patch"
-	elif [[ "${path}" =~ "cfi-x86-5.14-5140d56.patch" ]] ; then
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-5140d56-moved-for-5.13.patch"
 
-		# Add this to the end of the cfi commit list
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
-	elif [[ "${path}" =~ "cfi-5.18-a09066b.patch" ]] ; then
-		# 343e289 is the same as a09066b
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-343e289-fix-for-5.15.patch"
-	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.19-c6ef88b.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
-	elif [[ "${path}" =~ "cfi-x86-5.17-fb19148.patch" ]] ; then
-		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "kernel-locking-Use-a-pointer-in-ww_mutex_trylock.patch" ]] ; then
 		: # already applied
-	elif [[ "${path}" =~ "cfi-5.18-f5bff50.patch" ]] ; then
-		# f5bff50 is the same as 7fb10a9
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-7fb10a9-rebase-for-5.18.patch"
-	elif [[ "${path}" =~ "cfi-5.18-e921a27.patch" ]] ; then
-		_tpatch "${PATCH_OPTS} -F 3" "${path}" 3 0 ""
-		# Skipped paravirt_types.h, paravirt.c changes with missing paravirt_iret
-	elif [[ "${path}" =~ "cfi-5.18-aa4fb87.patch" ]] ; then
-		: # Skip for now since missing EXPORT_SYMBOL*
+
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.19-50b614c.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-50b614c-fix-for-5.17.patch"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.19-41ceaf5.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-41ceaf5-fix-for-5.17.patch"
-	elif [[ "${path}" =~ "cfi-5.18-bd6966b.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-bd6966b-fix-for-5.18.patch"
-	elif [[ "${path}" =~ "cfi-5.18-3cb32c4.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-3cb32c4-fix-for-5.18.patch"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.19-3ff0ac8.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-3ff0ac8-fix-for-5.19.10.patch"
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.19-c6ef88b.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
+
+	elif [[ "${path}" =~ "kcfi-5.19-eca242c.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/kcfi-eca242c-fix-for-5.19.10.patch"
+	elif [[ "${path}" =~ "kcfi-5.19-934bd55.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/kcfi-934bd55-fix-for-5.19.10.patch"
+	elif [[ "${path}" =~ "kcfi-5.19-55fcaf0.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/kcfi-55fcaf0-fix-for-5.19.10.patch"
+	elif [[ "${path}" =~ "kcfi-5.19-1fd151f.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/kcfi-1fd151f-fix-for-5.19.10.patch"
+
+	elif [[ "${path}" =~ "cfi-5.19-8dfd451.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-8dfd451-fix-for-5.19.10.patch"
+	elif [[ "${path}" =~ "cfi-5.19-f5bff50.patch" ]] ; then
+		# f5bff50 is the same as 7fb10a9
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-7fb10a9-rebase-for-5.18.patch"
+	elif [[ "${path}" =~ "cfi-5.19-bd6966b.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-bd6966b-fix-for-5.19.10.patch"
+	elif [[ "${path}" =~ "cfi-5.19-3cb32c4.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-3cb32c4-fix-for-5.19.10.patch"
+	elif [[ "${path}" =~ "cfi-5.19-e921a27.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 8 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-e921a27-fix-for-5.19.10.patch"
+		# Skipped paravirt_types.h, paravirt.c changes with missing paravirt_iret
+	elif [[ "${path}" =~ "cfi-5.19-a09066b.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-a09066b-fix-for-5.19.10.patch"
+	elif [[ "${path}" =~ "cfi-5.19-aa4fb87.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 7 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-aa4fb87-fix-for-5.15.69.patch"
+#	elif [[ "${path}" =~ "cfi-5.19-5140d56.patch" ]] ; then
+#		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-5140d56-moved-for-5.13.patch"
+#
+#		# Add this to the end of the cfi commit list
+#		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

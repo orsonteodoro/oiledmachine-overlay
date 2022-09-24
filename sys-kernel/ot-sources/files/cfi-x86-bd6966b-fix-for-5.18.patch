@@ -1,3 +1,8 @@
+License header:
+
+include/linux/cfi.h:
+/* SPDX-License-Identifier: GPL-2.0 */
+
 --- a/include/linux/cfi.h.orig	2022-06-14 23:23:30.059082913 -0700
 +++ b/include/linux/cfi.h	2022-06-14 23:30:40.758959038 -0700
 @@ -52,6 +52,9 @@ static inline void cfi_module_remove(str

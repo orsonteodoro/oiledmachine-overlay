@@ -1,3 +1,12 @@
+License footer:
+net/ipv4/tcp_bbr.c:
+# Dual BSD/GPL
+
+License header:
+
+net/ipv4/tcp_output.c:
+// SPDX-License-Identifier: GPL-2.0-only
+
 --- a/net/ipv4/tcp_bbr.c.orig	2022-09-22 17:50:06.509820928 -0700
 +++ b/net/ipv4/tcp_bbr.c	2022-09-22 17:58:39.442160529 -0700
 @@ -294,26 +294,40 @@ static void bbr_set_pacing_rate(struct s

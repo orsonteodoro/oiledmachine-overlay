@@ -1,3 +1,8 @@
+License header:
+
+arch/x86/Kconfig:
+# SPDX-License-Identifier: GPL-2.0
+
 --- a/arch/x86/Kconfig.orig	2021-11-06 22:45:02.729452483 -0700
 +++ b/arch/x86/Kconfig	2021-11-06 22:45:11.880451888 -0700
 @@ -102,6 +102,7 @@ config X86

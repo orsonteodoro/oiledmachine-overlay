@@ -1,0 +1,49 @@
+License headers:
+
+kernel/cfi.c:
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Clang Control Flow Integrity (CFI) error and slowpath handling.
+ *
+ * Copyright (C) 2021 Google LLC
+ */
+
+kernel/module/main.c:
+// SPDX-License-Identifier: GPL-2.0-or-later
+/*
+ * Copyright (C) 2002 Richard Henderson
+ * Copyright (C) 2001 Rusty Russell, 2002, 2010 Rusty Russell IBM.
+ */
+
+--- a/kernel/cfi.c.orig	2022-09-23 18:31:49.333192570 -0700
++++ b/kernel/cfi.c	2022-09-23 18:33:40.301539099 -0700
+@@ -67,10 +67,7 @@ static inline cfi_check_fn find_check_fn
+ 		rcu_irq_enter();
+ 	}
+ 
+-	if (IS_ENABLED(CONFIG_CFI_CLANG_SHADOW))
+-		fn = find_shadow_check_fn(ptr);
+-	if (!fn)
+-		fn = find_module_check_fn(ptr);
++	fn = find_module_check_fn(ptr);
+ 
+ 	if (rcu_idle) {
+ 		rcu_irq_exit();
+--- a/kernel/module/main.c.orig	2022-09-23 18:31:49.333192570 -0700
++++ b/kernel/module/main.c	2022-09-23 18:35:19.901441212 -0700
+@@ -2952,15 +2952,6 @@ static void cfi_init(struct module *mod)
+ 		mod->exit = *exit;
+ #endif
+ 	rcu_read_unlock_sched();
+-
+-	cfi_module_add(mod, mod_tree.addr_min);
+-#endif
+-}
+-
+-static void cfi_cleanup(struct module *mod)
+-{
+-#ifdef CONFIG_CFI_CLANG
+-	cfi_module_remove(mod, mod_tree.addr_min);
+ #endif
+ }
+ 

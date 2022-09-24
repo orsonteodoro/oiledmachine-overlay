@@ -1,3 +1,8 @@
+License headers:
+
+tools/testing/selftests/futex/functional/futex_wait_timeout.c:
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 --- a/tools/testing/selftests/futex/functional/futex_wait_timeout.c.orig	2021-09-22 23:48:11.883195600 -0700
 +++ b/tools/testing/selftests/futex/functional/futex_wait_timeout.c	2021-09-22 23:51:06.914201368 -0700
 @@ -12,12 +12,14 @@

@@ -1,7 +1,12 @@
 # Fix commit/hunk for 41cea for 5.15.53 kernel.
 # Original commit:  41ceaf5611bf5b9384e3f2aec5b591d5734126f9
 # URI: https://github.com/google/bbr/commit/41ceaf5611bf5b9384e3f2aec5b591d5734126f9
+
+License header:
+
+net/ipv4/tcp_rate.c:
 // SPDX-License-Identifier: GPL-2.0-only
+
 --- a/net/ipv4/tcp_rate.c.orig2	2022-07-12 13:06:20.794629277 -0700
 +++ b/net/ipv4/tcp_rate.c	2022-07-12 13:07:19.387914123 -0700
 @@ -105,6 +105,7 @@ void tcp_rate_skb_delivered(struct sock

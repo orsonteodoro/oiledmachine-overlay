@@ -1,4 +1,10 @@
 From:  https://github.com/torvalds/linux/commit/aa4fb87a71a95bef81d9742a772d1dc8eb4fceea
+
+License header:
+
+arch/x86/mm/extable.c:
+// SPDX-License-Identifier: GPL-2.0-only
+
 --- a/arch/x86/mm/extable.c.orig	2022-01-09 14:55:34.000000000 -0800
 +++ b/arch/x86/mm/extable.c	2022-02-23 23:44:02.702945755 -0800
 @@ -15,6 +15,7 @@ ex_fixup_addr(const struct exception_tab

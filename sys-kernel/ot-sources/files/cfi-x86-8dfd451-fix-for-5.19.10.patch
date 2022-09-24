@@ -1,0 +1,24 @@
+License header:
+
+tools/objtool/elf.c:
+// SPDX-License-Identifier: GPL-2.0-or-later
+/*
+ * elf.c - ELF access library
+ *
+ * Adapted from kpatch (https://github.com/dynup/kpatch):
+ * Copyright (C) 2013-2015 Josh Poimboeuf <jpoimboe@redhat.com>
+ * Copyright (C) 2014 Seth Jennings <sjenning@redhat.com>
+ */
+
+--- a/tools/objtool/elf.c.orig	2022-09-23 19:03:52.548328111 -0700
++++ b/tools/objtool/elf.c	2022-09-23 19:04:40.178180549 -0700
+@@ -954,6 +954,9 @@ static int read_relocs(struct elf *elf)
+ 		tot_reloc += nr_reloc;
+ 	}
+ 
++	if (fix_cfi_relocs(elf))
++		return -1;
++
+ 	if (opts.stats) {
+ 		printf("max_reloc: %lu\n", max_reloc);
+ 		printf("tot_reloc: %lu\n", tot_reloc);

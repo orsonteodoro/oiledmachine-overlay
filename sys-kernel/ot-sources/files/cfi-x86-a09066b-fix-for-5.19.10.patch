@@ -1,0 +1,15 @@
+License header:
+
+arch/x86/Kconfig:
+# SPDX-License-Identifier: GPL-2.0
+
+--- a/arch/x86/Kconfig.orig	2022-09-23 22:55:52.726963176 -0700
++++ b/arch/x86/Kconfig	2022-09-23 22:57:27.438716651 -0700
+@@ -112,6 +112,7 @@ config X86
+ 	select ARCH_SUPPORTS_LTO_CLANG
+ 	select ARCH_SUPPORTS_LTO_CLANG_THIN
+ 	select ARCH_SUPPORTS_PGO_CLANG		if X86_64
++	select ARCH_SUPPORTS_CFI_CLANG		if X86_64 && CLANG_VERSION >= 130000
+ 	select ARCH_USE_BUILTIN_BSWAP
+ 	select ARCH_USE_MEMTEST
+ 	select ARCH_USE_QUEUED_RWLOCKS

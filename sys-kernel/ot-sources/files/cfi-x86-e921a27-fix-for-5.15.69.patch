@@ -1,0 +1,38 @@
+License headers:
+
+arch/x86/kvm/emulate.c:
+// SPDX-License-Identifier: GPL-2.0-only
+
+arch/x86/xen/xen-ops.h:
+/* SPDX-License-Identifier: GPL-2.0 */
+
+--- a/arch/x86/kvm/emulate.c.orig	2022-09-23 15:23:03.088677759 -0700
++++ b/arch/x86/kvm/emulate.c	2022-09-23 15:24:18.427713566 -0700
+@@ -325,7 +325,7 @@ static int fastop(struct x86_emulate_ctx
+ 	__FOP_RET(#name)
+ 
+ #define __FOP_START(op, align) \
+-	extern void em_##op(struct fastop *fake); \
++	DECLARE_NOT_CALLED_FROM_C(em_##op); \
+ 	asm(".pushsection .text, \"ax\" \n\t" \
+ 	    ".global em_" #op " \n\t" \
+ 	    ".align " __stringify(align) " \n\t" \
+--- a/arch/x86/xen/xen-ops.h.orig	2022-09-23 15:23:03.088677759 -0700
++++ b/arch/x86/xen/xen-ops.h	2022-09-23 15:26:42.697528221 -0700
+@@ -8,12 +8,12 @@
+ #include <xen/xen-ops.h>
+ 
+ /* These are code, but not functions.  Defined in entry.S */
+-extern const char xen_failsafe_callback[];
++DECLARE_NOT_CALLED_FROM_C(xen_failsafe_callback);
+ 
+-void xen_entry_SYSENTER_compat(void);
++DECLARE_NOT_CALLED_FROM_C(xen_entry_SYSENTER_compat);
+ #ifdef CONFIG_X86_64
+-void xen_entry_SYSCALL_64(void);
+-void xen_entry_SYSCALL_compat(void);
++DECLARE_NOT_CALLED_FROM_C(xen_entry_SYSCALL_64);
++DECLARE_NOT_CALLED_FROM_C(xen_entry_SYSCALL_compat);
+ #endif
+ 
+ extern void *xen_initial_gdt;

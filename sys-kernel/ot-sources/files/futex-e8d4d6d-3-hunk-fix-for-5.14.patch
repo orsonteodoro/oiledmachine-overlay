@@ -1,3 +1,11 @@
+License headers:
+
+include/uapi/linux/futex.h
+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
+kernel/futex.c:
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 --- a/include/uapi/linux/futex.h.orig	2021-09-22 02:22:38.201653858 -0700
 +++ b/include/uapi/linux/futex.h	2021-09-22 02:23:26.067655435 -0700
 @@ -22,7 +22,7 @@

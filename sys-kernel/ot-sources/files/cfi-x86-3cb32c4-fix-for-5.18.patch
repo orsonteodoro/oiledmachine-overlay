@@ -1,3 +1,8 @@
+License header:
+
+drivers/misc/lkdtm/perms.c:
+// SPDX-License-Identifier: GPL-2.0
+
 --- a/drivers/misc/lkdtm/perms.c.orig	2022-05-22 12:52:31.000000000 -0700
 +++ b/drivers/misc/lkdtm/perms.c	2022-06-14 23:49:26.390010915 -0700
 @@ -193,7 +193,7 @@ void lkdtm_EXEC_VMALLOC(void)

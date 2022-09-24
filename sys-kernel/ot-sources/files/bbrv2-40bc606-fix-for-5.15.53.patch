@@ -1,7 +1,10 @@
 # Fix patch/hunk
 # Original commit:  40bc6063796ec77b6073861f9a1993be20d5befd
 # URI:  https://github.com/torvalds/linux/commit/40bc6063796ec77b6073861f9a1993be20d5befd
-#net/ipv4/tcp_rate.c
+
+License header:
+
+net/ipv4/tcp_rate.c:
 // SPDX-License-Identifier: GPL-2.0-only
 
 --- a/net/ipv4/tcp_rate.c.orig2	2022-07-12 01:37:19.153864794 -0700

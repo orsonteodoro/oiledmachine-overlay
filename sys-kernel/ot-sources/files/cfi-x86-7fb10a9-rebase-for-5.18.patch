@@ -1,5 +1,12 @@
 Subject:  Apply 7fb10a9 to 5.18
 Original from:  https://github.com/torvalds/linux/commit/7fb10a9f0f9a8d8edf03f74af5ab02d570e997c2
+
+License headers:
+
+include/linux/objtool.h:
+tools/include/linux/objtool.h:
+/* SPDX-License-Identifier: GPL-2.0 */
+
 --- a/include/linux/objtool.h.orig	2022-05-22 12:52:31.000000000 -0700
 +++ b/include/linux/objtool.h	2022-06-14 23:03:11.040171090 -0700
 @@ -66,6 +66,11 @@ struct unwind_hint {

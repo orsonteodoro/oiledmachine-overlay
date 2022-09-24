@@ -1,3 +1,14 @@
+License headers:
+
+include/uapi/linux/futex.h:
+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
+kernel/futex.c:
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+kernel/futex.h:
+/* SPDX-License-Identifier: GPL-2.0 */
+
 --- a/include/uapi/linux/futex.h.orig	2021-11-07 20:59:07.359018189 -0800
 +++ b/include/uapi/linux/futex.h	2021-11-07 21:00:11.262014037 -0800
 @@ -33,6 +33,7 @@ struct futex_wait_block {

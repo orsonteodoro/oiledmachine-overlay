@@ -1,0 +1,16 @@
+License header:
+
+arch/x86/entry/vdso/Makefile:
+# SPDX-License-Identifier: GPL-2.0
+
+--- a/arch/x86/entry/vdso/Makefile.orig	2022-09-23 18:19:38.136579941 -0700
++++ b/arch/x86/entry/vdso/Makefile	2022-09-23 18:20:39.034961014 -0700
+@@ -91,7 +91,7 @@ ifneq ($(RETPOLINE_VDSO_CFLAGS),)
+ endif
+ endif
+ 
+-$(vobjs): KBUILD_CFLAGS := $(filter-out $(CC_FLAGS_LTO) $(RANDSTRUCT_CFLAGS) $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
++$(vobjs): KBUILD_CFLAGS := $(filter-out $(CC_FLAGS_LTO) $(CC_FLAGS_CFI) $(RANDSTRUCT_CFLAGS) $(GCC_PLUGINS_CFLAGS) $(RETPOLINE_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
+ $(vobjs): KBUILD_AFLAGS += -DBUILD_VDSO
+ 
+ #

@@ -1,0 +1,29 @@
+License headers:
+
+drivers/misc/lkdtm/lkdtm.h:
+/* SPDX-License-Identifier: GPL-2.0 */
+
+drivers/misc/lkdtm/perms.c:
+// SPDX-License-Identifier: GPL-2.0
+
+--- a/drivers/misc/lkdtm/lkdtm.h.orig	2022-07-31 14:03:01.000000000 -0700
++++ b/drivers/misc/lkdtm/lkdtm.h	2022-09-23 20:56:11.512351677 -0700
+@@ -95,6 +95,6 @@ void __init lkdtm_usercopy_init(void);
+ void __exit lkdtm_usercopy_exit(void);
+ 
+ /* Special declaration for function-in-rodata. */
+-void lkdtm_rodata_do_nothing(void);
++DECLARE_NOT_CALLED_FROM_C(lkdtm_rodata_do_nothing);
+ 
+ #endif
+--- a/drivers/misc/lkdtm/perms.c.orig	2022-07-31 14:03:01.000000000 -0700
++++ b/drivers/misc/lkdtm/perms.c	2022-09-23 20:57:43.415932935 -0700
+@@ -193,7 +193,7 @@ static void lkdtm_EXEC_VMALLOC(void)
+ 
+ static void lkdtm_EXEC_RODATA(void)
+ {
+-	execute_location(dereference_function_descriptor(lkdtm_rodata_do_nothing),
++	execute_location((void*)dereference_function_descriptor(lkdtm_rodata_do_nothing),
+ 			 CODE_AS_IS);
+ }
+ 

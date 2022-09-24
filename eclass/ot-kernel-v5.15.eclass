@@ -640,20 +640,43 @@ ot-kernel_filter_patch_cb() {
 			"${FILESDIR}/cfi-x86-3bc6889-makefile-fix-for-5.15.patch"
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/clang-pgo-support-profraw-v6-to-v8.patch"
-	elif [[ "${path}" =~ "cfi-x86-5.14-5140d56.patch" ]] ; then
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-5140d56-moved-for-5.13.patch"
-
-		# Add this to the end of the cfi commit list
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
-	elif [[ "${path}" =~ "cfi-5.15-a09066b.patch" ]] ; then
-		# a09066b is the same as 343e289
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-343e289-fix-for-5.15.patch"
 	elif [[ "${path}" =~ "futex-5.15-b70e738.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/futex-b70e738-2-hunk-fix-for-5.15.patch"
+
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.15-94af063.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-40bc606-fix-for-5.15.53.patch"
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.15-50b614c.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-50b614c-fix-for-5.15.53.patch"
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.15-41ceaf5.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-41ceaf5-fix-for-5.15.53.patch"
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.15-3ff0ac8.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-3ff0ac8-fix-for-5.15.69.patch"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.15-c6ef88b.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
+
+	elif [[ "${path}" =~ "cfi-5.15-a09066b.patch" ]] ; then
+		# a09066b is the same as 343e289
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-343e289-fix-for-5.15.patch"
+	elif [[ "${path}" =~ "cfi-5.15-bd6966b.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-bd6966b-fix-for-5.15.69.patch"
+	elif [[ "${path}" =~ "cfi-5.15-e921a27.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-e921a27-fix-for-5.15.69.patch"
+	elif [[ "${path}" =~ "cfi-5.15-aa4fb87.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 7 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-aa4fb87-fix-for-5.15.69.patch"
+#	elif [[ "${path}" =~ "cfi-5.15-5140d56.patch" ]] ; then
+#		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-5140d56-moved-for-5.13.patch"
+#
+#		# Add this to the end of the cfi commit list
+#		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

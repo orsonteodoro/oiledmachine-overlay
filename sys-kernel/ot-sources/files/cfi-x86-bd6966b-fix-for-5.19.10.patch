@@ -1,0 +1,70 @@
+License headers:
+
+include/linux/cfi.h:
+/* SPDX-License-Identifier: GPL-2.0 */
+/*
+ * Clang Control Flow Integrity (CFI) support.
+ *
+ * Copyright (C) 2021 Google LLC
+ */
+
+kernel/cfi.c:
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Clang Control Flow Integrity (CFI) error and slowpath handling.
+ *
+ * Copyright (C) 2021 Google LLC
+ */
+
+--- a/include/linux/cfi.h.orig	2022-09-23 19:46:22.685376321 -0700
++++ b/include/linux/cfi.h	2022-09-23 19:55:43.971197966 -0700
+@@ -52,6 +52,9 @@ static inline void cfi_module_remove(str
+ 
+ #endif /* CONFIG_X86_KERNEL_IBT */
+ 
++#define DEFINE_CFI_IMMEDIATE_RETURN_STUB(fn) \
++	void fn(void) { return; }
++
+ #endif /* CONFIG_CFI_CLANG */
+ 
+ #ifndef __CFI_ADDRESSABLE
+--- a/kernel/cfi.c.orig	2022-07-31 14:03:01.000000000 -0700
++++ b/kernel/cfi.c	2022-09-23 19:50:30.183055845 -0700
+@@ -278,14 +278,36 @@ static inline cfi_check_fn find_module_c
+ 	return fn;
+ }
+ 
++extern unsigned long __start_cfi_excluded[];
++extern unsigned long __stop_cfi_excluded[];
++
++static inline bool is_cfi_excluded(unsigned long ptr)
++{
++	unsigned long *p = __start_cfi_excluded;
++
++	for ( ; p < __stop_cfi_excluded; ++p)
++		if (*p == ptr)
++			return true;
++
++	return false;
++}
++
++static void __cfi_pass(uint64_t id, void *ptr, void *diag)
++{
++}
++
+ static inline cfi_check_fn find_check_fn(unsigned long ptr)
+ {
+ 	cfi_check_fn fn = NULL;
+ 	unsigned long flags;
+ 	bool rcu_idle;
+ 
+-	if (is_kernel_text(ptr))
++	if (is_kernel_text(ptr)) {
++		if (unlikely(is_cfi_excluded(ptr)))
++			return __cfi_pass;
++
+ 		return __cfi_check;
++	}
+ 
+ 	/*
+ 	 * Indirect call checks can happen when RCU is not watching. Both

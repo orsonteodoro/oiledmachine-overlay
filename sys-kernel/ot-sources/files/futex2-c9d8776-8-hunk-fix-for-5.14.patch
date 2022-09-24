@@ -1,3 +1,14 @@
+License headers:
+
+arch/arm64/include/asm/unistd.h:
+/* SPDX-License-Identifier: GPL-2.0-only */
+
+arch/arm64/include/asm/unistd32.h
+/* SPDX-License-Identifier: GPL-2.0-only */
+
+include/uapi/asm-generic/unistd.h:
+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 --- a/arch/arm/tools/syscall.tbl.orig	2021-08-29 15:04:50.000000000 -0700
 +++ b/arch/arm/tools/syscall.tbl	2021-09-22 20:12:45.960769659 -0700
 @@ -460,3 +460,5 @@

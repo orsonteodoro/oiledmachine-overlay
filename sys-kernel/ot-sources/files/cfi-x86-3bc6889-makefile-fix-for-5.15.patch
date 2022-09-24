@@ -1,3 +1,8 @@
+License header:
+
+Makefile:
+# SPDX-License-Identifier: GPL-2.0
+
 --- a/Makefile.orig	2021-11-06 22:01:15.345623181 -0700
 +++ b/Makefile	2021-11-06 22:02:14.375619346 -0700
 @@ -674,6 +674,9 @@ endif # KBUILD_EXTMOD

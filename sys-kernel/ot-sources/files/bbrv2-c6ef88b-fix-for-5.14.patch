@@ -2,6 +2,8 @@
 # Original commit:  c6ef88ba01cc47ac4c6a2cfe51e15eaa4d833476
 # Original patch:  https://github.com/google/bbr/commit/c6ef88ba01cc47ac4c6a2cfe51e15eaa4d833476
 
+License header:
+
 include/net/inet_connection_sock.h:
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 

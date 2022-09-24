@@ -1,0 +1,63 @@
+License header:
+
+arch/x86/mm/extable.c:
+// SPDX-License-Identifier: GPL-2.0-only
+
+--- a/arch/x86/mm/extable.c.orig2	2022-09-23 15:42:09.910827153 -0700
++++ b/arch/x86/mm/extable.c	2022-09-23 15:52:54.112557307 -0700
+@@ -28,6 +28,7 @@ ex_fixup_addr(const struct exception_tab
+ 	return (unsigned long)&x->fixup + x->fixup;
+ }
+ 
++__visible __cficanonical
+ static bool ex_handler_default(const struct exception_table_entry *e,
+ 			       struct pt_regs *regs)
+ {
+@@ -40,6 +41,7 @@ static bool ex_handler_default(const str
+ 	return true;
+ }
+ 
++__visible __cficanonical
+ static bool ex_handler_fault(const struct exception_table_entry *fixup,
+ 			     struct pt_regs *regs, int trapnr)
+ {
+@@ -57,6 +59,7 @@ static bool ex_handler_fault(const struc
+  * of vulnerability by restoring from the initial state (essentially, zeroing
+  * out all the FPU registers) if we can't restore from the task's FPU state.
+  */
++__visible __cficanonical
+ static bool ex_handler_fprestore(const struct exception_table_entry *fixup,
+ 				 struct pt_regs *regs)
+ {
+@@ -69,6 +72,7 @@ static bool ex_handler_fprestore(const s
+ 	return true;
+ }
+ 
++__visible __cficanonical
+ static bool ex_handler_uaccess(const struct exception_table_entry *fixup,
+ 			       struct pt_regs *regs, int trapnr)
+ {
+@@ -76,6 +80,7 @@ static bool ex_handler_uaccess(const str
+ 	return ex_handler_default(fixup, regs);
+ }
+ 
++__visible __cficanonical
+ static bool ex_handler_copy(const struct exception_table_entry *fixup,
+ 			    struct pt_regs *regs, int trapnr)
+ {
+@@ -83,6 +88,7 @@ static bool ex_handler_copy(const struct
+ 	return ex_handler_fault(fixup, regs, trapnr);
+ }
+ 
++__visible __cficanonical
+ static bool ex_handler_msr(const struct exception_table_entry *fixup,
+ 			   struct pt_regs *regs, bool wrmsr, bool safe, int reg)
+ {
+@@ -111,6 +117,7 @@ static bool ex_handler_msr(const struct
+ 	return ex_handler_default(fixup, regs);
+ }
+ 
++__visible __cficanonical
+ static bool ex_handler_clear_fs(const struct exception_table_entry *fixup,
+ 				struct pt_regs *regs)
+ {

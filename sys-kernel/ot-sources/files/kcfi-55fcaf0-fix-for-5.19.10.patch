@@ -1,0 +1,229 @@
+License headers:
+
+kernel/cfi.c:
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Clang Control Flow Integrity (CFI) error handling.
+ *
+ * Copyright (C) 2022 Google LLC
+ */
+
+kernel/module/main.c:
+// SPDX-License-Identifier: GPL-2.0-or-later
+/*
+ * Copyright (C) 2002 Richard Henderson
+ * Copyright (C) 2001 Rusty Russell, 2002, 2010 Rusty Russell IBM.
+ */
+
+--- a/kernel/cfi.c.orig	2022-09-23 21:28:45.304749586 -0700
++++ b/kernel/cfi.c	2022-09-23 21:42:21.500906248 -0700
+@@ -1,105 +1,101 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Clang Control Flow Integrity (CFI) error and slowpath handling.
++ * Clang Control Flow Integrity (CFI) error handling.
+  *
+- * Copyright (C) 2021 Google LLC
++ * Copyright (C) 2022 Google LLC
+  */
+ 
+-#include <linux/hardirq.h>
+-#include <linux/kallsyms.h>
+-#include <linux/module.h>
+-#include <linux/mutex.h>
+-#include <linux/printk.h>
+-#include <linux/ratelimit.h>
+-#include <linux/rcupdate.h>
+-#include <linux/vmalloc.h>
+-#include <asm/cacheflush.h>
+-#include <asm/set_memory.h>
+-
+-/* Compiler-defined handler names */
+-#ifdef CONFIG_CFI_PERMISSIVE
+-#define cfi_failure_handler	__ubsan_handle_cfi_check_fail
+-#else
+-#define cfi_failure_handler	__ubsan_handle_cfi_check_fail_abort
+-#endif
++#include <linux/cfi.h>
+ 
+-static inline void handle_cfi_failure(void *ptr)
++enum bug_trap_type report_cfi_failure(struct pt_regs *regs, unsigned long addr,
++				      unsigned long *target, u32 type)
+ {
+-	if (IS_ENABLED(CONFIG_CFI_PERMISSIVE))
+-		WARN_RATELIMIT(1, "CFI failure (target: %pS):\n", ptr);
++	if (target)
++		pr_err("CFI failure at %pS (target: %pS; expected type: 0x%08x)\n",
++		       (void *)addr, (void *)*target, type);
+ 	else
+-		panic("CFI failure (target: %pS)\n", ptr);
++		pr_err("CFI failure at %pS (no target information)\n",
++		       (void *)addr);
++
++	if (IS_ENABLED(CONFIG_CFI_PERMISSIVE)) {
++		__warn(NULL, 0, (void *)addr, 0, regs, NULL);
++		return BUG_TRAP_TYPE_WARN;
++	}
++
++	return BUG_TRAP_TYPE_BUG;
+ }
+ 
+-#ifdef CONFIG_MODULES
++#ifdef CONFIG_ARCH_USES_CFI_TRAPS
++static inline unsigned long trap_address(s32 *p)
++{
++	return (unsigned long)((long)p + (long)*p);
++}
+ 
+-static inline cfi_check_fn find_module_check_fn(unsigned long ptr)
++static bool is_trap(unsigned long addr, s32 *start, s32 *end)
+ {
+-	cfi_check_fn fn = NULL;
+-	struct module *mod;
++	s32 *p;
+ 
+-	rcu_read_lock_sched_notrace();
+-	mod = __module_address(ptr);
+-	if (mod)
+-		fn = mod->cfi_check;
+-	rcu_read_unlock_sched_notrace();
++	for (p = start; p < end; ++p) {
++		if (trap_address(p) == addr)
++			return true;
++	}
+ 
+-	return fn;
++	return false;
+ }
+ 
+-static inline cfi_check_fn find_check_fn(unsigned long ptr)
++#ifdef CONFIG_MODULES
++/* Populates `kcfi_trap(_end)?` fields in `struct module`. */
++void module_cfi_finalize(const Elf_Ehdr *hdr, const Elf_Shdr *sechdrs,
++			 struct module *mod)
+ {
+-	cfi_check_fn fn = NULL;
+-	unsigned long flags;
+-	bool rcu_idle;
+-
+-	if (is_kernel_text(ptr))
+-		return __cfi_check;
+-
+-	/*
+-	 * Indirect call checks can happen when RCU is not watching. Both
+-	 * the shadow and __module_address use RCU, so we need to wake it
+-	 * up if necessary.
+-	 */
+-	rcu_idle = !rcu_is_watching();
+-	if (rcu_idle) {
+-		local_irq_save(flags);
+-		rcu_irq_enter();
+-	}
++	char *secstrings;
++	unsigned int i;
+ 
+-	fn = find_module_check_fn(ptr);
++	mod->kcfi_traps = NULL;
++	mod->kcfi_traps_end = NULL;
+ 
+-	if (rcu_idle) {
+-		rcu_irq_exit();
+-		local_irq_restore(flags);
+-	}
++	secstrings = (char *)hdr + sechdrs[hdr->e_shstrndx].sh_offset;
++
++	for (i = 1; i < hdr->e_shnum; i++) {
++		if (strcmp(secstrings + sechdrs[i].sh_name, "__kcfi_traps"))
++			continue;
+ 
+-	return fn;
++		mod->kcfi_traps = (s32 *)sechdrs[i].sh_addr;
++		mod->kcfi_traps_end = (s32 *)(sechdrs[i].sh_addr + sechdrs[i].sh_size);
++		break;
++	}
+ }
+ 
+-void __cfi_slowpath_diag(uint64_t id, void *ptr, void *diag)
++static bool is_module_cfi_trap(unsigned long addr)
+ {
+-	cfi_check_fn fn = find_check_fn((unsigned long)ptr);
++	struct module *mod;
++	bool found = false;
+ 
+-	if (likely(fn))
+-		fn(id, ptr, diag);
+-	else /* Don't allow unchecked modules */
+-		handle_cfi_failure(ptr);
+-}
+-EXPORT_SYMBOL(__cfi_slowpath_diag);
++	rcu_read_lock_sched_notrace();
+ 
+-#else /* !CONFIG_MODULES */
++	mod = __module_address(addr);
++	if (mod)
++		found = is_trap(addr, mod->kcfi_traps, mod->kcfi_traps_end);
+ 
+-void __cfi_slowpath_diag(uint64_t id, void *ptr, void *diag)
++	rcu_read_unlock_sched_notrace();
++
++	return found;
++}
++#else /* CONFIG_MODULES */
++static inline bool is_module_cfi_trap(unsigned long addr)
+ {
+-	handle_cfi_failure(ptr); /* No modules */
++	return false;
+ }
+-EXPORT_SYMBOL(__cfi_slowpath_diag);
+-
+ #endif /* CONFIG_MODULES */
+ 
+-void cfi_failure_handler(void *data, void *ptr, void *vtable)
++extern s32 __start___kcfi_traps[];
++extern s32 __stop___kcfi_traps[];
++
++bool is_cfi_trap(unsigned long addr)
+ {
+-	handle_cfi_failure(ptr);
++	if (is_trap(addr, __start___kcfi_traps, __stop___kcfi_traps))
++		return true;
++
++	return is_module_cfi_trap(addr);
+ }
+-EXPORT_SYMBOL(cfi_failure_handler);
++#endif /* CONFIG_ARCH_USES_CFI_TRAPS */
+--- a/kernel/module/main.c.orig	2022-09-23 21:26:27.051316287 -0700
++++ b/kernel/module/main.c	2022-09-23 21:38:55.828803759 -0700
+@@ -2926,32 +2926,6 @@ static inline int within(unsigned long a
+ 	return ((void *)addr >= start && (void *)addr < start + size);
+ }
+ 
+-static void cfi_init(struct module *mod)
+-{
+-#ifdef CONFIG_CFI_CLANG
+-	initcall_t *init;
+-#ifdef CONFIG_MODULE_UNLOAD
+-	exitcall_t *exit;
+-#endif
+-
+-	rcu_read_lock_sched();
+-	mod->cfi_check = (cfi_check_fn)
+-		find_kallsyms_symbol_value(mod, "__cfi_check");
+-	init = (initcall_t *)
+-		find_kallsyms_symbol_value(mod, "__cfi_jt_init_module");
+-	/* Fix init/exit functions to point to the CFI jump table */
+-	if (init)
+-		mod->init = *init;
+-#ifdef CONFIG_MODULE_UNLOAD
+-	exit = (exitcall_t *)
+-		find_kallsyms_symbol_value(mod, "__cfi_jt_cleanup_module");
+-	if (exit)
+-		mod->exit = *exit;
+-#endif
+-	rcu_read_unlock_sched();
+-#endif
+-}
+-
+ /* Keep in sync with MODULE_FLAGS_BUF_SIZE !!! */
+ char *module_flags(struct module *mod, char *buf)
+ {

@@ -1,3 +1,8 @@
+License headers:
+
+kernel/futex.c:
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 --- a/kernel/futex.c.orig	2021-09-23 14:55:32.971989566 -0700
 +++ b/kernel/futex.c	2021-09-23 15:19:15.954036457 -0700
 @@ -2743,11 +2743,8 @@ retry:

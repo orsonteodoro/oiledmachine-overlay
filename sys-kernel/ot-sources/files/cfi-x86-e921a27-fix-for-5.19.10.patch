@@ -1,0 +1,145 @@
+License headers:
+
+arch/x86/include/asm/page_64.h:
+/* SPDX-License-Identifier: GPL-2.0 */
+
+arch/x86/include/asm/proto.h:
+/* SPDX-License-Identifier: GPL-2.0 */
+
+arch/x86/kernel/ftrace.c:
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Dynamic function tracing support.
+ *
+ * Copyright (C) 2007-2008 Steven Rostedt <srostedt@redhat.com>
+ *
+ * Thanks goes to Ingo Molnar, for suggesting the idea.
+ * Mathieu Desnoyers, for suggesting postponing the modifications.
+ * Arjan van de Ven, for keeping me straight, and explaining to me
+ * the dangers of modifying code on the run.
+ */
+
+arch/x86/kvm/emulate.c:
+// SPDX-License-Identifier: GPL-2.0-only
+/******************************************************************************
+ * emulate.c
+ *
+ * Generic x86 (32-bit and 64-bit) instruction decoder and emulator.
+ *
+ * Copyright (c) 2005 Keir Fraser
+ *
+ * Linux coding style, mod r/m decoder, segment base fixes, real-mode
+ * privileged instructions:
+ *
+ * Copyright (C) 2006 Qumranet
+ * Copyright 2010 Red Hat, Inc. and/or its affiliates.
+ *
+ *   Avi Kivity <avi@qumranet.com>
+ *   Yaniv Kamay <yaniv@qumranet.com>
+ *
+ * From: xen-unstable 10676:af9809f51f81a3c43f276f00c81a52ef558afda4
+ */
+
+arch/x86/xen/xen-ops.h:
+/* SPDX-License-Identifier: GPL-2.0 */
+
+--- a/arch/x86/include/asm/page_64.h.orig	2022-09-23 22:07:44.856841358 -0700
++++ b/arch/x86/include/asm/page_64.h	2022-09-23 22:09:27.620880270 -0700
+@@ -5,6 +5,7 @@
+ #include <asm/page_64_types.h>
+ 
+ #ifndef __ASSEMBLY__
++#include <linux/linkage.h>
+ #include <asm/cpufeatures.h>
+ #include <asm/alternative.h>
+ 
+--- a/arch/x86/include/asm/proto.h.orig	2022-09-23 22:07:44.860841516 -0700
++++ b/arch/x86/include/asm/proto.h	2022-09-23 22:14:05.983875426 -0700
+@@ -12,30 +12,30 @@ struct task_struct;
+ void syscall_init(void);
+ 
+ #ifdef CONFIG_X86_64
+-void entry_SYSCALL_64(void);
+-void entry_SYSCALL_64_safe_stack(void);
+-void entry_SYSRETQ_unsafe_stack(void);
+-void entry_SYSRETQ_end(void);
++DECLARE_NOT_CALLED_FROM_C(entry_SYSCALL_64);
++DECLARE_NOT_CALLED_FROM_C(entry_SYSCALL_64_safe_stack);
++DECLARE_NOT_CALLED_FROM_C(entry_SYSRETQ_unsafe_stack);
++DECLARE_NOT_CALLED_FROM_C(entry_SYSRETQ_end);
+ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2);
+ #endif
+ 
+ #ifdef CONFIG_X86_32
+-void entry_INT80_32(void);
+-void entry_SYSENTER_32(void);
+-void __begin_SYSENTER_singlestep_region(void);
+-void __end_SYSENTER_singlestep_region(void);
++DECLARE_NOT_CALLED_FROM_C(entry_INT80_32);
++DECLARE_NOT_CALLED_FROM_C(entry_SYSENTER_32);
++DECLARE_NOT_CALLED_FROM_C(__begin_SYSENTER_singlestep_region);
++DECLARE_NOT_CALLED_FROM_C(__end_SYSENTER_singlestep_region);
+ #endif
+ 
+ #ifdef CONFIG_IA32_EMULATION
+-void entry_SYSENTER_compat(void);
+-void __end_entry_SYSENTER_compat(void);
+-void entry_SYSCALL_compat(void);
+-void entry_SYSCALL_compat_safe_stack(void);
+-void entry_SYSRETL_compat_unsafe_stack(void);
+-void entry_SYSRETL_compat_end(void);
+-void entry_INT80_compat(void);
++DECLARE_NOT_CALLED_FROM_C(entry_SYSENTER_compat);
++DECLARE_NOT_CALLED_FROM_C(__end_entry_SYSENTER_compat);
++DECLARE_NOT_CALLED_FROM_C(entry_SYSCALL_compat);
++DECLARE_NOT_CALLED_FROM_C(entry_SYSCALL_compat_safe_stack);
++DECLARE_NOT_CALLED_FROM_C(entry_SYSRETL_compat_unsafe_stack);
++DECLARE_NOT_CALLED_FROM_C(entry_SYSRETL_compat_end);
++DECLARE_NOT_CALLED_FROM_C(entry_INT80_compat);
+ #ifdef CONFIG_XEN_PV
+-void xen_entry_INT80_compat(void);
++DECLARE_NOT_CALLED_FROM_C(xen_entry_INT80_compat);
+ #endif
+ #endif
+ 
+--- a/arch/x86/kernel/ftrace.c.orig	2022-09-23 22:06:48.590629739 -0700
++++ b/arch/x86/kernel/ftrace.c	2022-09-23 22:15:21.794872625 -0700
+@@ -582,7 +582,7 @@ void arch_ftrace_trampoline_free(struct
+ #ifdef CONFIG_FUNCTION_GRAPH_TRACER
+ 
+ #if defined(CONFIG_DYNAMIC_FTRACE) && !defined(CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS)
+-extern void ftrace_graph_call(void);
++DECLARE_NOT_CALLED_FROM_C(ftrace_graph_call);
+ static const char *ftrace_jmp_replace(unsigned long ip, unsigned long addr)
+ {
+ 	return text_gen_insn(JMP32_INSN_OPCODE, (void *)ip, (void *)addr);
+--- a/arch/x86/kvm/emulate.c.orig	2022-09-23 22:07:44.884842459 -0700
++++ b/arch/x86/kvm/emulate.c	2022-09-23 22:23:40.590583641 -0700
+@@ -330,7 +330,7 @@ static int fastop(struct x86_emulate_ctx
+ 	__FOP_RET(#name)
+ 
+ #define __FOP_START(op, align) \
+-	extern void em_##op(struct fastop *fake); \
++	DECLARE_NOT_CALLED_FROM_C(em_##op); \
+ 	asm(".pushsection .text, \"ax\" \n\t" \
+ 	    ".global em_" #op " \n\t" \
+ 	    ".align " __stringify(align) " \n\t" \
+--- a/arch/x86/xen/xen-ops.h.orig	2022-09-23 22:07:44.904843246 -0700
++++ b/arch/x86/xen/xen-ops.h	2022-09-23 22:25:59.732079510 -0700
+@@ -8,12 +8,12 @@
+ #include <xen/xen-ops.h>
+ 
+ /* These are code, but not functions.  Defined in entry.S */
+-extern const char xen_failsafe_callback[];
++DECLARE_NOT_CALLED_FROM_C(xen_failsafe_callback);
+ 
+-void xen_entry_SYSENTER_compat(void);
++DECLARE_NOT_CALLED_FROM_C(xen_entry_SYSENTER_compat);
+ #ifdef CONFIG_X86_64
+-void xen_entry_SYSCALL_64(void);
+-void xen_entry_SYSCALL_compat(void);
++DECLARE_NOT_CALLED_FROM_C(xen_entry_SYSCALL_64);
++DECLARE_NOT_CALLED_FROM_C(xen_entry_SYSCALL_compat);
+ #endif
+ 
+ extern void *xen_initial_gdt;
