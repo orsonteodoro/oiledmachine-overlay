@@ -856,7 +856,11 @@ verify_clang_compiler_updated() {
 		"sys-devel/clang-14.0.3" \
 		"sys-devel/clang-14.0.4" \
 		"sys-devel/clang-14.0.5" \
+		"sys-devel/clang-14.0.6" \
+		"sys-devel/clang-15.0.0" \
+		"sys-devel/clang-15.0.1" \
 		"sys-devel/clang-15.0.0.9999" \
+		"sys-devel/clang-16.0.0.9999" \
 	; do
 		if has_version "=${p}*" ; then
 			einfo "Verifying prereqs for PGO for ${p}"
