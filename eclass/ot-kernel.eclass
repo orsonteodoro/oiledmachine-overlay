@@ -1075,6 +1075,8 @@ dump_profraw() {
 	local arch=$(cat /proc/version | cut -f 3 -d " ")
 	arch="${arch##*-}"
 	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
+	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
+	[[ "${version}" != "${PV}" ]] && return
 	local profraw_dpath="${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
 	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}" || die
 	local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
