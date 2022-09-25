@@ -622,6 +622,15 @@ pkg_postinst() {
 	ewarn "This version with oiledmachine-overlay PGO patches are still being"
 	ewarn "tested, but booting is working."
 	ewarn
+
+	ewarn
+	ewarn "For proper eudev and /dev/disk/{by-id,by-uuid,...} support the"
+	ewarn "following changes should be made so that it is built-in and not"
+	ewarn "as module in the kernel config:"
+	ewarn
+	ewarn "CONFIG_NET=y"
+	ewarn "CONFIG_UNIX=y"
+	ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

@@ -671,6 +671,15 @@ pkg_postinst() {
 	ewarn "This version with oiledmachine-overlay patches has not been tested."
 	ewarn "Do not use at this time.  Use 4.2.3 instead."
 	ewarn
+
+	ewarn
+	ewarn "For proper eudev and /dev/disk/{by-id,by-uuid,...} support the"
+	ewarn "following changes should be made so that it is built-in and not"
+	ewarn "as module in the kernel config:"
+	ewarn
+	ewarn "CONFIG_NET=y"
+	ewarn "CONFIG_UNIX=y"
+	ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

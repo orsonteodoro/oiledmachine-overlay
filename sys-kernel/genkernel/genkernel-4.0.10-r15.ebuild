@@ -432,6 +432,15 @@ pkg_postinst() {
 	ewarn "It will be announced later when the replacement is ready and require"
 	ewarn "upgrading."
 	ewarn
+
+	ewarn
+	ewarn "For proper mdev and /dev/disk/{by-id,by-uuid,...} support the"
+	ewarn "following changes should be made so that it is built-in and not"
+	ewarn "as module in the kernel config:"
+	ewarn
+	ewarn "CONFIG_NET=y"
+	ewarn "CONFIG_UNIX=y"
+	ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
