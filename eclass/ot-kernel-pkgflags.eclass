@@ -165,6 +165,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_autofs
 	ot-kernel-pkgflags_avahi
 	ot-kernel-pkgflags_batctl
+	ot-kernel-pkgflags_bcache_tools
 	ot-kernel-pkgflags_bcc
 	ot-kernel-pkgflags_bcm_sta
 	ot-kernel-pkgflags_beep
@@ -677,6 +678,19 @@ ot-kernel-pkgflags_batctl() { # DONE
 	if has_version "net-misc/batctl" ; then
 		einfo "Applying kernel config flags for the batctl package (id: e9cc0fc)"
 		ot-kernel_y_configopt "CONFIG_BATMAN_ADV"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_bcache_tools
+# @DESCRIPTION:
+# Applies kernel config flags for the bcache-tools package
+ot-kernel-pkgflags_bcache_tools() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "1c16a04" ]] && return
+	if has_version "sys-fs/bcache-tools" ; then
+		einfo "Applying kernel config flags for the bcache-tools package (id: 1c16a04)"
+		ot-kernel_y_configopt "CONFIG_BCACHE"
+		ot-kernel_y_configopt "CONFIG_MD"
+		ot-kernel_y_configopt "CONFIG_BLOCK"
 	fi
 }
 
