@@ -5810,7 +5810,11 @@ ewarn "or similar."
 			sed -r -i -e "s/${s}=[ymn]/${s}=y/g" "${orig}" || die
 		fi
 	done
+}
 
+# @FUNCTION: ot-kernel_set_kconfig_eudev
+# @DESCRIPTION:
+ot-kernel_set_kconfig_eudev() {
 	einfo "Fixing config for genkernel"
 	# Genkernel does not add the unix module
 	# This is required for initramfs's eudev (udevadm)
@@ -6072,6 +6076,7 @@ einfo
 
 		ot-kernel_set_kconfig_module_support
 		ot-kernel_set_kconfig_build_all_modules_as
+		ot-kernel_set_kconfig_eudev
 		ot-kernel_check_kernel_signing_prereqs
 		ot-kernel_set_kconfig_module_signing
 
