@@ -112,7 +112,7 @@ else
 	SRC_URI="https://dev.gentoo.org/~whissi/dist/genkernel/${P}.tar.xz
 		${COMMON_URI}"
 	SRC_URI+=" https://gitweb.gentoo.org/proj/genkernel.git/patch/?id=8c9de489290dc470e30f8c7d0aaa3456eb124537 -> ${P}-s390x.patch"
-	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86"
+#	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86" # Broken /dev/disk/{by-id,by-uuid,...}
 fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
@@ -125,7 +125,8 @@ IUSE+=" ibm +firmware"
 IUSE+=" crypt_root_plain"			# Added by oteodoro.
 IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
 IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
-IUSE+=" clang-pgo
+IUSE+="
+	clang-pgo
 	sudo
 	pgo-custom
 	pgo_trainer_crypto
@@ -139,30 +140,32 @@ IUSE+=" clang-pgo
 " # Added by the oiledmachine-overlay.
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
-REQUIRED_USE+=" cfi? ( llvm lto )
-		clang-pgo? (
-			llvm
-			|| (
-				pgo_trainer_crypto
-				pgo_trainer_memory
-				pgo_trainer_network
-				pgo_trainer_p2p
-				pgo_trainer_webcam
-				pgo_trainer_xscreensaver_2d
-				pgo_trainer_xscreensaver_3d
-				pgo_trainer_yt
-			)
+REQUIRED_USE+="
+	cfi? ( llvm lto )
+	clang-pgo? (
+		llvm
+		|| (
+			pgo_trainer_crypto
+			pgo_trainer_memory
+			pgo_trainer_network
+			pgo_trainer_p2p
+			pgo_trainer_webcam
+			pgo_trainer_xscreensaver_2d
+			pgo_trainer_xscreensaver_3d
+			pgo_trainer_yt
 		)
-		lto? ( llvm )
-		pgo_trainer_crypto? ( clang-pgo )
-		pgo_trainer_memory? ( clang-pgo )
-		pgo_trainer_network? ( clang-pgo )
-		pgo_trainer_p2p? ( clang-pgo )
-		pgo_trainer_webcam? ( clang-pgo )
-		pgo_trainer_xscreensaver_2d? ( clang-pgo )
-		pgo_trainer_xscreensaver_3d? ( clang-pgo )
-		pgo_trainer_yt? ( clang-pgo )
-		shadowcallstack? ( cfi )"
+	)
+	lto? ( llvm )
+	pgo_trainer_crypto? ( clang-pgo )
+	pgo_trainer_memory? ( clang-pgo )
+	pgo_trainer_network? ( clang-pgo )
+	pgo_trainer_p2p? ( clang-pgo )
+	pgo_trainer_webcam? ( clang-pgo )
+	pgo_trainer_xscreensaver_2d? ( clang-pgo )
+	pgo_trainer_xscreensaver_3d? ( clang-pgo )
+	pgo_trainer_yt? ( clang-pgo )
+	shadowcallstack? ( cfi )
+"
 gen_scs_exclusion() {
 	for a in ${EXCLUDE_SCS[@]} ; do
 		echo " ${a}? ( !shadowcallstack )"

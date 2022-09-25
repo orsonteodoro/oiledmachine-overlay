@@ -83,7 +83,8 @@ if [[ ${PV} == 9999* ]] ; then
 else
 	SRC_URI="https://dev.gentoo.org/~whissi/dist/genkernel/${P}.tar.xz
 		${COMMON_URI}"
-	# KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~s390 sparc x86" # Disabled because of security issue
+	# KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~s390 sparc x86"
+	# Disabled because of security issue with dependencies
 fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
@@ -97,9 +98,11 @@ IUSE+=" crypt_root_plain"			# Added by oteodoro.
 IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
 IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
 EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 s390 sparc x86 )
-REQUIRED_USE+=" cfi? ( llvm lto )
-		lto? ( llvm )
-		shadowcallstack? ( cfi )"
+REQUIRED_USE+="
+	cfi? ( llvm lto )
+	lto? ( llvm )
+	shadowcallstack? ( cfi )
+"
 gen_scs_exclusion() {
 	for a in ${EXCLUDE_SCS[@]} ; do
 		echo " ${a}? ( !shadowcallstack )"
