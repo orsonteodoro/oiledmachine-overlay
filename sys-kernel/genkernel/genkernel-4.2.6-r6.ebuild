@@ -29,7 +29,7 @@ inherit bash-completion-r1 python-single-r1
 # Whenever you bump a GKPKG, check if you have to move
 # or add new patches!
 VERSION_BCACHE_TOOLS="1.0.8_p20141204"
-VERSION_BOOST="1.76.0"
+VERSION_BOOST="1.79.0"
 VERSION_BTRFS_PROGS="5.15"
 VERSION_BUSYBOX="1.34.1"
 VERSION_COREUTILS="8.32"
@@ -111,6 +111,7 @@ if [[ ${PV} == 9999* ]] ; then
 else
 	SRC_URI="https://dev.gentoo.org/~whissi/dist/genkernel/${P}.tar.xz
 		${COMMON_URI}"
+	SRC_URI+=" https://gitweb.gentoo.org/proj/genkernel.git/patch/?id=8c9de489290dc470e30f8c7d0aaa3456eb124537 -> ${P}-s390x.patch"
 	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86"
 fi
 
@@ -255,6 +256,9 @@ RDEPEND+=" ${PYTHON_DEPS}
 	sys-devel/autoconf
 	sys-devel/autoconf-archive
 	sys-devel/automake
+	sys-devel/bc
+	sys-devel/bison
+	sys-devel/flex
 	sys-devel/libtool
 	virtual/pkgconfig
 	elibc_glibc? ( sys-libs/glibc[static-libs(+)] )
@@ -329,8 +333,12 @@ if [[ ${PV} == 9999* ]]; then
 fi
 
 PATCHES=(
+	"${FILESDIR}"/${P}-devicemanager.patch
 	"${FILESDIR}"/${P}-fix-btrfs-progs-deps.patch
 	"${FILESDIR}"/${P}-fuse-glibc-2.34.patch
+	"${FILESDIR}"/${P}-gcc-12-boost-1.79.patch
+	"${FILESDIR}"/${P}-chroot-path.patch
+	"${DISTDIR}"/${P}-s390x.patch
 )
 
 src_unpack() {

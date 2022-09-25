@@ -15,7 +15,7 @@ inherit bash-completion-r1
 
 # Whenever you bump a GKPKG, check if you have to move
 # or add new patches!
-VERSION_BOOST="1.73.0"
+VERSION_BOOST="1.76.0"
 VERSION_BTRFS_PROGS="5.6.1"
 VERSION_BUSYBOX="1.31.1"
 VERSION_COREUTILS="8.32"
@@ -181,6 +181,9 @@ RDEPEND+=" ${DEPEND}
 	sys-devel/autoconf
 	sys-devel/autoconf-archive
 	sys-devel/automake
+	sys-devel/bc
+	sys-devel/bison
+	sys-devel/flex
 	sys-devel/libtool
 	virtual/pkgconfig
 	cfi? (
