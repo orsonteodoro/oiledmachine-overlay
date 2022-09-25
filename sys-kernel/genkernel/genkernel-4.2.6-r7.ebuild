@@ -121,6 +121,7 @@ HOMEPAGE="https://wiki.gentoo.org/wiki/Genkernel https://gitweb.gentoo.org/proj/
 LICENSE="GPL-2"
 SLOT="0"
 RESTRICT=""
+IUSE+=" udev-rules"
 IUSE+=" ibm +firmware"
 IUSE+=" crypt_root_plain"			# Added by oteodoro.
 IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
@@ -412,6 +413,7 @@ src_prepare() {
 		|| die "Could not adjust versions"
 
 	eapply "${FILESDIR}/${PN}-4.2.3-compiler-noise.patch"
+	use udev-rules && eapply "${FILESDIR}"/${PN}-${PV}-eudev-rules.patch
 
 	if use subdir_mount ; then # conditional and codeblock and use flag added by muslx32 overlay
 		ewarn "The subdir_mount USE flag is untested for ${PV}.  Do not use at this time.  Use the 3.5.x.x ebuild instead."

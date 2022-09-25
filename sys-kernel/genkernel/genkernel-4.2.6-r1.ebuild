@@ -131,6 +131,7 @@ LICENSE="GPL-2
 "
 SLOT="0"
 RESTRICT=""
+IUSE+=" udev-rules"
 IUSE+=" ibm +firmware"
 IUSE+=" entry"					# Added by oteodoro.
 IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
@@ -347,7 +348,15 @@ if [[ ${PV} == 9999* ]]; then
 	DEPEND="${DEPEND} app-text/asciidoc"
 fi
 
-PATCHES=( "${FILESDIR}"/${P}-fix-btrfs-progs-deps.patch )
+PATCHES=(
+	"${FILESDIR}"/${P}-devicemanager.patch
+	"${FILESDIR}"/${P}-fix-btrfs-progs-deps.patch
+	"${FILESDIR}"/${P}-fuse-glibc-2.34.patch
+	"${FILESDIR}"/${P}-gcc-12-boost-1.79.patch
+	"${FILESDIR}"/${P}-chroot-path.patch
+	"${FILESDIR}"/${P}-slibtool.patch # 836012
+	"${DISTDIR}"/${P}-s390x.patch
+)
 
 src_unpack() {
 	if [[ ${PV} == 9999* ]]; then
@@ -421,6 +430,7 @@ eerror
 		|| die "Could not adjust versions"
 
 	eapply "${FILESDIR}/${PN}-4.2.3-compiler-noise.patch"
+	use udev-rules && eapply "${FILESDIR}"/${PN}-${PV}-eudev-rules.patch
 
 	if use subdir_mount ; then # conditional and codeblock and use flag added by muslx32 overlay
 		ewarn "The subdir_mount USE flag is untested for ${PV}.  Do not use at this time.  Use the 3.5.x.x ebuild instead."

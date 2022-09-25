@@ -83,8 +83,3 @@ dev-util/bear
 dev-util/ycm-generator
 www-misc/rtv
 www-misc/rainbowstream
-
-# Breaks /dev/disk/{by-id,by-uuid,by-label,...}
-# Broken by commit:  c792697d0ec5e54ee9fcf1536f04f2267dff699d
-# eudev's  --disable-rule-generator and missing *.rule files are the reasons
->=sys-kernel/genkernel-4.1
