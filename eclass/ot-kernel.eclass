@@ -986,11 +986,6 @@ ewarn "more secure and higher performant configurations and to override the"
 ewarn "scheduler default."
 ewarn
 	_report_eol
-	if use build ; then
-ewarn
-ewarn "The build USE flag is currently in development."
-ewarn
-	fi
 	if declare -f ot-kernel_pkg_setup_cb > /dev/null ; then
 		ot-kernel_pkg_setup_cb
 	fi

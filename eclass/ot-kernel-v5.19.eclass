@@ -484,12 +484,6 @@ SRC_URI+="
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
-	if use bbrv2 ; then
-ewarn
-ewarn "Fixes to forward port bbrv2 is WIP (Work In Progress)"
-ewarn "Expect failure"
-ewarn
-	fi
 	if use tresor ; then
 		if [[ -n "${OT_KERNEL_DEVELOPER}" && "${OT_KERNEL_DEVELOPER}" == "1" ]] ; then
 			:
