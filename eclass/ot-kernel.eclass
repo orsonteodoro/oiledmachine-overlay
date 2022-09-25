@@ -5813,6 +5813,7 @@ ewarn "or similar."
 
 	einfo "Fixing config for genkernel"
 	# Genkernel does not add the unix module
+	# This is required for initramfs's eudev (udevadm)
 	ot-kernel_y_configopt "CONFIG_NET"
 	ot-kernel_y_configopt "CONFIG_UNIX"
 }
