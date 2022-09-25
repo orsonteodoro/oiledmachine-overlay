@@ -357,6 +357,11 @@ src_unpack() {
 
 src_prepare() {
 	default
+eerror
+eerror "This particular ebuild revision is for development only.  Use stable"
+eerror "later revisions instead."
+eerror
+	die
 
 	if [[ ${PV} == 9999* ]] ; then
 		einfo "Updating version tag"
@@ -546,7 +551,7 @@ pkg_postinst() {
 	fi
 
 	local n_root_args=$(grep -o -- '\<root=' /proc/cmdline 2>/dev/null | wc -l)
-	if [[ ${n_root_args} > 1 ]] ; then
+	if [[ ${n_root_args} -gt 1 ]] ; then
 		ewarn "WARNING: Multiple root arguments (root=) on kernel command-line detected!"
 		ewarn "If you are appending non-persistent device names to kernel command-line,"
 		ewarn "next reboot could fail in case running system and initramfs do not agree"
