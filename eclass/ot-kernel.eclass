@@ -5810,6 +5810,11 @@ ewarn "or similar."
 			sed -r -i -e "s/${s}=[ymn]/${s}=y/g" "${orig}" || die
 		fi
 	done
+
+	einfo "Fixing config for genkernel"
+	# Genkernel does not add the unix module
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_UNIX"
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_build_all_modules_as
