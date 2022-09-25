@@ -215,10 +215,16 @@
       0. Mount the boot partition
       1. Emerge with the build USE flag
       2. Run etc-update
-      3. Build and install initramfs
+      3. Build and install initramfses per each built kernel
       4. Update the bootloader
       5. Reboot
 
+
+    Signed kernel modules corresponding to a build and that build's private key
+    require multiple runs of "genkernel ... initramfs".  This means that N build
+    profiles each having a unique private key required N kernel initramfs
+    invocations.  If you built 5 profiles you need 5 corresponding
+    initramfs updates.
 
 
     The PGO (Profile Guided Optimization) progression diagram:

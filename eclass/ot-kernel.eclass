@@ -7093,8 +7093,8 @@ einfo
 einfo "The kernel(s) still needs to complete the following steps:"
 einfo
 einfo "    1.  Run etc-update"
-einfo "    2.  Build and install the initramfs"
-einfo "    3.  Update the bootloader with a new entry"
+einfo "    2.  Build and install the initramfs per each kernel."
+einfo "    3.  Update the bootloader with a new entries"
 einfo "    4.  Reboot with the PGIed kernel"
 einfo "    5.  Train the kernel with benchmarks or the typical uses"
 einfo "    6.  Re-emerging the package"
@@ -7107,13 +7107,20 @@ einfo
 einfo "The kernel(s) still needs to complete the following steps:"
 einfo
 einfo "    1.  Run etc-update"
-einfo "    2.  Build and install the initramfs"
-einfo "    3.  Update the bootloader with the new entry"
+einfo "    2.  Build and install the initramfs per each kernel."
+einfo "    3.  Update the bootloader with the new entries"
 einfo "    4.  Reboot with the new kernel"
 einfo
 einfo "For details, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
 einfo
 	fi
+
+ewarn
+ewarn "Multiple built kernels require a corresponding initramfs especially if"
+ewarn "modules are signed with their corresponding build's private key and"
+ewarn "embedded in the initramfs."
+ewarn
+
 	if has clang-pgo ${IUSE} ; then
 		if use clang-pgo ; then
 einfo
