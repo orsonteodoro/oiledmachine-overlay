@@ -435,11 +435,11 @@ pkg_postinst() {
 
 	ewarn
 	ewarn "For proper mdev and /dev/disk/{by-id,by-uuid,...} support the"
-	ewarn "following changes should be made so that it is built-in and not"
-	ewarn "as module in the kernel config:"
+	ewarn "following changes should be made so that it is built-in the"
+	ewarn "kernel and not as a module in the kernel config:"
 	ewarn
-	ewarn "CONFIG_NET=y"
-	ewarn "CONFIG_UNIX=y"
+	ewarn "  CONFIG_NET=y"
+	ewarn "  CONFIG_UNIX=y"
 	ewarn
 }
 

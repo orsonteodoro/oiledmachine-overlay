@@ -119,7 +119,7 @@ else
 	SRC_URI="https://dev.gentoo.org/~whissi/dist/genkernel/${P}.tar.xz
 		${COMMON_URI}"
 	SRC_URI+=" https://gitweb.gentoo.org/proj/genkernel.git/patch/?id=8c9de489290dc470e30f8c7d0aaa3456eb124537 -> ${P}-s390x.patch"
-	#KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86" # Broken /dev/disk/{by-id,by-uuid,...}
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
@@ -674,11 +674,11 @@ pkg_postinst() {
 
 	ewarn
 	ewarn "For proper eudev and /dev/disk/{by-id,by-uuid,...} support the"
-	ewarn "following changes should be made so that it is built-in and not"
-	ewarn "as module in the kernel config:"
+	ewarn "following changes should be made so that it is built-in the"
+	ewarn "kernel and not as a module in the kernel config:"
 	ewarn
-	ewarn "CONFIG_NET=y"
-	ewarn "CONFIG_UNIX=y"
+	ewarn "  CONFIG_NET=y"
+	ewarn "  CONFIG_UNIX=y"
 	ewarn
 }
 
