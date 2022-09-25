@@ -359,7 +359,7 @@ OT_KERNEL_PKGFLAGS_ACCEPT="05309e2 351365c"
 OT_KERNEL_SIGN_MODULES="1"
 OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
 OT_KERNEL_WORK_PROFILE="workstation"
-OT_KERNEL_ZSWAP_ALLOCATOR="z3fold"
+OT_KERNEL_ZSWAP_ALLOCATOR="zsmalloc"
 OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
@@ -1994,11 +1994,11 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Acceptable values:
 
-      zsmalloc, zbud, z3fold, x1, x2, x3, unset, manual, auto
+      zsmalloc, zbud, z3fold, x2, x3, xn, unset, manual, auto
 
-    If unset, it assumes manual.  x1 is an alias for zsmalloc; x2 is a alias
-    for zbud; x3 is an alias for z3fold.  auto is an alias for zbud.  It is
-    recommended to use x3 for less than 12 GB of RAM.  For 12 GB and above, it
+    If unset, it assumes manual.  xn is an alias for zsmalloc; x2 is a alias
+    for zbud; x3 is an alias for z3fold.  auto is an alias for zszmalloc.  It is
+    recommended to use xn for less than 12 GB of RAM.  For 12 GB and above, it
     should be unset.  The 12 GB is arbitrary and based on worst case peak
     memory.
 

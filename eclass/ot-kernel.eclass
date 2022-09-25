@@ -5682,14 +5682,16 @@ ot-kernel_set_kconfig_zswap() {
 		ot-kernel_unset_configopt "CONFIG_ZBUD"
 		ot-kernel_unset_configopt "CONFIG_Z3FOLD"
 		if [[ "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "ZSMALLOC" \
-			|| "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "X1" ]] ; then
+			|| "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "XN" \
+			|| "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "auto" \
+			]] ; then
 			einfo "Using zsmalloc for zswap"
 			ot-kernel_y_configopt "CONFIG_MMU"
 			ot-kernel_y_configopt "CONFIG_ZSWAP_ZPOOL_DEFAULT_ZSMALLOC"
 			ot-kernel_y_configopt "CONFIG_ZSMALLOC"
 		elif [[ "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "ZBUD" \
 			|| "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "X2" \
-			|| "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "auto" ]] ; then
+			]] ; then
 			einfo "Using zbud for zswap"
 			ot-kernel_y_configopt "CONFIG_ZPOOL"
 			ot-kernel_y_configopt "CONFIG_ZSWAP_ZPOOL_DEFAULT_ZBUD"
