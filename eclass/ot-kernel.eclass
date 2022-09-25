@@ -5814,6 +5814,8 @@ ewarn "or similar."
 
 # @FUNCTION: ot-kernel_set_kconfig_eudev
 # @DESCRIPTION:
+# Fixes kernel config when OT_KERNEL_BUILD_ALL_MODULES_AS=m or fixes
+# undocumented genkernel dependency requirements for the kernel.
 ot-kernel_set_kconfig_eudev() {
 	einfo "Fixing config for genkernel"
 	# Genkernel does not add the unix module
