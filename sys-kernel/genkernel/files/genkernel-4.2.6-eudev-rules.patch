@@ -7,7 +7,7 @@
 +	local udevdir=$(get_udevdir)
 +	local udevdir_initramfs="/usr/lib/udev"
 +	local udev_files=(
-+		$(find /etc/genkernel/eudev/ -name "*.rules")
++		$(find /etc/genkernel/udev/rules.d -name "*.rules")
 +		$(find "${udevdir}" -name "60-persistent-storage.rules")
 +	)
 +

@@ -191,7 +191,7 @@
       plausable deniablity.
     </flag>
     <flag name="udev-rules">
-      Allow to add udev rules files from /etc/genkernel/udev/*.rules and
+      Allow to add udev rules files from /etc/genkernel/udev/rules.d/*.rules and
       from /lib/udev/rules.d/60-persistent-storage.rules.
 
       This will allow to reference devices from
