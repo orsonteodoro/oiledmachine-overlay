@@ -89,8 +89,11 @@ get_id() {
 
 start()
 {
-	kv=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${EXTRAVERSION}-.*||g")
-	k_major=${kv%%.*}
+	local kv=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${EXTRAVERSION}-.*||g")
+	local k_major=${kv%%.*}
+	local kpva=$(cat /proc/version | cut -f 3 -d " ") # PV-${extraverson}-${arch}
+	[[ -e "/etc/ot-sources/iosched/conf/${kpva}" ]] || return
+	source "/etc/ot-sources/iosched/conf/${kpva}"
 	if cat /proc/version | grep -q -E -e " [0-9.]+-${EXTRAVERSION}-" ; then
 		einfo "Setting I/O schedulers for the -${EXTRAVERSION} kernel"
 		for x in $(ls "/sys/block/") ; do

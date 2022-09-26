@@ -6680,6 +6680,7 @@ ot-kernel_restore_keys() {
 # @FUNCTION: ot-kernel_gen_iosched_openrc
 # @DESCRIPTION:
 # Generates an OpenRC script for the iosched
+WANT_IOSCHED_OPENRC=0
 ot-kernel_gen_iosched_openrc() {
 	[[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] || return
 	if ! has_version "sys-apps/openrc[bash]" ; then
@@ -6688,12 +6689,12 @@ eerror "Re-emerge sys-apps/openrc[bash]"
 eerror
 		die
 	fi
-	mkdir -p "${T}/conf.d"
+	mkdir -p "${T}/etc/ot-sources/iosched/conf"
 
 	local salt=$(dd if=/dev/random bs=40 count=1 2>/dev/null | sha256sum | cut -f 1 -d " ")
 
 ################################################################################
-	cat <<EOF > "${T}/conf.d/iosched-${extraversion}" || die
+	cat <<EOF > "${T}/etc/ot-sources/iosched/conf/${PV}-${extraversion}-${arch}" || die
 # See metadata.xml or epkginfo -x ${PN}::oiledmachine-overlay for details
 IOSCHED_OVERRIDES="${OT_KERNEL_IOSCHED_OVERRIDE}"
 
@@ -6714,11 +6715,8 @@ EXTRAVERSION="${extraversion}"
 
 HW_RAID="${OT_KERNEL_HWRAID:-0}"
 EOF
-	mkdir -p "${T}/openrc"
 ################################################################################
-
-	einfo "Generating an iosched-${extraversion} for OpenRC"
-	cat "${FILESDIR}/iosched-openrc" > "${T}/openrc/iosched-${extraversion}" || die
+	export WANT_IOSCHED_OPENRC=1
 }
 
 # @FUNCTION: ot-kernel_src_install
@@ -6808,11 +6806,9 @@ ot-kernel_src_install() {
 		doins -r "${BUILD_DIR}" # Sanitize file permissions
 
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
-			einfo "Installing OpenRC iosched script"
-			exeinto "/etc/init.d"
-			doexe "${T}/openrc/iosched-${extraversion}"
-			insinto "/etc/conf.d"
-			doins "${T}/conf.d/iosched-${extraversion}"
+			einfo "Installing OpenRC iosched script settings"
+			insinto "/etc/ot-sources/iosched/conf"
+			doins "${T}/etc/ot-sources/iosched/conf/${PV}-${extraversion}-${arch}"
 		fi
 	done
 
@@ -7289,11 +7285,19 @@ ewarn
 	fi
 
 	if [[ "${OT_KERNEL_IOSCHED_OPENRC}" == "1" ]] ; then
+		# Installed here to avoid merge conflict.
+		if [[ "${WANT_IOSCHED_OPENRC}" == "1" && -e "${EROOT}/etc/init.d" ]] ; then
+			cp -a "${FILESDIR}/ot-kernel-iosched.openrc" "${EROOT}/etc/init.d/ot-kernel-iosched"
+			chmod +x "${EROOT}/etc/init.d/ot-kernel-iosched"
+			chown root:root "${EROOT}/etc/init.d/iosched-settings"
+		fi
+
 ewarn
-ewarn "You need to etc-update to update the /etc/init.d and /etc/conf.d for the"
-ewarn "per-kernel iosched profiles."
+ewarn "The iosched has been changed to ${EPREFIX}/etc/init.d/ot-kernel-iosched"
+ewarn "You need to do the following to make the work profile fully effective:"
 ewarn
-ewarn "You need to enable /etc/init.d/iosched-"
+ewarn "  rc-update add ot-kernel-iosched"
+ewarn "  /etc/init.d/ot-kernel-iosched start"
 ewarn
 	fi
 
