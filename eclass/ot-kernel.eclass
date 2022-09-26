@@ -7288,7 +7288,7 @@ ewarn
 		# Installed here to avoid merge conflict.
 		if [[ "${WANT_IOSCHED_OPENRC}" == "1" && -e "${EROOT}/etc/init.d" ]] ; then
 			cp -a "${FILESDIR}/ot-kernel-iosched.openrc" "${EROOT}/etc/init.d/ot-kernel-iosched"
-			chmod +x "${EROOT}/etc/init.d/ot-kernel-iosched"
+			chmod 0755 "${EROOT}/etc/init.d/ot-kernel-iosched"
 			chown root:root "${EROOT}/etc/init.d/iosched-settings"
 		fi
 
