@@ -190,13 +190,6 @@
       an audio or image file to improve dm-crypt crypt plain
       plausable deniablity.
     </flag>
-    <flag name="udev-rules">
-      Allow to add udev rules files from /etc/genkernel/udev/rules.d/*.rules and
-      from /lib/udev/rules.d/60-persistent-storage.rules.
-
-      This will allow to reference devices from
-      /dev/disk/{by-id,by-uuid,by-label,...} in a more deterministic way.
-    </flag>
   </use>
   <!--
     <upstream>
