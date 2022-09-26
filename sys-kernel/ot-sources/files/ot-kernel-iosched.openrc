@@ -88,6 +88,7 @@ get_id() {
 }
 
 _load_modules() {
+	local kpva="${1}"
 	local M
 	M=(
 		"bfq"
@@ -100,7 +101,7 @@ _load_modules() {
 
 	local m
 	for m in ${M[@]} ; do
-		local nmods=$(find /lib/modules/$(cat /proc/version | cut -f 3 -d " ") -name "${m}.ko*" | wc -l)
+		local nmods=$(find "/lib/modules/${kpva}" -name "${m}.ko*" | wc -l)
 		if (( ${nmods} > 0 )) ; then
 			einfo "Loading ${m}"
 			modprobe ${m}
@@ -110,53 +111,53 @@ _load_modules() {
 
 start()
 {
-	local kv=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${EXTRAVERSION}-.*||g")
+	local kpva=$(cat /proc/version | cut -f 3 -d " ") # ${PV}-${extraverson}-${arch}
+	local kv="${kpva%%-*}"
 	local k_major=${kv%%.*}
-	local kpva=$(cat /proc/version | cut -f 3 -d " ") # PV-${extraverson}-${arch}
+	local extraversion="${kpva%-*}"
+	extraversion="${extraversion#*-}"
 	[[ -e "/etc/ot-sources/iosched/conf/${kpva}" ]] || return
 	source "/etc/ot-sources/iosched/conf/${kpva}"
 
-	_load_modules
+	_load_modules "${kpva}"
 
-	if cat /proc/version | grep -q -E -e " [0-9.]+-${EXTRAVERSION}-" ; then
-		einfo "Setting I/O schedulers for the -${EXTRAVERSION} kernel"
-		for x in $(ls "/sys/block/") ; do
-			[[ "${x}" =~ "dm-"[0-9]+ ]] && continue
-			[[ "${x}" =~ "loop"[0-9]+ ]] && continue
-			if grep -q -e "1" "/sys/block/${x}/queue/rotational" ; then
-				# HDD
-				set_iosched "${IOSCHED_HDD}"
-			fi
-			if grep -q -e "0" "/sys/block/${x}/queue/rotational" || realpath "/sys/block/${x}/device" | grep -q "usb" ; then
-				# SSD
-				# USB flash reported as rotational.
-				set_iosched "${IOSCHED_SSD}"
-			fi
-		done
+	einfo "Setting I/O schedulers for the -${extraversion} kernel"
+	for x in $(ls "/sys/block/") ; do
+		[[ "${x}" =~ "dm-"[0-9]+ ]] && continue
+		[[ "${x}" =~ "loop"[0-9]+ ]] && continue
+		if grep -q -e "1" "/sys/block/${x}/queue/rotational" ; then
+			# HDD
+			set_iosched "${IOSCHED_HDD}"
+		fi
+		if grep -q -e "0" "/sys/block/${x}/queue/rotational" || realpath "/sys/block/${x}/device" | grep -q "usb" ; then
+			# SSD
+			# USB flash reported as rotational.
+			set_iosched "${IOSCHED_SSD}"
+		fi
+	done
 
-		for x in ${IOSCHED_OVERRIDES} ; do
-			[[ "${x}" =~ ";" ]] || continue
-			id="${x%;*}"
-			iosched="${x#*;}"
-			if [[ -e "/dev/disk/by-id/${id}" ]] ; then
-				p=$(realpath "/dev/disk/by-id/${id}")
-				x=$(basename "${p}")
-				set_iosched "${iosched}"
-			fi
-		done
+	for x in ${IOSCHED_OVERRIDES} ; do
+		[[ "${x}" =~ ";" ]] || continue
+		id="${x%;*}"
+		iosched="${x#*;}"
+		if [[ -e "/dev/disk/by-id/${id}" ]] ; then
+			p=$(realpath "/dev/disk/by-id/${id}")
+			x=$(basename "${p}")
+			set_iosched "${iosched}"
+		fi
+	done
 
-		for x in ${IOSCHED_ANON_OVERRIDES} ; do
-			[[ "${x}" =~ ";" ]] || continue
-			hash="${x%;*}"
-			iosched="${x#*;}"
+	for x in ${IOSCHED_ANON_OVERRIDES} ; do
+		[[ "${x}" =~ ";" ]] || continue
+		hash="${x%;*}"
+		iosched="${x#*;}"
 
-			id=$(get_id "${hash}")
+		id=$(get_id "${hash}")
 
-			if [[ -e "/dev/disk/by-id/${id}" ]] ; then
-				p=$(realpath "/dev/disk/by-id/${id}")
-				x=$(basename "${p}")
-				set_iosched "${iosched}"
-			fi
-		done
-	fi
+		if [[ -e "/dev/disk/by-id/${id}" ]] ; then
+			p=$(realpath "/dev/disk/by-id/${id}")
+			x=$(basename "${p}")
+			set_iosched "${iosched}"
+		fi
+	done
 }

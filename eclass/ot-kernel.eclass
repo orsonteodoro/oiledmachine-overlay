@@ -6711,7 +6711,6 @@ SALT="${salt}"
 
 IOSCHED_HDD="${hdd_iosched}" # Do not change
 IOSCHED_SSD="${ssd_iosched}" # Do not change
-EXTRAVERSION="${extraversion}"
 
 HW_RAID="${OT_KERNEL_HWRAID:-0}"
 EOF
