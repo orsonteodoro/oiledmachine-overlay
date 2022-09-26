@@ -1329,29 +1329,33 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     Acceptable values:
 
       bfq - Alias for bfq-low-latency.  Virtual latency guarantees for
-      interactive and soft-real-time (SRT) and weighted proportional throughput.  By
-      default, more weight is given to interactive/SRT and sequential I/O requests.
+      interactive and soft-real-time (SRT) and weighted proportional throughput.
+      By default, more weight is given to interactive/SRT and sequential I/O
+      requests.
 
-      bfq-low-latency - Variation optimized for interactive or soft-real-time I/O
-      such as seeking for media players.  Has observed benefits in startup time.
-      This option does automatic weight adjustments, but can still be inferior in
-      some scenarios.  For manual, weight adjustments use bfq-custom-interactive
-      instead.
+      bfq-low-latency - Variation optimized for interactive or soft-real-time
+      I/O such as seeking for media players.  Has observed benefits in startup
+      time.  This option does automatic weight adjustments with interatives, but
+      can still be inferior in some scenarios.  For manual, weight adjustments
+      use bfq-custom-interactive instead.
 
       bfq-custom-interactive - Variation optimized for precise interactivity
       under high I/O.  This option requires the use of ionice to manually adjust
       the weights manipulating the priority class (-c in ionice) and the class
       data (-n in ionice).  Work profiles notorious for high I/O such as
-      builder-interactive will be assigned this.  Beneficial one liners for
-      bfq-ionice-interactive:
-      ionice -c 3 -p $(pgrep -G portage) # puts emerge in the idle class
-      ionice -c 3 -p $(pgrep sah) # puts sah in the idle class
-      ionice -c 2 -n 0 -p $(pgrep uzbl) # web browser
-      ionice -c 2 -n 0 -p $(pgrep mplayer) # streaming service
-      # ionice -c 3 means idle and heaviest I/O programs should use this value.
-      # ionice -c 2 means best effort to be used by interactive.
-      # ionice -n 0 is highest priority in that priority class in the best effort class.
-      # ionice -n 7 is low priority in that priority class in the best effort class.
+      builder-interactive will be assigned this.
+
+      Beneficial one liners forbfq-ionice-interactive:
+
+        ionice -c 3 -p $(pgrep -G portage) # puts emerge in the idle class
+        ionice -c 3 -p $(pgrep sah) # puts sah in the idle class
+        ionice -c 2 -n 0 -p $(pgrep uzbl) # web browser
+        ionice -c 2 -n 0 -p $(pgrep mplayer) # streaming service
+        # ionice -c 3 means idle and heaviest I/O programs should use this value.
+        # ionice -c 2 means best effort to be used by interactive.
+        # ionice -n 0 is highest priority in that priority class in the best effort class.
+        # ionice -n 7 is low priority in that priority class in the best effort class.
+
       The recommendations above may change or better solution provided later.
       See also PORTAGE_IONICE_COMMAND in "man make.conf".
 
@@ -1359,7 +1363,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       video frames at the expense of throughput.  This option uses automatic
       weight adjustments.
 
-      bfq-throughput - Variation to maximize MB/s
+      bfq-throughput - Variation to maximize MB/s disabling boosting weights
+      for interactive processes.
 
       cfq - Round robin fairness with timeslices (4.14 only)
 
