@@ -7286,7 +7286,8 @@ ewarn
 
 	if [[ "${OT_KERNEL_IOSCHED_OPENRC}" == "1" ]] ; then
 		# Installed here to avoid merge conflict.
-		if [[ "${WANT_IOSCHED_OPENRC}" == "1" && -e "${EROOT}/etc/init.d" ]] ; then
+		if [[ "${WANT_IOSCHED_OPENRC}" == "1" \
+			&& -e "${EROOT}/etc/init.d" ]] ; then
 			cat "${FILESDIR}/ot-kernel-iosched.openrc" \
 				> "${EROOT}/etc/init.d/ot-kernel-iosched"
 			chmod 0755 "${EROOT}/etc/init.d/ot-kernel-iosched"
