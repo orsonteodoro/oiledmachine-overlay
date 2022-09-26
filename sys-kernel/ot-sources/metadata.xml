@@ -1335,7 +1335,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       bfq-low-latency - Variation optimized for interactive or soft-real-time I/O
       such as seeking for media players.  Has observed benefits in startup time.
       This option does automatic weight adjustments, but can still be inferior in
-      some scenarios.
+      some scenarios.  For manual, weight adjustments use bfq-custom-interactive
+      instead.
 
       bfq-custom-interactive - Variation optimized for precise interactivity
       under high I/O.  This option requires the use of ionice to manually adjust
@@ -1351,12 +1352,12 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       # ionice -c 2 means best effort to be used by interactive.
       # ionice -n 0 is highest priority in that priority class in the best effort class.
       # ionice -n 7 is low priority in that priority class in the best effort class.
-      # DO NOT use the realtime I/O priority class.
       The recommendations above may change or better solution provided later.
       See also PORTAGE_IONICE_COMMAND in "man make.conf".
 
       bfq-streaming - Same as bfq-low-latency but designed to prevent dropped
-      video frames at the expense of throughput.
+      video frames at the expense of throughput.  This option uses automatic
+      weight adjustments.
 
       bfq-throughput - Variation to maximize MB/s
 
