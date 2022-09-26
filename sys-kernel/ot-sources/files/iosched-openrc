@@ -51,10 +51,10 @@ set_iosched() {
 			# Use manual weight adjustments via ionice
 			# https://docs.kernel.org/block/bfq-iosched.html#per-process-ioprio-and-weight
 			echo "0" > "/sys/block/${x}/queue/iosched/low_latency"
-			echo "1" > "/sys/block/sdb/queue/iosched/strict_guarantees"
+			echo "1" > "/sys/block/${x}/queue/iosched/strict_guarantees"
 		elif [[ "${ioschedc}" == "bfq-streaming" ]] ; then
 			echo "1" > "/sys/block/${x}/queue/iosched/low_latency"
-			echo "1" > "/sys/block/sdb/queue/iosched/strict_guarantees"
+			echo "1" > "/sys/block/${x}/queue/iosched/strict_guarantees"
 		fi
 	fi
 }
