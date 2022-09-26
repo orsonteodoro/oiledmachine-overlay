@@ -1345,7 +1345,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       data (-n in ionice).  Work profiles notorious for high I/O such as
       builder-interactive will be assigned this.
 
-      Beneficial one liners forbfq-ionice-interactive:
+      Beneficial one liners for bfq-custom-interactive:
 
         ionice -c 3 -p $(pgrep -G portage) # puts emerge in the idle class
         ionice -c 3 -p $(pgrep sah) # puts sah in the idle class
