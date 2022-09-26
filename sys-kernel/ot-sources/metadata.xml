@@ -1697,6 +1697,23 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
+    OT_KERNEL_SATA_LPM_MAX -- Set the SATA link power management policy for max performance. (Default:  1)
+    OT_KERNEL_SATA_LPM_MID -- Set the SATA link power management policy for mid performance. (Default:  0)
+    OT_KERNEL_SATA_LPM_MIN -- Set the SATA link power management policy for power saving. (Default:  0)
+
+    Acceptable values:
+
+      0 - firmware default
+      1 - maximum performance
+      2 - medium performance
+      3 - medium performance with initiated power management by device
+      4 - minimal power use
+
+    Using 3-4 may cause data loss that manifest as freezes.
+    Using 4 may cause disk corruption with certain disks.
+
+
+
     OT_KERNEL_SATELLITE_INTERNET -- Set this to optimize satellite internet.
 
     Acceptable values:

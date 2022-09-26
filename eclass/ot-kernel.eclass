@@ -2361,6 +2361,9 @@ ot-kernel_clear_env() {
 #	unset OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR	# global var
 	unset OT_KERNEL_PRIVATE_KEY
 	unset OT_KERNEL_PUBLIC_KEY
+	unset OT_KERNEL_SATA_LPM_MAX
+	unset OT_KERNEL_SATA_LPM_MID
+	unset OT_KERNEL_SATA_LPM_MIN
 	unset OT_KERNEL_SGX
 	unset OT_KERNEL_SLAB_ALLOCATOR
 	unset OT_KERNEL_SME
@@ -5614,6 +5617,46 @@ ewarn
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 		ot-kernel_iosched_interactive
+	fi
+
+	local sata_lpm_max="${OT_KERNEL_SATA_LPM_MAX:-1}"
+	local sata_lpm_mid="${OT_KERNEL_SATA_LPM_MID:-0}"
+	local sata_lpm_min="${OT_KERNEL_SATA_LPM_MIN:-0}"
+
+	if [[ -z "${work_profile}" || "${work_profile}" =~ ("custom"|"manual") ]] ; then
+		:;
+	elif \
+		   grep -q -E -e "^CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE=y" "${path_config}" \
+		; then
+		if \
+			   grep -q -E -e "^CONFIG_ATA=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_HAS_DMA=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_SATA_AHCI=(y|m)" "${path_config}" ; then
+			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "${sata_lpm_max}"
+		fi
+	elif \
+		   grep -q -E -e "^CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL=y" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE=y" "${path_config}" \
+		; then
+		if \
+			   grep -q -E -e "^CONFIG_ATA=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_HAS_DMA=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_SATA_AHCI=(y|m)" "${path_config}" \
+		; then
+			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "${sata_lpm_mid}"
+		fi
+	elif \
+		   grep -q -E -e "^CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE=y" "${path_config}" \
+		; then
+		if \
+			   grep -q -E -e "^CONFIG_ATA=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_HAS_DMA=(y|m)" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_SATA_AHCI=(y|m)" "${path_config}" ; then
+			ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "${sata_lpm_min}"
+		fi
+	else
+		ot-kernel_set_configopt "CONFIG_SATA_MOBILE_LPM_POLICY" "0" # firmware default
 	fi
 }
 
