@@ -100,7 +100,7 @@ _load_modules() {
 
 	local m
 	for m in ${M[@]} ; do
-		local nmods=$(find /lib/modules/$(cat /proc/version | cut -f 3 -d " ") -name "*${m}.ko*" | wc -l)
+		local nmods=$(find /lib/modules/$(cat /proc/version | cut -f 3 -d " ") -name "${m}.ko*" | wc -l)
 		if (( ${nmods} > 0 )) ; then
 			einfo "Loading ${m}"
 			modprobe ${m}
