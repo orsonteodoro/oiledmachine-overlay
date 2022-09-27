@@ -122,13 +122,13 @@
 		    zen-multigen_lru			N
 		    zen-sauce				N
 						
-    5.18 (Stable)					N
+    5.19 (Stable)					N
 		    -rt	(RT_PREEMPT)			A
 		    CFI					E
 		    Clang PGO				E
 		    genpatches				A
 		    KCFI				R
-		    kernel_compiler_patch		A
+		    kernel_compiler_patch		E
 		    multigen_lru			A
 		    Project C				A
 		    TCP BBR v2 [5]			E
@@ -312,7 +312,7 @@
       /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
       /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/patches
 
-    K_MAJOR_MINOR will be expanded to either 4.14, 5.4, 5.10, 5.15, 5.16, 5.17.
+    K_MAJOR_MINOR will be expanded to either 4.14, 5.4, 5.10, 5.15, 5.19.
 
     extraversion will be expanded to ot, rt, or a custom name.
 
@@ -661,7 +661,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       4.14: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, muqss, pds
       5.10: cfs, cfs-throghhput, cfs-interactive, cfs-autogroup, muqss, prjc, prjc-bmq, prjc-pds
       5.15: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
-      5.16: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
+      5.19: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
 
       The reason why for this flexibility is to allow for multiple
       configurations that are not mutual exclusive, meaning you can use the rt
@@ -2389,11 +2389,8 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     For 5.15, see:
     https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
 
-    For 5.17, see:
-    https://github.com/torvalds/linux/compare/v5.17...zen-kernel:5.17/zen-sauce
-
-    For 5.18, see:
-    https://github.com/torvalds/linux/compare/v5.18...zen-kernel:5.18/zen-sauce
+    For 5.19, see:
+    https://github.com/torvalds/linux/compare/v5.19...zen-kernel:5.19/zen-sauce
 
     Use the zen-sauce USE flags instead of passing their Zen commit IDs
     equivalents.
