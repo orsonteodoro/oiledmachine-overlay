@@ -5436,7 +5436,11 @@ ewarn
 			&& ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
-		ot-kernel_iosched_interactive
+		if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
+			ot-kernel_iosched_streaming
+		else
+			ot-kernel_iosched_interactive
+		fi
 	elif [[ "${work_profile}" =~ ("builder-dedicated"|"builder-interactive") ]] ; then
 		if [[ "${work_profile}" =~ ("builder-dedicated") ]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz
