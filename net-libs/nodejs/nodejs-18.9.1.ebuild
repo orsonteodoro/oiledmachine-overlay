@@ -92,7 +92,7 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Aug 22, 2022
+# Last deps commit date:  Sep 22, 2022
 NGHTTP2_V="1.47.0"
 RDEPEND+="
 	!net-libs/nodejs:0
@@ -131,7 +131,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="8.19.1" # See https://github.com/nodejs/node/blob/v18.9.0/deps/npm/package.json
+NPM_V="8.19.1" # See https://github.com/nodejs/node/blob/v18.9.1/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
