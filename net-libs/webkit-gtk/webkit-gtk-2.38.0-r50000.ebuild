@@ -6,11 +6,11 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.0)
+# ab = WEBKITGTK_API_VERSION version (5.0)
 # c = reserved
 # de = ebuild revision
 
-# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/WebKit/Configurations/Version.xcconfig
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
 LLVM_MAX_SLOT=14 # This should not be more than Mesa's package LLVM_MAX_SLOT
@@ -24,7 +24,7 @@ UOPTS_SUPPORT_TPGO=0
 inherit check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs uopts
 
-DESCRIPTION="Open source web browser engine (GTK+3 with libsoup2)"
+DESCRIPTION="Open source web browser engine (GTK 4)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
@@ -244,15 +244,15 @@ LICENSE="
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~riscv ~x86"
 
-API_VERSION="4.0"
+API_VERSION="5.0"
 UOPTS_IMPLS="_${API_VERSION}"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 4.0
-CURRENT="94"
-AGE="57"
+# WEBKITGTK_API_VERSION is 5.0
+CURRENT="0"
+AGE="0"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=5.0/0  GTK4 SOUP*
@@ -275,7 +275,7 @@ ${LANGS[@]/#/l10n_}
 aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dav1d +dfg-jit +doc
 -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
 hardened +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
-+libhyphen +libnotify -libwebrtc lto -mediastream +minibrowser +opengl openmp
++libhyphen -libwebrtc lto -mediastream +minibrowser +opengl openmp
 +pulseaudio -seccomp -spell test thunder +unified-builds variation-fonts
 +v4l wayland +webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver
 +webgl -webgl2 webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
@@ -348,7 +348,7 @@ REQUIRED_USE+="
 "
 # libwebrtc requires git clone or the fix the tarball to contain the libwebrtc folder.
 
-# cannot use introspection for 32 webkit on 64 bit because it requires 32 bit
+# Introspection for 32 webkit on 64 bit cannot be used because it requires 32 bit
 # libs/build for python from gobject-introspection.  It produces this error:
 #
 # pyport.h:686:2: error: #error "LONG_BIT definition appears wrong for platform
@@ -357,15 +357,22 @@ REQUIRED_USE+="
 # This means also you cannot use the geolocation feature.
 
 # For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Tools/gtk/install-dependencies
 #   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
 #   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
+
+#
+# To compare changes, Use:
+#
+# C="Source/cmake/WebKitCommon.cmake" D1="${S_OLD}" ; D2="${S_NEW}" ; diff  -urp "${D1}/${C}" "${D2}/${C}" # For individual comparisons
+# D1="${S_OLD}" ; D2="${S_NEW}" ; diff  -urp "${D1}" "${D2}" # For tree comparisons
+#
 
 # Upstream tests with U 18.04 LTS and U 20.04
 # Ebuild target is 18.04 based on the lowest LTS builder-bot
@@ -398,7 +405,7 @@ MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 RDEPEND+="
@@ -410,17 +417,17 @@ RDEPEND+="
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
+	>=gui-libs/gtk-3.98.5:4[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.8.0:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.4.2:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-0.9.18:=[icu(+),${MULTILIB_USEDEP}]
 	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
+	>=net-libs/libsoup-2.99.9:3.0[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
-	>=x11-libs/gtk+-3.22.0:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	avif? ( >=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}] )
 	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
 	geolocation? ( >=app-misc/geoclue-0.12.99:2.0 )
@@ -456,7 +463,6 @@ RDEPEND+="
 	jpeg2k? ( >=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}] )
 	jpegxl? ( media-libs/libjxl[${MULTILIB_USEDEP}] )
 	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
-	libnotify? ( >=x11-libs/libnotify-0.7.7[${MULTILIB_USEDEP}] )
 	opengl? (
 		!kernel_Winnt? ( >=media-libs/mesa-${MESA_V}[egl(+),${MULTILIB_USEDEP}] )
 		virtual/opengl[${MULTILIB_USEDEP}]
@@ -488,7 +494,6 @@ RDEPEND+="
 	webgl? (
 		|| (
 			>=media-libs/mesa-${MESA_V}[${MULTILIB_USEDEP}]
-			>=x11-libs/libdrm-2.4.107[${MULTILIB_USEDEP}]
 		)
 	)
 	webm-eme? ( ${OCDM_WV} )
@@ -569,7 +574,6 @@ BDEPEND+="
 # Commits can be found at:
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
 # Or https://trac.webkit.org/browser/webkit/releases/WebKitGTK
-EGIT_COMMIT="bec7040a3f8d8c18ae65fd9b22f0eced1215b4a4"
 SRC_URI="
 	!libwebrtc? (
 		https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
@@ -598,7 +602,7 @@ einfo
 		fi
 
 		if ! test-flag-CXX -std=c++20 ; then
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/OptionsCommon.cmake
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/OptionsCommon.cmake
 eerror
 eerror "You need at least GCC 8.3.x or Clang >= 6 for C++20-specific compiler"
 eerror "flags"
@@ -635,8 +639,12 @@ ewarn
 }
 
 pkg_setup() {
+ewarn
+ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
+ewarn "It is currently not recommended due to rendering bug(s)."
+ewarn
 einfo
-einfo "This is the unstable branch."
+einfo "This is the stable branch."
 einfo
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
@@ -724,11 +732,13 @@ echo "${actual_list_raw}"
 }
 
 EXPECTED_BUILD_FINGERPRINT="\
-0d13d401733d998df04997b9a1123b914dad318882acf9c4cdcccd1b80baaa13\
-b91bb7bbe62e2f3641dd75a1bca904acde6784139d14e38704a7981d746c93ab"
+e56ac532d31f231cf9a6065d04b97426c4fe561ff695bfbf653b45e4362773ae\
+570d78a138bf8811acb90b4d0a0eabda467f2560f55ba38f8e08f86d0b15d160\
+"
 EXPECTED_BUILD_FINGERPRINT_WEBRTC="\
 ce7a0164ea0da74de32de8eeac7e541c29355542710f270c2fc6125309315194\
-2c3acd8d773264875d99304da31c28ec05e5c97ee9af6a352504fb37fa59d8c3"
+2c3acd8d773264875d99304da31c28ec05e5c97ee9af6a352504fb37fa59d8c3\
+"
 src_unpack() {
 	if use libwebrtc ; then
 		EGIT_CLONE_TYPE="single"
@@ -771,6 +781,9 @@ src_unpack() {
 				| sha512sum \
 				| cut -f 1 -d " " \
 					)
+
+	uopts_setup
+
 	if [[ "${actual_build_fingerprint}" != "${EXPECTED_BUILD_FINGERPRINT}" ]] ; then
 eerror
 eerror "Detected build files update"
@@ -783,6 +796,8 @@ eerror
 		die
 	fi
 
+	return
+
 	if use libwebrtc && [[ "${actual_build_fingerprint_webrtc}" != "${EXPECTED_BUILD_FINGERPRINT_WEBRTC}" ]] ; then
 eerror
 eerror "Detected build files update for WebRTC"
@@ -794,7 +809,6 @@ eerror "QA:  Update IUSE, *DEPENDS, options, KEYWORDS, patches"
 eerror
 #		die
 	fi
-	uopts_setup
 }
 
 src_prepare() {
@@ -924,17 +938,15 @@ eerror
 		-DENABLE_WEBGL2=$(usex webgl2)
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
-		-DUSE_ANGLE_WEBGL=$(usex webgl)
 		-DUSE_AVIF=$(usex avif)
-		-DUSE_GTK4=OFF
+		-DUSE_GTK4=ON
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
-		-DUSE_LIBNOTIFY=$(usex libnotify)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=ON
+		-DUSE_SOUP2=OFF
 		-DUSE_WOFF2=$(usex woff2)
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
 # WPE renderer is used to implement accelerated compositing under wayland

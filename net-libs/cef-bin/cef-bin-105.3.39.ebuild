@@ -16,7 +16,7 @@ HOMEPAGE="https://bitbucket.org/chromiumembedded/cef/src/master/"
 KEYWORDS="~arm ~arm64 ~amd64"
 # The download page can be found at https://cef-builds.spotifycdn.com/index.html
 
-CEF_VERSION_RAW="07/06/2022 - 103.0.9+gd0bbcbb+chromium-103.0.5060.114 / Chromium 103.0.5060.114"
+CEF_VERSION_RAW="09/15/2022 - 105.3.39+g2ec21f9+chromium-105.0.5195.127 / Chromium 105.0.5195.127"
 CHROMIUM_V="${CEF_VERSION_RAW##* }" # same as https://bitbucket.org/chromiumembedded/cef/src/1c5e658/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4844
 CEF_COMMIT="${CEF_VERSION_RAW#*\+}" # same as https://bitbucket.org/chromiumembedded/cef/commits/
 CEF_COMMIT="${CEF_COMMIT%\+*}"
@@ -51,8 +51,8 @@ REQUIRED_USE+="
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
 # For details see:
-# Chromium runtime:  https://github.com/chromium/chromium/blob/103.0.5060.114/build/install-build-deps.sh#L237
-# Chromium buildtime:  https://github.com/chromium/chromium/blob/103.0.5060.114/build/install-build-deps.sh#L151
+# Chromium runtime:  https://github.com/chromium/chromium/blob/105.0.5195.127/build/install-build-deps.sh#L237
+# Chromium buildtime:  https://github.com/chromium/chromium/blob/105.0.5195.127/build/install-build-deps.sh#L151
 GLIB_V="2.48"
 XI_V="1.7.6"
 CHROMIUM_CDEPEND="
@@ -141,8 +141,14 @@ DEPEND+="
 		>=dev-libs/glib-${GLIB_V}:2
 	)
 "
+GCC_PV_MIN="7.5"
+CLANG_PV_MIN="12"
 BDEPEND+="
 	>=dev-util/cmake-3.10.2
+	|| (
+		>=sys-devel/gcc-${GCC_PV_MIN}
+		>=sys-devel/clang-${CLANG_PV_MIN}
+	)
 	test? (
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
@@ -150,7 +156,7 @@ BDEPEND+="
 "
 RESTRICT="mirror"
 PATCHES=(
-	"${FILESDIR}/cef-bin-93.1.11-visibility-changes.patch"
+	"${FILESDIR}/cef-bin-105.3.39-visibility-changes.patch"
 )
 S="${WORKDIR}" # Dummy
 
@@ -182,6 +188,26 @@ append_all() {
 	append-ldflags ${@}
 }
 
+# See https://bitbucket.org/chromiumembedded/cef/issues/3362/allow-c-17-features-in-cef-binary
+CXX_VER="17"
+check_compiler() {
+	CC=$(tc-getCC)
+	CXX=$(tc-getCXX)
+	einfo "CC=${CC} CXX=${CXX}"
+	test-flags-CXX "-std=c++${CXX_VER}" 2>/dev/null 1>/dev/null || die "Switch to a c++${CXX_VER} compatible compiler."
+	if tc-is-gcc ; then
+		if ver_test $(gcc-major-version) -lt ${GCC_PV_MIN} ; then
+			die "${PN} requires GCC >=${GCC_PV_MIN} for c++${CXX_VER} support"
+		fi
+	elif tc-is-clang ; then
+		if ver_test $(clang-version) -lt ${CLANG_PV_MIN} ; then
+			die "${PN} requires Clang >=${CLANG_PV_MIN} for c++${CXX_VER} support"
+		fi
+	else
+		die "Compiler is not supported"
+	fi
+}
+
 pkg_setup() {
 	chromium_suid_sandbox_check_kernel_config
 	if use test ; then
@@ -206,6 +232,7 @@ src_prepare() {
 }
 
 src_configure() {
+	check_compiler
 	strip-unsupported-flags
 	filter-flags \
 		'-f*sanitize*' \

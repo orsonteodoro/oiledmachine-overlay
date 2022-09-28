@@ -10,7 +10,7 @@ EAPI=8
 # c = reserved
 # de = ebuild revision
 
-# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/WebKit/Configurations/Version.xcconfig
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
 LLVM_MAX_SLOT=14 # This should not be more than Mesa's package LLVM_MAX_SLOT
@@ -349,7 +349,7 @@ REQUIRED_USE+="
 "
 # libwebrtc requires git clone or the fix the tarball to contain the libwebrtc folder.
 
-# cannot use introspection for 32 webkit on 64 bit because it requires 32 bit
+# Introspection for 32 webkit on 64 bit cannot be used because it requires 32 bit
 # libs/build for python from gobject-introspection.  It produces this error:
 #
 # pyport.h:686:2: error: #error "LONG_BIT definition appears wrong for platform
@@ -358,15 +358,22 @@ REQUIRED_USE+="
 # This means also you cannot use the geolocation feature.
 
 # For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Tools/gtk/install-dependencies
 #   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
 #   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
+
+#
+# To compare changes, Use:
+#
+# C="Source/cmake/WebKitCommon.cmake" D1="${S_OLD}" ; D2="${S_NEW}" ; diff  -urp "${D1}/${C}" "${D2}/${C}" # For individual comparisons
+# D1="${S_OLD}" ; D2="${S_NEW}" ; diff  -urp "${D1}" "${D2}" # For tree comparisons
+#
 
 # Upstream tests with U 18.04 LTS and U 20.04
 # Ebuild target is 18.04 based on the lowest LTS builder-bot
@@ -399,7 +406,7 @@ MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 RDEPEND+="
@@ -568,7 +575,6 @@ BDEPEND+="
 # Commits can be found at:
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
 # Or https://trac.webkit.org/browser/webkit/releases/WebKitGTK
-EGIT_COMMIT="bec7040a3f8d8c18ae65fd9b22f0eced1215b4a4"
 SRC_URI="
 	!libwebrtc? (
 		https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
@@ -597,7 +603,7 @@ einfo
 		fi
 
 		if ! test-flag-CXX -std=c++20 ; then
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/OptionsCommon.cmake
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/OptionsCommon.cmake
 eerror
 eerror "You need at least GCC 8.3.x or Clang >= 6 for C++20-specific compiler"
 eerror "flags"
@@ -635,7 +641,7 @@ ewarn
 
 pkg_setup() {
 einfo
-einfo "This is the unstable branch."
+einfo "This is the stable branch."
 einfo
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
@@ -723,11 +729,13 @@ echo "${actual_list_raw}"
 }
 
 EXPECTED_BUILD_FINGERPRINT="\
-0d13d401733d998df04997b9a1123b914dad318882acf9c4cdcccd1b80baaa13\
-b91bb7bbe62e2f3641dd75a1bca904acde6784139d14e38704a7981d746c93ab"
+e56ac532d31f231cf9a6065d04b97426c4fe561ff695bfbf653b45e4362773ae\
+570d78a138bf8811acb90b4d0a0eabda467f2560f55ba38f8e08f86d0b15d160\
+"
 EXPECTED_BUILD_FINGERPRINT_WEBRTC="\
 ce7a0164ea0da74de32de8eeac7e541c29355542710f270c2fc6125309315194\
-2c3acd8d773264875d99304da31c28ec05e5c97ee9af6a352504fb37fa59d8c3"
+2c3acd8d773264875d99304da31c28ec05e5c97ee9af6a352504fb37fa59d8c3\
+"
 src_unpack() {
 	if use libwebrtc ; then
 		EGIT_CLONE_TYPE="single"
@@ -770,6 +778,9 @@ src_unpack() {
 				| sha512sum \
 				| cut -f 1 -d " " \
 					)
+
+	uopts_setup
+
 	if [[ "${actual_build_fingerprint}" != "${EXPECTED_BUILD_FINGERPRINT}" ]] ; then
 eerror
 eerror "Detected build files update"
@@ -782,6 +793,8 @@ eerror
 		die
 	fi
 
+	return
+
 	if use libwebrtc && [[ "${actual_build_fingerprint_webrtc}" != "${EXPECTED_BUILD_FINGERPRINT_WEBRTC}" ]] ; then
 eerror
 eerror "Detected build files update for WebRTC"
@@ -793,7 +806,6 @@ eerror "QA:  Update IUSE, *DEPENDS, options, KEYWORDS, patches"
 eerror
 #		die
 	fi
-	uopts_setup
 }
 
 src_prepare() {
