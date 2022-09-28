@@ -17,9 +17,11 @@ SLOT="0/${PV}"
 IUSE+=" sdk +runtime"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 # See https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
-RDEPEND+=" ${PYTHON_DEPS}
+RDEPEND+="
+	${PYTHON_DEPS}
 	sdk? ( >=dev-util/nvidia-cuda-toolkit-11.6 )
-	runtime? ( >=x11-drivers/nvidia-drivers-$(ver_cut 2 ${PV}) )"
+	runtime? ( >=x11-drivers/nvidia-drivers-$(ver_cut 2 ${PV}) )
+"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}"
 SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_PN}-${PV}.tar.gz"
