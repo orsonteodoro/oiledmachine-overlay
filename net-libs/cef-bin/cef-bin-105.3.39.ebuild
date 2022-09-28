@@ -17,7 +17,7 @@ KEYWORDS="~arm ~arm64 ~amd64"
 # The download page can be found at https://cef-builds.spotifycdn.com/index.html
 
 CEF_VERSION_RAW="09/15/2022 - 105.3.39+g2ec21f9+chromium-105.0.5195.127 / Chromium 105.0.5195.127"
-CHROMIUM_V="${CEF_VERSION_RAW##* }" # same as https://bitbucket.org/chromiumembedded/cef/src/1c5e658/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4844
+CHROMIUM_V="${CEF_VERSION_RAW##* }" # same as https://bitbucket.org/chromiumembedded/cef/src/2ec21f9/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5195
 CEF_COMMIT="${CEF_VERSION_RAW#*\+}" # same as https://bitbucket.org/chromiumembedded/cef/commits/
 CEF_COMMIT="${CEF_COMMIT%\+*}"
 CEF_COMMIT="${CEF_COMMIT:1:7}"
