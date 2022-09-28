@@ -1,18 +1,73 @@
-# cargo install cargo-ebuild
-if [[ ${USER} == "root" ]] ; then
+#!/bin/bash
+
+export PV="${1}"
+export DEST="${2}"
+
+gen_ebuild() {
+	cargo install cargo-ebuild
+
+	T=$(mktemp -d)
+	mkdir -p "${T}"
+	pushd "${T}"
+		git clone https://github.com/pemistahl/grex
+		cd grex
+		git checkout v${PV}
+		cargo ebuild
+		sed -i \
+			-e "s|Apache-2.0 WITH LLVM-exception|Apache-2.0-with-LLVM-exceptions|g" \
+			-e "s|BSD-3-Clause|BSD|g" \
+			-e "/^CRATES=/a grex-${PV}" \
+			-e "/inherit cargo/a inherit lcnr" \
+			-e "s|Unlicense|unicode Unlicense|g" \
+			-e "s|BSL-1.0|Boost-1.0|g" \
+			grex-${PV}.ebuild
+
+cat <<EOF >> grex-${PV}.ebuild
+
+src_install() {
+        cargo_src_install
+
+	LCNR_SOURCE="\${WORKDIR}/cargo_home/gentoo"
+	LCNR_TAG="third_party"
+        lcnr_install_files
+}
+EOF
+		cp -a grex-${PV}.ebuild "${DEST}"
+	popd
+	rm -rf "${T}"
+}
+
+validate_args() {
+	if [[ -z "${PV}" ]] ; then
+echo
+echo "Arg 1 needs to be the version."
+echo "See https://github.com/pemistahl/grex/releases"
+echo
+		exit 1
+	fi
+
+	if [[ -z "${DEST}" ]] ; then
+		export DEST=$(pwd)
+	fi
+
+echo
+echo "PV=${PV}"
+echo "DEST=${DEST}"
+echo
+}
+
+setup() {
+	if [[ ${USER} == "root" ]] ; then
 echo "Do not run as root.  Copy to user."
-exit 1
-fi
-cargo install cargo-ebuild
-PV=${1}
-DEST="${2}"
-T=$(mktemp -d)
-mkdir -p ${T}
-pushd "${T}"
-	git clone https://github.com/pemistahl/grex
-	cd grex
-	git checkout v${PV}
-	cargo ebuild
-	cp -a grex-${PV}.ebuild "${DEST}"
-popd
-rm -rf ${T}
+		exit 1
+	fi
+}
+
+main() {
+	setup
+	validate_args
+	gen_ebuild
+}
+
+main
+
