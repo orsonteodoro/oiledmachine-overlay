@@ -438,9 +438,12 @@ RDEPEND+="
 	gstreamer? (
 		|| (
 			(
+				<media-plugins/gst-transcoder-1.8:0[${MULTILIB_USEDEP}]
 				>=media-plugins/gst-transcoder-${GSTREAMER_V}:0[${MULTILIB_USEDEP}]
 				<media-libs/gst-plugins-bad-1.8:1.0[${MULTILIB_USEDEP}]
+				>=media-libs/gst-plugins-bad-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
 				<media-libs/gstreamer-1.8:1.0[${MULTILIB_USEDEP}]
+				>=media-libs/gstreamer-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
 			)
 			(
 				>=media-libs/gst-plugins-bad-1.8:1.0[${MULTILIB_USEDEP}]
