@@ -28,7 +28,7 @@ curl -l http://ftp.mozilla.org/pub/firefox/releases/ \
 # https://wiki.mozilla.org/Release_Management/Calendar
 
 
-FIREFOX_PATCHSET="firefox-104-patches-02j.tar.xz"
+FIREFOX_PATCHSET="firefox-105-patches-05j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
@@ -93,8 +93,9 @@ SLOT="rapid"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
 LICENSE_FINGERPRINT="\
-5e0f2e3a6c098739ad6de018f6a308ba6a84981faf737ead646acc19fc0eef1d\
-775797533c34b33d527fb6e6d51f47b0044403872abfedc8858b58ba4b52ee0f" # SHA512
+b3c12f437e5a65cdc12a92193f59c2a01ec04b17066d23dcb44adb86ab1e15de\
+79493ff2220bd90c73cccab5e0f367bbae8e42ad7a7fc7ddfc12666f0f4d2571\
+" # SHA512
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
@@ -295,7 +296,7 @@ CDEPEND="
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.81[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.82[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.34.1[${MULTILIB_USEDEP}]
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	media-libs/fontconfig[${MULTILIB_USEDEP}]
@@ -903,6 +904,9 @@ src_prepare() {
 	if is-flagq '-flto*' ; then
 		rm -fv "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	fi
+	if ! use ppc64 ; then
+		rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
+	fi
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Only partial patching was done because Gentoo doesn't support multilib
@@ -1036,7 +1040,7 @@ einfo "Current CFLAGS:\t\t${CFLAGS:-no value set}"
 einfo "Current CXXFLAGS:\t\t${CXXFLAGS:-no value set}"
 einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
 einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
-einfo "Cross-compile: chost=${chost}"
+einfo "Cross-compile CHOST:\t\t${chost}"
 einfo
 
 	local have_switched_compiler=
@@ -1136,6 +1140,7 @@ einfo
 		--enable-release \
 		--enable-system-ffi \
 		--enable-system-pixman \
+		--enable-system-policies \
 		--host="${cbuild}" \
 		--libdir="${EPREFIX}/usr/$(get_libdir)" \
 		--prefix="${EPREFIX}/usr" \
@@ -1465,8 +1470,10 @@ einfo "Forcing -fno-tree-loop-vectorize to workaround GCC bug, see bug 758446 ..
 		"MOZ_OBJDIR=${BUILD_OBJ_DIR}"
 
 
-einfo "Cross-compile: ${ABI} CFLAGS=${CFLAGS}"
-einfo "Cross-compile: CC=${CC} CXX=${CXX}"
+einfo "Cross-compile ABI:\t\t${ABI}"
+einfo "Cross-compile CFLAGS:\t${CFLAGS}"
+einfo "Cross-compile CC:\t\t${CC}"
+einfo "Cross-compile CXX:\t\t${CXX}"
 	echo "export PKG_CONFIG=${chost}-pkg-config" >>${MOZCONFIG}
 	echo "export PKG_CONFIG_PATH=/usr/$(get_libdir)/pkgconfig:/usr/share/pkgconfig" >>${MOZCONFIG}
 

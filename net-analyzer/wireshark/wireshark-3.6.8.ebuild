@@ -4,7 +4,7 @@
 EAPI=8
 
 LUA_COMPAT=( lua5-{1..2} )
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..10} )
 
 inherit fcaps flag-o-matic lua-single python-any-r1 qmake-utils xdg cmake
 
@@ -276,5 +276,3 @@ pkg_postinst() {
 	ewarn "add yourself to the pcap group. This security measure ensures"
 	ewarn "that only trusted users are allowed to sniff your traffic."
 }
-
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  add-patches

@@ -26,7 +26,7 @@ curl -l http://ftp.mozilla.org/pub/firefox/releases/ \
 # Version announcements can be found here also:
 # https://wiki.mozilla.org/Release_Management/Calendar
 
-FIREFOX_PATCHSET="firefox-102esr-patches-02j.tar.xz"
+FIREFOX_PATCHSET="firefox-102esr-patches-03j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
@@ -96,7 +96,8 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
 LICENSE_FINGERPRINT="\
 43af3d4fd2b3fa834f0b37e9cd3d866d20820a2ba13f51c1aab1bcf23714b6ce\
-7508e8e4f7d4e010c91ea3c9341ab9623b7ac7dc455c70680eb913a7550d09ac" # SHA512
+7508e8e4f7d4e010c91ea3c9341ab9623b7ac7dc455c70680eb913a7550d09ac\
+" # SHA512
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
@@ -954,11 +955,6 @@ einfo "Removing pre-built binaries ..."
 	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) \
 		-print -delete || die
 
-	# Clearing checksums where we have applied patches
-	moz_clear_vendor_checksums audioipc
-	moz_clear_vendor_checksums audioipc-client
-	moz_clear_vendor_checksums audioipc-server
-
 	# Removed creation of a single build dir
 	#
 	#
@@ -1046,7 +1042,7 @@ einfo "Current CFLAGS:\t\t${CFLAGS:-no value set}"
 einfo "Current CXXFLAGS:\t\t${CXXFLAGS:-no value set}"
 einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
 einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
-einfo "Cross-compile: chost=${chost}"
+einfo "Cross-compile CHOST:\t\t${chost}"
 einfo
 
 	local have_switched_compiler=
@@ -1472,8 +1468,10 @@ einfo "Forcing -fno-tree-loop-vectorize to workaround GCC bug, see bug 758446 ..
 		"MOZ_OBJDIR=${BUILD_OBJ_DIR}"
 
 
-einfo "Cross-compile: ${ABI} CFLAGS=${CFLAGS}"
-einfo "Cross-compile: CC=${CC} CXX=${CXX}"
+einfo "Cross-compile ABI:\t\t${ABI}"
+einfo "Cross-compile CFLAGS:\t${CFLAGS}"
+einfo "Cross-compile CC:\t\t${CC}"
+einfo "Cross-compile CXX:\t\t${CXX}"
 	echo "export PKG_CONFIG=${chost}-pkg-config" >>${MOZCONFIG}
 	echo "export PKG_CONFIG_PATH=/usr/$(get_libdir)/pkgconfig:/usr/share/pkgconfig" >>${MOZCONFIG}
 
