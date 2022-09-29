@@ -288,7 +288,6 @@ libde265
 theora
 vpx
 x264
-x265
 "
 
 GST_CONTAINERS_IUSE="
