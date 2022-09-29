@@ -597,7 +597,7 @@ RDEPEND+="
 						>=media-plugins/gst-plugins-meta-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
 					)
 					libde265? (
-						>=media-plugins/gst-plugins-libde265-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
+						>=media-plugins/gst-plugins-libde265-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
 					)
 				)
 			)
