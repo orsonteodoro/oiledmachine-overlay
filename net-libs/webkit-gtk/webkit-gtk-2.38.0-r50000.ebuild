@@ -275,8 +275,8 @@ ${LANGS[@]/#/l10n_}
 aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dav1d +dfg-jit +doc
 -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
 hardened +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
-+libhyphen -libwebrtc lto -mediastream +minibrowser +opengl openmp
-+pulseaudio -seccomp -spell test thunder +unified-builds variation-fonts
++libhyphen -libwebrtc lto -mediarecorder -mediastream +minibrowser +opengl
+openmp +pulseaudio -seccomp -spell test thunder +unified-builds variation-fonts
 +v4l wayland +webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver
 +webgl -webgl2 webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
 "
@@ -397,21 +397,48 @@ WPE_DEPEND="
 # Technically, dev-libs/gobject-introspection requires [${MULTILIB_USEDEP}].
 #   It is removed to only allow native ABI to use it.
 # Manette 0.2.4 is required by webkit-gtk but LTS version is 0.2.3
-CAIRO_V="1.14.0"
-CLANG_V="6.0"
-GLIB_V="2.44.0"
-GSTREAMER_V="1.14.0"
-MESA_V="18.0.0_rc5"
+CAIRO_PV="1.14.0"
+CLANG_PV="6.0"
+GLIB_PV="2.44.0"
+GST_TRANSCODER_PV="1.20.0"
+GST_WEBRTC_PV="1.20.0"
+GSTREAMER_PV="1.14.0"
+MESA_PV="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
 # https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
+
+PLAIN_GSTREAMER="
+	(
+		<media-libs/gst-plugins-bad-1.8:1.0[${MULTILIB_USEDEP}]
+		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		<media-libs/gst-plugins-base-1.8:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
+		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
+		<media-libs/gstreamer-1.8:1.0[${MULTILIB_USEDEP}]
+		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		<media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
+		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
+		<media-plugins/gst-plugins-opus-1.8:1.0[${MULTILIB_USEDEP}]
+		>=media-plugins/gst-plugins-opus-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		<media-plugins/gst-transcoder-1.8:0[${MULTILIB_USEDEP}]
+		>=media-plugins/gst-transcoder-${GSTREAMER_PV}:0[${MULTILIB_USEDEP}]
+	)
+	(
+		>=media-libs/gst-plugins-bad-1.8:1.0[${MULTILIB_USEDEP}]
+		>=media-libs/gst-plugins-base-1.8:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
+		>=media-libs/gstreamer-1.8:1.0[${MULTILIB_USEDEP}]
+		>=media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
+		>=media-plugins/gst-plugins-opus-1.8:1.0[${MULTILIB_USEDEP}]
+	)
+"
+
 RDEPEND+="
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-61.2:=[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-${GLIB_V}:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-${GLIB_PV}:2[${MULTILIB_USEDEP}]
 	>=dev-libs/gmp-6.1.2[-pgo(-),${MULTILIB_USEDEP}]
 	>=dev-libs/libgcrypt-1.6.0:0=[${MULTILIB_USEDEP}]
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
@@ -427,44 +454,38 @@ RDEPEND+="
 	>=net-libs/libsoup-2.99.9:3.0[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
-	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-${CAIRO_PV}:=[X?,${MULTILIB_USEDEP}]
 	avif? ( >=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}] )
 	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
 	geolocation? ( >=app-misc/geoclue-0.12.99:2.0 )
 	gles2? (
-		>=media-libs/mesa-${MESA_V}[egl(+),gles2,${MULTILIB_USEDEP}]
+		>=media-libs/mesa-${MESA_PV}[egl(+),gles2,${MULTILIB_USEDEP}]
 	)
 	gnome-keyring? ( >=app-crypt/libsecret-0.18.6[${MULTILIB_USEDEP}] )
 	gstreamer? (
 		|| (
-			(
-				<media-libs/gst-plugins-bad-1.8:1.0[${MULTILIB_USEDEP}]
-				>=media-libs/gst-plugins-bad-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
-				<media-libs/gst-plugins-base-1.8:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
-				>=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
-				<media-libs/gstreamer-1.8:1.0[${MULTILIB_USEDEP}]
-				>=media-libs/gstreamer-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
-				<media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
-				>=media-plugins/gst-plugins-meta-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
-				<media-plugins/gst-plugins-opus-1.8:1.0[${MULTILIB_USEDEP}]
-				>=media-plugins/gst-plugins-opus-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
-				<media-plugins/gst-transcoder-1.8:0[${MULTILIB_USEDEP}]
-				>=media-plugins/gst-transcoder-${GSTREAMER_V}:0[${MULTILIB_USEDEP}]
-				gstwebrtc? (
-					<media-plugins/gst-plugins-webrtc-1.8:1.0[${MULTILIB_USEDEP}]
-					>=media-plugins/gst-plugins-webrtc-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
+			gstwebrtc? (
+				(
+					>=media-libs/gst-plugins-bad-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
+					>=media-libs/gst-plugins-base-${GST_WEBRTC_PV}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
+					>=media-libs/gstreamer-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
+					>=media-plugins/gst-plugins-meta-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
+					>=media-plugins/gst-plugins-opus-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
 					>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
 				)
 			)
-			(
-				>=media-libs/gst-plugins-bad-1.8:1.0[${MULTILIB_USEDEP}]
-				>=media-libs/gst-plugins-base-1.8:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
-				>=media-libs/gstreamer-1.8:1.0[${MULTILIB_USEDEP}]
-				>=media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
-				>=media-plugins/gst-plugins-opus-1.8:1.0[${MULTILIB_USEDEP}]
-				gstwebrtc? (
-					>=media-plugins/gst-plugins-webrtc-1.8:1.0[${MULTILIB_USEDEP}]
-					>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
+			mediarecorder? (
+				(
+					>=media-libs/gst-plugins-bad-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
+					>=media-libs/gst-plugins-base-${GST_TRANSCODER_PV}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
+					>=media-libs/gstreamer-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
+					>=media-plugins/gst-plugins-meta-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
+					>=media-plugins/gst-plugins-opus-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
+				)
+			)
+			!gstwebrtc? (
+				!mediarecorder? (
+					${PLAIN_GSTREAMER}
 				)
 			)
 		)
@@ -486,7 +507,7 @@ RDEPEND+="
 	jpegxl? ( media-libs/libjxl[${MULTILIB_USEDEP}] )
 	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
 	opengl? (
-		!kernel_Winnt? ( >=media-libs/mesa-${MESA_V}[egl(+),${MULTILIB_USEDEP}] )
+		!kernel_Winnt? ( >=media-libs/mesa-${MESA_PV}[egl(+),${MULTILIB_USEDEP}] )
 		virtual/opengl[${MULTILIB_USEDEP}]
 	)
 	openmp? ( >=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}] )
@@ -506,7 +527,7 @@ RDEPEND+="
 	wayland? (
 		>=dev-libs/wayland-1.14.0[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.12[${MULTILIB_USEDEP}]
-		>=media-libs/mesa-${MESA_V}[egl(+),${MULTILIB_USEDEP}]
+		>=media-libs/mesa-${MESA_PV}[egl(+),${MULTILIB_USEDEP}]
 		gles2? ( ${WPE_DEPEND} )
 		opengl? ( ${WPE_DEPEND} )
 	)
@@ -515,7 +536,7 @@ RDEPEND+="
 	)
 	webgl? (
 		|| (
-			>=media-libs/mesa-${MESA_V}[${MULTILIB_USEDEP}]
+			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
 		)
 	)
 	webm-eme? ( ${OCDM_WV} )
@@ -565,7 +586,7 @@ BDEPEND+="
 	)
 	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
 	>=dev-util/cmake-3.12
-	>=dev-util/glib-utils-${GLIB_V}
+	>=dev-util/glib-utils-${GLIB_PV}
 	>=dev-lang/perl-5.10.0
 	>=dev-lang/python-2.7
 	>=dev-lang/ruby-1.9
@@ -576,7 +597,7 @@ BDEPEND+="
 	virtual/perl-Data-Dumper
 	virtual/perl-JSON-PP
 	doc? ( dev-util/gi-docgen )
-	geolocation? ( >=dev-util/gdbus-codegen-${GLIB_V} )
+	geolocation? ( >=dev-util/gdbus-codegen-${GLIB_PV} )
 	lto? (
 		|| ( $(gen_bdepend_clang) )
 	)
@@ -942,11 +963,13 @@ eerror
 		-DENABLE_INTROSPECTION=$(multilib_native_usex introspection)
 		-DENABLE_JAVASCRIPTCORE=$(usex javascriptcore)
 		-DENABLE_JOURNALD_LOG=$(usex journald)
+		-DENABLE_MEDIA_RECORDER=$(usex mediarecorder)
 		-DENABLE_MEDIA_STREAM=$(usex mediastream)
 		-DENABLE_MINIBROWSER=$(usex minibrowser)
 		-DENABLE_QUARTZ_TARGET=$(usex aqua)
 		-DENABLE_UNIFIED_BUILDS=$(usex unified-builds)
 		-DENABLE_SPELLCHECK=$(usex spell)
+		-DENABLE_SUBTLE_CRYPTO=OFF
 		-DENABLE_THUNDER=$(usex thunder)
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
@@ -961,6 +984,7 @@ eerror
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
 		-DUSE_AVIF=$(usex avif)
+		-DUSE_GSTREAMER_WEBRTC=$(usex gstwebrtc)
 		-DUSE_GTK4=ON
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)

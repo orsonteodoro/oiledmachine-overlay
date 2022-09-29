@@ -243,6 +243,9 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
     <flag name="libwebrtc">
       Uses libwebrtc as a backend for WebRTC.
     </flag>
+    <flag name="mediarecorder">
+      Enables support for MediaRecorder API
+    </flag>
     <flag name="mediastream">
       Enables support for MediaStream API (IN DEVELOPMENT / DRAFT).
     </flag>
