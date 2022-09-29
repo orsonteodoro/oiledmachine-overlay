@@ -309,6 +309,51 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
     <flag name="yarr-jit">
       Enables JIT regex support.  Otherwise, it falls back to interpretive.
     </flag>
+
+    <!-- codecs -->
+    <flag name="a52">
+      Support for decoding AC-3 audio.
+    </flag>
+    <flag name="aac">
+      Support for decoding AAC audio.
+    </flag>
+    <flag name="aom">
+      Fallback support for CPU based AV1 video encoding.
+    </flag>
+    <flag name="flac">
+      Support for decoding FLAC audio.
+    </flag>
+    <flag name="g722">
+      Support for G722 encoding for GstWebRTC audio streams.
+    </flag>
+    <flag name="libde265">
+      Use libde265 as a fallback CPU based video decoder.
+    </flag>
+    <flag name="mp3">
+      Support for decoding MP1/2/3 audio.
+    </flag>
+    <flag name="ogg">
+      Support for Ogg container files.
+    </flag>
+    <flag name="opus">
+      Support for encoding or decoding Opus audio and for GstWebRTC RTP audio
+      streams.
+    </flag>
+    <flag name="speex">
+      Support for decoding Speex speech files.
+    </flag>
+    <flag name="theora">
+      Support for decoding Theora video.
+    </flag>
+    <flag name="x264">
+      Use x264 as a fallback CPU based video encoder.
+    </flag>
+    <flag name="vorbis">
+      Support for encoding and decoding vorbis audio.
+    </flag>
+    <flag name="vpx">
+      Use vpx as a fallback CPU based video encoder.
+    </flag>
   </use>
   <slots>
     <slot name="4.0">
