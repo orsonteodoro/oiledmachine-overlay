@@ -626,6 +626,13 @@ RDEPEND+="
 	jpegxl? ( media-libs/libjxl[${MULTILIB_USEDEP}] )
 	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
 	libnotify? ( >=x11-libs/libnotify-0.7.7[${MULTILIB_USEDEP}] )
+	libwebrtc? (
+		>=dev-libs/libevent-2.1.8[${MULTILIB_USEDEP}]
+		>=media-libs/alsa-lib-1.1.3[${MULTILIB_USEDEP}]
+		>=media-libs/libvpx-1.10.0[${MULTILIB_USEDEP}]
+		media-libs/openh264[${MULTILIB_USEDEP}]
+		>=media-libs/opus-1.1[${MULTILIB_USEDEP}]
+	)
 	opengl? (
 		!kernel_Winnt? ( >=media-libs/mesa-${MESA_PV}[egl(+),${MULTILIB_USEDEP}] )
 		virtual/opengl[${MULTILIB_USEDEP}]
@@ -662,13 +669,6 @@ RDEPEND+="
 	)
 	webm-eme? ( ${OCDM_WV} )
 	webxr? ( media-libs/openxr )
-	webrtc? (
-		>=dev-libs/libevent-2.1.8[${MULTILIB_USEDEP}]
-		>=media-libs/alsa-lib-1.1.3[${MULTILIB_USEDEP}]
-		>=media-libs/libvpx-1.7.0[${MULTILIB_USEDEP}]
-		media-libs/openh264[${MULTILIB_USEDEP}]
-		>=media-libs/opus-1.1[${MULTILIB_USEDEP}]
-	)
 	woff2? ( >=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}] )
 	X? (
 		>=x11-libs/libX11-1.6.4[${MULTILIB_USEDEP}]
