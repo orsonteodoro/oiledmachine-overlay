@@ -459,12 +459,12 @@ RDEPEND+="
 			)
 			(
 				>=media-libs/gst-plugins-bad-1.8:1.0[${MULTILIB_USEDEP}]
-				>=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
+				>=media-libs/gst-plugins-base-1.8:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
 				>=media-libs/gstreamer-1.8:1.0[${MULTILIB_USEDEP}]
-				>=media-plugins/gst-plugins-meta-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
-				>=media-plugins/gst-plugins-opus-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
+				>=media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
+				>=media-plugins/gst-plugins-opus-1.8:1.0[${MULTILIB_USEDEP}]
 				gstwebrtc? (
-					>=media-plugins/gst-plugins-webrtc-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
+					>=media-plugins/gst-plugins-webrtc-1.8:1.0[${MULTILIB_USEDEP}]
 					>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
 				)
 			)
