@@ -984,6 +984,7 @@ eerror
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
 		-DUSE_AVIF=$(usex avif)
+		-DUSE_GSTREAMER_TRANSCODER=$(usex mediarecorder)
 		-DUSE_GSTREAMER_WEBRTC=$(usex gstwebrtc)
 		-DUSE_GTK4=ON
 		-DUSE_JPEGXL=$(usex jpegxl)

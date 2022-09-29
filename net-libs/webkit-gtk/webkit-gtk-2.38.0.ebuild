@@ -984,6 +984,7 @@ eerror
 		-DPORT=GTK
 		-DUSE_ANGLE_WEBGL=$(usex webgl)
 		-DUSE_AVIF=$(usex avif)
+		-DUSE_GSTREAMER_TRANSCODER=$(usex mediarecorder)
 		-DUSE_GSTREAMER_WEBRTC=$(usex gstwebrtc)
 		-DUSE_GTK4=OFF
 		-DUSE_JPEGXL=$(usex jpegxl)
