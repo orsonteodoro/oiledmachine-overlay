@@ -438,27 +438,38 @@ RDEPEND+="
 	gstreamer? (
 		|| (
 			(
-				<media-plugins/gst-transcoder-1.8:0[${MULTILIB_USEDEP}]
-				>=media-plugins/gst-transcoder-${GSTREAMER_V}:0[${MULTILIB_USEDEP}]
 				<media-libs/gst-plugins-bad-1.8:1.0[${MULTILIB_USEDEP}]
 				>=media-libs/gst-plugins-bad-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
+				<media-libs/gst-plugins-base-1.8:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
+				>=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
 				<media-libs/gstreamer-1.8:1.0[${MULTILIB_USEDEP}]
 				>=media-libs/gstreamer-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
+				<media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
+				>=media-plugins/gst-plugins-meta-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
+				<media-plugins/gst-plugins-opus-1.8:1.0[${MULTILIB_USEDEP}]
+				>=media-plugins/gst-plugins-opus-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
+				<media-plugins/gst-transcoder-1.8:0[${MULTILIB_USEDEP}]
+				>=media-plugins/gst-transcoder-${GSTREAMER_V}:0[${MULTILIB_USEDEP}]
+				gstwebrtc? (
+					<media-plugins/gst-plugins-webrtc-1.8:1.0[${MULTILIB_USEDEP}]
+					>=media-plugins/gst-plugins-webrtc-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
+					>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
+				)
 			)
 			(
 				>=media-libs/gst-plugins-bad-1.8:1.0[${MULTILIB_USEDEP}]
+				>=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
 				>=media-libs/gstreamer-1.8:1.0[${MULTILIB_USEDEP}]
+				>=media-plugins/gst-plugins-meta-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
+				>=media-plugins/gst-plugins-opus-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
+				gstwebrtc? (
+					>=media-plugins/gst-plugins-webrtc-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
+					>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
+				)
 			)
 		)
->=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
-		media-plugins/gst-plugins-meta:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
-		>=media-plugins/gst-plugins-opus-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
 		dav1d? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},dav1d]
-		)
-		gstwebrtc? (
-			>=media-plugins/gst-plugins-webrtc-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
-			>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
 		)
 		webvtt? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]
