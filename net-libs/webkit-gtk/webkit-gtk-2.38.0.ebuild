@@ -270,8 +270,46 @@ uk vi zh_CN
 # wayland is enabled upstream but disabled because it is not defacto default
 #   standard for desktop yet
 
+# For codecs, see
+# https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L49
+# https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp#L280
+
+GST_ACODECS_IUSE="
+aac
+g722
+opus
+speex
+vorbis
+"
+
+GST_VCODECS_IUSE="
+aom
+libde265
+theora
+vpx
+x264
+x265
+"
+
+GST_CONTAINERS_IUSE="
+ogg
+"
+
+MSE_ACODECS_IUSE="
+a52
+flac
+"
+
+MSE_VCODECS_IUSE="
+"
+
 IUSE+="
 ${LANGS[@]/#/l10n_}
+${GST_ACODECS_IUSE}
+${GST_CONTAINERS_IUSE}
+${GST_VCODECS_IUSE}
+${MSE_ACODECS_IUSE}
+${MSE_VCODECS_IUSE}
 aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dav1d +dfg-jit +doc
 -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
 hardened +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
@@ -281,6 +319,47 @@ variation-fonts +v4l wayland +webassembly +webassembly-b3-jit +webcore
 +webcrypto -webdriver +webgl -webgl2 webm-eme -webrtc webvtt -webxr +woff2 +X
 +yarr-jit
 "
+
+gen_gst_plugins_duse() {
+	local U=(
+		${GST_ACODECS_IUSE}
+		${GST_CONTAINERS_IUSE}
+		${GST_VCODECS_IUSE}
+		${MSE_ACODECS_IUSE}
+		${MSE_VCODECS_IUSE}
+	)
+	U=( ${U[@]/g722/} )
+	U=( ${U[@]/libde265/} )
+	local out=""
+	local u
+	for u in ${U[@]} ; do
+		out+="${u}?,"
+	done
+	out="${out%,*}"
+	echo -n "${out}"
+}
+
+GST_PLUGINS_DUSE=$(gen_gst_plugins_duse)
+
+gen_gst_plugins_required_use() {
+	local U=(
+		${GST_ACODECS_IUSE}
+		${GST_CONTAINERS_IUSE}
+		${GST_VCODECS_IUSE}
+		${MSE_ACODECS_IUSE}
+		${MSE_VCODECS_IUSE}
+	)
+	local u
+	for u in ${U[@]} ; do
+		echo "
+			${u}? (
+				gstreamer
+			)
+		"
+	done
+}
+
+REQUIRED_USE+=" "$(gen_gst_plugins_required_use)
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
@@ -412,7 +491,7 @@ OCDM_WV="virtual/libc" # Placeholder
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
-PLAIN_GSTREAMER="
+PLAIN_GSTREAMER_DEPEND="
 	(
 		<media-libs/gst-plugins-bad-1.8:1.0[${MULTILIB_USEDEP}]
 		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
@@ -420,19 +499,38 @@ PLAIN_GSTREAMER="
 		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
 		<media-libs/gstreamer-1.8:1.0[${MULTILIB_USEDEP}]
 		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
-		<media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
-		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
-		<media-plugins/gst-plugins-opus-1.8:1.0[${MULTILIB_USEDEP}]
-		>=media-plugins/gst-plugins-opus-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		<media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},pulseaudio?,v4l?]
+		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},pulseaudio?,v4l?]
 		<media-plugins/gst-transcoder-1.8:0[${MULTILIB_USEDEP}]
 		>=media-plugins/gst-transcoder-${GSTREAMER_PV}:0[${MULTILIB_USEDEP}]
+		aom? (
+			<media-plugins/gst-plugins-aom-1.8:1.0[${MULTILIB_USEDEP}]
+			>=media-plugins/gst-plugins-aom-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		)
+		g722? (
+			<media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},ffmpeg]
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},ffmpeg]
+		)
+		libde265? (
+			<media-plugins/gst-plugins-libde265-1.8:1.0[${MULTILIB_USEDEP}]
+			>=media-plugins/gst-plugins-libde265-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		)
 	)
 	(
 		>=media-libs/gst-plugins-bad-1.8:1.0[${MULTILIB_USEDEP}]
 		>=media-libs/gst-plugins-base-1.8:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
 		>=media-libs/gstreamer-1.8:1.0[${MULTILIB_USEDEP}]
-		>=media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
+		>=media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},pulseaudio?,v4l?]
 		>=media-plugins/gst-plugins-opus-1.8:1.0[${MULTILIB_USEDEP}]
+		aom? (
+			>=media-plugins/gst-plugins-aom-1.8:1.0[${MULTILIB_USEDEP}]
+		)
+		g722? (
+			>=media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},ffmpeg]
+		)
+		libde265? (
+			>=media-plugins/gst-plugins-libde265-1.8:1.0[${MULTILIB_USEDEP}]
+		)
 	)
 "
 
@@ -456,6 +554,9 @@ RDEPEND+="
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[X?,${MULTILIB_USEDEP}]
 	>=x11-libs/gtk+-3.22.0:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
+	aom? (
+		media-libs/libaom[${MULTILIB_USEDEP}]
+	)
 	avif? ( >=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}] )
 	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
 	geolocation? ( >=app-misc/geoclue-0.12.99:2.0 )
@@ -470,9 +571,18 @@ RDEPEND+="
 					>=media-libs/gst-plugins-bad-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
 					>=media-libs/gst-plugins-base-${GST_WEBRTC_PV}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
 					>=media-libs/gstreamer-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
-					>=media-plugins/gst-plugins-meta-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
+					>=media-plugins/gst-plugins-meta-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},pulseaudio?,v4l?]
 					>=media-plugins/gst-plugins-opus-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
 					>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
+					aom? (
+						>=media-plugins/gst-plugins-aom-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
+					)
+					g722? (
+						>=media-plugins/gst-plugins-meta-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
+					)
+					libde265? (
+						>=media-plugins/gst-plugins-libde265-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
+					)
 				)
 			)
 			mediarecorder? (
@@ -480,13 +590,22 @@ RDEPEND+="
 					>=media-libs/gst-plugins-bad-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
 					>=media-libs/gst-plugins-base-${GST_TRANSCODER_PV}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
 					>=media-libs/gstreamer-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
-					>=media-plugins/gst-plugins-meta-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
+					>=media-plugins/gst-plugins-meta-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},pulseaudio?,v4l?]
 					>=media-plugins/gst-plugins-opus-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
+					aom? (
+						>=media-plugins/gst-plugins-aom-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
+					)
+					g722? (
+						>=media-plugins/gst-plugins-meta-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
+					)
+					libde265? (
+						>=media-plugins/gst-plugins-libde265-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
+					)
 				)
 			)
 			!gstwebrtc? (
 				!mediarecorder? (
-					${PLAIN_GSTREAMER}
+					${PLAIN_GSTREAMER_DEPEND}
 				)
 			)
 		)
