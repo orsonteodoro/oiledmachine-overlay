@@ -286,6 +286,7 @@ vorbis
 
 GST_VCODECS_IUSE="
 aom
+dav1d
 libde265
 theora
 vpx
@@ -311,7 +312,7 @@ ${GST_CONTAINERS_IUSE}
 ${GST_VCODECS_IUSE}
 ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
-aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dav1d +dfg-jit +doc
+aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 +dfg-jit +doc
 -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
 hardened +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
 +libhyphen +libnotify -libwebrtc lto -mediarecorder -mediastream +minibrowser
@@ -330,6 +331,7 @@ gen_gst_plugins_duse() {
 		${MSE_VCODECS_IUSE}
 	)
 	U=( ${U[@]/aom/} )
+	U=( ${U[@]/dav1d/} )
 	U=( ${U[@]/g722/} )
 	U=( ${U[@]/libde265/} )
 	U=( ${U[@]/speex/} )
@@ -376,7 +378,6 @@ REQUIRED_USE+="
 		!ftl-jit
 		bmalloc
 	)
-	dav1d? ( gstreamer )
 	jit? (
 		bmalloc
 		dfg-jit

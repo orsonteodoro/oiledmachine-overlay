@@ -187,8 +187,6 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
     <flag name="coverage">
       Enable code coverage support
     </flag>
-    <flag name="dav1d">Check and pull in dependencies for AV1 video decoding
-      support.</flag>
     <flag name="eme">
       Enable Encrypted Media Extensions support (ClearKey CDM only).
     </flag>
@@ -324,7 +322,10 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       Support for decoding AAC audio.
     </flag>
     <flag name="aom">
-      Fallback support for CPU based AV1 video encoding.
+      Support for CPU based AV1 video encoding and fallback as a decoder.
+    </flag>
+    <flag name="dav1d">
+      Fallback support for CPU based AV1 video decoding.
     </flag>
     <flag name="flac">
       Support for decoding FLAC audio.
@@ -333,7 +334,7 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       Support for G722 encoding for GstWebRTC audio streams.
     </flag>
     <flag name="libde265">
-      Use libde265 as a fallback CPU based video decoder.
+      Fallback support for the CPU based H.265 video decoder using libde265.
     </flag>
     <flag name="mp3">
       Support for decoding MP1/2/3 audio.
@@ -347,6 +348,9 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
     </flag>
     <flag name="speex">
       Support for decoding Speex speech files.
+
+      You may consider adding ogg container support (via USE=ogg) if a website
+      uses ogg files containing speex encoded content.
     </flag>
     <flag name="theora">
       Support for decoding Theora video.
