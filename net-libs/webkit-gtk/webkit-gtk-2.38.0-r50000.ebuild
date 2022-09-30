@@ -425,6 +425,7 @@ REQUIRED_USE+="
 	webrtc? (
 		^^ ( gstwebrtc libwebrtc )
 		mediastream
+		webcrypto
 	)
 	webvtt? ( gstreamer )
 	webxr? ( webgl )
@@ -1021,7 +1022,6 @@ eerror
 		-DENABLE_QUARTZ_TARGET=$(usex aqua)
 		-DENABLE_UNIFIED_BUILDS=$(usex unified-builds)
 		-DENABLE_SPELLCHECK=$(usex spell)
-		-DENABLE_SUBTLE_CRYPTO=OFF
 		-DENABLE_THUNDER=$(usex thunder)
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
