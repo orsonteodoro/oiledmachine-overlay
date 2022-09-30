@@ -42,9 +42,6 @@ REQUIRED_USE+="
 	)
 "
 
-# Do the check here because ebuild maintainer do not do the check in
-# media-libs/gst-plugins-bad.
-# See https://gitlab.freedesktop.org/gstreamer/gstreamer/-/blob/1.20.3/subprojects/gst-plugins-bad/sys/va/meson.build#L33
 MESA_PV="22.1.7"
 LIBVA_DEPEND="
 	vaapi? (
@@ -100,6 +97,7 @@ RDEPEND="
 	bzip2? ( >=app-arch/bzip2-1.0.6-r4[${MULTILIB_USEDEP}] )
 	vaapi? (
 		${LIBVA_DEPEND}
+		!media-plugins/gst-plugins-vaapi
 		dev-libs/libgudev
 		>=x11-libs/libva-1.8:=[${MULTILIB_USEDEP}]
 	)
