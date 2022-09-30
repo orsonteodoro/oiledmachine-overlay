@@ -328,8 +328,10 @@ gen_gst_plugins_duse() {
 		${MSE_ACODECS_IUSE}
 		${MSE_VCODECS_IUSE}
 	)
+	U=( ${U[@]/aom/} )
 	U=( ${U[@]/g722/} )
 	U=( ${U[@]/libde265/} )
+	U=( ${U[@]/speex/} )
 	local out=""
 	local u
 	for u in ${U[@]} ; do
@@ -515,6 +517,10 @@ PLAIN_GSTREAMER_DEPEND="
 			<media-plugins/gst-plugins-libde265-1.8:1.0[${MULTILIB_USEDEP}]
 			>=media-plugins/gst-plugins-libde265-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		)
+		speex? (
+			<media-plugins/gst-plugins-speex-1.8:1.0[${MULTILIB_USEDEP}]
+			>=media-plugins/gst-plugins-speex-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		)
 	)
 	(
 		>=media-libs/gst-plugins-bad-1.8:1.0[${MULTILIB_USEDEP}]
@@ -530,6 +536,9 @@ PLAIN_GSTREAMER_DEPEND="
 		)
 		libde265? (
 			>=media-plugins/gst-plugins-libde265-1.8:1.0[${MULTILIB_USEDEP}]
+		)
+		speex? (
+			>=media-plugins/gst-plugins-speex-1.8:1.0[${MULTILIB_USEDEP}]
 		)
 	)
 "
@@ -583,6 +592,9 @@ RDEPEND+="
 					libde265? (
 						>=media-plugins/gst-plugins-libde265-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
 					)
+					speex? (
+						>=media-plugins/gst-plugins-speex-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
+					)
 				)
 			)
 			mediarecorder? (
@@ -600,6 +612,9 @@ RDEPEND+="
 					)
 					libde265? (
 						>=media-plugins/gst-plugins-libde265-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
+					)
+					speex? (
+						>=media-plugins/gst-plugins-speex-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
 					)
 				)
 			)
