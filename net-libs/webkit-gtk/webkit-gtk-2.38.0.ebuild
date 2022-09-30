@@ -483,9 +483,7 @@ WPE_DEPEND="
 CAIRO_PV="1.14.0"
 CLANG_PV="6.0"
 GLIB_PV="2.44.0"
-GST_TRANSCODER_PV="1.20.0"
-GST_WEBRTC_PV="1.20.0"
-GSTREAMER_PV="1.14.0"
+GSTREAMER_PV="1.20.0" # Upstream min is 1.14, but distro only offers 1.20
 MESA_PV="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
@@ -493,56 +491,6 @@ OCDM_WV="virtual/libc" # Placeholder
 # https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
-
-PLAIN_GSTREAMER_DEPEND="
-	(
-		<media-libs/gst-plugins-bad-1.8:1.0[${MULTILIB_USEDEP}]
-		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
-		<media-libs/gst-plugins-base-1.8:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
-		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
-		<media-libs/gstreamer-1.8:1.0[${MULTILIB_USEDEP}]
-		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
-		<media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},pulseaudio?,v4l?]
-		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},pulseaudio?,v4l?]
-		<media-plugins/gst-transcoder-1.8:0[${MULTILIB_USEDEP}]
-		>=media-plugins/gst-transcoder-${GSTREAMER_PV}:0[${MULTILIB_USEDEP}]
-		aom? (
-			<media-plugins/gst-plugins-aom-1.8:1.0[${MULTILIB_USEDEP}]
-			>=media-plugins/gst-plugins-aom-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
-		)
-		g722? (
-			<media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},ffmpeg]
-			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},ffmpeg]
-		)
-		libde265? (
-			<media-plugins/gst-plugins-libde265-1.8:1.0[${MULTILIB_USEDEP}]
-			>=media-plugins/gst-plugins-libde265-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
-		)
-		speex? (
-			<media-plugins/gst-plugins-speex-1.8:1.0[${MULTILIB_USEDEP}]
-			>=media-plugins/gst-plugins-speex-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
-		)
-	)
-	(
-		>=media-libs/gst-plugins-bad-1.8:1.0[${MULTILIB_USEDEP}]
-		>=media-libs/gst-plugins-base-1.8:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
-		>=media-libs/gstreamer-1.8:1.0[${MULTILIB_USEDEP}]
-		>=media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},pulseaudio?,v4l?]
-		>=media-plugins/gst-plugins-opus-1.8:1.0[${MULTILIB_USEDEP}]
-		aom? (
-			>=media-plugins/gst-plugins-aom-1.8:1.0[${MULTILIB_USEDEP}]
-		)
-		g722? (
-			>=media-plugins/gst-plugins-meta-1.8:1.0[${MULTILIB_USEDEP},ffmpeg]
-		)
-		libde265? (
-			>=media-plugins/gst-plugins-libde265-1.8:1.0[${MULTILIB_USEDEP}]
-		)
-		speex? (
-			>=media-plugins/gst-plugins-speex-1.8:1.0[${MULTILIB_USEDEP}]
-		)
-	)
-"
 
 RDEPEND+="
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
@@ -564,9 +512,6 @@ RDEPEND+="
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[X?,${MULTILIB_USEDEP}]
 	>=x11-libs/gtk+-3.22.0:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
-	aom? (
-		media-libs/libaom[${MULTILIB_USEDEP}]
-	)
 	avif? ( >=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}] )
 	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
 	geolocation? ( >=app-misc/geoclue-0.12.99:2.0 )
@@ -575,58 +520,28 @@ RDEPEND+="
 	)
 	gnome-keyring? ( >=app-crypt/libsecret-0.18.6[${MULTILIB_USEDEP}] )
 	gstreamer? (
-		|| (
-			gstwebrtc? (
-				(
-					>=media-libs/gst-plugins-bad-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
-					>=media-libs/gst-plugins-base-${GST_WEBRTC_PV}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
-					>=media-libs/gstreamer-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
-					>=media-plugins/gst-plugins-meta-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},pulseaudio?,v4l?]
-					>=media-plugins/gst-plugins-opus-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
-					>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
-					aom? (
-						>=media-plugins/gst-plugins-aom-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
-					)
-					g722? (
-						>=media-plugins/gst-plugins-meta-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
-					)
-					libde265? (
-						>=media-plugins/gst-plugins-libde265-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
-					)
-					speex? (
-						>=media-plugins/gst-plugins-speex-${GST_WEBRTC_PV}:1.0[${MULTILIB_USEDEP}]
-					)
-				)
-			)
-			mediarecorder? (
-				(
-					>=media-libs/gst-plugins-bad-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
-					>=media-libs/gst-plugins-base-${GST_TRANSCODER_PV}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
-					>=media-libs/gstreamer-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
-					>=media-plugins/gst-plugins-meta-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},pulseaudio?,v4l?]
-					>=media-plugins/gst-plugins-opus-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
-					aom? (
-						>=media-plugins/gst-plugins-aom-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
-					)
-					g722? (
-						>=media-plugins/gst-plugins-meta-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
-					)
-					libde265? (
-						>=media-plugins/gst-plugins-libde265-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
-					)
-					speex? (
-						>=media-plugins/gst-plugins-speex-${GST_TRANSCODER_PV}:1.0[${MULTILIB_USEDEP}]
-					)
-				)
-			)
-			!gstwebrtc? (
-				!mediarecorder? (
-					${PLAIN_GSTREAMER_DEPEND}
-				)
-			)
+		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
+		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},pulseaudio?,v4l?]
+		>=media-plugins/gst-plugins-opus-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		aom? (
+			>=media-plugins/gst-plugins-aom-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		)
 		dav1d? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},dav1d]
+		)
+		g722? (
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
+		)
+		gstwebrtc? (
+			>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
+		)
+		libde265? (
+			>=media-plugins/gst-plugins-libde265-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		)
+		speex? (
+			>=media-plugins/gst-plugins-speex-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		)
 		webvtt? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]
