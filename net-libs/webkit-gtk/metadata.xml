@@ -356,13 +356,16 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       Support for decoding Theora video.
     </flag>
     <flag name="x264">
-      Use x264 as a fallback CPU based video encoder.
+      Use x264 as a fallback CPU based H.264 video encoder.
+    </flag>
+    <flag name="vaapi">
+      Add dependencies for stateless VA-API support.
     </flag>
     <flag name="vorbis">
-      Support for encoding and decoding vorbis audio.
+      Support for encoding and decoding Vorbis audio.
     </flag>
     <flag name="vpx">
-      Use vpx as a fallback CPU based video encoder.
+      Use vpx as a fallback CPU based VP8/9 video encoder or decoder.
     </flag>
   </use>
   <slots>

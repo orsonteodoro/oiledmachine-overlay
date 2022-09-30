@@ -317,7 +317,7 @@ aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 +dfg-jit +doc
 hardened +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
 +libhyphen +libnotify -libwebrtc lto -mediarecorder -mediastream +minibrowser
 +opengl openmp +pulseaudio -seccomp -spell test thunder +unified-builds
-variation-fonts +v4l wayland +webassembly +webassembly-b3-jit +webcore
+vaapi variation-fonts +v4l wayland +webassembly +webassembly-b3-jit +webcore
 +webcrypto -webdriver +webgl -webgl2 webm-eme -webrtc webvtt -webxr +woff2 +X
 +yarr-jit
 "
@@ -521,7 +521,7 @@ RDEPEND+="
 	)
 	gnome-keyring? ( >=app-crypt/libsecret-0.18.6[${MULTILIB_USEDEP}] )
 	gstreamer? (
-		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi?]
 		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
 		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},pulseaudio?,v4l?]
