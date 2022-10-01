@@ -1,0 +1,57 @@
+# oteodoro changes:
+# Patch status:  testing
+# For use for the distro's hardened profile
+
+License header for include/clang/Basic/CodeGenOptions.def:
+
+//===--- CodeGenOptions.def - Code generation option database ----- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+License header for include/clang/Driver/Options.td:
+
+//===--- Options.td - Options for clang -----------------------------------===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+diff -urp clang.orig/include/clang/Basic/CodeGenOptions.def clang/include/clang/Basic/CodeGenOptions.def
+--- clang.orig/include/clang/Basic/CodeGenOptions.def	2022-10-01 15:57:25.416633335 -0700
++++ clang/include/clang/Basic/CodeGenOptions.def	2022-10-01 15:58:34.555396929 -0700
+@@ -378,7 +378,7 @@ VALUE_CODEGENOPT(NumRegisterParameters,
+ VALUE_CODEGENOPT(SmallDataLimit, 32, 0)
+ 
+ /// The lower bound for a buffer to be considered for stack protection.
+-VALUE_CODEGENOPT(SSPBufferSize, 32, 0)
++VALUE_CODEGENOPT(SSPBufferSize, 32, 4)								// Changed by oteodoro for hardened SSP feature parity
+ 
+ /// The kind of generated debug info.
+ ENUM_CODEGENOPT(DebugInfo, codegenoptions::DebugInfoKind, 4, codegenoptions::NoDebugInfo)
+diff -urp clang.orig/include/clang/Driver/Options.td clang/include/clang/Driver/Options.td
+--- clang.orig/include/clang/Driver/Options.td	2022-10-01 15:57:25.576639731 -0700
++++ clang/include/clang/Driver/Options.td	2022-10-01 16:00:16.455468870 -0700
+@@ -2778,7 +2778,7 @@ def fstack_protector : Flag<["-"], "fsta
+   HelpText<"Enable stack protectors for some functions vulnerable to stack smashing. "
+            "This uses a loose heuristic which considers functions vulnerable if they "
+            "contain a char (or 8bit integer) array or constant sized calls to alloca "
+-           ", which are of greater size than ssp-buffer-size (default: 8 bytes). All "
++           ", which are of greater size than ssp-buffer-size (default: 4 bytes). All "		// Changed by oteodoro
+            "variable sized calls to alloca are considered vulnerable. A function with "
+            "a stack protector has a guard value added to the stack frame that is "
+            "checked on function exit. The guard value must be positioned in the "
+@@ -6108,7 +6108,7 @@ def stack_protector : Separate<["-"], "s
+   MarshallingInfoEnum<LangOpts<"StackProtector">, "SSPOff">;
+ def stack_protector_buffer_size : Separate<["-"], "stack-protector-buffer-size">,
+   HelpText<"Lower bound for a buffer to be considered for stack protection">,
+-  MarshallingInfoInt<CodeGenOpts<"SSPBufferSize">, "8">;
++  MarshallingInfoInt<CodeGenOpts<"SSPBufferSize">, "4">;					// Changed by oteodoro
+ def ftype_visibility : Joined<["-"], "ftype-visibility=">,
+   HelpText<"Default type visibility">,
+   MarshallingInfoVisibility<LangOpts<"TypeVisibilityMode">, fvisibility_EQ.KeyPath>;

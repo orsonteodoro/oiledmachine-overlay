@@ -105,7 +105,7 @@ PDEPEND+=" "$(gen_pdepend)
 
 PATCHES_HARDENED=(
 	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
-	"${FILESDIR}/clang-13.0.0_rc2-change-SSP-buffer-size-to-4.patch"
+	"${FILESDIR}/clang-16.0.0.9999-change-SSP-buffer-size-to-4.patch"
 	"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-version-info.patch"
@@ -218,7 +218,7 @@ src_prepare() {
 	llvm.org_src_prepare
 
 	#use pgo && \
-	eapply "${FILESDIR}/clang-14.0.0.9999-add-include-path.patch"
+	eapply "${FILESDIR}/clang-16.0.0.9999-add-include-path.patch"
 
 	if use hardened ; then
 ewarn
