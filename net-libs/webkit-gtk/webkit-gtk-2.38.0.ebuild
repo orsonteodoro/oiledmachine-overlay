@@ -744,11 +744,7 @@ ewarn
 		tc-check-openmp
 	fi
 
-	local linker_type=$(check-linker_get_lto_type)
-	if [[ "${linker_type}" =~ ("bfdlto"|"goldlto"|"thinlto") ]] \
-		&& tc-is-clang ; then
-		llvm_pkg_setup
-	fi
+	tc-is-clang && llvm_pkg_setup
 
 	if ! use pulseaudio ; then
 ewarn
