@@ -901,6 +901,7 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
+WANT_THINLTO=0
 _src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
@@ -1136,7 +1137,11 @@ einfo
 	fi
 
 	local linker_type=$(check-linker_get_lto_type)
-	if [[ "${linker_type}" == "thinlto" ]] && tc-is-clang ; then
+	if [[ \
+		    "${linker_type}" == "thinlto" \
+		|| "${WANT_THINLTO}" == "1" \
+	   ]] \
+		&& tc-is-clang ; then
 		local clang_major_pv=$(clang-major-version)
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${CHOST}-clang-${clang_major_pv}"
@@ -1144,6 +1149,10 @@ einfo
 			-DLTO_MODE=thin
 			-DUSE_LD_LLD=ON
 		)
+		WANT_THINLTO=1
+		filter-flags \
+			'-flto*' \
+			'-fuse-ld=*'
 	fi
 
 	if use mediastream ; then
