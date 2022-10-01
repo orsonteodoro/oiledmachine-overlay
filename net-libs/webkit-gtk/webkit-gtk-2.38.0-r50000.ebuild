@@ -748,7 +748,8 @@ ewarn
 	fi
 
 	local linker_type=$(check-linker_get_lto_type)
-	if [[ "${linker_type}" == "thinlto" ]] ; then
+	if [[ "${linker_type}" == "thinlto" ]] \
+		|| ( [[ "${linker_type}" =~ ("goldlto"|"bfdlto") ]] && tc-is-clang ) ; then
 		llvm_pkg_setup
 	fi
 
@@ -905,7 +906,7 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
-WANT_THINLTO=0
+SELECTED_LTO=""
 _src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
@@ -1142,21 +1143,37 @@ einfo
 
 	local linker_type=$(check-linker_get_lto_type)
 	if [[ \
-		    "${linker_type}" == "thinlto" \
-		|| "${WANT_THINLTO}" == "1" \
+		    "${linker_type}" =~ ("bfdlto"|"goldlto"|"thinlto") \
+		|| "${SELECTED_LTO}" =~ ("bfdlto"|"goldlto"|"thinlto") \
 	   ]] \
 		&& tc-is-clang ; then
 		local clang_major_pv=$(clang-major-version)
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${CHOST}-clang-${clang_major_pv}"
 			-DCMAKE_CXX_COMPILER="${CHOST}-clang++-${clang_major_pv}"
-			-DLTO_MODE=thin
-			-DUSE_LD_LLD=ON
 		)
-		WANT_THINLTO=1
+		[[ -z "${SELECTED_LTO}" ]] && SELECTED_LTO="${linker_type}"
 		filter-flags \
 			'-flto*' \
 			'-fuse-ld=*'
+		if [[ "${SELECTED_LTO}" == "bfdlto" ]] ; then
+			append-ldflags -fuse-ld=bfd
+			mycmakeargs+=(
+				-DLTO_MODE=full
+				-DUSE_LD_LLD=OFF
+			)
+		elif [[ "${SELECTED_LTO}" == "goldlto" ]] ; then
+			append-ldflags -fuse-ld=gold
+			mycmakeargs+=(
+				-DLTO_MODE=full
+				-DUSE_LD_LLD=OFF
+			)
+		elif [[ "${SELECTED_LTO}" == "thinlto" ]] ; then
+			mycmakeargs+=(
+				-DLTO_MODE=thin
+				-DUSE_LD_LLD=ON
+			)
+		fi
 	fi
 
 	if use mediastream ; then
