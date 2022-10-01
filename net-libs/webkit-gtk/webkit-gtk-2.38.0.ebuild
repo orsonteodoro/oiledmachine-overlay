@@ -14,14 +14,13 @@ EAPI=8
 # To make sure that libwebrtc is the same revision
 
 LLVM_MAX_SLOT=14 # This should not be more than Mesa's package LLVM_MAX_SLOT
-LLVM_SLOTS=(14 13)
 
 CMAKE_MAKEFILE_GENERATOR="ninja"
 PYTHON_COMPAT=( python3_{8..11} )
 USE_RUBY="ruby26 ruby27 ruby30 ruby31 "
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
-inherit check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr linux-info llvm \
+inherit check-linker check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs uopts
 
 DESCRIPTION="Open source web browser engine (GTK+3 with libsoup2)"
@@ -315,7 +314,7 @@ ${MSE_VCODECS_IUSE}
 aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 +dfg-jit +doc
 -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
 hardened +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
-+libhyphen +libnotify -libwebrtc lto -mediarecorder -mediastream +minibrowser
++libhyphen -libwebrtc -mediarecorder -mediastream +minibrowser
 +opengl openmp +pulseaudio -seccomp -spell test thunder +unified-builds
 vaapi variation-fonts +v4l wayland +webassembly +webassembly-b3-jit +webcore
 +webcrypto -webdriver +webgl -webgl2 webm-eme -webrtc webvtt -webxr +woff2 +X
@@ -559,7 +558,6 @@ RDEPEND+="
 	jpeg2k? ( >=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}] )
 	jpegxl? ( media-libs/libjxl[${MULTILIB_USEDEP}] )
 	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
-	libnotify? ( >=x11-libs/libnotify-0.7.7[${MULTILIB_USEDEP}] )
 	libwebrtc? (
 		>=dev-libs/libevent-2.1.8[${MULTILIB_USEDEP}]
 		>=media-libs/alsa-lib-1.1.3[${MULTILIB_USEDEP}]
@@ -619,24 +617,12 @@ unset WPE_DEPEND
 DEPEND+=" ${RDEPEND}"
 # paxctl is needed for bug #407085
 # It needs real bison, not yacc.
-gen_bdepend_clang() {
-	local s
-	for s in ${LLVM_SLOTS[@]} ; do
-		echo "
-			(
-				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
-				>=sys-devel/lld-${s}
-			)
-		"
-	done
-}
 
 BDEPEND+="
 	${PYTHON_DEPS}
 	${RUBY_DEPS}
 	|| (
-		|| ( $(gen_bdepend_clang) )
+		>=sys-devel/clang-13
 		>=sys-devel/gcc-8.3.0
 	)
 	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
@@ -653,9 +639,6 @@ BDEPEND+="
 	virtual/perl-JSON-PP
 	doc? ( dev-util/gi-docgen )
 	geolocation? ( >=dev-util/gdbus-codegen-${GLIB_PV} )
-	lto? (
-		|| ( $(gen_bdepend_clang) )
-	)
 	thunder? ( net-libs/thunder )
 	webcore? ( >=dev-util/gperf-3.0.1 )
 "
@@ -677,6 +660,7 @@ SRC_URI="
 		https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 	)
 "
+
 #
 # Tests fail to link for inexplicable reasons
 # https://bugs.webkit.org/show_bug.cgi?id=148210
@@ -700,9 +684,10 @@ einfo
 		fi
 
 		if ! test-flag-CXX -std=c++20 ; then
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/WebKitCommon.cmake#L72
 # See https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/OptionsCommon.cmake
 eerror
-eerror "You need at least GCC 8.3.x or Clang >= 6 for C++20-specific compiler"
+eerror "You need at least GCC 8.3.x or Clang >= 6 for C++20 specific compiler"
 eerror "flags"
 eerror
 			die
@@ -759,7 +744,8 @@ ewarn
 		tc-check-openmp
 	fi
 
-	if use lto ; then
+	local linker_type=$(check-linker_get_lto_type)
+	if [[ "${linker_type}" == "thinlto" ]] ; then
 		llvm_pkg_setup
 	fi
 
@@ -1033,7 +1019,7 @@ eerror
 		-DENABLE_WEBGL2=$(usex webgl2)
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
-		-DUSE_ANGLE_WEBGL=$(usex webgl)
+		-DUSE_ANGLE_WEBGL=OFF
 		-DUSE_AVIF=$(usex avif)
 		-DUSE_GSTREAMER_TRANSCODER=$(usex mediarecorder)
 		-DUSE_GSTREAMER_WEBRTC=$(usex gstwebrtc)
@@ -1041,7 +1027,6 @@ eerror
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
-		-DUSE_LIBNOTIFY=$(usex libnotify)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
@@ -1151,20 +1136,12 @@ einfo
 			"${S}/Source/cmake/OptionsGTK.cmake" || die
 	fi
 
-	if use lto ; then
-		local mesa_llvm_v=$(bzcat \
-			"${EPREFIX}/var/db/pkg/media-libs/mesa-"*"/environment.bz2" \
-			| grep "LLVM_MAX_SLOT" \
-			| head -n 1 \
-			| cut -f 2 -d "\"")
-		local llvm_prefix=$(get_llvm_prefix -d ${mesa_llvm_v})
-einfo
-einfo "MESA LLVM: ${mesa_llvm_v}"
-einfo "LLVM path: ${llvm_prefix}"
-einfo
+	local linker_type=$(check-linker_get_lto_type)
+	if [[ "${linker_type}" == "thinlto" ]] && tc-is-clang ; then
+		local clang_major_pv=$(clang-major-version)
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${llvm_prefix}/bin/${ctarget}-clang"
-			-DCMAKE_CXX_COMPILER="${llvm_prefix}/bin/${ctarget}-clang++"
+			-DCMAKE_C_COMPILER="${CHOST}-clang-${clang_major_pv}"
+			-DCMAKE_CXX_COMPILER="${CHOST}-clang++-${clang_major_pv}"
 			-DLTO_MODE=thin
 			-DUSE_LD_LLD=ON
 		)
