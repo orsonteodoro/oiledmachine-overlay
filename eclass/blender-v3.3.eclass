@@ -24,7 +24,7 @@ esac
 CXXABI_V=17 # Linux builds should be gnu11, but in Win builds it is c++17
 PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11. For the max exclusive Python supported (and
 # others), see \
-# https://github.com/blender/blender/blob/v3.2.0/build_files/build_environment/install_deps.sh#L382
+# https://github.com/blender/blender/blob/v3.3.0/build_files/build_environment/install_deps.sh#L382
 
 # Platform defaults based on CMakeList.txt
 OPENVDB_ABIS_MAJOR_VERS=9
@@ -50,9 +50,17 @@ gen_llvm_iuse()
 }
 IUSE+=" "$(gen_llvm_iuse) # same as Mesa and LLVM latest stable keyword \
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v3.2.0/build_files/build_environment/install_deps.sh#L488
-FFMPEG_IUSE+=" +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid"
+# https://github.com/blender/blender/blob/v3.3.0/build_files/build_environment/install_deps.sh#L488
+FFMPEG_IUSE+=" +aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid"
 IUSE+=" ${FFMPEG_IUSE}"
+
+ARM_CPU_FLAGS_3_3=(
+	neon2x:neon2x
+)
+CPU_FLAGS_3_3=(
+	${ARM_CPU_FLAGS_3_3[@]/#/cpu_flags_arm_}
+)
+IUSE+=" ${CPU_FLAGS_3_3[@]%:*}"
 
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
@@ -66,6 +74,7 @@ LICENSE+=" CC-BY-4.0" # The splash screen is CC-BY stated in https://www.blender
 
 # The below are hardcoded enabled in the dependency builder but no explicit option
 IMPLIED_RELEASE_BUILD_REQUIRED_USE="
+	aom
 	mp3
 	opus
 	theora
@@ -74,9 +83,9 @@ IMPLIED_RELEASE_BUILD_REQUIRED_USE="
 	xvid
 "
 REQUIRED_USE+="
-	!cycles-device-oneapi
 	^^ ( ${LLVM_SLOTS[@]/#/llvm-} )
 	^^ ( ${OPENVDB_ABIS[@]} )
+	aom? ( ffmpeg )
 	!boost? (
 		!alembic
 		!cycles
@@ -196,12 +205,15 @@ REQUIRED_USE+="
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # no need to look past those dates.
 
-# Last change was Apr 20, 2021 for:
-# https://github.com/blender/blender/commits/v3.2.0/build_files/cmake/config/blender_release.cmake
+# Last change was Jul 29, 2022 for:
+# https://github.com/blender/blender/commits/v3.3.0/build_files/build_environment/install_deps.sh
+
+# Last change was Aug 24, 2021 for:
+# https://github.com/blender/blender/commits/v3.3.0/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
-# Last change was May 9, 2022 for:
-# https://github.com/blender/blender/commits/v3.2.0/build_files/build_environment/cmake/versions.cmake
+# Last change was Aug 30, 2022 for:
+# https://github.com/blender/blender/commits/v3.3.0/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
 # dependency version requirements see
@@ -262,7 +274,7 @@ gen_osl_depends()
 	done
 }
 
-OPENEXR_V3="3.1.4 3.1.5"
+OPENEXR_V3="3.1.5"
 gen_openexr_pairs() {
 	local v
 	for v in ${OPENEXR_V3} ; do
@@ -288,6 +300,9 @@ THEORA_V="1.1.1"
 # build_files/build_environment/cmake/ffmpeg.cmake : --enable-ffplay
 # build_files/build_environment/install_deps.sh : --disable-ffplay
 CODECS="
+	aom? (
+		>=media-libs/libaom-3.4.0
+	)
 	mp3? (
 		>=media-sound/lame-3.100
 	)
@@ -327,6 +342,8 @@ gen_oidn_depends() {
 		"
 	done
 }
+
+# distro's llvm 14 for mesa is 22.05
 
 RDEPEND+="
 	${CODECS}
@@ -387,6 +404,7 @@ RDEPEND+="
 	)
 	cycles-device-oneapi? (
 		>=dev-libs/level-zero-1.7.15
+		<dev-libs/level-zero-2
 	)
 	cycles-hip? (
 		|| (
@@ -395,13 +413,15 @@ RDEPEND+="
 		)
 	)
 	embree? (
-		>=media-libs/embree-3.13.3:=\
-[-backface-culling(-),-compact-polys(-),cpu_flags_x86_sse4_2?,\
+		>=media-libs/embree-3.13.4:=\
+[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,\
+cpu_flags_x86_sse4_2?,\
 cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 	)
 	ffmpeg? (
 		>=media-video/ffmpeg-5:=\
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
+		<media-video/ffmpeg-6:=\
 	)
 	fftw? (
 		>=sci-libs/fftw-3.3.10:3.0=
@@ -508,7 +528,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		)
 	)
 	tiff? (
-		>=media-libs/tiff-4.3.0:0[webp?,zlib]
+		>=media-libs/tiff-4.4.0:0[webp?,zlib]
 	)
 	usd? (
 		>=media-libs/openusd-22.03[monolithic]
@@ -639,10 +659,6 @@ eerror
 }
 
 _blender_pkg_setup() {
-ewarn
-ewarn "This ebuild series is a Work In Progress (WIP) and undergoing"
-ewarn "development."
-ewarn
 	# TODO: ldd oiio for webp and warn user if missing
 	# Needs OpenCL 1.2 (GCN 2)
 	check_multiple_llvm_versions_in_native_libs
@@ -667,6 +683,13 @@ ewarn "loaded bug which includes (proprietary) GPU driver parts linked with a"
 ewarn "different version of LLVM.  To avoid this bug, use the same LLVM"
 ewarn "version from the driver to this package in the dependency chain"
 ewarn "including all dependencies of this package."
+ewarn
+	fi
+
+	if use cycles-device-oneapi ; then
+ewarn
+ewarn "Support for the cycles-device-oneapi may be incomplete because distro"
+ewarn "may be missing several packages."
 ewarn
 	fi
 }
@@ -825,7 +848,7 @@ _src_configure() {
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v3.2.0/build_files/cmake/config
+# https://github.com/blender/blender/tree/v3.3.0/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(

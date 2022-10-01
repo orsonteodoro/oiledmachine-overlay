@@ -17,7 +17,6 @@ esac
 
 _EBOLT_ECLASS=1
 
-LLVM_SLOTS=(16 15 14)
 inherit flag-o-matic toolchain-funcs
 
 IUSE+=" ebolt"
@@ -149,7 +148,7 @@ _setup_llvm() {
 	if [[ -n "${UOPTS_BOLT_SLOT}" ]] ; then
 		_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${UOPTS_BOLT_SLOT}/bin"
 	elif [[ -z "${LLVM_MAX_SLOT}" ]] ; then
-		for s in ${LLVM_SLOTS[@]} ; do
+		for s in ${_UOPTS_LLVM_SLOTS[@]} ; do
 			if has_version "sys-devel/llvm:${s}[bolt]" ; then
 				_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
 				break
