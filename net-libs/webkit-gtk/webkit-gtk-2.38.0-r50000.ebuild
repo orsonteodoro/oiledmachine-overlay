@@ -748,8 +748,8 @@ ewarn
 	fi
 
 	local linker_type=$(check-linker_get_lto_type)
-	if [[ "${linker_type}" == "thinlto" ]] \
-		|| ( [[ "${linker_type}" =~ ("goldlto"|"bfdlto") ]] && tc-is-clang ) ; then
+	if [[ "${linker_type}" =~ ("bfdlto"|"goldlto"|"thinlto") ]] \
+		&& tc-is-clang ; then
 		llvm_pkg_setup
 	fi
 
