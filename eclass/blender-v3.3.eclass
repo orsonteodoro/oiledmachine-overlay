@@ -709,7 +709,7 @@ eerror
 }
 
 _src_prepare_patches() {
-	eapply "${FILESDIR}/blender-2.93.10-findtbb2.patch"
+	eapply "${FILESDIR}/blender-3.2.2-findtbb2.patch"
 	eapply "${FILESDIR}/blender-3.2.0-parent-datafiles-dir-change.patch"
 	if ( has_version "<dev-cpp/tbb-2021:0" \
 		|| \
