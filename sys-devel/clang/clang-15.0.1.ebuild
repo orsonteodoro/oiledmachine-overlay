@@ -21,7 +21,7 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="$(ver_cut 1)"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x64-macos"
 IUSE="
 debug default-compiler-rt default-libcxx default-lld doc llvm-libunwind
 +static-analyzer test xml
@@ -32,7 +32,6 @@ REQUIRED_USE+="
 	?? ( jemalloc tcmalloc )
 	hardened? ( !test )
 "
-PROPERTIES="live"
 RESTRICT="!test? ( test )"
 
 RDEPEND+="
@@ -54,6 +53,7 @@ BDEPEND="
 "
 PDEPEND+="
 	sys-devel/clang-common
+	sys-devel/clang-toolchain-symlinks:${SLOT}
 	~sys-devel/clang-runtime-${PV}
 	default-compiler-rt? (
 		=sys-libs/compiler-rt-${PV%_*}*
@@ -67,13 +67,13 @@ LLVM_COMPONENTS=(
 	clang clang-tools-extra cmake
 	llvm/lib/Transforms/Hello
 )
-LLVM_MANPAGES=build
+LLVM_MANPAGES=1
 LLVM_TEST_COMPONENTS=(
 	llvm/lib/Testing/Support
 	llvm/utils/{lit,llvm-lit,unittest}
 	llvm/utils/{UpdateTestChecks,update_cc_test_checks.py}
 )
-LLVM_PATCHSET=9999-r3
+LLVM_PATCHSET=${PV/_/-}
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 
@@ -331,6 +331,27 @@ get_distribution_components() {
 		clang-resource-headers
 		libclang-headers
 
+		aarch64-resource-headers
+		arm-common-resource-headers
+		arm-resource-headers
+		core-resource-headers
+		cuda-resource-headers
+		hexagon-resource-headers
+		hip-resource-headers
+		hlsl-resource-headers
+		mips-resource-headers
+		opencl-resource-headers
+		openmp-resource-headers
+		ppc-htm-resource-headers
+		ppc-resource-headers
+		riscv-resource-headers
+		systemz-resource-headers
+		utility-resource-headers
+		ve-resource-headers
+		webassembly-resource-headers
+		windows-resource-headers
+		x86-resource-headers
+
 		# libs
 		clang-cpp
 		libclang
@@ -347,7 +368,9 @@ get_distribution_components() {
 			clang
 			clang-format
 			clang-offload-bundler
+			clang-offload-packager
 			clang-offload-wrapper
+			clang-pseudo
 			clang-refactor
 			clang-repl
 			clang-rename

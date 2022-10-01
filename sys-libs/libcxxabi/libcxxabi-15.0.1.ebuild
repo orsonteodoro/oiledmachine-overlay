@@ -12,18 +12,18 @@ DESCRIPTION="Low level support for a standard C++ library"
 HOMEPAGE="https://libcxxabi.llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS=""
-IUSE="+libunwind static-libs test"
+KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~sparc ~x86 ~x64-macos"
+IUSE=" static-libs test"
 IUSE+=" hardened r8"
+# in 15.x, cxxabi.h is moving from libcxx to libcxxabi
 RDEPEND="
-	libunwind? (
-		|| (
-			>=sys-libs/libunwind-1.0.1-r1[static-libs?,${MULTILIB_USEDEP}]
-			>=sys-libs/llvm-libunwind-3.9.0-r1[static-libs?,${MULTILIB_USEDEP}]
-		)
-	)
+	!<sys-libs/libcxx-15
 "
-DEPEND+=" ${RDEPEND}"
+LLVM_MAX_SLOT=${PV%%.*}
+DEPEND+="
+	${RDEPEND}
+	sys-devel/llvm:${LLVM_MAX_SLOT}
+"
 PATCHES=(
 	"${FILESDIR}/libcxxabi-15.0.0.9999-hardened.patch"
 	"${FILESDIR}/libcxx-15.0.0.9999-hardened.patch"
@@ -45,7 +45,7 @@ llvm.org_set_globals
 
 python_check_deps() {
 	use test || return 0
-	has_version "dev-python/lit[${PYTHON_USEDEP}]"
+	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
 }
 
 pkg_setup() {
@@ -192,9 +192,9 @@ _configure_abi() {
 		'-Wl,-z,now' \
 		'-Wl,-z,relro'
 
-	# link against compiler-rt instead of libgcc if we are using clang with libunwind
+	# link against compiler-rt instead of libgcc if this is what clang does
 	local want_compiler_rt=OFF
-	if use libunwind && tc-is-clang; then
+	if tc-is-clang; then
 		local compiler_rt=$($(tc-getCC) ${CFLAGS} ${CPPFLAGS} \
 			${LDFLAGS} -print-libgcc-file-name)
 		if [[ ${compiler_rt} == *libclang_rt* ]]; then
@@ -204,6 +204,7 @@ _configure_abi() {
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
+		-DCMAKE_CXX_COMPILER_TARGET="${CHOST}"
 		-DPython3_EXECUTABLE="${PYTHON}"
 		-DLLVM_ENABLE_RUNTIMES="libcxxabi;libcxx"
 		-DLLVM_INCLUDE_TESTS=OFF
@@ -211,26 +212,21 @@ _configure_abi() {
 		#
 		#
 		-DLIBCXXABI_INCLUDE_TESTS=$(usex test)
-		#
 		-DLIBCXXABI_USE_COMPILER_RT=${want_compiler_rt}
 
 		# upstream is omitting standard search path for this
 		# probably because gcc & clang are bundling their own unwind.h
 		-DLIBCXXABI_LIBUNWIND_INCLUDES="${EPREFIX}"/usr/include
-		-DLIBCXXABI_TARGET_TRIPLE="${CHOST}"
 
 		-DLIBCXX_LIBDIR_SUFFIX=
 		#
 		#
-		-DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY=OFF
 		-DLIBCXX_CXX_ABI=libcxxabi
-		-DLIBCXX_CXX_ABI_INCLUDE_PATHS="${WORKDIR}"/libcxxabi/include
 		-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF
 		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
 		-DLIBCXX_HAS_GCC_S_LIB=OFF
 		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
 		-DLIBCXX_INCLUDE_TESTS=OFF
-		-DLIBCXX_TARGET_TRIPLE="${CHOST}"
 
 		-DLTO=$(_usex_lto)
 		-DNOEXECSTACK=$(usex hardened)
@@ -281,7 +277,6 @@ _configure_abi() {
 		mycmakeargs+=(
 			-DLIBCXXABI_ENABLE_SHARED=OFF
 			-DLIBCXXABI_ENABLE_STATIC=ON
-			-DLIBCXXABI_USE_LLVM_UNWINDER=OFF
 			-DLIBCXX_ENABLE_SHARED=OFF
 			-DLIBCXX_ENABLE_STATIC=ON
 		)
@@ -289,7 +284,6 @@ _configure_abi() {
 		mycmakeargs+=(
 			-DLIBCXXABI_ENABLE_SHARED=ON
 			-DLIBCXXABI_ENABLE_STATIC=OFF
-			-DLIBCXXABI_USE_LLVM_UNWINDER=$(usex libunwind)
 			-DLIBCXX_ENABLE_SHARED=ON
 			-DLIBCXX_ENABLE_STATIC=OFF
 		)
@@ -301,7 +295,7 @@ _configure_abi() {
 
 		mycmakeargs+=(
 			-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
-			-DLLVM_LIT_ARGS="$(get_lit_flags);--param=cxx_under_test=${clang_path}"
+			-DLLVM_LIT_ARGS="$(get_lit_flags)"
 			-DPython3_EXECUTABLE="${PYTHON}"
 		)
 	fi

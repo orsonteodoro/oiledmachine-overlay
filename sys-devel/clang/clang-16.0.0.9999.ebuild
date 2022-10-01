@@ -21,17 +21,15 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="$(ver_cut 1)"
-KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x64-macos"
-IUSE="
-debug default-compiler-rt default-libcxx default-lld doc llvm-libunwind
-+static-analyzer test xml
-"
-IUSE+=" hardened jemalloc tcmalloc r5"
+KEYWORDS=""
+IUSE=" debug doc +static-analyzer test xml"
+IUSE+=" hardened jemalloc tcmalloc r4"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+="
 	?? ( jemalloc tcmalloc )
 	hardened? ( !test )
 "
+PROPERTIES="live"
 RESTRICT="!test? ( test )"
 
 RDEPEND+="
@@ -46,20 +44,15 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	${PYTHON_DEPS}
 	>=dev-util/cmake-3.16
 	doc? ( dev-python/sphinx )
 	xml? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
-	${PYTHON_DEPS}
 "
 PDEPEND+="
 	sys-devel/clang-common
+	sys-devel/clang-toolchain-symlinks:${SLOT}
 	~sys-devel/clang-runtime-${PV}
-	default-compiler-rt? (
-		=sys-libs/compiler-rt-${PV%_*}*
-		llvm-libunwind? ( sys-libs/llvm-libunwind )
-		!llvm-libunwind? ( sys-libs/libunwind )
-	)
-	default-libcxx? ( >=sys-libs/libcxx-${PV} )
 "
 
 LLVM_COMPONENTS=(
@@ -72,7 +65,7 @@ LLVM_TEST_COMPONENTS=(
 	llvm/utils/{lit,llvm-lit,unittest}
 	llvm/utils/{UpdateTestChecks,update_cc_test_checks.py}
 )
-LLVM_PATCHSET=${PV}-r2
+LLVM_PATCHSET=9999-r4
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 
@@ -80,6 +73,7 @@ REQUIRED_USE+="
 	amd64? ( llvm_targets_X86 )
 	arm? ( llvm_targets_ARM )
 	arm64? ( llvm_targets_AArch64 )
+	loong? ( llvm_targets_LoongArch )
 	m68k? ( llvm_targets_M68k )
 	mips? ( llvm_targets_Mips )
 	ppc? ( llvm_targets_PowerPC )
@@ -329,6 +323,27 @@ get_distribution_components() {
 		clang-resource-headers
 		libclang-headers
 
+		aarch64-resource-headers
+		arm-common-resource-headers
+		arm-resource-headers
+		core-resource-headers
+		cuda-resource-headers
+		hexagon-resource-headers
+		hip-resource-headers
+		hlsl-resource-headers
+		mips-resource-headers
+		opencl-resource-headers
+		openmp-resource-headers
+		ppc-htm-resource-headers
+		ppc-resource-headers
+		riscv-resource-headers
+		systemz-resource-headers
+		utility-resource-headers
+		ve-resource-headers
+		webassembly-resource-headers
+		windows-resource-headers
+		x86-resource-headers
+
 		# libs
 		clang-cpp
 		libclang
@@ -345,7 +360,8 @@ get_distribution_components() {
 			clang
 			clang-format
 			clang-offload-bundler
-			clang-offload-wrapper
+			clang-offload-packager
+			clang-pseudo
 			clang-refactor
 			clang-repl
 			clang-rename
@@ -502,12 +518,7 @@ einfo
 		# disable using CUDA to autodetect GPU, just build for all
 		-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
 
-		# override default stdlib and rtlib
-		-DCLANG_DEFAULT_CXX_STDLIB=$(usex default-libcxx libc++ "")
-		-DCLANG_DEFAULT_RTLIB=$(usex default-compiler-rt compiler-rt "")
-		-DCLANG_DEFAULT_LINKER=$(usex default-lld lld "")
 		-DCLANG_DEFAULT_PIE_ON_LINUX=$(usex hardened)
-		-DCLANG_DEFAULT_UNWINDLIB=$(usex default-compiler-rt libunwind "")
 
 		-DCLANG_ENABLE_ARCMT=$(usex static-analyzer)
 		-DCLANG_ENABLE_STATIC_ANALYZER=$(usex static-analyzer)

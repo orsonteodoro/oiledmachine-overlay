@@ -29,7 +29,6 @@ IUSE+=" bolt +bootstrap -dump r4"
 REQUIRED_USE="
 	!amd64? ( !arm64? ( !bolt ) )
 "
-PROPERTIES="live"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
@@ -72,6 +71,7 @@ RDEPEND="
 "
 PDEPEND="
 	sys-devel/llvm-common
+	sys-devel/llvm-toolchain-symlinks:${SLOT}
 	binutils-plugin? ( >=sys-devel/llvmgold-${SLOT} )
 "
 PATCHES=(
@@ -79,7 +79,7 @@ PATCHES=(
 )
 
 LLVM_COMPONENTS=( llvm bolt cmake third-party )
-LLVM_MANPAGES=build
+LLVM_MANPAGES=1
 LLVM_PATCHSET=9999-r3
 LLVM_USE_TARGETS=provide
 llvm.org_set_globals
@@ -148,8 +148,8 @@ ewarn
 python_check_deps() {
 	use doc || return 0
 
-	has_version -b "dev-python/recommonmark[${PYTHON_USEDEP}]" &&
-	has_version -b "dev-python/sphinx[${PYTHON_USEDEP}]"
+	python_has_version -b "dev-python/recommonmark[${PYTHON_USEDEP}]" &&
+	python_has_version -b "dev-python/sphinx[${PYTHON_USEDEP}]"
 }
 
 check_live_ebuild() {
@@ -326,6 +326,7 @@ get_distribution_components() {
 			count
 			not
 			yaml-bench
+			UnicodeNameMappingGenerator
 
 			# tools
 			bugpoint
@@ -347,11 +348,13 @@ get_distribution_components() {
 			llvm-cxxdump
 			llvm-cxxfilt
 			llvm-cxxmap
+			llvm-debuginfod
 			llvm-debuginfod-find
 			llvm-diff
 			llvm-dis
 			llvm-dlltool
 			llvm-dwarfdump
+			llvm-dwarfutil
 			llvm-dwp
 			llvm-exegesis
 			llvm-extract
@@ -385,6 +388,7 @@ get_distribution_components() {
 			llvm-readobj
 			llvm-reduce
 			llvm-remark-size-diff
+			llvm-remarkutil
 			llvm-rtdyld
 			llvm-sim
 			llvm-size
@@ -448,15 +452,6 @@ get_distribution_components() {
 	fi
 
 	printf "%s${sep}" "${out[@]}"
-}
-
-bool_trans() {
-	local arg="${1}"
-	if [[ "${arg}" == "1" ]] ; then
-		echo "true"
-	else
-		echo "false"
-	fi
 }
 
 src_configure() { :; }

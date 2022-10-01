@@ -12,7 +12,7 @@ DESCRIPTION="Low level support for a standard C++ library"
 HOMEPAGE="https://libcxxabi.llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="amd64 arm arm64 ~riscv sparc x86 ~x64-macos"
 IUSE="+libunwind static-libs test"
 IUSE+=" hardened r8"
 RDEPEND="
@@ -23,7 +23,12 @@ RDEPEND="
 		)
 	)
 "
-DEPEND+=" ${RDEPEND}"
+# llvm-6 for new lit options
+LLVM_MAX_SLOT=${PV%%.*}
+DEPEND+="
+	${RDEPEND}
+	sys-devel/llvm:${LLVM_MAX_SLOT}
+"
 BDEPEND+="
 	test? (
 		>=sys-devel/clang-3.9.0
@@ -45,7 +50,7 @@ llvm.org_set_globals
 
 python_check_deps() {
 	use test || return 0
-	has_version "dev-python/lit[${PYTHON_USEDEP}]"
+	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
 }
 
 pkg_setup() {
@@ -220,6 +225,8 @@ _configure_abi() {
 		-DLIBCXXABI_TARGET_TRIPLE="${CHOST}"
 
 		-DLIBCXX_LIBDIR_SUFFIX=
+		#
+		#
 		-DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY=OFF
 		-DLIBCXX_CXX_ABI=libcxxabi
 		-DLIBCXX_CXX_ABI_INCLUDE_PATHS="${WORKDIR}"/libcxxabi/include

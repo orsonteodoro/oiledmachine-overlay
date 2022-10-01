@@ -16,7 +16,7 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA"
 SLOT="0"
-KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv x86"
+KEYWORDS=""
 IUSE="debug test"
 IUSE+=" hardened"
 REQUIRED_USE+=" hardened? ( !test )"
@@ -33,6 +33,9 @@ BDEPEND="
 		$(python_gen_any_dep "~dev-python/lit-${PV}[\${PYTHON_USEDEP}]")
 	)
 "
+PDEPEND="
+	sys-devel/lld-toolchain-symlinks:${PV%%.*}
+"
 
 LLVM_COMPONENTS=( lld cmake libunwind/include/mach-o )
 LLVM_TEST_COMPONENTS=( llvm/utils/{lit,unittest} )
@@ -43,6 +46,7 @@ REQUIRED_USE+="
 	amd64? ( llvm_targets_X86 )
 	arm? ( llvm_targets_ARM )
 	arm64? ( llvm_targets_AArch64 )
+	loong? ( llvm_targets_LoongArch )
 	m68k? ( llvm_targets_M68k )
 	mips? ( llvm_targets_Mips )
 	ppc? ( llvm_targets_PowerPC )

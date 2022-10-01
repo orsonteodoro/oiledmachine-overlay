@@ -12,7 +12,7 @@ DESCRIPTION="Low level support for a standard C++ library"
 HOMEPAGE="https://libcxxabi.llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS="amd64 arm arm64 ~riscv ~x86 ~x64-macos"
+KEYWORDS="amd64 arm arm64 ~riscv x86 ~x64-macos"
 IUSE="+libunwind static-libs test"
 IUSE+=" hardened"
 RDEPEND="
@@ -23,7 +23,12 @@ RDEPEND="
 		)
 	)
 "
-DEPEND+=" ${RDEPEND}"
+# llvm-6 for new lit options
+LLVM_MAX_SLOT=${PV%%.*}
+DEPEND+="
+	${RDEPEND}
+	sys-devel/llvm:${LLVM_MAX_SLOT}
+"
 BDEPEND+="
 	test? (
 		>=sys-devel/clang-3.9.0
@@ -43,7 +48,7 @@ LLVM_COMPONENTS=( libcxx{abi,} llvm/cmake )
 llvm.org_set_globals
 
 python_check_deps() {
-	has_version "dev-python/lit[${PYTHON_USEDEP}]"
+	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
 }
 
 pkg_setup() {
@@ -207,9 +212,12 @@ _configure_abi() {
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
 		-DLIBCXXABI_LIBDIR_SUFFIX=${libdir#lib}
+		#
+		#
 		-DLIBCXXABI_USE_LLVM_UNWINDER=$(usex libunwind)
 		-DLIBCXXABI_INCLUDE_TESTS=$(usex test)
 		-DLIBCXXABI_USE_COMPILER_RT=${want_compiler_rt}
+
 		-DLIBCXXABI_LIBCXX_INCLUDES="${BUILD_DIR}"/libcxx/include/c++/v1
 		# upstream is omitting standard search path for this
 		# probably because gcc & clang are bundling their own unwind.h
@@ -291,6 +299,8 @@ wrap_libcxx() {
 	local BUILD_DIR=${BUILD_DIR}/libcxx
 	local mycmakeargs=(
 		-DLIBCXX_LIBDIR_SUFFIX=
+		#
+		#
 		-DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY=OFF
 		-DLIBCXX_CXX_ABI=libcxxabi
 		-DLIBCXX_CXX_ABI_INCLUDE_PATHS="${S}"/include

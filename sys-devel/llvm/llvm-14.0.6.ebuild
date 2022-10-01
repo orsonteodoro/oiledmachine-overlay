@@ -23,9 +23,9 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
+KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv sparc x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3"
-IUSE+=" bolt +bootstrap -dump r3"
+IUSE+=" bolt +bootstrap -dump r4"
 REQUIRED_USE="
 	!amd64? ( !arm64? ( !bolt ) )
 "
@@ -81,8 +81,8 @@ PATCHES=(
 )
 
 LLVM_COMPONENTS=( llvm bolt cmake third-party )
-LLVM_MANPAGES=pregenerated
-LLVM_PATCHSET=${PV}
+LLVM_MANPAGES=1
+LLVM_PATCHSET=${PV}-r2
 LLVM_USE_TARGETS=provide
 llvm.org_set_globals
 SRC_URI+="
@@ -162,8 +162,8 @@ ewarn
 python_check_deps() {
 	use doc || return 0
 
-	has_version -b "dev-python/recommonmark[${PYTHON_USEDEP}]" &&
-	has_version -b "dev-python/sphinx[${PYTHON_USEDEP}]"
+	python_has_version -b "dev-python/recommonmark[${PYTHON_USEDEP}]" &&
+	python_has_version -b "dev-python/sphinx[${PYTHON_USEDEP}]"
 }
 
 check_live_ebuild() {
@@ -470,15 +470,6 @@ get_distribution_components() {
 	fi
 
 	printf "%s${sep}" "${out[@]}"
-}
-
-bool_trans() {
-	local arg="${1}"
-	if [[ "${arg}" == "1" ]] ; then
-		echo "true"
-	else
-		echo "false"
-	fi
 }
 
 src_configure() { :; }

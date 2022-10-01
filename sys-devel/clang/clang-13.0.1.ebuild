@@ -59,7 +59,7 @@ PDEPEND+="
 "
 
 LLVM_COMPONENTS=( clang clang-tools-extra )
-LLVM_MANPAGES=pregenerated
+LLVM_MANPAGES=1
 LLVM_TEST_COMPONENTS=(
 	llvm/lib/Testing/Support
 	llvm/utils/{lit,llvm-lit,unittest}
@@ -283,7 +283,7 @@ check_distribution_components() {
 
 				all_targets+=( "${l}" )
 			fi
-		done < <(ninja -t targets all)
+		done < <(${NINJA} -t targets all)
 
 		while read -r l; do
 			my_targets+=( "${l}" )

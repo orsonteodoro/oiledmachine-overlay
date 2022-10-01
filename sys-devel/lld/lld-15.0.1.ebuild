@@ -16,11 +16,10 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
 IUSE="debug test"
 IUSE+=" hardened"
 REQUIRED_USE+=" hardened? ( !test )"
-PROPERTIES="live"
 RESTRICT="!test? ( test )"
 
 RDEPEND="~sys-devel/llvm-${PV}"
@@ -33,6 +32,9 @@ BDEPEND="
 		>=dev-util/cmake-3.16
 		$(python_gen_any_dep "~dev-python/lit-${PV}[\${PYTHON_USEDEP}]")
 	)
+"
+PDEPEND="
+	sys-devel/lld-toolchain-symlinks:${PV%%.*}
 "
 
 LLVM_COMPONENTS=( lld cmake libunwind/include/mach-o )
@@ -70,7 +72,7 @@ HARDENED_PATCHES=(
 )
 
 python_check_deps() {
-	has_version -b "dev-python/lit[${PYTHON_USEDEP}]"
+	python_has_version "~dev-python/lit-${PV}[${PYTHON_USEDEP}]"
 }
 
 pkg_setup() {

@@ -23,9 +23,12 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
-KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~ppc-macos ~x64-macos"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3"
-IUSE+=" +bootstrap -dump r3"
+IUSE+=" bolt +bootstrap -dump r4"
+REQUIRED_USE="
+	!amd64? ( !arm64? ( !bolt ) )
+"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
@@ -68,13 +71,14 @@ RDEPEND="
 "
 PDEPEND="
 	sys-devel/llvm-common
+	sys-devel/llvm-toolchain-symlinks:${SLOT}
 	binutils-plugin? ( >=sys-devel/llvmgold-${SLOT} )
 "
 PATCHES=(
-	"${FILESDIR}/llvm-12.0.1-stop-triple-spam.patch"
+	"${FILESDIR}/llvm-14.0.0.9999-stop-triple-spam.patch"
 )
 
-LLVM_COMPONENTS=( llvm )
+LLVM_COMPONENTS=( llvm bolt cmake third-party )
 LLVM_MANPAGES=1
 LLVM_PATCHSET=${PV/_/-}
 LLVM_USE_TARGETS=provide
@@ -84,6 +88,7 @@ REQUIRED_USE+="
 	amd64? ( llvm_targets_X86 )
 	arm? ( llvm_targets_ARM )
 	arm64? ( llvm_targets_AArch64 )
+	loong? ( llvm_targets_LoongArch )
 	m68k? ( llvm_targets_M68k )
 	mips? ( llvm_targets_Mips )
 	ppc? ( llvm_targets_PowerPC )
@@ -143,8 +148,8 @@ ewarn
 python_check_deps() {
 	use doc || return 0
 
-	python_has_version "dev-python/recommonmark[${PYTHON_USEDEP}]" &&
-	python_has_version "dev-python/sphinx[${PYTHON_USEDEP}]"
+	python_has_version -b "dev-python/recommonmark[${PYTHON_USEDEP}]" &&
+	python_has_version -b "dev-python/sphinx[${PYTHON_USEDEP}]"
 }
 
 check_live_ebuild() {
@@ -196,6 +201,14 @@ check_distribution_components() {
 						;;
 					# TableGen lib + deps
 					LLVMDemangle|LLVMSupport|LLVMTableGen)
+						;;
+					# BOLT static libs
+					LLVMBOLT*)
+						( ( use amd64 || use arm64 ) && use bolt ) || continue
+						;;
+					# BOLT static libs
+					bolt_rt)
+						( use amd64 && use bolt ) || continue
 						;;
 					# static libs
 					LLVM*)
@@ -257,6 +270,12 @@ src_prepare() {
 	check_live_ebuild
 
 	llvm.org_src_prepare
+	if use bolt ; then
+		pushd "${WORKDIR}" || die
+			eapply "${FILESDIR}/llvm-14.0.6-bolt-set-cmake-libdir.patch"
+			eapply "${FILESDIR}/llvm-14.0.6-bolt_rt-RuntimeLibrary.cpp-path.patch"
+		popd
+	fi
 
 	prepare_abi() {
 		uopts_src_prepare
@@ -307,6 +326,7 @@ get_distribution_components() {
 			count
 			not
 			yaml-bench
+			UnicodeNameMappingGenerator
 
 			# tools
 			bugpoint
@@ -328,10 +348,13 @@ get_distribution_components() {
 			llvm-cxxdump
 			llvm-cxxfilt
 			llvm-cxxmap
+			llvm-debuginfod
+			llvm-debuginfod-find
 			llvm-diff
 			llvm-dis
 			llvm-dlltool
 			llvm-dwarfdump
+			llvm-dwarfutil
 			llvm-dwp
 			llvm-exegesis
 			llvm-extract
@@ -364,6 +387,7 @@ get_distribution_components() {
 			llvm-readelf
 			llvm-readobj
 			llvm-reduce
+			llvm-remark-size-diff
 			llvm-rtdyld
 			llvm-sim
 			llvm-size
@@ -373,6 +397,7 @@ get_distribution_components() {
 			llvm-strip
 			llvm-symbolizer
 			llvm-tapi-diff
+			llvm-tli-checker
 			llvm-undname
 			llvm-windres
 			llvm-xray
@@ -396,10 +421,30 @@ get_distribution_components() {
 				docs-llvm-man
 			)
 		fi
+		use bolt && use amd64 && out+=(
+			# static libs
+			bolt_rt
+		)
+		use amd64 && use bolt && out+=(
+			LLVMBOLTTargetX86
+		)
+		use arm64 && use bolt && out+=(
+			LLVMBOLTTargetAArch64
+		)
+		( use amd64 || use arm64 ) \
+		&& use bolt && out+=(
+			LLVMBOLTCore
+			LLVMBOLTRewrite
+			LLVMBOLTRuntimeLibs
+			LLVMBOLTUtils
+			LLVMBOLTProfile
+			LLVMBOLTPasses
+			bolt
+			merge-fdata
+		)
 		use doc && out+=(
 			docs-llvm-html
 		)
-
 		use binutils-plugin && out+=(
 			LLVMgold
 		)
@@ -447,7 +492,6 @@ einfo "CFLAGS=${CFLAGS}"
 einfo "CXXFLAGS=${CXXFLAGS}"
 einfo
 
-	echo ${libdir#lib} > ""
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
 		# disable appending VCS revision to the version to improve
@@ -513,6 +557,10 @@ einfo
 		)
 #	fi
 
+	use bolt && mycmakeargs+=(
+		-DLLVM_ENABLE_PROJECTS="bolt"
+	)
+
 	use test && mycmakeargs+=(
 		-DLLVM_LIT_ARGS="$(get_lit_flags)"
 	)
@@ -558,6 +606,9 @@ einfo
 
 	cmake_src_configure
 
+	grep -q -E "^CMAKE_PROJECT_VERSION_MAJOR(:.*)?=$(ver_cut 1)$" \
+			CMakeCache.txt ||
+		die "Incorrect version, did you update _LLVM_MASTER_MAJOR?"
 	multilib_is_native_abi && check_distribution_components
 }
 
@@ -593,6 +644,11 @@ src_test() {
 }
 
 src_install() {
+	if use ebolt ; then
+		# For BOLT requirements, see
+# https://github.com/llvm/llvm-project/tree/main/bolt#input-binary-requirements
+		export STRIP="${BROOT}/bin/true"
+	fi
 	local MULTILIB_CHOST_TOOLS=(
 		/usr/lib/llvm/${SLOT}/bin/llvm-config
 	)

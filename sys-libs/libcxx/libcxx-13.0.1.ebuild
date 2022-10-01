@@ -13,16 +13,24 @@ HOMEPAGE="https://libcxx.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS="amd64 arm arm64 ~riscv ~x86 ~x64-macos"
+KEYWORDS="amd64 arm arm64 ~riscv x86 ~x64-macos"
 IUSE="+libcxxabi +libunwind static-libs test"
 IUSE+=" hardened"
 REQUIRED_USE="libunwind? ( libcxxabi )"
 RESTRICT="!test? ( test )"
 RDEPEND="
-	libcxxabi? ( ~sys-libs/libcxxabi-${PV}:=[hardened?,libunwind=,static-libs?,${MULTILIB_USEDEP}] )
-	!libcxxabi? ( >=sys-devel/gcc-4.7:=[cxx] )
+	libcxxabi? (
+		~sys-libs/libcxxabi-${PV}:=[hardened?,libunwind=,static-libs?,${MULTILIB_USEDEP}]
+	)
+	!libcxxabi? (
+		>=sys-devel/gcc-4.7:=[cxx]
+	)
 "
-DEPEND="${RDEPEND}"
+LLVM_MAX_SLOT=${PV%%.*}
+DEPEND="
+	${RDEPEND}
+	sys-devel/llvm:${LLVM_MAX_SLOT}
+"
 BDEPEND+="
 	test? (
 		>=dev-util/cmake-3.16
@@ -39,7 +47,7 @@ LLVM_PATCHSET=${PV/_/-}
 llvm.org_set_globals
 
 python_check_deps() {
-	has_version "dev-python/lit[${PYTHON_USEDEP}]"
+	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
 }
 
 pkg_setup() {
@@ -412,11 +420,8 @@ src_install() {
 			cd "${BUILD_DIR}" || die
 			cmake_src_install
 			if [[ ${CHOST} != *-darwin* ]] ; then
-				if [[ "${lib_type}" == "static" ]] ; then
-					gen_static_ldscript
-				else
-					gen_shared_ldscript
-				fi
+				gen_shared_ldscript
+				use static-libs && gen_static_ldscript
 			fi
 		done
 	}
