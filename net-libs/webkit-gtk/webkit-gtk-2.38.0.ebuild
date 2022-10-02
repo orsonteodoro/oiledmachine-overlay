@@ -917,6 +917,9 @@ _src_configure() {
 	filter-flags -DENABLE_JIT=* -DENABLE_YARR_JIT=* -DENABLE_ASSEMBLER=*
 	filter-flags '-fprofile*'
 
+	# pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
+	tc-is-gcc && replace-flags "-O1" "-O2"
+
 	# It does not compile on alpha without this in LDFLAGS
 	# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=648761
 	use alpha && append-ldflags "-Wl,--no-relax"
