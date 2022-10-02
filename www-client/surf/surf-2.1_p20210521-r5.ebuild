@@ -343,6 +343,7 @@ eerror
 	multilib_copy_sources
 
 	prepare_abi() {
+		einfo "ABI=${ABI} prepare_abi"
 		cd "${BUILD_DIR}" || die
 		sed -i -e "s|\
 LIBPREFIX = \$(PREFIX)/lib|\
@@ -359,14 +360,14 @@ LIBPREFIX = \$(PREFIX)/$(get_libdir)|g" \
 }
 
 multilib_src_compile() {
-	export PKG_CONFIG_LIBDIR="${SYSROOT}/usr/$(get_libdir)/pkgconfig"
+	einfo "ABI=${ABI} multilib_src_compile"
+	export PKG_CONFIG_LIBDIR="${ESYSROOT}/usr/$(get_libdir)/pkgconfig"
 	export PKG_CONFIG="$(tc-getPKG_CONFIG)"
+	export PKG_CONFIG_PATH="/usr/share/pkgconfig"
 	emake
 }
 
 multilib_src_install() {
-	export PKG_CONFIG_LIBDIR="${SYSROOT}/usr/$(get_libdir)/pkgconfig"
-	export PKG_CONFIG="$(tc-getPKG_CONFIG)"
 	default
 
 	dodoc LICENSE
