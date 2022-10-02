@@ -55,6 +55,9 @@ BDEPEND="
 	dev-lang/perl
 	>=dev-util/cmake-3.16
 	sys-devel/gnuconfig
+	bolt? (
+		dev-util/patchutils
+	)
 	doc? (
 		$(python_gen_any_dep '
 			dev-python/recommonmark[${PYTHON_USEDEP}]
@@ -87,6 +90,14 @@ LLVM_MANPAGES=1
 LLVM_PATCHSET=${PV/_/-}
 LLVM_USE_TARGETS=provide
 llvm.org_set_globals
+SRC_URI+="
+	bolt? (
+		https://github.com/llvm/llvm-project/commit/61cff9079c083fdcfb9fa324e50b9e480165037e.patch
+			-> llvm-commit-61cff90.patch
+	)
+"
+# 61cff90 - [BOLT] Support building bolt when LLVM_LINK_LLVM_DYLIB is ON
+#   Fixes linking problem
 
 REQUIRED_USE+="
 	amd64? ( llvm_targets_X86 )
@@ -278,6 +289,9 @@ src_prepare() {
 		pushd "${WORKDIR}" || die
 			eapply "${FILESDIR}/llvm-14.0.6-bolt-set-cmake-libdir.patch"
 			eapply "${FILESDIR}/llvm-14.0.6-bolt_rt-RuntimeLibrary.cpp-path.patch"
+			filterdiff -x "*/bat-dump/*" $(realpath "${DISTDIR}/llvm-commit-61cff90.patch") \
+				> "${T}/llvm-commit-61cff90.patch" || die
+			eapply "${T}/llvm-commit-61cff90.patch"
 		popd
 	fi
 
