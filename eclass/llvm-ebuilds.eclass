@@ -79,7 +79,7 @@ ewarn
 ewarn "Switching to -fuse-ld=gold"
 ewarn
 				append-ldflags "-fuse-ld=gold"
-			elif is-tc-gcc \
+			elif tc-is-gcc \
 				&& has_version "sys-devel/binutils[gold,plugins]" \
 				&& test-flag-CCLD '-fuse-ld=gold' ; then
 ewarn
