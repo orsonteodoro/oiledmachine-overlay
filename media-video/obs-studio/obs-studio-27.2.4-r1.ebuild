@@ -162,7 +162,7 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 	vaapi? (
 		|| (
 			video_cards_amdgpu? (
-				>=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_radeonsi]
+				>=media-libs/mesa-${MESA_V}[vaapi,video_cards_radeonsi]
 			)
 			video_cards_i965? (
 				|| (
@@ -180,10 +180,10 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 				x11-libs/libva-intel-media-driver
 			)
 			video_cards_r600? (
-				>=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_r600]
+				>=media-libs/mesa-${MESA_V}[vaapi,video_cards_r600]
 			)
 			video_cards_radeonsi? (
-				>=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_radeonsi]
+				>=media-libs/mesa-${MESA_V}[vaapi,video_cards_radeonsi]
 			)
 		)
 		>=x11-libs/libva-${LIBVA_V}

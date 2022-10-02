@@ -383,7 +383,7 @@ LIBVA_DEPEND="
 	vaapi? (
 		|| (
 			video_cards_amdgpu? (
-				media-libs/mesa:=[gallium,vaapi,video_cards_radeonsi,${MULTILIB_USEDEP}]
+				media-libs/mesa:=[vaapi,video_cards_radeonsi,${MULTILIB_USEDEP}]
 			)
 			video_cards_i965? (
 				|| (
@@ -401,9 +401,9 @@ LIBVA_DEPEND="
 				x11-libs/libva-intel-media-driver
 			)
 			video_cards_nouveau? (
-				media-libs/mesa:=[gallium,video_cards_nouveau,${MULTILIB_USEDEP}]
+				media-libs/mesa:=[video_cards_nouveau,${MULTILIB_USEDEP}]
 				|| (
-					media-libs/mesa:=[gallium,vaapi,video_cards_nouveau,${MULTILIB_USEDEP}]
+					media-libs/mesa:=[vaapi,video_cards_nouveau,${MULTILIB_USEDEP}]
 					>=x11-libs/libva-vdpau-driver-0.7.4-r3[${MULTILIB_USEDEP}]
 				)
 			)
@@ -412,10 +412,10 @@ LIBVA_DEPEND="
 				x11-drivers/nvidia-drivers
 			)
 			video_cards_r600? (
-				media-libs/mesa:=[gallium,vaapi,video_cards_r600,${MULTILIB_USEDEP}]
+				media-libs/mesa:=[vaapi,video_cards_r600,${MULTILIB_USEDEP}]
 			)
 			video_cards_radeonsi? (
-				media-libs/mesa:=[gallium,vaapi,video_cards_radeonsi,${MULTILIB_USEDEP}]
+				media-libs/mesa:=[vaapi,video_cards_radeonsi,${MULTILIB_USEDEP}]
 			)
 		)
 		>=x11-libs/libva-${LIBVA_V}:=[${MULTILIB_USEDEP}]

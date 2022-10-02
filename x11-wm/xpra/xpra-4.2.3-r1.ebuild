@@ -158,7 +158,7 @@ DEPEND+=" ${PYTHON_DEPS}
 		 >=x11-libs/libva-2.1.0
 		 || (
 		       video_cards_amdgpu? (
-				media-libs/mesa[gallium,vaapi,video_cards_radeonsi]
+				media-libs/mesa[vaapi,video_cards_radeonsi]
 		       )
 		       video_cards_intel? (
 				|| (
@@ -166,8 +166,8 @@ DEPEND+=" ${PYTHON_DEPS}
 					x11-libs/libva-intel-driver
 				)
 		       )
-		       video_cards_r600? ( media-libs/mesa[gallium,vaapi,video_cards_r600] )
-		       video_cards_radeonsi? ( media-libs/mesa[gallium,vaapi,video_cards_radeonsi] )
+		       video_cards_r600? ( media-libs/mesa[vaapi,video_cards_r600] )
+		       video_cards_radeonsi? ( media-libs/mesa[vaapi,video_cards_radeonsi] )
 		  )
 	)
 	vpx? ( >=media-libs/libvpx-1.4
@@ -480,13 +480,6 @@ pkg_postinst() {
 	einfo
 	einfo "You need to add yourself to the xpra, tty, dialout groups."
 	einfo
-	if use opengl ; then
-		einfo
-		einfo "If you're using the Gallium driver try:"
-		einfo
-		einfo "  eselect opengl set xorg-x11"
-		einfo
-	fi
 	if use pillow ; then
 		einfo
 		einfo "Manually add jpeg or webp optional USE flags to pillow"
