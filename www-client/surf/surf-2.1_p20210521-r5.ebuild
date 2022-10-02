@@ -262,7 +262,7 @@ eerror
 		fi
 	fi
 
-	if use saveconfig ; then
+	if use savedconfig ; then
 		cat "${SAVEDCONFIG_PATH}" > "config.h" || die # new
 	fi
 
