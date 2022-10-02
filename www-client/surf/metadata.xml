@@ -34,7 +34,6 @@
   </upstream>
   <use>
     <flag name="geolocation">Adds geolocation support.</flag>
-    <flag name="libnotify">Enables use of notifications.</flag>
     <flag name="mod_adblock">Adds adblocking support.</flag>
     <flag name="mod_adblock_spam404">Adds adblocking with Spam404 lists.</flag>
     <flag name="mod_adblock_easylist">Adds adblocking with EasyList lists.</flag>

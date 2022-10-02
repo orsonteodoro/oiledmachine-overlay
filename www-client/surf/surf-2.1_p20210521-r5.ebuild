@@ -26,7 +26,7 @@ KEYWORDS="
 "
 SLOT="0"
 IUSE+="
-doc +geolocation +libnotify mod_adblock mod_adblock_spam404 mod_adblock_easylist
+doc +geolocation mod_adblock mod_adblock_spam404 mod_adblock_easylist
 mod_autoopen mod_link_hints mod_searchengines mod_simple_bookmarking_redux
 tabbed update_adblock -pointer-lock +pulseaudio savedconfig +v4l
 "
@@ -43,7 +43,7 @@ RDEPEND+="
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	x11-libs/gtk+:3[${MULTILIB_USEDEP}]
 	x11-libs/libX11[${MULTILIB_USEDEP}]
-	net-libs/webkit-gtk:4[${MULTILIB_USEDEP},geolocation?,libnotify?,pulseaudio?,v4l?]
+	net-libs/webkit-gtk:4[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
 	mod_adblock? ( $(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
 			x11-apps/xprop )
 	!savedconfig? ( net-misc/curl[${MULTILIB_USEDEP}]
@@ -331,7 +331,6 @@ eerror
 	use geolocation && my_cppflags+=" -DUSE_GEOLOCATION"
 	use pointer-lock && my_cppflags+=" -DUSE_POINTER_LOCK"
 	use pulseaudio && my_cppflags+=" -DUSE_MICROPHONE"
-	use libnotify && my_cppflags+=" -DUSE_NOTIFICATIONS"
 	use v4l && my_cppflags+=" -DUSE_CAMERA"
 
 	sed -i -e "s|CPPFLAGS =|CPPFLAGS = ${my_cppflags}|g" \
