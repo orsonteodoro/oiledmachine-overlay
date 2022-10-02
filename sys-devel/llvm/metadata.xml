@@ -164,11 +164,17 @@ main
     <flag name="gold">
       Build the gold linker plugin
     </flag>
+    <flag name="jemalloc">
+      Use jemalloc to speed up processing time of llvm-bolt.
+    </flag>
     <flag name="ncurses">
       Support querying terminal properties using ncurses' terminfo
     </flag>
     <flag name="epgo">
       Build with Profile Guided Optimizations.
+    </flag>
+    <flag name="tcmalloc">
+      Use TCMalloc to speed up processing time of llvm-bolt.
     </flag>
     <flag name="xar">
       Support dumping LLVM bitcode sections in Mach-O files

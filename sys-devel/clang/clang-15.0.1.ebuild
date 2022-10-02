@@ -26,10 +26,9 @@ IUSE="
 debug default-compiler-rt default-libcxx default-lld doc llvm-libunwind
 +static-analyzer test xml
 "
-IUSE+=" hardened jemalloc tcmalloc r4"
+IUSE+=" hardened r4"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+="
-	?? ( jemalloc tcmalloc )
 	hardened? ( !test )
 "
 RESTRICT="!test? ( test )"

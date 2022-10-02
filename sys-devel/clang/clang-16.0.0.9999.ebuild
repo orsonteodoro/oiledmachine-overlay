@@ -23,10 +23,9 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="$(ver_cut 1)"
 KEYWORDS=""
 IUSE=" debug doc +static-analyzer test xml"
-IUSE+=" hardened jemalloc tcmalloc r4"
+IUSE+=" hardened r4"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+="
-	?? ( jemalloc tcmalloc )
 	hardened? ( !test )
 "
 PROPERTIES="live"

@@ -25,9 +25,11 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3"
-IUSE+=" bolt +bootstrap -dump r4"
+IUSE+=" bolt +bootstrap -dump jemalloc tcmalloc r4"
 REQUIRED_USE="
 	!amd64? ( !arm64? ( !bolt ) )
+	jemalloc? ( bolt )
+	tcmalloc? ( bolt )
 "
 RESTRICT="!test? ( test )"
 
@@ -35,9 +37,11 @@ RDEPEND="
 	sys-libs/zlib:0=[${MULTILIB_USEDEP}]
 	binutils-plugin? ( >=sys-devel/binutils-2.31.1-r4:*[plugins] )
 	exegesis? ( dev-libs/libpfm:= )
+	jemalloc? ( dev-libs/jemalloc )
 	libedit? ( dev-libs/libedit:0=[${MULTILIB_USEDEP}] )
 	libffi? ( >=dev-libs/libffi-3.0.13-r1:0=[${MULTILIB_USEDEP}] )
 	ncurses? ( >=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}] )
+	tcmalloc? ( dev-util/google-perftools )
 	xar? ( app-arch/xar )
 	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
 	z3? ( >=sci-mathematics/z3-4.7.1:0=[${MULTILIB_USEDEP}] )
