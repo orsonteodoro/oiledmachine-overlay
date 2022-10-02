@@ -791,6 +791,8 @@ ewarn "Disabling webcore disables website scripts completely"
 ewarn "or any contemporary websites."
 ewarn
 	fi
+
+	uopts_setup
 }
 
 _check_langs() {
@@ -861,8 +863,6 @@ src_unpack() {
 				| sha512sum \
 				| cut -f 1 -d " " \
 					)
-
-	uopts_setup
 
 	if [[ "${actual_build_fingerprint}" != "${EXPECTED_BUILD_FINGERPRINT}" ]] ; then
 eerror
