@@ -15,6 +15,7 @@ case ${EAPI:-0} in
 esac
 
 _LLVM_EBUILDS_ECLASS=1
+inherit flag-o-matic toolchain-funcs
 
 llvm-ebuilds_fix_toolchain() {
 	if [[ "${CC}" =~ "clang" ]] ; then
