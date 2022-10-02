@@ -917,9 +917,6 @@ _src_configure() {
 	filter-flags -DENABLE_JIT=* -DENABLE_YARR_JIT=* -DENABLE_ASSEMBLER=*
 	filter-flags '-fprofile*'
 
-	# pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
-	tc-is-gcc && replace-flags "-O1" "-O2"
-
 	# It does not compile on alpha without this in LDFLAGS
 	# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=648761
 	use alpha && append-ldflags "-Wl,--no-relax"
@@ -1214,11 +1211,22 @@ einfo
 	uopts_src_configure
 
 	if is-flagq -O0 ; then
+# -O0 is used for ebuild only correctness checking.
 ewarn
-ewarn "Upstream doesn't like it when -O0 is used, but we allow it."
+ewarn "Manually apply -DRELEASE_WITHOUT_OPTIMIZATIONS=1 to CPPFLAGS to force"
+ewarn "use of -O0."
 ewarn
-		append-cppflags -DRELEASE_WITHOUT_OPTIMIZATIONS=1
 	fi
+
+	if ! [[ "${CPPFLAGS}" =~ "-DRELEASE_WITHOUT_OPTIMIZATIONS=1" ]] ; then
+		# Using -O0 has severe runtime performance penalties.
+		tc-is-gcc && replace-flags "-O0" "-O2"
+		tc-is-clang && replace-flags "-O0" "-O1"
+	fi
+
+	# pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
+	# It happens with GCC -O1.
+	tc-is-gcc && replace-flags "-O1" "-O2"
 
 	WK_USE_CCACHE=NO cmake_src_configure
 }
