@@ -60,8 +60,8 @@ einfo
 		filter-flags "-flto*"
 	fi
 	if [[ "${LD}" =~ ("lld"|"clang") ]] || is-flagq '-fuse-ld=lld' ; then
-		if ld.lld --help | grep -q "symbol lookup error" \
-			|| ld.lld --help | grep -q "undefined symbol" ; then
+		if ld.lld --help | grep -q -e "symbol lookup error:" \
+			|| ld.lld --help | grep -q -e "undefined symbol:" ; then
 ewarn
 ewarn "Detected symbol errors for lld (linker)"
 ewarn "Switching to fallback linker"
