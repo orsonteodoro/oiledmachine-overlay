@@ -201,7 +201,10 @@ eerror
 				"${pgo_data_staging_dir}" || die
 			append-flags -fprofile-use="${pgo_data_staging_dir}/custom-pgo.profdata"
 		elif tc-is-gcc ; then
-			append-flags -fprofile-use -fprofile-dir="${pgo_data_staging_dir}"
+			append-flags \
+				-fprofile-correction \
+				-fprofile-use \
+				-fprofile-dir="${pgo_data_staging_dir}"
 			[[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] \
 				&& append-flags -fprofile-partial-training
 		fi
