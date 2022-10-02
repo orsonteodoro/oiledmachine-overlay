@@ -1275,6 +1275,7 @@ multilib_src_install() {
 		doins -r "${T}/langs/${l}"
 	done
 
+	LCNR_SOURCE="${S}"
 	lcnr_install_files
 
 	uopts_src_install
