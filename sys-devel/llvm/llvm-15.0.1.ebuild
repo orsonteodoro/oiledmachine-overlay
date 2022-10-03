@@ -92,10 +92,15 @@ LLVM_USE_TARGETS=provide
 llvm.org_set_globals
 SRC_URI+="
 	bolt? (
+		https://github.com/llvm/llvm-project/commit/9029ed2e4b2fda3b4c138eefeed686234e163495.patch
+			-> llvm-commit-9029ed2.patch
 		https://github.com/llvm/llvm-project/commit/61cff9079c083fdcfb9fa324e50b9e480165037e.patch
 			-> llvm-commit-61cff90.patch
 	)
 "
+# 9029ed2 - [BOLT] Fix (part of) dylib compatibility
+#   Commit dependency of 61cff90
+
 # 61cff90 - [BOLT] Support building bolt when LLVM_LINK_LLVM_DYLIB is ON
 #   Fixes linking problem
 
@@ -289,6 +294,7 @@ src_prepare() {
 		pushd "${WORKDIR}" || die
 			eapply "${FILESDIR}/llvm-14.0.6-bolt-set-cmake-libdir.patch"
 			eapply "${FILESDIR}/llvm-14.0.6-bolt_rt-RuntimeLibrary.cpp-path.patch"
+			eapply "${DISTDIR}/llvm-commit-9029ed2.patch"
 			filterdiff -x "*/bat-dump/*" $(realpath "${DISTDIR}/llvm-commit-61cff90.patch") \
 				> "${T}/llvm-commit-61cff90.patch" || die
 			eapply "${T}/llvm-commit-61cff90.patch"
@@ -444,7 +450,7 @@ get_distribution_components() {
 			bolt_rt
 		)
 		use amd64 && use bolt && out+=(
-			LLVMBOLTTargetX86
+			LLVMX86Desc
 		)
 		use arm64 && use bolt && out+=(
 			LLVMBOLTTargetAArch64
