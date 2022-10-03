@@ -4,7 +4,7 @@
 
 EAPI=8
 
-ELECTRON_APP_ELECTRON_V="19.0.13"
+ELECTRON_APP_ELECTRON_V="19.0.7"
 ELECTRON_APP_MODE="npm"
 inherit desktop electron-app npm-utils
 
