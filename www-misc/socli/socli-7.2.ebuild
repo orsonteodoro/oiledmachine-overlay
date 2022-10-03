@@ -15,6 +15,7 @@ KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
 IUSE+=" man"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 SLOT="0"
+# Last DEPENDs commit date Jan 17, 2021
 DEPEND+="
 	${PYTHON_DEPS}
 	  dev-python/argcomplete[${PYTHON_USEDEP}]
@@ -27,13 +28,12 @@ DEPEND+="
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}"
-EGIT_COMMIT="57c60e01981111d2559cb6339640ab377e752485"
 SRC_URI="
-https://github.com/gautamkrishnar/socli/archive/${EGIT_COMMIT}.tar.gz
+https://github.com/gautamkrishnar/socli/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 RESTRICT="mirror"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+S="${WORKDIR}/${PN}-${PV}"
 
 src_prepare() {
 	sed -i "/setup_requires/d" setup.py || die
