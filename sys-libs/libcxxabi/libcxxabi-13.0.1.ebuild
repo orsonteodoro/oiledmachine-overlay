@@ -111,7 +111,8 @@ has_sanitizer_option() {
 
 _usex_cfi() {
 	local s=$(clang-major-version)
-	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+	if tc-is-clang \
+	&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& has_sanitizer_option "cfi" ; then
 		echo "ON"
 	else
@@ -121,7 +122,8 @@ _usex_cfi() {
 
 _usex_cfi_cast() {
 	local s=$(clang-major-version)
-	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+	if tc-is-clang \
+	&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& ( \
 			has_sanitizer_option "cfi-derived-cast" \
 			|| has_sanitizer_option "cfi-unrelated-cast" \
@@ -134,7 +136,8 @@ _usex_cfi_cast() {
 
 _usex_cfi_icall() {
 	local s=$(clang-major-version)
-	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+	if tc-is-clang \
+	&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& has_sanitizer_option "cfi-icall" ; then
 		echo "ON"
 	else
@@ -144,7 +147,8 @@ _usex_cfi_icall() {
 
 _usex_cfi_vcall() {
 	local s=$(clang-major-version)
-	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+	if tc-is-clang \
+	&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& has_sanitizer_option "cfi-vcall" ; then
 		echo "ON"
 	else
@@ -154,7 +158,8 @@ _usex_cfi_vcall() {
 
 _usex_cfi_cross_dso() {
 	local s=$(clang-major-version)
-	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+	if tc-is-clang \
+	&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& is-flagq '-fsanitize-cfi-cross-dso' ; then
 		echo "ON"
 	else
@@ -164,7 +169,8 @@ _usex_cfi_cross_dso() {
 
 _usex_shadowcallstack() {
 	local s=$(clang-major-version)
-	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[shadowcallstack]" \
+	if tc-is-clang \
+	&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[shadowcallstack]" \
 		&& has_sanitizer_option "shadow-call-stack" ; then
 		echo "ON"
 	else
@@ -181,6 +187,13 @@ _usex_lto() {
 }
 
 _configure_abi() {
+	CC=$(tc-getCC)
+	CXX=$(tc-getCXX)
+	export CC CXX
+einfo
+einfo "CC=${CC}"
+einfo "CXX=${CXX}"
+einfo
 	filter-flags \
 		'--param=ssp-buffer-size=*' \
 		'-f*sanitize*' \
@@ -202,7 +215,7 @@ _configure_abi() {
 	# link against compiler-rt instead of libgcc if we are using clang with libunwind
 	local want_compiler_rt=OFF
 	if use libunwind && tc-is-clang; then
-		local compiler_rt=$($(tc-getCC) ${CFLAGS} ${CPPFLAGS} \
+		local compiler_rt=$("${CC}" ${CFLAGS} ${CPPFLAGS} \
 			${LDFLAGS} -print-libgcc-file-name)
 		if [[ ${compiler_rt} == *libclang_rt* ]]; then
 			want_compiler_rt=ON

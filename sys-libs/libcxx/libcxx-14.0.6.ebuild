@@ -89,7 +89,8 @@ has_sanitizer_option() {
 
 _usex_cfi() {
 	local s=$(clang-major-version)
-	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+	if tc-is-clang \
+		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& has_sanitizer_option "cfi" ; then
 		echo "ON"
 	else
@@ -99,7 +100,8 @@ _usex_cfi() {
 
 _usex_cfi_cast() {
 	local s=$(clang-major-version)
-	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+	if tc-is-clang \
+		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& ( \
 			has_sanitizer_option "cfi-derived-cast" \
 			|| has_sanitizer_option "cfi-unrelated-cast" \
@@ -112,7 +114,8 @@ _usex_cfi_cast() {
 
 _usex_cfi_icall() {
 	local s=$(clang-major-version)
-	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+	if tc-is-clang \
+		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& has_sanitizer_option "cfi-icall" ; then
 		echo "ON"
 	else
@@ -122,7 +125,8 @@ _usex_cfi_icall() {
 
 _usex_cfi_vcall() {
 	local s=$(clang-major-version)
-	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+	if tc-is-clang \
+		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& has_sanitizer_option "cfi-vcall" ; then
 		echo "ON"
 	else
@@ -132,7 +136,8 @@ _usex_cfi_vcall() {
 
 _usex_cfi_cross_dso() {
 	local s=$(clang-major-version)
-	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+	if tc-is-clang \
+		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& is-flagq '-fsanitize-cfi-cross-dso' ; then
 		echo "ON"
 	else
@@ -142,7 +147,8 @@ _usex_cfi_cross_dso() {
 
 _usex_shadowcallstack() {
 	local s=$(clang-major-version)
-	if has_version "=sys-libs/compiler-rt-sanitizers-${s}*[shadowcallstack]" \
+	if tc-is-clang \
+		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[shadowcallstack]" \
 		&& has_sanitizer_option "shadow-call-stack" ; then
 		echo "ON"
 	else
@@ -205,6 +211,12 @@ is_cfi_supported() {
 }
 
 _configure_abi() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+einfo
+einfo "CC=${CC}"
+einfo "CXX=${CXX}"
+einfo
 	filter-flags \
 		'--param=ssp-buffer-size=*' \
 		'-f*sanitize*' \
