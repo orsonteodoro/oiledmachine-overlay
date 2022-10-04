@@ -710,6 +710,9 @@ multilib_src_install_all() {
 
 	docompress "/usr/lib/llvm/${SLOT}/share/man"
 	llvm_install_manpages
+	if [[ -e "${ED}/var/tmp" ]] ; then
+		rm -rf "${ED}/var/tmp" || die
+	fi
 }
 
 pkg_postinst() {

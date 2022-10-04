@@ -449,20 +449,8 @@ get_distribution_components() {
 			# static libs
 			bolt_rt
 		)
-		use amd64 && use bolt && out+=(
-			LLVMX86Desc
-		)
-		use arm64 && use bolt && out+=(
-			LLVMBOLTTargetAArch64
-		)
 		( use amd64 || use arm64 ) \
 		&& use bolt && out+=(
-			LLVMBOLTCore
-			LLVMBOLTRewrite
-			LLVMBOLTRuntimeLibs
-			LLVMBOLTUtils
-			LLVMBOLTProfile
-			LLVMBOLTPasses
 			bolt
 			merge-fdata
 		)
@@ -711,6 +699,9 @@ multilib_src_install_all() {
 
 	docompress "/usr/lib/llvm/${SLOT}/share/man"
 	llvm_install_manpages
+	if [[ -e "${ED}/var/tmp" ]] ; then
+		rm -rf "${ED}/var/tmp" || die
+	fi
 }
 
 pkg_postinst() {

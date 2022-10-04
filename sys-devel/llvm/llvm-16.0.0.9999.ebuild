@@ -87,6 +87,8 @@ LLVM_MANPAGES=1
 LLVM_PATCHSET=9999-r3
 LLVM_USE_TARGETS=provide
 llvm.org_set_globals
+SRC_URI+="
+"
 
 REQUIRED_USE+="
 	amd64? ( llvm_targets_X86 )
@@ -430,20 +432,8 @@ get_distribution_components() {
 			# static libs
 			bolt_rt
 		)
-		use amd64 && use bolt && out+=(
-			LLVMBOLTTargetX86
-		)
-		use arm64 && use bolt && out+=(
-			LLVMBOLTTargetAArch64
-		)
 		( use amd64 || use arm64 ) \
 		&& use bolt && out+=(
-			LLVMBOLTCore
-			LLVMBOLTRewrite
-			LLVMBOLTRuntimeLibs
-			LLVMBOLTUtils
-			LLVMBOLTProfile
-			LLVMBOLTPasses
 			bolt
 			merge-fdata
 		)
@@ -692,6 +682,9 @@ multilib_src_install_all() {
 
 	docompress "/usr/lib/llvm/${SLOT}/share/man"
 	llvm_install_manpages
+	if [[ -e "${ED}/var/tmp" ]] ; then
+		rm -rf "${ED}/var/tmp" || die
+	fi
 }
 
 pkg_postinst() {
