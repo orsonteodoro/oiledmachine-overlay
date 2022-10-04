@@ -97,8 +97,13 @@ SRC_URI+="
 			-> llvm-commit-9029ed2.patch
 		https://github.com/llvm/llvm-project/commit/61cff9079c083fdcfb9fa324e50b9e480165037e.patch
 			-> llvm-commit-61cff90.patch
+		https://github.com/llvm/llvm-project/commit/90dcdc4b6e7d86cb3d5049bd766aecddd549dd7d.patch
+			-> llvm-commit-90dcdc4.patch
 	)
 "
+# 90dcdc4 - [bolt][llvm][cmake] Use CMAKE_INSTALL_LIBDIR too
+#   To fix multilib support
+
 # 9029ed2 - [BOLT] Fix (part of) dylib compatibility
 #   Commit dependency of 61cff90
 
@@ -295,6 +300,7 @@ src_prepare() {
 		pushd "${WORKDIR}" || die
 			eapply "${FILESDIR}/llvm-14.0.6-bolt-set-cmake-libdir.patch"
 			eapply "${FILESDIR}/llvm-14.0.6-bolt_rt-RuntimeLibrary.cpp-path.patch"
+			eapply "${DISTDIR}/llvm-commit-90dcdc4.patch"
 			eapply "${DISTDIR}/llvm-commit-9029ed2.patch"
 			filterdiff -x "*/bat-dump/*" $(realpath "${DISTDIR}/llvm-commit-61cff90.patch") \
 				> "${T}/llvm-commit-61cff90.patch" || die
