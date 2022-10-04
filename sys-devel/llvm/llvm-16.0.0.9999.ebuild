@@ -28,6 +28,7 @@ IUSE="+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z
 IUSE+=" bolt bolt-heatmap +bootstrap -dump jemalloc tcmalloc r4"
 REQUIRED_USE="
 	!amd64? ( !arm64? ( !bolt ) )
+	bolt-heatmap? ( bolt )
 	jemalloc? ( bolt )
 	tcmalloc? ( bolt )
 "
