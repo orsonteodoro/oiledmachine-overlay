@@ -452,6 +452,7 @@ get_distribution_components() {
 		( use amd64 || use arm64 ) \
 		&& use bolt && out+=(
 			bolt
+			llvm-bolt-heatmap
 			merge-fdata
 		)
 		use doc && out+=(
