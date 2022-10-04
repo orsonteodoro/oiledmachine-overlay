@@ -143,6 +143,11 @@ main
       layout.  This may improve performance by 15%.  It provides additional
       post build optimizations.
     </flag>
+    <flag name="bolt-heatmap">
+      Build the llvm-bolt-heatmap program.  The heatmap is a colored command
+      line visualization for comparing code layout before and after
+      optimization.
+    </flag>
     <flag name="dump">
       Build with dump functions to print additional (debugging) information
     </flag>
@@ -167,11 +172,6 @@ main
     </flag>
     <flag name="jemalloc">
       Use jemalloc to speed up processing time of llvm-bolt.
-    </flag>
-    <flag name="llvm-bolt-heatmap">
-      Build the llvm-bolt-heatmap program.  The heatmap is a colored command
-      line visualization for comparing code layout before and after
-      optimization.
     </flag>
     <flag name="ncurses">
       Support querying terminal properties using ncurses' terminfo
