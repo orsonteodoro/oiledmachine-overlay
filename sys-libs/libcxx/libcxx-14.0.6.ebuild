@@ -87,11 +87,13 @@ has_sanitizer_option() {
 	return 1
 }
 
+WANTS_CFI=0
 _usex_cfi() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
 		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& has_sanitizer_option "cfi" ; then
+		WANTS_CFI=1
 		echo "ON"
 	else
 		echo "OFF"
@@ -106,6 +108,7 @@ _usex_cfi_cast() {
 			has_sanitizer_option "cfi-derived-cast" \
 			|| has_sanitizer_option "cfi-unrelated-cast" \
 		) ; then
+		WANTS_CFI=1
 		echo "ON"
 	else
 		echo "OFF"
@@ -117,6 +120,7 @@ _usex_cfi_icall() {
 	if tc-is-clang \
 		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& has_sanitizer_option "cfi-icall" ; then
+		WANTS_CFI=1
 		echo "ON"
 	else
 		echo "OFF"
@@ -128,17 +132,20 @@ _usex_cfi_vcall() {
 	if tc-is-clang \
 		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& has_sanitizer_option "cfi-vcall" ; then
+		WANTS_CFI=1
 		echo "ON"
 	else
 		echo "OFF"
 	fi
 }
 
+WANTS_CFI_CROSS_DSO=0
 _usex_cfi_cross_dso() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
 		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& is-flagq '-fsanitize-cfi-cross-dso' ; then
+		WANTS_CFI_CROSS_DSO=1
 		echo "ON"
 	else
 		echo "OFF"
@@ -156,8 +163,10 @@ _usex_shadowcallstack() {
 	fi
 }
 
+WANTS_LTO=0
 _usex_lto() {
 	if is-flagq '-flto*' ; then
+		WANTS_LTO=1
 		echo "ON"
 	else
 		echo "OFF"
@@ -454,21 +463,21 @@ einfo "    clang++ -stdlib=libc++"
 einfo "to compile your C++ programs."
 einfo
 
-	if is-flagq '-fsanitize-cfi-cross-dso' ; then
+	if (( ${WANTS_CFI_CROSS_DSO} == 1 )) ; then
 ewarn
 ewarn "Using cfi-cross-dso requires a rebuild of the app with only the clang"
 ewarn "compiler."
 ewarn
 	fi
 
-	if [[ "${USE}" =~ "cfi" ]] && use static-libs ; then
+	if (( ${WANTS_CFI} == 1 )) && use static-libs ; then
 ewarn
 ewarn "Using cfi with static-libs requires the app be built with only the clang"
 ewarn "compiler."
 ewarn
 	fi
 
-	if use lto && use static-libs ; then
+	if (( ${WANTS_LTO} == 1 )) && use static-libs ; then
 		if tc-is-clang ; then
 ewarn
 ewarn "You are only allowed to static link this library with clang."
