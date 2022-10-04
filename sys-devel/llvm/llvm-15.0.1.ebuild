@@ -25,7 +25,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3"
-IUSE+=" bolt +bootstrap -dump jemalloc tcmalloc r4"
+IUSE+=" bolt +bootstrap -dump jemalloc llvm-bolt-heatmap tcmalloc r4"
 REQUIRED_USE="
 	!amd64? ( !arm64? ( !bolt ) )
 	jemalloc? ( bolt )
@@ -452,8 +452,10 @@ get_distribution_components() {
 		( use amd64 || use arm64 ) \
 		&& use bolt && out+=(
 			bolt
-			llvm-bolt-heatmap
 			merge-fdata
+		)
+		use llvm-bolt-heatmap && out+=(
+			llvm-bolt-heatmap
 		)
 		use doc && out+=(
 			docs-llvm-html
