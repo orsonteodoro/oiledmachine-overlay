@@ -5147,6 +5147,7 @@ app-forensics/prochunter
 app-laptop/tp_smapi
 app-laptop/tuxedo-keyboard
 bluetooth-drivers/rtbth
+dev-libs/libgpiod
 dev-util/lttng-modules
 dev-util/sysdig-kmod
 games-util/hid-nintendo
