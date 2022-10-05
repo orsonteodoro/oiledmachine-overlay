@@ -191,8 +191,8 @@ append_all() {
 # See https://bitbucket.org/chromiumembedded/cef/issues/3362/allow-c-17-features-in-cef-binary
 CXX_VER="17"
 check_compiler() {
-	CC=$(tc-getCC)
-	CXX=$(tc-getCXX)
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
 	einfo "CC=${CC} CXX=${CXX}"
 	test-flags-CXX "-std=c++${CXX_VER}" 2>/dev/null 1>/dev/null || die "Switch to a c++${CXX_VER} compatible compiler."
 	if tc-is-gcc ; then
@@ -229,9 +229,17 @@ src_prepare() {
 	einfo "CMAKE_USE_DIR=${CMAKE_USE_DIR}"
 	cd "${CMAKE_USE_DIR}" || die
 	cmake_src_prepare
+	if use minimal ; then
+		rm -rf "${CMAKE_USE_DIR}/tests" || die
+	fi
+	if ! use test ; then
+		rm -rf "${CMAKE_USE_DIR}/tests" || die
+	fi
 }
 
 src_configure() {
+	export CMAKE_USE_DIR=$(S_abi)
+	export BUILD_DIR=$(S_abi)
 	check_compiler
 	strip-unsupported-flags
 	filter-flags \
@@ -255,7 +263,9 @@ src_configure() {
 	mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
 	)
+einfo "DIR="$(pwd)
 	cmake_src_configure
+einfo "DIR="$(pwd)
 
 	if use test ; then
 ewarn
@@ -279,9 +289,9 @@ src_compile() {
 	cd "${BUILD_DIR}" || die
 	cmake_src_compile \
 		libcef_dll_wrapper \
-		$(usex cefclient cefclient "") \
-		$(usex cefsimple cefsimple "") \
-		$(usex test ceftests "")
+		$(usex cefclient "cefclient" "") \
+		$(usex cefsimple "cefsimple" "") \
+		$(usex test "ceftests" "")
 	if [[ -f "${BUILD_DIR}/tests/ceftests/Release/chrome-sandbox" ]] && use test ; then
 		chmod 4755 "${BUILD_DIR}/tests/ceftests/Release/chrome-sandbox" || die
 	fi
@@ -291,6 +301,7 @@ src_test() {
 	ewarn "This test failed on 87.1.12+g03f9336+chromium-87.0.4280.88"
 	export CMAKE_USE_DIR=$(S_abi)
 	export BUILD_DIR=$(S_abi)
+	cd "${BUILD_DIR}" || die
 	local build_type=$(usex debug "Debug" "Release")
 	if use test ; then
 		cd "${BUILD_DIR}/tests/ceftests/${build_type}" || die
@@ -303,6 +314,7 @@ src_test() {
 src_install() {
 	export CMAKE_USE_DIR=$(S_abi)
 	export BUILD_DIR=$(S_abi)
+	cd "${BUILD_DIR}" || die
 	dodir "/opt/${PN}"
 	cp -rT "${BUILD_DIR}" "${ED}/opt/${PN}" || die
 	local minimal=$(usex minimal "_minimal" "")

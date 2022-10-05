@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <!-- only for this ebuild fork on the oiledmachine-overlay -->
   <maintainer type="person">
+    <!-- only for this ebuild fork on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <!-- ebuild originator -->
   <maintainer type="person">
+    <!-- ebuild originator -->
     <email>chiitoo@gentoo.org</email>
     <name>Jimi Huotari</name>
   </maintainer>
   <longdescription>
-    A rewrite of what was formerly known as "Open Broadcaster Software",
-    software originally designed for recording and streaming live video
-    content, efficiently.  Aims to be multi-platform, and improved upon
-    internally.
+    obs-studio is a rewrite of what was formerly known as
+    "Open Broadcaster Software", originally designed for recording and streaming
+    live video content, efficiently.  Aims to be multi-platform, and improved
+    upon internally.
 
     This is an ebuild fork with more detailed VA-API dependency requirement
     checks.
@@ -38,7 +38,10 @@
     If all of the above are not defined, then streaming integration is disabled
     for that service.
 
-    SECURITY:  It recommended to provide a patch to UI/CMakeLists.txt to
+
+    SECURITY
+
+    It recommended to provide a patch to UI/CMakeLists.txt to
     embed the sensitive data.  This is to avoid the possible unsecured storage
     of sensitive info in /var/db/pkg/${CATEGORY}/${P}/environment.bz2.  If you
     have provided this information as a per-package file or via command line,
@@ -48,9 +51,38 @@
     /var/tmp/portage/${CATEGORY}/${P} and other unfinished builds may need
     to be recursively shredded as a precaution.  The information in
     environment.bz2 should be shredded, but it may be unmergable.  To fix this,
-    you may overwrite the install without sensitive info or delete every
+    you may overwrite the install without sensitive info or shred every
     file in the /var/db/pkg/${CATEGORY}/${P}/CONTENTS folder or never
     providing this information in the first place.
+
+
+    Whitelisting RTMP streaming services:  
+
+    It is recommended to whitelist only the services you need.  Services
+    listed on this list may not be vetted and may contain adult content
+    may present a security risk.  By default for this ebuild release, all
+    services are not listed until it is added to the whitelist.  You must
+    provide a space delimited list of names in OBS_STUDIO_SERVICES_WHITELIST
+    in make.conf or as a per-package env.
+
+    Example:
+
+      OBS_STUDIO_SERVICES_WHITELIST="Service A;Service B;Service - RTMP;...;Service N"
+
+
+    Listing RTMP streaming services:
+
+    To get a list of services to whitelist replacing VERSION, do
+
+      VERSION="28.0.3" ; \
+      jq '.services[].name' /var/tmp/portage/media-video/obs-studio-VERSION/work/obs-studio-VERSION/plugins/rtmp-services/data/services.json | sort
+
+    or
+
+      You may also view them from
+
+      https://github.com/obsproject/obs-studio/blob/master/plugins/rtmp-services/data/services.json
+
 
     Browser plugin:
 
@@ -61,43 +93,138 @@
     the browser is updated for security reasons.
   </longdescription>
   <use>
-    <flag name="aja">Add support for AJA capture hardware.</flag>
-    <flag name="browser">Enable adding web pages as a source.</flag>
-    <flag name="decklink">Enable support for DeckLink devices.</flag>
-    <flag name="fdk">Enable libfdk support for AAC encoding.</flag>
-    <flag name="ftl">Enable support for streaming with the FTL protocol
-      for a low latency streaming.  (Deprecated)</flag>
-    <flag name="imagemagick">Use ImageMagick for image loading instead of
-      FFmpeg.</flag>
-    <flag name="jack">Enable jack support.</flag>
-    <flag name="libaom">Add support for AV1 video encoding.</flag>
-    <flag name="lua">Build support for scripting via Luajit.</flag>
-    <flag name="nvenc">Enable NVENC encoding for nVidia video cards.</flag>
-    <flag name="oss">Enable OSS support in FreeBSD.</flag>
-    <flag name="pipewire">Enable PipeWire based capture support.</flag>
-    <flag name="pulse">Enable PulseAudio support.</flag>
-    <flag name="python">Build support for scripting via Python 3.</flag>
-    <flag name="speexdsp">Enable noise suppression filter support via
-      <pkg>media-libs/speexdsp</pkg>.</flag>
-    <flag name="ssl">Build support for TLS/SSL connections (RTMPS) via
-      <pkg>net-libs/mbedtls</pkg>.</flag>
-    <flag name="freetype">Builds the Freetype text plugin.</flag>
-    <flag name="qsv11">Enable use of the QSV11 hardware encoder.</flag>
-    <flag name="sndio">Enable sndio support.</flag>
-    <flag name="test">Build test parts.</flag>
-    <flag name="v4l">Build v4l2 support.</flag>
-    <flag name="vaapi">Enable hardware H264 encoding via VA-API.</flag>
-    <flag name="vlc">Build support for using <pkg>media-video/vlc</pkg> as a
-      media source.</flag>
-    <flag name="video_cards_amdgpu">Prefer the Gallium Mesa VA-API driver</flag>
-    <flag name="video_cards_i965">Pulls or checks for a VA-API driver</flag>
-    <flag name="video_cards_intel">Pulls or checks for a VA-API driver</flag>
-    <flag name="video_cards_iris">Pulls or checks for a VA-API driver</flag>
-    <flag name="video_cards_r600">Prefer the Gallium Mesa VA-API driver</flag>
-    <flag name="video_cards_radeonsi">Prefer the Gallium Mesa VA-API
-      driver</flag>
-    <flag name="vst">Adds support for VST plugins as audio filters.</flag>
-    <flag name="wayland">Adds support for Wayland.</flag>
+    <flag name="aja">
+      Add support for AJA capture hardware.
+    </flag>
+    <flag name="amf">
+      Add support for AMD hardware encoders.
+    </flag>
+    <flag name="browser">
+      Enable adding web pages as a source.
+    </flag>
+    <flag name="browser-panel">
+      Enable browser panel support.
+    </flag>
+    <flag name="browser-qt-loop">
+      Enable browser to run in main UI thread.
+    </flag>
+    <flag name="decklink">
+      Enable support for DeckLink devices.
+    </flag>
+    <flag name="fdk">
+      Enable libfdk support for AAC encoding.
+    </flag>
+    <flag name="freetype">
+      Builds the Freetype text plugin.
+    </flag>
+    <flag name="ftl">
+      Enable support for streaming with the FTL protocol for a low latency
+      streaming.  (Deprecated)
+    </flag>
+    <flag name="imagemagick">
+      Use ImageMagick for image loading instead of FFmpeg.
+    </flag>
+    <flag name="jack">
+      Enable jack support.
+    </flag>
+    <flag name="libaom">
+      Add support for AV1 video encoding.
+    </flag>
+    <flag name="lua">
+      Build support for scripting via Luajit.
+    </flag>
+    <flag name="mac-syphon">
+      Build the mac-syphon plugin.
+    </flag>
+    <flag name="new-mpegts-output">
+      Enable native SRT/RIST for mpegts output when using FFMpeg
+    </flag>
+    <flag name="nvenc">
+      Enable NVENC encoding for NVIDIA GPUs.
+    </flag>
+    <flag name="nvafx">
+      Enable building with NVAFX.
+    </flag>
+    <flag name="nvvfx">
+      Enable building with NVVFX.
+    </flag>
+    <flag name="oss">
+      Enable OSS support in FreeBSD.
+    </flag>
+    <flag name="pipewire">
+      Enable PipeWire based capture support.
+    </flag>
+    <flag name="pulse">
+      Enable PulseAudio support.
+    </flag>
+    <flag name="python">
+      Build support for scripting via Python 3.
+    </flag>
+    <flag name="rtmps">
+      Build support for RTMPS with TLS/SSL support.
+    </flag>
+    <flag name="speexdsp">
+      Enable noise suppression filter support via
+      <pkg>media-libs/speexdsp</pkg>.
+    </flag>
+    <flag name="rnnoise">
+      Build support for RNNoise supression filter.
+    </flag>
+    <flag name="service-updates">
+      Enable service updates.  Not this will override
+      OBS_STUDIO_SERVICES_WHITELIST changes or may list unwanted services.
+    </flag>
+    <flag name="qsv11">
+      Enable use of the QSV11 hardware encoder.
+    </flag>
+    <flag name="sndio">
+      Enable sndio support.
+    </flag>
+    <flag name="test">
+      Build test parts.
+    </flag>
+    <flag name="v4l">
+      Build v4l2 support.
+    </flag>
+    <flag name="vaapi">
+      Enable hardware H264 encoding via VA-API.
+    </flag>
+    <flag name="vlc">
+      Build support for using <pkg>media-video/vlc</pkg> as a media source.
+    </flag>
+    <flag name="whatsnew">
+      Enable WhatsNew dialog.
+    </flag>
+    <flag name="websocket">
+      Enable building websocket plugin.
+    </flag>
+    <flag name="video_cards_amdgpu">
+      Prefer the Gallium Mesa VA-API driver
+    </flag>
+    <flag name="video_cards_i965">
+      Pulls or checks for a VA-API driver
+    </flag>
+    <flag name="video_cards_intel">
+      Pulls or checks for a VA-API driver
+    </flag>
+    <flag name="video_cards_iris">
+      Pulls or checks for a VA-API driver
+    </flag>
+    <flag name="video_cards_r600">
+      Prefer the Gallium Mesa VA-API driver
+    </flag>
+    <flag name="video_cards_radeonsi">
+      Prefer the Gallium Mesa VA-API driver
+    </flag>
+    <flag name="vst">
+      Adds support for VST plugins as audio filters.
+    </flag>
+    <flag name="wayland">
+      Adds support for Wayland.
+    </flag>
+    <flag name="win-dshow">
+      Build the win-dshow plugin.
+    </flag>
   </use>
   <upstream>
     <remote-id type="github">obsproject/obs-studio</remote-id>
