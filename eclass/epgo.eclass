@@ -132,6 +132,15 @@ eerror "The epgo.eclass must be used with uopts.eclass.  Do not inherit epgo"
 eerror "directly."
 		die
 	fi
+
+	if tc-is-clang ; then
+		local s=$(clang-major-version)
+		if ! has_version "=sys-libs/compiler-rt-${s}*" ; then
+eerror
+eerror "You need to emerge =sys-libs/compiler-rt-${s}* for Clang PGO."
+eerror
+		fi
+	fi
 }
 
 # @FUNCTION: _epgo_prepare_pgo
