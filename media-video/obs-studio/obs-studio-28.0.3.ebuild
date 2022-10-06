@@ -8,7 +8,7 @@ EGIT_COMMIT="${PV}"
 EGIT_REPO_URI="https://github.com/obsproject/obs-studio.git"
 EGIT_SUBMODULES=(
 	'*'
-	'-plugins/win-dshow*'
+	'-plugins/win-dshow'
 	'-plugins/mac-syphon'
 	'-plugins/enc-amf'
 )
@@ -29,7 +29,10 @@ LICENSE="
 		GPL-2+
 		MIT
 	)
-	browser? ( BSD )
+	browser? (
+		BSD
+		ZLIB
+	)
 	decklink? ( Boost-1.0 )
 	ftl? (
 		curl
@@ -37,7 +40,12 @@ LICENSE="
 	)
 	mac-syphon? ( BSD )
 	vst? ( GPL-2+ )
-	websocket? ( Boost-1.0 )
+	websocket? (
+		Boost-1.0
+		BSD
+		MIT
+		ZLIB
+	)
 	win-dshow? (
 		GPL-2+
 		LGPL-2.1
@@ -697,6 +705,7 @@ src_unpack() {
 		fi
 
 		if use win-dshow ; then
+			EGIT_SUBMODULES=( '*' )
 			EGIT_CHECKOUT_DIR="${S}/plugins/win-dshow/libdshowcapture"
 			EGIT_COMMIT="a93f1a34c14e91b5c540f264fb965f32caf77336"
 			git-r3_fetch
