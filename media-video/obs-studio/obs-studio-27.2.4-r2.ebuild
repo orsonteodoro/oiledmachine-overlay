@@ -21,9 +21,24 @@ inherit cmake flag-o-matic git-r3 lua-single python-single-r1 xdg-utils
 DESCRIPTION="Software for Recording and Streaming Live Video Content"
 HOMEPAGE="https://obsproject.com"
 LICENSE="
+	GPL-CC-1.0
 	GPL-2
+	amf? (
+		custom
+		LGPL-2.1+
+		GPL-2+
+		MIT
+	)
 	browser? ( BSD )
+	decklink? ( Boost-1.0 )
+	mac-syphon? ( BSD )
+	vst? ( GPL-2+ )
+	win-dshow? (
+		GPL-2+
+		LGPL-2.1
+	)
 "
+# custom - plugins/enc-amf/AMF/LICENSE.txt
 KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="0"
 IUSE_VAAPI="
