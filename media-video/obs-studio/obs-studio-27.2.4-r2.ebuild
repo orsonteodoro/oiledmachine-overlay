@@ -889,7 +889,7 @@ ewarn "you need to update obs-studio the same time Chromium updates"
 ewarn "to avoid critical vulerabilities."
 ewarn
 ewarn "Currently the net-libs/cef-bin is not CFI protected."
-ewarn "Consider using a CFI protected bin browser package instead for full"
+ewarn "Consider using a CFI protected -bin browser package instead for full"
 ewarn "protection using Window Capture as a source."
 ewarn
 	fi
