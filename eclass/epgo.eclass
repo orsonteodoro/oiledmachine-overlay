@@ -135,9 +135,15 @@ eerror "directly."
 
 	if tc-is-clang ; then
 		local s=$(clang-major-version)
-		if ! has_version "=sys-libs/compiler-rt-${s}*" ; then
+		if [[ -n "${LLVM_MAX_SLOT}" ]] ; then
+			if (( ${LLVM_MAX_SLOT} < ${s} )) ; then
+				s="${LLVM_MAX_SLOT}"
+			fi
+		fi
+		if ! has_version "=sys-libs/compiler-rt-sanitizers-${s}*[profile]" ; then
 eerror
-eerror "You need to emerge =sys-libs/compiler-rt-${s}* for Clang PGO."
+eerror "You need to emerge =sys-libs/compiler-rt-sanitizers-${s}*[profile] for"
+eerror "Clang PGO."
 eerror
 		fi
 	fi
