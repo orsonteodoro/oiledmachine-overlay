@@ -859,7 +859,7 @@ einfo
 		local cef_suffix=""
 		has_version 'net-libs/cef-bin' && cef_suffix="-bin"
 		mycmakeargs+=(
-			-DCEF_ROOT_DIR="${EROOT}/opt/cef${cef_suffix}"
+			-DCEF_ROOT_DIR="${ESYSROOT}/opt/cef${cef_suffix}"
 		)
 	fi
 
