@@ -570,6 +570,7 @@ DEPEND+=" ${RDEPEND}"
 #  https://github.com/obsproject/obs-studio/discussions/4021
 #  The module is licensed as MIT.
 
+
 SRC_URI=""
 
 RESTRICT="mirror" # Speed up download of the latest release.
@@ -738,11 +739,15 @@ src_prepare() {
 			eapply -p1 "${FILESDIR}/obs-studio-27.0.0-ftl-use-system-deps.patch"
 		popd
 	fi
+
 	# typos
 	sed -i -e "s|LIBVA_LBRARIES|LIBVA_LIBRARIES|g" \
 		plugins/obs-ffmpeg/CMakeLists.txt || die
+
 	sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
 		plugins/obs-browser/FindCEF.cmake || die
+	sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
+		cmake/Modules/FindCEF.cmake || die
 }
 
 gen_rtmp_services() {
@@ -777,6 +782,15 @@ einfo
 einfo "CC=${CC}"
 einfo "CXX=${CXX}"
 einfo
+
+	# For obs-browser
+	# obs-browser-source.cpp:25:10: fatal error: QApplication: No such file or directory
+	# browser-client.cpp:27:10: fatal error: QThread: No such file or directory
+	if use browser ; then
+		append-cppflags -I/usr/include/qt5
+		append-cppflags -I/usr/include/qt5/QtWidgets
+		append-cppflags -I/usr/include/qt5/QtCore
+	fi
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
