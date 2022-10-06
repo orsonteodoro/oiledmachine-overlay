@@ -165,7 +165,8 @@
     </flag>
     <flag name="service-updates">
       Enable service updates.  This will override OBS_STUDIO_SERVICES_WHITELIST
-      changes or may list unwanted services.
+      changes or may list unwanted adult services (also in a multiuser
+      environment).
     </flag>
     <flag name="qsv11">
       Enable use of the QSV11 hardware encoder.
