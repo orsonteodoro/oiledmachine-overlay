@@ -283,7 +283,7 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 	>=sys-apps/pciutils-3.5.2
 	nvenc? (
 		|| (
-			<media-video/ffmpeg-4[nvenc]
+			>=media-video/ffmpeg-4[nvenc]
 			>=media-video/ffmpeg-4[video_cards_nvidia]
 		)
 	)

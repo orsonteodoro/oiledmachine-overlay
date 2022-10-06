@@ -324,7 +324,7 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 	)
 	nvenc? (
 		|| (
-			<media-video/ffmpeg-4[nvenc]
+			>=media-video/ffmpeg-4[nvenc]
 			>=media-video/ffmpeg-4[video_cards_nvidia]
 		)
 	)
