@@ -16,7 +16,7 @@ EGIT_SUBMODULES=(
 CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
 LUA_COMPAT=( luajit )
 PYTHON_COMPAT=( python3_{8..10} ) # 18.04 is only 3.6
-inherit cmake flag-o-matic git-r3 lua-single python-single-r1 xdg-utils
+inherit cmake flag-o-matic git-r3 lcnr lua-single python-single-r1 xdg-utils
 
 DESCRIPTION="Software for Recording and Streaming Live Video Content"
 HOMEPAGE="https://obsproject.com"
@@ -33,13 +33,20 @@ LICENSE="
 		BSD
 		ZLIB
 	)
-	decklink? ( Boost-1.0 )
+	decklink? (
+		Boost-1.0
+	)
 	ftl? (
 		curl
 		MIT
 	)
-	mac-syphon? ( BSD )
-	vst? ( GPL-2+ )
+	mac-syphon? (
+		BSD
+		BSD-2
+	)
+	vst? (
+		GPL-2+
+	)
 	websocket? (
 		Boost-1.0
 		BSD
@@ -881,6 +888,13 @@ src_install() {
 		has_version 'net-libs/cef-bin' && cef_suffix="-bin"
 		doexe "${EROOT}/opt/cef${cef_suffix}/libcef_dll_wrapper/libcef_dll_wrapper.so"
 	fi
+
+	docinto licenses
+	dodoc COMMITMENT
+
+	# The about dialog doesn't show all the copyright notices.
+	LCNR_SOURCE="${S}"
+	lcnr_install_files
 }
 
 pkg_postinst() {
