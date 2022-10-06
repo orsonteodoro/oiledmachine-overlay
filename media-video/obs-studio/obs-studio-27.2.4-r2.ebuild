@@ -22,7 +22,7 @@ DESCRIPTION="Software for Recording and Streaming Live Video Content"
 HOMEPAGE="https://obsproject.com"
 LICENSE="
 	GPL-CC-1.0
-	GPL-2
+	GPL-2+
 	amf? (
 		custom
 		LGPL-2.1+
