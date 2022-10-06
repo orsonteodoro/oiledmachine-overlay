@@ -31,6 +31,10 @@ LICENSE="
 	)
 	browser? ( BSD )
 	decklink? ( Boost-1.0 )
+	ftl? (
+		curl
+		MIT
+	)
 	mac-syphon? ( BSD )
 	vst? ( GPL-2+ )
 	win-dshow? (
