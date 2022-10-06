@@ -278,7 +278,8 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
 
 # For vaapi support, see source code at
 # https://github.com/obsproject/obs-studio/pull/1482/commits/2dc67f140d8156d9000db57786e53a4c1597c097
-# No video_cards_nouveau x264 encode from inspection of the Mesa driver, but for decode yes.
+# From inspection, the video_cards_nouveau supports h264 decode but not h264
+# encode.  This is why it is omitted below in the vaapi driver section.
 DEPEND_PLUGINS_OBS_FFMPEG="
 	>=sys-apps/pciutils-3.5.2
 	nvenc? (
