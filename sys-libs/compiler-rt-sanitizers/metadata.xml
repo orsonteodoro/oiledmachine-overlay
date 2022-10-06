@@ -50,28 +50,64 @@ sys-devel/clang:14 llvm-14-commit.conf
   https://github.com/llvm/llvm-project/commit/ADD_40_DIGIT_COMMIT_HERE
   </longdescription>
   <use>
-    <flag name="clang">Force building using installed clang (rather than the
-      default CC/CXX).</flag>
-    <flag name="libfuzzer">Build fuzzing runtime.</flag>
-    <flag name="memprof">Build memory profiler runtime.</flag>
-    <flag name="orc">Build ORC runtime.</flag>
-    <flag name="profile">Build profiling runtime.</flag>
-    <flag name="sanitize">Build sanitizer runtimes.</flag>
-    <flag name="xray">Build XRay runtime.</flag>
-
-    <flag name="asan">Build Address Sanitizer runtime.</flag>
-    <flag name="dfsan">Build Data Flow Sanitizer runtime.</flag>
-    <flag name="lsan">Build Leak Sanitizer runtime.</flag>
-    <flag name="msan">Build Memory Sanitizer runtime.</flag>
-    <flag name="hwasan">Build Hardware ASAN runtime.</flag>
-    <flag name="tsan">Build Thread Sanitizer runtime.</flag>
-    <flag name="ubsan">
-      Build Undefined Behavior Sanitizer runtime.
+    <flag name="clang">
+      Force building using the installed Clang (rather than the default CC/CXX).
     </flag>
-    <flag name="safestack">Build SafeStack runtime.</flag>
-    <flag name="cfi">Build Control Flow Integrity runtime.</flag>
-    <flag name="scudo">Build Scudo Hardened Allocator.</flag>
-    <flag name="shadowcallstack">Build ShadowCallStack.</flag>
-    <flag name="gwp-asan">Build GWP-ASAN runtime.</flag>
+    <flag name="libfuzzer">
+      Build the fuzzing runtime.
+    </flag>
+    <flag name="memprof">
+      Build the memory profiler runtime.
+    </flag>
+    <flag name="orc">
+      Build the ORC runtime.
+    </flag>
+    <flag name="profile">
+      Build the profiling runtime which is used during Profile Guided
+      Optimization (PGO).
+    </flag>
+    <flag name="sanitize">
+      Build the sanitizer runtimes.
+    </flag>
+    <flag name="xray">
+      Build the XRay runtime.
+    </flag>
+
+    <flag name="asan">
+      Build the Address Sanitizer runtime.
+    </flag>
+    <flag name="dfsan">
+      Build the Data Flow Sanitizer runtime.
+    </flag>
+    <flag name="lsan">
+      Build the Leak Sanitizer runtime.
+    </flag>
+    <flag name="msan">
+      Build the Memory Sanitizer runtime.
+    </flag>
+    <flag name="hwasan">
+      Build the Hardware ASAN runtime.
+    </flag>
+    <flag name="tsan">
+      Build the Thread Sanitizer runtime.
+    </flag>
+    <flag name="ubsan">
+      Build the Undefined Behavior Sanitizer runtime.
+    </flag>
+    <flag name="safestack">
+      Build the SafeStack runtime.
+    </flag>
+    <flag name="cfi">
+      Build the Control Flow Integrity runtime.
+    </flag>
+    <flag name="scudo">
+      Build the Scudo Hardened Allocator.
+    </flag>
+    <flag name="shadowcallstack">
+      Build the ShadowCallStack runtime.
+    </flag>
+    <flag name="gwp-asan">
+      Build the GWP-ASAN runtime.
+    </flag>
   </use>
 </pkgmetadata>
