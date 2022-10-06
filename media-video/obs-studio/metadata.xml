@@ -72,14 +72,7 @@
 
     Listing RTMP streaming services:
 
-    To get a list of services to whitelist replacing VERSION, do
-
-      VERSION="28.0.3" ; \
-      jq '.services[].name' /var/tmp/portage/media-video/obs-studio-VERSION/work/obs-studio-VERSION/plugins/rtmp-services/data/services.json | sort
-
-    or
-
-      You may also view them from
+    To get a list of services to whitelist replacing VERSION, see
 
       https://github.com/obsproject/obs-studio/blob/master/plugins/rtmp-services/data/services.json
 
@@ -171,8 +164,8 @@
       Build support for RNNoise supression filter.
     </flag>
     <flag name="service-updates">
-      Enable service updates.  Not this will override
-      OBS_STUDIO_SERVICES_WHITELIST changes or may list unwanted services.
+      Enable service updates.  This will override OBS_STUDIO_SERVICES_WHITELIST
+      changes or may list unwanted services.
     </flag>
     <flag name="qsv11">
       Enable use of the QSV11 hardware encoder.

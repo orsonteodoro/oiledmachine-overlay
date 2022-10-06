@@ -34,30 +34,19 @@ video_cards_i965
 video_cards_r600
 video_cards_radeonsi
 "
-# aja is enabled by default upstream
 # amf is enabled by default upstream
-# nvafx is enabled by default upstream
-# nvvfx is enabled by default upstream
-# oss is enabled by default upstream
 # qsv11 is enabled by default upstream
-# vlc is enabled by default upstream
 IUSE+="
 ${IUSE_VAAPI}
-+alsa aja amf +browser +browser-panels browser-qt-loop -decklink -fdk +freetype
-ftl +ipv6 jack +lua +new-mpegts-output nvafx nvenc nvvfx oss +pipewire
-+pulseaudio +python +rtmps +speexdsp -test +hevc mac-syphon qsv11 +rnnoise
--service-updates -sndio +speexdsp +v4l2 vaapi vlc +virtualcam +vst +wayland
-win-dshow +websocket +whatsnew
++alsa aja amf +browser +browser-panels browser-qt-loop -decklink fdk +freetype
+ftl imagemagick +ipv6 jack +lua mac-syphon nvafx nvenc oss +pipewire pulseaudio
++python +rnnoise +rtmps -service-updates +speexdsp -test qsv11 -sndio v4l2
+vaapi +virtualcam vlc +vst win-dshow +wayland
 
 kernel_FreeBSD
 kernel_OpenBSD
 "
 REQUIRED_USE+="
-	kernel_Winnt? (
-		kernel_Darwin? (
-			!virtualcam
-		)
-	)
 	lua? ( ${LUA_REQUIRED_USE} )
 	python? ( ${PYTHON_REQUIRED_USE} )
 	vaapi? (
@@ -79,6 +68,7 @@ REQUIRED_USE+="
 	)
 	!kernel_Darwin? (
 		!mac-syphon
+		!virtualcam
 		!kernel_linux? (
 			!kernel_FreeBSD? (
 				!jack
@@ -100,16 +90,8 @@ REQUIRED_USE+="
 	!kernel_FreeBSD? (
 		!oss
 	)
-	kernel_FreeBSD? (
-		!vst
-	)
-	kernel_OpenBSD? (
-		!vst
-	)
 	!kernel_Winnt? (
 		!nvafx
-		!nvvfx
-		!qsv11
 		!win-dshow
 		!kernel_Darwin? (
 			!kernel_linux? (
@@ -132,38 +114,25 @@ BDEPEND+="
 	>=dev-util/cmake-3.10.2
 	>=dev-util/pkgconf-1.3.7[pkg-config(+)]
 	lua? (
-		kernel_Darwin? (
-			>=dev-lang/swig-4
-		)
-		!kernel_Darwin? (
-			>=dev-lang/swig-3.0.12
-		)
+		>=dev-lang/swig-3.0.12
 	)
 	python? (
 		${PYTHON_DEPS}
-		kernel_Darwin? (
-			>=dev-lang/swig-4
-		)
-		!kernel_Darwin? (
-			>=dev-lang/swig-3.0.12
-		)
+		>=dev-lang/swig-3.0.12
 	)
 	test? (
 		>=dev-util/cmocka-1.1.1
-		websocket? (
-			>=dev-libs/boost-1.39
-		)
 	)
 "
 
 # CI uses U 18.04
 
-# 103 is EOL.  Current version is 106.
-CEF_PV="103"
+# 95 is EOL.  Current version is 106.
+CEF_PV="95"
 # See also
-# https://github.com/obsproject/obs-studio/blob/28.0.3/.github/workflows/main.yml#L20
+# https://github.com/obsproject/obs-studio/blob/27.2.3/.github/workflows/main.yml#L20
 # https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
-# https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
+# https://bitbucket.org/chromiumembedded/cef/src/4638/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4638
 
 FFMPEG_PV="3.4.2"
 LIBVA_PV="2.1.0"
@@ -273,7 +242,7 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
         >=x11-libs/libXrandr-1.5.1
 	pipewire? (
 		dev-libs/glib:2
-		>=media-video/pipewire-0.3.33
+		>=media-video/pipewire-0.3.32
 		x11-libs/libdrm
 	)
 "
@@ -283,10 +252,6 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
 # No video_cards_nouveau x264 encode from inspection of the Mesa driver, but for decode yes.
 DEPEND_PLUGINS_OBS_FFMPEG="
 	>=sys-apps/pciutils-3.5.2
-	new-mpegts-output? (
-		net-libs/rist
-		net-libs/srt
-	)
 	nvenc? (
 		|| (
 			<media-video/ffmpeg-4[nvenc]
@@ -369,15 +334,6 @@ DEPEND_PLUGINS_VST="
 	)
 "
 
-DEPEND_PLUGINS_WEBSOCKET="
-	websocket? (
-		>=dev-qt/qtcore-5.9.5:5=
-		>=dev-qt/qtwidgets-${QT_PV}:5=
-		>=dev-qt/qtnetwork-${QT_PV}:5=
-		>=dev-qt/qtsvg-${QT_PV}:5=
-	)
-"
-
 # See
 # plugins/linux-alsa/CMakeLists.txt
 # plugins/linux-jack/CMakeLists.txt
@@ -446,6 +402,7 @@ DEPEND_LIBOBS="
 	${DEPEND_ZLIB}
 	>=sys-apps/dbus-1.12.2
 	pulseaudio? ( >=media-sound/pulseaudio-11.1 )
+	imagemagick? ( >=media-gfx/imagemagick-6.9.7.4:= )
 "
 
 # See UI/CMakeLists.txt
@@ -671,14 +628,14 @@ src_unpack() {
 		if use amf ; then
 			EGIT_SUBMODULES=( '*' )
 			EGIT_CHECKOUT_DIR="${S}/plugins/enc-amf"
-			EGIT_COMMIT="5a1dafeddb4b37ca2ba2415cf88b40bff8aee428"
+			EGIT_COMMIT="f057617ea2617b25603189a7ab72513b62c8c140"
 			git-r3_fetch
 			git-r3_checkout
 		fi
 
 		if use win-dshow ; then
 			EGIT_CHECKOUT_DIR="${S}/plugins/win-dshow/libdshowcapture"
-			EGIT_COMMIT="a93f1a34c14e91b5c540f264fb965f32caf77336"
+			EGIT_COMMIT="8e7a75f2bf50dce4c9ebccf362023ecc567cece1"
 			git-r3_fetch
 			git-r3_checkout
 		fi
@@ -697,6 +654,9 @@ src_unpack() {
 
 src_prepare() {
 	cmake_src_prepare
+	pushd "${S}/plugins/obs-browser" || die
+		eapply -p1 "${FILESDIR}/obs-studio-25.0.8-install-libcef_dll_wrapper.patch"
+	popd
 	if use ftl ; then
 		pushd "${S}/plugins/obs-outputs/ftl-sdk" || die
 			eapply -p1 "${FILESDIR}/obs-studio-27.0.0-ftl-use-system-deps.patch"
@@ -734,6 +694,18 @@ gen_rtmp_services() {
 	mv "${S}/plugins/rtmp-services/data/services.json"{.t,} || die
 }
 
+cmflag() {
+	local opt="${1}"
+	local value="${2}"
+	if [[ "${value}" == "yes" ]] ; then
+		echo "-DDISABLE_${opt}=no"
+		echo "-DENABLE_${opt}=yes"
+	else
+		echo "-DDISABLE_${opt}=yes"
+		echo "-DENABLE_${opt}=no"
+	fi
+}
+
 src_configure() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
@@ -741,40 +713,46 @@ einfo
 einfo "CC=${CC}"
 einfo "CXX=${CXX}"
 einfo
+	# For obs-browser
+	# obs-browser-source.cpp:25:10: fatal error: QApplication: No such file or directory
+	# browser-client.cpp:27:10: fatal error: QThread: No such file or directory
+	if use browser ; then
+		append-cppflags -I/usr/include/qt5
+		append-cppflags -I/usr/include/qt5/QtWidgets
+		append-cppflags -I/usr/include/qt5/QtCore
+	fi
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
+		$(cmflag AJA $(usex aja))
+		$(cmflag ALSA $(usex alsa))
+		$(cmflag DECKLINK $(usex decklink))
+		$(cmflag FREETYPE $(usex freetype))
+		$(cmflag JACK $(usex jack))
+		$(cmflag LIBFDK $(usex fdk))
+		$(cmflag OSS $(usex oss))
+		$(cmflag PULSEAUDIO $(usex pulseaudio))
+		$(cmflag SNDIO $(usex sndio))
+		$(cmflag SPEEXDSP $(usex speexdsp))
+		$(cmflag V4L2 $(usex v4l2))
+		$(cmflag VLC $(usex vlc))
+		-DBROWSER_PANEL_SUPPORT_ENABLED=$(usex browser-panels)
+		-DBUILD_BROWSER=$(usex browser)
 		-DBUILD_TESTS=$(usex test)
-		-DENABLE_AJA=$(usex aja)
-		-DENABLE_ALSA=$(usex alsa)
-		-DENABLE_BROWSER=$(usex browser)
-		-DENABLE_BROWSER_PANELS=$(usex browser-panels)
-		-DENABLE_BROWSER_QT_LOOP=$(usex browser-qt-loop)
-		-DENABLE_DECKLINK=$(usex decklink)
-		-DENABLE_FREETYPE=$(usex freetype)
-		-DENABLE_HEVC=$(usex hevc)
+		-DBUILD_VIRTUALCAM=OFF
+		-DBUILD_VST=$(usex vst)
+		-DCHECK_FOR_SERVICE_UPDATES=$(usex service-updates)
+		-DDISABLE_PLUGINS=OFF
 		-DENABLE_IPV6=$(usex ipv6)
-		-DENABLE_JACK=$(usex jack)
-		-DENABLE_LIBFDK=$(usex fdk)
-		-DENABLE_NEW_MPEGTS_OUTPUT=$(usex new-mpegts-output)
-		-DENABLE_OSS=$(usex oss)
 		-DENABLE_PIPEWIRE=$(usex pipewire)
-		-DENABLE_PLUGINS=ON
-		-DENABLE_PULSEAUDIO=$(usex pulseaudio)
-		-DENABLE_RNNOISE=$(usex rnnoise)
-		-DENABLE_RTMPS=$(usex rtmps)
-		-DENABLE_SNDIO=$(usex sndio)
-		-DENABLE_SERVICE_UPDATES=$(usex service-updates)
-		-DENABLE_SPEEXDSP=$(usex speexdsp)
-		-DENABLE_UPDATER=OFF
+		-DENABLE_QSV11=$(usex qsv11)
 		-DENABLE_V4L2=$(usex v4l2)
-		-DENABLE_VLC=$(usex vlc)
-		-DENABLE_VST=$(usex vst)
 		-DENABLE_WAYLAND=$(usex wayland)
-		-DENABLE_WEBSOCKET=$(usex websocket)
-		-DENABLE_WHATSNEW=$(usex whatsnew)
+		-DLIBOBS_PREFER_IMAGEMAGICK=$(usex imagemagick)
 		-DOBS_MULTIARCH_SUFFIX=${libdir#lib}
 		-DUNIX_STRUCTURE=1
+		-DUSE_QT_LOOP=$(usex browser-qt-loop)
+		-DWITH_RTMPS=$(usex rtmps)
 	)
 
 	local clang_slot=$(clang-major-version)
@@ -784,7 +762,7 @@ einfo
 		)
 	fi
 
-	if use kernel_Winnt || use kernel_Darwin ; then
+	if use kernel_Darwin ; then
 		mycmakeargs+=(
 			-DBUILD_VIRTUALCAM=$(usex virtualcam)
 		)
@@ -792,9 +770,8 @@ einfo
 
 	if use kernel_Winnt ; then
 		mycmakeargs+=(
+			$(cmflag NVAFX $(usex nvafx))
 			-DBUILD_AMD_ENCODER=$(usex amf)
-			-DENABLE_NVAFX=$(usex nvafx)
-			-DENABLE_NVVFX=$(usex nvvfx)
 			-DENABLE_QSV11=$(usex qsv11)
 		)
 	fi
@@ -815,8 +792,8 @@ einfo
 
 	if use lua || use python; then
 		mycmakeargs+=(
-			-DENABLE_SCRIPTING_LUA=$(usex lua)
-			-DENABLE_SCRIPTING_PYTHON=$(usex python)
+			-DDISABLE_LUA=$(usex !lua)
+			-DDISABLE_PYTHON=$(usex !python)
 			-DENABLE_SCRIPTING=yes
 		)
 	else
@@ -845,13 +822,6 @@ src_install() {
 	# install them here
 	insinto /usr/include/obs/UI/obs-frontend-api
 	doins UI/obs-frontend-api/obs-frontend-api.h
-
-	if use browser ; then
-		exeinto "/usr/lib64/obs-plugins"
-		local cef_suffix=""
-		has_version 'net-libs/cef-bin' && cef_suffix="-bin"
-		doexe "${EROOT}/opt/cef${cef_suffix}/libcef_dll_wrapper/libcef_dll_wrapper.so"
-	fi
 }
 
 pkg_postinst() {
