@@ -787,9 +787,9 @@ einfo
 	# obs-browser-source.cpp:25:10: fatal error: QApplication: No such file or directory
 	# browser-client.cpp:27:10: fatal error: QThread: No such file or directory
 	if use browser ; then
-		append-cppflags -I/usr/include/qt5
-		append-cppflags -I/usr/include/qt5/QtWidgets
-		append-cppflags -I/usr/include/qt5/QtCore
+		append-cppflags -I"${ESYSROOT}"/usr/include/qt5
+		append-cppflags -I"${ESYSROOT}"/usr/include/qt5/QtWidgets
+		append-cppflags -I"${ESYSROOT}"/usr/include/qt5/QtCore
 	fi
 
 	local libdir=$(get_libdir)
