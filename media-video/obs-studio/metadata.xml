@@ -62,12 +62,13 @@
     listed on this list may not be vetted and may contain adult content
     may present a security risk.  By default for this ebuild release, all
     services are not listed until it is added to the whitelist.  You must
-    provide a semicolon delimited list of names in OBS_STUDIO_SERVICES_WHITELIST
-    in make.conf or as a per-package env.
+    provide a semicolon delimited list of names in
+    OBS_STUDIO_STREAMING_SERVICES_WHITELIST in make.conf or as a per-package
+    env.
 
     Example:
 
-      OBS_STUDIO_SERVICES_WHITELIST="Service A;Service B;Service - RTMP;...;Service N"
+      OBS_STUDIO_STREAMING_SERVICES_WHITELIST="Service A;Service B;Service - RTMP;...;Service N"
 
 
     Listing available streaming services:

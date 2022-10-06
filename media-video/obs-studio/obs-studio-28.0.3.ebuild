@@ -696,7 +696,7 @@ einfo "or"
 einfo
 einfo "  \`epkginfo -x ${CATEGORY}/${PN}::oiledmachine-overlay\`"
 einfo
-einfo "to setup RTMP service whitelists."
+einfo "to setup streaming service whitelists."
 einfo
 }
 
@@ -751,8 +751,8 @@ src_prepare() {
 }
 
 gen_rtmp_services() {
-	if [[ -z "${OBS_STUDIO_SERVICES_WHITELIST}" ]] ; then
-		einfo "Removing RTMP services"
+	if [[ -z "${OBS_STUDIO_STREAMING_SERVICES_WHITELIST}" ]] ; then
+		einfo "Removing streaming services"
 		jq '{"$schema","format_version","services": [.services[] | select(null)]}' \
 			"${S}/plugins/rtmp-services/data/services.json" \
 			> "${S}/plugins/rtmp-services/data/services.json.t" || die
@@ -763,8 +763,8 @@ gen_rtmp_services() {
 	export IFS=";"
 	local services=""
 	local s
-	for s in ${OBS_STUDIO_SERVICES_WHITELIST} ; do
-		einfo "Added ${s} RTMP service"
+	for s in ${OBS_STUDIO_STREAMING_SERVICES_WHITELIST} ; do
+		einfo "Added ${s} streaming service"
 		services+=" or .name==\"${s}\""
 	done
 	export IFS=$' \t\n'
