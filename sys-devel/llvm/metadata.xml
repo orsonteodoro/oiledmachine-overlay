@@ -31,18 +31,27 @@
     environmental variable must be set by adding the following once a
     successful build of LLVM has been discovered:
 
-Contents of /etc/portage/env/llvm-14-commit.conf:
+Contents of /etc/portage/env/llvm-16-commit.conf:
 EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="ADD_40_DIGIT_COMMIT_HERE"
 
 Contents of /etc/portage/package.env:
-sys-devel/llvm:14 llvm-14-commit.conf
-sys-devel/clang:14 llvm-14-commit.conf
-=sys-libs/compiler-rt-14* llvm-14-commit.conf
-=sys-libs/compiler-rt-sanitizers-14* llvm-14-commit.conf
-=sys-libs/libcxx-14* llvm-14-commit.conf
-=sys-libs/libcxxabi-14* llvm-14-commit.conf
-=sys-libs/libomp-14* llvm-14-commit.conf
-=sys-devel/lld-14* llvm-14-commit.conf
+sys-devel/llvm:16 llvm-16-commit.conf
+sys-devel/clang:16 llvm-16-commit.conf
+=sys-libs/compiler-rt-16* llvm-16-commit.conf
+=sys-libs/compiler-rt-sanitizers-16* llvm-16-commit.conf
+=sys-libs/libcxx-16* llvm-16-commit.conf
+=sys-libs/libcxxabi-16* llvm-16-commit.conf
+=sys-libs/libomp-16* llvm-16-commit.conf
+=sys-devel/lld-16* llvm-16-commit.conf
+
+    Then, emerge -1vuDN all of the above ebuilds.
+
+    Replace 16 with the particular slots of the live ebuilds that you are
+    interested.  When you need to update, just add and remove a # in front
+    of EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT to switch on and off when
+    updating the 40 digit hash code again.  For the best success only pick
+    the commits with a green checkmark in the commit history:
+    https://github.com/llvm/llvm-project/commit/ADD_40_DIGIT_COMMIT_HERE
 
 
     PGO notes:
@@ -67,7 +76,7 @@ sys-devel/clang:14 llvm-14-commit.conf
 
     BOLT (Experimental / WIP)
 
-    BOLT support is only offered is only offered in LLVM 14 or newer.  In its
+    BOLT support is only offered is only offered in LLVM 15 or newer.  In its
     current form it requires a recent CPU with LBR support.
 
     BOLT optimized builds steps:
@@ -89,7 +98,7 @@ sys-devel/clang:14 llvm-14-commit.conf
 #!/bin/bash
 OVERLAY_DIR="/usr/local/oiledmachine-overlay"
 PORTAGE_DIR="/usr/portage"
-SLOT=14
+SLOT=15
 
 trainer() {
 	export CC="clang-${SLOT}"
@@ -178,7 +187,7 @@ main
     </flag>
     <flag name="ebolt">
       Perform 1 step BOLT.  You can re-emerge for the last step or use
-      `emerge --config sys-devel/llvm-14`, replacing 14 with the version
+      `emerge --config sys-devel/llvm-15`, replacing 15 with the version
       you want to complete the final step.
     </flag>
     <flag name="epgo">

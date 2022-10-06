@@ -2,30 +2,37 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- ebuild fork only on the oiledmachine-overlay -->
+    <!-- Ebuild fork only on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <maintainer type="person">
-    <!-- ebuild originators -->
+    <!-- Ebuild originators -->
     <email>aballier@gentoo.org</email>
     <name>Alexis Ballier</name>
   </maintainer>
   <maintainer type="project">
-    <!-- ebuild originators -->
+    <!-- Ebuild originators -->
     <email>llvm@gentoo.org</email>
     <name>LLVM Project</name>
   </maintainer>
   <use>
-    <flag name="hardened">Build with Full RELRO, noexecstack, SSP.
-      For the non-hardened profile, set USE_HARDENED_PROFILE_DEFAULTS=1 in
-      make.conf to use the hardened profile settings or fallback to the browser
-      defaults.  See ebuild for details.</flag>
-    <flag name="libcxxabi">Build on top of <pkg>sys-libs/libcxxabi</pkg> instead
-      of gcc's libsupc++ (avoids depending on gcc).</flag>
-    <flag name="libunwind">Use libunwind instead of libgcc_s for stack
-      unwinding, thus avoiding dependence on gcc.</flag>
-    <flag name="rN">FOR INTERNAL USE ONLY.  Preserve paths for faster CCACHE
-      rebuilds</flag>
+    <flag name="hardened">
+      Build with Full RELRO, noexecstack, SSP.  For the non-hardened profile,
+      set USE_HARDENED_PROFILE_DEFAULTS=1 in make.conf to use the hardened
+      profile settings or fallback to the browser defaults.  See ebuild for
+      details.
+    </flag>
+    <flag name="libcxxabi">
+      Build on top of <pkg>sys-libs/libcxxabi</pkg> instead of gcc's libsupc++
+      (This avoids a dependency on gcc).
+    </flag>
+    <flag name="libunwind">
+      Use libunwind instead of libgcc_s for stack unwinding, thus avoiding
+      a dependency on gcc.
+    </flag>
+    <flag name="rN">
+      FOR INTERNAL USE ONLY.  Preserve paths for faster CCACHE rebuilds
+    </flag>
   </use>
 </pkgmetadata>
