@@ -1218,8 +1218,8 @@ _src_configure() {
 	fi
 
 einfo
-einfo "CC:\t\t${CC}"
-einfo "CXX:\t\t${CXX}"
+einfo "CC:\t\t\t${CC}"
+einfo "CXX:\t\t\t${CXX}"
 einfo "CFLAGS:\t\t${CFLAGS}"
 einfo "CXXFLAGS:\t\t${CXXFLAGS}"
 einfo "LDFLAGS:\t\t${LDFLAGS}"
