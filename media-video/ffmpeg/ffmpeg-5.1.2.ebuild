@@ -65,7 +65,7 @@ LICENSE="
 " # This package is actually LGPL-2.1+, but certain dependencies are LGPL-2.1
 # The extra licenses are for static-libs.
 if [ "${PV#9999}" = "${PV}" ] ; then
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-macos"
 fi
 
 # Options to use as use_enable in the foo[:bar] form.
@@ -84,14 +84,15 @@ FFMPEG_FLAG_MAP=(
 		libv4l:libv4l2 pulseaudio:libpulse libdrm jack:libjack
 		# decoders
 		amr:libopencore-amrwb amr:libopencore-amrnb codec2:libcodec2 +dav1d:libdav1d fdk:libfdk-aac
-		jpeg2k:libopenjpeg bluray:libbluray gme:libgme gsm:libgsm
+		jpeg2k:libopenjpeg jpegxl:libjxl bluray:libbluray gme:libgme gsm:libgsm
 		libaribb24 mmal modplug:libmodplug opus:libopus libilbc librtmp ssh:libssh
 		speex:libspeex srt:libsrt svg:librsvg nvenc:ffnvcodec
 		vorbis:libvorbis vpx:libvpx zvbi:libzvbi
 		# libavfilter options
 		appkit
 		bs2b:libbs2b chromaprint cuda:cuda-llvm flite:libflite frei0r vmaf:libvmaf
-		fribidi:libfribidi fontconfig ladspa libass libtesseract lv2 truetype:libfreetype vidstab:libvidstab
+		fribidi:libfribidi fontconfig ladspa lcms:lcms2 libass libplacebo libtesseract lv2
+		truetype:libfreetype vidstab:libvidstab
 		rubberband:librubberband zeromq:libzmq zimg:libzimg
 		# libswresample options
 		libsoxr
@@ -407,12 +408,15 @@ RDEPEND+="
 	)
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
 	jpeg2k? ( >=media-libs/openjpeg-2:2[${MULTILIB_USEDEP}] )
+	jpegxl? ( >=media-libs/libjxl-0.7.0[$MULTILIB_USEDEP] )
+	lcms? ( >=media-libs/lcms-2.13:2[$MULTILIB_USEDEP] )
 	libaom? ( >=media-libs/libaom-1.0.0-r1:=[${MULTILIB_USEDEP}] )
 	libaribb24? ( >=media-libs/aribb24-1.0.3-r2[${MULTILIB_USEDEP}] )
 	libass? ( >=media-libs/libass-0.11.0:=[${MULTILIB_USEDEP}] )
 	libcaca? ( >=media-libs/libcaca-0.99_beta18-r1[${MULTILIB_USEDEP}] )
 	libdrm? ( x11-libs/libdrm[${MULTILIB_USEDEP}] )
 	libilbc? ( >=media-libs/libilbc-2[${MULTILIB_USEDEP}] )
+	libplacebo? ( >=media-libs/libplacebo-4.192.0[$MULTILIB_USEDEP] )
 	librtmp? ( >=media-video/rtmpdump-2.4_p20131018[${MULTILIB_USEDEP}] )
 	libsoxr? ( >=media-libs/soxr-0.1.0[${MULTILIB_USEDEP}] )
 	libtesseract? ( >=app-text/tesseract-4.1.0-r1[${MULTILIB_USEDEP}] )
@@ -439,12 +443,12 @@ RDEPEND+="
 		x11-libs/cairo[${MULTILIB_USEDEP}]
 	)
 	nvenc? ( >=media-libs/nv-codec-headers-9.1.23.1 )
-	svt-av1? ( >=media-libs/svt-av1-0.8.4[${MULTILIB_USEDEP}] )
+	svt-av1? ( >=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}] )
 	truetype? ( >=media-libs/freetype-2.5.0.1:2[${MULTILIB_USEDEP}] )
 	vaapi? ( >=x11-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP}] )
 	vdpau? ( >=x11-libs/libvdpau-0.7[${MULTILIB_USEDEP}] )
 	vidstab? ( >=media-libs/vidstab-1.1.0[${MULTILIB_USEDEP}] )
-	vmaf? ( media-libs/libvmaf[${MULTILIB_USEDEP}] )
+	vmaf? ( >=media-libs/libvmaf-2.0.0[${MULTILIB_USEDEP}] )
 	vorbis? (
 		>=media-libs/libvorbis-1.3.3-r1[${MULTILIB_USEDEP}]
 		>=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}]
@@ -457,6 +461,7 @@ RDEPEND+="
 		>=x11-libs/libXv-1.0.10[${MULTILIB_USEDEP}]
 		>=x11-libs/libxcb-1.4:=[${MULTILIB_USEDEP}]
 	)
+	postproc? ( !media-libs/libpostproc )
 	zeromq? ( >=net-libs/zeromq-4.1.6 )
 	zimg? ( >=media-libs/zimg-2.7.4:=[${MULTILIB_USEDEP}] )
 	zlib? ( >=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}] )
@@ -475,6 +480,7 @@ RDEPEND+="
 "
 
 DEPEND+="
+	amf? ( media-libs/amf-headers )
 	ladspa? ( >=media-libs/ladspa-sdk-1.13-r2[${MULTILIB_USEDEP}] )
 	v4l? ( sys-kernel/linux-headers )
 "
@@ -483,7 +489,6 @@ DEPEND+="
 BDEPEND+="
 	>=sys-devel/make-3.81
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	amf? ( media-libs/amf-headers )
 	cpu_flags_x86_mmx? ( || ( >=dev-lang/nasm-2.13 >=dev-lang/yasm-1.3 ) )
 	cuda? ( >=sys-devel/clang-7[llvm_targets_NVPTX] )
 	doc? ( sys-apps/texinfo )
@@ -564,21 +569,8 @@ RESTRICT="
 S="${WORKDIR}/${P/_/-}"
 S_orig="${WORKDIR}/${P/_/-}"
 
-SRC_URI+="
-https://github.com/FFmpeg/FFmpeg/commit/e5163b1d34381a3319214a902ef1df923dd2eeba.patch
-	-> ${PN}-e5163b1.patch
-https://github.com/FFmpeg/FFmpeg/commit/c6fdbe26ef30fff817581e5ed6e078d96111248a.patch
-	-> ${PN}-c6fdbe2.patch
-"
-
-# c6fdbe2 - configure: fix SDL2 version check for pkg_config fallback
-# e5163b1 - configure: extend SDL check to accept all 2.x versions
-
 PATCHES=(
 	"${FILESDIR}"/chromium-r1.patch
-	"${FILESDIR}"/${PN}-5.0-backport-ranlib-build-fix.patch
-	"${DISTDIR}/${PN}-e5163b1.patch"
-	"${DISTDIR}/${PN}-c6fdbe2.patch"
 )
 
 MULTILIB_WRAPPED_HEADERS=(
@@ -886,6 +878,17 @@ eerror "${CATEGORY}/${PN} no-pid-sandbox.conf no-ipc-sandbox.conf"
 eerror
 		die
 	fi
+	# ffmpeg[chromaprint] depends on chromaprint, and chromaprint[tools] depends on ffmpeg.
+	# May cause breakage while updating, #862996, #625210, #833821.
+	if has_version media-libs/chromaprint[tools] && use chromaprint; then
+		ewarn "You have media-libs/chromaprint installed with 'tools' USE flag, which "
+		ewarn "links to ffmpeg, and you have enabled 'chromaprint' USE flag for ffmpeg, "
+		ewarn "which links to chromaprint. This may cause issues while rebuilding ffmpeg."
+		ewarn ""
+		ewarn "If your build fails to 'ERROR: chromaprint not found', rebuild chromaprint "
+		ewarn "without the 'tools' use flag first, then rebuild ffmpeg, and then finally enable "
+		ewarn "'tools' USE flag for chromaprint. See #862996."
+	fi
 }
 
 # The order does matter with PGO.
@@ -898,8 +901,6 @@ src_prepare() {
 	if [[ "${PV%_p*}" != "${PV}" ]] ; then # Snapshot
 		export revision=git-N-${FFMPEG_REVISION}
 	fi
-
-	eapply "${FILESDIR}/vmaf-models-default-path.patch"
 
 	default
 
@@ -1074,6 +1075,7 @@ _src_configure() {
 
 	original_licensing_enablement() {
 		use openssl && myconf+=( --enable-nonfree )
+		has_version dev-libs/openssl:0/3 && myconf+=( --enable-version3 )
 		use samba && myconf+=( --enable-version3 )
 
 		# Encoders
@@ -1215,11 +1217,13 @@ _src_configure() {
 		static_args=( --disable-static --enable-shared )
 	fi
 
-	echo "CC=${CC}"
-	echo "CXX=${CXX}"
-	echo "CFLAGS=${CFLAGS}"
-	echo "CXXFLAGS=${CXXFLAGS}"
-	echo "LDFLAGS=${LDFLAGS}"
+einfo
+einfo "CC:\t\t${CC}"
+einfo "CXX:\t\t${CXX}"
+einfo "CFLAGS:\t\t${CFLAGS}"
+einfo "CXXFLAGS:\t\t${CXXFLAGS}"
+einfo "LDFLAGS:\t\t${LDFLAGS}"
+einfo
 
 	if use pgo ; then
 		extra_libs+=( --extra-libs="-lgcov" )

@@ -65,7 +65,7 @@ LICENSE="
 " # This package is actually LGPL-2.1+, but certain dependencies are LGPL-2.1
 # The extra licenses are for static-libs.
 if [ "${PV#9999}" = "${PV}" ] ; then
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux"
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux ~x64-macos"
 fi
 
 # Options to use as use_enable in the foo[:bar] form.
@@ -458,6 +458,7 @@ RDEPEND+="
 		>=x11-libs/libXv-1.0.10[${MULTILIB_USEDEP}]
 		>=x11-libs/libxcb-1.4:=[${MULTILIB_USEDEP}]
 	)
+	postproc? ( !media-libs/libpostproc )
 	zeromq? ( >=net-libs/zeromq-4.1.6 )
 	zimg? ( >=media-libs/zimg-2.7.4:=[${MULTILIB_USEDEP}] )
 	zlib? ( >=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}] )
@@ -476,6 +477,7 @@ RDEPEND+="
 "
 
 DEPEND+="
+	amf? ( media-libs/amf-headers )
 	ladspa? ( >=media-libs/ladspa-sdk-1.13-r2[${MULTILIB_USEDEP}] )
 	v4l? ( sys-kernel/linux-headers )
 "
@@ -484,7 +486,6 @@ DEPEND+="
 BDEPEND+="
 	>=sys-devel/make-3.81
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	amf? ( media-libs/amf-headers )
 	cpu_flags_x86_mmx? ( || ( >=dev-lang/nasm-2.13 >=dev-lang/yasm-1.3 ) )
 	cuda? ( >=sys-devel/clang-7[llvm_targets_NVPTX] )
 	doc? ( sys-apps/texinfo )
@@ -1215,11 +1216,13 @@ _src_configure() {
 		static_args=( --disable-static --enable-shared )
 	fi
 
-	echo "CC=${CC}"
-	echo "CXX=${CXX}"
-	echo "CFLAGS=${CFLAGS}"
-	echo "CXXFLAGS=${CXXFLAGS}"
-	echo "LDFLAGS=${LDFLAGS}"
+einfo
+einfo "CC:\t\t${CC}"
+einfo "CXX:\t\t${CXX}"
+einfo "CFLAGS:\t\t${CFLAGS}"
+einfo "CXXFLAGS:\t\t${CXXFLAGS}"
+einfo "LDFLAGS:\t\t${LDFLAGS}"
+einfo
 
 	if use pgo ; then
 		extra_libs+=( --extra-libs="-lgcov" )
