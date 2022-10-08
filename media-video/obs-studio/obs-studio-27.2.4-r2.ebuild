@@ -44,6 +44,10 @@ LICENSE="
 		BSD
 		BSD-2
 	)
+	qsv11? (
+		GPL-2
+		BSD
+	)
 	vst? (
 		GPL-2+
 	)
@@ -67,15 +71,19 @@ video_cards_radeonsi
 # qsv11 is enabled by default upstream
 IUSE+="
 ${IUSE_VAAPI}
-+alsa aja amf +browser +browser-panels browser-qt-loop -decklink fdk +freetype
-ftl imagemagick +ipv6 jack +lua mac-syphon nvafx nvenc oss +pipewire pulseaudio
-+python +rnnoise +rtmps -service-updates +speexdsp -test qsv11 -sndio v4l2
-vaapi +virtualcam vlc +vst win-dshow +wayland
++alsa aja amf +browser +browser-panels browser-qt-loop
+-decklink fdk +freetype ftl imagemagick libaom +ipv6 jack +lua mac-syphon nvafx
+nvenc oss +pipewire pulseaudio +python qsv11 +rnnoise +rtmps -service-updates
+-sndio +speexdsp svt-av1 -test v4l2 vaapi +virtualcam vlc +vst +wayland
+win-dshow -win-mf x264
 
 kernel_FreeBSD
 kernel_OpenBSD
 "
 REQUIRED_USE+="
+	ftl? (
+		|| ( amf nvenc vaapi win-mf x264 )
+	)
 	lua? ( ${LUA_REQUIRED_USE} )
 	python? ( ${PYTHON_REQUIRED_USE} )
 	vaapi? (
@@ -113,8 +121,8 @@ REQUIRED_USE+="
 			!alsa
 			!pulseaudio
 			!v4l2
+			!vaapi
 		)
-		!vaapi
 	)
 	!kernel_FreeBSD? (
 		!oss
@@ -122,6 +130,7 @@ REQUIRED_USE+="
 	!kernel_Winnt? (
 		!nvafx
 		!win-dshow
+		!win-mf
 		!kernel_Darwin? (
 			!kernel_linux? (
 				!decklink
@@ -170,7 +179,7 @@ MESA_PV="18"
 QT_PV="5.15.2"
 
 DEPEND_FFMPEG="
-	>=media-video/ffmpeg-${FFMPEG_PV}:=
+	>=media-video/ffmpeg-${FFMPEG_PV}:=[libaom?,opus,svt-av1?]
 "
 
 DEPEND_LIBX11="
@@ -330,9 +339,6 @@ DEPEND_PLUGINS_OBS_OUTPUTS="
 	ftl? (
 		${DEPEND_CURL}
 		>=dev-libs/jansson-2.8
-		media-video/ffmpeg[opus]
-		!vaapi? ( ${DEPEND_LIBX264} )
-		 vaapi? ( media-video/ffmpeg[x264] )
 	)
 	rtmps? (
 		${DEPEND_ZLIB}
@@ -780,6 +786,7 @@ einfo
 		-DENABLE_QSV11=$(usex qsv11)
 		-DENABLE_V4L2=$(usex v4l2)
 		-DENABLE_WAYLAND=$(usex wayland)
+		-DENABLE_WINMF=$(usex win-mf)
 		-DLIBOBS_PREFER_IMAGEMAGICK=$(usex imagemagick)
 		-DOBS_MULTIARCH_SUFFIX=${libdir#lib}
 		-DUNIX_STRUCTURE=1

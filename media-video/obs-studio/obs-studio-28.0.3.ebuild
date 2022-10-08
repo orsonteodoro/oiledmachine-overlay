@@ -44,6 +44,10 @@ LICENSE="
 		BSD
 		BSD-2
 	)
+	qsv11? (
+		GPL-2
+		BSD
+	)
 	vst? (
 		GPL-2+
 	)
@@ -71,6 +75,7 @@ video_cards_radeonsi
 "
 # aja is enabled by default upstream
 # amf is enabled by default upstream
+# coreaudio-encoder is enabled by default upstream
 # nvafx is enabled by default upstream
 # nvvfx is enabled by default upstream
 # oss is enabled by default upstream
@@ -78,22 +83,31 @@ video_cards_radeonsi
 # vlc is enabled by default upstream
 IUSE+="
 ${IUSE_VAAPI}
-+alsa aja amf +browser +browser-panels browser-qt-loop -decklink -fdk +freetype
-ftl +ipv6 jack +lua +new-mpegts-output nvafx nvenc nvvfx oss +pipewire
-+pulseaudio +python +rtmps +speexdsp -test +hevc mac-syphon qsv11 +rnnoise
--service-updates -sndio +speexdsp +v4l2 vaapi vlc +virtualcam +vst +wayland
-win-dshow +websocket +whatsnew
++alsa aja amf +browser +browser-panels browser-qt-loop coreaudio-encoder
+-decklink -fdk +freetype ftl +ipv6 jack libaom +lua +new-mpegts-output nvafx
+nvenc nvvfx oss +pipewire +pulseaudio +python +rtmps +speexdsp -test +hevc
+mac-syphon qsv11 +rnnoise -service-updates -sndio +speexdsp svt-av1 +v4l2 vaapi
+vlc +virtualcam +vst +wayland win-dshow +websocket -win-mf +whatsnew x264
 
 kernel_FreeBSD
 kernel_OpenBSD
 "
 REQUIRED_USE+="
+	ftl? (
+		|| ( amf nvenc vaapi win-mf x264 )
+	)
 	kernel_Winnt? (
 		kernel_Darwin? (
 			!virtualcam
 		)
 	)
 	lua? ( ${LUA_REQUIRED_USE} )
+	hevc? (
+		|| (
+			amf
+			nvenc
+		)
+	)
 	python? ( ${PYTHON_REQUIRED_USE} )
 	vaapi? (
 		|| (
@@ -119,6 +133,9 @@ REQUIRED_USE+="
 				!jack
 			)
 		)
+		!kernel_Winnt? (
+			!coreaudio-encoder
+		)
 	)
 	!kernel_linux? (
 		!kernel_FreeBSD? (
@@ -129,8 +146,8 @@ REQUIRED_USE+="
 			!alsa
 			!pulseaudio
 			!v4l2
+			!vaapi
 		)
-		!vaapi
 	)
 	!kernel_FreeBSD? (
 		!oss
@@ -146,6 +163,7 @@ REQUIRED_USE+="
 		!nvvfx
 		!qsv11
 		!win-dshow
+		!win-mf
 		!kernel_Darwin? (
 			!kernel_linux? (
 				!decklink
@@ -207,7 +225,7 @@ MESA_PV="18"
 QT_PV="5.15.2"
 
 DEPEND_FFMPEG="
-	>=media-video/ffmpeg-${FFMPEG_PV}:=
+	>=media-video/ffmpeg-${FFMPEG_PV}:=[libaom?,opus,svt-av1?]
 "
 
 DEPEND_LIBX11="
@@ -371,9 +389,6 @@ DEPEND_PLUGINS_OBS_OUTPUTS="
 	ftl? (
 		${DEPEND_CURL}
 		>=dev-libs/jansson-2.8
-		media-video/ffmpeg[opus]
-		!vaapi? ( ${DEPEND_LIBX264} )
-		 vaapi? ( media-video/ffmpeg[x264] )
 	)
 	rtmps? (
 		${DEPEND_ZLIB}
@@ -801,6 +816,7 @@ einfo
 		-DENABLE_BROWSER=$(usex browser)
 		-DENABLE_BROWSER_PANELS=$(usex browser-panels)
 		-DENABLE_BROWSER_QT_LOOP=$(usex browser-qt-loop)
+		-DENABLE_COREAUDIO_ENCODER=$(usex coreaudio-encoder)
 		-DENABLE_DECKLINK=$(usex decklink)
 		-DENABLE_FREETYPE=$(usex freetype)
 		-DENABLE_HEVC=$(usex hevc)
@@ -823,6 +839,7 @@ einfo
 		-DENABLE_VST=$(usex vst)
 		-DENABLE_WAYLAND=$(usex wayland)
 		-DENABLE_WEBSOCKET=$(usex websocket)
+		-DENABLE_WINMF=$(usex win-mf)
 		-DENABLE_WHATSNEW=$(usex whatsnew)
 		-DOBS_MULTIARCH_SUFFIX=${libdir#lib}
 		-DUNIX_STRUCTURE=1

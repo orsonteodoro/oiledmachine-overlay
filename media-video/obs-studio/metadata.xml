@@ -24,16 +24,16 @@
     https://nouveau.freedesktop.org/wiki/VideoAcceleration/
 
 
-    Environment Variables:
+    Environment Variables
 
-    RESTREAM_CLIENTID
-    RESTREAM_HASH
-    TWITCH_CLIENTID
-    TWITCH_HASH
-    YOUTUBE_CLIENTID
-    YOUTUBE_CLIENTID_HASH
-    YOUTUBE_SECRET
-    YOUTUBE_SECRET_HASH
+      RESTREAM_CLIENTID
+      RESTREAM_HASH
+      TWITCH_CLIENTID
+      TWITCH_HASH
+      YOUTUBE_CLIENTID
+      YOUTUBE_CLIENTID_HASH
+      YOUTUBE_SECRET
+      YOUTUBE_SECRET_HASH
 
     If all of the above are not defined, then streaming integration is disabled
     for that service.
@@ -66,7 +66,7 @@
     OBS_STUDIO_STREAMING_SERVICES_WHITELIST in make.conf or as a per-package
     env.
 
-    Example:
+    Example
 
       OBS_STUDIO_STREAMING_SERVICES_WHITELIST="Service A;Service B;Service - RTMP;...;Service N"
 
@@ -78,14 +78,32 @@
       https://github.com/obsproject/obs-studio/blob/master/plugins/rtmp-services/data/services.json
 
 
-    Browser plugin:
+    Browser plugin
 
     The lag time for fixing the the browser plugin could be 4+ days.  Expect
     1+ day(s) lag time for a new cef-bin to match the upstream latest stable
     build.  Sometimes API changes can be fixed on the same day the cef-bin
     ebuild has been updated.  It is important to update the cef-bin whenever
     the browser is updated for security reasons.
+
+
+    Performance considerations
+
+    CPU based encoders may not be good for live streaming.  Use a GPU based
+    video encoder, capture card, or camera with the current encoder standard(s)
+    built-in instead.  CPU based encoding is only recommended for VOD (Video On
+    Demand).  It may be possible to use CPU based encoder for live streaming but
+    with a more recent CPU with many cores.
+
+
+    See also
+
+      https://obsproject.com/wiki/System-Requirements
+
   </longdescription>
+  <upstream>
+    <doc lang="en">https://obsproject.com/wiki/Home</doc>
+  </upstream>
   <use>
     <flag name="aja">
       Add support for AJA capture hardware.
@@ -115,6 +133,9 @@
       Enable support for streaming with the FTL protocol for a low latency
       streaming.  (Deprecated)
     </flag>
+    <flag name="hevc">
+      Enable HEVC (aka H.265) encoders.
+    </flag>
     <flag name="imagemagick">
       Use ImageMagick for image loading instead of FFmpeg.
     </flag>
@@ -122,7 +143,8 @@
       Enable jack support.
     </flag>
     <flag name="libaom">
-      Add support for AV1 video encoding.
+      Add support for CPU based AV1 video encoding via
+      <pkg>media-libs/libaom</pkg>.
     </flag>
     <flag name="lua">
       Build support for scripting via Luajit.
@@ -169,6 +191,10 @@
       changes or may list unwanted adult services (also in a multiuser
       environment).
     </flag>
+    <flag name="svt-av1">
+      Add support for CPU based AV1 video encoding via
+      <pkg>media-libs/svt-av1</pkg>.
+    </flag>
     <flag name="qsv11">
       Enable use of the QSV11 hardware encoder.
     </flag>
@@ -182,7 +208,7 @@
       Build v4l2 support.
     </flag>
     <flag name="vaapi">
-      Enable hardware H264 encoding via VA-API.
+      Enable H.264 GPU based encoding via VA-API.
     </flag>
     <flag name="vlc">
       Build support for using <pkg>media-video/vlc</pkg> as a media source.
@@ -194,7 +220,7 @@
       Enable building websocket plugin.
     </flag>
     <flag name="video_cards_amdgpu">
-      Prefer the Gallium Mesa VA-API driver
+      Pulls or checks for a VA-API driver
     </flag>
     <flag name="video_cards_i965">
       Pulls or checks for a VA-API driver
@@ -206,10 +232,10 @@
       Pulls or checks for a VA-API driver
     </flag>
     <flag name="video_cards_r600">
-      Prefer the Gallium Mesa VA-API driver
+      Pulls or checks for a VA-API driver
     </flag>
     <flag name="video_cards_radeonsi">
-      Prefer the Gallium Mesa VA-API driver
+      Pulls or checks for a VA-API driver
     </flag>
     <flag name="vst">
       Adds support for VST plugins as audio filters.
@@ -219,6 +245,13 @@
     </flag>
     <flag name="win-dshow">
       Build the win-dshow plugin.
+    </flag>
+    <flag name="win-mf">
+      Build deprecated win-mf plugin for H.264 and AAC encoders.
+    </flag>
+    <flag name="x264">
+      A fallback placeholder for CPU based encoding x264 is always required
+      when building.
     </flag>
   </use>
   <upstream>
