@@ -323,10 +323,6 @@ should be a bash script.
 
 | package | description |
 | --- | --- |
-| app-arch/AppImageKit | Contains appimagetool to package apps in the AppImage format. |
-| app-arch/appimaged | Contains the daemon to load appimage packaged programs.  Deprecated but more reliable. |
-| app-arch/appimageupdate | Used to update AppImages |
-| app-arch/go-appimage | Contains the daemon to load appimage packaged programs and appimagetool.  AppImage is used for container-like sandboxed portable Linux or Electron apps ideal for LiveCDs or USB transport.  This package is still in development. |
 | app-editors/epic-journal | This is an Electron based encrypted journal. |
 | app-editors/nano-ycmd | This is a modified GNU nano that uses ycmd.  It is still experimental. |
 | app-emacs/emacs-ycmd | This is a major mode (extension) to GNU Emacs that allows you to use ycmd. |

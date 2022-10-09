@@ -1,9 +1,0 @@
---- a/lib/CMakeLists.txt.orig	2020-08-01 23:51:50.756569817 -0700
-+++ b/lib/CMakeLists.txt	2020-08-01 23:53:49.141170579 -0700
-@@ -1,5 +1,5 @@
- # include libappimage
--add_subdirectory(libappimage EXCLUDE_FROM_ALL)
-+find_package(libappimage CONFIG)
- 
- 
- # uses libappimage's scripts
