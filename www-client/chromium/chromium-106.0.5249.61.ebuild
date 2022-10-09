@@ -437,9 +437,12 @@ gen_depend_llvm() {
 			=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${s}
 			=sys-libs/compiler-rt-${s}*
+			epgo? (
+				=sys-libs/compiler-rt-sanitizers-${s}*:=[profile]
+			)
 			official? (
 				amd64? (
-					=sys-libs/compiler-rt-sanitizers-${s}*:=[cfi]
+					=sys-libs/compiler-rt-sanitizers-${s}*:=[cfi,profile]
 				)
 			)
 			!official? (
@@ -671,7 +674,7 @@ Chromium, then add --password-store=basic to CHROMIUM_FLAGS in
 "
 
 python_check_deps() {
-	has_version -b "dev-python/setuptools[${PYTHON_USEDEP}]"
+	python_has_version -b "dev-python/setuptools[${PYTHON_USEDEP}]"
 }
 
 _compiler_version_checks() {
