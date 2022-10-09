@@ -72,40 +72,6 @@ https://raw.githubusercontent.com/andrewkirillov/AForge.NET/master/Sources/Core/
 	echo "${pv}_p${suffix}"
 }
 
-repo_latest_version_get_appimaged_pv() {
-	local pv="9999"
-	local suffix=$(get_head_suffix "github.com" \
-			"AppImage/appimaged" "master")
-	echo "${pv}_p${suffix}"
-}
-
-repo_latest_version_get_appimagetool_pv() {
-	local pv1=$(wget -q -O - \
-https://raw.githubusercontent.com/AppImage/AppImageKit/master/src/appimagetoolnoglib.c \
-		| grep -F -e "\"appimagetool" \
-		| head -n 1 \
-		| grep -E -o -e "[0-9\.]+")
-	local pv2=$(get_tags \
-https://github.com/AppImage/AppImageKit.git \
-		| grep -G -e "^[0-9]" \
-		| esort \
-		| tr " " "\n" \
-		| tail -n 1)
-	local suffix=$(get_head_suffix "github.com" \
-			"AppImage/AppImageKit" "master")
-	echo "${pv1}_p${pv2}_p${suffix}"
-}
-
-repo_latest_version_get_appimageupdate_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/AppImage/AppImageUpdate/main/CMakeLists.txt \
-		| grep -F -e "set(VERSION" \
-		| sed -e "s|set(VERSION ||g" -e "s|)||" -e "s|-|_|")
-	local suffix=$(get_head_suffix "github.com" \
-			"AppImage/AppImageUpdate" "rewrite")
-	echo "${pv}_p${suffix}"
-}
-
 repo_latest_version_get_aprs-symbols_pv() {
 	local pv="9999"
 	local suffix=$(get_head_suffix "github.com" "hessu/aprs-symbols" "master")
@@ -467,13 +433,6 @@ https://github.com/gcc-mirror/gcc.git \
 		| esort \
 		| tr " " "\n" \
 		| tail -n 1)
-}
-
-repo_latest_version_get_go-appimage_pv() {
-	local pv="9999"
-	local suffix=$(get_head_suffix "github.com" \
-			"probonopd/go-appimage" "master")
-	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_dev-dotnet-aspnetcore_pv() {
@@ -965,11 +924,6 @@ https://aomedia.googlesource.com/aom \
 		| tail -n 1)
 }
 
-repo_latest_version_get_libappimage_pv() {
-	echo $(get_newest_pv \
-https://github.com/AppImage/libappimage.git)
-}
-
 repo_latest_version_get_libcaca_pv() {
 	echo $(get_tags \
 https://github.com/cacalabs/libcaca.git \
@@ -1010,13 +964,6 @@ https://raw.githubusercontent.com/lidgren/lidgren-network-gen3/master/Lidgren.Ne
 			| grep -E -o -e "[0-9\.]+")
 	local suffix=$(get_head_suffix "github.com" \
 			"lidgren/lidgren-network-gen3" "master")
-	echo "${pv}_p${suffix}"
-}
-
-repo_latest_version_get_libdesktopenvironments_pv() {
-	local pv="9999"
-	local suffix=$(get_head_suffix "github.com" \
-			"TheAssassin/libdesktopenvironments" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -1972,12 +1919,6 @@ repo_latest_version_get_rvt_pv() {
 https://github.com/michael-lazar/rtv.git)
 }
 
-repo_latest_version_get_sanitizers-cmake_pv() {
-	local pv="9999"
-	local suffix=$(get_head_suffix "github.com" "arsenm/sanitizers-cmake" "master")
-	echo "${pv}_p${suffix}"
-}
-
 repo_latest_version_get_sddc_connector_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/jketterl/sddc_connector/master/CMakeLists.txt \
@@ -2076,19 +2017,6 @@ http://repository.spotify.com/dists/stable/non-free/binary-amd64/Packages \
 		| cut -f 2 -d "_" \
 		| grep -E -o -e "^[0-9\.]+" \
 		| sed -r -e "s|\.$||g")
-}
-
-repo_latest_version_get_squashfuse_pv() {
-	echo $(git ls-remote --tags https://github.com/vasi/squashfuse.git \
-		| sed -e "s|refs/tags/|;|g" \
-		| cut -f 2 -d ";" \
-		| sed -r -e "s|^v||g"  \
-		| sed -r -e "s#-(alpha|beta|rc|pre)\.?#_\1#g" \
-		| sed -e "s|_preview|_pre|" \
-		| sed -e "s|v||g" \
-		| esort \
-		| tr " " "\n"  \
-		| tail -n 1)
 }
 
 repo_latest_version_get_stickynotes_pv() {
@@ -2295,11 +2223,6 @@ repo_latest_version_get_woff2_pv() {
 https://github.com/google/woff2.git)
 }
 
-repo_latest_version_get_xdg-utils-cxx_pv() {
-	echo $(get_newest_pv \
-https://github.com/azubieta/xdg-utils-cxx.git)
-}
-
 repo_latest_version_get_xpra_pv() {
 	echo $(get_tags \
 https://github.com/Xpra-org/xpra.git \
@@ -2349,15 +2272,4 @@ https://github.com/zeromq/libzmq.git)
 repo_latest_version_get_zlib_pv() {
 	echo $(get_newest_pv \
 https://github.com/madler/zlib.git)
-}
-
-repo_latest_version_get_zsync2_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/AppImage/zsync2/master/CMakeLists.txt \
-		| grep -F -e "set(VERSION" \
-		| sed -e "s|set(VERSION \"||g" -e "s|\")||g" \
-		| sed -e "s|-|_|g" \
-		| sed -e "s|alpha_|alpha|g")
-	local suffix=$(get_head_suffix "github.com" "AppImage/zsync2" "master")
-	echo "${pv}_p${suffix}"
 }
