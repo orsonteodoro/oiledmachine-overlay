@@ -67,9 +67,9 @@ gen_iuse_pgo() {
 	done
 }
 
-IUSE+=" acorn corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu
-inspector npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap
-test
+IUSE+="
+acorn corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
+npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
 man pgo
