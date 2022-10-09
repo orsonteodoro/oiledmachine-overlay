@@ -487,7 +487,7 @@ WATCHDOG_FN="watchdog-${WATCHDOG_PV}.tar.gz"
 SRC_URI="
 https://github.com/ycm-core/ycmd/archive/${EGIT_COMMIT}.tar.gz
 	-> ${YCMD_FN}
-https://github.com/bottlepy/bottle/archive/refs/tags/0.12.18.tar.gz
+https://github.com/bottlepy/bottle/archive/refs/tags/${BOTTLE_PV}.tar.gz
 	-> ${BOTTLE_FN}
 https://github.com/davidhalter/django-stubs/archive/refs/tags/${DJANGO_STUBS_PV}.tar.gz
 	-> ${DJANGO_STUBS_FN}

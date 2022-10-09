@@ -231,7 +231,7 @@ system-bottle system-clangd system-go-tools system-jdtls system-jedi
 system-libclang system-mono system-mrab-regex system-requests system-rust
 system-rust system-tern system-typescript system-watchdog test typescript vim
 "
-CLANG_PV="14.0"
+CLANG_PV="15.0.1"
 CLANG_PV_MAJ=$(ver_cut 1 ${CLANG_PV})
 PV_MAJ=$(ver_cut 1 ${PV})
 # Missing rust-analyzer (aka rust-analyzer-preview) from rust packages because
@@ -346,11 +346,11 @@ REQUIRED_USE+="
 
 # Last update for
 # https://github.com/ycm-core/ycmd/commits/master/third_party
-# Mar 31, 2022
+# Sep 28, 2022
 
 # Last update for
 # https://github.com/ycm-core/ycmd/blob/master/build.py
-# Aug 29, 2022
+# Sep 28, 2022
 
 #EGIT_COMMIT="HEAD" # The lastest commit snapshot
 #EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
@@ -359,17 +359,17 @@ EGIT_COMMIT_MRAB_REGEX="fa9def53cf920ed9343a0afab54d5075d4c75394"
 EGIT_COMMIT_NUMPYDOC="c8513c5db6088a305711851519f944b33f7e1b25"
 EGIT_COMMIT_SCIPY_SPHINX_THEME="bc3b4b8383d4cd676fe75b7ca8c3e11d6afa8d97"
 EGIT_COMMIT_TYPESHED="d38645247816f862cafeed21a8f4466d306aacf3"
-BOTTLE_PV="0.12.18"
-CLANGD_PV="${CLANG_PV_MAJ}.0.0"
+BOTTLE_PV="0.12.23"
+CLANGD_PV="${CLANG_PV_MAJ}.0.1"
 CMAKE_PV="3.14"
 DJANGO_STUBS_PV="jedi-v1"
 GOPLS_PV="0.9.4"
 JDTLS_PV="1.14.0-202207211651" # MILESTONE-TIMESTAMP in build.py
-JEDI_PV="0.18.0"
+JEDI_PV="0.18.1"
 OMNISHARP_PV="1.37.11"
 LIBCLANG_PV="${CLANG_PV_MAJ}.0.0"
 MRAB_REGEX_PV="2021.10.23" # bf5e239
-PARSO_PV="0.8.1"
+PARSO_PV="0.8.3"
 RUST_PV="nightly-2022-08-17"
 WATCHDOG_PV="2.1.9"
 
@@ -414,7 +414,7 @@ DEPEND+="
 	)
 	system-jedi? (
 		>=dev-python/jedi-${JEDI_PV}[${PYTHON_USEDEP}]
-		>=dev-python/numpydoc-0.9.0_pre20190408[${PYTHON_USEDEP}]
+		>=dev-python/numpydoc-1.5_p20220916[${PYTHON_USEDEP}]
 		>=dev-python/parso-${PARSO_PV}[${PYTHON_USEDEP}]
 	)
 	system-libclang? (
@@ -502,7 +502,7 @@ else
 	SRC_URI+="
 https://github.com/ycm-core/ycmd/archive/${EGIT_COMMIT}.tar.gz
 	-> ${YCMD_FN}
-https://github.com/bottlepy/bottle/archive/refs/tags/0.12.18.tar.gz
+https://github.com/bottlepy/bottle/archive/refs/tags/${BOTTLE_PV}.tar.gz
 	-> ${BOTTLE_FN}
 https://github.com/davidhalter/django-stubs/archive/refs/tags/${DJANGO_STUBS_PV}.tar.gz
 	-> ${DJANGO_STUBS_FN}

@@ -345,29 +345,33 @@ REQUIRED_USE+="
 # .netfx version https://github.com/OmniSharp/omnisharp-roslyn/blob/v1.35.4/azure-pipelines.yml
 
 # Last update for
-# https://github.com/ycm-core/ycmd/blob/2ee41000a28fb6b2ae00985c231896b6d072af86/build.py
-# Aug 22, 2022
+# https://github.com/ycm-core/ycmd/commits/master/third_party
+# Aug 29, 2022
 
-EGIT_COMMIT="2ee41000a28fb6b2ae00985c231896b6d072af86" # The lastest commit snapshot
+# Last update for
+# https://github.com/ycm-core/ycmd/blob/master/build.py
+# Aug 29, 2022
+
+EGIT_COMMIT="5f1e71240949ef9e6a64f47fa17ab63d1ec50a4c" # The lastest commit snapshot
 #EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
 EGIT_COMMIT_ABSEIL_CPP="3b4a16abad2c2ddc494371cc39a2946e36d35d11"
 EGIT_COMMIT_MRAB_REGEX="fa9def53cf920ed9343a0afab54d5075d4c75394"
 EGIT_COMMIT_NUMPYDOC="c8513c5db6088a305711851519f944b33f7e1b25"
 EGIT_COMMIT_SCIPY_SPHINX_THEME="bc3b4b8383d4cd676fe75b7ca8c3e11d6afa8d97"
 EGIT_COMMIT_TYPESHED="d38645247816f862cafeed21a8f4466d306aacf3"
-BOTTLE_PV="0.12.18"
+BOTTLE_PV="0.12.23"
 CLANGD_PV="${CLANG_PV_MAJ}.0.0"
 CMAKE_PV="3.14"
 DJANGO_STUBS_PV="jedi-v1"
 GOPLS_PV="0.9.4"
-JDTLS_PV="1.6.0-202110200520" # MILESTONE-TIMESTAMP in build.py
-JEDI_PV="0.18.0"
+JDTLS_PV="1.14.0-202207211651" # MILESTONE-TIMESTAMP in build.py
+JEDI_PV="0.18.1"
 OMNISHARP_PV="1.37.11"
 LIBCLANG_PV="${CLANG_PV_MAJ}.0.0"
-MRAB_REGEX_PV="2020.10.15" # fa9def5
-PARSO_PV="0.8.1"
+MRAB_REGEX_PV="2021.10.23" # bf5e239
+PARSO_PV="0.8.3"
 RUST_PV="nightly-2022-08-17"
-WATCHDOG_PV="2.0.1"
+WATCHDOG_PV="2.1.9"
 
 RDEPEND_NODEJS="net-libs/nodejs"
 BDEPEND_NODEJS="net-libs/nodejs[npm]"
@@ -385,7 +389,7 @@ DEPEND+="
 		)
 	)
 	java? (
-		virtual/jre:11
+		virtual/jre:17
 	)
 	javascript? (
 		${RDEPEND_NODEJS}
@@ -410,7 +414,7 @@ DEPEND+="
 	)
 	system-jedi? (
 		>=dev-python/jedi-${JEDI_PV}[${PYTHON_USEDEP}]
-		>=dev-python/numpydoc-0.9.0_pre20190408[${PYTHON_USEDEP}]
+		>=dev-python/numpydoc-1.5_p20220916[${PYTHON_USEDEP}]
 		>=dev-python/parso-${PARSO_PV}[${PYTHON_USEDEP}]
 	)
 	system-libclang? (
@@ -1645,7 +1649,7 @@ einfo
 einfo "Cleaning omnisharp-roslyn"
 einfo
 		find third_party/omnisharp-roslyn \
-			! \(	\
+			! \( \
 				   -name "*.dll" \
 				-o -name "*.so" \
 				-o -name "*.config" \
