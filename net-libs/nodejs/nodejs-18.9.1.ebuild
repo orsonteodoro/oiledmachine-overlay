@@ -6,10 +6,11 @@
 
 EAPI=8
 
+CONFIG_CHECK="~ADVISE_SYSCALLS"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
 PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="threads(+)"
-inherit bash-completion-r1 flag-o-matic ninja-utils pax-utils python-any-r1
+inherit bash-completion-r1 flag-o-matic linux-info ninja-utils pax-utils python-any-r1
 inherit toolchain-funcs uopts xdg-utils
 inherit check-linker
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
@@ -145,6 +146,7 @@ pkg_pretend() {
 
 pkg_setup() {
 	python-any-r1_pkg_setup
+	linux-info_pkg_setup
 
 einfo
 einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2025-04-30."
