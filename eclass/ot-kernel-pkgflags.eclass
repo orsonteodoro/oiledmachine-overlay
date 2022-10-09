@@ -339,7 +339,8 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_nfacct
 	ot-kernel-pkgflags_nftables
 	ot-kernel-pkgflags_nftlb
-	ot-kernel-pkgflags_nilfs
+	ot-kernel-pkgflags_nilfs_utils
+	ot-kernel-pkgflags_nodejs
 	ot-kernel-pkgflags_nstx
 	ot-kernel-pkgflags_ntfs3g
 	ot-kernel-pkgflags_numad
@@ -4941,14 +4942,25 @@ ot-kernel-pkgflags_nftables() { # DONE
 	fi
 }
 
-# @FUNCTION: ot-kernel-pkgflags_nilfs
+# @FUNCTION: ot-kernel-pkgflags_nilfs_utils
 # @DESCRIPTION:
-# Applies kernel config flags for the nilfs package
-ot-kernel-pkgflags_nilfs() { # DONE
+# Applies kernel config flags for the nilfs-utils package
+ot-kernel-pkgflags_nilfs_utils() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "908989f" ]] && return
 	if has_version "sys-fs/nilfs-utils" ; then
-		einfo "Applying kernel config flags for the nilfs package (id: 908989f)"
+		einfo "Applying kernel config flags for the nilfs-utils package (id: 908989f)"
 		ot-kernel_y_configopt "CONFIG_POSIX_MQUEUE"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_nodejs
+# @DESCRIPTION:
+# Applies kernel config flags for the nodejs package
+ot-kernel-pkgflags_nodejs() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "21e5d87" ]] && return
+	if has_version "net-libs/nodejs" ; then
+		einfo "Applying kernel config flags for the nodejs package (id: 21e5d87)"
+		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 	fi
 }
 
