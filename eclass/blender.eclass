@@ -624,8 +624,8 @@ check_optimal_compiler_for_cycles_x86() {
 	fi
 
 einfo
-einfo "CC=${CC}"
-einfo "CXX=${CXX}"
+einfo "CC:\t\t${CC}"
+einfo "CXX:\t\t${CXX}"
 einfo
 }
 
