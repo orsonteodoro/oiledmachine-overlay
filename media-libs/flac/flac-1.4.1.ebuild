@@ -14,8 +14,12 @@ SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv sparc"
 KEYWORDS+=" x86 ~amd64-linux ~x86-linux ~ppc-macos ~sparc-solaris ~x64-solaris"
 KEYWORDS+=" ~x86-solaris"
-IUSE="+cxx debug ogg cpu_flags_ppc_altivec cpu_flags_ppc_vsx cpu_flags_x86_sse"
-IUSE+=" static-libs"
+IUSE="+cxx debug ogg cpu_flags_ppc_altivec cpu_flags_ppc_vsx cpu_flags_x86_avx"
+IUSE+=" cpu_flags_x86_avx2 cpu_flags_x86_sse2 static-libs"
+# AVX configure switch is for both AVX & AVX2
+REQUIRED_USE="
+	cpu_flags_x86_avx2? ( cpu_flags_x86_avx )
+"
 RDEPEND="ogg? ( >=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}] )"
 BDEPEND+="
 	app-arch/xz-utils
@@ -82,10 +86,11 @@ _src_configure() {
 		$([[ ${CHOST} == *-darwin* ]] && echo "--disable-asm-optimizations")
 		$(use_enable cpu_flags_ppc_altivec altivec)
 		$(use_enable cpu_flags_ppc_vsx vsx)
-		$(use_enable cpu_flags_x86_sse sse)
+		$(use_enable cpu_flags_x86_avx avx)
 		$(use_enable cxx cpplibs)
-		$(use_enable debug)
+		$(use_enable cpu_flags_x86_sse2 sse)
 		$(use_enable ogg)
+		$(use_enable debug)
 
 		# cross-compile fix (bug #521446)
 		# no effect if ogg support is disabled
