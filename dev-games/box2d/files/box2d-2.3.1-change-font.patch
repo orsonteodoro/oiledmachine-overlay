@@ -1,0 +1,11 @@
+--- Box2D/Testbed/Framework/Main.cpp.orig	2022-10-10 15:42:48.810274358 -0700
++++ Box2D/Testbed/Framework/Main.cpp	2022-10-10 15:42:58.442644853 -0700
+@@ -70,7 +70,7 @@ static void sCreateUI()
+ 	ui.mouseOverMenu = false;
+ 
+ 	// Init UI
+-    const char* fontPath = "../Data/DroidSans.ttf";
++    const char* fontPath = "/usr/share/fonts/droid/DroidSans.ttf";
+     
+ 	if (RenderGLInit(fontPath) == false)
+ 	{

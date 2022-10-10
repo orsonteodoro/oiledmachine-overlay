@@ -20,6 +20,7 @@ DEPEND+="
 		media-libs/glew[${MULTILIB_USEDEP}]
 		media-libs/glfw[${MULTILIB_USEDEP}]
 		media-libs/glui[${MULTILIB_USEDEP}]
+		media-fonts/droid
 	)
 "
 RDEPEND+=" ${DEPEND}"
@@ -31,7 +32,8 @@ https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz
 S="${WORKDIR}/${P}/Box2D"
 RESTRICT="mirror"
 PATCHES=(
-	"${FILESDIR}/box2d-2.3.1-cmake-fixes.patch"
+	"${FILESDIR}/${PN}-2.3.1-cmake-fixes.patch"
+	"${FILESDIR}/${PN}-2.3.1-change-font.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 MY_PN="Box2D"

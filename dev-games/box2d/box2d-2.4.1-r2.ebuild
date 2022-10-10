@@ -28,11 +28,23 @@ BDEPEND+="
 SRC_URI="
 https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/erincatto/box2d/commit/e76cf2d82792fbf915e42ae253f8a2ae252adbdf.patch
+	-> box2d-commit-e76cf2d.patch
+https://github.com/erincatto/box2d/commit/cd2c28dba83e4f359d08aeb7b70afd9e35e39eda.patch
+	-> box2d-commit-cd2c28d.patch
 "
+# e76cf2d - update doctest for #677
+#   Fixes doctest.h:4021:47: error: size of array 'altStackMem' is not an integral constant-expression
+
+# cd2c28d - Update doctest version (#682)
+#   Dependency for e76cf2d
+
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 PATCHES=(
-	"${FILESDIR}/box2d-2.4.1-cmake-fixes.patch"
+	"${FILESDIR}/${PN}-2.4.1-cmake-fixes.patch"
+	"${DISTDIR}/${PN}-commit-cd2c28d.patch"
+	"${DISTDIR}/${PN}-commit-e76cf2d.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 MY_PN="Box2D"
