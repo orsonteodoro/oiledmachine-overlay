@@ -20,12 +20,41 @@ if [[ "${TRAIN_USE_X}" == "1" ]] ;then
 	inherit virtualx
 fi
 
+__X_GPU_BDEPENDS="
+	x11-base/xorg-server
+	virtual/opengl
+"
+
 __VIRTX_BDEPENDS="
 	x11-base/xorg-server[xvfb]
 	x11-apps/xhost
 "
 
-if [[ "${TRAIN_USE_X}" == "1" && "${TRAIN_NO_X_DEPENDS}" != "1" ]] ;then
+if [[ "${TRAIN_USE_X_GPU}" == "1" && "${TRAIN_NO_X_GPU_DEPENDS}" != "1" && "${UOPTS_SUPPORT_TBOLT}" == "1" ]] ;then
+	BDEPEND+="
+		bolt? (
+			${__X_GPU_BDEPENDS}
+		)
+	"
+fi
+
+if [[ "${TRAIN_USE_X_GPU}" == "1" && "${TRAIN_NO_X_GPU_DEPENDS}" != "1" && "${UOPTS_SUPPORT_TPGO}" == "1" ]] ;then
+	BDEPEND+="
+		pgo? (
+			${__X_GPU_BDEPENDS}
+		)
+	"
+fi
+
+if [[ "${TRAIN_USE_X}" == "1" && "${TRAIN_NO_X_DEPENDS}" != "1" && "${UOPTS_SUPPORT_TBOLT}" == "1" ]] ;then
+	BDEPEND+="
+		bolt? (
+			${__VIRTX_BDEPENDS}
+		)
+	"
+fi
+
+if [[ "${TRAIN_USE_X}" == "1" && "${TRAIN_NO_X_DEPENDS}" != "1" && "${UOPTS_SUPPORT_TPGO}" == "1" ]] ;then
 	BDEPEND+="
 		pgo? (
 			${__VIRTX_BDEPENDS}
@@ -36,9 +65,13 @@ fi
 # @FUNCTION: _src_train
 # Defines
 
+# @ECLASS_VARIABLE: TRAIN_USE_X_GPU
+# @DESCRIPTION:
+# Runs GUI in Accelerated X.
+
 # @ECLASS_VARIABLE: TRAIN_USE_X
 # @DESCRIPTION:
-# Runs GUI in X.  You can use console apps in this also.
+# Runs GUI in X using software rendering.  You can use console apps in this also.
 
 # @ECLASS_VARIABLE: TRAIN_NO_X_DEPENDS
 # @DESCRIPTION:
@@ -82,6 +115,10 @@ train_setup() {
 			|| die "train_trainer_list must be defined"
 	fi
 
+	if [[ "${TRAIN_USE_X_GPU}" == "1" ]] ; then
+		export TRAIN_DISPLAY=${TRAIN_DISPLAY:-:0}
+einfo "TRAIN_DISPLAY=${TRAIN_DISPLAY} (AKA DISPLAY=${TRAIN_DISPLAY}.  Overridable via make.conf or package.env.)"
+	fi
 }
 
 # @FUNCTION: _train_run_trainer
@@ -163,11 +200,21 @@ while (( \${now} < ${done_at} )) \
 	now=\$(date +"%s")
 done
 ps -p \${pid} 2>/dev/null 1>/dev/null \
-	&& kill -9 \${pid}
+	&& kill -${TRAIN_SIGNAL:-9} \${pid}
 true
 EOF
 	chmod +x "run.sh" || die
-	if [[ "${TRAIN_USE_X}" == "1" ]] ; then
+	if [[ "${TRAIN_USE_X_GPU}" == "1" ]] ; then
+		DISPLAY=${TRAIN_DISPLAY} ./run.sh
+
+		if grep -q -r -e "cannot connect to X server" \
+			"${T}/build.log" ; then
+eerror
+eerror "Detected cannot connect to the X server."
+eerror
+			die
+		fi
+	elif [[ "${TRAIN_USE_X}" == "1" ]] ; then
 		virtx ./run.sh
 
 		if grep -q -r -e "cannot connect to X server" \

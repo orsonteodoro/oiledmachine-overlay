@@ -190,9 +190,12 @@ _epgo_configure() {
 	use epgo && addpredict "${EPREFIX}${UOPTS_PGO_PROFILES_DIR}"
 	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		if tc-is-clang ; then
-			append-flags -fprofile-generate="${pgo_data_suffix_dir}"
+			append-flags \
+				-fprofile-generate="${pgo_data_suffix_dir}"
 		elif tc-is-gcc ; then
-			append-flags -fprofile-generate -fprofile-dir="${pgo_data_suffix_dir}"
+			append-flags \
+				-fprofile-generate \
+				-fprofile-dir="${pgo_data_suffix_dir}"
 			[[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] \
 				&& append-flags -fprofile-partial-training
 		else
@@ -206,15 +209,18 @@ eerror
 einfo
 einfo "Merging PGO data to generate a PGO profile"
 einfo
-			if ! ls "${BUILD_DIR}/"*".profraw" 2>/dev/null 1>/dev/null ; then
+			if ! ls "${pgo_data_staging_dir}/"*".profraw" 2>/dev/null 1>/dev/null ; then
 eerror
 eerror "Missing *.profraw files"
 eerror
 				die
 			fi
-			llvm-profdata merge -output="${pgo_data_staging_dir}/custom-pgo.profdata" \
-				"${pgo_data_staging_dir}" || die
-			append-flags -fprofile-use="${pgo_data_staging_dir}/custom-pgo.profdata"
+			llvm-profdata \
+				merge \
+				-output="${pgo_data_staging_dir}/pgo-custom.profdata" \
+				$(find "${pgo_data_staging_dir}" -name "*.profraw") || die
+			append-flags \
+				-fprofile-use="${pgo_data_staging_dir}/pgo-custom.profdata"
 		elif tc-is-gcc ; then
 			append-flags \
 				-fprofile-correction \
@@ -247,10 +253,8 @@ _epgo_meets_pgo_requirements() {
 			export CC=$(tc-getCC)
 			export CXX=$(tc-getCXX)
 		fi
-einfo
-einfo "CC=${CC}"
-einfo "CXX=${CXX}"
-einfo
+einfo "CC:\t\t${CC}"
+einfo "CXX:\t\t${CXX}"
 		_CC="${CC% *}"
 
 		if ! tc-is-gcc && ! tc-is-clang ; then
@@ -261,14 +265,14 @@ ewarn
 		fi
 
 		touch "${pgo_data_staging_dir}/compiler_fingerprint" \
-			|| die "You must call epgo_src_prepare before calling epgo_get_phase"
+			|| die "You must call uopts_src_prepare before calling epgo_get_phase"
 		# Has same compiler?
 		if tc-is-gcc ; then
 			local actual=$("${_CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 ewarn
-ewarn "GCC incompatable:"
+ewarn "GCC fingerprint changed:"
 ewarn
 ewarn "actual: ${actual}"
 ewarn "expected: ${expected}"
@@ -280,7 +284,7 @@ ewarn
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 ewarn
-ewarn "Clang incompatable:"
+ewarn "Clang fingerprint changed:"
 ewarn
 ewarn "actual: ${actual}"
 ewarn "expected: ${expected}"

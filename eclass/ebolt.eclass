@@ -239,23 +239,26 @@ _ebolt_meets_bolt_requirements() {
 		# Actually, you can use GCC.
 
 		touch "${bolt_data_staging_dir}/llvm_bolt_fingerprint" \
-			|| die "You must call ebolt_src_prepare before calling ebolt_get_phase"
+			|| die "You must call uopts_src_prepare before calling ebolt_get_phase"
+
+		if ! tc-is-gcc && ! tc-is-clang ; then
+ewarn
+ewarn "Compiler is not supported."
+ewarn
+			return 2
+		fi
+
 		local actual=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " ")
 		local expected=$(cat "${bolt_data_staging_dir}/llvm_bolt_fingerprint")
 		if [[ "${actual}" != "${expected}" ]] ; then
 # This check is done because of BOLT profile compatibility.
 ewarn
-ewarn "llvm-bolt incompatable:"
+ewarn "llvm-bolt fingerprint changed:"
 ewarn
 ewarn "actual: ${actual}"
 ewarn "expected: ${expected}"
 ewarn
 			return 1
-		else
-			return 2
-ewarn
-ewarn "llvm-bolt fingerprint mismatch"
-ewarn
 		fi
 
 		# Has profile?

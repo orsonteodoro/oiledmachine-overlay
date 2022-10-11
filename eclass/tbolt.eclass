@@ -226,7 +226,7 @@ _tbolt_is_profile_reusable() {
 		# Actually, you can use GCC.
 
 		touch "${bolt_data_staging_dir}/llvm_bolt_fingerprint" \
-			|| die "You must call tbolt_src_prepare before calling tbolt_get_phase"
+			|| die "You must call uopts_src_prepare before calling tbolt_get_phase"
 
 		if ! tc-is-gcc && ! tc-is-clang ; then
 ewarn
@@ -240,7 +240,7 @@ ewarn
 		if [[ "${actual}" != "${expected}" ]] ; then
 # This check is done because of BOLT profile compatibility.
 ewarn
-ewarn "llvm-bolt incompatable:"
+ewarn "llvm-bolt fingerprint changed:"
 ewarn
 ewarn "actual: ${actual}"
 ewarn "expected: ${expected}"

@@ -864,6 +864,8 @@ einfo "FFMPEG_TRAINING_X11_DISPLAY=\"${FFMPEG_TRAINING_X11_DISPLAY}\""
 einfo
 	fi
 
+	# The GLFW does not allow for software rendering.
+	# This is why hardware rendering is required.
 	if use trainer-av-streaming \
 		&& ( has pid-sandbox ${FEATURES} || has ipc-sandbox ${FEATURES} ) ; then
 eerror
@@ -884,6 +886,22 @@ eerror "FEATURE=\"\${FEATURES} -ipc-sandbox\""
 eerror
 eerror "${EROOT}/etc/portage/package.env:"
 eerror "${CATEGORY}/${PN} no-pid-sandbox.conf no-ipc-sandbox.conf"
+eerror
+		die
+	fi
+
+	if ( use pgo || use bolt ) \
+		&& ! pidof X 2>/dev/null 1>/dev/null ; then
+eerror
+eerror "You must run X to do GPU based PGO/BOLT training."
+eerror
+		die
+	fi
+
+	if ( use pgo || use bolt ) \
+		&& ! ( DISPLAY="${TRAIN_DISPLAY}" xhost | grep -q -e "LOCAL:" ) ; then
+eerror
+eerror "You must do:  \`xhost +local:root:\` to do GPU based PGO/BOLT training."
 eerror
 		die
 	fi
@@ -2989,6 +3007,12 @@ ewarn "The portage should be removed from the video group after training."
 ewarn
 ewarn "The /dev/video* should have portage removed from ACL permissions after"
 ewarn "training."
+ewarn
+	fi
+	if ( use pgo || use bolt ) ; then
+ewarn
+ewarn "You must run \`xhost -local:root:\` after PGO training to restore the"
+ewarn "security default."
 ewarn
 	fi
 }

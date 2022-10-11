@@ -1,0 +1,54 @@
+diff -urp box2d-2.4.1.orig/testbed/main.cpp box2d-2.4.1/testbed/main.cpp
+--- box2d-2.4.1.orig/testbed/main.cpp	2022-10-11 12:26:32.965857832 -0700
++++ box2d-2.4.1/testbed/main.cpp	2022-10-11 12:27:26.776038432 -0700
+@@ -390,6 +390,7 @@ static void UpdateUI()
+ 				ImGui::Checkbox("Center of Masses", &s_settings.m_drawCOMs);
+ 				ImGui::Checkbox("Statistics", &s_settings.m_drawStats);
+ 				ImGui::Checkbox("Profile", &s_settings.m_drawProfile);
++				ImGui::Checkbox("Auto Shoot", &s_settings.m_autoShoot);
+ 
+ 				ImVec2 button_sz = ImVec2(-1, 0);
+ 				if (ImGui::Button("Pause (P)", button_sz))
+@@ -572,6 +573,7 @@ int main(int, char**)
+ 	std::chrono::duration<double> frameTime(0.0);
+ 	std::chrono::duration<double> sleepAdjust(0.0);
+ 
++	int frameCount = 0;
+ 	while (!glfwWindowShouldClose(g_mainWindow))
+ 	{
+ 		std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
+@@ -604,6 +606,15 @@ int main(int, char**)
+ 
+ 		s_test->Step(s_settings);
+ 
++		if (s_settings.m_autoShoot && frameCount == 0)
++		{
++			if (s_test)
++			{
++				s_test->LaunchBomb();
++			}
++		}
++		frameCount = ++frameCount % 120;
++
+ 		UpdateUI();
+ 
+ 		// ImGui::ShowDemoWindow();
+diff -urp box2d-2.4.1.orig/testbed/settings.h box2d-2.4.1/testbed/settings.h
+--- box2d-2.4.1.orig/testbed/settings.h	2020-10-17 17:09:34.000000000 -0700
++++ box2d-2.4.1/testbed/settings.h	2022-10-11 12:28:10.705818447 -0700
+@@ -37,6 +37,7 @@ struct Settings
+ 		m_hertz = 60.0f;
+ 		m_velocityIterations = 8;
+ 		m_positionIterations = 3;
++		m_autoShoot = true;
+ 		m_drawShapes = true;
+ 		m_drawJoints = true;
+ 		m_drawAABBs = false;
+@@ -64,6 +65,7 @@ struct Settings
+ 	float m_hertz;
+ 	int m_velocityIterations;
+ 	int m_positionIterations;
++	bool m_autoShoot;
+ 	bool m_drawShapes;
+ 	bool m_drawJoints;
+ 	bool m_drawAABBs;

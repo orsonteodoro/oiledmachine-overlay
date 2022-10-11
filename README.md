@@ -147,6 +147,7 @@ The following list contains ebuilds modified by this overlay with PGO (Profile
 Guided Optimization) support, with additional patches from others listed in
 the metadata.xml.
 
+* dev-games/box2d
 * dev-lang/lua
 * dev-lang/mono
 * media-libs/embree

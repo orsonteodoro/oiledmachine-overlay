@@ -145,9 +145,7 @@ uopts_src_compile() {
 				is_pgoable=0
 			fi
 		fi
-einfo
 einfo "is_pgoable=${is_pgoable}"
-einfo
 
 		_tpgo_is_profile_reusable
 		local ret_reuse="$?" # 0 = yes, 1 = no, 2 = unsupported_compiler
@@ -157,9 +155,7 @@ einfo
 			skip_pgi="yes"
 		fi
 
-einfo
 einfo "is_tpgo_profile_reusable=${skip_pgi} "
-einfo
 	fi
 
 	local is_boltable=1
@@ -173,9 +169,7 @@ einfo
 				is_boltable=0
 			fi
 		fi
-einfo
 einfo "is_boltable=${is_boltable}"
-einfo
 
 		_tbolt_is_profile_reusable
 		local ret_reuse="$?" # 0 = yes, 1 = no, 2 = unsupported_compiler
@@ -185,9 +179,7 @@ einfo
 			skip_inst="yes"
 		fi
 
-einfo
 einfo "is_tbolt_profile_reusable=${skip_inst} "
-einfo
 	fi
 
 	local PGO_PHASE="NO_PGO"

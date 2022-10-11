@@ -878,6 +878,23 @@ eerror "${CATEGORY}/${PN} no-pid-sandbox.conf no-ipc-sandbox.conf"
 eerror
 		die
 	fi
+
+	if ( use pgo || use bolt ) \
+		&& ! pidof X 2>/dev/null 1>/dev/null ; then
+eerror
+eerror "You must run X to do GPU based PGO/BOLT training."
+eerror
+		die
+	fi
+
+	if ( use pgo || use bolt ) \
+		&& ! ( DISPLAY="${TRAIN_DISPLAY}" xhost | grep -q -e "LOCAL:" ) ; then
+eerror
+eerror "You must do:  \`xhost +local:root:\` to do GPU based PGO/BOLT training."
+eerror
+		die
+	fi
+
 	# ffmpeg[chromaprint] depends on chromaprint, and chromaprint[tools] depends on ffmpeg.
 	# May cause breakage while updating, #862996, #625210, #833821.
 	if has_version media-libs/chromaprint[tools] && use chromaprint; then
@@ -2990,6 +3007,12 @@ ewarn "The portage should be removed from the video group after training."
 ewarn
 ewarn "The /dev/video* should have portage removed from ACL permissions after"
 ewarn "training."
+ewarn
+	fi
+	if ( use pgo || use bolt ) ; then
+ewarn
+ewarn "You must run \`xhost -local:root:\` after PGO training to restore the"
+ewarn "security default."
 ewarn
 	fi
 }

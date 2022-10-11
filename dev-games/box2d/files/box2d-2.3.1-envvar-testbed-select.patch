@@ -1,0 +1,21 @@
+--- Box2D/Testbed/Framework/Main.cpp.orig	2014-04-05 17:43:12.000000000 -0700
++++ Box2D/Testbed/Framework/Main.cpp	2022-10-10 16:54:29.329216155 -0700
+@@ -29,6 +29,7 @@
+ 
+ #include <glfw/glfw3.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ 
+ #ifdef _MSC_VER
+ #define snprintf _snprintf
+@@ -493,6 +494,10 @@ int main(int argc, char** argv)
+ 		++testCount;
+ 	}
+ 
++	char *sIndex = getenv("BOX2D_TESTBED_INDEX");
++	if (sIndex != NULL)
++		testIndex = atoi(sIndex);
++
+ 	testIndex = b2Clamp(testIndex, 0, testCount - 1);
+ 	testSelection = testIndex;
+ 

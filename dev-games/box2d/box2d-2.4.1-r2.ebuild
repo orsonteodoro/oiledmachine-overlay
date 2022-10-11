@@ -3,7 +3,11 @@
 
 EAPI=8
 
-inherit cmake multilib-build
+TRAIN_SIGNAL=6
+TRAIN_USE_X_GPU=1
+TRAIN_TEST_DURATION=15
+#TRAIN_USE_X=1
+inherit cmake multilib-build uopts
 
 DESCRIPTION="Box2D is a 2D physics engine for games"
 HOMEPAGE="http://box2d.org/"
@@ -12,6 +16,12 @@ KEYWORDS="~amd64 ~x86"
 SLOT_MAJ="$(ver_cut 1-2 ${PV})" # API change between 2.4.1 breaks 2.4.0
 SLOT="${SLOT_MAJ}/${PV}"
 IUSE+=" doc examples static-libs test"
+REQUIRED_USE+="
+	bolt? ( examples )
+	pgo? ( examples )
+	ebolt? ( examples )
+	epgo? ( examples )
+"
 # todo remove internal dependencies
 DEPEND+="
 	virtual/libc
@@ -45,15 +55,59 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.4.1-cmake-fixes.patch"
 	"${DISTDIR}/${PN}-commit-cd2c28d.patch"
 	"${DISTDIR}/${PN}-commit-e76cf2d.patch"
+	"${FILESDIR}/${PN}-2.4.1-testbed-close-handlers.patch"
+	"${FILESDIR}/${PN}-2.4.1-testbed-autoshoot.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 MY_PN="Box2D"
 
+# Order matters when PGOing
 get_lib_types() {
+	echo "shared"
 	if use static-libs ; then
 		echo "static"
 	fi
-	echo "shared"
+}
+
+pkg_setup() {
+	uopts_setup
+
+	# The GLFW does not allow for software rendering.
+	# This is why hardware rendering is required.
+	if ( use pgo || use bolt ) \
+		&& ( has pid-sandbox ${FEATURES} ) ; then
+eerror
+eerror "You must disable the pid-sandbox for PGO/BOLT training."
+eerror
+eerror "pid-sandbox is required for checking if X11 is being used."
+eerror
+eerror "Add a per-package environment rule with the following additions or"
+eerror "changes..."
+eerror
+eerror "${EROOT}/etc/portage/env/no-pid-sandbox.conf:"
+eerror "FEATURE=\"\${FEATURES} -pid-sandbox\""
+eerror
+eerror "${EROOT}/etc/portage/package.env:"
+eerror "${CATEGORY}/${PN} no-pid-sandbox.conf"
+eerror
+		die
+	fi
+
+	if ( use pgo || use bolt ) \
+		&& ! pidof X 2>/dev/null 1>/dev/null ; then
+eerror
+eerror "You must run X to do GPU based PGO/BOLT training."
+eerror
+		die
+	fi
+
+	if ( use pgo || use bolt ) \
+		&& ! ( DISPLAY="${TRAIN_DISPLAY}" xhost | grep -q -e "LOCAL:" ) ; then
+eerror
+eerror "You must do:  \`xhost +local:root:\` to do GPU based PGO/BOLT training."
+eerror
+		die
+	fi
 }
 
 src_prepare() {
@@ -63,8 +117,8 @@ src_prepare() {
 	prepare_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
 			cd "${CMAKE_USE_DIR}" || die
 			if [[ "${lib_type}" == "static" ]] ; then
 				sed -i -e "s|STATIC|SHARED|" src/CMakeLists.txt || die
@@ -80,12 +134,23 @@ src_prepare() {
 				# No package
 #				sed -i -e "s|STATIC|SHARED|" extern/sajson/CMakeLists.txt || die
 			fi
+			uopts_src_prepare
 		done
 	}
 	multilib_foreach_abi prepare_abi
 }
 
-_configure() {
+src_configure() { :; }
+
+_src_configure() {
+	einfo "Called _src_configure"
+	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+	einfo "CMAKE_USE_DIR:  ${CMAKE_USE_DIR}"
+	einfo "BUILD_DIR:  ${BUILD_DIR}"
+	cd "${CMAKE_USE_DIR}" || die
+	uopts_src_configure
+
 	local mycmakeargs=(
 		-DBOX2D_BUILD_DOCS=$(usex doc)
 		-DBOX2D_BUILD_TESTBED=$(usex examples)
@@ -105,27 +170,24 @@ _configure() {
 	cmake_src_configure
 }
 
-src_configure() {
-	configure_abi() {
-		local lib_type
-		for lib_type in $(get_lib_types) ; do
-			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
-			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-			cd "${CMAKE_USE_DIR}" || die
-			_configure
-		done
-	}
-	multilib_foreach_abi configure_abi
+_src_compile() {
+	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+	cd "${BUILD_DIR}" || die
+	cmake_src_compile
 }
 
 src_compile() {
 	compile_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
-			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-			cd "${BUILD_DIR}" || die
-			cmake_src_compile
+			if [[ "${lib_type}" == "static" ]] ; then
+				uopts_n_training
+			else
+				uopts_y_training
+			fi
+
+			uopts_src_compile
 		done
 	}
 	multilib_foreach_abi compile_abi
@@ -148,6 +210,54 @@ src_test() {
 	multilib_foreach_abi test_abi
 }
 
+TRAINER_MAX="57"
+train_pre_trainer() {
+	local trainer="${1}"
+cat > settings.ini <<EOF
+{
+  "testIndex": ${trainer},
+  "windowWidth": ${BOX2D_TRAIN_WIDTH:-1920},
+  "windowHeight": ${BOX2D_TRAIN_HEIGHT:-1080},
+  "hertz": 60,
+  "velocityIterations": 8,
+  "positionIterations": 3,
+  "drawShapes": true,
+  "drawJoints": true,
+  "drawAABBs": false,
+  "drawContactPoints": false,
+  "drawContactNormals": false,
+  "drawContactImpulse": false,
+  "drawFrictionImpulse": false,
+  "drawCOMs": false,
+  "drawStats": false,
+  "drawProfile": false,
+  "enableWarmStarting": true,
+  "enableContinuous": true,
+  "enableSubStepping": false,
+  "enableSleep": true
+}
+EOF
+	einfo "pwd:  $(pwd)"
+	einfo "trainer:  ${trainer}/${TRAINER_MAX}"
+	cat settings.ini
+}
+
+train_post_trainer() {
+	rm settings.ini
+}
+
+train_get_trainer_exe() {
+	echo "bin/testbed"
+}
+
+train_trainer_list() {
+	seq 0 ${TRAINER_MAX} | tr " " "\n"
+}
+
+_src_post_train() {
+	killall -9 testbed
+}
+
 src_install() {
 	install_abi() {
 		local lib_type
@@ -161,6 +271,7 @@ src_install() {
 			if use examples ; then
 				doexe bin/testbed
 			fi
+			uopts_src_install
 		done
 	}
 	multilib_foreach_abi install_abi
@@ -176,6 +287,16 @@ src_install() {
 		cd "${S}"
 		insinto /usr/share/${PN}/HelloWorld
 		doins -r unit-test/hello_world.cpp
+	fi
+}
+
+pkg_postinst() {
+	uopts_pkg_postinst
+	if ( use pgo || use bolt ) ; then
+ewarn
+ewarn "You must run \`xhost -local:root:\` after PGO training to restore the"
+ewarn "security default."
+ewarn
 	fi
 }
 

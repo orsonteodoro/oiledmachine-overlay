@@ -1,0 +1,31 @@
+diff -urp box2d-2.4.1.orig/testbed/main.cpp box2d-2.4.1/testbed/main.cpp
+--- box2d-2.4.1.orig/testbed/main.cpp	2020-10-17 17:09:34.000000000 -0700
++++ box2d-2.4.1/testbed/main.cpp	2022-10-11 00:53:16.450874653 -0700
+@@ -34,6 +34,7 @@
+ #include <stdio.h>
+ #include <thread>
+ #include <chrono>
++#include <signal.h>
+ 
+ #if defined(_WIN32)
+ #include <crtdbg.h>
+@@ -476,9 +477,19 @@ static void UpdateUI()
+ 	}
+ }
+ 
++void close_handler(int signum)
++{
++	glfwSetWindowShouldClose(g_mainWindow, GL_TRUE);
++	exit(0);
++}
++
+ //
+ int main(int, char**)
+ {
++	signal(SIGTERM, close_handler);
++	signal(SIGINT, close_handler);
++   signal(SIGABRT, close_handler);
++
+ #if defined(_WIN32)
+ 	// Enable memory-leak reports
+ 	_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));

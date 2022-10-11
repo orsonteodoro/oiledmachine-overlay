@@ -1,0 +1,54 @@
+diff -urp Box2D.orig/Testbed/Framework/Main.cpp Box2D/Testbed/Framework/Main.cpp
+--- Box2D.orig/Testbed/Framework/Main.cpp	2022-10-11 13:22:11.974900450 -0700
++++ Box2D/Testbed/Framework/Main.cpp	2022-10-11 13:28:25.697747973 -0700
+@@ -388,6 +388,8 @@ static void sInterface()
+ 			settings.drawStats = !settings.drawStats;
+ 		if (imguiCheck("Profile", settings.drawProfile, true))
+ 			settings.drawProfile = !settings.drawProfile;
++		if (imguiCheck("Auto Shoot", settings.drawProfile, true))
++			settings.drawProfile = !settings.autoShoot;
+ 
+ 		if (imguiButton("Pause", true))
+ 			settings.pause = !settings.pause;
+@@ -523,6 +525,7 @@ int main(int argc, char** argv)
+    
+     glClearColor(0.3f, 0.3f, 0.3f, 1.f);
+ 	
++	int frameCount = 0;
+  	while (!glfwWindowShouldClose(mainWindow))
+ 	{
+  		glfwGetWindowSize(mainWindow, &g_camera.m_width, &g_camera.m_height);
+@@ -547,6 +550,14 @@ int main(int argc, char** argv)
+ 		imguiBeginFrame(mousex, mousey, mousebutton, mscroll);
+ 
+ 		sSimulate();
++		if (settings.autoShoot && frameCount == 0)
++		{
++			if (test)
++			{
++				test->LaunchBomb();
++			}
++		}
++		frameCount = ++frameCount % 120;
+ 		sInterface();
+         
+         // Measure speed
+diff -urp Box2D.orig/Testbed/Framework/Test.h Box2D/Testbed/Framework/Test.h
+--- Box2D.orig/Testbed/Framework/Test.h	2014-04-05 17:43:12.000000000 -0700
++++ Box2D/Testbed/Framework/Test.h	2022-10-11 13:30:03.777651617 -0700
+@@ -65,6 +65,7 @@ struct Settings
+ 		hz = 60.0f;
+ 		velocityIterations = 8;
+ 		positionIterations = 3;
++		autoShoot = true;
+ 		drawShapes = true;
+ 		drawJoints = true;
+ 		drawAABBs = false;
+@@ -86,6 +87,7 @@ struct Settings
+ 	float32 hz;
+ 	int32 velocityIterations;
+ 	int32 positionIterations;
++	bool autoShoot;
+ 	bool drawShapes;
+ 	bool drawJoints;
+ 	bool drawAABBs;

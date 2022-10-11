@@ -1,0 +1,31 @@
+diff -urp Box2D.orig/Testbed/Framework/Main.cpp Box2D/Testbed/Framework/Main.cpp
+--- Box2D.orig/Testbed/Framework/Main.cpp	2022-10-11 00:54:21.101417883 -0700
++++ Box2D/Testbed/Framework/Main.cpp	2022-10-11 00:55:09.171309273 -0700
+@@ -30,6 +30,7 @@
+ #include <glfw/glfw3.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <signal.h>
+ 
+ #ifdef _MSC_VER
+ #define snprintf _snprintf
+@@ -428,9 +429,19 @@ static void sInterface()
+ 
+ }
+ 
++void close_handler(int signum)
++{
++	glfwSetWindowShouldClose(mainWindow, GL_TRUE);
++	exit(0);
++}
++
+ //
+ int main(int argc, char** argv)
+ {
++	signal(SIGTERM, close_handler);
++	signal(SIGINT, close_handler);
++   signal(SIGABRT, close_handler);
++	
+ #if defined(_WIN32)
+ 	// Enable memory-leak reports
+ 	_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG));

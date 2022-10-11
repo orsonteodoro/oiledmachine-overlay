@@ -313,10 +313,10 @@ _tpgo_configure() {
 			llvm-profdata \
 				merge \
 				-output="${pgo_data_staging_dir}/pgo-custom.profdata" \
-				"${pgo_data_staging_dir}" || die
+				$(find "${pgo_data_staging_dir}" -name "*.profraw") || die
 			append-flags \
 				-fprofile-use="${pgo_data_staging_dir}/pgo-custom.profdata"
-		else
+		elif tc-is-gcc ; then
 			append-flags \
 				-fprofile-correction \
 				-fprofile-use \
@@ -427,10 +427,8 @@ _tpgo_is_profile_reusable() {
 			export CC=$(tc-getCC)
 			export CXX=$(tc-getCXX)
 		fi
-einfo
-einfo "CC=${CC}"
-einfo "CXX=${CXX}"
-einfo
+einfo "CC:\t\t${CC}"
+einfo "CXX:\t\t${CXX}"
 		_CC="${CC% *}"
 
 		if ! tc-is-gcc && ! tc-is-clang ; then
@@ -441,14 +439,14 @@ ewarn
 		fi
 
 		touch "${pgo_data_staging_dir}/compiler_fingerprint" \
-			|| die "You must call tpgo_src_prepare before calling tpgo_src_compile"
+			|| die "You must call uopts_src_prepare before calling tpgo_src_compile"
 		# Has same compiler?
 		if tc-is-gcc ; then
 			local actual=$("${_CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 ewarn
-ewarn "GCC incompatable:"
+ewarn "GCC fingerprint changed:"
 ewarn
 ewarn "actual: ${actual}"
 ewarn "expected: ${expected}"
@@ -460,7 +458,7 @@ ewarn
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 ewarn
-ewarn "Clang incompatable:"
+ewarn "Clang fingerprint changed:"
 ewarn
 ewarn "actual: ${actual}"
 ewarn "expected: ${expected}"
@@ -513,6 +511,7 @@ tpgo_train_verify_profile_warn() {
 		if (( ${nlines} == 0 )) ; then
 ewarn
 ewarn "Failed to generate a PGO profile."
+ewarn "pgo_data_staging_dir=${pgo_data_staging_dir}"
 ewarn
 		fi
 	elif use pgo && [[ "${CC}" =~ "clang" ]] ; then
@@ -520,6 +519,7 @@ ewarn
 		if (( ${nlines} == 0 )) ; then
 ewarn
 ewarn "Failed to generate a PGO profile."
+ewarn "pgo_data_staging_dir=${pgo_data_staging_dir}"
 ewarn
 		fi
 	fi
