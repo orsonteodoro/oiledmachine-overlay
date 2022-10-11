@@ -482,6 +482,10 @@ _src_configure() {
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
+	# Longer than usual build time when building webkit-gtk.
+	# Bump to next fastest build setting.
+	replace-flags -O0 -O1
+
 	filter-flags -m32 -m64 -mx32 -m31 '-mabi=*'
 	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
 	export CFLAGS="$(get_abi_CFLAGS ${ABI}) ${CFLAGS}"

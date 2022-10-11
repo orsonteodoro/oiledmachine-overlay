@@ -407,6 +407,7 @@ _src_configure() {
 		# Build time bug with gcc 10.3.0, 11.2.0:
 		# internal compiler error: maximum number of LRA assignment passes is achieved (30)
 
+		# Apply if using GCC
 ewarn
 ewarn "Detected <=sys-devel/gcc-11.2.1_p20220112.  Downgrading to -Os to avoid"
 ewarn "bug.  Re-emerge >=sys-devel/gcc-11.2.1_p20220112 for a more optimized"
@@ -422,6 +423,10 @@ ewarn
 
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
+
+	# Longer than usual build time when building webkit-gtk.
+	# Bump to next fastest build setting.
+	replace-flags -O0 -O1
 
 	filter-flags -m32 -m64 -mx32 -m31 '-mabi=*'
 	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
