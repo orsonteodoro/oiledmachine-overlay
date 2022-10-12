@@ -162,18 +162,24 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
 ## DONE
 
 
-
-    Additional sources:
+    Additional sources
 
     For PGO trainers, see contents of
-    https://github.com/WebKit/WebKit/tree/main/PerformanceTests
+
+      https://github.com/WebKit/WebKit/tree/main/PerformanceTests
+
     for description for what they do.
 
+
     For details on w32 PGO see:
-    https://github.com/WebKit/WebKit/commit/790a01a3ec741d8752990a809d1ab489d9637e3d
+
+      https://github.com/WebKit/WebKit/commit/790a01a3ec741d8752990a809d1ab489d9637e3d
 
   </longdescription>
   <use>
+    <flag name="alsa">
+      Enables ALSA sound support.
+    </flag>
     <flag name="avif">
       Enables AVIF image support.
     </flag>
@@ -257,6 +263,8 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
     </flag>
     <flag name="pulseaudio">
       Adds PulseAudio and microphone support.
+
+      You may need <pkg>media-sound/pulseaudio-daemon[alsa]</pkg> to hear sound.
     </flag>
     <flag name="thunder">
       Links to a framework with pluginable CDM (content decryption module) support.
@@ -310,7 +318,7 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       Enables JIT regex support.  Otherwise, it falls back to interpretive.
     </flag>
 
-    <!-- codecs -->
+    <!-- Codecs -->
     <flag name="a52">
       Support for decoding AC-3 audio.
     </flag>
@@ -328,6 +336,9 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
     </flag>
     <flag name="g722">
       Support for G722 encoding for GstWebRTC audio streams.
+    </flag>
+    <flag name="openh264">
+      Support for CPU based H.264 decoding.
     </flag>
     <flag name="libde265">
       Fallback support for the CPU based H.265 video decoder using libde265.

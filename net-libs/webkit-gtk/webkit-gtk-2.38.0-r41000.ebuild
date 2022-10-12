@@ -287,6 +287,7 @@ GST_VCODECS_IUSE="
 aom
 dav1d
 libde265
+openh264
 theora
 vpx
 x264
@@ -304,6 +305,30 @@ flac
 MSE_VCODECS_IUSE="
 "
 
+# Based on distro package file lists and
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Tools/glib/dependencies
+DEFAULT_GST_PLUGINS="
++a52
++aac
++alsa
++aom
++flac
++g722
++libde265
++mp3
++ogg
++pulseaudio
++opus
++speex
++theora
+-v4l
++vaapi
++vorbis
++vpx
++x264
+"
+# alsa is disabled on D11, enabled on A/L, enabled in F/L
+
 IUSE+="
 ${LANGS[@]/#/l10n_}
 ${GST_ACODECS_IUSE}
@@ -311,14 +336,15 @@ ${GST_CONTAINERS_IUSE}
 ${GST_VCODECS_IUSE}
 ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
+${DEFAULT_GST_PLUGINS}
+
 aqua avif +bmalloc -cache-partitioning -cache-partitioning cpu_flags_arm_thumb2
-+dfg-jit +doc -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring
-+gstreamer gstwebrtc hardened +introspection +javascriptcore +jit +journald
-+jpeg2k jpegxl +lcms +libhyphen -libwebrtc -mediarecorder -mediastream
-+minibrowser +opengl openmp +pulseaudio -seccomp -spell test thunder
-+unified-builds variation-fonts vaapi +v4l wayland +webassembly
-+webassembly-b3-jit +webcore +webcrypto -webdriver +webgl -webgl2 webm-eme
--webrtc webvtt -webxr +woff2 +X +yarr-jit
++dfg-jit +doc -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer
+gstwebrtc hardened +introspection +javascriptcore +jit +journald +jpeg2k jpegxl
++lcms +libhyphen -libwebrtc -mediarecorder -mediastream +minibrowser +opengl
+openmp -seccomp -spell test thunder +unified-builds variation-fonts -v4l wayland
++webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver +webgl -webgl2
+webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
 "
 
 gen_gst_plugins_duse() {
@@ -333,6 +359,7 @@ gen_gst_plugins_duse() {
 	U=( ${U[@]/dav1d/} )
 	U=( ${U[@]/g722/} )
 	U=( ${U[@]/libde265/} )
+	U=( ${U[@]/openh264/} )
 	U=( ${U[@]/speex/} )
 	local out=""
 	local u
@@ -372,6 +399,9 @@ REQUIRED_USE+="
 		aqua
 		wayland
 		X
+	)
+	alsa? (
+		gstreamer
 	)
 	cpu_flags_arm_thumb2? (
 		!ftl-jit
@@ -448,6 +478,8 @@ REQUIRED_USE+="
 #   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/OptionsGTK.cmake
 #   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/WebKitCommon.cmake
 #   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Tools/gtk/dependencies
+#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.38.0/Tools/glib/dependencies
 #   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
 #   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
 
@@ -524,7 +556,7 @@ RDEPEND+="
 		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi?]
 		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
 		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
-		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},pulseaudio?,v4l?]
+		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},alsa?,pulseaudio?,v4l?]
 		>=media-plugins/gst-plugins-opus-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		aom? (
 			>=media-plugins/gst-plugins-aom-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
@@ -543,6 +575,9 @@ RDEPEND+="
 		)
 		speex? (
 			>=media-plugins/gst-plugins-speex-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		)
+		vaapi? (
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
 		)
 		webvtt? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]
@@ -1208,6 +1243,9 @@ einfo
 	fi
 
 	uopts_src_configure
+	if ( use pgo || use epgo ) && tc-is-clang ; then
+		append-flags -mllvm -vp-counters-per-site=3
+	fi
 
 	# Anything less than -O2 may break rendering.
 	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
@@ -1305,6 +1343,13 @@ einfo
 einfo "See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"
 einfo "for proper building with PGO+BOLT"
 einfo
+
+	if ! use alsa && use pulseaudio \
+		&& has_version "media-sound/pulseaudio-daemon[-alsa]" ; then
+ewarn
+ewarn "You may need media-sound/pulseaudio-daemon[alsa] to hear sound."
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
