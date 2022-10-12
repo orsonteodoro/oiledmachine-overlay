@@ -579,7 +579,9 @@ RDEPEND+="
 			>=media-plugins/gst-plugins-speex-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		)
 		vaapi? (
-			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
+			!vaapi-stateless-decoding? (
+				>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
+			)
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
 			media-video/ffmpeg[${MULTILIB_USEDEP},vaapi]
 		)
