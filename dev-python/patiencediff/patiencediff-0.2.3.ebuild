@@ -13,13 +13,14 @@ HOMEPAGE="https://github.com/breezy-team/patiencediff"
 LICENSE="GPL-2+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+=" ${PYTHON_DEPS}"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}"
 SRC_URI="
 https://github.com/breezy-team/patiencediff/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
