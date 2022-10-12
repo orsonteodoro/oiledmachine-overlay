@@ -151,6 +151,10 @@ _src_configure() {
 	cd "${CMAKE_USE_DIR}" || die
 	uopts_src_configure
 
+	# Performance drops observed with testbed's tumbler test.
+	replace-flags -Os -O2
+	replace-flags -O0 -O1
+
 	local mycmakeargs=(
 		-DBOX2D_BUILD_DOCS=$(usex doc)
 		-DBOX2D_BUILD_TESTBED=$(usex examples)

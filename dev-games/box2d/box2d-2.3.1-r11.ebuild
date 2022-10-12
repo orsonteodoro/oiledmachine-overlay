@@ -125,6 +125,8 @@ _src_configure() {
 	cd "${CMAKE_USE_DIR}" || die
 	uopts_src_configure
 
+	# Big performance drop with Testbed's tumbler with all -O* flags
+
 	local mycmakeargs=(
 		-DDOC_DEST_DIR=${PN}-${PVR}
 		-DBOX2D_INSTALL_DOC=$(usex doc)
@@ -245,3 +247,5 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib-support, static-libs
+# OILEDMACHINE-OVERLAY-META-REVDEP:  urho3d
+
