@@ -4,13 +4,13 @@
 EAPI=7
 GST_ORG_MODULE="gst-plugins-bad"
 PYTHON_COMPAT=( python3_{8,9,10} )
-inherit flag-o-matic gstreamer-meson python-any-r1
+inherit gstreamer-meson python-any-r1
 
 DESCRIPTION="Less plugins for GStreamer"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 
 LICENSE="LGPL-2"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ppc ~ppc64 ~riscv ~sparc x86"
 
 # TODO: egl and gtk IUSE only for transition
 IUSE="X bzip2 +egl gles2 gtk +introspection +opengl +orc vnc wayland" # Keep default IUSE mirrored with gst-plugins-base where relevant
