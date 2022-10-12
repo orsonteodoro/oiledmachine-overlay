@@ -17,10 +17,12 @@ IUSE+=" cext doc fastimport git gpg sftp test workspace"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 # See also:  https://github.com/breezy-team/breezy/blob/upstream-3.2.2/setup.py#L60
 DEPEND=" ${PYTHON_DEPS}
-	$(python_gen_cond_dep 'dev-python/configobj[${PYTHON_USEDEP}]')
-	$(python_gen_cond_dep 'dev-python/patiencediff[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep '>=dev-python/dulwich-0.20.23[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep '>=dev-python/fastbencode-0.0.5[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep '>=dev-python/urllib3-1.24.1[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/configobj[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/patiencediff[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/pyyaml[${PYTHON_USEDEP}]')
 	cext? ( $(python_gen_cond_dep '>=dev-python/cython-0.29[${PYTHON_USEDEP}]') )
 	fastimport? ( $(python_gen_cond_dep 'dev-python/fastimport[${PYTHON_USEDEP}]') )
 	gpg? (
@@ -35,10 +37,12 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	$(python_gen_cond_dep 'dev-python/setuptools-rust[${PYTHON_USEDEP}]')
 	doc? (
+		$(python_gen_cond_dep 'dev-python/setuptools[${PYTHON_USEDEP}]')
 		$(python_gen_cond_dep 'dev-python/sphinx[${PYTHON_USEDEP}]')
 		$(python_gen_cond_dep 'dev-python/sphinx-epytext[${PYTHON_USEDEP}]')
 	)
 	test? (
+		$(python_gen_cond_dep '>=dev-python/dulwich-0.20.29[${PYTHON_USEDEP}]')
 		$(python_gen_cond_dep 'dev-python/testtools[${PYTHON_USEDEP}]')
 		$(python_gen_cond_dep 'dev-python/subunit[${PYTHON_USEDEP}]')
 	)"
