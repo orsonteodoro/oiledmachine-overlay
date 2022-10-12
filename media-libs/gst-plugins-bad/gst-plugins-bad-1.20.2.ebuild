@@ -97,7 +97,6 @@ RDEPEND="
 	bzip2? ( >=app-arch/bzip2-1.0.6-r4[${MULTILIB_USEDEP}] )
 	vaapi? (
 		${LIBVA_DEPEND}
-		!media-plugins/gst-plugins-vaapi
 		dev-libs/libgudev
 		>=x11-libs/libva-1.8:=[${MULTILIB_USEDEP}]
 	)
