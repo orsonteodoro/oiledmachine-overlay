@@ -17,6 +17,7 @@ LICENSE="
 LICENSE+="
 	custom
 	Apache-2.0
+	BSD
 	BSD-4
 	MIT
 	PSF-2.4
