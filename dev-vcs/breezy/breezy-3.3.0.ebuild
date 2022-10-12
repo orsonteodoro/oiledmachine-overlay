@@ -5,12 +5,29 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit autotools distutils-r1
+inherit autotools distutils-r1 lcnr
 
 DESCRIPTION="Breezy is a friendly powerful distributed version control system."
 HOMEPAGE="https://launchpad.net/brz"
-LICENSE="GPL-2+ Apache-2.0"
+LICENSE="
+	GPL-2+
+	Apache-2.0
+"
 # tools/rst2pdf.py is Apache-2.0
+LICENSE+="
+	custom
+	Apache-2.0
+	BSD-4
+	MIT
+	PSF-2.4
+	openssl
+	tcltk
+	unicode
+	Unlicense
+" # Third party cargo licenses
+# homedir/.cargo/registry/src/github.com-1ecc6299db9ec823/pyo3-0.15.2 - custom
+# homedir/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-1.6.0 - custom
+# homedir/.cargo/registry/src/github.com-1ecc6299db9ec823/pkg-version-1.0.0 - custom
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 IUSE+=" cext doc fastimport git gpg sftp test workspace"
@@ -51,7 +68,22 @@ https://launchpad.net/brz/$(ver_cut 1-2 ${PV})/${PV}/+download/${PN}-${PV}.tar.g
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 
+pkg_setup() {
+	if has network-sandbox ${FEATURES} ; then
+eerror
+eerror "Building requires network-sandbox to be disabled in FEATURES on a"
+eerror "per-package level."
+eerror
+		die
+	fi
+	python_setup
+}
+
 src_install() {
+	LCNR_SOURCE="${HOME}/.cargo"
+	LCNR_TAG="third_party"
+	lcnr_install_files
+
 	distutils-r1_src_install
 	mv "${ED}/usr/man" "${ED}/usr/share" || die
 }
