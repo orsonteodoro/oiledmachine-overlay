@@ -369,8 +369,7 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       Use stateless VA-API decoding only support to avoid rendering issues.
     </flag>
     <flag name="vaapi">
-      Use the legacy VA-API implementation for hardware accelerated encoding
-      if supported.
+      Use VA-API for hardware accelerated encoding if supported.
 
       If USE=-vaapi-stateless-decoding, then use the legacy for hardware
       accelerated decoding.  Otherwise, use VA-API stateless decoding.
