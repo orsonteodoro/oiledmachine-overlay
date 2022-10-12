@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="project">
-		<email>gstreamer@gentoo.org</email>
-		<name>GStreamer package maintainers</name>
-	</maintainer>
-	<use>
-		<flag name="bzip2">Enable bzip2 encoder/decoder plugin</flag>
-		<flag name="egl">Enable EGL support</flag>
-		<flag name="gles2">Enable GLES2 support</flag>
-		<flag name="vaapi">Enable stateless VA-API support</flag>
-	</use>
+  <maintainer type="project">
+    <email>gstreamer@gentoo.org</email>
+    <name>GStreamer package maintainers</name>
+  </maintainer>
+  <use>
+    <flag name="bzip2">
+      Enable bzip2 encoder/decoder plugin
+    </flag>
+    <flag name="egl">
+      Enable EGL support
+    </flag>
+    <flag name="gles2">
+      Enable GLES2 support
+    </flag>
+    <flag name="vaapi">
+      Enable stateless VA-API decoding only support.
+
+      For encoding support use <pkg>media-plugins/gst-plugins-vaapi</pkg>
+    </flag>
+  </use>
 </pkgmetadata>
