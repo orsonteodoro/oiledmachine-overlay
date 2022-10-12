@@ -62,11 +62,12 @@ PDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/libaom-2.0.1-aom_sadXXXxh-are-ssse3.patch"
-	"${FILESDIR}/libaom-3.1.2-cfi-rework.patch"
+	"${FILESDIR}/${PN}-2.0.1-aom_sadXXXxh-are-ssse3.patch"
+	"${FILESDIR}/${PN}-3.1.2-cfi-rework.patch"
+	"${FILESDIR}/${PN}-3.4.0-posix-c-source-ftello.patch"
 )
 
-# the PATENTS file is required to be distributed with this package bug #682214
+# The PATENTS file is required to be distributed with this package bug #682214.
 DOCS=( PATENTS )
 # Don't strip CFI
 RESTRICT="strip"
