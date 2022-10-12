@@ -365,11 +365,15 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
     <flag name="x264">
       Use x264 as a fallback CPU based H.264 video encoder.
     </flag>
-    <flag name="vaapi">
-      Add dependencies for stateless VA-API support.
+    <flag name="vaapi-stateless-decoding">
+      Use stateless VA-API decoding only support to avoid rendering issues.
     </flag>
-    <flag name="stateful-vaapi">
-      Use the legacy VA-API implementation.
+    <flag name="vaapi">
+      Use the legacy VA-API implementation for hardware accelerated encoding
+      if supported.
+
+      If USE=-vaapi-stateless-decoding, then use the legacy for hardware
+      accelerated decoding.  Otherwise, use VA-API stateless decoding.
     </flag>
     <flag name="vorbis">
       Support for encoding and decoding Vorbis audio.

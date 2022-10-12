@@ -320,15 +320,16 @@ DEFAULT_GST_PLUGINS="
 +pulseaudio
 +opus
 +speex
--stateful-vaapi
 +theora
 -v4l
 +vaapi
++vaapi-stateless-decoding
 +vorbis
 +vpx
 +x264
 "
 # alsa is disabled on D11, enabled on A/L, enabled in F/L
+# D11, A/L, F/L are currently not distributing stateless vaapi decoding.
 
 IUSE+="
 ${LANGS[@]/#/l10n_}
@@ -577,13 +578,13 @@ RDEPEND+="
 		speex? (
 			>=media-plugins/gst-plugins-speex-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		)
-		stateful-vaapi? (
+		vaapi? (
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
+			media-video/ffmpeg[${MULTILIB_USEDEP},vaapi]
 		)
-		vaapi? (
+		vaapi-stateless-decoding? (
 			>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
-			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
 		)
 		webvtt? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]
@@ -1318,7 +1319,7 @@ multilib_src_install() {
 		doins -r "${T}/langs/${l}"
 	done
 
-	if use stateful-vaapi ; then
+	if ! use vaapi-stateless-decoding && use vaapi ; then
 		dodir /etc/env.d
 newenvd - 50${PN}${API_VERSION} <<-EOF
 WEBKIT_GST_ENABLE_LEGACY_VAAPI=1
