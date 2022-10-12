@@ -320,6 +320,7 @@ DEFAULT_GST_PLUGINS="
 +pulseaudio
 +opus
 +speex
+-stateful-vaapi
 +theora
 -v4l
 +vaapi
@@ -553,7 +554,7 @@ RDEPEND+="
 	)
 	gnome-keyring? ( >=app-crypt/libsecret-0.18.6[${MULTILIB_USEDEP}] )
 	gstreamer? (
-		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi?]
+		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
 		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},alsa?,pulseaudio?,v4l?]
@@ -576,7 +577,12 @@ RDEPEND+="
 		speex? (
 			>=media-plugins/gst-plugins-speex-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		)
+		stateful-vaapi? (
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
+		)
 		vaapi? (
+			>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
 		)
 		webvtt? (
@@ -1311,6 +1317,13 @@ multilib_src_install() {
 	for l in ${L10N} ; do
 		doins -r "${T}/langs/${l}"
 	done
+
+	if use stateful-vaapi ; then
+		dodir /etc/env.d
+newenvd - 50${PN}${API_VERSION} <<-EOF
+WEBKIT_GST_ENABLE_LEGACY_VAAPI=1
+EOF
+	fi
 
 	LCNR_SOURCE="${S}"
 	lcnr_install_files

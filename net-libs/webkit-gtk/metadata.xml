@@ -368,6 +368,9 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
     <flag name="vaapi">
       Add dependencies for stateless VA-API support.
     </flag>
+    <flag name="stateful-vaapi">
+      Use the legacy VA-API implementation.
+    </flag>
     <flag name="vorbis">
       Support for encoding and decoding Vorbis audio.
     </flag>
