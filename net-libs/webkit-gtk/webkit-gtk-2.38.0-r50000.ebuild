@@ -434,10 +434,8 @@ REQUIRED_USE+="
 		!gles2
 	)
 	pulseaudio? ( gstreamer )
-	stateless-vaapi-decoding? ( !vaapi )
 	thunder? ( eme )
 	v4l? ( gstreamer mediastream )
-	vaapi? ( !stateful-vaapi )
 	webassembly? ( jit )
 	webassembly-b3-jit? (
 		ftl-jit
