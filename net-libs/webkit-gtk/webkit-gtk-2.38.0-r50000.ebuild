@@ -1256,7 +1256,7 @@ einfo
 	fi
 
 	uopts_src_configure
-	if ( use pgo || use epgo ) && tc-is-clang ; then
+	if use epgo && tc-is-clang ; then
 		append-flags -mllvm -vp-counters-per-site=3
 	fi
 
