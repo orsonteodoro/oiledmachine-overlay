@@ -18,7 +18,15 @@
     <flag name="vaapi">
       Enable stateless VA-API decoding only support.
 
-      For encoding support use <pkg>media-plugins/gst-plugins-vaapi</pkg>
+      For VA-API encoding support, use either
+
+        <pkg>media-plugins/gst-plugins-vaapi</pkg>
+
+      or
+
+        <pkg>media-plugins/gst-plugins-ffmpeg</pkg> with 
+        <pkg>media-video/ffmpeg[vaapi]</pkg>.
+
     </flag>
   </use>
 </pkgmetadata>
