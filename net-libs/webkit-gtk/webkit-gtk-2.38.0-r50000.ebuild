@@ -1213,23 +1213,11 @@ einfo
 
 	uopts_src_configure
 
-	if is-flagq -O0 ; then
-# -O0 is used for ebuild only correctness checking.
-ewarn
-ewarn "Manually apply -DRELEASE_WITHOUT_OPTIMIZATIONS=1 to CPPFLAGS to force"
-ewarn "use of -O0."
-ewarn
-	fi
+	# Anything less than -O2 may break rendering.
+	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
 
-	if ! [[ "${CPPFLAGS}" =~ "-DRELEASE_WITHOUT_OPTIMIZATIONS=1" ]] ; then
-		# Using -O0 has severe runtime performance penalties.
-		tc-is-gcc && replace-flags "-O0" "-O2"
-		tc-is-clang && replace-flags "-O0" "-O1"
-	fi
-
-	# pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
-	# It happens with GCC -O1.
-	tc-is-gcc && replace-flags "-O1" "-O2"
+	replace-flags "-O0" "-O2"
+	replace-flags "-O1" "-O2"
 
 	WK_USE_CCACHE=NO cmake_src_configure
 }
@@ -1245,8 +1233,8 @@ src_compile() {
 	compile_abi() {
 		export CC=$(tc-getCC ${CTARGET:-${CHOST}})
 		export CXX=$(tc-getCXX ${CTARGET:-${CHOST}})
-		einfo "CC=${CC}"
-		einfo "CXX=${CXX}"
+einfo "CC:\t\t${CC}"
+einfo "CXX:\t\t${CXX}"
 		uopts_src_compile
 	}
 	multilib_foreach_abi compile_abi
