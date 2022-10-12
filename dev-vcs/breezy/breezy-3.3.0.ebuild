@@ -34,7 +34,8 @@ SLOT="0"
 IUSE+=" cext doc fastimport git gpg sftp test workspace"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 # See also:  https://github.com/breezy-team/breezy/blob/upstream-3.2.2/setup.py#L60
-DEPEND=" ${PYTHON_DEPS}
+DEPEND="
+	${PYTHON_DEPS}
 	$(python_gen_cond_dep '>=dev-python/dulwich-0.20.23[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep '>=dev-python/fastbencode-0.0.5[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep '>=dev-python/urllib3-1.24.1[${PYTHON_USEDEP}]')
@@ -50,9 +51,11 @@ DEPEND=" ${PYTHON_DEPS}
 		$(python_gen_cond_dep 'dev-python/paramiko[${PYTHON_USEDEP}]')
 		$(python_gen_cond_dep 'dev-python/pycrypto[${PYTHON_USEDEP}]')
 	)
-	workspace? ( $(python_gen_cond_dep 'dev-python/pyinotify[${PYTHON_USEDEP}]') )"
+	workspace? ( $(python_gen_cond_dep 'dev-python/pyinotify[${PYTHON_USEDEP}]') )
+"
 RDEPEND+=" ${DEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}
+BDEPEND+="
+	${PYTHON_DEPS}
 	$(python_gen_cond_dep 'dev-python/setuptools-rust[${PYTHON_USEDEP}]')
 	doc? (
 		$(python_gen_cond_dep 'dev-python/setuptools[${PYTHON_USEDEP}]')
@@ -63,9 +66,11 @@ BDEPEND+=" ${PYTHON_DEPS}
 		$(python_gen_cond_dep '>=dev-python/dulwich-0.20.29[${PYTHON_USEDEP}]')
 		$(python_gen_cond_dep 'dev-python/testtools[${PYTHON_USEDEP}]')
 		$(python_gen_cond_dep 'dev-python/subunit[${PYTHON_USEDEP}]')
-	)"
+	)
+"
 SRC_URI="
-https://launchpad.net/brz/$(ver_cut 1-2 ${PV})/${PV}/+download/${PN}-${PV}.tar.gz"
+https://launchpad.net/brz/$(ver_cut 1-2 ${PV})/${PV}/+download/${PN}-${PV}.tar.gz
+"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 
