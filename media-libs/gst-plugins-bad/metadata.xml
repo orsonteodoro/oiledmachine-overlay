@@ -24,7 +24,7 @@
 
       or
 
-        <pkg>media-plugins/gst-plugins-ffmpeg</pkg> with 
+        <pkg>media-plugins/gst-plugins-libva</pkg> with 
         <pkg>media-video/ffmpeg[vaapi]</pkg>.
 
     </flag>
