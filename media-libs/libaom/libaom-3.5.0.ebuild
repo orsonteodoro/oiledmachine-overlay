@@ -26,11 +26,12 @@ IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
 IUSE="${IUSE} cpu_flags_arm_neon"
 IUSE+=" +asm"
-IUSE+=" pgo
+IUSE+="
+	chromium
+	pgo
 	trainer-2-pass-constrained-quality
 	trainer-constrained-quality
 	trainer-lossless
-	chromium
 "
 REQUIRED_USE="
 	cpu_flags_x86_sse2? ( cpu_flags_x86_mmx )
@@ -262,6 +263,17 @@ _src_configure() {
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cd "${CMAKE_USE_DIR}" || die
 	uopts_src_configure
+
+	if tc-is-clang && ( use pgo || use epgo ) ; then
+#
+# Fix for:
+#
+# LLVM Profile Warning: Unable to track new values: Running out of static
+# counters.  Consider using option -mllvm -vp-counters-per-site=<n> to allocate
+# more value profile counters at compile time.
+#
+		append-flags -mllvm -vp-counters-per-site=3
+	fi
 
 	tc-export CC CXX
 
