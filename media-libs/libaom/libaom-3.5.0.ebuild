@@ -265,6 +265,9 @@ _src_configure() {
 
 	tc-export CC CXX
 
+	# Stuck on ~31 frames for more than double the time compared to -O1 when encoding.
+	replace-flags -O0 -O1
+
 	local mycmakeargs=(
 		-DENABLE_DOCS=$(multilib_native_usex doc ON OFF)
 		-DENABLE_TESTS=$(usex test)
