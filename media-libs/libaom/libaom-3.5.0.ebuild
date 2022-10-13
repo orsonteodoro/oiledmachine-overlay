@@ -272,7 +272,7 @@ _src_configure() {
 # counters.  Consider using option -mllvm -vp-counters-per-site=<n> to allocate
 # more value profile counters at compile time.
 #
-		append-flags -mllvm -vp-counters-per-site=4
+		append-flags -mllvm -vp-counters-per-site=8
 	fi
 
 	tc-export CC CXX
