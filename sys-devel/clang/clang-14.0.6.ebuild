@@ -194,6 +194,9 @@ ewarn "To avoid long linking delays, close programs that produce unexpectedly"
 ewarn "high disk activity (web browsers) and possibly switch to -j1."
 ewarn
 
+	# Keep in sync with
+	# https://github.com/llvm/llvm-project/blob/main/clang/CMakeLists.txt#L969
+	export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=ext-tsp -reorder-functions=hfsort+ -split-functions -split-all-cold -split-eh -dyno-stats -icf=1 -use-gnu-stack"}
 	uopts_setup
 
 # See https://bugs.gentoo.org/767700

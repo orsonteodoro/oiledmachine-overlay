@@ -155,7 +155,10 @@ tbolt_setup() {
 	subscribe_verify_profile_warn "tbolt_train_verify_profile_warn"
 	subscribe_verify_profile_fatal "tbolt_train_verify_profile_fatal"
 	_setup_llvm
-	export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=cache+ -reorder-functions=hfsort -split-functions=2 -split-all-cold -split-eh -dyno-stats"}
+
+	# Keep in sync with
+	# https://github.com/llvm/llvm-project/blob/main/bolt/README.md?plain=1#L183
+	export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=ext-tsp -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats"}
 
 	if [[ -z "${_UOPTS_ECLASS}" ]] ; then
 eerror "tbolt.eclass must be used with uopts.eclass.  Do not inherit tbolt"
