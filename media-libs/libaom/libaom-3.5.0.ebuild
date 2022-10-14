@@ -1,6 +1,8 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# TODO:  live streamer trainers will be added after portage secure wipe hooks [aka bash exit/abort traps] are implemented/fixed.
+
 EAPI=8
 
 CMAKE_ECLASS=cmake
@@ -30,22 +32,32 @@ IUSE+="
 	chromium
 	pgo
 	trainer-2-pass-constrained-quality
+	trainer-2-pass-constrained-quality-quick
 	trainer-constrained-quality
+	trainer-constrained-quality-quick
 	trainer-lossless
+	trainer-lossless-quick
 "
+# TODO trainer-random-frames.  Evaluate random frames instead of beginning.
 REQUIRED_USE="
 	cpu_flags_x86_sse2? ( cpu_flags_x86_mmx )
 	cpu_flags_x86_ssse3? ( cpu_flags_x86_sse2 )
 	pgo? (
 		|| (
 			trainer-2-pass-constrained-quality
+			trainer-2-pass-constrained-quality-quick
 			trainer-constrained-quality
+			trainer-constrained-quality-quick
 			trainer-lossless
+			trainer-lossless-quick
 		)
 	)
 	trainer-2-pass-constrained-quality? ( pgo )
+	trainer-2-pass-constrained-quality-quick? ( pgo )
 	trainer-constrained-quality? ( pgo )
+	trainer-constrained-quality-quick? ( pgo )
 	trainer-lossless? ( pgo )
+	trainer-lossless-quick? ( pgo )
 "
 
 BDEPEND+="
@@ -389,6 +401,26 @@ _vdecode() {
 	"${cmd[@]}" || die
 }
 
+_get_resolutions_quick() {
+	local L=(
+		"30;426;240;sdr"
+		"60;426;240;sdr"
+
+		"30;1280;720;hdr"
+		"60;1280;720;hdr"
+	)
+	local e
+	if [[ -n "${LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK}" ]] ; then
+		for e in ${LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK} ; do
+			echo "${e}"
+		done
+	else
+		for e in ${L[@]} ; do
+			echo "${e}"
+		done
+	fi
+}
+
 _get_resolutions() {
 	local L=(
 		"30;426;240;sdr"
@@ -454,12 +486,12 @@ _cheight() {
 
 _trainer_plan_constrained_quality_training_session() {
 	local entry="${1}"
+	local duration="${2}"
 
 	local fps=$(echo "${entry}" | cut -f 1 -d ";")
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local dynamic_range=$(echo "${entry}" | cut -f 4 -d ";")
-	local duration="3"
 	local m60fps="1"
 	local extra_args=()
 	local bits="" # 8 bit
@@ -517,9 +549,17 @@ _trainer_plan_constrained_quality_training_session() {
 }
 
 _trainer_plan_constrained_quality() {
-	local L=(
-		$(_get_resolutions)
-	)
+	local mode="${1}"
+	local duration
+	local L=()
+
+	if [[ "${mode}" == "quick" ]] ; then
+		L=( $(_get_resolutions_quick) )
+		duration="1"
+	else
+		L=( $(_get_resolutions) )
+		duration="3"
+	fi
 
 	if train_meets_requirements ; then
 		local id
@@ -529,7 +569,7 @@ _trainer_plan_constrained_quality() {
 			einfo "Running trainer for 1 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
-				_trainer_plan_constrained_quality_training_session "${e}"
+				_trainer_plan_constrained_quality_training_session "${e}" "${duration}"
 			done
 		done
 	fi
@@ -537,12 +577,12 @@ _trainer_plan_constrained_quality() {
 
 _trainer_plan_2_pass_constrained_quality_training_session() {
 	local entry="${1}"
+	local duration="${2}"
 
 	local fps=$(echo "${entry}" | cut -f 1 -d ";")
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local dynamic_range=$(echo "${entry}" | cut -f 4 -d ";")
-	local duration="3"
 	local mhdr="1"
 	local m60fps="1"
 	local bits=""
@@ -640,9 +680,17 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 }
 
 _trainer_plan_2_pass_constrained_quality() {
-	local L=(
-		$(_get_resolutions)
-	)
+	local mode="${1}"
+	local duration
+	local L=()
+
+	if [[ "${mode}" == "quick" ]] ; then
+		L=( $(_get_resolutions_quick) )
+		duration="1"
+	else
+		L=( $(_get_resolutions) )
+		duration="3"
+	fi
 
 	if train_meets_requirements ; then
 		local id
@@ -652,13 +700,22 @@ _trainer_plan_2_pass_constrained_quality() {
 			einfo "Running trainer for 2 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
-				_trainer_plan_2_pass_constrained_quality_training_session "${e}"
+				_trainer_plan_2_pass_constrained_quality_training_session "${e}" "${duration}"
 			done
 		done
 	fi
 }
 
 _trainer_plan_lossless() {
+	local mode="${1}"
+	local duration
+
+	if [[ "${mode}" == "quick" ]] ; then
+		duration="1"
+	else
+		duration="3"
+	fi
+
 	if train_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
@@ -675,7 +732,7 @@ _trainer_plan_lossless() {
 				-crf 0 \
 				${LIBAOM_TRAINING_ARGS_LOSSLESS} \
 				-an \
-				-t 3 \
+				-t ${duration} \
 				"${T}/traintemp/test.webm"
 			)
 			"${cmd[@]}" || die
@@ -688,14 +745,23 @@ train_trainer_custom() {
 	[[ "${lib_type}" == "static" ]] && return
 	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+	if use trainer-constrained-quality-quick ; then
+		_trainer_plan_constrained_quality "quick"
+	fi
+	if use trainer-2-pass-constrained-quality-quick ; then
+		_trainer_plan_2_pass_constrained_quality "quick"
+	fi
 	if use trainer-constrained-quality ; then
-		_trainer_plan_constrained_quality
+		_trainer_plan_constrained_quality "full"
 	fi
 	if use trainer-2-pass-constrained-quality ; then
-		_trainer_plan_2_pass_constrained_quality
+		_trainer_plan_2_pass_constrained_quality "full"
 	fi
 	if use trainer-lossless ; then
-		_trainer_plan_lossless
+		_trainer_plan_lossless "full"
+	fi
+	if use trainer-lossless-quick ; then
+		_trainer_plan_lossless "quick"
 	fi
 }
 

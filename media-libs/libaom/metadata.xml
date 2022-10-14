@@ -33,6 +33,7 @@
     (3) Acquire a video that is either CC0-1.0, public domain, or your own
         personal video asset that is at least 3 seconds long.  The asset
 	will determine whether or not that chroma subsample will be trained.
+        The video should not be blank for the first 3 seconds.
     (4a) Set assets in one of the 3 categories:
 
          LIBAOM_TRAINING_VIDEO_CGI_i          # Computer Generated Imagery
@@ -84,7 +85,8 @@
     Custom training resolutions
 
     Set LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS as a space separated list of
-    sublists.
+    sublists.  Use LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK for the
+    quick trainers.
 
     Sublist format:
     fps;width;height;dynamic_range
@@ -114,13 +116,38 @@
     <flag name="trainer-2-pass-constrained-quality">
       Performs an addtional 2 pass training.  Two pass improves quality and rate
       control.  This step can be skipped for live streamers.
+
+      3 seconds with many resolutions.
+    </flag>
+    <flag name="trainer-2-pass-constrained-quality-quick">
+      Performs an addtional 2 pass training.  Two pass improves quality and rate
+      control.  This step can be skipped for live streamers.
+
+      1 second and lowest resolutions only.
+
+      (Ebuild maintainer recommended)
     </flag>
     <flag name="trainer-constrained-quality">
-      Use the 1 pass constrained quality trainer.  (ebuild maintainer
-      recommended)
+      Use the 1 pass constrained quality trainer.
+
+      3 seconds with many resolutions.
+    </flag>
+    <flag name="trainer-constrained-quality-quick">
+      Use the 1 pass constrained quality trainer.
+
+      1 second and lowest resolutions only.
+
+      (Ebuild maintainer recommended)
     </flag>
     <flag name="trainer-lossless">
       Use the lossless trainer.
+
+      3 second only.
+    </flag>
+    <flag name="trainer-lossless-quick">
+      Use the lossless trainer.
+
+      1 second only.
     </flag>
   </use>
 </pkgmetadata>

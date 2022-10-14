@@ -1,6 +1,8 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# TODO:  live streamer trainers will be added after portage secure wipe hooks [aka bash exit/abort traps] are implemented/fixed.
+
 EAPI=8
 inherit flag-o-matic llvm multilib-minimal toolchain-funcs uopts
 
@@ -30,20 +32,29 @@ IUSE+="
 	chromium
 	pgo
 	trainer-2-pass-constrained-quality
+	trainer-2-pass-constrained-quality-quick
 	trainer-constrained-quality
+	trainer-constrained-quality-quick
 	trainer-lossless
+	trainer-lossless-quick
 "
 REQUIRED_USE="
 	pgo? (
 		|| (
 			trainer-2-pass-constrained-quality
+			trainer-2-pass-constrained-quality-quick
 			trainer-constrained-quality
+			trainer-constrained-quality-quick
 			trainer-lossless
+			trainer-lossless-quick
 		)
 	)
 	trainer-2-pass-constrained-quality? ( pgo )
+	trainer-2-pass-constrained-quality-quick? ( pgo )
 	trainer-constrained-quality? ( pgo )
+	trainer-constrained-quality-quick? ( pgo )
 	trainer-lossless? ( pgo )
+	trainer-lossless-quick? ( pgo )
 	test? ( threads )
 "
 
@@ -277,6 +288,10 @@ _src_configure() {
 
 	uopts_src_configure
 
+	if tc-is-clang && ( use pgo || use epgo ) ; then
+		append-flags -mllvm -vp-counters-per-site=8
+	fi
+
 	# #498364: sse doesn't work without sse2 enabled,
 	local myconfargs=(
 		--prefix="${EPREFIX}"/usr
@@ -376,6 +391,27 @@ _vdecode() {
 	"${cmd[@]}" || die
 }
 
+_get_resolutions_quick() {
+	local L=(
+		"30;426;240;sdr"
+		"60;426;240;sdr"
+
+		"30;1280;720;hdr"
+		"60;1280;720;hdr"
+	)
+
+	local e
+	if [[ -n "${LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK}" ]] ; then
+		for e in ${LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK} ; do
+			echo "${e}"
+		done
+	else
+		for e in ${L[@]} ; do
+			echo "${e}"
+		done
+	fi
+}
+
 _get_resolutions() {
 	local L=(
 		"30;426;240;sdr"
@@ -441,12 +477,12 @@ _cheight() {
 
 _trainer_plan_constrained_quality() {
 	local entry="${1}"
+	local duration="${2}"
 
 	local fps=$(echo "${entry}" | cut -f 1 -d ";")
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local dynamic_range=$(echo "${entry}" | cut -f 4 -d ";")
-	local duration="3"
 
 	local m60fps="1"
 
@@ -501,9 +537,9 @@ _trainer_plan_constrained_quality() {
 }
 
 _trainer_plan_constrained_quality() {
-	local L=(
-		$(_get_resolutions)
-	)
+	local L=()
+	local mode="${2}"
+	local duration
 
 	local encoding_codec="${1}"
 	local decoding_codec
@@ -518,6 +554,14 @@ _trainer_plan_constrained_quality() {
 		die "Unrecognized implementation of vpx"
 	fi
 
+	if [[ "${mode}" == "quick" ]] ; then
+		L=(_get_resolutions_quick)
+		duration="1"
+	else
+		L=(_get_resolutions)
+		duration="3"
+	fi
+
 	if train_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
@@ -526,7 +570,7 @@ _trainer_plan_constrained_quality() {
 			einfo "Running trainer for ${encoding_codec} for 1 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
-				_trainer_plan_constrained_quality_training_session "${e}"
+				_trainer_plan_constrained_quality_training_session "${e}" "${duration}"
 			done
 		done
 	fi
@@ -534,12 +578,12 @@ _trainer_plan_constrained_quality() {
 
 _trainer_plan_2_pass_constrained_quality_training_session() {
 	local entry="${1}"
+	local duration="${2}"
 
 	local fps=$(echo "${entry}" | cut -f 1 -d ";")
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local dynamic_range=$(echo "${entry}" | cut -f 4 -d ";")
-	local duration="3"
 	local mhdr="1"
 	local m60fps="1"
 	local bits=""
@@ -640,9 +684,9 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 }
 
 _trainer_plan_2_pass_constrained_quality() {
-	local L=(
-		$(_get_resolutions)
-	)
+	local L=()
+	local mode="${2}"
+	local duration
 
 	local encoding_codec="${1}"
 	local decoding_codec
@@ -657,6 +701,14 @@ _trainer_plan_2_pass_constrained_quality() {
 		die "Unrecognized implementation of vpx"
 	fi
 
+	if [[ "${mode}" == "quick" ]] ; then
+		L=(_get_resolutions_quick)
+		duration="1"
+	else
+		L=(_get_resolutions)
+		duration="3"
+	fi
+
 	if train_meets_requirements ; then
 		local id
 		for id in $(get_asset_ids) ; do
@@ -665,13 +717,16 @@ _trainer_plan_2_pass_constrained_quality() {
 			einfo "Running trainer for ${encoding_codec} for 2 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
-				_trainer_plan_constrained_quality_training_session "${e}"
+				_trainer_plan_constrained_quality_training_session "${e}" "${duration}"
 			done
 		done
 	fi
 }
 
 _trainer_plan_lossless() {
+	local mode="${2}"
+	local duration
+
 	local encoding_codec="${1}"
 	local decoding_codec
 	local training_args
@@ -683,6 +738,12 @@ _trainer_plan_lossless() {
 		training_args=${LIBVPX_TRAINING_VP9_ARGS_LOSSLESS}
 	else
 		die "Unrecognized implementation of vpx"
+	fi
+
+	if [[ "${mode}" == "quick" ]] ; then
+		duration="1"
+	else
+		duration="3"
 	fi
 
 	if train_meets_requirements ; then
@@ -700,7 +761,7 @@ _trainer_plan_lossless() {
 				-lossless 1 \
 				${training_args} \
 				-an \
-				-t 3 \
+				-t ${duration} \
 				"${T}/traintemp/test.webm" )
 			einfo "${cmd[@]}"
 			"${cmd[@]}" || die
@@ -711,17 +772,29 @@ _trainer_plan_lossless() {
 
 train_trainer_custom() {
 	[[ "${lib_type}" == "static" ]] || return # Reuse the shared PGO profile
+	if use trainer-constrained-quality-quick ; then
+		_trainer_plan_constrained_quality "libvpx" "quick"
+		_trainer_plan_constrained_quality "libvpx-vp9" "quick"
+	fi
 	if use trainer-constrained-quality ; then
-		_trainer_plan_constrained_quality "libvpx"
-		_trainer_plan_constrained_quality "libvpx-vp9"
+		_trainer_plan_constrained_quality "libvpx" "full"
+		_trainer_plan_constrained_quality "libvpx-vp9" "full"
+	fi
+	if use trainer-2-pass-constrained-quality-quick ; then
+		_trainer_plan_2_pass_constrained_quality "libvpx" "quick"
+		_trainer_plan_2_pass_constrained_quality "libvpx-vp9" "quick"
 	fi
 	if use trainer-2-pass-constrained-quality ; then
-		_trainer_plan_2_pass_constrained_quality "libvpx"
-		_trainer_plan_2_pass_constrained_quality "libvpx-vp9"
+		_trainer_plan_2_pass_constrained_quality "libvpx" "full"
+		_trainer_plan_2_pass_constrained_quality "libvpx-vp9" "full"
 	fi
 	if use trainer-lossless ; then
-		_trainer_plan_lossless "libvpx"
-		_trainer_plan_lossless "libvpx-vp9"
+		_trainer_plan_lossless "libvpx" "full"
+		_trainer_plan_lossless "libvpx-vp9" "full"
+	fi
+	if use trainer-lossless-quick ; then
+		_trainer_plan_lossless "libvpx" "quick"
+		_trainer_plan_lossless "libvpx-vp9" "quick"
 	fi
 }
 
