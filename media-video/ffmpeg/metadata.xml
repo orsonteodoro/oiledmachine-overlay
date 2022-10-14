@@ -339,7 +339,7 @@
     Performs an addtional 2 pass training.  Two pass improves quality and rate
     control.  This step can be skipped for live streamers.
 
-    Use the 1 pass constrained quality video trainer.
+    Uses 1 second with lowest resolutions.
   </flag>
   <flag name="trainer-video-constrained-quality">
     Use the 1 pass constrained quality video trainer.
