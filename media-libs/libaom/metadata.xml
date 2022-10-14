@@ -26,27 +26,34 @@
 
       media-video/ffmpeg[encode,libaom]
 
-    So the following steps must be taken.
+
+    The following steps must be taken...
+
     (1) Build this library first.
+
     (2) Build the trainer toolchain depending on this library corresponding
         to the package and USE flags above.
+
     (3) Acquire a video that is either CC0-1.0, public domain, or your own
         personal video asset that is at least 3 seconds long.  The asset
 	will determine whether or not that chroma subsample will be trained.
         The video should not be blank for the first 3 seconds.
-    (4a) Set assets in one of the 3 categories:
 
-         LIBAOM_TRAINING_VIDEO_CGI_i          # Computer Generated Imagery
-         LIBAOM_TRAINING_VIDEO_GAMING_i
-         LIBAOM_TRAINING_VIDEO_GENERAL_i
-         LIBAOM_TRAINING_VIDEO_GRAINY_i
-         LIBAOM_TRAINING_VIDEO_SCREENCAST_i
+    (4) Set assets in one of the 3 categories:
 
-         replacing i with an unpadded number, as a per-package environment
-         varable with the absolute path to the asset.
-    (4b) Set LIBAOM_TRAINING_ARGS and/or
+          LIBAOM_TRAINING_VIDEO_CGI_i          # Computer Generated Imagery
+          LIBAOM_TRAINING_VIDEO_GAMING_i
+          LIBAOM_TRAINING_VIDEO_GENERAL_i
+          LIBAOM_TRAINING_VIDEO_GRAINY_i
+          LIBAOM_TRAINING_VIDEO_SCREENCAST_i
+
+        replacing i with an unpadded number, as a per-package environment
+        varable with the absolute path to the asset.
+
+    (5) Set LIBAOM_TRAINING_ARGS and/or
 	LIBAOM_TRAINING_ARGS_LOSSLESS, see below for details.
-    (5) Re-emerge this package with the pgo USE flag enabled.
+
+    (6) Re-emerge this package with the pgo USE flag enabled.
 
     LIBAOM_TRAINING_MAX_ASSETS_PER_TYPE can be used to change the max number of
     assets to train with.  Currently it is set to 100.
@@ -61,7 +68,9 @@
 
     You may supply a LIBAOM_TRAINING_ARGS as a per package environment variable
     to tell ffmpeg which multicore, multithreading, tiling settings to use as
-    the default.  It must be a string.  Example
+    the default.  It must be a string.
+
+    Example
 
       LIBAOM_TRAINING_ARGS=" -cpu-used 8 -tile-columns 2 -tile-rows 2 -threads 8"
 
@@ -89,13 +98,17 @@
     quick trainers.
 
     Sublist format:
-    fps;width;height;dynamic_range
+
+      fps;width;height;dynamic_range
 
     dynamic range - sdr or hdr only
     fps - 30 or 60 only
 
-    Example:
-    LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS="30;1280;720;sdr 60;1280;720;sdr"
+    Examples
+
+      LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS="30;1280;720;sdr 60;1280;720;sdr"
+      LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK="30;426;240;sdr 60;426;240;sdr"
+      LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK="30;1280;720;hdr 60;1280;720;hdr"
 
     Setting this will override the defaults which trains all.
 

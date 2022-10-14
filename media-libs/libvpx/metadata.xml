@@ -32,34 +32,41 @@
 
       media-video/ffmpeg[encode,vpx]
 
-    So the following steps must be taken.
+
+    The following steps must be taken...
+
     (1) Build this library first.
+
     (2) Build the trainer toolchain depending on this library corresponding
         to the package and USE flags above.
+
     (3) Acquire a video that is either CC0-1.0, public domain, or your own
         personal video asset is at least 3 seconds long.  The choice of
-	the asset will decide whether or not a particular chroma subsample
-	code paths will be trained.  The sample must not be blank in the
+        the asset will decide whether or not a particular chroma subsample
+        code paths will be trained.  The sample must not be blank in the
         beginning.
-    (4a) Place the video in one of these groups
 
-		LIBVPX_TRAINING_VIDEO_CGI_i        # Computer Generated Imagery
-		LIBVPX_TRAINING_VIDEO_GENERAL_i
-		LIBVPX_TRAINING_VIDEO_GAMING_i
-		LIBVPX_TRAINING_VIDEO_GRAINY_i
-		LIBVPX_TRAINING_VIDEO_SCREENCAST_i
+    (4) Place the video in one of these groups
+
+          LIBVPX_TRAINING_VIDEO_CGI_i        # Computer Generated Imagery
+          LIBVPX_TRAINING_VIDEO_GENERAL_i
+          LIBVPX_TRAINING_VIDEO_GAMING_i
+          LIBVPX_TRAINING_VIDEO_GRAINY_i
+          LIBVPX_TRAINING_VIDEO_SCREENCAST_i
 
         replacing i with an unpadded number, as a per-package environment
         variable with the absolute path to the asset.
-    (4b) Set...
 
-		LIBVPX_TRAINING_VP8_ARGS,
-		LIBVPX_TRAINING_VP9_ARGS,
-		LIBVPX_TRAINING_VP8_ARGS_LOSSLESS,
-		LIBVPX_TRAINING_VP9_ARGS_LOSSLESS,
+    (5) Set...
 
-         See below for details on how to properly set these values.
-    (5) Re-emerge this package with the pgo USE flag enabled.
+          LIBVPX_TRAINING_VP8_ARGS,
+          LIBVPX_TRAINING_VP9_ARGS,
+          LIBVPX_TRAINING_VP8_ARGS_LOSSLESS,
+          LIBVPX_TRAINING_VP9_ARGS_LOSSLESS,
+
+        See below for details on how to properly set these values.
+
+    (6) Re-emerge this package with the pgo USE flag enabled.
 
     The LIBVPX_TRAINING_MAX_ASSETS_PER_TYPE can be use to lift the asset limits
     for PGO training.  Currently it is set at 100.
@@ -76,7 +83,7 @@
     a per package environment variable to tell ffmpeg which multicore,
     multithreading, tiling settings to use as the default.  It must be a string.
 
-    Example
+    Examples
 
       LIBVPX_TRAINING_VP8_ARGS=" -threads 8"
       LIBVPX_TRAINING_VP9_ARGS=" -tile-columns 2 -tile-rows 2 -threads 8"
@@ -100,13 +107,17 @@
     quick trainers.
 
     Sublist format:
-    fps;width;height;dynamic_range
+
+      fps;width;height;dynamic_range
 
     dynamic range - sdr or hdr only
     fps - 30 or 60 only
 
-    Example:
-    LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS="30;1280;720;sdr 60;1280;720;sdr"
+    Examples
+
+      LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS="30;1280;720;sdr 60;1280;720;sdr"
+      LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK="30;426;240;sdr 60;426;240;sdr"
+      LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK="30;1280;720;hdr 60;1280;720;hdr"
 
     Setting this will override the defaults which trains all.
 

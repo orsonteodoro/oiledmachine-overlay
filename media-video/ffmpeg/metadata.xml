@@ -6,316 +6,338 @@
 	<email>media-video@gentoo.org</email>
 </maintainer>
 <longdescription>
-	The oiledmachine-overlay provides this ebuild for PGO/BOLT optimization.
+  The oiledmachine-overlay provides this ebuild for PGO/BOLT optimization.
 
-	USE flag status:
-		pgo - done
-		bolt - WIP/testing
 
-	PGO optimization requires several steps:
-	(1) Fetch assets to train with.  They should be licensed under
-	public-domain, CC0-1.0, or your own assets.  They need to be
-	60 fps, 4k, and at least 3 seconds long for video PGO training.
-	For audio training, pick 3 samples 15 seconds each.
-	These high quality samples will be used to generate lower
-	quality samples.  The long 30 second requirement is to ensure
-	sufficient coverage of dynamic range.  In addition, the sample
-	will decide the code paths of the chroma subsample to train.
-	(2) Emerge FFmpeg the first time to get the PGO toolchain
-	installed.
-	(3) Configure the following variables, replacing i with a unpadded number:
+  USE flag status:
 
-		FFMPEG_TRAINING_VIDEO_CGI_i               # Computer Generated Imagery
-		FFMPEG_TRAINING_VIDEO_SCREENCAST_i
-		FFMPEG_TRAINING_VIDEO_FANTASY_i
-		FFMPEG_TRAINING_VIDEO_GAMING_i
-		FFMPEG_TRAINING_VIDEO_GRAINY_i
-		FFMPEG_TRAINING_VIDEO_REALISM_i
-		FFMPEG_TRAINING_VIDEO_STILL_i             # Same image used from start to finish in podcasting or music
-		FFMPEG_TRAINING_AUDIO_VOICE_i
-		FFMPEG_TRAINING_AUDIO_RADIO_i
-		FFMPEG_TRAINING_AUDIO_MUSIC_INSTRUMENTAL_i
-		FFMPEG_TRAINING_AUDIO_VOCAL_MUSIC_i
-		FFMPEG_TRAINING_AV_DEVICE_i
-		FFMPEG_TRAINING_AV_MICROPHONE_i
+    pgo - done
+    bolt - WIP/testing
 
-	to the abspath to your asset(s). Only one asset can be used for each
-	variable.  The reason for the long list is to ensure dynamic range
-	coverage based on typical use.  One may add samples across decades,
-	across genres, across live or studio so that the codecs do not
-	get parts deoptimized in the PGO process.  It is unnecessary to
-	fill all of them out.  For example one may inadvertantly optimize
-	for 60s music once only.  These allow to specify more so that
-	contemporary music or scenarios also gets optimized.  One may
-	inadvertantly cover women radio quality but inadvertantly
-	deoptimize for male or lgtbtqia.
-	(4) Setup FFMPEG_TRAINING_VIDEO_CODECS, FFMPEG_TRAINING_AUDIO_CODECS,
-	FFMPEG_TRAINING_CODECNAME_ARGS, FFMPEG_TRAINING_CODECNAME_ARGS_LOSSLESS,
-	per-package envvars.  See below for details.
-	(5) Emerge FFmpeg again with an optimized PGO build.
 
-	(Planning) FFMPEG_TRAINING_VIDEO_STREAMING_i is the v4l device to train for
-	codec streaming.
+  BOLT/PGO optimization requires several steps:
 
-	(Planning) FFMPEG_TRAINING_MOBILE_STREAMING_i is a sample for mobile
-	training.
+  (1) Fetch assets to train with.  They should be licensed under public-domain,
+      CC0-1.0, or your own assets.  They need to be 60 fps, 4k, and at least 3
+      seconds long for video PGO training.
 
-	FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE is a number of assets per *_i type.
-	Currently it is set to 100 but can be expanded to more than
-	that.
+      For audio training, pick 3 samples 15 seconds each.
+
+      These high quality samples will be used to generate lower quality samples.
+      The long 30 second requirement is to ensure sufficient coverage of dynamic
+      range.  In addition, the sample will decide the code paths of the chroma
+      subsample to train.
+
+  (2) Emerge FFmpeg the first time to get the PGO toolchain installed.
+
+  (3) Configure the following variables, replacing i with a unpadded number
+
+        FFMPEG_TRAINING_VIDEO_CGI_i               # Computer Generated Imagery
+        FFMPEG_TRAINING_VIDEO_SCREENCAST_i
+        FFMPEG_TRAINING_VIDEO_FANTASY_i
+        FFMPEG_TRAINING_VIDEO_GAMING_i
+        FFMPEG_TRAINING_VIDEO_GRAINY_i
+        FFMPEG_TRAINING_VIDEO_REALISM_i
+        FFMPEG_TRAINING_VIDEO_STILL_i             # Same image used from start to finish in podcasting or music
+        FFMPEG_TRAINING_AUDIO_VOICE_i
+        FFMPEG_TRAINING_AUDIO_RADIO_i
+        FFMPEG_TRAINING_AUDIO_MUSIC_INSTRUMENTAL_i
+        FFMPEG_TRAINING_AUDIO_VOCAL_MUSIC_i
+        FFMPEG_TRAINING_AV_DEVICE_i
+        FFMPEG_TRAINING_AV_MICROPHONE_i
+
+      to the abspath to your asset(s). Only one asset can be used for each
+      variable.  The reason for the long list is to ensure dynamic range
+      coverage based on typical use.  One may add samples across decades, across
+      genres, across live or studio so that the codecs do not get parts
+      deoptimized in the PGO process.  It is unnecessary to fill all of them
+      out.  For example one may inadvertantly optimize for 60s music once only.
+      These allow to specify more so that contemporary music or scenarios also
+      gets optimized.  One may inadvertantly cover women radio quality but
+      inadvertantly deoptimize for male or lgtbtqia.
+
+  (4) Setup FFMPEG_TRAINING_VIDEO_CODECS, FFMPEG_TRAINING_AUDIO_CODECS,
+      FFMPEG_TRAINING_CODECNAME_ARGS, FFMPEG_TRAINING_CODECNAME_ARGS_LOSSLESS,
+      per-package envvars.  See below for details.
+
+  (5) Emerge FFmpeg again with an optimized PGO build.
+
+  (Planning) FFMPEG_TRAINING_VIDEO_STREAMING_i is the v4l device to train for
+  codec streaming.
+
+  (Planning) FFMPEG_TRAINING_MOBILE_STREAMING_i is a sample for mobile
+  training.
+
+  FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE is a number of assets per *_i type.
+  Currently it is set to 100 but can be expanded to more than
+  that.
 	
-	FFMPEG_TRAINING_VIDEO_CODECS is a string separated list of elements.
-	Each element is in this format vscenario:vencoder:vdecoder:ext:tags.
-	Empty elements are shown as :: for inner or : for outer.
+  FFMPEG_TRAINING_VIDEO_CODECS is a string separated list of elements.
+  Each element is in this format vscenario:vencoder:vdecoder:ext:tags.
+  Empty elements are shown as :: for inner or : for outer.
 
-	  The value of vscenario can be fantasy, film, grainy, streaming, realism.
-	  The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*" in parens
-	  The value of vdecoder matches  mpv --vd=help
-	  The value of ext matches  ffmpeg -formats
-	  The value of tags may be added for custom trainers providing metadata
-	  for enablement of special optimization options.  Multiple tags
-	  may be appended by comma and spaces replaced with _.  Tags can
-	  be filtered with bash regex to apply extra args.
+    The value of vscenario can be fantasy, film, grainy, streaming, realism.
+    The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*" in parens
+    The value of vdecoder matches  mpv --vd=help
+    The value of ext matches  ffmpeg -formats
+    The value of tags may be added for custom trainers providing metadata
+    for enablement of special optimization options.  Multiple tags
+    may be appended by comma and spaces replaced with _.  Tags can
+    be filtered with bash regex to apply extra args.
 
-	* VA-API codecs are currently not supported for training in the ebuild level.
+    * VA-API codecs are currently not supported for training in the ebuild level.
 
-	Example:
-	FFMPEG_TRAINING_VIDEO_CODECS=" fantasy:libvpx-vp9:libvpx-vp9:webm: realism:libvpx-vp9:libvpx-vp9:webm:"
+    Example
+	
+      FFMPEG_TRAINING_VIDEO_CODECS=" fantasy:libvpx-vp9:libvpx-vp9:webm: realism:libvpx-vp9:libvpx-vp9:webm:"
 
-	FFMPEG_TRAINING_AUDIO_CODECS is a string separated list of elements.
-	Each element is in this format ascenario:aencoder:adecoder:ext:tags.
-	Empty elements are shown as :: for inner or : for outer.
+  FFMPEG_TRAINING_AUDIO_CODECS is a string separated list of elements.
+  Each element is in this format ascenario:aencoder:adecoder:ext:tags.
+  Empty elements are shown as :: for inner or : for outer.
 
-	  The value of ascenario can be voice, radio, music.
-	  The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*" in parens
-	  The value of adecoder matches  mpv --ad=help
-	  The value of ext matches  ffmpeg -formats
-	  The value of tags may be added for custom trainers providing metadata
-	  for enablement of special optimization options.  Multiple tags
-	  may be appended by comma and spaces replaced with _.  Tags can
-	  be filtered with bash regex to apply extra args.
+    The value of ascenario can be voice, radio, music.
+    The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*" in parens
+    The value of adecoder matches  mpv --ad=help
+    The value of ext matches  ffmpeg -formats
+    The value of tags may be added for custom trainers providing metadata
+    for enablement of special optimization options.  Multiple tags
+    may be appended by comma and spaces replaced with _.  Tags can
+    be filtered with bash regex to apply extra args.
 
-	Each codec can be supplied additional per-package envvar args to
-	pass to ffmpeg in this general form:
+    Each codec can be supplied additional per-package envvar args to
+    pass to ffmpeg in this general form:
 
-	FFMPEG_TRAINING_CODECNAME_ARGS
-	FFMPEG_TRAINING_CODECNAME_ARGS_LOSSLESS
+      FFMPEG_TRAINING_CODECNAME_ARGS
+      FFMPEG_TRAINING_CODECNAME_ARGS_LOSSLESS
 
-	FFMPEG_TRAINING_AUDIO_CODECS=" voice:libopus:libopus:webm: music:libvorbis:libvorbis:ogg:high_profile"
+    Example
 
-	replacing CODECNAME with uppercases and hyphens with underscores.
-	For example, if one wanted to train an imaginary codec libfoo-bar,
-	you need to set the variables FFMPEG_TRAINING_LIBFOO_BAR_ARGS
-	or FFMPEG_TRAINING_LIBFOO_BAR_ARGS_LOSSLESS.  These args correspond to
-	additional  ffmpeg -h full  codec settings for that codec.  You
-	should change them to the type of performance or quality settings
-	you want to use typically.  Setting the -crf or the -threads is
-	something you should set.
+      FFMPEG_TRAINING_AUDIO_CODECS=" voice:libopus:libopus:webm: music:libvorbis:libvorbis:ogg:high_profile"
 
-	The variables with _LOSSLESS suffix should only add arguments that
-	modify performance and not the framerate or quality.
+    replacing CODECNAME with uppercases and hyphens with underscores.
+    For example, if one wanted to train an imaginary codec libfoo-bar,
+    you need to set the variables FFMPEG_TRAINING_LIBFOO_BAR_ARGS
+    or FFMPEG_TRAINING_LIBFOO_BAR_ARGS_LOSSLESS.  These args correspond to
+    additional  ffmpeg -h full  codec settings for that codec.  You
+    should change them to the type of performance or quality settings
+    you want to use typically.  Setting the -crf or the -threads is
+    something you should set.
 
-	Both FFMPEG_TRAINING_VIDEO_CODECS and FFMPEG_TRAINING_AUDIO_CODECS are for
-	use only for the ffmpeg codebase.  Using another external codec
-	in an external ebuild requires that ebuild be modified for
-	PGO.
+  The variables with _LOSSLESS suffix should only add arguments that
+  modify performance and not the framerate or quality.
 
-	The cbr and vbr trainers for audio PGO training have additional
-	envvars.  Let's pretend that there is an imaginary codec called
-	foo.  Foo supports bitrates between 64 and 1411.  We can support
-	only discrete values for PGO training.
+  Both FFMPEG_TRAINING_VIDEO_CODECS and FFMPEG_TRAINING_AUDIO_CODECS are for
+  use only for the ffmpeg codebase.  Using another external codec
+  in an external ebuild requires that ebuild be modified for
+  PGO.
 
-	# Use this to support 64 kbps, 128 kbps, 256 kbps, 320 kbps, 1411 kbps
-	FFMPEG_TRAINING_CBR_TABLE_FOO_MUSIC="128 256 320 1411"
-	FFMPEG_TRAINING_CBR_TABLE_FOO_RADIO="64"
-	FFMPEG_TRAINING_CBR_TABLE_FOO_VOICE="32"
+  The cbr and vbr trainers for audio PGO training have additional
+  envvars.  Let's pretend that there is an imaginary codec called
+  foo.  Foo supports bitrates between 64 and 1411.  We can support
+  only discrete values for PGO training.
 
-	The codec will match the suffix with the asset scenario to
-	not waste time on unlikely parings encountered in the real world.
+  # Use this to support 64 kbps, 128 kbps, 256 kbps, 320 kbps, 1411 kbps
+  FFMPEG_TRAINING_CBR_TABLE_FOO_MUSIC="128 256 320 1411"
+  FFMPEG_TRAINING_CBR_TABLE_FOO_RADIO="64"
+  FFMPEG_TRAINING_CBR_TABLE_FOO_VOICE="32"
 
-	Foo also can be used for VBR encoding.  The user needs to supply
-	the ffmpeg option and the value.
+  The codec will match the suffix with the asset scenario to
+  not waste time on unlikely parings encountered in the real world.
 
-	# Train with -vbr 1, -vbr 2, -vbr 3, -vbr 4
-	FFMPEG_TRAINING_VBR_OPTION_FOO="-vbr"
-	FFMPEG_TRAINING_VBR_TABLE_LIBFOO_FOO_MUSIC="7 8 9"
-	FFMPEG_TRAINING_VBR_TABLE_LIBFOO_FOO_RADIO="2 3"
+  Foo also can be used for VBR encoding.  The user needs to supply
+  the ffmpeg option and the value.
 
-	It is recommended to only train codecs that reflect typical use.
-	Not doing so will result in increased code size and performance
-	degradation.
+  # Train with -vbr 1, -vbr 2, -vbr 3, -vbr 4
+  FFMPEG_TRAINING_VBR_OPTION_FOO="-vbr"
+  FFMPEG_TRAINING_VBR_TABLE_LIBFOO_FOO_MUSIC="7 8 9"
+  FFMPEG_TRAINING_VBR_TABLE_LIBFOO_FOO_RADIO="2 3"
+
+  It is recommended to only train codecs that reflect typical use.
+  Not doing so will result in increased code size and performance
+  degradation.
 
 
-	Audio Video (AV) capture training (Work in Progress)
+  Audio Video (AV) capture training (Work in Progress)
 
-	Do not use the USE=trainer-av-streaming this feature until portage is
-	patched with mitigations.
+  Do not use the USE=trainer-av-streaming this feature until portage is
+  patched with mitigations.
 
-	This is accessible via the trainer-av-streaming USE flag.  Note
-	it will require access to either camera, X11, or KMS.  The reason why
-	is to reduce CPU load that may result in decoding other assets and
-	to similate or replicate the conditions similar to live streaming.
+  This is accessible via the trainer-av-streaming USE flag.  Note
+  it will require access to either camera, X11, or KMS.  The reason why
+  is to reduce CPU load that may result in decoding other assets and
+  to similate or replicate the conditions similar to live streaming.
 
-	It also requires some permission changes for the portage account
-	such as either adding portage to video group or changing the /dev/video*
-	device with +rw ACL changes for portage in order to capture from the
-	camera.  These should be temporary changes and the permitted
-	permissions should be removed after training.  It also requires
-	FEATURES="${FEATURES} -ipc-sandbox -pid-sandbox" permissions in order
-	to train for a screencasting scenario.  When performing screencasting
-	training (which is always enabled), it will take a grab of the screen
-	which is a big security/privacy issue.  When portage is fixed with
-	trap INT, trap QUIT, trap HUP, etc support, some mitigation can be
-	achieved but not total especially in brownout or low battery
-	situation.  It is recommended to only use this training only during
-	a single user controlled setting when passwords, private accounts,
-	personal identifiable information are not being used or not being
-	exposed.
+  It also requires some permission changes for the portage account
+  such as either adding portage to video group or changing the /dev/video*
+  device with +rw ACL changes for portage in order to capture from the
+  camera.  These should be temporary changes and the permitted
+  permissions should be removed after training.  It also requires
+  FEATURES="${FEATURES} -ipc-sandbox -pid-sandbox" permissions in order
+  to train for a screencasting scenario.  When performing screencasting
+  training (which is always enabled), it will take a grab of the screen
+  which is a big security/privacy issue.  When portage is fixed with
+  trap INT, trap QUIT, trap HUP, etc support, some mitigation can be
+  achieved but not total especially in brownout or low battery
+  situation.  It is recommended to only use this training only during
+  a single user controlled setting when passwords, private accounts,
+  personal identifiable information are not being used or not being
+  exposed.
 	
 
-	FFMPEG_TRAINING_AV_CODECS must be set as a space separated list of elements.
+  FFMPEG_TRAINING_AV_CODECS must be set as a space separated list of elements.
 
-	Each element is in the format avscenario:vencoder:vdecoder:aencoder:adecoder:container:tags
-	Empty elements are shown as :: for inner or : for outer.
+    Each element of FFMPEG_TRAINING_AV_CODECS is in the format
 
-	  The value of avscenario can be live-streaming
-	  The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*" in parens
-	  The value of vdecoder matches  mpv --vd=help ; you may specify none
-	  The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*" in parens
-	  The value of adecoder matches  mpv --ad=help ; you may specify none
-	  The value of container matches  ffmpeg -formats ; if you don't know put unknown.
-	  The value of tags may be added for custom trainers providing metadata
-	  for enablement of special optimization options.  Multiple tags
-	  may be appended by comma and spaces replaced with _.  Tags can
-	  be filtered with bash regex to apply extra args.
+      avscenario:vencoder:vdecoder:aencoder:adecoder:container:tags
 
-	* The decoders may be used in the future for simulating video conferencing
-	* The avscenario may be expanded to include video-conferencing.
-	* live-streaming assumes client side only.  No network training currently.
-	* The permissions for /dev/video* require either portage be in the video
-	  group or Access Control List (ACL) of the /dev/video* have portage with
-	  rw- permission in order to to do training with the capture device.
+    Empty elements are shown as :: for inner or : for outer.
+
+    The value of avscenario can be live-streaming
+    The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*" in parens
+    The value of vdecoder matches  mpv --vd=help ; you may specify none
+    The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*" in parens
+    The value of adecoder matches  mpv --ad=help ; you may specify none
+    The value of container matches  ffmpeg -formats ; if you don't know put unknown.
+    The value of tags may be added for custom trainers providing metadata
+    for enablement of special optimization options.  Multiple tags
+    may be appended by comma and spaces replaced with _.  Tags can
+    be filtered with bash regex to apply extra args.
+
+    * The decoders may be used in the future for simulating video conferencing
+    * The avscenario may be expanded to include video-conferencing.
+    * live-streaming assumes client side only.  No network training currently.
+    * The permissions for /dev/video* require either portage be in the video
+      group or Access Control List (ACL) of the /dev/video* have portage with
+      rw- permission in order to to do training with the capture device.
 	  
-
-	See the above section how to setup these variables.
-
-
-	AV environment variables
-
-	FFMPEG_TRAINING_STREAMING_UPLOAD_BANDWIDTH - Upload bandwidth in Mbps
-	(megabits) that the host machine supports.  Anything exceeding that
-	will not be trained.  Decimal values supported.
-
-	FFMPEG_TRAINING_AV_STREAMING_WS - This is a weighted function formula
-	that uses a weighted sum for sorting recommendations.  You must
-	place the formula in single quotes.  This can be used to control the
-	recommended codec or preference for FPS or quality or other aspects
-	based on sum of subscores.  The score without your formula is maxed out
-	at less than the approaching 60000 Kbps corresponding to total_bitrate.
-	If the term exceeds that number, then it is a dominator term and has
-	more influence over sorting the list with higher scores climbing to
-	more to the top of recommended.  The idea is to boost the score of
-	aspects that you are more interested in.  Some people are more
-	interested in audio.  Others may be interested in video quality.
-	Some may prefer FPS over video quality or vice-versa.
-
-	Available variables:
-
-	  ${abitrate} -- audio bitrate in kbps.  Some sites cap it at 256 kbps.
-	  ${asample_rate} -- audio sample rate.  Some sites cap it at 44.8 kHz.
-	  ${vquality} -- 1 for low, 2 for mid, 3 for high video quality
-	  ${is_30fps} -- 1 for true
-	  ${is_60fps} -- 1 for true
-	  ${fps} -- frames per second.  Max is 60
-	  ${mic} -- 1 for true
-	  ${total_bitrate} -- in kbps summing the audio and video bitrates
-
-        * It is recommended to normalize the variables from [0,1].
-	* It may be left unset, it will fall back to the total bitrate.
-	* If set, the score formula is replaced with your formula starting
-	  at zero score.
-	* Have at least one term dominating the total_bitrate in order
-	  to be satisfied about recommendation sorting.  Total bitrates
-	  may range from 6000 to 60000 for live streaming.
-	* You may want to leave the total_bitrate in so that the worst case
-	  sorting if all other terms are zeroed or are too small, it can be
-	  still be sorted in a satisfactory way with it as fallback, or
-	  as a way to break ties with scores sharing the same score
-	  with just dominating factors.  If all scores are the same 60000,
-	  the total_bitrate term can break theses ties.
-
-	General formula:
-	score = a_1*x_1 + a_2*x_2 + .... + a_n*x_n, where a_i are weights and x_i
-	are one of the variables above of your choosing.
-
-	Example:
-	FFMPEG_TRAINING_AV_STREAMING_WS='200000*${is_60fps} + 100000*(${aquality}/3) + ${total_bitrate}'
-
-	This formula just says I like 60 fps more than quality.
+    See the above section how to setup these variables.
 
 
-	Custom training resolutions
+  AV environment variables
 
-	Set FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS as a space separated list of
-	sublists to control training Video On Demand (VOD).  Use
-        FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK for the quick trainers.
+  FFMPEG_TRAINING_STREAMING_UPLOAD_BANDWIDTH - Upload bandwidth in Mbps
+  (megabits) that the host machine supports.  Anything exceeding that
+  will not be trained.  Decimal values supported.
 
-	Sublist format:
-	fps;width;height;dynamic_range
+  FFMPEG_TRAINING_AV_STREAMING_WS - This is a weighted function formula
+  that uses a weighted sum for sorting recommendations.  You must
+  place the formula in single quotes.  This can be used to control the
+  recommended codec or preference for FPS or quality or other aspects
+  based on sum of subscores.  The score without your formula is maxed out
+  at less than the approaching 60000 Kbps corresponding to total_bitrate.
+  If the term exceeds that number, then it is a dominator term and has
+  more influence over sorting the list with higher scores climbing to
+  more to the top of recommended.  The idea is to boost the score of
+  aspects that you are more interested in.  Some people are more
+  interested in audio.  Others may be interested in video quality.
+  Some may prefer FPS over video quality or vice-versa.
 
-	dynamic range - sdr or hdr only
-	fps - 24, 25, 30, or 60 mostly.
+  Available variables:
 
-	Example:
-	FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS="30;1280;720;sdr 60;1280;720;sdr"
+    ${abitrate} -- audio bitrate in kbps.  Some sites cap it at 256 kbps.
+    ${asample_rate} -- audio sample rate.  Some sites cap it at 44.8 kHz.
+    ${vquality} -- 1 for low, 2 for mid, 3 for high video quality
+    ${is_30fps} -- 1 for true
+    ${is_60fps} -- 1 for true
+    ${fps} -- frames per second.  Max is 60
+    ${mic} -- 1 for true
+    ${total_bitrate} -- in kbps summing the audio and video bitrates
 
-	Set FFMPEG_TRAINING_CUSTOM_STREAMING_RESOLUTIONS as a space separated
-	list of sublists for level of detail for streaming:
+    * It is recommended to normalize the variables from [0,1].
+    * It may be left unset, it will fall back to the total bitrate.
+    * If set, the score formula is replaced with your formula starting
+      at zero score.
+    * Have at least one term dominating the total_bitrate in order
+      to be satisfied about recommendation sorting.  Total bitrates
+      may range from 6000 to 60000 for live streaming.
+    * You may want to leave the total_bitrate in so that the worst case
+      sorting if all other terms are zeroed or are too small, it can be
+      still be sorted in a satisfactory way with it as fallback, or
+      as a way to break ties with scores sharing the same score
+      with just dominating factors.  If all scores are the same 60000,
+      the total_bitrate term can break theses ties.
 
-	Sublist format:
-	fps;width;height;bitrate;sample_rate;microphone
+  General formula:
+  score = a_1*x_1 + a_2*x_2 + .... + a_n*x_n, where a_i are weights and x_i
+  are one of the variables above of your choosing.
 
-	Example:
-	FFMPEG_TRAINING_CUSTOM_STREAMING_RESOLUTIONS="30;1980;1080;128;44.1;1 30;640;360;128;44.1;1"	
+  Example
 
-	bitrate is in Kbps (kilobits per second).
-	sample rate is in kHZ (kilohertz).
+    FFMPEG_TRAINING_AV_STREAMING_WS='200000*${is_60fps} + 100000*(${aquality}/3) + ${total_bitrate}'
 
-	Setting this will override the defaults which trains all.
-
-
-	Environment variables related to training
-
-	The following are customizable
-
-	FFMPEG_TRAINING_264_HW_LEVEL_SUPPORTED - A space delimited list of hw
-	supported levels.  Check the technical manual for details.
-
-	FFMPEG_TRAINING_256_PRESET - A string representing speed to compression
-	ratio.  See the wiki for details under preset.  (This may be changed or
-	removed and appied to FFMPEG_TRAINING_CUSTOM_STREAMING_RESOLUTIONS
-	instead).  Currently allowed only for trainer-av-streaming USE flag.
-	Examples:
-	FFMPEG_TRAINING_256_PRESET="superfast" # blocky artifacts
-	FFMPEG_TRAINING_256_PRESET="ultrafast" # unsharp edges but fast encoding
-	FFMPEG_TRAINING_256_PRESET="medium" # default
-
-	FFMPEG_TRAINER_VAAPI_SCALE_ALG - Choose either CPU or GPU
-	VA-API scaling.  Acceptable values:  gpu (default), igp, cpu.
-
-	FFMPEG_TRAINING_X11_DISPLAY - Sets the X11 DISPLAY to grab for
-	PGO/BOLT training.  The default value is ":0".  This needs to be changed
-	if using a custom setup.
+  This formula just says I like 60 fps more than quality.
 
 
-	Custom training
+  Custom training resolutions
 
-	Since it would be impratical to permute and PGO train all the possible
-	features and settings of the software, customized PGO training is
-	provided (See README.md of overlay) to allow people to script their own
-	trainers.  You may also define additional per-package environment
-	variable assigned assets.  See the ebuild for ways to use the
-	variables.
+  Set FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS as a space separated list of
+  sublists to control training Video On Demand (VOD).  Use
+  FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK for the quick trainers.
+
+  Sublist format:
+
+    fps;width;height;dynamic_range
+
+  dynamic range - sdr or hdr only
+  fps - 24, 25, 30, or 60 mostly.
+
+  Examples
+
+    FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS="30;1280;720;sdr 60;1280;720;sdr"
+    FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK="30;426;240;sdr 60;426;240;sdr"
+    FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK="30;1280;720;hdr 60;1280;720;hdr"
+
+  Set FFMPEG_TRAINING_CUSTOM_STREAMING_RESOLUTIONS as a space separated
+  list of sublists for level of detail for streaming:
+
+  Sublist format:
+
+    fps;width;height;bitrate;sample_rate;microphone
+
+  Example
+
+    FFMPEG_TRAINING_CUSTOM_STREAMING_RESOLUTIONS="30;1980;1080;128;44.1;1 30;640;360;128;44.1;1"	
+
+  bitrate is in Kbps (kilobits per second).
+  sample rate is in kHZ (kilohertz).
+
+  Setting this will override the defaults which trains all.
+
+
+  Environment variables related to training
+
+  The following are customizable
+
+  FFMPEG_TRAINING_264_HW_LEVEL_SUPPORTED - A space delimited list of hw
+  supported levels.  Check the technical manual for details.
+
+  FFMPEG_TRAINING_256_PRESET - A string representing speed to compression
+  ratio.  See the wiki for details under preset.  (This may be changed or
+  removed and appied to FFMPEG_TRAINING_CUSTOM_STREAMING_RESOLUTIONS
+  instead).  Currently allowed only for trainer-av-streaming USE flag.
+
+    Examples
+
+      FFMPEG_TRAINING_256_PRESET="superfast" # blocky artifacts
+      FFMPEG_TRAINING_256_PRESET="ultrafast" # unsharp edges but fast encoding
+      FFMPEG_TRAINING_256_PRESET="medium" # default
+
+  FFMPEG_TRAINER_VAAPI_SCALE_ALG - Choose either CPU or GPU
+  VA-API scaling.  Acceptable values:  gpu (default), igp, cpu.
+
+  FFMPEG_TRAINING_X11_DISPLAY - Sets the X11 DISPLAY to grab for
+  PGO/BOLT training.  The default value is ":0".  This needs to be changed
+  if using a custom setup.
+
+
+  Custom training
+
+  Since it would be impratical to permute and PGO train all the possible
+  features and settings of the software, customized PGO training is
+  provided (See README.md of overlay) to allow people to script their own
+  trainers.  You may also define additional per-package environment
+  variable assigned assets.  See the ebuild for ways to use the
+  variables.
 
 </longdescription>
 <use>
