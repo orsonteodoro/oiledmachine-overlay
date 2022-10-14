@@ -37,7 +37,8 @@
     (3) Acquire a video that is either CC0-1.0, public domain, or your own
         personal video asset that is at least 3 seconds long.  The asset
 	will determine whether or not that chroma subsample will be trained.
-        The video should not be blank for the first 3 seconds.
+        The video should have blank images or same color completely in the
+        beginning for 1-3 seconds.
 
     (4) Set assets in one of the 3 categories:
 

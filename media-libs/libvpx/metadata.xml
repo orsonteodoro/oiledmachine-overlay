@@ -43,8 +43,8 @@
     (3) Acquire a video that is either CC0-1.0, public domain, or your own
         personal video asset is at least 3 seconds long.  The choice of
         the asset will decide whether or not a particular chroma subsample
-        code paths will be trained.  The sample must not be blank in the
-        beginning.
+        code paths will be trained.  The sample must not have blank images
+        or be completely the same color in the beginning for 1-3 seconds.
 
     (4) Place the video in one of these groups
 

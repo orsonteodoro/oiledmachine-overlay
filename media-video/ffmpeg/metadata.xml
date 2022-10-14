@@ -19,7 +19,8 @@
 
   (1) Fetch assets to train with.  They should be licensed under public-domain,
       CC0-1.0, or your own assets.  They need to be 60 fps, 4k, and at least 3
-      seconds long for video PGO training.
+      seconds long for video PGO training.  The video should not have blank
+      images or be completely the same color in the beginning for 1-3 seconds.
 
       For audio training, pick 3 samples 15 seconds each.
 
