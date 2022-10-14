@@ -30,7 +30,6 @@ K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.205"
 PATCH_ALLOW_O3_COMMIT="228e792a116fd4cce8856ea73f2958ec8a241c0c" # from zen repo
-PATCH_BBRV2_TAG_NAME="v2alpha-2021-07-07"
 PATCH_BBRV2_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442" # 5.10
 PATCH_BBRV2_COMMIT_A="c13e23b9782c9a7f4bcc409bfde157e44a080e82" # ancestor / oldest
 PATCH_BBRV2_COMMIT_D="3d76056b85feab3aade8007eb560c3451e7d3433" # descendant / newest
@@ -43,6 +42,7 @@ PATCH_TRESOR_V="3.18.5"
 # When using that commit list generator, it may miss some commits, so verify all
 # the commits in order.
 
+CK_KV="5.10.0"
 CK_COMMITS=(
 35f6640868573a07b1291c153021f5d75749c15e
 ea9b4218b46eae24eef6162be269934f4bb5dfb6
@@ -70,6 +70,7 @@ CK_COMMITS_BL=(
 a2fb34e34d157c303d07ee16b1ad42c8720ab320
 )
 
+ZEN_KV="5.10.0"
 PATCH_ZENSAUCE_COMMITS=(
 dda238180bacda4c39f71dd16d754a48da38e676
 9a2e0d950bfd77fb51a42a5fc7e81a9187606c38
@@ -164,6 +165,7 @@ ZEN_MUQSS_EXCLUDED_COMMITS=(
 # For 5.6
 # This corresponds to the futex-proton-v3 branch.
 # Repo order is bottom oldest and top newest.
+FUTEX_KV="5.6.0_rc1"
 FUTEX_COMMITS=( # oldest
 dc3e0456bf719cde7ce44e1beb49d4ad0e5f0c71
 714afdc15b847a7a33c5206b6e1ddf64697c07d6
@@ -172,8 +174,9 @@ ec85ea95a00b490a059bcc817bc1b4660062dba0
 e8d4d6ded8544b5716c66d326aa290db8501518c
 ) # newest
 
-BBR2_VERSION="v2alpha-2021-07-07"
-BBR2_COMMITS=( # oldest
+BBRV2_KV="5.10.0"
+BBRV2_VERSION="v2alpha-2021-07-07"
+BBRV2_COMMITS=( # oldest
 c13e23b9782c9a7f4bcc409bfde157e44a080e82
 89fe5fca59f015a7370543d9c906548a6ac7c7ac
 f6da35cbef6549b1141a4a5631b91748d2ed0922
@@ -288,7 +291,9 @@ gen_clang_llvm_pair() {
 }
 
 KCP_RDEPEND="
-	clang? ( || ( $(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT}) ) )
+	clang? (
+		|| ( $(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT}) )
+	)
 	|| (
 		(
 			>=sys-devel/gcc-11.1
@@ -307,19 +312,54 @@ https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARB
 "
 fi
 
+if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
+
 SRC_URI+="
 	${KCP_SRC_4_9_URI}
 	${KCP_SRC_8_1_URI}
 	${KCP_SRC_9_1_URI}
 	${KCP_SRC_CORTEX_A72_URI}
-	bbrv2? ( ${BBRV2_SRC_URIS} )
-	futex? ( ${FUTEX_SRC_URIS} )
+	${BBRV2_SRC_URIS}
+	${FUTEX_SRC_URIS}
+	${GENPATCHES_URI}
+	${CK_SRC_URIS}
+	${PRJC_SRC_URI}
+	${RT_SRC_URI}
+	${TRESOR_AESNI_SRC_URI}
+	${TRESOR_I686_SRC_URI}
+	${TRESOR_README_SRC_URI}
+	${TRESOR_RESEARCH_PDF_SRC_URI}
+	${TRESOR_SYSFS_SRC_URI}
+	${UKSM_SRC_URI}
+	${ZEN_MUQSS_SRC_URIS}
+	${ZENSAUCE_URIS}
+"
+
+else
+
+SRC_URI+="
+	${KCP_SRC_4_9_URI}
+	${KCP_SRC_8_1_URI}
+	${KCP_SRC_9_1_URI}
+	${KCP_SRC_CORTEX_A72_URI}
+	bbrv2? (
+		${BBRV2_SRC_URIS}
+	)
+	futex? (
+		${FUTEX_SRC_URIS}
+	)
 	genpatches? (
 		${GENPATCHES_URI}
 	)
-	muqss? ( ${CK_SRC_URIS} )
-	prjc? ( ${PRJC_SRC_URI} )
-	rt? ( ${RT_SRC_URI} )
+	muqss? (
+		${CK_SRC_URIS}
+	)
+	prjc? (
+		${PRJC_SRC_URI}
+	)
+	rt? (
+		${RT_SRC_URI}
+	)
 	tresor? (
 		${TRESOR_AESNI_SRC_URI}
 		${TRESOR_I686_SRC_URI}
@@ -327,10 +367,18 @@ SRC_URI+="
 		${TRESOR_RESEARCH_PDF_SRC_URI}
 		${TRESOR_SYSFS_SRC_URI}
 	)
-	uksm? ( ${UKSM_SRC_URI} )
-	zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
-	zen-sauce? ( ${ZENSAUCE_URIS} )
+	uksm? (
+		${UKSM_SRC_URI}
+	)
+	zen-muqss? (
+		${ZEN_MUQSS_SRC_URIS}
+	)
+	zen-sauce? (
+		${ZENSAUCE_URIS}
+	)
 "
+
+fi
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
@@ -496,13 +544,13 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "futex-5.10-e8d4d6d.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/futex-e8d4d6d-2-hunk-fix-for-5.10.patch"
-	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-07-07-5.10-f6da35c.patch" ]] ; then
+	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-f6da35c.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-f6da35c-fix-for-5.10.129.patch"
-	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-07-07-5.10-f85b140.patch" ]] ; then
+	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-f85b140.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-f85b140-fix-for-5.10.129.patch"
-	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-07-07-5.10-cd58ed7.patch" ]] ; then
+	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-cd58ed7.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cd58ed7-fix-for-5.10.129.patch"
 	else

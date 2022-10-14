@@ -29,10 +29,10 @@ K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 PATCH_ALLOW_O3_COMMIT="b53feb0ba5a8f3af0795778120a38bce6676179b" # from zen repo
-PATCH_BBRV2_TAG_NAME="v2alpha-2022-08-28"
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor / oldest
 PATCH_BBRV2_COMMIT_D="a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361" # descendant / newest
+CLANG_PGO_KV="5.13.0_rc2"
 PATCH_CLANG_PGO_COMMIT_A_PARENT="fca41af18e10318e4de090db47d9fa7169e1bf2f"
 PATCH_CLANG_PGO_COMMIT_A="3bc68891829b776b9a5dd9174de05e69138af7b6" # oldest exclusive
 PATCH_CLANG_PGO_COMMIT_D="a15058eaefffc37c31326b59fa08b267b2def603" # descendant / newest
@@ -51,6 +51,7 @@ PATCH_TRESOR_V="3.18.5"
 # When using that commit list generator, it may miss some commits, so verify all
 # the commits in order.
 
+ZEN_KV="5.19.0"
 PATCH_ZENSAUCE_COMMITS=(
 127f953caa6bd1b249d91834b4840f57e2a7f66a
 ab4134b722a69906d6c4696a0432718595fbe4ce
@@ -125,6 +126,7 @@ PATCH_ZENSAUCE_BL=(
 
 # Have to pull and apply one-by-one because of already applied commits
 # Corresponding to [5.15, cfi-5.15]
+CFI_KV="5.15.0"
 CFI_COMMITS=(
 8dfd451f45dbb26f049083248bf80463a71bc5fd
 f5bff50472d56909b1cce5463d120a996a34b004
@@ -147,6 +149,7 @@ aa4fb87a71a95bef81d9742a772d1dc8eb4fceea
 CFI_EXCLUDE_COMMITS=(
 )
 
+KCFI_KV="5.19.0_rc1"
 KCFI_COMMITS=(
 eca242caae05e8f3a1f4e644bb83daf231aa5ed6
 56df88e87a6450edc97aab0437baf89308703e9c
@@ -170,8 +173,9 @@ d110d35c0953ead5f529f0447d5075eaf85e1d49
 4e0e0ceb2e21c9a3b71380e3e7cfd8ce8d028f15
 )
 
-BBR2_VERSION="v2alpha-2021-08-21"
-BBR2_COMMITS=( # oldest
+BBRV2_KV="5.13.12"
+BBRV2_VERSION="v2alpha-2021-08-21"
+BBRV2_COMMITS=( # oldest
 1ca5498fa4c6d4d8d634b1245d41f1427482824f
 #46ddceed8f8dad02a97e79c40893c385b859d1c8 # already applied
 #94af063d5a381af0e2063cfd97dcce9783ed25c6 # already applied
@@ -200,8 +204,6 @@ e77879755ff930875d0747fa5c7d94923d248a22
 d29d596279f9ce7a33c7cc68277886e49381ea05
 1a45fd4faf30229a3d3116de7bfe9d2f933d3562
 ) # newest
-
-HAVE_CLANG_PGO=1
 
 IUSE+=" build symlink"
 IUSE+=" bbrv2 cfi +cfs clang disable_debug
@@ -383,7 +385,8 @@ gen_clang_pgo_rdepend() {
 	done
 }
 
-RDEPEND+=" cfi? (
+RDEPEND+="
+	cfi? (
 		arm64? (
 			|| ( $(gen_cfi_rdepend 12 ${LLVM_MAX_SLOT}) )
 		)
@@ -391,10 +394,7 @@ RDEPEND+=" cfi? (
 			|| ( $(gen_cfi_rdepend 13 ${LLVM_MAX_SLOT}) )
 		)
 	)
-"
-
-# KCFI requires https://reviews.llvm.org/D119296 patch
-RDEPEND+=" kcfi? (
+	kcfi? (
 		arm64? (
 			|| ( $(gen_kcfi_rdepend 15 ${LLVM_MAX_SLOT}) )
 		)
@@ -402,15 +402,20 @@ RDEPEND+=" kcfi? (
 			|| ( $(gen_kcfi_rdepend 15 ${LLVM_MAX_SLOT}) )
 		)
 	)
-"
-
-RDEPEND+=" clang-pgo? (
+	clang-pgo? (
 		|| ( $(gen_clang_pgo_rdepend 13 ${LLVM_MAX_SLOT}) )
 		sys-kernel/genkernel[clang-pgo]
-	   )
+	)
+	lto? (
+		|| ( $(gen_lto_rdepend 11 ${LLVM_MAX_SLOT}) )
+	)
+	shadowcallstack? (
+		arm64? (
+			|| ( $(gen_shadowcallstack_rdepend 10 ${LLVM_MAX_SLOT}) )
+		)
+	)
 "
-RDEPEND+=" lto? ( || ( $(gen_lto_rdepend 11 ${LLVM_MAX_SLOT}) ) )"
-RDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_rdepend 10 ${LLVM_MAX_SLOT}) ) ) )"
+# KCFI requires https://reviews.llvm.org/D119296 patch
 
 gen_clang_llvm_pair() {
 	local min=${1}
@@ -427,7 +432,9 @@ gen_clang_llvm_pair() {
 }
 
 KCP_RDEPEND="
-	clang? ( || ( $(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT}) ) )
+	clang? (
+		|| ( $(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT}) )
+	)
 	|| (
 		(
 			>=sys-devel/gcc-11.1
@@ -451,21 +458,65 @@ fi
 NOT_READY_YET="
 "
 
+if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
+
 SRC_URI+="
 	${KCP_SRC_4_9_URI}
 	${KCP_SRC_8_1_URI}
 	${KCP_SRC_9_1_URI}
 	${KCP_SRC_CORTEX_A72_URI}
-	bbrv2? ( ${BBRV2_SRC_URIS} )
-	cfi? ( amd64? ( ${CFI_SRC_URIS} ) )
-	clang-pgo? ( ${CLANG_PGO_URI} )
+	${BBRV2_SRC_URIS}
+	${CFI_SRC_URIS}
+	${CLANG_PGO_URI}
+	${GENPATCHES_URI}
+	${KCFI_SRC_URIS}
+	${MULTIGEN_LRU_SRC_URI}
+	${PRJC_SRC_URI}
+	${RT_SRC_ALT_URI}
+	${TRESOR_AESNI_SRC_URI}
+	${TRESOR_I686_SRC_URI}
+	${TRESOR_README_SRC_URI}
+	${TRESOR_RESEARCH_PDF_SRC_URI}
+	${TRESOR_SYSFS_SRC_URI}
+	${ZEN_MULTIGEN_LRU_SRC_URI}
+	${ZENSAUCE_URIS}
+"
+
+else
+
+SRC_URI+="
+	${KCP_SRC_4_9_URI}
+	${KCP_SRC_8_1_URI}
+	${KCP_SRC_9_1_URI}
+	${KCP_SRC_CORTEX_A72_URI}
+	bbrv2? (
+		${BBRV2_SRC_URIS}
+	)
+	cfi? (
+		amd64? (
+			${CFI_SRC_URIS}
+		)
+	)
+	clang-pgo? (
+		${CLANG_PGO_URI}
+	)
 	genpatches? (
 		${GENPATCHES_URI}
 	)
-	kcfi? ( amd64? ( ${KCFI_SRC_URIS} ) )
-	multigen_lru? ( ${MULTIGEN_LRU_SRC_URI} )
-	prjc? ( ${PRJC_SRC_URI} )
-	rt? ( ${RT_SRC_ALT_URI} )
+	kcfi? (
+		amd64? (
+			${KCFI_SRC_URIS}
+		)
+	)
+	multigen_lru? (
+		${MULTIGEN_LRU_SRC_URI}
+	)
+	prjc? (
+		${PRJC_SRC_URI}
+	)
+	rt? (
+		${RT_SRC_ALT_URI}
+	)
 	tresor? (
 		${TRESOR_AESNI_SRC_URI}
 		${TRESOR_I686_SRC_URI}
@@ -473,9 +524,15 @@ SRC_URI+="
 		${TRESOR_RESEARCH_PDF_SRC_URI}
 		${TRESOR_SYSFS_SRC_URI}
 	)
-	zen-multigen_lru? ( ${ZEN_MULTIGEN_LRU_SRC_URI} )
-	zen-sauce? ( ${ZENSAUCE_URIS} )
+	zen-multigen_lru? (
+		${ZEN_MULTIGEN_LRU_SRC_URI}
+	)
+	zen-sauce? (
+		${ZENSAUCE_URIS}
+	)
 "
+
+fi
 
 # Not ready yet
 #	   uksm? ( ${UKSM_SRC_URI} )
@@ -652,11 +709,7 @@ ot-kernel_filter_patch_cb() {
 	#          number overlap.  Always inspect each and every hunk.
 	# Using patch with fuzz factor is disallowed with define parts or syscall_*.tbl of futex
 
-	if [[ "${path}" =~ "ck-0.210-for-5.12-d66b728-47a8b81.patch" ]] ; then
-		_dpatch "${PATCH_OPTS}" "${path}"
-		_dpatch "${PATCH_OPTS}" \
-"${FILESDIR}/ck-patchset-5.12-ck1-fix-cpufreq-gov-performance.patch"
-	elif [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
+	if [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
 		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
 		einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0002-z3fold-stricter-locking-and-more-careful-reclaim.patch" ]] \
@@ -679,55 +732,52 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "kernel-locking-Use-a-pointer-in-ww_mutex_trylock.patch" ]] ; then
 		: # already applied
 
-	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.19-50b614c.patch" ]] ; then
+	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-50b614c.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-50b614c-fix-for-5.17.patch"
-	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.19-41ceaf5.patch" ]] ; then
+	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-41ceaf5.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-41ceaf5-fix-for-5.17.patch"
-	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.19-3ff0ac8.patch" ]] ; then
+	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-3ff0ac8.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-3ff0ac8-fix-for-5.19.10.patch"
-	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.19-c6ef88b.patch" ]] ; then
+	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-c6ef88b.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
 
-	elif [[ "${path}" =~ "kcfi-5.19-eca242c.patch" ]] ; then
+	elif [[ "${path}" =~ "kcfi-${KCFI_KV}-eca242c.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/kcfi-eca242c-fix-for-5.19.10.patch"
-	elif [[ "${path}" =~ "kcfi-5.19-934bd55.patch" ]] ; then
+	elif [[ "${path}" =~ "kcfi-${KCFI_KV}-934bd55.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/kcfi-934bd55-fix-for-5.19.10.patch"
-	elif [[ "${path}" =~ "kcfi-5.19-55fcaf0.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/kcfi-55fcaf0-fix-for-5.19.10.patch"
-	elif [[ "${path}" =~ "kcfi-5.19-1fd151f.patch" ]] ; then
+	elif [[ "${path}" =~ "kcfi-${KCFI_KV}-55fcaf0.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 3 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/kcfi-55fcaf0-fix-for-5.19.15.patch"
+	elif [[ "${path}" =~ "kcfi-${KCFI_KV}-1fd151f.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/kcfi-1fd151f-fix-for-5.19.10.patch"
 
-	elif [[ "${path}" =~ "cfi-5.19-8dfd451.patch" ]] ; then
+	elif [[ "${path}" =~ "cfi-${CFI_KV}-8dfd451.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-8dfd451-fix-for-5.19.10.patch"
-	elif [[ "${path}" =~ "cfi-5.19-f5bff50.patch" ]] ; then
+	elif [[ "${path}" =~ "cfi-${CFI_KV}-f5bff50.patch" ]] ; then
 		# f5bff50 is the same as 7fb10a9
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-7fb10a9-rebase-for-5.18.patch"
-	elif [[ "${path}" =~ "cfi-5.19-bd6966b.patch" ]] ; then
+	elif [[ "${path}" =~ "cfi-${CFI_KV}-bd6966b.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-bd6966b-fix-for-5.19.10.patch"
-	elif [[ "${path}" =~ "cfi-5.19-3cb32c4.patch" ]] ; then
+	elif [[ "${path}" =~ "cfi-${CFI_KV}-3cb32c4.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-3cb32c4-fix-for-5.19.10.patch"
-	elif [[ "${path}" =~ "cfi-5.19-e921a27.patch" ]] ; then
+	elif [[ "${path}" =~ "cfi-${CFI_KV}-e921a27.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 8 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-e921a27-fix-for-5.19.10.patch"
 		# Skipped paravirt_types.h, paravirt.c changes with missing paravirt_iret
-	elif [[ "${path}" =~ "cfi-5.19-a09066b.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-a09066b-fix-for-5.19.10.patch"
-	elif [[ "${path}" =~ "cfi-5.19-aa4fb87.patch" ]] ; then
+	elif [[ "${path}" =~ "cfi-${CFI_KV}-aa4fb87.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 7 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-aa4fb87-fix-for-5.15.69.patch"
-#	elif [[ "${path}" =~ "cfi-5.19-5140d56.patch" ]] ; then
+#	elif [[ "${path}" =~ "cfi-${CFI_KV}-5140d56.patch" ]] ; then
 #		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-5140d56-moved-for-5.13.patch"
 #
 #		# Add this to the end of the cfi commit list

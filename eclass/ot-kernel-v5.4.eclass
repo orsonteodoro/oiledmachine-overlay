@@ -33,6 +33,7 @@ PATCH_ALLOW_O3_COMMIT="4edc8050a41d333e156d2ae1ed3ab91d0db92c7e" # from zen repo
 PATCH_KCP_COMMIT="cbf238bae1a5132b8b35392f3f3769267b2acaf5" # from zen repo
 PATCH_TRESOR_V="3.18.5"
 
+CK_KV="5.4.0"
 CK_COMMITS=(
 7acac2e4000e75f3349106a8847cf1021651446b
 36d5e8df1fead191fa6fe9e83fcdfc69532238f2
@@ -57,6 +58,7 @@ CK_COMMITS_BL=(
 5b6cd7cfe6cf6e1263b0a5d2ee461c8058b76213
 )
 
+ZEN_KV="5.4.0"
 PATCH_ZENSAUCE_COMMITS=(
 1baa02fbd7a419fdd0e484ba31ba82c90c7036cf
 ef12d902c1323bbbeacc3babc91aae15976474ca
@@ -135,6 +137,7 @@ ZEN_MUQSS_EXCLUDED_COMMITS=(
 # For 5.6
 # This corresponds to the futex-proton-v3 branch.
 # Repo order is bottom oldest and top newest.
+FUTEX_KV="5.6.0_rc1"
 FUTEX_COMMITS=( # oldest
 dc3e0456bf719cde7ce44e1beb49d4ad0e5f0c71
 714afdc15b847a7a33c5206b6e1ddf64697c07d6
@@ -240,18 +243,50 @@ https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARB
 "
 fi
 
+if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
+
 SRC_URI+="
 	${O3_ALLOW_SRC_URI}
 	${KCP_SRC_4_9_URI}
 	${KCP_SRC_8_1_URI}
 	${KCP_SRC_9_1_URI}
-	bmq? ( ${BMQ_SRC_URI} )
-	futex? ( ${FUTEX_SRC_URIS} )
+	${BMQ_SRC_URI}
+	${FUTEX_SRC_URIS}
+	${GENPATCHES_URI}
+	${CK_SRC_URIS}
+	${RT_SRC_URI}
+	${TRESOR_AESNI_SRC_URI}
+	${TRESOR_I686_SRC_URI}
+	${TRESOR_README_SRC_URI}
+	${TRESOR_RESEARCH_PDF_SRC_URI}
+	${TRESOR_SYSFS_SRC_URI}
+	${UKSM_SRC_URI}
+	${ZEN_MUQSS_SRC_URIS}
+	${ZENSAUCE_URIS}
+"
+
+else
+
+SRC_URI+="
+	${O3_ALLOW_SRC_URI}
+	${KCP_SRC_4_9_URI}
+	${KCP_SRC_8_1_URI}
+	${KCP_SRC_9_1_URI}
+	bmq? (
+		${BMQ_SRC_URI}
+	)
+	futex? (
+		${FUTEX_SRC_URIS}
+	)
 	genpatches? (
 		${GENPATCHES_URI}
 	)
-	muqss? ( ${CK_SRC_URIS} )
-	rt? ( ${RT_SRC_URI} )
+	muqss? (
+		${CK_SRC_URIS}
+	)
+	rt? (
+		${RT_SRC_URI}
+	)
 	tresor? (
 		${TRESOR_AESNI_SRC_URI}
 		${TRESOR_I686_SRC_URI}
@@ -259,10 +294,18 @@ SRC_URI+="
 		${TRESOR_RESEARCH_PDF_SRC_URI}
 		${TRESOR_SYSFS_SRC_URI}
 	)
-	uksm? ( ${UKSM_SRC_URI} )
-	zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
-	zen-sauce? ( ${ZENSAUCE_URIS} )
+	uksm? (
+		${UKSM_SRC_URI}
+	)
+	zen-muqss? (
+		${ZEN_MUQSS_SRC_URIS}
+	)
+	zen-sauce? (
+		${ZENSAUCE_URIS}
+	)
 "
+
+fi
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
@@ -418,13 +461,13 @@ ot-kernel_filter_patch_cb() {
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/uksm-5.4-rebase-for-5.4.147.patch"
-	elif [[ "${path}" =~ "zen-muqss-5.4-7acac2e.patch" ]] ; then
+	elif [[ "${path}" =~ "zen-muqss-${ZEN_KV}-7acac2e.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
-	elif [[ "${path}" =~ "zen-muqss-5.4-c181de6.patch" ]] ; then
+	elif [[ "${path}" =~ "zen-muqss-${ZEN_KV}-c181de6.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
-	elif [[ "${path}" =~ "zen-muqss-5.4-530963d.patch" ]] ; then
+	elif [[ "${path}" =~ "zen-muqss-${ZEN_KV}-530963d.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
-	elif [[ "${path}" =~ "zen-sauce-5.4-4edc805.patch" ]] ; then
+	elif [[ "${path}" =~ "zen-sauce-${ZEN_KV}-4edc805.patch" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/zen-sauce-5.4-4edc805-fix.patch"
 	else

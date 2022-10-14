@@ -33,6 +33,7 @@ PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow
 PATCH_PDS_V="${PATCH_PDS_V:-098i}"
 PATCH_TRESOR_V="3.18.5"
 
+CK_KV="4.14.0"
 CK_COMMITS=(
 fbc0b4595aeccc2cc03e292ac8743565b3d3037b
 e8e37da685f7988182d7920a711e00dd2457af65
@@ -159,6 +160,27 @@ https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARB
 "
 fi
 
+if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
+
+SRC_URI+="
+	${O3_CO_SRC_URI}
+	${O3_RO_SRC_URI}
+	${KCP_SRC_4_9_URI}
+	${KCP_SRC_8_1_URI}
+	${GENPATCHES_URI}
+	${CK_SRC_URIS}
+	${PDS_SRC_URI}
+	${RT_SRC_URI}
+	${TRESOR_AESNI_SRC_URI}
+	${TRESOR_I686_SRC_URI}
+	${TRESOR_SYSFS_SRC_URI}
+	${TRESOR_README_SRC_URI}
+	${TRESOR_RESEARCH_PDF_SRC_URI}
+	${UKSM_SRC_URI}
+"
+
+else
+
 SRC_URI+="
 	${O3_CO_SRC_URI}
 	${O3_RO_SRC_URI}
@@ -167,9 +189,15 @@ SRC_URI+="
 	genpatches? (
 		${GENPATCHES_URI}
 	)
-	muqss? ( ${CK_SRC_URIS} )
-	rt? ( ${RT_SRC_URI} )
-	pds? ( ${PDS_SRC_URI} )
+	muqss? (
+		${CK_SRC_URIS}
+	)
+	pds? (
+		${PDS_SRC_URI}
+	)
+	rt? (
+		${RT_SRC_URI}
+	)
 	tresor? (
 		${TRESOR_AESNI_SRC_URI}
 		${TRESOR_I686_SRC_URI}
@@ -177,8 +205,12 @@ SRC_URI+="
 		${TRESOR_README_SRC_URI}
 		${TRESOR_RESEARCH_PDF_SRC_URI}
 	)
-	uksm? ( ${UKSM_SRC_URI} )
+	uksm? (
+		${UKSM_SRC_URI}
+	)
 "
+
+fi
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
@@ -284,15 +316,15 @@ ot-kernel_filter_patch_cb() {
 	# WARNING: Fuzz matching is not intelligent enough to distiniguish syscall
 	#          number overlap.  Always inspect each and every hunk.
 
-	if [[ "${path}" =~ "ck-0.162-4.14-fbc0b45.patch" ]] ; then
+	if [[ "${path}" =~ "ck-0.162-${CK_KV}-fbc0b45.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/ck-0.162-4.14-fbc0b45-2-hunk-fix-for-4.14.246.patch"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/ck-0.162-4.14-fbc0b45-build-time-fixes-for-4.14.213.patch"
-	elif [[ "${path}" =~ "ck-0.162-4.14-ff1ab75.patch" ]] ; then
+	elif [[ "${path}" =~ "ck-0.162-${CK_KV}-ff1ab75.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
-	elif [[ "${path}" =~ "ck-0.162-4.14-071486d.patch" ]] ; then
+	elif [[ "${path}" =~ "ck-0.162-${CK_KV}-071486d.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
-	elif [[ "${path}" =~ "ck-0.162-4.14-24da54e.patch" ]] ; then
+	elif [[ "${path}" =~ "ck-0.162-${CK_KV}-24da54e.patch" ]] ; then
 		# -N is used to skip the duplicate hunks
 		_tpatch "${PATCH_OPTS} -N" "${path}" 0 1 ""
 	elif [[ "${path}" =~ "0179-mm-memcontrol-Replace-local_irq_disable-with-local-l.patch" ]] ; then

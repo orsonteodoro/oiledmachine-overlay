@@ -154,7 +154,9 @@ CDEPEND="
 	sys-devel/make
 	virtual/libelf
 	virtual/pkgconfig
-	bzip2? ( app-arch/bzip2 )
+	bzip2? (
+		app-arch/bzip2
+	)
 	gtk? (
 		dev-libs/glib:2
 		gnome-base/libglade:2.0
@@ -164,13 +166,21 @@ CDEPEND="
 		app-arch/gzip
 		sys-apps/kmod[zlib]
 	)
-	lz4? ( app-arch/lz4 )
-	lzma? ( app-arch/xz-utils )
-	lzo? ( app-arch/lzop )
+	lz4? (
+		app-arch/lz4
+	)
+	lzma? (
+		app-arch/xz-utils
+	)
+	lzo? (
+		app-arch/lzop
+	)
 	ncurses? (
 		sys-libs/ncurses
 	)
-	openssl? ( dev-libs/openssl )
+	openssl? (
+		dev-libs/openssl
+	)
 	qt5? (
 		dev-qt/qtcore:5
 		dev-qt/qtgui:5
@@ -187,15 +197,19 @@ CDEPEND="
 "
 
 RDEPEND+="
-	!build? ( ${CDEPEND} )
+	!build? (
+		${CDEPEND}
+	)
 "
 BDEPEND+="
-	build? ( ${CDEPEND} )
 	dev-util/patchutils
 	sys-apps/findutils
+	build? (
+		${CDEPEND}
+	)
 "
 
-if [[ "${HAVE_CLANG_PGO}" == "1" ]] ; then
+if [[ -n "${CLANG_PGO_KV}" ]] ; then
 PGT_CRYPTO_DEPEND="
 	sys-fs/cryptsetup
 "
@@ -302,6 +316,7 @@ PDEPEND+="
 	)
 	ot_kernel_pgt_yt? (
 		${PYTHON_DEPS}
+		$(python_gen_cond_dep 'dev-python/selenium[${PYTHON_USEDEP}]')
 		|| (
 			(
 				www-client/chromium
@@ -314,13 +329,13 @@ PDEPEND+="
 				www-client/firefox[geckodriver]
 			)
 		)
-		$(python_gen_cond_dep 'dev-python/selenium[${PYTHON_USEDEP}]')
 	)
 "
 fi
 
-EXPORT_FUNCTIONS pkg_pretend pkg_setup src_unpack src_prepare src_configure src_compile src_install \
-		pkg_postinst
+EXPORT_FUNCTIONS \
+	pkg_pretend pkg_setup src_unpack src_prepare src_configure src_compile \
+	src_install pkg_postinst
 
 # @FUNCTION: gen_kernel_seq
 # @DESCRIPTION:
@@ -352,7 +367,7 @@ gen_zensauce_uris()
 	local c
 	for (( c=0 ; c < ${len} ; c+=1 )) ; do
 		local id="${commits[c]}"
-		s=" ${s} ${ZENSAUCE_BASE_URI}${id}.patch -> zen-sauce-${K_MAJOR_MINOR}-${id:0:7}.patch"
+		s=" ${s} ${ZENSAUCE_BASE_URI}${id}.patch -> zen-sauce-${ZEN_KV}-${id:0:7}.patch"
 	done
 	echo "$s"
 }
@@ -366,18 +381,23 @@ BBRV2_BASE_URI=\
 gen_bbrv2_uris() {
 	local s=""
 	local c
-	for c in ${BBR2_COMMITS[@]} ; do
-		s+=" ${BBRV2_BASE_URI}${c}.patch -> bbrv2-${BBR2_VERSION}-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	for c in ${BBRV2_COMMITS[@]} ; do
+		s+=" ${BBRV2_BASE_URI}${c}.patch -> bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-${c:0:7}.patch"
 	done
 	echo "${s}"
 }
-BBRV2_SRC_URIS=" "$(gen_bbrv2_uris)
+if [[ -n "${BBRV2}_KV" ]] ; then
+	BBRV2_SRC_URIS=" "$(gen_bbrv2_uris)
+fi
 
-CLANG_PGO_FN="clang-pgo-${PATCH_CLANG_PGO_COMMIT_A:0:7}-${PATCH_CLANG_PGO_COMMIT_D:0:7}.patch"
+CLANG_PGO_FN="clang-pgo-${CLANG_PGO_KV}-${PATCH_CLANG_PGO_COMMIT_A:0:7}-${PATCH_CLANG_PGO_COMMIT_D:0:7}.patch"
 CLANG_PGO_BASE_URI="https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/patch/?h=for-next/clang/pgo"
-CLANG_PGO_URI="
+if [[ -n "${CLANG_PGO_KV}" ]] ; then
+	CLANG_PGO_URI="
 ${CLANG_PGO_BASE_URI}&id=${PATCH_CLANG_PGO_COMMIT_D}&id2=${PATCH_CLANG_PGO_COMMIT_A_PARENT}
-		-> ${CLANG_PGO_FN}" # [oldest,newest]
+		-> ${CLANG_PGO_FN}
+	" # [oldest,newest]
+fi
 
 GENPATCHES_URI_BASE_URI="https://gitweb.gentoo.org/proj/linux-patches.git/snapshot/"
 GENPATCHES_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
@@ -432,20 +452,24 @@ MULTIGEN_LRU_COMMITS_SHORT=\
 "${PATCH_MULTIGEN_LRU_COMMIT_A:0:7}-${PATCH_MULTIGEN_LRU_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
 MULTIGEN_LRU_BASE_URI=\
 "https://github.com/torvalds/linux/compare/${MULTIGEN_LRU_COMMITS}"
+if [[ -n "${ZEN_KV}" ]] ; then
 MULTIGEN_LRU_FN=\
-"multigen_lru-${K_MAJOR_MINOR}-${MULTIGEN_LRU_COMMITS_SHORT}.patch"
+"multigen_lru-${ZEN_KV}-${MULTIGEN_LRU_COMMITS_SHORT}.patch"
 MULTIGEN_LRU_SRC_URI=\
 "${MULTIGEN_LRU_BASE_URI}.patch -> ${MULTIGEN_LRU_FN}"
+fi
 
 ZEN_MULTIGEN_LRU_COMMITS="${PATCH_ZEN_MULTIGEN_LRU_COMMIT_A}^..${PATCH_ZEN_MULTIGEN_LRU_COMMIT_D}" # [oldest,newest] [top,bottom]
 ZEN_MULTIGEN_LRU_COMMITS_SHORT=\
 "${PATCH_ZEN_MULTIGEN_LRU_COMMIT_A:0:7}-${PATCH_ZEN_MULTIGEN_LRU_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
 ZEN_MULTIGEN_LRU_BASE_URI=\
 "https://github.com/torvalds/linux/compare/${ZEN_MULTIGEN_LRU_COMMITS}"
+if [[ -n "${ZEN_KV}" ]] ; then
 ZEN_MULTIGEN_LRU_FN=\
-"zen-multigen_lru-${K_MAJOR_MINOR}-${ZEN_MULTIGEN_LRU_COMMITS_SHORT}.patch"
+"zen-multigen_lru-${ZEN_KV}-${ZEN_MULTIGEN_LRU_COMMITS_SHORT}.patch"
 ZEN_MULTIGEN_LRU_SRC_URI=\
 "${ZEN_MULTIGEN_LRU_BASE_URI}.patch -> ${ZEN_MULTIGEN_LRU_FN}"
+fi
 
 ZEN_MUQSS_BASE_URI=\
 "https://github.com/torvalds/linux/commit/"
@@ -463,11 +487,13 @@ gen_zen_muqss_uris() {
 	local s=""
 	local c
 	for c in ${ZEN_MUQSS_COMMITS[@]} ; do
-		s+=" ${ZEN_MUQSS_BASE_URI}${c}.patch -> zen-muqss-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		s+=" ${ZEN_MUQSS_BASE_URI}${c}.patch -> zen-muqss-${ZEN_KV}-${c:0:7}.patch"
 	done
 	echo "${s}"
 }
-ZEN_MUQSS_SRC_URIS=" "$(gen_zen_muqss_uris)
+if [[ -n "${ZEN_KV}" ]] ; then
+	ZEN_MUQSS_SRC_URIS=" "$(gen_zen_muqss_uris)
+fi
 
 CK_BASE_URI=\
 "https://github.com/torvalds/linux/commit/"
@@ -475,11 +501,13 @@ gen_ck_uris() {
 	local s=""
 	local c
 	for c in ${CK_COMMITS[@]} ; do
-		s+=" ${CK_BASE_URI}${c}.patch -> ck-${MUQSS_VER}-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		s+=" ${CK_BASE_URI}${c}.patch -> ck-${MUQSS_VER}-${CK_KV}-${c:0:7}.patch"
 	done
 	echo "${s}"
 }
-CK_SRC_URIS=" "$(gen_ck_uris)
+if [[ -n "${CK_KV}" ]] ; then
+	CK_SRC_URIS=" "$(gen_ck_uris)
+fi
 
 CFI_BASE_URI=\
 "https://github.com/torvalds/linux/commit/"
@@ -487,21 +515,25 @@ gen_cfi_uris() {
 	local s=""
 	local c
 	for c in ${CFI_COMMITS[@]} ; do
-		s+=" ${CFI_BASE_URI}${c}.patch -> cfi-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		s+=" ${CFI_BASE_URI}${c}.patch -> cfi-${CFI_KV}-${c:0:7}.patch"
 	done
 	echo "${s}"
 }
-CFI_SRC_URIS=" "$(gen_cfi_uris)
+if [[ -n "${CFI_KV}" ]] ; then
+	CFI_SRC_URIS=" "$(gen_cfi_uris)
+fi
 
 gen_kcfi_uris() {
 	local s=""
 	local c
 	for c in ${KCFI_COMMITS[@]} ; do
-		s+=" ${CFI_BASE_URI}${c}.patch -> kcfi-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		s+=" ${CFI_BASE_URI}${c}.patch -> kcfi-${KCFI_KV}-${c:0:7}.patch"
 	done
 	echo "${s}"
 }
-KCFI_SRC_URIS=" "$(gen_kcfi_uris)
+if [[ -n "${KCFI_KV}" ]] ; then
+	KCFI_SRC_URIS=" "$(gen_kcfi_uris)
+fi
 
 FUTEX_BASE_URI=\
 "https://gitlab.collabora.com/tonyk/linux/-/commit/"
@@ -509,11 +541,13 @@ gen_futex_uris() {
 	local s=""
 	local c
 	for c in ${FUTEX_COMMITS[@]} ; do
-		s+=" ${FUTEX_BASE_URI}${c}.patch -> futex-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		s+=" ${FUTEX_BASE_URI}${c}.patch -> futex-${FUTEX_KV}-${c:0:7}.patch"
 	done
 	echo "${s}"
 }
-FUTEX_SRC_URIS=" "$(gen_futex_uris)
+if [[ -n "${FUTEX_KV}" ]] ; then
+	FUTEX_SRC_URIS=" "$(gen_futex_uris)
+fi
 
 FUTEX2_BASE_URI=\
 "https://gitlab.collabora.com/tonyk/linux/-/commit/"
@@ -521,11 +555,13 @@ gen_futex2_uris() {
 	local s=""
 	local c
 	for c in ${FUTEX2_COMMITS[@]} ; do
-		s+=" ${FUTEX2_BASE_URI}${c}.patch -> futex2-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		s+=" ${FUTEX2_BASE_URI}${c}.patch -> futex2-${FUTEX2_KV}-${c:0:7}.patch"
 	done
 	echo "${s}"
 }
-FUTEX2_SRC_URIS=" "$(gen_futex2_uris)
+if [[ -n "${FUTEX2_KV}" ]] ; then
+	FUTEX2_SRC_URIS=" "$(gen_futex2_uris)
+fi
 
 LINUX_REPO_URI=\
 "https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
@@ -579,7 +615,9 @@ UKSM_BASE_URI=\
 UKSM_FN="uksm-${K_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-ZENSAUCE_URIS=$(gen_zensauce_uris "${PATCH_ZENSAUCE_COMMITS[@]}")
+if [[ -n "${ZEN_KV}" ]] ; then
+	ZENSAUCE_URIS=$(gen_zensauce_uris "${PATCH_ZENSAUCE_COMMITS[@]}")
+fi
 
 if ver_test ${PV} -eq ${K_MAJOR_MINOR} ; then
 KERNEL_NO_POINT_RELEASE="1"
@@ -859,7 +897,9 @@ verify_clang_compiler_updated() {
 		"sys-devel/clang-14.0.6" \
 		"sys-devel/clang-15.0.0" \
 		"sys-devel/clang-15.0.1" \
-		"sys-devel/clang-15.0.0.9999" \
+		"sys-devel/clang-15.0.2" \
+		"sys-devel/clang-15.0.3.9999" \
+		"sys-devel/clang-16.0.0_pre20221010" \
 		"sys-devel/clang-16.0.0.9999" \
 	; do
 		if has_version "=${p}*" ; then
@@ -913,7 +953,9 @@ verify_profraw_compatibility() {
 		"14.0.6" \
 		"15.0.0" \
 		"15.0.1" \
-		"15.0.0.9999" \
+		"15.0.2" \
+		"15.0.3.9999" \
+		"16.0.0_pre20221010" \
 		"16.0.0.9999" \
 	; do
 		(! has_version "~sys-devel/llvm-${v}" ) && continue
@@ -986,6 +1028,7 @@ ewarn "more secure and higher performant configurations and to override the"
 ewarn "scheduler default."
 ewarn
 	_report_eol
+	ot-kernel-cve_setup
 	if declare -f ot-kernel_pkg_setup_cb > /dev/null ; then
 		ot-kernel_pkg_setup_cb
 	fi
@@ -1303,7 +1346,7 @@ ewarn
 		fi
 		(( ${is_blacklisted} == 1 )) && continue
 
-		_fpatch "${EDISTDIR}/zen-sauce-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		_fpatch "${EDISTDIR}/zen-sauce-${ZEN_KV}-${c:0:7}.patch"
 	done
 }
 
@@ -1313,7 +1356,7 @@ ewarn
 apply_cfi() {
 	local c
 	for c in ${CFI_COMMITS[@]} ; do
-		_fpatch "${EDISTDIR}/cfi-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		_fpatch "${EDISTDIR}/cfi-${CFI_KV}-${c:0:7}.patch"
 	done
 }
 
@@ -1323,7 +1366,7 @@ apply_cfi() {
 apply_kcfi() {
 	local c
 	for c in ${KCFI_COMMITS[@]} ; do
-		_fpatch "${EDISTDIR}/kcfi-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		_fpatch "${EDISTDIR}/kcfi-${KCFI_KV}-${c:0:7}.patch"
 	done
 }
 
@@ -1383,9 +1426,9 @@ apply_futex2() {
 # few percent of packet loss.
 apply_bbrv2() {
 	local c
-	for c in ${BBR2_COMMITS[@]} ; do
-		_fpatch "${EDISTDIR}/bbrv2-${BBR2_VERSION}-${K_MAJOR_MINOR}-${c:0:7}.patch"
-		rm config.gce 2>/dev/null # included in bbr2 patch
+	for c in ${BBRV2_COMMITS[@]} ; do
+		_fpatch "${EDISTDIR}/bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-${c:0:7}.patch"
+		rm config.gce 2>/dev/null # It was included in the bbrv2 patch.
 	done
 }
 
@@ -1514,7 +1557,7 @@ apply_ck() {
 			(( ${blacklisted} == 1 )) && break
 		done
 		(( ${blacklisted} == 1 )) && continue
-		_fpatch "${EDISTDIR}/ck-${MUQSS_VER}-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		_fpatch "${EDISTDIR}/ck-${MUQSS_VER}-${CK_KV}-${c:0:7}.patch"
 	done
 }
 
@@ -1653,7 +1696,7 @@ apply_zen_muqss() {
 	for x in ${ZEN_MUQSS_COMMITS[@]} ; do
 		local id="${x:0:7}"
 		is_zen_muquss_excluded "${x}" && continue
-		_fpatch "${EDISTDIR}/zen-muqss-${K_MAJOR_MINOR}-${id}.patch"
+		_fpatch "${EDISTDIR}/zen-muqss-${ZEN_KV}-${id}.patch"
 	done
 }
 

@@ -15,8 +15,31 @@ kernel/module/main.c:
  * Copyright (C) 2001 Rusty Russell, 2002, 2010 Rusty Russell IBM.
  */
 
---- a/kernel/cfi.c.orig	2022-09-23 21:28:45.304749586 -0700
-+++ b/kernel/cfi.c	2022-09-23 21:42:21.500906248 -0700
+--- a/include/asm-generic/vmlinux.lds.h.orig	2022-10-13 19:19:40.531110709 -0700
++++ b/include/asm-generic/vmlinux.lds.h	2022-10-13 19:20:48.753726095 -0700
+@@ -556,20 +556,6 @@
+ 
+ 
+ /*
+- * .text..L.cfi.jumptable.* contain Control-Flow Integrity (CFI)
+- * jump table entries.
+- */
+-#ifdef CONFIG_CFI_CLANG
+-#define TEXT_CFI_JT							\
+-		ALIGN_FUNCTION();					\
+-		__cfi_jt_start = .;					\
+-		*(.text..L.cfi.jumptable .text..L.cfi.jumptable.*)	\
+-		__cfi_jt_end = .;
+-#else
+-#define TEXT_CFI_JT
+-#endif
+-
+-/*
+  * Non-instrumentable text section
+  */
+ #define NOINSTR_TEXT							\
+--- a/kernel/cfi.c.orig	2022-10-13 19:17:40.810522334 -0700
++++ b/kernel/cfi.c	2022-10-13 19:22:07.180733297 -0700
 @@ -1,105 +1,101 @@
  // SPDX-License-Identifier: GPL-2.0
  /*
@@ -192,8 +215,8 @@ kernel/module/main.c:
  }
 -EXPORT_SYMBOL(cfi_failure_handler);
 +#endif /* CONFIG_ARCH_USES_CFI_TRAPS */
---- a/kernel/module/main.c.orig	2022-09-23 21:26:27.051316287 -0700
-+++ b/kernel/module/main.c	2022-09-23 21:38:55.828803759 -0700
+--- a/kernel/module/main.c.orig	2022-10-13 19:19:40.535110863 -0700
++++ b/kernel/module/main.c	2022-10-13 19:20:48.753726095 -0700
 @@ -2926,32 +2926,6 @@ static inline int within(unsigned long a
  	return ((void *)addr >= start && (void *)addr < start + size);
  }

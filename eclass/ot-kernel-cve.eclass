@@ -28,12 +28,16 @@ esac
 IUSE+=" cve_hotfix"
 LICENSE+=" cve_hotfix? ( GPL-2 )"
 
-DEPEND+=" cve_hotfix? ( app-arch/gzip
-			app-misc/jq
-			app-text/html2text
-			dev-libs/libpcre
-			dev-util/patchutils
-			sys-apps/grep[pcre] )"
+DEPEND+="
+	cve_hotfix? (
+		app-arch/gzip
+		app-misc/jq
+		app-text/html2text
+		dev-libs/libpcre
+		dev-util/patchutils
+		sys-apps/grep[pcre]
+	)
+"
 
 # _PM = patch message from person who fixed it, _FN = patch file name
 
@@ -77,7 +81,7 @@ CVE_DISALLOW_UNTRUSTED=0x00000000
 CVE_DISALLOW_INCOMPLETE=0x00000000
 
 CVE_FIX_TRUST_DEFAULT=$(( \
-	${CVE_ALLOW_KERNEL_DOT_ORG_REPO} \
+	  ${CVE_ALLOW_KERNEL_DOT_ORG_REPO} \
 	| ${CVE_ALLOW_GITHUB_TORVALDS} \
 	| ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH} \
 	| ${CVE_ALLOW_NVD_INDIRECT_LINKED_PATCH} \
@@ -85,43 +89,48 @@ CVE_FIX_TRUST_DEFAULT=$(( \
 	| ${CVE_ALLOW_MAJOR_DISTRO_REVIEWED} \
 	| ${CVE_ALLOW_MAJOR_DISTRO_TEAM_SUGGESTION} \
 	| ${CVE_ALLOW_EBUILD_MAINTAINER_FILESDIR} \
-	| ${CVE_ALLOW_FOSS_CONTRIBUTOR} ))
+	| ${CVE_ALLOW_FOSS_CONTRIBUTOR} \
+))
 
-CVE_FIX_TRUST_LEVEL=${CVE_FIX_TRUST_LEVEL:-${CVE_FIX_TRUST_DEFAULT}}
+ot-kernel-cve_setup() {
+	export CVE_FIX_TRUST_LEVEL=${CVE_FIX_TRUST_LEVEL:-${CVE_FIX_TRUST_DEFAULT}}
 
-# rejects applying cve fixes for all CVEs marked with disputed flag
-CVE_FIX_REJECT_DISPUTED=${CVE_FIX_REJECT_DISPUTED:-0}
+	# rejects applying cve fixes for all CVEs marked with disputed flag
+	export CVE_FIX_REJECT_DISPUTED=${CVE_FIX_REJECT_DISPUTED:-0}
 
-# only applies to dangerous non trivial backports which might result
-# in data loss or data corruption, non functioning driver/device, or
-# irreversible damage.
-CVE_ALLOW_RISKY_BACKPORTS=${CVE_ALLOW_RISKY_BACKPORTS:-0}
+	# This only applies to dangerous non trivial backports which might
+	# result in data loss or data corruption, non functioning driver/device,
+	# or irreversible damage.
+	export CVE_ALLOW_RISKY_BACKPORTS=${CVE_ALLOW_RISKY_BACKPORTS:-0}
 
-CVE_DELAY="${CVE_DELAY:-1}"
+	export CVE_DELAY="${CVE_DELAY:-1}"
 
-CVE_LANG="${CVE_LANG:-en}"	# You can define this in your make.conf.
-				# Currently en is only supported.
+	export CVE_LANG="${CVE_LANG:-en}"	# You can define this in your make.conf.
+						# Currently en is only supported.
 
-CVE_MAX_BULK_CONNECTIONS=${CVE_MAX_BULK_CONNECTIONS:-5}
-CVE_MAX_PATCH_CONNECTIONS=${CVE_MAX_PATCH_CONNECTIONS:-100}
+	export CVE_MAX_BULK_CONNECTIONS=${CVE_MAX_BULK_CONNECTIONS:-5}
+	export CVE_MAX_PATCH_CONNECTIONS=${CVE_MAX_PATCH_CONNECTIONS:-100}
 
-# Additional commits not mentioned in NVD CVE report but added by vendor
-# of the same type.  NVD DB will report 1 memory leak then not mention several
-# ones following applied by driver maintainer.  Associated commits should likely
-# be added to CVE/NVD report but are not.
-CVE_ALLOW_CRASH_PREVENTION=${CVE_ALLOW_CRASH_PREVENTION:-1}
+	# Additional commits not mentioned in NVD CVE report but added by vendor
+	# of the same type.  NVD DB will report 1 memory leak then not mention several
+	# ones following applied by driver maintainer.  Associated commits should likely
+	# be added to CVE/NVD report but are not.
+	export CVE_ALLOW_CRASH_PREVENTION=${CVE_ALLOW_CRASH_PREVENTION:-1}
 
-# This will perform heuristic keyword analysis on the commit itself
-# for fix suitability and to avoid re-introducing flaws by security
-# researchers fully disclosing commits good or bad.
-CVE_ALLOW_UNTAGGED_PATCHES=${CVE_ALLOW_UNTAGGED_PATCHES:-1}
+	# This will perform heuristic keyword analysis on the commit itself
+	# for fix suitability and to avoid re-introducing flaws by security
+	# researchers fully disclosing commits good or bad.
+	export CVE_ALLOW_UNTAGGED_PATCHES=${CVE_ALLOW_UNTAGGED_PATCHES:-1}
 
-# controls how much is downloaded and patch starting point
-CVE_MIN_YEAR=${CVE_MIN_YEAR:-1999}
+	# This controls how much is downloaded and the patch starting point.
+	if [[ -z "${CVE_MIN_YEAR}" ]] ; then
+		local this_year=$(date +"%Y")
+		export CVE_MIN_YEAR="${this_year}" # 1999 is the minimal
+	fi
+}
 
 TUXPARONI_A_FN="tuxparoni.tar.gz"
-TUXPARONI_SRC_URI="
-https://github.com/orsonteodoro/tuxparoni/archive/master.tar.gz"
+TUXPARONI_SRC_URI="https://github.com/orsonteodoro/tuxparoni/archive/master.tar.gz"
 
 fetch_tuxparoni() {
 einfo "Fetching tuxparoni from a live source..."
