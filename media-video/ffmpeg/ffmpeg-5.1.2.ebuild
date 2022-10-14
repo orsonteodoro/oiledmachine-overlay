@@ -292,8 +292,11 @@ IUSE+=" pgo
 	trainer-audio-vbr
 	trainer-audio-lossless
 	trainer-video-2-pass-constrained-quality
+	trainer-video-2-pass-constrained-quality-quick
 	trainer-video-constrained-quality
+	trainer-video-constrained-quality-quick
 	trainer-video-lossless
+	trainer-video-lossless-quick
 	trainer-av-streaming
 "
 
@@ -527,8 +530,11 @@ REQUIRED_USE+="
 			trainer-audio-vbr
 			trainer-audio-lossless
 			trainer-video-2-pass-constrained-quality
+			trainer-video-2-pass-constrained-quality-quick
 			trainer-video-constrained-quality
+			trainer-video-constrained-quality-quick
 			trainer-video-lossless
+			trainer-video-lossless-quick
 			trainer-av-streaming
 		)
 	)
@@ -537,8 +543,11 @@ REQUIRED_USE+="
 	trainer-audio-vbr? ( pgo )
 	trainer-audio-lossless? ( pgo )
 	trainer-video-2-pass-constrained-quality? ( pgo )
+	trainer-video-2-pass-constrained-quality-quick? ( pgo )
 	trainer-video-constrained-quality? ( pgo )
+	trainer-video-constrained-quality-quick? ( pgo )
 	trainer-video-lossless? ( pgo )
+	trainer-video-lossless-quick? ( pgo )
 	trainer-av-streaming? (
 		encode
 		kernel_linux
@@ -1296,6 +1305,27 @@ _vdecode() {
 	"${cmd[@]}" || die
 }
 
+_get_resolutions_quick() {
+	local L=(
+		"30;426;240;sdr"
+		"60;426;240;sdr"
+
+		"30;1280;720;hdr"
+		"60;1280;720;hdr"
+	)
+
+	local e
+	if [[ -n "${FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK}" ]] ; then
+		for e in ${FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK} ; do
+			echo "${e}"
+		done
+	else
+		for e in ${L[@]} ; do
+			echo "${e}"
+		done
+	fi
+}
+
 _get_resolutions() {
 	local L=(
 		"30;426;240;sdr"
@@ -1463,12 +1493,12 @@ _has_hw_264_level_support() {
 
 _trainer_plan_video_constrained_quality_training_session() {
 	local entry="${1}"
+	local duration="${2}"
 
 	local fps=$(echo "${entry}" | cut -f 1 -d ";")
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local dynamic_range=$(echo "${entry}" | cut -f 4 -d ";")
-	local duration="3"
 	local bits="" # 8 bit
 
 	local m60fps="1"
@@ -1600,12 +1630,14 @@ _trainer_plan_video_constrained_quality_training_session() {
 }
 
 _trainer_plan_video_constrained_quality() {
-	local video_scenario="${1}"
-	local encoding_codec="${2}"
-	local decoding_codec="${3}"
-	local extension="${4}"
-	local tags="${5}"
+	local mode="${1}"
+	local video_scenario="${2}"
+	local encoding_codec="${3}"
+	local decoding_codec="${4}"
+	local extension="${5}"
+	local tags="${6}"
 	local training_args=
+	local duration
 
 	if [[ "${encoding_codec}" =~ "vaapi" ]] ; then
 eerror
@@ -1621,9 +1653,15 @@ eerror
 		training_args="${!envvar}"
 	fi
 
-	local L=(
-		$(_get_resolutions)
-	)
+	local L=()
+
+	if [[ "${mode}" == "quick" ]] ; then
+		L=( $(_get_resolutions) )
+		duration="1"
+	else
+		L=( $(_get_resolutions_quick) )
+		duration="3"
+	fi
 
 	if train_meets_requirements ; then
 		local id
@@ -1633,7 +1671,7 @@ eerror
 			einfo "Running trainer for ${encoding_codec} for 1 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
-				_trainer_plan_video_constrained_quality_training_session "${e}"
+				_trainer_plan_video_constrained_quality_training_session "${e}" "${duration}"
 			done
 		done
 	fi
@@ -1641,12 +1679,12 @@ eerror
 
 _trainer_plan_video_2_pass_constrained_quality_training_session() {
 	local entry="${1}"
+	local duration="${2}"
 
 	local fps=$(echo "${entry}" | cut -f 1 -d ";")
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local dynamic_range=$(echo "${entry}" | cut -f 4 -d ";")
-	local duration="3"
 	local mhdr="1"
 	local m60fps="1"
 	local bits=""
@@ -1827,12 +1865,14 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 }
 
 _trainer_plan_video_2_pass_constrained_quality() {
-	local video_scenario="${1}"
-	local encoding_codec="${2}"
-	local decoding_codec="${3}"
-	local extension="${4}"
-	local tags="${5}"
+	local mode="${1}"
+	local video_scenario="${2}"
+	local encoding_codec="${3}"
+	local decoding_codec="${4}"
+	local extension="${5}"
+	local tags="${6}"
 	local training_args=
+	local duration
 
 	if [[ "${encoding_codec}" =~ "vaapi" ]] ; then
 eerror
@@ -1848,9 +1888,15 @@ eerror
 		training_args="${!envvar}"
 	fi
 
-	local L=(
-		$(_get_resolutions)
-	)
+	local L=()
+
+	if [[ "${mode}" == "quick" ]] ; then
+		L=( $(_get_resolutions) )
+		duration="1"
+	else
+		L=( $(_get_resolutions_quick) )
+		duration="3"
+	fi
 
 	if train_meets_requirements ; then
 		local id
@@ -1860,7 +1906,7 @@ eerror
 			einfo "Running trainer for ${encoding_codec} for 2 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
-				_trainer_plan_video_2_pass_constrained_quality_training_session "${e}"
+				_trainer_plan_video_2_pass_constrained_quality_training_session "${e}" "${duration}"
 			done
 		done
 	fi
@@ -1929,13 +1975,15 @@ _trainer_plan_audio_lossless() {
 }
 
 _trainer_plan_video_lossless() {
-	local video_scenario="${1}"
-	local encoding_codec="${2}"
-	local decoding_codec="${3}"
-	local extension="${4}"
-	local tags="${5}"
+	local mode="${1}"
+	local video_scenario="${2}"
+	local encoding_codec="${3}"
+	local decoding_codec="${4}"
+	local extension="${5}"
+	local tags="${6}"
 	local training_args=
 	local codec_args=()
+	local duration
 
 	local name="${encoding_codec^^}"
 	name="${name//-/_}"
@@ -1945,6 +1993,12 @@ _trainer_plan_video_lossless() {
 	fi
 
 	[[ "${encoding_codec}" =~ "libvpx-vp9" ]] && codec_args+=( -lossless 1 )
+
+	if [[ "${mode}" == "quick" ]] ; then
+		duration="1"
+	else
+		duration="3"
+	fi
 
 	if train_meets_requirements ; then
 		local id
@@ -1962,7 +2016,7 @@ _trainer_plan_video_lossless() {
 				${codec_args[@]} \
 				${training_args} \
 				-an \
-				-t 3 \
+				-t ${duration} \
 				"${T}/traintemp/test.${extension}"
 			)
 			einfo "${cmd[@]}"
@@ -2741,6 +2795,16 @@ ewarn
 		local tags=$(echo "${codec}" | cut -f 5 -d ":")
 		if use trainer-video-constrained-quality ; then
 			_trainer_plan_video_constrained_quality \
+				"full" \
+				"${video_scenario}" \
+				"${encode_codec}" \
+				"${decode_codec}" \
+				"${container_extension}" \
+				"${tags}"
+		fi
+		if use trainer-video-constrained-quality-quick ; then
+			_trainer_plan_video_constrained_quality \
+				"quick" \
 				"${video_scenario}" \
 				"${encode_codec}" \
 				"${decode_codec}" \
@@ -2749,6 +2813,16 @@ ewarn
 		fi
 		if use trainer-video-2-pass-constrained-quality ; then
 			_trainer_plan_video_2_pass_constrained_quality \
+				"full" \
+				"${video_scenario}" \
+				"${encode_codec}" \
+				"${decode_codec}" \
+				"${container_extension}" \
+				"${tags}"
+		fi
+		if use trainer-video-2-pass-constrained-quality-quick ; then
+			_trainer_plan_video_2_pass_constrained_quality \
+				"quick" \
 				"${video_scenario}" \
 				"${encode_codec}" \
 				"${decode_codec}" \
@@ -2757,6 +2831,16 @@ ewarn
 		fi
 		if use trainer-video-lossless ; then
 			_trainer_plan_video_lossless \
+				"full" \
+				"${video_scenario}" \
+				"${encode_codec}" \
+				"${decode_codec}" \
+				"${container_extension}" \
+				"${tags}"
+		fi
+		if use trainer-video-lossless-quick ; then
+			_trainer_plan_video_lossless \
+				"quick" \
 				"${video_scenario}" \
 				"${encode_codec}" \
 				"${decode_codec}" \
