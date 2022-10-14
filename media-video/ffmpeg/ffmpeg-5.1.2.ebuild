@@ -888,7 +888,8 @@ eerror
 		die
 	fi
 
-	if ( use pgo || use bolt ) \
+	if use trainer-av-streaming \
+		&& ( use pgo || use bolt ) \
 		&& ! pidof X 2>/dev/null 1>/dev/null ; then
 eerror
 eerror "You must run X to do GPU based PGO/BOLT training."
@@ -896,7 +897,8 @@ eerror
 		die
 	fi
 
-	if ( use pgo || use bolt ) \
+	if use trainer-av-streaming \
+		&& ( use pgo || use bolt ) \
 		&& ! ( DISPLAY="${TRAIN_DISPLAY}" xhost | grep -q -e "LOCAL:" ) ; then
 eerror
 eerror "You must do:  \`xhost +local:root:\` to do GPU based PGO/BOLT training."
@@ -3093,7 +3095,8 @@ ewarn "The /dev/video* should have portage removed from ACL permissions after"
 ewarn "training."
 ewarn
 	fi
-	if ( use pgo || use bolt ) ; then
+	if use trainer-av-streaming \
+		&& ( use pgo || use bolt ) ; then
 ewarn
 ewarn "You must run \`xhost -local:root:\` after PGO training to restore the"
 ewarn "security default."
