@@ -1081,6 +1081,11 @@ _src_configure() {
 	einfo "Configuring ${lib_type} with PGO_PHASE=${PGO_PHASE}"
 
 	uopts_src_configure
+
+	if tc-is-clang && ( use pgo || use epgo ) ; then
+		append-flags -mllvm -vp-counters-per-site=8
+	fi
+
 	strip-flag-value "cfi-icall"
 	if tc-is-clang && has_version "sys-libs/compiler-rt-sanitizer[cfi]" ; then
 		append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with ffprobe
