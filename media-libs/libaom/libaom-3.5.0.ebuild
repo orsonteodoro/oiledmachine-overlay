@@ -398,6 +398,7 @@ _src_configure() {
 _vdecode() {
 	einfo "Decoding ${1}"
 	cmd=( "${FFMPEG}" -i "${T}/traintemp/test.webm" -f null - )
+	einfo "${cmd[@]}"
 	"${cmd[@]}" || die
 }
 
@@ -544,6 +545,7 @@ _trainer_plan_constrained_quality_training_session() {
 		-t ${duration} \
 		"${T}/traintemp/test.webm"
 	)
+	einfo "${cmd[@]}"
 	"${cmd[@]}" || die
 	_vdecode "${cheight} ${fps} fps"
 }
@@ -600,7 +602,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 			# See libavfilter/vf_setparams.c
 			# Target HDR10
 			-color_primaries bt2020
-			-color_range limited # video
+			-color_range 0 # 0 = studio [16, 235], 1 = full [0, 255]
 			-color_trc smpte2084
 			-colorspace bt2020nc
 		)
@@ -674,7 +676,9 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 		-t ${duration} \
 		"${T}/traintemp/test.webm"
 	)
+	einfo "${cmd1[@]}"
 	"${cmd1[@]}" || die
+	einfo "${cmd2[@]}"
 	"${cmd2[@]}" || die
 	_vdecode "${cheight} ${fps} fps"
 }
@@ -735,6 +739,7 @@ _trainer_plan_lossless() {
 				-t ${duration} \
 				"${T}/traintemp/test.webm"
 			)
+			einfo "${cmd[@]}"
 			"${cmd[@]}" || die
 			_vdecode "lossless"
 		done
@@ -745,8 +750,8 @@ train_trainer_custom() {
 	[[ "${lib_type}" == "static" ]] && return
 	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-	if use trainer-constrained-quality-quick ; then
-		_trainer_plan_constrained_quality "quick"
+	if use trainer-2-pass-constrained-quality ; then
+		_trainer_plan_2_pass_constrained_quality "full"
 	fi
 	if use trainer-2-pass-constrained-quality-quick ; then
 		_trainer_plan_2_pass_constrained_quality "quick"
@@ -754,8 +759,8 @@ train_trainer_custom() {
 	if use trainer-constrained-quality ; then
 		_trainer_plan_constrained_quality "full"
 	fi
-	if use trainer-2-pass-constrained-quality ; then
-		_trainer_plan_2_pass_constrained_quality "full"
+	if use trainer-constrained-quality-quick ; then
+		_trainer_plan_constrained_quality "quick"
 	fi
 	if use trainer-lossless ; then
 		_trainer_plan_lossless "full"

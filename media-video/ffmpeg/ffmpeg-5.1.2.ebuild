@@ -1253,7 +1253,7 @@ einfo "CXXFLAGS:\t\t${CXXFLAGS}"
 einfo "LDFLAGS:\t\t${LDFLAGS}"
 einfo
 
-	if use pgo ; then
+	if tc-is-gcc && ( use pgo || use epgo ) ; then
 		extra_libs+=( --extra-libs="-lgcov" )
 	fi
 

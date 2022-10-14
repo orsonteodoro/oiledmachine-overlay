@@ -255,7 +255,7 @@ eerror "directly."
 		if ! has_version "=sys-libs/compiler-rt-sanitizers-${s}*[profile]" ; then
 eerror
 eerror "You need to emerge =sys-libs/compiler-rt-sanitizers-${s}*[profile] for"
-eerror "Clang PGO."
+eerror "Clang PGO in addition ABIs."
 eerror
 		fi
 	fi
@@ -290,6 +290,15 @@ tpgo_src_prepare() {
 	_tpgo_prepare_pgo
 }
 
+# @FUNCTION: _tpgo_append_all
+# @INTERNAL
+# @DESCRIPTION:
+# Append all flags to {C,CXX,LD}FLAGS
+_tpgo_append_flags() {
+	append-flags ${@}
+	append-ldflags ${@}
+}
+
 # @FUNCTION: _tpgo_configure
 # @INTERNAL
 # @DESCRIPTION:
@@ -298,14 +307,21 @@ _tpgo_configure() {
 	if use pgo && [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		einfo "Setting up PGI"
 		if tc-is-clang ; then
-			append-flags \
+			local clang_pv=$(clang-fullversion)
+			if ! has_version "~sys-libs/compiler-rt-sanitizers-${clang_pv}[${MULTILIB_ABI_FLAG},profile]" ; then
+eerror
+eerror "You need to emerge ~sys-libs/compiler-rt-sanitizers-${clang_pv}[${MULTILIB_ABI_FLAG},profile]."
+eerror
+				die
+			fi
+			_tpgo_append_flags \
 				-fprofile-generate="${pgo_data_staging_dir}"
 		else
-			append-flags \
+			_tpgo_append_flags \
 				-fprofile-generate \
 				-fprofile-dir="${pgo_data_staging_dir}"
 			[[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] \
-				&& append-flags -fprofile-partial-training
+				&& _tpgo_append_flags -fprofile-partial-training
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		einfo "Setting up PGO"
@@ -314,15 +330,15 @@ _tpgo_configure() {
 				merge \
 				-output="${pgo_data_staging_dir}/pgo-custom.profdata" \
 				$(find "${pgo_data_staging_dir}" -name "*.profraw") || die
-			append-flags \
+			_tpgo_append_flags \
 				-fprofile-use="${pgo_data_staging_dir}/pgo-custom.profdata"
 		elif tc-is-gcc ; then
-			append-flags \
+			_tpgo_append_flags \
 				-fprofile-correction \
 				-fprofile-use \
 				-fprofile-dir="${pgo_data_staging_dir}"
 			[[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] \
-				&& append-flags -fprofile-partial-training
+				&& _tpgo_append_flags -fprofile-partial-training
 		fi
 	fi
 }

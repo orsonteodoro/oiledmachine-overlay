@@ -388,6 +388,7 @@ _src_pre_train() {
 _vdecode() {
 	einfo "Decoding ${1}"
 	cmd=( "${FFMPEG}" -i "${T}/traintemp/test.webm" -f null - )
+	einfo "${cmd[@]}"
 	"${cmd[@]}" || die
 }
 
@@ -599,7 +600,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 			# See libavfilter/vf_setparams.c
 			# Target HDR10
 			-color_primaries bt2020
-			-color_range limited # video
+			-color_range 0 # 0 = limited [16, 235], 1 = full [0, 255]
 			-color_trc smpte2084
 			-colorspace bt2020nc
 		)
@@ -772,21 +773,21 @@ _trainer_plan_lossless() {
 
 train_trainer_custom() {
 	[[ "${lib_type}" == "static" ]] || return # Reuse the shared PGO profile
-	if use trainer-constrained-quality-quick ; then
-		_trainer_plan_constrained_quality "libvpx" "quick"
-		_trainer_plan_constrained_quality "libvpx-vp9" "quick"
-	fi
-	if use trainer-constrained-quality ; then
-		_trainer_plan_constrained_quality "libvpx" "full"
-		_trainer_plan_constrained_quality "libvpx-vp9" "full"
+	if use trainer-2-pass-constrained-quality ; then
+		_trainer_plan_2_pass_constrained_quality "libvpx" "full"
+		_trainer_plan_2_pass_constrained_quality "libvpx-vp9" "full"
 	fi
 	if use trainer-2-pass-constrained-quality-quick ; then
 		_trainer_plan_2_pass_constrained_quality "libvpx" "quick"
 		_trainer_plan_2_pass_constrained_quality "libvpx-vp9" "quick"
 	fi
-	if use trainer-2-pass-constrained-quality ; then
-		_trainer_plan_2_pass_constrained_quality "libvpx" "full"
-		_trainer_plan_2_pass_constrained_quality "libvpx-vp9" "full"
+	if use trainer-constrained-quality ; then
+		_trainer_plan_constrained_quality "libvpx" "full"
+		_trainer_plan_constrained_quality "libvpx-vp9" "full"
+	fi
+	if use trainer-constrained-quality-quick ; then
+		_trainer_plan_constrained_quality "libvpx" "quick"
+		_trainer_plan_constrained_quality "libvpx-vp9" "quick"
 	fi
 	if use trainer-lossless ; then
 		_trainer_plan_lossless "libvpx" "full"

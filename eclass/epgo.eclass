@@ -143,7 +143,7 @@ eerror "directly."
 		if ! has_version "=sys-libs/compiler-rt-sanitizers-${s}*[profile]" ; then
 eerror
 eerror "You need to emerge =sys-libs/compiler-rt-sanitizers-${s}*[profile] for"
-eerror "Clang PGO."
+eerror "Clang PGO in addition ABIs."
 eerror
 		fi
 	fi
@@ -178,6 +178,15 @@ epgo_src_prepare() {
 	_epgo_prepare_pgo
 }
 
+# @FUNCTION: _epgo_append_all
+# @INTERNAL
+# @DESCRIPTION:
+# Append all flags to {C,CXX,LD}FLAGS
+_epgo_append_flags() {
+	append-flags ${@}
+	append-ldflags ${@}
+}
+
 # @FUNCTION: _epgo_configure
 # @INTERNAL
 # @DESCRIPTION:
@@ -190,14 +199,21 @@ _epgo_configure() {
 	use epgo && addpredict "${EPREFIX}${UOPTS_PGO_PROFILES_DIR}"
 	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		if tc-is-clang ; then
-			append-flags \
+			local clang_pv=$(clang-fullversion)
+			if ! has_version "~sys-libs/compiler-rt-sanitizers-${clang_pv}[${MULTILIB_ABI_FLAG},profile]" ; then
+eerror
+eerror "You need to emerge ~sys-libs/compiler-rt-sanitizers-${clang_pv}[${MULTILIB_ABI_FLAG},profile]."
+eerror
+				die
+			fi
+			_epgo_append_flags \
 				-fprofile-generate="${pgo_data_suffix_dir}"
 		elif tc-is-gcc ; then
-			append-flags \
+			_epgo_append_flags \
 				-fprofile-generate \
 				-fprofile-dir="${pgo_data_suffix_dir}"
 			[[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] \
-				&& append-flags -fprofile-partial-training
+				&& _epgo_append_flags -fprofile-partial-training
 		else
 eerror
 eerror "Only GCC and Clang are supported for PGO."
@@ -219,15 +235,15 @@ eerror
 				merge \
 				-output="${pgo_data_staging_dir}/pgo-custom.profdata" \
 				$(find "${pgo_data_staging_dir}" -name "*.profraw") || die
-			append-flags \
+			_epgo_append_flags \
 				-fprofile-use="${pgo_data_staging_dir}/pgo-custom.profdata"
 		elif tc-is-gcc ; then
-			append-flags \
+			_epgo_append_flags \
 				-fprofile-correction \
 				-fprofile-use \
 				-fprofile-dir="${pgo_data_staging_dir}"
 			[[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] \
-				&& append-flags -fprofile-partial-training
+				&& _epgo_append_flags -fprofile-partial-training
 		fi
 	fi
 }
