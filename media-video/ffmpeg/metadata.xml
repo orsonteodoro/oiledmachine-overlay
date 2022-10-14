@@ -319,15 +319,21 @@
 
 </longdescription>
 <use>
-  <!-- added to ebuild by oiledmachine-overlay -->
+  <!-- USE flags added by the oiledmachine-overlay -->
   <flag name="trainer-audio-cbr">
     Use the CBR audio trainer.
+  </flag>
+  <flag name="trainer-audio-lossless">
+    Use the lossless audio trainer.
   </flag>
   <flag name="trainer-audio-vbr">
     Use the VBR audio trainer.
   </flag>
-  <flag name="trainer-audio-lossless">
-    Use the lossless audio trainer.
+  <flag name="trainer-av-streaming">
+    Use the audio video stream trainer.  This will access the camera, X11, or
+    active KMS plane as sources of data.  Currently it will train for bitrates
+    requested by live streaming websites, but it may be updated later to train
+    with the network connections.
   </flag>
   <flag name="trainer-video-2-pass-constrained-quality">
     Performs an addtional 2 pass training.  Two pass improves quality and rate
@@ -361,14 +367,11 @@
 
     Uses 1 second with lowest resolutions.
   </flag>
-  <flag name="trainer-av-streaming">
-    Use the audio video stream trainer.  This will access the camera, X11, or
-    active KMS plane as sources of data.  Currently it will train for bitrates
-    requested by live streaming websites, but it may be updated later to train
-    with the network connections.
-  </flag>
   <flag name="ssp">
     Build with stack smashing protection
+  </flag>
+  <flag name="rN">
+    (FOR INTERNAL USE ONLY) Ebuild fork revision.
   </flag>
   <!-- For license compatibility checking -->
   <!-- Deal with the restrictive first then back to the permissive. -->
@@ -384,15 +387,14 @@
   <flag name="mpl2_0">Checks MPL-2.0 license compatibility</flag>
   <flag name="debug">Relax license restrictions</flag>
 
-  <!-- modified -->
-  <!-- The gpl USE flag should be replaced with gpl2 USE flag -->
+  <!-- Modified -->
   <flag name="gpl">
     Synonym for the gpl2 USE flag to build a GPL-2.0 (only) package.  Certain
     license incompatibilities may be encountered.  This USE flag is kept for
     compatibility.
   </flag>
 
-  <!-- added by ebuild originators -->
+  <!-- Added by ebuild originators -->
   <flag name="amr">
     Enables Adaptive Multi-Rate Audio support
   </flag>
@@ -575,9 +577,6 @@
   </flag>
   <flag name="zvbi">
     Enables <pkg>media-libs/zvbi</pkg> based teletext decoder.
-  </flag>
-  <flag name="rN">
-    (FOR INTERNAL USE ONLY) Ebuild fork revision.
   </flag>
 </use>
 <slots>

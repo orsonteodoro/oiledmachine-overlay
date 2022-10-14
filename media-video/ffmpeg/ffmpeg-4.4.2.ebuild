@@ -285,19 +285,18 @@ REQUIRED_USE+=" ${LICENSE_REQUIRED_USE}"
 # MPL-2.0 is indirect compatible with the GPL-2, LGPL-2.1 -- with exceptions.  \
 #   For details see: https://www.gnu.org/licenses/license-list.html#MPL-2.0
 
-IUSE+=" pgo
-	trainer-audio
-	trainer-video
+IUSE+="
+	pgo
 	trainer-audio-cbr
-	trainer-audio-vbr
 	trainer-audio-lossless
+	trainer-audio-vbr
+	trainer-av-streaming
 	trainer-video-2-pass-constrained-quality
 	trainer-video-2-pass-constrained-quality-quick
 	trainer-video-constrained-quality
 	trainer-video-constrained-quality-quick
 	trainer-video-lossless
 	trainer-video-lossless-quick
-	trainer-av-streaming
 "
 
 # Strings for CPU features in the useflag[:configure_option] form
@@ -521,30 +520,21 @@ REQUIRED_USE+="
 REQUIRED_USE+="
 	pgo? (
 		|| (
-			trainer-audio
-			trainer-video
 			trainer-audio-cbr
 			trainer-audio-vbr
 			trainer-audio-lossless
+			trainer-av-streaming
 			trainer-video-2-pass-constrained-quality
 			trainer-video-2-pass-constrained-quality-quick
 			trainer-video-constrained-quality
 			trainer-video-constrained-quality-quick
 			trainer-video-lossless
 			trainer-video-lossless-quick
-			trainer-av-streaming
 		)
 	)
-	trainer-video? ( pgo )
 	trainer-audio-cbr? ( pgo )
 	trainer-audio-vbr? ( pgo )
 	trainer-audio-lossless? ( pgo )
-	trainer-video-2-pass-constrained-quality? ( pgo )
-	trainer-video-2-pass-constrained-quality-quick? ( pgo )
-	trainer-video-constrained-quality? ( pgo )
-	trainer-video-constrained-quality-quick? ( pgo )
-	trainer-video-lossless? ( pgo )
-	trainer-video-lossless-quick? ( pgo )
 	trainer-av-streaming? (
 		encode
 		kernel_linux
@@ -562,6 +552,12 @@ REQUIRED_USE+="
 			x265
 		)
 	)
+	trainer-video-2-pass-constrained-quality? ( pgo )
+	trainer-video-2-pass-constrained-quality-quick? ( pgo )
+	trainer-video-constrained-quality? ( pgo )
+	trainer-video-constrained-quality-quick? ( pgo )
+	trainer-video-lossless? ( pgo )
+	trainer-video-lossless-quick? ( pgo )
 	!kernel_linux? (
 		!trainer-av-streaming
 	)
@@ -1701,10 +1697,18 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 			# See libavfilter/vf_setparams.c
 			# Target HDR10
 			-color_primaries bt2020
-			-color_range limited # video
 			-color_trc smpte2084
 			-colorspace bt2020nc
 		)
+		if [[ "${encoding_codec}" =~ ("libvpx"|"libvpx-vp9"|"libaom-av1") ]] ; then
+			extra_args+=(
+				-color_range 0 # limited
+			)
+		else
+			extra_args+=(
+				-color_range limited # video
+			)
+		fi
 		mhdr="1.25"
 	fi
 
@@ -2798,24 +2802,6 @@ ewarn
 		local decode_codec=$(echo "${codec}" | cut -f 3 -d ":")
 		local container_extension=$(echo "${codec}" | cut -f 4 -d ":")
 		local tags=$(echo "${codec}" | cut -f 5 -d ":")
-		if use trainer-video-constrained-quality ; then
-			_trainer_plan_video_constrained_quality \
-				"full" \
-				"${video_scenario}" \
-				"${encode_codec}" \
-				"${decode_codec}" \
-				"${container_extension}" \
-				"${tags}"
-		fi
-		if use trainer-video-constrained-quality-quick ; then
-			_trainer_plan_video_constrained_quality \
-				"quick" \
-				"${video_scenario}" \
-				"${encode_codec}" \
-				"${decode_codec}" \
-				"${container_extension}" \
-				"${tags}"
-		fi
 		if use trainer-video-2-pass-constrained-quality ; then
 			_trainer_plan_video_2_pass_constrained_quality \
 				"full" \
@@ -2827,6 +2813,24 @@ ewarn
 		fi
 		if use trainer-video-2-pass-constrained-quality-quick ; then
 			_trainer_plan_video_2_pass_constrained_quality \
+				"quick" \
+				"${video_scenario}" \
+				"${encode_codec}" \
+				"${decode_codec}" \
+				"${container_extension}" \
+				"${tags}"
+		fi
+		if use trainer-video-constrained-quality ; then
+			_trainer_plan_video_constrained_quality \
+				"full" \
+				"${video_scenario}" \
+				"${encode_codec}" \
+				"${decode_codec}" \
+				"${container_extension}" \
+				"${tags}"
+		fi
+		if use trainer-video-constrained-quality-quick ; then
+			_trainer_plan_video_constrained_quality \
 				"quick" \
 				"${video_scenario}" \
 				"${encode_codec}" \
