@@ -207,6 +207,7 @@ src_prepare() {
 		fi
 	fi
 	prepare_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			cp -a "${S}" "${CMAKE_USE_DIR}" || die
@@ -244,6 +245,7 @@ has_ffmpeg() {
 has_codec_requirements() {
 	local meets_input_req=1
 	local meets_output_req=0
+	local id
 	for id in $(get_asset_ids) ; do
 		local video_asset_path="${!id}"
 		[[ ! -e "${video_asset_path}" ]] && continue
@@ -259,6 +261,16 @@ has_codec_requirements() {
 }
 
 train_meets_requirements() {
+	if has_ffmpeg ; then
+einfo "media-video/ffmpeg[${MULTILIB_ABI_FLAG}] support:\tY"
+	else
+einfo "media-video/ffmpeg[${MULTILIB_ABI_FLAG}] support:\tN"
+	fi
+	if has_codec_requirements ; then
+einfo "Codec requirements:\t\t\t\tY"
+	else
+einfo "Codec requirements:\t\t\t\tN"
+	fi
 	has_ffmpeg && has_codec_requirements && return 0
 	return 1
 }
@@ -809,7 +821,9 @@ _src_post_pgo() {
 src_compile() {
 	mkdir -p "${T}/traintemp" || die
 	compile_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
+			einfo "Build type is ${lib_type}"
 
 			if [[ "${lib_type}" == "static" ]] ; then
 				uopts_n_training
@@ -826,6 +840,7 @@ src_compile() {
 
 src_test() {
 	test_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
@@ -838,6 +853,7 @@ src_test() {
 
 src_install() {
 	install_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"

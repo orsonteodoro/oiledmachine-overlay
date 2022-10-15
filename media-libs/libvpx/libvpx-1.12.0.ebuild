@@ -206,8 +206,11 @@ get_multiabi_ffmpeg() {
 
 has_ffmpeg() {
 	local x=$(get_multiabi_ffmpeg)
-	[[ -n "${x}" && -e "${x}" ]] && return 0
-	return 1
+	if [[ -n "${x}" && -e "${x}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
 }
 
 has_codec_requirements() {
@@ -229,6 +232,16 @@ has_codec_requirements() {
 }
 
 train_meets_requirements() {
+	if has_ffmpeg ; then
+einfo "media-video/ffmpeg[${MULTILIB_ABI_FLAG}] support:\tY"
+	else
+einfo "media-video/ffmpeg[${MULTILIB_ABI_FLAG}] support:\tN"
+	fi
+	if has_codec_requirements ; then
+einfo "Codec requirements:\t\t\t\tY"
+	else
+einfo "Codec requirements:\t\t\t\tN"
+	fi
 	has_ffmpeg && has_codec_requirements && return 0
 	return 1
 }
@@ -252,6 +265,7 @@ src_prepare() {
 	fi
 
 	prepare_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			einfo "Build type is ${lib_type}"
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
@@ -281,8 +295,12 @@ append_all() {
 }
 
 _src_configure() {
+	export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+	export BUILD_DIR="${S}"
+	cd "${BUILD_DIR}" || die
 	[[ -f Makefile ]] && emake clean
 	unset CODECS #357487
+	einfo "PGO_PHASE: ${PGO_PHASE}"
 
 	add_sandbox_exceptions
 
@@ -381,10 +399,6 @@ _src_configure() {
 	"${S}"/configure "${myconfargs[@]}"
 }
 
-_src_pre_train() {
-	export FFMPEG=$(get_multiabi_ffmpeg)
-}
-
 _vdecode() {
 	einfo "Decoding ${1}"
 	cmd=( "${FFMPEG}" -i "${T}/traintemp/test.webm" -f null - )
@@ -397,7 +411,6 @@ _get_resolutions_quick() {
 		"30;426;240;sdr"
 		"60;426;240;sdr"
 	)
-
 	local e
 	if [[ -n "${LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK}" ]] ; then
 		for e in ${LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK} ; do
@@ -473,7 +486,7 @@ _cheight() {
 	fi
 }
 
-_trainer_plan_constrained_quality() {
+_trainer_plan_constrained_quality_training_session() {
 	local entry="${1}"
 	local duration="${2}"
 
@@ -481,13 +494,24 @@ _trainer_plan_constrained_quality() {
 	local width=$(echo "${entry}" | cut -f 2 -d ";")
 	local height=$(echo "${entry}" | cut -f 3 -d ";")
 	local dynamic_range=$(echo "${entry}" | cut -f 4 -d ";")
-
 	local m60fps="1"
+	local extra_args=()
+
 
 	[[ "${fps}" == "60" ]] && m60fps="1.5"
 	[[ "${dynamic_range}" == "hdr" ]] && return
 
-	local extra_args=()
+	local pf=$(ffprobe -show_entries stream=pix_fmt "${video_asset_path}" 2>/dev/null \
+		| grep "pix_fmt" \
+		| cut -f 2 -d "=")
+
+	if [[ "${pf}" =~ ("422"|"444") ]] ; then
+		extra_args+=( -profile:v 1 ) # 4:2:2 or 4:4:4 8 bit chroma subsampling
+		extra_args+=( -pix_fmt yuv422p )
+	else
+		extra_args+=( -profile:v 0 ) # 4:2:0 8 bit chroma subsampling
+		extra_args+=( -pix_fmt yuv420p )
+	fi
 
 	if [[ "${id}" =~ ("CGI"|"GAMING"|"SCREENCAST") ]] ; then
 		extra_args+=( -tune-content 1 ) # 1=screen
@@ -497,28 +521,17 @@ _trainer_plan_constrained_quality() {
 		extra_args+=( -tune-content 0 ) # 0=default
 	fi
 
-	local pf=$(ffprobe -show_entries stream=pix_fmt "${video_asset_path}" 2>/dev/null \
-		| grep "pix_fmt" \
-		| cut -f 2 -d "=")
-	if [[ "${pf}" =~ ("422"|"444") ]] ; then
-		extra_args+=( -profile:v 1 ) # 4:2:2 or 4:4:4 8 bit chroma subsampling
-		extra_args+=( -pix_fmt yuv422p )
-	else
-		extra_args+=( -profile:v 0 ) # 4:2:0 8 bit chroma subsampling
-		extra_args+=( -pix_fmt yuv420p )
-	fi
-
 	# Formula based on point slope linear curve fitting.  Drop 1000 for Mbps.
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
 	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
 	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
 	local minrate=$(python -c "print(${avgrate}*0.5)") # stationary
 
-	local cheight=$(_cheight "${height}")
-
 	local cmd
+	local cheight=$(_cheight "${height}")
 	einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
-	cmd=( "${FFMPEG}" \
+	cmd=(
+		"${FFMPEG}" \
 		-y \
 		-i "${video_asset_path}" \
 		-c:v ${encoding_codec} \
@@ -528,7 +541,8 @@ _trainer_plan_constrained_quality() {
 		-an \
 		-r ${fps} \
 		-t ${duration} \
-		"${T}/traintemp/test.webm" )
+		"${T}/traintemp/test.webm"
+	)
 	einfo "${cmd[@]}"
 	"${cmd[@]}" || die
 	_vdecode "${cheight}, ${fps} fps"
@@ -553,10 +567,10 @@ _trainer_plan_constrained_quality() {
 	fi
 
 	if [[ "${mode}" == "quick" ]] ; then
-		L=(_get_resolutions_quick)
+		L=( $(_get_resolutions_quick) )
 		duration="1"
 	else
-		L=(_get_resolutions)
+		L=( $(_get_resolutions) )
 		duration="3"
 	fi
 
@@ -648,7 +662,8 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 
 	local cmd
 	einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
-	cmd1=( "${FFMPEG}" \
+	cmd1=(
+		"${FFMPEG}" \
 		-y \
 		-i "${video_asset_path}" \
 		-c:v ${encoding_codec} \
@@ -660,8 +675,10 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 		-an \
 		-r ${fps} \
 		-t ${duration} \
-		-f null /dev/null )
-	cmd2=( "${FFMPEG}" \
+		-f null /dev/null
+	)
+	cmd2=(
+		"${FFMPEG}" \
 		-y \
 		-i "${video_asset_path}" \
 		-c:v ${encoding_codec} \
@@ -673,7 +690,8 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 		-an \
 		-r ${fps} \
 		-t ${duration} \
-		"${T}/traintemp/test.webm" )
+		"${T}/traintemp/test.webm"
+	)
 	einfo "${cmd1[@]}"
 	"${cmd1[@]}" || die
 	einfo "${cmd2[@]}"
@@ -689,6 +707,7 @@ _trainer_plan_2_pass_constrained_quality() {
 	local encoding_codec="${1}"
 	local decoding_codec
 	local training_args
+
 	if [[ "${encoding_codec}" == "libvpx" ]] ; then
 		decoding_codec="libvpx"
 		training_args=${LIBVPX_TRAINING_VP8_ARGS}
@@ -700,10 +719,10 @@ _trainer_plan_2_pass_constrained_quality() {
 	fi
 
 	if [[ "${mode}" == "quick" ]] ; then
-		L=(_get_resolutions_quick)
+		L=( $(_get_resolutions_quick) )
 		duration="1"
 	else
-		L=(_get_resolutions)
+		L=( $(_get_resolutions) )
 		duration="3"
 	fi
 
@@ -715,7 +734,7 @@ _trainer_plan_2_pass_constrained_quality() {
 			einfo "Running trainer for ${encoding_codec} for 2 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
-				_trainer_plan_constrained_quality_training_session "${e}" "${duration}"
+				_trainer_plan_2_pass_constrained_quality_training_session "${e}" "${duration}"
 			done
 		done
 	fi
@@ -752,7 +771,8 @@ _trainer_plan_lossless() {
 			einfo "Running trainer for ${encoding_codec} for lossless"
 			einfo "Encoding for lossless"
 			local cmd
-			cmd=( "${FFMPEG}" \
+			cmd=(
+				"${FFMPEG}" \
 				-y \
 				-i "${video_asset_path}" \
 				-c:v ${encoding_codec} \
@@ -760,7 +780,8 @@ _trainer_plan_lossless() {
 				${training_args} \
 				-an \
 				-t ${duration} \
-				"${T}/traintemp/test.webm" )
+				"${T}/traintemp/test.webm"
+			)
 			einfo "${cmd[@]}"
 			"${cmd[@]}" || die
 			_vdecode "lossless"
@@ -769,7 +790,10 @@ _trainer_plan_lossless() {
 }
 
 train_trainer_custom() {
-	[[ "${lib_type}" == "static" ]] || return # Reuse the shared PGO profile
+	einfo "Called train_trainer_custom"
+	[[ "${lib_type}" == "static" ]] && return # Reuse the shared PGO profile
+	export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+	export BUILD_DIR="${S}"
 	if use trainer-2-pass-constrained-quality ; then
 		_trainer_plan_2_pass_constrained_quality "libvpx" "full"
 		_trainer_plan_2_pass_constrained_quality "libvpx-vp9" "full"
@@ -797,6 +821,9 @@ train_trainer_custom() {
 }
 
 _src_compile() {
+	export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+	export BUILD_DIR="${S}"
+	cd "${BUILD_DIR}" || die
 	# build verbose by default and do not build examples that will not be installed
 	# disable stripping of debug info, bug #752057
 	# (only works as long as upstream does not use non-gnu strip)
@@ -805,6 +832,7 @@ _src_compile() {
 
 _src_pre_train() {
 	export LD_LIBRARY_PATH="${BUILD_DIR}"
+	export FFMPEG=$(get_multiabi_ffmpeg)
 }
 
 _src_post_train() {
@@ -837,12 +865,9 @@ _wipe_data() {
 src_compile() {
 	mkdir -p "${T}/traintemp" || die
 	compile_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			einfo "Build type is ${lib_type}"
-			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
-			export BUILD_DIR="${S}"
-			cd "${BUILD_DIR}" || die
-
 			if [[ "${lib_type}" == "static" ]] ; then
 				uopts_n_training
 			else
@@ -858,6 +883,7 @@ src_compile() {
 
 src_test() {
 	test_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
@@ -872,6 +898,7 @@ src_test() {
 
 src_install() {
 	install_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
