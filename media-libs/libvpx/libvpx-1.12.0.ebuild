@@ -157,9 +157,9 @@ eerror
 			local s=$(($(echo "${d}" \
 				| cut -f 3 -d ":") * 1))
 			local t=$((${h} + ${m} + ${s}))
-			if (( ${t} < 3 )) ; then
+			if (( ${t} < 5 )) ; then
 eerror
-eerror "The PGO video sample must be >= 3 seconds."
+eerror "The PGO video sample must be >= 5 seconds."
 eerror
 				die
 			fi
