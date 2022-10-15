@@ -1724,7 +1724,7 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 		bits="${bits}le"
 		[[ "${ABI}" =~ "arm" ]] && continue
 	else
-		bits="8" # 8 bits
+		bits="" # 8 bits
 	fi
 
 	if [[ "${encoding_codec}" =~ ("openh264") ]] ; then
