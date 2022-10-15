@@ -38,7 +38,6 @@ IUSE+="
 	trainer-lossless
 	trainer-lossless-quick
 "
-# TODO trainer-random-frames.  Evaluate random frames instead of beginning.
 REQUIRED_USE="
 	cpu_flags_x86_sse2? ( cpu_flags_x86_mmx )
 	cpu_flags_x86_ssse3? ( cpu_flags_x86_sse2 )
@@ -86,6 +85,7 @@ DOCS=( PATENTS )
 RESTRICT="strip"
 # Tests need more wiring up
 RESTRICT+=" !test? ( test ) test"
+N_SAMPLES=5
 
 get_asset_ids() {
 	local types=(
@@ -554,9 +554,17 @@ _trainer_plan_constrained_quality_training_session() {
 		-t ${duration} \
 		"${T}/traintemp/test.webm"
 	)
-	einfo "${cmd[@]}"
-	"${cmd[@]}" || die
-	_vdecode "${cheight} ${fps} fps"
+
+	local len=$(ffprobe -i "${video_asset_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+	(( len < 0 )) && len=0
+	for i in $(seq 1 ${N_SAMPLES}) ; do
+		local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+		einfo "Seek:  ${i} / ${N_SAMPLES}"
+		einfo "Position / Length:  ${pos} / ${len}"
+		einfo "${cmd[@]} -ss ${pos}"
+		"${cmd[@]}" -ss ${pos} || die
+		_vdecode "${cheight} ${fps} fps"
+	done
 }
 
 _trainer_plan_constrained_quality() {
@@ -579,6 +587,7 @@ _trainer_plan_constrained_quality() {
 			[[ -e "${video_asset_path}" ]] || continue
 			einfo "Running trainer for 1 pass constrained quality"
 			local e
+
 			for e in ${L[@]} ; do
 				_trainer_plan_constrained_quality_training_session "${e}" "${duration}"
 			done
@@ -685,11 +694,19 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 		-t ${duration} \
 		"${T}/traintemp/test.webm"
 	)
-	einfo "${cmd1[@]}"
-	"${cmd1[@]}" || die
-	einfo "${cmd2[@]}"
-	"${cmd2[@]}" || die
-	_vdecode "${cheight} ${fps} fps"
+
+	local len=$(ffprobe -i "${video_asset_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+	(( len < 0 )) && len=0
+	for i in $(seq 1 ${N_SAMPLES}) ; do
+		local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+		einfo "Seek:  ${i} / ${N_SAMPLES}"
+		einfo "Position / Length:  ${pos} / ${len}"
+		einfo "${cmd1[@]} -ss ${pos}"
+		"${cmd1[@]}" -ss ${pos} || die
+		einfo "${cmd2[@]} -ss ${pos}"
+		"${cmd2[@]}" -ss ${pos} || die
+		_vdecode "${cheight} ${fps} fps"
+	done
 }
 
 _trainer_plan_2_pass_constrained_quality() {
@@ -748,9 +765,17 @@ _trainer_plan_lossless() {
 				-t ${duration} \
 				"${T}/traintemp/test.webm"
 			)
-			einfo "${cmd[@]}"
-			"${cmd[@]}" || die
-			_vdecode "lossless"
+
+			local len=$(ffprobe -i "${video_asset_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+			(( len < 0 )) && len=0
+			for i in $(seq 1 ${N_SAMPLES}) ; do
+				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+				einfo "Seek:  ${i} / ${N_SAMPLES}"
+				einfo "Position / Length:  ${pos} / ${len}"
+				einfo "${cmd[@]} -ss ${pos}"
+				"${cmd[@]}" -ss ${pos} || die
+				_vdecode "lossless"
+			done
 		done
 	fi
 }

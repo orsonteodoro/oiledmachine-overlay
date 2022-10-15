@@ -570,6 +570,7 @@ RESTRICT="
 
 S="${WORKDIR}/${P/_/-}"
 S_orig="${WORKDIR}/${P/_/-}"
+N_SAMPLES=5
 
 SRC_URI+="
 https://github.com/FFmpeg/FFmpeg/commit/e5163b1d34381a3319214a902ef1df923dd2eeba.patch
@@ -1635,9 +1636,16 @@ _trainer_plan_video_constrained_quality_training_session() {
 		-t ${duration} \
 		"${T}/traintemp/test.${extension}"
 	)
-	einfo "${cmd[@]}"
-	"${cmd[@]}" || die
-	_vdecode "${cheight}, ${fps} fps"
+	local len=$(ffprobe -i "${video_sample_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+	(( len < 0 )) && len=0
+	for i in $(seq 1 ${N_SAMPLES}) ; do
+		local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+		einfo "Seek:  ${i} / ${N_SAMPLES}"
+		einfo "Position / Length:  ${pos} / ${len}"
+		einfo "${cmd[@]} -ss ${pos}"
+		"${cmd[@]}" -ss ${pos} || die
+		_vdecode "${cheight}, ${fps} fps"
+	done
 }
 
 _trainer_plan_video_constrained_quality() {
@@ -1876,11 +1884,18 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 		-t ${duration} \
 		"${T}/traintemp/test.${extension}"
 	)
-	einfo "${cmd1[@]}"
-	"${cmd1[@]}" || die
-	einfo "${cmd2[@]}"
-	"${cmd2[@]}" || die
-	_vdecode "${cheight}, ${fps} fps"
+	local len=$(ffprobe -i "${video_sample_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+	(( len < 0 )) && len=0
+	for i in $(seq 1 ${N_SAMPLES}) ; do
+		local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+		einfo "Seek:  ${i} / ${N_SAMPLES}"
+		einfo "Position / Length:  ${pos} / ${len}"
+		einfo "${cmd1[@]} -ss ${pos}"
+		"${cmd1[@]}" -ss ${pos} || die
+		einfo "${cmd2[@]} -ss ${pos}"
+		"${cmd2[@]}" -ss ${pos} || die
+		_vdecode "${cheight}, ${fps} fps"
+	done
 }
 
 _trainer_plan_video_2_pass_constrained_quality() {
@@ -1986,9 +2001,16 @@ _trainer_plan_audio_lossless() {
 				-t 3 \
 				"${T}/traintemp/test.${extension}"
 			)
-			einfo "${cmd[@]}"
-			"${cmd[@]}" || die
-			_adecode "lossless"
+			local len=$(ffprobe -i "${audio_sample_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+			(( len < 0 )) && len=0
+			for i in $(seq 1 ${N_SAMPLES}) ; do
+				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+				einfo "Seek:  ${i} / ${N_SAMPLES}"
+				einfo "Position / Length:  ${pos} / ${len}"
+				einfo "${cmd[@]} -ss ${pos}"
+				"${cmd[@]}" -ss ${pos} || die
+				_adecode "lossless"
+			done
 		done
 	fi
 }
@@ -2038,9 +2060,16 @@ _trainer_plan_video_lossless() {
 				-t ${duration} \
 				"${T}/traintemp/test.${extension}"
 			)
-			einfo "${cmd[@]}"
-			"${cmd[@]}" || die
-			_vdecode "lossless"
+			local len=$(ffprobe -i "${video_sample_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+			(( len < 0 )) && len=0
+			for i in $(seq 1 ${N_SAMPLES}) ; do
+				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+				einfo "Seek:  ${i} / ${N_SAMPLES}"
+				einfo "Position / Length:  ${pos} / ${len}"
+				einfo "${cmd[@]} -ss ${pos}"
+				"${cmd[@]}" -ss ${pos} || die
+				_vdecode "lossless"
+			done
 		done
 	fi
 }
@@ -2684,9 +2713,16 @@ _trainer_plan_audio_cbr() {
 				-t 3 \
 				"${T}/traintemp/test.${extension}"
 			)
-			einfo "${cmd[@]}"
-			"${cmd[@]}" || die
-			_adecode "${bitrate} kbps"
+			local len=$(ffprobe -i "${audio_sample_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+			(( len < 0 )) && len=0
+			for i in $(seq 1 ${N_SAMPLES}) ; do
+				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+				einfo "Seek:  ${i} / ${N_SAMPLES}"
+				einfo "Position / Length:  ${pos} / ${len}"
+				einfo "${cmd[@]} -ss ${pos}"
+				"${cmd[@]}" -ss ${pos} || die
+				_adecode "${bitrate} kbps"
+			done
 		done
 	done
 }
@@ -2760,9 +2796,16 @@ _trainer_plan_audio_vbr() {
 				-t 3 \
 				"${T}/traintemp/test.${extension}"
 			)
-			einfo "${cmd[@]}"
-			"${cmd[@]}" || die
-			_adecode "${bitrate} setting"
+			local len=$(ffprobe -i "${audio_sample_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+			(( len < 0 )) && len=0
+			for i in $(seq 1 ${N_SAMPLES}) ; do
+				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+				einfo "Seek:  ${i} / ${N_SAMPLES}"
+				einfo "Position / Length:  ${pos} / ${len}"
+				einfo "${cmd[@]} -ss ${pos}"
+				"${cmd[@]}" -ss ${pos} || die
+				_adecode "${bitrate} setting"
+			done
 		done
 	done
 }
