@@ -576,7 +576,7 @@ S_orig="${WORKDIR}/${P/_/-}"
 N_SAMPLES=5
 
 PATCHES=(
-	"${FILESDIR}"/chromium-r1.patch
+	"${FILESDIR}/chromium-r1.patch"
 )
 
 MULTILIB_WRAPPED_HEADERS=(
@@ -1082,6 +1082,11 @@ _src_configure() {
 	einfo "Configuring ${lib_type} with PGO_PHASE=${PGO_PHASE}"
 
 	uopts_src_configure
+
+	# Fix for when gcc >= -O2 -fprofile-generate -fno-reorder-blocks-and-partition
+	# libswscale/x86/rgb2rgb_template.c:1640:9: error: 'asm' operand has impossible constraints
+	filter-flags -f*omit-frame-pointer
+	append_all -fno-omit-frame-pointer
 
 	if tc-is-clang && ( use pgo || use epgo ) ; then
 # The instrumented build with clang will segfault when training.
