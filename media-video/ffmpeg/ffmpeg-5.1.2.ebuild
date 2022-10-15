@@ -638,7 +638,7 @@ eerror
 eerror "${id} is missing the abspath to your video as a per-package environment"
 eerror "variable."
 eerror
-#eerror "The video must be 3840x2160 resolution, 60fps, >= 3 seconds."
+#eerror "The video must be 3840x2160 resolution, 60fps, >= 5 seconds."
 #eerror
 		die
 	fi
@@ -671,9 +671,9 @@ eerror
 		local s=$(($(echo "${d}" \
 			| cut -f 3 -d ":") * 1))
 		local t=$((${h} + ${m} + ${s}))
-		if (( ${t} < 3 )) ; then
+		if (( ${t} < 5 )) ; then
 eerror
-eerror "The PGO video sample must be >= 3 seconds for ${id}."
+eerror "The PGO video sample must be >= 5 seconds for ${id}."
 eerror
 			die
 		else
