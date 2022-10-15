@@ -308,9 +308,16 @@ _tpgo_configure() {
 		einfo "Setting up PGI"
 		if tc-is-clang ; then
 			local clang_pv=$(clang-fullversion)
-			if ! has_version "~sys-libs/compiler-rt-sanitizers-${clang_pv}[${MULTILIB_ABI_FLAG},profile]" ; then
+			if ! has_version "~sys-libs/compiler-rt-sanitizers-${clang_pv}[${MULTILIB_ABI_FLAG},profile]" \
+				&& ! has_version "=sys-libs/compiler-rt-sanitizers-${clang_pv}*[${MULTILIB_ABI_FLAG},profile]" ; then
 eerror
-eerror "You need to emerge ~sys-libs/compiler-rt-sanitizers-${clang_pv}[${MULTILIB_ABI_FLAG},profile]."
+eerror "You need to emerge"
+eerror
+eerror "~sys-libs/compiler-rt-sanitizers-${clang_pv}[${MULTILIB_ABI_FLAG},profile]"
+eerror
+eerror "  or"
+eerror
+eerror "=sys-libs/compiler-rt-sanitizers-${clang_pv}*[${MULTILIB_ABI_FLAG},profile]"
 eerror
 				die
 			fi

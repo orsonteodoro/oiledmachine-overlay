@@ -1083,6 +1083,14 @@ _src_configure() {
 	uopts_src_configure
 
 	if tc-is-clang && ( use pgo || use epgo ) ; then
+# The instrumented build with clang will segfault when training.
+eerror
+eerror "Use gcc for PGO builds."
+eerror
+		die
+	fi
+
+	if tc-is-clang && ( use pgo || use epgo ) ; then
 		append-flags -mllvm -vp-counters-per-site=8
 	fi
 
