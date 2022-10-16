@@ -59,8 +59,15 @@ LICENSE="
 		BSD
 		BSD-2
 		ZLIB
-		libcaca? ( GPL-2 ISC LGPL-2.1 WTFPL-2 )
-		zimg? ( WTFPL-2 )
+		libcaca? (
+			GPL-2
+			ISC
+			LGPL-2.1
+			WTFPL-2
+		)
+		zimg? (
+			WTFPL-2
+		)
 	)
 " # This package is actually LGPL-2.1+, but certain dependencies are LGPL-2.1
 # The extra licenses are for static-libs.
@@ -73,41 +80,42 @@ fi
 # or $(use_enable foo foo) if no :bar is set.
 # foo is added to IUSE.
 FFMPEG_FLAG_MAP=(
-		+bzip2:bzlib cpudetection:runtime-cpudetect debug gcrypt +gnutls gmp
-		hardcoded-tables +iconv libxml2 lzma +network opencl
-		openssl +postproc samba:libsmbclient sdl:ffplay sdl:sdl2 vaapi vdpau vulkan
-		X:xlib X:libxcb X:libxcb-shm X:libxcb-xfixes +zlib
-		# libavdevice options
-		cdio:libcdio iec61883:libiec61883 ieee1394:libdc1394 libcaca openal
-		opengl
-		# indevs
-		libv4l:libv4l2 pulseaudio:libpulse libdrm jack:libjack
-		# decoders
-		amr:libopencore-amrwb amr:libopencore-amrnb codec2:libcodec2 +dav1d:libdav1d fdk:libfdk-aac
-		jpeg2k:libopenjpeg bluray:libbluray gme:libgme gsm:libgsm
-		libaribb24 mmal modplug:libmodplug opus:libopus libilbc librtmp ssh:libssh
-		speex:libspeex srt:libsrt svg:librsvg nvenc:ffnvcodec
-		vorbis:libvorbis vpx:libvpx zvbi:libzvbi
-		# libavfilter options
-		appkit
-		bs2b:libbs2b chromaprint cuda:cuda-llvm flite:libflite frei0r vmaf:libvmaf
-		fribidi:libfribidi fontconfig ladspa libass libtesseract lv2 truetype:libfreetype vidstab:libvidstab
-		rubberband:librubberband zeromq:libzmq zimg:libzimg
-		# libswresample options
-		libsoxr
-		# Threads; we only support pthread for now but ffmpeg supports more
-		+threads:pthreads
+	+bzip2:bzlib cpudetection:runtime-cpudetect debug gcrypt +gnutls gmp
+	hardcoded-tables +iconv libxml2 lzma +network opencl
+	openssl +postproc samba:libsmbclient sdl:ffplay sdl:sdl2 vaapi vdpau vulkan
+	X:xlib X:libxcb X:libxcb-shm X:libxcb-xfixes +zlib
+	# libavdevice options
+	cdio:libcdio iec61883:libiec61883 ieee1394:libdc1394 libcaca openal
+	opengl
+	# indevs
+	libv4l:libv4l2 pulseaudio:libpulse libdrm jack:libjack
+	# decoders
+	amr:libopencore-amrwb amr:libopencore-amrnb codec2:libcodec2 +dav1d:libdav1d fdk:libfdk-aac
+	jpeg2k:libopenjpeg bluray:libbluray gme:libgme gsm:libgsm
+	libaribb24 mmal modplug:libmodplug opus:libopus libilbc librtmp ssh:libssh
+	speex:libspeex srt:libsrt svg:librsvg nvenc:ffnvcodec
+	vorbis:libvorbis vpx:libvpx zvbi:libzvbi
+	# libavfilter options
+	appkit
+	bs2b:libbs2b chromaprint cuda:cuda-llvm flite:libflite frei0r vmaf:libvmaf
+	fribidi:libfribidi fontconfig ladspa libass libtesseract lv2 truetype:libfreetype vidstab:libvidstab
+	rubberband:librubberband zeromq:libzmq zimg:libzimg
+	# libswresample options
+	libsoxr
+	# Threads; we only support pthread for now but ffmpeg supports more
+	+threads:pthreads
 )
 
 # Same as above but for encoders, i.e. they do something only with USE=encode.
 FFMPEG_ENCODER_FLAG_MAP=(
 	amf amrenc:libvo-amrwbenc kvazaar:libkvazaar libaom mp3:libmp3lame
-	openh264:libopenh264 rav1e:librav1e	snappy:libsnappy svt-av1:libsvtav1
+	openh264:libopenh264 rav1e:librav1e snappy:libsnappy svt-av1:libsvtav1
 	theora:libtheora twolame:libtwolame webp:libwebp x264:libx264
 	x265:libx265 xvid:libxvid
 )
 
-IUSE+=" alsa chromium doc +encode oss pic sndio static-libs test v4l
+IUSE+="
+	alsa chromium doc +encode oss pic sndio static-libs test v4l
 	${FFMPEG_FLAG_MAP[@]%:*}
 	${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 "
