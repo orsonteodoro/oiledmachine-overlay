@@ -1078,6 +1078,7 @@ _is_version3() {
 
 src_configure() { :; }
 
+WANT_LTO=0
 _src_configure() {
 	local myconf=( )
 	local extra_libs=( )
@@ -1212,10 +1213,12 @@ eerror
 		break
 	done
 
-	if is-flagq "-flto*" && [[ "${ABI}" != "x86" ]] ; then
+	if ( is-flagq "-flto*" || [[ "${WANT_LTO}" == "1" ]] ) \
+		&& [[ "${ABI}" != "x86" ]] ; then
 		# LTO support, bug #566282, bug #754654
 		myconf+=( "--enable-lto" )
 		filter-flags "-flto*"
+		WANT_LTO=1
 	fi
 
 	# Mandatory configuration
