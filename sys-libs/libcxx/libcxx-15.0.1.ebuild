@@ -86,12 +86,13 @@ has_sanitizer_option() {
 	return 1
 }
 
+HAVE_FLAG_CFI=0
 WANTS_CFI=0
 _usex_cfi() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
 		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
-		&& has_sanitizer_option "cfi" ; then
+		&& [[ "${HAVE_FLAG_CFI}" == "1" ]] ; then
 		WANTS_CFI=1
 		echo "ON"
 	else
@@ -99,14 +100,12 @@ _usex_cfi() {
 	fi
 }
 
+HAVE_FLAG_CFI_CAST=0
 _usex_cfi_cast() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
 		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
-		&& ( \
-			has_sanitizer_option "cfi-derived-cast" \
-			|| has_sanitizer_option "cfi-unrelated-cast" \
-		) ; then
+		&& [[ "${HAVE_CFI_CAST}" == "1" ]] ; then
 		WANTS_CFI=1
 		echo "ON"
 	else
@@ -114,11 +113,12 @@ _usex_cfi_cast() {
 	fi
 }
 
+HAVE_FLAG_CFI_ICALL=0
 _usex_cfi_icall() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
 		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
-		&& has_sanitizer_option "cfi-icall" ; then
+		&& [[ "${HAVE_FLAG_CFI_ICALL}" == "1" ]] ; then
 		WANTS_CFI=1
 		echo "ON"
 	else
@@ -126,11 +126,12 @@ _usex_cfi_icall() {
 	fi
 }
 
+HAVE_FLAG_CFI_VCALL=0
 _usex_cfi_vcall() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
 		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
-		&& has_sanitizer_option "cfi-vcall" ; then
+		&& [[ "${HAVE_FLAG_CFI_VCALL}" == "1" ]] ; then
 		WANTS_CFI=1
 		echo "ON"
 	else
@@ -139,11 +140,12 @@ _usex_cfi_vcall() {
 }
 
 WANTS_CFI_CROSS_DSO=0
+HAVE_FLAG_CFI_CROSS_DSO=0
 _usex_cfi_cross_dso() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
 		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
-		&& is-flagq '-fsanitize-cfi-cross-dso' ; then
+		&& [[ "${HAVE_FLAG_CFI_CROSS_DSO}" == "1" ]] ; then
 		WANTS_CFI_CROSS_DSO=1
 		echo "ON"
 	else
@@ -151,20 +153,22 @@ _usex_cfi_cross_dso() {
 	fi
 }
 
+HAVE_FLAG_SHADOW_CALL_STACK=0
 _usex_shadowcallstack() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
 		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[shadowcallstack]" \
-		&& has_sanitizer_option "shadow-call-stack" ; then
+		&& [[ "${HAVE_FLAG_SHADOWCALLSTACK}" == "1" ]] ; then
 		echo "ON"
 	else
 		echo "OFF"
 	fi
 }
 
+HAVE_FLAG_LTO=0
 WANTS_LTO=0
 _usex_lto() {
-	if is-flagq '-flto*' ; then
+	if [[ "${HAVE_FLAG_LTO}" == "1" ]] ; then
 		WANTS_LTO=1
 		echo "ON"
 	else
@@ -192,6 +196,15 @@ src_configure() {
 		done
 	}
 	multilib_foreach_abi configure_abi
+
+	is-flagq '-flto*' && HAVE_FLAG_LTO="1"
+	has_sanitizer_option "cfi-icall" && HAVE_FLAG_CFI_ICALL="1"
+	has_sanitizer_option "cfi-vcall" && HAVE_FLAG_CFI_VCALL="1"
+	has_sanitizer_option "shadow-call-stack" && HAVE_FLAG_SHADOW_CALL_STACK="1"
+	is-flagq '-fsanitize-cfi-cross-dso' && HAVE_FLAG_CFI_CROSS_DSO="1"
+	( has_sanitizer_option "cfi-derived-cast" \
+		|| has_sanitizer_option "cfi-unrelated-cast" ) \
+		&& HAVE_FLAG_CFI_CAST=1
 }
 
 is_hardened_clang() {
@@ -221,10 +234,20 @@ is_cfi_supported() {
 _configure_abi() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+
 einfo
 einfo "CC=${CC}"
 einfo "CXX=${CXX}"
 einfo
+
+	local _lto=$(_usex_lto)
+	local _cfi=$(_usex_cfi)
+	local _cfi_cast=$(_usex_cfi_cast)
+	local _cfi_icall=$(_usex_cfi_icall)
+	local _cfi_vcall=$(_usex_cfi_vcall)
+	local _cross_dso_cfi=$(_usex_cfi_cross_dso)
+	local _shadowcallstack=$(_usex_shadowcallstack)
+
 	filter-flags \
 		'--param=ssp-buffer-size=*' \
 		'-f*sanitize*' \
@@ -278,7 +301,7 @@ einfo
 		-DLIBCXX_USE_COMPILER_RT=${want_compiler_rt}
 		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
 
-		-DLTO=$(_usex_lto)
+		-DLTO=${_lto}
 		-DNOEXECSTACK=$(usex hardened)
 	)
 
@@ -288,16 +311,16 @@ einfo
 		# cfi-icall breaks icu/genrb
 		if tc-is-clang && is_cfi_supported ; then
 			mycmakeargs+=(
-				-DCFI=$(_usex_cfi)
-				-DCFI_CAST=$(_usex_cfi_cast)
+				-DCFI=${_cfi}
+				-DCFI_CAST=${_cfi_cast}
 				-DCFI_EXCEPTIONS="-fno-sanitize=cfi-icall"
 				-DCFI_ICALL=OFF
-				-DCFI_VCALL=$(_usex_cfi_vcall)
-				-DCROSS_DSO_CFI=$(_usex_cfi_cross_dso)
+				-DCFI_VCALL=${_cfi_vcall}
+				-DCROSS_DSO_CFI=${_cfi_cross_dso}
 			)
 		fi
 		mycmakeargs+=(
-			-DSHADOW_CALL_STACK=$(_usex_shadowcallstack)
+			-DSHADOW_CALL_STACK=${_shadowcallstack}
 		)
 	}
 
