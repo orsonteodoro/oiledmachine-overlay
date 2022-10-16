@@ -86,7 +86,7 @@ has_sanitizer_option() {
 	return 1
 }
 
-HAVE_FLAG_CFI=0
+HAVE_FLAG_CFI="0"
 WANTS_CFI=0
 _usex_cfi() {
 	local s=$(clang-major-version)
@@ -100,7 +100,7 @@ _usex_cfi() {
 	fi
 }
 
-HAVE_FLAG_CFI_CAST=0
+HAVE_FLAG_CFI_CAST="0"
 _usex_cfi_cast() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
@@ -113,7 +113,7 @@ _usex_cfi_cast() {
 	fi
 }
 
-HAVE_FLAG_CFI_ICALL=0
+HAVE_FLAG_CFI_ICALL="0"
 _usex_cfi_icall() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
@@ -126,7 +126,7 @@ _usex_cfi_icall() {
 	fi
 }
 
-HAVE_FLAG_CFI_VCALL=0
+HAVE_FLAG_CFI_VCALL="0"
 _usex_cfi_vcall() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
@@ -139,8 +139,8 @@ _usex_cfi_vcall() {
 	fi
 }
 
+HAVE_FLAG_CFI_CROSS_DSO="0"
 WANTS_CFI_CROSS_DSO=0
-HAVE_FLAG_CFI_CROSS_DSO=0
 _usex_cfi_cross_dso() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
@@ -153,7 +153,7 @@ _usex_cfi_cross_dso() {
 	fi
 }
 
-HAVE_FLAG_SHADOW_CALL_STACK=0
+HAVE_FLAG_SHADOW_CALL_STACK="0"
 _usex_shadowcallstack() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
@@ -165,7 +165,7 @@ _usex_shadowcallstack() {
 	fi
 }
 
-HAVE_FLAG_LTO=0
+HAVE_FLAG_LTO="0"
 WANTS_LTO=0
 _usex_lto() {
 	if [[ "${HAVE_FLAG_LTO}" == "1" ]] ; then
@@ -189,14 +189,6 @@ src_configure() {
 		cxxabi_incs="${gcc_inc};${gcc_inc}/${CHOST}"
 	fi
 
-	configure_abi() {
-		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-			_configure_abi
-		done
-	}
-	multilib_foreach_abi configure_abi
-
 	is-flagq '-flto*' && HAVE_FLAG_LTO="1"
 	has_sanitizer_option "cfi-icall" && HAVE_FLAG_CFI_ICALL="1"
 	has_sanitizer_option "cfi-vcall" && HAVE_FLAG_CFI_VCALL="1"
@@ -204,7 +196,15 @@ src_configure() {
 	is-flagq '-fsanitize-cfi-cross-dso' && HAVE_FLAG_CFI_CROSS_DSO="1"
 	( has_sanitizer_option "cfi-derived-cast" \
 		|| has_sanitizer_option "cfi-unrelated-cast" ) \
-		&& HAVE_FLAG_CFI_CAST=1
+		&& HAVE_FLAG_CFI_CAST="1"
+
+	configure_abi() {
+		for lib_type in $(get_lib_types) ; do
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			_configure_abi
+		done
+	}
+	multilib_foreach_abi configure_abi
 }
 
 is_hardened_clang() {
