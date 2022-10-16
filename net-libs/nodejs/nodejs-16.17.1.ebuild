@@ -336,11 +336,10 @@ _src_configure() {
 		--shared-nghttp2
 		--shared-zlib
 	)
-	is-flagq '-flto*' && myconf+=( --enable-lto )
-	[[ "${LTO_TYPE}" =~ "thinlto" ]] \
-		&& myconf+=( --with-thinlto )
-	[[ "${LTO_TYPE}" =~ "goldlto" ]] \
-		&& myconf+=( --with-goldlto )
+
+	[[ "${LTO_TYPE}" =~ "lto" ]] && myconf+=( --enable-lto )
+	[[ "${LTO_TYPE}" =~ "thinlto" ]] && myconf+=( --with-thinlto )
+	[[ "${LTO_TYPE}" =~ "goldlto" ]] && myconf+=( --with-goldlto )
 
 	# LTO compiler flags are handled by configure.py itself
 	filter-flags '-flto*' \
