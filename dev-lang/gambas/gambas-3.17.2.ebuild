@@ -282,9 +282,6 @@ _use_enable_lto() {
 }
 
 src_configure() {
-	# Upstream will supply -O flags.
-	filter-flags '-O*' '-flto*'
-
 	econf \
 		--disable-jitllvm \
 		--disable-qt4 \
@@ -346,6 +343,9 @@ src_configure() {
 				--enable-xmlhtml) ) ) \
 		$(use_enable zlib) \
 		$(use_enable zstd)
+
+	# Upstream will supply -O flags.
+	filter-flags '-O*' '-flto*'
 
 	for p in $(grep -l -F -e "State" $(find . -name "*.component")) ; do
 		if echo "${p}" | grep -q -E -e "gb.xml/.component$" ; then
