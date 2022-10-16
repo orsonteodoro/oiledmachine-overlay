@@ -6,23 +6,31 @@ EAPI=8
 
 # This is a live snapshot based on version in Cargo.toml and date of latest commit in master branch.
 
+LLVM_SLOTS=(13 12 11) # For clang-sys
+LLVM_MAX_SLOT=13
+
 PYTHON_COMPAT=( python3_{8..11} )
 inherit flag-o-matic lcnr llvm meson multilib-minimal
 
 DESCRIPTION="Various GStreamer plugins written in Rust"
 HOMEPAGE="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs"
 CARGO_THIRD_PARTY_PACKAGES="
-0BSD
-Apache-2.0
-BSD
-ISC
-MIT
-Unlicense
-unicode
-ZLIB"
-LICENSE="Apache-2.0 MIT LGPL-2.1+
+	0BSD
+	Apache-2.0
+	BSD
+	ISC
+	MIT
+	Unlicense
+	unicode
+	ZLIB
+"
+LICENSE="
+	Apache-2.0
+	MIT
+	LGPL-2.1+
 	MPL-2.0
-	${CARGO_THIRD_PARTY_PACKAGES}"
+	${CARGO_THIRD_PARTY_PACKAGES}
+"
 # Apache-2.0 ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-channel-0.3.15/LICENSE-APACHE
 # 0BSD ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/adler-0.2.2/LICENSE-0BSD
 # BSD ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/bindgen-0.54.1/LICENSE
@@ -98,11 +106,11 @@ RDEPEND+="
 	)
 	rusoto? ( >=dev-libs/openssl-1.1.1n[${MULTILIB_USEDEP}] )
 	videofx? ( >=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}] )
-	sodium? ( >=dev-libs/libsodium-1.0.18[${MULTILIB_USEDEP}] )"
+	sodium? ( >=dev-libs/libsodium-1.0.18[${MULTILIB_USEDEP}] )
+"
 DEPEND+=" ${RDEPEND}"
 # Update while keeping track of versions of virtual/rust.
 # Expanded here because the virtual system is broken for multilib.
-LLVM_SLOTS=(13 12 11) # For clang-sys
 gen_llvm_bdepend() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
@@ -113,7 +121,7 @@ gen_llvm_bdepend() {
 		"
 	done
 }
-BDEPEND+=" ${BDEPEND}
+BDEPEND+="
 	|| ( $(gen_llvm_bdepend) )
 	>=dev-util/cargo-c-0.9.3
 	>=dev-util/meson-0.56
@@ -123,7 +131,8 @@ BDEPEND+=" ${BDEPEND}
 "
 SRC_URI="
 https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/${PV}/gst-plugins-rs-${PV}.tar.bz2
-	-> ${P}.tar.bz2"
+	-> ${P}.tar.bz2
+"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 PATCHES=(
@@ -158,31 +167,31 @@ eerror
 }
 
 multilib_src_configure() {
-	LLVM_MAX_SLOT=13
 	if has_version 'media-libs/mesa' ; then
 		LLVM_MAX_SLOT=$(bzcat "${ESYSROOT}"/var/db/pkg/media-libs/mesa-*/environment.bz2 \
 			| grep -e "LLVM_MAX_SLOT" | head -n 1 | grep -E -o -e "[0-9]+")
 		llvm_pkg_setup
-	elif has_version 'sys-devel/clang:13' \
-		&& has_version 'sys-devel/llvm:13' ; then
-		LLVM_MAX_SLOT=13
-		llvm_pkg_setup
-	elif has_version 'sys-devel/clang:12' \
-		&& has_version 'sys-devel/llvm:12' ; then
-		LLVM_MAX_SLOT=12
-		llvm_pkg_setup
-	elif has_version 'sys-devel/clang:11' \
-		&& has_version 'sys-devel/llvm:11' ; then
-		LLVM_MAX_SLOT=11
-		llvm_pkg_setup
 	else
+		local found=0
+		for s in ${LLVM_SLOTS[@]} ; do
+			if has_version "sys-devel/clang:${s}" \
+				&& has_version "sys-devel/llvm:${s}" ; then
+				found=1
+				break
+			fi
+		done
+		if (( ${found} == 1 )) ; then
+			LLVM_MAX_SLOT=${s}
+			llvm_pkg_setup
+		else
 eerror
 eerror "The LLVM/clang version is not supported.  Send a issue request to"
 eerror "update the ebuild maintainer."
 eerror
-		die
+			die
+		fi
 	fi
-	einfo "LLVM=${LLVM_MAX_SLOT}"
+einfo "LLVM=${LLVM_MAX_SLOT}"
 
 	export CSOUND_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)"
 
@@ -234,6 +243,10 @@ eerror
 	popd
 
 	meson_src_configure
+}
+
+multilib_src_compile() {
+	meson_src_compile
 }
 
 multilib_src_install() {
