@@ -4,13 +4,15 @@
 
 EAPI=8
 
-MY_PV="gstreamer-1.21.1"
+MY_PV="9999"
 
 LLVM_SLOTS=(13 12 11) # For clang-sys
 LLVM_MAX_SLOT=13
 
+# We cannot use the cargo.eclass because it doesn't support git crates.
+
 PYTHON_COMPAT=( python3_{8..11} )
-inherit flag-o-matic lcnr llvm meson multilib-minimal
+inherit flag-o-matic git-r3 lcnr llvm meson multilib-minimal
 
 DESCRIPTION="Various GStreamer plugins written in Rust"
 HOMEPAGE="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs"
@@ -50,7 +52,6 @@ LICENSE="
 
 SLOT="1.0/${PV}"
 MODULES=(
-	ahead
 	audiofx
 	aws
 	cdg
@@ -69,6 +70,7 @@ MODULES=(
 	hsv
 	json
 	lewton
+	ndi
 	onvif
 	raptorq
 	rav1e
@@ -79,6 +81,7 @@ MODULES=(
 	spotify
 	sodium
 	test
+	textahead
 	textwrap
 	threadshare
 	togglerecord
@@ -159,14 +162,20 @@ BDEPEND+="
 	>=virtual/rust-${RUST_V}[${MULTILIB_USEDEP}]
 "
 
-SRC_URI="
-https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/${MY_PV}/gst-plugins-rs-${MY_PV}.tar.bz2
-	-> ${P}.tar.bz2
-"
+if [[ ${PV} =~ 9999 ]] ; then
+	EGIT_COMMIT="HEAD"
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs.git"
+else
+	SRC_URI="
+	https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/${MY_PV}/gst-plugins-rs-${MY_PV}.tar.bz2
+		-> ${P}.tar.bz2
+	"
+fi
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${MY_PV}"
 PATCHES=(
-	"${FILESDIR}/${PN}-0.9.4_alpha1-modular-build.patch"
+	"${FILESDIR}/${PN}-9999-modular-build.patch"
 	"${FILESDIR}/${PN}-0.6.0_p20210607-rename-csound-ref.patch"
 )
 
@@ -273,6 +282,38 @@ einfo "LLVM=${LLVM_MAX_SLOT}"
 	popd
 
 	meson_src_configure
+}
+
+EXPECTED_BUILD_FILES="\
+15ce85c35bfda0c8c30b7ddc95e8edc4fd2bb97df0f09c4bdd2b877c7cfc0648\
+397871c9e2804919ad07b1bf8eb496a4359548c3f4cdc2c457cb541c3981ac2a\
+"
+
+src_unpack() {
+	if [[ ${PV} =~ 9999 ]] ; then
+		git-r3_fetch
+		git-r3_checkout
+		local actual_build_files=$(cat \
+			$(find "${S}" \
+				-name "*.toml" \
+				-o -name "Cargo.lock" \
+				-o -name "meson.build" \
+				| sort) \
+			| sha512sum \
+			| cut -f 1 -d " ")
+		if [[ "${EXPECTED_BUILD_FILES}" != "${actual_build_files}" ]] ; then
+eerror
+eerror "A change to the build scripts was detected."
+eerror "Notify the ebuild maintainer for an update."
+eerror
+eerror "Expected build files:  ${EXPECTED_BUILD_FILES}"
+eerror "Actual build files:  ${actual_build_files}"
+eerror
+			die
+		fi
+	else
+		unpack ${A}
+	fi
 }
 
 multilib_src_compile() {
