@@ -1943,10 +1943,10 @@ eerror
 	local L=()
 
 	if [[ "${mode}" == "quick" ]] ; then
-		L=( $(_get_resolutions) )
+		L=( $(_get_resolutions_quick) )
 		duration="1"
 	else
-		L=( $(_get_resolutions_quick) )
+		L=( $(_get_resolutions) )
 		duration="3"
 	fi
 
@@ -2193,10 +2193,10 @@ eerror
 	local L=()
 
 	if [[ "${mode}" == "quick" ]] ; then
-		L=( $(_get_resolutions) )
+		L=( $(_get_resolutions_quick) )
 		duration="1"
 	else
-		L=( $(_get_resolutions_quick) )
+		L=( $(_get_resolutions) )
 		duration="3"
 	fi
 
