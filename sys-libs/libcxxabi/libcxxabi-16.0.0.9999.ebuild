@@ -187,7 +187,7 @@ _usex_shadowcallstack() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
 		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[shadowcallstack]" \
-		&& [[ "${HAVE_FLAG_SHADOWCALLSTACK}" == "1" ]] ; then
+		&& [[ "${HAVE_FLAG_SHADOW_CALL_STACK}" == "1" ]] ; then
 		echo "ON"
 	else
 		echo "OFF"
