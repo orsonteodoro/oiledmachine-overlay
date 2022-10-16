@@ -1217,9 +1217,9 @@ eerror
 		&& [[ "${ABI}" != "x86" ]] ; then
 		# LTO support, bug #566282, bug #754654
 		myconf+=( "--enable-lto" )
-		filter-flags "-flto*"
 		WANT_LTO=1
 	fi
+	filter-flags "-flto*"
 
 	# Mandatory configuration
 	myconf=(
