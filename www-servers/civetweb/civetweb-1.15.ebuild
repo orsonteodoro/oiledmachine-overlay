@@ -173,6 +173,7 @@ src_prepare() {
 WANT_LTO=0
 _usex_lto() {
 	if is-flagq '-flto*' || [[ "${WANT_LTO}" == "1" ]] ; then
+		WANT_LTO=1
 		echo "ON"
 	else
 		echo "OFF"
