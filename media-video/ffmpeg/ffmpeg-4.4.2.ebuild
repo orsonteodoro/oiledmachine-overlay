@@ -915,6 +915,28 @@ eerror "You must do:  \`xhost +local:root:\` to do GPU based PGO/BOLT training."
 eerror
 		die
 	fi
+
+	if ! use pic && is-flagq '-flto*' ; then
+ewarn
+ewarn "USE=pic may required for LTO"
+ewarn
+	fi
+
+#
+# BFD LTO with GCC:
+#
+# ld.lld: warning: multiple common of __gnu_lto_slim
+# ld.lld: warning: multiple common of __gnu_lto_slim
+# ld.lld: warning: multiple common of __gnu_lto_slim
+# ld.lld: error: undefined symbol: main
+# >>> referenced by /usr/lib/gcc/x86_64-pc-linux-gnu/11.3.0/../../../../lib/Scrt1.o:(_start)
+#
+	if is-flagq '-flto*' ; then
+ewarn
+ewarn "Do not use the BFD linker for LTO.  Use either Gold LTO or"
+ewarn "Thin LTO only."
+ewarn
+	fi
 }
 
 # The order does matter with PGO.
@@ -1213,13 +1235,7 @@ eerror
 		break
 	done
 
-	if ( is-flagq "-flto*" || [[ "${WANT_LTO}" == "1" ]] ) \
-		&& [[ "${ABI}" != "x86" ]] ; then
-		# LTO support, bug #566282, bug #754654
-		myconf+=( "--enable-lto" )
-		WANT_LTO=1
-	fi
-	filter-flags "-flto*"
+	# Disabling LTO is a security risk.  It disables Clang CFI.
 
 	# Mandatory configuration
 	myconf=(

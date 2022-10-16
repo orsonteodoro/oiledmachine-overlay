@@ -339,6 +339,13 @@
   variable assigned assets.  See the ebuild for ways to use the
   variables.
 
+
+  Additional notes
+
+  The pic USE flag may be required for LTO builds.
+  Either Gold LTO or Thin LTO may only be used for LTO.
+  Using BFD LTO may result in linker errors.
+
 </longdescription>
 <use>
   <!-- USE flags added by the oiledmachine-overlay -->

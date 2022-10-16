@@ -908,13 +908,37 @@ eerror
 	# ffmpeg[chromaprint] depends on chromaprint, and chromaprint[tools] depends on ffmpeg.
 	# May cause breakage while updating, #862996, #625210, #833821.
 	if has_version media-libs/chromaprint[tools] && use chromaprint; then
-		ewarn "You have media-libs/chromaprint installed with 'tools' USE flag, which "
-		ewarn "links to ffmpeg, and you have enabled 'chromaprint' USE flag for ffmpeg, "
-		ewarn "which links to chromaprint. This may cause issues while rebuilding ffmpeg."
-		ewarn ""
-		ewarn "If your build fails to 'ERROR: chromaprint not found', rebuild chromaprint "
-		ewarn "without the 'tools' use flag first, then rebuild ffmpeg, and then finally enable "
-		ewarn "'tools' USE flag for chromaprint. See #862996."
+ewarn
+ewarn "You have media-libs/chromaprint installed with 'tools' USE flag, which "
+ewarn "links to ffmpeg, and you have enabled 'chromaprint' USE flag for ffmpeg, "
+ewarn "which links to chromaprint. This may cause issues while rebuilding ffmpeg."
+ewarn
+ewarn "If your build fails to 'ERROR: chromaprint not found', rebuild chromaprint "
+ewarn "without the 'tools' use flag first, then rebuild ffmpeg, and then finally enable "
+ewarn "'tools' USE flag for chromaprint. See #862996."
+ewarn
+	fi
+
+	if ! use pic && is-flagq '-flto*' ; then
+ewarn
+ewarn "USE=pic may required for LTO"
+ewarn
+	fi
+
+#
+# BFD LTO with GCC:
+#
+# ld.lld: warning: multiple common of __gnu_lto_slim
+# ld.lld: warning: multiple common of __gnu_lto_slim
+# ld.lld: warning: multiple common of __gnu_lto_slim
+# ld.lld: error: undefined symbol: main
+# >>> referenced by /usr/lib/gcc/x86_64-pc-linux-gnu/11.3.0/../../../../lib/Scrt1.o:(_start)
+#
+	if is-flagq '-flto*' ; then
+ewarn
+ewarn "Do not use the BFD linker for LTO.  Use either Gold LTO or"
+ewarn "Thin LTO only."
+ewarn
 	fi
 }
 
@@ -1213,13 +1237,7 @@ eerror
 		break
 	done
 
-	if ( is-flagq "-flto*" || [[ "${WANT_LTO}" == "1" ]] ) \
-		&& [[ "${ABI}" != "x86" ]] ; then
-		# LTO support, bug #566282, bug #754654
-		myconf+=( "--enable-lto" )
-		WANT_LTO=1
-	fi
-	filter-flags "-flto*"
+	# Disabling LTO is a security risk.  It disables Clang CFI.
 
 	# Mandatory configuration
 	myconf=(
