@@ -1,7 +1,7 @@
-diff -x '*.rej' -x '*.orig' -urp gst-plugins-rs-0.8.4.orig/meson.build gst-plugins-rs-0.8.4/meson.build
---- gst-plugins-rs-0.8.4.orig/meson.build	2022-04-26 04:20:02.000000000 -0700
-+++ gst-plugins-rs-0.8.4/meson.build	2022-04-26 18:57:37.019991523 -0700
-@@ -33,38 +33,120 @@ endif
+diff -urp gst-plugins-rs-gstreamer-1.21.1.orig/meson.build gst-plugins-rs-gstreamer-1.21.1/meson.build
+--- gst-plugins-rs-gstreamer-1.21.1.orig/meson.build	2022-10-04 09:16:43.000000000 -0700
++++ gst-plugins-rs-gstreamer-1.21.1/meson.build	2022-10-16 13:55:10.037365260 -0700
+@@ -36,43 +36,140 @@ endif
  
  # workspace name -> lib name
  plugins = {
@@ -14,11 +14,12 @@ diff -x '*.rej' -x '*.orig' -urp gst-plugins-rs-0.8.4.orig/meson.build gst-plugi
 -  'gst-plugin-flavors': 'libgstrsflv',
 -  'gst-plugin-gif': 'libgstgif',
 -  'gst-plugin-lewton': 'libgstlewton',
+-  'gst-plugin-raptorq': 'libgstraptorq',
 -  'gst-plugin-rav1e': 'libgstrav1e',
 -  'gst-plugin-reqwest': 'libgstreqwest',
 -  'gst-plugin-hlssink3': 'libgsthlssink3',
 -  'gst-plugin-rspng': 'libgstrspng',
--  'gst-plugin-rusoto': 'libgstrusoto',
+-  'gst-plugin-aws': 'libgstaws',
 -  'gst-plugin-textwrap': 'libgstrstextwrap',
 -  'gst-plugin-fmp4': 'libgstfmp4',
 -  'gst-plugin-threadshare': 'libgstthreadshare',
@@ -33,6 +34,10 @@ diff -x '*.rej' -x '*.orig' -urp gst-plugins-rs-0.8.4.orig/meson.build gst-plugi
 -  'gst-plugin-uriplaylistbin': 'libgsturiplaylistbin',
 -  'gst-plugin-spotify': 'libgstspotify',
 -  'gst-plugin-textahead': 'libgsttextahead',
+-  'gst-plugin-onvif': 'libgstrsonvif',
+-  'gst-plugin-tracers': 'libgstrstracers',
+-  'gst-plugin-webrtchttp': 'libgstwebrtchttp',
+-  'gst-plugin-rtpav1': 'libgstrtpav1',
  }
  
  extra_env = {}
@@ -43,6 +48,10 @@ diff -x '*.rej' -x '*.orig' -urp gst-plugins-rs-0.8.4.orig/meson.build gst-plugi
 +
 +if get_option('audiofx').enabled()
 +  plugins += {'gst-plugin-audiofx' : 'libgstrsaudiofx'}
++endif
++
++if get_option('aws').enabled()
++  plugins += {'gst-plugin-aws' : 'libgstaws'}
 +endif
 +
 +if get_option('cdg').enabled()
@@ -89,6 +98,14 @@ diff -x '*.rej' -x '*.orig' -urp gst-plugins-rs-0.8.4.orig/meson.build gst-plugi
 +  plugins += {'gst-plugin-lewton' : 'libgstlewton'}
 +endif
 +
++if get_option('onvif').enabled()
++  plugins += {'gst-plugin-onvif' : 'libgstonvif'}
++endif
++
++if get_option('raptorq').enabled()
++  plugins += {'gst-plugin-raptorq' : 'libgstraptorq'}
++endif
++
 +if get_option('rav1e').enabled()
 +  plugins += {'gst-plugin-rav1e' : 'libgstrav1e'}
 +endif
@@ -101,8 +118,8 @@ diff -x '*.rej' -x '*.orig' -urp gst-plugins-rs-0.8.4.orig/meson.build gst-plugi
 +  plugins += {'gst-plugin-rspng' : 'libgstrspng'}
 +endif
 +
-+if get_option('rusoto').enabled()
-+  plugins += {'gst-plugin-rusoto' : 'libgstrusoto'}
++if get_option('rtpav1').enabled()
++  plugins += {'gst-plugin-rtpav1' : 'libgstrtpav1'}
 +endif
 +
 +if get_option('spotify').enabled()
@@ -119,6 +136,10 @@ diff -x '*.rej' -x '*.orig' -urp gst-plugins-rs-0.8.4.orig/meson.build gst-plugi
 +
 +if get_option('togglerecord').enabled()
 +  plugins += {'gst-plugin-togglerecord' : 'libgsttogglerecord'}
++endif
++
++if get_option('tracers').enabled()
++  plugins += {'gst-plugin-tracers' : 'libgsttracers'}
 +endif
 +
 +if get_option('hsv').enabled()
@@ -145,10 +166,14 @@ diff -x '*.rej' -x '*.orig' -urp gst-plugins-rs-0.8.4.orig/meson.build gst-plugi
 +  plugins += {'gst-plugin-webp' : 'libgstrswebp'}
 +endif
 +
++if get_option('webrtchttp').enabled()
++  plugins += {'gst-plugin-webrtchttp' : 'libgstwebrtchttp'}
++endif
++
  if dependency('pangocairo', required : get_option('closedcaption')).found()
    plugins += {'gst-plugin-closedcaption' : 'libgstrsclosedcaption',}
  endif
-@@ -73,13 +155,15 @@ if dependency('dav1d', required : get_op
+@@ -81,13 +178,15 @@ if dependency('dav1d', version : '>= 1.0
    plugins += {'gst-plugin-dav1d' : 'libgstrsdav1d'}
  endif
  
@@ -171,10 +196,10 @@ diff -x '*.rej' -x '*.orig' -urp gst-plugins-rs-0.8.4.orig/meson.build gst-plugi
  endif
  
  cc = meson.get_compiler('c')
-diff -x '*.rej' -x '*.orig' -urp gst-plugins-rs-0.8.4.orig/meson_options.txt gst-plugins-rs-0.8.4/meson_options.txt
---- gst-plugins-rs-0.8.4.orig/meson_options.txt	2022-04-26 04:20:02.000000000 -0700
-+++ gst-plugins-rs-0.8.4/meson_options.txt	2022-04-26 18:30:52.121565971 -0700
-@@ -1,7 +1,36 @@
+diff -urp gst-plugins-rs-gstreamer-1.21.1.orig/meson_options.txt gst-plugins-rs-gstreamer-1.21.1/meson_options.txt
+--- gst-plugins-rs-gstreamer-1.21.1.orig/meson_options.txt	2022-10-04 09:16:43.000000000 -0700
++++ gst-plugins-rs-gstreamer-1.21.1/meson_options.txt	2022-10-16 14:00:46.306196111 -0700
+@@ -1,9 +1,42 @@
  option('closedcaption', type : 'feature', value : 'auto', description : 'Build closedcaption plugin')
  option('dav1d', type : 'feature', value : 'auto', description : 'Build dav1d plugin')
 -option('sodium', type : 'combo',
@@ -186,9 +211,9 @@ diff -x '*.rej' -x '*.orig' -urp gst-plugins-rs-0.8.4.orig/meson_options.txt gst
 +
 +option('ahead', type: 'feature', value : 'auto', description : 'Build the ahead plugin')
 +option('audiofx', type: 'feature', value : 'auto', description : 'Build the audiofx plugin')
++option('aws', type: 'feature', value : 'auto', description : 'Build the aws plugin')
 +option('cdg', type: 'feature', value : 'auto', description : 'Build the cdg plugin')
 +option('claxon', type: 'feature', value : 'auto', description : 'Build the claxon plugin')
-+option('closedcaption', type: 'feature', value : 'auto', description : 'Build the closedcaption plugin')
 +option('fallbackswitch', type: 'feature', value : 'auto', description : 'Build the fallbackswitch plugin')
 +option('ffv1', type: 'feature', value : 'auto', description : 'Build the ffv1 plugin')
 +option('file', type: 'feature', value : 'auto', description : 'Build the file plugin')
@@ -198,13 +223,16 @@ diff -x '*.rej' -x '*.orig' -urp gst-plugins-rs-0.8.4.orig/meson_options.txt gst
 +option('gtk4', type: 'feature', value : 'auto', description : 'Build the gtk4 plugin')
 +option('hlssink3', type: 'feature', value : 'auto', description : 'Build the hlssink3 plugin')
 +option('lewton', type: 'feature', value : 'auto', description : 'Build the lewton plugin')
++option('onvif', type: 'feature', value : 'auto', description : 'Build the onvif plugin')
++option('raptorq', type: 'feature', value : 'auto', description : 'Build the raptorq plugin')
 +option('rav1e', type: 'feature', value : 'auto', description : 'Build the rav1e plugin')
 +option('reqwest', type: 'feature', value : 'auto', description : 'Build the reqwest plugin')
 +option('rspng', type: 'feature', value : 'auto', description : 'Build the rspng plugin')
-+option('rusoto', type: 'feature', value : 'auto', description : 'Build the rusoto plugin')
++option('rtpav1', type: 'feature', value : 'auto', description : 'Build the rtpav1 plugin')
 +option('textwrap', type: 'feature', value : 'auto', description : 'Build the textwrap plugin')
 +option('threadshare', type: 'feature', value : 'auto', description : 'Build the threadshare plugin')
 +option('togglerecord', type: 'feature', value : 'auto', description : 'Build the togglerecord plugin')
++option('tracers', type: 'feature', value : 'auto', description : 'Build the tracers plugin')
 +option('spotify', type: 'feature', value : 'auto', description : 'Build the spotify plugin')
 +option('uriplaylistbin', type: 'feature', value : 'auto', description : 'Build the uriplaylistbin plugin')
 +option('hsv', type: 'feature', value : 'auto', description : 'Build the hsv plugin')
@@ -212,5 +240,8 @@ diff -x '*.rej' -x '*.orig' -urp gst-plugins-rs-0.8.4.orig/meson_options.txt gst
 +option('regex', type: 'feature', value : 'auto', description : 'Build the regex plugin')
 +option('videofx', type: 'feature', value : 'auto', description : 'Build the videofx plugin')
 +option('webp', type: 'feature', value : 'auto', description : 'Build the webp plugin')
++option('webrtchttp', type: 'feature', value : 'auto', description : 'Build the webrtchttp plugin')
 +
  option('gtk4', type : 'feature', value : 'auto', description : 'Build GTK4 plugin')
+ 
+ # Common options

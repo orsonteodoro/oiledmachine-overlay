@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# This is a live snapshot based on version in Cargo.toml and date of latest commit in master branch.
+MY_PV="gstreamer-1.21.1"
 
 LLVM_SLOTS=(13 12 11) # For clang-sys
 LLVM_MAX_SLOT=13
@@ -52,6 +52,7 @@ SLOT="1.0/${PV}"
 MODULES=(
 	ahead
 	audiofx
+	aws
 	cdg
 	claxon
 	closedcaption
@@ -68,45 +69,73 @@ MODULES=(
 	hsv
 	json
 	lewton
+	onvif
+	raptorq
 	rav1e
 	regex
 	reqwest
 	rspng
-	rusoto
+	rtpav1
 	spotify
 	sodium
 	test
 	textwrap
 	threadshare
 	togglerecord
+	tracers
 	uriplaylistbin
 	videofx
 	webp
+	webrtchttp
 )
 IUSE+=" ${MODULES[@]}"
-REQUIRED_USE+=" || ( ${MODULES[@]} )"
-RUST_V="1.52"
-CARGO_V="1.40"
+REQUIRED_USE+="
+	|| ( ${MODULES[@]} )
+	webrtchttp? ( reqwest )
+"
+RUST_V="1.64"
+CARGO_V="1.64"
 # grep -e "requires_private" "${WORKDIR}" for external dependencies
 # See "Run-time dependency" in CI
 # Assumes D11
-GST_V="1.14" # upstream uses in CI 1.21.0.1
+GST_PV="1.18" # upstream uses in CI 1.21.0.1
+PANGO_PV="1.50.10"
 RDEPEND+="
-	  dev-libs/glib:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.66.8:2[${MULTILIB_USEDEP}]
 	!=dev-libs/libgit2-1.4*
 	 =dev-libs/libgit2-1.3*
-	>=media-plugins/gst-plugins-meta-${GST_V}:1.0[${MULTILIB_USEDEP}]
+	>=media-plugins/gst-plugins-meta-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+	aws? (
+		>=dev-libs/openssl-1.1.1n[${MULTILIB_USEDEP}]
+	)
 	closedcaption? (
-		>=x11-libs/pango-1.46.2[${MULTILIB_USEDEP}]
+		>=x11-libs/pango-${PANGO_PV}[${MULTILIB_USEDEP}]
+		>=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}]
 	)
-	csound? ( >=media-sound/csound-6.14[${MULTILIB_USEDEP}] )
-	dav1d? ( >=media-libs/dav1d-0.9.2[${MULTILIB_USEDEP}] )
+	csound? (
+		>=media-sound/csound-6.14[${MULTILIB_USEDEP}]
+	)
+	dav1d? (
+		>=media-libs/dav1d-1.0.0[${MULTILIB_USEDEP}]
+	)
 	gtk4? (
-		>=gui-libs/gtk-4.6.2:4[gstreamer]
+		>=gui-libs/gtk-4.8.1:4[gstreamer]
 	)
-	rusoto? ( >=dev-libs/openssl-1.1.1n[${MULTILIB_USEDEP}] )
-	videofx? ( >=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}] )
-	sodium? ( >=dev-libs/libsodium-1.0.18[${MULTILIB_USEDEP}] )
+	onvif? (
+		>=x11-libs/pango-${PANGO_PV}[${MULTILIB_USEDEP}]
+	)
+	sodium? (
+		>=dev-libs/libsodium-1.0.18[${MULTILIB_USEDEP}]
+	)
+	videofx? (
+		>=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}]
+	)
+	webp? (
+		>=media-libs/libwebp-0.6.1[${MULTILIB_USEDEP}]
+	)
+	webrtchttp? (
+		media-plugins/gst-plugins-webrtc[${MULTILIB_USEDEP}]
+	)
 "
 DEPEND+=" ${RDEPEND}"
 # Update while keeping track of versions of virtual/rust.
@@ -123,21 +152,22 @@ gen_llvm_bdepend() {
 }
 BDEPEND+="
 	|| ( $(gen_llvm_bdepend) )
-	>=dev-util/cargo-c-0.9.3
-	>=dev-util/meson-0.56
+	>=dev-util/cargo-c-0.9.12
+	>=dev-util/meson-0.63.2
 	>=dev-util/pkgconf-0.29.2[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/gcc-11
 	>=virtual/rust-${RUST_V}[${MULTILIB_USEDEP}]
 "
+
 SRC_URI="
-https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/${PV}/gst-plugins-rs-${PV}.tar.bz2
+https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/${MY_PV}/gst-plugins-rs-${MY_PV}.tar.bz2
 	-> ${P}.tar.bz2
 "
 RESTRICT="mirror"
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${PN}-${MY_PV}"
 PATCHES=(
-	"${FILESDIR}/gst-plugins-rs-0.8.4-modular-build.patch"
-	"${FILESDIR}/gst-plugins-rs-0.6.0_p20210607-rename-csound-ref.patch"
+	"${FILESDIR}/${PN}-0.9.4_alpha1-modular-build.patch"
+	"${FILESDIR}/${PN}-0.6.0_p20210607-rename-csound-ref.patch"
 )
 
 pkg_setup() {
@@ -246,6 +276,7 @@ einfo "LLVM=${LLVM_MAX_SLOT}"
 }
 
 multilib_src_compile() {
+# DO NOT REMOVE
 	meson_src_compile
 }
 
