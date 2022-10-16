@@ -1,0 +1,19 @@
+# Error
+# libswscale/x86/rgb2rgb_template.c:1640:9: error: 'asm' operand has impossible constraints
+
+Manually control HAVE_7REGS with ALLOW_7REGS.
+
+If using x86 (32-bit) with PGO set CPPFLAGS=-DALLOW_7REGS=0
+Otherwise, CPPFLAGS=-DALLOW_7REGS=1
+
+--- a/libavutil/x86/asm.h.orig	2022-07-22 10:58:39.000000000 -0700
++++ b/libavutil/x86/asm.h	2022-10-15 13:12:13.183775090 -0700
+@@ -72,7 +72,7 @@ typedef int32_t x86_reg;
+ typedef int x86_reg;
+ #endif
+ 
+-#define HAVE_7REGS (ARCH_X86_64 || (HAVE_EBX_AVAILABLE && HAVE_EBP_AVAILABLE))
++#define HAVE_7REGS (ALLOW_7REGS && (ARCH_X86_64 || (HAVE_EBX_AVAILABLE && HAVE_EBP_AVAILABLE)))
+ #define HAVE_6REGS (ARCH_X86_64 || (HAVE_EBX_AVAILABLE || HAVE_EBP_AVAILABLE))
+ 
+ #if ARCH_X86_64 && defined(PIC)

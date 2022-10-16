@@ -587,6 +587,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.0-backport-ranlib-build-fix.patch"
 	"${DISTDIR}/${PN}-e5163b1.patch"
 	"${DISTDIR}/${PN}-c6fdbe2.patch"
+	"${FILESDIR}/${PN}-5.1.2-allow-7regs.patch"
 )
 
 MULTILIB_WRAPPED_HEADERS=(
@@ -758,6 +759,7 @@ eerror
 }
 
 _pgo_check_av() {
+	! use trainer-av-streaming && return
 	if [[ -z "${capture_path}" ]] ; then
 eerror
 eerror "${id} is missing the abspath to your capture device as a per-package"
@@ -1039,7 +1041,8 @@ train_meets_requirements() {
 	if has_codec_requirement ; then
 		codecs=1
 	fi
-	einfo "has_ffmpeg=${player} has_codec_requirement=${codecs}"
+	einfo "has_codec_requirement=${codecs}"
+	einfo "has_ffmpeg=${player}"
 	if has_ffmpeg && has_codec_requirement ; then
 		return 0
 	fi
@@ -1086,8 +1089,12 @@ _src_configure() {
 
 	# Fix for when gcc >= -O2 -fprofile-generate -fno-reorder-blocks-and-partition
 	# libswscale/x86/rgb2rgb_template.c:1640:9: error: 'asm' operand has impossible constraints
-	filter-flags -f*omit-frame-pointer
-	append_all -fno-omit-frame-pointer
+	filter-flags '-DALLOW_7REGS=*'
+	if [[ "${ABI}" == "x86" ]] && ( use pgo || use epgo ) ; then
+		append-cppflags -DALLOW_7REGS=0
+	else
+		append-cppflags -DALLOW_7REGS=1
+	fi
 
 	if tc-is-clang && ( use pgo || use epgo ) ; then
 # The instrumented build with clang will segfault when training.
@@ -2957,6 +2964,7 @@ train_trainer_custom() {
 	if [[ -n "${FFMPEG_TRAINING_AV_CODECS}" ]] ; then
 		run_trainer_av_codecs
 	fi
+	unset MY_ED
 }
 
 _src_compile() {
@@ -2988,7 +2996,7 @@ _src_pre_pgi() {
 }
 
 _src_pre_pgo() {
-	export MY_ED="${ED}"
+	export MY_ED=""
 }
 
 _src_post_pgo() {
@@ -2998,6 +3006,7 @@ _src_post_pgo() {
 _src_pre_train() {
 	einfo "Installing image into sandbox staging area"
 	_install
+	export MY_ED="${ED}"
 	export FFMPEG=$(get_multiabi_ffmpeg)
 	export LD_LIBRARY_PATH="${ED}/usr/$(get_libdir)"
 }
