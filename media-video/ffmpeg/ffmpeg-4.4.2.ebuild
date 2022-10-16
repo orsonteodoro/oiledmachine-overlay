@@ -151,7 +151,11 @@ gen_relicense() {
 				lgpl2x_to_gpl2? ( gpl2 )
 				lgpl2x_to_gpl3? ( gpl3 )
 				lgpl2x_to_lgpl3x? ( lgpl3x )
-				!lgpl2x_to_gpl2? ( !lgpl2x_to_gpl3? ( !lgpl2x_to_lgpl3x? ( lgpl2x ) ) )
+				!lgpl2x_to_gpl2? (
+					!lgpl2x_to_gpl3? (
+						!lgpl2x_to_lgpl3x? ( lgpl2x )
+					)
+				)
 			"
 			;;
 		lgpl2_1)
@@ -159,7 +163,11 @@ gen_relicense() {
 				lgpl2_1_to_gpl2? ( gpl2 )
 				lgpl2_1_to_gpl2x? ( gpl2x )
 				lgpl2_1_to_gpl3? ( gpl3 )
-				!lgpl2_1_to_gpl2? ( !lgpl2_1_to_gpl2x ( !lgpl2_1_to_gpl3? ( lgpl2_1 ) ) )
+				!lgpl2_1_to_gpl2? (
+					!lgpl2_1_to_gpl2x (
+						!lgpl2_1_to_gpl3? ( lgpl2_1 )
+					)
+				)
 			"
 			;;
 		lgpl2_1x)
@@ -169,7 +177,15 @@ gen_relicense() {
 				lgpl2_1x_to_gpl3? ( gpl3 )
 				lgpl2_1x_to_lgpl3? ( lgpl3 )
 				lgpl2_1x_to_lgpl3x? ( lgpl3x )
-				lgpl2_1x_to_gpl2? ( !lgpl2_1x_to_gpl2x? ( !lgpl2_1x_to_gpl3? ( !lgpl2_1x_to_lgpl3? ( !lgpl2_1x_to_lgpl3x? ( lgpl2_1x ) ) ) ) )
+				lgpl2_1x_to_gpl2? (
+					!lgpl2_1x_to_gpl2x? (
+						!lgpl2_1x_to_gpl3? (
+							!lgpl2_1x_to_lgpl3? (
+								!lgpl2_1x_to_lgpl3x? ( lgpl2_1x )
+							)
+						)
+					)
+				)
 			"
 			;;
 		lgpl3)
@@ -205,79 +221,234 @@ gen_relicense() {
 
 REQUIRED_USE_VERSION3="^^ ( gpl3 gpl3x lgpl3 lgpl3x )"
 LICENSE_REQUIRED_USE="
-	apache2_0? ( $(gen_relicense lgpl2_1x) )
-	apache2_0? ( ${REQUIRED_USE_VERSION3} !gpl2 !lgpl2_1 )
-	amr? ( apache2_0 ${REQUIRED_USE_VERSION3} )
-	cdio? ( gpl3x $(gen_relicense gpl2x) $(gen_relicense lgpl2_1) )
-	chromaprint? ( $(gen_relicense lgpl2_1) )
-	codec2? ( $(gen_relicense lgpl2_1) )
-	cuda? ( nonfree )
-	encode? (
-		amrenc? ( apache2_0 ${REQUIRED_USE_VERSION3} )
-		kvazaar? ( $(gen_relicense lgpl2_1) )
-		mp3? ( $(gen_relicense lgpl2_1x) )
-		twolame? ( $(gen_relicense lgpl2_1x) )
-		x264? ( $(gen_relicense gpl2x) )
-		x265? ( $(gen_relicense gpl2x) )
-		xvid? ( $(gen_relicense gpl2x) )
+	apache2_0? (
+		$(gen_relicense lgpl2_1x)
 	)
-	fdk? ( !gpl2 !gpl3 nonfree )
-	frei0r? ( $(gen_relicense gpl2x) gpl3x $(gen_relicense lgpl2_1x) )
-	fribidi? ( $(gen_relicense lgpl2_1x) )
-	gcrypt? ( $(gen_relicense lgpl2_1) )
-	gme? ( $(gen_relicense lgpl2_1) )
-	gmp? ( || ( $(gen_relicense gpl2x) $(gen_relicense lgpl3x) ) ${REQUIRED_USE_VERSION3} )
-	gpl2? ( !lgpl3 !lgpl3x !gpl3 )
-	gpl3? ( !gpl2 )
-	gpl3x? ( !gpl2 )
-	jack? (
-		jack2? ( gpl2 )
-		jack-audio-connection-kit? ( gpl2 $(gen_relicense lgpl2_1) )
-		pipewire? ( gpl2 $(gen_relicense lgpl2_1x) )
+	apache2_0? (
+		${REQUIRED_USE_VERSION3}
+		!gpl2
+		!lgpl2_1
 	)
-	iec61883? ( || ( $(gen_relicense lgpl2_1) gpl2 ) $(gen_relicense lgpl2_1) )
-	ieee1394? ( $(gen_relicense lgpl2_1) )
-	lgpl3? ( !gpl2 )
-	libaribb24? ( $(gen_relicense lgpl3) ${REQUIRED_USE_VERSION3} )
-	libcaca? ( gpl2 $(gen_relicense lgpl2_1) )
-	librtmp? ( $(gen_relicense gpl2x) $(gen_relicense lgpl2_1x) )
-	libsoxr? ( $(gen_relicense lgpl2_1) )
-	libtesseract? ( apache2_0 )
-	libv4l? ( $(gen_relicense lgpl2_1x) )
-	lzma? ( $(gen_relicense lgpl2_1x) $(gen_relicense gpl2x) )
-	nonfree? ( !gpl2 !gpl2x !gpl3 !gpl3x )
-	openal? ( $(gen_relicense lgpl2x) )
-	openssl? (
+	amr? (
+		${REQUIRED_USE_VERSION3}
+		apache2_0
+	)
+	cdio? (
+		$(gen_relicense gpl2x)
+		$(gen_relicense lgpl2_1)
+		gpl3x
+	)
+	chromaprint? (
+		$(gen_relicense lgpl2_1)
+	)
+	codec2? (
+		$(gen_relicense lgpl2_1)
+	)
+	cuda? (
 		nonfree
-		!apache2_0? ( !gpl2 !gpl2x !gpl3 !gpl3x )
-		apache2_0? ( !gpl2 || ( gpl3 gpl3x lgpl3 lgpl3x ) )
+	)
+	encode? (
+		amrenc? (
+			${REQUIRED_USE_VERSION3}
+			apache2_0
+		)
+		kvazaar? (
+			$(gen_relicense lgpl2_1)
+		)
+		mp3? (
+			$(gen_relicense lgpl2_1x)
+		)
+		twolame? (
+			$(gen_relicense lgpl2_1x)
+		)
+		x264? (
+			$(gen_relicense gpl2x)
+		)
+		x265? (
+			$(gen_relicense gpl2x)
+		)
+		xvid? (
+			$(gen_relicense gpl2x)
+		)
+	)
+	fdk? (
+		!gpl2
+		!gpl3
+		nonfree
+	)
+	frei0r? (
+		$(gen_relicense gpl2x)
+		$(gen_relicense lgpl2_1x)
+		gpl3x
+	)
+	fribidi? (
+		$(gen_relicense lgpl2_1x)
+	)
+	gcrypt? (
+		$(gen_relicense lgpl2_1)
+	)
+	gme? (
+		$(gen_relicense lgpl2_1)
+	)
+	gmp? (
+		${REQUIRED_USE_VERSION3}
+		|| (
+			$(gen_relicense gpl2x)
+			$(gen_relicense lgpl3x)
+		)
+	)
+	gpl2? (
+		!lgpl3
+		!lgpl3x
+		!gpl3
+	)
+	gpl3? (
+		!gpl2
+	)
+	gpl3x? (
+		!gpl2
+	)
+	jack? (
+		jack2? (
+			gpl2
+		)
+		jack-audio-connection-kit? (
+			$(gen_relicense lgpl2_1)
+			gpl2
+		)
+		pipewire? (
+			$(gen_relicense lgpl2_1x)
+			gpl2
+		)
+	)
+	iec61883? (
+		|| (
+			$(gen_relicense lgpl2_1)
+			gpl2
+		)
+		$(gen_relicense lgpl2_1)
+	)
+	ieee1394? (
+		$(gen_relicense lgpl2_1)
+	)
+	lgpl3? (
+		!gpl2
+	)
+	libaribb24? (
+		${REQUIRED_USE_VERSION3}
+		$(gen_relicense lgpl3)
+	)
+	libcaca? (
+		gpl2
+		$(gen_relicense lgpl2_1)
+	)
+	librtmp? (
+		$(gen_relicense gpl2x)
+		$(gen_relicense lgpl2_1x)
+	)
+	libsoxr? (
+		$(gen_relicense lgpl2_1)
+	)
+	libtesseract? (
+		apache2_0
+	)
+	libv4l? (
+		$(gen_relicense lgpl2_1x)
+	)
+	lzma? (
+		$(gen_relicense lgpl2_1x)
+		$(gen_relicense gpl2x)
+	)
+	nonfree? (
+		!gpl2
+		!gpl2x
+		!gpl3
+		!gpl3x
+	)
+	openal? (
+		$(gen_relicense lgpl2x)
+	)
+	openssl? (
+		!apache2_0? (
+			!gpl2
+			!gpl2x
+			!gpl3
+			!gpl3x
+		)
+		apache2_0? (
+			!gpl2
+			|| (
+				gpl3
+				gpl3x
+				lgpl3
+				lgpl3x
+			)
+		)
+		nonfree
 	)
 	opencl? (
-		opencl-icd-loader? ( apache2_0 )
+		opencl-icd-loader? (
+			apache2_0
+		)
 	)
-	postproc? ( $(gen_relicense gpl2x) $(gen_relicense lgpl2_1x) )
+	postproc? (
+		$(gen_relicense gpl2x)
+		$(gen_relicense lgpl2_1x)
+	)
 	pulseaudio? (
-		!gdbm? ( gpl2 )
-		gdbm? ( $(gen_relicense lgpl2_1) )
+		!gdbm? (
+			gpl2
+		)
+		gdbm? (
+			$(gen_relicense lgpl2_1)
+		)
 	)
-	rav1e? ( apache2_0 )
-	rubberband? ( $(gen_relicense gpl2x) )
-	samba? ( gpl3 )
-	srt? ( mpl2_0 )
-	ssh? ( $(gen_relicense lgpl2_1) )
-	svg? ( $(gen_relicense lgpl2x) )
-	truetype? ( $(gen_relicense gpl2x) )
-	vidstab? ( $(gen_relicense gpl2x) )
-	vulkan? ( apache2_0 )
-	zeromq? ( $(gen_relicense lgpl3) )
-	zvbi? ( gpl2 $(gen_relicense gpl2x) $(gen_relicense lgpl2x) )
+	rav1e? (
+		apache2_0
+	)
+	rubberband? (
+		$(gen_relicense gpl2x)
+	)
+	samba? (
+		gpl3
+	)
+	srt? (
+		mpl2_0
+	)
+	ssh? (
+		$(gen_relicense lgpl2_1)
+	)
+	svg? (
+		$(gen_relicense lgpl2x)
+	)
+	truetype? (
+		$(gen_relicense gpl2x)
+	)
+	vidstab? (
+		$(gen_relicense gpl2x)
+	)
+	vulkan? (
+		apache2_0
+	)
+	zeromq? (
+		$(gen_relicense lgpl3)
+	)
+	zvbi? (
+		$(gen_relicense gpl2x)
+		$(gen_relicense lgpl2x)
+		gpl2
+	)
 "
 RDEPEND+="
 	gpl2? (
-		opencl-icd-loader? ( !dev-libs/opencl-icd-loader )
+		opencl-icd-loader? (
+			!dev-libs/opencl-icd-loader
+		)
 	)
 	lgpl2_1? (
-		opencl-icd-loader? ( !dev-libs/opencl-icd-loader )
+		opencl-icd-loader? (
+			!dev-libs/opencl-icd-loader
+		)
 	)
 " # License incompatible
 REQUIRED_USE+=" ${LICENSE_REQUIRED_USE}"
@@ -311,20 +482,59 @@ ARM_CPU_FEATURES=(
 	cpu_flags_arm_v8:armv8
 )
 ARM_CPU_REQUIRED_USE="
-	arm64? ( cpu_flags_arm_v8 )
-	cpu_flags_arm_v8? (  cpu_flags_arm_vfpv3 cpu_flags_arm_neon )
-	cpu_flags_arm_neon? ( cpu_flags_arm_thumb2 cpu_flags_arm_vfp )
-	cpu_flags_arm_vfpv3? ( cpu_flags_arm_vfp )
-	cpu_flags_arm_thumb2? ( cpu_flags_arm_v6 )
-	cpu_flags_arm_v6? ( cpu_flags_arm_thumb )
+	arm64? (
+		cpu_flags_arm_v8
+	)
+	cpu_flags_arm_neon? (
+		cpu_flags_arm_thumb2
+		cpu_flags_arm_vfp
+	)
+	cpu_flags_arm_thumb2? (
+		cpu_flags_arm_v6
+	)
+	cpu_flags_arm_v6? (
+		cpu_flags_arm_thumb
+	)
+	cpu_flags_arm_v8? (
+		cpu_flags_arm_neon
+		cpu_flags_arm_vfpv3
+	)
+	cpu_flags_arm_vfpv3? (
+		cpu_flags_arm_vfp
+	)
 "
-MIPS_CPU_FEATURES=( mipsdspr1:mipsdsp mipsdspr2 mipsfpu )
-PPC_CPU_FEATURES=( cpu_flags_ppc_altivec:altivec cpu_flags_ppc_vsx:vsx cpu_flags_ppc_vsx2:power8 )
+MIPS_CPU_FEATURES=(
+	mipsdspr1:mipsdsp
+	mipsdspr2
+	mipsfpu
+)
+PPC_CPU_FEATURES=(
+	cpu_flags_ppc_altivec:altivec
+	cpu_flags_ppc_vsx:vsx
+	cpu_flags_ppc_vsx2:power8
+)
 PPC_CPU_REQUIRED_USE="
 	cpu_flags_ppc_vsx? ( cpu_flags_ppc_altivec )
 	cpu_flags_ppc_vsx2? ( cpu_flags_ppc_vsx )
 "
-X86_CPU_FEATURES_RAW=( 3dnow:amd3dnow 3dnowext:amd3dnowext aes:aesni avx:avx avx2:avx2 fma3:fma3 fma4:fma4 mmx:mmx mmxext:mmxext sse:sse sse2:sse2 sse3:sse3 ssse3:ssse3 sse4_1:sse4 sse4_2:sse42 xop:xop )
+X86_CPU_FEATURES_RAW=(
+	3dnow:amd3dnow
+	3dnowext:amd3dnowext
+	aes:aesni
+	avx:avx
+	avx2:avx2
+	fma3:fma3
+	fma4:fma4
+	mmx:mmx
+	mmxext:mmxext
+	sse:sse
+	sse2:sse2
+	sse3:sse3
+	ssse3:ssse3
+	sse4_1:sse4
+	sse4_2:sse42
+	xop:xop
+)
 X86_CPU_FEATURES=( ${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_} )
 X86_CPU_REQUIRED_USE="
 	cpu_flags_x86_avx2? ( cpu_flags_x86_avx )
@@ -358,7 +568,20 @@ CPU_REQUIRED_USE="
 	${X86_CPU_REQUIRED_USE}
 "
 
-FFTOOLS=( aviocat cws2fws ffescape ffeval ffhash fourcc2pixfmt graph2dot ismindex pktdumper qt-faststart sidxindex trasher )
+FFTOOLS=(
+	aviocat
+	cws2fws
+	ffescape
+	ffeval
+	ffhash
+	fourcc2pixfmt
+	graph2dot
+	ismindex
+	pktdumper
+	qt-faststart
+	sidxindex
+	trasher
+)
 IUSE+=" ${FFTOOLS[@]/#/+fftools_}"
 
 RDEPEND+="
@@ -468,14 +691,20 @@ RDEPEND+="
 "
 
 RDEPEND+="
-		openssl? (
-			apache2_0? ( >=dev-libs/openssl-3.0.0_beta2:0=[${MULTILIB_USEDEP}] )
-			!apache2_0? (
-				>=dev-libs/openssl-1.0.1h-r2:0=[${MULTILIB_USEDEP}]
-				<dev-libs/openssl-3:=[${MULTILIB_USEDEP}]
-			)
+	openssl? (
+		apache2_0? (
+			>=dev-libs/openssl-3.0.0_beta2:0=[${MULTILIB_USEDEP}]
 		)
-		!openssl? ( gnutls? ( >=net-libs/gnutls-2.12.23-r6:=[${MULTILIB_USEDEP}] ) )
+		!apache2_0? (
+			>=dev-libs/openssl-1.0.1h-r2:0=[${MULTILIB_USEDEP}]
+			<dev-libs/openssl-3:=[${MULTILIB_USEDEP}]
+		)
+	)
+	!openssl? (
+		gnutls? (
+			>=net-libs/gnutls-2.12.23-r6:=[${MULTILIB_USEDEP}]
+		)
+	)
 "
 
 DEPEND+="
