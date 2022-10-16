@@ -170,8 +170,9 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
+WANT_LTO=0
 _usex_lto() {
-	if is-flagq '-flto*' ; then
+	if is-flagq '-flto*' || [[ "${WANT_LTO}" == "1" ]] ; then
 		echo "ON"
 	else
 		echo "OFF"
@@ -185,7 +186,6 @@ _configure() {
 	# CIVETWEB_LUA_VERSION is either 5.1.5 5.2.4 5.3.5 5.4.0 based
 	#   on src/third_party/lua-<PV>
 
-	filter-flags '-flto*'
 	local mycmakeargs=(
 		-D_GET_LIBDIR=$(get_libdir)
 		-DCIVETWEB_BUILD_TESTING=$(usex test)
@@ -216,6 +216,7 @@ _configure() {
 		-DCIVETWEB_ENABLE_ZLIB=$(usex zlib)
 		-DCIVETWEB_SERVE_NO_FILES=$(usex serve_no_files)
 	)
+	filter-flags '-flto*'
 	if [[ "${lib_type}" == "shared" ]] ;then
 		mycmakeargs+=(
 			-DBUILD_SHARED_LIBS=ON
