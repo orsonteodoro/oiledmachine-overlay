@@ -137,7 +137,7 @@
 
       1 second and lowest resolutions only.
 
-      (Ebuild maintainer recommended)
+      (Ebuild maintainer recommended for encoding)
     </flag>
     <flag name="trainer-constrained-quality">
       Use the 1 pass constrained quality trainer.
@@ -149,7 +149,7 @@
 
       1 second and lowest resolutions only.
 
-      (Ebuild maintainer recommended)
+      (Ebuild maintainer recommended for decoding)
     </flag>
     <flag name="trainer-lossless">
       Use the lossless trainer.

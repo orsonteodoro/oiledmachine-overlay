@@ -6,7 +6,7 @@
 EAPI=8
 
 # Training time error occurred during BOLT training with 30 FPS 1280x720 (SDR) decoding.
-# It does not happen in PGO training.
+# It does not happen after PGI or PGO training before BOLT instrumentation.
 # warped_motion.c:389: av1_highbd_warp_affine_c: Assertion `0 <= sum && sum < (1 << max_bits_horiz)' failed.
 
 UOPTS_SUPPORT_EBOLT=0

@@ -375,6 +375,8 @@
     control.  This step can be skipped for live streamers.
 
     Uses 1 second with lowest resolutions.
+
+    (Ebuild maintainer recommended for encoding)
   </flag>
   <flag name="trainer-video-constrained-quality">
     Use the 1 pass constrained quality video trainer.
@@ -385,6 +387,8 @@
     Use the 1 pass constrained quality video trainer.
 
     Uses 1 second with lowest resolutions.
+
+    (Ebuild maintainer recommended for decoding)
   </flag>
   <flag name="trainer-video-lossless">
     Use the lossless video trainer.
