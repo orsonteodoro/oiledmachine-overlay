@@ -421,7 +421,7 @@ _src_configure() {
 
 _vdecode() {
 	einfo "Decoding ${1}"
-	cmd=( "${FFMPEG}" -i "${T}/traintemp/test.webm" -f null - )
+	cmd=( "${FFMPEG}" -c:v libaom-av1 -i "${T}/traintemp/test.webm" -f null - )
 	einfo "${cmd[@]}"
 	"${cmd[@]}" || die
 }
