@@ -1576,14 +1576,14 @@ einfo
 
 _adecode() {
 	einfo "Decoding ${1}"
-	cmd=( "${FFMPEG}" -i "${T}/traintemp/test.${extension}" -f null - )
+	cmd=( "${FFMPEG}" -c:a ${decoding_codec} -i "${T}/traintemp/test.${extension}" -f null - )
 	einfo "${cmd[@]}"
 	"${cmd[@]}" || die
 }
 
 _vdecode() {
 	einfo "Decoding ${1}"
-	cmd=( "${FFMPEG}" -i "${T}/traintemp/test.${extension}" -f null - )
+	cmd=( "${FFMPEG}" -c:v ${decoding_codec} -i "${T}/traintemp/test.${extension}" -f null - )
 	einfo "${cmd[@]}"
 	"${cmd[@]}" || die
 }
