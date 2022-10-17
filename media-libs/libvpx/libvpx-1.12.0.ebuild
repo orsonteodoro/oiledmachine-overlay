@@ -401,8 +401,10 @@ _src_configure() {
 }
 
 _vdecode() {
-	einfo "Decoding ${1}"
-	cmd=( "${FFMPEG}" -i "${T}/traintemp/test.webm" -f null - )
+	local decoding_codec="${1}"
+	local msg="${2}"
+	einfo "Decoding ${msg}"
+	cmd=( "${FFMPEG}" -c:v ${decoding_codec} -i "${T}/traintemp/test.webm" -f null - )
 	einfo "${cmd[@]}"
 	"${cmd[@]}" || die
 }
@@ -552,7 +554,7 @@ _trainer_plan_constrained_quality_training_session() {
 		einfo "Position / Length:  ${pos} / ${len}"
 		einfo "${cmd[@]} -ss ${pos}"
 		"${cmd[@]}" -ss ${pos} || die
-		_vdecode "${cheight}, ${fps} fps"
+		_vdecode "${decoding_codec}" "${cheight}, ${fps} fps"
 	done
 }
 
@@ -711,7 +713,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 		"${cmd1[@]}" -ss ${pos} || die
 		einfo "${cmd2[@]} -ss ${pos}"
 		"${cmd2[@]}" -ss ${pos} || die
-		_vdecode "${cheight}, ${fps} fps"
+		_vdecode "${decoding_codec}" "${cheight}, ${fps} fps"
 	done
 }
 
@@ -806,7 +808,7 @@ _trainer_plan_lossless() {
 				einfo "Position / Length:  ${pos} / ${len}"
 				einfo "${cmd[@]} -ss ${pos}"
 				"${cmd[@]} -ss ${pos}" || die
-				_vdecode "lossless"
+				_vdecode "${decoding_codec}" "lossless"
 			done
 		done
 	fi
