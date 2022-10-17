@@ -1590,8 +1590,8 @@ _vdecode() {
 
 _get_resolutions_quick() {
 	local L=(
-		"30;426;240;sdr"
-		"60;426;240;sdr"
+		"30;1280;720;sdr"
+		"60;1280;720;sdr"
 	)
 
 	local e
