@@ -87,7 +87,7 @@ PATCHES=(
 )
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
-N_SAMPLES=5
+N_SAMPLES=1
 
 get_asset_ids() {
 	local types=(
@@ -409,8 +409,8 @@ _vdecode() {
 
 _get_resolutions_quick() {
 	local L=(
+		# Most videos are 24 FPS.
 		"30;1280;720;sdr"
-		"60;1280;720;sdr"
 	)
 	local e
 	if [[ -n "${LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK}" ]] ; then

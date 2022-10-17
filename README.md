@@ -151,7 +151,6 @@ the metadata.xml.
 * dev-lang/lua
 * dev-lang/mono
 * media-libs/embree
-* media-libs/libaom
 * media-libs/libjpeg-turbo
 * media-libs/libspng
 * media-libs/libvpx

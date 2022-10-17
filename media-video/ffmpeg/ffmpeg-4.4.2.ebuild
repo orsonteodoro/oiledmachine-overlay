@@ -807,7 +807,7 @@ RESTRICT="
 
 S="${WORKDIR}/${P/_/-}"
 S_orig="${WORKDIR}/${P/_/-}"
-N_SAMPLES=5
+N_SAMPLES=1
 
 SRC_URI+="
 https://github.com/FFmpeg/FFmpeg/commit/e5163b1d34381a3319214a902ef1df923dd2eeba.patch
@@ -1590,8 +1590,8 @@ _vdecode() {
 
 _get_resolutions_quick() {
 	local L=(
+		# Most videos are 24 FPS
 		"30;1280;720;sdr"
-		"60;1280;720;sdr"
 	)
 
 	local e

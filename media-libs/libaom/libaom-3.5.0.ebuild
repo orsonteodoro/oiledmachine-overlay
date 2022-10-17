@@ -5,6 +5,13 @@
 
 EAPI=8
 
+# Training time error occurred during BOLT training with 30 FPS 1280x720 (SDR) decoding.
+# It does not happen in PGO training.
+# warped_motion.c:389: av1_highbd_warp_affine_c: Assertion `0 <= sum && sum < (1 << max_bits_horiz)' failed.
+
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_TBOLT=0
+
 CMAKE_ECLASS=cmake
 PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake-multilib flag-o-matic python-any-r1 toolchain-funcs uopts
@@ -85,7 +92,7 @@ DOCS=( PATENTS )
 RESTRICT="strip"
 # Tests need more wiring up
 RESTRICT+=" !test? ( test ) test"
-N_SAMPLES=5
+N_SAMPLES=1
 
 get_asset_ids() {
 	local types=(
@@ -179,6 +186,11 @@ pkg_setup() {
 	fi
 	check_video
 	uopts_setup
+	if ! use asm ; then
+ewarn
+ewarn "USE=-asm may result in unsmooth decoding."
+ewarn
+	fi
 }
 
 # The order does matter with PGO.
@@ -416,8 +428,8 @@ _vdecode() {
 
 _get_resolutions_quick() {
 	local L=(
+		# Most videos are 24 FPS.
 		"30;1280;720;sdr"
-		"60;1280;720;sdr"
 	)
 	local e
 	if [[ -n "${LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK}" ]] ; then
