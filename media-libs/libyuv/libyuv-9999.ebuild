@@ -69,17 +69,20 @@ src_unpack() {
 		EGIT_BRANCH="stable"
 		expected="\
 d598ee724bf56ae04ed475987d4e8780e302be56a5e98dd284225069bb54caf9\
-c4abf7602876c86bf9b75f6b8e2f663dc71c1438e4fa3d0ced829781d395e294"
+c4abf7602876c86bf9b75f6b8e2f663dc71c1438e4fa3d0ced829781d395e294\
+"
 	elif use master ; then
 		EGIT_BRANCH="master"
 		expected="\
 d598ee724bf56ae04ed475987d4e8780e302be56a5e98dd284225069bb54caf9\
-c4abf7602876c86bf9b75f6b8e2f663dc71c1438e4fa3d0ced829781d395e294"
+c4abf7602876c86bf9b75f6b8e2f663dc71c1438e4fa3d0ced829781d395e294\
+"
 	elif use main ; then
 		EGIT_BRANCH="main"
 		expected="\
-087f42d76101c61ea91db87a052c8f53394a18875e8535d5e349fe586bcaca78\
-dea5d9746a82a88d9ccf9eb9120d7f65c55150fb7bac480da3f3ea92d83e0208"
+ee757985ebf88813ddbb68bc44752b59ec8fb8c1233fbb6bf57417fa2f226f2f\
+4666634a42502fa4c27779ce67c9a10d963418a04f65475914fa627849ea28b5\
+"
 	fi
 	git-r3_fetch
 	git-r3_checkout
@@ -92,8 +95,8 @@ eerror
 eerror "This means that the ebuild packager needs to update the *DEPENDS,"
 eerror "IUSE, KEYWORDS.  Send an issue request about this."
 eerror
-eerror "Expected build files fingerprint:  ${expected}"
-eerror "Actual build files fingerprint:  ${actual}"
+eerror "Expected build files fingerprint:\t${expected}"
+eerror "Actual build files fingerprint:\t${actual}"
 eerror
 		die
 	fi
