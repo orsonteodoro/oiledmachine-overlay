@@ -155,7 +155,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	v4l2? ( media-video/v4l2loopback
 		sys-kernel/linux-headers )
 	vaapi? ( >=media-video/ffmpeg-4.4:0=[vaapi]
-		 >=x11-libs/libva-2.1.0
+		 >=media-libs/libva-2.1.0
 		 || (
 		       video_cards_amdgpu? (
 				media-libs/mesa[vaapi,video_cards_radeonsi]

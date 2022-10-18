@@ -98,7 +98,7 @@ RDEPEND="
 	vaapi? (
 		${LIBVA_DEPEND}
 		dev-libs/libgudev
-		>=x11-libs/libva-1.8:=[${MULTILIB_USEDEP}]
+		>=media-libs/libva-1.8:=[${MULTILIB_USEDEP}]
 	)
 	vnc? ( X? ( x11-libs/libX11[${MULTILIB_USEDEP}] ) )
 	wayland? (

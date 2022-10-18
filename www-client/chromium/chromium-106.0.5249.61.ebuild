@@ -418,7 +418,7 @@ LIBVA_DEPEND="
 				media-libs/mesa:=[vaapi,video_cards_radeonsi,${MULTILIB_USEDEP}]
 			)
 		)
-		>=x11-libs/libva-${LIBVA_V}:=[${MULTILIB_USEDEP}]
+		>=media-libs/libva-${LIBVA_V}:=[${MULTILIB_USEDEP}]
 		system-ffmpeg? (
 			>=media-video/ffmpeg-${FFMPEG_V}[vaapi,${MULTILIB_USEDEP}]
 		)
@@ -495,7 +495,7 @@ COMMON_SNAPSHOT_DEPEND="
 		pulseaudio? ( media-sound/pulseaudio:=[${MULTILIB_USEDEP}] )
 		sys-apps/pciutils:=[${MULTILIB_USEDEP}]
 		kerberos? ( virtual/krb5[${MULTILIB_USEDEP}] )
-		vaapi? ( >=x11-libs/libva-${LIBVA_V}:=[X,drm,${MULTILIB_USEDEP}] )
+		vaapi? ( >=media-libs/libva-${LIBVA_V}:=[X,drm,${MULTILIB_USEDEP}] )
 		X? (
 			x11-libs/libX11:=[${MULTILIB_USEDEP}]
 			x11-libs/libXext:=[${MULTILIB_USEDEP}]

@@ -374,7 +374,7 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 				>=media-libs/mesa-${MESA_PV}[vaapi,video_cards_radeonsi]
 			)
 		)
-		>=x11-libs/libva-${LIBVA_PV}
+		>=media-libs/libva-${LIBVA_PV}
 		>=media-video/ffmpeg-${FFMPEG_PV}[vaapi]
 	)
 "
