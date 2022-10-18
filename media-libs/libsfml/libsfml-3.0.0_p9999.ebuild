@@ -128,8 +128,9 @@ DOCS=( changelog.md readme.md )
 SRC_URI=""
 S="${WORKDIR}/${P}"
 EXPECTED_DEPENDS="\
-2783f960b3948a52d57574bdeb375374d42901de394cee43806c2c4d0e9fb7d4\
-89f812b643c56244ad3ac85258f0f115f69dcdeebaa3a7818fff7ada58a6aa0f"
+60b8fdf409596243173994200adf5c0d1ba663bc191f3f5d8cbe8ffed361739c\
+505233fdfa34f58472a0375c2423d0721c1d1d86e691736e183086c0afc9b94d\
+"
 RESTRICT="" # See headers for copyright notices
 PATCHES=(
 	"${FILESDIR}/libsfml-2.6x_p9999-drm-null.patch"
@@ -147,8 +148,8 @@ verify_version() {
 eerror
 eerror "The package needs a version bump"
 eerror
-eerror "Expected version:  ${expected_version}"
-eerror "Acutal version:  ${actual_version}"
+eerror "Expected version:\t${expected_version}"
+eerror "Actual version:\t${actual_version}"
 eerror
 		die
 	fi
@@ -181,8 +182,8 @@ src_unpack() {
 eerror
 eerror "The package needs an IUSE or *DEPENDs review"
 eerror
-eerror "Expected depends:  ${EXPECTED_DEPENDS}"
-eerror "Acutal depends:  ${actual_depends}"
+eerror "Expected depends:\t${EXPECTED_DEPENDS}"
+eerror "Actual depends:\t${actual_depends}"
 eerror
 		die
 	fi
