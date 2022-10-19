@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
-# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V18.md
+# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
 
 EAPI=8
 
@@ -13,7 +13,7 @@ PYTHON_REQ_USE="threads(+)"
 inherit bash-completion-r1 flag-o-matic linux-info ninja-utils pax-utils python-any-r1
 inherit check-linker lcnr toolchain-funcs uopts xdg-utils
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
-LICENSE="Apache-1.1 Apache-2.0 Artistic-2 BSD BSD-2 icu-71.1 ISC MIT openssl unicode ZLIB"
+LICENSE="Apache-1.1 Apache-2.0 Artistic-2 BSD BSD-2 icu-70.1 ISC MIT openssl unicode ZLIB"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
 HOMEPAGE="https://nodejs.org/"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
@@ -68,8 +68,8 @@ gen_iuse_pgo() {
 }
 
 IUSE+="
-acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
-+npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
+acorn corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
+npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
 man pgo
@@ -92,18 +92,18 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Sep 22, 2022
+# Last deps commit date:  Oct 11, 2022
 NGHTTP2_V="1.47.0"
 RDEPEND+="
 	!net-libs/nodejs:0
 	app-eselect/eselect-nodejs
 	>=app-arch/brotli-1.0.9
-	>=dev-libs/libuv-1.43.0:=
+	>=dev-libs/libuv-1.44.0:=
 	>=net-dns/c-ares-1.18.1
 	>=net-libs/nghttp2-${NGHTTP2_V}
 	>=sys-libs/zlib-1.2.11
 	system-icu? ( >=dev-libs/icu-71.1:= )
-	system-ssl? ( >=dev-libs/openssl-3.0.5:0= )
+	system-ssl? ( >=dev-libs/openssl-1.1.1q:0= )
 "
 DEPEND+=" ${RDEPEND}"
 BDEPEND+="
@@ -123,15 +123,23 @@ BDEPEND+="
 PDEPEND+="
 	acorn? ( >=dev-node/acorn-bin-8.8.0 )
 "
-SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
+SRC_URI="
+https://github.com/nodejs/node/archive/refs/tags/v${PV}.tar.gz
+	-> node-v${PV}.tar.gz
+"
 PATCHES=(
+	"${FILESDIR}"/${PN}-16.12.0-jinja_collections_abc.patch
 	"${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
 	"${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch
 	"${FILESDIR}"/${PN}-16.13.2-use-thinlto.patch
 	"${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch
 )
-S="${WORKDIR}/node-v${PV}"
-NPM_V="8.19.1" # See https://github.com/nodejs/node/blob/v18.9.1/deps/npm/package.json
+if [[ -d "${WORKDIR}/node-v${PV}" ]] ; then
+	S="${WORKDIR}/node-v${PV}"
+else
+	S="${WORKDIR}/node-${PV}"
+fi
+NPM_V="8.19.2" # See https://github.com/nodejs/node/blob/v16.17.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
@@ -148,16 +156,16 @@ pkg_setup() {
 	linux-info_pkg_setup
 
 einfo
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2025-04-30."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2023-09-11."
 einfo
 
 	# For man page reasons
-	for s in 12 14 16 ; do
+	for s in 12 14 18 ; do
 		if use corepack && has_version "net-libs/nodejs:${s}[corepack]"
 		then
 eerror
-eerror "You need to disable corepack on net-libs/nodejs:${s}[corepack].  Only"
-eerror "enable corepack on the highest slot."
+eerror "You need to disable corepack on net-libs/nodejs:${s}[corepack].  Only enable"
+eerror "corepack on the highest slot."
 eerror
 			die
 		fi
@@ -389,7 +397,7 @@ _src_configure() {
 	fi
 }
 
-_src_compile() {
+_src_compile_() {
 	eninja -C ${ENINJA_BUILD_DIR}
 }
 
