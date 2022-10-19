@@ -68,6 +68,7 @@ UOPTS_SUPPORT_TPGO=0
 inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info llvm multiprocessing
 inherit pax-utils python-any-r1 toolchain-funcs virtualx xdg
 inherit check-linker lcnr multilib-minimal rust-toolchain uopts
+inherit cflags-depends
 
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 
@@ -319,7 +320,7 @@ CDEPEND="
 	sndio? ( >=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}] )
 	screencast? ( media-video/pipewire:= )
 	system-av1? (
-		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP},8bit]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
@@ -390,6 +391,12 @@ RESTRICT="mirror"
 
 S="${WORKDIR}/${PN}-${PV%_*}"
 S_BAK="${WORKDIR}/${PN}-${PV%_*}"
+
+# One of the major sources of lag comes from dependencies
+# These are strict to match performance to competition or normal builds.
+declare -A CFLAGS_RDEPEND=(
+	["media-libs/dav1d"]="-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
+)
 
 MOZILLA_FIVE_HOME=""
 BUILD_OBJ_DIR=""
@@ -831,6 +838,8 @@ eerror
 		NABIS=$((${NABIS} + 1))
 	done
 	uopts_setup
+
+	use system-av1 && cflags-depends_check
 }
 
 src_unpack() {

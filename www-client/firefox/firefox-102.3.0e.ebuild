@@ -66,6 +66,7 @@ UOPTS_SUPPORT_TPGO=0
 inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info llvm multiprocessing
 inherit pax-utils python-any-r1 toolchain-funcs virtualx xdg
 inherit check-linker lcnr multilib-minimal rust-toolchain uopts
+inherit cflags-depends
 
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 
@@ -330,7 +331,7 @@ CDEPEND="
 	libproxy? ( net-libs/libproxy[${MULTILIB_USEDEP}] )
 	sndio? ( >=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}] )
 	system-av1? (
-		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP},8bit]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
@@ -396,6 +397,7 @@ DEPEND="
 		x11-libs/libSM[${MULTILIB_USEDEP}]
 	)
 "
+
 RESTRICT="mirror"
 
 S="${WORKDIR}/${PN}-${PV/e}"
@@ -403,6 +405,12 @@ S_BAK="${WORKDIR}/${PN}-${PV/e}"
 
 MOZILLA_FIVE_HOME=""
 BUILD_OBJ_DIR=""
+
+# One of the major sources of lag comes from dependencies
+# These are strict to match performance to competition or normal builds.
+declare -A CFLAGS_RDEPEND=(
+	["media-libs/dav1d"]="-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
+)
 
 # Allow MOZ_GMP_PLUGIN_LIST to be set in an eclass or
 # overridden in the enviromnent (advanced hackers only)
@@ -841,6 +849,8 @@ eerror
 		NABIS=$((${NABIS} + 1))
 	done
 	uopts_setup
+
+	use system-av1 && cflags-depends_check
 }
 
 src_unpack() {
