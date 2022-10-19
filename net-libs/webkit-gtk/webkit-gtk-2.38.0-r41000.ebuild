@@ -22,6 +22,7 @@ UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 inherit check-linker check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs uopts
+inherit cflags-depends
 
 DESCRIPTION="Open source web browser engine (GTK+3 with libsoup3)"
 HOMEPAGE="https://www.webkitgtk.org"
@@ -311,7 +312,8 @@ DEFAULT_GST_PLUGINS="
 +a52
 +aac
 +alsa
-+aom
+-aom
++dav1d
 +flac
 +g722
 +libde265
@@ -330,6 +332,7 @@ DEFAULT_GST_PLUGINS="
 "
 # alsa is disabled on D11, enabled on A/L, enabled in F/L
 # D11, A/L, F/L are currently not distributing stateless vaapi decoding.
+# Using dav1d because aom is slow for decoding.
 
 IUSE+="
 ${LANGS[@]/#/l10n_}
@@ -396,6 +399,7 @@ REQUIRED_USE+=" "$(gen_gst_plugins_required_use)
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
+
 REQUIRED_USE+="
 	|| (
 		aqua
@@ -413,9 +417,15 @@ REQUIRED_USE+="
 		bmalloc
 		dfg-jit
 	)
-	dfg-jit? ( jit )
-	ftl-jit? ( jit )
-	geolocation? ( introspection )
+	dfg-jit? (
+		jit
+	)
+	ftl-jit? (
+		jit
+	)
+	geolocation? (
+		introspection
+	)
 	gles2? (
 		!opengl
 	)
@@ -429,14 +439,25 @@ REQUIRED_USE+="
 		gstreamer
 		webrtc
 	)
-	hardened? ( !jit )
+	hardened? (
+		!jit
+	)
 	opengl? (
 		!gles2
 	)
-	pulseaudio? ( gstreamer )
-	thunder? ( eme )
-	v4l? ( gstreamer mediastream )
-	webassembly? ( jit )
+	pulseaudio? (
+		gstreamer
+	)
+	thunder? (
+		eme
+	)
+	v4l? (
+		gstreamer
+		mediastream
+	)
+	webassembly? (
+		jit
+	)
 	webassembly-b3-jit? (
 		ftl-jit
 		webassembly
@@ -447,21 +468,33 @@ REQUIRED_USE+="
 			opengl
 		)
 	)
-	webgl2? ( webgl )
+	webgl2? (
+		webgl
+	)
 	webm-eme? (
 		eme
 		gstreamer
 		thunder
 	)
 	webrtc? (
-		^^ ( gstwebrtc libwebrtc )
+		^^ (
+			gstwebrtc
+			libwebrtc
+		)
 		mediastream
 		webcrypto
 	)
-	webvtt? ( gstreamer )
-	webxr? ( webgl )
-	yarr-jit? ( jit )
+	webvtt? (
+		gstreamer
+	)
+	webxr? (
+		webgl
+	)
+	yarr-jit? (
+		jit
+	)
 "
+
 # libwebrtc requires git clone or the fix the tarball to contain the libwebrtc folder.
 
 # Introspection for 32 webkit on 64 bit cannot be used because it requires 32 bit
@@ -479,6 +512,8 @@ REQUIRED_USE+="
 #   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/GStreamerChecks.cmake
 #   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/OptionsGTK.cmake
 #   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Tools/buildstream/elements/sdk-platform.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
 #   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Tools/gtk/install-dependencies
 #   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.0/Tools/gtk/dependencies
 #   https://github.com/WebKit/WebKit/tree/webkitgtk-2.38.0/Tools/glib/dependencies
@@ -565,6 +600,7 @@ RDEPEND+="
 		)
 		dav1d? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},dav1d]
+			media-libs/dav1d[8bit]
 		)
 		g722? (
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
@@ -764,6 +800,12 @@ ewarn
 	fi
 }
 
+# One of the major sources of lag comes from dependencies
+# These are strict to match performance to competition or normal builds.
+declare -A CFLAGS_RDEPEND=(
+	["media-libs/dav1d"]="-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
+)
+
 pkg_setup() {
 einfo
 einfo "This is the stable branch."
@@ -776,6 +818,7 @@ einfo
 	python-any-r1_pkg_setup
 
 	check_geolocation
+	cflags-depends_check
 
 	if ( use arm || use arm64 ) && ! use gles2 ; then
 ewarn
@@ -941,6 +984,7 @@ src_prepare() {
 	}
 	multilib_foreach_abi prepare_abi
 }
+
 
 SELECTED_LTO=""
 _src_configure() {
@@ -1258,9 +1302,11 @@ einfo
 
 	# Anything less than -O2 may break rendering.
 	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
+	# Clang -Os:  slower than expected rendering.
 
 	replace-flags "-O0" "-O2"
 	replace-flags "-O1" "-O2"
+	replace-flags "-Os" "-O2"
 
 	WK_USE_CCACHE=NO cmake_src_configure
 }

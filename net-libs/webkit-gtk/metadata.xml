@@ -327,9 +327,13 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
     </flag>
     <flag name="aom">
       Support for CPU based AV1 video encoding and fallback as a decoder.
+
+      This reference implementation is not recommended for decoding.
     </flag>
     <flag name="dav1d">
       Fallback support for CPU based AV1 video decoding.
+
+      Recommended as the fallback for AV1 decoding.
     </flag>
     <flag name="flac">
       Support for decoding FLAC audio.
