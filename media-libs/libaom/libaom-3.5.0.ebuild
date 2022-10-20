@@ -9,8 +9,9 @@ EAPI=8
 # It does not happen after PGI or PGO training before BOLT instrumentation.
 # warped_motion.c:389: av1_highbd_warp_affine_c: Assertion `0 <= sum && sum < (1 << max_bits_horiz)' failed.
 
-UOPTS_SUPPORT_EBOLT=0
-UOPTS_SUPPORT_TBOLT=0
+TRAIN_SANDBOX_EXCEPTION_VAAPI=1
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_TBOLT=1
 
 CMAKE_ECLASS=cmake
 PYTHON_COMPAT=( python3_{8..11} )
@@ -30,7 +31,7 @@ HOMEPAGE="https://aomedia.org"
 
 LICENSE="BSD-2"
 SLOT="0/3"
-IUSE="doc examples static-libs test"
+IUSE="doc examples lossless static-libs test"
 IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3"
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
 IUSE="${IUSE} cpu_flags_arm_neon"
@@ -185,7 +186,13 @@ pkg_setup() {
 		einfo "The chromium USE flag is in testing."
 	fi
 	check_video
+
+	if ( has bolt ${IUSE} && use bolt ) || ( has ebolt ${IUSE} && use ebolt ) ; then
+		export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=branch-predictor -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats"}
+	fi
+
 	uopts_setup
+
 	if ! use asm ; then
 ewarn
 ewarn "USE=-asm may result in unsmooth decoding."
@@ -313,8 +320,33 @@ _src_configure() {
 
 	tc-export CC CXX
 
-	# Stuck on ~31 frames for more than double the time compared to -O1 when encoding.
-	replace-flags -O0 -O1
+	# -O0 is stuck on ~31 frames for more than double the time compared to -O1 when encoding.
+
+	# This codec is really slow at decoding.
+	# Forced highest compiler setting.
+	if use lossless ; then
+		filter-flags '-f*fast-math'
+		filter-flags '-Ofast'
+		replace-flags '-O*' '-O3'
+	else
+		replace-flags '-O*' '-Ofast'
+	fi
+
+	filter-flags '-DN*DEBUG'
+	append-cppflags -DNDEBUG
+
+	# For fixing segfault with PGO+BOLT
+	append-flags \
+		-fno-indirect-inlining \
+		-fno-ipa-cp \
+		-fno-ipa-bit-cp
+
+	local test_flags=(
+		-fno-hoist-adjacent-loads \
+		-fno-inline-functions \
+		-fno-inline-small-functions \
+		-fno-gcse-lm  \
+	)
 
 	local mycmakeargs=(
 		-DENABLE_DOCS=$(multilib_native_usex doc ON OFF)
@@ -429,7 +461,7 @@ _vdecode() {
 _get_resolutions_quick() {
 	local L=(
 		# Most videos are 24 FPS.
-		"30;1280;720;sdr"
+		"24;1280;720;sdr"
 	)
 	local e
 	if [[ -n "${LIBAOM_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK}" ]] ; then
@@ -573,8 +605,9 @@ _trainer_plan_constrained_quality_training_session() {
 		local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 		einfo "Seek:  ${i} / ${N_SAMPLES}"
 		einfo "Position / Length:  ${pos} / ${len}"
-		einfo "${cmd[@]} -ss ${pos}"
-		"${cmd[@]}" -ss ${pos} || die
+		local cmdt=(${cmd[@]} -ss ${pos})
+		einfo "${cmdt[@]}"
+		"${cmdt[@]}" || die
 		_vdecode "${cheight} ${fps} fps"
 	done
 }
@@ -713,10 +746,13 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 		local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 		einfo "Seek:  ${i} / ${N_SAMPLES}"
 		einfo "Position / Length:  ${pos} / ${len}"
-		einfo "${cmd1[@]} -ss ${pos}"
-		"${cmd1[@]}" -ss ${pos} || die
-		einfo "${cmd2[@]} -ss ${pos}"
-		"${cmd2[@]}" -ss ${pos} || die
+		local cmdt
+		cmdt=(${cmd1[@]} -ss ${pos})
+		einfo "${cmdt[@]}"
+		"${cmdt[@]}" || die
+		cmdt=(${cmd2[@]} -ss ${pos})
+		einfo "${cmd[@]}"
+		"${cmdt[@]}" || die
 		_vdecode "${cheight} ${fps} fps"
 	done
 }
@@ -784,8 +820,9 @@ _trainer_plan_lossless() {
 				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 				einfo "Seek:  ${i} / ${N_SAMPLES}"
 				einfo "Position / Length:  ${pos} / ${len}"
-				einfo "${cmd[@]} -ss ${pos}"
-				"${cmd[@]}" -ss ${pos} || die
+				local cmdt=(${cmd[@]} -ss ${pos})
+				einfo "${cmdt[@]}"
+				"${cmdt[@]}" || die
 				_vdecode "lossless"
 			done
 		done
