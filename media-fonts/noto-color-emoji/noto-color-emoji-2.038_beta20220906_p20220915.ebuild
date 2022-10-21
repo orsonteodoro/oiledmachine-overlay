@@ -33,44 +33,42 @@ RDEPEND+="
         >=x11-libs/cairo-1.16
 	media-libs/freetype[png]
 "
+# NOTOTOOLS_DEPEND last update on 20220811
 NOTOTOOLS_DEPEND="
-	$(python_gen_any_dep '>=app-arch/brotli-1.0.7[${PYTHON_USEDEP},python]')
+	$(python_gen_any_dep '>=app-arch/brotli-1.0.9[${PYTHON_USEDEP},python]')
 	$(python_gen_any_dep '>=dev-python/appdirs-1.4.4[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/attrs-19.3.0[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/black-19.10_beta0[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/attrs-21.4.0[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/black-22.6.0[${PYTHON_USEDEP}]')
 	$(python_gen_any_dep '>=dev-python/booleanOperations-0.9.0[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/click-7.1.2[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/cu2qu-1.6.7[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/defcon-0.6.0[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/fontMath-0.6.0[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/fontParts-0.9.2[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/click-8.1.3[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/cu2qu-1.6.7_p1[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/defcon-0.10.2[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/fontMath-0.9.2[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/fontParts-0.10.7[${PYTHON_USEDEP}]')
 	$(python_gen_any_dep '>=dev-python/fontPens-0.2.4[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/fonttools-4.11.0[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/fs-2.4.11[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/lxml-4.5.1[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/fonttools-4.34.4[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/fs-2.4.16[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/lxml-4.9.1[${PYTHON_USEDEP}]')
 	$(python_gen_any_dep '>=dev-python/MutatorMath-3.0.1[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/pathspec-0.8.0[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/pillow-7.1.2[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/pyclipper-1.1.0_p1[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/pytz-2020.1[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/six-1.15.0[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/toml-0.10.1[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/typed-ast-1.4.1[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/ufoNormalizer-0.4.1[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/pathspec-0.9.0[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/pillow-9.2.0[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/pyclipper-1.3.0_p3[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/pytz-2022.1[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/regex-2022.7.25[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/six-1.16.0[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/toml-0.10.2[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/typed-ast-1.4.2[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/ufoNormalizer-0.6.1[${PYTHON_USEDEP}]')
 	$(python_gen_any_dep '>=dev-python/ufoProcessor-1.9.0[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-python/unicodedata2-13.0.0_p2[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-util/afdko-3.4.0[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '>=dev-util/psautohint-2.0.1[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/unicodedata2-14.0.0[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-util/afdko-3.9.1[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-util/psautohint-2.4.0[${PYTHON_USEDEP}]')
 	$(python_gen_any_dep '>=media-gfx/scour-0.37[${PYTHON_USEDEP}]')
-	|| (
-		$(python_gen_any_dep '>=dev-python/regex-2020.5.14[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep '>=dev-python/mrab-regex-2.5.80[${PYTHON_USEDEP}]')
-	)
 "
-INTERNAL_NOTOTOOLS_PV="0.2.13" # see setup.py for versioning
+INTERNAL_NOTOTOOLS_PV="0.2.17_p20220811" # see setup.py for versioning
 BDEPEND+="
 	${PYTHON_DEPS}
-	$(python_gen_any_dep '>=dev-python/fonttools-4.7.0[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/fonttools-4.34.4[${PYTHON_USEDEP}]')
 	!system-nototools? (
 		${NOTOTOOLS_DEPEND}
 	)
@@ -81,15 +79,15 @@ BDEPEND+="
 		media-gfx/optipng
 	)
 	system-nototools? (
-		$(python_gen_any_dep '>=dev-python/nototools-0.2.13[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '>=dev-python/nototools-0.2.17[${PYTHON_USEDEP}]')
 	)
 	zopflipng? (
 		app-arch/zopfli
 	)
 "
 FONT_SUFFIX="ttf"
-NOTO_EMOJI_COMMIT="aac7ccaa4d1dea4543453b96f7d6fc47066a57ff"
-NOTOTOOLS_COMMIT="1e7789e6c62fb7ce91d7abdb682422cc99c47c31"
+NOTO_EMOJI_COMMIT="9a5261d871451f9b5183c93483cbd68ed916b1e9"
+NOTOTOOLS_COMMIT="cd79db632c9a506ad61ae72bfad5875341ca56b8"
 SRC_URI="
 https://github.com/googlei18n/noto-emoji/archive/${NOTO_EMOJI_COMMIT}.tar.gz
 	-> noto-emoji-${PV}.tar.gz
