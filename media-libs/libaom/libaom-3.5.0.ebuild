@@ -93,7 +93,7 @@ DOCS=( PATENTS )
 RESTRICT="strip"
 # Tests need more wiring up
 RESTRICT+=" !test? ( test ) test"
-N_SAMPLES=1
+N_SAMPLES=5
 
 get_asset_ids() {
 	local types=(
@@ -337,16 +337,10 @@ _src_configure() {
 
 	# For fixing segfault with PGO+BOLT
 	append-flags \
-		-fno-indirect-inlining \
-		-fno-ipa-cp \
-		-fno-ipa-bit-cp
-
-	local test_flags=(
-		-fno-hoist-adjacent-loads \
-		-fno-inline-functions \
-		-fno-inline-small-functions \
-		-fno-gcse-lm  \
-	)
+		$(test-flags \
+			-fno-gcse \
+			-fno-cse-follow-jumps \
+		)
 
 	local mycmakeargs=(
 		-DENABLE_DOCS=$(multilib_native_usex doc ON OFF)
@@ -619,7 +613,7 @@ _trainer_plan_constrained_quality() {
 
 	if [[ "${mode}" == "quick" ]] ; then
 		L=( $(_get_resolutions_quick) )
-		duration="1"
+		duration="5"
 	else
 		L=( $(_get_resolutions) )
 		duration="3"
@@ -764,7 +758,7 @@ _trainer_plan_2_pass_constrained_quality() {
 
 	if [[ "${mode}" == "quick" ]] ; then
 		L=( $(_get_resolutions_quick) )
-		duration="1"
+		duration="5"
 	else
 		L=( $(_get_resolutions) )
 		duration="3"
@@ -789,7 +783,7 @@ _trainer_plan_lossless() {
 	local duration
 
 	if [[ "${mode}" == "quick" ]] ; then
-		duration="1"
+		duration="5"
 	else
 		duration="3"
 	fi
