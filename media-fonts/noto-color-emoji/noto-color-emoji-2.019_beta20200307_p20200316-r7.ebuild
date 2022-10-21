@@ -67,10 +67,8 @@ NOTOTOOLS_COMMIT="e0a39bad11ca47f924b432bb05c3cccd87e68571"
 SRC_URI="
 https://github.com/googlei18n/noto-emoji/archive/${NOTO_EMOJI_COMMIT}.tar.gz
 	-> noto-emoji-${PV}.tar.gz
-!system-nototools? (
 https://github.com/googlei18n/nototools/archive/${NOTOTOOLS_COMMIT}.tar.gz
 	-> nototools-${NOTOTOOLS_COMMIT:0:7}.tar.gz
-)
 "
 RESTRICT="mirror"
 S="${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}"

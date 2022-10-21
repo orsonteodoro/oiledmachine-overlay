@@ -86,15 +86,13 @@ BDEPEND+="
 	)
 "
 FONT_SUFFIX="ttf"
-NOTO_EMOJI_COMMIT="9a5261d871451f9b5183c93483cbd68ed916b1e9"
+NOTO_EMOJI_COMMIT="e8073ab740292f8d5f19b5de144087ac58044d06"
 NOTOTOOLS_COMMIT="cd79db632c9a506ad61ae72bfad5875341ca56b8"
 SRC_URI="
 https://github.com/googlei18n/noto-emoji/archive/${NOTO_EMOJI_COMMIT}.tar.gz
 	-> noto-emoji-${PV}.tar.gz
-!system-nototools? (
 https://github.com/googlei18n/nototools/archive/${NOTOTOOLS_COMMIT}.tar.gz
 	-> nototools-${NOTOTOOLS_COMMIT:0:7}.tar.gz
-)
 "
 RESTRICT="mirror"
 S="${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}"
