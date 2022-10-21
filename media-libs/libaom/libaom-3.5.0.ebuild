@@ -617,7 +617,7 @@ _trainer_plan_constrained_quality() {
 
 	if [[ "${mode}" == "quick" ]] ; then
 		L=( $(_get_resolutions_quick) )
-		duration="5"
+		duration="2"
 	else
 		L=( $(_get_resolutions) )
 		duration="3"
@@ -762,7 +762,7 @@ _trainer_plan_2_pass_constrained_quality() {
 
 	if [[ "${mode}" == "quick" ]] ; then
 		L=( $(_get_resolutions_quick) )
-		duration="5"
+		duration="2"
 	else
 		L=( $(_get_resolutions) )
 		duration="3"
@@ -787,7 +787,7 @@ _trainer_plan_lossless() {
 	local duration
 
 	if [[ "${mode}" == "quick" ]] ; then
-		duration="5"
+		duration="2"
 	else
 		duration="3"
 	fi
