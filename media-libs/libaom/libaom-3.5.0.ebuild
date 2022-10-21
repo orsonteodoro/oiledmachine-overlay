@@ -88,7 +88,7 @@ DOCS=( PATENTS )
 RESTRICT="strip"
 # Tests need more wiring up
 RESTRICT+=" !test? ( test ) test"
-N_SAMPLES=5
+N_SAMPLES=1
 
 get_asset_ids() {
 	local types=(
@@ -186,6 +186,10 @@ pkg_setup() {
 		# For the basic block reorder branch-predictor summary,
 		# see https://github.com/llvm/llvm-project/blob/main/bolt/include/bolt/Passes/BinaryPasses.h#L139
 		export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=branch-predictor -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats"}
+ewarn
+ewarn "When BOLT training this package, there is a possibility of random"
+ewarn "failures (indeterminism)."
+ewarn
 	fi
 
 	uopts_setup
@@ -617,7 +621,7 @@ _trainer_plan_constrained_quality() {
 
 	if [[ "${mode}" == "quick" ]] ; then
 		L=( $(_get_resolutions_quick) )
-		duration="2"
+		duration="1"
 	else
 		L=( $(_get_resolutions) )
 		duration="3"
@@ -762,7 +766,7 @@ _trainer_plan_2_pass_constrained_quality() {
 
 	if [[ "${mode}" == "quick" ]] ; then
 		L=( $(_get_resolutions_quick) )
-		duration="2"
+		duration="1"
 	else
 		L=( $(_get_resolutions) )
 		duration="3"
@@ -787,7 +791,7 @@ _trainer_plan_lossless() {
 	local duration
 
 	if [[ "${mode}" == "quick" ]] ; then
-		duration="2"
+		duration="1"
 	else
 		duration="3"
 	fi
