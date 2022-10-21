@@ -2,6 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- Only for this ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -25,9 +26,6 @@
       https://github.com/googlefonts/noto-emoji/issues
     </bugs-to>
     <doc lang="en">https://www.google.com/get/noto/help/emoji/</doc>
-    <maintainer status="active" type="project">
-      <name>Google</name>
-    </maintainer>
     <remote-id type="github">googlefonts/noto-emoji</remote-id>
   </upstream>
 </pkgmetadata>

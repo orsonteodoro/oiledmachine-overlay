@@ -2,6 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- Only for this ebuild from the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -19,6 +20,8 @@
     Noto Color Emoji 2.020 adds Unicode 13.1 support and new emojis.
 
     Noto Color Emoji 2.034 adds Unicode 14.0 support and new emojis.
+
+    Noto Color Emoji 2.038 adds Unicode 15.0 support and new emojis.
     
     This package is used to build the font from sources.
 
@@ -30,19 +33,18 @@
       https://github.com/googlefonts/noto-emoji/issues
     </bugs-to>
     <doc lang="en">https://www.google.com/get/noto/help/emoji/</doc>
-    <maintainer status="active" type="project">
-      <name>Google</name>
-    </maintainer>
     <remote-id type="github">googlefonts/noto-emoji</remote-id>
   </upstream>
   <use>
-    <flag name="optipng">Compresses emoji images with optipng
-    6 times faster than upstream. (ebuild default, recommended for development
-    or custom modding).
+    <flag name="optipng">
+      Compresses emoji images with optipng 6 times faster than upstream. (ebuild
+      default, recommended for development or custom modding).
     </flag>
-    <flag name="zopflipng">Compresses emoji images with zoptlipng.  Better
-    compression results at around ~3% (~373K savings, ~94 pages of memory
-    savings) and deflate but ~6 times slower (or ~167 minutes longer) compared
-    to optipng.  (upstream default, recommeded for mobile or production)</flag>
+    <flag name="zopflipng">
+      Compresses emoji images with zoptlipng.  Better compression results at
+      around ~3% (~373K savings, ~94 pages of memory savings) and deflate but
+      ~6 times slower (or ~167 minutes longer) compared to optipng.  (upstream
+      default, recommeded for mobile or production)
+    </flag>
   </use>
 </pkgmetadata>

@@ -11,15 +11,17 @@ inherit font
 DESCRIPTION="NotoColorEmoji is colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
 LICENSE="OFL-1.1"
-KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 \
-~s390 ~sh ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris"
+KEYWORDS="
+~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh
+~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris
+"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND="
 	!media-fonts/noto-color-emoji
 	!media-fonts/noto-emoji
 	>=media-libs/fontconfig-2.11.91
-	media-libs/freetype[png]
         >=x11-libs/cairo-1.16
+	media-libs/freetype[png]
 "
 DEPEND="
         ${RDEPEND}
