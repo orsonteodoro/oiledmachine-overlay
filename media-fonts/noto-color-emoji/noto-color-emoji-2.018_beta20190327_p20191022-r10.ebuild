@@ -34,12 +34,14 @@ RDEPEND+="
 	media-libs/freetype[png]
 "
 NOTOTOOLS_DEPEND="
-        $(python_gen_any_dep '>=dev-python/booleanOperations-0.8.2[${PYTHON_USEDEP}]')
-        $(python_gen_any_dep '>=dev-python/defcon-0.6.0[${PYTHON_USEDEP}]')
-        $(python_gen_any_dep '>=dev-python/fonttools-4.0.2[${PYTHON_USEDEP}]')
-        $(python_gen_any_dep '>=dev-python/pillow-6.2.0[${PYTHON_USEDEP}]')
-        $(python_gen_any_dep '>=dev-python/pyclipper-1.1.0_p1[${PYTHON_USEDEP}]')
-        $(python_gen_any_dep '>=media-gfx/scour-0.37[${PYTHON_USEDEP}]')
+        $(python_gen_any_dep '
+		>=dev-python/booleanOperations-0.8.2[${PYTHON_USEDEP}]
+	        >=dev-python/defcon-0.6.0[${PYTHON_USEDEP}]
+	        >=dev-python/fonttools-4.0.2[${PYTHON_USEDEP}]
+	        >=dev-python/pillow-6.2.0[${PYTHON_USEDEP}]
+	        >=dev-python/pyclipper-1.1.0_p1[${PYTHON_USEDEP}]
+	        >=media-gfx/scour-0.37[${PYTHON_USEDEP}]
+	')
 "
 INTERNAL_NOTOTOOLS_PV="0.2.0_p20191019" # see setup.py for versioning ; official release was 20191017
 BDEPEND+="
@@ -72,6 +74,22 @@ https://github.com/googlei18n/nototools/archive/${NOTOTOOLS_COMMIT}.tar.gz
 "
 RESTRICT="mirror"
 S="${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}"
+
+python_check_deps() {
+	python_has_version \
+		">=dev-python/booleanOperations-0.8.2[${PYTHON_USEDEP}]" \
+	        ">=dev-python/defcon-0.6.0[${PYTHON_USEDEP}]" \
+	        ">=dev-python/fonttools-4.0.2[${PYTHON_USEDEP}]" \
+	        ">=dev-python/pillow-6.2.0[${PYTHON_USEDEP}]" \
+	        ">=dev-python/pyclipper-1.1.0_p1[${PYTHON_USEDEP}]" \
+	        ">=media-gfx/scour-0.37[${PYTHON_USEDEP}]" \
+		"dev-python/fonttools[${PYTHON_USEDEP}]"
+
+	if use system-nototools ; then
+		python_has_version \
+			"~dev-python/nototools-"$(ver_cut 1-3 ${INTERNAL_NOTOTOOLS_PV})"[${PYTHON_USEDEP}]"
+	fi
+}
 
 pkg_setup() {
 	python-any-r1_pkg_setup
