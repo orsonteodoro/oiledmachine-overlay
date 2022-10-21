@@ -135,7 +135,7 @@
       Performs an addtional 2 pass training.  Two pass improves quality and rate
       control.  This step can be skipped for live streamers.
 
-      1 second and lowest resolutions only.
+      Lowest resolution only 5 times for 5 seconds.
 
       (Ebuild maintainer recommended for encoding)
     </flag>
@@ -147,7 +147,7 @@
     <flag name="trainer-constrained-quality-quick">
       Use the 1 pass constrained quality trainer.
 
-      1 second and lowest resolutions only.
+      Lowest resolution only 5 times for 5 seconds.
 
       (Ebuild maintainer recommended for decoding)
     </flag>
@@ -159,7 +159,7 @@
     <flag name="trainer-lossless-quick">
       Use the lossless trainer.
 
-      1 second only.
+      Lowest resolution only 5 times for 5 seconds.
     </flag>
   </use>
 </pkgmetadata>

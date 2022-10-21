@@ -5,11 +5,6 @@
 
 EAPI=8
 
-# Training time error occurred during BOLT training with 30 FPS 1280x720 (SDR) decoding.
-# It does not happen after PGI or PGO training before BOLT instrumentation.
-# warped_motion.c:389: av1_highbd_warp_affine_c: Assertion `0 <= sum && sum < (1 << max_bits_horiz)' failed.
-
-TRAIN_SANDBOX_EXCEPTION_VAAPI=1
 UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_TBOLT=1
 
@@ -188,6 +183,8 @@ pkg_setup() {
 	check_video
 
 	if ( has bolt ${IUSE} && use bolt ) || ( has ebolt ${IUSE} && use ebolt ) ; then
+		# For the basic block reorder branch-predictor summary,
+		# see https://github.com/llvm/llvm-project/blob/main/bolt/include/bolt/Passes/BinaryPasses.h#L139
 		export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=branch-predictor -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats"}
 	fi
 
@@ -319,6 +316,13 @@ _src_configure() {
 	fi
 
 	tc-export CC CXX
+
+	# LTO causes a segfault during BOLT training.
+	if ( has bolt ${IUSE} && use bolt ) || ( has ebolt ${IUSE} && use ebolt ) ; then
+		filter-flags \
+			'-flto*' \
+			'-fuse-ld=*'
+	fi
 
 	# -O0 is stuck on ~31 frames for more than double the time compared to -O1 when encoding.
 
