@@ -1,26 +1,34 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+EAPI=8
+
 # See NotoColorEmoji.tmpl.ttx.tmpl for versioning at
 # <namerecord nameID="5" platformID="3" platEncID="1" langID="0x409">
-EAPI=8
+
+inherit font
+
 DESCRIPTION="NotoColorEmoji is colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
 LICENSE="OFL-1.1"
 KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 \
 ~s390 ~sh ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris"
-inherit font
-SLOT="0/${PV}"
-RDEPEND=" !media-fonts/noto-color-emoji
-	  !media-fonts/noto-emoji
-	 >=media-libs/fontconfig-2.11.91
-	   media-libs/freetype[png]
-         >=x11-libs/cairo-1.16"
-DEPEND="dev-python/fonttools
-        ${RDEPEND}"
-SRC_URI=\
-"https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip \
-	-> ${PN}-${PV}.zip"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+RDEPEND="
+	!media-fonts/noto-color-emoji
+	!media-fonts/noto-emoji
+	>=media-libs/fontconfig-2.11.91
+	media-libs/freetype[png]
+        >=x11-libs/cairo-1.16
+"
+DEPEND="
+        ${RDEPEND}
+	dev-python/fonttools
+"
+SRC_URI="
+https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip
+	-> ${PN}-${PV}.zip
+"
 RESTRICT="mirror"
 S="${WORKDIR}"
 FONT_SUFFIX="ttf"
