@@ -6,7 +6,7 @@ EAPI=8
 # See NotoColorEmoji.tmpl.ttx.tmpl for versioning at
 # <namerecord nameID="5" platformID="3" platEncID="1" langID="0x409">
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit font python-any-r1
 
 DESCRIPTION="NotoColorEmoji is colored emojis"
