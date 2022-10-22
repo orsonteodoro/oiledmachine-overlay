@@ -161,6 +161,11 @@ pkg_setup() {
 	if ! [[ "${LANG}" =~ \.utf8$ ]] ; then
 		die "Change your locale to suffix .utf8.  Use \`eselect locale\` to set it."
 	fi
+	if has_version "dev-python/pypng" ; then
+ewarn
+ewarn "If build fails, temporarily uninstall dev-python/pypng."
+ewarn
+	fi
 }
 
 src_prepare() {
