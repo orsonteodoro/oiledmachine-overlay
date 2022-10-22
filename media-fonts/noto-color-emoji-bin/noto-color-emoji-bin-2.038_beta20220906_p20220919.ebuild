@@ -21,6 +21,11 @@ REQUIRED_USE="
 	kernel_Winnt? (
 		cbdt
 	)
+	|| (
+		cbdt
+		colrv1
+		colrv1-no-flags
+	)
 "
 RDEPEND="
 	!media-fonts/noto-color-emoji
