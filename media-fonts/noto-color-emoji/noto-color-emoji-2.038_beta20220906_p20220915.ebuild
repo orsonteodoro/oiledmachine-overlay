@@ -8,6 +8,7 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{8..10} )
 inherit font python-any-r1
+inherit lcnr
 
 DESCRIPTION="NotoColorEmoji is colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
@@ -172,7 +173,6 @@ emoji: \$(EMOJI_FILES)|\
 MISSING_ZOPFLI = fail\nundefine MISSING_OPTIPNG\nemoji: \$(EMOJI_FILES)|g" \
 			Makefile || die
 	fi
-	sed -i -e "s|MISSING_VENV = fail|MISSING_VENV =|g" Makefile || die
 	# Allow output
 	sed -i -e "s|@(\$(PNGQUANT)|(\$(PNGQUANT)|g" Makefile || die
 	sed -i -e "s|@convert|convert|g" Makefile || die
@@ -184,9 +184,6 @@ MISSING_ZOPFLI = fail\nundefine MISSING_OPTIPNG\nemoji: \$(EMOJI_FILES)|g" \
 	if use zopflipng ; then
 		sed -i -e "s|@\$(ZOPFLIPNG)|\$(ZOPFLIPNG)|g" Makefile || die
 	fi
-
-	# check_sequence (commit bebb2f2b39d059e852b98cc0e39ef766a9dfa683) is broken when BYPASS_SEQUENCE_CHECK is True
-	sed -i -e "s|check_sequence ||" Makefile || die
 }
 
 src_compile() {
@@ -201,36 +198,30 @@ src_compile() {
 		export PATH=\
 "${WORKDIR}/nototools-${NOTOTOOLS_COMMIT}/nototools:${PATH}"
 	fi
-	export BYPASS_SEQUENCE_CHECK='True'
+
+	export VIRTUAL_ENV="true"
+	export BYPASS_SEQUENCE_CHECK="true"
 	emake || die "Failed to compile font"
 	[[ ! -f NotoColorEmoji.ttf ]] && die "NotoColorEmoji.ttf missing"
 }
 
 src_install() {
 	font_src_install
-	docinto licenses/font
-	dodoc font/LICENSE
-	docinto licenses/tools_and_images
-	dodoc LICENSE
-	docinto licenses/svg
-	dodoc svg/LICENSE
-	docinto licenses/third_party/color_emoji
-	dodoc third_party/color_emoji/LICENSE
-	docinto licenses/third_party/region-flags
-	dodoc third_party/region-flags/LICENSE
-	docinto licenses/third_party/pngquant
-	dodoc third_party/pngquant/LICENSE
+
+	LCNR_SOURCE="${S}"
+	LCNR_TAG="source"
+	lcnr_install_files
+
 	if ! use system-nototools ; then
-		docinto licenses/third_party/nototools
-		dodoc "${WORKDIR}/nototools-${NOTOTOOLS_COMMIT}/LICENSE"
+		LCNR_SOURCE="${WORKDIR}/nototools-${NOTOTOOLS_COMMIT}"
+		LCNR_TAG="nototools"
+		lcnr_install_files
 	fi
+
 	if use doc ; then
-		docinto readmes
-		dodoc README.md AUTHORS CONTRIBUTING.md CONTRIBUTORS
-		docinto readmes/third_party/color_emoji
-		dodoc third_party/color_emoji/{README,README.third_party}
-		docinto readmes/third_party/region-flags
-		dodoc third_party/region-flags/{AUTHORS,README.third_party}
+		LCNR_SOURCE="${S}"
+		LCNR_TAG="source"
+		lcnr_install_readmes
 	fi
 }
 
