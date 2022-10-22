@@ -25,8 +25,17 @@ KEYWORDS="
 ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc optipng system-nototools +zopflipng"
-REQUIRED_USE+=" ^^ ( optipng zopflipng )"
+IUSE+=" +cbdt +colrv1 doc optipng system-nototools +zopflipng"
+REQUIRED_USE+="
+	^^ (
+		optipng
+		zopflipng
+	)
+	|| (
+		cbdt
+		colrv1
+	)
+"
 RDEPEND+="
         !media-fonts/noto-color-emoji-bin
 	!media-fonts/noto-emoji
@@ -77,6 +86,9 @@ BDEPEND+="
 	)
 	media-gfx/pngquant
 	virtual/pkgconfig
+	colrv1? (
+		$(python_gen_any_dep '>=dev-python/nanoemoji-0.15.0[${PYTHON_USEDEP}]')
+	)
         optipng? (
 		media-gfx/optipng
 	)
@@ -135,6 +147,11 @@ python_check_deps() {
 		">=dev-util/psautohint-2.4.0[${PYTHON_USEDEP}]" \
 		">=media-gfx/scour-0.37[${PYTHON_USEDEP}]" \
 		">=dev-python/fonttools-4.34.4[${PYTHON_USEDEP}]"
+
+	if use colrv1 ; then
+		python_has_version \
+			">=dev-python/nanoemoji-0.15.0[${PYTHON_USEDEP}]"
+	fi
 
 	if use system-nototools ; then
 		python_has_version \
@@ -197,7 +214,8 @@ MISSING_ZOPFLI = fail\nundefine MISSING_OPTIPNG\nemoji: \$(EMOJI_FILES)|g" \
 	fi
 }
 
-src_compile() {
+_build_cbdt() {
+einfo "Building CBDT font"
 	if use optipng ; then
 		export ZOPFLIPNG=
 	else
@@ -213,8 +231,28 @@ src_compile() {
 	export VIRTUAL_ENV="true"
 	export BYPASS_SEQUENCE_CHECK="true"
 
-	emake || die "Failed to compile font"
+	emake
 	[[ ! -f NotoColorEmoji.ttf ]] && die "NotoColorEmoji.ttf missing"
+}
+
+_build_colrv1() {
+	[[ ! -f font/NotoColorEmoji.ttf ]] && _build_cbdt
+
+einfo "Building COLRv1 font"
+	(cd colrv1 && python colrv1_generate_configs.py)
+
+	which nanoemoji || die "nanoemoji is unreachable"
+	(cd colrv1 && rm -rf build/ && nanoemoji *.toml)
+	cp colrv1/build/NotoColorEmoji.ttf fonts/Noto-COLRv1.ttf
+	cp colrv1/build/NotoColorEmoji-noflags.ttf fonts/Noto-COLRv1-noflags.ttf
+
+	python colrv1_postproc.py
+}
+
+src_compile() {
+	rm -rf fonts/*.ttf || die
+	use cbdt && _build_cbdt
+	use colrv1 && _build_colrv1
 }
 
 src_install() {

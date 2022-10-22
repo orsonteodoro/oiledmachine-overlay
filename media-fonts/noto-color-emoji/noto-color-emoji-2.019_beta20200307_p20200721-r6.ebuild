@@ -26,7 +26,12 @@ KEYWORDS="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc optipng system-nototools +zopflipng"
-REQUIRED_USE+=" ^^ ( optipng zopflipng )"
+REQUIRED_USE+="
+	^^ (
+		optipng
+		zopflipng
+	)
+"
 RDEPEND+="
         !media-fonts/noto-color-emoji-bin
 	!media-fonts/noto-emoji
@@ -204,6 +209,7 @@ MISSING_ZOPFLI = fail\nundefine MISSING_OPTIPNG\nemoji: \$(EMOJI_FILES)|g" \
 }
 
 src_compile() {
+	rm -rf fonts/*.ttf || die
 	if use optipng ; then
 		export ZOPFLIPNG=
 	else
@@ -219,7 +225,7 @@ src_compile() {
 	export VIRTUAL_ENV="true"
 	export BYPASS_SEQUENCE_CHECK="true"
 
-	emake || die "Failed to compile font"
+	emake
 	[[ ! -f NotoColorEmoji.ttf ]] && die "NotoColorEmoji.ttf missing"
 }
 

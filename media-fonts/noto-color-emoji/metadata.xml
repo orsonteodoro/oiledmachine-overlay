@@ -36,6 +36,13 @@
     <remote-id type="github">googlefonts/noto-emoji</remote-id>
   </upstream>
   <use>
+    <flag name="cbdt">
+      Bitmap font
+    </flag>
+    <flag name="colrv1">
+      Color Gradient Vector Fonts Version 1 utilizing gradients, composting,
+      blending
+    </flag>
     <flag name="optipng">
       Compresses emoji images with optipng 6 times faster than upstream. (ebuild
       default, recommended for development or custom modding).
