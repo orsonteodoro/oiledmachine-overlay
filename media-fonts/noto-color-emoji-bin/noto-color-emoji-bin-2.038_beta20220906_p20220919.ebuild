@@ -16,6 +16,12 @@ KEYWORDS="
 ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE="+cbdt +colrv1 colrv1-no-flags"
+REQUIRED_USE="
+	kernel_Winnt? (
+		cbdt
+	)
+"
 RDEPEND="
 	!media-fonts/noto-color-emoji
 	!media-fonts/noto-emoji
@@ -31,7 +37,24 @@ EGIT_COMMIT="f826707b28355f6cd1593f504427ca2b1f6c4c19"
 GH_URI="https://github.com/googlefonts/noto-emoji/raw/${EGIT_COMMIT}/fonts/"
 SRC_URI="
 	${GH_URI}/LICENSE -> ${P}.LICENSE
-	${GH_URI}/NotoColorEmoji.ttf -> ${P}.ttf
+	cbdt? (
+		!kernel_Winnt? (
+			${GH_URI}/NotoColorEmoji.ttf
+				-> NotoColorEmoji.ttf.${EGIT_COMMIT:0:7}
+		)
+		kernel_Winnt? (
+			${GH_URI}/NotoColorEmoji_WindowsCompatible.ttf
+				-> NotoColorEmoji_WindowsCompatible.ttf.${EGIT_COMMIT:0:7}
+		)
+	)
+	colrv1? (
+		${GH_URI}/Noto-COLRv1.ttf
+			-> Noto-COLRv1.ttf.${EGIT_COMMIT:0:7}
+	)
+	colrv1-no-flags? (
+		${GH_URI}/Noto-COLRv1-noflags.ttf
+			-> Noto-COLRv1-noflags.ttf.${EGIT_COMMIT:0:7}
+	)
 "
 RESTRICT="mirror"
 S="${WORKDIR}"
@@ -41,7 +64,26 @@ FONT_CONF=( )
 src_unpack() {
 	mkdir -p "${S}" || die
 	cp "${DISTDIR}/${P}.LICENSE" LICENSE || die
-	cp "${DISTDIR}/${P}.ttf" NotoColorEmoji.ttf || die
+
+	if use cbdt ; then
+		cp "${DISTDIR}/NotoColorEmoji.ttf.${EGIT_COMMIT:0:7}" \
+			NotoColorEmoji.ttf || die
+	fi
+
+	if use colrv1 ; then
+		cp "${DISTDIR}/Noto-COLRv1.ttf.${EGIT_COMMIT:0:7}" \
+			Noto-COLRv1.ttf || die
+	fi
+
+	if use colrv1-no-flags ; then
+		cp "${DISTDIR}/Noto-COLRv1-no-flags.ttf.${EGIT_COMMIT:0:7}" \
+			Noto-COLRv1-no-flags.ttf || die
+	fi
+
+	if use kernel_Winnt ; then
+		cp "${DISTDIR}/NotoColorEmoji_WindowsCompatible.ttf.${EGIT_COMMIT:0:7}" \
+			NotoColorEmoji_WindowsCompatible.ttf || die
+	fi
 }
 
 rebuild_fontfiles() {
