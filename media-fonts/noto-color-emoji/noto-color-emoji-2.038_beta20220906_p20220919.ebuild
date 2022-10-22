@@ -239,14 +239,20 @@ _build_colrv1() {
 	[[ ! -f font/NotoColorEmoji.ttf ]] && _build_cbdt
 
 einfo "Building COLRv1 font"
-	(cd colrv1 && python colrv1_generate_configs.py)
+	addpredict /proc/self/comm
+	pushd colrv1 2>/dev/null 1>/dev/null || die
+		${EPYTHON} colrv1_generate_configs.py || popd
+	popd 2>/dev/null 1>/dev/null || die
 
 	which nanoemoji || die "nanoemoji is unreachable"
-	(cd colrv1 && rm -rf build/ && nanoemoji *.toml)
-	cp colrv1/build/NotoColorEmoji.ttf fonts/Noto-COLRv1.ttf
-	cp colrv1/build/NotoColorEmoji-noflags.ttf fonts/Noto-COLRv1-noflags.ttf
+	pushd colrv1 2>/dev/null 1>/dev/null || die
+		rm -rf build/ || die
+		nanoemoji *.toml || die
+	popd 2>/dev/null 1>/dev/null || die
+	cp colrv1/build/NotoColorEmoji.ttf fonts/Noto-COLRv1.ttf || die
+	cp colrv1/build/NotoColorEmoji-noflags.ttf fonts/Noto-COLRv1-noflags.ttf || die
 
-	python colrv1_postproc.py
+	${EPYTHON} colrv1_postproc.py || die
 }
 
 src_compile() {
