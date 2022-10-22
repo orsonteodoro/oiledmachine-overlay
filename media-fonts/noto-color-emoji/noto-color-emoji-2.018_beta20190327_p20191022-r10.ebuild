@@ -51,7 +51,6 @@ BDEPEND+="
 	!system-nototools? (
 		${NOTOTOOLS_DEPEND}
 	)
-        media-gfx/imagemagick
 	media-gfx/pngquant
 	virtual/pkgconfig
         optipng? (
@@ -62,6 +61,10 @@ BDEPEND+="
 	)
 	zopflipng? (
 		app-arch/zopfli
+	)
+	|| (
+		media-gfx/graphicsmagick[png]
+	        media-gfx/imagemagick[png]
 	)
 "
 FONT_SUFFIX="ttf"
@@ -111,6 +114,9 @@ MISSING_OPTIPNG = fail\nundefine MISSING_ZOPFLI\nemoji: \$(EMOJI_FILES)|g" \
 emoji: \$(EMOJI_FILES)|\
 MISSING_ZOPFLI = fail\nundefine MISSING_OPTIPNG\nemoji: \$(EMOJI_FILES)|g" \
 			Makefile || die
+	fi
+	if has_version -b "media-gfx/graphicsmagick" ; then
+		eapply "${FILESDIR}/noto-emoji-20190328-use-gm.patch"
 	fi
 	# Allow output
 	sed -i -e "s|@(\$(PNGQUANT)|(\$(PNGQUANT)|g" Makefile || die

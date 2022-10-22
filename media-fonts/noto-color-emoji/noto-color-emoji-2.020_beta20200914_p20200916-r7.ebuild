@@ -79,7 +79,6 @@ BDEPEND+="
 	!system-nototools? (
 		${NOTOTOOLS_DEPEND}
 	)
-        media-gfx/imagemagick
 	media-gfx/pngquant
 	virtual/pkgconfig
         optipng? (
@@ -90,6 +89,10 @@ BDEPEND+="
 	)
 	zopflipng? (
 		app-arch/zopfli
+	)
+	|| (
+		media-gfx/graphicsmagick[png]
+	        media-gfx/imagemagick[png]
 	)
 "
 FONT_SUFFIX="ttf"
@@ -179,11 +182,14 @@ emoji: \$(EMOJI_FILES)|\
 MISSING_ZOPFLI = fail\nundefine MISSING_OPTIPNG\nemoji: \$(EMOJI_FILES)|g" \
 			Makefile || die
 	fi
+	if has_version -b "media-gfx/graphicsmagick" ; then
+		eapply "${FILESDIR}/noto-emoji-20190328-use-gm.patch"
+	fi
+	eapply "${FILESDIR}/noto-color-emoji-2.019_beta20200307_p20200721-revert-optipng-removal.patch"
 	# Allow output
 	sed -i -e "s|@(\$(PNGQUANT)|(\$(PNGQUANT)|g" Makefile || die
 	sed -i -e "s|@convert|convert|g" Makefile || die
 	sed -i -e "s|@./waveflag|./waveflag|g" Makefile || die
-	eapply "${FILESDIR}/noto-color-emoji-2.019_beta20200307_p20200721-revert-optipng-removal.patch"
 	if use optipng ; then
 		sed -i -e "s|@\$(OPTIPNG)|\$(OPTIPNG)|g" Makefile || die
 	fi
