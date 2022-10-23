@@ -86,10 +86,6 @@ _src_compile() {
 	cmake_src_compile
 }
 
-_src_install() {
-	cmake_src_install
-}
-
 src_compile() {
 	export PATH_ORIG="${PATH}"
 	uopts_src_compile
@@ -133,5 +129,6 @@ train_trainer_custom() {
 }
 
 src_install() {
+	cmake_src_install
 	uopts_src_install
 }
