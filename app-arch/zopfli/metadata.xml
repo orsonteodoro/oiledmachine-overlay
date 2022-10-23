@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- only for this ebuild fork only on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- maintainer-needed -->
+  <upstream>
+    <remote-id type="github">google/zopfli</remote-id>
+  </upstream>
+  <longdescription>
+    This ebuild fork is modified for PGO+BOLT optimization.
+
+    Environment variables:
+
+      ZOPFLI_TRAINER_NOTO_EMOJI_PERCENT_IMAGES - a whole number [0-99] for
+      the percent assets to train.  The default is 1 which 137 emoji images
+      will be processed with zopflipng
+
+  </longdescription>
+  <use>
+    <flag name="bolt">
+      Use 3 step BOLT training
+    </flag>
+    <flag name="ebolt">
+      Use 1 step BOLT training
+    </flag>
+    <flag name="epgo">
+      Use 1 step PGO training
+    </flag>
+    <flag name="pgo">
+      Use 3 step PGO training
+    </flag>
+    <flag name="trainer-zopflipng-with-noto-emoji">
+      Use noto-emoji to train with zopflipng
+    </flag>
+  </use>
+</pkgmetadata>
