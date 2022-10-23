@@ -34,6 +34,11 @@
     <flag name="cbdt">
       Color bitmap font in older format.
     </flag>
+    <flag name="cbdt-win">
+      Color bitmap font in older format for Windows.
+
+      (For use by web developers or cross platform developers)
+    </flag>
     <flag name="colrv1">
       Build fonts as COLRv1 increasing scaling quality and decreasing storage
       size.

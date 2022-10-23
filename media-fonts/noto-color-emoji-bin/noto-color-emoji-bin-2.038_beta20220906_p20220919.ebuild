@@ -16,16 +16,20 @@ KEYWORDS="
 ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="+cbdt +colrv1 colrv1-no-flags"
+IUSE="+cbdt cbdt-win +colrv1 colrv1-no-flags"
 REQUIRED_USE="
 	kernel_Winnt? (
 		cbdt
 	)
 	|| (
 		cbdt
+		cbdt-win
 		colrv1
 		colrv1-no-flags
 	)
+"
+COLRV1_DEPEND="
+	>=media-libs/freetype-2.11.0
 "
 RDEPEND="
 	!media-fonts/noto-color-emoji
@@ -34,7 +38,10 @@ RDEPEND="
         >=x11-libs/cairo-1.16
 	media-libs/freetype[png]
 	colrv1? (
-		>=media-libs/freetype-2.11.0
+		${COLRV1_DEPEND}
+	)
+	colrv1-no-flags? (
+		${COLRV1_DEPEND}
 	)
 "
 DEPEND="
@@ -46,14 +53,12 @@ GH_URI="https://github.com/googlefonts/noto-emoji/raw/${EGIT_COMMIT}/fonts/"
 SRC_URI="
 	${GH_URI}/LICENSE -> ${P}.LICENSE
 	cbdt? (
-		!kernel_Winnt? (
-			${GH_URI}/NotoColorEmoji.ttf
-				-> NotoColorEmoji.ttf.${EGIT_COMMIT:0:7}
-		)
-		kernel_Winnt? (
-			${GH_URI}/NotoColorEmoji_WindowsCompatible.ttf
-				-> NotoColorEmoji_WindowsCompatible.ttf.${EGIT_COMMIT:0:7}
-		)
+		${GH_URI}/NotoColorEmoji.ttf
+			-> NotoColorEmoji.ttf.${EGIT_COMMIT:0:7}
+	)
+	cbdt-win? (
+		${GH_URI}/NotoColorEmoji_WindowsCompatible.ttf
+			-> NotoColorEmoji_WindowsCompatible.ttf.${EGIT_COMMIT:0:7}
 	)
 	colrv1? (
 		${GH_URI}/Noto-COLRv1.ttf
@@ -78,6 +83,11 @@ src_unpack() {
 			NotoColorEmoji.ttf || die
 	fi
 
+	if use cbdt-win ; then
+		cp "${DISTDIR}/NotoColorEmoji_WindowsCompatible.ttf.${EGIT_COMMIT:0:7}" \
+			NotoColorEmoji_WindowsCompatible.ttf || die
+	fi
+
 	if use colrv1 ; then
 		cp "${DISTDIR}/Noto-COLRv1.ttf.${EGIT_COMMIT:0:7}" \
 			Noto-COLRv1.ttf || die
@@ -86,11 +96,6 @@ src_unpack() {
 	if use colrv1-no-flags ; then
 		cp "${DISTDIR}/Noto-COLRv1-no-flags.ttf.${EGIT_COMMIT:0:7}" \
 			Noto-COLRv1-no-flags.ttf || die
-	fi
-
-	if use kernel_Winnt ; then
-		cp "${DISTDIR}/NotoColorEmoji_WindowsCompatible.ttf.${EGIT_COMMIT:0:7}" \
-			NotoColorEmoji_WindowsCompatible.ttf || die
 	fi
 }
 
@@ -109,6 +114,13 @@ src_install() {
 	font_src_install
 	docinto licenses
 	dodoc LICENSE
+
+	find "${ED}/usr/share/fonts" -name "*WindowsCompatible*" -delete
+
+	if use cbdt-win ; then
+		insinto /usr/share/${PN/-bin}
+		doins NotoColorEmoji_WindowsCompatible.ttf
+	fi
 }
 
 pkg_postinst() {

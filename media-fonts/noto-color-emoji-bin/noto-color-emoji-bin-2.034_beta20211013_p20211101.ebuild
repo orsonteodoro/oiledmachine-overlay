@@ -16,11 +16,14 @@ KEYWORDS="
 ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="+cbdt"
+IUSE="+cbdt cbdt-win"
 REQUIRED_USE="
-	cbdt
 	kernel_Winnt? (
 		cbdt
+	)
+	|| (
+		cbdt
+		cbdt-win
 	)
 "
 RDEPEND="
@@ -39,14 +42,12 @@ GH_URI="https://github.com/googlefonts/noto-emoji/raw/${EGIT_COMMIT}/fonts/"
 SRC_URI="
 	${GH_URI}/LICENSE -> ${P}.LICENSE
 	cbdt? (
-		!kernel_Winnt? (
-			${GH_URI}/NotoColorEmoji.ttf
-				-> NotoColorEmoji.ttf.${EGIT_COMMIT:0:7}
-		)
-		kernel_Winnt? (
-			${GH_URI}/NotoColorEmoji_WindowsCompatible.ttf
-				-> NotoColorEmoji_WindowsCompatible.ttf.${EGIT_COMMIT:0:7}
-		)
+		${GH_URI}/NotoColorEmoji.ttf
+			-> NotoColorEmoji.ttf.${EGIT_COMMIT:0:7}
+	)
+	cbdt-win? (
+		${GH_URI}/NotoColorEmoji_WindowsCompatible.ttf
+			-> NotoColorEmoji_WindowsCompatible.ttf.${EGIT_COMMIT:0:7}
 	)
 "
 RESTRICT="mirror"
@@ -63,7 +64,7 @@ src_unpack() {
 			NotoColorEmoji.ttf || die
 	fi
 
-	if use kernel_Winnt ; then
+	if use cbdt-win ; then
 		cp "${DISTDIR}/NotoColorEmoji_WindowsCompatible.ttf.${EGIT_COMMIT:0:7}" \
 			NotoColorEmoji_WindowsCompatible.ttf || die
 	fi
@@ -84,6 +85,13 @@ src_install() {
 	font_src_install
 	docinto licenses
 	dodoc LICENSE
+
+	find "${ED}/usr/share/fonts" -name "*WindowsCompatible*" -delete
+
+	if use cbdt-win ; then
+		insinto /usr/share/${PN/-bin}
+		doins NotoColorEmoji_WindowsCompatible.ttf
+	fi
 }
 
 pkg_postinst() {

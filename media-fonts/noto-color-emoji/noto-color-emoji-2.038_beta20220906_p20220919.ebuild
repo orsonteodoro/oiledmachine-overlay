@@ -25,16 +25,24 @@ KEYWORDS="
 ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" +cbdt +colrv1 colrv1-no-flags doc optipng system-nototools +zopflipng woff2"
+IUSE+=" +cbdt cbdt-win +colrv1 colrv1-no-flags doc optipng system-nototools +zopflipng woff2"
 REQUIRED_USE+="
 	^^ (
 		optipng
 		zopflipng
 	)
+	kernel_Winnt? (
+		cbdt-win
+	)
 	|| (
 		cbdt
+		cbdt-win
 		colrv1
+		colrv1-no-flags
 	)
+"
+COLRV1_DEPEND="
+	>=media-libs/freetype-2.11.0
 "
 RDEPEND+="
         !media-fonts/noto-color-emoji-bin
@@ -43,7 +51,10 @@ RDEPEND+="
         >=x11-libs/cairo-1.16
 	media-libs/freetype[png]
 	colrv1? (
-		>=media-libs/freetype-2.11.0
+		${COLRV1_DEPEND}
+	)
+	colrv1-no-flags? (
+		${COLRV1_DEPEND}
 	)
 	woff2? (
 		>=media-libs/freetype-2.10.2[brotli]
@@ -93,6 +104,9 @@ BDEPEND+="
 	media-gfx/pngquant
 	virtual/pkgconfig
 	colrv1? (
+		$(python_gen_any_dep '>=dev-python/nanoemoji-0.15.0[${PYTHON_USEDEP}]')
+	)
+	colrv1-no-flags? (
 		$(python_gen_any_dep '>=dev-python/nanoemoji-0.15.0[${PYTHON_USEDEP}]')
 	)
         optipng? (
@@ -160,7 +174,7 @@ python_check_deps() {
 		">=media-gfx/scour-0.37[${PYTHON_USEDEP}]" \
 		">=dev-python/fonttools-4.34.4[${PYTHON_USEDEP}]"
 
-	if use colrv1 ; then
+	if use colrv1 || use colrv1-no-flags ; then
 		python_has_version \
 			">=dev-python/nanoemoji-0.15.0[${PYTHON_USEDEP}]"
 	fi
@@ -282,7 +296,9 @@ _compress_font() {
 src_compile() {
 	rm -rf fonts/*.ttf || die
 	use cbdt && _build_cbdt
-	use colrv1 && _build_colrv1
+	if use colrv1 || use colrv1-no-flags ; then
+		_build_colrv1
+	fi
 	use woff2 && _compress_font
 }
 
@@ -314,8 +330,15 @@ src_install() {
 		lcnr_install_readmes
 	fi
 
-	! use kernel_Winnt && find "${ED}" -name "*WindowsCompatible*" -delete
+	find "${ED}/usr/share/fonts" -name "*WindowsCompatible*" -delete
+
+	if use cbdt-win ; then
+		insinto /usr/share/${PN}
+		doins fonts/NotoColorEmoji_WindowsCompatible.ttf
+	fi
+
 	! use cbdt && find "${ED}" -name "NotoColorEmoji*" -delete
+	! use colrv1 && find "${ED}" -name "Noto-COLRv1.*" -delete
 	! use colrv1-no-flags && find "${ED}" -name "Noto-COLRv1-noflags*" -delete
 }
 

@@ -280,7 +280,12 @@ src_install() {
 		lcnr_install_readmes
 	fi
 
-	! use kernel_Winnt && find "${ED}" -name "*WindowsCompatible*" -delete
+	find "${ED}/usr/share/fonts" -name "*WindowsCompatible*" -delete
+
+	if use cbdt-win ; then
+		insinto /usr/share/${PN}
+		doins fonts/NotoColorEmoji_WindowsCompatible.ttf
+	fi
 }
 
 rebuild_fontfiles() {
