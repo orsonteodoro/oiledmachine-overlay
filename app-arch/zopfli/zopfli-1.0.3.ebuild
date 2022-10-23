@@ -75,7 +75,9 @@ _src_configure() {
 	replace-flags -Os -O3
 	replace-flags -Oz -O3
 	# Allow -Ofast
-	if ! ( is-flagq '-O3' || is-flag '-Ofast' ) ; then
+	if is-flagq '-O3' || is-flag '-Ofast' ; then
+		:;
+	else
 		append-flags -O3
 	fi
 
