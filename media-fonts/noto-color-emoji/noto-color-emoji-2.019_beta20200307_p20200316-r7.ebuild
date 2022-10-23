@@ -175,7 +175,7 @@ _compress_font() {
 			woff2_compress "${path}" || die
 		fi
 		if has_version "dev-python/fonttools" ; then
-			fonttools ttLib.woff2 compress -o "${path/.ttf/.woff2}" "${path}"
+			fonttools ttLib.woff2 compress -o "${path/.ttf/.woff2}" "${path}" || die
 		fi
 	done
 }
