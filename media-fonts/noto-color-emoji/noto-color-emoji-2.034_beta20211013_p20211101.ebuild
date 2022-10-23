@@ -247,8 +247,7 @@ _compress_font() {
 	for path in $(find . -name "*.ttf") ; do
 		if has_version "media-libs/woff2" ; then
 			woff2_compress "${path}" || die
-		fi
-		if has_version "dev-python/fonttools" ; then
+		elif has_version "dev-python/fonttools" ; then
 			fonttools ttLib.woff2 compress -o "${path/.ttf/.woff2}" "${path}" || die
 		fi
 	done
