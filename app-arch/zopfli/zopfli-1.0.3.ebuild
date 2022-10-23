@@ -113,7 +113,7 @@ trainer_zopflipng_with_noto_emoji() {
 	max=$(python -c "print(int( ${max} * ( ${ZOPFLI_TRAINER_NOTO_EMOJI_PERCENT_IMAGES_} / 100 ) ))")
 einfo "ZOPFLI_TRAINER_NOTO_EMOJI_PERCENT_IMAGES:\t${ZOPFLI_TRAINER_NOTO_EMOJI_PERCENT_IMAGES_}"
 einfo "N training assets:\t${max} out of ${#L[@]}"
-	for path in $(find "${WORKDIR}/noto-emoji-${NOTO_EMOJI_PV}/png" -type f -name "*.png") ; do
+	for path in ${L[@]} ; do
 		(( ${i} > ${max} )) && break
 		local cmd=(
 			zopflipng -y "${path}" "${T}/trash/"$(basename "${path}")
