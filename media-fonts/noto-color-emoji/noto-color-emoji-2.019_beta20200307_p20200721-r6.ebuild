@@ -25,7 +25,7 @@ KEYWORDS="
 ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc optipng system-nototools +zopflipng"
+IUSE+=" doc optipng system-nototools +zopflipng woff2"
 REQUIRED_USE+="
 	^^ (
 		optipng
@@ -38,6 +38,9 @@ RDEPEND+="
 	>=media-libs/fontconfig-2.11.91
         >=x11-libs/cairo-1.16
 	media-libs/freetype[png]
+	woff2? (
+		>=media-libs/freetype-2.10.2[brotli]
+	)
 "
 NOTOTOOLS_DEPEND="
 	$(python_gen_any_dep '
@@ -91,6 +94,12 @@ BDEPEND+="
 	)
 	system-nototools? (
 		$(python_gen_any_dep '>=dev-python/nototools-0.2.4[${PYTHON_USEDEP}]')
+	)
+	woff2? (
+		|| (
+			media-libs/woff2
+			dev-python/fonttools
+		)
 	)
 	zopflipng? (
 		app-arch/zopfli
@@ -208,8 +217,8 @@ MISSING_ZOPFLI = fail\nundefine MISSING_OPTIPNG\nemoji: \$(EMOJI_FILES)|g" \
 	fi
 }
 
-src_compile() {
-	rm -rf fonts/*.ttf || die
+_build_cbdt() {
+einfo "Building CBDT font"
 	if use optipng ; then
 		export ZOPFLIPNG=
 	else
@@ -227,9 +236,29 @@ src_compile() {
 
 	emake
 	[[ ! -f NotoColorEmoji.ttf ]] && die "NotoColorEmoji.ttf missing"
+	mv *.ttf fonts/ || die
+}
+
+_compress_font() {
+	local path
+	for path in $(find . -name "*.ttf") ; do
+		if has_version "media-libs/woff2" ; then
+			woff2_compress "${path}" || die
+		fi
+		if has_version "dev-python/fonttools" ; then
+			fonttools ttLib.woff2 compress -o "${path/.ttf/.woff2}" "${path}"
+		fi
+	done
+}
+
+src_compile() {
+	rm -rf fonts/*.ttf || die
+	_build_cbdt
+	use woff2 && _compress_font
 }
 
 src_install() {
+	FONT_S="${S}/fonts"
 	font_src_install
 
 	LCNR_SOURCE="${S}"

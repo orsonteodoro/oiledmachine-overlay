@@ -32,11 +32,11 @@
   </upstream>
   <use>
     <flag name="cbdt">
-      Bitmap font
+      Color bitmap font in older format.
     </flag>
     <flag name="colrv1">
-      Color Gradient Vector Fonts Version 1 utilizing gradients, composting,
-      blending
+      Build fonts as COLRv1 increasing scaling quality and decreasing storage
+      size.
     </flag>
     <flag name="colrv1-no-flags">
       Special build that replaces unknown flags with a single placeholder

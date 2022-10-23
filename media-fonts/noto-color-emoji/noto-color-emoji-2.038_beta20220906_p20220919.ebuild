@@ -25,7 +25,7 @@ KEYWORDS="
 ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" +cbdt +colrv1 doc optipng system-nototools +zopflipng"
+IUSE+=" +cbdt +colrv1 colrv1-no-flags doc optipng system-nototools +zopflipng woff2"
 REQUIRED_USE+="
 	^^ (
 		optipng
@@ -42,6 +42,12 @@ RDEPEND+="
 	>=media-libs/fontconfig-2.11.91
         >=x11-libs/cairo-1.16
 	media-libs/freetype[png]
+	colrv1? (
+		>=media-libs/freetype-2.11.0
+	)
+	woff2? (
+		>=media-libs/freetype-2.10.2[brotli]
+	)
 "
 # NOTOTOOLS_DEPEND last update on 20220811
 NOTOTOOLS_DEPEND="
@@ -94,6 +100,12 @@ BDEPEND+="
 	)
 	system-nototools? (
 		$(python_gen_any_dep '>=dev-python/nototools-0.2.17[${PYTHON_USEDEP}]')
+	)
+	woff2? (
+		|| (
+			media-libs/woff2
+			dev-python/fonttools
+		)
 	)
 	zopflipng? (
 		app-arch/zopfli
@@ -231,8 +243,10 @@ einfo "Building CBDT font"
 	export VIRTUAL_ENV="true"
 	export BYPASS_SEQUENCE_CHECK="true"
 
+	${EPYTHON} size_check.py || die
 	emake
 	[[ ! -f NotoColorEmoji.ttf ]] && die "NotoColorEmoji.ttf missing"
+	mv *.ttf fonts/ || die
 }
 
 _build_colrv1() {
@@ -240,13 +254,11 @@ _build_colrv1() {
 
 einfo "Building COLRv1 font"
 	addpredict /proc/self/comm
-	pushd colrv1 2>/dev/null 1>/dev/null || die
-		${EPYTHON} colrv1_generate_configs.py || popd
-	popd 2>/dev/null 1>/dev/null || die
+	${EPYTHON} colrv1_generate_configs.py || die
 
 	which nanoemoji || die "nanoemoji is unreachable"
+	rm -rf colrv1/build/ || die
 	pushd colrv1 2>/dev/null 1>/dev/null || die
-		rm -rf build/ || die
 		nanoemoji *.toml || die
 	popd 2>/dev/null 1>/dev/null || die
 	cp colrv1/build/NotoColorEmoji.ttf fonts/Noto-COLRv1.ttf || die
@@ -255,14 +267,36 @@ einfo "Building COLRv1 font"
 	${EPYTHON} colrv1_postproc.py || die
 }
 
+_compress_font() {
+	local path
+	for path in $(find . -name "*.ttf") ; do
+		if has_version "media-libs/woff2" ; then
+			woff2_compress "${path}" || die
+		fi
+		if has_version "dev-python/fonttools" ; then
+			fonttools ttLib.woff2 compress -o "${path/.ttf/.woff2}" "${path}"
+		fi
+	done
+}
+
 src_compile() {
 	rm -rf fonts/*.ttf || die
 	use cbdt && _build_cbdt
 	use colrv1 && _build_colrv1
+	use woff2 && _compress_font
 }
 
 src_install() {
+	FONT_S="${S}/fonts"
 	font_src_install
+
+	if use woff2 ; then
+		insinto "/usr/share/${PN}"
+		local path
+		for path in $(find font -name "*.woff2") ; do
+			doins "${path}"
+		done
+	fi
 
 	LCNR_SOURCE="${S}"
 	LCNR_TAG="source"
@@ -281,6 +315,8 @@ src_install() {
 	fi
 
 	! use kernel_Winnt && find "${ED}" -name "*WindowsCompatible*" -delete
+	! use cbdt && find "${ED}" -name "NotoColorEmoji*" -delete
+	! use colrv1-no-flags && find "${ED}" -name "Noto-COLRv1-noflags*" -delete
 }
 
 rebuild_fontfiles() {
