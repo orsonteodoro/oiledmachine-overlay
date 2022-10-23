@@ -99,7 +99,11 @@ BDEPEND+="
 	woff2? (
 		|| (
 			media-libs/woff2
-			dev-python/fonttools
+			(
+				$(python_gen_any_dep '
+					dev-python/fonttools[woff,${PYTHON_USEDEP}]
+				')
+			)
 		)
 	)
 	zopflipng? (
@@ -162,6 +166,10 @@ python_check_deps() {
 	if use system-nototools ; then
 		python_has_version \
 			">=dev-python/nototools-0.2.13[${PYTHON_USEDEP}]"
+	fi
+	if use woff2 ; then
+		has_version "media-libs/woff2" \
+			|| python_has_version "dev-python/fonttools[woff,${PYTHON_USEDEP}]"
 	fi
 }
 
@@ -247,7 +255,7 @@ _compress_font() {
 	for path in $(find . -name "*.ttf") ; do
 		if has_version "media-libs/woff2" ; then
 			woff2_compress "${path}" || die
-		elif has_version "dev-python/fonttools" ; then
+		elif has_version "dev-python/fonttools[woff]" ; then
 			fonttools ttLib.woff2 compress -o "${path/.ttf/.woff2}" "${path}" || die
 		fi
 	done
