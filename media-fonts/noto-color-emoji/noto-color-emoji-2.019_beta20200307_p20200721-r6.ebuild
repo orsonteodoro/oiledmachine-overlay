@@ -7,8 +7,7 @@ EAPI=8
 # <namerecord nameID="5" platformID="3" platEncID="1" langID="0x409">
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit font python-any-r1
-inherit lcnr
+inherit font lcnr python-any-r1
 
 DESCRIPTION="NotoColorEmoji is colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
@@ -25,7 +24,7 @@ KEYWORDS="
 ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc optipng system-nototools +zopflipng woff2"
+IUSE+=" doc +optipng system-nototools zopflipng woff2"
 REQUIRED_USE+="
 	^^ (
 		optipng
