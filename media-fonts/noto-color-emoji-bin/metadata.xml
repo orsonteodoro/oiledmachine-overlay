@@ -20,8 +20,6 @@
     Noto Color Emoji 2.034 adds Unicode 14.0 support and new emojis.
 
     Noto Color Emoji 2.038 adds Unicode 15.0 support and new emojis.
-
-    The WindowsCompatible variation is a CBDT font.
   </longdescription>
   <upstream>
     <bugs-to>
@@ -32,7 +30,7 @@
   </upstream>
   <use>
     <flag name="cbdt">
-      Color bitmap font in older format.
+      Color bitmap font in older format.  (Compatible with current font stack)
     </flag>
     <flag name="cbdt-win">
       Color bitmap font in older format for Windows.
@@ -41,11 +39,11 @@
     </flag>
     <flag name="colrv1">
       Build fonts as COLRv1 increasing scaling quality and decreasing storage
-      size.
+      size.  (Not widely supported)
     </flag>
     <flag name="colrv1-no-flags">
       Special build that replaces unknown flags with a single placeholder
-      unknown flag image and removal of region flags.
+      unknown flag image and removal of region flags.  (Not widely supported)
     </flag>
   </use>
 </pkgmetadata>
