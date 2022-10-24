@@ -200,16 +200,20 @@ _epgo_configure() {
 	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		if tc-is-clang ; then
 			local clang_pv=$(clang-fullversion)
-			if ! has_version "~sys-libs/compiler-rt-sanitizers-${clang_pv}[${MULTILIB_ABI_FLAG},profile]" \
-				&& ! has_version "=sys-libs/compiler-rt-sanitizers-${clang_pv}*[${MULTILIB_ABI_FLAG},profile]" ; then
+			local use_arg=""
+			if [[ "${_MULTILIB_BUILD_ECLASS}" == "1" ]] ; then
+				use_arg="${MULTILIB_ABI_FLAG},"
+			fi
+			if ! has_version "~sys-libs/compiler-rt-sanitizers-${clang_pv}[${use_arg}profile]" \
+				&& ! has_version "=sys-libs/compiler-rt-sanitizers-${clang_pv}*[${use_arg}profile]" ; then
 eerror
 eerror "You need to emerge"
 eerror
-eerror "~sys-libs/compiler-rt-sanitizers-${clang_pv}[${MULTILIB_ABI_FLAG},profile]"
+eerror "~sys-libs/compiler-rt-sanitizers-${clang_pv}[$use_arg}profile]"
 eerror
 eerror "  or"
 eerror
-eerror "=sys-libs/compiler-rt-sanitizers-${clang_pv}*[${MULTILIB_ABI_FLAG},profile]"
+eerror "=sys-libs/compiler-rt-sanitizers-${clang_pv}*[${use_arg}profile]"
 eerror
 				die
 			fi
