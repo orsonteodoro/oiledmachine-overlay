@@ -49,7 +49,10 @@ KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~loong ppc ppc64 ~riscv ~s390 sparc 
 DOCS=( CONTRIBUTORS README README.zopflipng )
 
 pkg_setup() {
-	export ZOPFLI_TRAINER_NOTO_EMOJI_PERCENT_IMAGES_=${ZOPFLI_TRAINER_NOTO_EMOJI_PERCENT_IMAGES:-1}
+	export ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_=${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES:-30}
+	[[ -z "${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_}" ]] && ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_=30
+	(( ${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_} > 13739 )) && ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_=13739
+	(( ${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_} < 1 )) && ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_=1
 	if ( has bolt ${IUSE} && use bolt ) || ( has ebolt ${IUSE} && use ebolt ) ; then
 		# For the basic block reorder branch-predictor summary,
 		# see https://github.com/llvm/llvm-project/blob/main/bolt/include/bolt/Passes/BinaryPasses.h#L139
@@ -64,7 +67,7 @@ pkg_setup() {
 -use-aggr-reg-reassign \
 "
 		export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-" \
--reorder-blocks=branch-predictor \
+-reorder-blocks=ext-tsp \
 -reorder-functions=hfsort \
 -split-functions \
 -split-all-cold \
@@ -131,15 +134,12 @@ _src_post_train() {
 trainer_zopflipng_with_noto_emoji() {
 	mkdir -p "${T}/trash" || die
 	local L=( $(find "${WORKDIR}/noto-emoji-${NOTO_EMOJI_PV}/png" -type f -name "*.png" | shuf) )
-	local max=${#L[@]}
 	local path
 	local i=0
 
-	max=$(python -c "print(int( ${max} * ( ${ZOPFLI_TRAINER_NOTO_EMOJI_PERCENT_IMAGES_} / 100 ) ))")
-einfo "ZOPFLI_TRAINER_NOTO_EMOJI_PERCENT_IMAGES:\t${ZOPFLI_TRAINER_NOTO_EMOJI_PERCENT_IMAGES_}"
-einfo "N training assets:\t${max} out of ${#L[@]}"
+einfo "ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES:\t${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_} out of ${#L[@]}"
 	for path in ${L[@]} ; do
-		(( ${i} > ${max} )) && break
+		(( ${i} > ${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_} )) && break
 		local cmd=(
 			zopflipng -y "${path}" "${T}/trash/"$(basename "${path}")
 		)

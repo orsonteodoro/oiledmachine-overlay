@@ -15,8 +15,8 @@
 
     Environment variables:
 
-      ZOPFLI_TRAINER_NOTO_EMOJI_PERCENT_IMAGES - a whole number [0-99] for
-      the percent assets to train.  The default is 1 which 137 emoji images
+      ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES - a whole number [1-13739] for
+      the number of assets to train.  The default is 30 emoji images
       will be processed with zopflipng
 
   </longdescription>
