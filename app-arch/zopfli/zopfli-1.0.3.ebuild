@@ -16,9 +16,16 @@ LICENSE="
 "
 # The Apache-2.0 does not have all rights reserved in the template.
 IUSE+="
+	bolt-aggressive-optimizations
 	trainer-zopflipng-with-noto-emoji
 "
 REQUIRED_USE+="
+	bolt-aggressive-optimizations? (
+		|| (
+			bolt
+			ebolt
+		)
+	)
 	bolt? (
 		trainer-zopflipng-with-noto-emoji
 	)
@@ -42,13 +49,31 @@ KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~loong ppc ppc64 ~riscv ~s390 sparc 
 DOCS=( CONTRIBUTORS README README.zopflipng )
 
 pkg_setup() {
-	uopts_setup
 	export ZOPFLI_TRAINER_NOTO_EMOJI_PERCENT_IMAGES_=${ZOPFLI_TRAINER_NOTO_EMOJI_PERCENT_IMAGES:-1}
 	if ( has bolt ${IUSE} && use bolt ) || ( has ebolt ${IUSE} && use ebolt ) ; then
 		# For the basic block reorder branch-predictor summary,
 		# see https://github.com/llvm/llvm-project/blob/main/bolt/include/bolt/Passes/BinaryPasses.h#L139
-		export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=branch-predictor -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats"}
+		local extra_args=""
+		use bolt-aggressive-optimizations && extra_args+=" \
+-icf \
+-indirect-call-promotion=all \
+-frame-opt=hot \
+-jump-tables=aggressive \
+-reg-reassign \
+-simplify-rodata-loads \
+-use-aggr-reg-reassign \
+"
+		export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-" \
+-reorder-blocks=branch-predictor \
+-reorder-functions=hfsort \
+-split-functions \
+-split-all-cold \
+-split-eh \
+-dyno-stats \
+${extra_args} \
+"}
 	fi
+	uopts_setup
 }
 
 src_unpack() {

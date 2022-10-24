@@ -21,6 +21,9 @@
 
   </longdescription>
   <use>
+    <flag name="bolt-aggressive-optimizations">
+      Increase the number of BOLT optimizations beyond the suggestions.
+    </flag>
     <flag name="bolt">
       Use 3 step BOLT training
     </flag>
