@@ -123,6 +123,11 @@ BDEPEND+="
 				')
 			)
 		)
+		cbdt-win? (
+			$(python_gen_any_dep '
+				dev-python/fonttools[woff,${PYTHON_USEDEP}]
+			')
+		)
 	)
 	zopflipng? (
 		app-arch/zopfli
@@ -189,6 +194,8 @@ python_check_deps() {
 	if use woff2 ; then
 		has_version "media-libs/woff2" \
 			|| python_has_version "dev-python/fonttools[woff,${PYTHON_USEDEP}]"
+		use cbdt-win \
+			&& python_has_version "dev-python/fonttools[woff,${PYTHON_USEDEP}]"
 	fi
 }
 
@@ -291,10 +298,23 @@ einfo "Building COLRv1 font"
 _compress_font() {
 	local path
 	for path in $(find . -name "*.ttf") ; do
-		if has_version "media-libs/woff2" ; then
-			woff2_compress "${path}" || die
+		if has_version "dev-python/fonttools[woff]" \
+			&& [[ "${path}" =~ "WindowsCompatible" ]] ; then
+			fonttools \
+				ttLib.woff2 \
+				compress \
+				--no-glyf-transform \
+				-o "${path/.ttf/.woff2}" \
+				"${path}" || die
+		elif has_version "media-libs/woff2" ; then
+			woff2_compress \
+				"${path}" || die
 		elif has_version "dev-python/fonttools[woff]" ; then
-			fonttools ttLib.woff2 compress -o "${path/.ttf/.woff2}" "${path}" || die
+			fonttools \
+				ttLib.woff2 \
+				compress \
+				-o "${path/.ttf/.woff2}" \
+				"${path}" || die
 		fi
 	done
 }
@@ -306,10 +326,9 @@ src_compile() {
 		_build_colrv1
 	fi
 	use woff2 && _compress_font
-	unset LD_PRELOAD
 
-	# Junk file
-	find "${S}/fonts" -name "NotoColorEmoji.tmpl.ttf" -delete
+	# Junk files
+	find "${S}/fonts" -name "*.tmpl.*" -delete
 }
 
 src_test() {

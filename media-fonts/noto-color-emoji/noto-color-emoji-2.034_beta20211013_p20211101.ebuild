@@ -24,11 +24,14 @@ KEYWORDS="
 ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc +optipng system-nototools test woff2 zopflipng"
+IUSE+=" cbdt-win doc +optipng system-nototools test woff2 zopflipng"
 REQUIRED_USE+="
 	^^ (
 		optipng
 		zopflipng
+	)
+	kernel_Winnt? (
+		cbdt-win
 	)
 "
 RDEPEND+="
@@ -104,6 +107,11 @@ BDEPEND+="
 				')
 			)
 		)
+		cbdt-win? (
+			$(python_gen_any_dep '
+				dev-python/fonttools[woff,${PYTHON_USEDEP}]
+			')
+		)
 	)
 	zopflipng? (
 		app-arch/zopfli
@@ -169,6 +177,8 @@ python_check_deps() {
 	if use woff2 ; then
 		has_version "media-libs/woff2" \
 			|| python_has_version "dev-python/fonttools[woff,${PYTHON_USEDEP}]"
+		use cbdt-win \
+			&& python_has_version "dev-python/fonttools[woff,${PYTHON_USEDEP}]"
 	fi
 }
 
@@ -253,10 +263,23 @@ einfo "Building CBDT font"
 _compress_font() {
 	local path
 	for path in $(find . -name "*.ttf") ; do
-		if has_version "media-libs/woff2" ; then
-			woff2_compress "${path}" || die
+		if has_version "dev-python/fonttools[woff]" \
+			&& [[ "${path}" =~ "WindowsCompatible" ]] ; then
+			fonttools \
+				ttLib.woff2 \
+				compress \
+				--no-glyf-transform \
+				-o "${path/.ttf/.woff2}" \
+				"${path}" || die
+		elif has_version "media-libs/woff2" ; then
+			woff2_compress \
+				"${path}" || die
 		elif has_version "dev-python/fonttools[woff]" ; then
-			fonttools ttLib.woff2 compress -o "${path/.ttf/.woff2}" "${path}" || die
+			fonttools \
+				ttLib.woff2 \
+				compress \
+				-o "${path/.ttf/.woff2}" \
+				"${path}" || die
 		fi
 	done
 }
@@ -266,8 +289,8 @@ src_compile() {
 	_build_cbdt
 	use woff2 && _compress_font
 
-	# Junk file
-	find "${S}/fonts" -name "NotoColorEmoji.tmpl.ttf" -delete
+	# Junk files
+	find "${S}/fonts" -name "*.tmpl.*" -delete
 }
 
 src_test() {

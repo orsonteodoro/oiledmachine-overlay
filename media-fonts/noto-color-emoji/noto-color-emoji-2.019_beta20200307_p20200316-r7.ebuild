@@ -180,9 +180,14 @@ _compress_font() {
 	local path
 	for path in $(find . -name "*.ttf") ; do
 		if has_version "media-libs/woff2" ; then
-			woff2_compress "${path}" || die
+			woff2_compress \
+				"${path}" || die
 		elif has_version "dev-python/fonttools[woff]" ; then
-			fonttools ttLib.woff2 compress -o "${path/.ttf/.woff2}" "${path}" || die
+			fonttools \
+				ttLib.woff2 \
+				compress \
+				-o "${path/.ttf/.woff2}" \
+				"${path}" || die
 		fi
 	done
 }
@@ -192,8 +197,8 @@ src_compile() {
 	_build_cbdt
 	use woff2 && _compress_font
 
-	# Junk file
-	find "${S}/fonts" -name "NotoColorEmoji.tmpl.ttf" -delete
+	# Junk files
+	find "${S}/fonts" -name "*.tmpl.*" -delete
 }
 
 src_test() {
