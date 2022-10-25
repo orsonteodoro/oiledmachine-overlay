@@ -11,12 +11,14 @@ DESCRIPTION="Minimal config to get colored Noto emojis working on Gentoo."
 LICENSE="CC-PD"
 KEYWORDS="~amd64 ~x86"
 IUSE="
-+cbdt +colrv1
++cbdt cbdt-win +colrv1 colrv1-no-flags
 "
 REQUIRED_USE="
 	|| (
 		cbdt
+		cbdt-win
 		colrv1
+		colrv1-no-flags
 	)
 "
 SLOT="0"
@@ -26,16 +28,16 @@ RDEPEND="
 	media-libs/freetype[png]
 	colrv1? (
 		|| (
-			>=media-fonts/noto-color-emoji-2.038[cbdt?,colrv1?]
-			>=media-fonts/noto-color-emoji-bin-2.038[cbdt?,colrv1?]
+			>=media-fonts/noto-color-emoji-2.038[colrv1?,colrv1-no-flags?]
+			>=media-fonts/noto-color-emoji-bin-2.038[colrv1?,colrv1-no-flags?]
 		)
 	)
 	cbdt? (
 		|| (
 			<media-fonts/noto-color-emoji-2.038
 			<media-fonts/noto-color-emoji-bin-2.038
-			>=media-fonts/noto-color-emoji-2.038[cbdt?]
-			>=media-fonts/noto-color-emoji-bin-2.038[cbdt?]
+			>=media-fonts/noto-color-emoji-2.038[cbdt?,cbdt-win?]
+			>=media-fonts/noto-color-emoji-bin-2.038[cbdt?,cbdt-win?]
 			media-fonts/noto-emoji
 		)
 	)
@@ -47,6 +49,19 @@ RESTRICT="nofetch"
 
 FONT_CONF=( "${S}/61-noto.conf" )
 
+pkg_setup() {
+	export CBDT_DEFAULT=${NOTO_COLOR_EMOJI_CBDT_DEFAULT:-"Noto Color Emoji"}
+	export COLRV1_DEFAULT=${NOTO_COLOR_EMOJI_COLRV1_DEFAULT:-"Noto COLRv1"}
+einfo
+einfo "NOTO_COLOR_EMOJI_CBDT_DEFAULT:\t${CBDT_DEFAULT}"
+einfo "NOTO_COLOR_EMOJI_COLRV1_DEFAULT:\t${COLRV1_DEFAULT}"
+einfo
+einfo "See \`epkginfo -x media-fonts/noto-color-emoji-config::oiledmachine-overlay\`"
+einfo "or metadata.xml for valid values or instructions to change them."
+einfo
+	font_pkg_setup
+}
+
 src_unpack() {
 	mkdir -p "${S}" || die
 	cat "${FILESDIR}/61-noto-${MY_PV}.conf" > "${S}/61-noto.conf" || die
@@ -56,16 +71,18 @@ eerror "USE=-colrv1 is required if using distro noto-emoji package."
 eerror
 		die
 	fi
-	if ! use cbdt ; then
+
+	if ! use cbdt && ! use cbdt-win ; then
 		sed -i -e '/__BEGIN_HAS_CBDT__/,/__END_HAS_CBDT__/d' "${S}/61-noto.conf" || die
 	else
 		sed -i -e '/__BEGIN_HAS_CBDT__/d' "${S}/61-noto.conf" || die
 		sed -i -e '/__END_HAS_CBDT__/d' "${S}/61-noto.conf" || die
+		sed -i -e "s|__HAS_CBDT__|${CBDT_DEFAULT}|g" "${S}/61-noto.conf" || die
 	fi
-	if use colrv1 ; then
-		sed -i -e "s|__HAS_COLRV1__|Noto COLRv1|g" "${S}/61-noto.conf" || die
+	if use colrv1 || use colrv1-no-flags ; then
+		sed -i -e "s|__HAS_COLRV1__|${COLRV1_DEFAULT}|g" "${S}/61-noto.conf" || die
 	else
-		sed -i -e "s|__HAS_COLRV1__|Noto Color Emoji|g" "${S}/61-noto.conf" || die
+		sed -i -e "s|__HAS_COLRV1__|${CBDT_DEFAULT}|g" "${S}/61-noto.conf" || die
 	fi
 }
 

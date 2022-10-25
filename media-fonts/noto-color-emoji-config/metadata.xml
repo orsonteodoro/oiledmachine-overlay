@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Only for this ebuild from the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+
+    Environment Variables
+
+      NOTO_COLOR_EMOJI_CBDT_DEFAULT - The default CBDT family name.
+
+      Acceptable values:
+
+        "Noto Color Emoji" [default]
+        "Noto Color Emoji (Windows)"
+
+
+    NOTO_COLOR_EMOJI_COLRV1_DEFAULT - The default COLRv1 family name.
+
+      Acceptable values:
+
+        "Noto COLRv1" [default]
+        "Noto COLRv1 (noflags)"
+
+
+    These values can be changed through a per-package env file.
+    Details can be found at:
+
+      https://wiki.gentoo.org/wiki//etc/portage/package.env
+
+    After setting new defaults, re-emerge the package.
+
+  </longdescription>
+  <use>
+    <flag name="cbdt">
+      Color bitmap font in older format.  (Compatible systemwide)
+    </flag>
+    <flag name="cbdt-win">
+      Color bitmap font in older format for Windows.
+
+      (For use by web developers or cross platform developers)
+    </flag>
+    <flag name="colrv1">
+      Build fonts as COLRv1 increasing scaling quality and decreasing storage
+      size.  (Blink 93+ only)
+    </flag>
+    <flag name="colrv1-no-flags">
+      Special build that replaces unknown flags with a single placeholder
+      unknown flag image and removal of region flags.  (Blink 93+ only)
+    </flag>
+  </use>
+</pkgmetadata>
