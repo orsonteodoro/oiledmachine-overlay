@@ -24,7 +24,7 @@ KEYWORDS="
 ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" +cbdt cbdt-win +colrv1 colrv1-no-flags doc +optipng system-nototools zopflipng woff2"
+IUSE+=" +cbdt cbdt-win +colrv1 colrv1-no-flags doc +optipng system-nototools test woff2 zopflipng"
 REQUIRED_USE+="
 	^^ (
 		optipng
@@ -193,6 +193,7 @@ python_check_deps() {
 }
 
 pkg_setup() {
+	font_pkg_setup
 	python-any-r1_pkg_setup
 #	Prevents:
 #	Traceback (most recent call last):
@@ -305,6 +306,17 @@ src_compile() {
 		_build_colrv1
 	fi
 	use woff2 && _compress_font
+	unset LD_PRELOAD
+
+	# Junk file
+	find "${S}/fonts" -name "NotoColorEmoji.tmpl.ttf" -delete
+}
+
+src_test() {
+	local path
+	for path in $(find fonts -name "*.ttf" -o -name "*.woff2") ; do
+		fc-query "${path}" || die
+	done
 }
 
 src_install() {
@@ -314,7 +326,7 @@ src_install() {
 	if use woff2 ; then
 		insinto "/usr/share/${PN}"
 		local path
-		for path in $(find font -name "*.woff2") ; do
+		for path in $(find fonts -name "*.woff2") ; do
 			doins "${path}"
 		done
 	fi
@@ -347,20 +359,8 @@ src_install() {
 	! use colrv1-no-flags && find "${ED}" -name "Noto-COLRv1-noflags*" -delete
 }
 
-rebuild_fontfiles() {
-        einfo "Refreshing fonts.scale and fonts.dir..."
-        cd ${FONT_ROOT}
-        mkfontdir -- ${FONT_TARGETS}
-        if [ "${ROOT}" = "/" ] &&  [ -x /usr/bin/fc-cache ]
-        then
-                einfo "Updating font cache..."
-                HOME="/root" /usr/bin/fc-cache -f ${FONT_TARGETS}
-        fi
-}
-
 pkg_postinst() {
-        rebuild_fontfiles
-	fc-cache -fv
+	font_pkg_postinst
 einfo
 einfo "To see emojis in your x11-term you need to switch to a .utf8 suffixed"
 einfo "locale.  To set the locale see \`eselect locale\`."
@@ -368,9 +368,4 @@ einfo
 einfo "\`emerge media-fonts/noto-color-emoji-config\` to fix emojis on firefox,"
 einfo "google-chrome, etc systemwide."
 einfo
-}
-
-pkg_postrm() {
-        rebuild_fontfiles
-	fc-cache -fv
 }
