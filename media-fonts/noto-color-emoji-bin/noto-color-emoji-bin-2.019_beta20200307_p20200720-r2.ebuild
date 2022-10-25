@@ -44,17 +44,6 @@ src_unpack() {
 	cp "${DISTDIR}/${P}.ttf" NotoColorEmoji.ttf || die
 }
 
-rebuild_fontfiles() {
-        einfo "Refreshing fonts.scale and fonts.dir..."
-        cd ${FONT_ROOT}
-        mkfontdir -- ${FONT_TARGETS}
-        if [ "${ROOT}" = "/" ] &&  [ -x /usr/bin/fc-cache ]
-        then
-                einfo "Updating font cache..."
-                HOME="/root" /usr/bin/fc-cache -f ${FONT_TARGETS}
-        fi
-}
-
 src_install() {
 	font_src_install
 	docinto licenses
@@ -62,8 +51,7 @@ src_install() {
 }
 
 pkg_postinst() {
-        rebuild_fontfiles
-	fc-cache -fv
+	font_pkg_postinst
 ewarn
 ewarn "To see emojis in your x11-term you need to switch to a .utf8 suffixed"
 ewarn "locale via \`eselect locale\`."
@@ -75,9 +63,4 @@ ewarn "\`emerge noto-color-emoji-config\` from ebuild from oiledmachine-overlay"
 ewarn "to get noto color emojis to display properly on firefox, google-chrome,"
 ewarn "etc systemwide."
 ewarn
-}
-
-pkg_postrm() {
-        rebuild_fontfiles
-	fc-cache -fv
 }

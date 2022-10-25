@@ -195,10 +195,13 @@ _compress_font() {
 src_compile() {
 	rm -rf fonts/*.ttf || die
 	_build_cbdt
-	use woff2 && _compress_font
+
+	cd "${S}" || die
 
 	# Junk files
-	find "${S}/fonts" -name "*.tmpl.*" -delete
+	find "fonts" -name "*.tmpl.*" -delete
+
+	use woff2 && _compress_font
 }
 
 src_test() {

@@ -325,10 +325,17 @@ src_compile() {
 	if use colrv1 || use colrv1-no-flags ; then
 		_build_colrv1
 	fi
-	use woff2 && _compress_font
+
+	cd "${S}" || die
 
 	# Junk files
-	find "${S}/fonts" -name "*.tmpl.*" -delete
+	find "fonts" -name "*.tmpl.*" -delete
+	! use cbdt && find "fonts" -name "NotoColorEmoji*" -delete
+	! use cbdt-win && find "fonts" -name "*WindowsCompatible*" -delete
+	! use colrv1 && find "fonts" -name "Noto-COLRv1.*" -delete
+	! use colrv1-no-flags && find "fonts" -name "Noto-COLRv1-noflags*" -delete
+
+	use woff2 && _compress_font
 }
 
 src_test() {
@@ -366,16 +373,12 @@ src_install() {
 		lcnr_install_readmes
 	fi
 
-	find "${ED}/usr/share/fonts" -name "*WindowsCompatible*" -delete
-
 	if use cbdt-win ; then
 		insinto /usr/share/${PN}
 		doins fonts/NotoColorEmoji_WindowsCompatible.ttf
 	fi
 
-	! use cbdt && find "${ED}" -name "NotoColorEmoji*" -delete
-	! use colrv1 && find "${ED}" -name "Noto-COLRv1.*" -delete
-	! use colrv1-no-flags && find "${ED}" -name "Noto-COLRv1-noflags*" -delete
+	find "${ED}/usr/share/fonts" -name "*WindowsCompatible*" -delete
 }
 
 pkg_postinst() {

@@ -287,10 +287,14 @@ _compress_font() {
 src_compile() {
 	rm -rf fonts/*.ttf || die
 	_build_cbdt
-	use woff2 && _compress_font
+
+	cd "${S}" || die
 
 	# Junk files
-	find "${S}/fonts" -name "*.tmpl.*" -delete
+	find "fonts" -name "*.tmpl.*" -delete
+	! use cbdt-win && find "fonts" -name "*WindowsCompatible*" -delete
+
+	use woff2 && _compress_font
 }
 
 src_test() {
@@ -328,12 +332,12 @@ src_install() {
 		lcnr_install_readmes
 	fi
 
-	find "${ED}/usr/share/fonts" -name "*WindowsCompatible*" -delete
-
 	if use cbdt-win ; then
 		insinto /usr/share/${PN}
 		doins fonts/NotoColorEmoji_WindowsCompatible.ttf
 	fi
+
+	find "${ED}/usr/share/fonts" -name "*WindowsCompatible*" -delete
 }
 
 pkg_postinst() {
