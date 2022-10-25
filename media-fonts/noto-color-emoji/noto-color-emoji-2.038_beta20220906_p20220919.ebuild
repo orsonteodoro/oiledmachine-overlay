@@ -150,6 +150,25 @@ RESTRICT="mirror"
 S="${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}"
 
 python_check_deps() {
+	local extra
+
+	if use colrv1 || use colrv1-no-flags ; then
+		extra+=( ">=dev-python/nanoemoji-0.15.0[${PYTHON_USEDEP}]" )
+	fi
+
+	if use system-nototools ; then
+		extra+=( ">=dev-python/nototools-0.2.17[${PYTHON_USEDEP}]" )
+	fi
+
+	if use woff2 ; then
+		if ! has_version "media-libs/woff2" ; then
+			extra+=( "dev-python/fonttools[woff,${PYTHON_USEDEP}]" )
+		fi
+		if use cbdt-win ; then
+			extra+=( "dev-python/fonttools[woff,${PYTHON_USEDEP}]" )
+		fi
+	fi
+
 	python_has_version \
 		">=app-arch/brotli-1.0.9[${PYTHON_USEDEP},python]" \
 		">=dev-python/appdirs-1.4.4[${PYTHON_USEDEP}]" \
@@ -180,23 +199,8 @@ python_check_deps() {
 		">=dev-util/afdko-3.9.1[${PYTHON_USEDEP}]" \
 		">=dev-util/psautohint-2.4.0[${PYTHON_USEDEP}]" \
 		">=media-gfx/scour-0.37[${PYTHON_USEDEP}]" \
-		">=dev-python/fonttools-4.34.4[${PYTHON_USEDEP}]"
-
-	if use colrv1 || use colrv1-no-flags ; then
-		python_has_version \
-			">=dev-python/nanoemoji-0.15.0[${PYTHON_USEDEP}]"
-	fi
-
-	if use system-nototools ; then
-		python_has_version \
-			">=dev-python/nototools-0.2.17[${PYTHON_USEDEP}]"
-	fi
-	if use woff2 ; then
-		has_version "media-libs/woff2" \
-			|| python_has_version "dev-python/fonttools[woff,${PYTHON_USEDEP}]"
-		use cbdt-win \
-			&& python_has_version "dev-python/fonttools[woff,${PYTHON_USEDEP}]"
-	fi
+		">=dev-python/fonttools-4.34.4[${PYTHON_USEDEP}]" \
+		${extra[@]}
 }
 
 pkg_setup() {

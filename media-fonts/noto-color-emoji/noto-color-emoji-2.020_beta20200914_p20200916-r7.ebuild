@@ -125,6 +125,24 @@ RESTRICT="mirror"
 S="${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}"
 
 python_check_deps() {
+	local extra=()
+
+	if use system-nototools ; then
+		extra+=( ">=dev-python/nototools-0.2.13[${PYTHON_USEDEP}]" )
+	fi
+
+	if use woff2 ; then
+		if ! has_version "media-libs/woff2" ; then
+			extra+=( "dev-python/fonttools[woff,${PYTHON_USEDEP}]" )
+		fi
+	fi
+
+	if has_version "dev-python/regex" ; then
+		extra+=( ">=dev-python/regex-2020.5.14[${PYTHON_USEDEP}]" )
+	else
+		extra+=( ">=dev-python/mrab-regex-2.5.80[${PYTHON_USEDEP}]" )
+	fi
+
 	python_has_version \
 		">=app-arch/brotli-1.0.7[${PYTHON_USEDEP},python]" \
 		">=dev-python/appdirs-1.4.4[${PYTHON_USEDEP}]" \
@@ -155,19 +173,7 @@ python_check_deps() {
 		">=dev-util/psautohint-2.0.1[${PYTHON_USEDEP}]" \
 		">=media-gfx/scour-0.37[${PYTHON_USEDEP}]" \
 		">=dev-python/fonttools-4.7.0[${PYTHON_USEDEP}]" \
-		&& { \
-			python_has_version ">=dev-python/regex-2020.5.14[${PYTHON_USEDEP}]" \
-			|| python_has_version ">=dev-python/mrab-regex-2.5.80[${PYTHON_USEDEP}]" ; \
-		}
-
-	if use system-nototools ; then
-		python_has_version \
-			">=dev-python/nototools-0.2.13[${PYTHON_USEDEP}]"
-	fi
-	if use woff2 ; then
-		has_version "media-libs/woff2" \
-			|| python_has_version "dev-python/fonttools[woff,${PYTHON_USEDEP}]"
-	fi
+		${extra[@]}
 }
 
 pkg_setup() {
