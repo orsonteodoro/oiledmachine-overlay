@@ -234,26 +234,24 @@ src_prepare() {
 emoji: \$(EMOJI_FILES)|\
 MISSING_OPTIPNG = fail\nundefine MISSING_ZOPFLI\nemoji: \$(EMOJI_FILES)|g" \
 			Makefile || die
+		sed -i -e $"14a# Ebuild edited:  Use zopflipng" Makefile || die
 	else
 		sed -i -e "s|\
 emoji: \$(EMOJI_FILES)|\
 MISSING_ZOPFLI = fail\nundefine MISSING_OPTIPNG\nemoji: \$(EMOJI_FILES)|g" \
 			Makefile || die
+		sed -i -e $"14a# Ebuild edited:  Use optipng" Makefile || die
 	fi
 	if has_version -b "media-gfx/graphicsmagick" ; then
 		eapply "${FILESDIR}/noto-emoji-20190328-use-gm.patch"
+		sed -i -e $"14a# Ebuild edited:  graphicsmagick patch applied" Makefile || die
 	fi
 	eapply "${FILESDIR}/noto-color-emoji-2.019_beta20200307_p20200721-revert-optipng-removal.patch"
+	sed -i -e $"14a# Ebuild edited:  Revert optipng removal" Makefile || die
+
 	# Allow output
-	sed -i -e "s|@(\$(PNGQUANT)|(\$(PNGQUANT)|g" Makefile || die
-	sed -i -e "s|@convert|convert|g" Makefile || die
-	sed -i -e "s|@./waveflag|./waveflag|g" Makefile || die
-	if use optipng ; then
-		sed -i -e "s|@\$(OPTIPNG)|\$(OPTIPNG)|g" Makefile || die
-	fi
-	if use zopflipng ; then
-		sed -i -e "s|@\$(ZOPFLIPNG)|\$(ZOPFLIPNG)|g" Makefile || die
-	fi
+	sed -i -e "s|\t@|\t|g" Makefile || die
+	sed -i -e $"14a# Ebuild edited:  Allow verbose output" Makefile || die
 }
 
 _build_cbdt() {
