@@ -153,52 +153,63 @@ python_check_deps() {
 	local extra
 
 	if use colrv1 || use colrv1-no-flags ; then
-		extra+=( ">=dev-python/nanoemoji-0.15.0[${PYTHON_USEDEP}]" )
+		extra+=(
+			">=dev-python/nanoemoji-0.15.0[${PYTHON_USEDEP}]"
+		)
 	fi
 
 	if use system-nototools ; then
-		extra+=( ">=dev-python/nototools-0.2.17[${PYTHON_USEDEP}]" )
+		extra+=(
+			">=dev-python/nototools-0.2.17[${PYTHON_USEDEP}]"
+		)
+	else
+		extra+=(
+			">=app-arch/brotli-1.0.9[${PYTHON_USEDEP},python]"
+			">=dev-python/appdirs-1.4.4[${PYTHON_USEDEP}]"
+			">=dev-python/attrs-21.4.0[${PYTHON_USEDEP}]"
+			">=dev-python/black-22.6.0[${PYTHON_USEDEP}]"
+			">=dev-python/booleanOperations-0.9.0[${PYTHON_USEDEP}]"
+			">=dev-python/click-8.1.3[${PYTHON_USEDEP}]"
+			">=dev-python/cu2qu-1.6.7_p1[${PYTHON_USEDEP}]"
+			">=dev-python/defcon-0.10.2[${PYTHON_USEDEP}]"
+			">=dev-python/fontMath-0.9.2[${PYTHON_USEDEP}]"
+			">=dev-python/fontParts-0.10.7[${PYTHON_USEDEP}]"
+			">=dev-python/fontPens-0.2.4[${PYTHON_USEDEP}]"
+			">=dev-python/fonttools-4.34.4[${PYTHON_USEDEP}]"
+			">=dev-python/fs-2.4.16[${PYTHON_USEDEP}]"
+			">=dev-python/lxml-4.9.1[${PYTHON_USEDEP}]"
+			">=dev-python/MutatorMath-3.0.1[${PYTHON_USEDEP}]"
+			">=dev-python/pathspec-0.9.0[${PYTHON_USEDEP}]"
+			">=dev-python/pillow-9.2.0[${PYTHON_USEDEP}]"
+			">=dev-python/pyclipper-1.3.0_p3[${PYTHON_USEDEP}]"
+			">=dev-python/pytz-2022.1[${PYTHON_USEDEP}]"
+			">=dev-python/regex-2022.7.25[${PYTHON_USEDEP}]"
+			">=dev-python/six-1.16.0[${PYTHON_USEDEP}]"
+			">=dev-python/toml-0.10.2[${PYTHON_USEDEP}]"
+			">=dev-python/typed-ast-1.4.2[${PYTHON_USEDEP}]"
+			">=dev-python/ufoNormalizer-0.6.1[${PYTHON_USEDEP}]"
+			">=dev-python/ufoProcessor-1.9.0[${PYTHON_USEDEP}]"
+			">=dev-python/unicodedata2-14.0.0[${PYTHON_USEDEP}]"
+			">=dev-util/afdko-3.9.1[${PYTHON_USEDEP}]"
+			">=dev-util/psautohint-2.4.0[${PYTHON_USEDEP}]"
+			">=media-gfx/scour-0.37[${PYTHON_USEDEP}]"
+		)
 	fi
 
 	if use woff2 ; then
 		if ! has_version "media-libs/woff2" ; then
-			extra+=( "dev-python/fonttools[woff,${PYTHON_USEDEP}]" )
+			extra+=(
+				"dev-python/fonttools[woff,${PYTHON_USEDEP}]"
+			)
 		fi
 		if use cbdt-win ; then
-			extra+=( "dev-python/fonttools[woff,${PYTHON_USEDEP}]" )
+			extra+=(
+				"dev-python/fonttools[woff,${PYTHON_USEDEP}]"
+			)
 		fi
 	fi
 
 	python_has_version \
-		">=app-arch/brotli-1.0.9[${PYTHON_USEDEP},python]" \
-		">=dev-python/appdirs-1.4.4[${PYTHON_USEDEP}]" \
-		">=dev-python/attrs-21.4.0[${PYTHON_USEDEP}]" \
-		">=dev-python/black-22.6.0[${PYTHON_USEDEP}]" \
-		">=dev-python/booleanOperations-0.9.0[${PYTHON_USEDEP}]" \
-		">=dev-python/click-8.1.3[${PYTHON_USEDEP}]" \
-		">=dev-python/cu2qu-1.6.7_p1[${PYTHON_USEDEP}]" \
-		">=dev-python/defcon-0.10.2[${PYTHON_USEDEP}]" \
-		">=dev-python/fontMath-0.9.2[${PYTHON_USEDEP}]" \
-		">=dev-python/fontParts-0.10.7[${PYTHON_USEDEP}]" \
-		">=dev-python/fontPens-0.2.4[${PYTHON_USEDEP}]" \
-		">=dev-python/fonttools-4.34.4[${PYTHON_USEDEP}]" \
-		">=dev-python/fs-2.4.16[${PYTHON_USEDEP}]" \
-		">=dev-python/lxml-4.9.1[${PYTHON_USEDEP}]" \
-		">=dev-python/MutatorMath-3.0.1[${PYTHON_USEDEP}]" \
-		">=dev-python/pathspec-0.9.0[${PYTHON_USEDEP}]" \
-		">=dev-python/pillow-9.2.0[${PYTHON_USEDEP}]" \
-		">=dev-python/pyclipper-1.3.0_p3[${PYTHON_USEDEP}]" \
-		">=dev-python/pytz-2022.1[${PYTHON_USEDEP}]" \
-		">=dev-python/regex-2022.7.25[${PYTHON_USEDEP}]" \
-		">=dev-python/six-1.16.0[${PYTHON_USEDEP}]" \
-		">=dev-python/toml-0.10.2[${PYTHON_USEDEP}]" \
-		">=dev-python/typed-ast-1.4.2[${PYTHON_USEDEP}]" \
-		">=dev-python/ufoNormalizer-0.6.1[${PYTHON_USEDEP}]" \
-		">=dev-python/ufoProcessor-1.9.0[${PYTHON_USEDEP}]" \
-		">=dev-python/unicodedata2-14.0.0[${PYTHON_USEDEP}]" \
-		">=dev-util/afdko-3.9.1[${PYTHON_USEDEP}]" \
-		">=dev-util/psautohint-2.4.0[${PYTHON_USEDEP}]" \
-		">=media-gfx/scour-0.37[${PYTHON_USEDEP}]" \
 		">=dev-python/fonttools-4.34.4[${PYTHON_USEDEP}]" \
 		${extra[@]}
 }

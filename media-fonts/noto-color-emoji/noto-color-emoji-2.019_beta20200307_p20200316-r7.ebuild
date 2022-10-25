@@ -100,22 +100,29 @@ python_check_deps() {
 	local extra=()
 
 	if use system-nototools ; then
-		extra+=( "~dev-python/nototools-"$(ver_cut 1-3 ${INTERNAL_NOTOTOOLS_PV})"[${PYTHON_USEDEP}]" )
+		extra+=(
+			"~dev-python/nototools-"$(ver_cut 1-3 ${INTERNAL_NOTOTOOLS_PV})"[${PYTHON_USEDEP}]"
+		)
+	else
+		extra+=(
+			">=dev-python/booleanOperations-0.8.2[${PYTHON_USEDEP}]"
+		        ">=dev-python/defcon-0.6.0[${PYTHON_USEDEP}]"
+		        ">=dev-python/fonttools-4.0.2[${PYTHON_USEDEP}]"
+		        ">=dev-python/pillow-6.2.2[${PYTHON_USEDEP}]"
+		        ">=dev-python/pyclipper-1.1.0_p1[${PYTHON_USEDEP}]"
+		        ">=media-gfx/scour-0.37[${PYTHON_USEDEP}]"
+		)
 	fi
 
 	if use woff2 ; then
 		if ! has_version "media-libs/woff2" ; then
-			extra+=( "dev-python/fonttools[woff,${PYTHON_USEDEP}]" )
+			extra+=(
+				"dev-python/fonttools[woff,${PYTHON_USEDEP}]"
+			)
 		fi
 	fi
 
 	python_has_version \
-		">=dev-python/booleanOperations-0.8.2[${PYTHON_USEDEP}]" \
-	        ">=dev-python/defcon-0.6.0[${PYTHON_USEDEP}]" \
-	        ">=dev-python/fonttools-4.0.2[${PYTHON_USEDEP}]" \
-	        ">=dev-python/pillow-6.2.2[${PYTHON_USEDEP}]" \
-	        ">=dev-python/pyclipper-1.1.0_p1[${PYTHON_USEDEP}]" \
-	        ">=media-gfx/scour-0.37[${PYTHON_USEDEP}]" \
 		"dev-python/fonttools[${PYTHON_USEDEP}]" \
 		${extra[@]}
 }
