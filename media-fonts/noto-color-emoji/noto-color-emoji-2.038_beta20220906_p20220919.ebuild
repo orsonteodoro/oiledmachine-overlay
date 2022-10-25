@@ -150,7 +150,7 @@ RESTRICT="mirror"
 S="${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}"
 
 python_check_deps() {
-	local extra
+	local extra=()
 
 	if use colrv1 || use colrv1-no-flags ; then
 		extra+=(
