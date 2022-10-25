@@ -271,7 +271,7 @@ einfo "Building CBDT font"
 }
 
 _build_colrv1() {
-	[[ ! -f font/NotoColorEmoji.ttf ]] && _build_cbdt
+	[[ ! -f fonts/NotoColorEmoji.ttf ]] && _build_cbdt
 
 einfo "Building COLRv1 font"
 	addpredict /proc/self/comm
