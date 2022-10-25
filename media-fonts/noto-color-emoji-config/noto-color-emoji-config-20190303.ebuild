@@ -35,19 +35,24 @@ RESTRICT="nofetch"
 FONT_CONF=( "${S}/61-noto.conf" )
 
 src_unpack() {
-	mkdir -p "${S}"
-	cp "${FILESDIR}/61-noto-${MY_PV}.conf" "${S}/61-noto.conf" || die
+	mkdir -p "${S}" || die
+	cat "${FILESDIR}/61-noto-${MY_PV}.conf" > "${S}/61-noto.conf" || die
 
 	if use colorize-chrome-editboxes ; then
-		cp "${FILESDIR}/41-noto-colorize-chrome-editboxes-${MY_PV}.conf" \
-			"${S}/41-noto-colorize-chrome-editboxes.conf" || die
+		cat "${FILESDIR}/41-noto-colorize-chrome-editboxes-${MY_PV}.conf" \
+			> "${S}/41-noto-colorize-chrome-editboxes.conf" || die
 		FONT_CONF+=( "${S}/41-noto-colorize-chrome-editboxes.conf" )
 	fi
 	if use colorize-firefox-editboxes ; then
-		cp "${FILESDIR}/41-noto-colorize-firefox-editboxes-${MY_PV}.conf" \
-			"${S}/41-noto-colorize-firefox-editboxes.conf" || die
+		cat "${FILESDIR}/41-noto-colorize-firefox-editboxes-${MY_PV}.conf" \
+			> "${S}/41-noto-colorize-firefox-editboxes.conf" || die
 		FONT_CONF+=( "${S}/41-noto-colorize-firefox-editboxes.conf" )
 	fi
+}
+
+src_install() {
+	font_src_install
+	rm -rf "${ED}/usr/share/fonts" || die
 }
 
 pkg_postinst() {
@@ -58,7 +63,7 @@ pkg_postinst() {
 	if use colorize-firefox-editboxes ; then
 		eselect fontconfig enable 41-noto-colorize-firefox-editboxes.conf
 	fi
-	fc-cache -fv
+	font_pkg_postinst
 ewarn
 ewarn "To see emojis in your x11-term you need to switch to a utf8 locale."
 ewarn "Try manually running \`fc-cache -fv\` on the non-root user account and"
@@ -73,6 +78,5 @@ einfo
 	eselect fontconfig disable 61-noto.conf
 	eselect fontconfig disable 41-noto-colorize-chrome-editboxes.conf
 	eselect fontconfig disable 41-noto-colorize-firefox-editboxes.conf
-	rebuild_fontfiles
-	fc-cache -fv
+	font_pkg_postrm
 }
