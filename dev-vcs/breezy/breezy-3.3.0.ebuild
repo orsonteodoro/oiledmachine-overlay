@@ -23,12 +23,14 @@ LICENSE+="
 	PSF-2.4
 	openssl
 	tcltk
-	unicode
+	Unicode-DFS-2016
 	Unlicense
 " # Third party cargo licenses
 # homedir/.cargo/registry/src/github.com-1ecc6299db9ec823/pyo3-0.15.2 - custom
 # homedir/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-1.6.0 - custom
 # homedir/.cargo/registry/src/github.com-1ecc6299db9ec823/pkg-version-1.0.0 - custom
+# homedir/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-syntax-0.6.27/src/unicode_tables/LICENSE-UNICODE - Unicode-DFS-2016
+# homedir/.cargo/registry/src/github.com-1ecc6299db9ec823/unicode-ident-1.0.5/LICENSE-UNICODE - Unicode-DFS-2016
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 IUSE+=" cext doc fastimport git gpg sftp test workspace"
