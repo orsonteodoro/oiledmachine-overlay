@@ -4,7 +4,7 @@
 
 EAPI=8
 
-NPM_SECAUDIT_AT_TYPES_NODE_V="17.0.17"
+NPM_SECAUDIT_AT_TYPES_NODE_V="18.6.4"
 # Same as package-lock but uses latest always latest.
 # See https://www.npmjs.com/package/@types/node
 

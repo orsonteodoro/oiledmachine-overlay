@@ -14,15 +14,30 @@ inherit npm-secaudit npm-utils
 DESCRIPTION="TypeScript is a superset of JavaScript that compiles to clean
 JavaScript output"
 HOMEPAGE="https://www.typescriptlang.org/"
-LICENSE="Apache-2.0 all-rights-reserved BSD BSD-2 CC0-1.0 CC-BY-3.0 CC-BY-4.0
-CC-BY-SA-4.0 MIT unicode W3C W3C-CLA WTFPL"
+LICENSE="
+	Apache-2.0
+	all-rights-reserved
+	BSD
+	BSD-2
+	CC0-1.0
+	CC-BY-3.0
+	CC-BY-4.0
+	CC-BY-SA-4.0
+	MIT
+	Unicode-DFS-2016
+	W3C
+	W3C-CLA
+	WTFPL
+"
 # Apache-2.0 is the main
 # Rest of the licenses are third party licenses
 # all-rights-reserved asserted in source and third party modules
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="$(ver_cut 1-2 ${PV})/${PV}"
 MIN_NODE_VERSION=$(ver_cut 1 ${NPM_SECAUDIT_AT_TYPES_NODE_V})
-CDEPEND=" >=net-libs/nodejs-${MIN_NODE_VERSION}[npm]"
+CDEPEND="
+	>=net-libs/nodejs-${MIN_NODE_VERSION}[npm]
+"
 RDEPEND+="
 	app-eselect/eselect-typescript
 "
@@ -38,7 +53,7 @@ https://github.com/Microsoft/${MY_PN}/archive/v${PV}.tar.gz
 "
 S="${WORKDIR}/${MY_PN}-${PV}"
 if [[ "${UPDATE_MANIFEST}" != "1" ]] ; then
-RESTRICT="fetch mirror"
+	RESTRICT="fetch mirror"
 fi
 GITHUB_HOMEPAGE="https://github.com/microsoft/TypeScript"
 
