@@ -67,7 +67,7 @@ EMSCRIPTEN_LICENSE="
 "
 LICENSE+=" ${EMSCRIPTEN_LICENSE}"
 
-NODEJS_LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 icu-68.1 ISC MIT openssl unicode ZLIB"
+NODEJS_LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 icu-68.1 ISC MIT openssl Unicode-DFS-2016 ZLIB"
 LICENSE+=" ${NODEJS_LICENSE}"
 
 # Extra licenses because it is in source code form and third party external
