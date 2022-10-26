@@ -82,6 +82,7 @@ LICENSE="
 	GPL-2+
 	g711
 	g722
+	icu
 	IJG
 	ILA-OpenCV
 	ISC
@@ -105,11 +106,12 @@ LICENSE="
 	Unlicense
 	UoI-NCSA
 	unRAR
-	unicode
+	Unicode-DFS-2016
 	SGI-B-2.0
 	sigslot
 	SunPro
 	svgo
+	W3C
 	WTFPL-2
 	x11proto
 	ZLIB
@@ -158,6 +160,7 @@ LICENSE="
 # BSD MPL-1.1 - url/third_party/mozilla/LICENSE.txt
 # BSD-2 - third_party/node/node_modules/eslint-scope/LICENSE
 # BSD-2 IJG MIT - third_party/libavif/src/LICENSE
+# BSD-2 - third_party/libaom/source/libaom/LICENSE
 # base64 - third_party/webrtc/rtc_base/third_party/base64/LICENSE
 # custom - third_party/llvm/clang-tools-extra/clang-tidy/cert/LICENSE.TXT
 # custom - third_party/llvm/clang-tools-extra/clang-tidy/hicpp/LICENSE.TXT
@@ -182,6 +185,7 @@ LICENSE="
 # GPL-2 - third_party/freetype-testing/LICENSE
 # GPL-2+ - third_party/devscripts/licensecheck.pl.vanilla
 # ILA-OpenCV (BSD with additional clauses) - third_party/opencv/src/LICENSE
+# icu Unicode-DFS-2016 - base/third_party/icu/LICENSE
 # ISC - third_party/node/node_modules/rimraf/LICENSE
 # ISC - third_party/libaom/source/libaom/third_party/x86inc/LICENSE
 # ISC CC-BY-SA-4.0 - third_party/node/node_modules/glob/LICENSE ; no logo \
@@ -199,11 +203,21 @@ LICENSE="
 # libpng2 - third_party/pdfium/third_party/libpng16/LICENSE
 # MIT CC0-1.0 - third_party/node/node_modules/eslint/node_modules/lodash/LICENSE
 # MIT SGI-B-2.0 - third_party/khronos/LICENSE
-# MIT unicode - third_party/node/node_modules/typescript/ThirdPartyNoticeText.txt
+# MIT Unicode-DFS-2016 CC-BY-4.0 W3C W3C-Community-Final-Specification-Agreement - third_party/node/node_modules/typescript/ThirdPartyNoticeText.txt
 # MPL-2.0 - third_party/node/node_modules/mdn-data/LICENSE
 # neon_2_sse - third_party/neon_2_sse/LICENSE
 # OFL-1.1 - third_party/freetype-testing/src/fuzzing/corpora/cff-render-ftengine/bungeman/HangingS.otf
 # ooura - third_party/webrtc/common_audio/third_party/ooura/LICENSE
+# PATENTS - third_party/dav1d/libdav1d/doc/PATENTS
+# PATENTS - third_party/libaom/source/libaom/PATENTS
+# PATENTS - third_party/libaom/source/libaom/third_party/libwebm/PATENTS.TXT
+# PATENTS - third_party/libjxl/src/PATENTS
+# PATENTS - third_party/libvpx/source/libvpx/PATENTS
+# PATENTS - third_party/libvpx/source/libvpx/third_party/libwebm/PATENTS.TXT
+# PATENTS - third_party/libwebm/source/PATENTS.TXT
+# PATENTS - third_party/libwebp/src/PATENTS
+# PATENTS - third_party/libyuv/PATENTS
+# PATENTS - third_party/webrtc/PATENTS
 # public-domain - third_party/lzma_sdk/LICENSE
 # public-domain with no warranty - third_party/pdfium/third_party/bigint/LICENSE
 # public-domain - \
