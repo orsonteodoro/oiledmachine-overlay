@@ -70,6 +70,7 @@ LICENSE="
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
 	( all-rights-reserved MIT )
+	Boost-1.0
 	BSD-2
 	BSD-4
 	base64
@@ -82,6 +83,7 @@ LICENSE="
 	GPL-2+
 	g711
 	g722
+	HPND
 	icu
 	IJG
 	ILA-OpenCV
@@ -101,11 +103,12 @@ LICENSE="
 	OFL-1.1
 	ooura
 	openssl
-	PSF-2
+	PSF-2.4
 	QU-fft
 	Unlicense
 	UoI-NCSA
 	unRAR
+	unicode
 	Unicode-DFS-2016
 	SGI-B-2.0
 	sigslot
@@ -156,6 +159,7 @@ LICENSE="
 # BSD ^^ ( MPL-1.1 GPL-2+ LGPL-2+ ) - \
 #   third_party/openscreen/src/third_party/mozilla/LICENSE.txt
 # BSD CC-BY-3.0 CC-BY-4.0 MIT public-domain - third_party/snappy/src/COPYING
+# BSD HPND (modified) - native_client_sdk/src/libraries/third_party/newlib-extras/netdb.h
 # BSD ISC MIT openssl - third_party/boringssl/src/LICENSE
 # BSD MPL-1.1 - url/third_party/mozilla/LICENSE.txt
 # BSD-2 - third_party/node/node_modules/eslint-scope/LICENSE
@@ -169,6 +173,12 @@ LICENSE="
 # custom CC-BY-ND-2.5 LGPL-2.1+ GPL-2+ public-domain - \
 #   third_party/blink/perf_tests/svg/resources/LICENSES
 # custom BSD APSL-2 MIT BSD-4 - third_party/breakpad/breakpad/LICENSE
+# custom Boost-1.0 BSD BSD-2 BSD-4 gcc-runtime-library-exception-3.1 FDL-1.1 \
+#   GPL-2 GPL-2+ GPL-2-with-classpath-exception GPL-3 HPND icu LIBGLOSS LGPL-2
+#   LGPL-2.1 LGPL-2.1+ LGPL-3 MIT NEWLIB PSF-2.4 rc UoI-NCSA ZLIB \
+#   ^^ ( MPL-1.1 GPL 2.0 LGPL-2.1 ) - native_client/NOTICE
+#   NSIS: BZIP2 CPL-1.0 libpng ZLIB
+#   (Some third_party modules do not exist like NSIS)
 # custom IJG - third_party/iccjpeg/LICENSE
 # custom MPL-2.0 BSD GPL-3 LGPL-3 Apache-1.1 - \
 #   third_party/tflite/src/third_party/eigen3/LICENSE ; Only MPL-2.0 files are \
@@ -184,6 +194,7 @@ LICENSE="
 # g722 - third_party/webrtc/modules/third_party/g722/LICENSE
 # GPL-2 - third_party/freetype-testing/LICENSE
 # GPL-2+ - third_party/devscripts/licensecheck.pl.vanilla
+# HPND PSF-2.4 - v8/third_party/v8/builtins/LICENSE
 # ILA-OpenCV (BSD with additional clauses) - third_party/opencv/src/LICENSE
 # icu Unicode-DFS-2016 - base/third_party/icu/LICENSE
 # ISC - third_party/node/node_modules/rimraf/LICENSE
@@ -230,8 +241,10 @@ LICENSE="
 #   third_party/node/node_modules/svgo/LICENSE
 # Unlicense Apache-2.0 - \
 #   third_party/devtools-frontend/src/node_modules/@sinonjs/text-encoding/LICENSE.md
-# UoI-NCSA - third_party/swiftshader/third_party/llvm-subzero/LICENSE.TXT
+# unicode [3 clause DFS] - third_party/icu4j/LICENSE
+# Unicode-DFS-2016 [2 clause DFS] - third_party/cldr/LICENSE
 # unRAR - third_party/unrar/LICENSE
+# UoI-NCSA - third_party/swiftshader/third_party/llvm-subzero/LICENSE.TXT
 # widevine - third_party/widevine/LICENSE
 # WTFPL BSD-2 - third_party/catapult/third_party/polymer2/bower_components/sinon-chai/LICENSE.txt
 # x11proto - third_party/x11proto/LICENSE
