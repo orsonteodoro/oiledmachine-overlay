@@ -17,14 +17,9 @@ inherit flag-o-matic git-r3 lcnr llvm meson multilib-minimal
 DESCRIPTION="Various GStreamer plugins written in Rust"
 HOMEPAGE="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs"
 CARGO_THIRD_PARTY_PACKAGES="
-	0BSD
 	Apache-2.0
-	BSD
-	ISC
 	MIT
-	Unlicense
 	unicode
-	ZLIB
 "
 LICENSE="
 	Apache-2.0
@@ -33,20 +28,7 @@ LICENSE="
 	MPL-2.0
 	${CARGO_THIRD_PARTY_PACKAGES}
 "
-# Apache-2.0 ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-channel-0.3.15/LICENSE-APACHE
-# 0BSD ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/adler-0.2.2/LICENSE-0BSD
-# BSD ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/bindgen-0.54.1/LICENSE
-# BSD ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/subtle-1.0.0/LICENSE
-# BSD-2 ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/crossbeam-queue-0.2.3/LICENSE-THIRD-PARTY
-# BSD-2 ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/rav1e-0.3.3/LICENSE
-# BSD-2 ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-channel-0.3.15/src/mpsc/queue.rs
-# ISC ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/libloading-0.5.2/LICENSE
-# MIT ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-channel-0.3.15/LICENSE-MIT
-# Unlicense ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/termcolor-1.1.0/UNLICENSE
-# Unlicense ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/aho-corasick-0.7.13/UNLICENSE
-# unicode ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-syntax-0.6.25/src/unicode_tables/LICENSE-UNICODE
-# ZLIB ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/adler32-1.1.0/LICENSE
-# ZLIB ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/bytemuck-1.2.0/LICENSE-ZLIB.md
+# unicode ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/unicode-ident-1.0.5/LICENSE-UNICODE
 
 # Live ebuilds or live snapshot don't get KEYWORDs
 
@@ -72,12 +54,12 @@ MODULES=(
 	lewton
 	ndi
 	onvif
+	png
 	raptorq
 	rav1e
 	regex
 	reqwest
-	rspng
-	rtpav1
+	rtp
 	spotify
 	sodium
 	test
@@ -89,9 +71,10 @@ MODULES=(
 	uriplaylistbin
 	videofx
 	webp
+	webrtc
 	webrtchttp
 )
-IUSE+=" ${MODULES[@]}"
+IUSE+=" ${MODULES[@]} doc"
 REQUIRED_USE+="
 	|| ( ${MODULES[@]} )
 	webrtchttp? ( reqwest )
@@ -101,7 +84,7 @@ CARGO_V="1.64"
 # grep -e "requires_private" "${WORKDIR}" for external dependencies
 # See "Run-time dependency" in CI
 # Assumes D11
-GST_PV="1.18" # upstream uses in CI 1.21.0.1
+GST_PV="1.20" # upstream uses in CI 1.21.0.1
 PANGO_PV="1.50.10"
 RDEPEND+="
 	>=dev-libs/glib-2.66.8:2[${MULTILIB_USEDEP}]
@@ -119,7 +102,7 @@ RDEPEND+="
 		>=media-sound/csound-6.14[${MULTILIB_USEDEP}]
 	)
 	dav1d? (
-		>=media-libs/dav1d-1.0.0[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	gtk4? (
 		>=gui-libs/gtk-4.8.1:4[gstreamer]
@@ -160,6 +143,7 @@ BDEPEND+="
 	>=dev-util/pkgconf-0.29.2[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/gcc-11
 	>=virtual/rust-${RUST_V}[${MULTILIB_USEDEP}]
+	doc? ( dev-python/hotdoc )
 "
 
 if [[ ${PV} =~ 9999 ]] ; then
@@ -251,7 +235,22 @@ einfo "LLVM=${LLVM_MAX_SLOT}"
 		[[ "${m}" == "test" ]] && continue
 		if ! use "${m}" ; then
 			einfo "Removed ${m}"
-			if [[ "${m}" == "textwrap" ]] ; then
+			if [[ "${m}" == "webrtchttp" ]] ; then
+				# Ambigious lines
+				sed -i -e "/net\/webrtchttp$/d" \
+					Cargo.toml || die
+			elif [[ "${m}" == "webrtc" ]] ; then
+				# Ambigious lines
+				sed -i \
+					-e "/net\/webrtc$/d" \
+					-e "/net\/webrtc/protocol$/d" \
+					-e "/net\/webrtc/signalling$/d" \
+					Cargo.toml || die
+			elif [[ "${m}" == "textahead" ]] ; then
+				# Different name
+				sed -i -e "/text\/ahead/d" \
+					Cargo.toml || die
+			elif [[ "${m}" == "textwrap" ]] ; then
 				# Ambigious lines
 				sed -i -e "/text\/wrap/d" \
 					Cargo.toml || die
@@ -285,8 +284,8 @@ einfo "LLVM=${LLVM_MAX_SLOT}"
 }
 
 EXPECTED_BUILD_FILES="\
-15ce85c35bfda0c8c30b7ddc95e8edc4fd2bb97df0f09c4bdd2b877c7cfc0648\
-397871c9e2804919ad07b1bf8eb496a4359548c3f4cdc2c457cb541c3981ac2a\
+d057cfa87b2c80d97bee678cb8ba2aa20463d646344e5dcd969a514fe1e475d3\
+b7ca663f1562c3f84592e88ffae44918c7c04fbb19ce14e891c8296bac6e8526\
 "
 
 src_unpack() {
@@ -306,8 +305,8 @@ eerror
 eerror "A change to the build scripts was detected."
 eerror "Notify the ebuild maintainer for an update."
 eerror
-eerror "Expected build files:  ${EXPECTED_BUILD_FILES}"
-eerror "Actual build files:  ${actual_build_files}"
+eerror "Expected build files:\t${EXPECTED_BUILD_FILES}"
+eerror "Actual build files:\t\t${actual_build_files}"
 eerror
 			die
 		fi
