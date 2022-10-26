@@ -49,7 +49,7 @@ LICENSE="
 			MIT
 			all-rights-reserved
 			MPL-1.1
-			unicode
+			Unicode-DFS-2016
 			W3C
 			W3C-document
 		)
@@ -150,7 +150,7 @@ LICENSE="
 			Apache-2.0
 			CC-BY-4.0
 			MIT
-			unicode
+			Unicode-DFS-2016
 			W3C
 		)
 	)

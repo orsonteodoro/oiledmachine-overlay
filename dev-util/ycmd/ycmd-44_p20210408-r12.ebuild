@@ -131,7 +131,7 @@ LICENSE="
 			Apache-2.0
 			CC-BY-4.0
 			MIT
-			unicode
+			Unicode-DFS-2016
 			W3C
 		)
 	)
