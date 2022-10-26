@@ -21,7 +21,6 @@ bazel - Installs the bazel plugin.
 bbedit - Installs the bbedit plugin.
 bedtools - Installs the bedtools plugin.
 bgnotify - Installs the bgnotify plugin.
-boot2docker - Installs the boot2docker plugin.
 bower - Installs the bower plugin.
 branch - Installs the branch plugin.
 brew - Installs the brew plugin.
@@ -30,7 +29,6 @@ cabal - Installs the cabal plugin.
 cake - Installs the cake plugin.
 cakephp3 - Installs the cakephp3 plugin.
 capistrano - Installs the capistrano plugin.
-cargo - Installs the cargo plugin.
 cask - Installs the cask plugin.
 catimg - Installs the catimg plugin.
 celery - Installs the celery plugin.
@@ -48,7 +46,6 @@ common-aliases - Installs the common-aliases plugin.
 compleat - Installs the compleat plugin.
 composer - Installs the composer plugin.
 copybuffer - Installs the copybuffer plugin.
-copydir - Installs the copydir plugin.
 copyfile - Installs the copyfile plugin.
 copypath - Installs the copypath plugin.
 cp - Installs the cp plugin.
@@ -94,7 +91,6 @@ frontend-search - Installs the frontend-search plugin.
 fzf - Installs the fzf plugin.
 gas - Installs the gas plugin.
 gatsby - Installs the gatsby plugin.
-gb - Installs the gb plugin.
 gcloud - Installs the gcloud plugin.
 geeknote - Installs the geeknote plugin.
 gem - Installs the gem plugin.
@@ -189,12 +185,10 @@ nmap - Installs the nmap plugin.
 node - Installs the node plugin.
 nomad - Installs the nomad plugin.
 npm - Installs the npm plugin.
-npx - Installs the npx plugin.
 nvm - Installs the nvm plugin.
 oc - Installs the oc plugin.
 octozen - Installs the octozen plugin.
 operator-sdk - Installs the operator-sdk plugin.
-osx - Installs the osx plugin.
 otp - Installs the otp plugin.
 pass - Installs the pass plugin.
 paver - Installs the paver plugin.
@@ -235,7 +229,6 @@ ros - Installs the ros plugin.
 rsync - Installs the rsync plugin.
 ruby - Installs the ruby plugin.
 rust - Installs the rust plugin.
-rustup - Installs the rustup plugin.
 rvm - Installs the rvm plugin.
 safe-paste - Installs the safe-paste plugin.
 salt - Installs the salt plugin.
