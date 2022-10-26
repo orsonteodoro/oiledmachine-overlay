@@ -12,11 +12,12 @@ inherit font lcnr python-any-r1
 DESCRIPTION="NotoColorEmoji is colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
 LICENSE="Apache-2.0 OFL-1.1"
-LICENSE+=" all-rights-reserved" # the Apache-2.0 license doesn't contain all rights reserved ; See flag_glyph_name.py
-LICENSE+=" !system-nototools? ( Apache-2.0 )" # nototools default license
-LICENSE+=" !system-nototools? ( BSD )" # nototools/third_party/dspl
-LICENSE+=" !system-nototools? ( GPL-2 )" # nototools/third_party/spiro
-LICENSE+=" !system-nototools? ( unicode )" # nototools/third_party/{cldr,ucd,unicode}
+LICENSE+=" all-rights-reserved"				# The Apache-2.0 license doesn't contain all rights reserved in the template ; See flag_glyph_name.py
+LICENSE+=" !system-nototools? ( Apache-2.0 )"		# nototools default license
+LICENSE+=" !system-nototools? ( BSD )"			# nototools/third_party/dspl
+LICENSE+=" !system-nototools? ( GPL-2 )"		# nototools/third_party/spiro
+LICENSE+=" !system-nototools? ( Unicode-DFS-2016 )"	# nototools/third_party/cldr
+LICENSE+=" !system-nototools? ( unicode )"		# nototools/third_party/{ucd,unicode}
 # Font files are OFL-1.1
 # Artwork is Apache-2.0 and flags are public domain
 KEYWORDS="
