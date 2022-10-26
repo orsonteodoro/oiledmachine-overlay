@@ -7,7 +7,32 @@ inherit autotools flag-o-matic libtool multilib-minimal toolchain-funcs
 
 DESCRIPTION="Free and Open Source spell checker designed to replace Ispell"
 HOMEPAGE="http://aspell.net/"
-LICENSE="LGPL-2.1"
+LICENSE="
+	LGPL-2.1
+	LGPL-2+
+	LGPL-2.1+
+	BSD
+	FDL-1.1+
+	FDL-1.2
+	GPL-2+
+	GPL-3+
+	MIT
+	myspell-en_CA-KevinAtkinson
+"
+# BSD - myspell/munch.c
+# BSD LGPL-2.1 - modules/speller/default/affix.cpp
+# GPL-2+ - m4/libtool.m4
+#	 - misc/po-filter.c
+# GPL-3+ - config.guess
+#	 - manual/texinfo.tex
+# FDL-1.1+ - manual/aspell-dev.info
+# FDL-1.2 - manual/fdl.texi
+# LGPL-2+ - common/gettext.h
+# LGPL-2.1+ - modules/filter/nroff.cpp
+# MIT - install-sh
+# myspell-en_CA-KevinAtkinson - common/lsort.hpp
+#			      - common/clone_ptr-t.hpp
+
 SLOT="0/${PV}"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390
 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris
