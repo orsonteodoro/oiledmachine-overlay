@@ -19,7 +19,7 @@ HOMEPAGE="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs"
 CARGO_THIRD_PARTY_PACKAGES="
 	Apache-2.0
 	MIT
-	unicode
+	Unicode-DFS-2016
 "
 LICENSE="
 	Apache-2.0
@@ -28,7 +28,7 @@ LICENSE="
 	MPL-2.0
 	${CARGO_THIRD_PARTY_PACKAGES}
 "
-# unicode ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/unicode-ident-1.0.5/LICENSE-UNICODE
+# Unicode-DFS-2016 ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/unicode-ident-1.0.5/LICENSE-UNICODE
 
 # Live ebuilds or live snapshot don't get KEYWORDs
 
