@@ -243,8 +243,8 @@ einfo "LLVM=${LLVM_MAX_SLOT}"
 				# Ambigious lines
 				sed -i \
 					-e "/net\/webrtc$/d" \
-					-e "/net\/webrtc/protocol$/d" \
-					-e "/net\/webrtc/signalling$/d" \
+					-e "/net\/webrtc\/protocol$/d" \
+					-e "/net\/webrtc\/signalling$/d" \
 					Cargo.toml || die
 			elif [[ "${m}" == "textahead" ]] ; then
 				# Different name
