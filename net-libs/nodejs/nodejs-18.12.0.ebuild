@@ -92,7 +92,7 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Sep 26, 2022
+# Last deps commit date:  Oct 11, 2022
 NGHTTP2_V="1.47.0"
 RDEPEND+="
 	!net-libs/nodejs:0
