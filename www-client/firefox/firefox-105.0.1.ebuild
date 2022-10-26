@@ -141,6 +141,7 @@ LICENSE+="
 	SunPro
 	UoI-NCSA
 	unicode
+	Unicode-DFS-2016
 	W3C-document
 	ZLIB
 	pgo? (
@@ -220,10 +221,10 @@ LICENSE+="
 #   found at https://github.com/lodash/lodash/blob/master/LICENSE)
 # MIT UoI-NCSA js/src/jit/arm/llvm-compiler-rt/assembly.h
 # UoI-NCSA tools/fuzzing/libfuzzer/LICENSE.TXT
-# unicode BSD NAIST-IPADIC intl/icu/source/data/brkitr/dictionaries/cjdict.txt
-# unicode icu security/sandbox/chromium/base/third_party/icu/LICENSE
-# unicode intl/icu/source/data/unidata/ucdterms.txt
-# unicode rust/regex-syntax/src/unicode_tables/LICENSE-UNICODE
+# unicode Unicode-DFS-2016 BSD NAIST-IPADIC intl/icu/source/data/brkitr/dictionaries/cjdict.txt
+# Unicode-DFS-2016 icu security/sandbox/chromium/base/third_party/icu/LICENSE
+# unicode third_party/rust/regex-syntax/src/unicode_tables/LICENSE-UNICODE
+# unicode-DFS-2019 intl/icu/source/data/dtd/cldr-40/common/dtd/ldml.dtd
 # Spencer-94 js/src/editline/README *
 # SunPro modules/fdlibm/src/math_private.h
 # W3C-document testing/web-platform/tests/css/CSS2/LICENSE-W3CD
