@@ -79,8 +79,8 @@ LICENSE="
 	)
 	!system-mrab-regex? (
 		all-rights-reserved
+		Apache-2.0
 		CNRI
-		PSF-2
 	)
 	rust? (
 		!system-rust? (
