@@ -129,6 +129,7 @@ LICENSE+="
 	curl
 	GPL-2+
 	GPL-3+
+	HPND
 	icu-71.1
 	ISC
 	Ispell
@@ -210,6 +211,7 @@ LICENSE+="
 # GlyphWiki - layout/reftests/fonts/glyphwiki-license.txt *
 # GPL-2+ testing/talos/talos/tests/v8_7/deltablue.js
 # GPL-3+ js/src/devtools/rootAnalysis/run_complete
+# HPND gfx/cairo/cairo/src/cairo-time.c
 # ISC ipc/chromium/src/third_party/libevent/arc4random.c
 # libpng media/libpng/pngconf.h
 # OFL-1.1 layout/reftests/fonts/Chunkfive-license.txt
