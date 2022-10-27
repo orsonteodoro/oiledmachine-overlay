@@ -866,10 +866,6 @@ src_configure() {
 src_install() {
 	insinto "${ZSH_DEST}"
 	doins -r *
-	if use omz_plugins_emoji ; then
-		insinto "${ZSH_DEST}/plugins/emoji/Unicode-DFS"
-		doins "${FILESDIR}/Unicode-DFS"
-	fi
 }
 
 pkg_postinst() {
