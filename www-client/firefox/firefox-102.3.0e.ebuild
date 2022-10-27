@@ -144,7 +144,6 @@ LICENSE+="
 	UoI-NCSA
 	unicode
 	Unicode-DFS-2016
-	W3C-document
 	ZLIB
 	pgo? (
 		(
@@ -214,7 +213,7 @@ LICENSE+="
 # ISC ipc/chromium/src/third_party/libevent/arc4random.c
 # libpng media/libpng/pngconf.h
 # OFL-1.1 layout/reftests/fonts/Chunkfive-license.txt
-# OPENLDAP third_party/rust/lmdb-rkv-sys/lmdb/libraries/liblmdb/mdb.c
+# OPENLDAP ISC third_party/rust/lmdb-rkv-sys/lmdb/libraries/liblmdb/mdb.c
 # Old-MIT gfx/harfbuzz/
 # PSF-2.4 (is a variation of) third_party/python/virtualenv/__virtualenv__/typing-3.7.4.3-py2-none-any/typing-3.7.4.3.dist-info/LICENSE
 # PSF-2 third_party/python/virtualenv/__virtualenv__/contextlib2-0.6.0.post1-py2.py3-none-any/contextlib2-0.6.0.post1.dist-info/LICENSE.txt
@@ -229,7 +228,6 @@ LICENSE+="
 # unicode-DFS-2019 intl/icu/source/data/dtd/cldr-40/common/dtd/ldml.dtd
 # Spencer-94 js/src/editline/README *
 # SunPro modules/fdlibm/src/math_private.h
-# W3C-document testing/web-platform/tests/css/CSS2/LICENSE-W3CD
 # ZLIB gfx/sfntly/cpp/src/test/tinyxml/tinyxml.cpp
 # ZLIB media/ffvpx/libavutil/adler32.c
 # ZLIB third_party/rust/libz-sys/src/zlib/zlib.h
