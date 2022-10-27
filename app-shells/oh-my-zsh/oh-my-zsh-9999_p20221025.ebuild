@@ -15,6 +15,7 @@ LICENSE="
 	MIT
 	Apache-2.0
 	unicode
+	Unicode-DFS-2016
 	omz_plugins_bazel? ( Apache-2.0 all-rights-reserved )
 	omz_plugins_kube-ps1? ( Apache-2.0 )
 	omz_plugins_sfdx? ( Apache-2.0 )
