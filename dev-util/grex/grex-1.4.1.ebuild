@@ -184,7 +184,7 @@ LICENSE="
 	BSD
 	Boost-1.0
 	MIT
-	Unicode-DFS-2022
+	Unicode-DFS-2016
 	Unlicense
 "
 SLOT="0"
