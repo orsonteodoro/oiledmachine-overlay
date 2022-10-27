@@ -470,16 +470,16 @@ gen_depend_llvm() {
 			>=sys-devel/lld-${s}
 			=sys-libs/compiler-rt-${s}*
 			epgo? (
-				=sys-libs/compiler-rt-sanitizers-${s}*:=[profile]
+				=sys-libs/compiler-rt-sanitizers-${s}*:=[${MULTILIB_USEDEP},profile]
 			)
 			official? (
 				amd64? (
-					=sys-libs/compiler-rt-sanitizers-${s}*:=[cfi,profile]
+					=sys-libs/compiler-rt-sanitizers-${s}*:=[${MULTILIB_USEDEP},cfi,profile]
 				)
 			)
 			!official? (
 				cfi? (
-					=sys-libs/compiler-rt-sanitizers-${s}*:=[cfi]
+					=sys-libs/compiler-rt-sanitizers-${s}*:=[${MULTILIB_USEDEP},cfi]
 				)
 			)
 		"

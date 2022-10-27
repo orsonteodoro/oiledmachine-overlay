@@ -28,7 +28,7 @@ curl -l http://ftp.mozilla.org/pub/firefox/releases/ \
 # https://wiki.mozilla.org/Release_Management/Calendar
 
 
-FIREFOX_PATCHSET="firefox-105-patches-05j.tar.xz"
+FIREFOX_PATCHSET="firefox-106-patches-02j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
@@ -264,6 +264,9 @@ gen_llvm_bdepends() {
 		(
 			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+			pgo? (
+				=sys-libs/compiler-rt-sanitizers-${s}*[profile,${MULTILIB_USEDEP}]
+			)
 		)
 		"
 	done
@@ -283,7 +286,7 @@ BDEPEND+="
 	>=dev-util/cbindgen-0.24.3
 	net-libs/nodejs
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=virtual/rust-1.59.0[${MULTILIB_USEDEP}]
+	>=virtual/rust-1.61.0[${MULTILIB_USEDEP}]
 	amd64? ( >=dev-lang/nasm-2.14 )
 	pgo? (
 		x11-base/xorg-server[xvfb]
@@ -294,7 +297,10 @@ BDEPEND+="
 
 CDEPEND="
 	${FF_ONLY_DEPEND}
-	dev-libs/atk[${MULTILIB_USEDEP}]
+	|| (
+		>=app-accessibility/at-spi2-core-2.46.0:2
+		dev-libs/atk[${MULTILIB_USEDEP}]
+	)
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=[${MULTILIB_USEDEP}]
@@ -626,6 +632,27 @@ mozconfig_use_with() {
 	mozconfig_add_options_ac "$(use ${1} && echo +${1} || echo -${1})" "${flag}"
 }
 
+virtwl() {
+	debug-print-function ${FUNCNAME} "$@"
+
+	[[ $# -lt 1 ]] && die "${FUNCNAME} needs at least one argument"
+	[[ -n $XDG_RUNTIME_DIR ]] || die "${FUNCNAME} needs XDG_RUNTIME_DIR to be set; try xdg_environment_reset"
+	tinywl -h >/dev/null || die 'tinywl -h failed'
+
+	# TODO: don't run addpredict in utility function. WLR_RENDERER=pixman doesn't work
+	addpredict /dev/dri
+	local VIRTWL VIRTWL_PID
+	coproc VIRTWL { WLR_BACKENDS=headless exec tinywl -s 'echo $WAYLAND_DISPLAY; read _; kill $PPID'; }
+	local -x WAYLAND_DISPLAY
+	read WAYLAND_DISPLAY <&${VIRTWL[0]}
+
+	debug-print "${FUNCNAME}: $@"
+	"$@"
+
+	[[ -n $VIRTWL_PID ]] || die "tinywl exited unexpectedly"
+	exec {VIRTWL[0]}<&- {VIRTWL[1]}>&-
+}
+
 pkg_pretend() {
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		if use pgo ; then
@@ -673,7 +700,8 @@ eerror "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
 		llvm_pkg_setup
 
 		if tc-is-clang && is-flagq '-flto*' ; then
-			has_version "sys-devel/lld" || die
+			has_version "sys-devel/lld" \
+				|| die "Clang PGO requires LLD."
 			local lld_pv=$(ld.lld \
 					--version 2>/dev/null \
 				| awk '{ print $2 }')
@@ -959,9 +987,7 @@ einfo "Removing pre-built binaries ..."
 		-print -delete || die
 
 	# Clearing checksums where we have applied patches
-	moz_clear_vendor_checksums audioipc
-	moz_clear_vendor_checksums audioipc-client
-	moz_clear_vendor_checksums audioipc-server
+	moz_clear_vendor_checksums bindgen
 
 	# Removed creation of a single build dir
 	#
@@ -1469,7 +1495,8 @@ einfo "Forcing -fno-tree-loop-vectorize to workaround GCC bug, see bug 758446 ..
 	export MOZ_NOSPAM=1
 
 	# Portage sets XARGS environment variable to "xargs -r" by default which
-	# breaks build system's check_prog() function which doesn't support arguments
+	# breaks build system's check_prog() function which doesn't support
+	# arguments
 	mozconfig_add_options_ac \
 		'Gentoo default' \
 		"XARGS=${EPREFIX}/usr/bin/xargs"
@@ -1484,8 +1511,10 @@ einfo "Cross-compile ABI:\t\t${ABI}"
 einfo "Cross-compile CFLAGS:\t${CFLAGS}"
 einfo "Cross-compile CC:\t\t${CC}"
 einfo "Cross-compile CXX:\t\t${CXX}"
-	echo "export PKG_CONFIG=${chost}-pkg-config" >>${MOZCONFIG}
-	echo "export PKG_CONFIG_PATH=/usr/$(get_libdir)/pkgconfig:/usr/share/pkgconfig" >>${MOZCONFIG}
+echo "export PKG_CONFIG=${chost}-pkg-config" \
+	>>${MOZCONFIG}
+echo "export PKG_CONFIG_PATH=/usr/$(get_libdir)/pkgconfig:/usr/share/pkgconfig" \
+	>>${MOZCONFIG}
 
 	# Show flags we will use
 einfo "Build BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
@@ -1529,12 +1558,16 @@ _src_compile() {
 	local virtx_cmd=
 
 	if use pgo ; then
-		virtx_cmd=virtx
-
 		# Reset and cleanup environment variables used by GNOME/XDG
 		gnome2_environment_reset
 
 		addpredict /root
+
+		if ! use X; then
+			virtx_cmd=virtwl
+		else
+			virtx_cmd=virtx
+		fi
 	fi
 
 	if ! use X && use wayland; then
@@ -1543,8 +1576,7 @@ _src_compile() {
 		local -x GDK_BACKEND=x11
 	fi
 
-	${virtx_cmd} ./mach build --verbose \
-		|| die
+	${virtx_cmd} ./mach build --verbose || die
 }
 
 src_compile() {
@@ -1697,8 +1729,8 @@ EOF
 	# Force hwaccel prefs if USE=hwaccel is enabled
 	if use hwaccel ; then
 		cat "${FILESDIR}"/gentoo-hwaccel-prefs.js-r2 \
-		>>"${GENTOO_PREFS}" \
-		|| die "failed to add prefs to force hardware-accelerated rendering to all-gentoo.js"
+		>>"${GENTOO_PREFS}" || \
+die "failed to add prefs to force hardware-accelerated rendering to all-gentoo.js"
 
 		if use wayland; then
 cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set hwaccel wayland prefs"
@@ -1715,15 +1747,18 @@ EOF
 		local plugin
 		for plugin in "${MOZ_GMP_PLUGIN_LIST[@]}" ; do
 einfo "Disabling auto-update for ${plugin} plugin ..."
-cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to disable autoupdate for ${plugin} media plugin"
+cat >>"${GENTOO_PREFS}" <<-EOF || \
+die "failed to disable autoupdate for ${plugin} media plugin"
 pref("media.${plugin}.autoupdate",   false);
 EOF
 		done
 	fi
 
-	# Force the graphite pref if USE=system-harfbuzz is enabled, since the pref cannot disable it
+	# Force the graphite pref if USE=system-harfbuzz is enabled, since the
+	# pref cannot disable it
 	if use system-harfbuzz ; then
-cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set gfx.font_rendering.graphite.enabled pref"
+cat >>"${GENTOO_PREFS}" <<-EOF || \
+die "failed to set gfx.font_rendering.graphite.enabled pref"
 sticky_pref("gfx.font_rendering.graphite.enabled", true);
 EOF
 	fi
@@ -1731,7 +1766,9 @@ EOF
 	# Install language packs
 	local langpacks=( $(find "${WORKDIR}/language_packs" -type f -name '*.xpi') )
 	if [[ -n "${langpacks}" ]] ; then
-		moz_install_xpi "${MOZILLA_FIVE_HOME}/distribution/extensions" "${langpacks[@]}"
+		moz_install_xpi \
+			"${MOZILLA_FIVE_HOME}/distribution/extensions" \
+			"${langpacks[@]}"
 	fi
 
 	# Install geckodriver
@@ -1823,8 +1860,8 @@ einfo "APULSE found; Generating library symlinks for sound support ..."
 		local lib
 		pushd "${ED}${MOZILLA_FIVE_HOME}" &>/dev/null || die
 		for lib in ../apulse/libpulse{.so{,.0},-simple.so{,.0}} ; do
-			# A quickpkg rolled by hand will grab symlinks as part of the package,
-			# so we need to avoid creating them if they already exist.
+	# A quickpkg rolled by hand will grab symlinks as part of the package,
+	# so we need to avoid creating them if they already exist.
 			if [[ ! -L ${lib##*/} ]] ; then
 				ln -s "${lib}" ${lib##*/} || die
 			fi

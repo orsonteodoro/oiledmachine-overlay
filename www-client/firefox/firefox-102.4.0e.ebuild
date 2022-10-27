@@ -26,7 +26,7 @@ curl -l http://ftp.mozilla.org/pub/firefox/releases/ \
 # Version announcements can be found here also:
 # https://wiki.mozilla.org/Release_Management/Calendar
 
-FIREFOX_PATCHSET="firefox-102esr-patches-03j.tar.xz"
+FIREFOX_PATCHSET="firefox-102esr-patches-04j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
@@ -266,6 +266,9 @@ gen_llvm_bdepends() {
 		(
 			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+			pgo? (
+				=sys-libs/compiler-rt-sanitizers-${s}*[profile,${MULTILIB_USEDEP}]
+			)
 		)
 		"
 	done
@@ -296,7 +299,10 @@ BDEPEND+="
 
 CDEPEND="
 	${FF_ONLY_DEPEND}
-	dev-libs/atk[${MULTILIB_USEDEP}]
+	|| (
+		>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
+		dev-libs/atk[${MULTILIB_USEDEP}]
+	)
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=[${MULTILIB_USEDEP}]
@@ -684,7 +690,8 @@ eerror "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
 		llvm_pkg_setup
 
 		if tc-is-clang && is-flagq '-flto*' ; then
-			has_version "sys-devel/lld" || die
+			has_version "sys-devel/lld" \
+				|| die "Clang PGO requires LLD."
 			local lld_pv=$(ld.lld \
 					--version 2>/dev/null \
 				| awk '{ print $2 }')
@@ -1538,9 +1545,7 @@ _src_compile() {
 
 	local -x GDK_BACKEND=x11
 
-	${virtx_cmd} ./mach build --verbose \
-		|| die
-
+	${virtx_cmd} ./mach build --verbose || die
 }
 
 src_compile() {
