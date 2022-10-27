@@ -20,7 +20,7 @@ LICENSE="
 	BSD-4
 	MIT
 	MPL-2.0
-	PSF-3.9
+	( PSF-2.4 ( PSF-2 0BSD ) HPND MIT )
 	unicode
 	UoI-NCSA
 "
@@ -31,7 +31,7 @@ LICENSE="
 # Apache-2.0-with-LLVM-exceptions - toolchains/llvm/prebuilt/linux-x86_64/libexec/ccc-analyzer
 # BSD - sources/third_party/googletest/LICENSE
 # MIT - toolchains/llvm/prebuilt/linux-x86_64/python3/lib/python3.9/site-packages/setuptools-49.2.1.dist-info/LICENSE
-# PSF-3.9, MIT (libffi) - toolchains/llvm/prebuilt/linux-x86_64/python3/lib/python3.9/LICENSE.txt
+# PSF-2.4 ( PSF-2 0BSD ), HPND, MIT - toolchains/llvm/prebuilt/linux-x86_64/python3/lib/python3.9/LICENSE.txt
 KEYWORDS="~amd64"
 IUSE=""
 SLOT="0"
