@@ -29,6 +29,7 @@ LICENSE="
 	all-rights-reserved
 	LGPL-2.1+
 	MPL-2.0
+	( PSF-2.4 ( PSF-2 0BSD ) )
 	build_creator? (
 		Apache-2.0
 		AFL-3.0
@@ -40,7 +41,6 @@ LICENSE="
 		GPL-3
 		GPL-3-with-font-exception
 		LGPL-2.1+
-		PSF-2
 		ZLIB
 	)
 	build_headless? (
@@ -54,7 +54,6 @@ LICENSE="
 		GPL-3
 		GPL-3-with-font-exception
 		LGPL-2.1+
-		PSF-2
 		ZLIB
 	)
 	cycles? (
