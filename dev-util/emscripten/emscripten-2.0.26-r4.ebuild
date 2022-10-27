@@ -12,8 +12,8 @@ EAPI=8
 # Keep emscripten.config.x.yy.zz updated if changed from:
 # https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/settings_template.py
 
-LLVM_V=13
-LLVM_MAX_SLOT=${LLVM_V}
+LLVM_PV=13
+LLVM_MAX_SLOT=${LLVM_PV}
 PYTHON_COMPAT=( python3_{8..11} )
 inherit flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1 \
 	toolchain-funcs
@@ -21,25 +21,25 @@ inherit flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1 \
 DESCRIPTION="LLVM-to-JavaScript Compiler"
 HOMEPAGE="http://emscripten.org/"
 LICENSE="
+	( all-rights-reserved || ( MIT UoI-NCSA ) )
 	all-rights-reserved
-	UoI-NCSA
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
 	Boost-1.0
 	BSD
 	BSD-2
 	CC-BY-SA-3.0
-	|| ( FTL GPL-2 )
 	freeglut-teapot
 	GPL-2+
 	LGPL-2.1
 	LGPL-3
 	MIT
+	( MIT all-rights-reserved )
 	MPL-2.0
 	OFL-1.1
 	OG-X11
-	PSF-2.4
 	Unlicense
+	UoI-NCSA
 	ZLIB
 	closure-compiler? (
 		Apache-2.0
@@ -50,6 +50,10 @@ LICENSE="
 		MIT
 		MPL-2.0
 		NPL-1.1
+	)
+	|| (
+		FTL
+		GPL-2
 	)
 "
 #
@@ -77,7 +81,7 @@ LICENSE="
 #   source-map - BSD
 #
 # Tests
-#   all-rights-reserved || (MIT UoI-NCSA)
+#   all-rights-reserved || ( MIT UoI-NCSA )
 #   all-rights-reserved MIT - tests/full_es2_sdlproc.c
 #   box2d - ZLIB
 #     freeglut - MIT LGPL-2
@@ -86,11 +90,10 @@ LICENSE="
 #   enet - MIT
 #   freealut - LGPL-2
 #     files under src is UoI-NCSA MIT
-#   freetype - || (FTL GPL-2) MIT ZLIB
+#   freetype - || ( FTL GPL-2 ) MIT ZLIB
 #     LiberationSansBold - OFL-1.1
 #   openjpeg - BSD-2
-#   tests/python - PSF-2.4
-#   tests/sounds - cc-by-sa-3.0
+#   tests/sounds - CC-BY-SA-3.0
 #   tests/third_party/box2d/freeglut/freeglut_teapot_data.h - MIT freeglut-teapot
 #   poppler - GPL-2
 #   poppler/cmake - BSD
@@ -120,7 +123,8 @@ REQUIRED_USE+="
 		closure-compiler
 		^^ ( closure_compiler_java closure_compiler_native
 			closure_compiler_nodejs )
-	)"
+	)
+"
 # See also .circleci/config.yml
 # See also https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/building.py EXPECTED_BINARYEN_VERSION
 JAVA_V="11" # See https://github.com/google/closure-compiler/blob/v20210601/.github/workflows/ci.yaml#L43
@@ -148,6 +152,10 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	closure-compiler? (
+		!system-closure-compiler? (
+			${JRE_DEPEND}
+			>=net-libs/nodejs-10
+		)
 		system-closure-compiler? (
 			>=dev-util/closure-compiler-npm-20210601.0.0:\
 ${CLOSURE_COMPILER_SLOT}\
@@ -159,29 +167,25 @@ ${CLOSURE_COMPILER_SLOT}\
 		closure_compiler_nodejs? (
 			${JRE_DEPEND}
 		)
-		!system-closure-compiler? (
-			${JRE_DEPEND}
-			>=net-libs/nodejs-10
-		)
 	)
 	dev-util/binaryen:${BINARYEN_V}
 	>=net-libs/nodejs-4.1.1
 	(
-		>=sys-devel/lld-${LLVM_V}
-		>=sys-devel/llvm-${LLVM_V}:${LLVM_V}=[llvm_targets_WebAssembly]
-		>=sys-devel/clang-${LLVM_V}:${LLVM_V}=[llvm_targets_WebAssembly]
+		>=sys-devel/clang-${LLVM_PV}:${LLVM_PV}=[llvm_targets_WebAssembly]
+		>=sys-devel/lld-${LLVM_PV}
+		>=sys-devel/llvm-${LLVM_PV}:${LLVM_PV}=[llvm_targets_WebAssembly]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 	closure-compiler? (
+		!system-closure-compiler? (
+			${JRE_DEPEND}
+		)
 		closure_compiler_java? (
 			${JRE_DEPEND}
 		)
 		closure_compiler_nodejs? (
-			${JRE_DEPEND}
-		)
-		!system-closure-compiler? (
 			${JRE_DEPEND}
 		)
 	)
@@ -294,7 +298,7 @@ eerror
 	fi
 	python-single-r1_pkg_setup
 	llvm_pkg_setup
-	export CXX="clang++-${LLVM_V}"
+	export CXX="clang++-${LLVM_PV}"
 	einfo "CXX=${CXX}"
 }
 
@@ -313,9 +317,9 @@ prepare_file() {
 		die "could not adjust path for '${source_filename}'"
 	sed -i -e "s|\${PYTHON_EXE_ABSPATH}|${PYTHON_EXE_ABSPATH}|g" \
 		"${dest_dir}/${source_filename}" || die
-	sed -i -e "s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${LLVM_V}/bin|" \
+	sed -i -e "s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${LLVM_PV}/bin|" \
 		-e "s|__EMCC_WASM_BACKEND__|1|" \
-		-e "s|__LLVM_BIN_PATH__|/usr/lib/llvm/${LLVM_V}/bin|" \
+		-e "s|__LLVM_BIN_PATH__|/usr/lib/llvm/${LLVM_PV}/bin|" \
 		-e "s|\$(get_libdir)|$(get_libdir)|" \
 		-e "s|\${BINARYEN_SLOT}|${BINARYEN_V}|" \
 		"${dest_dir}/${source_filename}" || die
@@ -446,7 +450,7 @@ src_install() {
 }
 
 pkg_postinst() {
-	eselect emscripten set "emscripten-${PV} llvm-${LLVM_V}"
+	eselect emscripten set "emscripten-${PV} llvm-${LLVM_PV}"
 	if use closure-compiler && ! use system-closure-compiler ; then
 		export NPM_SECAUDIT_INSTALL_PATH="${DEST}/${P}"
 		npm-secaudit_pkg_postinst
