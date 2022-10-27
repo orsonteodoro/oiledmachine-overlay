@@ -11,10 +11,10 @@ KEYWORDS=\
 "~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE="4_14 5_4 5_10 5_15"
 RDEPEND="
-	4_14? ( ~sys-kernel/ot-sources-4.14.295 )
-	5_4? ( ~sys-kernel/ot-sources-5.4.219 )
-	5_10? ( ~sys-kernel/ot-sources-5.10.149 )
-	5_15? ( ~sys-kernel/ot-sources-5.15.74 )
+	4_14? ( ~sys-kernel/ot-sources-4.14.296 )
+	5_4? ( ~sys-kernel/ot-sources-5.4.220 )
+	5_10? ( ~sys-kernel/ot-sources-5.10.150 )
+	5_15? ( ~sys-kernel/ot-sources-5.15.75 )
 "
 REQUIRED_USE=""
 SLOT="0/${PV}"
