@@ -14,7 +14,7 @@ LICENSE="
 	DOTNET-libraries-and-runtime-components-patents
 	MIT
 	Ms-PL
-	unicode
+	Unicode-DFS-2016
 	ZLIB
 	W3C-Software-and-Document-Notice-and-License
 "
