@@ -14,14 +14,14 @@
 
 # This is used by external projects in order to find emscripten.  It is not used
 # by emscripten itself.
-EMSCRIPTEN_ROOT = '/usr/share/emscripten-${PV}' # directory
+EMSCRIPTEN_ROOT = '${EPREFIX}/usr/share/emscripten-${PV}' # directory
 
 LLVM_ROOT = '__LLVM_BIN_PATH__' # directory
-BINARYEN_ROOT = '/usr/$(get_libdir)/binaryen/${BINARYEN_SLOT}' # directory
+BINARYEN_ROOT = '${EPREFIX}/usr/$(get_libdir)/binaryen/${BINARYEN_SLOT}' # directory
 
 # Location of the node binary to use for running the JS parts of the compiler.
 # This engine must exist, or nothing can be compiled.
-NODE_JS = '/usr/bin/node' # executable
+NODE_JS = '${EPREFIX}/usr/bin/node' # executable
 
 JAVA = 'java' # executable
 

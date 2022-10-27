@@ -35,7 +35,8 @@ BDEPEND+="
 "
 SRC_URI="
 https://github.com/WebAssembly/binaryen/archive/version_${PV}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${PN}-version_${PV}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md )
@@ -44,7 +45,8 @@ pkg_setup() {
 	CC=$(tc-getCC)
 	CXX=$(tc-getCXX)
 	einfo "CC=${CC} CXX=${CXX}"
-	test-flags-CXX "-std=c++17" 2>/dev/null 1>/dev/null || die "Switch to a c++17 compatible compiler."
+	test-flags-CXX "-std=c++17" 2>/dev/null 1>/dev/null \
+		|| die "Switch to a c++17 compatible compiler."
 	if tc-is-gcc ; then
 		if ver_test $(gcc-major-version) -lt 11 ; then
 			die "${PN} requires GCC >=11 for c++17 support"
@@ -68,9 +70,9 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_LIBDIR=/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/$(get_libdir)
-		-DCMAKE_INSTALL_BINDIR=/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/bin
-		-DCMAKE_INSTALL_INCLUDEDIR=/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/include
+		-DCMAKE_INSTALL_LIBDIR="${EPREFIX}/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/$(get_libdir)"
+		-DCMAKE_INSTALL_BINDIR="${EPREFIX}/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/bin"
+		-DCMAKE_INSTALL_INCLUDEDIR="${EPREFIX}/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/include"
 		-DBUILD_STATIC_LIB=OFF
 		-DENABLE_WERROR=OFF
 	)
@@ -96,7 +98,7 @@ src_install() {
 	dodoc "${T}/LICENSE.llvm-project.TXT"
 	for f in $(find "${ED}" -executable) ; do
 		if ldd "${f}" 2>/dev/null | grep -q "libbinaryen.so" ; then
-			patchelf --set-rpath "/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/$(get_libdir)" "${f}" || die
+			patchelf --set-rpath "${EPREFIX}/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/$(get_libdir)" "${f}" || die
 		fi
 	done
 }

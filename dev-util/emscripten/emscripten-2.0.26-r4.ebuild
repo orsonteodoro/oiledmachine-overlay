@@ -127,27 +127,27 @@ REQUIRED_USE+="
 "
 # See also .circleci/config.yml
 # See also https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/building.py EXPECTED_BINARYEN_VERSION
-JAVA_V="11" # See https://github.com/google/closure-compiler/blob/v20210601/.github/workflows/ci.yaml#L43
+JAVA_PV="11" # See https://github.com/google/closure-compiler/blob/v20210601/.github/workflows/ci.yaml#L43
 # See https://github.com/google/closure-compiler-npm/blob/v20210601.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
 # For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/2.0.26/package.json
 # For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/shared.py#L39
 # For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/shared.py#L43
-BINARYEN_V="101"
+BINARYEN_PV="101"
 JDK_DEPEND="
 	|| (
-		dev-java/openjdk-bin:${JAVA_V}
-		dev-java/openjdk:${JAVA_V}
+		dev-java/openjdk-bin:${JAVA_PV}
+		dev-java/openjdk:${JAVA_PV}
 	)
 "
 JRE_DEPEND="
 	|| (
 		${JDK_DEPEND}
-		dev-java/openjdk-jre-bin:${JAVA_V}
+		dev-java/openjdk-jre-bin:${JAVA_PV}
 	)
 "
-#JDK_DEPEND="virtual/jdk:${JAVA_V}"
-#JRE_DEPEND=">=virtual/jre-${JAVA_V}"
+#JDK_DEPEND="virtual/jdk:${JAVA_PV}"
+#JRE_DEPEND=">=virtual/jre-${JAVA_PV}"
 RDEPEND+="
 	${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
@@ -168,7 +168,7 @@ ${CLOSURE_COMPILER_SLOT}\
 			${JRE_DEPEND}
 		)
 	)
-	dev-util/binaryen:${BINARYEN_V}
+	dev-util/binaryen:${BINARYEN_PV}
 	>=net-libs/nodejs-4.1.1
 	(
 		>=sys-devel/clang-${LLVM_PV}:${LLVM_PV}=[llvm_targets_WebAssembly]
@@ -224,26 +224,26 @@ setup_openjdk() {
 	local jdk_basepath
 
 	if find \
-		/usr/$(get_libdir)/openjdk-${JAVA_V}*/ \
+		/usr/$(get_libdir)/openjdk-${JAVA_PV}*/ \
 		-maxdepth 1 \
 		-type d \
 		2>/dev/null 1>/dev/null
 	then
 		export JAVA_HOME=$(find \
-				/usr/$(get_libdir)/openjdk-${JAVA_V}*/ \
+				/usr/$(get_libdir)/openjdk-${JAVA_PV}*/ \
 				-maxdepth 1 \
 				-type d \
 			| sort -V \
 			| head -n 1)
 		export PATH="${JAVA_HOME}/bin:${PATH}"
 	elif find \
-		/opt/openjdk-bin-${JAVA_V}*/ \
+		/opt/openjdk-bin-${JAVA_PV}*/ \
 		-maxdepth 1 \
 		-type d \
 		2>/dev/null 1>/dev/null
 	then
 		export JAVA_HOME=$(find \
-				/opt/openjdk-bin-${JAVA_V}*/ \
+				/opt/openjdk-bin-${JAVA_PV}*/ \
 				-maxdepth 1 \
 				-type d \
 			| sort -V \
@@ -281,7 +281,7 @@ eerror "JAVA_HOME is set to ${JAVA_HOME} but cannot locate ${JAVA_HOME}/bin/java
 eerror
 				die
 			fi
-			# java-pkg_ensure-vm-version-ge ${JAVA_V}
+			# java-pkg_ensure-vm-version-ge ${JAVA_PV}
 		fi
 		if ! use system-closure-compiler ; then
 			npm-secaudit_pkg_setup
@@ -317,23 +317,25 @@ prepare_file() {
 		die "could not adjust path for '${source_filename}'"
 	sed -i -e "s|\${PYTHON_EXE_ABSPATH}|${PYTHON_EXE_ABSPATH}|g" \
 		"${dest_dir}/${source_filename}" || die
-	sed -i -e "s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${LLVM_PV}/bin|" \
+	sed -i -e "s|__EMSDK_LLVM_ROOT__|${EPREFIX}/usr/lib/llvm/${LLVM_PV}/bin|" \
 		-e "s|__EMCC_WASM_BACKEND__|1|" \
-		-e "s|__LLVM_BIN_PATH__|/usr/lib/llvm/${LLVM_PV}/bin|" \
+		-e "s|__LLVM_BIN_PATH__|${EPREFIX}/usr/lib/llvm/${LLVM_PV}/bin|" \
 		-e "s|\$(get_libdir)|$(get_libdir)|" \
-		-e "s|\${BINARYEN_SLOT}|${BINARYEN_V}|" \
+		-e "s|\${BINARYEN_SLOT}|${BINARYEN_PV}|" \
 		"${dest_dir}/${source_filename}" || die
 	sed -i "/EMSCRIPTEN_NATIVE_OPTIMIZER/d" \
+		"${dest_dir}/${source_filename}" || die
+	sed -i "s|\${EPREFIX}|${EPREFIX}|g" \
 		"${dest_dir}/${source_filename}" || die
 	if use closure-compiler ; then
 		if use system-closure-compiler ; then
 			local cmd
 			if use closure_compiler_java ; then
-				cmd="/usr/bin/closure-compiler-java"
+				cmd="${EPREFIX}/usr/bin/closure-compiler-java"
 			elif use closure_compiler_nodejs ; then
-				cmd="/usr/bin/closure-compiler-node"
+				cmd="${EPREFIX}/usr/bin/closure-compiler-node"
 			elif use closure_compiler_native ; then
-				cmd="/usr/bin/closure-compiler"
+				cmd="${EPREFIX}/usr/bin/closure-compiler"
 			fi
 			sed -i -e "s|__EMSDK_CLOSURE_COMPILER__|\"${cmd}\"|" \
 				"${dest_dir}/${source_filename}" || die
@@ -401,11 +403,11 @@ src_test() {
 			|| die "Could not export variable"
 		local cc_cmd
 		if use closure_compiler_java ; then
-			cc_cmd="${EROOT}/usr/bin/closure-compiler-java"
+			cc_cmd="${BROOT}/usr/bin/closure-compiler-java"
 		elif use closure_compiler_nodejs ; then
-			cc_cmd="${EROOT}/usr/bin/closure-compiler-node"
+			cc_cmd="${BROOT}/usr/bin/closure-compiler-node"
 		elif use closure_compiler_native ; then
-			cc_cmd="${EROOT}/usr/bin/closure-compiler"
+			cc_cmd="${BROOT}/usr/bin/closure-compiler"
 		elif use closure-compiler ; then
 			cc_cmd="" # use defaults
 		fi
@@ -416,7 +418,7 @@ src_test() {
 			die "Error during executing emcc!"
 		test -f "${TEST}/hello_world.js" \
 			|| die "Could not find '${TEST}/hello_world.js'"
-		OUT=$(/usr/bin/node "${TEST}/hello_world.js") || \
+		OUT=$("${BROOT}/usr/bin/node" "${TEST}/hello_world.js") || \
 			die "Could not execute /usr/bin/node"
 		EXP=$(echo -e -n 'Hello World!\n') \
 			|| die "Could not create expected string"
