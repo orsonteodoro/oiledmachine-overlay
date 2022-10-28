@@ -237,7 +237,7 @@ LICENSE+="
 # ZLIB all-rights-reserved media/libjpeg/simd/powerpc/jdsample-altivec.c -- \#
 #   the vanilla ZLIB lib license doesn't contain all rights reserved
 
-IUSE+=" cpu_flags_arm_neon dbus debug eme-free hardened hwaccel jack libproxy"
+IUSE+=" cpu_flags_arm_neon dbus debug eme-free +hardened hwaccel jack libproxy"
 IUSE+=" +openh264 pgo pulseaudio sndio selinux +system-av1 +system-harfbuzz"
 IUSE+=" +system-icu +system-jpeg +system-libevent +system-libvpx system-png"
 IUSE+=" system-python-libs +system-webp	wayland wifi"
@@ -1260,9 +1260,12 @@ einfo "Building without Mozilla API key ..."
 
 	mozconfig_use_enable geckodriver
 
+	# The upstream default is hardening on
 	if use hardened ; then
 		mozconfig_add_options_ac "+hardened" --enable-hardening
 		append-ldflags "-Wl,-z,relro -Wl,-z,now"
+	else
+		mozconfig_add_options_ac "+hardened" --disable-hardening
 	fi
 
 	local myaudiobackends=""
