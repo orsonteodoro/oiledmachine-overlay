@@ -1002,7 +1002,7 @@ einfo "Removing pre-built binaries ..."
 		if [[ -e "${ESYSROOT}/usr/bin/${chost}-objdump" ]] ; then
 			# sed-in toolchain prefix
 			sed -i \
-				-e "s/objdump/${chost}-objdump/" \
+				-e "s/\"objdump/\"${chost}-objdump/" \
 				python/mozbuild/mozbuild/configure/check_debug_ranges.py \
 				|| die "sed failed to set toolchain prefix"
 einfo "Using ${chost}-objdump for chost"
@@ -1010,7 +1010,7 @@ einfo "Using ${chost}-objdump for chost"
 			[[ -e "${ESYSROOT}/usr/bin/${cbuild}-objdump" ]] || die
 			# sed-in toolchain prefix
 			sed -i \
-				-e "s/objdump/${cbuild}-objdump/" \
+				-e "s/\"objdump/\"${cbuild}-objdump/" \
 				python/mozbuild/mozbuild/configure/check_debug_ranges.py \
 				|| die "sed failed to set toolchain prefix"
 ewarn "Using ${cbuild}-objdump for cbuild"
