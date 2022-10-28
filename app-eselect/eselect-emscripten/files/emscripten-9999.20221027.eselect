@@ -530,8 +530,7 @@ EOF
     rm -rf "${sandbox}"
 
     echo
-    echo "You need to do the following following environment variables need to"
-    echo "be exported prior to running the emscripten toolchain:"
+    echo "You need to run the following before using the emscripten toolchain:"
     echo
     echo "env-update"
     echo ". /etc/profile"
