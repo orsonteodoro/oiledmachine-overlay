@@ -415,6 +415,7 @@ src_test() {
 		elif use closure-compiler ; then
 			cc_cmd="" # use defaults
 		fi
+		BINARYEN="${BROOT}/usr/$(get_libdir)/binaryen/${BINARYEN_PV}" \
 		CLOSURE_COMPILER="${cc_cmd}" \
 		LLVM_ROOT="${EMSDK_LLVM_ROOT}" \
 		../"${P}/emcc" "${TEST}/hello_world.cpp" \
