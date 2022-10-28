@@ -1277,12 +1277,12 @@ einfo "Building without Mozilla API key ..."
 
 	mozconfig_use_enable geckodriver
 
-	# The upstream default is hardening on
+	# The upstream default is hardening on even if unset.
 	if use hardened ; then
 		mozconfig_add_options_ac "+hardened" --enable-hardening
 		append-ldflags "-Wl,-z,relro -Wl,-z,now"
 	else
-		mozconfig_add_options_ac "+hardened" --disable-hardening
+		mozconfig_add_options_ac "-hardened" --disable-hardening
 	fi
 
 	local myaudiobackends=""
