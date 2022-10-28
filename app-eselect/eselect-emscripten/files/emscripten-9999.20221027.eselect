@@ -538,7 +538,7 @@ EOF
     # The CLOSURE_COMPILER is reserved for the closure-compiler package,
     # the emscripten package has no right to it.
     echo "export CLOSURE_COMPILER=\"\${EMSDK_CLOSURE_COMPILER}\""
-    echo "export EM_CONFIG=\"\${EROOT}/usr/share/emscripten-${PV}/emscripten.config\""
+    echo "export EM_CONFIG=\"${EROOT}/usr/share/emscripten-${PV}/emscripten.config\""
     echo "export EMCC_WASM_BACKEND=\"${__EMCC_WASM_BACKEND__}\""
     # The LLVM_ prefix is reserved for the package llvm package only, \
     # the emscripten package has no right to it.
