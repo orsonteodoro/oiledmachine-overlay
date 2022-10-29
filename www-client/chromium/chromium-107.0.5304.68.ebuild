@@ -2356,6 +2356,11 @@ ewarn
 	replace-flags "-Og" "-O2" # Fork ebuild if you want -Og ; Similar to -O1
 	replace-flags "-O0" "-O2"
 
+	if is-flagq "-Ofast" ; then
+		# Precaution
+		append-flags -fno-allow-store-data-races
+	fi
+
 	if [[ "${myarch}" == "amd64" ]] ; then
 		target_cpu="x64"
 		ffmpeg_target_arch="x64"

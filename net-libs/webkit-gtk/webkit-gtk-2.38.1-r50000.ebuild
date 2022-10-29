@@ -1311,6 +1311,11 @@ einfo
 	replace-flags "-O1" "-O2"
 	replace-flags "-Os" "-O2"
 
+	if is-flagq "-Ofast" ; then
+		# Precaution
+		append-flags -fno-allow-store-data-races
+	fi
+
 	WK_USE_CCACHE=NO cmake_src_configure
 }
 

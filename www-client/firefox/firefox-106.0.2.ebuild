@@ -1397,6 +1397,11 @@ einfo "Building without Mozilla API key ..."
 		fi
 	fi
 
+	if is-flagq '-Ofast' ; then
+		# Precaution
+		append-flags -fno-allow-store-data-races
+	fi
+
 	# Debug flag was handled via configure
 	filter-flags '-g*'
 
