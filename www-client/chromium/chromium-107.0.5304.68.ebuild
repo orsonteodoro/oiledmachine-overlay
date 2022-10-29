@@ -2329,7 +2329,6 @@ ewarn
 
 	# Avoid CFLAGS problems, bug #352457, bug #390147.
 	if ! use custom-cflags ; then
-		replace-flags "-Os" "-O2"
 		strip-flags
 
 		# Debug info section overflows without component build
@@ -2350,6 +2349,12 @@ ewarn
 				'-mno-xop'
 		fi
 	fi
+
+	# Boost Oflags for internal dav1d to avoid blurry images or < 25 FPS.
+	replace-flags "-Os" "-O2"
+	replace-flags "-O1" "-O2"
+	replace-flags "-Og" "-O2" # Fork ebuild if you want -Og ; Similar to -O1
+	replace-flags "-O0" "-O2"
 
 	if [[ "${myarch}" == "amd64" ]] ; then
 		target_cpu="x64"
@@ -2682,12 +2687,6 @@ einfo
 	fi
 
 	uopts_src_configure
-
-	# Boost Oflags for internal dav1d to avoid blurry images or < 25 FPS.
-	replace-flags -Os -O2
-	replace-flags -O1 -O2
-	replace-flags -Og -O2 # Fork ebuild if you want -Og ; Similar to -O1
-	replace-flags -O0 -O2
 
 einfo
 einfo "Configuring Chromium..."
