@@ -13,7 +13,7 @@ IUSE="4_14 5_4 5_10 5_15"
 RDEPEND="
 	4_14? ( ~sys-kernel/ot-sources-4.14.296 )
 	5_4? ( ~sys-kernel/ot-sources-5.4.220 )
-	5_10? ( ~sys-kernel/ot-sources-5.10.150 )
+	5_10? ( ~sys-kernel/ot-sources-5.10.151 )
 	5_15? ( ~sys-kernel/ot-sources-5.15.75 )
 "
 REQUIRED_USE=""
