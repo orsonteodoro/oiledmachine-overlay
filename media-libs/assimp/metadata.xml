@@ -2,17 +2,17 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
 	<maintainer type="person">
-		<!-- only for this ebuild fork on the oildedmachine-overlay -->
+		<!-- Only for this ebuild fork on the oildedmachine-overlay -->
 		<email>orsonteodoro@hotmail.com</email>
 		<name>Orson Teodoro</name>
 	</maintainer>
 	<maintainer type="person" proxied="yes">
-		<!-- original ebuild maintainers -->
+		<!-- Original ebuild maintainers -->
 		<email>waebbl-gentoo@posteo.net</email>
 		<name>Bernd Waibel</name>
 	</maintainer>
 	<maintainer type="project" proxied="proxy">
-		<!-- original ebuild maintainers -->
+		<!-- Original ebuild maintainers -->
 		<email>proxy-maint@gentoo.org</email>
 		<name>Gentoo Proxy Maintainers</name>
 	</maintainer>

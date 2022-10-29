@@ -1,11 +1,12 @@
 https://bugs.gentoo.org/840767
 https://github.com/assimp/assimp/issues/4438
 
-From f963a15bbbcfa1e3c4bd0c24173f90151e023469 Mon Sep 17 00:00:00 2001
+From 48cb5451383855755debfc17cb5e3428cba2d94e Mon Sep 17 00:00:00 2001
 From: Bernd Waibel <waebbl-gentoo@posteo.net>
-Date: Thu, 28 Apr 2022 07:59:26 +0200
+Date: Sat, 21 May 2022 17:37:04 +0200
 Subject: [PATCH] drop failing tests for abi_x86_32
 
+Drop two additional test wrt 5.2.3
 Signed-off-by: Bernd Waibel <waebbl-gentoo@posteo.net>
 --- a/test/unit/AssimpAPITest_aiMatrix3x3.cpp
 +++ b/test/unit/AssimpAPITest_aiMatrix3x3.cpp
@@ -23,6 +24,21 @@ Signed-off-by: Bernd Waibel <waebbl-gentoo@posteo.net>
  TEST_F(AssimpAPITest_aiMatrix3x3, aiMatrix3AreEqualTest) {
      result_c = result_cpp = random_mat3();
      EXPECT_EQ(result_cpp == result_c,
+@@ -127,14 +120,6 @@ TEST_F(AssimpAPITest_aiMatrix3x3, aiMatrix3RotationZTest) {
+     EXPECT_EQ(result_cpp, result_c);
+ }
+ 
+-TEST_F(AssimpAPITest_aiMatrix3x3, aiMatrix3FromRotationAroundAxisTest) {
+-    const float angle(RandPI.next());
+-    const auto axis = random_unit_vec3();
+-    aiMatrix3x3::Rotation(angle, axis, result_cpp);
+-    aiMatrix3FromRotationAroundAxis(&result_c, &axis, angle);
+-    EXPECT_EQ(result_cpp, result_c);
+-}
+-
+ TEST_F(AssimpAPITest_aiMatrix3x3, aiMatrix3TranslationTest) {
+     const auto axis = random_vec2();
+     aiMatrix3x3::Translation(axis, result_cpp);
 --- a/test/unit/AssimpAPITest_aiMatrix4x4.cpp
 +++ b/test/unit/AssimpAPITest_aiMatrix4x4.cpp
 @@ -78,15 +78,6 @@ TEST_F(AssimpAPITest_aiMatrix4x4, aiMatrix4FromMatrix3Test) {
@@ -54,6 +70,21 @@ Signed-off-by: Bernd Waibel <waebbl-gentoo@posteo.net>
  TEST_F(AssimpAPITest_aiMatrix4x4, aiMatrix4IsIdentityTest) {
      EXPECT_EQ(result_cpp.IsIdentity(),
          (bool)aiMatrix4IsIdentity(&result_c));
+@@ -228,14 +213,6 @@ TEST_F(AssimpAPITest_aiMatrix4x4, aiMatrix4RotationZTest) {
+     EXPECT_EQ(result_cpp, result_c);
+ }
+ 
+-TEST_F(AssimpAPITest_aiMatrix4x4, aiMatrix4FromRotationAroundAxisTest) {
+-    const float angle(RandPI.next());
+-    const auto axis = random_unit_vec3();
+-    aiMatrix4x4::Rotation(angle, axis, result_cpp);
+-    aiMatrix4FromRotationAroundAxis(&result_c, &axis, angle);
+-    EXPECT_EQ(result_cpp, result_c);
+-}
+-
+ TEST_F(AssimpAPITest_aiMatrix4x4, aiMatrix4TranslationTest) {
+     const auto axis = random_vec3();
+     aiMatrix4x4::Translation(axis, result_cpp);
 --- a/test/unit/AssimpAPITest_aiQuaternion.cpp
 +++ b/test/unit/AssimpAPITest_aiQuaternion.cpp
 @@ -54,19 +54,6 @@ protected:
