@@ -12,40 +12,31 @@ EAPI=8
 # "/usr/bin/shiboken2" at build time and "libshiboken2-*.so" at runtime.
 # TODO: Add PyPy once officially supported. See also:
 #     https://bugreports.qt.io/browse/PYSIDE-535
-# Fails to compile with python3.10
-# FAILED: libshiboken/CMakeFiles/libshiboken.dir/sbkstring.cpp.o
 PYTHON_COMPAT=( python3_{8..11} )
+LLVM_MAX_SLOT=15
+LLVM_SLOTS=(11 12 13 14 15)
 
 inherit cmake flag-o-matic llvm python-r1 toolchain-funcs
 
 MY_P=pyside-setup-opensource-src-$(ver_cut 1-3 ${PV})
+# Minimal supported version of Qt.
+QT_PV="$(ver_cut 1-2):5"
 
 DESCRIPTION="Python binding generator for C++ libraries"
 HOMEPAGE="https://wiki.qt.io/PySide2"
-SRC_URI="https://download.qt.io/official_releases/QtForPython/shiboken2/PySide2-${PV}-src/pyside-setup-opensource-src-${PV}.tar.gz
-	-> pyside-setup-opensource-src-${PV}.tar.xz"
-S="${WORKDIR}/${MY_P}/sources/shiboken2"
-
+SRC_URI="https://download.qt.io/official_releases/QtForPython/pyside2/PySide2-${PV}-src/${MY_P}.tar.xz"
 # The "sources/shiboken2/libshiboken" directory is triple-licensed under the
 # GPL v2, v3+, and LGPL v3. All remaining files are licensed under the GPL v3
 # with version 1.0 of a Qt-specific exception enabling shiboken2 output to be
 # arbitrarily relicensed. (TODO)
 LICENSE="|| ( GPL-2 GPL-3+ LGPL-3 ) GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="+docstrings numpy test vulkan"
-LLVM_SLOTS=(11 12 13 14)
 IUSE+=" ${LLVM_SLOTS[@]/#/llvm-}"
 IUSE+=" +llvm-13" # latest stable
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+=" ^^ ( ${LLVM_SLOTS[@]/#/llvm-} )"
-
-#tests fail pretty bad and I'm not fixing them right now
-RESTRICT="test mirror"
-
-# Minimal supported version of Qt.
-QT_PV="$(ver_cut 1-2):5"
-
 # Since Clang is required at both build- and runtime, BDEPEND is omitted here.
 RDEPEND="${PYTHON_DEPS}
 	>=dev-qt/qtcore-${QT_PV}
@@ -68,19 +59,27 @@ gen_llvm_rdepend() {
 		"
 	done
 }
-RDEPEND+=" "$(gen_llvm_rdepend)
-DEPEND="${RDEPEND}
+RDEPEND+="
+	$(gen_llvm_rdepend)
+"
+DEPEND="
+	${RDEPEND}
 	test? ( >=dev-qt/qttest-${QT_PV} )
 "
 BDEPEND="
 	dev-util/patchelf
 "
-
-DOCS=( AUTHORS )
+S="${WORKDIR}/${MY_P}/sources/shiboken2"
+RESTRICT="test mirror"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.15.2.1-python310.patch"
+	"${FILESDIR}/${PN}-5.15.5-python311-1.patch"
+	"${FILESDIR}/${PN}-5.15.5-python311-2.patch"
+	"${FILESDIR}/${PN}-5.15.5-python311-3.patch"
+	"${FILESDIR}/${PN}-5.15.6-fix-pyside2-compile.patch"
+	"${FILESDIR}/${PN}-5.15.5-add-numpy-1.23-compatibility.patch"
 	"${FILESDIR}/${PN}-5.12.2.1-oflag.patch"
 )
+DOCS=( AUTHORS )
 
 # Ensure the path returned by get_llvm_prefix() contains clang as well.
 llvm_check_deps() {
@@ -97,7 +96,7 @@ src_prepare() {
 	# Shiboken2 assumes Vulkan headers live under either "$VULKAN_SDK/include"
 	# or "$VK_SDK_PATH/include" rather than "${EPREFIX}/usr/include/vulkan".
 	if use vulkan; then
-		sed -i -e 's~\bdetectVulkan(&headerPaths);~headerPaths.append(HeaderPath{QByteArrayLiteral("'${EPREFIX}'/usr/include/vulkan"), HeaderType::System});~' \
+		sed -i -e "s~\bdetectVulkan(&headerPaths);~headerPaths.append(HeaderPath{QByteArrayLiteral(\"${EPREFIX}/usr/include/vulkan\"), HeaderType::System});~" \
 			ApiExtractor/clangparser/compilersupport.cpp || die
 	fi
 
@@ -116,10 +115,8 @@ src_prepare() {
 	# PySide2 does *NOT* care whether the end user has done so or not, as
 	# PySide2 unconditionally requires Clang in either case. See also:
 	#     https://bugs.gentoo.org/619490
-	sed -i -e 's~(findClangBuiltInIncludesDir())~(QStringLiteral("'${EPREFIX}'/usr/lib/clang/'$(CPP=clang clang-fullversion)'/include"))~' \
+	sed -i -e 's~(findClangBuiltInIncludesDir())~(QStringLiteral("'"${EPREFIX}"'/usr/lib/clang/'$(CPP=clang clang-fullversion)'/include"))~' \
 		ApiExtractor/clangparser/compilersupport.cpp || die
-
-	sed -i -e "s|COMMAND shiboken2|COMMAND shiboken2 --debug-level=full |g" "tests/otherbinding/CMakeLists.txt" || die
 
 	cmake_src_prepare
 }
@@ -257,7 +254,7 @@ src_install() {
 	sed -i \
 		-e 's~shiboken2-python[[:digit:]]\+\.[[:digit:]]\+~shiboken2${PYTHON_CONFIG_SUFFIX}~g' \
 		-e 's~/bin/shiboken2~/bin/shiboken2${PYTHON_CONFIG_SUFFIX}~g' \
-		"${ED}/usr/$(get_libdir)"/cmake/Shiboken2-${PV}/Shiboken2Targets-gentoo.cmake || die
+		"${ED}/usr/$(get_libdir)"/cmake/Shiboken2-${PV}/Shiboken2Targets-${CMAKE_BUILD_TYPE,,}.cmake || die
 
 	# Remove the broken "shiboken_tool.py" script. By inspection, this script
 	# reduces to a noop. Moreover, this script raises the following exception:
