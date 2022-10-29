@@ -1351,7 +1351,7 @@ _src_configure() {
 
 	if is-flagq "-Ofast" ; then
 		# Precaution
-		append_all -fno-allow-store-data-races
+		append_all $(test-flags -fno-allow-store-data-races)
 	fi
 
 	# Fix for when gcc >= -O2 -fprofile-generate -fno-reorder-blocks-and-partition

@@ -985,6 +985,10 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
+append_all() {
+	append-flags ${@}
+	append-ldflags ${@}
+}
 
 SELECTED_LTO=""
 _src_configure() {
@@ -1310,7 +1314,7 @@ einfo
 
 	if is-flagq "-Ofast" ; then
 		# Precaution
-		append-flags -fno-allow-store-data-races
+		append_all $(test-flags -fno-allow-store-data-races)
 	fi
 
 	WK_USE_CCACHE=NO cmake_src_configure

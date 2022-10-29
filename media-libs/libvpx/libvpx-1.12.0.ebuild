@@ -309,7 +309,7 @@ _src_configure() {
 
 	if is-flagq "-Ofast" ; then
 		# Precaution
-		append_all -fno-allow-store-data-races
+		append_all $(test-flags -fno-allow-store-data-races)
 	fi
 
 	if tc-is-clang && ( use pgo || use epgo ) ; then

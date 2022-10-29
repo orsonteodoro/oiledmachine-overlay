@@ -2073,6 +2073,11 @@ has_sanitizer_option() {
 	return 1
 }
 
+append_all() {
+	append-flags ${@}
+	append-ldflags ${@}
+}
+
 LTO_TYPE=""
 _src_configure() {
 	local s
@@ -2358,7 +2363,7 @@ ewarn
 
 	if is-flagq "-Ofast" ; then
 		# Precaution
-		append-flags -fno-allow-store-data-races
+		append_all $(test-flags -fno-allow-store-data-races)
 	fi
 
 	if [[ "${myarch}" == "amd64" ]] ; then

@@ -1054,6 +1054,11 @@ _fix_paths() {
 	tc-export CC CXX
 }
 
+append_all() {
+	append-flags ${@}
+	append-ldflags ${@}
+}
+
 LTO_TYPE=""
 _src_configure() {
 	local s=$(_get_s)
@@ -1371,7 +1376,7 @@ einfo "Building without Mozilla API key ..."
 
 	if is-flagq '-Ofast' ; then
 		# Precaution
-		append-flags -fno-allow-store-data-races
+		append_all $(test-flags -fno-allow-store-data-races)
 	fi
 
 	# Debug flag was handled via configure
