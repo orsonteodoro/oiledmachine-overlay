@@ -1349,6 +1349,11 @@ _src_configure() {
 
 	uopts_src_configure
 
+	if is-flagq "-Ofast" ; then
+		# Precaution
+		append_all -fno-allow-store-data-races
+	fi
+
 	# Fix for when gcc >= -O2 -fprofile-generate -fno-reorder-blocks-and-partition
 	# libswscale/x86/rgb2rgb_template.c:1640:9: error: 'asm' operand has impossible constraints
 	filter-flags '-DALLOW_7REGS=*'

@@ -340,6 +340,11 @@ _src_configure() {
 		replace-flags '-O*' '-Ofast'
 	fi
 
+	if is-flagq "-Ofast" ; then
+		# Precaution
+		append_all -fno-allow-store-data-races
+	fi
+
 	filter-flags '-DN*DEBUG'
 	append-cppflags -DNDEBUG
 
