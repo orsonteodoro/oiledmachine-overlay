@@ -18,10 +18,9 @@ DESCRIPTION="Standard (de)compression library"
 HOMEPAGE="https://zlib.net/"
 SRC_URI="
 	https://zlib.net/${P}.tar.gz
-	https://zlib.net/fossils/${P}.tar.gz
-	https://www.gzip.org/zlib/${P}.tar.gz
-	https://www.zlib.net/current/beta/${P}.tar.gz
-	verify-sig? ( https://zlib.net/${P}.tar.gz.asc )
+	https://zlib.net/fossils/${P}.tar.xz
+	https://zlib.net/current/beta/${P}.tar.xz
+	verify-sig? ( https://zlib.net/${P}.tar.xz.asc )
 	elibc_Cygwin? ( ${CYGWINPATCHES[*]} )
 "
 
@@ -30,7 +29,7 @@ LICENSE="ZLIB"
 # The FAQ does mention GPL-2 but the file is not there but a file with a
 # similar name exist but under different licensing.
 SLOT="0/1" # subslot = SONAME
-KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="minizip minizip-utils static-libs backup-copy"
 IUSE+="
 	pgo
@@ -134,8 +133,10 @@ _seq() {
 	done
 }
 
-BDEPEND+=" minizip? ( ${AUTOTOOLS_DEPEND} )
-	verify-sig? ( sec-keys/openpgp-keys-madler )"
+BDEPEND+="
+	minizip? ( ${AUTOTOOLS_DEPEND} )
+	verify-sig? ( sec-keys/openpgp-keys-madler )
+"
 # See #309623 for libxml2
 RDEPEND+="
 	!<dev-libs/libxml2-2.7.7
@@ -155,16 +156,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-1.2.11-configure-fix-AR-RANLIB-NM-detection.patch
 
 	# Respect LDFLAGS during configure tests. Pending upstream
-	"${FILESDIR}"/${PN}-1.2.12-use-LDFLAGS-in-configure.patch
-
-	# Fix broken CC logic
-	"${FILESDIR}"/${P}-fix-CC-logic-in-configure.patch
-
-	# Backport for Java (and others), bug #836370
-	"${FILESDIR}"/${P}-CRC-buggy-input.patch
-
-	# bug #863851
-	"${FILESDIR}"/${P}-CVE-2022-37434.patch
+	"${FILESDIR}"/${PN}-1.2.13-use-LDFLAGS-in-configure.patch
 )
 
 # The order does matter with USE=pgo
@@ -1117,7 +1109,10 @@ src_install() {
 
 	cd "${S}" || die
 	dodoc FAQ README ChangeLog doc/*.txt
-	use minizip && dodoc contrib/minizip/*.txt
+	if use minizip ; then
+		dodoc contrib/minizip/*.txt
+		doman contrib/minizip/*.1
+	fi
 	find "${ED}" -type f -name '*.la' -delete || die
 }
 
