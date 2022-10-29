@@ -2683,6 +2683,11 @@ einfo
 
 	uopts_src_configure
 
+	# Boost Oflags for internal dav1d to avoid blurry images or < 25 FPS.
+	replace-flags -Os -O2
+	replace-flags -O1 -O2
+	replace-flags -Og -O2 # Fork ebuild if you want -Og ; Similar to -O1
+	replace-flags -O0 -O2
 
 einfo
 einfo "Configuring Chromium..."
