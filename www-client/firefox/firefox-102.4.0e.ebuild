@@ -983,7 +983,7 @@ einfo "Removing pre-built binaries ..."
 	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
 
 
-	if is-flagq "-ffast-math" ; then
+	if is-flagq "-ffast-math" || is-flagq '-Ofast' ; then
 		pushd "${S}" || die
 		eapply "${FILESDIR}/multiabi/firefox-78.0.2-opus-fast-math.patch"
 		popd || die
@@ -1337,38 +1337,24 @@ einfo "Building without Mozilla API key ..."
 	# LTO flag was handled via configure
 	filter-flags '-flto*'
 
+	# Default upstream Oflag is -O0, but dav1d is only acceptable at >= -O2.
 	mozconfig_use_enable debug
 	if use debug ; then
 		mozconfig_add_options_ac '+debug' --disable-optimize
 	else
-		if is-flagq '-g*' ; then
-			if tc-is-clang ; then
-				mozconfig_add_options_ac 'from CFLAGS' \
-					--enable-debug-symbols=$(get-flag '-g*')
-			else
-				mozconfig_add_options_ac 'from CFLAGS' \
-					--enable-debug-symbols
-			fi
-		else
-			mozconfig_add_options_ac 'Gentoo default' \
-				--disable-debug-symbols
-		fi
+		mozconfig_add_options_ac 'Gentoo default' \
+			--disable-debug-symbols
 
-		if is-flagq '-O0' ; then
-			mozconfig_add_options_ac "from CFLAGS" \
-				--enable-optimize=-O0
-		elif is-flagq '-O4' ; then
+		# Fork ebuild or set USE=debug if you want -Og
+		if is-flagq '-O4' ; then
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O4
+		elif is-flagq '-Ofast' ; then
+			mozconfig_add_options_ac "from CFLAGS" \
+				--enable-optimize=-Ofast
 		elif is-flagq '-O3' ; then
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O3
-		elif is-flagq '-O1' ; then
-			mozconfig_add_options_ac "from CFLAGS" \
-				--enable-optimize=-O1
-		elif is-flagq '-Os' ; then
-			mozconfig_add_options_ac "from CFLAGS" \
-				--enable-optimize=-Os
 		else
 			mozconfig_add_options_ac "Gentoo default" \
 				--enable-optimize=-O2

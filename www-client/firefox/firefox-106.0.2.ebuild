@@ -304,8 +304,8 @@ CDEPEND="
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.82[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.34.1[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.83[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	media-libs/fontconfig[${MULTILIB_USEDEP}]
 	media-libs/freetype[${MULTILIB_USEDEP}]
@@ -770,6 +770,14 @@ eerror
 		addpredict /proc/self/oom_score_adj
 
 		if use pgo ; then
+			# Update 105.0: "/proc/self/oom_score_adj" isn't enough anymore with pgo, but not sure
+			# whether that's due to better OOM handling by Firefox (bmo#1771712), or portage
+			# (PORTAGE_SCHEDULING_POLICY) update...
+			addpredict /proc
+
+			# May need a wider addpredict when using wayland+pgo.
+			addpredict /dev/dri
+
 			# Allow access to GPU during PGO run
 			local ati_cards mesa_cards nvidia_cards render_cards
 			shopt -s nullglob
@@ -869,6 +877,14 @@ eerror
 	uopts_setup
 
 	use system-av1 && cflags-depends_check
+
+	if tc-is-clang && ! use system-av1 ; then
+eerror
+eerror "Internal dav1d is broken with clang 14 (#1513114).  Set USE=system-av1"
+eerror "or switch to gcc."
+eerror
+		die
+	fi
 }
 
 src_unpack() {
@@ -999,7 +1015,7 @@ einfo "Removing pre-built binaries ..."
 	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
 
 
-	if is-flagq "-ffast-math" ; then
+	if is-flagq "-ffast-math" || is-flagq '-Ofast' ; then
 		pushd "${S}" || die
 		eapply "${FILESDIR}/multiabi/firefox-78.0.2-opus-fast-math.patch"
 		popd || die
@@ -1357,38 +1373,24 @@ einfo "Building without Mozilla API key ..."
 	# LTO flag was handled via configure
 	filter-flags '-flto*'
 
+	# Default upstream Oflag is -O0, but dav1d is only acceptable at >= -O2.
 	mozconfig_use_enable debug
 	if use debug ; then
 		mozconfig_add_options_ac '+debug' --disable-optimize
 	else
-		if is-flagq '-g*' ; then
-			if tc-is-clang ; then
-				mozconfig_add_options_ac 'from CFLAGS' \
-					--enable-debug-symbols=$(get-flag '-g*')
-			else
-				mozconfig_add_options_ac 'from CFLAGS' \
-					--enable-debug-symbols
-			fi
-		else
-			mozconfig_add_options_ac 'Gentoo default' \
-				--disable-debug-symbols
-		fi
+		mozconfig_add_options_ac 'Gentoo default' \
+			--disable-debug-symbols
 
-		if is-flagq '-O0' ; then
-			mozconfig_add_options_ac "from CFLAGS" \
-				--enable-optimize=-O0
-		elif is-flagq '-O4' ; then
+		# Fork ebuild or set USE=debug if you want -Og
+		if is-flagq '-O4' ; then
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O4
+		elif is-flagq '-Ofast' ; then
+			mozconfig_add_options_ac "from CFLAGS" \
+				--enable-optimize=-Ofast
 		elif is-flagq '-O3' ; then
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O3
-		elif is-flagq '-O1' ; then
-			mozconfig_add_options_ac "from CFLAGS" \
-				--enable-optimize=-O1
-		elif is-flagq '-Os' ; then
-			mozconfig_add_options_ac "from CFLAGS" \
-				--enable-optimize=-Os
 		else
 			mozconfig_add_options_ac "Gentoo default" \
 				--enable-optimize=-O2

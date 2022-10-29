@@ -51,3 +51,6 @@ sys-libs/zlib bolt ebolt
 # Broken instrumented builds which cause stall.  Still trying to find
 # exe/.so exclusion(s)
 x11-libs/cairo bolt ebolt
+
+# Force >= -O2 for dav1d
+www-client/firefox debug
