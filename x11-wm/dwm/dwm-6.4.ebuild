@@ -16,40 +16,55 @@ LICENSE="
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
 IUSE="
 	xinerama
-	mod_fibonacci mod_rotatestack mod_sizehintsoff
+	mod_fibonacci
+	mod_rotatestack
+	mod_sizehintsoff
 	savedconfig
 "
 SLOT="0"
 RDEPEND="
 	media-libs/fontconfig
 	x11-libs/libX11
-	x11-libs/libXft
+	>=x11-libs/libXft-2.3.5
 	xinerama? ( x11-libs/libXinerama )
 "
 DEPEND="
 	${RDEPEND}
 	xinerama? ( x11-base/xorg-proto )
 "
-FIBONACCI_FN="dwm-fibonacci-5.8.2.diff"
-ROTATESTACK_FN="dwm-rotatestack-20161021-ab9571b.diff"
+FIBONACCI_DFN="dwm-fibonacci-6.2.diff"
+FIBONACCI_SFN="dwm-fibonacci-6.2.diff"
+ROTATESTACK_DFN="dwm-rotatestack-20161021-ab9571b.diff"
+ROTATESTACK_SFN="dwm-rotatestack-20161021-ab9571b.diff"
 DWM_FN="${P}.tar.gz"
 SRC_URI="
 https://dl.suckless.org/${PN}/${DWM_FN}
-mod_fibonacci? ( ${FIBONACCI_FN} )
-mod_rotatestack? ( ${ROTATESTACK_FN} )
+mod_fibonacci? ( ${FIBONACCI_DFN} )
+mod_rotatestack? ( ${ROTATESTACK_DFN} )
 "
 RESTRICT="fetch"
+SHA512_FIBONACCI="\
+b0d1d21a246cf395c7dca880fa0b660b263c13d3740f78e8c96e2c90dc1f6b59\
+618c756497a11d81da3d2f3ed8602e649614e7019d535e2f45e1c39b9e32e325\
+"
+SHA512_ROTATESTACK="\
+65e6d67c27434ad36f2e6d307e00307134084c9124efc1f29361bd9e8f29bd05\
+c0bc9f1bf399ba16d53f92193e5d990a75a9ef73d7820ef9c72b639205575f10\
+"
 
 _boilerplate_dl_link_hints() {
-	local fn_d="${1}"
-	local dl_location="${2}"
-	local msg="${3}"
+	local fn_s="${1}"
+	local fn_d="${2}"
+	local dl_location="${3}"
 	local hash="${4}"
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	einfo
-	einfo "${msg}"
-	einfo "from ${dl_location} and rename it to ${fn_d} place them in ${distdir} ."
-	einfo "If copied correctly, the sha1sum should be ${hash} ."
+	einfo "The following file needs to be downloaded:"
+	einfo
+	einfo "File:\t\t${fn_s}"
+	einfo "Download URI:\t${dl_location}"
+	einfo "Destination:\t\t${distdir}/${fn_d}"
+	einfo "SHA512 fingerprint:\t${hash}"
 	einfo
 }
 
@@ -63,27 +78,28 @@ pkg_nofetch() {
 		einfo
 	fi
 	if use mod_fibonacci ; then
-		_boilerplate_dl_link_hints "${FIBONACCI_FN}" \
+		_boilerplate_dl_link_hints \
+			"${FIBONACCI_SFN}" \
+			"${FIBONACCI_DFN}" \
 			"https://dwm.suckless.org/patches/fibonacci/" \
-			"Download the file" \
-			"bf556ad02793303a599d0efcb256aad991eaaa39"
+			"${SHA512_FIBONACCI}"
 	fi
 	if use mod_rotatestack ; then
-		_boilerplate_dl_link_hints "${ROTATESTACK_FN}" \
+		_boilerplate_dl_link_hints \
+			"${ROTATESTACK_SFN}" \
+			"${ROTATESTACK_DFN}" \
 			"https://dwm.suckless.org/patches/rotatestack/" \
-			"Download the file" \
-			"b37cbd30aefd5ad88baa34e7a89dea80480800da"
+			"${SHA512_ROTATESTACK}"
 	fi
 }
 
 src_prepare() {
 	default
 	if use mod_fibonacci ; then
-		eapply "${DISTDIR}/${FIBONACCI_FN}"
-		eapply "${FILESDIR}/dwm-fibonacci-hotkeys.patch"
+		eapply "${DISTDIR}/${FIBONACCI_DFN}"
 	fi
 	if use mod_rotatestack ; then
-		eapply "${DISTDIR}/${ROTATESTACK_FN}"
+		eapply "${DISTDIR}/${ROTATESTACK_DFN}"
 	fi
 	if use mod_sizehintsoff ; then
 		sed -i -e "s|resizehints = 1|resizehints = 0|g" config.def.h || die
