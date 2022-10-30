@@ -211,11 +211,11 @@ src_configure() {
 		local -x LLVM_INSTALL_DIR="${LLVM_PATH}"
 		cmake_src_configure
 	}
-	einfo "PATH=${PATH}"
-	einfo "CFLAGS=${CFLAGS}"
-	einfo "CXXFLAGS=${CXXFLAGS}"
-	einfo "LDFLAGS=${LDFLAGS}"
-	einfo "LLVM_INSTALL_DIR=${LLVM_PATH}"
+einfo "PATH:\t\t${PATH}"
+einfo "CFLAGS:\t\t${CFLAGS}"
+einfo "CXXFLAGS:\t\t${CXXFLAGS}"
+einfo "LDFLAGS:\t\t${LDFLAGS}"
+einfo "LLVM_PATH:\t\t${LLVM_PATH}"
 	python_foreach_impl shiboken2_configure
 }
 
