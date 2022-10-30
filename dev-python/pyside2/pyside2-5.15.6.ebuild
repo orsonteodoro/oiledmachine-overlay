@@ -3,12 +3,6 @@
 
 EAPI=8
 
-# TODO: Add PyPy once officially supported. See also:
-#     https://bugreports.qt.io/browse/PYSIDE-535
-PYTHON_COMPAT=( python3_{8..11} )
-
-inherit cmake llvm python-r1 virtualx
-
 # TODO: Add conditional support for "QtRemoteObjects" via a new "remoteobjects"
 # USE flag after an external "dev-qt/qtremoteobjects" package has been created.
 # TODO: Add conditional support for apidoc generation via a new "doc" USE flag.
@@ -24,95 +18,127 @@ inherit cmake llvm python-r1 virtualx
 # be conditionally patched to avoid these tests. An issue should be filed with
 # upstream requesting a CLI-settable variable to control this.
 
+LLVM_SLOTS=( 11 12 13 14 15 )
 MY_P=pyside-setup-opensource-src-$(ver_cut 1-3 ${PV})
+# TODO: Add PyPy once officially supported. See also:
+#     https://bugreports.qt.io/browse/PYSIDE-535
+PYTHON_COMPAT=( python3_{8..11} )
+# Minimal supported version of Qt.
+QT_PV="$(ver_cut 1-2):5"
+
+inherit cmake llvm python-r1 virtualx
 
 DESCRIPTION="Python bindings for the Qt framework"
 HOMEPAGE="https://wiki.qt.io/PySide2"
-SRC_URI="https://download.qt.io/official_releases/QtForPython/pyside2/PySide2-${PV}-src/${MY_P}.tar.xz"
-S="${WORKDIR}/${MY_P}/sources/pyside2"
-
+LICENSE="|| ( GPL-2 GPL-3+ LGPL-3 )" # \
 # See "sources/pyside2/PySide2/licensecomment.txt" for licensing details.
-LICENSE="|| ( GPL-2 GPL-3+ LGPL-3 )"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="
-	3d charts concurrent datavis designer gles2-only +gui help location
-	multimedia +network positioning printsupport qml quick quickcontrols2 script scripttools
-	scxml sensors speech sql svg test testlib webchannel webengine websockets
-	+widgets x11extras xml xmlpatterns
-"
-LLVM_SLOTS=(11 12 13 14)
-IUSE+=" ${LLVM_SLOTS[@]/#/llvm-}"
-IUSE+=" +llvm-13" # latest stable
-
+${LLVM_SLOTS[@]/#/llvm-}
+3d charts concurrent datavis designer gles2-only +gui help location multimedia
++network positioning printsupport qml quick quickcontrols2 script scripttools
+scxml sensors speech sql svg test testlib webchannel webengine websockets
++widgets x11extras xml xmlpatterns
++llvm-13" # latest stable
 # Manually reextract these requirements on version bumps by running the
 # following one-liner from within "${S}":
 #     $ grep 'set.*_deps' PySide2/Qt*/CMakeLists.txt
 # Note that the "designer" USE flag corresponds to the "Qt5UiTools" module.
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
-	3d? ( gui network )
-	charts? ( widgets )
-	datavis? ( gui )
-	designer? ( widgets xml )
-	gles2-only? ( gui )
-	help? ( widgets )
-	location? ( positioning )
-	multimedia? ( gui network )
-	printsupport? ( widgets )
-	qml? ( gui network )
-	quick? ( qml )
-	scripttools? ( gui script widgets )
-	speech? ( multimedia )
-	sql? ( widgets )
-	svg? ( widgets )
-	testlib? ( widgets )
-	webengine? (
-		location quick
-		widgets? ( gui network printsupport webchannel )
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+	^^ ( ${LLVM_SLOTS[@]/#/llvm-} )
+	gui
+	widgets
+	3d? (
+		gui
+		network
 	)
-	websockets? ( network )
-	widgets? ( gui )
-	x11extras? ( gui )
-"
-
-#tests fail pretty bad and I'm not fixing them right now
-RESTRICT="test"
-
-# Minimal supported version of Qt.
-QT_PV="$(ver_cut 1-2):5"
-
-RDEPEND="${PYTHON_DEPS}
-	dev-qt/qtcore:5=
-	dev-qt/qtopengl:5=
-	dev-qt/qtserialport:5=
-	3d? ( >=dev-qt/qt3d-${QT_PV}[qml?] )
-	charts? ( >=dev-qt/qtcharts-${QT_PV}[qml?] )
-	concurrent? ( >=dev-qt/qtconcurrent-${QT_PV} )
-	datavis? ( >=dev-qt/qtdatavis3d-${QT_PV}[qml?] )
-	designer? ( >=dev-qt/designer-${QT_PV} )
-	gui? ( >=dev-qt/qtgui-${QT_PV}[jpeg,gles2-only?] )
-	help? ( >=dev-qt/qthelp-${QT_PV} )
-	location? ( >=dev-qt/qtlocation-${QT_PV} )
-	multimedia? ( >=dev-qt/qtmultimedia-${QT_PV}[qml?,widgets?] )
-	network? ( >=dev-qt/qtnetwork-${QT_PV} )
-	positioning? ( >=dev-qt/qtpositioning-${QT_PV}[qml?] )
-	printsupport? ( >=dev-qt/qtprintsupport-${QT_PV} )
-	qml? ( >=dev-qt/qtdeclarative-${QT_PV}[widgets?] )
-	quickcontrols2? ( >=dev-qt/qtquickcontrols2-${QT_PV} )
-	script? ( >=dev-qt/qtscript-${QT_PV}[scripttools?] )
-	scxml? ( >=dev-qt/qtscxml-${QT_PV} )
-	sensors? ( >=dev-qt/qtsensors-${QT_PV}[qml?] )
-	speech? ( >=dev-qt/qtspeech-${QT_PV} )
-	sql? ( >=dev-qt/qtsql-${QT_PV} )
-	svg? ( >=dev-qt/qtsvg-${QT_PV} )
-	testlib? ( >=dev-qt/qttest-${QT_PV} )
-	webchannel? ( >=dev-qt/qtwebchannel-${QT_PV}[qml?] )
-	webengine? ( >=dev-qt/qtwebengine-${QT_PV}[widgets?] )
-	websockets? ( >=dev-qt/qtwebsockets-${QT_PV}[qml?] )
-	widgets? ( >=dev-qt/qtwidgets-${QT_PV} )
-	x11extras? ( >=dev-qt/qtx11extras-${QT_PV} )
-	xml? ( >=dev-qt/qtxml-${QT_PV} )
-	xmlpatterns? ( >=dev-qt/qtxmlpatterns-${QT_PV}[qml?] )
+	charts? (
+		gui
+		widgets
+	)
+	datavis? (
+		gui
+	)
+	designer? (
+		gui
+		widgets
+		xml
+	)
+	gles2-only? (
+		gui
+	)
+	help? (
+		gui
+		widgets
+	)
+	location? (
+		positioning
+	)
+	multimedia? (
+		gui
+		network
+	)
+	printsupport? (
+		gui
+		widgets
+	)
+	qml? (
+		gui
+		network
+	)
+	quick? (
+		gui
+		network
+		qml
+	)
+	quickcontrols2? (
+		gui
+		network
+		qml
+		quick
+	)
+	scripttools? (
+		gui
+		script
+		widgets
+	)
+	speech? (
+		multimedia
+	)
+	sql? (
+		gui
+		widgets
+	)
+	svg? (
+		gui
+		widgets
+	)
+	testlib? (
+		gui
+		widgets
+	)
+	webengine? (
+		network
+		widgets? (
+			gui
+			network
+			quick
+			printsupport
+			webchannel
+		)
+	)
+	websockets? (
+		network
+	)
+	widgets? (
+		gui
+	)
+	x11extras? (
+		gui
+		widgets
+	)
 "
 gen_llvm_rdepend() {
 	for s in ${LLVM_SLOTS[@]} ; do
@@ -125,24 +151,78 @@ gen_llvm_rdepend() {
 		"
 	done
 }
-RDEPEND+=" "$(gen_llvm_rdepend)
-DEPEND="${RDEPEND}
+RDEPEND="
+	${PYTHON_DEPS}
+	$(gen_llvm_rdepend)
+	>=dev-python/shiboken2-${PV}[${PYTHON_USEDEP}]
+	dev-qt/qtcore:5=
+	dev-qt/qtopengl:5=[gles2-only=]
+	dev-qt/qtserialport:5=
+	3d? ( >=dev-qt/qt3d-${QT_PV}[qml?,gles2-only=] )
+	charts? ( >=dev-qt/qtcharts-${QT_PV}[qml?] )
+	concurrent? ( >=dev-qt/qtconcurrent-${QT_PV} )
+	datavis? ( >=dev-qt/qtdatavis3d-${QT_PV}[qml?,gles2-only=] )
+	designer? ( >=dev-qt/designer-${QT_PV} )
+	gui? ( >=dev-qt/qtgui-${QT_PV}[jpeg,gles2-only=] )
+	help? ( >=dev-qt/qthelp-${QT_PV} )
+	location? ( >=dev-qt/qtlocation-${QT_PV} )
+	multimedia? ( >=dev-qt/qtmultimedia-${QT_PV}[qml?,gles2-only=,widgets?] )
+	network? ( >=dev-qt/qtnetwork-${QT_PV} )
+	positioning? ( >=dev-qt/qtpositioning-${QT_PV}[qml?] )
+	printsupport? ( >=dev-qt/qtprintsupport-${QT_PV}[gles2-only=] )
+	qml? ( >=dev-qt/qtdeclarative-${QT_PV}[widgets?] )
+	quickcontrols2? ( >=dev-qt/qtquickcontrols2-${QT_PV} )
+	script? ( >=dev-qt/qtscript-${QT_PV}[scripttools?] )
+	scxml? ( >=dev-qt/qtscxml-${QT_PV} )
+	sensors? ( >=dev-qt/qtsensors-${QT_PV}[qml?] )
+	speech? ( >=dev-qt/qtspeech-${QT_PV} )
+	sql? ( >=dev-qt/qtsql-${QT_PV} )
+	svg? ( >=dev-qt/qtsvg-${QT_PV} )
+	testlib? ( >=dev-qt/qttest-${QT_PV} )
+	webchannel? ( >=dev-qt/qtwebchannel-${QT_PV}[qml] )
+	webengine? ( >=dev-qt/qtwebengine-${QT_PV}[widgets?] )
+	websockets? ( >=dev-qt/qtwebsockets-${QT_PV}[qml?] )
+	widgets? ( >=dev-qt/qtwidgets-${QT_PV}[gles2-only=] )
+	x11extras? ( >=dev-qt/qtx11extras-${QT_PV} )
+	xml? ( >=dev-qt/qtxml-${QT_PV} )
+	xmlpatterns? ( >=dev-qt/qtxmlpatterns-${QT_PV}[qml?] )
+"
+DEPEND="
+	${RDEPEND}
 	test? ( x11-misc/xvfb-run )
 "
 BDEPEND="
-	>=dev-python/shiboken2-${PV}[${PYTHON_USEDEP}]
 	test? (
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
 	)
 "
+RESTRICT="test"
+SRC_URI="https://download.qt.io/official_releases/QtForPython/pyside2/PySide2-${PV}-src/${MY_P}.tar.xz"
+S="${WORKDIR}/${MY_P}/sources/pyside2"
+PATCHES=(
+	"${FILESDIR}/${PN}-5.15.2-python310.patch"
+	"${FILESDIR}/${PN}-5.15.2-python311.patch"
+	"${FILESDIR}/${PN}-5.15.2-python311-fixups.patch"
+)
 
 pkg_setup() {
 	python_setup
 	llvm_pkg_setup
 	if use qml ; then
 		# Prevent segfault with shiboken2.
-		for u in 3d charts datavis multimedia positioning sensors webchannel websockets xmlpatterns ; do
+		local U=(
+			3d
+			charts
+			datavis
+			multimedia
+			positioning
+			sensors
+			webchannel
+			websockets
+			xmlpatterns
+		)
+		for u in ${U[@]} ; do
 			local u2="${u}"
 			[[ "${u}" == "datavis" ]] && u2="datavis3d"
 			if use "${u}" && ! has_version "dev-qt/qt${u2}[qml]" ; then
@@ -165,14 +245,12 @@ src_configure() {
 		fi
 	done
 	clang --version || die
-	einfo "PATH=${PATH}"
-	einfo "CFLAGS=${CFLAGS}"
-	einfo "CXXFLAGS=${CXXFLAGS}"
-	einfo "LDFLAGS=${LDFLAGS}"
-	einfo "LLVM_INSTALL_DIR=${LLVM_PATH}"
-
+einfo "PATH:\t\t${PATH}"
+einfo "CFLAGS:\t\t${CFLAGS}"
+einfo "CXXFLAGS:\t\t${CXXFLAGS}"
+einfo "LDFLAGS:\t\t${LDFLAGS}"
+einfo "LLVM_PATH:\t\t${LLVM_PATH}"
 	export CLANG_INSTALL_DIR="${LLVM_PATH}"
-
 	# See COLLECT_MODULE_IF_FOUND macros in CMakeLists.txt
 	local mycmakeargs=(
 		-DBUILD_TESTS=$(usex test)
@@ -217,7 +295,6 @@ src_configure() {
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5Xml=$(usex !xml)
 		-DCMAKE_DISABLE_FIND_PACKAGE_Qt5XmlPatterns=$(usex !xmlpatterns)
 	)
-
 	pyside2_configure() {
 		local mycmakeargs=(
 			"${mycmakeargs[@]}"
@@ -264,7 +341,7 @@ src_install() {
 	#     https://bugreports.qt.io/browse/PYSIDE-1053
 	#     https://github.com/leycec/raiagent/issues/74
 	sed -i -e 's~pyside2-python[[:digit:]]\+\.[[:digit:]]\+~pyside2${PYTHON_CONFIG_SUFFIX}~g' \
-		"${ED}/usr/$(get_libdir)/cmake/PySide2-$(ver_cut 1-3 ${PV})/PySide2Targets-gentoo.cmake" || die
+		"${ED}/usr/$(get_libdir)/cmake/PySide2-${PV}/PySide2Targets-${CMAKE_BUILD_TYPE,,}.cmake" || die
 }
 
 # OILEDMACHINE-OVERLAY-META-REVDEP:  shiboken2
