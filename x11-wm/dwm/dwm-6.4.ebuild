@@ -15,17 +15,17 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
 IUSE="
-	xinerama
 	mod_fibonacci
 	mod_rotatestack
 	mod_sizehintsoff
 	savedconfig
+	xinerama
 "
 SLOT="0"
 RDEPEND="
+	>=x11-libs/libXft-2.3.5
 	media-libs/fontconfig
 	x11-libs/libX11
-	>=x11-libs/libXft-2.3.5
 	xinerama? ( x11-libs/libXinerama )
 "
 DEPEND="
