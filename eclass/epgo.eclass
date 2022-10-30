@@ -295,26 +295,26 @@ ewarn
 			|| die "You must call uopts_src_prepare before calling epgo_get_phase"
 		# Has same compiler?
 		if tc-is-gcc ; then
-			local actual=$("${_CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
+			local actual=$(${_CC} -dumpmachine | sha512sum | cut -f 1 -d " ")
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 ewarn
 ewarn "GCC fingerprint changed:"
 ewarn
-ewarn "actual: ${actual}"
-ewarn "expected: ${expected}"
+ewarn "Actual:\t${actual}"
+ewarn "Expected:\t${expected}"
 ewarn
 				return 1
 			fi
 		elif tc-is-clang ; then
-			local actual=$("${_CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
+			local actual=$(${_CC} -dumpmachine | sha512sum | cut -f 1 -d " ")
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 ewarn
 ewarn "Clang fingerprint changed:"
 ewarn
-ewarn "actual: ${actual}"
-ewarn "expected: ${expected}"
+ewarn "Actual:\t${actual}"
+ewarn "Expected:\t${expected}"
 ewarn
 				return 1
 			fi
@@ -381,14 +381,14 @@ epgo_src_install() {
 		CC="${CC% *}"
 
 		if tc-is-gcc ; then
-			"${CC}" -dumpmachine \
+			${CC} -dumpmachine \
 				> "${ED}/${pgo_data_suffix_dir}/compiler" || die
-			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+			${CC} -dumpmachine | sha512sum | cut -f 1 -d " " \
 				> "${ED}/${pgo_data_suffix_dir}/compiler_fingerprint" || die
 		elif tc-is-clang ; then
-			"${CC}" -dumpmachine \
+			${CC} -dumpmachine \
 				> "${ED}/${pgo_data_suffix_dir}/compiler" || die
-			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+			${CC} -dumpmachine | sha512sum | cut -f 1 -d " " \
 				> "${ED}/${pgo_data_suffix_dir}/compiler_fingerprint" || die
 		fi
 	fi

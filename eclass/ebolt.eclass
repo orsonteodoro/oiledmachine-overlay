@@ -258,8 +258,8 @@ ewarn
 ewarn
 ewarn "llvm-bolt fingerprint changed:"
 ewarn
-ewarn "actual: ${actual}"
-ewarn "expected: ${expected}"
+ewarn "Actual:\t${actual}"
+ewarn "Expected:\t${expected}"
 ewarn
 			return 1
 		fi
