@@ -25,8 +25,8 @@ LICENSE="
 # GPL-3+ - icu/source/config.guess
 SLOT="0/${PV}"
 KEYWORDS="
-~alpha amd64 arm arm64 hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
-sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
+~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris
 ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt
 "
 IUSE="debug doc examples static-libs test"
@@ -39,7 +39,7 @@ BDEPEND+="
 		app-doc/doxygen[dot]
 	)
 	verify-sig? (
-		sec-keys/openpgp-keys-icu
+		>=sec-keys/openpgp-keys-icu-20221020
 	)
 "
 SRC_URI="
@@ -53,11 +53,11 @@ S_orig="${WORKDIR}/${PN}/source"
 MULTILIB_CHOST_TOOLS=(
 	/usr/bin/icu-config
 )
+
 PATCHES=(
 	"${FILESDIR}/${PN}-65.1-remove-bashisms.patch"
 	"${FILESDIR}/${PN}-64.2-darwin.patch"
 	"${FILESDIR}/${PN}-68.1-nonunicode.patch"
-	"${FILESDIR}/${P}-CVE-2022-1638.patch" # bug 843731
 	"${FILESDIR}/extra/${PN}-69.1-extra-so-flags.patch" # oiledmachine-overlay added
 )
 
