@@ -860,12 +860,11 @@ eerror
 
 	use system-av1 && cflags-depends_check
 
-	if tc-is-clang && ! use system-av1 ; then
-eerror
-eerror "Internal dav1d is broken with clang 14 (#1513114).  Set USE=system-av1"
-eerror "or switch to gcc."
-eerror
-		die
+	if tc-is-clang ; then
+ewarn
+ewarn "You may encounter issues with atomics when building with clang.  Switch"
+ewarn "to gcc if problematic."
+ewarn
 	fi
 }
 
