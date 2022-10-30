@@ -104,7 +104,7 @@ src_prepare() {
 	if use mod_sizehintsoff ; then
 		sed -i -e "s|resizehints = 1|resizehints = 0|g" config.def.h || die
 	fi
-	eapply "${FILESDIR}"/dwm-6.1-no-emoji-title-crash.patch
+	eapply "${FILESDIR}/dwm-6.1-no-emoji-title-crash.patch"
 	sed -i \
 		-e "s/ -Os / /" \
 		-e "/^\(LDFLAGS\|CFLAGS\|CPPFLAGS\)/{s| = | += |g;s|-s ||g}" \
