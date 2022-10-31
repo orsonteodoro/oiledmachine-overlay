@@ -866,6 +866,8 @@ ewarn "You may encounter issues with atomics when building with clang.  Switch"
 ewarn "to gcc if problematic."
 ewarn
 	fi
+
+	export MAKEOPTS="-j1" # > -j1 breaks building memchr with sccache
 }
 
 src_unpack() {
