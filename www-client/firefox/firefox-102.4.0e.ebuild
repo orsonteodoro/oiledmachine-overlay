@@ -28,7 +28,7 @@ curl -l http://ftp.mozilla.org/pub/firefox/releases/ \
 
 FIREFOX_PATCHSET="firefox-102esr-patches-04j.tar.xz"
 
-LLVM_MAX_SLOT=14
+LLVM_MAX_SLOT=13 # >= 14 causes build time failures with atomics
 
 PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -241,7 +241,7 @@ IUSE+=" cpu_flags_arm_neon dbus debug eme-free +hardened hwaccel jack libproxy"
 IUSE+=" +openh264 pgo pulseaudio sndio selinux +system-av1 +system-harfbuzz"
 IUSE+=" +system-icu +system-jpeg +system-libevent +system-libvpx system-png"
 IUSE+=" system-python-libs +system-webp	wayland wifi"
-IUSE+=" -jemalloc"
+IUSE+=" -jemalloc +webrtc"
 
 # Firefox-only IUSE
 IUSE+=" geckodriver +gmp-autoupdate screencast +X"
@@ -860,13 +860,6 @@ eerror
 
 	use system-av1 && cflags-depends_check
 
-	if tc-is-clang ; then
-ewarn
-ewarn "You may encounter issues with atomics when building with clang.  Switch"
-ewarn "to gcc if problematic."
-ewarn
-	fi
-
 	export MAKEOPTS="-j1" # > -j1 breaks building memchr with sccache
 }
 
@@ -1257,6 +1250,8 @@ einfo "Building without Location API key ..."
 einfo "Building without Mozilla API key ..."
 	fi
 
+	# To find features, use
+	# grep -o -E -r -e "--(with|disable|enable)[^\"]+" ./toolkit/moz.configure | sort | uniq
 	mozconfig_use_with system-av1
 	mozconfig_use_with system-harfbuzz
 	mozconfig_use_with system-harfbuzz system-graphite2
@@ -1269,6 +1264,7 @@ einfo "Building without Mozilla API key ..."
 
 	mozconfig_use_enable dbus
 	mozconfig_use_enable libproxy
+	mozconfig_use_enable webrtc
 
 	use eme-free && mozconfig_add_options_ac '+eme-free' --disable-eme
 
@@ -1957,6 +1953,15 @@ einfo "ln -sf /usr/lib32/${PN} /usr/bin/firefox"
 einfo
 # The FPS problem is gone in the -bin package
 	uopts_pkg_postinst
+
+	if ! use hwaccel ; then
+ewarn
+ewarn "You must manually enable \"Use hardware acceleration when available\""
+ewarn "for smoother scrolling and >= 25 FPS video playback."
+ewarn
+ewarn "For details, see https://support.mozilla.org/en-US/kb/performance-settings"
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
