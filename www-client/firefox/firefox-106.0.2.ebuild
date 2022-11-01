@@ -1418,7 +1418,7 @@ einfo "Building without Mozilla API key ..."
 		local pos=$(grep -n "#define OPUS_DEFINES_H" \
 			"${s}/media/libopus/include/opus_defines.h" \
 			| cut -f 1 -d ":")
-		sed -e "${pos}a#define FLOAT_APPROX 1" \
+		sed -i -e "${pos}a#define FLOAT_APPROX 1" \
 			"${s}/media/libopus/include/opus_defines.h" || die
 	fi
 
