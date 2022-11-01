@@ -1388,8 +1388,9 @@ einfo "Building without Mozilla API key ..."
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O4
 		elif is-flagq '-Ofast' ; then
+			# UI flickers when GPU acceleration on
 			mozconfig_add_options_ac "from CFLAGS" \
-				--enable-optimize=-Ofast
+				--enable-optimize=-O3
 		elif is-flagq '-O3' ; then
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O3
