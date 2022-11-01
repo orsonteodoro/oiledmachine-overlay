@@ -171,7 +171,8 @@ LICENSE+="
 #     ( all-rights-reserved || ( MIT AFL-2.1 ) )
 #     ( MIT GPL-2 )
 #     BSD
-#     MIT ) \
+#     MIT
+#   ) \
 #     build/pgo/js-input/sunspider/string-unpack-code.html
 #   || ( MIT GPL-2 ) build/pgo/blueprint/LICENSE
 #   BSD
@@ -183,13 +184,17 @@ LICENSE+="
 # ( BSD-2 BSD LGPL-2.1
 #   ( all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
 #   ( all-rights-reserved || ( MIT AFL-2.1 ) )
+#   ( all-rights-reserved || ( AFL-2.1 BSD ) )
+#   ( all-rights-reserved MIT )
 #   ( MIT GPL-2 )
-#   ( all-rights-reserved || ( AFL-2.1 BSD) ) ) \
-#     third_party/webkit/PerformanceTests/SunSpider/sunspider-1.0.1/sunspider-1.0.1/sunspider-test-contents.js
+#   ( all-rights-reserved Apache-2.0 )
+# ) \
+#     third_party/webkit/PerformanceTests/**
 # ( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) ) \
 #   testing/talos/talos/pageloader/chrome/pageloader.xhtml
 # ^^ ( GPL-3? ( FTL ) GPL-2 ) modules/freetype2/LICENSE.TXT - GPL-2 assumed # \
 #   since original ebuild cites it
+# all-rights-reserved third_party/webkit/PerformanceTests/MotionMark/tests/master/resources/timeline.svg
 # all-rights-reserved MIT mfbt/Span.h \
 #   The standard MIT license template does not contain all rights reserved.
 # all-rights-reserved MIT devtools/client/shared/widgets/CubicBezierWidget.js \
