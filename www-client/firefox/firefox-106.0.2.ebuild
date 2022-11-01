@@ -222,10 +222,10 @@ LICENSE+="
 #   found at https://github.com/lodash/lodash/blob/master/LICENSE)
 # MIT UoI-NCSA js/src/jit/arm/llvm-compiler-rt/assembly.h
 # UoI-NCSA tools/fuzzing/libfuzzer/LICENSE.TXT
-# unicode Unicode-DFS-2016 BSD NAIST-IPADIC intl/icu/source/data/brkitr/dictionaries/cjdict.txt
-# Unicode-DFS-2016 icu security/sandbox/chromium/base/third_party/icu/LICENSE
-# unicode third_party/rust/regex-syntax/src/unicode_tables/LICENSE-UNICODE
-# unicode-DFS-2019 intl/icu/source/data/dtd/cldr-40/common/dtd/ldml.dtd
+# unicode [terms of use] Unicode-DFS-2016 [2 clause from website] BSD NAIST-IPADIC intl/icu/source/data/brkitr/dictionaries/cjdict.txt
+# Unicode-DFS-2016 [2 clause] icu security/sandbox/chromium/base/third_party/icu/LICENSE
+# Unicode-DFS-2016 [2 clause] third_party/rust/regex-syntax/src/unicode_tables/LICENSE-UNICODE
+# unicode [3 clause] intl/icu/source/data/dtd/cldr-40/common/dtd/ldml.dtd
 # Spencer-94 js/src/editline/README *
 # SunPro modules/fdlibm/src/math_private.h
 # ZLIB gfx/sfntly/cpp/src/test/tinyxml/tinyxml.cpp
