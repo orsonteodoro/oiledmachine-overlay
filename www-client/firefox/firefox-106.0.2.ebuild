@@ -1008,13 +1008,6 @@ einfo "Removing pre-built binaries ..."
 	echo -n "${MOZ_API_KEY_LOCATION//gGaPi/}" > "${S}"/api-location.key || die
 	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
 
-
-	if is-flagq "-ffast-math" || is-flagq '-Ofast' ; then
-		pushd "${S}" || die
-		eapply "${FILESDIR}/multiabi/firefox-78.0.2-opus-fast-math.patch"
-		popd || die
-	fi
-
 	verify_license_fingerprint
 
 	(( ${NABIS} > 1 )) && multilib_copy_sources
@@ -1077,6 +1070,7 @@ append_all() {
 	append-ldflags ${@}
 }
 
+OFLAG=""
 LTO_TYPE=""
 _src_configure() {
 	local s=$(_get_s)
@@ -1384,23 +1378,27 @@ einfo "Building without Mozilla API key ..."
 			--disable-debug-symbols
 
 		# Fork ebuild or set USE=debug if you want -Og
-		if is-flagq '-O4' ; then
+		if is-flagq '-O4' || [[ "${OFLAG}" == "-O4" ]] ; then
+			OFLAG="-O4"
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O4
-		elif is-flagq '-Ofast' ; then
-			# UI flickers when GPU acceleration on
-			mozconfig_add_options_ac "from CFLAGS" \
-				--enable-optimize=-O3
-		elif is-flagq '-O3' ; then
+		elif is-flagq '-O3' \
+			|| is-flagq '-Ofast' \
+			|| [[ "${OFLAG}" == "-O3" || "${OFLAG}" == "-Ofast" ]] ; then
+	# -Ofast bug:
+	# Dynamic visual elements on the website associated with the mouse may
+	# flicker when GPU acceleration is on.
+			OFLAG="-O3"
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O3
 		else
+			OFLAG="-O2"
 			mozconfig_add_options_ac "Gentoo default" \
 				--enable-optimize=-O2
 		fi
 	fi
 
-	if is-flagq '-Ofast' ; then
+	if is-flagq '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
 		# Precaution
 		append_all $(test-flags -fno-allow-store-data-races)
 	fi
@@ -1410,6 +1408,14 @@ einfo "Building without Mozilla API key ..."
 
 	# Optimization flag was handled via configure
 	filter-flags '-O*'
+
+	if is-flagq '-ffast-math' || [[ "${OFLAG}" == "-Ofast" ]] ; then
+		local pos=$(grep -n "#define OPUS_DEFINES_H" \
+			"${s}/media/libopus/include/opus_defines.h" \
+			| cut -f 1 -d ":")
+		sed -e "${pos}a#define FLOAT_APPROX 1" \
+			"${s}/media/libopus/include/opus_defines.h" || die
+	fi
 
 	# Modifications to better support ARM, bug #553364
 	if use cpu_flags_arm_neon ; then
