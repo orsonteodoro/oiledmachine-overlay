@@ -137,6 +137,9 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
   <flag name="system-webp">
     Use the system-wide <pkg>media-libs/libwebp</pkg> instead of bundled.
   </flag>
+  <flag name="webspeech">
+    Enable input speech recognition for websites.
+  </flag>
 </use>
 <slots>
   <slot name="rapid">

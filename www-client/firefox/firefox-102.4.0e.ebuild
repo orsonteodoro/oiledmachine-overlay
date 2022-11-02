@@ -242,11 +242,13 @@ LICENSE+="
 # ZLIB all-rights-reserved media/libjpeg/simd/powerpc/jdsample-altivec.c -- \#
 #   the vanilla ZLIB lib license doesn't contain all rights reserved
 
-IUSE+=" cpu_flags_arm_neon dbus debug eme-free +hardened hwaccel jack libproxy"
-IUSE+=" +openh264 pgo pulseaudio sndio selinux +system-av1 +system-harfbuzz"
-IUSE+=" +system-icu +system-jpeg +system-libevent +system-libvpx system-png"
-IUSE+=" system-python-libs +system-webp	wayland wifi"
-IUSE+=" -jemalloc +webrtc"
+IUSE+="
+cpu_flags_arm_neon cups dbus debug eme-free +hardened hwaccel jack -jemalloc
+libcanberra libproxy libsecret +openh264 pgo pulseaudio sndio selinux speech
++system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
++system-libvpx system-png system-python-libs +system-webp wayland wifi +webrtc
+webspeech
+"
 
 # Firefox-only IUSE
 IUSE+=" geckodriver +gmp-autoupdate screencast +X"
@@ -384,9 +386,13 @@ CDEPEND="
 	)
 "
 
+# See also PR_LoadLibrary
 RDEPEND="
 	${CDEPEND}
+	cups? ( net-print/cups[${MULTILIB_USEDEP}] )
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
+	libcanberra? ( media-libs/libcanberra[${MULTILIB_USEDEP}] )
+	libsecret? ( app-crypt/libsecret[${MULTILIB_USEDEP}] )
 	openh264? ( media-libs/openh264:*[plugin,${MULTILIB_USEDEP}] )
 	pulseaudio? (
 		|| (
@@ -394,6 +400,7 @@ RDEPEND="
 			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP}]
 		)
 	)
+	speech? ( app-accessibility/speech-dispatcher )
 "
 
 DEPEND="
@@ -1263,7 +1270,10 @@ einfo "Building without Mozilla API key ..."
 
 	mozconfig_use_enable dbus
 	mozconfig_use_enable libproxy
+	mozconfig_use_enable cups printing
+	multilib_is_native_abi && mozconfig_use_enable speech synth-speechd
 	mozconfig_use_enable webrtc
+	mozconfig_use_enable webspeech
 
 	use eme-free && mozconfig_add_options_ac '+eme-free' --disable-eme
 
