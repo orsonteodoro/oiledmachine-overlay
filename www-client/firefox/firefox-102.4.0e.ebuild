@@ -1396,6 +1396,9 @@ einfo "Building without Mozilla API key ..."
 	# Optimization flag was handled via configure
 	filter-flags '-O*'
 
+	# Same problem as -Ofast bug.
+	filter-flags '-ffast-math'
+
 	if is-flagq '-ffast-math' || [[ "${OFLAG}" == "-Ofast" ]] ; then
 		local pos=$(grep -n "#define OPUS_DEFINES_H" \
 			"${s}/media/libopus/include/opus_defines.h" \
