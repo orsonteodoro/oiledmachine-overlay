@@ -44,6 +44,7 @@ REQUIRED_USE+="
 			!video_cards_amdgpu
 			!video_cards_r600
 		)
+		|| ( ${IUSE_VAAPI} )
 	)
 "
 
