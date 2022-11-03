@@ -242,7 +242,7 @@ LICENSE+="
 
 # (unforced) -hwaccel , pgo, x11 + wayland are defaults in -bin browser
 IUSE+="
-cpu_flags_arm_neon cups dbus debug eme-free +hardened -hwaccel jack -jemalloc
+cpu_flags_arm_neon cups +dbus debug eme-free +hardened -hwaccel jack -jemalloc
 libcanberra libproxy libsecret +openh264 +pgo pulseaudio sndio selinux speech
 +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-png system-python-libs +system-webp +wayland wifi +webrtc
