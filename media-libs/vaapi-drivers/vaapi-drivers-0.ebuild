@@ -95,6 +95,10 @@ RDEPEND+="
 	>=media-libs/libva-${LIBVA_PV}
 	!custom? (
 		${RDEPEND_DRIVERS}
+	)
+"
+PDEPEND="
+	!custom? (
 		>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},vaapi]
 	)
 "
