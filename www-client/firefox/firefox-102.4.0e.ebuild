@@ -403,7 +403,10 @@ RDEPEND="
 		)
 	)
 	speech? ( app-accessibility/speech-dispatcher )
-	vaapi? ( media-libs/vaapi-drivers[${MULTILIB_USEDEP}] )
+	vaapi? (
+		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
+		media-libs/libva[${MULTILIB_USEDEP},drm]
+	)
 "
 
 DEPEND="
