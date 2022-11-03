@@ -60,7 +60,7 @@ _cflags-depends_is_exact() {
 # _cflags-depends_is_opt_lt -O3 -O1 # same as -O1 < -O3 which returns 1.
 _cflags-depends_is_opt_lt() {
 	local a="${1}"
-	local b="${1}"
+	local b="${2}"
 
 	a="${a/-}"
 	b="${b/-}"
