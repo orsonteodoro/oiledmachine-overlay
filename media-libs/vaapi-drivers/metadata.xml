@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Only for this ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    This ebuild package is to resolve VA-API driver compatibility.
+  </longdescription>
+  <use>
+    <flag name="custom">
+      Allow to manually install VA-API drivers or install none at all.
+    </flag>
+    <flag name="video_cards_amdgpu">
+      Pulls or checks for a VA-API driver
+    </flag>
+    <flag name="video_cards_i965">
+      Pulls or checks for a VA-API driver
+    </flag>
+    <flag name="video_cards_intel">
+      Pulls or checks for a VA-API driver
+    </flag>
+    <flag name="video_cards_iris">
+      Pulls or checks for a VA-API driver
+    </flag>
+    <flag name="video_cards_r600">
+      Pulls or checks for a VA-API driver
+    </flag>
+    <flag name="video_cards_radeonsi">
+      Pulls or checks for a VA-API driver
+    </flag>
+  </use>
+</pkgmetadata>

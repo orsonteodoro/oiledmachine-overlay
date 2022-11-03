@@ -619,6 +619,7 @@ RDEPEND+="
 				>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
 			)
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
+			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 			media-video/ffmpeg[${MULTILIB_USEDEP},vaapi]
 		)
 		vaapi-stateless-decoding? (

@@ -679,7 +679,10 @@ RDEPEND+="
 	nvenc? ( >=media-libs/nv-codec-headers-9.1.23.1 )
 	svt-av1? ( >=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}] )
 	truetype? ( >=media-libs/freetype-2.5.0.1:2[${MULTILIB_USEDEP}] )
-	vaapi? ( >=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP}] )
+	vaapi? (
+		>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP}]
+		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
+	)
 	vdpau? ( >=x11-libs/libvdpau-0.7[${MULTILIB_USEDEP}] )
 	vidstab? ( >=media-libs/vidstab-1.1.0[${MULTILIB_USEDEP}] )
 	vmaf? ( >=media-libs/libvmaf-2.0.0[${MULTILIB_USEDEP}] )
@@ -737,6 +740,7 @@ BDEPEND+="
 		vaapi? (
 			media-video/libva-utils[vainfo]
 			>=media-libs/libva-1.2.1-r1:0=[X,drm,${MULTILIB_USEDEP}]
+			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		)
 	)
 "

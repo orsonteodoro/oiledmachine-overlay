@@ -156,19 +156,7 @@ DEPEND+=" ${PYTHON_DEPS}
 		sys-kernel/linux-headers )
 	vaapi? ( >=media-video/ffmpeg-4.4:0=[vaapi]
 		 >=media-libs/libva-2.1.0
-		 || (
-		       video_cards_amdgpu? (
-				media-libs/mesa[vaapi,video_cards_radeonsi]
-		       )
-		       video_cards_intel? (
-				|| (
-					x11-libs/libva-intel-media-driver
-					x11-libs/libva-intel-driver
-				)
-		       )
-		       video_cards_r600? ( media-libs/mesa[vaapi,video_cards_r600] )
-		       video_cards_radeonsi? ( media-libs/mesa[vaapi,video_cards_radeonsi] )
-		  )
+		 media-libs/vaapi-drivers
 	)
 	vpx? ( >=media-libs/libvpx-1.4
 		 virtual/ffmpeg )
@@ -256,14 +244,6 @@ eerror
 			die \
 		"You are missing pam_selinux.so.  Reinstall pam[selinux]."
 		fi
-	fi
-
-	if has_version "x11-libs/libva-intel-driver" ; then
-ewarn
-ewarn "x11-libs/libva-intel-driver is the older vaapi driver but intended for"
-ewarn "select hardware.  See also x11-libs/libva-intel-media-driver package"
-ewarn "to access more vaapi accelerated encoders if driver support overlaps."
-ewarn
 	fi
 }
 
@@ -387,93 +367,6 @@ python_install_all() {
 	fi
 }
 
-vaapi_message() {
-	if use video_cards_amdgpu \
-		|| use video_cards_r600 \
-		|| use video_cards_radeonsi ; then \
-		einfo
-		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following:"
-		einfo
-		einfo "  VCE 1.0+:  h264"
-		einfo "  UVD 1.0+:  h264"
-		einfo "  UVD 6.3+:  h264,hevc"
-		einfo
-		einfo "(See https://en.wikipedia.org/wiki/Video_Core_Next)"
-		einfo "(https://en.wikipedia.org/wiki/Unified_Video_Decoder#Format_support)"
-		einfo "(https://en.wikipedia.org/wiki/Video_Coding_Engine)"
-		einfo "(https://www.x.org/wiki/RadeonFeature/)"
-		einfo
-		einfo "* The free driver only supports ARUBA in the r600 free driver."
-		einfo "Use the free radeonsi driver or closed drivers for newer hardware."
-		einfo
-		einfo "The XPRA_VAAPI_ENCODINGS with multiple codecs separated with comma and"
-		einfo "no space like above and XPRA_VAAPI=true can both can be placed in your"
-		einfo "~/.bashrc file but currently disabled by default upstream.  You may set"
-		einfo "XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc or"
-		einfo "~/.xinitrc file then relog."
-		einfo
-	fi
-	if has_version "x11-libs/libva-intel-driver" ; then
-		einfo
-		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following for G45/HD:"
-		einfo
-		einfo "  SNB+:  h264"
-		einfo "  CHV+/BSW+:  vp8"
-		einfo "  SKL+:  hevc"
-		einfo "  KBL+:  hevc,vp9"
-		einfo
-		einfo "(See https://github.com/intel/intel-vaapi-driver/blob/master/README for abbreviations.)"
-		einfo
-		einfo "The XPRA_VAAPI_ENCODINGS with multiple codecs separated with comma and"
-		einfo "no space like above and XPRA_VAAPI=true can both can be placed in your"
-		einfo "~/.bashrc file but currently disabled by default upstream.  You may set"
-		einfo "XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc or"
-		einfo "~/.xinitrc file then relog."
-		einfo
-	fi
-	if has_version "x11-libs/libva-intel-media-driver" ; then
-		einfo
-		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following for GEN:"
-		einfo
-		einfo "  BDW:  h264,mpeg2"
-		einfo "  SKL:  h264,hevc,mpeg2"
-		einfo "  BXT/APL:  h264,hevc"
-		einfo "  KBLx:  h264,hevc,mpeg2,vp8"
-		einfo "  ICL:  h264,hevc,mpeg,vp8,vp9"
-		einfo "  EHL/JSL:  h264,hevc,vp9"
-		einfo "  TGL/RKL/ADL-S/ADL-P:  h264,hevc,mpeg2,vp9"
-		einfo "  DG1/SG1:  h264,hevc,mpeg2,vp9"
-		einfo
-		einfo "(See https://github.com/intel/media-driver for abbreviations)"
-		einfo
-		einfo "The XPRA_VAAPI_ENCODINGS with multiple codecs separated with comma and"
-		einfo "no space like above and XPRA_VAAPI=true can both can be placed in your"
-		einfo "~/.bashrc file but currently disabled by default upstream.  You may set"
-		einfo "XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc or"
-		einfo "~/.xinitrc file then relog."
-		einfo
-	fi
-	einfo
-	einfo "Some drivers may require firmware for proper VA-API support."
-	einfo
-	einfo "You must be part of the video group to use VA-API support."
-	einfo
-	einfo "The LIBVA_DRIVER_NAME envvar may need to be changed if both open"
-	einfo "and closed drivers are installed to one of the following"
-	einfo
-	has_version "x11-libs/libva-intel-driver" \
-		&& einfo "  LIBVA_DRIVER_NAME=\"i965\""
-	has_version "x11-libs/libva-intel-media-driver" \
-		&& einfo "  LIBVA_DRIVER_NAME=\"iHD\""
-	use video_cards_r600 \
-		&& einfo "  LIBVA_DRIVER_NAME=\"r600\""
-	( use video_cards_radeonsi || use video_cards_amdgpu ) \
-		&& einfo "  LIBVA_DRIVER_NAME=\"radeonsi\""
-	einfo
-	einfo "to your ~/.bashrc or ~/.xinitrc and relog."
-	einfo
-}
-
 pkg_postinst() {
 	tmpfiles_process /usr/lib/tmpfiles.d/xpra.conf
 	xdg_pkg_postinst
@@ -530,9 +423,6 @@ pkg_postinst() {
 	einfo
 	einfo "Make sure you change the mode in the GUI to SSL."
 	einfo
-	if use vaapi ; then
-		vaapi_message
-	fi
 }
 
 pkg_postrm() {

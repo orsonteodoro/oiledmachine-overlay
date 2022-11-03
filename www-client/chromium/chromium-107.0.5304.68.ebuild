@@ -391,18 +391,6 @@ REQUIRED_USE+="
 		!cfi
 	)
 	vaapi? ( proprietary-codecs )
-	video_cards_amdgpu? (
-		!video_cards_r600
-		!video_cards_radeonsi
-	)
-	video_cards_r600? (
-		!video_cards_amdgpu
-		!video_cards_radeonsi
-	)
-	video_cards_radeonsi? (
-		!video_cards_amdgpu
-		!video_cards_r600
-	)
 	widevine? (
 		!arm64
 		!ppc64
@@ -414,43 +402,7 @@ FFMPEG_V="4.3"
 
 LIBVA_DEPEND="
 	vaapi? (
-		|| (
-			video_cards_amdgpu? (
-				media-libs/mesa:=[vaapi,video_cards_radeonsi,${MULTILIB_USEDEP}]
-			)
-			video_cards_i965? (
-				|| (
-					x11-libs/libva-intel-media-driver
-					x11-libs/libva-intel-driver[${MULTILIB_USEDEP}]
-				)
-			)
-			video_cards_intel? (
-				|| (
-					x11-libs/libva-intel-media-driver
-					x11-libs/libva-intel-driver[${MULTILIB_USEDEP}]
-				)
-			)
-			video_cards_iris? (
-				x11-libs/libva-intel-media-driver
-			)
-			video_cards_nouveau? (
-				media-libs/mesa:=[video_cards_nouveau,${MULTILIB_USEDEP}]
-				|| (
-					media-libs/mesa:=[vaapi,video_cards_nouveau,${MULTILIB_USEDEP}]
-					>=x11-libs/libva-vdpau-driver-0.7.4-r3[${MULTILIB_USEDEP}]
-				)
-			)
-			video_cards_nvidia? (
-				>=x11-libs/libva-vdpau-driver-0.7.4-r1[${MULTILIB_USEDEP}]
-				x11-drivers/nvidia-drivers
-			)
-			video_cards_r600? (
-				media-libs/mesa:=[vaapi,video_cards_r600,${MULTILIB_USEDEP}]
-			)
-			video_cards_radeonsi? (
-				media-libs/mesa:=[vaapi,video_cards_radeonsi,${MULTILIB_USEDEP}]
-			)
-		)
+		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		>=media-libs/libva-${LIBVA_V}:=[${MULTILIB_USEDEP}]
 		system-ffmpeg? (
 			>=media-video/ffmpeg-${FFMPEG_V}[vaapi,${MULTILIB_USEDEP}]
@@ -2988,92 +2940,6 @@ pkg_postrm() {
 	xdg_desktop_database_update
 }
 
-print_vaapi_support() {
-#
-# This information is provided for a better WebRTC experience.
-# Instead of using the inferior software codec(s), it suggests better vaapi
-# drivers with hardware accelerated encoders.
-#
-	if has_version "x11-libs/libva-intel-driver" ; then
-ewarn
-ewarn "x11-libs/libva-intel-driver is the older vaapi driver but intended for"
-ewarn "select hardware.  See also x11-libs/libva-intel-media-driver package"
-ewarn "to access more VA-API accelerated encoders if driver support overlaps."
-ewarn
-	fi
-
-	if use video_cards_intel || use video_cards_i965 || use video_cards_iris ; then
-einfo
-einfo "Intel Quick Sync Video is required for hardware accelerated H.264 VA-API"
-einfo "encode."
-einfo
-einfo "For hardware support, see the AVC row at"
-einfo "https://en.wikipedia.org/wiki/Intel_Quick_Sync_Video#Hardware_decoding_and_encoding"
-einfo
-einfo "Driver ebuild packages for their corresponding hardware can be found at:"
-einfo
-einfo "x11-libs/libva-intel-driver:"
-einfo "https://github.com/intel/intel-vaapi-driver/blob/master/README"
-einfo
-einfo "x11-libs/libva-intel-media-driver:"
-einfo "https://github.com/intel/media-driver#decodingencoding-features"
-einfo
-	fi
-	if use video_cards_amdgpu \
-		|| use video_cards_r600 \
-		|| use video_cards_radeonsi ; then
-einfo
-einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for"
-einfo "hardware accelerated H.264 VA-API encode."
-einfo
-einfo "For details see https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview"
-einfo "or https://www.x.org/wiki/RadeonFeature/"
-einfo
-einfo "The r600 driver only supports ARUBA for VCE encode."
-einfo "For newer hardware, try a newer free driver like"
-einfo "the radeonsi driver or closed drivers."
-einfo
-	fi
-	if use video_cards_nouveau ; then
-einfo
-einfo "For details see, https://nouveau.freedesktop.org/VideoAcceleration.html"
-einfo "Reconsider using the official driver instead."
-einfo
-	fi
-einfo
-einfo "Some drivers may require firmware for proper VA-API support."
-einfo
-einfo "The user must be part of the video group to use VA-API support."
-# Because it touches /dev/dri/renderD128
-einfo
-einfo "The LIBVA_DRIVER_NAME envvar may need to be changed if both open"
-einfo "and closed drivers are installed to one of the following"
-einfo
-	if has_version "x11-libs/libva-intel-driver" ; then
-einfo
-einfo "  LIBVA_DRIVER_NAME=\"i965\""
-einfo
-	fi
-	if has_version "x11-libs/libva-intel-media-driver" ; then
-einfo
-einfo "  LIBVA_DRIVER_NAME=\"iHD\""
-einfo
-	fi
-	if use video_cards_r600 ; then
-einfo
-einfo "  LIBVA_DRIVER_NAME=\"r600\""
-einfo
-	fi
-	if ( use video_cards_radeonsi || use video_cards_amdgpu ) ; then
-einfo
-einfo "  LIBVA_DRIVER_NAME=\"radeonsi\""
-einfo
-	fi
-einfo
-einfo "to your ~/.bashrc or ~/.xinitrc and relogging."
-einfo
-}
-
 pkg_postinst() {
 	xdg_icon_cache_update
 	xdg_desktop_database_update
@@ -3105,9 +2971,6 @@ einfo "Chromium prefers GTK3 over GTK4 at runtime. To override this"
 einfo "behavior you need to pass --gtk-version=4, e.g. by adding it"
 einfo "to CHROMIUM_FLAGS in /etc/chromium/default."
 einfo
-		fi
-		if use vaapi ; then
-			print_vaapi_support
 		fi
 	fi
 

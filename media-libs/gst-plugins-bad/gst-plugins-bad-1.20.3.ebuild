@@ -15,74 +15,10 @@ KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ppc ~ppc64 ~riscv ~spa
 # TODO: egl and gtk IUSE only for transition
 IUSE="X bzip2 +egl gles2 gtk +introspection +opengl +orc vnc wayland" # Keep default IUSE mirrored with gst-plugins-base where relevant
 
-VAAPI_DRIVERS="
-video_cards_amdgpu video_cards_intel video_cards_iris video_cards_i965
-video_cards_nouveau video_cards_nvidia video_cards_r600 video_cards_radeonsi
-"
-
 # Using vaapi stateless support via gst-plugins-bad.
 # The gst-plugins-vaapi (or stateful version) is discontinued (EOL).
 IUSE+="
-	${VAAPI_DRIVERS}
 	vaapi
-"
-REQUIRED_USE+="
-	vaapi? ( || ( ${VAAPI_DRIVERS} ) )
-	video_cards_amdgpu? (
-		!video_cards_r600
-		!video_cards_radeonsi
-	)
-	video_cards_r600? (
-		!video_cards_amdgpu
-		!video_cards_radeonsi
-	)
-	video_cards_radeonsi? (
-		!video_cards_amdgpu
-		!video_cards_r600
-	)
-"
-
-MESA_PV="22.1.7"
-LIBVA_DEPEND="
-	vaapi? (
-		|| (
-			video_cards_amdgpu? (
-				>=media-libs/mesa-${MESA_PV}:=[vaapi,video_cards_radeonsi,${MULTILIB_USEDEP}]
-			)
-			video_cards_i965? (
-				|| (
-					x11-libs/libva-intel-media-driver
-					x11-libs/libva-intel-driver[${MULTILIB_USEDEP}]
-				)
-			)
-			video_cards_intel? (
-				|| (
-					x11-libs/libva-intel-media-driver
-					x11-libs/libva-intel-driver[${MULTILIB_USEDEP}]
-				)
-			)
-			video_cards_iris? (
-				x11-libs/libva-intel-media-driver
-			)
-			video_cards_nouveau? (
-				>=media-libs/mesa-${MESA_PV}:=[video_cards_nouveau,${MULTILIB_USEDEP}]
-				|| (
-					media-libs/mesa:=[vaapi,video_cards_nouveau,${MULTILIB_USEDEP}]
-					>=x11-libs/libva-vdpau-driver-0.7.4-r3[${MULTILIB_USEDEP}]
-				)
-			)
-			video_cards_nvidia? (
-				>=x11-libs/libva-vdpau-driver-0.7.4-r1[${MULTILIB_USEDEP}]
-				x11-drivers/nvidia-drivers
-			)
-			video_cards_r600? (
-				>=media-libs/mesa-${MESA_PV}:=[vaapi,video_cards_r600,${MULTILIB_USEDEP}]
-			)
-			video_cards_radeonsi? (
-				>=media-libs/mesa-${MESA_PV}:=[vaapi,video_cards_radeonsi,${MULTILIB_USEDEP}]
-			)
-		)
-	)
 "
 
 # X11 is automagic for now, upstream #709530 - only used by librfb USE=vnc plugin
@@ -97,8 +33,9 @@ RDEPEND="
 	bzip2? ( >=app-arch/bzip2-1.0.6-r4[${MULTILIB_USEDEP}] )
 	vaapi? (
 		${LIBVA_DEPEND}
-		dev-libs/libgudev
 		>=media-libs/libva-1.8:=[${MULTILIB_USEDEP}]
+		dev-libs/libgudev[${MULTILIB_USEDEP}]
+		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 	)
 	vnc? ( X? ( x11-libs/libX11[${MULTILIB_USEDEP}] ) )
 	wayland? (
