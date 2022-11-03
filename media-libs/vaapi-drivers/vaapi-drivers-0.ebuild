@@ -101,11 +101,6 @@ RDEPEND+="
 		${RDEPEND_DRIVERS}
 	)
 "
-PDEPEND="
-	!custom? (
-		>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},vaapi]
-	)
-"
 
 pkg_postinst() {
 	if has_version "x11-libs/libva-intel-driver" ; then
