@@ -247,8 +247,8 @@ IUSE+="
 cpu_flags_arm_neon cups +dbus debug eme-free +hardened -hwaccel jack -jemalloc
 libcanberra libproxy libsecret +openh264 +pgo pulseaudio sndio selinux speech
 +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
-+system-libvpx system-png system-python-libs +system-webp +wayland wifi +webrtc
-webspeech
++system-libvpx system-png system-python-libs +system-webp +vaapi +wayland
++webrtc wifi webspeech
 "
 
 # Firefox-only IUSE
@@ -258,6 +258,7 @@ REQUIRED_USE="
 	X
 	debug? ( !system-av1 )
 	wayland? ( X dbus )
+	vaapi? ( wayland )
 	wifi? ( dbus )
 "
 
@@ -877,7 +878,11 @@ eerror
 
 	if ! use wayland ; then
 ewarn
-ewarn "Disabling wayland USE flag may degrade WebGL FPS by less than 25 FPS."
+ewarn "Disabling the wayland USE flag has the following consequences:"
+ewarn
+ewarn "  (1) Degrade WebGL FPS by less than 25 FPS (15 FPS on average)"
+ewarn "  (2) Use software CPU based video decode for VP8, VP9, AV1 instead of"
+ewarn "      USE=wayland will use GPU's accelerated decoding if supported."
 ewarn
 	fi
 }
@@ -1063,6 +1068,18 @@ _fix_paths() {
 append_all() {
 	append-flags ${@}
 	append-ldflags ${@}
+}
+
+is_flagq_last() {
+	local flag="${1}"
+	local olast=$(echo "${CFLAGS}" \
+		| grep -E -e "-O(0|g|1|z|s|2|3|4|fast)" \
+		| tr " " "\n" \
+		| tail -n 1)
+einfo "CFLAGS:\t${CFLAGS}"
+einfo "olast:\t${olast}"
+	[[ "${flag}" == "${olast}" ]] && return 0
+	return 1
 }
 
 OFLAG=""
@@ -1363,7 +1380,8 @@ einfo "Building without Mozilla API key ..."
 	# LTO flag was handled via configure
 	filter-flags '-flto*'
 
-	# Default upstream Oflag is -O0, but dav1d is only acceptable at >= -O2.
+	# Default upstream Oflag is -O0 in script, but -bin's default is -O3,
+	# but dav1d's FPS + image quality is only acceptable at >= -O2.
 	mozconfig_use_enable debug
 	if use debug ; then
 		mozconfig_add_options_ac '+debug' --disable-optimize
@@ -1372,15 +1390,16 @@ einfo "Building without Mozilla API key ..."
 			--disable-debug-symbols
 
 		# Fork ebuild or set USE=debug if you want -Og
-		if is-flagq '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
-			OFLAG="-Ofast"
+		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
+			# Flicker bug still happens.  Downgrading.
+			OFLAG="-O3"
 			mozconfig_add_options_ac "from CFLAGS" \
-				--enable-optimize=-Ofast
-		elif is-flagq '-O4' || [[ "${OFLAG}" == "-O4" ]] ; then
+				--enable-optimize=-O3
+		elif is_flagq_last '-O4' || [[ "${OFLAG}" == "-O4" ]] ; then
 			OFLAG="-O4" # Same as O3
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O4
-		elif is-flagq '-O2' || [[ "${OFLAG}" == "-O2" ]] ; then
+		elif is_flagq_last '-O2' || [[ "${OFLAG}" == "-O2" ]] ; then
 			OFLAG="-O2"
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O2
@@ -1391,7 +1410,7 @@ einfo "Building without Mozilla API key ..."
 		fi
 	fi
 
-	if is-flagq '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
+	if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
 		# Precaution
 		append_all $(test-flags -fno-allow-store-data-races)
 	fi
@@ -1407,7 +1426,7 @@ einfo "Building without Mozilla API key ..."
 	# flicker when GPU acceleration is on.
 	if ( \
 		[[ "${OFLAG}" == "-Ofast" ]] \
-		|| is-flagq '-Ofast' \
+		|| is_flagq_last '-Ofast' \
 		|| is-flagq '-ffast-math' \
 	   ) \
 		&& ! is-flagq '-fno-finite-math-only' ; then

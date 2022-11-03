@@ -140,10 +140,15 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
   <flag name="webspeech">
     Enable input speech recognition for websites.
   </flag>
+  <flag name="vaapi">
+    Alias for USE=wayland to enable VA-API support.
+  </flag>
   <flag name="wayland">
-    Adds support for wayland and DMABUF.
+    Adds support for wayland, DMABUF, hardware video decoders.
 
     Disabling this USE flag may degrade WebGL performance below 25 FPS.
+    Disabling this USE flag will disable VA-API [hardware accelerated video
+    decoding with either VP8, VP9, AV1 if available].
   </flag>
 </use>
 <slots>
