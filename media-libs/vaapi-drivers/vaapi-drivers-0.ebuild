@@ -111,11 +111,10 @@ ewarn "to access more VA-API accelerated encoders if driver support overlaps."
 ewarn
 	fi
 
-	if use vaapi ; then
-		if \
-			   use video_cards_intel \
-			|| use video_cards_i965 \
-			|| use video_cards_iris ; then
+	if \
+		   use video_cards_intel \
+		|| use video_cards_i965 \
+		|| use video_cards_iris ; then
 einfo
 einfo "Quick Sync Video is required for hardware accelerated H.264 VA-API"
 einfo "encode."
@@ -131,10 +130,10 @@ einfo
 einfo "x11-libs/libva-intel-media-driver:"
 einfo "https://github.com/intel/media-driver#decodingencoding-features"
 einfo
-		fi
-		if use video_cards_amdgpu \
-			|| use video_cards_r600 \
-			|| use video_cards_radeonsi  ; then
+	fi
+	if use video_cards_amdgpu \
+		|| use video_cards_r600 \
+		|| use video_cards_radeonsi  ; then
 einfo
 einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for"
 einfo "hardware accelerated H.264 VA-API encode."
@@ -151,7 +150,7 @@ einfo "The r600 driver only supports ARUBA for VCE encode."
 einfo "For newer hardware, try a newer free driver like the radeonsi driver or"
 einfo "closed drivers."
 einfo
-		fi
+	fi
 einfo
 einfo "Some drivers may require firmware for proper VA-API support."
 einfo
@@ -161,14 +160,13 @@ einfo "The LIBVA_DRIVER_NAME environment variable may need to be changed if"
 einfo "both open and closed drivers are installed to one of the following to"
 einfo "to your ~/.bashrc or ~/.xinitrc and relogging:"
 einfo
-		has_version "x11-libs/libva-intel-driver" \
-			&& einfo "  LIBVA_DRIVER_NAME=\"i965\""
-		has_version "x11-libs/libva-intel-media-driver" \
-			&& einfo "  LIBVA_DRIVER_NAME=\"iHD\""
-		use video_cards_r600 \
-			&& einfo "  LIBVA_DRIVER_NAME=\"r600\""
-		( use video_cards_radeonsi || use video_cards_amdgpu ) \
-			&& einfo "  LIBVA_DRIVER_NAME=\"radeonsi\""
+	has_version "x11-libs/libva-intel-driver" \
+		&& einfo "  LIBVA_DRIVER_NAME=\"i965\""
+	has_version "x11-libs/libva-intel-media-driver" \
+		&& einfo "  LIBVA_DRIVER_NAME=\"iHD\""
+	use video_cards_r600 \
+		&& einfo "  LIBVA_DRIVER_NAME=\"r600\""
+	( use video_cards_radeonsi || use video_cards_amdgpu ) \
+		&& einfo "  LIBVA_DRIVER_NAME=\"radeonsi\""
 einfo
-	fi
 }
