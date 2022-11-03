@@ -27,6 +27,7 @@ UOPTS_SUPPORT_TBOLT=0
 inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils \
 python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
 inherit check-linker llvm multilib multilib-minimal uopts # Added by the oiledmachine-overlay
+inherit cflags-depends
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
@@ -645,6 +646,12 @@ BDEPEND="
 	js-type-check? ( virtual/jre )
 	vaapi? ( media-video/libva-utils )
 "
+
+# One of the major sources of lag comes from dependencies
+# These are strict to match performance to competition or normal builds.
+declare -A CFLAGS_RDEPEND=(
+	["media-libs/dav1d"]="-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
+)
 
 # Upstream uses llvm:13
 # When CFI + PGO + official was tested, it didn't work well with LLVM12.  Error noted in
@@ -1601,6 +1608,8 @@ einfo
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
 	done
+
+	use system-av1 && cflags-depends_check
 }
 
 USED_EAPPLY=0
