@@ -110,9 +110,9 @@ PDEPEND="
 pkg_postinst() {
 	if has_version "x11-libs/libva-intel-driver" ; then
 ewarn
-ewarn "x11-libs/libva-intel-driver is the older vaapi driver but intended for"
+ewarn "x11-libs/libva-intel-driver is the older VA-API driver but intended for"
 ewarn "select hardware.  See also x11-libs/libva-intel-media-driver package"
-ewarn "to access more vaapi accelerated encoders if driver support overlaps."
+ewarn "to access more VA-API accelerated encoders if driver support overlaps."
 ewarn
 	fi
 
@@ -122,7 +122,7 @@ ewarn
 			|| use video_cards_i965 \
 			|| use video_cards_iris ; then
 einfo
-einfo "Intel Quick Sync Video is required for hardware accelerated H.264 VA-API"
+einfo "Quick Sync Video is required for hardware accelerated H.264 VA-API"
 einfo "encode."
 einfo
 einfo "For hardware support, see the AVC row at"
@@ -153,17 +153,18 @@ einfo
 einfo "  https://www.x.org/wiki/RadeonFeature/"
 einfo
 einfo "The r600 driver only supports ARUBA for VCE encode."
-einfo "For newer hardware, try a newer free driver like"
-einfo "the radeonsi driver or closed drivers."
+einfo "For newer hardware, try a newer free driver like the radeonsi driver or"
+einfo "closed drivers."
 einfo
 		fi
 einfo
 einfo "Some drivers may require firmware for proper VA-API support."
 einfo
-einfo "The user must be part of the video group to use VAAPI support."
+einfo "The user must be part of the video group to use VA-API support."
 einfo
-einfo "The LIBVA_DRIVER_NAME envvar may need to be changed if both open"
-einfo "and closed drivers are installed to one of the following"
+einfo "The LIBVA_DRIVER_NAME environment variable may need to be changed if"
+einfo "both open and closed drivers are installed to one of the following to"
+einfo "to your ~/.bashrc or ~/.xinitrc and relogging:"
 einfo
 		has_version "x11-libs/libva-intel-driver" \
 			&& einfo "  LIBVA_DRIVER_NAME=\"i965\""
@@ -173,8 +174,6 @@ einfo
 			&& einfo "  LIBVA_DRIVER_NAME=\"r600\""
 		( use video_cards_radeonsi || use video_cards_amdgpu ) \
 			&& einfo "  LIBVA_DRIVER_NAME=\"radeonsi\""
-einfo
-einfo "to your ~/.bashrc or ~/.xinitrc and relogging."
 einfo
 	fi
 }
