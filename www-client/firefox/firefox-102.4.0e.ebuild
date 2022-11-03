@@ -1096,16 +1096,16 @@ einfo
 		CXX=${chost}-clang++
 		NM=llvm-nm
 		RANLIB=llvm-ranlib
-		local s=$(clang-major-version)
-		if ! has_version ">=sys-devel/lld-${s}" ; then
+		local clang_slot=$(clang-major-version)
+		if ! has_version ">=sys-devel/lld-${clang_slot}" ; then
 eerror
-eerror "You need to emerge >=sys-devel/lld-${s}"
+eerror "You need to emerge >=sys-devel/lld-${clang_slot}"
 eerror
 			die
 		fi
-		if ! has_version "=sys-libs/compiler-rt-sanitizers-${s}*[profile]" ; then
+		if ! has_version "=sys-libs/compiler-rt-sanitizers-${clang_slot}*[profile]" ; then
 eerror
-eerror "You need to emerge =sys-libs/compiler-rt-sanitizers-${s}*[profile]"
+eerror "You need to emerge =sys-libs/compiler-rt-sanitizers-${clang_slot}*[profile]"
 eerror
 			die
 		fi
