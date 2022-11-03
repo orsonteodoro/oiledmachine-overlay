@@ -1365,16 +1365,15 @@ einfo "Building without Mozilla API key ..."
 			--disable-debug-symbols
 
 		# Fork ebuild or set USE=debug if you want -Og
-		if is-flagq '-O4' || [[ "${OFLAG}" == "-O4" ]] ; then
-			OFLAG="-O4"
+		if is-flagq '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
+			OFLAG="-Ofast"
+			mozconfig_add_options_ac "from CFLAGS" \
+				--enable-optimize=-Ofast
+		elif is-flagq '-O4' || [[ "${OFLAG}" == "-O4" ]] ; then
+			OFLAG="-O4" # Same as O3
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O4
-		elif is-flagq '-O3' \
-			|| is-flagq '-Ofast' \
-			|| [[ "${OFLAG}" == "-O3" || "${OFLAG}" == "-Ofast" ]] ; then
-	# -Ofast bug:
-	# Dynamic visual elements on the website associated with the mouse may
-	# flicker when GPU acceleration is on.
+		elif is-flagq '-O3' || [[ "${OFLAG}" == "-O3" ]] ; then
 			OFLAG="-O3"
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O3
@@ -1396,8 +1395,17 @@ einfo "Building without Mozilla API key ..."
 	# Optimization flag was handled via configure
 	filter-flags '-O*'
 
-	# Same problem as -Ofast bug.
-	filter-flags '-ffast-math'
+	# Bug with -Ofast, -ffast-math (containing -finite-math-only):
+	# Dynamic visual elements on the website associated with the mouse may
+	# flicker when GPU acceleration is on.
+	if ( \
+		[[ "${OFLAG}" == "-Ofast" ]] \
+		|| is-flagq '-Ofast' \
+		|| is-flagq '-ffast-math' \
+	   ) \
+		&& ! is-flagq '-fno-finite-math-only' ; then
+		append_all $(test-flags '-fno-finite-math-only')
+	fi
 
 	if is-flagq '-ffast-math' || [[ "${OFLAG}" == "-Ofast" ]] ; then
 		local pos=$(grep -n "#define OPUS_DEFINES_H" \
