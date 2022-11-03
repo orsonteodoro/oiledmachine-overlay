@@ -25,6 +25,12 @@
     <flag name="video_cards_iris">
       Pulls or checks for a VA-API driver
     </flag>
+    <flag name="video_cards_nvidia">
+      Add VA-API compatiblity
+    </flag>
+    <flag name="video_cards_nouveau">
+      Adds only decode compatiblity
+    </flag>
     <flag name="video_cards_r600">
       Pulls or checks for a VA-API driver
     </flag>
