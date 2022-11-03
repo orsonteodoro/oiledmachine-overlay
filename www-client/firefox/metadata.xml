@@ -140,6 +140,11 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
   <flag name="webspeech">
     Enable input speech recognition for websites.
   </flag>
+  <flag name="wayland">
+    Adds support for wayland and DMABUF.
+
+    Disabling this USE flag may degrade WebGL performance below 25 FPS.
+  </flag>
 </use>
 <slots>
   <slot name="rapid">

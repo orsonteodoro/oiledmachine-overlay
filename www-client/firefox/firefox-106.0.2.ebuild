@@ -240,11 +240,12 @@ LICENSE+="
 # ZLIB all-rights-reserved media/libjpeg/simd/powerpc/jdsample-altivec.c -- \#
 #   the vanilla ZLIB lib license doesn't contain all rights reserved
 
+# (unforced) -hwaccel , pgo, x11 + wayland are defaults in -bin browser
 IUSE+="
-cpu_flags_arm_neon cups dbus debug eme-free +hardened hwaccel jack -jemalloc
-libcanberra libproxy libsecret +openh264 pgo pulseaudio sndio selinux speech
+cpu_flags_arm_neon cups dbus debug eme-free +hardened -hwaccel jack -jemalloc
+libcanberra libproxy libsecret +openh264 +pgo pulseaudio sndio selinux speech
 +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
-+system-libvpx system-png system-python-libs +system-webp wayland wifi +webrtc
++system-libvpx system-png system-python-libs +system-webp +wayland wifi +webrtc
 webspeech
 "
 
@@ -891,6 +892,12 @@ eerror
 	use system-av1 && cflags-depends_check
 
 	export MAKEOPTS="-j1" # > -j1 breaks building memchr with sccache
+
+	if ! use wayland ; then
+ewarn
+ewarn "Disabling wayland USE flag may degrade WebGL FPS by less than 25 FPS."
+ewarn
+	fi
 }
 
 src_unpack() {
@@ -1401,14 +1408,14 @@ einfo "Building without Mozilla API key ..."
 			OFLAG="-O4" # Same as O3
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O4
-		elif is-flagq '-O3' || [[ "${OFLAG}" == "-O3" ]] ; then
-			OFLAG="-O3"
-			mozconfig_add_options_ac "from CFLAGS" \
-				--enable-optimize=-O3
-		else
+		elif is-flagq '-O2' || [[ "${OFLAG}" == "-O2" ]] ; then
 			OFLAG="-O2"
-			mozconfig_add_options_ac "Gentoo default" \
+			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O2
+		else
+			OFLAG="-O3"
+			mozconfig_add_options_ac "Upstream default" \
+				--enable-optimize=-O3
 		fi
 	fi
 
