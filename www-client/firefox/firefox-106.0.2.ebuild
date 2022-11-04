@@ -1140,11 +1140,11 @@ ewarn "-fno-finite-math-only is broken with Clang."
 ewarn
 ewarn "Applying fallbacks:"
 ewarn
-ewarn "  -Ofast -> -O3"
 ewarn "  Removing -ffast-math"
+ewarn "  Appending -fno-fast-math"
 ewarn
-		replace-flags '-Ofast' '-O3'
 		filter-flags '-ffast-math'
+		append-flags '-fno-fast-math'
 	fi
 
 	local have_switched_compiler=
