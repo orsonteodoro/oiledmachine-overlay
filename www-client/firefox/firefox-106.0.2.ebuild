@@ -1138,6 +1138,7 @@ einfo
 		) ; then
 ewarn
 ewarn "-fno-finite-math-only is broken with Clang."
+ewarn "Remove -Ofast and -ffast-math to use Clang."
 ewarn
 		force_gcc=1
 	fi
