@@ -905,7 +905,8 @@ ewarn "Disabling the wayland USE flag has the following consequences:"
 ewarn
 ewarn "  (1) Degrade WebGL FPS by less than 25 FPS (15 FPS on average)"
 ewarn "  (2) Always use software CPU based video decode for VP8, VP9, AV1."
-ewarn "      USE=wayland will use GPU's accelerated decoding if supported."
+ewarn "      If the wayland USE flag is enabled, it will use GPU accelerated"
+ewarn "      decoding if supported."
 ewarn
 	fi
 }
@@ -985,6 +986,7 @@ src_prepare() {
 		rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
 	fi
 	eapply "${WORKDIR}/firefox-patches"
+	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags.patch"
 
 	# Only partial patching was done because Gentoo doesn't support multilib
 	# Python.  Only native ABI is supported.  This means cbindgen cannot
@@ -1128,24 +1130,6 @@ einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
 einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 einfo "Cross-compile CHOST:\t\t${chost}"
 einfo
-
-	if tc-is-clang \
-		&& ( \
-			[[ "${OFLAG}" == "-Ofast" ]] \
-			|| is_flagq_last '-Ofast' \
-			|| is-flagq '-ffast-math' \
-		) ; then
-ewarn
-ewarn "-fno-finite-math-only is broken with Clang."
-ewarn
-ewarn "Applying fallbacks:"
-ewarn
-ewarn "  Removing -ffast-math"
-ewarn "  Appending -fno-fast-math for -Ofast"
-ewarn
-		filter-flags '-ffast-math'
-		append-flags '-fno-fast-math'
-	fi
 
 	local have_switched_compiler=
 	if tc-is-clang ; then
@@ -1461,28 +1445,11 @@ einfo "Building without Mozilla API key ..."
 		fi
 	fi
 
-	if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
-		# Precaution
-		append_all $(test-flags -fno-allow-store-data-races)
-	fi
-
 	# Debug flag was handled via configure
 	filter-flags '-g*'
 
 	# Optimization flag was handled via configure
 	filter-flags '-O*'
-
-	# Bug with -Ofast, -ffast-math (containing -finite-math-only):
-	# Dynamic visual elements on the website associated with the mouse may
-	# flicker when GPU acceleration is on.
-	if ( \
-		[[ "${OFLAG}" == "-Ofast" ]] \
-		|| is_flagq_last '-Ofast' \
-		|| is-flagq '-ffast-math' \
-	   ) \
-		&& ! is-flagq '-fno-finite-math-only' ; then
-		append_all $(test-flags '-fno-finite-math-only')
-	fi
 
 	if is-flagq '-ffast-math' || [[ "${OFLAG}" == "-Ofast" ]] ; then
 		local pos=$(grep -n "#define OPUS_DEFINES_H" \

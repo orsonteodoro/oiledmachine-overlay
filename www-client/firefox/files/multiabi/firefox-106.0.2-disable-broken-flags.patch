@@ -1,0 +1,47 @@
+Disable broken compiler optimizations associated with -Ofast, -ffast-math
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+
+--- a/build/moz.configure/toolchain.configure.orig	2022-10-25 09:20:09.000000000 -0700
++++ b/build/moz.configure/toolchain.configure	2022-11-04 12:53:44.408067890 -0700
+@@ -1788,6 +1788,23 @@ try_compile(
+     onerror=die_on_old_libstdcxx,
+ )
+ 
++@depends(
++    c_compiler,
++)
++def disable_broken(c_compiler):
++    flags = []
++    # Bug with -Ofast, -ffast-math (containing -finite-math-only):
++    # Dynamic visual elements on the website associated with the mouse may
++    # flicker when GPU acceleration is on.
++    flags.append("-fno-finite-math-only")
++    if c_compiler.type == "gcc":
++        # Precaution against possible vulnerability
++        flags.append("-fno-allow-store-data-races")
++    return namespace(
++        flags=flags,
++    )
++
++set_config("MOZ_DISABLE_BROKEN_FLAGS", disable_broken.flags)
+ 
+ @depends(c_compiler, target)
+ def default_debug_flags(compiler_info, target):
+--- a/python/mozbuild/mozbuild/frontend/context.py.orig	2022-10-25 09:20:15.000000000 -0700
++++ b/python/mozbuild/mozbuild/frontend/context.py	2022-11-04 12:51:08.422071877 -0700
+@@ -389,6 +389,6 @@ class HostCompileFlags(BaseCompileFlags)
+             optimize_flags += self._context.config.substs.get("HOST_OPTIMIZE_FLAGS")
+         elif self._context.config.substs.get("MOZ_OPTIMIZE"):
+-            optimize_flags += self._context.config.substs.get("MOZ_OPTIMIZE_FLAGS")
++            optimize_flags += self._context.config.substs.get("MOZ_OPTIMIZE_FLAGS") + self._context.config.substs.get("MOZ_DISABLE_BROKEN_FLAGS")
+         return optimize_flags
+ 
+ 
+@@ -518,6 +519,6 @@ class TargetCompileFlags(BaseCompileFlag
+             # If MOZ_PGO_OPTIMIZE_FLAGS is empty we fall back to
+             # MOZ_OPTIMIZE_FLAGS. Presently this occurs on Windows.
+-            optimize_flags = self._context.config.substs.get("MOZ_OPTIMIZE_FLAGS")
++            optimize_flags = self._context.config.substs.get("MOZ_OPTIMIZE_FLAGS") + self._context.config.substs.get("MOZ_DISABLE_BROKEN_FLAGS")
+         return optimize_flags
+ 
+     def __setitem__(self, key, value):
