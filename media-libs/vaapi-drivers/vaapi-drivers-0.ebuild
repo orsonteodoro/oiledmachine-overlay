@@ -34,9 +34,6 @@ REQUIRED_USE+="
 	)
 "
 
-FFMPEG_PV="3.4.2"
-LIBVA_PV="2.1.0"
-MESA_PV="18"
 RDEPEND_DRIVERS="
 	|| (
 		video_cards_amdgpu? (
@@ -77,7 +74,7 @@ RDEPEND_DRIVERS="
 "
 
 RDEPEND+="
-	>=media-libs/libva-${LIBVA_PV}
+	media-libs/libva
 	!custom? (
 		${RDEPEND_DRIVERS}
 	)
