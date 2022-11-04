@@ -1077,7 +1077,7 @@ append_all() {
 is_flagq_last() {
 	local flag="${1}"
 	local olast=$(echo "${CFLAGS}" \
-		| grep -E -e "-O(0|g|1|z|s|2|3|4|fast)" \
+		| grep -o -E -e "-O(0|g|1|z|s|2|3|4|fast)" \
 		| tr " " "\n" \
 		| tail -n 1)
 einfo "CFLAGS:\t${CFLAGS}"
@@ -1116,7 +1116,7 @@ ewarn
 ewarn "Applying fallbacks:"
 ewarn
 ewarn "  Removing -ffast-math"
-ewarn "  Appending -fno-fast-math"
+ewarn "  Appending -fno-fast-math for -Ofast"
 ewarn
 		filter-flags '-ffast-math'
 		append-flags '-fno-fast-math'
@@ -1413,6 +1413,7 @@ einfo "Building without Mozilla API key ..."
 
 		# Fork ebuild or set USE=debug if you want -Og
 		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
+			einfo "Using Ofast"
 			OFLAG="-Ofast"
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-Ofast
