@@ -207,6 +207,18 @@ ewarn
 	uopts_setup
 }
 
+is_flagq_last() {
+	local flag="${1}"
+	local olast=$(echo "${CFLAGS}" \
+		| grep -E -e "-O(0|g|1|z|s|2|3|4|fast)" \
+		| tr " " "\n" \
+		| tail -n 1)
+einfo "CFLAGS:\t${CFLAGS}"
+einfo "olast:\t${olast}"
+	[[ "${flag}" == "${olast}" ]] && return 0
+	return 1
+}
+
 LTO_TYPE="none"
 src_prepare() {
 	tc-export AR CC CXX PKG_CONFIG
@@ -230,28 +242,33 @@ src_prepare() {
 
 	# -O3 removal breaks _FORITIFY_SOURCE
 	if use custom-optimization ; then
-		if is-flagq -O0; then
+		if is_flagq_last '-O0'; then
 			ewarn "Using -O0 may disable _FORITIFY_SOURCE lowering security"
 			use pgo && ewarn "Using -O0 with PGO is uncommon"
 			sed -i -e "s|'-O3'|'-O0'|g" common.gypi node.gypi || die
-		elif is-flagq -O1; then
+		elif is_flagq_last '-Og'; then
+			use pgo && ewarn "Using -Og with PGO is uncommon"
+			sed -i -e "s|'-O3'|'-Og'|g" common.gypi node.gypi || die
+		elif is_flagq_last '-O1'; then
 			use pgo && ewarn "Using -O1 with PGO is uncommon"
 			sed -i -e "s|'-O3'|'-O1'|g" common.gypi node.gypi || die
-		elif is-flagq -O2; then
-			use pgo && ewarn "Using -O2 with PGO is uncommon"
-			sed -i -e "s|'-O3'|'-O2'|g" common.gypi node.gypi || die
-		elif is-flagq -O3; then
-			sed -i -e "s|'-O3'|'-O3'|g" common.gypi node.gypi || die
-		elif is-flagq -O4; then
-			sed -i -e "s|'-O3'|'-O4'|g" common.gypi node.gypi || die
-		elif is-flagq -Ofast; then
-			sed -i -e "s|'-O3'|'-Ofast'|g" common.gypi node.gypi || die
-		elif is-flagq -Os; then
-			use pgo && ewarn "Using -Os with PGO is uncommon"
-			sed -i -e "s|'-O3'|'-Os'|g" common.gypi node.gypi || die
-		elif is-flagq -Oz; then
+		elif is_flagq_last '-Oz'; then
 			use pgo && ewarn "Using -Oz with PGO is uncommon"
 			sed -i -e "s|'-O3'|'-Oz'|g" common.gypi node.gypi || die
+		elif is_flagq_last '-Os'; then
+			use pgo && ewarn "Using -Os with PGO is uncommon"
+			sed -i -e "s|'-O3'|'-Os'|g" common.gypi node.gypi || die
+		elif is_flagq_last '-O2'; then
+			use pgo && ewarn "Using -O2 with PGO is uncommon"
+			sed -i -e "s|'-O3'|'-O2'|g" common.gypi node.gypi || die
+		elif is_flagq_last '-O3'; then
+			sed -i -e "s|'-O3'|'-O3'|g" common.gypi node.gypi || die
+		elif is_flagq_last '-O4'; then
+			sed -i -e "s|'-O3'|'-O4'|g" common.gypi node.gypi || die
+		elif is_flagq_last '-Ofast'; then
+			sed -i -e "s|'-O3'|'-Ofast'|g" common.gypi node.gypi || die
+		# else
+		#	-O3 is the upstream default
 		fi
 	fi
 
