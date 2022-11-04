@@ -1129,8 +1129,21 @@ einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 einfo "Cross-compile CHOST:\t\t${chost}"
 einfo
 
+	local force_gcc=0
+	if tc-is-clang \
+		&& ( \
+			[[ "${OFLAG}" == "-Ofast" ]] \
+			|| is_flagq_last '-Ofast' \
+			|| is-flagq '-ffast-math' \
+		) ; then
+ewarn
+ewarn "-fno-finite-math-only is broken with Clang."
+ewarn
+		force_gcc=1
+	fi
+
 	local have_switched_compiler=
-	if tc-is-clang ; then
+	if tc-is-clang && (( ${force_gcc} == 0 )) ; then
 		# Force clang
 einfo
 einfo "Switching to clang"
@@ -1424,10 +1437,9 @@ einfo "Building without Mozilla API key ..."
 
 		# Fork ebuild or set USE=debug if you want -Og
 		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
-			# Flicker bug still happens.  Downgrading.
-			OFLAG="-O3"
+			OFLAG="-Ofast"
 			mozconfig_add_options_ac "from CFLAGS" \
-				--enable-optimize=-O3
+				--enable-optimize=-Ofast
 		elif is_flagq_last '-O4' || [[ "${OFLAG}" == "-O4" ]] ; then
 			OFLAG="-O4" # Same as O3
 			mozconfig_add_options_ac "from CFLAGS" \
