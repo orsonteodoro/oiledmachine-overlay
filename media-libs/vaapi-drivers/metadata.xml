@@ -14,6 +14,11 @@
     installation.  The required hardware support for VA-API drivers listed in
     the links below:
 
+    video_cards_amdgpu, video_cards_r600, video_cards_radeonsi:
+
+      https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview
+      https://www.x.org/wiki/RadeonFeature/
+
     video_cards_intel:
 
       https://en.wikipedia.org/wiki/Intel_Quick_Sync_Video#Hardware_decoding_and_encoding
@@ -28,11 +33,6 @@
 
       https://en.wikipedia.org/wiki/Nvidia_NVENC (optional)
       https://en.wikipedia.org/wiki/Nvidia_NVDEC
-
-    video_cards_amdgpu, video_cards_r600, video_cards_radeonsi:
-
-      https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview
-      https://www.x.org/wiki/RadeonFeature/
 
 
     Additional requirements:
