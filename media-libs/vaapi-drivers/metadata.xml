@@ -8,34 +8,79 @@
   </maintainer>
   <longdescription>
     This ebuild package is to resolve VA-API driver compatibility.
+
+    Some or all codecs may not be supported depending on the model.  If no
+    codecs are supported, you may choose the USE=custom use flag to skip
+    installation.  The required hardware support for VA-API drivers listed in
+    the links below:
+
+    video_cards_intel:
+
+      https://en.wikipedia.org/wiki/Intel_Quick_Sync_Video#Hardware_decoding_and_encoding
+      https://github.com/intel/intel-vaapi-driver/blob/master/NEWS
+      https://github.com/intel/media-driver#decodingencoding-features
+
+    video_cards_nouveau:
+
+      https://nouveau.freedesktop.org/VideoAcceleration.html
+
+    video_cards_nvidia:
+
+      https://en.wikipedia.org/wiki/Nvidia_NVENC (optional)
+      https://en.wikipedia.org/wiki/Nvidia_NVDEC
+
+    video_cards_amdgpu, video_cards_r600, video_cards_radeonsi:
+
+      https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview
+      https://www.x.org/wiki/RadeonFeature/
+
+
+    Additional requirements:
+
+      * The firmware package for the driver should be installed.
+      * The user must be part of the video group.
+
+
+    The following environment variables may be set to select a specific
+    VA-API driver:
+
+      media-libs/libva-intel-driver:        LIBVA_DRIVER_NAME="i965"
+      media-libs/libva-intel-media-driver:  LIBVA_DRIVER_NAME="iHD"
+      USE=video_cards_r600:                 LIBVA_DRIVER_NAME="r600"
+      USE=video_cards_radeonsi:             LIBVA_DRIVER_NAME="radeonsi"
+      USE=video_cards_amdgpu:               LIBVA_DRIVER_NAME="radeonsi"
+
   </longdescription>
   <use>
     <flag name="custom">
       Allow to manually install VA-API drivers or install none at all.
     </flag>
     <flag name="video_cards_amdgpu">
-      Pulls or checks for a VA-API driver
-    </flag>
-    <flag name="video_cards_i965">
-      Pulls or checks for a VA-API driver
+      Checks or installs for a VA-API driver for both encoding and decoding.
+
+      (Alias for video_cards_radeonsi)
     </flag>
     <flag name="video_cards_intel">
-      Pulls or checks for a VA-API driver
-    </flag>
-    <flag name="video_cards_iris">
-      Pulls or checks for a VA-API driver
+      Checks or installs for a VA-API driver for both encoding and decoding.
+
+      Use <pkg>media-libs/libva-intel-media-driver</pkg> for Gen5 or newer.
+      Use <pkg>media-libs/libva-intel-driver</pkg> for Gen4 or older.
     </flag>
     <flag name="video_cards_nvidia">
-      Add VA-API compatiblity
+      Checks or installs a compatible VA-API driver for decoding.
+
+      <pkg>x11-libs/libva-vdpau-driver</pkg> provides for decoding only.
+      <pkg>media-plugins/nvidia-vaapi-driver</pkg> provides for decode only.
     </flag>
     <flag name="video_cards_nouveau">
-      Adds only decode compatiblity
+      Checks or installs a VA-API driver for decoding.
     </flag>
     <flag name="video_cards_r600">
-      Pulls or checks for a VA-API driver
+      Checks or installs a VA-API driver for decoding, and encoding
+      support for ARUBA only.
     </flag>
     <flag name="video_cards_radeonsi">
-      Pulls or checks for a VA-API driver
+      Checks or installs a VA-API driver for both encoding and decoding.
     </flag>
   </use>
 </pkgmetadata>

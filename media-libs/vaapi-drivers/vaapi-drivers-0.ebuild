@@ -17,8 +17,6 @@ SLOT="0"
 IUSE_VAAPI="
 video_cards_amdgpu
 video_cards_intel
-video_cards_iris
-video_cards_i965
 video_cards_nouveau
 video_cards_nvidia
 video_cards_r600
@@ -32,18 +30,6 @@ custom
 
 REQUIRED_USE+="
 	!custom? (
-		video_cards_amdgpu? (
-			!video_cards_r600
-			!video_cards_radeonsi
-		)
-		video_cards_r600? (
-			!video_cards_amdgpu
-			!video_cards_radeonsi
-		)
-		video_cards_radeonsi? (
-			!video_cards_amdgpu
-			!video_cards_r600
-		)
 		|| ( ${IUSE_VAAPI} )
 	)
 "
@@ -56,26 +42,21 @@ RDEPEND_DRIVERS="
 		video_cards_amdgpu? (
 			media-libs/mesa:=[${MULTILIB_USEDEP},vaapi,video_cards_radeonsi]
 		)
-		video_cards_i965? (
-			|| (
-				x11-libs/libva-intel-media-driver
-				x11-libs/libva-intel-driver[${MULTILIB_USEDEP}]
-			)
-		)
 		video_cards_intel? (
 			|| (
-				x11-libs/libva-intel-media-driver
-				x11-libs/libva-intel-driver[${MULTILIB_USEDEP}]
+				media-libs/libva-intel-media-driver
+				media-libs/libva-intel-driver[${MULTILIB_USEDEP}]
 			)
 		)
-		video_cards_iris? (
-			x11-libs/libva-intel-media-driver
-		)
 		video_cards_nouveau? (
-			media-libs/mesa:=[${MULTILIB_USEDEP},video_cards_nouveau]
 			|| (
-				media-libs/mesa:=[vaapi,video_cards_nouveau,${MULTILIB_USEDEP}]
-				>=x11-libs/libva-vdpau-driver-0.7.4-r3[${MULTILIB_USEDEP}]
+				(
+					media-libs/mesa:=[${MULTILIB_USEDEP},vaapi,video_cards_nouveau]
+				)
+				(
+					>=x11-libs/libva-vdpau-driver-0.7.4-r3[${MULTILIB_USEDEP}]
+					media-libs/mesa:=[${MULTILIB_USEDEP},vdpau,video_cards_nouveau]
+				)
 			)
 		)
 		video_cards_nvidia? (
@@ -110,63 +91,22 @@ ewarn "select hardware.  See also x11-libs/libva-intel-media-driver package"
 ewarn "to access more VA-API accelerated encoders if driver support overlaps."
 ewarn
 	fi
-
-	if \
-		   use video_cards_intel \
-		|| use video_cards_i965 \
-		|| use video_cards_iris ; then
 einfo
-einfo "Quick Sync Video is required for hardware accelerated H.264 VA-API"
-einfo "encode."
-einfo
-einfo "For hardware support, see the AVC row at"
-einfo "https://en.wikipedia.org/wiki/Intel_Quick_Sync_Video#Hardware_decoding_and_encoding"
-einfo
-einfo "Driver ebuild packages for their corresponding hardware can be found at:"
-einfo
-einfo "x11-libs/libva-intel-driver:"
-einfo "https://github.com/intel/intel-vaapi-driver/blob/master/NEWS"
-einfo
-einfo "x11-libs/libva-intel-media-driver:"
-einfo "https://github.com/intel/media-driver#decodingencoding-features"
-einfo
-	fi
-	if use video_cards_amdgpu \
-		|| use video_cards_r600 \
-		|| use video_cards_radeonsi  ; then
-einfo
-einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for"
-einfo "hardware accelerated H.264 VA-API encode."
-einfo
-einfo "For details see"
-einfo
-einfo "  https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview"
-einfo
-einfo "or"
-einfo
-einfo "  https://www.x.org/wiki/RadeonFeature/"
-einfo
-einfo "The r600 driver only supports ARUBA for VCE encode."
-einfo "For newer hardware, try a newer free driver like the radeonsi driver or"
-einfo "closed drivers."
-einfo
-	fi
-einfo
-einfo "Some drivers may require firmware for proper VA-API support."
-einfo
-einfo "The user must be part of the video group to use VA-API support."
-einfo
+einfo "See the metadata.xml or epkginfo -x ${CATEGORY}/${PN} for hardware"
+einfo "requirements."
+ewarn
+ewarn "Some drivers may require firmware packages installed."
+ewarn
+ewarn "The user must be part of the video group to use VA-API support."
+ewarn
 einfo "The LIBVA_DRIVER_NAME environment variable may need to be changed if"
-einfo "both open and closed drivers are installed to one of the following to"
-einfo "to your ~/.bashrc or ~/.xinitrc and relogging:"
+einfo "multiple VA-API drivers are installed to one of the following to to your"
+einfo "~/.bashrc or ~/.xinitrc and relogging:"
 einfo
-	has_version "x11-libs/libva-intel-driver" \
-		&& einfo "  LIBVA_DRIVER_NAME=\"i965\""
-	has_version "x11-libs/libva-intel-media-driver" \
-		&& einfo "  LIBVA_DRIVER_NAME=\"iHD\""
-	use video_cards_r600 \
-		&& einfo "  LIBVA_DRIVER_NAME=\"r600\""
-	( use video_cards_radeonsi || use video_cards_amdgpu ) \
-		&& einfo "  LIBVA_DRIVER_NAME=\"radeonsi\""
+einfo "  media-libs/libva-intel-driver:        LIBVA_DRIVER_NAME=\"i965\""
+einfo "  media-libs/libva-intel-media-driver:  LIBVA_DRIVER_NAME=\"iHD\""
+einfo "  USE=video_cards_r600:                 LIBVA_DRIVER_NAME=\"r600\""
+einfo "  USE=video_cards_radeonsi:             LIBVA_DRIVER_NAME=\"radeonsi\""
+einfo "  USE=video_cards_amdgpu:               LIBVA_DRIVER_NAME=\"radeonsi\""
 einfo
 }
