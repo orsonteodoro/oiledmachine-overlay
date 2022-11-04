@@ -1129,7 +1129,6 @@ einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 einfo "Cross-compile CHOST:\t\t${chost}"
 einfo
 
-	local force_gcc=0
 	if tc-is-clang \
 		&& ( \
 			[[ "${OFLAG}" == "-Ofast" ]] \
@@ -1138,13 +1137,18 @@ einfo
 		) ; then
 ewarn
 ewarn "-fno-finite-math-only is broken with Clang."
-ewarn "Remove -Ofast and -ffast-math to use Clang."
 ewarn
-		force_gcc=1
+ewarn "Applying fallbacks:"
+ewarn
+ewarn "  -Ofast -> -O3"
+ewarn "  Removing -ffast-math"
+ewarn
+		replace-flags '-Ofast' '-O3'
+		filter-flags '-ffast-math'
 	fi
 
 	local have_switched_compiler=
-	if tc-is-clang && (( ${force_gcc} == 0 )) ; then
+	if tc-is-clang ; then
 		# Force clang
 einfo
 einfo "Switching to clang"
