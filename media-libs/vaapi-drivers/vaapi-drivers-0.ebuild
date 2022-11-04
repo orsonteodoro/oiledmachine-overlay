@@ -87,8 +87,9 @@ pkg_postinst() {
 	if has_version "x11-libs/libva-intel-driver" ; then
 ewarn
 ewarn "x11-libs/libva-intel-driver is the older VA-API driver but intended for"
-ewarn "select hardware.  See also x11-libs/libva-intel-media-driver package"
-ewarn "to access more VA-API accelerated encoders if driver support overlaps."
+ewarn "Gen 4 and earlier.  See also x11-libs/libva-intel-media-driver package"
+ewarn "for Gen 5 or later to access more VA-API accelerated encoders if driver"
+ewarn "support overlaps."
 ewarn
 	fi
 einfo
