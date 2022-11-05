@@ -77,7 +77,7 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
     Enable libproxy support
   </flag>
   <flag name="libcanberra">
-    Enable sound events support for browser dialogs and popups.
+    Enable sound events support for browser dialogs and menu popups.
   </flag>
   <flag name="openh264">
     Use <pkg>media-libs/openh264</pkg> for H.264 support instead of downloading
