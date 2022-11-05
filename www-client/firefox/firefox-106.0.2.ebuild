@@ -254,8 +254,9 @@ IUSE+=" geckodriver +gmp-autoupdate screencast +X"
 
 REQUIRED_USE="
 	debug? ( !system-av1 )
-	wayland? ( dbus )
+	libcanberra? ( || ( alsa pulseaudio ) )
 	vaapi? ( wayland )
+	wayland? ( dbus )
 	wifi? ( dbus )
 "
 
@@ -1435,6 +1436,7 @@ einfo "Building without Mozilla API key ..."
 
 		# Fork ebuild or set USE=debug if you want -Og
 		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
+			tc-is-clang && ewarn "Using -Ofast with clang may segfault" # Does not segfault with GCC
 			einfo "Using Ofast"
 			OFLAG="-Ofast"
 			mozconfig_add_options_ac "from CFLAGS" \
