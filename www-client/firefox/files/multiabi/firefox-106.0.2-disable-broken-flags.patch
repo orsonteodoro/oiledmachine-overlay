@@ -3,7 +3,7 @@ Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 
 --- a/build/moz.configure/toolchain.configure.orig	2022-10-25 09:20:09.000000000 -0700
 +++ b/build/moz.configure/toolchain.configure	2022-11-04 12:53:44.408067890 -0700
-@@ -1788,6 +1788,26 @@ try_compile(
+@@ -1788,6 +1788,25 @@ try_compile(
      onerror=die_on_old_libstdcxx,
  )
  
