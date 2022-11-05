@@ -41,6 +41,9 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
 
 </longdescription>
 <upstream>
+  <changelog>
+    https://www.mozilla.org/en-US/firefox/releases/
+  </changelog
   <bugs-to>
     https://developer.mozilla.org/en-US/docs/Mozilla/QA/Bug_writing_guidelines
   </bugs-to>
