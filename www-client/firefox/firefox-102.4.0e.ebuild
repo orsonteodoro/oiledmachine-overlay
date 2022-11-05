@@ -245,10 +245,10 @@ LICENSE+="
 # (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser
 IUSE+="
 alsa cpu_flags_arm_neon cups +dbus debug eme-free +hardened -hwaccel jack
--jemalloc libcanberra libproxy libsecret +openh264 +pgo pulseaudio sndio selinux
-speech +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
-+system-libvpx system-png system-python-libs +system-webp +vaapi +wayland
-+webrtc wifi webspeech
+-jemalloc libcanberra libproxy libsecret +openh264 +pgo pulseaudio
+sndio selinux speech +system-av1 +system-harfbuzz +system-icu +system-jpeg
++system-libevent +system-libvpx system-png system-python-libs +system-webp
++vaapi +wayland +webrtc wifi webspeech
 "
 
 # Firefox-only IUSE
@@ -291,8 +291,14 @@ FF_ONLY_DEPEND="
 	screencast? ( media-video/pipewire:=[${MULTILIB_USEDEP}] )
 	selinux? ( sec-policy/selinux-mozilla )
 "
+GAMEPAD_BDEPEND="
+	kernel_linux? (
+		sys-kernel/linux-headers
+	)
+"
 BDEPEND+="
 	${PYTHON_DEPS}
+	${GAMEPAD_BDEPEND}
 	app-arch/unzip
 	app-arch/zip
 	>=dev-util/cbindgen-0.24.3
@@ -389,9 +395,23 @@ CDEPEND="
 	)
 "
 
+# Same as virtual/udev-217-r5 but with multilib changes.
+# Required for gamepad, or WebAuthn roaming authenticators (e.g. USB security key)
+UDEV_RDEPEND="
+	kernel_linux? (
+		|| (
+			sys-apps/systemd-utils[${MULTILIB_USEDEP},udev]
+			sys-fs/udev[${MULTILIB_USEDEP}]
+			>=sys-fs/eudev-2.1.1[${MULTILIB_USEDEP}]
+			>=sys-apps/systemd-217[${MULTILIB_USEDEP}]
+		)
+	)
+"
+
 # See also PR_LoadLibrary
 RDEPEND="
 	${CDEPEND}
+	${UDEV_RDEPEND}
 	cups? ( net-print/cups[${MULTILIB_USEDEP}] )
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
 	libcanberra? (
