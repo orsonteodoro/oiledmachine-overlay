@@ -242,9 +242,9 @@ LICENSE+="
 
 # (unforced) -hwaccel , pgo, x11 + wayland are defaults in -bin browser
 IUSE+="
-cpu_flags_arm_neon cups +dbus debug eme-free +hardened -hwaccel jack -jemalloc
-libcanberra libproxy libsecret +openh264 +pgo pulseaudio sndio selinux speech
-+system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
+alsa cpu_flags_arm_neon cups +dbus debug eme-free +hardened -hwaccel jack
+-jemalloc libcanberra libproxy libsecret +openh264 +pgo pulseaudio sndio selinux
+speech +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-png system-python-libs +system-webp +vaapi +wayland
 +webrtc wifi webspeech
 "
@@ -383,7 +383,16 @@ RDEPEND="
 	${CDEPEND}
 	cups? ( net-print/cups[${MULTILIB_USEDEP}] )
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
-	libcanberra? ( media-libs/libcanberra[${MULTILIB_USEDEP}] )
+	libcanberra? (
+		!pulseaudio? (
+			alsa? (
+				media-libs/libcanberra[${MULTILIB_USEDEP},alsa]
+			)
+		)
+		pulseaudio? (
+			media-libs/libcanberra[${MULTILIB_USEDEP},pulseaudio]
+		)
+	)
 	libsecret? ( app-crypt/libsecret[${MULTILIB_USEDEP}] )
 	openh264? ( media-libs/openh264:*[plugin,${MULTILIB_USEDEP}] )
 	pulseaudio? (
@@ -1347,7 +1356,7 @@ einfo "Building without Mozilla API key ..."
 	use jack && myaudiobackends+="jack,"
 	use sndio && myaudiobackends+="sndio,"
 	use pulseaudio && myaudiobackends+="pulseaudio,"
-	! use pulseaudio && myaudiobackends+="alsa,"
+	! use pulseaudio && use alsa && myaudiobackends+="alsa,"
 
 	mozconfig_add_options_ac '--enable-audio-backends' \
 		--enable-audio-backends="${myaudiobackends::-1}"
@@ -2054,6 +2063,14 @@ ewarn "for smoother scrolling and >= 25 FPS video playback."
 ewarn
 ewarn "For details, see https://support.mozilla.org/en-US/kb/performance-settings"
 ewarn
+	fi
+	if use libcanberra ; then
+		if has_version "media-libs/libcanberra[-sound]" ; then
+ewarn
+ewarn "You need a sound theme to hear notifications."
+ewarn "The default one can be installed with media-libs/libcanberra[sound]"
+ewarn
+		fi
 	fi
 }
 

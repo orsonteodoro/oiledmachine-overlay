@@ -3,7 +3,7 @@ Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 
 --- a/build/moz.configure/toolchain.configure.orig	2022-10-25 09:20:09.000000000 -0700
 +++ b/build/moz.configure/toolchain.configure	2022-11-04 12:53:44.408067890 -0700
-@@ -1788,6 +1788,23 @@ try_compile(
+@@ -1788,6 +1788,26 @@ try_compile(
      onerror=die_on_old_libstdcxx,
  )
  
@@ -16,6 +16,8 @@ Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 +    # Dynamic visual elements on the website associated with the mouse may
 +    # flicker when GPU acceleration is on.
 +    flags.append("-fno-finite-math-only")
++    if c_compiler.type == "clang":
++        flags.append("-fno-fast-math")
 +    if c_compiler.type == "gcc":
 +        # Precaution against possible vulnerability
 +        flags.append("-fno-allow-store-data-races")
