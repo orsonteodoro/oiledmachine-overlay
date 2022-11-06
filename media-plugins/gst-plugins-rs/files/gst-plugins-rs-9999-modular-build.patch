@@ -1,7 +1,7 @@
-diff -urp gst-plugins-rs-9999.orig/meson.build gst-plugins-rs-9999/meson.build
---- gst-plugins-rs-9999.orig/meson.build	2022-10-25 19:29:44.997299546 -0700
-+++ gst-plugins-rs-9999/meson.build	2022-10-25 19:35:27.206647714 -0700
-@@ -39,57 +39,147 @@ endif
+diff -x '*.orig' -x '*.rej' -urp gst-plugins-rs-9999.orig/meson.build gst-plugins-rs-9999/meson.build
+--- gst-plugins-rs-9999.orig/meson.build	2022-11-06 11:10:07.669109824 -0800
++++ gst-plugins-rs-9999/meson.build	2022-11-06 11:15:23.165398051 -0800
+@@ -39,47 +39,11 @@ endif
  # workspace name -> lib name
  # kept in the same order as the `members` list in Cargo.toml
  plugins = {
@@ -20,7 +20,6 @@ diff -urp gst-plugins-rs-9999.orig/meson.build gst-plugins-rs-9999/meson.build
 -  'gst-plugin-aws': 'libgstaws',
 -  'gst-plugin-hlssink3': 'libgsthlssink3',
 -  'gst-plugin-ndi': 'libgstndi',
--  'gst-plugin-onvif': 'libgstrsonvif',
 -  'gst-plugin-raptorq': 'libgstraptorq',
 -  'gst-plugin-reqwest': 'libgstreqwest',
 -  'gst-plugin-rtp': 'libgstrsrtp',
@@ -50,9 +49,7 @@ diff -urp gst-plugins-rs-9999.orig/meson.build gst-plugins-rs-9999/meson.build
    # videofx has an external dependency, see below
  
    # FIXME: libwebp-sys2 will build its bundled version on msvc and apple platforms
-   # https://github.com/qnighy/libwebp-sys2-rs/issues/4
--  'gst-plugin-webp': 'libgstrswebp',
- }
+@@ -89,6 +53,130 @@ plugins = {
  
  extra_env = {}
  
@@ -120,10 +117,6 @@ diff -urp gst-plugins-rs-9999.orig/meson.build gst-plugins-rs-9999/meson.build
 +  plugins += {'gst-plugin-ndi' : 'libgstndi'}
 +endif
 +
-+if get_option('onvif').enabled()
-+  plugins += {'gst-plugin-onvif' : 'libgstrsonvif'}
-+endif
-+
 +if get_option('raptorq').enabled()
 +  plugins += {'gst-plugin-raptorq' : 'libgstraptorq'}
 +endif
@@ -187,7 +180,7 @@ diff -urp gst-plugins-rs-9999.orig/meson.build gst-plugins-rs-9999/meson.build
  if dependency('cairo-gobject', required : get_option('videofx')).found()
    plugins += {'gst-plugin-videofx': 'libgstrsvideofx',}
  endif
-@@ -102,13 +192,15 @@ if dependency('dav1d', version : '>= 1.0
+@@ -105,13 +193,15 @@ if dependency('dav1d', version : '>= 1.0
    plugins += {'gst-plugin-dav1d' : 'libgstdav1d'}
  endif
  
@@ -210,14 +203,12 @@ diff -urp gst-plugins-rs-9999.orig/meson.build gst-plugins-rs-9999/meson.build
  endif
  
  cc = meson.get_compiler('c')
-Only in gst-plugins-rs-9999: meson.build.orig
-Only in gst-plugins-rs-9999: meson.build.rej
-diff -urp gst-plugins-rs-9999.orig/meson_options.txt gst-plugins-rs-9999/meson_options.txt
---- gst-plugins-rs-9999.orig/meson_options.txt	2022-10-25 19:29:44.997299546 -0700
-+++ gst-plugins-rs-9999/meson_options.txt	2022-10-25 19:30:10.766304503 -0700
-@@ -1,10 +1,43 @@
- option('videofx', type : 'feature', value : 'auto', description : 'Build videofx plugin')
+diff -x '*.orig' -x '*.rej' -urp gst-plugins-rs-9999.orig/meson_options.txt gst-plugins-rs-9999/meson_options.txt
+--- gst-plugins-rs-9999.orig/meson_options.txt	2022-11-06 11:10:07.669109824 -0800
++++ gst-plugins-rs-9999/meson_options.txt	2022-11-06 11:16:13.119378787 -0800
+@@ -2,10 +2,42 @@ option('videofx', type : 'feature', valu
  option('closedcaption', type : 'feature', value : 'auto', description : 'Build closedcaption plugin')
+ option('onvif', type : 'feature', value : 'auto', description : 'Build onvif plugin')
  option('dav1d', type : 'feature', value : 'auto', description : 'Build dav1d plugin')
 -option('sodium', type : 'combo',
 -    choices : ['system', 'built-in', 'disabled'], value : 'built-in',
@@ -239,7 +230,6 @@ diff -urp gst-plugins-rs-9999.orig/meson_options.txt gst-plugins-rs-9999/meson_o
 +option('hlssink3', type: 'feature', value : 'auto', description : 'Build the hlssink3 plugin')
 +option('lewton', type: 'feature', value : 'auto', description : 'Build the lewton plugin')
 +option('ndi', type: 'feature', value : 'auto', description : 'Build the ndi plugin')
-+option('onvif', type: 'feature', value : 'auto', description : 'Build the onvif plugin')
 +option('raptorq', type: 'feature', value : 'auto', description : 'Build the raptorq plugin')
 +option('rav1e', type: 'feature', value : 'auto', description : 'Build the rav1e plugin')
 +option('reqwest', type: 'feature', value : 'auto', description : 'Build the reqwest plugin')
