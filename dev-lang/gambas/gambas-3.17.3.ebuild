@@ -5,19 +5,18 @@ EAPI=8
 
 inherit autotools desktop flag-o-matic toolchain-funcs xdg
 
-DESCRIPTION="Gambas is a free development environment and a full powerful \
-development platform based on a Basic interpreter with object extensions
-and form designer."
+DESCRIPTION="Gambas is a free development environment and a full powerful
+development platform based on a Basic interpreter with object extensionsand form
+designer."
 HOMEPAGE="http://gambas.sourceforge.net/en/main.html"
-SRC_URI=\
-"https://gitlab.com/gambas/gambas/-/archive/${PV}/gambas-${PV}.tar.bz2"
 LICENSE="GPL-2"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 SLOT="0"
-GAMBAS_MODULES=(bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer
-gtk3 htmlview httpd imlib2 jit mime mixer mysql ncurses network odbc openal
-opengl openssl pcre pdf pixbuf postgresql qt5 sdl sdl2 sqlite v4l
-X xml xslt zlib zstd)
+GAMBAS_MODULES=(
+bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer gtk3 httpd imlib2
+jit mime mixer mysql ncurses network odbc openal opengl openssl pcre pdf pixbuf
+postgresql qt5 sdl sdl2 sqlite v4l X xml xslt zlib zstd
+)
 QT_MIN_PV="5.3"
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES[@]/#/+})
 # On each minor release, re-inspect the code quality.
@@ -31,138 +30,301 @@ GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+ncurses/-ncurses})
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+mysql/-mysql})
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+pdf/-pdf})
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+sdl2/-sdl2})
-IUSE+=" ${GAMBAS_MODULES_DEFAULTS[@]} debug doc +glsl +glu +ide +jit +glsl
-+sge smtp +webkit"
 # The remove_stable_not_finished is intentionally kept disabled.
 # The remove_deprecated is intentionally kept disabled until upstream removes it.
 # The USE flags below have no config options but are removed manually.
-IUSE+=" remove_deprecated +remove_not_finished remove_stable_not_finished
-+remove_unstable"
+IUSE+="
+${GAMBAS_MODULES_DEFAULTS[@]}
+debug doc +glsl +glu +ide +jit +glsl +sge smtp +webkit
+
+remove_deprecated +remove_not_finished remove_stable_not_finished
++remove_unstable
+"
 # For depends see also:
 # https://gitlab.com/gambas/gambas/-/blob/3.16.3/.gitlab-ci.yml
-DEPEND+=" bzip2? ( app-arch/bzip2 )
-	cairo? ( >=x11-libs/cairo-1.6 )
-	crypt? ( dev-libs/libgcrypt )
-	curl? ( >=net-misc/curl-7.13 )
-	dbus? ( >=sys-apps/dbus-1 )
+DEPEND+="
 	dev-libs/libffi
-	gmp? ( dev-libs/gmp )
-	gnome-keyring? ( gnome-base/gnome-keyring )
-	glu? ( media-libs/glu )
-	gsl? ( sci-libs/gsl )
-	gstreamer? ( >=media-libs/gstreamer-1 )
-	gtk3? ( >=gnome-base/librsvg-2.14.3
+	sys-devel/gcc
+	sys-devel/gettext
+	virtual/libc
+	x11-misc/xdg-utils
+	bzip2? (
+		app-arch/bzip2
+	)
+	cairo? (
+		>=x11-libs/cairo-1.6
+	)
+	crypt? (
+		dev-libs/libgcrypt
+	)
+	curl? (
+		>=net-misc/curl-7.13
+	)
+	dbus? (
+		>=sys-apps/dbus-1
+	)
+	gmp? (
+		dev-libs/gmp
+	)
+	gnome-keyring? (
+		gnome-base/gnome-keyring
+	)
+	glu? (
+		media-libs/glu
+	)
+	gsl? (
+		sci-libs/gsl
+	)
+	gstreamer? (
+		>=media-libs/gstreamer-1
+	)
+	gtk3? (
+		>=gnome-base/librsvg-2.14.3
 		>=net-libs/webkit-gtk-2.20
 		>=x11-libs/gtk+-3.4:3[X,wayland]
 		x11-libs/libICE
-		x11-libs/libSM )
-	httpd? ( sys-libs/glibc )
-	imlib2? ( >=media-libs/imlib-1.4 )
-	jit? ( || ( sys-devel/gcc
-		sys-devel/clang
-		dev-lang/tcc ) )
-	mime? ( >=dev-libs/gmime-2.6 )
-	mixer? ( sdl? ( media-libs/sdl-mixer )
-		sdl2? ( >=media-libs/sdl2-mixer-2 ) )
-	mysql? ( virtual/mysql )
-	ncurses? ( sys-libs/ncurses )
-	odbc? ( dev-db/unixODBC )
-	openal? ( >=media-libs/openal-1.13 )
-	opengl? ( media-libs/mesa
-		media-libs/glew )
-	openssl? ( >=dev-libs/openssl-1 )
-	pcre? ( dev-libs/libpcre )
-	pdf? ( >=app-text/poppler-0.58 )
-	pixbuf? ( >=x11-libs/gdk-pixbuf-2.4.13 )
-	postgresql? ( dev-db/postgresql )
-	qt5? ( >=dev-qt/qtcore-${QT_MIN_PV}:5=
+		x11-libs/libSM
+	)
+	httpd? (
+		sys-libs/glibc
+	)
+	imlib2? (
+		>=media-libs/imlib-1.4
+	)
+	jit? (
+		|| (
+			sys-devel/gcc
+			sys-devel/clang
+			dev-lang/tcc
+		)
+	)
+	mime? (
+		>=dev-libs/gmime-2.6
+	)
+	mixer? (
+		sdl? (
+			media-libs/sdl-mixer
+		)
+		sdl2? (
+			>=media-libs/sdl2-mixer-2
+		)
+	)
+	mysql? (
+		virtual/mysql
+	)
+	ncurses? (
+		sys-libs/ncurses
+	)
+	odbc? (
+		dev-db/unixODBC
+	)
+	openal? (
+		>=media-libs/openal-1.13
+	)
+	opengl? (
+		media-libs/glew
+		media-libs/mesa
+	)
+	openssl? (
+		>=dev-libs/openssl-1
+	)
+	pcre? (
+		dev-libs/libpcre
+	)
+	pdf? (
+		>=app-text/poppler-0.58
+		<app-text/poppler-23
+	)
+	pixbuf? (
+		>=x11-libs/gdk-pixbuf-2.4.13
+	)
+	postgresql? (
+		dev-db/postgresql
+	)
+	qt5? (
+		>=dev-qt/qtcore-${QT_MIN_PV}:5=
 		>=dev-qt/qtgui-${QT_MIN_PV}:5=
 		>=dev-qt/qtprintsupport-${QT_MIN_PV}:5=
 		>=dev-qt/qtsvg-${QT_MIN_PV}:5=
 		>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
 		>=dev-qt/qtx11extras-${QT_MIN_PV}:5=
-		opengl? ( >=dev-qt/qtopengl-${QT_MIN_PV}:5= )
-		webkit? ( >=dev-qt/qtnetwork-${QT_MIN_PV}:5=
+		opengl? (
+			>=dev-qt/qtopengl-${QT_MIN_PV}:5=
+		)
+		webkit? (
+			>=dev-qt/qtnetwork-${QT_MIN_PV}:5=
 			>=dev-qt/qtwebkit-5:5=
-			>=dev-qt/qtxml-${QT_MIN_PV}:5= ) )
-	sdl? ( >=media-libs/libsdl-1.2.8
-		media-libs/sdl-ttf )
-	sdl2? ( >=media-libs/libsdl2-2.0.2
+			>=dev-qt/qtxml-${QT_MIN_PV}:5=
+		)
+	)
+	sdl? (
+		>=media-libs/libsdl-1.2.8
+		media-libs/sdl-ttf
+	)
+	sdl2? (
+		>=media-libs/libsdl2-2.0.2
 		>=media-libs/sdl2-image-2.0
-		>=media-libs/sdl2-ttf-2.0.12 )
-	smtp? ( dev-libs/glib )
-	sqlite? ( dev-db/sqlite:3 )
-	sys-devel/gcc
-	sys-devel/gettext
-	v4l? ( media-libs/libpng
+		>=media-libs/sdl2-ttf-2.0.12
+	)
+	smtp? (
+		dev-libs/glib
+	)
+	sqlite? (
+		dev-db/sqlite:3
+	)
+	v4l? (
+		media-libs/libpng
 		media-libs/libv4l
-		virtual/jpeg )
-	virtual/libc
-	X? ( x11-libs/libX11
-		x11-libs/libXtst )
-	x11-misc/xdg-utils
-	xml? ( >=dev-libs/libxml2-2 )
-	xslt? ( dev-libs/libxslt )
-	zlib? ( sys-libs/zlib )
-	zstd? ( >=app-arch/zstd-1.3.3 )"
+		virtual/jpeg
+	)
+	X? (
+		x11-libs/libX11
+		x11-libs/libXtst
+	)
+	xml? (
+		>=dev-libs/libxml2-2
+	)
+	xslt? (
+		dev-libs/libxslt
+	)
+	zlib? (
+		sys-libs/zlib
+	)
+	zstd? (
+		>=app-arch/zstd-1.3.3
+	)
+"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	>=sys-devel/autoconf-2.68
 	>=sys-devel/automake-1.11.1
-	>=sys-devel/libtool-2.4"
+	>=sys-devel/libtool-2.4
+"
 REQUIRED_USE+="
-	glsl? ( opengl )
-	gtk3? ( X cairo )
-	ide ( X network curl gsl || ( qt5 gtk3 ) webkit )
-	mixer? ( || ( sdl sdl2 ) )
-	opengl? ( || ( qt5 ) )
-	remove_deprecated? ( !gnome-keyring !sdl !v4l )
-	remove_not_finished? ( !dbus !gsl !gtk3 !imlib2 !ncurses )
-	remove_stable_not_finished? ( !sdl2 )
-	remove_unstable? ( !mysql !pdf )
-	qt5? ( X )
-	sge? ( opengl )
-	xml? ( xslt )
-	xslt? ( xml )"
+	glsl? (
+		opengl
+	)
+	gtk3? (
+		cairo
+		X
+	)
+	ide (
+		curl
+		network
+		gsl
+		webkit
+		X
+		|| (
+			gtk3
+			qt5
+		)
+	)
+	mixer? (
+		|| (
+			sdl
+			sdl2
+		)
+	)
+	opengl? (
+		|| (
+			qt5
+		)
+	)
+	remove_deprecated? (
+		!gnome-keyring
+		!sdl
+		!v4l
+	)
+	remove_not_finished? (
+		!dbus
+		!gsl
+		!gtk3
+		!imlib2
+		!ncurses
+	)
+	remove_stable_not_finished? (
+		!sdl2
+	)
+	remove_unstable? (
+		!mysql
+		!pdf
+	)
+	qt5? (
+		X
+	)
+	sge? (
+		opengl
+	)
+	xml? (
+		xslt
+	)
+	xslt? (
+		xml
+	)
+"
+SRC_URI="
+https://gitlab.com/gambas/gambas/-/archive/${PV}/gambas-${PV}.tar.bz2
+"
 S="${WORKDIR}/${PN}-${PV}"
 DOCS=( AUTHORS ChangeLog README )
 RESTRICT="mirror"
-declare -Ax USE_FLAG_TO_MODULE_NAME=( \
-	[bzip2]="bzlib2" \
-	[cairo]="cairo" \
-	[crypt]="crypt"  \
-	[curl]="curl" \
-	[dbus]="dbus" \
-	[gmp]="gmp" \
-	[gnome-keyring]="keyring" \
-	[gsl]="gsl"  \
-	[gstreamer]="media" \
-	[gtk3]="gtk3" \
-	[httpd]="httpd" \
-	[imlib2]="imageimlib"  \
-	[mime]="mime" \
-	[ncurses]="ncurses"  \
-	[network]="net" \
-	[mixer]="sdlsound" \
-	[mysql]="mysql" \
-	[odbc]="odbc" \
-	[openal]="openal" \
-	[opengl]="opengl" \
-	[openssl]="openssl" \
-	[pcre]="pcre" \
-	[pdf]="pdf" \
-	[pixbuf]="imageio" \
-	[postgresql]="postgresql" \
-	[qt5]="qt5"  \
-	[sdl]="sdl" \
-	[sdl2]="sdl2"  \
-	[sqlite]="sqlite3" \
-	[v4l]="v4l" \
-	[X]="X" \
-	[xslt]="xslt" \
-	[xml]="libxml" \
-	[zlib]="zlib" \
-	[zstd]="zstd" )
+
+declare -Ax USE_FLAG_TO_MODULE_NAME=(
+	[bzip2]="bzlib2"
+	[cairo]="cairo"
+	[crypt]="crypt"
+	[curl]="curl"
+	[dbus]="dbus"
+	[gmp]="gmp"
+	[gnome-keyring]="keyring"
+	[gsl]="gsl"
+	[gstreamer]="media"
+	[gtk3]="gtk3"
+	[httpd]="httpd"
+	[imlib2]="imageimlib"
+	[mime]="mime"
+	[ncurses]="ncurses"
+	[network]="net"
+	[mixer]="sdlsound"
+	[mysql]="mysql"
+	[odbc]="odbc"
+	[openal]="openal"
+	[opengl]="opengl"
+	[openssl]="openssl"
+	[pcre]="pcre"
+	[pdf]="pdf"
+	[pixbuf]="imageio"
+	[postgresql]="postgresql"
+	[qt5]="qt5"
+	[sdl]="sdl"
+	[sdl2]="sdl2"
+	[sqlite]="sqlite3"
+	[v4l]="v4l"
+	[X]="X"
+	[xslt]="xslt"
+	[xml]="libxml"
+	[zlib]="zlib"
+	[zstd]="zstd"
+)
+
+check_cxx() {
+	CC=$(tc-getCC)
+	CXX=$(tc-getCXX)
+	einfo "CC=${CC} CXX=${CXX}"
+	test-flags-CXX "-std=c++17" 2>/dev/null 1>/dev/null \
+		|| die "Switch to a c++17 compatible compiler."
+	if tc-is-gcc ; then
+		if ver_test $(gcc-major-version) -lt 11 ; then
+			die "${PN} requires GCC >=11 for c++17 support"
+		fi
+	elif tc-is-clang ; then
+		if ver_test $(clang-version) -lt 11 ; then
+			die "${PN} requires Clang >=11 for c++17 support"
+		fi
+	else
+		die "Compiler is not supported for =${CATEGORY}/${P}"
+	fi
+}
 
 pkg_setup() {
 	if [[ "$(tc-getCC)" == "clang" || "$(tc-getCXX)" == "clang++" ]]; then
@@ -173,6 +335,8 @@ ewarn
 		export CC="gcc"
 		export CXX="g++"
 	fi
+
+	check_cxx
 
 	if use qt5 ; then
 		einfo "Checking Qt versions"
@@ -302,7 +466,6 @@ src_configure() {
 		$(use_enable gnome-keyring gb_desktop_gnome_keyring) \
 		$(use_enable gstreamer media) \
 		$(use_enable gtk3) \
-		$(use_enable htmlview) \
 		$(use_enable httpd) \
 		$(use_enable imlib2 image_imlib) \
 		$(use_enable imlib2 imageimlib) \
