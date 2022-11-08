@@ -1,0 +1,12 @@
+--- a/gfx/layers/moz.build.orig	2022-10-25 09:20:11.000000000 -0700
++++ b/gfx/layers/moz.build	2022-11-06 19:16:43.666980167 -0800
+@@ -526,3 +526,9 @@ if CONFIG["FUZZING"] and CONFIG["FUZZING
+ 
+ # Add libFuzzer configuration directives
+ include("/tools/fuzzing/libfuzzer-config.mozbuild")
++
++if CONFIG["CC_TYPE"] in ("clang"):
++    CXXFLAGS += [
++        # Prevent flickering
++        "-O2"
++    ]

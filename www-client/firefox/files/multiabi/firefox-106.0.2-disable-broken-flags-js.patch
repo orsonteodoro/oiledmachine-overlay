@@ -1,0 +1,18 @@
+--- a/js/src/js-cxxflags.mozbuild.orig	2022-10-25 09:20:11.000000000 -0700
++++ b/js/src/js-cxxflags.mozbuild	2022-11-06 19:05:40.789483797 -0800
+@@ -16,3 +16,15 @@ if CONFIG['CC_TYPE'] in ('clang', 'gcc')
+ # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=50044
+ if CONFIG['CC_TYPE'] == 'gcc':
+     CXXFLAGS += ['-Wno-attributes']
++
++if CONFIG["CC_TYPE"] in ("clang"):
++    CXXFLAGS += [
++        # Freezes before playing video
++        "-O3"
++    ]
++
++if CONFIG["CC_TYPE"] in ("gcc"):
++    CXXFLAGS += [
++        # Testing for https://bugs.gentoo.org/758446
++        "-fno-tree-loop-vectorize"
++    ]

@@ -994,7 +994,13 @@ src_prepare() {
 		rm -fv "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	fi
 	eapply "${WORKDIR}/firefox-patches"
-	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags.patch"
+	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disallow-store-data-races.patch"
+	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags-gfx-layers.patch" # Flicker prevention
+	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags-js.patch" # YT stall prevention
+
+	# These needs testing with GCC to discover which subsystem caused failure
+	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags-dom-indexeddb.patch"
+	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags-storage.patch"
 
 	# Only partial patching was done because Gentoo doesn't support multilib
 	# Python.  Only native ABI is supported.  This means cbindgen cannot
@@ -2026,9 +2032,9 @@ einfo "installed.  You must change it manually if you want to run on a"
 einfo "different default ABI."
 einfo
 einfo "Examples"
-einfo "ln -sf /usr/lib64/${PN} /usr/bin/firefox"
-einfo "ln -sf /usr/lib/${PN} /usr/bin/firefox"
-einfo "ln -sf /usr/lib32/${PN} /usr/bin/firefox"
+einfo "ln -sf /usr/lib64/${PN}/${PN} /usr/bin/firefox"
+einfo "ln -sf /usr/lib/${PN}/${PN} /usr/bin/firefox"
+einfo "ln -sf /usr/lib32/${PN}/${PN} /usr/bin/firefox"
 einfo
 # The FPS problem is gone in the -bin package
 	uopts_pkg_postinst

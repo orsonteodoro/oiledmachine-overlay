@@ -1,0 +1,18 @@
+--- a/storage/moz.build.orig	2022-11-06 19:33:09.504955907 -0800
++++ b/storage/moz.build	2022-11-06 17:53:07.136358877 -0800
+@@ -107,3 +107,15 @@ LOCAL_INCLUDES += [
+ CXXFLAGS += CONFIG["SQLITE_CFLAGS"]
+ 
+ REQUIRES_UNIFIED_BUILD = True
++
++if CONFIG["CC_TYPE"] in ("clang"):
++    CXXFLAGS += [
++        # Placeholder for -fno-tree-loop-vectorize below
++        "-O2"
++    ]
++
++if CONFIG["CC_TYPE"] in ("gcc"):
++    CXXFLAGS += [
++        # Testing for https://bugs.gentoo.org/758446
++        "-fno-tree-loop-vectorize"
++    ]
