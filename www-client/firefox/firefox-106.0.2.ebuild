@@ -243,7 +243,7 @@ LICENSE+="
 # (unforced) -hwaccel , pgo, x11 + wayland are defaults in -bin browser
 IUSE+="
 alsa cpu_flags_arm_neon cups +dbus debug eme-free +hardened -hwaccel jack
--jemalloc libcanberra libproxy libsecret +openh264 +pgo pulseaudio
+-jemalloc libcanberra libproxy libsecret +openh264 +pgo +pulseaudio
 sndio selinux speech +system-av1 +system-harfbuzz +system-icu +system-jpeg
 +system-libevent +system-libvpx system-png system-python-libs +system-webp
 +vaapi +wayland +webrtc wifi webspeech
@@ -1937,7 +1937,7 @@ einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
 		-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
 		"${ED}/usr/bin/${PN}-${ABI}" \
 		|| die
-#	_install_licenses
+	_install_licenses
 	uopts_src_install
 }
 
