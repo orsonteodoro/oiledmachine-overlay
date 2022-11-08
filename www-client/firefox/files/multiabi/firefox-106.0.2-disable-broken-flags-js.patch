@@ -1,14 +1,16 @@
 --- a/js/src/js-cxxflags.mozbuild.orig	2022-10-25 09:20:11.000000000 -0700
 +++ b/js/src/js-cxxflags.mozbuild	2022-11-06 19:05:40.789483797 -0800
-@@ -16,3 +16,14 @@ if CONFIG['CC_TYPE'] in ('clang', 'gcc')
+@@ -16,3 +16,16 @@ if CONFIG['CC_TYPE'] in ('clang', 'gcc')
  # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=50044
  if CONFIG['CC_TYPE'] == 'gcc':
      CXXFLAGS += ['-Wno-attributes']
 +
 +if CONFIG["CC_TYPE"] in ("clang"):
-+    # Freezes before playing video
-+    CXXFLAGS = [ "-O3" if x == "-Ofast" else x for x in CFLAGS ]
-+    CXXFLAGS.remove("-ffast-math")
++    # Freezes before loading video
++    CXXFLAGS += [
++        "-O3", # -O3 works fine, -Ofast causes the freeze
++        "-fno-fast-math",
++    ]
 +
 +if CONFIG["CC_TYPE"] in ("gcc"):
 +    CXXFLAGS += [

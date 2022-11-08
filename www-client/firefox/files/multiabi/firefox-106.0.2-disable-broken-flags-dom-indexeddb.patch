@@ -8,7 +8,7 @@
 +if CONFIG["CC_TYPE"] in ("clang"):
 +    CXXFLAGS += [
 +        # Placeholder for -fno-tree-loop-vectorize below
-+        "-O2"
++        "-O3"
 +    ]
 +
 +if CONFIG["CC_TYPE"] in ("gcc"):
