@@ -1,6 +1,6 @@
 --- a/gfx/layers/moz.build.orig	2022-10-25 09:20:11.000000000 -0700
 +++ b/gfx/layers/moz.build	2022-11-06 19:16:43.666980167 -0800
-@@ -526,3 +526,11 @@ if CONFIG["FUZZING"] and CONFIG["FUZZING
+@@ -526,3 +526,16 @@ if CONFIG["FUZZING"] and CONFIG["FUZZING
  
  # Add libFuzzer configuration directives
  include("/tools/fuzzing/libfuzzer-config.mozbuild")
@@ -12,3 +12,9 @@
 +        "-fhonor-infinities",
 +        "-fhonor-nans",
 +    ]
++
++if CONFIG["CC_TYPE"] in ("gcc"):
++    CXXFLAGS += [
++        "-fno-finite-math-only",
++    ]
+
