@@ -8,7 +8,7 @@
 +if CONFIG["CC_TYPE"] in ("clang"):
 +    CXXFLAGS += [
 +        # Freezes before playing video
-+        "-O3"
++        "-O2"
 +    ]
 +
 +if CONFIG["CC_TYPE"] in ("gcc"):
