@@ -28,7 +28,7 @@ BDEPEND+="
 	abi_x86_32? ( dev-lang/nasm )
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-1.3.3-fPIC.patch"
+	"${FILESDIR}/${PN}-1.4.2-fPIC.patch"
 )
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
