@@ -1018,7 +1018,8 @@ src_prepare() {
 	# Flicker prevention with -Ofast
 	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags-gfx-layers.patch"
 
-	# Prevent YT stall prevention with clang with -Ofast. prevent audio perma mute with gcc with -Ofast.
+	# Prevent YT stall prevention with clang with -Ofast.
+	# Prevent audio perma mute with gcc with -Ofast.
 	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags-js.patch"
 
 	# Only partial patching was done because Gentoo doesn't support multilib
