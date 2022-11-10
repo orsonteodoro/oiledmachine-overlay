@@ -105,6 +105,10 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
   <flag name="screenshot">
     Allow to disable screenshot extension in global profile
   </flag>
+  <flag name="speech">
+    Add support for speech text-to-speech synthesis for websites.  (EXPERIMENTAL
+    AT EBUILD LEVEL / SUPPORTED UPSTREAM)
+  </flag>
   <flag name="system-av1">
     Use the system-wide <pkg>media-libs/dav1d</pkg> and
     <pkg>media-libs/libaom</pkg> library instead of bundled.
@@ -133,7 +137,8 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
     Use the system-wide <pkg>media-libs/libwebp</pkg> instead of bundled.
   </flag>
   <flag name="webspeech">
-    Enable input speech recognition for websites.
+    Add support for input speech recognition for websites.  (EXPERIMENTAL AT
+    EBUILD LEVEL / NOT SUPPORTED UPSTREAM)
   </flag>
   <flag name="vaapi">
     Alias for USE=wayland to enable VA-API support.

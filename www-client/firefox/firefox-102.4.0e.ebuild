@@ -432,7 +432,24 @@ RDEPEND="
 			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP}]
 		)
 	)
-	speech? ( app-accessibility/speech-dispatcher )
+	speech? (
+		!pulseaudio? (
+			alsa? (
+				|| (
+					>=app-accessibility/speech-dispatcher-0.8.2[alsa,espeak-ng]
+					>=app-accessibility/speech-dispatcher-0.8.2[alsa,espeak]
+					>=app-accessibility/speech-dispatcher-0.8.2[alsa,flite]
+				)
+			)
+		)
+		pulseaudio? (
+			|| (
+				>=app-accessibility/speech-dispatcher-0.8.2[pulseaudio,espeak-ng]
+				>=app-accessibility/speech-dispatcher-0.8.2[pulseaudio,espeak]
+				>=app-accessibility/speech-dispatcher-0.8.2[pulseaudio,flite]
+			)
+		)
+	)
 	vaapi? (
 		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		media-libs/libva[${MULTILIB_USEDEP},drm]
@@ -920,6 +937,8 @@ ewarn "      If the wayland USE flag is enabled, it will use GPU accelerated"
 ewarn "      decoding if supported."
 ewarn
 	fi
+	use speech && ewarn "Speech synthesis (USE=speech) has not been confirmed working."
+	use webspeech && ewarn "Speech recognition (USE=webspeech) has not been confirmed working."
 }
 
 src_unpack() {
@@ -995,12 +1014,12 @@ src_prepare() {
 	fi
 	eapply "${WORKDIR}/firefox-patches"
 	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disallow-store-data-races.patch"
-	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags-gfx-layers.patch" # Flicker prevention
-	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags-js.patch" # YT stall prevention
 
-	# These needs testing with GCC to discover which subsystem caused failure
-	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags-dom-indexeddb.patch"
-	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags-storage.patch"
+	# Flicker prevention with -Ofast
+	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags-gfx-layers.patch"
+
+	# Prevent YT stall prevention with clang with -Ofast. prevent audio perma mute with gcc with -Ofast.
+	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags-js.patch"
 
 	# Only partial patching was done because Gentoo doesn't support multilib
 	# Python.  Only native ABI is supported.  This means cbindgen cannot
@@ -1433,7 +1452,6 @@ einfo "Building without Mozilla API key ..."
 
 		# Fork ebuild or set USE=debug if you want -Og
 		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
-			tc-is-clang && ewarn "Using -Ofast with clang may segfault" # Does not segfault with GCC
 			einfo "Using Ofast"
 			OFLAG="-Ofast"
 			mozconfig_add_options_ac "from CFLAGS" \
@@ -1508,11 +1526,18 @@ einfo "Building without Mozilla API key ..."
 				'elf-hack is broken when using Clang' \
 				--disable-elf-hack
 		fi
-	elif tc-is-gcc ; then
-		if ver_test $(gcc-fullversion) -ge 10 ; then
-einfo "Forcing -fno-tree-loop-vectorize to workaround GCC bug, see bug 758446 ..."
-			append-cxxflags -fno-tree-loop-vectorize
-		fi
+	fi
+
+	if (is_flagq "-O3" || is_flagq "-Ofast") \
+		&& tc-is-gcc \
+		&& ver_test $(gcc-fullversion) -lt 11.3.0 ; then
+ewarn
+ewarn "GCC version detected:\t$(gcc-fullversion)"
+ewarn "Expected version:\t>= 11.3"
+ewarn
+ewarn "The detected version is untested and may result in userscript failure."
+ewarn "Use GCC >= 11.3 or Clang to prevent this bug."
+ewarn
 	fi
 
 	# Additional ARCH support
@@ -1913,8 +1938,8 @@ einfo "APULSE found; Generating library symlinks for sound support ..."
 		local lib
 		pushd "${ED}${MOZILLA_FIVE_HOME}" &>/dev/null || die
 		for lib in ../apulse/libpulse{.so{,.0},-simple.so{,.0}} ; do
-			# A quickpkg rolled by hand will grab symlinks as part of the package,
-			# so we need to avoid creating them if they already exist.
+	# A quickpkg rolled by hand will grab symlinks as part of the package,
+	# so we need to avoid creating them if they already exist.
 			if [[ ! -L ${lib##*/} ]] ; then
 				ln -s "${lib}" ${lib##*/} || die
 			fi
