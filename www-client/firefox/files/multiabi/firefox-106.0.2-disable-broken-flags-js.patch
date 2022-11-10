@@ -8,13 +8,13 @@
 +if CONFIG["CC_TYPE"] in ("clang"):
 +    # Freezes before loading video
 +    CXXFLAGS += [
-+        "-O2", # -O3 works fine, -Ofast causes the freeze
++        "-O3", # -O3 works fine, -Ofast causes the freeze
 +        "-fno-fast-math",
 +    ]
 +
 +if CONFIG["CC_TYPE"] in ("gcc"):
 +    CXXFLAGS += [
-+        # Make audio work
++        # Prevent audio from muting always.  Breaks at -Ofast.
 +        "-O2",
 +        "-fno-fast-math",
 +    ]
