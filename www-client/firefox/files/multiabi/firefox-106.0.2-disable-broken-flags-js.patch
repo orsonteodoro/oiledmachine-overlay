@@ -15,6 +15,6 @@
 +if CONFIG["CC_TYPE"] in ("gcc"):
 +    CXXFLAGS += [
 +        # Prevent audio from muting always.  Breaks at -Ofast.
-+        "-O2",
++        "-O3",
 +        "-fno-fast-math",
 +    ]

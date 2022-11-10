@@ -1963,7 +1963,7 @@ einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
 		-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
 		"${ED}/usr/bin/${PN}-${ABI}" \
 		|| die
-	_install_licenses
+#	_install_licenses
 	uopts_src_install
 }
 
