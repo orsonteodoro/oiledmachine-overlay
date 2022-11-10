@@ -1486,15 +1486,15 @@ einfo "Building without Mozilla API key ..."
 			OFLAG="-Ofast"
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-Ofast
+		elif is_flagq_last '-O4' || [[ "${OFLAG}" == "-O4" ]] ; then
+			OFLAG="-O4" # Same as O3
+			mozconfig_add_options_ac "from CFLAGS" \
+				--enable-optimize=-O4
 		elif is_flagq_last '-O3' || [[ "${OFLAG}" == "-O3" ]] ; then
 			# Repeated for multiple Oflags
 			OFLAG="-O3"
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O3
-		elif is_flagq_last '-O4' || [[ "${OFLAG}" == "-O4" ]] ; then
-			OFLAG="-O4" # Same as O3
-			mozconfig_add_options_ac "from CFLAGS" \
-				--enable-optimize=-O4
 		elif is_flagq_last '-O2' || [[ "${OFLAG}" == "-O2" ]] ; then
 			OFLAG="-O2"
 			mozconfig_add_options_ac "from CFLAGS" \
@@ -2131,6 +2131,9 @@ ewarn "The default one can be installed with media-libs/libcanberra[sound]"
 ewarn
 		fi
 	fi
+
+# Broken with -bin too.
+einfo "VSync ON is broken.  Expect tearing."
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
