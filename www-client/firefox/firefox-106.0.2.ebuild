@@ -2132,8 +2132,24 @@ ewarn
 		fi
 	fi
 
-# Broken with -bin too.
-einfo "VSync ON is broken.  Expect tearing."
+	if use X \
+		&& ( \
+			   has_version "x11-drivers/xf86-video-amdgpu" \
+			|| has_version "x11-drivers/xf86-video-ati" \
+			|| has_version "x11-drivers/xf86-video-intel" \
+		) ; then
+ewarn
+ewarn "The following changes are required for /etc/X11/xorg.conf or"
+ewarn "/etc/X11/xorg.conf.d/* for reduction or elimination of tearing"
+ewarn "(aka split frames) during video playback."
+ewarn
+ewarn "Section \"Device\""
+ewarn "        Identifier  \"...\""
+ewarn "        Driver      \"...\""
+ewarn "        Option      \"TearFree\"                  \"true\""
+ewarn "EndSection"
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
