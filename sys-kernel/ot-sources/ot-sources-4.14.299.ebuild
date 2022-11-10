@@ -3,16 +3,14 @@
 
 EAPI=8
 
-K_GENPATCHES_VER="228"
-PATCH_BMQ_VER="5.4-r2"
-BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
-PATCH_RT_VER="5.4.209-rt77"
+K_GENPATCHES_VER="310"
+PATCH_RT_VER="4.14.298-rt141-rc1"
 
-inherit ot-kernel-v5.4
+inherit ot-kernel-v4.14
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v5.4.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v4.14.eclass
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
