@@ -1486,6 +1486,11 @@ einfo "Building without Mozilla API key ..."
 			OFLAG="-Ofast"
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-Ofast
+		elif is_flagq_last '-O3' || [[ "${OFLAG}" == "-O3" ]] ; then
+			# Repeated for multiple Oflags
+			OFLAG="-O3"
+			mozconfig_add_options_ac "from CFLAGS" \
+				--enable-optimize=-O3
 		elif is_flagq_last '-O4' || [[ "${OFLAG}" == "-O4" ]] ; then
 			OFLAG="-O4" # Same as O3
 			mozconfig_add_options_ac "from CFLAGS" \
@@ -1963,7 +1968,7 @@ einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
 		-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
 		"${ED}/usr/bin/${PN}-${ABI}" \
 		|| die
-#	_install_licenses
+	_install_licenses
 	uopts_src_install
 }
 
