@@ -387,7 +387,6 @@ CDEPEND="
 
 # Same as virtual/udev-217-r5 but with multilib changes.
 # Required for gamepad, or WebAuthn roaming authenticators (e.g. USB security key)
-# speech-dispatcher-0.11.3 is bugged.
 UDEV_RDEPEND="
 	kernel_linux? (
 		|| (
@@ -400,6 +399,7 @@ UDEV_RDEPEND="
 "
 
 # See also PR_LoadLibrary
+# speech-dispatcher-0.11.3 is bugged.
 RDEPEND="
 	${CDEPEND}
 	${UDEV_RDEPEND}
