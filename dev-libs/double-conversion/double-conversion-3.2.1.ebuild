@@ -20,5 +20,5 @@ src_configure() {
 		-DBUILD_TESTING=$(usex test)
 	)
 
-	cmake_src_configure
+	cmake-multilib_src_configure
 }
