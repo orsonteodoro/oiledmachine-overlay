@@ -52,6 +52,7 @@ MODULES=(
 	hsv
 	json
 	lewton
+	mp4
 	ndi
 	onvif
 	png
@@ -79,13 +80,14 @@ REQUIRED_USE+="
 	|| ( ${MODULES[@]} )
 	webrtchttp? ( reqwest )
 "
-RUST_V="1.64"
-CARGO_V="1.64"
+RUST_V="1.65"
+CARGO_V="1.65"
 # grep -e "requires_private" "${WORKDIR}" for external dependencies
 # See "Run-time dependency" in CI
 # Assumes D11
-GST_PV="1.20" # upstream uses in CI 1.21.0.1
-PANGO_PV="1.50.10"
+CAIRO_PV="1.16.0"
+GST_PV="1.20" # Upstream uses in CI 1.21.2.1, distro only provides 1.20.x
+PANGO_PV="1.50.12"
 RDEPEND+="
 	>=dev-libs/glib-2.66.8:2[${MULTILIB_USEDEP}]
 	!=dev-libs/libgit2-1.4*
@@ -96,7 +98,7 @@ RDEPEND+="
 	)
 	closedcaption? (
 		>=x11-libs/pango-${PANGO_PV}[${MULTILIB_USEDEP}]
-		>=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}]
+		>=x11-libs/cairo-${CAIRO_PV}[${MULTILIB_USEDEP}]
 	)
 	csound? (
 		>=media-sound/csound-6.14[${MULTILIB_USEDEP}]
@@ -105,7 +107,7 @@ RDEPEND+="
 		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	gtk4? (
-		>=gui-libs/gtk-4.8.1:4[gstreamer]
+		>=gui-libs/gtk-4.8.2:4[gstreamer]
 	)
 	onvif? (
 		>=x11-libs/pango-${PANGO_PV}[${MULTILIB_USEDEP}]
@@ -114,13 +116,13 @@ RDEPEND+="
 		>=dev-libs/libsodium-1.0.18[${MULTILIB_USEDEP}]
 	)
 	videofx? (
-		>=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}]
+		>=x11-libs/cairo-${CAIRO_PV}[${MULTILIB_USEDEP}]
 	)
 	webp? (
 		>=media-libs/libwebp-0.6.1[${MULTILIB_USEDEP}]
 	)
 	webrtchttp? (
-		media-plugins/gst-plugins-webrtc[${MULTILIB_USEDEP}]
+		>=media-plugins/gst-plugins-webrtc-${GST_PV}[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND+=" ${RDEPEND}"
@@ -254,6 +256,14 @@ einfo "LLVM=${LLVM_MAX_SLOT}"
 				# Ambigious lines
 				sed -i -e "/text\/wrap/d" \
 					Cargo.toml || die
+			elif [[ "${m}" == "fmp4" ]] ; then
+				# Ambigious lines
+				sed -i -e "/mux\/fmp4/d" \
+					Cargo.toml || die
+			elif [[ "${m}" == "mp4" ]] ; then
+				# Ambigious lines
+				sed -i -e "/mux\/mp4/d" \
+					Cargo.toml || die
 			elif [[ "${m}" == "file" ]] ; then
 				# Ambigious lines
 				sed -i -e "/generic\/file/d" \
@@ -283,16 +293,16 @@ einfo "LLVM=${LLVM_MAX_SLOT}"
 	meson_src_configure
 }
 
-EXPECTED_BUILD_FILES="\
-95b59d345cd876920df9b8a1d741e6f42f250d55bd6a693b4fced20c8a5b006c\
-801c9d4d07e27280726b08ba8dbc09922047f777688b1aa4d355a236a39b8892\
+EXPECTED_BUILD_FILES_FINGERPRINT="\
+d37018b6f9a8d0cd7d13bc5adc748678d9548861e2b8ee4488fbf467c5e220ed\
+372f3e7b7c1bed04b27b0f7f9a8926084d0596ab03e035bbc3b159052b2be2a7\
 "
 
 src_unpack() {
 	if [[ ${PV} =~ 9999 ]] ; then
 		git-r3_fetch
 		git-r3_checkout
-		local actual_build_files=$(cat \
+		local actual_build_files_fingerprint=$(cat \
 			$(find "${S}" \
 				-name "*.toml" \
 				-o -name "Cargo.lock" \
@@ -300,13 +310,13 @@ src_unpack() {
 				| sort) \
 			| sha512sum \
 			| cut -f 1 -d " ")
-		if [[ "${EXPECTED_BUILD_FILES}" != "${actual_build_files}" ]] ; then
+		if [[ "${EXPECTED_BUILD_FILES_FINGERPRINT}" != "${actual_build_files_fingerprint}" ]] ; then
 eerror
 eerror "A change to the build scripts was detected."
 eerror "Notify the ebuild maintainer for an update."
 eerror
-eerror "Expected build files:\t${EXPECTED_BUILD_FILES}"
-eerror "Actual build files:\t\t${actual_build_files}"
+eerror "Expected build files fingerprint:\t${EXPECTED_BUILD_FILES_FINGERPRINT}"
+eerror "Actual build files fingerprint:\t\t${actual_build_files_fingerprint}"
 eerror
 			die
 		fi

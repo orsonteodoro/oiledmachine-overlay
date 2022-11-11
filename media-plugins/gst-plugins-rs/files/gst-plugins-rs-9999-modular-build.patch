@@ -1,7 +1,7 @@
-diff -x '*.orig' -x '*.rej' -urp gst-plugins-rs-9999.orig/meson.build gst-plugins-rs-9999/meson.build
---- gst-plugins-rs-9999.orig/meson.build	2022-11-06 11:10:07.669109824 -0800
-+++ gst-plugins-rs-9999/meson.build	2022-11-06 11:15:23.165398051 -0800
-@@ -39,47 +39,11 @@ endif
+diff -urp gst-plugins-rs-9999.orig/meson.build gst-plugins-rs-9999/meson.build
+--- gst-plugins-rs-9999.orig/meson.build	2022-11-10 18:53:25.252829505 -0800
++++ gst-plugins-rs-9999/meson.build	2022-11-10 18:54:47.123927143 -0800
+@@ -39,57 +39,147 @@ endif
  # workspace name -> lib name
  # kept in the same order as the `members` list in Cargo.toml
  plugins = {
@@ -15,6 +15,7 @@ diff -x '*.orig' -x '*.rej' -urp gst-plugins-rs-9999.orig/meson.build gst-plugin
    # sodium has an external dependency, see below
 -  'gst-plugin-threadshare': 'libgstthreadshare',
 -
+-  'gst-plugin-mp4': 'libgstmp4',
 -  'gst-plugin-fmp4': 'libgstfmp4',
 -
 -  'gst-plugin-aws': 'libgstaws',
@@ -49,7 +50,9 @@ diff -x '*.orig' -x '*.rej' -urp gst-plugins-rs-9999.orig/meson.build gst-plugin
    # videofx has an external dependency, see below
  
    # FIXME: libwebp-sys2 will build its bundled version on msvc and apple platforms
-@@ -89,6 +53,130 @@ plugins = {
+   # https://github.com/qnighy/libwebp-sys2-rs/issues/4
+-  'gst-plugin-webp': 'libgstrswebp',
+ }
  
  extra_env = {}
  
@@ -83,6 +86,10 @@ diff -x '*.orig' -x '*.rej' -urp gst-plugins-rs-9999.orig/meson.build gst-plugin
 +
 +if get_option('flavors').enabled()
 +  plugins += {'gst-plugin-flavors' : 'libgstrsflv'}
++endif
++
++if get_option('mp4').enabled()
++  plugins += {'gst-plugin-mp4' : 'libgstmp4'}
 +endif
 +
 +if get_option('fmp4').enabled()
@@ -180,7 +187,7 @@ diff -x '*.orig' -x '*.rej' -urp gst-plugins-rs-9999.orig/meson.build gst-plugin
  if dependency('cairo-gobject', required : get_option('videofx')).found()
    plugins += {'gst-plugin-videofx': 'libgstrsvideofx',}
  endif
-@@ -105,13 +193,15 @@ if dependency('dav1d', version : '>= 1.0
+@@ -106,13 +196,15 @@ if dependency('dav1d', version : '>= 1.0
    plugins += {'gst-plugin-dav1d' : 'libgstdav1d'}
  endif
  
@@ -203,10 +210,12 @@ diff -x '*.orig' -x '*.rej' -urp gst-plugins-rs-9999.orig/meson.build gst-plugin
  endif
  
  cc = meson.get_compiler('c')
-diff -x '*.orig' -x '*.rej' -urp gst-plugins-rs-9999.orig/meson_options.txt gst-plugins-rs-9999/meson_options.txt
---- gst-plugins-rs-9999.orig/meson_options.txt	2022-11-06 11:10:07.669109824 -0800
-+++ gst-plugins-rs-9999/meson_options.txt	2022-11-06 11:16:13.119378787 -0800
-@@ -2,10 +2,42 @@ option('videofx', type : 'feature', valu
+Only in gst-plugins-rs-9999: meson.build.orig
+Only in gst-plugins-rs-9999: meson.build.rej
+diff -urp gst-plugins-rs-9999.orig/meson_options.txt gst-plugins-rs-9999/meson_options.txt
+--- gst-plugins-rs-9999.orig/meson_options.txt	2022-11-10 18:53:25.252829505 -0800
++++ gst-plugins-rs-9999/meson_options.txt	2022-11-10 18:55:16.561041375 -0800
+@@ -2,10 +2,43 @@ option('videofx', type : 'feature', valu
  option('closedcaption', type : 'feature', value : 'auto', description : 'Build closedcaption plugin')
  option('onvif', type : 'feature', value : 'auto', description : 'Build onvif plugin')
  option('dav1d', type : 'feature', value : 'auto', description : 'Build dav1d plugin')
@@ -214,7 +223,7 @@ diff -x '*.orig' -x '*.rej' -urp gst-plugins-rs-9999.orig/meson_options.txt gst-
 -    choices : ['system', 'built-in', 'disabled'], value : 'built-in',
 -    description : 'Weither to use libsodium from the system or the built-in version from the sodiumoxide crate')
 +option('sodium', type : 'feature', value : 'auto', description : 'Build sodium plugin')
-+option('sodium-built-in', type : 'feature', value : 'disabled', description : 'Weither to use libsodium from the system or the built-in version from the sodiumoxide crate')
++option('sodium-built-in', type : 'feature', value : 'disabled', description : 'Whether to use libsodium from the system or the built-in version from the sodiumoxide crate')
  option('csound', type : 'feature', value : 'auto', description : 'Build csound plugin')
 +
 +option('audiofx', type: 'feature', value : 'auto', description : 'Build the audiofx plugin')
@@ -225,6 +234,7 @@ diff -x '*.orig' -x '*.rej' -urp gst-plugins-rs-9999.orig/meson_options.txt gst-
 +option('ffv1', type: 'feature', value : 'auto', description : 'Build the ffv1 plugin')
 +option('file', type: 'feature', value : 'auto', description : 'Build the file plugin')
 +option('flavors', type: 'feature', value : 'auto', description : 'Build the flavors plugin')
++option('mp4', type: 'feature', value : 'auto', description : 'Build the mp4 plugin')
 +option('fmp4', type: 'feature', value : 'auto', description : 'Build the fmp4 plugin')
 +option('gif', type: 'feature', value : 'auto', description : 'Build the gif plugin')
 +option('hlssink3', type: 'feature', value : 'auto', description : 'Build the hlssink3 plugin')
