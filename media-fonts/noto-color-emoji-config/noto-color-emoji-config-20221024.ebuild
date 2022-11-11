@@ -32,16 +32,16 @@ RDEPEND="
 	media-libs/freetype[png]
 	colrv1? (
 		|| (
-			>=media-fonts/noto-color-emoji-2.038[colrv1?,colrv1-no-flags?]
-			>=media-fonts/noto-color-emoji-bin-2.038[colrv1?,colrv1-no-flags?]
+			>=media-fonts/noto-color-emoji-2.038_beta[colrv1?,colrv1-no-flags?]
+			>=media-fonts/noto-color-emoji-bin-2.038_beta[colrv1?,colrv1-no-flags?]
 		)
 	)
 	cbdt? (
 		|| (
-			<media-fonts/noto-color-emoji-2.038
-			<media-fonts/noto-color-emoji-bin-2.038
-			>=media-fonts/noto-color-emoji-2.038[cbdt?,cbdt-win?]
-			>=media-fonts/noto-color-emoji-bin-2.038[cbdt?,cbdt-win?]
+			<media-fonts/noto-color-emoji-2.038_beta
+			<media-fonts/noto-color-emoji-bin-2.038_beta
+			>=media-fonts/noto-color-emoji-2.038_beta[cbdt?,cbdt-win?]
+			>=media-fonts/noto-color-emoji-bin-2.038_beta[cbdt?,cbdt-win?]
 			media-fonts/noto-emoji
 		)
 	)
