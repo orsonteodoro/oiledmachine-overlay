@@ -387,6 +387,7 @@ CDEPEND="
 
 # Same as virtual/udev-217-r5 but with multilib changes.
 # Required for gamepad, or WebAuthn roaming authenticators (e.g. USB security key)
+# speech-dispatcher-0.11.3 is bugged.
 UDEV_RDEPEND="
 	kernel_linux? (
 		|| (
@@ -426,17 +427,17 @@ RDEPEND="
 		!pulseaudio? (
 			alsa? (
 				|| (
-					>=app-accessibility/speech-dispatcher-0.8.2[alsa,espeak-ng]
-					>=app-accessibility/speech-dispatcher-0.8.2[alsa,espeak]
-					>=app-accessibility/speech-dispatcher-0.8.2[alsa,flite]
+					>=app-accessibility/speech-dispatcher-0.11.4[alsa,espeak-ng]
+					>=app-accessibility/speech-dispatcher-0.11.4[alsa,espeak]
+					>=app-accessibility/speech-dispatcher-0.11.4[alsa,flite]
 				)
 			)
 		)
 		pulseaudio? (
 			|| (
-				>=app-accessibility/speech-dispatcher-0.8.2[pulseaudio,espeak-ng]
-				>=app-accessibility/speech-dispatcher-0.8.2[pulseaudio,espeak]
-				>=app-accessibility/speech-dispatcher-0.8.2[pulseaudio,flite]
+				>=app-accessibility/speech-dispatcher-0.11.4[pulseaudio,espeak-ng]
+				>=app-accessibility/speech-dispatcher-0.11.4[pulseaudio,espeak]
+				>=app-accessibility/speech-dispatcher-0.11.4[pulseaudio,flite]
 			)
 		)
 	)
@@ -956,7 +957,6 @@ ewarn "      If the wayland USE flag is enabled, it will use GPU accelerated"
 ewarn "      decoding if supported."
 ewarn
 	fi
-	use speech && ewarn "Speech synthesis (USE=speech) has not been confirmed working."
 	use webspeech && ewarn "Speech recognition (USE=webspeech) has not been confirmed working."
 }
 
@@ -1169,6 +1169,123 @@ einfo "olast:\t${olast}"
 	return 1
 }
 
+check_speech_dispatcher() {
+	if use speech ; then
+		if [[ ! -f "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ]] ; then
+eerror
+eerror "Missing ${ESYSROOT}/etc/speech-dispatcher/speechd.conf"
+eerror
+			die
+		fi
+		if has_version "app-accessibility/speech-dispatcher[pulseaudio]" ; then
+			if ! grep -q -e "^AudioOutputMethod.*\"pulse\"" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf"
+eerror
+eerror "AudioOutputMethod \"pulse\""
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "same settings."
+eerror
+				die
+			fi
+		elif has_version "app-accessibility/speech-dispatcher[alsa]" ; then
+			if ! grep -q -e "^AudioOutputMethod.*\"alsa\"" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
+eerror
+eerror "AudioOutputMethod \"alsa\""
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "same settings."
+eerror
+				die
+			fi
+		fi
+		if has_version "app-accessibility/speech-dispatcher[espeak-ng]" ; then
+			if ! grep -q -e "^AddModule.*\"espeak-ng\"" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
+eerror
+eerror "AddModule \"espeak-ng\"                \"sd_espeak-ng\" \"espeak-ng.conf\""
+eerror "DefaultModule espeak-ng"
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "same settings."
+eerror
+				die
+			fi
+			if ! grep -q -e "^DefaultModule.*espeak-ng" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
+eerror
+eerror "DefaultModule espeak-ng"
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "same settings."
+eerror
+				die
+			fi
+		elif has_version "app-accessibility/speech-dispatcher[espeak]" ; then
+			if ! grep -q -e "^AddModule.*\"espeak\"" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
+eerror
+eerror "AddModule \"espeak\"                   \"sd_espeak\"    \"espeak.conf\""
+eerror "DefaultModule espeak"
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "same settings."
+eerror
+				die
+			fi
+			if ! grep -q -e "^DefaultModule.*espeak" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
+eerror
+eerror "DefaultModule espeak"
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "same settings."
+eerror
+				die
+			fi
+		elif has_version "app-accessibility/speech-dispatcher[flite]" ; then
+			if ! grep -q -e "^AddModule.*\"flite\"" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
+eerror
+eerror "#AddModule \"flite\"                    \"sd_flite\"     \"flite.conf\""
+eerror "DefaultModule flite"
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "same settings."
+eerror
+				die
+			fi
+			if ! grep -q -e "^DefaultModule.*flite" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
+eerror
+eerror "DefaultModule flite"
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "same settings."
+eerror
+				die
+			fi
+		fi
+	fi
+}
+
 OFLAG=""
 LTO_TYPE=""
 _src_configure() {
@@ -1236,6 +1353,7 @@ einfo
 	fi
 
 	uopts_src_configure
+	check_speech_dispatcher
 
 	# Ensure we use correct toolchain
 	export HOST_CC="$(tc-getBUILD_CC)"
