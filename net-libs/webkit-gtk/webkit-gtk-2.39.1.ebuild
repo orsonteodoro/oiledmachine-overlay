@@ -413,10 +413,6 @@ REQUIRED_USE+="
 		!ftl-jit
 		bmalloc
 	)
-	jit? (
-		bmalloc
-		dfg-jit
-	)
 	dfg-jit? (
 		jit
 	)
@@ -447,6 +443,10 @@ REQUIRED_USE+="
 	)
 	hardened? (
 		!jit
+	)
+	jit? (
+		bmalloc
+		dfg-jit
 	)
 	opengl? (
 		!gles2
@@ -581,26 +581,36 @@ RDEPEND+="
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.8.0:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.4.2:2[${MULTILIB_USEDEP}]
-	>=media-libs/harfbuzz-0.9.18:=[icu(+),${MULTILIB_USEDEP}]
+	>=media-libs/harfbuzz-0.9.18:=[${MULTILIB_USEDEP},icu(+)]
 	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
+	>=net-libs/libsoup-2.54.0:2.4[${MULTILIB_USEDEP},introspection?]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
-	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
-	>=x11-libs/cairo-${CAIRO_PV}:=[X?,${MULTILIB_USEDEP}]
-	>=x11-libs/gtk+-3.22.0:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
-	avif? ( >=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}] )
-	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
-	gbm? ( >=x11-libs/libdrm-2.4.99[${MULTILIB_USEDEP}] )
-	geolocation? ( >=app-misc/geoclue-0.12.99:2.0 )
-	gles2? (
-		>=media-libs/mesa-${MESA_PV}[egl(+),gles2,${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
+	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
+	virtual/jpeg:0=[${MULTILIB_USEDEP}]
+	avif? (
+		>=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}]
 	)
-	gnome-keyring? ( >=app-crypt/libsecret-0.18.6[${MULTILIB_USEDEP}] )
+	gamepad? (
+		>=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}]
+	)
+	gbm? (
+		>=x11-libs/libdrm-2.4.99[${MULTILIB_USEDEP}]
+	)
+	geolocation? (
+		>=app-misc/geoclue-0.12.99:2.0
+	)
+	gles2? (
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+),gles2]
+	)
+	gnome-keyring? (
+		>=app-crypt/libsecret-0.18.6[${MULTILIB_USEDEP}]
+	)
 	gstreamer? (
 		>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
-		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
+		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},egl(+),gles2?,opengl?,X?]
 		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},${GST_PLUGINS_DUSE},alsa?,pulseaudio?,v4l?]
 		>=media-plugins/gst-plugins-opus-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
@@ -638,46 +648,62 @@ RDEPEND+="
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]
 		)
 	)
-	introspection? ( >=dev-libs/gobject-introspection-1.56.1:= )
+	introspection? (
+		>=dev-libs/gobject-introspection-1.56.1:=
+	)
 	journald? (
 		|| (
-			sys-auth/elogind
 			>=sys-apps/systemd-245.4[${MULTILIB_USEDEP}]
+			sys-auth/elogind
 		)
 	)
-	jpeg2k? ( >=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}] )
-	jpegxl? ( media-libs/libjxl[${MULTILIB_USEDEP}] )
-	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
+	jpeg2k? (
+		>=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}]
+	)
+	jpegxl? (
+		media-libs/libjxl[${MULTILIB_USEDEP}]
+	)
+	libhyphen? (
+		>=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}]
+	)
 	libwebrtc? (
 		>=dev-libs/libevent-2.1.8[${MULTILIB_USEDEP}]
 		>=media-libs/alsa-lib-1.1.3[${MULTILIB_USEDEP}]
 		>=media-libs/libvpx-1.10.0[${MULTILIB_USEDEP}]
-		media-libs/openh264[${MULTILIB_USEDEP}]
 		>=media-libs/opus-1.1[${MULTILIB_USEDEP}]
+		media-libs/openh264[${MULTILIB_USEDEP}]
 	)
 	opengl? (
-		!kernel_Winnt? ( >=media-libs/mesa-${MESA_PV}[egl(+),${MULTILIB_USEDEP}] )
+		!kernel_Winnt? (
+			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+)]
+		)
 		virtual/opengl[${MULTILIB_USEDEP}]
 	)
-	openmp? ( >=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}] )
+	openmp? (
+		>=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}]
+	)
 	seccomp? (
 		>=sys-apps/bubblewrap-0.3.1
 		>=sys-apps/xdg-dbus-proxy-0.1.2
 		>=sys-libs/libseccomp-0.9.0[${MULTILIB_USEDEP}]
 	)
-	spell? ( >=app-text/enchant-1.6.0:2[${MULTILIB_USEDEP}] )
-	thunder? ( net-libs/thunder )
+	spell? (
+		>=app-text/enchant-1.6.0:2[${MULTILIB_USEDEP}]
+	)
+	thunder? (
+		net-libs/thunder
+	)
 	variation-fonts? (
-		>=x11-libs/cairo-1.16:=[X?,${MULTILIB_USEDEP}]
 		>=media-libs/fontconfig-2.13.0:1.0[${MULTILIB_USEDEP}]
 		>=media-libs/freetype-2.9.0[${MULTILIB_USEDEP}]
-		>=media-libs/harfbuzz-0.9.18:=[icu(+),${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-0.9.18:=[${MULTILIB_USEDEP},icu(+)]
+		>=x11-libs/cairo-1.16:=[${MULTILIB_USEDEP},X?]
 	)
 	wayland? (
 		${WPE_DEPEND}
 		>=dev-libs/wayland-1.14.0[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.12[${MULTILIB_USEDEP}]
-		>=media-libs/mesa-${MESA_PV}[egl(+),${MULTILIB_USEDEP}]
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+)]
 	)
 	webcrypto? (
 		>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
@@ -688,9 +714,15 @@ RDEPEND+="
 			>=x11-libs/libdrm-2.4.107[${MULTILIB_USEDEP}]
 		)
 	)
-	webm-eme? ( ${OCDM_WV} )
-	webxr? ( media-libs/openxr )
-	woff2? ( >=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}] )
+	webm-eme? (
+		${OCDM_WV}
+	)
+	webxr? (
+		media-libs/openxr
+	)
+	woff2? (
+		>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
+	)
 	X? (
 		>=x11-libs/libX11-1.6.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXcomposite-0.4.4[${MULTILIB_USEDEP}]
@@ -710,10 +742,6 @@ DEPEND+=" ${RDEPEND}"
 BDEPEND+="
 	${PYTHON_DEPS}
 	${RUBY_DEPS}
-	|| (
-		>=sys-devel/clang-${CLANG_PV}
-		>=sys-devel/gcc-${GCC_PV}
-	)
 	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
 	>=dev-util/cmake-3.12
 	>=dev-util/glib-utils-${GLIB_PV}
@@ -727,15 +755,30 @@ BDEPEND+="
 	virtual/perl-Carp
 	virtual/perl-Data-Dumper
 	virtual/perl-JSON-PP
-	doc? ( dev-util/gi-docgen )
-	geolocation? ( >=dev-util/gdbus-codegen-${GLIB_PV} )
-	thunder? ( net-libs/thunder )
-	webcore? ( >=dev-util/gperf-3.0.1 )
+	doc? (
+		dev-util/gi-docgen
+	)
+	geolocation? (
+		>=dev-util/gdbus-codegen-${GLIB_PV}
+	)
+	thunder? (
+		net-libs/thunder
+	)
+	webcore? (
+		>=dev-util/gperf-3.0.1
+	)
+	|| (
+		>=sys-devel/clang-${CLANG_PV}
+		>=sys-devel/gcc-${GCC_PV}
+	)
 "
 #	test? (
 #		>=dev-python/pygobject-3.26.1:3[python_targets_python2_7]
 #		>=x11-themes/hicolor-icon-theme-0.17
-#		jit? ( >=sys-apps/paxctl-0.9 ) )
+#		jit? (
+#			>=sys-apps/paxctl-0.9
+#		)
+#	)
 #
 # Revisions and commit hashes provided since no tags specifically for the
 # webkit-gtk project.
