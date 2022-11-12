@@ -11,14 +11,34 @@ toolchain-funcs
 DESCRIPTION="a simple web browser based on WebKit/GTK+"
 HOMEPAGE="https://surf.suckless.org/"
 LICENSE="
-	MIT SURF
-	mod_adblock? ( CC-BY-NA-SA-3.0 MIT SURF-MOD_ADBLOCKER )
-        mod_adblock_easylist? ( CC-BY-SA-3.0 GPL-3+ SURF-MOD_ADBLOCKER-EASYLIST )
-        mod_adblock_spam404? ( CC-BY-SA-4.0 SURF-MOD_ADBLOCKER-SPAM404 )
-	mod_autoopen? ( all-rights-reserved )
-	mod_link_hints? ( all-rights-reserved )
-	mod_searchengines? ( all-rights-reserved )
-	mod_simple_bookmarking_redux? ( all-rights-reserved )
+	MIT
+	SURF
+	mod_adblock? (
+		CC-BY-NA-SA-3.0
+		MIT
+		SURF-MOD_ADBLOCKER
+	)
+        mod_adblock_easylist? (
+		CC-BY-SA-3.0
+		GPL-3+
+		SURF-MOD_ADBLOCKER-EASYLIST
+	)
+        mod_adblock_spam404? (
+		CC-BY-SA-4.0
+		SURF-MOD_ADBLOCKER-SPAM404
+	)
+	mod_autoopen? (
+		all-rights-reserved
+	)
+	mod_link_hints? (
+		all-rights-reserved
+	)
+	mod_searchengines? (
+		all-rights-reserved
+	)
+	mod_simple_bookmarking_redux? (
+		all-rights-reserved
+	)
 "
 KEYWORDS="
 ~alpha ~amd64 ~amd64-fbsd ~amd64-linux ~arm ~arm64 ~ia64 ~ppc ~ppc64 ~sparc ~x86
@@ -37,27 +57,39 @@ REQUIRED_USE+="
 	mod_simple_bookmarking_redux? ( savedconfig )
 	update_adblock? ( mod_adblock )
 "
+# net-libs/webkit-gtk:4.1 is in testing
 RDEPEND+="
+	!savedconfig? (
+		>=x11-misc/dmenu-4.7
+		net-misc/curl[${MULTILIB_USEDEP}]
+		x11-apps/xprop
+		x11-terms/st
+	)
 	!sci-chemistry/surf
 	app-crypt/gcr[gtk,${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	x11-libs/gtk+:3[${MULTILIB_USEDEP}]
 	x11-libs/libX11[${MULTILIB_USEDEP}]
-	net-libs/webkit-gtk:4[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
-	mod_adblock? ( $(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
-			x11-apps/xprop )
-	!savedconfig? ( net-misc/curl[${MULTILIB_USEDEP}]
-			x11-apps/xprop
-			>=x11-misc/dmenu-4.7
-			x11-terms/st )
-	tabbed? ( x11-misc/tabbed )
+	|| (
+		net-libs/webkit-gtk:4[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
+		net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
+	)
+	mod_adblock? (
+		$(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
+		x11-apps/xprop
+	)
+	tabbed? (
+		x11-misc/tabbed
+	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
 	virtual/pkgconfig
-	update_adblock? ( ${PYTHON_DEPS} )
+	update_adblock? (
+		${PYTHON_DEPS}
+	)
 "
 EGIT_BRANCH="surf-webkit2"
 EGIT_COMMIT="761ea9e4c6c4d8aba4a4d39da9c9b4db8ac471b1"
