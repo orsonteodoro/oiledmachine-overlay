@@ -401,11 +401,6 @@ REQUIRED_USE+=" "$(gen_gst_plugins_required_use)
 # of emerging web technologies.  Also found in Source/WebCore/features.json
 
 REQUIRED_USE+="
-	|| (
-		aqua
-		wayland
-		X
-	)
 	alsa? (
 		gstreamer
 	)
@@ -498,6 +493,11 @@ REQUIRED_USE+="
 	)
 	yarr-jit? (
 		jit
+	)
+	|| (
+		aqua
+		wayland
+		X
 	)
 "
 
