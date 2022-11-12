@@ -254,10 +254,10 @@ SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 CURRENT="95"
 AGE="58"
 SOVERSION=$((${CURRENT} - ${AGE}))
-SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
-# SLOT=6/0-6.0  GTK4 SOUP*
-# SLOT=4/0-4.1  GTK3 SOUP3
-# SLOT=4/37-4.0 GTK3 SOUP2
+SLOT="${API_VERSION%.*}/${SOVERSION}"
+# SLOT=6/0    GTK4 SOUP*
+# SLOT=4.1/0  GTK3 SOUP3
+# SLOT=4/37   GTK3 SOUP2
 
 LANGS=(
 ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hr hu id it
