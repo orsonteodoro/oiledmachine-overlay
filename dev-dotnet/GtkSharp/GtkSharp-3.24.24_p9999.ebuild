@@ -21,6 +21,7 @@ REQUIRED_USE="
 	|| ( ${ETFM[@]} )
 	mono? ( netstandard20 )
 "
+# See also Source/Libs/Shared/GLibrary.cs
 RDEPEND="
 	!dev-dotnet/atk-sharp
 	!dev-dotnet/gdk-sharp
@@ -37,10 +38,10 @@ RDEPEND="
 	x11-libs/gdk-pixbuf
 	x11-libs/pango
 	x11-libs/gtk+:3
-	gtksourceview? ( x11-libs/gtksourceview )
+	gtksourceview? ( >=x11-libs/gtksourceview-4:4 )
 	mono? ( >=dev-lang/mono-5.4 )
 	net60? ( >=dev-dotnet/dotnet-sdk-bin-6:6 )
-	webkit-gtk? ( net-libs/webkit-gtk )
+	webkit-gtk? ( net-libs/webkit-gtk:4 )
 "
 DEPEND="
 	${RDEPEND}
