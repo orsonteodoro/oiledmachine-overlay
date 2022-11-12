@@ -1161,7 +1161,7 @@ eerror
 eerror "AudioOutputMethod \"pulse\""
 eerror
 eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
-eerror "same settings."
+eerror "the same settings."
 eerror
 				die
 			fi
@@ -1174,7 +1174,7 @@ eerror
 eerror "AudioOutputMethod \"alsa\""
 eerror
 eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
-eerror "same settings."
+eerror "the same settings."
 eerror
 				die
 			fi
@@ -1189,7 +1189,7 @@ eerror "AddModule \"espeak-ng\"                \"sd_espeak-ng\" \"espeak-ng.conf
 eerror "DefaultModule espeak-ng"
 eerror
 eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
-eerror "same settings."
+eerror "the same settings."
 eerror
 				die
 			fi
@@ -1201,7 +1201,7 @@ eerror
 eerror "DefaultModule espeak-ng"
 eerror
 eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
-eerror "same settings."
+eerror "the same settings."
 eerror
 				die
 			fi
@@ -1215,7 +1215,7 @@ eerror "AddModule \"espeak\"                   \"sd_espeak\"    \"espeak.conf\""
 eerror "DefaultModule espeak"
 eerror
 eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
-eerror "same settings."
+eerror "the same settings."
 eerror
 				die
 			fi
@@ -1227,7 +1227,7 @@ eerror
 eerror "DefaultModule espeak"
 eerror
 eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
-eerror "same settings."
+eerror "the same settings."
 eerror
 				die
 			fi
@@ -1241,7 +1241,7 @@ eerror "#AddModule \"flite\"                    \"sd_flite\"     \"flite.conf\""
 eerror "DefaultModule flite"
 eerror
 eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
-eerror "same settings."
+eerror "the same settings."
 eerror
 				die
 			fi
@@ -1253,7 +1253,7 @@ eerror
 eerror "DefaultModule flite"
 eerror
 eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
-eerror "same settings."
+eerror "the same settings."
 eerror
 				die
 			fi
