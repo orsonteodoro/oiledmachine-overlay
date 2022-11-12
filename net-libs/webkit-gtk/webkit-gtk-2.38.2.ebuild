@@ -739,14 +739,14 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	${RUBY_DEPS}
 	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
-	>=dev-util/cmake-3.12
-	>=dev-util/glib-utils-${GLIB_PV}
 	>=dev-lang/perl-5.10.0
 	>=dev-lang/python-2.7
 	>=dev-lang/ruby-1.9
+	>=dev-util/cmake-3.12
+	>=dev-util/glib-utils-${GLIB_PV}
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/bison-3.0.4
 	>=sys-devel/gettext-0.19.8.1[${MULTILIB_USEDEP}]
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	virtual/perl-Carp
 	virtual/perl-Data-Dumper
 	virtual/perl-JSON-PP
