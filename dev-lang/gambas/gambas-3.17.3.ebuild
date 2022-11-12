@@ -80,10 +80,13 @@ DEPEND+="
 	)
 	gtk3? (
 		>=gnome-base/librsvg-2.14.3
-		>=net-libs/webkit-gtk-2.20
 		>=x11-libs/gtk+-3.4:3[X,wayland]
 		x11-libs/libICE
 		x11-libs/libSM
+		|| (
+			>=net-libs/webkit-gtk-2.20:4
+			>=net-libs/webkit-gtk-2.20:4.1
+		)
 	)
 	httpd? (
 		sys-libs/glibc
