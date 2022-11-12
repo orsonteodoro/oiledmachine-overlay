@@ -1065,6 +1065,16 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
+    OT_KERNEL_FAST_INSTALL -- install kernel sources in the fastest way
+    without permissions sanitization.
+
+    Acceptable values:
+
+      1 - fast install without permissions sanitization.
+      unset - slow install with permissions sanitation.  (default)
+
+
+
     OT_KERNEL_FIRMWARE -- a space separated list of keywords matching the
     firmware relative to inside /lib/firmware.  Wildcards (denoted by "*") are
     accepted as well as relative paths.  Wildcards are implied before and after

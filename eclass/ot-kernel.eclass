@@ -2373,6 +2373,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_EFI_PARTITION
 	unset OT_KERNEL_EP800
 	unset OT_KERNEL_EXTRAVERSION
+	unset OT_KERNEL_FAST_INSTALL
 	unset OT_KERNEL_FIRMWARE
 	unset OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG
 #	unset OT_KERNEL_HALT_ON_LOWERED_SECURITY		# global var
@@ -6848,8 +6849,22 @@ ot-kernel_src_install() {
 		fi
 
 		einfo "Installing the kernel sources"
-		insinto /usr/src
-		doins -r "${BUILD_DIR}" # Sanitize file permissions
+		if [[ "${OT_KERNEL_FAST_INSTALL:-0}" == "1" ]] ; then
+			dodir /usr/src
+			mv "${BUILD_DIR}" "${ED}/usr/src" || die
+		else
+			insinto /usr/src
+			doins -r "${BUILD_DIR}" # Sanitize file permissions
+
+			local nprocs=$(echo "${MAKEOPTS}" | grep -E -e "-j[ ]*[0-9]+" | grep -E -o -e "[0-9]+")
+			[[ -z "${nprocs}" ]] && nprocs=1
+			einfo "nprocs:  ${nprocs}"
+			einfo "Restoring +x bit"
+			cd "${ED}/usr/src/linux-${PV}-${extraversion}" || die
+			find . -type f -print0 | xargs -0 -I '{}' -P ${nprocs} bash -c "f='{}' ; file '{}' | grep -q -F -e 'executable' && fperms +x \"\${f#.}\""
+			cd "${ED}" || die
+			find boot -type f -print0 | xargs -0 -I '{}' -P ${nprocs} bash -c "f='{}' ; file '{}' | grep -q -E -e 'Linux kernel.*executable' && fperms -x \"/\${f}\""
+		fi
 
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
 			einfo "Installing OpenRC iosched script settings"
@@ -6857,14 +6872,6 @@ ot-kernel_src_install() {
 			doins "${T}/etc/ot-sources/iosched/conf/${PV}-${extraversion}-${arch}"
 		fi
 	done
-
-	local nprocs=$(echo "${MAKEOPTS}" | grep -E -e "-j[ ]*[0-9]+" | grep -E -o -e "[0-9]+")
-	[[ -z "${nprocs}" ]] && nprocs=1
-	einfo "nprocs:  ${nprocs}"
-	einfo "Restoring +x bit"
-	cd "${ED}" || die
-	find . -type f -print0 | xargs -0 -I '{}' -P ${nprocs} bash -c "f='{}' ; file '{}' | grep -q -F -e 'executable' && fperms +x \"\${f#.}\""
-	find boot -type f -print0 | xargs -0 -I '{}' -P ${nprocs} bash -c "f='{}' ; file '{}' | grep -q -E -e 'Linux kernel.*executable' && fperms -x \"/\${f}\""
 
 	if has clang-pgo ${IUSE} && use clang-pgo ; then
 		insinto "${OT_KERNEL_PGO_DATA_DIR}"
