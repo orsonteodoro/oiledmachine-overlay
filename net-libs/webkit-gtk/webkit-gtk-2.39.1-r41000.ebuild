@@ -343,14 +343,13 @@ ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
 ${DEFAULT_GST_PLUGINS}
 
-aqua +avif +bmalloc -cache-partitioning -cache-partitioning cpu_flags_arm_thumb2
-+dfg-jit +doc -eme +ftl-jit -gamepad +gbm +geolocation gles2 gnome-keyring
-+gstreamer gstwebrtc hardened +introspection +javascriptcore +jit +journald
-+jpeg2k jpegxl +lcms +libhyphen -libwebrtc -mediarecorder -mediastream
-+minibrowser +opengl openmp -seccomp -spell test thunder +unified-builds
-variation-fonts -v4l wayland +webassembly +webassembly-b3-jit +webcore
-+webcrypto -webdriver +webgl -webgl2 webm-eme -webrtc webvtt -webxr +woff2 +X
-+yarr-jit
+aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 +dfg-jit +doc -eme
++ftl-jit -gamepad +gbm +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
+hardened +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
++libhyphen -libwebrtc -mediarecorder -mediastream +minibrowser +opengl openmp
+-seccomp -spell test thunder +unified-builds variation-fonts wayland
++webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver +webgl -webgl2
+webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
 "
 
 gen_gst_plugins_duse() {
