@@ -13,15 +13,11 @@ KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 IUSE+=" curl doc mms static-libs"
 # U 20.04
+# See MediaInfoLib/Project/GNU/libmediainfo.dsc
 DEPEND+="
 	>=dev-libs/tinyxml2-7.0.0:=[${MULTILIB_USEDEP}]
-	>=dev-util/desktop-file-utils-0.24
 	>=media-libs/libzen-0.4.39:=[static-libs=,${MULTILIB_USEDEP}]
-	>=net-libs/webkit-gtk-2.28.1:4[${MULTILIB_USEDEP}]
-	>=sys-apps/bubblewrap-0.4.0
 	>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
-	>=x11-libs/libSM-1.2.3[${MULTILIB_USEDEP}]
-	>=x11-libs/wxGTK-3.0.4:3.0-gtk3[${MULTILIB_USEDEP}]
 	curl? ( >=net-misc/curl-7.68.0[${MULTILIB_USEDEP}] )
 	mms? ( >=media-libs/libmms-0.6.4:=[static-libs=,${MULTILIB_USEDEP}] )
 "
