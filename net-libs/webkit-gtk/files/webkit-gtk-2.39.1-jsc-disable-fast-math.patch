@@ -1,10 +1,11 @@
 # Precaution to avoid crashes or glitches because of Inf and NaN mentioned in comments and code.
 --- webkitgtk-2.39.1/Source/JavaScriptCore/CMakeLists.txt.orig	2022-11-13 10:43:52.918314317 -0800
 +++ webkitgtk-2.39.1/Source/JavaScriptCore/CMakeLists.txt	2022-11-13 10:53:34.787049163 -0800
-@@ -1458,6 +1458,8 @@ if (COMPILER_IS_GCC_OR_CLANG)
+@@ -1458,6 +1458,9 @@ if (COMPILER_IS_GCC_OR_CLANG)
          WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -ffp-contract=off -fno-slp-vectorize)
      endif ()
  
++    WEBKIT_ADD_TARGET_CXX_FLAGS(LowLevelInterpreterLib -fno-fast-math)
 +    WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -fno-fast-math)
 +
      # On MIPS we have to explicitly disable madd4, since some versions of gcc still generate
