@@ -70,16 +70,16 @@ RDEPEND+="
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	x11-libs/gtk+:3[${MULTILIB_USEDEP}]
 	x11-libs/libX11[${MULTILIB_USEDEP}]
-	|| (
-		net-libs/webkit-gtk:4[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
-		net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
-	)
 	mod_adblock? (
 		$(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
 		x11-apps/xprop
 	)
 	tabbed? (
 		x11-misc/tabbed
+	)
+	|| (
+		net-libs/webkit-gtk:4[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
+		net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
 	)
 "
 DEPEND+="
