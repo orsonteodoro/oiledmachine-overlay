@@ -9,10 +9,12 @@ PYTHON_COMPAT=( python3_{8..10} )
 inherit distutils-r1 eutils flag-o-matic linux-info prefix tmpfiles udev user \
 xdg
 
-DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based \
+DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based
 on wimpiggy"
-HOMEPAGE="http://xpra.org/ \
-	  https://github.com/Xpra-org/xpra"
+HOMEPAGE="
+	http://xpra.org/
+	https://github.com/Xpra-org/xpra
+"
 LICENSE="GPL-2+ BSD-2 CC-BY-SA-3.0 MIT LGPL-3+"
 # BSD-2 - xpra/buffers/xxhash.c
 # CC-BY-3.0 - xpra/platform/win32/printer_notify.py
@@ -122,7 +124,7 @@ REQUIRED_USE+="
 		server
 	)
 "
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 MY_PV="$(ver_cut 1-4)"
 CUDA_7_5_DRV_V="352.31"
 NVFBC_MIN_DRV_V="410.66"
