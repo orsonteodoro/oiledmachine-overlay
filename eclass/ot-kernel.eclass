@@ -3096,7 +3096,7 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 
 	if has cfs ${IUSE} && ot-kernel_use cfs \
 		&& [[ "${cpu_sched}" =~ "cfs" ]] ; then
-		if [[ "${cpu_sched}" =~ ("cfs-throughput"|"cfs-interactive"|"cfs-interactive") ]] ; then
+		if [[ "${cpu_sched}" =~ ("cfs-throughput"|"cfs-interactive"|"cfs-autogroup") ]] ; then
 			:;
 		else
 			einfo "Changed .config to use CFS with autogroup manually set."
