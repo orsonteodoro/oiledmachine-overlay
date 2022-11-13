@@ -3,7 +3,8 @@
 
 EAPI=8
 
-LUA_COMPAT=( lua5-{1..4} ) # building with 5.1 is broken
+# Building with 5.1 is broken.
+LUA_COMPAT=( lua5-{1..4} )
 inherit cmake flag-o-matic lua multilib-minimal
 
 DESCRIPTION="CivetWeb is an embedded C++ web server"
@@ -11,10 +12,14 @@ HOMEPAGE="https://github.com/civetweb"
 LICENSE="MIT"
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~ppc ~x86"
-IUSE+=" ${LUA_COMPAT[@]/#/lua_targets_}" # for some reason the lua eclass looks broken
-IUSE+=" +asan +c11 c89 c99 c++98 c++11 +c++14 +cgi gnu17 -cxx +caching
-debug doc -duktape -ipv6 -lua -serve_no_files +server_executable
--server_stats +ssl ssl_1_0 +ssl_1_1 static-libs -test -websockets -zlib"
+# For some reason, the lua eclass looks broken.
+IUSE+="
+${LUA_COMPAT[@]/#/lua_targets_}
+
++asan +c11 c89 c99 c++98 c++11 +c++14 +cgi gnu17 -cxx +caching debug doc
+-duktape -ipv6 -lua -serve_no_files +server_executable -server_stats +ssl
+ssl_1_0 +ssl_1_1 static-libs -test -websockets -zlib
+"
 REQUIRED_USE+="
 	^^ (
 		c11
