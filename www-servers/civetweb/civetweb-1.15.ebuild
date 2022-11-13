@@ -140,8 +140,10 @@ eerror
 		fi
 	fi
 
+	local s
 	for s in ${LUA_PV_SUPPORTED[@]} ; do
 		if has_version "dev-lang/lua:$(ver_cut 1-2 ${s})" ; then
+			local best_v
 			best_v=$(best_version "dev-lang/lua:$(ver_cut 1-2 ${s})")
 			best_v=$(echo "${best_v}" | cut -f 3- -d '-')
 			best_v=$(ver_cut 1-3 ${best_v})
