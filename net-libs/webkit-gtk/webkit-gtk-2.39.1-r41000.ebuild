@@ -625,7 +625,7 @@ RDEPEND+="
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
 		)
 		gstwebrtc? (
-			>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
+			>=dev-libs/openssl-3[${MULTILIB_USEDEP}]
 		)
 		libde265? (
 			>=media-plugins/gst-plugins-libde265-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
