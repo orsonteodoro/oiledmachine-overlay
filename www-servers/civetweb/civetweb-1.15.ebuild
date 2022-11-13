@@ -16,14 +16,39 @@ IUSE+=" +asan +c11 c89 c99 c++98 c++11 +c++14 +cgi gnu17 -cxx +caching
 debug doc -duktape -ipv6 -lua -serve_no_files +server_executable
 -server_stats +ssl ssl_1_0 +ssl_1_1 static-libs -test -websockets -zlib"
 REQUIRED_USE+="
-	lua? ( ${LUA_REQUIRED_USE} gnu17 )
-	lua_targets_lua5-1? ( lua )
-	lua_targets_lua5-2? ( lua )
-	lua_targets_lua5-3? ( lua )
-	lua_targets_lua5-4? ( lua )
-	ssl? ( ^^ ( ssl_1_0 ssl_1_1 ) )
-	^^ ( c11 c89 c99 gnu17 )
-	^^ ( c++98 c++11 c++14 )
+	^^ (
+		c11
+		c89
+		c99
+		gnu17
+	)
+	^^ (
+		c++11
+		c++14
+		c++98
+	)
+	lua? (
+		${LUA_REQUIRED_USE}
+		gnu17
+	)
+	lua_targets_lua5-1? (
+		lua
+	)
+	lua_targets_lua5-2? (
+		lua
+	)
+	lua_targets_lua5-3? (
+		lua
+	)
+	lua_targets_lua5-4? (
+		lua
+	)
+	ssl? (
+		^^ (
+			ssl_1_0
+			ssl_1_1
+		)
+	)
 "
 # CMakeLists.txt lists versions
 # See https://github.com/civetweb/civetweb/tree/v1.15/src/third_party
@@ -32,7 +57,7 @@ LUA_5_2_MIN="5.2.4"
 LUA_5_3_MIN="5.3.6"
 LUA_5_4_MIN="5.4.3"
 # CI uses U 14.04
-LUA_IMPLS=(5.1 5.2 5.3 5.4)
+LUA_IMPLS=( 5.1 5.2 5.3 5.4 )
 LUA_PV_SUPPORTED=( 5.1.5 5.2.4 5.3.5 5.4.0 ) # Upstream supported specifically
 gen_lua_targets() {
 	for x in ${LUA_IMPLS[@]} ; do
@@ -49,13 +74,13 @@ RDEPEND+="
 	>=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
 	virtual/libc
 	ssl? (
-		ssl_1_1? ( =dev-libs/openssl-1.1*[${MULTILIB_USEDEP}] )
 		ssl_1_0? (
 			|| (
 				=dev-libs/openssl-1.0*[${MULTILIB_USEDEP}]
 				dev-libs/openssl-compat:1.0.0[${MULTILIB_USEDEP}]
 			)
 		)
+		ssl_1_1? ( =dev-libs/openssl-1.1*[${MULTILIB_USEDEP}] )
 	)
 	zlib? ( sys-libs/zlib[${MULTILIB_USEDEP}] )
 "
@@ -70,9 +95,11 @@ DEPEND+="
 		>=dev-lua/luaxml-1.8[${MULTILIB_USEDEP},${LUA_USEDEP},static-libs?]
 	)
 "
-BDEPEND+=" >=dev-util/cmake-3.3.0"
+BDEPEND+="
+	>=dev-util/cmake-3.3.0
+"
 SRC_URI="
-https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz \
+https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 S="${WORKDIR}/civetweb-${PV}"
