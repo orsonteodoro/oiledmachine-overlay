@@ -1039,6 +1039,7 @@ eerror
 
 src_prepare() {
 #	use webrtc && eapply "${FILESDIR}/2.33.2-add-openh264-headers.patch"
+	eapply "${FILESDIR}/webkit-gtk-2.39.1-jsc-disable-fast-math.patch" # Precaution
 	cmake_src_prepare
 	gnome2_src_prepare
 
