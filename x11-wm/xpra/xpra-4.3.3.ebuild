@@ -4,10 +4,12 @@
 
 EAPI=7
 
+MY_PV="$(ver_cut 1-4)"
+
 DISTUTILS_USE_SETUPTOOLS=no
 PYTHON_COMPAT=( python3_{8..10} )
-inherit distutils-r1 eutils flag-o-matic linux-info prefix tmpfiles udev user \
-xdg
+inherit distutils-r1 eutils flag-o-matic linux-info prefix tmpfiles udev user
+inherit xdg
 
 DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based
 on wimpiggy"
@@ -39,8 +41,8 @@ selinux +server sound spng sqlite ssh sshpass +ssl systemd test u2f vaapi vpx
 vsock v4l2 webcam webp websockets X xdg zeroconf zlib
 "
 
-#LIMD # ATM, GEN 5-12
-#LID # C2M, GEN 5-9
+# LIMD # ATM, GEN 5-12
+# LID # C2M, GEN 5-9
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	gtk3
@@ -125,7 +127,6 @@ REQUIRED_USE+="
 	)
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-MY_PV="$(ver_cut 1-4)"
 CUDA_7_5_DRV_V="352.31"
 NVFBC_MIN_DRV_V="410.66"
 NVJPEG_MIN_DRV_V="450.36.06"
@@ -381,21 +382,21 @@ einfo
 	enewuser ${PN} -1 -1 /var/lib/${PN} ${PN}
 
 	python_setup
-	einfo "EPYTHON=${EPYTHON}"
+einfo "EPYTHON=${EPYTHON}"
 	[[ -z "${EPYTHON}" ]] && die "EPYTHON is empty"
 	if use opengl ; then
-		PYOPENGL_V=$(cat \
+		PYOPENGL_PV=$(cat \
 "${EROOT}/usr/lib/${EPYTHON}/site-packages/OpenGL/version.py" \
 			| grep -F -e "__version__" \
 			| grep -E -o -e "[0-9\.]+")
-		PYOPENGL_ACCELERATE_V=$(cat \
+		PYOPENGL_ACCELERATE_PV=$(cat \
 "${EROOT}/usr/lib/${EPYTHON}/site-packages/OpenGL_accelerate/__init__.py" \
 			| grep -F -e "__version__" \
 			| grep -E -o -e "[0-9.]+")
-		if ver_test ${PYOPENGL_V} -ne ${PYOPENGL_ACCELERATE_V} ; then
+		if ver_test ${PYOPENGL_PV} -ne ${PYOPENGL_ACCELERATE_PV} ; then
 eerror
-eerror "${PN} demands pyopengl-${PYOPENGL_V} and"
-eerror "pyopengl_accelerate-${PYOPENGL_ACCELERATE_V} be the same version."
+eerror "${PN} demands pyopengl-${PYOPENGL_PV} and"
+eerror "pyopengl_accelerate-${PYOPENGL_ACCELERATE_PV} be the same version."
 eerror
 			die
 		fi
@@ -517,8 +518,9 @@ python_configure_all() {
 		)
 	fi
 
-	# see https://www.xpra.org/trac/ticket/1080
-	# and http://trac.cython.org/ticket/395
+	# See
+	# https://www.xpra.org/trac/ticket/1080
+	# http://trac.cython.org/ticket/395
 	append-cflags -fno-strict-aliasing
 
 	export XPRA_SOCKET_DIRS="${EPREFIX}/run/xpra"
