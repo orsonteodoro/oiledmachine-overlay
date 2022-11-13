@@ -579,7 +579,7 @@ elog
 einfo
 einfo "The init config has been moved to /etc/conf.d/xpra"
 einfo
-einfo "XPRA_USER_TO_PORT and XPRA_USER_TO_DISPLAY should be set to"
+einfo "XPRA_USER_TO_PORT and XPRA_USER_TO_DISPLAY should be set in"
 einfo "/etc/conf.d/xpra"
 einfo
 einfo "For the OpenRC init script, they should be defined as follows:"
