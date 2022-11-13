@@ -138,6 +138,7 @@ src_install() {
 			if use doc; then
 				find doc -name '.gitignore' -delete || die
 			fi
+			cd "${S}" || die
 			einstalldocs
 		fi
 	}
