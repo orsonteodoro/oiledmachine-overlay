@@ -152,8 +152,8 @@ eerror
 
 	if [[ -e "${ESYSROOT}/usr/include/lua.h" ]] ; then
 eerror
-eerror "${ESYSROOT}/usr/include/lua.h must be removed.  Switch lua implementation to"
-eerror "alternative and back again via eselect."
+eerror "${ESYSROOT}/usr/include/lua.h must be removed.  Switch lua"
+eerror "implementation to alternative and back again via eselect."
 eerror
 		die
 	fi
