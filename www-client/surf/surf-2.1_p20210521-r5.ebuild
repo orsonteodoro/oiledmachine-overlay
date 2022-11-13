@@ -372,6 +372,12 @@ eerror
 
 	touch NEWS AUTHORS ChangeLog
 
+	if has_version "net-libs/webkit-gtk:4.1" ; then
+einfo "Switching to webkit-gtk:4.1"
+		sed -i -e "s|webkit2gtk-4.0|webkit2gtk-4.1|g" config.mk || die
+		sed -i -e "s|webkit2gtk-web-extension-4.0|webkit2gtk-web-extension-4.1|g" config.mk || die
+	fi
+
 	multilib_copy_sources
 
 	prepare_abi() {
@@ -395,7 +401,7 @@ multilib_src_compile() {
 	einfo "ABI=${ABI} multilib_src_compile"
 	export PKG_CONFIG_LIBDIR="${ESYSROOT}/usr/$(get_libdir)/pkgconfig"
 	export PKG_CONFIG="$(tc-getPKG_CONFIG)"
-	export PKG_CONFIG_PATH="/usr/share/pkgconfig"
+	export PKG_CONFIG_PATH="${ESYSROOT}/usr/share/pkgconfig"
 	emake
 }
 
