@@ -1,3 +1,66 @@
+diff -Nurp ycmd-45_p9999.orig/ycmd/build_prefs.py ycmd-45_p9999/ycmd/build_prefs.py
+--- ycmd-45_p9999.orig/ycmd/build_prefs.py	1969-12-31 16:00:00.000000000 -0800
++++ ycmd-45_p9999/ycmd/build_prefs.py	2021-04-16 20:44:55.431988563 -0700
+@@ -0,0 +1,59 @@
++# Copyright (C) 2021 ycmd contributors
++#
++# This file is part of ycmd.
++#
++# ycmd is free software: you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation, either version 3 of the License, or
++# (at your option) any later version.
++#
++# ycmd is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with ycmd.  If not, see <http://www.gnu.org/licenses/>.
++
++USE_SYSTEM_RUST = False
++SYSTEM_RA_PATH = "___SYSTEM_RA_PATH___"
++SYSTEM_RUSTC_PATH = "___SYSTEM_RUSTC_PATH___"
++
++USE_SYSTEM_TYPESCRIPT = False
++SYSTEM_TSSERVER_PATH = "___SYSTEM_TSSERVER_PATH___"
++
++USE_SYSTEM_TERN = False
++SYSTEM_TERN_PATH = "___SYSTEM_TERN_PATH___"
++
++USE_SYSTEM_CLANGD = False
++SYSTEM_CLANGD_PATH = "___SYSTEM_CLANGD_PATH___"
++
++USE_SYSTEM_GOPLS = False
++SYSTEM_GOPLS_PATH = "___SYSTEM_GOPLS_PATH___"
++
++USE_SYSTEM_ROSLYN_OMNISHARP = False
++SYSTEM_ROSLYN_OMNISHARP_PATH = "___SYSTEM_OMNISHARP_PATH___"
++SYSTEM_OMNISHARP_ROSLYN_BINARY_PATH = "___SYSTEM_ROSYLN_BINARY_PATH___"
++
++USE_SYSTEM_JDTLS = False
++SYSTEM_JDTLS_LANGUAGE_SERVER_HOME_PATH = "___SYSTEM_JDTLS_LANGUAGE_SERVER_HOME_PATH___"
++SYSTEM_JDTLS_WORKSPACE_ROOT_PATH = "___SYSTEM_JDTLS_WORKSPACE_ROOT_PATH___"
++SYSTEM_JDTLS_EXTENSION_PATH = "___SYSTEM_JDTLS_EXTENSION_PATH___"
++
++USE_SYSTEM_LIBCLANG = False
++SYSTEM_CLANG_LIB_PATH = "___SYSTEM_CLANG_LIB_PATH___"
++
++USE_SYSTEM_BOTTLE = False
++SYSTEM_BOTTLE_PATH = "___SYSTEM_BOTTLE_PATH___"
++
++USE_SYSTEM_REGEX = False
++SYSTEM_REGEX_PATH = "___SYSTEM_REGEX_PATH___"
++
++USE_SYSTEM_JEDI = False
++SYSTEM_JEDI_PATH = "___SYSTEM_JEDI_PATH___"
++
++USE_SYSTEM_WATCHDOG = False
++SYSTEM_WATCHDOG_PATH = "___SYSTEM_WATCHDOG_PATH___"
++
++USE_CLANGD = False
++USE_LIBCLANG = False
 diff -urp ycmd-45_p9999.orig/ycmd/__main__.py ycmd-45_p9999/ycmd/__main__.py
 --- ycmd-45_p9999.orig/ycmd/__main__.py	2022-08-05 18:17:11.896031640 -0700
 +++ ycmd-45_p9999/ycmd/__main__.py	2022-08-05 18:17:51.309761737 -0700

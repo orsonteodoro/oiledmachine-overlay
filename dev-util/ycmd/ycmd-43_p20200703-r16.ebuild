@@ -1873,12 +1873,13 @@ src_install() {
 	for x in $(find "${ED}" -type f) ; do
 		[[ -L "${x}" ]] && continue
 		local is_exe=0
-		file "${x}" | "executable" && is_exe=1
-		file "${x}" | "shared object" && is_exe=1
-		file "${x}" | "shell script" && is_exe=1
-		file "${x}" | "Python script" && is_exe=1
+		file "${x}" | grep -q -e "executable" && is_exe=1
+		file "${x}" | grep -q -e "shared object" && is_exe=1
+		file "${x}" | grep -q -e "shell script" && is_exe=1
+		file "${x}" | grep -q -e "Python script" && is_exe=1
 		if (( ${is_exe} )) ; then
-			fperms 0755 $(echo "${x}" | sed -e "s|${ED}||g")
+			local f=$(echo "${x}" | sed -e "s|${ED}||g")
+			fperms 0755 "${f}"
 		fi
 	done
 
