@@ -28,6 +28,7 @@ system-rustc system-tsserver unicode ycm-generator
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
+	!minimal
 	^^ (
 		libgcrypt
 		nettle
