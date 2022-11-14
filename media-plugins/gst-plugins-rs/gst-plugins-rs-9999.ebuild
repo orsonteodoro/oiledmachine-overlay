@@ -87,7 +87,7 @@ CARGO_V="1.65"
 # Assumes D11
 CAIRO_PV="1.16.0"
 GST_PV="1.20" # Upstream uses in CI 1.21.2.1, distro only provides 1.20.x
-PANGO_PV="1.50.12"
+PANGO_PV="1.50.11" # Upstream uses 1.50.12
 RDEPEND+="
 	>=dev-libs/glib-2.66.8:2[${MULTILIB_USEDEP}]
 	!=dev-libs/libgit2-1.4*
