@@ -859,9 +859,9 @@ check_geolocation() {
 		if ! grep -q -e "submit-data=true" \
 			"${EROOT}/etc/geoclue/geoclue.conf" ; then
 ewarn
-ewarn "${EROOT}/etc/geoclue/geoclue.conf should be submit-data=true to get GPS"
-ewarn "coordinates with the router's BSSID for non-mobile devices or editing"
-ewarn "the [wifi] section to use another location service."
+ewarn "${EROOT}/etc/geoclue/geoclue.conf should be changed to submit-data=true"
+ewarn "to get GPS coordinates with the router's BSSID for non-mobile devices or"
+ewarn "editing the [wifi] section to use another location service."
 ewarn
 		fi
 	fi
