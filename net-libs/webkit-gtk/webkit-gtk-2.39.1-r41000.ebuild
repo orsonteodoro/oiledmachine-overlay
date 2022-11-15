@@ -348,7 +348,7 @@ aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 +dfg-jit +doc -eme
 hardened +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
 +libhyphen -libwebrtc -mediarecorder -mediastream +minibrowser +opengl openmp
 -seccomp -spell test thunder +unified-builds variation-fonts wayland
-+webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver +webgl -webgl2
++webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver +webgl +webgl2
 webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
 "
 
