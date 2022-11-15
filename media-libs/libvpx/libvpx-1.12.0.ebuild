@@ -307,6 +307,10 @@ _src_configure() {
 
 	uopts_src_configure
 
+	# Prevent below 25 FPS and erratic FPS
+	# Fork ebuild if you need -O0
+	replace-flags '-O0' '-O1'
+
 	if is-flagq "-Ofast" ; then
 		# Precaution
 		append_all $(test-flags -fno-allow-store-data-races)
