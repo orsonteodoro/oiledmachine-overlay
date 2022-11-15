@@ -871,6 +871,7 @@ ewarn
 # These are strict to match performance to competition or normal builds.
 declare -A CFLAGS_RDEPEND=(
 	["media-libs/dav1d"]="-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
+	["media-libs/libvpx"]="-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 
 pkg_setup() {
@@ -1043,7 +1044,11 @@ eerror
 
 src_prepare() {
 #	use webrtc && eapply "${FILESDIR}/2.33.2-add-openh264-headers.patch"
-	eapply "${FILESDIR}/webkit-gtk-2.39.1-jsc-disable-fast-math.patch" # Precaution
+
+	# Precautions
+	eapply "${FILESDIR}/webkit-gtk-2.39.1-jsc-disable-fast-math.patch"
+	eapply "${FILESDIR}/webkit-gtk-2.39.1-webcore-honor-finite-math-and-nan.patch"
+
 	cmake_src_prepare
 	gnome2_src_prepare
 
@@ -1368,10 +1373,13 @@ einfo
 	# Anything less than -O2 may break rendering.
 	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
 	# Clang -Os:  slower than expected rendering.
+	# Forced >= -O3 to be about same relative performance to other browser engines.
+	# -O2 feels like C- grade relative other browser engines.
 
-	replace-flags "-O0" "-O2"
-	replace-flags "-O1" "-O2"
-	replace-flags "-Os" "-O2"
+	replace-flags "-O0" "-O3"
+	replace-flags "-O1" "-O3"
+	replace-flags "-Os" "-O3"
+	replace-flags "-O2" "-O3"
 
 	if is-flagq "-Ofast" ; then
 		# Precaution

@@ -1,13 +1,14 @@
 # Precaution to avoid crashes or glitches because of Inf and NaN mentioned in comments and code.
---- webkitgtk-2.39.1/Source/JavaScriptCore/CMakeLists.txt.orig	2022-11-13 10:43:52.918314317 -0800
-+++ webkitgtk-2.39.1/Source/JavaScriptCore/CMakeLists.txt	2022-11-13 10:53:34.787049163 -0800
-@@ -1458,6 +1458,9 @@ if (COMPILER_IS_GCC_OR_CLANG)
-         WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -ffp-contract=off -fno-slp-vectorize)
-     endif ()
+--- a/Source/JavaScriptCore/CMakeLists.txt.orig	2022-11-10 00:32:07.849860000 -0800
++++ b/Source/JavaScriptCore/CMakeLists.txt	2022-11-14 09:20:37.274672995 -0800
+@@ -1450,6 +1450,10 @@ WEBKIT_FRAMEWORK_DECLARE(JavaScriptCore)
+ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
  
-+    WEBKIT_ADD_TARGET_CXX_FLAGS(LowLevelInterpreterLib -fno-fast-math)
-+    WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -fno-fast-math)
+ if (COMPILER_IS_GCC_OR_CLANG)
++    # Prevent segfaults with -Ofast
++    WEBKIT_ADD_TARGET_CXX_FLAGS(LowLevelInterpreterLib -O3 -fno-strict-aliasing -fno-fast-math)
++    WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -O3 -fno-strict-aliasing -fno-fast-math)
 +
-     # On MIPS we have to explicitly disable madd4, since some versions of gcc still generate
-     # such instructions despite -ffp-contract=off
-     if (WTF_CPU_MIPS)
+     # Avoid using fused multiply-add instructions since this could give different results
+     # for e.g. parseInt depending on the platform and compilation flags.
+     if (WTF_CPU_LOONGARCH64)
