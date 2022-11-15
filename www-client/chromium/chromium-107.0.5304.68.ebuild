@@ -473,8 +473,8 @@ COMMON_SNAPSHOT_DEPEND="
 	media-libs/mesa:=[gbm(+),${MULTILIB_USEDEP}]
 	proprietary-codecs? ( >=media-libs/openh264-1.6.0:=[${MULTILIB_USEDEP}] )
 	system-av1? (
-		>=media-libs/dav1d-1.0.0:=
-		>=media-libs/libaom-3.4.0:=
+		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP},8bit]
+		>=media-libs/libaom-3.4.0:=[${MULTILIB_USEDEP}]
 	)
 	sys-libs/zlib:=[${MULTILIB_USEDEP}]
 	x11-libs/libdrm:=[${MULTILIB_USEDEP}]
