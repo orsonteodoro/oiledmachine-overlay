@@ -24,7 +24,7 @@ inherit check-linker check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr li
 multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs uopts
 inherit cflags-depends
 
-DESCRIPTION="Open source web browser engine (GTK 4)"
+DESCRIPTION="Open source web browser engine (GTK 4 with HTTP/2 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )

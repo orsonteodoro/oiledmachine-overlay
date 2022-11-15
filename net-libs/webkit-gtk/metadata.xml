@@ -296,7 +296,8 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       Builds WebXR support.  (EXPERIMENTAL / IN DEVELOPMENT)
     </flag>
     <flag name="webvtt">
-      Checks and pulls in dependencies required for full WebVTT support.
+      Used for in-band text tracks support with WebVTT used as a cue format
+      for subtitles or captions.
     </flag>
     <flag name="webrtc">
       Enables WebRTC support for audio or video communication.  (WebKitGTK
@@ -378,16 +379,16 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
   </use>
   <slots>
     <slot name="4">
-      Built with GTK+3 or GTK+2 with libsoup v2
+      Built with GTK+3 or GTK+2 with HTTP/1.1 support
     </slot>
     <slot name="4.1">
-      Built with GTK+3 with libsoup v3
+      Built with GTK+3 with HTTP/2 support
     </slot>
     <slot name="5">
-      Built with GTK 4 with libsoup v3
+      Built with GTK 4 with HTTP/2 support
     </slot>
     <slot name="6">
-      Built with GTK 4 with libsoup v3 with inner versioning changes
+      Built with GTK 4 with HTTP/2 support with inner versioning changes
     </slot>
     <subslots>
       Corresponds to the SOVERSION
