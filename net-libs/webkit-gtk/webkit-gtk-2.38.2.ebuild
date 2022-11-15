@@ -591,7 +591,7 @@ RDEPEND+="
 		>=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}]
 	)
 	geolocation? (
-		>=app-misc/geoclue-0.12.99:2.0
+		>=app-misc/geoclue-2.6.0:2.0
 	)
 	gles2? (
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+),gles2]
@@ -847,28 +847,25 @@ ewarn
 	fi
 }
 
-check_geolocation() {
-	if use geolocation ; then
-		if has_version "~app-misc/geoclue-2.5.7" ; then
-			local geoclue_repo=$(cat "${EROOT}/var/db/pkg/app-misc/geoclue-2.5.7"*"/repository")
-			if [[ "${geoclue_repo}" == "gentoo" ]] ; then
-ewarn
-ewarn "The gentoo repo version of geoclue may be broken if you have no GPS"
-ewarn "device but rely on Wi-Fi positioning system (WPS) method of converting"
-ewarn "the BSSID/SSID to Lat/Long.  Use the app-misc/geoclue from the"
-ewarn "oiledmachine-overlay version instead."
-ewarn
-			fi
-		fi
-	fi
-}
-
 # One of the major sources of lag comes from dependencies
 # These are strict to match performance to competition or normal builds.
 declare -A CFLAGS_RDEPEND=(
 	["media-libs/dav1d"]="-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
 	["media-libs/libvpx"]="-O1" # -O0 causes FPS to lag below 25 FPS.
 )
+
+check_geolocation() {
+	if has_version "app-misc/geoclue" ; then
+		if ! grep -q -e "submit-data=true" \
+			"${EROOT}/etc/geoclue/geoclue.conf" ; then
+ewarn
+ewarn "/etc/geoclue/geoclue.conf should be submit-data=true to get GPS"
+ewarn "coordinates with the router's BSSID for non-mobile devices or editing"
+ewarn "the [wifi] section to use another location service."
+ewarn
+		fi
+	fi
+}
 
 pkg_setup() {
 einfo
