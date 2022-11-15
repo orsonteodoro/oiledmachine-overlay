@@ -132,18 +132,14 @@ einfo
 }
 
 check_geolocation() {
-	if use geolocation ; then
-		if has_version "~app-misc/geoclue-2.5.7" ; then
-			local geoclue_repo=\
-$(cat "${EROOT}/var/db/pkg/app-misc/geoclue-2.5.7"*"/repository")
-			if [[ "${geoclue_repo}" == "gentoo" ]] ; then
+	if has_version "app-misc/geoclue" ; then
+		if ! grep -q -e "submit-data=true" \
+			"${EROOT}/etc/geoclue/geoclue.conf" ; then
 ewarn
-ewarn "The gentoo repo version of geoclue may be broken if you have no GPS"
-ewarn "device but rely on Wi-Fi positioning system (WPS) method of converting"
-ewarn "the BSSID/SSID to Lat/Long.  Use the app-misc/geoclue from the"
-ewarn "oiledmachine-overlay version instead."
+ewarn "${EROOT}/etc/geoclue/geoclue.conf should be submit-data=true to get GPS"
+ewarn "coordinates with the router's BSSID for non-mobile devices or editing"
+ewarn "the [wifi] section to use another location service."
 ewarn
-			fi
 		fi
 	fi
 }
