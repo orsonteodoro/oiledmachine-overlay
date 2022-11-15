@@ -470,6 +470,7 @@ S_BAK="${WORKDIR}/${PN}-${PV%_*}"
 # These are strict to match performance to competition or normal builds.
 declare -A CFLAGS_RDEPEND=(
 	["media-libs/dav1d"]="-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
+	["media-libs/libvpx"]="-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 
 MOZILLA_FIVE_HOME=""
