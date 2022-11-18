@@ -10,9 +10,9 @@ inherit multilib-minimal
 
 DESCRIPTION="Libraries for cryptographic UIs and accessing PKCS#11 modules"
 LICENSE="GPL-2+ LGPL-2+"
-KEYWORDS="~alpha amd64 arm arm64 ~ia64 ~loong ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux ~sparc-solaris ~x86-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~sparc-solaris ~x86-solaris"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/gcr"
-SLOT="0/1" # subslot = suffix of libgcr-base-3 and co
+SLOT="4/gcr4.4-gck2.2" # subslot = soname and soversion of libgcr and libgck
 IUSE+=" gtk gtk-doc +introspection systemd +vala"
 REQUIRED_USE+=" vala? ( introspection )"
 # For dependencies see: gcr-3.40.0/meson.build
@@ -21,12 +21,13 @@ DEPEND+="
 	>=app-crypt/gnupg-2.3.6
 	>=app-crypt/libsecret-0.20[${MULTILIB_USEDEP}]
 	>=app-crypt/p11-kit-0.19.0[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.44.0:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.68.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libgcrypt-1.2.2:0=[${MULTILIB_USEDEP}]
 	>=sys-apps/dbus-1[${MULTILIB_USEDEP}]
-	gtk? ( >=x11-libs/gtk+-3.22:3[introspection?,${MULTILIB_USEDEP}] )
+	gtk? ( gui-libs/gtk:4[introspection?] )
 	introspection? ( >=dev-libs/gobject-introspection-1.58:= )
 	systemd? ( sys-apps/systemd:=[${MULTILIB_USEDEP}] )
+	!<app-crypt/gcr-3.41.1-r1
 "
 RDEPEND+=" ${DEPEND}
 	app-crypt/gnupg
@@ -45,10 +46,6 @@ BDEPEND+="
 	vala? ( $(vala_depend) )
 "
 
-PATCHES=(
-	"${FILESDIR}"/3.38.0-optional-vapi.patch
-)
-
 pkg_setup() {
 	use vala && vala_setup
 	python-any-r1_pkg_setup
@@ -64,7 +61,7 @@ src_configure() {
 		cd "${BUILD_DIR}"
 		local emesonargs=(
 			$(multilib_native_usex introspection -Dintrospection=true -Dintrospection=false)
-			$(meson_use gtk)
+			$(meson_use gtk gtk4)
 			$(meson_use gtk-doc gtk_doc)
 			-Dgpg_path=/usr/bin/gpg
 			$(multilib_native_usex vala -Dvapi=true -Dvapi=false)
@@ -103,7 +100,7 @@ src_install() {
 	multilib_foreach_abi install_abi
 	if use gtk-doc; then
 		mkdir -p "${ED}"/usr/share/gtk-doc/html/ || die
-		mv "${ED}"/usr/share/doc/{gck-1,gcr-3,gcr-ui-3} "${ED}"/usr/share/gtk-doc/html/ || die
+		mv "${ED}"/usr/share/doc/{gck-2,gcr-4} "${ED}"/usr/share/gtk-doc/html/ || die
 	fi
 }
 
