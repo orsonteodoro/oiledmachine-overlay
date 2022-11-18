@@ -68,7 +68,6 @@ src_configure() {
 			$(meson_use gtk-doc gtk_doc)
 			-Dgpg_path=/usr/bin/gpg
 			$(multilib_native_usex vala -Dvapi=true -Dvapi=false)
-			-Dabi="${ABI}"
 		)
 		EMESON_SOURCE="${BUILD_DIR}" \
 		BUILD_DIR="${WORKDIR}/${P}-build-${ABI}" \
