@@ -294,8 +294,8 @@ einfo "LLVM=${LLVM_MAX_SLOT}"
 }
 
 EXPECTED_BUILD_FILES_FINGERPRINT="\
-44a2ecb819c7a32aebf9ca2f86a845f8a83ebfbe534736f6911008a1ff4b32e8\
-bfd60bc6e46f81ebb494ed789894941e7d01b2424d52ca021b33823ee5ce652c\
+b845416ae0b39fae96f801aa5f5ced8beedb9302b7234086437282a4c3e1a5f6\
+7e98a56819c213bbdc5f48ed7ed91024f66c33c5151954f36636a3f3653d64f9\
 "
 
 src_unpack() {
@@ -315,8 +315,8 @@ eerror
 eerror "A change to the build scripts was detected."
 eerror "Notify the ebuild maintainer for an update."
 eerror
-eerror "Expected build files fingerprint:\t\t${EXPECTED_BUILD_FILES_FINGERPRINT}"
-eerror "Actual build files fingerprint:\t\t${actual_build_files_fingerprint}"
+eerror "Expected build files fingerprint:\t${EXPECTED_BUILD_FILES_FINGERPRINT}"
+eerror "Actual build files fingerprint:\t${actual_build_files_fingerprint}"
 eerror
 			die
 		fi
