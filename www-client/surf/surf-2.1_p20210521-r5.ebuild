@@ -79,12 +79,12 @@ RDEPEND+="
 	gtk3? (
 		|| (
 			(
-				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
+				app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
 				net-libs/webkit-gtk:4[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
 				x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
 			)
 			(
-				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
+				app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
 				net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
 				x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
 			)
@@ -93,12 +93,12 @@ RDEPEND+="
 	gtk4? (
 		|| (
 			(
-				app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
+				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
 				gui-libs/gtk:4[X]
 				net-libs/webkit-gtk:5[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
 			)
 			(
-				app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
+				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
 				gui-libs/gtk:4[X]
 				net-libs/webkit-gtk:6[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
 			)
