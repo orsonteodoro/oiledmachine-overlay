@@ -66,10 +66,13 @@ SET_PROP_RDEPEND="
 
 RDEPEND+="
 	!sci-chemistry/surf
+	>=x11-misc/dmenu-4.7
+	app-shells/bash
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
+	sys-apps/grep
+	x11-apps/xprop
 	x11-libs/libX11[${MULTILIB_USEDEP}]
 	curl? (
-		app-shells/bash
 		net-misc/curl[${MULTILIB_USEDEP}]
 		x11-terms/st
 	)
@@ -103,24 +106,18 @@ RDEPEND+="
 	)
 	mod_adblock? (
 		$(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
-		x11-apps/xprop
 	)
 	mpv? (
-		app-shells/bash
 		media-video/mpv
 	)
 	plumb? (
-		app-shells/bash
 		x11-misc/xdg-utils
 	)
 	tabbed? (
 		x11-misc/tabbed
 	)
 	url-bar? (
-		>=x11-misc/dmenu-4.7
-		app-shells/bash
 		sys-apps/sed
-		x11-apps/xprop
 	)
 "
 DEPEND+="
@@ -417,7 +414,6 @@ eerror
 		sed -i -e "s|\[SmoothScrolling\]     =       { { .i = [01] },     },|\[SmoothScrolling\]     =       { { .i = 0 },     },|g" "${config_file}" || die
 	fi
 
-#omt
 	eapply "${FILESDIR}/surf-2.1-gtk4.patch"
 
 	if has_version "net-libs/webkit-gtk:6" && use gtk4 ; then
