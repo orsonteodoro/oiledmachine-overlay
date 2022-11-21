@@ -589,6 +589,14 @@ ewarn
 		fi
 	fi
 
+	if use gtk4 && use savedconfig ; then
+ewarn
+ewarn "You must change SETPROP in the header dropping -w \$1 from dmenu's arg"
+ewarn "for URL bar or find compatibility and rebuild again.  See the"
+ewarn "surf-2.1-gtk4.patch for details."
+ewarn
+	fi
+
 	check_geolocation
 }
 
