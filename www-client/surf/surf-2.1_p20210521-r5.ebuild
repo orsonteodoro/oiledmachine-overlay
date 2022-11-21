@@ -46,40 +46,81 @@ KEYWORDS="
 "
 SLOT="0"
 IUSE+="
-doc +geolocation mod_adblock mod_adblock_spam404 mod_adblock_easylist
-mod_autoopen mod_link_hints mod_searchengines mod_simple_bookmarking_redux
-tabbed update_adblock -pointer-lock +pulseaudio savedconfig +v4l
+${EXTERNAL_IUSE}
+curl doc gtk3 gtk4 +geolocation mod_adblock mod_adblock_spam404
+mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
+mod_simple_bookmarking_redux mpv tabbed update_adblock plumb -pointer-lock
++pulseaudio savedconfig -smoothscrolling +url-bar +v4l
 "
 REQUIRED_USE+="
+	^^ ( gtk3 gtk4 )
+	gtk4? ( !mod_adblock )
 	mod_adblock_easylist? ( mod_adblock )
 	mod_adblock_spam404? ( mod_adblock )
 	mod_searchengines? ( savedconfig )
 	mod_simple_bookmarking_redux? ( savedconfig )
 	update_adblock? ( mod_adblock )
 "
-# net-libs/webkit-gtk:4.1 is in testing
+SET_PROP_RDEPEND="
+"
+
 RDEPEND+="
-	!savedconfig? (
-		>=x11-misc/dmenu-4.7
+	!sci-chemistry/surf
+	dev-libs/glib:2[${MULTILIB_USEDEP}]
+	x11-libs/libX11[${MULTILIB_USEDEP}]
+	curl? (
+		app-shells/bash
 		net-misc/curl[${MULTILIB_USEDEP}]
-		x11-apps/xprop
 		x11-terms/st
 	)
-	!sci-chemistry/surf
-	app-crypt/gcr[gtk,${MULTILIB_USEDEP}]
-	dev-libs/glib:2[${MULTILIB_USEDEP}]
-	x11-libs/gtk+:3[${MULTILIB_USEDEP}]
-	x11-libs/libX11[${MULTILIB_USEDEP}]
+	gtk3? (
+		|| (
+			(
+				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
+				net-libs/webkit-gtk:4[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
+				x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
+			)
+			(
+				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
+				net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
+				x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
+			)
+		)
+	)
+	gtk4? (
+		|| (
+			(
+				app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
+				gui-libs/gtk:4[X]
+				net-libs/webkit-gtk:5[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
+			)
+			(
+				app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
+				gui-libs/gtk:4[X]
+				net-libs/webkit-gtk:6[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
+			)
+		)
+	)
 	mod_adblock? (
 		$(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
 		x11-apps/xprop
 	)
+	mpv? (
+		app-shells/bash
+		media-video/mpv
+	)
+	plumb? (
+		app-shells/bash
+		x11-misc/xdg-utils
+	)
 	tabbed? (
 		x11-misc/tabbed
 	)
-	|| (
-		net-libs/webkit-gtk:4[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
-		net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?]
+	url-bar? (
+		>=x11-misc/dmenu-4.7
+		app-shells/bash
+		sys-apps/sed
+		x11-apps/xprop
 	)
 "
 DEPEND+="
@@ -368,10 +409,43 @@ eerror
 
 	touch NEWS AUTHORS ChangeLog
 
-	if has_version "net-libs/webkit-gtk:4.1" ; then
+	if use smoothscrolling ; then
+		sed -i -e "s|\[SmoothScrolling\]     =       { { .i = [01] },     },|\[SmoothScrolling\]     =       { { .i = 1 },     },|g" "config.def.h" || die
+		sed -i -e "s|\[SmoothScrolling\]     =       { { .i = [01] },     },|\[SmoothScrolling\]     =       { { .i = 1 },     },|g" "${config_file}" || die
+	else
+		sed -i -e "s|\[SmoothScrolling\]     =       { { .i = [01] },     },|\[SmoothScrolling\]     =       { { .i = 0 },     },|g" "config.def.h" || die
+		sed -i -e "s|\[SmoothScrolling\]     =       { { .i = [01] },     },|\[SmoothScrolling\]     =       { { .i = 0 },     },|g" "${config_file}" || die
+	fi
+
+#omt
+	eapply "${FILESDIR}/surf-2.1-gtk4.patch"
+
+	if has_version "net-libs/webkit-gtk:6" && use gtk4 ; then
+einfo "Switching to webkit-gtk:6"
+		sed -i -e "s|webkit2gtk-4.0|webkitgtk-6.0|g" config.mk || die
+		sed -i -e "s|webkit2gtk-web-extension-4.0|webkitgtk-web-extension-6.0|g" config.mk || die
+		sed -i -e 's|gtk[+]-3.0|gtk4|g' config.mk || die
+		sed -i -e 's|gcr-3|gcr-4|g' config.mk || die
+		append-cflags -DWEBKIT_API_VERSION=0600
+	elif has_version "net-libs/webkit-gtk:5" && use gtk4 ; then
+einfo "Switching to webkit-gtk:5"
+		sed -i -e "s|webkit2gtk-4.0|webkit2gtk-5.0|g" config.mk || die
+		sed -i -e "s|webkit2gtk-web-extension-4.0|webkit2gtk-web-extension-5.0|g" config.mk || die
+		sed -i -e 's|gtk[+]-3.0|gtk4|g' config.mk || die
+		sed -i -e 's|gcr-3|gcr-4|g' config.mk || die
+		append-cflags -DWEBKIT_API_VERSION=0500
+	elif has_version "net-libs/webkit-gtk:4.1" && use gtk3 ; then
 einfo "Switching to webkit-gtk:4.1"
 		sed -i -e "s|webkit2gtk-4.0|webkit2gtk-4.1|g" config.mk || die
 		sed -i -e "s|webkit2gtk-web-extension-4.0|webkit2gtk-web-extension-4.1|g" config.mk || die
+		append-cflags -DWEBKIT_API_VERSION=0401
+	else
+		append-cflags -DWEBKIT_API_VERSION=0400
+	fi
+
+	if has_version "net-libs/webkit-gtk[gles2,wayland]" \
+		|| has_version "net-libs/webkit-gtk[opengl,wayland]" ; then
+		append-cflags -DWEBKIT_WPE=1
 	fi
 
 	multilib_copy_sources

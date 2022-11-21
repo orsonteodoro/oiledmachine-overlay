@@ -2,12 +2,12 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- only on the forked version found on oiledmachine-overlay -->
+    <!-- Only for the ebuild forked on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <maintainer type="person">
-    <!-- only on Gentoo's repo -->
+    <!-- Ebuild originators on the distro repo -->
     <email>jer@gentoo.org</email>
   </maintainer>
   <longdescription>
@@ -18,6 +18,10 @@
 
       SAVEDCONFIG_PATH - absolute path to config.h
 
+    Bugs:
+
+      Clipboard copy and paste in both gtk3 and gtk4 support.
+
   </longdescription>
   <upstream>
     <doc lang="en">https://git.suckless.org/surf/file/README.html</doc>
@@ -25,7 +29,7 @@
     <doc lang="en">
       https://git.suckless.org/surf/file/config.def.h.html#l131
     </doc>
-    <!-- see https://git.suckless.org/surf/file/LICENSE.html for a full list
+    <!-- See https://git.suckless.org/surf/file/LICENSE.html for a full list
     of maintainers -->
     <maintainer type="person" status="active">
       <email>quinq@fifth.space</email>
@@ -33,21 +37,62 @@
     </maintainer>
   </upstream>
   <use>
-    <flag name="geolocation">Adds geolocation support.</flag>
-    <flag name="mod_adblock">Adds adblocking support.</flag>
-    <flag name="mod_adblock_spam404">Adds adblocking with Spam404 lists.</flag>
-    <flag name="mod_adblock_easylist">Adds adblocking with EasyList lists.</flag>
-    <flag name="mod_autoopen">Adds xdg open support.</flag>
-    <flag name="mod_link_hints">Adds link hinting support.</flag>
-    <flag name="mod_searchengines">Adds custom search engine keyword searching
-      support.</flag>
-    <flag name="mod_simple_bookmarking_redux">Adds bookmarking support.</flag>
-    <flag name="pointer-lock">Enables pointer lock for webapps used for
-      games or first person simulators.</flag>
-    <flag name="pulseaudio">Adds PulseAudio and microphone support.</flag>
-    <flag name="savedconfig">Without a saved config.h, this package depends on
-      <pkg>net-misc/curl</pkg> and <pkg>x11-terms/st</pkg> for a default
-      download mechanism</flag>
-    <flag name="v4l">Adds camera support.</flag>
+    <flag name="geolocation">
+      Adds geolocation support.
+    </flag>
+    <flag name="gtk3">
+      Use GTK+3 as the primary dependency.  (Production ready)
+    </flag>
+    <flag name="gtk4">
+      Use GTK 4 as the primary dependency.  (EXPERIMENTAL, IN TESTING)
+    </flag>
+    <flag name="mod_adblock">
+      Adds adblocking support.
+    </flag>
+    <flag name="mod_adblock_spam404">
+      Uses Spam404 lists for adblocking.
+    </flag>
+    <flag name="mod_adblock_easylist">
+      Uses EasyList lists for adblocking.
+    </flag>
+    <flag name="mod_autoopen">
+      Adds xdg open support.
+    </flag>
+    <flag name="mod_link_hints">
+      Adds link hinting support.
+    </flag>
+    <flag name="mod_searchengines">
+      Adds custom search engine keyword searching support.
+    </flag>
+    <flag name="mod_simple_bookmarking_redux">
+      Adds bookmarking support.
+    </flag>
+    <flag name="smoothscrolling">
+      Enables smooth scrolling by default.
+    </flag>
+    <flag name="plumb">
+      Adds support for opening files with external programs passed to the URL
+      bar.
+    </flag>
+    <flag name="pointer-lock">
+      Enables pointer lock for webapps used for games or first person
+      simulators.
+    </flag>
+    <flag name="pulseaudio">
+      Adds PulseAudio and microphone support.
+    </flag>
+    <flag name="savedconfig">
+      Reuses an existing config.  Primarily for header only mods, custom
+      search engine keyword search, custom button configuration.
+    </flag>
+    <flag name="v4l">
+      Adds camera support.
+    </flag>
+    <flag name="url-bar">
+      Adds support for a URL bar and find-on-page feature.
+
+      Otherwise, pass the URL as an argument in command line.
+      (e.g. surf http://suckless.org)
+    </flag>
   </use>
 </pkgmetadata>
