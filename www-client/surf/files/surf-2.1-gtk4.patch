@@ -558,14 +558,14 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +	for (msection = msections; msection != NULL ; msection = msection->next) {
 +		GcrCertificateSection *section = msection->data;
 +		GListModel *fields;
-+		fields = gcr_certificate_section_get_fields (section);
++		fields = gcr_certificate_section_get_fields(section);
 +		guint fields_len = g_list_model_get_n_items(fields);
 +		for (guint i = 0; i < fields_len; i++) {
 +			GcrCertificateField *field = g_list_model_get_item(fields, i);
 +			GValue v = G_VALUE_INIT;
 +			GType vt;
 +			vt = gcr_certificate_field_get_value_type(field);
-+			g_value_init (&v, vt);
++			g_value_init(&v, vt);
 +			gcr_certificate_field_get_value(field, &v);
 +			gchar *val;
 +			GString *bstr = g_string_new(NULL);
@@ -594,7 +594,7 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +			g_object_unref(field);
 +		}
 +	}
-+	g_list_free_full (msections, (GDestroyNotify) g_object_unref);
++	g_list_free_full(msections, (GDestroyNotify)g_object_unref);
 +
 +	GtkButton *button = GTK_BUTTON(gtk_button_new_with_label("Close"));
 +	gtk_box_append(GTK_BOX(box), GTK_WIDGET(button));
