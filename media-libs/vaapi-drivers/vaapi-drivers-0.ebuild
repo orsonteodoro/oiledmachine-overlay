@@ -51,14 +51,14 @@ RDEPEND_DRIVERS="
 					media-libs/mesa:=[${MULTILIB_USEDEP},vaapi,video_cards_nouveau]
 				)
 				(
-					>=x11-libs/libva-vdpau-driver-0.7.4-r3[${MULTILIB_USEDEP}]
+					>=media-libs/libva-vdpau-driver-0.7.4-r3[${MULTILIB_USEDEP}]
 					media-libs/mesa:=[${MULTILIB_USEDEP},vdpau,video_cards_nouveau]
 				)
 			)
 		)
 		video_cards_nvidia? (
 			|| (
-				>=x11-libs/libva-vdpau-driver-0.7.4-r1[${MULTILIB_USEDEP}]
+				>=media-libs/libva-vdpau-driver-0.7.4-r1[${MULTILIB_USEDEP}]
 				media-plugins/nvidia-vaapi-driver
 			)
 			x11-drivers/nvidia-drivers
@@ -81,10 +81,10 @@ RDEPEND+="
 "
 
 pkg_postinst() {
-	if has_version "x11-libs/libva-intel-driver" ; then
+	if has_version "media-libs/libva-intel-driver" ; then
 ewarn
-ewarn "x11-libs/libva-intel-driver is the older VA-API driver but intended for"
-ewarn "Gen 4 and earlier.  See also x11-libs/libva-intel-media-driver package"
+ewarn "media-libs/libva-intel-driver is the older VA-API driver but intended for"
+ewarn "Gen 4 and earlier.  See also media-libs/libva-intel-media-driver package"
 ewarn "for Gen 5 or later to access more VA-API accelerated encoders if driver"
 ewarn "support overlaps."
 ewarn
