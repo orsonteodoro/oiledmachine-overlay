@@ -443,7 +443,7 @@ RDEPEND="
 	)
 	vaapi? (
 		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
-		media-libs/libva[${MULTILIB_USEDEP},drm]
+		media-libs/libva[${MULTILIB_USEDEP},drm(+)]
 	)
 "
 

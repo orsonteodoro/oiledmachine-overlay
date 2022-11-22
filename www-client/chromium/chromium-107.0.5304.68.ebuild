@@ -403,7 +403,7 @@ FFMPEG_V="4.3"
 LIBVA_DEPEND="
 	vaapi? (
 		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
-		>=media-libs/libva-${LIBVA_V}:=[${MULTILIB_USEDEP}]
+		>=media-libs/libva-${LIBVA_V}:=[X?,drm(+),wayland?,${MULTILIB_USEDEP}]
 		system-ffmpeg? (
 			>=media-video/ffmpeg-${FFMPEG_V}[vaapi,${MULTILIB_USEDEP}]
 		)
@@ -479,12 +479,12 @@ COMMON_SNAPSHOT_DEPEND="
 	sys-libs/zlib:=[${MULTILIB_USEDEP}]
 	x11-libs/libdrm:=[${MULTILIB_USEDEP}]
 	!headless? (
+		${LIBVA_DEPEND}
 		dev-libs/glib:2[${MULTILIB_USEDEP}]
 		>=media-libs/alsa-lib-1.0.19:=[${MULTILIB_USEDEP}]
 		pulseaudio? ( media-sound/pulseaudio:=[${MULTILIB_USEDEP}] )
 		sys-apps/pciutils:=[${MULTILIB_USEDEP}]
 		kerberos? ( virtual/krb5[${MULTILIB_USEDEP}] )
-		vaapi? ( >=media-libs/libva-${LIBVA_V}:=[X?,drm,wayland?,${MULTILIB_USEDEP}] )
 		X? (
 			x11-libs/libX11:=[${MULTILIB_USEDEP}]
 			x11-libs/libXext:=[${MULTILIB_USEDEP}]
@@ -509,7 +509,6 @@ VIRTUAL_UDEV="
 
 COMMON_DEPEND="
 	${COMMON_SNAPSHOT_DEPEND}
-	${LIBVA_DEPEND}
 	app-arch/bzip2:=[${MULTILIB_USEDEP}]
 	dev-libs/expat:=[${MULTILIB_USEDEP}]
 	system-ffmpeg? (

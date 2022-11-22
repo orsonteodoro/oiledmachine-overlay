@@ -739,7 +739,7 @@ BDEPEND+="
 	trainer-av-streaming? (
 		vaapi? (
 			media-video/libva-utils[vainfo]
-			>=media-libs/libva-1.2.1-r1:0=[X,drm,${MULTILIB_USEDEP}]
+			>=media-libs/libva-1.2.1-r1:0=[X,drm(+),${MULTILIB_USEDEP}]
 			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		)
 	)

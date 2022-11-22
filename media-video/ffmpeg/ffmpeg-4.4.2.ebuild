@@ -735,7 +735,7 @@ BDEPEND+="
 	trainer-av-streaming? (
 		vaapi? (
 			media-video/libva-utils[vainfo]
-			>=media-libs/libva-1.2.1-r1:0=[X,drm,${MULTILIB_USEDEP}]
+			>=media-libs/libva-1.2.1-r1:0=[X,drm(+),${MULTILIB_USEDEP}]
 			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		)
 	)
@@ -762,8 +762,8 @@ REQUIRED_USE+="
 	pgo? (
 		|| (
 			trainer-audio-cbr
-			trainer-audio-vbr
 			trainer-audio-lossless
+			trainer-audio-vbr
 			trainer-av-streaming
 			trainer-video-2-pass-constrained-quality
 			trainer-video-2-pass-constrained-quality-quick
