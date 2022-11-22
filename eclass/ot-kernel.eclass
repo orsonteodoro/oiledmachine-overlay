@@ -6824,6 +6824,10 @@ ot-kernel_src_install() {
 			# dosym src_relpath_real dest_abspath_symlink
 			dosym $(basename "${default_config}") $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${PV})-${extraversion}-${arch}
 
+			# For linux-info.eclass config checks
+			dosym $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${PV})-${extraversion}-${arch} \
+				"/usr/src/linux-${PV}-${extraversion}/.config"
+
 			einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
 			make mrproper ARCH=${arch} || die
 			if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" && -z "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
