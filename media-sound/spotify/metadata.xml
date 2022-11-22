@@ -25,6 +25,11 @@
       Support for hardware accelerated video decoding.  Useful for fullscreen
       video podcasts or power savings.
     </flag>
+    <flag name="wayland">
+      Add support for Wayland.  (EXPERIMENAL, UNSUPPORTED UPSTREAM)
+
+      Bugs:  Fullscreen video podcasts may segfault.
+    </flag>
     <flag name="zenity">
       Add support for the file picker used for locating local files.
     </flag>

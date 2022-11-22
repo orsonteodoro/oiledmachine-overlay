@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit desktop gnome2-utils unpacker xdg
+inherit desktop gnome2-utils toolchain-funcs unpacker xdg
 
 DESCRIPTION="A social music platform"
 HOMEPAGE="https://www.spotify.com"
@@ -47,7 +47,10 @@ KEYWORDS="~amd64"
 
 # Dropped systray USE flag because of license.
 
-IUSE="emoji ffmpeg libnotify pulseaudio vaapi zenity"
+IUSE="emoji ffmpeg libnotify pulseaudio vaapi wayland zenity +X"
+REQUIRED_USE="
+	|| ( wayland X )
+"
 RESTRICT="fetch mirror strip"
 
 # Support based on (20.04) LTS mainly but older LTSs may be supported.
@@ -82,14 +85,13 @@ OPTIONAL_RDEPENDS_UNLISTED="
 		media-sound/pulseaudio
 	)
 	vaapi? (
-		>=media-libs/libva-2.1[X]
+		>=media-libs/libva-2.1[wayland?,X?]
 		media-libs/vaapi-drivers
 	)
 	zenity? (
-		gnome-extra/zenity
+		>=gnome-extra/zenity-3.28.1
 	)
 "
-# TODO: Test wayland support with workaround.
 
 # START CEF DEPENDS
 # Some *DEPENDs below are copy pasted and based on the cef-bin ebuild.
@@ -113,21 +115,26 @@ CHROMIUM_CDEPEND="
 	>=dev-libs/libffi-3.2.1
 	>=dev-libs/nss-3.21
 	>=media-libs/alsa-lib-1.1.0
-	>=media-libs/mesa-11.2.0[gbm(+)]
+	>=media-libs/mesa-11.2.0[gbm(+),wayland?,X?]
 	>=sys-apps/pciutils-3.3.1
 	>=sys-apps/util-linux-2.27.1
 	>=sys-libs/glibc-2.23
 	>=sys-libs/libcap-2.24
 	>=sys-libs/pam-1.1.8
 	>=x11-libs/cairo-1.14.6
-	>=x11-libs/gtk+-3.18.9:3
-	>=x11-libs/libXtst-1.2.2
+	>=x11-libs/gtk+-3.18.9:3[wayland?,X?]
 	>=x11-libs/libdrm-2.4.67
+	wayland? (
+		>=dev-libs/wayland-1.13:=
+	)
+	X? (
+		>=x11-libs/libXtst-1.2.2
+	)
 "
 
 # Possibly Nth level dependencies, but not direct.
 UNLISTED_RDEPEND="
-	>=media-libs/mesa-11.2.0[egl(+)]
+	>=media-libs/mesa-11.2.0[egl(+),wayland?,X?]
 	>=x11-libs/libxkbcommon-0.5.0
 	dev-libs/fribidi
 	dev-libs/gmp
@@ -156,10 +163,6 @@ OPTIONAL_RDEPEND="
 	>=media-libs/vulkan-loader-1.0.8.0
 "
 
-CHROMIUM_RDEPEND_NOT_LISTED="
-	dev-libs/wayland
-"
-
 # cups is required or it will segfault.
 CHROMIUM_RDEPEND="
 	${CHROMIUM_CDEPEND}
@@ -174,26 +177,28 @@ CHROMIUM_RDEPEND="
 	>=media-libs/libpng-1.6.20
 	>=net-print/cups-2.1.3
 	>=sys-devel/gcc-5.4.0[cxx(+)]
-	>=x11-libs/libX11-1.6.3
-	>=x11-libs/libXau-1.0.8
-	>=x11-libs/libXcomposite-0.4.4
-	>=x11-libs/libXcursor-1.1.14
-	>=x11-libs/libXdamage-1.1.4
-	>=x11-libs/libXdmcp-1.1.2
-	>=x11-libs/libXext-1.3.3
-	>=x11-libs/libXfixes-5.0.1
-	>=x11-libs/libXi-${XI_V}
-	>=x11-libs/libXinerama-1.1.3
-	>=x11-libs/libXrandr-1.5.0
-	>=x11-libs/libXrender-0.9.9
-	>=x11-libs/libxcb-1.6.3
 	>=x11-libs/pango-1.38.1
 	>=x11-libs/pixman-0.33.6
 	>=sys-libs/zlib-1.2.8
+	X? (
+		>=x11-libs/libX11-1.6.3
+		>=x11-libs/libXau-1.0.8
+		>=x11-libs/libXcomposite-0.4.4
+		>=x11-libs/libXcursor-1.1.14
+		>=x11-libs/libXdamage-1.1.4
+		>=x11-libs/libXdmcp-1.1.2
+		>=x11-libs/libXext-1.3.3
+		>=x11-libs/libXfixes-5.0.1
+		>=x11-libs/libXi-${XI_V}
+		>=x11-libs/libXinerama-1.1.3
+		>=x11-libs/libXrandr-1.5.0
+		>=x11-libs/libXrender-0.9.9
+		>=x11-libs/libxcb-1.6.3
+	)
 "
 
 CEFCLIENT_RDEPENDS_NOT_LISTED="
-	>=x11-libs/gtk+:3
+	>=x11-libs/gtk+:3[wayland?,X?]
 "
 
 CEFCLIENT_RDEPENDS="
@@ -220,14 +225,16 @@ RDEPEND+="
 	>=dev-libs/nss-3.49.1
 	>=gnome-base/gconf-3.2.6
 	>=media-libs/alsa-lib-1.2.2
-	>=media-libs/mesa-20.0.4[X(+)]
+	>=media-libs/mesa-20.0.4[wayland?,X?]
 	>=net-misc/curl-7.68[ssl,gnutls]
-	>=x11-libs/gtk+-3.22.30:3
-	>=x11-libs/libXScrnSaver-1.2.3
-	>=x11-libs/libXtst-1.2.3
+	>=x11-libs/gtk+-3.22.30:3[wayland?,X?]
 	>=x11-misc/xdg-utils-1.1.3
 	sys-devel/gcc
 	sys-libs/glibc
+	X? (
+		>=x11-libs/libXScrnSaver-1.2.3
+		>=x11-libs/libXtst-1.2.3
+	)
 	|| (
 		=dev-libs/openssl-3*:0
 		=dev-libs/openssl-1.1*:0
@@ -244,6 +251,12 @@ RDEPEND+="
 
 BDEPEND+="
 	app-arch/gzip
+	wayland? (
+		|| (
+			sys-devel/gcc
+			sys-devel/clang
+		)
+	)
 "
 
 S="${WORKDIR}"
@@ -293,6 +306,30 @@ ewarn
 	fi
 }
 
+src_compile() {
+	if use wayland ; then
+		cat "${FILESDIR}/xstub.c" > "${T}/xstub.c" || die
+		CC=$(tc-getCC)
+		${CC} "${T}/xstub.c" -o "${T}/${PN}-xstub.so" -shared || die
+	fi
+}
+
+gen_x11_wrapper() {
+cat <<-EOF >"${D}/usr/bin/${PN}-wayland" || die
+#!/bin/sh
+exec "${DEST}/${PN}" "\$@"
+EOF
+	fperms +x /usr/bin/${PN}-wayland
+}
+
+gen_wayland_wrapper() {
+cat <<-EOF >"${D}/usr/bin/${PN}-x11" || die
+#!/bin/sh
+LD_PRELOAD=/usr/$(get_libdir)/${PN}-xstub.so exec "${DEST}/${PN}" --enable-features=UseOzonePlatform --ozone-platform=wayland "\$@"
+EOF
+	fperms +x /usr/bin/${PN}-x11
+}
+
 src_install() {
 	gunzip usr/share/doc/${PN}-client/changelog.gz || die
 	dodoc usr/share/doc/${PN}-client/changelog
@@ -308,11 +345,19 @@ src_install() {
 	fperms +x "${DEST}/${PN}"
 
 	dodir /usr/bin
-	cat <<-EOF >"${D}/usr/bin/${PN}" || die
-		#! /bin/sh
-		exec "${DEST}/${PN}" "\$@"
-	EOF
-	fperms +x /usr/bin/${PN}
+	if use wayland ; then
+		dolib.so "${T}/${PN}-xstub.so"
+		gen_wayland_wrapper
+	fi
+	if use X ; then
+		gen_x11_wrapper
+	fi
+
+	if use wayland ; then
+		dosym ${PN}-wayland /usr/bin/${PN}
+	elif use X ; then
+		dosym ${PN}-x11 /usr/bin/${PN}
+	fi
 
 	local FONT_SIZES=(
 		16
@@ -367,6 +412,21 @@ ewarn
 #einfo
 #einfo "CEF version:  ${CEF_VERSION}"
 #einfo
+	if use wayland ; then
+ewarn
+ewarn "Fullscreening a video podcast may segfault."
+ewarn
+	fi
+
+	if use wayland && use X ; then
+ewarn
+ewarn "This ebuild makes the alternative platform the default."
+ewarn "To override this choice you can choose one below:"
+ewarn
+ewarn "  ln -sf ${PN}-wayland /usr/bin/${PN}"
+ewarn "  ln -sf ${PN}-x11 /usr/bin/${PN}"
+ewarn
+	fi
 }
 
 pkg_postrm() {
