@@ -56,8 +56,8 @@ RESTRICT="fetch mirror strip"
 # Support based on (20.04) LTS mainly but older LTSs may be supported.
 
 # Found in Recommends: section of stable requirements.
-# If >=ffmpeg-5.0 is installed only, then podcasting doesn't work.
-# A few audio podcasts require <ffmpeg-5.0.
+# If >=ffmpeg-5.0 is installed only, then audio podcast playback doesn't work.
+# A few of these audio podcasts require <ffmpeg-5.0.
 OPTIONAL_RDEPENDS_LISTED="
 	ffmpeg? (
 		>=media-video/ffmpeg-4.2.2
