@@ -28,7 +28,7 @@
     <flag name="wayland">
       Add support for Wayland.  (EXPERIMENAL, UNSUPPORTED UPSTREAM)
 
-      Bugs:  Fullscreen video podcasts may segfault.
+      Bugs:  Fullscreen video podcasts may segfault, use cinema mode instead.
     </flag>
     <flag name="zenity">
       Add support for the file picker used for locating local files.

@@ -414,7 +414,8 @@ ewarn
 #einfo
 	if use wayland ; then
 ewarn
-ewarn "Fullscreening a video podcast may segfault."
+ewarn "Fullscreening a video podcast in a Wayland desktop environment may"
+ewarn "segfault, use cinema mode instead."
 ewarn
 	fi
 
