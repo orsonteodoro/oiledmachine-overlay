@@ -315,19 +315,19 @@ src_compile() {
 }
 
 gen_x11_wrapper() {
-cat <<-EOF >"${D}/usr/bin/${PN}-wayland" || die
+cat <<-EOF >"${D}/usr/bin/${PN}-x11" || die
 #!/bin/sh
 exec "${DEST}/${PN}" "\$@"
 EOF
-	fperms +x /usr/bin/${PN}-wayland
+	fperms +x /usr/bin/${PN}-x11
 }
 
 gen_wayland_wrapper() {
-cat <<-EOF >"${D}/usr/bin/${PN}-x11" || die
+cat <<-EOF >"${D}/usr/bin/${PN}-wayland" || die
 #!/bin/sh
 LD_PRELOAD=/usr/$(get_libdir)/${PN}-xstub.so exec "${DEST}/${PN}" --enable-features=UseOzonePlatform --ozone-platform=wayland "\$@"
 EOF
-	fperms +x /usr/bin/${PN}-x11
+	fperms +x /usr/bin/${PN}-wayland
 }
 
 src_install() {
