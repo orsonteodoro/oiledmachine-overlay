@@ -1,7 +1,7 @@
 // See https://gist.github.com/jamesob/7a71cff391b71582ef154f4db923ac4b
 #include <stdio.h>
 
-#define X_FN(f) int f() { puts("called"); return 0; }
+#define X_FN(f) int f() { return 0; }
 X_FN(XInternAtoms)
 X_FN(XChangeProperty)
 X_FN(XGetGeometry)
