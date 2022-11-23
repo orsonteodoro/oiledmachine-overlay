@@ -85,7 +85,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 		media-sound/pulseaudio
 	)
 	vaapi? (
-		>=media-libs/libva-2.1[wayland?,X?]
+		>=media-libs/libva-2.1[drm(+),wayland?,X?]
 		media-libs/vaapi-drivers
 	)
 	zenity? (
