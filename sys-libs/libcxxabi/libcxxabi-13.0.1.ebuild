@@ -13,21 +13,24 @@ HOMEPAGE="https://libcxxabi.llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
 KEYWORDS="amd64 arm arm64 ~riscv x86 ~x64-macos"
-IUSE="+libunwind static-libs test"
-IUSE+=" hardened"
+IUSE="
++libunwind static-libs test
+
+hardened r9
+"
 RDEPEND="
 	libunwind? (
 		|| (
-			>=sys-libs/libunwind-1.0.1-r1[static-libs?,${MULTILIB_USEDEP}]
-			>=sys-libs/llvm-libunwind-3.9.0-r1[static-libs?,${MULTILIB_USEDEP}]
+			>=sys-libs/libunwind-1.0.1-r1[${MULTILIB_USEDEP},static-libs?]
+			>=sys-libs/llvm-libunwind-3.9.0-r1[${MULTILIB_USEDEP},static-libs?]
 		)
 	)
 "
 # llvm-6 for new lit options
-LLVM_MAX_SLOT=${PV%%.*}
+LLVM_MAX_SLOT=${LLVM_MAJOR}
 DEPEND+="
 	${RDEPEND}
-	sys-devel/llvm:${LLVM_MAX_SLOT}
+	sys-devel/llvm:${LLVM_MAJOR}
 "
 BDEPEND+="
 	test? (
@@ -212,6 +215,17 @@ _configure_abi() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 
+	if tc-is-clang ; then
+		if ! has_version "clang:${SLOT_MAJOR}" ; then
+eerror
+eerror "You must emerge clang:${SLOT_MAJOR} to build with clang."
+eerror
+		fi
+		export CC="${CHOST}-clang-${SLOT_MAJOR}"
+		export CXX="${CHOST}-clang++-${SLOT_MAJOR}"
+		strip-unsupported-flags
+	fi
+
 einfo
 einfo "CC=${CC}"
 einfo "CXX=${CXX}"
@@ -245,12 +259,8 @@ einfo
 
 	# link against compiler-rt instead of libgcc if we are using clang with libunwind
 	local want_compiler_rt=OFF
-	if use libunwind && tc-is-clang; then
-		local compiler_rt=$("${CC}" ${CFLAGS} ${CPPFLAGS} \
-			${LDFLAGS} -print-libgcc-file-name)
-		if [[ ${compiler_rt} == *libclang_rt* ]]; then
-			want_compiler_rt=ON
-		fi
+	if use libunwind && [[ $(tc-get-c-rtlib) == compiler-rt ]]; then
+		want_compiler_rt=ON
 	fi
 
 	local libdir=$(get_libdir)

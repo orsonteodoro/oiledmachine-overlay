@@ -183,18 +183,6 @@ sys-devel/clang:16 llvm-16-commit.conf
 [2] https://llvm.org/docs/HowToBuildWithPGO.html
   </longdescription>
   <use>
-    <flag name="epgo">
-      Use event based Profile Guided Optimization to optimize the ebuild.
-      One PGO step per emerge is performed.  When a patch version bump
-      happens, it does only the PGO step.  It may result in 20% build
-      reduction with the optimized build.
-    </flag>
-    <flag name="ebolt">
-      Optimize code layout for better cache and branch prediction.  This may
-      improve performance by 15%.  This uses event based bolt where one
-      step is performed per emerge.  To progress to the next step you
-      re-emerge the ebuild with the BOLT training perf profile.
-    </flag>
     <flag name="default-compiler-rt">
       Use compiler-rt instead of libgcc as the default rtlib for clang
     </flag>
@@ -203,6 +191,21 @@ sys-devel/clang:16 llvm-16-commit.conf
     </flag>
     <flag name="default-lld">
       Use lld as the default linker for clang
+    </flag>
+    <flag name="ebolt">
+      Optimize code layout for better cache and branch prediction.  This may
+      improve performance by 15%.  This uses event based bolt where one
+      step is performed per emerge.  To progress to the next step you
+      re-emerge the ebuild with the BOLT training perf profile.
+    </flag>
+    <flag name="epgo">
+      Use event based Profile Guided Optimization to optimize the ebuild.
+      One PGO step per emerge is performed.  When a patch version bump
+      happens, it does only the PGO step.  It may result in 20% build
+      reduction with the optimized build.
+    </flag>
+    <flag name="extra">
+      Build extra tools (clangd, clang-tidy and a few more)
     </flag>
     <flag name="hardened">
       Match the hardened default on settings from hardened GCC

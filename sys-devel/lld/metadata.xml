@@ -124,5 +124,8 @@ sys-devel/clang:16 llvm-16-commit.conf
     <flag name="epgo">
       Builds with the event based Profile Guided Optimization strategy.
     </flag>
+    <flag name="r1">
+      Revision bump (FOR INTERNAL USE ONLY)
+    </flag>
   </use>
 </pkgmetadata>

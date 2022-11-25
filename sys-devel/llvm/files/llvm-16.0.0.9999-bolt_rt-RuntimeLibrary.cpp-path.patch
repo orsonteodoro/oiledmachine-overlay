@@ -1,0 +1,108 @@
+
+Subject:  Respect multilib
+
+//===- bolt/RuntimeLibs/RuntimeLibrary.h - Runtime Library ------*- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+//===- bolt/RuntimeLibs/HugifyRuntimeLibrary.cpp - Hugify RT Library ------===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+//===- bolt/RuntimeLibs/InstrumentationRuntimeLibrary.cpp -----------------===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+//===- bolt/RuntimeLibs/RuntimeLibrary.cpp - Runtime Library --------------===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+--- a/bolt.orig/include/bolt/RuntimeLibs/RuntimeLibrary.h	2022-11-24 20:19:34.359229244 -0800
++++ b/bolt/include/bolt/RuntimeLibs/RuntimeLibrary.h	2022-11-24 20:21:51.504734712 -0800
+@@ -60,7 +60,7 @@ protected:
+   uint64_t RuntimeStartAddress{0};
+ 
+   /// Get the full path to a runtime library specified by \p LibFileName.
+-  static std::string getLibPath(StringRef ToolPath, StringRef LibFileName);
++  static std::string getLibPath(BinaryContext &BC, StringRef ToolPath, StringRef LibFileName); // oteodoro:  added BC arg
+ 
+   /// Load a static runtime library specified by \p LibPath.
+   static void loadLibrary(StringRef LibPath, RuntimeDyld &RTDyld);
+--- a/bolt.orig/lib/RuntimeLibs/HugifyRuntimeLibrary.cpp	2022-11-24 20:19:34.743244664 -0800
++++ b/bolt/lib/RuntimeLibs/HugifyRuntimeLibrary.cpp	2022-11-24 20:21:51.504734712 -0800
+@@ -63,7 +63,7 @@ void HugifyRuntimeLibrary::adjustCommand
+ void HugifyRuntimeLibrary::link(BinaryContext &BC, StringRef ToolPath,
+                                 RuntimeDyld &RTDyld,
+                                 std::function<void(RuntimeDyld &)> OnLoad) {
+-  std::string LibPath = getLibPath(ToolPath, opts::RuntimeHugifyLib);
++  std::string LibPath = getLibPath(BC, ToolPath, opts::RuntimeHugifyLib); // oteodoro:  added BC arg
+   loadLibrary(LibPath, RTDyld);
+   OnLoad(RTDyld);
+   RTDyld.finalizeWithMemoryManagerLocking();
+--- a/bolt.orig/lib/RuntimeLibs/InstrumentationRuntimeLibrary.cpp	2022-11-24 20:19:34.743244664 -0800
++++ b/bolt/lib/RuntimeLibs/InstrumentationRuntimeLibrary.cpp	2022-11-24 20:21:51.504734712 -0800
+@@ -193,7 +193,7 @@ void InstrumentationRuntimeLibrary::emit
+ void InstrumentationRuntimeLibrary::link(
+     BinaryContext &BC, StringRef ToolPath, RuntimeDyld &RTDyld,
+     std::function<void(RuntimeDyld &)> OnLoad) {
+-  std::string LibPath = getLibPath(ToolPath, opts::RuntimeInstrumentationLib);
++  std::string LibPath = getLibPath(BC, ToolPath, opts::RuntimeInstrumentationLib); // oteodoro:  added BC arg
+   loadLibrary(LibPath, RTDyld);
+   OnLoad(RTDyld);
+   RTDyld.finalizeWithMemoryManagerLocking();
+--- a/bolt.orig/lib/RuntimeLibs/RuntimeLibrary.cpp	2022-11-24 20:19:34.743244664 -0800
++++ b/bolt/lib/RuntimeLibs/RuntimeLibrary.cpp	2022-11-24 20:25:14.772888454 -0800
+@@ -12,6 +12,7 @@
+ 
+ #include "bolt/RuntimeLibs/RuntimeLibrary.h"
+ #include "bolt/RuntimeLibs/RuntimeLibraryVariables.inc"
++#include "bolt/Core/BinaryFunction.h"
+ #include "bolt/Utils/Utils.h"
+ #include "llvm/BinaryFormat/Magic.h"
+ #include "llvm/ExecutionEngine/RuntimeDyld.h"
+@@ -25,16 +26,26 @@ using namespace bolt;
+ 
+ void RuntimeLibrary::anchor() {}
+ 
+-std::string RuntimeLibrary::getLibPath(StringRef ToolPath,
++std::string RuntimeLibrary::getLibPath(BinaryContext &BC,  // oteodoro:  added BC arg
++                                       StringRef ToolPath,
+                                        StringRef LibFileName) {
+   StringRef Dir = llvm::sys::path::parent_path(ToolPath);
+   SmallString<128> LibPath = llvm::sys::path::parent_path(Dir);
+-  llvm::sys::path::append(LibPath, "lib" LLVM_LIBDIR_SUFFIX);
++  std::string lib_dir("lib");                                                // oteodoro: start of added code block
++  if (BC.TheTriple->getArch() == llvm::Triple::aarch64) {                    // oteodoro:
++    lib_dir = "lib64";                                                       // oteodoro: Support multilib respecting lib conventions.
++  } else if (BC.TheTriple->getArch() == llvm::Triple::x86_64) {              // oteodoro:
++    lib_dir = "lib64";                                                       // oteodoro:
++  } else {                                                                   // oteodoro:
++    errs() << "BOLT-ERROR: Unsupported triple for this file\n";              // oteodoro:
++    exit(1);                                                                 // oteodoro:
++  }                                                                          // otedooro: end of added code block
++  llvm::sys::path::append(LibPath, lib_dir); // changed "lib" -> lib_dir
+   if (!llvm::sys::fs::exists(LibPath)) {
+     // In some cases we install bolt binary into one level deeper in bin/,
+     // we need to go back one more level to find lib directory.
+     LibPath = llvm::sys::path::parent_path(llvm::sys::path::parent_path(Dir));
+-    llvm::sys::path::append(LibPath, "lib" LLVM_LIBDIR_SUFFIX);
++    llvm::sys::path::append(LibPath, lib_dir); // oteodoro:  changed "lib" -> lib_dir
+   }
+   llvm::sys::path::append(LibPath, LibFileName);
+   if (!llvm::sys::fs::exists(LibPath)) {

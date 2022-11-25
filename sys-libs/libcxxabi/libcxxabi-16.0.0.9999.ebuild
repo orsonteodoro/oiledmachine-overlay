@@ -13,16 +13,19 @@ HOMEPAGE="https://libcxxabi.llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
 KEYWORDS=""
-IUSE=" static-libs test"
-IUSE+=" hardened r8"
+IUSE="
+static-libs test
+
+hardened r9
+"
 # in 15.x, cxxabi.h is moving from libcxx to libcxxabi
 RDEPEND="
 	!<sys-libs/libcxx-15
 "
-LLVM_MAX_SLOT=${PV%%.*}
+LLVM_MAX_SLOT=${LLVM_MAJOR}
 DEPEND+="
 	${RDEPEND}
-	sys-devel/llvm:${LLVM_MAX_SLOT}
+	sys-devel/llvm:${LLVM_MAJOR}
 "
 PATCHES=(
 	"${FILESDIR}/libcxxabi-15.0.0.9999-hardened.patch"
@@ -33,8 +36,10 @@ RESTRICT="!test? ( test )"
 # Don't strip CFI from .so files
 RESTRICT+=" strip"
 BDEPEND+="
+	!test? (
+		${PYTHON_DEPS}
+	)
 	test? (
-		>=sys-devel/clang-3.9.0
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)
 "
@@ -52,7 +57,7 @@ pkg_setup() {
 	# darwin prefix builds do not have llvm installed yet, so rely on bootstrap-prefix
 	# to set the appropriate path vars to LLVM instead of using llvm_pkg_setup.
 	if [[ ${CHOST} != *-darwin* ]] || has_version dev-lang/llvm; then
-		llvm_pkg_setup
+		LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
 	fi
 	python-any-r1_pkg_setup
 }
@@ -209,6 +214,17 @@ _configure_abi() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 
+	if tc-is-clang ; then
+		if ! has_version "clang:${SLOT_MAJOR}" ; then
+eerror
+eerror "You must emerge clang:${SLOT_MAJOR} to build with clang."
+eerror
+		fi
+		export CC="${CHOST}-clang-${SLOT_MAJOR}"
+		export CXX="${CHOST}-clang++-${SLOT_MAJOR}"
+		strip-unsupported-flags
+	fi
+
 einfo
 einfo "CC=${CC}"
 einfo "CXX=${CXX}"
@@ -236,15 +252,9 @@ einfo
 		'-Wl,-z,now' \
 		'-Wl,-z,relro'
 
-	# link against compiler-rt instead of libgcc if this is what clang does
-	local want_compiler_rt=OFF
-	if tc-is-clang; then
-		local compiler_rt=$("${CC}" ${CFLAGS} ${CPPFLAGS} \
-			${LDFLAGS} -print-libgcc-file-name)
-		if [[ ${compiler_rt} == *libclang_rt* ]]; then
-			want_compiler_rt=ON
-		fi
-	fi
+	# link to compiler-rt
+	local use_compiler_rt=OFF
+	[[ $(tc-get-c-rtlib) == compiler-rt ]] && use_compiler_rt=ON
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
@@ -256,7 +266,7 @@ einfo
 		#
 		#
 		-DLIBCXXABI_INCLUDE_TESTS=$(usex test)
-		-DLIBCXXABI_USE_COMPILER_RT=${want_compiler_rt}
+		-DLIBCXXABI_USE_COMPILER_RT=${use_compiler_rt}
 
 		# upstream is omitting standard search path for this
 		# probably because gcc & clang are bundling their own unwind.h
@@ -334,9 +344,6 @@ einfo
 	fi
 
 	if use test; then
-		local clang_path=$(type -P "${CHOST:+${CHOST}-}clang" 2>/dev/null)
-		[[ -n ${clang_path} ]] || die "Unable to find ${CHOST}-clang for tests"
-
 		mycmakeargs+=(
 			-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
 			-DLLVM_LIT_ARGS="$(get_lit_flags)"

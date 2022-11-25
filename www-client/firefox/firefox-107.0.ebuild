@@ -8,25 +8,27 @@ EAPI=8
 # with update sync updated to this version of the ebuild.
 # Revisions may change in the oiledmachine-overlay.
 
-# Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates it will have an esr suffix.
+# Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
 # For security advisories, see https://www.mozilla.org/en-US/security/advisories/
 
-# Due to versioning conflicts and ebuild assumptions, you cannot have stable and esr be the same version
 # The latest can be found with:
 __='
 curl -l http://ftp.mozilla.org/pub/firefox/releases/ \
 	| cut -f 3 -d ">" \
 	| cut -f 1 -d "<" \
-	| grep "esr" \
+	| grep -v "esr" \
+	| grep -v "b" \
 	| sed -e "s|/||g" \
 	| grep "^[0-9]" \
-	| sort -V
+	| sort -V \
+	| tail -n 1
 '
 
 # Version announcements can be found here also:
 # https://wiki.mozilla.org/Release_Management/Calendar
 
-FIREFOX_PATCHSET="firefox-102esr-patches-04j.tar.xz"
+
+FIREFOX_PATCHSET="firefox-107-patches-02j.tar.xz"
 
 LLVM_MAX_SLOT=13 # >= 14 causes build time failures with atomics
 
@@ -37,9 +39,9 @@ WANT_AUTOCONF="2.1"
 
 VIRTUALX_REQUIRED="pgo"
 
-MOZ_ESR=yes
+MOZ_ESR=
 
-MOZ_PV=${PV/e}
+MOZ_PV=${PV}
 MOZ_PV_SUFFIX=
 if [[ ${PV} =~ (_(alpha|beta|rc).*)$ ]] ; then
 	MOZ_PV_SUFFIX=${BASH_REMATCH[1]}
@@ -71,15 +73,11 @@ inherit cflags-depends
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 
 if [[ ${PV} == *_rc* ]] ; then
-	MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/candidates/${MOZ_PV}-candidates/build${PV##*e}"
-fi
-
-if [[ ${PV} == *e* ]] ; then
-	MOZ_SRC_BASE_URI="http://ftp.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
+	MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/candidates/${MOZ_PV}-candidates/build${PV##*_rc}"
 fi
 
 PATCH_URIS=(
-	https://dev.gentoo.org/~{juippis,whissi,slashbeast}/mozilla/patchsets/${FIREFOX_PATCHSET}
+	https://dev.gentoo.org/~{juippis,polynomial-c,whissi,slashbeast}/mozilla/patchsets/${FIREFOX_PATCHSET}
 )
 
 SRC_URI="
@@ -92,12 +90,12 @@ HOMEPAGE="https://www.mozilla.com/firefox"
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
-SLOT="esr"
+SLOT="rapid"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
 LICENSE_FINGERPRINT="\
-43af3d4fd2b3fa834f0b37e9cd3d866d20820a2ba13f51c1aab1bcf23714b6ce\
-7508e8e4f7d4e010c91ea3c9341ab9623b7ac7dc455c70680eb913a7550d09ac\
+b3c12f437e5a65cdc12a92193f59c2a01ec04b17066d23dcb44adb86ab1e15de\
+79493ff2220bd90c73cccab5e0f367bbae8e42ad7a7fc7ddfc12666f0f4d2571\
 " # SHA512
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
@@ -105,7 +103,7 @@ MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 # FF-XX.YY-THIRD-PARTY-LICENSES should be updated per new feature or if the \
 # fingerprint changes.
 # Update the license version also.
-LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-ESR-THIRD-PARTY-LICENSES"
+LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES"
 LICENSE+=" ${LICENSE_FILE_NAME}"
 LICENSE+="
 	(
@@ -186,8 +184,8 @@ LICENSE+="
 #   ( all-rights-reserved || ( MIT AFL-2.1 ) )
 #   ( all-rights-reserved || ( AFL-2.1 BSD ) )
 #   ( all-rights-reserved MIT )
-#   ( MIT GPL-2 )
 #   ( all-rights-reserved Apache-2.0 )
+#   ( MIT GPL-2 )
 # ) \
 #     third_party/webkit/PerformanceTests/**
 # ( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) ) \
@@ -242,7 +240,7 @@ LICENSE+="
 # ZLIB all-rights-reserved media/libjpeg/simd/powerpc/jdsample-altivec.c -- \#
 #   the vanilla ZLIB lib license doesn't contain all rights reserved
 
-# (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser
+# (unforced) -hwaccel , pgo, x11 + wayland are defaults in -bin browser
 IUSE+="
 alsa cpu_flags_arm_neon cups +dbus debug eme-free +hardened -hwaccel jack
 -jemalloc libcanberra libproxy libsecret +openh264 +pgo +pulseaudio
@@ -255,15 +253,15 @@ sndio selinux speech +system-av1 +system-harfbuzz +system-icu +system-jpeg
 IUSE+=" geckodriver +gmp-autoupdate screencast +X"
 
 REQUIRED_USE="
-	X
 	debug? ( !system-av1 )
 	libcanberra? ( || ( alsa pulseaudio ) )
 	vaapi? ( wayland )
-	wayland? ( X dbus )
+	wayland? ( dbus )
 	wifi? ( dbus )
 "
 
 # Firefox-only REQUIRED_USE flags
+REQUIRED_USE+=" || ( X wayland )"
 REQUIRED_USE+=" pgo? ( X )"
 REQUIRED_USE+=" screencast? ( wayland )"
 
@@ -287,7 +285,7 @@ gen_llvm_bdepends() {
 BDEPEND+=" || ( $(gen_llvm_bdepends) )"
 FF_ONLY_DEPEND="
 	!www-client/firefox:0
-	!www-client/firefox:rapid
+	!www-client/firefox:esr
 	screencast? ( media-video/pipewire:=[${MULTILIB_USEDEP}] )
 	selinux? ( sec-policy/selinux-mozilla )
 "
@@ -304,7 +302,7 @@ BDEPEND+="
 	>=dev-util/cbindgen-0.24.3
 	net-libs/nodejs
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=virtual/rust-1.59.0[${MULTILIB_USEDEP}]
+	>=virtual/rust-1.61.0[${MULTILIB_USEDEP}]
 	amd64? ( >=dev-lang/nasm-2.14 )
 	pgo? (
 		x11-base/xorg-server[xvfb]
@@ -316,14 +314,14 @@ BDEPEND+="
 CDEPEND="
 	${FF_ONLY_DEPEND}
 	|| (
-		>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
+		>=app-accessibility/at-spi2-core-2.46.0:2
 		dev-libs/atk[${MULTILIB_USEDEP}]
 	)
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.79.1[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.34[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.84[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	media-libs/fontconfig[${MULTILIB_USEDEP}]
 	media-libs/freetype[${MULTILIB_USEDEP}]
@@ -331,19 +329,8 @@ CDEPEND="
 	media-video/ffmpeg[${MULTILIB_USEDEP}]
 	sys-libs/zlib[${MULTILIB_USEDEP}]
 	virtual/freedesktop-icon-theme
-
-
+	x11-libs/cairo[${MULTILIB_USEDEP}]
 	x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
-
-
-
-
-
-
-
-
-
-
 	x11-libs/pango[${MULTILIB_USEDEP}]
 	x11-libs/pixman[${MULTILIB_USEDEP}]
 	dbus? (
@@ -352,7 +339,9 @@ CDEPEND="
 	)
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
 	libproxy? ( net-libs/libproxy[${MULTILIB_USEDEP}] )
+	selinux? ( sec-policy/selinux-mozilla )
 	sndio? ( >=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}] )
+	screencast? ( media-video/pipewire:= )
 	system-av1? (
 		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP},8bit]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
@@ -363,14 +352,15 @@ CDEPEND="
 	)
 	system-icu? ( >=dev-libs/icu-71.1:=[${MULTILIB_USEDEP}] )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1[${MULTILIB_USEDEP}] )
-	system-libevent? ( >=dev-libs/libevent-2.0:0=[threads,${MULTILIB_USEDEP}] )
-	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[postproc,${MULTILIB_USEDEP}] )
-	system-png? ( >=media-libs/libpng-1.6.35:0=[apng,${MULTILIB_USEDEP}] )
+	system-libevent? ( >=dev-libs/libevent-2.1.12:0=[${MULTILIB_USEDEP},threads] )
+	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[${MULTILIB_USEDEP},postproc] )
+	system-png? ( >=media-libs/libpng-1.6.35:0=[${MULTILIB_USEDEP},apng] )
 	system-webp? ( >=media-libs/libwebp-1.1.0:0=[${MULTILIB_USEDEP}] )
 	wayland? (
-		x11-libs/gtk+:3[wayland,${MULTILIB_USEDEP}]
+		>=media-libs/libepoxy-1.5.10-r1[${MULTILIB_USEDEP}]
+		x11-libs/gtk+:3[${MULTILIB_USEDEP},wayland]
 		x11-libs/libdrm[${MULTILIB_USEDEP}]
-		x11-libs/libxkbcommon[wayland,${MULTILIB_USEDEP}]
+		x11-libs/libxkbcommon[${MULTILIB_USEDEP},wayland]
 	)
 	wifi? (
 		kernel_linux? (
@@ -381,14 +371,14 @@ CDEPEND="
 	)
 	X? (
 		virtual/opengl[${MULTILIB_USEDEP}]
-		x11-libs/cairo[X,${MULTILIB_USEDEP}]
-		x11-libs/gtk+:3[X,${MULTILIB_USEDEP}]
+		x11-libs/cairo[${MULTILIB_USEDEP},X]
+		x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
 		x11-libs/libX11[${MULTILIB_USEDEP}]
 		x11-libs/libXcomposite[${MULTILIB_USEDEP}]
 		x11-libs/libXdamage[${MULTILIB_USEDEP}]
 		x11-libs/libXext[${MULTILIB_USEDEP}]
 		x11-libs/libXfixes[${MULTILIB_USEDEP}]
-		x11-libs/libxkbcommon[X,${MULTILIB_USEDEP}]
+		x11-libs/libxkbcommon[${MULTILIB_USEDEP},X]
 		x11-libs/libXrandr[${MULTILIB_USEDEP}]
 		x11-libs/libXtst[${MULTILIB_USEDEP}]
 		x11-libs/libxcb:=[${MULTILIB_USEDEP}]
@@ -462,7 +452,7 @@ DEPEND="
 	pulseaudio? (
 		|| (
 			media-sound/pulseaudio[${MULTILIB_USEDEP}]
-			>=media-sound/apulse-0.1.12-r4[sdk,${MULTILIB_USEDEP}]
+			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP},sdk]
 		)
 	)
 	X? (
@@ -473,11 +463,8 @@ DEPEND="
 
 RESTRICT="mirror"
 
-S="${WORKDIR}/${PN}-${PV/e}"
-S_BAK="${WORKDIR}/${PN}-${PV/e}"
-
-MOZILLA_FIVE_HOME=""
-BUILD_OBJ_DIR=""
+S="${WORKDIR}/${PN}-${PV%_*}"
+S_BAK="${WORKDIR}/${PN}-${PV%_*}"
 
 # One of the major sources of lag comes from dependencies
 # These are strict to match performance to competition or normal builds.
@@ -485,6 +472,9 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/dav1d"]="-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
 	["media-libs/libvpx"]="-O1" # -O0 causes FPS to lag below 25 FPS.
 )
+
+MOZILLA_FIVE_HOME=""
+BUILD_OBJ_DIR=""
 
 # Allow MOZ_GMP_PLUGIN_LIST to be set in an eclass or
 # overridden in the enviromnent (advanced hackers only)
@@ -710,6 +700,27 @@ mozconfig_use_with() {
 	mozconfig_add_options_ac "$(use ${1} && echo +${1} || echo -${1})" "${flag}"
 }
 
+virtwl() {
+	debug-print-function ${FUNCNAME} "$@"
+
+	[[ $# -lt 1 ]] && die "${FUNCNAME} needs at least one argument"
+	[[ -n $XDG_RUNTIME_DIR ]] || die "${FUNCNAME} needs XDG_RUNTIME_DIR to be set; try xdg_environment_reset"
+	tinywl -h >/dev/null || die 'tinywl -h failed'
+
+	# TODO: don't run addpredict in utility function. WLR_RENDERER=pixman doesn't work
+	addpredict /dev/dri
+	local VIRTWL VIRTWL_PID
+	coproc VIRTWL { WLR_BACKENDS=headless exec tinywl -s 'echo $WAYLAND_DISPLAY; read _; kill $PPID'; }
+	local -x WAYLAND_DISPLAY
+	read WAYLAND_DISPLAY <&${VIRTWL[0]}
+
+	debug-print "${FUNCNAME}: $@"
+	"$@"
+
+	[[ -n $VIRTWL_PID ]] || die "tinywl exited unexpectedly"
+	exec {VIRTWL[0]}<&- {VIRTWL[1]}>&-
+}
+
 pkg_pretend() {
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		if use pgo ; then
@@ -736,7 +747,7 @@ eerror
 NABIS=0
 pkg_setup() {
 einfo
-einfo "This is the ESR release."
+einfo "This is the rapid release."
 einfo
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		if use pgo ; then
@@ -827,6 +838,14 @@ eerror
 		addpredict /proc/self/oom_score_adj
 
 		if use pgo ; then
+			# Update 105.0: "/proc/self/oom_score_adj" isn't enough anymore with pgo, but not sure
+			# whether that's due to better OOM handling by Firefox (bmo#1771712), or portage
+			# (PORTAGE_SCHEDULING_POLICY) update...
+			addpredict /proc
+
+			# May need a wider addpredict when using wayland+pgo.
+			addpredict /dev/dri
+
 			# Allow access to GPU during PGO run
 			local ati_cards mesa_cards nvidia_cards render_cards
 			shopt -s nullglob
@@ -1013,6 +1032,9 @@ src_prepare() {
 	if is-flagq '-flto*' ; then
 		rm -fv "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	fi
+	if ! use ppc64 ; then
+		rm -v "${WORKDIR}"/firefox-patches/*bmo-1775202-ppc64*.patch
+	fi
 	eapply "${WORKDIR}/firefox-patches"
 	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disallow-store-data-races.patch"
 
@@ -1061,6 +1083,9 @@ src_prepare() {
 einfo "Removing pre-built binaries ..."
 	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) \
 		-print -delete || die
+
+	# Clearing checksums where we have applied patches
+	moz_clear_vendor_checksums bindgen
 
 	# Removed creation of a single build dir
 	#
@@ -1378,6 +1403,7 @@ einfo
 		--enable-release \
 		--enable-system-ffi \
 		--enable-system-pixman \
+		--enable-system-policies \
 		--host="${cbuild}" \
 		--libdir="${EPREFIX}/usr/$(get_libdir)" \
 		--prefix="${EPREFIX}/usr" \
@@ -1506,6 +1532,9 @@ einfo "Building without Mozilla API key ..."
 	if use X && use wayland ; then
 		mozconfig_add_options_ac '+x11+wayland' \
 			--enable-default-toolkit=cairo-gtk3-x11-wayland
+	elif ! use X && use wayland ; then
+		mozconfig_add_options_ac '+wayland' \
+			--enable-default-toolkit=cairo-gtk3-wayland-only
 	else
 		mozconfig_add_options_ac '+x11' \
 			--enable-default-toolkit=cairo-gtk3
@@ -1714,7 +1743,8 @@ ewarn
 	export MOZ_NOSPAM=1
 
 	# Portage sets XARGS environment variable to "xargs -r" by default which
-	# breaks build system's check_prog() function which doesn't support arguments
+	# breaks build system's check_prog() function which doesn't support
+	# arguments
 	mozconfig_add_options_ac \
 		'Gentoo default' \
 		"XARGS=${EPREFIX}/usr/bin/xargs"
@@ -1729,8 +1759,10 @@ einfo "Cross-compile ABI:\t\t${ABI}"
 einfo "Cross-compile CFLAGS:\t${CFLAGS}"
 einfo "Cross-compile CC:\t\t${CC}"
 einfo "Cross-compile CXX:\t\t${CXX}"
-	echo "export PKG_CONFIG=${chost}-pkg-config" >>${MOZCONFIG}
-	echo "export PKG_CONFIG_PATH=/usr/$(get_libdir)/pkgconfig:/usr/share/pkgconfig" >>${MOZCONFIG}
+echo "export PKG_CONFIG=${chost}-pkg-config" \
+	>>${MOZCONFIG}
+echo "export PKG_CONFIG_PATH=/usr/$(get_libdir)/pkgconfig:/usr/share/pkgconfig" \
+	>>${MOZCONFIG}
 
 	# Show flags we will use
 einfo "Build BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
@@ -1774,15 +1806,23 @@ _src_compile() {
 	local virtx_cmd=
 
 	if use pgo ; then
-		virtx_cmd=virtx
-
 		# Reset and cleanup environment variables used by GNOME/XDG
 		gnome2_environment_reset
 
 		addpredict /root
+
+		if ! use X; then
+			virtx_cmd=virtwl
+		else
+			virtx_cmd=virtx
+		fi
 	fi
 
-	local -x GDK_BACKEND=x11
+	if ! use X && use wayland; then
+		local -x GDK_BACKEND=wayland
+	else
+		local -x GDK_BACKEND=x11
+	fi
 
 	${virtx_cmd} ./mach build --verbose || die
 }
@@ -1937,8 +1977,8 @@ EOF
 	# Force hwaccel prefs if USE=hwaccel is enabled
 	if use hwaccel ; then
 		cat "${FILESDIR}"/gentoo-hwaccel-prefs.js-r2 \
-		>>"${GENTOO_PREFS}" \
-		|| die "failed to add prefs to force hardware-accelerated rendering to all-gentoo.js"
+		>>"${GENTOO_PREFS}" || \
+die "failed to add prefs to force hardware-accelerated rendering to all-gentoo.js"
 
 		if use wayland; then
 cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set hwaccel wayland prefs"
@@ -1955,15 +1995,18 @@ EOF
 		local plugin
 		for plugin in "${MOZ_GMP_PLUGIN_LIST[@]}" ; do
 einfo "Disabling auto-update for ${plugin} plugin ..."
-cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to disable autoupdate for ${plugin} media plugin"
+cat >>"${GENTOO_PREFS}" <<-EOF || \
+die "failed to disable autoupdate for ${plugin} media plugin"
 pref("media.${plugin}.autoupdate",   false);
 EOF
 		done
 	fi
 
-	# Force the graphite pref if USE=system-harfbuzz is enabled, since the pref cannot disable it
+	# Force the graphite pref if USE=system-harfbuzz is enabled, since the
+	# pref cannot disable it
 	if use system-harfbuzz ; then
-cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set gfx.font_rendering.graphite.enabled pref"
+cat >>"${GENTOO_PREFS}" <<-EOF || \
+die "failed to set gfx.font_rendering.graphite.enabled pref"
 sticky_pref("gfx.font_rendering.graphite.enabled", true);
 EOF
 	fi
@@ -1971,7 +2014,9 @@ EOF
 	# Install language packs
 	local langpacks=( $(find "${WORKDIR}/language_packs" -type f -name '*.xpi') )
 	if [[ -n "${langpacks}" ]] ; then
-		moz_install_xpi "${MOZILLA_FIVE_HOME}/distribution/extensions" "${langpacks[@]}"
+		moz_install_xpi \
+			"${MOZILLA_FIVE_HOME}/distribution/extensions" \
+			"${langpacks[@]}"
 	fi
 
 	# Install geckodriver

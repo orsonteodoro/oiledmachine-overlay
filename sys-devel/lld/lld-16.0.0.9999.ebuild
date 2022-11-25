@@ -15,14 +15,22 @@ DESCRIPTION="The LLVM linker (link editor)"
 HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA"
-SLOT="0"
+SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS=""
-IUSE="debug test"
-IUSE+=" hardened"
+IUSE="
+debug test zstd
+
+hardened r1
+"
 REQUIRED_USE+=" hardened? ( !test )"
 RESTRICT="!test? ( test )"
 
-RDEPEND="~sys-devel/llvm-${PV}"
+RDEPEND="
+	!sys-devel/lld:0
+	sys-libs/zlib:=
+	zstd? ( app-arch/zstd:= )
+	~sys-devel/llvm-${PV}
+"
 DEPEND="${RDEPEND}"
 BDEPEND="
 	ebolt? (
@@ -30,15 +38,15 @@ BDEPEND="
 	)
 	test? (
 		>=dev-util/cmake-3.16
-		$(python_gen_any_dep "~dev-python/lit-${PV}[\${PYTHON_USEDEP}]")
+		$(python_gen_any_dep ">=dev-python/lit-${PV}[\${PYTHON_USEDEP}]")
 	)
 "
 PDEPEND="
-	sys-devel/lld-toolchain-symlinks:${PV%%.*}
+	>=sys-devel/lld-toolchain-symlinks-16-r2:${LLVM_MAJOR}
 "
 
 LLVM_COMPONENTS=( lld cmake libunwind/include/mach-o )
-LLVM_TEST_COMPONENTS=( llvm/utils/{lit,unittest} )
+LLVM_TEST_COMPONENTS=( llvm/utils third-party )
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 
@@ -60,7 +68,7 @@ gen_rdepend() {
 	local f
 	for f in ${ALL_LLVM_TARGET_FLAGS[@]} ; do
 		echo  "
-			~sys-devel/llvm-${PV}:$(ver_cut 1 ${PV})=[${f}=]
+			~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[${f}=]
 		"
 	done
 }
@@ -72,11 +80,11 @@ HARDENED_PATCHES=(
 )
 
 python_check_deps() {
-	python_has_version "~dev-python/lit-${PV}[${PYTHON_USEDEP}]"
+	python_has_version ">=dev-python/lit-${PV}[${PYTHON_USEDEP}]"
 }
 
 pkg_setup() {
-	LLVM_MAX_SLOT=${PV%%.*} llvm_pkg_setup
+	LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
 	use test && python-any-r1_pkg_setup
 	uopts_setup
 
@@ -126,9 +134,9 @@ _src_configure() {
 	use elibc_musl && append-ldflags -Wl,-z,stack-size=2097152
 
 	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 		-DBUILD_SHARED_LIBS=ON
 		-DLLVM_INCLUDE_TESTS=$(usex test)
-		-DLLVM_MAIN_SRC_DIR="${WORKDIR}/llvm"
 	)
 	use test && mycmakeargs+=(
 		-DLLVM_BUILD_TESTS=ON

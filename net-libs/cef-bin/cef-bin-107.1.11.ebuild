@@ -16,8 +16,8 @@ HOMEPAGE="https://bitbucket.org/chromiumembedded/cef/src/master/"
 KEYWORDS="~arm ~arm64 ~amd64"
 # The download page can be found at https://cef-builds.spotifycdn.com/index.html
 
-CEF_VERSION_RAW="09/15/2022 - 105.3.39+g2ec21f9+chromium-105.0.5195.127 / Chromium 105.0.5195.127"
-CHROMIUM_V="${CEF_VERSION_RAW##* }" # same as https://bitbucket.org/chromiumembedded/cef/src/2ec21f9/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5195
+CEF_VERSION_RAW="11/16/2022 - 107.1.11+g26c0b5e+chromium-107.0.5304.110 / Chromium 107.0.5304.110"
+CHROMIUM_V="${CEF_VERSION_RAW##* }" # same as https://bitbucket.org/chromiumembedded/cef/src/26c0b5e/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5195
 CEF_COMMIT="${CEF_VERSION_RAW#*\+}" # same as https://bitbucket.org/chromiumembedded/cef/commits/
 CEF_COMMIT="${CEF_COMMIT%\+*}"
 CEF_COMMIT="${CEF_COMMIT:1:7}"
@@ -51,8 +51,8 @@ REQUIRED_USE+="
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
 # For details see:
-# Chromium runtime:  https://github.com/chromium/chromium/blob/105.0.5195.127/build/install-build-deps.sh#L237
-# Chromium buildtime:  https://github.com/chromium/chromium/blob/105.0.5195.127/build/install-build-deps.sh#L151
+# Chromium runtime:  https://github.com/chromium/chromium/blob/107.0.5304.110/build/install-build-deps.sh#L237
+# Chromium buildtime:  https://github.com/chromium/chromium/blob/107.0.5304.110/build/install-build-deps.sh#L151
 GLIB_V="2.48"
 XI_V="1.7.6"
 CHROMIUM_CDEPEND="

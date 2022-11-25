@@ -14,22 +14,25 @@ HOMEPAGE="https://libcxx.llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
 KEYWORDS="amd64 arm arm64 ~riscv sparc x86 ~x64-macos"
-IUSE="+libcxxabi +libunwind static-libs test"
-IUSE+=" hardened r10"
+IUSE="
++libcxxabi +libunwind static-libs test
+
+hardened r11
+"
 REQUIRED_USE="libunwind? ( libcxxabi )"
 RESTRICT="!test? ( test )"
 RDEPEND="
 	libcxxabi? (
-		~sys-libs/libcxxabi-${PV}:=[hardened?,libunwind=,static-libs?,${MULTILIB_USEDEP}]
+		~sys-libs/libcxxabi-${PV}:=[${MULTILIB_USEDEP},hardened?,libunwind=,static-libs?]
 	)
 	!libcxxabi? (
 		>=sys-devel/gcc-4.7:=[cxx]
 	)
 "
-LLVM_MAX_SLOT=${PV%%.*}
+LLVM_MAX_SLOT=${LLVM_MAJOR}
 DEPEND="
 	${RDEPEND}
-	sys-devel/llvm:${LLVM_MAX_SLOT}
+	sys-devel/llvm:${LLVM_MAJOR}
 "
 BDEPEND+="
 	test? (
@@ -235,6 +238,17 @@ is_cfi_supported() {
 _configure_abi() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+
+	if tc-is-clang ; then
+		if ! has_version "sys-devel/clang:${SLOT_MAJOR}" ; then
+eerror
+eerror "You must emerge clang:${SLOT_MAJOR} to build with clang."
+eerror
+		fi
+		export CC="${CHOST}-clang-${SLOT_MAJOR}"
+		export CXX="${CHOST}-clang++-${SLOT_MAJOR}"
+		strip-unsupported-flags
+	fi
 
 einfo
 einfo "CC=${CC}"

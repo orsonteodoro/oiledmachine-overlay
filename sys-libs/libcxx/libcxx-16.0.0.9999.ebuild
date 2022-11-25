@@ -14,22 +14,25 @@ HOMEPAGE="https://libcxx.llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
 KEYWORDS=""
-IUSE="+libcxxabi static-libs test"
-IUSE+=" hardened r8"
+IUSE="
++libcxxabi static-libs test
+
+hardened r11
+"
 REQUIRED_USE=""
 RESTRICT="!test? ( test )"
 RDEPEND="
 	libcxxabi? (
-		~sys-libs/libcxxabi-${PV}:=[hardened?,static-libs?,${MULTILIB_USEDEP}]
+		~sys-libs/libcxxabi-${PV}:=[${MULTILIB_USEDEP},hardened?,static-libs?]
 	)
 	!libcxxabi? (
 		>=sys-devel/gcc-4.7:=[cxx]
 	)
 "
-LLVM_MAX_SLOT=${PV%%.*}
+LLVM_MAX_SLOT=${LLVM_MAJOR}
 DEPEND="
 	${RDEPEND}
-	sys-devel/llvm:${LLVM_MAX_SLOT}
+	sys-devel/llvm:${LLVM_MAJOR}
 "
 BDEPEND+="
 	test? (
@@ -42,7 +45,6 @@ BDEPEND+="
 PATCHES=( "${FILESDIR}/libcxx-15.0.0.9999-hardened.patch" )
 
 LLVM_COMPONENTS=( runtimes libcxx{,abi} llvm/{cmake,utils/llvm-lit} cmake )
-LLVM_PATCHSET=9999-1
 llvm.org_set_globals
 
 python_check_deps() {
@@ -55,7 +57,7 @@ pkg_setup() {
 	# bootstrap-prefix to set the appropriate path vars to LLVM instead
 	# of using llvm_pkg_setup.
 	if [[ ${CHOST} != *-darwin* ]] || has_version dev-lang/llvm; then
-		llvm_pkg_setup
+		LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
 	fi
 	python-any-r1_pkg_setup
 
@@ -236,6 +238,17 @@ _configure_abi() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 
+	if tc-is-clang ; then
+		if ! has_version "sys-devel/clang:${SLOT_MAJOR}" ; then
+eerror
+eerror "You must emerge clang:${SLOT_MAJOR} to build with clang."
+eerror
+		fi
+		export CC="${CHOST}-clang-${SLOT_MAJOR}"
+		export CXX="${CHOST}-clang++-${SLOT_MAJOR}"
+		strip-unsupported-flags
+	fi
+
 einfo
 einfo "CC=${CC}"
 einfo "CXX=${CXX}"
@@ -263,15 +276,9 @@ einfo
 		'-Wl,-z,now' \
 		'-Wl,-z,relro'
 
-	# link against compiler-rt instead of libgcc if this is what clang does
-	local want_compiler_rt=OFF
-	if tc-is-clang; then
-		local compiler_rt=$($(tc-getCC) ${CFLAGS} ${CPPFLAGS} \
-			${LDFLAGS} -print-libgcc-file-name)
-		if [[ ${compiler_rt} == *libclang_rt* ]]; then
-			want_compiler_rt=ON
-		fi
-	fi
+	# link to compiler-rt
+	local use_compiler_rt=OFF
+	[[ $(tc-get-c-rtlib) == compiler-rt ]] && use_compiler_rt=ON
 
 	# bootstrap: cmake is unhappy if compiler can't link to stdlib
 	local nolib_flags=( -nodefaultlibs -lc )
@@ -299,7 +306,7 @@ einfo
 		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
 		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
 		-DLIBCXX_INCLUDE_TESTS=$(usex test)
-		-DLIBCXX_USE_COMPILER_RT=${want_compiler_rt}
+		-DLIBCXX_USE_COMPILER_RT=${use_compiler_rt}
 		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
 
 		-DLTO=${_lto}
