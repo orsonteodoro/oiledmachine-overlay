@@ -18,7 +18,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ppc64 ~riscv ~x86 ~amd64-linux ~ppc-macos ~x64-maco
 IUSE="
 +abi_x86_32 abi_x86_64 +clang debug test
 
-+libfuzzer +memprof +orc +profile +xray
++libfuzzer +memprof +orc +profile +xray r2
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -44,7 +44,7 @@ PATCHES=(
 	"${FILESDIR}/compiler-rt-sanitizers-13.0.0-disable-cfi-assert-for-autoconf.patch"
 )
 
-LLVM_MAX_SLOT=${SLOT%%.*}
+LLVM_MAX_SLOT=${LLVM_MAJOR}
 DEPEND="
 	sys-devel/llvm:${LLVM_MAJOR}
 	virtual/libcrypt[abi_x86_32(-)?,abi_x86_64(-)?]
@@ -56,8 +56,8 @@ BDEPEND="
 	test? (
 		!!<sys-apps/sandbox-2.13
 		$(python_gen_any_dep ">=dev-python/lit-15[\${PYTHON_USEDEP}]")
-		=sys-devel/clang-${LLVM_VERSION}*:${LLVM_MAJOR}
 		sys-libs/compiler-rt:${LLVM_VERSION}
+		~sys-devel/clang-${LLVM_VERSION}:${LLVM_MAJOR}
 	)
 	!test? (
 		${PYTHON_DEPS}

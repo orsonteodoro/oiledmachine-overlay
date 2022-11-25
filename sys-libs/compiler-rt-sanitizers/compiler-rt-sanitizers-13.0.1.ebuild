@@ -18,7 +18,7 @@ KEYWORDS="amd64 arm arm64 ppc64 ~riscv x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="
 +abi_x86_32 abi_x86_64 +clang debug test
 
-+libfuzzer +memprof +orc +profile +xray
++libfuzzer +memprof +orc +profile +xray r2
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -37,16 +37,16 @@ REQUIRED_USE="
 	)
 "
 RESTRICT="
-	!test? ( test )
 	!clang? ( test )
+	!test? ( test )
 "
 PATCHES=(
 	"${FILESDIR}/compiler-rt-sanitizers-13.0.0-disable-cfi-assert-for-autoconf.patch"
 )
 
-LLVM_MAX_SLOT=${SLOT%%.*}
+LLVM_MAX_SLOT=${LLVM_MAJOR}
 DEPEND="
-	sys-devel/llvm:${LLVM_MAX_SLOT}
+	sys-devel/llvm:${LLVM_MAJOR}
 	virtual/libcrypt[abi_x86_32(-)?,abi_x86_64(-)?]
 "
 BDEPEND="
@@ -56,8 +56,8 @@ BDEPEND="
 	test? (
 		!!<sys-apps/sandbox-2.13
 		$(python_gen_any_dep ">=dev-python/lit-5[\${PYTHON_USEDEP}]")
-		=sys-devel/clang-${PV%_*}*:${LLVM_MAX_SLOT}
-		sys-libs/compiler-rt:${SLOT}
+		sys-libs/compiler-rt:${LLVM_VERSION}
+		~sys-devel/clang-${LLVM_VERSION}:${LLVM_MAJOR}
 	)
 	!test? (
 		${PYTHON_DEPS}
@@ -172,14 +172,14 @@ src_configure() {
 			-DLLVM_LIT_ARGS="$(get_lit_flags)"
 
 			# they are created during src_test()
-			-DCOMPILER_RT_TEST_COMPILER="${BUILD_DIR}/lib/llvm/${LLVM_MAX_SLOT}/bin/clang"
-			-DCOMPILER_RT_TEST_CXX_COMPILER="${BUILD_DIR}/lib/llvm/${LLVM_MAX_SLOT}/bin/clang++"
+			-DCOMPILER_RT_TEST_COMPILER="${BUILD_DIR}/lib/llvm/${LLVM_MAJOR}/bin/clang"
+			-DCOMPILER_RT_TEST_CXX_COMPILER="${BUILD_DIR}/lib/llvm/${LLVM_MAJOR}/bin/clang++"
 		)
 
 		# same flags are passed for build & tests, so we need to strip
 		# them down to a subset supported by clang
-		CC=${EPREFIX}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang \
-		CXX=${EPREFIX}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang++ \
+		CC=${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang \
+		CXX=${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang++ \
 		strip-unsupported-flags
 	fi
 
@@ -206,17 +206,17 @@ src_configure() {
 
 		# copy clang over since resource_dir is located relatively to binary
 		# therefore, we can put our new libraries in it
-		mkdir -p "${BUILD_DIR}"/lib/{llvm/${LLVM_MAX_SLOT}/{bin,$(get_libdir)},clang/${SLOT}/include} || die
-		cp "${EPREFIX}"/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang{,++} \
-			"${BUILD_DIR}"/lib/llvm/${LLVM_MAX_SLOT}/bin/ || die
+		mkdir -p "${BUILD_DIR}"/lib/{llvm/${LLVM_MAJOR}/{bin,$(get_libdir)},clang/${SLOT}/include} || die
+		cp "${EPREFIX}"/usr/lib/llvm/${LLVM_MAJOR}/bin/clang{,++} \
+			"${BUILD_DIR}"/lib/llvm/${LLVM_MAJOR}/bin/ || die
 		cp "${EPREFIX}"/usr/lib/clang/${SLOT}/include/*.h \
 			"${BUILD_DIR}"/lib/clang/${SLOT}/include/ || die
 		cp "${sys_dir}"/*builtins*.a \
 			"${BUILD_DIR}/lib/clang/${SLOT}/lib/${sys_dir##*/}/" || die
 		# we also need LLVMgold.so for gold-based tests
-		if [[ -f ${EPREFIX}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/LLVMgold.so ]]; then
-			ln -s "${EPREFIX}"/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/LLVMgold.so \
-				"${BUILD_DIR}"/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/ || die
+		if [[ -f ${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/LLVMgold.so ]]; then
+			ln -s "${EPREFIX}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/LLVMgold.so \
+				"${BUILD_DIR}"/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/ || die
 		fi
 	fi
 }
