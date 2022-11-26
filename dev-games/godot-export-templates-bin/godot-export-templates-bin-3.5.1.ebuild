@@ -7,9 +7,9 @@ EAPI=8
 STATUS="stable"
 
 ANDROID_MIN_API="19"
-ANDROID_SDK_V="30"
+ANDROID_SDK_V="32"
 IOS_MIN="10.0"
-MONO_PV="6.12.0.158" # no release reference in godot-mono-builds repo
+MONO_PV="6.12.0.182"
 EMSCRIPTEN_PV="1.39.9" # emsdk_pv == emscripten-core_pv
 
 # To get the internal dependency versions of the EMSCRIPTEN_PV build:

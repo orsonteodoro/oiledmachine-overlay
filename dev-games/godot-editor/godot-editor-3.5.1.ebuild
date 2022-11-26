@@ -11,7 +11,7 @@ MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 
 STATUS="stable"
-MONO_PV="6.12.0.158" # same as godot-export-templates-bin
+MONO_PV="6.12.0.182" # same as godot-export-templates-bin
 
 FRAMEWORK="4.5" # Target .NET Framework
 VIRTUALX_REQUIRED=manual
@@ -43,7 +43,7 @@ LICENSE="
 	ZLIB
 "
 
-# See https://github.com/godotengine/godot/blob/3.4.5-stable/thirdparty/README.md for Apache-2.0 licensed third party.
+# See https://github.com/godotengine/godot/blob/3.5.1-stable/thirdparty/README.md for Apache-2.0 licensed third party.
 
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # \
 #   The MIT license does not have all rights reserved but the source does
@@ -281,7 +281,7 @@ DEPEND+="
 			app-misc/ca-certificates[cacert]
 		)
 		!ca-certs-relax? (
-			>=app-misc/ca-certificates-20220331[cacert]
+			>=app-misc/ca-certificates-20220719[cacert]
 		)
 	)
         gamepad? ( virtual/libudev )
@@ -290,7 +290,7 @@ DEPEND+="
 	system-embree? ( >=media-libs/embree-3.13.0 )
 	system-freetype? ( >=media-libs/freetype-${FREETYPE_V} )
 	system-libogg? ( >=media-libs/libogg-${LIBOGG_V} )
-	system-libpng? ( >=media-libs/libpng-1.6.37 )
+	system-libpng? ( >=media-libs/libpng-1.6.38 )
 	system-libtheora? ( >=media-libs/libtheora-1.1.1 )
 	system-libvorbis? ( >=media-libs/libvorbis-${LIBVORBIS_V} )
 	system-libvpx? ( >=media-libs/libvpx-1.6.0 )
