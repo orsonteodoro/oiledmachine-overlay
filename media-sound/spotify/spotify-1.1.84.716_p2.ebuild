@@ -348,12 +348,6 @@ src_install() {
 	gen_wrapper
 	fperms +x /usr/bin/${PN}
 
-	if use wayland ; then
-		dosym ${PN}-wayland /usr/bin/${PN}
-	elif use X ; then
-		dosym ${PN}-x11 /usr/bin/${PN}
-	fi
-
 	local FONT_SIZES=(
 		16
 		22
