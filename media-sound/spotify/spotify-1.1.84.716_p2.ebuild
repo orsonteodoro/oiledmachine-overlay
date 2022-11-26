@@ -314,20 +314,19 @@ src_compile() {
 	fi
 }
 
-gen_x11_wrapper() {
-cat <<-EOF >"${D}/usr/bin/${PN}-x11" || die
+gen_wrapper() {
+cat <<-EOF >"${D}/usr/bin/${PN}" || die
 #!/bin/sh
-exec "${DEST}/${PN}" "\$@"
+if test -n "\${DISPLAY}" ; then
+	exec "${DEST}/${PN}" "\$@"
+else
+	LD_PRELOAD=/usr/$(get_libdir)/${PN}-xstub.so \
+	exec "${DEST}/${PN}" \
+		--enable-features=UseOzonePlatform \
+		--ozone-platform=wayland \
+		"\$@"
+fi
 EOF
-	fperms +x /usr/bin/${PN}-x11
-}
-
-gen_wayland_wrapper() {
-cat <<-EOF >"${D}/usr/bin/${PN}-wayland" || die
-#!/bin/sh
-LD_PRELOAD=/usr/$(get_libdir)/${PN}-xstub.so exec "${DEST}/${PN}" --enable-features=UseOzonePlatform --ozone-platform=wayland "\$@"
-EOF
-	fperms +x /usr/bin/${PN}-wayland
 }
 
 src_install() {
@@ -345,13 +344,9 @@ src_install() {
 	fperms +x "${DEST}/${PN}"
 
 	dodir /usr/bin
-	if use wayland ; then
-		dolib.so "${T}/${PN}-xstub.so"
-		gen_wayland_wrapper
-	fi
-	if use X ; then
-		gen_x11_wrapper
-	fi
+	use wayland && dolib.so "${T}/${PN}-xstub.so"
+	gen_wrapper
+	fperms +x /usr/bin/${PN}
 
 	if use wayland ; then
 		dosym ${PN}-wayland /usr/bin/${PN}
@@ -416,16 +411,6 @@ ewarn
 ewarn
 ewarn "Fullscreening a video podcast in a Wayland desktop environment may"
 ewarn "segfault, use cinema mode instead."
-ewarn
-	fi
-
-	if use wayland && use X ; then
-ewarn
-ewarn "This ebuild makes the alternative platform the default."
-ewarn "To override this choice you can choose one below:"
-ewarn
-ewarn "  ln -sf ${PN}-wayland /usr/bin/${PN}"
-ewarn "  ln -sf ${PN}-x11 /usr/bin/${PN}"
 ewarn
 	fi
 }
