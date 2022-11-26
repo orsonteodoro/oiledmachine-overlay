@@ -221,7 +221,7 @@ _configure_abi() {
 	export CXX=$(tc-getCXX)
 
 	if tc-is-clang ; then
-		if ! has_version "clang:${SLOT_MAJOR}" ; then
+		if ! has_version "sys-devel/clang:${SLOT_MAJOR}" ; then
 eerror
 eerror "You must emerge clang:${SLOT_MAJOR} to build with clang."
 eerror
