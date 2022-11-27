@@ -72,7 +72,7 @@ LICENSE="
 " # This package is actually LGPL-2.1+, but certain dependencies are LGPL-2.1
 # The extra licenses are for static-libs.
 if [ "${PV#9999}" = "${PV}" ] ; then
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux ~x64-macos"
+	KEYWORDS="~alpha ~amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ppc ppc64 ~riscv sparc ~x86 ~amd64-linux ~x86-linux ~x64-macos"
 fi
 
 # Options to use as use_enable in the foo[:bar] form.
@@ -694,7 +694,6 @@ RDEPEND+="
 		>=x11-libs/libXv-1.0.10[${MULTILIB_USEDEP}]
 		>=x11-libs/libxcb-1.4:=[${MULTILIB_USEDEP}]
 	)
-	postproc? ( !media-libs/libpostproc )
 	zeromq? ( >=net-libs/zeromq-4.1.6 )
 	zimg? ( >=media-libs/zimg-2.7.4:=[${MULTILIB_USEDEP}] )
 	zlib? ( >=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}] )
@@ -814,8 +813,6 @@ S_orig="${WORKDIR}/${P/_/-}"
 N_SAMPLES=1
 
 SRC_URI+="
-https://github.com/FFmpeg/FFmpeg/commit/e5163b1d34381a3319214a902ef1df923dd2eeba.patch
-	-> ${PN}-e5163b1.patch
 https://github.com/FFmpeg/FFmpeg/commit/c6fdbe26ef30fff817581e5ed6e078d96111248a.patch
 	-> ${PN}-c6fdbe2.patch
 "
@@ -826,9 +823,9 @@ https://github.com/FFmpeg/FFmpeg/commit/c6fdbe26ef30fff817581e5ed6e078d96111248a
 PATCHES=(
 	"${FILESDIR}/chromium-r1.patch"
 	"${FILESDIR}/${PN}-5.0-backport-ranlib-build-fix.patch"
-	"${DISTDIR}/${PN}-e5163b1.patch"
 	"${DISTDIR}/${PN}-c6fdbe2.patch"
 	"${FILESDIR}/${PN}-5.1.2-allow-7regs.patch"
+	"${FILESDIR}/${P}-clang-14-ff_seek_frame_binary-crash.patch"
 )
 
 MULTILIB_WRAPPED_HEADERS=(
@@ -1518,12 +1515,6 @@ eerror
 		$(multilib_native_use_enable doc htmlpages)
 		$(multilib_native_enable manpages)
 	)
-
-	if use arm || use ppc || use mips || [[ ${CHOST} == *i486* ]] ; then
-		# bug #782811
-		# bug #790590
-		extra_libs+=( --extra-libs="$(test-flags-CCLD -latomic)" )
-	fi
 
 	local static_args=()
 	if [[ "${lib_type}" == "static" ]] ; then
