@@ -38,9 +38,9 @@ MTD_V="${PV}"
 CTDM_V="${PV}"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
+	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
 	ppc64? (
-		https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
-			https://quickbuild.io/~raptor-engineering-public/+archive/ubuntu/chromium/+files/${PATCHSET_NAME_PPC64}.tar.xz
+		https://quickbuild.io/~raptor-engineering-public/+archive/ubuntu/chromium/+files/${PATCHSET_NAME_PPC64}.tar.xz
 	)
 "
 #
@@ -279,8 +279,9 @@ ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 +official pic +proprietary-codecs pulseaudio qt5 screencast selinux +suid
 -system-av1 -system-ffmpeg -system-icu -system-harfbuzz -system-png +vaapi
 wayland widevine
+
+r1
 "
-IUSE+=" r0"
 # What is considered a proprietary codec can be found at:
 #   https://github.com/chromium/chromium/blob/107.0.5304.110/media/filters/BUILD.gn#L160
 #   https://github.com/chromium/chromium/blob/107.0.5304.110/media/media_options.gni#L38
