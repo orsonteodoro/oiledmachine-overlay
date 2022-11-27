@@ -271,6 +271,7 @@ KEYWORDS="amd64 arm64 ~x86" # Waiting for server to upload tarball
 #
 CPU_FLAGS_ARM=( neon )
 CPU_FLAGS_X86=( sse2 ssse3 sse4_2 )
+IUSE_LIBCXX=( bundled-libcxx system-libstdcxx )
 # CFI Basic (.a) mode requires all third party modules built as static.
 IUSE="
 ${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_}
@@ -279,6 +280,10 @@ ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 +official pic +proprietary-codecs pulseaudio qt5 screencast selinux +suid
 -system-av1 -system-ffmpeg -system-icu -system-harfbuzz -system-png +vaapi
 wayland widevine
+
+${IUSE_LIBCXX[@]}
++bundled-libcxx branch-protection +cfi libcmalloc +partitionalloc
++pre-check-llvm +pre-check-vaapi +pgo thinlto-opt
 
 r1
 "
@@ -289,11 +294,7 @@ r1
 #     Upstream doesn't consider MP3 proprietary, but this ebuild does.
 #   https://github.com/chromium/chromium/blob/107.0.5304.110/media/base/supported_types.cc#L284
 # Codec upstream default: https://github.com/chromium/chromium/blob/107.0.5304.110/tools/mb/mb_config_expectations/chromium.linux.json#L89
-IUSE+="
-video_cards_amdgpu video_cards_intel video_cards_iris video_cards_i965
-video_cards_nouveau video_cards_nvidia video_cards_r600 video_cards_radeonsi
-" # For VA-API
-IUSE+=" +partitionalloc libcmalloc"
+
 #
 # For cfi-vcall, cfi-icall defaults status, see \
 #   https://github.com/chromium/chromium/blob/107.0.5304.110/build/config/sanitizers/sanitizers.gni
@@ -305,11 +306,6 @@ IUSE+=" +partitionalloc libcmalloc"
 #   https://github.com/chromium/chromium/blob/107.0.5304.110/build/config/c++/c++.gni#L14
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
 #
-IUSE_LIBCXX=( bundled-libcxx system-libstdcxx )
-IUSE+="
-${IUSE_LIBCXX[@]} +bundled-libcxx branch-protection +cfi +pre-check-llvm
-+pre-check-vaapi +pgo thinlto-opt
-"
 
 #
 # vaapi is not conditioned on proprietary-codecs upstream, but should
