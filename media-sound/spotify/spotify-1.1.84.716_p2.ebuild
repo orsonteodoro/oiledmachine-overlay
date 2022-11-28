@@ -620,7 +620,7 @@ einfo
 	die
 }
 
-_verify_client_program() {
+_verify_client_deb() {
 	local alg="${1}"
 	local expected_hash=$(\
 		  cat "Packages" \
@@ -696,7 +696,7 @@ eerror
 	fi
 }
 
-verify_client_program() {
+verify_client_deb() {
 	[[ -e "Packages" ]] || die
 	csplit \
 		--prefix=package \
@@ -731,10 +731,10 @@ einfo
 einfo "${archive_fn} fingerprints:"
 einfo
 	if \
-		   _verify_client_program "md5" \
-		&& _verify_client_program "sha1" \
-		&& _verify_client_program "sha256" \
-		&& _verify_client_program "sha512" \
+		   _verify_client_deb "md5" \
+		&& _verify_client_deb "sha1" \
+		&& _verify_client_deb "sha256" \
+		&& _verify_client_deb "sha512" \
 	; then
 		return 0
 	fi
@@ -824,7 +824,7 @@ unpack_offline() {
 einfo
 einfo "${archive_fn} fingerprints:"
 einfo
-	# The SHA512 check in verify_client_program plus blake2b would have the
+	# The SHA512 check in verify_client_deb plus blake2b would have the
 	# same integrity guarantees as Manifest.
 	if _verify_client_blake2b ; then
 		unpack_deb "${EDISTDIR}/${archive_fn}"
@@ -837,7 +837,7 @@ src_unpack() {
 	verify_pubkey
 	verify_inrelease
 	verify_package_list
-	verify_client_program
+	verify_client_deb
 	if ! [[ ${PV} =~ 9999 ]] ; then
 		unpack_deb "${EDISTDIR}/${FN_CLIENT}"
 	elif [[ "${EVCS_OFFLINE}" == "1" ]] ; then
