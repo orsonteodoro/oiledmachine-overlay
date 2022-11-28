@@ -151,7 +151,7 @@ _get_NS() {
 		elif [[ "${ns}" == "SharpNav.GUI" ]] ; then
 			use gui-client && echo "${ns}"
 		elif [[ "${ns}" == "SharpNav.Tests" ]] ; then
-			has "test" "${IUSE}" && use test && echo "${ns}"
+			has "test" ${IUSE} && use test && echo "${ns}"
 		else
 			echo "${ns}"
 		fi
