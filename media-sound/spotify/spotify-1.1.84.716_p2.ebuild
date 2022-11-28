@@ -290,7 +290,7 @@ SRC_URI+="
 	${PUBLIC_KEY_URI}
 "
 
-if [[ ${PV} != 9999 ]] ; then
+if ! [[ ${PV} =~ 9999 ]] ; then
 	MY_PV=$(ver_cut 1-4 ${PV})
 	MY_REV=$(ver_cut 6 ${PV})
 	BUILD_ID_AMD64="gc5f8b819"
@@ -838,7 +838,9 @@ src_unpack() {
 	verify_inrelease
 	verify_package_list
 	verify_client_program
-	if [[ "${EVCS_OFFLINE}" == "1" ]] ; then
+	if ! [[ ${PV} =~ 9999 ]] ; then
+		unpack_deb "${EDISTDIR}/${FN_CLIENT}"
+	elif [[ "${EVCS_OFFLINE}" == "1" ]] ; then
 		unpack_offline
 	else
 		unpack_online
