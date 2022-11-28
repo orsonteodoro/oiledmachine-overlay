@@ -660,7 +660,9 @@ src_install() {
 	# Move runtime headers to /usr/lib/clang, where they belong
 	mv "${ED}"/usr/include/clangrt "${ED}"/usr/lib/clang || die
 	# move (remaining) wrapped headers back
-	mv "${T}"/clang-tidy "${ED}"/usr/include/ || die
+	if use extra; then
+		mv "${T}"/clang-tidy "${ED}"/usr/include/ || die
+	fi
 	mv "${ED}"/usr/include "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/include || die
 
 	# Apply CHOST and version suffix to clang tools
@@ -744,11 +746,14 @@ einfo "You can find additional utility scripts in:"
 einfo
 einfo "  ${EROOT}/usr/lib/llvm/${LLVM_MAJOR}/share/clang"
 einfo
+	if use extra ; then
+einfo
 einfo "Some of them are vim integration scripts (with instructions inside)."
 einfo "The run-clang-tidy.py script requires the following additional package:"
 einfo
 einfo "  dev-python/pyyaml"
 einfo
+	fi
 	uopts_pkg_postinst
 einfo
 einfo "See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"
