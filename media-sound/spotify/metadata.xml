@@ -10,10 +10,17 @@
     Ebuild fork for improved compatibility.
   </longdescription>
   <use>
+    <flag name="beta">
+      Downloads and installs the latest beta version.
+    </flag>
     <flag name="emoji">
       Install color emojis if not done so yet.
 
       This is required to see emoji only music tracks or playlists with emojis.
+    </flag>
+    <flag name="extra-dep-checks">
+      Checks and notifies for incompatibilities or missing system libraries
+      required for the package.
     </flag>
     <flag name="ffmpeg">
       Allows playing local files and a few audio podcasts that rely on ffmpeg.
@@ -21,9 +28,18 @@
     <flag name="pulseaudio">
       Controls the dependency on PulseAudio or apulse.
     </flag>
+    <flag name="stable">
+      Downloads and installs the latest stable version.
+    </flag>
     <flag name="vaapi">
       Support for hardware accelerated video decoding.  Useful for fullscreen
       video podcasts or power savings.
+    </flag>
+    <flag name="verify-gpg-key">
+      Check the repository public key for reassurance of identity and/or
+      revocation.
+
+      (This will require to disable network-sandbox from FEATURES.)
     </flag>
     <flag name="wayland">
       Add support for Wayland.  (EXPERIMENAL, UNSUPPORTED UPSTREAM)
