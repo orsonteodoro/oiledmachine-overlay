@@ -340,7 +340,7 @@ PKG_ARCH="amd64" # It can be amd64, i386, all.
 
 # Before URI redirect.  Not SSL protected.  MITM attack possible.
 # From second line of https://www.spotify.com/us/download/linux/
-#REPO_DOMAIN="http://repository.spotify.com" # Never use this domain install downloaded debs.
+#REPO_DOMAIN="http://repository.spotify.com" # Never use this URI to install downloaded debs.
 
 # After URI redirect of the above domain.  SSL protected.
 REPO_DOMAIN="https://repository-origin.spotify.com/"
