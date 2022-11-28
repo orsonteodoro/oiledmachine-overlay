@@ -6,6 +6,8 @@ EAPI=8
 
 inherit cmake git-r3
 
+# EOL / Renamed
+
 DESCRIPTION="Qt platform theme plugin for apps integration with Liri"
 HOMEPAGE="https://github.com/lirios/platformtheme"
 LICENSE="GPL-3"
@@ -13,24 +15,29 @@ LICENSE="GPL-3"
 # Live/snapshot ebuilds do not get KEYWORDed
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
+IUSE+="
+r1
+"
 QT_MIN_PV=5.8
-DEPEND+=" dev-libs/glib
+DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
-	 ~liri-base/qtgsettings-1.3.0_p9999"
+	dev-libs/glib
+	~liri-base/qtgsettings-1.3.0_p9999
+"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	>=dev-util/cmake-3.10.0
-	 ~liri-base/cmake-shared-2.0.0_p9999
-	  virtual/pkgconfig"
+	virtual/pkgconfig
+	~liri-base/cmake-shared-2.0.0_p9999
+"
 SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-PROPERTIES="live"
 
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)

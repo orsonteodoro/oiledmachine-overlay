@@ -2,6 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- For the ebuild only on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -11,4 +12,9 @@
     <remote-id type="github">lirios/libliri</remote-id>
     <bugs-to>https://github.com/lirios/libliri/issues</bugs-to>
   </upstream>
+  <use>
+    <flag name="rN">
+      FOR INTERNAL USE ONLY.  (FORCES REBUILD WHEN BUMPED)
+    </flag>
+  </use>
 </pkgmetadata>

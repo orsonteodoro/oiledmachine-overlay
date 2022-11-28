@@ -13,7 +13,11 @@ LICENSE="BSD MPL-2.0 FDL-1.3+"
 # live ebuilds do not get KEYWORDed
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
-IUSE+=" doc test"
+IUSE+="
+doc -qtquick-compiler test
+
+r1
+"
 QT_MIN_PV=5.10
 DEPEND+="
 	>=dev-libs/wayland-1.15
@@ -21,18 +25,20 @@ DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
-	 ~liri-base/qtaccountsservice-1.3.0_p9999"
+"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	>=dev-util/cmake-3.10.0
-	>=kde-frameworks/extra-cmake-modules-1.7.0
-	 ~liri-base/cmake-shared-2.0.0_p9999
-	  virtual/pkgconfig
-	  test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
+	virtual/pkgconfig
+	test? (
+		>=dev-qt/qttest-${QT_MIN_PV}:5=
+	)
+	~liri-base/cmake-shared-2.0.0_p9999
+"
 SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
@@ -40,7 +46,6 @@ EGIT_OVERRIDE_REPO_LIRIOS_QBS_SHARED="https://github.com/lirios/qbs-shared.git"
 EGIT_OVERRIDE_REPO_LIRIOS_CMAKE_SHARED="https://github.com/lirios/cmake-shared.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-PROPERTIES="live"
 
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
@@ -75,7 +80,9 @@ pkg_setup() {
 src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
-	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d "\"")
+	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" \
+		| head -n 1 \
+		| cut -f 2 -d "\"")
 	local v_expected=$(ver_cut 1-3 ${PV})
 	if ver_test ${v_expected} -ne ${v_live} ; then
 		eerror
@@ -98,6 +105,7 @@ src_configure() {
 		-DBUILD_TESTING=$(usex test)
 		-DFLUID_WITH_DOCUMENTATION=$(usex doc)
 		-DFLUID_WITH_DEMO=OFF
+		-DFLUID_ENABLE_QTQUICK_COMPILER=$(usex qtquick-compiler)
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
 		-DINSTALL_PLUGINSDIR=/usr/$(get_libdir)/qt5/plugins
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml

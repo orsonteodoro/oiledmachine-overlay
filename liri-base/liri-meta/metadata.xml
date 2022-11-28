@@ -2,6 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- For the ebuild only on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -9,30 +10,72 @@
     This is a meta package for liri.
   </longdescription>
   <use>
-    <flag name="appcenter">Installs a Flatpak App Center</flag>
-    <flag name="browser">Installs a qtwebengine based web browser</flag>
-    <flag name="calculator">Installs a calculator program</flag>
-    <flag name="systemd">Adds systemd support</flag>
-    <flag name="files">Installs a file manager named Files</flag>
-    <flag name="flatpak">Installs Flatpak support</flag>
-    <flag name="materialdecoration">Installs a material decoration for
-      Qt apps under wayland.</flag>
-    <flag name="music">Installs a music player app </flag>
-    <flag name="networkmanager">Adds NetworkManager support</flag>
-    <flag name="platformtheme">Sets the default font and icon theme</flag>
-    <flag name="player">Installs a video media player</flag>
-    <flag name="power-manager">Adds power management support</flag>
-    <flag name="pulseaudio">Adds PulseAudio support</flag>
-    <flag name="qtintegration">Sets the default font and icon theme and material
-      decoration for Qt apps under wayland and wayland shell integration.</flag>
-    <flag name="terminal">Installs a terminal emulator named Terminal</flag>
-    <flag name="screencast">Installs a video desktop capture program</flag>
-    <flag name="screenshot">Installs a desktop still capture program</flag>
-    <flag name="settings">Installs a program named Settings to configure the
-      system</flag>
-    <flag name="themes">Installs color schemes, boot loader themes,
-      a display manager theme</flag>
-    <flag name="text">Installs a text editor</flag>
-    <flag name="xwayland">Adds XWayland support</flag>
+    <flag name="appcenter">
+      Installs a Flatpak App Center
+    </flag>
+    <flag name="browser">
+      Installs a qtwebengine based web browser
+    </flag>
+    <flag name="calculator">
+      Installs a calculator program
+    </flag>
+    <flag name="systemd">
+      Adds systemd support
+    </flag>
+    <flag name="files">
+      Installs a file manager named Files
+    </flag>
+    <flag name="flatpak">
+      Installs Flatpak support
+    </flag>
+    <flag name="materialdecoration">
+      Installs a material decoration for Qt apps under wayland.
+    </flag>
+    <flag name="music">
+      Installs a music player app
+    </flag>
+    <flag name="networkmanager">
+      Adds NetworkManager support
+    </flag>
+    <flag name="platformtheme">
+      Sets the default font and icon theme
+    </flag>
+    <flag name="player">
+      Installs a video media player
+    </flag>
+    <flag name="power-manager">
+      Adds power management support
+    </flag>
+    <flag name="pulseaudio">
+      Adds PulseAudio support
+    </flag>
+    <flag name="qtintegration">
+      Sets the default font and icon theme and material decoration for Qt apps
+      under wayland and wayland shell integration.
+    </flag>
+    <flag name="terminal">
+      Installs a terminal emulator named Terminal
+    </flag>
+    <flag name="screencast">
+      Installs a video desktop capture program
+    </flag>
+    <flag name="screenshot">
+      Installs a desktop still capture program
+    </flag>
+    <flag name="settings">
+      Installs a program named Settings to configure the system
+    </flag>
+    <flag name="themes">
+      Installs color schemes, boot loader themes, a display manager theme
+    </flag>
+    <flag name="text">
+      Installs a text editor
+    </flag>
+    <flag name="xwayland">
+      Adds XWayland support
+    </flag>
+    <flag name="rN">
+      FOR INTERNAL USE ONLY.  (FORCES REBUILD WHEN BUMPED)
+    </flag>
   </use>
 </pkgmetadata>

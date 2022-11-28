@@ -13,21 +13,30 @@ LICENSE="BSD"
 # Live/snapshots do not get KEYWORDS.
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
-DEPEND+=" >=kde-frameworks/extra-cmake-modules-5.48.0"
-RDEPEND+=" ${DEPEND}"
-BDEPEND+=" >=dev-util/cmake-3.10.0"
+IUSE+="
+r1
+"
+DEPEND+="
+	>=kde-frameworks/extra-cmake-modules-5.99.0
+"
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
+	>=dev-util/cmake-3.17.0
+"
 SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
 PATCHES=( "${FILESDIR}/${PN}-1.1.0_p20200511-pkgconfig-lib-basename.patch" )
-PROPERTIES="live"
 RESTRICT="fetch mirror"
 
 src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
-	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" | cut -f 2 -d "\"")
+	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" \
+		| cut -f 2 -d "\"")
 	local v_expected=$(ver_cut 1-3 ${PV})
 	if ver_test ${v_expected} -ne ${v_live} ; then
 		eerror

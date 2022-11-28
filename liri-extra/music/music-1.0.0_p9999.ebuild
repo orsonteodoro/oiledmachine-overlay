@@ -16,7 +16,11 @@ LICENSE="GPL-3+ BSD FDL-1.3+ MPL-2.0"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 QT_MIN_PV=5.14
-IUSE+=" doc +system-fluid test"
+IUSE+="
+doc +system-fluid test
+
+r1
+"
 
 FLUID_DEPEND="
 	>=dev-libs/wayland-1.15
@@ -24,18 +28,23 @@ FLUID_DEPEND="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
-	 ~liri-base/qtaccountsservice-1.3.0_p9999"
+"
 FLUID_BDEPEND="
 	>=dev-util/cmake-3.10.0
-	>=kde-frameworks/extra-cmake-modules-1.7.0
-	 ~liri-base/cmake-shared-2.0.0_p9999
-	  virtual/pkgconfig
-	  test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
+	virtual/pkgconfig
+	test? (
+		>=dev-qt/qttest-${QT_MIN_PV}:5=
+	)
+	~liri-base/cmake-shared-2.0.0_p9999
+"
 DEPEND+="
+	!system-fluid? (
+		${FLUID_DEPEND}
+	)
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
@@ -43,22 +52,28 @@ DEPEND+="
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
 	>=dev-qt/qtsql-${QT_MIN_PV}:5=
-	  media-libs/taglib:taglib2-preview
-	 !system-fluid? ( ${FLUID_DEPEND} )
-	  system-fluid? ( ~liri-base/fluid-1.2.0_p9999 )"
+	media-libs/taglib:taglib2-preview
+	system-fluid? (
+		~liri-base/fluid-1.2.0_p9999
+	)
+"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
+	!system-fluid? (
+		${FLUID_BDEPEND}
+	)
 	>=dev-util/cmake-3.10.0
-	  virtual/pkgconfig
-	 !system-fluid? ( ${FLUID_BDEPEND} )
-	  system-fluid? ( ~liri-base/cmake-shared-2.0.0_p9999 )"
+	virtual/pkgconfig
+	system-fluid? (
+		~liri-base/cmake-shared-2.0.0_p9999
+	)
+"
 SRC_URI=""
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 EGIT_OVERRIDE_REPO_LIRIOS_QBS_SHARED="https://github.com/lirios/qbs-shared.git"
 EGIT_OVERRIDE_REPO_LIRIOS_CMAKE_SHARED="https://github.com/lirios/cmake-shared.git"
 S="${WORKDIR}/${P}"
-PROPERTIES="live"
 RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/music-1.0.0_pre20200314-reference-taglib2.patch"
@@ -140,7 +155,9 @@ pkg_setup() {
 src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
-	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d "\"")
+	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" \
+		| head -n 1 \
+		| cut -f 2 -d "\"")
 	local v_expected=$(ver_cut 1-3 ${PV})
 	if ver_test ${v_expected} -ne ${v_live} ; then
 		eerror

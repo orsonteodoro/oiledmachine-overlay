@@ -13,6 +13,9 @@ LICENSE="GPL-3 BSD"
 # Live/snapshots do not get KEYWORDS.
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
+IUSE+="
+r1
+"
 QT_MIN_PV=5.10
 DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
@@ -24,19 +27,22 @@ DEPEND+="
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
 	>=dev-qt/qtwebengine-${QT_MIN_PV}:5=
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
-	 ~liri-base/fluid-1.2.0_p9999
-	 ~liri-base/qtgsettings-1.3.0_p9999"
-RDEPEND+=" ${DEPEND}"
+	~liri-base/fluid-1.2.0_p9999
+	~liri-base/qtgsettings-1.3.0_p9999
+"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	>=dev-util/cmake-3.10.0
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
-	 ~liri-base/cmake-shared-2.0.0_p9999
-	  virtual/pkgconfig"
+	virtual/pkgconfig
+	~liri-base/cmake-shared-2.0.0_p9999
+"
 SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
-PROPERTIES="live"
 RESTRICT="mirror"
 
 pkg_setup() {
@@ -74,7 +80,9 @@ pkg_setup() {
 src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
-	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d "\"")
+	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" \
+		| head -n 1 \
+		| cut -f 2 -d "\"")
 	local v_expected=$(ver_cut 1-3 ${PV})
 	if ver_test ${v_expected} -ne ${v_live} ; then
 		eerror

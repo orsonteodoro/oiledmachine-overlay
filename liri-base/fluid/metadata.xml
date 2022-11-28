@@ -2,6 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- For the ebuild only on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -11,4 +12,16 @@
     <remote-id type="github">lirios/fluid</remote-id>
     <bugs-to>https://github.com/lirios/fluid/issues</bugs-to>
   </upstream>
+  <use>
+    <flag name="doc">
+      Build documentation
+    </flag>
+    <flag name="qtquick-compiler">
+      Optimizes using the qtquick-compiler.  This package requires a rebuild
+      after updating Qt if enabled.
+    </flag>
+    <flag name="rN">
+      FOR INTERNAL USE ONLY.  (FORCES REBUILD WHEN BUMPED)
+    </flag>
+  </use>
 </pkgmetadata>

@@ -2,6 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- For the ebuild only on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -11,4 +12,18 @@
     <remote-id type="github">lirios/themes</remote-id>
     <bugs-to>https://github.com/lirios/themes/issues</bugs-to>
   </upstream>
+  <use>
+    <flag name="grub">
+      Adds theme support for the GRUB boot loader.
+    </flag>
+    <flag name="plymouth">
+      Adds theme support for the Plymouth graphical boot system.
+    </flag>
+    <flag name="sddm">
+      Adds theme support for SDDM (X11/Wayland window manager).
+    </flag>
+    <flag name="rN">
+      FOR INTERNAL USE ONLY.  (FORCES REBUILD WHEN BUMPED)
+    </flag>
+  </use>
 </pkgmetadata>

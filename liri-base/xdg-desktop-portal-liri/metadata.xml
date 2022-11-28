@@ -2,6 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- For the ebuild only on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -11,4 +12,15 @@
     <remote-id type="github">lirios/xdg-desktop-portal-liri</remote-id>
     <bugs-to>https://github.com/lirios/xdg-desktop-portal-liri/issues</bugs-to>
   </upstream>
+  <use>
+    <flag name="pipewire">
+      Adds screencast support
+    </flag>
+    <flag name="systemd">
+      Adds user service support with systemd
+    </flag>
+    <flag name="rN">
+      FOR INTERNAL USE ONLY.  (FORCES REBUILD WHEN BUMPED)
+    </flag>
+  </use>
 </pkgmetadata>

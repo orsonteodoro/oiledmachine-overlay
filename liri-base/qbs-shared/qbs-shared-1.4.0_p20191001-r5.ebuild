@@ -13,16 +13,20 @@ LICENSE="BSD"
 # Live/snapshots do not get KEYWORDed
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
+IUSE+="
+r1
+"
 # Upstream requires qbs 1.11 in README, but qbs file requires 1.10
 # If building qbs fails with 1.12, try with 1.15 which works.
-BDEPEND+=" >=dev-util/qbs-1.11"
+BDEPEND+="
+	>=dev-util/qbs-1.11
+"
 SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 QBS_CONFIG=( --settings-dir "${S}/qbs-config" )
-PROPERTIES="live"
 
 # Based on https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=liri-qbs-shared-git
 
@@ -36,7 +40,9 @@ pkg_setup() {
 src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
-	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d "\"")
+	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" \
+		| head -n 1 \
+		| cut -f 2 -d "\"")
 	local v_expected=$(ver_cut 1-3 ${PV})
 	if ver_test ${v_expected} -ne ${v_live} ; then
 		eerror

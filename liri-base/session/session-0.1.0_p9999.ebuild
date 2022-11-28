@@ -13,27 +13,37 @@ LICENSE="GPL-3+ LGPL-3+"
 # Live/snapshots do not get KEYWORDed.
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
-IUSE+=" systemd"
+IUSE+="
+systemd
+
+r1
+"
 QT_MIN_PV=5.10
 DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
-	 ~liri-base/libliri-0.9.0_p9999
-	 ~liri-base/qtgsettings-1.3.0_p9999
-	  systemd? ( sys-apps/systemd )"
-RDEPEND+=" ${DEPEND}"
+	>=dev-qt/qtxml-${QT_MIN_PV}:5=
+	systemd? (
+		sys-apps/systemd
+	)
+	~liri-base/libliri-0.9.0_p9999
+	~liri-base/qtgsettings-1.3.0_p9999
+"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
-	 ~liri-base/cmake-shared-2.0.0_p9999
-	  virtual/pkgconfig"
+	virtual/pkgconfig
+	~liri-base/cmake-shared-2.0.0_p9999
+"
 SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-PROPERTIES="live"
 DESKTOP_DATABASE_DIR="/usr/share/wayland-sessions"
 PATCHES=( "${FILESDIR}/${PN}-0.1.0_p20200524-missing-variable.patch" )
 
@@ -41,11 +51,15 @@ pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
 	QTDBUS_PV=$(pkg-config --modversion Qt5DBus)
 	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
+	QTXML_PV=$(pkg-config --modversion Qt5Xml)
 	if ver_test ${QTCORE_PV} -ne ${QTDBUS_PV} ; then
 		die "Qt5Core is not the same version as Qt5DBus"
 	fi
 	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
 		die "Qt5Core is not the same version as Qt5Gui"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTXML_PV} ; then
+		die "Qt5Core is not the same version as Qt5Xml"
 	fi
 einfo
 einfo "If you emerged ${PN} directly, please start from the liri-meta package"
@@ -60,7 +74,9 @@ src_prepare() {
 src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
-	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d "\"")
+	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" \
+		| head -n 1 \
+		| cut -f 2 -d "\"")
 	local v_expected=$(ver_cut 1-3 ${PV})
 	if ver_test ${v_expected} -ne ${v_live} ; then
 		eerror

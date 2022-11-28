@@ -13,6 +13,9 @@ LICENSE="GPL-3" # Readme.md says GPL-3 but some sources say GPL-3+
 # Live/snapshot do not get KEYWORDS.
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
+IUSE+="
+r1
+"
 QT_MIN_PV=5.10
 KDE_FRAMEWORKS_MIN_PV=5.48
 DEPEND+="
@@ -24,19 +27,20 @@ DEPEND+="
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtxml-${QT_MIN_PV}:5=
-	 ~liri-base/fluid-1.2.0_p9999
-	 ~liri-base/libliri-0.9.0_p9999"
+	~liri-base/fluid-1.2.0_p9999
+	~liri-base/libliri-0.9.0_p9999
+"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	>=dev-util/cmake-3.10.0
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
-	 ~liri-base/cmake-shared-2.0.0_p9999
-	  virtual/pkgconfig"
+	virtual/pkgconfig
+	~liri-base/cmake-shared-2.0.0_p9999
+"
 SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
-PROPERTIES="live"
 RESTRICT="mirror"
 
 pkg_setup() {
@@ -66,7 +70,9 @@ pkg_setup() {
 src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
-	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d "\"")
+	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" \
+		| head -n 1 \
+		| cut -f 2 -d "\"")
 	local v_expected=$(ver_cut 1-3 ${PV})
 	if ver_test ${v_expected} -ne ${v_live} ; then
 		eerror

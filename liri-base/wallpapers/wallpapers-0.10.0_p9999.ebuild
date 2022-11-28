@@ -13,22 +13,28 @@ LICENSE="CC-BY-SA-4.0 CC-BY-4.0"
 # Live/snapshots do not get keyworded
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
-IUSE+=" test"
+IUSE+="
+test
+
+r1
+"
 QT_MIN_PV=5.12
 BDEPEND+="
 	>=dev-util/cmake-3.10.0
-	 ~liri-base/cmake-shared-2.0.0_p9999"
+	~liri-base/cmake-shared-2.0.0_p9999
+"
 SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-PROPERTIES="live"
 
 src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
-	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d "\"")
+	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" \
+		| head -n 1 \
+		| cut -f 2 -d "\"")
 	local v_expected=$(ver_cut 1-3 ${PV})
 	if ver_test ${v_expected} -ne ${v_live} ; then
 		eerror

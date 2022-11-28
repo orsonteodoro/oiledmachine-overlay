@@ -13,29 +13,41 @@ LICENSE="GPL-3+ LGPL-2.1+"
 # Live/snapshot ebuilds do not get KEYWORDed
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
-QT_MIN_PV=5.10
+IUSE+="
+r1
+"
+QT_MIN_PV=5.15
 DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
-	 ~liri-base/fluid-1.2.0_p9999
-	>=media-sound/pulseaudio-5.0"
-RDEPEND+=" ${DEPEND}"
+	>=media-sound/pulseaudio-5.0
+	~liri-base/fluid-1.2.0_p9999
+"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
+	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
-	 ~liri-base/cmake-shared-2.0.0_p9999
-	  virtual/pkgconfig"
+	virtual/pkgconfig
+	~liri-base/cmake-shared-2.0.0_p9999
+"
 SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-PROPERTIES="live"
 
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
+	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
 	QTQML_PV=$(pkg-config --modversion Qt5Qml)
 	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
 		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
+		die "Qt5Core is not the same version as Qt5Gui"
 	fi
 }
 
@@ -46,7 +58,9 @@ src_prepare() {
 src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
-	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d "\"")
+	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" \
+		| head -n 1 \
+		| cut -f 2 -d "\"")
 	local v_expected=$(ver_cut 1-3 ${PV})
 	if ver_test ${v_expected} -ne ${v_live} ; then
 		eerror

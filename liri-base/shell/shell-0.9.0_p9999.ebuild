@@ -8,12 +8,18 @@ inherit cmake git-r3
 
 DESCRIPTION="QtQuick and Wayland shell for convergence"
 HOMEPAGE="https://github.com/lirios/shell"
-LICENSE="GPL-3+ LGPL-3+"
+LICENSE="GPL-3+ LGPL-3+ BSD"
+# BSD - cmake/3rdparty/FindPAM.cmake
 
 # Live/snapshot do not get KEYWORDs.
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
-IUSE+=" systemd"
+IUSE+="
+-qtquick-compiler systemd
+
+r1
+"
+# systemd is enabled by default upstream, but distro defaults to OpenRC.
 QT_MIN_PV=5.15
 DEPEND+="
 	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
@@ -21,39 +27,43 @@ DEPEND+="
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtsql-${QT_MIN_PV}:5=
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
-	  kde-frameworks/solid
-	  liri-base/eglfs
-	 ~liri-base/fluid-1.2.0_p9999
-	 ~liri-base/libliri-0.9.0_p9999
-	 ~liri-base/qtaccountsservice-1.3.0_p9999
-	 ~liri-base/qtgsettings-1.3.0_p9999
-	 ~liri-base/wayland-0.0.0_p9999
-	  media-fonts/droid
-	  media-fonts/noto
-	  sys-auth/polkit-qt
-	  sys-libs/pam
-	  systemd? ( sys-apps/systemd )"
+	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
+	>=dev-qt/qtxml-${QT_MIN_PV}:5=
+	kde-frameworks/solid
+	media-fonts/droid
+	media-fonts/noto
+	sys-auth/polkit-qt
+	sys-libs/pam
+	systemd? ( sys-apps/systemd )
+	~liri-base/aurora-client-0.0.0_p9999
+	~liri-base/aurora-compositor-0.0.0_p9999
+	~liri-base/fluid-1.2.0_p9999
+	~liri-base/libliri-0.9.0_p9999
+	~liri-base/qtaccountsservice-1.3.0_p9999
+	~liri-base/qtgsettings-1.3.0_p9999
+"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
-	|| (
-		  sys-devel/clang
-		>=sys-devel/gcc-4.8
-	)
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
-	 ~liri-base/cmake-shared-2.0.0_p9999
-	  virtual/pkgconfig"
+	virtual/pkgconfig
+	|| (
+		sys-devel/clang
+		>=sys-devel/gcc-4.8
+	)
+	~liri-base/aurora-scanner-0.0.0_p9999
+	~liri-base/cmake-shared-2.0.0_p9999
+"
 SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-PROPERTIES="live"
 
 pkg_setup() {
 	QTCONCURRENT_PV=$(pkg-config --modversion Qt5Concurrent)
@@ -65,6 +75,8 @@ pkg_setup() {
 	QTQML_PV=$(pkg-config --modversion Qt5Qml)
 	QTQUICKCONTROLS2_PV=$(pkg-config --modversion Qt5QuickControls2)
 	QTWAYLANDCLIENT_PV=$(pkg-config --modversion Qt5WaylandClient)
+	QTWIDGETS_PV=$(pkg-config --modversion Qt5Widgets)
+	QTXML_PV=$(pkg-config --modversion Qt5Xml)
 	if ver_test ${QTCORE_PV} -ne ${QTCONCURRENT_PV} ; then
 		die "Qt5Core is not the same version as Qt5Concurrent"
 	fi
@@ -89,6 +101,12 @@ pkg_setup() {
 	if ver_test ${QTCORE_PV} -ne ${QTWAYLANDCLIENT_PV} ; then
 		die "Qt5Core is not the same version as Qt5WaylandClient (qtwayland)"
 	fi
+	if ver_test ${QTCORE_PV} -ne ${QTWIDGETS_PV} ; then
+		die "Qt5Core is not the same version as Qt5Widgets"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTXML_PV} ; then
+		die "Qt5Core is not the same version as Qt5Xml"
+	fi
 	einfo \
 "If you emerged ${PN} directly, please start from the liri-meta package instead."
 }
@@ -96,7 +114,9 @@ pkg_setup() {
 src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
-	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d "\"")
+	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" \
+		| head -n 1 \
+		| cut -f 2 -d "\"")
 	local v_expected=$(ver_cut 1-3 ${PV})
 	if ver_test ${v_expected} -ne ${v_live} ; then
 		eerror
@@ -116,10 +136,11 @@ src_unpack() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DFEATURE_enable_systemd=$(usex systemd)
+		-DFEATURE_shell_enable_qtquick_compiler=$(usex qtquick-compiler)
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
 		-DINSTALL_PLUGINSDIR=/usr/$(get_libdir)/qt5/plugins
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
-		-DLIRI_ENABLE_SYSTEMD=$(usex systemd)
 	)
 	if use systemd ; then
 		mycmakeargs+=( -DINSTALL_SYSTEMDUSERUNITDIR=/usr/lib/systemd/user )
