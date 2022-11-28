@@ -258,7 +258,6 @@ RDEPEND+="
 
 BDEPEND+="
 	app-arch/gzip
-	app-crypt/gnupg
 	app-crypt/rhash
 	net-misc/wget
 	sys-apps/coreutils
@@ -269,6 +268,19 @@ BDEPEND+="
 		)
 	)
 "
+
+if [[ ${PV} =~ 9999 ]] ; then
+	BDEPEND+="
+		app-crypt/gnupg[ssl]
+	"
+else
+	BDEPEND+="
+		app-crypt/gnupg
+		verify-gpg-key? (
+			app-crypt/gnupg[ssl]
+		)
+	"
+fi
 
 S="${WORKDIR}"
 
@@ -392,23 +404,23 @@ ewarn
 	fi
 
 	local require_network=0
-	if has "extra-dep-checks" "${IUSE}" \
+	if has "extra-dep-checks" ${IUSE} \
 		&& use extra-dep-checks ; then
 		require_network=1
 eerror
 eerror "Network access required to verify Cr/Blink dependencies."
 eerror
 	fi
-	if has "verify-gpg-key" "${IUSE}" \
+	if has "verify-gpg-key" ${IUSE} \
 		&& use verify-gpg-key \
-		&& has "network-sandbox" "${FEATURES}" ; then
+		&& has "network-sandbox" ${FEATURES} ; then
 		require_network=1
 eerror
 eerror "Network access required to verify the public repository gpg key."
 eerror
 	fi
 	if [[ "${PV}" =~ 9999 ]] \
-		&& has "network-sandbox" "${FEATURES}" ; then
+		&& has "network-sandbox" ${FEATURES} ; then
 		require_network=1
 eerror
 eerror "Network access required to download from live source and verify the"
@@ -524,7 +536,7 @@ eerror
 		external_key_check=1
 	fi
 
-	if has "verify-gpg-key" "${IUSE}" \
+	if has "verify-gpg-key" ${IUSE} \
 		&& use verify-gpg-key ; then
 		external_key_check=1
 	fi
@@ -538,7 +550,7 @@ eerror
 		--batch \
 		--homedir ${_GNUPGHOME} \
 		--keyserver ${pub_keyserver} \
-		--recv-keys "${KEY_ID}")
+		--recv-keys "${KEY_ID}" 2>&1)
 	if [[ "${O}" =~ "keyserver search failed" ]] ; then
 eerror
 eerror "The public key server needs to be changed.  Set GPG_PUBLIC_KEYSERVER."
@@ -548,7 +560,7 @@ eerror
 	O=$(gpg \
 		--batch \
 		--homedir ${_GNUPGHOME} \
-		--list-keys "${KEY_ID}")
+		--list-keys "${KEY_ID}" 2>&1)
 	if ! [[ "${O}" =~ "${KEY_ID}" && "${O}" =~ "${EXPECTED_UID}" ]] ; then
 eerror
 eerror "The public key's ID was not found."
@@ -1005,7 +1017,7 @@ src_install() {
 	domenu "${S}/${SHARE_PATH}/${PN}.desktop"
 	# Dropped pax_kernel USE flag because of license.
 
-	if has "extra-dep-checks" "${IUSE}" \
+	if has "extra-dep-checks" ${IUSE} \
 		use extra-dep-checks ; then
 		check_cr
 		check_libs
