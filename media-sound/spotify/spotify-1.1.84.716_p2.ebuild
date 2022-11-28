@@ -794,7 +794,8 @@ _verify_client_blake2b() {
 		rhash --blake2b "${EDISTDIR}/${archive_fn}" \
 		| cut -f 1 -d " ")
 	local EXPECTED_BLAKE2B=$(\
-		cat "${EDISTDIR}/${archive_fn}.blake2b")
+		cat "${EDISTDIR}/${archive_fn}.blake2b" \
+			| sed -e "s|[^a-f0-9]||g")
 	local SIZE_BLAKE2B=$(\
 		stat -c "%s" "${EDISTDIR}/${archive_fn}.blake2b"
 	)
@@ -813,7 +814,8 @@ einfo
 
 get_archivefn_from_file() {
 	[[ -e "${EDISTDIR}/${PN}-${CONFIGURATION}-archive" ]] || die
-	local archive_fn=$(cat "${EDISTDIR}/${PN}-${CONFIGURATION}-archive")
+	local archive_fn=$(cat "${EDISTDIR}/${PN}-${CONFIGURATION}-archive" \
+		| sed -e "s|[^a-z0-9_.-]||g")
 	echo "${archive_fn}"
 }
 
