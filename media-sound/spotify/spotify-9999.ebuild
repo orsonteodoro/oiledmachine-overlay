@@ -726,14 +726,20 @@ eerror
 		ln -s "${EDISTDIR}/${archive_fn}" "${WORKDIR}/${archive_fn}" || die
 	fi
 	[[ -e "${archive_fn}" ]] || die
+	local expected_size=$(grep "^Size: " "${package_fn}" | cut -f 2 -d " ")
+	local actual_size=$(stat -c "%s" $(realpath "${archive_fn}"))
 einfo
 einfo "${archive_fn} fingerprints:"
+einfo
+einfo "Expected size:\t${expected_size}"
+einfo "Actual size:\t\t${actual_size}"
 einfo
 	if \
 		   _verify_client_deb "md5" \
 		&& _verify_client_deb "sha1" \
 		&& _verify_client_deb "sha256" \
 		&& _verify_client_deb "sha512" \
+		&& (( "${expected_size}" == "${actual_size}" )) \
 	; then
 		return 0
 	fi
