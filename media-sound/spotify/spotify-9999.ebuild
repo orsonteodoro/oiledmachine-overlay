@@ -392,7 +392,6 @@ ewarn
 	fi
 
 	local require_network=0
-	local require_network_reason=""
 	if has "extra-dep-checks" "${IUSE}" \
 		&& use extra-dep-checks ; then
 		require_network=1
