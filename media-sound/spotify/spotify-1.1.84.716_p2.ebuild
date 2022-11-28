@@ -360,7 +360,7 @@ declare -A atabs=(
 	["sha1"]="\t\t"
 	["sha256"]="\t"
 	["sha512"]="\t"
-	["blake2b"]="\t\t"
+	["blake2b"]="\t"
 )
 
 pkg_setup() {
@@ -852,10 +852,10 @@ check_cr() {
 		# Verify Cr/Blink DEPENDs
 		# This is the minimal required but there are additional ones appended to lib_list.
 		local CEF_VERSION=$(\
-			  strings $(find "${WORKDIR}" -name "libcef.so") \
+			  strings $(find "${ED}" -name "libcef.so") \
 			| grep -E -e "\+chromium-")
 		local CR_VERSION=$(\
-			  strings $(find "${WORKDIR}" -name "libcef.so") \
+			  strings $(find "${ED}" -name "libcef.so") \
 			| grep -E -e "\+chromium-" \
 			| cut -f 2 -d "-")
 		# See also https://github.com/chromium/chromium/commits/${CR_VERSION}/build/install-build-deps.sh
@@ -895,7 +895,7 @@ eerror
 
 _missing_libs() {
 	for f in $(find \
-			"${WORKDIR}/usr/share/spotify" \
+			"${ED}/opt/${PN}/${PN}-client" \
 			-type f \( \
 				-executable -o -name "*.so*" \
 			\)\
@@ -909,7 +909,7 @@ _missing_libs() {
 		for lib in ${lib_list[@]} ; do
 			if ! ldconfig -p | grep -q "${lib} " ; then
 				local n=$(find \
-					"${WORKDIR}/usr/share/spotify" \
+					"${ED}/opt/${PN}/${PN}-client" \
 					-maxdepth 1 \
 					-name "${lib}" | wc -l)
 				(( ${n} == 0 )) && echo "${lib}"
@@ -930,14 +930,6 @@ ewarn "QA:"
 ewarn
 ewarn "  Update *DEPENDs."
 ewarn
-	fi
-}
-
-src_configure() {
-	if has "extra-dep-checks" "${IUSE}" \
-		use extra-dep-checks ; then
-		check_cr
-		check_libs
 	fi
 }
 
@@ -1005,6 +997,12 @@ src_install() {
 	done
 	domenu "${S}/${SHARE_PATH}/${PN}.desktop"
 	# Dropped pax_kernel USE flag because of license.
+
+	if has "extra-dep-checks" "${IUSE}" \
+		use extra-dep-checks ; then
+		check_cr
+		check_libs
+	fi
 }
 
 pkg_postinst() {
