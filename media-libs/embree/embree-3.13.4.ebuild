@@ -157,7 +157,7 @@ DEPEND+="
 	)
 	tutorials? (
 		media-libs/libpng:0=
-		<media-libs/openimageio-2.3[-cxx17(-),-abi8-compat,-abi9-compat]
+		<media-libs/openimageio-2.3.5.0[-cxx17(-),-abi8-compat,-abi9-compat]
 		virtual/jpeg:0
 	)
 "
