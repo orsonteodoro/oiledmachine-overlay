@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# EOL? Replaced with Aurora
+
 inherit cmake git-r3
 
 DESCRIPTION="XWayland support for QtQuick Wayland compositors like Liri Shell"

@@ -9,7 +9,7 @@ SLOT="0/$(ver_cut 1-3 ${PV})" # based on liri-base/liri-shell
 IUSE+="
 appcenter browser calculator +files flatpak music networkmanager player
 power-manager pulseaudio qtintegration screencast screenshot +settings systemd
-+terminal text themes wallpaper xwayland
++terminal text themes wallpaper
 
 r1
 "
@@ -32,7 +32,6 @@ DEPEND+="
 	text? ( ~liri-extra/text-0.5.0_p9999 )
 	themes? ( ~liri-base/themes-0.9.0_p9999 )
 	wallpaper? ( ~liri-base/wallpapers-0.10.0_p9999 )
-	xwayland? ( ~liri-base/qml-xwayland-0.10.0_p9999 )
 	~liri-base/session-0.1.0_p9999[systemd?]
 	~liri-base/shell-0.9.0_p9999[systemd?]
 "
