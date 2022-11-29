@@ -4,6 +4,7 @@
 
 EAPI=8
 
+CXXABI_V=11
 TRAIN_USE_X=1
 TRAIN_TEST_DURATION=120
 inherit cmake flag-o-matic linux-info toolchain-funcs uopts
@@ -156,7 +157,7 @@ DEPEND+="
 	)
 	tutorials? (
 		media-libs/libpng:0=
-		media-libs/openimageio
+		<media-libs/openimageio-2.3[-cxx17(-),-abi8-compat,-abi9-compat]
 		virtual/jpeg:0
 	)
 "
