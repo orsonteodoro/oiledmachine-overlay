@@ -185,10 +185,10 @@ src_unpack() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DFEATURE_aurora_datadevice=$(usex datadevice)
-		-DFEATURE_aurora_xkbcommon=$(usex xkbcommon)
+		-DBUILD_TESTING=$(usex test)
 		-DFEATURE_aurora_brcm=$(usex brcm)
 		-DFEATURE_aurora_compositor_quick=$(usex compositor-quick)
+		-DFEATURE_aurora_datadevice=$(usex datadevice)
 		-DFEATURE_aurora_dmabuf_client_buffer=$(usex dmabuf-client-buffer)
 		-DFEATURE_aurora_dmabuf_server_buffer=$(usex dmabuf-server-buffer)
 		-DFEATURE_aurora_drm_atomic=$(usex drm-atomic)
@@ -198,8 +198,8 @@ src_configure() {
 		-DFEATURE_aurora_shm_emulation_server=$(usex shm-emulation-server)
 		-DFEATURE_aurora_vulkan_server_buffer=$(usex vulkan-server-buffer)
 		-DFEATURE_aurora_wayland_egl=$(usex wayland-egl)
+		-DFEATURE_aurora_xkbcommon=$(usex xkbcommon)
 		-DFEATURE_aurora_xwayland=$(usex xwayland)
-		-DBUILD_TESTING=$(usex test)
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
 		-DINSTALL_PLUGINSDIR=/usr/$(get_libdir)/qt5/plugins
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml

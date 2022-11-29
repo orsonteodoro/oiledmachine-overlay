@@ -17,10 +17,10 @@
       Adds RPI integration
     </flag>
     <flag name="compositor-quick">
-      Adds QtQuick integration
+      Adds Qt Quick integration
     </flag>
     <flag name="datadevice">
-      Adds Drag and drop support
+      Adds drag and drop support
     </flag>
     <flag name="dmabuf-client-buffer">
       Adds DMA-BUF client integration
