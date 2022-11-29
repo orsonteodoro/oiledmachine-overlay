@@ -419,7 +419,7 @@ cpu_flags_x86_sse4_2?,\
 cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 	)
 	ffmpeg? (
-		>=media-video/ffmpeg-5:=\
+		>=media-video/ffmpeg-4:=\
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
 		<media-video/ffmpeg-6:=\
 	)
