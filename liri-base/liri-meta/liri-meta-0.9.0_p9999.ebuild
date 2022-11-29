@@ -14,7 +14,7 @@ power-manager pulseaudio qtintegration screencast screenshot +settings systemd
 r1
 "
 DEPEND+="
-	appcenter? ( ~liri-base/appcenter-0.1.0_p9999 )
+	appcenter? ( ~liri-extra/appcenter-0.1.0_p9999 )
 	browser? ( ~liri-extra/browser-1.2.0_p9999 )
 	calculator? ( ~liri-extra/calculator-1.3.0_p9999 )
 	files? ( ~liri-base/files-0.2.0_p9999 )
