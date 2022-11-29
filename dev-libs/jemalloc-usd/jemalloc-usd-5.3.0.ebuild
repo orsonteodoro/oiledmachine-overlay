@@ -66,7 +66,7 @@ src_prepare() {
 	default
 
 	if use custom-cflags ; then
-		eapply "${FILESDIR}/${PN}-5.3.0-gentoo-fixups.patch"
+		eapply "${FILESDIR}/${MY_PN}-5.3.0-gentoo-fixups.patch"
 		# -g3 flag introduced in f3340ca8d5b89ce8f2ec5b3721871029e0fa70ac (circa 2009) : Add configure tests for CFLAGS settings.
 		if ! use test ; then
 			sed -i -e "/-g3/d" configure.ac || die
