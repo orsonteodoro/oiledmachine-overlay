@@ -4,7 +4,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake llvm multilib-minimal python-any-r1 toolchain-funcs
+inherit cmake flag-o-matic llvm multilib-minimal python-any-r1 toolchain-funcs
 
 DESCRIPTION="Advanced shading language for production GI renderers"
 HOMEPAGE="http://opensource.imageworks.com/?p=osl"
@@ -38,6 +38,9 @@ REQUIRED_USE+="
 # For optix requirements, see
 #   https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.11.17.0/src/cmake/externalpackages.cmake
 QT_MIN=5.6
+PATCHES=(
+	"${FILESDIR}/${PN}-1.11.17.0-stddef-includes-path.patch"
+)
 
 gen_llvm_depend()
 {
@@ -217,6 +220,9 @@ src_prepare() {
 
 src_configure() {
 	configure_abi() {
+		export CC="clang"
+		export CXX="clang++"
+		strip-unsupported-flags
 		local lib_type
 		for lib_type in $(get_lib_type) ; do
 			export CMAKE_USE_DIR="${S}"
@@ -244,6 +250,7 @@ src_configure() {
 				-DOSL_BUILD_TESTS=$(usex test)
 				#-DOSL_SHADER_INSTALL_DIR="include/OSL/shaders"
 				-DSTOP_ON_WARNING=OFF
+				#-DUSE_CCACHE=OFF
 				-DUSE_OPTIX=$(usex optix)
 				-DUSE_PARTIO=$(usex partio)
 				-DUSE_PYTHON=$(usex python)
@@ -258,7 +265,11 @@ src_configure() {
 			fi
 
 			append-cxxflags -fPIC
-
+			if ver_test $(clang-major-version) -ge 16 ; then
+				export CXX_INCLUDES_PATH="${ESYSROOT}/usr/lib/clang/$(clang-major-version)/include"
+			else
+				export CXX_INCLUDES_PATH="${ESYSROOT}/usr/lib/clang/$(clang-fullversion)/include"
+			fi
 			cmake_src_configure
 		done
 	}
