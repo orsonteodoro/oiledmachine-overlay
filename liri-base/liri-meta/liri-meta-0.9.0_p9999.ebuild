@@ -54,7 +54,7 @@ DEPEND+="
 		~liri-base/settings-0.9.0_p9999
 	)
 	terminal? (
-		~liri-base/terminal-0.2.0_p9999
+		~liri-extra/terminal-0.2.0_p9999
 	)
 	text? (
 		~liri-extra/text-0.5.0_p9999
