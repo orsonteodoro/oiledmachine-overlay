@@ -51,7 +51,7 @@ DEPEND+="
 	>=dev-qt/qtmultimedia-${QT_MIN_PV}:5=[qml]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
-	>=dev-qt/qtsql-${QT_MIN_PV}:5=
+	>=dev-qt/qtsql-${QT_MIN_PV}:5=[sqlite]
 	media-libs/taglib:taglib2-preview
 	system-fluid? (
 		~liri-base/fluid-1.2.0_p9999
