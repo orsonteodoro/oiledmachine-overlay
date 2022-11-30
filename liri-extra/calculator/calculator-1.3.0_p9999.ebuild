@@ -14,7 +14,7 @@ LICENSE="GPL-3+"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
-r1
+r2
 "
 QT_MIN_PV=5.10
 DEPEND+="
@@ -36,6 +36,8 @@ BDEPEND+="
 SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
+EGIT_OVERRIDE_REPO_LIRIOS_CALCULATOR="https://github.com/lirios/calculator.git"
+EGIT_OVERRIDE_REPO_LIRIOS_SNAPCRAFT_PLUGINS="https://github.com/lirios/snapcraft-plugins.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
