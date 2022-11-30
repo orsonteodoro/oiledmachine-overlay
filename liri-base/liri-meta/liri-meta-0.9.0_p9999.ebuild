@@ -13,27 +13,65 @@ power-manager pulseaudio qtintegration screencast screenshot +settings systemd
 
 r1
 "
+XDG_DESKTOP_PORTAL_LIRI_PV="0.0.0_p9999"
 DEPEND+="
-	appcenter? ( ~liri-extra/appcenter-0.1.0_p9999 )
-	browser? ( ~liri-extra/browser-1.2.0_p9999 )
-	calculator? ( ~liri-extra/calculator-1.3.0_p9999 )
-	files? ( ~liri-base/files-0.2.0_p9999 )
-	flatpak? ( ~liri-base/xdg-desktop-portal-liri-0.0.0_p9999 )
-	music? ( ~liri-extra/music-1.0.0_p9999 )
-	networkmanager? ( ~liri-extra/networkmanager-0.9.0_p9999 )
-	player? ( ~liri-extra/player-0.1.0_p9999 )
-	power-manager? ( ~liri-extra/power-manager-0.9.0_p9999 )
-	pulseaudio? ( ~liri-base/pulseaudio-0.9.0_p9999 )
-	qtintegration? ( ~liri-base/qtintegration-1.0.0_p9999 )
-	screencast? ( ~liri-extra/screencast-0.9.0_p9999 )
-	screenshot? ( ~liri-extra/screenshot-0.9.0_p9999 )
-	settings? ( ~liri-base/settings-0.9.0_p9999 )
-	terminal? ( ~liri-base/terminal-0.2.0_p9999 )
-	text? ( ~liri-extra/text-0.5.0_p9999 )
-	themes? ( ~liri-base/themes-0.9.0_p9999 )
-	wallpaper? ( ~liri-base/wallpapers-0.10.0_p9999 )
+	appcenter? (
+		~liri-extra/appcenter-0.1.0_p9999
+		~liri-base/xdg-desktop-portal-liri-${XDG_DESKTOP_PORTAL_LIRI_PV}
+	)
+	browser? (
+		~liri-extra/browser-1.2.0_p9999
+	)
+	calculator? (
+		~liri-extra/calculator-1.3.0_p9999
+	)
+	files? (
+		~liri-base/files-0.2.0_p9999
+	)
+	flatpak? (
+		~liri-base/xdg-desktop-portal-liri-${XDG_DESKTOP_PORTAL_LIRI_PV}
+	)
+	music? (
+		~liri-extra/music-1.0.0_p9999
+	)
+	networkmanager? (
+		~liri-extra/networkmanager-0.9.0_p9999
+	)
+	player? (
+		~liri-extra/player-0.1.0_p9999
+	)
+	power-manager? (
+		~liri-extra/power-manager-0.9.0_p9999
+	)
+	pulseaudio? (
+		~liri-base/pulseaudio-0.9.0_p9999
+	)
+	qtintegration? (
+		~liri-base/qtintegration-1.0.0_p9999
+	)
+	screencast? (
+		~liri-extra/screencast-0.9.0_p9999
+	)
+	screenshot? (
+		~liri-extra/screenshot-0.9.0_p9999
+	)
+	settings? (
+		~liri-base/settings-0.9.0_p9999
+	)
+	terminal? (
+		~liri-base/terminal-0.2.0_p9999
+	)
+	text? (
+		~liri-extra/text-0.5.0_p9999
+	)
+	themes? (
+		~liri-base/themes-0.9.0_p9999
+	)
+	wallpaper? (
+		~liri-base/wallpapers-0.10.0_p9999
+	)
 	~liri-base/session-0.1.0_p9999[systemd?]
-	~liri-base/shell-0.9.0_p9999[systemd?]
+	~liri-base/shell-${SLOT#*/}[systemd?]
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
