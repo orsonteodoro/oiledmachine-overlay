@@ -11,7 +11,7 @@ appcenter browser calculator +files flatpak music networkmanager player
 power-manager pulseaudio screencast screenshot +settings systemd
 +terminal text themes wallpaper
 
-r1
+r2
 "
 DEPEND+="
 	appcenter? (
@@ -66,7 +66,7 @@ DEPEND+="
 		~liri-base/wallpapers-0.10.0_p9999
 	)
 	~liri-base/session-0.1.0_p9999[systemd?]
-	~liri-base/shell-${SLOT#*/}[systemd?]
+	~liri-base/shell-${PV}[systemd?]
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
