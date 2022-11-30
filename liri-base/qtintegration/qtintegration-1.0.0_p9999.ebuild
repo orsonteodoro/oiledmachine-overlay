@@ -17,7 +17,7 @@ IUSE="
 +layer-shell-integration +lockscreen-integration +material-decoration
 +platform-theme
 
-r2
+r3
 "
 QT_MIN_PV=5.15
 DEPEND+="
@@ -96,7 +96,7 @@ src_unpack() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DLIRI_QTINTEGRATION_ENABLE_LAYER_SHELL_INTEGRATION=$(usex shell-integration)
+		-DLIRI_QTINTEGRATION_ENABLE_LAYER_SHELL_INTEGRATION=$(usex layer-shell-integration)
 		-DLIRI_QTINTEGRATION_ENABLE_LOCKSCREEN_INTEGRATION=$(usex lockscreen-integration)
 		-DLIRI_QTINTEGRATION_ENABLE_MATERIAL_DECORATION=$(usex material-decoration)
 		-DLIRI_QTINTEGRATION_ENABLE_PLATFORMTHEME=$(usex platform-theme)
