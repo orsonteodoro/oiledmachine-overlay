@@ -26,7 +26,7 @@ DEPEND+="
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
-	~liri-base/fluid-1.0.0_p9999
+	~liri-base/fluid-1.2.0_p9999
 	~liri-base/aurora-client-0.0.0_p9999
 "
 RDEPEND+="
