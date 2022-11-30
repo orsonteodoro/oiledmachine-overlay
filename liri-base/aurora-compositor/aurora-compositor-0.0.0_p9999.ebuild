@@ -158,6 +158,19 @@ pkg_setup() {
 	if ver_test ${QTCORE_PV} -ne ${QTTEST_PV} ; then
 		die "Qt5Core is not the same version as Qt5Test"
 	fi
+
+	# Check commit
+
+	local cmake_commit_time=1669796760 # seconds in UTC; Same as Wed Nov 30 00:26:00 PST 2022
+	local cmake_build_time=$(portageq metadata / installed liri-base/cmake-shared-2.0.0_p9999 BUILD_TIME) # UTC
+	if (( ${cmake_build_time} < ${cmake_commit_time} )) ; then
+eerror
+eerror "Incompatible commit found for liri-base/cmake-shared."
+eerror
+eerror "You must re-emerge liri-base/cmake-shared without commit overrides."
+eerror
+		die
+	fi
 }
 
 src_unpack() {
