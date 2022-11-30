@@ -40,6 +40,8 @@ BDEPEND+="
 SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
+EGIT_OVERRIDE_REPO_LIRIOS_TEXT="https://github.com/lirios/text.git"
+EGIT_OVERRIDE_REPO_LIRIOS_SNAPCRAFT_PLUGINS="https://github.com/lirios/snapcraft-plugins.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
