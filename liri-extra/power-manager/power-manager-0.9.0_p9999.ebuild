@@ -32,6 +32,7 @@ DEPEND+="
 	~liri-base/fluid-1.2.0_p9999
 	~liri-base/libliri-0.9.0_p9999
 	~liri-base/qtgsettings-1.3.0_p9999
+	~liri-base/session-0.1.0_p9999
 "
 RDEPEND+="
 	${DEPEND}
