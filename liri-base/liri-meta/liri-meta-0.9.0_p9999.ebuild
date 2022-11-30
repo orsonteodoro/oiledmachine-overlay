@@ -13,11 +13,9 @@ power-manager pulseaudio qtintegration screencast screenshot +settings systemd
 
 r1
 "
-XDG_DESKTOP_PORTAL_LIRI_PV="0.0.0_p9999"
 DEPEND+="
 	appcenter? (
 		~liri-extra/appcenter-0.1.0_p9999
-		~liri-base/xdg-desktop-portal-liri-${XDG_DESKTOP_PORTAL_LIRI_PV}
 	)
 	browser? (
 		~liri-extra/browser-1.2.0_p9999
@@ -29,7 +27,7 @@ DEPEND+="
 		~liri-base/files-0.2.0_p9999
 	)
 	flatpak? (
-		~liri-base/xdg-desktop-portal-liri-${XDG_DESKTOP_PORTAL_LIRI_PV}
+		~liri-base/xdg-desktop-portal-liri-0.0.0_p9999
 	)
 	music? (
 		~liri-extra/music-1.0.0_p9999
