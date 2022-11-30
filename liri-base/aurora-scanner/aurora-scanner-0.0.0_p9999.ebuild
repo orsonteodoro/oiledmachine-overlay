@@ -16,7 +16,7 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
 test
 
-r1
+r3
 "
 QT_MIN_PV=5.15
 DEPEND+="
@@ -36,6 +36,9 @@ EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+PATCHES=(
+	"${FILESDIR}/aurora-scanner-0.0.0_p9999-revert-header-names.patch"
+)
 
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
@@ -75,6 +78,12 @@ src_configure() {
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
 	)
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+	dosym aurora-wayland-scanner \
+		/usr/bin/qtwaylandscanner
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

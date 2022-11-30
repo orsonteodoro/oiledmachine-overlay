@@ -16,7 +16,7 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
 doc -qtquick-compiler test
 
-r1
+r2
 "
 QT_MIN_PV=5.10
 DEPEND+="
@@ -42,10 +42,15 @@ BDEPEND+="
 SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
-EGIT_OVERRIDE_REPO_LIRIOS_QBS_SHARED="https://github.com/lirios/qbs-shared.git"
 EGIT_OVERRIDE_REPO_LIRIOS_CMAKE_SHARED="https://github.com/lirios/cmake-shared.git"
+EGIT_OVERRIDE_REPO_LIRIOS_QBS_SHARED="https://github.com/lirios/qbs-shared.git"
+EGIT_OVERRIDE_COMMIT_LIRIOS_CMAKE_SHARED="HEAD"
+EGIT_OVERRIDE_COMMIT_LIRIOS_QBS_SHARED="HEAD"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+PATCHES=(
+	"${FILESDIR}/fluid-1.2.0_p9999-aurora.patch"
+)
 
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
@@ -98,6 +103,10 @@ src_unpack() {
 		einfo "v_live=${v_live}"
 		einfo
 	fi
+}
+
+src_prepare() {
+	cmake_src_prepare
 }
 
 src_configure() {
