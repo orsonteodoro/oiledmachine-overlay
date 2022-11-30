@@ -1,6 +1,6 @@
-diff -urp music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d.orig/cmake/Modules/FindTaglib.cmake music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d/cmake/Modules/FindTaglib.cmake
---- music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d.orig/cmake/Modules/FindTaglib.cmake	2020-03-14 10:11:21.000000000 -0700
-+++ music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d/cmake/Modules/FindTaglib.cmake	2020-07-18 16:07:42.753972353 -0700
+diff -urp music-1.0.0_p9999.orig/cmake/Modules/FindTaglib.cmake music-1.0.0_p9999/cmake/Modules/FindTaglib.cmake
+--- music-1.0.0_p9999.orig/cmake/Modules/FindTaglib.cmake	2022-11-30 11:35:30.342646566 -0800
++++ music-1.0.0_p9999/cmake/Modules/FindTaglib.cmake	2022-11-30 11:36:18.860579432 -0800
 @@ -11,11 +11,11 @@
  # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
  
@@ -15,12 +15,26 @@ diff -urp music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d.orig/cmake/Modules/Find
         ${BIN_INSTALL_DIR}
      )
  endif(NOT WIN32)
-diff -urp music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d.orig/src/Components/Utilities/musicscanner.cpp music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d/src/Components/Utilities/musicscanner.cpp
---- music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d.orig/src/Components/Utilities/musicscanner.cpp	2020-03-14 10:11:21.000000000 -0700
-+++ music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d/src/Components/Utilities/musicscanner.cpp	2020-07-18 16:08:03.784784476 -0700
-@@ -8,16 +8,16 @@
- #include <QMimeDatabase>
+diff -urp music-1.0.0_p9999.orig/src/Components/Songs/songmodel.cpp music-1.0.0_p9999/src/Components/Songs/songmodel.cpp
+--- music-1.0.0_p9999.orig/src/Components/Songs/songmodel.cpp	2022-11-30 11:35:30.618657562 -0800
++++ music-1.0.0_p9999/src/Components/Songs/songmodel.cpp	2022-11-30 11:37:02.442315480 -0800
+@@ -4,8 +4,8 @@
+ #include <stdio.h>
+ #include <iostream>
+ #include <QFileInfo>
+-#include <taglib/tag.h>
+-#include <taglib/fileref.h>
++#include <taglib2/tag.h>
++#include <taglib2/fileref.h>
+ 
+ SongModel::SongModel(QObject *parent):
+     QAbstractListModel(parent)
+diff -urp music-1.0.0_p9999.orig/src/Components/Utilities/musicscanner.cpp music-1.0.0_p9999/src/Components/Utilities/musicscanner.cpp
+--- music-1.0.0_p9999.orig/src/Components/Utilities/musicscanner.cpp	2022-11-30 11:35:30.622657721 -0800
++++ music-1.0.0_p9999/src/Components/Utilities/musicscanner.cpp	2022-11-30 11:36:18.860579432 -0800
+@@ -11,21 +11,20 @@
  #include <QThread>
+ #include <QBuffer>
  #include <iostream>
 -#include <taglib/mpegfile.h>
 -#include <taglib/mpegheader.h>
@@ -28,25 +42,32 @@ diff -urp music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d.orig/src/Components/Uti
 -#include <taglib/attachedpictureframe.h>
 -#include <taglib/id3v2frame.h>
 -#include <taglib/id3v2header.h>
--#include <taglib/id3v2tag.h>
+-#include <taglib/mpegfile.h>
+-#include <taglib/flacfile.h>
 +#include <taglib2/mpegfile.h>
 +#include <taglib2/mpegheader.h>
 +#include <taglib2/tbytevector.h>
 +#include <taglib2/attachedpictureframe.h>
 +#include <taglib2/id3v2frame.h>
 +#include <taglib2/id3v2header.h>
++#include <taglib2/mpegfile.h>
++#include <taglib2/flacfile.h>
+ #include <glob.h>
+-#include <taglib/id3v2tag.h>
 +#include <taglib2/id3v2tag.h>
  #include <typeinfo>
--#include <taglib/tpicturemap.h>
+ //#include "/usr/local/include/taglib/tpicturemap.h"
 -#include <taglib/id3v1tag.h>
-+#include <taglib2/tpicturemap.h>
+-#include <taglib/tstring.h>
+-#include <taglib/tstring.h>
 +#include <taglib2/id3v1tag.h>
- 
- 
- MusicScanner::MusicScanner():
-diff -urp music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d.orig/src/Components/Utilities/musicscanner.h music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d/src/Components/Utilities/musicscanner.h
---- music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d.orig/src/Components/Utilities/musicscanner.h	2020-03-14 10:11:21.000000000 -0700
-+++ music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d/src/Components/Utilities/musicscanner.h	2020-07-18 16:08:02.434732342 -0700
++#include <taglib2/tstring.h>
+ #include <filesystem>
+ #include <iostream>
+ #include <vector>
+diff -urp music-1.0.0_p9999.orig/src/Components/Utilities/musicscanner.h music-1.0.0_p9999/src/Components/Utilities/musicscanner.h
+--- music-1.0.0_p9999.orig/src/Components/Utilities/musicscanner.h	2022-11-30 11:35:30.622657721 -0800
++++ music-1.0.0_p9999/src/Components/Utilities/musicscanner.h	2022-11-30 11:36:18.860579432 -0800
 @@ -7,11 +7,11 @@
  
  #include <QFileSystemWatcher>
@@ -64,3 +85,15 @@ diff -urp music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d.orig/src/Components/Uti
  
  #include "../Songs/song.h"
  #include "../Albums/album.h"
+diff -urp music-1.0.0_p9999.orig/src/main.cpp music-1.0.0_p9999/src/main.cpp
+--- music-1.0.0_p9999.orig/src/main.cpp	2022-11-30 11:35:30.698660750 -0800
++++ music-1.0.0_p9999/src/main.cpp	2022-11-30 11:36:59.098182275 -0800
+@@ -43,7 +43,7 @@
+ #include "Components/Utilities/musicscanner.h"
+ #include "Components/Albums/albumartprovider.h"
+ #include <QtQuickControls2>
+-#include <taglib/tag.h>
++#include <taglib2/tag.h>
+ 
+ #ifdef QT_STATIC
+ #  include <QQmlExtensionPlugin>

@@ -19,7 +19,7 @@ QT_MIN_PV=5.14
 IUSE+="
 doc +system-fluid test
 
-r2
+r3
 "
 
 FLUID_DEPEND="
@@ -62,6 +62,7 @@ BDEPEND+="
 		${FLUID_BDEPEND}
 	)
 	>=dev-util/cmake-3.10.0
+	dev-libs/stb
 	virtual/pkgconfig
 	system-fluid? (
 		~liri-base/cmake-shared-2.0.0_p9999
@@ -182,13 +183,26 @@ src_unpack() {
 		ln -s "${WORKDIR}/qbs-shared-${QBS_SHARED_COMMIT}" \
 			"${S}/fluid/qbs/shared" || die
 	fi
-	if ! use system-fluid ; then
-		eapply "${FILESDIR}/music-1.0.0_pre20200314-disable-fluid-documentation.patch"
-	fi
+}
+
+patch_fluid() {
+	local F=(
+		"fluid/src/imports/controls-private/extensions/liridecoration.h"
+		"fluid/src/imports/controls-private/extensions/liridecoration.cpp"
+	)
+	local f
+	for f in ${F[@]} ; do
+		sed -i -e "s|QtWayland::|Aurora::Client::PrivateClient::|g" \
+			"${f}" || die
+	done
 }
 
 src_prepare() {
 	cmake_src_prepare
+	if ! use system-fluid ; then
+		eapply "${FILESDIR}/music-1.0.0_pre20200314-disable-fluid-documentation.patch"
+		patch_fluid
+	fi
 }
 
 src_configure() {
