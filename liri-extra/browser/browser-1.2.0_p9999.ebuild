@@ -28,7 +28,6 @@ DEPEND+="
 	>=dev-qt/qtwebengine-${QT_MIN_PV}:5=
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
 	~liri-base/fluid-1.2.0_p9999
-	~liri-base/qtgsettings-1.3.0_p9999
 "
 RDEPEND+="
 	${DEPEND}
