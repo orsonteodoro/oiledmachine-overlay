@@ -13,11 +13,19 @@ LICENSE="GPL-3+ LGPL-3+ ISC"
 # Live/snapshot ebuild do not get KEYWORDed
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
+FEATURES_IUSE=(
+layer-shell-integration lockscreen-integration material-decoration
+platform-theme
+)
 IUSE="
-+layer-shell-integration +lockscreen-integration +material-decoration
-+platform-theme
+${FEATURES_IUSE[@]/#/+}
 
-r3
+r5
+"
+REQUIRED_USE="
+|| (
+	${FEATURES_IUSE[@]}
+)
 "
 QT_MIN_PV=5.15
 DEPEND+="
@@ -94,6 +102,10 @@ src_unpack() {
 	fi
 }
 
+src_prepare() {
+	cmake_src_prepare
+}
+
 src_configure() {
 	local mycmakeargs=(
 		-DLIRI_QTINTEGRATION_ENABLE_LAYER_SHELL_INTEGRATION=$(usex layer-shell-integration)
@@ -108,7 +120,6 @@ src_configure() {
 }
 
 pkg_postinst() {
-	xdg_pkg_postinst
 	einfo "The environmental variable QT_WAYLAND_DISABLE_WINDOWDECORATION must be unset"
 	einfo "Set QT_WAYLAND_DECORATION=material before loading liri-session"
 }
