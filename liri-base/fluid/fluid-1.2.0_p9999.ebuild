@@ -21,7 +21,6 @@ r1
 QT_MIN_PV=5.10
 DEPEND+="
 	>=dev-libs/wayland-1.15
-	>=dev-qt/qdoc-${QT_MIN_PV}:5=
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5=
@@ -29,6 +28,7 @@ DEPEND+="
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
+	doc? ( >=dev-qt/qdoc-${QT_MIN_PV}:5= )
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="

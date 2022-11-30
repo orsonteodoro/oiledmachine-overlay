@@ -42,6 +42,7 @@ IUSE_FEATURES=(
 )
 IUSE+="
 ${IUSE_FEATURES[@]/#/+}
+test
 
 r1
 "
@@ -124,6 +125,7 @@ pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
 	QTDBUS_PV=$(pkg-config --modversion Qt5DBus)
 	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
+	QTXML_PV=$(pkg-config --modversion Qt5Xml)
 	if ver_test ${QTCORE_PV} -ne ${QTDBUS_PV} ; then
 		die "Qt5Core is not the same version as Qt5DBus"
 	fi
@@ -144,7 +146,7 @@ pkg_setup() {
 		&& use vulkan-server-buffer \
 		&& use wayland-egl \
 	; then
-		QTQML_PV=$(pkg-config --modversion Qt5OpenGL)
+		QTOPENGL_PV=$(pkg-config --modversion Qt5OpenGL)
 		if ver_test ${QTCORE_PV} -ne ${QTOPENGL_PV} ; then
 			die "Qt5Core is not the same version as Qt5OpenGL"
 		fi
@@ -152,11 +154,9 @@ pkg_setup() {
 	if ver_test ${QTCORE_PV} -ne ${QTXML_PV} ; then
 		die "Qt5Core is not the same version as Qt5Xml"
 	fi
-	if use test ; then
-		QTTEST_PV=$(pkg-config --modversion Qt5Test)
-		if ver_test ${QTCORE_PV} -ne ${QTTEST_PV} ; then
-			die "Qt5Core is not the same version as Qt5Test"
-		fi
+	QTTEST_PV=$(pkg-config --modversion Qt5Test)
+	if ver_test ${QTCORE_PV} -ne ${QTTEST_PV} ; then
+		die "Qt5Core is not the same version as Qt5Test"
 	fi
 }
 

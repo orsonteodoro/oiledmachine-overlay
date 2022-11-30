@@ -24,7 +24,6 @@ r2
 
 FLUID_DEPEND="
 	>=dev-libs/wayland-1.15
-	>=dev-qt/qdoc-${QT_MIN_PV}:5=
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5=
@@ -182,6 +181,9 @@ src_unpack() {
 			"${S}/fluid/cmake/shared" || die
 		ln -s "${WORKDIR}/qbs-shared-${QBS_SHARED_COMMIT}" \
 			"${S}/fluid/qbs/shared" || die
+	fi
+	if ! use system-fluid ; then
+		eapply "${FILESDIR}/music-1.0.0_pre20200314-disable-fluid-documentation.patch"
 	fi
 }
 
