@@ -14,10 +14,10 @@ LICENSE="GPL-3+ LGPL-3+ ISC"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE="
-layer-shell-integration lockscreen-integration material-decoration
-platform-theme
++layer-shell-integration +lockscreen-integration +material-decoration
++platform-theme
 
-r1
+r2
 "
 QT_MIN_PV=5.15
 DEPEND+="
@@ -27,9 +27,6 @@ DEPEND+="
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
 	x11-libs/libxkbcommon
-	layer-shell-integration? (
-		~liri-base/aurora-client-0.0.0_p9999
-	)
 	platform-theme? (
 		~liri-base/qtgsettings-1.3.0_p9999
 	)

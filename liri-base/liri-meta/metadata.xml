@@ -28,17 +28,11 @@
     <flag name="flatpak">
       Installs Flatpak support
     </flag>
-    <flag name="materialdecoration">
-      Installs a material decoration for Qt apps under wayland.
-    </flag>
     <flag name="music">
       Installs a music player app
     </flag>
     <flag name="networkmanager">
       Adds NetworkManager support
-    </flag>
-    <flag name="platformtheme">
-      Sets the default font and icon theme
     </flag>
     <flag name="player">
       Installs a video media player
@@ -48,10 +42,6 @@
     </flag>
     <flag name="pulseaudio">
       Adds PulseAudio support
-    </flag>
-    <flag name="qtintegration">
-      Sets the default font and icon theme and material decoration for Qt apps
-      under wayland and wayland shell integration.
     </flag>
     <flag name="terminal">
       Installs a terminal emulator named Terminal

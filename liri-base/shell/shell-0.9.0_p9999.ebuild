@@ -16,6 +16,7 @@ LICENSE="GPL-3+ LGPL-3+ BSD"
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
 -qtquick-compiler systemd
++layer-shell-integration +lockscreen-integration
 
 r2
 "
@@ -46,7 +47,8 @@ DEPEND+="
 	~liri-base/libliri-0.9.0_p9999
 	~liri-base/qtaccountsservice-1.3.0_p9999
 	~liri-base/qtgsettings-1.3.0_p9999
-"
+	~liri-base/qtintegration-1.0.0_p9999[layer-shell-integration?,lockscreen-integration?]
+" # TODO: check liri-base/qtintegration USE flags for always required.
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=

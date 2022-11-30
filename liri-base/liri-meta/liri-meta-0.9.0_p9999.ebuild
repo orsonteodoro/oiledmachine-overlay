@@ -8,7 +8,7 @@ HOMEPAGE="https://liri.io/"
 SLOT="0/$(ver_cut 1-3 ${PV})" # based on liri-base/liri-shell
 IUSE+="
 appcenter browser calculator +files flatpak music networkmanager player
-power-manager pulseaudio qtintegration screencast screenshot +settings systemd
+power-manager pulseaudio screencast screenshot +settings systemd
 +terminal text themes wallpaper
 
 r1
@@ -43,9 +43,6 @@ DEPEND+="
 	)
 	pulseaudio? (
 		~liri-base/pulseaudio-0.9.0_p9999
-	)
-	qtintegration? (
-		~liri-base/qtintegration-1.0.0_p9999
 	)
 	screencast? (
 		~liri-extra/screencast-0.9.0_p9999
