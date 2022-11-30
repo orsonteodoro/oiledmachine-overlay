@@ -19,7 +19,7 @@ QT_MIN_PV=5.14
 IUSE+="
 doc +system-fluid test
 
-r1
+r2
 "
 
 FLUID_DEPEND="

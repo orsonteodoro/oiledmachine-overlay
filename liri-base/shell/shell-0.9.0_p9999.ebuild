@@ -17,7 +17,7 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
 -qtquick-compiler systemd
 
-r1
+r2
 "
 # systemd is enabled by default upstream, but distro defaults to OpenRC.
 QT_MIN_PV=5.15
