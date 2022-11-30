@@ -14,7 +14,7 @@ LICENSE="BSD"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
-r1
+r2
 "
 DEPEND+="
 	>=kde-frameworks/extra-cmake-modules-5.99.0
