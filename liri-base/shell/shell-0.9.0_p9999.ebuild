@@ -29,7 +29,7 @@ DEPEND+="
 	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
-	>=dev-qt/qtsql-${QT_MIN_PV}:5=
+	>=dev-qt/qtsql-${QT_MIN_PV}:5=[sqlite]
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
