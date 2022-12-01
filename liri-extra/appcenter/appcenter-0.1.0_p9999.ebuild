@@ -24,7 +24,7 @@ DEPEND+="
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
-	>=dev-qt/qtnetwork-${QT_MIN_PV}:5=
+	>=dev-qt/qtnetwork-${QT_MIN_PV}:5=[ssl]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	dev-libs/appstream[qt5]
 	sys-apps/flatpak
