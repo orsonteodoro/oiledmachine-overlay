@@ -167,11 +167,13 @@ ewarn "  -The cursor and wallpaper will not show properly if you ran"
 ewarn "   \`liri-session -- -platform xcb\`"
 ewarn "  -The -platform eglfs mode may not work at all."
 ewarn
-einfo "To run Liri in X run:"
-einfo "  liri-session -- -platform xcb"
 einfo
-einfo "To run Liri in KMS from a VT run:"
-einfo "  liri-session -- -platform eglfs"
+einfo "To run Liri in X do:"
+einfo "  startx"
+einfo "  open terminal program"
+einfo "  liri-session"
+einfo
+ewarn "liri-session will not work with .xinitrc."
 einfo
 }
 

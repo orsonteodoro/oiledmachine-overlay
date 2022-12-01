@@ -7,8 +7,8 @@ DESCRIPTION="Meta package for liri"
 HOMEPAGE="https://liri.io/"
 SLOT="0/$(ver_cut 1-3 ${PV})" # based on liri-base/liri-shell
 IUSE+="
-appcenter browser calculator +files flatpak music networkmanager player
-power-manager pulseaudio screencast screenshot +settings systemd
+appcenter browser calculator +files flatpak initial-setup music networkmanager
+player power-manager pulseaudio screencast screenshot +settings systemd
 +terminal text themes wallpaper
 
 r2
@@ -28,6 +28,9 @@ DEPEND+="
 	)
 	flatpak? (
 		~liri-base/xdg-desktop-portal-liri-0.0.0_p9999
+	)
+	initial-setup? (
+		~liri-base/initial-setup-0.0.0_p9999
 	)
 	music? (
 		~liri-extra/music-1.0.0_p9999
@@ -84,11 +87,13 @@ ewarn "  -The cursor and wallpaper will not show properly if you ran"
 ewarn "   \`liri-session -- -platform xcb\`"
 ewarn "  -The -platform eglfs mode may not work at all."
 ewarn
-einfo "To run Liri in X run:"
-einfo "  liri-session -- -platform xcb"
 einfo
-einfo "To run Liri in KMS from a VT run:"
-einfo "  liri-session -- -platform eglfs"
+einfo "To run Liri in X do:"
+einfo "  startx"
+einfo "  open terminal program"
+einfo "  liri-session"
+einfo
+ewarn "liri-session will not work with .xinitrc."
 einfo
 }
 
