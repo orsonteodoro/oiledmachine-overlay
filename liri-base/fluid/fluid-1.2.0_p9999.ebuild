@@ -16,7 +16,7 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
 doc -qtquick-compiler test
 
-r2
+r3
 "
 QT_MIN_PV=5.10
 DEPEND+="

@@ -1,65 +1,40 @@
-diff -urp fluid-1.2.0_p9999.orig/qbs/shared/modules/WaylandScanner/WaylandScanner.qbs fluid-1.2.0_p9999/qbs/shared/modules/WaylandScanner/WaylandScanner.qbs
---- fluid-1.2.0_p9999.orig/qbs/shared/modules/WaylandScanner/WaylandScanner.qbs	2022-11-30 10:02:51.750801723 -0800
-+++ fluid-1.2.0_p9999/qbs/shared/modules/WaylandScanner/WaylandScanner.qbs	2022-11-30 10:03:23.840060231 -0800
-@@ -11,11 +11,11 @@ Module {
-         inputs: ["wayland.client.protocol"]
+diff -urp fluid-1.2.0_p9999.orig/src/imports/controls-private/CMakeLists.txt fluid-1.2.0_p9999/src/imports/controls-private/CMakeLists.txt
+--- fluid-1.2.0_p9999.orig/src/imports/controls-private/CMakeLists.txt	2022-11-30 16:03:24.818826038 -0800
++++ fluid-1.2.0_p9999/src/imports/controls-private/CMakeLists.txt	2022-11-30 16:04:19.916968817 -0800
+@@ -4,12 +4,11 @@ if(LINUX AND NOT ANDROID)
+         extensions/fluiddecorationv1.h
+     )
  
-         Artifact {
--            filePath: "wayland-" + FileInfo.baseName(input.fileName) + "-client-protocol.h"
-+            filePath: "wayland-" + FileInfo.baseName(input.fileName) + "-client-protocol.h"
-             fileTags: ["hpp", "hpp_private"]
-         }
-         Artifact {
--            filePath: "wayland-" + FileInfo.baseName(input.fileName) + "-protocol.c"
-+            filePath: "wayland-" + FileInfo.baseName(input.fileName) + "-protocol.c"
-             fileTags: ["c"]
-         }
+-    find_package(QtWaylandScanner REQUIRED)
++    if(NOT TARGET Liri::AuroraClient)
++        find_package(Liri1AuroraClient REQUIRED)
++    endif()
+     find_package(Wayland 1.15 COMPONENTS Client REQUIRED)
+     find_package(Qt5WaylandClient REQUIRED)
+-    ecm_add_qtwayland_client_protocol(SOURCES
+-        PROTOCOL "${CMAKE_CURRENT_SOURCE_DIR}/extensions/fluid-decoration-unstable-v1.xml"
+-        BASENAME "fluid-decoration-unstable-v1")
+     set(DEFINES FLUID_ENABLE_WAYLAND=1)
+     set(LIBRARIES Qt5::GuiPrivate Qt5::WaylandClient Wayland::Client)
+ endif()
+@@ -37,6 +36,14 @@ liri_add_qml_plugin(fluidcontrolsprivate
+         Qt5::QuickControls2
+     LIBRARIES
+         ${LIBRARIES}
++        Liri::AuroraClient
+ )
  
-@@ -28,11 +28,11 @@ Module {
-         inputs: ["wayland.client.protocol"]
- 
-         Artifact {
--            filePath: "qwayland-" + FileInfo.baseName(input.fileName) + ".h"
-+            filePath: "qwayland-" + FileInfo.baseName(input.fileName) + ".h"
-             fileTags: ["hpp", "hpp_private"]
-         }
-         Artifact {
--            filePath: "qwayland-" + FileInfo.baseName(input.fileName) + ".cpp"
-+            filePath: "qwayland-" + FileInfo.baseName(input.fileName) + ".cpp"
-             fileTags: ["cpp"]
-         }
- 
-@@ -45,11 +45,11 @@ Module {
-         inputs: ["wayland.server.protocol"]
- 
-         Artifact {
--            filePath: "wayland-" + FileInfo.baseName(input.fileName) + "-server-protocol.h"
-+            filePath: "wayland-" + FileInfo.baseName(input.fileName) + "-server-protocol.h"
-             fileTags: ["hpp", "hpp_private"]
-         }
-         Artifact {
--            filePath: "wayland-" + FileInfo.baseName(input.fileName) + "-protocol.c"
-+            filePath: "wayland-" + FileInfo.baseName(input.fileName) + "-protocol.c"
-             fileTags: ["c"]
-         }
- 
-@@ -62,11 +62,11 @@ Module {
-         inputs: ["wayland.server.protocol"]
- 
-         Artifact {
--            filePath: "qwayland-server-" + FileInfo.baseName(input.fileName) + ".h"
-+            filePath: "qwayland-server-" + FileInfo.baseName(input.fileName) + ".h"
-             fileTags: ["hpp", "hpp_private"]
-         }
-         Artifact {
--            filePath: "qwayland-server-" + FileInfo.baseName(input.fileName) + ".cpp"
-+            filePath: "qwayland-server-" + FileInfo.baseName(input.fileName) + ".cpp"
-             fileTags: ["cpp"]
-         }
- 
++if(LINUX AND NOT ANDROID)
++    liri_generate_wayland_protocol_client_sources(fluidcontrolsprivate
++        FILES
++            "${CMAKE_CURRENT_SOURCE_DIR}/extensions/fluid-decoration-unstable-v1.xml"
++    )
++endif()
++
+ liri_finalize_qml_plugin(fluidcontrolsprivate)
 diff -urp fluid-1.2.0_p9999.orig/src/imports/controls-private/extensions/fluiddecorationv1.cpp fluid-1.2.0_p9999/src/imports/controls-private/extensions/fluiddecorationv1.cpp
---- fluid-1.2.0_p9999.orig/src/imports/controls-private/extensions/fluiddecorationv1.cpp	2022-11-30 10:02:50.830765640 -0800
-+++ fluid-1.2.0_p9999/src/imports/controls-private/extensions/fluiddecorationv1.cpp	2022-11-30 10:03:23.840060231 -0800
+--- fluid-1.2.0_p9999.orig/src/imports/controls-private/extensions/fluiddecorationv1.cpp	2022-11-30 16:03:24.818826038 -0800
++++ fluid-1.2.0_p9999/src/imports/controls-private/extensions/fluiddecorationv1.cpp	2022-11-30 16:03:47.471706969 -0800
 @@ -61,7 +61,7 @@ FluidDecoration *FluidDecorationManager:
  
  FluidDecoration::FluidDecoration(FluidDecorationManager *parent, QWindow *window, struct ::zfluid_decoration_v1 *object)
@@ -70,14 +45,14 @@ diff -urp fluid-1.2.0_p9999.orig/src/imports/controls-private/extensions/fluidde
      , m_window(window)
  {
 diff -urp fluid-1.2.0_p9999.orig/src/imports/controls-private/extensions/fluiddecorationv1.h fluid-1.2.0_p9999/src/imports/controls-private/extensions/fluiddecorationv1.h
---- fluid-1.2.0_p9999.orig/src/imports/controls-private/extensions/fluiddecorationv1.h	2022-11-30 10:02:50.830765640 -0800
-+++ fluid-1.2.0_p9999/src/imports/controls-private/extensions/fluiddecorationv1.h	2022-11-30 10:04:43.239173957 -0800
+--- fluid-1.2.0_p9999.orig/src/imports/controls-private/extensions/fluiddecorationv1.h	2022-11-30 16:03:24.818826038 -0800
++++ fluid-1.2.0_p9999/src/imports/controls-private/extensions/fluiddecorationv1.h	2022-11-30 16:03:47.471706969 -0800
 @@ -11,12 +11,12 @@
  
  #include <wayland-client.h>
  
 -#include "qwayland-fluid-decoration-unstable-v1.h"
-+#include "qwayland-fluid-decoration-unstable-v1.h"
++#include "aurora-client-fluid-decoration-unstable-v1.h"
  
  class FluidDecoration;
  
