@@ -5,9 +5,6 @@
 # Developer note:
 # without -<use> means block USE flag.
 
-# Placeholder
-liri-base/liri-meta appcenter
-
 # Untested.  Please report back to remove hard use mask
 >=sys-kernel/genkernel-4 subdir_mount
 
