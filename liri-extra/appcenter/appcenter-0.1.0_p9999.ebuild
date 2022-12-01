@@ -26,6 +26,7 @@ DEPEND+="
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
 	>=dev-qt/qtnetwork-${QT_MIN_PV}:5=[ssl]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
+	acct-group/flatpak
 	dev-libs/appstream[qt5]
 	sys-apps/flatpak
 	~liri-base/fluid-1.2.0_p9999
@@ -105,6 +106,16 @@ src_configure() {
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
 	)
 	cmake_src_configure
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+
+	# Prevent startup exit
+	mkdir -p "${EROOT}/var/lib/flatpak"
+	chmod 0770 "${EROOT}/var/lib/flatpak"
+	chown root:flatpak "${EROOT}/var/lib/flatpak"
+	ewarn "The user must be in the flatpak group to use ${PN}"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
