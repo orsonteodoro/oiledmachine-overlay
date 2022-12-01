@@ -8,42 +8,20 @@ inherit cmake git-r3 xdg
 
 DESCRIPTION="A modern music app for modern people."
 HOMEPAGE="https://github.com/lirios/music"
-LICENSE="GPL-3+ BSD FDL-1.3+ MPL-2.0"
+LICENSE="GPL-3+ BSD"
 # FindTaglib.cmake is BSD
-# fluid contains files with MPL-2.0 FDL-1.3+
 
 # Live/snapshots do not get KEYWORDS.
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 QT_MIN_PV=5.14
 IUSE+="
-doc +system-fluid test
+doc test
 
-r3
+r5
 "
 
-FLUID_DEPEND="
-	>=dev-libs/wayland-1.15
-	>=dev-qt/qtcore-${QT_MIN_PV}:5=
-	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
-	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland]
-	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
-	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
-	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
-"
-FLUID_BDEPEND="
-	>=dev-util/cmake-3.10.0
-	virtual/pkgconfig
-	test? (
-		>=dev-qt/qttest-${QT_MIN_PV}:5=
-	)
-	~liri-base/cmake-shared-2.0.0_p9999
-"
 DEPEND+="
-	!system-fluid? (
-		${FLUID_DEPEND}
-	)
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
@@ -52,27 +30,21 @@ DEPEND+="
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
 	>=dev-qt/qtsql-${QT_MIN_PV}:5=[sqlite]
 	media-libs/taglib:taglib2-preview
-	system-fluid? (
-		~liri-base/fluid-1.2.0_p9999
-	)
+	~liri-base/fluid-1.2.0_p9999
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
-	!system-fluid? (
-		${FLUID_BDEPEND}
-	)
 	>=dev-util/cmake-3.10.0
 	dev-libs/stb
 	virtual/pkgconfig
-	system-fluid? (
-		~liri-base/cmake-shared-2.0.0_p9999
-	)
+	~liri-base/cmake-shared-2.0.0_p9999
 "
 SRC_URI=""
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 EGIT_OVERRIDE_REPO_LIRIOS_QBS_SHARED="https://github.com/lirios/qbs-shared.git"
 EGIT_OVERRIDE_REPO_LIRIOS_CMAKE_SHARED="https://github.com/lirios/cmake-shared.git"
+EGIT_SUBMODULES=( '*' '-*fluid*' )
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 PATCHES=(
@@ -80,36 +52,6 @@ PATCHES=(
 	"${FILESDIR}/music-1.0.0_pre20200314-allow-system-fluid.patch"
 	"${FILESDIR}/music-1.0.0_pre20200314-add-qtmultimedia-to-cmakelists.patch"
 )
-
-fluid_pkg_setup() {
-	QTCORE_PV=$(pkg-config --modversion Qt5Core)
-	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
-	QTQML_PV=$(pkg-config --modversion Qt5Qml)
-	QTQUICKCONTROLS2_PV=$(pkg-config --modversion Qt5QuickControls2)
-	QTSVG_PV=$(pkg-config --modversion Qt5Svg)
-	QTWAYLANDCLIENT_PV=$(pkg-config --modversion Qt5WaylandClient)
-	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
-		die "Qt5Core is not the same version as Qt5Gui"
-	fi
-	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
-		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
-	fi
-	if ver_test ${QTCORE_PV} -ne ${QTQUICKCONTROLS2_PV} ; then
-		die "Qt5Core is not the same version as Qt5QuickControls2"
-	fi
-	if ver_test ${QTCORE_PV} -ne ${QTSVG_PV} ; then
-		die "Qt5Core is not the same version as Qt5Svg"
-	fi
-	if use test ; then
-		QTTEST_PV=$(pkg-config --modversion Qt5Test)
-		if ver_test ${QTCORE_PV} -ne ${QTTEST_PV} ; then
-			die "Qt5Core is not the same version as Qt5Test"
-		fi
-	fi
-	if ver_test ${QTCORE_PV} -ne ${QTWAYLANDCLIENT_PV} ; then
-		die "Qt5Core is not the same version as Qt5WaylandClient (qtwayland)"
-	fi
-}
 
 qbs_check() {
 	"${EROOT}/usr/bin/qbs" list-products 2>&1 \
@@ -145,9 +87,6 @@ pkg_setup() {
 	if ver_test ${QTCORE_PV} -ne ${QTSVG_PV} ; then
 		die "Qt5Core is not the same version as Qt5Svg"
 	fi
-	if ! use system-fluid ; then
-		fluid_pkg_setup
-	fi
 
 	qbs_check
 }
@@ -173,36 +112,10 @@ src_unpack() {
 		einfo "v_live=${v_live}"
 		einfo
 	fi
-	if ! use system-fluid && false ; then
-		rm -rf "${S}/fluid" || die
-		ln -s "${WORKDIR}/fluid-${FLUID_COMMIT}" "${S}/fluid" || die
-		rm -rf "${S}/fluid/qbs/shared" || die
-		rm -rf "${S}/fluid/cmake/shared" || die
-		ln -s "${WORKDIR}/cmake-shared-${CMAKE_SHARED_COMMIT}" \
-			"${S}/fluid/cmake/shared" || die
-		ln -s "${WORKDIR}/qbs-shared-${QBS_SHARED_COMMIT}" \
-			"${S}/fluid/qbs/shared" || die
-	fi
-}
-
-patch_fluid() {
-	local F=(
-		"fluid/src/imports/controls-private/extensions/liridecoration.h"
-		"fluid/src/imports/controls-private/extensions/liridecoration.cpp"
-	)
-	local f
-	for f in ${F[@]} ; do
-		sed -i -e "s|QtWayland::|Aurora::Client::PrivateClient::|g" \
-			"${f}" || die
-	done
 }
 
 src_prepare() {
 	cmake_src_prepare
-	if ! use system-fluid ; then
-		eapply "${FILESDIR}/music-1.0.0_pre20200314-disable-fluid-documentation.patch"
-		patch_fluid
-	fi
 }
 
 src_configure() {
@@ -210,14 +123,6 @@ src_configure() {
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
 		-DINSTALL_PLUGINSDIR=/usr/$(get_libdir)/qt5/plugins
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
-	)
-
-	# from fluid ebuild
-	mycmakeargs=(
-		-DBUILD_TESTING=$(usex test)
-		-DFLUID_WITH_DOCUMENTATION=$(usex doc)
-		-DFLUID_WITH_DEMO=OFF
-		-DLIRI_LOCAL_ECM=$(usex system-fluid "OFF" "ON")
 	)
 	cmake_src_configure
 }
