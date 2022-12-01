@@ -15,7 +15,7 @@ LICENSE="GPL-3+ LGPL-3+ BSD"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
--qtquick-compiler systemd
++jpeg -qtquick-compiler systemd
 +layer-shell-integration +lockscreen-integration
 
 r2
@@ -28,7 +28,7 @@ DEPEND+="
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland]
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[jpeg?,wayland]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtsql-${QT_MIN_PV}:5=[sqlite]
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=

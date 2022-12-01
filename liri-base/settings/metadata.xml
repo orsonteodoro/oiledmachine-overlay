@@ -13,6 +13,15 @@
     <bugs-to>https://github.com/lirios/settings/issues</bugs-to>
   </upstream>
   <use>
+    <flag name="gif">
+      Add profile picture support in gif
+    </flag>
+    <flag name="jpeg">
+      Add profile picture or wallpaper support in jpeg
+    </flag>
+    <flag name="png">
+      Add profile picture or wallpaper support in png
+    </flag>
     <flag name="rN">
       FOR INTERNAL USE ONLY.  (FORCES REBUILD WHEN BUMPED)
     </flag>

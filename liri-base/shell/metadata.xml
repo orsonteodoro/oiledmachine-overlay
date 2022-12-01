@@ -16,6 +16,12 @@
     <flag name="doc">
       Build documentation
     </flag>
+    <flag name="gif">
+      Add support for importing gif profile pictures
+    </flag>
+    <flag name="jpeg">
+      Add support for wallpapers in jpeg
+    </flag>
     <flag name="qtquick-compiler">
       Optimize using the Qt Quick Compiler.  This will require rebuild of
       this package on Qt updates.

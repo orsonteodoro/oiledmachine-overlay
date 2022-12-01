@@ -14,6 +14,8 @@ LICENSE="GPL-3+"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
++gif +jpeg +png
+
 r1
 "
 QT_MIN_PV=5.10
@@ -24,7 +26,7 @@ DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[gif?,jpeg?,png?]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
 	>=dev-qt/qtxml-${QT_MIN_PV}:5=
