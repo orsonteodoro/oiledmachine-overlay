@@ -66,6 +66,9 @@ EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+PATCHES=(
+	"${FILESDIR}/shell-0.9.0_p9999-systemd-libs-optional.patch"
+)
 
 pkg_setup() {
 	QTCONCURRENT_PV=$(pkg-config --modversion Qt5Concurrent)
@@ -145,7 +148,9 @@ src_configure() {
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
 	)
 	if use systemd ; then
-		mycmakeargs+=( -DINSTALL_SYSTEMDUSERUNITDIR=/usr/lib/systemd/user )
+		mycmakeargs+=(
+			-DINSTALL_SYSTEMDUSERUNITDIR=/usr/lib/systemd/user
+		)
 	fi
 	cmake_src_configure
 }
