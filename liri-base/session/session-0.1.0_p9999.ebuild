@@ -14,15 +14,18 @@ LICENSE="GPL-3+ LGPL-3+"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
-systemd
+eglfs systemd X
 
 r1
+"
+REQUIRED_USE="
+|| ( eglfs X )
 "
 QT_MIN_PV=5.10
 DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[eglfs?,X?]
 	>=dev-qt/qtxml-${QT_MIN_PV}:5=
 	systemd? (
 		sys-apps/systemd
@@ -117,18 +120,28 @@ ewarn
 ewarn "Please switch to the Mesa GL driver.  Do not use the proprietary driver."
 ewarn
 ewarn "Failure to do so can cause the following:"
+ewarn
 ewarn "  -The cursor and wallpaper will not show properly if you ran"
 ewarn "   \`liri-session -- -platform xcb\`"
 ewarn "  -The -platform eglfs mode may not work at all."
 ewarn
+	if use X ; then
 einfo
-einfo "To run Liri in X do:"
+einfo "To run a Liri session in X do:"
 einfo "  startx"
 einfo "  open terminal program"
 einfo "  liri-session"
 einfo
 ewarn "liri-session will not work with .xinitrc."
 einfo
+	fi
+	if use eglfs ; then
+einfo
+einfo "To run a Liri session in EGL fullscreen do:"
+einfo
+einfo "  liri-session -- -platform eglfs"
+einfo
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

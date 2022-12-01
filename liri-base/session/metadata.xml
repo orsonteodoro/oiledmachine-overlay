@@ -7,12 +7,31 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
+
+    To run a Liri session in X do:
+      startx
+      open terminal program
+      liri-session
+
+    liri-session will not work with .xinitrc.
+
+
+    To run a Liri session in EGL fullscreen do:"
+
+      liri-session -- -platform eglfs
+
   </longdescription>
   <upstream>
     <remote-id type="github">lirios/session</remote-id>
     <bugs-to>https://github.com/lirios/session/issues</bugs-to>
   </upstream>
   <use>
+    <flag name="eglfs">
+      Add support for running liri-session under EGL fullscreen
+    </flag>
+    <flag name="X">
+      Add support for running liri-session under X
+    </flag>
     <flag name="systemd">
       Adds systemd support
     </flag>

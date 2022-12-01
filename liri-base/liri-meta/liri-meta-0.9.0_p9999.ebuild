@@ -83,17 +83,24 @@ ewarn
 ewarn "Please switch to the Mesa GL driver.  Do not use the proprietary driver."
 ewarn
 ewarn "Failure to do so can cause the following:"
+ewarn
 ewarn "  -The cursor and wallpaper will not show properly if you ran"
 ewarn "   \`liri-session -- -platform xcb\`"
 ewarn "  -The -platform eglfs mode may not work at all."
 ewarn
 einfo
 einfo "To run Liri in X do:"
+einfo
 einfo "  startx"
 einfo "  open terminal program"
 einfo "  liri-session"
 einfo
 ewarn "liri-session will not work with .xinitrc."
+einfo
+einfo
+einfo "To run a Liri session in EGL fullscreen do:"
+einfo
+einfo "  liri-session -- -platform eglfs"
 einfo
 }
 
