@@ -16,6 +16,10 @@
     <flag name="doc">
       Build documentation
     </flag>
+    <flag name="embed-icons">
+      Embeds icons inside but makes the executable larger.
+      Otherwise, place icons externally outside.
+    </flag>
     <flag name="qtquick-compiler">
       Optimizes using the qtquick-compiler.  This package requires a rebuild
       after updating Qt if enabled.

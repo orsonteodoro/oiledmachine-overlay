@@ -8,13 +8,17 @@ inherit cmake git-r3
 
 DESCRIPTION="Library for QtQuick apps with Material Design"
 HOMEPAGE="https://liri.io/docs/sdk/fluid/develop/"
-LICENSE="BSD MPL-2.0 FDL-1.3+"
+LICENSE="
+	BSD MPL-2.0 FDL-1.3+
+	Apache-2.0
+"
+# Apache-2.0 - src/imports/controls/icons
 
 # live ebuilds do not get KEYWORDed
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
-doc -qtquick-compiler test
+-embed-icons doc -qtquick-compiler test
 
 r3
 "
@@ -115,6 +119,7 @@ src_configure() {
 		-DFLUID_WITH_DOCUMENTATION=$(usex doc)
 		-DFLUID_WITH_DEMO=OFF
 		-DFLUID_ENABLE_QTQUICK_COMPILER=$(usex qtquick-compiler)
+		-DFLUID_INSTALL_ICONS=$(usex embed-icons OFF ON)
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
 		-DINSTALL_PLUGINSDIR=/usr/$(get_libdir)/qt5/plugins
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
