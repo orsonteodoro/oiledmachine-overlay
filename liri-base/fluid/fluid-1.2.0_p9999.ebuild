@@ -18,7 +18,7 @@ LICENSE="
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
--embed-icons doc -qtquick-compiler test
+-embed-icons doc -qtquick-compiler test -update-icons
 
 r3
 "
@@ -54,6 +54,7 @@ S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/fluid-1.2.0_p9999-aurora.patch"
+	"${FILESDIR}/fluid-1.2.0_p9999-fetch-icons-disable-git.patch"
 )
 
 pkg_setup() {
@@ -107,10 +108,22 @@ src_unpack() {
 		einfo "v_live=${v_live}"
 		einfo
 	fi
+	if use update-icons ; then
+		EGIT_REPO_URI="https://github.com/google/material-design-icons.git"
+		EGIT_CHECKOUT_DIR="${S}/material-design-icons"
+		EGIT_BRANCH="master"
+		git-r3_fetch
+		git-r3_checkout
+	fi
 }
 
 src_prepare() {
 	cmake_src_prepare
+	if use update-icons ; then
+		[[ -e material-design-icons/src/action/123/materialicons/20px.svg ]] \
+			|| die "Directory layout changed."
+		scripts/fetch_icons.sh || die
+	fi
 }
 
 src_configure() {

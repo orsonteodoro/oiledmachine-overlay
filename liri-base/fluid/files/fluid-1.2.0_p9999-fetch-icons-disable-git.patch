@@ -1,0 +1,14 @@
+--- a/scripts/fetch_icons.sh	2022-12-01 20:13:19.704456975 -0800
++++ b/scripts/fetch_icons.sh	2022-12-01 20:12:55.703482828 -0800
+@@ -25,9 +25,9 @@ function copy_icon()
+ }
+ 
+ if [ -d $GIT_DIR ]; then
+-    (cd $GIT_DIR && git pull)
++    :; #(cd $GIT_DIR && git pull)
+ else
+-    git clone --depth 1 $GIT_URL
++    :; #git clone --depth 1 $GIT_URL
+ fi
+ 
+ CATEGORIES=$(ls -1 -d  $GIT_DIR/src/*/*/materialicons/*.svg | awk -F/ '{ print $3 }' | uniq)
