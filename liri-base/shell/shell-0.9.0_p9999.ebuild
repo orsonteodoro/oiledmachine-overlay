@@ -275,6 +275,8 @@ einfo
 einfo "To add/remove launchers:"
 einfo
 einfo "  gsettings set io.liri.desktop.panel pinned-launchers ['app1', 'app2', 'app3']"
+einfo "  gsettings set io.liri.desktop.panel pinned-launchers ['app1']"
+einfo "  (The same as /usr/share/applications but without the .desktop suffix.)"
 einfo
 einfo "To remove all launchers:"
 einfo
