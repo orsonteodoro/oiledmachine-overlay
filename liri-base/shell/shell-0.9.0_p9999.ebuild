@@ -268,17 +268,17 @@ einfo
 einfo
 einfo "Per user customization"
 einfo
-einfo "To reset lannchers:"
+einfo "To reset pinned launchers:"
 einfo
 einfo "  gsettings reset io.liri.desktop.panel pinned-launchers"
 einfo
-einfo "To add/remove launchers:"
+einfo "To add/remove pinned launchers:"
 einfo
 einfo "  gsettings set io.liri.desktop.panel pinned-launchers ['app1', 'app2', 'app3']"
 einfo "  gsettings set io.liri.desktop.panel pinned-launchers ['app1']"
 einfo "  (The same as /usr/share/applications but without the .desktop suffix.)"
 einfo
-einfo "To remove all launchers:"
+einfo "To remove all pinned launchers:"
 einfo
 einfo "  gsettings set io.liri.desktop.panel pinned-launchers []"
 einfo

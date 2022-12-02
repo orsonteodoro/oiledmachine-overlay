@@ -25,17 +25,17 @@
 
     Per user customization
 
-    To reset lannchers:
+    To reset pinned launchers:
 
       gsettings reset io.liri.desktop.panel pinned-launchers
 
-    To add/remove launchers:
+    To add/remove pinned launchers:
 
       gsettings set io.liri.desktop.panel pinned-launchers ['app1', 'app2', 'app3']
       gsettings set io.liri.desktop.panel pinned-launchers ['app1']
       (The same as /usr/share/applications but without the .desktop suffix.)
 
-    To remove all launchers:
+    To remove all pinned launchers:
 
       gsettings set io.liri.desktop.panel pinned-launchers []
 
