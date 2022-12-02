@@ -128,6 +128,7 @@ ewarn
 	if use X ; then
 einfo
 einfo "To run a Liri session in X do:"
+einfo
 einfo "  startx"
 einfo "  open terminal program"
 einfo "  liri-session"
