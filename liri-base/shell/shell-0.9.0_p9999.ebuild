@@ -192,8 +192,9 @@ einfo "  open terminal program"
 einfo "  QT_WAYLAND_SHELL_INTEGRATION=fullscreen-shell liri-session -- -platform wayland"
 einfo
 einfo
-einfo "To run a Liri session in Wayland with wlroots + dwl do:"
+einfo "To run a Liri session in Wayland with dwl do:"
 einfo
+einfo "  export XDG_RUNTIME_DIR=/tmp/xdg-runtime-\$(id -u)"
 einfo "  dwl -s \"liri-session -- -platform wayland\""
 einfo
 }
