@@ -21,7 +21,7 @@
       liri-session -- -platform eglfs
 
 
-    To run a Liri session in Wayland with Weston:"
+    To run a Liri session in Wayland with Weston do:"
 
       emerge -1vuDN weston[desktop,drm,fullscreen,gles2,seatd]"
       export XDG_RUNTIME_DIR=/tmp/xdg-runtime-\$(id -u)"
@@ -30,7 +30,7 @@
       QT_WAYLAND_SHELL_INTEGRATION=fullscreen-shell liri-session -- -platform wayland"
 
 
-    To run a Liri session in Wayland with wlroots + dwl:"
+    To run a Liri session in Wayland with wlroots + dwl do:"
 
       dwl -s "liri-session -- -platform wayland"
 
