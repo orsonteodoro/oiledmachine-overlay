@@ -40,6 +40,7 @@ DEPEND+="
 	media-fonts/noto
 	sys-auth/polkit-qt
 	sys-libs/pam
+	virtual/freedesktop-icon-theme
 	systemd? ( sys-apps/systemd )
 	~liri-base/aurora-client-0.0.0_p9999
 	~liri-base/aurora-compositor-0.0.0_p9999
