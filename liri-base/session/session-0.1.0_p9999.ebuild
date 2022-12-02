@@ -14,18 +14,18 @@ LICENSE="GPL-3+ LGPL-3+"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
-eglfs systemd X
+eglfs systemd wayland X
 
 r1
 "
 REQUIRED_USE="
-|| ( eglfs X )
+|| ( eglfs wayland X )
 "
 QT_MIN_PV=5.10
 DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=[eglfs?,X?]
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[eglfs?,wayland?,X?]
 	>=dev-qt/qtxml-${QT_MIN_PV}:5=
 	eglfs? (
 		~liri-base/aurora-compositor-0.0.0_p9999[qpa]
@@ -146,6 +146,7 @@ einfo
 einfo "  liri-session -- -platform eglfs"
 einfo
 	fi
+	if use wayland ; then
 einfo
 einfo "To run a Liri session in Wayland with Weston do:"
 einfo
@@ -161,6 +162,7 @@ einfo
 einfo "  export XDG_RUNTIME_DIR=/tmp/xdg-runtime-\$(id -u)"
 einfo "  dwl -s \"liri-session -- -platform wayland\""
 einfo
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
