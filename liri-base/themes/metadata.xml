@@ -7,6 +7,12 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
+
+    Build time environment variables
+
+    LIRI_THEMES_DEFAULT_ICON_THEME - Force this icon theme.  The theme must
+    match one of the names in /usr/share/icons.
+
   </longdescription>
   <upstream>
     <remote-id type="github">lirios/themes</remote-id>

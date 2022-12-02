@@ -18,7 +18,7 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
 grub plymouth sddm
 
-r1
+r2
 "
 QT_MIN_PV=5.10
 DEPEND+="
@@ -32,6 +32,11 @@ DEPEND+="
 		x11-misc/sddm
 		~liri-base/fluid-1.2.0_p9999
 		~liri-base/shell-0.9.0_p9999
+		|| (
+			virtual/freedesktop-icon-theme
+			x11-themes/paper-icon-theme
+			x11-themes/papirus-icon-theme
+		)
 	)
 "
 RDEPEND+="
@@ -71,7 +76,41 @@ src_unpack() {
 	fi
 }
 
+change_icon_theme() {
+einfo
+einfo "Set LIRI_THEMES_DEFAULT_ICON_THEME to change the icon theme.  See"
+einfo "metadata.xml or \`epkginfo -x ${CATEGORY}/${PN}\` for details."
+einfo
+	if [[ -n "${LIRI_THEMES_DEFAULT_ICON_THEME}" ]] ; then
+einfo
+einfo "Using the ${LIRI_THEMES_DEFAULT_ICON_THEME} icon theme as the default"
+einfo
+		sed -i -e "s|Paper|${LIRI_THEMES_DEFAULT_ICON_THEME}|g" \
+			sddm/theme.conf \
+			|| die
+	elif has_version "x11-themes/paper-icon-theme" ; then
+einfo
+einfo "Using the Paper icon theme as the default" # Upstream default but EOL
+einfo
+	elif has_version "x11-themes/papirus-icon-theme" ; then
+einfo
+einfo "Using the Papirus icon theme as the default" # Similar look
+einfo
+		sed -i -e "s|Paper|Papirus|g" \
+			sddm/theme.conf \
+			|| die
+	else
+		local icon_theme=$(ls -1 "${ESYSROOT}/usr/share/icons" \
+			| head -n 1)
+		sed -i -e "s|Paper|${icon_theme}|g" \
+			sddm/theme.conf \
+			|| die
+		einfo "Using the ${icon_theme} icon theme as the default"
+	fi
+}
+
 src_configure() {
+	use sddm && change_icon_theme
 	local mycmakeargs=(
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
 		-DINSTALL_PLUGINSDIR=/usr/$(get_libdir)/qt5/plugins
