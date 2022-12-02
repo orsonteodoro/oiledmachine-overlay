@@ -27,6 +27,9 @@ DEPEND+="
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=[eglfs?,X?]
 	>=dev-qt/qtxml-${QT_MIN_PV}:5=
+	eglfs? (
+		~liri-base/aurora-compositor-0.0.0_p9999[qpa]
+	)
 	systemd? (
 		sys-apps/systemd
 	)
