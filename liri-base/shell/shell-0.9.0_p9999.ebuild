@@ -285,6 +285,7 @@ einfo
 einfo "To set icon theme:"
 einfo
 einfo "  gsettings set io.liri.desktop.interface icon-theme 'Paper'"
+einfo "  (The same as /usr/share/icons.)"
 einfo
 }
 

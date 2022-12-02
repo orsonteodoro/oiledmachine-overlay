@@ -42,6 +42,7 @@
     To set icon theme:
 
       gsettings set io.liri.desktop.interface icon-theme 'Paper'
+      (The same as /usr/share/icons.)
 
   </longdescription>
   <upstream>
