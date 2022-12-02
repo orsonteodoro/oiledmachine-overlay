@@ -144,7 +144,7 @@ src_unpack() {
 	fi
 }
 
-src_configure() {
+change_default_icon_theme() {
 einfo
 einfo "Set LIRI_SHELL_DEFAULT_ICON_THEME to change the icon theme.  See"
 einfo "metadata.xml or \`epkginfo -x ${CATEGORY}/${PN}\` for details."
@@ -175,6 +175,38 @@ einfo
 			|| die
 		einfo "Using the ${icon_theme} icon theme as the default"
 	fi
+}
+
+change_pinned_launchers() {
+einfo
+einfo "Set LIRI_SHELL_PINNED_LAUNCHERS to set pinned launchers.  See"
+einfo "metadata.xml or \`epkginfo -x ${CATEGORY}/${PN}\` for details."
+einfo
+	[[ -z "${LIRI_SHELL_PINNED_LAUNCHERS}" ]] && return
+	if [[ "${LIRI_SHELL_PINNED_LAUNCHERS}" =~ "REMOVE_ALL" ]] ; then
+einfo
+einfo "Removing all pinned launchers"
+einfo
+		sed -i -e "s|'io.liri.Terminal', 'io.liri.Settings'||g" \
+			data/settings/io.liri.desktop.panel.gschema.xml || die
+	fi
+	local L=($(echo ${LIRI_SHELL_PINNED_LAUNCHERS}))
+	local L2=""
+	local l
+	for l in ${L[@]} ; do
+		L2+=", '${l}'"
+	done
+	L3=$(echo -n "${L2}" | sed -e "s|^, ||g")
+	sed -i -e "s|'io.liri.Terminal', 'io.liri.Settings'|${L3}|g" \
+		data/settings/io.liri.desktop.panel.gschema.xml || die
+einfo
+einfo "Pinned launchers:  ${L3}"
+einfo
+}
+
+src_configure() {
+	change_default_icon_theme
+	change_pinned_launchers
 	local mycmakeargs=(
 		-DFEATURE_enable_systemd=$(usex systemd)
 		-DFEATURE_shell_enable_qtquick_compiler=$(usex qtquick-compiler)
@@ -231,6 +263,26 @@ einfo "To run a Liri session in Wayland with dwl do:"
 einfo
 einfo "  export XDG_RUNTIME_DIR=/tmp/xdg-runtime-\$(id -u)"
 einfo "  dwl -s \"liri-session -- -platform wayland\""
+einfo
+
+einfo
+einfo "Per user customization"
+einfo
+einfo "To reset lannchers:"
+einfo
+einfo "  gsettings reset io.liri.desktop.panel pinned-launchers"
+einfo
+einfo "To add/remove launchers:"
+einfo
+einfo "  gsettings set io.liri.desktop.panel pinned-launchers ['app1', 'app2', 'app3']"
+einfo
+einfo "To remove all launchers:"
+einfo
+einfo "  gsettings set io.liri.desktop.panel pinned-launchers []"
+einfo
+einfo "To set icon theme:"
+einfo
+einfo "  gsettings set io.liri.desktop.interface icon-theme 'Paper'"
 einfo
 }
 

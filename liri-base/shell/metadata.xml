@@ -13,6 +13,34 @@
     LIRI_SHELL_DEFAULT_ICON_THEME - Force this icon theme.  The theme must match
     one of the names in /usr/share/icons.
 
+    LIRI_SHELL_PINNED_LAUNCHERS - A space delimited list to appear in the
+    launcher taskbar.  Setting this will override the default.  You may set
+    this value to REMOVE_ALL to delete all pinned launchers.  You may use
+    one of the names in /usr/share/applications without the .desktop portion.
+
+      Examples:
+
+      LIRI_SHELL_PINNED_LAUNCHERS="io.liri.Terminal io.liri.Settings"
+
+
+    Per user customization
+
+    To reset lannchers:
+
+      gsettings reset io.liri.desktop.panel pinned-launchers
+
+    To add/remove launchers:
+
+      gsettings set io.liri.desktop.panel pinned-launchers ['app1', 'app2', 'app3']
+
+    To remove all launchers:
+
+      gsettings set io.liri.desktop.panel pinned-launchers []
+
+    To set icon theme:
+
+      gsettings set io.liri.desktop.interface icon-theme 'Paper'
+
   </longdescription>
   <upstream>
     <remote-id type="github">lirios/shell</remote-id>
