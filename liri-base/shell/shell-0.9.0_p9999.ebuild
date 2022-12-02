@@ -18,7 +18,7 @@ IUSE+="
 +jpeg -qtquick-compiler systemd
 +layer-shell-integration +lockscreen-integration
 
-r2
+r3
 "
 # systemd is enabled by default upstream, but distro defaults to OpenRC.
 QT_MIN_PV=5.15
@@ -40,8 +40,12 @@ DEPEND+="
 	media-fonts/noto
 	sys-auth/polkit-qt
 	sys-libs/pam
-	virtual/freedesktop-icon-theme
 	systemd? ( sys-apps/systemd )
+	|| (
+		virtual/freedesktop-icon-theme
+		x11-themes/paper-icon-theme
+		x11-themes/papirus-icon-theme
+	)
 	~liri-base/aurora-client-0.0.0_p9999
 	~liri-base/aurora-compositor-0.0.0_p9999
 	~liri-base/fluid-1.2.0_p9999
@@ -141,6 +145,36 @@ src_unpack() {
 }
 
 src_configure() {
+einfo
+einfo "Set LIRI_SHELL_DEFAULT_ICON_THEME to change the icon theme.  See"
+einfo "metadata.xml or \`epkginfo -x ${CATEGORY}/${PN}\` for details."
+einfo
+	if [[ -n "${LIRI_SHELL_DEFAULT_ICON_THEME}" ]] ; then
+einfo
+einfo "Using the ${LIRI_SHELL_DEFAULT_ICON_THEME} icon theme as the default"
+einfo
+		sed -i -e "s|'Paper'|'${LIRI_SHELL_DEFAULT_ICON_THEME}'|g" \
+			data/settings/io.liri.desktop.interface.gschema.xml \
+			|| die
+	elif has_version "x11-themes/paper-icon-theme" ; then
+einfo
+einfo "Using the Paper icon theme as the default" # Upstream default but EOL
+einfo
+	elif has_version "x11-themes/papirus-icon-theme" ; then
+einfo
+einfo "Using the Papirus icon theme as the default" # Similar look
+einfo
+		sed -i -e "s|'Paper'|'Papirus'|g" \
+			data/settings/io.liri.desktop.interface.gschema.xml \
+			|| die
+	else
+		local icon_theme=$(ls -1 "${ESYSROOT}/usr/share/icons" \
+			| head -n 1)
+		sed -i -e "s|'Paper'|'${icon_theme}'|g" \
+			data/settings/io.liri.desktop.interface.gschema.xml \
+			|| die
+		einfo "Using the ${icon_theme} icon theme as the default"
+	fi
 	local mycmakeargs=(
 		-DFEATURE_enable_systemd=$(usex systemd)
 		-DFEATURE_shell_enable_qtquick_compiler=$(usex qtquick-compiler)
