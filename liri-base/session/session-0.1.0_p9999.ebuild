@@ -139,13 +139,13 @@ einfo
 		cursor_theme=$(\
 			ls -1 "${ESYSROOT}/usr/share/cursors/" \
 			| head -n 1)
-		# FIXME:  Change relative cut index 5 for Gentoo Prefix.
 		[[ -z "${cursor_theme}" ]] && \
 		cursor_theme=$(\
 			find "${ESYSROOT}/usr/share/icons/"*"/cursors" \
 				-type d \
-			| cut -f 5 -d "/" \
-			| head -n 1)
+			| head -n 1 \
+			| sed -e "s|/cursors$||g" \
+			      -e "s|${ESYSROOT}/usr/share/icons/||g")
 		if [[ -n "${cursor_theme}" ]] ; then
 			sed -i -e "s|Paper|${cursor_theme}|g" \
 				src/manager/main.cpp || die
