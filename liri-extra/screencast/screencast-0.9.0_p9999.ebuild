@@ -14,14 +14,14 @@ LICENSE="GPL-3+"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
-r1
+r2
 "
 QT_MIN_PV=5.10
 DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	media-libs/gstreamer:1.0
-	media-plugins/gst-plugins-meta:1.0
+	media-plugins/gst-plugins-meta:1.0[ogg,theora]
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
