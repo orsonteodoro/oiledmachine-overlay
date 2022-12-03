@@ -32,7 +32,15 @@ alsa doc musepack pulseaudio speex test
 r5
 "
 REQUIRED_USE="
-^^ ( alsa pulseaudio )
+	|| (
+		alsa
+		pulseaudio
+	)
+	|| (
+		${GSTREAMER_CODECS[@]}
+		musepack
+		speex
+	)
 "
 
 GSTREAMER_CODECS_DEPENDS=("${GSTREAMER_CODECS[@]/#/,}")
