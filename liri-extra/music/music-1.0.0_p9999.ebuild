@@ -27,9 +27,9 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 QT_MIN_PV=5.14
 IUSE+="
 ${GSTREAMER_CODECS[@]}
-alsa doc musepack pulseaudio speex test
+alsa doc gstreamer musepack pulseaudio speex test
 
-r5
+r6
 "
 REQUIRED_USE="
 	|| (
@@ -53,7 +53,7 @@ DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
-	>=dev-qt/qtmultimedia-${QT_MIN_PV}:5=[alsa?,pulseaudio?,qml]
+	>=dev-qt/qtmultimedia-${QT_MIN_PV}:5=[alsa?,gstreamer,pulseaudio?,qml]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
 	>=dev-qt/qtsql-${QT_MIN_PV}:5=[sqlite]
