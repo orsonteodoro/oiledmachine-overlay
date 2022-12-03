@@ -32,14 +32,13 @@
 
     To run a Liri session in EGL fullscreen do:
 
+      sudo gpasswd -a USERNAME input
       liri-session -- -platform eglfs
-
-    * Using the keyboard or mouse with eglfs may currently not work.
 
 
     To run a Liri session in Wayland with Weston do:
 
-      emerge -1vuDN weston[desktop,drm,fullscreen,gles2,seatd]
+      sudo emerge -1vuDN weston[desktop,drm,fullscreen,gles2,seatd]
       export XDG_RUNTIME_DIR=/tmp/xdg-runtime-$(id -u)
       weston --shell=fullscreen-shell.so
       open terminal program

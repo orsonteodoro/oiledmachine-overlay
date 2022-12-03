@@ -247,15 +247,13 @@ einfo
 einfo
 einfo "To run a Liri session in EGL fullscreen do:"
 einfo
+einfo "  sudo gpasswd -a <user> input"
 einfo "  liri-session -- -platform eglfs"
 einfo
-ewarn
-ewarn "* Using the keyboard or mouse with eglfs may currently not work."
-ewarn
 einfo
 einfo "To run a Liri session in Wayland with Weston do:"
 einfo
-einfo "  emerge -1vuDN weston[desktop,drm,fullscreen,gles2,seatd]"
+einfo "  sudo emerge -1vuDN weston[desktop,drm,fullscreen,gles2,seatd]"
 einfo "  export XDG_RUNTIME_DIR=/tmp/xdg-runtime-\$(id -u)"
 einfo "  weston --shell=fullscreen-shell.so"
 einfo "  open terminal program"
