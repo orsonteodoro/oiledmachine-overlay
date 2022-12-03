@@ -16,7 +16,7 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
 +gif +jpeg +png
 
-r1
+r3
 "
 QT_MIN_PV=5.10
 # The documentation on the readme is lagging.  See \
@@ -27,7 +27,7 @@ DEPEND+="
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=[gif?,jpeg?,png?]
-	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
+	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=[widgets]
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
 	>=dev-qt/qtxml-${QT_MIN_PV}:5=
 	sys-auth/polkit

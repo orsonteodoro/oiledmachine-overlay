@@ -14,7 +14,7 @@ LICENSE="GPL-3+ CC0-1.0"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
-r1
+r2
 "
 QT_MIN_PV=5.10
 DEPEND+="
@@ -22,9 +22,10 @@ DEPEND+="
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
 	>=dev-qt/qtmultimedia-${QT_MIN_PV}:5=[qml]
-	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
+	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=[widgets]
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
-	 ~liri-base/fluid-1.2.0_p9999"
+	 ~liri-base/fluid-1.2.0_p9999
+"
 RDEPEND+="
 	${DEPEND}
 "

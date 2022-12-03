@@ -17,7 +17,7 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
 pipewire systemd
 
-r1
+r2
 "
 QT_MIN_PV=5.10
 DEPEND+="
@@ -27,7 +27,7 @@ DEPEND+="
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland]
 	>=dev-qt/qtprintsupport-${QT_MIN_PV}:5=
-	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
+	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=[widgets]
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
 	>=dev-qt/qtxml-${QT_MIN_PV}:5=
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
