@@ -13,6 +13,9 @@
     <bugs-to>https://github.com/lirios/music/issues</bugs-to>
   </upstream>
   <use>
+    <flag name="musepack">
+      Adds support for musepack
+    </flag>
     <flag name="doc">
       Build documentation
     </flag>

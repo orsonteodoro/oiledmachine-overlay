@@ -13,23 +13,51 @@ LICENSE="GPL-3+ BSD"
 
 # Live/snapshots do not get KEYWORDS.
 
+GSTREAMER_CODECS=(
+a52
+aac
+flac
+mp3
+ogg
+vorbis
+)
+# Based on mime listed in com.liri.music.desktop
+
 SLOT="0/$(ver_cut 1-3 ${PV})"
 QT_MIN_PV=5.14
 IUSE+="
-doc test
+${GSTREAMER_CODECS[@]}
+alsa doc musepack pulseaudio speex test
 
 r5
 "
+REQUIRED_USE="
+^^ ( alsa pulseaudio )
+"
+
+GSTREAMER_CODECS_DEPENDS=("${GSTREAMER_CODECS[@]/#/,}")
+GSTREAMER_CODECS_DEPENDS=("${GSTREAMER_CODECS_DEPENDS[@]/%/?}")
+GSTREAMER_CODECS_DEPENDS="${GSTREAMER_CODECS_DEPENDS}"
+GSTREAMER_CODECS_DEPENDS="${GSTREAMER_CODECS_DEPENDS:1}"
+GSTREAMER_CODECS_DEPENDS="${GSTREAMER_CODECS_DEPENDS// }"
 
 DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
-	>=dev-qt/qtmultimedia-${QT_MIN_PV}:5=[qml]
+	>=dev-qt/qtmultimedia-${QT_MIN_PV}:5=[alsa?,pulseaudio?,qml]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
 	>=dev-qt/qtsql-${QT_MIN_PV}:5=[sqlite]
+	media-plugins/gst-plugins-meta:1.0[${GSTREAMER_CODECS_DEPENDS}]
 	media-libs/taglib:taglib2-preview
+	musepack? (
+		media-sound/musepack-tools
+		media-libs/gst-plugins-bad:1.0
+	)
+	speex? (
+		media-plugins/gst-plugins-speex:1.0
+	)
 	~liri-base/fluid-1.2.0_p9999
 "
 RDEPEND+=" ${DEPEND}"
@@ -61,6 +89,19 @@ qbs_check() {
 	fi
 }
 
+gst_musepack_check() {
+	if use musepack ; then
+		local p=$(best_version "media-libs/gst-plugins-bad")
+		if ! portageq contents ${ESYSROOT} ${pkg} \
+			| grep -q "gstmusepack" ; then
+eerror
+eerror "Rebuild ${p}.  Missing libgstmusepack-1.0.so support in ${p}."
+eerror
+			die
+		fi
+	fi
+}
+
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
 	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
@@ -89,6 +130,7 @@ pkg_setup() {
 	fi
 
 	qbs_check
+	gst_musepack_check
 }
 
 src_unpack() {
