@@ -33,9 +33,27 @@ DEPEND+="
 	systemd? (
 		sys-apps/systemd
 	)
+	|| (
+		x11-themes/paper-icon-theme
+		x11-themes/xcursor-themes
+		x11-themes/adwaita-icon-theme
+		x11-themes/blueglass-xcursors
+		x11-themes/chameleon-xcursors
+		x11-themes/comix-xcursors
+		x11-themes/gentoo-xcursors
+		x11-themes/golden-xcursors
+		x11-themes/haematite-xcursors
+		x11-themes/neutral-xcursors
+		x11-themes/obsidian-xcursors
+		x11-themes/pearlgrey-xcursors
+		x11-themes/silver-xcursors
+		x11-themes/vanilla-dmz-aa-xcursors
+		x11-themes/vanilla-dmz-xcursors
+	)
 	~liri-base/libliri-0.9.0_p9999
 	~liri-base/qtgsettings-1.3.0_p9999
 "
+
 RDEPEND+="
 	${DEPEND}
 "
@@ -100,7 +118,46 @@ src_unpack() {
 	fi
 }
 
+# For eglfs, xwayland
+change_cursor_theme() {
+einfo
+einfo "LIRI_SESSION_CURSOR_THEME can be set to change the cursor theme."
+einfo "See metadata.xml or \`epkginfo ${CATEGORY}/${PN}\` for details."
+einfo
+	if [[ -n "${LIRI_SESSION_CURSOR_THEME}" ]] ; then
+einfo
+einfo "Switching to the ${LIRI_SESSION_CURSOR_THEME} cursor theme"
+einfo
+		sed -i -e "s|Paper|${LIRI_SESSION_CURSOR_THEME}|g" \
+			src/manager/main.cpp || die
+	elif has_version "x11-themes/paper-icon-theme" ; then
+einfo
+einfo "Switching to the Paper cursor theme" # Upstream default
+einfo
+	else
+		local cursor_theme
+		cursor_theme=$(\
+			ls -1 "${ESYSROOT}/usr/share/cursors/" \
+			| head -n 1)
+		# FIXME:  Change relative cut index 5 for Gentoo Prefix.
+		[[ -z "${cursor_theme}" ]] && \
+		cursor_theme=$(\
+			find "${ESYSROOT}/usr/share/icons/"*"/cursors" \
+				-type d \
+			| cut -f 5 -d "/" \
+			| head -n 1)
+		if [[ -n "${cursor_theme}" ]] ; then
+			sed -i -e "s|Paper|${cursor_theme}|g" \
+				src/manager/main.cpp || die
+einfo
+einfo "Switching to the ${cursor_theme} cursor theme"
+einfo
+		fi
+	fi
+}
+
 src_configure() {
+	change_cursor_theme
 	local mycmakeargs=(
 		-DINSTALL_SYSCONFDIR=/etc
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
@@ -145,6 +202,9 @@ einfo "To run a Liri session in EGL fullscreen do:"
 einfo
 einfo "  liri-session -- -platform eglfs"
 einfo
+ewarn
+ewarn "* Using the keyboard or mouse with eglfs may currently not work."
+ewarn
 	fi
 	if use wayland ; then
 einfo
@@ -163,6 +223,14 @@ einfo "  export XDG_RUNTIME_DIR=/tmp/xdg-runtime-\$(id -u)"
 einfo "  dwl -s \"liri-session -- -platform wayland\""
 einfo
 	fi
+einfo
+einfo "To change the default cursor theme do:"
+einfo
+einfo " ln -sf gentoo /usr/share/cursors/xorg-x11/default"
+einfo " ln -sf /usr/share/icons/Paper /usr/share/cursors/xorg-x11/default"
+einfo
+einfo "(Cursor themes only work with X [via xcb] or with eglfs.)"
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

@@ -102,6 +102,9 @@ einfo "To run a Liri session in EGL fullscreen do:"
 einfo
 einfo "  liri-session -- -platform eglfs"
 einfo
+ewarn
+ewarn "* Using the keyboard or mouse with eglfs may currently not work."
+ewarn
 einfo
 einfo "To run a Liri session in Wayland with Weston do:"
 einfo

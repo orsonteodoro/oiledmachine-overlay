@@ -8,6 +8,20 @@
   </maintainer>
   <longdescription>
 
+    Build time environment variables
+
+    LIRI_SESSION_CURSOR_THEME - Sets the default cursor theme.
+    (Theme names can be found in /usr/share/icons.)
+
+
+    To change the default cursor theme do:
+
+    ln -sf gentoo /usr/share/cursors/xorg-x11/default
+    ln -sf /usr/share/icons/Paper /usr/share/cursors/xorg-x11/default
+
+    (Cursor themes only work with X [via xcb] or with eglfs.)
+
+
     To run a Liri session in X do:
       startx
       open terminal program
@@ -16,23 +30,25 @@
     liri-session will not work with .xinitrc.
 
 
-    To run a Liri session in EGL fullscreen do:"
+    To run a Liri session in EGL fullscreen do:
 
       liri-session -- -platform eglfs
 
-
-    To run a Liri session in Wayland with Weston do:"
-
-      emerge -1vuDN weston[desktop,drm,fullscreen,gles2,seatd]"
-      export XDG_RUNTIME_DIR=/tmp/xdg-runtime-$(id -u)"
-      weston --shell=fullscreen-shell.so"
-      open terminal program"
-      QT_WAYLAND_SHELL_INTEGRATION=fullscreen-shell liri-session -- -platform wayland"
+    * Using the keyboard or mouse with eglfs may currently not work.
 
 
-    To run a Liri session in Wayland with dwl do:"
+    To run a Liri session in Wayland with Weston do:
 
-      export XDG_RUNTIME_DIR=/tmp/xdg-runtime-$(id -u)"
+      emerge -1vuDN weston[desktop,drm,fullscreen,gles2,seatd]
+      export XDG_RUNTIME_DIR=/tmp/xdg-runtime-$(id -u)
+      weston --shell=fullscreen-shell.so
+      open terminal program
+      QT_WAYLAND_SHELL_INTEGRATION=fullscreen-shell liri-session -- -platform wayland
+
+
+    To run a Liri session in Wayland with dwl do:
+
+      export XDG_RUNTIME_DIR=/tmp/xdg-runtime-$(id -u)
       dwl -s "liri-session -- -platform wayland"
 
   </longdescription>
