@@ -20,7 +20,6 @@ dv
 ffmpeg
 flac
 fluidsynth
-http
 jpeg
 modplug
 mp3
@@ -39,7 +38,7 @@ aiff amr amrwb dvd mjpeg musepack sbc speex
 "
 IUSE+="
 ${ALL_CODECS}
-alsa mms pulseaudio rtmp
+alsa http mms pulseaudio rtmp
 
 r5
 "
@@ -99,7 +98,7 @@ DEPEND+="
 	>=dev-qt/qtmultimedia-${QT_MIN_PV}:5=[alsa?,gstreamer,pulseaudio?,qml]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=[widgets]
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
-	media-plugins/gst-plugins-meta:1.0[${GSTREAMER_META_CODECS_DEPENDS}]
+	media-plugins/gst-plugins-meta:1.0[${GSTREAMER_META_CODECS_DEPENDS},http?]
 	aiff? (
 		media-libs/gst-plugins-bad:1.0
 	)
