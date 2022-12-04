@@ -6,9 +6,4 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <maintainer type="project">
-    <!-- Ebuild originator -->
-    <email>gstreamer@gentoo.org</email>
-    <name>GStreamer package maintainers</name>
-  </maintainer>
 </pkgmetadata>
