@@ -46,6 +46,9 @@
     <flag name="terminal">
       Installs a terminal emulator named Terminal
     </flag>
+    <flag name="samtal">
+      Installs an IRC client
+    </flag>
     <flag name="screencast">
       Installs a video desktop capture program
     </flag>

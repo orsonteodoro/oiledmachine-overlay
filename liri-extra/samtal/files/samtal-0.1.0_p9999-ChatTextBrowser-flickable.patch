@@ -1,0 +1,25 @@
+diff -urp samtal-0.1.0_p9999.orig/src/app/qml/ChatTextBrowser.qml samtal-0.1.0_p9999/src/app/qml/ChatTextBrowser.qml
+--- samtal-0.1.0_p9999.orig/src/app/qml/ChatTextBrowser.qml	2022-12-04 12:19:08.846690934 -0800
++++ samtal-0.1.0_p9999/src/app/qml/ChatTextBrowser.qml	2022-12-04 12:43:43.540716644 -0800
+@@ -23,9 +23,10 @@ Item {
+         id: formatter
+     }
+ 
+-    ScrollView {
+-        id: scrollView
++    Flickable {
++        id: chatTextFlick
+         anchors.fill: parent
++        ScrollIndicator.vertical: ScrollIndicator {}
+ 
+         function ensureVisible(r) {
+             if (contentX >= r.x)
+@@ -47,7 +48,7 @@ Item {
+             selectByMouse: true
+             background: Item {}
+ 
+-            onCursorRectangleChanged: scrollView.ensureVisible(cursorRectangle)
++            onCursorRectangleChanged: chatTextFlick.ensureVisible(cursorRectangle)
+             onLinkActivated: Qt.openUrlExternally(link)
+ 
+             MouseArea {

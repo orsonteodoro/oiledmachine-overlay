@@ -1,0 +1,23 @@
+diff -urp samtal-0.1.0_p9999.orig/src/app/qml/main.qml samtal-0.1.0_p9999/src/app/qml/main.qml
+--- samtal-0.1.0_p9999.orig/src/app/qml/main.qml	2022-12-04 10:27:02.688939896 -0800
++++ samtal-0.1.0_p9999/src/app/qml/main.qml	2022-12-04 10:29:58.463892335 -0800
+@@ -78,7 +78,7 @@ FluidControls.ApplicationWindow {
+                 }
+             }
+             onErrorMessageReceived: {
+-                toast.open(message.error);
++                snackBar.open(message.error);
+             }
+         }
+ 
+@@ -174,8 +174,8 @@ FluidControls.ApplicationWindow {
+ 
+     initialPage: serverSettings.host ? chatComponent : placeholderComponent
+ 
+-    FluidControls.InfoBar {
+-        id: toast
++    FluidControls.SnackBar {
++        id: snackBar
+     }
+ 
+     Component.onDestruction: {
