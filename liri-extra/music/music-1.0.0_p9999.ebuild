@@ -27,7 +27,7 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 QT_MIN_PV=5.14
 IUSE+="
 ${GSTREAMER_CODECS[@]}
-alsa doc gstreamer musepack pulseaudio speex test
+alsa doc musepack pulseaudio speex test
 
 r6
 "
