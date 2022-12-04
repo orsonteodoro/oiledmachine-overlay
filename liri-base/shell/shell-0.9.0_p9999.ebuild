@@ -40,6 +40,7 @@ DEPEND+="
 	media-fonts/noto
 	sys-auth/polkit-qt
 	sys-libs/pam
+	x11-misc/xdg-utils
 	systemd? ( sys-apps/systemd )
 	|| (
 		virtual/freedesktop-icon-theme
@@ -54,6 +55,7 @@ DEPEND+="
 	~liri-base/qtgsettings-1.3.0_p9999
 	~liri-base/qtintegration-1.0.0_p9999[layer-shell-integration?,lockscreen-integration?]
 " # TODO: check liri-base/qtintegration USE flags for always required.
+# x11-misc/xdg-utils - for xdg-open
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
@@ -248,6 +250,7 @@ einfo
 einfo "To run a Liri session in EGL fullscreen do:"
 einfo
 einfo "  sudo gpasswd -a <user> input"
+einfo "  logoff and login"
 einfo "  liri-session -- -platform eglfs"
 einfo
 einfo
