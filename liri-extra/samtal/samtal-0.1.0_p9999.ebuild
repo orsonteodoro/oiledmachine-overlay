@@ -21,7 +21,6 @@ DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
-	>=dev-qt/qtmultimedia-${QT_MIN_PV}:5=[qml]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=net-im/libcommuni-3.5:=[qml]
 	~liri-base/fluid-1.2.0_p9999
@@ -49,14 +48,10 @@ PATCHES=(
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
 	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
-	QTMULTIMEDIA_PV=$(pkg-config --modversion Qt5Multimedia)
 	QTQML_PV=$(pkg-config --modversion Qt5Qml)
 	QTQUICKCONTROLS2_PV=$(pkg-config --modversion Qt5QuickControls2)
 	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
 		die "Qt5Core is not the same version as Qt5Gui"
-	fi
-	if ver_test ${QTCORE_PV} -ne ${QTMULTIMEDIA_PV} ; then
-		die "Qt5Core is not the same version as Qt5Multimedia"
 	fi
 	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
 		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
