@@ -13,19 +13,135 @@ LICENSE="GPL-3+ CC0-1.0"
 # Live/snapshot do not get KEYWORDS.
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
-IUSE+="
-r2
+GSTREAMER_META_CODECS=(
+a52
+aac
+dv
+ffmpeg
+flac
+fluidsynth
+http
+jpeg
+modplug
+mp3
+mpeg
+ogg
+opus
+theora
+vaapi
+vorbis
+wavpack
+)
+# Based on mime listed in io.liri.Player.desktop
+ALL_CODECS="
+${GSTREAMER_META_CODECS[@]}
+aiff amr amrwb dvd mjpeg musepack sbc speex
 "
+IUSE+="
+${ALL_CODECS}
+alsa mms pulseaudio rtmp
+
+r4
+"
+
+ACODECS=(
+	a52
+	aac
+	aiff
+	amr
+	amrwb
+	flac
+	ffmpeg
+	modplug
+	mp3
+	musepack
+	opus
+	sbc
+	vorbis
+	wavpack
+)
+
+AUDIO_SYSTEMS_IUSE="
+	|| (
+		alsa
+		pulseaudio
+	)
+"
+
+gen_audio_ruse() {
+	for codec in ${ACODECS[@]} ; do
+		echo  "
+			${codec}? (
+				${AUDIO_SYSTEMS_IUSE}
+			)
+		"
+	done
+}
+
+REQUIRED_USE="
+	$(gen_audio_ruse)
+	|| (
+		${ALL_CODECS}
+	)
+"
+
+GSTREAMER_META_CODECS_DEPENDS=("${GSTREAMER_META_CODECS[@]/#/,}")
+GSTREAMER_META_CODECS_DEPENDS=("${GSTREAMER_META_CODECS_DEPENDS[@]/%/?}")
+GSTREAMER_META_CODECS_DEPENDS="${GSTREAMER_META_CODECS_DEPENDS}"
+GSTREAMER_META_CODECS_DEPENDS="${GSTREAMER_META_CODECS_DEPENDS:1}"
+GSTREAMER_META_CODECS_DEPENDS="${GSTREAMER_META_CODECS_DEPENDS// }"
+
 QT_MIN_PV=5.10
 DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
-	>=dev-qt/qtmultimedia-${QT_MIN_PV}:5=[qml]
+	>=dev-qt/qtmultimedia-${QT_MIN_PV}:5=[alsa?,gstreamer,pulseaudio?,qml]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=[widgets]
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
-	 ~liri-base/fluid-1.2.0_p9999
+	media-plugins/gst-plugins-meta:1.0[${GSTREAMER_META_CODECS_DEPENDS}]
+	aiff? (
+		media-libs/gst-plugins-bad:1.0
+	)
+	amr? (
+		media-plugins/gst-plugins-amr:1.0
+	)
+	amrwb? (
+		media-plugins/gst-plugins-amr:1.0[amrwbdec]
+	)
+	fluidsynth? (
+		media-plugins/gst-plugins-fluidsynth:1.0
+	)
+	mjpeg? (
+		media-plugins/gst-plugins-jpeg:1.0
+	)
+	mms? (
+		media-plugins/gst-plugins-libmms:1.0
+	)
+	musepack? (
+		media-plugins/gst-plugins-musepack:1.0
+	)
+	rtmp? (
+		media-plugins/gst-plugins-rtmp:1.0
+	)
+	sbc? (
+		media-plugins/gst-plugins-sbc:1.0
+	)
+	speex? (
+		media-plugins/gst-plugins-speex:1.0
+	)
+	vaapi? (
+		media-libs/vaapi-drivers
+	)
+	~liri-base/fluid-1.2.0_p9999
 "
+# Extra codec coverage for gst-plugins-good:
+#   video/3gp
+# Extra codec coverage for gst-plugins-av:
+#   audio/x-ape
+#   audio/x-shorten
+#   audio/x-tta
+#   video/x-nsv
 RDEPEND+="
 	${DEPEND}
 "

@@ -60,8 +60,7 @@ DEPEND+="
 	media-plugins/gst-plugins-meta:1.0[${GSTREAMER_CODECS_DEPENDS}]
 	media-libs/taglib:taglib2-preview
 	musepack? (
-		media-sound/musepack-tools
-		media-libs/gst-plugins-bad:1.0
+		media-plugins/gst-plugins-musepack:1.0
 	)
 	speex? (
 		media-plugins/gst-plugins-speex:1.0
@@ -97,19 +96,6 @@ qbs_check() {
 	fi
 }
 
-gst_musepack_check() {
-	if use musepack ; then
-		local p=$(best_version "media-libs/gst-plugins-bad")
-		if ! portageq contents ${ESYSROOT} ${pkg} \
-			| grep -q "gstmusepack" ; then
-eerror
-eerror "Rebuild ${p}.  Missing libgstmusepack-1.0.so support in ${p}."
-eerror
-			die
-		fi
-	fi
-}
-
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
 	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
@@ -138,7 +124,6 @@ pkg_setup() {
 	fi
 
 	qbs_check
-	gst_musepack_check
 }
 
 src_unpack() {
