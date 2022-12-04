@@ -39,7 +39,7 @@ IUSE+="
 ${ALL_CODECS}
 alsa http mms pulseaudio rtmp
 
-r5
+r6
 "
 
 ACODECS=(
@@ -108,7 +108,7 @@ DEPEND+="
 		media-plugins/gst-plugins-amr:1.0[amrwbdec]
 	)
 	fluidsynth? (
-		media-plugins/gst-plugins-bad:1.0
+		media-libs/gst-plugins-bad:1.0
 		media-plugins/gst-plugins-fluidsynth:1.0
 	)
 	mjpeg? (
