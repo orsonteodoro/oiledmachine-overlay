@@ -101,6 +101,7 @@ einfo
 einfo "To run a Liri session in EGL fullscreen do:"
 einfo
 einfo "  sudo gpasswd -a <user> input"
+einfo "  logout and login"
 einfo "  liri-session -- -platform eglfs"
 einfo
 einfo

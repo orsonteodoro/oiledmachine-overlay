@@ -33,6 +33,7 @@
     To run a Liri session in EGL fullscreen do:
 
       sudo gpasswd -a USERNAME input
+      logoff and login
       liri-session -- -platform eglfs
 
 
