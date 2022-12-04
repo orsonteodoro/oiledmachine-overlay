@@ -20,7 +20,6 @@ dv
 ffmpeg
 flac
 fluidsynth
-jpeg
 modplug
 mp3
 mpeg
@@ -34,7 +33,7 @@ wavpack
 # Based on mime listed in io.liri.Player.desktop
 ALL_CODECS="
 ${GSTREAMER_META_CODECS[@]}
-aiff amr amrwb dvd musepack sbc speex
+aiff amr amrwb dvd mjpeg musepack sbc speex
 "
 IUSE+="
 ${ALL_CODECS}
@@ -111,6 +110,9 @@ DEPEND+="
 	fluidsynth? (
 		media-plugins/gst-plugins-bad:1.0
 		media-plugins/gst-plugins-fluidsynth:1.0
+	)
+	mjpeg? (
+		media-plugins/gst-plugins-meta:1.0[jpeg]
 	)
 	mms? (
 		media-plugins/gst-plugins-libmms:1.0

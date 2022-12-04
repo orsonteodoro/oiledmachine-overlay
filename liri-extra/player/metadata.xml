@@ -19,7 +19,7 @@
     <flag name="fluidsynth">
       Adds MIDI audio support
     </flag>
-    <flag name="jpeg">
+    <flag name="mjpeg">
       Adds MJPEG video support
     </flag>
     <flag name="modplug">
