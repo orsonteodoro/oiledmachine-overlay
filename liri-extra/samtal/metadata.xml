@@ -13,6 +13,13 @@
     <bugs-to>https://github.com/lirios/samtal/issues</bugs-to>
   </upstream>
   <use>
+    <flag name="save-server-settings">
+      Saves server details and passwords in plaintext, but
+      prevents you from changing your user details.
+
+      Disable this flag to unstuck resetting user details
+      and server details on every application restart.
+    </flag>
     <flag name="rN">
       FOR INTERNAL USE ONLY.  (FORCES REBUILD WHEN BUMPED)
     </flag>

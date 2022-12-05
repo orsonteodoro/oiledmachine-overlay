@@ -1,0 +1,16 @@
+diff -urp samtal-0.1.0_p9999.orig/src/app/qml/main.qml samtal-0.1.0_p9999/src/app/qml/main.qml
+--- samtal-0.1.0_p9999.orig/src/app/qml/main.qml	2022-12-04 23:31:03.374918861 -0800
++++ samtal-0.1.0_p9999/src/app/qml/main.qml	2022-12-05 00:00:26.300374271 -0800
+@@ -32,10 +32,10 @@ FluidControls.ApplicationWindow {
+         property string userName
+     }
+ 
+-    Settings {
++    Item {
+         id: serverSettings
+ 
+-        category: "Server"
++        /* category: "Server" */
+ 
+         property string host
+         property int port

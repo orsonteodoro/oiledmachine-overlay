@@ -14,6 +14,8 @@ LICENSE="GPL-3+"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
+save-server-settings
+
 r1
 "
 QT_MIN_PV=5.10
@@ -102,6 +104,9 @@ src_unpack() {
 src_prepare() {
 	cmake_src_prepare
 	sed -i -e "/src\/libirc/d" CMakeLists.txt || die
+	if ! use save-server-settings ; then
+		eapply "${FILESDIR}/${PN}-0.1.0_p9999-non-persistent-server-info.patch"
+	fi
 }
 
 src_configure() {
@@ -127,12 +132,14 @@ ewarn "Passwords stored in ~/.config/Liri/'Liri Samtal.conf'"
 ewarn "are in plaintext."
 ewarn
 ewarn
-ewarn "Either one of the follwing mitigations:"
+ewarn "Either one of the following mitigations:"
 ewarn
 ewarn "1. Encrypt /home/<username>"
 ewarn
 ewarn "2. Use a wrapper script to shred ~/.config/Liri/'Liri Samtal.conf' after exit."
 ewarn "   (Does not work well in brownout or low power mobile/laptop.)"
+ewarn
+ewarn "3. Disable storing passwords.  (By setting the save-server-settings USE flag disabled.)"
 ewarn
 }
 
