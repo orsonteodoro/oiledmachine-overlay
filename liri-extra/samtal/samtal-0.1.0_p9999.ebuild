@@ -130,7 +130,9 @@ ewarn
 ewarn "Either one of the follwing mitigations:"
 ewarn
 ewarn "1. Encrypt /home/<username>"
-ewarn "2. Use a wrapper script to shred ~/.config/Liri/'Liri Samtal.conf' after exit"
+ewarn
+ewarn "2. Use a wrapper script to shred ~/.config/Liri/'Liri Samtal.conf' after exit."
+ewarn "   (Does not work well in brownout or low power mobile/laptop.)"
 ewarn
 }
 
