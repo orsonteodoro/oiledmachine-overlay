@@ -143,6 +143,17 @@ ewarn "3. Disable storing passwords.  (By setting the save-server-settings USE"
 ewarn "flag disabled.  Unstucks user ident changes on app restart as well.)"
 ewarn
 ewarn
+ewarn "Security notice:"
+ewarn
+ewarn "The password sent to server are not wiped immediately after being sent"
+ewarn "The password is saved in RAM or swap in plaintext."
+# FIXME:  Wipe password in memory with random bytes.
+ewarn
+ewarn
+ewarn "Either one of the following mitigations:"
+ewarn
+ewarn "Encrypted memory and encrypted swap."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
