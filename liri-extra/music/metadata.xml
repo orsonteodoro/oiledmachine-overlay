@@ -8,7 +8,7 @@
   </maintainer>
   <longdescription>
 
-    Ways to populate music:"
+    Ways to populate music:
 
     1. Add your music in the /home/USERNAME/Music folder.  (Upstream recommended)
     2. From command line:  LiriMusic PATH-TO-FILE
