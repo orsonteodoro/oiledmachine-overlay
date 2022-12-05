@@ -127,9 +127,10 @@ ewarn "Passwords stored in ~/.config/Liri/'Liri Samtal.conf'"
 ewarn "are in plaintext."
 ewarn
 ewarn
-ewarn "Mitigation recommendation:"
+ewarn "Either one of the follwing mitigations:"
 ewarn
-ewarn "Encrypt /home/<username>"
+ewarn "1. Encrypt /home/<username>"
+ewarn "2. Use a wrapper script to shred ~/.config/Liri/'Liri Samtal.conf' after exit"
 ewarn
 }
 
