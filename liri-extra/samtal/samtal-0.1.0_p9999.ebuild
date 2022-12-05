@@ -136,10 +136,12 @@ ewarn "Either one of the following mitigations:"
 ewarn
 ewarn "1. Encrypt /home/<username>"
 ewarn
-ewarn "2. Use a wrapper script to shred ~/.config/Liri/'Liri Samtal.conf' after exit."
-ewarn "   (Does not work well in brownout or low power mobile/laptop.)"
+ewarn "2. Use a wrapper script to shred ~/.config/Liri/'Liri Samtal.conf' after"
+ewarn "exit.  (It does not work well in brownout or low power mobile/laptop.)"
 ewarn
-ewarn "3. Disable storing passwords.  (By setting the save-server-settings USE flag disabled.)"
+ewarn "3. Disable storing passwords.  (By setting the save-server-settings USE"
+ewarn "flag disabled.  Unstucks user ident changes on app restart as well.)"
+ewarn
 ewarn
 }
 
