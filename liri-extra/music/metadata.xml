@@ -12,8 +12,8 @@
 
     1. Add your music in the /home/USERNAME/Music folder.  (Upstream recommended)
     2. From command line:  LiriMusic PATH-TO-FILE
-    3. Drag and drop on top of link.
-    4. Use it as the program to handle the MIME type/
+    3. Drag and drop on top of desktop shortcut.
+    4. Use it as the program to handle the MIME type.
 
   </longdescription>
   <upstream>

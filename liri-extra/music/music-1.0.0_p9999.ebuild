@@ -171,8 +171,8 @@ einfo "Ways to populate music:"
 einfo
 einfo "1. Add your music in the /home/<username>/Music folder.  (Upstream recommended)"
 einfo "2. From command line:  LiriMusic <path-to-file>"
-einfo "3. Drag and drop on top of link."
-einfo "4. Use it as the program to handle the MIME type/"
+einfo "3. Drag and drop on top of desktop shortcut."
+einfo "4. Use it as the program to handle the MIME type."
 einfo
 }
 
