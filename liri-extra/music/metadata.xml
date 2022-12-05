@@ -7,6 +7,14 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
+
+    Ways to populate music:"
+
+    1. Add your music in the /home/USERNAME/Music folder.  (Upstream recommended)
+    2. From command line:  LiriMusic PATH-TO-FILE
+    3. Drag and drop on top of link.
+    4. Use it as the program to handle the MIME type/
+
   </longdescription>
   <upstream>
     <remote-id type="github">lirios/music</remote-id>
