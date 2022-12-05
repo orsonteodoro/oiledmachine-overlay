@@ -121,4 +121,28 @@ src_configure() {
 	cmake_src_configure
 }
 
+# UserPage.qml
+# The qstring.clear() does not fill the memory array with random/null data.
+# See qstring.h implementation at https://github.com/qt/qtbase/blob/5.15/src/corelib/text/qstring.h#L1092
+# See CWE-256
+security_notice() {
+ewarn
+ewarn "Security notice"
+ewarn
+ewarn "The passwords in the \"Your account\" section may not properly get"
+ewarn "sanitized when changing passwords."
+ewarn
+ewarn
+ewarn "Mitigation"
+ewarn
+ewarn "Do not use the facilities used by this program but the ones"
+ewarn "provided by the operating system."
+ewarn
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+	security_notice
+}
+
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
