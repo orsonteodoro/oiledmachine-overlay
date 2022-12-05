@@ -224,10 +224,25 @@ src_configure() {
 	cmake_src_configure
 }
 
-pkg_postinst() {
-	# https://github.com/lirios/shell/issues/63
-	glib-compile-schemas /usr/share/glib-2.0/schemas
-	xdg_pkg_postinst
+lock_screen_notice() {
+# Found in the qmls (AuthDialog.qml, LockScreenWindow.qml),
+# possibly in cpp files with password variable too ...
+# The fluid library lacks a secure type for strings.
+# 475b8ea commit also
+ewarn
+ewarn "Security notice"
+ewarn
+ewarn "Using password session locker may not properly sanitize the same memory"
+ewarn "area containing a password with random data or between copies."
+ewarn
+ewarn "Mitigation"
+ewarn
+ewarn "Do no use facilities."
+ewarn "Complete logoff or shutdown instead of lock screen."
+ewarn
+}
+
+driver_notice() {
 ewarn
 ewarn "Please switch to the Mesa GL driver.  Do not use the proprietary driver."
 ewarn
@@ -237,6 +252,9 @@ ewarn "  -The cursor and wallpaper will not show properly if you ran"
 ewarn "   \`liri-session -- -platform xcb\`"
 ewarn "  -The -platform eglfs mode may not work at all."
 ewarn
+}
+
+session_start_notice() {
 einfo
 einfo "To run a Liri session in X do:"
 einfo
@@ -268,7 +286,9 @@ einfo
 einfo "  export XDG_RUNTIME_DIR=/tmp/xdg-runtime-\$(id -u)"
 einfo "  dwl -s \"liri-session -- -platform wayland\""
 einfo
+}
 
+customized_settings_notice() {
 einfo
 einfo "Per user customization"
 einfo
@@ -291,22 +311,18 @@ einfo
 einfo "  gsettings set io.liri.desktop.interface icon-theme 'Paper'"
 einfo "  (The same as /usr/share/icons.)"
 einfo
+}
 
-ewarn
-ewarn "Security notice"
-ewarn
-ewarn "Using password session locker may not properly sanitize the same memory"
-ewarn "area containing a password with random data or between copies."
-# Found in the qmls (AuthDialog.qml, LockScreenWindow.qml),
-# possibly in cpp files with password variable too ...
-# The fluid library lacks a secure type for strings.
-# commit also 475b8ea
-ewarn
-ewarn "Mitigation"
-ewarn
-ewarn "Do no use facilities."
-ewarn "Complete logoff or shutdown instead of lock screen."
-ewarn
+pkg_postinst() {
+	# https://github.com/lirios/shell/issues/63
+	glib-compile-schemas /usr/share/glib-2.0/schemas
+	xdg_pkg_postinst
+
+	driver_notice
+	session_start_notice
+	customized_settings_notice
+
+	use systemd && lock_screen_notice
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
