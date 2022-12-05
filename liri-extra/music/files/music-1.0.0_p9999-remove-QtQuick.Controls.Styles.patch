@@ -1,0 +1,11 @@
+diff -urp music-1.0.0_p9999.orig/src/main.qml music-1.0.0_p9999/src/main.qml
+--- music-1.0.0_p9999.orig/src/main.qml	2022-12-04 17:19:12.631504084 -0800
++++ music-1.0.0_p9999/src/main.qml	2022-12-04 17:20:56.143601448 -0800
+@@ -1,7 +1,6 @@
+ import QtQuick 2.12
+ import QtQuick.Layouts 1.0
+ import Fluid.Controls 1.0 as FluidControls
+-import QtQuick.Controls.Styles 1.4
+ import com.liri.music 1.0
+ import QtMultimedia 5.12
+ import QtQuick.Controls.Material 2.12

@@ -29,7 +29,7 @@ IUSE+="
 ${GSTREAMER_CODECS[@]}
 alsa doc musepack pulseaudio speex test
 
-r6
+r7
 "
 REQUIRED_USE="
 	|| (
@@ -86,6 +86,8 @@ PATCHES=(
 	"${FILESDIR}/music-1.0.0_pre20200314-reference-taglib2.patch"
 	"${FILESDIR}/music-1.0.0_pre20200314-allow-system-fluid.patch"
 	"${FILESDIR}/music-1.0.0_pre20200314-add-qtmultimedia-to-cmakelists.patch"
+	"${FILESDIR}/music-1.0.0_p9999-liri_finalize_executable.patch"
+	"${FILESDIR}/music-1.0.0_p9999-remove-QtQuick.Controls.Styles.patch"
 )
 
 qbs_check() {
@@ -160,6 +162,16 @@ src_configure() {
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
 	)
 	cmake_src_configure
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+ewarn
+ewarn "You need to provide the path to the file or drag and drop the file on"
+ewarn "the com.liri.music.desktop in order to make use of it."
+ewarn
+ewarn "It's recommended to use liri-extra/player instead."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

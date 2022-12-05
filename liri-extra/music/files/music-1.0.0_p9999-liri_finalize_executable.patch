@@ -1,0 +1,9 @@
+diff -urp music-1.0.0_p9999.orig/src/CMakeLists.txt music-1.0.0_p9999/src/CMakeLists.txt
+--- music-1.0.0_p9999.orig/src/CMakeLists.txt	2022-12-04 17:02:33.763857412 -0800
++++ music-1.0.0_p9999/src/CMakeLists.txt	2022-12-04 17:06:56.170290203 -0800
+@@ -116,4 +116,5 @@ target_compile_definitions(${CMAKE_PROJE
+ add_custom_target(headers SOURCES ${liri_vinyl_HEADERS})
+ #target_link_libraries(${CMAKE_PROJECT_NAME} Qt5::Core Qt5::Gui Qt5::Svg Qt5::Qml Qt5::Quick Qt5::QuickControls2 Qt5::Sql ${TAGLIB_LIBRARIES})
+ 
++liri_finalize_executable(${CMAKE_PROJECT_NAME})
+ install(TARGETS ${CMAKE_PROJECT_NAME} DESTINATION bin)
