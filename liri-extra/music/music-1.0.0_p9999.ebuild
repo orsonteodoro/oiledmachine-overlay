@@ -166,6 +166,8 @@ src_configure() {
 
 pkg_postinst() {
 	xdg_pkg_postinst
+# This is listed because there is no open file dialog which is uncommon for
+# GUI music players.
 einfo
 einfo "Ways to populate music:"
 einfo
