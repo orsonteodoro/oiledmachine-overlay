@@ -291,6 +291,22 @@ einfo
 einfo "  gsettings set io.liri.desktop.interface icon-theme 'Paper'"
 einfo "  (The same as /usr/share/icons.)"
 einfo
+
+ewarn
+ewarn "Security notice"
+ewarn
+ewarn "Using password session locker may not properly sanitize the same memory"
+ewarn "area containing a password with random data or between copies."
+# Found in the qmls (AuthDialog.qml, LockScreenWindow.qml),
+# possibly in cpp files with password variable too ...
+# The fluid library lacks a secure type for strings.
+# commit also 475b8ea
+ewarn
+ewarn "Mitigation"
+ewarn
+ewarn "Do no use facilities."
+ewarn "Complete logoff or shutdown instead of lock screen."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
