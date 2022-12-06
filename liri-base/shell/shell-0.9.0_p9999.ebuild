@@ -15,8 +15,8 @@ LICENSE="GPL-3+ LGPL-3+ BSD"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
-+jpeg -qtquick-compiler systemd
-+layer-shell-integration +lockscreen-integration
++jpeg -qtquick-compiler -lockscreen-integration +png systemd
++layer-shell-integration
 
 r3
 "
@@ -28,12 +28,12 @@ DEPEND+="
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=[jpeg?,wayland]
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[jpeg?,png?,wayland]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtsql-${QT_MIN_PV}:5=[sqlite]
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
-	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
+	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=[png?]
 	>=dev-qt/qtxml-${QT_MIN_PV}:5=
 	kde-frameworks/solid
 	media-fonts/droid
@@ -322,7 +322,7 @@ pkg_postinst() {
 	session_start_notice
 	customized_settings_notice
 
-	use systemd && lock_screen_notice
+	use lockscreen-integration && lock_screen_notice
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
