@@ -16,7 +16,7 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
 +gif +jpeg +png
 
-r3
+r4
 "
 QT_MIN_PV=5.10
 # The documentation on the readme is lagging.  See \
@@ -26,18 +26,22 @@ DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=[gif?,jpeg?,png?]
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[jpeg?,png?]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=[widgets]
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
 	>=dev-qt/qtxml-${QT_MIN_PV}:5=
 	sys-auth/polkit
 	x11-misc/xkeyboard-config
+	gif? (
+		>=dev-qt/qtgui-${QT_MIN_PV}:5=[gif(+),jpeg?,png?]
+	)
 	~liri-base/aurora-client-0.0.0_p9999
 	~liri-base/fluid-1.2.0_p9999
 	~liri-base/libliri-0.9.0_p9999
 	~liri-base/qtaccountsservice-1.3.0_p9999
 	~liri-base/qtgsettings-1.3.0_p9999
 "
+# gif dropped in qtgui-5.15.7 ebuild but picked up in qtbase
 RDEPEND+="
 	${DEPEND}
 "
