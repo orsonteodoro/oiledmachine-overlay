@@ -15,15 +15,20 @@ LICENSE="LGPL-3+ GPL-3+"
 SLOT="0/$(ver_cut 1-3 ${PV})"
 QT_MIN_PV=5.10
 IUSE+="
-taglib
+taglib wayland X
 
 r1
+"
+REQUIRED_USE+="
+	|| (
+		wayland X
+	)
 "
 DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland?,X?]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qttest-${QT_MIN_PV}:5=
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
