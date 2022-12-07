@@ -35,7 +35,7 @@ DEPEND+="
 		~liri-base/files-0.2.0_p9999[wayland?,X?]
 	)
 	flatpak? (
-		~liri-base/xdg-desktop-portal-liri-0.0.0_p9999
+		~liri-base/xdg-desktop-portal-liri-0.0.0_p9999[systemd?]
 	)
 	music? (
 		~liri-extra/music-1.0.0_p9999[wayland?,X?]
