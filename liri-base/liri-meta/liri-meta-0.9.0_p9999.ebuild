@@ -7,7 +7,7 @@ DESCRIPTION="Meta package for liri"
 HOMEPAGE="https://liri.io/"
 SLOT="0/$(ver_cut 1-3 ${PV})" # based on liri-base/liri-shell
 IUSE+="
-appcenter browser calculator +files flatpak initial-setup music networkmanager
+appcenter browser calculator +files flatpak music networkmanager
 player power-manager pulseaudio samtal screencast screenshot +settings systemd
 +terminal text themes wallpaper
 
@@ -36,9 +36,6 @@ DEPEND+="
 	)
 	flatpak? (
 		~liri-base/xdg-desktop-portal-liri-0.0.0_p9999
-	)
-	initial-setup? (
-		~liri-base/initial-setup-0.0.0_p9999
 	)
 	music? (
 		~liri-extra/music-1.0.0_p9999[wayland?,X?]
