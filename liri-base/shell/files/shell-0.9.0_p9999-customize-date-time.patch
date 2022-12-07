@@ -6,7 +6,7 @@ diff -urp shell-0.9.0_p9999.orig/src/plugins/statusarea/datetime/contents/main.q
  Shell.StatusAreaExtension {
      indicator: Shell.Indicator {
 -        property var now: new Date()
-+        property var now: new DateTime()
++        property var now: new Date()
  
 -        text: Qt.formatTime(now)
 +        text: Qt.formatDateTime(now __DATE_TIME_FORMAT__)
@@ -17,7 +17,7 @@ diff -urp shell-0.9.0_p9999.orig/src/plugins/statusarea/datetime/contents/main.q
              running: true
              onTriggered: {
 -                now = new Date();
-+                now = new DateTime();
++                now = new Date();
              }
          }
      }
