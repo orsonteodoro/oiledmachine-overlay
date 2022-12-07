@@ -14,15 +14,7 @@ LICENSE="GPL-3" # Readme.md says GPL-3 but some sources say GPL-3+
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
-wayland X
-
 r1
-"
-REQUIRED_USE+="
-	|| (
-		wayland
-		X
-	)
 "
 QT_MIN_PV=5.10
 KDE_FRAMEWORKS_MIN_PV=5.48
@@ -32,7 +24,7 @@ DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland?,X?]
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtxml-${QT_MIN_PV}:5=
 	~liri-base/fluid-1.2.0_p9999
