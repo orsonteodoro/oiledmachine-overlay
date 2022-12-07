@@ -25,11 +25,13 @@
     LIRI_SHELL_DATE_TIME_FORMAT - A format specifier to customize the date time
     format.  See links below.
 
-      https://doc.qt.io/qt-6/qml-qtqml-qt.html#formatDateTime-method
+      https://doc.qt.io/qt-6/qdatetime.html#toString
+      https://doc.qt.io/qt-6/qdate.html#toString
+      https://doc.qt.io/qt-6/qtime.html#toString
 
     Examples:
    
-      LIRI_SHELL_DATE_TIME_FORMAT="ddd MM dd hh:mm:ss"
+      LIRI_SHELL_DATE_TIME_FORMAT="ddd MMM dd hh:mm:ss"
 
 
     Per user customization
