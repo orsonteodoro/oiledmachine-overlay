@@ -18,7 +18,7 @@ LICENSE="
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
--embed-icons doc -qtquick-compiler test -update-icons
+-embed-icons doc -qtquick-compiler test +update-icons
 
 r3
 "
