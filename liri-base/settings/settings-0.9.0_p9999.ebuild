@@ -16,7 +16,7 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
 +gif +jpeg +png
 
-r4
+r5
 "
 QT_MIN_PV=5.10
 # The documentation on the readme is lagging.  See \
@@ -31,6 +31,7 @@ DEPEND+="
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
 	>=dev-qt/qtxml-${QT_MIN_PV}:5=
 	sys-auth/polkit
+	virtual/libcrypt:=
 	x11-misc/xkeyboard-config
 	gif? (
 		>=dev-qt/qtgui-${QT_MIN_PV}:5=[gif(+),jpeg?,png?]
