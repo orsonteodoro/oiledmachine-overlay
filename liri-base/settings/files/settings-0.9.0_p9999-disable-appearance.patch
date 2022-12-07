@@ -1,0 +1,120 @@
+diff -urp settings-0.9.0_p9999.orig/src/modules/appearance/contents/main.qml settings-0.9.0_p9999/src/modules/appearance/contents/main.qml
+--- settings-0.9.0_p9999.orig/src/modules/appearance/contents/main.qml	2022-12-07 01:36:01.542472157 -0800
++++ settings-0.9.0_p9999/src/modules/appearance/contents/main.qml	2022-12-07 01:36:54.436560145 -0800
+@@ -31,116 +31,4 @@ import Liri.Settings 1.0
+ 
+ ModulePage {
+     id: page
+-
+-    ScrollView {
+-        anchors.fill: parent
+-        clip: true
+-
+-        Column {
+-            ModuleContainer {
+-                title: qsTr("Desktop")
+-                width: page.width
+-
+-                ListItem {
+-                    text: qsTr("Transparent app shelf")
+-
+-                    onClicked: appShelfSwitch.checked = !appShelfSwitch.checked
+-
+-                    rightItem: Switch {
+-                        id: appShelfSwitch
+-
+-                        anchors.centerIn: parent
+-
+-                        checked: ShellSettings.appShelf.transparentShelf
+-                        onCheckedChanged: {
+-                            ShellSettings.appShelf.transparentShelf = checked
+-                            checked = Qt.binding(function() {
+-                                return ShellSettings.appShelf.transparentShelf
+-                            })
+-                        }
+-                    }
+-                }
+-
+-                ListItem {
+-                    text: qsTr("Accent color")
+-                    //tintColor: "transparent"
+-
+-                    onClicked: colorPicker.open()
+-
+-                    rightItem: Rectangle {
+-                        anchors.centerIn: parent
+-
+-                        radius: 2
+-                        width: 24
+-                        height: width
+-                        color: Material.color(ShellSettings.desktop.accentColor)
+-                        border.color: Material.color(ShellSettings.desktop.accentColor, Material.Shade700)
+-                    }
+-                }
+-
+-                Popup {
+-                    id: colorPicker
+-                    //title: "Accent Color"
+-                    x: (parent.width - width) / 2
+-                    y: (parent.height - height) / 2
+-                    modal: true
+-
+-                    property var selectedColor: ShellSettings.desktop.accentColor
+-
+-                    //positiveButton.visible: false
+-
+-                    Grid {
+-                        columns: 7
+-                        spacing: 8
+-
+-                        Repeater {
+-                            model: [
+-                                Material.Red, Material.Pink, Material.Purple, Material.DeepPurple,
+-                                Material.Indigo, Material.Blue, Material.LightBlue, Material.Cyan,
+-                                Material.Teal, Material.Green, Material.LightGreen, Material.Lime,
+-                                Material.Yellow, Material.Amber, Material.Orange, Material.DeepOrange,
+-                                Material.Grey, Material.BlueGrey, Material.Brown
+-                            ]
+-
+-                            Rectangle {
+-                                width: 30
+-                                height: width
+-                                radius: 2
+-                                color: Material.color(modelData)
+-                                border.color: Material.color(modelData, Material.Shade700)
+-
+-                                MouseArea {
+-                                    anchors.fill: parent
+-                                    onClicked: {
+-                                        ShellSettings.desktop.accentColor = modelData
+-                                        colorPicker.close()
+-                                    }
+-                                }
+-                            }
+-                        }
+-                    }
+-                }
+-            }
+-
+-            ModuleContainer {
+-                title: "Lockscreen"
+-                width: page.width
+-
+-                ListItem {
+-                    text: "Nothing here yet"
+-                    enabled: false
+-                }
+-            }
+-
+-            ModuleContainer {
+-                title: "Screen saver"
+-                width: page.width
+-
+-                ListItem {
+-                    text: "Nothing here yet"
+-                    enabled: false
+-                }
+-            }
+-        }
+-    }
+ }

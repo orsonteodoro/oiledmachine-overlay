@@ -58,6 +58,10 @@ EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
+PATCHES=(
+	"${FILESDIR}/${PN}-0.9.0_p9999-disable-appearance.patch"
+)
+
 pkg_setup() {
 	QTCONCURRENT_PV=$(pkg-config --modversion Qt5Concurrent)
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
