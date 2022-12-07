@@ -74,7 +74,8 @@ EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 PATCHES=(
-	"${FILESDIR}/shell-0.9.0_p9999-systemd-libs-optional.patch"
+	"${FILESDIR}/${PN}-0.9.0_p9999-systemd-libs-optional.patch"
+	"${FILESDIR}/${PN}-0.9.0_p9999-customize-date-time.patch"
 )
 
 pkg_setup() {
@@ -206,9 +207,24 @@ einfo "Pinned launchers:  ${L3}"
 einfo
 }
 
+change_date_time() {
+einfo
+einfo "See metadata.xml or \`epkginfo -x ${CATEGORY}/${PN}\` to change the date"
+einfo "time format"
+einfo
+	if [[ -n "${LIRI_SHELL_DATE_TIME_FORMAT}" ]] ; then
+		sed -i -e "s|__DATE_TIME_FORMAT__|, \"${LIRI_SHELL_DATE_TIME_FORMAT}\"|g" \
+			src/plugins/statusarea/datetime/contents/main.qml || die
+	else
+		sed -i -e "s|__DATE_TIME_FORMAT__|, \"HH:mm:ss\"|g" \
+			src/plugins/statusarea/datetime/contents/main.qml || die
+	fi
+}
+
 src_configure() {
 	change_default_icon_theme
 	change_pinned_launchers
+	change_date_time
 	local mycmakeargs=(
 		-DFEATURE_enable_systemd=$(usex systemd)
 		-DFEATURE_shell_enable_qtquick_compiler=$(usex qtquick-compiler)
@@ -316,7 +332,6 @@ einfo
 pkg_postinst() {
 	# https://github.com/lirios/shell/issues/63
 	glib-compile-schemas /usr/share/glib-2.0/schemas
-	xdg_pkg_postinst
 
 	driver_notice
 	session_start_notice

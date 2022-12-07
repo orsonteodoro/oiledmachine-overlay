@@ -22,6 +22,15 @@
 
       LIRI_SHELL_PINNED_LAUNCHERS="io.liri.Terminal io.liri.Settings"
 
+    LIRI_SHELL_DATE_TIME_FORMAT - A format specifier to customize the date time
+    format.  See links below.
+
+      https://doc.qt.io/qt-6/qml-qtqml-qt.html#formatDateTime-method
+
+    Examples:
+   
+      LIRI_SHELL_DATE_TIME_FORMAT="ddd MM dd hh:mm:ss"
+
 
     Per user customization
 
