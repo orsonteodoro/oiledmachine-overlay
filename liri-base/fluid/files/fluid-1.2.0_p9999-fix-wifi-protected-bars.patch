@@ -5,11 +5,11 @@
  {
      for NAME in $ICONS; do
 -        source_path=$GIT_DIR/src/$CATEGORY/$NAME/materialicons/24px.svg
-+	if [[ -e $GIT_DIR/src/$CATEGORY/$NAME/materialicons/24px.svg ]] ; then
-+	        source_path=$GIT_DIR/src/$CATEGORY/$NAME/materialicons/24px.svg
-+	else
-+	        source_path=$GIT_DIR/src/$CATEGORY/$NAME/materialiconstwotone/24px.svg
-+	fi
++        if [[ -e $GIT_DIR/src/$CATEGORY/$NAME/materialicons/24px.svg ]] ; then
++            source_path=$GIT_DIR/src/$CATEGORY/$NAME/materialicons/24px.svg
++        else
++	     source_path=$GIT_DIR/src/$CATEGORY/$NAME/materialiconstwotone/24px.svg
++        fi
          [ ! -f $source_path ] && continue
          dest_path=$TARGET_DIR/$CATEGORY/$NAME.svg
          if [ ! -f $dest_path ]; then
