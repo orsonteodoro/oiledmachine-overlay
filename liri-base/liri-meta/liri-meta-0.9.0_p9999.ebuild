@@ -7,11 +7,9 @@ DESCRIPTION="Meta package for liri"
 HOMEPAGE="https://liri.io/"
 SLOT="0/$(ver_cut 1-3 ${PV})" # based on liri-base/liri-shell
 IUSE+="
-appcenter browser calculator +files flatpak music networkmanager
-player power-manager pulseaudio samtal screencast screenshot +settings systemd
-+terminal text themes wallpaper
-
-wayland eglfs X
+appcenter browser calculator eglfs +files flatpak music networkmanager player
+power-manager pulseaudio samtal screencast screenshot +settings systemd
++terminal text themes wallpaper wayland X
 
 r2
 "
