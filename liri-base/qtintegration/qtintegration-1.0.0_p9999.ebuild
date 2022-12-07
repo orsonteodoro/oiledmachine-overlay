@@ -14,7 +14,7 @@ LICENSE="GPL-3+ LGPL-3+ ISC"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 FEATURES_IUSE=(
-layer-shell-integration lockscreen-integration material-decoration
+shell lockscreen material-decoration
 platform-theme
 )
 IUSE="
@@ -38,10 +38,10 @@ DEPEND+="
 	platform-theme? (
 		~liri-base/qtgsettings-1.3.0_p9999
 	)
-	layer-shell-integration? (
+	shell? (
 		~liri-base/aurora-client-0.0.0_p9999
 	)
-	lockscreen-integration? (
+	lockscreen? (
 		~liri-base/aurora-client-0.0.0_p9999
 	)
 	~liri-base/libliri-0.9.0_p9999
@@ -108,8 +108,8 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DLIRI_QTINTEGRATION_ENABLE_LAYER_SHELL_INTEGRATION=$(usex layer-shell-integration)
-		-DLIRI_QTINTEGRATION_ENABLE_LOCKSCREEN_INTEGRATION=$(usex lockscreen-integration)
+		-DLIRI_QTINTEGRATION_ENABLE_LAYER_SHELL_INTEGRATION=$(usex shell)
+		-DLIRI_QTINTEGRATION_ENABLE_LOCKSCREEN_INTEGRATION=$(usex lockscreen)
 		-DLIRI_QTINTEGRATION_ENABLE_MATERIAL_DECORATION=$(usex material-decoration)
 		-DLIRI_QTINTEGRATION_ENABLE_PLATFORMTHEME=$(usex platform-theme)
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
@@ -120,8 +120,10 @@ src_configure() {
 }
 
 pkg_postinst() {
-	einfo "The environmental variable QT_WAYLAND_DISABLE_WINDOWDECORATION must be unset"
-	einfo "Set QT_WAYLAND_DECORATION=material before loading liri-session"
+einfo
+einfo "The environmental variable QT_WAYLAND_DISABLE_WINDOWDECORATION must be unset"
+einfo "Set QT_WAYLAND_DECORATION=material before loading liri-session"
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

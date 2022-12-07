@@ -22,6 +22,8 @@
     </flag>
     <flag name="update-icons">
       Updates the Material Design icon theme
+
+      It also fixes the missing WIFI protected bars icons.
     </flag>
     <flag name="qtquick-compiler">
       Optimizes using the qtquick-compiler.  This package requires a rebuild

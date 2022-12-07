@@ -16,13 +16,13 @@ HOMEPAGE="https://bitbucket.org/chromiumembedded/cef/src/master/"
 KEYWORDS="~arm ~arm64 ~amd64"
 # The download page can be found at https://cef-builds.spotifycdn.com/index.html
 
-CEF_VERSION_RAW="11/16/2022 - 107.1.11+g26c0b5e+chromium-107.0.5304.110 / Chromium 107.0.5304.110"
-CHROMIUM_V="${CEF_VERSION_RAW##* }" # same as https://bitbucket.org/chromiumembedded/cef/src/26c0b5e/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5195
+CEF_VERSION_RAW="12/01/2022 - 108.4.12+g2e23ced+chromium-108.0.5359.71 / Chromium 108.0.5359.71"
+CHROMIUM_V="${CEF_VERSION_RAW##* }" # same as https://bitbucket.org/chromiumembedded/cef/src/2e23ced/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5195
 CEF_COMMIT="${CEF_VERSION_RAW#*\+}" # same as https://bitbucket.org/chromiumembedded/cef/commits/
 CEF_COMMIT="${CEF_COMMIT%\+*}"
 CEF_COMMIT="${CEF_COMMIT:1:7}"
 
-TARBALL_SUFFIX="" # can be _beta or "" (stable)
+TARBALL_SUFFIX="_beta" # can be _beta or "" (stable)
 SRC_URI="
 	elibc_glibc? (
 		amd64? (
@@ -51,8 +51,8 @@ REQUIRED_USE+="
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
 # For details see:
-# Chromium runtime:  https://github.com/chromium/chromium/blob/107.0.5304.110/build/install-build-deps.sh#L237
-# Chromium buildtime:  https://github.com/chromium/chromium/blob/107.0.5304.110/build/install-build-deps.sh#L151
+# Chromium runtime:  https://github.com/chromium/chromium/blob/108.0.5359.71/build/install-build-deps.sh#L237
+# Chromium buildtime:  https://github.com/chromium/chromium/blob/108.0.5359.71/build/install-build-deps.sh#L151
 GLIB_V="2.48"
 XI_V="1.7.6"
 CHROMIUM_CDEPEND="
@@ -342,6 +342,12 @@ ewarn "shadow-call-stack (backward edge protection) applied to these binaries"
 ewarn "is unknown."
 ewarn
 ewarn "For full protection, use the regular browser bin package instead."
+ewarn
+
+ewarn
+ewarn "Security notices"
+ewarn
+ewarn "V8: CVE-2022-4262 https://nvd.nist.gov/vuln/detail/CVE-2022-4262"
 ewarn
 }
 

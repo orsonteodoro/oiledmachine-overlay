@@ -313,10 +313,7 @@ BDEPEND+="
 
 CDEPEND="
 	${FF_ONLY_DEPEND}
-	|| (
-		>=app-accessibility/at-spi2-core-2.46.0:2
-		dev-libs/atk[${MULTILIB_USEDEP}]
-	)
+	>=app-accessibility/at-spi2-core-2.46.0:2
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=[${MULTILIB_USEDEP}]

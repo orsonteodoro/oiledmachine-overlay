@@ -14,13 +14,21 @@ LICENSE="GPL-3 BSD"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
+wayland X
+
 r1
+"
+REQUIRED_USE+="
+	|| (
+		wayland
+		X
+	)
 "
 QT_MIN_PV=5.10
 DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland?,X?]
 	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5=
 	>=dev-qt/qtnetwork-${QT_MIN_PV}:5=
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=

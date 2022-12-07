@@ -37,7 +37,7 @@ aiff amr amrwb dvd mjpeg musepack sbc speex
 "
 IUSE+="
 ${ALL_CODECS}
-alsa http mms pulseaudio rtmp
+alsa http mms pulseaudio rtmp wayland X
 
 r6
 "
@@ -81,6 +81,10 @@ REQUIRED_USE="
 	|| (
 		${ALL_CODECS}
 	)
+	|| (
+		wayland
+		X
+	)
 "
 
 GSTREAMER_META_CODECS_DEPENDS=("${GSTREAMER_META_CODECS[@]/#/,}")
@@ -93,7 +97,7 @@ QT_MIN_PV=5.10
 DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland?,X?]
 	>=dev-qt/qtmultimedia-${QT_MIN_PV}:5=[alsa?,gstreamer,pulseaudio?,qml]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=[widgets]
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=

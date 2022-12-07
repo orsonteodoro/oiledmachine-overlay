@@ -15,13 +15,13 @@ LICENSE="GPL-3+ LGPL-3+ BSD"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
-+jpeg -qtquick-compiler -lockscreen-integration +png systemd
-+layer-shell-integration
++jpeg -qtquick-compiler -lockscreen +png systemd
 
 r3
 "
 # systemd is enabled by default upstream, but distro defaults to OpenRC.
 QT_MIN_PV=5.15
+QT_INTEGRATION_PV="1.0.0_p9999"
 DEPEND+="
 	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
@@ -53,7 +53,7 @@ DEPEND+="
 	~liri-base/libliri-0.9.0_p9999
 	~liri-base/qtaccountsservice-1.3.0_p9999
 	~liri-base/qtgsettings-1.3.0_p9999
-	~liri-base/qtintegration-1.0.0_p9999[layer-shell-integration?,lockscreen-integration?]
+	~liri-base/qtintegration-${QT_INTEGRATION_PV}[shell,lockscreen?]
 " # TODO: check liri-base/qtintegration USE flags for always required.
 # x11-misc/xdg-utils - for xdg-open
 RDEPEND+=" ${DEPEND}"
@@ -322,7 +322,7 @@ pkg_postinst() {
 	session_start_notice
 	customized_settings_notice
 
-	use lockscreen-integration && lock_screen_notice
+	use lockscreen && lock_screen_notice
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

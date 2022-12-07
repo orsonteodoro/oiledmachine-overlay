@@ -14,14 +14,22 @@ LICENSE="GPL-3+"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
+wayland X
+
 r1
+"
+REQUIRED_USE+="
+	|| (
+		wayland
+		X
+	)
 "
 QT_MIN_PV=5.10
 DEPEND+="
 	>=dev-db/sqlite-3.7.15
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland?,X?]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtsql-${QT_MIN_PV}:5=
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=

@@ -14,15 +14,21 @@ LICENSE="GPL-3+"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
-save-server-settings
+save-server-settings wayland X
 
 r1
+"
+REQUIRED_USE+="
+	|| (
+		wayland
+		X
+	)
 "
 QT_MIN_PV=5.10
 DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland?,X?]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=net-im/libcommuni-3.5:=[qml]
 	~liri-base/fluid-1.2.0_p9999

@@ -55,6 +55,7 @@ RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/fluid-1.2.0_p9999-aurora.patch"
 	"${FILESDIR}/fluid-1.2.0_p9999-fetch-icons-disable-git.patch"
+	"${FILESDIR}/fluid-1.2.0_p9999-fix-wifi-protected-bars.patch"
 )
 
 pkg_setup() {
@@ -138,6 +139,14 @@ src_configure() {
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
 	)
 	cmake_src_configure
+}
+
+pkg_postinst() {
+	if ! use update-icons ; then
+ewarn
+ewarn "To fix the missing WIFI protected bars, use the update-icons USE flag."
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

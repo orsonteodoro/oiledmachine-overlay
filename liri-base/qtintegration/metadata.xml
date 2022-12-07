@@ -13,17 +13,23 @@
     <bugs-to>https://github.com/lirios/qtintegration/issues</bugs-to>
   </upstream>
   <use>
-    <flag name="layer-shell-integration">
-      Builds layer-shell integration support.
+    <flag name="shell">
+      Allows Liri shell to be used.
+
+      (The Liri shell contains the apps launcher, taskbar, status area,
+       wallpaper, etc.)
     </flag>
-    <flag name="lockscreen-integration">
-      Builds lockscreen shell integration support.
+    <flag name="lockscreen">
+      Allows the lockscreen to be used.
     </flag>
     <flag name="material-decoration">
       Builds material decoration support.
+
+      (No observable changes when testing.)
     </flag>
     <flag name="platform-theme">
-      Builds the platform theme.
+      Applies several theme related changes such as the icon theme, font style,
+      color, etc.
     </flag>
     <flag name="rN">
       FOR INTERNAL USE ONLY.  (FORCES REBUILD WHEN BUMPED)

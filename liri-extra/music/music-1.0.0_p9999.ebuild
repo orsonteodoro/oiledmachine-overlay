@@ -27,11 +27,15 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 QT_MIN_PV=5.14
 IUSE+="
 ${GSTREAMER_CODECS[@]}
-alsa doc musepack pulseaudio speex test
+alsa doc musepack pulseaudio speex test wayland X
 
 r7
 "
 REQUIRED_USE="
+	|| (
+		wayland
+		X
+	)
 	|| (
 		alsa
 		pulseaudio
@@ -52,7 +56,7 @@ GSTREAMER_CODECS_DEPENDS="${GSTREAMER_CODECS_DEPENDS// }"
 DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland?,X?]
 	>=dev-qt/qtmultimedia-${QT_MIN_PV}:5=[alsa?,gstreamer,pulseaudio?,qml]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=

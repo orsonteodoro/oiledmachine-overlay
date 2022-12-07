@@ -15,7 +15,15 @@ LICENSE="GPL-3+"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
+wayland X
+
 r2
+"
+REQUIRED_USE+="
+	|| (
+		wayland
+		X
+	)
 "
 QT_MIN_PV=5.10
 DEPEND+="
@@ -23,7 +31,7 @@ DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland?,X?]
 	>=dev-qt/qtnetwork-${QT_MIN_PV}:5=[ssl]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	acct-group/flatpak

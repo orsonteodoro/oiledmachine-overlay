@@ -11,20 +11,28 @@ appcenter browser calculator +files flatpak initial-setup music networkmanager
 player power-manager pulseaudio samtal screencast screenshot +settings systemd
 +terminal text themes wallpaper
 
+wayland eglfs X
+
 r2
+"
+REQUIRED_USE+="
+	|| (
+		wayland
+		X
+	)
 "
 DEPEND+="
 	appcenter? (
-		~liri-extra/appcenter-0.1.0_p9999
+		~liri-extra/appcenter-0.1.0_p9999[wayland?,X?]
 	)
 	browser? (
-		~liri-extra/browser-1.2.0_p9999
+		~liri-extra/browser-1.2.0_p9999[wayland?,X?]
 	)
 	calculator? (
-		~liri-extra/calculator-1.3.0_p9999
+		~liri-extra/calculator-1.3.0_p9999[wayland?,X?]
 	)
 	files? (
-		~liri-base/files-0.2.0_p9999
+		~liri-base/files-0.2.0_p9999[wayland?,X?]
 	)
 	flatpak? (
 		~liri-base/xdg-desktop-portal-liri-0.0.0_p9999
@@ -33,13 +41,13 @@ DEPEND+="
 		~liri-base/initial-setup-0.0.0_p9999
 	)
 	music? (
-		~liri-extra/music-1.0.0_p9999
+		~liri-extra/music-1.0.0_p9999[wayland?,X?]
 	)
 	networkmanager? (
 		~liri-extra/networkmanager-0.9.0_p9999
 	)
 	player? (
-		~liri-extra/player-0.1.0_p9999
+		~liri-extra/player-0.1.0_p9999[wayland?,X?]
 	)
 	power-manager? (
 		~liri-extra/power-manager-0.9.0_p9999
@@ -48,7 +56,7 @@ DEPEND+="
 		~liri-base/pulseaudio-0.9.0_p9999
 	)
 	samtal? (
-		~liri-extra/samtal-0.1.0_p9999
+		~liri-extra/samtal-0.1.0_p9999[wayland?,X?]
 	)
 	screencast? (
 		~liri-extra/screencast-0.9.0_p9999
@@ -60,10 +68,10 @@ DEPEND+="
 		~liri-base/settings-0.9.0_p9999
 	)
 	terminal? (
-		~liri-extra/terminal-0.2.0_p9999
+		~liri-extra/terminal-0.2.0_p9999[wayland?,X?]
 	)
 	text? (
-		~liri-extra/text-0.5.0_p9999
+		~liri-extra/text-0.5.0_p9999[wayland?,X?]
 	)
 	themes? (
 		~liri-base/themes-0.9.0_p9999
@@ -71,7 +79,7 @@ DEPEND+="
 	wallpaper? (
 		~liri-base/wallpapers-0.10.0_p9999
 	)
-	~liri-base/session-0.1.0_p9999[systemd?]
+	~liri-base/session-0.1.0_p9999[eglfs?,systemd?,wayland?,X?]
 	~liri-base/shell-${PV}[systemd?]
 "
 RDEPEND+=" ${DEPEND}"
