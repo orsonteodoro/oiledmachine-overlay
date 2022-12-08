@@ -124,8 +124,8 @@ cflags-depends_check() {
 		! has_version "${p}" && continue
 		local actual_oflag=$(_cflags-depends_get_last_oflag "${p}")
 		local required_oflag="${CFLAGS_RDEPEND[${p}]}"
-einfo "Actual oflag:\t${actual_oflag} (${p})"
-einfo "Required oflag:\t${required_oflag} (${p})"
+einfo "Actual oflag:\t   ${actual_oflag} (${p})"
+einfo "Required oflag:\t>= ${required_oflag} (${p})"
 		if _cflags-depends_is_opt_lt "${actual_oflag}" "${required_oflag}" ; then
 eerror
 eerror "Recompile ${p} with ${required_oflag} or better"
