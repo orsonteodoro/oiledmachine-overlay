@@ -1,0 +1,47 @@
+diff -urp shell-0.9.0_p9999.orig/src/helper/qml/BackgroundWindow.qml shell-0.9.0_p9999/src/helper/qml/BackgroundWindow.qml
+--- shell-0.9.0_p9999.orig/src/helper/qml/BackgroundWindow.qml	2022-12-07 15:26:27.031820411 -0800
++++ shell-0.9.0_p9999/src/helper/qml/BackgroundWindow.qml	2022-12-07 15:47:16.933307565 -0800
+@@ -10,7 +10,8 @@ import QtGSettings 1.0 as Settings
+ import Fluid.Effects 1.0 as FluidEffects
+ import Aurora.Client 1.0 as AuroraClient
+ import Liri.Shell 1.0 as LS
+ import Liri.DBusService 1.0 as DBusService
++import Liri.Session 1.0 as Session
+ 
+ Window {
+     id: bgWindow
+@@ -36,31 +36,24 @@ Window {
+         schema.path: "/io/liri/desktop/background/"
+     }
+ 
+-    DBusService.Application {
+-        id: settingsApp
+-
+-        serviceName: "io.liri.Settings"
+-        objectPath: "/io/liri/Settings"
+-    }
+-
+     Menu {
+         id: bgMenu
+ 
+         MenuItem {
+             text: qsTr("Change Background...")
+-            onClicked: settingsApp.open(["background"])
++            onClicked: Session.Launcher.launchCommand("liri-settings background")
+         }
+ 
+         MenuSeparator {}
+ 
+         MenuItem {
+             text: qsTr("Display Settings")
+-            onClicked: settingsApp.open(["display"])
++            onClicked: Session.Launcher.launchCommand("liri-settings display")
+         }
+ 
+         MenuItem {
+             text: qsTr("Settings")
+-            onClicked: settingsApp.activate()
++            onClicked: Session.Launcher.launchCommand("liri-settings")
+         }
+     }
+ 
