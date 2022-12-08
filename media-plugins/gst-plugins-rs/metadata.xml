@@ -40,7 +40,8 @@
       Build the Dav1d Plugin for decoding AV1 video
     </flag>
     <flag name="fallback-commit">
-      Fallback to the commit snapshot with same dependencies
+      Fallback to the commit snapshot with same dependencies and tested applied
+      patches
     </flag>
     <flag name="fallbackswitch">
       Build the Fallback Switcher Plugin for falling back to sync pad after
