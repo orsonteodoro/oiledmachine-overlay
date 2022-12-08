@@ -5,6 +5,7 @@
 EAPI=8
 
 inherit cmake git-r3 xdg
+inherit cflags-depends
 
 DESCRIPTION="Cross-platform Material design web browser"
 HOMEPAGE="https://github.com/lirios/browser"
@@ -46,6 +47,11 @@ BDEPEND+="
 	virtual/pkgconfig
 	~liri-base/cmake-shared-2.0.0_p9999
 "
+# One of the major sources of lag comes from dependencies
+# These are strict to match performance to competition or normal builds.
+declare -A CFLAGS_RDEPEND=(
+	["media-libs/libvpx"]="-O1" # -O0 causes FPS to lag below 25 FPS.
+)
 SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
@@ -82,6 +88,7 @@ pkg_setup() {
 	if ver_test ${QTCORE_PV} -ne ${QTWIDGETS_PV} ; then
 		die "Qt5Core is not the same version as Qt5Widgets"
 	fi
+	cflags-depends_check
 }
 
 src_unpack() {
