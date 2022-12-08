@@ -4,6 +4,8 @@
 
 EAPI=8
 
+EGIT_COMMIT_FALLBACK="08c716d11014a60a958b1c135fc223702a5810c1"
+
 MY_PV="9999"
 
 LLVM_SLOTS=(13 12 11) # For clang-sys
@@ -75,7 +77,7 @@ MODULES=(
 	webrtc
 	webrtchttp
 )
-IUSE+=" ${MODULES[@]} doc"
+IUSE+=" ${MODULES[@]} doc fallback-commit"
 REQUIRED_USE+="
 	|| ( ${MODULES[@]} )
 	webrtchttp? ( reqwest )
@@ -87,7 +89,7 @@ CARGO_V="1.65"
 # Assumes D11
 CAIRO_PV="1.16.0"
 GST_PV="1.20" # Upstream uses in CI 1.21.2.1, distro only provides 1.20.x
-PANGO_PV="1.50.11" # Upstream uses 1.50.12
+PANGO_PV="1.50.13"
 RDEPEND+="
 	>=dev-libs/glib-2.66.8:2[${MULTILIB_USEDEP}]
 	!=dev-libs/libgit2-1.4*
@@ -140,8 +142,8 @@ gen_llvm_bdepend() {
 }
 BDEPEND+="
 	|| ( $(gen_llvm_bdepend) )
-	>=dev-util/cargo-c-0.9.12
-	>=dev-util/meson-0.63.2
+	>=dev-util/cargo-c-0.9.14
+	>=dev-util/meson-0.62.2
 	>=dev-util/pkgconf-0.29.2[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/gcc-11
 	>=virtual/rust-${RUST_V}[${MULTILIB_USEDEP}]
@@ -294,11 +296,15 @@ einfo "LLVM=${LLVM_MAX_SLOT}"
 }
 
 EXPECTED_BUILD_FILES_FINGERPRINT="\
-0e7620df241e01c42d0d8cbe38118f37009c25d92d8f58a27cd6cc8a38357686\
-29e1891843884587e0cd0f7c7f0ba35f13e45fe95542fda35c558f8dd6f51916\
+b73f2f5e05362d59e0980be47212bda1f8a2005ab68498199dd4df92c198af9c\
+7c9decd7c9b14a29272ef68eb480b28741a110852cac3e2ff6cf8e05fbfa551e\
 "
 
 src_unpack() {
+	if use fallback-commit ; then
+		export EGIT_COMMIT="${EGIT_COMMIT_FALLBACK}"
+		export EGIT_OVERRIDE_COMMIT_GSTREAMER_GST_PLUGINS_RS="${EGIT_COMMIT_FALLBACK}"
+	fi
 	if [[ ${PV} =~ 9999 ]] ; then
 		git-r3_fetch
 		git-r3_checkout
