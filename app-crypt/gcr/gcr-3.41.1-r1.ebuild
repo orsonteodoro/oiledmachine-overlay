@@ -10,7 +10,7 @@ inherit multilib-minimal
 
 DESCRIPTION="Libraries for cryptographic UIs and accessing PKCS#11 modules"
 LICENSE="GPL-2+ LGPL-2+"
-KEYWORDS="~alpha amd64 arm arm64 ~ia64 ~loong ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux ~sparc-solaris ~x86-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~sparc-solaris ~x86-solaris"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/gcr"
 SLOT="0/1" # subslot = suffix of libgcr-base-3 and co
 IUSE+=" gtk gtk-doc +introspection systemd +vala"
@@ -100,6 +100,17 @@ src_install() {
 		meson_src_install
 	}
 	multilib_foreach_abi install_abi
+
+	# These files are installed by gcr:4
+	local conflicts=(
+		"${ED}"/usr/libexec/gcr-ssh-agent
+	)
+	use systemd && conflicts+=(
+		"${ED}"/usr/lib/systemd/user/gcr-ssh-agent.{service,socket}
+	)
+	einfo "${conflicts[@]}"
+	rm "${conflicts[@]}" || die
+
 	if use gtk-doc; then
 		mkdir -p "${ED}"/usr/share/gtk-doc/html/ || die
 		mv "${ED}"/usr/share/doc/{gck-1,gcr-3,gcr-ui-3} "${ED}"/usr/share/gtk-doc/html/ || die
