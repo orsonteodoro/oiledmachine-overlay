@@ -217,7 +217,6 @@ IUSE+=" -exfat"
 
 # Not ready yet
 REQUIRED_USE+="
-	!prjc
 	!uksm
 "
 

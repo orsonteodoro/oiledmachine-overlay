@@ -3,17 +3,19 @@
 
 EAPI=8
 
-K_GENPATCHES_VER="11"
-PATCH_PROJC_VER="5.19-r0"
-PATCH_RT_VER="6.0.5-rt14"
+K_GENPATCHES_VER="167"
+BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
+PRJC_LTS="-lts"
+PATCH_PROJC_VER="5.10-lts-r3"
+PATCH_RT_VER="5.10.158-rt77"
 
-inherit ot-kernel-v6.0
+inherit ot-kernel-v5.10
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.0.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v5.10.eclass
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
 # OILEDMACHINE-OVERLAY-META-TAGS:  see-eclass-for-full-details
-# OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
+# OILEDMACHINE-OVERLAY-META-WIP:  signed-kexec, signed-kernels
