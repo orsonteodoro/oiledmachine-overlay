@@ -36,7 +36,6 @@ src_prepare() {
 }
 
 src_configure() {
-	export PKG_CONFIG="$(tc-getPKG_CONFIG)"
 	use X && append-cppflags -DXWAYLAND
 	tc-export CC
 }
