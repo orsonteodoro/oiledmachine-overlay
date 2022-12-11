@@ -58,6 +58,8 @@ src_unpack() {
 		fi
 		git-r3_fetch
 		git-r3_checkout
+	else
+		unpack ${A}
 	fi
 }
 
