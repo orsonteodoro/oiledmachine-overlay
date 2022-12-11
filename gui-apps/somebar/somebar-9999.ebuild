@@ -19,6 +19,7 @@ markup-in-status-messages show-status-on-selected-monitor
 )
 IUSE+="
 	${CONTRIB_PATCHES_IUSE[@]}
+	fallback-commit
 "
 DEPEND="
 	dev-libs/wayland
@@ -30,6 +31,14 @@ BDEPEND="
 	dev-libs/wayland-protocols
 	dev-util/wayland-scanner
 "
+
+src_unpack() {
+	if use fallback-commit ; then
+		EGIT_COMMIT="5bb988bc803c44e7726d2dcabdf6b2b94d6b2d16"
+	fi
+	git-r3_fetch
+	git-r3_checkout
+}
 
 src_prepare() {
 	default

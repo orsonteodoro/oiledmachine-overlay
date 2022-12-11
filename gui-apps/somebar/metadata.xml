@@ -71,6 +71,9 @@
     <flag name="colorless-status">
      Sets the color of status component to inactive.
     </flag>
+    <flag name="fallback-commit">
+      Rewinds back to the commit that works with all the patches.
+    </flag>
     <flag name="hide-vacant-tags">
       Hide vacant unused tags.
     </flag>
