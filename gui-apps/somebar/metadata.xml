@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild fork only from the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+    <email>efe.izbudak@metu.edu.tr</email>
+    <name>Efe İzbudak</name>
+  </maintainer>
+  <longdescription>
+
+    Buildtime environment variables
+
+    SOMEBAR_TERMCMD - Sets the terminal command to run when the status area is
+                      clicked.
+
+      Example
+
+        SOMEBAR_TERMCMD="foot"
+        SOMEBAR_TERMCMD="st"
+
+    SOMEBAR_FONT - Sets the typographical style for all parts.
+
+      Example
+
+        SOMEBAR_FONT="Sans 12"
+        SOMEBAR_FONT="Monospace 9"
+
+    SOMEBAR_PADDINGX - Sets the horizontal spacing around internal border.
+
+      Example
+
+        SOMEBAR_PADDINGX="10"
+
+    SOMEBAR_PADDINGY - Sets the vertical spacing around internal border.
+
+      Example
+
+        SOMEBAR_PADDINGY="3"
+
+    SOMEBAR_INACTIVECOLOR_FG - Sets the inactive tag color text in hex RGB.
+
+      Example
+
+        SOMEBAR_INACTIVECOLOR_FG="0xbb, 0xbb, 0xbb"
+
+    SOMEBAR_INACTIVECOLOR_BG - Sets the inactive tag color background in hex RGB.
+
+      Example
+
+        SOMEBAR_INACTIVECOLOR_BG="0x22, 0x22, 0x22"
+
+    SOMEBAR_ACTIVECOLOR_FG - Sets the active tag color text in hex RGB.
+
+      Example
+
+        SOMEBAR_ACTIVECOLOR_FG="0xee, 0xee, 0xee"
+
+    SOMEBAR_ACTIVECOLOR_BG - Sets the active tag color background in hex RGB.
+
+      Example
+
+        SOMEBAR_ACTIVECOLOR_BG="0x00, 0x55, 0x77"
+
+  </longdescription>
+  <use>
+    <flag name="colorless-status">
+     Sets the color of status component to inactive.
+    </flag>
+    <flag name="hide-vacant-tags">
+      Hide vacant unused tags.
+    </flag>
+    <flag name="indicator-size-props">
+      Lets config.h customize indicators sizes.
+    </flag>
+    <flag name="ipc">
+      Allow to use IPC patch to click switch workspaces on tabs.
+
+      If using dwl, the dwl[somebar] USE flag must be enabled.
+    </flag>
+    <flag name="markup-in-status-messages">
+      Allow colours to be used to highlight parts of status bar messages.
+    </flag>
+    <flag name="show-status-on-selected-monitor">
+      Show status on selected monitor
+    </flag>
+  </use>
+</pkgmetadata>
