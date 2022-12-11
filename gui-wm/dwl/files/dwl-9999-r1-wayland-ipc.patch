@@ -1,30 +1,36 @@
 diff -urpN dwl-9999.orig/Makefile dwl-9999/Makefile
---- dwl-9999.orig/Makefile	2022-12-10 08:53:10.908253759 -0800
-+++ dwl-9999/Makefile	2022-12-10 09:00:00.308305647 -0800
-@@ -13,10 +13,18 @@ PKGS      = wlroots wayland-server xkbco
- DWLCFLAGS = `$(PKG_CONFIG) --cflags $(PKGS)` $(DWLCPPFLAGS) $(DWLDEVCFLAGS) $(CFLAGS)
+--- dwl-9999.orig/Makefile	2022-12-10 23:39:32.934732730 -0800
++++ dwl-9999/Makefile	2022-12-10 23:42:05.940126642 -0800
+@@ -14,9 +14,10 @@ DWLCFLAGS = `$(PKG_CONFIG) --cflags $(PK
  LDLIBS    = `$(PKG_CONFIG) --libs $(PKGS)` $(LIBS)
  
+ all: dwl
+-dwl: dwl.o util.o
++net-tapesoftware-dwl-wm-unstable-v1-protocol.o: net-tapesoftware-dwl-wm-unstable-v1-protocol.h
++dwl: dwl.o net-tapesoftware-dwl-wm-unstable-v1-protocol.o util.o
+-	$(CC) dwl.o util.o $(LDLIBS) $(LDFLAGS) $(DWLCFLAGS) -o $@
++	$(CC) dwl.o net-tapesoftware-dwl-wm-unstable-v1-protocol.o util.o $(LDLIBS) $(LDFLAGS) $(DWLCFLAGS) -o $@
+-dwl.o: dwl.c config.mk config.h client.h xdg-shell-protocol.h wlr-layer-shell-unstable-v1-protocol.h
++dwl.o: dwl.c config.mk config.h client.h xdg-shell-protocol.h wlr-layer-shell-unstable-v1-protocol.h net-tapesoftware-dwl-wm-unstable-v1-protocol.h
+ util.o: util.c util.h
+ 
+ # wayland-scanner is a tool which generates C headers and rigging for Wayland
+@@ -31,6 +31,12 @@ xdg-shell-protocol.h:
+ wlr-layer-shell-unstable-v1-protocol.h:
+ 	$(WAYLAND_SCANNER) server-header \
+ 		protocols/wlr-layer-shell-unstable-v1.xml $@
 +net-tapesoftware-dwl-wm-unstable-v1-protocol.h: protocols/net-tapesoftware-dwl-wm-unstable-v1.xml
 +	$(WAYLAND_SCANNER) server-header \
 +		protocols/net-tapesoftware-dwl-wm-unstable-v1.xml $@
 +net-tapesoftware-dwl-wm-unstable-v1-protocol.c: protocols/net-tapesoftware-dwl-wm-unstable-v1.xml
 +	$(WAYLAND_SCANNER) private-code \
 +		protocols/net-tapesoftware-dwl-wm-unstable-v1.xml $@
-+net-tapesoftware-dwl-wm-unstable-v1-protocol.o: net-tapesoftware-dwl-wm-unstable-v1-protocol.h
-+
- all: dwl
--dwl: dwl.o util.o
-+dwl: dwl.o util.o net-tapesoftware-dwl-wm-unstable-v1-protocol.o
- 	$(CC) dwl.o util.o $(LDLIBS) $(LDFLAGS) $(DWLCFLAGS) -o $@
--dwl.o: dwl.c config.mk config.h client.h xdg-shell-protocol.h wlr-layer-shell-unstable-v1-protocol.h
-+dwl.o: dwl.c config.mk config.h client.h xdg-shell-protocol.h wlr-layer-shell-unstable-v1-protocol.h net-tapesoftware-dwl-wm-unstable-v1-protocol.h
- util.o: util.c util.h
  
- # wayland-scanner is a tool which generates C headers and rigging for Wayland
+ config.h:
+ 	cp config.def.h $@
 diff -urpN dwl-9999.orig/dwl.c dwl-9999/dwl.c
---- dwl-9999.orig/dwl.c	2022-12-10 08:53:10.924254386 -0800
-+++ dwl-9999/dwl.c	2022-12-10 08:56:25.003862859 -0800
+--- dwl-9999.orig/dwl.c	2022-12-10 23:39:32.942733008 -0800
++++ dwl-9999/dwl.c	2022-12-10 23:39:56.379553518 -0800
 @@ -52,6 +52,7 @@
  #include <wlr/types/wlr_xdg_shell.h>
  #include <wlr/util/log.h>
@@ -305,7 +311,7 @@ diff -urpN dwl-9999.orig/dwl.c dwl-9999/dwl.c
 +}
 diff -urpN dwl-9999.orig/protocols/net-tapesoftware-dwl-wm-unstable-v1.xml dwl-9999/protocols/net-tapesoftware-dwl-wm-unstable-v1.xml
 --- dwl-9999.orig/protocols/net-tapesoftware-dwl-wm-unstable-v1.xml	1969-12-31 16:00:00.000000000 -0800
-+++ dwl-9999/protocols/net-tapesoftware-dwl-wm-unstable-v1.xml	2022-12-10 08:54:08.514511882 -0800
++++ dwl-9999/protocols/net-tapesoftware-dwl-wm-unstable-v1.xml	2022-12-10 23:39:56.379553518 -0800
 @@ -0,0 +1,164 @@
 +<?xml version="1.0" encoding="UTF-8"?>
 +<protocol name="net_tapesoftware_dwl_wm_unstable_v1">
