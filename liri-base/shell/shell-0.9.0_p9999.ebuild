@@ -77,6 +77,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.9.0_p9999-systemd-libs-optional.patch"
 	"${FILESDIR}/${PN}-0.9.0_p9999-customize-date-time.patch"
 	"${FILESDIR}/${PN}-0.9.0_p9999-fix-background-window-launch-settings.patch"
+	"${FILESDIR}/${PN}-0.9.0_p9999-decorations.patch"
 )
 
 pkg_setup() {

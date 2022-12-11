@@ -1,0 +1,54 @@
+diff -urp shell-0.9.0_p9999.orig/src/compositor/qml/windows/XWaylandWindow.qml shell-0.9.0_p9999/src/compositor/qml/windows/XWaylandWindow.qml
+--- shell-0.9.0_p9999.orig/src/compositor/qml/windows/XWaylandWindow.qml	2022-12-11 11:26:43.402221323 -0800
++++ shell-0.9.0_p9999/src/compositor/qml/windows/XWaylandWindow.qml	2022-12-11 11:32:45.471789686 -0800
+@@ -30,15 +30,19 @@ FluidCore.Object {
+     readonly property alias fullscreen: __private.fullscreen
+     readonly property alias resizing: __private.resizing
+     readonly property bool decorated: {
+-        // Set true if it has a titlebar and decoration
+-        if (__private.windowType !== Qt.Popup)
++        if (toplevelHandle.appId == "")
++            return __private.decorate && !__private.fullscreen;
++        else if (__private.windowType !== Qt.Popup)
++            // Set true if it has a titlebar and decoration
+             return __private.decorate && !__private.fullscreen;
+         else
+             return false;
+     }
+     readonly property bool bordered: {
+-        // Set true if it has resize handles
+-        if (decorated)
++        if (toplevelHandle.appId == "")
++            return !__private.maximized && !__private.fullscreen;
++        else if (decorated)
++            // Set true if it has resize handles
+             return !__private.maximized && !__private.fullscreen;
+         else
+             return false;
+diff -urp shell-0.9.0_p9999.orig/src/compositor/qml/windows/XdgToplevelWindow.qml shell-0.9.0_p9999/src/compositor/qml/windows/XdgToplevelWindow.qml
+--- shell-0.9.0_p9999.orig/src/compositor/qml/windows/XdgToplevelWindow.qml	2022-12-11 11:26:43.402221323 -0800
++++ shell-0.9.0_p9999/src/compositor/qml/windows/XdgToplevelWindow.qml	2022-12-11 11:29:45.509103930 -0800
+@@ -31,15 +31,19 @@ FluidCore.Object {
+     readonly property alias fullscreen: __private.fullscreen
+     readonly property alias resizing: __private.resizing
+     readonly property bool decorated: {
+-        // Set true if it has a titlebar and decorations
+-        if (__private.decorationMode === XdgToplevel.ServerSideDecoration)
++        if (toplevel.appId == "")
++            return !__private.fullscreen;
++        else if (__private.decorationMode === XdgToplevel.ServerSideDecoration)
++            // Set true if it has a titlebar and decorations
+             return !__private.fullscreen;
+         else
+             return false;
+     }
+     readonly property bool bordered: {
+-        // Set true if it has resize handles
+-        if (__private.decorationMode === XdgToplevel.ServerSideDecoration)
++        if (toplevel.appId == "")
++            return !__private.maximized && !__private.fullscreen;
++        else if (__private.decorationMode === XdgToplevel.ServerSideDecoration)
++            // Set true if it has resize handles
+             return !__private.maximized && !__private.fullscreen;
+         else
+             return false;
