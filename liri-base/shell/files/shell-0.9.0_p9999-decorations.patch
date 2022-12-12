@@ -7,7 +7,7 @@ diff -urp shell-0.9.0_p9999.orig/src/compositor/qml/windows/XWaylandWindow.qml s
      readonly property bool decorated: {
 -        // Set true if it has a titlebar and decoration
 -        if (__private.windowType !== Qt.Popup)
-+        if (toplevelHandle.appId == "")
++        if (toplevelHandle && toplevelHandle.appId == "")
 +            return __private.decorate && !__private.fullscreen;
 +        else if (__private.windowType !== Qt.Popup)
 +            // Set true if it has a titlebar and decoration
@@ -18,7 +18,7 @@ diff -urp shell-0.9.0_p9999.orig/src/compositor/qml/windows/XWaylandWindow.qml s
      readonly property bool bordered: {
 -        // Set true if it has resize handles
 -        if (decorated)
-+        if (toplevelHandle.appId == "")
++        if (toplevelHandle && toplevelHandle.appId == "")
 +            return !__private.maximized && !__private.fullscreen;
 +        else if (decorated)
 +            // Set true if it has resize handles
@@ -34,7 +34,7 @@ diff -urp shell-0.9.0_p9999.orig/src/compositor/qml/windows/XdgToplevelWindow.qm
      readonly property bool decorated: {
 -        // Set true if it has a titlebar and decorations
 -        if (__private.decorationMode === XdgToplevel.ServerSideDecoration)
-+        if (toplevel.appId == "")
++        if (toplevel && toplevel.appId == "")
 +            return !__private.fullscreen;
 +        else if (__private.decorationMode === XdgToplevel.ServerSideDecoration)
 +            // Set true if it has a titlebar and decorations
@@ -45,7 +45,7 @@ diff -urp shell-0.9.0_p9999.orig/src/compositor/qml/windows/XdgToplevelWindow.qm
      readonly property bool bordered: {
 -        // Set true if it has resize handles
 -        if (__private.decorationMode === XdgToplevel.ServerSideDecoration)
-+        if (toplevel.appId == "")
++        if (toplevel && toplevel.appId == "")
 +            return !__private.maximized && !__private.fullscreen;
 +        else if (__private.decorationMode === XdgToplevel.ServerSideDecoration)
 +            // Set true if it has resize handles
