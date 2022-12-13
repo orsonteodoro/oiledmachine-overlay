@@ -60,7 +60,7 @@ DEPEND+="
 	~liri-base/libliri-0.9.0_p9999
 	~liri-base/qtaccountsservice-1.3.0_p9999
 	~liri-base/qtgsettings-1.3.0_p9999
-	~liri-base/qtintegration-${QT_INTEGRATION_PV}[shell,lockscreen?]
+	~liri-base/qtintegration-${QT_INTEGRATION_PV}[aurora=,shell,lockscreen?]
 " # TODO: check liri-base/qtintegration USE flags for always required.
 # x11-misc/xdg-utils - for xdg-open
 RDEPEND+=" ${DEPEND}"
