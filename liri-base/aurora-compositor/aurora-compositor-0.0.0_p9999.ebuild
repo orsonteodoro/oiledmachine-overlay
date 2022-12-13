@@ -228,6 +228,7 @@ ewarn
 ewarn "Related issue:"
 ewarn
 ewarn "  https://github.com/lirios/aurora-compositor/issues/14"
+# Related bug log:  xdg_surface.get_popup with invalid popup parent
 ewarn
 }
 
