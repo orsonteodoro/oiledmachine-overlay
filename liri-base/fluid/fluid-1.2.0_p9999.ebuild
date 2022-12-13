@@ -37,6 +37,7 @@ DEPEND+="
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	>=dev-util/cmake-3.10.0
+	dev-qt/qtwaylandscanner
 	virtual/pkgconfig
 	test? (
 		>=dev-qt/qttest-${QT_MIN_PV}:5=

@@ -37,11 +37,12 @@ RDEPEND+="
 BDEPEND+="
 	!liri-base/aurora-scanner
 	>=dev-util/cmake-3.10.0
-	~liri-base/cmake-shared-2.0.0_p9999
+	dev-qt/qtwaylandscanner
 	virtual/pkgconfig
 	test? (
 		>=dev-qt/qttest-${QT_MIN_PV}:5=
 	)
+	~liri-base/cmake-shared-2.0.0_p9999
 "
 SRC_URI=""
 EGIT_BRANCH="develop"
