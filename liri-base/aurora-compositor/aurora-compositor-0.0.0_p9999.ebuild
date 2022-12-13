@@ -59,6 +59,7 @@ EGL_DEPENDS="
 DEPEND+="
 	!liri-base/eglfs
 	!liri-base/qbs-shared
+	!liri-base/qml-xwayland
 	!liri-base/qtudev
 	!liri-base/wayland
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=

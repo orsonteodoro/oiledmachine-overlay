@@ -20,6 +20,7 @@ r1
 "
 QT_MIN_PV=5.9
 DEPEND+="
+	!liri-base/aurora-compositor
 	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland]
