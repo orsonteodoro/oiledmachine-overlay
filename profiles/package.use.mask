@@ -64,3 +64,4 @@ liri-base/qtintegration aurora
 liri-base/liri-meta aurora
 liri-extra/screenshot aurora
 liri-base/xdg-desktop-portal-liri aurora
+liri-base/libliri aurora

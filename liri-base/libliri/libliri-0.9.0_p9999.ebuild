@@ -15,7 +15,7 @@ LICENSE="LGPL-3+ FDL-1.3"
 SLOT="0/$(ver_cut 1-3 ${PV})"
 QT_MIN_PV=5.10
 IUSE+="
-test
+aurora test
 
 r1
 "
@@ -72,6 +72,9 @@ pkg_setup() {
 }
 
 src_unpack() {
+	if ! use aurora ; then
+		EGIT_COMMIT="a3d6fa9b6be60d5ded050b68459d3895efd47ec9"
+	fi
 	git-r3_fetch
 	git-r3_checkout
 	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" \
