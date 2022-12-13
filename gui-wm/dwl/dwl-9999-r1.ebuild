@@ -66,6 +66,7 @@ src_unpack() {
 
 src_prepare() {
 	restore_config config.h
+	# Patch from https://git.sr.ht/~raphi/dwl
 	use somebar && eapply "${FILESDIR}/${PN}-9999-r1-wayland-ipc.patch"
 
 	default

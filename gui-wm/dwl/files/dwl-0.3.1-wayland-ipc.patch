@@ -1,3 +1,6 @@
+Obtained from:
+https://git.sr.ht/~raphi/dwl
+
 diff -urpN dwl-0.3.1.orig/Makefile dwl-0.3.1/Makefile
 --- dwl-0.3.1.orig/Makefile	2022-04-10 19:38:48.000000000 -0700
 +++ dwl-0.3.1/Makefile	2022-12-10 08:36:24.328757127 -0800
