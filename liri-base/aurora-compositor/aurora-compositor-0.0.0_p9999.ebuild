@@ -220,4 +220,15 @@ src_configure() {
 	cmake_src_configure
 }
 
+pkg_postinst() {
+ewarn
+ewarn "Popup support for all non-wayland (e.g. GTK+3) based apps are broken and"
+ewarn "may lead to a crash."
+ewarn
+ewarn "Related issue:"
+ewarn
+ewarn "  https://github.com/lirios/aurora-compositor/issues/14"
+ewarn
+}
+
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
