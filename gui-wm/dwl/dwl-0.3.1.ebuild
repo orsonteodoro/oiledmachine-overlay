@@ -60,5 +60,8 @@ ewarn
 ewarn "Accessing the menu with ctrl+p after monitor is off or suspended may"
 ewarn "lead to loss of unsaved work (or data loss) due to crash."
 ewarn
+ewarn "Switching from other vt console too long may make it impossible"
+ewarn "to return back to dwl desktop."
+ewarn
 # A similar problem (issue 107) was addressed in this project.
 }
