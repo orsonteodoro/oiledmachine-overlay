@@ -17,13 +17,14 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
 aurora eglfs +jpeg -qtquick-compiler -lockscreen +png systemd
 
-r5
+r6
 "
 # systemd is enabled by default upstream, but distro defaults to OpenRC.
 QT_MIN_PV=5.15
 QT_INTEGRATION_PV="1.0.0_p9999"
 DEPEND+="
 	!aurora? (
+		~liri-base/qml-xwayland-0.10.0_p9999
 		~liri-base/qtudev-1.1.0_p9999
 		~liri-base/wayland-0.0.0_p9999
 		eglfs? (
