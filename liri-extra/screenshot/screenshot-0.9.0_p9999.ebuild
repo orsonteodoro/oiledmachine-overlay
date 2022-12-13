@@ -43,7 +43,9 @@ BDEPEND+="
 	>=dev-util/cmake-3.10.0
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	virtual/pkgconfig
-	~liri-base/aurora-scanner-0.0.0_p9999
+	aurora? (
+		~liri-base/aurora-scanner-0.0.0_p9999
+	)
 	~liri-base/cmake-shared-2.0.0_p9999
 "
 SRC_URI=""
