@@ -110,6 +110,7 @@ src_unpack() {
 src_prepare() {
 	cmake_src_prepare
 	sed -i -e "/src\/libirc/d" CMakeLists.txt || die
+	die
 	if ! use save-server-settings ; then
 		eapply "${FILESDIR}/${PN}-0.1.0_p9999-non-persistent-server-info.patch"
 	fi

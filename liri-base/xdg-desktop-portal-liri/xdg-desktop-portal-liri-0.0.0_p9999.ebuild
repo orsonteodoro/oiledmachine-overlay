@@ -15,12 +15,15 @@ LICENSE="GPL-3+ MIT"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
-pipewire systemd
+aurora pipewire systemd
 
 r2
 "
 QT_MIN_PV=5.10
 DEPEND+="
+	!aurora? (
+		~liri-base/wayland-0.0.0_p9999
+	)
 	>=dev-libs/wayland-1.15
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
@@ -34,6 +37,9 @@ DEPEND+="
 	dev-libs/glib
 	sys-apps/flatpak
 	sys-apps/xdg-desktop-portal
+	aurora? (
+		~liri-base/aurora-client-0.0.0_p9999
+	)
 	pipewire? (
 		>=media-video/pipewire-0.3
 		x11-libs/libdrm
@@ -44,7 +50,6 @@ DEPEND+="
 	~liri-base/libliri-0.9.0_p9999
 	~liri-base/qtaccountsservice-1.3.0_p9999
 	~liri-base/qtgsettings-1.3.0_p9999
-	~liri-base/aurora-client-0.0.0_p9999
 "
 RDEPEND+="
 	${DEPEND}
@@ -52,7 +57,9 @@ RDEPEND+="
 BDEPEND+="
 	>=dev-util/cmake-3.10.0
 	virtual/pkgconfig
-	~liri-base/aurora-scanner-0.0.0_p9999
+	aurora? (
+		~liri-base/aurora-scanner-0.0.0_p9999
+	)
 	~liri-base/cmake-shared-2.0.0_p9999
 "
 SRC_URI=""
@@ -98,6 +105,9 @@ pkg_setup() {
 }
 
 src_unpack() {
+	if ! use aurora ; then
+		EGIT_COMMIT="3c6e8046967d5aafe59e1065af48b77a49b0858f"
+	fi
 	git-r3_fetch
 	git-r3_checkout
 	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" \

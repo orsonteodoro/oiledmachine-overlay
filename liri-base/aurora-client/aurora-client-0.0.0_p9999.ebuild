@@ -21,6 +21,7 @@ r1
 "
 QT_MIN_PV=5.15
 DEPEND+="
+	!liri-base/wayland
 	>=dev-libs/wayland-1.15
 	>=dev-libs/wayland-protocols-1.15
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=

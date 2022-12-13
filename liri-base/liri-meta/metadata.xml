@@ -13,6 +13,14 @@
     <flag name="appcenter">
       Installs a Flatpak App Center
     </flag>
+    <flag name="aurora">
+      Build against the Aurora compositor.
+
+      (If disabled, it will rewind the commit to pre-Aurora changes.)
+
+      (The aurora compositor is still in development, and will break all
+       non-Wayland apps [including GTK based apps] when popups are encountered.)
+    </flag>
     <flag name="browser">
       Installs a qtwebengine based web browser
     </flag>

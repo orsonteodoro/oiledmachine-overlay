@@ -56,3 +56,11 @@ www-client/firefox debug
 # Freezes input
 gui-apps/somebar ipc
 gui-wm/dwl somebar
+
+# Aurora breaks all GTK apps and X based apps with popups
+liri-base/shell aurora
+liri-base/session aurora
+liri-base/qtintegration aurora
+liri-base/liri-meta aurora
+liri-extra/screenshot aurora
+liri-base/xdg-desktop-portal-liri aurora

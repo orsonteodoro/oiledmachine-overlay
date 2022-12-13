@@ -3,6 +3,10 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
+# 0.9.0 is before aurora (i.e. forked qtwaylandcompositor)
+# 1.0.0 will have aurora
+
 DESCRIPTION="Meta package for liri"
 HOMEPAGE="https://liri.io/"
 SLOT="0/$(ver_cut 1-3 ${PV})" # based on liri-base/liri-shell
@@ -10,6 +14,8 @@ IUSE+="
 appcenter browser calculator eglfs +files flatpak music networkmanager player
 power-manager pulseaudio samtal screencast screenshot +settings systemd
 +terminal text themes wallpaper wayland X
+
+-aurora
 
 r2
 "
@@ -19,6 +25,7 @@ REQUIRED_USE+="
 		X
 	)
 "
+
 DEPEND+="
 	appcenter? (
 		~liri-extra/appcenter-0.1.0_p9999[wayland?,X?]
@@ -33,7 +40,7 @@ DEPEND+="
 		~liri-base/files-0.2.0_p9999[wayland?,X?]
 	)
 	flatpak? (
-		~liri-base/xdg-desktop-portal-liri-0.0.0_p9999[systemd?]
+		~liri-base/xdg-desktop-portal-liri-0.0.0_p9999[aurora=,systemd?]
 	)
 	music? (
 		~liri-extra/music-1.0.0_p9999[wayland?,X?]
@@ -57,7 +64,7 @@ DEPEND+="
 		~liri-extra/screencast-0.9.0_p9999
 	)
 	screenshot? (
-		~liri-extra/screenshot-0.9.0_p9999
+		~liri-extra/screenshot-0.9.0_p9999[aurora=]
 	)
 	settings? (
 		~liri-base/settings-0.9.0_p9999
@@ -74,8 +81,8 @@ DEPEND+="
 	wallpaper? (
 		~liri-base/wallpapers-0.10.0_p9999
 	)
-	~liri-base/session-0.1.0_p9999[eglfs?,systemd?,wayland?,X?]
-	~liri-base/shell-${PV}[systemd?]
+	~liri-base/session-0.1.0_p9999[aurora=,eglfs?,systemd?,wayland?,X?]
+	~liri-base/shell-${PV}[aurora=,eglfs?,systemd?]
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="

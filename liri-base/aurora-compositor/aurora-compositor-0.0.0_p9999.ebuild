@@ -57,6 +57,10 @@ EGL_DEPENDS="
 	x11-libs/libdrm
 "
 DEPEND+="
+	!liri-base/eglfs
+	!liri-base/qbs-shared
+	!liri-base/qtudev
+	!liri-base/wayland
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland]

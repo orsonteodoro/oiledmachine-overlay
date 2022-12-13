@@ -14,7 +14,7 @@ LICENSE="GPL-3+ LGPL-3+"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
-eglfs systemd wayland X
+aurora eglfs systemd wayland X
 
 r1
 "
@@ -23,12 +23,22 @@ REQUIRED_USE="
 "
 QT_MIN_PV=5.10
 DEPEND+="
+	!aurora? (
+		eglfs? (
+			~liri-base/eglfs-0.0.0_p9999
+		)
+		wayland? (
+			~liri-base/wayland-0.0.0_p9999
+		)
+	)
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=[eglfs?,wayland?,X?]
 	>=dev-qt/qtxml-${QT_MIN_PV}:5=
-	eglfs? (
-		~liri-base/aurora-compositor-0.0.0_p9999[qpa]
+	aurora? (
+		eglfs? (
+			~liri-base/aurora-compositor-0.0.0_p9999[qpa]
+		)
 	)
 	systemd? (
 		sys-apps/systemd
@@ -61,6 +71,9 @@ BDEPEND+="
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
 	virtual/pkgconfig
+	aurora? (
+		~liri-base/aurora-scanner-0.0.0_p9999
+	)
 	~liri-base/cmake-shared-2.0.0_p9999
 "
 SRC_URI=""
@@ -96,6 +109,9 @@ src_prepare() {
 }
 
 src_unpack() {
+	if ! use aurora ; then
+		EGIT_COMMIT="f0936e9f16f517c5e3f4ee2094fc103841628674"
+	fi
 	git-r3_fetch
 	git-r3_checkout
 	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" \

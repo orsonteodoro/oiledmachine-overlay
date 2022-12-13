@@ -13,6 +13,11 @@
     <bugs-to>https://github.com/lirios/xdg-desktop-portal-liri/issues</bugs-to>
   </upstream>
   <use>
+    <flag name="aurora">
+      Build against the Aurora compositor.
+
+      (If disabled, it will rewind the commit to pre-Aurora changes.)
+    </flag>
     <flag name="pipewire">
       Adds screencast support
     </flag>

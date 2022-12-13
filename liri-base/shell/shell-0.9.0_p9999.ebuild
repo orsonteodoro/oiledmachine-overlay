@@ -15,7 +15,7 @@ LICENSE="GPL-3+ LGPL-3+ BSD"
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
-+jpeg -qtquick-compiler -lockscreen +png systemd
+aurora eglfs +jpeg -qtquick-compiler -lockscreen +png systemd
 
 r4
 "
@@ -23,6 +23,11 @@ r4
 QT_MIN_PV=5.15
 QT_INTEGRATION_PV="1.0.0_p9999"
 DEPEND+="
+	!aurora? (
+		~liri-base/qtudev-1.1.0_p9999
+		~liri-base/wayland-0.0.0_p9999
+		eglfs? ( ~liri-base/eglfs-0.0.9_p9999 )
+	)
 	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
@@ -41,14 +46,16 @@ DEPEND+="
 	sys-auth/polkit-qt
 	sys-libs/pam
 	x11-misc/xdg-utils
+	aurora? (
+		~liri-base/aurora-client-0.0.0_p9999
+		~liri-base/aurora-compositor-0.0.0_p9999
+	)
 	systemd? ( sys-apps/systemd )
 	|| (
 		virtual/freedesktop-icon-theme
 		x11-themes/paper-icon-theme
 		x11-themes/papirus-icon-theme
 	)
-	~liri-base/aurora-client-0.0.0_p9999
-	~liri-base/aurora-compositor-0.0.0_p9999
 	~liri-base/fluid-1.2.0_p9999
 	~liri-base/libliri-0.9.0_p9999
 	~liri-base/qtaccountsservice-1.3.0_p9999
@@ -61,11 +68,13 @@ BDEPEND+="
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
 	virtual/pkgconfig
+	aurora? (
+		~liri-base/aurora-scanner-0.0.0_p9999
+	)
 	|| (
 		sys-devel/clang
 		>=sys-devel/gcc-4.8
 	)
-	~liri-base/aurora-scanner-0.0.0_p9999
 	~liri-base/cmake-shared-2.0.0_p9999
 "
 SRC_URI=""
@@ -73,11 +82,13 @@ EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-PATCHES=(
+AURORA_PATCHES=(
 	"${FILESDIR}/${PN}-0.9.0_p9999-systemd-libs-optional.patch"
+	"${FILESDIR}/${PN}-0.9.0_p9999-decorations.patch"
+)
+PATCHES=(
 	"${FILESDIR}/${PN}-0.9.0_p9999-customize-date-time.patch"
 	"${FILESDIR}/${PN}-0.9.0_p9999-fix-background-window-launch-settings.patch"
-	"${FILESDIR}/${PN}-0.9.0_p9999-decorations.patch"
 )
 
 pkg_setup() {
@@ -127,6 +138,10 @@ pkg_setup() {
 }
 
 src_unpack() {
+	if ! use aurora ; then
+		EGIT_COMMIT="abc4e1a09862fb95990c7123dd4130bf5301a027"
+	fi
+
 	git-r3_fetch
 	git-r3_checkout
 	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" \
@@ -147,6 +162,11 @@ src_unpack() {
 		einfo "v_live=${v_live}"
 		einfo
 	fi
+}
+
+src_prepare() {
+	cmake_src_prepare
+	use aurora && eapply ${AURORA_PATCHES[@]}
 }
 
 change_default_icon_theme() {

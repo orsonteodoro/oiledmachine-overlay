@@ -19,6 +19,7 @@ platform-theme
 )
 IUSE="
 ${FEATURES_IUSE[@]/#/+}
+aurora
 
 r5
 "
@@ -39,10 +40,20 @@ DEPEND+="
 		~liri-base/qtgsettings-1.3.0_p9999
 	)
 	shell? (
-		~liri-base/aurora-client-0.0.0_p9999
+		!aurora? (
+			~liri-base/wayland-0.0.0_p9999
+		)
+		aurora? (
+			~liri-base/aurora-client-0.0.0_p9999
+		)
 	)
 	lockscreen? (
-		~liri-base/aurora-client-0.0.0_p9999
+		!aurora? (
+			~liri-base/wayland-0.0.0_p9999
+		)
+		aurora? (
+			~liri-base/aurora-client-0.0.0_p9999
+		)
 	)
 	~liri-base/libliri-0.9.0_p9999
 "
@@ -50,7 +61,9 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	>=dev-util/cmake-3.10.0
 	virtual/pkgconfig
-	~liri-base/aurora-scanner-0.0.0_p9999
+	aurora? (
+		~liri-base/aurora-scanner-0.0.0_p9999
+	)
 	~liri-base/cmake-shared-2.0.0_p9999
 "
 SRC_URI=""
@@ -80,6 +93,9 @@ pkg_setup() {
 }
 
 src_unpack() {
+	if ! use aurora ; then
+		EGIT_COMMIT="9a5d191b3b5eb196c37332c0ecb2526de4ecabb4"
+	fi
 	git-r3_fetch
 	git-r3_checkout
 	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" \

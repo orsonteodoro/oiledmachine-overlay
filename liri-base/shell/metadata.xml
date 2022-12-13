@@ -61,8 +61,19 @@
     <bugs-to>https://github.com/lirios/shell/issues</bugs-to>
   </upstream>
   <use>
+    <flag name="aurora">
+      Build against the Aurora compositor.
+
+      (If disabled, it will rewind the commit to pre-Aurora changes.)
+
+      (The aurora compositor is still in development, and will break all
+       non-Wayland apps [including GTK based apps] when popups are encountered.)
+    </flag>
     <flag name="doc">
       Build documentation
+    </flag>
+    <flag name="eglfs">
+      Add support for full screen EGL.
     </flag>
     <flag name="gif">
       Add support for importing gif profile pictures

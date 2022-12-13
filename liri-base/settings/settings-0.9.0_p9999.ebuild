@@ -19,8 +19,6 @@ IUSE+="
 r5
 "
 QT_MIN_PV=5.10
-# The documentation on the readme is lagging.  See \
-# https://github.com/lirios/lirios/blob/develop/config/_dependencies.cmake
 DEPEND+="
 	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
@@ -36,7 +34,6 @@ DEPEND+="
 	gif? (
 		>=dev-qt/qtgui-${QT_MIN_PV}:5=[gif(+),jpeg?,png?]
 	)
-	~liri-base/aurora-client-0.0.0_p9999
 	~liri-base/fluid-1.2.0_p9999
 	~liri-base/libliri-0.9.0_p9999
 	~liri-base/qtaccountsservice-1.3.0_p9999

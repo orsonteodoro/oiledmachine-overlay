@@ -4,31 +4,39 @@
 
 EAPI=8
 
+# EOL?
+
 inherit cmake git-r3
 
-DESCRIPTION="Converts Wayland protocol definition to C++ code"
-HOMEPAGE="https://github.com/lirios/aurora-scanner"
-LICENSE="CC0-1.0"
+DESCRIPTION="EGL fullscreen platform plugin"
+HOMEPAGE="https://github.com/lirios/eglfs"
+LICENSE="LGPL-3+ GPL-3+"
 
-# Live/snapshots ebuilds do not get KEYWORDS
+# live ebuilds do not get KEYWORDed
 
 SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
-test
-
-r5
+r1
 "
 QT_MIN_PV=5.15
 DEPEND+="
-	!liri-base/wayland
-	>=dev-qt/qtcore-${QT_MIN_PV}:5=
-	>=dev-qt/qtxml-${QT_MIN_PV}:5=
+	!liri-base/aurora-compositor
+	>=dev-qt/qtcore-${QT_MIN_PV}:5
+	>=dev-qt/qtdbus-${QT_MIN_PV}:5
+	>=dev-qt/qtgui-${QT_MIN_PV}:5[egl,udev]
+	dev-libs/libinput
+	media-libs/fontconfig
+	media-libs/mesa[egl(+),gbm(+)]
+	x11-libs/libdrm
+	x11-libs/libxkbcommon
+	~liri-base/libliri-0.9.0_p9999
+	~liri-base/qtudev-1.1.0_p9999
 "
-RDEPEND+="
-	${DEPEND}
-"
+RDEPEND+=" ${DEPEND}"
 BDEPEND+="
+	>=dev-qt/qttest-${QT_MIN_PV}:5
 	>=dev-util/cmake-3.10.0
+	sys-kernel/linux-headers
 	virtual/pkgconfig
 	~liri-base/cmake-shared-2.0.0_p9999
 "
@@ -40,9 +48,13 @@ RESTRICT="mirror"
 
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
-	QTXML_PV=$(pkg-config --modversion Qt5Xml)
-	if ver_test ${QTCORE_PV} -ne ${QTXML_PV} ; then
-		die "Qt5Core is not the same version as Qt5Xml"
+	QTDBUS_PV=$(pkg-config --modversion Qt5DBus)
+	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
+	if ver_test ${QTCORE_PV} -ne ${QTDBUS_PV} ; then
+		die "Qt5Core is not the same version as Qt5DBus"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
+		die "Qt5Core is not the same version as Qt5Gui"
 	fi
 }
 
@@ -76,12 +88,6 @@ src_configure() {
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
 	)
 	cmake_src_configure
-}
-
-src_install() {
-	cmake_src_install
-	dosym aurora-wayland-scanner \
-		/usr/bin/qtwaylandscanner
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

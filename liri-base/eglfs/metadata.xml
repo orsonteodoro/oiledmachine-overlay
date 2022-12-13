@@ -9,15 +9,10 @@
   <longdescription>
   </longdescription>
   <upstream>
-    <remote-id type="github">lirios/screenshot</remote-id>
-    <bugs-to>https://github.com/lirios/screenshot/issues</bugs-to>
+    <remote-id type="github">lirios/eglfs</remote-id>
+    <bugs-to>https://github.com/lirios/eglfs/issues</bugs-to>
   </upstream>
   <use>
-    <flag name="aurora">
-      Build against the Aurora compositor.
-
-      (If disabled, it will rewind the commit to pre-Aurora changes.)
-    </flag>
     <flag name="rN">
       FOR INTERNAL USE ONLY.  (FORCES REBUILD WHEN BUMPED)
     </flag>
