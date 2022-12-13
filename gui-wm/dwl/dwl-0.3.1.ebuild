@@ -54,9 +54,10 @@ src_install() {
 pkg_postinst() {
 	savedconfig_pkg_postinst
 ewarn
-ewarn "This program is buggy."
+ewarn "This program is buggy or or the dependencies are."
 ewarn
 ewarn "Accessing the menu with ctrl+p after monitor is off or suspended may"
 ewarn "lead to loss of unsaved work (or data loss) due to crash."
 ewarn
+# A similar problem (issue 107) was addressed in this project.
 }
