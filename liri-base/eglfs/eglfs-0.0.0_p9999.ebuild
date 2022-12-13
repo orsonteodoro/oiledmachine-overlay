@@ -29,7 +29,7 @@ DEPEND+="
 	media-libs/mesa[egl(+),gbm(+)]
 	x11-libs/libdrm
 	x11-libs/libxkbcommon
-	~liri-base/libliri-0.9.0_p9999[aurora]
+	~liri-base/libliri-0.9.0_p9999[-aurora]
 	~liri-base/qtudev-1.1.0_p9999
 "
 RDEPEND+=" ${DEPEND}"
