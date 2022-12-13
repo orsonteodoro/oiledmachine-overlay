@@ -1,6 +1,6 @@
-diff -urpN shell-0.9.0_p9999.orig/src/compositor/qml/windows/XWaylandWindow.qml shell-0.9.0_p9999/src/compositor/qml/windows/XWaylandWindow.qml
---- shell-0.9.0_p9999.orig/src/compositor/qml/windows/XWaylandWindow.qml	2022-12-12 23:51:14.956624372 -0800
-+++ shell-0.9.0_p9999/src/compositor/qml/windows/XWaylandWindow.qml	2022-12-12 23:51:45.309814915 -0800
+diff -urp shell-0.9.0_p9999.orig/src/compositor/qml/windows/XWaylandWindow.qml shell-0.9.0_p9999/src/compositor/qml/windows/XWaylandWindow.qml
+--- shell-0.9.0_p9999.orig/src/compositor/qml/windows/XWaylandWindow.qml	2022-12-12 23:45:38.447424459 -0800
++++ shell-0.9.0_p9999/src/compositor/qml/windows/XWaylandWindow.qml	2022-12-12 23:46:04.240436284 -0800
 @@ -30,15 +30,19 @@ FluidCore.Object {
      readonly property alias fullscreen: __private.fullscreen
      readonly property alias resizing: __private.resizing
@@ -25,18 +25,18 @@ diff -urpN shell-0.9.0_p9999.orig/src/compositor/qml/windows/XWaylandWindow.qml 
              return !__private.maximized && !__private.fullscreen;
          else
              return false;
-diff -urpN shell-0.9.0_p9999.orig/src/compositor/qml/windows/XdgToplevelWindow.qml shell-0.9.0_p9999/src/compositor/qml/windows/XdgToplevelWindow.qml
---- shell-0.9.0_p9999.orig/src/compositor/qml/windows/XdgToplevelWindow.qml	2022-12-12 23:51:14.956624372 -0800
-+++ shell-0.9.0_p9999/src/compositor/qml/windows/XdgToplevelWindow.qml	2022-12-12 23:52:11.050824543 -0800
-@@ -31,15 +31,19 @@ FluidCore.Object {
+diff -urp shell-0.9.0_p9999.orig/src/compositor/qml/windows/XdgToplevelWindow.qml shell-0.9.0_p9999/src/compositor/qml/windows/XdgToplevelWindow.qml
+--- shell-0.9.0_p9999.orig/src/compositor/qml/windows/XdgToplevelWindow.qml	2022-12-12 23:45:38.447424459 -0800
++++ shell-0.9.0_p9999/src/compositor/qml/windows/XdgToplevelWindow.qml	2022-12-12 23:48:17.165650577 -0800
+@@ -30,15 +30,19 @@ FluidCore.Object {
      readonly property alias fullscreen: __private.fullscreen
      readonly property alias resizing: __private.resizing
      readonly property bool decorated: {
 -        // Set true if it has a titlebar and decorations
--        if (__private.decorationMode === XdgToplevel.ServerSideDecoration)
+-        if (__private.decorationMode === QtWayland.XdgToplevel.ServerSideDecoration)
 +        if (toplevel && toplevel.appId == "")
 +            return !__private.fullscreen;
-+        else if (__private.decorationMode === XdgToplevel.ServerSideDecoration)
++        else if (__private.decorationMode === QtWayland.XdgToplevel.ServerSideDecoration)
 +            // Set true if it has a titlebar and decorations
              return !__private.fullscreen;
          else
@@ -44,15 +44,15 @@ diff -urpN shell-0.9.0_p9999.orig/src/compositor/qml/windows/XdgToplevelWindow.q
      }
      readonly property bool bordered: {
 -        // Set true if it has resize handles
--        if (__private.decorationMode === XdgToplevel.ServerSideDecoration)
+-        if (__private.decorationMode === QtWayland.XdgToplevel.ServerSideDecoration)
 +        if (toplevel && toplevel.appId == "")
 +            return !__private.maximized && !__private.fullscreen;
-+        else if (__private.decorationMode === XdgToplevel.ServerSideDecoration)
++        else if (__private.decorationMode === QtWayland.XdgToplevel.ServerSideDecoration)
 +            // Set true if it has resize handles
              return !__private.maximized && !__private.fullscreen;
          else
              return false;
-@@ -48,7 +52,9 @@ FluidCore.Object {
+@@ -47,7 +51,9 @@ FluidCore.Object {
      readonly property real titleBarHeight: decorated ? 32 : 0
      readonly property bool focusable: true
      readonly property bool maximizable: {

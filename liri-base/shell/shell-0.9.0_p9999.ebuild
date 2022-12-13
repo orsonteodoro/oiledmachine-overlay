@@ -17,7 +17,7 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
 aurora eglfs +jpeg -qtquick-compiler -lockscreen +png systemd
 
-r6
+r7
 "
 # systemd is enabled by default upstream, but distro defaults to OpenRC.
 QT_MIN_PV=5.15
@@ -91,6 +91,7 @@ AURORA_PATCHES=(
 )
 PREAURORA_PATCHES=(
 	"${FILESDIR}/${PN}-0.9.0_p9999-systemd-libs-optional-abc4e1a.patch"
+	"${FILESDIR}/${PN}-0.9.0_p9999-decorations-abc4e1a.patch"
 )
 PATCHES=(
 	"${FILESDIR}/${PN}-0.9.0_p9999-customize-date-time.patch"
