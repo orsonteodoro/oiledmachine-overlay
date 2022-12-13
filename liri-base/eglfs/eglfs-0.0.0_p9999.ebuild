@@ -45,6 +45,9 @@ EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+PATCHES=(
+	"${FILESDIR}/${PN}-0.0.0_p9999-fix-pkgconfig-xkbcommon.patch"
+)
 
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
