@@ -20,6 +20,7 @@ power-manager pulseaudio samtal screencast screenshot +settings systemd
 r2
 "
 REQUIRED_USE+="
+	eglfs? ( wayland )
 	|| (
 		wayland
 		X

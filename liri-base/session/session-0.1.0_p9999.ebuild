@@ -19,7 +19,8 @@ aurora eglfs systemd wayland X
 r1
 "
 REQUIRED_USE="
-|| ( eglfs wayland X )
+	eglfs? ( wayland )
+	|| ( eglfs wayland X )
 "
 QT_MIN_PV=5.10
 DEPEND+="
