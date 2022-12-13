@@ -17,7 +17,7 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+="
 aurora eglfs +jpeg -qtquick-compiler -lockscreen +png systemd
 
-r4
+r5
 "
 # systemd is enabled by default upstream, but distro defaults to OpenRC.
 QT_MIN_PV=5.15
@@ -87,6 +87,9 @@ RESTRICT="mirror"
 AURORA_PATCHES=(
 	"${FILESDIR}/${PN}-0.9.0_p9999-systemd-libs-optional.patch"
 	"${FILESDIR}/${PN}-0.9.0_p9999-decorations.patch"
+)
+PREAURORA_PATCHES=(
+	"${FILESDIR}/${PN}-0.9.0_p9999-systemd-libs-optional-abc4e1a.patch"
 )
 PATCHES=(
 	"${FILESDIR}/${PN}-0.9.0_p9999-customize-date-time.patch"
@@ -168,7 +171,11 @@ src_unpack() {
 
 src_prepare() {
 	cmake_src_prepare
-	use aurora && eapply ${AURORA_PATCHES[@]}
+	if use aurora ; then
+		eapply ${AURORA_PATCHES[@]}
+	else
+		eapply ${PREAURORA_PATCHES[@]}
+	fi
 }
 
 change_default_icon_theme() {
