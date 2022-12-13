@@ -9,7 +9,7 @@ ELECTRON_APP_ELECTRON_V="18.2.2" # See \
 ELECTRON_APP_REACT_V="16.14.0" # See \
 # https://raw.githubusercontent.com/4ian/GDevelop/v5.0.138/newIDE/app/package-lock.json
 
-inherit check-reqs desktop electron-app eutils user \
+inherit check-reqs desktop electron-app eutils user-info \
 	toolchain-funcs xdg
 
 MY_PN="GDevelop"
@@ -201,8 +201,23 @@ pkg_setup() {
 	check-reqs_pkg_setup
 	check_lld
 
-	enewgroup ${PN}
-	enewuser ${PN} -1 -1 /var/lib/${PN} ${PN}
+	if ! egetent group ${PN} ; then
+eerror
+eerror "You must add the ${PN} group to the system."
+eerror
+eerror "  groupadd ${PN}"
+eerror
+		die
+	fi
+	if ! egetent passwd ${PN} ; then
+eerror
+eerror "You must add the ${PN} user to the system."
+eerror
+eerror "  useradd ${PN} -g ${PN} -d /var/lib/${PN}"
+eerror
+		die
+	fi
+
 ewarn
 ewarn "Consider using the web-browser only version instead which the browser"
 ewarn "itself which is updated frequently and consistently.  It is more secure"

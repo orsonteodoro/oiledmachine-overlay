@@ -6,7 +6,7 @@ EAPI=7
 
 DISTUTILS_USE_PEP517=setuptools
 PYTHON_COMPAT=( python3_{8..11} )
-inherit distutils-r1 user
+inherit distutils-r1 user-info
 
 DESCRIPTION="Open source, multi-user SDR receiver software with a web interface"
 HOMEPAGE="https://www.openwebrx.de/"
@@ -211,9 +211,26 @@ S="${WORKDIR}/${P}"
 
 pkg_setup() {
 	ewarn "This ebuild is in development"
-	enewuser ${PN}
-	enewgroup ${PN}
-	esetgroups ${PN} ${PN}
+}
+
+src_configure() {
+	if ! egetent group ${PN} ; then
+eerror
+eerror "You must add the ${PN} group to the system."
+eerror
+eerror "  groupadd ${PN}"
+eerror
+		die
+	fi
+	if ! egetent passwd ${PN} ; then
+eerror
+eerror "You must add the ${PN} user to the system."
+eerror
+eerror "  useradd ${PN} -g ${PN} -d /var/lib/${PN}"
+eerror
+		die
+	fi
+	distutils-r1_src_configure
 }
 
 python_install() {

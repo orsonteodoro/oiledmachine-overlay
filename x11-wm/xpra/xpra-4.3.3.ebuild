@@ -8,8 +8,8 @@ MY_PV="$(ver_cut 1-4)"
 
 DISTUTILS_USE_SETUPTOOLS=no
 PYTHON_COMPAT=( python3_{8..10} )
-inherit distutils-r1 eutils flag-o-matic linux-info prefix tmpfiles udev user
-inherit xdg
+inherit distutils-r1 eutils flag-o-matic linux-info prefix tmpfiles udev
+inherit user-info xdg
 
 DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based
 on wimpiggy"
@@ -378,8 +378,15 @@ einfo
 		linux-info_pkg_setup
 	fi
 
-	# server only
-	enewuser ${PN} -1 -1 /var/lib/${PN} ${PN}
+	# Server only
+	if ! egetent passwd ${PN} ; then
+eerror
+eerror "You must add the ${PN} user to the system."
+eerror
+eerror "  useradd ${PN} -g ${PN} -d /var/lib/${PN}"
+eerror
+		die
+	fi
 
 	python_setup
 einfo "EPYTHON=${EPYTHON}"
