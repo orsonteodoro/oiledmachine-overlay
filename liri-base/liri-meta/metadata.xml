@@ -18,7 +18,7 @@
 
       (If disabled, it will rewind the commit to pre-Aurora changes.)
 
-      (The aurora compositor is still in development, and will break all
+      (The aurora compositor is still in development, and it will break all
        non-Wayland apps [including GTK based apps] when popups are encountered.)
     </flag>
     <flag name="browser">
