@@ -26,7 +26,9 @@ DEPEND+="
 	!aurora? (
 		~liri-base/qtudev-1.1.0_p9999
 		~liri-base/wayland-0.0.0_p9999
-		eglfs? ( ~liri-base/eglfs-0.0.9_p9999 )
+		eglfs? (
+			~liri-base/eglfs-0.0.0_p9999
+		)
 	)
 	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
