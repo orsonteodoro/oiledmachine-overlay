@@ -80,6 +80,10 @@ LLVM_TEST_COMPONENTS=(
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 
+SRC_URI+="
+https://github.com/llvm/llvm-project/commit/71a9b8833231a285b4d8d5587c699ed45881624b.patch -> ${PN}-71a9b88.patch
+"
+
 REQUIRED_USE+="
 	amd64? ( llvm_targets_X86 )
 	arm? ( llvm_targets_ARM )

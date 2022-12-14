@@ -81,6 +81,13 @@ PATCHES_HARDENED=(
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 
+SRC_URI+="
+https://github.com/llvm/llvm-project/commit/71a9b8833231a285b4d8d5587c699ed45881624b.patch -> ${PN}-71a9b88.patch
+"
+
+# 71a9b88 - [PATCH] [X86] Use unsigned int for return type of __get_cpuid_max.
+#   Fix for compiler-rt-sanitizers[clang,scudo]
+
 REQUIRED_USE+="
 	amd64? ( llvm_targets_X86 )
 	arm? ( llvm_targets_ARM )
@@ -224,6 +231,8 @@ src_prepare() {
 	BUILD_DIR="${WORKDIR}/x/y/clang"
 
 	llvm.org_src_prepare
+
+	eapply -p2 "${DISTDIR}/${PN}-71a9b88.patch"
 
 	if use hardened ; then
 ewarn
