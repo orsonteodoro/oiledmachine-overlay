@@ -381,8 +381,8 @@ src_configure() {
 
 		# same flags are passed for build & tests, so we need to strip
 		# them down to a subset supported by clang
-		CC=${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang \
-		CXX=${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang++ \
+		CC="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang" \
+		CXX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang++" \
 		strip-unsupported-flags
 	fi
 
@@ -417,7 +417,7 @@ src_configure() {
 		cp "${sys_dir}"/*builtins*.a \
 			"${BUILD_DIR}/lib/clang/${SLOT}/lib/${sys_dir##*/}/" || die
 		# we also need LLVMgold.so for gold-based tests
-		if [[ -f ${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/LLVMgold.so ]]; then
+		if [[ -f "${EPREFIX}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/LLVMgold.so ]]; then
 			ln -s "${EPREFIX}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/LLVMgold.so \
 				"${BUILD_DIR}"/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/ || die
 		fi
