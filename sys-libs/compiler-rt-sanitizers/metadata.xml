@@ -94,7 +94,9 @@ sys-devel/clang:16 llvm-16-commit.conf
       compared to non hardware assisted ASAN.  64-bit only.
     </flag>
     <flag name="tsan">
-      Build the Thread Sanitizer runtime for data races detection.
+      Build the Thread Sanitizer runtime for data races detection where one
+      of the threads is a writer of a multithread variable which is illegal
+      in c++11.
     </flag>
     <flag name="ubsan">
       Build the Undefined Behavior Sanitizer runtime for out-of-bounds,
@@ -117,9 +119,9 @@ sys-devel/clang:16 llvm-16-commit.conf
       Build the Scudo Hardened Allocator for mitigation against heap based
       attacks with memory allocated from *alloc functions.
 
-      Features guard pages for large allocations and delayed deallocation for
-      use-after-free mitigation.  A LD_PRELOAD standalone version is made
-      available.
+      It features guard pages for large allocations, delayed deallocation for
+      use-after-free mitigation, randomization of blocks or thread cache
+      assignment.  A LD_PRELOAD standalone version is made available.
     </flag>
     <flag name="shadowcallstack">
       Build the ShadowCallStack (SCS) runtime to protect against overwritten
