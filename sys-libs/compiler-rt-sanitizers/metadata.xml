@@ -76,7 +76,8 @@ sys-devel/clang:16 llvm-16-commit.conf
     </flag>
 
     <flag name="asan">
-      Build the Address Sanitizer runtime for memory/pointer checks.
+      Build the Address Sanitizer runtime for reporting invalid memory/pointer
+      violations.
     </flag>
     <flag name="dfsan">
       Build the Data Flow Sanitizer runtime for detect code issues through
