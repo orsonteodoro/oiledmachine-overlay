@@ -1553,8 +1553,8 @@ ewarn
 einfo
 einfo "To remove the hard USE mask for the builtin pgo profile:"
 einfo
-einfo "  mkdir -p ${EPREFIX}/etc/portage/profile"
-einfo "  echo \"www-client/chromium -pgo\" >> ${EPREFIX}/etc/portage/profile/package.use.mask"
+einfo "  mkdir -p \"${EPREFIX}\"/etc/portage/profile"
+einfo "  echo \"www-client/chromium -pgo\" >> \"${EPREFIX}\"/etc/portage/profile/package.use.mask"
 einfo
 
 	uopts_setup
