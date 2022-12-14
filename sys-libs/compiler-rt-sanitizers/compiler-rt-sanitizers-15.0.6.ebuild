@@ -12,11 +12,11 @@ DESCRIPTION="Compiler runtime libraries for clang (sanitizers & xray)"
 HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
-SLOT="$(ver_cut 1-3)"
-KEYWORDS="amd64 arm arm64 ppc64 ~riscv x86 ~amd64-linux ~ppc-macos ~x64-macos"
+SLOT="${LLVM_VERSION}"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 # base targets
 IUSE="
-+abi_x86_32 abi_x86_64 +clang debug test
++abi_x86_32 abi_x86_64 +clang debug hexagon test
 
 +libfuzzer +memprof +orc +profile +xray r2
 "
@@ -29,18 +29,20 @@ SANITIZER_FLAGS=(
 CPU_X86_FLAGS=( sse3 sse4_2 )
 IUSE+=" ${SANITIZER_FLAGS[@]/#/+}"
 IUSE+=" ${CPU_X86_FLAGS[@]/#/cpu_flags_x86_}"
-# See also https://github.com/llvm/llvm-project/blob/llvmorg-13.0.1/compiler-rt/cmake/config-ix.cmake
+# See also https://github.com/llvm/llvm-project/blob/llvmorg-15.0.6/compiler-rt/cmake/Modules/AllSupportedArchDefs.cmake
 SANITIZER_REQUIRED_USE="
 	asan? (
 		|| (
 			amd64
 			arm
 			arm64
+			hexagon
 			mips
 			ppc64
 			riscv
 			s390
 			sparc
+			loong
 			x86
 		)
 	)
@@ -49,6 +51,7 @@ SANITIZER_REQUIRED_USE="
 			amd64
 			arm
 			arm64
+			hexagon
 			mips
 			x86
 		)
@@ -86,6 +89,7 @@ SANITIZER_REQUIRED_USE="
 		kernel_linux? (
 			|| (
 				amd64
+				arm
 				arm64
 				s390
 				x86
@@ -114,6 +118,7 @@ SANITIZER_REQUIRED_USE="
 				amd64
 				arm
 				arm64
+				hexagon
 				mips
 				ppc64
 				s390
@@ -149,6 +154,8 @@ SANITIZER_REQUIRED_USE="
 		!elibc_Winnt? (
 			|| (
 				amd64
+				arm
+				arm64
 			)
 		)
 	)
@@ -157,9 +164,11 @@ SANITIZER_REQUIRED_USE="
 			amd64
 			arm
 			arm64
+			hexagon
 			ppc
 			ppc64
 			mips
+			riscv
 			s390
 			sparc
 			x86
@@ -169,6 +178,8 @@ SANITIZER_REQUIRED_USE="
 		|| (
 			amd64
 			arm64
+			hexagon
+			loong
 			mips
 			x86
 		)
@@ -178,6 +189,8 @@ SANITIZER_REQUIRED_USE="
 			amd64
 			arm
 			arm64
+			hexagon
+			loong
 			mips
 			ppc64
 			x86
@@ -190,6 +203,7 @@ SANITIZER_REQUIRED_USE="
 		|| (
 			amd64
 			arm64
+			loong
 			mips
 			ppc64
 			s390
@@ -201,6 +215,8 @@ SANITIZER_REQUIRED_USE="
 			amd64
 			arm
 			arm64
+			hexagon
+			loong
 			mips
 			ppc64
 			riscv
@@ -215,6 +231,7 @@ SANITIZER_REQUIRED_USE="
 				amd64
 				arm
 				arm64
+				hexagon
 				mips
 				ppc64
 			)
@@ -257,7 +274,7 @@ BDEPEND="
 	elibc_glibc? ( net-libs/libtirpc )
 	test? (
 		!!<sys-apps/sandbox-2.13
-		$(python_gen_any_dep ">=dev-python/lit-5[\${PYTHON_USEDEP}]")
+		$(python_gen_any_dep ">=dev-python/lit-15[\${PYTHON_USEDEP}]")
 		sys-libs/compiler-rt:${LLVM_VERSION}
 		~sys-devel/clang-${LLVM_VERSION}:${LLVM_MAJOR}
 	)
@@ -266,14 +283,14 @@ BDEPEND="
 	)
 "
 
-LLVM_COMPONENTS=( compiler-rt )
+LLVM_COMPONENTS=( compiler-rt cmake llvm/cmake )
 LLVM_TEST_COMPONENTS=( llvm/lib/Testing/Support llvm/utils/unittest )
 LLVM_PATCHSET=${PV/_/-}
 llvm.org_set_globals
 
 python_check_deps() {
 	use test || return 0
-	python_has_version ">=dev-python/lit-5[${PYTHON_USEDEP}]"
+	python_has_version ">=dev-python/lit-15[${PYTHON_USEDEP}]"
 }
 
 check_space() {
@@ -289,7 +306,7 @@ pkg_pretend() {
 
 pkg_setup() {
 	check_space
-	llvm_pkg_setup
+	LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
 	python-any-r1_pkg_setup
 }
 
@@ -340,10 +357,10 @@ src_configure() {
 	done
 
 	local mycmakeargs=(
-		-DCOMPILER_RT_INSTALL_PATH="${EPREFIX}/usr/lib/clang/${SLOT}"
+		-DCOMPILER_RT_INSTALL_PATH="${EPREFIX}/usr/lib/clang/${LLVM_VERSION}"
 		# use a build dir structure consistent with install
 		# this makes it possible to easily deploy test-friendly clang
-		-DCOMPILER_RT_OUTPUT_DIR="${BUILD_DIR}/lib/clang/${SLOT}"
+		-DCOMPILER_RT_OUTPUT_DIR="${BUILD_DIR}/lib/clang/${LLVM_VERSION}"
 
 		-DCOMPILER_RT_INCLUDE_TESTS=$(usex test)
 		# builtins & crt installed by sys-libs/compiler-rt
@@ -403,19 +420,19 @@ src_configure() {
 	cmake_src_configure
 
 	if use test; then
-		local sys_dir=( "${EPREFIX}"/usr/lib/clang/${SLOT}/lib/* )
+		local sys_dir=( "${EPREFIX}"/usr/lib/clang/${LLVM_VERSION}/lib/* )
 		[[ -e ${sys_dir} ]] || die "Unable to find ${sys_dir}"
 		[[ ${#sys_dir[@]} -eq 1 ]] || die "Non-deterministic compiler-rt install: ${sys_dir[*]}"
 
 		# copy clang over since resource_dir is located relatively to binary
 		# therefore, we can put our new libraries in it
-		mkdir -p "${BUILD_DIR}"/lib/{llvm/${LLVM_MAJOR}/{bin,$(get_libdir)},clang/${SLOT}/include} || die
+		mkdir -p "${BUILD_DIR}"/lib/{llvm/${LLVM_MAJOR}/{bin,$(get_libdir)},clang/${LLVM_VERSION}/include} || die
 		cp "${EPREFIX}"/usr/lib/llvm/${LLVM_MAJOR}/bin/clang{,++} \
 			"${BUILD_DIR}"/lib/llvm/${LLVM_MAJOR}/bin/ || die
-		cp "${EPREFIX}"/usr/lib/clang/${SLOT}/include/*.h \
-			"${BUILD_DIR}"/lib/clang/${SLOT}/include/ || die
+		cp "${EPREFIX}"/usr/lib/clang/${LLVM_VERSION}/include/*.h \
+			"${BUILD_DIR}"/lib/clang/${LLVM_VERSION}/include/ || die
 		cp "${sys_dir}"/*builtins*.a \
-			"${BUILD_DIR}/lib/clang/${SLOT}/lib/${sys_dir##*/}/" || die
+			"${BUILD_DIR}/lib/clang/${LLVM_VERSION}/lib/${sys_dir##*/}/" || die
 		# we also need LLVMgold.so for gold-based tests
 		if [[ -f ${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/LLVMgold.so ]]; then
 			ln -s "${EPREFIX}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/LLVMgold.so \

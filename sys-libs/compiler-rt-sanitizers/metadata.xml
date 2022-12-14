@@ -70,44 +70,51 @@ sys-devel/clang:16 llvm-16-commit.conf
       Build the sanitizer runtimes.
     </flag>
     <flag name="xray">
-      Build the XRay runtime.
+      Build the XRay runtime for dynamic profiling.
     </flag>
 
     <flag name="asan">
-      Build the Address Sanitizer runtime.
+      Build the Address Sanitizer runtime for memory/pointer checks.
     </flag>
     <flag name="dfsan">
-      Build the Data Flow Sanitizer runtime.
+      Build the Data Flow Sanitizer runtime for detect code issues through
+      generic data flows analysis.
     </flag>
     <flag name="lsan">
-      Build the Leak Sanitizer runtime.
+      Build the [Memory] Leak Sanitizer runtime.
     </flag>
     <flag name="msan">
-      Build the Memory Sanitizer runtime.
+      Build the Memory Sanitizer runtime for uninitalized value checks.
     </flag>
     <flag name="hwasan">
-      Build the Hardware ASAN runtime.
+      Build the Hardware ASAN runtime on supported hardware.  Lower memory cost
+      compared to non hardware assisted ASAN.  64-bit only.
     </flag>
     <flag name="tsan">
-      Build the Thread Sanitizer runtime.
+      Build the Thread Sanitizer runtime for data races detection.
     </flag>
     <flag name="ubsan">
-      Build the Undefined Behavior Sanitizer runtime.
+      Build the Undefined Behavior Sanitizer runtime for out-of-bounds,
+      overflows, dereferencing checks.
     </flag>
     <flag name="safestack">
-      Build the SafeStack runtime.
+      Build the SafeStack runtime for stack buffer overflow protection.
     </flag>
     <flag name="cfi">
-      Build the Control Flow Integrity runtime.
+      Build the Control Flow Integrity (CFI) runtime to abort on undefined
+      behavior that may lead to control flow attacks.
     </flag>
     <flag name="scudo">
-      Build the Scudo Hardened Allocator.
+      Build the Scudo Hardened Allocator for mitigation against heap based
+      attacks.
     </flag>
     <flag name="shadowcallstack">
       Build the ShadowCallStack runtime.
     </flag>
     <flag name="gwp-asan">
-      Build the GWP-ASAN runtime.
+      Build the GWP-ASAN runtime for ASAN in production builds/environments.
+
+      (It's recommend to also enable scudo to easily deploy gwp-asan.)
     </flag>
   </use>
 </pkgmetadata>

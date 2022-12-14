@@ -16,7 +16,7 @@ SLOT="${LLVM_MAJOR}"
 KEYWORDS=""
 # base targets
 IUSE="
-+abi_x86_32 abi_x86_64 +clang debug test
++abi_x86_32 abi_x86_64 +clang debug hexagon test
 
 +libfuzzer +memprof +orc +profile +xray r2
 "
@@ -29,11 +29,230 @@ SANITIZER_FLAGS=(
 CPU_X86_FLAGS=( sse3 sse4_2 )
 IUSE+=" ${SANITIZER_FLAGS[@]/#/+}"
 IUSE+=" ${CPU_X86_FLAGS[@]/#/cpu_flags_x86_}"
+# See also https://github.com/llvm/llvm-project/blob/main/compiler-rt/cmake/Modules/AllSupportedArchDefs.cmake
+SANITIZER_REQUIRED_USE="
+	asan? (
+		|| (
+			amd64
+			arm
+			arm64
+			hexagon
+			mips
+			ppc64
+			riscv
+			s390
+			sparc
+			loong
+			x86
+		)
+	)
+	cfi? (
+		|| (
+			amd64
+			arm
+			arm64
+			hexagon
+			mips
+			x86
+		)
+	)
+	dfsan? (
+		|| (
+			amd64
+			arm64
+			mips
+		)
+	)
+	gwp-asan? (
+		|| (
+			amd64
+			arm
+			arm64
+			x86
+		)
+	)
+	hwasan? (
+		|| (
+			amd64
+			arm64
+		)
+	)
+	libfuzzer? (
+		elibc_bionic? (
+			|| (
+				amd64
+				arm
+				arm64
+				x86
+			)
+		)
+		kernel_linux? (
+			|| (
+				amd64
+				arm
+				arm64
+				s390
+				x86
+			)
+		)
+		kernel_Winnt? (
+			|| (
+				amd64
+				x86
+			)
+		)
+		!elibc_bionic? (
+			!kernel_linux? (
+				!kernel_Winnt? (
+					|| (
+						amd64
+						arm64
+					)
+				)
+			)
+		)
+	)
+	lsan? (
+		!kernel_Darwin? (
+			|| (
+				amd64
+				arm
+				arm64
+				hexagon
+				mips
+				ppc64
+				s390
+				riscv
+				x86
+			)
+		)
+		kernel_Darwin? (
+			|| (
+				amd64
+				arm64
+				mips
+				x86
+			)
+		)
+	)
+	memprof? (
+		|| (
+			amd64
+		)
+	)
+	msan? (
+		|| (
+			amd64
+			arm64
+			mips
+			ppc64
+			s390
+		)
+	)
+	orc? (
+		!elibc_Winnt
+		!elibc_Winnt? (
+			|| (
+				amd64
+				arm
+				arm64
+			)
+		)
+	)
+	profile? (
+		|| (
+			amd64
+			arm
+			arm64
+			hexagon
+			ppc
+			ppc64
+			mips
+			riscv
+			s390
+			sparc
+			x86
+		)
+	)
+	safestack? (
+		|| (
+			amd64
+			arm64
+			hexagon
+			loong
+			mips
+			x86
+		)
+	)
+	scudo? (
+		|| (
+			amd64
+			arm
+			arm64
+			hexagon
+			loong
+			mips
+			ppc64
+			x86
+		)
+	)
+	shadowcallstack? (
+		arm64
+	)
+	tsan? (
+		|| (
+			amd64
+			arm64
+			loong
+			mips
+			ppc64
+			s390
+			x86
+		)
+	)
+	ubsan? (
+		|| (
+			amd64
+			arm
+			arm64
+			hexagon
+			loong
+			mips
+			ppc64
+			riscv
+			s390
+			sparc
+			x86
+		)
+	)
+	xray? (
+		!kernel_Darwin? (
+			|| (
+				amd64
+				arm
+				arm64
+				hexagon
+				mips
+				ppc64
+			)
+		)
+		kernel_Darwin? (
+			amd64
+		)
+	)
+"
 REQUIRED_USE="
-	|| ( ${SANITIZER_FLAGS[*]} libfuzzer orc profile xray )
+	${SANITIZER_REQUIRED_USE}
 	test? (
 		cfi? ( ubsan )
 		gwp-asan? ( scudo )
+	)
+	|| (
+		${SANITIZER_FLAGS[*]}
+		libfuzzer
+		orc
+		profile
+		xray
 	)
 "
 RESTRICT="
@@ -66,7 +285,6 @@ BDEPEND="
 
 LLVM_COMPONENTS=( compiler-rt cmake llvm/cmake )
 LLVM_TEST_COMPONENTS=( llvm/lib/Testing/Support third-party )
-LLVM_PATCHSET=9999-1
 llvm.org_set_globals
 
 python_check_deps() {
@@ -126,6 +344,7 @@ src_configure() {
 		local -x CC=${CHOST}-clang
 		local -x CXX=${CHOST}-clang++
 		strip-unsupported-flags
+		append-cppflags -I"${ESYSROOT}"/usr/lib/clang/${LLVM_SLOT}/include
 	fi
 
 	local flag want_sanitizer=OFF

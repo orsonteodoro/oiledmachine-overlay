@@ -77,7 +77,6 @@ LLVM_TEST_COMPONENTS=(
 	llvm/utils
 	third-party
 )
-LLVM_PATCHSET=9999-r4
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 
