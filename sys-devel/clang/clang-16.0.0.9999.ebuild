@@ -584,7 +584,7 @@ einfo
 		)
 	fi
 
-	if [[ -n ${EPREFIX} ]]; then
+	if [[ -n "${EPREFIX}" ]]; then
 		mycmakeargs+=(
 			-DGCC_INSTALL_PREFIX="${EPREFIX}/usr"
 		)
@@ -740,7 +740,7 @@ multilib_src_install_all() {
 }
 
 pkg_postinst() {
-	if [[ -z ${ROOT} && -f ${EPREFIX}/usr/share/eselect/modules/compiler-shadow.eselect ]] ; then
+	if [[ -z "${ROOT}" && -f "${EPREFIX}"/usr/share/eselect/modules/compiler-shadow.eselect ]] ; then
 		eselect compiler-shadow update all
 	fi
 
@@ -765,7 +765,7 @@ einfo
 }
 
 pkg_postrm() {
-	if [[ -z ${ROOT} && -f ${EPREFIX}/usr/share/eselect/modules/compiler-shadow.eselect ]] ; then
+	if [[ -z "${ROOT}" && -f "${EPREFIX}"/usr/share/eselect/modules/compiler-shadow.eselect ]] ; then
 		eselect compiler-shadow clean all
 	fi
 }
