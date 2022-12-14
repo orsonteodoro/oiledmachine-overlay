@@ -4,7 +4,7 @@
 
 EAPI=7
 
-inherit cmake user
+inherit cmake user-info
 
 DESCRIPTION="Modular audio codec server"
 HOMEPAGE="https://github.com/jketterl/codecserver"
@@ -32,11 +32,32 @@ S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( LICENSE README.md )
 
-pkg_setup() {
-	enewuser codecserver
-	enewgroup codecserver
-	esetgroups codecserver dialout
-	esetgroups codecserver codecserver
+src_configure() {
+	if ! egetent group ${PN} ; then
+eerror
+eerror "You must add the ${PN} group to the system."
+eerror
+eerror "  groupadd ${PN}"
+eerror
+		die
+	fi
+	if ! egetent passwd ${PN} ; then
+eerror
+eerror "You must add the ${PN} user to the system."
+eerror
+eerror "  useradd ${PN} -g ${PN} -G dialout -d /var/lib/${PN}"
+eerror
+		die
+	fi
+	if ! groups codecserver | grep -q -e "dialout" ; then
+eerror
+eerror "You must add the ${PN} user to the dialout group."
+eerror
+eerror "  gpasswd -a ${PN} dialout"
+eerror
+		die
+	fi
+	cmake_src_configure
 }
 
 src_install() {
