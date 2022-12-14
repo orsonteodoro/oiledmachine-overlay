@@ -10,7 +10,7 @@ EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/enigma-dev/enigma-dev.git"
 
 inherit desktop flag-o-matic git-r3 multilib-minimal \
-toolchain-funcs user
+toolchain-funcs
 
 DESCRIPTION="ENIGMA, the Extensible Non-Interpreted Game Maker Augmentation,
 is an open source cross-platform game development environment."
