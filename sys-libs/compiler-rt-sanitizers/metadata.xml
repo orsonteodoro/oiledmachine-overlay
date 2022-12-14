@@ -60,7 +60,9 @@ sys-devel/clang:16 llvm-16-commit.conf
       Build the memory profiler runtime.
     </flag>
     <flag name="orc">
-      Build the ORC runtime.
+      Build the ORC JIT API that could be utilized for LLVM optimization,
+      concurrent JIT, (cross-compiled) expression evaluation, optimized
+      interpreter code.
     </flag>
     <flag name="profile">
       Build the profiling runtime which is used during Profile Guided
@@ -100,19 +102,28 @@ sys-devel/clang:16 llvm-16-commit.conf
     <flag name="safestack">
       Build the SafeStack runtime for stack buffer overflow protection using
       disjoint safe/unsafe stacks instead of canaries and additional
-      measures to protect the safe stack.
+      measures to protect and hide the safe stack.
     </flag>
     <flag name="cfi">
-      Build the Control Flow Integrity (CFI) runtime to abort on undefined
-      behavior that may lead to control flow attacks.
+      Build the Control Flow Integrity (CFI) runtime to abort the program on
+      undefined behavior that may lead to control flow attacks.
+
+      It ensures the derived dynamic type is of the (static) source type.
+      Checks are made with pointers, objects, functions, types, dynamic libs.
+      Unrelated types and not derived dynamic types are violations.
     </flag>
     <flag name="scudo">
       Build the Scudo Hardened Allocator for mitigation against heap based
       attacks with memory allocated from *alloc functions.
+
+      Features guard pages for large allocations and delayed deallocation for
+      use-after-free mitigation.  A LD_PRELOAD standalone version is made
+      available.
     </flag>
     <flag name="shadowcallstack">
-      Build the ShadowCallStack runtime to protect against overwritten
-      return addresses.
+      Build the ShadowCallStack (SCS) runtime to protect against overwritten
+      return addresses using a disjoint, isolated, hidden SCS.  SCS is a
+      better alternative to fstack-protector and SafeStack.
     </flag>
     <flag name="gwp-asan">
       Build the GWP-ASAN runtime for ASAN in production builds/environments.
