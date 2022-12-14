@@ -95,10 +95,12 @@ sys-devel/clang:16 llvm-16-commit.conf
     </flag>
     <flag name="ubsan">
       Build the Undefined Behavior Sanitizer runtime for out-of-bounds,
-      overflows, dereferencing checks.
+      overflows, disallowed dereferencing checks.
     </flag>
     <flag name="safestack">
-      Build the SafeStack runtime for stack buffer overflow protection.
+      Build the SafeStack runtime for stack buffer overflow protection using
+      disjoint safe/unsafe stacks instead of canaries and additional
+      measures to protect the safe stack.
     </flag>
     <flag name="cfi">
       Build the Control Flow Integrity (CFI) runtime to abort on undefined
@@ -106,10 +108,11 @@ sys-devel/clang:16 llvm-16-commit.conf
     </flag>
     <flag name="scudo">
       Build the Scudo Hardened Allocator for mitigation against heap based
-      attacks.
+      attacks with memory allocated from *alloc functions.
     </flag>
     <flag name="shadowcallstack">
-      Build the ShadowCallStack runtime.
+      Build the ShadowCallStack runtime to protect against overwritten
+      return addresses.
     </flag>
     <flag name="gwp-asan">
       Build the GWP-ASAN runtime for ASAN in production builds/environments.
