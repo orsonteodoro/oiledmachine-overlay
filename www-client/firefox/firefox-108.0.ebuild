@@ -28,7 +28,7 @@ curl -l http://ftp.mozilla.org/pub/firefox/releases/ \
 # https://wiki.mozilla.org/Release_Management/Calendar
 
 
-FIREFOX_PATCHSET="firefox-107-patches-02j.tar.xz"
+FIREFOX_PATCHSET="firefox-108-patches-01j.tar.xz"
 
 LLVM_MAX_SLOT=13 # >= 14 causes build time failures with atomics
 
@@ -77,7 +77,7 @@ if [[ ${PV} == *_rc* ]] ; then
 fi
 
 PATCH_URIS=(
-	https://dev.gentoo.org/~{juippis,polynomial-c,whissi,slashbeast}/mozilla/patchsets/${FIREFOX_PATCHSET}
+	https://dev.gentoo.org/~{juippis,whissi,slashbeast}/mozilla/patchsets/${FIREFOX_PATCHSET}
 )
 
 SRC_URI="
@@ -253,6 +253,7 @@ sndio selinux speech +system-av1 +system-harfbuzz +system-icu +system-jpeg
 IUSE+=" geckodriver +gmp-autoupdate screencast +X"
 
 REQUIRED_USE="
+	|| ( wayland X )
 	debug? ( !system-av1 )
 	libcanberra? ( || ( alsa pulseaudio ) )
 	vaapi? ( wayland )
@@ -305,8 +306,15 @@ BDEPEND+="
 	>=virtual/rust-1.61.0[${MULTILIB_USEDEP}]
 	amd64? ( >=dev-lang/nasm-2.14 )
 	pgo? (
-		x11-base/xorg-server[xvfb]
-		x11-apps/xhost
+		X? (
+			sys-devel/gettext
+			x11-base/xorg-server[xvfb]
+			x11-apps/xhost
+		)
+		wayland? (
+			>=gui-libs/wlroots-0.15.1-r1[tinywl]
+			x11-misc/xkeyboard-config
+		)
 	)
 	x86? ( >=dev-lang/nasm-2.14 )
 "
@@ -317,7 +325,7 @@ CDEPEND="
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.84[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.85[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	media-libs/fontconfig[${MULTILIB_USEDEP}]

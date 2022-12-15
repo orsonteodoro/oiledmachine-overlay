@@ -26,7 +26,7 @@ curl -l http://ftp.mozilla.org/pub/firefox/releases/ \
 # Version announcements can be found here also:
 # https://wiki.mozilla.org/Release_Management/Calendar
 
-FIREFOX_PATCHSET="firefox-102esr-patches-06j.tar.xz"
+FIREFOX_PATCHSET="firefox-102esr-patches-07j.tar.xz"
 
 LLVM_MAX_SLOT=13 # >= 14 causes build time failures with atomics
 
@@ -307,6 +307,7 @@ BDEPEND+="
 	>=virtual/rust-1.59.0[${MULTILIB_USEDEP}]
 	amd64? ( >=dev-lang/nasm-2.14 )
 	pgo? (
+		sys-devel/gettext
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
 	)
@@ -315,14 +316,11 @@ BDEPEND+="
 
 CDEPEND="
 	${FF_ONLY_DEPEND}
-	|| (
-		>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
-		dev-libs/atk[${MULTILIB_USEDEP}]
-	)
+	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.79.1[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.79.2[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.34[${MULTILIB_USEDEP}]
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	media-libs/fontconfig[${MULTILIB_USEDEP}]
