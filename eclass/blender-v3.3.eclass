@@ -248,7 +248,7 @@ gen_oiio_depends() {
 			${s}? (
 				>=dev-cpp/robin-map-0.6.2
 				>=dev-libs/libfmt-8
-				>=media-libs/openimageio-2.3.13.0[${s},color-management?,jpeg2k?,png,webp?]
+				>=media-libs/openimageio-2.3.20.0[${s},color-management?,jpeg2k?,png,webp?]
 				<media-libs/openimageio-2.4
 			)
 		"
@@ -292,7 +292,7 @@ EXTRA_DEPENDS="
 
 BOOST_V="1.78"
 LIBOGG_V="1.3.5"
-LIBSNDFILE_V="1.0.28"
+LIBSNDFILE_V="1.1.0"
 OSL_V="1.11.17.0"
 PUGIXML_V="1.10"
 THEORA_V="1.1.1"
@@ -357,7 +357,7 @@ RDEPEND+="
 		virtual/jpeg:0=
 	)
 	>=dev-cpp/pystring-1.1.3
-	>=dev-lang/python-3.10.2
+	>=dev-lang/python-3.10.8
 	>=dev-libs/wayland-protocols-1.21
 	  dev-libs/lzo:2
 	$(python_gen_cond_dep '
@@ -369,12 +369,12 @@ RDEPEND+="
 		>=dev-python/urllib3-1.26.7[${PYTHON_USEDEP}]
 		>=dev-python/python-zstandard-0.16.0[${PYTHON_USEDEP}]
 	')
-	>=media-libs/freetype-2.11.1
+	>=media-libs/freetype-2.12.1
 	>=media-libs/glew-1.13.0:*
 	>=media-libs/libpng-1.6.37:0=
 	  media-libs/libglvnd
 	  media-libs/libsamplerate
-	>=sys-libs/zlib-1.2.12
+	>=sys-libs/zlib-1.2.13
 	  virtual/libintl
 	alembic? (
 		>=media-gfx/alembic-1.8.3[boost(+),hdf(+)]
@@ -391,7 +391,7 @@ RDEPEND+="
 	)
 	color-management? (
 		>=media-libs/opencolorio-2.1.1
-		>=dev-libs/expat-2.4.4
+		>=dev-libs/expat-2.5.0
 	)
 	cuda? (
 		>=x11-drivers/nvidia-drivers-418.39
@@ -439,7 +439,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		>=dev-libs/jemalloc-5.2.1:=
 	)
 	jpeg2k? (
-		>=media-libs/openjpeg-2.4.0:2
+		>=media-libs/openjpeg-2.5.0:2
 	)
 	llvm? (
 		$(gen_llvm_depends)
