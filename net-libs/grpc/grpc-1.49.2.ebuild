@@ -23,9 +23,10 @@ LICENSE="
 # MIT third_party/upb/third_party/lunit/LICENSE
 # Unlicense third_party/upb/third_party/wyhash/LICENSE
 KEYWORDS="~amd64 ~ppc64 ~x86"
-BINDINGS_IUSE=(cpp csharp csharpext nodejs objc php python ruby) # Upstream enables all
+BINDINGS_IUSE=(csharp cxx csharpext nodejs objc php python ruby) # Upstream enables all
 IUSE+="
 ${BINDINGS_IUSE[@]/#/-}
+cxx
 doc examples test
 "
 SLOT_MAJ="0"
@@ -124,7 +125,7 @@ src_configure() {
 			-DgRPC_INSTALL=ON
 			-DgRPC_ABSL_PROVIDER=package
 			-DgRPC_BACKWARDS_COMPATIBILITY_MODE=OFF
-			-DgRPC_BUILD_GRPC_CPP_PLUGIN=$(usex cpp)
+			-DgRPC_BUILD_GRPC_CPP_PLUGIN=$(usex cxx)
 			-DgRPC_BUILD_GRPC_CSHARP_PLUGIN=$(usex csharp)
 			-DgRPC_BUILD_GRPC_NODE_PLUGIN=$(usex nodejs)
 			-DgRPC_BUILD_GRPC_OBJECTIVE_C_PLUGIN=$(usex objc)

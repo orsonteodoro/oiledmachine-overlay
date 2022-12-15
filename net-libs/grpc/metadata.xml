@@ -1,31 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="person">
-		<!-- ebuild fork only on the oiledmachine overlay -->
-		<email>orsonteodoro@hotmail.com</email>
-		<name>Orson Teodoro</name>
-	</maintainer>
-	<maintainer type="person">
-		<!-- ebuild originators -->
-		<email>perfinion@gentoo.org</email>
-	</maintainer>
-	<maintainer type="person">
-		<!-- ebuild originators -->
-		<email>gyakovlev@gentoo.org</email>
-		<name>Georgy Yakovlev</name>
-	</maintainer>
-	<use>
-		<flag name="perftools">Enable profiling using <pkg>dev-util/google-perftools</pkg></flag>
-		<flag name="systemtap">Enable SystemTAP/DTrace tracing</flag>
-	</use>
-	<upstream>
-		<remote-id type="cpe">cpe:/a:grpc:grpc</remote-id>
-		<remote-id type="github">grpc/grpc</remote-id>
-	</upstream>
-	<longdescription>
-		The purpose of the ebuild fork is to provide multilib support.
-		This ebuild-package may be deleted once multilib support is
-		added to the original ebuild.
-	</longdescription>
+  <maintainer type="person">
+    <!-- Ebuild fork only on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+   <email>perfinion@gentoo.org</email>
+  </maintainer>
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+    <email>gyakovlev@gentoo.org</email>
+    <name>Georgy Yakovlev</name>
+  </maintainer>
+  <longdescription>
+    The purpose of the ebuild fork is to provide multilib support.  This
+    ebuild-package may be deleted once multilib support is added to the original
+    ebuild.
+  </longdescription>
+  <upstream>
+    <remote-id type="cpe">cpe:/a:grpc:grpc</remote-id>
+    <remote-id type="github">grpc/grpc</remote-id>
+  </upstream>
+  <use>
+    <flag name="csharp">
+      Build the C# plugin
+    </flag>
+    <flag name="csharpext">
+      Build C# extensions
+    </flag>
+    <flag name="cxx">
+      Build the C++ plugin
+    </flag>
+    <flag name="ruby">
+      Build the Ruby plugin
+    </flag>
+    <flag name="nodejs">
+      Build the node plugin
+    </flag>
+    <flag name="objc">
+      Build the Objective C plugin
+    </flag>
+    <flag name="perftools">
+      Enable profiling using <pkg>dev-util/google-perftools</pkg>
+    </flag>
+    <flag name="php">
+      Build the PHP plugin
+    </flag>
+    <flag name="python">
+      Build the Python plugin
+    </flag>
+    <flag name="systemtap">
+      Enable SystemTAP/DTrace tracing
+    </flag>
+  </use>
 </pkgmetadata>
