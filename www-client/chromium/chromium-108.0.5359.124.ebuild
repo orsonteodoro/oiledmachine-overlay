@@ -262,13 +262,13 @@ SLOT="0/stable"
 KEYWORDS="~amd64 ~arm64 ~ppc64"
 #
 # vaapi is enabled by default upstream for some arches \
-# See https://github.com/chromium/chromium/blob/108.0.5359.94/media/gpu/args.gni#L24
+# See https://github.com/chromium/chromium/blob/108.0.5359.124/media/gpu/args.gni#L24
 #
 # Using the system-ffmpeg or system-icu breaks cfi-icall or cfi-cast which is
 #   incompatible as a shared lib.
 #
 # The suid is built by default upstream but not necessarily used:  \
-#   https://github.com/chromium/chromium/blob/108.0.5359.94/sandbox/linux/BUILD.gn
+#   https://github.com/chromium/chromium/blob/108.0.5359.124/sandbox/linux/BUILD.gn
 #
 CPU_FLAGS_ARM=( neon )
 CPU_FLAGS_X86=( sse2 ssse3 sse4_2 )
@@ -289,22 +289,22 @@ ${IUSE_LIBCXX[@]}
 r1
 "
 # What is considered a proprietary codec can be found at:
-#   https://github.com/chromium/chromium/blob/108.0.5359.94/media/filters/BUILD.gn#L160
-#   https://github.com/chromium/chromium/blob/108.0.5359.94/media/media_options.gni#L38
-#   https://github.com/chromium/chromium/blob/108.0.5359.94/media/base/supported_types.cc#L203
+#   https://github.com/chromium/chromium/blob/108.0.5359.124/media/filters/BUILD.gn#L160
+#   https://github.com/chromium/chromium/blob/108.0.5359.124/media/media_options.gni#L38
+#   https://github.com/chromium/chromium/blob/108.0.5359.124/media/base/supported_types.cc#L203
 #     Upstream doesn't consider MP3 proprietary, but this ebuild does.
-#   https://github.com/chromium/chromium/blob/108.0.5359.94/media/base/supported_types.cc#L284
-# Codec upstream default: https://github.com/chromium/chromium/blob/108.0.5359.94/tools/mb/mb_config_expectations/chromium.linux.json#L89
+#   https://github.com/chromium/chromium/blob/108.0.5359.124/media/base/supported_types.cc#L284
+# Codec upstream default: https://github.com/chromium/chromium/blob/108.0.5359.124/tools/mb/mb_config_expectations/chromium.linux.json#L89
 
 #
 # For cfi-vcall, cfi-icall defaults status, see \
-#   https://github.com/chromium/chromium/blob/108.0.5359.94/build/config/sanitizers/sanitizers.gni
+#   https://github.com/chromium/chromium/blob/108.0.5359.124/build/config/sanitizers/sanitizers.gni
 # For cfi-cast default status, see \
-#   https://github.com/chromium/chromium/blob/108.0.5359.94/build/config/sanitizers/sanitizers.gni#L123
+#   https://github.com/chromium/chromium/blob/108.0.5359.124/build/config/sanitizers/sanitizers.gni#L123
 # For pgo default status, see \
-#   https://github.com/chromium/chromium/blob/108.0.5359.94/build/config/compiler/pgo/pgo.gni#L15
+#   https://github.com/chromium/chromium/blob/108.0.5359.124/build/config/compiler/pgo/pgo.gni#L15
 # For libcxx default, see \
-#   https://github.com/chromium/chromium/blob/108.0.5359.94/build/config/c++/c++.gni#L14
+#   https://github.com/chromium/chromium/blob/108.0.5359.124/build/config/c++/c++.gni#L14
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
 #
 
@@ -613,7 +613,7 @@ declare -A CFLAGS_RDEPEND=(
 # This is why LLVM13 was set as the minimum and did fix the problem.
 
 # For the current llvm for this project, see
-#   https://github.com/chromium/chromium/blob/108.0.5359.94/tools/clang/scripts/update.py#L42
+#   https://github.com/chromium/chromium/blob/108.0.5359.124/tools/clang/scripts/update.py#L42
 # Use the same clang for official USE flag because of older llvm bugs which
 #   could result in security weaknesses (explained in the llvm:12 note below).
 # Used llvm >= 12 for arm64 for the same reason in the Linux kernel CFI comment.
@@ -706,7 +706,7 @@ _compiler_version_checks() {
 
 pre_build_checks() {
 
-# https://github.com/chromium/chromium/blob/108.0.5359.94/docs/linux/build_instructions.md#system-requirements
+# https://github.com/chromium/chromium/blob/108.0.5359.124/docs/linux/build_instructions.md#system-requirements
 # Check build requirements, bug #541816 and bug #471810 .
 	CHECKREQS_MEMORY="4G"
 	CHECKREQS_DISK_BUILD="12G"
@@ -817,7 +817,7 @@ ewarn
 
 # LLVM 16
 CR_CLANG_USED="0d30e92f" # Obtained from \
-# https://github.com/chromium/chromium/blob/108.0.5359.94/tools/clang/scripts/update.py#L42 \
+# https://github.com/chromium/chromium/blob/108.0.5359.124/tools/clang/scripts/update.py#L42 \
 # https://github.com/llvm/llvm-project/commit/0d30e92f
 CR_CLANG_USED_UNIX_TIMESTAMP="1660548388" # Cached.  Use below to obtain this. \
 # TIMESTAMP=$(wget -q -O - https://github.com/llvm/llvm-project/commit/${CR_CLANG_USED}.patch \
@@ -2155,7 +2155,7 @@ einfo
 	fi
 
 # Debug symbols level 2 is still on when official is on even though is_debug=false:
-# See https://github.com/chromium/chromium/blob/108.0.5359.94/build/config/compiler/compiler.gni#L276
+# See https://github.com/chromium/chromium/blob/108.0.5359.124/build/config/compiler/compiler.gni#L276
 	# GN needs explicit config for Debug/Release as opposed to inferring it from build directory.
 	myconf_gn+=" is_debug=false"
 
@@ -2505,8 +2505,8 @@ ewarn
 			third_party/crc32c/src/src/crc32c_arm64.cc || die
 	fi
 
-# See https://github.com/chromium/chromium/blob/108.0.5359.94/build/config/sanitizers/BUILD.gn#L196
-# See https://github.com/chromium/chromium/blob/108.0.5359.94/tools/mb/mb_config.pyl#L2950
+# See https://github.com/chromium/chromium/blob/108.0.5359.124/build/config/sanitizers/BUILD.gn#L196
+# See https://github.com/chromium/chromium/blob/108.0.5359.124/tools/mb/mb_config.pyl#L2950
 	local is_cfi_custom=0
 	if use official ; then
 		# Forced because it is the final official settings.
@@ -2654,7 +2654,7 @@ einfo
 	fi
 
 # See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
-# See also https://github.com/chromium/chromium/blob/108.0.5359.94/docs/pgo.md
+# See also https://github.com/chromium/chromium/blob/108.0.5359.124/docs/pgo.md
 # profile-instr-use is clang which that file assumes but gcc doesn't have.
 	if tc-is-cross-compiler || use epgo ; then
 		# Disallow build files choices because they only do Clang PGO.
@@ -2970,7 +2970,7 @@ pkg_postinst() {
 	if ! use headless; then
 		if use vaapi ; then
 # It says 3 args:
-# https://github.com/chromium/chromium/blob/108.0.5359.94/docs/gpu/vaapi.md#vaapi-on-linux
+# https://github.com/chromium/chromium/blob/108.0.5359.124/docs/gpu/vaapi.md#vaapi-on-linux
 einfo
 einfo "VA-API is disabled by default at runtime.  You have to enable it"
 einfo "by adding --enable-features=VaapiVideoDecoder --ignore-gpu-blocklist"
