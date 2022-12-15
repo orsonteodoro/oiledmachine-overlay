@@ -66,8 +66,8 @@ RESTRICT="mirror"
 # SHA512 about_credits.html fingerprint:
 #
 LICENSE_FINGERPRINT="\
-2b66e181e7d47cdecdecc7dfdd4052458eeb83e32d72a0eba880545fcd147bc2\
-11186234246fa9cdaa6b57a793dd8ad2a15137a18bd58acacb5c23c6d0f571a2\
+3df037f24b90248caf1d2a8940b642a56a1a9c3474d434cf607fffa9c4e8ac36\
+5ae759acdcb3bbdaad9bf75ca39f6c803f2c6a7379ca2796b98a92cbe0662878\
 "
 LICENSE="
 	BSD
