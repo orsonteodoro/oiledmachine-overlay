@@ -18,7 +18,7 @@ else
 	SRC_URI="https://www.wireshark.org/download/src/all-versions/${P/_/}.tar.xz"
 	S="${WORKDIR}/${P/_/}"
 
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~ppc64 ~riscv x86"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc64 ~riscv ~x86"
 fi
 
 LICENSE="GPL-2"
@@ -146,12 +146,15 @@ src_configure() {
 	python_setup
 
 	mycmakeargs+=(
+		-DPython3_EXECUTABLE="${PYTHON}"
 		-DCMAKE_DISABLE_FIND_PACKAGE_{Asciidoctor,DOXYGEN}=$(usex !doc)
+
 		$(use androiddump && use pcap && echo -DEXTCAP_ANDROIDDUMP_LIBPCAP=yes)
 		$(usex qt5 LRELEASE=$(qt5_get_bindir)/lrelease '')
 		$(usex qt5 MOC=$(qt5_get_bindir)/moc '')
 		$(usex qt5 RCC=$(qt5_get_bindir)/rcc '')
 		$(usex qt5 UIC=$(qt5_get_bindir)/uic '')
+
 		-DBUILD_androiddump=$(usex androiddump)
 		-DBUILD_capinfos=$(usex capinfos)
 		-DBUILD_captype=$(usex captype)
