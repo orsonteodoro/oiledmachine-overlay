@@ -17,17 +17,14 @@ SLOT="0/${PV}"
 IUSE+=" cxx17 test"
 BDEPEND+="
 	${PYTHON_DEPS}
-	test? ( sys-libs/timezone-data )
+	test? (
+		=dev-cpp/gtest-9999
+		sys-libs/timezone-data
+	)
 "
-# It uses the master branch source code, see
-# https://github.com/abseil/abseil-cpp/blob/20211102.0/CMake/Googletest/CMakeLists.txt.in
-GTEST_COMMIT="1b18723e874b256c1e39378c6774a90701d70f7a" #
-GTEST_FILE="gtest-1.11.0_p20211112-${GTEST_COMMIT:0:7}.tar.gz"
 SRC_URI="
 https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/google/googletest/archive/${GTEST_COMMIT}.tar.gz
-	-> ${GTEST_FILE}
 "
 RESTRICT="!test? ( test ) mirror"
 
@@ -53,8 +50,8 @@ src_prepare() {
 src_configure() {
 	local mycmakeargs=(
 		-DABSL_ENABLE_INSTALL=TRUE
-		-DABSL_LOCAL_GOOGLETEST_DIR="${WORKDIR}/googletest-${GTEST_COMMIT}"
 		-DABSL_PROPAGATE_CXX_STD=TRUE
+		-DABSL_USE_EXTERNAL_GOOGLETEST=TRUE
 		$(usex cxx17 -DCMAKE_CXX_STANDARD=17 '')
 		$(usex test -DBUILD_TESTING=ON '')
 	)
