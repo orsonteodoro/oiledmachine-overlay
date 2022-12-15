@@ -49,7 +49,6 @@ BDEPEND+="
 	virtual/pkgconfig
 	~liri-base/cmake-shared-2.0.0_p9999
 "
-SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
