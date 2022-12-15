@@ -54,7 +54,11 @@ sys-devel/clang:16 llvm-16-commit.conf
       Force building using the installed Clang (rather than the default CC/CXX).
     </flag>
     <flag name="libfuzzer">
-      Build the fuzzing runtime.
+      Build the libFuzzer engine used to generate and mutate input files from
+      a corpus set to be fed into to target functions.  As new coverage is
+      discovered, the corpus set expands.  libFuzzer should be combined with one
+      or more sanitizers such as asan, ubsan, msan, lsan which are detected and
+      logged during fuzzing.
     </flag>
     <flag name="memprof">
       Build the memory profiler runtime.
