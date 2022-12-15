@@ -4,7 +4,7 @@
 
 EAPI=8
 
-EGIT_COMMIT_FALLBACK="08c716d11014a60a958b1c135fc223702a5810c1"
+EGIT_COMMIT_FALLBACK="42385c81becabb075e0edfbbf2a9ec1376df6edc" # Dec 14, 2022
 
 MY_PV="9999"
 
@@ -54,6 +54,7 @@ MODULES=(
 	hsv
 	json
 	lewton
+	livesync
 	mp4
 	ndi
 	onvif
@@ -89,7 +90,7 @@ CARGO_V="1.65"
 # Assumes D11
 CAIRO_PV="1.16.0"
 GST_PV="1.20" # Upstream uses in CI 1.21.2.1, distro only provides 1.20.x
-PANGO_PV="1.50.13"
+PANGO_PV="1.50.12" # Upstream uses 1.50.13 on meson-shared test CI
 RDEPEND+="
 	>=dev-libs/glib-2.66.8:2[${MULTILIB_USEDEP}]
 	!=dev-libs/libgit2-1.4*
@@ -296,8 +297,8 @@ einfo "LLVM=${LLVM_MAX_SLOT}"
 }
 
 EXPECTED_BUILD_FILES_FINGERPRINT="\
-b73f2f5e05362d59e0980be47212bda1f8a2005ab68498199dd4df92c198af9c\
-7c9decd7c9b14a29272ef68eb480b28741a110852cac3e2ff6cf8e05fbfa551e\
+be1701ba39acb03b4e6209afde99db9d8c87016590e91f765df536ae37dcd6af\
+7bb6c5a17379bf6323a06fe3fc7c6cf1604753ade80d26711b7d1667aeefed6c\
 "
 
 src_unpack() {

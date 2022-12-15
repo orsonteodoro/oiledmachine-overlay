@@ -1,7 +1,7 @@
 diff -urp gst-plugins-rs-9999.orig/meson.build gst-plugins-rs-9999/meson.build
---- gst-plugins-rs-9999.orig/meson.build	2022-11-10 18:53:25.252829505 -0800
-+++ gst-plugins-rs-9999/meson.build	2022-11-10 18:54:47.123927143 -0800
-@@ -39,57 +39,147 @@ endif
+--- gst-plugins-rs-9999.orig/meson.build	2022-12-14 18:20:44.570505098 -0800
++++ gst-plugins-rs-9999/meson.build	2022-12-14 18:27:06.741826582 -0800
+@@ -39,58 +39,151 @@ endif
  # workspace name -> lib name
  # kept in the same order as the `members` list in Cargo.toml
  plugins = {
@@ -33,6 +33,7 @@ diff -urp gst-plugins-rs-9999.orig/meson.build gst-plugins-rs-9999/meson.build
 -  'gst-plugin-textwrap': 'libgsttextwrap',
 -
 -  'gst-plugin-fallbackswitch': 'libgstfallbackswitch',
+-  'gst-plugin-livesync': 'libgstlivesync',
 -  'gst-plugin-togglerecord': 'libgsttogglerecord',
 -  'gst-plugin-tracers': 'libgstrstracers',
 -  'gst-plugin-uriplaylistbin': 'libgsturiplaylistbin',
@@ -66,7 +67,7 @@ diff -urp gst-plugins-rs-9999.orig/meson.build gst-plugins-rs-9999/meson.build
 +
 +if get_option('cdg').enabled()
 +  plugins += {'gst-plugin-cdg' : 'libgstcdg'}
-+endif
+++endif
 +
 +if get_option('claxon').enabled()
 +  plugins += {'gst-plugin-claxon' : 'libgstclaxon'}
@@ -118,6 +119,10 @@ diff -urp gst-plugins-rs-9999.orig/meson.build gst-plugins-rs-9999/meson.build
 +
 +if get_option('lewton').enabled()
 +  plugins += {'gst-plugin-lewton' : 'libgstlewton'}
++endif
++
++if get_option('livesync').enabled()
++  plugins += {'gst-plugin-livesync' : 'libgstlivesync'}
 +endif
 +
 +if get_option('ndi').enabled()
@@ -187,7 +192,7 @@ diff -urp gst-plugins-rs-9999.orig/meson.build gst-plugins-rs-9999/meson.build
  if dependency('cairo-gobject', required : get_option('videofx')).found()
    plugins += {'gst-plugin-videofx': 'libgstrsvideofx',}
  endif
-@@ -106,13 +196,15 @@ if dependency('dav1d', version : '>= 1.0
+@@ -107,13 +200,15 @@ if dependency('dav1d', version : '>= 1.0
    plugins += {'gst-plugin-dav1d' : 'libgstdav1d'}
  endif
  
@@ -213,9 +218,9 @@ diff -urp gst-plugins-rs-9999.orig/meson.build gst-plugins-rs-9999/meson.build
 Only in gst-plugins-rs-9999: meson.build.orig
 Only in gst-plugins-rs-9999: meson.build.rej
 diff -urp gst-plugins-rs-9999.orig/meson_options.txt gst-plugins-rs-9999/meson_options.txt
---- gst-plugins-rs-9999.orig/meson_options.txt	2022-11-10 18:53:25.252829505 -0800
-+++ gst-plugins-rs-9999/meson_options.txt	2022-11-10 18:55:16.561041375 -0800
-@@ -2,10 +2,43 @@ option('videofx', type : 'feature', valu
+--- gst-plugins-rs-9999.orig/meson_options.txt	2022-12-14 18:20:44.570505098 -0800
++++ gst-plugins-rs-9999/meson_options.txt	2022-12-14 18:26:56.773426854 -0800
+@@ -2,10 +2,44 @@ option('videofx', type : 'feature', valu
  option('closedcaption', type : 'feature', value : 'auto', description : 'Build closedcaption plugin')
  option('onvif', type : 'feature', value : 'auto', description : 'Build onvif plugin')
  option('dav1d', type : 'feature', value : 'auto', description : 'Build dav1d plugin')
@@ -239,6 +244,7 @@ diff -urp gst-plugins-rs-9999.orig/meson_options.txt gst-plugins-rs-9999/meson_o
 +option('gif', type: 'feature', value : 'auto', description : 'Build the gif plugin')
 +option('hlssink3', type: 'feature', value : 'auto', description : 'Build the hlssink3 plugin')
 +option('lewton', type: 'feature', value : 'auto', description : 'Build the lewton plugin')
++option('livesync', type: 'feature', value : 'auto', description : 'Build the livesync plugin')
 +option('ndi', type: 'feature', value : 'auto', description : 'Build the ndi plugin')
 +option('raptorq', type: 'feature', value : 'auto', description : 'Build the raptorq plugin')
 +option('rav1e', type: 'feature', value : 'auto', description : 'Build the rav1e plugin')
