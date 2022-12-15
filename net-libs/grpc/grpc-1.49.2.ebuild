@@ -23,18 +23,45 @@ LICENSE="
 # MIT third_party/upb/third_party/lunit/LICENSE
 # Unlicense third_party/upb/third_party/wyhash/LICENSE
 KEYWORDS="~amd64 ~ppc64 ~x86"
-IUSE+=" doc examples test"
+BINDINGS_IUSE=(cpp csharp csharpext nodejs objc php python ruby) # Upstream enables all
+IUSE+="
+${BINDINGS_IUSE[@]/#/-}
+doc examples test
+"
 SLOT_MAJ="0"
-SLOT="${SLOT_MAJ}/25.147" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
+SLOT="${SLOT_MAJ}/27.149" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
 # third_party last update: 20220615
 RDEPEND+="
-	 ~dev-cpp/abseil-cpp-20211102.0:=[${MULTILIB_USEDEP},cxx17(+)]
-	>=dev-libs/openssl-1.1.1:0=[-bindist(-),${MULTILIB_USEDEP}]
-	>=dev-libs/protobuf-3.19.4:=[${MULTILIB_USEDEP}]
+	>=dev-libs/openssl-1.1.1g:0=[-bindist(-),${MULTILIB_USEDEP}]
+	>=dev-libs/protobuf-3.21.6:=[${MULTILIB_USEDEP}]
 	>=dev-libs/re2-0.2021.09.01:=[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.17.2:=[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.12:=[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.2.13:=[${MULTILIB_USEDEP}]
+	csharp? (
+		>=dev-lang/mono-4.6
+		>=dev-util/monodevelop-5.9
+		dev-dotnet/dotnet-sdk-bin
+	)
+	nodejs? (
+		>=net-libs/nodejs-4
+	)
+	php? (
+		>=dev-lang/php-5.5
+		dev-php/composer
+		dev-php/PEAR-PEAR
+	)
+	python? (
+		~dev-python/grpcio-${PV}
+	)
+	ruby? (
+		>=dev-lang/ruby-2
+	)
+	~dev-cpp/abseil-cpp-20220623.0:=[${MULTILIB_USEDEP},cxx17(+)]
 "
+# See also
+# third_party/boringssl-with-bazel/src/include/include/openssl/crypto.h: OPENSSL_VERSION_TEXT
+# third_party/boringssl-with-bazel/src/include/include/openssl/base.h: OPENSSL_VERSION_NUMBER
+
 DEPEND+=" ${RDEPEND}"
 BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -97,6 +124,14 @@ src_configure() {
 			-DgRPC_INSTALL=ON
 			-DgRPC_ABSL_PROVIDER=package
 			-DgRPC_BACKWARDS_COMPATIBILITY_MODE=OFF
+			-DgRPC_BUILD_GRPC_CPP_PLUGIN=$(usex cpp)
+			-DgRPC_BUILD_GRPC_CSHARP_PLUGIN=$(usex csharp)
+			-DgRPC_BUILD_GRPC_NODE_PLUGIN=$(usex nodejs)
+			-DgRPC_BUILD_GRPC_OBJECTIVE_C_PLUGIN=$(usex objc)
+			-DgRPC_BUILD_GRPC_PHP_PLUGIN=$(usex php)
+			-DgRPC_BUILD_GRPC_PYTHON_PLUGIN=OFF
+			-DgRPC_BUILD_GRPC_RUBY_PLUGIN=$(usex ruby)
+			-DgRPC_BUILD_CSHARP_EXT=$(usex csharpext)
 			-DgRPC_CARES_PROVIDER=package
 			-DgRPC_INSTALL_CMAKEDIR="$(get_libdir)/cmake/${PN}"
 			-DgRPC_INSTALL_LIBDIR="$(get_libdir)"
