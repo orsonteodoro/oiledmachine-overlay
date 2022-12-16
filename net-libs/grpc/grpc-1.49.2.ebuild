@@ -24,7 +24,7 @@ LICENSE="
 # Unlicense third_party/upb/third_party/wyhash/LICENSE
 KEYWORDS="~amd64 ~ppc64 ~x86"
 # LSRT - language specific runtime
-LSRT_IUSE=(csharp cxx csharpext nodejs objc php python ruby) # Upstream enables all
+LSRT_IUSE=(csharp cxx csharpext java nodejs objc php python ruby) # Upstream enables all
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx
@@ -57,13 +57,10 @@ BDEPEND+="
 "
 PDEPEND+="
 	csharp? (
-		>=dev-lang/mono-4.6
-		>=dev-util/monodevelop-5.9
-		dev-dotnet/dotnet-sdk-bin
-		~dev-dotnet/grpc-${PV}
+		=dev-dotnet/grpc-dotnet-$(($(ver_cut 1 ${PV})+1)).$(ver_cut 2 ${PV})*
 	)
-	nodejs? (
-		>=net-libs/nodejs-4
+	java? (
+		~dev-java/grpc-java-${PV}
 	)
 	php? (
 		~dev-php/grpc-${PV}
