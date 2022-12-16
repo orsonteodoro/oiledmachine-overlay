@@ -23,11 +23,14 @@ LICENSE="
 # MIT third_party/upb/third_party/lunit/LICENSE
 # Unlicense third_party/upb/third_party/wyhash/LICENSE
 KEYWORDS="~amd64 ~ppc64 ~x86"
-BINDINGS_IUSE=(csharp cxx csharpext nodejs objc php python ruby) # Upstream enables all
+# LSRT - language specific runtime
+LSRT_IUSE=(csharp cxx csharpext nodejs objc php python ruby) # Upstream enables all
 IUSE+="
-${BINDINGS_IUSE[@]/#/-}
+${LSRT_IUSE[@]/#/-}
 cxx
 doc examples test
+
+r1
 "
 SLOT_MAJ="0"
 SLOT="${SLOT_MAJ}/29.151" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
@@ -42,6 +45,7 @@ RDEPEND+="
 		>=dev-lang/mono-4.6
 		>=dev-util/monodevelop-5.9
 		dev-dotnet/dotnet-sdk-bin
+		~dev-dotnet/grpc-${PV}
 	)
 	nodejs? (
 		>=net-libs/nodejs-4
@@ -50,11 +54,13 @@ RDEPEND+="
 		>=dev-lang/php-5.5
 		dev-php/composer
 		dev-php/PEAR-PEAR
+		~dev-php/grpc-${PV}
 	)
 	python? (
 		~dev-python/grpcio-${PV}
 	)
 	ruby? (
+		~dev-ruby/grpc-${PV}
 		>=dev-lang/ruby-2
 	)
 	~dev-cpp/abseil-cpp-20220623.0:=[${MULTILIB_USEDEP},cxx17(+)]
@@ -130,7 +136,7 @@ src_configure() {
 			-DgRPC_BUILD_GRPC_NODE_PLUGIN=$(usex nodejs)
 			-DgRPC_BUILD_GRPC_OBJECTIVE_C_PLUGIN=$(usex objc)
 			-DgRPC_BUILD_GRPC_PHP_PLUGIN=$(usex php)
-			-DgRPC_BUILD_GRPC_PYTHON_PLUGIN=OFF
+			-DgRPC_BUILD_GRPC_PYTHON_PLUGIN=$(usex python)
 			-DgRPC_BUILD_GRPC_RUBY_PLUGIN=$(usex ruby)
 			-DgRPC_BUILD_CSHARP_EXT=$(usex csharpext)
 			-DgRPC_CARES_PROVIDER=package
