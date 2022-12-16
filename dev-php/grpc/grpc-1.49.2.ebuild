@@ -13,6 +13,7 @@ RDEPEND+="
 	>=dev-lang/php-5.5
 	dev-php/composer
 	dev-php/PEAR-PEAR
+	~net-libs/grpc-${PV}
 "
 DEPEND+="
 	${RDEPEND}
