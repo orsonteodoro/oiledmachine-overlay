@@ -40,7 +40,7 @@ https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
 	-> ${GRPC_P}.tar.gz
 "
 S="${WORKDIR}/${GRPC_P}"
-PATCHES=( "${FILESDIR}/1.37.1-cc-flag-test-fix.patch" )
+PATCHES=( "${FILESDIR}/grpcio-1.49.2-cc-flag-test-fix.patch" )
 
 python_prepare_all() {
 	distutils-r1_python_prepare_all

@@ -1,0 +1,14 @@
+Same as 1.37.1-cc-flag-test-fix.patch
+Commit:  c21ddf679bf46c0a13046060f17d7a87608923e3
+diff -urp grpc-1.49.2.orig/src/python/grpcio/commands.py grpc-1.49.2/src/python/grpcio/commands.py
+--- grpc-1.49.2.orig/src/python/grpcio/commands.py	2022-12-07 15:49:12.000000000 -0800
++++ grpc-1.49.2/src/python/grpcio/commands.py	2022-12-15 18:32:45.700287970 -0800
+@@ -228,6 +228,7 @@ class BuildExt(build_ext.build_ext):
+             """
+             try:
+                 # TODO(lidiz) Remove the generated a.out for success tests.
++                cc = os.environ.get('CC', 'cc')
+-                cc_test = subprocess.Popen(['cc', '-x', 'c', '-std=c++14', '-'],
++                cc_test = subprocess.Popen([cc, '-x', 'c', '-std=c++14', '-'],
+                                            stdin=subprocess.PIPE,
+                                            stdout=subprocess.PIPE,
