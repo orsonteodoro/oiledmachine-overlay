@@ -41,28 +41,6 @@ RDEPEND+="
 	>=dev-libs/re2-0.2021.09.01:=[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.17.2:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.13:=[${MULTILIB_USEDEP}]
-	csharp? (
-		>=dev-lang/mono-4.6
-		>=dev-util/monodevelop-5.9
-		dev-dotnet/dotnet-sdk-bin
-		~dev-dotnet/grpc-${PV}
-	)
-	nodejs? (
-		>=net-libs/nodejs-4
-	)
-	php? (
-		>=dev-lang/php-5.5
-		dev-php/composer
-		dev-php/PEAR-PEAR
-		~dev-php/grpc-${PV}
-	)
-	python? (
-		~dev-python/grpcio-${PV}
-	)
-	ruby? (
-		~dev-ruby/grpc-${PV}
-		>=dev-lang/ruby-2
-	)
 	~dev-cpp/abseil-cpp-20220623.0:=[${MULTILIB_USEDEP},cxx17(+)]
 "
 # See also
@@ -75,6 +53,27 @@ BDEPEND+="
 	>=dev-util/cmake-3.5.1
 	test? (
 		>=dev-cpp/benchmark-1.6.0
+	)
+"
+PDEPEND+="
+	csharp? (
+		>=dev-lang/mono-4.6
+		>=dev-util/monodevelop-5.9
+		dev-dotnet/dotnet-sdk-bin
+		~dev-dotnet/grpc-${PV}
+	)
+	nodejs? (
+		>=net-libs/nodejs-4
+	)
+	php? (
+		~dev-php/grpc-${PV}
+	)
+	python? (
+		~dev-python/grpcio-${PV}
+	)
+	ruby? (
+		~dev-ruby/grpc-${PV}
+		>=dev-lang/ruby-2
 	)
 "
 RESTRICT="test"
@@ -123,6 +122,7 @@ src_prepare() {
 }
 
 src_configure() {
+	use php && export EXTRA_DEFINES=GRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK
 	configure_abi() {
 		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
