@@ -201,7 +201,7 @@ check_compiler() {
 pkg_setup() {
 	chromium_suid_sandbox_check_kernel_config
 	if use test ; then
-		if [[ "${FEATURES}" =~ (^| )"sandbox" ]] ; then
+		if has "sandbox" ${FEATURES} ; then
 eerror
 eerror "-sandbox must be added to FEATURES to use the test USE flag."
 eerror
@@ -213,14 +213,6 @@ ewarn "FEATURES as a per package envvar."
 ewarn
 	fi
 
-	if ( ! use beta ) && ver_test $(ver_cut 4 ${CHROMIUM_PV}) -lt 125 ; then
-# Weekly release cycle issues with stable.
-ewarn
-ewarn "You are using the stable release with PATCH version < 125 may contain"
-ewarn "vulnerabilies in Chromium and internal dependencies parts."
-ewarn "Please use the beta release instead."
-ewarn
-	fi
 	if [[ "${PV}" =~ 9999 ]] \
 		&& has "network-sandbox" ${FEATURES} ; then
 eerror
@@ -513,6 +505,7 @@ ewarn
 ewarn "We recommend that this library and every web browser be updated weekly."
 ewarn
 ewarn
+# Weekly release cycle issues with stable.
 ewarn "If the PATCH in MAJOR.MINOR.BUILD.PATCH is < 125, it is recommended to"
 ewarn "use the beta USE flag for security reasons."
 ewarn
