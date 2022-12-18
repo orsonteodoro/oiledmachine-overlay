@@ -373,38 +373,20 @@ src_unpack() {
 		| sed -e "s|\+||g")
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	local uri="https://cef-builds.spotifycdn.com/${bn}"
-einfo
-einfo "Set EVCS_OFFLINE=1 if already downloaded for faster reinstall."
-einfo
-	if [[ "${EVCS_OFFLINE}" == "1" ]] ; then
-		[[ -e "${distdir}/${PN}-last-tarball" ]] || die
-		bn=$(cat "${distdir}/${PN}-last-tarball" \
-			| sed -e "s|[^a-f0-9]||g")
-		[[ -e "${distdir}/${bn}" ]] \
-			|| die "Missing ${distdir}/${bn}"
-		[[ -e "${distdir}/${bn}.sha1" ]] \
-			|| die "Missing ${distdir}/${bn}.sha1"
-		[[ -e "${distdir}/${bn}.sha512" ]] \
-			|| die "Missing ${distdir}/${bn}.sha512"
-		[[ -e "${distdir}/${bn}.blake2b" ]] \
-			|| die "Missing ${distdir}/${bn}.blake2b"
-	else
-		if check_tarball_integrity "${bn}" ; then
+	if check_tarball_integrity "${bn}" ; then
 einfo
 einfo "Using cached tarball copy"
 einfo
-		else
-			addwrite "${distdir}"
-			wget -O "${distdir}/${bn}.sha1" "${uri}.sha1" || die
-			wget -O "${distdir}/${bn}" "${uri}" || die
-			echo "${bn}" > "${distdir}/${PN}-last-tarball" || die
-			local blake2b=$(rhash --blake2b "${distdir}/${bn}" \
-				| cut -f 1 -d " ")
-			local sha512=$(sha512sum "${distdir}/${bn}" \
-				| cut -f 1 -d " ")
-			echo -n "${blake2b}" > "${distdir}/${bn}.blake2b" || die
-			echo -n "${sha512}" > "${distdir}/${bn}.sha512" || die
-		fi
+	else
+		addwrite "${distdir}"
+		wget -O "${distdir}/${bn}.sha1" "${uri}.sha1" || die
+		wget -O "${distdir}/${bn}" "${uri}" || die
+		local blake2b=$(rhash --blake2b "${distdir}/${bn}" \
+			| cut -f 1 -d " ")
+		local sha512=$(sha512sum "${distdir}/${bn}" \
+			| cut -f 1 -d " ")
+		echo -n "${blake2b}" > "${distdir}/${bn}.blake2b" || die
+		echo -n "${sha512}" > "${distdir}/${bn}.sha512" || die
 	fi
 
 	if ! check_tarball_integrity "${bn}" ; then
