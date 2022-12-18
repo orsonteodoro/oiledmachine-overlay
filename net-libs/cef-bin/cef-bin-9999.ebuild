@@ -2,10 +2,13 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+EAPI=8
+
+# This ebuild is provided to reduce ebuild security update lag.
+# Always update it weekly.
+
 # Builds also the libcef_dll_wrapper
 # The -bin in ${PN} comes from the prebuilt chromium
-
-EAPI=8
 
 VIRTUALX_REQUIRED="manual"
 inherit chromium-2 cmake flag-o-matic virtualx
@@ -16,32 +19,8 @@ HOMEPAGE="https://bitbucket.org/chromiumembedded/cef/src/master/"
 KEYWORDS="~arm ~arm64 ~amd64"
 # The download page can be found at https://cef-builds.spotifycdn.com/index.html
 
-CEF_VERSION_RAW="12/01/2022 - 108.4.12+g2e23ced+chromium-108.0.5359.71 / Chromium 108.0.5359.71"
-CHROMIUM_V="${CEF_VERSION_RAW##* }" # same as https://bitbucket.org/chromiumembedded/cef/src/2e23ced/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5195
-CEF_COMMIT="${CEF_VERSION_RAW#*\+}" # same as https://bitbucket.org/chromiumembedded/cef/commits/
-CEF_COMMIT="${CEF_COMMIT%\+*}"
-CEF_COMMIT="${CEF_COMMIT:1:7}"
-
-TARBALL_SUFFIX="_beta" # can be _beta or "" (stable)
-SRC_URI="
-	elibc_glibc? (
-		amd64? (
-			minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux64${TARBALL_SUFFIX}_minimal.tar.bz2 )
-			!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux64${TARBALL_SUFFIX}.tar.bz2 )
-		)
-		arm? (
-			minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm${TARBALL_SUFFIX}_minimal.tar.bz2 )
-			!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm${TARBALL_SUFFIX}.tar.bz2 )
-		)
-		arm64? (
-			minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm64${TARBALL_SUFFIX}_minimal.tar.bz2 )
-			!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm64${TARBALL_SUFFIX}.tar.bz2 )
-		)
-	)
-"
-
 SLOT="0/${PV}"
-IUSE+=" cefclient cefsimple debug minimal test"
+IUSE+=" beta cefclient cefsimple debug minimal test"
 REQUIRED_USE+="
 	cefclient? ( !minimal )
 	cefsimple? ( !minimal )
@@ -78,19 +57,19 @@ CHROMIUM_CDEPEND="
 "
 # Unlisted based on ldd inspection not found in common_lib_list
 UNLISTED_RDEPEND="
+	>=dev-libs/nss-3.21
+	>=media-libs/mesa-11.2.0[egl(+)]
+	>=x11-libs/libxkbcommon-0.5.0
 	dev-libs/fribidi
 	dev-libs/gmp
 	dev-libs/libbsd
 	dev-libs/libtasn1
 	dev-libs/libunistring
-	>=dev-libs/nss-3.21
 	dev-libs/nettle
 	media-gfx/graphite2
 	media-libs/harfbuzz
 	media-libs/libglvnd
-	>=media-libs/mesa-11.2.0[egl(+)]
 	net-dns/libidn
-	>=x11-libs/libxkbcommon-0.5.0
 "
 OPTIONAL_RDEPEND="
 	>=gnome-base/gnome-keyring-3.36[pam]
@@ -104,7 +83,6 @@ CHROMIUM_RDEPEND="
 	>=dev-libs/expat-2.1.0
 	>=dev-libs/libpcre-8.38
 	>=dev-libs/nspr-4.11
-	  dev-libs/wayland
 	>=media-libs/fontconfig-2.11.94
 	>=media-libs/freetype-2.6.1
 	>=media-libs/libpng-1.6.20
@@ -125,6 +103,7 @@ CHROMIUM_RDEPEND="
 	>=x11-libs/pango-1.38.1
 	>=x11-libs/pixman-0.33.6
 	>=sys-libs/zlib-1.2.8
+	dev-libs/wayland
 "
 # libcef alone uses aura not gtk
 RDEPEND+="
@@ -143,15 +122,20 @@ DEPEND+="
 "
 GCC_PV_MIN="7.5"
 CLANG_PV_MIN="12"
+INTEGRITY_CHECK_BDEPEND="
+	app-crypt/rhash
+	app-misc/jq
+" # From ebuild dev
 BDEPEND+="
+	${INTEGRITY_CHECK_BDEPEND}
 	>=dev-util/cmake-3.10.2
-	|| (
-		>=sys-devel/gcc-${GCC_PV_MIN}
-		>=sys-devel/clang-${CLANG_PV_MIN}
-	)
 	test? (
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
+	)
+	|| (
+		>=sys-devel/gcc-${GCC_PV_MIN}
+		>=sys-devel/clang-${CLANG_PV_MIN}
 	)
 "
 RESTRICT="mirror"
@@ -161,11 +145,11 @@ PATCHES=(
 S="${WORKDIR}" # Dummy
 
 get_xrid() {
-	if use elibc_glibc && [[ "${ABI}" == "amd64" ]] ; then
+	if use kernel_linux && use elibc_glibc [[ "${ABI}" == "amd64" ]] ; then
 		echo "linux64"
-	elif use elibc_glibc && [[ "${ABI}" == "x86" ]] ; then
+	elif use kernel_linux && use elibc_glibc [[ "${ABI}" == "x86" ]] ; then
 		echo "linux32"
-	elif use elibc_glibc && [[ "${ABI}" == "arm64" ]] ; then
+	elif use kernel_linux && use elibc_glibc && [[ "${ABI}" == "arm64" ]] ; then
 		echo "linuxarm64"
 	elif ( use elibc_Darwin || use elibc_Cygwin ) && [[ "${ABI}" == "amd64" ]] ; then
 		echo "macos64"
@@ -175,12 +159,15 @@ get_xrid() {
 		echo "windows64"
 	elif ( use elibc_Winnt || use elibc_Cygwin ) && [[ "${ABI}" == "arm64" ]] ; then
 		echo "windowsarm64"
+	else
+		die "LIBC or ABI not supported"
 	fi
 }
 
 S_abi() {
 	local minimal=$(usex minimal "_minimal" "")
-	echo "${WORKDIR}/cef_binary_${PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_V}_$(get_xrid)${TARBALL_SUFFIX}${minimal}"
+	local suffix=$(usex beta "_beta" "")
+	echo "${WORKDIR}/cef_binary_${MY_PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_PV}_$(get_xrid)${suffix}${minimal}"
 }
 
 append_all() {
@@ -222,6 +209,192 @@ ewarn "The test is expected to fail.  To install, add test-fail-continue to"
 ewarn "FEATURES as a per package envvar."
 ewarn
 	fi
+
+	if ( ! use beta ) && ver_test $(ver_cut 4 ${CHROMIUM_PV}) -lt 125 ; then
+# Weekly release cycle issues with stable.
+ewarn
+ewarn "You are using the stable release with PATCH version < 125 may contain"
+ewarn "vulnerabilies in Chromium and internal dependencies parts."
+ewarn "Please use the beta release instead."
+ewarn
+	fi
+	if [[ "${PV}" =~ 9999 ]] \
+		&& has "network-sandbox" ${FEATURES} ; then
+eerror
+eerror "Network access required to download from a live source."
+eerror
+	fi
+}
+
+get_uri_tarball() {
+	local minimal=""
+	local xrid=$(get_xrid)
+	local suffix
+	if use minimal ; then
+		minimal="_minimal"
+	fi
+	if use beta ; then
+		suffix="_beta"
+	fi
+	echo "https://cef-builds.spotifycdn.com/cef_binary_${MY_PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_PV}_${xrid}${suffix}${minimal}.tar.bz2"
+}
+
+get_version_list() {
+	# Necessary to get the CEF version.
+	wget -O "${WORKDIR}/index.json" "https://cef-builds.spotifycdn.com/index.json" || die
+}
+
+check_tarball_integrity() {
+	local bn="${1}"
+	local fatal="${2}"
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+
+	[[ -n "${distdir}/${bn}" ]] || return 1
+	[[ -n "${WORKDIR}/index.json" ]] || return 1
+
+	[[ -n "${distdir}/${bn}.sha1" ]] || return 1
+	[[ -n "${distdir}/${bn}.blake2b" ]] || return 1
+	[[ -n "${distdir}/${bn}.sha512" ]] || return 1
+	local actual_fingerprint_size_sha1=$(stat -c "%s" "${distdir}/${bn}.sha1")
+	local expected_fingerprint_size_sha1="40"
+	[[ "${actual_fingerprint_size_sha1}" != "${expected_fingerprint_size_sha1}" ]] && return 1
+
+	local actual_fingerprint_size_blake2b=$(stat -c "%s" "${distdir}/${bn}.blake2b")
+	local expected_fingerprint_size_blake2b="128"
+	[[ "${actual_fingerprint_size_blake2b}" != "${expected_fingerprint_size_blake2b}" ]] && return 1
+
+	local actual_fingerprint_size_sha512=$(stat -c "%s" "${distdir}/${bn}.sha512")
+	local expected_fingerprint_size_sha512="128"
+	[[ "${actual_fingerprint_size_sha512}" != "${expected_fingerprint_size_sha512}" ]] && return 1
+
+	local actual_sha1=$(sha1sum "${distdir}/${bn}" | cut -f 1 -d " ")
+	local expected_sha1=$(cat "${distdir}/${bn}.sha1")
+	local actual_blake2b=$(rhash --blake2b "${distdir}/${bn}" | cut -f 1 -d " ")
+	local actual_sha512=$(sha512sum "${distdir}/${bn}" | cut -f 1 -d " ")
+	local expected_blake2b=$(cat "${distdir}/${bn}.blake2b")
+	local expected_sha512=$(cat "${distdir}/${bn}.sha512")
+	if [[ "${actual_sha1}" != "${expected_sha1}" ]] ; then
+eerror
+eerror "Fingerprint mismatch"
+eerror
+eerror "Actual:\t${actual_sha1}"
+eerror "Expected:\t${expected_sha1}"
+eerror
+		return 1
+	fi
+	if [[ "${actual_blake2b}" != "${expected_blake2b}" ]] ; then
+eerror
+eerror "Fingerprint mismatch"
+eerror
+eerror "Actual:\t${actual_blake2b}"
+eerror "Expected:\t${expected_blake2b}"
+eerror
+		return 1
+	fi
+	if [[ "${actual_sha512}" != "${expected_sha512}" ]] ; then
+eerror
+eerror "Fingerprint mismatch"
+eerror
+eerror "Actual:\t${actual_sha512}"
+eerror "Expected:\t${expected_sha512}"
+eerror
+		return 1
+	fi
+
+	local xrid=$(get_xrid)
+	local expected_tarball_size=$(cat "${WORKDIR}/index.json" \
+		| jq '.'${xrid}'.versions[].files | .[] | select(.sha1=="'${expected_sha1}'") | .size')
+	local actual_tarball_size=$(stat -c "%s" "${distdir}/${bn}")
+	if [[ "${actual_tarball_size}" != "${expected_tarball_size}" ]] ; then
+eerror
+eerror "Tarball size mismatch"
+eerror
+eerror "Actual:\t${actual_tarball_size}"
+eerror "Expected:\t${expected_tarball_size}"
+eerror
+		return 1
+	fi
+
+	return 0
+}
+
+src_unpack() {
+	local minimal=$(usex minimal "_minimal" "")
+	local configuration=$(usex beta "_beta" "")
+	local xrid=$(get_xrid)
+	local fsuffix="${xrid}${configuration}${minimal}.tar.bz2"
+	local bn=""
+
+	get_version_list
+
+	if use beta ; then
+		local unstable_branch=$(git ls-remote https://bitbucket.org/chromiumembedded/cef.git \
+			| grep -E -o -e "refs/heads/[0-9]+" \
+			| grep -E -o -e "[0-9]+" \
+			| sort -V \
+			| tail -n 1)
+		bn=$(cat "${WORKDIR}/index.json" \
+			| grep -E -o -e "cef_binary[^\"]+${unstable_branch}[^\"]+\""  \
+			| sort -V \
+			| sed -e "s|\"||g" \
+			| grep -e "${fsuffix}" \
+			| tail -n 1)
+	else
+		local stable_branch=$(git ls-remote https://bitbucket.org/chromiumembedded/cef.git \
+			| grep -E -o -e "refs/heads/[0-9]+" \
+			| grep -E -o -e "[0-9]+" \
+			| sort -V \
+			| tail -n 2 \
+			| head -n 1)
+		bn=$(cat "${WORKDIR}/index.json" \
+			| grep -E -o -e "cef_binary[^\"]+${stable_branch}[^\"]+\""  \
+			| sort -V \
+			| sed -e "s|\"||g" \
+			| grep -e "${fsuffix}" \
+			| tail -n 1)
+	fi
+
+	export CEF_COMMIT=$(echo "${bn}" | grep -E -o -e "\+g[a-z0-f]{7}" | sed -e "s|\+g||g")
+	export CHROMIUM_PV=$(echo "${bn}" | grep -E -o -e "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
+	export MY_PV=$(echo "${bn}" | grep -E -o -e "[0-9]+\.[0-9]+\.[0-9]+\+" | sed -e "s|\+||g")
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	local uri="https://cef-builds.spotifycdn.com/${bn}"
+einfo
+einfo "Set EVCS_OFFLINE=1 if already downloaded for faster reinstall."
+einfo
+	if [[ "${EVCS_OFFLINE}" == "1" ]] ; then
+		[[ -e "${distdir}/${PN}-last-tarball" ]] || die
+		bn=$(cat "${distdir}/${PN}-last-tarball" | sed -e "s|[^a-f0-9]||g")
+		[[ -e "${distdir}/${bn}" ]] || die "Missing ${distdir}/${bn}"
+		[[ -e "${distdir}/${bn}.sha1" ]] || die "Missing ${distdir}/${bn}.sha1"
+		[[ -e "${distdir}/${bn}.sha512" ]] || die "Missing ${distdir}/${bn}.sha512"
+		[[ -e "${distdir}/${bn}.shablake2b" ]] || die "Missing ${distdir}/${bn}.shablake2b"
+	else
+		if check_tarball_integrity "${bn}" ; then
+einfo
+einfo "Using cached tarball copy"
+einfo
+		else
+			addwrite "${distdir}"
+			wget -O "${distdir}/${bn}.sha1" "${uri}.sha1" || die
+			wget -O "${distdir}/${bn}" "${uri}" || die
+			echo "${bn}" > "${distdir}/${PN}-last-tarball" || die
+			local blake2b=$(rhash --blake2b "${distdir}/${bn}" | cut -f 1 -d " ")
+			local sha512=$(sha512sum "${distdir}/${bn}" | cut -f 1 -d " ")
+			echo -n "${blake2b}" > "${distdir}/${bn}.blake2b" || die
+			echo -n "${sha512}" > "${distdir}/${bn}.sha512" || die
+		fi
+	fi
+
+	if ! check_tarball_integrity "${bn}" ; then
+eerror
+eerror "This indicates that the download has either been corrupted,"
+eerror "compromised, or is incomplete."
+eerror
+		die
+	fi
+
+	unpack "${distdir}/${bn}"
 }
 
 src_prepare() {
@@ -318,17 +491,27 @@ src_install() {
 	dodir "/opt/${PN}"
 	cp -rT "${BUILD_DIR}" "${ED}/opt/${PN}" || die
 	local minimal=$(usex minimal "_minimal" "")
-	echo "cef_binary_${PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_V}_$(get_xrid)${minimal}" \
+	echo "${MY_PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_PV}_$(get_xrid)${minimal}" \
 		> "${ED}/opt/${PN}/.version" || die
 	find "${ED}" -name "*.o" -delete
 }
 
 pkg_postinst() {
+einfo
+einfo "Version installed:  "$(cat "${EROOT}/opt/${PN}/.version")
+einfo
 ewarn
 ewarn "Security notice:"
 ewarn
 ewarn "This package needs to be updated at the same time as your Chromium web"
 ewarn "browser to avoid the same critical vulnerabilities."
+ewarn
+ewarn "We recommend that this library and every web browser be updated weekly."
+ewarn
+ewarn
+ewarn "If the PATCH in MAJOR.MINOR.BUILD.PATCH is < 125, it is recommended to"
+ewarn "use the beta USE flag for security reasons."
+ewarn
 ewarn
 ewarn "Some parts such as libcef_dll_wrapper.so are not CFI protected and"
 ewarn "cannot be Cross-DSO CFI protected at this time."
@@ -342,12 +525,6 @@ ewarn "shadow-call-stack (backward edge protection) applied to these binaries"
 ewarn "is unknown."
 ewarn
 ewarn "For full protection, use the regular browser bin package instead."
-ewarn
-
-ewarn
-ewarn "Security notices"
-ewarn
-ewarn "V8: CVE-2022-4262 https://nvd.nist.gov/vuln/detail/CVE-2022-4262"
 ewarn
 }
 
