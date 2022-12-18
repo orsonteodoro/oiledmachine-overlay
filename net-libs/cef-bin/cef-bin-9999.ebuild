@@ -181,7 +181,8 @@ check_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	einfo "CC=${CC} CXX=${CXX}"
-	test-flags-CXX "-std=c++${CXX_VER}" 2>/dev/null 1>/dev/null || die "Switch to a c++${CXX_VER} compatible compiler."
+	test-flags-CXX "-std=c++${CXX_VER}" 2>/dev/null 1>/dev/null \
+		|| die "Switch to a c++${CXX_VER} compatible compiler."
 	if tc-is-gcc ; then
 		if ver_test $(gcc-major-version) -lt ${GCC_PV_MIN} ; then
 			die "${PN} requires GCC >=${GCC_PV_MIN} for c++${CXX_VER} support"
@@ -257,20 +258,26 @@ check_tarball_integrity() {
 	[[ -n "${distdir}/${bn}.sha512" ]] || return 1
 	local actual_fingerprint_size_sha1=$(stat -c "%s" "${distdir}/${bn}.sha1")
 	local expected_fingerprint_size_sha1="40"
-	[[ "${actual_fingerprint_size_sha1}" != "${expected_fingerprint_size_sha1}" ]] && return 1
+	[[ "${actual_fingerprint_size_sha1}" != "${expected_fingerprint_size_sha1}" ]] \
+		&& return 1
 
 	local actual_fingerprint_size_blake2b=$(stat -c "%s" "${distdir}/${bn}.blake2b")
 	local expected_fingerprint_size_blake2b="128"
-	[[ "${actual_fingerprint_size_blake2b}" != "${expected_fingerprint_size_blake2b}" ]] && return 1
+	[[ "${actual_fingerprint_size_blake2b}" != "${expected_fingerprint_size_blake2b}" ]] \
+		&& return 1
 
 	local actual_fingerprint_size_sha512=$(stat -c "%s" "${distdir}/${bn}.sha512")
 	local expected_fingerprint_size_sha512="128"
-	[[ "${actual_fingerprint_size_sha512}" != "${expected_fingerprint_size_sha512}" ]] && return 1
+	[[ "${actual_fingerprint_size_sha512}" != "${expected_fingerprint_size_sha512}" ]] \
+		&& return 1
 
-	local actual_sha1=$(sha1sum "${distdir}/${bn}" | cut -f 1 -d " ")
+	local actual_sha1=$(sha1sum "${distdir}/${bn}" \
+		| cut -f 1 -d " ")
 	local expected_sha1=$(cat "${distdir}/${bn}.sha1")
-	local actual_blake2b=$(rhash --blake2b "${distdir}/${bn}" | cut -f 1 -d " ")
-	local actual_sha512=$(sha512sum "${distdir}/${bn}" | cut -f 1 -d " ")
+	local actual_blake2b=$(rhash --blake2b "${distdir}/${bn}" \
+		| cut -f 1 -d " ")
+	local actual_sha512=$(sha512sum "${distdir}/${bn}" \
+		| cut -f 1 -d " ")
 	local expected_blake2b=$(cat "${distdir}/${bn}.blake2b")
 	local expected_sha512=$(cat "${distdir}/${bn}.sha512")
 	if [[ "${actual_sha1}" != "${expected_sha1}" ]] ; then
@@ -354,9 +361,14 @@ src_unpack() {
 			| tail -n 1)
 	fi
 
-	export CEF_COMMIT=$(echo "${bn}" | grep -E -o -e "\+g[a-z0-f]{7}" | sed -e "s|\+g||g")
-	export CHROMIUM_PV=$(echo "${bn}" | grep -E -o -e "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
-	export MY_PV=$(echo "${bn}" | grep -E -o -e "[0-9]+\.[0-9]+\.[0-9]+\+" | sed -e "s|\+||g")
+	export CEF_COMMIT=$(echo "${bn}" \
+		| grep -E -o -e "\+g[a-z0-f]{7}" \
+		| sed -e "s|\+g||g")
+	export CHROMIUM_PV=$(echo "${bn}" \
+		| grep -E -o -e "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+")
+	export MY_PV=$(echo "${bn}" \
+		| grep -E -o -e "[0-9]+\.[0-9]+\.[0-9]+\+" \
+		| sed -e "s|\+||g")
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	local uri="https://cef-builds.spotifycdn.com/${bn}"
 einfo
@@ -364,11 +376,16 @@ einfo "Set EVCS_OFFLINE=1 if already downloaded for faster reinstall."
 einfo
 	if [[ "${EVCS_OFFLINE}" == "1" ]] ; then
 		[[ -e "${distdir}/${PN}-last-tarball" ]] || die
-		bn=$(cat "${distdir}/${PN}-last-tarball" | sed -e "s|[^a-f0-9]||g")
-		[[ -e "${distdir}/${bn}" ]] || die "Missing ${distdir}/${bn}"
-		[[ -e "${distdir}/${bn}.sha1" ]] || die "Missing ${distdir}/${bn}.sha1"
-		[[ -e "${distdir}/${bn}.sha512" ]] || die "Missing ${distdir}/${bn}.sha512"
-		[[ -e "${distdir}/${bn}.shablake2b" ]] || die "Missing ${distdir}/${bn}.shablake2b"
+		bn=$(cat "${distdir}/${PN}-last-tarball" \
+			| sed -e "s|[^a-f0-9]||g")
+		[[ -e "${distdir}/${bn}" ]] \
+			|| die "Missing ${distdir}/${bn}"
+		[[ -e "${distdir}/${bn}.sha1" ]] \
+			|| die "Missing ${distdir}/${bn}.sha1"
+		[[ -e "${distdir}/${bn}.sha512" ]] \
+			|| die "Missing ${distdir}/${bn}.sha512"
+		[[ -e "${distdir}/${bn}.blake2b" ]] \
+			|| die "Missing ${distdir}/${bn}.blake2b"
 	else
 		if check_tarball_integrity "${bn}" ; then
 einfo
@@ -379,8 +396,10 @@ einfo
 			wget -O "${distdir}/${bn}.sha1" "${uri}.sha1" || die
 			wget -O "${distdir}/${bn}" "${uri}" || die
 			echo "${bn}" > "${distdir}/${PN}-last-tarball" || die
-			local blake2b=$(rhash --blake2b "${distdir}/${bn}" | cut -f 1 -d " ")
-			local sha512=$(sha512sum "${distdir}/${bn}" | cut -f 1 -d " ")
+			local blake2b=$(rhash --blake2b "${distdir}/${bn}" \
+				| cut -f 1 -d " ")
+			local sha512=$(sha512sum "${distdir}/${bn}" \
+				| cut -f 1 -d " ")
 			echo -n "${blake2b}" > "${distdir}/${bn}.blake2b" || die
 			echo -n "${sha512}" > "${distdir}/${bn}.sha512" || die
 		fi
@@ -466,7 +485,8 @@ src_compile() {
 		$(usex cefsimple "cefsimple" "") \
 		$(usex test "ceftests" "")
 	if [[ -f "${BUILD_DIR}/tests/ceftests/Release/chrome-sandbox" ]] && use test ; then
-		chmod 4755 "${BUILD_DIR}/tests/ceftests/Release/chrome-sandbox" || die
+		chmod 4755 "${BUILD_DIR}/tests/ceftests/Release/chrome-sandbox" \
+			|| die
 	fi
 }
 
