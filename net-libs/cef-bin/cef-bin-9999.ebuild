@@ -166,8 +166,10 @@ get_xrid() {
 
 S_abi() {
 	local minimal=$(usex minimal "_minimal" "")
-	local suffix=$(usex beta "_beta" "")
-	echo "${WORKDIR}/cef_binary_${MY_PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_PV}_$(get_xrid)${suffix}${minimal}"
+	local configuration=$(usex beta "_beta" "")
+	local suffix="$(get_xrid)${configuration}${minimal}"
+	local version="${MY_PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_PV}"
+	echo "${WORKDIR}/cef_binary_${version}_${suffix}"
 }
 
 append_all() {
