@@ -7,11 +7,14 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    Expect a delay of 1+ day per update.
 
-    Updates to this ebuild-package will be done when
-    the CEF Chromium version matches the latest Chromium stable
-    which has the latest security fixes.
+    Expect a delay of 1+ day per update relative to the browser version.
+
+
+    Prebuilt binaries and the source code of these binaries can be obtained from
+
+      https://cef-builds.spotifycdn.com/index.html
+
   </longdescription>
   <upstream>
     <remote-id type="bitbucket">chromiumembedded/cef</remote-id>
