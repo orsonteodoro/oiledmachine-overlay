@@ -230,14 +230,13 @@ eerror
 get_uri_tarball() {
 	local minimal=""
 	local xrid=$(get_xrid)
-	local suffix
-	if use minimal ; then
-		minimal="_minimal"
-	fi
-	if use beta ; then
-		suffix="_beta"
-	fi
-	echo "https://cef-builds.spotifycdn.com/cef_binary_${MY_PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_PV}_${xrid}${suffix}${minimal}.tar.bz2"
+	local configuration=""
+	use minimal && minimal="_minimal"
+	use beta && configuration="_beta"
+	local suffix="${xrid}${configuration}${minimal}"
+	local version="${MY_PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_PV}"
+	local filename="cef_binary_${version}_${suffix}.tar.bz2"
+	echo "https://cef-builds.spotifycdn.com/${filename}"
 }
 
 get_version_list() {
