@@ -20,6 +20,9 @@
     <remote-id type="bitbucket">chromiumembedded/cef</remote-id>
   </upstream>
   <use>
+    <flag name="beta">
+      Gets the beta release.  Otherwise, gets the stable release.
+    </flag>
     <flag name="cefclient">
       Builds and installs interactive example browser with a menu and an URL bar
     </flag>
