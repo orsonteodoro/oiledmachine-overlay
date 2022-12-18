@@ -242,7 +242,8 @@ get_uri_tarball() {
 
 get_version_list() {
 	# Necessary to get the CEF version.
-	wget -O "${WORKDIR}/index.json" "https://cef-builds.spotifycdn.com/index.json" || die
+	wget -O "${WORKDIR}/index.json" \
+		"https://cef-builds.spotifycdn.com/index.json" || die
 }
 
 check_tarball_integrity() {
