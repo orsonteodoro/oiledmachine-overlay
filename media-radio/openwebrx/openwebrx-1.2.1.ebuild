@@ -132,7 +132,7 @@ RDEPEND_UNPACKAGED+="
 "
 RDEPEND+=" ${RDEPEND_UNPACKAGED}" # Package it yourself
 RDEPEND+=" ${PYTHON_DEPS}
-	>=dev-python/pycsdr-0.18[${PYTHON_USEDEP}]
+	>=dev-python/pycsdr-0.18.1[${PYTHON_USEDEP}]
 	|| (
 		net-analyzer/netcat
 		net-analyzer/openbsd-netcat
@@ -169,7 +169,7 @@ RDEPEND+=" ${PYTHON_DEPS}
 		media-sound/alsa-utils
 	)
 	openwebrx_sdr_hpsdr? (
-		>=media-radio/hpsdrconnector-0.6
+		>=media-radio/hpsdrconnector-0.6.1
 	)
 	openwebrx_sdr_lime_sdr? (
 		net-wireless/limesuite

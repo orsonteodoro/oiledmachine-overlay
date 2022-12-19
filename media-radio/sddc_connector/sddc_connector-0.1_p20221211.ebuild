@@ -25,10 +25,10 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	virtual/pkgconfig
 "
-EGIT_COMMIT="a921bb7d353f33732e00daba1fe62f647b4872f3"
+EGIT_COMMIT="057e7c3ec0c027ca51d6113fc1bf326de2e107e1"
 SRC_URI="
 https://github.com/jketterl/sddc_connector/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz
+	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz
 "
 DOCS=( LICENSE )
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"

@@ -13,6 +13,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/${PV}"
 IUSE+=" test"
 DEPEND+="
+	dev-cpp/blaze
 	dev-libs/boost
 	media-libs/codec2
 "
@@ -20,8 +21,9 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.9
 	test? ( dev-cpp/gtest )
 "
+EGIT_COMMIT="kalman-v1.0"
 SRC_URI="
-https://github.com/mobilinkd/m17-cxx-demod/archive/refs/tags/v${PV}.tar.gz
+https://github.com/mobilinkd/m17-cxx-demod/archive/refs/tags/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
