@@ -16,7 +16,10 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+=" ${PYTHON_DEPS}"
 DEPEND+=" ${RDEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}"
+BDEPEND+="
+	${PYTHON_DEPS}
+	>=dev-python/cython-0.29[${PYTHON_USEDEP}]
+"
 SRC_URI="
 https://github.com/breezy-team/patiencediff/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
