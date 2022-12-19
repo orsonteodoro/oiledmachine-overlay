@@ -13,12 +13,13 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/${PV}"
 IUSE+=" test"
 DEPEND+="
-	dev-cpp/blaze
 	dev-libs/boost
 	media-libs/codec2
 "
 RDEPEND+=" ${DEPEND}"
-BDEPEND+=" >=dev-util/cmake-3.9
+BDEPEND+="
+	>=dev-util/cmake-3.9
+	dev-libs/blaze
 	test? ( dev-cpp/gtest )
 "
 EGIT_COMMIT="kalman-v1.0"
