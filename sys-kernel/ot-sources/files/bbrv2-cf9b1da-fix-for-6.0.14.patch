@@ -1,0 +1,77 @@
+
+Header license for include/net/inet_connection_sock.h:
+
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
+Header license include/net/netns/ipv4.h:
+
+/* SPDX-License-Identifier: GPL-2.0 */
+
+Header license for include/uapi/linux/snmp.h:
+
+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
+Header license for net/ipv4/proc.c:
+
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+Header license for net/ipv4/sysctl_net_ipv4.c:
+
+// SPDX-License-Identifier: GPL-2.0
+
+--- a/include/net/inet_connection_sock.h.orig	2022-12-19 20:07:56.991878487 -0800
++++ b/include/net/inet_connection_sock.h	2022-12-19 20:09:14.642940807 -0800
+@@ -132,7 +132,7 @@ struct inet_connection_sock {
+ 	u32			  icsk_probes_tstamp;
+ 	u32			  icsk_user_timeout;
+ 
+-#define ICSK_CA_PRIV_SIZE	  (216)
++#define ICSK_CA_PRIV_SIZE	  (224)
+ 	u64			  icsk_ca_priv[ICSK_CA_PRIV_SIZE / sizeof(u64)];
+ };
+ 
+--- a/include/net/netns/ipv4.h.orig	2022-10-02 14:09:07.000000000 -0700
++++ b/include/net/netns/ipv4.h	2022-12-19 20:09:42.948057093 -0800
+@@ -181,6 +181,11 @@ struct netns_ipv4 {
+ 	unsigned long tfo_active_disable_stamp;
+ 	u32 tcp_challenge_timestamp;
+ 	u32 tcp_challenge_count;
++	u8 sysctl_tcp_plb_enabled;
++	int sysctl_tcp_plb_cong_thresh;
++	u8 sysctl_tcp_plb_idle_rehash_rounds;
++	u8 sysctl_tcp_plb_rehash_rounds;
++	u8 sysctl_tcp_plb_suspend_rto_sec;
+ 
+ 	int sysctl_udp_wmem_min;
+ 	int sysctl_udp_rmem_min;
+--- a/include/uapi/linux/snmp.h.orig	2022-10-02 14:09:07.000000000 -0700
++++ b/include/uapi/linux/snmp.h	2022-12-19 20:10:03.632872859 -0800
+@@ -292,6 +292,7 @@ enum
+ 	LINUX_MIB_TCPDSACKIGNOREDDUBIOUS,	/* TCPDSACKIgnoredDubious */
+ 	LINUX_MIB_TCPMIGRATEREQSUCCESS,		/* TCPMigrateReqSuccess */
+ 	LINUX_MIB_TCPMIGRATEREQFAILURE,		/* TCPMigrateReqFailure */
++	LINUX_MIB_TCPECNREHASH,			/* TCPECNRehash */
+ 	__LINUX_MIB_MAX
+ };
+ 
+--- a/net/ipv4/proc.c.orig	2022-10-02 14:09:07.000000000 -0700
++++ b/net/ipv4/proc.c	2022-12-19 20:10:23.217645247 -0800
+@@ -297,6 +297,7 @@ static const struct snmp_mib snmp4_net_l
+ 	SNMP_MIB_ITEM("TCPDSACKIgnoredDubious", LINUX_MIB_TCPDSACKIGNOREDDUBIOUS),
+ 	SNMP_MIB_ITEM("TCPMigrateReqSuccess", LINUX_MIB_TCPMIGRATEREQSUCCESS),
+ 	SNMP_MIB_ITEM("TCPMigrateReqFailure", LINUX_MIB_TCPMIGRATEREQFAILURE),
++	SNMP_MIB_ITEM("TCPECNRehash", LINUX_MIB_TCPECNREHASH),
+ 	SNMP_MIB_SENTINEL
+ };
+ 
+--- a/net/ipv4/sysctl_net_ipv4.c.orig	2022-12-19 20:08:17.636692647 -0800
++++ b/net/ipv4/sysctl_net_ipv4.c	2022-12-19 20:10:43.698452978 -0800
+@@ -39,6 +39,8 @@ static u32 u32_max_div_HZ = UINT_MAX / H
+ static int one_day_secs = 24 * 3600;
+ static u32 fib_multipath_hash_fields_all_mask __maybe_unused =
+ 	FIB_MULTIPATH_HASH_FIELD_ALL_MASK;
++static int tcp_plb_max_rounds = 31;
++static int tcp_plb_max_cong_thresh = 256;
+ 
+ /* obsolete */
+ static int sysctl_tcp_low_latency __read_mostly;

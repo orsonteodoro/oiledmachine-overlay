@@ -404,7 +404,7 @@ GENPATCHES_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
 GENPATCHES_FN="linux-patches-${GENPATCHES_MAJOR_MINOR_REVISION}.tar.bz2"
 GENPATCHES_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_FN}"
 
-KCP_COMMIT_SNAPSHOT="991e4553ff0a525136ab90d3d2418ab8f870d97b" # 20221106
+KCP_COMMIT_SNAPSHOT="2053118be570776187a8bc21f5fe9c8f5b31a7e1" # 20221217
 
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 KERNEL_SERIES_TARBALL_FN="linux-${K_MAJOR_MINOR}.tar.xz"
@@ -898,14 +898,19 @@ verify_clang_compiler_updated() {
 		"sys-devel/clang-15.0.0" \
 		"sys-devel/clang-15.0.1" \
 		"sys-devel/clang-15.0.2" \
-		"sys-devel/clang-15.0.3.9999" \
-		"sys-devel/clang-16.0.0_pre20221010" \
+		"sys-devel/clang-15.0.3" \
+		"sys-devel/clang-15.0.4" \
+		"sys-devel/clang-15.0.5" \
+		"sys-devel/clang-15.0.6" \
+		"sys-devel/clang-15.0.6.9999" \
+		"sys-devel/clang-16.0.0_pre20221210" \
+		"sys-devel/clang-16.0.0_pre20221217" \
 		"sys-devel/clang-16.0.0.9999" \
 	; do
 		if has_version "=${p}*" ; then
 			einfo "Verifying prereqs for PGO for ${p}"
 			local emerged_llvm_commit=$(bzless \
-				"${ESYSROOT}/var/db/pkg/${p/_/-}"*"/environment.bz2" \
+				"${ESYSROOT}/var/db/pkg/${p}"*"/environment.bz2" \
 				| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
 			local emerged_llvm_time_desc=$(wget -q -O - \
 				https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch \
@@ -954,14 +959,19 @@ verify_profraw_compatibility() {
 		"15.0.0" \
 		"15.0.1" \
 		"15.0.2" \
-		"15.0.3.9999" \
-		"16.0.0_pre20221010" \
+		"15.0.3" \
+		"15.0.4" \
+		"15.0.5" \
+		"15.0.6" \
+		"15.0.6.9999" \
+		"16.0.0_pre20221217" \
+		"16.0.0_pre20221210" \
 		"16.0.0.9999" \
 	; do
 		(! has_version "~sys-devel/llvm-${v}" ) && continue
 		local llvm_version
 		einfo "v=${v}"
-		if [[ "${v}" =~ "9999" ]] ; then
+		if [[ "${v}" =~ "9999" || "${v}" =~ "_pre" ]] ; then
 			local llvm_version=$(bzless \
 				"${ESYSROOT}/var/db/pkg/sys-devel/llvm-${v}"*"/environment.bz2" \
 				| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
@@ -1745,6 +1755,10 @@ verify_point_release() {
 	local c2=$(grep "^SUBLEVEL = " "${BUILD_DIR}/Makefile" | cut -f 2 -d "=" | sed -e "s| ||g")
 	local actual_pv="${c0}.${c1}.${c2}"
 	local expected_pv=$(ver_cut 1-3 "${PV}")
+
+	local nparts=$(echo "${expected_pv}" | tr "." "\n" | wc -l)
+	(( ${nparts} == 2 )) && return # Not a point release
+
 	if [[ "${expected_pv}" != "${actual_pv}" ]] ; then
 eerror
 eerror "Applying point release patches failed."

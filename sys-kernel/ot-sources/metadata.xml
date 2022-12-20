@@ -128,9 +128,26 @@
 		    Clang PGO				E
 		    genpatches				A
 		    KCFI				A
-		    kernel_compiler_patch		?
+		    kernel_compiler_patch		A
+		    multigen_lru			R
+		    Project C				A
+		    TCP BBR v2 [5]			E
+		    TRESOR (AES-NI) [5]			D
+		    TRESOR (x86) [5]			D
+		    TRESOR (x86-64) [5]			D
+		    UKSM				N
+		    zen-multigen_lru			N
+		    zen-sauce				A
+
+    6.1 (Stable)					N
+		    -rt	(RT_PREEMPT)			A
+		    CFI					?
+		    Clang PGO				?
+		    genpatches				A
+		    KCFI				A
+		    kernel_compiler_patch		A
 		    multigen_lru			A
-		    Project C				?
+		    Project C				A
 		    TCP BBR v2 [5]			E
 		    TRESOR (AES-NI) [5]			D
 		    TRESOR (x86) [5]			D
@@ -872,9 +889,9 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
                           Embedded(*1)   LTS (Long term support)   Security
         CFS                    C-                 A                 A(*7)
-        Project C (BMQ)        B                  F                 F(*8)(*17)
-        Project C (PDS)        A                  F                 F(*8)(*17)
-        PDS-mq                 C-                 F                 F(*8)
+        Project C (BMQ)        B                  F                 F(*17)
+        Project C (PDS)        A                  F                 F(*17)
+        PDS-mq                 C-                 F                 F
         MuQSS for 5.4+         C-                 F                 F(*6)(*8)
 
                            Multicore(*20)        EOL
@@ -900,7 +917,9 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
           restart.  It is unknown if this issue is outside of this scheduler
           or the scheduler itself.
         (*6) SCHED_ISO may be abused.  No use caps or timeout cooldown observed.
-        (*7) Fuzzed many times by the community
+        (*7) Autogroup cpu burner protections and core scheduling mitigations
+          allowed.
+        (*8) May increase trashing in older version.  (Memory leak?, related to *18)
         (*9) No CI and no fuzz history.  Precaution should be taken when using
           this under secure scenarios.
         (*10) The nice formulas and virtual deadlines show consistency in SYNC
@@ -2453,60 +2472,80 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     Please read the metadata.xml comments for more info.
   </longdescription>
   <upstream>
-    <!-- for this ebuild, eclasses, cve_hotfix, disable_debug, tresor_x86_64,
-         tresor_x86_64-256-bit-key-support -->
+    <!--
+
+      For this ebuild, eclasses, cve_hotfix, disable_debug, tresor_x86_64,
+      tresor_x86_64-256-bit-key-support
+
+    -->
     <bugs-to>
       https://github.com/orsonteodoro/oiledmachine-overlay/issues
     </bugs-to>
 
-    <!-- for TCP BBR v2 support and documentation, see
-https://github.com/google/bbr
+    <!--
+
+      For TCP BBR v2 support and documentation, see
+
+      https://github.com/google/bbr
+
     -->
 
     <maintainer status="active" type="person">
-      <!-- for BMQ, PDS, Project C -->
+      <!-- For BMQ, PDS, Project C -->
       <email>cchalpha@gmail.com</email>
       <name>Alfred Chen</name>
     </maintainer>
 
-    <!-- for CFI maintainers, see
+    <!--
+
+      For CFI maintainers, see
+
 https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/tree/MAINTAINERS?h=for-next/clang/pgo&id=3bc68891829b776b9a5dd9174de05e69138af7b6#n4439
+
     -->
 
     <maintainer status="active" type="project">
-      <!-- for genpatches -->
+      <!-- For genpatches -->
       <email>kernel@gentoo.org</email>
       <name>Gentoo Kernel Project</name>
     </maintainer>
 
-    <!-- for futex (FUTEX_WAIT_MULTIPLE), futex2, see
+    <!--
+
+      For futex (FUTEX_WAIT_MULTIPLE), futex2, see
+
 https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3
 https://gitlab.collabora.com/tonyk/linux/-/commits/futex2
 https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-proton
+
     -->
 
     <maintainer status="active" type="person">
-      <!-- for kernel_compiler_patches -->
+      <!-- For kernel_compiler_patches -->
       <email>graysky AT archlinux DOT us</email>
       <name>graysky</name>
     </maintainer>
 
     <maintainer status="active" type="person">
-      <!-- for the Linux kernel -->
+      <!-- For the Linux kernel -->
       <name>Linus Torvalds</name>
     </maintainer>
 
     <maintainer status="active" type="person">
-      <!-- for MuQSS -->
+      <!-- For MuQSS -->
       <email>kernel at kolivas dot org</email>
       <name>Con Kolivas</name>
     </maintainer>
 
-    <!-- for PGO maintainers, see
+    <!--
+
+    For PGO maintainers, see
+
 https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/tree/MAINTAINERS?h=for-next/clang/pgo&id=3bc68891829b776b9a5dd9174de05e69138af7b6#n14390
+
     -->
 
-    <!-- for -rt -->
+    <!-- For -rt -->
     <bugs-to>
       https://wiki.linuxfoundation.org/realtime/communication/bugreport
     </bugs-to>
@@ -2514,53 +2553,73 @@ https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/tree/MAINTAINERS?
       https://wiki.linuxfoundation.org/realtime/documentation/start
     </doc>
 
-    <!-- for UKSM, see
+    <!--
+
+      For UKSM, see
+
 https://github.com/dolohow/uksm
+
     -->
 
     <maintainer status="active" type="person">
-      <!-- for TRESOR AES-NI and i386, 2010 -->
+      <!-- For TRESOR AES-NI and i386, 2010 -->
       <email>tilo.mueller@informatik.uni-erlangen.de</email>
       <name>Tilo Mueller</name>
     </maintainer>
 
     <maintainer status="active" type="person">
-      <!-- for TRESOR (aes-128) i386, 2012 -->
+      <!-- For TRESOR (aes-128) i386, 2012 -->
       <email>johannes@jgoetzfried.de</email>
       <name>Johannes Goetzfried</name>
     </maintainer>
 
     <maintainer status="active" type="person">
-      <!-- for the zen patchset -->
+      <!-- For the zen patchset -->
       <email>jan.steffens@gmail.com</email>
       <name>Jan Alexander Steffens</name>
-      <!-- aka heftig -->
+      <!-- AKA heftig -->
     </maintainer>
   </upstream>
   <use>
-    <flag name="bbrv2">Patches the kernel with BBRv2 TCP congestion control for
-      improved goodput, which is the actual useful data over time alone, than
-      its predecessor with around less than 5 percent retransmission comparable
-      to Cubic but trading off ~5-10 MBps raw throughput, which includes data
-      retransmissions and overhead.</flag>
-    <flag name="bfq-mq">Update the BFQ IO scheduler from single queue to
-      multi-queue in 4.14.x series only.  The multi-queue design was utilized
-      in later kernels.  Updating may present IO related problems, or have
-      hidden unfixed bugs</flag>
-    <flag name="bmq">Patches the kernel to use BMQ CPU scheduler, a more
-      simple scheduler.</flag>
-    <flag name="bmq-quick-fix">Patches the kernel with fixes to BMQ.</flag>
-    <flag name="bzip2">Add support for bzip compression</flag>
-    <flag name="cfi">Ensures that the toolchain is ready for CFI support
-      (for arm64 in production, and for x86_64 in development).  Control
-      Flow Integrity (CFI) is mitigation against forward edge attacks and
-      backward edge attacks (through the shadowcallstack USE flag) to
-      mitigate against arbitrary code execution.</flag>
-    <flag name="cfs">Uses the CFS (Completely Fair Scheduling) CPU scheduler
-      and not apply any third-party CPU scheduler.</flag>
-    <flag name="clang">This is a stronger check for those prefer Clang over
-      GCC and to make sure the prerequisites are met. </flag>
-    <flag name="clang-pgo">Adds experimental Clang PGO support.</flag>
+    <flag name="bbrv2">
+      Patches the kernel with BBRv2 TCP congestion control for improved goodput,
+      which is the actual useful data over time alone, than its predecessor with
+      around less than 5 percent retransmission comparable to Cubic but trading
+      off ~5-10 MBps raw throughput, which includes data retransmissions and
+      overhead.
+    </flag>
+    <flag name="bfq-mq">
+      Update the BFQ IO scheduler from single queue to multi-queue in 4.14.x
+      series only.  The multi-queue design was utilized in later kernels.
+      Updating may present IO related problems, or have hidden unfixed bugs
+    </flag>
+    <flag name="bmq">
+      Patches the kernel to use BMQ CPU scheduler, a more simple scheduler.
+    </flag>
+    <flag name="bmq-quick-fix">
+      Patches the kernel with fixes to BMQ.
+    </flag>
+    <flag name="bzip2">
+      Add support for bzip compression
+    </flag>
+    <flag name="cfi">
+      Ensures that the toolchain is ready for CFI support (for arm64 in
+      production, and for x86_64 in development).  Control Flow Integrity (CFI)
+      is mitigation against forward edge attacks and backward edge attacks
+      (through the shadowcallstack USE flag) to mitigate against arbitrary code
+      execution.
+    </flag>
+    <flag name="cfs">
+      Uses the CFS (Completely Fair Scheduling) CPU scheduler and not apply
+      any third-party CPU scheduler.
+    </flag>
+    <flag name="clang">
+      This is a stronger check for those prefer Clang over GCC and to make sure
+      the prerequisites are met.
+    </flag>
+    <flag name="clang-pgo">
+      Adds experimental Clang PGO support.
+    </flag>
     <flag name="cve_hotfix">Applies patches to resolve CVEs (Common 
       Vulnerabilities and Exposures).  Not enabled by default.
 
@@ -2573,31 +2632,45 @@ https://github.com/dolohow/uksm
       It uses an external script from https://github.com/orsonteodoro/tuxparoni
 
       This USE flag is experimental.
-      </flag>
-    <flag name="disable_debug">Installs scripts to disable debugging, tracing,
-      verbose output or related code paths.</flag>
-    <flag name="exfat">Enables or removes exFAT</flag>
-    <flag name="genpatches">Applies the genkernel patch set.</flag>
-    <flag name="genpatches_1510">Applies the genkernel patch 1510 for
-      protected hardlinks and symlinks during early boot.  Disabled because it
-      may cause indefinte lock up during OOM (or very high memory use) or
-      cause failures in different software during runtime.  Enabling it reverts
+    </flag>
+    <flag name="disable_debug">
+      Installs scripts to disable debugging, tracing, verbose output or related
+      code paths.
+    </flag>
+    <flag name="exfat">
+      Enables or removes exFAT
+    </flag>
+    <flag name="genpatches">
+      Applies the genkernel patch set.
+    </flag>
+    <flag name="genpatches_1510">
+      Applies the genkernel patch 1510 for protected hardlinks and symlinks
+      during early boot.  Disabled because it may cause indefinte lock up during
+      OOM (or very high memory use) or cause failures in different software
+      during runtime.  Enabling it reverts
 https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd415
     </flag>
-    <flag name="gtk">Add support for gconfig, the GTK+2 kernel config editor</flag>
-    <flag name="gzip">Add support for gzip compression</flag>
-    <flag name="futex">Patches the kernel with FUTEX_WAIT_MULTIPLE futex syscall
-      option which may be used in the proton, proton-wine, experimental-wine
-      version 5 or above packages.  It may reduce CPU usage by less than
-      5%.</flag>
-    <flag name="futex2">Patches the kernel with older futex2 syscall
-      specification.  This may reduce the CPU usage by less than 5%.  It is
-      recommended to combine this USE flag with the futex2-proton USE flag as
-      well since no known software uses the syscall's original data
-      structures.</flag>
-    <flag name="futex2-proton">Modifies the syscall data structures to be
-      compatible with experimental-wine version 5.13 or above.  This will
-      break compatibility.</flag>
+    <flag name="gtk">
+      Add support for gconfig, the GTK+2 kernel config editor
+    </flag>
+    <flag name="gzip">
+      Add support for gzip compression
+    </flag>
+    <flag name="futex">
+      Patches the kernel with FUTEX_WAIT_MULTIPLE futex syscall option which may
+      be used in the proton, proton-wine, experimental-wine version 5 or above
+      packages.  It may reduce CPU usage by less than 5%.
+    </flag>
+    <flag name="futex2">
+      Patches the kernel with older futex2 syscall specification.  This may
+      reduce the CPU usage by less than 5%.  It is recommended to combine this
+      USE flag with the futex2-proton USE flag as well since no known software
+      uses the syscall's original data structures.
+    </flag>
+    <flag name="futex2-proton">
+      Modifies the syscall data structures to be compatible with
+      experimental-wine version 5.13 or above.  This will break compatibility.
+    </flag>
     <flag name="kcfi">
       Apply KCFI sanitization for forward edge control flow integrity but
       limited to only indirect calls.
@@ -2607,71 +2680,118 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       feature is still under code review.
 
       See also https://wiki.gentoo.org/wiki//etc/portage/patches
-      </flag>
-    <flag name="lto">Fulfills the ThinLTO requirements.</flag>
-    <flag name="lz4">Add support for lz4 compression</flag>
-    <flag name="lzma">Add support for lzma compression</flag>
-    <flag name="lzo">Add support for lzo compression</flag>
-    <flag name="multigen_lru">Applies the vanilla Multi-Gen LRU patch for
-      improved page reclamation.</flag>
-    <flag name="muqss">Patches the kernel with Con Kolivas patchset and
-      includes his skiplist based MuQSS CPU scheduler.</flag>
-    <flag name="ncurses">Add support for nconfig and menuconfig, the ncurses
-      kernel config editors</flag>
-    <flag name="openssl">Add support for signing modules and kernels</flag>
-    <flag name="pds">Patches the kernel with an alternative skiplist
-      based scheduler.</flag>
-    <flag name="prjc">Applies the Project C CPU scheduler.</flag>
-    <flag name="qt5">Add support for xconfig, the Qt5 kernel config
-      editor</flag>
-    <flag name="rt">Patches the kernel with the PREEMPT_RT patch which tries
-      to minimize non-preemptible parts of the kernel.  It's experimental when
-      combined with other USE flags and patchsets.  Realtime
-      is not recommended for desktop use but for dedicated and isolated
-      setups.  Never give untrusted apps realtime access.  The rt patchset
-      is used by music producers that require low latency audio.</flag>
-    <flag name="shadowcallstack">Ensures that shadow call stack dependencies
-      are installed.  Protects from ROP back edge attacks from arbitary
-      code execution.</flag>
-    <flag name="symlink">Updates the the /usr/src/linux symlink for every
-      newer release.</flag>
-    <flag name="tresor">Controls application of TRESOR, a cold boot resistant
-      AES cipher.  AES keys are stored in registers instead of RAM.  It only
-      supports one device at a time but supports 128-, 192-, 256- bit keys.
-      </flag>
-    <flag name="tresor_aesni">Patches the kernel with cold boot resistant
-      AES hardware accelerated AES-NI support.</flag>
-    <flag name="tresor_i686">Patches the kernel with cold boot resistant
-      AES using SSE for 32 bit systems.</flag>
-    <flag name="tresor_prompt">Enables the TRESOR prompt in the kernel
-      config.</flag>
-    <flag name="tresor_sysfs">Builds the external key setting program.</flag>
-    <flag name="tresor_x86_64">Patches the kernel with cold boot
-      resistant AES using SSE for 64 bit systems.</flag>
-    <flag name="tresor_x86_64-256-bit-key-support">Adds 192- and 256-bit
-      AES key support to the 64-bit sse2 version of TRESOR.</flag>
-    <flag name="uksm">Patches the kernel with the Ultra Kernel Samepage
-      Merging, a type of memory page deduper algorithm.
+    </flag>
+    <flag name="lto">
+      Fulfills the ThinLTO requirements.
+    </flag>
+    <flag name="lz4">
+      Add support for lz4 compression
+    </flag>
+    <flag name="lzma">
+      Add support for lzma compression
+    </flag>
+    <flag name="lzo">
+      Add support for lzo compression
+    </flag>
+    <flag name="multigen_lru">
+      Applies the vanilla Multi-Gen LRU patch for improved page reclamation.
+    </flag>
+    <flag name="muqss">
+      Patches the kernel with Con Kolivas patchset and includes his skiplist
+      based MuQSS CPU scheduler.
+    </flag>
+    <flag name="ncurses">
+      Add support for nconfig and menuconfig, the ncurses kernel config editors
+    </flag>
+    <flag name="openssl">
+      Add support for signing modules and kernels
+    </flag>
+    <flag name="pds">
+      Patches the kernel with an alternative skiplist based scheduler.
+    </flag>
+    <flag name="prjc">
+      Applies the Project C CPU scheduler.
+    </flag>
+    <flag name="qt5">
+      Add support for xconfig, the Qt5 kernel config editor
+    </flag>
+    <flag name="rt">
+      Patches the kernel with the PREEMPT_RT patch which tries to minimize
+      non-preemptible parts of the kernel.  It's experimental when combined with
+      other USE flags and patchsets.  Realtime is not recommended for desktop
+      use but for dedicated and isolated setups.  Never give untrusted apps
+      realtime access.  The rt patchset is used by music producers that require
+      low latency audio.
+    </flag>
+    <flag name="shadowcallstack">
+      Ensures that shadow call stack dependencies are installed.  Protects from
+      ROP back edge attacks from arbitary code execution.
+    </flag>
+    <flag name="symlink">
+      Updates the the /usr/src/linux symlink for every newer release.
+    </flag>
+    <flag name="tresor">
+      Controls application of TRESOR, a cold boot resistant AES cipher.  AES
+      keys are stored in registers instead of RAM.  It only supports one device
+      at a time but supports 128-, 192-, 256- bit keys.
+    </flag>
+    <flag name="tresor_aesni">
+      Patches the kernel with cold boot resistant AES hardware accelerated
+      AES-NI support.
+    </flag>
+    <flag name="tresor_i686">
+      Patches the kernel with cold boot resistant AES using SSE for 32 bit
+      systems.
+    </flag>
+    <flag name="tresor_prompt">
+      Enables the TRESOR prompt in the kernel config.
+    </flag>
+    <flag name="tresor_sysfs">
+      Builds the external key setting program.
+    </flag>
+    <flag name="tresor_x86_64">
+      Patches the kernel with cold boot resistant AES using SSE for 64 bit
+      systems.
+    </flag>
+    <flag name="tresor_x86_64-256-bit-key-support">
+      Adds 192- and 256-bit AES key support to the 64-bit sse2 version of
+      TRESOR.
+    </flag>
+    <flag name="uksm">
+      Patches the kernel with the Ultra Kernel Samepage Merging, a type of
+      memory page deduper algorithm.
 
       Using it may be insecure.  For details, see
-      https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks</flag>
-    <flag name="xz">Add support for xz compression</flag>
-    <flag name="zen-multigen_lru">Enables and sets default time interval between
-      0.1 to 1 second [based on the timer frequency selected] for preventing
-      certain working sets from being OOM-killed via the zen-kernel patchset.
-      The vanilla Multi-Gen LRU patch does not enable time based OOM-kill
-      prevention by default.  For 5.15, it adds the le9ec patch for size based
-      thrash prevention and livelock prevention when clean pages are
-      exausted.</flag>
-    <flag name="zen-muqss">Apply the zen-kernel's version of MuQSS</flag>
-    <flag name="zen-sauce">Patches the kernel with selected Zen kernel.
-      The zen-sauce set contains patches that add drivers or functionality
-      related to gaming, laptops, optimizations, etc.
-     </flag>
-    <flag name="zen-sauce-all">Blanket whitelist all zen-sauce commits</flag>
-    <flag name="zen-tune">Patches the kernel with some Zen Interactive
-      Tuning, particularly those marked INTERACTIVE.
+      https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks
     </flag>
-    <flag name="zstd">Add support for zstd compression</flag>
+    <flag name="xz">
+      Add support for xz compression
+    </flag>
+    <flag name="zen-multigen_lru">
+      Enables and sets default time interval between 0.1 to 1 second [based on
+      the timer frequency selected] for preventing certain working sets from
+      being OOM-killed via the zen-kernel patchset.  The vanilla Multi-Gen LRU
+      patch does not enable time based OOM-kill prevention by default.  For
+      5.15, it adds the le9ec patch for size based thrash prevention and
+      livelock prevention when clean pages are exausted.
+    </flag>
+    <flag name="zen-muqss">
+      Apply the zen-kernel's version of MuQSS
+    </flag>
+    <flag name="zen-sauce">
+      Patches the kernel with selected Zen kernel.  The zen-sauce set contains
+      patches that add drivers or functionality related to gaming, laptops,
+      optimizations, etc.
+    </flag>
+    <flag name="zen-sauce-all">
+      Blanket whitelist all zen-sauce commits
+    </flag>
+    <flag name="zen-tune">
+      Patches the kernel with some Zen Interactive Tuning, particularly those
+      marked INTERACTIVE.
+    </flag>
+    <flag name="zstd">
+      Add support for zstd compression
+    </flag>
   </use>
 </pkgmetadata>
