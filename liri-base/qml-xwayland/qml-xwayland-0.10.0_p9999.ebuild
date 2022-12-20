@@ -56,6 +56,7 @@ pkg_setup() {
 	if ver_test ${QTCORE_PV} -ne ${QTCONCURRENT_PV} ; then
 		die "Qt5Core is not the same version as Qt5Concurrent"
 	fi
+	export EGIT_COMMIT="${EGIT_COMMIT:-98cb78ac81c18e4123fe6885b46282e5ef8dede0}"
 }
 
 src_unpack() {

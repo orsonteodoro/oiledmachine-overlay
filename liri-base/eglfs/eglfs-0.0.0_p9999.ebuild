@@ -59,6 +59,7 @@ pkg_setup() {
 	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
 		die "Qt5Core is not the same version as Qt5Gui"
 	fi
+	export EGIT_COMMIT="${EGIT_COMMIT:-28334707a13a3f488e4302222c292123645b2333}"
 }
 
 src_unpack() {

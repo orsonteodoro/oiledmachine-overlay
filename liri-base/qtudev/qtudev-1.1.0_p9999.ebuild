@@ -57,6 +57,7 @@ pkg_setup() {
 			die "Qt5Core is not the same version as Qt5Test"
 		fi
 	fi
+	export EGIT_COMMIT="${EGIT_COMMIT:-183a3b89fab333bc1f10dcf65eb58a25f8e5be60}"
 }
 
 src_unpack() {
