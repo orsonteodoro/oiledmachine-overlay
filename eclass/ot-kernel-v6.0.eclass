@@ -165,7 +165,7 @@ e7d79ff94bc455715404cbbbf2198c804c05fca0
 1d275a825021bbdc2fa540970785c1685bb4e2f7
 8af5fa437242de44eea587bfbdc0fdff68ab5552
 f9c00496ef042425996fae9ba381cff80d8feaa6
-f5ad9baffac511ec735019da0e8c3e703b6be8b5
+# f5ad9baffac511ec735019da0e8c3e703b6be8b5 # already added
 cde42b413e4952c97a56797a24409221e99db840
 b4e640724b4b3fcc68b7696361fd5985d692d6be
 4cc0bdf878d08c6b43cf4f0031bf2c91a47ff104
@@ -771,9 +771,6 @@ ot-kernel_filter_patch_cb() {
 		_tpatch "${PATCH_OPTS}" "${path}" 8 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-e921a27-fix-for-5.19.10.patch"
 		# Skipped paravirt_types.h, paravirt.c changes with missing paravirt_iret
-	elif [[ "${path}" =~ "cfi-${CFI_KV}-a09066b.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-a09066b-fix-for-5.19.10.patch"
 	elif [[ "${path}" =~ "cfi-${CFI_KV}-aa4fb87.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 7 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-aa4fb87-fix-for-5.15.69.patch"
@@ -782,6 +779,10 @@ ot-kernel_filter_patch_cb() {
 #
 #		# Add this to the end of the cfi commit list
 #		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
+
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-cf9b1da.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 5 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-6.0.14.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

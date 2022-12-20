@@ -736,6 +736,10 @@ ot-kernel_filter_patch_cb() {
 #
 #		# Add this to the end of the cfi commit list
 #		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
+
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-cf9b1da.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-5.15.84.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

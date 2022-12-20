@@ -921,7 +921,7 @@ verify_clang_compiler_updated() {
 				die "Re-emerge =${p}"
 			else
 				# If on the same day it may be broken
-				einfo "Clang and LLVM is up-to-date"
+				einfo "Clang and LLVM are up-to-date"
 			fi
 		fi
 	done

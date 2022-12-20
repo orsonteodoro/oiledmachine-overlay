@@ -147,31 +147,7 @@ aa4fb87a71a95bef81d9742a772d1dc8eb4fceea
 CFI_EXCLUDE_COMMITS=(
 )
 
-KCFI_KV="6.0.0_rc4"
-KCFI_COMMITS=(
-7874060b8118af62ef2a290e80bad6396b4d6ce8
-ea7ab427eb855e507359e343e48fceb75bef7c0b
-49f682d18fa2ff75165dd8a759b80438cf8a0a2b
-a2c012638e54e902ef7f7e84839d25c7ab75d3bb
-393fb8d1a2ccaee35a15d5f30caa8bd34bcdfed5
-74cd76117de71676a7a98d2f3402ca8f50bd0f69
-a831063e41714ba29bb1bee577d7af5fc0164f07
-6250469f6a2f50b9a524ded193d78222f956cd76
-c0845287247897e390318766099811539b0f8e95
-e14faac7bbd02aa38710b701bba3d77038837c97
-66c97e4e2674f9bf19a0918cf515af4b35e4cf77
-e7d79ff94bc455715404cbbbf2198c804c05fca0
-1d275a825021bbdc2fa540970785c1685bb4e2f7
-8af5fa437242de44eea587bfbdc0fdff68ab5552
-f9c00496ef042425996fae9ba381cff80d8feaa6
-f5ad9baffac511ec735019da0e8c3e703b6be8b5
-cde42b413e4952c97a56797a24409221e99db840
-b4e640724b4b3fcc68b7696361fd5985d692d6be
-4cc0bdf878d08c6b43cf4f0031bf2c91a47ff104
-f3e3fe9a55b1e293766b08b2a50ed8151d0f9d67
-ee59863e43532cf1f06369e108f0419d9d294cfd
-bc6f77c6f1f12c7f22c4e7088990c07a3d761990
-)
+# KCFI merged in 6.1
 
 BBRV2_KV="5.13.12"
 BBRV2_VERSION="v2alpha-2022-08-28"
@@ -474,7 +450,6 @@ SRC_URI+="
 	${CFI_SRC_URIS}
 	${CLANG_PGO_URI}
 	${GENPATCHES_URI}
-	${KCFI_SRC_URIS}
 	${PRJC_SRC_URI}
 	${RT_SRC_ALT_URI}
 	${TRESOR_AESNI_SRC_URI}
@@ -512,11 +487,6 @@ SRC_URI+="
 	)
 	genpatches? (
 		${GENPATCHES_URI}
-	)
-	kcfi? (
-		amd64? (
-			${KCFI_SRC_URIS}
-		)
 	)
 	prjc? (
 		${PRJC_SRC_URI}
@@ -754,10 +724,6 @@ ot-kernel_filter_patch_cb() {
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
 
-	elif [[ "${path}" =~ "kcfi-${KCFI_KV}-393fb8d.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/kcfi-393fb8d-fix-for-6.0.1.patch"
-
 	elif [[ "${path}" =~ "cfi-${CFI_KV}-8dfd451.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-8dfd451-fix-for-5.19.10.patch"
@@ -765,6 +731,12 @@ ot-kernel_filter_patch_cb() {
 		# f5bff50 is the same as 7fb10a9
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-7fb10a9-rebase-for-5.18.patch"
 	elif [[ "${path}" =~ "cfi-${CFI_KV}-bd6966b.patch" ]] ; then
+eerror
+eerror "Please use the kcfi USE flag instead."
+eerror "Still investigating alternative CFI patch."
+eerror
+einfo "See cfi-${CFI_KV}-bd6966b.patch"
+die
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-bd6966b-fix-for-5.19.10.patch"
 	elif [[ "${path}" =~ "cfi-${CFI_KV}-3cb32c4.patch" ]] ; then
@@ -785,6 +757,11 @@ ot-kernel_filter_patch_cb() {
 #
 #		# Add this to the end of the cfi commit list
 #		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
+
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-cf9b1da.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 5 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-6.1.patch"
+
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi
