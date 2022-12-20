@@ -19,7 +19,7 @@ DEPEND+="
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	>=dev-util/cmake-3.9
-	dev-libs/blaze
+	dev-cpp/blaze
 	test? ( dev-cpp/gtest )
 "
 EGIT_COMMIT="kalman-v1.0"
