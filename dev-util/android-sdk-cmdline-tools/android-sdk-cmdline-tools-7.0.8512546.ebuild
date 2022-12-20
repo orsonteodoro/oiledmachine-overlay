@@ -23,6 +23,7 @@ LICENSE="
 	MIT
 	W3C
 	W3C-document
+	|| ( LGPL-2.1 Apache-2.0 )
 "
 # Apache-2.0, BSD, MIT - ./cmdline-tools/lib/LICENSE
 # Apache-2.0, BSD, CDDL-1.1 EPL-1.0, MIT, LGPL-2.1  - ./cmdline-tools/NOTICE.txt
