@@ -2620,8 +2620,9 @@ https://github.com/dolohow/uksm
     <flag name="clang-pgo">
       Adds experimental Clang PGO support.
     </flag>
-    <flag name="cve_hotfix">Applies patches to resolve CVEs (Common 
-      Vulnerabilities and Exposures).  Not enabled by default.
+    <flag name="cve_hotfix">
+      Applies patches to resolve CVEs (Common Vulnerabilities and Exposures).
+      Not enabled by default.
 
       Currently, not all patch fixes under code review, custom kernel vendors
       from mobile hardware manufacturers, or major distro advisories,
