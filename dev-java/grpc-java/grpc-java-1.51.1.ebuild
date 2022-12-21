@@ -1949,12 +1949,6 @@ src_compile() {
 # For arches, see
 # https://docs.gradle.org/current/javadoc/org/gradle/nativeplatform/platform/Architecture.html
 
-# Requires it done at root or as limited user (preferred)
-#	if use android ; then
-#		yes | "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" "build-tools;28.0.3" || die
-#		yes | "${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager" "platforms;android-29" || die
-#	fi
-
 	# See build.gradle
 	local arch_flag
 	if [[ "${ABI}" =~ "amd64" ]] ; then
