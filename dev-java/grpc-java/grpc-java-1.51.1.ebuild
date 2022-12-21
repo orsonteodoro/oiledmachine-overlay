@@ -21,11 +21,13 @@ THIRD_PARTY_LICENSES="
 	CDDL-1.1
 	CDDL-1.0
 	EPL-1.0
+	GPL-2-with-classpath-exception
 	ISC
 	LGPL-2.1+
 	minipack
 	MIT
 	openssl
+	W3C
 	W3C-Software-and-Document-Notice-and-License
 	|| ( LGPL-2.1 Apache-2.0 )
 "
