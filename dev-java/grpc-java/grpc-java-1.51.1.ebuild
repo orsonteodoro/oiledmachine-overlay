@@ -10,9 +10,53 @@ inherit flag-o-matic java-utils-2
 
 DESCRIPTION="High-performance RPC framework (Java libraries)"
 HOMEPAGE="https://grpc.io"
+THIRD_PARTY_LICENSES="
+	custom
+	( Apache-2.0 all-rights-reserved )
+	Apache-1.0
+	Apache-2.0
+	BSD
+	BSD-2
+	BSD-4
+	CDDL-1.1
+	CDDL-1.0
+	EPL-1.0
+	ISC
+	LGPL-2.1+
+	minipack
+	MIT
+	openssl
+	W3C-Software-and-Document-Notice-and-License
+	|| ( LGPL-2.1 Apache-2.0 )
+"
 LICENSE="
 	Apache-2.0
+	${THIRD_PARTY_LICENSES}
 "
+
+# Apache-2.0, MIT, BSD - ./repository/com/android/tools/build/builder/4.2.0/builder-4.2.0/LICENSE
+# Apache-2.0, W3C-Software-and-Document-Notice-and-License - ./repository/com/google/appengine/appengine-api-1.0-sdk/1.9.59/appengine-api-1.0-sdk-1.9.59/org/apache/geronimo/mail/LICENSE
+# Apache-2.0, LGPL-2.1+ - ./repository/net/java/dev/jna/jna-platform/5.6.0/jna-platform-5.6.0/META-INF/LICENSE
+# Apache-2.0, openssl, ISC - ./repository/io/grpc/grpc-netty-shaded/1.43.2/grpc-netty-shaded-1.43.2/META-INF/NOTICE.txt
+# Apache-2.0 all-rights-reserved - ./repository/org/apache/commons/commons-math3/3.2/commons-math3-3.2/META-INF/NOTICE.txt
+# Apache-2.0, W3C, custom, Apache-1.1, EPL-1.0, SAX-PD, MIT - ./repository/org/jvnet/staxex/stax-ex/1.8.1/stax-ex-1.8.1/META-INF/NOTICE.md
+# Apache-2.0, minpack, BSD, BSD-2 - ./repository/org/apache/commons/commons-math3/3.2/commons-math3-3.2/META-INF/LICENSE.txt
+# Apache-2.0, W3C-Software-and-Document-Notice-and-License, SAX2-PD - ./repository/org/apache/ant/ant-launcher/1.10.11/ant-launcher-1.10.11/META-INF/LICENSE.txt
+# Apache-1.1 - ./repository/org/codehaus/plexus/plexus-utils/3.4.1/plexus-utils-3.4.1/licenses/extreme.indiana.edu.license.TXT
+# BSD - ./repository/jakarta/xml/bind/jakarta.xml.bind-api/2.3.2/jakarta.xml.bind-api-2.3.2/META-INF/LICENSE.md
+# BSD-2 - ./repository/org/codehaus/plexus/plexus-utils/3.4.1/plexus-utils-3.4.1/licenses/javolution.license.TXT
+# BSD-4 - ./repository/org/jdom/jdom2/2.0.6/jdom2-2.0.6/META-INF/LICENSE.txt
+# CDDL-1.1, GPL-2-with-classpath-exception - ./repository/javax/annotation/javax.annotation-api/1.3.2/javax.annotation-api-1.3.2/META-INF/LICENSE.txt
+# CDDL-1.0 - ./repository/javax/activation/activation/1.1/activation-1.1/META-INF/LICENSE.txt
+# EPL-1.0 - ./repository/junit/junit/4.12/junit-4.12/LICENSE-junit.txt
+# GPL-2-with-classpath-exception, || ( LGPL-2.1 Apache-2.0), MIT - ./repository/org/checkerframework/dataflow-errorprone/3.15.0/dataflow-errorprone-3.15.0/META-INF/LICENSE.txt
+# GPL-2-with-classpath-exception - ./repository/org/openjdk/jmh/jmh-generator-asm/1.29/jmh-generator-asm-1.29/LICENSE
+# MIT - ./repository/org/checkerframework/checker-qual/3.8.0/checker-qual-3.8.0/META-INF/LICENSE.txt
+# openssl - ./repository/io/grpc/grpc-netty-shaded/1.43.2/grpc-netty-shaded-1.43.2/META-INF/license/LICENSE.aix-netbsd.txt
+# openssl, BSD, ISC - ./repository/io/grpc/grpc-netty-shaded/1.43.2/grpc-netty-shaded-1.43.2/META-INF/license/LICENSE.boringssl.txt
+# SAX2-PD - ./repository/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01/license/LICENSE.sax.txt
+# W3C-Software-and-Document-Notice-and-License - ./repository/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01/license/LICENSE.dom-software.txt
+
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~s390 ~x86"
 IUSE+=" android doc source test"
