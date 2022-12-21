@@ -32,7 +32,7 @@ THIRD_PARTY_LICENSES="
 	W3C
 	W3C-Document-License
 	W3C-Software-Notice-and-License
-	|| ( LGPL-2.1 Apache-2.0 )
+	|| ( LGPL-2.1+ Apache-2.0 )
 	|| ( Apache-2.0 Apache-1.1 BSD public-domain ( custom Apache-1.1 ) )
 "
 LICENSE="
