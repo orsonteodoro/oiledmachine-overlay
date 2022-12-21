@@ -1871,8 +1871,6 @@ unpack_gradle()
 			| sed -e "1s|[.]|/|g" \
 			| tr "\n" "/" \
 			| sed -e "s|/$||g")
-#		d_rel=""
-#		local d_base="${HOME}/.gradle/caches/modules-2/files-2.1"
 		local d_base="${WORKDIR}/.m2/repository"
 		local d="${d_base}/${d_rel}"
 		mkdir -p "${d}" || die
@@ -1921,7 +1919,8 @@ src_configure() {
 	if use android ; then
 		echo "android.useAndroidX=true" > gradle.properties || die
 	fi
-	local bn=$(basename $(realpath "${ESYSROOT}/$(get_libdir)/ld-linux-"*".so.2") | sed  -e 's|[.]|\\.|g')
+	local bn=$(basename $(realpath "${ESYSROOT}/$(get_libdir)/ld-linux-"*".so.2") \
+		| sed  -e 's|[.]|\\.|g')
 	export ARTIFACT_CHECK_EXTRA="${bn}"
 }
 
@@ -2040,7 +2039,8 @@ einfo "gradle build ${flags} ${args[@]}"
 einfo
 einfo "Update GRADLE_PKGS_URIS:"
 einfo
-		grep -o -E -r -e "http[s]?://.*(\.jar|\.pom|\.signature) " "${T}/build.log" \
+		grep -o -E -r -e "http[s]?://.*(\.jar|\.pom|\.signature) " \
+			"${T}/build.log" \
 			| sort \
 			| uniq \
 			| sed -e "s| ||g"
@@ -2077,11 +2077,17 @@ ewarn "Skipping ${HOME}/.m2/repository/io/grpc/${m}/${PV}/${m}-${PV}.jar and rel
 			continue
 		fi
 		java-pkg_jarinto "/usr/share/${PN}/lib"
-		java-pkg_newjar "${HOME}/.m2/repository/io/grpc/${m}/${PV}/${m}-${PV}.jar" "${m}.jar"
+		java-pkg_newjar \
+			"${HOME}/.m2/repository/io/grpc/${m}/${PV}/${m}-${PV}.jar" \
+			"${m}.jar"
 		java-pkg_jarinto "/usr/share/${PN}/html/api"
-		use doc && java-pkg_newjar "${HOME}/.m2/repository/io/grpc/${m}/${PV}/${m}-${PV}-javadoc.jar" "${m}-javadoc.jar"
+		use doc && java-pkg_newjar \
+			"${HOME}/.m2/repository/io/grpc/${m}/${PV}/${m}-${PV}-javadoc.jar" \
+			"${m}-javadoc.jar"
 		java-pkg_jarinto "/usr/share/${PN}/source"
-		use source && java-pkg_newjar "${HOME}/.m2/repository/io/grpc/${m}/${PV}/${m}-${PV}-sources.jar" "${m}-sources.jar"
+		use source && java-pkg_newjar \
+			"${HOME}/.m2/repository/io/grpc/${m}/${PV}/${m}-${PV}-sources.jar" \
+			"${m}-sources.jar"
 	done
 
 	einstalldocs
