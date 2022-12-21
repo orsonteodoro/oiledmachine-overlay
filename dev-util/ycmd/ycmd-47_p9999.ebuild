@@ -53,7 +53,7 @@ LICENSE="
 			all-rights-reserved
 			MPL-1.1
 			W3C
-			W3C-document
+			W3C-Document-License
 		)
 	)
 	javascript? (

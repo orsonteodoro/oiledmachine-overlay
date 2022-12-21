@@ -51,7 +51,7 @@ LICENSE="
 			MPL-1.1
 			Unicode-DFS-2016
 			W3C
-			W3C-document
+			W3C-Document-License
 		)
 	)
 	javascript? (
