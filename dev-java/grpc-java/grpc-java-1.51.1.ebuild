@@ -1,3 +1,4 @@
+# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -2085,3 +2086,5 @@ ewarn "Skipping ${HOME}/.m2/repository/io/grpc/${m}/${PV}/${m}-${PV}.jar and rel
 
 	einstalldocs
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
