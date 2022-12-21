@@ -12,9 +12,6 @@ DESCRIPTION="High-performance RPC framework (Java libraries)"
 HOMEPAGE="https://grpc.io"
 LICENSE="
 	Apache-2.0
-	android? (
-		android
-	)
 "
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~s390 ~x86"
