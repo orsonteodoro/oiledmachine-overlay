@@ -13,8 +13,8 @@ IUSE="4_14 5_4 5_10 5_15"
 RDEPEND="
 	4_14? ( ~sys-kernel/ot-sources-4.14.302 )
 	5_4? ( ~sys-kernel/ot-sources-5.4.228 )
-	5_10? ( ~sys-kernel/ot-sources-5.10.160 )
-	5_15? ( ~sys-kernel/ot-sources-5.15.84 )
+	5_10? ( ~sys-kernel/ot-sources-5.10.161 )
+	5_15? ( ~sys-kernel/ot-sources-5.15.85 )
 "
 REQUIRED_USE=""
 SLOT="0/${PV}"
