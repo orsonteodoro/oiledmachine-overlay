@@ -13,23 +13,27 @@ HOMEPAGE="https://grpc.io"
 THIRD_PARTY_LICENSES="
 	custom
 	( Apache-2.0 all-rights-reserved )
+	( Apache-2.0 || ( MIT GPL-2+ ) )
+	( custom Apache-1.1 )
 	Apache-1.0
 	Apache-2.0
 	BSD
 	BSD-2
 	BSD-4
+	CDDL
 	CDDL-1.1
-	CDDL-1.0
 	EPL-1.0
 	GPL-2-with-classpath-exception
 	ISC
 	LGPL-2.1+
-	minipack
+	minpack
 	MIT
 	openssl
 	W3C
-	W3C-Software-and-Document-Notice-and-License
+	W3C-Document-License
+	W3C-Software-Notice-and-License
 	|| ( LGPL-2.1 Apache-2.0 )
+	|| ( Apache-2.0 Apache-1.1 BSD public-domain ( custom Apache-1.1 ) )
 "
 LICENSE="
 	Apache-2.0
@@ -37,27 +41,30 @@ LICENSE="
 "
 
 # Apache-2.0, MIT, BSD - ./repository/com/android/tools/build/builder/4.2.0/builder-4.2.0/LICENSE
-# Apache-2.0, W3C-Software-and-Document-Notice-and-License - ./repository/com/google/appengine/appengine-api-1.0-sdk/1.9.59/appengine-api-1.0-sdk-1.9.59/org/apache/geronimo/mail/LICENSE
+# Apache-2.0, W3C-Software-Notice-and-License - ./repository/com/google/appengine/appengine-api-1.0-sdk/1.9.59/appengine-api-1.0-sdk-1.9.59/org/apache/geronimo/mail/LICENSE
 # Apache-2.0, LGPL-2.1+ - ./repository/net/java/dev/jna/jna-platform/5.6.0/jna-platform-5.6.0/META-INF/LICENSE
 # Apache-2.0, openssl, ISC - ./repository/io/grpc/grpc-netty-shaded/1.43.2/grpc-netty-shaded-1.43.2/META-INF/NOTICE.txt
 # Apache-2.0 all-rights-reserved - ./repository/org/apache/commons/commons-math3/3.2/commons-math3-3.2/META-INF/NOTICE.txt
 # Apache-2.0, W3C, custom, Apache-1.1, EPL-1.0, SAX-PD, MIT - ./repository/org/jvnet/staxex/stax-ex/1.8.1/stax-ex-1.8.1/META-INF/NOTICE.md
 # Apache-2.0, minpack, BSD, BSD-2 - ./repository/org/apache/commons/commons-math3/3.2/commons-math3-3.2/META-INF/LICENSE.txt
-# Apache-2.0, W3C-Software-and-Document-Notice-and-License, SAX2-PD - ./repository/org/apache/ant/ant-launcher/1.10.11/ant-launcher-1.10.11/META-INF/LICENSE.txt
+# Apache-2.0, W3C-Software-Notice-and-License, SAX2-PD - ./repository/org/apache/ant/ant-launcher/1.10.11/ant-launcher-1.10.11/META-INF/LICENSE.txt
 # Apache-1.1 - ./repository/org/codehaus/plexus/plexus-utils/3.4.1/plexus-utils-3.4.1/licenses/extreme.indiana.edu.license.TXT
 # BSD - ./repository/jakarta/xml/bind/jakarta.xml.bind-api/2.3.2/jakarta.xml.bind-api-2.3.2/META-INF/LICENSE.md
+# BSD, (Apache-2.0 W3C-Software-Notice-and-License public-domain), MIT, (custom Apache-1.1), pending [Apache-2.0], (Apache-2.0 || (MIT GPL-1.0+)), SAX-PD, || ( Apache-2.0 Apache-1.1 BSD public-domain (custom Apache-1.1) ) - ./repository/com/sun/istack/istack-commons-runtime/3.0.8/istack-commons-runtime-3.0.8/META-INF/NOTICE.md
 # BSD-2 - ./repository/org/codehaus/plexus/plexus-utils/3.4.1/plexus-utils-3.4.1/licenses/javolution.license.TXT
 # BSD-4 - ./repository/org/jdom/jdom2/2.0.6/jdom2-2.0.6/META-INF/LICENSE.txt
 # CDDL-1.1, GPL-2-with-classpath-exception - ./repository/javax/annotation/javax.annotation-api/1.3.2/javax.annotation-api-1.3.2/META-INF/LICENSE.txt
 # CDDL-1.0 - ./repository/javax/activation/activation/1.1/activation-1.1/META-INF/LICENSE.txt
 # EPL-1.0 - ./repository/junit/junit/4.12/junit-4.12/LICENSE-junit.txt
-# GPL-2-with-classpath-exception, || ( LGPL-2.1 Apache-2.0), MIT - ./repository/org/checkerframework/dataflow-errorprone/3.15.0/dataflow-errorprone-3.15.0/META-INF/LICENSE.txt
+# GPL-2-with-classpath-exception, || ( LGPL-2.1 Apache-2.0 ), MIT - ./repository/org/checkerframework/dataflow-errorprone/3.15.0/dataflow-errorprone-3.15.0/META-INF/LICENSE.txt
 # GPL-2-with-classpath-exception - ./repository/org/openjdk/jmh/jmh-generator-asm/1.29/jmh-generator-asm-1.29/LICENSE
 # MIT - ./repository/org/checkerframework/checker-qual/3.8.0/checker-qual-3.8.0/META-INF/LICENSE.txt
 # openssl - ./repository/io/grpc/grpc-netty-shaded/1.43.2/grpc-netty-shaded-1.43.2/META-INF/license/LICENSE.aix-netbsd.txt
 # openssl, BSD, ISC - ./repository/io/grpc/grpc-netty-shaded/1.43.2/grpc-netty-shaded-1.43.2/META-INF/license/LICENSE.boringssl.txt
 # SAX2-PD - ./repository/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01/license/LICENSE.sax.txt
-# W3C-Software-and-Document-Notice-and-License - ./repository/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01/license/LICENSE.dom-software.txt
+# W3C-Document-License - ./repository/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01/license/LICENSE.dom-documentation.txt
+# W3C-Software-Notice-and-License - ./repository/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01/license/LICENSE.dom-software.txt
+# Apache-2.0, W3C-Software-Notice-and-License - ./repository/org/apache/ant/ant-launcher/1.10.11/ant-launcher-1.10.11/META-INF/LICENSE.txt
 
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~s390 ~x86"
@@ -87,11 +94,11 @@ BDEPEND+="
 	${JDK_DEPEND}
 	dev-java/gradle-bin:${GRADLE_PV}
 	android? (
-		>=dev-util/android-ndk-19
+		dev-util/android-sdk-update-manager
 		dev-util/android-platform:29
 		dev-util/android-platform:30
 		dev-util/android-build-tools:30.0.2
-		dev-util/android-sdk-cmdline-tools
+		dev-util/android-sdk-commandlinetools
 	)
 "
 
@@ -1972,10 +1979,9 @@ src_compile() {
 	einfo "HOME:\t\t\t${HOME}"
 	export USER_HOME="${HOME}"
 	export GRADLE_USER_HOME="${USER_HOME}/.gradle"
-	export ANDROID_HOME="${ESYSROOT}/opt/android-sdk-update-manager"
-	export ANDROID_SDK_ROOT="${ANDROID_HOME}"
-	export ANDROID_TOOLS="${ESYSROOT}/opt/android-sdk-update-manager/tools"
-	export ANDROID_PLATFORM_TOOLS="${ESYSROOT}/opt/android-sdk-update-manager/platform-tools"
+	export ANDROID_SDK_ROOT="${ESYSROOT}/${ANDROID_HOME}"
+	export ANDROID_TOOLS="${ESYSROOT}/${ANDORID_HOME}/tools"
+	export ANDROID_PLATFORM_TOOLS="${ESYSROOT}/${ANDROID_HOME}/platform-tools"
 	export ANDROID_SDK_HOME="${HOME}/.android"
 	mkdir -p "${ANDROID_SDK_HOME}" || die
 	export PATH="${ESYSROOT}/usr/share/gradle-bin-${GRADLE_PV}/bin:${ANDROID_TOOLS}:${PLATFORM_TOOLS}:${PATH}"
@@ -2054,6 +2060,16 @@ src_compile() {
 		":grpc-testing-proto"
 		":grpc-xds"
 	)
+
+	if use android ; then
+		TG+=(
+			":grpc-android"
+			":grpc-android-interop-testing"
+			":grpc-binder"
+			":grpc-cronet"
+		)
+	fi
+
 	if ! use doc ; then
 		local t
 		for t in ${TG[@]} ; do
@@ -2071,6 +2087,11 @@ src_compile() {
 	fi
 
 	export 'GRADLE_OPTS=-Dorg.gradle.jvmargs='\''-Xmx1g'\'''
+	export 'JAVA_OPTS=-Duser.home='\'"${WORKDIR}/homedir"\'''
+	mkdir -p "${WORKDIR}/homedir" || die
+
+einfo "GRADLE_OPTS:\t\t\t${GRADLE_OPTS}"
+einfo "JAVA_OPTS:\t\t\t${JAVA_OPTS}"
 
 einfo "gradle build ${flags} ${args[@]}"
 
