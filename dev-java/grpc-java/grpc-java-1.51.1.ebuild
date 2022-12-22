@@ -1979,8 +1979,9 @@ src_compile() {
 	einfo "HOME:\t\t\t${HOME}"
 	export USER_HOME="${HOME}"
 	export GRADLE_USER_HOME="${USER_HOME}/.gradle"
+	[[ -z "${ANDROID_HOME}" ]] && die "You need to \`source /etc/profile\`"
 	export ANDROID_SDK_ROOT="${ESYSROOT}/${ANDROID_HOME}"
-	export ANDROID_TOOLS="${ESYSROOT}/${ANDORID_HOME}/tools"
+	export ANDROID_TOOLS="${ESYSROOT}/${ANDROID_HOME}/tools"
 	export ANDROID_PLATFORM_TOOLS="${ESYSROOT}/${ANDROID_HOME}/platform-tools"
 	export ANDROID_SDK_HOME="${HOME}/.android"
 	mkdir -p "${ANDROID_SDK_HOME}" || die
@@ -2024,6 +2025,7 @@ src_compile() {
 		-Djava.util.prefs.userRoot="${USER_HOME}/.java/.userPrefs"
 		-Dmaven.repo.local="${USER_HOME}/.m2/repository"
 		-Dorg.gradle.parallel=true
+		-Duser.home="${WORKDIR}/homedir"
 		-i
 		-Pprotoc="${ESYSROOT}/usr/bin/protoc"
 		-PskipAndroid=$(usex !android "true" "false")
@@ -2087,11 +2089,9 @@ src_compile() {
 	fi
 
 	export 'GRADLE_OPTS=-Dorg.gradle.jvmargs='\''-Xmx1g'\'''
-	export 'JAVA_OPTS=-Duser.home='\'"${WORKDIR}/homedir"\'''
 	mkdir -p "${WORKDIR}/homedir" || die
 
 einfo "GRADLE_OPTS:\t\t\t${GRADLE_OPTS}"
-einfo "JAVA_OPTS:\t\t\t${JAVA_OPTS}"
 
 einfo "gradle build ${flags} ${args[@]}"
 
