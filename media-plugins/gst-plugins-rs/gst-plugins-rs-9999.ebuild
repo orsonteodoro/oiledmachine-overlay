@@ -4,7 +4,7 @@
 
 EAPI=8
 
-EGIT_COMMIT_FALLBACK="42385c81becabb075e0edfbbf2a9ec1376df6edc" # Dec 14, 2022
+EGIT_COMMIT_FALLBACK="71c268da14045b50d1309de7533a9f295bf78e6d" # Dec 22, 2022
 
 MY_PV="9999"
 
@@ -167,6 +167,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-9999-modular-build.patch"
 	"${FILESDIR}/${PN}-0.6.0_p20210607-rename-csound-ref.patch"
 )
+EXPECTED_BUILD_FILES_FINGERPRINT="\
+3de28ab23009080555ed9d45c5c7300b8f2bbe5e9787f866672f0785f58a73f0\
+9752d95d6dc5eb02069a450f8d54d19cb695aa5a9e060ffc752cbbbc7042677b\
+"
 
 pkg_setup() {
 	if ldd /usr/bin/cargo-cbuild | grep -q -e "libgit2.so.1.4" ; then
@@ -295,11 +299,6 @@ einfo "LLVM=${LLVM_MAX_SLOT}"
 
 	meson_src_configure
 }
-
-EXPECTED_BUILD_FILES_FINGERPRINT="\
-be1701ba39acb03b4e6209afde99db9d8c87016590e91f765df536ae37dcd6af\
-7bb6c5a17379bf6323a06fe3fc7c6cf1604753ade80d26711b7d1667aeefed6c\
-"
 
 src_unpack() {
 	if use fallback-commit ; then
