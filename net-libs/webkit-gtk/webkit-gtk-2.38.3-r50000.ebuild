@@ -6,11 +6,11 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.1)
+# ab = WEBKITGTK_API_VERSION version (5.0)
 # c = reserved
 # de = ebuild revision
 
-# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2/Source/WebKit/Configurations/Version.xcconfig
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
 LLVM_MAX_SLOT=14 # This should not be more than Mesa's package LLVM_MAX_SLOT
@@ -24,7 +24,7 @@ inherit check-linker check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr li
 multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs uopts
 inherit cflags-depends
 
-DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/2 support)"
+DESCRIPTION="Open source web browser engine (GTK 4 with HTTP/2 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
@@ -244,17 +244,17 @@ LICENSE="
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
 
-API_VERSION="4.1"
+API_VERSION="5.0"
 UOPTS_IMPLS="_${API_VERSION}"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 4.1
-CURRENT="2"
-AGE="2"
+# WEBKITGTK_API_VERSION is 5.0
+CURRENT="0"
+AGE="0"
 SOVERSION=$((${CURRENT} - ${AGE}))
-SLOT="${API_VERSION}/${SOVERSION}"
+SLOT="${API_VERSION%.*}/${SOVERSION}"
 # SLOT=5/0    GTK4 SOUP3
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4/37   GTK3 SOUP2
@@ -273,7 +273,7 @@ uk vi zh_CN
 # For codecs, see
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L49
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp#L280
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
 
 GST_ACODECS_IUSE="
 aac
@@ -307,7 +307,7 @@ MSE_VCODECS_IUSE="
 "
 
 # Based on distro package file lists and
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2/Tools/glib/dependencies
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Tools/glib/dependencies
 DEFAULT_GST_PLUGINS="
 +a52
 +aac
@@ -506,17 +506,17 @@ REQUIRED_USE+="
 # This means also you cannot use the geolocation feature.
 
 # For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2/Tools/buildstream/elements/sdk-platform.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2/Tools/gtk/install-dependencies
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2/Tools/gtk/dependencies
-#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.38.2/Tools/glib/dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Tools/buildstream/elements/sdk-platform.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Tools/gtk/dependencies
+#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.38.3/Tools/glib/dependencies
 #   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
 #   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
 
@@ -560,7 +560,7 @@ MESA_PV="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
@@ -573,6 +573,7 @@ RDEPEND+="
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
+	>=gui-libs/gtk-3.98.5:4[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	>=media-libs/fontconfig-2.8.0:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.4.2:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-0.9.18:=[${MULTILIB_USEDEP},icu(+)]
@@ -582,7 +583,6 @@ RDEPEND+="
 	>=net-libs/libsoup-2.99.9:3.0[${MULTILIB_USEDEP},introspection?]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
-	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	avif? (
 		>=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}]
@@ -813,8 +813,8 @@ einfo
 		CC=$(tc-getCC)
 		CXX=$(tc-getCXX)
 		if ! test-flag-CXX -std=c++${CXX_STD} ; then
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2/Source/cmake/WebKitCommon.cmake#L72
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.2/Source/cmake/OptionsCommon.cmake
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/cmake/WebKitCommon.cmake#L72
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/cmake/OptionsCommon.cmake
 eerror
 eerror "You need at least GCC ${GCC_PV} or Clang >= ${CLANG_PV} for"
 eerror "C++${CXX_STD} specific compiler flags"
@@ -867,6 +867,10 @@ ewarn
 }
 
 pkg_setup() {
+ewarn
+ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
+ewarn "It is currently not recommended due to rendering bug(s)."
+ewarn
 einfo
 einfo "This is the stable branch."
 einfo
@@ -957,8 +961,8 @@ echo "${actual_list_raw}"
 }
 
 EXPECTED_BUILD_FINGERPRINT="\
-49e07ccede973ffcbe759e92891cf9b2bb81f1758c3336008ee1a02f10bde3c1\
-5e6990e24b5976f3c94c1dcde3328eca66e9406cb5cdc9c4556d2e5c9e15f8f8\
+8e8a8efb80f2d4d8e4a2ebc27d8a470f07c12d59aa87cf6c4020289bbd0d3e82\
+534f166e98d780138d6a0d9889a64c41d8625b1ce0a592883a18d50c54ddf877\
 "
 EXPECTED_BUILD_FINGERPRINT_WEBRTC="\
 ce7a0164ea0da74de32de8eeac7e541c29355542710f270c2fc6125309315194\
@@ -1177,7 +1181,7 @@ eerror
 		-DUSE_AVIF=$(usex avif)
 		-DUSE_GSTREAMER_TRANSCODER=$(usex mediarecorder)
 		-DUSE_GSTREAMER_WEBRTC=$(usex gstwebrtc)
-		-DUSE_GTK4=OFF
+		-DUSE_GTK4=ON
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
