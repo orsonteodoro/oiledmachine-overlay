@@ -1,0 +1,663 @@
+--- a/grpc.gemspec	2022-12-07 15:49:12.000000000 -0800
++++ b/grpc.gemspec	2022-12-23 13:39:20.542901280 -0800
+@@ -1549,333 +1549,6 @@ Gem::Specification.new do |s|
+   s.files += %w( src/core/tsi/transport_security_grpc.cc )
+   s.files += %w( src/core/tsi/transport_security_grpc.h )
+   s.files += %w( src/core/tsi/transport_security_interface.h )
+-  s.files += %w( third_party/abseil-cpp/absl/algorithm/algorithm.h )
+-  s.files += %w( third_party/abseil-cpp/absl/algorithm/container.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/attributes.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/call_once.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/casts.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/config.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/const_init.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/dynamic_annotations.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/atomic_hook.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/cycleclock.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/cycleclock.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/direct_mmap.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/dynamic_annotations.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/endian.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/errno_saver.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/fast_type_id.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/hide_ptr.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/identity.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/inline_variable.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/invoke.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/low_level_alloc.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/low_level_alloc.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/low_level_scheduling.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/per_thread_tls.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/prefetch.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/raw_logging.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/raw_logging.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/scheduling_mode.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/spinlock.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/spinlock.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/spinlock_akaros.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/spinlock_linux.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/spinlock_posix.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/spinlock_wait.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/spinlock_wait.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/spinlock_win32.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/strerror.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/strerror.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/sysinfo.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/sysinfo.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/thread_annotations.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/thread_identity.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/thread_identity.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/throw_delegate.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/throw_delegate.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/tsan_mutex_interface.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/unaligned_access.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/unscaledcycleclock.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/base/internal/unscaledcycleclock.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/log_severity.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/base/log_severity.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/macros.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/optimization.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/options.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/policy_checks.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/port.h )
+-  s.files += %w( third_party/abseil-cpp/absl/base/thread_annotations.h )
+-  s.files += %w( third_party/abseil-cpp/absl/container/fixed_array.h )
+-  s.files += %w( third_party/abseil-cpp/absl/container/flat_hash_map.h )
+-  s.files += %w( third_party/abseil-cpp/absl/container/flat_hash_set.h )
+-  s.files += %w( third_party/abseil-cpp/absl/container/inlined_vector.h )
+-  s.files += %w( third_party/abseil-cpp/absl/container/internal/common.h )
+-  s.files += %w( third_party/abseil-cpp/absl/container/internal/compressed_tuple.h )
+-  s.files += %w( third_party/abseil-cpp/absl/container/internal/container_memory.h )
+-  s.files += %w( third_party/abseil-cpp/absl/container/internal/hash_function_defaults.h )
+-  s.files += %w( third_party/abseil-cpp/absl/container/internal/hash_policy_traits.h )
+-  s.files += %w( third_party/abseil-cpp/absl/container/internal/hashtable_debug_hooks.h )
+-  s.files += %w( third_party/abseil-cpp/absl/container/internal/hashtablez_sampler.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/container/internal/hashtablez_sampler.h )
+-  s.files += %w( third_party/abseil-cpp/absl/container/internal/hashtablez_sampler_force_weak_definition.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/container/internal/inlined_vector.h )
+-  s.files += %w( third_party/abseil-cpp/absl/container/internal/layout.h )
+-  s.files += %w( third_party/abseil-cpp/absl/container/internal/raw_hash_map.h )
+-  s.files += %w( third_party/abseil-cpp/absl/container/internal/raw_hash_set.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/container/internal/raw_hash_set.h )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/address_is_readable.h )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/demangle.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/demangle.h )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.h )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/stacktrace_aarch64-inl.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/stacktrace_arm-inl.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/stacktrace_config.h )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/stacktrace_emscripten-inl.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/stacktrace_generic-inl.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/stacktrace_powerpc-inl.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/stacktrace_riscv-inl.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/stacktrace_unimplemented-inl.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/stacktrace_win32-inl.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/stacktrace_x86-inl.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/symbolize.h )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/vdso_support.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/internal/vdso_support.h )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/stacktrace.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/stacktrace.h )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/symbolize.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/symbolize.h )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/symbolize_darwin.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/symbolize_elf.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/symbolize_emscripten.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/symbolize_unimplemented.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/debugging/symbolize_win32.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/functional/any_invocable.h )
+-  s.files += %w( third_party/abseil-cpp/absl/functional/bind_front.h )
+-  s.files += %w( third_party/abseil-cpp/absl/functional/function_ref.h )
+-  s.files += %w( third_party/abseil-cpp/absl/functional/internal/any_invocable.h )
+-  s.files += %w( third_party/abseil-cpp/absl/functional/internal/front_binder.h )
+-  s.files += %w( third_party/abseil-cpp/absl/functional/internal/function_ref.h )
+-  s.files += %w( third_party/abseil-cpp/absl/hash/hash.h )
+-  s.files += %w( third_party/abseil-cpp/absl/hash/internal/city.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/hash/internal/city.h )
+-  s.files += %w( third_party/abseil-cpp/absl/hash/internal/hash.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/hash/internal/hash.h )
+-  s.files += %w( third_party/abseil-cpp/absl/hash/internal/low_level_hash.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/hash/internal/low_level_hash.h )
+-  s.files += %w( third_party/abseil-cpp/absl/memory/memory.h )
+-  s.files += %w( third_party/abseil-cpp/absl/meta/type_traits.h )
+-  s.files += %w( third_party/abseil-cpp/absl/numeric/bits.h )
+-  s.files += %w( third_party/abseil-cpp/absl/numeric/int128.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/numeric/int128.h )
+-  s.files += %w( third_party/abseil-cpp/absl/numeric/int128_have_intrinsic.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/numeric/int128_no_intrinsic.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/numeric/internal/bits.h )
+-  s.files += %w( third_party/abseil-cpp/absl/numeric/internal/representation.h )
+-  s.files += %w( third_party/abseil-cpp/absl/profiling/internal/exponential_biased.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/profiling/internal/exponential_biased.h )
+-  s.files += %w( third_party/abseil-cpp/absl/profiling/internal/sample_recorder.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/bernoulli_distribution.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/beta_distribution.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/discrete_distribution.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/random/discrete_distribution.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/distributions.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/exponential_distribution.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/gaussian_distribution.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/random/gaussian_distribution.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/distribution_caller.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/fast_uniform_bits.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/fastmath.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/generate_real.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/iostream_state_saver.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/nonsecure_base.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/pcg_engine.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/platform.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/pool_urbg.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/pool_urbg.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/randen.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/randen.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/randen_detect.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/randen_detect.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/randen_engine.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/randen_hwaes.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/randen_hwaes.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/randen_round_keys.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/randen_slow.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/randen_slow.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/randen_traits.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/salted_seed_seq.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/seed_material.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/seed_material.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/traits.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/uniform_helper.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/internal/wide_multiply.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/log_uniform_int_distribution.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/poisson_distribution.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/random.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/seed_gen_exception.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/random/seed_gen_exception.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/seed_sequences.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/random/seed_sequences.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/uniform_int_distribution.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/uniform_real_distribution.h )
+-  s.files += %w( third_party/abseil-cpp/absl/random/zipf_distribution.h )
+-  s.files += %w( third_party/abseil-cpp/absl/status/internal/status_internal.h )
+-  s.files += %w( third_party/abseil-cpp/absl/status/internal/statusor_internal.h )
+-  s.files += %w( third_party/abseil-cpp/absl/status/status.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/status/status.h )
+-  s.files += %w( third_party/abseil-cpp/absl/status/status_payload_printer.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/status/status_payload_printer.h )
+-  s.files += %w( third_party/abseil-cpp/absl/status/statusor.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/status/statusor.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/ascii.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/ascii.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/charconv.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/charconv.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/cord.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/cord.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/cord_analysis.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/cord_analysis.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/cord_buffer.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/cord_buffer.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/escaping.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/escaping.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/char_map.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/charconv_bigint.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/charconv_bigint.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/charconv_parse.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/charconv_parse.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_data_edge.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_internal.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_internal.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_rep_btree.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_rep_btree.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_rep_btree_navigator.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_rep_btree_navigator.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_rep_btree_reader.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_rep_btree_reader.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_rep_consume.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_rep_consume.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_rep_crc.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_rep_crc.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_rep_flat.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_rep_ring.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_rep_ring.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cord_rep_ring_reader.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cordz_functions.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cordz_functions.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cordz_handle.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cordz_handle.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cordz_info.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cordz_info.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cordz_statistics.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cordz_update_scope.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/cordz_update_tracker.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/escaping.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/escaping.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/memutil.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/memutil.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/ostringstream.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/ostringstream.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/resize_uninitialized.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/stl_type_traits.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/str_format/arg.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/str_format/arg.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/str_format/bind.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/str_format/bind.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/str_format/checker.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/str_format/extension.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/str_format/extension.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/str_format/float_conversion.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/str_format/float_conversion.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/str_format/output.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/str_format/output.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/str_format/parser.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/str_format/parser.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/str_join_internal.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/str_split_internal.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/string_constant.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/utf8.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/internal/utf8.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/match.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/match.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/numbers.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/numbers.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/str_cat.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/str_cat.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/str_format.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/str_join.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/str_replace.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/str_replace.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/str_split.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/str_split.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/string_view.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/string_view.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/strip.h )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/substitute.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/strings/substitute.h )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/barrier.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/barrier.h )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/blocking_counter.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/blocking_counter.h )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/internal/create_thread_identity.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/internal/create_thread_identity.h )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/internal/futex.h )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/internal/graphcycles.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/internal/graphcycles.h )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/internal/kernel_timeout.h )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/internal/per_thread_sem.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/internal/per_thread_sem.h )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/internal/waiter.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/internal/waiter.h )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/mutex.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/mutex.h )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/notification.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/synchronization/notification.h )
+-  s.files += %w( third_party/abseil-cpp/absl/time/civil_time.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/civil_time.h )
+-  s.files += %w( third_party/abseil-cpp/absl/time/clock.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/clock.h )
+-  s.files += %w( third_party/abseil-cpp/absl/time/duration.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/format.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/include/cctz/civil_time.h )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/include/cctz/civil_time_detail.h )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/include/cctz/time_zone.h )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/include/cctz/zone_info_source.h )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/civil_time_detail.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_fixed.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_fixed.h )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_format.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_if.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_if.h )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_impl.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_impl.h )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.h )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_libc.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_libc.h )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_lookup.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_posix.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_posix.h )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/tzfile.h )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/cctz/src/zone_info_source.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/get_current_time_chrono.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/internal/get_current_time_posix.inc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/time.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/time/time.h )
+-  s.files += %w( third_party/abseil-cpp/absl/types/bad_optional_access.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/types/bad_optional_access.h )
+-  s.files += %w( third_party/abseil-cpp/absl/types/bad_variant_access.cc )
+-  s.files += %w( third_party/abseil-cpp/absl/types/bad_variant_access.h )
+-  s.files += %w( third_party/abseil-cpp/absl/types/internal/optional.h )
+-  s.files += %w( third_party/abseil-cpp/absl/types/internal/span.h )
+-  s.files += %w( third_party/abseil-cpp/absl/types/internal/variant.h )
+-  s.files += %w( third_party/abseil-cpp/absl/types/optional.h )
+-  s.files += %w( third_party/abseil-cpp/absl/types/span.h )
+-  s.files += %w( third_party/abseil-cpp/absl/types/variant.h )
+-  s.files += %w( third_party/abseil-cpp/absl/utility/utility.h )
+   s.files += %w( third_party/address_sorting/address_sorting.c )
+   s.files += %w( third_party/address_sorting/address_sorting_internal.h )
+   s.files += %w( third_party/address_sorting/address_sorting_posix.c )
+@@ -2354,141 +2027,6 @@ Gem::Specification.new do |s|
+   s.files += %w( third_party/boringssl-with-bazel/src/third_party/fiat/curve25519_64.h )
+   s.files += %w( third_party/boringssl-with-bazel/src/third_party/fiat/p256_32.h )
+   s.files += %w( third_party/boringssl-with-bazel/src/third_party/fiat/p256_64.h )
+-  s.files += %w( third_party/cares/ares_build.h )
+-  s.files += %w( third_party/cares/cares/include/ares.h )
+-  s.files += %w( third_party/cares/cares/include/ares_dns.h )
+-  s.files += %w( third_party/cares/cares/include/ares_rules.h )
+-  s.files += %w( third_party/cares/cares/include/ares_version.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares__close_sockets.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares__get_hostent.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares__parse_into_addrinfo.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares__read_line.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares__readaddrinfo.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares__sortaddrinfo.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares__timeval.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_android.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_android.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_cancel.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_create_query.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_data.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_data.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_destroy.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_expand_name.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_expand_string.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_fds.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_free_hostent.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_free_string.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_freeaddrinfo.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_getaddrinfo.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_getenv.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_getenv.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_gethostbyaddr.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_gethostbyname.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_getnameinfo.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_getsock.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_inet_net_pton.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_init.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_iphlpapi.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_ipv6.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_library_init.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_library_init.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_llist.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_llist.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_mkquery.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_nameser.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_nowarn.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_nowarn.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_options.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_parse_a_reply.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_parse_aaaa_reply.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_parse_caa_reply.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_parse_mx_reply.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_parse_naptr_reply.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_parse_ns_reply.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_parse_ptr_reply.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_parse_soa_reply.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_parse_srv_reply.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_parse_txt_reply.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_platform.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_platform.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_private.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_process.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_query.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_search.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_send.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_setup.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_strcasecmp.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_strcasecmp.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_strdup.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_strdup.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_strerror.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_strsplit.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_strsplit.h )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_timeout.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_version.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_writev.c )
+-  s.files += %w( third_party/cares/cares/src/lib/ares_writev.h )
+-  s.files += %w( third_party/cares/cares/src/lib/bitncmp.c )
+-  s.files += %w( third_party/cares/cares/src/lib/bitncmp.h )
+-  s.files += %w( third_party/cares/cares/src/lib/config-dos.h )
+-  s.files += %w( third_party/cares/cares/src/lib/config-win32.h )
+-  s.files += %w( third_party/cares/cares/src/lib/inet_net_pton.c )
+-  s.files += %w( third_party/cares/cares/src/lib/inet_ntop.c )
+-  s.files += %w( third_party/cares/cares/src/lib/setup_once.h )
+-  s.files += %w( third_party/cares/cares/src/lib/windows_port.c )
+-  s.files += %w( third_party/cares/config_darwin/ares_config.h )
+-  s.files += %w( third_party/cares/config_freebsd/ares_config.h )
+-  s.files += %w( third_party/cares/config_linux/ares_config.h )
+-  s.files += %w( third_party/cares/config_openbsd/ares_config.h )
+-  s.files += %w( third_party/re2/re2/bitmap256.h )
+-  s.files += %w( third_party/re2/re2/bitstate.cc )
+-  s.files += %w( third_party/re2/re2/compile.cc )
+-  s.files += %w( third_party/re2/re2/dfa.cc )
+-  s.files += %w( third_party/re2/re2/filtered_re2.cc )
+-  s.files += %w( third_party/re2/re2/filtered_re2.h )
+-  s.files += %w( third_party/re2/re2/mimics_pcre.cc )
+-  s.files += %w( third_party/re2/re2/nfa.cc )
+-  s.files += %w( third_party/re2/re2/onepass.cc )
+-  s.files += %w( third_party/re2/re2/parse.cc )
+-  s.files += %w( third_party/re2/re2/perl_groups.cc )
+-  s.files += %w( third_party/re2/re2/pod_array.h )
+-  s.files += %w( third_party/re2/re2/prefilter.cc )
+-  s.files += %w( third_party/re2/re2/prefilter.h )
+-  s.files += %w( third_party/re2/re2/prefilter_tree.cc )
+-  s.files += %w( third_party/re2/re2/prefilter_tree.h )
+-  s.files += %w( third_party/re2/re2/prog.cc )
+-  s.files += %w( third_party/re2/re2/prog.h )
+-  s.files += %w( third_party/re2/re2/re2.cc )
+-  s.files += %w( third_party/re2/re2/re2.h )
+-  s.files += %w( third_party/re2/re2/regexp.cc )
+-  s.files += %w( third_party/re2/re2/regexp.h )
+-  s.files += %w( third_party/re2/re2/set.cc )
+-  s.files += %w( third_party/re2/re2/set.h )
+-  s.files += %w( third_party/re2/re2/simplify.cc )
+-  s.files += %w( third_party/re2/re2/sparse_array.h )
+-  s.files += %w( third_party/re2/re2/sparse_set.h )
+-  s.files += %w( third_party/re2/re2/stringpiece.cc )
+-  s.files += %w( third_party/re2/re2/stringpiece.h )
+-  s.files += %w( third_party/re2/re2/tostring.cc )
+-  s.files += %w( third_party/re2/re2/unicode_casefold.cc )
+-  s.files += %w( third_party/re2/re2/unicode_casefold.h )
+-  s.files += %w( third_party/re2/re2/unicode_groups.cc )
+-  s.files += %w( third_party/re2/re2/unicode_groups.h )
+-  s.files += %w( third_party/re2/re2/walker-inl.h )
+-  s.files += %w( third_party/re2/util/benchmark.h )
+-  s.files += %w( third_party/re2/util/flags.h )
+-  s.files += %w( third_party/re2/util/logging.h )
+-  s.files += %w( third_party/re2/util/malloc_counter.h )
+-  s.files += %w( third_party/re2/util/mix.h )
+-  s.files += %w( third_party/re2/util/mutex.h )
+-  s.files += %w( third_party/re2/util/pcre.cc )
+-  s.files += %w( third_party/re2/util/pcre.h )
+-  s.files += %w( third_party/re2/util/rune.cc )
+-  s.files += %w( third_party/re2/util/strutil.cc )
+-  s.files += %w( third_party/re2/util/strutil.h )
+-  s.files += %w( third_party/re2/util/test.h )
+-  s.files += %w( third_party/re2/util/utf.h )
+-  s.files += %w( third_party/re2/util/util.h )
+   s.files += %w( third_party/upb/third_party/utf8_range/naive.c )
+   s.files += %w( third_party/upb/third_party/utf8_range/range2-neon.c )
+   s.files += %w( third_party/upb/third_party/utf8_range/range2-sse.c )
+@@ -2541,30 +2079,4 @@ Gem::Specification.new do |s|
+   s.files += %w( third_party/upb/upb/upb.h )
+   s.files += %w( third_party/upb/upb/upb.hpp )
+   s.files += %w( third_party/xxhash/xxhash.h )
+-  s.files += %w( third_party/zlib/adler32.c )
+-  s.files += %w( third_party/zlib/compress.c )
+-  s.files += %w( third_party/zlib/crc32.c )
+-  s.files += %w( third_party/zlib/crc32.h )
+-  s.files += %w( third_party/zlib/deflate.c )
+-  s.files += %w( third_party/zlib/deflate.h )
+-  s.files += %w( third_party/zlib/gzclose.c )
+-  s.files += %w( third_party/zlib/gzguts.h )
+-  s.files += %w( third_party/zlib/gzlib.c )
+-  s.files += %w( third_party/zlib/gzread.c )
+-  s.files += %w( third_party/zlib/gzwrite.c )
+-  s.files += %w( third_party/zlib/infback.c )
+-  s.files += %w( third_party/zlib/inffast.c )
+-  s.files += %w( third_party/zlib/inffast.h )
+-  s.files += %w( third_party/zlib/inffixed.h )
+-  s.files += %w( third_party/zlib/inflate.c )
+-  s.files += %w( third_party/zlib/inflate.h )
+-  s.files += %w( third_party/zlib/inftrees.c )
+-  s.files += %w( third_party/zlib/inftrees.h )
+-  s.files += %w( third_party/zlib/trees.c )
+-  s.files += %w( third_party/zlib/trees.h )
+-  s.files += %w( third_party/zlib/uncompr.c )
+-  s.files += %w( third_party/zlib/zconf.h )
+-  s.files += %w( third_party/zlib/zlib.h )
+-  s.files += %w( third_party/zlib/zutil.c )
+-  s.files += %w( third_party/zlib/zutil.h )
+ end
+--- a/src/ruby/ext/grpc/extconf.rb	2022-12-07 15:49:12.000000000 -0800
++++ b/src/ruby/ext/grpc/extconf.rb	2022-12-23 13:37:46.659142337 -0800
+@@ -135,6 +135,151 @@ if linux && RUBY_ENGINE != 'truffleruby'
+ end
+ $LDFLAGS << ' -static' if windows
+ 
++# oteodoro:  Generated from:
++# for x in $(find /usr/lib64/pkgconfig/ -name "absl_*" | cut -f 5 -d "/" | sort) ; do echo "\$LDFLAGS << ' ' + \`pkg-config --libs ${x/.pc}\`.chomp # oteodoro:  use system lib" ; done
++# oteodoro:  Added code block:
++$LDFLAGS << ' ' + `pkg-config --libs absl_algorithm`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_algorithm_container`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_any`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_any_invocable`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_atomic_hook`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_bad_any_cast`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_bad_any_cast_impl`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_bad_optional_access`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_bad_variant_access`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_base`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_base_internal`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_bind_front`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_bits`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_btree`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_city`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_civil_time`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_cleanup`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_cleanup_internal`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_compare`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_compressed_tuple`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_config`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_container_common`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_container_memory`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_cord`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_cord_internal`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_cordz_functions`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_cordz_handle`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_cordz_info`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_cordz_sample_token`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_cordz_statistics`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_cordz_update_scope`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_cordz_update_tracker`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_core_headers`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_counting_allocator`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_debugging`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_debugging_internal`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_demangle_internal`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_dynamic_annotations`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_endian`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_errno_saver`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_examine_stack`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_exponential_biased`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_failure_signal_handler`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_fast_type_id`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_fixed_array`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_flags`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_flags_commandlineflag`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_flags_commandlineflag_internal`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_flags_config`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_flags_internal`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_flags_marshalling`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_flags_parse`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_flags_path_util`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_flags_private_handle_accessor`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_flags_program_name`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_flags_reflection`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_flags_usage`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_flags_usage_internal`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_flat_hash_map`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_flat_hash_set`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_function_ref`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_graphcycles_internal`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_hash`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_hash_function_defaults`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_hash_policy_traits`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_hashtable_debug`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_hashtable_debug_hooks`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_hashtablez_sampler`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_inlined_vector`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_inlined_vector_internal`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_int128`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_kernel_timeout_internal`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_layout`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_leak_check`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_log_severity`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_low_level_hash`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_malloc_internal`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_memory`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_meta`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_node_hash_map`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_node_hash_set`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_node_slot_policy`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_numeric`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_numeric_representation`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_optional`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_periodic_sampler`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_prefetch`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_pretty_function`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_bit_gen_ref`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_distributions`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_distribution_caller`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_distribution_test_util`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_fast_uniform_bits`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_fastmath`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_generate_real`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_iostream_state_saver`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_mock_helpers`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_nonsecure_base`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_pcg_engine`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_platform`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_pool_urbg`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_randen`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_randen_engine`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_randen_hwaes`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_randen_hwaes_impl`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_randen_slow`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_salted_seed_seq`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_seed_material`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_traits`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_uniform_helper`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_internal_wide_multiply`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_random`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_seed_gen_exception`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_random_seed_sequences`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_raw_hash_map`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_raw_hash_set`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_raw_logging_internal`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_sample_recorder`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_scoped_set_env`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_span`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_spinlock_wait`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_stacktrace`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_status`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_statusor`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_str_format`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_str_format_internal`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_strerror`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_strings`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_strings_internal`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_symbolize`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_synchronization`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_throw_delegate`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_time`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_time_zone`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_type_traits`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_utility`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs absl_variant`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs libcares`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs re2`.chomp # oteodoro:  use system lib
++$LDFLAGS << ' ' + `pkg-config --libs zlib`.chomp # oteodoro:  use system lib
++
++
+ $CFLAGS << ' -std=c11 '
+ $CFLAGS << ' -Wall '
+ $CFLAGS << ' -Wextra '
