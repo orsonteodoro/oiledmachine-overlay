@@ -93,8 +93,7 @@ GST_PV="1.20" # Upstream uses in CI 1.21.2.1, distro only provides 1.20.x
 PANGO_PV="1.50.12" # Upstream uses 1.50.13 on meson-shared test CI
 RDEPEND+="
 	>=dev-libs/glib-2.66.8:2[${MULTILIB_USEDEP}]
-	!=dev-libs/libgit2-1.4*
-	 =dev-libs/libgit2-1.3*
+	>=dev-libs/libgit2-1.5
 	>=media-plugins/gst-plugins-meta-${GST_PV}:1.0[${MULTILIB_USEDEP}]
 	aws? (
 		>=dev-libs/openssl-1.1.1n[${MULTILIB_USEDEP}]
@@ -173,14 +172,6 @@ EXPECTED_BUILD_FILES_FINGERPRINT="\
 "
 
 pkg_setup() {
-	if ldd /usr/bin/cargo-cbuild | grep -q -e "libgit2.so.1.4" ; then
-# Segfaults
-eerror
-eerror "dev-util/cargo-c must not be built against =dev-libs/libgit2-1.4*."
-eerror "Re-emerge =dev-libs/libgit2-1.3* and dev-util/cargo-c."
-eerror
-		die
-	fi
 	if has network-sandbox $FEATURES ; then
 eerror
 eerror "FEATURES=\"-network-sandbox\" must be added per-package env to be able"
