@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<!-- maintainer-needed -->
-	<upstream>
-		<remote-id type="github">ispc/ispc</remote-id>
-	</upstream>
+  <!-- Distro request:  maintainer-needed -->
+  <upstream>
+    <remote-id type="github">ispc/ispc</remote-id>
+  </upstream>
+  <use>
+    <flag name="fallback-commit">
+      Last commit when patches worked.
+    </flag>
+  </use>
 </pkgmetadata>

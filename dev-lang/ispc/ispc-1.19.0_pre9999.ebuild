@@ -1,29 +1,33 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..10} )
-LLVM_MAX_SLOT=14
-LLVM_SLOTS=(14 13)
+LLVM_MAX_SLOT=15
+LLVM_SLOTS=(15 14 13)
 inherit cmake python-any-r1 llvm
+
+# For version, see
+# https://github.com/ispc/ispc/blob/main/common/version.h
 
 DESCRIPTION="Intel SPMD Program Compiler"
 HOMEPAGE="https://ispc.github.io/"
 
-if [[ ${PV} == 9999 ]]; then
+if [[ ${PV} =~ 9999 ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/ispc/ispc.git"
 else
 	SRC_URI="https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="amd64 ~arm ~arm64 ~ppc64 ~x86"
+	KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 fi
 
 LICENSE="BSD BSD-2 UoI-NCSA"
 SLOT="0"
-IUSE="examples"
+IUSE="examples fallback-commit test"
 IUSE+=" ${LLVM_SLOTS[@]/#/llvm-}"
 REQUIRED_USE+=" ^^ ( ${LLVM_SLOTS[@]/#/llvm-} ) "
+RESTRICT="!test? ( test )"
 
 gen_llvm_depends() {
 	local s
@@ -49,7 +53,8 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-1.18.0-llvm.patch"
+	"${FILESDIR}/${PN}-9999-llvm.patch"
+	"${FILESDIR}"/${PN}-1.18.1-curses-cmake.patch
 )
 
 CMAKE_BUILD_TYPE="RelWithDebInfo"
@@ -65,6 +70,12 @@ pkg_setup() {
 
 	llvm_pkg_setup
 	python-any-r1_pkg_setup
+}
+
+src_unpack() {
+	use fallback-commit && export EGIT_COMMIT="09bae5fa6c03cc379c549d52f3660bdaa1b53b8c" # Dec 16, 2022
+	git-r3_fetch
+	git-r3_checkout
 }
 
 src_prepare() {
@@ -84,6 +95,8 @@ src_configure() {
 		-DARM_ENABLED=$(usex arm)
 		-DCMAKE_SKIP_RPATH=ON
 		-DISPC_NO_DUMPS=ON
+		-DISPC_INCLUDE_EXAMPLES=OFF
+		-DISPC_INCLUDE_TESTS=$(usex test)
 	)
 	cmake_src_configure
 }

@@ -26,7 +26,7 @@ IUSE="
 debug default-compiler-rt default-libcxx default-lld doc +extra llvm-libunwind
 +pie +static-analyzer test xml
 
-hardened r6
+hardened r7
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -530,7 +530,7 @@ einfo
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/share/man"
 		-DCLANG_CONFIG_FILE_SYSTEM_DIR="${EPREFIX}/etc/clang"
 		# relative to bindir
-		-DCLANG_RESOURCE_DIR="../../../../lib/clang/${LLVM_MAJOR}"
+		-DCLANG_RESOURCE_DIR="../../../../lib/clang/${LLVM_VERSION}"
 
 		-DBUILD_SHARED_LIBS=OFF
 		-DCLANG_LINK_CLANG_DYLIB=ON

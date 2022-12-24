@@ -1,7 +1,7 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 PYTHON_COMPAT=( python3_{8..10} )
 LLVM_MAX_SLOT=15
@@ -21,10 +21,10 @@ fi
 
 LICENSE="BSD BSD-2 UoI-NCSA"
 SLOT="0"
-IUSE="examples"
-
+IUSE="examples test"
 IUSE+=" ${LLVM_SLOTS[@]/#/llvm-}"
 REQUIRED_USE+=" ^^ ( ${LLVM_SLOTS[@]/#/llvm-} ) "
+RESTRICT="!test? ( test )"
 
 gen_llvm_depends() {
 	local s
@@ -50,20 +50,11 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-9999-llvm.patch"
+	"${FILESDIR}"/${PN}-1.18.0-llvm.patch
+	"${FILESDIR}"/${PN}-1.18.1-curses-cmake.patch
 )
 
-CMAKE_BUILD_TYPE="RelWithDebInfo"
-
 pkg_setup() {
-	local s
-	for s in ${LLVM_SLOTS[@]} ; do
-		if use llvm-${s} ; then
-			export LLVM_MAX_SLOT=${s}
-			break
-		fi
-	done
-
 	llvm_pkg_setup
 	python-any-r1_pkg_setup
 }
@@ -85,6 +76,8 @@ src_configure() {
 		-DARM_ENABLED=$(usex arm)
 		-DCMAKE_SKIP_RPATH=ON
 		-DISPC_NO_DUMPS=ON
+		-DISPC_INCLUDE_EXAMPLES=OFF
+		-DISPC_INCLUDE_TESTS=$(usex test)
 	)
 	cmake_src_configure
 }
