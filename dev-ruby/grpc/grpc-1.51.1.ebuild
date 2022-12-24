@@ -9,7 +9,9 @@ RUBY_FAKEGEM_EXTRADOC="AUTHORS LICENSE NOTICE.txt README.md"
 RUBY_FAKEGEM_GEMSPEC="grpc.gemspec"
 RUBY_FAKEGEM_RECIPE_TEST="rspec3"
 RUBY_TW_DISABLE="1"
-USE_RUBY="ruby26 ruby27 ruby30 ruby31"
+RUBY_PV=(2.7 3.0 3.1)
+USE_RUBY=("${RUBY_PV[@]/.}")
+USE_RUBY="${USE_RUBY[@]/#/ruby}"
 inherit ruby-fakegem ruby-tw
 
 DESCRIPTION="High-performance RPC framework (python libraries)"
