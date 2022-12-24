@@ -13,15 +13,14 @@ HOMEPAGE="https://chromium.googlesource.com/libyuv/libyuv/"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
 SLOT="0/${PV}"
-GIT_BRANCHES="+main master stable"
+GIT_BRANCHES="+main stable"
 IUSE+="
 	${GIT_BRANCHES}
-	static system-gflags test
+	fallback-commit static system-gflags test
 "
 REQUIRED_USE+="
 	^^ (
 		main
-		master
 		stable
 	)
 "
@@ -71,18 +70,14 @@ src_unpack() {
 d598ee724bf56ae04ed475987d4e8780e302be56a5e98dd284225069bb54caf9\
 c4abf7602876c86bf9b75f6b8e2f663dc71c1438e4fa3d0ced829781d395e294\
 "
-	elif use master ; then
-		EGIT_BRANCH="master"
-		expected="\
-d598ee724bf56ae04ed475987d4e8780e302be56a5e98dd284225069bb54caf9\
-c4abf7602876c86bf9b75f6b8e2f663dc71c1438e4fa3d0ced829781d395e294\
-"
+		use fallback-commit && export EGIT_COMMIT="eb6e7bb63738e29efd82ea3cf2a115238a89fa51"
 	elif use main ; then
 		EGIT_BRANCH="main"
 		expected="\
-ee757985ebf88813ddbb68bc44752b59ec8fb8c1233fbb6bf57417fa2f226f2f\
-4666634a42502fa4c27779ce67c9a10d963418a04f65475914fa627849ea28b5\
+adf02ccbaa212eed8d8ab371c6331378c7936f4004ae25bfb42a5d34d9158f79\
+97e45db859ba2cba4335ceb139bafe74e02064dc09a339fed333b3ced68bd6d0\
 "
+		use fallback-commit && export EGIT_COMMIT="3abd6f36b6e4f5a2e0ce236580a8bc1da3c7cf7e"
 	fi
 	git-r3_fetch
 	git-r3_checkout
