@@ -3,21 +3,26 @@
 
 EAPI=8
 
-EGIT_BRANCH="master"
+EGIT_BRANCH="main"
 EGIT_REPO_URI="https://github.com/recastnavigation/recastnavigation.git"
 
 inherit cmake flag-o-matic git-r3 multilib-minimal toolchain-funcs
 
 EXPECTED="\
-982eaa9bac6a1f6b892829d7f1cd543dd8c57f9c240e2bbeca581747c44f0fc2\
-8531005d683942fd680912c0b6359b5f24718e2dc6c97cfecd2cabeca400e668"
+a8713189737e6d885b7e9badbd494d495a460cd47b0eaac9424dbc72d133e49a\
+fc8fd1891a1255b4347c0fbabbd5fc841dc0d3c622137e494a454a312ba5e483\
+"
 
 DESCRIPTION="Navigation-mesh Toolset for Games"
 LICENSE="ZLIB"
 HOMEPAGE="https://github.com/memononen/recastnavigation"
 #KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86" # live ebuilds do not get keywords
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="debug demo examples static-libs test"
+IUSE="
+debug demo examples static-libs test
+
+fallback-commit
+"
 CDEPEND="
 	>=sys-devel/gcc-8.0
 "
@@ -55,6 +60,7 @@ get_lib_type() {
 }
 
 src_unpack() {
+	use fallback-commit && export EGIT_COMMIT="b51925bb8720e78a65c77339a532459b96ddfc7e" # Dec 22, 2022
 	git-r3_fetch
 	git-r3_checkout
 	local actual=$(cat $(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake") \
@@ -62,8 +68,8 @@ src_unpack() {
 		| cut -f 1 -d " ")
 	if [[ "${actual}" != "${EXPECTED}" ]] ; then
 eerror
-eerror "Actual build files fingerprint:  ${actual}"
-eerror "Expected build files fingerprint:  ${EXPECTED}"
+eerror "Actual build files fingerprint:\t${actual}"
+eerror "Expected build files fingerprint:\t${EXPECTED}"
 eerror
 eerror "Detected a change in build files that is indicative of a new option,"
 eerror "*DEPENDs, IUSE, KEYWORDS."

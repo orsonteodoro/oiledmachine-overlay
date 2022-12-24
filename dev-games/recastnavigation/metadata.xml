@@ -26,10 +26,24 @@
     <remote-id type="github">recastnavigation/recastnavigation</remote-id>
   </upstream>
   <use>
-    <flag name="demo">Builds the demo</flag>
-    <flag name="examples">Builds examples</flag>
-    <flag name="static">Builds static libraries</flag>
-    <flag name="test">Performs testing</flag>
-    <flag name="urho3d">Adds Urho3D support</flag>
+    <flag name="demo">
+      Builds the demo
+    </flag>
+    <flag name="examples">
+      Builds examples
+    </flag>
+    <flag name="fallback-commit">
+      Rewinds to the last working commit that doesn't break patches or
+      change requirements.
+    </flag>
+    <flag name="static">
+      Builds static libraries
+    </flag>
+    <flag name="test">
+      Performs testing
+    </flag>
+    <flag name="urho3d">
+      Adds Urho3D support
+    </flag>
   </use>
 </pkgmetadata>
