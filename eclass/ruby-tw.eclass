@@ -23,6 +23,7 @@ esac
 # @INTERNAL
 # @DESCRIPTION:
 # Generate conditional for case for 2 . separators
+# ~>1.0.1 means >= 1.0.1 AND < 1.1
 __tw2(){
 	local cn="${1}"
 	local pv="${2}"
@@ -37,6 +38,7 @@ __tw2(){
 # @INTERNAL
 # @DESCRIPTION:
 # Generate conditional for case for 1 . separators
+# ~>1.1 means >= 1.1 AND < 2
 __tw1(){
 	local cn="${1}"
 	local pv="${2}"
