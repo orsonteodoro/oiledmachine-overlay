@@ -50,6 +50,9 @@ eerror
 		| head -n 1 \
 		| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+" \
 		| head -n 1)
+	if ver_test ${gcc_pv} -ge 11 ; then
+		gcc_pv=$(ver_cut 1 ${gcc_pv})
+	fi
 	if libtool --config | grep -q -e "linux-gnu/${gcc_pv}" ; then
 einfo
 einfo "Libtool & GCC compatibility:  Pass"
