@@ -73,6 +73,10 @@
     <flag name="examples">
       Installs examples.
     </flag>
+    <flag name="fallback-commit">
+      Rewinds the live ebuild back to the last commit which all patches work
+      and requirements don't change.
+    </flag>
     <flag name="go">
       Adds the Go language completer
     </flag>

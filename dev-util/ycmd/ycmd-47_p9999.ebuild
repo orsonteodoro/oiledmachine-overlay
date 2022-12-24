@@ -230,6 +230,8 @@ libclang minimal netcore netfx objc objcxx python rust system-abseil
 system-bottle system-clangd system-go-tools system-jdtls system-jedi
 system-libclang system-mono system-mrab-regex system-requests system-rust
 system-rust system-tern system-typescript system-watchdog test typescript vim
+
+fallback-commit
 "
 CLANG_PV="15.0.1"
 CLANG_PV_MAJ=$(ver_cut 1 ${CLANG_PV})
@@ -874,6 +876,7 @@ src_unpack() {
 	if [[ ${PV} =~ 9999 ]] ; then
 		EGIT_BRANCH="master"
 		EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
+		use fallback-commit && export EGIT_COMMIT="c65849af00afd15953b36e4bae6d60148ae20455" # Dec 22, 2022
 		git-r3_fetch
 		git-r3_checkout
 
@@ -1223,7 +1226,7 @@ src_prepare() {
 	_check_abi_supported
 	eapply "${FILESDIR}/${PN}-44_p20210408-skip-thirdparty-check.patch"
 	eapply "${FILESDIR}/${PN}-44_p20210408-system-third-party.patch"
-	eapply "${FILESDIR}/${PN}-45_p20220706-system-global-config.patch"
+	eapply "${FILESDIR}/${PN}-47_p9999-system-global-config.patch"
 	eapply "${FILESDIR}/${PN}-45_p20220706-disable-fetch-abseil.patch"
 
 	cat "${FILESDIR}/default_settings.json.44_p20200907" \
