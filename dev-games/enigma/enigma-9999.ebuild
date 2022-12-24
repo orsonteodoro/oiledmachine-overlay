@@ -35,13 +35,17 @@ aba553d213834071ba6722e33d2ae67e94c874b5ef4d26be3697c839a6c5f98e\
 b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
-ABI_FINGERPRINT="4742c621d202c5d84b6a87efa7a371eaadc142fdb904b976f3fcbbc2517bb0b5"
+ABI_FINGERPRINT="a11c6d030ef5062747bf04226629464ca8bb0464e3754bbfcbf1b9308803d411"
 DEPENDS_FINGERPRINT="0ec94f2f56757425c83281360d9d1f8266766b589747d553e143a88cb621760b"
 SLOT="0/${ABI_FINGERPRINT}"
-IUSE+=" android box2d bullet clang d3d ds doc externalfuncs +freetype
+IUSE+="
+android box2d bullet clang d3d ds doc externalfuncs +freetype
 gles2 gles3 gme gnome gtk2 gtest headless joystick kde macos mingw32 mingw64
 network +openal +opengl +png sdl2 sound test threads widgets wine +X xrandr
-xtest"
+xtest
+
+fallback-commit
+"
 REQUIRED_USE_PLATFORMS="
 	|| ( android headless macos sdl2 X )
 "
@@ -618,6 +622,7 @@ eerror
 }
 
 src_unpack() {
+	use fallback-commit && export EGIT_COMMIT="ab1e99c9a9b876bb6519c9d8a6061552931bd820" # Oct 18, 2022
 	git-r3_fetch
 	git-r3_checkout
 	cd "${S}" || die
