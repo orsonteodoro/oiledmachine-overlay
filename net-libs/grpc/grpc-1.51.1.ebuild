@@ -55,10 +55,12 @@ BDEPEND+="
 		>=dev-cpp/benchmark-1.6.0
 	)
 "
-PDEPEND+="
+PDEPEND_DISABLE="
 	csharp? (
 		=dev-dotnet/grpc-dotnet-$(($(ver_cut 1 ${PV})+1)).$(ver_cut 2 ${PV})*
 	)
+"
+PDEPEND+="
 	java? (
 		~dev-java/grpc-java-${PV}
 	)
