@@ -4,7 +4,8 @@
 EAPI=8
 
 CMAKE_ECLASS=cmake
-inherit cmake-multilib java-pkg-opt-2 flag-o-matic toolchain-funcs uopts
+inherit cmake-multilib java-pkg-opt-2 flag-o-matic flag-o-matic-om
+inherit toolchain-funcs uopts
 
 DESCRIPTION="MMX, SSE, and SSE2 SIMD accelerated JPEG library"
 HOMEPAGE="https://libjpeg-turbo.org/ https://sourceforge.net/projects/libjpeg-turbo/"

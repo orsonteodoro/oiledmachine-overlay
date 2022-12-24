@@ -25,9 +25,11 @@ CR_CLANG_SLOT_OFFICIAL=16
 LLVM_SLOTS=(16 ${LLVM_MAX_SLOT}) # [inclusive, inclusive] high to low
 UOPTS_SUPPORT_TPGO=0
 UOPTS_SUPPORT_TBOLT=0
-inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils \
-python-any-r1 qmake-utils readme.gentoo-r1 toolchain-funcs xdg-utils
-inherit check-linker llvm multilib multilib-minimal uopts # Added by the oiledmachine-overlay
+inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils
+inherit python-any-r1 qmake-utils readme.gentoo-r1 toolchain-funcs xdg-utils
+
+# Added by the oiledmachine-overlay
+inherit check-linker flag-o-matic-om llvm multilib multilib-minimal uopts
 inherit cflags-depends
 
 DESCRIPTION="Open-source version of Google Chrome web browser"

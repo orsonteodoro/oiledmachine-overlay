@@ -23,7 +23,7 @@ fi
 
 TRAIN_SANDBOX_EXCEPTION_VAAPI=1
 inherit flag-o-matic multilib multilib-minimal toolchain-funcs ${SCM}
-inherit llvm uopts
+inherit flag-o-matic-om llvm uopts
 
 DESCRIPTION="Complete solution to record/convert/stream audio and video. Includes libavcodec"
 HOMEPAGE="https://ffmpeg.org/"

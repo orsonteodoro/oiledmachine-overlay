@@ -10,8 +10,9 @@ CONFIG_CHECK="~ADVISE_SYSCALLS"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
 PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="threads(+)"
-inherit bash-completion-r1 flag-o-matic linux-info ninja-utils pax-utils python-any-r1
-inherit check-linker lcnr toolchain-funcs uopts xdg-utils
+inherit bash-completion-r1 flag-o-matic flag-o-matic-om linux-info ninja-utils
+inherit pax-utils python-any-r1 check-linker lcnr toolchain-funcs uopts
+inherit xdg-utils
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
 LICENSE="Apache-1.1 Apache-2.0 Artistic-2 BSD BSD-2 icu-71.1 ISC MIT openssl Unicode-DFS-2016 ZLIB"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"

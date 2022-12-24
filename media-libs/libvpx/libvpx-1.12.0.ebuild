@@ -4,7 +4,7 @@
 # TODO:  live streamer trainers will be added after portage secure wipe hooks [aka bash exit/abort traps] are implemented/fixed.
 
 EAPI=8
-inherit flag-o-matic llvm multilib-minimal toolchain-funcs uopts
+inherit flag-o-matic flag-o-matic-om llvm multilib-minimal toolchain-funcs uopts
 
 # To create a new testdata tarball:
 # 1. Unpack source tarball or checkout git tag

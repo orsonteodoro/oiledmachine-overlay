@@ -7,7 +7,8 @@ EAPI=8
 # Worth keeping an eye on 'develop' branch upstream for possible backports.
 AUTOTOOLS_AUTO_DEPEND="no"
 VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}"/usr/share/openpgp-keys/madler.asc
-inherit autotools flag-o-matic multilib-minimal toolchain-funcs uopts usr-ldscript verify-sig
+inherit autotools flag-o-matic flag-o-matic-om multilib-minimal toolchain-funcs
+inherit uopts usr-ldscript verify-sig
 
 CYGWINPATCHES=(
 	"https://github.com/cygwinports/zlib/raw/22a3462cae33a82ad966ea0a7d6cbe8fc1368fec/1.2.11-gzopen_w.patch -> ${PN}-1.2.11-cygwin-gzopen_w.patch"

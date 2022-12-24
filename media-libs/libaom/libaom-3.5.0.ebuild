@@ -10,7 +10,8 @@ UOPTS_SUPPORT_TBOLT=1
 
 CMAKE_ECLASS=cmake
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake-multilib flag-o-matic python-any-r1 toolchain-funcs uopts
+inherit cmake-multilib flag-o-matic flag-o-matic-om python-any-r1
+inherit toolchain-funcs uopts
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
@@ -380,7 +381,7 @@ _src_configure() {
 
 	if tc-is-clang && has_version "sys-libs/compiler-rt-sanitizers[cfi]" ; then
 		# Prevent Illegal instruction with /usr/bin/aomdec --help
-		strip-flag-value "strip-flag-value"
+		strip-flag-value "cfi-icall"
 		append_all -fno-sanitize=cfi-icall
 	fi
 
