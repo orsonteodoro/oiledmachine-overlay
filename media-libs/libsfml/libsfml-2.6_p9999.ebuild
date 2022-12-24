@@ -28,6 +28,8 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 audio X debug doc drm examples flac graphics ios network test udev window
 vulkan
+
+fallback-commit
 "
 VULKAN_LINUX_DRIVERS=( amdgpu intel nvidia radeonsi )
 IUSE+=" ${VULKAN_LINUX_DRIVERS[@]/#/video_cards_} "
@@ -48,6 +50,7 @@ REQUIRED_USE+="
 	udev? ( kernel_linux window )
 	X? ( kernel_linux window )
 "
+# DEPENDs last check: Dec 22, 2022
 NV_DRIVER_VERSION_VULKAN="390.132"
 VULKAN_LINUX_RDEPEND="
 	|| (
@@ -131,8 +134,8 @@ DOCS=( changelog.md readme.md )
 SRC_URI=""
 S="${WORKDIR}/${P}"
 EXPECTED_DEPENDS="\
-490b9b7c315763a3fa5bfe5123371de4c5a7bace6bc1e39db2cd270c2a7fb2b8\
-353c5bc684d32ae577ce31c90aa9199d66191fe3344cc59dc52c99f5f62f1c72\
+d20820befb877ea0a4ccc22452988dfeb0933b9a4d1041386493ef86f3aa634a\
+0a1f20c1f6c3e34e1363e2d18812d4cc24c4b48c279fd44e370c412a98e63548\
 "
 RESTRICT=""  # See headers for copyright notices
 PATCHES=(
@@ -173,6 +176,7 @@ eerror
 src_unpack() {
 	export EGIT_BRANCH="2.6.x"
 	export EGIT_REPO_URI="https://github.com/SFML/SFML.git"
+	use fallback-commit && EGIT_COMMIT="37db7a83f3d767287f60b63c1edcd1a997225902" # Dec 22, 2022
 	git-r3_fetch
 	git-r3_checkout
 	cd "${S}" || die
