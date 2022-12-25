@@ -16,7 +16,7 @@ LICENSE="
 "
 # The all-rights-reserved applies to the firmware.
 KEYWORDS="~amd64 ~x86"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/$(ver_cut 1-3 ${PV})" # 3 components because cxx is header only
 IUSE+=" audio-firmware +bindist -csharp +c-sync +cxx doc +examples fakenect"
 IUSE+=" +opencv openni2 python"
 REQUIRED_USE+="
