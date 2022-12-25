@@ -83,3 +83,7 @@ dev-util/bear
 dev-util/ycm-generator
 www-misc/rtv
 www-misc/rainbowstream
+
+# Unfinished.  ebuild is pre-alpha
+dev-dotnet/dotdevelop
+dev-dotnet/monodevelop
