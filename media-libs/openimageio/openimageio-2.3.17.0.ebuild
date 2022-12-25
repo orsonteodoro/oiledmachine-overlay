@@ -16,17 +16,28 @@ LICENSE="BSD"
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 X86_CPU_FEATURES=(
-	sse2:sse2 sse3:sse3 ssse3:ssse3 sse4_1:sse4.1 sse4_2:sse4.2
-	avx:avx avx2:avx2 avx512f:avx512f f16c:f16c )
+	sse2:sse2
+	sse3:sse3
+	ssse3:ssse3
+	sse4_1:sse4.1
+	sse4_2:sse4.2
+	avx:avx
+	avx2:avx2
+	avx512f:avx512f
+	f16c:f16c
+)
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
 OPENVDB_APIS=( 5 6 7 8 9 )
 OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
 OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
 # font install is enabled upstream
 # building test enabled upstream
-IUSE+=" ${CPU_FEATURES[@]%:*} ${OPENVDB_APIS_[@]}
+IUSE+="
+${CPU_FEATURES[@]%:*}
+${OPENVDB_APIS_[@]}
 aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc
-jpeg2k opencv opengl openvdb png ptex +python +qt5 raw rav1e tbb +truetype webp"
+jpeg2k opencv opengl openvdb png ptex +python +qt5 raw rav1e tbb +truetype webp
+"
 gen_abi_compat_required_use() {
 	local o
 	local s
@@ -62,7 +73,7 @@ gen_openvdb_depends() {
 }
 
 OPENEXR_V2="2.5.8"
-OPENEXR_V3="3.1.4 3.1.5"
+OPENEXR_V3="3.1.4 3.1.5 3.1.6"
 gen_openexr_pairs() {
 	local v
 	for v in ${OPENEXR_V2} ; do
@@ -83,6 +94,7 @@ gen_openexr_pairs() {
 	done
 }
 
+# Depends May 31, 2022
 RDEPEND+="
 	|| ( $(gen_openexr_pairs) )
 	>=dev-cpp/robin-map-0.6.2
@@ -95,7 +107,10 @@ RDEPEND+="
 	color-management? ( >=media-libs/opencolorio-1.1:= )
 	dds? ( >=media-libs/libsquish-1.13 )
 	dicom? ( >=sci-libs/dcmtk-3.6.1 )
-	ffmpeg? ( >=media-video/ffmpeg-3.0:= )
+	ffmpeg? (
+		>=media-video/ffmpeg-3.0:=
+		<media-video/ffmpeg-5.1:=
+	)
 	field3d? ( >=media-libs/Field3D-1.7.3:= )
 	gif? ( >=media-libs/giflib-4.1:0= )
 	heif? (

@@ -4,8 +4,8 @@
 EAPI=8
 
 CXX_STD_MIN="14"
-LLVM_MAX_SLOT=13
-LLVM_SLOTS=(13)
+LLVM_MAX_SLOT=14
+LLVM_SLOTS=(14 13)
 FONT_PN=OpenImageIO
 PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake font llvm python-single-r1
@@ -35,7 +35,7 @@ OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
 IUSE+="
 ${CPU_FEATURES[@]%:*}
 ${OPENVDB_APIS_[@]}
-aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif hdf5 heif icc
+aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc
 jpeg2k opencv opengl openvdb png ptex +python +qt5 raw rav1e tbb +truetype webp
 "
 gen_abi_compat_required_use() {
@@ -50,13 +50,12 @@ REQUIRED_USE="
 	$(gen_abi_compat_required_use)
 	aom? ( avif )
 	avif? ( || ( aom rav1e ) )
-	hdf5? ( field3d )
 	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) tbb )
 	python? ( ${PYTHON_REQUIRED_USE} )
 	rav1e? ( avif )
 	tbb? ( openvdb )
 "
-# See https://github.com/OpenImageIO/oiio/blob/Release-2.2.21.0/INSTALL.md for requirements
+# See https://github.com/OpenImageIO/oiio/blob/v2.3.17.0/INSTALL.md
 QT_V="5.6"
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
@@ -95,12 +94,12 @@ gen_openexr_pairs() {
 	done
 }
 
-# Depends Jun 28, 2022
+# Depends Oct 23, 2022
 RDEPEND+="
 	|| ( $(gen_openexr_pairs) )
 	>=dev-cpp/robin-map-0.6.2
 	>=dev-libs/boost-1.53:=
-	>=dev-libs/libfmt-6.1.2:=
+	>=dev-libs/libfmt-8.0.0:=
 	>=dev-libs/pugixml-1.8:=
 	>=media-libs/tiff-3.9:0=
 	sys-libs/zlib:=
@@ -109,20 +108,17 @@ RDEPEND+="
 	dds? ( >=media-libs/libsquish-1.13 )
 	dicom? ( >=sci-libs/dcmtk-3.6.1 )
 	ffmpeg? (
-		>=media-video/ffmpeg-2.6:=
-		<media-video/ffmpeg-5.1:=
+		>=media-video/ffmpeg-3.0:=
+		<media-video/ffmpeg-5.2:=
 	)
-	field3d? (
-		>=media-libs/Field3D-1.7.3:=
-		hdf5? ( sci-libs/hdf5 )
-	)
+	field3d? ( >=media-libs/Field3D-1.7.3:= )
 	gif? ( >=media-libs/giflib-4.1:0= )
 	heif? (
 		>=media-libs/libheif-1.3:=
 		avif? ( >=media-libs/libheif-1.7:=[aom?,rav1e?] )
 	)
 	jpeg2k? ( >=media-libs/openjpeg-2:2= )
-	opencv? ( >=media-libs/opencv-2:= )
+	opencv? ( >=media-libs/opencv-3:= )
 	opengl? (
 		media-libs/glew:=
 		virtual/glu
@@ -144,7 +140,7 @@ RDEPEND+="
 		$(gen_openvdb_depends)
 	)
 	png? ( media-libs/libpng:0= )
-	ptex? ( >=media-libs/ptex-2.3.0:= )
+	ptex? ( >=media-libs/ptex-2.3.1:= )
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
@@ -206,13 +202,13 @@ BDEPEND+="
 	)
 	icc? ( ${BDEPEND_ICC} )"
 SRC_URI="
-https://github.com/OpenImageIO/oiio/archive/Release-${PV}.tar.gz
+https://github.com/OpenImageIO/oiio/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 
 DOCS=( CHANGES.md CREDITS.md README.md )
 RESTRICT="test" # bug 431412
 RESTRICT+=" mirror"
-S="${WORKDIR}/oiio-Release-${PV}"
+S="${WORKDIR}/oiio-${PV}"
 
 pkg_setup() {
 	if use clang && [[ -z "${CC}" || -z "${CXX}" ]] ; then
@@ -269,6 +265,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_DOCS=$(usex doc)
 		-DVERBOSE=ON
+		-DENABLE_FIELD3D=$(usex field3d)
 		-DINSTALL_DOCS=$(usex doc)
 		-DINSTALL_FONTS=OFF
 		-DOIIO_BUILD_TESTS=OFF # as they are RESTRICTed
