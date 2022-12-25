@@ -24,10 +24,16 @@ ${ORG_GH}/${MY_PN}/archive/release-${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 NV_DRIVER_VERSION_VULKAN="390.132"
-IUSE+=" doc gles2 +system-jsoncpp video_cards_amdgpu video_cards_intel
-video_cards_nvidia video_cards_radeonsi wayland xcb +xlib"
+IUSE+="
+doc gles2 +system-jsoncpp video_cards_amdgpu video_cards_intel
+video_cards_nvidia video_cards_radeonsi wayland xcb +xlib
+"
 REQUIRED_USE+="
-	^^ ( xlib xcb wayland )
+	^^ (
+		xcb
+		xlib
+		wayland
+	)
 	|| (
 		video_cards_amdgpu
 		video_cards_intel
@@ -76,7 +82,9 @@ DEPEND+="
 "
 #	x11-libs/libXrandr
 #	x11-libs/libXxf86vm
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_any_dep '>=dev-python/jinja-2[${PYTHON_USEDEP}]')
@@ -87,7 +95,7 @@ BDEPEND+="
 		sys-devel/gcc
 	)
 "
-CMAKE_BUILD_TYPE=Release
+CMAKE_BUILD_TYPE="Release"
 RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-release-${PV}"
 
@@ -133,4 +141,3 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  vulkan-driver-checks
-
