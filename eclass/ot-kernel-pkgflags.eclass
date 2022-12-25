@@ -4297,7 +4297,6 @@ ot-kernel-pkgflags_libomp() { # DONE
 ot-kernel-pkgflags_libsdl2() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "6f67af3" ]] && return
 	if has_version "media-libs/libsdl2" \
-		|| has_version "dev-games/urho3d" \
 		|| has_version "dev-libs/hidapi" ; then
 		einfo "Applying kernel config flags for the libsdl2 / hidapi package(s) (id: 6f67af3)"
 		ot-kernel_y_configopt "CONFIG_INPUT"

@@ -11,9 +11,6 @@
 # Untested.  You may disable this USE hard block at your own risk.
 games-misc/enigma android macos mingw32 mingw64 wine
 
-# Incomplete, requires developer with devices to complete
-dev-libs/urho3d android rpi
-
 # Untested tests
 dev-util/bear test
 net-libs/grpc test

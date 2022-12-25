@@ -2,12 +2,12 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Only for this ebuild fork on the oiledmachine-overlay -->
+    <!-- Ebuild fork on the oiledmachine-overlay -->
     <name>Orson Teodoro</name>
     <email>orsonteodoro@hotmail.com</email>
   </maintainer>
   <maintainer type="person">
-    <!-- Originator -->
+    <!-- Ebuild originator -->
     <email>zmedico@gentoo.org</email>
   </maintainer>
   <upstream>
@@ -26,10 +26,10 @@
     <flag name="c99">
       Uses the C99 standard
     </flag>
-    <flag name="c++11">
+    <flag name="cxx11">
       Uses the C++11 standard
     </flag>
-    <flag name="c++14">
+    <flag name="cxx14">
       Uses the C++14 standard
     </flag>
     <flag name="cgi">
@@ -37,9 +37,6 @@
     </flag>
     <flag name="gnu17">
       Uses the default C
-    </flag>
-    <flag name="urho3d">
-      Builds against the Lua build for Urh3D
     </flag>
     <flag name="cxx">
       Enables C++ bindings

@@ -13,7 +13,7 @@ LICENSE="MIT"
 SLOT="5.1"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
 IUSE="+deprecated readline"
-IUSE+=" static-libs urho3d"
+IUSE+=" static-libs"
 
 COMMON_DEPEND="
 	>=app-eselect/eselect-lua-3
@@ -80,10 +80,6 @@ src_prepare() {
 		-e "/^includedir=/s,(/include)$,\1/lua${SLOT}," \
 		-e "/^Libs:/s,((-llua)($| )),\2${SLOT}\3," \
 		"${S}"/etc/lua.pc
-
-	if use urho3d ; then
-		eapply "${FILESDIR}/lua-5.1.5-urho3d-lua_getmainthread.patch"
-	fi
 
 	# custom Makefiles
 	multilib_copy_sources
@@ -221,4 +217,4 @@ pkg_postinst() {
 	uopts_pkg_postinst
 }
 
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  apply-urho3d-patch allow-static-libs, pgo
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  allow-static-libs, pgo

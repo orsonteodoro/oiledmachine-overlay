@@ -18,7 +18,6 @@ LICENSE="MIT"
 SLOT="2"
 KEYWORDS="~arm64"
 IUSE="lua52compat static-libs"
-IUSE+=" urho3d"
 
 PATCHES=(
 	"${FILESDIR}/${PN}-2-ldconfig.patch"
@@ -28,9 +27,6 @@ PATCHES=(
 S="${WORKDIR}/${MY_P}"
 
 _emake() {
-	if use urho3d ; then
-		append-cppflags -DURHO3D
-	fi
 	emake \
 		Q= \
 		PREFIX="${EPREFIX}/usr" \
@@ -53,13 +49,6 @@ _emake() {
 		"$@"
 }
 
-src_prepare() {
-	default
-	if use urho3d ; then
-		eapply "${FILESDIR}/LuaJIT-2.1.0-urho3d-lua_getmainthread.patch"
-	fi
-}
-
 src_compile() {
 	tc-export_build_env
 	_emake XCFLAGS="$(usex lua52compat "-DLUAJIT_ENABLE_LUA52COMPAT" "")"
@@ -72,5 +61,3 @@ src_install() {
 
 	HTML_DOCS="doc/." einstalldocs
 }
-
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  apply-urho3d-patch

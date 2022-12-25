@@ -16,7 +16,7 @@ KEYWORDS="~amd64 ~ppc ~x86"
 IUSE+="
 ${LUA_COMPAT[@]/#/lua_targets_}
 
-+asan +c11 c89 c99 c++98 c++11 +c++14 +cgi gnu17 -cxx +caching debug doc
++asan +c11 c89 c99 cxx98 cxx11 +cxx14 +cgi gnu17 -cxx +caching debug doc
 -duktape -ipv6 -lua -serve_no_files +server_executable -server_stats +ssl
 ssl_1_0 +ssl_1_1 static-libs -test -websockets -zlib
 "
@@ -28,9 +28,9 @@ REQUIRED_USE+="
 		gnu17
 	)
 	^^ (
-		c++11
-		c++14
-		c++98
+		cxx11
+		cxx14
+		cxx98
 	)
 	lua? (
 		${LUA_REQUIRED_USE}
@@ -232,9 +232,9 @@ _configure() {
 			) \
 		)
 		-DCIVETWEB_CXX_ENABLE_LTO=$(_usex_lto)
-		-DCIVETWEB_CXX_STANDARD=$(usex c++14 c++14 \
-						$(usex c++11 c++11 \
-							$(usex c++98 c++11 auto) \
+		-DCIVETWEB_CXX_STANDARD=$(usex cxx14 cxx14 \
+						$(usex cxx11 cxx11 \
+							$(usex cxx98 cxx11 auto) \
 						) \
 					)
 		-DCIVETWEB_ENABLE_SERVER_EXECUTABLE=$(usex server_executable)

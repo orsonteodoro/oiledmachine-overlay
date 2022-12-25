@@ -2171,21 +2171,6 @@ https://github.com/mishoo/UglifyJS.git \
 		| tail -n 1)
 }
 
-# only stable, don't sort! 1.23 should be 1.2.3? 1.32 should be 1.3.2?
-repo_latest_version_get_urho3d_pv() {
-	# do not sort
-	echo $(get_tags \
-https://github.com/urho3d/Urho3D.git \
-		| grep -E -i -v -e ".*(ALPHA|BETA|RC).*" \
-		| tr " " "\n" \
-		| tail -n 1)
-}
-
-# only stable, don't sort! 1.23 should be 1.2.3? 1.32 should be 1.3.2?
-repo_latest_version_get_urho3d-web_pv() {
-	echo $(repo_latest_version_get_urho3d_pv)
-}
-
 repo_latest_version_get_vips_pv() {
 	echo $(get_newest_pv \
 https://github.com/libvips/libvips.git)

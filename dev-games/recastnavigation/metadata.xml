@@ -42,8 +42,5 @@
     <flag name="test">
       Performs testing
     </flag>
-    <flag name="urho3d">
-      Adds Urho3D support
-    </flag>
   </use>
 </pkgmetadata>
