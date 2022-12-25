@@ -155,7 +155,7 @@ MULTILIB_WRAPPED_HEADERS=(
 SRC_URI="https://www.libsdl.org/release/${MY_P}.tar.gz"
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.0.16-static-libs.patch
-	"${FILESDIR}"/${PN}-2.24.0-cmake-target-fixes.patch
+	"${FILESDIR}"/${PN}-2.24.0-fix-build-without-joystick.patch
 )
 
 S="${WORKDIR}/${MY_P}"

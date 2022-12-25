@@ -61,10 +61,11 @@ IUSE="alsa aqua -armv6-simd cpu_flags_arm_v6 cpu_flags_arm_v7
 cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 custom-cflags dbus doc
 fcitx4 gles1 gles2 haptic +hidapi-hidraw -hidapi-libusb ibus jack +joystick
 kms libsamplerate nas opengl oss pipewire pulseaudio sndio +sound static-libs
-+threads udev +video video_cards_vc4 vulkan wayland X xinerama xscreensaver"
++threads udev +video video_cards_vc4 vulkan wayland X xscreensaver"
 IUSE+=" -libdecor +openurl +nls"
 # libdecor is not in main repo but in community repos
 REQUIRED_USE="
+	|| ( joystick udev )
 	alsa? ( sound )
 	fcitx4? ( dbus )
 	gles1? ( video )
@@ -80,13 +81,13 @@ REQUIRED_USE="
 	sndio? ( sound )
 	vulkan? ( video )
 	wayland? ( gles2 )
-	xinerama? ( X )
 	xscreensaver? ( X )
 "
 # See https://github.com/libsdl-org/SDL/blob/release-2.0.22/.github/workflows/main.yml#L38
 # https://github.com/libsdl-org/SDL/blob/release-2.0.22/docs/README-linux.md
 # U 20.04
 CDEPEND="
+	virtual/libiconv[${MULTILIB_USEDEP}]
 	alsa? ( >=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}] )
 	dbus? ( >=sys-apps/dbus-1.6.18-r1[${MULTILIB_USEDEP}] )
 	fcitx4? ( app-i18n/fcitx:4 )
@@ -123,17 +124,15 @@ CDEPEND="
 		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libXcursor-1.1.14[${MULTILIB_USEDEP}]
 		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
+		>=x11-libs/libXfixes-6.0.0[${MULTILIB_USEDEP}]
 		>=x11-libs/libXi-1.7.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libXrandr-1.4.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libXxf86vm-1.1.3[${MULTILIB_USEDEP}]
-		xinerama? ( >=x11-libs/libXinerama-1.1.3[${MULTILIB_USEDEP}] )
 		xscreensaver? ( >=x11-libs/libXScrnSaver-1.2.2-r1[${MULTILIB_USEDEP}] )
 	)
 "
 RDEPEND="
 	${CDEPEND}
-	vulkan? ( media-libs/vulkan-loader )
-"
+	vulkan? ( media-libs/vulkan-loader )"
 DEPEND="
 	${CDEPEND}
 	ibus? ( dev-libs/glib:2[${MULTILIB_USEDEP}] )
@@ -157,6 +156,7 @@ MULTILIB_WRAPPED_HEADERS=(
 SRC_URI="https://www.libsdl.org/release/${MY_P}.tar.gz"
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.0.16-static-libs.patch
+	"${FILESDIR}"/${PN}-2.26.0-wayland.patch
 )
 
 S="${WORKDIR}/${MY_P}"
@@ -205,6 +205,7 @@ multilib_src_configure() {
 	# sorted by `./configure --help`
 	local myeconfargs=(
 		$(use_enable static-libs static)
+		--enable-system-iconv
 		--enable-atomic
 		$(use_enable sound audio)
 		$(use_enable video)
@@ -214,7 +215,7 @@ multilib_src_configure() {
 		$(use_enable haptic)
 		--enable-power
 		--enable-filesystem
-		$(use_enable threads)
+		$(use_enable threads pthreads)
 		--enable-timers
 		--enable-file
 		--enable-loadso
@@ -239,6 +240,7 @@ multilib_src_configure() {
 		--disable-pulseaudio-shared
 		--disable-arts
 		$(use_enable libsamplerate)
+		--disable-werror
 		$(use_enable nas)
 		--disable-nas-shared
 		$(use_enable nls locale)
@@ -254,12 +256,11 @@ multilib_src_configure() {
 		--disable-x11-shared
 		$(use_enable X video-x11-xcursor)
 		$(use_enable X video-x11-xdbe)
-		$(use_enable xinerama video-x11-xinerama)
+		$(use_enable X video-x11-xfixes)
 		$(use_enable X video-x11-xinput)
 		$(use_enable X video-x11-xrandr)
 		$(use_enable xscreensaver video-x11-scrnsaver)
 		$(use_enable X video-x11-xshape)
-		$(use_enable X video-x11-vm)
 		$(use_enable aqua video-cocoa)
 		--disable-video-directfb
 		--disable-fusionsound
