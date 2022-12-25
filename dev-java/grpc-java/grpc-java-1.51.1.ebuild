@@ -95,9 +95,9 @@ BDEPEND+="
 	dev-java/gradle-bin:${GRADLE_PV}
 	android? (
 		dev-util/android-sdk-update-manager
-		dev-util/android-platform:29
-		dev-util/android-platform:30
-		dev-util/android-build-tools:30.0.2
+		dev-util/android-sdk-platform:29
+		dev-util/android-sdk-platform:30
+		dev-util/android-sdk-build-tools:30.0.2
 		dev-util/android-sdk-commandlinetools
 	)
 "
