@@ -11,15 +11,18 @@ inherit desktop pax-utils unpacker xdg
 DESCRIPTION="A 3D interface to the planet"
 HOMEPAGE="https://earth.google.com/"
 # See https://support.google.com/earth/answer/168344?hl=en for list of direct links
-EXPECTED_SHA512="05d5507240275cf30221f28f1d3170dae392ea66ddbb350c7df1b604c37853\
-2f454531989f8427e80acf62613eda92c924a0a6a851c6f5367a8f8422c63cb07e"
+EXPECTED_SHA512="\
+327b915e1e832e7abca5d8c3187695a74300d3afcef38f433e7395bb3cfeb7a7\
+7aafd418df5e1408223fad0b6547e512740adb6d48755558b4576002c427eb09\
+"
 MY_PV=$(ver_cut 1-3 ${PV})
 SRC_FN_AMD64="${PN}-stable_${MY_PV}_amd64.deb"
-DEST_FN_AMD64="${PN}-stable_$(ver_cut 1-3 ${PV})_${EXPECTED_SHA512:0:7}_amd64.deb"
+DEST_FN_AMD64="${PN}-stable_${MY_PV}_${EXPECTED_SHA512:0:7}_amd64.deb"
 SRC_URI="amd64? ( ${DEST_FN_AMD64} )"
 # See opt/google/earth/pro/resources/licenses.rcc or Help > About for the full
 # license list.
-LICENSE="google-earth-pro-7.3.4
+LICENSE="
+	google-earth-pro-7.3.6
 	Apache-2.0
 	BSD
 	Boost-1.0
@@ -45,7 +48,8 @@ LICENSE="google-earth-pro-7.3.4
 	!system-openssl? ( openssl )
 	!system-qt5? ( BSD-2 BSD LGPL-2.1 google-earth-pro-7.3.4 )
 	!system-spnav? ( BSD )
-	ZLIB"
+	ZLIB
+"
 # libvpx is BSD.  libvpx is referenced in ffmpeg and possibly internally
 # WebKit BSD-2, BSD (ANGLE), LGPL-2.1 (for WebCore), plus possibly some
 #   custom code
@@ -53,11 +57,15 @@ LICENSE="google-earth-pro-7.3.4
 SLOT="0"
 KEYWORDS="~amd64"
 RESTRICT="fetch strip" # fetch for more control and determinism
-LANGS=( ar bg ca cs da de el en es-419 es fa fil fi fr he hi hr hu id it ja ko \
-lt lv nl no pl pt-PT pt ro ru sk sl sr sv th tr uk vi zh-Hans zh-Hant-HK \
-zh-Hant )
-IUSE=" +l10n_en ${LANGS[@]/#/l10n_} system-expat system-ffmpeg system-icu
-system-gdal system-gpsbabel system-openssl system-qt5 system-spnav"
+LANGS=(
+ar bg ca cs da de el en es-419 es fa fil fi fr he hi hr hu id it ja ko lt lv nl
+no pl pt-PT pt ro ru sk sl sr sv th tr uk vi zh-Hans zh-Hant-HK zh-Hant
+)
+IUSE="
+${LANGS[@]/#/l10n_}
++l10n_en system-expat system-ffmpeg system-icu system-gdal system-gpsbabel
+system-openssl system-qt5 system-spnav
+"
 LANGS+=( en )
 MY_PN="${PN}"
 MY_PN="${MY_PN//-/}"
@@ -70,19 +78,19 @@ QA_PREBUILT="*"
 # You can run /opt/google/earth/pro/libQt5Core.so.5 and get the version number.
 # Only minor versions are compatible in Qt.
 
-# ${PN} requires Ubuntu 14.04 libraries minimum
+# ${PN} requires U14.04 libraries minimum
 
 # Using system-openssl, system-icu USE flags requires custom slotting
 
-EXPAT_V="2.2.1"
-GDAL_V="2.4.4" # approximate
-  LIBPNG_V="1.2.56"
-  LIBTIFF_V="4.0.10"
-  POSTGIS_V="5.2.0"
-  ZLIB="1.2.3"
-FFMPEG_V="3.2.4"
-ICU_V="54.1"
-OPENSSL_V="1.0.2u"
+EXPAT_PV="2.2.1"
+GDAL_PV="2.4.4" # approximate
+  LIBPNG_PV="1.2.56"
+  LIBTIFF_PV="4.0.10"
+  POSTGIS_PV="5.2.0"
+  ZLIB_PV="1.2.3"
+FFMPEG_PV="4.4.2"
+ICU_PV="54.1"
+OPENSSL_PV="1.0.2u"
 QT_VERSION="5.5.1" # The version distributed with ${PN}
 
 # Using system Qt may likely require the older exact libraries.  Choices are...
@@ -100,65 +108,58 @@ QT_VERSION="5.5.1" # The version distributed with ${PN}
 # One may try to replace the Qt libs but there is a chance that they have been
 # modified by upstream.
 #
-QT_CATEGORY="dev-qt" # user can either choose to keep ebuild in same folder or \
-# seperate
-QT_SLOT="5" # may requires seperate SLOT depending on choice
-RDEPEND="
-	>=app-arch/bzip2-1.0.6
-	>=dev-db/sqlite-3.8.2:3
-	>=dev-lang/orc-0.4
-	  dev-libs/double-conversion
-	>=dev-libs/glib-2.0:2
-	>=dev-libs/gmp-5.1.3
-	>=dev-libs/libbsd-0.6.0
-	>=dev-libs/libffi-3.0.13
-	  dev-libs/libpcre
-	>=dev-libs/libtasn1-3.4
-	  dev-libs/libunistring
-	>=dev-libs/libxml2-2.9.1
-	  dev-libs/nettle
-	>=media-libs/alsa-lib-1.0.27.2
-	>=media-libs/fontconfig-2.11.0
-	>=media-libs/freetype-2.5.2
+# User can either choose to keep ebuild in same folder, or it may require a
+# seperate SLOT depending on the choice.
+#
+QT_CATEGORY="dev-qt"
+QT_SLOT="5"
+DPKG_RDEPEND="
+	>=media-libs/alsa-lib-1.1.3
+	>=media-libs/fontconfig-2.12.6
+	>=media-libs/freetype-2.8.1
+	>=media-libs/mesa-9.0.0
+	>=net-libs/libproxy-0.4.15
+	>=net-print/cups-2.2.7
+	>=sys-libs/glibc-2.27
+	>=sys-apps/dbus-1.12.2
+	>=sys-devel/gcc-8[cxx]
+	>=dev-libs/glib-2.56.1:2
+	>=media-libs/gstreamer-1.14.0:1.0
+	>=media-libs/gst-plugins-base-1.14.0:1.0
+	>=media-plugins/gst-plugins-meta-1.14.0:1.0
+	>=x11-libs/libSM-1.2.2
+	>=x11-libs/libX11-1.6.4
+	>=x11-libs/libxcb-1.13
+	>=x11-libs/libXext-1.3.3
+	>=dev-libs/libxml2-2.9.4
+	>=x11-libs/libXrender-0.9.10
+	>=x11-libs/libXtst-1.2.3
+"
+DYN_RDEPEND="
+	>=dev-db/sqlite-3.22.0:3
 	>=media-libs/glu-9.0
-	  media-libs/gstreamer:1.0=
-	  media-libs/gst-plugins-base:1.0=
-	>=media-libs/harfbuzz-0.9.27
-	>=media-libs/libpng-1.6
-	>=media-plugins/gst-plugins-meta-1.2.3:1.0
-	>=net-dns/libidn2-0.9
-	>=net-libs/gnutls-3.4.10
-	>=net-libs/libproxy-0.4.11
-	>=net-print/cups-1.7.2
-	>=sys-apps/dbus-1.6.18
-	>=sys-apps/util-linux-2.20.1
-	>=sys-devel/gcc-4.9.4[cxx]
-	>=sys-libs/zlib-1.2.8
-	virtual/opengl
-	virtual/ttf-fonts
+	>=sys-libs/zlib-1.2.11
 	>=x11-libs/libICE-1.0.8
-	>=x11-libs/libSM-1.2.1
-	>=x11-libs/libX11-1.6.2
-	>=x11-libs/libXau-1.0.8
 	>=x11-libs/libXcomposite-0.4.4
-	>=x11-libs/libXdmcp-1.1.1
-	>=x11-libs/libXext-1.3.2
-	>=x11-libs/libXfixes-5.0.1
 	>=x11-libs/libXi-1.7.1
-	>=x11-libs/libXrender-0.9.8
-	>=x11-libs/libXxf86vm-1.1.3
-	>=x11-libs/libdrm-2.4.52
-	>=x11-libs/libxcb-1.10
-	>=x11-libs/libxshmfence-1.1
-	system-expat? ( >=dev-libs/expat-${EXPAT_V} )
+"
+INTERNAL_DEPS="
+	system-expat? (
+		>=dev-libs/expat-${EXPAT_PV}
+	)
 	system-ffmpeg? (
 		<media-video/ffmpeg-4
-		>=media-video/ffmpeg-${FFMPEG_V}
+		>=media-video/ffmpeg-${FFMPEG_PV}
 	)
-	system-gdal? ( >=sci-libs/gdal-${GDAL_V}:2 )
-	system-gpsbabel? ( >=sci-geosciences/gpsbabel-1.6.0 )
-	system-icu? ( dev-libs/icu:${ICU_V} )
-	system-openssl? ( >=dev-libs/openssl-${OPENSSL_V}:0 )
+	system-gdal? (
+		>=sci-libs/gdal-${GDAL_PV}:2
+	)
+	system-gpsbabel? (
+		>=sci-geosciences/gpsbabel-1.6.0
+	)
+	system-icu? (
+		dev-libs/icu:${ICU_PV}
+	)
 	system-qt5? (
 		~${QT_CATEGORY}/qtcore-${QT_VERSION}:${QT_SLOT}[icu]
 		~${QT_CATEGORY}/qtdbus-${QT_VERSION}:${QT_SLOT}
@@ -175,11 +176,22 @@ RDEPEND="
 		~${QT_CATEGORY}/qtsvg-${QT_VERSION}:${QT_SLOT}
 		~${QT_CATEGORY}/qtwebchannel-${QT_VERSION}:${QT_SLOT}
 		~${QT_CATEGORY}/qtwebkit-${QT_VERSION}:${QT_SLOT}
-		~${QT_CATEGORY}/qtwebsockets-${QT_VERSION}:${QT_SLOT}[ssl]
 		~${QT_CATEGORY}/qtwidgets-${QT_VERSION}:${QT_SLOT}
 		~${QT_CATEGORY}/qtx11extras-${QT_VERSION}:${QT_SLOT}
 	)
-	system-spnav? ( >=dev-libs/libspnav-0.2.3 )"
+	system-openssl? (
+		>=dev-libs/openssl-${OPENSSL_PV}:0
+	)
+	system-spnav? (
+		>=dev-libs/libspnav-0.2.3
+	)
+"
+RDEPEND="
+	${DPKG_RDEPEND}
+	${DYN_RDEPEND}
+	${INTERNAL_DEPS}
+	virtual/ttf-fonts
+"
 S="${WORKDIR}"
 
 pkg_setup() {
@@ -189,7 +201,7 @@ ewarn "Using system-expat has not been tested"
 ewarn
 	else
 ewarn
-ewarn "The internal Expat ${EXPAT_V} library may contain CVE advisories.  For details see"
+ewarn "The internal Expat ${EXPAT_PV} library may contain CVE advisories.  For details see"
 ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=expat&search_type=all"
 ewarn
 	fi
@@ -199,8 +211,8 @@ ewarn "Using system-ffmpeg has not been tested"
 ewarn
 	else
 ewarn
-ewarn "The internal FFmpeg ${FFMPEG_V} may contain CVE advisories.  For details see"
-ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=ffmpeg%20$(ver_cut 1-2 ${FFMPEG_V})&search_type=all"
+ewarn "The internal FFmpeg ${FFMPEG_PV} may contain CVE advisories.  For details see"
+ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=ffmpeg%20$(ver_cut 1-2 ${FFMPEG_PV})&search_type=all"
 ewarn
 	fi
 	if use system-gdal ; then
@@ -209,7 +221,7 @@ ewarn "Using system-gdal has not been tested"
 ewarn
 	else
 ewarn
-ewarn "The internal GDAL ${GDAL_V} library may contain CVE advisories.  For details see"
+ewarn "The internal GDAL ${GDAL_PV} library may contain CVE advisories.  For details see"
 ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=gdal&search_type=all"
 ewarn
 	fi
@@ -219,7 +231,7 @@ ewarn "Using system-icu has not been tested"
 ewarn
 	else
 ewarn
-ewarn "The internal ICU ${ICU_V} library may contain known CVE advisories.  For details see"
+ewarn "The internal ICU ${ICU_PV} library may contain known CVE advisories.  For details see"
 ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=International%20Components%20for%20Unicode&search_type=all"
 ewarn
 	fi
@@ -229,8 +241,8 @@ ewarn "Using system-openssl has not been tested"
 ewarn
 	else
 ewarn
-ewarn "The internal OpenSSL ${OPENSSL_V} contains known CVE advisories and is End Of Life (EOL).  For details see"
-ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=openssl%20$(ver_cut 1-3 ${OPENSSL_V})&search_type=all"
+ewarn "The internal OpenSSL ${OPENSSL_PV} contains known CVE advisories and is End Of Life (EOL).  For details see"
+ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=openssl%20$(ver_cut 1-3 ${OPENSSL_PV})&search_type=all"
 ewarn "https://www.openssl.org/policies/releasestrat.html"
 ewarn
 	fi
