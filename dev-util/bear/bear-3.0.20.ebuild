@@ -15,25 +15,29 @@ MY_PN="${PN/b/B}"
 SLOT="0"
 IUSE+=" test"
 CDEPEND="
-	>=net-libs/grpc-1.26[${MULTILIB_USEDEP}]
+	>=net-libs/grpc-1.46.4[${MULTILIB_USEDEP}]
 	>=dev-libs/protobuf-3.11[${MULTILIB_USEDEP}]
 "
 DEPEND+="
 	${CDEPEND}
-	>=dev-cpp/nlohmann_json-3.7.3[${MULTILIB_USEDEP}]
-	>=dev-libs/libfmt-6.1[${MULTILIB_USEDEP}]
+	!=dev-cpp/nlohmann_json-3.10.3[${MULTILIB_USEDEP}]
+	>=dev-cpp/nlohmann_json-3.10.5[${MULTILIB_USEDEP}]
+	>=dev-libs/libfmt-9[${MULTILIB_USEDEP}]
 	>=dev-libs/spdlog-1.5[${MULTILIB_USEDEP}]
 " # \
 # The libfmt requirement is based on the CMakeLists.txt is different from the \
 # INSTALL.md requiring 6.2.
-RDEPEND+=" ${DEPEND}"
-BDEPEND+=" ${CDEPEND}
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
+	${CDEPEND}
 	>=dev-util/cmake-3.12
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	test? (
 		${PYTHON_DEPS}
 		$(python_gen_any_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]')
-		>=dev-cpp/gtest-1.10[${MULTILIB_USEDEP}]
+		>=dev-cpp/gtest-1.12.1[${MULTILIB_USEDEP}]
 		dev-util/valgrind
 	)
 "
@@ -48,7 +52,7 @@ pkg_setup()
 {
 	python-any-r1_pkg_setup
 	if pkg-config --libs grpc | grep -q -e "absl_dynamic_annotations" ; then
-		if [[ ! -f /usr/$(get_libdir)/libabsl_dynamic_annotations.so ]] ; then
+		if [[ ! -f "${ESYSROOT}"/usr/$(get_libdir)/libabsl_dynamic_annotations.so ]] ; then
 			# grpc requirement
 			die "Missing libabsl_dynamic_annotations.so"
 		fi

@@ -14,8 +14,12 @@ KEYWORDS="~amd64 ~x86"
 MY_PN="${PN/b/B}"
 SLOT="0"
 IUSE+=" bash-completion test"
-DEPEND+=" ${PYTHON_DEPS}"
-RDEPEND+=" ${DEPEND}"
+DEPEND+="
+	${PYTHON_DEPS}
+"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-util/cmake-2.8
