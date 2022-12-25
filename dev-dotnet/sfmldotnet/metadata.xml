@@ -9,4 +9,9 @@
   <upstream>
     <remote-id type="github">SFML/SFML.Net</remote-id>
   </upstream>
+  <use>
+    <flag name="fallback-commit">
+      Rewind the commit snapshot to when build files didn't change.
+    </flag>
+  </use>
 </pkgmetadata>

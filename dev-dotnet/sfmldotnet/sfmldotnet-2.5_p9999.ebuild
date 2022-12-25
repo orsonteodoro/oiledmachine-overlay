@@ -10,7 +10,11 @@ inherit dotnet git-r3
 DESCRIPTION="SFML.Net is a C# language binding for SFML"
 HOMEPAGE="http://www.sfml-dev.org"
 LICENSE="ZLIB"
-IUSE="${USE_DOTNET} developer mono nupkg"
+IUSE="
+${USE_DOTNET} developer mono nupkg
+
+fallback-commit
+"
 REQUIRED_USE=""
 RDEPEND="
 	=media-libs/libsfml-2.5*
@@ -36,8 +40,8 @@ EGIT_COMMIT="HEAD"
 DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-${DOTNET_PV}" )
 
 EXPECTED_BUILD_FILES="\
-9e22ad0f0cbfc96ae8a3261c1365b82765ccaaf9e1a4baa57f4db796f38f3e7b\
-5b571431836f51cb19156fd09e558596462afc8a15fa1dcd12160ccaef790140\
+6c7f2bcc6e2f4a2749df6c366a77b31094c8fa28b1a3873738e33c0731a888e3\
+f664b59e1280ad5c6b5d35fbc8d8c6e4bc739d3229bb3dd291632877deb16038\
 "
 
 # Copy and sanitize permissions
@@ -92,6 +96,7 @@ eerror
 }
 
 src_unpack() {
+	use fallback-commit && export EGIT_COMMIT="f678eb2cf1eadf1a4f95cf1febd1da1d78ddcd7f" # Oct 27, 2022
 	git-r3_fetch
 	git-r3_checkout
 	local actual_build_files=$(cat \
@@ -102,8 +107,8 @@ src_unpack() {
 eerror
 eerror "A change in build files has been detected."
 eerror
-eerror "Expected build files:  ${EXPECTED_BUILD_FILES}"
-eerror "Actual build files:  ${actual_build_files}"
+eerror "Expected build files:\t${EXPECTED_BUILD_FILES}"
+eerror "Actual build files:\t${actual_build_files}"
 eerror
 		die
 	fi
