@@ -10,11 +10,10 @@ DESCRIPTION=\
 HOMEPAGE="https://pugixml.org/ https://github.com/zeux/pugixml/"
 LICENSE="MIT"
 KEYWORDS="
-~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
-~x86-linux
+amd64 ~arm arm64 ~hppa ~ia64 ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux
 "
 IUSE+=" doc static-libs"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 DEPEND+=" virtual/libc"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
