@@ -55,7 +55,7 @@ LICENSE="
 #   and are transported with the tarball.
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="alsa aqua -armv6-simd cpu_flags_arm_v6 cpu_flags_arm_v7
 -cpu_flags_arm_neon cpu_flags_ppc_altivec cpu_flags_x86_3dnow
 cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 custom-cflags dbus doc
