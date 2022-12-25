@@ -9,4 +9,10 @@
   <upstream>
     <remote-id type="github">dotdevelop/dotdevelop</remote-id>
   </upstream>
+  <use>
+    <flag name="fallback-commit">
+      Rewind back to the expected dependencies and when build
+      files didn't change.
+    </flag>
+  </use>
 </pkgmetadata>

@@ -33,7 +33,11 @@ LICENSE="
 #
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE=" debugger developer test"
+IUSE="
+debugger developer test
+
++fallback-commit
+"
 REQUIRED_USE="
 	!debugger
 "
@@ -118,6 +122,7 @@ eerror
 }
 
 src_unpack() {
+	use fallback-commit && EGIT_COMMIT="5819e6e7ef5747ba6375cb9dfad0a75b6127d562"
 	git-r3_fetch
 	git-r3_checkout
 	cd "${S}" || die
