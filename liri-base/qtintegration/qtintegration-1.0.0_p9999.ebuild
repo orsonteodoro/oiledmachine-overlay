@@ -12,7 +12,7 @@ LICENSE="GPL-3+ LGPL-3+ ISC"
 
 # Live/snapshot ebuild do not get KEYWORDed
 
-SLOT="0/$(ver_cut 1-3 ${PV})"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 FEATURES_IUSE=(
 shell lockscreen material-decoration
 platform-theme

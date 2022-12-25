@@ -22,7 +22,7 @@ LICENSE="
 
 # Live/snapshots ebuilds do not get KEYWORDS
 
-SLOT="0/$(ver_cut 1-3 ${PV})"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE_FEATURES=(
 	datadevice
 	brcm

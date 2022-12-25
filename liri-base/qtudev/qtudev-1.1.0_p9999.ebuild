@@ -14,7 +14,7 @@ LICENSE="LGPL-3+"
 
 # Live/snapshots do not get KEYWORDed
 
-SLOT="0/$(ver_cut 1-3 ${PV})"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 QT_MIN_PV=5.8
 IUSE+="
 test

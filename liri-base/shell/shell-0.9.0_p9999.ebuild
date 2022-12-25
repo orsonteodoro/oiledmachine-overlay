@@ -13,7 +13,7 @@ LICENSE="GPL-3+ LGPL-3+ BSD"
 
 # Live/snapshot do not get KEYWORDs.
 
-SLOT="0/$(ver_cut 1-3 ${PV})"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 aurora eglfs +jpeg -qtquick-compiler -lockscreen +png systemd
 

@@ -12,7 +12,7 @@ LICENSE="LGPL-2.1+ FDL-1.3"
 
 # Live/snapshot do not get KEYWORDed.
 
-SLOT="0/$(ver_cut 1-3 ${PV})"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 examples test
 

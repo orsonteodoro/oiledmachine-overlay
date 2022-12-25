@@ -14,7 +14,7 @@ LICENSE="LGPL-3+ GPL-3+"
 
 # live ebuilds do not get KEYWORDed
 
-SLOT="0/$(ver_cut 1-3 ${PV})"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 r1
 "

@@ -12,7 +12,7 @@ LICENSE="LGPL-3+ MIT"
 
 # Live/snapshot do not get KEYWORDs
 
-SLOT="0/$(ver_cut 1-3 ${PV})"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 wayland X
 

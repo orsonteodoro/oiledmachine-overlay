@@ -12,7 +12,7 @@ LICENSE="GPL-3" # Readme.md says GPL-3 but some sources say GPL-3+
 
 # Live/snapshot do not get KEYWORDS.
 
-SLOT="0/$(ver_cut 1-3 ${PV})"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 r1
 "

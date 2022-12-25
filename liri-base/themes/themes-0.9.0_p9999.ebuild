@@ -14,7 +14,7 @@ LICENSE="GPL-3+ grub? ( GPL-3-with-font-exception OFL-1.1 )"
 
 # Live/snapshot do not get KEYWORDS.
 
-SLOT="0/$(ver_cut 1-3 ${PV})"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 grub plymouth sddm
 

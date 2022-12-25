@@ -23,7 +23,7 @@ vorbis
 )
 # Based on mime listed in com.liri.music.desktop
 
-SLOT="0/$(ver_cut 1-3 ${PV})"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 QT_MIN_PV=5.14
 IUSE+="
 ${GSTREAMER_CODECS[@]}

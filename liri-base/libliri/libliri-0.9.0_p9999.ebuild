@@ -12,7 +12,7 @@ LICENSE="LGPL-3+ FDL-1.3"
 
 # live/snapshot ebuilds don't get KEYWORDed
 
-SLOT="0/$(ver_cut 1-3 ${PV})"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 QT_MIN_PV=5.10
 IUSE+="
 aurora test

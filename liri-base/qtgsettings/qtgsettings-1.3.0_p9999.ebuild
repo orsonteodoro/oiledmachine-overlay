@@ -12,7 +12,7 @@ LICENSE="LGPL-3"
 
 # Live/snapshot do not get KEYWORed.
 
-SLOT="0/$(ver_cut 1-3 ${PV})"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 test
 
