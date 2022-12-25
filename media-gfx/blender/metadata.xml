@@ -223,6 +223,9 @@
     <flag name="cycles-network">
       Enable experimental peer-to-peer LAN networking support for Cycles.
     </flag>
+    <flag name="dbus">
+      Adds themed cursor support for Wayland support.
+    </flag>
     <flag name="dds">
       Adds DDS textures support to Blender.
     </flag>

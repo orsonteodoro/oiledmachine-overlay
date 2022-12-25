@@ -51,9 +51,9 @@ LICENSE="
 # KEYWORDS="~amd64" ebuild is still a Work In Progress (WIP) and needs testing.
 PLUGIN_NAME="rprblender"
 # Ceiling values based on python compatibility matching the particular Blender
-# version
-MIN_BLENDER_V="2.80"
-MAX_BLENDER_V="2.94" # exclusive
+# version.
+MIN_BLENDER_PV="2.80"
+MAX_BLENDER_PV="3.5" # exclusive
 SLOT="0"
 IUSE+=" +blender-lts +blender-stable blender-master"
 IUSE+=" denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca -systemwide
@@ -64,7 +64,6 @@ NV_DRIVER_VERSION_VULKAN="390.132"
 # Systemwide is preferred but currently doesn't work but did in the past in <2.0
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
-	|| ( blender-lts blender-master blender-stable )
 	!systemwide
 	python_targets_python3_9
 	blender-lts? ( python_targets_python3_9 )
@@ -83,12 +82,16 @@ REQUIRED_USE+="
 			opencl_rocr
 		)
 	)
+	|| (
+		blender-lts
+		blender-master
+		blender-stable
+	)
 "
 # Assumes U 18.04.03 minimal
 CDEPEND_NOT_LISTED="
 	dev-lang/python[xml]
-	sys-devel/gcc[openmp]
-"
+	sys-devel/gcc[openmp]"
 DEPEND_NOT_LISTED=""
 # See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.3.5/README-LNX.md#build-requirements
 DEPEND+="
@@ -148,23 +151,25 @@ RDEPEND_NOT_LISTED="
 RDEPEND+="
 	${CDEPEND_NOT_LISTED}
 	${RDEPEND_NOT_LISTED}
+	>=media-libs/embree-2.12.0
+	>=media-libs/openimageio-1.6
+	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
 	blender-lts? (
-		>=media-gfx/blender-${MIN_BLENDER_V}[python_single_target_python3_9]
-		 <media-gfx/blender-${MAX_BLENDER_V}[python_single_target_python3_9]
+		>=media-gfx/blender-${MIN_BLENDER_PV}[python_single_target_python3_9]
+		 <media-gfx/blender-${MAX_BLENDER_PV}[python_single_target_python3_9]
 	)
 	blender-stable? (
-		>=media-gfx/blender-${MIN_BLENDER_V}[python_single_target_python3_9]
-		 <media-gfx/blender-${MAX_BLENDER_V}[python_single_target_python3_9]
+		>=media-gfx/blender-${MIN_BLENDER_PV}[python_single_target_python3_9]
+		 <media-gfx/blender-${MAX_BLENDER_PV}[python_single_target_python3_9]
 	)
 	blender-master? (
 		>=media-gfx/blender-9999[python_single_target_python3_9]
 	)
-	>=media-libs/embree-2.12.0
-	>=media-libs/openimageio-1.6
-	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
 	matlib? ( media-plugins/RadeonProRenderMaterialLibrary )
 	opencl? (
-		intel-ocl? ( dev-util/intel-ocl-sdk )
+		intel-ocl? (
+			dev-util/intel-ocl-sdk
+		)
 		|| (
 			video_cards_amdgpu? (
 				opencl_orca? ( dev-libs/amdgpu-pro-opencl )
@@ -205,25 +210,25 @@ RDEPEND+="
 BDEPEND+="
 	${CDEPEND_NOT_LISTED}
 	${PYTHON_DEPS}
-	app-arch/makeself
-	dev-util/patchelf
-	dev-cpp/castxml
 	$(python_gen_cond_dep 'dev-python/pip[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep '>=dev-python/pytest-3[${PYTHON_USEDEP}]')
 	>=dev-util/cmake-3.11
+	app-arch/makeself
+	dev-util/patchelf
+	dev-cpp/castxml
 	dev-vcs/git
 "
-RIF_V="1.7.2"
-RPRSDK_V="2.2.12"
-RPRSC_V="9999_p20201109"
+RIF_PV="1.7.2"
+RPRSDK_PV="2.2.16"
+RPRSC_PV="9999"
 # Commits based on left side.  The commit associated with the message (right) differs
 # with the commit associated with the folder (left) on the GitHub website.
 EGIT_COMMIT_RIF="76068b7ca29aa8a7f29f65475f334981f0dd5e53"
-EGIT_COMMIT_RPRSC="41d2e5fb8631ef2bfa60fa27f5dbf7c4a8e2e4aa"
-EGIT_COMMIT_RPRSDK="e284dfac04ee3a142603ba955a2bf8d11a78d945"
-RIF_DF="RadeonImageFilter-${RIF_V}-${EGIT_COMMIT_RIF:0:7}.tar.gz"
-RPRSDK_DF="RadeonProRenderSDK-${RPRSDK_V}-${EGIT_COMMIT_RPRSDK:0:7}.tar.gz"
-RPRSC_DF="RadeonProRenderSharedComponents-${RPRSC_V}-${EGIT_COMMIT_RPRSC:0:7}.tar.gz"
+EGIT_COMMIT_RPRSC="6608117fcddd783e81b2aedc2c1abdf0b449d465"
+EGIT_COMMIT_RPRSDK="c6424e29169743cd5a05c10593a2665dfedb185c"
+RIF_DF="RadeonImageFilter-${RIF_PV}-${EGIT_COMMIT_RIF:0:7}.tar.gz"
+RPRSC_DF="RadeonProRenderSharedComponents-${RPRSC_PV}-${EGIT_COMMIT_RPRSC:0:7}.tar.gz"
+RPRSDK_DF="RadeonProRenderSDK-${RPRSDK_PV}-${EGIT_COMMIT_RPRSDK:0:7}.tar.gz"
 GH_ORG_BURI="https://github.com/GPUOpen-LibrariesAndSDKs"
 SRC_URI="
 ${GH_ORG_BURI}/RadeonProRenderBlenderAddon/archive/refs/tags/v${PV}.tar.gz
@@ -304,6 +309,7 @@ ewarn
 	fi
 }
 
+
 src_unpack() {
 	unpack ${A}
 	cd "${S}" || die
@@ -316,9 +322,9 @@ src_unpack() {
 }
 
 src_prepare() {
-	ewarn "This is the weekly development build."
+	ewarn "This is the release build."
 	default
-	eapply "${FILESDIR}/rpr-3.3.29-more-generic-call-python3.patch"
+	eapply "${FILESDIR}/rpr-3.5.2-more-generic-call-python3.patch"
 	eapply "${FILESDIR}/rpr-${PV}-bump-version.patch"
 	git init || die
 	touch dummy || die
@@ -370,8 +376,8 @@ src_install_systemwide_plugin_unpacked() {
 
 	for d_ver in ${DIRS} ; do
 		d_ver=$(basename ${d_ver})
-		if ver_test ${MIN_BLENDER_V} -le ${d_ver} \
-			&& ver_test ${d_ver} -lt ${MAX_BLENDER_V} ; then
+		if ver_test ${MIN_BLENDER_PV} -le ${d_ver} \
+			&& ver_test ${d_ver} -lt ${MAX_BLENDER_PV} ; then
 			einfo "Blender ${d_ver} is supported.  Installing..."
 			d_addon_base="/usr/share/blender/${d_ver}/scripts/addons_contrib"
 			ed_addon_base="${ED}/${d_addon_base}"

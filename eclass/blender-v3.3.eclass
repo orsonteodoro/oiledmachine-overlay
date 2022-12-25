@@ -2,12 +2,12 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: blender-v3.2.eclass
+# @ECLASS: blender-v3.3.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
 # @BLURB: blender implementation
 # @DESCRIPTION:
-# The blender-v3.2.eclass helps reduce code duplication across ebuilds
+# The blender-v3.3.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
 
 # Upstream uses LLVM 9 for Linux.  For prebuilt binary only addons, this may be
@@ -24,7 +24,7 @@ esac
 CXXABI_V=17 # Linux builds should be gnu11, but in Win builds it is c++17
 PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11. For the max exclusive Python supported (and
 # others), see \
-# https://github.com/blender/blender/blob/v3.3.0/build_files/build_environment/install_deps.sh#L382
+# https://github.com/blender/blender/blob/v3.3.2/build_files/build_environment/install_deps.sh#L382
 
 # Platform defaults based on CMakeList.txt
 OPENVDB_ABIS_MAJOR_VERS=9
@@ -32,7 +32,7 @@ OPENVDB_ABIS=( ${OPENVDB_ABIS_MAJOR_VERS/#/abi} )
 OPENVDB_ABIS=( ${OPENVDB_ABIS[@]/%/-compat} )
 IUSE+=" ${OPENVDB_ABIS[@]}"
 IUSE+="
-X +abi9-compat +alembic -asan +boost +bullet +collada -cycles-hip
++X +abi9-compat +alembic -asan +boost +bullet +collada -cycles-hip
 +color-management -cpudetection +cuda +cycles -cycles-device-oneapi +dds -debug
 doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp +jack +jemalloc +jpeg2k -llvm
 -man +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
@@ -50,7 +50,7 @@ gen_llvm_iuse()
 }
 IUSE+=" "$(gen_llvm_iuse) # same as Mesa and LLVM latest stable keyword \
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v3.3.0/build_files/build_environment/install_deps.sh#L488
+# https://github.com/blender/blender/blob/v3.3.2/build_files/build_environment/install_deps.sh#L488
 FFMPEG_IUSE+=" +aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 
@@ -206,14 +206,14 @@ REQUIRED_USE+="
 # no need to look past those dates.
 
 # Last change was Jul 29, 2022 for:
-# https://github.com/blender/blender/commits/v3.3.0/build_files/build_environment/install_deps.sh
+# https://github.com/blender/blender/commits/v3.3.2/build_files/build_environment/install_deps.sh
 
 # Last change was Aug 24, 2021 for:
-# https://github.com/blender/blender/commits/v3.3.0/build_files/cmake/config/blender_release.cmake
+# https://github.com/blender/blender/commits/v3.3.2/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
-# Last change was Aug 30, 2022 for:
-# https://github.com/blender/blender/commits/v3.3.0/build_files/build_environment/cmake/versions.cmake
+# Last change was Nov 2, 2022 for:
+# https://github.com/blender/blender/commits/v3.3.2/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
 # dependency version requirements see
@@ -269,7 +269,7 @@ gen_osl_depends()
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
-			llvm-${s}? ( >=media-libs/osl-${OSL_V}:=[llvm-${s},static-libs] )
+			llvm-${s}? ( >=media-libs/osl-${OSL_PV}:=[llvm-${s},static-libs] )
 		"
 	done
 }
@@ -290,18 +290,18 @@ gen_openexr_pairs() {
 EXTRA_DEPENDS="
 "
 
-BOOST_V="1.78"
-LIBOGG_V="1.3.5"
-LIBSNDFILE_V="1.1.0"
-OSL_V="1.11.17.0"
-PUGIXML_V="1.10"
-THEORA_V="1.1.1"
+BOOST_PV="1.78"
+LIBOGG_PV="1.3.5"
+LIBSNDFILE_PV="1.1.0"
+OSL_PV="1.11.17.0"
+PUGIXML_PV="1.10"
+THEORA_PV="1.1.1"
 # the ffplay contradicts in
 # build_files/build_environment/cmake/ffmpeg.cmake : --enable-ffplay
 # build_files/build_environment/install_deps.sh : --disable-ffplay
 CODECS="
 	aom? (
-		>=media-libs/libaom-3.4.0
+		>=media-libs/libaom-3.3.0
 	)
 	mp3? (
 		>=media-sound/lame-3.100
@@ -310,14 +310,14 @@ CODECS="
 		>=media-libs/opus-1.3.1
 	)
 	theora? (
-		>=media-libs/libogg-${LIBOGG_V}
-		>=media-libs/libtheora-${THEORA_V}
+		>=media-libs/libogg-${LIBOGG_PV}
+		>=media-libs/libtheora-${THEORA_PV}
 		vorbis? (
-			>=media-libs/libtheora-${THEORA_V}[encode]
+			>=media-libs/libtheora-${THEORA_PV}[encode]
 		)
 	)
 	vorbis? (
-		>=media-libs/libogg-${LIBOGG_V}
+		>=media-libs/libogg-${LIBOGG_PV}
 		>=media-libs/libvorbis-1.3.7
 	)
 	vpx? (
@@ -358,7 +358,6 @@ RDEPEND+="
 	)
 	>=dev-cpp/pystring-1.1.3
 	>=dev-lang/python-3.10.8
-	>=dev-libs/wayland-protocols-1.21
 	  dev-libs/lzo:2
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2021.10.8[${PYTHON_USEDEP}]
@@ -380,9 +379,9 @@ RDEPEND+="
 		>=media-gfx/alembic-1.8.3[boost(+),hdf(+)]
 	)
 	boost? (
-		>=dev-libs/boost-${BOOST_V}:=[nls?,threads(+)]
+		>=dev-libs/boost-${BOOST_PV}:=[nls?,threads(+)]
 		usd? (
-			>=dev-libs/boost-${BOOST_V}:=[nls?,threads(+),python]
+			>=dev-libs/boost-${BOOST_PV}:=[nls?,threads(+),python]
 		)
 	)
 	collada? (
@@ -399,7 +398,7 @@ RDEPEND+="
 	)
 	cycles? (
 		osl? (
-			>=dev-libs/pugixml-${PUGIXML_V}
+			>=dev-libs/pugixml-${PUGIXML_PV}
 		)
 	)
 	cycles-device-oneapi? (
@@ -477,7 +476,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 	)
 	openimageio? (
 		$(gen_oiio_depends)
-		>=dev-libs/pugixml-${PUGIXML_V}
+		>=dev-libs/pugixml-${PUGIXML_PV}
 	)
 	openexr? (
 		|| ( $(gen_openexr_pairs) )
@@ -515,9 +514,9 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		>=media-libs/libsdl2-2.0.20[sound]
 	)
 	sndfile? (
-		>=media-libs/libsndfile-${LIBSNDFILE_V}
+		>=media-libs/libsndfile-${LIBSNDFILE_PV}
 		flac? (
-			>=media-libs/libsndfile-${LIBSNDFILE_V}[-minimal]
+			>=media-libs/libsndfile-${LIBSNDFILE_PV}[-minimal]
 		)
 	)
 	tbb? (
@@ -662,10 +661,9 @@ _blender_pkg_setup() {
 	# TODO: ldd oiio for webp and warn user if missing
 	# Needs OpenCL 1.2 (GCN 2)
 	check_multiple_llvm_versions_in_native_libs
-ewarn
-ewarn "This version is not a Long Term Support (LTS) version."
-ewarn "Consider using 2.93.x series instead."
-ewarn
+einfo
+einfo "This version a Long Term Support (LTS) version till Sep 2024."
+einfo
 
 	local found=0
 	for s in ${LLVM_SLOTS[@]} ; do
@@ -789,6 +787,7 @@ _src_configure() {
 		-DWITH_CYCLES_HIP_BINARIES=$(usex cycles-hip)
 		-DWITH_DOC_MANPAGE=$(usex man)
 		-DWITH_DRACO=$(usex draco)
+		-DWITH_GHOST_WAYLAND_DYNLOAD=OFF
 		-DWITH_GMP=$(usex gmp)
 		-DWITH_IK_SOLVER=ON
 		-DWITH_INPUT_IME=OFF
@@ -848,7 +847,7 @@ _src_configure() {
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v3.3.0/build_files/cmake/config
+# https://github.com/blender/blender/tree/v3.3.2/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(

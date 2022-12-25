@@ -31,11 +31,11 @@ src/bindings/pyrpr/rpr.py:
 #********************************************************************
 
 Toorero is not a mispelling of Teodoro.  We are two different people.
-Teodoro edited the patch to complete the patch.
+Teodoro edited the patch for newer point releases and to complete the patch.
 
-diff -urp RadeonProRenderBlenderAddon-3.3.16.orig/BlenderPkg/build_linux.sh RadeonProRenderBlenderAddon-3.3.16/BlenderPkg/build_linux.sh
---- RadeonProRenderBlenderAddon-3.3.16.orig/BlenderPkg/build_linux.sh	2021-12-16 11:53:07.000000000 -0800
-+++ RadeonProRenderBlenderAddon-3.3.16/BlenderPkg/build_linux.sh	2021-12-18 09:48:42.341570948 -0800
+diff -urp RadeonProRenderBlenderAddon-3.5.2.orig/BlenderPkg/build_linux.sh RadeonProRenderBlenderAddon-3.5.2/BlenderPkg/build_linux.sh
+--- RadeonProRenderBlenderAddon-3.5.2.orig/BlenderPkg/build_linux.sh	2022-11-07 10:03:41.000000000 -0800
++++ RadeonProRenderBlenderAddon-3.5.2/BlenderPkg/build_linux.sh	2022-12-24 18:53:11.016547753 -0800
 @@ -15,8 +15,10 @@
  # limitations under the License.
  #********************************************************************
@@ -48,21 +48,21 @@ diff -urp RadeonProRenderBlenderAddon-3.3.16.orig/BlenderPkg/build_linux.sh Rade
  
 -python3.7 create_zip_addon.py
 +python3 create_zip_addon.py # oteodoro: python3.7 -> python3
-diff -urp RadeonProRenderBlenderAddon-3.3.16.orig/build.py RadeonProRenderBlenderAddon-3.3.16/build.py
---- RadeonProRenderBlenderAddon-3.3.16.orig/build.py	2021-12-16 11:53:07.000000000 -0800
-+++ RadeonProRenderBlenderAddon-3.3.16/build.py	2021-12-18 09:45:49.241570967 -0800
+diff -urp RadeonProRenderBlenderAddon-3.5.2.orig/build.py RadeonProRenderBlenderAddon-3.5.2/build.py
+--- RadeonProRenderBlenderAddon-3.5.2.orig/build.py	2022-11-07 10:03:41.000000000 -0800
++++ RadeonProRenderBlenderAddon-3.5.2/build.py	2022-12-24 18:56:08.415271358 -0800
 @@ -41,14 +41,12 @@ subprocess.check_call([sys.executable, '
  subprocess.check_call([sys.executable, 'rpr_load_store.py'])
  os.chdir(cwd)
  
--if sys.version_info.major == 3 and sys.version_info.minor == 9:
--    # we are going to build RPRBlenderHelper only for python 3.9
+-if sys.version_info.major == 3 and sys.version_info.minor == 10:
+-    # we are going to build RPRBlenderHelper only for python 3.10
 -    os.chdir('RPRBlenderHelper')
 -    shutil.rmtree('.build', ignore_errors=True)
 -    os.makedirs('.build')
 -    os.chdir('.build')
 -    if 'Windows' == platform.system():
--        subprocess.check_call(['cmake', '-G', 'Visual Studio 14 2015 Win64',  '..'])
+-        subprocess.check_call(['cmake', '-G', 'Visual Studio 16 2019',  '..'])
 -    else:
 -        subprocess.check_call(['cmake', '..'])
 -    subprocess.check_call(['cmake', '--build',  '.', '--config', 'Release', '--clean-first'])
@@ -71,16 +71,14 @@ diff -urp RadeonProRenderBlenderAddon-3.3.16.orig/build.py RadeonProRenderBlende
 +os.makedirs('.build', exist_ok=True)								#
 +os.chdir('.build')										#
 +if 'Windows' == platform.system():								# Toorero: Also build RPRBlenderHelper for other python3 versions 5b735f2
-+    subprocess.check_call(['cmake', '-G', 'Visual Studio 14 2015 Win64',  '..'])		#
++    subprocess.check_call(['cmake', '-G', 'Visual Studio 16 2019',  '..'])			#
 +else:												#
 +    subprocess.check_call(['cmake', '..'])							#
 +subprocess.check_call(['cmake', '--build',  '.', '--config', 'Release', '--clean-first'])	# </changed>
-Only in RadeonProRenderBlenderAddon-3.3.16: build.py.orig
-Only in RadeonProRenderBlenderAddon-3.3.16: build.py.rej
-diff -urp RadeonProRenderBlenderAddon-3.3.16.orig/build.sh RadeonProRenderBlenderAddon-3.3.16/build.sh
---- RadeonProRenderBlenderAddon-3.3.16.orig/build.sh	2021-12-16 11:53:07.000000000 -0800
-+++ RadeonProRenderBlenderAddon-3.3.16/build.sh	2021-12-18 09:44:38.537710291 -0800
-@@ -1,10 +1,10 @@
+diff -urp RadeonProRenderBlenderAddon-3.5.2.orig/build.sh RadeonProRenderBlenderAddon-3.5.2/build.sh
+--- RadeonProRenderBlenderAddon-3.5.2.orig/build.sh	2022-11-07 10:03:41.000000000 -0800
++++ RadeonProRenderBlenderAddon-3.5.2/build.sh	2022-12-24 18:53:11.016547753 -0800
+@@ -1,11 +1,11 @@
  cxml="/usr/bin/castxml"
  if [ -f "$cxml" ]; then
 -    python3.7 cmd_tools/create_sdk.py
@@ -90,14 +88,16 @@ diff -urp RadeonProRenderBlenderAddon-3.3.16.orig/build.sh RadeonProRenderBlende
  	if [ -f "./bindings-ok" ]; then
 -		python3.7 build.py
 -		python3.9 build.py
+-		python3.10 build.py
 +		python3 build.py								# Toorero: Specifically calls python3 7829e36
-+		python3 build.py								# Toorero
++		python3 build.py								# Toorero:
++		python3 build.py								# Teodoro: python3.10 -> python3
  	else
  		echo Compiling bindings failed
  	fi
-diff -urp RadeonProRenderBlenderAddon-3.3.16.orig/src/bindings/pyrpr/rpr.py RadeonProRenderBlenderAddon-3.3.16/src/bindings/pyrpr/rpr.py
---- RadeonProRenderBlenderAddon-3.3.16.orig/src/bindings/pyrpr/rpr.py	2021-12-18 09:43:39.211309265 -0800
-+++ RadeonProRenderBlenderAddon-3.3.16/src/bindings/pyrpr/rpr.py	2021-12-18 09:47:53.155582435 -0800
+diff -urp RadeonProRenderBlenderAddon-3.5.2.orig/src/bindings/pyrpr/rpr.py RadeonProRenderBlenderAddon-3.5.2/src/bindings/pyrpr/rpr.py
+--- RadeonProRenderBlenderAddon-3.5.2.orig/src/bindings/pyrpr/rpr.py	2022-12-24 18:52:47.439655031 -0800
++++ RadeonProRenderBlenderAddon-3.5.2/src/bindings/pyrpr/rpr.py	2022-12-24 18:53:11.016547753 -0800
 @@ -97,7 +97,7 @@ def export(json_file_name, dependencies,
          if distro.id() != 'gentoo':                                                                     # oteodoro added line
            cffi_libs_dir = Path(_cffi_backend.__file__).parent / '.libs_cffi_backend'                    # oteodoro changed indent
