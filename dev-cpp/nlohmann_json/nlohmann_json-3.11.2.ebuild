@@ -5,29 +5,32 @@ EAPI=8
 
 inherit cmake-multilib
 
-# Check https://github.com/nlohmann/json/blob/develop/cmake/download_test_data.cmake to find test archive version
-TEST_VERSION="3.0.0"
+# To find test archive version, see
+# https://github.com/nlohmann/json/blob/develop/cmake/download_test_data.cmake
+TEST_VERSION="3.1.0"
+
 DESCRIPTION="JSON for Modern C++"
 HOMEPAGE="https://github.com/nlohmann/json https://nlohmann.github.io/json/"
-SRC_URI="
-	https://github.com/nlohmann/json/archive/v${PV}.tar.gz -> ${P}.tar.gz
-	test? ( https://github.com/nlohmann/json_test_data/archive/v${TEST_VERSION}.tar.gz -> ${PN}-testdata-${TEST_VERSION}.tar.gz )"
-S="${WORKDIR}/json-${PV}"
-
 LICENSE="MIT"
-SLOT="0"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
 IUSE="doc test"
-#RESTRICT="!test? ( test )"
-# Need to report failing tests upstream
-# Tests only just added, large test suite, majority pass
-RESTRICT="test"
-
 BDEPEND="
 	>=dev-util/cmake-2.8.12
 	doc? ( app-doc/doxygen )
 "
-
+# Need to report failing tests upstream
+# Tests only just added, large test suite, majority pass
+#RESTRICT="!test? ( test )"
+RESTRICT="test"
+SRC_URI="
+https://github.com/nlohmann/json/archive/v${PV}.tar.gz -> ${P}.tar.gz
+test? (
+https://github.com/nlohmann/json_test_data/archive/v${TEST_VERSION}.tar.gz
+	-> ${PN}-testdata-${TEST_VERSION}.tar.gz
+)
+"
+S="${WORKDIR}/json-${PV}"
 DOCS=( ChangeLog.md README.md )
 
 src_configure() {
@@ -37,8 +40,11 @@ src_configure() {
 		-DJSON_BuildTests=$(usex test)
 	)
 
-	# Define test data directory here to avoid unused var QA warning, bug #747826
-	use test && mycmakeargs+=( -DJSON_TestDataDirectory="${S}"/json_test_data )
+	# Define test data directory here to avoid unused var QA warning, bug
+	# #747826
+	if use test ; then
+		mycmakeargs+=( -DJSON_TestDataDirectory="${S}"/json_test_data )
+	fi
 
 	cmake-multilib_src_configure
 }
@@ -63,3 +69,5 @@ src_test() {
 
 	cmake-multilib_src_test
 }
+
+# OILEDMACHINE-OVERLAY-META-REVDEP:  bear
