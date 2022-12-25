@@ -310,10 +310,10 @@ src_compile() {
 src_install() {
 	local configuration="Release"
 
-	die
-cat <<EOF > "${ED}/usr/bin/dotdevelop"
+	die "src_install is not finished"
+cat <<EOF > "${ED}/usr/bin/monodevelop"
 #!/bin/bash
-PATH="/usr/lib/dotdevelop:\${PATH}"
+PATH="/usr/lib/monodevelop:\${PATH}"
 mono main/build/bin/MonoDevelop.exe "\${@}"
 EOF
 

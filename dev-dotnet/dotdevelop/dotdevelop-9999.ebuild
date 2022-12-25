@@ -311,7 +311,7 @@ src_compile() {
 src_install() {
 	local configuration="Release"
 
-	die
+	die "src_install is unfinished"
 cat <<EOF > "${ED}/usr/bin/dotdevelop"
 #!/bin/bash
 PATH="/usr/lib/dotdevelop:\${PATH}"
