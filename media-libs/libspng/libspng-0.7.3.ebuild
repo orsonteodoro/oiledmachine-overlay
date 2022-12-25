@@ -12,7 +12,7 @@ HOMEPAGE="https://libspng.org"
 LICENSE="BSD-2
 	test? ( libpng2 )"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc examples +opt -static-libs -test -threads zlib"
 REQUIRED_USE+=" pgo? ( examples )"
 DEPEND+=" virtual/libc
