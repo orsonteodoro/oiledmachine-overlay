@@ -10,34 +10,40 @@ DESCRIPTION="Python bindings for the Plex API."
 HOMEPAGE="https://github.com/pkkid/python-plexapi"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
-SLOT="0"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-DEPEND+=" ${PYTHON_DEPS}
-	dev-python/requests[${PYTHON_USEDEP}]"
-RDEPEND+=" ${DEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}
+DEPEND+="
+	${PYTHON_DEPS}
+	dev-python/requests[${PYTHON_USEDEP}]
+"
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
+	${PYTHON_DEPS}
 	doc? (
 		>=dev-python/sphinx-4.3.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinx_rtd_theme-1.0.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx_rtd_theme-1.1.1[${PYTHON_USEDEP}]
 	)
 	test? (
 		>=dev-python/coveralls-3.3.1[${PYTHON_USEDEP}]
-		>=dev-python/flake8-4.0.1[${PYTHON_USEDEP}]
-		>=dev-python/pillow-9.1.1[${PYTHON_USEDEP}]
-		>=dev-python/pytest-7.1.2[${PYTHON_USEDEP}]
+		>=dev-python/flake8-5.0.4[${PYTHON_USEDEP}]
+		>=dev-python/pillow-9.3.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-7.2.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cache-1.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-cov-3.0.0[${PYTHON_USEDEP}]
-		<dev-python/pytest-mock-3.7.1[${PYTHON_USEDEP}]
+		>=dev-python/pytest-cov-4.0.0[${PYTHON_USEDEP}]
+		<dev-python/pytest-mock-3.10.1[${PYTHON_USEDEP}]
 		>=dev-python/recommonmark-0.7.1[${PYTHON_USEDEP}]
-		>=dev-python/requests-2.27.1[${PYTHON_USEDEP}]
-		>=dev-python/requests-mock-1.9.3[${PYTHON_USEDEP}]
-		>=dev-python/tqdm-4.64.0[${PYTHON_USEDEP}]
-		>=dev-python/websocket-client-1.3.2[${PYTHON_USEDEP}]
+		>=dev-python/requests-2.28.1[${PYTHON_USEDEP}]
+		>=dev-python/requests-mock-1.10.0[${PYTHON_USEDEP}]
+		>=dev-python/tqdm-4.64.1[${PYTHON_USEDEP}]
+		>=dev-python/websocket-client-1.4.2[${PYTHON_USEDEP}]
 	)"
 SRC_URI="
 https://github.com/pkkid/python-plexapi/archive/${PV}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
