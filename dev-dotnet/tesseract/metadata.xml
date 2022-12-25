@@ -9,4 +9,9 @@
   <upstream>
     <remote-id type="github">charlesw/tesseract</remote-id>
   </upstream>
+  <use>
+    <flag name="fallback-commit">
+      Rewind back to the expected dependency versions.
+    </flag>
+  </use>
 </pkgmetadata>

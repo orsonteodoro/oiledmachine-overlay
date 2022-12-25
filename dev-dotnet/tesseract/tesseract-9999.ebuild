@@ -13,10 +13,14 @@ HOMEPAGE="https://github.com/charlesw/tesseract"
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE=" ${TARGET_FRAMEWORK} developer mono"
+IUSE="
+${TARGET_FRAMEWORK} developer mono
+
+fallback-commit
+"
 REQUIRED_USE=" || ( ${TARGET_FRAMEWORK} )"
-EXPECTED_LEPTONICA_PV="1.80.0"
-EXPECTED_TESSERACT_PV="4.1.1"
+EXPECTED_LEPTONICA_PV="1.82.0"
+EXPECTED_TESSERACT_PV="5.2.0"
 RDEPEND="
 	mono? (
 		>=dev-lang/mono-5.4
@@ -74,6 +78,7 @@ eerror
 }
 
 src_unpack() {
+	use fallback-commit && export EGIT_COMMIT="b6a69bfbb1c61aba63f3c6c201d6ff784557960b" # Nov 30, 2022
 	git-r3_fetch
 	git-r3_checkout
 	cd "${S}" || die
@@ -91,8 +96,8 @@ src_unpack() {
 eerror
 eerror "Version change detected for tesseract dependency"
 eerror
-eerror "Expected pv:  ${actual_tesseract_pv}"
-eerror "Actual pv:  ${EXPECTED_TESSERACT_PV}"
+eerror "Actual pv:\t${actual_tesseract_pv}"
+eerror "Expected pv:\t${EXPECTED_TESSERACT_PV}"
 eerror
 		die
 	fi
@@ -101,8 +106,8 @@ eerror
 eerror
 eerror "Version change detected for leptonica dependency"
 eerror
-eerror "Expected pv:  ${actual_leptonica_pv}"
-eerror "Actual pv:  ${EXPECTED_LEPTONICA_PV}"
+eerror "Actual pv:\t${actual_leptonica_pv}"
+eerror "Expected pv:\t${EXPECTED_LEPTONICA_PV}"
 eerror
 		die
 	fi
