@@ -18,7 +18,7 @@ KEYWORDS=""
 IUSE="
 +abi_x86_32 abi_x86_64 +clang debug hexagon test
 
-+libfuzzer +memprof +orc +profile +xray r2
++libfuzzer +memprof +orc +profile +xray r3
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -344,7 +344,6 @@ src_configure() {
 		local -x CC=${CHOST}-clang
 		local -x CXX=${CHOST}-clang++
 		strip-unsupported-flags
-		append-cppflags -I"${ESYSROOT}"/usr/lib/clang/${LLVM_SLOT}/include
 	fi
 
 	local flag want_sanitizer=OFF
