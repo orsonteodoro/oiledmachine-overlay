@@ -98,6 +98,9 @@ EXPECTED_BUILD_FILES="\
 "
 
 pkg_setup() {
+ewarn
+ewarn "This ebuild is unbuildable and incomplete."
+ewarn
 	use kernel_Darwin && die "This ebuild does not support this Prefix or CHOST currently."
 	use elibc_Winnt && die "This ebuild does not support this Prefix or CHOST currently."
 	use elibc_mingw && die "This ebuild does not support this Prefix or CHOST currently."

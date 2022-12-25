@@ -87,6 +87,9 @@ f1e851c34cbbbddf6c78522c59bc9d24f60a63e90e29e6e98505b4130d20ae0c\
 "
 
 pkg_setup() {
+ewarn
+ewarn "This ebuild is unbuildable and incomplete."
+ewarn
 	if has network-sandbox ${FEATURES} ; then
 eerror
 eerror "Building requires network-sandbox to be disabled in FEATURES on a"
