@@ -955,18 +955,6 @@ https://github.com/mono/libgdiplus.git \
 		| tail -n 1)
 }
 
-# change _p to _pre?  untagged
-repo_latest_version_get_lidgren-network-gen3_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lidgren/lidgren-network-gen3/master/Lidgren.Network/Properties/AssemblyInfo.cs \
-			| grep -F -e "AssemblyVersion" \
-			| grep -v -F -e "//" \
-			| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" \
-			"lidgren/lidgren-network-gen3" "master")
-	echo "${pv}_p${suffix}"
-}
-
 repo_latest_version_get_libfishsound_pv() {
 	echo $(get_newest_pv \
 https://gitlab.xiph.org/xiph/libfishsound.git)
