@@ -343,7 +343,7 @@ should be a bash script.
 | app-shells/emoji-cli | This is an emoji autocompletion plugin for Zsh.  You might want to combine it with emojify. |
 | app-shells/emojify | This is a BASH shell script to convert emoji aliases described in English words into Unicode equivalent to display the emoji. |
 | app-shells/oh-my-zsh | Oh My Zsh are extra themes and plugins to enhance Zsh.  This ebuild allows to pick specific themes and plugins and to get rid of the ones you don't need. |
-| dev-db/nanodbc | A dependency for Urho3D. |
+| dev-db/nanodbc | TBA |
 | dev-dotnet/aforgedotnet | This is the AForge.NET library containing computer vision and aritificial intelligence algorithms.  Kinect (via libfreenect) support untested.  References to FFmpeg were untested.  The package needs testing.  The author said that the video isn't feature complete on Mono for Linux. |
 | dev-dotnet/assimp-net | For loading 3D models in dotnet games or simulations |
 | dev-dotnet/atitextureconverter | You don't need the actual proprietary library to compile MonoGame.  The wrapper alone will do fine in order to use MonoGame.  You need to manually install the proprietary library if you have the hardware.  Instructions are provided in the library to obtain and place it. |
@@ -377,10 +377,9 @@ should be a bash script.
 | dev-games/libmaker | This is the Library editor for ENIGMA and GameMaker to customize and add button actions for the drag and drop scripting.  It was written in Java.  More information can be found at https://enigma-dev.org/docs/Wiki/Library_Maker. |
 | dev-games/mojoshader | Used to allow for compatible usage for Direct3D shaders on non-Windows platforms to produce post-production special effects. |
 | dev-games/recastnavigation | This is a AI pathfinding library for C++.  Use this if you want your AI to walk around walls and obstacles. |
-| dev-games/urho3d | Urho3D is another game engine.  Android and Raspberry PI support on the ebuild level is incomplete but left for Gentoo community to help finish.  The system libraries are preferred because the internal libraries are several years old.  There may be quirks when using the system libraries.  If you see any that bother you, then use the internal dependency instead. |
 | dev-lang/gambas | Gambas is based on the BASIC programming language dialect and Visual Basic clone.  Use the `ide` USE flag to build the IDE.  You can make games with it and has support for OpenGL. |
-| dev-lang/lua | This is a lua library with Urho3D changes necessary for coroutines |
-| dev-lang/luajit | This is a luajit library with Urho3D changes necessary for coroutines |
+| dev-lang/lua | This is scripting library and interpreter |
+| dev-lang/luajit | TBA |
 | dev-lang/typescript | This package is kept as a dependency and a backend for YCMD code completion. |
 | dev-libs/asmlib | TBA |
 | dev-libs/hyphen | TBA |
@@ -389,7 +388,7 @@ should be a bash script.
 | dev-libs/log4c | TBA |
 | dev-libs/nxjson | A JSON parser library for C.  Used in nano-ycmd. |
 | dev-libs/pugixml | A XML parser library for C++. |
-| dev-libs/rapidjson | A JSON parser in C++.  Used in Urho3D. |
+| dev-libs/rapidjson | A JSON parser in C++.  |
 | dev-lua/luasqlite3 | TBA |
 | dev-python/pocket | This is the Pocket API for Python. |
 | dev-python/py-stackexchange | A Python library to interact with StackExchange, Stack Overflow, etc. |
@@ -459,6 +458,6 @@ should be a bash script.
 | www-misc/instatron | This is a Instagram uploader in Electron. |
 | www-misc/rtv | This is a command line Reddit client which has been updated. |
 | www-misc/socli | This is a Stack Overflow command line client. |
-| www-servers/civetweb | Kept around for Urho3D. |
+| www-servers/civetweb | TBA |
 | x11-wm/dwm | This ebuild fixes the emoji titlebar crash and has integrated Fibonacci layout patch applied. |
 | x11-wm/xpra | This is an alternative VNC like client.  It's kept around for Firejail. |
