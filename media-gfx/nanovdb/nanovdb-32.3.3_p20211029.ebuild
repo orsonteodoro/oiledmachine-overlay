@@ -12,7 +12,7 @@ HOMEPAGE=\
 LICENSE="MPL-2.0"
 # For versioning, see
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/0ed0f19ea4fbb0d8bf64d3dca07abab3c7429803/nanovdb/nanovdb/NanoVDB.h#L104
-SLOT="0/$(ver_cut 1-3 ${PV})"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 # Live ebuilds do not get keyworded.
 # cuda, optix, allow-fetchcontent are enabled upstream by default but
 # are disabled
