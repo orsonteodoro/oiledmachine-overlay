@@ -12,7 +12,7 @@ LICENSE="MIT"
 
 # Live ebuilds/snapshots won't get KEYWORed.
 
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" -boost doxygen +debug html +examples -handle_nodata_bug
 +libcxx man pdf -unicode -static-libs singlehtml texinfo"
 REQUIRED_USE+=" !libcxx" # static-libs not supported unless boost has static-libs support
