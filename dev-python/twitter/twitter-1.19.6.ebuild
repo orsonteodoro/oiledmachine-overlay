@@ -10,12 +10,21 @@ DESCRIPTION="An API and command-line toolset for Twitter (twitter.com)"
 HOMEPAGE="https://mike.verdone.ca/twitter/"
 LICENSE="MIT"
 KEYWORDS="amd64 x86"
-SLOT="0/${PV}"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-DEPEND+=" ${PYTHON_DEPS}"
-RDEPEND+=" ${DEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}
-	dev-python/setuptools[${PYTHON_USEDEP}]"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+"
+DEPEND+="
+	${PYTHON_DEPS}
+	dev-python/certifi[${PYTHON_USEDEP}]
+"
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
+	${PYTHON_DEPS}
+	dev-python/setuptools[${PYTHON_USEDEP}]
+"
 SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 RESTRICT="mirror"
 PATCHES=( "${FILESDIR}/${PN}-9999-ansi-fix.patch" )
