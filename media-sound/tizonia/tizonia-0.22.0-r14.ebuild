@@ -13,7 +13,7 @@ servers and Chromecast devices."
 HOMEPAGE="http://tizonia.org"
 LICENSE="LGPL-3+"
 KEYWORDS="~amd64 ~x86"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" +aac +alsa +bash-completion -blocking-etb-ftb -blocking-sendcommand
  +boost +curl doc +dbus +file-io +flac +fuzzywuzzy +inproc-io
  +mp4 +ogg +opus +lame +libsndfile +mad +mp3-metadata-eraser +mp2 +mpg123

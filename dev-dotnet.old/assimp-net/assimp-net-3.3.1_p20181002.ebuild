@@ -17,7 +17,7 @@ EGIT_COMMIT="9002f2b5eb2d096b880c61714c26a3924254489e"
 SRC_URI="https://github.com/assimp/assimp-net/archive/${EGIT_COMMIT}.tar.gz \
 		-> ${P}.tar.gz"
 inherit gac
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 S="${WORKDIR}/assimp-net-${EGIT_COMMIT}"
 RESTRICT="mirror"
 

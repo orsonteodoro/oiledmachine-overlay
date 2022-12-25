@@ -6,7 +6,7 @@ DESCRIPTION="Logging FrameWork for C, as Log4j or Log4Cpp"
 HOMEPAGE="http://log4c.sourceforge.net/"
 LICENSE="LGPL-2.1"
 KEYWORDS="~amd64 ~x86"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 SRC_URI="http://prdownloads.sourceforge.net/log4c/log4c-1.2.4.tar.gz"
 inherit multilib multilib-minimal
 PATCHES=( "${FILESDIR}/log4c-1.2.4-log4c-config-multilib.patch" )

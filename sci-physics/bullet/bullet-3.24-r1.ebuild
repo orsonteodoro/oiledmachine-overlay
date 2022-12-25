@@ -239,7 +239,7 @@ SRC_URI="
 https://github.com/bulletphysics/bullet3/archive/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 	+bullet3
 	+bullet-robotics

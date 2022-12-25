@@ -27,7 +27,7 @@ RDEPEND="
 	>=media-libs/sdl2-ttf-${SDL2_TTF_PV}[${MULTILIB_USEDEP}]
 "
 DEPEND="${RDEPEND}"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 SRC_URI=""
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"

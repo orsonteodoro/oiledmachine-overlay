@@ -28,7 +28,7 @@ REQUIRED_USE=" || ( ${_PROFILES} )
 	profile_hlsl? ( || ( elibc_mingw elibc_Winnt ) )
 	profile_metal? ( kernel_Darwin )
 "
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
 	>=dev-util/re2c-1.2.1
 	media-libs/libsdl2

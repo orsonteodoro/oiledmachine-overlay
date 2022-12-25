@@ -23,7 +23,7 @@ RDEPEND="
 	)
 "
 DEPEND="${RDEPEND}"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 SRC_URI="
 https://github.com/FNA-XNA/FNA3D/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz

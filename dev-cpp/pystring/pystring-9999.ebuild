@@ -12,7 +12,7 @@ methods"
 LICENSE="BSD"
 # Live ebuild snapshots do not get keyworded
 HOMEPAGE="https://github.com/imageworks/pystring"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" custom-cflags doc test"
 RDEPEND+="
 	|| (

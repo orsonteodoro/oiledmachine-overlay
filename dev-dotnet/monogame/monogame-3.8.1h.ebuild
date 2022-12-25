@@ -201,7 +201,7 @@ IUSE+="
 "
 
 SRC_URI=""
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 S="${WORKDIR}/${MY_P}"
 RESTRICT="mirror"
 

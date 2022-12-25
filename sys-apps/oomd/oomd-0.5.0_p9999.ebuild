@@ -140,7 +140,7 @@ BDEPEND+="
 	>=dev-util/meson-0.45
 	virtual/pkgconfig
 "
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 SRC_URI=""
 S="${WORKDIR}/${P}"
 PROPERTIES="live"

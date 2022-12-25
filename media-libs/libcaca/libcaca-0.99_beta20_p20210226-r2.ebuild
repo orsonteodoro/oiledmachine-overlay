@@ -17,7 +17,7 @@ LICENSE="ISC GPL-2 LGPL-2.1 WTFPL-2"
 IUSE="cxx doc imlib java mono ncurses network opengl python ruby slang
  static-libs test truetype X"
 IUSE+=" 256-colors-ncurses"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 REQUIRED_USE+=" 256-colors-ncurses? ( ncurses )
 	      python? ( ${PYTHON_REQUIRED_USE} )
 	      ruby? ( ^^ ( $(ruby_get_use_targets) ) )

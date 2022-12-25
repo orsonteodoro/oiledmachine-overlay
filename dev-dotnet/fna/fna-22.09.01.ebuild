@@ -21,7 +21,7 @@ RDEPEND="
 	~dev-dotnet/theorafile-9999[net40]
 "
 DEPEND="${RDEPEND}"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 SRC_URI="
 https://github.com/FNA-XNA/FNA/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz

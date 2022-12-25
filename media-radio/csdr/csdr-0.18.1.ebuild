@@ -10,7 +10,7 @@ DESCRIPTION="A simple DSP library and command-line tool for Software Defined Rad
 HOMEPAGE="https://github.com/jketterl/csdr"
 LICENSE="BSD GPL-3+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 DEPEND+="
 	>=sci-libs/fftw-3.3:=
 	>=media-libs/libsamplerate-0.1.8

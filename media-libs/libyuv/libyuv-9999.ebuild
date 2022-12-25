@@ -12,7 +12,7 @@ conversion functionality."
 HOMEPAGE="https://chromium.googlesource.com/libyuv/libyuv/"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 GIT_BRANCHES="+main stable"
 IUSE+="
 	${GIT_BRANCHES}

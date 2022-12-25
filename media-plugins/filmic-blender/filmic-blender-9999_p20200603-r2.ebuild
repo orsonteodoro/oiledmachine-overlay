@@ -13,7 +13,7 @@ HOMEPAGE="https://sobotka.github.io/filmic-blender/"
 # https://github.com/sobotka/filmic-blender/pull/29#issuecomment-502137400
 LICENSE="all-rights-reserved"
 KEYWORDS="amd64 ~x86"
-SLOT="0/${PV}" # 0/${PV} for latest
+SLOT="0/$(ver_cut 1-2 ${PV})" # 0/${PV} for latest
 RDEPEND+=" media-gfx/blender:=[color-management]" # reinstall if new blender
 FILMIC_COMMIT="183784a03c37b3ff51f20c435e0711ceffe3ddd3"
 DEST_FN="filmic-${FILMIC_COMMIT}.zip"

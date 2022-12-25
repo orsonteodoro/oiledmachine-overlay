@@ -13,7 +13,7 @@ DESCRIPTION="Python Bindings for the NVIDIA Management Library"
 HOMEPAGE="http://www.nvidia.com/"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~x86 ~arm64"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" sdk +runtime"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 # See https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html

@@ -10,7 +10,7 @@ DESCRIPTION="Implementation of an OpenWebRX connector for BBRF103 / RX666 / RX88
 HOMEPAGE="https://github.com/jketterl/sddc_connector"
 LICENSE="GPL-3"
 # KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Not tested due to lack of cuda hardware
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 RESTRICT="mirror"
 DEPEND+="
 	dev-util/nvidia-cuda-toolkit

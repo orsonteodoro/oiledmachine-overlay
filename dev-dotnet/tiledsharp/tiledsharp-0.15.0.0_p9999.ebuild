@@ -26,7 +26,7 @@ BDEPEND+="
 	dev-dotnet/dotnet-sdk-bin
 	doc? ( app-doc/doxygen )
 "
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 #KEYFILE="dotnet-overlay-mono.snk"
 #SRC_URI="
 #https://github.com/gentoo/dotnet/raw/master/eclass/mono.snk

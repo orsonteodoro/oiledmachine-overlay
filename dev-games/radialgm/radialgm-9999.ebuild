@@ -15,7 +15,7 @@ DESCRIPTION="A native IDE for ENIGMA written in C++ using the Qt Framework."
 LICENSE="GPL-3+"
 #KEYWORDS="~amd64 ~x86" # Cannot build simple hello world
 HOMEPAGE="https://github.com/enigma-dev/RadialGM"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="doc"
 ENIGMA_ABI_FINGERPRINT="3660f4e5cab9d7d7db6fd8b5c4b6f7089b923e283daef5eb7c41094626b90001"
 # See CI for *DEPENDs

@@ -12,7 +12,7 @@ IUSE="${USE_DOTNET} debug +gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac gac? ( net45 )"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 inherit dotnet eutils mono
 SRC_URI="https://github.com/Robmaister/SharpFont/archive/v${PV}.tar.gz
 		-> ${P}.tar.gz"

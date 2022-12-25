@@ -9,7 +9,7 @@ inherit cmake flag-o-matic
 DESCRIPTION="A high performance C++ math library"
 LICENSE="BSD"
 HOMEPAGE="https://bitbucket.org/blaze-lib/blaze"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" boost +lapack"
 RDEPEND+="
 	lapack? (

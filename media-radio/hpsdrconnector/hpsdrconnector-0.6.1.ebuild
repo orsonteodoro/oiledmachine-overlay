@@ -16,7 +16,7 @@ DESCRIPTION="An OpenWebRX connector for HPSDR radios"
 HOMEPAGE="https://github.com/jancona/hpsdrconnector"
 LICENSE="GPL-3"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 RESTRICT="mirror"
 SRC_URI="
 ${EGO_SUM_SRC_URI}

@@ -18,7 +18,7 @@ COMMIT="f8dfe74c8d767404d41c97d87eace04df636d021"
 SRC_URI="https://github.com/KonajuGames/PVRTexLibNET/archive/${COMMIT}.tar.gz
 		-> ${P}.tar.gz"
 inherit gac
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 DLL_NAME="PVRTexLibNET"
 SO_NAME="PVRTexLibWrapper"
 S="${WORKDIR}/${DLL_NAME}-${COMMIT}"

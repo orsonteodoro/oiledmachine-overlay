@@ -33,7 +33,7 @@ REQUIRED_USE="
 		)
 	)
 "
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND="
 	dev-dotnet/gwen-dotnet
 	examples? (

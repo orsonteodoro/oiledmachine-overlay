@@ -8,7 +8,7 @@ HOMEPAGE="http://www.agner.org/optimize/"
 LICENSE="GPL-3"
 KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~ia64 ~mips ~ppc ~ppc64 \
 ~sparc ~ia64-linux ~x86 ~x86-freebsd ~x86-linux ~x86-macos"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="doc"
 DEPEND="dev-lang/nasm
 	>=dev-util/objconv-2.51"

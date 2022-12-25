@@ -20,7 +20,7 @@ LICENSE="
 	NPL-1.1"
 KEYWORDS="~amd64 ~amd64-linux ~arm64"
 PV_CC=$(ver_cut 1 ${PV})
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 NODE_SLOT="0"
 MY_PN="closure-compiler"
 JAVA_V="17"

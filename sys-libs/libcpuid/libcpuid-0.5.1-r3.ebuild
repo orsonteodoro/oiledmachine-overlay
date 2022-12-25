@@ -11,7 +11,7 @@ DESCRIPTION="a small C library for x86 CPU detection and feature extraction"
 HOMEPAGE="http://libcpuid.sourceforge.net/"
 LICENSE="BSD-2"
 KEYWORDS="~amd64 ~x86"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 BDEPEND+="
 	doc? ( app-doc/doxygen )

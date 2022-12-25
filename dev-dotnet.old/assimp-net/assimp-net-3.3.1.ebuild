@@ -16,7 +16,7 @@ inherit dotnet eutils
 SRC_URI="https://github.com/assimp/assimp-net/archive/${PV}.tar.gz \
 		-> ${P}.tar.gz"
 inherit gac
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 S="${WORKDIR}/assimp-net-${PV}"
 RESTRICT="mirror"
 

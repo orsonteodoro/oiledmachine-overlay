@@ -10,7 +10,7 @@ DESCRIPTION="M17 Demodulator in C++"
 HOMEPAGE="https://github.com/mobilinkd/m17-cxx-demod"
 LICENSE="GPL-3"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 DEPEND+="
 	dev-libs/boost

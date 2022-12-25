@@ -18,7 +18,7 @@ RDEPEND="
 	>=media-libs/libsdl2-2.24[${MULTILIB_USEDEP}]
 "
 DEPEND="${RDEPEND}"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 SRC_URI="
 https://github.com/FNA-XNA/FAudio/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz

@@ -22,7 +22,7 @@ else
 fi
 
 LICENSE="GPL-2"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="androiddump bcg729 brotli +capinfos +captype ciscodump +dftest doc dpauxmon"
 IUSE+=" +dumpcap +editcap http2 ilbc kerberos libxml2 lto lua lz4 maxminddb"
 IUSE+=" +mergecap +minizip +netlink opus +plugins plugin-ifdemo +pcap +qt5 +randpkt"

@@ -10,7 +10,7 @@ HOMEPAGE="https://github.com/richgel999/miniz"
 SRC_URI="https://github.com/richgel999/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="amd64 ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 IUSE="static-libs"
 PATCHES=(

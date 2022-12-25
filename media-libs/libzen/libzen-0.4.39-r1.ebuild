@@ -11,7 +11,7 @@ HOMEPAGE="https://github.com/MediaArea/ZenLib"
 LICENSE="all-rights-reserved ZLIB"
 # the vanilla ZLIB does not have all rights reserved but stated explictly in the
 # README.md
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64 ~x86"
 IUSE+=" doc static-libs"
 BDEPEND+="

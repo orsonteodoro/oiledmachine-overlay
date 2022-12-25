@@ -11,7 +11,7 @@ doxygen in and exhale it out"
 HOMEPAGE="https://github.com/svenevs/exhale"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 # For test requirements, see https://github.com/svenevs/exhale/blob/v0.3.5/tox.ini

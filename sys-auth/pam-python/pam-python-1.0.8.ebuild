@@ -11,7 +11,7 @@ DESCRIPTION="Enables PAM modules to be written in Python"
 HOMEPAGE="http://pam-python.sourceforge.net/"
 LICENSE="AGPL-3+"
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Still needs testing
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}

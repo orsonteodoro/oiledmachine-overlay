@@ -10,7 +10,7 @@ inherit cmake flag-o-matic lua multilib-minimal
 DESCRIPTION="CivetWeb is an embedded C++ web server"
 HOMEPAGE="https://github.com/civetweb"
 LICENSE="MIT"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64 ~ppc ~x86"
 # For some reason, the lua eclass looks broken.
 IUSE+="

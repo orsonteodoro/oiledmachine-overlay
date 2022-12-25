@@ -19,7 +19,7 @@ HOMEPAGE="https://bitbucket.org/chromiumembedded/cef/src/master/"
 KEYWORDS="~arm ~arm64 ~amd64"
 # The download page can be found at https://cef-builds.spotifycdn.com/index.html
 
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" beta cefclient cefsimple debug minimal test"
 REQUIRED_USE+="
 	cefclient? ( !minimal )

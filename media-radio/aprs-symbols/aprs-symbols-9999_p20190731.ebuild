@@ -8,7 +8,7 @@ DESCRIPTION="aprs.fi APRS symbol set, high-resolution, vector"
 HOMEPAGE="https://github.com/hessu/aprs-symbols"
 LICENSE="all-rights-reserved CC-BY-SA-2.0"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 EGIT_COMMIT="5c2abe2658ee4d2563f3c73b90c6f59124839802"
 SRC_URI="
 https://github.com/hessu/aprs-symbols/archive/${EGIT_COMMIT}.tar.gz

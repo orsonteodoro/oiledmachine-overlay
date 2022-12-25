@@ -13,7 +13,7 @@ inherit cmake font llvm python-single-r1
 DESCRIPTION="A library for reading and writing images"
 HOMEPAGE="https://sites.google.com/site/openimageio/ https://github.com/OpenImageIO"
 LICENSE="BSD"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 X86_CPU_FEATURES=(
 	sse2:sse2

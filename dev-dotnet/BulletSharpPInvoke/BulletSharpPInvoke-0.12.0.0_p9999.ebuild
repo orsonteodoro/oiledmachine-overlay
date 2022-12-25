@@ -190,7 +190,7 @@ PATCHES=(
 )
 
 SRC_URI+=" "$(gen_src_uris)
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 

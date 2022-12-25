@@ -16,7 +16,7 @@ LICENSE="Apache-2.0"
 MKL_DNN_COMMIT="eb3e9670053192258d5a66f61486e3cfe25618b3"
 OIDN_WEIGHTS_COMMIT="59bad6bb6344f8fb8205772df3f795c2dc72e23b"
 ORG_GH="https://github.com/OpenImageDenoise"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 +apps +built-in-weights custom-tc doc gcc openimageio
 "

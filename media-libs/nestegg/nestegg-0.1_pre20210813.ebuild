@@ -13,7 +13,7 @@ EGIT_COMMIT="ec6adfbbf979678e3058cc4695257366f39e290b"
 SRC_URI="
 https://github.com/kinetiknz/nestegg/archive/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}.tar.gz"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE=""
 RDEPEND=""
 DEPEND="${RDEPEND}"

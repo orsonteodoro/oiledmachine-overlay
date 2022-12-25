@@ -13,7 +13,7 @@ HOMEPAGE="https://rapidjson.org/"
 LICENSE="MIT"
 IUSE="doc examples test"
 RESTRICT="!test? ( test )"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/miloyip/rapidjson.git"

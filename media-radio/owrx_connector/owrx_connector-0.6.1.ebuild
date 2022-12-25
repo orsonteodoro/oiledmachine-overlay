@@ -11,7 +11,7 @@ HOMEPAGE="https://github.com/jketterl/owrx_connector"
 LICENSE="GPL-3 LGPL-3+"
 # LGPL-3 only applies to a build file
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 DEPEND+="
 	>=media-radio/csdr-0.18
 	net-wireless/rtl-sdr

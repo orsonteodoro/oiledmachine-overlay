@@ -15,7 +15,7 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 inherit autotools dotnet eutils
 SRC_URI="https://github.com/mono/${PN}/archive/${P}.tar.gz -> ${P}.tar.gz"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 MAKEOPTS="${MAKEOPTS} -j1" #nowarn
 S="${WORKDIR}/${PN}-${P}"
 RESTRICT="mirror"

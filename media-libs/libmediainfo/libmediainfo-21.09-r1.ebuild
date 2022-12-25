@@ -10,7 +10,7 @@ DESCRIPTION="MediaInfo libraries"
 HOMEPAGE="https://mediaarea.net/mediainfo/ https://github.com/MediaArea/MediaInfoLib"
 LICENSE="BSD-2"
 KEYWORDS="~amd64 ~x86"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" curl doc mms static-libs"
 # U 20.04
 # See MediaInfoLib/Project/GNU/libmediainfo.dsc

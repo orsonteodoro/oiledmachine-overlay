@@ -9,7 +9,7 @@ inherit cmake flag-o-matic llvm multilib-minimal python-any-r1 toolchain-funcs
 DESCRIPTION="Advanced shading language for production GI renderers"
 HOMEPAGE="http://opensource.imageworks.com/?p=osl"
 LICENSE="BSD"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="amd64 ~x86"
 X86_CPU_FEATURES=(
 	sse2:sse2

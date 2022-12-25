@@ -7,7 +7,7 @@ HOMEPAGE="http://lua.sqlite.org"
 LICENSE="all-rights-reserved MIT"
 # The vanilla MIT license does not include all rights reserved.
 KEYWORDS="~amd64 ~ppc ~x86"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="doc static-libs"
 LUA_COMPAT=( lua5-{1..4} )
 inherit lua multilib-minimal

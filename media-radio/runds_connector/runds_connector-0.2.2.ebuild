@@ -10,7 +10,7 @@ DESCRIPTION="OpenWebRX connector implementation for R&S EB200 or Ammos protocol 
 HOMEPAGE="https://github.com/jketterl/runds_connector"
 LICENSE="GPL-3"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 DEPEND+="
 	media-radio/owrx_connector
 "

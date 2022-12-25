@@ -33,7 +33,7 @@ LICENSE="
 # myspell-en_CA-KevinAtkinson - common/lsort.hpp
 #			      - common/clone_ptr-t.hpp
 
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390
 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris
 ~x86-solaris"
