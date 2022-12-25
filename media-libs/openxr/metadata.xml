@@ -2,6 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- Ebuild only on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -10,19 +11,29 @@
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/KhronosGroup/OpenXR-SDK-Source</bugs-to>
+    <remote-id type="github">KhronosGroup/OpenXR-SDK-Source</remote-id>
   </upstream>
   <use>
-    <flag name="doc">Install documentation.</flag>
-    <flag name="system-jsoncpp">Use the system provide jsoncpp package instead
-      of the internal</flag>
-    <flag name="test">Builds tests</flag>
-    <flag name="video_cards_amdgpu">Checks if the mesa Vulkan driver is
-      installed.</flag>
-    <flag name="video_cards_intel">Checks if the Intel Vulkan driver is
-      installed</flag>
-    <flag name="video_cards_nvidia">Checks if the NVIDIA Vulkan driver is
-      installed</flag>
-    <flag name="video_cards_radeonsi">Checks if the Mesa Vulkan driver is
-      installed</flag>
+    <flag name="doc">
+      Install documentation.
+    </flag>
+    <flag name="system-jsoncpp">
+      Use the system provide jsoncpp package instead of the internal version.
+    </flag>
+    <flag name="test">
+      Builds tests
+    </flag>
+    <flag name="video_cards_amdgpu">
+      Checks if Vulkan driver is installed.
+    </flag>
+    <flag name="video_cards_intel">
+      Checks if Vulkan driver is installed.
+    </flag>
+    <flag name="video_cards_nvidia">
+      Checks if Vulkan driver is installed.
+    </flag>
+    <flag name="video_cards_radeonsi">
+      Checks if Vulkan driver is installed.
+    </flag>
   </use>
 </pkgmetadata>

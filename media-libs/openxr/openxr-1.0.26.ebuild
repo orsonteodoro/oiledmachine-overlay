@@ -17,7 +17,7 @@ LICENSE="
 KEYWORDS="~amd64"
 HOMEPAGE="https://khronos.org/openxr"
 ORG_GH="https://github.com/KhronosGroup"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 MY_PN="OpenXR-SDK-Source"
 SRC_URI="
 ${ORG_GH}/${MY_PN}/archive/release-${PV}.tar.gz
@@ -70,6 +70,7 @@ DEPEND+="
 	wayland? (
 		dev-libs/wayland
 		dev-libs/wayland-protocols
+		dev-util/wayland-scanner
 		media-libs/mesa[egl(+)]
 	)
 "
@@ -80,6 +81,7 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_any_dep '>=dev-python/jinja-2[${PYTHON_USEDEP}]')
 	>=dev-util/cmake-3.0
+	virtual/pkgconfig
 	|| (
 		sys-devel/clang
 		sys-devel/gcc
