@@ -6,8 +6,8 @@ EAPI=8
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
-DESCRIPTION="Automatic C++ library api documentation generation: breathe \
-doxygen in and exhale it out. "
+DESCRIPTION="Automatic C++ library api documentation generation: breathe
+doxygen in and exhale it out"
 HOMEPAGE="https://github.com/svenevs/exhale"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
@@ -18,14 +18,18 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 # For requirements, see
 # https://github.com/svenevs/exhale/blob/v0.3.5/docs/requirements.txt
 # https://github.com/svenevs/exhale/blob/v0.3.5/setup.cfg#L38
-RDEPEND+=" ${PYTHON_DEPS}
+RDEPEND+="
+	${PYTHON_DEPS}
 	  dev-python/beautifulsoup:4[${PYTHON_USEDEP}]
 	>=dev-python/breathe-4.32[${PYTHON_USEDEP}]
 	  dev-python/six[${PYTHON_USEDEP}]
         >=dev-python/lxml-4.6.4[${PYTHON_USEDEP}]
 "
-DEPEND+=" ${RDEPEND}"
-BDEPEND+="  ${PYTHON_DEPS}
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	${PYTHON_DEPS}
 	doc? (
 		  dev-python/docutils
 		>=dev-python/sphinx-4.3.1[${PYTHON_USEDEP}]
@@ -43,7 +47,8 @@ BDEPEND+="  ${PYTHON_DEPS}
 "
 SRC_URI="
 https://github.com/svenevs/exhale/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
