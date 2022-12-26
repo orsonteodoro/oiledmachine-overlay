@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person">
+    <!-- Ebuild originator -->
+    <email>zoltan@sinustrom.info</email>
+    <name>Zoltan Puskas</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="gitlab">https://gitlab.com/aaronNG/reddio</remote-id>
+  </upstream>
+</pkgmetadata>
