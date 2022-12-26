@@ -9,7 +9,8 @@ inherit desktop python-any-r1 webapp xdg
 
 DESCRIPTION="HTML5 client for Xpra"
 HOMEPAGE="https://github.com/Xpra-org/xpra-html5"
-LICENSE="MPL-2.0
+LICENSE="
+	MPL-2.0
 	Apache-2.0
 	all-rights-reserved
 	BSD
@@ -17,7 +18,8 @@ LICENSE="MPL-2.0
 	GPL-2
 	LGPL-2.1+
 	LGPL-3+
-	MIT"
+	MIT
+"
 # MIT and GPL-2 - html5/js/lib/jquery.ba-throttle-debounce.js
 # BSD MIT all-rights-reserved ^^ ( BSD GPL-2 ) - html5/js/lib/forge.js *
 # Apache 2.0 - html5/js/lib/AudioContextMonkeyPatch.js
@@ -28,21 +30,44 @@ LICENSE="MPL-2.0
 # *Contains a modified MIT license with all rights reserved and retaining notice clauses \
 # the plain MIT license does not come with all rights reserved.
 # ^^ (MIT GPL-3)  html5/js/lib/jszip.js
-KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
+KEYWORDS="~amd64 ~x86"
 IUSE+=" +brotli +gzip httpd menu-only local minify"
-REQUIRED_USE+="	^^ ( httpd local menu-only )"
-#RDEPEND+=" x11-wm/xpra" # avoid circular
-RDEPEND+=" ${PYTHON_DEPS}
-	httpd? ( virtual/httpd-basic )"
-DEPEND+=" ${RDEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}
-	gzip? ( app-arch/gzip )
-	brotli? ( app-arch/brotli  )
-	minify? ( dev-util/uglifyjs )"
-SRC_URI="https://github.com/Xpra-org/xpra-html5/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz"
+REQUIRED_USE+="
+	^^ (
+		httpd
+		local
+		menu-only
+	)
+"
+RDEPEND+="
+	${PYTHON_DEPS}
+	x11-themes/gnome-backgrounds
+	httpd? (
+		virtual/httpd-basic
+	)
+"
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	${PYTHON_DEPS}
+	gzip? (
+		app-arch/gzip
+	)
+	brotli? (
+		app-arch/brotli
+	)
+	minify? (
+		dev-util/uglifyjs
+	)
+"
+PDEPEND+=" x11-wm/xpra"
+SRC_URI="
+https://github.com/Xpra-org/xpra-html5/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 RESTRICT="mirror"
-LOCAL_INSTALL_URI="file:///usr/share/xpra/html5/index.html"
+LOCAL_INSTALL_URI="file:///usr/share/xpra/www/index.html"
 
 pkg_setup()
 {
@@ -91,8 +116,11 @@ src_install() {
 		webapp_src_install
 	elif use local ; then
 		dodir /usr/share/xpra/html5
-		einfo "${EPYTHON} ./setup.py install \"${D}/usr/share/xpra/html5\" ${minifier}"
-		${EPYTHON} ./setup.py install "${D}/usr/share/xpra/html5" ${minifier}
+#		einfo "${EPYTHON} ./setup.py install \"${D}/usr/share/xpra/html5\" ${minifier}"
+#		${EPYTHON} ./setup.py install "${D}/usr/share/xpra/html5" ${minifier}
+
+		einfo "${EPYTHON} ./setup.py install \"${D}\" ${minifier}"
+		${EPYTHON} ./setup.py install "${D}" ${minifier}
 	fi
 
 	if ( use httpd || use menu-only ) \

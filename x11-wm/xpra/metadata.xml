@@ -1,132 +1,379 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-<!-- for this forked ebuild version only on the oiledmachine-overlay -->
-<maintainer type="person" status="active">
-  <email>orsonteodoro@hotmail.com</email>
-  <name>Orson Teodoro</name>
-</maintainer>
-<!-- originator -->
-<maintainer type="person">
-  <email>dilfridge@gentoo.org</email>
-  <name>Andreas K. Huettel</name>
-</maintainer>
-<upstream>
-  <bugs-to>https://github.com/Xpra-org/xpra/issues</bugs-to>
-  <doc lang="en">https://github.com/Xpra-org/xpra/tree/master/docs</doc>
   <maintainer type="person" status="active">
-    <name>Antoine Martin</name>
+    <!-- Ebuild forked on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
   </maintainer>
-</upstream>
-<longdescription>
-  XPRA_VAAPI environment variable is set to default off due to problems, but it
-  could be used for accelerated encoding if supported by the hardware.
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+    <email>dilfridge@gentoo.org</email>
+    <name>Andreas K. Huettel</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>
+      https://github.com/Xpra-org/xpra/issues
+    </bugs-to>
+    <doc lang="en">
+      https://github.com/Xpra-org/xpra/tree/master/docs
+    </doc>
+    <maintainer type="person" status="active">
+      <name>Antoine Martin</name>
+    </maintainer>
+  </upstream>
+  <longdescription>
 
-  XPRA_VAAPI_ENCODINGS environment variable could be used to disable buggy
-  encoders or permit others.  For details, see
+    XPRA_VAAPI environment variable is set to default off due to problems, but
+    it could be used for accelerated encoding if supported by the hardware.
 
-    https://github.com/Xpra-org/xpra/blob/v4.2.2/xpra/codecs/enc_ffmpeg/encoder.pyx
+    XPRA_VAAPI_ENCODINGS environment variable could be used to disable buggy
+    encoders or permit others.  For details, see
 
-</longdescription>
-<use>
-  <flag name="aac">Adds support for AAC.</flag>
-  <flag name="alsa">Adds support for ALSA sound cards.</flag>
-  <flag name="avahi">Enables support for Avahi auto discovery.</flag>
-  <flag name="client">Build client-side code.</flag>
-  <flag name="clipboard">Enable clipboard support.</flag>
-  <flag name="csc">Enable csc (color space conversion) softscaler support.
-    Equivalent to csc_swscale in older ebuilds.</flag>
-  <flag name="csc_libyuv">Enables the color space conversion module using
-    libyuv.</flag>
-  <flag name="csc_swscale">Enables the color space conversion module using
-    swscale.</flag>
-  <flag name="cuda_rebuild">Enables rebuilding CUDA kernels.</flag>
-  <flag name="cups">Enables printer support.</flag>
-  <flag name="dbus">Checks and enables support for DBus.</flag>
-  <flag name="dec_avcodec2">Enables support for encoding and decoding video
-    (MPEG1/2/4, H264, H265, WEBM, VP8/9) and audio (MP4A, AAC).</flag>
-  <flag name="enc_ffmpeg">Enable advanced ffmpeg encoder support.</flag>
-  <flag name="enc_x264">Enable x264 encoder support.</flag>
-  <flag name="enc_x265">Enable x265 encoder support.</flag>
-  <flag name="firejail">Checks for proper Firejail support.</flag>
-  <flag name="flac">Adds support for this lossless codec.</flag>
-  <flag name="gss">Adds gss authentication support.</flag>
-  <flag name="gtk2">Uses GTK2 library to create the GUI.</flag>
-  <flag name="gtk3">Uses GTK3 library to create the GUI.</flag>
-  <flag name="html5-client">Enables the HTML5 client allowing to view a xpra
-    session on a web browser.</flag>
-  <flag name="html5_brotli">Enables brotli compression for clipboard.</flag>
-  <flag name="html5_gzip">Enables accepting gzip compressed files.</flag>
-  <flag name="jack">Adds support for the JACK audio sound server.</flag>
-  <flag name="jpeg">Enables support for JPEG encoding and decoding.</flag>
-  <flag name="kerberos">Adds kerberos authentication support.</flag>
-  <flag name="lame">Adds LAME MP3 encoding support.</flag>
-  <flag name="ldap">Adds ldap authentication support.</flag>
-  <flag name="ldap3">Adds ldap3 authentication support .</flag>
-  <flag name="lz4">Enable support for lz4 compression.</flag>
-  <flag name="lzo">Enable support for lzo compression.</flag>
-  <flag name="matroska">Adds support for the Matroska container format.</flag>
-  <flag name="mdns">Enables multicast DNS for easier device discovery.</flag>
-  <flag name="minify">Enables minifying the client.</flag>
-  <flag name="mysql">Adds support for MySQL authentication.</flag>
-  <flag name="notifications">Enables support for system notifications.</flag>
-  <flag name="mp3">Adds support for LAME MP3 encoding.</flag>
-  <flag name="nvenc">Enables support for the NVENC hardware encoder.</flag>
-  <flag name="nvfbc">Enables support for NvFBC screen capture.</flag>
-  <flag name="nvjpeg">Enables support for nvJPEG for GPU accelerated JPEG
-    compression, decompression.</flag>
-  <flag name="ogg">Adds support for the OGG container format.</flag>
-  <flag name="opengl">Enables support for OpenGL accelerated rendering on
-    client.</flag>
-  <flag name="openrc">Adds OpenRC support.</flag>
-  <flag name="opus">Adds support for both voice and general audio compression.</flag>
-  <flag name="oss">Adds support for OSS sound cards.</flag>
-  <flag name="pam">Adds support for PAM for authentication.</flag>
-  <flag name="pillow">Enable pillow support to encode and decode PNG, JPEG,
-    WebP.</flag>
-  <flag name="png">Adds PNG encoding support.</flag>
-  <flag name="rencodeplus">Enables use of the forked rencode named rencodeplus
-    to fix issues.  Rencode is used for packet encoding.</flag>
-  <flag name="speex">Adds voice compression.</flag>
-  <flag name="pulseaudio">Enables support for PulseAudio.</flag>
-  <flag name="python_targets_python3_5">Compatible with this python
-    version.</flag>
-  <flag name="python_targets_python3_6">Compatible with this python
-    version.</flag>
-  <flag name="python_targets_python3_7">Compatible with this python
-    version.</flag>
-  <flag name="sd_listen">Enables support for systemd's socket activation
-    feature.</flag>
-  <flag name="server">Enables server-side code.</flag>
-  <flag name="sound">Enables the sound support.</flag>
-  <flag name="spng">Enables use of secure/fuzzed spng for encoding and decoding
-    pngs.</flag>
-  <flag name="sqlite">Add support for SQLite authentication.</flag>
-  <flag name="ssh">Enables SSH networking support.</flag>
-  <flag name="sshpass">Enables sshpass support to supply passwords for SSH.</flag>
-  <flag name="ssl">Enables SSL support for secured connections and the ssl://
-    connection string.</flag>
-  <flag name="systemd">Installs systemd services.</flag>
-  <flag name="test">Enables self tests.</flag>
-  <flag name="twolame">Adds MPEG Audio Layer 2 (MP2) encoding support.</flag>
-  <flag name="u2f">Adds Universal 2nd Factor (U2F) authentication support.</flag>
-  <flag name="vaapi">Checks dependencies for proper VAAPI video acceleration
-    support.</flag>
-  <flag name="vorbis">Adds lossy patent free audio encoding support.</flag>
-  <flag name="v4l2">Enables support for v4l2loopback devices for additional
-    post-processing.</flag>
-  <flag name="vpx">Enables VP8/VP9 video format support.</flag>
-  <flag name="vsock">Enable support for VSOCK and the vsock:// connection
-    string.</flag>
-  <flag name="wavpack">Adds support for WavPack lossless compression.</flag>
-  <flag name="webcam">Enable webcam support via opencv.</flag>
-  <flag name="webp">Enables encoding and decoding WebP images.</flag>
-  <flag name="websockets">Enables server support for the websockets and to serve
-    html5 clients to view xpra sessions over web browser instead of GTK/X.
+      https://github.com/Xpra-org/xpra/blob/v4.2.2/xpra/codecs/enc_ffmpeg/encoder.pyx
+
+  </longdescription>
+  <use>
+    <flag name="aes">
+      Adds AES encryption support.
     </flag>
-  <flag name="xdg">Enables support for xdg_open.</flag>
-  <flag name="X">Enables support for native X GUI.</flag>
-  <flag name="zeroconf">Resolves LAN IP address to computer name.</flag>
-  <flag name="zlib">Enables support for PNGs in pillow.</flag>
-</use>
+    <flag name="aac">
+      Adds support for AAC.
+    </flag>
+    <flag name="alsa">
+      Adds support for ALSA sound cards.
+    </flag>
+    <flag name="appindicator">
+      Adds support for a status bar icon.
+    </flag>
+    <flag name="avahi">
+      Enables support for Avahi auto discovery.
+    </flag>
+    <flag name="avif">
+      Enables support for AVIF images.
+    </flag>
+    <flag name="brotli">
+      Enables support for brolti compression of text packets.
+    </flag>
+    <flag name="client">
+      Build client-side code.
+    </flag>
+    <flag name="clipboard">
+      Enable clipboard support.
+    </flag>
+    <flag name="cpu-percent">
+      Adds support for reporting CPU percent for the "xpra top" command.
+    </flag>
+    <flag name="csc">
+      Enable csc (color space conversion) softscaler support.  Equivalent to
+      csc_swscale in older ebuilds.
+    </flag>
+    <flag name="csc_cython">
+      Enables the color space conversion module using the cython csc fallback to
+      avoid additional dependencies.
+
+      See https://github.com/Xpra-org/xpra/commit/764cefa886d3c1f15d5afe1cf027958f9c78fee0
+    </flag>
+    <flag name="csc_libyuv">
+      Enables the color space conversion module using libyuv.
+    </flag>
+    <flag name="csc_swscale">
+      Enables the color space conversion module using swscale.
+    </flag>
+    <flag name="cuda_rebuild">
+      Enables rebuilding CUDA kernels.
+    </flag>
+    <flag name="cups">
+      Enables printer support.
+    </flag>
+    <flag name="cups-forwarding">
+      Enables printing from servers to clients.
+    </flag>
+    <flag name="cython">
+      Compile python code as native running possibly 1-2 orders of magnitude faster.
+    </flag>
+    <flag name="dbus">
+      Checks and enables support for DBus.
+    </flag>
+    <flag name="drm">
+      Expand a desktop feature (EXPERIMENTAL / IN DEVELOPMENT)
+    </flag>
+    <flag name="evdi">
+      Enable Extensible Virtual Display Interface (EVDI) support.
+    </flag>
+    <flag name="firejail">
+      Checks for proper Firejail support.
+    </flag>
+    <flag name="flac">
+      Adds support for this lossless codec.
+    </flag>
+    <flag name="ffmpeg">
+      Enable advanced ffmpeg encoder/decoder support for video and audio.
+
+      Video support*:  MPEG1/2/4, H264, H265, WEBM, VP8/9
+      Audio support*:  MP4A, AAC
+
+      *Requires additional USE flag changes to ffmpeg and mesa.
+    </flag>
+    <flag name="gnome-shell">
+      Fixes system tray support with gnome-shell.
+    </flag>
+    <flag name="gssapi">
+      Adds GSSAPI authentication support.
+    </flag>
+    <flag name="gtk3">
+      Uses GTK3 library to create the GUI.
+    </flag>
+    <flag name="html5-client">
+      Enables the HTML5 client allowing to view a xpra session on a web browser.
+    </flag>
+    <flag name="html5_brotli">
+      Enables brotli compression for clipboard.
+    </flag>
+    <flag name="html5_gzip">
+      Enables accepting gzip compressed files.
+    </flag>
+    <flag name="ibus">
+      Adds support for the IBUS input method framework.
+    </flag>
+    <flag name="jack">
+      Adds support for the JACK audio sound server.
+    </flag>
+    <flag name="jpeg">
+      Enables support for JPEG encoding and decoding.
+    </flag>
+    <flag name="keyboard-layout">
+      Adds support for different keyboard layouts found around the world.
+    </flag>
+    <flag name="keycloak">
+      Enables support for keycloak authentication.
+    </flag>
+    <flag name="kerberos">
+      Adds Kerberos authentication support.
+    </flag>
+    <flag name="lame">
+      Adds LAME MP3 encoding support.
+    </flag>
+    <flag name="ldap">
+      Adds ldap authentication support.
+    </flag>
+    <flag name="ldap3">
+      Adds ldap3 authentication support.
+    </flag>
+    <flag name="lz4">
+      Enable support for lz4 compression of packets.
+    </flag>
+    <flag name="lzo">
+      Enable support for lzo compression.
+    </flag>
+    <flag name="matroska">
+      Adds support for the Matroska container format.
+    </flag>
+    <flag name="mdns">
+      Enables multicast DNS for easier device discovery.
+    </flag>
+    <flag name="mysql">
+      Adds support for MySQL authentication.
+    </flag>
+    <flag name="notifications">
+      Enables support for system notifications.
+    </flag>
+    <flag name="mp3">
+      Adds support for LAME MP3 encoding.
+    </flag>
+    <flag name="nvenc">
+      Enables support for the NVENC hardware encoder.
+    </flag>
+    <flag name="nvfbc">
+      Enables support for NvFBC screen capture.
+    </flag>
+    <flag name="netdev">
+      Adds support for obtaining the interface speed
+    </flag>
+    <flag name="nvjpeg">
+      Enables support for nvJPEG for GPU accelerated JPEG compression,
+      decompression.
+    </flag>
+    <flag name="ogg">
+      Adds support for the OGG container format.
+    </flag>
+    <flag name="opengl">
+      Enables support for OpenGL accelerated rendering on client.
+    </flag>
+    <flag name="openrc">
+      Adds OpenRC support.
+    </flag>
+    <flag name="opus">
+      Adds support for both voice and general audio compression.
+    </flag>
+    <flag name="osmesa">
+      Adds support for the server to use software OpenGL.
+    </flag>
+    <flag name="oss">
+      Adds support for OSS sound cards.
+    </flag>
+    <flag name="pam">
+      Adds support for PAM for authentication.
+    </flag>
+    <flag name="pillow">
+      Enable pillow support to encode and decode PNG, JPEG, WebP.
+    </flag>
+    <flag name="pinentry">
+      Enable pinentry gtk support for password prompts.
+    </flag>
+    <flag name="png">
+      Adds PNG encoding support.
+    </flag>
+    <flag name="proc">
+      Adds support for using /proc to guess content types
+    </flag>
+    <flag name="proxy">
+      Adds support for the xpra proxy server to start or access multiple xpra
+      sessions through a single node where limited ports or firewall outbound
+      restrictions encountered.
+
+      Details https://github.com/Xpra-org/xpra/blob/master/docs/Usage/Proxy-Server.md
+    </flag>
+    <flag name="pulseaudio">
+      Enables support for PulseAudio.
+    </flag>
+    <flag name="pyinotify">
+      Adds support for monitoring existance changes for webcam or application
+      menus.
+    </flag>
+    <flag name="python_targets_python3_5">
+      Compatible with this python version.
+    </flag>
+    <flag name="python_targets_python3_6">
+      Compatible with this python version.
+    </flag>
+    <flag name="python_targets_python3_7">
+      Compatible with this python version.
+    </flag>
+    <flag name="qrencode">
+      Adds support for QR code creation.
+    </flag>
+    <flag name="rencode">
+      Adds support for deprecated rencode encoding of data structures.
+    </flag>
+    <flag name="rencodeplus">
+      Enables use of the forked rencode named rencodeplus to fix issues
+      with (encrypted/compressed) byte arrays and strings.
+
+      Rencode is used for packet encoding of data structures.
+    </flag>
+    <flag name="socks">
+      Adds support to connect through SOCKS proxies.
+    </flag>
+    <flag name="speex">
+      Adds voice compression.
+    </flag>
+    <flag name="sd_listen">
+      Enables support for systemd's socket activation feature.
+    </flag>
+    <flag name="selinux">
+      Installs SELinux policies.
+    </flag>
+    <flag name="server">
+      Enables server-side code.
+    </flag>
+    <flag name="sound">
+      Enables the sound support.
+    </flag>
+    <flag name="sound-forwarding">
+      Enables sound and/or microphone from servers to clients
+    </flag>
+    <flag name="spng">
+      Enables use of secure/fuzzed spng for encoding and decoding pngs.
+    </flag>
+    <flag name="sqlite">
+      Add support for SQLite authentication.
+    </flag>
+    <flag name="ssh">
+      Enables SSH networking support.
+    </flag>
+    <flag name="sshpass">
+      Enables sshpass support to supply passwords for SSH.
+    </flag>
+    <flag name="ssl">
+      Enables SSL support for secured connections and the ssl:// connection
+      string.
+    </flag>
+    <flag name="systemd">
+      Installs systemd services.
+    </flag>
+    <flag name="tcp-wrappers">
+      Add support for hosts authentication
+    </flag>
+    <flag name="test">
+      Enables self tests.
+    </flag>
+    <flag name="twolame">
+      Adds MPEG Audio Layer 2 (MP2) encoding support.
+    </flag>
+    <flag name="u2f">
+      Adds Universal 2nd Factor (U2F) authentication support.
+    </flag>
+    <flag name="uinput">
+      Adds support for userspace virtual input emulation
+    </flag>
+    <flag name="vaapi">
+      Checks dependencies for proper VAAPI video acceleration support.
+    </flag>
+    <flag name="vorbis">
+      Adds lossy patent free audio encoding support.
+    </flag>
+    <flag name="v4l2">
+      Enables support for v4l2loopback devices for additional post-processing.
+    </flag>
+    <flag name="vpx">
+      Enables VP8/VP9 video format support.
+    </flag>
+    <flag name="vsock">
+      Enable support for VSOCK and the vsock:// connection string.
+    </flag>
+    <flag name="wavpack">
+      Adds support for WavPack lossless compression.
+    </flag>
+    <flag name="webcam">
+      Enable webcam support via opencv.
+    </flag>
+    <flag name="webcam-forwarding">
+      Enable sending webcam from server to client.
+    </flag>
+    <flag name="webp">
+      Enables encoding and decoding WebP images.
+    </flag>
+    <flag name="websockets">
+      Enables server support for the websockets and to serve html5 clients to
+      view xpra sessions over web browser instead of GTK/X.
+    </flag>
+    <flag name="X">
+      Enables support for native X GUI.
+    </flag>
+    <flag name="x264">
+      Enable x264 encoder support.
+    </flag>
+    <flag name="x265">
+      Enable x265 encoder support.
+    </flag>
+    <flag name="xdg">
+      Enables support for opening files based on content type.
+    </flag>
+    <flag name="xinput">
+      Enables experimental and incomplete xinput/xinput2 support.  Originally
+      intended to support tablet control of PC and to be combined with uinput.
+
+      See https://github.com/Xpra-org/xpra/issues/173#issuecomment-765379574
+    </flag>
+    <flag name="yaml">
+      Adds support for yaml encoding for JSON/YAML clients.
+    </flag>
+    <flag name="zeroconf">
+      Resolves LAN IP address to computer name.
+    </flag>
+    <flag name="zlib">
+      Enables support for PNGs in pillow.
+    </flag>
+  </use>
 </pkgmetadata>

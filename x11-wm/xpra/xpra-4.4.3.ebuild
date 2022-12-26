@@ -33,30 +33,82 @@ wavpack
 IUSE+="
 ${GSTREAMER_IUSE}
 
-avahi +client +clipboard csc_swscale csc_libyuv cuda_rebuild cups dbus
-dec_avcodec2 doc enc_ffmpeg enc_x264 enc_x265 firejail gtk3 gss html5-client
-html5_gzip html5_brotli jpeg kerberos ldap ldap3 +lz4 lzo opengl openrc mdns
-mysql +notifications nvenc nvfbc nvjpeg pam pillow png rencodeplus sd_listen
-selinux +server sound spng sqlite ssh sshpass +ssl systemd test u2f vaapi vpx
-vsock v4l2 webcam webp websockets X xdg zeroconf zlib
+aes appindicator +avahi avif brotli +client +clipboard cpu-percent +csc_cython
+csc_libyuv +cuda_rebuild +cups cups-forwarding +cython +dbus +doc -drm ffmpeg
+evdi firejail gnome-shell +gtk3 gssapi html5-client html5_gzip html5_brotli
+ibus jpeg kerberos +keyboard-layout keycloak ldap ldap3 +lz4 lzo +mdns mysql
++netdev +notifications nvenc nvfbc nvjpeg +opengl openrc osmesa +pam +pillow
+pinentry png proc +proxy pyinotify qrencode -rencode +rencodeplus sd_listen
+selinux +server +socks +sound sound-forwarding spng sqlite ssh sshpass +ssl
+systemd +tcp-wrappers test u2f -uinput +v4l2 vaapi vpx vsock +webcam
+webcam-forwarding webp +websockets +X x264 -x265 +xdg +xinput yaml zeroconf
+zlib
+"
+# Upstream enables uinput by default.  Disabled because ebuild exists.
+# Upstream enables drm by default.  Disabled because unfinished.
+
+# See https://github.com/Xpra-org/xpra/blob/v4.4.3/docs/Build/Dependencies.md
+CLIENT_OPTIONS="
+	ffmpeg? (
+		client
+	)
+	opengl? (
+		client
+	)
+	sshpass? (
+		client
+	)
+"
+
+SERVER_OPTIONS="
+	avahi? (
+		server
+	)
+	cups-forwarding? (
+		server
+	)
+	gssapi? (
+		server
+	)
+	kerberos? (
+		server
+	)
+	ldap? (
+		server
+	)
+	ldap3? (
+		server
+	)
+	nvenc? (
+		server
+	)
+	sound-forwarding? (
+		server
+	)
+	u2f? (
+		server
+	)
+	x264? (
+		server
+	)
+	webcam-forwarding? (
+		server
+	)
+	zeroconf? (
+		server
+	)
 "
 
 # LIMD # ATM, GEN 5-12
 # LID # C2M, GEN 5-9
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
+	${CLIENT_OPTIONS}
+	${SERVER_OPTIONS}
 	gtk3
 	avahi? (
 		dbus
 		mdns
-	)
-	client? (
-		enc_x264? (
-			dec_avcodec2
-		)
-		enc_x265? (
-			dec_avcodec2
-		)
 	)
 	clipboard? (
 		gtk3
@@ -68,9 +120,15 @@ REQUIRED_USE+="
 	cups? (
 		dbus
 	)
+	cups-forwarding? (
+		cups
+	)
 	firejail? (
 		client
 		server
+	)
+	gnome-shell? (
+		appindicator
 	)
 	html5-client? (
 		websockets
@@ -99,6 +157,9 @@ REQUIRED_USE+="
 	opengl? (
 		client
 	)
+	osmesa? (
+		server
+	)
 	png? (
 		pillow
 		zlib
@@ -109,14 +170,27 @@ REQUIRED_USE+="
 	sound? (
 		pulseaudio
 	)
+	sound-forwarding? (
+		pulseaudio
+	)
 	sshpass? (
 		ssh
+	)
+	test? (
+		aes
+		rencode
 	)
 	webp? (
 		pillow
 	)
 	X? (
 		gtk3
+	)
+	x264? (
+		ffmpeg
+	)
+	x265? (
+		ffmpeg
 	)
 	zeroconf? (
 		mdns
@@ -130,52 +204,73 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 CUDA_7_5_DRV_V="352.31"
 NVFBC_MIN_DRV_V="410.66"
 NVJPEG_MIN_DRV_V="450.36.06"
+PYCUDA_PV="2022.1"
+RENCODE_PV="1.0.6"
 # From my experience, firejail doesn't need pillow with webp or with jpeg.
 # The encoding when set to auto may require jpeg and webp.
 # See https://github.com/Xpra-org/xpra/blob/v4.2/docs/Build/Dependencies.md for the full list.
+
 DEPEND+="
 	${PYTHON_DEPS}
 	acct-group/xpra
 	app-admin/sudo
+	dev-libs/gobject-introspection[${PYTHON_USEDEP}]
 	dev-lang/python[sqlite?,ssl?]
 	dev-libs/glib[dbus?]
-	dev-python/cryptography[${PYTHON_USEDEP}]
-	dev-python/netifaces[${PYTHON_USEDEP}]
-	dev-python/rencode[${PYTHON_USEDEP}]
+	dev-python/pygobject[${PYTHON_USEDEP}]
+	aes? (
+		dev-python/cryptography[${PYTHON_USEDEP}]
+	)
+	appindicator? (
+		dev-libs/libappindicator[introspection]
+		gnome-base/librsvg[introspection]
+	)
+	avif? (
+		>=media-libs/libavif-0.9
+	)
 	avahi? (
 		net-dns/avahi[${PYTHON_USEDEP},python]
+		dev-python/netifaces[${PYTHON_USEDEP}]
+	)
+	brotli? (
+		app-arch/brotli[${PYTHON_USEDEP}]
+	)
+	cpu-percent? (
+		dev-python/psutil[${PYTHON_USEDEP}]
 	)
 	csc_libyuv? (
 		media-libs/libyuv
 	)
-	csc_swscale? (
-		>=media-video/ffmpeg-1.2.2:0=
-	)
 	cups? (
 		dev-python/pycups[${PYTHON_USEDEP}]
+		cups-forwarding? (
+			net-print/cups
+			net-print/cups-filters
+			net-print/cups-pdf
+		)
 	)
 	dbus? (
 		dev-python/dbus-python[${PYTHON_USEDEP}]
+		sys-apps/dbus[X?]
 	)
-	dec_avcodec2? (
-		>=media-video/ffmpeg-3.1:0=[vpx?,x264,x265]
+	drm? (
+		>=x11-libs/libdrm-2.4
 	)
-	enc_ffmpeg? (
-		>=media-video/ffmpeg-4.0:0=
+	evdi? (
+		>=x11-drivers/evdi-1.9
 	)
-	enc_x264? (
-		>=media-video/ffmpeg-1.0.4:0=[x264]
-		>=media-libs/x264-0.0.20171225
+	ffmpeg? (
+		>=media-video/ffmpeg-4.0:0=[vpx?,x264?,x265?]
 	)
-	enc_x265? (
-		>=media-video/ffmpeg-2:0=[x265]
-		media-libs/x265
+	gnome-shell? (
+		gnome-extra/gnome-shell-extension-appindicator
+		gnome-extra/gnome-shell-extension-topicons-plus
 	)
-	gss? (
+	gssapi? (
 		dev-python/gssapi[${PYTHON_USEDEP}]
 	)
 	gtk3? (
-		dev-python/pycairo[${PYTHON_USEDEP}]
+		>=dev-python/pycairo-1.20.0[${PYTHON_USEDEP}]
 		dev-python/pygobject:3[${PYTHON_USEDEP},cairo]
 		dev-libs/gobject-introspection
 		x11-libs/gtk+:3[introspection]
@@ -184,11 +279,17 @@ DEPEND+="
 	html5-client? (
 		www-apps/xpra-html5
 	)
+	ibus? (
+		app-i18n/ibus[${PYTHON_USEDEP},gtk3]
+	)
 	jpeg? (
 		>=media-libs/libjpeg-turbo-1.4
 	)
 	kerberos? (
 		dev-python/pykerberos[${PYTHON_USEDEP}]
+	)
+	keycloak? (
+		dev-python/oauthlib[${PYTHON_USEDEP}]
 	)
 	ldap? (
 		dev-python/python-ldap[${PYTHON_USEDEP}]
@@ -197,7 +298,7 @@ DEPEND+="
 		dev-python/ldap3[${PYTHON_USEDEP}]
 	)
 	lz4? (
-		dev-python/lz4[${PYTHON_USEDEP}]
+		>=dev-python/lz4-4.0.2[${PYTHON_USEDEP}]
 	)
 	lzo? (
 		>=dev-python/python-lzo-0.7.0[${PYTHON_USEDEP}]
@@ -206,28 +307,32 @@ DEPEND+="
 		dev-python/mysql-connector-python[${PYTHON_USEDEP}]
 	)
 	nvenc? (
-		>=dev-python/pynvml-10.418[${PYTHON_USEDEP}]
+		>=dev-python/pycuda-${PYCUDA_PV}[${PYTHON_USEDEP}]
+		>=dev-python/pynvml-11.515.75[${PYTHON_USEDEP}]
 		>=dev-util/nvidia-cuda-toolkit-7.5:=
 		>=x11-drivers/nvidia-drivers-${CUDA_7_5_DRV_V}
 		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/pycuda[${PYTHON_USEDEP}]
 		media-video/nvidia-video-codec
 	)
 	nvfbc? (
+		>=dev-python/pycuda-${PYCUDA_PV}[${PYTHON_USEDEP}]
 		>=dev-util/nvidia-cuda-toolkit-10.0:=
 		>=x11-drivers/nvidia-drivers-${NVFBC_MIN_DRV_V}
 		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/pycuda[${PYTHON_USEDEP}]
 	)
 	nvjpeg? (
+		>=dev-python/pycuda-${PYCUDA_PV}[${PYTHON_USEDEP}]
 	        >=dev-util/nvidia-cuda-toolkit-11.1.1:=
 	        >=x11-drivers/nvidia-drivers-${NVJPEG_MIN_DRV_V}
-		dev-python/pycuda[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
 	)
 	opengl? (
 		x11-base/xorg-drivers[video_cards_dummy]
 		client? (
-			dev-python/pyopengl_accelerate[${PYTHON_USEDEP}]
+			>=dev-python/pyopengl_accelerate-3.1.5[${PYTHON_USEDEP}]
+		)
+		server? (
+			media-libs/mesa[osmesa?]
 		)
 	)
 	openrc? (
@@ -240,12 +345,34 @@ DEPEND+="
 	pillow? (
 		dev-python/pillow[${PYTHON_USEDEP},jpeg?,webp?,zlib?]
 	)
+	pinentry? (
+		app-crypt/pinentry[gtk]
+	)
+	proc? (
+		sys-process/procps
+	)
 	pulseaudio? (
 		media-sound/pulseaudio[dbus?]
+		sound-forwarding? (
+			media-libs/libpulse
+		)
+	)
+	qrencode? (
+		media-gfx/qrencode[${PYTHON_USEDEP}]
+	)
+	rencode? (
+		>=dev-python/rencode-${RENCODE_PV}[${PYTHON_USEDEP}]
+	)
+	socks? (
+		dev-python/PySocks[${PYTHON_USEDEP}]
 	)
 	server? (
 		x11-base/xorg-server[-minimal,xvfb]
 		x11-drivers/xf86-input-void
+		x11-themes/adwaita-icon-theme
+	)
+	proxy? (
+		dev-python/setproctitle[${PYTHON_USEDEP}]
 	)
 	spng? (
 		>=media-libs/libspng-0.7
@@ -271,6 +398,7 @@ DEPEND+="
 		)
 	)
 	ssh? (
+		dev-python/dnspython[${PYTHON_USEDEP}]
 		sshpass? (
 			net-misc/sshpass
 		)
@@ -282,8 +410,14 @@ DEPEND+="
 	systemd? (
 		sys-apps/systemd
 	)
+	tcp-wrappers? (
+		sys-apps/tcp-wrappers
+	)
 	u2f? (
-		dev-python/pyu2f[${PYTHON_USEDEP}]
+		>=dev-python/pyu2f-0.1.5[${PYTHON_USEDEP}]
+	)
+	uinput? (
+		>=dev-python/python-uinput-0.11.2[${PYTHON_USEDEP}]
 	)
 	v4l2? (
 		media-video/v4l2loopback
@@ -302,8 +436,14 @@ DEPEND+="
 		sys-kernel/linux-headers
 	)
 	webcam? (
-		>=media-libs/opencv-2.0[${PYTHON_USEDEP},python]
-		dev-python/numpy[${PYTHON_USEDEP}]
+		client? (
+			>=media-libs/opencv-2.0[${PYTHON_USEDEP},python]
+		)
+		webcam-forwarding? (
+			kernel_linux? (
+				media-video/v4l2loopback
+			)
+		)
 		dev-python/pyinotify[${PYTHON_USEDEP}]
 	)
 	webp? (
@@ -319,41 +459,62 @@ DEPEND+="
 		x11-libs/libXfixes
 		x11-libs/libXi
 		x11-libs/libXrandr
+		x11-libs/libXres
 		x11-libs/libXtst
 		x11-libs/libxkbfile
 	)
 	xdg? (
+		dev-python/pyxdg[${PYTHON_USEDEP}]
 		x11-misc/xdg-utils
+	)
+	yaml? (
+		dev-python/pyyaml[${PYTHON_USEDEP}]
 	)
 	zeroconf? (
 		dev-python/zeroconf[${PYTHON_USEDEP}]
 	)
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/cython-0.16[${PYTHON_USEDEP}]
 	virtual/pkgconfig
+	cython? (
+		>=dev-python/cython-3.0.0_alpha11[${PYTHON_USEDEP}]
+	)
 	doc? (
 		app-text/pandoc
 	)
 	test? (
+		>=dev-python/rencode-${RENCODE_PV}[${PYTHON_USEDEP}]
+		dev-python/cryptography[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
+		client? (
+			sys-libs/zlib
+			x11-misc/xclip
+		)
+	)
+	|| (
+		sys-devel/gcc[cxx]
+		sys-devel/clang
 	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-3.0.2_ignore-gentoo-no-compile.patch"
-	"${FILESDIR}/${PN}-4.2-suid-warning.patch"
-	"${FILESDIR}/${PN}-4.2.3-ldconfig-skip.patch"
 	"${FILESDIR}/${PN}-4.3-openrc-init-fix-v3.patch"
 	"${FILESDIR}/${PN}-4.1.3-change-init-config-path.patch"
 	"${FILESDIR}/${PN}-4.2-udev-path.patch"
-	"${FILESDIR}/${PN}-4.3-translate-flags.patch"
+	"${FILESDIR}/${PN}-4.4.3-translate-flags.patch"
+	"${DISTDIR}/${PN}-d4ff2b0.patch"
 )
 SRC_URI="
 https://github.com/Xpra-org/xpra/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/Xpra-org/xpra/commit/d4ff2b0a6a966dffdc1856ea5d3cc5a57f2239bf.patch
+	-> ${PN}-d4ff2b0.patch
 "
+# d4ff2b0 : #3693 fixup 23b2c55 for builds without nvidia bits
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
@@ -464,51 +625,78 @@ python_prepare_all() {
 }
 
 python_configure_all() {
+	if use evdi && [[ ! -e "${ESYSROOT}/usr/$(get_libdir)/pkgconfig/evdi.pc" ]] ; then
+eerror
+eerror "Missing evdi.pc"
+eerror
+eerror "See https://github.com/Xpra-org/xpra/issues/3390#issuecomment-1118194059"
+eerror
+		die
+	fi
+
 	sed -i \
 	-e "/'pulseaudio'/s:DEFAULT_PULSEAUDIO:$(usex pulseaudio True False):" \
 		setup.py || die
 
 	mydistutilsargs=(
+		$(use_with avif)
+		$(use_with brotli)
 		$(use_with client)
 		$(use_with clipboard)
+		$(use_with cython)
 		$(use_with doc docs)
+		$(use_with drm)
+		$(use_with netdev)
 		$(use_with nvenc cuda_kernels)
-		$(use_with nvjpeg)
-		$(use_with cuda_rebuild)
-		$(use_with csc_swscale)
+		$(use_with nvjpeg nvjpeg_decoder)
+		$(use_with nvjpeg nvjpeg_encoder)
+		$(use_with csc_cython)
 		$(use_with csc_libyuv)
+		$(use_with cuda_rebuild)
 		$(use_with cups printing)
 		$(use_with dbus)
-		$(use_with dec_avcodec2)
-		$(use_with enc_ffmpeg)
-		$(use_with enc_x264)
-		$(use_with enc_x265)
-		$(use_with jpeg jpeg_encoder)
+		$(use_with evdi)
+		$(use_with ffmpeg)
+		$(use_with ffmpeg csc_swscale)
+		$(use_with ffmpeg dec_avcodec2)
 		$(use_with jpeg jpeg_decoder)
+		$(use_with jpeg jpeg_encoder)
+		$(use_with keyboard-layout keyboard)
+		$(use_with lz4)
 		$(use_with mdns)
+		$(use_with notifications)
+		$(use_with nvenc)
+		$(use_with nvfbc)
 		$(use_with opengl)
 		$(use_with pam)
 		$(use_with pillow)
-		$(use_with notifications)
-		$(use_with nvenc)
+		$(use_with proc)
+		$(use_with proxy)
+		$(use_with qrencode)
 		$(use_with rencodeplus)
 		$(use_with server)
+		$(use_with server service)
 		$(use_with server shadow)
 		$(use_with sound)
 		$(use_with spng spng_decoder)
 		$(use_with spng spng_encoder)
 		$(use_with sd_listen)
+		$(use_with uinput)
 		$(use_with vpx)
 		$(use_with vsock)
 		$(use_with v4l2)
 		$(use_with webcam)
 		$(use_with webp)
-		$(use_with xdg xdg_open)
 		$(use_with X x11)
+		$(use_with x264 enc_x264)
+		$(use_with x265 enc_x265)
+		$(use_with xdg xdg_open)
+		$(use_with xinput)
 		--with-strict
 		--with-verbose
 		--with-warn
 		--without-debug
+		--without-example
 		--without-PIC
 		--without-Xdummy
 	)
