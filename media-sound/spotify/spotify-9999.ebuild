@@ -1039,6 +1039,11 @@ ewarn
 ewarn
 ewarn "Some podcasts will be broken if the ffmpeg USE flag is disabled."
 ewarn
+	else
+ewarn
+ewarn "You may need to hit play it to load the ffmpeg library with a different"
+ewarn "audio podcast and play the intended podcast for actual playback."
+ewarn
 	fi
 
 	if ! use emoji ; then
