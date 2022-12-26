@@ -7,7 +7,10 @@ inherit autotools edos2unix flag-o-matic multilib-minimal
 
 MY_PN="MediaInfo"
 DESCRIPTION="MediaInfo libraries"
-HOMEPAGE="https://mediaarea.net/mediainfo/ https://github.com/MediaArea/MediaInfoLib"
+HOMEPAGE="
+https://mediaarea.net/mediainfo/
+https://github.com/MediaArea/MediaInfoLib
+"
 LICENSE="BSD-2"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
@@ -18,31 +21,36 @@ DEPEND+="
 	>=dev-libs/tinyxml2-7.0.0:=[${MULTILIB_USEDEP}]
 	>=media-libs/libzen-0.4.39:=[static-libs=,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
-	curl? ( >=net-misc/curl-7.68.0[${MULTILIB_USEDEP}] )
-	mms? ( >=media-libs/libmms-0.6.4:=[static-libs=,${MULTILIB_USEDEP}] )
+	curl? (
+		>=net-misc/curl-7.68.0[${MULTILIB_USEDEP}]
+	)
+	mms? (
+		>=media-libs/libmms-0.6.4:=[static-libs=,${MULTILIB_USEDEP}]
+	)
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	>=dev-util/pkgconf-1.6.3[${MULTILIB_USEDEP},pkg-config(+)]
-	doc? ( >=app-doc/doxygen-1.8.17 )
+	doc? (
+		>=app-doc/doxygen-1.8.17
+	)
 "
 SRC_URI="https://mediaarea.net/download/source/${PN}/${PV}/${P/-/_}.tar.xz"
 # tests try to fetch data from online sources
 RESTRICT="test"
 S="${WORKDIR}/${MY_PN}Lib"
 
-PATCHES=(
-	"${FILESDIR}"/${P}-link-fix.patch
-)
-
 src_prepare() {
 	cd "${S}/Project/GNU/Library" || die
-	eapply ${PATCHES[@]}
 	eapply_user
 
 	sed -i 's:-O2::' configure.ac || die
+
 	append-cppflags -DMEDIAINFO_LIBMMS_DESCRIBE_SUPPORT=0
 
+	eautoreconf
 	multilib_copy_sources
 }
 
@@ -71,7 +79,9 @@ multilib_src_compile() {
 multilib_src_install() {
 	cd "${BUILD_DIR}/Project/GNU/Library" || die
 	if use doc; then
-		local HTML_DOCS=( "${WORKDIR}"/${MY_PN}Lib/Doc/*.html )
+		local HTML_DOCS=(
+			"${WORKDIR}"/${MY_PN}Lib/Doc/*.html
+		)
 	fi
 
 	default
@@ -80,7 +90,8 @@ multilib_src_install() {
 	insinto /usr/$(get_libdir)/pkgconfig
 	doins ${PN}.pc
 
-	for x in ./ Archive Audio Duplicate Export Image Multiple Reader Tag Text Video; do
+	for x in ./ Archive Audio Duplicate Export Image \
+		Multiple Reader Tag Text Video; do
 		insinto /usr/include/${MY_PN}/${x}
 		doins "${WORKDIR}"/${MY_PN}Lib/Source/${MY_PN}/${x}/*.h
 	done

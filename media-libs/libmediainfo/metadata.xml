@@ -2,12 +2,12 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- ebuild fork only on the oiledmachine-overlay -->
+    <!-- Ebuild fork only on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <maintainer type="project">
-    <!-- originator -->
+    <!-- Ebuild originator -->
     <email>media-video@gentoo.org</email>
     <name>Gentoo Video project</name>
   </maintainer>
