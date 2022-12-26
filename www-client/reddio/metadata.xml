@@ -14,4 +14,9 @@
   <upstream>
     <remote-id type="gitlab">https://gitlab.com/aaronNG/reddio</remote-id>
   </upstream>
+  <use>
+    <flag name="auth">
+      Adds authentication support
+    </flag>
+  </use>
 </pkgmetadata>

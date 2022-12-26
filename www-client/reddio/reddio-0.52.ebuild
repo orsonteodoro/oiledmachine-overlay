@@ -8,11 +8,14 @@ HOMEPAGE="https://gitlab.com/aaronNG/reddio"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+IUSE="auth"
 RDEPEND="
 	app-misc/jq
-	net-analyzer/netcat
 	net-misc/curl
 	sys-apps/coreutils
+	auth? (
+		net-analyzer/netcat
+	)
 "
 DEPEND="
 	${RDEPEND}
