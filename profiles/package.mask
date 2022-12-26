@@ -81,7 +81,6 @@ media-plugins/gst-plugins-omx
 # worked in the past but untested today
 dev-util/bear
 dev-util/ycm-generator
-www-misc/rtv
 www-misc/rainbowstream
 
 # Unfinished.  ebuild is pre-alpha

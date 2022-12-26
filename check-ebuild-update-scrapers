@@ -880,11 +880,6 @@ repo_latest_version_get_js8py_pv() {
 https://github.com/jketterl/js8py.git)
 }
 
-repo_latest_version_get_kitchen_pv() {
-	echo $(get_newest_pv \
-https://github.com/fedora-infra/kitchen.git)
-}
-
 repo_latest_version_get_koala_pv() {
 	echo $(get_tags \
 https://github.com/arsduo/koala.git \
@@ -1900,11 +1895,6 @@ https://github.com/recastnavigation/recastnavigation.git)
 repo_latest_version_get_runds_connector_pv() {
 	echo $(get_newest_pv \
 https://github.com/jketterl/runds_connector.git)
-}
-
-repo_latest_version_get_rvt_pv() {
-	echo $(get_newest_pv \
-https://github.com/michael-lazar/rtv.git)
 }
 
 repo_latest_version_get_sddc_connector_pv() {
