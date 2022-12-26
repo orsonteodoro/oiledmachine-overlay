@@ -26,7 +26,7 @@ SRC_URI="
 https://gitlab.com/aaronNG/reddio/-/archive/v${PV}/${PN}-v${PV}.tar.bz2
 	-> ${P}.tar.bz2
 "
-S="${WORKDIR}/${PN}-v.${PV}"
+S="${WORKDIR}/${PN}-v${PV}"
 RESTRICT="mirror"
 
 src_compile() { :; }
