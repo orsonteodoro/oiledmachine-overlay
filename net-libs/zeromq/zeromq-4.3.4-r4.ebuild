@@ -41,7 +41,6 @@ REQUIRED_USE+="
 		curve
 	)
 "
-RESTRICT="!test? ( test )"
 RDEPEND+="
 	libbsd? (
 		dev-libs/libbsd[${MULTILIB_USEDEP}]
@@ -79,6 +78,7 @@ https://github.com/zeromq/libzmq/releases/download/v${PV}/${P}.tar.gz
 PATCHES=(
 	"${FILESDIR}/zeromq-4.3.4-build-curve_keygen.patch"
 )
+RESTRICT="!test? ( test )"
 
 src_configure() {
 	local mycmakeargs=(
@@ -96,8 +96,18 @@ src_configure() {
 		-DWITH_CURVE_KEYGEN=$(usex curve_keygen)
 		-DWITH_DOCS=$(usex doc)
 		-DWITH_LIBBSD=$(usex libbsd)
-		-DWITH_LIBSODIUM=$(usex curve $(usex sodium) "OFF")
-		-DWITH_LIBSODIUM_STATIC=$(usex curve $(usex static-libs $(usex sodium) "OFF") "OFF")
+		-DWITH_LIBSODIUM=$(\
+			usex curve \
+				$(usex sodium) \
+				"OFF" \
+		)
+		-DWITH_LIBSODIUM_STATIC=$(\
+			usex curve \
+				$(usex static-libs \
+					$(usex sodium) \
+					"OFF") \
+				"OFF" \
+		)
 		-DWITH_NORM=$(usex norm)
 		-DWITH_OPENPGM=$(usex pgm)
 		-DWITH_VMCI=$(usex vmci)
