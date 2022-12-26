@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <!-- only for this fork on the oiledmachine-overlay -->
   <maintainer type="person">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-
-  <!-- originator -->
   <maintainer type="person">
+    <!-- Ebuild originator -->
     <email>whissi@gentoo.org</email>
     <name>Thomas Deutschmann</name>
   </maintainer>
   <upstream>
     <maintainer>
       <email>sustrik@fastmq.com</email>
-        <name>Martin Sustrik</name>
+      <name>Martin Sustrik</name>
     </maintainer>
     <doc>http://zguide.zeromq.org/page:all</doc>
       <bugs-to>https://github.com/zeromq/libzmq/issues</bugs-to>
