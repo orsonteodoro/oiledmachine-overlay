@@ -37,4 +37,6 @@ src_install() {
 		DESTDIR="${ED}" \
 		PREFIX="/usr" \
 		install
+	dodoc LICENSE
+	einstalldocs
 }
