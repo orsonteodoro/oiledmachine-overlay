@@ -206,6 +206,11 @@ ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=ove
 ewarn
 	fi
 	# The FFmpeg 4.4.2 critical was patched
+	if use system-ffmpeg ; then
+ewarn
+ewarn "Using system-ffmpeg has not been tested"
+ewarn
+	fi
 	if use system-gdal ; then
 ewarn
 ewarn "Using system-gdal has not been tested"
