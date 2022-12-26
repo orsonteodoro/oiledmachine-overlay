@@ -205,16 +205,7 @@ ewarn "The internal Expat ${EXPAT_PV} library may contain CVE advisories.  For d
 ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=expat&search_type=all"
 ewarn
 	fi
-	if use system-ffmpeg ; then
-ewarn
-ewarn "Using system-ffmpeg has not been tested"
-ewarn
-	else
-ewarn
-ewarn "The internal FFmpeg ${FFMPEG_PV} may contain CVE advisories.  For details see"
-ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=ffmpeg%20$(ver_cut 1-2 ${FFMPEG_PV})&search_type=all"
-ewarn
-	fi
+	# The FFmpeg 4.4.2 critical was patched
 	if use system-gdal ; then
 ewarn
 ewarn "Using system-gdal has not been tested"
