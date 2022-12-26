@@ -15,13 +15,17 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 BDEPEND+="
 	doc? ( app-doc/doxygen )
-	test? ( ${PYTHON_DEPS} )"
+	test? ( ${PYTHON_DEPS} )
+"
 SRC_URI="
 https://github.com/anrieff/${PN}/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-PATCHES=( "${FILESDIR}/${PN}-0.5.0-cmake-customize-libdir.patch" )
+PATCHES=(
+	"${FILESDIR}/${PN}-0.5.0-cmake-customize-libdir.patch"
+)
 
 pkg_setup() {
 	use test && python-any-r1_pkg_setup
