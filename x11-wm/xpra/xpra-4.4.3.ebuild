@@ -179,6 +179,9 @@ REQUIRED_USE+="
 		aes
 		rencode
 	)
+	vpx? (
+		ffmpeg
+	)
 	X? (
 		gtk3
 	)
@@ -439,7 +442,6 @@ DEPEND+="
 	)
 	vpx? (
 		>=media-libs/libvpx-1.4
-		virtual/ffmpeg
 	)
 	vsock? (
 		sys-kernel/linux-headers
