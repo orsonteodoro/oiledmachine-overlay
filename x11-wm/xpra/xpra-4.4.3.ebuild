@@ -214,7 +214,7 @@ DEPEND+="
 	${PYTHON_DEPS}
 	acct-group/xpra
 	app-admin/sudo
-	dev-libs/gobject-introspection[${PYTHON_USEDEP}]
+	dev-libs/gobject-introspection
 	dev-lang/python[sqlite?,ssl?]
 	dev-libs/glib[dbus?]
 	dev-python/pygobject[${PYTHON_USEDEP}]
