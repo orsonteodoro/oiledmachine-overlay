@@ -262,6 +262,9 @@
 
       Rencode is used for packet encoding of data structures.
     </flag>
+    <flag name="rfb">
+      Adds support for VNC clients that use the RFB protocol.
+    </flag>
     <flag name="socks">
       Adds support to connect through SOCKS proxies.
     </flag>

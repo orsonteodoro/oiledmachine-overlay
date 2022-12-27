@@ -38,7 +38,7 @@ csc_libyuv +cuda_rebuild +cups cups-forwarding +cython +dbus +doc -drm ffmpeg
 evdi firejail gnome-shell +gtk3 gssapi html5-client html5_gzip html5_brotli
 ibus jpeg kerberos +keyboard-layout keycloak ldap ldap3 +lz4 lzo +mdns mysql
 +netdev +notifications nvenc nvfbc nvjpeg +opengl openrc osmesa +pam +pillow
-pinentry png proc +proxy pyinotify qrencode -rencode +rencodeplus sd_listen
+pinentry png proc +proxy pyinotify qrencode -rencode +rencodeplus +rfb sd_listen
 selinux +server +socks +sound sound-forwarding spng sqlite ssh sshpass +ssl
 systemd +tcp-wrappers test u2f -uinput +v4l2 vaapi vpx vsock -wayland +webcam
 webcam-forwarding webp +websockets +X x264 -x265 +xdg +xinput yaml zeroconf
@@ -80,6 +80,9 @@ SERVER_OPTIONS="
 		server
 	)
 	nvenc? (
+		server
+	)
+	rfb? (
 		server
 	)
 	sound-forwarding? (
@@ -676,6 +679,7 @@ eerror
 		$(use_with proc)
 		$(use_with proxy)
 		$(use_with qrencode)
+		$(use_with rfb)
 		$(use_with rencodeplus)
 		$(use_with server)
 		$(use_with server service)
