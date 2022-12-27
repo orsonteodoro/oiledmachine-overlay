@@ -18,9 +18,9 @@
     <doc lang="en">
       https://github.com/Xpra-org/xpra/tree/master/docs
     </doc>
-    <maintainer type="person" status="active">
-      <name>Antoine Martin</name>
-    </maintainer>
+    <changelog>
+      https://github.com/Xpra-org/xpra/blob/master/docs/CHANGELOG.md
+    </changelog>
   </upstream>
   <longdescription>
 
