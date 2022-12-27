@@ -415,6 +415,7 @@ DEPEND+="
 	)
 	u2f? (
 		>=dev-python/pyu2f-0.1.5[${PYTHON_USEDEP}]
+		dev-python/cryptography[${PYTHON_USEDEP}]
 	)
 	uinput? (
 		>=dev-python/python-uinput-0.11.2[${PYTHON_USEDEP}]
