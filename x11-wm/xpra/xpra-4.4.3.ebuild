@@ -430,7 +430,6 @@ DEPEND+="
 		>=dev-python/python-uinput-0.11.2[${PYTHON_USEDEP}]
 	)
 	v4l2? (
-		media-video/v4l2loopback
 		sys-kernel/linux-headers
 	)
 	vaapi? (
