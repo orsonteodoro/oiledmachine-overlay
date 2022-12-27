@@ -215,9 +215,6 @@
     <flag name="pam">
       Adds support for PAM for authentication.
     </flag>
-    <flag name="pillow">
-      Enable pillow support to encode and decode PNG, JPEG, WebP.
-    </flag>
     <flag name="pinentry">
       Enable pinentry gtk support for password prompts.
     </flag>
@@ -310,6 +307,9 @@
     </flag>
     <flag name="test">
       Enables self tests.
+    </flag>
+    <flag name="tiff">
+      Add support for tiff
     </flag>
     <flag name="twolame">
       Adds MPEG Audio Layer 2 (MP2) encoding support.

@@ -37,10 +37,10 @@ aes appindicator +avahi avif brotli +client +clipboard cpu-percent +csc_cython
 csc_libyuv +cuda_rebuild +cups cups-forwarding +cython +dbus +doc -drm ffmpeg
 evdi firejail gnome-shell +gtk3 gssapi html5-client html5_gzip html5_brotli
 ibus jpeg kerberos +keyboard-layout keycloak ldap ldap3 +lz4 lzo +mdns mysql
-+netdev +notifications nvenc nvfbc nvjpeg +opengl openrc osmesa +pam +pillow
-pinentry png proc +proxy pyinotify qrencode -rencode +rencodeplus +rfb sd_listen
-selinux +server +socks +sound sound-forwarding spng sqlite ssh sshpass +ssl
-systemd +tcp-wrappers test u2f -uinput +v4l2 vaapi vpx vsock -wayland +webcam
++netdev +notifications nvenc nvfbc nvjpeg +opengl openrc osmesa +pam pinentry
+png proc +proxy pyinotify qrencode -rencode +rencodeplus +rfb sd_listen selinux
++server +socks +sound sound-forwarding spng sqlite ssh sshpass +ssl systemd
++tcp-wrappers test tiff u2f -uinput +v4l2 vaapi vpx vsock -wayland +webcam
 webcam-forwarding webp +websockets +X x264 -x265 +xdg +xinput yaml zeroconf
 zlib
 "
@@ -145,9 +145,6 @@ REQUIRED_USE+="
 			)
 		)
 	)
-	jpeg? (
-		pillow
-	)
 	mdns? (
 		|| (
 			avahi
@@ -164,7 +161,6 @@ REQUIRED_USE+="
 		server
 	)
 	png? (
-		pillow
 		zlib
 	)
 	sd_listen? (
@@ -182,9 +178,6 @@ REQUIRED_USE+="
 	test? (
 		aes
 		rencode
-	)
-	webp? (
-		pillow
 	)
 	X? (
 		gtk3
@@ -212,6 +205,10 @@ RENCODE_PV="1.0.6"
 # From my experience, firejail doesn't need pillow with webp or with jpeg.
 # The encoding when set to auto may require jpeg and webp.
 # See https://github.com/Xpra-org/xpra/blob/v4.2/docs/Build/Dependencies.md for the full list.
+
+PILLOW_DEPEND="
+	dev-python/pillow[${PYTHON_USEDEP},jpeg?,tiff?,webp?,zlib?]
+"
 
 DEPEND+="
 	${PYTHON_DEPS}
@@ -286,6 +283,7 @@ DEPEND+="
 		app-i18n/ibus[${PYTHON_USEDEP},gtk3]
 	)
 	jpeg? (
+		${PILLOW_DEPEND}
 		>=media-libs/libjpeg-turbo-1.4
 	)
 	kerberos? (
@@ -345,11 +343,11 @@ DEPEND+="
 	pam? (
 		sys-libs/pam[selinux?]
 	)
-	pillow? (
-		dev-python/pillow[${PYTHON_USEDEP},jpeg?,webp?,zlib?]
-	)
 	pinentry? (
 		app-crypt/pinentry[gtk]
+	)
+	png? (
+		${PILLOW_DEPEND}
 	)
 	proc? (
 		sys-process/procps
@@ -416,6 +414,9 @@ DEPEND+="
 	tcp-wrappers? (
 		sys-apps/tcp-wrappers
 	)
+	tiff? (
+		${PILLOW_DEPEND}
+	)
 	u2f? (
 		>=dev-python/pyu2f-0.1.5[${PYTHON_USEDEP}]
 		dev-python/cryptography[${PYTHON_USEDEP}]
@@ -451,6 +452,7 @@ DEPEND+="
 		dev-python/pyinotify[${PYTHON_USEDEP}]
 	)
 	webp? (
+		${PILLOW_DEPEND}
 		>=media-libs/libwebp-0.5[opengl?]
 	)
 	websockets? (
@@ -675,7 +677,6 @@ eerror
 		$(use_with nvfbc)
 		$(use_with opengl)
 		$(use_with pam)
-		$(use_with pillow)
 		$(use_with proc)
 		$(use_with proxy)
 		$(use_with qrencode)
@@ -707,6 +708,16 @@ eerror
 		--without-PIC
 		--without-Xdummy
 	)
+
+	if use jpeg || use png || use tiff || use webp || use test ; then
+		mydistutilsargs+=(
+			--with-pillow
+		)
+	else
+		mydistutilsargs+=(
+			--without-pillow
+		)
+	fi
 
 	if use gtk3 ; then
 		mydistutilsargs+=(
@@ -752,12 +763,6 @@ pkg_postinst() {
 einfo
 einfo "You need to add yourself to the xpra, tty, dialout groups."
 einfo
-	if use pillow ; then
-einfo
-einfo "Manually add jpeg or webp optional USE flags to pillow"
-einfo "package to enable support for them."
-einfo
-	fi
 elog
 elog "You need to enable the xpra service for this to work."
 elog
