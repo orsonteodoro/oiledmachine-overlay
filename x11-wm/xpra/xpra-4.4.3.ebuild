@@ -375,6 +375,11 @@ DEPEND+="
 	proxy? (
 		dev-python/setproctitle[${PYTHON_USEDEP}]
 	)
+	server? (
+		pyinotify? (
+			dev-python/pyinotify[${PYTHON_USEDEP}]
+		)
+	)
 	spng? (
 		>=media-libs/libspng-0.7
 	)
@@ -449,7 +454,9 @@ DEPEND+="
 				media-video/v4l2loopback
 			)
 		)
-		dev-python/pyinotify[${PYTHON_USEDEP}]
+		pyinotify? (
+			dev-python/pyinotify[${PYTHON_USEDEP}]
+		)
 	)
 	webp? (
 		${PILLOW_DEPEND}
