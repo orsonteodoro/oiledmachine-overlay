@@ -25,7 +25,7 @@ LICENSE="GPL-2+ BSD-2 CC-BY-SA-3.0 MIT LGPL-3+"
 # LGPL-3+ - xpra/gtk_common/gtk_notifier.py
 # MIT - xpra/platform/win32/lsa_logon_lib.py
 #	- xpra/client/gl/gl_colorspace_conversions.py
-KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
+KEYWORDS="~amd64 ~arm64 ~x86"
 GSTREAMER_IUSE+="
 aac alsa flac jack lame matroska ogg opus oss pulseaudio speex twolame vorbis
 wavpack
