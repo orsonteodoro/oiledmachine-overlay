@@ -178,9 +178,6 @@
     <flag name="notifications">
       Enables support for system notifications.
     </flag>
-    <flag name="mp3">
-      Adds support for LAME MP3 encoding.
-    </flag>
     <flag name="nvenc">
       Enables support for the NVENC hardware encoder.
     </flag>
