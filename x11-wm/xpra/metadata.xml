@@ -140,7 +140,7 @@
       Adds support for the JACK audio sound server.
     </flag>
     <flag name="jpeg">
-      Enables support for JPEG encoding and decoding.
+      Enables support for JPEG images.
     </flag>
     <flag name="keyboard-layout">
       Adds support for different keyboard layouts found around the world.
@@ -219,7 +219,7 @@
       Enable pinentry gtk support for password prompts.
     </flag>
     <flag name="png">
-      Adds PNG encoding support.
+      Adds PNG support.
     </flag>
     <flag name="proc">
       Adds support for using /proc to guess content types
@@ -309,7 +309,7 @@
       Enables self tests.
     </flag>
     <flag name="tiff">
-      Add support for tiff
+      Add support for TIFF images.
     </flag>
     <flag name="twolame">
       Adds MPEG Audio Layer 2 (MP2) encoding support.
