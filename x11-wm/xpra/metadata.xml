@@ -348,7 +348,7 @@
       Enable sending webcam from server to client.
     </flag>
     <flag name="webp">
-      Enables encoding and decoding WebP images.
+      Enables WebP images support.
     </flag>
     <flag name="websockets">
       Enables server support for the websockets and to serve html5 clients to
