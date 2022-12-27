@@ -332,6 +332,9 @@
     <flag name="vsock">
       Enable support for VSOCK and the vsock:// connection string.
     </flag>
+    <flag name="wayland">
+      Adds support for Wayland. (EXPERIMENTAL)
+    </flag>
     <flag name="wavpack">
       Adds support for WavPack lossless compression.
     </flag>

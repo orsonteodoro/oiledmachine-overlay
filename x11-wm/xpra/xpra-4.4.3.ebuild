@@ -40,7 +40,7 @@ ibus jpeg kerberos +keyboard-layout keycloak ldap ldap3 +lz4 lzo +mdns mysql
 +netdev +notifications nvenc nvfbc nvjpeg +opengl openrc osmesa +pam +pillow
 pinentry png proc +proxy pyinotify qrencode -rencode +rencodeplus sd_listen
 selinux +server +socks +sound sound-forwarding spng sqlite ssh sshpass +ssl
-systemd +tcp-wrappers test u2f -uinput +v4l2 vaapi vpx vsock +webcam
+systemd +tcp-wrappers test u2f -uinput +v4l2 vaapi vpx vsock -wayland +webcam
 webcam-forwarding webp +websockets +X x264 -x265 +xdg +xinput yaml zeroconf
 zlib
 "
@@ -134,7 +134,7 @@ REQUIRED_USE+="
 		websockets
 	)
 	gtk3? (
-		X
+		|| ( X wayland )
 		client? (
 			webp
 			opengl? (
@@ -273,7 +273,7 @@ DEPEND+="
 		>=dev-python/pycairo-1.20.0[${PYTHON_USEDEP}]
 		dev-python/pygobject:3[${PYTHON_USEDEP},cairo]
 		dev-libs/gobject-introspection
-		x11-libs/gtk+:3[introspection]
+		x11-libs/gtk+:3[wayland?,X?,introspection]
 		x11-libs/pango[introspection]
 	)
 	html5-client? (
@@ -492,7 +492,9 @@ BDEPEND+="
 		dev-python/numpy[${PYTHON_USEDEP}]
 		client? (
 			sys-libs/zlib
-			x11-misc/xclip
+			X? (
+				x11-misc/xclip
+			)
 		)
 	)
 	|| (
