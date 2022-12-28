@@ -7,14 +7,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    This manages the cython symlinks.  The symlink should not change
-    in the middle of other cython builds utilizing the symlink.
-
-    The listed symlinks in "eselect cython list" is to be interpreted as:
-    cython.${SLOT}
-
-    cython.0 corresponds to Cython 0.x (stable)
-    cython.3 corresponds to Cython 3.x (alpha)
+    This manages the typescript symlinks.
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/orsonteodoro/oiledmachine-overlay/issues</bugs-to>

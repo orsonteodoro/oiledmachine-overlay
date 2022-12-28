@@ -4,8 +4,8 @@
 
 EAPI=8
 
-DESCRIPTION="Manages the /usr/include/node symlink"
-HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay"
+DESCRIPTION="Manages the emscripten environment"
+HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/app-eselect/eselect-emscripten"
 SRC_URI=""
 
 LICENSE="GPL-2"

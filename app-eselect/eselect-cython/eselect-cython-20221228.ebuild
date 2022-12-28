@@ -5,7 +5,7 @@
 EAPI="8"
 
 DESCRIPTION="Manages the cython symlinks"
-HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay"
+HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/app-eselect/eselect-cython"
 SRC_URI=""
 
 LICENSE="GPL-2"

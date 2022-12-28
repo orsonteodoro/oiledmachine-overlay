@@ -5,7 +5,7 @@
 EAPI=8
 
 DESCRIPTION="Manages the /usr/include/node symlink"
-HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay"
+HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/app-eselect/eselect-nodejs"
 SRC_URI=""
 
 LICENSE="GPL-2"
