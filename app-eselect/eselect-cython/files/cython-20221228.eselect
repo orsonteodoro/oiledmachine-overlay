@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manages the Cython multslot symlinks"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20221128"
+VERSION="20221228"
 PN="cython"
 
 # find a list of Cython symlink targets
