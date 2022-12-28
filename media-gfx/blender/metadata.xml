@@ -25,8 +25,8 @@
     Blender, the open source software for 3D modeling, animation,
     rendering, post-production, interactive creation and playback.
 
-    2.93.x -- LTS (Long Term Support)
-    3.x -- Stable
+    2.93.x, 3.3.x -- LTS (Long Term Support)
+    3.4 and later -- Stable
 
     Information about Cycles network rendering can be found at:
     https://wiki.blender.org/wiki/Source/Render/Cycles/Network_Render
@@ -59,7 +59,7 @@
     defined, it will fall back to clang++, then icpc.
 
 
-    Event Based PGO (EPGO) - (Work In Progress)
+    Event Based PGO (EPGO)
 
     For CPU based algorithms, PGO can result on average 10% benefit, but certain
     scenarios such as QPS or throughput, it may result in 40% benefit.
@@ -305,11 +305,15 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
     </flag>
     <flag name="opencl">
       Allow OpenCL Graphics Acceleration. This may require extra graphics card
-      drivers.</flag>
+      drivers.
+    </flag>
     <flag name="openimagedenoise">
       Enable Open Image Denoise support for CPU based AI denoising for improved
-      blending.</flag>
-    <flag name="openimageio">Enable OpenImageIO Support</flag>
+      blending.
+    </flag>
+    <flag name="openimageio">
+      Enable OpenImageIO Support
+    </flag>
     <flag name="opensubdiv">
       Accelerates the subdivision rendering to produce smoother curved 3D
       surfaces with the use of GPU and CPU.
