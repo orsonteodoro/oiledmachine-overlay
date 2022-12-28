@@ -126,7 +126,7 @@ REQUIRED_USE+="
 	)
 "
 # See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/3.1.17/tools/building.py EXPECTED_BINARYEN_VERSION
+# See also https://github.com/emscripten-core/emscripten/blob/3.1.17/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
 JAVA_PV="11" # See https://github.com/google/closure-compiler/blob/v20220502/.github/workflows/ci.yaml#L43
 # See https://github.com/google/closure-compiler-npm/blob/v20220502.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
