@@ -205,8 +205,6 @@ _tpgo_custom_clean() {
 	# Still not deterministic
 	einfo "Cleaning copy"
 	rm -rf "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build" || die
-#	cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build" || die
-#	cd "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build" || die
 }
 
 src_test() {
