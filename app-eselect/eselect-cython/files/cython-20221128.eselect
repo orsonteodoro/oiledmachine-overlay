@@ -5,13 +5,13 @@
 
 DESCRIPTION="Manages the Cython multslot symlinks"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20220718"
+VERSION="20221128"
 PN="cython"
 
 # find a list of Cython symlink targets
 find_targets() {
     local f
-    L=$(find /usr/lib/python-exec/python*/ -name "cython.*" | sort | uniq)
+    L=$(find /usr/lib/python-exec/python*/ -name "cython.*" -exec basename '{}' \; | sort | uniq)
     for f in ${L}; do
         echo $(basename "${f}")
     done
