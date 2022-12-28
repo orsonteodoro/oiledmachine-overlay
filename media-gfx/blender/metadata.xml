@@ -2,22 +2,22 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- only for this ebuild fork on the oiledmachine-overlay -->
+    <!-- Ebuild fork on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <maintainer type="person">
-    <!-- ebuild originators -->
+    <!-- Ebuild originators -->
     <email>agrigo2001@yahoo.com.au</email>
     <name>Adrian Grigo</name>
   </maintainer>
   <maintainer type="project">
-    <!-- ebuild originators -->
+    <!-- Ebuild originators -->
     <email>proxy-maint@gentoo.org</email>
     <name>Proxy Maintainers</name>
   </maintainer>
   <maintainer type="project">
-    <!-- ebuild originators -->
+    <!-- Ebuild originators -->
     <email>graphics@gentoo.org</email>
     <name>Gentoo Graphics Project</name>
   </maintainer>
