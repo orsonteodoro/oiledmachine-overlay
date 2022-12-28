@@ -44,6 +44,7 @@ _get_lib_types() {
 src_configure() {
 	local lib_type
 	configure_abi() {
+		local lib_type
 		for lib_type in $(_get_lib_types) ; do
 			local mycmakeargs=()
 			if [[ "${lib_type}" == "static" ]] ; then
@@ -66,6 +67,7 @@ src_configure() {
 src_compile() {
 	local lib_type
 	configure_abi() {
+		local lib_type
 		for lib_type in $(_get_lib_types) ; do
 			export CMAKE_USE_DIR="${S}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
@@ -79,14 +81,20 @@ src_compile() {
 src_install() {
 	local lib_type
 	install_abi() {
+		local lib_type
 		for lib_type in $(_get_lib_types) ; do
 			export CMAKE_USE_DIR="${S}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			cd "${BUILD_DIR}" || die
 			cmake_src_install
 		done
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
+
+multilib_src_install_all() {
 	cd "${S}" || die
 	dodoc license.txt
 }

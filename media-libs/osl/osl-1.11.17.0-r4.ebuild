@@ -302,6 +302,7 @@ src_install() {
 			dosym /usr/$(get_libdir)/osl/bin/oslc /usr/bin/oslc
 			dosym /usr/$(get_libdir)/osl/bin/oslinfo /usr/bin/oslinfo
 		fi
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
 }

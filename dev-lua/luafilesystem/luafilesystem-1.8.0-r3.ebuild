@@ -120,13 +120,18 @@ src_install() {
 			emake DESTDIR="${D}" install
 		}
 		lua_foreach_impl lua_src_install
-		cd "${S}" || die
-		use doc && local HTML_DOCS=( doc/us/. )
-		einstalldocs
-		docinto licenses
-		dodoc LICENSE
+		multilib_check_headers
 	}
         multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
+
+multilib_src_install_all() {
+	cd "${S}" || die
+	use doc && local HTML_DOCS=( doc/us/. )
+	einstalldocs
+	docinto licenses
+	dodoc LICENSE
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib

@@ -104,8 +104,8 @@ MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 # fingerprint changes.
 # Update the license version also.
 LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES"
-LICENSE+=" ${LICENSE_FILE_NAME}"
 LICENSE+="
+	${LICENSE_FILE_NAME}
 	(
 		BSD-2
 		BSD
@@ -158,6 +158,7 @@ LICENSE+="
 		LGPL-2.1+
 		MPL-2.0
 	)
+	|| ( BSD W3C-Document-License-2002 )
 " # \
 # emerge does not recognize ^^ for the LICENSE variable.  You must choose
 # at most one for some packages when || is present.
@@ -204,6 +205,7 @@ LICENSE+="
 # BSD dom/media/webrtc/transport/third_party/nrappkit/src/util/util.c
 # BSD-2 ISC third_party/dav1d/tools/compat/getopt.c
 # BSD, MIT, ISC nsprpub/pr/src/misc/praton.c
+# || ( BSD W3C-Document-License-2002 ) testing/web-platform/tests/css/css-color/LICENSE
 # CC-BY-4.0 browser/fonts/TwemojiMozilla.ttf \
 #   (See https://github.com/mozilla/twemoji-colr/blob/master/LICENSE.md)
 # curl - toolkit/crashreporter/google-breakpad/src/third_party/curl/COPYING
@@ -2099,6 +2101,7 @@ einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
 src_install() {
 	install_abi() {
 		_src_install
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
 }

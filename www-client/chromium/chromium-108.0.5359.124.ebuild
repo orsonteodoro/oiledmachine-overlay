@@ -123,6 +123,7 @@ LICENSE="
 	SunPro
 	svgo
 	W3C
+	W3C-Document-License-2002
 	WTFPL-2
 	x11proto
 	ZLIB
@@ -187,6 +188,13 @@ LICENSE="
 #   ^^ ( MPL-1.1 GPL 2.0 LGPL-2.1 ) - native_client/NOTICE
 #   NSIS: BZIP2 CPL-1.0 libpng ZLIB
 #   (Some third_party modules do not exist like NSIS)
+# custom, W3C-IPR, BSD, MIT, GPL-2, LPGL-2.1, PSF-2.4, BSD-2, SunPro, \
+#   GPL-2+, ZLIB, LGPL-2.1+, NEWLIB, LIBGLOSS, GPL-2-with-classpath-exception, \
+#   SAX-PD, GPL-2-with-classpath-exception, UoI-NCSA, FDL-1.1, Boost-1.0, \
+#   CPL-1.0, BZIP2, ZLIB, LGPL-3, GPL-3, gcc-runtime-library-exception-3.1, \
+#   W3C-SOFTWARE-NOTICE-AND-LICENSE-2004 (LICENSE.DOM), HPND, BSD-4, \
+#   ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ),    - native_client/NOTICE \
+#   Not all folders present so not all licenses will apply.
 # custom IJG - third_party/iccjpeg/LICENSE
 # custom MPL-2.0 BSD GPL-3 LGPL-3 Apache-1.1 - \
 #   third_party/tflite/src/third_party/eigen3/LICENSE ; Only MPL-2.0 files are \
@@ -253,6 +261,7 @@ LICENSE="
 # Unicode-DFS-2016 [2 clause DFS] - third_party/cldr/LICENSE
 # unRAR - third_party/unrar/LICENSE
 # UoI-NCSA - third_party/swiftshader/third_party/llvm-subzero/LICENSE.TXT
+# W3C-Document-License-2002, MIT, Unicode-DFS-2016, CC-BY-4.0, W3C-Community-Final-Specification-Agreement - third_party/node/node_modules/typescript/ThirdPartyNoticeText.txt
 # widevine - third_party/widevine/LICENSE
 # WTFPL BSD-2 - third_party/catapult/third_party/polymer2/bower_components/sinon-chai/LICENSE.txt
 # x11proto - third_party/x11proto/LICENSE
@@ -2954,6 +2963,7 @@ src_install() {
 	install_abi() {
 		cd $(_get_s) || die
 		_src_install
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
 }

@@ -20,7 +20,7 @@ LICENSE="
 "
 #
 # https://github.com/mono/msbuild/blob/v16.9.0/LICENSE
-# https://github.com/mono/msbuild/blob/xplat-master/THIRDPARTYNOTICES.txt
+# https://github.com/mono/msbuild/blob/v16.9.0/THIRDPARTYNOTICES.txt
 #
 # For project names for reverse lookup of licenses, see
 #

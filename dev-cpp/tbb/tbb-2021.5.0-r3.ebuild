@@ -460,6 +460,7 @@ src_install()
 			cd "${BUILD_DIR}" || die
 			_src_install
 		fi
+		multilib_check_headers
 	}
 	multilib_foreach_abi src_install_abi
 }

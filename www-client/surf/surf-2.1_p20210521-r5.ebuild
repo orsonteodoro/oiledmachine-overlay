@@ -540,8 +540,8 @@ _update_adblock() {
 	einfo "Done updating adblock rules"
 }
 
-src_install_all() {
-	einfo "Ran src_install_all,"
+multilib_src_install_all() {
+	debug-print-function ${FUNCNAME} "${@}"
 	use tabbed && dobin surf-open.sh
 }
 

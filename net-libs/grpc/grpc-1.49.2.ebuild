@@ -155,17 +155,17 @@ src_configure() {
 }
 
 src_compile() {
-	configure_abi() {
+	compile_abi() {
 		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 		cd "${BUILD_DIR}" || die
 		cmake_src_compile
 	}
-	multilib_foreach_abi configure_abi
+	multilib_foreach_abi compile_abi
 }
 
 src_install() {
-	configure_abi() {
+	install_abi() {
 		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 		cd "${BUILD_DIR}" || die
@@ -182,8 +182,13 @@ src_install() {
 			cd "${S}" || die
 			einstalldocs
 		fi
+		multilib_check_headers
 	}
-	multilib_foreach_abi configure_abi
+	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
+
+multilib_src_install_all() {
 	cd "${S}" || die
 	docinto licenses
 	dodoc LICENSE NOTICE.txt

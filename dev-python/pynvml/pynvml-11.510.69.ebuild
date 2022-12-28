@@ -24,6 +24,7 @@ RDEPEND+="
 "
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}"
+# See https://pypi.org/project/nvidia-ml-py/#history
 SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_PN}-${PV}.tar.gz"
 S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"

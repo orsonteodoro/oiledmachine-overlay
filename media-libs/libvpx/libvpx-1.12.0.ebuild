@@ -336,8 +336,8 @@ _src_configure() {
 		$(use_enable highbitdepth vp9-highbitdepth)
 	)
 
+	strip-flag-value "cfi-icall"
 	if tc-is-clang && has_version "sys-libs/compiler-rt-sanitizers[cfi]" ; then
-		strip-flag-value "cfi-icall"
 		append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with vpxenc --help
 	fi
 
@@ -941,6 +941,7 @@ src_install() {
 			multilib_is_native_abi && use doc && dodoc -r docs/html
 			uopts_src_install
 		done
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
 }

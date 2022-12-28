@@ -221,9 +221,13 @@ src_install() {
 			fi
 			uopts_src_install
 		done
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
 
+multilib_src_install_all() {
 	if use examples ; then
 		cd "${S}"
 		insinto /usr/share/${PN}/HelloWorld

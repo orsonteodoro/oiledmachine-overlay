@@ -243,6 +243,7 @@ src_install() {
 			cmake_src_install
 			multilib_is_native_abi && src_install_docs
 		done
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
 }

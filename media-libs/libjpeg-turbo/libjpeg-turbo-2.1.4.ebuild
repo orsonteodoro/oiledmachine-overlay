@@ -195,7 +195,7 @@ _src_configure() {
 	local mycmakeargs=()
 
 	strip-flag-value "cfi-icall"
-	if has_version "sys-libs/compiler-rt-sanitizers[cfi]" ; then
+	if tc-is-clang && has_version "sys-libs/compiler-rt-sanitizers[cfi]" ; then
 		append_all -fno-sanitize=cfi-icall # breaks precompiled cef based apps
 	fi
 
@@ -387,6 +387,7 @@ _src_post_pgo() {
 src_compile() {
 	export PATH="${ED}/usr/bin:${PATH}"
 	compile_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			if [[ "${lib_type}" == "static" ]] ; then
 				uopts_n_training
@@ -408,7 +409,25 @@ _install() {
 	fi
 }
 
-_install_once() {
+src_install() {
+	install_abi() {
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export CMAKE_USE_DIR="${S}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			cd "${BUILD_DIR}" || die
+			_install
+			uopts_src_install
+		done
+		multilib_prepare_wrappers
+		multilib_check_headers
+	}
+	multilib_foreach_abi install_abi
+	multilib_install_wrappers
+	multilib_src_install_all
+}
+
+multilib_src_install_all() {
 	cd "${S}" || die
 	find "${ED}" -type f -name '*.la' -delete || die
 
@@ -427,23 +446,6 @@ _install_once() {
 		dodoc -r "${S}"/java/doc/.
 		newdoc "${S}"/java/README README.java
 	fi
-}
-
-src_install() {
-	install_abi() {
-		for lib_type in $(get_lib_types) ; do
-			export CMAKE_USE_DIR="${S}"
-			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-			cd "${BUILD_DIR}" || die
-			_install
-			multilib_prepare_wrappers
-			multilib_check_headers
-			uopts_src_install
-		done
-	}
-	multilib_foreach_abi install_abi
-	multilib_install_wrappers
-	_install_once
 }
 
 pkg_postinst() {

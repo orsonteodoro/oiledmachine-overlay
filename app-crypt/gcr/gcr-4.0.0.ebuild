@@ -95,8 +95,13 @@ src_install() {
 		EMESON_SOURCE="${BUILD_DIR}" \
 		BUILD_DIR="${WORKDIR}/${P}-build-${ABI}" \
 		meson_src_install
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
+
+multilib_src_install_all() {
 	if use gtk-doc; then
 		mkdir -p "${ED}"/usr/share/gtk-doc/html/ || die
 		mv "${ED}"/usr/share/doc/{gck-2,gcr-4} "${ED}"/usr/share/gtk-doc/html/ || die

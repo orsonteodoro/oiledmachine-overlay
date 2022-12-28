@@ -107,8 +107,13 @@ src_install() {
 		[[ "${ABI}" == "arm64" ]] && export SR_ARCH="arm64"
 		[[ "${ABI}" == "x86" ]] && export SR_ARCH="x86"
 		cmake_src_install
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
+
+multilib_src_install_all() {
 	if ! use gold ; then
 		find "${ED}" -name "ld.gold" -delete
 	fi

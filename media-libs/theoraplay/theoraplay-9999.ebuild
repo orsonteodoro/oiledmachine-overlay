@@ -15,7 +15,8 @@ LICENSE="ZLIB"
 KEYWORDS="~amd64 ~x86"
 EXPECTED="\
 f45d14bf8a3cd4816dba29e0fab9fe0efcf26628d681491090bfe2dc20a46540\
-377e07984e42a17c77476616cfb10d85376f655a53adf6f63ccee92e9e4a04ec"
+377e07984e42a17c77476616cfb10d85376f655a53adf6f63ccee92e9e4a04ec\
+"
 SLOT="0/${EXPECTED}"
 IUSE="debug static-libs"
 REQUIRED_USE+=""
@@ -105,8 +106,13 @@ src_install() {
 			cd "${BUILD_DIR}" || die
 			doheader ${PN}.h
 		done
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
+
+multilib_src_install_all() {
 	cd "${S}" || die
 	dodoc LICENSE.txt README.md
 }

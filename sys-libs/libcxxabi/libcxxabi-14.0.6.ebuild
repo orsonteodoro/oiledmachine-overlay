@@ -98,6 +98,7 @@ src_configure() {
 		&& HAVE_FLAG_CFI_CAST="1"
 
 	configure_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			_configure_abi
@@ -372,6 +373,7 @@ einfo
 
 src_compile() {
 	compile_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
@@ -383,6 +385,7 @@ src_compile() {
 
 src_test() {
 	test_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
@@ -395,14 +398,19 @@ src_test() {
 
 src_install() {
 	install_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			DESTDIR="${D}" cmake_build install-cxxabi
 		done
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
 
+multilib_src_install_all() {
 	cd "${S}" || die
 	insinto /usr/include/libcxxabi
 	doins -r "${WORKDIR}"/libcxxabi/include/.

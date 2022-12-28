@@ -347,6 +347,7 @@ src_install() {
 				cmake_src_install
 			fi
 		done
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
 }

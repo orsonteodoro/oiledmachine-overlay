@@ -64,6 +64,7 @@ src_test() {
 src_install() {
 	install_abi() {
 		cmake_src_install
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
 }

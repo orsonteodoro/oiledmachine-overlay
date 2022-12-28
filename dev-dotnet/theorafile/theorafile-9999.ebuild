@@ -108,8 +108,13 @@ src_install() {
 		dolib.so "libtheorafile.so"
 		local march=$(get_targetplatform)
 		doexe "csharp/bin/${march}/${configuration}/Theorafile-CS.dll"
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
+
+multilib_src_install_all() {
 	cd "${S}" || die
 	docinto licenses
 	dodoc licenses/*

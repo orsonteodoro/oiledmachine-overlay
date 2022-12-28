@@ -175,8 +175,13 @@ src_install() {
 			meson_src_install
 			uopts_src_install
 		done
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
+
+multilib_src_install_all() {
 	cd "${S}" || die
 	dodoc LICENSE
 }

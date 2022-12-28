@@ -500,6 +500,7 @@ src_install_abi() {
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${configuration}"
 	cd "${BUILD_DIR}" || die
 	emake DESTDIR="${D}" install
+	multilib_check_headers
 }
 
 src_install() {
@@ -507,13 +508,13 @@ src_install() {
 	for configuration in $(get_configurations) ; do
 		multilib_foreach_abi src_install_abi
 	done
-
-	# Verify that release is only installed
-	grep -r -e "png_set_crc_action" $(find "${ED}" -name "*.so*") \
-		&& die "Detected fuzzed libs."
+	multilib_src_install_all
 }
 
 multilib_src_install_all() {
+	# Verify that release is only installed
+	grep -r -e "png_set_crc_action" $(find "${ED}" -name "*.so*") \
+		&& die "Detected fuzzed libs."
 	cd "${S}" || die
 	einstalldocs
 	find "${ED}" -name '*.la' -delete || die

@@ -105,6 +105,7 @@ ${SO_NAME}/PVRTexTool/Library/Linux_x86_${myabi_so}/Dynamic/libPVRTexLib.so
 				"${FILESDIR}/${DLL_NAME}.dll.config"
 		}
 		dotnet_foreach_impl dll_install_impl
+		multilib_check_headers
 	}
 	multilib_foreach_abi ml_install_impl
 	dotnet_multilib_comply

@@ -1205,6 +1205,7 @@ src_prepare() {
 
 	einfo "Copying sources, please wait"
 	prepare_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			einfo "Copying sources to ${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			cp -a "${S_orig}" "${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
@@ -3285,6 +3286,7 @@ _src_post_train() {
 src_compile() {
 	mkdir -p "${T}/traintemp" || die
 	compile_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
@@ -3306,6 +3308,7 @@ src_compile() {
 
 src_test() {
 	test_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
@@ -3383,19 +3386,23 @@ _install() {
 
 src_install() {
 	install_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			_install
-			multilib_prepare_wrappers
-			multilib_check_headers
 			uopts_src_install
 		done
+		multilib_prepare_wrappers
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
 	multilib_install_wrappers
+	multilib_src_install_all
+}
 
+multilib_src_install_all() {
 	dodoc Changelog README.md CREDITS doc/*.txt doc/APIchanges
 	[ -f "RELEASE_NOTES" ] && dodoc "RELEASE_NOTES"
 

@@ -15,23 +15,17 @@ DESCRIPTION="TypeScript is a superset of JavaScript that compiles to clean
 JavaScript output"
 HOMEPAGE="https://www.typescriptlang.org/"
 LICENSE="
-	Apache-2.0
-	all-rights-reserved
-	BSD
-	BSD-2
-	CC0-1.0
-	CC-BY-3.0
+	( Apache-2.0 all-rights-reserved )
 	CC-BY-4.0
-	CC-BY-SA-4.0
 	MIT
 	Unicode-DFS-2016
-	W3C
-	W3C-CLA
-	WTFPL
+	W3C-Community-Final-Specification-Agreement
+	W3C-Software-and-Document-Notice-and-License-2015
 "
+# TODO:  Inspect downloaded dependencies
+# (Apache-2.0 all-rights-reserved) - CopyrightNotice.txt
 # Apache-2.0 is the main
 # Rest of the licenses are third party licenses
-# all-rights-reserved asserted in source and third party modules
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="$(ver_cut 1-2 ${PV})/${PV}"
 MIN_NODE_VERSION=$(ver_cut 1 ${NPM_SECAUDIT_AT_TYPES_NODE_V})

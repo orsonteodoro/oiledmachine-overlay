@@ -146,12 +146,12 @@ LICENSE="
 	)
 	typescript? (
 		!system-typescript? (
-			all-rights-reserved
-			Apache-2.0
+			( Apache-2.0 all-rights-reserved )
 			CC-BY-4.0
 			MIT
 			Unicode-DFS-2016
-			W3C
+			W3C-Community-Final-Specification-Agreement
+			W3C-Software-and-Document-Notice-and-License-2015
 		)
 	)
 	typescriptreact? (

@@ -113,6 +113,7 @@ src_install() {
 			lua_foreach_impl lua_src_install
 			dodoc doc/lsqlite3.wiki
 		done
+		multilib_check_headers
 	}
         multilib_foreach_abi install_abi
 }

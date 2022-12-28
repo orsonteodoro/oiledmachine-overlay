@@ -98,9 +98,13 @@ src_install() {
 		EMESON_SOURCE="${BUILD_DIR}" \
 		BUILD_DIR="${WORKDIR}/${P}-build-${ABI}" \
 		meson_src_install
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
 
+multilib_src_install_all() {
 	# These files are installed by gcr:4
 	local conflicts=(
 		"${ED}"/usr/libexec/gcr-ssh-agent

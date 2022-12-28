@@ -1444,7 +1444,10 @@ multilib_src_install() {
 	for l in ${L10N} ; do
 		doins -r "${T}/langs/${l}"
 	done
+	uopts_src_install
+}
 
+multilib_src_install_all() {
 	if ! use vaapi-stateless-decoding && use vaapi ; then
 		dodir /etc/env.d
 newenvd - 50${PN}${API_VERSION} <<-EOF
@@ -1454,8 +1457,6 @@ EOF
 
 	LCNR_SOURCE="${S}"
 	lcnr_install_files
-
-	uopts_src_install
 }
 
 pkg_postinst() {

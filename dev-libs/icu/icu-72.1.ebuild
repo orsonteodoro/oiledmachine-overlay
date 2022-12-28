@@ -88,6 +88,7 @@ src_prepare() {
 	eautoreconf
 
 	prepare_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			einfo "Build type is ${lib_type}"
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
@@ -124,6 +125,7 @@ src_configure() {
 	fi
 
 	configure_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
@@ -210,6 +212,7 @@ _configure_abi() {
 src_compile() {
 	export VERBOSE=1
 	compile_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
@@ -228,6 +231,7 @@ src_compile() {
 
 src_test() {
 	test_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
@@ -250,6 +254,7 @@ src_test() {
 
 src_install() {
 	install_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
@@ -260,9 +265,13 @@ src_install() {
 				dodoc -r doc/html/*
 			fi
 		done
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
 
+multilib_src_install_all() {
 	local HTML_DOCS=( ../readme.html )
 	einstalldocs
 }

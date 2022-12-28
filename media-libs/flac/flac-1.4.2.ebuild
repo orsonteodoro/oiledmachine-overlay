@@ -46,6 +46,7 @@ src_prepare() {
 	eautoreconf
 
 	prepare_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			einfo "Build type is ${lib_type}"
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
@@ -74,7 +75,7 @@ has_sanitizer() {
 }
 
 _src_configure() {
-	tc-is-clang && filter-flags -fsanitize=cfi-icall
+	filter-flags -fsanitize=cfi-icall
 	if tc-is-clang && has_version "sys-libs/compiler-rt-sanitizers[cfi]" && has_sanitizer "cfi" ; then
 		append_all -fno-sanitize=cfi-icall # cfi-icall breaks CEF with illegal instruction
 	fi
@@ -112,6 +113,7 @@ _src_configure() {
 
 src_configure() {
 	configure_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
@@ -124,6 +126,7 @@ src_configure() {
 
 src_compile() {
 	compile_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
@@ -137,6 +140,7 @@ src_compile() {
 
 src_test() {
 	test_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
@@ -153,14 +157,20 @@ src_test() {
 
 src_install() {
 	install_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			emake DESTDIR="${D}" install
 		done
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
+
+multilib_src_install_all() {
 	einstalldocs
 	find "${ED}" -type f -name '*.la' -delete || die
 }

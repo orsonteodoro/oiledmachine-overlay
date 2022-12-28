@@ -86,8 +86,13 @@ lua_src_install() {
 src_install() {
 	install_abi() {
 		lua_foreach_impl lua_src_install
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
+
+multilib_src_install_all() {
 	cd "${S}" || die
 	dodoc ${DOCS[@]}
 }

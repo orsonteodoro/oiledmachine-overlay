@@ -137,6 +137,7 @@ src_install() {
 			cd "${BUILD_DIR}" || die
 			cmake_src_install
 		done
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
 }

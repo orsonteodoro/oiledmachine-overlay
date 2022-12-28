@@ -552,6 +552,7 @@ src_install() {
 		rm -f "${ED}"/usr/lib/mono/{2.0,4.5}/mcs.exe.so || die
 
 		uopts_src_install
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
 	multilib_src_install_all

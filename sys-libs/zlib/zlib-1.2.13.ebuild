@@ -280,6 +280,7 @@ src_prepare() {
 	esac
 
 	prepare_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			einfo "Build type is ${lib_type}"
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
@@ -1008,6 +1009,7 @@ train_meets_requirements() {
 src_compile() {
 	export PATH_orig="${ED}/usr/bin:${PATH}"
 	compile_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			einfo "ABI=${ABI} lib_type=${lib_type}"
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
@@ -1086,6 +1088,7 @@ _install() {
 
 src_install() {
 	install_abi() {
+		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
@@ -1105,9 +1108,13 @@ src_install() {
 				fi
 			fi
 		done
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
 
+multilib_src_install_all() {
 	cd "${S}" || die
 	dodoc FAQ README ChangeLog doc/*.txt
 	if use minizip ; then

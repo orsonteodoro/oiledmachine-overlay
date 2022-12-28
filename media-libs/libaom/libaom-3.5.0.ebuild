@@ -379,9 +379,9 @@ _src_configure() {
 		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2 ON OFF)
 	)
 
+	# Prevent Illegal instruction with /usr/bin/aomdec --help
+	strip-flag-value "cfi-icall"
 	if tc-is-clang && has_version "sys-libs/compiler-rt-sanitizers[cfi]" ; then
-		# Prevent Illegal instruction with /usr/bin/aomdec --help
-		strip-flag-value "cfi-icall"
 		append_all -fno-sanitize=cfi-icall
 	fi
 
@@ -946,9 +946,13 @@ src_install() {
 			cmake_src_install
 			uopts_src_install
 		done
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
 
+multilib_src_install_all() {
 	find "${ED}" -type f \( -name "*.la" \) -delete || die
 }
 

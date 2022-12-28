@@ -568,8 +568,13 @@ src_install() {
 			doins -r "${CMAKE_USE_DIR}/examples/pybullet/gym"
 		fi
 		uopts_src_install
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+	multilib_src_install_all
+}
+
+multilib_src_install_all() {
 	cd "${S}" || die
 	if use examples ; then
 		insinto "/usr/share/${PN}"

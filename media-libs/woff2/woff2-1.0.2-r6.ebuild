@@ -35,8 +35,12 @@ src_install() {
 			dobin "${BUILD_DIR}/woff2_decompress"
 			dobin "${BUILD_DIR}/woff2_info"
 		fi
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_bin
+	multilib_src_install_all
+}
 
+multilib_src_install_all() {
 	einstalldocs
 }

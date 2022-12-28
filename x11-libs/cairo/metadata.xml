@@ -1,31 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="person">
-		<!-- ebuild fork only on the oiledmachine-overlay -->
-		<email>orsonteodoro@hotmail.com</email>
-		<name>Orson Teodoro</name>
-	</maintainer>
-	<maintainer type="project">
-		<!-- ebuild originator -->
-		<email>x11@gentoo.org</email>
-		<name>X11</name>
-	</maintainer>
-	<use>
-		<flag name="opengl" restrict="&gt;=x11-libs/cairo-1.10.0">Build the OpenGL backend</flag>
-		<flag name="gles2-only">Build the OpenGL ES 2 backend</flag>
-		<flag name="glib">Compile with GLib Object System support</flag>
-		<flag name="utils">Build support for Cairo script and trace utilities</flag>
-		<flag name="valgrind">Built-in support to mark memory regions</flag>
-	</use>
-	<upstream>
-		<remote-id type="cpe">cpe:/a:cairographics:cairo</remote-id>
-	</upstream>
-	<longdescription>
-oiledmachine-overlay changes:
+  <maintainer type="person">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- Ebuild originators -->
+    <email>x11@gentoo.org</email>
+    <name>X11</name>
+  </maintainer>
+  <longdescription>
 
-Fixes Bug 704896 by applying cairo-1.16.0-check-redefinition-xrender.patch.
+    oiledmachine-overlay changes:
 
-Temporary ebuild fork until it is fixed.
-	</longdescription>
+      PGO support
+      Test support
+
+
+    Re-emerge twice for pgo/testing
+
+      1.  1st emerge will emerge testing/pgo depends out of order to break the
+          circular depends chain.
+
+      2.  2nd emerge will do actual PGO or testing.
+
+  </longdescription>
+  <use>
+    <flag name="opengl" restrict="&gt;=x11-libs/cairo-1.10.0">
+      Build the OpenGL backend
+    </flag>
+    <flag name="gles2-only">
+      Build the OpenGL ES 2 backend
+    </flag>
+    <flag name="glib">
+      Compile with GLib Object System support
+    </flag>
+    <flag name="utils">
+      Build support for Cairo script and trace utilities
+    </flag>
+    <flag name="valgrind">
+      Built-in support to mark memory regions
+    </flag>
+  </use>
+  <upstream>
+    <remote-id type="cpe">cpe:/a:cairographics:cairo</remote-id>
+  </upstream>
 </pkgmetadata>
