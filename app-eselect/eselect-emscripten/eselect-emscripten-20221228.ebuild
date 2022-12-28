@@ -6,12 +6,10 @@ EAPI=8
 
 DESCRIPTION="Manages the emscripten environment"
 HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/app-eselect/eselect-emscripten"
-SRC_URI=""
-
 LICENSE="GPL-2"
+KEYWORDS="~amd64 ~arm64 ~x86"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~x86 ~amd64-linux"
-IUSE=""
+SRC_URI=""
 RESTRICT="fetch"
 
 src_unpack() {

@@ -6,13 +6,10 @@ EAPI=8
 
 DESCRIPTION="Manages the /usr/include/node symlink"
 HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/app-eselect/eselect-nodejs"
-SRC_URI=""
-
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
 LICENSE="GPL-2"
 SLOT="0"
-
-# Live ebuilds do not get keyworded
-
+SRC_URI=""
 RESTRICT="fetch"
 
 src_unpack() {
