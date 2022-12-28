@@ -12,5 +12,9 @@ inherit blender-v2.93
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender-multibuild.eclass
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender-v2.93.eclass
 
+# For version bumps see,
+# https://download.blender.org/release/Blender2.93/
+
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  turned-into-split-eclasses
+
