@@ -5,9 +5,9 @@
 EAPI=7
 
 ELECTRON_APP_ELECTRON_V="18.2.2" # See \
-# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.138/newIDE/electron-app/package-lock.json
-ELECTRON_APP_REACT_V="16.14.0" # See \
-# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.138/newIDE/app/package-lock.json
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.1.155/newIDE/electron-app/package-lock.json
+ELECTRON_APP_REACT_V="15.5.4" # See \
+# https://raw.githubusercontent.com/4ian/GDevelop/master/newIDE/app/package-lock.json
 
 inherit check-reqs desktop electron-app eutils user-info \
 	toolchain-funcs xdg
@@ -21,35 +21,48 @@ LICENSE="GDevelop MIT"
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+=" +extensions openrc"
-# See https://github.com/4ian/GDevelop/blob/v5.0.138/ExtLibs/installDeps.sh
-# See *raw log* of https://app.travis-ci.com/github/4ian/GDevelop
+# Dependency lists:
+# https://github.com/4ian/GDevelop/blob/v5.1.155/.circleci/config.yml#L85
+# https://github.com/4ian/GDevelop/blob/v5.1.155/.travis.yml
+# https://github.com/4ian/GDevelop/blob/v5.1.155/ExtLibs/installDeps.sh
+# https://app.travis-ci.com/github/4ian/GDevelop (raw log)
 # U 16.04
 # Dependencies for the native build are not installed in CI
-UDEV_V="229"
-DEPEND+="
-	|| (
-		>=sys-fs/udev-${UDEV_V}
-		>=sys-fs/eudev-3.1.5
-		>=sys-apps/systemd-${UDEV_V}
-	)
-	>=app-arch/p7zip-9.20.1
-	>=media-libs/freetype-2.6.1
+UDEV_PV="229"
+GDEVELOP_JS_NODE_PV="14.18.2" # From emsdk 1.39.6
+
+DEPEND_NOT_USED_IN_CI="
+	>=media-libs/freetype-2.10.1
 	>=media-libs/glew-1.13
 	>=media-libs/libsndfile-1.0.25
 	>=media-libs/mesa-18.0.5
 	>=media-libs/openal-1.16.0
 	>=virtual/jpeg-80
-	  virtual/opengl
-	  virtual/udev
 	>=x11-apps/xrandr-1.5.0
+	virtual/opengl
+	virtual/udev
 	x11-misc/xdg-utils
-	openrc? ( sys-apps/openrc[bash] )
+	openrc? (
+		sys-apps/openrc[bash]
+	)
+"
+DEPEND_NOT_USED_IN_CI2="
+	>=sys-fs/udev-${UDEV_PV}
+	>=sys-fs/eudev-3.1.5
+"
+
+DEPEND+="
+	${DEPEND_NOT_USED_IN_CI}
+	|| (
+		${DEPEND_NOT_USED_IN_CI2}
+		>=sys-apps/systemd-${UDEV_PV}
+	)
+	>=app-arch/p7zip-9.20.1
 "
 RDEPEND+=" ${DEPEND}"
-EMSCRIPTEN_MIN_V="1.39.6" # Based on CI
-NODEJS_V="16.15.1" # Based on CI
-MAX_NODEJS_V="16.15.1" # Based on CI, For building SFML/GDCore
-MIN_NODEJS_V="14.18.2" # Based on CI, For building GDevelop.js
+EMSCRIPTEN_PV="1.39.6" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
+GDCORE_TESTS_NODEJS_PV="16.15.1" # Based on CI, For building GDCore tests
+GDEVELOP_JS_NODEJS_PV="14.18.2" # Based on CI, For building GDevelop.js
 #
 # The package actually uses two nodejs, but the current multislot nodejs
 # package cannot switch in the middle of emerge.  From experience, the
@@ -72,19 +85,24 @@ gen_llvm_depends() {
 	done
 }
 
-BDEPEND+="
-	|| ( $(gen_llvm_depends) )
+BDEPEND_NOT_USED_IN_CI="
 	|| (
 		>=dev-node/acorn-8.4.1
 		>=dev-node/acorn-bin-8.4.1
 	)
+"
+
+BDEPEND+="
+	|| (
+		$(gen_llvm_depends)
+	)
 	>=dev-util/cmake-3.12.4
-	>=dev-util/emscripten-${EMSCRIPTEN_MIN_V}[wasm(+)]
-	>=dev-vcs/git-2.35.1
+	>=dev-util/emscripten-${EMSCRIPTEN_PV}[wasm(+)]
+	>=dev-vcs/git-2.37.3
 	>=media-gfx/imagemagick-6.8.9[png]
+	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:${GDEVELOP_JS_NODEJS_PV%%.*}
+	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}[npm]
 	>=sys-devel/gcc-5.4
-	>=net-libs/nodejs-${NODEJS_V}:${NODEJS_V%%.*}
-	>=net-libs/nodejs-${NODEJS_V}[npm]
 "
 MY_PV="${PV//_/-}"
 SRC_URI="
@@ -126,7 +144,7 @@ eerror
 		:;
 	else
 eerror
-eerror "You need to set your >=emscripten-${EMSCRIPTEN_MIN_V} and"
+eerror "You need to set your >=emscripten-${EMSCRIPTEN_PV} and"
 eerror ">=sys-devel/llvm-${MIN_LLVM}.  See \`eselect emscripten\` for details.  (1)"
 eerror
 		die
@@ -142,14 +160,14 @@ eerror
 		| grep -E -o -e "llvm-[0-9.]+" \
 		| sed -e "s|llvm-||")
 
-	if ver_test ${em_v}   -ge ${EMSCRIPTEN_MIN_V} \
+	if ver_test ${em_v}   -ge ${EMSCRIPTEN_PV} \
 	&& ver_test ${llvm_v} -ge ${MIN_LLVM} ; then
 einfo
 einfo "Using emscripten-${em_v} and >=llvm-${llvm_v}"
 einfo
 	else
 eerror
-eerror "You need to set your >=emscripten-${EMSCRIPTEN_MIN_V} and >=llvm-${MIN_LLVM}."
+eerror "You need to set your >=emscripten-${EMSCRIPTEN_PV} and >=llvm-${MIN_LLVM}."
 eerror "See \`eselect emscripten\` for details.  (2)"
 eerror
 		die
@@ -166,9 +184,9 @@ eerror
 		-e "#define NODE_MAJOR_VERSION" \
 		"${EROOT}/usr/include/node/node_version.h" \
 		| cut -f 3 -d " ")
-	if ver_test ${ACTIVE_VERSION%%.*} -ne ${NODEJS_V%%.*} ; then
+	if ver_test ${ACTIVE_VERSION%%.*} -ne ${GDEVELOP_JS_NODEJS_PV%%.*} ; then
 eerror
-eerror "Please switch Node.js to ${NODEJS_V%%.*}"
+eerror "Please switch Node.js to ${GDEVELOP_JS_NODEJS_PV%%.*}"
 eerror
 		die
 	fi
