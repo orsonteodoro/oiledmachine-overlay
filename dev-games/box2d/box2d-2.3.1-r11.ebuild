@@ -16,7 +16,7 @@ LICENSE="ZLIB"
 KEYWORDS="~amd64 ~x86"
 SLOT_MAJ="$(ver_cut 1-2 ${PV})"
 SLOT="${SLOT_MAJ}/${PV}"
-IUSE+=" doc examples static-libs test"
+IUSE+=" doc examples static-libs test r1"
 REQUIRED_USE+="
 	test? ( examples )
 	bolt? ( examples )
@@ -105,7 +105,7 @@ src_prepare() {
 	export CMAKE_USE_DIR="${S}"
 	cd "${CMAKE_USE_DIR}" || die
 	cmake_src_prepare
-	compile_abi() {
+	prepare_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
@@ -114,12 +114,13 @@ src_prepare() {
 			uopts_src_prepare
 		done
 	}
-	multilib_foreach_abi compile_abi
+	multilib_foreach_abi prepare_abi
 }
 
 src_configure() { :; }
 
 _src_configure() {
+	debug-print-function ${FUNCNAME} "${@}"
 	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cd "${CMAKE_USE_DIR}" || die

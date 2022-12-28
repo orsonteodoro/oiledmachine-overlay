@@ -36,6 +36,10 @@
       https://github.com/orsonteodoro/oiledmachine-overlay#pgo-packages
 
   </longdescription>
+  <upstream>
+    <doc lang="en">https://box2d.org/documentation</doc>
+    <remote-id type="github">erincatto/Box2D</remote-id>
+  </upstream>
   <use>
     <flag name="bolt">
       3 step BOLT
@@ -58,9 +62,8 @@
     <flag name="test">
       Runs unit tests or hello world example
     </flag>
+    <flag name="rN">
+      Bumps the ebuild revision (INTERNAL USE ONLY)
+    </flag>
   </use>
-  <upstream>
-    <doc lang="en">https://box2d.org/documentation</doc>
-    <remote-id type="github">erincatto/Box2D</remote-id>
-  </upstream>
 </pkgmetadata>

@@ -1774,7 +1774,6 @@ eerror
 # @DESCRIPTION:
 # Applies patch sets in order.
 ot-kernel_src_unpack() {
-	einfo "Called ot-kernel_src_unpack()"
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	_PATCHES=()
 
@@ -2012,8 +2011,6 @@ ot-kernel_copy_pgo_state() {
 # @DESCRIPTION:
 # Patch the kernel a bit
 ot-kernel_src_prepare() {
-	einfo "Called ot-kernel_src_prepare()"
-
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export BUILD_DIR_MASTER="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
@@ -6025,7 +6022,6 @@ ot-kernel_check_kernel_signing_prereqs() {
 # @DESCRIPTION:
 # Run menuconfig
 ot-kernel_src_configure() {
-	einfo "Called ot-kernel_src_configure()"
 	ot-kernel_is_build || return
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
@@ -6455,7 +6451,6 @@ ot-kernel_kexec_sign_and_install() {
 # @DESCRIPTION:
 # Replaces all the arch/*/install.sh
 ot-kernel-make_install() {
-	einfo "Called ot-kernel-make_install()"
 	dodir "${kernel_dir}"
 	[[ -z "${kernel_dir}" ]] && die "OT_KERNEL_KERNEL_DIR cannot be empty"
 
@@ -6639,7 +6634,6 @@ eerror
 # @DESCRIPTION:
 # Compiles the userland programs and the kernel
 ot-kernel_src_compile() {
-	einfo "Called ot-kernel_src_compile()"
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
@@ -6784,7 +6778,6 @@ EOF
 # @DESCRIPTION:
 # Removes patch cruft.
 ot-kernel_src_install() {
-	einfo "Called ot-kernel_src_install()"
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export STRIP="/bin/true" # See https://github.com/torvalds/linux/blob/v5.16/init/Kconfig#L2169
 	if has tresor ${IUSE} ; then

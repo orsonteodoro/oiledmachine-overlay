@@ -302,7 +302,7 @@ append_all() {
 src_configure() { :; }
 
 _tpgo_custom_clean() {
-	einfo "Ran _tpgo_custom_clean"
+	debug-print-function ${FUNCNAME} "${@}"
 	[[ -f Makefile ]] \
 		&& grep -q -e "^clean:" Makefile \
 		&& emake clean

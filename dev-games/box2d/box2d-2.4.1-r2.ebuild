@@ -15,7 +15,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 SLOT_MAJ="$(ver_cut 1-2 ${PV})" # API change between 2.4.1 breaks 2.4.0
 SLOT="${SLOT_MAJ}/${PV}"
-IUSE+=" doc examples static-libs test"
+IUSE+=" doc examples static-libs test r1"
 REQUIRED_USE+="
 	bolt? ( examples )
 	pgo? ( examples )
@@ -143,7 +143,7 @@ src_prepare() {
 src_configure() { :; }
 
 _src_configure() {
-	einfo "Called _src_configure"
+	debug-print-function ${FUNCNAME} "${@}"
 	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	einfo "CMAKE_USE_DIR:  ${CMAKE_USE_DIR}"
