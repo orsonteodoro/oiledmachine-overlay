@@ -8,9 +8,9 @@ License header for
 ## Copyright 2009-2021 Intel Corporation
 ## SPDX-License-Identifier: Apache-2.0
 
-diff -urp embree-3.13.4.orig/common/cmake/clang.cmake embree-3.13.4/common/cmake/clang.cmake
---- embree-3.13.4.orig/common/cmake/clang.cmake	2022-06-14 22:13:52.000000000 -0700
-+++ embree-3.13.4/common/cmake/clang.cmake	2022-08-20 05:30:19.714218036 -0700
+diff -urp embree-3.13.5.orig/common/cmake/clang.cmake embree-3.13.5/common/cmake/clang.cmake
+--- embree-3.13.5.orig/common/cmake/clang.cmake	2022-09-07 23:40:43.000000000 -0700
++++ embree-3.13.5/common/cmake/clang.cmake	2022-12-29 14:29:10.724488995 -0800
 @@ -1,6 +1,11 @@
  ## Copyright 2009-2021 Intel Corporation
  ## SPDX-License-Identifier: Apache-2.0
@@ -118,9 +118,9 @@ diff -urp embree-3.13.4.orig/common/cmake/clang.cmake embree-3.13.4/common/cmake
        SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined") # issues link error for undefined symbols in shared library
        SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")                     # enables position independent execution for executable
        IF (NOT EMSCRIPTEN)
-diff -urp embree-3.13.4.orig/common/cmake/gnu.cmake embree-3.13.4/common/cmake/gnu.cmake
---- embree-3.13.4.orig/common/cmake/gnu.cmake	2022-06-14 22:13:52.000000000 -0700
-+++ embree-3.13.4/common/cmake/gnu.cmake	2022-08-20 05:30:00.461461495 -0700
+diff -urp embree-3.13.5.orig/common/cmake/gnu.cmake embree-3.13.5/common/cmake/gnu.cmake
+--- embree-3.13.5.orig/common/cmake/gnu.cmake	2022-09-07 23:40:43.000000000 -0700
++++ embree-3.13.5/common/cmake/gnu.cmake	2022-12-29 14:40:31.323673610 -0800
 @@ -1,6 +1,11 @@
  ## Copyright 2009-2021 Intel Corporation
  ## SPDX-License-Identifier: Apache-2.0
@@ -133,17 +133,16 @@ diff -urp embree-3.13.4.orig/common/cmake/gnu.cmake embree-3.13.4/common/cmake/g
  MACRO(_SET_IF_EMPTY VAR VALUE)
    IF(NOT ${VAR})
      SET(${VAR} "${VALUE}")
-@@ -39,20 +44,29 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
- SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fwrapv")                         # this option instructs the compiler to assume that signed arithmetic overflow warps around.
+@@ -40,7 +45,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsigned-char")                   # treat char as signed on all processors, including ARM
  
--IF (NOT APPLE)
--  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIE")                       # enables support for more secure position independent execution
-+IF (HARDENED AND NOT APPLE)                                                                                                              # oteodoro:  changed conditonal
-+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIE")                     # enables support for more secure position independent execution   # oteodoro:  indent line
- ENDIF()
- SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")                       # generate position independent code suitable for shared libraries
- SET(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -fPIC")                       # generate position independent code suitable for shared libraries
+ IF (NOT WIN32)
+-  IF (NOT APPLE)
++  IF (HARDENED AND NOT APPLE)                                                                                                              # oteodoro:  changed conditonal
+     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIE")                   # enables support for more secure position independent execution
+   ENDIF()
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")                     # generate position independent code suitable for shared libraries
+@@ -50,12 +55,21 @@ ENDIF ()
  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")                  # enables C++11 features
  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")         # makes all symbols hidden by default
  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility-inlines-hidden") # makes all inline symbols hidden by default
@@ -171,7 +170,7 @@ diff -urp embree-3.13.4.orig/common/cmake/gnu.cmake embree-3.13.4/common/cmake/g
  MACRO(DISABLE_STACK_PROTECTOR_FOR_FILE file)
    IF (EMBREE_STACK_PROTECTOR)
      SET_SOURCE_FILES_PROPERTIES(${file} PROPERTIES COMPILE_FLAGS "-fno-stack-protector")
-@@ -66,14 +80,22 @@ ENDIF (EMBREE_ARM)
+@@ -69,14 +83,22 @@ ENDIF (EMBREE_ARM)
  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")              # generate debug information
  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")         # enable assertions
  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DTBB_USE_DEBUG") # configure TBB in debug mode
@@ -196,7 +195,7 @@ diff -urp embree-3.13.4.orig/common/cmake/gnu.cmake embree-3.13.4/common/cmake/g
  
  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "")
  IF (EMBREE_ARM)
-@@ -81,18 +103,31 @@ IF (EMBREE_ARM)
+@@ -84,20 +106,33 @@ IF (EMBREE_ARM)
  ENDIF (EMBREE_ARM)
  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -g")              # generate debug information
  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -DNDEBUG")        # disable assertions
@@ -219,25 +218,31 @@ diff -urp embree-3.13.4.orig/common/cmake/gnu.cmake embree-3.13.4/common/cmake/g
    # SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")             # link against libc++ which supports C++11 features
    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flax-vector-conversions")
  ELSE(APPLE)
--  SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined") # issues link error for undefined symbols in shared library
--  SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -z noexecstack")     # we do not need an executable stack
--  SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -z relro -z now")    # re-arranges data sections to increase security
--  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -z noexecstack")           # we do not need an executable stack
--  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -z relro -z now")          # re-arranges data sections to increase security
--  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")                     # enables position independent execution for executable
+-  IF (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+-    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined") # issues link error for undefined symbols in shared library
+-    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -z noexecstack")     # we do not need an executable stack
+-    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -z relro -z now")    # re-arranges data sections to increase security
+-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -z noexecstack")           # we do not need an executable stack
+-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -z relro -z now")          # re-arranges data sections to increase security
+-  ENDIF ()
+-  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")                       # enables position independent execution for executable
 +  IF (HARDENED)                                                                      # oteodoro:  added line
-+    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined") # issues link error for undefined symbols in shared library  # oteodoro:  indent
-+    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -z noexecstack")     # we do not need an executable stack                         # oteodoro:  indent
-+    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -z relro -z now")    # re-arranges data sections to increase security             # oteodoro:  indent
-+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -z noexecstack")           # we do not need an executable stack                         # oteodoro:  indent
-+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -z relro -z now")          # re-arranges data sections to increase security             # oteodoro:  indent
-+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")                     # enables position independent execution for executable      # oteodoro:  indent
++    IF (CMAKE_CXX_COMPILER_ID MATCHES "GNU")                                                                                                        # oteodoro:  indent
++      SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined") # issues link error for undefined symbols in shared library  # oteodoro:  indent
++      SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -z noexecstack")     # we do not need an executable stack                         # oteodoro:  indent
++      SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -z relro -z now")    # re-arranges data sections to increase security             # oteodoro:  indent
++      SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -z noexecstack")           # we do not need an executable stack                         # oteodoro:  indent
++      SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -z relro -z now")          # re-arranges data sections to increase security             # oteodoro:  indent
++    ENDIF ()                                                                                                                                        # oteodoro:  indent
++    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")                       # enables position independent execution for executable      # oteodoro:  indent
 +  ENDIF(HARDENED)
  ENDIF(APPLE)
  
-diff -urp embree-3.13.4.orig/common/cmake/ispc.cmake embree-3.13.4/common/cmake/ispc.cmake
---- embree-3.13.4.orig/common/cmake/ispc.cmake	2022-06-14 22:13:52.000000000 -0700
-+++ embree-3.13.4/common/cmake/ispc.cmake	2022-08-20 05:22:41.000193204 -0700
+Only in embree-3.13.5/common/cmake: gnu.cmake.orig
+Only in embree-3.13.5/common/cmake: gnu.cmake.rej
+diff -urp embree-3.13.5.orig/common/cmake/ispc.cmake embree-3.13.5/common/cmake/ispc.cmake
+--- embree-3.13.5.orig/common/cmake/ispc.cmake	2022-09-07 23:40:43.000000000 -0700
++++ embree-3.13.5/common/cmake/ispc.cmake	2022-12-29 14:29:10.728489155 -0800
 @@ -1,6 +1,8 @@
  ## Copyright 2009-2021 Intel Corporation
  ## SPDX-License-Identifier: Apache-2.0

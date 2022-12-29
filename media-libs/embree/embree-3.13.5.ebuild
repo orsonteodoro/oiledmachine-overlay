@@ -174,7 +174,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.13.0-findtbb-more-debug-messages.patch"
 	"${FILESDIR}/${PN}-3.13.0-findtbb-alt-lib-path.patch"
 	"${FILESDIR}/${PN}-3.13.4-tbb-alt-config.patch"
-	"${FILESDIR}/${PN}-3.13.4-customize-flags.patch"
+	"${FILESDIR}/${PN}-3.13.5-customize-flags.patch"
 )
 
 chcxx() {
