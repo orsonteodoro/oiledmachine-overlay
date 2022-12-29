@@ -15,7 +15,7 @@ inherit pax-utils python-any-r1 check-linker lcnr toolchain-funcs uopts
 inherit xdg-utils
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
 LICENSE="Apache-1.1 Apache-2.0 Artistic-2 BSD BSD-2 icu-71.1 ISC MIT openssl Unicode-DFS-2016 ZLIB"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
 HOMEPAGE="https://nodejs.org/"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
