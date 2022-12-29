@@ -32,6 +32,7 @@ BENCHMARK_TYPES=(
 	diagnostics_channel
 	dns
 	domain
+	error
 	es
 	esm
 	es

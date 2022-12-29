@@ -23,6 +23,7 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 BENCHMARK_TYPES=(
 	assert
 	async_hooks
+	blob
 	buffers
 	child_process
 	cluster
@@ -32,6 +33,7 @@ BENCHMARK_TYPES=(
 	diagnostics_channel
 	dns
 	domain
+	error
 	es
 	esm
 	es
@@ -132,7 +134,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="9.2.0" # See https://github.com/nodejs/node/blob/v19.2.0/deps/npm/package.json
+NPM_V="9.2.0" # See https://github.com/nodejs/node/blob/v19.3.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
