@@ -134,6 +134,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch
 	"${FILESDIR}"/${PN}-16.13.2-use-thinlto.patch
 	"${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch
+	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
 )
 if [[ -d "${WORKDIR}/node-v${PV}" ]] ; then
 	S="${WORKDIR}/node-v${PV}"
@@ -255,6 +256,7 @@ einfo "olast:\t${olast}"
 
 LTO_TYPE="none"
 src_prepare() {
+	default
 	tc-export AR CC CXX PKG_CONFIG
 	export V=1
 	export BUILDTYPE=Release
@@ -274,37 +276,58 @@ src_prepare() {
 	# Avoid writing a depfile, not useful
 	sed -i -e "/DEPFLAGS =/d" tools/gyp/pylib/gyp/generator/make.py || die
 
+	local FP=(
+		$(grep -l -r -e "-O3" $(find deps/openssl -name "*.gn*" -o -name "*gyp*"))
+		common.gypi
+		deps/llhttp/common.gypi
+		deps/uv/common.gypi
+		node.gypi
+	)
+
 	# -O3 removal breaks _FORITIFY_SOURCE
+	local a1="-O3"
+	local r1="-O2"
+	local a2="-O2"
+	local r2="-O3"
 	if use custom-optimization ; then
+		local oflag="-O3"
 		if is_flagq_last '-O0'; then
 			ewarn "Using -O0 may disable _FORITIFY_SOURCE lowering security"
-			use pgo && ewarn "Using -O0 with PGO is uncommon"
-			sed -i -e "s|'-O3'|'-O0'|g" common.gypi node.gypi || die
+			oflag="-O0"
 		elif is_flagq_last '-Og'; then
 			use pgo && ewarn "Using -Og with PGO is uncommon"
-			sed -i -e "s|'-O3'|'-Og'|g" common.gypi node.gypi || die
+			oflag="-Og"
 		elif is_flagq_last '-O1'; then
 			use pgo && ewarn "Using -O1 with PGO is uncommon"
-			sed -i -e "s|'-O3'|'-O1'|g" common.gypi node.gypi || die
-		elif is_flagq_last '-Oz'; then
-			use pgo && ewarn "Using -Oz with PGO is uncommon"
-			sed -i -e "s|'-O3'|'-Oz'|g" common.gypi node.gypi || die
-		elif is_flagq_last '-Os'; then
-			use pgo && ewarn "Using -Os with PGO is uncommon"
-			sed -i -e "s|'-O3'|'-Os'|g" common.gypi node.gypi || die
+			oflag="-O1"
 		elif is_flagq_last '-O2'; then
 			use pgo && ewarn "Using -O2 with PGO is uncommon"
-			sed -i -e "s|'-O3'|'-O2'|g" common.gypi node.gypi || die
+			oflag="-O2"
 		elif is_flagq_last '-O3'; then
-			sed -i -e "s|'-O3'|'-O3'|g" common.gypi node.gypi || die
+			oflag="-O3"
 		elif is_flagq_last '-O4'; then
-			sed -i -e "s|'-O3'|'-O4'|g" common.gypi node.gypi || die
+			oflag="-O4"
 		elif is_flagq_last '-Ofast'; then
-			sed -i -e "s|'-O3'|'-Ofast'|g" common.gypi node.gypi || die
-		# else
+			oflag="-Ofast"
+		elif is_flagq_last '-Os'; then
+			use pgo && ewarn "Using -Os with PGO is uncommon"
+			oflag="-Os"
+		elif is_flagq_last '-Oz'; then
+			use pgo && ewarn "Using -Oz with PGO is uncommon"
+			oflag="-Oz"
+		#else
 		#	-O3 is the upstream default
 		fi
+		sed -i -e "s|-O3|${oflag}|g" ${FP[@]} || die
+		a1="${oflag}"
+		a2="${oflag}"
 	fi
+	sed -i \
+		-e "s|__OFLAGS_A1__|${a1}|g" \
+		-e "s|__OFLAGS_R1__|${r1}|g" \
+		-e "s|__OFLAGS_A2__|${a2}|g" \
+		-e "s|__OFLAGS_R2__|${r2}|g" \
+		tools/v8_gypfiles/toolchain.gypi || die
 
 	# debug builds. change install path, remove optimisations and override buildtype
 	if use debug; then
@@ -335,7 +358,6 @@ src_prepare() {
 	# Save before using filter-flag
 	export LTO_TYPE=$(check-linker_get_lto_type)
 
-	default
 	uopts_src_prepare
 	export PATH_ORIG="${PATH}"
 }

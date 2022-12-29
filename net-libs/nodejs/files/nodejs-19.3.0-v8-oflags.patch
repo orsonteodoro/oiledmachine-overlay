@@ -1,0 +1,34 @@
+--- a/tools/v8_gypfiles/toolchain.gypi	2022-12-14 03:28:45.000000000 -0800
++++ b/tools/v8_gypfiles/toolchain.gypi	2022-12-29 02:22:55.469497497 -0800
+@@ -809,11 +809,11 @@
+                   # Don't use -O3 with sanitizers.
+                   ['asan==0 and msan==0 and lsan==0 \
+                 and tsan==0 and ubsan==0 and ubsan_vptr==0', {
+-                    'cflags': ['-O3'],
+-                    'cflags!': ['-O2'],
++                    'cflags': ['__OFLAGS_A1__'],
++                    'cflags!': ['__OFLAGS_R1__'],
+                   }, {
+-                     'cflags': ['-O2'],
+-                     'cflags!': ['-O3'],
++                     'cflags': ['__OFLAGS_A2__'],
++                     'cflags!': ['__OFLAGS_R2__'],
+                    }],
+                 ],
+               }],
+@@ -857,11 +857,11 @@
+               # Don't use -O3 with sanitizers.
+               ['asan==0 and msan==0 and lsan==0 \
+                 and tsan==0 and ubsan==0 and ubsan_vptr==0', {
+-                'cflags': ['-O3'],
+-                'cflags!': ['-O2'],
++                'cflags': ['__OFLAGS_A1__'],
++                'cflags!': ['__OFLAGS_R1__'],
+               }, {
+-                'cflags': ['-O2'],
+-                'cflags!': ['-O3'],
++                'cflags': ['__OFLAGS_A2__'],
++                'cflags!': ['__OFLAGS_R2__'],
+               }],
+             ],
+           }],
