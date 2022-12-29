@@ -184,7 +184,7 @@ einfo
 	if use corepack && (( $(_count_useflag_slots "corepack") > 1 ))
 	then
 eerror
-eerror "You need to disable corepack on one of the following:"
+eerror "You need to disable corepack on all except one of the following:"
 eerror
 		_print_merge_useflag_conflicts "corepack"
 eerror
@@ -193,7 +193,7 @@ eerror
 	if use npm && (( $(_count_useflag_slots "npm") > 1 ))
 	then
 eerror
-eerror "You need to disable npm on one of the following:"
+eerror "You need to disable npm on all except one of the following:"
 eerror
 		_print_merge_useflag_conflicts "npm"
 eerror
@@ -204,7 +204,7 @@ eerror
 	if use man && (( $(_count_useflag_slots "man") > 1 ))
 	then
 eerror
-eerror "You need to disable man on one of the following:"
+eerror "You need to disable man on all except one of the following:"
 eerror
 		_print_merge_useflag_conflicts "man"
 eerror
