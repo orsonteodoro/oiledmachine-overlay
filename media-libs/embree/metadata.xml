@@ -36,11 +36,29 @@
     <flag name="cpu_flags_x86_avx2">
       Sets the highest ISA to AVX2
     </flag>
-    <flag name="cpu_flags_x86_avx512knl">
-      Sets the highest ISA to AVX-512 for Xeon Phi / Knights Landing
+    <flag name="cpu_flags_x86_avx512cd">
+      Checks CPU flag support for avx512vl.
+
+      Sets the highest ISA to AVX512 when AVX512 (f, cd, vl, dq) flags are
+      enabled for Skylake [or newer].
     </flag>
-    <flag name="cpu_flags_x86_avx512skx">
-      Sets the highest ISA to AVX-512 for Skylake
+    <flag name="cpu_flags_x86_avx512bw">
+      Checks CPU flag support for avx512bw.
+
+      Sets the highest ISA to AVX512 when AVX512 (f, cd, vl, dq) flags are
+      enabled for Skylake [or newer].
+    </flag>
+    <flag name="cpu_flags_x86_avx512f">
+      Checks CPU flag support for avx512f.
+
+      Sets the highest ISA to AVX512 when AVX512 (f, cd, vl, dq) flags are
+      enabled for Skylake [or newer].
+    </flag>
+    <flag name="cpu_flags_x86_avx512vl">
+      Checks CPU flag support for avx512vl.
+
+      Sets the highest ISA to AVX512 when AVX512 (f, cd, vl, dq) flags are
+      enabled for Skylake [or newer].
     </flag>
     <flag name="custom-optimization">
       Allows for a custom -O flag setting.
