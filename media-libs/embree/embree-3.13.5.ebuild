@@ -13,8 +13,8 @@ DESCRIPTION="Collection of high-performance ray tracing kernels"
 HOMEPAGE="https://github.com/embree/embree"
 LICENSE="
 	Apache-2.0
-	tutorials? ( Apache-2.0 MIT )
 	static-libs? ( BSD BZIP2 MIT ZLIB )
+	tutorials? ( Apache-2.0 MIT )
 "
 KEYWORDS="~amd64 ~arm64 ~x86"
 SRC_URI="https://github.com/embree/embree/archive/v${PV}.tar.gz -> ${P}.tar.gz"
@@ -22,8 +22,6 @@ SLOT_MAJ="3"
 SLOT="${SLOT_MAJ}/${PV}"
 
 X86_CPU_FLAGS=(
-	sse2:sse2
-	sse4_2:sse4_2
 	avx:avx
 	avx2:avx2
 	avx512f:avx512f
@@ -31,12 +29,13 @@ X86_CPU_FLAGS=(
 	avx512bw:avx512bw
 	avx512dq:avx512dq
 	avx512cd:avx512cd
-
+	sse2:sse2
+	sse4_2:sse4_2
 )
 ARM_CPU_FLAGS=( neon:neon neon2x:neon2x )
 CPU_FLAGS=(
-	${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 	${ARM_CPU_FLAGS[@]/#/cpu_flags_arm_}
+	${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 )
 
 IUSE+="
@@ -48,20 +47,12 @@ static-libs +tbb test tutorials
 "
 REQUIRED_USE+="
 	^^ ( clang gcc )
-	|| ( ${CPU_FLAGS[@]%:*} )
-	pgo? ( tutorials )
-	cpu_flags_x86_sse4_2? (
-		cpu_flags_x86_sse2
-	)
-
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4_2
 	)
-
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
 	)
-
 	cpu_flags_x86_avx512f? (
 		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512vl
@@ -69,7 +60,6 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512cd
 	)
-
 	cpu_flags_x86_avx512vl? (
 		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512f
@@ -77,7 +67,6 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512cd
 	)
-
 	cpu_flags_x86_avx512bw? (
 		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512f
@@ -85,7 +74,6 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512cd
 	)
-
 	cpu_flags_x86_avx512dq? (
 		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512f
@@ -93,7 +81,6 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512cd
 	)
-
 	cpu_flags_x86_avx512cd? (
 		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512f
@@ -101,6 +88,11 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512dq
 	)
+	cpu_flags_x86_sse4_2? (
+		cpu_flags_x86_sse2
+	)
+	pgo? ( tutorials )
+	|| ( ${CPU_FLAGS[@]%:*} )
 "
 # For ISAs, see https://github.com/embree/embree/blob/v3.13.4/common/sys/sysinfo.h#L153
 # All flags required for proper reporting in
@@ -249,7 +241,6 @@ ewarn
 
 src_prepare() {
 	cmake_src_prepare
-
 	# disable RPM package building
 	sed -e 's|CPACK_RPM_PACKAGE_RELEASE 1|CPACK_RPM_PACKAGE_RELEASE 0|' \
 		-i CMakeLists.txt || die
@@ -306,9 +297,6 @@ eerror
 		# with embree_test and embree_verify
 		-DALLOW_AUTO_VECTORIZATION=$(usex allow-auto-vectorization)
 		-DALLOW_STRICT_ALIASING=$(usex allow-strict-aliasing)
-
-		-DHARDENED=$(usex hardened)
-
 		-DBUILD_TESTING:BOOL=OFF
 		-DCMAKE_C_COMPILER="${CC}"
 		-DCMAKE_CXX_COMPILER="${CXX}"
@@ -356,6 +344,7 @@ eerror
 		-DEMBREE_STAT_COUNTERS=OFF
 		-DEMBREE_TASKING_SYSTEM:STRING=$(usex tbb "TBB" "INTERNAL")
 		-DEMBREE_TUTORIALS=$(usex tutorials)
+		-DHARDENED=$(usex hardened)
 	)
 
 	local last_o=$(echo "${CFLAGS}" \
@@ -486,7 +475,6 @@ _get_time_override() {
 		"bvh_builder:86"
 		"embree_verify:$((21*60))"
 	) # exename:seconds
-
 	local duration=${TRAIN_TEST_DURATION}
 	for entry in ${time_override[@]} ; do
 		local name="${entry%:*}"
@@ -520,11 +508,9 @@ train_get_trainer_args() {
 	local ncpus=$(lscpu | grep "CPU(s)" | head -n 1 | grep -E -o -e "[0-9]+")
 	local tpc=$(lscpu | grep "Thread(s) per core" | head -n 1 | grep -E -o -e "[0-9]+")
 	local threads=$(( ${ncpus} * ${tpc} ))
-
 #	einfo "Threads Per Core (TPC):  ${tpc}"
 #	einfo "nCPUS:  ${ncpus}"
 #	einfo "Threads:  ${threads}"
-
 	echo --isa ${isa} --threads ${threads}
 }
 
@@ -542,7 +528,6 @@ src_test() {
 # All tests passed (15 assertions in 13 test cases)
 	einfo "Running embree_tests"
 	"embree_tests" || die
-
 	if use tutorials ; then
 ewarn
 ewarn "The embree_verify is expected to fail.  To install, add test-fail-continue to"
@@ -560,31 +545,20 @@ ewarn
 
 src_install() {
 	cmake_src_install
-
 	cat <<EOF > "${T}/99${PN}${SLOT_MAJ}"
 CPATH="${EPREFIX}/usr/include/embree${SLOT_MAJ}"
 PATH="${EPREFIX}/usr/bin/embree${SLOT_MAJ}"
 EOF
-
 	doenvd "${T}/99${PN}${SLOT_MAJ}"
-
 	docinto docs
 	if use doc ; then
 		einstalldocs
 		doman man/man3/*
 	fi
-	if use doc-docfiles ; then
-		dodoc -r doc/doc
-	fi
-	if use doc-images ; then
-		dodoc -r doc/images
-	fi
-	if use doc-man ; then
-		dodoc -r doc/man/man3
-	fi
-	if use doc-html ; then
-		dodoc -r doc/www
-	fi
+	use doc-docfiles && dodoc -r doc/doc
+	use doc-images && dodoc -r doc/images
+	use doc-man && dodoc -r doc/man/man3
+	use doc-html && dodoc -r doc/www
 	if use tutorials ; then
 		insinto /usr/share/${PN}/tutorials
 		doins -r tutorials/*
