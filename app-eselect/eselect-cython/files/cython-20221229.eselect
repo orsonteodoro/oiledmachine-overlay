@@ -11,9 +11,13 @@ PN="cython"
 # find a list of Cython symlink targets
 find_targets() {
     local f
-    L=$(find /usr/lib/python-exec/python*/ -name "cython.*" -exec basename '{}' \; | sort | uniq)
+    L=$(find /usr/lib/python-exec/python*/ \
+        -name "cython.*" \
+        -exec basename '{}' \; \
+        | sort | uniq)
     for f in ${L}; do
-        echo $(basename "${f}")
+        local bn=$(basename "${f}")
+        echo "${bn}"
     done
 }
 
@@ -36,7 +40,13 @@ remove_symlinks() {
 set_symlink() {
     local target=$1
 
-    local pyimpls=($(find /usr/lib/python-exec -maxdepth 1 \( -name "python2*" -type d -o -name "python3*" -type d -o -name "pypy" -type d \) | sed -e "s|/usr/lib/python-exec/||g"))
+    local pyimpls=($(find /usr/lib/python-exec \
+        -maxdepth 1 \
+        \(    -name "python2*" -type d \
+           -o -name "python3*" -type d \
+           -o -name "pypy" -type d \
+        \) \
+        | sed -e "s|/usr/lib/python-exec/||g"))
 
     if is_number "${target}"; then
         local targets=( $(find_targets) )
@@ -70,8 +80,12 @@ set_symlink() {
                 ln -s /usr/lib/${epython}/site-packages/pyximport{.${slot},}
             fi
         done
-    elif [[ "${target}" =~ ^cython.[0-9]* ]] ; then
+    elif [[ "${target}" =~ ^Cython ]] ; then
         target="${target}"
+        target=$(echo "${target}" \
+            | tr " " "." \
+            | sed -E -e "s|C|c|g" \
+                -e "s|([0-9]+)\.x|\1|")
 
         slot="${target/cython.}"
 
@@ -116,7 +130,12 @@ describe_show() {
 do_show() {
     write_list_start "Current Cython symlinks:"
 
-    local pyimpls=($(find /usr/lib/python-exec -maxdepth 1 -name "python2*" -type d -o -name "python3*" -type d -o -name "pypy" -type d | sed -e "s|/usr/lib/python-exec/||g"))
+    local pyimpls=($(find /usr/lib/python-exec \
+        -maxdepth 1 \
+        -name "python2*" -type d \
+        -o -name "python3*" -type d \
+        -o -name "pypy" -type d \
+        | sed -e "s|/usr/lib/python-exec/||g"))
 
     local k_cython_src=""
     for epython in ${pyimpls[@]} ; do
@@ -143,18 +162,33 @@ describe_list() {
 do_list() {
     local i targets=( $(find_targets) )
 
-    local pyimpls=($(find /usr/lib/python-exec -maxdepth 1 -name "python2*" -type d -o -name "python3*" -type d -o -name "pypy" -type d | sed -e "s|/usr/lib/python-exec/||g"))
+    local pyimpls=($(find /usr/lib/python-exec \
+        -maxdepth 1 \
+           -name "python2*" -type d \
+        -o -name "python3*" -type d \
+        -o -name "pypy" -type d \
+        | sed -e "s|/usr/lib/python-exec/||g"))
 
     write_list_start "Available Cython symlink targets:"
+    IFS=$'\n'
     for (( i = 0; i < ${#targets[@]}; i++ )); do
         # highlight the target where the symlink is pointing to
         for epython in ${pyimpls[@]} ; do
             if [[ -L /usr/lib/python-exec/${epython}/cython ]] ; then
-                [[ ${targets[i]} == $(basename "$(canonicalise "/usr/lib/python-exec/${epython}/cython")") ]] \
-                    && targets[i]=$(highlight_marker "${targets[i]}")
+                local bn=$(basename $(canonicalise "/usr/lib/python-exec/${epython}/cython"))
+                if [[ ${targets[i]} == "${bn}" ]] ; then
+                    targets[i]=$(highlight_marker "${targets[i]}")
+                else
+                    targets[i]=$(echo "${targets[i]}" \
+                        | tr "." " " \
+                        | sed -E -e "s|c|C|g" \
+                            -e "s|([0-9]+)|\1.x|" \
+                            -e "s| x||g")
+                fi
             fi
         done
     done
+    IFS=$' \t\n'
     write_numbered_list -m "(none found)" "${targets[@]}"
 }
 
