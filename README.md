@@ -66,9 +66,6 @@ See
 [electron-app.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass) 
 for ways to control vulnerability patching using per-package environmental variables.
 
-The app-portage/npm-secaudit package is optional but provides adding npm and 
-electron packages to the @npm-security-update set if a vulnerability was found.
-
 ### .NET Framework stack or .NET Core stack
 
 (May be revised)
@@ -339,7 +336,6 @@ should be a bash script.
 | app-eselect/eselect-nodejs | Allows to use a particular Node.js as the current one. |
 | app-eselect/eselect-opengl | Deprecated |
 | app-eselect/eselect-typescript | Allows to use a particular TypeScript version as the current one.  Used for ycmd. |
-| app-portage/npm-secaudit | A simple postsync script to check npm and Electron apps for security updates. |
 | app-shells/emoji-cli | This is an emoji autocompletion plugin for Zsh.  You might want to combine it with emojify. |
 | app-shells/emojify | This is a BASH shell script to convert emoji aliases described in English words into Unicode equivalent to display the emoji. |
 | app-shells/oh-my-zsh | Oh My Zsh are extra themes and plugins to enhance Zsh.  This ebuild allows to pick specific themes and plugins and to get rid of the ones you don't need. |
