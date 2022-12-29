@@ -15,17 +15,21 @@ LICENSE="MIT BSD CC0-1.0"
 #KEYWORDS="~amd64" # Still needs testing
 SLOT="0"
 IUSE+=" cuda ffmpeg gtk pyv4l2"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+"
 DEPEND+="
 	${PYTHON_DEPS}
 	>=dev-libs/inih-52
+	>=sci-libs/dlib-19.16[${PYTHON_USEDEP},cuda?]
 	dev-libs/boost[${PYTHON_USEDEP},python]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	media-libs/opencv[${PYTHON_USEDEP},contribhdf,python,v4l]
 	sys-auth/pam-python[${PYTHON_USEDEP}]
 	sys-libs/pam
-	>=sci-libs/dlib-19.16[${PYTHON_USEDEP},cuda?]
-	cuda? ( >=dev-util/nvidia-cuda-toolkit-7.5 )
+	cuda? (
+		>=dev-util/nvidia-cuda-toolkit-7.5
+	)
 	ffmpeg? (
 		dev-python/ffmpeg-python[${PYTHON_USEDEP}]
 		media-video/ffmpeg[v4l]
@@ -35,17 +39,19 @@ DEPEND+="
 		x11-libs/gtk+:3[introspection]
 	)
 	pyv4l2? (
-		media-libs/libv4l
 		dev-python/pyv4l2[${PYTHON_USEDEP}]
+		media-libs/libv4l
 	)
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
+	dev-util/meson
 	|| (
 		>=sys-devel/gcc-5
 		>=sys-devel/clang-3.4
 	)
-	dev-util/meson
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-3.0_beta_pre20220131-pam_howdy-meson-build-fixes.patch"
@@ -70,11 +76,15 @@ RESTRICT="mirror"
 pkg_setup()
 {
 	if use ffmpeg && use pyv4l2 ; then
-		ewarn "Only one capture source is allowed.  Disable either"
-		ewarn "ffmpeg, pyv4l2, or all."
+ewarn
+ewarn "Only one capture source is allowed.  Disable either ffmpeg, pyv4l2, or"
+ewarn "all."
+ewarn
 	fi
 	if has_version "dev-python/ffmpeg-python" && ! use ffmpeg ; then
-		ewarn "You must enable the ffmpeg USE flag or unemerge ffmpeg-python."
+ewarn
+ewarn "You must enable the ffmpeg USE flag or unemerge ffmpeg-python."
+ewarn
 	fi
 	python_setup
 }
@@ -96,27 +106,31 @@ src_prepare() {
 		howdy/src/pam/README.md
 		howdy/src/pam/meson.build
 		howdy/src/pam-config/howdy
-		README.md
 		howdy-gtk/src/tab_video.py
 		howdy-gtk/src/window.py
+		README.md
 	)
 
 	for f in ${F[@]} ; do
 		einfo "Editing ${f}"
-		sed -i -e "s|/lib/security|/$(get_libdir)/security|g" "${f}" || die
+		sed -i -e "s|/lib/security|/$(get_libdir)/security|g" \
+			"${f}" || die
 	done
 }
 
 src_configure() {
 	pushd "${WORKDIR}/${PN}-${EGIT_COMMIT}/howdy/src" || die
 		if use cuda ; then
-			sed -i -e "s|use_cnn = false|use_cnn = true|g" config.ini || die
+			sed -i -e "s|use_cnn = false|use_cnn = true|g" \
+				config.ini || die
 		fi
 		if use ffmpeg ; then
-			sed -i -e "s|recording_plugin = opencv|recording_plugin = ffmpeg|g" config.ini || die
+			sed -i -e "s|recording_plugin = opencv|recording_plugin = ffmpeg|g" \
+				config.ini || die
 		fi
 		if use pyv4l2 ; then
-			sed -i -e "s|recording_plugin = opencv|recording_plugin = pyv4l2|g" config.ini || die
+			sed -i -e "s|recording_plugin = opencv|recording_plugin = pyv4l2|g" \
+				config.ini || die
 		fi
 		sed -i -e "s|/lib/security/howdy/config.ini|/$(get_libdir)/security/howdy/config.ini|g" \
 			"pam/main.cc" || die
@@ -148,16 +162,16 @@ src_install() {
 			local x
 			for x in $(find "$(get_libdir)/security/${PN}" -type d) ; do
 				x="/${x}"
-				einfo "DIR: fperms 0744 ${x}"
+einfo "DIR: fperms 0744 ${x}"
 				fperms -R 0744 "/${x}"
 			done
 			for x in $(find "$(get_libdir)/security/${PN}" -type f) ; do
 				x="/${x}"
-				einfo "FILE: fperms 0644 ${x}"
+einfo "FILE: fperms 0644 ${x}"
 				fperms -R 0644 "/${x}"
 			done
 			x="/$(get_libdir)/security/${PN}"
-			einfo "DIR: fperms 0755 ${x}"
+einfo "DIR: fperms 0755 ${x}"
 			fperms 0755 "${x}"
 		popd
 		exeinto /usr/bin
@@ -179,27 +193,27 @@ src_install() {
 }
 
 pkg_postinst() {
-	einfo
-	einfo "You need an IR camera for this to work properly."
-	einfo
-	einfo
-	einfo "The following need to be edited in /lib/security/howdy/config.ini:"
-	einfo
-	einfo "  device_path = none"
-	einfo
-	einfo "to path of the IR camera (e.g. /dev/video1)."
-	einfo
-	einfo
-	einfo "The pam configuration can be found in"
-	einfo
-	einfo "  https://github.com/boltgolt/howdy/wiki/Only-using-howdy-for-specific-authentication-types"
-	einfo
-	einfo "It may be possible to apply these changes beyond sudo."
-	einfo
+einfo
+einfo "You need an IR camera for this to work properly."
+einfo
+einfo
+einfo "The following need to be edited in /lib/security/howdy/config.ini:"
+einfo
+einfo "  device_path = none"
+einfo
+einfo "to path of the IR camera (e.g. /dev/video1)."
+einfo
+einfo
+einfo "The pam configuration can be found in"
+einfo
+einfo "  https://github.com/boltgolt/howdy/wiki/Only-using-howdy-for-specific-authentication-types"
+einfo
+einfo "It may be possible to apply these changes beyond sudo."
+einfo
 	if ! use ffmpeg ; then
-	ewarn
-	ewarn "If problems are encountered, use the ffmpeg USE flag."
-	ewarn
+ewarn
+ewarn "If problems are encountered, use the ffmpeg USE flag."
+ewarn
 	fi
 }
 
