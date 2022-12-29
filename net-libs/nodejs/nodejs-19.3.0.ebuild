@@ -70,7 +70,7 @@ gen_iuse_pgo() {
 
 IUSE+="
 acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
-+npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
++npm pax-kernel +snapshot +ssl system-icu +system-ssl test
 
 $(gen_iuse_pgo)
 man pgo
@@ -118,7 +118,6 @@ BDEPEND+="
 			>=net-libs/nghttp2-${NGHTTP2_PV}[utils]
 		)
 	)
-	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )
 "
 PDEPEND+="
