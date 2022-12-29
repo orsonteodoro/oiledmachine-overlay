@@ -70,7 +70,7 @@ gen_iuse_pgo() {
 
 IUSE+="
 acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
-+npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
+npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
 man pgo
@@ -88,7 +88,6 @@ REQUIRED_USE+="
 	npm? ( ssl )
 	system-icu? ( icu )
 	system-ssl? ( ssl )
-	${PN}_pgo_trainers_module? ( inspector )
 "
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder

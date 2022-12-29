@@ -88,7 +88,6 @@ REQUIRED_USE+="
 	npm? ( ssl )
 	system-icu? ( icu )
 	system-ssl? ( ssl )
-	${PN}_pgo_trainers_module? ( inspector )
 "
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder

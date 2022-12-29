@@ -13,12 +13,17 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="0"
 IUSE="clipboard"
+NODEJS_PV="8.3"
 RDEPEND="
-	>=net-libs/nodejs-8.3:${NODE_VERSION}[npm]
+	>=net-libs/nodejs-${NODEJS_PV}:${NODE_VERSION}
+	>=net-libs/nodejs-${NODEJS_PV}[npm]
 	clipboard? ( x11-misc/xclip )
 "
 DEPEND="
 	${RDEPEND}
+"
+BDEPEND="
+	>=net-libs/nodejs-${NODEJS_PV}[npm]
 "
 MY_PN="${PN//-cli/}"
 SRC_URI="
