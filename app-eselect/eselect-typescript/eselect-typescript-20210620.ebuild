@@ -9,6 +9,7 @@ HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/app-e
 LICENSE="GPL-2"
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="0"
+SRC_URI=""
 RESTRICT="fetch"
 
 src_unpack() {

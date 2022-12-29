@@ -94,14 +94,14 @@ RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 # Last deps commit date:  Dec 14, 2022
-NGHTTP2_V="1.51.0"
+NGHTTP2_PV="1.51.0"
 RDEPEND+="
 	!net-libs/nodejs:0
 	app-eselect/eselect-nodejs
 	>=app-arch/brotli-1.0.9
 	>=dev-libs/libuv-1.44.2:=
 	>=net-dns/c-ares-1.18.1
-	>=net-libs/nghttp2-${NGHTTP2_V}
+	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.2.12
 	system-icu? ( >=dev-libs/icu-72.1:= )
 	system-ssl? ( >=dev-libs/openssl-3.0.7:0= )
@@ -115,7 +115,7 @@ BDEPEND+="
 	pax-kernel? ( sys-apps/elfix )
 	pgo? (
 		${PN}_pgo_trainers_http2? (
-			>=net-libs/nghttp2-${NGHTTP2_V}[utils]
+			>=net-libs/nghttp2-${NGHTTP2_PV}[utils]
 		)
 	)
 	systemtap? ( dev-util/systemtap )

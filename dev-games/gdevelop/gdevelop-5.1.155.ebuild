@@ -4,10 +4,10 @@
 
 EAPI=7
 
-ELECTRON_APP_ELECTRON_V="18.2.2" # See \
+ELECTRON_APP_ELECTRON_PV="18.2.2" # See \
 # https://raw.githubusercontent.com/4ian/GDevelop/v5.1.155/newIDE/electron-app/package-lock.json
-ELECTRON_APP_REACT_V="15.5.4" # See \
-# https://raw.githubusercontent.com/4ian/GDevelop/master/newIDE/app/package-lock.json
+ELECTRON_APP_REACT_PV="16.14.0" # See \
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.1.155/newIDE/app/package-lock.json
 
 inherit check-reqs desktop electron-app eutils user-info \
 	toolchain-funcs xdg
@@ -273,7 +273,7 @@ src_unpack() {
 	eapply \
 "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-01.patch"
 
-	einfo "ELECTRON_APP_ELECTRON_V=${ELECTRON_APP_ELECTRON_V}"
+	einfo "ELECTRON_APP_ELECTRON_PV=${ELECTRON_APP_ELECTRON_PV}"
 	einfo "EMSCRIPTEN=${EMSCRIPTEN}"
 	addpredict "${EMSCRIPTEN}"
 	export TEMP_DIR='/tmp'

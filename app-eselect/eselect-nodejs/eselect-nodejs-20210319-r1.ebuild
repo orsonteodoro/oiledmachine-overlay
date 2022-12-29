@@ -6,8 +6,8 @@ EAPI=8
 
 DESCRIPTION="Manages the /usr/include/node symlink"
 HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/app-eselect/eselect-nodejs"
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
 LICENSE="GPL-2"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
 SLOT="0"
 SRC_URI=""
 RESTRICT="fetch"

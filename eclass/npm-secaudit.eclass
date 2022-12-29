@@ -72,15 +72,15 @@ NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
 NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="14"
 
 # See https://github.com/microsoft/TypeScript/blob/v2.0.7/package.json
-if [[ -n "${NPM_SECAUDIT_TYPESCRIPT_V}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${NPM_SECAUDIT_TYPESCRIPT_V}") -ge 2.0 \
-	&& ver_test $(ver_cut 1-3 "${NPM_SECAUDIT_TYPESCRIPT_V}") -le 2.1.4 ) ; then
+if [[ -n "${NPM_SECAUDIT_TYPESCRIPT_PV}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${NPM_SECAUDIT_TYPESCRIPT_PV}") -ge 2.0 \
+	&& ver_test $(ver_cut 1-3 "${NPM_SECAUDIT_TYPESCRIPT_PV}") -le 2.1.4 ) ; then
 COMMON_DEPEND+="
 	>=net-libs/nodejs-0.8.0
 "
-elif [[ -n "${NPM_SECAUDIT_TYPESCRIPT_V}" ]] && ( \
-	ver_test $(ver_cut 1-3 "${NPM_SECAUDIT_TYPESCRIPT_V}") -ge 2.1.5 \
-	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_TYPESCRIPT_V}") -le 9999 ) ; then
+elif [[ -n "${NPM_SECAUDIT_TYPESCRIPT_PV}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${NPM_SECAUDIT_TYPESCRIPT_PV}") -ge 2.1.5 \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_TYPESCRIPT_PV}") -le 9999 ) ; then
 COMMON_DEPEND+="
 	>=net-libs/nodejs-4.2.0
 "
@@ -89,47 +89,47 @@ fi
 # See https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/node/vX/index.d.ts , \
 #   where X is a number connected to the Node.js version
 # The following conditional chain is for @types/node:
-if [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 0 ; then
+if [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 0 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-0"
-elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 4 ; then
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 4 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-4"
-elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 6 ; then
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 6 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-6*"
-elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 7 ; then
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 7 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-7*"
-elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 8 ; then
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 8 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-8*"
-elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 9 ; then
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 9 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-9*"
-elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 10 ; then
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 10 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-10*"
-elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 11 ; then
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 11 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-11*"
-elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 12 ; then
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 12 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-12*"
-elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 13 ; then
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 13 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-13*"
-elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 14 ; then
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 14 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-14*"
-elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 15 ; then
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 15 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-15*"
-elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 16 ; then
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 16 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-16*"
-elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 17 ; then
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 17 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-17*"
 fi
 
@@ -198,7 +198,7 @@ ewarn
 		npm-utils_check_nodejs "${DEPEND}"
 	fi
 
-	npm-utils_check_chromium_eol ${CHROMIUM_V}
+	npm-utils_check_chromium_eol ${CHROMIUM_PV}
 }
 
 # @FUNCTION: npm-secaudit_fetch_deps
@@ -520,7 +520,7 @@ eerror
 			fi
 		popd
 	done
-	npm-utils_check_chromium_eol ${CHROMIUM_V}
+	npm-utils_check_chromium_eol ${CHROMIUM_PV}
 }
 
 # @FUNCTION: npm-secaudit_audit_prod

@@ -4,11 +4,12 @@
 
 EAPI=8
 
-NPM_SECAUDIT_AT_TYPES_NODE_V="16.4.13"
+NPM_SECAUDIT_AT_TYPES_NODE_PV="16.4.13"
 # Same as package-lock but uses latest always latest.
 # See https://www.npmjs.com/package/@types/node
+NODE_VERSION="${NPM_SECAUDIT_AT_TYPES_NODE_PV%%.*}" # Using nodejs muxer variable name.
 
-NPM_SECAUDIT_TYPESCRIPT_V="${PV}"
+NPM_SECAUDIT_TYPESCRIPT_PV="${PV}"
 inherit npm-secaudit npm-utils
 
 DESCRIPTION="TypeScript is a superset of JavaScript that compiles to clean
@@ -28,14 +29,15 @@ LICENSE="
 # Rest of the licenses are third party licenses
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="$(ver_cut 1-2 ${PV})/${PV}"
-MIN_NODE_VERSION=$(ver_cut 1 ${NPM_SECAUDIT_AT_TYPES_NODE_V})
-CDEPEND="
-	>=net-libs/nodejs-${MIN_NODE_VERSION}[npm]
-"
 RDEPEND+="
+	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	app-eselect/eselect-typescript
 "
 DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	>=net-libs/nodejs-${NODE_VERSION}[npm]
 	media-libs/vips
 "
 MY_PN="TypeScript"
@@ -71,15 +73,17 @@ einfo
 
 pkg_setup() {
 	npm-secaudit_pkg_setup
-	NODE_VERSION=$(/usr/bin/node --version | sed -e "s|v||g" | cut -f 1 -d ".")
-        if (( ${NODE_VERSION} < ${MIN_NODE_VERSION} )) ; then
+	local node_pv=$(/usr/bin/node --version \
+		| sed -e "s|v||g" \
+		| cut -f 1 -d ".")
+        if (( ${node_pv} < ${NODE_VERSION} )) ; then
 		eerror
-		eerror "NODE_VERSION must be >=${MIN_NODE_VERSION}"
-		eerror "Switch Node.js to >=${MIN_NODE_VERSION}"
+		eerror "node_pv must be >=${NODE_VERSION}"
+		eerror "Switch Node.js to >=${NODE_VERSION}"
 		eerror
 		die
         fi
-	einfo "Node.js is ${NODE_VERSION}"
+	einfo "Node.js is ${node_pv}"
 }
 
 npm-secaudit_src_postprepare() {

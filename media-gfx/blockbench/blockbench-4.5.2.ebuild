@@ -4,7 +4,7 @@
 
 EAPI=8
 
-ELECTRON_APP_ELECTRON_V="21.2.2"
+ELECTRON_APP_ELECTRON_PV="21.2.2"
 ELECTRON_APP_MODE="npm"
 inherit desktop electron-app npm-utils
 
@@ -13,7 +13,9 @@ HOMEPAGE="https://www.blockbench.net"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64"
 SLOT="0"
-BDEPEND+=" net-libs/nodejs[npm]"
+BDEPEND+="
+	net-libs/nodejs[npm]
+"
 SRC_URI="
 https://github.com/JannisX11/blockbench/archive/v${PV}.tar.gz
 	-> ${PN}-${PV}.tar.gz

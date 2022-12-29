@@ -54,7 +54,7 @@ NPM_UTILS_ALLOW_I_PACKAGE_LOCK=${NPM_UTILS_ALLOW_I_PACKAGE_LOCK:="0"}
 # https://omahaproxy.appspot.com/
 # https://www.chromestatus.com/features
 # https://en.wikipedia.org/wiki/Google_Chrome_version_history
-CHROMIUM_STABLE_V="105"
+CHROMIUM_STABLE_PV="105"
 
 # ##################  END Per-package environmental variables ##################
 
@@ -699,14 +699,14 @@ npm-utils_install_readmes() {
 # Ensures header and node exe are the same version.  Check is
 # required for multislot nodejs.
 npm-utils_is_nodejs_header_exe_same() {
-	local node_v=$(node --version | sed -e "s|v||")
-	local node_major=$(grep -r -e "NODE_MAJOR_VERSION" \
+	local node_pv=$(node --version | sed -e "s|v||")
+	local node_pv_major=$(grep -r -e "NODE_MAJOR_VERSION" \
 		/usr/include/node/node_version.h | head -n 1 | cut -f 3 -d " ")
-	local node_minor=$(grep -r -e "NODE_MINOR_VERSION" \
+	local node_pv_minor=$(grep -r -e "NODE_MINOR_VERSION" \
 		/usr/include/node/node_version.h | head -n 1 | cut -f 3 -d " ")
-	local node_patch=$(grep -r -e "NODE_PATCH_VERSION" \
+	local node_pv_patch=$(grep -r -e "NODE_PATCH_VERSION" \
 		/usr/include/node/node_version.h | head -n 1 | cut -f 3 -d " ")
-	if ver_test ${node_major}.${node_minor} -ne $(ver_cut 1-2 ${node_v}) ; then
+	if ver_test ${node_pv_major}.${node_pv_minor} -ne $(ver_cut 1-2 ${node_pv}) ; then
 eerror
 eerror "Inconsistency between node header and active executable version."
 eerror "Switch your headers via \`eselect nodejs\`"
@@ -714,8 +714,8 @@ eerror
 		die
 	else
 einfo
-einfo "Node.js header version: ${node_major}.${node_minor}.${node_minor}"
-einfo "Node.js exe version: ${node_v}"
+einfo "Node.js header version: ${node_pv_major}.${node_pv_minor}.${node_pv_patch}"
+einfo "Node.js exe version: ${node_pv}"
 einfo
 	fi
 }
@@ -728,82 +728,84 @@ einfo
 # $1 - A string recognized by {B,R,}DEPENDS
 # @CODE
 npm-utils_check_nodejs() {
-	local node_exe_v=$(node --version | sed -e "s|v||")
-	local node_header_v=$(grep -r -e "NODE_MAJOR_VERSION" \
+	local node_exe_ver=$(node --version | sed -e "s|v||")
+	local node_header_ver=$(grep -r -e "NODE_MAJOR_VERSION" \
 		/usr/include/node/node_version.h | head -n 1 \
 		| cut -f 3 -d " ")
-	node_exe_v=$(echo "${node_exe_v}" | cut -f 1 -d ".")
+	node_exe_ver=$(echo "${node_exe_ver}" | cut -f 1 -d ".")
 
 	local s="${1}"
 	local has_min_ge=$(echo "${s}" | grep -q -E -o ">=net-libs/nodejs" ; echo $?)
 	local has_min_gt=$(echo "${s}" | grep -q -E -o ">net-libs/nodejs" ; echo $?)
 	local has_max_le=$(echo "${s}" | grep -q -E -o "<=net-libs/nodejs" ; echo $?)
 	local has_max_lt=$(echo "${s}" | grep -q -E -o "<net-libs/nodejs" ; echo $?)
-	local min_v
-	local max_v
+	local min_ver
+	local max_ver
+	local min_slot
+	local max_slot
 	if [[ "${has_min_ge}" == "0" ]] ; then
-		min_slot_v=$(echo "${s}" \
+		min_slot=$(echo "${s}" \
 			| grep -E -o ">=net-libs/nodejs-[0-9]+:[0-9]+" \
 			| head -n 1 | sed -r -e "s|>=net-libs/nodejs-[0-9]+:||")
-		min_v=$(echo "${s}" \
+		min_ver=$(echo "${s}" \
 			| grep -E -o ">=net-libs/nodejs-[0-9]+" \
 			| head -n 1 | sed -e "s|>=net-libs/nodejs-||")
-		if [[ -n "${min_slot_v}" ]] ; then
-			min_v="${min_v}"
+		if [[ -n "${min_slot}" ]] ; then
+			min_ver="${min_ver}"
 		fi
 	fi
 	if [[ "${has_min_gt}" == "0" ]] ; then
-		min_slot_v=$(echo "${s}" \
+		min_slot=$(echo "${s}" \
 			| grep -E -o ">net-libs/nodejs-[0-9]+:[0-9]+" \
 			| head -n 1 | sed -r -e "s|>net-libs/nodejs-[0-9]+:||")
-		min_v=$(echo "${s}" \
+		min_ver=$(echo "${s}" \
 			| grep -E -o ">net-libs/nodejs-[0-9]+" \
 			| head -n 1 | sed -e "s|>net-libs/nodejs-||")
-		if [[ -n "${min_slot_v}" ]] ; then
-			min_v="${min_v}"
+		if [[ -n "${min_slot}" ]] ; then
+			min_ver="${min_ver}"
 		fi
 	fi
 	if [[ "${has_max_le}" == "0" ]] ; then
-		max_slot_v=$(echo "${s}" \
+		max_slot=$(echo "${s}" \
 			| grep -E -o "<=net-libs/nodejs-[0-9]+:[0-9]+" \
 			| head -n 1 | sed -r -e "s|<=net-libs/nodejs-[0-9]+:||")
-		max_v=$(echo "${s}" \
+		max_ver=$(echo "${s}" \
 			| grep -E -o "<=net-libs/nodejs-[0-9]+" \
 			| head -n 1 | sed -e "s|<=net-libs/nodejs-||")
-		if [[ -n "${max_slot_v}" ]] ; then
-			min_v="${max_v}"
+		if [[ -n "${max_slot}" ]] ; then
+			min_ver="${max_ver}"
 		fi
 	fi
 	if [[ "${has_max_lt}" == "0" ]] ; then
-		max_slot_v=$(echo "${s}" \
+		max_slot=$(echo "${s}" \
 			| grep -E -o "<net-libs/nodejs-[0-9]+:[0-9]+" \
 			| head -n 1 | sed -r -e "s|<net-libs/nodejs-[0-9]+:||")
-		max_v=$(echo "${s}" \
+		max_ver=$(echo "${s}" \
 			| grep -E -o "<net-libs/nodejs-[0-9]+" \
 			| head -n 1 | sed -e "s|<net-libs/nodejs-||")
-		if [[ -n "${max_slot_v}" ]] ; then
-			min_v="${max_v}"
+		if [[ -n "${max_slot}" ]] ; then
+			min_ver="${max_ver}"
 		fi
 	fi
 
 	# floor / min
 	if [[ "${has_min_ge}" == "0" ]] ; then
-		if (( ${node_exe_v} < ${min_v} ||
-			${node_header_v} < ${min_v} )) ; then
+		if (( ${node_exe_ver} < ${min_ver} ||
+			${node_header_ver} < ${min_ver} )) ; then
 eerror
-eerror "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be"
-eerror ">= ${min_v}"
+eerror "Both node_exe_ver=${node_exe_ver} node_header_ver=${node_header_ver} need to be"
+eerror ">= ${min_ver}"
 eerror
 			die
 		fi
 	fi
 
 	if [[ "${has_min_gt}" == "0" ]] ; then
-		if (( ${node_exe_v} <= ${min_v} ||
-			${node_header_v} <= ${min_v} )) ; then
+		if (( ${node_exe_ver} <= ${min_ver} ||
+			${node_header_ver} <= ${min_ver} )) ; then
 eerror
-eerror "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be"
-eerror "> ${min_v}"
+eerror "Both node_exe_ver=${node_exe_ver} node_header_ver=${node_header_ver} need to be"
+eerror "> ${min_ver}"
 eerror
 			die
 		fi
@@ -811,22 +813,22 @@ eerror
 
 	# ceil / max
 	if [[ "${has_max_le}" == "0" ]] ; then
-		if (( ${node_exe_v} > ${max_v} ||
-			${node_header_v} > ${max_v} )) ; then
+		if (( ${node_exe_ver} > ${max_ver} ||
+			${node_header_ver} > ${max_ver} )) ; then
 eerror
-eerror "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be"
-eerror "<= ${max_v}"
+eerror "Both node_exe_ver=${node_exe_ver} node_header_ver=${node_header_ver} need to be"
+eerror "<= ${max_ver}"
 eerror
 			die
 		fi
 	fi
 
 	if [[ "${has_max_lt}" == "0" ]] ; then
-		if (( ${node_exe_v} >= ${max_v} ||
-			${node_header_v} >= ${max_v} )) ; then
+		if (( ${node_exe_ver} >= ${max_ver} ||
+			${node_header_ver} >= ${max_ver} )) ; then
 eerror
-eerror "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be"
-eerror "< ${max_v}"
+eerror "Both node_exe_ver=${node_exe_ver} node_header_ver=${node_header_ver} need to be"
+eerror "< ${max_ver}"
 eerror
 			die
 		fi
@@ -838,9 +840,9 @@ eerror
 # both Electron and packages like Puppeteer.
 npm-utils_check_chromium_eol() {
 	# TODO check updated chromium via `chrome --version`
-	local chromium_v=${1}
-	if [[ -n "${chromium_v}" ]] ; then
-		if ver_test $(ver_cut 1 ${chromium_v}) -lt ${CHROMIUM_STABLE_V} ; then
+	local chromium_pv=${1}
+	if [[ -n "${chromium_pv}" ]] ; then
+		if ver_test $(ver_cut 1 ${chromium_pv}) -lt ${CHROMIUM_STABLE_PV} ; then
 			if [[ \
 				( -n "${NPM_SECAUDIT_NO_DIE_ON_AUDIT}" \
 					&& "${NPM_SECAUDIT_NO_DIE_ON_AUDIT}" == "1" ) \
@@ -848,18 +850,18 @@ npm-utils_check_chromium_eol() {
 					&& "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "1" ) \
 			]] ; then
 ewarn
-ewarn "The package contains chromium_v=${chromium_v} which is End Of Life (EOL)"
+ewarn "The package contains chromium_pv=${chromium_pv} which is End Of Life (EOL)"
 ewarn
 			else
 eerror
-eerror "The package contains chromium_v=${chromium_v} which is End Of Life"
+eerror "The package contains chromium_pv=${chromium_pv} which is End Of Life"
 eerror "(EOL)"
 eerror
 				die
 			fi
 		else
 einfo
-einfo "chromium_v=${chromium_v} >= chromium_v_stable=${CHROMIUM_STABLE_V}"
+einfo "chromium_pv=${chromium_pv} >= chromium_pv_stable=${CHROMIUM_STABLE_PV}"
 einfo
 		fi
 	fi
@@ -869,25 +871,25 @@ einfo
 			&& "${NPM_SECAUDIT_CHECK_CHROMIUM}" == "1" ) \
 		|| ( -n "${ELECTRON_APP_CHECK_CHROMIUM}" \
 			&& "${ELECTRON_APP_CHECK_CHROMIUM}" == "1" ) \
-		|| -n "${chromium_v}" \
+		|| -n "${chromium_pv}" \
 	]]; then
 		for x in $(find . -name "chrome" 2>/dev/null) ; do
-			chromium_v=$(strings ${x} \
+			chromium_pv=$(strings ${x} \
 		| grep -E -e "^[0-9]+\.[0-9]\.[0-9]{3,4}\.[0-9]+$" | head -n 1)
-			if ver_test $(ver_cut 1 ${chromium_v}) -lt ${CHROMIUM_STABLE_V} ; then
+			if ver_test $(ver_cut 1 ${chromium_pv}) -lt ${CHROMIUM_STABLE_PV} ; then
 				if [[ "${NPM_SECAUDIT_NO_DIE_ON_AUDIT}" == "1" ]] ; then
 ewarn
-ewarn "The package contains chromium_exe_v=${chromium_v} which is End Of Life (EOL)"
+ewarn "The package contains chromium_pv=${chromium_pv} which is End Of Life (EOL)"
 ewarn
 				else
 eerror
-eerror "The package contains chromium_exe_v=${chromium_v} which is End Of Life (EOL)"
+eerror "The package contains chromium_pv=${chromium_pv} which is End Of Life (EOL)"
 eerror
 					die
 				fi
 			else
 einfo
-einfo "chromium_exe_v=${chromium_v} >= chromium_exe_v_stable=${CHROMIUM_STABLE_V}"
+einfo "chromium_pv=${chromium_pv} >= CHROMIUM_STABLE_PV=${CHROMIUM_STABLE_PV}"
 einfo
 			fi
 		done

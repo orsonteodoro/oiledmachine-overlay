@@ -5,6 +5,7 @@
 EAPI=8
 
 MY_PN="UglifyJS"
+NODEJS_PV="0.8"
 inherit npm-secaudit
 
 DESCRIPTION="JavaScript parser / mangler / compressor / beautifier toolkit"
@@ -12,9 +13,8 @@ HOMEPAGE="https://github.com/mishoo/UglifyJS"
 LICENSE="BSD-2"
 KEYWORDS="~amd64"
 SLOT="0"
-NODEJS_V="0.8"
-RDEPEND+=" >=net-libs/nodejs-${NODEJS_V}"
-BDEPEND+=" >=net-libs/nodejs-${NODEJS_V}"
+RDEPEND+=" >=net-libs/nodejs-${NODEJS_PV}"
+BDEPEND+=" >=net-libs/nodejs-${NODEJS_PV}"
 SRC_URI="
 https://github.com/mishoo/UglifyJS/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz"

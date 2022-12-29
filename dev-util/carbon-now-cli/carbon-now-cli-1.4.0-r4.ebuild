@@ -3,20 +3,28 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
+NODE_VERSION=14 # Using nodejs muxer variable name.
+inherit desktop npm-secaudit npm-utils
+
 DESCRIPTION="Beautiful images of your code from right inside your terminal."
 HOMEPAGE="https://github.com/mixn/carbon-now-cli"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="0"
 IUSE="clipboard"
-RDEPEND="clipboard? ( x11-misc/xclip )"
-NODE_VERSION=14
-DEPEND=">=net-libs/nodejs-${NODE_VERSION}[npm]"
-inherit desktop npm-secaudit npm-utils
+RDEPEND="
+	>=net-libs/nodejs-8.3:${NODE_VERSION}[npm]
+	clipboard? ( x11-misc/xclip )
+"
+DEPEND="
+	${RDEPEND}
+"
 MY_PN="${PN//-cli/}"
-SRC_URI=\
-"https://github.com/mixn/carbon-now-cli/archive/v${PV}.tar.gz \
-	-> ${P}.tar.gz"
+SRC_URI="
+https://github.com/mixn/carbon-now-cli/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${PN}-${PV}"
 
 npm-secaudit_src_compile() {

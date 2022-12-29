@@ -6,7 +6,7 @@ EAPI=8
 
 inherit check-reqs java-utils-2 npm-secaudit
 
-DESCRIPTION="Check, compile, optimize and compress Javascript with \
+DESCRIPTION="Check, compile, optimize and compress Javascript with
 Closure-Compiler"
 HOMEPAGE="https://developers.google.com/closure/compiler/"
 LICENSE="
@@ -17,59 +17,74 @@ LICENSE="
 	LGPL-2.1+
 	MIT
 	MPL-2.0
-	NPL-1.1"
+	NPL-1.1
+"
 KEYWORDS="~amd64 ~amd64-linux ~arm64"
 PV_CC=$(ver_cut 1 ${PV})
 SLOT="0/$(ver_cut 1-2 ${PV})"
+JAVA_SLOT="17"
 NODE_SLOT="0"
 MY_PN="closure-compiler"
-JAVA_V="17"
-IUSE+="	closure_compiler_java
+IUSE+="
+	closure_compiler_java
 	closure_compiler_js
 	closure_compiler_native
 	closure_compiler_nodejs
-	doc"
+	doc
+"
 REQUIRED_USE+="
-	|| (	closure_compiler_java
+	|| (
+		closure_compiler_java
 		closure_compiler_js
 		closure_compiler_native
-		closure_compiler_nodejs	)
-	closure_compiler_nodejs? ( closure_compiler_java )
+		closure_compiler_nodejs
+	)
+	closure_compiler_nodejs? (
+		closure_compiler_java
+	)
 "
 # For the node version, see
 # https://github.com/google/closure-compiler-npm/blob/v20220601.0.0/packages/google-closure-compiler/package.json
 # For dependencies, see
 # https://github.com/google/closure-compiler-npm/blob/v20220601.0.0/.github/workflows/build.yml
-NODE_V="14" # Upstream uses 14 on linux but others 16, 18
-CDEPEND="closure_compiler_nodejs? ( >=net-libs/nodejs-${NODE_V} )"
+NODE_PV="14" # Upstream uses 14 on linux but others 16, 18
+CDEPEND="closure_compiler_nodejs? ( >=net-libs/nodejs-${NODE_PV} )"
 JDK_DEPEND="
-|| (
-	dev-java/openjdk-bin:${JAVA_V}
-	dev-java/openjdk:${JAVA_V}
-)"
+	|| (
+		dev-java/openjdk-bin:${JAVA_SLOT}
+		dev-java/openjdk:${JAVA_SLOT}
+	)
+"
 JRE_DEPEND="
-|| (
-	${JDK_DEPEND}
-	dev-java/openjdk-jre-bin:${JAVA_V}
-)"
-#JDK_DEPEND=" virtual/jdk:${JAVA_V}"
-#JRE_DEPEND=" virtual/jre:${JAVA_V}"
+	|| (
+		${JDK_DEPEND}
+		dev-java/openjdk-jre-bin:${JAVA_SLOT}
+	)
+"
+#JDK_DEPEND=" virtual/jdk:${JAVA_SLOT}"
+#JRE_DEPEND=" virtual/jre:${JAVA_SLOT}"
 # The virtual/jdk not virtual/jre must be in DEPENDs for the eclass not to be stupid.
-RDEPEND+=" ${CDEPEND}
+RDEPEND+="
+	${CDEPEND}
 	!dev-lang/closure-compiler-bin
 	closure_compiler_java? (
 		${JRE_DEPEND}
 	)
 	closure_compiler_nodejs? (
 		${JRE_DEPEND}
-	)"
-DEPEND+=" ${RDEPEND}
-	${JDK_DEPEND}"
-BDEPEND+=" ${CDEPEND}
+	)
+"
+DEPEND+="
+	${RDEPEND}
+	${JDK_DEPEND}
+"
+BDEPEND+="
+	${CDEPEND}
 	${JDK_DEPEND}
 	dev-java/maven-bin
 	dev-vcs/git
-	sys-apps/yarn"
+	sys-apps/yarn
+"
 FN_DEST="${PN}-${PV}.tar.gz"
 FN_DEST2="closure-compiler-${PV}.tar.gz"
 BAZELISK_PV="1.12.0"
@@ -112,14 +127,14 @@ setup_openjdk() {
 	local jdk_bin_basepath
 	local jdk_basepath
 
-	if find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
-		export JAVA_HOME=$(find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+	if find /usr/$(get_libdir)/openjdk-${JAVA_SLOT}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
+		export JAVA_HOME=$(find /usr/$(get_libdir)/openjdk-${JAVA_SLOT}*/ -maxdepth 1 -type d | sort -V | head -n 1)
 		export PATH="${JAVA_HOME}/bin:${PATH}"
-	elif find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
-		export JAVA_HOME=$(find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+	elif find /opt/openjdk-bin-${JAVA_SLOT}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
+		export JAVA_HOME=$(find /opt/openjdk-bin-${JAVA_SLOT}*/ -maxdepth 1 -type d | sort -V | head -n 1)
 		export PATH="${JAVA_HOME}/bin:${PATH}"
 	else
-		die "dev-java/openjdk:${JDK_V} or dev-java/openjdk-bin:${JDK_V} must be installed"
+		die "dev-java/openjdk:${JAVA_SLOT} or dev-java/openjdk-bin:${JAVA_SLOT} must be installed"
 	fi
 }
 
@@ -132,8 +147,8 @@ pkg_setup() {
 	# java-pkg_init
 
 	# the eclass/eselect system is broken
-	X_JDK_V=$(best_version "dev-java/openjdk-bin:${JAVA_V}" | sed -e "s|dev-java/openjdk-bin-||g" -e "s|-r[0-9]$||g")
-	export JAVA_HOME="/opt/openjdk-bin-${X_JDK_V}" # basedir
+	X_JAVA_SLOT=$(best_version "dev-java/openjdk-bin:${JAVA_SLOT}" | sed -e "s|dev-java/openjdk-bin-||g" -e "s|-r[0-9]$||g")
+	export JAVA_HOME="/opt/openjdk-bin-${X_JAVA_SLOT}" # basedir
 
 	einfo "JAVA_HOME=${JAVA_HOME}"
 	if [[ -n "${JAVA_HOME}" && -f "${JAVA_HOME}/bin/java" ]] ; then
@@ -145,8 +160,8 @@ eerror
 		die
 	fi
 
-	if ver_test ${X_JDK_V} -lt ${JAVA_V} ; then
-		die "You must have OpenJDK >= ${JAVA_V}.  Best is ${X_JDK_V}."
+	if ver_test ${X_JAVA_SLOT} -lt ${JAVA_SLOT} ; then
+		die "You must have OpenJDK >= ${JAVA_SLOT}.  Best is ${X_JAVA_SLOT}."
 	fi
 
 	if ! which mvn 2>/dev/null 1>/dev/null ; then

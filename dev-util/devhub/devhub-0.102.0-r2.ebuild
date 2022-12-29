@@ -5,12 +5,12 @@
 EAPI=8
 
 ELECTRON_APP_MODE=yarn
-ELECTRON_APP_ELECTRON_V="11.0.3"
-ELECTRON_APP_REACT_NATIVE_V="0.64.0_rc1"
+ELECTRON_APP_ELECTRON_PV="11.0.3"
+ELECTRON_APP_REACT_NATIVE_PV="0.64.0_rc1"
 
 inherit desktop electron-app npm-utils
 
-DESCRIPTION="GitHub Notifications Manager & Activity Watcher - Web, Mobile & \
+DESCRIPTION="GitHub Notifications Manager & Activity Watcher - Web, Mobile &
 Desktop"
 HOMEPAGE="https://devhubapp.com"
 LICENSE="AGPL-3"

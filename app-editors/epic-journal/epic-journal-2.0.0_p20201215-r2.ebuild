@@ -4,8 +4,8 @@
 
 EAPI=8
 
-ELECTRON_APP_ELECTRON_V="3.1.13" # todo, update version
-ELECTRON_APP_VUE_V="2.5.16"
+ELECTRON_APP_ELECTRON_PV="3.1.13" # todo, update version
+ELECTRON_APP_VUE_PV="2.5.16"
 
 inherit desktop electron-app
 
@@ -14,8 +14,12 @@ HOMEPAGE="https://epicjournal.xyz/"
 LICENSE="CC-BY-NC-4.0"
 KEYWORDS="~amd64"
 SLOT="0"
-DEPEND+=" dev-db/sqlcipher"
-RDEPEND+=" ${DEPEND}"
+DEPEND+="
+	dev-db/sqlcipher
+"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	(
 		<net-libs/nodejs-14[npm]

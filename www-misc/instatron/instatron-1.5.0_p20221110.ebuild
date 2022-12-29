@@ -4,7 +4,7 @@
 
 EAPI=8
 
-ELECTRON_APP_ELECTRON_V="18.3.7"
+ELECTRON_APP_ELECTRON_PV="18.3.7"
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 inherit desktop electron-app
 
@@ -14,7 +14,9 @@ HOMEPAGE="https://github.com/alexdevero/instatron"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0"
-BDEPEND+=" >=net-libs/nodejs-9[npm]"
+BDEPEND+="
+	>=net-libs/nodejs-9[npm]
+"
 EGIT_COMMIT="0916d8dd64f06580d640e645334586d8ba319cbf"
 SRC_URI="
 https://github.com/alexdevero/instatron/archive/${EGIT_COMMIT}.tar.gz

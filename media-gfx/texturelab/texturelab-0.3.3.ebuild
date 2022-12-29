@@ -4,8 +4,8 @@
 
 EAPI=8
 
-ELECTRON_APP_ELECTRON_V="13.1.4"
-ELECTRON_APP_VUE_V="2.6.11"
+ELECTRON_APP_ELECTRON_PV="13.1.4"
+ELECTRON_APP_VUE_PV="2.6.11"
 ELECTRON_APP_MODE="yarn"
 
 inherit desktop electron-app npm-utils

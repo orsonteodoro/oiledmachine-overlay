@@ -4,18 +4,18 @@
 
 EAPI=8
 
-inherit
-
 DESCRIPTION="Sync hook for npm security checks."
 HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay"
 LICENSE="|| ( GPL-2 MIT )"
 KEYWORDS="amd64"
 SLOT="0"
-RDEPEND="app-misc/jq
-	 app-shells/bash
-	 net-misc/wget
-	 sys-apps/portage
-	 sys-apps/grep[pcre]"
+RDEPEND="
+	app-misc/jq
+	app-shells/bash
+	net-misc/wget
+	sys-apps/portage
+	sys-apps/grep[pcre]
+"
 S="${WORKDIR}"
 
 src_install() {

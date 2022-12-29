@@ -4,8 +4,8 @@
 
 EAPI=8
 
-ELECTRON_APP_ELECTRON_V="13.0.0"
-ELECTRON_APP_REACT_V="17.0.0"
+ELECTRON_APP_ELECTRON_PV="13.0.0"
+ELECTRON_APP_REACT_PV="17.0.0"
 
 inherit desktop electron-app npm-utils
 
@@ -14,9 +14,15 @@ HOMEPAGE="http://hackjutsu.com/Lepton"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0"
-DEPEND+=" dev-libs/libsass"
-RDEPEND+=" ${DEPEND}"
-BDEPEND+=" net-libs/nodejs[npm]"
+DEPEND+="
+	dev-libs/libsass
+"
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
+	net-libs/nodejs[npm]
+"
 SRC_URI="
 https://github.com/hackjutsu/Lepton/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
