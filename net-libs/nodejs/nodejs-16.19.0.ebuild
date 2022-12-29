@@ -311,6 +311,7 @@ src_prepare() {
 
 	default
 	uopts_src_prepare
+	export PATH_ORIG="${PATH}"
 }
 
 src_configure() { :; }
@@ -391,6 +392,12 @@ _src_configure() {
 	myarch="${myarch/x86/ia32}"
 	[[ "${ARCH}:${ABI}" =~ "riscv:lp64" ]] && myarch="riscv64"
 
+	if [[ "${PATH}" =~ "ccache" ]] ; then
+		# https://github.com/nodejs/node/blob/v16.19.0/BUILDING.md#speeding-up-frequent-rebuilds-when-developing
+		export CC="ccache $(tc-getCC)"
+		export CXX="ccache $(tc-getCXX)"
+	fi
+
 	GYP_DEFINES="linux_use_gold_flags=0
 		linux_use_bundled_binutils=0
 		linux_use_bundled_gold=0" \
@@ -461,9 +468,11 @@ train_trainer_custom() {
 	NODE_PATH="${S}/node_modules/wrk"
 	NODE_PATH+=":${ED}/usr/$(get_libdir)/node_modules"
 	export NODE_PATH
-	PATH="${ED}/usr/bin"
-	PATH+=":${ED}/usr/$(get_libdir)/node_modules/npm/bin"
-	PATH+=":${S}/node_modules/.bin:${PATH}"
+	local _PATH
+	_PATH="${ED}/usr/bin"
+	_PATH+=":${ED}/usr/$(get_libdir)/node_modules/npm/bin"
+	_PATH+=":${S}/node_modules/.bin"
+	PATH="${_PATH}:${PATH_ORIG}"
 	export PATH
 
 	# This needs additional args.
