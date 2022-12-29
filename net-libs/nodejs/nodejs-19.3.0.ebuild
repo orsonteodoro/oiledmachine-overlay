@@ -684,13 +684,6 @@ src_install() {
 
 	mv "${ED}"/usr/share/doc/node "${ED}"/usr/share/doc/${PF} || die
 
-	if use systemtap ; then
-		# Move tapset to avoid conflict
-		mv "${ED}/usr/share/systemtap/tapset/"node${,${SLOT_MAJOR}}.stp || die
-	else
-		rm "${ED}/usr/share/systemtap/tapset/node.stp" || die
-	fi
-
 	if ! use corepack ; then
 		# Prevent collisions
 		rm -rf "${ED}/usr/$(get_libdir)/node_modules/corepack" || die
