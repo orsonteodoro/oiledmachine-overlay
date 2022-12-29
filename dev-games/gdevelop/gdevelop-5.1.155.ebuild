@@ -59,7 +59,9 @@ DEPEND+="
 	)
 	>=app-arch/p7zip-9.20.1
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 EMSCRIPTEN_PV="1.39.6" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
 GDCORE_TESTS_NODEJS_PV="16.15.1" # Based on CI, For building GDCore tests
 GDEVELOP_JS_NODEJS_PV="14.18.2" # Based on CI, For building GDevelop.js
@@ -68,7 +70,7 @@ GDEVELOP_JS_NODEJS_PV="14.18.2" # Based on CI, For building GDevelop.js
 # package cannot switch in the middle of emerge.  From experience, the
 # highest nodejs works.
 #
-LLVM_SLOTS=(15 14 13 12 11 10) # Deleted 9 8 7 because asm.js support was dropped.
+LLVM_SLOTS=(16 15 14 13 12 11 10) # Deleted 9 8 7 because asm.js support was dropped.
 # The CI uses Clang 7.
 # Emscripten expects either LLVM 10 for wasm, or LLVM 6 for asm.js.
 MIN_LLVM="10"
@@ -151,19 +153,19 @@ eerror
 	fi
 	local line=$(eselect emscripten list \
 		| grep -E -e "llvm-[0-9]+ \*")
-	local em_v=$(echo "${line}" \
+	local emscripten_pv=$(echo "${line}" \
 		| grep -E -e "llvm-[0-9]+ \*" \
 		| grep -E -o -e "emscripten-[0-9.]+" \
 		| sed -e "s|emscripten-||")
-	local llvm_v=$(echo "${line}" \
+	local llvm_pv=$(echo "${line}" \
 		| grep -E -e "llvm-[0-9]+ \*" \
 		| grep -E -o -e "llvm-[0-9.]+" \
 		| sed -e "s|llvm-||")
 
-	if ver_test ${em_v}   -ge ${EMSCRIPTEN_PV} \
-	&& ver_test ${llvm_v} -ge ${MIN_LLVM} ; then
+	if ver_test ${emscripten_pv}   -ge ${EMSCRIPTEN_PV} \
+	&& ver_test ${llvm_pv} -ge ${MIN_LLVM} ; then
 einfo
-einfo "Using emscripten-${em_v} and >=llvm-${llvm_v}"
+einfo "Using emscripten-${emscripten_pv} and >=llvm-${llvm_pv}"
 einfo
 	else
 eerror
@@ -202,7 +204,7 @@ check_lld() {
 	einfo "CXX=${CXX}"
 	if has_version "sys-devel/clang:${LLVM_SLOT}[llvm_targets_WebAssembly]" &&
 	   has_version "sys-devel/llvm:${LLVM_SLOT}[llvm_targets_WebAssembly]" ; then
-		einfo "Passed same slot test for lld, clang, llvm."
+einfo "Passed same slot test for lld, clang, llvm."
 	else
 eerror
 eerror "LLD's corresponding version to Clang and LLVM versions must have"
@@ -469,8 +471,8 @@ pkg_postinst() {
 	xdg_pkg_postinst
 einfo
 	if use openrc ; then
-einfo "The OpenRC init script is called ${PN}-server.  The ${PN}-server"
-einfo "must be started before running the ${PN} wrapper."
+einfo "The OpenRC init script is called ${PN}-server.  The ${PN}-server must be"
+einfo "started before running the ${PN} wrapper."
 	else
 ewarn "You must write an init script to start the server or launch the server"
 ewarn "manually."
@@ -484,8 +486,8 @@ einfo "  \"\$(xdg-user-dir DOCUMENTS)/${MY_PN} projects\""
 einfo
 einfo "if using the Electron version."
 einfo
-einfo "You can set the IDE_MODE by either Electron or Web_Browser before running"
-einfo "${PN}."
+einfo "You can set the IDE_MODE by either Electron or Web_Browser before"
+einfo "running ${PN}."
 einfo
 einfo "Example:"
 einfo
@@ -502,7 +504,9 @@ einfo "  chown \${USER}:\${USER} ~/.config/${PN}/${PN}.conf"
 einfo "  chmod go-w ~/.config/${PN}/${PN}.conf"
 ewarn
 ewarn
-ewarn "Games may send anonymous statistics.  See the following commits for details:"
+ewarn "Games may send anonymous statistics.  See the following commits for"
+ewarn "details:"
+ewarn
 ewarn "https://github.com/4ian/GDevelop/commit/5d62f0c92655a3d83b8d5763c87d0226594478d1"
 ewarn "https://github.com/4ian/GDevelop/commit/f650a6aa9cf5d123f1e5fe632a2523f2ac2faaaf"
 ewarn

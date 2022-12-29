@@ -2,14 +2,16 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    ebuild status:
 
-    HTML5 is only complete on the ebuild level.
-    Currently it only builds GDevelop 5.
+    Ebuild status:
+
+      WIP (Unfinished / untested) for 5.1.155.
+
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/4ian/GDevelop/issues</bugs-to>

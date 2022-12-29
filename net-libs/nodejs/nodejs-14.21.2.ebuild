@@ -383,8 +383,9 @@ _src_configure() {
 		myconf+=( --without-ssl )
 	fi
 
-	local myarch="${ABI/amd64/x64}"
-	myarch="${ABI/x86/ia32}"
+	local myarch
+	myarch="${ABI/amd64/x64}"
+	myarch="${myarch/x86/ia32}"
 
 	GYP_DEFINES="linux_use_gold_flags=0
 		linux_use_bundled_binutils=0
