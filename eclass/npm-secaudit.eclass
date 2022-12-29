@@ -29,61 +29,41 @@ EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postrm pkg_postinst
 
 # ############## START Per-package environmental variables #####################
 
-# Set this in your make.conf to control number of HTTP requests.  50 is npm
-# default but it is too high.
-NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="1"}
+# See npm-secaudit_pkg_setup_per_package_environment_variables() for details.
 
-# You could define it as a per-package envar.  It not recommended in the ebuild.
-NPM_SECAUDIT_ALLOW_AUDIT=${NPM_SECAUDIT_ALLOW_AUDIT:="1"}
-
-# You could define it as a per-package envar.  It not recommended in the ebuild.
-NPM_SECAUDIT_ALLOW_AUDIT_FIX=${NPM_SECAUDIT_ALLOW_AUDIT_FIX:="1"}
-
-# You could define it as a per-package envar.  It not recommended in the ebuild.
-# Applies to only vulnerability testing not the tool itself.
-NPM_SECAUDIT_NO_DIE_ON_AUDIT=${NPM_SECAUDIT_NO_DIE_ON_AUDIT:="0"}
-
-# You could define it as a per-package envar.  Disabled by default because of
-# rapid changes in dependencies over a short period of time.
-NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=${NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:="0"}
-
-# Acceptable values:  Critical, High, Moderate, Low
-# Applies to npm audit not CVSS v3
-# For those that are confused, this is interpeted as tolerance level meaning
-# >=$NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL.
-NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL=\
-${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL:="Critical"}
 
 # ##################  END Per-package environmental variables ##################
 
 # ##################  START ebuild and eclass global variables #################
 
+# See https://nodejs.dev/en/about/releases/
+NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="14"
+
 _NPM_SECAUDIT_REG_PATH=${_NPM_SECAUDIT_REG_PATH:=""} # private set only within in the eclass
 if [[ -n "${NPM_SECAUDIT_REG_PATH}" ]] ; then
-eerror
-eerror "NPM_SECAUDIT_REG_PATH has been removed and replaced with"
-eerror "NPM_SECAUDIT_INSTALL_PATH.  Please wait for the next ebuild update."
-eerror
-	die
+	eerror
+	eerror "NPM_SECAUDIT_REG_PATH has been removed and replaced with"
+	eerror "NPM_SECAUDIT_INSTALL_PATH.  Please wait for the next ebuild update."
+	eerror
+		die
 fi
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
 NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
-NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="14"
 
 # See https://github.com/microsoft/TypeScript/blob/v2.0.7/package.json
 if [[ -n "${NPM_SECAUDIT_TYPESCRIPT_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${NPM_SECAUDIT_TYPESCRIPT_PV}") -ge 2.0 \
 	&& ver_test $(ver_cut 1-3 "${NPM_SECAUDIT_TYPESCRIPT_PV}") -le 2.1.4 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-0.8.0
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-0.8.0
+	"
 elif [[ -n "${NPM_SECAUDIT_TYPESCRIPT_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${NPM_SECAUDIT_TYPESCRIPT_PV}") -ge 2.1.5 \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_TYPESCRIPT_PV}") -le 9999 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-4.2.0
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-4.2.0
+	"
 fi
 
 # See https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/node/vX/index.d.ts , \
@@ -91,55 +71,85 @@ fi
 # The following conditional chain is for @types/node:
 if [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 0 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-0"
+	COMMON_DEPEND+=" =net-libs/nodejs-0"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 4 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-4"
+	COMMON_DEPEND+=" =net-libs/nodejs-4"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 6 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-6*"
+	COMMON_DEPEND+=" =net-libs/nodejs-6*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 7 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-7*"
+	COMMON_DEPEND+=" =net-libs/nodejs-7*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 8 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-8*"
+	COMMON_DEPEND+=" =net-libs/nodejs-8*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 9 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-9*"
+	COMMON_DEPEND+=" =net-libs/nodejs-9*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 10 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-10*"
+	COMMON_DEPEND+=" =net-libs/nodejs-10*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 11 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-11*"
+	COMMON_DEPEND+=" =net-libs/nodejs-11*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 12 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-12*"
+	COMMON_DEPEND+=" =net-libs/nodejs-12*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 13 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-13*"
+	COMMON_DEPEND+=" =net-libs/nodejs-13*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 14 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-14*"
+	COMMON_DEPEND+=" =net-libs/nodejs-14*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 15 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-15*"
+	COMMON_DEPEND+=" =net-libs/nodejs-15*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 16 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-16*"
+	COMMON_DEPEND+=" =net-libs/nodejs-16*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_PV}") -eq 17 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-17*"
+	COMMON_DEPEND+=" =net-libs/nodejs-17*"
 fi
 
-DEPEND+=" ${COMMON_DEPEND}"
-#DEPEND+="
-#app-portage/npm-secaudit"
-RDEPEND+=" ${COMMON_DEPEND}"
+DEPEND+="
+	${COMMON_DEPEND}
+"
+RDEPEND+="
+	${COMMON_DEPEND}
+"
 IUSE+=" debug"
 
-# ##################  END ebuild and eclass global variables #################
+# ##################  END ebuild and eclass global variables ###################
+
+# @FUNCTION: npm-secaudit_pkg_setup_per_package_environment_variables
+# @DESCRIPTION:
+# Initalizes per package environment variables
+npm-secaudit_pkg_setup_per_package_environment_variables() {
+	npm-utils_pkg_setup
+
+	# The following could be define as a per-package envar:
+	# They are not recommended to set these in the in the ebuild.
+
+	# Set this in your make.conf to control number of HTTP requests.  50 is
+	# npm default but it is too high.
+	NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="1"}
+
+	NPM_SECAUDIT_ALLOW_AUDIT_FIX=${NPM_SECAUDIT_ALLOW_AUDIT_FIX:="1"}
+
+	# Applies to only vulnerability testing not the tool itself.
+	# If set to 1, it will stop emerging.  Otherwise, it will install it.
+	NPM_SECAUDIT_NO_DIE_ON_AUDIT=${NPM_SECAUDIT_NO_DIE_ON_AUDIT:="0"}
+
+	# Allow to audit Chromium versions for EOL (End Of Life meaning most
+	# likely vulnerable).
+	NPM_SECAUDIT_CHECK_CHROMIUM=${NPM_SECAUDIT_CHECK_CHROMIUM:="1"}
+
+	# Disabled by default because of rapid changes in dependencies over a
+	# short period of time.
+	NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=${NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:="0"}
+}
 
 
 # @FUNCTION: npm-secaudit_pkg_setup
@@ -147,6 +157,8 @@ IUSE+=" debug"
 # Initializes globals
 npm-secaudit_pkg_setup() {
         debug-print-function ${FUNCNAME} "${@}"
+
+	npm-secaudit_pkg_setup_per_package_environment_variables
 
 	if has network-sandbox $FEATURES ; then
 eerror
@@ -184,8 +196,23 @@ eerror
 
 	if has_version "<net-libs/nodejs-${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN}" ; then
 ewarn
-ewarn "You have a nodejs less than ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN}"
-ewarn "which is End Of Life (EOL) and has vulnerabilities."
+ewarn "You have a net-libs/nodejs less than ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN}"
+ewarn "installed which is End Of Life (EOL) and has vulnerabilities."
+ewarn
+	fi
+
+	local found_unsupported_node=0
+	for x in $(seq 1 30) ; do
+		if npm-utils_check_node_eol "${x}" \
+			&& has_version "=net-libs/nodejs-${x}*" ; then
+ewarn "Found EOL =net-libs/nodejs-${x}*"
+			found_unsupported=1
+		fi
+	done
+
+	if (( ${found_unsupported_node} == 1 )) ; then
+ewarn
+ewarn "You have a nodejs that is EOL and has likely vulnerabilities."
 ewarn
 	fi
 
@@ -252,8 +279,7 @@ npm-secaudit_src_unpack() {
 		npm-secaudit_src_preprepare
 	fi
 
-	# Inspect before downloading
-	npm-secaudit_audit_dev
+	npm-utils_check_chromium_eol ${CHROMIUM_PV}
 
 	cd "${S}" || die
 	if declare -f npm-secaudit_src_prepare > /dev/null ; then
@@ -270,10 +296,7 @@ npm-secaudit_src_unpack() {
 		npm-secaudit_src_postprepare
 	fi
 
-	# Audit both the production and dev packages before possibly
-	# bundling a vulnerable package/library or a dev package that
-	# generates vulnerable code.
-	npm-secaudit_audit_dev
+	npm-utils_check_chromium_eol ${CHROMIUM_PV}
 
 	cd "${S}" || die
 	if declare -f npm-secaudit_src_compile > /dev/null ; then
@@ -444,130 +467,6 @@ einfo "Audit fix done"
 einfo
 }
 
-# @FUNCTION: npm-secaudit_audit_dev
-# @DESCRIPTION:
-# This will preform an recursive audit in place without adding packages.
-# @CODE
-# Parameters:
-# $1 - if set to 1 will not die (optional).  It should ONLY be be used for debugging.
-# @CODE
-npm-secaudit_audit_dev() {
-	if [[ -n "${NPM_SECAUDIT_ALLOW_AUDIT}" && "${NPM_SECAUDIT_ALLOW_AUDIT}" == "1" ]] ; then
-		:;
-	else
-		return
-	fi
-
-	local nodie="${1}"
-	if [ ! -e package-lock.json ] ; then
-eerror
-eerror "Missing package-lock.json in implied root $(pwd)"
-eerror
-		die
-	fi
-
-	L=$(find . -name "package-lock.json")
-	for l in $L; do
-		pushd $(dirname $l) || die
-			if [[ -n "${nodie}" && "${NPM_SECAUDIT_NO_DIE_ON_AUDIT}" == "1" ]] ; then
-				npm audit || die
-			else
-				local audit_file="${T}/npm-audit-result"
-				npm audit &> "${audit_file}" || die
-				local is_critical=0
-				local is_high=0
-				local is_moderate=0
-				local is_low=0
-				grep -q -F -e " Critical " "${audit_file}" && is_critical=1
-				grep -q -F -e " High " "${audit_file}" && is_high=1
-				grep -q -F -e " Moderate " "${audit_file}" && is_moderate=1
-				grep -q -F -e " Low " "${audit_file}" && is_low=1
-	if [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
-					&& "${is_critical}" == "1" ]] ; then
-					cat "${audit_file}"
-eerror
-eerror "Detected critical vulnerability in a package."
-eerror
-					die
-	elif [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
-					&& ( "${is_high}" == "1" \
-					|| "${is_critical}" == "1" ) ]] ; then
-					cat "${audit_file}"
-eerror
-eerror "Detected high vulnerability in a package."
-eerror
-					die
-	elif [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
-					&& ( "${is_moderate}" == "1" \
-					|| "${is_critical}" == "1" \
-					|| "${is_high}" == "1" ) ]] ; then
-					cat "${audit_file}"
-eerror
-eerror "Detected moderate vulnerability in a package."
-eerror
-					die
-	elif [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" \
-					&& ( "${is_low}" == "1" \
-					|| "${is_critical}" == "1" \
-					|| "${is_high}" == "1" \
-					|| "${is_moderate}" == "1" ) ]] ; then
-					cat "${audit_file}"
-eerror
-eerror "Detected low vulnerability in a package."
-eerror
-					die
-				fi
-			fi
-		popd
-	done
-	npm-utils_check_chromium_eol ${CHROMIUM_PV}
-}
-
-# @FUNCTION: npm-secaudit_audit_prod
-# @DESCRIPTION:
-# This will preform an recursive audit for production in place without adding packages.
-npm-secaudit_audit_prod() {
-	if [[ -n "${NPM_SECAUDIT_ALLOW_AUDIT}" && "${NPM_SECAUDIT_ALLOW_AUDIT}" == "1" ]] ; then
-		:;
-	else
-		return
-	fi
-
-	if [ ! -e package-lock.json ] ; then
-eerror
-eerror "Missing package-lock.json in implied root $(pwd)"
-eerror
-		die
-	fi
-
-	L=$(find . -name "package-lock.json")
-	for l in $L; do
-		pushd $(dirname $l) || die
-			local audit_file="${T}"/npm-secaudit-result
-			npm audit &> "${audit_file}" || true
-			if cat "${audit_file}" | grep -q -F -e "ELOCKVERIFY" ; then
-				cat "${audit_file}" | grep -q -F -e "require manual review"
-				local result_found1="$?"
-				cat "${audit_file}" | grep -q -F -e "npm audit fix"
-				local result_found2="$?"
-				if [[ "${result_found1}" == "0" || "${result_found2}" == "0" ]] ; then
-eerror
-eerror "Package is still vulnerable at $(pwd)$l"
-eerror
-					die
-				fi
-			else
-				if cat "${audit_file}" | grep -q -F -e "npm ERR!" ; then
-					cat "${audit_file}"
-eerror
-eerror "Uncaught error"
-eerror
-					die
-				fi
-			fi
-		popd
-	done
-}
 
 # @FUNCTION: npm-secaudit_src_preinst_default
 # @DESCRIPTION:
@@ -763,4 +662,3 @@ einfo
 # For single exe packaging see:
 # See npm-utils_download_pkg in npm-utils.eclass
 # See npm-utils_src_compile_pkg in npm-utils.eclass
-

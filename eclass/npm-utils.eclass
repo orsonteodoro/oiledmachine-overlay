@@ -29,7 +29,6 @@ inherit lcnr
 
 # For those that just want it to install (no security) you can add
 # /etc/portage/env/npm-no-audit-fix.conf with the following without # character:
-# NPM_SECAUDIT_ALLOW_AUDIT=0
 # NPM_SECAUDIT_ALLOW_AUDIT_FIX=0
 # NPM_SECAUDIT_NO_DIE_ON_AUDIT=1
 # ELECTRON_APP_ALLOW_AUDIT=0
@@ -39,24 +38,38 @@ inherit lcnr
 # Then, add to /etc/portage/package.env
 # ${CATEGORY}/${PN} npm-no-audit-fix.conf
 
+# See npm-utils_pkg_setup for details.
 
-# You could define it as a per-package envar, but should not be done in the
-# ebuild itself.
-NPM_UTILS_ALLOW_AUDIT_FIX=${NPM_UTILS_ALLOW_AUDIT_FIX:="1"}
-
-# You could define it as a per-package envar, but should not be done in the
-# ebuild itself.
-NPM_UTILS_ALLOW_AUDIT=${NPM_UTILS_ALLOW_AUDIT:="1"}
-
-NPM_UTILS_ALLOW_I_PACKAGE_LOCK=${NPM_UTILS_ALLOW_I_PACKAGE_LOCK:="0"}
+# ############## END Per-package environmental variables #######################
+# ##################  START ECLASS environmental variables #####################
 
 # Keep up to date from
 # https://omahaproxy.appspot.com/
-# https://www.chromestatus.com/features
-# https://en.wikipedia.org/wiki/Google_Chrome_version_history
-CHROMIUM_STABLE_PV="105"
+CHROMIUM_STABLE_PV="108"
 
-# ##################  END Per-package environmental variables ##################
+# See https://nodejs.dev/en/about/releases/
+NODE_VERSIONS_SUPPORTED=(14 16 18 19 20)
+
+# See https://nodejs.dev/en/about/releases/
+NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="14"
+
+# ##################  END ECLASS environmental variables #######################
+
+npm-utils_pkg_setup() {
+	# The following could be define as a per-package envar, but should not
+	# be done in the ebuild itself.
+
+	# Allows fixing during auditing.
+	NPM_UTILS_ALLOW_AUDIT_FIX=${NPM_UTILS_ALLOW_AUDIT_FIX:="1"}
+
+	# You could define it as a per-package envar, but should not be done in
+	# the ebuild itself.
+	NPM_UTILS_ALLOW_AUDIT=${NPM_UTILS_ALLOW_AUDIT:="1"}
+
+	# Allows to force a package-lock which could add more vulnerabilities
+	# as a consequence.
+	NPM_UTILS_ALLOW_I_PACKAGE_LOCK=${NPM_UTILS_ALLOW_I_PACKAGE_LOCK:="0"}
+}
 
 # @FUNCTION: npm_check_npm_error
 # @DESCRIPTION:
@@ -70,7 +83,8 @@ ewarn "Detected some potential download failure(s).  Logs can be found in"
 ewarn "${HOME}/npm/_logs .  Retry if the build fails."
 ewarn
 	fi
-	if grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|FETCH_ERROR)" "${HOME}/npm/_logs" ; then
+	if grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|FETCH_ERROR)" \
+		"${HOME}/npm/_logs" ; then
 eerror
 eerror "Detected some download failure(s).  Logs can be found in"
 eerror "${HOME}/npm/_logs .  Re-emerge the package."
@@ -833,6 +847,18 @@ eerror
 			die
 		fi
 	fi
+}
+
+# @FUNCTION: npm-utils_check_node_eol
+# @DESCRIPTION: Checks if the version is node is EOL.
+# 0 means EOL, 1 means supported
+npm-utils_check_node_eol() {
+	local pv="${1}"
+	local x
+	for x in ${NODE_VERSIONS_SUPPORTED[@]} ; do
+		[[ "${x}" == "${pv}" ]] && return 1
+	done
+	return 0
 }
 
 # @FUNCTION: npm-utils_check_chromium_eol

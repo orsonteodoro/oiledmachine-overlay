@@ -21,6 +21,7 @@ esac
 
 inherit chromium-2 desktop npm-utils
 
+
 # ############## START Per-package environmental variables #####################
 
 # Some of these environmental variables manage the degree of consent for
@@ -42,41 +43,18 @@ inherit chromium-2 desktop npm-utils
 # Then, add to /etc/portage/package.env
 # ${CATEGORY}/${PN} npm-no-audit-fix.conf
 
+# See electron-app_pkg_setup_per_package_environment_variables() for details.
 
-ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn
-
-# Set this in your make.conf to control number of HTTP requests.  50 is npm
-# default but it is too high.
-ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="1"}
-
-# You could define it as a per-package envar.  It not recommended in the ebuild.
-ELECTRON_APP_ALLOW_AUDIT=${ELECTRON_APP_ALLOW_AUDIT:="1"}
-
-# You could define it as a per-package envar.  It not recommended in the ebuild.
-ELECTRON_APP_ALLOW_AUDIT_FIX=${ELECTRON_APP_ALLOW_AUDIT_FIX:="1"}
-
-# You could define it as a per-package envar.  It not recommended in the ebuild.
-# Applies to only vulnerability testing not the tool itself.
-ELECTRON_APP_NO_DIE_ON_AUDIT=${ELECTRON_APP_NO_DIE_ON_AUDIT:="0"}
-
-# You could define it as a per-package envar.  Disabled by default because
-# rapid changes in dependencies over short period of time.
-ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=\
-${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:="0"}
-
-# Acceptable values:  Critical, High, Moderate, Low
-# Applies to npm audit not CVSS v3
-# For those that are confused, this is interpeted as tolerance level meaning
-# >=$ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL.
-ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL=\
-${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL:="Critical"}
-
-# You could define it as a per-package envar.  It not recommended in the ebuild.
-ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:="0"}
 
 # ##################  END Per-package environmental variables ##################
 
 # ##################  START ebuild and eclass global variables #################
+
+# [A] Supported versions (LTS) are listed in
+# https://www.electronjs.org/docs/latest/tutorial/electron-timelines
+ELECTRON_APP_ELECTRON_PV_SUPPORTED="20.0"
+
+ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
@@ -84,10 +62,10 @@ YARN_PACKAGE_DB="/var/lib/portage/yarn-packages"
 _ELECTRON_APP_REG_PATH=${_ELECTRON_APP_REG_PATH:=""} # private set only within the eclass
 
 if [[ -n "${ELECTRON_APP_REG_PATH}" ]] ; then
-eerror
-eerror "ELECTRON_APP_REG_PATH has been removed and replaced with"
-eerror "ELECTRON_APP_INSTALL_PATH.  Please wait for the next ebuild update."
-eerror
+	eerror
+	eerror "ELECTRON_APP_REG_PATH has been removed and replaced with"
+	eerror "ELECTRON_APP_INSTALL_PATH.  Please wait for the next ebuild update."
+	eerror
 	die
 fi
 
@@ -104,72 +82,61 @@ NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
 ELECTRON_APP_DATA_DIR="${EROOT}/var/cache/npm-secaudit"
 ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 
-# ##################  START End of Life or patched versions ####################
+ELECTRON_APP_OPTIONAL_DEPENDS=" "
+ELECTRON_APP_CR_OPTIONAL_DEPENDS=" "
+if [[ "${ELECTRON_APP_FEATURE_APPINDICATOR}" == "1" ]] ; then
+	IUSE+=" app-indicator"
+	ELECTRON_APP_OPTIONAL_DEPENDS+="
+		app-indicator? (
+			dev-libs/libappindicator:3
+		)
+	"
+fi
 
-# Also bump if for unpublished vulnerabilities published as bugs, weakened
-# security, or Chromium security updates.
+if [[ "${ELECTRON_APP_FEATURE_GLOBAL_MENU_BAR}" == "1" ]] ; then
+	IUSE+=" global-menu-bar"
+	ELECTRON_APP_OPTIONAL_DEPENDS+="
+		global-menu-bar? (
+			dev-libs/libdbusmenu
+		)
+	"
+fi
 
-# Stable versions list https://www.electronjs.org/docs/latest/tutorial/electron-timelines
+if [[ "${ELECTRON_APP_FEATURE_GNOME_KEYRING}" == "1" ]] ; then
+	IUSE+=" gnome-keyring"
+	ELECTRON_APP_CR_OPTIONAL_DEPENDS+="
+		gnome-keyring? (
+			gnome-base/gnome-keyring[pam]
+		)
+	"
+fi
 
-# IMPORTANT: Update section [A] below
+if [[ "${ELECTRON_APP_FEATURE_LIBSECRET}" == "1" ]] ; then
+	IUSE+=" libsecret"
+	ELECTRON_APP_CR_OPTIONAL_DEPENDS+="
+		libsecret? (
+			app-crypt/libsecret
+		)
+	"
+fi
 
-# See also:  https://raw.githubusercontent.com/electron/releases/master/lite.json
+if [[ "${ELECTRON_APP_FEATURE_UNITY}" == "1" ]] ; then
+	IUSE+=" unity"
+	ELECTRON_APP_OPTIONAL_DEPENDS+="
+		unity? (
+			dev-libs/libunity
+		)
+	"
+fi
 
-# Track "Security:" in https://www.electronjs.org/releases/nightly?version=22
-CVE_PATCHED_ELECTRON_22="22.0.0-nightly.20220831" # Nightly
-
-# Track "Security:" in https://www.electronjs.org/releases/nightly?version=21
-CVE_PATCHED_ELECTRON_21="21.0.0-nightly.20220802" # Nightly
-
-# Track "Security:" in https://www.electronjs.org/releases/nightly?version=20
-CVE_PATCHED_ELECTRON_20="20.1.1" # Stable
-
-# Track "Security:" in https://www.electronjs.org/releases/nightly?version=19
-CVE_PATCHED_ELECTRON_19="19.0.15" # Stable
-
-# Track "Security:" in https://www.electronjs.org/releases/nightly?version=18
-CVE_PATCHED_ELECTRON_18="18.3.11" # Stable
-
-
-# Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
-CVE_PATCHED_NODE_16_E22="16.17.0" # latest
-CVE_PATCHED_NODE_16_E21="16.16.0" # old, security release
-CVE_PATCHED_NODE_16_E20="16.15.0" # old, not recent security fix
-CVE_PATCHED_NODE_16_E19="16.14.2" # old, not recent security fix
-CVE_PATCHED_NODE_16_E18="16.13.2" # old, not recent security fix
-
-# These Chromium desktop versions listed are non vulnerable versions:
-# Reason why is to minimize vulnerability checks in this eclass.
-
-# It's difficult to determine between OS and Desktop which are not the
-# vulnerable versions so it is assumed that the latest on the Linux platform is
-# clean.  For the latest, Linux version see:
-# https://omahaproxy.appspot.com/
-
-# Beta channel
-# Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
-LATEST_CHROMIUM_106="106.0.5216.0" # E22 ; Dev vulnerabilities never reported for this release
-LATEST_CHROMIUM_105="105.0.5187.0" # E21 ; EOL not receiving latest security fixes
-LATEST_CHROMIUM_104="104.0.5112.102" # E20 ; EOL
-LATEST_CHROMIUM_102="102.0.5005.167" # E19 ; EOL
-#LATEST_CHROMIUM_100="100.0.4896.160" # E18 ; EOL
-
-# Check the runtime dependencies for electron
-# Most electron apps will have electron bundled already.  No need for seperate
-# ebuild.
-
-# The chromium version can be found in the table:
-# https://github.com/electron/electron/blob/12-x-y/DEPS#L17 , replacing 12 with
-# one of the stable versions
-
-# See https://www.electronjs.org/docs/development/build-instructions-linux
-# For Electron <ver>, see https://github.com/chromium/chromium/blob/<cr_version>/build/install-build-deps.sh#L242
-
-# ##################  END End of Life or patched versions ######################
-
-#   under "List of required run-time libraries"
-# Obtained from ldd
-IUSE+=" app-indicator global-menu-bar gnome-keyring libsecret unity pulseaudio"
+if [[ "${ELECTRON_APP_FEATURE_PULSEAUDIO}" == "1" ]] ; then
+	IUSE+=" pulseaudio"
+	ELECTRON_APP_CR_OPTIONAL_DEPENDS+="
+		pulseaudio? (
+			media-sound/pulseaudio
+		)
+	"
+fi
 
 # See https://www.electronjs.org/docs/tutorial/support#linux for OS min requirements.
 
@@ -187,21 +154,17 @@ IUSE+=" app-indicator global-menu-bar gnome-keyring libsecret unity pulseaudio"
 # Chromium supports at least U 14.04, this is why there is no version
 # restrictions below in all *DEPENDs section.
 CHROMIUM_DEPEND="
+	${ELECTRON_APP_CR_OPTIONAL_DEPENDS}
 	app-accessibility/speech-dispatcher
 	dev-db/sqlite:3
-	libsecret? ( app-crypt/libsecret )
-	gnome-keyring? (
-		gnome-base/gnome-keyring[pam]
-	)
-	pulseaudio? ( media-sound/pulseaudio )
 "
 # Electron only
 # Assumes U 18.04 builder but allows for older U LTS if libs present.
 COMMON_DEPEND="
 	${CHROMIUM_DEPEND}
+	${ELECTRON_APP_OPTIONAL_DEPENDS}
 	app-accessibility/at-spi2-atk:2
 	app-arch/bzip2
-	app-indicator? ( dev-libs/libappindicator:3 )
 	dev-libs/atk
 	dev-libs/expat
 	dev-libs/fribidi
@@ -215,7 +178,6 @@ COMMON_DEPEND="
 	dev-libs/nss
 	dev-libs/nettle
 	dev-libs/nspr
-	global-menu-bar? ( dev-libs/libdbusmenu )
 	media-gfx/graphite2
 	media-libs/alsa-lib
 	media-libs/fontconfig
@@ -233,7 +195,6 @@ COMMON_DEPEND="
 	sys-apps/util-linux
 	sys-devel/gcc[cxx(+)]
 	sys-libs/zlib[minizip]
-	unity? ( dev-libs/libunity )
 	virtual/ttf-fonts
 	x11-libs/cairo
 	x11-libs/gdk-pixbuf:2
@@ -259,202 +220,201 @@ COMMON_DEPEND="
 	x11-libs/pixman
 "
 
-# [A] Supported versions (LTS) are listed in
-# https://www.electronjs.org/docs/latest/tutorial/electron-timelines
-ELECTRON_APP_ELECTRON_PV_SUPPORTED="17.0"
 if [[ -n "${ELECTRON_APP_ELECTRON_PV}" ]] \
-&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_PV}") -ge ${ELECTRON_APP_ELECTRON_PV_SUPPORTED} ; then
-:; # E18, E19, E20 supported upstream
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_PV}") \
+		-ge \
+	   ${ELECTRON_APP_ELECTRON_PV_SUPPORTED} ; then
+	:; # E20, E21, E22, E23 supported upstream
 else
-if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
+	if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
 eerror "Found:  ${ELECTRON_APP_ELECTRON_PV}"
 eerror "Supported:  >=${ELECTRON_APP_ELECTRON_PV_SUPPORTED}"
 eerror "Electron should be updated to one of the latest Long Term Support (LTS)"
 eerror "series versions or else it likely contains critical CVE security"
 eerror "advisories."
-fi
+	fi
 fi
 
 # See https://github.com/angular/angular/blob/4.0.x/package.json
 if [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 2.0 \
 	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le 2.4 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-5.4.1
-	<net-libs/nodejs-7
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-5.4.1
+		<net-libs/nodejs-7
+	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 4.0 \
 	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le 4.4 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-6.9.5
-	<net-libs/nodejs-7
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-6.9.5
+		<net-libs/nodejs-7
+	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 5.0 \
 	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le 6.0 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-8.9.1
-	<net-libs/nodejs-9
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-8.9.1
+		<net-libs/nodejs-9
+	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 6.1 \
 	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -le 8.2 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-10.9.0
-	<net-libs/nodejs-11
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-10.9.0
+		<net-libs/nodejs-11
+	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 9.0 \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_PV}") -le 11.2.8 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-10.9.0
-	<net-libs/nodejs-13
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-10.9.0
+		<net-libs/nodejs-13
+	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 11.2.9 \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_PV}") -le 11.2.14 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-10.19.0
-	<net-libs/nodejs-16
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-10.19.0
+		<net-libs/nodejs-16
+	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 12.0.0 \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_PV}") -le 12.2.11 ) ; then
-COMMON_DEPEND+="
-	|| (
-		>=net-libs/nodejs-12.20.0:12
-		>=net-libs/nodejs-14:14
-	)
-"
+	COMMON_DEPEND+="
+		|| (
+			>=net-libs/nodejs-12.20.0:12
+			>=net-libs/nodejs-14:14
+		)
+	"
 elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_PV}") -ge 13 \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_PV}") -le 9999 ) ; then
-COMMON_DEPEND+="
-	|| (
-		>=net-libs/nodejs-12.20.0:12
-		>=net-libs/nodejs-14.15:14
-		>=net-libs/nodejs-16.10.0:16
-	)
-"
+	COMMON_DEPEND+="
+		|| (
+			>=net-libs/nodejs-12.20.0:12
+			>=net-libs/nodejs-14.15:14
+			>=net-libs/nodejs-16.10.0:16
+		)
+	"
 fi
 
 # See https://github.com/facebook/react/blob/master/package.json
 if [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -ge 0.3 \
 	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -le 0.13 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-0.10.0
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-0.10.0
+	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] \
 	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -eq 0.14 ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-4
-	<net-libs/nodejs-5
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-4
+		<net-libs/nodejs-5
+	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -ge 15.0 \
 	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -le 15.6 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-4
-	<net-libs/nodejs-8
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-4
+		<net-libs/nodejs-8
+	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] \
 	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -eq 16.3 ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-8
-	<net-libs/nodejs-11
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-8
+		<net-libs/nodejs-11
+	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] \
 	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -eq 16.4 ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-8
-	<net-libs/nodejs-10
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-8
+		<net-libs/nodejs-10
+	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -ge 16.8.3 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -le 16.8.6 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-8
-	<net-libs/nodejs-12
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-8
+		<net-libs/nodejs-12
+	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -ge 16.13.0 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -le 16.13.1 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-8
-	<net-libs/nodejs-14
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-8
+		<net-libs/nodejs-14
+	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -ge 16.14.0 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_PV}") -lt 9999 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-8
-	<net-libs/nodejs-15
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-8
+		<net-libs/nodejs-15
+	"
 elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_PV}") -ge 9999 ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-12.17
-	<net-libs/nodejs-18
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-12.17
+		<net-libs/nodejs-18
+	"
 fi
 
 # See https://github.com/microsoft/TypeScript/blob/v2.0.7/package.json
 if [[ -n "${ELECTRON_APP_TYPESCRIPT_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_TYPESCRIPT_PV}") -ge 2.0 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_PV}") -le 2.1.4 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-0.8.0
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-0.8.0
+	"
 elif [[ -n "${ELECTRON_APP_TYPESCRIPT_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_PV}") -ge 2.1.5 \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_TYPESCRIPT_PV}") -le 9999 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-4.2.0
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-4.2.0
+	"
 fi
 
 # See https://github.com/facebook/react-native/blob/0.63-stable/package.json
 if [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge 0.13 \
 	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -le 0.55 ) ; then
-COMMON_DEPEND+="" # doesn't say
+	COMMON_DEPEND+="" # doesn't say
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge 0.13 \
 	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -le 0.55 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-4
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-4
+	"
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] \
 	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -eq 0.56 ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-8
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-8
+	"
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge 0.57 \
 	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -le 0.62 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-8.3
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-8.3
+	"
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge 0.63 \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_NATIVE_PV}") -lt 0.64 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-10
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-10
+	"
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge 0.64 \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_NATIVE_PV}") -le 0.67 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-12
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-12
+	"
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_PV}") -ge 0.68 \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_NATIVE_PV}") -le 9999 ) ; then
-COMMON_DEPEND+="
-	>=net-libs/nodejs-14
-"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-14
+	"
 fi
 
 
@@ -463,116 +423,116 @@ fi
 # For @types/node
 if [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 0 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-0*"
+	COMMON_DEPEND+=" =net-libs/nodejs-0*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 4 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-4*"
+	COMMON_DEPEND+=" =net-libs/nodejs-4*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 6 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-6*"
+	COMMON_DEPEND+=" =net-libs/nodejs-6*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 7 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-7*"
+	COMMON_DEPEND+=" =net-libs/nodejs-7*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 8 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-8*"
+	COMMON_DEPEND+=" =net-libs/nodejs-8*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 9 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-9*"
+	COMMON_DEPEND+=" =net-libs/nodejs-9*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 10 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-10*"
+	COMMON_DEPEND+=" =net-libs/nodejs-10*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 11 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-11*"
+	COMMON_DEPEND+=" =net-libs/nodejs-11*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 12 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-12*"
+	COMMON_DEPEND+=" =net-libs/nodejs-12*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 13 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-13*"
+	COMMON_DEPEND+=" =net-libs/nodejs-13*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 14 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-14*"
+	COMMON_DEPEND+=" =net-libs/nodejs-14*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 15 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-15*"
+	COMMON_DEPEND+=" =net-libs/nodejs-15*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 16 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-16*"
+	COMMON_DEPEND+=" =net-libs/nodejs-16*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 17 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-17*"
+	COMMON_DEPEND+=" =net-libs/nodejs-17*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_PV}") -eq 18 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-18*"
+	COMMON_DEPEND+=" =net-libs/nodejs-18*"
 fi
 
 # https://github.com/vuejs/vue/blob/v2.7.10/package.json
 if [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 0.6.0 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 0.11.10 ) ; then
-COMMON_DEPEND+=" =net-libs/nodejs-0.10*" # .travis.yml
+	COMMON_DEPEND+=" =net-libs/nodejs-0.10*" # .travis.yml
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 0.12.0 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 0.12.0 ) ; then
-COMMON_DEPEND+=" net-libs/iojs" # doesn't say
+	COMMON_DEPEND+=" net-libs/iojs" # doesn't say
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 0.12.1 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 0.12.1 ) ; then
-COMMON_DEPEND+=" ~net-libs/iojs-2.0.1" # .travis.yml
+	COMMON_DEPEND+=" ~net-libs/iojs-2.0.1" # .travis.yml
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 0.12.2 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 0.12.2 ) ; then
-COMMON_DEPEND+=" " # doesn't say
+	COMMON_DEPEND+=" " # doesn't say
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 0.12.0 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 1.0.8 ) ; then
-COMMON_DEPEND+=" ~net-libs/iojs-2.0.1" # .travis.yml
+	COMMON_DEPEND+=" ~net-libs/iojs-2.0.1" # .travis.yml
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 1.0.9 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 1.0.17 ) ; then
-COMMON_DEPEND+=" =net-libs/nodejs-4*" # based on circle.yml
+	COMMON_DEPEND+=" =net-libs/nodejs-4*" # based on circle.yml
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 1.0.18 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 1.0.28 ) ; then
-COMMON_DEPEND+=" =net-libs/nodejs-5*" # based on circle.yml
+	COMMON_DEPEND+=" =net-libs/nodejs-5*" # based on circle.yml
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 2.0.0 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 2.4.4 ) ; then
-COMMON_DEPEND+=" =net-libs/nodejs-6*" # based on circle.yml
+	COMMON_DEPEND+=" =net-libs/nodejs-6*" # based on circle.yml
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 2.5.0 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 2.5.22 ) ; then
 	# based on @types/node restriction
-COMMON_DEPEND+=" =net-libs/nodejs-8*" # ^8.0.33 ; they did the testing in node6 in <=2.5.7
+	COMMON_DEPEND+=" =net-libs/nodejs-8*" # ^8.0.33 ; they did the testing in node6 in <=2.5.7
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 2.6.0 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 2.6.10 ) ; then
 	# based on @types/node restriction
-COMMON_DEPEND+=" =net-libs/nodejs-10*" # ^10.12.18
+	COMMON_DEPEND+=" =net-libs/nodejs-10*" # ^10.12.18
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 2.6.11 ; then
 	# based on @types/node restriction
 	# dev branch
-COMMON_DEPEND+=" =net-libs/nodejs-12*" # ^12.12.0
+	COMMON_DEPEND+=" =net-libs/nodejs-12*" # ^12.12.0
 elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 2.7 ; then
 	# based on @types/node restriction
 	# dev branch
-COMMON_DEPEND+=" =net-libs/nodejs-17*" # ^17.0.41
+	COMMON_DEPEND+=" =net-libs/nodejs-17*" # ^17.0.41
 fi
 
 if [[ -n "${ELECTRON_APP_VUE_CORE_PV}" ]] &&
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -eq 3.0.0 ; then
-COMMON_DEPEND+=" =net-libs/nodejs-10*"
+	COMMON_DEPEND+=" =net-libs/nodejs-10*"
 elif [[ -n "${ELECTRON_APP_VUE_CORE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -ge 3.0.1 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -lt 3.2 ) ; then
-COMMON_DEPEND+=" =net-libs/nodejs-14*" # ^14.10.1
+	COMMON_DEPEND+=" =net-libs/nodejs-14*" # ^14.10.1
 elif [[ -n "${ELECTRON_APP_VUE_CORE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_CORE_PV}") -ge 3.2 ) ; then
-COMMON_DEPEND+=" =net-libs/nodejs-16*" # ^16.4.7
+	COMMON_DEPEND+=" =net-libs/nodejs-16*" # ^16.4.7
 fi
 
 # Same packages as far back as 3.x
@@ -583,26 +543,26 @@ EXPORT_FUNCTIONS pkg_setup src_unpack pkg_preinst pkg_postinst pkg_postrm
 
 IUSE+=" debug "
 if (( ${EAPI} == 7 )) ; then
-BDEPEND+="
-	app-misc/jq
-	net-misc/wget
-	sys-apps/file
-	sys-apps/grep[pcre]
-"
+	BDEPEND+="
+		app-misc/jq
+		net-misc/wget
+		sys-apps/file
+		sys-apps/grep[pcre]
+	"
 else
-DEPEND+="
-	app-misc/jq
-	net-misc/wget
-	sys-apps/file
-	sys-apps/grep[pcre]
-"
+	DEPEND+="
+		app-misc/jq
+		net-misc/wget
+		sys-apps/file
+		sys-apps/grep[pcre]
+	"
 fi
 
 if [[ -n "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" \
-&& "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" == "1" ]] ; then
-RDEPEND+="
-	app-portage/npm-secaudit
-"
+	&& "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" == "1" ]] ; then
+	RDEPEND+="
+		app-portage/npm-secaudit
+	"
 fi
 
 # This is for single exe portable versions versus the traditional install
@@ -616,30 +576,33 @@ fi
 # electron-builder -l snap --pd dist/linux-unpackaged/
 #
 _ELECTRON_APP_PACKAGING_METHODS+=( unpacked )
-if [[ -n "${ELECTRON_APP_APPIMAGEABLE}" && "${ELECTRON_APP_APPIMAGEABLE}" == 1 ]] ; then
-IUSE+=" appimage"
-_ELECTRON_APP_PACKAGING_METHODS+=( appimage )
-RDEPEND+="
-	appimage? ( || (
-		app-arch/appimaged
-		app-arch/go-appimage[appimaged]
-	) )
-"
-# emerge will dump the .AppImage in that folder.
-ELECTRON_APP_APPIMAGE_INSTALL_DIR=\
-${ELECTRON_APP_APPIMAGE_INSTALL_DIR:="/opt/AppImage/${PN}"}
+if [[ -n "${ELECTRON_APP_APPIMAGEABLE}" \
+	&& "${ELECTRON_APP_APPIMAGEABLE}" == 1 ]] ; then
+	IUSE+=" appimage"
+	_ELECTRON_APP_PACKAGING_METHODS+=( appimage )
+	RDEPEND+="
+		appimage? (
+			|| (
+				app-arch/appimaged
+				app-arch/go-appimage[appimaged]
+			)
+		)
+	"
+	# emerge will dump the .AppImage in that folder.
+	ELECTRON_APP_APPIMAGE_INSTALL_DIR=\
+	${ELECTRON_APP_APPIMAGE_INSTALL_DIR:="/opt/AppImage/${PN}"}
 fi
 if [[ -n "${ELECTRON_APP_SNAPABLE}" \
 	&& "${ELECTRON_APP_SNAPABLE}" == 1 ]] ; then
-IUSE+=" snap"
-_ELECTRON_APP_PACKAGING_METHODS+=( snap )
-RDEPEND+=" snap? ( app-emulation/snapd )"
-# emerge will dump it in that folder then use snap functions
-# to install desktop files and mount the image.
-ELECTRON_APP_SNAP_INSTALL_DIR=\
-${ELECTRON_APP_SNAP_INSTALL_DIR:="/opt/snap/${PN}"}
-ELECTRON_APP_SNAP_NAME=${ELECTRON_APP_SNAP_NAME:=${PN}}
-# ELECTRON_APP_SNAP_REVISION is also defineable
+	IUSE+=" snap"
+	_ELECTRON_APP_PACKAGING_METHODS+=( snap )
+	RDEPEND+=" snap? ( app-emulation/snapd )"
+	# emerge will dump it in that folder then use snap functions
+	# to install desktop files and mount the image.
+	ELECTRON_APP_SNAP_INSTALL_DIR=\
+	${ELECTRON_APP_SNAP_INSTALL_DIR:="/opt/snap/${PN}"}
+	ELECTRON_APP_SNAP_NAME=${ELECTRON_APP_SNAP_NAME:=${PN}}
+	# ELECTRON_APP_SNAP_REVISION is also defineable
 fi
 IUSE+=" ${_ELECTRON_APP_PACKAGING_METHODS[@]/unpacked/+unpacked}"
 REQUIRED_USE+=" || ( ${_ELECTRON_APP_PACKAGING_METHODS[@]} )"
@@ -717,11 +680,42 @@ ewarn
 
 }
 
+# @FUNCTION: electron-app_pkg_setup_per_package_environment_variables
+# @DESCRIPTION:
+# Initializes per-package environment variables
+electron-app_pkg_setup_per_package_environment_variables() {
+	npm-utils_pkg_setup
+
+	# Set this in your make.conf to control number of HTTP requests.  50 is npm
+	# default but it is too high.
+	ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="1"}
+
+	# You could define it as a per-package envar.  It not recommended in the ebuild.
+	ELECTRON_APP_ALLOW_AUDIT=${ELECTRON_APP_ALLOW_AUDIT:="1"}
+
+	# You could define it as a per-package envar.  It not recommended in the ebuild.
+	ELECTRON_APP_ALLOW_AUDIT_FIX=${ELECTRON_APP_ALLOW_AUDIT_FIX:="1"}
+
+	# You could define it as a per-package envar.  It not recommended in the ebuild.
+	# Applies to only vulnerability testing not the tool itself.
+	ELECTRON_APP_NO_DIE_ON_AUDIT=${ELECTRON_APP_NO_DIE_ON_AUDIT:="0"}
+
+	# You could define it as a per-package envar.  Disabled by default because
+	# rapid changes in dependencies over short period of time.
+	ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=\
+	${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:="0"}
+
+	# You could define it as a per-package envar.  It not recommended in the ebuild.
+	ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:="0"}
+}
+
 # @FUNCTION: electron-app_pkg_setup
 # @DESCRIPTION:
 # Initializes globals
 electron-app_pkg_setup() {
         debug-print-function ${FUNCNAME} "${@}"
+
+	electron-app_pkg_setup_per_package_environment_variables
 
 	chromium_suid_sandbox_check_kernel_config
 
@@ -1024,147 +1018,17 @@ elog
 		# Skip for dependency but not building ui yet
 		return
 	fi
-	#BORINGSSL_PV=$(_query_lite_json '.deps.openssl')
+	# BORINGSSL_PV=$(_query_lite_json '.deps.openssl')
 	CHROMIUM_PV=$(_query_lite_json '.deps.chrome')
 	LIBUV_PV=$(_query_lite_json '.deps.uv')
 	NODE_PV=$(_query_lite_json '.deps.node')
 	V8_PV=$(_query_lite_json '.deps.v8')
 	ZLIB_PV=$(_query_lite_json '.deps.zlib')
 
-	# ##### Vulnerability and End Of Life (EOL) Tests ######################
 
-	# Check Electron
-	if ver_test $(ver_cut 1 ${ELECTRON_PV}) -ge 21 ; then
-		# E22 Nightly
-		# E21 Nightly
-		:; # Auto pass since vulnerabilies only announced on stable releases
-
-	# Stable
-	elif ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 20 \
-		&& ver_test ${ELECTRON_PV} -ge ${CVE_PATCHED_ELECTRON_20} ; then
-		:; # Patched / Passed
-	elif ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 20 \
-		&& ver_test ${ELECTRON_PV} -lt ${CVE_PATCHED_ELECTRON_20} ; then
-		# Unpatched
-		adie \
-"Electron ${ELECTRON_PV} is not receiving proper security updates."
-
-	# Stable
-	elif ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 19 \
-		&& ver_test ${ELECTRON_PV} -ge ${CVE_PATCHED_ELECTRON_19} ; then
-		:; # Patched / Passed
-	elif ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 19 \
-		&& ver_test ${ELECTRON_PV} -lt ${CVE_PATCHED_ELECTRON_19} ; then
-		# Unpatched
-		adie \
-"Electron ${ELECTRON_PV} is not receiving proper security updates."
-
-	# Stable
-	elif ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 18 \
-		&& ver_test ${ELECTRON_PV} -ge ${CVE_PATCHED_ELECTRON_18} ; then
-		:; # Patched / Passed
-	elif ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 18 \
-		&& ver_test ${ELECTRON_PV} -lt ${CVE_PATCHED_ELECTRON_18} ; then
-		# Unpatched
-		adie \
-"Electron ${ELECTRON_PV} is not receiving proper security updates."
-
-	else
-		adie \
-"Electron ${ELECTRON_PV} has already reached End Of Life (EOL)."
-	fi
-
-	# Check Node.js EOL
-
-	# Dev E22
-	if ver_test $(ver_cut 1 ${NODE_PV}) -eq 16 \
-		&& ver_test ${NODE_PV} -ge ${CVE_PATCHED_NODE_16_E22} \
-		&& ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 22 ; then
-		:; # Patched / Passed
-	elif ver_test $(ver_cut 1 ${NODE_PV}) -eq 16 \
-		&& ver_test ${NODE_PV} -lt ${CVE_PATCHED_NODE_16_E22} \
-		&& ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 22 ; then
-		# Unpatched
-		adie \
-"Electron ${ELECTRON_PV} uses Node.js ${NODE_PV} which is not receiving\n\
-security updates."
-
-	# Dev E21
-	elif ver_test $(ver_cut 1 ${NODE_PV}) -eq 16 \
-		&& ver_test ${NODE_PV} -ge ${CVE_PATCHED_NODE_16_E21} \
-		&& ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 21 ; then
-		:; # Patched / Passed
-	elif ver_test $(ver_cut 1 ${NODE_PV}) -eq 16 \
-		&& ver_test ${NODE_PV} -lt ${CVE_PATCHED_NODE_16_E21} \
-		&& ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 21 ; then
-		# Unpatched
-		adie \
-"Electron ${ELECTRON_PV} uses Node.js ${NODE_PV} which is not receiving\n\
-security updates."
-
-	# Stable E20
-	elif ver_test $(ver_cut 1 ${NODE_PV}) -eq 16 \
-		&& ver_test ${NODE_PV} -ge ${CVE_PATCHED_NODE_16_E20} \
-		&& ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 20 ; then
-		:; # Patched / Passed
-	elif ver_test $(ver_cut 1 ${NODE_PV}) -eq 16 \
-		&& ver_test ${NODE_PV} -lt ${CVE_PATCHED_NODE_16_E20} \
-		&& ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 20 ; then
-		# Unpatched
-		adie \
-"Electron ${ELECTRON_PV} uses Node.js ${NODE_PV} which is not receiving\n\
-security updates."
-
-	# Stable E19
-	elif ver_test $(ver_cut 1 ${NODE_PV}) -eq 16 \
-		&& ver_test ${NODE_PV} -ge ${CVE_PATCHED_NODE_16_E19} \
-		&& ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 19 ; then
-		:; # Patched / Passed
-	elif ver_test $(ver_cut 1 ${NODE_PV}) -eq 16 \
-		&& ver_test ${NODE_PV} -lt ${CVE_PATCHED_NODE_16_E19} \
-		&& ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 19 ; then
-		# Unpatched
-		adie \
-"Electron ${ELECTRON_PV} uses Node.js ${NODE_PV} which is not receiving\n\
-security updates."
-
-	# Stable E18
-	elif ver_test $(ver_cut 1 ${NODE_PV}) -eq 16 \
-		&& ver_test ${NODE_PV} -ge ${CVE_PATCHED_NODE_16_E18} \
-		&& ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 18 ; then
-		:; # Patched / Passed
-	elif ver_test $(ver_cut 1 ${NODE_PV}) -eq 16 \
-		&& ver_test ${NODE_PV} -lt ${CVE_PATCHED_NODE_16_E18} \
-		&& ver_test $(ver_cut 1 ${ELECTRON_PV}) -eq 18 ; then
-		# Unpatched
-		adie \
-"Electron ${ELECTRON_PV} uses Node.js ${NODE_PV} which is not receiving\n\
-security updates."
-
-	else
-		# Check Node.js EOL
-		adie \
-"Electron ${ELECTRON_PV} uses Node.js ${NODE_PV} which is End Of Life (EOL)."
-	fi
-
-	# Check Chromium
-	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
-	if ver_test $(ver_cut 1 ${CHROMIUM_PV}) -ge 106 ; then
-#
-# Auto passed because vulnerabilites are typically not announced for beta and
-# dev channels
-#
-		:;
-	elif ver_test $(ver_cut 1 ${CHROMIUM_PV}) -eq 105 ; then
-		adie \
-"Electron ${ELECTRON_PV} uses Chromium ${CHROMIUM_PV} which is not receiving\n\
-proper security updates."
-	else
-		adie \
-"Electron ${ELECTRON_PV} uses Chromium ${CHROMIUM_PV} is End Of Life (EOL)."
-	fi
 
 	# ##### Compatibity Tests ##############################################
+
 
 	if ! has_version ">=dev-libs/libuv-${LIBUV_PV}" ; then
 		adie \
@@ -1181,7 +1045,13 @@ ewarn
 		adie \
 "Electron ${ELECTRON_PV} requires at least >=sys-libs/zlib-${ZLIB_PV}"
 	fi
+
+	# ##### EOL Tests ######################################################
+
 	npm-utils_check_chromium_eol ${CHROMIUM_PV}
+
+	# ##### EOL Tests ######################################################
+
 einfo
 einfo "Electron version report with internal/external dependencies:"
 einfo
@@ -1241,10 +1111,6 @@ electron-app_src_unpack() {
 		electron-app_src_postprepare
 	fi
 
-	# Audit both the production and dev packages before possibly
-	# bundling a vulnerable package/library or a dev package that
-	# generates vulnerable code.
-	electron-app_audit_dev
 
 	cd "${S}"
 	if declare -f electron-app_src_compile > /dev/null ; then
@@ -1339,138 +1205,6 @@ eerror
 	esac
 }
 
-# @FUNCTION: electron-app_audit_dev
-# @DESCRIPTION:
-# This will preform an recursive audit in place without adding packages.
-# @CODE
-# Parameters:
-# $1 - if set to 1 will not die (optional).  It should ONLY be be used for debugging.
-# @CODE
-electron-app_audit_dev() {
-	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT}" \
-		&& "${ELECTRON_APP_ALLOW_AUDIT}" == "1" ]] ; then
-		:;
-	else
-		return
-	fi
-
-	local nodie="${1}"
-	if [ ! -e package-lock.json ] ; then
-eerror
-eerror "Missing package-lock.json in implied root $(pwd)"
-eerror
-		die
-	fi
-
-	L=$(find . -name "package-lock.json")
-	for l in $L; do
-		pushd $(dirname $l) || die
-		if [[ -n "${nodie}" \
-			&& "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "1" ]] ; then
-				npm audit || die
-			else
-				local audit_file="${T}/npm-audit-result"
-				npm audit &> "${audit_file}" || die
-				local is_critical=0
-				local is_high=0
-				local is_moderate=0
-				local is_low=0
-				grep -q -F -e " Critical " "${audit_file}" \
-					&& is_critical=1
-				grep -q -F -e " High " "${audit_file}" \
-					&& is_high=1
-				grep -q -F -e " Moderate " "${audit_file}" \
-					&& is_moderate=1
-				grep -q -F -e " Low " "${audit_file}" \
-					&& is_low=1
-				if [[ \
-"${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
-					&& "${is_critical}" == "1" ]] ; then
-					cat "${audit_file}"
-eerror
-eerror "Detected critical vulnerability in a package."
-eerror
-					die
-				elif [[ \
-"${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
-					&& ( "${is_high}" == "1" \
-					|| "${is_critical}" == "1" ) ]] ; then
-					cat "${audit_file}"
-eerror
-eerror "Detected high vulnerability in a package."
-eerror
-					die
-				elif [[ \
-"${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
-					&& ( "${is_moderate}" == "1" \
-					|| "${is_critical}" == "1" \
-					|| "${is_high}" == "1" ) ]] ; then
-					cat "${audit_file}"
-eerror
-eerror "Detected moderate vulnerability in a package."
-eerror
-					die
-				elif [[ \
-"${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" \
-					&& ( "${is_low}" == "1" \
-					|| "${is_critical}" == "1" \
-					|| "${is_high}" == "1" \
-					|| "${is_moderate}" == "1" ) ]] ; then
-					cat "${audit_file}"
-eerror
-eerror "Detected low vulnerability in a package."
-eerror
-					die
-				fi
-			fi
-		popd
-	done
-}
-
-
-# @FUNCTION: electron-app_audit_prod
-# @DESCRIPTION:
-# This will preform an recursive audit for production in place without adding
-# packages.
-electron-app_audit_prod() {
-	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT}" \
-		&& "${ELECTRON_APP_ALLOW_AUDIT}" == "1" ]] ; then
-		:;
-	else
-		return
-	fi
-
-	if [ ! -e package-lock.json ] ; then
-eerror
-eerror "Missing package-lock.json in implied root $(pwd)"
-eerror
-		die
-	fi
-
-	L=$(find . -name "package-lock.json")
-	for l in $L; do
-		pushd $(dirname $l) || die
-		local audit_file="${T}"/npm-secaudit-result
-		npm audit &> "${audit_file}" || true
-		cat "${audit_file}" | grep -q -F -e "ELOCKVERIFY"
-		if [[ "$?" != "0" ]] ; then
-			cat "${audit_file}" \
-				| grep -q -F -e "require manual review"
-			local result_found1="$?"
-			cat "${audit_file}" \
-				| grep -q -F -e "npm audit fix"
-			local result_found2="$?"
-			if [[ "${result_found1}" == "0" \
-				|| "${result_found2}" == "0" ]] ; then
-eerror
-eerror "package is still vulnerable at $(pwd)$l"
-eerror
-				die
-			fi
-		fi
-		popd
-	done
-}
 
 # @FUNCTION: electron-app_src_preinst_default
 # @DESCRIPTION:
