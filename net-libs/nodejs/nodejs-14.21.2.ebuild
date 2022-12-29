@@ -387,12 +387,6 @@ _src_configure() {
 	myarch="${ABI/amd64/x64}"
 	myarch="${myarch/x86/ia32}"
 
-	if [[ "${PATH}" =~ "ccache" ]] ; then
-		# https://github.com/nodejs/node/blob/v14.21.2/BUILDING.md#speeding-up-frequent-rebuilds-when-developing
-		export CC="ccache $(tc-getCC)"
-		export CXX="ccache $(tc-getCXX)"
-	fi
-
 	GYP_DEFINES="linux_use_gold_flags=0
 		linux_use_bundled_binutils=0
 		linux_use_bundled_gold=0" \

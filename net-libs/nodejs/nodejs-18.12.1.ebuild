@@ -385,12 +385,6 @@ _src_configure() {
 	[[ "${ARCH}:${ABI}" =~ "loong:lp64" ]] && myarch="loong64"
 	[[ "${ARCH}:${ABI}" =~ "riscv:lp64" ]] && myarch="riscv64"
 
-	if [[ "${PATH}" =~ "ccache" ]] ; then
-		# https://github.com/nodejs/node/blob/v18.12.1/BUILDING.md#speeding-up-frequent-rebuilds-when-developing
-		export CC="ccache $(tc-getCC)"
-		export CXX="ccache $(tc-getCXX)"
-	fi
-
 	GYP_DEFINES="linux_use_gold_flags=0
 		linux_use_bundled_binutils=0
 		linux_use_bundled_gold=0" \
