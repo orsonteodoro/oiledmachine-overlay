@@ -10,8 +10,10 @@ LICENSE="WTFPL-2"
 HOMEPAGE="https://github.com/l29ah/w3crapcli"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
 SLOT="0"
-IUSE+=" doc download-tracks gettracks glistfm grab-lastfm-userpic lastfmpost
-mpv mplayerfm savedconfig"
+IUSE+="
+doc download-tracks gettracks glistfm grab-lastfm-userpic lastfmpost mpv
+mplayerfm savedconfig
+"
 REQUIRED_USE+=" savedconfig" # \
 # Potential security problem.  Portage doesn't encrypt environment.bz2
 # especially security sensitive variables.
@@ -28,9 +30,15 @@ DEPEND+="
 		dev-lang/ghc
 		net-misc/curl
 	)
-	glistfm? ( net-misc/curl )
-	grab-lastfm-userpic? ( net-misc/wget )
-	lastfmpost? ( net-misc/wget )
+	glistfm? (
+		net-misc/curl
+	)
+	grab-lastfm-userpic? (
+		net-misc/wget
+	)
+	lastfmpost? (
+		net-misc/wget
+	)
 	mplayerfm? (
 		media-sound/scrobbler
 		media-libs/mutagen
@@ -42,7 +50,7 @@ DEPEND+="
 	)
 "
 # use media-sound/scrobbler from booboo overlay
-EGIT_COMMIT="b8fc6007bb33e69a4dd00b2417b55ead55ec6ec1"
+EGIT_COMMIT="3bd665ada8d514ef39c2629bc4f1be0f2a3d0b67"
 FN_PREFIX="w3crapcli-last.fm-${EGIT_COMMIT}-"
 BASE_URL=\
 "https://raw.githubusercontent.com/l29ah/w3crapcli/${EGIT_COMMIT}/last.fm/"
