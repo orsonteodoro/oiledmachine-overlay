@@ -77,6 +77,7 @@ man pgo
 "
 
 gen_required_use_pgo() {
+	local t
 	for t in ${BENCHMARK_TYPES[@]} ; do
 		echo " ${PN}_pgo_trainers_${t}? ( pgo )"
 	done
@@ -147,6 +148,26 @@ pkg_pretend() {
 	# Does not need 6ca785b
 }
 
+_count_useflag_slots() {
+	local useflag="${1}"
+	local tot=0
+	local x
+	for x in $(seq 14 19) ; do
+		has_version "net-libs/nodejs:${x}[${useflag}]" \
+			&& tot=$(( ${tot} + 1 ))
+	done
+	echo "${tot}"
+}
+
+_all_slots_useflag() {
+	local useflag="${1}"
+	local x
+	for x in $(seq 14 19) ; do
+		has_version "net-libs/nodejs:${x}[${useflag}]" \
+			&& eerror "net-libs/nodejs:${x}[${useflag}]"
+	done
+}
+
 pkg_setup() {
 	python-any-r1_pkg_setup
 	linux-info_pkg_setup
@@ -155,33 +176,35 @@ einfo
 einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2023-04-30."
 einfo
 
-	# For man page reasons
-	for s in 12 16 18 ; do
-		if use corepack && has_version "net-libs/nodejs:${s}[corepack]"
-		then
+	# Prevent merge conflicts
+	if use corepack && (( $(_count_useflag_slots "corepack") > 1 ))
+	then
 eerror
-eerror "You need to disable corepack on net-libs/nodejs:${s}[corepack].  Only"
-eerror "enable corepack on the highest slot."
+eerror "You need to disable corepack on one of the following:"
+		_all_slots_useflag "corepack"
 eerror
-			die
-		fi
-		if use npm && has_version "net-libs/nodejs:${s}[npm]"
-		then
+		die
+	fi
+	if use npm && (( $(_count_useflag_slots "npm") > 1 ))
+	then
 eerror
-eerror "You need to disable npm on net-libs/nodejs:${s}[npm].  Only enable"
-eerror "npm on the highest slot."
+eerror "You need to disable npm on one of the following:"
 eerror
-			die
-		fi
-		if use man && has_version "net-libs/nodejs:${s}[man]"
-		then
+		_all_slots_useflag "npm"
 eerror
-eerror "You need to disable npm on net-libs/nodejs:${s}[man].  Only enable"
-eerror "man on the highest slot."
+		die
+	fi
+	if use man && (( $(_count_useflag_slots "man") > 1 ))
+	then
 eerror
-		fi
-	done
+eerror "You need to disable man on one of the following:"
+eerror
+		_all_slots_useflag "man"
+eerror
+		die
+	fi
 
+	local u
 	for u in ${PN}_pgo_trainers_http ${PN}_pgo_trainers_https ; do
                 if use "${u}" && has network-sandbox $FEATURES ; then
 eerror
@@ -443,6 +466,8 @@ train_trainer_custom() {
 	local benchmark=( $(grep -l -r -e "createBenchmark" "benchmark" | sort) )
 	unset accepted
 	declare -A accepted
+	local t
+	local b
 	for t in ${BENCHMARK_TYPES[@]} ; do
 		for b in ${benchmark[@]} ; do
 			if use "${PN}_pgo_trainers_${t}" \
@@ -478,6 +503,7 @@ train_trainer_custom() {
 	einfo "NODEJS_EXCLUDED_BENCHMARKS=${NODEJS_EXCLUDED_BENCHMARKS}"
 	init_local_npm
 	cd "${S}" || die # Ensure PGO profiles are from this dir.
+	local b
 	for b in $(echo ${accepted[@]} | tr " " "\n" | sort) ; do
 		if [[ "${NODEJS_EXCLUDED_BENCHMARKS}" =~ "${b}" ]] ; then
 			einfo "Skipping ${b}"
@@ -573,6 +599,7 @@ src_install() {
 	local D_INCLUDE_BASE="/usr/include/node${SLOT_MAJOR}"
 	dodir ${D_INCLUDE_BASE}/deps/{v8,uv}
 	dosym . ${D_INCLUDE_BASE}/src
+	local var
 	for var in deps/{uv,v8}/include; do
 		dosym ../.. ${D_INCLUDE_BASE}/${var}
 	done
@@ -609,6 +636,7 @@ src_install() {
 		fi
 
 		# Clean up
+		local f
 		for f in \
 			"${ED_BASE}"/node_modules/npm/{.mailmap,.npmignore,Makefile} \
 			"${ED_BASE}"/node_modules/npm/{doc,html,man} ; do
@@ -621,6 +649,7 @@ src_install() {
 
 		local find_exp="-or -name"
 		local find_name=()
+		local match
 		for match in "AUTHORS*" "CHANGELOG*" "CONTRIBUT*" "README*" \
 			".travis.yml" ".eslint*" ".wercker.yml" ".npmignore" \
 			"*.md" "*.markdown" "*.bat" "*.cmd"; do
