@@ -159,7 +159,7 @@ _count_useflag_slots() {
 	echo "${tot}"
 }
 
-_all_slots_useflag() {
+_print_merge_useflag_conflicts() {
 	local useflag="${1}"
 	local x
 	for x in $(seq 14 19) ; do
@@ -181,7 +181,8 @@ einfo
 	then
 eerror
 eerror "You need to disable corepack on one of the following:"
-		_all_slots_useflag "corepack"
+eerror
+		_print_merge_useflag_conflicts "corepack"
 eerror
 		die
 	fi
@@ -190,7 +191,7 @@ eerror
 eerror
 eerror "You need to disable npm on one of the following:"
 eerror
-		_all_slots_useflag "npm"
+		_print_merge_useflag_conflicts "npm"
 eerror
 eerror "Only enable the npm USE flag in the highest slot installed."
 eerror
@@ -201,7 +202,7 @@ eerror
 eerror
 eerror "You need to disable man on one of the following:"
 eerror
-		_all_slots_useflag "man"
+		_print_merge_useflag_conflicts "man"
 eerror
 		die
 	fi
