@@ -29,7 +29,7 @@
     </flag>
     <flag name="cpu_flags_arm_neon2x">
       Sets the highest ISA to double pumped NEON for a ~8% benefit or ~3.8 FPS
-      increase.
+      increase relative to NEON.
     </flag>
     <flag name="cpu_flags_x86_sse2">
       Sets the highest ISA to SSE2
