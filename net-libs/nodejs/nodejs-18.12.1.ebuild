@@ -381,6 +381,8 @@ _src_configure() {
 	local myarch
 	myarch="${ABI/amd64/x64}"
 	myarch="${myarch/x86/ia32}"
+	[[ "${ARCH}:${ABI}" =~ "loong:lp64" ]] && myarch="loong64"
+	[[ "${ARCH}:${ABI}" =~ "riscv:lp64" ]] && myarch="riscv64"
 
 	GYP_DEFINES="linux_use_gold_flags=0
 		linux_use_bundled_binutils=0
