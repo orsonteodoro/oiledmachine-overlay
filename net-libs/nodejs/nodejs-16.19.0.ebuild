@@ -196,6 +196,8 @@ eerror "You need to disable npm on one of the following:"
 eerror
 		_all_slots_useflag "npm"
 eerror
+eerror "Only enable the npm USE flag in the highest slot installed."
+eerror
 		die
 	fi
 	if use man && (( $(_count_useflag_slots "man") > 1 ))
