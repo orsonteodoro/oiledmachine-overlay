@@ -589,8 +589,7 @@ if [[ -n "${ELECTRON_APP_APPIMAGEABLE}" \
 		)
 	"
 	# emerge will dump the .AppImage in that folder.
-	ELECTRON_APP_APPIMAGE_INSTALL_DIR=\
-	${ELECTRON_APP_APPIMAGE_INSTALL_DIR:-"/opt/AppImage/${PN}"}
+	ELECTRON_APP_APPIMAGE_INSTALL_DIR=${ELECTRON_APP_APPIMAGE_INSTALL_DIR:-"/opt/AppImage/${PN}"}
 fi
 if [[ -n "${ELECTRON_APP_SNAPABLE}" \
 	&& "${ELECTRON_APP_SNAPABLE}" == 1 ]] ; then
@@ -599,8 +598,7 @@ if [[ -n "${ELECTRON_APP_SNAPABLE}" \
 	RDEPEND+=" snap? ( app-emulation/snapd )"
 	# emerge will dump it in that folder then use snap functions
 	# to install desktop files and mount the image.
-	ELECTRON_APP_SNAP_INSTALL_DIR=\
-	${ELECTRON_APP_SNAP_INSTALL_DIR:-"/opt/snap/${PN}"}
+	ELECTRON_APP_SNAP_INSTALL_DIR=${ELECTRON_APP_SNAP_INSTALL_DIR:-"/opt/snap/${PN}"}
 	ELECTRON_APP_SNAP_NAME=${ELECTRON_APP_SNAP_NAME:-${PN}}
 	# ELECTRON_APP_SNAP_REVISION is also defineable
 fi
@@ -702,8 +700,7 @@ electron-app_pkg_setup_per_package_environment_variables() {
 
 	# You could define it as a per-package envar.  Disabled by default because
 	# rapid changes in dependencies over short period of time.
-	ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=\
-	${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:-"0"}
+	ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:-"0"}
 
 	# You could define it as a per-package envar.  It not recommended in the ebuild.
 	ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:-"0"}
