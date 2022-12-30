@@ -22,7 +22,7 @@ inherit lcnr
 
 # ############## START Per-package environmental variables #####################
 
-# Anything with := is likely a environmental variable setting
+# Anything with :- is likely a environmental variable setting
 # These manage the degree of consent.  Some users want a highly secure system.
 # Other users just want the product to install.  By default, the eclasses use
 # the policy to block criticals from being merged into the system.
@@ -60,15 +60,15 @@ npm-utils_pkg_setup() {
 	# be done in the ebuild itself.
 
 	# Allows fixing during auditing.
-	NPM_UTILS_ALLOW_AUDIT_FIX=${NPM_UTILS_ALLOW_AUDIT_FIX:="1"}
+	NPM_UTILS_ALLOW_AUDIT_FIX=${NPM_UTILS_ALLOW_AUDIT_FIX:-"1"}
 
 	# You could define it as a per-package envar, but should not be done in
 	# the ebuild itself.
-	NPM_UTILS_ALLOW_AUDIT=${NPM_UTILS_ALLOW_AUDIT:="1"}
+	NPM_UTILS_ALLOW_AUDIT=${NPM_UTILS_ALLOW_AUDIT:-"1"}
 
 	# Allows to force a package-lock which could add more vulnerabilities
 	# as a consequence.
-	NPM_UTILS_ALLOW_I_PACKAGE_LOCK=${NPM_UTILS_ALLOW_I_PACKAGE_LOCK:="0"}
+	NPM_UTILS_ALLOW_I_PACKAGE_LOCK=${NPM_UTILS_ALLOW_I_PACKAGE_LOCK:-"0"}
 }
 
 # @FUNCTION: npm_check_npm_error

@@ -39,7 +39,7 @@ EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postrm pkg_postinst
 # See https://nodejs.dev/en/about/releases/
 NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="14"
 
-_NPM_SECAUDIT_REG_PATH=${_NPM_SECAUDIT_REG_PATH:=""} # private set only within in the eclass
+_NPM_SECAUDIT_REG_PATH=${_NPM_SECAUDIT_REG_PATH:-""} # private set only within in the eclass
 if [[ -n "${NPM_SECAUDIT_REG_PATH}" ]] ; then
 	eerror
 	eerror "NPM_SECAUDIT_REG_PATH has been removed and replaced with"
@@ -134,21 +134,21 @@ npm-secaudit_pkg_setup_per_package_environment_variables() {
 
 	# Set this in your make.conf to control number of HTTP requests.  50 is
 	# npm default but it is too high.
-	NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="1"}
+	NPM_MAXSOCKETS=${NPM_MAXSOCKETS:-"1"}
 
-	NPM_SECAUDIT_ALLOW_AUDIT_FIX=${NPM_SECAUDIT_ALLOW_AUDIT_FIX:="1"}
+	NPM_SECAUDIT_ALLOW_AUDIT_FIX=${NPM_SECAUDIT_ALLOW_AUDIT_FIX:-"1"}
 
 	# Applies to only vulnerability testing not the tool itself.
 	# If set to 1, it will stop emerging.  Otherwise, it will install it.
-	NPM_SECAUDIT_NO_DIE_ON_AUDIT=${NPM_SECAUDIT_NO_DIE_ON_AUDIT:="0"}
+	NPM_SECAUDIT_NO_DIE_ON_AUDIT=${NPM_SECAUDIT_NO_DIE_ON_AUDIT:-"0"}
 
 	# Allow to audit Chromium versions for EOL (End Of Life meaning most
 	# likely vulnerable).
-	NPM_SECAUDIT_CHECK_CHROMIUM=${NPM_SECAUDIT_CHECK_CHROMIUM:="1"}
+	NPM_SECAUDIT_CHECK_CHROMIUM=${NPM_SECAUDIT_CHECK_CHROMIUM:-"1"}
 
 	# Disabled by default because of rapid changes in dependencies over a
 	# short period of time.
-	NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=${NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:="0"}
+	NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=${NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:-"0"}
 }
 
 

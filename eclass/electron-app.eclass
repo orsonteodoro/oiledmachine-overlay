@@ -54,12 +54,12 @@ inherit chromium-2 desktop npm-utils
 # https://www.electronjs.org/docs/latest/tutorial/electron-timelines
 ELECTRON_APP_ELECTRON_PV_SUPPORTED="20.0"
 
-ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn
+ELECTRON_APP_MODE=${ELECTRON_APP_MODE:-"npm"} # can be npm, yarn
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
 YARN_PACKAGE_DB="/var/lib/portage/yarn-packages"
-_ELECTRON_APP_REG_PATH=${_ELECTRON_APP_REG_PATH:=""} # private set only within the eclass
+_ELECTRON_APP_REG_PATH=${_ELECTRON_APP_REG_PATH:-""} # private set only within the eclass
 
 if [[ -n "${ELECTRON_APP_REG_PATH}" ]] ; then
 	eerror
@@ -75,7 +75,7 @@ fi
 # web-browser (including social media apps), the internal Chromium requires
 # weekly forced updates.
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP=\
-${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP:="0"}
+${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP:-"0"}
 
 ELECTRON_APP_LOCKS_DIR="/dev/shm"
 NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
@@ -590,7 +590,7 @@ if [[ -n "${ELECTRON_APP_APPIMAGEABLE}" \
 	"
 	# emerge will dump the .AppImage in that folder.
 	ELECTRON_APP_APPIMAGE_INSTALL_DIR=\
-	${ELECTRON_APP_APPIMAGE_INSTALL_DIR:="/opt/AppImage/${PN}"}
+	${ELECTRON_APP_APPIMAGE_INSTALL_DIR:-"/opt/AppImage/${PN}"}
 fi
 if [[ -n "${ELECTRON_APP_SNAPABLE}" \
 	&& "${ELECTRON_APP_SNAPABLE}" == 1 ]] ; then
@@ -600,8 +600,8 @@ if [[ -n "${ELECTRON_APP_SNAPABLE}" \
 	# emerge will dump it in that folder then use snap functions
 	# to install desktop files and mount the image.
 	ELECTRON_APP_SNAP_INSTALL_DIR=\
-	${ELECTRON_APP_SNAP_INSTALL_DIR:="/opt/snap/${PN}"}
-	ELECTRON_APP_SNAP_NAME=${ELECTRON_APP_SNAP_NAME:=${PN}}
+	${ELECTRON_APP_SNAP_INSTALL_DIR:-"/opt/snap/${PN}"}
+	ELECTRON_APP_SNAP_NAME=${ELECTRON_APP_SNAP_NAME:-${PN}}
 	# ELECTRON_APP_SNAP_REVISION is also defineable
 fi
 IUSE+=" ${_ELECTRON_APP_PACKAGING_METHODS[@]/unpacked/+unpacked}"
@@ -688,25 +688,25 @@ electron-app_pkg_setup_per_package_environment_variables() {
 
 	# Set this in your make.conf to control number of HTTP requests.  50 is npm
 	# default but it is too high.
-	ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="1"}
+	ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:-"1"}
 
 	# You could define it as a per-package envar.  It not recommended in the ebuild.
-	ELECTRON_APP_ALLOW_AUDIT=${ELECTRON_APP_ALLOW_AUDIT:="1"}
+	ELECTRON_APP_ALLOW_AUDIT=${ELECTRON_APP_ALLOW_AUDIT:-"1"}
 
 	# You could define it as a per-package envar.  It not recommended in the ebuild.
-	ELECTRON_APP_ALLOW_AUDIT_FIX=${ELECTRON_APP_ALLOW_AUDIT_FIX:="1"}
+	ELECTRON_APP_ALLOW_AUDIT_FIX=${ELECTRON_APP_ALLOW_AUDIT_FIX:-"1"}
 
 	# You could define it as a per-package envar.  It not recommended in the ebuild.
 	# Applies to only vulnerability testing not the tool itself.
-	ELECTRON_APP_NO_DIE_ON_AUDIT=${ELECTRON_APP_NO_DIE_ON_AUDIT:="0"}
+	ELECTRON_APP_NO_DIE_ON_AUDIT=${ELECTRON_APP_NO_DIE_ON_AUDIT:-"0"}
 
 	# You could define it as a per-package envar.  Disabled by default because
 	# rapid changes in dependencies over short period of time.
 	ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=\
-	${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:="0"}
+	${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:-"0"}
 
 	# You could define it as a per-package envar.  It not recommended in the ebuild.
-	ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:="0"}
+	ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:-"0"}
 }
 
 # @FUNCTION: electron-app_pkg_setup
@@ -767,7 +767,7 @@ eerror
 			addwrite ${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 			mkdir -p ${YARN_STORE_DIR}/offline
 			chown -R portage:portage "${YARN_STORE_DIR}"
-			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:=${YARN_STORE_DIR}}
+			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:-${YARN_STORE_DIR}}
 			;;
 		yarn)
 ewarn
@@ -778,7 +778,7 @@ ewarn
 			addwrite ${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 			mkdir -p ${YARN_STORE_DIR}/offline
 			chown -R portage:portage "${YARN_STORE_DIR}"
-			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:=${YARN_STORE_DIR}}
+			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:-${YARN_STORE_DIR}}
 			;;
 		*)
 eerror
