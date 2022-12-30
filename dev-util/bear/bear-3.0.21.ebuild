@@ -15,15 +15,15 @@ MY_PN="${PN/b/B}"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 CDEPEND="
-	>=net-libs/grpc-1.46.4[${MULTILIB_USEDEP}]
+	>=net-libs/grpc-1.49.2[${MULTILIB_USEDEP}]
 	>=dev-libs/protobuf-3.11[${MULTILIB_USEDEP}]
 "
 DEPEND+="
 	${CDEPEND}
 	!=dev-cpp/nlohmann_json-3.10.3[${MULTILIB_USEDEP}]
-	>=dev-cpp/nlohmann_json-3.10.5[${MULTILIB_USEDEP}]
-	>=dev-libs/libfmt-9[${MULTILIB_USEDEP}]
-	>=dev-libs/spdlog-1.5[${MULTILIB_USEDEP}]
+	>=dev-cpp/nlohmann_json-3.11.2[${MULTILIB_USEDEP}]
+	>=dev-libs/libfmt-9.1[${MULTILIB_USEDEP}]
+	>=dev-libs/spdlog-1.11.0[${MULTILIB_USEDEP}]
 " # \
 # The libfmt requirement is based on the CMakeLists.txt is different from the \
 # INSTALL.md requiring 6.2.
