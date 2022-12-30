@@ -530,8 +530,10 @@ EOF
         cp "/usr/share/eselect-emscripten/hello_world.cpp" ./
         export EM_CACHE="${sandbox}/cache"
 
-        /usr/share/emscripten-${PV}/emcc \
-        hello_world.cpp -o hello_world.js
+        /usr/share/emscripten-${PV}/em++ \
+		-stdlib=libc++ \
+	        hello_world.cpp \
+		-o hello_world.js
     popd
     rm -rf "${sandbox}"
 
@@ -547,6 +549,8 @@ EOF
     # The LLVM_ prefix is reserved for the package llvm package only, \
     # the emscripten package has no right to it.
     echo "export LLVM_ROOT=\"\${EMSDK_LLVM_ROOT}\""
+    echo
+    echo "You may need to add -stdlib=libc++ "
     echo
 }
 
