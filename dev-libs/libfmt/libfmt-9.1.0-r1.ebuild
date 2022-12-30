@@ -23,12 +23,15 @@ IUSE="test"
 RESTRICT="!test? ( test )"
 
 src_configure() {
-	local mycmakeargs=(
-		-DFMT_CMAKE_DIR="$(get_libdir)/cmake/fmt"
-		-DFMT_LIB_DIR="$(get_libdir)"
-		-DFMT_TEST=$(usex test)
-	)
-	cmake-multilib_src_configure
+	configure_abi() {
+		local mycmakeargs=(
+			-DFMT_CMAKE_DIR="$(get_libdir)/cmake/fmt"
+			-DFMT_LIB_DIR="$(get_libdir)"
+			-DFMT_TEST=$(usex test)
+		)
+		cmake_src_configure
+	}
+	multilib_foreach_abi configure_abi
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib
