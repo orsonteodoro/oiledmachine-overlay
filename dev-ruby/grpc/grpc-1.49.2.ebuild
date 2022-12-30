@@ -11,7 +11,8 @@ RUBY_FAKEGEM_RECIPE_TEST="rspec3"
 RUBY_TW_DISABLE="1"
 RUBY_PV=(2.7 3.0 3.1)
 USE_RUBY=("${RUBY_PV[@]/.}")
-USE_RUBY="${USE_RUBY[@]/#/ruby}"
+USE_RUBY=("${USE_RUBY[@]/#/ruby}")
+USE_RUBY="${USE_RUBY[@]}"
 inherit ruby-fakegem ruby-tw
 
 DESCRIPTION="High-performance RPC framework (python libraries)"
