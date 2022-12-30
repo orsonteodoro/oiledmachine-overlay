@@ -165,15 +165,15 @@ find_targets() {
         -regextype 'posix-egrep' -regex ".*[0-9.]+" | sed -e "s|^${EROOT}||" \
         | sort -V | cut -f 5 -d "/")
 
-    for em_v in ${EMSCRIPTEN_VERSIONS} ; do
-        [[ ! -f "${EROOT}/usr/share/emscripten-${em_v}/emcc" ]] && continue
+    for em_pv in ${EMSCRIPTEN_VERSIONS} ; do
+        [[ ! -f "${EROOT}/usr/share/emscripten-${em_pv}/emcc" ]] && continue
         local use_path=$(realpath --canonicalize-missing \
-            "${EROOT}"/var/db/pkg/dev-util/emscripten-${em_v}*/USE)
+            "${EROOT}"/var/db/pkg/dev-util/emscripten-${em_pv}*/USE)
         [[ ! -f "${use_path}" ]] && continue
         for compiler in fastcomp llvm ; do
             if [[ "${compiler}" == "fastcomp" ]] ; then
-                if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0" ; then
-                    echo "emscripten-${em_v},emscripten-fastcomp-${em_v}"
+                if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "2.0" ; then
+                    echo "emscripten-${em_pv},emscripten-fastcomp-${em_pv}"
                 fi
             elif [[ "${compiler}" == "llvm" ]] ; then
                 for llvm_slot in ${LLVM_VERSIONS} ; do
@@ -181,66 +181,66 @@ find_targets() {
                            $(realpath "${EROOT}"/var/db/pkg/sys-devel/llvm-${llvm_slot}*/USE) \
                        && grep -q -F -e "llvm_targets_WebAssembly" \
                            $(realpath "${EROOT}"/var/db/pkg/sys-devel/clang-${llvm_slot}*/USE) ; then
-			llvm_v=$(basename $(realpath "${EROOT}"/var/db/pkg/sys-devel/clang-${llvm_slot}*) \
+			llvm_pv=$(basename $(realpath "${EROOT}"/var/db/pkg/sys-devel/clang-${llvm_slot}*) \
 				| sed -e "s|clang-||")
                         llvm_major="${llvm_slot}"
-                        llvm_major_minor=$(echo "${llvm_v}" | cut -f 1-2 -d '.')
+                        llvm_major_minor=$(echo "${llvm_pv}" | cut -f 1-2 -d '.')
 			# Also set the llvm conditional block in set_config()
-                        if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.18" \
+                        if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.18" \
                             && [[ "${llvm_major}" -ge 16 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.18" \
-                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.4" \
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.18" \
+                            && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.4" \
                             && [[ "${llvm_major}" -ge 15 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.4" \
-                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.27" \
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.4" \
+                            && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "2.0.27" \
                             && [[ "${llvm_major}" -ge 14 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.27" \
-                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" \
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "2.0.27" \
+                            && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "2.0.13" \
                             && [[ "${llvm_major}" -ge 13 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.13" \
-                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" \
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "2.0.13" \
+                            && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.39.20" \
                             && [[ "${llvm_major}" -ge 12 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.39.20" \
-                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.7" \
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.39.20" \
+                            && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.39.7" \
                             && [[ "${llvm_major}" -ge 11 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.39.7" \
-                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.40" \
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.39.7" \
+                            && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.38.40" \
                             && [[ "${llvm_major}" -ge 10 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.38.40" \
-                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.24" \
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.38.40" \
+                            && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.38.24" \
                             && [[ "${llvm_major}" -ge 9 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.38.24" \
-                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.11" \
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.38.24" \
+                            && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.38.11" \
                             && [[ "${llvm_major}" -ge 8 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.38.11" \
-                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.28" \
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.38.11" \
+                            && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.37.28" \
                             && [[ "${llvm_major}" -ge 7 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.28" \
-                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.21" \
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.37.28" \
+                            && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.37.21" \
                             && [[ "${llvm_major}" -ge 6 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.21" \
-                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.15" \
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.37.21" \
+                            && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.37.15" \
                             && [[ "${llvm_major}" -ge 5 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.15" \
-                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.7" \
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.37.15" \
+                            && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.37.7" \
                             && [[ "${llvm_major}" -ge 4 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.7" \
-                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.36.1" \
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.37.7" \
+                            && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.36.1" \
                             && is_x_op_y ${llvm_major_minor} ">=" "3.9" ; then
-                            echo "emscripten-${em_v},llvm-${llvm_slot}"
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
                         fi
                     fi
                 done
@@ -275,11 +275,12 @@ set_config() {
         local targets=( $(find_targets) )
         target=${targets[target-1]}
         em=$(echo "${target}" | cut -f 1 -d ",")
-        PV=$(echo "${em}" | cut -f 2 -d "-")
+        em_pv=${em#*-}
+        PV=${em_pv}
         compiler=$(echo "${target}" | cut -f 2 -d ",")
         if [[ "${compiler}" =~ "llvm" ]] ; then
-            llvm_v=$(echo "${compiler}" | cut -f 2 -d "-")
-            __LLVM_BIN_PATH__=/usr/lib/llvm/${llvm_v}/bin
+            llvm_pv=$(echo "${compiler}" | cut -f 2 -d "-")
+            __LLVM_BIN_PATH__=/usr/lib/llvm/${llvm_pv}/bin
             __EMCC_WASM_BACKEND__=1
         elif [[ "${compiler}" =~ "emscripten-fastcomp" ]] ; then
             fc_p="${compiler}"
@@ -289,11 +290,12 @@ set_config() {
     elif [[ "${target}" =~ emscripten- \
         && "${target}" =~ (llvm-|emscripten-fastcomp-) ]] ; then
         em=$(echo "${target}" | cut -f 1 -d " ")
-        PV=$(echo "${em}" | cut -f 2 -d "-")
+        em_pv=${em#*-}
+        PV=${em_pv}
         compiler=$(echo "${target}" | cut -f 2 -d " ")
         if [[ "${compiler}" =~ "llvm" ]] ; then
-            llvm_v=$(echo "${compiler}" | cut -f 2 -d "-")
-            __LLVM_BIN_PATH__=/usr/lib/llvm/${llvm_v}/bin
+            llvm_pv=$(echo "${compiler}" | cut -f 2 -d "-")
+            __LLVM_BIN_PATH__=/usr/lib/llvm/${llvm_pv}/bin
             __EMCC_WASM_BACKEND__=1
         elif [[ "${compiler}" =~ "emscripten-fastcomp" ]] ; then
             fc_p="${compiler}"
@@ -335,116 +337,116 @@ set_config() {
         PYTHON_EXE_ABSPATH=/usr/bin/python3.6
     fi
 
-    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.28" ; then
+    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.37.28" ; then
         __EMSDK_NODE_VERSION_MIN__="4.1.1"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.28" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.37.28" ; then
         __EMSDK_NODE_VERSION_MIN__="0.8.0"
     fi
 
-    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.27" ; then
+    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.27" ; then
         __EMSDK_BINARYEN_VERSION__="111"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.27" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.14" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.27" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.14" ; then
         __EMSDK_BINARYEN_VERSION__="109"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.14" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.11" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.14" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.11" ; then
         __EMSDK_BINARYEN_VERSION__="108"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.11" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.8" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.11" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.8" ; then
         __EMSDK_BINARYEN_VERSION__="105"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.8" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.2" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.8" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.2" ; then
         __EMSDK_BINARYEN_VERSION__="104"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.2" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.0.1" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.2" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.0.1" ; then
         __EMSDK_BINARYEN_VERSION__="103"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.0.1" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.15" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.0.1" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "2.0.15" ; then
         __EMSDK_BINARYEN_VERSION__="101"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.18" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.15" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "2.0.18" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "2.0.15" ; then
         __EMSDK_BINARYEN_VERSION__="100"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.15" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "2.0.15" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "2.0.13" ; then
         __EMSDK_BINARYEN_VERSION__="99"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.13" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.8" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "2.0.13" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "2.0.8" ; then
         __EMSDK_BINARYEN_VERSION__="98"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.8" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.5" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "2.0.8" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "2.0.5" ; then
         __EMSDK_BINARYEN_VERSION__="97"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.5" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.1" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "2.0.5" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "2.0.1" ; then
         __EMSDK_BINARYEN_VERSION__="95"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.1" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.40.0" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "2.0.1" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.40.0" ; then
         __EMSDK_BINARYEN_VERSION__="94"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.40.0" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.14" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.40.0" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.39.14" ; then
         __EMSDK_BINARYEN_VERSION__="93"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.39.14" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.39.14" ; then
         __EMSDK_BINARYEN_VERSION__="90"
     fi
 
     # Also set the llvm conditional chain in find_targets()
-    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.18" ; then
+    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.18" ; then
         __EMSDK_LLVM_VERSION__="16"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.18" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.4" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.18" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.4" ; then
         __EMSDK_LLVM_VERSION__="15"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.4" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.27" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.4" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "2.0.27" ; then
         __EMSDK_LLVM_VERSION__="14"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.27" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "2.0.27" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "2.0.13" ; then
         __EMSDK_LLVM_VERSION__="13"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.13" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "2.0.13" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.39.20" ; then
         __EMSDK_LLVM_VERSION__="12"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.39.20" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.7" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.39.20" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.39.7" ; then
         __EMSDK_LLVM_VERSION__="11"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.39.7" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.40" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.39.7" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.38.40" ; then
         __EMSDK_LLVM_VERSION__="10"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.38.40" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.24" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.38.40" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.38.24" ; then
         __EMSDK_LLVM_VERSION__="9"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.38.24" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.11" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.38.24" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.38.11" ; then
         __EMSDK_LLVM_VERSION__="8"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.38.11" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.28" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.38.11" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.37.28" ; then
         __EMSDK_LLVM_VERSION__="7"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.28" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.21" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.37.28" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.37.21" ; then
         __EMSDK_LLVM_VERSION__="6"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.21" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.15" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.37.21" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.37.15" ; then
         __EMSDK_LLVM_VERSION__="5"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.15" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.7" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.37.15" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.37.7" ; then
         __EMSDK_LLVM_VERSION__="4"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.7" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.35.22" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.37.7" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.35.22" ; then
         __EMSDK_LLVM_VERSION__="3.9"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.35.22" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.35.2" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.35.22" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.35.2" ; then
         __EMSDK_LLVM_VERSION__="3.8"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.35.2" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.32.4" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.35.2" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.32.4" ; then
         __EMSDK_LLVM_VERSION__="3.7"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.32.4" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.30.1" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.32.4" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.30.1" ; then
         __EMSDK_LLVM_VERSION__="3.6"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.30.1" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.29.1" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.30.1" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.29.1" ; then
         __EMSDK_LLVM_VERSION__="3.5"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.29.1" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.27.1" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.29.1" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.27.1" ; then
         __EMSDK_LLVM_VERSION__="3.4"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.27.1" \
-        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.17.0" ; then
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.27.1" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.17.0" ; then
         __EMSDK_LLVM_VERSION__="3.3"
     fi
 
@@ -517,6 +519,15 @@ EOF
     export EMCC_WASM_BACKEND=${__EMCC_WASM_BACKEND__}
     export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 
+    echo
+    echo -e "BINARYEN:\t\t${EMSDK_BINARYEN_BASE_PATH}"
+    echo -e "CLOSURE_COMPILER:\t${EMSDK_CLOSURE_COMPILER}"
+    echo -e "EM_CONFIG:\t\t${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
+    echo -e "EMCC_WASM_BACKEND:\t${__EMCC_WASM_BACKEND__}"
+    echo -e "EROOT:\t\t${EROOT}"
+    echo -e "LLVM_ROOT:\t\t${EMSDK_LLVM_ROOT}"
+    echo
+
     /usr/bin/emcc -v
     /usr/bin/em++ -v
 
@@ -564,26 +575,26 @@ do_show() {
     write_list_start "Current emscritpen, emscripten-fastcomp, llvm combo:"
 
     [[ ! -f /etc/env.d/99emscripten ]] && return
-    em_v=$(basename $(grep -F -e "EMSCRIPTEN=" /etc/env.d/99emscripten) \
+    em_pv=$(basename $(grep -F -e "EMSCRIPTEN=" /etc/env.d/99emscripten) \
         | sed -e "s|emscripten-||g")
     is_llvm=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
         | grep -q -F -e "/usr/lib/llvm" ; echo "$?")
     is_fc=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
         | grep -q -F -e "/usr/share/emscripten-fastcomp" ; echo "$?")
 
-    llvm_v=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+    llvm_pv=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
         | sed -e "s|EMSDK_LLVM_ROOT=/usr/lib/llvm/||" -e "s|/bin||")
-    fc_v=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+    fc_pv=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
         | sed -e "s|EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-||" \
         -e "s|/bin||")
 
     if [[ "${is_llvm}" == "0" ]] ; then
-        local k_node_src="emscripten-${em_v}"
-        local k_node_dest="llvm-${llvm_v}"
+        local k_node_src="emscripten-${em_pv}"
+        local k_node_dest="llvm-${llvm_pv}"
         write_kv_list_entry "${k_node_src%/}" "${k_node_dest%/}"
     elif [[ "${is_fc}" == "0" ]]; then
-        local k_node_src="emscripten-${em_v}"
-        local k_node_dest="emscripten-fastcomp-${fc_v}"
+        local k_node_src="emscripten-${em_pv}"
+        local k_node_dest="emscripten-fastcomp-${fc_pv}"
         write_kv_list_entry "${k_node_src%/}" "${k_node_dest%/}"
     else
         write_kv_list_entry "(unset)" ""
@@ -600,24 +611,24 @@ do_list() {
     local i targets=( $(find_targets) )
 
     if [[ -f /etc/env.d/99emscripten ]] ; then
-        em_v=$(basename $(grep -F -e "EMSCRIPTEN=" /etc/env.d/99emscripten) \
+        em_pv=$(basename $(grep -F -e "EMSCRIPTEN=" /etc/env.d/99emscripten) \
             | sed -e "s|emscripten-||g")
         is_llvm=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
             | grep -q -F -e "/usr/lib/llvm" ; echo "$?")
         is_fc=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
             | grep -q -F -e "/usr/share/emscripten-fastcomp" ; echo "$?")
 
-        llvm_v=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+        llvm_pv=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
             | sed -e "s|EMSDK_LLVM_ROOT=/usr/lib/llvm/||" -e "s|/bin||")
-        fc_v=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+        fc_pv=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
             | sed -e "s|EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-||" \
             -e "s|/bin||")
 
-        expected_highligted_line="emscripten-${em_v}"
+        expected_highligted_line="emscripten-${em_pv}"
         if [[ "${is_llvm}" == "0" ]] ; then
-            expected_highligted_line+=",llvm-${llvm_v}"
+            expected_highligted_line+=",llvm-${llvm_pv}"
         elif [[ "${is_fc}" == "0" ]] ; then
-            expected_highligted_line+=",emscripten-fastcomp-${fc_v}"
+            expected_highligted_line+=",emscripten-fastcomp-${fc_pv}"
         fi
     fi
 
