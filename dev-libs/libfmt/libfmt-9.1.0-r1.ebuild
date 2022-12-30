@@ -30,3 +30,6 @@ src_configure() {
 	)
 	cmake-multilib_src_configure
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib
+# OILEDMACHINE-OVERLAY-META-REVDEP: bear
