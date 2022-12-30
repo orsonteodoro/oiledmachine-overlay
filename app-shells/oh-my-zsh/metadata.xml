@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <!-- only for this forked version of oh-my-zsh on oiledmachine-overlay -->
   <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
+
     Oh-my-zsh is a collection of zsh plugins and themes.  Plugins may
     help in autocompletion, add aliases, or add additional features
     to the command line experience.  Themes change the way the command
@@ -15,76 +16,156 @@
     information about local copy of a repository.
 
     For plugins_common-aliases:
-    OMZ_CHM_VIEWER
-    OMZ_PDF_VIEWER
-    OMZ_PS_VIEWER - PostScript
-    OMZ_DVI_VIEWER
-    OMZ_DJVU_VIEWER
-    OMZ_MEDIA_PLAYER
+
+      OMZ_CHM_VIEWER
+      OMZ_PDF_VIEWER
+      OMZ_PS_VIEWER - PostScript
+      OMZ_DVI_VIEWER
+      OMZ_DJVU_VIEWER
+      OMZ_MEDIA_PLAYER
+
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/robbyrussell/oh-my-zsh/issues</bugs-to>
     <doc lang="en">https://github.com/robbyrussell/oh-my-zsh/wiki</doc>
-    <maintainer status="inactive" type="person">
-      <name>Robby Russell</name>
-    </maintainer>
-    <maintainer status="active" type="person">
-      <email>marc.cornella@live.com</email>
-      <name>Marc Cornellà</name>
-    </maintainer>
     <remote-id type="github">robbyrussell/oh-my-zsh</remote-id>
   </upstream>
   <use>
-    <!-- see https://github.com/robbyrussell/oh-my-zsh/wiki/Themes -->
+    <!-- See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes -->
     <!-- moved to profiles/desc/omz_themes.desc -->
     <!-- See https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins -->
     <!-- moved to profiles/desc/omz_plugins.desc -->
-    <flag name="ace">Checks for proper ace archiver support.</flag>
-    <flag name="branding">Enables gentoo branding.</flag>
-    <flag name="bzr">Checks for proper bzr support.</flag>
-    <flag name="clipboard">Checks dependencies for X clipboard support.</flag>
-    <flag name="curl">Checks for proper cURL support.</flag>
-    <flag name="deb">Add support for deb files.</flag>
-    <flag name="emojis">Checks for proper emoji support.</flag>
-    <flag name="update-emoji-data">Updates emoji information on emerge time to
-      the bleeding edge emoji version (currently emoji version 13.0).  If
-      disabled, it may only support emoji 1.0 plus some of emoji 2.0.</flag>
-    <flag name="java">Checks for proper Java support.</flag>
-    <flag name="lzw">Adds support for LZW (.Z) compressed files</flag>
-    <flag name="git">Checks for proper Git support.</flag>
-    <flag name="gpg">Checks for proper GnuPG support.</flag>
-    <flag name="mercurial">Checks for proper Mercurial support.</flag>
-    <flag name="nodejs">Checks for proper NodeJS support </flag>
-    <flag name="perlbrew">Adds perlbrew support for the perl plugin </flag>
-    <flag name="powerline">Checks for installation of the powerline font and
-      themes that depend on it.</flag>
-    <flag name="python">Enables python support.</flag>
-    <flag name="ruby">Checks for proper Ruby support.</flag>
-    <flag name="rust">Checks for proper Rust support.</flag>
-    <flag name="subversion">Checks for proper subversion support.</flag>
-    <flag name="sudo">Checks for proper sudo support.</flag>
-    <flag name="wget">Checks for proper wget support.</flag>
-    <flag name="7zip">Adds 7zip support for the extract plugin.</flag>
-    <flag name="bzip2">Adds bzip2 support for the extract plugin.</flag>
-    <flag name="gzip">Adds gzip support for the extract plugin.</flag>
-    <flag name="lrzip">Adds lrzip support for the extract plugin.</flag>
-    <flag name="lz4">Adds lz4 support for the extract plugin.</flag>
-    <flag name="lzip">Adds lzip support for the extract plugin.</flag>
-    <flag name="lzo">Adds lzo support for the extract plugin.</flag>
-    <flag name="lzma">Adds lzma support for the extract plugin.</flag>
-    <flag name="unzip">Adds unzip support for the extract plugin.</flag>
-    <flag name="rar">Adds rar support for the extract plugin.</flag>
-    <flag name="rar">Adds rpm support for the extract plugin.</flag>
-    <flag name="xz">Adds xz support for the extract plugin.</flag>
-    <flag name="zip">Adds zip support for the extract plugin to list files in
-      common-aliases.</flag>
-    <flag name="zstd">Adds zstd support for the extract plugin.</flag>
-    <flag name="python_targets_python2_7">Checks for Python 2.7 support.</flag>
-    <flag name="python_targets_python3_5">Checks for Python 3.x support.</flag>
-    <flag name="python_targets_python3_6">Checks for Python 3.x support.</flag>
-    <flag name="python_targets_python3_7">Checks for Python 3.x support.</flag>
-    <flag name="ruby_targets_ruby24">Checks for Ruby support.</flag>
-    <flag name="ruby_targets_ruby25">Checks for Ruby support.</flag>
-    <flag name="ruby_targets_ruby26">Checks for Ruby support.</flag>
+    <flag name="ace">
+      Checks for proper ace archiver support.
+    </flag>
+    <flag name="bzr">
+      Checks for proper bzr support.
+    </flag>
+    <flag name="clipboard">
+      Checks dependencies for X clipboard support.
+    </flag>
+    <flag name="curl">
+      Checks for proper cURL support.
+    </flag>
+    <flag name="deb">
+      Add support for deb files.
+    </flag>
+    <flag name="emoji">
+      Checks for proper emoji support.
+    </flag>
+    <flag name="update-emoji-data">
+      Updates emoji information on emerge time to the bleeding edge emoji
+      version (currently emoji version 15.0).  If disabled, it may only support
+      emoji 1.0 plus some of emoji 2.0.
+    </flag>
+    <flag name="java">
+      Checks for proper Java support.
+    </flag>
+    <flag name="lzw">
+      Adds support for LZW (.Z) compressed files
+    </flag>
+    <flag name="git">
+      Checks for proper Git support.
+    </flag>
+    <flag name="gpg">
+      Checks for proper GnuPG support.
+    </flag>
+    <flag name="mercurial">
+      Checks for proper Mercurial support.
+    </flag>
+    <flag name="nodejs">
+      Checks for proper NodeJS support
+    </flag>
+    <flag name="perlbrew">
+      Adds perlbrew support for the perl plugin
+    </flag>
+    <flag name="powerline">
+      Checks for installation of the powerline font and themes that depend on
+      it.
+    </flag>
+    <flag name="python">
+      Enables python support.
+    </flag>
+    <flag name="ruby">
+      Checks for proper Ruby support.
+    </flag>
+    <flag name="rust">
+      Checks for proper Rust support.
+    </flag>
+    <flag name="subversion">
+      Checks for proper subversion support.
+    </flag>
+    <flag name="sudo">
+      Checks for proper sudo support.
+    </flag>
+    <flag name="wget">
+      Checks for proper wget support.
+    </flag>
+    <flag name="7zip">
+      Adds 7zip support for the extract plugin.
+    </flag>
+    <flag name="bzip2">
+      Adds bzip2 support for the extract plugin.
+    </flag>
+    <flag name="gzip">
+      Adds gzip support for the extract plugin.
+    </flag>
+    <flag name="lrzip">
+      Adds lrzip support for the extract plugin.
+    </flag>
+    <flag name="lz4">
+      Adds lz4 support for the extract plugin.
+    </flag>
+    <flag name="lzip">
+      Adds lzip support for the extract plugin.
+    </flag>
+    <flag name="lzo"> 
+      Adds lzo support for the extract plugin.
+    </flag>
+    <flag name="lzma">
+      Adds lzma support for the extract plugin.
+    </flag>
+    <flag name="unzip">
+      Adds unzip support for the extract plugin.
+    </flag>
+    <flag name="rar">
+      Adds rar support for the extract plugin.
+    </flag>
+    <flag name="rar">
+      Adds rpm support for the extract plugin.
+    </flag>
+    <flag name="xz">
+      Adds xz support for the extract plugin.
+    </flag>
+    <flag name="zip">
+      Adds zip support for the extract plugin to list files in common-aliases.
+    </flag>
+    <flag name="zstd">
+      Adds zstd support for the extract plugin.
+    </flag>
+    <flag name="python_targets_python2_7">
+      Checks for Python 2.7 support.
+    </flag>
+    <flag name="python_targets_python3_8">
+      Checks for Python 3.8.x support.
+    </flag>
+    <flag name="python_targets_python3_9">
+      Checks for Python 3.9.x support.
+    </flag>
+    <flag name="python_targets_python3_10">
+      Checks for Python 3.10.x support.
+    </flag>
+    <flag name="python_targets_python3_11">
+      Checks for Python 3.11.x support.
+    </flag>
+    <flag name="ruby_targets_ruby31">
+      Checks for Ruby support.
+    </flag>
+    <flag name="ruby_targets_ruby30">
+      Checks for Ruby support.
+    </flag>
+    <flag name="ruby_targets_ruby27">
+      Checks for Ruby support.
+    </flag>
   </use>
 </pkgmetadata>

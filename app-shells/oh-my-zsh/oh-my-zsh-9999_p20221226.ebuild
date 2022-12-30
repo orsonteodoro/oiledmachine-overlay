@@ -8,6 +8,8 @@ USE_RUBY="ruby26 ruby27 ruby30 ruby31 "
 
 inherit python-r1 ruby-ng
 
+# GEN_EBUILD="1" # Uncomment to auto generate parts of the ebuild
+
 DESCRIPTION="A delightful community-driven framework for managing your zsh
 configuration that includes optional plugins and themes."
 HOMEPAGE="http://ohmyz.sh/"
@@ -46,7 +48,7 @@ LICENSE="
 	omz_plugins_wd? ( MIT )
 	omz_plugins_zsh-navigation-tools? ( MIT GPL-3 )
 	omz_plugins_shrink-path? ( WTFPL-2 )
-	omz_plugins_z? ( WTFPL-2 )
+	omz_plugins_z? ( MIT WTFPL-2 )
 	omz_plugins_per-directory-history? ( ZLIB )
 "
 
@@ -59,7 +61,7 @@ LICENSE="
 
 RUBY_OPTIONAL=1
 EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:=en}
-EGIT_COMMIT="49691b58b3c1fbe64b927ec88d5e9697f76e2a80"
+EGIT_COMMIT="a3c579bf27b34942d4c6ad64e7cfd75788b05ea3"
 FN_SRC="${EGIT_COMMIT}.zip"
 FN_DST="${P}-${EGIT_COMMIT:0:7}.zip"
 A_URL="https://github.com/ohmyzsh/ohmyzsh/archive/${FN_SRC}"
@@ -70,7 +72,7 @@ SRC_URI="${A_URL} -> ${FN_DST}"
 RESTRICT+=" fetch"
 SLOT="0"
 IUSE+="
-branding bzr clipboard curl emojis update-emoji-data java git gpg mercurial
+bzr clipboard curl emoji update-emoji-data java git gpg mercurial
 nodejs powerline perlbrew python ruby rust subversion sudo tmux uri wayland wget
 X
 
@@ -107,30 +109,30 @@ copybuffer copyfile copypath cp cpanm dash debian deno dircycle direnv
 dirhistory dirpersist dnf dnote docker docker-compose docker-machine doctl
 dotenv dotnet droplr drush eecms emacs ember-cli emoji emoji-clock emotty
 encode64 extract fabric fancy-ctrl-z fasd fastfile fbterm fd fig firewalld
-flutter fnm forklift fossil frontend-search fzf gas gatsby gcloud geeknote gem
-genpass gh git git-auto-fetch git-escape-magic git-extras git-flow git-flow-avh
-git-hubflow git-lfs git-prompt gitfast github gitignore glassfish globalias
-gnu-utils golang gpg-agent gradle grails grc grunt gulp hanami helm heroku
-history history-substring-search hitchhiker hitokoto homestead httpie invoke
-ionic ipfs isodate istioctl iterm2 jake-node jenv jfrog jhbuild jira jruby
-jsontools juju jump kate keychain kitchen kn knife knife_ssh kops kube-ps1
-kubectl kubectx lando laravel laravel4 laravel5 last-working-dir lein
+flutter fluxcd fnm forklift fossil frontend-search fzf gas gatsby gcloud
+geeknote gem genpass gh git git-auto-fetch git-escape-magic git-extras git-flow
+git-flow-avh git-hubflow git-lfs git-prompt gitfast github gitignore glassfish
+globalias gnu-utils golang gpg-agent gradle grails grc grunt gulp hanami hasura
+helm heroku history history-substring-search hitchhiker hitokoto homestead
+httpie invoke ionic ipfs isodate istioctl iterm2 jake-node jenv jfrog jhbuild
+jira jruby jsontools juju jump kate keychain kitchen kn knife knife_ssh kops
+kube-ps1 kubectl kubectx lando laravel laravel4 laravel5 last-working-dir lein
 lighthouse lol lpass lxd macos macports magic-enter man marked2 mercurial
-meteor microk8s minikube mix mix-fast mongocli mosh multipass mvn
+meteor microk8s minikube mix mix-fast mongo-atlas mongocli mosh multipass mvn
 mysql-macports n98-magerun nanoc ng nmap node nomad npm nvm oc octozen
 operator-sdk otp pass paver pep8 per-directory-history percol perl perms phing
-pip pipenv pj please pm2 pod poetry postgres pow powder powify profiles pyenv
-pylint python rails rake rake-fast rand-quote rbenv rbfu rbw react-native rebar
-redis-cli repo ripgrep ros rsync ruby rust rvm safe-paste salt samtools sbt
-scala scd screen scw sdk sfdx sfffe shell-proxy shrink-path singlechar spring
-sprunge ssh-agent stack sublime sublime-merge sudo supervisor suse svcat svn
-svn-fast-info swiftpm symfony symfony2 systemadmin systemd taskwarrior term_tab
-terminitor terraform textastic textmate thefuck themes thor tig timer tmux
-tmux-cssh tmuxinator toolbox torrent transfer tugboat ubuntu ufw
-universalarchive urltools vagrant vagrant-prompt vault vi-mode vim-interaction
-virtualenv virtualenvwrapper volta vscode vundle wakeonlan wd web-search wp-cli
-xcode yarn yii yii2 yum z zbell zeus zoxide zsh-interactive-cd
-zsh-navigation-tools
+pip pipenv pj please pm2 pod poetry postgres pow powder powify pre-commit
+profiles pyenv pylint python rails rake rake-fast rand-quote rbenv rbfu rbw
+react-native rebar redis-cli repo ripgrep ros rsync ruby rust rvm safe-paste
+salt samtools sbt scala scd screen scw sdk sfdx sfffe shell-proxy shrink-path
+sigstore singlechar skaffold spring sprunge ssh-agent stack sublime
+sublime-merge sudo supervisor suse svcat svn svn-fast-info swiftpm symfony
+symfony2 systemadmin systemd taskwarrior term_tab terminitor terraform
+textastic textmate thefuck themes thor tig timer tmux tmux-cssh tmuxinator
+toolbox torrent transfer tugboat ubuntu ufw universalarchive urltools vagrant
+vagrant-prompt vault vi-mode vim-interaction virtualenv virtualenvwrapper volta
+vscode vundle wakeonlan watson wd web-search wp-cli xcode yarn yii yii2 yum z
+zbell zeus zoxide zsh-interactive-cd zsh-navigation-tools
 )
 IUSE+=" ${OMZSH_PLUGINS[@]/#/-omz_plugins_}"
 RDEPEND_COMMON_ALIASES=()
@@ -157,17 +159,22 @@ fi
 PLUGINS_RDEPEND="
 	omz_plugins_1password? ( >=app-misc/1password-cli-2 )
 	omz_plugins_adb? ( dev-util/android-tools )
+	omz_plugins_ag? ( app-misc/ag )
 	omz_plugins_ansible? ( app-admin/ansible )
 	omz_plugins_ant? ( dev-java/ant )
 	omz_plugins_arcanist? ( dev-util/arcanist )
+	omz_plugins_archlinux? ( sys-apps/pacman )
 	omz_plugins_autojump? ( app-shells/autojump )
+	omz_plugins_autopep8? ( dev-python/autopep8 )
 	omz_plugins_aws? ( dev-python/awscli )
 	omz_plugins_battery? ( sys-power/acpi )
 	omz_plugins_bazel? ( dev-util/bazel )
+	omz_plugins_bedtools? ( sci-biology/bedtools )
 	omz_plugins_bower? ( dev-nodejs/bower )
 	omz_plugins_bundler? ( dev-ruby/bundler )
 	omz_plugins_cabal? ( dev-haskell/cabal )
 	omz_plugins_capistrano? ( dev-ruby/capistrano )
+	omz_plugins_cask? ( app-emacs/cask )
 	omz_plugins_catimg? ( media-gfx/imagemagick[png] )
 	omz_plugins_celery? ( dev-python/celery )
 	omz_plugins_chucknorris? ( games-misc/fortune-mod )
@@ -184,6 +191,7 @@ PLUGINS_RDEPEND="
 	)
 	omz_plugins_cpanm? ( dev-perl/App-cpanminus )
 	omz_plugins_debian? ( app-arch/dpkg )
+	omz_plugins_deno? ( net-libs/deno )
 	omz_plugins_direnv? ( dev-util/direnv )
 	omz_plugins_docker? ( app-containers/docker )
 	omz_plugins_docker-compose? ( app-emulation/docker-compose )
@@ -200,10 +208,12 @@ PLUGINS_RDEPEND="
 	)
 	omz_plugins_emacs? ( >=app-editors/emacs-24.0 )
 	omz_plugins_fasd? ( app-misc/fasd )
+	omz_plugins_fabric? ( dev-python/fabric )
 	omz_plugins_fbterm? ( app-i18n/fbterm )
 	omz_plugins_fd? ( sys-apps/fd )
 	omz_plugins_firewalld? ( net-firewall/firewalld )
 	omz_plugins_flutter? ( dev-util/flutter )
+	omz_plugins_fnm? ( dev-util/fnm )
 	omz_plugins_fossil? ( dev-vcs/fossil )
 	omz_plugins_fzf? ( app-shells/fzf )
 	omz_plugins_gcloud? ( app-misc/google-cloud-sdk )
@@ -220,11 +230,13 @@ PLUGINS_RDEPEND="
 	omz_plugins_grc? ( app-misc/grc )
 	omz_plugins_helm? ( app-admin/helm )
 	omz_plugins_heroku? ( dev-util/heroku-cli )
+	omz_plugins_history-substring-search? ( app-editors/emacs )
 	omz_plugins_hitchhiker? (
 		games-misc/cowsay
 		games-misc/fortune-mod
 	)
 	omz_plugins_httpie? ( net-misc/httpie )
+	omz_plugins_invoke? ( dev-python/invoke )
 	omz_plugins_ipfs? ( net-p2p/go-ipfs )
 	omz_plugins_jira? ( dev-python/jira )
 	omz_plugins_jfrog? ( dev-util/jfrog-cli )
@@ -237,8 +249,10 @@ PLUGINS_RDEPEND="
 	omz_plugins_laravel? ( dev-lang/php )
 	omz_plugins_laravel4? ( dev-lang/php )
 	omz_plugins_laravel5? ( dev-lang/php )
+	omz_plugins_lein? ( dev-java/leiningen-bin )
 	omz_plugins_lol? ( sys-process/procps )
 	omz_plugins_lpass? ( app-admin/lastpass-cli )
+	omz_plugins_lxd? ( app-containers/lxd )
 	omz_plugins_man? ( virtual/man )
 	omz_plugins_minikube? ( sys-cluster/minikube )
 	omz_plugins_mix? ( dev-lang/elixir )
@@ -273,8 +287,11 @@ PLUGINS_RDEPEND="
 	omz_plugins_phing? ( dev-php/phing )
 	omz_plugins_pip? ( dev-python/pip )
 	omz_plugins_pipenv? ( dev-python/pipenv )
+	omz_plugins_pm2? ( sys-process/pm2 )
 	omz_plugins_poetry? ( dev-python/poetry )
 	omz_plugins_postgres? ( dev-db/postgresql )
+	omz_plugins_pow? ( sys-process/lsof )
+	omz_plugins_pre-commit? ( dev-vcs/pre-commit )
 	omz_plugins_pylint? ( dev-python/pylint )
 	omz_plugins_rails? (
 		|| (
@@ -286,6 +303,8 @@ PLUGINS_RDEPEND="
 	omz_plugins_rake? ( dev-ruby/rake )
 	omz_plugins_rake-fast? ( dev-ruby/rake )
 	omz_plugins_rand-quote? ( net-misc/curl )
+	omz_plugins_rbenv? ( dev-ruby/rbenv )
+	omz_plugins_rbw? ( app-admin/rbw )
 	omz_plugins_rebar? ( dev-util/rebar3 )
 	omz_plugins_redis-cli? ( dev-db/redis )
 	omz_plugins_repo? ( dev-vcs/repo )
@@ -301,6 +320,9 @@ PLUGINS_RDEPEND="
 		app-admin/salt
 		dev-lang/python
 	)
+	omz_plugins_samtools? (
+		sci-biology/samtools
+	)
 	omz_plugins_sbt? (
 		|| (
 			dev-java/sbt
@@ -311,10 +333,13 @@ PLUGINS_RDEPEND="
 	omz_plugins_screen? ( app-misc/screen )
 	omz_plugins_scw? ( app-admin/scaleway-cli )
 	omz_plugins_sfffe? ( sys-apps/ack )
+	omz_plugins_sigstore? ( app-containers/cosign )
+	omz_plugins_ssh-agent? ( virtual/ssh )
 	omz_plugins_stack? ( dev-haskell/stack )
 	omz_plugins_sublime? ( app-editors/sublime-text )
 	omz_plugins_sublime-merge? ( dev-vcs/sublime-merge )
 	omz_plugins_supervisor? ( app-admin/supervisor )
+	omz_plugins_suse? ( sys-apps/zypper )
 	omz_plugins_svn-fast-info? ( >=dev-vcs/subversion-1.6 )
 	omz_plugins_systemadmin? (
 		net-analyzer/tcpdump
@@ -339,6 +364,8 @@ PLUGINS_RDEPEND="
 	omz_plugins_tig? ( dev-vcs/tig )
 	omz_plugins_tmux? ( app-misc/tmux )
 	omz_plugins_toolbox? ( app-containers/toolbox )
+	omz_plugins_ubuntu? ( sys-apps/apt )
+	omz_plugins_ufw? ( net-firewall/ufw )
 	omz_plugins_vagrant? ( app-emulation/vagrant )
 	omz_plugins_vagrant-prompt? ( app-emulation/vagrant )
 	omz_plugins_vim-interaction? ( app-editors/gvim )
@@ -353,28 +380,13 @@ PLUGINS_RDEPEND="
 	)
 	omz_plugins_vundle? ( app-editors/vim )
 	omz_plugins_wakeonlan? ( net-misc/wakeonlan )
+	omz_plugins_watson? ( dev-python/td-watson )
 	omz_plugins_yarn? ( sys-apps/yarn )
 	omz_plugins_wp-cli? ( app-admin/wp-cli )
 	omz_plugins_zsh-interactive-cd? ( app-shells/fzf )
 	omz_plugins_zsh-navigation-tools? ( sys-process/procps )
 	omz_plugins_zoxide? ( app-shells/zoxide )
 "
-#	omz_plugins_urltools? (
-#		|| (
-#			dev-lang/perl
-#			dev-lang/php
-#			dev-lang/python
-#			dev-lang/ruby
-#			net-libs/nodejs
-#		)
-#	)
-#	omz_plugins_jsontools? (
-#		|| (
-#			dev-lang/python
-#			dev-lang/ruby
-#			net-libs/nodejs
-#		)
-#	)
 THEMES_RDEPEND="
 	 omz_themes_adben? ( games-misc/fortune-mod )
 "
@@ -406,10 +418,11 @@ RDEPEND+="
 		)
 	)
 	deb? ( sys-devel/binutils )
-	emojis? (
+	emoji? (
 		|| (
 			media-fonts/noto-color-emoji
 			media-fonts/noto-color-emoji-bin
+			media-fonts/noto-emoji
 			media-fonts/emojione-color-font
 			media-fonts/symbola
 			media-fonts/twemoji-color-font
@@ -466,7 +479,6 @@ BDEPEND+="
 "
 S="${WORKDIR}/${PN//-/}-${EGIT_COMMIT}"
 REQUIRED_USE+="
-	branding? ( omz_themes_gentoo )
 	curl? (
 		|| (
 			omz_plugins_extract
@@ -477,6 +489,7 @@ REQUIRED_USE+="
 			omz_plugins_gitignore
 			omz_plugins_hitokoto
 			omz_plugins_lol
+			omz_plugins_octozen
 			omz_plugins_perl
 			omz_plugins_pip
 			omz_plugins_rand-quote
@@ -508,11 +521,11 @@ REQUIRED_USE+="
 	omz_plugins_coffee? ( clipboard )
 	omz_plugins_copybuffer? ( clipboard )
 	omz_plugins_copyfile? ( clipboard )
-	omz_plugins_emoji-clock? ( emojis )
-	omz_plugins_emoji? ( emojis )
+	omz_plugins_emoji-clock? ( emoji )
+	omz_plugins_emoji? ( emoji )
 	omz_plugins_emotty? (
 		!update-emoji-data
-		emojis
+		emoji
 		omz_plugins_emoji
 	)
 	omz_plugins_git? ( git )
@@ -526,6 +539,7 @@ REQUIRED_USE+="
 		python
 	)
 	omz_plugins_git-flow? ( git )
+	omz_plugins_history-substring-search? ( git )
 	omz_plugins_magic-enter? ( git )
 	omz_plugins_jenv? ( java )
 	omz_plugins_mercurial? ( mercurial )
@@ -572,6 +586,7 @@ REQUIRED_USE+="
 		rar
 		zip
 	)
+	omz_plugins_emoji-clock? ( emoji )
 	omz_plugins_extract? (
 		|| (
 			7zip
@@ -591,12 +606,14 @@ REQUIRED_USE+="
 		)
 	)
 	omz_plugins_archlinux? ( curl )
+	omz_plugins_octozen? ( curl )
 	omz_plugins_composer? ( curl )
 	omz_plugins_gitfast? ( curl )
 	omz_plugins_github? ( curl )
 	omz_plugins_gitignore? ( curl )
 	omz_plugins_hitokoto? ( curl )
 	omz_plugins_lol? ( curl )
+	omz_plugins_macos? ( curl )
 	omz_plugins_perl? ( curl )
 	omz_plugins_pip? ( curl )
 	omz_plugins_rand-quote? ( curl )
@@ -604,11 +621,25 @@ REQUIRED_USE+="
 	omz_plugins_sprunge? ( curl )
 	omz_plugins_systemadmin? ( curl )
 	omz_plugins_transfer? ( curl )
+	omz_plugins_chruby? ( ruby )
 	omz_plugins_ruby? ( ruby )
 	omz_plugins_rbenv? ( ruby )
 	omz_plugins_rust? ( rust )
 	omz_plugins_aliases? ( python )
-	omz_plugins_jsontools? ( python )
+	omz_plugins_jsontools? (
+		|| (
+			python
+			nodejs
+			ruby
+		)
+	)
+	omz_plugins_urltools? (
+		|| (
+			python
+			nodejs
+			ruby
+		)
+	)
 	omz_plugins_pyenv? ( python )
 	omz_plugins_python? ( python )
 	omz_plugins_salt? ( python )
@@ -621,12 +652,25 @@ REQUIRED_USE+="
 			omz_plugins_singlechar
 		)
 	)
+
+	omz_plugins_apache2-macports? ( kernel_Darwin )
+	omz_plugins_brew? ( kernel_Darwin )
+	omz_plugins_dash? ( kernel_Darwin )
+	omz_plugins_droplr? ( kernel_Darwin )
+	omz_plugins_iterm2? ( kernel_Darwin )
+	omz_plugins_macports? ( kernel_Darwin )
+	omz_plugins_mysql-macports? ( kernel_Darwin )
+	omz_plugins_macos? ( kernel_Darwin )
+	omz_plugins_postgres? ( kernel_Darwin )
+	omz_plugins_pow? ( kernel_Darwin )
+	omz_plugins_swiftpm? ( kernel_Darwin )
+	omz_plugins_textastic? ( kernel_Darwin )
+	omz_plugins_textmate? ( kernel_Darwin )
+	omz_plugins_xcode? ( kernel_Darwin )
 "
 ZSH_DEST="/usr/share/zsh/site-contrib/${PN}"
 ZSH_EDEST="${EPREFIX}${ZSH_DEST}"
 ZSH_TEMPLATE="templates/zshrc.zsh-template"
-
-# GEN_EBUILD="1" # Uncomment to auto generate parts of the ebuild
 
 pkg_setup() {
 	if use update-emoji-data ; then
@@ -765,19 +809,11 @@ src_prepare() {
 		|| die
 	sed -i -e '/zstyle.*cache/d' "${S}/lib/completion.zsh" || die
 
-	if use branding ; then
-		sed -i \
--e 's!\
-ZSH_THEME="robbyrussell"!\
-[[ -z "${ZSH_THEME}" ]] \&\& ZSH_THEME="gentoo"!g' \
-		  "${S}/${ZSH_TEMPLATE}" || die
-	else
-		sed -i \
+	sed -i \
 -e 's!\
 ZSH_THEME="robbyrussell"!\
 [[ -z "${ZSH_THEME}" ]] \&\& ZSH_THEME="robbyrussell"!g' \
-		  "${S}/${ZSH_TEMPLATE}" || die
-	fi
+	  "${S}/${ZSH_TEMPLATE}" || die
 
 	if use omz_plugins_common-aliases ; then
 		if [[ -n "${OMZ_CHM_VIEWER}" ]] ; then

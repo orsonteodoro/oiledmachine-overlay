@@ -84,6 +84,7 @@ fd - Installs the fd plugin.
 fig - Installs the fig plugin.
 firewalld - Installs the firewalld plugin.
 flutter - Installs the flutter plugin.
+fluxcd - Installs the fluxcd plugin.
 fnm - Installs the fnm plugin.
 forklift - Installs the forklift plugin.
 fossil - Installs the fossil plugin.
@@ -119,6 +120,7 @@ grc - Installs the grc plugin.
 grunt - Installs the grunt plugin.
 gulp - Installs the gulp plugin.
 hanami - Installs the hanami plugin.
+hasura - Installs the hasura plugin.
 helm - Installs the helm plugin.
 heroku - Installs the heroku plugin.
 history - Installs the history plugin.
@@ -173,6 +175,7 @@ microk8s - Installs the microk8s plugin.
 minikube - Installs the minikube plugin.
 mix - Installs the mix plugin.
 mix-fast - Installs the mix-fast plugin.
+mongo-atlas - Installs the mongo-atlas plugin.
 mongocli - Installs the mongocli plugin.
 mosh - Installs the mosh plugin.
 multipass - Installs the multipass plugin.
@@ -209,6 +212,7 @@ postgres - Installs the postgres plugin.
 pow - Installs the pow plugin.
 powder - Installs the powder plugin.
 powify - Installs the powify plugin.
+pre-commit - Installs the pre-commit plugin.
 profiles - Installs the profiles plugin.
 pyenv - Installs the pyenv plugin.
 pylint - Installs the pylint plugin.
@@ -243,7 +247,9 @@ sfdx - Installs the sfdx plugin.
 sfffe - Installs the sfffe plugin.
 shell-proxy - Installs the shell-proxy plugin.
 shrink-path - Installs the shrink-path plugin.
+sigstore - Installs the sigstore plugin.
 singlechar - Installs the singlechar plugin.
+skaffold - Installs the skaffold plugin.
 spring - Installs the spring plugin.
 sprunge - Installs the sprunge plugin.
 ssh-agent - Installs the ssh-agent plugin.
@@ -294,6 +300,7 @@ volta - Installs the volta plugin.
 vscode - Installs the vscode plugin.
 vundle - Installs the vundle plugin.
 wakeonlan - Installs the wakeonlan plugin.
+watson - Installs the watson plugin.
 wd - Installs the wd plugin.
 web-search - Installs the web-search plugin.
 wp-cli - Installs the wp-cli plugin.
