@@ -883,6 +883,9 @@ eerror
 eerror "The package contains chromium_pv=${chromium_pv} which is End Of Life"
 eerror "(EOL)"
 eerror
+eerror "Set either NPM_SECAUDIT_NO_DIE_ON_AUDIT=1 or ELECTRON_APP_NO_DIE_ON_AUDIT=1"
+eerror "to continue."
+eerror
 				die
 			fi
 		else
@@ -903,13 +906,17 @@ einfo
 			chromium_pv=$(strings ${x} \
 		| grep -E -e "^[0-9]+\.[0-9]\.[0-9]{3,4}\.[0-9]+$" | head -n 1)
 			if ver_test $(ver_cut 1 ${chromium_pv}) -lt ${CHROMIUM_STABLE_PV} ; then
-				if [[ "${NPM_SECAUDIT_NO_DIE_ON_AUDIT}" == "1" ]] ; then
+				if [[ "${NPM_SECAUDIT_NO_DIE_ON_AUDIT}" == "1" \
+					|| "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "1" ]] ; then
 ewarn
 ewarn "The package contains chromium_pv=${chromium_pv} which is End Of Life (EOL)"
 ewarn
 				else
 eerror
 eerror "The package contains chromium_pv=${chromium_pv} which is End Of Life (EOL)"
+eerror
+eerror "Set either NPM_SECAUDIT_NO_DIE_ON_AUDIT=1 or ELECTRON_APP_NO_DIE_ON_AUDIT=1"
+eerror "to continue."
 eerror
 					die
 				fi

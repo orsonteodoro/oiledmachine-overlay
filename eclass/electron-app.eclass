@@ -968,9 +968,16 @@ _query_lite_json() {
 # Print warnings for audits or die depending on ELECTRON_APP_NO_DIE_ON_AUDIT
 adie() {
 	if [[ "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "1" ]] ; then
-		ewarn "${1}"
+ewarn
+ewarn "${1}"
+ewarn
 	else
-		die "${1}"
+eerror
+eerror "${1}"
+eerror
+eerror "Set ELECTRON_APP_NO_DIE_ON_AUDIT=1 to continue"
+eerror
+		die
 	fi
 }
 
