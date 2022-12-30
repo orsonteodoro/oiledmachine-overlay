@@ -17,7 +17,7 @@ KEYWORDS=""
 IUSE="
 +libcxxabi static-libs test
 
-hardened r11
+hardened r12
 "
 REQUIRED_USE=""
 RESTRICT="!test? ( test )"
@@ -35,12 +35,17 @@ DEPEND="
 	sys-devel/llvm:${LLVM_MAJOR}
 "
 BDEPEND+="
+	dev-util/patchutils
 	test? (
 		>=dev-util/cmake-3.16
 		>=sys-devel/clang-3.9.0
 		sys-devel/gdb[python]
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)
+"
+SRC_URI+="
+https://github.com/llvm/llvm-project/commit/ef843c8271027b89419d07ffc2aaa3abf91438ef.patch
+	-> libcxx-commit-ef843c8.patch
 "
 PATCHES=( "${FILESDIR}/libcxx-15.0.0.9999-hardened.patch" )
 
@@ -177,6 +182,26 @@ _usex_lto() {
 	else
 		echo "OFF"
 	fi
+}
+
+src_prepare() {
+	pushd "${WORKDIR}" || die
+		# Still bugged since Sept 30, 2022
+		# Fixes build time failure:
+#
+# include/c++/v1/system_error: In instantiation of 'std::__1::error_code::error_code(_Ep, typename std::__1::enable_if<std::__1::is_error_code_enum<_Ep>::value>::type*) [with _Ep = st>
+# include/c++/v1/ios:452:34:   required from here
+# include/c++/v1/system_error:355:40: error: use of deleted function 'void std::__1::__adl_only::make_error_code()'
+#   355 |                 *this = make_error_code(__e);
+#       |                         ~~~~~~~~~~~~~~~^~~~~
+# include/c++/v1/system_error:263:10: note: declared here
+#   263 |     void make_error_code() = delete;
+#
+		filterdiff -x "*/Cxx2bIssues.csv" "${DISTDIR}/libcxx-commit-ef843c8.patch" \
+			> "${T}/libcxx-commit-ef843c8.patch" || die
+		eapply -R "${T}/libcxx-commit-ef843c8.patch"
+	popd
+	llvm.org_src_prepare
 }
 
 src_configure() {
