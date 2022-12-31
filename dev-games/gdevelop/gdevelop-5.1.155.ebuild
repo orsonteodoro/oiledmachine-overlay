@@ -9,10 +9,12 @@ ELECTRON_APP_ELECTRON_PV="18.2.2" # See \
 ELECTRON_APP_REACT_PV="16.14.0" # See \
 # https://raw.githubusercontent.com/4ian/GDevelop/v5.1.155/newIDE/app/package-lock.json
 
-inherit check-reqs desktop electron-app eutils user-info \
-	toolchain-funcs xdg
+inherit check-reqs desktop electron-app eutils flag-o-matic user-info
+inherit toolchain-funcs xdg
 
 MY_PN="GDevelop"
+MY_PV="${PV//_/-}"
+
 DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed
 to be used by everyone."
 HOMEPAGE="https://gdevelop-app.com/"
@@ -28,8 +30,27 @@ IUSE+=" +extensions openrc"
 # https://app.travis-ci.com/github/4ian/GDevelop (raw log)
 # U 16.04
 # Dependencies for the native build are not installed in CI
+EMSCRIPTEN_PV="1.39.6" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
+GDCORE_TESTS_NODEJS_PV="16.15.1" # Based on CI, For building GDCore tests
+GDEVELOP_JS_NODEJS_PV="14.18.2" # Based on CI, For building GDevelop.js.  From emsdk 1.39.6
 UDEV_PV="229"
-GDEVELOP_JS_NODE_PV="14.18.2" # From emsdk 1.39.6
+
+LLVM_SLOTS=(16 14) # Deleted 9 8 7 because asm.js support was dropped.
+# The CI uses Clang 7.
+# Emscripten expects either LLVM 10 for wasm, or LLVM 6 for asm.js.
+
+gen_llvm_depends() {
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+		(
+			sys-devel/llvm:${s}
+			sys-devel/clang:${s}
+			=sys-devel/lld-${s}*
+			>=dev-util/emscripten-${EMSCRIPTEN_PV}:${s}[wasm(+)]
+		)
+		"
+	done
+}
 
 DEPEND_NOT_USED_IN_CI="
 	>=media-libs/freetype-2.10.1
@@ -50,7 +71,6 @@ DEPEND_NOT_USED_IN_CI2="
 	>=sys-fs/udev-${UDEV_PV}
 	>=sys-fs/eudev-3.1.5
 "
-
 DEPEND+="
 	${DEPEND_NOT_USED_IN_CI}
 	|| (
@@ -58,55 +78,30 @@ DEPEND+="
 		>=sys-apps/systemd-${UDEV_PV}
 	)
 	>=app-arch/p7zip-9.20.1
+	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:14
 "
 RDEPEND+="
 	${DEPEND}
 "
-EMSCRIPTEN_PV="1.39.6" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
-GDCORE_TESTS_NODEJS_PV="16.15.1" # Based on CI, For building GDCore tests
-GDEVELOP_JS_NODEJS_PV="14.18.2" # Based on CI, For building GDevelop.js
 #
 # The package actually uses two nodejs, but the current multislot nodejs
 # package cannot switch in the middle of emerge.  From experience, the
 # highest nodejs works.
 #
-LLVM_SLOTS=(16 15 14 13 12 11 10) # Deleted 9 8 7 because asm.js support was dropped.
-# The CI uses Clang 7.
-# Emscripten expects either LLVM 10 for wasm, or LLVM 6 for asm.js.
-MIN_LLVM="10"
-
-gen_llvm_depends() {
-	for s in ${LLVM_SLOTS[@]} ; do
-		echo "
-		(
-			sys-devel/llvm:${s}
-			sys-devel/clang:${s}
-			=sys-devel/lld-${s}*
-		)
-		"
-	done
-}
-
-BDEPEND_NOT_USED_IN_CI="
-	|| (
-		>=dev-node/acorn-8.4.1
-		>=dev-node/acorn-bin-8.4.1
-	)
-"
-
+# acorn not used in CI
 BDEPEND+="
 	|| (
 		$(gen_llvm_depends)
 	)
 	>=dev-util/cmake-3.12.4
-	>=dev-util/emscripten-${EMSCRIPTEN_PV}[wasm(+)]
 	>=dev-vcs/git-2.37.3
 	>=media-gfx/imagemagick-6.8.9[png]
-	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:${GDEVELOP_JS_NODEJS_PV%%.*}
-	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}[npm]
+	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:${GDEVELOP_JS_NODEJS_PV%%.*}[acorn]
+	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}[acorn,npm]
 	>=sys-devel/gcc-5.4
+	dev-util/emscripten:14[wasm(+)]
 "
-MY_PV="${PV//_/-}"
+# Emscripten 3.1.3 used because of node 14.
 SRC_URI="
 https://github.com/4ian/${MY_PN}/archive/v${MY_PV}.tar.gz
 	-> ${P}.tar.gz
@@ -141,40 +136,6 @@ eerror
 		fi
 	fi
 
-	if eselect emscripten list \
-		| grep -q -E -e "llvm-[0-9]+ \*" ; then
-		:;
-	else
-eerror
-eerror "You need to set your >=emscripten-${EMSCRIPTEN_PV} and"
-eerror ">=sys-devel/llvm-${MIN_LLVM}.  See \`eselect emscripten\` for details.  (1)"
-eerror
-		die
-	fi
-	local line=$(eselect emscripten list \
-		| grep -E -e "llvm-[0-9]+ \*")
-	local emscripten_pv=$(echo "${line}" \
-		| grep -E -e "llvm-[0-9]+ \*" \
-		| grep -E -o -e "emscripten-[0-9.]+" \
-		| sed -e "s|emscripten-||")
-	local llvm_pv=$(echo "${line}" \
-		| grep -E -e "llvm-[0-9]+ \*" \
-		| grep -E -o -e "llvm-[0-9.]+" \
-		| sed -e "s|llvm-||")
-
-	if ver_test ${emscripten_pv}   -ge ${EMSCRIPTEN_PV} \
-	&& ver_test ${llvm_pv} -ge ${MIN_LLVM} ; then
-einfo
-einfo "Using emscripten-${emscripten_pv} and >=llvm-${llvm_pv}"
-einfo
-	else
-eerror
-eerror "You need to set your >=emscripten-${EMSCRIPTEN_PV} and >=llvm-${MIN_LLVM}."
-eerror "See \`eselect emscripten\` for details.  (2)"
-eerror
-		die
-	fi
-
 	electron-app_pkg_setup
 	if [[ -z "${EM_CONFIG}" ]] ; then
 eerror
@@ -194,32 +155,9 @@ eerror
 	fi
 }
 
-get_lld_slot() {
-	echo $(ver_cut 1 $(wasm-ld --version | sed -e "s|LLD ||"))
-}
-
-check_lld() {
-	export LLVM_SLOT=$(get_lld_slot)
-	export CXX="clang++-${LLVM_SLOT}"
-	einfo "CXX=${CXX}"
-	if has_version "sys-devel/clang:${LLVM_SLOT}[llvm_targets_WebAssembly]" &&
-	   has_version "sys-devel/llvm:${LLVM_SLOT}[llvm_targets_WebAssembly]" ; then
-einfo "Passed same slot test for lld, clang, llvm."
-	else
-eerror
-eerror "LLD's corresponding version to Clang and LLVM versions must have"
-eerror "llvm_targets_WebAssembly.  Either upgrade LLD to version ${LLVM_SLOT}"
-eerror "or rebuild with sys-devel/llvm:${LLVM_SLOT}[llvm_targets_WebAssembly] and"
-eerror "sys-devel/clang:${LLVM_SLOT}[llvm_targets_WebAssembly]"
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
 	pkg_setup_html5
 	check-reqs_pkg_setup
-	check_lld
 
 	if ! egetent group ${PN} ; then
 eerror
@@ -286,23 +224,30 @@ src_unpack() {
 		"${EMBUILD_DIR}/emscripten.config" || die
 #	export EMMAKEN_CFLAGS='-std=gnu++11'
 #	export EMCC_CFLAGS='-std=gnu++11'
-	export CC=emcc
-	export CXX=em++
+	export EMCC_CFLAGS="-stdlib=libc++"
+        export BINARYEN="${EMSDK_BINARYEN_BASE_PATH}"
+	export CC="emcc"
+	export CXX="em++"
 	strip-unsupported-flags
 #	export CC=gcc
 #	export CXX=g++
-	export NODE_VERSION=${ACTIVE_VERSION}
+        export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
 	export EM_CACHE="${T}/emscripten/cache"
 	emconfig_path=$(cat ${EM_CONFIG})
-	BINARYEN_LIB_PATH=$(echo \
-		-e "${emconfig_path}\nprint (BINARYEN_ROOT)" \
-		| python3)"/lib"
-	export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
+	export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
+        export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
+	export NODE_VERSION=${ACTIVE_VERSION}
+
+
 einfo "CC=${CC}"
 einfo "CXX=${CXX}"
 einfo "CFLAGS=${CFLAGS}"
 einfo "CXXFLAGS=${CXXFLAGS}"
 einfo "LDFLAGS=${LDFLAGS}"
+einfo "BINARYEN=${EMSDK_BINARYEN_BASE_PATH}"
+einfo "CLOSURE_COMPILER=${EMSDK_CLOSURE_COMPILER}"
+einfo "EMCC_CFLAGS=${EMCC_CFLAGS}"
+einfo "LLVM_ROOT=${EMSDK_LLVM_ROOT}"
 einfo "NODE_VERSION=${NODE_VERSION}"
 	export PATH="/usr/$(get_libdir)/node_modules/acorn/bin:${PATH}"
 	export NODE_PATH="/usr/$(get_libdir)/node_modules:${NODE_PATH}"
