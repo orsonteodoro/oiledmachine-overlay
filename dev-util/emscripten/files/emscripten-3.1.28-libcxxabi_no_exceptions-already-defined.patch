@@ -1,0 +1,12 @@
+--- a/tools/system_libs.py.orig	2022-12-08 11:15:20.000000000 -0800
++++ b/tools/system_libs.py	2022-12-30 21:29:13.122908131 -0800
+@@ -1379,7 +1379,8 @@ class libcxxabi(NoExceptLibrary, MTLibra
+     if not self.is_mt and not self.is_ww:
+       cflags.append('-D_LIBCXXABI_HAS_NO_THREADS')
+     if self.eh_mode == Exceptions.NONE:
+-      cflags.append('-D_LIBCXXABI_NO_EXCEPTIONS')
++      cflags.append('-Wno-macro-redefined')
++      cflags.append('-D_LIBCXXABI_NO_EXCEPTIONS')
+     elif self.eh_mode == Exceptions.EMSCRIPTEN:
+       cflags.append('-D__USING_EMSCRIPTEN_EXCEPTIONS__')
+       # The code used to interpret exceptions during terminate

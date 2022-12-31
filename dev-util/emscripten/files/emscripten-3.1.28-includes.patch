@@ -1,0 +1,40 @@
+--- a/tools/system_libs.py.orig	2022-12-08 11:15:20.000000000 -0800
++++ b/tools/system_libs.py	2022-12-30 21:52:36.832325881 -0800
+@@ -1372,7 +1372,7 @@ class libcxxabi(NoExceptLibrary, MTLibra
+       '-DLIBCXXABI_NON_DEMANGLING_TERMINATE',
+       '-std=c++20',
+     ]
+-  includes = ['system/lib/libcxx/src']
++  includes = ['system/include/compat', 'system/lib/libcxx/include', 'system/lib/libcxxabi/include', 'system/lib/libc/musl/include', 'system/lib/libc/musl/arch/emscripten', 'system/lib/libcxx/src']
+ 
+   def get_cflags(self):
+     cflags = super().get_cflags()
+@@ -1437,7 +1437,7 @@ class libcxx(NoExceptLibrary, MTLibrary)
+     '-std=c++20',
+   ]
+ 
+-  includes = ['system/lib/libcxx/src']
++  includes = ['system/include/compat', 'system/lib/libcxx/include', 'system/lib/libcxxabi/include', 'system/lib/libc/musl/include', 'system/lib/libc/musl/arch/emscripten', 'system/lib/libcxx/src']
+ 
+   src_dir = 'system/lib/libcxx/src'
+   src_glob = '**/*.cpp'
+@@ -1702,7 +1702,7 @@ class libwasmfs(DebugLibrary, AsanInstru
+ 
+   cflags = ['-fno-exceptions', '-std=c++17']
+ 
+-  includes = ['system/lib/wasmfs', 'system/lib/pthread']
++  includes = ['system/lib/wasmfs', 'system/lib/pthread']
+ 
+   def __init__(self, **kwargs):
+     self.ignore_case = kwargs.pop('ignore_case')
+--- a/tools/gen_struct_info.py.orig	2022-12-08 11:15:20.000000000 -0800
++++ b/tools/gen_struct_info.py	2022-12-30 22:03:56.360714991 -0800
+@@ -440,6 +440,8 @@ def main(args):
+     '-I' + utils.path_from_root('system/lib/libcxxabi/src'),
+     '-D__USING_EMSCRIPTEN_EXCEPTIONS__',
+     '-I' + utils.path_from_root('system/lib/wasmfs/'),
++    '-I' + utils.path_from_root('system/lib/libcxx/include/'),
++    '-I' + utils.path_from_root('system/lib/libcxxabi/include/'),
+     '-std=c++17',
+   ]
+ 
