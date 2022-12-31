@@ -25,7 +25,7 @@ esac
 
 inherit npm-utils
 
-EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postrm pkg_postinst
+EXPORT_FUNCTIONS pkg_setup src_unpack
 
 # ############## START Per-package environmental variables #####################
 
@@ -38,18 +38,6 @@ EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postrm pkg_postinst
 
 # See https://nodejs.dev/en/about/releases/
 NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="14"
-
-_NPM_SECAUDIT_REG_PATH=${_NPM_SECAUDIT_REG_PATH:-""} # private set only within in the eclass
-if [[ -n "${NPM_SECAUDIT_REG_PATH}" ]] ; then
-	eerror
-	eerror "NPM_SECAUDIT_REG_PATH has been removed and replaced with"
-	eerror "NPM_SECAUDIT_INSTALL_PATH.  Please wait for the next ebuild update."
-	eerror
-		die
-fi
-NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
-NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
-NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
 
 # See https://github.com/microsoft/TypeScript/blob/v2.0.7/package.json
 if [[ -n "${NPM_SECAUDIT_TYPESCRIPT_PV}" ]] && ( \
@@ -330,28 +318,6 @@ npm-secaudit_src_prepare_default() {
 	#default_src_prepare
 }
 
-
-# @FUNCTION: npm_secaudit_store_jsons_for_security_audit
-# @DESCRIPTION:
-# Standardize the install location for .audit
-npm_secaudit_store_jsons_for_security_audit() {
-	_npm-secaudit_check_missing_install_path
-	npm_secaudit_store_package_jsons "${S}"
-	export _NPM_SECAUDIT_REG_PATH="${NPM_SECAUDIT_INSTALL_PATH}/.audit"
-	insinto "${_NPM_SECAUDIT_REG_PATH}"
-
-	local old_dotglob=$(shopt dotglob | cut -f 2)
-	shopt -s dotglob # copy hidden files
-
-	doins -r "${T}/package_jsons"/*
-
-	if [[ "${old_dotglob}" == "on" ]] ; then
-		shopt -s dotglob
-	else
-		shopt -u dotglob
-	fi
-}
-
 # @FUNCTION: npm-secaudit_src_install_default
 # @DESCRIPTION:
 # Installs the program.  Analog of electron-app_desktop_install.
@@ -388,64 +354,6 @@ npm-secaudit_src_compile_default() {
 	cd "${S}"
 
 	npm-secaudit-build
-}
-
-# @FUNCTION: npm-secaudit-register
-# @DESCRIPTION:
-# Adds the package to the electron database
-# This function MUST be called in post_inst.
-npm-secaudit-register() {
-	if [[ -n "${NPM_SECAUDIT_REG_PATH}" ]] ; then
-ewarn
-ewarn "NPM_SECAUDIT_REG_PATH has been removed and replaced with"
-ewarn "NPM_SECAUDIT_INSTALL_PATH.  Please wait for the next ebuild update."
-ewarn
-		die
-	fi
-	if [[ -z "${NPM_SECAUDIT_INSTALL_PATH}" ]] ; then
-eerror
-eerror "NPM_SECAUDIT_INSTALL_PATH must be defined"
-eerror
-		die
-	fi
-	while true ; do
-		if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
-			trap "rm -rf \"${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
-			local path=${1:-""}
-			local check_path
-			if [[ "${path}" =~ ^/ ]] ; then
-				# absolute path
-				check_path="${path}"
-			else
-				# relative path
-				check_path=$(realpath "${NPM_SECAUDIT_INSTALL_PATH}/${path}")
-			fi
-
-			[[ -z "${check_path}" ]] && "check_path is empty.  Audits won't work"
-
-			# format:
-			# ${CATEGORY}/${P}	path_to_package
-			addwrite "${NPM_PACKAGE_DB}"
-
-			# remove existing entry
-			touch "${NPM_PACKAGE_DB}"
-			sed -i -r -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
-
-			echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${NPM_PACKAGE_DB}"
-
-			# remove blank lines
-			sed -i '/^$/d' "${NPM_PACKAGE_DB}"
-			rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
-			break
-		else
-einfo
-einfo "Waiting for mutex to be released for npm-secaudit's pkg_db.  If it takes"
-einfo "too long (15 min), cancel all emerges and remove"
-einfo "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
-einfo
-			sleep 15
-		fi
-	done
 }
 
 # @FUNCTION: _npm-secaudit_audit_fix
@@ -540,117 +448,6 @@ npm-secaudit_install() {
 	for f in $(find "${ed}" -name "*.so" -type f -o -name "*.so.*" -type f) ; do
 		chmod 0755 $(realpath "${f}") || die
 	done
-
-	if [[ "${old_dotglob}" == "on" ]] ; then
-		shopt -s dotglob
-	else
-		shopt -u dotglob
-	fi
-}
-
-# @FUNCTION: npm-secaudit_pkg_postinst
-# @DESCRIPTION:
-# Automatically registers an npm package.
-# Set NPM_SECAUDIT_REG_PATH global to relative path (NOT starting with /) or
-# absolute path (starting with /) to scan for vulnerabilities containing
-# node_modules.
-npm-secaudit_pkg_postinst() {
-        debug-print-function ${FUNCNAME} "${@}"
-
-	npm-secaudit-register "${NPM_SECAUDIT_REG_PATH}"
-}
-
-# @FUNCTION: npm-secaudit_pkg_postrm
-# @DESCRIPTION:
-# Post-removal hook for Electron apps. Removes information required for security checks.
-npm-secaudit_pkg_postrm() {
-        debug-print-function ${FUNCNAME} "${@}"
-
-	while true ; do
-		if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
-			trap "rm -rf \"${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
-			sed -i -r -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
-			sed -i '/^$/d' "${NPM_PACKAGE_DB}"
-			rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
-			break
-		else
-einfo
-einfo "Waiting for mutex to be released for npm-secaudit's pkg_db.  If it takes"
-einfo "too long (15 min), cancel all emerges and remove"
-einfo "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
-einfo
-			sleep 15
-		fi
-	done
-
-	while true ; do
-		if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db" 2>/dev/null ; then
-			trap "rm -rf \"${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db\"" EXIT
-			sed -i -r -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_SETS_DB}"
-			sed -i '/^$/d' "${NPM_PACKAGE_SETS_DB}"
-			rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
-			break
-		else
-einfo
-einfo "Waiting for mutex to be released for npm-secaudit's emerge-sets-db.  If"
-einfo "it takes too long (15 min), cancel all emerges and remove"
-einfo "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
-einfo
-			sleep 15
-		fi
-	done
-}
-
-# @FUNCTION: npm-secaudit_store_package_jsons
-# @DESCRIPTION: Saves the package-lock.json to T for auditing
-npm-secaudit_store_package_jsons() {
-einfo
-einfo "Saving package-lock.json and npm-shrinkwrap.json for future audits"
-einfo
-
-	local old_dotglob=$(shopt dotglob | cut -f 2)
-	shopt -s dotglob # copy hidden files
-
-	local ROOTDIR="${1}"
-	local d
-	local rd
-	local F=$(find ${ROOTDIR} -name "package-lock.json" \
-		-o -name "npm-shrinkwrap.json" \
-		-o -name "package.json" \
-		-o -name "yarn.lock")
-	local td="${T}/package_jsons/"
-	for f in ${F}; do
-		d=$(dirname ${f})
-		rd=$(dirname $(echo "${f}" | sed -e "s|${ROOTDIR}||"))
-		local temp_dest=$(realpath --canonicalize-missing "${td}/${rd}")
-		mkdir -p "${temp_dest}"
-einfo
-einfo "Copying ${f} to ${temp_dest}"
-einfo
-		cp -a "${f}" "${temp_dest}" || die
-	done
-
-	if [[ "${old_dotglob}" == "on" ]] ; then
-		shopt -s dotglob
-	else
-		shopt -u dotglob
-	fi
-}
-
-# @FUNCTION: npm-secaudit_restore_package_jsons
-# @DESCRIPTION: Restores the package-lock.json to T for auditing
-npm-secaudit_restore_package_jsons() {
-	local dest="${1}"
-einfo
-einfo "Restoring package-lock.json and npm-shrinkwrap.json to ${dest}"
-einfo
-
-	local old_dotglob=$(shopt dotglob | cut -f 2)
-	shopt -s dotglob # copy hidden files
-
-	local td="${T}/package_jsons"
-
-	cp -a "${td}"/* "${dest}" || die
 
 	if [[ "${old_dotglob}" == "on" ]] ; then
 		shopt -s dotglob

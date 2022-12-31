@@ -56,19 +56,6 @@ ELECTRON_APP_ELECTRON_PV_SUPPORTED="20.0"
 
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:-"npm"} # can be npm, yarn
 
-NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
-NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
-YARN_PACKAGE_DB="/var/lib/portage/yarn-packages"
-_ELECTRON_APP_REG_PATH=${_ELECTRON_APP_REG_PATH:-""} # private set only within the eclass
-
-if [[ -n "${ELECTRON_APP_REG_PATH}" ]] ; then
-	eerror
-	eerror "ELECTRON_APP_REG_PATH has been removed and replaced with"
-	eerror "ELECTRON_APP_INSTALL_PATH.  Please wait for the next ebuild update."
-	eerror
-	die
-fi
-
 # The recurrance interval between critical vulnerabilities in chrome is 10-14
 # days recently (worst cases), but longer interval between vulnerabilites with
 # 159 days (~5 months) and 5 days has been observed.  If the app is used like a
@@ -77,8 +64,6 @@ fi
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP=\
 ${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP:-"0"}
 
-ELECTRON_APP_LOCKS_DIR="/dev/shm"
-NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
 ELECTRON_APP_DATA_DIR="${EROOT}/var/cache/npm-secaudit"
 ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 
@@ -539,7 +524,7 @@ fi
 RDEPEND+=" ${COMMON_DEPEND}"
 DEPEND+=" ${COMMON_DEPEND}"
 
-EXPORT_FUNCTIONS pkg_setup src_unpack pkg_preinst pkg_postinst pkg_postrm
+EXPORT_FUNCTIONS pkg_setup src_unpack pkg_preinst pkg_postinst
 
 IUSE+=" debug "
 if (( ${EAPI} == 7 )) ; then
@@ -555,13 +540,6 @@ else
 		net-misc/wget
 		sys-apps/file
 		sys-apps/grep[pcre]
-	"
-fi
-
-if [[ -n "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" \
-	&& "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" == "1" ]] ; then
-	RDEPEND+="
-		app-portage/npm-secaudit
 	"
 fi
 
@@ -785,13 +763,6 @@ eerror
 			;;
 	esac
 
-	if [[ ! -d "/dev/shm" ]] ; then
-eerror
-eerror "Missing /dev/shm.  Check the kernel config?"
-eerror
-		die
-	fi
-
 	local prev_update
 	if [[ -f "${ELECTRON_APP_VERSION_DATA_PATH}" ]] ; then
 		prev_update=$(stat -c "%W" "${ELECTRON_APP_VERSION_DATA_PATH}")
@@ -991,10 +962,10 @@ einfo "requirements"
 einfo
 
 	if [[ "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" == "1" ]] ; then
-elog
-elog "It's strongly recommended re-emerge the app weekly to mitigate against"
-elog "critical vulnerabilities in the internal Chromium."
-elog
+ewarn
+ewarn "It's strongly recommended re-emerge the app weekly to mitigate against"
+ewarn "critical vulnerabilities in the internal Chromium."
+ewarn
 	fi
 
 	local ELECTRON_PV
@@ -1364,27 +1335,6 @@ eerror
 	fi
 }
 
-# @FUNCTION: electron-app_store_jsons_for_security_audit
-# @DESCRIPTION:
-# Standardize the install location for .audit
-electron-app_store_jsons_for_security_audit() {
-	_electron-app_check_missing_install_path
-	electron-app_store_package_jsons "${S}"
-	export _ELECTRON_APP_REG_PATH="${ELECTRON_APP_INSTALL_PATH}/.audit"
-	insinto "${_ELECTRON_APP_REG_PATH}"
-
-	local old_dotglob=$(shopt dotglob | cut -f 2)
-	shopt -s dotglob # copy hidden files
-
-	doins -r "${T}/package_jsons"/*
-
-	if [[ "${old_dotglob}" == "on" ]] ; then
-		shopt -s dotglob
-	else
-		shopt -u dotglob
-	fi
-}
-
 # @FUNCTION: electron-app_desktop_install
 # @DESCRIPTION:
 # Installs a desktop app with wrapper and desktop menu entry.
@@ -1455,85 +1405,6 @@ ewarn
 	fi
 
 	make_desktop_entry "${PN}" "${pkg_name}" "${icon}" "${category}"
-
-	electron-app_store_jsons_for_security_audit
-}
-
-# @FUNCTION: electron-app-register-x
-# @DESCRIPTION:
-# Adds the package to the electron database
-# This function MUST be called in pkg_postinst.
-electron-app-register-x() {
-	if [[ -n "${ELECTRON_APP_REG_PATH}" ]] ; then
-eerror
-eerror "ELECTRON_APP_REG_PATH has been removed and replaced with"
-eerror "ELECTRON_APP_INSTALL_PATH.  Please wait for the next ebuild update."
-eerror
-		die
-	fi
-	if [[ -z "${ELECTRON_APP_INSTALL_PATH}" ]] ; then
-eerror
-eerror "ELECTRON_APP_INSTALL_PATH must be defined."
-eerror
-		die
-	fi
-	while true ; do
-		if mkdir "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
-			trap "rm -rf \"${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
-			local pkg_db="${1}"
-			local path=${2:-""}
-			local check_path
-			if [[ "${path}" =~ ^/ ]] ; then
-				# assumed absolute path
-				check_path="${path}"
-			else
-				# relative path
-				check_path=$(realpath "${ELECTRON_APP_INSTALL_PATH}/${path}")
-			fi
-
-			[[ -z "${check_path}" ]] && "check_path is empty.  Audits won't work"
-
-			# format:
-			# ${CATEGORY}/${P}	path_to_package
-			addwrite "${pkg_db}"
-
-			# remove existing entry
-			touch "${pkg_db}"
-			sed -i -r -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${pkg_db}"
-
-			echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${pkg_db}"
-
-			# remove blank lines
-			sed -i '/^$/d' "${pkg_db}"
-			rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
-			break
-		else
-einfo
-einfo "Waiting for mutex to be released for electron-app's pkg_db.  If it takes"
-einfo "too long (15 min), cancel all emerges and remove"
-einfo "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
-einfo
-			sleep 15
-		fi
-	done
-}
-
-# @FUNCTION: electron-app-register-npm
-# @DESCRIPTION:
-# Adds the package to the electron database
-# This function MUST be called in pkg_postinst.
-electron-app-register-npm() {
-	local path=${1:-""}
-	electron-app-register-x "${NPM_PACKAGE_DB}" "${path}"
-}
-
-# @FUNCTION: electron-app-register-yarn
-# @DESCRIPTION:
-# Adds the package to the electron database
-# This function MUST be called in pkg_postinst.
-electron-app-register-yarn() {
-	local path=${1:-""}
-	electron-app-register-x "${YARN_PACKAGE_DB}" "${path}"
 }
 
 electron-app_pkg_preinst() {
@@ -1558,9 +1429,7 @@ electron-app_pkg_preinst() {
 
 # @FUNCTION: electron-app_pkg_postinst
 # @DESCRIPTION:
-# Automatically registers an electron app package.  Set _ELECTRON_APP_REG_PATH
-# global to relative path (NOT starting with /) or absolute path (starting with
-# /) to scan for vulnerabilities containing node_modules.
+# Performs post-merge actions
 electron-app_pkg_postinst() {
         debug-print-function ${FUNCNAME} "${@}"
 
@@ -1588,150 +1457,6 @@ ewarn
 			snap install ${has_assertion_file} \
 "${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_PATH_BASENAME}"
 		fi
-	fi
-
-	case "$ELECTRON_APP_MODE" in
-		npm)
-			electron-app-register-npm "${_ELECTRON_APP_REG_PATH}"
-			;;
-		yarn)
-			electron-app-register-yarn "${_ELECTRON_APP_REG_PATH}"
-			;;
-		*)
-eerror
-eerror "Unsupported package system"
-eerror
-			die
-			;;
-	esac
-}
-
-# @FUNCTION: electron-app_pkg_postrm
-# @DESCRIPTION:
-# Post-removal hook for Electron apps. Removes information required for security checks.
-electron-app_pkg_postrm() {
-        debug-print-function ${FUNCNAME} "${@}"
-
-	case "${ELECTRON_APP_MODE}" in
-		npm)
-			while true ; do
-				if mkdir "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
-					trap "rm -rf \"${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
-					sed -i -r -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
-					sed -i '/^$/d' "${NPM_PACKAGE_DB}"
-					rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
-					break
-				else
-einfo
-einfo "Waiting for mutex to be released for electron-app's pkg_db for npm.  If"
-einfo "it takes too long (15 min), cancel all emerges and remove"
-einfo "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
-einfo
-					sleep 15
-				fi
-			done
-
-			while true ; do
-				if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db" 2>/dev/null ; then
-					trap "rm -rf \"${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db\"" EXIT
-					sed -i -r -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_SETS_DB}"
-					sed -i '/^$/d' "${NPM_PACKAGE_SETS_DB}"
-					rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
-					break
-				else
-einfo
-einfo "Waiting for mutex to be released for npm-secaudit's emerge-sets-db.  If"
-einfo "it takes too long (15 min), cancel all emerges and remove"
-einfo "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
-einfo
-					sleep 15
-				fi
-			done
-			;;
-		yarn)
-			while true ; do
-				if mkdir "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
-					trap "rm -rf \"${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
-					sed -i -r -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${YARN_PACKAGE_DB}"
-					sed -i '/^$/d' "${YARN_PACKAGE_DB}"
-					rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
-					break
-				else
-einfo
-einfo "Waiting for mutex to be released for electron-app's pkg_db for yarn.  If"
-einfo "it takes too long (15 min), cancel all emerges and remove"
-einfo "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
-einfo
-					sleep 15
-				fi
-			done
-
-
-			;;
-		*)
-eerror
-eerror "Unsupported package system"
-eerror
-			die
-			;;
-	esac
-}
-
-# @FUNCTION: electron-app_store_package_jsons
-# @DESCRIPTION: Saves the package-lock.json to T for auditing
-electron-app_store_package_jsons() {
-einfo
-einfo "Saving package-lock.json and npm-shrinkwrap.json for future audits"
-einfo
-
-	local old_dotglob=$(shopt dotglob | cut -f 2)
-	shopt -s dotglob # copy hidden files
-
-	local ROOTDIR="${1}"
-	local d
-	local rd
-	local F=$(find ${ROOTDIR} -name "package-lock.json" \
-		-o -name "npm-shrinkwrap.json" \
-		-o -name "package.json" \
-		-o -name "yarn.lock")
-	local td="${T}/package_jsons/"
-	for f in ${F}; do
-		d=$(dirname ${f})
-		rd=$(dirname $(echo "${f}" | sed -e "s|${ROOTDIR}||"))
-		local temp_dest=$(realpath --canonicalize-missing "${td}/${rd}")
-		mkdir -p "${temp_dest}"
-einfo
-einfo "Copying ${f} to ${temp_dest}"
-einfo
-		cp -a "${f}" "${temp_dest}" || die
-	done
-
-	if [[ "${old_dotglob}" == "on" ]] ; then
-		shopt -s dotglob
-	else
-		shopt -u dotglob
-	fi
-}
-
-# @FUNCTION: electron-app_restore_package_jsons
-# @DESCRIPTION: Restores the package-lock.json to T for auditing
-electron-app_restore_package_jsons() {
-	local dest="${1}"
-einfo
-einfo "Restoring package-lock.json and npm-shrinkwrap.json to ${dest}"
-einfo
-
-	local old_dotglob=$(shopt dotglob | cut -f 2)
-	shopt -s dotglob # copy hidden files
-
-	local td="${T}/package_jsons"
-
-	cp -a "${td}"/* "${dest}" || die
-
-	if [[ "${old_dotglob}" == "on" ]] ; then
-		shopt -s dotglob
-	else
-		shopt -u dotglob
 	fi
 }
 
