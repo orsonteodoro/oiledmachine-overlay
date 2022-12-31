@@ -172,7 +172,7 @@ ${CLOSURE_COMPILER_SLOT}\
 	>=net-libs/nodejs-4.1.1
 	(
 		>=sys-devel/clang-${LLVM_PV}:${LLVM_PV}=[llvm_targets_WebAssembly]
-		>=sys-devel/lld-${LLVM_PV}
+		>=sys-devel/lld-${LLVM_PV}:${LLVM_PV}
 		>=sys-devel/llvm-${LLVM_PV}:${LLVM_PV}=[llvm_targets_WebAssembly]
 	)
 "
@@ -203,20 +203,25 @@ DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
 _PATCHES=(
 	"${FILESDIR}/emscripten-3.1.20-set-wrappers-path.patch"
-	"${FILESDIR}/emscripten-2.0.14-gentoo-wasm-ld-path.patch"
 )
 EMSCRIPTEN_CONFIG_V="2.0.26"
 
 pkg_nofetch() {
 	# No fetch on all-rights-reserved
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-eerror "Please download"
-eerror "  ${FN_SRC}"
-eerror "from ${DOWNLOAD_SITE}"
-eerror "and rename it to ${FN_DEST} place it in ${distdir}."
+	local dl_uri="https://github.com/emscripten-core/emscripten/archive/${FN_SRC}"
 eerror
-eerror "If you are in a hurry, you can do \`wget -O ${distdir}/${FN_DEST} \
-https://github.com/emscripten-core/emscripten/archive/${FN_SRC}\`"
+eerror "Please download"
+eerror
+eerror "  ${FN_SRC}"
+eerror
+eerror "from ${DOWNLOAD_SITE} and rename it to ${FN_DEST} place it in"
+eerror "${distdir}."
+eerror
+eerror "If you are in a hurry, you can do"
+eerror
+eerror "  wget -O ${distdir}/${FN_DEST} ${dl_uri}"
+eerror
 }
 
 setup_openjdk() {

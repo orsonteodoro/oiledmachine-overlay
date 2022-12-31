@@ -4,15 +4,15 @@
 EAPI=8
 
 # For requirements, see
-# https://github.com/emscripten-core/emscripten/blob/3.1.3/site/source/docs/building_from_source/toolchain_what_is_needed.rst
+# https://github.com/emscripten-core/emscripten/blob/3.1.18/site/source/docs/building_from_source/toolchain_what_is_needed.rst
 
 # For the closure-compiler-npm version see:
-# https://github.com/emscripten-core/emscripten/blob/3.1.3/package.json
+# https://github.com/emscripten-core/emscripten/blob/3.1.18/package.json
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/3.1.3/tools/config_template.py
+# https://github.com/emscripten-core/emscripten/blob/3.1.18/tools/config_template.py
 
-LLVM_PV=14
+LLVM_PV=15
 LLVM_MAX_SLOT=${LLVM_PV}
 PYTHON_COMPAT=( python3_{8..11} )
 inherit flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1 \
@@ -108,7 +108,7 @@ LICENSE="
 #   system/include/GL/gl.h -- all-rights-reserved MIT
 #   system/lib/libcxx/src/ryu/f2s.cpp -- Apache-2.0-with-LLVM-exceptions, Boost-1.0
 #
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~x86" # See tests/clang_native.py for supported arches
 SLOT_MAJOR=$(ver_cut 1-2 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 CLOSURE_COMPILER_SLOT="0"
@@ -126,14 +126,14 @@ REQUIRED_USE+="
 	)
 "
 # See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/3.1.3/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
-JAVA_PV="11" # See https://github.com/google/closure-compiler/blob/v20220104/.github/workflows/ci.yaml#L43
-# See https://github.com/google/closure-compiler-npm/blob/v20220104.0.0/packages/google-closure-compiler/package.json
+# See also https://github.com/emscripten-core/emscripten/blob/3.1.18/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
+JAVA_PV="11" # See https://github.com/google/closure-compiler/blob/v20220502/.github/workflows/ci.yaml#L43
+# See https://github.com/google/closure-compiler-npm/blob/v20220502.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
-# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.3/package.json
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.3/tools/shared.py#L50
-# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.3/tools/shared.py#L43
-BINARYEN_PV="104"
+# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.18/package.json
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.18/tools/shared.py#L50
+# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.18/tools/shared.py#L43
+BINARYEN_PV="109"
 JDK_DEPEND="
 	|| (
 		dev-java/openjdk-bin:${JAVA_PV}
@@ -157,7 +157,7 @@ RDEPEND+="
 			>=net-libs/nodejs-10
 		)
 		system-closure-compiler? (
-			>=dev-util/closure-compiler-npm-20220104.0.0:\
+			>=dev-util/closure-compiler-npm-20220502.0.0:\
 ${CLOSURE_COMPILER_SLOT}\
 [closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?]
 		)
@@ -202,7 +202,7 @@ TEST="${WORKDIR}/test/"
 DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
 _PATCHES=(
-	"${FILESDIR}/emscripten-2.0.31-set-wrappers-path.patch"
+	"${FILESDIR}/emscripten-3.1.20-set-wrappers-path.patch"
 )
 EMSCRIPTEN_CONFIG_V="2.0.26"
 
@@ -368,7 +368,7 @@ src_prepare() {
 	einfo "PYTHON_EXE_ABSPATH=${PYTHON_EXE_ABSPATH}"
 	eapply ${_PATCHES[@]}
 
-	eapply -R "${FILESDIR}/emscripten-3.1.3-30e3c87.patch" # reverted - reason: Breaks 'Running sanity checks'. # \
+	#eapply -R "${FILESDIR}/emscripten-3.1.3-30e3c87.patch" # reverted - reason: Breaks 'Running sanity checks'. # \
 	# emcc: error: unexpected metadata key received from wasm-emscripten-finalize: tableSize
 
 	eapply_user
