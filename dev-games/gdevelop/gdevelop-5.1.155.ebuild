@@ -220,6 +220,20 @@ src_unpack() {
 	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 	export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
 	mkdir -p "${EMBUILD_DIR}" || die
+	if ! [[ "${EM_CONFIG}" ]] ; then
+		local em_pv=$(best_version "dev-util/emscripten:14")
+		em_pv=$(echo "${em_pv}" | sed -e "s|dev-util/emscripten-||g")
+		em_pv=$(ver_cut 1-3 ${em_pv})
+eerror
+eerror "Do:"
+eerror
+eerror "  eselect emscripten list"
+eerror "  eselect emscripten set \"dev-util/emscripten-${em_pv},llvm-14\""
+eerror "  etc-update"
+eerror "  . /etc/profile"
+eerror
+		die
+	fi
 	cp "${EM_CONFIG}" \
 		"${EMBUILD_DIR}/emscripten.config" || die
 #	export EMMAKEN_CFLAGS='-std=gnu++11'
