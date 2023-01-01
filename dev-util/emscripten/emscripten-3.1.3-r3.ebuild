@@ -3,12 +3,6 @@
 
 EAPI=8
 
-# For requirements, see
-# https://github.com/emscripten-core/emscripten/blob/3.1.3/site/source/docs/building_from_source/toolchain_what_is_needed.rst
-
-# For the closure-compiler-npm version see:
-# https://github.com/emscripten-core/emscripten/blob/3.1.3/package.json
-
 # Keep emscripten.config.x.yy.zz updated if changed from:
 # https://github.com/emscripten-core/emscripten/blob/3.1.3/tools/config_template.py
 
@@ -18,8 +12,8 @@ JAVA_PV="11"
 LLVM_PV=14
 LLVM_MAX_SLOT=${LLVM_PV}
 PYTHON_COMPAT=( python3_{8..11} )
-inherit flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1 \
-	toolchain-funcs
+inherit flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1
+inherit toolchain-funcs
 
 DESCRIPTION="LLVM-to-JavaScript Compiler"
 HOMEPAGE="http://emscripten.org/"
@@ -140,7 +134,8 @@ REQUIRED_USE+="
 "
 # For DEPENDs:
 # See also .circleci/config.yml
-# For the required Binaryen, See also https://github.com/emscripten-core/emscripten/blob/3.1.3/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
+# See also https://github.com/emscripten-core/emscripten/blob/3.1.3/site/source/docs/building_from_source/toolchain_what_is_needed.rst
+# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/3.1.3/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
 # For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.3/package.json
 # For the required closure-compiler-nodejs node version, see https://github.com/google/closure-compiler-npm/blob/v20220104.0.0/packages/google-closure-compiler/package.json
 # For the required Java, See https://github.com/google/closure-compiler/blob/v20220104/.github/workflows/ci.yaml#L43

@@ -808,7 +808,7 @@ npm-utils_check_nodejs() {
 			${node_header_ver} < ${min_ver} )) ; then
 eerror
 eerror "Both node_exe_ver=${node_exe_ver} node_header_ver=${node_header_ver} need to be"
-eerror ">= ${min_ver}"
+eerror ">= ${min_ver}.  Use \`eselect nodejs set node#\` to fix this."
 eerror
 			die
 		fi
@@ -819,7 +819,7 @@ eerror
 			${node_header_ver} <= ${min_ver} )) ; then
 eerror
 eerror "Both node_exe_ver=${node_exe_ver} node_header_ver=${node_header_ver} need to be"
-eerror "> ${min_ver}"
+eerror "> ${min_ver}.  Use \`eselect nodejs set node#\` to fix this."
 eerror
 			die
 		fi
@@ -831,7 +831,7 @@ eerror
 			${node_header_ver} > ${max_ver} )) ; then
 eerror
 eerror "Both node_exe_ver=${node_exe_ver} node_header_ver=${node_header_ver} need to be"
-eerror "<= ${max_ver}"
+eerror "<= ${max_ver}.  Use \`eselect nodejs set node#\` to fix this."
 eerror
 			die
 		fi
@@ -842,7 +842,7 @@ eerror
 			${node_header_ver} >= ${max_ver} )) ; then
 eerror
 eerror "Both node_exe_ver=${node_exe_ver} node_header_ver=${node_header_ver} need to be"
-eerror "< ${max_ver}"
+eerror "< ${max_ver}.  Use \`eselect nodejs set node#\` to fix this."
 eerror
 			die
 		fi
