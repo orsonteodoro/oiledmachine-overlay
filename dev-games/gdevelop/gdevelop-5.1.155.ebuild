@@ -22,6 +22,7 @@ THIRD_PARTY_LICENSES="
 	custom
 	all-rights-reserved
 	( Apache-2.0 all-rights-reserved )
+	( MIT all-rights-reserved )
 	0BSD
 	Apache-2.0
 	BSD
@@ -30,14 +31,20 @@ THIRD_PARTY_LICENSES="
 	MIT
 	CC-BY-4.0
 	Unicode-DFS-2016
+	W3C
 	W3C-Community-Final-Specification-Agreement
+	W3C-Document-License
 	W3C-Software-and-Document-Notice-and-License-2015
 "
 LICENSE="
 	GDevelop MIT
 	${THIRD_PARTY_LICENSES}
 "
-# custom - newIDE/app/node_modules/monaco-editor/ThirdPartyNotices.txt
+# custom, (MIT all-rights-reserved), MIT, Apache-2.0, \
+#   (W3C [ipr-legal-disclaimer, ipr-trademarks], W3C-Document-License, \
+#   http://www.w3.org/TR/2015/WD-html51-20151008/), \
+#   (Apache-2.0 all-rights-reserved) - \
+#   newIDE/app/node_modules/monaco-editor/ThirdPartyNotices.txt
 # all-rights-reserved - newIDE/app/node_modules/style-dictionary/NOTICE
 # 0BSD - newIDE/app/node_modules/camel-case/node_modules/tslib/CopyrightNotice.txt
 # Apache-2.0 - newIDE/app/node_modules/lazy-universal-dotenv/license
@@ -45,8 +52,8 @@ LICENSE="
 # BSD
 # BSD-2 - newIDE/electron-app/node_modules/configstore/license
 # ISC
-# MIT, Unicode-DFS-2016, W3C-Software-and-Document-Notice-and-License-2015, # \
-#   CC-BY-4.0, W3C-Community-Final-Specification-Agreement - # \
+# MIT, Unicode-DFS-2016, W3C-Software-and-Document-Notice-and-License-2015, \
+#   CC-BY-4.0, W3C-Community-Final-Specification-Agreement - \
 #   newIDE/app/node_modules/typescript/ThirdPartyNoticeText.txt
 # MIT
 #KEYWORDS="~amd64" # ebuild still in development
