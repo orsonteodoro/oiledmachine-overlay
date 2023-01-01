@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20221230"
+VERSION="20221231"
 PN="emscripten"
 
 # 3.1.27 llvm 16 ; node 4.1.1 ; binaryen 111
@@ -289,10 +289,10 @@ set_config() {
         fi
     elif [[ "${target}" =~ emscripten- \
         && "${target}" =~ (llvm-|emscripten-fastcomp-) ]] ; then
-        em=$(echo "${target}" | cut -f 1 -d " ")
+        em=$(echo "${target}" | cut -f 1 -d ",")
         em_pv=${em#*-}
         PV=${em_pv}
-        compiler=$(echo "${target}" | cut -f 2 -d " ")
+        compiler=$(echo "${target}" | cut -f 2 -d ",")
         if [[ "${compiler}" =~ "llvm" ]] ; then
             llvm_pv=$(echo "${compiler}" | cut -f 2 -d "-")
             __LLVM_BIN_PATH__=/usr/lib/llvm/${llvm_pv}/bin

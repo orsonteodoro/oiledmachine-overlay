@@ -12,6 +12,9 @@ EAPI=8
 # Keep emscripten.config.x.yy.zz updated if changed from:
 # https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/settings_template.py
 
+# TC = toolchain
+BINARYEN_PV="101" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
+JAVA_PV="11"
 LLVM_PV=13
 LLVM_MAX_SLOT=${LLVM_PV}
 PYTHON_COMPAT=( python3_{8..11} )
@@ -111,28 +114,38 @@ LICENSE="
 KEYWORDS="~amd64 ~x86"
 SLOT="${LLVM_PV}/$(ver_cut 1-2 ${PV})"
 CLOSURE_COMPILER_SLOT="0"
-IUSE+=" -closure-compiler closure_compiler_java closure_compiler_native
-closure_compiler_nodejs system-closure-compiler test"
+IUSE+="
+-closure-compiler closure_compiler_java closure_compiler_native
+closure_compiler_nodejs system-closure-compiler test
+"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
-	closure_compiler_java? ( closure-compiler )
-	closure_compiler_native? ( closure-compiler )
-	closure_compiler_nodejs? ( closure-compiler )
+	closure_compiler_java? (
+		closure-compiler
+	)
+	closure_compiler_native? (
+		closure-compiler
+	)
+	closure_compiler_nodejs? (
+		closure-compiler
+	)
 	system-closure-compiler? (
 		closure-compiler
-		^^ ( closure_compiler_java closure_compiler_native
-			closure_compiler_nodejs )
+		^^ (
+			closure_compiler_native
+			closure_compiler_java
+			closure_compiler_nodejs
+		)
 	)
 "
+# For DEPENDs:
 # See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
-JAVA_PV="11" # See https://github.com/google/closure-compiler/blob/v20210601/.github/workflows/ci.yaml#L43
-# See https://github.com/google/closure-compiler-npm/blob/v20210601.0.0/packages/google-closure-compiler/package.json
-# They use the latest commit for llvm and clang
+# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
 # For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/2.0.26/package.json
+# For the required closure-compiler-node node version, see https://github.com/google/closure-compiler-npm/blob/v20210601.0.0/packages/google-closure-compiler/package.json
+# For the required Java, See https://github.com/google/closure-compiler/blob/v20210601/.github/workflows/ci.yaml#L43
 # For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/shared.py#L39
 # For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/shared.py#L43
-BINARYEN_PV="101"
 JDK_DEPEND="
 	|| (
 		dev-java/openjdk-bin:${JAVA_PV}
