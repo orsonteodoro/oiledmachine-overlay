@@ -423,8 +423,7 @@ ewarn
 	fi
 	cp "${FILESDIR}/${PN}" "${T}/${PN}" || die
 	sed -i  -e "s|\$(get_libdir)|$(get_libdir)|g" \
-		-e "s|__MY_PN__|${MY_PN}|g" \
-		-e "s|__PN__|${PN}|g" \
+		-e "s|\${PN}|${PN}|g" \
 		-e "s|\${SLOT_MAJOR}|${SLOT_MAJOR}|g" \
 		"${T}/${PN}" || die
 	exeinto /usr/bin
@@ -452,7 +451,9 @@ ewarn
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/public/libGD.js" \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/public/libGD.wasm" \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/src/Version/VersionMetadata.js"
+	keepdir "${ELECTRON_APP_INSTALL_PATH}/.cache/.eslintcache"
         fowners -R ${PN}:${PN} \
+		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/.cache/.eslintcache"
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime" \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime-sources" \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/public/external" \
