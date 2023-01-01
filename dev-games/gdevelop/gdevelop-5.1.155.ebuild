@@ -18,7 +18,37 @@ MY_PV="${PV//_/-}"
 DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed
 to be used by everyone."
 HOMEPAGE="https://gdevelop-app.com/"
-LICENSE="GDevelop MIT"
+THIRD_PARTY_LICENSES="
+	custom
+	all-rights-reserved
+	( Apache-2.0 all-rights-reserved )
+	0BSD
+	Apache-2.0
+	BSD
+	BSD-2
+	ISC
+	MIT
+	CC-BY-4.0
+	Unicode-DFS-2016
+	W3C-Community-Final-Specification-Agreement
+	W3C-Software-and-Document-Notice-and-License-2015
+"
+LICENSE="
+	GDevelop MIT
+	${THIRD_PARTY_LICENSES}
+"
+# custom - newIDE/app/node_modules/monaco-editor/ThirdPartyNotices.txt
+# all-rights-reserved - newIDE/app/node_modules/style-dictionary/NOTICE
+# 0BSD - newIDE/app/node_modules/camel-case/node_modules/tslib/CopyrightNotice.txt
+# Apache-2.0 - newIDE/app/node_modules/lazy-universal-dotenv/license
+# Apache-2.0, all-rights-reserved - newIDE/app/node_modules/typescript/CopyrightNotice.txt
+# BSD
+# BSD-2 - newIDE/electron-app/node_modules/configstore/license
+# ISC
+# MIT, Unicode-DFS-2016, W3C-Software-and-Document-Notice-and-License-2015, # \
+#   CC-BY-4.0, W3C-Community-Final-Specification-Agreement - # \
+#   newIDE/app/node_modules/typescript/ThirdPartyNoticeText.txt
+# MIT
 #KEYWORDS="~amd64" # ebuild still in development
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
@@ -352,7 +382,7 @@ src_install() {
 ewarn
 ewarn "Add SKIP_WRAPPER_FILE_SIGNAL=1 to bypass and manually patch if it fails."
 ewarn
-			eapply "${FILESDIR}/${PN}-5.0.0_beta97-wrapper-file-signal.patch"
+			eapply "${FILESDIR}/${PN}-5.1.555-wrapper-file-signal.patch"
 		fi
 	fi
 	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}/${SLOT_MAJOR}"
