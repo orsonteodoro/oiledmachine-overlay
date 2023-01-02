@@ -23,6 +23,7 @@ THIRD_PARTY_LICENSES_ELECTRON="
 	( custom ISC all-rights-reserved )
 	( fping all-rights-reserved )
 	( LGPL-2.1 LGPL-2.1+ )
+	( MPL-1.1 GPL-2 )
 	|| ( MPL-2 GPL-2+ LGPL-2.1+ )
 	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
 	android
@@ -183,8 +184,9 @@ LICENSE="
 
 # For Electron: \
 #   (Similar to newIDE/electron-app/node_modules/electron/dist/LICENSES.chromium.html) with changes \
-#   EPL-1.1 \
-#   Boost-1.0 - \
+#   ( MPL-1.1 GPL-2 ) \
+#   Boost-1.0 \
+#   EPL-1.1 - \
 #   newIDE/electron-app/app/node_modules/electron/dist/LICENSES.chromium.html
 #
 # IANAL:
@@ -225,7 +227,7 @@ EMSCRIPTEN_PV="1.39.6" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
 GDCORE_TESTS_NODEJS_PV="16.15.1" # Based on CI, For building GDCore tests
 GDEVELOP_JS_NODEJS_PV="14.18.2" # Based on CI, For building GDevelop.js.
 # emscripten 1.36.6 requires llvm10 for wasm, 4.1.1 nodejs
-EMSCRIPTEN_TARGET="14/2.0"
+EMSCRIPTEN_SLOT="${GDEVELOP_JS_NODEJS_PV%%.*}-${EMSCRIPTEN_PV%.*}"
 UDEV_PV="229"
 
 LLVM_SLOTS=(14) # Deleted 9 8 7 because asm.js support was dropped.
@@ -292,7 +294,7 @@ BDEPEND+="
 	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:${GDEVELOP_JS_NODEJS_PV%%.*}[acorn]
 	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}[npm]
 	>=sys-devel/gcc-5.4
-	dev-util/emscripten:${EMSCRIPTEN_TARGET}[wasm(+)]
+	dev-util/emscripten:${EMSCRIPTEN_SLOT}[wasm(+)]
 "
 # Emscripten 3.1.3 used because of node 14.
 SRC_URI="
@@ -419,14 +421,14 @@ src_unpack() {
 	export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
 	mkdir -p "${EMBUILD_DIR}" || die
 	if ! [[ -e "${EM_CONFIG}" ]] ; then
-		local em_pv=$(best_version "dev-util/emscripten:${EMSCRIPTEN_TARGET}")
+		local em_pv=$(best_version "dev-util/emscripten:${EMSCRIPTEN_SLOT}")
 		em_pv=$(echo "${em_pv}" | sed -e "s|dev-util/emscripten-||g")
 		em_pv=$(ver_cut 1-3 ${em_pv})
 eerror
 eerror "Do:"
 eerror
 eerror "  eselect emscripten list"
-eerror "  eselect emscripten set \"emscripten-${em_pv},llvm-${EMSCRIPTEN_TARGET%/*}\""
+eerror "  eselect emscripten set \"emscripten-${em_pv},llvm-${EMSCRIPTEN_SLOT%-*}\""
 eerror "  etc-update"
 eerror "  . /etc/profile"
 eerror
@@ -617,6 +619,7 @@ ewarn
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/public/libGD.wasm" \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/src/Version/VersionMetadata.js"
 	keepdir "${ELECTRON_APP_INSTALL_PATH}/.cache/.eslintcache"
+	keepdir "${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime"
         fowners -R ${PN}:${PN} \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/.cache/.eslintcache"
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime" \
