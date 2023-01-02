@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20221231"
+VERSION="20230101"
 PN="emscripten"
 
 # 3.1.27 llvm 16 ; node 4.1.1 ; binaryen 111
@@ -199,43 +199,43 @@ find_targets() {
                             echo "emscripten-${em_pv},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "2.0.27" \
                             && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "2.0.13" \
-                            && [[ "${llvm_major}" -eq 13 ]] ; then
+                            && [[ "${llvm_major}" -ge 13 ]] ; then
                             echo "emscripten-${em_pv},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "2.0.13" \
                             && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.39.20" \
-                            && [[ "${llvm_major}" -eq 12 ]] ; then
+                            && [[ "${llvm_major}" -ge 12 ]] ; then
                             echo "emscripten-${em_pv},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.39.20" \
                             && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.39.7" \
-                            && [[ "${llvm_major}" -eq 11 ]] ; then
+                            && [[ "${llvm_major}" -ge 11 ]] ; then
                             echo "emscripten-${em_pv},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.39.7" \
                             && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.38.40" \
-                            && [[ "${llvm_major}" -eq 10 ]] ; then
+                            && [[ "${llvm_major}" -ge 10 ]] ; then
                             echo "emscripten-${em_pv},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.38.40" \
                             && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.38.24" \
-                            && [[ "${llvm_major}" -eq 9 ]] ; then
+                            && [[ "${llvm_major}" -ge 9 ]] ; then
                             echo "emscripten-${em_pv},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.38.24" \
                             && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.38.11" \
-                            && [[ "${llvm_major}" -eq 8 ]] ; then
+                            && [[ "${llvm_major}" -ge 8 ]] ; then
                             echo "emscripten-${em_pv},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.38.11" \
                             && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.37.28" \
-                            && [[ "${llvm_major}" -eq 7 ]] ; then
+                            && [[ "${llvm_major}" -ge 7 ]] ; then
                             echo "emscripten-${em_pv},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.37.28" \
                             && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.37.21" \
-                            && [[ "${llvm_major}" -eq 6 ]] ; then
+                            && [[ "${llvm_major}" -ge 6 ]] ; then
                             echo "emscripten-${em_pv},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.37.21" \
                             && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.37.15" \
-                            && [[ "${llvm_major}" -eq 5 ]] ; then
+                            && [[ "${llvm_major}" -ge 5 ]] ; then
                             echo "emscripten-${em_pv},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.37.15" \
                             && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.37.7" \
-                            && [[ "${llvm_major}" -eq 4 ]] ; then
+                            && [[ "${llvm_major}" -ge 4 ]] ; then
                             echo "emscripten-${em_pv},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.37.7" \
                             && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.36.1" \
@@ -521,7 +521,7 @@ EOF
     export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 
     echo
-    echo -e "BINARYEN:\t\t${EMSDK_BINARYEN_BASE_PATH}"
+    echo -e "BINARYEN:\t\t${BINARYEN}"
     echo -e "CLOSURE_COMPILER:\t${EMSDK_CLOSURE_COMPILER}"
     echo -e "EM_CONFIG:\t\t${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
     echo -e "EMCC_WASM_BACKEND:\t${__EMCC_WASM_BACKEND__}"

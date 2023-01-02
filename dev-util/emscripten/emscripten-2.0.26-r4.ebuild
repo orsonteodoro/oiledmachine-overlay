@@ -9,7 +9,7 @@ EAPI=8
 # TC = toolchain
 BINARYEN_PV="101" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
 JAVA_PV="11"
-LLVM_PV=13
+LLVM_PV=14 # Upstream requires 13.
 LLVM_MAX_SLOT=${LLVM_PV}
 PYTHON_COMPAT=( python3_{8..11} )
 inherit flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1

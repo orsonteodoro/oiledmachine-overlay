@@ -71,7 +71,7 @@ THIRD_PARTY_LICENSES_ELECTRON="
 	unicode
 	unRAR
 	UoI-NCSA
-	WEBp-patent-license
+	WebP-PATENTS
 	ZLIB
 	|| ( public-domain MIT ( public-domain MIT ) )
 " # The ^^ (mutually exclusion) does not work.  It is assumed the user will choose
@@ -176,7 +176,7 @@ LICENSE="
 #   unicode \
 #   unRAR \
 #   UoI-NCSA \
-#   WEBp-patent-license \
+#   WebP-PATENTS \
 #   ZLIB \
 #   || ( public-domain MIT ( public-domain MIT ) ) - \
 #   newIDE/electron-app/node_modules/electron/dist/LICENSES.chromium.html
@@ -225,10 +225,10 @@ EMSCRIPTEN_PV="1.39.6" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
 GDCORE_TESTS_NODEJS_PV="16.15.1" # Based on CI, For building GDCore tests
 GDEVELOP_JS_NODEJS_PV="14.18.2" # Based on CI, For building GDevelop.js.
 # emscripten 1.36.6 requires llvm10 for wasm, 4.1.1 nodejs
-NODEJS_PV_TARGET="13"
+EMSCRIPTEN_TARGET="14/2.0"
 UDEV_PV="229"
 
-LLVM_SLOTS=(13) # Deleted 9 8 7 because asm.js support was dropped.
+LLVM_SLOTS=(14) # Deleted 9 8 7 because asm.js support was dropped.
 # The CI uses Clang 7.
 # Emscripten expects either LLVM 10 for wasm, or LLVM 6 for asm.js.
 
@@ -267,7 +267,7 @@ DEPEND_NOT_USED_IN_CI2="
 DEPEND+="
 	${DEPEND_NOT_USED_IN_CI}
 	>=app-arch/p7zip-9.20.1
-	>=net-libs/nodejs-${NODEJS_PV_TARGET}:16
+	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:${GDEVELOP_JS_NODEJS_PV%%.*}
 	|| (
 		${DEPEND_NOT_USED_IN_CI2}
 		>=sys-apps/systemd-${UDEV_PV}
@@ -289,10 +289,10 @@ BDEPEND+="
 	>=dev-util/cmake-3.12.4
 	>=dev-vcs/git-2.37.3
 	>=media-gfx/imagemagick-6.8.9[png]
-	>=net-libs/nodejs-${NODEJS_PV_TARGET}:${NODEJS_PV_TARGET%%.*}[acorn]
-	>=net-libs/nodejs-${NODEJS_PV_TARGET}[acorn,npm]
+	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:${GDEVELOP_JS_NODEJS_PV%%.*}[acorn]
+	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}[npm]
 	>=sys-devel/gcc-5.4
-	dev-util/emscripten:16[wasm(+)]
+	dev-util/emscripten:${EMSCRIPTEN_TARGET}[wasm(+)]
 "
 # Emscripten 3.1.3 used because of node 14.
 SRC_URI="
@@ -340,9 +340,14 @@ eerror
 		-e "#define NODE_MAJOR_VERSION" \
 		"${EROOT}/usr/include/node/node_version.h" \
 		| cut -f 3 -d " ")
-	if ver_test ${ACTIVE_VERSION%%.*} -ne ${NODEJS_PV_TARGET%%.*} ; then
+	if ver_test ${ACTIVE_VERSION%%.*} -ne ${GDEVELOP_JS_NODEJS_PV%%.*} ; then
 eerror
-eerror "Please switch Node.js to ${NODEJS_PV_TARGET%%.*}"
+eerror "Please switch Node.js to ${GDEVELOP_JS_NODEJS_PV%%.*}."
+eerror
+eerror "Try:"
+eerror
+eerror "  eselect nodejs list"
+eerror "  eselect nodejs set node${GDEVELOP_JS_NODEJS_PV%%.*}"
 eerror
 		die
 	fi
@@ -414,14 +419,14 @@ src_unpack() {
 	export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
 	mkdir -p "${EMBUILD_DIR}" || die
 	if ! [[ -e "${EM_CONFIG}" ]] ; then
-		local em_pv=$(best_version "dev-util/emscripten:16")
+		local em_pv=$(best_version "dev-util/emscripten:${EMSCRIPTEN_TARGET}")
 		em_pv=$(echo "${em_pv}" | sed -e "s|dev-util/emscripten-||g")
 		em_pv=$(ver_cut 1-3 ${em_pv})
 eerror
 eerror "Do:"
 eerror
 eerror "  eselect emscripten list"
-eerror "  eselect emscripten set \"emscripten-${em_pv},llvm-16\""
+eerror "  eselect emscripten set \"emscripten-${em_pv},llvm-${EMSCRIPTEN_TARGET%/*}\""
 eerror "  etc-update"
 eerror "  . /etc/profile"
 eerror
