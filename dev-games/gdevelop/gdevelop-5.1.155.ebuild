@@ -213,7 +213,7 @@ LICENSE="
 
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE+=" +extensions openrc"
+IUSE+=" openrc"
 # Dependency lists:
 # https://github.com/4ian/GDevelop/blob/v5.1.155/.circleci/config.yml#L85
 # https://github.com/4ian/GDevelop/blob/v5.1.155/.travis.yml
@@ -410,6 +410,8 @@ src_unpack() {
 "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-00.patch"
 	eapply \
 "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-01.patch"
+	eapply \
+"${FILESDIR}/${PN}-5.1.155-no-emscripten-force-compilers.patch"
 
 	einfo "ELECTRON_APP_ELECTRON_PV=${ELECTRON_APP_ELECTRON_PV}"
 	einfo "EMSCRIPTEN=${EMSCRIPTEN}"
@@ -469,6 +471,10 @@ einfo "NODE_VERSION=${NODE_VERSION}"
 	export NODE_PATH="/usr/$(get_libdir)/node_modules:${NODE_PATH}"
 einfo "NODE_PATH=${NODE_PATH}"
 einfo "PATH=${PATH}"
+
+#	touch "${S}/dummy.c"
+#	"${EMSCRIPTEN}/emcc" -v "${S}/dummy.c" || die "RET: $?"
+#einfo "RET: $?"
 
 einfo
 einfo "Building ${MY_PN}.js"

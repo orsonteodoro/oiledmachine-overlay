@@ -1,0 +1,10 @@
+--- GDevelop-5.1.155/GDevelop.js/Gruntfile.js.orig	2023-01-01 20:12:23.306759964 -0800
++++ GDevelop-5.1.155/GDevelop.js/Gruntfile.js	2023-01-01 20:35:27.785457839 -0800
+@@ -93,6 +93,7 @@ module.exports = function (grunt) {
+             isDev
+               ? '-DDISABLE_EMSCRIPTEN_LINK_OPTIMIZATIONS=TRUE'
+               : '-DDISABLE_EMSCRIPTEN_LINK_OPTIMIZATIONS=FALSE',
++            '-DEMSCRIPTEN_FORCE_COMPILERS=FALSE',
+           ].join(' '),
+         options: {
+           execOptions: {
