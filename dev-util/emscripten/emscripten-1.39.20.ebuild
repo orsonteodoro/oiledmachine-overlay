@@ -111,6 +111,8 @@ CLOSURE_COMPILER_SLOT="0"
 IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs system-closure-compiler test
+
+r24
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
