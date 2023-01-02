@@ -94,6 +94,7 @@ THIRD_PARTY_LICENSES="
 	W3C-Community-Final-Specification-Agreement
 	W3C-Document-License
 	W3C-Software-and-Document-Notice-and-License-2015
+	W3C-Software-Notice-and-License
 "
 LICENSE="
 	GDevelop MIT
@@ -116,6 +117,7 @@ LICENSE="
 #   CC-BY-4.0, W3C-Community-Final-Specification-Agreement - \
 #   newIDE/app/node_modules/typescript/ThirdPartyNoticeText.txt
 # MIT
+# W3C-Software-Notice-and-License - newIDE/electron-app/app/node_modules/sax/LICENSE-W3C.html
 
 # For Electron: \
 # custom \
