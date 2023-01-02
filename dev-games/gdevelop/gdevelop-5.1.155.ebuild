@@ -470,10 +470,6 @@ einfo "NODE_VERSION=${NODE_VERSION}"
 einfo "NODE_PATH=${NODE_PATH}"
 einfo "PATH=${PATH}"
 
-#	touch "${S}/dummy.c"
-#	"${EMSCRIPTEN}/emcc" -v "${S}/dummy.c" || die "RET: $?"
-#einfo "RET: $?"
-
 einfo
 einfo "Building ${MY_PN}.js"
 einfo

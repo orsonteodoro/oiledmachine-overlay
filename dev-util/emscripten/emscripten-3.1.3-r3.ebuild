@@ -209,8 +209,8 @@ TEST="${WORKDIR}/test/"
 DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
 _PATCHES=(
-	"${FILESDIR}/emscripten-2.0.31-set-wrappers-path.patch"
-	"${FILESDIR}/emscripten-3.1.28-libcxxabi_no_exceptions-already-defined.patch"
+	"${FILESDIR}/${PN}-2.0.31-set-wrappers-path.patch"
+	"${FILESDIR}/${PN}-3.1.28-libcxxabi_no_exceptions-already-defined.patch"
 )
 EMSCRIPTEN_CONFIG_V="2.0.26"
 
