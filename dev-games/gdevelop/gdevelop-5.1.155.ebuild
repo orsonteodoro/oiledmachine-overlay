@@ -444,7 +444,7 @@ eerror
 #	export CC=gcc
 #	export CXX=g++
         export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
-	export EM_BINARYEN_ROOT="${BINAYREN}"
+	export EM_BINARYEN_ROOT="${BINARYEN}"
 	export EM_CACHE="${T}/emscripten/cache"
 	export EM_NODE_JS="/usr/bin/node"
 	export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}"
