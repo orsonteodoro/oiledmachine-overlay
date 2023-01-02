@@ -72,19 +72,19 @@
   </use>
   <slots>
     <slot name="14-1.39">
-      Target LLVM14 and Emscripten 1.39.x (EOL)
+      Target LLVM 14 and Emscripten 1.39.x (EOL)
     </slot>
     <slot name="14-2.0">
-      Target LLVM14 and Emscripten 2.0.x (EOL)
+      Target LLVM 14 and Emscripten 2.0.x (EOL)
     </slot>
     <slot name="14-3.1">
-      Target LLVM14 and Emscripten 3.1.x (EOL)
+      Target LLVM 14 and Emscripten 3.1.x (EOL)
     </slot>
     <slot name="15-3.1">
-      Target LLVM15 and Emscripten 3.1.x (EOL)
+      Target LLVM 15 and Emscripten 3.1.x (EOL)
     </slot>
     <slot name="16-3.1">
-      Target LLVM16 and Emscripten 3.1.x (Upstream supported)
+      Target LLVM 16 and Emscripten 3.1.x (Upstream supported)
     </slot>
   </slots>
 </pkgmetadata>
