@@ -13,13 +13,6 @@
     <name>Harald Weiner</name>
   </maintainer>
   <upstream>
-    <maintainer>
-      <!--
-           For a full list see 
-           https://github.com/emscripten-core/emscripten/blob/master/AUTHORS
-      -->
-      <name>The Emscripten Authors</name>
-    </maintainer>
     <bugs-to>
       https://github.com/emscripten-core/emscripten/issues
     </bugs-to>
@@ -34,13 +27,13 @@
     This ebuild tracks only the highest point releases corresponding to
     the corresponding LLVM version up to the latest current stable LLVM.
 
-    LLVM 16 (dev) - 3.1.28
-    LLVM 15 (dev) - 3.1.17
-    LLVM 14 (stable) - 3.1.3
-    LLVM 13 (stable) - 2.0.26
+    The project is rolling release.  No LTS versions.
 
-    The release cycle is rolling, so there is no stable or no LTS versions
-    for this project.
+    LLVM 16 (dev) - 3.1.28 (Upstream supported 3.1.x)
+    LLVM 15 (stable) - 3.1.17 (EOL)
+    LLVM 14 (stable) - 3.1.3 (EOL)
+    LLVM 14 (stable) - 2.0.26 (EOL)
+    LLVM 14 (stable) - 1.39.20 (EOL)
 
     These ebuilds only version by tags and release notes for a particular point
     release may be found in the next version bump.
@@ -73,5 +66,25 @@
     <flag name="wasm">
       Adds WebAssembly output support.  Recommended upstream.
     </flag>
+    <flag name="rN">
+      Bump ebuild revision (FOR INTERNAL USE ONLY)
+    </flag>
   </use>
+  <slots>
+    <slot name="14-1.39">
+      Target LLVM14 and Emscripten 1.39.x (EOL)
+    </slot>
+    <slot name="14-2.0">
+      Target LLVM14 and Emscripten 2.0.x (EOL)
+    </slot>
+    <slot name="14-3.1">
+      Target LLVM14 and Emscripten 3.1.x (EOL)
+    </slot>
+    <slot name="15-3.1">
+      Target LLVM15 and Emscripten 3.1.x (EOL)
+    </slot>
+    <slot name="16-3.1">
+      Target LLVM16 and Emscripten 3.1.x (Upstream supported)
+    </slot>
+  </slots>
 </pkgmetadata>

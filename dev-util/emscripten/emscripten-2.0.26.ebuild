@@ -19,6 +19,7 @@ DESCRIPTION="LLVM-to-JavaScript Compiler"
 HOMEPAGE="http://emscripten.org/"
 LICENSE="
 	( all-rights-reserved || ( MIT UoI-NCSA ) )
+	( MIT all-rights-reserved )
 	all-rights-reserved
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -31,7 +32,6 @@ LICENSE="
 	LGPL-2.1
 	LGPL-3
 	MIT
-	( MIT all-rights-reserved )
 	MPL-2.0
 	OFL-1.1
 	OG-X11
@@ -111,6 +111,8 @@ CLOSURE_COMPILER_SLOT="0"
 IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs system-closure-compiler test
+
+r5
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
