@@ -18,6 +18,65 @@ MY_PV="${PV//_/-}"
 DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed
 to be used by everyone."
 HOMEPAGE="https://gdevelop-app.com/"
+THIRD_PARTY_ELECTRON="
+	custom
+	( custom ISC all-rights-reserved )
+	( fping all-rights-reserved )
+	( LGPL-2.1 LGPL-2.1+ )
+	|| ( MPL-2 GPL-2+ LGPL-2.1+ )
+	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
+	android
+	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
+	APSL-2
+	AFL-2.0
+	BitstreamVera
+	Boost-1.0
+	BSD
+	BSD-2
+	BSD-4
+	BSD-Protection
+	CC-BY-SA-3.0
+	CPL-1.0
+	curl
+	EPL-1.0
+	GPL-2
+	GPL-2-with-classpath-exception
+	GPL-3
+	GPL-3+
+	MIT
+	MPL-2.0
+	FTL
+	icu-70.1
+	IJG
+	ISC
+	HPND
+	Khronos-CLHPP
+	LGPL-2.1
+	LGPL-2.1+
+	LGPL-3
+	LGPL-3+
+	libpng
+	libpng2
+	libstdc++
+	NEWLIB
+	MPL-1.1
+	MPL-2.0
+	Ms-PL
+	OFL-1.1
+	minpack
+	openssl
+	SunPro
+	Unicode-DFS-2016
+	unicode
+	unRAR
+	UoI-NCSA
+	WEBp-patent-license
+	ZLIB
+	|| ( public-domain MIT ( public-domain MIT ) )
+" # The ^^ (mutually exclusion) does not work.  It is assumed the user will choose
+# outside the computer.
+
 THIRD_PARTY_LICENSES="
 	custom
 	all-rights-reserved
@@ -56,7 +115,99 @@ LICENSE="
 #   CC-BY-4.0, W3C-Community-Final-Specification-Agreement - \
 #   newIDE/app/node_modules/typescript/ThirdPartyNoticeText.txt
 # MIT
+
+# For Electron:
+# custom \
+#   search: "grants an immunity from suit" \
+#   custom-font-license \
+#     search: "removed from any derivative versions" \
+#   ( custom ISC with no advertising clause all-rights-reserved ) \
+#   ( fping all-rights-reserved ) \
+#   ( LGPL-2.1 LGPL-2.1+ ) \
+#   ^^ ( MPL-2 GPL-2+ LGPL-2.1+ ) \
+#   ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) \
+#   android \
+#   Apache-2.0 \
+#   Apache-2.0-with-LLVM-exceptions \
+#   APSL-2 \
+#   AFL-2.0 \
+#   BitstreamVera \
+#   BSD \
+#   BSD-2 \
+#   BSD-4 \
+#   BSD-Protection \
+#   CC-BY-SA-3.0 \
+#   CPL-1.0 \
+#   curl \
+#   GPL-2 \
+#   GPL-2-with-classpath-exception \
+#   GPL-3 \
+#   GPL-3+ \
+#   MIT \
+#   MPL-2.0 \
+#   FTL \
+#   icu-70.1 \
+#   icu (58) \
+#   icu (1.8.1+) \
+#   IJG \
+#   ISC \
+#   HPND \
+#   Khronos-CLHPP \
+#   LGPL-2.1 \
+#   LGPL-2.1+ \
+#   LGPL-3 \
+#   LGPL-3+ \
+#   libpng \
+#   libpng2 \
+#   libstdc++ \
+#   NEWLIB \
+#   MPL-1.1 \
+#   MPL-2.0 \
+#   Ms-PL \
+#   OFL-1.1 \
+#   PCRE8 (BSD) \
+#   minpack \
+#   openssl \
+#   SunPro \
+#   Unicode-DFS-2016 \
+#   unicode \
+#   unRAR \
+#   UoI-NCSA \
+#   WEBp-patent-license \
+#   ZLIB \
+#   || ( public-domain MIT ( public-domain MIT ) ) - \
+#   newIDE/electron-app/node_modules/electron/dist/LICENSES.chromium.html
+
+# For Electron:
+#   (Similar to newIDE/electron-app/node_modules/electron/dist/LICENSES.chromium.html) with changes
+#   EPL-1.1
+#   Boost-1.0
+#   newIDE/electron-app/app/node_modules/electron/dist/LICENSES.chromium.html
+#
+# IANAL:
+# This list appears auto generated (99.4k line html license file), but some of
+# these modules or files may not be present in the Chromium source code tarball.
+# The license compatibility may be better explained in the headers or usage
+# (build files versus redistributed).
+#
+
 #KEYWORDS="~amd64" # ebuild still in development
+# It should work in emscripten 1.x.
+# Last bug related to >= emscripten 3.0:
+
+#Unhandled Rejection (ReferenceError): addOnPreMain is not defined
+#(anonymous function)
+#http://localhost:3000/libGD.js?cache-buster=5.1.155-unknown-hash:11498:26
+#(anonymous function)
+#src/index.js:88
+#  85 |   return;
+#  86 | }
+#  87 | 
+#> 88 | initializeGDevelopJs({
+#     | ^  89 |   // Override the resolved URL for the .wasm file,
+#  90 |   // to ensure a new version is fetched when the version changes.
+#  91 |   locateFile: (path: string, prefix: string) => {
+
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+=" +extensions openrc"
@@ -69,10 +220,12 @@ IUSE+=" +extensions openrc"
 # Dependencies for the native build are not installed in CI
 EMSCRIPTEN_PV="1.39.6" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
 GDCORE_TESTS_NODEJS_PV="16.15.1" # Based on CI, For building GDCore tests
-GDEVELOP_JS_NODEJS_PV="14.18.2" # Based on CI, For building GDevelop.js.  From emsdk 1.39.6
+GDEVELOP_JS_NODEJS_PV="14.18.2" # Based on CI, For building GDevelop.js.
+# emscripten 1.36.6 requires llvm10 for wasm, 4.1.1 nodejs
+NODEJS_PV_TARGET="13"
 UDEV_PV="229"
 
-LLVM_SLOTS=(16 14) # Deleted 9 8 7 because asm.js support was dropped.
+LLVM_SLOTS=(13) # Deleted 9 8 7 because asm.js support was dropped.
 # The CI uses Clang 7.
 # Emscripten expects either LLVM 10 for wasm, or LLVM 6 for asm.js.
 
@@ -80,10 +233,10 @@ gen_llvm_depends() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
 		(
-			sys-devel/llvm:${s}
-			sys-devel/clang:${s}
-			=sys-devel/lld-${s}*
 			>=dev-util/emscripten-${EMSCRIPTEN_PV}:${s}[wasm(+)]
+			=sys-devel/lld-${s}*
+			sys-devel/clang:${s}
+			sys-devel/llvm:${s}
 		)
 		"
 	done
@@ -110,12 +263,12 @@ DEPEND_NOT_USED_IN_CI2="
 "
 DEPEND+="
 	${DEPEND_NOT_USED_IN_CI}
+	>=app-arch/p7zip-9.20.1
+	>=net-libs/nodejs-${NODEJS_PV_TARGET}:16
 	|| (
 		${DEPEND_NOT_USED_IN_CI2}
 		>=sys-apps/systemd-${UDEV_PV}
 	)
-	>=app-arch/p7zip-9.20.1
-	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:14
 "
 RDEPEND+="
 	${DEPEND}
@@ -133,10 +286,10 @@ BDEPEND+="
 	>=dev-util/cmake-3.12.4
 	>=dev-vcs/git-2.37.3
 	>=media-gfx/imagemagick-6.8.9[png]
-	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:${GDEVELOP_JS_NODEJS_PV%%.*}[acorn]
-	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}[acorn,npm]
+	>=net-libs/nodejs-${NODEJS_PV_TARGET}:${NODEJS_PV_TARGET%%.*}[acorn]
+	>=net-libs/nodejs-${NODEJS_PV_TARGET}[acorn,npm]
 	>=sys-devel/gcc-5.4
-	dev-util/emscripten:14[wasm(+)]
+	dev-util/emscripten:16[wasm(+)]
 "
 # Emscripten 3.1.3 used because of node 14.
 SRC_URI="
@@ -184,9 +337,9 @@ eerror
 		-e "#define NODE_MAJOR_VERSION" \
 		"${EROOT}/usr/include/node/node_version.h" \
 		| cut -f 3 -d " ")
-	if ver_test ${ACTIVE_VERSION%%.*} -ne ${GDEVELOP_JS_NODEJS_PV%%.*} ; then
+	if ver_test ${ACTIVE_VERSION%%.*} -ne ${NODEJS_PV_TARGET%%.*} ; then
 eerror
-eerror "Please switch Node.js to ${GDEVELOP_JS_NODEJS_PV%%.*}"
+eerror "Please switch Node.js to ${NODEJS_PV_TARGET%%.*}"
 eerror
 		die
 	fi
@@ -257,15 +410,15 @@ src_unpack() {
 	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 	export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
 	mkdir -p "${EMBUILD_DIR}" || die
-	if ! [[ "${EM_CONFIG}" ]] ; then
-		local em_pv=$(best_version "dev-util/emscripten:14")
+	if ! [[ -e "${EM_CONFIG}" ]] ; then
+		local em_pv=$(best_version "dev-util/emscripten:16")
 		em_pv=$(echo "${em_pv}" | sed -e "s|dev-util/emscripten-||g")
 		em_pv=$(ver_cut 1-3 ${em_pv})
 eerror
 eerror "Do:"
 eerror
 eerror "  eselect emscripten list"
-eerror "  eselect emscripten set \"dev-util/emscripten-${em_pv},llvm-14\""
+eerror "  eselect emscripten set \"emscripten-${em_pv},llvm-16\""
 eerror "  etc-update"
 eerror "  . /etc/profile"
 eerror
@@ -345,7 +498,7 @@ electron-app_src_compile() {
 		einfo
 		einfo "Compiling ${MY_PN}.js"
 		einfo
-# In https://github.com/4ian/GDevelop/blob/v5.0.0-beta98/GDevelop.js/Gruntfile.js#L88
+# In https://github.com/4ian/GDevelop/blob/v5.1.155/GDevelop.js/Gruntfile.js#L88
 		npm run build -- --force --dev || die
 		if [[ ! -f "${S_BAK}/Binaries/embuild/${MY_PN}.js/libGD.wasm" ]]
 		then
