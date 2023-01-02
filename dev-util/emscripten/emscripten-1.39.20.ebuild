@@ -8,7 +8,7 @@ EAPI=8
 
 # TC = toolchain
 BINARYEN_PV="93" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
-JAVA_PV="1.8"
+JAVA_PV="8"
 LLVM_PV=14 # Upstream requires 12 for wasm and 6 for asmjs.
 LLVM_MAX_SLOT=${LLVM_PV}
 PYTHON_COMPAT=( python3_{8..11} )
