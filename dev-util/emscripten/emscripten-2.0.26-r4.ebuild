@@ -211,6 +211,7 @@ FN_SRC="${PV}.tar.gz"
 _PATCHES=(
 	"${FILESDIR}/emscripten-2.0.26-set-wrappers-path.patch"
 	"${FILESDIR}/emscripten-3.1.28-libcxxabi_no_exceptions-already-defined.patch"
+	"${FILESDIR}/emscripten-2.0.26-version-check-workaround.patch"
 )
 EMSCRIPTEN_CONFIG_V="2.0.26"
 

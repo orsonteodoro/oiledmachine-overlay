@@ -410,8 +410,6 @@ src_unpack() {
 "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-00.patch"
 	eapply \
 "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-01.patch"
-	eapply \
-"${FILESDIR}/${PN}-5.1.155-no-emscripten-force-compilers.patch"
 
 	einfo "ELECTRON_APP_ELECTRON_PV=${ELECTRON_APP_ELECTRON_PV}"
 	einfo "EMSCRIPTEN=${EMSCRIPTEN}"
