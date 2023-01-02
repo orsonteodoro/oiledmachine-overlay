@@ -238,7 +238,6 @@ gen_llvm_depends() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
 		(
-			>=dev-util/emscripten-${EMSCRIPTEN_PV}:${s}[wasm(+)]
 			=sys-devel/lld-${s}*
 			sys-devel/clang:${s}
 			sys-devel/llvm:${s}
