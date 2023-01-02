@@ -106,7 +106,7 @@ LICENSE="
 #   system/lib/libcxx/src/ryu/f2s.cpp -- Apache-2.0-with-LLVM-exceptions, Boost-1.0
 #
 KEYWORDS="~amd64 ~x86"
-SLOT="${LLVM_PV}/$(ver_cut 1-2 ${PV})"
+SLOT="${LLVM_PV}-$(ver_cut 1-2 ${PV})"
 CLOSURE_COMPILER_SLOT="0"
 IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
