@@ -117,7 +117,7 @@ LICENSE="
 #   newIDE/app/node_modules/typescript/ThirdPartyNoticeText.txt
 # MIT
 
-# For Electron:
+# For Electron: \
 # custom \
 #   search: "grants an immunity from suit" \
 #   custom-font-license \
@@ -179,10 +179,10 @@ LICENSE="
 #   || ( public-domain MIT ( public-domain MIT ) ) - \
 #   newIDE/electron-app/node_modules/electron/dist/LICENSES.chromium.html
 
-# For Electron:
-#   (Similar to newIDE/electron-app/node_modules/electron/dist/LICENSES.chromium.html) with changes
-#   EPL-1.1
-#   Boost-1.0
+# For Electron: \
+#   (Similar to newIDE/electron-app/node_modules/electron/dist/LICENSES.chromium.html) with changes \
+#   EPL-1.1 \
+#   Boost-1.0 - \
 #   newIDE/electron-app/app/node_modules/electron/dist/LICENSES.chromium.html
 #
 # IANAL:
