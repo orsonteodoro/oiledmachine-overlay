@@ -98,6 +98,7 @@ THIRD_PARTY_LICENSES="
 LICENSE="
 	GDevelop MIT
 	${THIRD_PARTY_LICENSES}
+	${THIRD_PARTY_ELECTRON}
 "
 # custom, (MIT all-rights-reserved), MIT, Apache-2.0, \
 #   (W3C [ipr-legal-disclaimer, ipr-trademarks], W3C-Document-License, \
