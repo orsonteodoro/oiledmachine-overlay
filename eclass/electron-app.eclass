@@ -64,6 +64,144 @@ ELECTRON_APP_MODE=${ELECTRON_APP_MODE:-"npm"} # can be npm, yarn
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP=\
 ${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP:-"0"}
 
+# For Electron 18.2.2 from electron-builder
+# See comments below for details.
+ELECTRON_APP_LICENSES="
+	custom
+	( custom ISC all-rights-reserved )
+	( fping all-rights-reserved )
+	( LGPL-2.1 LGPL-2.1+ )
+	( MPL-1.1 GPL-2 )
+	|| ( MPL-2 GPL-2+ LGPL-2.1+ )
+	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
+	android
+	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
+	APSL-2
+	AFL-2.0
+	BitstreamVera
+	Boost-1.0
+	BSD
+	BSD-2
+	BSD-4
+	BSD-Protection
+	CC-BY-SA-3.0
+	CPL-1.0
+	curl
+	EPL-1.0
+	GPL-2
+	GPL-2-with-classpath-exception
+	GPL-3
+	GPL-3+
+	MIT
+	MPL-2.0
+	FTL
+	icu-70.1
+	IJG
+	ISC
+	HPND
+	Khronos-CLHPP
+	LGPL-2.1
+	LGPL-2.1+
+	LGPL-3
+	LGPL-3+
+	libpng
+	libpng2
+	libstdc++
+	NEWLIB
+	MPL-1.1
+	MPL-2.0
+	Ms-PL
+	OFL-1.1
+	minpack
+	openssl
+	SunPro
+	Unicode-DFS-2016
+	unicode
+	unRAR
+	UoI-NCSA
+	WebP-PATENTS
+	ZLIB
+	|| ( public-domain MIT ( public-domain MIT ) )
+" # The ^^ (mutually exclusion) does not work.  It is assumed the user will choose
+# outside the computer.
+
+# For Electron: \
+# custom \
+#   search: "grants an immunity from suit" \
+#   custom-font-license \
+#     search: "removed from any derivative versions" \
+#   ( custom ISC with no advertising clause all-rights-reserved ) \
+#   ( fping all-rights-reserved ) \
+#   ( LGPL-2.1 LGPL-2.1+ ) \
+#   ^^ ( MPL-2 GPL-2+ LGPL-2.1+ ) \
+#   ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) \
+#   android \
+#   Apache-2.0 \
+#   Apache-2.0-with-LLVM-exceptions \
+#   APSL-2 \
+#   AFL-2.0 \
+#   BitstreamVera \
+#   BSD \
+#   BSD-2 \
+#   BSD-4 \
+#   BSD-Protection \
+#   CC-BY-SA-3.0 \
+#   CPL-1.0 \
+#   curl \
+#   GPL-2 \
+#   GPL-2-with-classpath-exception \
+#   GPL-3 \
+#   GPL-3+ \
+#   MIT \
+#   MPL-2.0 \
+#   FTL \
+#   icu-70.1 \
+#   icu (58) \
+#   icu (1.8.1+) \
+#   IJG \
+#   ISC \
+#   HPND \
+#   Khronos-CLHPP \
+#   LGPL-2.1 \
+#   LGPL-2.1+ \
+#   LGPL-3 \
+#   LGPL-3+ \
+#   libpng \
+#   libpng2 \
+#   libstdc++ \
+#   NEWLIB \
+#   MPL-1.1 \
+#   MPL-2.0 \
+#   Ms-PL \
+#   OFL-1.1 \
+#   PCRE8 (BSD) \
+#   minpack \
+#   openssl \
+#   SunPro \
+#   Unicode-DFS-2016 \
+#   unicode \
+#   unRAR \
+#   UoI-NCSA \
+#   WebP-PATENTS \
+#   ZLIB \
+#   || ( public-domain MIT ( public-domain MIT ) ) - \
+#   newIDE/electron-app/node_modules/electron/dist/LICENSES.chromium.html
+
+# For Electron: \
+#   (Similar to newIDE/electron-app/node_modules/electron/dist/LICENSES.chromium.html) with changes \
+#   ( MPL-1.1 GPL-2 ) \
+#   Boost-1.0 \
+#   EPL-1.1 - \
+#   newIDE/electron-app/app/node_modules/electron/dist/LICENSES.chromium.html
+#
+# IANAL:
+# This list appears auto generated (99.4k line html license file), but some of
+# these modules or files may not be present in the Chromium source code tarball.
+# The license compatibility may be better explained in the headers or usage
+# (build files versus redistributed).
+#
+
 ELECTRON_APP_DATA_DIR="${EROOT}/var/cache/npm-secaudit"
 ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 
