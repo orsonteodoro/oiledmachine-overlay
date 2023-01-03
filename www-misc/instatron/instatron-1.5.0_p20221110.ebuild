@@ -11,7 +11,14 @@ inherit desktop electron-app
 DESCRIPTION="A simple Instagram desktop uploader & client app build with
 electron.Mobile Instagram on desktop!"
 HOMEPAGE="https://github.com/alexdevero/instatron"
-LICENSE="MIT"
+LICENSE="
+	MIT
+	${ELECTRON_APP_LICENSES}
+"
+
+# For ELECTRON_APP_LICENSES, see
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass#L67
+
 KEYWORDS="~amd64"
 SLOT="0"
 BDEPEND+="

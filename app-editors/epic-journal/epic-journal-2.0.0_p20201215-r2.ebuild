@@ -11,7 +11,14 @@ inherit desktop electron-app
 
 DESCRIPTION="A clean and modern encrypted journal/diary app"
 HOMEPAGE="https://epicjournal.xyz/"
-LICENSE="CC-BY-NC-4.0"
+LICENSE="
+	CC-BY-NC-4.0
+	${ELECTRON_APP_LICENSES}
+"
+
+# For ELECTRON_APP_LICENSES, see
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass#L67
+
 KEYWORDS="~amd64"
 SLOT="0"
 DEPEND+="

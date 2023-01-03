@@ -13,7 +13,14 @@ inherit desktop electron-app npm-utils
 DESCRIPTION="GitHub Notifications Manager & Activity Watcher - Web, Mobile &
 Desktop"
 HOMEPAGE="https://devhubapp.com"
-LICENSE="AGPL-3"
+LICENSE="
+	AGPL-3
+	${ELECTRON_APP_LICENSES}
+"
+
+# For ELECTRON_APP_LICENSES, see
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass#L67
+
 KEYWORDS="~amd64"
 SLOT="0"
 BDEPEND+="

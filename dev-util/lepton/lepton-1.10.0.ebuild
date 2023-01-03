@@ -11,7 +11,14 @@ inherit desktop electron-app npm-utils
 
 DESCRIPTION="Democratizing Snippet Management (macOS/Win/Linux)"
 HOMEPAGE="http://hackjutsu.com/Lepton"
-LICENSE="MIT"
+LICENSE="
+	MIT
+	${ELECTRON_APP_LICENSES}
+"
+
+# For ELECTRON_APP_LICENSES, see
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass#L67
+
 KEYWORDS="~amd64"
 SLOT="0"
 DEPEND+="

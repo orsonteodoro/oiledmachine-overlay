@@ -12,7 +12,14 @@ inherit desktop electron-app
 
 DESCRIPTION="Elegant Facebook Messenger desktop app"
 HOMEPAGE="https://github.com/sindresorhus/caprine"
-LICENSE="MIT"
+LICENSE="
+	MIT
+	${ELECTRON_APP_LICENSES}
+"
+
+# For ELECTRON_APP_LICENSES, see
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass#L67
+
 KEYWORDS="~amd64"
 SLOT="0"
 BDEPEND+="

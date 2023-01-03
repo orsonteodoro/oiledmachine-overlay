@@ -100,8 +100,12 @@ THIRD_PARTY_LICENSES="
 LICENSE="
 	GDevelop MIT
 	${THIRD_PARTY_LICENSES}
-	${THIRD_PARTY_LICENSES_ELECTRON}
+	${ELECTRON_APP_LICENSES}
 "
+
+# For ELECTRON_APP_LICENSES, see
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass#L67
+
 # custom, (MIT all-rights-reserved), MIT, Apache-2.0, \
 #   (W3C [ipr-legal-disclaimer, ipr-trademarks], W3C-Document-License, \
 #   http://www.w3.org/TR/2015/WD-html51-20151008/), \
@@ -119,82 +123,6 @@ LICENSE="
 #   newIDE/app/node_modules/typescript/ThirdPartyNoticeText.txt
 # MIT
 # W3C-Software-Notice-and-License - newIDE/electron-app/app/node_modules/sax/LICENSE-W3C.html
-
-# For Electron: \
-# custom \
-#   search: "grants an immunity from suit" \
-#   custom-font-license \
-#     search: "removed from any derivative versions" \
-#   ( custom ISC with no advertising clause all-rights-reserved ) \
-#   ( fping all-rights-reserved ) \
-#   ( LGPL-2.1 LGPL-2.1+ ) \
-#   ^^ ( MPL-2 GPL-2+ LGPL-2.1+ ) \
-#   ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) \
-#   android \
-#   Apache-2.0 \
-#   Apache-2.0-with-LLVM-exceptions \
-#   APSL-2 \
-#   AFL-2.0 \
-#   BitstreamVera \
-#   BSD \
-#   BSD-2 \
-#   BSD-4 \
-#   BSD-Protection \
-#   CC-BY-SA-3.0 \
-#   CPL-1.0 \
-#   curl \
-#   GPL-2 \
-#   GPL-2-with-classpath-exception \
-#   GPL-3 \
-#   GPL-3+ \
-#   MIT \
-#   MPL-2.0 \
-#   FTL \
-#   icu-70.1 \
-#   icu (58) \
-#   icu (1.8.1+) \
-#   IJG \
-#   ISC \
-#   HPND \
-#   Khronos-CLHPP \
-#   LGPL-2.1 \
-#   LGPL-2.1+ \
-#   LGPL-3 \
-#   LGPL-3+ \
-#   libpng \
-#   libpng2 \
-#   libstdc++ \
-#   NEWLIB \
-#   MPL-1.1 \
-#   MPL-2.0 \
-#   Ms-PL \
-#   OFL-1.1 \
-#   PCRE8 (BSD) \
-#   minpack \
-#   openssl \
-#   SunPro \
-#   Unicode-DFS-2016 \
-#   unicode \
-#   unRAR \
-#   UoI-NCSA \
-#   WebP-PATENTS \
-#   ZLIB \
-#   || ( public-domain MIT ( public-domain MIT ) ) - \
-#   newIDE/electron-app/node_modules/electron/dist/LICENSES.chromium.html
-
-# For Electron: \
-#   (Similar to newIDE/electron-app/node_modules/electron/dist/LICENSES.chromium.html) with changes \
-#   ( MPL-1.1 GPL-2 ) \
-#   Boost-1.0 \
-#   EPL-1.1 - \
-#   newIDE/electron-app/app/node_modules/electron/dist/LICENSES.chromium.html
-#
-# IANAL:
-# This list appears auto generated (99.4k line html license file), but some of
-# these modules or files may not be present in the Chromium source code tarball.
-# The license compatibility may be better explained in the headers or usage
-# (build files versus redistributed).
-#
 
 #KEYWORDS="~amd64" # ebuild still in development
 # It should work in emscripten 1.x.

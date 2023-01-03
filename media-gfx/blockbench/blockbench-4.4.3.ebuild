@@ -10,7 +10,14 @@ inherit desktop electron-app npm-utils
 
 DESCRIPTION="Blockbench - A boxy 3D model editor"
 HOMEPAGE="https://www.blockbench.net"
-LICENSE="GPL-3+"
+LICENSE="
+	GPL-3+
+	${ELECTRON_APP_LICENSES}
+"
+
+# For ELECTRON_APP_LICENSES, see
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass#L67
+
 KEYWORDS="~amd64"
 SLOT="0"
 BDEPEND+="
