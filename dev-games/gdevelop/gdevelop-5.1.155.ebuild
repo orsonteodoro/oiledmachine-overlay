@@ -143,7 +143,7 @@ LICENSE="
 
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE+=" openrc r1"
+IUSE+=" openrc r2"
 # Dependency lists:
 # https://github.com/4ian/GDevelop/blob/v5.1.155/.circleci/config.yml#L85
 # https://github.com/4ian/GDevelop/blob/v5.1.155/.travis.yml
@@ -365,7 +365,9 @@ eerror
 		"${EMBUILD_DIR}/emscripten.config" || die
 #	export EMMAKEN_CFLAGS='-std=gnu++11'
 #	export EMCC_CFLAGS='-std=gnu++11'
-	export EMCC_CFLAGS="-stdlib=libc++"
+	if ver_test ${em_pv} -ge 3 ; then
+		export EMCC_CFLAGS="-stdlib=libc++"
+	fi
         export BINARYEN="${EMSDK_BINARYEN_BASE_PATH}"
 	export CC="emcc"
 	export CXX="em++"
