@@ -112,7 +112,7 @@ IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs system-closure-compiler test
 
-r1
+r3
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
