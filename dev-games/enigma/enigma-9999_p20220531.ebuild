@@ -701,6 +701,7 @@ src_install() {
 	doins -r "CommandLine/libEGM"
 	exeinto "/usr/bin"
 	newicon "Resources/logo.png" "enigma.png"
+	DESCRIPTION=$(echo "${DESCRIPTION}" | tr "\n" " ")
 	make_desktop_entry \
 		"/usr/bin/${PN}" \
 		"${PN^^}" \

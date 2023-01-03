@@ -55,6 +55,7 @@ src_install() {
 	doexe "${FILESDIR}/${PN}"
 
         newicon "node_modules/@devhub/desktop/assets/icons/icon.png" "${PN}.png"
+	DESCRIPTION=$(echo "${DESCRIPTION}" | tr "\n" " ")
         make_desktop_entry ${PN} "${MY_PN}" ${PN} "Development"
 	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
 }
