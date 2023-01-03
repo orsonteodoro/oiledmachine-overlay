@@ -1,4 +1,4 @@
-# Backport to 2.0.26
+# Backport to 1.40.1
 
 # Commit from
 # https://github.com/emscripten-core/emscripten/commit/78a56183e22b08b789f76c1f3143dc28b367f09c
@@ -14,10 +14,10 @@ Call Stack (most recent call first):
 
 It happens with EMCC_CFLAGS="-stdlib=libc++".
 
-diff -urp emscripten-2.0.26.orig/emcc.py emscripten-2.0.26/emcc.py
---- emscripten-2.0.26.orig/emcc.py	2021-07-25 10:43:09.000000000 -0700
-+++ emscripten-2.0.26/emcc.py	2023-01-02 09:59:25.327693590 -0800
-@@ -948,6 +948,21 @@ run_via_emxx = False
+diff -urp emscripten-1.40.1.orig/emcc.py emscripten-1.40.1/emcc.py
+--- emscripten-1.40.1.orig/emcc.py	2020-08-01 07:45:03.000000000 -0700
++++ emscripten-1.40.1/emcc.py	2023-01-02 19:01:31.201994416 -0800
+@@ -747,6 +747,21 @@ run_via_emxx = False
  # Main run() function
  #
  def run(args):
@@ -36,19 +36,19 @@ diff -urp emscripten-2.0.26.orig/emcc.py emscripten-2.0.26/emcc.py
 +    print(version_string(), file=sys.stderr)
 +    return shared.check_call([clang, '-v'] + get_clang_flags(), check=False).returncode
 +
-   # Additional compiler flags that we treat as if they were passed to us on the
-   # commandline
-   EMCC_CFLAGS = os.environ.get('EMCC_CFLAGS')
-@@ -958,6 +973,7 @@ def run(args):
-     logger.warning(f'invocation: {cmd} (in {os.getcwd()})')
+   global final
+   target = None
+ 
+@@ -760,6 +775,7 @@ def run(args):
+     logger.warning('invocation: ' + cmd + '  (in ' + os.getcwd() + ')')
    if EMCC_CFLAGS:
      args.extend(shlex.split(EMCC_CFLAGS))
 +    args += shlex.split(EMCC_CFLAGS)
  
    # Strip args[0] (program name)
    args = args[1:]
-@@ -1000,16 +1016,6 @@ There is NO warranty; not even for MERCH
- ''')
+@@ -809,18 +825,6 @@ There is NO warranty; not even for MERCH
+   ''' % (shared.EMSCRIPTEN_VERSION, revision))
      return 0
  
 -  if run_via_emxx:
@@ -58,18 +58,20 @@ diff -urp emscripten-2.0.26.orig/emcc.py emscripten-2.0.26/emcc.py
 -
 -  if len(args) == 1 and args[0] == '-v': # -v with no inputs
 -    # autoconf likes to see 'GNU' in the output to enable shared object support
--    print(version_string(), file=sys.stderr)
--    return shared.check_call([clang, '-v'] + get_clang_flags(), check=False).returncode
+-    print('emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) %s' % shared.EMSCRIPTEN_VERSION, file=sys.stderr)
+-    code = run_process([clang, '-v'], check=False).returncode
+-    shared.check_sanity(force=True)
+-    return code
 -
+   shared.check_sanity(force=DEBUG)
+ 
    if '-dumpmachine' in args:
-     print(get_llvm_target())
-     return 0
-Only in emscripten-2.0.26: emcc.py.orig
-Only in emscripten-2.0.26: emcc.py.rej
-diff -urp emscripten-2.0.26.orig/tests/test_other.py emscripten-2.0.26/tests/test_other.py
---- emscripten-2.0.26.orig/tests/test_other.py	2021-07-25 10:43:09.000000000 -0700
-+++ emscripten-2.0.26/tests/test_other.py	2023-01-02 09:57:30.263209870 -0800
-@@ -154,6 +154,10 @@ class other(RunnerCore):
+Only in emscripten-1.40.1: emcc.py.orig
+Only in emscripten-1.40.1: emcc.py.rej
+diff -urp emscripten-1.40.1.orig/tests/test_other.py emscripten-1.40.1/tests/test_other.py
+--- emscripten-1.40.1.orig/tests/test_other.py	2020-08-01 07:45:03.000000000 -0700
++++ emscripten-1.40.1/tests/test_other.py	2023-01-02 18:59:49.765979289 -0800
+@@ -204,6 +204,10 @@ class other(RunnerCore):
        os.close(master)
        os.close(slave)
  
@@ -80,4 +82,4 @@ diff -urp emscripten-2.0.26.orig/tests/test_other.py emscripten-2.0.26/tests/tes
    def test_emcc_v(self):
      for compiler in [EMCC, EMXX]:
        # -v, without input files
-Only in emscripten-2.0.26/tests: test_other.py.orig
+Only in emscripten-1.40.1/tests: test_other.py.orig

@@ -112,7 +112,7 @@ IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs system-closure-compiler test
 
-r29
+r30
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -212,6 +212,7 @@ DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
 _PATCHES=(
 	"${FILESDIR}/${PN}-1.39.20-set-wrappers-path.patch"
+	"${FILESDIR}/${PN}-1.40.1-78a5618.patch"
 )
 EMSCRIPTEN_CONFIG_V="2.0.26"
 
