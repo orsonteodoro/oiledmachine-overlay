@@ -468,7 +468,13 @@ src_install() {
 }
 
 pkg_postinst() {
-	eselect emscripten set "emscripten-${PV},llvm-${LLVM_PV}"
+# Breaks inherit
+#	eselect emscripten set "emscripten-${PV},llvm-${LLVM_PV}"
+einfo
+einfo "You must manually do:"
+einfo
+einfo "  eselect emscripten set \"emscripten-${PV},llvm-${LLVM_PV}\""
+einfo
 	if use closure-compiler && ! use system-closure-compiler ; then
 		export NPM_SECAUDIT_INSTALL_PATH="${DEST}/${P}"
 		npm-secaudit_pkg_postinst

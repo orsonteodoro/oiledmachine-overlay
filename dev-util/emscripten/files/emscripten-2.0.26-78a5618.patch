@@ -4,15 +4,15 @@
 # https://github.com/emscripten-core/emscripten/commit/78a56183e22b08b789f76c1f3143dc28b367f09c
 
 # Fixes:
-CMake Error at /usr/share/emscripten-1.39.20/cmake/Modules/Platform/Emscripten.cmake:131 (message):
-  Failed to fetch compiler version information with command
-  "'/usr/share/emscripten-1.39.20/emcc' -v"! Process returned with error code
-  1.
-Call Stack (most recent call first):
-  /usr/share/cmake/Modules/CMakeDetermineSystem.cmake:124 (include)
-  CMakeLists.txt:37 (project)
+# CMake Error at /usr/share/emscripten-1.39.20/cmake/Modules/Platform/Emscripten.cmake:131 (message):
+#   Failed to fetch compiler version information with command
+#   "'/usr/share/emscripten-1.39.20/emcc' -v"! Process returned with error code
+#   1.
+# Call Stack (most recent call first):
+#   /usr/share/cmake/Modules/CMakeDetermineSystem.cmake:124 (include)
+#   CMakeLists.txt:37 (project)
 
-It happens with EMCC_CFLAGS="-stdlib=libc++".
+# It happens with EMCC_CFLAGS="-stdlib=libc++".
 
 diff -urp emscripten-2.0.26.orig/emcc.py emscripten-2.0.26/emcc.py
 --- emscripten-2.0.26.orig/emcc.py	2021-07-25 10:43:09.000000000 -0700
