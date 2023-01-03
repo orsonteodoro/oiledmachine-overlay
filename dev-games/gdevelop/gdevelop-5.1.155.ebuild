@@ -215,7 +215,7 @@ LICENSE="
 
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE+=" openrc"
+IUSE+=" openrc r1"
 # Dependency lists:
 # https://github.com/4ian/GDevelop/blob/v5.1.155/.circleci/config.yml#L85
 # https://github.com/4ian/GDevelop/blob/v5.1.155/.travis.yml
