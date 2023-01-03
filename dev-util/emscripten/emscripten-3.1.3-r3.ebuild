@@ -472,7 +472,7 @@ src_install() {
 }
 
 pkg_postinst() {
-	eselect emscripten set "emscripten-${PV} llvm-${LLVM_PV}"
+	eselect emscripten set "emscripten-${PV},llvm-${LLVM_PV}"
 	if use closure-compiler && ! use system-closure-compiler ; then
 		export NPM_SECAUDIT_INSTALL_PATH="${DEST}/${P}"
 		npm-secaudit_pkg_postinst
