@@ -1162,9 +1162,9 @@ ewarn
 ewarn "Electron ${ELECTRON_PV} requires at least >=net-libs/nodejs-${NODE_PV}"
 ewarn
 	fi
-	if ! has_version ">=sys-libs/zlib-${ZLIB_PV}" ; then
+	if ! has_version ">=sys-libs/zlib-${ZLIB_PV%-*}" ; then
 		adie \
-"Electron ${ELECTRON_PV} requires at least >=sys-libs/zlib-${ZLIB_PV}"
+"Electron ${ELECTRON_PV} requires at least >=sys-libs/zlib-${ZLIB_PV%-*}"
 	fi
 
 	# ##### EOL Tests ######################################################
