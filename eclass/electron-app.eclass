@@ -800,6 +800,14 @@ ewarn
 electron-app_pkg_setup_per_package_environment_variables() {
 	npm-utils_pkg_setup
 
+	# Accepts production or development [or unset as development]
+	export NODE_ENV=${NODE_ENV:-production}
+	if [[ "${NODE_ENV}" == "production" ]] ; then
+einfo "NODE_ENV=production"
+	else
+einfo "NODE_ENV=development"
+	fi
+
 	# Set this in your make.conf to control number of HTTP requests.  50 is npm
 	# default but it is too high.
 	ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:-"1"}
@@ -1504,7 +1512,18 @@ eerror
 		# Create wrapper
 		exeinto "/usr/bin"
 		echo "#!/bin/bash" > "${T}/${PN}"
-		echo "${cmd}" >> "${T}/${PN}"
+		if [[ -n "${NODE_VERSION}" ]] ; then
+einfo "Setting NODE_VERSION=${NODE_VERSION} in wrapper."
+			echo "export NODE_VERSION=${NODE_VERSION}" >> "${T}/${PN}"
+		fi
+		if [[ "${NODE_ENV}" == "production" ]] ; then
+einfo "Setting NODE_ENV=\${NODE_ENV:-production} in wrapper."
+			echo "export NODE_ENV=\${NODE_ENV:-production}" >> "${T}/${PN}"
+		else
+einfo "Setting NODE_ENV=\${NODE_ENV:-development} in wrapper."
+			echo "export NODE_ENV=\${NODE_ENV:-development}" >> "${T}/${PN}"
+		fi
+		echo "${cmd}" >> "${T}/${PN} \"\${@}\""
 		doexe "${T}/${PN}"
 
 		local icon=""
@@ -1542,6 +1561,7 @@ ewarn
 		fi
 	fi
 
+	DESCRIPTION=$(echo "${DESCRIPTION}" | tr "\n" " ")
 	make_desktop_entry "${PN}" "${pkg_name}" "${icon}" "${category}"
 }
 

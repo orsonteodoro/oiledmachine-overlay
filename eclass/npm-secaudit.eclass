@@ -107,7 +107,6 @@ DEPEND+="
 RDEPEND+="
 	${COMMON_DEPEND}
 "
-IUSE+=" debug"
 
 # ##################  END ebuild and eclass global variables ###################
 
@@ -116,6 +115,14 @@ IUSE+=" debug"
 # Initalizes per package environment variables
 npm-secaudit_pkg_setup_per_package_environment_variables() {
 	npm-utils_pkg_setup
+
+	# Accepts production or development [or unset as development]
+	export NODE_ENV=${NODE_ENV:-production}
+	if [[ "${NODE_ENV}" == "production" ]] ; then
+einfo "NODE_ENV=production"
+	else
+einfo "NODE_ENV=development"
+	fi
 
 	# The following could be define as a per-package envar:
 	# They are not recommended to set these in the in the ebuild.
@@ -331,7 +338,18 @@ npm-secaudit_src_install_default() {
 	# Create wrapper
 	exeinto "/usr/bin"
 	echo "#!/bin/bash" > "${T}/${PN}"
-	echo "${cmd}" >> "${T}/${PN}"
+	if [[ -n "${NODE_VERSION}" ]] ; then
+einfo "Setting NODE_VERSION=${NODE_VERSION} in wrapper."
+		echo "export NODE_VERSION=${NODE_VERSION}" >> "${T}/${PN}"
+	fi
+	if [[ "${NODE_ENV}" == "production" ]] ; then
+einfo "Setting NODE_ENV=\${NODE_ENV:-production} in wrapper."
+		echo "export NODE_ENV=\${NODE_ENV:-production}" >> "${T}/${PN}"
+	else
+einfo "Setting NODE_ENV=\${NODE_ENV:-development} in wrapper."
+		echo "export NODE_ENV=\${NODE_ENV:-development}" >> "${T}/${PN}"
+	fi
+	echo "${cmd}" >> "${T}/${PN} \"\${@}\""
 	doexe "${T}/${PN}"
 
 	npm-secaudit_store_jsons_for_security_audit
