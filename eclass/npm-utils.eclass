@@ -728,8 +728,8 @@ eerror
 		die
 	else
 einfo
-einfo "Node.js header version: ${node_pv_major}.${node_pv_minor}.${node_pv_patch}"
-einfo "Node.js exe version: ${node_pv}"
+einfo "Node.js header version:\t${node_pv_major}.${node_pv_minor}.${node_pv_patch}"
+einfo "Node.js exe version:\t\t${node_pv}"
 einfo
 	fi
 }

@@ -1212,8 +1212,8 @@ electron-app_src_unpack() {
 			-ne \
 			$(ver_cut 1 ${NODE_VERSION}) ; then
 eerror
-eerror "Node header version:  ${node_header_pv}"
-eerror "Ebuild selected version:  ${NODE_VERSION}"
+eerror "Node header version:\t\t${node_header_pv}"
+eerror "Ebuild selected version:\t${NODE_VERSION}"
 eerror
 eerror "Switch the headers to ${NODE_VERSION}."
 eerror "Did you perform \`eselect nodejs set node${NODE_VERSION}\`"
