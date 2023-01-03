@@ -4,12 +4,12 @@
 EAPI=8
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/3.1.17/tools/config_template.py
+# https://github.com/emscripten-core/emscripten/blob/3.0.1/tools/config_template.py
 
 # TC = toolchain
-BINARYEN_PV="109" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
+BINARYEN_PV="103" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
 JAVA_PV="11"
-LLVM_PV=15
+LLVM_PV=14
 LLVM_MAX_SLOT=${LLVM_PV}
 PYTHON_COMPAT=( python3_{8..11} )
 inherit flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1
@@ -136,13 +136,13 @@ REQUIRED_USE+="
 "
 # For DEPENDs:
 # See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/3.1.17/site/source/docs/building_from_source/toolchain_what_is_needed.rst
-# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/3.1.17/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
-# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.17/package.json
-# For the required closure-compiler-nodejs node version, see https://github.com/google/closure-compiler/blob/v20220502/.github/workflows/ci.yaml#L43
-# For the required Java, See https://github.com/google/closure-compiler/blob/v20220502/.github/workflows/ci.yaml#L43
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.17/tools/shared.py#L50
-# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.17/tools/shared.py#L43
+# See also https://github.com/emscripten-core/emscripten/blob/3.0.1/site/source/docs/building_from_source/toolchain_what_is_needed.rst
+# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/3.0.1/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
+# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.0.1/package.json
+# For the required closure-compiler-nodejs node version, see https://github.com/google/closure-compiler/blob/v20211006/.github/workflows/ci.yaml#L43
+# For the required Java, See https://github.com/google/closure-compiler/blob/v20211006/.github/workflows/ci.yaml#L43
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.0.1/tools/shared.py#L50
+# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.0.1/tools/shared.py#L43
 JDK_DEPEND="
 	|| (
 		dev-java/openjdk-bin:${JAVA_PV}
@@ -166,7 +166,7 @@ RDEPEND+="
 			>=net-libs/nodejs-10
 		)
 		system-closure-compiler? (
-			>=dev-util/closure-compiler-npm-20220502.0.0:\
+			>=dev-util/closure-compiler-npm-20211006.0.0:\
 ${CLOSURE_COMPILER_SLOT}\
 [closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?]
 		)
@@ -211,8 +211,7 @@ TEST="${WORKDIR}/test/"
 DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
 _PATCHES=(
-	"${FILESDIR}/${PN}-3.1.14-set-wrappers-path.patch"
-	"${FILESDIR}/${PN}-3.1.28-includes.patch"
+	"${FILESDIR}/${PN}-3.0.1-set-wrappers-path.patch"
 	"${FILESDIR}/${PN}-3.1.28-libcxxabi_no_exceptions-already-defined.patch"
 )
 EMSCRIPTEN_CONFIG_V="2.0.26"

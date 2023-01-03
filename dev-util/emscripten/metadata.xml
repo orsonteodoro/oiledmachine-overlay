@@ -24,14 +24,15 @@
   <longdescription>
     Only in the oiledmachine-overlay:
 
-    This ebuild tracks only the highest point releases corresponding to
-    the corresponding LLVM version up to the latest current stable LLVM.
+    This ebuild package tracks releases corresponding to both the LLVM version
+    and the highest point release of the major minor version.
 
     The project is rolling release.  No LTS versions.
 
     LLVM 16 (dev) - 3.1.28 (Upstream supported 3.1.x)
     LLVM 15 (stable) - 3.1.17 (EOL)
     LLVM 14 (stable) - 3.1.3 (EOL)
+    LLVM 14 (stable) - 3.0.3 (EOL)
     LLVM 14 (stable) - 2.0.26 (EOL)
     LLVM 14 (stable) - 1.40.1 (EOL)
     LLVM 14 (stable) - 1.39.20 (EOL)
@@ -81,6 +82,9 @@
     </slot>
     <slot name="14-2.0">
       Target LLVM 14 and Emscripten 2.0.x (EOL)
+    </slot>
+    <slot name="14-3.0">
+      Target LLVM 14 and Emscripten 3.0.x (EOL)
     </slot>
     <slot name="14-3.1">
       Target LLVM 14 and Emscripten 3.1.x (EOL)
