@@ -1,4 +1,5 @@
 #!/bin/bash
+NODE_VERSION="${NODE_VERSION}"
 SETTINGS=$(realpath ~/)"/.config/${PN}/${PN}.conf"
 if [[ -f "${SETTINGS}" ]] ; then
 	gperms=$(stat -c '%a' "${SETTINGS}" | cut -c 2)

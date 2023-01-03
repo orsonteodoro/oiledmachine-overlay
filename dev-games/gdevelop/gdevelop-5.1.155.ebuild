@@ -124,22 +124,7 @@ LICENSE="
 # MIT
 # W3C-Software-Notice-and-License - newIDE/electron-app/app/node_modules/sax/LICENSE-W3C.html
 
-#KEYWORDS="~amd64" # ebuild still in development
-# It should work in emscripten 1.x.
-# Last bug related to >= emscripten 3.0:
-
-#Unhandled Rejection (ReferenceError): addOnPreMain is not defined
-#(anonymous function)
-#http://localhost:3000/libGD.js?cache-buster=5.1.155-unknown-hash:11498:26
-#(anonymous function)
-#src/index.js:88
-#  85 |   return;
-#  86 | }
-#  87 | 
-#> 88 | initializeGDevelopJs({
-#     | ^  89 |   // Override the resolved URL for the .wasm file,
-#  90 |   // to ensure a new version is fetched when the version changes.
-#  91 |   locateFile: (path: string, prefix: string) => {
+KEYWORDS="~amd64"
 
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
@@ -520,6 +505,7 @@ ewarn
 	fi
 	cp "${FILESDIR}/${PN}" "${T}/${PN}" || die
 	sed -i  -e "s|\$(get_libdir)|$(get_libdir)|g" \
+		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
 		-e "s|\${PN}|${PN}|g" \
 		-e "s|\${SLOT_MAJOR}|${SLOT_MAJOR}|g" \
 		"${T}/${PN}" || die
@@ -531,6 +517,7 @@ ewarn
 	if use openrc ; then
 		cp "${FILESDIR}/${PN}-server-openrc" "${T}/${PN}-server" || die
 		sed -i  -e "s|\$(get_libdir)|$(get_libdir)|g" \
+			-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
 			-e "s|\${PN}|${PN}|g" \
 			-e "s|\${MY_PN}|${MY_PN}|g" \
 			-e "s|\${SLOT_MAJOR}|${SLOT_MAJOR}|g" \

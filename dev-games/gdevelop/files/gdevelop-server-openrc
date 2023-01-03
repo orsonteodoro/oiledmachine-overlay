@@ -40,6 +40,7 @@ start_server() {
 	chown ${PN}:${PN} "$(dirname ${SERVER_PID_FILE})"
 	touch "${SERVER_PID_FILE}"
 
+	export NODE_VERSION="${NODE_VERSION}"
 	cd "${PROJECT_ROOT}/newIDE/app"
 	start-stop-daemon \
 		--background \
