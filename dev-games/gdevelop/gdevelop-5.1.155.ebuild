@@ -143,7 +143,7 @@ LICENSE="
 
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE+=" openrc r2"
+IUSE+=" openrc r3"
 # Dependency lists:
 # https://github.com/4ian/GDevelop/blob/v5.1.155/.circleci/config.yml#L85
 # https://github.com/4ian/GDevelop/blob/v5.1.155/.travis.yml
@@ -347,10 +347,10 @@ src_unpack() {
 	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 	export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
 	mkdir -p "${EMBUILD_DIR}" || die
+	local em_pv=$(best_version "dev-util/emscripten:${EMSCRIPTEN_SLOT}")
+	em_pv=$(echo "${em_pv}" | sed -e "s|dev-util/emscripten-||g")
+	em_pv=$(ver_cut 1-3 ${em_pv})
 	if ! [[ -e "${EM_CONFIG}" ]] ; then
-		local em_pv=$(best_version "dev-util/emscripten:${EMSCRIPTEN_SLOT}")
-		em_pv=$(echo "${em_pv}" | sed -e "s|dev-util/emscripten-||g")
-		em_pv=$(ver_cut 1-3 ${em_pv})
 eerror
 eerror "Do:"
 eerror
@@ -390,6 +390,7 @@ einfo "CXXFLAGS=${CXXFLAGS}"
 einfo "LDFLAGS=${LDFLAGS}"
 einfo "BINARYEN=${EMSDK_BINARYEN_BASE_PATH}"
 einfo "CLOSURE_COMPILER=${EMSDK_CLOSURE_COMPILER}"
+einfo "em_pv=${em_pv}"
 einfo "EM_BINARYEN_ROOT=${EM_BINARYEN_ROOT}"
 einfo "EM_CONFIG=${EM_CONFIG}"
 einfo "EM_NODE_JS=${EM_NODE_JS}"
