@@ -1201,6 +1201,27 @@ ewarn
 electron-app_src_unpack() {
         debug-print-function ${FUNCNAME} "${@}"
 
+	if [[ -n "${NODE_VERSION}" ]] ; then
+		local node_header_pv=$(grep \
+			"NODE_MAJOR_VERSION" \
+			"${ESYSROOT}/usr/include/node/node_version.h" \
+			| head -n 1 \
+			| cut -f 3 -d " ")
+		if ver_test \
+			$(ver_cut 1 ${node_header_pv}) \
+			-ne \
+			$(ver_cut 1 ${NODE_VERSION}) ; then
+eerror
+eerror "Node header version:  ${node_header_pv}"
+eerror "Ebuild selected version:  ${NODE_VERSION}"
+eerror
+eerror "Switch the headers to ${NODE_VERSION}."
+eerror "Did you perform \`eselect nodejs set node${NODE_VERSION}\`"
+eerror
+			die
+		fi
+	fi
+
 	cd "${WORKDIR}"
 
 	if [[ ! -d "${S}" ]] ; then
