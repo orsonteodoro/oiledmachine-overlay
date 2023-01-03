@@ -68,12 +68,13 @@ ${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP:-"0"}
 # See comments below for details.
 ELECTRON_APP_LICENSES="
 	custom
+	( all-rights-reserved HPND )
 	( custom ISC all-rights-reserved )
 	( fping all-rights-reserved )
 	( LGPL-2.1 LGPL-2.1+ )
 	( MPL-1.1 GPL-2 )
-	|| ( MPL-2 GPL-2+ LGPL-2.1+ )
-	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
+	( MPL-1.1 all-right-reserved || ( GPL-2 LGPL-2.1 ) )
+	|| ( (MPL-2.0 GPL-2+) (MPL-2.0 LGPL-2.1+) MPL-2.0 GPL-2.0+ )
 	android
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -85,6 +86,7 @@ ELECTRON_APP_LICENSES="
 	BSD-2
 	BSD-4
 	BSD-Protection
+	CC-BY-3.0
 	CC-BY-SA-3.0
 	CPL-1.0
 	curl
@@ -95,6 +97,7 @@ ELECTRON_APP_LICENSES="
 	GPL-3+
 	MIT
 	MPL-2.0
+	FLEX
 	FTL
 	icu-70.1
 	IJG
@@ -108,6 +111,7 @@ ELECTRON_APP_LICENSES="
 	libpng
 	libpng2
 	libstdc++
+	neon_2_sse
 	NEWLIB
 	MPL-1.1
 	MPL-2.0
@@ -115,6 +119,7 @@ ELECTRON_APP_LICENSES="
 	OFL-1.1
 	minpack
 	openssl
+	ooura
 	SunPro
 	Unicode-DFS-2016
 	unicode
@@ -131,11 +136,12 @@ ELECTRON_APP_LICENSES="
 #   search: "grants an immunity from suit" \
 #   custom-font-license \
 #     search: "removed from any derivative versions" \
+#   ( all-rights-reserved HPND )
 #   ( custom ISC with no advertising clause all-rights-reserved ) \
 #   ( fping all-rights-reserved ) \
 #   ( LGPL-2.1 LGPL-2.1+ ) \
-#   ^^ ( MPL-2 GPL-2+ LGPL-2.1+ ) \
-#   ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) \
+#   ( MPL-1.1 all-right-reserved  ^^ ( GPL-2 LGPL-2.1 ) ) \
+#   ^^ ( (MPL-2.0 GPL-2+) (MPL-2.0 LGPL-2.1+) MPL-2.0 GPL-2.0+ )
 #   android \
 #   Apache-2.0 \
 #   Apache-2.0-with-LLVM-exceptions \
@@ -155,6 +161,7 @@ ELECTRON_APP_LICENSES="
 #   GPL-3+ \
 #   MIT \
 #   MPL-2.0 \
+#   FLEX \
 #   FTL \
 #   icu-70.1 \
 #   icu (58) \
@@ -174,10 +181,12 @@ ELECTRON_APP_LICENSES="
 #   MPL-1.1 \
 #   MPL-2.0 \
 #   Ms-PL \
+#   neon_2_sse \
 #   OFL-1.1 \
 #   PCRE8 (BSD) \
 #   minpack \
 #   openssl \
+#   ooura \
 #   SunPro \
 #   Unicode-DFS-2016 \
 #   unicode \
