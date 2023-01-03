@@ -40,9 +40,6 @@ https://github.com/WebAssembly/binaryen/archive/version_${PV}.tar.gz
 S="${WORKDIR}/${PN}-version_${PV}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md )
-PATCHES=(
-	"${FILESDIR}/${P}-e4d1e20.patch"
-)
 
 pkg_setup() {
 	CC=$(tc-getCC)

@@ -4,10 +4,10 @@
 EAPI=8
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/1.39.20/tools/settings_template.py
+# https://github.com/emscripten-core/emscripten/blob/1.40.1/tools/settings_template.py
 
 # TC = toolchain
-BINARYEN_PV="93" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
+BINARYEN_PV="94" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
 JAVA_PV="8"
 LLVM_PV=14 # Upstream requires 12 for wasm and 6 for asmjs.
 LLVM_MAX_SLOT=${LLVM_PV}
@@ -136,13 +136,13 @@ REQUIRED_USE+="
 "
 # For DEPENDs:
 # See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/1.39.20/site/source/docs/building_from_source/toolchain_what_is_needed.rst
-# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/1.39.20/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
-# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/1.39.20/package.json
+# See also https://github.com/emscripten-core/emscripten/blob/1.40.1/site/source/docs/building_from_source/toolchain_what_is_needed.rst
+# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/1.40.1/tools/shared.py#L44
+# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/1.40.1/package.json
 # For the required closure-compiler-nodejs node version, see https://github.com/google/closure-compiler-npm/blob/v20200224.0.0/packages/google-closure-compiler/package.json
 # For the required Java, See https://github.com/google/closure-compiler/blob/v20200224/.travis.yml#L7
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/1.39.20/tools/shared.py#L431
-# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/1.39.20/tools/shared.py#L43
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/1.40.1/tools/shared.py#L431
+# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/1.40.1/tools/shared.py#L43
 JDK_DEPEND="
 	|| (
 		dev-java/openjdk-bin:${JAVA_PV}
@@ -318,7 +318,7 @@ eerror
 
 # The activated_cfg goes in emscripten.config from the json file.
 # The activated_env goes in 99emscripten from the json file.
-# https://github.com/emscripten-core/emsdk/blob/1.39.20/emsdk_manifest.json
+# https://github.com/emscripten-core/emsdk/blob/1.40.1/emsdk_manifest.json
 # For examples of environmental variables and paths used in this package, see
 # https://github.com/emscripten-core/emsdk/issues/167#issuecomment-414935332
 prepare_file() {

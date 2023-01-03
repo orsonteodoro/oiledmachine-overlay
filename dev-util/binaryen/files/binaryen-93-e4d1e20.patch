@@ -1,0 +1,2084 @@
+# Backport for Binaryen 93
+
+# Fixes:
+Fatal: Module::addFunction: stackSave already exists
+emcc: error: '/usr/lib64/binaryen/93/bin/wasm-emscripten-finalize --detect-features --global-base=1024 --check-stack-overflow /var/tmp/portage/dev-util/emscripten-1.39.20/temp/emscripten_temp_4sdzerq2/tmpjvuqmr_c.wasm -o /var/tmp/portage/dev-util/emscripten-1.39.20/temp/
+
+Commit from:
+https://github.com/WebAssembly/binaryen/commit/e4d1e203c8bf8577e645dbf7ab265d1ec1c68bee
+
+diff -urp binaryen-version_93.orig/CHANGELOG.md binaryen-version_93/CHANGELOG.md
+--- binaryen-version_93.orig/CHANGELOG.md	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/CHANGELOG.md	2023-01-02 17:33:05.581859700 -0800
+@@ -15,6 +15,10 @@ full changeset diff at the end of each s
+ Current Trunk
+ -------------
+ 
++- wasm-emscripten-finalize will no longer generate `stackSave`, `stackAlloc`,
++  `stackRestore` function.  It not expects them to be included in the input
++  file.
++
+ v93
+ ---
+ 
+Only in binaryen-version_93: CHANGELOG.md.orig
+Only in binaryen-version_93: CHANGELOG.md.rej
+diff -urp binaryen-version_93.orig/src/tools/wasm-emscripten-finalize.cpp binaryen-version_93/src/tools/wasm-emscripten-finalize.cpp
+--- binaryen-version_93.orig/src/tools/wasm-emscripten-finalize.cpp	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/src/tools/wasm-emscripten-finalize.cpp	2023-01-02 17:32:37.544751673 -0800
+@@ -251,7 +251,6 @@ int main(int argc, const char* argv[]) {
+     generator.generatePostInstantiateFunction();
+   } else {
+     BYN_TRACE("finalizing as regular module\n");
+-    generator.generateRuntimeFunctions();
+     generator.internalizeStackPointerGlobal();
+     generator.generateMemoryGrowthFunction();
+     // For side modules these gets called via __post_instantiate
+diff -urp binaryen-version_93.orig/src/wasm/wasm-emscripten.cpp binaryen-version_93/src/wasm/wasm-emscripten.cpp
+--- binaryen-version_93.orig/src/wasm/wasm-emscripten.cpp	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/src/wasm/wasm-emscripten.cpp	2023-01-02 17:35:56.816624653 -0800
+@@ -39,7 +39,6 @@ cashew::IString EM_JS_PREFIX("__em_js__"
+ 
+ static Name STACK_SAVE("stackSave");
+ static Name STACK_RESTORE("stackRestore");
+-static Name STACK_ALLOC("stackAlloc");
+ static Name STACK_INIT("stack$init");
+ static Name STACK_LIMIT("__stack_limit");
+ static Name SET_STACK_LIMIT("__set_stack_limit");
+@@ -82,137 +81,6 @@ Global* EmscriptenGlueGenerator::getStac
+   return nullptr;
+ }
+ 
+-Expression* EmscriptenGlueGenerator::generateLoadStackPointer() {
+-  if (!useStackPointerGlobal) {
+-    return builder.makeLoad(
+-      /* bytes  =*/4,
+-      /* signed =*/false,
+-      /* offset =*/stackPointerOffset,
+-      /* align  =*/4,
+-      /* ptr    =*/builder.makeConst(Literal(0)),
+-      /* type   =*/Type::i32);
+-  }
+-  Global* stackPointer = getStackPointerGlobal();
+-  if (!stackPointer) {
+-    Fatal() << "stack pointer global not found";
+-  }
+-  return builder.makeGlobalGet(stackPointer->name, Type::i32);
+-}
+-
+-inline Expression* stackBoundsCheck(Builder& builder,
+-                                    Function* func,
+-                                    Expression* value,
+-                                    Global* stackPointer,
+-                                    Global* stackLimit,
+-                                    Name handlerName) {
+-  // Add a local to store the value of the expression. We need the value twice:
+-  // once to check if it has overflowed, and again to assign to store it.
+-  auto newSP = Builder::addVar(func, stackPointer->type);
+-  // If we imported a handler, call it. That can show a nice error in JS.
+-  // Otherwise, just trap.
+-  Expression* handler;
+-  if (handlerName.is()) {
+-    handler = builder.makeCall(handlerName, {}, Type::none);
+-  } else {
+-    handler = builder.makeUnreachable();
+-  }
+-  // (if (i32.lt_u (local.tee $newSP (...value...)) (global.get $__stack_limit))
+-  auto check =
+-    builder.makeIf(builder.makeBinary(
+-                     BinaryOp::LtUInt32,
+-                     builder.makeLocalTee(newSP, value, stackPointer->type),
+-                     builder.makeGlobalGet(stackLimit->name, stackLimit->type)),
+-                   handler);
+-  // (global.set $__stack_pointer (local.get $newSP))
+-  auto newSet = builder.makeGlobalSet(
+-    stackPointer->name, builder.makeLocalGet(newSP, stackPointer->type));
+-  return builder.blockify(check, newSet);
+-}
+-
+-Expression*
+-EmscriptenGlueGenerator::generateStoreStackPointer(Function* func,
+-                                                   Expression* value) {
+-  BYN_TRACE("generateStoreStackPointer\n");
+-  if (!useStackPointerGlobal) {
+-    return builder.makeStore(
+-      /* bytes  =*/4,
+-      /* offset =*/stackPointerOffset,
+-      /* align  =*/4,
+-      /* ptr    =*/builder.makeConst(Literal(0)),
+-      /* value  =*/value,
+-      /* type   =*/Type::i32);
+-  }
+-  Global* stackPointer = getStackPointerGlobal();
+-  if (!stackPointer) {
+-    Fatal() << "stack pointer global not found";
+-  }
+-  if (auto* stackLimit = wasm.getGlobalOrNull(STACK_LIMIT)) {
+-    return stackBoundsCheck(builder,
+-                            func,
+-                            value,
+-                            stackPointer,
+-                            stackLimit,
+-                            importStackOverflowHandler());
+-  }
+-  return builder.makeGlobalSet(stackPointer->name, value);
+-}
+-
+-void EmscriptenGlueGenerator::generateStackSaveFunction() {
+-  BYN_TRACE("generateStackSaveFunction\n");
+-  std::vector<NameType> params{};
+-  Function* function =
+-    builder.makeFunction(STACK_SAVE, std::move(params), Type::i32, {});
+-
+-  function->body = generateLoadStackPointer();
+-
+-  addExportedFunction(wasm, function);
+-}
+-
+-void EmscriptenGlueGenerator::generateStackAllocFunction() {
+-  BYN_TRACE("generateStackAllocFunction\n");
+-  std::vector<NameType> params{{"0", Type::i32}};
+-  Function* function = builder.makeFunction(
+-    STACK_ALLOC, std::move(params), Type::i32, {{"1", Type::i32}});
+-  Expression* loadStack = generateLoadStackPointer();
+-  LocalGet* getSizeArg = builder.makeLocalGet(0, Type::i32);
+-  Binary* sub = builder.makeBinary(SubInt32, loadStack, getSizeArg);
+-  const static uint32_t bitAlignment = 16;
+-  const static uint32_t bitMask = bitAlignment - 1;
+-  Const* subConst = builder.makeConst(Literal(~bitMask));
+-  Binary* maskedSub = builder.makeBinary(AndInt32, sub, subConst);
+-  LocalSet* teeStackLocal = builder.makeLocalTee(1, maskedSub, Type::i32);
+-  Expression* storeStack = generateStoreStackPointer(function, teeStackLocal);
+-
+-  Block* block = builder.makeBlock();
+-  block->list.push_back(storeStack);
+-  LocalGet* getStackLocal2 = builder.makeLocalGet(1, Type::i32);
+-  block->list.push_back(getStackLocal2);
+-  block->type = Type::i32;
+-  function->body = block;
+-
+-  addExportedFunction(wasm, function);
+-}
+-
+-void EmscriptenGlueGenerator::generateStackRestoreFunction() {
+-  BYN_TRACE("generateStackRestoreFunction\n");
+-  std::vector<NameType> params{{"0", Type::i32}};
+-  Function* function =
+-    builder.makeFunction(STACK_RESTORE, std::move(params), Type::none, {});
+-  LocalGet* getArg = builder.makeLocalGet(0, Type::i32);
+-  Expression* store = generateStoreStackPointer(function, getArg);
+-
+-  function->body = store;
+-
+-  addExportedFunction(wasm, function);
+-}
+-
+-void EmscriptenGlueGenerator::generateRuntimeFunctions() {
+-  BYN_TRACE("generateRuntimeFunctions\n");
+-  generateStackSaveFunction();
+-  generateStackAllocFunction();
+-  generateStackRestoreFunction();
+-}
+-
+ static Function*
+ ensureFunctionImport(Module* module, Name name, Signature sig) {
+   // See if its already imported.
+@@ -517,12 +385,21 @@ struct RemoveStackPointer : public PostW
+     }
+   }
+ 
+-  bool needStackSave = false;
+-  bool needStackRestore = false;
++  void visitModule(Module* curr) {
++    if (needStackSave) {
++      ensureFunctionImport(curr, STACK_SAVE, Signature(Type::none, Type::i32));
++    }
++    if (needStackRestore) {
++      ensureFunctionImport(
++        curr, STACK_RESTORE, Signature(Type::i32, Type::none));
++    }
++  }
+ 
+ private:
+   std::unique_ptr<Builder> builder;
+   Global* stackPointer;
++  bool needStackSave = false;
++  bool needStackRestore = false;
+ };
+ 
+ // lld can sometimes produce a build with an imported mutable __stack_pointer
+@@ -558,15 +435,7 @@ void EmscriptenGlueGenerator::replaceSta
+   }
+ 
+   // Replace all uses of stack pointer global
+-  RemoveStackPointer walker(stackPointer);
+-  walker.walkModule(&wasm);
+-  if (walker.needStackSave) {
+-    ensureFunctionImport(&wasm, STACK_SAVE, Signature(Type::none, Type::i32));
+-  }
+-  if (walker.needStackRestore) {
+-    ensureFunctionImport(
+-      &wasm, STACK_RESTORE, Signature(Type::i32, Type::none));
+-  }
++  RemoveStackPointer(stackPointer).walkModule(&wasm);
+ 
+   // Finally remove the stack pointer global itself. This avoids importing
+   // a mutable global.
+@@ -587,14 +456,39 @@ struct StackLimitEnforcer : public Walke
+     return new StackLimitEnforcer(stackPointer, stackLimit, builder, handler);
+   }
+ 
++  Expression* stackBoundsCheck(Function* func,
++                               Expression* value,
++                               Global* stackPointer,
++                               Global* stackLimit) {
++    // Add a local to store the value of the expression. We need the value
++    // twice: once to check if it has overflowed, and again to assign to store
++    // it.
++    auto newSP = Builder::addVar(func, stackPointer->type);
++    // If we imported a handler, call it. That can show a nice error in JS.
++    // Otherwise, just trap.
++    Expression* handlerExpr;
++    if (handler.is()) {
++      handlerExpr = builder.makeCall(handler, {}, Type::none);
++    } else {
++      handlerExpr = builder.makeUnreachable();
++    }
++    // (if (i32.lt_u (local.tee $newSP (...val...)) (global.get $__stack_limit))
++    auto check = builder.makeIf(
++      builder.makeBinary(
++        BinaryOp::LtUInt32,
++        builder.makeLocalTee(newSP, value, stackPointer->type),
++        builder.makeGlobalGet(stackLimit->name, stackLimit->type)),
++      handlerExpr);
++    // (global.set $__stack_pointer (local.get $newSP))
++    auto newSet = builder.makeGlobalSet(
++      stackPointer->name, builder.makeLocalGet(newSP, stackPointer->type));
++    return builder.blockify(check, newSet);
++  }
++
+   void visitGlobalSet(GlobalSet* curr) {
+     if (getModule()->getGlobalOrNull(curr->name) == stackPointer) {
+-      replaceCurrent(stackBoundsCheck(builder,
+-                                      getFunction(),
+-                                      curr->value,
+-                                      stackPointer,
+-                                      stackLimit,
+-                                      handler));
++      replaceCurrent(
++        stackBoundsCheck(getFunction(), curr->value, stackPointer, stackLimit));
+     }
+   }
+ 
+Only in binaryen-version_93/src/wasm: wasm-emscripten.cpp.orig
+Only in binaryen-version_93/src/wasm: wasm-emscripten.cpp.rej
+diff -urp binaryen-version_93.orig/src/wasm-emscripten.h binaryen-version_93/src/wasm-emscripten.h
+--- binaryen-version_93.orig/src/wasm-emscripten.h	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/src/wasm-emscripten.h	2023-01-02 17:34:03.184135815 -0800
+@@ -34,7 +34,6 @@ public:
+   void setStandalone(bool standalone_) { standalone = standalone_; }
+   void setSideModule(bool sideModule_) { sideModule = sideModule_; }
+ 
+-  void generateRuntimeFunctions();
+   Function* generateMemoryGrowthFunction();
+   Function* generateAssignGOTEntriesFunction();
+   void generatePostInstantiateFunction();
+@@ -79,12 +78,7 @@ private:
+   std::unordered_set<Signature> sigs;
+ 
+   Global* getStackPointerGlobal();
+-  Expression* generateLoadStackPointer();
+-  Expression* generateStoreStackPointer(Function* func, Expression* value);
+   void generateDynCallThunk(Signature sig);
+-  void generateStackSaveFunction();
+-  void generateStackAllocFunction();
+-  void generateStackRestoreFunction();
+   void generateSetStackLimitFunction();
+   Name importStackOverflowHandler();
+ };
+Only in binaryen-version_93/src: wasm-emscripten.h.orig
+Only in binaryen-version_93/src: wasm-emscripten.h.rej
+diff -urp binaryen-version_93.orig/test/lld/bigint.wat.out binaryen-version_93/test/lld/bigint.wat.out
+--- binaryen-version_93.orig/test/lld/bigint.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/bigint.wat.out	2023-01-02 17:32:37.548751832 -0800
+@@ -1,45 +1,17 @@
+ (module
+- (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $i64_=>_i64 (func (param i64) (result i64)))
+- (type $i32_=>_none (func (param i32)))
+- (type $none_=>_i32 (func (result i32)))
++ (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $i32_i64_=>_i64 (func (param i32 i64) (result i64)))
+  (table $0 1 1 funcref)
+  (elem (i32.const 1) $foo)
+  (global $global$0 (mut i32) (i32.const 66208))
+  (global $global$1 i32 (i32.const 658))
+  (export "__data_end" (global $global$1))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (export "dynCall_jj" (func $dynCall_jj))
+  (func $foo (param $0 i64) (result i64)
+   (unreachable)
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -69,9 +41,6 @@
+     "_dynCall_jj"
+   ],
+   "exports": [
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory",
+     "dynCall_jj"
+   ],
+Only in binaryen-version_93/test/lld: bigint.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/duplicate_imports.wat.out binaryen-version_93/test/lld/duplicate_imports.wat.out
+--- binaryen-version_93.orig/test/lld/duplicate_imports.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/duplicate_imports.wat.out	2023-01-02 17:32:37.548751832 -0800
+@@ -1,8 +1,7 @@
+ (module
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $none_=>_i32 (func (result i32)))
+  (type $none_=>_none (func))
+- (type $i32_=>_none (func (param i32)))
++ (type $none_=>_i32 (func (result i32)))
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+  (type $i64_=>_i32 (func (param i64) (result i32)))
+  (type $i32_f32_f64_=>_f32 (func (param i32 f32 f64) (result f32)))
+@@ -22,9 +21,6 @@
+  (export "main" (func $main))
+  (export "__heap_base" (global $global$1))
+  (export "__data_end" (global $global$2))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (func $main (result i32)
+   (drop
+@@ -37,29 +33,6 @@
+  (func $__wasm_call_ctors
+   (nop)
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -103,9 +76,6 @@
+   "exports": [
+     "__wasm_call_ctors",
+     "main",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory"
+   ],
+   "namedGlobals": {
+Only in binaryen-version_93/test/lld: duplicate_imports.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/em_asm.wat.mem.out binaryen-version_93/test/lld/em_asm.wat.mem.out
+--- binaryen-version_93.orig/test/lld/em_asm.wat.mem.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/em_asm.wat.mem.out	2023-01-02 17:32:37.548751832 -0800
+@@ -1,8 +1,7 @@
+ (module
++ (type $none_=>_none (func))
+  (type $none_=>_i32 (func (result i32)))
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $none_=>_none (func))
+- (type $i32_=>_none (func (param i32)))
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+  (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
+  (import "env" "emscripten_asm_const_iii" (func $emscripten_asm_const_iii (param i32 i32 i32) (result i32)))
+@@ -14,9 +13,6 @@
+  (export "__wasm_call_ctors" (func $__wasm_call_ctors))
+  (export "main" (func $main))
+  (export "__data_end" (global $global$1))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (func $__wasm_call_ctors
+   (nop)
+@@ -71,29 +67,6 @@
+  (func $main (param $0 i32) (param $1 i32) (result i32)
+   (call $__original_main)
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -128,9 +101,6 @@
+   "exports": [
+     "__wasm_call_ctors",
+     "main",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory"
+   ],
+   "namedGlobals": {
+Only in binaryen-version_93/test/lld: em_asm.wat.mem.out.orig
+diff -urp binaryen-version_93.orig/test/lld/em_asm.wat.out binaryen-version_93/test/lld/em_asm.wat.out
+--- binaryen-version_93.orig/test/lld/em_asm.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/em_asm.wat.out	2023-01-02 17:32:37.548751832 -0800
+@@ -1,8 +1,7 @@
+ (module
++ (type $none_=>_none (func))
+  (type $none_=>_i32 (func (result i32)))
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $none_=>_none (func))
+- (type $i32_=>_none (func (param i32)))
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+  (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
+  (import "env" "emscripten_asm_const_iii" (func $emscripten_asm_const_iii (param i32 i32 i32) (result i32)))
+@@ -15,9 +14,6 @@
+  (export "__wasm_call_ctors" (func $__wasm_call_ctors))
+  (export "main" (func $main))
+  (export "__data_end" (global $global$1))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (func $__wasm_call_ctors
+   (nop)
+@@ -72,29 +68,6 @@
+  (func $main (param $0 i32) (param $1 i32) (result i32)
+   (call $__original_main)
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -129,9 +102,6 @@
+   "exports": [
+     "__wasm_call_ctors",
+     "main",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory"
+   ],
+   "namedGlobals": {
+Only in binaryen-version_93/test/lld: em_asm.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/em_asm_O0.wat.out binaryen-version_93/test/lld/em_asm_O0.wat.out
+--- binaryen-version_93.orig/test/lld/em_asm_O0.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/em_asm_O0.wat.out	2023-01-02 17:32:37.548751832 -0800
+@@ -1,8 +1,7 @@
+ (module
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $none_=>_i32 (func (result i32)))
+  (type $none_=>_none (func))
+- (type $i32_=>_none (func (param i32)))
++ (type $none_=>_i32 (func (result i32)))
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+  (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
+  (import "env" "emscripten_asm_const_i" (func $emscripten_asm_const_i (param i32) (result i32)))
+@@ -19,9 +18,6 @@
+  (export "main" (func $main))
+  (export "__heap_base" (global $global$1))
+  (export "__data_end" (global $global$2))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (func $main (result i32)
+   (local $t1 i32)
+@@ -52,29 +48,6 @@
+  (func $__wasm_call_ctors
+   (nop)
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -109,9 +82,6 @@
+   "exports": [
+     "__wasm_call_ctors",
+     "main",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory"
+   ],
+   "namedGlobals": {
+Only in binaryen-version_93/test/lld: em_asm_O0.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/em_asm_main_thread.wat.out binaryen-version_93/test/lld/em_asm_main_thread.wat.out
+--- binaryen-version_93.orig/test/lld/em_asm_main_thread.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/em_asm_main_thread.wat.out	2023-01-02 17:32:37.548751832 -0800
+@@ -2,7 +2,6 @@
+  (type $none_=>_i32 (func (result i32)))
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $none_=>_none (func))
+- (type $i32_=>_none (func (param i32)))
+  (type $i32_i32_=>_none (func (param i32 i32)))
+  (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+@@ -19,9 +18,6 @@
+  (export "__heap_base" (global $global$1))
+  (export "__data_end" (global $global$2))
+  (export "main" (func $main))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (func $__wasm_call_ctors
+   (nop)
+@@ -194,29 +190,6 @@
+  (func $main (param $0 i32) (param $1 i32) (result i32)
+   (call $__original_main)
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -251,9 +224,6 @@
+   "exports": [
+     "__wasm_call_ctors",
+     "main",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory"
+   ],
+   "namedGlobals": {
+Only in binaryen-version_93/test/lld: em_asm_main_thread.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/em_asm_table.wat.out binaryen-version_93/test/lld/em_asm_table.wat.out
+--- binaryen-version_93.orig/test/lld/em_asm_table.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/em_asm_table.wat.out	2023-01-02 17:32:37.548751832 -0800
+@@ -1,10 +1,8 @@
+ (module
+  (type $i32_i32_=>_none (func (param i32 i32)))
+- (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
+- (type $i32_=>_none (func (param i32)))
+  (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
+- (type $none_=>_i32 (func (result i32)))
++ (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $i32_i32_i32_i32_=>_i32 (func (param i32 i32 i32 i32) (result i32)))
+  (import "env" "memory" (memory $0 8192))
+  (import "env" "emscripten_log" (func $fimport$0 (param i32 i32)))
+@@ -14,35 +12,9 @@
+  (global $global$0 (mut i32) (i32.const 1024))
+  (global $global$1 i32 (i32.const 1048))
+  (export "__data_end" (global $global$1))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (export "dynCall_vii" (func $dynCall_vii))
+  (export "dynCall_iiii" (func $dynCall_iiii))
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -83,9 +55,6 @@
+     "_dynCall_iiii"
+   ],
+   "exports": [
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory",
+     "dynCall_vii",
+     "dynCall_iiii"
+Only in binaryen-version_93/test/lld: em_asm_table.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/em_js_O0.wat.out binaryen-version_93/test/lld/em_js_O0.wat.out
+--- binaryen-version_93.orig/test/lld/em_js_O0.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/em_js_O0.wat.out	2023-01-02 17:32:37.548751832 -0800
+@@ -1,7 +1,5 @@
+ (module
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $i32_=>_none (func (param i32)))
+- (type $none_=>_i32 (func (result i32)))
+  (import "env" "memory" (memory $0 256 256))
+  (data (i32.const 1024) "(void)<::>{ out(\"no args works\"); }\00(void)<::>{ out(\"no args returning int\"); return 12; }\00(void)<::>{ out(\"no args returning double\"); return 12.25; }\00(int x)<::>{ out(\"  takes ints: \" + x);}\00(double d)<::>{ out(\"  takes doubles: \" + d);}\00(char* str)<::>{ out(\"  takes strings: \" + UTF8ToString(str)); return 7.75; }\00(int x, int y)<::>{ out(\"  takes multiple ints: \" + x + \", \" + y); return 6; }\00(int x, const char* str, double d)<::>{ out(\"  mixed arg types: \" + x + \", \" + UTF8ToString(str) + \", \" + d); return 8.125; }\00(int unused)<::>{ out(\"  ignores unused args\"); return 5.5; }\00(int x, int y)<::>{ out(\"  skips unused args: \" + y); return 6; }\00(double x, double y, double z)<::>{ out(\"  \" + x + \" + \" + z); return x + z; }\00(void)<::>{ out(\"  can use <::> separator in user code\"); return 15; }\00(void)<::>{ var x, y; x = {}; y = 3; x[y] = [1, 2, 3]; out(\"  can have commas in user code: \" + x[y]); return x[y][1]; }\00(void)<::>{ var jsString = \'\e3\81\93\e3\82\93\e3\81\ab\e3\81\a1\e3\81\af\'; var lengthBytes = lengthBytesUTF8(jsString); var stringOnWasmHeap = _malloc(lengthBytes); stringToUTF8(jsString, stringOnWasmHeap, lengthBytes+1); return stringOnWasmHeap; }\00(void)<::>{ var jsString = \'hello from js\'; var lengthBytes = jsString.length+1; var stringOnWasmHeap = _malloc(lengthBytes); stringToUTF8(jsString, stringOnWasmHeap, lengthBytes+1); return stringOnWasmHeap; }\00BEGIN\n\00    noarg_int returned: %d\n\00    noarg_double returned: %f\n\00    stringarg returned: %f\n\00string arg\00    multi_intarg returned: %d\n\00    multi_mixedarg returned: %f\n\00hello\00    unused_args returned: %d\n\00    skip_args returned: %f\n\00    add_outer returned: %f\n\00    user_separator returned: %d\n\00    user_comma returned: %d\n\00    return_str returned: %s\n\00    return_utf8_str returned: %s\n\00END\n\00\00\cc\1a\00\00\00\00\00\00\00\00\00\00\00\00\00\00T!\"\19\0d\01\02\03\11K\1c\0c\10\04\0b\1d\12\1e\'hnopqb \05\06\0f\13\14\15\1a\08\16\07($\17\18\t\n\0e\1b\1f%#\83\82}&*+<=>?CGJMXYZ[\\]^_`acdefgijklrstyz{|\00\00\00\00\00\00\00\00\00Illegal byte sequence\00Domain error\00Result not representable\00Not a tty\00Permission denied\00Operation not permitted\00No such file or directory\00No such process\00File exists\00Value too large for data type\00No space left on device\00Out of memory\00Resource busy\00Interrupted system call\00Resource temporarily unavailable\00Invalid seek\00Cross-device link\00Read-only file system\00Directory not empty\00Connection reset by peer\00Operation timed out\00Connection refused\00Host is down\00Host is unreachable\00Address in use\00Broken pipe\00I/O error\00No such device or address\00Block device required\00No such device\00Not a directory\00Is a directory\00Text file busy\00Exec format error\00Invalid argument\00Argument list too long\00Symbolic link loop\00Filename too long\00Too many open files in system\00No file descriptors available\00Bad file descriptor\00No child process\00Bad address\00File too large\00Too many links\00No locks available\00Resource deadlock would occur\00State not recoverable\00Previous owner died\00Operation canceled\00Function not implemented\00No message of desired type\00Identifier removed\00Device not a stream\00No data available\00Device timeout\00Out of streams resources\00Link has been severed\00Protocol error\00Bad message\00File descriptor in bad state\00Not a socket\00Destination address required\00Message too large\00Protocol wrong type for socket\00Protocol not available\00Protocol not supported\00Socket type not supported\00Not supported\00Protocol family not supported\00Address family not supported by protocol\00Address not available\00Network is down\00Network unreachable\00Connection reset by network\00Connection aborted\00No buffer space available\00Socket is connected\00Socket not connected\00Cannot send after socket shutdown\00Operation already in progress\00Operation in progress\00Stale file handle\00Remote I/O error\00Quota exceeded\00No medium found\00Wrong medium type\00No error information\00\00-+   0X0x\00(null)\00\00\00\00\11\00\n\00\11\11\11\00\00\00\00\05\00\00\00\00\00\00\t\00\00\00\00\0b\00\00\00\00\00\00\00\00\11\00\0f\n\11\11\11\03\n\07\00\01\13\t\0b\0b\00\00\t\06\0b\00\00\0b\00\06\11\00\00\00\11\11\11\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\0b\00\00\00\00\00\00\00\00\11\00\n\n\11\11\11\00\n\00\00\02\00\t\0b\00\00\00\t\00\0b\00\00\0b\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\0c\00\00\00\00\00\00\00\00\00\00\00\0c\00\00\00\00\0c\00\00\00\00\t\0c\00\00\00\00\00\0c\00\00\0c\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\0e\00\00\00\00\00\00\00\00\00\00\00\0d\00\00\00\04\0d\00\00\00\00\t\0e\00\00\00\00\00\0e\00\00\0e\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\10\00\00\00\00\00\00\00\00\00\00\00\0f\00\00\00\00\0f\00\00\00\00\t\10\00\00\00\00\00\10\00\00\10\00\00\12\00\00\00\12\12\12\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\12\00\00\00\12\12\12\00\00\00\00\00\00\t\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\0b\00\00\00\00\00\00\00\00\00\00\00\n\00\00\00\00\n\00\00\00\00\t\0b\00\00\00\00\00\0b\00\00\0b\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\0c\00\00\00\00\00\00\00\00\00\00\00\0c\00\00\00\00\0c\00\00\00\00\t\0c\00\00\00\00\00\0c\00\00\0c\00\000123456789ABCDEF-0X+0X 0X-0x+0x 0x\00inf\00INF\00nan\00NAN\00.\00")
+  (data (i32.const 5232) "\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\00")
+@@ -11,33 +9,7 @@
+  (global $global$2 i32 (i32.const 7232))
+  (export "__heap_base" (global $global$1))
+  (export "__data_end" (global $global$2))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -63,9 +35,6 @@
+     "___growWasmMemory"
+   ],
+   "exports": [
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory"
+   ],
+   "namedGlobals": {
+Only in binaryen-version_93/test/lld: em_js_O0.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/gdollar_mainmodule.wat.out binaryen-version_93/test/lld/gdollar_mainmodule.wat.out
+--- binaryen-version_93.orig/test/lld/gdollar_mainmodule.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/gdollar_mainmodule.wat.out	2023-01-02 17:32:37.548751832 -0800
+@@ -1,8 +1,7 @@
+ (module
+  (type $none_=>_i32 (func (result i32)))
+- (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $none_=>_none (func))
+- (type $i32_=>_none (func (param i32)))
++ (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+  (import "env" "memory" (memory $0 0))
+  (data (global.get $gimport$3) "")
+@@ -21,37 +20,11 @@
+  (export "someglobal2" (global $global$1))
+  (export "main" (func $main))
+  (export "__data_end" (global $global$2))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (export "__assign_got_enties" (func $__assign_got_enties))
+  (func $main (param $0 i32) (param $1 i32) (result i32)
+   (i32.const 0)
+  )
+- (func $stackSave (result i32)
+-  (global.get $gimport$2)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $gimport$2
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $gimport$2)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $gimport$2
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -99,9 +72,6 @@
+   ],
+   "exports": [
+     "main",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory",
+     "__assign_got_enties"
+   ],
+Only in binaryen-version_93/test/lld: gdollar_mainmodule.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/hello_world.passive.wat.out binaryen-version_93/test/lld/hello_world.passive.wat.out
+--- binaryen-version_93.orig/test/lld/hello_world.passive.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/hello_world.passive.wat.out	2023-01-02 17:32:37.548751832 -0800
+@@ -1,8 +1,7 @@
+ (module
+- (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $none_=>_none (func))
++ (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $none_=>_i32 (func (result i32)))
+- (type $i32_=>_none (func (param i32)))
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+  (import "env" "puts" (func $puts (param i32) (result i32)))
+  (memory $0 2)
+@@ -16,9 +15,6 @@
+  (export "__heap_base" (global $global$1))
+  (export "__data_end" (global $global$2))
+  (export "main" (func $main))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (func $__wasm_call_ctors
+   (call $__wasm_init_memory)
+@@ -41,29 +37,6 @@
+  (func $main (param $0 i32) (param $1 i32) (result i32)
+   (call $__original_main)
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -94,9 +67,6 @@
+   "exports": [
+     "__wasm_call_ctors",
+     "main",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory"
+   ],
+   "namedGlobals": {
+Only in binaryen-version_93/test/lld: hello_world.passive.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/hello_world.wat.mem.out binaryen-version_93/test/lld/hello_world.wat.mem.out
+--- binaryen-version_93.orig/test/lld/hello_world.wat.mem.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/hello_world.wat.mem.out	2023-01-02 17:32:37.548751832 -0800
+@@ -1,8 +1,7 @@
+ (module
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $none_=>_i32 (func (result i32)))
+  (type $none_=>_none (func))
+- (type $i32_=>_none (func (param i32)))
++ (type $none_=>_i32 (func (result i32)))
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+  (import "env" "puts" (func $puts (param i32) (result i32)))
+  (memory $0 2)
+@@ -13,9 +12,6 @@
+  (export "__wasm_call_ctors" (func $__wasm_call_ctors))
+  (export "main" (func $main))
+  (export "__data_end" (global $global$1))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (func $__wasm_call_ctors
+   (nop)
+@@ -31,29 +27,6 @@
+  (func $main (param $0 i32) (param $1 i32) (result i32)
+   (call $__original_main)
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -84,9 +57,6 @@
+   "exports": [
+     "__wasm_call_ctors",
+     "main",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory"
+   ],
+   "namedGlobals": {
+Only in binaryen-version_93/test/lld: hello_world.wat.mem.out.orig
+diff -urp binaryen-version_93.orig/test/lld/hello_world.wat.out binaryen-version_93/test/lld/hello_world.wat.out
+--- binaryen-version_93.orig/test/lld/hello_world.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/hello_world.wat.out	2023-01-02 17:32:37.548751832 -0800
+@@ -1,8 +1,7 @@
+ (module
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $none_=>_i32 (func (result i32)))
+  (type $none_=>_none (func))
+- (type $i32_=>_none (func (param i32)))
++ (type $none_=>_i32 (func (result i32)))
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+  (import "env" "puts" (func $puts (param i32) (result i32)))
+  (memory $0 2)
+@@ -14,9 +13,6 @@
+  (export "__wasm_call_ctors" (func $__wasm_call_ctors))
+  (export "main" (func $main))
+  (export "__data_end" (global $global$1))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (func $__wasm_call_ctors
+   (nop)
+@@ -32,29 +28,6 @@
+  (func $main (param $0 i32) (param $1 i32) (result i32)
+   (call $__original_main)
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -85,9 +58,6 @@
+   "exports": [
+     "__wasm_call_ctors",
+     "main",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory"
+   ],
+   "namedGlobals": {
+Only in binaryen-version_93/test/lld: hello_world.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/init.wat.out binaryen-version_93/test/lld/init.wat.out
+--- binaryen-version_93.orig/test/lld/init.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/init.wat.out	2023-01-02 17:32:37.548751832 -0800
+@@ -2,7 +2,6 @@
+  (type $none_=>_none (func))
+  (type $none_=>_i32 (func (result i32)))
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $i32_=>_none (func (param i32)))
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+  (memory $0 2)
+  (table $0 1 1 funcref)
+@@ -12,9 +11,6 @@
+  (export "__wasm_call_ctors" (func $__wasm_call_ctors))
+  (export "main" (func $main))
+  (export "__data_end" (global $global$1))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (func $__wasm_call_ctors
+   (call $init_x)
+@@ -45,29 +41,6 @@
+  (func $main (param $0 i32) (param $1 i32) (result i32)
+   (call $__original_main)
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -97,9 +70,6 @@
+   "exports": [
+     "__wasm_call_ctors",
+     "main",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory"
+   ],
+   "namedGlobals": {
+Only in binaryen-version_93/test/lld: init.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/longjmp.wat.out binaryen-version_93/test/lld/longjmp.wat.out
+--- binaryen-version_93.orig/test/lld/longjmp.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/longjmp.wat.out	2023-01-02 17:32:37.548751832 -0800
+@@ -1,9 +1,9 @@
+ (module
+  (type $i32_=>_none (func (param i32)))
+- (type $none_=>_i32 (func (result i32)))
+- (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $i32_i32_=>_none (func (param i32 i32)))
+  (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
++ (type $none_=>_i32 (func (result i32)))
++ (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $none_=>_none (func))
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+  (type $i32_i32_i32_=>_i32 (func (param i32 i32 i32) (result i32)))
+@@ -26,9 +26,6 @@
+  (export "main" (func $2))
+  (export "__data_end" (global $global$1))
+  (export "dynCall_vii" (func $dynCall_vii))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (func $0
+   (nop)
+@@ -143,29 +140,6 @@
+    (local.get $fptr)
+   )
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -204,9 +178,6 @@
+     "__wasm_call_ctors",
+     "main",
+     "dynCall_vii",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory"
+   ],
+   "namedGlobals": {
+Only in binaryen-version_93/test/lld: longjmp.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/main_module.wat.out binaryen-version_93/test/lld/main_module.wat.out
+--- binaryen-version_93.orig/test/lld/main_module.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/main_module.wat.out	2023-01-02 17:32:37.548751832 -0800
+@@ -1,8 +1,7 @@
+ (module
+  (type $none_=>_i32 (func (result i32)))
+- (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $none_=>_none (func))
+- (type $i32_=>_none (func (param i32)))
++ (type $i32_=>_i32 (func (param i32) (result i32)))
+  (import "env" "memory" (memory $0 0))
+  (data (global.get $gimport$2) "Hello, world\00\00\00\00\00\00\00\00\00\00\00\00")
+  (import "env" "table" (table $0 1 funcref))
+@@ -25,9 +24,6 @@
+  (export "ptr_puts" (global $global$0))
+  (export "ptr_local_func" (global $global$1))
+  (export "__data_end" (global $global))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (export "__assign_got_enties" (func $__assign_got_enties))
+  (export "dynCall_i" (func $dynCall_i))
+@@ -63,29 +59,6 @@
+    (global.get $gimport$5)
+   )
+  )
+- (func $stackSave (result i32)
+-  (global.get $sp)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $sp
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $sp)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $sp
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -143,9 +116,6 @@
+   "exports": [
+     "__wasm_call_ctors",
+     "_Z13print_messagev",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory",
+     "__assign_got_enties",
+     "dynCall_i"
+Only in binaryen-version_93/test/lld: main_module.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/main_module_table.wat.out binaryen-version_93/test/lld/main_module_table.wat.out
+--- binaryen-version_93.orig/test/lld/main_module_table.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/main_module_table.wat.out	2023-01-02 17:32:37.552751990 -0800
+@@ -2,7 +2,6 @@
+  (type $none_=>_none (func))
+  (type $i32_=>_none (func (param i32)))
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $none_=>_i32 (func (result i32)))
+  (import "env" "__stack_pointer" (global $sp_import i32))
+  (import "env" "__table_base" (global $__table_base i32))
+  (table $0 1 funcref)
+@@ -12,38 +11,12 @@
+  (global $sp (mut i32) (global.get $sp_import))
+  (export "__stdio_write" (func $__stdio_write))
+  (export "__data_end" (global $global))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (export "__assign_got_enties" (func $__assign_got_enties))
+  (export "dynCall_v" (func $dynCall_v))
+  (func $__stdio_write
+   (nop)
+  )
+- (func $stackSave (result i32)
+-  (global.get $sp)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $sp
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $sp)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $sp
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -88,9 +61,6 @@
+   ],
+   "exports": [
+     "__stdio_write",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory",
+     "__assign_got_enties",
+     "dynCall_v"
+Only in binaryen-version_93/test/lld: main_module_table.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/main_module_table_2.wat.out binaryen-version_93/test/lld/main_module_table_2.wat.out
+--- binaryen-version_93.orig/test/lld/main_module_table_2.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/main_module_table_2.wat.out	2023-01-02 17:32:37.552751990 -0800
+@@ -2,7 +2,6 @@
+  (type $none_=>_none (func))
+  (type $i32_=>_none (func (param i32)))
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $none_=>_i32 (func (result i32)))
+  (import "env" "table" (table $0 2 funcref))
+  (elem (global.get $__table_base) $__stdio_write)
+  (import "env" "__stack_pointer" (global $sp_import i32))
+@@ -12,38 +11,12 @@
+  (global $sp (mut i32) (global.get $sp_import))
+  (export "__stdio_write" (func $__stdio_write))
+  (export "__data_end" (global $global))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (export "__assign_got_enties" (func $__assign_got_enties))
+  (export "dynCall_v" (func $dynCall_v))
+  (func $__stdio_write
+   (nop)
+  )
+- (func $stackSave (result i32)
+-  (global.get $sp)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $sp
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $sp)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $sp
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -88,9 +61,6 @@
+   ],
+   "exports": [
+     "__stdio_write",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory",
+     "__assign_got_enties",
+     "dynCall_v"
+Only in binaryen-version_93/test/lld: main_module_table_2.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/main_module_table_3.wat.out binaryen-version_93/test/lld/main_module_table_3.wat.out
+--- binaryen-version_93.orig/test/lld/main_module_table_3.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/main_module_table_3.wat.out	2023-01-02 17:32:37.552751990 -0800
+@@ -2,7 +2,6 @@
+  (type $none_=>_none (func))
+  (type $i32_=>_none (func (param i32)))
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $none_=>_i32 (func (result i32)))
+  (import "env" "table" (table $0 2 funcref))
+  (elem (i32.const 0) $__stdio_write)
+  (import "env" "__stack_pointer" (global $sp_import i32))
+@@ -12,38 +11,12 @@
+  (global $sp (mut i32) (global.get $sp_import))
+  (export "__stdio_write" (func $__stdio_write))
+  (export "__data_end" (global $global))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (export "__assign_got_enties" (func $__assign_got_enties))
+  (export "dynCall_v" (func $dynCall_v))
+  (func $__stdio_write
+   (nop)
+  )
+- (func $stackSave (result i32)
+-  (global.get $sp)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $sp
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $sp)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $sp
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -88,9 +61,6 @@
+   ],
+   "exports": [
+     "__stdio_write",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory",
+     "__assign_got_enties",
+     "dynCall_v"
+Only in binaryen-version_93/test/lld: main_module_table_3.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/main_module_table_4.wat.out binaryen-version_93/test/lld/main_module_table_4.wat.out
+--- binaryen-version_93.orig/test/lld/main_module_table_4.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/main_module_table_4.wat.out	2023-01-02 17:32:37.552751990 -0800
+@@ -2,7 +2,6 @@
+  (type $none_=>_none (func))
+  (type $i32_=>_none (func (param i32)))
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $none_=>_i32 (func (result i32)))
+  (import "env" "table" (table $0 2 funcref))
+  (elem (global.get $tb) $__stdio_write)
+  (import "env" "__stack_pointer" (global $sp_import i32))
+@@ -12,38 +11,12 @@
+  (global $sp (mut i32) (global.get $sp_import))
+  (export "__stdio_write" (func $__stdio_write))
+  (export "__data_end" (global $global))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (export "__assign_got_enties" (func $__assign_got_enties))
+  (export "dynCall_v" (func $dynCall_v))
+  (func $__stdio_write
+   (nop)
+  )
+- (func $stackSave (result i32)
+-  (global.get $sp)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $sp
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $sp)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $sp
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -88,9 +61,6 @@
+   ],
+   "exports": [
+     "__stdio_write",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory",
+     "__assign_got_enties",
+     "dynCall_v"
+Only in binaryen-version_93/test/lld: main_module_table_4.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/main_module_table_5.wat.out binaryen-version_93/test/lld/main_module_table_5.wat.out
+--- binaryen-version_93.orig/test/lld/main_module_table_5.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/main_module_table_5.wat.out	2023-01-02 17:32:37.552751990 -0800
+@@ -2,7 +2,6 @@
+  (type $none_=>_none (func))
+  (type $i32_=>_none (func (param i32)))
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $none_=>_i32 (func (result i32)))
+  (import "env" "table" (table $0 2 funcref))
+  (elem (global.get $tb) $other $stuff $__stdio_write)
+  (import "env" "__stack_pointer" (global $sp_import i32))
+@@ -12,9 +11,6 @@
+  (global $sp (mut i32) (global.get $sp_import))
+  (export "__stdio_write" (func $__stdio_write))
+  (export "__data_end" (global $global))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (export "__assign_got_enties" (func $__assign_got_enties))
+  (export "dynCall_v" (func $dynCall_v))
+@@ -27,29 +23,6 @@
+  (func $stuff
+   (nop)
+  )
+- (func $stackSave (result i32)
+-  (global.get $sp)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $sp
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $sp)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $sp
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -94,9 +67,6 @@
+   ],
+   "exports": [
+     "__stdio_write",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory",
+     "__assign_got_enties",
+     "dynCall_v"
+Only in binaryen-version_93/test/lld: main_module_table_5.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/recursive.wat.out binaryen-version_93/test/lld/recursive.wat.out
+--- binaryen-version_93.orig/test/lld/recursive.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/recursive.wat.out	2023-01-02 17:32:37.552751990 -0800
+@@ -1,9 +1,8 @@
+ (module
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
++ (type $none_=>_none (func))
+  (type $none_=>_i32 (func (result i32)))
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $none_=>_none (func))
+- (type $i32_=>_none (func (param i32)))
+  (import "env" "iprintf" (func $iprintf (param i32 i32) (result i32)))
+  (memory $0 2)
+  (data (i32.const 568) "%d:%d\n\00Result: %d\n\00")
+@@ -14,9 +13,6 @@
+  (export "__wasm_call_ctors" (func $__wasm_call_ctors))
+  (export "main" (func $main))
+  (export "__data_end" (global $global$1))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (func $__wasm_call_ctors
+   (nop)
+@@ -90,29 +86,6 @@
+  (func $main (param $0 i32) (param $1 i32) (result i32)
+   (call $__original_main)
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -143,9 +116,6 @@
+   "exports": [
+     "__wasm_call_ctors",
+     "main",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory"
+   ],
+   "namedGlobals": {
+Only in binaryen-version_93/test/lld: recursive.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/recursive_safe_stack.wat.out binaryen-version_93/test/lld/recursive_safe_stack.wat.out
+--- binaryen-version_93.orig/test/lld/recursive_safe_stack.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/recursive_safe_stack.wat.out	2023-01-02 17:32:37.552751990 -0800
+@@ -19,9 +19,6 @@
+  (export "__data_end" (global $global$2))
+  (export "main" (func $main))
+  (export "__set_stack_limit" (func $__set_stack_limit))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (func $__wasm_call_ctors
+   (nop)
+@@ -148,51 +145,6 @@
+    (local.get $0)
+   )
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (local $2 i32)
+-  (block
+-   (if
+-    (i32.lt_u
+-     (local.tee $2
+-      (local.tee $1
+-       (i32.and
+-        (i32.sub
+-         (global.get $global$0)
+-         (local.get $0)
+-        )
+-        (i32.const -16)
+-       )
+-      )
+-     )
+-     (global.get $__stack_limit)
+-    )
+-    (call $__handle_stack_overflow)
+-   )
+-   (global.set $global$0
+-    (local.get $2)
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (local $1 i32)
+-  (if
+-   (i32.lt_u
+-    (local.tee $1
+-     (local.get $0)
+-    )
+-    (global.get $__stack_limit)
+-   )
+-   (call $__handle_stack_overflow)
+-  )
+-  (global.set $global$0
+-   (local.get $1)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -226,9 +178,6 @@
+     "__wasm_call_ctors",
+     "main",
+     "__set_stack_limit",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory"
+   ],
+   "namedGlobals": {
+Only in binaryen-version_93/test/lld: recursive_safe_stack.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/reserved_func_ptr.wat.out binaryen-version_93/test/lld/reserved_func_ptr.wat.out
+--- binaryen-version_93.orig/test/lld/reserved_func_ptr.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/reserved_func_ptr.wat.out	2023-01-02 17:32:37.552751990 -0800
+@@ -1,11 +1,10 @@
+ (module
+  (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
+- (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $none_=>_none (func))
+- (type $i32_=>_none (func (param i32)))
++ (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
++ (type $i32_=>_none (func (param i32)))
+  (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
+- (type $none_=>_i32 (func (result i32)))
+  (type $f32_f32_i32_=>_f32 (func (param f32 f32 i32) (result f32)))
+  (type $f64_i32_=>_f64 (func (param f64 i32) (result f64)))
+  (import "env" "_Z4atoiPKc" (func $atoi\28char\20const*\29 (param i32) (result i32)))
+@@ -18,9 +17,6 @@
+  (export "__wasm_call_ctors" (func $__wasm_call_ctors))
+  (export "main" (func $main))
+  (export "__data_end" (global $global$1))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (export "dynCall_viii" (func $dynCall_viii))
+  (func $__wasm_call_ctors
+@@ -116,29 +112,6 @@
+   )
+   (i32.const 0)
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -178,9 +151,6 @@
+   "exports": [
+     "__wasm_call_ctors",
+     "main",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory",
+     "dynCall_viii"
+   ],
+Only in binaryen-version_93/test/lld: reserved_func_ptr.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/safe_stack_standalone-wasm.wat.out binaryen-version_93/test/lld/safe_stack_standalone-wasm.wat.out
+--- binaryen-version_93.orig/test/lld/safe_stack_standalone-wasm.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/safe_stack_standalone-wasm.wat.out	2023-01-02 17:32:37.552751990 -0800
+@@ -18,9 +18,6 @@
+  (export "__data_end" (global $global$2))
+  (export "main" (func $main))
+  (export "__set_stack_limit" (func $__set_stack_limit))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (export "_start" (func $_start))
+  (func $__wasm_call_ctors
+@@ -148,51 +145,6 @@
+    (local.get $0)
+   )
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (local $2 i32)
+-  (block
+-   (if
+-    (i32.lt_u
+-     (local.tee $2
+-      (local.tee $1
+-       (i32.and
+-        (i32.sub
+-         (global.get $global$0)
+-         (local.get $0)
+-        )
+-        (i32.const -16)
+-       )
+-      )
+-     )
+-     (global.get $__stack_limit)
+-    )
+-    (unreachable)
+-   )
+-   (global.set $global$0
+-    (local.get $2)
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (local $1 i32)
+-  (if
+-   (i32.lt_u
+-    (local.tee $1
+-     (local.get $0)
+-    )
+-    (global.get $__stack_limit)
+-   )
+-   (unreachable)
+-  )
+-  (global.set $global$0
+-   (local.get $1)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -234,9 +186,6 @@
+     "__wasm_call_ctors",
+     "main",
+     "__set_stack_limit",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory",
+     "_start"
+   ],
+Only in binaryen-version_93/test/lld: safe_stack_standalone-wasm.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/standalone-wasm-with-start.wat.out binaryen-version_93/test/lld/standalone-wasm-with-start.wat.out
+--- binaryen-version_93.orig/test/lld/standalone-wasm-with-start.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/standalone-wasm-with-start.wat.out	2023-01-02 17:32:37.552751990 -0800
+@@ -1,7 +1,6 @@
+ (module
+  (type $none_=>_i32 (func (result i32)))
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $i32_=>_none (func (param i32)))
+  (memory $0 2)
+  (table $0 1 1 funcref)
+  (elem (i32.const 0) $foo)
+@@ -12,9 +11,6 @@
+  (export "_start" (func $_start))
+  (export "__heap_base" (global $global$1))
+  (export "__data_end" (global $global$2))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (func $_start (result i32)
+   (nop)
+@@ -22,29 +18,6 @@
+  (func $foo (result i32)
+   (nop)
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -69,9 +42,6 @@
+   ],
+   "exports": [
+     "_start",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory"
+   ],
+   "namedGlobals": {
+Only in binaryen-version_93/test/lld: standalone-wasm-with-start.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/standalone-wasm.wat.out binaryen-version_93/test/lld/standalone-wasm.wat.out
+--- binaryen-version_93.orig/test/lld/standalone-wasm.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/standalone-wasm.wat.out	2023-01-02 17:32:37.552751990 -0800
+@@ -1,8 +1,7 @@
+ (module
+  (type $none_=>_i32 (func (result i32)))
+- (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $none_=>_none (func))
+- (type $i32_=>_none (func (param i32)))
++ (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+  (memory $0 2)
+  (table $0 1 1 funcref)
+@@ -14,9 +13,6 @@
+  (export "main" (func $main))
+  (export "__heap_base" (global $global$1))
+  (export "__data_end" (global $global$2))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (export "_start" (func $_start))
+  (func $__original_main (result i32)
+@@ -28,29 +24,6 @@
+  (func $foo (result i32)
+   (nop)
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -84,9 +57,6 @@
+   ],
+   "exports": [
+     "main",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory",
+     "_start"
+   ],
+Only in binaryen-version_93/test/lld: standalone-wasm.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/standalone-wasm2.wat.out binaryen-version_93/test/lld/standalone-wasm2.wat.out
+--- binaryen-version_93.orig/test/lld/standalone-wasm2.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/standalone-wasm2.wat.out	2023-01-02 17:32:37.552751990 -0800
+@@ -1,9 +1,7 @@
+ (module
+- (type $i32_=>_i32 (func (param i32) (result i32)))
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+  (type $none_=>_none (func))
+- (type $i32_=>_none (func (param i32)))
+- (type $none_=>_i32 (func (result i32)))
++ (type $i32_=>_i32 (func (param i32) (result i32)))
+  (memory $0 2)
+  (global $global$0 (mut i32) (i32.const 66112))
+  (global $global$1 i32 (i32.const 66112))
+@@ -12,9 +10,6 @@
+  (export "main" (func $main))
+  (export "__heap_base" (global $global$1))
+  (export "__data_end" (global $global$2))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (export "_start" (func $_start))
+  (func $__original_main (param $0 i32) (param $1 i32) (result i32)
+@@ -26,29 +21,6 @@
+    (local.get $1)
+   )
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -82,9 +54,6 @@
+   ],
+   "exports": [
+     "main",
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory",
+     "_start"
+   ],
+Only in binaryen-version_93/test/lld: standalone-wasm2.wat.out.orig
+diff -urp binaryen-version_93.orig/test/lld/standalone-wasm3.wat.out binaryen-version_93/test/lld/standalone-wasm3.wat.out
+--- binaryen-version_93.orig/test/lld/standalone-wasm3.wat.out	2020-04-27 15:29:28.000000000 -0700
++++ binaryen-version_93/test/lld/standalone-wasm3.wat.out	2023-01-02 17:32:37.552751990 -0800
+@@ -1,7 +1,5 @@
+ (module
+  (type $i32_=>_i32 (func (param i32) (result i32)))
+- (type $i32_=>_none (func (param i32)))
+- (type $none_=>_i32 (func (result i32)))
+  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
+  (memory $0 2)
+  (global $global$0 (mut i32) (i32.const 66112))
+@@ -10,36 +8,10 @@
+  (export "memory" (memory $0))
+  (export "__heap_base" (global $global$1))
+  (export "__data_end" (global $global$2))
+- (export "stackSave" (func $stackSave))
+- (export "stackAlloc" (func $stackAlloc))
+- (export "stackRestore" (func $stackRestore))
+  (export "__growWasmMemory" (func $__growWasmMemory))
+  (func $__original_main (param $0 i32) (param $1 i32) (result i32)
+   (nop)
+  )
+- (func $stackSave (result i32)
+-  (global.get $global$0)
+- )
+- (func $stackAlloc (param $0 i32) (result i32)
+-  (local $1 i32)
+-  (global.set $global$0
+-   (local.tee $1
+-    (i32.and
+-     (i32.sub
+-      (global.get $global$0)
+-      (local.get $0)
+-     )
+-     (i32.const -16)
+-    )
+-   )
+-  )
+-  (local.get $1)
+- )
+- (func $stackRestore (param $0 i32)
+-  (global.set $global$0
+-   (local.get $0)
+-  )
+- )
+  (func $__growWasmMemory (param $newSize i32) (result i32)
+   (memory.grow
+    (local.get $newSize)
+@@ -62,9 +34,6 @@
+     "___growWasmMemory"
+   ],
+   "exports": [
+-    "stackSave",
+-    "stackAlloc",
+-    "stackRestore",
+     "__growWasmMemory"
+   ],
+   "namedGlobals": {
+Only in binaryen-version_93/test/lld: standalone-wasm3.wat.out.orig
