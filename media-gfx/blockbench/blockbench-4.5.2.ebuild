@@ -6,6 +6,8 @@ EAPI=8
 
 ELECTRON_APP_ELECTRON_PV="21.2.2"
 ELECTRON_APP_MODE="npm"
+NODE_VERSION=16
+NODE_ENV=development
 inherit desktop electron-app npm-utils
 
 DESCRIPTION="Blockbench - A boxy 3D model editor"
@@ -21,6 +23,7 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0"
 BDEPEND+="
+	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	net-libs/nodejs[npm]
 "
 SRC_URI="
