@@ -78,8 +78,6 @@ LICENSE="
 	( ISC CC-BY-SA-4.0 )
 	( MIT CC0-1.0 )
 	( HPND all-rights-reserved )
-	( MPL-1.1 || ( GPL-2 LGPL-2.1 ) )
-	|| ( (MPL-2.0 GPL-2+) (MPL-2.0 LGPL-2.1+) MPL-2.0 GPL-2.0+ )
 	APSL-2
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -132,6 +130,8 @@ LICENSE="
 	x11proto
 	ZLIB
 	widevine? ( widevine )
+	|| ( MPL-1.1 GPL-2 LGPL-2.1 )
+	|| ( ( MPL-2.0 GPL-2+ ) ( MPL-2.0 LGPL-2.1+ ) MPL-2.0 GPL-2.0+ )
 "
 #
 # Benchmark website licenses:
@@ -139,11 +139,11 @@ LICENSE="
 #
 # BSD-2 BSD LGPL-2.1 - Kraken benchmark
 #   ( ( all-rights-reserved || ( MIT AFL-2.1 ) ) (MIT GPL) BSD MIT )
-#   ( MPL-1.1 ^^ ( GPL-2+ LGPL-2.1+ ) )
 #   ( all-rights-reserved GPL-3+ ) tests/kraken-1.0/audio-beat-detection-data.js
-#   || ( BSD GPL-2 ) ; for SJCL
 #   MPL-1.1 tests/kraken-1.0/imaging-desaturate.js
 #   public-domain hosted/json2.js
+#   || ( MPL-1.1 GPL-2+ LGPL-2.1+ )
+#   || ( BSD GPL-2 ) ; for SJCL
 
 # Third Party Licenses:
 #
@@ -151,13 +151,6 @@ LICENSE="
 #        reevaluated.
 # TODO:  scan all font files for embedded licenses
 #
-# ^^ ( FTL GPL-2 ) ZLIB public-domain - third_party/freetype/src/LICENSE.TXT
-# ( MPL-1.1(GPL-2+,LGPL-2.1+) ) - chrome/utility/importer/nss_decryptor.cc
-# || ( WTFPL-2 Apache-2.0 ) - \
-#   third_party/catapult/third_party/polymer2/bower_components/sinon-chai/LICENSE.txt ; \
-#   the WTFPL is the better choice because Apache-2.0 has more restrictions
-# || ( MIT GPL-3 ) third_party/catapult/tracing/third_party/jszip/LICENSE.markdown ; \
-#   upstream has more MIT than GPL3 copyright notices, so MIT is assumed
 # APSL-2 - third_party/apple_apsl/LICENSE
 # APSL-2 Apache-2.0 BSD MIT - third_party/breakpad/LICENSE
 # Apache-2.0 - CIPD - https://chromium.googlesource.com/infra/luci/luci-go/+/refs/heads/main/cipd
@@ -168,12 +161,12 @@ LICENSE="
 # all-rights-reserved MIT - third_party/xcbproto/LICENSE ; the plain MIT \
 #   license doesn't come with all rights reserved in the license template
 # BSD - third_party/vulkan-deps/glslang/src/LICENSE.txt
-# BSD ( MPL-1.1(GPL-2+,LGPL-2+) ) - \
+# BSD || ( MPL-1.1 GPL-2+ LGPL-2+ ) - \
 #   third_party/openscreen/src/third_party/mozilla/LICENSE.txt
 # BSD CC-BY-3.0 CC-BY-4.0 MIT public-domain - third_party/snappy/src/COPYING
 # BSD HPND (modified) - native_client_sdk/src/libraries/third_party/newlib-extras/netdb.h
 # BSD ISC MIT openssl - third_party/boringssl/src/LICENSE
-# BSD MPL-1.1(GPL-2+,LGPL-2+) - url/third_party/mozilla/LICENSE.txt
+# BSD || ( MPL-1.1 GPL-2+ LGPL-2+ ) - url/third_party/mozilla/LICENSE.txt
 # BSD-2 - third_party/node/node_modules/eslint-scope/LICENSE
 # BSD-2 IJG MIT - third_party/libavif/src/LICENSE
 # BSD-2 - third_party/libaom/source/libaom/LICENSE
@@ -188,7 +181,7 @@ LICENSE="
 # custom Boost-1.0 BSD BSD-2 BSD-4 gcc-runtime-library-exception-3.1 FDL-1.1 \
 #   GPL-2 GPL-2+ GPL-2-with-classpath-exception GPL-3 HPND icu LIBGLOSS LGPL-2
 #   LGPL-2.1 LGPL-2.1+ LGPL-3 MIT NEWLIB PSF-2.4 rc UoI-NCSA ZLIB \
-#   ( MPL-1.1(GPL 2.0,LGPL-2.1) ) - native_client/NOTICE
+#   || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) - native_client/NOTICE
 #   NSIS: BZIP2 CPL-1.0 libpng ZLIB
 #   (Some third_party modules do not exist like NSIS)
 # custom, W3C-IPR, BSD, MIT, GPL-2, LPGL-2.1, PSF-2.4, BSD-2, SunPro, \
@@ -196,7 +189,7 @@ LICENSE="
 #   SAX-PD, GPL-2-with-classpath-exception, UoI-NCSA, FDL-1.1, Boost-1.0, \
 #   CPL-1.0, BZIP2, ZLIB, LGPL-3, GPL-3, gcc-runtime-library-exception-3.1, \
 #   W3C-SOFTWARE-NOTICE-AND-LICENSE-2004 (LICENSE.DOM), HPND, BSD-4, \
-#   ( MPL-1.1(GPL-2+,LGPL-2.1+) ),    - native_client/NOTICE \
+#   || ( MPL-1.1 GPL-2+ LGPL-2.1+ ),    - native_client/NOTICE \
 #   Not all folders present so not all licenses will apply.
 # custom IJG - third_party/iccjpeg/LICENSE
 # custom MPL-2.0 BSD GPL-3 LGPL-3 Apache-1.1 - \
@@ -268,6 +261,13 @@ LICENSE="
 # widevine - third_party/widevine/LICENSE
 # WTFPL BSD-2 - third_party/catapult/third_party/polymer2/bower_components/sinon-chai/LICENSE.txt
 # x11proto - third_party/x11proto/LICENSE
+# ^^ ( FTL GPL-2 ) ZLIB public-domain - third_party/freetype/src/LICENSE.TXT
+# || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) - chrome/utility/importer/nss_decryptor.cc
+# || ( WTFPL-2 Apache-2.0 ) - \
+#   third_party/catapult/third_party/polymer2/bower_components/sinon-chai/LICENSE.txt ; \
+#   the WTFPL is the better choice because Apache-2.0 has more restrictions
+# || ( MIT GPL-3 ) third_party/catapult/tracing/third_party/jszip/LICENSE.markdown ; \
+#   upstream has more MIT than GPL3 copyright notices, so MIT is assumed
 # * The public-domain entry was not added to the LICENSE ebuild variable to not
 #   give the wrong impression that the entire software was released in public
 #   domain.

@@ -49,7 +49,6 @@ LICENSE="
 # For Electron 21.2.2: \
 # custom \
 #   search "with the mathematical derivations" \
-# ( MPL-1.1 all-right-reserved  ^^ ( GPL-2 LGPL-2.1 ) ) \
 # ( LGPL-2.1+ MIT BSD GPL-2+ ) \
 # ( MPL2 || ( BSD LGPL ) ) \
 # ( MIT SGI-Free-B SGI-copyright LGPL Mark's-copyright BSD ) \
@@ -57,7 +56,6 @@ LICENSE="
 # ( HPND all-rights-reserved ) \
 # ( CC-BY-3.0 MIT CC-BY public-domain ) \
 # ( BSD BSD-2 ) \
-# || ( MIT public-domain ( MIT public-domain )) \
 # android \
 # AFL-2.0 \
 # Apache-2.0 \
@@ -110,6 +108,8 @@ LICENSE="
 # unRAR \
 # WebP-PATENTS \
 # ZLIB \
+# || ( MIT public-domain ( MIT public-domain )) \
+# || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) \
 # - node_modules/electron/dist/LICENSES.chromium.html
 
 KEYWORDS="~amd64"

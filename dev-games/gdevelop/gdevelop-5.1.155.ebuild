@@ -18,66 +18,6 @@ MY_PV="${PV//_/-}"
 DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed
 to be used by everyone."
 HOMEPAGE="https://gdevelop-app.com/"
-THIRD_PARTY_LICENSES_ELECTRON="
-	custom
-	( custom ISC all-rights-reserved )
-	( fping all-rights-reserved )
-	( LGPL-2.1 LGPL-2.1+ )
-	( MPL-1.1 GPL-2 )
-	|| ( MPL-2 GPL-2+ LGPL-2.1+ )
-	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
-	android
-	Apache-2.0
-	Apache-2.0-with-LLVM-exceptions
-	APSL-2
-	AFL-2.0
-	BitstreamVera
-	Boost-1.0
-	BSD
-	BSD-2
-	BSD-4
-	BSD-Protection
-	CC-BY-SA-3.0
-	CPL-1.0
-	curl
-	EPL-1.0
-	GPL-2
-	GPL-2-with-classpath-exception
-	GPL-3
-	GPL-3+
-	MIT
-	MPL-2.0
-	FTL
-	icu-70.1
-	IJG
-	ISC
-	HPND
-	Khronos-CLHPP
-	LGPL-2.1
-	LGPL-2.1+
-	LGPL-3
-	LGPL-3+
-	libpng
-	libpng2
-	libstdc++
-	NEWLIB
-	MPL-1.1
-	MPL-2.0
-	Ms-PL
-	OFL-1.1
-	minpack
-	openssl
-	SunPro
-	Unicode-DFS-2016
-	unicode
-	unRAR
-	UoI-NCSA
-	WebP-PATENTS
-	ZLIB
-	|| ( public-domain MIT ( public-domain MIT ) )
-" # The ^^ (mutually exclusion) does not work.  It is assumed the user will choose
-# outside the computer.
-
 THIRD_PARTY_LICENSES="
 	custom
 	all-rights-reserved

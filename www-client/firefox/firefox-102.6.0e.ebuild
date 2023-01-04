@@ -109,15 +109,14 @@ LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-ESR-THIRD-PARTY-LICENSES"
 LICENSE+="
 	${LICENSE_FILE_NAME}
 	(
+		( all-rights-reserved || ( AFL-2.1 MIT ) )
+		( all-rights-reserved || ( AFL-2.1 BSD ) )
+		( MIT GPL-2 )
 		BSD-2
 		BSD
 		LGPL-2.1
-		( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
-		( all-rights-reserved || ( MIT AFL-2.1 ) )
-		( MIT GPL-2 )
-		( all-rights-reserved || ( AFL-2.1 BSD ) )
+		|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
 	)
-	( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
 	all-rights-reserved
@@ -161,6 +160,7 @@ LICENSE+="
 		MPL-2.0
 	)
 	|| ( BSD W3C-Document-License-2002 )
+	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
 " # \
 # emerge does not recognize ^^ for the LICENSE variable.  You must choose
 # at most one for some packages when || is present.
@@ -183,15 +183,15 @@ LICENSE+="
 #   MPL-2.0
 #
 # ( BSD-2 BSD LGPL-2.1
-#   ( all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
-#   ( all-rights-reserved || ( MIT AFL-2.1 ) )
+#   ( all-rights-reserved || ( AFL-2.1 MIT ) )
 #   ( all-rights-reserved || ( AFL-2.1 BSD ) )
+#   ( all-rights-reserved Apache-2.0 )
 #   ( all-rights-reserved MIT )
 #   ( MIT GPL-2 )
-#   ( all-rights-reserved Apache-2.0 )
+#   || ( MPL-1.1 GPL-2+ LGPL-2.1+ )
 # ) \
 #     third_party/webkit/PerformanceTests/**
-# ( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) ) \
+# || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) \
 #   testing/talos/talos/pageloader/chrome/pageloader.xhtml
 # ^^ ( GPL-3? ( FTL ) GPL-2 ) modules/freetype2/LICENSE.TXT - GPL-2 assumed # \
 #   since original ebuild cites it

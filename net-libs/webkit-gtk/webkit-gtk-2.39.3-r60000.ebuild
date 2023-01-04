@@ -27,7 +27,6 @@ inherit cflags-depends
 DESCRIPTION="Open source web browser engine (GTK 4 with HTTP/2 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
-	( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
 	( all-rights-reserved MIT )
 	( ( all-rights-reserved || ( MIT AFL-2.1 ) ) ( MIT GPL-2 ) || ( AFL-2.1 BSD ) MIT )
 	( all-rights-reserved GPL-2+ )
@@ -36,10 +35,12 @@ LICENSE_DROMAEO="
 	BSD
 	BSD-2
 	LGPL-2.1
+	|| ( MPL-1.1 GPL-2.0+ LGPL-2.1+ )
 "
 # The default webkit license is LGPL-2 BSD-2.
 LICENSE="
 	all-rights-reserved
+	( || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) GIF )
 	Apache-2.0
 	BitstreamVera
 	Boost-1.0
@@ -54,9 +55,6 @@ LICENSE="
 	MIT
 	MPL-2.0
 	Unicode-DFS-2016
-	( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
-	( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) GIF )
-	|| ( AFL-2.0 LGPL-2+ )
 	libwebrtc? (
 		Apache-2.0
 		BSD
@@ -75,12 +73,14 @@ LICENSE="
 		QU-fft
 		sigslot
 	)
+	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
+	|| ( AFL-2.0 LGPL-2+ )
 " # \
 # emerge does not understand ^^ when applied to licenses, but you should only \
 #   pick one when || is presented
 
 # BSD BSD-2 LGPL-2+ LGPL-2.1+ Tools/Scripts
-#   (all-rights-reserved LGPL-2.1+) Tools/Scripts/webkitperl/VCSUtils_unittest/parseDiffWithMockFiles.pl
+#   ( all-rights-reserved LGPL-2.1+ ) Tools/Scripts/webkitperl/VCSUtils_unittest/parseDiffWithMockFiles.pl
 #   all-rights-reserved Tools/Scripts/libraries/webkitcorepy/webkitcorepy/tests/string_utils_unittest.py
 #   GPL-2+ Tools/Scripts/prepare-ChangeLog
 #   LGPL-2.1+ Tools/Scripts/run-minibrowser
@@ -96,37 +96,37 @@ LICENSE="
 #  https://www.gutenberg.org/policy/license.html
 # BSD-2 PerformanceTests/DecoderTest
 # BSD BSD-2 || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) PerformanceTests/Dromaeo
-#   (all-rights-reserved || (MIT AFL-2.1)) (MIT GPL-2) BSD \
+#   ( all-rights-reserved || ( MIT AFL-2.1 ) ) ( MIT GPL-2 ) BSD \
 #     PerformanceTests/Dromaeo/resources/dromaeo/web/tests/sunspider-string-unpack-code.html
-#   (all-rights-reserved GPL-2+) PerformanceTests/Dromaeo/resources/dromaeo/web/tests/v8-deltablue.html ; \
+#   ( all-rights-reserved GPL-2+ ) PerformanceTests/Dromaeo/resources/dromaeo/web/tests/v8-deltablue.html ; \
 #     the GPL-2+ does not say all rights reserved in the license template
-#   (all-rights-reserved MIT) PerformanceTests/Dromaeo/Octane2/navier-stokes.js
-#   (all-rights-reserved MIT) PerformanceTests/Dromaeo/resources/dromaeo/web/tests/v8-crypto.html ; \
+#   ( all-rights-reserved MIT ) PerformanceTests/Dromaeo/Octane2/navier-stokes.js
+#   ( all-rights-reserved MIT ) PerformanceTests/Dromaeo/resources/dromaeo/web/tests/v8-crypto.html ; \
 #     the MIT license template doesn't contain all rights reserved
 #   LGPL-2.1 PerformanceTests/Dromaeo/resources/dromaeo/web/tests/sunspider-date-format-xparb.html
-#   (MIT GPL-2) for jquery (MIT BSD GPL-2) for Sizzle.js \
+#   ( MIT GPL-2 ) for jquery ( MIT BSD GPL-2 ) for Sizzle.js \
 #     PerformanceTests/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js
 # BSD PerformanceTests/DOM
 # BSD-2 BSD MIT GPL-2 GPL-2+ ZLIB Apache-2.0 || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) UoI-NCSA \
 #     PerformanceTests/JetStream
-#   ( (all-rights-reserved Apache-2.0) (all-rights-reserved MIT) ) \
+#   ( ( all-rights-reserved Apache-2.0 ) ( all-rights-reserved MIT ) ) \
 #     PerformanceTests/JetStream/simple/gcc-loops.cpp.js
-#   (all-rights-reserved Apache-2.0) PerformanceTests/JetStream/Octane2/typescript-input.js ; \
+#   ( all-rights-reserved Apache-2.0 ) PerformanceTests/JetStream/Octane2/typescript-input.js ; \
 #     the Apache-2.0 template does not contain all-rights-reserved
-#   (all-rights-reserved GPL-2+) PerformanceTests/JetStream/Octane2/pdfjs.js ; \
+#   ( all-rights-reserved GPL-2+ ) PerformanceTests/JetStream/Octane2/pdfjs.js ; \
 #     the GPL-2+ does not contain all rights reserved in the template
-#   (all-rights-reserved MIT) PerformanceTests/JetStream/Octane2/crypto.js ; \
+#   ( all-rights-reserved MIT ) PerformanceTests/JetStream/Octane2/crypto.js ; \
 #     the MIT license template does not contain all rights reserved
 #   || ( BSD-2 GPL-2+ ) PerformanceTests/JetStream2/SeaMonster/sjlc.js
-#   custom (all-rights-reserved Apache-2.0) PerformanceTests/JetStream/simple/hash-map.js
+#   custom ( all-rights-reserved Apache-2.0 ) PerformanceTests/JetStream/simple/hash-map.js
 #   LGPL-2.1 PerformanceTests/JetStream/sunspider/date-format-xparb.js
 # BSD-2 BSD || ( BSD GPL-2+ ) MIT LGPL-2.1 Apache-2.0 ZLIB PerformanceTests/JetStream2
-#   (all-rights-reserved GPL-2+) PerformanceTests/JetStream2/Octane/pdfjs.js
-#   (all-rights-reserved MIT) PerformanceTests/JetStream2/Octane/crypto.js
-#   (all-rights-reserved Apache-2.0) PerformanceTests/JetStream2/simple/hash-map.js
+#   ( all-rights-reserved GPL-2+ ) PerformanceTests/JetStream2/Octane/pdfjs.js
+#   ( all-rights-reserved MIT ) PerformanceTests/JetStream2/Octane/crypto.js
+#   ( all-rights-reserved Apache-2.0 ) PerformanceTests/JetStream2/simple/hash-map.js
 #   ( MIT BSD || ( MIT GPL-2 ) ^^ ( MIT GPL-2 ) LGPL BSD-2 ) \
 #     PerformanceTests/JetStream2/web-tooling-benchmark/cli.js
-#   ^^ ( MPL-1.1 GPL-2+ LGPL-2+ ) PerformanceTests/JetStream2/SunSpider/base64.js
+#   || ( MPL-1.1 GPL-2+ LGPL-2+ ) PerformanceTests/JetStream2/SunSpider/base64.js
 #   all-rights-reserved PerformanceTests/JetStream2/wasm/TSF/tsf_sha1.h
 #   all-rights-reserved FPL PerformanceTests/JetStream2/wasm/TSF/tsf_sha1.c
 #   custom MIT PerformanceTests/JetStream2/WSL/spirv.core.grammar.json
@@ -137,11 +137,11 @@ LICENSE="
 # BSD-2 MIT PerformanceTests/JSBench
 # BSD-2 BSD LGPL-2.1 - Kraken benchmark
 #   ( ( all-rights-reserved || ( MIT AFL-2.1 ) ) (MIT GPL) BSD MIT )
-#   ( all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
 #   ( all-rights-reserved GPL-3+ ) tests/kraken-1.0/audio-beat-detection-data.js
-#   || ( BSD GPL-2 ) ; for SJCL
 #   MPL-1.1 tests/kraken-1.0/imaging-desaturate.js
 #   public-domain hosted/json2.js
+#   || ( BSD GPL-2 ) ; for SJCL
+#   || ( MPL-1.1 GPL-2+ LGPL-2.1+ )
 # BSD-2 PerformanceTests/LaunchTime
 # BSD BSD-2 Apache-2.0 LGPL-2.1 || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) \
 #   PerformanceTests/LongSpider
@@ -161,26 +161,26 @@ LICENSE="
 #   MIT PerformanceTests/resources/jquery.flot.min.js
 # MIT PerformanceTests/SixSpeed
 # MIT BSD PerformanceTests/Speedometer/
-#   (all-rights-reserved MIT) \
+#   ( all-rights-reserved MIT ) \
 #     PerformanceTests/Speedometer/resources/todomvc/architecture-examples/angular/dist/vendor.9a296bbc1909830a9106.bundle.js
-#   (MIT CC0-1.0) \
+#   ( MIT CC0-1.0 ) \
 #     PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/requirejs-text/LICENSE
-#   || (MIT BSD) \
+#   || ( MIT BSD ) \
 #     PerformanceTests/Speedometer/resources/flightjs-example-app/components/requirejs/require.js
 #   Apache-2.0 PerformanceTests/Speedometer/resources/flightjs-example-app/components/bootstrap/css/bootstrap-responsive.css
 #   CC-BY-4.0 PerformanceTests/Speedometer/resources/todomvc/vanilla-examples/es2015/node_modules/todomvc-app-css/readme.md
 #   public-domain PerformanceTests/Speedometer/resources/flightjs-example-app/components/es5-shim/tests/lib/json2.js
-# BSD BSD-2 (MIT GPL-2) MIT || (MIT AFL-2.1) PerformanceTests/SunSpider
-#   (all-rights-reserved GPL-2) PerformanceTests/SunSpider/tests/v8-v6/v8-deltablue.js
-#   (all-rights-reserved MIT) PerformanceTests/SunSpider/tests/v8-v5/v8-crypto.js ; \
+# BSD BSD-2 ( MIT GPL-2 ) MIT || ( MIT AFL-2.1 ) PerformanceTests/SunSpider
+#   ( all-rights-reserved GPL-2 ) PerformanceTests/SunSpider/tests/v8-v6/v8-deltablue.js
+#   ( all-rights-reserved MIT ) PerformanceTests/SunSpider/tests/v8-v5/v8-crypto.js ; \
 #     no all rights reserved in the plain MIT license template
-#   ^^ (MPL-1.1 GPL-2.0+ LGPL-2.1+) \
+#   || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) \
 #     PerformanceTests/SunSpider/tests/sunspider-0.9.1/string-base64.js
 #   GPL-2+ PerformanceTests/SunSpider/tests/v8-v5/v8-deltablue.js
 #   LGPL-2.1 PerformanceTests/SunSpider/tests/sunspider-0.9.1/date-format-xparb.js
 #   public-domain PerformanceTests/SunSpider/hosted/json2.js
 # BSD-2 BSD ( all-rights-reserved Apache-2.0 ) ZLIB PerformanceTests/testmem
-#   (all-rights-reserved || (MPL-1.1 GPL-2+ LGPL-2+)) PerformanceTests/testmem/base64.js
+#   ( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2+ ) ) PerformanceTests/testmem/base64.js
 # PerformanceTests/SVG
 #   public-domain PerformanceTests/SVG/resources/AzLizardBenjiPark.svg
 #   custom PerformanceTests/SVG/resources/WorldIso.svg
@@ -205,9 +205,7 @@ LICENSE="
 #   PerformanceTests/TailBench9000
 
 # Some licenses are third party
-# ( all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) ) Source/WTF/wtf/DateMath.h
-# ( all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) GIF ) Source/WebCore/platform/image-decoders/gif/GIFImageReader.cpp
-# || ( LGPL-2+ AFL-2.0 ) Source/ThirdParty/xdgmime/README
+# ( || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) GIF ) Source/WebCore/platform/image-decoders/gif/GIFImageReader.cpp
 # all-rights-reserved Source/WebInspectorUI/UserInterface/Images/CanvasOverview.svg
 # all-rights-reserved Source/ThirdParty/gtest/scripts/run_with_path.py
 # all-rights-reserved GPL-2+ Source/WTF/wtf/HashCountedSet.h ; * the GPL-2+ license does not contain all rights reserved
@@ -240,6 +238,8 @@ LICENSE="
 # public-domain Source/ThirdParty/libwebrtc/Source/webrtc/modules/third_party/g722/LICENSE
 # public-domain Source/ThirdParty/libwebrtc/Source/webrtc/modules/third_party/g711/LICENSE
 # Unicode-DFS-2016 Source/WTF/icu/LICENSE
+# || ( LGPL-2+ AFL-2.0 ) Source/ThirdParty/xdgmime/README
+# || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) Source/WTF/wtf/DateMath.h
 # * The public-domain is not presented in LICENSE variable to not give
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"

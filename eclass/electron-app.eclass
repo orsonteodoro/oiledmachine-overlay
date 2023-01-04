@@ -73,8 +73,6 @@ ELECTRON_APP_LICENSES="
 	( fping all-rights-reserved )
 	( LGPL-2.1 LGPL-2.1+ )
 	( MPL-1.1 GPL-2 )
-	( MPL-1.1 all-right-reserved || ( GPL-2 LGPL-2.1 ) )
-	|| ( (MPL-2.0 GPL-2+) (MPL-2.0 LGPL-2.1+) MPL-2.0 GPL-2.0+ )
 	android
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -96,6 +94,7 @@ ELECTRON_APP_LICENSES="
 	GPL-3
 	GPL-3+
 	MIT
+	MPL-1.1
 	MPL-2.0
 	FLEX
 	FTL
@@ -128,6 +127,8 @@ ELECTRON_APP_LICENSES="
 	WebP-PATENTS
 	ZLIB
 	|| ( public-domain MIT ( public-domain MIT ) )
+	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
+	|| ( ( MPL-2.0 GPL-2+ ) ( MPL-2.0 LGPL-2.1+ ) MPL-2.0 GPL-2.0+ )
 " # The ^^ (mutually exclusion) does not work.  It is assumed the user will choose
 # outside the computer.
 
@@ -140,7 +141,6 @@ ELECTRON_APP_LICENSES="
 #   ( custom ISC with no advertising clause all-rights-reserved ) \
 #   ( fping all-rights-reserved ) \
 #   ( LGPL-2.1 LGPL-2.1+ ) \
-#   ( MPL-1.1 all-right-reserved  ^^ ( GPL-2 LGPL-2.1 ) ) \
 #   ^^ ( (MPL-2.0 GPL-2+) (MPL-2.0 LGPL-2.1+) MPL-2.0 GPL-2.0+ )
 #   android \
 #   Apache-2.0 \
@@ -194,6 +194,7 @@ ELECTRON_APP_LICENSES="
 #   UoI-NCSA \
 #   WebP-PATENTS \
 #   ZLIB \
+#   || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) \
 #   || ( public-domain MIT ( public-domain MIT ) ) - \
 #   newIDE/electron-app/node_modules/electron/dist/LICENSES.chromium.html
 
