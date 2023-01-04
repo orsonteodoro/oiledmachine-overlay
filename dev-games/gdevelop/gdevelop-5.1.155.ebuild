@@ -8,6 +8,7 @@ ELECTRON_APP_ELECTRON_PV="18.2.2" # See \
 # https://raw.githubusercontent.com/4ian/GDevelop/v5.1.155/newIDE/electron-app/package-lock.json
 ELECTRON_APP_REACT_PV="16.14.0" # See \
 # https://raw.githubusercontent.com/4ian/GDevelop/v5.1.155/newIDE/app/package-lock.json
+NODE_ENV=development
 
 inherit check-reqs desktop electron-app eutils flag-o-matic user-info
 inherit toolchain-funcs xdg
