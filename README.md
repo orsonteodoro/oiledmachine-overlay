@@ -329,7 +329,6 @@ should be a bash script.
 
 | package | description |
 | --- | --- |
-| app-editors/epic-journal | This is an Electron based encrypted journal. |
 | app-editors/nano-ycmd | This is a modified GNU nano that uses ycmd.  It is still experimental. |
 | app-emacs/emacs-ycmd | This is a major mode (extension) to GNU Emacs that allows you to use ycmd. |
 | app-eselect/eselect-emscripten | Allows to use a particular Emscripten version as the current one. |
