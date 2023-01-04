@@ -470,9 +470,9 @@ npm-secaudit_install() {
 	doins -r ${rel_src_path}
 
 	for f in $(find "${ed}" -type f) ; do
-		if file "${f}" | grep "executable" ; then
+		if file "${f}" | grep -q "executable" ; then
 			chmod 0755 $(realpath "${f}") || die
-		elif file "${f}" | grep "shared object" ; then
+		elif file "${f}" | grep -q "shared object" ; then
 			chmod 0755 $(realpath "${f}") || die
 		fi
 	done
