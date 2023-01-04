@@ -6,6 +6,8 @@ EAPI=8
 
 ELECTRON_APP_ELECTRON_PV="18.3.7"
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
+NODE_ENV=development
+NODE_VERSION="16"
 inherit desktop electron-app
 
 DESCRIPTION="A simple Instagram desktop uploader & client app build with \
@@ -22,7 +24,7 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0"
 BDEPEND+="
-	>=net-libs/nodejs-9[npm]
+	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 "
 EGIT_COMMIT="0916d8dd64f06580d640e645334586d8ba319cbf"
 SRC_URI="
