@@ -44,8 +44,9 @@ src_install() {
 	electron-app_desktop_install \
 		"dist/linux-unpacked/*" \
 		"static/Icon.png" \
-		"${PN^}" "Network" \
-	"${ELECTRON_APP_INSTALL_PATH}/${PN} \"\$@\""
+		"${PN^}" \
+		"Network" \
+		"${ELECTRON_APP_INSTALL_PATH}/${PN}"
 	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
 	npm-utils_install_licenses
 }

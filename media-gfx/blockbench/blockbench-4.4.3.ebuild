@@ -148,7 +148,7 @@ src_install() {
 		"icon.png" \
 		"${PN^}" \
 		"Graphics;3DGraphics" \
-		"${ELECTRON_APP_INSTALL_PATH}/blockbench \"\$@\""
+		"${ELECTRON_APP_INSTALL_PATH}/${PN}"
 	fperms 0755 ${ELECTRON_APP_INSTALL_PATH}/blockbench
 	npm-utils_install_licenses
 }

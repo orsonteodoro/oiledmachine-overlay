@@ -43,7 +43,9 @@ src_install() {
 	electron-app_desktop_install \
 		"builds/${PN}-linux-"$(electron-app_get_arch)"/*" \
 		"assets/instagram-uploader-icon.png" \
-		"${PN^}" "Network" "${ELECTRON_APP_INSTALL_PATH}/${PN}"
+		"${PN^}" \
+		"Network" \
+		"${ELECTRON_APP_INSTALL_PATH}/${PN}"
 	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
 }
 

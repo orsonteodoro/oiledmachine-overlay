@@ -69,9 +69,12 @@ electron-app_src_preprepare() {
 
 src_install() {
 	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}"
-	electron-app_desktop_install "dist/linux-unpacked/*" \
-		"build/icon/icon.png" "${PN^}" \
-		"Development" "${ELECTRON_APP_INSTALL_PATH}/${PN} \"\$@\""
+	electron-app_desktop_install \
+		"dist/linux-unpacked/*" \
+		"build/icon/icon.png" \
+		"${PN^}" \
+		"Development" \
+		"${ELECTRON_APP_INSTALL_PATH}/${PN}"
 	npm-utils_install_licenses
 	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
 }

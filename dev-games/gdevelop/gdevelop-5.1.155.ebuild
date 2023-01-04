@@ -437,7 +437,8 @@ ewarn
 	electron-app_desktop_install \
 		"*" \
 		"newIDE/electron-app/build/icon-256x256.png" \
-		"${MY_PN} $(ver_cut 1 ${PV})" "Development;IDE" \
+		"${MY_PN} $(ver_cut 1 ${PV})" \
+		"Development;IDE" \
 		"/usr/bin/${PN}"
 
 	if [[ -e "${ED}/usr/bin/${PN}" ]] ; then

@@ -59,9 +59,12 @@ electron-app_src_compile() {
 
 src_install() {
 	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}"
-	electron-app_desktop_install "build/linux-unpacked/*" \
-		"build/icons/256x256.png" "${MY_PN}" \
-		"Office" "${ELECTRON_APP_INSTALL_PATH}/${PN}"
+	electron-app_desktop_install \
+		"build/linux-unpacked/*" \
+		"build/icons/256x256.png" \
+		"${MY_PN}" \
+		"Office" \
+		"${ELECTRON_APP_INSTALL_PATH}/${PN}"
 	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
 	npm-utils_install_licenses
 }
