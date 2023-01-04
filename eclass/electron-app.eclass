@@ -1375,20 +1375,7 @@ electron-app_desktop_install_program_raw() {
 	local d="${ELECTRON_APP_INSTALL_PATH}"
 	local ed="${ED}/${d}"
 	case "$ELECTRON_APP_MODE" in
-		npm)
-			local old_dotglob=$(shopt dotglob | cut -f 2)
-			shopt -s dotglob # copy hidden files
-
-			mkdir -p "${ed}" || die
-			cp -a ${rel_src_path} "${ed}" || die
-
-			if [[ "${old_dotglob}" == "on" ]] ; then
-				shopt -s dotglob
-			else
-				shopt -u dotglob
-			fi
-			;;
-		yarn)
+		npm|yarn)
 			local old_dotglob=$(shopt dotglob | cut -f 2)
 			shopt -s dotglob # copy hidden files
 
@@ -1421,66 +1408,19 @@ electron-app_desktop_install_program() {
 	local d="${ELECTRON_APP_INSTALL_PATH}"
 	local ed="${ED}/${d}"
 	case "$ELECTRON_APP_MODE" in
-		npm)
+		npm|yarn)
 			local old_dotglob=$(shopt dotglob | cut -f 2)
 			shopt -s dotglob # copy hidden files
 
 			insinto "${d}"
 			doins -r ${rel_src_path}
 
-			# Mark .bin scripts executable
-			for dir_path in $(find "${ed}" -name ".bin" -type d) ; do
-				for f in $(find "${dir_path}" ) ; do
+			for f in $(find "${ed}" -type f) ; do
+				if file "${f}" | grep "executable" ; then
 					chmod 0755 $(realpath "${f}") || die
-				done
-			done
-
-			# Mark libraries executable
-			for f in $(find "${ed}" \
-					-name "*.so" -type f \
-					-o -name "*.so.*" -type f) ; do
-				chmod 0755 $(realpath "${f}") || die
-			done
-
-			# Mark electron executable
-			for f in $(find "${ed}" -path "*dist/electron" -type f) ; do
-				chmod 0755 "${f}" || die
-			done
-
-			# Mark chrome parts executable
-			for f in $(find "${ed}" -name "chrome-sandbox" -type f) ; do
-				chmod 0755 "${f}" || die
-			done
-
-			if [[ "${old_dotglob}" == "on" ]] ; then
-				shopt -s dotglob
-			else
-				shopt -u dotglob
-			fi
-			;;
-		yarn)
-			local old_dotglob=$(shopt dotglob | cut -f 2)
-			shopt -s dotglob # copy hidden files
-
-			insinto "${d}"
-			doins -r ${rel_src_path}
-
-			# Mark .bin scripts executable
-			for dir_path in $(find "${ed}" -name ".bin" -type d) ; do
-				for f in $(find "${dir_path}" ) ; do
+				elif file "${f}" | grep "shared object" ; then
 					chmod 0755 $(realpath "${f}") || die
-				done
-			done
-
-			# Mark libraries executable
-			for f in $(find "${ed}" -name "*.so" -type f \
-					-o -name "*.so.*" -type f) ; do
-				chmod 0755 $(realpath "${f}") || die
-			done
-
-			# Mark electron executable
-			for f in $(find "${ed}" -path "*dist/electron" -type f) ; do
-				chmod 0755 "${f}" || die
+				fi
 			done
 
 			if [[ "${old_dotglob}" == "on" ]] ; then

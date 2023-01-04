@@ -4,6 +4,7 @@
 
 EAPI=8
 
+NODE_DEV=development
 NODE_VERSION=14 # Using nodejs muxer variable name.
 inherit desktop npm-secaudit npm-utils
 
@@ -16,14 +17,15 @@ IUSE="clipboard"
 NODEJS_PV="8.3"
 RDEPEND="
 	>=net-libs/nodejs-${NODEJS_PV}:${NODE_VERSION}
-	>=net-libs/nodejs-${NODEJS_PV}[npm]
+	>=net-libs/nodejs-${NODE_VERSION}[npm]
 	clipboard? ( x11-misc/xclip )
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=net-libs/nodejs-${NODEJS_PV}[npm]
+	>=net-libs/nodejs-${NODEJS_PV}:${NODE_VERSION}
+	>=net-libs/nodejs-${NODE_VERSION}[npm]
 "
 MY_PN="${PN//-cli/}"
 SRC_URI="

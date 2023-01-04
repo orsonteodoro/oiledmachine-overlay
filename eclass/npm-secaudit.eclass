@@ -469,16 +469,12 @@ npm-secaudit_install() {
 	insinto "${d}"
 	doins -r ${rel_src_path}
 
-	# Mark .bin scripts executable
-	for dir_path in $(find "${ed}" -name ".bin" -type d) ; do
-		for f in $(find "${dir_path}" ) ; do
+	for f in $(find "${ed}" -type f) ; do
+		if file "${f}" | grep "executable" ; then
 			chmod 0755 $(realpath "${f}") || die
-		done
-	done
-
-	# Mark libraries executable
-	for f in $(find "${ed}" -name "*.so" -type f -o -name "*.so.*" -type f) ; do
-		chmod 0755 $(realpath "${f}") || die
+		elif file "${f}" | grep "shared object" ; then
+			chmod 0755 $(realpath "${f}") || die
+		fi
 	done
 
 	if [[ "${old_dotglob}" == "on" ]] ; then
