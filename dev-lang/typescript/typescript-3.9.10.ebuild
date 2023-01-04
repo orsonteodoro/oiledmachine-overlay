@@ -29,6 +29,9 @@ LICENSE="
 # Rest of the licenses are third party licenses
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="$(ver_cut 1-2 ${PV})/${PV}"
+IUSE+="
+r1
+"
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	app-eselect/eselect-typescript
@@ -101,7 +104,7 @@ npm-secaudit_src_postcompile() {
 }
 
 src_install() {
-	export NPM_SECAUDIT_INSTALL_PATH="/opt/${PN}/${SLOT}"
+	export NPM_SECAUDIT_INSTALL_PATH="/opt/${PN}/${PV}"
 	npm-secaudit_install "*"
 	fperms 0755 "${NPM_SECAUDIT_INSTALL_PATH}/bin/tsc" \
 		"${NPM_SECAUDIT_INSTALL_PATH}/bin/tsserver"
@@ -109,8 +112,8 @@ src_install() {
 
 pkg_postinst() {
 	npm-secaudit_pkg_postinst
-	if eselect typescript list | grep ${SLOT} >/dev/null ; then
-		eselect typescript set ${SLOT}
+	if eselect typescript list | grep ${PV} >/dev/null ; then
+		eselect typescript set ${PV}
 	fi
 }
 
