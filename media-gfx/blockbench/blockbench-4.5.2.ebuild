@@ -116,7 +116,7 @@ KEYWORDS="~amd64"
 SLOT="0"
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
-	net-libs/nodejs[npm]
+	>=net-libs/nodejs-${NODE_VERSION}[npm]
 "
 SRC_URI="
 https://github.com/JannisX11/blockbench/archive/v${PV}.tar.gz
