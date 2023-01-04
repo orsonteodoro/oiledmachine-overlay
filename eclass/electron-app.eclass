@@ -1592,7 +1592,6 @@ ewarn
 		fi
 	fi
 
-	DESCRIPTION=$(echo "${DESCRIPTION}" | tr "\n" " ")
 	make_desktop_entry "${PN}" "${pkg_name}" "${icon}" "${category}"
 }
 

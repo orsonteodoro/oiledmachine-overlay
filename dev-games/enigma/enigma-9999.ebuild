@@ -11,7 +11,7 @@ EGIT_REPO_URI="https://github.com/enigma-dev/enigma-dev.git"
 inherit desktop flag-o-matic git-r3 multilib-minimal \
 toolchain-funcs
 
-DESCRIPTION="ENIGMA, the Extensible Non-Interpreted Game Maker Augmentation,
+DESCRIPTION="ENIGMA, the Extensible Non-Interpreted Game Maker Augmentation, \
 is an open source cross-platform game development environment."
 HOMEPAGE="http://enigma-dev.org"
 LICENSE="GPL-3+"
@@ -709,7 +709,6 @@ src_install() {
 	doins -r "CommandLine/libEGM"
 	exeinto "/usr/bin"
 	newicon "Resources/logo.png" "enigma.png"
-	DESCRIPTION=$(echo "${DESCRIPTION}" | tr "\n" " ")
 	make_desktop_entry \
 		"/usr/bin/${PN}" \
 		"${PN^^}" \

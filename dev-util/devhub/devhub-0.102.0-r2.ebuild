@@ -10,7 +10,7 @@ ELECTRON_APP_REACT_NATIVE_PV="0.64.0_rc1"
 
 inherit desktop electron-app npm-utils
 
-DESCRIPTION="GitHub Notifications Manager & Activity Watcher - Web, Mobile &
+DESCRIPTION="GitHub Notifications Manager & Activity Watcher - Web, Mobile & \
 Desktop"
 HOMEPAGE="https://devhubapp.com"
 LICENSE="
@@ -55,7 +55,6 @@ src_install() {
 	doexe "${FILESDIR}/${PN}"
 
         newicon "node_modules/@devhub/desktop/assets/icons/icon.png" "${PN}.png"
-	DESCRIPTION=$(echo "${DESCRIPTION}" | tr "\n" " ")
         make_desktop_entry ${PN} "${MY_PN}" ${PN} "Development"
 	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
 }
