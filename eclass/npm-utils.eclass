@@ -77,7 +77,9 @@ npm-utils_pkg_setup() {
 # but does not.  Check and die if error log is found.
 npm_check_npm_error()
 {
-	if find "${HOME}/npm/_logs/"* 2>/dev/null 1>/dev/null ; then
+	local count
+	count=$(find "${HOME}/npm/_logs/"* 2>/dev/null | wc -l)
+	if (( ${count} > 0 )) ; then
 ewarn
 ewarn "Detected some potential download failure(s).  Logs can be found in"
 ewarn "${HOME}/npm/_logs .  Retry if the build fails."
