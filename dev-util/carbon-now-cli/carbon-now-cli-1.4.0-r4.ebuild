@@ -4,7 +4,7 @@
 
 EAPI=8
 
-NODE_DEV=development
+NODE_ENV=development
 NODE_VERSION=14 # Using nodejs muxer variable name.
 inherit desktop npm-secaudit npm-utils
 
