@@ -38,7 +38,7 @@ media-libs/alure
 # while project is active within ~2 years (2020).  May contain critical
 # or multiple high vulnerabilities.
 app-editors/epic-journal # Electron 3.1.13 with Chromium 66.0.3359.181 parts
-net-im/caprine # Electron 21.2.3 with Chromium 106.0.5249.168 parts
+net-im/caprine # Electron 21.3.3 with Chromium 106.0.5249.199 parts
 www-misc/instatron # Electron 18.3.15 with Chromium 100.0.4896.160 parts
 
 # Masked for ebuild quality control reasons
