@@ -674,7 +674,6 @@ DEPEND+=" ${COMMON_DEPEND}"
 
 EXPORT_FUNCTIONS pkg_setup src_unpack pkg_preinst pkg_postinst
 
-IUSE+=" debug "
 if (( ${EAPI} == 7 )) ; then
 	BDEPEND+="
 		app-misc/jq
