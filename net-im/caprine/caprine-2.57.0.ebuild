@@ -7,6 +7,8 @@ EAPI=8
 ELECTRON_APP_ELECTRON_PV="21.2.3"
 ELECTRON_APP_TYPESCRIPT_PV="4.8.4"
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
+NODE_VERSION=16
+NODE_ENV=development
 
 inherit desktop electron-app
 
@@ -23,6 +25,7 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0"
 BDEPEND+="
+	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-16[npm]
 " # Based on their CI
 SRC_URI="
