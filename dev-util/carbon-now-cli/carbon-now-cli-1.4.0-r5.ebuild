@@ -54,7 +54,7 @@ src_install() {
 	exeinto /usr/bin
 	doexe "${T}/${MY_PN}"
 	sed -i -e ""
-	if use custom-browser && ! [[ -n "${CARBON_NOW_BROWSER_PATH}" ]] ; then
+	if use custom-browser && [[ -z "${CARBON_NOW_BROWSER_PATH}" ]] ; then
 eerror
 eerror "custom-browser USE flag requires CARBON_NOW_BROWSER_PATH"
 eerror "be set as an environment variable."
