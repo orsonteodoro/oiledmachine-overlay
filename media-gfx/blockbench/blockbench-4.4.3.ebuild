@@ -127,6 +127,12 @@ RESTRICT="mirror"
 
 pkg_setup() {
 	electron-app_pkg_setup
+	if [[ "${NPM_UTILS_ALLOW_AUDIT}" != "0" ]] ; then
+eerror
+eerror "NPM_UTILS_ALLOW_AUDIT=0 needs to be added as a per-package envvar"
+eerror
+		die
+	fi
 }
 
 electron-app_src_compile() {
