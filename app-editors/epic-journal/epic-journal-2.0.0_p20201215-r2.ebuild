@@ -63,7 +63,6 @@ src_install() {
 		"build/icons/256x256.png" "${MY_PN}" \
 		"Office" "${ELECTRON_APP_INSTALL_PATH}/${PN}"
 	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
-	electron-app_store_jsons_for_security_audit
 	npm-utils_install_licenses
 }
 

@@ -45,8 +45,4 @@ src_install() {
 	doexe "${FILESDIR}/${PN}"
 }
 
-pkg_postinst() {
-	npm-secaudit-register "/opt/${PN}"
-}
-
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

@@ -48,7 +48,6 @@ src_install() {
 	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}"
 	electron-app_desktop_install_program \
 		"packages/desktop/build/linux-unpacked/*"
-	electron-app_store_jsons_for_security_audit
 	npm-utils_install_licenses
 
 	exeinto /usr/bin
