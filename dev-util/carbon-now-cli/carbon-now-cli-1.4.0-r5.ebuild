@@ -14,11 +14,16 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="0"
 IUSE="clipboard"
-NODEJS_PV="8.3"
+NODEJS_PV="8.3" # Upstream uses 10 on CI
 RDEPEND="
 	>=net-libs/nodejs-${NODEJS_PV}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
 	clipboard? ( x11-misc/xclip )
+	|| (
+		www-client/chromium-bin
+		www-client/chromium
+		www-client/google-chrome
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -46,6 +51,23 @@ src_install() {
 		"${T}/${MY_PN}" || die
 	exeinto /usr/bin
 	doexe "${T}/${MY_PN}"
+	sed -i -e ""
+	local browser_path=""
+	if has_version "www-client/chromium-bin" ; then
+		browser_path="/opt/chromium-bin/chrome"
+	elif has_version "www-client/chromium" ; then
+		browser_path="/opt/chromium/chrome"
+	elif has_version "www-client/google-chrome" ; then
+		browser_path="/opt/google/chrome/chrome"
+	elif [[ -n "${CARBON_NOW_BROWSER_PATH}" ]] ; then
+		browser_path="${CARBON_NOW_BROWSER_PATH}"
+	fi
+	sed -i -e "1aexport PUPPETEER_EXECUTABLE_PATH=\"${browser_path}\"" \
+		"${ED}"/usr/bin/carbon-now || die
+
+	# The internal Chromium is broken
+	# Removed vulnerable version
+	rm -rf "${ED}/opt/carbon-now-cli/node_modules/puppeteer/.local-chromium" || die
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

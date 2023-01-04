@@ -38,7 +38,6 @@ media-libs/alure
 # while project is active within ~2 years (2020).  May contain multiple critical
 # or multiple high vulnerabilities.
 app-editors/epic-journal # Electron 3.1.13 with Chromium 66.0.3359.181 parts
-dev-util/carbon-now-cli # Puppeteer 1.20.0 with Chromium 78.0.3882.0
 net-im/caprine # Electron 21.3.3 with Chromium 106.0.5249.199 parts
 www-misc/instatron # Electron 18.3.15 with Chromium 100.0.4896.160 parts
 
