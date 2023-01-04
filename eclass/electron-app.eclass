@@ -1554,7 +1554,7 @@ einfo "Setting NODE_ENV=\${NODE_ENV:-production} in wrapper."
 einfo "Setting NODE_ENV=\${NODE_ENV:-development} in wrapper."
 			echo "export NODE_ENV=\${NODE_ENV:-development}" >> "${T}/${PN}"
 		fi
-		echo "${cmd}" >> "${T}/${PN} \"\${@}\""
+		echo "${cmd} \"\${@}\"" >> "${T}/${PN}"
 		doexe "${T}/${PN}"
 
 		local icon=""
