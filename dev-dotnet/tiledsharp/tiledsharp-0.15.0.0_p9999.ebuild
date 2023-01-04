@@ -12,7 +12,7 @@ EGIT_REPO_URI="https://github.com/marshallward/TiledSharp.git"
 USE_DOTNET="net40"
 inherit dotnet git-r3 lcnr
 
-DESCRIPTION="C# library for parsing and importing TMX and TSX files generated
+DESCRIPTION="C# library for parsing and importing TMX and TSX files generated \
 by Tiled, a tile map generation tool."
 HOMEPAGE="https://github.com/marshallward/TiledSharp"
 LICENSE="Apache-2.0"

@@ -10,7 +10,7 @@ inherit python-r1 ruby-ng
 
 # GEN_EBUILD="1" # Uncomment to auto generate parts of the ebuild
 
-DESCRIPTION="A delightful community-driven framework for managing your zsh
+DESCRIPTION="A delightful community-driven framework for managing your zsh \
 configuration that includes optional plugins and themes."
 HOMEPAGE="http://ohmyz.sh/"
 LICENSE="

@@ -6,7 +6,7 @@ EAPI=8
 
 inherit flag-o-matic meson multilib-build toolchain-funcs uopts
 
-DESCRIPTION="libspng is a C library for reading and writing Portable Network
+DESCRIPTION="libspng is a C library for reading and writing Portable Network \
 Graphics (PNG) format files with a focus on security and ease of use."
 HOMEPAGE="https://libspng.org"
 LICENSE="BSD-2

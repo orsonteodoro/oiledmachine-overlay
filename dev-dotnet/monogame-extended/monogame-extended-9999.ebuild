@@ -7,7 +7,7 @@ EAPI=8
 DOTNET_V="6.0"
 inherit git-r3 lcnr
 
-DESCRIPTION="MonoGame.Extended are classes and extensions to make MonoGame more
+DESCRIPTION="MonoGame.Extended are classes and extensions to make MonoGame more \
 awesome"
 HOMEPAGE="http://www.monogameextended.net/"
 LICENSE="MIT"

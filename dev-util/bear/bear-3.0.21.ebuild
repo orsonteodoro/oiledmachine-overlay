@@ -6,7 +6,7 @@ EAPI=8
 PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake-multilib python-any-r1
 
-DESCRIPTION="Bear is a tool that generates a compilation database for clang
+DESCRIPTION="Bear is a tool that generates a compilation database for clang \
 tooling."
 HOMEPAGE="https://github.com/rizsotto/Bear"
 LICENSE="GPL-3+"

@@ -119,14 +119,14 @@ REQUIRED_USE+="
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizable kernel package with
-BFQ-mq updates,
-genpatches,
-kernel_compiler_patch,
-MuQSS,
-PDS,
-RT_PREEMPT (-rt),
-TRESOR,
+DESCRIPTION="A customizable kernel package with \
+BFQ-mq updates, \
+genpatches, \
+kernel_compiler_patch, \
+MuQSS, \
+PDS, \
+RT_PREEMPT (-rt), \
+TRESOR, \
 UKSM."
 
 inherit ot-kernel

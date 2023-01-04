@@ -7,7 +7,7 @@ EAPI=8
 PYTHON_COMPAT=( python3_{8..10} )
 inherit distutils-r1
 
-DESCRIPTION="The Levenshtein Python C extension module contains functions for
+DESCRIPTION="The Levenshtein Python C extension module contains functions for \
 fast computation of Levenshtein distance and string similarity"
 LICENSE="GPL-2+"
 HOMEPAGE="https://github.com/maxbachmann/Levenshtein"

@@ -7,7 +7,7 @@ EAPI=7
 FRAMEWORK="4.0"
 inherit cmake
 
-DESCRIPTION=""
+DESCRIPTION="FNA3D - 3D Graphics Library for FNA"
 HOMEPAGE="http://fna-xna.github.io/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~x86"

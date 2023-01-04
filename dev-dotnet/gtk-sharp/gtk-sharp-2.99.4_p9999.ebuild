@@ -10,7 +10,7 @@ FRAMEWORK="3.5"
 MY_PV=$(ver_cut 1-3 ${PV})
 inherit autotools dotnet git-r3
 
-DESCRIPTION="Gtk# is a Mono/.NET binding to the cross platform Gtk+ GUI toolkit
+DESCRIPTION="Gtk# is a Mono/.NET binding to the cross platform Gtk+ GUI toolkit \
 and the foundation of most GUI apps built with Mono"
 HOMEPAGE="https://github.com/mono/gtk-sharp"
 LICENSE="LGPL-2 MIT GPL-2"

@@ -8,7 +8,7 @@ ELECTRON_APP_ELECTRON_PV="18.3.7"
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 inherit desktop electron-app
 
-DESCRIPTION="A simple Instagram desktop uploader & client app build with
+DESCRIPTION="A simple Instagram desktop uploader & client app build with \
 electron.Mobile Instagram on desktop!"
 HOMEPAGE="https://github.com/alexdevero/instatron"
 LICENSE="

@@ -9,7 +9,7 @@ MY_PN="${PN,,}"
 PYTHON_COMPAT=( python3_{8..10} )
 inherit distutils-r1
 
-DESCRIPTION="Python library for fast approximate string matching using Jaro and
+DESCRIPTION="Python library for fast approximate string matching using Jaro and \
 Jaro-Winkler similarity"
 LICENSE=""
 HOMEPAGE="https://github.com/maxbachmann/JaroWinkler"

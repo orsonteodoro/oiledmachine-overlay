@@ -6,7 +6,7 @@ EAPI=8
 
 inherit cmake git-r3
 
-DESCRIPTION="Qt-style API to interact with Wayland protocols inside Qt-based
+DESCRIPTION="Qt-style API to interact with Wayland protocols inside Qt-based \
 graphical applications"
 HOMEPAGE="https://github.com/lirios/aurora-client"
 LICENSE="LGPL-3+"

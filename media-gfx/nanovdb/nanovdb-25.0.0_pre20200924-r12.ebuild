@@ -5,7 +5,7 @@ EAPI=8
 
 inherit cmake flag-o-matic
 
-DESCRIPTION="A lightweight GPU friendly version of VDB initially targeting
+DESCRIPTION="A lightweight GPU friendly version of VDB initially targeting \
 rendering applications."
 HOMEPAGE=\
 "https://github.com/AcademySoftwareFoundation/openvdb/tree/feature/nanovdb/nanovdb"

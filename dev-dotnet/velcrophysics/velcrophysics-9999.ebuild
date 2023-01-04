@@ -6,7 +6,7 @@ EAPI=8
 
 inherit git-r3 lcnr
 
-DESCRIPTION="High performance 2D collision detection system with realistic
+DESCRIPTION="High performance 2D collision detection system with realistic \
 physics responses."
 HOMEPAGE="https://github.com/Genbox/VelcroPhysics"
 PROJECT_NAME="VelcroPhysics"

@@ -15,7 +15,7 @@ inherit toolchain-funcs xdg
 MY_PN="GDevelop"
 MY_PV="${PV//_/-}"
 
-DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed
+DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed \
 to be used by everyone."
 HOMEPAGE="https://gdevelop-app.com/"
 THIRD_PARTY_LICENSES="

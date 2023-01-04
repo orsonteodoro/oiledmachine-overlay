@@ -12,9 +12,9 @@ USE_DOTNET="net40"
 
 inherit dotnet gac mono git-r3
 
-DESCRIPTION="AForge.NET Framework is a C# framework designed for developers and
-researchers in the fields of Computer Vision and Artificial Intelligence - 
-image processing, neural networks, genetic algorithms, machine learning,
+DESCRIPTION="AForge.NET Framework is a C# framework designed for developers and \
+researchers in the fields of Computer Vision and Artificial Intelligence - \
+image processing, neural networks, genetic algorithms, machine learning, \
 robotics, etc."
 HOMEPAGE="http://www.aforgenet.com/"
 LICENSE="LGPL-3 GPL-3"

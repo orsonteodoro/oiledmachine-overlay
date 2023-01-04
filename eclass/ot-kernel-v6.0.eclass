@@ -255,17 +255,17 @@ fi
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizable kernel package with
-BBRv2,
-CFI,
-CVE fixes,
-genpatches,
-kernel_compiler_patch,
-multigen_lru,
-Project C (BMQ, PDS-mq),
-RT_PREEMPT (-rt),
-zen-multigen_lru,
-zen-sauce,
+DESCRIPTION="A customizable kernel package with \
+BBRv2, \
+CFI, \
+CVE fixes, \
+genpatches, \
+kernel_compiler_patch, \
+multigen_lru, \
+Project C (BMQ, PDS-mq), \
+RT_PREEMPT (-rt), \
+zen-multigen_lru, \
+zen-sauce, \
 zen-tune."
 
 # Not ready yet

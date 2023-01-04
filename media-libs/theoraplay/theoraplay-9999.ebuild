@@ -8,7 +8,7 @@ EGIT_REPO_URI="https://github.com/icculus/theoraplay.git"
 
 inherit multilib-build git-r3
 
-DESCRIPTION="TheoraPlay is a simple library to make decoding of Ogg Theora
+DESCRIPTION="TheoraPlay is a simple library to make decoding of Ogg Theora \
 videos easier."
 HOMEPAGE="https://icculus.org/theoraplay/"
 LICENSE="ZLIB"

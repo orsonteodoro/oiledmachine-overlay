@@ -12,7 +12,7 @@ NODE_VERSION="${NPM_SECAUDIT_AT_TYPES_NODE_PV%%.*}" # Using nodejs muxer variabl
 NPM_SECAUDIT_TYPESCRIPT_PV="${PV}"
 inherit npm-secaudit npm-utils
 
-DESCRIPTION="TypeScript is a superset of JavaScript that compiles to clean
+DESCRIPTION="TypeScript is a superset of JavaScript that compiles to clean \
 JavaScript output"
 HOMEPAGE="https://www.typescriptlang.org/"
 LICENSE="

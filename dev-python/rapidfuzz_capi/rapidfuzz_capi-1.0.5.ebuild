@@ -10,7 +10,7 @@ MY_PN="${MY_PN/-/_}"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
-DESCRIPTION="C-API of RapidFuzz, which can be used to extend RapidFuzz from
+DESCRIPTION="C-API of RapidFuzz, which can be used to extend RapidFuzz from \
 separate packages"
 LICENSE="MIT"
 HOMEPAGE="https://github.com/maxbachmann/rapidfuzz_capi"

@@ -7,7 +7,7 @@ EAPI=8
 DOTNET_PV="6.0"
 inherit git-r3 lcnr
 
-DESCRIPTION="DotDevelop will hopefully be a full-featured integrated development
+DESCRIPTION="DotDevelop will hopefully be a full-featured integrated development \
 environment (IDE) for .NET using GTK."
 HOMEPAGE="https://github.com/dotdevelop/dotdevelop"
 LICENSE="

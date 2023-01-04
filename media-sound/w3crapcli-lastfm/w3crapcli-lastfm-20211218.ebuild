@@ -4,7 +4,7 @@
 
 EAPI=8
 
-DESCRIPTION="w3crapcli/last.fm provides a command line interface for the
+DESCRIPTION="w3crapcli/last.fm provides a command line interface for the \
 last.fm web service"
 LICENSE="WTFPL-2"
 HOMEPAGE="https://github.com/l29ah/w3crapcli"

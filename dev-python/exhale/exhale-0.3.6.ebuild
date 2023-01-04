@@ -6,7 +6,7 @@ EAPI=8
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
-DESCRIPTION="Automatic C++ library api documentation generation: breathe
+DESCRIPTION="Automatic C++ library api documentation generation: breathe \
 doxygen in and exhale it out"
 HOMEPAGE="https://github.com/svenevs/exhale"
 LICENSE="BSD"

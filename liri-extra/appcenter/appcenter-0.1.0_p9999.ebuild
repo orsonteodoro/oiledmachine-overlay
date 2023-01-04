@@ -6,7 +6,7 @@ EAPI=8
 
 inherit cmake git-r3 xdg
 
-DESCRIPTION="This is the App Center for Liri OS for installing, updating, and
+DESCRIPTION="This is the App Center for Liri OS for installing, updating, and \
 managing applications built using Flatpak"
 HOMEPAGE="https://github.com/lirios/appcenter"
 LICENSE="GPL-3+"

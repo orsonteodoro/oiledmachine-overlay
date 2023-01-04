@@ -6,8 +6,8 @@ EAPI=7
 USE_DOTNET="net35"
 inherit dotnet lcnr git-r3
 
-DESCRIPTION="Drivers and libraries for the Xbox Kinect device on Windows,"
-DESCRIPTION+=" Linux, and OS X"
+DESCRIPTION="Drivers and libraries for the Xbox Kinect device on Windows, \
+Linux, and OS X"
 HOMEPAGE="https://github.com/OpenKinect/libfreenect"
 LICENSE="|| ( Apache-2.0 GPL-2 )"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"

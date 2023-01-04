@@ -11,7 +11,7 @@ PYTHON_COMPAT=( python3_{8..10} )
 inherit distutils-r1 eutils flag-o-matic linux-info prefix tmpfiles udev
 inherit user-info xdg
 
-DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based
+DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based \
 on wimpiggy"
 HOMEPAGE="
 	http://xpra.org/

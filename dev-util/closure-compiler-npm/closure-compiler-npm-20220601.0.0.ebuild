@@ -6,7 +6,7 @@ EAPI=8
 
 inherit check-reqs java-utils-2 npm-secaudit
 
-DESCRIPTION="Check, compile, optimize and compress Javascript with
+DESCRIPTION="Check, compile, optimize and compress Javascript with \
 Closure-Compiler"
 HOMEPAGE="https://developers.google.com/closure/compiler/"
 LICENSE="

@@ -3,7 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-DESCRIPTION="A package for cross building with the MinGW-w64 (32-bit) toolchain
+DESCRIPTION="A package for cross building with the MinGW-w64 (32-bit) toolchain \
 and Wine32 for the Enigma game engine"
 REVISION=0
 SLOT="0/${REVISION}"

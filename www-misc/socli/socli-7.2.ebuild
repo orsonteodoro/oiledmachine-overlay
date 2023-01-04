@@ -7,7 +7,7 @@ EAPI=8
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
-DESCRIPTION="Stack overflow command line client. Search and browse stack
+DESCRIPTION="Stack overflow command line client. Search and browse stack \
 overflow without leaving the terminal"
 HOMEPAGE="https://github.com/gautamkrishnar/socli"
 LICENSE="BSD"

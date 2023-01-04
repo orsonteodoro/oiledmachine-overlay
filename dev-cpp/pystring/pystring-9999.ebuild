@@ -7,7 +7,7 @@ EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/imageworks/pystring.git"
 inherit flag-o-matic git-r3
 
-DESCRIPTION="C++ functions matching the interface and behavior of python string
+DESCRIPTION="C++ functions matching the interface and behavior of python string \
 methods"
 LICENSE="BSD"
 # Live ebuild snapshots do not get keyworded

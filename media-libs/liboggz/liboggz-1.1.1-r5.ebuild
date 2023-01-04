@@ -5,7 +5,7 @@ EAPI=8
 
 inherit autotools multilib-minimal
 
-DESCRIPTION="Oggz provides a simple programming interface for reading and
+DESCRIPTION="Oggz provides a simple programming interface for reading and \
 writing Ogg files and streams"
 HOMEPAGE="https://www.xiph.org/oggz/"
 SRC_URI="https://downloads.xiph.org/releases/${PN}/${P}.tar.gz"

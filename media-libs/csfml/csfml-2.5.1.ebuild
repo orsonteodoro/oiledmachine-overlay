@@ -7,7 +7,7 @@ EAPI=8
 
 inherit cmake multilib-build
 
-DESCRIPTION="Official binding of SFML for C "
+DESCRIPTION="Official binding of SFML for C"
 HOMEPAGE="https://www.sfml-dev.org/ https://github.com/SFML/CSFML/"
 LICENSE="ZLIB"
 

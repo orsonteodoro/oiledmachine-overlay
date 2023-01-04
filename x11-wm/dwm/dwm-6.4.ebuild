@@ -6,7 +6,7 @@ EAPI=8
 
 inherit toolchain-funcs
 
-DESCRIPTION="a dynamic window manager for X11"
+DESCRIPTION="A dynamic window manager for X11"
 HOMEPAGE="https://dwm.suckless.org/"
 LICENSE="
 	MIT

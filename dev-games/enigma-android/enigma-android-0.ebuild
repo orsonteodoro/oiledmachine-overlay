@@ -3,7 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-DESCRIPTION="A package for cross building for Android with the Enigma game
+DESCRIPTION="A package for cross building for Android with the Enigma game \
 engine"
 REVISION=0
 SLOT="0/${REVISION}"

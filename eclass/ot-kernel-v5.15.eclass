@@ -252,19 +252,19 @@ fi
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizable kernel package with
-BBRv2,
-CFI,
-CVE fixes,
-FUTEX_WAIT_MULTIPLE,
-genpatches,
-kernel_compiler_patch,
-multigen_lru,
-Project C (BMQ, PDS-mq),
-RT_PREEMPT (-rt),
-UKSM,
-zen-multigen_lru,
-zen-sauce,
+DESCRIPTION="A customizable kernel package with \
+BBRv2, \
+CFI, \
+CVE fixes, \
+FUTEX_WAIT_MULTIPLE, \
+genpatches, \
+kernel_compiler_patch, \
+multigen_lru, \
+Project C (BMQ, PDS-mq), \
+RT_PREEMPT (-rt), \
+UKSM, \
+zen-multigen_lru, \
+zen-sauce, \
 zen-tune."
 
 inherit ot-kernel
