@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+
+    Environment variables
+
+    CARBON_NOW_BROWSER_PATH - Set to the absolute path to a Chromium based web
+    browser.
+
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/mixn/carbon-now-cli/issues</bugs-to>
+    <remote-id type="github">mixn/carbon-now-cli</remote-id>
+  </upstream>
+  <use>
+    <flag name="custom-browser">
+      Allow to untether *DEPENDs to use an alternative browser package based
+      on Chromium.
+    </flag>
+  </use>
+</pkgmetadata>
