@@ -217,7 +217,9 @@ eerror "env to be able to download micropackages."
 eerror
 		die
 	fi
-	npm-secaudit_pkg_setup
+	if use closure_compiler_nodejs ; then
+		npm-secaudit_pkg_setup
+	fi
 
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
@@ -292,7 +294,9 @@ einfo "Adding .git folder"
 	git commit -m "Dummy" || die
 	git tag v${PV} || die
 
-	npm-secaudit_src_unpack
+	if use closure_compiler_nodejs ; then
+		npm-secaudit_src_unpack
+	fi
 
 	if grep -e "Read timed out" "${T}/build.log" ; then
 eerror
