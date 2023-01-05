@@ -35,14 +35,14 @@ IUSE+="
 	doc
 "
 REQUIRED_USE+="
+	closure_compiler_nodejs? (
+		closure_compiler_java
+	)
 	|| (
 		closure_compiler_java
 		closure_compiler_js
 		closure_compiler_native
 		closure_compiler_nodejs
-	)
-	closure_compiler_nodejs? (
-		closure_compiler_java
 	)
 "
 # For the node version, see
