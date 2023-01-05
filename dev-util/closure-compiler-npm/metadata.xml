@@ -18,10 +18,10 @@
       Builds Closure Compiler as a js file
     </flag>
     <flag name="closure_compiler_native">
-      Builds the Closure Compiler as a native app
+      Builds Closure Compiler as a native app
     </flag>
     <flag name="closure_compiler_nodejs">
-      Builds the Closure Compiler for Node.js
+      Builds Closure Compiler for Node.js
     </flag>
   </use>
 </pkgmetadata>

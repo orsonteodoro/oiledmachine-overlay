@@ -52,12 +52,6 @@ REQUIRED_USE+="
 # https://github.com/google/closure-compiler-npm/blob/v20221102.0.1/packages/google-closure-compiler/package.json
 # For dependencies, see
 # https://github.com/google/closure-compiler-npm/blob/v20221102.0.1/.github/workflows/build.yml
-CDEPEND="
-	closure_compiler_nodejs? (
-		>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
-		>=net-libs/nodejs-${NODE_VERSION}[npm]
-	)
-"
 JDK_DEPEND="
 	|| (
 		dev-java/openjdk-bin:${JAVA_SLOT}
@@ -74,13 +68,14 @@ JRE_DEPEND="
 #JRE_DEPEND=" virtual/jre:${JAVA_SLOT}"
 # The virtual/jdk not virtual/jre must be in DEPENDs for the eclass not to be stupid.
 RDEPEND+="
-	${CDEPEND}
 	!dev-lang/closure-compiler-bin
 	closure_compiler_java? (
 		${JRE_DEPEND}
 	)
 	closure_compiler_nodejs? (
 		${JRE_DEPEND}
+		>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
+		>=net-libs/nodejs-${NODE_VERSION}[npm]
 	)
 "
 DEPEND+="
@@ -88,8 +83,9 @@ DEPEND+="
 	${JDK_DEPEND}
 "
 BDEPEND+="
-	${CDEPEND}
 	${JDK_DEPEND}
+	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
+	>=net-libs/nodejs-${NODE_VERSION}[npm]
 	dev-java/maven-bin
 	dev-vcs/git
 	sys-apps/yarn
@@ -220,9 +216,7 @@ eerror "env to be able to download micropackages."
 eerror
 		die
 	fi
-	if use closure_compiler_nodejs ; then
-		npm-secaudit_pkg_setup
-	fi
+	npm-secaudit_pkg_setup
 
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
@@ -297,9 +291,7 @@ einfo "Adding .git folder"
 	git commit -m "Dummy" || die
 	git tag v${PV} || die
 
-	if use closure_compiler_nodejs ; then
-		npm-secaudit_src_unpack
-	fi
+	npm-secaudit_src_unpack
 
 	if grep -e "Read timed out" "${T}/build.log" ; then
 eerror
