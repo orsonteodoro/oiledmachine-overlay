@@ -393,6 +393,11 @@ pkg_postinst() {
 	if use closure_compiler_nodejs ; then
 		npm-secaudit_pkg_postinst
 	fi
+	if use closure_compiler_nodejs || use closure_compiler_java; then
+ewarn
+ewarn "You need to switch user/system java-vm to >= 11 before using ${PN}"
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
