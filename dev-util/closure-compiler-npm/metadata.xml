@@ -12,16 +12,16 @@
   </upstream>
   <use>
     <flag name="closure_compiler_java">
-      Builds Closure Compiler for Java
+      Installs Closure Compiler for Java
     </flag>
     <flag name="closure_compiler_js">
-      Builds Closure Compiler as a js file
+      Installs Closure Compiler as a js file
     </flag>
     <flag name="closure_compiler_native">
-      Builds Closure Compiler as a native app
+      Installs Closure Compiler as a native app
     </flag>
     <flag name="closure_compiler_nodejs">
-      Builds Closure Compiler for Node.js
+      Installs Closure Compiler for Node.js
     </flag>
   </use>
 </pkgmetadata>
