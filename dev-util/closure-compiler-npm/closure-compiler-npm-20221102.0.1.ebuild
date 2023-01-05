@@ -35,6 +35,9 @@ IUSE+="
 	doc
 "
 REQUIRED_USE+="
+	closure_compiler_native? (
+		closure_compiler_nodejs
+	)
 	closure_compiler_nodejs? (
 		closure_compiler_java
 	)
