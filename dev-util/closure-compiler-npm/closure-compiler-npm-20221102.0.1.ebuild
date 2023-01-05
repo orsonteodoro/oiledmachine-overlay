@@ -363,6 +363,7 @@ src_install() {
 			"${T}/${MY_PN}-node" || die
 		sed -i -e "s|\$(get_libdir)|$(get_libdir)|g" \
 			-e "s|\${NODE_SLOT}|${NODE_SLOT}|g" \
+			-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
 			"${T}/${MY_PN}-node" || die
 		doexe "${T}/${MY_PN}-node"
 		for dir_path in $(find "${ED}/${d_node}" \

@@ -1,4 +1,5 @@
 #!/bin/bash
+NODE_VERSION=${NODE_VERSION}
 BASE_DIR="/opt/closure-compiler"
 export PATH="${BASE_DIR}/node_modules/.bin:${PATH}"
 export NODE_PATH="${BASE_DIR}/packages:${NODE_PATH}"
