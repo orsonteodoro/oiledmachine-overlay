@@ -11,6 +11,38 @@ inherit check-reqs java-utils-2 npm-secaudit
 DESCRIPTION="Check, compile, optimize and compress Javascript with \
 Closure-Compiler"
 HOMEPAGE="https://developers.google.com/closure/compiler/"
+
+GRAAL_VM_CE_LICENSES="
+	custom
+	UPL-1.0
+	GPL-2-with-classpath-exception
+	( MIT all-rights-reserved )
+	Apache-2.0
+	BSD
+	BSD-2
+	CPL-1.0
+	CDDL
+	CDDL-1.1
+	CC0-1.0
+	EPL-1.0
+	EPL-2.0
+	icu-68.1
+	JDOM
+	JSON
+	LGPL-2.1
+	LGPL-2.1+
+	MIT
+	NAIST-IPADIC
+	unicode
+	Unicode-DFS-2016
+	W3C
+	W3C-Software-Notice-and-License
+	W3C-Software-and-Document-Notice-and-License
+	W3C-Software-and-Document-Notice-and-License-20021231
+	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
+	|| ( Apache-2.0 GPL-2+-with-classpath-exception )
+" # It includes third party licenses.
+
 LICENSE="
 	Apache-2.0
 	BSD
@@ -20,11 +52,12 @@ LICENSE="
 	MIT
 	MPL-2.0
 	NPL-1.1
+	closure_compiler_native? ( ${GRAAL_VM_CE_LICENSES} )
 "
-KEYWORDS="~amd64 ~amd64-linux ~arm64"
+KEYWORDS="~amd64 ~arm64"
 CC_PV=$(ver_cut 1 ${PV})
 SLOT="0/$(ver_cut 1-2 ${PV})"
-JAVA_SLOT="17"
+JAVA_SLOT="11"
 NODE_SLOT="0"
 MY_PN="closure-compiler"
 IUSE+="
@@ -46,9 +79,9 @@ REQUIRED_USE+="
 	)
 "
 # For the node version, see
-# https://github.com/google/closure-compiler-npm/blob/v20221102.0.1/packages/google-closure-compiler/package.json
+# https://github.com/google/closure-compiler-npm/blob/v20230103.0.0/packages/google-closure-compiler/package.json
 # For dependencies, see
-# https://github.com/google/closure-compiler-npm/blob/v20221102.0.1/.github/workflows/build.yml
+# https://github.com/google/closure-compiler-npm/blob/v20230103.0.0/.github/workflows/build.yml
 JDK_DEPEND="
 	|| (
 		dev-java/openjdk-bin:${JAVA_SLOT}
@@ -86,20 +119,41 @@ BDEPEND+="
 	dev-java/maven-bin
 	dev-vcs/git
 	sys-apps/yarn
+	closure_compiler_native? (
+		dev-util/android-sdk-platform:32
+	)
 "
 FN_DEST="${PN}-${PV}.tar.gz"
 FN_DEST2="closure-compiler-${PV}.tar.gz"
-BAZELISK_PV="1.14.0" # From CI (Build Compiler)
+BAZELISK_PV="1.15.0" # From CI (Build Compiler)
 BAZELISK_ABIS="
 	amd64
 	arm64
 "
+GRAAL_VM_CE_PV="22.3.0"
+GRAAL_VM_CE_JAVA_VER="17"
 gen_bazelisk_src_uris() {
 	for abi in ${BAZELISK_ABIS} ; do
 		echo "
 	${abi}? (
 https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_PV}/bazelisk-linux-${abi}
 	-> bazelisk-linux-${abi}-${BAZELISK_PV}
+	)
+		"
+	done
+}
+declare -A GRAALVM_ABIS=(
+	[amd64]="amd64"
+	[arm64]="aarch64"
+)
+
+gen_graalvm_ce_uris() {
+	for abi in ${!GRAALVM_ABIS[@]} ; do
+		echo "
+	${abi}? (
+		closure_compiler_native? (
+https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.0/graalvm-ce-java${GRAAL_VM_CE_JAVA_VER}-linux-${GRAALVM_ABIS[${abi}]}-${GRAAL_VM_CE_PV}.tar.gz
+		)
 	)
 		"
 	done
@@ -112,6 +166,7 @@ https://github.com/google/closure-compiler/archive/v${CC_PV}.tar.gz
 "
 SRC_URI+="
 	$(gen_bazelisk_src_uris)
+	$(gen_graalvm_ce_uris)
 "
 S="${WORKDIR}/${PN}-${PV}"
 S_CLOSURE_COMPILER="${WORKDIR}/closure-compiler-${CC_PV}"
@@ -218,11 +273,6 @@ eerror
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 
-ewarn
-ewarn "Re-emerge if it randomly fails with message: cb() never called!"
-ewarn "Re-emerge if exitCode: 18 when downloading graal image for google-closure-compiler-linux."
-ewarn
-
 	if [[ ! -e "/usr/include/node/node_version.h" ]] ; then
 eerror
 eerror "Use eselect nodejs to fix missing header location."
@@ -237,8 +287,20 @@ eerror
 	fi
 }
 
+attach_graalvm_ce() {
+	export GRAALVM_HOME="${WORKDIR}/graalvm-ce-java${GRAAL_VM_CE_JAVA_VER}-${GRAAL_VM_CE_PV}"
+	export PATH="${WORKDIR}/graalvm-ce-java${GRAAL_VM_CE_JAVA_VER}-${GRAAL_VM_CE_PV}/bin:${PATH}"
+	export JAVA_HOME="${WORKDIR}/graalvm-ce-java${GRAAL_VM_CE_JAVA_VER}-${GRAAL_VM_CE_PV}"
+einfo "GRAALVM_HOME:\t${GRAALVM_HOME}"
+einfo "PATH:\t${PATH}"
+einfo "JAVA_HOME:\t${JAVA_HOME}"
+}
+
 src_unpack() {
 	unpack ${A}
+	if use closure_compiler_native ; then
+		attach_graalvm_ce
+	fi
 	rm -rf "${S}/compiler" || die
 	mv "${S_CLOSURE_COMPILER}" \
 		"${S}/compiler" || die
@@ -309,6 +371,24 @@ eerror
 		die
 	fi
 	if grep -e "ERROR:" "${T}/build.log" ; then
+eerror
+eerror "Detected a failure.  Re-emerge."
+eerror
+		die
+	fi
+	if grep -e "exitCode:" "${T}/build.log" ; then
+eerror
+eerror "Detected a failure.  Re-emerge."
+eerror
+		die
+	fi
+	if grep -e "Exit code:" "${T}/build.log" ; then
+eerror
+eerror "Detected a failure.  Re-emerge."
+eerror
+		die
+	fi
+	if grep -F -e "cb() never called!" "${T}/build.log" ; then
 eerror
 eerror "Detected a failure.  Re-emerge."
 eerror
