@@ -4,6 +4,8 @@
 
 EAPI=8
 
+NODE_ENV=development
+NODE_VERSION=14 # Upstream uses 14 on linux but others 16, 18
 inherit check-reqs java-utils-2 npm-secaudit
 
 DESCRIPTION="Check, compile, optimize and compress Javascript with \
@@ -20,7 +22,7 @@ LICENSE="
 	NPL-1.1
 "
 KEYWORDS="~amd64 ~amd64-linux ~arm64"
-PV_CC=$(ver_cut 1 ${PV})
+CC_PV=$(ver_cut 1 ${PV})
 SLOT="0/$(ver_cut 1-2 ${PV})"
 JAVA_SLOT="17"
 NODE_SLOT="0"
@@ -44,11 +46,14 @@ REQUIRED_USE+="
 	)
 "
 # For the node version, see
-# https://github.com/google/closure-compiler-npm/blob/v20220601.0.0/packages/google-closure-compiler/package.json
+# https://github.com/google/closure-compiler-npm/blob/v20221102.0.1/packages/google-closure-compiler/package.json
 # For dependencies, see
-# https://github.com/google/closure-compiler-npm/blob/v20220601.0.0/.github/workflows/build.yml
-NODE_PV="14" # Upstream uses 14 on linux but others 16, 18
-CDEPEND="closure_compiler_nodejs? ( >=net-libs/nodejs-${NODE_PV} )"
+# https://github.com/google/closure-compiler-npm/blob/v20221102.0.1/.github/workflows/build.yml
+CDEPEND="
+	closure_compiler_nodejs? (
+		>=net-libs/nodejs-${NODE_VERSION}
+	)
+"
 JDK_DEPEND="
 	|| (
 		dev-java/openjdk-bin:${JAVA_SLOT}
@@ -87,7 +92,7 @@ BDEPEND+="
 "
 FN_DEST="${PN}-${PV}.tar.gz"
 FN_DEST2="closure-compiler-${PV}.tar.gz"
-BAZELISK_PV="1.12.0"
+BAZELISK_PV="1.14.0" # From CI (Build Compiler)
 BAZELISK_ABIS="
 	amd64
 	arm64
@@ -105,12 +110,14 @@ https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_PV}/bazelis
 SRC_URI="
 https://github.com/google/closure-compiler-npm/archive/v${PV}.tar.gz
 	-> ${FN_DEST}
-https://github.com/google/closure-compiler/archive/v${PV_CC}.tar.gz
+https://github.com/google/closure-compiler/archive/v${CC_PV}.tar.gz
 	-> ${FN_DEST2}
 "
-SRC_URI+=" $(gen_bazelisk_src_uris)"
+SRC_URI+="
+	$(gen_bazelisk_src_uris)
+"
 S="${WORKDIR}/${PN}-${PV}"
-S_CLOSURE_COMPILER="${WORKDIR}/closure-compiler-${PV_CC}"
+S_CLOSURE_COMPILER="${WORKDIR}/closure-compiler-${CC_PV}"
 RESTRICT="mirror"
 
 _set_check_reqs_requirements() {
@@ -127,30 +134,58 @@ setup_openjdk() {
 	local jdk_bin_basepath
 	local jdk_basepath
 
-	if find /usr/$(get_libdir)/openjdk-${JAVA_SLOT}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
-		export JAVA_HOME=$(find /usr/$(get_libdir)/openjdk-${JAVA_SLOT}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+	if find \
+		/usr/$(get_libdir)/openjdk-${JAVA_SLOT}*/ \
+		-maxdepth 1 \
+		-type d \
+		2>/dev/null \
+		1>/dev/null
+	then
+		export JAVA_HOME=$(find \
+			/usr/$(get_libdir)/openjdk-${JAVA_SLOT}*/ \
+			-maxdepth 1 \
+			-type d \
+			| sort -V \
+			| head -n 1)
 		export PATH="${JAVA_HOME}/bin:${PATH}"
-	elif find /opt/openjdk-bin-${JAVA_SLOT}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
-		export JAVA_HOME=$(find /opt/openjdk-bin-${JAVA_SLOT}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+	elif find \
+		/opt/openjdk-bin-${JAVA_SLOT}*/ \
+		-maxdepth 1 \
+		-type d \
+		2>/dev/null \
+		1>/dev/null
+	then
+		export JAVA_HOME=$(find \
+			/opt/openjdk-bin-${JAVA_SLOT}*/ \
+			-maxdepth 1 \
+			-type d \
+			| sort -V \
+			| head -n 1)
 		export PATH="${JAVA_HOME}/bin:${PATH}"
 	else
-		die "dev-java/openjdk:${JAVA_SLOT} or dev-java/openjdk-bin:${JAVA_SLOT} must be installed"
+eerror
+eerror "dev-java/openjdk:${JAVA_SLOT} or dev-java/openjdk-bin:${JAVA_SLOT} must be installed"
+eerror
+		die
 	fi
 }
 
 pkg_setup() {
 	setup_openjdk
 
-	einfo "JAVA_HOME=${JAVA_HOME}"
-	einfo "PATH=${PATH}"
+einfo "JAVA_HOME:\t${JAVA_HOME}"
+einfo "PATH:\t${PATH}"
 
 	# java-pkg_init
 
 	# the eclass/eselect system is broken
-	X_JAVA_SLOT=$(best_version "dev-java/openjdk-bin:${JAVA_SLOT}" | sed -e "s|dev-java/openjdk-bin-||g" -e "s|-r[0-9]$||g")
+	X_JAVA_SLOT=$(best_version "dev-java/openjdk-bin:${JAVA_SLOT}" \
+		| sed \
+			-e "s|dev-java/openjdk-bin-||g" \
+			-e "s|-r[0-9]$||g")
 	export JAVA_HOME="/opt/openjdk-bin-${X_JAVA_SLOT}" # basedir
 
-	einfo "JAVA_HOME=${JAVA_HOME}"
+einfo "JAVA_HOME:\t${JAVA_HOME}"
 	if [[ -n "${JAVA_HOME}" && -f "${JAVA_HOME}/bin/java" ]] ; then
 		export JAVA="${JAVA_HOME}/bin/java"
 	else
@@ -161,11 +196,17 @@ eerror
 	fi
 
 	if ver_test ${X_JAVA_SLOT} -lt ${JAVA_SLOT} ; then
-		die "You must have OpenJDK >= ${JAVA_SLOT}.  Best is ${X_JAVA_SLOT}."
+eerror
+eerror "You must have OpenJDK >= ${JAVA_SLOT}.  Best is ${X_JAVA_SLOT}."
+eerror
+		die
 	fi
 
 	if ! which mvn 2>/dev/null 1>/dev/null ; then
-		die "Missing mvn.  Install dev-java/maven-bin"
+eerror
+eerror "Missing mvn.  Install dev-java/maven-bin"
+eerror
+		die
 	fi
 
 	if has network-sandbox $FEATURES ; then
@@ -180,14 +221,20 @@ eerror
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 
-	ewarn
-	ewarn "Re-emerge if it randomly fails with message: cb() never called!"
-	ewarn "Re-emerge if exitCode: 18 when downloading graal image for google-closure-compiler-linux."
-	ewarn
+ewarn
+ewarn "Re-emerge if it randomly fails with message: cb() never called!"
+ewarn "Re-emerge if exitCode: 18 when downloading graal image for google-closure-compiler-linux."
+ewarn
 
 	if [[ ! -e "/usr/include/node/node_version.h" ]] ; then
 eerror
 eerror "Use eselect nodejs to fix missing header location."
+eerror
+		die
+	fi
+	if [[ "${NPM_UTILS_ALLOW_AUDIT}" != "0" ]] ; then
+eerror
+eerror "NPM_UTILS_ALLOW_AUDIT=0 needs to be added as a per-package envvar"
 eerror
 		die
 	fi
@@ -200,22 +247,22 @@ src_unpack() {
 		"${S}/compiler" || die
 
 	if ! use closure_compiler_java ; then
-		einfo "Removing Java support"
+einfo "Removing Java support"
 		rm -rf "${S}/packages/google-closure-compiler-java" || die
 	fi
 	if ! use closure_compiler_js ; then
-		einfo "Removing JavaScript support"
+einfo "Removing JavaScript support"
 		rm -rf "${S}/packages/google-closure-compiler-js" || die
 	fi
 	if ! use closure_compiler_native ; then
-		einfo "Removing native binary support"
+einfo "Removing native binary support"
 		rm -rf "${S}/packages/google-closure-compiler-linux" || die
 	fi
 	if ! use closure_compiler_nodejs ; then
-		einfo "Removing Node.js support"
+einfo "Removing Node.js support"
 		rm -rf "${S}/packages/google-closure-compiler" || die
 	fi
-	einfo "Removing unsupported platforms"
+einfo "Removing unsupported platforms"
 	rm -rf "${S}/packages/google-closure-compiler-osx" || die
 	rm -rf "${S}/packages/google-closure-compiler-windows" || die
 	# Fetches and builds the closure compiler here.
@@ -224,15 +271,17 @@ src_unpack() {
 	for abi in ${BAZELISK_ABIS} ; do
 		mkdir -p "${WORKDIR}/bazelisk" || die
 		if use ${abi} ; then
-			cp $(realpath "${DISTDIR}/bazelisk-linux-${abi}-${BAZELISK_PV}") \
-				"${WORKDIR}/bazelisk/bazelisk" || die
+			cp $(realpath \
+				"${DISTDIR}/bazelisk-linux-${abi}-${BAZELISK_PV}") \
+				"${WORKDIR}/bazelisk/bazelisk" \
+				|| die
 			chmod +x "${WORKDIR}/bazelisk/bazelisk" || die
 		fi
 	done
 	export PATH="${WORKDIR}/bazelisk:${PATH}"
 
 	# Prevent error
-	einfo "Adding .git folder"
+einfo "Adding .git folder"
 	git init || die
 	git add . || die
 	touch dummy || die
@@ -242,31 +291,31 @@ src_unpack() {
 	git commit -m "Dummy" || die
 	git tag v${PV} || die
 
-	einfo "Adding package-lock.json file from project root."
-	npm i --package-lock-only || die
-	[[ ! -f package-lock.json ]] && die "Missing package-lock.json from dir=$(pwd)"
-
-	if use closure_compiler_nodejs ; then
-		pushd packages/google-closure-compiler || die
-			einfo "Adding package-lock.json file for closure_compiler_nodejs package."
-			npm i --package-lock-only || die
-			[[ ! -f package-lock.json ]] && die "Missing package-lock.json from dir=$(pwd)"
-		popd
-	fi
-
 	npm-secaudit_src_unpack
 
 	if grep -e "Read timed out" "${T}/build.log" ; then
-		die "Detected download failure.  Re-emerge."
+eerror
+eerror "Detected download failure.  Re-emerge."
+eerror
+		die
 	fi
 	if grep -e "Error downloading" "${T}/build.log" ; then
-		die "Detected download failure.  Re-emerge."
+eerror
+eerror "Detected download failure.  Re-emerge."
+eerror
+		die
 	fi
 	if grep -e "Build did NOT complete successfully" "${T}/build.log" ; then
-		die "Detected build failure.  Re-emerge."
+eerror
+eerror "Detected build failure.  Re-emerge."
+eerror
+		die
 	fi
-	if grep -i -e "ERROR:" "${T}/build.log" ; then
-		die "Detected a failure.  Re-emerge."
+	if grep -e "ERROR:" "${T}/build.log" ; then
+eerror
+eerror "Detected a failure.  Re-emerge."
+eerror
+		die
 	fi
 }
 
