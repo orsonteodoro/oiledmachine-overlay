@@ -51,7 +51,8 @@ REQUIRED_USE+="
 # https://github.com/google/closure-compiler-npm/blob/v20221102.0.1/.github/workflows/build.yml
 CDEPEND="
 	closure_compiler_nodejs? (
-		>=net-libs/nodejs-${NODE_VERSION}
+		>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
+		>=net-libs/nodejs-${NODE_VERSION}[npm]
 	)
 "
 JDK_DEPEND="
