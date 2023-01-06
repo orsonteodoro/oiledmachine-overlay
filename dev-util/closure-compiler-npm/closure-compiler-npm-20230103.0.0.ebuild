@@ -114,6 +114,11 @@ DEPEND+="
 	${RDEPEND}
 	${JDK_DEPEND}
 "
+GRAALVM_CE_DEPENDS="
+	sys-devel/gcc[cxx]
+	sys-libs/glibc
+	sys-libs/zlib
+"
 BDEPEND+="
 	${JDK_DEPEND}
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
@@ -122,9 +127,13 @@ BDEPEND+="
 	dev-vcs/git
 	sys-apps/yarn
 	closure_compiler_native? (
-		dev-util/android-sdk-platform:32
+		${GRAALVM_CE_DEPENDS}
 	)
 "
+TRASH=(
+		dev-util/android-sdk-platform:32
+)
+
 FN_DEST="${PN}-${PV}.tar.gz"
 FN_DEST2="closure-compiler-${PV}.tar.gz"
 BAZELISK_PV="1.15.0" # From CI (Build Compiler)
