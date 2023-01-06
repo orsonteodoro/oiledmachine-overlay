@@ -886,7 +886,7 @@ eerror "The package contains chromium_pv=${chromium_pv} which is End Of Life"
 eerror "(EOL)"
 eerror
 eerror "Set either NPM_SECAUDIT_NO_DIE_ON_AUDIT=1 or ELECTRON_APP_NO_DIE_ON_AUDIT=1"
-eerror "to continue."
+eerror "to continue and accept the risks."
 eerror
 				die
 			fi
@@ -918,7 +918,7 @@ eerror
 eerror "The package contains chromium_pv=${chromium_pv} which is End Of Life (EOL)"
 eerror
 eerror "Set either NPM_SECAUDIT_NO_DIE_ON_AUDIT=1 or ELECTRON_APP_NO_DIE_ON_AUDIT=1"
-eerror "to continue."
+eerror "to continue and accept the risks."
 eerror
 					die
 				fi
