@@ -1220,6 +1220,31 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     it will fall back to the CPU optimized or the generic non-optimized
     algorithm.
 
+    IMPORTANT:
+
+    Do not assume that the hardware algorithm is secure especially if
+    obtained from or provided by a stranger or backdoored.
+
+    The preference for hardware implementations of ciphers, hashes, RNG
+    generators, end of life (EOL) compilers, etc is not endorsed by the ebuild
+    maintainer.  This is due to most of these implementations being not
+    transparent as in not open source hardware.  You should always check to see
+    if the crypto integrated circut (IC) or CPU has reported hardware
+    side-channels or design flaws.  If the hardware does have a flaw, consider
+    replacing the hardware from a trusted vendor who can verify authenticity of
+    that unit or use the software open source implementation from trusted vetted
+    developers.
+
+    See also
+
+    https://en.wikipedia.org/wiki/Bullrun_(decryption_program)
+    CONFIG_RANDOM_TRUST_CPU - https://github.com/torvalds/linux/blob/v6.1/drivers/char/Kconfig#L426
+    CONFIG_RANDOM_TRUST_BOOTLOADER - https://github.com/torvalds/linux/blob/v6.1/drivers/char/Kconfig#L444
+    https://en.wikipedia.org/wiki/Evil_maid_attack
+    Lucky winner attack (trojan horse hardware) - https://en.wikipedia.org/wiki/Social_engineering_(security)#Baiting
+    https://en.wikipedia.org/wiki/Backdoor_(computing)
+    https://en.wikipedia.org/wiki/Hardware_backdoor
+    https://nvd.nist.gov/vuln/detail/CVE-2019-15847
 
 
     OT_KERNEL_HDD -- Set if HDD drive is present for this kernel build.
