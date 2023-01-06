@@ -13,7 +13,9 @@ Closure-Compiler"
 HOMEPAGE="https://developers.google.com/closure/compiler/"
 
 GRAAL_VM_CE_LICENSES="
-	custom
+	GraalVM_CE_22.3_LICENSE
+	GraalVM_CE_22.3_LICENSE_NATIVEIMAGE
+	GraalVM_CE_22.3_THIRD_PARTY_LICENSE
 	UPL-1.0
 	GPL-2-with-classpath-exception
 	( MIT all-rights-reserved )
