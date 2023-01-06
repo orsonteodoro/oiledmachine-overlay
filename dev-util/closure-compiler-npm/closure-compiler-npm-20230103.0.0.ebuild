@@ -294,6 +294,8 @@ attach_graalvm_ce() {
 einfo "GRAALVM_HOME:\t${GRAALVM_HOME}"
 einfo "PATH:\t${PATH}"
 einfo "JAVA_HOME:\t${JAVA_HOME}"
+	java -version | grep -q "GraalVM CE ${GRAAL_VM_CE_PV}" || die
+	gu install native-image || die
 }
 
 src_unpack() {
