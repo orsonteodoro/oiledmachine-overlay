@@ -160,7 +160,7 @@ gen_graalvm_ce_uris() {
 		echo "
 	${abi}? (
 		closure_compiler_native? (
-https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.0/graalvm-ce-java${GRAAL_VM_CE_JAVA_VER}-linux-${GRAALVM_ABIS[${abi}]}-${GRAAL_VM_CE_PV}.tar.gz
+https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${GRAAL_VM_CE_PV}/graalvm-ce-java${GRAAL_VM_CE_JAVA_VER}-linux-${GRAALVM_ABIS[${abi}]}-${GRAAL_VM_CE_PV}.tar.gz
 		)
 	)
 		"
