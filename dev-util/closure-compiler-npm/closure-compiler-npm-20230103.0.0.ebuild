@@ -130,9 +130,6 @@ BDEPEND+="
 		${GRAALVM_CE_DEPENDS}
 	)
 "
-TRASH=(
-		dev-util/android-sdk-platform:32
-)
 
 FN_DEST="${PN}-${PV}.tar.gz"
 FN_DEST2="closure-compiler-${PV}.tar.gz"
@@ -235,6 +232,11 @@ eerror
 
 pkg_setup() {
 	setup_openjdk
+
+	# Bug
+	unset ANDROID_HOME
+	unset ANDROID_NDK_HOME
+	unset ANDROID_SDK_HOME
 
 einfo "JAVA_HOME:\t${JAVA_HOME}"
 einfo "PATH:\t${PATH}"
