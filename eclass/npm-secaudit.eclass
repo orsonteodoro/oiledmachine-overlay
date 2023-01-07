@@ -223,7 +223,7 @@ ewarn
 npm-secaudit_fetch_deps() {
 	pushd "${S}" || die
 		local install_args=()
-		# Avoid adding fsevent (a MacOS dependency) which may require
+		# Avoid adding fsevent (a macOS dependency) which may require
 		# older node
 		if [[ -e "yarn.lock" ]] ; then
 			grep -q -F -e "chokidar" "yarn.lock" \
@@ -317,6 +317,13 @@ eerror
 	cd "${S}"
 	if declare -f npm-secaudit_src_postcompile > /dev/null ; then
 		npm-secaudit_src_postcompile
+	fi
+
+	if grep -q -e "Exit code:" "${T}/build.log" ; then
+eerror
+eerror "Detected failure.  Re-emerge..."
+eerror
+		die
 	fi
 
 	cd "${S}"

@@ -905,8 +905,10 @@ einfo
 		|| -n "${chromium_pv}" \
 	]]; then
 		for x in $(find . -name "chrome" 2>/dev/null) ; do
+			[[ -d "${x}" ]] && continue
 			chromium_pv=$(strings ${x} \
-		| grep -E -e "^[0-9]+\.[0-9]\.[0-9]{3,4}\.[0-9]+$" | head -n 1)
+				| grep -E -e "^[0-9]+\.[0-9]\.[0-9]{3,4}\.[0-9]+$" \
+				| head -n 1)
 			if ver_test $(ver_cut 1 ${chromium_pv}) -lt ${CHROMIUM_STABLE_PV} ; then
 				if [[ "${NPM_SECAUDIT_NO_DIE_ON_AUDIT}" == "1" \
 					|| "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "1" ]] ; then

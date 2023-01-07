@@ -35,8 +35,8 @@ sys-process/psdoom-ng
 media-libs/alure
 
 # Contains End Of Life (EOL) Electron versions with old Chromium parts
-# while project is active within ~2 years (2020).  May contain multiple critical
-# or multiple high vulnerabilities.
+# Packages may contain multiple critical or multiple high vulnerabilities.
+dev-util/devhub # Electron 11.0.3 with Chromium 87.0.4280.67 parts
 net-im/caprine # Electron 21.3.3 with Chromium 106.0.5249.199 parts
 www-misc/instatron # Electron 18.3.15 with Chromium 100.0.4896.160 parts
 

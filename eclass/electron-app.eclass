@@ -1004,7 +1004,7 @@ electron-app_fetch_deps_npm() {
 
 	pushd "${S}" || die
 		local install_args=()
-		# Avoid adding fsevent (a MacOS dependency) which may require older node
+		# Avoid adding fsevent (a macOS dependency) which may require older node
 		if [[ -e "yarn.lock" ]] ; then
 			grep -q -F -e "chokidar" "yarn.lock" \
 				&& install_args+=( --no-optional )
@@ -1038,7 +1038,7 @@ electron-app_fetch_deps_yarn() {
 		export FAKEROOTKEY="15574641"
 
 		# set global dir
-		cp "${S}"/.yarnrc{,.orig}
+		cp "${S}"/.yarnrc{,.orig} 2>/dev/null
 		echo "prefix \"${S}/.yarn\"" >> "${S}/.yarnrc" || die
 		echo "global-folder \"${S}/.yarn\"" >> "${S}/.yarnrc" || die
 		echo "offline-cache-mirror \"${YARN_STORE_DIR}/offline\"" \
@@ -1046,9 +1046,9 @@ electron-app_fetch_deps_yarn() {
 
 		mkdir -p "${S}/.yarn" || die
 einfo
-einfo "yarn prefix: $(yarn config get prefix)"
-einfo "yarn global-folder: $(yarn config get global-folder)"
-einfo "yarn offline-cache-mirror: $(yarn config get offline-cache-mirror)"
+einfo "yarn prefix:\t\t\t$(yarn config get prefix)"
+einfo "yarn global-folder:\t\t$(yarn config get global-folder)"
+einfo "yarn offline-cache-mirror:\t$(yarn config get offline-cache-mirror)"
 einfo
 
 		yarn install --network-concurrency ${ELECTRON_APP_MAXSOCKETS} \
@@ -1124,6 +1124,7 @@ ewarn
 	fi
 
 	local ELECTRON_PV
+	local ELECTRON_PV_
 	if npm ls electron | grep -q -F -e " electron@" ; then
 		# case when ^ or latest used
 		ELECTRON_PV=$(npm ls electron \
@@ -1185,12 +1186,12 @@ ewarn
 einfo
 einfo "Electron version report with internal/external dependencies:"
 einfo
-einfo "ELECTRON_PV=${ELECTRON_PV}"
-einfo "CHROMIUM_PV=${CHROMIUM_PV}"
-einfo "LIBUV_PV=${LIBUV_PV}"
-einfo "NODE_PV=${NODE_PV}"
-einfo "V8_PV=${V8_PV}"
-einfo "ZLIB_PV=${ZLIB_PV}"
+einfo "ELECTRON_PV:\t\t${ELECTRON_PV}"
+einfo "CHROMIUM_PV:\t\t${CHROMIUM_PV}"
+einfo "LIBUV_PV:\t\t${LIBUV_PV}"
+einfo "NODE_PV:\t\t${NODE_PV}"
+einfo "V8_PV:\t\t${V8_PV}"
+einfo "ZLIB_PV:\t\t${ZLIB_PV}"
 einfo
 
 	local node_pv=$(node --version | sed -e "s|v||")
@@ -1273,6 +1274,13 @@ eerror
 	cd "${S}"
 	if declare -f electron-app_src_postcompile > /dev/null ; then
 		electron-app_src_postcompile
+	fi
+
+	if grep -q -e "Exit code:" "${T}/build.log" ; then
+eerror
+eerror "Detected failure.  Re-emerge..."
+eerror
+		die
 	fi
 
 	cd "${S}"
