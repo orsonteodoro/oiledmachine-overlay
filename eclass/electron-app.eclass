@@ -1205,6 +1205,49 @@ ewarn
 	fi
 }
 
+# @FUNCTION: electron-app_ask_permission_analytics
+# @DESCRIPTION:
+# Inspect and block apps that may spy on users without consent or opt-out.
+electron-app_ask_permission_analytics() {
+	[[ "${ELECTRON_APP_ANALYTICS}" =~ ("allow"|"accept") ]] && return
+	local path
+
+	IFS=$'\n'
+	local L=(
+		$(find "${WORKDIR}" \
+			-name "package.json" \
+			-o -name "package.json" \
+			-o -name "package-lock.json" \
+			-o -name "yarn.lock")
+	)
+
+	local analytics_packages=(
+		"/analytics"
+		"-analytics"
+	)
+
+	for path in ${L[@]} ; do
+		local ap
+		for ap in ${analytics_packages[@]} ; do
+			if grep -F -q -e "${ap}" "${path}" ; then
+eerror
+eerror "An analytics package has been detected in ${PN} that may track user"
+eerror "behavior.  Often times, this kind of collection is unannounced in"
+eerror "in READMEs and many times no way to opt out."
+eerror
+eerror "ELECTRON_APP_ANALYTICS=\"allow\"  # to continue installing"
+eerror "ELECTRON_APP_ANALYTICS=\"deny\"   # to stop installing (default)"
+eerror
+eerror "You should only apply these rules as a per-package environment"
+eerror "variable."
+eerror
+			fi
+		done
+
+	done
+	IFS=$' \t\n'
+}
+
 # @FUNCTION: electron-app_src_unpack
 # @DESCRIPTION:
 # Runs phases for downloading dependencies, unpacking, building
@@ -1238,7 +1281,9 @@ eerror
 		default_src_unpack
 	fi
 
-	# all the phase hooks get run in unpack because of download restrictions
+	# All the phase hooks get run in unpack because of download restrictions
+
+	electron-app_ask_permission_analytics
 
 	cd "${S}"
 	if declare -f electron-app_src_preprepare > /dev/null ; then
