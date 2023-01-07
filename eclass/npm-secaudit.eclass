@@ -285,6 +285,7 @@ eerror
 eerror "You should only apply these rules as a per-package environment"
 eerror "variable."
 eerror
+				die
 			fi
 		done
 
