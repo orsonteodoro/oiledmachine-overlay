@@ -269,6 +269,7 @@ npm-secaudit_ask_permission_analytics() {
 		"-analytics"
 	)
 
+einfo "Scanning for analytics packages."
 	for path in ${L[@]} ; do
 		local ap
 		for ap in ${analytics_packages[@]} ; do
