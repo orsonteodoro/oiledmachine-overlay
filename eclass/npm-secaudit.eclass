@@ -250,7 +250,7 @@ einfo
 
 # @FUNCTION: npm-secaudit_ask_permission_analytics
 # @DESCRIPTION:
-# Inspect and block apps that may spy on users without consent or opt-out.
+# Inspect and block apps that may spy on users without consent or no opt-out.
 npm-secaudit_ask_permission_analytics() {
 	[[ "${NPM_SECAUDIT_ANALYTICS}" =~ ("allow"|"accept") ]] && return
 	local path

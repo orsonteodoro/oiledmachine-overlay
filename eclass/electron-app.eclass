@@ -1207,7 +1207,7 @@ ewarn
 
 # @FUNCTION: electron-app_ask_permission_analytics
 # @DESCRIPTION:
-# Inspect and block apps that may spy on users without consent or opt-out.
+# Inspect and block apps that may spy on users without consent or no opt-out.
 electron-app_ask_permission_analytics() {
 	[[ "${ELECTRON_APP_ANALYTICS}" =~ ("allow"|"accept") ]] && return
 	local path
