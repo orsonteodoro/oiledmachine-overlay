@@ -248,10 +248,10 @@ einfo
 	popd
 }
 
-# @FUNCTION: npm-secaudit_ask_permission_analytics
+# @FUNCTION: npm-secaudit_find_analytics
 # @DESCRIPTION:
 # Inspect and block apps that may spy on users without consent or no opt-out.
-npm-secaudit_ask_permission_analytics() {
+npm-secaudit_find_analytics() {
 	[[ "${NPM_SECAUDIT_ANALYTICS}" =~ ("allow"|"accept") ]] && return
 	local path
 
@@ -269,11 +269,13 @@ npm-secaudit_ask_permission_analytics() {
 		"-analytics"
 	)
 
+einfo
 einfo "Scanning for analytics packages."
+einfo
 	for path in ${L[@]} ; do
 		local ap
 		for ap in ${analytics_packages[@]} ; do
-			if grep -F -q -e "${ap}" "${path}" ; then
+			if grep -q -e "${ap}" "${path}" ; then
 eerror
 eerror "An analytics package has been detected in ${PN} that may track user"
 eerror "behavior.  Often times, this kind of collection is unannounced in"
@@ -289,6 +291,100 @@ eerror
 			fi
 		done
 
+	done
+	IFS=$' \t\n'
+}
+
+# @FUNCTION: npm-secaudit_find_session_replay
+# @DESCRIPTION:
+# Inspect and block apps that may spy on users without consent or no opt-out.
+npm-secaudit_find_session_replay() {
+	[[ "${NPM_SECAUDIT_SESSION_REPLAY}" =~ ("allow"|"accept") ]] && return
+	local path
+
+	IFS=$'\n'
+	local L=(
+		$(find "${WORKDIR}" \
+			-name "package.json" \
+			-o -name "package.json" \
+			-o -name "package-lock.json" \
+			-o -name "yarn.lock")
+	)
+
+	local session_replay_packages=(
+		"ffmpeg" # may access system ffmpeg with x11grab
+		"ffmpeg-screen-recorder" # tagged x11grab
+		"puppeteer-stream" # tagged x11grab
+		"record-screen" # tagged x11grab
+		"rrweb"
+		"recorder"
+		"screencast"
+		"woobi" # tagged x11grab
+
+		# User can define this globally in /etc/make.conf.
+		# It must be a space delimited string.
+		${ELECTRON_APP_SESSION_REPLAY_BLACKLIST}
+	)
+
+einfo
+einfo "Scanning for session replay packages or recording packages."
+einfo "(NOTE:  It is impossible to find all packages.)"
+einfo
+	for path in ${L[@]} ; do
+		local ap
+		for ap in ${session_replay_packages[@]} ; do
+			if grep -q -e "${ap}" "${path}" ; then
+eerror
+eerror "A possible session replay or recording package has been detected in"
+eerror "${PN} that may record user behavior or sensitive data with greater"
+eerror "specificity which can be abused or compromise anonymity."
+eerror
+eerror "Build file:  ${path}"
+eerror "Package:"
+grep "${ap}" "${path}"
+eerror
+eerror "NPM_SECAUDIT_SESSION_REPLAY=\"allow\"  # to continue installing"
+eerror "NPM_SECAUDIT_SESSION_REPLAY=\"deny\"   # to stop installing (default)"
+eerror
+eerror "You should only apply these rules as a per-package environment"
+eerror "variable."
+eerror
+				die
+			fi
+		done
+
+	done
+	IFS=$' \t\n'
+}
+
+# @FUNCTION: npm-secaudit_find_session_replay_within_source_code
+# @DESCRIPTION:
+# Check abuse with exec/spawn
+npm-secaudit_find_session_replay_within_source_code() {
+	[[ "${NPM_SECAUDIT_SESSION_REPLAY}" =~ ("allow"|"accept") ]] && return
+einfo
+einfo "Scanning for possible [unauthorized] recording within code."
+einfo "(NOTE:  It is impossible to scan all obfuscated code.)"
+einfo
+	IFS=$'\n'
+	local path
+	for path in $(find "${WORKDIR}" -type f) ; do
+		if grep -E -r -e "x11grab" "${path}" ; then
+eerror
+eerror "Possible unauthorized screen recording has been detected in"
+eerror "${PN} that may record user behavior or sensitive data with greater"
+eerror "specificity which can be abused or compromise anonymity."
+eerror
+eerror "File:  ${path}"
+eerror
+eerror "NPM_SECAUDIT_SESSION_REPLAY=\"allow\"  # to continue installing"
+eerror "NPM_SECAUDIT_SESSION_REPLAY=\"deny\"   # to stop installing (default)"
+eerror
+eerror "You should only apply these rules as a per-package environment"
+eerror "variable."
+eerror
+			die
+		fi
 	done
 	IFS=$' \t\n'
 }
@@ -328,14 +424,15 @@ eerror
 
 	# All the phase hooks get run in unpack because of download restrictions
 
-	npm-secaudit_ask_permission_analytics
-
 	cd "${S}" || die
 	if declare -f npm-secaudit_src_preprepare > /dev/null ; then
 		npm-secaudit_src_preprepare
 	fi
 
 	npm-utils_check_chromium_eol ${CHROMIUM_PV}
+	npm-secaudit_find_analytics
+	npm-secaudit_find_session_replay
+	npm-secaudit_find_session_replay_within_source_code
 
 	cd "${S}" || die
 	if declare -f npm-secaudit_src_prepare > /dev/null ; then
@@ -353,6 +450,9 @@ eerror
 	fi
 
 	npm-utils_check_chromium_eol ${CHROMIUM_PV}
+	npm-secaudit_find_analytics
+	npm-secaudit_find_session_replay
+	npm-secaudit_find_session_replay_within_source_code
 
 	cd "${S}" || die
 	if declare -f npm-secaudit_src_compile > /dev/null ; then

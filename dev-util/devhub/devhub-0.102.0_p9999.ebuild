@@ -86,6 +86,9 @@ BDEPEND+="
 "
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
+PATCHES=(
+	"${FILESDIR}/devhub-0.102.0-icontheme-tsx-changes.patch"
+)
 
 pkg_setup() {
 	if has network-sandbox $FEATURES ; then
@@ -137,8 +140,7 @@ eerror
 	fi
 }
 
-electron-app_src_prepare() {
-	ewarn "This ebuild is a Work In Progress (WIP) and incomplete."
+deps_live() {
 	vrun yarn workspace @devhub/web add "@brunolemos/react-window-without-virtualization@1.8.5-withoutvirtualization.1" || die
 	vrun yarn workspace @devhub/web add "@types/fbemitter@2.0.32" || die
 	vrun yarn workspace @devhub/web add "@types/gravatar@1.8.0" || die
@@ -154,13 +156,53 @@ electron-app_src_prepare() {
 	vrun yarn workspace @devhub/web add "@types/react-window@1.8.1" || die
 	vrun yarn workspace @devhub/web add "@types/yup@0.26.24" || die
 	vrun yarn workspace @devhub/web add "@octokit/webhooks@7.0.0" || die
+	vrun yarn workspace @devhub/web add "babel-plugin-react-native-web@0.14.9" || die
 	vrun yarn workspace @devhub/web add "lodash@4.17.20" || die
+	vrun yarn workspace @devhub/web add "react-app-rewired@2.1.7" || die
+	vrun yarn workspace @devhub/web add "react-native-vector-icons@7.1.0" || die
 	vrun yarn workspace @devhub/web add "redux-flipper@1.4.2" || die
+	vrun yarn workspace @devhub/web add "reselect-tools@0.0.7" || die
 	vrun yarn workspace @devhub/web add "typescript@4.3.4" || die
 	vrun yarn workspace @devhub/web add "yup@0.27.0" || die
+	vrun yarn workspace @devhub/web add "webpack-bundle-analyzer@3.5.2" || die
+}
 
-	vrun yarn workspace @devhub/web add "@primer/octicons@10.0.0" || die
-#	vrun yarn workspace @devhub/web add "" || die
+deps_0_102() {
+	vrun yarn workspace @devhub/web add "@brunolemos/react-window-without-virtualization@1.8.5-withoutvirtualization.1" || die
+	vrun yarn workspace @devhub/web add "@types/fbemitter@2.0.32" || die
+	vrun yarn workspace @devhub/web add "@types/gravatar@1.8.0" || die
+	vrun yarn workspace @devhub/web add "@types/google.analytics@0.0.40" || die
+	vrun yarn workspace @devhub/web add "@types/lodash@4.14.165" || die
+	vrun yarn workspace @devhub/web add "@types/qs@6.9.0" || die
+	vrun yarn workspace @devhub/web add "@types/react@17.0.0" || die
+	vrun yarn workspace @devhub/web add "@types/react-dom@17.0.0" || die
+	vrun yarn workspace @devhub/web add "@types/react-native@0.63.37" || die
+	vrun yarn workspace @devhub/web add "@types/react-native-vector-icons@6.4.4" || die
+	vrun yarn workspace @devhub/web add "@types/react-redux@7.1.11" || die
+	vrun yarn workspace @devhub/web add "@types/react-stripe-elements@1.3.5" || die
+	vrun yarn workspace @devhub/web add "@types/react-window@1.8.1" || die
+	vrun yarn workspace @devhub/web add "@types/yup@0.26.24" || die
+	vrun yarn workspace @devhub/web add "@octokit/webhooks@7.0.0" || die
+	vrun yarn workspace @devhub/web add "babel-plugin-react-native-web@0.14.9" || die
+	vrun yarn workspace @devhub/web add "lodash@4.17.20" || die
+	vrun yarn workspace @devhub/web add "react-app-rewired@2.1.7s" || die
+	vrun yarn workspace @devhub/web add "react-native-vector-icons@7.1.0" || die
+	vrun yarn workspace @devhub/web add "redux-flipper@1.4.2" || die
+	vrun yarn workspace @devhub/web add "reselect-tools@0.0.7" || die
+	vrun yarn workspace @devhub/web add "typescript@4.1.2" || die
+	vrun yarn workspace @devhub/web add "yup@0.27.0" || die
+	vrun yarn workspace @devhub/web add "webpack-bundle-analyzer@3.5.2" || die
+}
+
+electron-app_src_prepare() {
+	ewarn "This ebuild is a Work In Progress (WIP) and incomplete."
+
+	eapply ${PATCHES[@]}
+	if [[ ${PV} =~ 9999 ]] ; then
+		deps_live
+	else
+		deps_0_102
+	fi
 
 #	vrun yarn workspace @devhub/web add "" || die
 	electron-app_src_prepare_default
@@ -184,6 +226,10 @@ src_install() {
 
 	exeinto /usr/bin
 	doexe "${FILESDIR}/${PN}"
+	sed -i \
+		-e "s|\${NODE_ENV}|${NODE_ENV}|g" \
+		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
+		"${ED}/usr/bin/${PN}" || die
 
         newicon "node_modules/@devhub/desktop/assets/icons/icon.png" "${PN}.png"
         make_desktop_entry ${PN} "${MY_PN}" ${PN} "Development"

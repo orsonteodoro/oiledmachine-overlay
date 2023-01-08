@@ -1,4 +1,6 @@
 #!/bin/bash
+NODE_ENV="${NODE_ENV}"
+NODE_VERSION="${NODE_VERSION}"
 PROJECT_ROOT="/opt/devhub"
 pushd "${PROJECT_ROOT}"
 	./devhub "$@"

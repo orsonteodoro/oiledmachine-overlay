@@ -1051,8 +1051,20 @@ einfo "yarn global-folder:\t\t$(yarn config get global-folder)"
 einfo "yarn offline-cache-mirror:\t$(yarn config get offline-cache-mirror)"
 einfo
 
-		yarn install --network-concurrency ${ELECTRON_APP_MAXSOCKETS} \
-				--verbose || die
+		local extra_args=()
+		if [[ "${ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY}" == "1" ]] ; then
+ewarn
+ewarn "Using exact versions in lockfile."
+ewarn "This implies that security updates are NOT performed."
+ewarn
+			extra_args+=( --frozen-lockfile )
+		fi
+
+		yarn install \
+			--network-concurrency ${ELECTRON_APP_MAXSOCKETS} \
+			--verbose \
+			${extra_args[@]} \
+			|| die
 		# todo yarn audit auto patch
 		# an analog to yarn audix fix doesn't exit yet
 	popd
@@ -1187,12 +1199,11 @@ einfo
 einfo "Electron version report with internal/external dependencies:"
 einfo
 einfo "ELECTRON_PV:\t\t${ELECTRON_PV}"
-einfo "CHROMIUM_PV:\t\t${CHROMIUM_PV}"
+einfo "CHROMIUM_PV:\t\t${CHROMIUM_PV} (internal)"
 einfo "LIBUV_PV:\t\t${LIBUV_PV}"
-einfo "NODE_PV:\t\t${NODE_PV}"
-einfo "V8_PV:\t\t${V8_PV}"
-einfo "ZLIB_PV:\t\t${ZLIB_PV}"
-einfo
+einfo "NODE_PV:\t\t${NODE_PV} (internal)"
+einfo "V8_PV:\t\t${V8_PV} (internal)"
+einfo "ZLIB_PV:\t\t${ZLIB_PV} (external)"
 
 	local node_pv=$(node --version | sed -e "s|v||")
 	if ver_test $(ver_cut 1 ${NODE_PV}) -ne $(ver_cut 1 ${node_pv}) ; then
@@ -1205,10 +1216,10 @@ ewarn
 	fi
 }
 
-# @FUNCTION: electron-app_ask_permission_analytics
+# @FUNCTION: electron-app_find_analytics
 # @DESCRIPTION:
 # Inspect and block apps that may spy on users without consent or no opt-out.
-electron-app_ask_permission_analytics() {
+electron-app_find_analytics() {
 	[[ "${ELECTRON_APP_ANALYTICS}" =~ ("allow"|"accept") ]] && return
 	local path
 
@@ -1226,11 +1237,13 @@ electron-app_ask_permission_analytics() {
 		"-analytics"
 	)
 
+einfo
 einfo "Scanning for analytics packages."
+einfo
 	for path in ${L[@]} ; do
 		local ap
 		for ap in ${analytics_packages[@]} ; do
-			if grep -F -q -e "${ap}" "${path}" ; then
+			if grep -q -e "${ap}" "${path}" ; then
 eerror
 eerror "An analytics package has been detected in ${PN} that may track user"
 eerror "behavior.  Often times, this kind of collection is unannounced in"
@@ -1246,6 +1259,101 @@ eerror
 			fi
 		done
 
+	done
+	IFS=$' \t\n'
+}
+
+# @FUNCTION: electron-app_find_session_replay
+# @DESCRIPTION:
+# Inspect and block apps that may spy on users without consent or no opt-out.
+electron-app_find_session_replay() {
+	[[ "${ELECTRON_APP_SESSION_REPLAY}" =~ ("allow"|"accept") ]] && return
+	local path
+
+	IFS=$'\n'
+	local L=(
+		$(find "${WORKDIR}" \
+			-name "package.json" \
+			-o -name "package.json" \
+			-o -name "package-lock.json" \
+			-o -name "yarn.lock")
+	)
+
+	local session_replay_packages=(
+		"ffmpeg" # may access system ffmpeg with x11grab
+		"ffmpeg-screen-recorder" # tagged x11grab
+		"puppeteer-stream" # tagged x11grab
+		"record-screen" # tagged x11grab
+		"rrweb"
+		"recorder"
+		"screencast"
+		"woobi" # tagged x11grab
+
+		# User can define this globally in /etc/make.conf.
+		# It must be a space delimited string.
+		${ELECTRON_APP_SESSION_REPLAY_BLACKLIST}
+	)
+
+einfo
+einfo "Scanning for session replay packages or recording packages."
+einfo "(NOTE:  It is impossible to find all packages.)"
+einfo
+	for path in ${L[@]} ; do
+		local ap
+		for ap in ${session_replay_packages[@]} ; do
+			if grep -q -e "${ap}" "${path}" ; then
+eerror
+eerror "A possible session replay or recording package has been detected in"
+eerror "${PN} that may record user behavior or sensitive data with greater"
+eerror "specificity which can be abused or compromise anonymity."
+eerror
+eerror "Build file:  ${path}"
+eerror "Package:"
+grep "${ap}" "${path}"
+eerror
+eerror
+eerror "ELECTRON_APP_SESSION_REPLAY=\"allow\"  # to continue installing"
+eerror "ELECTRON_APP_SESSION_REPLAY=\"deny\"   # to stop installing (default)"
+eerror
+eerror "You should only apply these rules as a per-package environment"
+eerror "variable."
+eerror
+				die
+			fi
+		done
+
+	done
+	IFS=$' \t\n'
+}
+
+# @FUNCTION: electron-app_find_session_replay_within_source_code
+# @DESCRIPTION:
+# Check abuse with exec/spawn
+electron-app_find_session_replay_within_source_code() {
+	[[ "${ELECTRON_APP_SESSION_REPLAY}" =~ ("allow"|"accept") ]] && return
+einfo
+einfo "Scanning for possible [unauthorized] recording within code."
+einfo "(NOTE:  It is impossible to scan all obfuscated code.)"
+einfo
+	IFS=$'\n'
+	local path
+	for path in $(find "${WORKDIR}" -type f) ; do
+		if grep -E -r -e "x11grab" "${path}" ; then
+eerror
+eerror "Possible unauthorized screen recording has been detected in"
+eerror "${PN} that may record user behavior or sensitive data with greater"
+eerror "specificity which can be abused or compromise anonymity."
+eerror
+eerror "File:  ${path}"
+eerror
+eerror "ELECTRON_APP_SESSION_REPLAY=\"allow\"  # to continue installing"
+eerror "ELECTRON_APP_SESSION_REPLAY=\"deny\"   # to stop installing (default)"
+eerror
+eerror "You should only apply these rules as a per-package environment"
+eerror "variable."
+eerror
+			die
+		fi
 	done
 	IFS=$' \t\n'
 }
@@ -1285,8 +1393,6 @@ eerror
 
 	# All the phase hooks get run in unpack because of download restrictions
 
-	electron-app_ask_permission_analytics
-
 	cd "${S}"
 	if declare -f electron-app_src_preprepare > /dev/null ; then
 		electron-app_src_preprepare
@@ -1294,6 +1400,9 @@ eerror
 
 	# Inspect before downloading
 	electron-app_audit_versions
+	electron-app_find_analytics
+	electron-app_find_session_replay
+	electron-app_find_session_replay_within_source_code
 
 	cd "${S}"
 	if declare -f electron-app_src_prepare > /dev/null ; then
@@ -1334,6 +1443,9 @@ eerror
 	# Another audit happens because electron-builder downloads again
 	# possibly vulnerable libraries.
 	electron-app_audit_versions
+	electron-app_find_analytics
+	electron-app_find_session_replay
+	electron-app_find_session_replay_within_source_code
 
 	cd "${S}"
 	if declare -f electron-app_src_preinst > /dev/null ; then
