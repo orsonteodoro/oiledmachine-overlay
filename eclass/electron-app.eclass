@@ -1338,7 +1338,7 @@ einfo
 	IFS=$'\n'
 	local path
 	for path in $(find "${WORKDIR}" -type f) ; do
-		if grep -E -r -e "x11grab" "${path}" ; then
+		if grep -E -r -e "(x11grab|screen://)" "${path}" ; then
 eerror
 eerror "Possible unauthorized screen recording has been detected in"
 eerror "${PN} that may record user behavior or sensitive data with greater"
