@@ -90,8 +90,11 @@ THIRD_PARTY_LICENSES="
 	${ELECTRON_CHROMEDRIVER_LICENSES}
 	( Apache-2.0 all-rights-reserved )
 	( custom MIT all-rights-reserved )
+	( custom MIT ( MIT all-rights-reserved ) )
+	( custom OFL )
 	( MIT all-rights-reserved )
 	( MIT CC0-1.0 )
+	( MIT svgo )
 	( ISC CC-BY-SA-4.0 )
 	( WTFPL-2 MIT )
 	( MIT Unicode-DFS-2016 W3C-Community-Final-Specification-Agreement CC-BY-4.0 W3C-Software-and-Document-Notice-and-License )
@@ -103,13 +106,10 @@ THIRD_PARTY_LICENSES="
 	CC-BY-4.0
 	CC0-1.0
 	custom
-	( custom MIT ( MIT all-rights-reserved ) )
-	( custom OFL )
 	ISC
 	LGPL-3.0
 	MagentaMgOpen
 	MIT
-	( MIT svgo )
 	MPL-2.0
 	Unlicense
 	WTFPL-2
