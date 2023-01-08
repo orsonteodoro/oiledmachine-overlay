@@ -1239,7 +1239,7 @@ electron-app_find_analytics() {
 		"glean"
 	)
 
-einfo "Scanning for analytics packages package*.json or yarn.lock."
+einfo "Scanning for analytics packages in package*.json or yarn.lock."
 	for path in ${L[@]} ; do
 		path=$(realpath "${path}")
 		local ap
