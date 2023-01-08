@@ -267,12 +267,13 @@ npm-secaudit_find_analytics() {
 	local analytics_packages=(
 		"/analytics"
 		"-analytics"
+		"telemetry"
+		"glean"
 	)
 
-einfo
-einfo "Scanning for analytics packages."
-einfo
+einfo "Scanning for analytics packages package*.json or yarn.lock."
 	for path in ${L[@]} ; do
+		path=$(realpath "${path}")
 		local ap
 		for ap in ${analytics_packages[@]} ; do
 			if grep -q -e "${ap}" "${path}" ; then
@@ -280,6 +281,10 @@ eerror
 eerror "An analytics package has been detected in ${PN} that may track user"
 eerror "behavior.  Often times, this kind of collection is unannounced in"
 eerror "in READMEs and many times no way to opt out."
+eerror
+eerror "Keyword found:\t${ap}"
+eerror "Details:"
+	grep -n -e "${ap}" "${path}"
 eerror
 eerror "NPM_SECAUDIT_ANALYTICS=\"allow\"  # to continue installing"
 eerror "NPM_SECAUDIT_ANALYTICS=\"deny\"   # to stop installing (default)"
@@ -326,11 +331,9 @@ npm-secaudit_find_session_replay() {
 		${ELECTRON_APP_SESSION_REPLAY_BLACKLIST}
 	)
 
-einfo
-einfo "Scanning for session replay packages or recording packages."
-einfo "(NOTE:  It is impossible to find all packages.)"
-einfo
+einfo "Scanning for session replay packages or recording packages in package*json or yarn.lock."
 	for path in ${L[@]} ; do
+		path=$(realpath "${path}")
 		local ap
 		for ap in ${session_replay_packages[@]} ; do
 			if grep -q -e "${ap}" "${path}" ; then
@@ -339,9 +342,9 @@ eerror "A possible session replay or recording package has been detected in"
 eerror "${PN} that may record user behavior or sensitive data with greater"
 eerror "specificity which can be abused or compromise anonymity."
 eerror
-eerror "Build file:  ${path}"
-eerror "Package:"
-grep "${ap}" "${path}"
+eerror "Package/pattern:\t${ap}"
+eerror "Details:"
+	grep -n -e "${ap}" "${path}"
 eerror
 eerror "NPM_SECAUDIT_SESSION_REPLAY=\"allow\"  # to continue installing"
 eerror "NPM_SECAUDIT_SESSION_REPLAY=\"deny\"   # to stop installing (default)"
@@ -362,20 +365,21 @@ eerror
 # Check abuse with exec/spawn
 npm-secaudit_find_session_replay_within_source_code() {
 	[[ "${NPM_SECAUDIT_SESSION_REPLAY}" =~ ("allow"|"accept") ]] && return
-einfo
-einfo "Scanning for possible [unauthorized] recording within code."
-einfo "(NOTE:  It is impossible to scan all obfuscated code.)"
-einfo
+einfo "Scanning for possible unauthorized recording within code."
+	local pat="(x11grab|screen://)"
 	IFS=$'\n'
 	local path
 	for path in $(find "${WORKDIR}" -type f) ; do
-		if grep -E -r -e "(x11grab|screen://)" "${path}" ; then
+		path=$(realpath "${path}")
+		if grep -E -r -e "${pat}" "${path}" ; then
 eerror
 eerror "Possible unauthorized screen recording has been detected in"
 eerror "${PN} that may record user behavior or sensitive data with greater"
 eerror "specificity which can be abused or compromise anonymity."
 eerror
-eerror "File:  ${path}"
+eerror "Pattern:\t${pat}"
+eerror "Details:"
+	grep -n -e "${pat}" "${path}"
 eerror
 eerror "NPM_SECAUDIT_SESSION_REPLAY=\"allow\"  # to continue installing"
 eerror "NPM_SECAUDIT_SESSION_REPLAY=\"deny\"   # to stop installing (default)"
@@ -394,20 +398,21 @@ eerror
 # Check unauthorized analytics within source code
 npm-secaudit_find_analytics_within_source_code() {
 	[[ "${NPM_SECAUDIT_ANALYTICS}" =~ ("allow"|"accept") ]] && return
-einfo
 einfo "Scanning for possible analytics within code."
-einfo "(NOTE:  It is impossible to scan all obfuscated code.)"
-einfo
+	local pat="analytics"
 	IFS=$'\n'
 	local path
 	for path in $(find "${WORKDIR}" -type f) ; do
-		if grep -i -r -e "analytics" "${path}" ; then
+		path=$(realpath "${path}")
+		if grep -i -r -e "${pat}" "${path}" ; then
 eerror
 eerror "Analytics use within the code has detected in ${PN} that may track user"
 eerror "behavior.  Often times, this kind of collection is unannounced in"
 eerror "in READMEs and many times no way to opt out."
 eerror
-eerror "File:  ${path}"
+eerror "Pattern:\t${pat}"
+eerror "Details:"
+	grep -n -e "${pat}" "${path}"
 eerror
 eerror "NPM_SECAUDIT_ANALYTICS=\"allow\"  # to continue installing"
 eerror "NPM_SECAUDIT_ANALYTICS=\"deny\"   # to stop installing (default)"
