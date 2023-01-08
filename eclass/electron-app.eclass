@@ -1358,6 +1358,38 @@ eerror
 	IFS=$' \t\n'
 }
 
+# @FUNCTION: electron-app_find_analytics_within_source_code
+# @DESCRIPTION:
+# Check unauthorized analytics within source code
+electron-app_find_analytics_within_source_code() {
+	[[ "${ELECTRON_APP_ANALYTICS}" =~ ("allow"|"accept") ]] && return
+einfo
+einfo "Scanning for possible analytics within code."
+einfo "(NOTE:  It is impossible to scan all obfuscated code.)"
+einfo
+	IFS=$'\n'
+	local path
+	for path in $(find "${WORKDIR}" -type f) ; do
+		if grep -i -r -e "analytics" "${path}" ; then
+eerror
+eerror "Analytics use within the code has detected in ${PN} that may track user"
+eerror "behavior.  Often times, this kind of collection is unannounced in"
+eerror "in READMEs and many times no way to opt out."
+eerror
+eerror "File:  ${path}"
+eerror
+eerror "ELECTRON_APP_ANALYTICS=\"allow\"  # to continue installing"
+eerror "ELECTRON_APP_ANALYTICS=\"deny\"   # to stop installing (default)"
+eerror
+eerror "You should only apply these rules as a per-package environment"
+eerror "variable."
+eerror
+			die
+		fi
+	done
+	IFS=$' \t\n'
+}
+
 # @FUNCTION: electron-app_src_unpack
 # @DESCRIPTION:
 # Runs phases for downloading dependencies, unpacking, building
@@ -1401,6 +1433,7 @@ eerror
 	# Inspect before downloading
 	electron-app_audit_versions
 	electron-app_find_analytics
+	electron-app_find_analytics_within_source_code
 	electron-app_find_session_replay
 	electron-app_find_session_replay_within_source_code
 

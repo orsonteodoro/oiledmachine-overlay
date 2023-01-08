@@ -389,6 +389,38 @@ eerror
 	IFS=$' \t\n'
 }
 
+# @FUNCTION: npm-secaudit_find_analytics_within_source_code
+# @DESCRIPTION:
+# Check unauthorized analytics within source code
+npm-secaudit_find_analytics_within_source_code() {
+	[[ "${NPM_SECAUDIT_ANALYTICS}" =~ ("allow"|"accept") ]] && return
+einfo
+einfo "Scanning for possible analytics within code."
+einfo "(NOTE:  It is impossible to scan all obfuscated code.)"
+einfo
+	IFS=$'\n'
+	local path
+	for path in $(find "${WORKDIR}" -type f) ; do
+		if grep -i -r -e "analytics" "${path}" ; then
+eerror
+eerror "Analytics use within the code has detected in ${PN} that may track user"
+eerror "behavior.  Often times, this kind of collection is unannounced in"
+eerror "in READMEs and many times no way to opt out."
+eerror
+eerror "File:  ${path}"
+eerror
+eerror "NPM_SECAUDIT_ANALYTICS=\"allow\"  # to continue installing"
+eerror "NPM_SECAUDIT_ANALYTICS=\"deny\"   # to stop installing (default)"
+eerror
+eerror "You should only apply these rules as a per-package environment"
+eerror "variable."
+eerror
+			die
+		fi
+	done
+	IFS=$' \t\n'
+}
+
 # @FUNCTION: npm-secaudit_src_unpack
 # @DESCRIPTION:
 # Runs phases for downloading dependencies, unpacking, building
@@ -431,6 +463,7 @@ eerror
 
 	npm-utils_check_chromium_eol ${CHROMIUM_PV}
 	npm-secaudit_find_analytics
+	npm-secaudit_find_analytics_within_source_code
 	npm-secaudit_find_session_replay
 	npm-secaudit_find_session_replay_within_source_code
 
