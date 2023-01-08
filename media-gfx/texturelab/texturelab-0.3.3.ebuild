@@ -80,7 +80,7 @@ ELECTRON_CHROMEDRIVER_LICENSES="
 	SunPro
 	unRAR
 	UoI-NCSA
-	WebP-PATENTS
+	libwebm-PATENTS
 	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
 "
 
@@ -208,7 +208,7 @@ LICENSE="
 #   SunPro \
 #   unRAR \
 #   UoI-NCSA \
-#   WebP-PATENTS \
+#   libwebm-PATENTS \
 #   || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) \
 #   node_modules/electron-chromedriver/bin/LICENSES.chromium.html
 

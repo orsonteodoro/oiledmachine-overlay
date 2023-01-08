@@ -106,7 +106,7 @@ LICENSE="
 # Unicode-DFS-2016 \
 # UoI-NCSA \
 # unRAR \
-# WebP-PATENTS \
+# libwebm-PATENTS \
 # ZLIB \
 # || ( MIT public-domain ( MIT public-domain )) \
 # || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) \

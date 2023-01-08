@@ -124,7 +124,7 @@ ELECTRON_APP_LICENSES="
 	unicode
 	unRAR
 	UoI-NCSA
-	WebP-PATENTS
+	libwebm-PATENTS
 	ZLIB
 	|| ( public-domain MIT ( public-domain MIT ) )
 	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
@@ -192,7 +192,7 @@ ELECTRON_APP_LICENSES="
 #   unicode \
 #   unRAR \
 #   UoI-NCSA \
-#   WebP-PATENTS \
+#   libwebm-PATENTS \
 #   ZLIB \
 #   || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) \
 #   || ( public-domain MIT ( public-domain MIT ) ) - \
