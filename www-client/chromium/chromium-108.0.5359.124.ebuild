@@ -124,6 +124,7 @@ LICENSE="
 	sigslot
 	SunPro
 	svgo
+	trio
 	W3C
 	W3C-Document-License-2002
 	WTFPL-2
