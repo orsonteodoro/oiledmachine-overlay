@@ -331,7 +331,7 @@ npm-secaudit_find_session_replay() {
 		${ELECTRON_APP_SESSION_REPLAY_BLACKLIST}
 	)
 
-einfo "Scanning for session replay packages or recording packages in package*json or yarn.lock."
+einfo "Scanning for session replay packages or recording packages in package*.json or yarn.lock."
 	for path in ${L[@]} ; do
 		path=$(realpath "${path}")
 		local ap
