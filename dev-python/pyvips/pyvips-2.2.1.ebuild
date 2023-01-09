@@ -6,7 +6,7 @@ EAPI=8
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
-DESCRIPTION="python binding for libvips using cffi "
+DESCRIPTION="python binding for libvips using cffi"
 HOMEPAGE="https://github.com/libvips/pyvips"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
@@ -17,10 +17,15 @@ CDEPEND="
 	${PYTHON_DEPS}
 	>=dev-python/cffi-1.0.0[${PYTHON_USEDEP}]
 "
-DEPEND+=" ${CDEPEND}"
-RDEPEND+=" ${DEPEND}"
+DEPEND+="
+	${CDEPEND}
+"
+RDEPEND+="
+	${DEPEND}
+"
 # TODO pyperf needs to be packaged.
-BDEPEND+=" ${CDEPEND}
+BDEPEND+="
+	${CDEPEND}
 	test? (
 		dev-python/pyperf[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
@@ -30,10 +35,14 @@ BDEPEND+=" ${CDEPEND}
 	doc? (
 		dev-python/sphinx[${PYTHON_USEDEP}]
 		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
-	)"
-PDEPEND=" media-libs/vips"
+	)
+"
+PDEPEND+="
+	media-libs/vips
+"
 SRC_URI="
 https://github.com/libvips/pyvips/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
