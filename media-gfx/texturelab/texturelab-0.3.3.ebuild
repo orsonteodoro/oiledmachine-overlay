@@ -5,13 +5,14 @@
 EAPI=8
 
 ELECTRON_APP_ELECTRON_PV="13.1.4"
-ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY=1
 ELECTRON_APP_VUE_PV="2.6.11"
 ELECTRON_APP_MODE="yarn"
-NODE_ENV=development
+ELECTRON_APP_SKIP_EXIT_CODE_CHECK="1"
+NODE_ENV="development"
 NODE_VERSION="14"
+PYTHON_COMPAT=( python3_{8..10} )
 
-inherit desktop electron-app npm-utils
+inherit desktop electron-app npm-utils python-r1
 
 DESCRIPTION="Free, Cross-Platform, GPU-Accelerated Procedural Texture Generator"
 HOMEPAGE="https://njbrown.itch.io/texturelab"
@@ -214,34 +215,95 @@ LICENSE="
 
 KEYWORDS="~amd64"
 SLOT="0"
+IUSE+=" system-vips"
+SHARP_DEPENDS="
+	>=net-libs/nodejs-14.15:${NODE_VERSION}
+	system-vips? (
+		>=media-libs/vips-8.13.3[png,jpeg,tiff]
+	)
+" # For vips version see https://github.com/lovell/sharp/blob/main/package.json#L158
+RDEPEND+="
+	${SHARP_DEPENDS}
+"
+RDEPEND+="
+	${DEPEND}
+"
+NODE_GYP_BDEPENDS="
+	${PYTHON_DEPS}
+	sys-devel/gcc
+	sys-devel/make
+"
 BDEPEND+="
+	${NODE_GYP_BDEPENDS}
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
 "
-ASSETS_COMMIT="eed449f3f9abe8f17ae354ab4cb9932272c7811b"
+TEXTURELABDATA_COMMIT="eed449f3f9abe8f17ae354ab4cb9932272c7811b"
 SRC_URI="
 https://github.com/njbrown/texturelab/archive/v${PV}.tar.gz
 	-> ${PN}-${PV}.tar.gz
-https://github.com/njbrown/texturelabdata/archive/${ASSETS_COMMIT}.tar.gz
-	-> ${PN}-assets-${ASSETS_COMMIT:0:7}.tar.gz
+https://github.com/njbrown/texturelabdata/archive/${TEXTURELABDATA_COMMIT}.tar.gz
+	-> ${PN}data-${TEXTURELABDATA_COMMIT:0:7}.tar.gz
 "
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 MY_PN="TextureLab"
 
+vrun() {
+einfo "Running:\t${@}"
+	"${@}" || die
+	if [[ "${ELECTRON_APP_SKIP_EXIT_CODE_CHECK}" == "1" ]] ; then
+		:;
+	elif grep -q -e "Exit code:" "${T}/build.log" ; then
+eerror
+eerror "Detected failure.  Re-emerge..."
+eerror
+		die
+	fi
+}
+
+pkg_setup() {
+	if use system-vips ; then
+		if has_version "media-libs/vips[-graphicsmagick,-imagemagick]" ; then
+eerror
+eerror "media-libs/vips requires imagemagick or graphicsmagick USE flag"
+eerror
+			die
+		fi
+	fi
+	electron-app_pkg_setup
+	if [[ "${NPM_UTILS_ALLOW_AUDIT}" != "0" ]] ; then
+eerror
+eerror "NPM_UTILS_ALLOW_AUDIT=0 needs to be added as a per-package envvar"
+eerror
+		die
+	fi
+}
+
 electron-app_src_preprepare() {
-ewarn "This ebuild is a Work In Progress (WIP)"
 	cd "${WORKDIR}" || die
-	unpack "${PN}-assets-${ASSETS_COMMIT:0:7}.tar.gz"
+	unpack "${PN}data-${TEXTURELABDATA_COMMIT:0:7}.tar.gz"
 	rm -rf "${S}/public/assets" || die
 	mkdir -p "${S}/public/assets" || die
-	cp -aT "${WORKDIR}/${PN}data-${ASSETS_COMMIT}" "${S}/public/assets" || die
+	cp -aT "${WORKDIR}/${PN}data-${TEXTURELABDATA_COMMIT}" "${S}/public/assets" || die
+	cd "${S}" || die
+}
+
+electron-app_src_prepare() {
+	electron-app_src_prepare_default
+	export SHARP_IGNORE_GLOBAL_LIBVIPS=1
+	if use system-vips ; then
+		export SHARP_IGNORE_GLOBAL_LIBVIPS=0
+		vrun yarn add "node-gyp@9.3.1"
+		eapply "${FILESDIR}/texturelab-0.3.3-node-gyp-openssl_fips.patch"
+		export ELECTRON_APP_SKIP_EXIT_CODE_CHECK=0
+	fi
 }
 
 electron-app_src_compile() {
 	cd "${S}" || die
 	export PATH="${S}/node_modules/.bin:${PATH}"
-	yarn electron:build --publish=never || die
+	vrun yarn electron:build --publish=never
 }
 
 src_install() {

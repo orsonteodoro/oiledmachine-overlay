@@ -1204,6 +1204,7 @@ einfo "LIBUV_PV:\t\t${LIBUV_PV}"
 einfo "NODE_PV:\t\t${NODE_PV} (internal)"
 einfo "V8_PV:\t\t${V8_PV} (internal)"
 einfo "ZLIB_PV:\t\t${ZLIB_PV} (external)"
+einfo
 
 	local node_pv=$(node --version | sed -e "s|v||")
 	if ver_test $(ver_cut 1 ${NODE_PV}) -ne $(ver_cut 1 ${node_pv}) ; then
@@ -1469,7 +1470,9 @@ eerror
 		electron-app_src_postcompile
 	fi
 
-	if grep -q -e "Exit code:" "${T}/build.log" ; then
+	if [[ "${ELECTRON_APP_SKIP_EXIT_CODE_CHECK}" == "1" ]] ; then
+		:;
+	elif grep -q -e "Exit code:" "${T}/build.log" ; then
 eerror
 eerror "Detected failure.  Re-emerge..."
 eerror

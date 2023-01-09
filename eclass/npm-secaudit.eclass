@@ -504,7 +504,10 @@ eerror
 		npm-secaudit_src_postcompile
 	fi
 
-	if grep -q -e "Exit code:" "${T}/build.log" ; then
+	if [[ "${NPM_SECAUDIT_SKIP_EXIT_CODE_CHECK}" == "1" \
+		|| "${ELECTRON_APP_SKIP_EXIT_CODE_CHECK}" == "1" ]] ; then
+		:;
+	elif grep -q -e "Exit code:" "${T}/build.log" ; then
 eerror
 eerror "Detected failure.  Re-emerge..."
 eerror
