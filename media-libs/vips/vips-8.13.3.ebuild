@@ -92,7 +92,7 @@ RDEPEND+="
 		>=media-libs/openjpeg-2.4.0[${MULTILIB_USEDEP}]
 	)
 	jxl? (
-		>=media-libs/libjxl-0.7.0
+		>=media-libs/libjxl-0.7.0[${MULTILIB_USEDEP}]
 	)
 	lcms? (
 		>=media-libs/lcms-2.12[${MULTILIB_USEDEP}]
