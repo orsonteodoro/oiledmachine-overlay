@@ -40,13 +40,23 @@ RESTRICT="mirror"
 LIBSASS_EXT="auto"
 
 pkg_setup() {
-	if [[ -z "$LEPTON_CLIENT_ID" || -z "$LEPTON_CLIENT_ID" ]] ; then
+#
+# This is why emerge needs an API or procedure for sensitive data.
+#
+# It is possible to save these datas in environment.bz2 across other prior
+# ebuilds.
+#
+ewarn
+ewarn "Do not provide LEPTON_CLIENT_ID or LEPTON_CLIENT_SECRET if multiple"
+ewarn "ebuilds are being emerged prior to ${PN}.  It should be the only"
+ewarn "ebuild package to pass on this data."
+ewarn
+	if [[ -z "${LEPTON_CLIENT_ID}" || -z "${LEPTON_CLIENT_SECRET}" ]] ; then
 eerror
-eerror "You must define LEPTON_CLIENT_ID and LEPTON_CLIENT_SECRET in your"
-eerror "package.env. See:"
+eerror "You must define LEPTON_CLIENT_ID and LEPTON_CLIENT_SECRET"
+eerror "as environment variable."
 eerror
 eerror "https://github.com/hackjutsu/Lepton#client-idsecret"
-eerror "https://wiki.gentoo.org/wiki//etc/portage/package.env"
 eerror "https://github.com/hackjutsu/Lepton/issues/265"
 eerror
 		die
