@@ -82,6 +82,8 @@ vlc +virtualcam +vst +wayland win-dshow +websocket -win-mf +whatsnew x264
 
 kernel_FreeBSD
 kernel_OpenBSD
+
+r1
 "
 REQUIRED_USE+="
 	ftl? (
@@ -585,6 +587,36 @@ qt_check() {
 	fi
 }
 
+#
+# Should be preformed when the die hook is called also, but
+# the ebuild system doesn't support this!
+#
+# Before compile finishes (or specifically before sanitize_login_tokens gets
+# called), these info will be in plaintext or *unsanitized* because the die hook
+# cannot be called.
+#
+# So the package manager is flawed and needs a special API or hooks to clean.
+# up sensitive information when emerge crashes.
+#
+sanitize_login_tokens() {
+	export RESTREAM_CLIENTID=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	export RESTREAM_HASH=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	export TWITCH_CLIENTID=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	export TWITCH_HASH=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	export YOUTUBE_CLIENTID=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	export YOUTUBE_CLIENTID_HASH=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	export YOUTUBE_SECRET=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	export YOUTUBE_SECRET_HASH=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	unset RESTREAM_CLIENTID
+	unset RESTREAM_HASH
+	unset TWITCH_CLIENTID
+	unset TWITCH_HASH
+	unset YOUTUBE_CLIENTID
+	unset YOUTUBE_CLIENTID_HASH
+	unset YOUTUBE_SECRET
+	unset YOUTUBE_SECRET_HASH
+}
+
 pkg_setup() {
 	qt_check
 	use lua && lua-single_pkg_setup
@@ -604,6 +636,23 @@ eerror
 	if ! use v4l2 ; then
 		ewarn "WebCam capture is possibly disabled.  Enable with the v4l2 USE flag."
 	fi
+
+#
+# Doing something like...
+#
+# SN_CLIENT="xxx" SN_HASH="yyy" emerge -1vuDN obs-studio
+#
+# can save data in environment.bz2 in plaintext in multiple prior packages.
+# This information should only be passed via package.env or via prompt
+# with immediate sanitation.
+#
+ewarn
+ewarn "Do not provide or pass *_CLIENTID or *_HASH environment variables"
+ewarn "from command line or when multiple packages are being emerged"
+ewarn "prior to ${PN}.  This package alone should be emerged alone"
+ewarn "when this information is provided."
+ewarn
+	sleep 15
 
 	if ! use browser || [[ -z "${RESTREAM_CLIENTID}" \
 		|| -z "${RESTREAM_HASH}" ]] ; then
@@ -846,6 +895,7 @@ einfo
 
 src_compile() {
 	cmake_src_compile
+	sanitize_login_tokens
 }
 
 src_install() {
