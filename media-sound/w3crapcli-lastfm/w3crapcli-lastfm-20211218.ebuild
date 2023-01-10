@@ -104,6 +104,7 @@ ewarn "if multiple prior ebuild packages are being emerged prior to ${PN}."
 # package.env system.
 ewarn "Only ${PN} should be emerged alone with this information."
 ewarn
+	sleep 15
 	if use savedconfig ; then
 		if [[ -z "${SAVEDCONFIG_PATH}" ]] ; then
 eerror

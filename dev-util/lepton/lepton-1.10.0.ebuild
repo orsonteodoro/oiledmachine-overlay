@@ -51,6 +51,7 @@ ewarn "Do not provide LEPTON_CLIENT_ID or LEPTON_CLIENT_SECRET if multiple"
 ewarn "ebuilds are being emerged prior to ${PN}.  It should be the only"
 ewarn "ebuild package to pass on this data."
 ewarn
+	sleep 15
 	if [[ -z "${LEPTON_CLIENT_ID}" || -z "${LEPTON_CLIENT_SECRET}" ]] ; then
 eerror
 eerror "You must define LEPTON_CLIENT_ID and LEPTON_CLIENT_SECRET"
