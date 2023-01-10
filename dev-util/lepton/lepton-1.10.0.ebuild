@@ -16,8 +16,8 @@ inherit desktop electron-app npm-utils
 DESCRIPTION="Democratizing Snippet Management (macOS/Win/Linux)"
 HOMEPAGE="http://hackjutsu.com/Lepton"
 THIRD_PARTY_LICENSES="
+	( custom MIT all-rights-reserved keep-copyright-notice )
 	( MIT all-rights-reserved )
-	( MIT all-rights-reserved keep-copyright-notice )
 	( WTFPL-2 ISC )
 	0BSD
 	Apache-2.0
@@ -40,8 +40,8 @@ LICENSE="
 # For ELECTRON_APP_LICENSES, see
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass#L67
 
+# ( custom MIT all-rights-reserved keep-copyright-notice ) - node_modules/ecc-jsbn/lib/LICENSE-jsbn
 # ( MIT all-rights-reserved ) - node_modules/string_decoder/LICENSE
-# ( MIT all-rights-reserved keep-copyright-notice ) - node_modules/ecc-jsbn/lib/LICENSE-jsbn
 # ( WTFPL-2 ISC ) - node_modules/sanitize-filename/LICENSE.md
 # 0BSD - node_modules/tslib/CopyrightNotice.txt
 # Apache-2.0
