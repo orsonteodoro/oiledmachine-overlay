@@ -177,6 +177,9 @@ LICENSE="
 #   custom \
 #     search: "to anyone/anything when using this software" \
 #     search: "license to install, copy and use the SDK solely as necessary for" \
+#     search: "and this permission notice appear in all copies, and that the names of" \
+#     search: "all paragraphs of this notice appear in all copies, and that the" \
+#     search: "copyright notice and this permission notice appear in all copies, and that" \
 #   android \
 #   Apache-2.0 \
 #   APSL-2 \
