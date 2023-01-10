@@ -237,6 +237,7 @@ BDEPEND+="
 	${NODE_GYP_BDEPENDS}
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
+	sys-apps/yarn
 "
 TEXTURELABDATA_COMMIT="eed449f3f9abe8f17ae354ab4cb9932272c7811b"
 SRC_URI="
