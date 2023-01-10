@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
 SLOT="0"
 IUSE+="
 doc download-tracks gettracks glistfm grab-lastfm-userpic lastfmpost mpv
-mplayerfm savedconfig
+mplayerfm savedconfig r1
 "
 REQUIRED_USE+=" savedconfig" # \
 # Potential security problem.  Portage doesn't encrypt environment.bz2
@@ -94,6 +94,16 @@ sanitize_variables() {
 }
 
 pkg_setup() {
+# The emerge system needs a special API to handle sensitive data.
+# Possible ebuild system flaw.
+# It is possible for environment.bz2 to save data across multiple emerged package in plaintext.
+ewarn
+ewarn "Do not set LFM_NAME, LFM_PASS, APP_API_KEY, APP_SHARED_SECRET"
+ewarn "if multiple prior ebuild packages are being emerged prior to ${PN}."
+# It could happen if passed via command line but only should be passed via the
+# package.env system.
+ewarn "Only ${PN} should be emerged alone with this information."
+ewarn
 	if use savedconfig ; then
 		if [[ -z "${SAVEDCONFIG_PATH}" ]] ; then
 eerror
