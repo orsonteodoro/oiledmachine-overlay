@@ -1249,7 +1249,8 @@ einfo "Scanning for analytics packages in package*.json or yarn.lock."
 eerror
 eerror "An analytics package has been detected in ${PN} that may track user"
 eerror "behavior.  Often times, this kind of collection is unannounced in"
-eerror "in READMEs and many times no way to opt out."
+eerror "in READMEs, or cowardly buried hidden under several subfolders, and"
+eerror "many times no way to opt out."
 eerror
 eerror "Keyword found:\t${ap}"
 eerror "Details:"
@@ -1377,7 +1378,8 @@ einfo "Scanning for possible analytics within code."
 eerror
 eerror "Analytics use within the code has detected in ${PN} that may track user"
 eerror "behavior.  Often times, this kind of collection is unannounced in"
-eerror "in READMEs and many times no way to opt out."
+eerror "in READMEs, or cowardly buried hidden under several subfolders, and"
+eerror "many times no way to opt out."
 eerror
 eerror "Pattern:\t${pat}"
 eerror "Details:"
