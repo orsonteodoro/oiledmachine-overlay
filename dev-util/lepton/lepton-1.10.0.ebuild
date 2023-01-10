@@ -21,6 +21,7 @@ LICENSE="
 
 KEYWORDS="~amd64"
 SLOT="0"
+IUSE=" r1"
 DEPEND+="
 	dev-libs/libsass
 "
@@ -53,18 +54,28 @@ eerror
 	electron-app_pkg_setup
 }
 
+sanitize_variables() {
+	export LEPTON_CLIENT_ID=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	export LEPTON_CLIENT_SECRET=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+}
+
+electron-app_src_preprepare() {
+	cp "${FILESDIR}"/account.js "${S}"/configs || die
+	sed -i -e "s|<your_client_id>|${LEPTON_CLIENT_ID}|" \
+		-e "s|<your_client_secret>|${LEPTON_CLIENT_SECRET}|" \
+		"${S}"/configs/account.js || die
+
+	sanitize_variables
+
+	unset LEPTON_CLIENT_ID
+	unset LEPTON_CLIENT_SECRET
+}
+
 electron-app_src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
 	npm run build || die
 	electron-builder -l --dir || die
-}
-
-electron-app_src_preprepare() {
-	cp "${FILESDIR}"/account.js "${S}"/configs || die
-	sed -i -e "s|<your_client_id>|$LEPTON_CLIENT_ID|" \
-		-e "s|<your_client_secret>|$LEPTON_CLIENT_SECRET|" \
-		"${S}"/configs/account.js || die
 }
 
 src_install() {
@@ -77,6 +88,7 @@ src_install() {
 		"${ELECTRON_APP_INSTALL_PATH}/${PN}"
 	npm-utils_install_licenses
 	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
+	shred "${S}"/configs/account.js
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
