@@ -592,7 +592,10 @@ ewarn "from command line or when multiple packages are being emerged"
 ewarn "prior to ${PN}.  This package alone should be emerged alone"
 ewarn "when this information is provided."
 ewarn
-	sleep 15
+ewarn "After being built, this information provided via package.env or"
+ewarn "by patch should be sanitized from forensics attacks."
+ewarn
+	sleep 30
 
 	if ! use browser || [[ -z "${RESTREAM_CLIENTID}" \
 		|| -z "${RESTREAM_HASH}" ]] ; then
