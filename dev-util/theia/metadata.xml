@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/eclipse-theia/theia/issues</bugs-to>
+    <changelog>https://github.com/eclipse-theia/theia/blob/master/CHANGELOG.md</changelog>
+    <remote-id type="github">eclipse-theia/theia</remote-id>
+  </upstream>
+  <slots>
+    <slot name="0">
+      The latest release
+    </slot>
+    <subslots>
+      Reflect the release channel
+
+      community - Stable releases every 3 months
+      monthly - Improvements every month
+    </subslots>
+  </slots>
+</pkgmetadata>

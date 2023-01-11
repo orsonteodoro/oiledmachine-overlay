@@ -6774,6 +6774,18 @@ EOF
 	export WANT_IOSCHED_OPENRC=1
 }
 
+# @FUNCTION: ot-kernel_get_nprocs
+# @INTERNAL
+# @DESCRIPTION:
+# Gets the number N from -jN defined by MAKEOPTS.
+ot-kernel_get_nprocs() {
+	local nprocs=$(echo "${MAKEOPTS}" \
+		| grep -E -e "-j[ ]*[0-9]+" \
+		| grep -E -o -e "[0-9]+")
+	[[ -z "${nprocs}" ]] && nprocs=1
+	echo "${nprocs}"
+}
+
 # @FUNCTION: ot-kernel_src_install
 # @DESCRIPTION:
 # Removes patch cruft.
@@ -6867,14 +6879,34 @@ ot-kernel_src_install() {
 			insinto /usr/src
 			doins -r "${BUILD_DIR}" # Sanitize file permissions
 
-			local nprocs=$(echo "${MAKEOPTS}" | grep -E -e "-j[ ]*[0-9]+" | grep -E -o -e "[0-9]+")
-			[[ -z "${nprocs}" ]] && nprocs=1
+			local nprocs=$(ot-kernel_get_nprocs)
 			einfo "nprocs:  ${nprocs}"
 			einfo "Restoring +x bit"
 			cd "${ED}/usr/src/linux-${PV}-${extraversion}" || die
-			find . -type f -print0 | xargs -0 -I '{}' -P ${nprocs} bash -c "f='{}' ; file '{}' | grep -q -F -e 'executable' && fperms +x \"\${f#.}\""
+			export IFS=$'\n'
+			local f
+			for f in $(find . -type f) ; do
+				(
+					if file "${f}" | grep -q -F -e 'executable' ; then
+						fperms +x "${f#.}"
+					fi
+				) &
+				local njobs=$(jobs -r -p | wc -l)
+				[[ ${njobs} -ge ${nprocs} ]] && wait -n
+			done
+			wait
 			cd "${ED}" || die
-			find boot -type f -print0 | xargs -0 -I '{}' -P ${nprocs} bash -c "f='{}' ; file '{}' | grep -q -E -e 'Linux kernel.*executable' && fperms -x \"/\${f}\""
+			for f in $(find boot -type f) ; do
+				(
+					if file "${f}" | grep -q -E -e 'Linux kernel.*executable' ; then
+						fperms -x "${f}"
+					fi
+				) &
+				local njobs=$(jobs -r -p | wc -l)
+				[[ ${njobs} -ge ${nprocs} ]] && wait -n
+			done
+			wait
+			export IFS=$' \t\n'
 		fi
 
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then

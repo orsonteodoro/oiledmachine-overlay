@@ -649,6 +649,18 @@ npm-secaudit_install_raw() {
 	fi
 }
 
+# @FUNCTION: npm-secaudit_get_nprocs
+# @INTERNAL
+# @DESCRIPTION:
+# Gets the number N from -jN defined by MAKEOPTS.
+npm-secaudit_get_nprocs() {
+	local nprocs=$(echo "${MAKEOPTS}" \
+		| grep -E -e "-j[ ]*[0-9]+" \
+		| grep -E -o -e "[0-9]+")
+	[[ -z "${nprocs}" ]] && nprocs=1
+	echo "${nprocs}"
+}
+
 # @FUNCTION: npm-secaudit_install
 # @DESCRIPTION:
 # Installs an app to image area before going live resetting permissions and owner.
@@ -666,13 +678,21 @@ npm-secaudit_install() {
 	insinto "${d}"
 	doins -r ${rel_src_path}
 
+	export IFS=$'\n'
 	for f in $(find "${ed}" -type f) ; do
-		if file "${f}" | grep -q "executable" ; then
-			chmod 0755 $(realpath "${f}") || die
-		elif file "${f}" | grep -q "shared object" ; then
-			chmod 0755 $(realpath "${f}") || die
-		fi
+		(
+			if file "${f}" | grep -q "executable" ; then
+				chmod 0755 $(realpath "${f}") || die
+			elif file "${f}" | grep -q "shared object" ; then
+				chmod 0755 $(realpath "${f}") || die
+			fi
+		) &
+		local nprocs=$(npm-secaudit_get_nprocs)
+		local njobs=$(jobs -r -p | wc -l)
+		[[ ${njobs} -ge ${nprocs} ]] && wait -n
 	done
+	wait
+	export IFS=$' \t\n'
 
 	if [[ "${old_dotglob}" == "on" ]] ; then
 		shopt -s dotglob

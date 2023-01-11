@@ -1137,7 +1137,15 @@ ewarn
 
 	local ELECTRON_PV
 	local ELECTRON_PV_
-	if npm ls electron | grep -q -F -e " electron@" ; then
+	if [[ -n "${ELECTRON_APP_ELECTRON_PV}" ]] ; then
+		# fallback based on analysis on package.json
+		ELECTRON_PV=${ELECTRON_APP_ELECTRON_PV} # for json search
+		ELECTRON_PV_=${ELECTRON_APP_ELECTRON_PV}
+		ELECTRON_PV_=${ELECTRON_PV_/-/_}
+		ELECTRON_PV_=${ELECTRON_PV_/alpha./alpha}
+		ELECTRON_PV_=${ELECTRON_PV_/beta./beta}
+		ELECTRON_PV_=${ELECTRON_PV_/nightly./pre} # sanitize for ver_test
+	elif npm ls electron | grep -q -F -e " electron@" ; then
 		# case when ^ or latest used
 		ELECTRON_PV=$(npm ls electron \
 			| grep -E -e "electron@[0-9.]+" \
@@ -1145,14 +1153,6 @@ ewarn
 			| grep -E -o -e "[0-9\.a-z-]*" \
 			| tail -n 1) # used by package and json search
 		ELECTRON_PV_=${ELECTRON_PV}
-		ELECTRON_PV_=${ELECTRON_PV_/-/_}
-		ELECTRON_PV_=${ELECTRON_PV_/alpha./alpha}
-		ELECTRON_PV_=${ELECTRON_PV_/beta./beta}
-		ELECTRON_PV_=${ELECTRON_PV_/nightly./pre} # sanitize for ver_test
-	elif [[ -n "${ELECTRON_APP_ELECTRON_PV}" ]] ; then
-		# fallback based on analysis on package.json
-		ELECTRON_PV=${ELECTRON_APP_ELECTRON_PV} # for json search
-		ELECTRON_PV_=${ELECTRON_APP_ELECTRON_PV}
 		ELECTRON_PV_=${ELECTRON_PV_/-/_}
 		ELECTRON_PV_=${ELECTRON_PV_/alpha./alpha}
 		ELECTRON_PV_=${ELECTRON_PV_/beta./beta}
@@ -1606,6 +1606,18 @@ eerror
 	esac
 }
 
+# @FUNCTION: electron-app_get_nprocs
+# @INTERNAL
+# @DESCRIPTION:
+# Gets the number N from -jN defined by MAKEOPTS.
+electron-app_get_nprocs() {
+	local nprocs=$(echo "${MAKEOPTS}" \
+		| grep -E -e "-j[ ]*[0-9]+" \
+		| grep -E -o -e "[0-9]+")
+	[[ -z "${nprocs}" ]] && nprocs=1
+	echo "${nprocs}"
+}
+
 # @FUNCTION: electron-app_desktop_install_program
 # @DESCRIPTION:
 # Installs program only.  Resets permissions and ownership.  Additional change
@@ -1616,6 +1628,7 @@ electron-app_desktop_install_program() {
 	local rel_src_path="$1"
 	local d="${ELECTRON_APP_INSTALL_PATH}"
 	local ed="${ED}/${d}"
+	local nprocs=$(electron-app_get_nprocs)
 	case "$ELECTRON_APP_MODE" in
 		npm|yarn)
 			local old_dotglob=$(shopt dotglob | cut -f 2)
@@ -1624,13 +1637,20 @@ electron-app_desktop_install_program() {
 			insinto "${d}"
 			doins -r ${rel_src_path}
 
+			export IFS=$'\n'
 			for f in $(find "${ed}" -type f) ; do
-				if file "${f}" | grep -q "executable" ; then
-					chmod 0755 $(realpath "${f}") || die
-				elif file "${f}" | grep -q "shared object" ; then
-					chmod 0755 $(realpath "${f}") || die
-				fi
+				(
+					if file "${f}" | grep -q "executable" ; then
+						chmod 0755 $(realpath "${f}") || die
+					elif file "${f}" | grep -q "shared object" ; then
+						chmod 0755 $(realpath "${f}") || die
+					fi
+				) &
+				local njobs=$(jobs -r -p | wc -l)
+				[[ ${njobs} -ge ${nprocs} ]] && wait -n
 			done
+			wait
+			export IFS=$' \t\n'
 
 			if [[ "${old_dotglob}" == "on" ]] ; then
 				shopt -s dotglob

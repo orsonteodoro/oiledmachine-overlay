@@ -84,6 +84,18 @@ ewarn "QA:  ${LCNR_SOURCE}/${d}/${file_name} is missing"
 	fi
 }
 
+# @FUNCTION: lcnr_get_nprocs
+# @INTERNAL
+# @DESCRIPTION:
+# Gets the number N from -jN defined by MAKEOPTS.
+lcnr_get_nprocs() {
+	local nprocs=$(echo "${MAKEOPTS}" \
+		| grep -E -e "-j[ ]*[0-9]+" \
+		| grep -E -o -e "[0-9]+")
+	[[ -z "${nprocs}" ]] && nprocs=1
+	echo "${nprocs}"
+}
+
 # @FUNCTION: lcnr_install_files
 # @DESCRIPTION:
 # Installs a licenses or copyright notices from packages and other internal
@@ -101,6 +113,7 @@ lcnr_install_files() {
 einfo
 einfo "Copying third party licenses and copyright notices${message_extension}"
 einfo
+	local nprocs=$(lcnr_get_nprocs)
 	export IFS=$'\n'
 	local f
 	for f in $(find "${LCNR_SOURCE}" \
@@ -116,21 +129,26 @@ einfo
 		-e "copyright" \
 		-e "licen" \
 		-e "warrant" \
-		$(find "${LCNR_SOURCE}" -iname "*readme*")) ; \
+		$(find "${LCNR_SOURCE}" -iname "*readme*" -type f)) ; \
 	do
-		local d
-		if [[ -f "${f}" ]] ; then
-			d=$(dirname "${f}" | sed -e "s|^${LCNR_SOURCE}||")
-		else
-			d=$(echo "${f}" | sed -e "s|^${LCNR_SOURCE}||")
-		fi
-		if [[ -n "${LCNR_TAG}" ]] ; then
-			docinto "licenses/${LCNR_TAG}/${d}"
-		else
-			docinto "licenses/${d}"
-		fi
-		dodoc -r "${f}"
+		(
+			local d
+			if [[ -f "${f}" ]] ; then
+				d=$(dirname "${f}" | sed -e "s|^${LCNR_SOURCE}||")
+			else
+				d=$(echo "${f}" | sed -e "s|^${LCNR_SOURCE}||")
+			fi
+			if [[ -n "${LCNR_TAG}" ]] ; then
+				docinto "licenses/${LCNR_TAG}/${d}"
+			else
+				docinto "licenses/${d}"
+			fi
+			dodoc -r "${f}"
+		) &
+		local njobs=$(jobs -r -p | wc -l)
+		[[ ${njobs} -ge ${nprocs} ]] && wait -n
 	done
+	wait
 	export IFS=$' \t\n'
 
 	if [[ "${LCNR_COPY_ONCE}" == "1" ]] ; then
@@ -167,6 +185,7 @@ einfo
 		)
 	fi
 
+	local nprocs=$(lcnr_get_nprocs)
 	export IFS=$'\n'
 	local f
 	for f in $(find "${LCNR_SOURCE}" \
@@ -183,19 +202,24 @@ einfo
 		${extra_args[@]} \
 	) ; \
 	do
-		local d
-		if [[ -f "${f}" ]] ; then
-			d=$(dirname "${f}" | sed -e "s|^${LCNR_SOURCE}||")
-		else
-			d=$(echo "${f}" | sed -e "s|^${LCNR_SOURCE}||")
-		fi
-		if [[ -n "${LCNR_TAG}" ]] ; then
-			docinto "readmes/${LCNR_TAG}/${d}"
-		else
-			docinto "readmes/${d}"
-		fi
-		dodoc -r "${f}"
+		(
+			local d
+			if [[ -f "${f}" ]] ; then
+				d=$(dirname "${f}" | sed -e "s|^${LCNR_SOURCE}||")
+			else
+				d=$(echo "${f}" | sed -e "s|^${LCNR_SOURCE}||")
+			fi
+			if [[ -n "${LCNR_TAG}" ]] ; then
+				docinto "readmes/${LCNR_TAG}/${d}"
+			else
+				docinto "readmes/${d}"
+			fi
+			dodoc -r "${f}"
+		) &
+		local njobs=$(jobs -r -p | wc -l)
+		[[ ${njobs} -ge ${nprocs} ]] && wait -n
 	done
+	wait
 	export IFS=$' \t\n'
 	if [[ "${LCNR_COPY_ONCE}" == "1" ]] ; then
 		touch "${filename}"
