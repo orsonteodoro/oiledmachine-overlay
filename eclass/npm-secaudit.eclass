@@ -678,6 +678,7 @@ npm-secaudit_install() {
 	insinto "${d}"
 	doins -r ${rel_src_path}
 
+	local nprocs=$(npm-secaudit_get_nprocs)
 	export IFS=$'\n'
 	for f in $(find "${ed}" -type f) ; do
 		(
@@ -687,7 +688,6 @@ npm-secaudit_install() {
 				chmod 0755 $(realpath "${f}") || die
 			fi
 		) &
-		local nprocs=$(npm-secaudit_get_nprocs)
 		local njobs=$(jobs -r -p | wc -l)
 		[[ ${njobs} -ge ${nprocs} ]] && wait -n
 	done
