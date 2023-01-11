@@ -1261,8 +1261,7 @@ electron-app_find_analytics() {
 	)
 
 	local analytics_packages=(
-		"/analytics"
-		"-analytics"
+		"analytics"
 		"telemetry"
 		"glean"
 	)
