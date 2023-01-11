@@ -276,7 +276,7 @@ if [[ "${ELECTRON_APP_FEATURE_UNITY}" == "1" ]] ; then
 	"
 fi
 
-# Only add if you think it may benefit from video codec HW acceleration
+# Add if the app uses video or jpeg images
 if [[ "${ELECTRON_APP_FEATURE_VAAPI}" == "1" ]] ; then
 	IUSE+=" vaapi"
 	ELECTRON_APP_OPTIONAL_DEPEND+="
