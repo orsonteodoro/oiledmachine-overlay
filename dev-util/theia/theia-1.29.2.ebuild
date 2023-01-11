@@ -45,7 +45,6 @@ THIRD_PARTY_LICENSES="
 			MPL-2.0 \
 			public-domain \
 			Unlicense \
-			X11 \
 			|| ( BSD-2 MIT Apache-2.0 ) \
 			|| ( BSD MPL-2.0 ) \
 			|| ( MIT GPL-2 ) \
@@ -170,7 +169,7 @@ LICENSE="
 #     MPL-2.0 \
 #     public-domain \
 #     Unlicense \
-#     X11 \
+#     X11 [see distro MIT license file] \
 #     || ( BSD-2 MIT Apache-2.0 ) \
 #     || ( BSD MPL-2.0 ) \
 #     || ( MIT GPL-2 ) \
