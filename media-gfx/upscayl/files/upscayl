@@ -1,0 +1,7 @@
+#!/bin/bash
+NODE_ENV="${NODE_ENV}"
+NODE_VERSION="${NODE_VERSION}"
+PROJECT_ROOT="${INSTALL_DIR}"
+pushd "${PROJECT_ROOT}"
+	./${PN} "$@"
+popd
