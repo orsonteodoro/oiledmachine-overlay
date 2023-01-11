@@ -3,4 +3,8 @@ NODE_VERSION=${NODE_VERSION}
 NODE_ENV=${NODE_ENV}
 export PATH="${INSTALL_DIR}/node_modules/.bin:${PATH}"
 cd "${INSTALL_DIR}/examples/electron"
-"${INSTALL_DIR}/node_modules/.bin/theia" start --plugins=local-dir:../../plugins "${@}"
+if [[ -n "${DISPLAY}" ]] ; then
+	"${INSTALL_DIR}/node_modules/.bin/theia" start --plugins=local-dir:../../plugins "${@}"
+else
+	"${INSTALL_DIR}/node_modules/.bin/theia" --enable-features=UseOzonePlatform --ozone-platform-hint=wayland start --plugins=local-dir:../../plugins "${@}"
+fi

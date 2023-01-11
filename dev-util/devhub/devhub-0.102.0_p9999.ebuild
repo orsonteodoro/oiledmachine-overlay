@@ -161,6 +161,7 @@ src_install() {
 	exeinto /usr/bin
 	doexe "${FILESDIR}/${PN}"
 	sed -i \
+		-e "s|\${INSTALL_PATH}|${ELECTRON_APP_INSTALL_PATH}|g" \
 		-e "s|\${NODE_ENV}|${NODE_ENV}|g" \
 		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
 		"${ED}/usr/bin/${PN}" || die

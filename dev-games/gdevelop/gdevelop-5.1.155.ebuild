@@ -446,7 +446,9 @@ ewarn
 		rm "${ED}/usr/bin/${PN}" || die # Replace wrapper with the one below
 	fi
 	cp "${FILESDIR}/${PN}" "${T}/${PN}" || die
-	sed -i  -e "s|\$(get_libdir)|$(get_libdir)|g" \
+	sed -i \
+		-e "s|\${INSTALL_PATH}|${ELECTRON_APP_INSTALL_PATH}|g" \
+		-e "s|\$(get_libdir)|$(get_libdir)|g" \
 		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
 		-e "s|\${PN}|${PN}|g" \
 		-e "s|\${SLOT_MAJOR}|${SLOT_MAJOR}|g" \

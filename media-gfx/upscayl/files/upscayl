@@ -2,6 +2,9 @@
 NODE_ENV="${NODE_ENV}"
 NODE_VERSION="${NODE_VERSION}"
 PROJECT_ROOT="${INSTALL_DIR}"
-pushd "${PROJECT_ROOT}"
+cd "${PROJECT_ROOT}"
+if [[ -n "${DISPLAY}" ]] ; then
 	./${PN} "$@"
-popd
+else
+	./${PN} --enable-features=UseOzonePlatform --ozone-platform-hint=wayland "$@"
+fi

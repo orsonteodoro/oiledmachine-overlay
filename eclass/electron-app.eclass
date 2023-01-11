@@ -215,11 +215,16 @@ ELECTRON_APP_LICENSES="
 ELECTRON_APP_DATA_DIR="${EROOT}/var/cache/npm-secaudit"
 ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 
-ELECTRON_APP_OPTIONAL_DEPENDS=" "
-ELECTRON_APP_CR_OPTIONAL_DEPENDS=" "
+IUSE+=" wayland +X"
+REQUIRED_USE+="
+	|| ( wayland X )
+"
+
+ELECTRON_APP_OPTIONAL_DEPEND=" "
+ELECTRON_APP_CR_OPTIONAL_DEPEND=" "
 if [[ "${ELECTRON_APP_FEATURE_APPINDICATOR}" == "1" ]] ; then
 	IUSE+=" app-indicator"
-	ELECTRON_APP_OPTIONAL_DEPENDS+="
+	ELECTRON_APP_OPTIONAL_DEPEND+="
 		app-indicator? (
 			dev-libs/libappindicator:3
 		)
@@ -228,7 +233,7 @@ fi
 
 if [[ "${ELECTRON_APP_FEATURE_GLOBAL_MENU_BAR}" == "1" ]] ; then
 	IUSE+=" global-menu-bar"
-	ELECTRON_APP_OPTIONAL_DEPENDS+="
+	ELECTRON_APP_OPTIONAL_DEPEND+="
 		global-menu-bar? (
 			dev-libs/libdbusmenu
 		)
@@ -237,7 +242,7 @@ fi
 
 if [[ "${ELECTRON_APP_FEATURE_GNOME_KEYRING}" == "1" ]] ; then
 	IUSE+=" gnome-keyring"
-	ELECTRON_APP_CR_OPTIONAL_DEPENDS+="
+	ELECTRON_APP_CR_OPTIONAL_DEPEND+="
 		gnome-keyring? (
 			gnome-base/gnome-keyring[pam]
 		)
@@ -246,40 +251,53 @@ fi
 
 if [[ "${ELECTRON_APP_FEATURE_LIBSECRET}" == "1" ]] ; then
 	IUSE+=" libsecret"
-	ELECTRON_APP_CR_OPTIONAL_DEPENDS+="
+	ELECTRON_APP_CR_OPTIONAL_DEPEND+="
 		libsecret? (
 			app-crypt/libsecret
 		)
 	"
 fi
 
-if [[ "${ELECTRON_APP_FEATURE_UNITY}" == "1" ]] ; then
-	IUSE+=" unity"
-	ELECTRON_APP_OPTIONAL_DEPENDS+="
-		unity? (
-			dev-libs/libunity
-		)
-	"
-fi
-
 if [[ "${ELECTRON_APP_FEATURE_PULSEAUDIO}" == "1" ]] ; then
 	IUSE+=" pulseaudio"
-	ELECTRON_APP_CR_OPTIONAL_DEPENDS+="
+	ELECTRON_APP_CR_OPTIONAL_DEPEND+="
 		pulseaudio? (
 			media-sound/pulseaudio
 		)
 	"
 fi
 
+if [[ "${ELECTRON_APP_FEATURE_UNITY}" == "1" ]] ; then
+	IUSE+=" unity"
+	ELECTRON_APP_OPTIONAL_DEPEND+="
+		unity? (
+			dev-libs/libunity
+		)
+	"
+fi
+
+# Only add if you think it may benefit from video codec HW acceleration
+if [[ "${ELECTRON_APP_FEATURE_VAAPI}" == "1" ]] ; then
+	IUSE+=" vaapi"
+	ELECTRON_APP_OPTIONAL_DEPEND+="
+		media-video/ffmpeg[vaapi?]
+		vaapi? (
+			media-libs/libva
+			media-libs/vaapi-drivers
+		)
+	"
+fi
+
 # See https://www.electronjs.org/docs/tutorial/support#linux for OS min requirements.
 
-# The dependencies for
+# For dependencies, see also
+# https://github.com/chromium/chromium/blob/109.0.5414.74/build/install-build-deps.sh#L230
 
 # Found in Chromium only
 # For optional fonts, see
 # https://github.com/chromium/chromium/blob/master/build/linux/install-chromeos-fonts.py
 #  For specific versions associated with Chromium release, see as base address
-#  https://github.com/chromium/chromium/tree/66.0.3359.181/
+#  https://github.com/chromium/chromium/tree/109.0.5414.74/
 #    chromium/chrome/installer/linux/debian/dist_package_versions.json for
 #      chromium 66.0.3359.181 (electron version v3.0.0 to latest)
 #    chrome/installer/linux/debian/expected_deps_x64 for chromium 49.0.2623.75
@@ -287,15 +305,19 @@ fi
 # Chromium supports at least U 14.04, this is why there is no version
 # restrictions below in all *DEPENDs section.
 CHROMIUM_DEPEND="
-	${ELECTRON_APP_CR_OPTIONAL_DEPENDS}
+	${ELECTRON_APP_CR_OPTIONAL_DEPEND}
 	app-accessibility/speech-dispatcher
 	dev-db/sqlite:3
 "
 # Electron only
 # Assumes U 18.04 builder but allows for older U LTS if libs present.
+RPATH_OVERRIDE_DEPEND="
+	media-video/ffmpeg
+" # System libs that are not used which the bundle version overrides.
 COMMON_DEPEND="
+	${RPATH_OVERRIDE_DEPEND}
 	${CHROMIUM_DEPEND}
-	${ELECTRON_APP_OPTIONAL_DEPENDS}
+	${ELECTRON_APP_OPTIONAL_DEPEND}
 	app-accessibility/at-spi2-atk:2
 	app-arch/bzip2
 	dev-libs/atk
@@ -319,7 +341,6 @@ COMMON_DEPEND="
 	media-libs/libepoxy
 	media-libs/libpng
 	media-libs/mesa[egl(+),gbm(+)]
-	media-video/ffmpeg
 	net-dns/libidn2
 	net-libs/gnutls
 	net-print/cups
@@ -331,26 +352,32 @@ COMMON_DEPEND="
 	virtual/ttf-fonts
 	x11-libs/cairo
 	x11-libs/gdk-pixbuf:2
-	x11-libs/gtk+:3[X]
-	x11-libs/libX11
-	x11-libs/libXScrnSaver
-	x11-libs/libXau
-	x11-libs/libXcomposite
-	x11-libs/libXcursor
-	x11-libs/libXdamage
-	x11-libs/libXdmcp
-	x11-libs/libXext
-	x11-libs/libXfixes
-	x11-libs/libXi
-	x11-libs/libXrandr
-	x11-libs/libXrender
-	x11-libs/libXtst
-	x11-libs/libXxf86vm
+	x11-libs/gtk+:3[wayland?,X?]
 	x11-libs/libdrm
-	x11-libs/libxcb
-	x11-libs/libxshmfence
+	x11-libs/libxkbcommon
 	x11-libs/pango
 	x11-libs/pixman
+	wayland? (
+		dev-libs/wayland
+	)
+	X? (
+		x11-libs/libX11
+		x11-libs/libXScrnSaver
+		x11-libs/libXau
+		x11-libs/libXcomposite
+		x11-libs/libXcursor
+		x11-libs/libXdamage
+		x11-libs/libXdmcp
+		x11-libs/libXext
+		x11-libs/libXfixes
+		x11-libs/libXi
+		x11-libs/libXrandr
+		x11-libs/libXrender
+		x11-libs/libXtst
+		x11-libs/libXxf86vm
+		x11-libs/libxcb
+		x11-libs/libxshmfence
+	)
 "
 
 if [[ -n "${ELECTRON_APP_ELECTRON_PV}" ]] \
@@ -1710,19 +1737,35 @@ eerror
 		electron-app_desktop_install_program "${rel_src_path}"
 		# Create wrapper
 		exeinto "/usr/bin"
-		echo "#!/bin/bash" > "${T}/${PN}"
+		local node_version=""
+		local node_env=""
 		if [[ -n "${NODE_VERSION}" ]] ; then
 einfo "Setting NODE_VERSION=${NODE_VERSION} in wrapper."
-			echo "export NODE_VERSION=${NODE_VERSION}" >> "${T}/${PN}"
+			node_version="export NODE_VERSION=${NODE_VERSION}"
 		fi
 		if [[ "${NODE_ENV}" == "production" ]] ; then
 einfo "Setting NODE_ENV=\${NODE_ENV:-production} in wrapper."
-			echo "export NODE_ENV=\${NODE_ENV:-production}" >> "${T}/${PN}"
+			node_env="export NODE_ENV=\${NODE_ENV:-production}"
 		else
 einfo "Setting NODE_ENV=\${NODE_ENV:-development} in wrapper."
-			echo "export NODE_ENV=\${NODE_ENV:-development}" >> "${T}/${PN}"
+			node_env="export NODE_ENV=\${NODE_ENV:-development}"
 		fi
-		echo "${cmd} \"\${@}\"" >> "${T}/${PN}"
+
+cat <<EOF > "${T}/${PN}" || die
+#!/bin/bash
+${node_version}
+${node_env}
+extra_args=""
+
+# Client side window directions (title bar) issue #29618
+[[ \${NODE_VERSION} -ge 18 ]] && extra_args="--enable-features=WaylandWindowDecorations"
+
+if [[ -n \${DISPLAY} ]] ; then
+	${cmd} "\${@}"
+else
+	${cmd} --enable-features=UseOzonePlatform --ozone-platform-hint=wayland \${extra_args} "\${@}"
+fi
+EOF
 		doexe "${T}/${PN}"
 
 		local icon=""

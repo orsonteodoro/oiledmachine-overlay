@@ -16,13 +16,15 @@ if [[ -f "${SETTINGS}" ]] ; then
 		exit 1
 	fi
 fi
-ROOT="/opt/${PN}/${SLOT_MAJOR}"
 IDE_MODE=${IDE_MODE:="Electron"} # can be either Electron or Web_Browser
 
-pushd "${ROOT}/newIDE/electron-app"
+cd "${INSTALL_PATH}/newIDE/electron-app"
 if [[ "${IDE_MODE}" == "Electron" ]] ; then
-	./node_modules/electron/dist/electron app "${@}"
+	if [[ -n "${DISPLAY}" ]] ; then
+		./node_modules/electron/dist/electron app "${@}"
+	else
+		./node_modules/electron/dist/electron --enable-features=UseOzonePlatform --ozone-platform-hint=wayland app "${@}"
+	fi
 else
 	xdg-open "http://localhost:3000"
 fi
-popd
