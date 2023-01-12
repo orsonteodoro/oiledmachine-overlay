@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# You must add the following to /etc/portage/profile/package.use.mask
+# media-libs/opencv -contribhdf
+
 PYTHON_COMPAT=( python3_{8..11} )
 inherit meson python-r1
 
@@ -14,18 +17,18 @@ LICENSE="MIT BSD CC0-1.0"
 # BSD - howdy/src/recorders/v4l2.py
 #KEYWORDS="~amd64" # Still needs testing
 SLOT="0"
-IUSE+=" cuda ffmpeg gtk pyv4l2"
+IUSE+=" cuda ffmpeg gtk pyv4l2 r1"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
 DEPEND+="
 	${PYTHON_DEPS}
+	$(python_gen_any_dep 'sys-auth/pam-python[${PYTHON_SINGLE_USEDEP}]')
 	>=dev-libs/inih-52
 	>=sci-libs/dlib-19.16[${PYTHON_USEDEP},cuda?]
 	dev-libs/boost[${PYTHON_USEDEP},python]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	media-libs/opencv[${PYTHON_USEDEP},contribhdf,python,v4l]
-	sys-auth/pam-python[${PYTHON_USEDEP}]
 	sys-libs/pam
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-7.5
