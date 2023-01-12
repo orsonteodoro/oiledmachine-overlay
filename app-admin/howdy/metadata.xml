@@ -41,6 +41,9 @@
     <flag name="cuda">
       Used for improved face detection in various angles.
     </flag>
+    <flag name="fallback-commit">
+      Rewind commit to the last tested commit compatible with patches.
+    </flag>
     <flag name="ffmpeg">
       Uses FFmpeg as a capture source.  Otherwise, use OpenCV.  If grayscale
       issues occur with OpenCV, use the ffmpeg USE flag instead.

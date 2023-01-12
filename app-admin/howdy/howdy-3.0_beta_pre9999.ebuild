@@ -8,7 +8,7 @@ EAPI=8
 # media-libs/opencv -contribhdf
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit meson python-r1
+inherit git-r3 meson python-r1
 
 DESCRIPTION="Facial authentication for Linux"
 HOMEPAGE="https://github.com/boltgolt/howdy"
@@ -17,7 +17,7 @@ LICENSE="MIT BSD CC0-1.0"
 # BSD - howdy/src/recorders/v4l2.py
 #KEYWORDS="~amd64" # Still needs testing.  Not confirmed working.
 SLOT="0"
-IUSE+=" cuda ffmpeg gtk pyv4l2 r1"
+IUSE+=" cuda ffmpeg gtk pyv4l2"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -57,15 +57,22 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-3.0_beta_pre20220131-pam_howdy-meson-build-fixes.patch"
 	"${FILESDIR}/${PN}-3.0_beta_pre20220131-use-py3-pythonparser.patch"
 )
-EGIT_COMMIT="96767fe58ee381ba20cbddc88646335eb719ec8c"
 EGIT_COMMIT_DLIB_MODELS="daf943f7819a3dda8aec4276754ef918dc26491f"
 DLIB_MODELS_DATE="20210412"
-SRC_URI="
+if [[ ${PV} =~ 9999 ]] ; then
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${PN}-${PV}"
+else
+	EGIT_COMMIT="943f1e14e2c05159c22fb5176db377c0c1610bba"
+	SRC_URI+="
 https://github.com/boltgolt/howdy/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz
+	"
+	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+fi
+SRC_URI+="
 https://github.com/davisking/dlib-models/raw/master/dlib_face_recognition_resnet_model_v1.dat.bz2
 	-> dlib_face_recognition_resnet_model_v1-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat.bz2
 https://github.com/davisking/dlib-models/raw/master/mmod_human_face_detector.dat.bz2
@@ -73,7 +80,6 @@ https://github.com/davisking/dlib-models/raw/master/mmod_human_face_detector.dat
 https://github.com/davisking/dlib-models/raw/master/shape_predictor_5_face_landmarks.dat.bz2
 	-> shape_predictor_5_face_landmarks-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat.bz2
 "
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
 pkg_setup()
@@ -96,6 +102,13 @@ ewarn
 }
 
 src_unpack() {
+	if [[ ${PV} =~ 9999 ]] ; then
+		use fallback-commit && EGIT_COMMIT="943f1e14e2c05159c22fb5176db377c0c1610bba" # Apr 26, 2022
+		EGIT_BRANCH="beta"
+		EGIT_REPO_URI="https://github.com/boltgolt/howdy.git"
+		git-r3_fetch
+		git-r3_checkout
+	fi
 	unpack ${A}
 	mv dlib_face_recognition_resnet_model_v1-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat \
 		dlib_face_recognition_resnet_model_v1.dat || die
@@ -125,7 +138,7 @@ einfo "Editing ${f}"
 }
 
 src_configure() {
-	pushd "${WORKDIR}/${PN}-${EGIT_COMMIT}/howdy/src" || die
+	pushd "${S}/howdy/src" || die
 		if use cuda ; then
 			sed -i -e "s|use_cnn = false|use_cnn = true|g" \
 				config.ini || die
@@ -141,8 +154,8 @@ src_configure() {
 		sed -i -e "s|/lib/security/howdy/config.ini|/$(get_libdir)/security/howdy/config.ini|g" \
 			"pam/main.cc" || die
 	popd
-	pushd "${WORKDIR}/${PN}-${EGIT_COMMIT}/howdy/src/pam" || die
-		export EMESON_SOURCE="${WORKDIR}/${PN}-${EGIT_COMMIT}/howdy/src/pam"
+	pushd "${S}/howdy/src/pam" || die
+		export EMESON_SOURCE="${S}/howdy/src/pam"
 		local emesonargs=(
 			-Dinih:with_INIReader=true
 		)
@@ -186,7 +199,7 @@ einfo "DIR: fperms 0755 ${x}"
 		insinto /usr/share/bash-completion/completions
 		doins src/autocomplete/howdy
 		exeinto /$(get_libdir)/security
-		doexe "${BUILD_DIR}/libpam_howdy.so"
+		doexe "${BUILD_DIR}/pam_howdy.so"
 		dodir /usr/share/howdy
 		rm -rf "${ED}/$(get_libdir)/security/howdy/pam-config"
 	popd || die
