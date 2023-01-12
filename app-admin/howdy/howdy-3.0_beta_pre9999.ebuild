@@ -7,6 +7,9 @@ EAPI=8
 # You must add the following to /etc/portage/profile/package.use.mask
 # media-libs/opencv -contribhdf
 
+# For versioning, see
+# https://github.com/boltgolt/howdy/blob/beta/howdy/src/cli.py#L122
+
 PYTHON_COMPAT=( python3_{8..11} )
 inherit git-r3 meson python-r1
 
@@ -23,9 +26,8 @@ REQUIRED_USE+="
 "
 DEPEND+="
 	${PYTHON_DEPS}
-	$(python_gen_any_dep 'sys-auth/pam-python[${PYTHON_SINGLE_USEDEP}]')
 	>=dev-libs/inih-52
-	>=sci-libs/dlib-19.16[${PYTHON_USEDEP},cuda?]
+	>=sci-libs/dlib-19.16[${PYTHON_USEDEP},cuda?,python]
 	dev-libs/boost[${PYTHON_USEDEP},python]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	media-libs/opencv[${PYTHON_USEDEP},contribhdf,python,v4l]
@@ -228,6 +230,11 @@ einfo
 einfo "  https://github.com/boltgolt/howdy/wiki/Only-using-howdy-for-specific-authentication-types"
 einfo
 einfo "It may be possible to apply these changes beyond sudo."
+einfo
+einfo "You must add the following to /etc/pam.d/ file(s) that would benefit"
+einfo "by using howdy and before system-auth line."
+einfo
+einfo "auth            sufficient      /lib64/security/pam_howdy.so"
 einfo
 	if ! use ffmpeg ; then
 ewarn
