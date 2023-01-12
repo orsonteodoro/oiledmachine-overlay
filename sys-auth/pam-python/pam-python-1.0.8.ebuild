@@ -13,7 +13,7 @@ LICENSE="AGPL-3+"
 
 # Still needs testing.  Not confirmed working.
 # It requires manual setup which has not been documented.
-#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
@@ -59,9 +59,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-ewarn
-ewarn "This ebuild has not been confirmed working."
-ewarn
 	addwrite /etc/pam.d
 	python-single-r1_pkg_setup
 	if use test ; then
@@ -73,16 +70,7 @@ eerror "FEATURES:  ${FEATURES}"
 	fi
 }
 
-src_prepare() {
-	default
-#	die
-	# Breaks with python2.7
-#	einfo "Futurizing py2 -> py3"
-#	futurize -0 -w . || die
-}
-
 src_configure() {
-#	sed -i -e "s|-O0|-O1|g" "src/Makefile" || die
 	export CC=$(tc-getCC)
 }
 
@@ -128,4 +116,4 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD PYTHON-NO-CHANGE
-# OILEDMACHINE-OVERLAY-META-REVDEP:  orphaned
+# OILEDMACHINE-OVERLAY-META-REVDEP:  howdy

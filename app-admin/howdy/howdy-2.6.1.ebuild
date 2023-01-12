@@ -8,10 +8,10 @@ EAPI=8
 # media-libs/opencv -contribhdf
 
 # For versioning, see
-# https://github.com/boltgolt/howdy/blob/beta/howdy/src/cli.py#L122
+# https://github.com/boltgolt/howdy/blob/v2.6.1/src/cli.py#L111
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit git-r3 meson python-r1
+inherit python-r1
 
 DESCRIPTION="Facial authentication for Linux"
 HOMEPAGE="https://github.com/boltgolt/howdy"
@@ -20,12 +20,13 @@ LICENSE="MIT BSD CC0-1.0"
 # BSD - howdy/src/recorders/v4l2.py
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE+=" cuda ffmpeg gtk pyv4l2"
+IUSE+=" cuda ffmpeg pyv4l2"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
 DEPEND+="
 	${PYTHON_DEPS}
+	$(python_gen_any_dep 'sys-auth/pam-python[${PYTHON_SINGLE_USEDEP}]')
 	>=dev-libs/inih-52
 	>=sci-libs/dlib-19.16[${PYTHON_USEDEP},cuda?,python]
 	dev-libs/boost[${PYTHON_USEDEP},python]
@@ -39,10 +40,6 @@ DEPEND+="
 		dev-python/ffmpeg-python[${PYTHON_USEDEP}]
 		media-video/ffmpeg[v4l]
 	)
-	gtk? (
-		dev-python/elevate[${PYTHON_USEDEP}]
-		x11-libs/gtk+:3[introspection]
-	)
 	pyv4l2? (
 		dev-python/pyv4l2[${PYTHON_USEDEP}]
 		media-libs/libv4l
@@ -52,27 +49,21 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	dev-util/meson
 	|| (
 		>=sys-devel/gcc-5
 		>=sys-devel/clang-3.4
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-3.0_beta_pre20220131-use-py3-pythonparser.patch"
+	"${FILESDIR}/${PN}-2.6.1-use-py3-pythonparser.patch"
 )
 EGIT_COMMIT_DLIB_MODELS="daf943f7819a3dda8aec4276754ef918dc26491f"
 DLIB_MODELS_DATE="20210412"
-if [[ ${PV} =~ 9999 ]] ; then
-	IUSE+=" fallback-commit"
-	S="${WORKDIR}/${PN}-${PV}"
-else
-	SRC_URI+="
+SRC_URI+="
 https://github.com/boltgolt/howdy/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-	"
-	S="${WORKDIR}/${PN}-${PV}"
-fi
+"
+S="${WORKDIR}/${PN}-${PV}"
 SRC_URI+="
 https://github.com/davisking/dlib-models/raw/master/dlib_face_recognition_resnet_model_v1.dat.bz2
 	-> dlib_face_recognition_resnet_model_v1-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat.bz2
@@ -100,13 +91,6 @@ ewarn
 }
 
 src_unpack() {
-	if [[ ${PV} =~ 9999 ]] ; then
-		use fallback-commit && EGIT_COMMIT="943f1e14e2c05159c22fb5176db377c0c1610bba" # Apr 26, 2022
-		EGIT_BRANCH="beta"
-		EGIT_REPO_URI="https://github.com/boltgolt/howdy.git"
-		git-r3_fetch
-		git-r3_checkout
-	fi
 	unpack ${A}
 	mv dlib_face_recognition_resnet_model_v1-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat \
 		dlib_face_recognition_resnet_model_v1.dat || die
@@ -131,7 +115,7 @@ einfo "Editing ${f}"
 }
 
 src_configure() {
-	pushd "${S}/howdy/src" || die
+	pushd "${S}/src" || die
 		if use cuda ; then
 			sed -i -e "s|use_cnn = false|use_cnn = true|g" \
 				config.ini || die
@@ -144,23 +128,16 @@ src_configure() {
 			sed -i -e "s|recording_plugin = opencv|recording_plugin = pyv4l2|g" \
 				config.ini || die
 		fi
-		sed -i -e "s|/lib/security/howdy/config.ini|/$(get_libdir)/security/howdy/config.ini|g" \
-			"pam/main.cc" || die
-	popd
-	pushd "${S}/howdy/src/pam" || die
-		export EMESON_SOURCE="${S}/howdy/src/pam"
-		local emesonargs=(
-			-Dinih:with_INIReader=true
-		)
-		meson_src_configure
 	popd
 }
 
 src_compile() {
-	meson_src_compile
+	:;
 }
 
-install_howdy() {
+src_install() {
+	docinto licenses
+	dodoc LICENSE
 	insinto /$(get_libdir)/security/${PN}
 	doins -r src/*
 	insinto /$(get_libdir)/security/${PN}/dlib-data
@@ -187,29 +164,9 @@ einfo "DIR: fperms 0755 ${x}"
 	dosym ../../$(get_libdir)/security/${PN}/cli.py /usr/bin/${PN}
 	fperms 0755 /$(get_libdir)/security/${PN}/cli.py
 	insinto /usr/share/bash-completion/completions
-	doins src/autocomplete/howdy
-	exeinto /$(get_libdir)/security
-	doexe "${BUILD_DIR}/pam_howdy.so"
+	doins autocomplete/howdy
 	dodir /usr/share/howdy
 	rm -rf "${ED}/$(get_libdir)/security/howdy/pam-config"
-}
-
-install_howdy_gtk() {
-	insinto /$(get_libdir)/${PN}-gtk
-	doins -r src/*
-}
-
-src_install() {
-	docinto licenses
-	dodoc LICENSE
-	pushd ${PN} || die
-		install_howdy
-	popd || die
-	if use gtk ; then
-		pushd ${PN}-gtk || die
-			install_howdy_gtk
-		popd || die
-	fi
 }
 
 pkg_postinst() {
@@ -234,7 +191,7 @@ einfo
 einfo "You must add/change the following to /etc/pam.d/ file(s) that would benefit"
 einfo "by using howdy and before system-auth line."
 einfo
-einfo "auth            sufficient      /$(get_libdir)/security/pam_howdy.so"
+einfo "auth            sufficient      pam_python.so /$(get_libdir)/security/howdy/pam.py"
 einfo
 	if ! use ffmpeg ; then
 ewarn
