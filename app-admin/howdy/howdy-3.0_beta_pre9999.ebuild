@@ -167,7 +167,7 @@ src_configure() {
 		local emesonargs=(
 			-Dinih:with_INIReader=true
 		)
-		meson_src_configure
+		use native-pam && meson_src_configure
 	popd
 }
 
