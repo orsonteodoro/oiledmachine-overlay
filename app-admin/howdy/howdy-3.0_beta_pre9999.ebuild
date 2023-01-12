@@ -234,7 +234,7 @@ einfo
 einfo "You must add the following to /etc/pam.d/ file(s) that would benefit"
 einfo "by using howdy and before system-auth line."
 einfo
-einfo "auth            sufficient      /lib64/security/pam_howdy.so"
+einfo "auth            sufficient      /$(lib64)/security/pam_howdy.so"
 einfo
 	if ! use ffmpeg ; then
 ewarn
