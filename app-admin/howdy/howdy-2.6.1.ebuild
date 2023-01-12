@@ -191,7 +191,7 @@ einfo
 einfo "You must add/change the following to /etc/pam.d/ file(s) that would benefit"
 einfo "by using howdy and before system-auth line."
 einfo
-einfo "auth            sufficient      pam_python.so /$(get_libdir)/security/howdy/pam.py"
+einfo "  auth            sufficient      pam_python.so /$(get_libdir)/security/howdy/pam.py"
 einfo
 	if ! use ffmpeg ; then
 ewarn
