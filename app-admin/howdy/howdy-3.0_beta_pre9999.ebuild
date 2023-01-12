@@ -18,7 +18,9 @@ HOMEPAGE="https://github.com/boltgolt/howdy"
 LICENSE="MIT BSD CC0-1.0"
 # CC0-1.0 - dlib-models
 # BSD - howdy/src/recorders/v4l2.py
-KEYWORDS="~amd64"
+
+# Live ebuilds do not get KEYWORDS.  Distro policy.
+
 SLOT="0"
 IUSE+=" cuda ffmpeg gtk pyv4l2"
 REQUIRED_USE+="
