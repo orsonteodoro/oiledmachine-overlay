@@ -114,6 +114,26 @@ src_unpack() {
 		mmod_human_face_detector.dat || die
 	mv shape_predictor_5_face_landmarks-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat \
 		shape_predictor_5_face_landmarks.dat || die
+
+	local EXPECTED_VERSION="Howdy 3.0.0 BETA"
+	local actual_version=$(grep -E -o \
+		-e "Howdy [0-9]+\.[0-9]+\.[0-9]+[ ]?[A-Z]*" \
+		"${S}/howdy/src/cli.py")
+	if [[ "${EXPECTED_VERSION}" != "${actual_version}" ]] ; then
+eerror
+eerror "A change in version was detected:"
+eerror
+eerror "Actual version:\t${actual_version}"
+eerror "Expected version:\t${EXPECTED_VERSION}"
+eerror
+eerror "This requires IUSE, *DEPENDs, EXPECTED_VERSION, src_install changes."
+eerror
+eerror "  or"
+eerror
+eerror "Use the fallback-commit USE flag."
+eerror
+		die
+	fi
 }
 
 src_prepare() {
