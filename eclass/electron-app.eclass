@@ -725,11 +725,11 @@ fi
 # Ebuild developer must provide an electron-app_src_compile to tell
 # electron-builder package the app manually.  Do something like:
 # electron-builder -l AppImage --pd dist/linux-unpackaged/
+# electron-builder -l flatpak --pd dist/linux-unpackaged/
 # electron-builder -l snap --pd dist/linux-unpackaged/
 #
 _ELECTRON_APP_PACKAGING_METHODS+=( unpacked )
-if [[ -n "${ELECTRON_APP_APPIMAGEABLE}" \
-	&& "${ELECTRON_APP_APPIMAGEABLE}" == 1 ]] ; then
+if [[ "${ELECTRON_APP_APPIMAGE}" == "1" ]] ; then
 	IUSE+=" appimage"
 	_ELECTRON_APP_PACKAGING_METHODS+=( appimage )
 	RDEPEND+="
@@ -741,18 +741,27 @@ if [[ -n "${ELECTRON_APP_APPIMAGEABLE}" \
 		)
 	"
 	# emerge will dump the .AppImage in that folder.
-	ELECTRON_APP_APPIMAGE_INSTALL_DIR=${ELECTRON_APP_APPIMAGE_INSTALL_DIR:-"/opt/AppImage/${PN}"}
+	ELECTRON_APP_APPIMAGE_INSTALL_DIR=${ELECTRON_APP_APPIMAGE_INSTALL_DIR:-"/opt/AppImage"}
 fi
-if [[ -n "${ELECTRON_APP_SNAPABLE}" \
-	&& "${ELECTRON_APP_SNAPABLE}" == 1 ]] ; then
+if [[ "${ELECTRON_APP_SNAP}" == "1" ]] ; then
 	IUSE+=" snap"
 	_ELECTRON_APP_PACKAGING_METHODS+=( snap )
-	RDEPEND+=" snap? ( app-emulation/snapd )"
+	RDEPEND+="
+		snap? ( app-emulation/snapd )
+	"
 	# emerge will dump it in that folder then use snap functions
 	# to install desktop files and mount the image.
-	ELECTRON_APP_SNAP_INSTALL_DIR=${ELECTRON_APP_SNAP_INSTALL_DIR:-"/opt/snap/${PN}"}
+	ELECTRON_APP_SNAP_INSTALL_DIR=${ELECTRON_APP_SNAP_INSTALL_DIR:-"/opt/snap"}
 	ELECTRON_APP_SNAP_NAME=${ELECTRON_APP_SNAP_NAME:-${PN}}
 	# ELECTRON_APP_SNAP_REVISION is also defineable
+fi
+if [[ "${ELECTRON_APP_FLATPAK}" == "1" ]] ; then
+	IUSE+=" flatpak"
+	RDEPEND+="
+		flatpak? ( sys-apps/flatpak )
+	"
+	_ELECTRON_APP_PACKAGING_METHODS+=( flatpak )
+	ELECTRON_APP_FLATPAK_INSTALL_DIR=${ELECTRON_APP_SNAP_INSTALL_DIR:-"/opt/flatpak"}
 fi
 IUSE+=" ${_ELECTRON_APP_PACKAGING_METHODS[@]/unpacked/+unpacked}"
 REQUIRED_USE+=" || ( ${_ELECTRON_APP_PACKAGING_METHODS[@]} )"
@@ -967,47 +976,6 @@ einfo
 einfo
 einfo "Using cached Electron release data"
 einfo
-	fi
-
-	if [[ -n "${ELECTRON_APP_APPIMAGEABLE}" \
-		&& "${ELECTRON_APP_APPIMAGEABLE}" == 1 ]] ; then
-		if [[ -z "${ELECTRON_APP_APPIMAGE_PATH}" ]] ; then
-eerror
-eerror "ELECTRON_APP_APPIMAGE_PATH must be defined relative to \${BUILD_DIR}"
-eerror
-			die
-		fi
-	fi
-
-	if [[ -n "${ELECTRON_APP_SNAPABLE}" \
-		&& "${ELECTRON_APP_SNAPABLE}" == 1 ]] ; then
-		if [[ -z "${ELECTRON_APP_SNAP_PATH_BASENAME}" ]] ; then
-eerror
-eerror "ELECTRON_APP_SNAP_PATH_BASENAME must be defined relative to"
-eerror "ELECTRON_APP_SNAP_INSTALL_DIR"
-eerror
-			die
-		fi
-		if [[ -z "${ELECTRON_APP_SNAP_PATH}" ]] ; then
-eerror
-eerror "ELECTRON_APP_SNAP_PATH must be defined relative to \${BUILD_DIR}"
-eerror
-			die
-		fi
-		if [[ -n "${ELECTRON_APP_SNAP_ASSERT_PATH}" \
-			&& -z "${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}" ]] ; then
-eerror
-eerror "ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME must be defined."
-eerror
-			die
-		fi
-		if [[ -n "${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}" \
-			&& -z "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
-eerror
-eerror "ELECTRON_APP_SNAP_ASSERT_PATH must be defined."
-eerror
-			die
-		fi
 	fi
 
 	npm-utils_is_nodejs_header_exe_same
@@ -1785,24 +1753,29 @@ ewarn "Only png, svg, xpm accepted as icons for the XDG desktop icon theme"
 ewarn "spec.  Skipping."
 ewarn
 		fi
+		make_desktop_entry "${PN}" "${pkg_name}" "${icon}" "${category}"
 	fi
+	# Some below already already adds .desktop
 	if has appimage ${IUSE_EFFECTIVE} ; then
 		if use appimage ; then
 			exeinto "${ELECTRON_APP_APPIMAGE_INSTALL_DIR}"
-			doexe "${ELECTRON_APP_APPIMAGE_PATH}"
+			doexe $(find . -name "${ELECTRON_APP_APPIMAGE_ARCHIVE_NAME}")
+		fi
+	fi
+	if has flatpak ${IUSE_EFFECTIVE} ; then
+		if use flatpak ; then
+			insinto "${ELECTRON_APP_FLATPAK_INSTALL_DIR}"
+			doins $(find . -name "${ELECTRON_APP_FLATPAK_ARCHIVE_NAME}")
 		fi
 	fi
 	if has snap ${IUSE_EFFECTIVE} ; then
 		if use snap ; then
 			insinto "${ELECTRON_APP_SNAP_INSTALL_DIR}"
-			doins "${ELECTRON_APP_SNAP_PATH}"
-			if [[ -e "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
-				doins "${ELECTRON_APP_SNAP_ASSERT_PATH}"
-			fi
+			doins $(find . -name "${ELECTRON_APP_SNAP_ARCHIVE_NAME}")
+			local assert_path=$(find . -name "${ELECTRON_APP_SNAP_ARCHIVE_NAME/.snap/.assert}")
+			[[ -e "${assert_path}" ]] && doins "${assert_path}"
 		fi
 	fi
-
-	make_desktop_entry "${PN}" "${pkg_name}" "${icon}" "${category}"
 }
 
 electron-app_pkg_preinst() {
@@ -1836,15 +1809,11 @@ electron-app_pkg_postinst() {
 ewarn
 ewarn "snap support is untested"
 ewarn
-ewarn "Remember do not update the snap manually through the \`snap\` tool."
-ewarn "Allow the emerge system to update it."
-ewarn
-			# I don't know if snap will sanitize the files for
-			# system-wide installation.
 			local has_assertion_file="--dangerous"
-			if [[ -e "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
-				snap ack \
-"${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}"
+			local assert_path=\
+"${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_ARCHIVE_NAME/.snap/.assert}"
+			if [[ -e "${assert_path}" ]] ; then
+				snap ack "${assert_path}"
 				has_assertion_file=""
 			else
 ewarn
@@ -1853,7 +1822,26 @@ ewarn
 			fi
 			# This will add the desktop links to the snap.
 			snap install ${has_assertion_file} \
-"${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_PATH_BASENAME}"
+"${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_ARCHIVE_NAME}"
+		fi
+	fi
+	if has flatpak ${IUSE_EFFECTIVE} ; then
+		if use flatpak ; then
+			flatpak --install \
+"${EROOT}/${ELECTRON_APP_FLATPAK_INSTALL_DIR}/${ELECTRON_APP_FLATPAK_ARCHIVE_NAME}"
+		fi
+	fi
+}
+
+electron-app_pkg_prerm() {
+	if has snap ${IUSE_EFFECTIVE} ; then
+		if use snap ; then
+			snap remove "${SNAP_NAME}"
+		fi
+	fi
+	if has flatpak ${IUSE_EFFECTIVE} ; then
+		if use flatpak ; then
+			flatpak uninstall "${FLATPACK_NAME}"
 		fi
 	fi
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <email>zmedico@gentoo.org</email>
+    <name>Zac Medico</name>
+  </maintainer>
+  <maintainer type="person">
+    <!-- Ebuild originator -->
+    <email>zmedico@gentoo.org</email>
+    <name>Zac Medico</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>mailto:dave@vasilevsky.ca</bugs-to>
+    <changelog>https://github.com/vasi/squashfuse/commits/master</changelog>
+    <doc>https://raw.github.com/vasi/squashfuse/master/README</doc>
+  <remote-id type="github">vasi/squashfuse</remote-id>
+  </upstream>
+</pkgmetadata>

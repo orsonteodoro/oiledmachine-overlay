@@ -1,0 +1,227 @@
+diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
+--- go-appimage.orig/scripts/build.sh	2021-04-29 23:59:39.000000000 -0700
++++ go-appimage/scripts/build.sh	2021-05-19 22:49:41.887335899 -0700
+@@ -19,10 +19,7 @@ set -x
+ ##############################################################
+ 
+ # Disregard any other Go environment that may be on the system (e.g., on Travis CI)
+-unset GOARCH GOBIN GOEXE GOHOSTARCH GOHOSTOS GOOS GORACE GOROOT GOTOOLDIR CC GOGCCFLAGS CGO_ENABLED GO111MODULE
+-if [ -z $GOPATH ] ; then
+-  export GOPATH=$PWD/gopath
+-fi
++export GOPATH="${WORKDIR}/go_build"
+ mkdir -p $GOPATH/src || true
+ 
+ # Export version and build number
+@@ -34,42 +31,56 @@ else
+   export VERSION=$(date '+%Y-%m-%d_%H%M%S')
+ fi
+ 
+-# Get pinned version of Go directly from upstream
+-if [ "aarch64" == "$TRAVIS_ARCH" ] ; then export ARCH=arm64 ; fi
+-if [ "amd64" == "$TRAVIS_ARCH" ] ; then export ARCH=amd64 ; fi
+-wget -c -nv https://dl.google.com/go/go1.15.6.linux-$ARCH.tar.gz
+-mkdir path || true
+-tar -C $PWD/path -xzf go*.tar.gz
+-export PATH=$PWD/path/go/bin:$PATH
+-
+-# Get dependencies needed for CGo # FIXME: Get rid of the need for CGo and, in return, those dependencies
+-sudo apt-get -q update
+-if [ $(go env GOHOSTARCH) == "amd64" ] ; then sudo apt-get -y install gcc-multilib autoconf ; fi
+-if [ $(go env GOHOSTARCH) == "arm64" ] ; then sudo apt-get -y install gcc-arm-linux-gnueabi autoconf ; fi
++export _GOHOSTARCH=$(go env GOHOSTARCH)
+ 
+ ##############################################################
+ # Build appimagetool and appimaged
+ ##############################################################
+ 
+ cd $TRAVIS_BUILD_DIR
+-go get -d -v ./...
++# go get -d -v github.com/probonopd/go-appimage/...
+ # Download it to the normal location for later, but it'll probably fail, so we allow it
+ # TODO: Fix it so we don't need this step
+ 
+-# 64-bit
+-go build -o $GOPATH/src -v -trimpath -ldflags="-s -w -X main.commit=$COMMIT" ./src/...
+-mv $GOPATH/src/appimaged $GOPATH/src/appimaged-$(go env GOHOSTARCH)
+-mv $GOPATH/src/appimagetool $GOPATH/src/appimagetool-$(go env GOHOSTARCH)
+-
+-# 32-bit
+-if [ $(go env GOHOSTARCH) == "amd64" ] ; then 
+-  env CGO_ENABLED=1 GOOS=linux GOARCH=386 go build -o $GOPATH/src -v -trimpath -ldflags="-s -w -X main.commit=$COMMIT" ./src/...
++
++
++cd $GOPATH
++
++if [[ "${GARCH}" = "arm64" ]] ; then
++  export ARCHITECTURE=aarch64
++  export ARCHITECTURE2=arm64
++elif [[ "${GARCH}" = "arm" ]] ; then
++  export ARCHITECTURE=armhf
++  export ARCHITECTURE2=arm
++elif [[ "${GARCH}" = "amd64" ]] ; then
++  export ARCHITECTURE=x86_64
++  export ARCHITECTURE2=amd64
++elif [[ "${GARCH}" = "x86" ]] ; then
++  export ARCHITECTURE=i686
++  export ARCHITECTURE2=x86
++else
++  echo "Error: Arch=${GARCH} is not supported"
++  exit 1
++fi
++
++if [[ "${GARCH}" == "x86" ]] ; then
++  echo "Building 32-bit (x86)"
++  env CGO_ENABLED=1 GOOS=linux GOARCH=386 go build -o $GOPATH/src -v -trimpath -ldflags="-s -w -X main.commit=$COMMIT" ./src/github.com/probonopd/go-appimage/src/...
+   mv $GOPATH/src/appimaged $GOPATH/src/appimaged-386
+   mv $GOPATH/src/appimagetool $GOPATH/src/appimagetool-386
+-elif [ $(go env GOHOSTARCH) == "arm64" ] ; then
+-  env CC=arm-linux-gnueabi-gcc CGO_ENABLED=1 GOOS=linux GOARCH=arm GOARM=6 go build -o $GOPATH/src -v -trimpath -ldflags="-s -w -X main.commit=$COMMIT" ./src/...
++elif [[ "${GARCH}" == "arm" ]] ; then
++  echo "Building 32-bit (arm)"
++  env CC=arm-linux-gnueabi-gcc CGO_ENABLED=1 GOOS=linux GOARCH=arm GOARM=6 go build -o $GOPATH/src -v -trimpath -ldflags="-s -w -X main.commit=$COMMIT" ./src/github.com/probonopd/go-appimage/src/...
+   mv $GOPATH/src/appimaged $GOPATH/src/appimaged-arm
+   mv $GOPATH/src/appimagetool $GOPATH/src/appimagetool-arm
++elif [[ "${GARCH}" == "arm64" || "${GARCH}" == "amd64" ]] ; then
++  echo "Building 64-bit ${GARCH}"
++  go build -o $GOPATH/src -v -trimpath -ldflags="-s -w -X main.commit=$COMMIT" ./src/github.com/probonopd/go-appimage/src/...
++  mv $GOPATH/src/appimaged $GOPATH/src/appimaged-${_GOHOSTARCH}
++  mv $GOPATH/src/appimagetool $GOPATH/src/appimagetool-${_GOHOSTARCH}
++else
++  echo "Error: Did not build anything for Arch=${GARCH}"
++  exit 1
+ fi
+ 
+ ##############################################################
+@@ -79,99 +90,21 @@ fi
+ 
+ cd $GOPATH/src
+ 
+-unset ARCH # It contains "amd64" which we cannot use since we need "x86_64"
+-
+-# For some weird reason, no one seems to agree on what architectures
+-# should be called... argh
+-if [ "$TRAVIS_ARCH" == "aarch64" ] ; then
+-  export ARCHITECTURE=aarch64
+-else
+-  export ARCHITECTURE=x86_64
+-fi
+-
+-# Make appimagetool AppImage
+-rm -rf appimagetool.AppDir || true
+-mkdir -p appimagetool.AppDir/usr/bin
+-( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/desktop-file-validate-$ARCHITECTURE -O desktop-file-validate )
+-( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/mksquashfs-$ARCHITECTURE -O mksquashfs )
+-( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/patchelf-$ARCHITECTURE -O patchelf )
+-( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/AppImage/AppImageKit/releases/download/continuous/runtime-$ARCHITECTURE )
+-( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh -O uploadtool )
+-chmod +x appimagetool.AppDir/usr/bin/*
+-cp appimagetool-$(go env GOHOSTARCH) appimagetool.AppDir/usr/bin/appimagetool
+-( cd appimagetool.AppDir/ ; ln -s usr/bin/appimagetool AppRun)
+-cp $TRAVIS_BUILD_DIR/data/appimage.png appimagetool.AppDir/
+-cat > appimagetool.AppDir/appimagetool.desktop <<\EOF
+-[Desktop Entry]
+-Type=Application
+-Name=appimagetool
+-Exec=appimagetool
+-Comment=Tool to generate AppImages from AppDirs
+-Icon=appimage
+-Categories=Development;
+-Terminal=true
+-EOF
+-PATH=./appimagetool.AppDir/usr/bin/:$PATH appimagetool ./appimagetool.AppDir
+-
+-# Make appimaged AppImage
+-rm -rf appimaged.AppDir || true
+-mkdir -p appimaged.AppDir/usr/bin
+-( cd appimaged.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/bsdtar-$ARCHITECTURE -O bsdtar )
+-( cd appimaged.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/unsquashfs-$ARCHITECTURE -O unsquashfs )
+-chmod +x appimaged.AppDir/usr/bin/*
+-cp appimaged-$(go env GOHOSTARCH) appimaged.AppDir/usr/bin/appimaged
+-( cd appimaged.AppDir/ ; ln -s usr/bin/appimaged AppRun)
+-cp $TRAVIS_BUILD_DIR/data/appimage.png appimaged.AppDir/
+-cat > appimaged.AppDir/appimaged.desktop <<\EOF
+-[Desktop Entry]
+-Type=Application
+-Name=appimaged
+-Exec=appimaged
+-Comment=Optional daemon that integrates AppImages into the system
+-Icon=appimage
+-Categories=Utility;
+-Terminal=true
+-NoDisplay=true
+-EOF
+-./appimagetool-*-$ARCHITECTURE.AppImage ./appimaged.AppDir
+-
+-
+-### 32-bit
+-
+ # For some weird reason, no one seems to agree on what architectures
+ # should be called... argh
+-if [ "$TRAVIS_ARCH" == "aarch64" ] ; then
+-  export ARCHITECTURE=armhf
+-else
+-  export ARCHITECTURE=i686
+-fi
+-
+-######################## FIXME: instaed of repeating all of what follows, turn it into a fuction that gets called
++# See https://golang.org/doc/install/source for ARCHITECTURE2
++echo "COMMIT_STATIC_TOOLS=$COMMIT_STATIC_TOOLS"
+ 
+ # Make appimagetool AppImage
+-rm -rf appimagetool.AppDir || true
++#rm -rf appimagetool.AppDir || true
+ mkdir -p appimagetool.AppDir/usr/bin
+-( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/desktop-file-validate-$ARCHITECTURE -O desktop-file-validate )
+-( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/mksquashfs-$ARCHITECTURE -O mksquashfs )
+-( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/patchelf-$ARCHITECTURE -O patchelf )
+-( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/AppImage/AppImageKit/releases/download/continuous/runtime-$ARCHITECTURE )
+-( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh -O uploadtool )
++( cd appimagetool.AppDir/usr/bin/ ; [[ "${USE_SYSTEM_DESKTOP_FILE_VALIDATE}" == "0" ]] && cp -a $(realpath "${DISTDIR}/probonopd-desktop-file-validate-${ARCHITECTURE}-${COMMIT_STATIC_TOOLS:0:7}") desktop-file-validate || true )
++( cd appimagetool.AppDir/usr/bin/ ; [[ "${USE_SYSTEM_MKSQUASH}" == "0" ]] && cp -a $(realpath "${DISTDIR}/probonopd-mksquashfs-${ARCHITECTURE}-${COMMIT_STATIC_TOOLS:0:7}") mksquashfs || true )
++( cd appimagetool.AppDir/usr/bin/ ; [[ "${USE_SYSTEM_PATCHELF}" == "0" ]] && cp -a $(realpath "${DISTDIR}/probonopd-patchelf-${ARCHITECTURE}-${COMMIT_STATIC_TOOLS:0:7}") patchelf || true )
++( cd appimagetool.AppDir/usr/bin/ ; [[ "${USE_SYSTEM_AIK_RUNTIME}" == "0" ]] && cp -a $(realpath "${DISTDIR}/AppImageKit-runtime-${ARCHITECTURE}-${TAG_AIK}") runtime-${ARCHITECTURE2} || true )
++( cd appimagetool.AppDir/usr/bin/ ; cp -a $(realpath "${DISTDIR}/probonopd-upload.sh-${COMMIT_UPLOADTOOL:0:7}") uploadtool )
+ chmod +x appimagetool.AppDir/usr/bin/*
+-
+-# 32-bit
+-if [ $(go env GOHOSTARCH) == "amd64" ] ; then 
+-  USEARCH=386
+-  sudo dpkg --add-architecture i386
+-  sudo apt-get update
+-  sudo apt-get install libc6:i386 zlib1g:i386 libfuse2:i386
+-elif [ $(go env GOHOSTARCH) == "arm64" ] ; then
+-  USEARCH=arm
+-  sudo dpkg --add-architecture armhf
+-  sudo apt-get update
+-  sudo apt-get install libc6:armhf zlib1g:armhf zlib1g-dev:armhf libfuse2:armhf libc6-armel:armhf
+-fi
+-
+-cp appimagetool-$USEARCH appimagetool.AppDir/usr/bin/appimagetool
++cp appimagetool-${_GOHOSTARCH} appimagetool.AppDir/usr/bin/appimagetool
+ ( cd appimagetool.AppDir/ ; ln -s usr/bin/appimagetool AppRun)
+ cp $TRAVIS_BUILD_DIR/data/appimage.png appimagetool.AppDir/
+ cat > appimagetool.AppDir/appimagetool.desktop <<\EOF
+@@ -187,12 +120,12 @@ EOF
+ PATH=./appimagetool.AppDir/usr/bin/:$PATH appimagetool ./appimagetool.AppDir
+ 
+ # Make appimaged AppImage
+-rm -rf appimaged.AppDir || true
++#rm -rf appimaged.AppDir || true
+ mkdir -p appimaged.AppDir/usr/bin
+-( cd appimaged.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/bsdtar-$ARCHITECTURE -O bsdtar )
+-( cd appimaged.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/unsquashfs-$ARCHITECTURE -O unsquashfs )
++( cd appimaged.AppDir/usr/bin/ ; [[ "${USE_SYSTEM_BSDTAR}" == "0" ]] && cp -a $(realpath "${DISTDIR}/probonopd-bsdtar-${ARCHITECTURE}-${COMMIT_STATIC_TOOLS:0:7}") bsdtar || true )
++( cd appimaged.AppDir/usr/bin/ ; [[ "${USE_SYSTEM_UNSQUASH}" == "0" ]] && cp -a $(realpath "${DISTDIR}/probonopd-unsquashfs-${ARCHITECTURE}-${COMMIT_STATIC_TOOLS:0:7}") -O unsquashfs || true )
+ chmod +x appimaged.AppDir/usr/bin/*
+-cp appimaged-$USEARCH appimaged.AppDir/usr/bin/appimaged
++cp appimaged-${_GOHOSTARCH} appimaged.AppDir/usr/bin/appimaged
+ ( cd appimaged.AppDir/ ; ln -s usr/bin/appimaged AppRun)
+ cp $TRAVIS_BUILD_DIR/data/appimage.png appimaged.AppDir/
+ cat > appimaged.AppDir/appimaged.desktop <<\EOF
+@@ -206,4 +139,4 @@ Categories=Utility;
+ Terminal=true
+ NoDisplay=true
+ EOF
+-./appimagetool-*-$ARCHITECTURE.AppImage ./appimaged.AppDir
++./appimagetool-*-${ARCHITECTURE2}.AppImage ./appimaged.AppDir

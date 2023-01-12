@@ -198,7 +198,7 @@
       Enables support for OpenGL accelerated rendering on client.
     </flag>
     <flag name="openrc">
-      Adds OpenRC support.
+      Adds OpenRC support.  (EXPERIMENTAL)
     </flag>
     <flag name="opus">
       Adds support for both voice and general audio compression.
@@ -297,7 +297,7 @@
       string.
     </flag>
     <flag name="systemd">
-      Installs systemd services.
+      Installs systemd services.  (RECOMMENDED)
     </flag>
     <flag name="tcp-wrappers">
       Add support for hosts authentication

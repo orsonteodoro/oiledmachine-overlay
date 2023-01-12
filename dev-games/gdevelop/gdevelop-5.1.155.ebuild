@@ -4,6 +4,11 @@
 
 EAPI=7
 
+MY_PN="GDevelop"
+MY_PV="${PV//_/-}"
+
+#ELECTRON_APP_APPIMAGE="1"
+ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV%%.*}-${PV}.AppImage"
 ELECTRON_APP_ELECTRON_PV="18.2.2" # See \
 # https://raw.githubusercontent.com/4ian/GDevelop/v5.1.155/newIDE/electron-app/package-lock.json
 ELECTRON_APP_REACT_PV="16.14.0" # See \
@@ -12,9 +17,6 @@ NODE_ENV=development
 
 inherit check-reqs desktop electron-app eutils flag-o-matic user-info
 inherit toolchain-funcs xdg
-
-MY_PN="GDevelop"
-MY_PV="${PV//_/-}"
 
 DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed \
 to be used by everyone."
