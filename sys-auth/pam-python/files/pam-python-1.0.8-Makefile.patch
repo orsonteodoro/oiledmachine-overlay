@@ -1,13 +1,12 @@
 diff -urp pam-python-1.0.8.orig/src/Makefile pam-python-1.0.8/src/Makefile
---- pam-python-1.0.8.orig/src/Makefile	2022-05-10 20:02:40.392852041 -0700
-+++ pam-python-1.0.8/src/Makefile	2022-05-10 20:06:15.661240844 -0700
-@@ -4,15 +4,15 @@ WARNINGS=-Wall -Wextra -Wundef -Wshadow
+--- pam-python-1.0.8.orig/src/Makefile	2023-01-12 01:27:29.673164729 -0800
++++ pam-python-1.0.8/src/Makefile	2023-01-12 01:28:41.495969608 -0800
+@@ -4,20 +4,22 @@ WARNINGS=-Wall -Wextra -Wundef -Wshadow
  #WARNINGS=-Wunreachable-code 	# Gcc 4.1 .. 4.4 are too buggy to make this useful
  
  LIBDIR ?= /lib/security
--PYV=$(shell python --version | cut -f 2 -d " " | cut -f 1-2 -d "." | sed -e "s|\.||g")
-+PYV=$(shell $(EPYTHON) --version | cut -f 2 -d " " | cut -f 1-2 -d "." | sed -e "s|\.||g")
- ARCH=$(shell uname -m)
++PYTHON_PV=$(shell $(EPYTHON) --version | cut -f 2 -d " " | cut -f 1-2 -d "." | sed -e "s|\.||g")
++ARCH=$(shell uname -m)
  
  pam_python.so: pam_python.c setup.py Makefile
  	@rm -f "$@"
@@ -15,13 +14,22 @@ diff -urp pam-python-1.0.8.orig/src/Makefile pam-python-1.0.8/src/Makefile
 -	CFLAGS="$(CFLAGS) $(WARNINGS) -I/usr/local/lib/ " ./setup.py build --debug
 -	@#CFLAGS="$(CFLAGS) -Og $(WARNINGS)" ./setup.py build --debug
 -	@#CFLAGS="$(CFLAGS) -Og $(WARNINGS)" Py_DEBUG=1 ./setup.py build --debug
+-	ln -sf build/lib.*/$@ .
 +	CFLAGS="$(CFLAGS) $(WARNINGS) -I/usr/local/lib/ " $(EPYTHON) ./setup.py build --debug
 +	@#CFLAGS="$(CFLAGS) -Og $(WARNINGS)" $(EPYTHON) ./setup.py build --debug
 +	@#CFLAGS="$(CFLAGS) -Og $(WARNINGS)" Py_DEBUG=1 $(EPYTHON) ./setup.py build --debug
- 	ln -sf $(shell realpath build/lib.linux-$(ARCH)-cpython-$(PYV)/*.so) $@
++	ln -sfv build/lib.linux-$(ARCH)-cpython-$(PYTHON_PV)/pam_python.cpython-$(PYTHON_PV)-$(ARCH)-linux-gnu.so $@
  
  .PHONY: install install-lib
-@@ -40,7 +40,7 @@ test-pam_python.pam: test-pam_python.pam
+ install: install-lib
+ install-lib:
+ 	mkdir -p $(DESTDIR)$(LIBDIR)
+-	cp build/lib.*/pam_python.so $(DESTDIR)$(LIBDIR)
++	cp build/lib.linux-$(ARCH)-cpython-$(PYTHON_PV)/pam_python.cpython-$(PYTHON_PV)-$(ARCH)-linux-gnu.so $(DESTDIR)$(LIBDIR)/pam_python.so
+ 
+ .PHONY: clean
+ clean:
+@@ -38,7 +40,7 @@ test-pam_python.pam: test-pam_python.pam
  
  .PHONY: test
  test: pam_python.so ctest /etc/pam.d/test-pam_python.pam
@@ -30,7 +38,7 @@ diff -urp pam-python-1.0.8.orig/src/Makefile pam-python-1.0.8/src/Makefile
  	./ctest python
  
  test-pam_python-installed.pam: test-pam_python.pam.in Makefile
-@@ -52,5 +52,5 @@ test-pam_python-installed.pam: test-pam_
+@@ -50,5 +52,5 @@ test-pam_python-installed.pam: test-pam_
  
  .PHONY: installed-test
  installed-test: ctest /etc/pam.d/test-pam_python-installed.pam

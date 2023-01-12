@@ -47,8 +47,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.8-no-sudo.patch"
 	"${FILESDIR}/${PN}-1.0.8-compiler-agnostic.patch"
 	"${FILESDIR}/${PN}-1.0.8-agnostic-shebang.patch"
-	"${FILESDIR}/${PN}-1.0.8-fix-build-dir.patch"
-	"${FILESDIR}/${PN}-1.0.8-Makefile-EPYTHON.patch"
+	"${FILESDIR}/${PN}-1.0.8-Makefile.patch"
 
 	# python3.8 compat
 	"${FILESDIR}/${PN}-1.0.8-cast-value-as-char-ptr.patch"
@@ -76,6 +75,7 @@ eerror "FEATURES:  ${FEATURES}"
 
 src_prepare() {
 	default
+#	die
 	# Breaks with python2.7
 #	einfo "Futurizing py2 -> py3"
 #	futurize -0 -w . || die
