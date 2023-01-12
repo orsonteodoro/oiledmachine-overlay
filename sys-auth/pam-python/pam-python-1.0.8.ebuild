@@ -121,8 +121,9 @@ ewarn
 ewarn "This package may require manual configuration which has not been"
 ewarn "documented well."
 ewarn
-ewarn "Also, when you play with the pam.d files it may break login so be"
-ewarn "careful and take precautions and make backups of the previous setting."
+ewarn "Also, when you play with the pam.d files, it may break login, so be"
+ewarn "careful and take precautions and make backups of the previous"
+ewarn "setting(s)."
 ewarn
 }
 
