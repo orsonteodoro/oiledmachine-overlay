@@ -12,7 +12,7 @@ HOMEPAGE="http://pam-python.sourceforge.net/"
 LICENSE="AGPL-3+"
 
 # Still needs testing.  Not confirmed working.
-# It require manual setup which has not been documented.
+# It requires manual setup which has not been documented.
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 
 SLOT="0/$(ver_cut 1-2 ${PV})"
