@@ -15,7 +15,7 @@ HOMEPAGE="https://github.com/boltgolt/howdy"
 LICENSE="MIT BSD CC0-1.0"
 # CC0-1.0 - dlib-models
 # BSD - howdy/src/recorders/v4l2.py
-#KEYWORDS="~amd64" # Still needs testing
+#KEYWORDS="~amd64" # Still needs testing.  Not confirmed working.
 SLOT="0"
 IUSE+=" cuda ffmpeg gtk pyv4l2 r1"
 REQUIRED_USE+="
@@ -78,6 +78,9 @@ RESTRICT="mirror"
 
 pkg_setup()
 {
+ewarn
+ewarn "This ebuild has not been confirmed working."
+ewarn
 	if use ffmpeg && use pyv4l2 ; then
 ewarn
 ewarn "Only one capture source is allowed.  Disable either ffmpeg, pyv4l2, or"

@@ -10,7 +10,11 @@ inherit flag-o-matic python-single-r1 toolchain-funcs
 DESCRIPTION="Enables PAM modules to be written in Python"
 HOMEPAGE="http://pam-python.sourceforge.net/"
 LICENSE="AGPL-3+"
-#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Still needs testing
+
+# Still needs testing.  Not confirmed working.
+# It require manual setup which has not been documented.
+#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 REQUIRED_USE+="
@@ -56,6 +60,9 @@ PATCHES=(
 )
 
 pkg_setup() {
+ewarn
+ewarn "This ebuild has not been confirmed working."
+ewarn
 	addwrite /etc/pam.d
 	python-single-r1_pkg_setup
 	if use test ; then
@@ -109,6 +116,13 @@ src_install() {
 		DESTDIR="${D}" \
 		LIBDIR="${EPREFIX}/$(get_libdir)/security"
 	einstalldocs
+ewarn
+ewarn "This package may require manual configuration which has not been"
+ewarn "documented well."
+ewarn
+ewarn "Also, when you play with the pam.d files it may break login so be"
+ewarn "careful and take precautions and make backups of the previous setting."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD PYTHON-NO-CHANGE
