@@ -94,15 +94,16 @@ src_compile() {
 }
 
 src_test() {
-	ewarn "Tests only work with python2.7 and must be ran outside of emerge."
-	ewarn "Run test with \`EPYTHON=python2.7 make test\`."
-	ewarn "After completion, \`make clean\` to remove symlinks."
-	ewarn
-	ewarn "If the test fail, the following need to be manually removed:"
-	ewarn
-	ewarn "  /etc/pam.d/test-pam_python.pam"
-	ewarn "  /etc/pam.d/test-pam_python-installed.pam"
-	ewarn
+ewarn
+ewarn "Tests only work with python2.7 and must be ran outside of emerge."
+ewarn "Run test with \`EPYTHON=python2.7 make test\`."
+ewarn "After completion, \`make clean\` to remove symlinks."
+ewarn
+ewarn "If the test fail, the following need to be manually removed:"
+ewarn
+ewarn "  /etc/pam.d/test-pam_python.pam"
+ewarn "  /etc/pam.d/test-pam_python-installed.pam"
+ewarn
 	emake test
 }
 

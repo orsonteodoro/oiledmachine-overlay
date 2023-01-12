@@ -118,7 +118,7 @@ src_prepare() {
 	)
 
 	for f in ${F[@]} ; do
-		einfo "Editing ${f}"
+einfo "Editing ${f}"
 		sed -i -e "s|/lib/security|/$(get_libdir)/security|g" \
 			"${f}" || die
 	done
