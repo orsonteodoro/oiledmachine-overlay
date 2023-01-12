@@ -20,7 +20,7 @@
     Howdy is an addition to n-factor authentication and should not be used
     alone.
 
-    To setup Howdy with pam, see [3].  It may be possible to apply
+    To setup Howdy with PAM, see [3].  It may be possible to apply
     these changes to beyond sudo.
 
     References:
@@ -50,6 +50,12 @@
     </flag>
     <flag name="gtk">
       Used for sticky floating window authentication.
+    </flag>
+    <flag name="native-pam">
+      Use the native C++ PAM module for authentication.
+    </flag>
+    <flag name="pam-python">
+      Use pam-python with python scripts for PAM authentication.
     </flag>
     <flag name="pyv4l2">
       Uses pyv4l2 as a capture source.

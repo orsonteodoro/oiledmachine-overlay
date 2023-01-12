@@ -20,9 +20,10 @@ LICENSE="MIT BSD CC0-1.0"
 # BSD - howdy/src/recorders/v4l2.py
 #KEYWORDS="~amd64" # Still needs testing.  Not confirmed working.
 SLOT="0"
-IUSE+=" cuda ffmpeg gtk pyv4l2"
+IUSE+=" cuda ffmpeg gtk pyv4l2 +native-pam pam-python"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
+	|| ( native-pam pam-python )
 "
 DEPEND+="
 	${PYTHON_DEPS}
@@ -43,6 +44,9 @@ DEPEND+="
 		dev-python/elevate[${PYTHON_USEDEP}]
 		x11-libs/gtk+:3[introspection]
 	)
+	pam-python? (
+		$(python_gen_any_dep 'sys-auth/pam-python[${PYTHON_SINGLE_USEDEP}]')
+	)
 	pyv4l2? (
 		dev-python/pyv4l2[${PYTHON_USEDEP}]
 		media-libs/libv4l
@@ -52,7 +56,9 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	dev-util/meson
+	native-pam? (
+		dev-util/meson
+	)
 	|| (
 		>=sys-devel/gcc-5
 		>=sys-devel/clang-3.4
@@ -166,7 +172,7 @@ src_configure() {
 }
 
 src_compile() {
-	meson_src_compile
+	use native-pam && meson_src_compile
 }
 
 src_install() {
@@ -201,7 +207,7 @@ einfo "DIR: fperms 0755 ${x}"
 		insinto /usr/share/bash-completion/completions
 		doins src/autocomplete/howdy
 		exeinto /$(get_libdir)/security
-		doexe "${BUILD_DIR}/pam_howdy.so"
+		use native-pam && doexe "${BUILD_DIR}/pam_howdy.so"
 		dodir /usr/share/howdy
 		rm -rf "${ED}/$(get_libdir)/security/howdy/pam-config"
 	popd || die
@@ -231,11 +237,22 @@ einfo "  https://github.com/boltgolt/howdy/wiki/Only-using-howdy-for-specific-au
 einfo
 einfo "It may be possible to apply these changes beyond sudo."
 einfo
-einfo "You must add the following to /etc/pam.d/ file(s) that would benefit"
+	if use native-pam ; then
+einfo
+einfo "For native-pam, you must add the following to /etc/pam.d/ file(s) that would benefit"
 einfo "by using howdy and before system-auth line."
 einfo
-einfo "auth            sufficient      /$(lib64)/security/pam_howdy.so"
+einfo "auth            sufficient      /$(get_libdir)/security/pam_howdy.so"
 einfo
+	fi
+	if use pam-python ; then
+einfo
+einfo "For pam-python, you must add the following to /etc/pam.d/ file(s) that would benefit"
+einfo "by using howdy and before system-auth line."
+einfo
+einfo "auth            sufficient      pam_python.so /$(get_libdir)/security/howdy/pam.py"
+einfo
+	fi
 	if ! use ffmpeg ; then
 ewarn
 ewarn "If problems are encountered, use the ffmpeg USE flag."
