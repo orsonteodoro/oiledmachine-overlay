@@ -1,3 +1,4 @@
+# This list can be used to force off USE flags.
 # ebuild developers, you may fix a feature by modifying /etc/portage/profile/package.use.mask
 # and adding a row containing ${CATEGORY}/${PN} -use_flag.  This will remove the
 # the hard USE flag disable restriction.

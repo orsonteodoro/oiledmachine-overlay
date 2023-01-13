@@ -1,14 +1,15 @@
 diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/cmake/libappimage.pc.in libappimage-1.0.4-5/cmake/libappimage.pc.in
 --- libappimage-1.0.4-5.orig/cmake/libappimage.pc.in	2022-05-11 11:28:34.000000000 -0700
 +++ libappimage-1.0.4-5/cmake/libappimage.pc.in	2023-01-11 18:15:32.351583431 -0800
-@@ -7,6 +7,6 @@ Name: @PROJECT_NAME@
+@@ -7,6 +7,7 @@ Name: @PROJECT_NAME@
  Description: AppImage management and desktop integration
  Version: @libappimage_VERSION@
  URL: https://github.com/AppImage/libappimage
 -
 -Libs: -L${libdir} -lappimage
 -Cflags: -I${includedir}
-+Requires: pangocairo gio-2.0 glib-2.0 libappimage_shared libappimage_hashlib libarchive libbsd libcroco-0.6 libcrypto liblzma librsvg-2.0 libxml-2.0 mount squashfuse_appimage xshmfence zlib
++Requires: glib-2.0 gobject-2.0 gio-2.0 zlib cairo librsvg-2.0
++# pangocairo gio-2.0 glib-2.0 libappimage_shared libappimage_hashlib libarchive libbsd libcroco-0.6 libcrypto liblzma librsvg-2.0 libxml-2.0 mount squashfuse_appimage xshmfence zlib
 +Libs: -L${libdir} -lappimage -lbz2 -lstdc++ -lboost_filesystem -L${libdir}/XdgUtils -lXdgUtilsBaseDir -lXdgUtilsDesktopEntry
 +Cflags: -I${includedir}/appimage -I${includedir}/XdgUtils
 diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/cmake/libappimage_hashlib.pc.in libappimage-1.0.4-5/cmake/libappimage_hashlib.pc.in
@@ -44,7 +45,7 @@ diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/cmake/libappimage_shared.pc.in 
 diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/cmake/libappimage_static.pc.in libappimage-1.0.4-5/cmake/libappimage_static.pc.in
 --- libappimage-1.0.4-5.orig/cmake/libappimage_static.pc.in	1969-12-31 16:00:00.000000000 -0800
 +++ libappimage-1.0.4-5/cmake/libappimage_static.pc.in	2023-01-11 18:15:32.355583589 -0800
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,13 @@
 +prefix=@CMAKE_INSTALL_PREFIX@
 +# Use prefix as base path to make the package relocatable
 +libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
@@ -54,7 +55,8 @@ diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/cmake/libappimage_static.pc.in 
 +Description: AppImage management and desktop integration
 +Version: @libappimage_VERSION@
 +URL: https://github.com/AppImage/libappimage
-+Requires: pangocairo gio-2.0 glib-2.0 libappimage_shared libappimage_hashlib libarchive libbsd libcroco-0.6 libcrypto liblzma librsvg-2.0 libxml-2.0 mount squashfuse_appimage xshmfence zlib
++Requires: glib-2.0 gobject-2.0 gio-2.0 zlib cairo librsvg-2.0
++# pangocairo gio-2.0 glib-2.0 libappimage_shared libappimage_hashlib libarchive libbsd libcroco-0.6 libcrypto liblzma librsvg-2.0 libxml-2.0 mount squashfuse_appimage xshmfence zlib
 +Libs: -L${libdir} -lappimage_static -lbz2 -lstdc++ -lboost_filesystem -L${libdir}/XdgUtils -lXdgUtilsBaseDir -lXdgUtilsDesktopEntry
 +Cflags: -I${includedir}/appimage -I${includedir}/XdgUtils
 diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/cmake/xdg-basedir.pc.in libappimage-1.0.4-5/cmake/xdg-basedir.pc.in

@@ -21,6 +21,8 @@ KEYWORDS="~amd64 ~x86"
 IUSE="
 static-libs system-boost system-libarchive system-squashfuse system-xdgutils
 system-xz
+
+r1
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND="
@@ -66,6 +68,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.4_p5-use-squashfuse_appimage-for-pkgconfig.patch"
 	"${FILESDIR}/${PN}-1.0.2-same-files-static-build.patch"
 	"${FILESDIR}/${PN}-1.0.4_p5-complete-pkgconfig.patch"
+	"${FILESDIR}/${PN}-1.0.4_p5-tests-use-std-ofstream.patch"
 )
 
 pkg_setup() {

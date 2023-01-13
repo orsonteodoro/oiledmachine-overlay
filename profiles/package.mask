@@ -1,3 +1,4 @@
+# This list is used to hard mask packages.
 # Ebuilds masked because other reasons
 
 # Ebuilds currently in develpment
