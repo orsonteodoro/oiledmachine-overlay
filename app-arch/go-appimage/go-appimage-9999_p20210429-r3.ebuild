@@ -634,12 +634,12 @@ src_install() {
 
 pkg_postinst() {
 	if use openrc ; then
-einfo
-einfo "OpenRC support is experimental.  It may or not work for encrypted home."
-einfo "Do \`rc-update add appimaged\` to run the service on boot."
-einfo
-einfo "You can \`/etc/init.d/${PN} start\` to start it now."
-einfo
+ewarn
+ewarn "OpenRC support is experimental.  It may or not work for encrypted home."
+ewarn "Do \`rc-update add appimaged\` to run the service on boot."
+ewarn
+ewarn "You can \`/etc/init.d/${PN} start\` to start it now."
+ewarn
 	fi
 	if use systemd ; then
 einfo
