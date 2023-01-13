@@ -8,7 +8,7 @@ diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/cmake/libappimage.pc.in libappi
 -
 -Libs: -L${libdir} -lappimage
 -Cflags: -I${includedir}
-+Requires: glib-2.0 gobject-2.0 gio-2.0 zlib cairo librsvg-2.0
++Requires: glib-2.0 gobject-2.0 gio-2.0 zlib cairo librsvg-2.0 libarchive
 +# pangocairo gio-2.0 glib-2.0 libappimage_shared libappimage_hashlib libarchive libbsd libcroco-0.6 libcrypto liblzma librsvg-2.0 libxml-2.0 mount squashfuse_appimage xshmfence zlib
 +Libs: -L${libdir} -lappimage -lbz2 -lstdc++ -lboost_filesystem -L${libdir}/XdgUtils -lXdgUtilsBaseDir -lXdgUtilsDesktopEntry
 +Cflags: -I${includedir}/appimage -I${includedir}/XdgUtils
@@ -55,7 +55,7 @@ diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/cmake/libappimage_static.pc.in 
 +Description: AppImage management and desktop integration
 +Version: @libappimage_VERSION@
 +URL: https://github.com/AppImage/libappimage
-+Requires: glib-2.0 gobject-2.0 gio-2.0 zlib cairo librsvg-2.0
++Requires: glib-2.0 gobject-2.0 gio-2.0 zlib cairo librsvg-2.0 libarchive
 +# pangocairo gio-2.0 glib-2.0 libappimage_shared libappimage_hashlib libarchive libbsd libcroco-0.6 libcrypto liblzma librsvg-2.0 libxml-2.0 mount squashfuse_appimage xshmfence zlib
 +Libs: -L${libdir} -lappimage_static -lbz2 -lstdc++ -lboost_filesystem -L${libdir}/XdgUtils -lXdgUtilsBaseDir -lXdgUtilsDesktopEntry
 +Cflags: -I${includedir}/appimage -I${includedir}/XdgUtils

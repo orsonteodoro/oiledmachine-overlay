@@ -29,19 +29,40 @@ LICENSE+=" !system-binaries? ( MIT LGPL-2 GPL-2 )" # from musl libc package
 
 # Live ebuilds don't get keyworded.
 
-IUSE+=" -appimaged -appimagetool disable_watching_desktop_folder
+IUSE+="
+-appimaged -appimagetool disable_watching_desktop_folder
 disable_watching_downloads_folder firejail gnome kde openrc overlayfs
-+system-binaries systemd travis-ci"
++system-binaries systemd travis-ci
+"
+REQUIRED_USE+="
+	openrc? ( appimaged )
+	systemd? ( appimaged )
+	|| ( appimaged appimagetool )
+	|| ( gnome kde )
+"
+SLOT="0/${PV}"
 RDEPEND+="
-	  sys-apps/dbus
 	>=sys-fs/squashfs-tools-4.4:=
-	  sys-fs/udisks[daemon]
-	appimaged? ( !app-arch/appimaged )
-	appimagetool? ( app-arch/AppImageKit[-appimagetool] )
-	firejail? ( sys-apps/firejail )
-	gnome? ( gnome-base/gvfs[udisks] )
-	kde? ( kde-frameworks/solid )
-	openrc? ( sys-apps/openrc[bash] )
+	sys-apps/dbus
+	sys-fs/udisks[daemon]
+	appimaged? (
+		!app-arch/appimaged
+	)
+	appimagetool? (
+		app-arch/AppImageKit[-appimagetool]
+	)
+	firejail? (
+		sys-apps/firejail
+	)
+	gnome? (
+		gnome-base/gvfs[udisks]
+	)
+	kde? (
+		kde-frameworks/solid
+	)
+	openrc? (
+		sys-apps/openrc[bash]
+	)
 	system-binaries? (
 		app-arch/AppImageKit[runtime]
 		>=app-arch/libarchive-3.3.2:=
@@ -49,21 +70,20 @@ RDEPEND+="
 		>=dev-util/patchelf-0.9:=
 		>=sys-fs/squashfs-tools-4.4:=
 	)
-	systemd? ( sys-apps/systemd )
+	systemd? (
+		sys-apps/systemd
+	)
 	travis-ci? (
 		dev-libs/openssl
 		dev-vcs/git
 	)
 "
-DEPEND+=" ${RDEPEND}"
-BDEPEND+=" >=dev-lang/go-1.13.4:="
-REQUIRED_USE+="
-	|| ( appimaged appimagetool )
-	|| ( gnome kde )
-	openrc? ( appimaged )
-	systemd? ( appimaged )
+DEPEND+="
+	${RDEPEND}
 "
-SLOT="0/${PV}"
+BDEPEND+="
+	>=dev-lang/go-1.13.4:=
+"
 
 gen_go_dl_gh_url()
 {
@@ -331,7 +351,7 @@ unpack_go_pkg()
 	local tag="${3}"
 	local dest="${S_GO}/src/${pkg_name}"
 	local dest_name="${pkg_name//\//-}-${tag//\//-}"
-	einfo "Unpacking ${dest_name}.tar.gz"
+einfo "Unpacking ${dest_name}.tar.gz"
 	mkdir -p "${dest}" || die
 	tar --strip-components=1 -x -C "${dest}" \
 		-f "${DISTDIR}/${dest_name}.tar.gz" || die

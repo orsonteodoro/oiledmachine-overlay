@@ -18,11 +18,11 @@ openrc +systemd system-inotify-tools
 SLOT="0/9999"
 #	x11-libs/cairo:=[static-libs]
 RDEPEND="${RDEPEND}
-	app-arch/go-appimage[-appimaged]
+	app-arch/libarchive[lz4]
 	dev-libs/glib:=[static-libs]
 	dev-libs/libappimage:=[static-libs]
 	dev-libs/xdg-utils-cxx:=[static-libs]
-	sys-fs/squashfuse:=[appimage,static-libs]
+	sys-fs/squashfuse:=[appimage,lz4,static-libs]
 	sys-libs/glibc:=
 	x11-libs/cairo:=
 	firejail? (
@@ -68,6 +68,14 @@ _PATCHES=(
 # See scripts/build.sh
 
 pkg_setup() {
+	if has_version "app-arch/go-appimage[appimaged]" ; then
+eerror
+eerror "You must disable the appimaged USE flag in app-arch/go-appimage to"
+eerror "continue."
+eerror
+		die
+	fi
+
 ewarn
 ewarn "This product is EOL (End Of Life) and will no longer receive security"
 ewarn "updates.  Use go-appimage instead."
