@@ -6,6 +6,7 @@
 # This 0.1.103 is dated 2018
 
 EAPI=8
+
 inherit autotools flag-o-matic
 
 DESCRIPTION="FUSE filesystem to mount squashfs archives"
@@ -14,29 +15,55 @@ LICENSE="BSD-2"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
 SLOT="0"
 
-IUSE+=" vanilla appimage"
-IUSE+=" lz4 lzma lzo static-libs +zlib zstd"
+IUSE+="
+fuse2 fuse3
+vanilla appimage
+lz4 lzma lzo static-libs +zlib zstd
+r5
+"
 REQUIRED_USE+="
+	^^ ( fuse3 fuse2 )
+	appimage? ( fuse2 lzma static-libs )
 	|| ( lz4 lzma lzo zlib zstd )
 	|| ( vanilla appimage )
-	appimage? ( lzma static-libs )
 "
 DEPEND+="
-	>=sys-fs/fuse-2.8.6:0=
-	appimage? ( >=app-arch/xz-utils-5.0.4:=[static-libs] )
-	lzma? ( >=app-arch/xz-utils-5.0.4:= )
-	zlib? ( >=sys-libs/zlib-1.2.5-r2:= )
-	lzo? ( >=dev-libs/lzo-2.06:= )
-	lz4? ( >=app-arch/lz4-0_p106:= )
-	zstd? ( app-arch/zstd:= )
+	appimage? (
+		>=app-arch/xz-utils-5.0.4:=[static-libs]
+	)
+	fuse2? (
+		>=sys-fs/fuse-2.8.6:0=
+	)
+	fuse3? (
+		>=sys-fs/fuse-3:3=
+	)
+	lz4? (
+		>=app-arch/lz4-0_p106:=
+	)
+	lzma? (
+		>=app-arch/xz-utils-5.0.4:=
+	)
+	lzo? (
+		>=dev-libs/lzo-2.06:=
+	)
+	zlib? (
+		>=sys-libs/zlib-1.2.5-r2:=
+	)
+	zstd? (
+		app-arch/zstd:=
+	)
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	sys-devel/automake:1.15
-	virtual/pkgconfig"
-COMMIT_SQUASHFUSE_PATCHES="ae0258ab484c1259facc8fd85aaa8c7857c3e155"
+	virtual/pkgconfig
+"
+COMMIT_SQUASHFUSE_PATCHES="718cfda5a1f668059d8e34cf28a037e7ec0ce200"
 SRC_URI="
-https://github.com/vasi/squashfuse/releases/download/${PV}/${P}.tar.gz
+https://github.com/vasi/squashfuse/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
 	appimage? (
 https://raw.githubusercontent.com/AppImage/libappimage/${COMMIT_SQUASHFUSE_PATCHES}/src/patches/squashfuse_dlopen.c
 	-> squashfuse_dlopen.c.${COMMIT_SQUASHFUSE_PATCHES:0:7}
@@ -46,7 +73,7 @@ https://raw.githubusercontent.com/AppImage/libappimage/${COMMIT_SQUASHFUSE_PATCH
 "
 RESTRICT="mirror"
 
-get_squashfuse_variants() {
+get_variants() {
 	use vanilla && echo "vanilla"
 	use appimage && echo "appimage"
 }
@@ -54,17 +81,20 @@ get_squashfuse_variants() {
 src_prepare() {
 	default
 	cd "${S}" || die
+
+	eapply "${FILESDIR}/${PN}-0.1.105-with-fuse-slot.patch"
+
 	eautoreconf
 
 	local variant
-	for variant in $(get_squashfuse_variants) ; do
+	for variant in $(get_variants) ; do
 		cp -a "${S}" "${S}_${variant}" || die
 		export BUILD_DIR="${S}_${variant}"
 		cd "${BUILD_DIR}" || die
 		if [[ "${variant}" == "appimage" ]] ; then
-			eapply "${FILESDIR}/${PN}.patch"
-			eapply "${FILESDIR}/${PN}_dlopen.patch"
-			eapply "${FILESDIR}/${PN}-0.1.103-r1-pkconfig-appimage.patch"
+			eapply "${FILESDIR}/${PN}-0.1.105-libappimage.patch"
+			eapply "${FILESDIR}/${PN}-0.1.105-dlopen.patch"
+			eapply "${FILESDIR}/${PN}-0.1.105-pkgconfig-appimage.patch"
 			cp -a "${DISTDIR}/${PN}_dlopen.c.${COMMIT_SQUASHFUSE_PATCHES:0:7}" \
 				"${BUILD_DIR}/${PN}_dlopen.c" || die
 			cp -a "${DISTDIR}/${PN}_dlopen.h.${COMMIT_SQUASHFUSE_PATCHES:0:7}" \
@@ -77,11 +107,10 @@ src_prepare() {
 
 src_configure() {
 	local variant
-	for variant in $(get_squashfuse_variants) ; do
+	for variant in $(get_variants) ; do
 		export BUILD_DIR="${S}_${variant}"
 		cd "${BUILD_DIR}" || die
 		filter-flags -flto* -fwhole-program -fno-common
-
 		local econfargs=(
 			$(use_enable static-libs static)
 			$(use lz4 || echo --without-lz4)
@@ -90,24 +119,36 @@ src_configure() {
 			$(use zlib || echo --without-zlib)
 			$(use zstd || echo --without-zstd)
 		)
+		if use fuse3 ; then
+			econfargs+=(
+				--with-fuse-slot=3
+			)
+		else
+			econfargs+=(
+				--with-fuse-slot=2
+			)
+		fi
+#		filter-flags -Wl,-efusefs_main
 		if [[ "${variant}" == "appimage" ]] ; then
-			# disjointed install
+#			append-ldflags -Wl,-efusefs_main
 			econfargs+=(
 				--disable-high-level
 				--bindir="/usr/$(get_libdir)/${PN}_appimage/bin"
-				--libdir="/usr/$(get_libdir)/${PN}_appimage/lib"
 				--includedir="/usr/include/${PN}_appimage"
+				--libdir="/usr/$(get_libdir)/${PN}_appimage/lib"
 				--with-pkgconfigdir="/usr/$(get_libdir)/pkgconfig"
 			)
 		fi
-
 		econf "${econfargs[@]}"
+		if [[ "${variant}" == "appimage" ]] ; then
+			sed -i -e "s|XZ_LIBS = |XZ_LIBS = -Bstatic|g" Makefile || die
+		fi
 	done
 }
 
 src_compile() {
 	local variant
-	for variant in $(get_squashfuse_variants) ; do
+	for variant in $(get_variants) ; do
 		cd "${BUILD_DIR}" || die
 		emake
 	done
@@ -115,7 +156,7 @@ src_compile() {
 
 src_install() {
 	local variant
-	for variant in $(get_squashfuse_variants) ; do
+	for variant in $(get_variants) ; do
 		export BUILD_DIR="${S}_${variant}"
 		cd "${BUILD_DIR}" || die
 		default
