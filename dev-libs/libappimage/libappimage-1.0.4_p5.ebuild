@@ -22,7 +22,7 @@ IUSE="
 static-libs system-boost system-libarchive system-squashfuse system-xdgutils
 system-xz
 
-r1
+r2
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND="

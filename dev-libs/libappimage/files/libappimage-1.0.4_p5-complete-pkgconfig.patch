@@ -25,7 +25,7 @@ diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/cmake/libappimage_hashlib.pc.in
 +Description: MD5 hash library for libappimage
 +Version: @libappimage_VERSION@
 +URL: https://github.com/AppImage/libappimage
-+Libs: -L${libdir} -lappimage_hashlib
++Libs: -L${libdir} -l:libappimage_hashlib.a
 +Cflags: -I${includedir}/libappimage_hashlib
 diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/cmake/libappimage_shared.pc.in libappimage-1.0.4-5/cmake/libappimage_shared.pc.in
 --- libappimage-1.0.4-5.orig/cmake/libappimage_shared.pc.in	1969-12-31 16:00:00.000000000 -0800
@@ -40,7 +40,7 @@ diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/cmake/libappimage_shared.pc.in 
 +Description: Helper functions for analysis of AppImages
 +Version: @libappimage_VERSION@
 +URL: https://github.com/AppImage/libappimage
-+Libs: -L${libdir} -lappimage_shared
++Libs: -L${libdir} -l:libappimage_shared.a
 +Cflags: -I${includedir}/appimage
 diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/cmake/libappimage_static.pc.in libappimage-1.0.4-5/cmake/libappimage_static.pc.in
 --- libappimage-1.0.4-5.orig/cmake/libappimage_static.pc.in	1969-12-31 16:00:00.000000000 -0800
@@ -57,7 +57,7 @@ diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/cmake/libappimage_static.pc.in 
 +URL: https://github.com/AppImage/libappimage
 +Requires: glib-2.0 gobject-2.0 gio-2.0 zlib cairo librsvg-2.0 libarchive
 +# pangocairo gio-2.0 glib-2.0 libappimage_shared libappimage_hashlib libarchive libbsd libcroco-0.6 libcrypto liblzma librsvg-2.0 libxml-2.0 mount squashfuse_appimage xshmfence zlib
-+Libs: -L${libdir} -lappimage_static -lbz2 -lstdc++ -lboost_filesystem -L${libdir}/XdgUtils -lXdgUtilsBaseDir -lXdgUtilsDesktopEntry
++Libs: -L${libdir} -l:libappimage_static.a -lbz2 -lstdc++ -lboost_filesystem -L${libdir}/XdgUtils -lXdgUtilsBaseDir -lXdgUtilsDesktopEntry
 +Cflags: -I${includedir}/appimage -I${includedir}/XdgUtils
 diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/cmake/xdg-basedir.pc.in libappimage-1.0.4-5/cmake/xdg-basedir.pc.in
 --- libappimage-1.0.4-5.orig/cmake/xdg-basedir.pc.in	1969-12-31 16:00:00.000000000 -0800
@@ -72,7 +72,7 @@ diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/cmake/xdg-basedir.pc.in libappi
 +Description: XDG functions for libappimage
 +Version: @libappimage_VERSION@
 +URL: https://github.com/AppImage/libappimage
-+Libs: -L${libdir} -lxdg-basedir
++Libs: -L${libdir} -l:libxdg-basedir.a
 +Cflags: -I${includedir}/appimage
 diff -x '*/*.rej' -urpN libappimage-1.0.4-5.orig/src/CMakeLists.txt libappimage-1.0.4-5/src/CMakeLists.txt
 --- libappimage-1.0.4-5.orig/src/CMakeLists.txt	2022-05-11 11:28:34.000000000 -0700
