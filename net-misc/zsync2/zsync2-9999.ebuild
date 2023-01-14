@@ -4,7 +4,7 @@
 
 EAPI=8
 
-inherit cmake flag-o-matic git-r3
+inherit cmake flag-o-matic git-r3 lcnr
 
 DESCRIPTION="Rewrite of https://github.com/AppImage/zsync-curl, using modern \
 C++, providing both a library and standalone tools."
@@ -15,7 +15,6 @@ LICENSE+=" MIT" # args, cpr
 LICENSE+=" BSD" # googletest
 LICENSE+=" all-rights-reserved GPL-2" # mongoose ; no all rights reserved in GPL-2
 LICENSE+=" curl" # curl
-LICENSE+=" all-rights-reserved ZLIB" # hashlib ; the ZLIB license does not have all rights reserved
 LICENSE+=" Artistic" # librcksum, libzsync
 LICENSE+=" ZLIB" # zlib
 KEYWORDS="~amd64 ~x86"
@@ -88,23 +87,8 @@ src_configure() {
 
 src_install() {
 	cmake_src_install
+	lcnr_install_files
 	dodoc README.md
-	docinto licenses
-	dodoc COPYING
-	docinto licenses/thirdparty/args
-	dodoc "${S}/lib/args/LICENSE"
-	docinto licenses/thirdparty/cpr
-	dodoc "${S}/lib/cpr/LICENSE"
-	docinto licenses/thirdparty/cpr/thirdparty/curl
-	dodoc "${S}/lib/cpr/opt/curl/COPYING"
-	docinto licenses/thirdparty/cpr/thirdparty/googletest
-	dodoc "${S}/lib/cpr/opt/googletest/LICENSE"
-	docinto licenses/thirdparty/cpr/thirdparty/mongoose
-	dodoc "${S}/lib/cpr/opt/mongoose/LICENSE"
-	docinto licenses/thirdparty/gtest/googlemock
-	dodoc "${S}/lib/gtest/googlemock/LICENSE"
-	docinto licenses/thirdparty/gtest/googletest
-	dodoc "${S}/lib/gtest/googletest/LICENSE"
 	docinto licenses/thirdparty/librcksum
 	head -n 15 "${S}/lib/librcksum/rcksum.h" \
 		> "${T}/LICENSE" || die
@@ -117,18 +101,6 @@ src_install() {
 	head -n 29 "${S}/lib/zlib/zlib.h" \
 		> "${T}/LICENSE" || die
 	dodoc "${T}/LICENSE"
-	docinto licenses/thirdparty/hashlib
-	dodoc "${FILESDIR}/LICENSE.hashlib"
-	insinto /usr/include/zsync2
-	doins -r include/*
-	doins -r lib/cpr/include/*
-	doins lib/args/args.hxx
-	insinto /usr/include/zsync2/hashlib
-	doins -r lib/hashlib/include/hashlib/*
-	# This needs to unbundled or it might cause merge conflict
-	cd "${BUILD_DIR}" || die
-	dolib.so lib/libcpr.so
-	dolib.so lib/libzsync/libzsync.so
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
