@@ -7,7 +7,9 @@ EAPI=8
 # The AppImageKit project currently is just the non Go version of appimagetool.
 # AppImageKit is the set of utils and assets used for appimagetool.
 
-inherit cmake git-r3
+MAKEOPTS="-j1"
+
+inherit cmake flag-o-matic git-r3
 
 DESCRIPTION="appimagetool -- Generate, extract, and inspect AppImages"
 HOMEPAGE="https://github.com/AppImage/AppImageKit"
@@ -16,18 +18,35 @@ LICENSE+=" all-rights-reserved" # src/appimagetool.c ; The vanilla MIT license d
 
 # live ebuilds do not get keyworded
 
-IUSE+=" additional-tools appstream appimagetool runtime"
+IUSE+="
+additional-tools appimagetool appstream runtime
+
+r1
+"
+REQUIRED_USE+="
+	|| ( appimagetool runtime )
+"
 SLOT="0/9999"
 RDEPEND+="
-	additional-tools? ( dev-libs/openssl )
-	app-arch/xz-utils:=[static-libs]
-	appimagetool? ( app-arch/go-appimage[-appimagetool] )
-	appstream? ( dev-libs/appstream:= )
-	dev-libs/libffi:=
-	net-misc/zsync2:=
-	sys-fs/squashfuse:=
-	sys-fs/squashfs-tools:=
+	>=app-arch/libarchive-3.3.1
+	>=app-arch/xz-utils-5.2.3:=[static-libs]
+	>=sys-fs/squashfs-tools-4.4:=[lz4,lzma]
+	>=sys-fs/squashfuse-0.1.101:=[lzma,zlib]
 	dev-libs/libappimage:=[static-libs]
+	dev-libs/libffi:=
+	additional-tools? (
+		dev-libs/openssl
+	)
+	appimagetool? (
+		app-arch/go-appimage[-appimagetool]
+	)
+	appstream? (
+		dev-libs/appstream:=
+	)
+	|| (
+		net-misc/zsync2:=
+		net-misc/zsync:=
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -55,8 +74,6 @@ PATCHES=(
 CMAKE_MAKEFILE_GENERATOR="emake"
 
 pkg_setup() {
-ewarn "This ebuild is a Work In Progress (WIP)"
-ewarn "Use ~${PN}-9999_p20200707 instead"
 	if has network-sandbox $FEATURES ; then
 eerror
 eerror "${PN} requires network-sandbox to be disabled in FEATURES in order to"
@@ -97,6 +114,10 @@ src_prepare() {
 			| cut -f 2 -d '"')
 		sed -i -e "s|${old_c}|${c}|g" CMakeLists.txt || die
 	fi
+	if has_version "net-misc/zsync2" ; then
+		sed -i -e "s|zsyncmake|zsyncmake2|g" src/appimagetool.c || die
+		sed -i -e "s|zsyncmake|zsyncmake2|g" ci/build-appdir.sh || die
+	fi
 }
 
 src_configure() {
@@ -135,16 +156,17 @@ src_install() {
 	docinto readmes
 	dodoc README.md
 	exeinto /usr/bin
+	local arch=$(get_arch)
 	if use appimagetool ; then
-		doexe "build/out/appimagetool-${ABI}.AppImage"
-		dosym /usr/bin/appimagetool-${ABI}.AppImage /usr/bin/appimagetool
+		doexe "${WORKDIR}/out/appimagetool-${arch}.AppImage"
+		dosym /usr/bin/appimagetool-${arch}.AppImage /usr/bin/appimagetool
 	fi
 	# Already embedded
-	#doexe "${WORKDIR}/out/AppRun-${ABI}"
+	#doexe "${WORKDIR}/out/AppRun-${arch}"
 	if use runtime ; then
 		exeinto /usr/$(get_libdir)/${PN}
 		# exposed for go-appimage
-		doexe "build/out/runtime-${ABI}"
+		doexe "${WORKDIR}/out/runtime-${arch}"
 	fi
 }
 
