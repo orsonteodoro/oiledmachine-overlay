@@ -98,14 +98,18 @@ RESTRICT="!test? ( test )"
 NGHTTP2_PV="1.47.0"
 RDEPEND+="
 	!net-libs/nodejs:0
-	app-eselect/eselect-nodejs
 	>=app-arch/brotli-1.0.9
 	>=dev-libs/libuv-1.43.0:=
 	>=net-dns/c-ares-1.18.1
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.2.11
-	system-icu? ( >=dev-libs/icu-71.1:= )
-	system-ssl? ( >=dev-libs/openssl-3.0.7:0= )
+	app-eselect/eselect-nodejs
+	system-icu? (
+		>=dev-libs/icu-71.1:=
+	)
+	system-ssl? (
+		>=dev-libs/openssl-3.0.7:0=
+	)
 "
 DEPEND+=" ${RDEPEND}"
 BDEPEND+="
@@ -113,17 +117,25 @@ BDEPEND+="
 	dev-util/ninja
 	sys-apps/coreutils
 	virtual/pkgconfig
-	pax-kernel? ( sys-apps/elfix )
+	pax-kernel? (
+		sys-apps/elfix
+	)
 	pgo? (
 		${PN}_pgo_trainers_http2? (
 			>=net-libs/nghttp2-${NGHTTP2_PV}[utils]
 		)
 	)
-	systemtap? ( dev-util/systemtap )
-	test? ( net-misc/curl )
+	systemtap? (
+		dev-util/systemtap
+	)
+	test? (
+		net-misc/curl
+	)
 "
 PDEPEND+="
-	acorn? ( >=dev-node/acorn-bin-8.8.0 )
+	acorn? (
+		>=dev-node/acorn-bin-8.8.0
+	)
 "
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 PATCHES=(

@@ -23,7 +23,6 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 BENCHMARK_TYPES=(
 	assert
 	async_hooks
-	blob
 	buffers
 	child_process
 	cluster
@@ -72,7 +71,7 @@ gen_iuse_pgo() {
 
 IUSE+="
 acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
-+npm pax-kernel +snapshot +ssl system-icu +system-ssl test
+npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
 man pgo
@@ -95,7 +94,7 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Dec 14, 2022
+# Last deps commit date:  Jan 5, 2023
 NGHTTP2_PV="1.51.0"
 RDEPEND+="
 	!net-libs/nodejs:0
@@ -126,6 +125,9 @@ BDEPEND+="
 			>=net-libs/nghttp2-${NGHTTP2_PV}[utils]
 		)
 	)
+	systemtap? (
+		dev-util/systemtap
+	)
 	test? (
 		net-misc/curl
 	)
@@ -144,7 +146,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="9.2.0" # See https://github.com/nodejs/node/blob/v19.3.0/deps/npm/package.json
+NPM_V="8.19.3" # See https://github.com/nodejs/node/blob/v18.13.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
@@ -181,7 +183,7 @@ pkg_setup() {
 	linux-info_pkg_setup
 
 einfo
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2023-06-01."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2025-04-30."
 einfo
 
 	# Prevent merge conflicts
@@ -450,6 +452,7 @@ _src_configure() {
 	"${EPYTHON}" configure.py \
 		--prefix="${EPREFIX}"/usr \
 		--dest-cpu=${myarch} \
+		$(use_with systemtap dtrace) \
 		"${myconf[@]}" || die
 
 	# Prevent double build on install.
@@ -694,6 +697,13 @@ src_install() {
 	fi
 
 	mv "${ED}"/usr/share/doc/node "${ED}"/usr/share/doc/${PF} || die
+
+	if use systemtap ; then
+		# Move tapset to avoid conflict
+		mv "${ED}/usr/share/systemtap/tapset/"node${,${SLOT_MAJOR}}.stp || die
+	else
+		rm "${ED}/usr/share/systemtap/tapset/node.stp" || die
+	fi
 
 	if ! use corepack ; then
 		# Prevent collisions
