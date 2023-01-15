@@ -82,10 +82,10 @@ src_prepare() {
 			eapply "${FILESDIR}/${PN}-0.1.103-${PN}.patch"
 			eapply "${FILESDIR}/${PN}-0.1.103-${PN}_dlopen.patch"
 			eapply "${FILESDIR}/${PN}-0.1.103-pkgconfig-appimage.patch"
-			cp -a "${DISTDIR}/${PN}_dlopen.c.${COMMIT_SQUASHFUSE_PATCHES:0:7}" \
-				"${BUILD_DIR}/${PN}_dlopen.c" || die
-			cp -a "${DISTDIR}/${PN}_dlopen.h.${COMMIT_SQUASHFUSE_PATCHES:0:7}" \
-				"${BUILD_DIR}/${PN}_dlopen.h" || die
+			cat "${DISTDIR}/${PN}_dlopen.c.${COMMIT_SQUASHFUSE_PATCHES:0:7}" \
+				> "${BUILD_DIR}/${PN}_dlopen.c" || die
+			cat "${DISTDIR}/${PN}_dlopen.h.${COMMIT_SQUASHFUSE_PATCHES:0:7}" \
+				> "${BUILD_DIR}/${PN}_dlopen.h" || die
 			sed -i "s/typedef off_t sqfs_off_t/typedef int64_t sqfs_off_t/g" \
 				common.h || die
 		fi
