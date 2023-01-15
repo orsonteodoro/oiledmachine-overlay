@@ -52,7 +52,7 @@ diff -urp AppImageKit-9999.orig/ci/build-appdir.sh AppImageKit-9999/ci/build-app
 diff -urp AppImageKit-9999.orig/ci/build-binaries-and-appimage.sh AppImageKit-9999/ci/build-binaries-and-appimage.sh
 --- AppImageKit-9999.orig/ci/build-binaries-and-appimage.sh	2023-01-14 15:38:12.689903859 -0800
 +++ AppImageKit-9999/ci/build-binaries-and-appimage.sh	2023-01-14 15:38:43.943141531 -0800
-@@ -6,9 +6,9 @@ set -o functrace
+@@ -6,9 +6,10 @@ set -o functrace
  
  # make sure the prebuilt libraries in the container will be found
  # (in case we're building in an AppImageBuild container)
@@ -62,6 +62,7 @@ diff -urp AppImageKit-9999.orig/ci/build-binaries-and-appimage.sh AppImageKit-99
 +export LD_LIBRARY_PATH="${WORKDIR}/deps/lib:$LD_LIBRARY_PATH"
 +export PKG_CONFIG_PATH="${WORKDIR}/deps/lib/pkgconfig/"
 +export PATH="${WORKDIR}/deps/bin:$PATH"
++export VERBOSE=1
  
  # note: signing is not working at the moment
  # see ci-build.sh for more information
@@ -81,7 +82,7 @@ diff -urp AppImageKit-9999.orig/ci/build-binaries-and-appimage.sh AppImageKit-99
  }
  
 -trap cleanup EXIT
-+#trap cleanup EXIT
++trap cleanup EXIT
  
  REPO_ROOT="$(readlink -f "$(dirname "${BASH_SOURCE[0]}")"/..)"
  OLD_CWD="$(readlink -f .)"
@@ -227,7 +228,7 @@ diff -urp AppImageKit-9999.orig/ci/test-appimage.sh AppImageKit-9999/ci/test-app
          [[ -d "$tmpdir" ]] && rm -r "$tmpdir"
      }
 -    trap cleanup EXIT
-+    #trap cleanup EXIT
++    trap cleanup EXIT
  
      echo "Copying appimagetool and patching out magic bytes"
      cp "$appimagetool" "$tmpdir/"
@@ -250,7 +251,7 @@ diff -urp AppImageKit-9999.orig/ci/test-appimagetool.sh AppImageKit-9999/ci/test
  }
  
 -trap cleanup EXIT
-+#trap cleanup EXIT
++trap cleanup EXIT
  
  REPO_ROOT="$(readlink -f "$(dirname "${BASH_SOURCE[0]}")"/..)"
  OLD_CWD="$(readlink -f .)"

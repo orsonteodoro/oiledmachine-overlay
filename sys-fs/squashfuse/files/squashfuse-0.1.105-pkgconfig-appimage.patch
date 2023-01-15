@@ -1,9 +1,6 @@
-Forward port for 0.1.105
-Original patch:  https://github.com/AppImageCommunity/libappimage/tree/master/src/patches
-
-diff -urpN -x '*.rej' -x '*.orig' squashfuse-0.1.105_appimage.orig/Makefile.am squashfuse-0.1.105_appimage/Makefile.am
---- squashfuse-0.1.105_appimage.orig/Makefile.am	2023-01-12 22:33:05.456118795 -0800
-+++ squashfuse-0.1.105_appimage/Makefile.am	2023-01-12 22:33:30.673112933 -0800
+diff -urpN squashfuse-0.1.105_appimage.orig/Makefile.am squashfuse-0.1.105_appimage/Makefile.am
+--- squashfuse-0.1.105_appimage.orig/Makefile.am	2023-01-14 18:21:18.437542250 -0800
++++ squashfuse-0.1.105_appimage/Makefile.am	2023-01-14 18:24:18.784687995 -0800
 @@ -21,7 +21,7 @@ pkginclude_HEADERS = squashfuse.h squash
  	cache.h common.h config.h decompress.h dir.h file.h fs.h stack.h table.h \
  	traverse.h util.h xattr.h
@@ -13,9 +10,17 @@ diff -urpN -x '*.rej' -x '*.orig' squashfuse-0.1.105_appimage.orig/Makefile.am s
  
  # Convenience lib to we get static executables
  noinst_LTLIBRARIES += libsquashfuse_convenience.la
-diff -urpN -x '*.rej' -x '*.orig' squashfuse-0.1.105_appimage.orig/configure.ac squashfuse-0.1.105_appimage/configure.ac
+@@ -78,7 +78,6 @@ libsquashfuse_ll_la_CPPFLAGS = $(ZLIB_CP
+ 	$(LZ4_CPPFLAGS) $(ZSTD_CPPFLAGS) $(FUSE_CPPFLAGS)
+ libsquashfuse_ll_la_LIBADD = libsquashfuse_ll_convenience.la $(COMPRESSION_LIBS) $(FUSE_LIBS)
+ 
+-pkgconfig_DATA += squashfuse_ll.pc
+ pkginclude_HEADERS += ll.h
+ endif
+ 
+diff -urpN squashfuse-0.1.105_appimage.orig/configure.ac squashfuse-0.1.105_appimage/configure.ac
 --- squashfuse-0.1.105_appimage.orig/configure.ac	2022-06-14 17:34:42.000000000 -0700
-+++ squashfuse-0.1.105_appimage/configure.ac	2023-01-12 22:34:27.519354147 -0800
++++ squashfuse-0.1.105_appimage/configure.ac	2023-01-14 18:23:46.791420372 -0800
 @@ -102,7 +102,7 @@ AC_SUBST([sq_high_level])
  AC_SUBST([sq_low_level])
  AC_SUBST([sq_demo])
@@ -25,9 +30,9 @@ diff -urpN -x '*.rej' -x '*.orig' squashfuse-0.1.105_appimage.orig/configure.ac 
  AC_OUTPUT
  
  AS_ECHO()
-diff -urpN -x '*.rej' -x '*.orig' squashfuse-0.1.105_appimage.orig/squashfuse_appimage.pc.in squashfuse-0.1.105_appimage/squashfuse_appimage.pc.in
+diff -urpN squashfuse-0.1.105_appimage.orig/squashfuse_appimage.pc.in squashfuse-0.1.105_appimage/squashfuse_appimage.pc.in
 --- squashfuse-0.1.105_appimage.orig/squashfuse_appimage.pc.in	1969-12-31 16:00:00.000000000 -0800
-+++ squashfuse-0.1.105_appimage/squashfuse_appimage.pc.in	2023-01-12 22:33:30.673112933 -0800
++++ squashfuse-0.1.105_appimage/squashfuse_appimage.pc.in	2023-01-14 18:23:46.795420530 -0800
 @@ -0,0 +1,12 @@
 +prefix=@prefix@
 +exec_prefix=@exec_prefix@
@@ -40,4 +45,4 @@ diff -urpN -x '*.rej' -x '*.orig' squashfuse-0.1.105_appimage.orig/squashfuse_ap
 +
 +Requires:
 +Libs: -L${libdir} -lsquashfuse -lsquashfuse_ll
-+Cflags: -I${includedir}
++Cflags: -I${includedir} -I${includedir}/squashfuse

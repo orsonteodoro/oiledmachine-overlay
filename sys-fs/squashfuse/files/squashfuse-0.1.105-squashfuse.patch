@@ -1,3 +1,6 @@
+Forward port for 0.1.105
+Original patch:  https://github.com/AppImageCommunity/libappimage/tree/master/src/patches
+
 diff -urp squashfuse-0.1.105.orig/Makefile.am squashfuse-0.1.105/Makefile.am
 --- squashfuse-0.1.105.orig/Makefile.am	2022-06-14 17:34:42.000000000 -0700
 +++ squashfuse-0.1.105/Makefile.am	2023-01-13 17:09:07.097249179 -0800

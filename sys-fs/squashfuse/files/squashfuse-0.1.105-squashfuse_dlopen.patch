@@ -2,8 +2,8 @@ Forward port for 0.1.105
 Original patch:  https://github.com/AppImageCommunity/libappimage/tree/master/src/patches
 
 diff -urp squashfuse-0.1.105_appimage.orig/Makefile.am squashfuse-0.1.105_appimage/Makefile.am
---- squashfuse-0.1.105_appimage.orig/Makefile.am	2023-01-13 11:15:31.861093899 -0800
-+++ squashfuse-0.1.105_appimage/Makefile.am	2023-01-13 11:17:34.401954486 -0800
+--- squashfuse-0.1.105_appimage.orig/Makefile.am	2023-01-14 17:01:51.764747235 -0800
++++ squashfuse-0.1.105_appimage/Makefile.am	2023-01-14 17:02:44.762843224 -0800
 @@ -1,6 +1,7 @@
  COMPRESSION_LIBS = $(ZLIB_LIBS) $(XZ_LIBS) $(LZO_LIBS) $(LZ4_LIBS) $(ZSTD_LIBS)
  
@@ -34,7 +34,7 @@ diff -urp squashfuse-0.1.105_appimage.orig/Makefile.am squashfuse-0.1.105_appima
  
  if SQ_WANT_FUSE
  # Helper for FUSE clients: libfuseprivate
-@@ -97,7 +98,7 @@ squashfuse_ls_LDADD = libsquashfuse.la $
+@@ -91,7 +92,7 @@ squashfuse_ls_LDADD = libsquashfuse.la $
  noinst_PROGRAMS += squashfuse_extract
  squashfuse_extract_CPPFLAGS = $(FUSE_CPPFLAGS)
  squashfuse_extract_SOURCES = extract.c stat.h stat.c nonstd-makedev.c nonstd-symlink.c
@@ -43,9 +43,10 @@ diff -urp squashfuse-0.1.105_appimage.orig/Makefile.am squashfuse-0.1.105_appima
    $(FUSE_LIBS)
  endif
  
+Only in squashfuse-0.1.105_appimage: Makefile.am.orig
 diff -urp squashfuse-0.1.105_appimage.orig/fuseprivate.c squashfuse-0.1.105_appimage/fuseprivate.c
 --- squashfuse-0.1.105_appimage.orig/fuseprivate.c	2022-06-14 17:34:42.000000000 -0700
-+++ squashfuse-0.1.105_appimage/fuseprivate.c	2023-01-13 11:17:34.401954486 -0800
++++ squashfuse-0.1.105_appimage/fuseprivate.c	2023-01-14 17:02:44.762843224 -0800
 @@ -60,18 +60,21 @@ int sqfs_listxattr(sqfs *fs, sqfs_inode
  }
  
@@ -74,7 +75,7 @@ diff -urp squashfuse-0.1.105_appimage.orig/fuseprivate.c squashfuse-0.1.105_appi
  	exit(-2);
 diff -urp squashfuse-0.1.105_appimage.orig/fuseprivate.h squashfuse-0.1.105_appimage/fuseprivate.h
 --- squashfuse-0.1.105_appimage.orig/fuseprivate.h	2022-06-14 17:34:42.000000000 -0700
-+++ squashfuse-0.1.105_appimage/fuseprivate.h	2023-01-13 11:17:34.401954486 -0800
++++ squashfuse-0.1.105_appimage/fuseprivate.h	2023-01-14 17:02:44.762843224 -0800
 @@ -27,11 +27,14 @@
  
  #include "squashfuse.h"
@@ -97,7 +98,7 @@ diff -urp squashfuse-0.1.105_appimage.orig/fuseprivate.h squashfuse-0.1.105_appi
  /* Common functions for FUSE high- and low-level clients */
 diff -urp squashfuse-0.1.105_appimage.orig/hl.c squashfuse-0.1.105_appimage/hl.c
 --- squashfuse-0.1.105_appimage.orig/hl.c	2022-06-14 17:34:42.000000000 -0700
-+++ squashfuse-0.1.105_appimage/hl.c	2023-01-13 11:17:34.401954486 -0800
++++ squashfuse-0.1.105_appimage/hl.c	2023-01-14 17:05:12.936703272 -0800
 @@ -34,6 +34,7 @@
  #include <stdlib.h>
  #include <string.h>
@@ -128,7 +129,17 @@ diff -urp squashfuse-0.1.105_appimage.orig/hl.c squashfuse-0.1.105_appimage/hl.c
  }
  
  static int sqfs_hl_op_getattr(const char *path, struct stat *st
-@@ -288,7 +291,16 @@ static sqfs_hl *sqfs_hl_open(const char
+@@ -262,7 +265,8 @@ static int sqfs_hl_op_getxattr(const cha
+ }
+ 
+ static int sqfs_hl_op_statfs(const char *path, struct statvfs *st) {
+-	sqfs_hl *hl = fuse_get_context()->private_data;
++	LOAD_SYMBOL(struct fuse_context *,fuse_get_context(void));
++	sqfs_hl *hl = DL(fuse_get_context)()->private_data;
+ 	return sqfs_statfs(&hl->fs, st);
+ }
+ 
+@@ -288,7 +292,16 @@ static sqfs_hl *sqfs_hl_open(const char
  	return NULL;
  }
  
@@ -145,7 +156,7 @@ diff -urp squashfuse-0.1.105_appimage.orig/hl.c squashfuse-0.1.105_appimage/hl.c
  	struct fuse_args args;
  	sqfs_opts opts;
  	sqfs_hl *hl;
-@@ -324,7 +336,7 @@ int main(int argc, char *argv[]) {
+@@ -324,7 +337,7 @@ int main(int argc, char *argv[]) {
  	opts.image = NULL;
  	opts.mountpoint = 0;
  	opts.offset = 0;
@@ -154,7 +165,7 @@ diff -urp squashfuse-0.1.105_appimage.orig/hl.c squashfuse-0.1.105_appimage/hl.c
  		sqfs_usage(argv[0], true);
  	if (!opts.image)
  		sqfs_usage(argv[0], true);
-@@ -333,8 +345,9 @@ int main(int argc, char *argv[]) {
+@@ -333,8 +346,9 @@ int main(int argc, char *argv[]) {
  	if (!hl)
  		return -1;
  	
@@ -168,7 +179,7 @@ diff -urp squashfuse-0.1.105_appimage.orig/hl.c squashfuse-0.1.105_appimage/hl.c
  }
 diff -urp squashfuse-0.1.105_appimage.orig/ll.c squashfuse-0.1.105_appimage/ll.c
 --- squashfuse-0.1.105_appimage.orig/ll.c	2022-06-14 17:34:42.000000000 -0700
-+++ squashfuse-0.1.105_appimage/ll.c	2023-01-13 11:17:34.401954486 -0800
++++ squashfuse-0.1.105_appimage/ll.c	2023-01-14 17:02:44.762843224 -0800
 @@ -54,6 +54,8 @@ static struct fuse_session *fuse_instanc
  
  void sqfs_ll_op_getattr(fuse_req_t req, fuse_ino_t ino,
@@ -644,7 +655,7 @@ diff -urp squashfuse-0.1.105_appimage.orig/ll.c squashfuse-0.1.105_appimage/ll.c
  
 diff -urp squashfuse-0.1.105_appimage.orig/ll.h squashfuse-0.1.105_appimage/ll.h
 --- squashfuse-0.1.105_appimage.orig/ll.h	2022-06-14 17:34:42.000000000 -0700
-+++ squashfuse-0.1.105_appimage/ll.h	2023-01-13 11:17:34.401954486 -0800
++++ squashfuse-0.1.105_appimage/ll.h	2023-01-14 17:02:44.766843383 -0800
 @@ -27,10 +27,13 @@
  
  #include "squashfuse.h"
@@ -665,7 +676,7 @@ diff -urp squashfuse-0.1.105_appimage.orig/ll.h squashfuse-0.1.105_appimage/ll.h
  typedef struct sqfs_ll sqfs_ll;
 diff -urp squashfuse-0.1.105_appimage.orig/ll_inode.c squashfuse-0.1.105_appimage/ll_inode.c
 --- squashfuse-0.1.105_appimage.orig/ll_inode.c	2022-06-14 17:34:42.000000000 -0700
-+++ squashfuse-0.1.105_appimage/ll_inode.c	2023-01-13 11:17:34.401954486 -0800
++++ squashfuse-0.1.105_appimage/ll_inode.c	2023-01-14 17:02:44.766843383 -0800
 @@ -348,12 +348,14 @@ sqfs_err sqfs_ll_inode(sqfs_ll *ll, sqfs
  
  
@@ -684,8 +695,8 @@ diff -urp squashfuse-0.1.105_appimage.orig/ll_inode.c squashfuse-0.1.105_appimag
  	return err;
  }
 diff -urp squashfuse-0.1.105_appimage.orig/ll_main.c squashfuse-0.1.105_appimage/ll_main.c
---- squashfuse-0.1.105_appimage.orig/ll_main.c	2023-01-13 11:15:31.861093899 -0800
-+++ squashfuse-0.1.105_appimage/ll_main.c	2023-01-13 11:21:25.119115863 -0800
+--- squashfuse-0.1.105_appimage.orig/ll_main.c	2023-01-14 17:01:51.768747393 -0800
++++ squashfuse-0.1.105_appimage/ll_main.c	2023-01-14 17:02:44.766843383 -0800
 @@ -38,6 +38,17 @@
  #include <unistd.h>
  
@@ -704,7 +715,7 @@ diff -urp squashfuse-0.1.105_appimage.orig/ll_main.c squashfuse-0.1.105_appimage
  	struct fuse_args args;
  	sqfs_opts opts;
  
-@@ -85,13 +96,15 @@ int fusefs_main(int argc, char *argv[])
+@@ -85,13 +96,15 @@ int fusefs_main(int argc, char *argv[],
  	opts.mountpoint = 0;
  	opts.offset = 0;
  	opts.idle_timeout_secs = 0;
@@ -723,7 +734,7 @@ diff -urp squashfuse-0.1.105_appimage.orig/ll_main.c squashfuse-0.1.105_appimage
                             &fuse_cmdline_opts.mountpoint,
                             &fuse_cmdline_opts.mt,
                             &fuse_cmdline_opts.foreground) == -1)
-@@ -138,27 +151,28 @@ int fusefs_main(int argc, char *argv[])
+@@ -138,27 +151,28 @@ int fusefs_main(int argc, char *argv[],
                          sizeof(sqfs_ll_ops),
                          ll) == SQFS_OK) {
  			if (sqfs_ll_daemonize(fuse_cmdline_opts.foreground) != -1) {
@@ -758,7 +769,7 @@ diff -urp squashfuse-0.1.105_appimage.orig/ll_main.c squashfuse-0.1.105_appimage
  }
 diff -urp squashfuse-0.1.105_appimage.orig/nonstd-daemon.c squashfuse-0.1.105_appimage/nonstd-daemon.c
 --- squashfuse-0.1.105_appimage.orig/nonstd-daemon.c	2022-06-14 17:34:42.000000000 -0700
-+++ squashfuse-0.1.105_appimage/nonstd-daemon.c	2023-01-13 11:17:34.405954643 -0800
++++ squashfuse-0.1.105_appimage/nonstd-daemon.c	2023-01-14 17:02:44.766843383 -0800
 @@ -28,15 +28,19 @@
  #include "nonstd-internal.h"
  

@@ -1,6 +1,6 @@
 diff -urp AppImageKit-9999.orig/CMakeLists.txt AppImageKit-9999/CMakeLists.txt
---- AppImageKit-9999.orig/CMakeLists.txt	2023-01-14 13:44:22.895420817 -0800
-+++ AppImageKit-9999/CMakeLists.txt	2023-01-14 13:45:31.998155518 -0800
+--- AppImageKit-9999.orig/CMakeLists.txt	2023-01-14 17:48:17.971062808 -0800
++++ AppImageKit-9999/CMakeLists.txt	2023-01-14 17:48:54.160497192 -0800
 @@ -69,7 +69,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PAT
  # configure dependencies
  add_subdirectory(lib)
@@ -11,8 +11,8 @@ diff -urp AppImageKit-9999.orig/CMakeLists.txt AppImageKit-9999/CMakeLists.txt
  
  
 diff -urp AppImageKit-9999.orig/cmake/dependencies.cmake AppImageKit-9999/cmake/dependencies.cmake
---- AppImageKit-9999.orig/cmake/dependencies.cmake	2023-01-14 13:44:17.919223872 -0800
-+++ AppImageKit-9999/cmake/dependencies.cmake	2023-01-14 13:45:31.998155518 -0800
+--- AppImageKit-9999.orig/cmake/dependencies.cmake	2023-01-14 17:48:14.718933908 -0800
++++ AppImageKit-9999/cmake/dependencies.cmake	2023-01-14 17:48:54.164497350 -0800
 @@ -2,7 +2,7 @@
  cmake_minimum_required(VERSION 3.2)
  
@@ -74,16 +74,16 @@ diff -urp AppImageKit-9999.orig/cmake/dependencies.cmake AppImageKit-9999/cmake/
 -    endif()
 -endif()
 diff -urp AppImageKit-9999.orig/lib/CMakeLists.txt AppImageKit-9999/lib/CMakeLists.txt
---- AppImageKit-9999.orig/lib/CMakeLists.txt	2023-01-14 13:44:17.919223872 -0800
-+++ AppImageKit-9999/lib/CMakeLists.txt	2023-01-14 13:45:31.998155518 -0800
+--- AppImageKit-9999.orig/lib/CMakeLists.txt	2023-01-14 17:48:14.722934066 -0800
++++ AppImageKit-9999/lib/CMakeLists.txt	2023-01-14 17:48:54.164497350 -0800
 @@ -1 +1,3 @@
 -add_subdirectory(libappimage)
 +if(NOT USE_SYSTEM_LIBAPPIMAGE)
 +    add_subdirectory(libappimage)
 +endif()
 diff -urp AppImageKit-9999.orig/lib/libappimage/cmake/dependencies.cmake AppImageKit-9999/lib/libappimage/cmake/dependencies.cmake
---- AppImageKit-9999.orig/lib/libappimage/cmake/dependencies.cmake	2023-01-14 13:44:18.943264402 -0800
-+++ AppImageKit-9999/lib/libappimage/cmake/dependencies.cmake	2023-01-14 13:45:31.998155518 -0800
+--- AppImageKit-9999.orig/lib/libappimage/cmake/dependencies.cmake	2023-01-14 17:48:15.322957848 -0800
++++ AppImageKit-9999/lib/libappimage/cmake/dependencies.cmake	2023-01-14 17:48:54.164497350 -0800
 @@ -18,11 +18,14 @@ else()
      set(CXX "${CMAKE_CXX_COMPILER}")
  endif()
@@ -101,8 +101,8 @@ diff -urp AppImageKit-9999.orig/lib/libappimage/cmake/dependencies.cmake AppImag
  
  if(NOT USE_SYSTEM_XZ)
 diff -urp AppImageKit-9999.orig/lib/libappimage/src/libappimage/libappimage.c AppImageKit-9999/lib/libappimage/src/libappimage/libappimage.c
---- AppImageKit-9999.orig/lib/libappimage/src/libappimage/libappimage.c	2023-01-14 13:44:18.955264876 -0800
-+++ AppImageKit-9999/lib/libappimage/src/libappimage/libappimage.c	2023-01-14 13:45:32.002155676 -0800
+--- AppImageKit-9999.orig/lib/libappimage/src/libappimage/libappimage.c	2023-01-14 17:48:15.330958166 -0800
++++ AppImageKit-9999/lib/libappimage/src/libappimage/libappimage.c	2023-01-14 17:48:54.164497350 -0800
 @@ -41,7 +41,11 @@
  #include <glib/gstdio.h>
  #include <gio/gio.h>
@@ -117,9 +117,9 @@ diff -urp AppImageKit-9999.orig/lib/libappimage/src/libappimage/libappimage.c Ap
  #include "elf.h"
  
 diff -urp AppImageKit-9999.orig/lib/libappimage/tests/CMakeLists.txt AppImageKit-9999/lib/libappimage/tests/CMakeLists.txt
---- AppImageKit-9999.orig/lib/libappimage/tests/CMakeLists.txt	2023-01-14 13:44:18.959265035 -0800
-+++ AppImageKit-9999/lib/libappimage/tests/CMakeLists.txt	2023-01-14 13:45:32.002155676 -0800
-@@ -16,12 +16,26 @@ if(BUILD_TESTING)
+--- AppImageKit-9999.orig/lib/libappimage/tests/CMakeLists.txt	2023-01-14 17:48:15.338958483 -0800
++++ AppImageKit-9999/lib/libappimage/tests/CMakeLists.txt	2023-01-14 17:58:41.575776646 -0800
+@@ -16,12 +16,23 @@ if(BUILD_TESTING)
      target_sources(fixtures INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/fixtures.h)
      set_property(TARGET fixtures PROPERTY INTERFACE_LINK_LIBRARIES xdg-basedir gtest)
  
@@ -129,17 +129,14 @@ diff -urp AppImageKit-9999.orig/lib/libappimage/tests/CMakeLists.txt AppImageKit
 +    pkg_check_modules(LIBAPPIMAGE_SHARED libappimage_shared IMPORTED_TARGET)
 +    if(USE_SYSTEM_SQUASHFUSE)
 +        pkg_check_modules(SQUASHFUSE squashfuse_appimage IMPORTED_TARGET)
-+        pkg_check_modules(SQUASHFUSELL squashfuse_ll IMPORTED_TARGET)
 +        set(LIB_SQUASHFUSE PkgConfig::SQUASHFUSE)
-+        set(LIB_SQUASHFUSELL PkgConfig::SQUASHFUSELL)
 +    else()
 +        set(LIB_SQUASHFUSE libsquashfuse)
-+        set(LIB_SQUASHFUSELL)
 +    endif()
 +
      add_executable(test_libappimage test_libappimage.cpp)
 -    target_link_libraries(test_libappimage fixtures libappimage libsquashfuse)
-+    target_link_libraries(test_libappimage fixtures PkgConfig::LIBAPPIMAGE ${LIB_SQUASHFUSE} ${LIB_SQUASHFUSELL})
++    target_link_libraries(test_libappimage fixtures PkgConfig::LIBAPPIMAGE ${LIB_SQUASHFUSE})
      add_test(test_libappimage test_libappimage)
  
      add_executable(test_shared test_shared.cpp)
@@ -148,23 +145,23 @@ diff -urp AppImageKit-9999.orig/lib/libappimage/tests/CMakeLists.txt AppImageKit
      add_test(test_shared test_shared)
      # needed for some const->non-const conversions
      target_compile_options(test_shared PRIVATE -fpermissive)
-@@ -32,6 +46,6 @@ if(BUILD_TESTING)
+@@ -32,6 +50,6 @@ if(BUILD_TESTING)
  
      add_executable(test_desktop_integration test_desktop_integration.cpp file_management_utils.hpp)
      target_include_directories(test_desktop_integration PRIVATE "${PROJECT_SOURCE_DIR}/src/libappimage")
 -    target_link_libraries(test_desktop_integration libappimage libappimage_shared libsquashfuse gtest gtest_main)
-+    target_link_libraries(test_desktop_integration PkgConfig::LIBAPPIMAGE PkgConfig::LIBAPPIMAGE_SHARED ${LIB_SQUASHFUSE} ${LIB_SQUASHFUSELL} gtest gtest_main)
++    target_link_libraries(test_desktop_integration PkgConfig::LIBAPPIMAGE PkgConfig::LIBAPPIMAGE_SHARED ${LIB_SQUASHFUSE} gtest gtest_main)
      add_test(test_desktop_integration test_desktop_integration)
  endif()
 diff -urp AppImageKit-9999.orig/src/CMakeLists.txt AppImageKit-9999/src/CMakeLists.txt
---- AppImageKit-9999.orig/src/CMakeLists.txt	2023-01-14 13:44:17.923224030 -0800
-+++ AppImageKit-9999/src/CMakeLists.txt	2023-01-14 13:52:00.909539571 -0800
+--- AppImageKit-9999.orig/src/CMakeLists.txt	2023-01-14 17:48:14.726934225 -0800
++++ AppImageKit-9999/src/CMakeLists.txt	2023-01-14 17:58:38.439652375 -0800
 @@ -1,3 +1,4 @@
 +set(CMAKE_MODULE_PATH "/usr/lib64/cmake/sanitizers-cmake" ${CMAKE_MODULE_PATH})
  find_package(Sanitizers)
  
  if(NOT COMMAND add_sanitizers)
-@@ -12,6 +13,30 @@ endif()
+@@ -12,6 +13,27 @@ endif()
  set(AUXILIARY_FILES_DESTINATION "lib/appimagekit" CACHE STRING "Target install directory for mksquashfs")
  
  
@@ -183,19 +180,16 @@ diff -urp AppImageKit-9999.orig/src/CMakeLists.txt AppImageKit-9999/src/CMakeLis
 +pkg_check_modules(LIBSSL libssl IMPORTED_TARGET)
 +if(USE_SYSTEM_SQUASHFUSE)
 +    pkg_check_modules(SQUASHFUSE squashfuse_appimage IMPORTED_TARGET)
-+    pkg_check_modules(SQUASHFUSELL squashfuse_ll IMPORTED_TARGET)
 +    set(LIB_SQUASHFUSE PkgConfig::SQUASHFUSE)
-+    set(LIB_SQUASHFUSELL PkgConfig::SQUASHFUSELL)
 +else()
 +    set(LIB_SQUASHFUSE libsquashfuse)
-+    set(LIB_SQUASHFUSELL)
 +endif()
 +pkg_check_modules(ZLIB zlib IMPORTED_TARGET)
 +
  # the runtime build configuration is quite long, therefore it's managed in a separate CMake script
  include(build-runtime.cmake)
  
-@@ -33,20 +58,25 @@ target_include_directories(appimagetool
+@@ -33,20 +62,24 @@ target_include_directories(appimagetool
  find_package(PkgConfig)
  pkg_check_modules(libgpgme REQUIRED gpgme IMPORTED_TARGET)
  pkg_check_modules(libgcrypt REQUIRED libgcrypt IMPORTED_TARGET)
@@ -208,8 +202,6 @@ diff -urp AppImageKit-9999.orig/src/CMakeLists.txt AppImageKit-9999/src/CMakeLis
  target_link_libraries(appimagetool
      ${CMAKE_DL_LIBS}
 -    libsquashfuse
-+    ${LIB_SQUASHFUSE}
-+    ${LIB_SQUASHFUSELL}
      xdg-basedir
 -    libappimage_shared
 -    libglib
@@ -224,10 +216,11 @@ diff -urp AppImageKit-9999.orig/src/CMakeLists.txt AppImageKit-9999/src/CMakeLis
      PkgConfig::libgpgme
 -    xz
 +    ${LIB_LIBLZMA}
++    ${LIB_SQUASHFUSE}
  )
  
  target_compile_definitions(appimagetool
-@@ -61,6 +91,13 @@ target_include_directories(appimagetool
+@@ -61,6 +95,13 @@ target_include_directories(appimagetool
      PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include/>
      INTERFACE $<INSTALL_INTERFACE:include/>
  )
@@ -241,7 +234,7 @@ diff -urp AppImageKit-9999.orig/src/CMakeLists.txt AppImageKit-9999/src/CMakeLis
  
  if(AUXILIARY_FILES_DESTINATION)
      message(STATUS "Installing auxiliary files in path: ${AUXILIARY_FILES_DESTINATION}")
-@@ -83,15 +120,16 @@ target_compile_definitions(AppRun
+@@ -83,15 +124,16 @@ target_compile_definitions(AppRun
  add_sanitizers(AppRun)
  
  
@@ -262,7 +255,7 @@ diff -urp AppImageKit-9999.orig/src/CMakeLists.txt AppImageKit-9999/src/CMakeLis
      )
  
      target_include_directories(validate
-@@ -103,8 +141,9 @@ else()
+@@ -103,8 +145,9 @@ else()
      add_executable(digest digest.c)
  
      target_link_libraries(digest
@@ -274,7 +267,7 @@ diff -urp AppImageKit-9999.orig/src/CMakeLists.txt AppImageKit-9999/src/CMakeLis
      )
  
      add_sanitizers(digest)
-@@ -121,8 +160,8 @@ target_include_directories(digest_md5
+@@ -121,8 +164,8 @@ target_include_directories(digest_md5
  )
  
  target_link_libraries(digest_md5
@@ -285,7 +278,7 @@ diff -urp AppImageKit-9999.orig/src/CMakeLists.txt AppImageKit-9999/src/CMakeLis
  )
  
  
-@@ -130,17 +169,32 @@ target_link_libraries(digest_md5
+@@ -130,17 +173,32 @@ target_link_libraries(digest_md5
  if(NOT USE_SYSTEM_MKSQUASHFS)
      if(AUXILIARY_FILES_DESTINATION)
          install(
@@ -321,8 +314,8 @@ diff -urp AppImageKit-9999.orig/src/CMakeLists.txt AppImageKit-9999/src/CMakeLis
  
  set(optional_targets "")
 diff -urp AppImageKit-9999.orig/src/appimagetool.c AppImageKit-9999/src/appimagetool.c
---- AppImageKit-9999.orig/src/appimagetool.c	2023-01-14 13:44:17.927224189 -0800
-+++ AppImageKit-9999/src/appimagetool.c	2023-01-14 13:45:32.002155676 -0800
+--- AppImageKit-9999.orig/src/appimagetool.c	2023-01-14 17:48:14.730934383 -0800
++++ AppImageKit-9999/src/appimagetool.c	2023-01-14 17:48:54.164497350 -0800
 @@ -39,7 +39,11 @@
  #include <argp.h>
  
@@ -337,8 +330,8 @@ diff -urp AppImageKit-9999.orig/src/appimagetool.c AppImageKit-9999/src/appimage
  #include <sys/types.h>
  #include <sys/stat.h>
 diff -urp AppImageKit-9999.orig/src/appimagetoolnoglib.c AppImageKit-9999/src/appimagetoolnoglib.c
---- AppImageKit-9999.orig/src/appimagetoolnoglib.c	2023-01-14 13:44:17.927224189 -0800
-+++ AppImageKit-9999/src/appimagetoolnoglib.c	2023-01-14 13:45:32.002155676 -0800
+--- AppImageKit-9999.orig/src/appimagetoolnoglib.c	2023-01-14 17:48:14.730934383 -0800
++++ AppImageKit-9999/src/appimagetoolnoglib.c	2023-01-14 17:48:54.168497509 -0800
 @@ -3,7 +3,11 @@
  
  #include <stdlib.h>
@@ -353,9 +346,9 @@ diff -urp AppImageKit-9999.orig/src/appimagetoolnoglib.c AppImageKit-9999/src/ap
  #include <sys/types.h>
  #include <sys/stat.h>
 diff -urp AppImageKit-9999.orig/src/build-runtime.cmake AppImageKit-9999/src/build-runtime.cmake
---- AppImageKit-9999.orig/src/build-runtime.cmake	2023-01-14 13:44:17.931224348 -0800
-+++ AppImageKit-9999/src/build-runtime.cmake	2023-01-14 13:45:32.002155676 -0800
-@@ -15,22 +15,50 @@ else()
+--- AppImageKit-9999.orig/src/build-runtime.cmake	2023-01-14 17:48:14.730934383 -0800
++++ AppImageKit-9999/src/build-runtime.cmake	2023-01-14 17:58:40.055716413 -0800
+@@ -15,22 +15,47 @@ else()
      set(BUILD_DEBUG FALSE)
  endif()
  
@@ -377,14 +370,11 @@ diff -urp AppImageKit-9999.orig/src/build-runtime.cmake AppImageKit-9999/src/bui
 +endif()
 +if(USE_SYSTEM_SQUASHFUSE)
 +    pkg_check_modules(SQUASHFUSE squashfuse_appimage IMPORTED_TARGET)
-+    pkg_check_modules(SQUASHFUSELL squashfuse_ll IMPORTED_TARGET)
 +    set(LIB_SQUASHFUSE PkgConfig::SQUASHFUSE)
-+    set(LIB_SQUASHFUSELL PkgConfig::SQUASHFUSELL)
 +    set(DEPENDENCIES_CFLAGS ${DEPENDENCIES_CFLAGS} -DEXTERNAL_SQUASHFUSE)
  else()
 -    get_target_property(squashfuse_INCLUDE_DIRS libsquashfuse INTERFACE_INCLUDE_DIRECTORIES)
 +    set(LIB_SQUASHFUSE libsquashfuse)
-+    set(LIB_SQUASHFUSELL)
  endif()
 +pkg_check_modules(ZLIB zlib IMPORTED_TARGET)
  
@@ -402,7 +392,7 @@ diff -urp AppImageKit-9999.orig/src/build-runtime.cmake AppImageKit-9999/src/bui
 +
 +set(runtime_cflags ${runtime_cflags} ${LIBAPPIMAGE_CFLAGS} ${LIBAPPIMAGE_SHARED_CFLAGS} ${LIBAPPIMAGE_HASHLIB_CFLAGS})
 +if(USE_SYSTEM_SQUASHFUSE)
-+    set(runtime_cflags ${runtime_cflags} ${SQUASHFUSE_CFLAGS} ${SQUASHFUSELL_CFLAGS})
++    set(runtime_cflags ${runtime_cflags} ${SQUASHFUSE_CFLAGS})
 +endif()
 +if(USE_SYSTEM_XZ)
 +    set(runtime_cflags ${runtime_cflags} ${LIBLZMA_CFLAGS})
@@ -412,7 +402,7 @@ diff -urp AppImageKit-9999.orig/src/build-runtime.cmake AppImageKit-9999/src/bui
  # must not include -Wl,--gc-sections in the following flags, otherwise the data sections will be stripped out
  set(runtime_ldflags -s -ffunction-sections -fdata-sections -flto ${DEPENDENCIES_LDFLAGS})
  
-@@ -42,76 +70,48 @@ else()
+@@ -42,76 +74,48 @@ else()
      set(runtime_cflags -Os ${runtime_cflags})
  endif()
  
@@ -506,18 +496,18 @@ diff -urp AppImageKit-9999.orig/src/build-runtime.cmake AppImageKit-9999/src/bui
  if(COMMAND target_link_options)
      target_link_options(runtime PRIVATE ${runtime_ldflags})
  else()
-@@ -120,6 +120,10 @@ else()
+@@ -120,6 +124,10 @@ else()
  endif()
  target_include_directories(runtime PRIVATE ${PROJECT_SOURCE_DIR}/include)
  
-+target_link_libraries(runtime PRIVATE runtime_lib ${LIB_LIBLZMA} ${LIB_SQUASHFUSE} ${LIB_SQUASHFUSELL} PkgConfig::FUSE PkgConfig::ZLIB dl PkgConfig::LIBAPPIMAGE PkgConfig::LIBAPPIMAGE_SHARED PkgConfig::LIBAPPIMAGE_HASHLIB)
++target_link_libraries(runtime PRIVATE runtime_lib ${LIB_LIBLZMA} ${LIB_SQUASHFUSE} PkgConfig::FUSE PkgConfig::ZLIB dl PkgConfig::LIBAPPIMAGE PkgConfig::LIBAPPIMAGE_SHARED PkgConfig::LIBAPPIMAGE_HASHLIB)
 +
 +set(STRIP strip)
 +
  if(BUILD_DEBUG)
      message(WARNING "Debug build, not stripping runtime to allow debugging using gdb etc.")
  else()
-@@ -139,6 +143,8 @@ if(APPIMAGEKIT_EMBED_MAGIC_BYTES)
+@@ -139,6 +147,8 @@ if(APPIMAGEKIT_EMBED_MAGIC_BYTES)
      )
  endif()
  
@@ -527,8 +517,8 @@ diff -urp AppImageKit-9999.orig/src/build-runtime.cmake AppImageKit-9999/src/bui
  add_custom_command(
      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/runtime_embed.o
 diff -urp AppImageKit-9999.orig/src/runtime.c AppImageKit-9999/src/runtime.c
---- AppImageKit-9999.orig/src/runtime.c	2023-01-14 13:44:17.931224348 -0800
-+++ AppImageKit-9999/src/runtime.c	2023-01-14 13:45:32.002155676 -0800
+--- AppImageKit-9999.orig/src/runtime.c	2023-01-14 17:48:14.734934542 -0800
++++ AppImageKit-9999/src/runtime.c	2023-01-14 17:48:54.168497509 -0800
 @@ -29,7 +29,11 @@
  
  #define _GNU_SOURCE
