@@ -188,7 +188,7 @@ diff -urp AppImageKit-9999.orig/ci/build.sh AppImageKit-9999/ci/build.sh
 +            /bin/bash -xc "cd ${OUTPUT_ADIR} && bash /ws/ci/test-appimage.sh ./appimagetool-\"$ARCH\".AppImage"
 +    else
 +        # Something is broken
-+        :; #cd "${OUTPUT_ADIR}" && "${S}/ci/test-appimage.sh" "./appimagetool-$ARCH.AppImage"
++        cd "${OUTPUT_ADIR}" && "${S}/ci/test-appimage.sh" "./appimagetool-$ARCH.AppImage"
 +    fi
  fi
  
