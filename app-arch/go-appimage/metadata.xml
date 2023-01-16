@@ -61,6 +61,21 @@ https://github.com/probonopd/go-appimage/blob/master/src/appimaged/appimaged.go#
     <flag name="firejail">
       Checks for Firejail support for sandbox support.
     </flag>
+    <flag name="force-musl">
+      Forces the use of the zig compiler using internal musl along with
+      static-tools (internal prebuilt static builds of dependencies built with
+      musl libc).
+
+      It is the upstream default, but disabled by the ebuild author.  The distro
+      does not typically run musl binaries on a glibc built system.  The distro
+      prefers to build *everything* from source code and without prebuilt
+      anything.
+
+      See also:
+
+        https://github.com/probonopd/go-appimage/pull/207
+
+    </flag>
     <flag name="gnome">
       Checks support for udisk support in Gnome.
     </flag>

@@ -34,14 +34,17 @@ tools"
 HOMEPAGE="https://github.com/probonopd/go-appimage"
 
 THIRD_PARTY_LICENSES="
-	( Apache-2.0 || ( CC0-1.0 BSD-2 MIT ) Apache-2.0-with-LLVM-exceptions Apache-2.0 MIT )
-	( Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT ) )
+	force-musl? (
+		( Apache-2.0 || ( CC0-1.0 BSD-2 MIT ) Apache-2.0-with-LLVM-exceptions Apache-2.0 MIT )
+		( Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT ) )
+		( BSD-4 HPND ISC BSD inner-net totd ( all-rights-reserved HPND ) PCRE LGPL-2.1+ )
+		( custom public-domain )
+		( MIT BSD BSD-2 public-domain )
+		ZPL
+	)
 	( BSD CC-BY-SA-1.0 CC-BY-SA-2.0 CC-BY-SA-2.5 CC-BY-SA-3.0 )
 	( BSD-2 ISC )
-	( BSD-4 HPND ISC BSD inner-net totd ( all-rights-reserved HPND ) PCRE LGPL-2.1+ )
-	( custom public-domain )
 	( EPL-2.0 BSD )
-	( MIT BSD BSD-2 public-domain )
 	( MIT all-rights-reserved )
 	( || ( EPL-2.0 BSD ) BSD-2 BSD )
 	BSD
@@ -58,7 +61,6 @@ THIRD_PARTY_LICENSES="
 	GPL-3
 	GPL-2
 	MPL-2.0
-	ZPL
 "
 
 LICENSE="MIT" # go-appimage project's default license
@@ -117,8 +119,15 @@ IUSE+="
 appimaged appimagetool disable_watching_desktop_folder
 disable_watching_downloads_folder firejail gnome kde mkappimage openrc overlayfs
 +system-binaries systemd travis-ci
+
+force-musl
 "
 REQUIRED_USE+="
+	elibc_glibc? (
+		force-musl? (
+			!system-binaries
+		)
+	)
 	openrc? ( appimaged )
 	systemd? ( appimaged )
 	|| ( appimaged appimagetool mkappimage )
@@ -296,8 +305,10 @@ https://github.com/probonopd/static-tools/releases/download/continuous/unsquashf
 	-> static-tools-unsquashfs-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
 			)
 		)
-		${garch}? (
+		force-musl? (
+			${garch}? (
 https://ziglang.org/download/0.10.0/zig-linux-${zigarch}-${ZIG_LINUX_PV}.tar.xz
+			)
 		)
 	"
 }
@@ -765,6 +776,7 @@ src_compile() {
 	use x86 && export GARCH="x86"
 	use arm64 && export GARCH="arm64"
 	use arm && export GARCH="arm"
+	use force-musl && export FORCE_MUSL="1"
 	export GO_APPIMAGE_PV="${MY_PV}"
 	export GOPATH="${WORKDIR}/go_build"
 	export GO111MODULE=auto
@@ -776,7 +788,7 @@ src_compile() {
 		)
 	fi
 	cd "${S}" || die
-	"${S}/scripts/build.sh" -a $(get_build_sh_arch) -dc ${args[@]} || die
+	"${S}/scripts/build.sh" -dc ${args[@]} || die
 }
 
 src_install() {
