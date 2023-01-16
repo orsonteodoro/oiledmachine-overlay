@@ -103,6 +103,7 @@ LICENSE+="
 # aid = included in appimaged ; ait = included in appimagetool
 # LICENSE is already handled and accepted in other packages when
 # system-binaries USE is enabled.
+LICENSE+=" !system-binaries? ( OPENLDAP GPL-2 LGPL-2.1 )" # appstreamcli # ait
 LICENSE+=" !system-binaries? ( BSD BSD-2 BSD-4 public-domain )" # libarchive (bsdtar) aid
 LICENSE+=" !system-binaries? ( GPL-2 )" # squashfs-tools ait aid
 LICENSE+=" !system-binaries? ( GPL-2+ )" # desktop-file-utils ait
