@@ -355,6 +355,7 @@ OT_KERNEL_DISABLE="0"
 OT_KERNEL_EXTRAVERSION="ot"
 OT_KERNEL_FIRMWARE="regulatory"
 OT_KERNEL_HARDENING_LEVEL="untrusted"
+OT_KERNEL_INSTALL_SOURCE_CODE="1"
 OT_KERNEL_LSMS="auto"
 OT_KERNEL_MODULES_SUPPORT="1"
 OT_KERNEL_MODULES_COMPRESSOR="zstd"
@@ -1067,13 +1068,17 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_FAST_INSTALL -- install kernel sources in the fastest way
-    without permissions sanitization.
+    OT_KERNEL_FAST_SOURCE_CODE_INSTALL -- install the kernel sources in the
+    fastest way without permissions sanitization.
 
     Acceptable values:
 
       1 - fast install without permissions sanitization.
       unset - slow install with permissions sanitation.  (default)
+
+    Requires:
+
+    OT_KERNEL_INSTALL_SOURCE_CODE=1
 
 
 
@@ -1305,6 +1310,19 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       OT_KERNEL_IMA_POLICIES="tcb"
       OT_KERNEL_IMA_POLICIES="tcb tcb_appraise"
       OT_KERNEL_IMA_POLICIES="tcb tcb_appraise secure_boot"
+
+
+
+    OT_KERNEL_INSTALL_SOURCE_CODE - Install the kernel source code.
+    Install the source code implies copying the copyright notices.
+
+    Acceptable values:
+
+    0 - don't install
+    1 - install
+    n - don't install
+    y - install
+    unset -  install (default)
 
 
 

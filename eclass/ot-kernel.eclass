@@ -24,7 +24,7 @@
 # CFI:
 #   https://github.com/torvalds/linux/compare/v5.15...samitolvanen:cfi-5.15
 # KCFI:
-#   https://github.com/torvalds/linux/compare/v5.19...samitolvanen:kcfi-rfc-v3
+#   https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
 # futex (aka futex_wait_multiple):
 #   https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3
 # futex2:
@@ -39,7 +39,7 @@
 #   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.4
 #   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.10
 #   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
-#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.0
+#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.1
 # kernel_compiler_patch:
 #   https://github.com/graysky2/kernel_compiler_patch
 # MUQSS CPU Scheduler (official, EOL 5.12):
@@ -68,7 +68,7 @@
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
-#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.0/
+#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
 # Project C CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/Project%20C
 #   https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -80,7 +80,7 @@
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
-#   https://github.com/torvalds/linux/compare/v6.0...zen-kernel:6.0/zen-sauce
+#   https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
 
 case ${EAPI:-0} in
 	[78]) ;;
@@ -2384,7 +2384,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_EFI_PARTITION
 	unset OT_KERNEL_EP800
 	unset OT_KERNEL_EXTRAVERSION
-	unset OT_KERNEL_FAST_INSTALL
+	unset OT_KERNEL_FAST_SOURCE_CODE_INSTALL
 	unset OT_KERNEL_FIRMWARE
 	unset OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG
 #	unset OT_KERNEL_HALT_ON_LOWERED_SECURITY		# global var
@@ -2394,6 +2394,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_IMA
 	unset OT_KERNEL_IMA_HASH_ALG
 	unset OT_KERNEL_IMA_POLICIES
+	unset OT_KERNEL_INSTALL_SOURCE_CODE
 	unset OT_KERNEL_IOMMU
 	unset OT_KERNEL_IOSCHED
 	unset OT_KERNEL_IOSCHED_OPENRC
@@ -6452,10 +6453,12 @@ ot-kernel_kexec_sign_and_install() {
 		"${kimage_spath}.signed"
 }
 
-# @FUNCTION: ot-kernel-make_install
+# @FUNCTION: ot-kernel_install_built_kernel
 # @DESCRIPTION:
-# Replaces all the arch/*/install.sh
-ot-kernel-make_install() {
+# Installs the built kernel, and a replacement of the upstream's
+# arch/*/install.sh installer.  It works the same as make install.
+# It doesn't do kernel sources install.
+ot-kernel_install_built_kernel() {
 	dodir "${kernel_dir}"
 	[[ -z "${kernel_dir}" ]] && die "OT_KERNEL_KERNEL_DIR cannot be empty"
 
@@ -6542,6 +6545,55 @@ ot-kernel-make_install() {
 	else
 		einfo "Installing unsigned kernel"
 		newins "${kimage_spath}" "${kimage_dpath}"
+	fi
+	export IFS=$'\n'
+	cd "${ED}" || die
+	for f in $(find boot -type f) ; do
+		(
+			if file "${f}" | grep -q -E -e 'Linux kernel.*executable' ; then
+				fperms -x "${f}"
+			fi
+		) &
+		local njobs=$(jobs -r -p | wc -l)
+		[[ ${njobs} -ge ${nprocs} ]] && wait -n
+	done
+	wait
+	export IFS=$' \t\n'
+}
+
+# @FUNCTION: ot-kernel_install_source_code
+# @DESCRIPTION:
+# Installs the kernel source code.  Installing the source code implies
+# installing the copyright notices.
+ot-kernel_install_source_code() {
+	einfo "Installing the kernel sources"
+	if [[ "${OT_KERNEL_FAST_SOURCE_CODE_INSTALL:-0}" == "1" ]] ; then
+		cp -a "${ED}/usr/src/linux-${PV}-${extraversion}/.config" "${T}"
+		rm -rf "${ED}/usr/src/linux-${PV}-${extraversion}"
+		dodir /usr/src
+		mv "${BUILD_DIR}" "${ED}/usr/src" || die
+		cp -a "${T}/.config" "${ED}/usr/src/linux-${PV}-${extraversion}/.config"
+	else
+		insinto /usr/src
+		doins -r "${BUILD_DIR}" # Sanitize file permissions
+
+		local nprocs=$(ot-kernel_get_nprocs)
+		einfo "nprocs:  ${nprocs}"
+		einfo "Restoring +x bit"
+		cd "${ED}/usr/src/linux-${PV}-${extraversion}" || die
+		export IFS=$'\n'
+		local f
+		for f in $(find . -type f) ; do
+			(
+				if file "${f}" | grep -q -F -e 'executable' ; then
+					fperms +x "${f#.}"
+				fi
+			) &
+			local njobs=$(jobs -r -p | wc -l)
+			[[ ${njobs} -ge ${nprocs} ]] && wait -n
+		done
+		wait
+		export IFS=$' \t\n'
 	fi
 }
 
@@ -6831,7 +6883,7 @@ ot-kernel_src_install() {
 				ARCH=${arch}
 			)
 
-			ot-kernel-make_install
+			ot-kernel_install_built_kernel # It works the same as make install.
 			einfo "Running:  make modules_install ${args[@]}"
 			make modules_install "${args[@]}" || die
 			if [[ "${arch}" =~ "arm" ]] ; then
@@ -6876,45 +6928,8 @@ ot-kernel_src_install() {
 				> include/config/kernel.release || die
 		fi
 
-		einfo "Installing the kernel sources"
-		if [[ "${OT_KERNEL_FAST_INSTALL:-0}" == "1" ]] ; then
-			cp -a "${ED}/usr/src/linux-${PV}-${extraversion}/.config" "${T}"
-			rm -rf "${ED}/usr/src/linux-${PV}-${extraversion}"
-			dodir /usr/src
-			mv "${BUILD_DIR}" "${ED}/usr/src" || die
-			cp -a "${T}/.config" "${ED}/usr/src/linux-${PV}-${extraversion}/.config"
-		else
-			insinto /usr/src
-			doins -r "${BUILD_DIR}" # Sanitize file permissions
-
-			local nprocs=$(ot-kernel_get_nprocs)
-			einfo "nprocs:  ${nprocs}"
-			einfo "Restoring +x bit"
-			cd "${ED}/usr/src/linux-${PV}-${extraversion}" || die
-			export IFS=$'\n'
-			local f
-			for f in $(find . -type f) ; do
-				(
-					if file "${f}" | grep -q -F -e 'executable' ; then
-						fperms +x "${f#.}"
-					fi
-				) &
-				local njobs=$(jobs -r -p | wc -l)
-				[[ ${njobs} -ge ${nprocs} ]] && wait -n
-			done
-			wait
-			cd "${ED}" || die
-			for f in $(find boot -type f) ; do
-				(
-					if file "${f}" | grep -q -E -e 'Linux kernel.*executable' ; then
-						fperms -x "${f}"
-					fi
-				) &
-				local njobs=$(jobs -r -p | wc -l)
-				[[ ${njobs} -ge ${nprocs} ]] && wait -n
-			done
-			wait
-			export IFS=$' \t\n'
+		if [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+			ot-kernel_install_source_code
 		fi
 
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
