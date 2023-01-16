@@ -2135,6 +2135,12 @@ unset OT_KERNEL_PRIVATE_KEY
     environment variables are only valid if the package is installed.
     0 means off and 1 means on.
 
+    Important:  The 0 does not imply disable but implies unchanged in some
+    cases.  This is because of the possibility of flag dependencies which are
+    difficult to backtrack.  You must manually disable them by editing the
+    kernel config.  This understanding is applied to previous sections as
+    well.
+
     ALSA_PC_SPEAKER - Use the ALSA speaker driver for PC speaker.
 
     Valid values:
@@ -2325,13 +2331,16 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     Valid values:  0 (default), 1.
 
     SQUASHFS_4K_BLOCK_SIZE - Operate in 4k blocks instead of 1k blocks
-    Valid values: 0 (upstream default; optimize for space savings),
-    1 (ebuild default; optimizes I/O for sequential operations in some instances).
+    Valid values: 0 (upstream default; optimizes for lower latency),
+    1 (ebuild default; optimizes for increased sequential throughput).
 
     SQUASHFS_NFRAGS_CACHED - Number of fragments to cache in embedded environments.
     Valid values: 1 or more with default 3.
     Decreasing means more seeks and big delays.
     Increasing means less seeks and fewer big delays.
+
+    SQUASHFS_ZLIB - Adds ZLIB decompression.
+    Valid values: 1 (default), 0.
 
     SQUASHFS_NSTEP_DECOMPRESS - Number of steps to decompress
     1 - once into page cache (ebuild default, fastest)

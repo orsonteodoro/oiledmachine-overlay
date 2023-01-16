@@ -6350,10 +6350,13 @@ ot-kernel-pkgflags_spice_vdagent() { # DONE
 # Applies kernel config flags for the squashfs packages
 _ot-kernel-pkgflags_squashfs() {
 	if grep -q -e "^CONFIG_SQUASHFS=y" "${path_config}" ; then
+		einfo "Added SquashFS ZLIB decompression support (for fallback and compatibility reasons)"
 		ot-kernel_y_configopt "CONFIG_SQUASHFS_ZLIB"
 		if [[ "${SQUASHFS_4K_BLOCK_SIZE:-1}" == "1" ]] ; then
+			einfo "SquashFS 4k block transfer for optimized increased throughput applied"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_4K_DEVBLK_SIZE"
 		else
+			einfo "SquashFS 1k block transfer for optimized lowered latency applied"
 			ot-kernel_n_configopt "CONFIG_SQUASHFS_4K_DEVBLK_SIZE"
 		fi
 		if [[ "${SQUASHFS_XATTR:-1}" == "1" ]] ; then
@@ -6379,33 +6382,43 @@ _ot-kernel-pkgflags_squashfs() {
 				ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_SINGLE"
 			fi
 		elif [[ "${SQUASHFS_DECOMPRESSORS_PER_CORE}" == "2" ]] ; then
+			einfo "SquashFS multi-threaded decompression applied (Threads Per Core: ${tpc})"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_MULTI"
 		elif [[ "${SQUASHFS_DECOMPRESSORS_PER_CORE}" == "1lb" ]] ; then
+			einfo "SquashFS multicore decompression applied (CPU Cores: ${mc})"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_MULTI_PERCPU"
 		else
+			einfo "SquashFS single thread applied"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_SINGLE"
 		fi
 		ot-kernel_n_configopt "CONFIG_SQUASHFS_FILE_CACHE"
 		ot-kernel_n_configopt "CONFIG_SQUASHFS_FILE_DIRECT"
 		if [[ "${SQUASHFS_NSTEP_DECOMPRESS:-1}" == "1" ]] ; then
+			einfo "SquashFS direct 1-step copy applied"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_FILE_DIRECT"
 		else
+			einfo "SquashFS 2-step intermediate copy applied"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_FILE_CACHE"
 		fi
 		if has_version "sys-fs/squashfs-tools[lz4]" ; then
+			einfo "Added SquashFS LZ4 decompression support"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_LZ4"
 		fi
 		if has_version "sys-fs/squashfs-tools[lzo]" ; then
+			einfo "Added SquashFS LZO decompression support"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_LZO"
 		fi
 		if has_version "sys-fs/squashfs-tools[lzma]" ; then
+			einfo "Added SquashFS XZ decompression support"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_XZ"
 		fi
 		if has_version "sys-fs/squashfs-tools[zstd]" ; then
+			einfo "Added SquashFS ZSTD decompression support"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_ZSTD"
 		fi
 		ot-kernel_n_configopt "CONFIG_SQUASHFS_EMBEDDED"
 		if [[ -n "${SQUASHFS_NFRAGS_CACHED}" ]] ; then
+			einfo "Changed SquashFS n-frags cached to ${SQUASHFS_NFRAGS_CACHED}"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_EMBEDDED"
 			ot-kernel_set_configopt "CONFIG_SQUASHFS_FRAGMENT_CACHE_SIZE" "${SQUASHFS_NFRAGS_CACHED}"
 		fi
