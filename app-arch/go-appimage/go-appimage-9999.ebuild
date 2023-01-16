@@ -40,6 +40,7 @@ THIRD_PARTY_LICENSES="
 		( BSD-4 HPND ISC BSD inner-net totd ( all-rights-reserved HPND ) PCRE LGPL-2.1+ )
 		( custom public-domain )
 		( MIT BSD BSD-2 public-domain )
+		Apache-2.0-with-LLVM-exceptions
 		ZPL
 	)
 	( BSD CC-BY-SA-1.0 CC-BY-SA-2.0 CC-BY-SA-2.5 CC-BY-SA-3.0 )
@@ -52,7 +53,6 @@ THIRD_PARTY_LICENSES="
 	MIT
 	MIT
 	Apache-2.0
-	Apache-2.0-with-LLVM-exceptions
 	custom
 	custom BSD W3C-Test-Suite-Licence
 	CC-BY-3.0
