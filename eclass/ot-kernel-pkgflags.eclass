@@ -3140,7 +3140,7 @@ ot-kernel-pkgflags_flatpak() { # DONE
 		einfo "Applying kernel config flags for the flatpak package (id: 427345a)"
 		ot-kernel_y_configopt "CONFIG_NAMESPACES"
 		ot-kernel_y_configopt "CONFIG_USER_NS"
-		if -q -e "config USER_NS_UNPRIVILEGED" "${BUILD_DIR}/init/Kconfig" ; then
+		if grep -q -e "config USER_NS_UNPRIVILEGED" "${BUILD_DIR}/init/Kconfig" ; then
 			ot-kernel_y_configopt "CONFIG_USER_NS_UNPRIVILEGED"
 		fi
 	fi
