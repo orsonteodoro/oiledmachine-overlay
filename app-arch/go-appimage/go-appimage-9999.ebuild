@@ -34,15 +34,6 @@ tools"
 HOMEPAGE="https://github.com/probonopd/go-appimage"
 
 THIRD_PARTY_LICENSES="
-	force-musl? (
-		( Apache-2.0 || ( CC0-1.0 BSD-2 MIT ) Apache-2.0-with-LLVM-exceptions Apache-2.0 MIT )
-		( Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT ) )
-		( BSD-4 HPND ISC BSD inner-net totd ( all-rights-reserved HPND ) PCRE LGPL-2.1+ )
-		( custom public-domain )
-		( MIT BSD BSD-2 public-domain )
-		Apache-2.0-with-LLVM-exceptions
-		ZPL
-	)
 	( BSD CC-BY-SA-1.0 CC-BY-SA-2.0 CC-BY-SA-2.5 CC-BY-SA-3.0 )
 	( BSD-2 ISC )
 	( EPL-2.0 BSD )
@@ -61,6 +52,15 @@ THIRD_PARTY_LICENSES="
 	GPL-3
 	GPL-2
 	MPL-2.0
+	force-musl? (
+		( Apache-2.0 || ( CC0-1.0 BSD-2 MIT ) Apache-2.0-with-LLVM-exceptions Apache-2.0 MIT )
+		( Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT ) )
+		( BSD-4 HPND ISC BSD inner-net totd ( all-rights-reserved HPND ) PCRE LGPL-2.1+ )
+		( custom public-domain )
+		( MIT BSD BSD-2 public-domain )
+		Apache-2.0-with-LLVM-exceptions
+		ZPL
+	)
 "
 
 LICENSE="MIT" # go-appimage project's default license
