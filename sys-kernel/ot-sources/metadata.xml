@@ -122,23 +122,6 @@
 		    zen-multigen_lru			N
 		    zen-sauce				N
 						
-    6.0 (Stable)					N
-		    -rt	(RT_PREEMPT)			A
-		    CFI					E
-		    Clang PGO				E
-		    genpatches				A
-		    KCFI				A
-		    kernel_compiler_patch		A
-		    multigen_lru			R
-		    Project C				A
-		    TCP BBR v2 [5]			E
-		    TRESOR (AES-NI) [5]			D
-		    TRESOR (x86) [5]			D
-		    TRESOR (x86-64) [5]			D
-		    UKSM				N
-		    zen-multigen_lru			N
-		    zen-sauce				A
-
     6.1 (Stable)					N
 		    -rt	(RT_PREEMPT)			A
 		    CFI					?
@@ -329,7 +312,7 @@
       /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
       /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/patches
 
-    K_MAJOR_MINOR will be expanded to either 4.14, 5.4, 5.10, 5.15, 6.0.
+    K_MAJOR_MINOR will be expanded to either 4.14, 5.4, 5.10, 5.15, 6.1.
 
     extraversion will be expanded to ot, rt, or a custom name.
 
@@ -678,7 +661,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       4.14: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, muqss, pds
       5.10: cfs, cfs-throghhput, cfs-interactive, cfs-autogroup, muqss, prjc, prjc-bmq, prjc-pds
       5.15: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
-      6.0: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
+      6.1: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
 
       The reason why for this flexibility is to allow for multiple
       configurations that are not mutual exclusive, meaning you can use the rt
@@ -2443,8 +2426,8 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     For 5.15, see:
     https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
 
-    For 6.0, see:
-    https://github.com/torvalds/linux/compare/v6.0...zen-kernel:6.0/zen-sauce
+    For 6.1, see:
+    https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
 
     Use the zen-sauce USE flags instead of passing their Zen commit IDs
     equivalents.
