@@ -6,6 +6,7 @@
 # This 0.1.103 is dated 2018
 
 EAPI=8
+
 inherit autotools flag-o-matic
 
 DESCRIPTION="FUSE filesystem to mount squashfs archives"
@@ -13,10 +14,11 @@ HOMEPAGE="https://github.com/vasi/squashfuse"
 LICENSE="BSD-2"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
 SLOT="0"
-
-IUSE+=" vanilla appimage"
-IUSE+=" lz4 lzma lzo static-libs +zlib zstd"
-IUSE+=" r6"
+IUSE+="
+vanilla appimage
+lz4 lzma lzo static-libs +zlib zstd
+r7
+"
 REQUIRED_USE+="
 	|| ( lz4 lzma lzo zlib zstd )
 	|| ( vanilla appimage )
@@ -148,6 +150,7 @@ src_install() {
 				decompress.h \
 				file.h \
 				fs.h \
+				fuseprivate.h \
 				nonstd.h \
 				squashfs_fs.h \
 				squashfuse_dlopen.h \

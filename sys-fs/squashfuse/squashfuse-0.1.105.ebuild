@@ -14,12 +14,11 @@ HOMEPAGE="https://github.com/vasi/squashfuse"
 LICENSE="BSD-2"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
 SLOT="0"
-
 IUSE+="
 fuse2 fuse3
 vanilla appimage
 lz4 lzma lzo static-libs +zlib zstd
-r6
+r7
 "
 REQUIRED_USE+="
 	^^ ( fuse3 fuse2 )
@@ -170,6 +169,7 @@ src_install() {
 				decompress.h \
 				file.h \
 				fs.h \
+				fuseprivate.h \
 				nonstd.h \
 				squashfs_fs.h \
 				squashfuse_dlopen.h \

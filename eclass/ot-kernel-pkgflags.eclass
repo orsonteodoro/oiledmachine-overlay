@@ -582,8 +582,6 @@ ot-kernel-pkgflags_appimage() { # DONE
 		|| has_version "app-arch/go-appimage" ; then
 		einfo "Applying kernel config flags for the appimage packages (id: 9d13cec)"
 		ot-kernel_y_configopt "CONFIG_FUSE_FS"
-		ot-kernel_y_configopt "CONFIG_MISC_FILESYSTEMS"
-		ot-kernel_y_configopt "CONFIG_SQUASHFS"
 	fi
 }
 
