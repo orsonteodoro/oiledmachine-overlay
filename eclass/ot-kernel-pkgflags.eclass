@@ -582,6 +582,7 @@ ot-kernel-pkgflags_appimage() { # DONE
 		|| has_version "app-arch/go-appimage" ; then
 		einfo "Applying kernel config flags for the appimage packages (id: 9d13cec)"
 		ot-kernel_y_configopt "CONFIG_FUSE_FS"
+
 	fi
 	if has_version "app-arch/go-appimage" ; then
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"

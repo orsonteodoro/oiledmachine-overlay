@@ -117,7 +117,7 @@ LICENSE+=" !system-binaries? ( MIT LGPL-2 GPL-2 )" # From the musl libc package
 [[ ${PV} =~ 9999 ]] && IUSE+=" fallback-commit"
 IUSE+="
 appimaged appimagetool disable_watching_desktop_folder
-disable_watching_downloads_folder firejail gnome kde mkappimage openrc overlayfs
+disable_watching_downloads_folder firejail gnome kde mkappimage openrc
 +system-binaries systemd travis-ci
 
 force-musl
@@ -386,14 +386,6 @@ ewarn "CONFIG_BINFMT_MISC=m"
 ewarn
 	fi
 
-	if ! linux_chkconfig_builtin SQUASHFS \
-		&& ! linux_chkconfig_module SQUASHFS ; then
-ewarn
-ewarn "You need to change your kernel .config to CONFIG_SQUASHFS=y or"
-ewarn "CONFIG_SQUASHFS=m"
-ewarn
-	fi
-
 	local found_appimage_type=0
 	if [[ -f "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type1" ]] \
 	&& grep -F -e "enabled" "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type1" ; then
@@ -435,14 +427,6 @@ eerror
 ewarn
 ewarn "You need to change your kernel .config to CONFIG_BLK_DEV_LOOP=y or"
 ewarn "CONFIG_BLK_DEV_LOOP=m"
-ewarn
-			die
-		fi
-		if use overlayfs && ! linux_chkconfig_builtin OVERLAY_FS \
-			&& ! linux_chkconfig_module OVERLAY_FS ; then
-ewarn
-ewarn "You need to change your kernel .config to CONFIG_OVERLAY_FS=y or"
-ewarn "CONFIG_OVERLAY_FS=m"
 ewarn
 			die
 		fi
