@@ -15,7 +15,7 @@
 
     The appimagetool is a publishing tool that produces AppImages that are
     signed for distribution.  Only Type 2 SquashFS based AppImages are
-    supported by this tool.
+    supported by this tool.  gzip and zstd are the supported for compression.
 
     appimaged will watch these folders for new .AppImage(s):
     ~/Downloads

@@ -6,6 +6,10 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <longdescription>
+    Gzip and lzma are the supported compression types that can be
+    used for appimagetool.
+  </longdescription>
   <use>
     <flag name="additional-tools">
       Adds optional tools
