@@ -2136,10 +2136,15 @@ unset OT_KERNEL_PRIVATE_KEY
     0 means off and 1 means on.
 
     Important:  The 0 does not imply disable but implies unchanged in some
-    cases.  This is because of the possibility of flag dependencies which are
+    cases.  This is because of the possibility of *flag dependencies* which are
     difficult to backtrack.  You must manually disable them by editing the
     kernel config.  This understanding is applied to previous sections as
-    well.
+    well.  The application of intuitive implied disable or implied unchange
+    is based on the following general rules:  If it seems like the kernel
+    option could be multiple referenced, a base option for an another option,
+    or library option; it is implied unchanged.  If it seems like the kernel
+    option is unlikely a base option, unlikely inherited option, or unlikely
+    multiple reference; it is likely an implied disabled.
 
     ALSA_PC_SPEAKER - Use the ALSA speaker driver for PC speaker.
 
