@@ -2,6 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -44,10 +45,10 @@ https://github.com/probonopd/go-appimage/blob/master/src/appimaged/appimaged.go#
   </longdescription>
   <use>
     <flag name="appimaged">
-      Installs appimaged.
+      Installs appimaged, an daemon to integrate AppImages into the system.
     </flag>
     <flag name="appimagetool">
-      Installs appimagetool.
+      Installs appimagetool, an AppImage creation tool from AppDirs.
     </flag>
     <flag name="disable_watching_desktop_folder">
       Disable watching the ~/Desktop folder for new .AppImages.  This may speed
@@ -65,6 +66,9 @@ https://github.com/probonopd/go-appimage/blob/master/src/appimaged/appimaged.go#
     </flag>
     <flag name="kde">
       Checks support for udisk support in KDE.
+    </flag>
+    <flag name="mkappimage">
+      Adds the core AppImage creation tool.
     </flag>
     <flag name="openrc">
       Adds OpenRC support.  (EXPERIMENTAL)
