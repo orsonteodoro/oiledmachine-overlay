@@ -148,11 +148,15 @@ RDEPEND+="
 		sys-apps/openrc[bash]
 	)
 	system-binaries? (
-		app-arch/AppImageKit[runtime]
 		>=app-arch/libarchive-3.3.2:=
-		>=dev-util/desktop-file-utils-0.15:=
+		>=dev-libs/appstream-0.12.9:=
+		>=dev-util/desktop-file-utils-0.27:=
 		>=dev-util/patchelf-0.9:=
 		>=sys-fs/squashfs-tools-4.4:=[zstd]
+		|| (
+			app-arch/static-tools
+			app-arch/AppImageKit[runtime]
+		)
 	)
 	systemd? (
 		sys-apps/systemd
@@ -162,6 +166,7 @@ RDEPEND+="
 		dev-vcs/git
 	)
 "
+# U 22.04 used for static-tools
 DEPEND+="
 	${RDEPEND}
 "
