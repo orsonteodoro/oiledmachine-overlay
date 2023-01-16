@@ -99,6 +99,18 @@ LICENSE+="
 # MPL-2.0 - go_build/src/github.com/hashicorp/go-version/LICENSE
 # ZPL - go_build/src/zig/lib/libc/mingw/COPYING
 
+# Found third-party in static-tools:
+# Artistic-2.0beta4 - zsync-0.6.2/COPYING
+# BSD-2 - squashfuse-e51978cd6bb5c4d16fae9eee43d0b258f570bb0f/LICENSE
+# BSD BSD-2 public-domain - libarchive-3.3.2/COPYING
+# GPL-2 - desktop-file-utils-56d220dd679c7c3a8f995a41a27a7d6f3df49dea/COPYING
+# GPL-2 - appstream-0.12.9/LICENSE.GPLv2
+# GPL-2 - squashfs-tools-4.5.1/COPYING
+# GPL-3 - patchelf-0.9/COPYING
+# LGPL-2.1 - appstream-0.12.9/LICENSE.LGPLv2.1
+# MIT - static-tools-9999/LICENSE
+# OPENLDAP - openldap-LMDB_0.9.29/libraries/liblmdb/LICENSE
+
 # Static executables follow below
 # aid = included in appimaged ; ait = included in appimagetool
 # LICENSE is already handled and accepted in other packages when
