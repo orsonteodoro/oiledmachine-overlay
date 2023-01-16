@@ -411,6 +411,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_spacenavd
 	ot-kernel-pkgflags_speedtouch_usb
 	ot-kernel-pkgflags_spice_vdagent
+	ot-kernel-pkgflags_squashfs-tools
 	ot-kernel-pkgflags_squid
 	ot-kernel-pkgflags_sssd
 	ot-kernel-pkgflags_sstp_client
@@ -6338,6 +6339,72 @@ ot-kernel-pkgflags_spice_vdagent() { # DONE
 		einfo "Applying kernel config flags for the spice-vdagent package (id: 239cc81)"
 		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
 		ot-kernel_y_configopt "CONFIG_VIRTIO_CONSOLE"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_squashfs-tools
+# @DESCRIPTION:
+# Applies kernel config flags for the squashfs-tools package or for LIVE CDs
+ot-kernel-pkgflags_squashfs-tools() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "7a8aba0" ]] && return
+	if has_version "sys-fs/squashfs-tools" ; then
+		einfo "Applying kernel config flags for the squashfs-tools package (id: 7a8aba0)"
+		ot-kernel_y_configopt "CONFIG_SQUASHFS"
+		ot-kernel_y_configopt "CONFIG_MISC_FILESYSTEMS"
+		ot-kernel_y_configopt "CONFIG_SQUASHFS_ZLIB"
+		if [[ "${SQUASHFS_4K_BLOCK_SIZE:-1}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SQUASHFS_4K_DEVBLK_SIZE"
+		else
+			ot-kernel_n_configopt "CONFIG_SQUASHFS_4K_DEVBLK_SIZE"
+		fi
+		if [[ "${SQUASHFS_XATTR:-1}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SQUASHFS_XATTR"
+		else
+			ot-kernel_n_configopt "CONFIG_SQUASHFS_XATTR"
+		fi
+		ot-kernel_n_configopt "CONFIG_SQUASHFS_DECOMP_SINGLE"
+		ot-kernel_n_configopt "CONFIG_SQUASHFS_DECOMP_MULTI"
+		ot-kernel_n_configopt "CONFIG_SQUASHFS_DECOMP_MULTI_PERCPU"
+		if [[ "${SQUASHFS_DECOMPRESSORS_PER_CORE:-auto}" == "auto" ]] ; then
+			local tpc=$(lscpu \
+				| grep "Thread(s) per core:" \
+				| grep -E -o -e "[0-9]+")
+			local mc=$(lscpu \
+				| grep "CPU(s):" \
+				| grep -E -o -e "[0-9]+")
+			if (( "${tpc}" >= 2 )) ; then
+				ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_MULTI"
+			elif (( "${mc}" >= 2 )) ; then
+				ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_MULTI_PERCPU"
+			else
+				ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_SINGLE"
+			fi
+		elif [[ "${SQUASHFS_DECOMPRESSORS_PER_CORE}" == "2" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_MULTI"
+		elif [[ "${SQUASHFS_DECOMPRESSORS_PER_CORE}" == "1lb" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_MULTI_PERCPU"
+		else
+			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_SINGLE"
+		fi
+		ot-kernel_n_configopt "CONFIG_SQUASHFS_FILE_CACHE"
+		ot-kernel_n_configopt "CONFIG_SQUASHFS_FILE_DIRECT"
+		if [[ "${SQUASHFS_NSTEP_DECOMPRESS:-1}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SQUASHFS_FILE_DIRECT"
+		else
+			ot-kernel_y_configopt "CONFIG_SQUASHFS_FILE_CACHE"
+		fi
+		if has_version "sys-fs/squashfs-tools[lz4]" ; then
+			ot-kernel_y_configopt "CONFIG_SQUASHFS_LZ4"
+		fi
+		if has_version "sys-fs/squashfs-tools[lzo]" ; then
+			ot-kernel_y_configopt "CONFIG_SQUASHFS_LZO"
+		fi
+		if has_version "sys-fs/squashfs-tools[lzma]" ; then
+			ot-kernel_y_configopt "CONFIG_SQUASHFS_XZ"
+		fi
+		if has_version "sys-fs/squashfs-tools[zstd]" ; then
+			ot-kernel_y_configopt "CONFIG_SQUASHFS_ZSTD"
+		fi
 	fi
 }
 

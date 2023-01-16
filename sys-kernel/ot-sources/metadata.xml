@@ -2306,6 +2306,25 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     QEMU_ETHERNET_BRIDGING - Add support for ethernet bridging.
     Valid values:  0 (default), 1.
 
+    SQUASHFS_4K_BLOCK_SIZE - Operate in 4k blocks instead of 1k blocks
+    Valid values: 0 (upstream default; optimize for space savings),
+    1 (ebuild default; optimizes I/O for sequential operations in some instances).
+
+    SQUASHFS_NSTEP_DECOMPRESS - Number of steps to decompress
+    1 - once into page cache (ebuild default, fastest)
+    2 - two step copy from temp buffer to page cache (upstream default)
+
+    SQUASHFS_XATTR - Support extended attributes.
+    Valid values: 0 (upstream default), 1 (ebuild default).
+
+    SQUASHFS_DECOMPRESSORS_PER_CORE - Parallel decompression
+    Valid values: 1 (upstream default), 1lb (1 per core load balanced),
+    2, auto (ebuild default).
+    auto will judge based on threads per core (TPC) inspection.
+    Use manual selection when porting to other machines.
+    The SQUASHFS_* environment variables fall into scope when the
+    squashfs-tools package is installed.
+
     USB_FLASH_EXT2 - Add support for ext2 USB flash disks (aka USB thumb drive)
     Valid values:  0 (default), 1.
 
