@@ -157,6 +157,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_alsa
 	ot-kernel-pkgflags_amt_check
 	ot-kernel-pkgflags_apcupsd
+	ot-kernel-pkgflags_appimage
 	ot-kernel-pkgflags_apptainer
 	ot-kernel-pkgflags_aqtion
 	ot-kernel-pkgflags_arcconf
@@ -568,6 +569,21 @@ ot-kernel-pkgflags_apcupsd() { # DONE
 		einfo "Applying kernel config flags for the apcupsd package (id: 491c232)"
 		ot-kernel_y_configopt "CONFIG_USB_HIDDEV"
 		ot-kernel_y_configopt "CONFIG_HIDRAW"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_appimage
+# @DESCRIPTION:
+# Applies kernel config flags for appimage packages
+ot-kernel-pkgflags_appimage() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "9d13cec" ]] && return
+	if has_version "app-arch/AppImageKit" \
+		|| has_version "app-arch/appimaged" \
+		|| has_version "app-arch/go-appimage" ; then
+		einfo "Applying kernel config flags for the appimage packages (id: 9d13cec)"
+		ot-kernel_y_configopt "CONFIG_FUSE_FS"
+		ot-kernel_y_configopt "CONFIG_MISC_FILESYSTEMS"
+		ot-kernel_y_configopt "CONFIG_SQUASHFS"
 	fi
 }
 
@@ -3132,11 +3148,6 @@ ot-kernel-pkgflags_firejail() { # DONE
 		einfo "Applying kernel config flags for the firejail package (id: 222b6c4)"
 		ot-kernel_y_configopt "CONFIG_NAMESPACES"
 		ot-kernel_y_configopt "CONFIG_USER_NS"
-		if has_version "app-arch/appimaged" \
-			|| has_version "app-arch/go-appimage" ; then
-			ot-kernel_y_configopt "CONFIG_MISC_FILESYSTEMS"
-			ot-kernel_y_configopt "CONFIG_SQUASHFS"
-		fi
 	fi
 }
 
