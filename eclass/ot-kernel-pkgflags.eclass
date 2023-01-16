@@ -6350,8 +6350,10 @@ ot-kernel-pkgflags_spice_vdagent() { # DONE
 # Applies kernel config flags for the squashfs packages
 _ot-kernel-pkgflags_squashfs() {
 	if grep -q -e "^CONFIG_SQUASHFS=y" "${path_config}" ; then
-		einfo "Added SquashFS ZLIB decompression support (for fallback and compatibility reasons)"
-		ot-kernel_y_configopt "CONFIG_SQUASHFS_ZLIB"
+		if [[ "${SQUASHFS_ZLIB:-1}" == "1" ]] ; then
+			einfo "Added SquashFS ZLIB decompression support (for fallback and compatibility reasons)"
+			ot-kernel_y_configopt "CONFIG_SQUASHFS_ZLIB"
+		fi
 		if [[ "${SQUASHFS_4K_BLOCK_SIZE:-1}" == "1" ]] ; then
 			einfo "SquashFS 4k block transfer for optimized increased throughput applied"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_4K_DEVBLK_SIZE"
