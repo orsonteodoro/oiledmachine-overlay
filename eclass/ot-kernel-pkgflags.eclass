@@ -583,6 +583,14 @@ ot-kernel-pkgflags_appimage() { # DONE
 		einfo "Applying kernel config flags for the appimage packages (id: 9d13cec)"
 		ot-kernel_y_configopt "CONFIG_FUSE_FS"
 	fi
+	if has_version "app-arch/go-appimage" ; then
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_BINFMT_MISC"
+	fi
+	if has_version "app-arch/appimaged[firejail]" \
+		|| has_version "app-arch/go-appimage[firejail]" ; then
+		ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP=y"
+	fi
 }
 
 # @FUNCTION: ot-kernel-pkgflags_apptainer
