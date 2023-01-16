@@ -101,7 +101,7 @@ LICENSE+="
 # aid = included in appimaged ; ait = included in appimagetool
 # LICENSE is already handled and accepted in other packages when
 # system-binaries USE is enabled.
-LICENSE+=" !system-binaries? ( BSD BSD-2 BSD-4 public-domain )" # libarchive aid
+LICENSE+=" !system-binaries? ( BSD BSD-2 BSD-4 public-domain )" # libarchive (bsdtar) aid
 LICENSE+=" !system-binaries? ( GPL-2 )" # squashfs-tools ait aid
 LICENSE+=" !system-binaries? ( GPL-2+ )" # desktop-file-utils ait
 LICENSE+=" !system-binaries? ( GPL-3 )" # patchelf # ait
@@ -148,11 +148,11 @@ RDEPEND+="
 		sys-apps/openrc[bash]
 	)
 	system-binaries? (
-		app-arch/AppImageKit[runtime]
 		>=app-arch/libarchive-3.3.2:=
 		>=dev-util/desktop-file-utils-0.15:=
 		>=dev-util/patchelf-0.9:=
 		>=sys-fs/squashfs-tools-4.4:=[zstd]
+		app-arch/AppImageKit[runtime]
 	)
 	systemd? (
 		sys-apps/systemd
