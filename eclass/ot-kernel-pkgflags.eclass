@@ -483,6 +483,9 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_zfs
 	ot-kernel-pkgflags_zfs_kmod
 
+	# Post apply
+	_ot-kernel-pkgflags_squashfs
+
 	# Out of source modules
 }
 
@@ -6342,15 +6345,11 @@ ot-kernel-pkgflags_spice_vdagent() { # DONE
 	fi
 }
 
-# @FUNCTION: ot-kernel-pkgflags_squashfs-tools
+# @FUNCTION: _ot-kernel-pkgflags_squashfs
 # @DESCRIPTION:
-# Applies kernel config flags for the squashfs-tools package or for LIVE CDs
-ot-kernel-pkgflags_squashfs-tools() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "7a8aba0" ]] && return
-	if has_version "sys-fs/squashfs-tools" ; then
-		einfo "Applying kernel config flags for the squashfs-tools package (id: 7a8aba0)"
-		ot-kernel_y_configopt "CONFIG_SQUASHFS"
-		ot-kernel_y_configopt "CONFIG_MISC_FILESYSTEMS"
+# Applies kernel config flags for the squashfs packages
+_ot-kernel-pkgflags_squashfs() {
+	if grep -q -e "^CONFIG_SQUASHFS=y" "${path_config}" ; then
 		ot-kernel_y_configopt "CONFIG_SQUASHFS_ZLIB"
 		if [[ "${SQUASHFS_4K_BLOCK_SIZE:-1}" == "1" ]] ; then
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_4K_DEVBLK_SIZE"
@@ -6405,6 +6404,23 @@ ot-kernel-pkgflags_squashfs-tools() { # DONE
 		if has_version "sys-fs/squashfs-tools[zstd]" ; then
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_ZSTD"
 		fi
+		ot-kernel_n_configopt "CONFIG_SQUASHFS_EMBEDDED"
+		if [[ -n "${SQUASHFS_NFRAGS_CACHED}" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SQUASHFS_EMBEDDED"
+			ot-kernel_set_configopt "CONFIG_SQUASHFS_FRAGMENT_CACHE_SIZE" "${SQUASHFS_NFRAGS_CACHED}"
+		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_squashfs-tools
+# @DESCRIPTION:
+# Applies kernel config flags for the squashfs-tools package or for LIVE CDs
+ot-kernel-pkgflags_squashfs-tools() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "7a8aba0" ]] && return
+	if has_version "sys-fs/squashfs-tools" ; then
+		einfo "Applying kernel config flags for the squashfs-tools package (id: 7a8aba0)"
+		ot-kernel_y_configopt "CONFIG_MISC_FILESYSTEMS"
+		ot-kernel_y_configopt "CONFIG_SQUASHFS"
 	fi
 }
 

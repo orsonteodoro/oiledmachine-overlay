@@ -2310,6 +2310,11 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     Valid values: 0 (upstream default; optimize for space savings),
     1 (ebuild default; optimizes I/O for sequential operations in some instances).
 
+    SQUASHFS_NFRAGS_CACHED - Number of fragments to cache in embedded environments.
+    Valid values: 1 or more with default 3.
+    Decreasing means more seeks and big delays.
+    Increasing means less seeks and fewer big delays.
+
     SQUASHFS_NSTEP_DECOMPRESS - Number of steps to decompress
     1 - once into page cache (ebuild default, fastest)
     2 - two step copy from temp buffer to page cache (upstream default)
@@ -2322,8 +2327,6 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     2, auto (ebuild default).
     auto will judge based on threads per core (TPC) inspection.
     Use manual selection when porting to other machines.
-    The SQUASHFS_* environment variables fall into scope when the
-    squashfs-tools package is installed.
 
     USB_FLASH_EXT2 - Add support for ext2 USB flash disks (aka USB thumb drive)
     Valid values:  0 (default), 1.

@@ -2473,6 +2473,7 @@ ot-kernel_clear_env() {
 	unset SANE_USB
 	unset SQUASHFS_4K_BLOCK_SIZE
 	unset SQUASHFS_DECOMPRESSORS_PER_CORE
+	unset SQUASHFS_NFRAGS_CACHED
 	unset SQUASHFS_NSTEP_DECOMPRESS
 	unset SQUASHFS_XATTR
 	unset STD_PC_SPEAKER
@@ -6877,8 +6878,11 @@ ot-kernel_src_install() {
 
 		einfo "Installing the kernel sources"
 		if [[ "${OT_KERNEL_FAST_INSTALL:-0}" == "1" ]] ; then
+			cp -a "${ED}/usr/src/linux-${PV}-${extraversion}/.config" "${T}"
+			rm -rf "${ED}/usr/src/linux-${PV}-${extraversion}"
 			dodir /usr/src
 			mv "${BUILD_DIR}" "${ED}/usr/src" || die
+			cp -a "${T}/.config" "${ED}/usr/src/linux-${PV}-${extraversion}/.config"
 		else
 			insinto /usr/src
 			doins -r "${BUILD_DIR}" # Sanitize file permissions
