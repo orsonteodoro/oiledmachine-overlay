@@ -6549,6 +6549,7 @@ ot-kernel_install_built_kernel() {
 	fi
 	export IFS=$'\n'
 	cd "${ED}" || die
+	local f
 	for f in $(find boot -type f) ; do
 		(
 			if file "${f}" | grep -q -E -e 'Linux kernel.*executable' ; then
