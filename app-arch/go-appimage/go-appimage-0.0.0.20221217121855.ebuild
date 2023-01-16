@@ -123,7 +123,7 @@ disable_watching_downloads_folder firejail gnome kde mkappimage openrc overlayfs
 force-musl
 "
 REQUIRED_USE+="
-	elibc_glibc? (
+	!elibc_musl? (
 		force-musl? (
 			!system-binaries
 		)
