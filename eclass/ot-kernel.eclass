@@ -7263,9 +7263,12 @@ ot-kernel_src_install() {
 
 		# Required for external modules
 		insinto "/usr/src/linux-${PV}-${extraversion}"
-		doins -r "${BUILD_DIR}/"*.pem
-		doins -r "${BUILD_DIR}/"*.x509
-		doins -r "${BUILD_DIR}/"*.genkey
+		ls "${BUILD_DIR}/"*".pem" 2>/dev/null 1>/dev/null \
+			&& doins "${BUILD_DIR}/"*".pem"
+		ls "${BUILD_DIR}/"*".x509" 2>/dev/null 1>/dev/null \
+			&& doins "${BUILD_DIR}/"*".x509"
+		ls "${BUILD_DIR}/"*".genkey" 2>/dev/null 1>/dev/null \
+			&& doins "${BUILD_DIR}/"*".genkey"
 
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
 			einfo "Installing OpenRC iosched script settings"
