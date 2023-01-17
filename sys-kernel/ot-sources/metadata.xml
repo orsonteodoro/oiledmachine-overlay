@@ -1633,6 +1633,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       For seemless boot logos or animated logos, it is recommended to use
       - Dracut and Plymouth packages instead of the kernel logo.
       Kernel logos are stills.
+      - Additional modding may be required on PPC.  See
+        custom-logo-for-6.1.patch for details.
 
 
 
