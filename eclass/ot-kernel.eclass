@@ -6081,22 +6081,12 @@ einfo "Using boot logo from ${OT_KERNEL_LOGO_URI}"
 		elif [[ "${OT_KERNEL_LOGO_URI}" =~ ("http://"|"https://"|"ftp://") ]] ; then
 			_check_network_sandbox
 			wget -O "${T}/boot.logo" "${OT_KERNEL_LOGO_URI}" || die
-
-			if [[ "${OT_KERNEL_LOGO_LICENSE_URI}" =~ ("http://"|"https://"|"ftp://") ]] ; then
-				wget -O "${BUILD_DIR}/drivers/video/logo/logo_custom.ppm.license" \
-				"${OT_KERNEL_LOGO_LICENSE_URI}" || die
-			fi
 		else
 			local path="${OT_KERNEL_LOGO_URI}"
 			path=$(echo "${path}" | sed -e "s|^file://||g")
 			[[ -e "${path}" ]] || die "File not found"
 			cat "${path}" > "${T}/boot.logo" || die
 
-			path="${OT_KERNEL_LOGO_LICENSE_URI}"
-			path=$(echo "${path}" | sed -e "s|^file://||g")
-			[[ -e "${path}" ]] || die "File not found"
-			cat "${path}" "${BUILD_DIR}/drivers/video/logo/logo_custom.ppm.license" \
-				|| die
 		fi
 		local image_type=$(file "${T}/boot.logo")
 
@@ -6140,8 +6130,12 @@ einfo "${OT_KERNEL_LOGO_URI} accepted as jpeg2k."
 				|| die "Missing image codec in ${gfx_pkg}[jpeg2k] package"
 			image_in_path="${T}/boot.jp2"
 			mv "${T}/boot.logo" "${image_in_path}" || die
-		elif [[ "${image_type}" =~ "Netpbm image data" ]] ; then
-einfo "${OT_KERNEL_LOGO_URI} accepted as ppm."
+		elif [[ "${image_type}" =~ "Netpbm image data".*"pixmap" ]] ; then
+einfo "${OT_KERNEL_LOGO_URI} accepted as ppm (colored pixmap)."
+			image_in_path="${T}/boot.ppm"
+			mv "${T}/boot.logo" "${image_in_path}" || die
+		elif [[ "${image_type}" =~ "Netpbm image data".*"pixmap" ]] ; then
+einfo "${OT_KERNEL_LOGO_URI} accepted as pbm (b&w bitmap)."
 			image_in_path="${T}/boot.pbm"
 			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "OpenEXR image data" ]] ; then
@@ -6290,15 +6284,19 @@ eerror
 					"${OT_KERNEL_LOGO_PREPROCESS_PATH}"
 				fi
 				local colors_suffix=""
+				local colors_ext=""
 				if [[ "${OT_KERNEL_LOGO_MAGICK_ARGS}" =~ "-colors 1" ]] ; then
 					ot-kernel_y_configopt "CONFIG_LOGO_CUSTOM_MONO"
 					colors_suffix="mono"
+					colors_ext="pbm"
 				elif [[ "${OT_KERNEL_LOGO_MAGICK_ARGS}" =~ "-colors 16" ]] ; then
 					ot-kernel_y_configopt "CONFIG_LOGO_CUSTOM_VGA16"
 					colors_suffix="vga16"
+					colors_ext="ppm"
 				elif [[ "${OT_KERNEL_LOGO_MAGICK_ARGS}" =~ "-colors 224" ]] ; then
 					ot-kernel_y_configopt "CONFIG_LOGO_CUSTOM_CLUT224"
 					colors_suffix="clut224"
+					colors_ext="ppm"
 				else
 eerror
 eerror "You need to add one of the following rows to"
@@ -6313,8 +6311,22 @@ eerror
 				magick \
 					"${image_in_path}" \
 					${OT_KERNEL_LOGO_MAGICK_ARGS} \
-					"${BUILD_DIR}/drivers/video/logo/logo_custom_${suffix}.ppm" \
+					"${BUILD_DIR}/drivers/video/logo/logo_custom_${colors_suffix}.${colors_ext}" \
 					|| die
+				if [[ "${OT_KERNEL_LOGO_URI}" =~ ("http://"|"https://"|"ftp://") ]] ; then
+					if [[ "${OT_KERNEL_LOGO_LICENSE_URI}" =~ ("http://"|"https://"|"ftp://") ]] ; then
+						wget -O "${BUILD_DIR}/drivers/video/logo/logo_custom_${colors_suffix}.ppm.license" \
+						"${OT_KERNEL_LOGO_LICENSE_URI}" || die
+					fi
+				else
+					local path
+					path="${OT_KERNEL_LOGO_LICENSE_URI}"
+					path=$(echo "${path}" | sed -e "s|^file://||g")
+					if [[ -e "${path}" ]] ; then
+						cat "${path}" "${BUILD_DIR}/drivers/video/logo/logo_custom_${colors_suffix}.ppm.license" \
+							|| die
+					fi
+				fi
 			fi
 		fi
 	fi
@@ -7231,9 +7243,10 @@ ot-kernel_src_install() {
 		if [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
 			ot-kernel_install_source_code
 		else
-			if [[ -e "${BUILD_DIR}/drivers/video/logo/logo_custom.ppm.license" ]] ; then
+			local license_path=$(find "${BUILD_DIR}/drivers/video/logo" -name "logo_custom_*.*.license" 2>/dev/null)
+			if [[ -n "${license_path}" && -e "${license_path}" ]] ; then
 				docinto "licenses/${extraversion}"
-				dodoc "${BUILD_DIR}/drivers/video/logo/logo_custom.ppm.license"
+				dodoc "${license_path}"
 			fi
 		fi
 
