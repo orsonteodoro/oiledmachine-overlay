@@ -5,7 +5,7 @@
  	default y
  
 +config LOGO_CUSTOM_MONO
-+	bool "Custom logo (b&w)"
++	bool "Custom logo (black and white)"
 +	default y
 +
 +config LOGO_CUSTOM_VGA16
@@ -64,3 +64,15 @@
  	}
  	return logo;
  }
+--- linux-6.1.6-builder/include/linux/linux_logo.h.orig	2022-12-11 14:15:18.000000000 -0800
++++ linux-6.1.6-builder/include/linux/linux_logo.h	2023-01-16 23:35:18.876232050 -0800
+@@ -45,6 +45,9 @@ extern const struct linux_logo logo_supe
+ extern const struct linux_logo logo_superh_vga16;
+ extern const struct linux_logo logo_superh_clut224;
+ extern const struct linux_logo logo_spe_clut224;
++extern const struct linux_logo logo_custom_mono;
++extern const struct linux_logo logo_custom_vga16;
++extern const struct linux_logo logo_custom_clut224;
+ 
+ extern const struct linux_logo *fb_find_logo(int depth);
+ #ifdef CONFIG_FB_LOGO_EXTRA
