@@ -29,7 +29,7 @@ ot-kernel_set_configopt() {
 	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
 		sed -i -e "s|# ${opt} is not set|${opt}=${val}|g" "${path_config}" || die
 	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
-		sed -i -r -e "s#${opt}=.*#${opt}=${val}#g" "${path_config}" || die
+		sed -i -r -e "s/${opt}=.*/${opt}=${val}/g" "${path_config}" || die
 	else
 		echo "${opt}=${val}" >> "${path_config}" || die
 	fi
@@ -40,7 +40,13 @@ ot-kernel_set_configopt() {
 # Unsets the kernel option.  Unset means no or disable.
 ot-kernel_unset_configopt() {
 	local opt="${1}"
-	sed -r -i -e "s/^${opt}=.*/# ${opt} is not set/g" "${path_config}" || die
+	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
+		:;
+	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
+		sed -r -i -e "s/^${opt}=.*/# ${opt} is not set/g" "${path_config}" || die
+	else
+		echo "# ${opt} is not set" >> "${path_config}" || die
+	fi
 }
 
 # @FUNCTION: ot-kernel_y_configopt
@@ -51,7 +57,7 @@ ot-kernel_y_configopt() {
 	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
 		sed -i -e "s|# ${opt} is not set|${opt}=y|g" "${path_config}" || die
 	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
-		sed -i -r -e "s#${opt}=[y|n|m]#${opt}=y#g" "${path_config}" || die
+		sed -i -r -e "s/^${opt}=.*/${opt}=y/g" "${path_config}" || die
 	else
 		echo "${opt}=y" >> "${path_config}" || die
 	fi
@@ -62,7 +68,13 @@ ot-kernel_y_configopt() {
 # Unset kernel config option
 ot-kernel_n_configopt() {
 	local opt="${1}"
-	sed -i -e "s|^${opt}=.*|# ${opt} is not set|g" "${path_config}" || die
+	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
+		:;
+	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
+		sed -r -i -e "s/^${opt}=.*/# ${opt} is not set/g" "${path_config}" || die
+	else
+		echo "# ${opt} is not set" >> "${path_config}" || die
+	fi
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_kernel_cmdline

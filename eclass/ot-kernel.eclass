@@ -6221,7 +6221,6 @@ eerror
 		elif [[ "${OT_KERNEL_LOGO_URI}" =~ "logo_superh_vga16.ppm" ]] ; then
 			ot-kernel_y_configopt "CONFIG_LOGO_SUPERH_VGA16"
 		elif [[ -n "${OT_KERNEL_LOGO_URI}" ]] ; then
-			ot-kernel_y_configopt "CONFIG_LOGO_CUSTOM"
 			if [[ -n "${OT_KERNEL_LOGO_MAGICK_ARGS}" ]] ; then
 				if [[ -z "${OT_KERNEL_LOGO_MAGICK_ARGS}" ]] ; then
 eerror
@@ -6286,14 +6285,17 @@ eerror
 				local colors_suffix=""
 				local colors_ext=""
 				if [[ "${OT_KERNEL_LOGO_MAGICK_ARGS}" =~ "-colors 1" ]] ; then
+einfo "Enabling custom logo (mono)"
 					ot-kernel_y_configopt "CONFIG_LOGO_CUSTOM_MONO"
 					colors_suffix="mono"
 					colors_ext="pbm"
 				elif [[ "${OT_KERNEL_LOGO_MAGICK_ARGS}" =~ "-colors 16" ]] ; then
+einfo "Enabling custom logo (16 colors)"
 					ot-kernel_y_configopt "CONFIG_LOGO_CUSTOM_VGA16"
 					colors_suffix="vga16"
 					colors_ext="ppm"
 				elif [[ "${OT_KERNEL_LOGO_MAGICK_ARGS}" =~ "-colors 224" ]] ; then
+einfo "Enabling custom logo (224 colors)"
 					ot-kernel_y_configopt "CONFIG_LOGO_CUSTOM_CLUT224"
 					colors_suffix="clut224"
 					colors_ext="ppm"
