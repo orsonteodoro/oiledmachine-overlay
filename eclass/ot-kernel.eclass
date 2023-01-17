@@ -6289,12 +6289,16 @@ eerror
 					export image_in_path
 					"${OT_KERNEL_LOGO_PREPROCESS_PATH}"
 				fi
+				local colors_suffix=""
 				if [[ "${OT_KERNEL_LOGO_MAGICK_ARGS}" =~ "-colors 1" ]] ; then
 					ot-kernel_y_configopt "CONFIG_LOGO_CUSTOM_MONO"
+					colors_suffix="mono"
 				elif [[ "${OT_KERNEL_LOGO_MAGICK_ARGS}" =~ "-colors 16" ]] ; then
 					ot-kernel_y_configopt "CONFIG_LOGO_CUSTOM_VGA16"
+					colors_suffix="vga16"
 				elif [[ "${OT_KERNEL_LOGO_MAGICK_ARGS}" =~ "-colors 224" ]] ; then
 					ot-kernel_y_configopt "CONFIG_LOGO_CUSTOM_CLUT224"
+					colors_suffix="clut224"
 				else
 eerror
 eerror "You need to add one of the following rows to"
@@ -6309,7 +6313,7 @@ eerror
 				magick \
 					"${image_in_path}" \
 					${OT_KERNEL_LOGO_MAGICK_ARGS} \
-					"${BUILD_DIR}/drivers/video/logo/logo_custom.ppm" \
+					"${BUILD_DIR}/drivers/video/logo/logo_custom_${suffix}.ppm" \
 					|| die
 			fi
 		fi

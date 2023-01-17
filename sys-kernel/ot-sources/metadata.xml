@@ -1538,6 +1538,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     Notes:
 
       - The -geometry option is used to scale the image preserving aspect ratio.
+      - The value of -geometry cannot exceed the framebuffer width or height.
       - The -colors can only be 1, 16, 224 to indicate the maxiumum
         allowed colors.
       - You may specify more args.
