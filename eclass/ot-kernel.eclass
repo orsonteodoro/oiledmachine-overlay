@@ -7261,7 +7261,7 @@ ot-kernel_src_install() {
 		insinto "/usr/src/linux-${PV}-${extraversion}/include/config"
 		doins "${BUILD_DIR}/include/config/kernel.release"
 
-		# Required for external modules
+		# Required for building external modules
 		insinto "/usr/src/linux-${PV}-${extraversion}/certs"
 		ls "${BUILD_DIR}/certs/"*".pem" 2>/dev/null 1>/dev/null \
 			&& doins "${BUILD_DIR}/certs/"*".pem"
