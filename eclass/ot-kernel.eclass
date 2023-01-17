@@ -140,6 +140,7 @@ OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${PV}"
 IUSE+=" cpu_flags_arm_thumb"
 IUSE+=" gtk +ncurses openssl qt5"
 IUSE+=" bzip2 gzip lz4 lzma lzo xz zstd"
+IUSE+=" imagemagick graphicsmagick"
 NEEDS_DEBUGFS=0
 PYTHON_COMPAT=( python3_{8..10} )
 inherit check-reqs flag-o-matic python-r1 ot-kernel-cve ot-kernel-pkgflags ot-kernel-kutils toolchain-funcs
@@ -206,6 +207,12 @@ BDEPEND+="
 	sys-apps/findutils
 	build? (
 		${CDEPEND}
+	)
+	imagemagick? (
+		media-gfx/imagemagick
+	)
+	graphicsmagick? (
+		media-gfx/graphicsmagick[imagemagick]
 	)
 "
 
@@ -1370,6 +1377,15 @@ apply_cfi() {
 	done
 }
 
+# @FUNCTION: apply_custom_logo
+# @DESCRIPTION:
+# Adds custom logo patch
+apply_custom_logo() {
+	if [[ -n "${OT_KERNEL_LOGO_URI}" ]] ; then
+		_fpatch "${FILESDIR}/custom-logo-for-6.1.patch"
+	fi
+}
+
 # @FUNCTION: apply_kcfi
 # @DESCRIPTION:
 # Adds kcfi protection for the x86-64 platform
@@ -1985,6 +2001,8 @@ apply_all_patchsets() {
 		fi
 	fi
 
+	apply_custom_logo
+
 	if (( ${#_PATCHES[@]} > 0 )) ; then
 		eapply ${_PATCHES[@]}
 	fi
@@ -2401,6 +2419,10 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_IOSCHED_OVERRIDE
 	unset OT_KERNEL_KERNEL_DIR
 	unset OT_KERNEL_KEXEC
+	unset OT_KERNEL_LOGO_LICENSE_URI
+	unset OT_KERNEL_LOGO_MAGICK_ARGS
+	unset OT_KERNEL_LOGO_MAGICK_PACKAGE
+	unset OT_KERNEL_LOGO_URI
 	unset OT_KERNEL_LSMS
 	unset OT_KERNEL_MENUCONFIG_COLORS
 	unset OT_KERNEL_MENUCONFIG_EXTRAVERSION
@@ -6025,6 +6047,184 @@ ot-kernel_check_kernel_signing_prereqs() {
 	fi
 }
 
+# @FUNCTION: _ot-kernel_is_upstream_logo
+# @DESCRIPTION:
+# Is the file mentioned a logo found in the kernel source?
+_ot-kernel_is_upstream_logo() {
+	IFS=$'\n'
+	local L=(
+		$(find "${BUILD_DIR}/drivers/video/logo" -name "*.ppm")
+	)
+	local path
+	for path in ${L[@]} ; do
+		if [[ "${path}" =~ "${OT_KERNEL_LOGO_URI}" ]] ; then
+			return 0
+		fi
+	done
+	IFS=$' \t\n'
+	return 1
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_logo
+# @DESCRIPTION:
+# Fetch and use a kernel boot logo
+ot-kernel_set_kconfig_logo() {
+	if [[ -n "${OT_KERNEL_LOGO_URI}" ]] ; then
+einfo "Using boot logo from ${OT_KERNEL_LOGO_URI}"
+		local is_uri=0
+		if _ot-kernel_is_upstream_logo ; then
+			:;
+		elif [[ "${OT_KERNEL_LOGO_URI}" =~ ("http://"|"https://"|"ftp://") ]] ; then
+			_check_network_sandbox
+			wget -O "${T}/boot.logo" "${OT_KERNEL_LOGO_URI}" || die
+			if [[ "${OT_KERNEL_LOGO_LICENSE_URI}" =~ ("http://"|"https://"|"ftp://") ]] ; then
+				wget -O "${T}/boot.logo.license" "${OT_KERNEL_LOGO_LICENSE_URI}" || die
+			fi
+			is_uri=1
+		else
+			local path="${OT_KERNEL_LOGO_URI}"
+			path=$(echo "${path}" | sed -e "s|^file://||g")
+			[[ -e "${path}" ]] || die "File not found"
+			cat "${path}" > "${T}/boot.logo" || die
+		fi
+		local image_type=$(file "${T}/boot.logo")
+
+		local gfx_pkg
+		if has_version "media-gfx/imagemagick" ; then
+			gfx_pkg="media-gfx/imagemagick"
+		elif has_version "media-gfx/graphicsmagick" ; then
+			gfx_pkg="media-gfx/graphicsmagick[imagemagick]"
+		else
+eerror
+eerror "media-gfx/imagemagick or media-gfx/graphicsmagick[imagemagick] required"
+eerror "for OT_KERNEL_LOGO_URI."
+eerror
+			die
+		fi
+
+		local image_in_path=""
+		if [[ "${image_type}" =~ "AVIF Image" ]] ; then
+eerror "${OT_KERNEL_LOGO_URI} accepted as avif."
+			mv "${T}/boot.logo" "${T}/boot.avif" || die
+			image_in_path="${T}/boot.avif"
+		elif [[ "${image_type}" =~ "PC bitmap" ]] ; then
+eerror "${OT_KERNEL_LOGO_URI} accepted as bmp."
+			mv "${T}/boot.logo" "${T}/boot.bmp" || die
+			image_in_path="${T}/boot.bmp"
+		elif [[ "${image_type}" =~ "GIF image data" ]] ; then
+eerror "${OT_KERNEL_LOGO_URI} accepted as gif."
+			has_version "${gfx_pkg}" || die "Missing image in package"
+			mv "${T}/boot.logo" "${T}/boot.gif" || die
+			image_in_path="${T}/boot.gif"
+		elif [[ "${image_type}" =~ "JPEG image data" ]] ; then
+eerror "${OT_KERNEL_LOGO_URI} accepted as jpeg."
+			has_version "${gfx_pkg}[jpeg]" || die "Missing image codec in package"
+			mv "${T}/boot.logo" "${T}/boot.jpg" || die
+			image_in_path="${T}/boot.jpg"
+		elif [[ "${image_type}" =~ "JPEG 2000 Part 1 (JP2)" ]] ; then
+eerror "${OT_KERNEL_LOGO_URI} accepted as jpeg2k."
+			has_version "${gfx_pkg}[jpeg2k]" || die "Missing image codec in package"
+			mv "${T}/boot.logo" "${T}/boot.jp2" || die
+			image_in_path="${T}/boot.jp2"
+		elif [[ "${image_type}" =~ "Netpbm image data" ]] ; then
+eerror "${OT_KERNEL_LOGO_URI} accepted as ppm."
+			mv "${T}/boot.logo" "${T}/boot.pbm" || die
+			image_in_path="${T}/boot.pbm"
+		elif [[ "${image_type}" =~ "OpenEXR image data" ]] ; then
+eerror "${OT_KERNEL_LOGO_URI} accepted as openexr."
+			has_version "${gfx_pkg}[openexr]" || die "Missing image codec in package"
+			mv "${T}/boot.logo" "${T}/boot.exr" || die
+			image_in_path="${T}/boot.exr"
+		elif [[ "${image_type}" =~ "PNG image data" ]] ; then
+eerror "${OT_KERNEL_LOGO_URI} accepted as png."
+			has_version "${gfx_pkg}[png]" || die "Missing image codec in package"
+			mv "${T}/boot.logo" "${T}/boot.png" || die
+			image_in_path="${T}/boot.png"
+		elif [[ "${image_type}" =~ "SVG Scalable Vector Graphics image" ]] ; then
+eerror "${OT_KERNEL_LOGO_URI} accepted as svg."
+			has_version "${gfx_pkg}[svg]" || die "Missing image codec in package"
+			mv "${T}/boot.logo" "${T}/boot.svg" || die
+			image_in_path="${T}/boot.svg"
+		elif [[ "${image_type}" =~ "Targa image data" ]] ; then
+eerror "${OT_KERNEL_LOGO_URI} accepted as tga."
+			has_version "${gfx_pkg}[tiff]" || die "Missing image codec in package"
+			mv "${T}/boot.logo" "${T}/boot.tga" || die
+			image_in_path="${T}/boot.tga"
+		elif [[ "${image_type}" =~ "TIFF image data" ]] ; then
+eerror "${OT_KERNEL_LOGO_URI} accepted as tiff."
+			has_version "${gfx_pkg}[tiff]" || die "Missing image codec in package"
+			mv "${T}/boot.logo" "${T}/boot.tiff" || die
+			image_in_path="${T}/boot.tiff"
+		elif [[ "${image_type}" =~ "Web/P image" ]] ; then
+eerror "${OT_KERNEL_LOGO_URI} accepted as webp."
+			has_version "${gfx_pkg}[webp]" || die "Missing image codec in package"
+			mv "${T}/boot.logo" "${T}/boot.webp" || die
+			image_in_path="${T}/boot.webp"
+		else
+eerror
+eerror "Image not supported for ${OT_KERNEL_LOGO_URI}."
+eerror
+			die
+		fi
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_LOGO"
+		ot-kernel_n_configopt "CONFIG_LOGO_LINUX_MONO"
+		ot-kernel_n_configopt "CONFIG_LOGO_LINUX_VGA16"
+		ot-kernel_n_configopt "CONFIG_LOGO_LINUX_CLUT224"
+		ot-kernel_n_configopt "CONFIG_LOGO_DEC_CLUT224"
+		ot-kernel_n_configopt "CONFIG_LOGO_MAC_CLUT224"
+		ot-kernel_n_configopt "CONFIG_LOGO_PARISC_CLUT224"
+		ot-kernel_n_configopt "CONFIG_LOGO_SGI_CLUT224"
+		ot-kernel_n_configopt "CONFIG_LOGO_SUN_CLUT224"
+		ot-kernel_n_configopt "CONFIG_LOGO_SUPERH_MONO"
+		ot-kernel_n_configopt "CONFIG_LOGO_SUPERH_VGA16"
+		ot-kernel_n_configopt "CONFIG_LOGO_SUPERH_CLUT224"
+		ot-kernel_n_configopt "CONFIG_LOGO_CUSTOM"
+		if [[ "${OT_KERNEL_LOGO_URI}" =~ "logo_dec_clut224.ppm" ]] ; then
+			ot-kernel_y_configopt "CONFIG_LOGO_DEC_CLUT224"
+		elif [[ "${OT_KERNEL_LOGO_URI}" =~ "logo_linux_clut224.ppm" ]] ; then
+			ot-kernel_y_configopt "CONFIG_LOGO_LINUX_CLUT224"
+		elif [[ "${OT_KERNEL_LOGO_URI}" =~ "logo_linux_mono.pbm" ]] ; then
+			ot-kernel_y_configopt "CONFIG_LOGO_LINUX_MONO"
+		elif [[ "${OT_KERNEL_LOGO_URI}" =~ "logo_linux_vga16.ppm" ]] ; then
+			ot-kernel_y_configopt "CONFIG_LOGO_LINUX_VGA16"
+		elif [[ "${OT_KERNEL_LOGO_URI}" =~ "logo_mac_clut224.ppm" ]] ; then
+			ot-kernel_y_configopt "CONFIG_LOGO_MAC_CLUT224"
+		elif [[ "${OT_KERNEL_LOGO_URI}" =~ "logo_parisc_clut224.ppm" ]] ; then
+			ot-kernel_y_configopt "CONFIG_LOGO_PARISC_CLUT224"
+		elif [[ "${OT_KERNEL_LOGO_URI}" =~ "logo_sgi_clut224.ppm" ]] ; then
+			ot-kernel_y_configopt "CONFIG_LOGO_SGI_CLUT224"
+		elif [[ "${OT_KERNEL_LOGO_URI}" =~ "logo_spe_clut224.ppm" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SPU_BASE"
+		elif [[ "${OT_KERNEL_LOGO_URI}" =~ "logo_sun_clut224.ppm" ]] ; then
+			ot-kernel_y_configopt "CONFIG_LOGO_SUN_CLUT224"
+		elif [[ "${OT_KERNEL_LOGO_URI}" =~ "logo_superh_clut224.ppm" ]] ; then
+			ot-kernel_y_configopt "CONFIG_LOGO_SUPERH_CLUT224"
+		elif [[ "${OT_KERNEL_LOGO_URI}" =~ "logo_superh_mono.pbm" ]] ; then
+			ot-kernel_y_configopt "CONFIG_LOGO_SUPERH_MONO"
+		elif [[ "${OT_KERNEL_LOGO_URI}" =~ "logo_superh_vga16.ppm" ]] ; then
+			ot-kernel_y_configopt "CONFIG_LOGO_SUPERH_VGA16"
+		elif [[ -n "${OT_KERNEL_LOGO_URI}" ]] ; then
+			ot-kernel_y_configopt "CONFIG_LOGO_CUSTOM"
+			if [[ -n "${OT_KERNEL_LOGO_MAGICK_ARGS}" ]] ; then
+				if [[ -z "${OT_KERNEL_LOGO_MAGICK_ARGS}" ]] ; then
+eerror
+eerror "OT_KERNEL_LOGO_MAGICK_ARGS must be define."
+eerror "See metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\` for details."
+eerror
+					die
+				fi
+				has_version "${gfx_pkg}"
+				magick \
+					"${image_in_path}" \
+					${OT_KERNEL_LOGO_MAGICK_ARGS} \
+					"${BUILD_DIR}/drivers/video/logo" \
+					|| die
+			fi
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure
 # @DESCRIPTION:
 # Run menuconfig
@@ -6152,6 +6352,8 @@ einfo
                 # from a generated new kernel config.
 		ot-kernel-pkgflags_apply # Placed before security flags
 		ot-kernel_set_kconfig_ep800 # For testing build time breakage
+
+		ot-kernel_set_kconfig_logo
 
 		is_firmware_ready
 
@@ -6553,7 +6755,7 @@ ot-kernel_install_built_kernel() {
 	for f in $(find boot -type f) ; do
 		(
 			if file "${f}" | grep -q -E -e 'Linux kernel.*executable' ; then
-				fperms -x "${f}"
+				chmod -x "${f}"
 			fi
 		) &
 		local njobs=$(jobs -r -p | wc -l)
@@ -6886,6 +7088,7 @@ ot-kernel_src_install() {
 			)
 
 			ot-kernel_install_built_kernel # It works the same as make install.
+			cd "${BUILD_DIR}" || die
 			einfo "Running:  make modules_install ${args[@]}"
 			make modules_install "${args[@]}" || die
 			if [[ "${arch}" =~ "arm" ]] ; then

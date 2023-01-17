@@ -1,0 +1,21 @@
+--- linux-6.1.6-gaming/drivers/video/logo/Kconfig.orig	2022-12-11 14:15:18.000000000 -0800
++++ linux-6.1.6-gaming/drivers/video/logo/Kconfig	2023-01-16 16:02:28.793426528 -0800
+@@ -68,4 +68,8 @@ config LOGO_SUPERH_CLUT224
+ 	depends on SUPERH
+ 	default y
+ 
++config LOGO_CUSTOM
++	bool "Custom logo"
++	default y
++
+ endif # LOGO
+--- linux-6.1.6-gaming/drivers/video/logo/Makefile.orig	2022-12-11 14:15:18.000000000 -0800
++++ linux-6.1.6-gaming/drivers/video/logo/Makefile	2023-01-16 16:03:27.531784979 -0800
+@@ -13,6 +13,7 @@ obj-$(CONFIG_LOGO_SUN_CLUT224)		+= logo_
+ obj-$(CONFIG_LOGO_SUPERH_MONO)		+= logo_superh_mono.o
+ obj-$(CONFIG_LOGO_SUPERH_VGA16)		+= logo_superh_vga16.o
+ obj-$(CONFIG_LOGO_SUPERH_CLUT224)	+= logo_superh_clut224.o
++obj-$(CONFIG_LOGO_CUSTOM)		+= logo_custom.o
+ 
+ obj-$(CONFIG_SPU_BASE)			+= logo_spe_clut224.o
+ 

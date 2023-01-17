@@ -356,6 +356,8 @@ OT_KERNEL_EXTRAVERSION="ot"
 OT_KERNEL_FIRMWARE="regulatory"
 OT_KERNEL_HARDENING_LEVEL="untrusted"
 OT_KERNEL_INSTALL_SOURCE_CODE="1"
+OT_KERNEL_LOGO_MAGICK_ARGS="-geometry 480x -colors 224"
+OT_KERNEL_LOGO_URI="https://upload.wikimedia.org/wikipedia/commons/4/49/Flag_of_Ukraine.svg"
 OT_KERNEL_LSMS="auto"
 OT_KERNEL_MODULES_SUPPORT="1"
 OT_KERNEL_MODULES_COMPRESSOR="zstd"
@@ -1507,6 +1509,100 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
       OT_KERNEL_IMA
       OT_KERNEL_IMA_POLICIES
+
+
+
+    OT_KERNEL_LOGO_MAGICK_PACKAGE -- The package to use for image conversion
+
+    Acceptable values:
+
+      media-gfx/imagemagick
+      media-gfx/graphicsmagick
+      unset - auto detects with media-gfx/imagemagick having priority.
+
+    Examples
+
+      OT_KERNEL_LOGO_MAGICK_PACKAGE="media-gfx/imagemagick"
+
+
+
+    OT_KERNEL_LOGO_LICENSE_URI -- A uri, local file containing the license
+
+    Acceptable values:
+
+      url - An image off the internet.
+      absolute path to local file - A path locally on the device
+      unset - skip license copy
+
+    Examples:
+
+      OT_KERNEL_LOGO_LICENSE_URI="https://gitweb.gentoo.org/repo/gentoo.git/plain/licenses/CC-BY-3.0"
+      OT_KERNEL_LOGO_LICENSE_URI="file:///home/user/logo.license"
+      OT_KERNEL_LOGO_LICENSE_URI="/home/user/logo.license"
+
+
+
+    OT_KERNEL_LOGO_MAGICK_ARGS -- Args to pass to the converter
+
+    Examples:
+
+      OT_KERNEL_LOGO_MAGICK_ARGS="-geometry x112 -colors 224"
+      OT_KERNEL_LOGO_MAGICK_ARGS="-geometry x80 -colors 224"
+
+    Notes:
+
+      - The -geometry option is used to scale the image preserving aspect ratio.
+      - The -colors can only be 1, 16, 224, 256 and indicate the maxiumum
+        allowed colors.
+      - You may specify more args.
+      - The old logos dimensions do not scale well in current times.  The ratio
+        is approximately .166, .133, .10416 the height of 640x480, 800x600,
+        1366x768 monitors circa 2008.  So if you have a 1080p monitor (or
+        1920x1080) or 4k monitor, a flag as a logo should be 144 pixels or 224
+        pixels respectively in height to properly scale for newer monitors, so
+        logos do not appear tiny, or feel archaic useless, but remain nostalgic
+        as in circa 2008.  Larger full screen logos should be possible like
+        with Dracut / Plymouth.
+      - The dimensions should be an even number and divisible by 4.
+      - See https://imagemagick.org/script/magick.php for additional arguments
+        or clarification of the examples above.
+
+
+
+    OT_KERNEL_LOGO_URI -- A URI, local file, or pre-bundled logo provided by the
+    package.
+
+    Acceptable values:
+    url - An image off the Internet.
+    absolute path to local file - A path locally on the device
+    pre-bundled logos - See https://github.com/torvalds/linux/tree/master/drivers/video/logo
+
+    Examples:
+
+      OT_KERNEL_LOGO_URI="https://upload.wikimedia.org/wikipedia/commons/4/49/Flag_of_Ukraine.svg"
+      OT_KERNEL_LOGO_URI="logo_linux_clut224.ppm"
+      OT_KERNEL_LOGO_URI="file:///home/user/logo.jpg"
+      OT_KERNEL_LOGO_URI="/home/user/logo.jpg"
+
+    Notes:
+
+      - Custom logos or images provided require imagemagick or graphicsmagick
+      installed via the respective USE flag.
+      Positives for using a kernel logo are ease of deployment, fewest changes,
+      short term satisfaction.
+      - Negatives for using a kernel logo are it will likely break the seamless
+      integration between initramfs or init system logo transition.
+      - It requires that the network-sandbox be disabled if logos are fetched
+      from the Internet.
+      - The logo must be license compatible with the kernel.
+      - The logo must abide by acceptable trademark use agreements.
+      - The logo from the Internet must come from a vetted reliable source to
+      prevent being hacked.
+      - The logos provided by the kernel are 80x80 or 40x40 with either
+      1, 16, 225 colors.
+      For seemless boot logos or animated logos, it is recommended to use
+      - Dracut and Plymouth packages instead of the kernel logo.
+      Kernel logos are stills.
 
 
 
@@ -2733,6 +2829,12 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
     <flag name="futex2-proton">
       Modifies the syscall data structures to be compatible with
       experimental-wine version 5.13 or above.  This will break compatibility.
+    </flag>
+    <flag name="graphicsmagick">
+      Adds build time logo conversion support.
+    </flag>
+    <flag name="imagemagick">
+      Adds build time logo conversion support.
     </flag>
     <flag name="kcfi">
       Apply KCFI sanitization for forward edge control flow integrity but
