@@ -7255,7 +7255,7 @@ ot-kernel_src_install() {
 			fi
 		fi
 
-		# Required for initramfs
+		# Required for genkernel
 		insinto "/usr/src/linux-${PV}-${extraversion}"
 		doins "${BUILD_DIR}/Makefile"
 		insinto "/usr/src/linux-${PV}-${extraversion}/include/config"
