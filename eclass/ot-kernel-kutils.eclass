@@ -27,9 +27,9 @@ ot-kernel_set_configopt() {
 	local opt="${1}"
 	local val="${2}"
 	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
-		sed -i -e "s|# ${opt} is not set|${opt}=${val}|g" "${path_config}" || die
+		sed -i -e "s@# ${opt} is not set@${opt}=${val}@g" "${path_config}" || die
 	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
-		sed -i -r -e "s/${opt}=.*/${opt}=${val}/g" "${path_config}" || die
+		sed -i -r -e "s@${opt}=.*@${opt}=${val}@g" "${path_config}" || die
 	else
 		echo "${opt}=${val}" >> "${path_config}" || die
 	fi
@@ -43,7 +43,7 @@ ot-kernel_unset_configopt() {
 	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
 		:;
 	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
-		sed -r -i -e "s/^${opt}=.*/# ${opt} is not set/g" "${path_config}" || die
+		sed -r -i -e "s@^${opt}=.*@# ${opt} is not set@g" "${path_config}" || die
 	else
 		echo "# ${opt} is not set" >> "${path_config}" || die
 	fi
@@ -55,9 +55,9 @@ ot-kernel_unset_configopt() {
 ot-kernel_y_configopt() {
 	local opt="${1}"
 	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
-		sed -i -e "s|# ${opt} is not set|${opt}=y|g" "${path_config}" || die
+		sed -i -e "s@# ${opt} is not set@${opt}=y@g" "${path_config}" || die
 	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
-		sed -i -r -e "s/^${opt}=.*/${opt}=y/g" "${path_config}" || die
+		sed -i -r -e "s@^${opt}=.*@${opt}=y@g" "${path_config}" || die
 	else
 		echo "${opt}=y" >> "${path_config}" || die
 	fi
@@ -71,7 +71,7 @@ ot-kernel_n_configopt() {
 	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
 		:;
 	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
-		sed -r -i -e "s/^${opt}=.*/# ${opt} is not set/g" "${path_config}" || die
+		sed -r -i -e "s@^${opt}=.*@# ${opt} is not set@g" "${path_config}" || die
 	else
 		echo "# ${opt} is not set" >> "${path_config}" || die
 	fi
@@ -90,10 +90,10 @@ ot-kernel_set_kconfig_kernel_cmdline() {
 		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${inargs[@]}\""
 	else
-		cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
+		cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s@CONFIG_CMDLINE=\"@@g" -e "s@\"$@@g")
 		for x in ${inargs[@]} ; do
 			# Remove duplicates
-			cmd=$(echo "${cmd}" | sed -e "s#${x}##g")
+			cmd=$(echo "${cmd}" | sed -e "s@${x}@@g")
 		done
 		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"\""
 		local outargs=(
@@ -104,7 +104,7 @@ ot-kernel_set_kconfig_kernel_cmdline() {
 		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${outargs_}\""
 	fi
-	cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
+	cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s@CONFIG_CMDLINE=\"@@g" -e "s@\"$@@g")
 	einfo "BOOT_ARGS:  ${cmd}"
 
 }
@@ -121,10 +121,10 @@ ot-kernel_unset_pat_kconfig_kernel_cmdline() {
 	if grep -q -E -e "# CONFIG_CMDLINE_BOOL is not set" "${path_config}" ; then
 		:
 	else
-		cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
+		cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s@CONFIG_CMDLINE=\"@@g" -e "s@\"$@@g")
 		for x in ${inargs[@]} ; do
 			# Remove duplicates
-			cmd=$(echo "${cmd}" | sed -r -e "s#${x}##g")
+			cmd=$(echo "${cmd}" | sed -r -e "s@${x}@@g")
 		done
 		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"\""
 		local outargs=(
@@ -134,7 +134,7 @@ ot-kernel_unset_pat_kconfig_kernel_cmdline() {
 		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${outargs_}\""
 	fi
-	cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
+	cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s@CONFIG_CMDLINE=\"@@g" -e "s@\"$@@g")
 	einfo "BOOT_ARGS:  ${cmd}"
 
 }
@@ -156,10 +156,10 @@ ot-kernel_get_cpu_mfg_id() {
 		| grep "vendor_id" \
 		| head -n 1 \
 		| cut -f 2 -d ":" \
-		| sed -e "s| ||g")
+		| sed -e "s@ @@g")
 	if [[ "${mfg}" =~ ("Authentic"|"Genuine") ]] ; then
 		mfg=$(echo "${mfg}" \
-			| sed -E -e "s#(Authentic|Genuine)##g")
+			| sed -E -e "s@(Authentic|Genuine)@@g")
 	fi
 	if [[ -n "${mfg}" ]] ; then
 		echo "${mfg,,}"
