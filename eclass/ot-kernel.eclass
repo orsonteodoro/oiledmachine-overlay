@@ -7262,7 +7262,10 @@ ot-kernel_src_install() {
 		doins "${BUILD_DIR}/include/config/kernel.release"
 
 		# Required for external modules
-		doins -r "${BUILD_DIR}/certs"
+		insinto "/usr/src/linux-${PV}-${extraversion}"
+		doins -r "${BUILD_DIR}/"*.pem
+		doins -r "${BUILD_DIR}/"*.x509
+		doins -r "${BUILD_DIR}/"*.genkey
 
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
 			einfo "Installing OpenRC iosched script settings"
