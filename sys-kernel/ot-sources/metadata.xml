@@ -1579,7 +1579,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     Example:
 
-      OT_KERNEL_LOGO_PREPROCESS="/etc/portage/ot-sources/6.1/gaming/x86_64/logo_preprocess.sh"
+      OT_KERNEL_LOGO_PREPROCESS_PATH="/etc/portage/ot-sources/6.1/gaming/x86_64/logo_preprocess.sh"
 
     Notes:
 
@@ -1595,6 +1595,10 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
         desired results.
       - GPU usage may require extra ebuild/eclass modding so the CPU algorithm
         is preferred or preprocessing done prior to emerging.
+      - This script can be used in creative good way like a image of the day
+        changer, but also it can be a weakness (as in being hacked).  It is
+        not recommended to do web activities during this time or allow
+        external shell scripts from the web to run.
 
 
 
