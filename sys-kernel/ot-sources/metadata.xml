@@ -1512,20 +1512,6 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_LOGO_MAGICK_PACKAGE -- The package to use for image conversion
-
-    Acceptable values:
-
-      media-gfx/imagemagick
-      media-gfx/graphicsmagick
-      unset - auto detects with media-gfx/imagemagick having priority.
-
-    Examples
-
-      OT_KERNEL_LOGO_MAGICK_PACKAGE="media-gfx/imagemagick"
-
-
-
     OT_KERNEL_LOGO_LICENSE_URI -- A uri, local file containing the license
 
     Acceptable values:
