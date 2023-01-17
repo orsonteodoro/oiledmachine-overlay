@@ -1569,6 +1569,45 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
+    OT_KERNEL_LOGO_PREPROCESS_PATH -- This is an absolute path to the
+    preprocessor script.  This script can apply a series of extra manipulation
+    on the logo such as distortions (wavy flag), or text annotations, or color
+    tinting to the logo, or drawing borders, or waifu2x style upscaling.  The
+    image_in_path bash variable will contain the path to the image.  The final
+    image must be the same image format and the same filename contained in
+    image_in_path.
+
+    Example:
+
+      OT_KERNEL_LOGO_PREPROCESS="/etc/portage/ot-sources/6.1/gaming/x86_64/logo_preprocess.sh"
+
+    Notes:
+
+      - The script must have root:root and 700 permissions.
+      - The script must be a bash script.
+      - OT_KERNEL_LOGO_PREPROCESS_SHA512 and OT_KERNEL_LOGO_PREPROCESS_BLAKE2B
+        needs to be defined.
+      - See the following links:
+        https://imagemagick.org/Usage/distorts/
+        https://imagemagick.org/Usage/annotating/
+        https://imagemagick.org/Usage/
+      - You may use other programs other than *magick package to achieve the
+        desired results.
+      - GPU usage may require extra ebuild/eclass modding so the CPU algorithm
+        is preferred or preprocessing done prior to emerging.
+
+
+
+    OT_KERNEL_LOGO_PREPROCESS_SHA512 -- sha512 checksum for OT_KERNEL_LOGO_PREPROCESS script.
+    OT_KERNEL_LOGO_PREPROCESS_BLAKE2B -- blake2b checksum for OT_KERNEL_LOGO_PREPROCESS script..
+
+    Notes:
+
+      Use `sha512sum /etc/portage/ot-sources/6.1/gaming/x86_64/logo_preprocess.sh | cut -f 1 -d " "` to obtain the sha512 checksum.
+      Use `rhash --blake2b /etc/portage/ot-sources/6.1/gaming/x86_64/logo_preprocess.sh | cut -f 1 -d " "` to obtain the blake2b checksum
+
+
+
     OT_KERNEL_LOGO_URI -- A URI, local file, or pre-bundled logo provided by the
     package.
 

@@ -210,9 +210,11 @@ BDEPEND+="
 	)
 	imagemagick? (
 		media-gfx/imagemagick
+		app-crypt/rhash
 	)
 	graphicsmagick? (
 		media-gfx/graphicsmagick[imagemagick]
+		app-crypt/rhash
 	)
 "
 
@@ -2423,6 +2425,9 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_LOGO_MAGICK_ARGS
 	unset OT_KERNEL_LOGO_MAGICK_PACKAGE
 	unset OT_KERNEL_LOGO_URI
+	unset OT_KERNEL_LOGO_PREPROCESS_PATH
+	unset OT_KERNEL_LOGO_PREPROCESS_SHA512
+	unset OT_KERNEL_LOGO_PREPROCESS_BLAKE2B
 	unset OT_KERNEL_LSMS
 	unset OT_KERNEL_MENUCONFIG_COLORS
 	unset OT_KERNEL_MENUCONFIG_EXTRAVERSION
@@ -6221,6 +6226,58 @@ eerror
 					die
 				fi
 				has_version "${gfx_pkg}" || die
+				if [[ -n "${OT_KERNEL_LOGO_PREPROCESS_PATH}" ]] ; then
+einfo "Running preprocessing script"
+					local access_permissions=$(stat -c "%a" "${OT_KERNEL_LOGO_PREPROCESS_PATH}")
+					if [[ "${access_permissions}" != "700" ]] ; then
+eerror
+eerror "Chmod permissions:\t${access_permissions}"
+eerror
+eerror "${OT_KERNEL_LOGO_PREPROCESS_PATH} must be 700"
+eerror "Check if the contents of the script if it has been compromised."
+eerror
+						die
+					fi
+					local group_name=$(stat -c "%G" "${OT_KERNEL_LOGO_PREPROCESS_PATH}")
+					if [[ "${group_name}" != "root" ]] ; then
+eerror
+eerror "Group name:\t${group_name}"
+eerror
+eerror "${OT_KERNEL_LOGO_PREPROCESS_PATH} must be root"
+eerror "Check if the contents of the script if it has been compromised."
+eerror
+						die
+					fi
+					local owner_name=$(stat -c "%G" "${OT_KERNEL_LOGO_PREPROCESS_PATH}")
+					if [[ "${owner_name}" != "root" ]] ; then
+eerror
+eerror "Owner name:\t${owner_name}"
+eerror
+eerror "${OT_KERNEL_LOGO_PREPROCESS_PATH} must be root"
+eerror "Check if the contents of the script if it has been compromised."
+eerror
+						die
+					fi
+					local preprocess_script_sha512=$(sha512sum "${OT_KERNEL_LOGO_PREPROCESS_PATH}" \
+						| cut -f 1 -d " ")
+					local preprocess_script_blake2b=$(rhash --blake2b "${OT_KERNEL_LOGO_PREPROCESS_PATH}" \
+						| cut -f 1 -d " ")
+					if [[ "${OT_KERNEL_LOGO_PREPROCESS_SHA512}" != "${preprocess_script_sha512}" \
+						|| "${OT_KERNEL_LOGO_PREPROCESS_BLAKE2B}" != "${preprocess_script_blake2b}" ]] ; then
+eerror
+eerror "Detected failed integrity with logo preprocess script"
+eerror
+eerror "Expected sha512:\t${OT_KERNEL_LOGO_PREPROCESS_SHA512}"
+eerror "Actual sha512:\t${preprocess_script_sha512}"
+eerror
+eerror "Expected blake2b:\t${OT_KERNEL_LOGO_PREPROCESS_BLAKE2B}"
+eerror "Actual blake2b:\t${preprocess_script_blake2b}"
+eerror
+						die
+					fi
+					export image_in_path
+					"${OT_KERNEL_LOGO_PREPROCESS_PATH}"
+				fi
 				magick \
 					"${image_in_path}" \
 					${OT_KERNEL_LOGO_MAGICK_ARGS} \
