@@ -1320,11 +1320,17 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     Acceptable values:
 
-    0 - don't install
+    0 - don't install (EXPERIMENTAL)
     1 - install
-    n - don't install
+    n - don't install (EXPERIMENTAL)
     y - install
     unset -  install (default)
+
+    - It is not recommended to disable source code install until
+    it is confirmed the minimal set of files from the source code
+    is found in order for initramfs works.
+    - It is not recommended to disable this if you are using
+    external modules.
 
 
 

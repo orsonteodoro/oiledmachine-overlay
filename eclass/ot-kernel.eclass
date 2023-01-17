@@ -7241,9 +7241,11 @@ ot-kernel_src_install() {
 			mkdir -p "include/config" || die
 			echo "${PV}-${extraversion}-${arch}" \
 				> include/config/kernel.release || die
+
 		fi
 
 		if [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+			ewarn "Using OT_KERNEL_INSTALL_SOURCE_CODE is experimental."
 			ot-kernel_install_source_code
 		else
 			local license_path=$(find "${BUILD_DIR}/drivers/video/logo" -name "logo_custom_*.*.license" 2>/dev/null)
@@ -7252,6 +7254,13 @@ ot-kernel_src_install() {
 				dodoc "${license_path}"
 			fi
 		fi
+
+		# Required for initramfs
+		insinto "/usr/src/linux-${PV}-${extraversion}"
+		doins "${BUILD_DIR}/Makefile"
+
+		# Required for external modules
+		doins -r "${BUILD_DIR}/certs"
 
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
 			einfo "Installing OpenRC iosched script settings"
