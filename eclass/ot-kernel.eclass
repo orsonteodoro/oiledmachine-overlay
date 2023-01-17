@@ -878,7 +878,7 @@ _check_network_sandbox() {
 	if has network-sandbox ${FEATURES} ; then
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to use live patches."
+eerror "env to be able to use live patches or to download logos."
 eerror
 		die
 	fi
