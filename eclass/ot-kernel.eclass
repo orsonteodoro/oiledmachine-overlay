@@ -6220,7 +6220,7 @@ eerror "See metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\` for deta
 eerror
 					die
 				fi
-				has_version "${gfx_pkg}"
+				has_version "${gfx_pkg}" || die
 				magick \
 					"${image_in_path}" \
 					${OT_KERNEL_LOGO_MAGICK_ARGS} \
