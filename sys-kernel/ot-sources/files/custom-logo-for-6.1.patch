@@ -1,3 +1,10 @@
+There is change in
+
+https://github.com/torvalds/linux/blob/master/arch/powerpc/kernel/prom_init.c#L2438
+
+which I cannot find the commit summary and reason why.  It may require modding
+if custom logos do not work on that platform.
+
 --- linux-6.1.6-gaming/drivers/video/logo/Kconfig.orig	2022-12-11 14:15:18.000000000 -0800
 +++ linux-6.1.6-gaming/drivers/video/logo/Kconfig	2023-01-16 16:02:28.793426528 -0800
 @@ -68,4 +68,16 @@ config LOGO_SUPERH_CLUT224
