@@ -6071,21 +6071,27 @@ _ot-kernel_is_upstream_logo() {
 ot-kernel_set_kconfig_logo() {
 	if [[ -n "${OT_KERNEL_LOGO_URI}" ]] ; then
 einfo "Using boot logo from ${OT_KERNEL_LOGO_URI}"
-		local is_uri=0
 		if _ot-kernel_is_upstream_logo ; then
 			:;
 		elif [[ "${OT_KERNEL_LOGO_URI}" =~ ("http://"|"https://"|"ftp://") ]] ; then
 			_check_network_sandbox
 			wget -O "${T}/boot.logo" "${OT_KERNEL_LOGO_URI}" || die
+
 			if [[ "${OT_KERNEL_LOGO_LICENSE_URI}" =~ ("http://"|"https://"|"ftp://") ]] ; then
-				wget -O "${T}/boot.logo.license" "${OT_KERNEL_LOGO_LICENSE_URI}" || die
+				wget -O "${BUILD_DIR}/drivers/video/logo/logo_custom.ppm.license" \
+				"${OT_KERNEL_LOGO_LICENSE_URI}" || die
 			fi
-			is_uri=1
 		else
 			local path="${OT_KERNEL_LOGO_URI}"
 			path=$(echo "${path}" | sed -e "s|^file://||g")
 			[[ -e "${path}" ]] || die "File not found"
 			cat "${path}" > "${T}/boot.logo" || die
+
+			path="${OT_KERNEL_LOGO_LICENSE_URI}"
+			path=$(echo "${path}" | sed -e "s|^file://||g")
+			[[ -e "${path}" ]] || die "File not found"
+			cat "${path}" "${BUILD_DIR}/drivers/video/logo/logo_custom.ppm.license" \
+				|| die
 		fi
 		local image_type=$(file "${T}/boot.logo")
 
@@ -6218,7 +6224,7 @@ eerror
 				magick \
 					"${image_in_path}" \
 					${OT_KERNEL_LOGO_MAGICK_ARGS} \
-					"${BUILD_DIR}/drivers/video/logo" \
+					"${BUILD_DIR}/drivers/video/logo/logo_custom.ppm" \
 					|| die
 			fi
 		fi
@@ -7135,6 +7141,11 @@ ot-kernel_src_install() {
 
 		if [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
 			ot-kernel_install_source_code
+		else
+			if [[ -e "${BUILD_DIR}/drivers/video/logo/logo_custom.ppm.license" ]] ; then
+				docinto "licenses/${extraversion}"
+				dodoc "${BUILD_DIR}/drivers/video/logo/logo_custom.ppm.license"
+			fi
 		fi
 
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
