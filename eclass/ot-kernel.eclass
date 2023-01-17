@@ -7258,6 +7258,8 @@ ot-kernel_src_install() {
 		# Required for initramfs
 		insinto "/usr/src/linux-${PV}-${extraversion}"
 		doins "${BUILD_DIR}/Makefile"
+		insinto "/usr/src/linux-${PV}-${extraversion}/include/config"
+		doins "${BUILD_DIR}/include/config/kernel.release"
 
 		# Required for external modules
 		doins -r "${BUILD_DIR}/certs"
