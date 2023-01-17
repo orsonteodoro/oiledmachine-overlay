@@ -6312,6 +6312,7 @@ eerror
 				fi
 				magick \
 					"${image_in_path}" \
+					-compress None \
 					${OT_KERNEL_LOGO_MAGICK_ARGS} \
 					"${BUILD_DIR}/drivers/video/logo/logo_custom_${colors_suffix}.${colors_ext}" \
 					|| die
