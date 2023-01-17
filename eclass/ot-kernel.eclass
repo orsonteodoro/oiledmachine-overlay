@@ -6115,62 +6115,71 @@ eerror
 
 		local image_in_path=""
 		if [[ "${image_type}" =~ "AVIF Image" ]] ; then
-eerror "${OT_KERNEL_LOGO_URI} accepted as avif."
-			mv "${T}/boot.logo" "${T}/boot.avif" || die
+einfo "${OT_KERNEL_LOGO_URI} accepted as avif."
 			image_in_path="${T}/boot.avif"
+			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "PC bitmap" ]] ; then
-eerror "${OT_KERNEL_LOGO_URI} accepted as bmp."
-			mv "${T}/boot.logo" "${T}/boot.bmp" || die
+einfo "${OT_KERNEL_LOGO_URI} accepted as bmp."
 			image_in_path="${T}/boot.bmp"
+			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "GIF image data" ]] ; then
-eerror "${OT_KERNEL_LOGO_URI} accepted as gif."
-			has_version "${gfx_pkg}" || die "Missing ${gfx_pkg} package"
-			mv "${T}/boot.logo" "${T}/boot.gif" || die
+einfo "${OT_KERNEL_LOGO_URI} accepted as gif."
+			has_version "${gfx_pkg}" \
+				|| die "Missing ${gfx_pkg} package"
 			image_in_path="${T}/boot.gif"
+			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "JPEG image data" ]] ; then
-eerror "${OT_KERNEL_LOGO_URI} accepted as jpeg."
-			has_version "${gfx_pkg}[jpeg]" || die "Missing image codec in ${gfx_pkg}[jpeg] package"
-			mv "${T}/boot.logo" "${T}/boot.jpg" || die
+einfo "${OT_KERNEL_LOGO_URI} accepted as jpeg."
+			has_version "${gfx_pkg}[jpeg]" \
+				|| die "Missing image codec in ${gfx_pkg}[jpeg] package"
 			image_in_path="${T}/boot.jpg"
+			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "JPEG 2000 Part 1 (JP2)" ]] ; then
-eerror "${OT_KERNEL_LOGO_URI} accepted as jpeg2k."
-			has_version "${gfx_pkg}[jpeg2k]" || die "Missing image codec in ${gfx_pkg}[jpeg2k] package"
-			mv "${T}/boot.logo" "${T}/boot.jp2" || die
+einfo "${OT_KERNEL_LOGO_URI} accepted as jpeg2k."
+			has_version "${gfx_pkg}[jpeg2k]" \
+				|| die "Missing image codec in ${gfx_pkg}[jpeg2k] package"
 			image_in_path="${T}/boot.jp2"
+			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "Netpbm image data" ]] ; then
-eerror "${OT_KERNEL_LOGO_URI} accepted as ppm."
-			mv "${T}/boot.logo" "${T}/boot.pbm" || die
+einfo "${OT_KERNEL_LOGO_URI} accepted as ppm."
 			image_in_path="${T}/boot.pbm"
+			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "OpenEXR image data" ]] ; then
-eerror "${OT_KERNEL_LOGO_URI} accepted as openexr."
-			has_version "${gfx_pkg}[openexr]" || die "Missing image codec in ${gfx_pkg}[openexr] package"
-			mv "${T}/boot.logo" "${T}/boot.exr" || die
+einfo "${OT_KERNEL_LOGO_URI} accepted as openexr."
+			has_version "${gfx_pkg}[openexr]" \
+				|| die "Missing image codec in ${gfx_pkg}[openexr] package"
 			image_in_path="${T}/boot.exr"
+			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "PNG image data" ]] ; then
-eerror "${OT_KERNEL_LOGO_URI} accepted as png."
-			has_version "${gfx_pkg}[png]" || die "Missing image codec in ${gfx_pkg}[pkg] package"
-			mv "${T}/boot.logo" "${T}/boot.png" || die
+einfo "${OT_KERNEL_LOGO_URI} accepted as png."
+			has_version "${gfx_pkg}[png]" \
+				|| die "Missing image codec in ${gfx_pkg}[pkg] package"
 			image_in_path="${T}/boot.png"
+			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "SVG Scalable Vector Graphics image" ]] ; then
-eerror "${OT_KERNEL_LOGO_URI} accepted as svg."
-			has_version "${gfx_pkg}[svg]" || die "Missing image codec in ${gfx_pkg}[svg] package"
-			mv "${T}/boot.logo" "${T}/boot.svg" || die
+einfo "${OT_KERNEL_LOGO_URI} accepted as svg."
+			has_version "${gfx_pkg}[svg]" \
+				|| die "Missing image codec in ${gfx_pkg}[svg] package"
 			image_in_path="${T}/boot.svg"
+			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "Targa image data" ]] ; then
-eerror "${OT_KERNEL_LOGO_URI} accepted as tga."
-			has_version "${gfx_pkg}" || die "Missing ${gfx_pkg} package"
-			mv "${T}/boot.logo" "${T}/boot.tga" || die
+einfo "${OT_KERNEL_LOGO_URI} accepted as tga."
+			has_version "${gfx_pkg}" \
+				|| die "Missing ${gfx_pkg} package"
 			image_in_path="${T}/boot.tga"
+			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "TIFF image data" ]] ; then
-eerror "${OT_KERNEL_LOGO_URI} accepted as tiff."
-			has_version "${gfx_pkg}[tiff]" || die "Missing image codec in ${gfx_pkg}[tiff] package"
-			mv "${T}/boot.logo" "${T}/boot.tiff" || die
+einfo "${OT_KERNEL_LOGO_URI} accepted as tiff."
+			has_version "${gfx_pkg}[tiff]" \
+				|| die "Missing image codec in ${gfx_pkg}[tiff] package"
 			image_in_path="${T}/boot.tiff"
+			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "Web/P image" ]] ; then
-eerror "${OT_KERNEL_LOGO_URI} accepted as webp."
-			has_version "${gfx_pkg}[webp]" || die "Missing image codec in ${gfx_pkg}[webp] package"
-			mv "${T}/boot.logo" "${T}/boot.webp" || die
+einfo "${OT_KERNEL_LOGO_URI} accepted as webp."
+			has_version "${gfx_pkg}[webp]" \
+				|| die "Missing image codec in ${gfx_pkg}[webp] package"
 			image_in_path="${T}/boot.webp"
+			mv "${T}/boot.logo" "${image_in_path}" || die
 		else
 eerror
 eerror "Image not supported for ${OT_KERNEL_LOGO_URI}."
@@ -6190,7 +6199,9 @@ eerror
 		ot-kernel_n_configopt "CONFIG_LOGO_SUPERH_MONO"
 		ot-kernel_n_configopt "CONFIG_LOGO_SUPERH_VGA16"
 		ot-kernel_n_configopt "CONFIG_LOGO_SUPERH_CLUT224"
-		ot-kernel_n_configopt "CONFIG_LOGO_CUSTOM"
+		ot-kernel_n_configopt "CONFIG_LOGO_CUSTOM_MONO"
+		ot-kernel_n_configopt "CONFIG_LOGO_CUSTOM_VGA16"
+		ot-kernel_n_configopt "CONFIG_LOGO_CUSTOM_CLUT224"
 		if [[ "${OT_KERNEL_LOGO_URI}" =~ "logo_dec_clut224.ppm" ]] ; then
 			ot-kernel_y_configopt "CONFIG_LOGO_DEC_CLUT224"
 		elif [[ "${OT_KERNEL_LOGO_URI}" =~ "logo_linux_clut224.ppm" ]] ; then
@@ -6277,6 +6288,23 @@ eerror
 					fi
 					export image_in_path
 					"${OT_KERNEL_LOGO_PREPROCESS_PATH}"
+				fi
+				if [[ "${OT_KERNEL_LOGO_MAGICK_ARGS}" =~ "-colors 1" ]] ; then
+					ot-kernel_y_configopt "CONFIG_LOGO_CUSTOM_MONO"
+				elif [[ "${OT_KERNEL_LOGO_MAGICK_ARGS}" =~ "-colors 16" ]] ; then
+					ot-kernel_y_configopt "CONFIG_LOGO_CUSTOM_VGA16"
+				elif [[ "${OT_KERNEL_LOGO_MAGICK_ARGS}" =~ "-colors 224" ]] ; then
+					ot-kernel_y_configopt "CONFIG_LOGO_CUSTOM_CLUT224"
+				else
+eerror
+eerror "You need to add one of the following rows to"
+eerror "OT_KERNEL_LOGO_MAGICK_ARGS:"
+eerror
+eerror "  -colors 1"
+eerror "  -colors 16"
+eerror "  -colors 224"
+eerror
+					die
 				fi
 				magick \
 					"${image_in_path}" \

@@ -1,21 +1,66 @@
 --- linux-6.1.6-gaming/drivers/video/logo/Kconfig.orig	2022-12-11 14:15:18.000000000 -0800
 +++ linux-6.1.6-gaming/drivers/video/logo/Kconfig	2023-01-16 16:02:28.793426528 -0800
-@@ -68,4 +68,8 @@ config LOGO_SUPERH_CLUT224
+@@ -68,4 +68,16 @@ config LOGO_SUPERH_CLUT224
  	depends on SUPERH
  	default y
  
-+config LOGO_CUSTOM
-+	bool "Custom logo"
++config LOGO_CUSTOM_MONO
++	bool "Custom logo (b&w)"
++	default y
++
++config LOGO_CUSTOM_VGA16
++	bool "Custom logo (16 colors)"
++	default y
++
++config LOGO_CUSTOM_CLUT224
++	bool "Custom logo (224 colors)"
 +	default y
 +
  endif # LOGO
 --- linux-6.1.6-gaming/drivers/video/logo/Makefile.orig	2022-12-11 14:15:18.000000000 -0800
 +++ linux-6.1.6-gaming/drivers/video/logo/Makefile	2023-01-16 16:03:27.531784979 -0800
-@@ -13,6 +13,7 @@ obj-$(CONFIG_LOGO_SUN_CLUT224)		+= logo_
+@@ -13,6 +13,9 @@ obj-$(CONFIG_LOGO_SUN_CLUT224)		+= logo_
  obj-$(CONFIG_LOGO_SUPERH_MONO)		+= logo_superh_mono.o
  obj-$(CONFIG_LOGO_SUPERH_VGA16)		+= logo_superh_vga16.o
  obj-$(CONFIG_LOGO_SUPERH_CLUT224)	+= logo_superh_clut224.o
-+obj-$(CONFIG_LOGO_CUSTOM)		+= logo_custom.o
++obj-$(CONFIG_LOGO_CUSTOM_MONO)		+= logo_custom_mono.o
++obj-$(CONFIG_LOGO_CUSTOM_VGA16)	+= logo_custom_vga16.o
++obj-$(CONFIG_LOGO_CUSTOM_CLUT224)	+= logo_custom_clut224.o
  
  obj-$(CONFIG_SPU_BASE)			+= logo_spe_clut224.o
  
+--- linux-6.1.6-gaming/drivers/video/logo/logo.c.orig	2022-12-11 14:15:18.000000000 -0800
++++ linux-6.1.6-gaming/drivers/video/logo/logo.c	2023-01-16 22:44:15.126684821 -0800
+@@ -57,6 +57,10 @@ const struct linux_logo * __ref fb_find_
+ 		/* SuperH Linux logo */
+ 		logo = &logo_superh_mono;
+ #endif
++#ifdef CONFIG_LOGO_CUSTOM_MONO
++		/* Custom logo */
++		logo = &logo_custom_mono;
++#endif
+ 	}
+ 	
+ 	if (depth >= 4) {
+@@ -68,6 +72,10 @@ const struct linux_logo * __ref fb_find_
+ 		/* SuperH Linux logo */
+ 		logo = &logo_superh_vga16;
+ #endif
++#ifdef CONFIG_LOGO_CUSTOM_VGA16
++		/* Custom logo */
++		logo = &logo_custom_vga16;
++#endif
+ 	}
+ 	
+ 	if (depth >= 8) {
+@@ -100,6 +108,10 @@ const struct linux_logo * __ref fb_find_
+ 		/* SuperH Linux logo */
+ 		logo = &logo_superh_clut224;
+ #endif
++#ifdef CONFIG_LOGO_CUSTOM_CLUT224
++		/* Custom logo */
++		logo = &logo_custom_clut224;
++#endif
+ 	}
+ 	return logo;
+ }
