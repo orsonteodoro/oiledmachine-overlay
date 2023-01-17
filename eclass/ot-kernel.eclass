@@ -6119,17 +6119,17 @@ eerror "${OT_KERNEL_LOGO_URI} accepted as bmp."
 			image_in_path="${T}/boot.bmp"
 		elif [[ "${image_type}" =~ "GIF image data" ]] ; then
 eerror "${OT_KERNEL_LOGO_URI} accepted as gif."
-			has_version "${gfx_pkg}" || die "Missing image in package"
+			has_version "${gfx_pkg}" || die "Missing ${gfx_pkg} package"
 			mv "${T}/boot.logo" "${T}/boot.gif" || die
 			image_in_path="${T}/boot.gif"
 		elif [[ "${image_type}" =~ "JPEG image data" ]] ; then
 eerror "${OT_KERNEL_LOGO_URI} accepted as jpeg."
-			has_version "${gfx_pkg}[jpeg]" || die "Missing image codec in package"
+			has_version "${gfx_pkg}[jpeg]" || die "Missing image codec in ${gfx_pkg}[jpeg] package"
 			mv "${T}/boot.logo" "${T}/boot.jpg" || die
 			image_in_path="${T}/boot.jpg"
 		elif [[ "${image_type}" =~ "JPEG 2000 Part 1 (JP2)" ]] ; then
 eerror "${OT_KERNEL_LOGO_URI} accepted as jpeg2k."
-			has_version "${gfx_pkg}[jpeg2k]" || die "Missing image codec in package"
+			has_version "${gfx_pkg}[jpeg2k]" || die "Missing image codec in ${gfx_pkg}[jpeg2k] package"
 			mv "${T}/boot.logo" "${T}/boot.jp2" || die
 			image_in_path="${T}/boot.jp2"
 		elif [[ "${image_type}" =~ "Netpbm image data" ]] ; then
@@ -6138,32 +6138,32 @@ eerror "${OT_KERNEL_LOGO_URI} accepted as ppm."
 			image_in_path="${T}/boot.pbm"
 		elif [[ "${image_type}" =~ "OpenEXR image data" ]] ; then
 eerror "${OT_KERNEL_LOGO_URI} accepted as openexr."
-			has_version "${gfx_pkg}[openexr]" || die "Missing image codec in package"
+			has_version "${gfx_pkg}[openexr]" || die "Missing image codec in ${gfx_pkg}[openexr] package"
 			mv "${T}/boot.logo" "${T}/boot.exr" || die
 			image_in_path="${T}/boot.exr"
 		elif [[ "${image_type}" =~ "PNG image data" ]] ; then
 eerror "${OT_KERNEL_LOGO_URI} accepted as png."
-			has_version "${gfx_pkg}[png]" || die "Missing image codec in package"
+			has_version "${gfx_pkg}[png]" || die "Missing image codec in ${gfx_pkg}[pkg] package"
 			mv "${T}/boot.logo" "${T}/boot.png" || die
 			image_in_path="${T}/boot.png"
 		elif [[ "${image_type}" =~ "SVG Scalable Vector Graphics image" ]] ; then
 eerror "${OT_KERNEL_LOGO_URI} accepted as svg."
-			has_version "${gfx_pkg}[svg]" || die "Missing image codec in package"
+			has_version "${gfx_pkg}[svg]" || die "Missing image codec in ${gfx_pkg}[svg] package"
 			mv "${T}/boot.logo" "${T}/boot.svg" || die
 			image_in_path="${T}/boot.svg"
 		elif [[ "${image_type}" =~ "Targa image data" ]] ; then
 eerror "${OT_KERNEL_LOGO_URI} accepted as tga."
-			has_version "${gfx_pkg}[tiff]" || die "Missing image codec in package"
+			has_version "${gfx_pkg}" || die "Missing ${gfx_pkg} package"
 			mv "${T}/boot.logo" "${T}/boot.tga" || die
 			image_in_path="${T}/boot.tga"
 		elif [[ "${image_type}" =~ "TIFF image data" ]] ; then
 eerror "${OT_KERNEL_LOGO_URI} accepted as tiff."
-			has_version "${gfx_pkg}[tiff]" || die "Missing image codec in package"
+			has_version "${gfx_pkg}[tiff]" || die "Missing image codec in ${gfx_pkg}[tiff] package"
 			mv "${T}/boot.logo" "${T}/boot.tiff" || die
 			image_in_path="${T}/boot.tiff"
 		elif [[ "${image_type}" =~ "Web/P image" ]] ; then
 eerror "${OT_KERNEL_LOGO_URI} accepted as webp."
-			has_version "${gfx_pkg}[webp]" || die "Missing image codec in package"
+			has_version "${gfx_pkg}[webp]" || die "Missing image codec in ${gfx_pkg}[webp] package"
 			mv "${T}/boot.logo" "${T}/boot.webp" || die
 			image_in_path="${T}/boot.webp"
 		else
