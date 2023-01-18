@@ -70,7 +70,6 @@ ELECTRON_APP_LICENSES="
 	custom
 	( all-rights-reserved HPND )
 	( custom ISC all-rights-reserved )
-	( fping all-rights-reserved )
 	( LGPL-2.1 LGPL-2.1+ )
 	( MPL-1.1 GPL-2 )
 	android
@@ -119,6 +118,7 @@ ELECTRON_APP_LICENSES="
 	minpack
 	openssl
 	ooura
+	Prior-BSD-License
 	SunPro
 	Unicode-DFS-2016
 	unicode
@@ -139,7 +139,6 @@ ELECTRON_APP_LICENSES="
 #     search: "removed from any derivative versions" \
 #   ( all-rights-reserved HPND )
 #   ( custom ISC with no advertising clause all-rights-reserved ) \
-#   ( fping all-rights-reserved ) \
 #   ( LGPL-2.1 LGPL-2.1+ ) \
 #   ^^ ( (MPL-2.0 GPL-2+) (MPL-2.0 LGPL-2.1+) MPL-2.0 GPL-2.0+ )
 #   android \
@@ -187,6 +186,7 @@ ELECTRON_APP_LICENSES="
 #   minpack \
 #   openssl \
 #   ooura \
+#   Prior-BSD-License
 #   SunPro \
 #   Unicode-DFS-2016 \
 #   unicode \

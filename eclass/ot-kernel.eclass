@@ -99,20 +99,33 @@ esac
 # See also https://github.com/torvalds/linux/blob/master/Documentation/process/license-rules.rst
 LICENSE+=" GPL-2 Linux-syscall-note" #  Applies to whole source  \
 #   that are GPL-2 compatible.  See paragraph 3 of the above link for details.
+
 # The following licenses applies to individual files:
-LICENSE+=" ZLIB" # See lib/zlib_dfltcc/dfltcc.c, ...
+
+# The distro GPL licenses templates do not have all rights reserved but it's
+# found in the headers.  The BSD license template does have all rights reserved.
+LICENSE+=" ( GPL-2 all-rights-reserved )" # See mm/list_lru.c
+LICENSE+=" ( GPL-2+ all-rights-reserved )" # See drivers/gpu/drm/meson/meson_plane.c
+LICENSE+=" ( all-rights-reserved BSD || ( GPL-2 BSD ) )" # See lib/zstd/compress.c
+
+LICENSE+=" 0BSD" # See lib/math/cordic.c
+LICENSE+=" Apache-2.0" # See drivers/staging/wfx/hif_api_cmd.h
+
+# It is missing SPDX: compared to the other all-rights-reserved files.
+LICENSE+=" all-rights-reserved" # See lib/dynamic_debug.c
+
+LICENSE+=" BSD" # See include/linux/packing.h, ...
+LICENSE+=" BSD-2" # See include/linux/firmware/broadcom/tee_bnxt_fw.h
+LICENSE+=" Clear-BSD" # See drivers/net/wireless/ath/ath11k/core.h, ...
 LICENSE+=" ISC" # See linux/drivers/net/wireless/ath/wil6210/trace.c, \
 # linux/drivers/net/wireless/ath/ath5k/Makefile, ...
-LICENSE+=" all-rights-reserved GPL-2" # See lib/zstd/compress.c, ... ;
-# The GPL-2 license doesn't come with all rights reserved.
-# The all rights reserved is explicitly stated in several files with GPL.
 LICENSE+=" LGPL-2.1" # See fs/ext4/migrate.c, ...
 LICENSE+=" LGPL-2+ Linux-syscall-note" # See arch/x86/include/uapi/asm/mtrr.h
 LICENSE+=" MIT" # See drivers/gpu/drm/drm_dsc.c
-LICENSE+=" BSD-2" # See include/linux/firmware/broadcom/tee_bnxt_fw.h
-LICENSE+=" BSD" # See include/linux/packing.h, ...
-LICENSE+=" Clear-BSD" # See drivers/net/wireless/ath/ath11k/core.h, ...
-LICENSE+=" Apache-2.0" # See drivers/staging/wfx/hif_api_cmd.h
+LICENSE+=" ZLIB" # See lib/zlib_dfltcc/dfltcc.c, ...
+
+LICENSE+=" || ( BSD GPL-2 )" # See lib/test_parman.c
+LICENSE+=" || ( GPL-2 MIT )" # See lib/crypto/poly1305-donna32.c
 
 HOMEPAGE+="
           https://algo.ing.unimo.it/people/paolo/disk_sched/

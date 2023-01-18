@@ -61,7 +61,6 @@ ELECTRON_CHROMEDRIVER_LICENSES="
 	BSD-4
 	BSD-Protection
 	curl
-	fping
 	FTL
 	GPL-2
 	GPL-2-with-classpath-exception
@@ -78,6 +77,7 @@ ELECTRON_CHROMEDRIVER_LICENSES="
 	Ms-PL
 	openssl
 	OFL-1.1
+	Prior-BSD-License
 	SunPro
 	unRAR
 	UoI-NCSA
@@ -191,7 +191,6 @@ LICENSE="
 #   BSD-Protection \
 #   CC∅ Public Domain Affirmation and Waiver 1.0 - https://www.creativecommons.org/licenses/zero-waive/1.0/us/legalcode \
 #   curl \
-#   fping \
 #   FTL \
 #   GPL-2 \
 #   GPL-2-with-classpath-exception \
@@ -209,6 +208,7 @@ LICENSE="
 #   newlib-extras \
 #   openssl \
 #   OFL-1.1 \
+#   Prior-BSD-License \
 #   SunPro \
 #   unRAR \
 #   UoI-NCSA \

@@ -137,9 +137,9 @@ LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" muqss? ( GPL-2 )"
-LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" pds? ( GPL-3 )" # \
   # See https://gitlab.com/alfredchen/PDS-mq/-/blob/master/LICENSE
+LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   # GPL-2 applies to the files being patched \
