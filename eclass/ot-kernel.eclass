@@ -6922,6 +6922,7 @@ ot-kernel_install_source_code() {
 		wait
 		export IFS=$' \t\n'
 	fi
+	# TODO:  prune extra arches
 }
 
 # @FUNCTION: ot-kernel_get_boot_decompressor
@@ -7268,20 +7269,31 @@ ot-kernel_src_install() {
 			fi
 		fi
 
+		cd "${BUILD_DIR}" || die
+
 		# Required for genkernel
 		insinto "/usr/src/linux-${PV}-${extraversion}"
-		doins "${BUILD_DIR}/Makefile"
+		doins "Makefile" # Also required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
 		insinto "/usr/src/linux-${PV}-${extraversion}/include/config"
-		doins "${BUILD_DIR}/include/config/kernel.release"
+		doins "include/config/kernel.release"
 
 		# Required for building external modules
 		insinto "/usr/src/linux-${PV}-${extraversion}/certs"
-		ls "${BUILD_DIR}/certs/"*".pem" 2>/dev/null 1>/dev/null \
-			&& doins "${BUILD_DIR}/certs/"*".pem"
-		ls "${BUILD_DIR}/certs/"*".x509" 2>/dev/null 1>/dev/null \
-			&& doins "${BUILD_DIR}/certs/"*".x509"
-		ls "${BUILD_DIR}/certs/"*".genkey" 2>/dev/null 1>/dev/null \
-			&& doins "${BUILD_DIR}/certs/"*".genkey"
+		ls "certs/"*".pem" 2>/dev/null 1>/dev/null \
+			&& doins "certs/"*".pem"
+		ls "certs/"*".x509" 2>/dev/null 1>/dev/null \
+			&& doins "certs/"*".x509"
+		ls "certs/"*".genkey" 2>/dev/null 1>/dev/null \
+			&& doins "certs/"*".genkey"
+
+		# Required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
+		local ed_kernel_path="${ED}/usr/src/linux-${PV}-${extraversion}"
+		cp --parents -a $(find scripts -name "Kbuild.include") "${ed_kernel_path}" || die
+		cp --parents -a $(find scripts -name "Makefile.extrawarn") "${ed_kernel_path}" || die
+		cp --parents -a $(find scripts -name "subarch.include") "${ed_kernel_path}" || die
+		cp --parents -a $(find arch/* -maxdepth 1 -name "Makefile") "${ed_kernel_path}" || die # Prune extra arches?
+
+		# Do arch pruning here for install_source_code.?
 
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
 			einfo "Installing OpenRC iosched script settings"
