@@ -90,7 +90,7 @@ SRC_URI="
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+KEYWORDS="amd64 arm64 ~ppc64 ~x86"
 
 SLOT="esr"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -352,6 +352,12 @@ CDEPEND="
 	)
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
 	libproxy? ( net-libs/libproxy[${MULTILIB_USEDEP}] )
+	pulseaudio? (
+		|| (
+			media-sound/pulseaudio
+			>=media-sound/apulse-0.1.12-r4
+		)
+	)
 	sndio? ( >=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}] )
 	system-av1? (
 		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP},8bit]
@@ -466,6 +472,7 @@ DEPEND="
 		)
 	)
 	X? (
+		x11-base/xorg-proto
 		x11-libs/libICE[${MULTILIB_USEDEP}]
 		x11-libs/libSM[${MULTILIB_USEDEP}]
 	)
@@ -1499,7 +1506,7 @@ einfo "Building without Mozilla API key ..."
 	! use pulseaudio && use alsa && myaudiobackends+="alsa,"
 
 	mozconfig_add_options_ac '--enable-audio-backends' \
-		--enable-audio-backends="${myaudiobackends::-1}"
+		--enable-audio-backends="${myaudiobackends:-1}"
 
 	mozconfig_use_enable wifi necko-wifi
 

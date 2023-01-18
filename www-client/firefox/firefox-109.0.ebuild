@@ -28,11 +28,11 @@ curl -l http://ftp.mozilla.org/pub/firefox/releases/ \
 # https://wiki.mozilla.org/Release_Management/Calendar
 
 
-FIREFOX_PATCHSET="firefox-108-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-109-patches-02j.tar.xz"
 
 LLVM_MAX_SLOT=13 # >= 14 causes build time failures with atomics
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{9..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 
 WANT_AUTOCONF="2.1"
@@ -300,6 +300,7 @@ GAMEPAD_BDEPEND="
 BDEPEND+="
 	${PYTHON_DEPS}
 	${GAMEPAD_BDEPEND}
+	app-alternatives/awk
 	app-arch/unzip
 	app-arch/zip
 	>=dev-util/cbindgen-0.24.3
@@ -327,7 +328,7 @@ CDEPEND="
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.85[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.86[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	media-libs/fontconfig[${MULTILIB_USEDEP}]
@@ -1091,9 +1092,6 @@ einfo "Removing pre-built binaries ..."
 	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) \
 		-print -delete || die
 
-	# Clearing checksums where we have applied patches
-	moz_clear_vendor_checksums bindgen
-
 	# Removed creation of a single build dir
 	#
 	#
@@ -1390,7 +1388,7 @@ einfo
 	#
 
 	# Initialize MOZCONFIG
-	mozconfig_add_options_ac '' --enable-application=browser
+	mozconfig_add_options_ac '' --enable-project=browser
 
 	# Set Gentoo defaults
 	export MOZILLA_OFFICIAL=1
@@ -1532,7 +1530,7 @@ einfo "Building without Mozilla API key ..."
 	! use pulseaudio && use alsa && myaudiobackends+="alsa,"
 
 	mozconfig_add_options_ac '--enable-audio-backends' \
-		--enable-audio-backends="${myaudiobackends::-1}"
+		--enable-audio-backends="${myaudiobackends:-1}"
 
 	mozconfig_use_enable wifi necko-wifi
 
@@ -1602,11 +1600,16 @@ einfo "Building without Mozilla API key ..."
 	mozconfig_use_enable debug
 	if use debug ; then
 		mozconfig_add_options_ac '+debug' --disable-optimize
+		mozconfig_add_options_ac '+debug' --enable-real-time-tracing
 	else
+		mozconfig_add_options_ac 'Gentoo defaults' \
+			--disable-real-time-tracing
+
+		# No -Og beyond this point.
 		mozconfig_add_options_ac 'Gentoo default' \
 			--disable-debug-symbols
 
-		# Fork ebuild or set USE=debug if you want -Og
+		# Fork ebuild, or use distro ebuild, or set USE=debug if you want -Og
 		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
 			einfo "Using Ofast"
 			OFLAG="-Ofast"
