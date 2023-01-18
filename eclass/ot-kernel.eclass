@@ -7288,10 +7288,14 @@ ot-kernel_src_install() {
 
 		# Required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
 		local ed_kernel_path="${ED}/usr/src/linux-${PV}-${extraversion}"
-		cp --parents -a $(find scripts -name "Kbuild.include") "${ed_kernel_path}" || die
-		cp --parents -a $(find scripts -name "Makefile.extrawarn") "${ed_kernel_path}" || die
-		cp --parents -a $(find scripts -name "subarch.include") "${ed_kernel_path}" || die
-		cp --parents -a $(find arch/* -maxdepth 1 -name "Makefile") "${ed_kernel_path}" || die # Prune extra arches?
+		insinto "/usr/src/linux-${PV}-${extraversion}"
+		doins scripts/Kbuild.include
+		doins scripts/Makefile.extrawarn
+		doins scripts/subarch.include
+		for path in $(find arch/* -maxdepth 1 -name "Makefile") ; do
+			insinto "/usr/src/linux-${PV}-${extraversion}/"$(dirpath "${path}")
+			doins "${path}"
+		done
 
 		# Do arch pruning here for install_source_code.?
 
