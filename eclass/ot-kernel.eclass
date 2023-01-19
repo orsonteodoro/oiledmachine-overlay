@@ -7285,6 +7285,9 @@ ot-kernel_src_install() {
 			&& doins "certs/"*".x509"
 		ls "certs/"*".genkey" 2>/dev/null 1>/dev/null \
 			&& doins "certs/"*".genkey"
+		for x in $(find certs -type f) ; do
+			fperms 600 "${x}"
+		done
 
 		# Required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
 		local ed_kernel_path="${ED}/usr/src/linux-${PV}-${extraversion}"
