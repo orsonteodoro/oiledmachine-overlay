@@ -90,10 +90,10 @@ ot-kernel_set_kconfig_kernel_cmdline() {
 		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${inargs[@]}\""
 	else
-		cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s@CONFIG_CMDLINE=\"@@g" -e "s@\"$@@g")
+		cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
 		for x in ${inargs[@]} ; do
 			# Remove duplicates
-			cmd=$(echo "${cmd}" | sed -e "s@${x}@@g")
+			cmd=$(echo "${cmd}" | sed -e "s|${x}||g")
 		done
 		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"\""
 		local outargs=(
@@ -104,7 +104,7 @@ ot-kernel_set_kconfig_kernel_cmdline() {
 		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${outargs_}\""
 	fi
-	cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s@CONFIG_CMDLINE=\"@@g" -e "s@\"$@@g")
+	cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
 	einfo "BOOT_ARGS:  ${cmd}"
 
 }
@@ -121,10 +121,10 @@ ot-kernel_unset_pat_kconfig_kernel_cmdline() {
 	if grep -q -E -e "# CONFIG_CMDLINE_BOOL is not set" "${path_config}" ; then
 		:
 	else
-		cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s@CONFIG_CMDLINE=\"@@g" -e "s@\"$@@g")
+		cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
 		for x in ${inargs[@]} ; do
 			# Remove duplicates
-			cmd=$(echo "${cmd}" | sed -r -e "s@${x}@@g")
+			cmd=$(echo "${cmd}" | sed -r -e "s|${x}||g")
 		done
 		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"\""
 		local outargs=(
@@ -134,7 +134,7 @@ ot-kernel_unset_pat_kconfig_kernel_cmdline() {
 		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${outargs_}\""
 	fi
-	cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s@CONFIG_CMDLINE=\"@@g" -e "s@\"$@@g")
+	cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
 	einfo "BOOT_ARGS:  ${cmd}"
 
 }
