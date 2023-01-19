@@ -7296,7 +7296,7 @@ ot-kernel_src_install() {
 		doins scripts/Makefile.extrawarn
 		doins scripts/subarch.include
 		for path in $(find arch/* -maxdepth 1 -name "Makefile") ; do
-			insinto "/usr/src/linux-${PV}-${extraversion}/"$(dirpath "${path}")
+			insinto "/usr/src/linux-${PV}-${extraversion}/"$(dirname "${path}")
 			doins "${path}"
 		done
 
