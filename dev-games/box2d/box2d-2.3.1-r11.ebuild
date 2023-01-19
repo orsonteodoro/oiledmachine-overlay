@@ -84,8 +84,13 @@ eerror
 		die
 	fi
 
+	local pid="$$"
+einfo "PID=${pid}"
+	local display=$(grep -z "^DISPLAY=" "/proc/${pid}/environ" \
+		| cut -f 2 -d "=")
+einfo "DISPLAY=${display}"
 	if ( use pgo || use bolt ) \
-		&& ! pidof X 2>/dev/null 1>/dev/null ; then
+		&& [[ -z "${display}" ]] ; then
 eerror
 eerror "You must run X to do GPU based PGO/BOLT training."
 eerror
@@ -93,7 +98,8 @@ eerror
 	fi
 
 	if ( use pgo || use bolt ) \
-		&& ! ( DISPLAY="${TRAIN_DISPLAY}" xhost | grep -q -e "LOCAL:" ) ; then
+		&& ! ( DISPLAY="${TRAIN_DISPLAY:-${display}}" xhost \
+			| grep -q -e "LOCAL:" ) ; then
 eerror
 eerror "You must do:  \`xhost +local:root:\` to do GPU based PGO/BOLT training."
 eerror
