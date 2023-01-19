@@ -1,0 +1,409 @@
+#!/bin/bash
+#
+# Copyright (c) 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>  All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+
+#
+# 1.0 initial
+#     single process / single core
+#
+# 2.0 license merging to single file
+#     multiprocess / multicore design
+#     detect false positives
+#     named headerextract
+#
+# 3.0.0 dropped merging to single file
+#       dropped detect false positives
+#       relative dump based on path
+#       simplification of code and design
+#       copy text files directly with copyright notices or licenses
+#       expand FILE_LIST beyond copyright keyword regex
+#       allow to select MERGED_COPYRIGHT_NOTICES and/or MULTI_COPYRIGHT_NOTICES
+#       allow to save/delete logs
+#       used semver
+#	add license classification
+#	rename to header-preserve
+#
+
+# TODO: classify *.md, *.txt files for MULTI_COPYRIGHT_NOTICES.
+
+# Place script in project root before running.
+# Requires bash, coreutils, grep
+
+export MY_PN="header-preserve-kernel" # minimal kernel version
+export MY_PV="3.0.0"
+
+# This means all unique copyright notices in one file.
+MERGED_COPYRIGHT_NOTICES=${MERGED_COPYRIGHT_NOTICES:-0}
+
+# This means to strip the source code but preserve headers in a separate tree \
+# with same file-directory layout.
+MULTI_COPYRIGHT_NOTICES=${MULTI_COPYRIGHT_NOTICES:-1}
+
+ATTACH_LOCATION_IN_MERGED=${ATTACH_LOCATION_IN_MERGED:-1}
+
+# It requires the header-preserve-classify sister script.
+CLASSIFY_COPYRIGHT_NOTICES=${CLASSIFY_COPYRIGHT_NOTICES:-0}
+
+SAVE_LOGS=1
+
+if [[ "${CLASSIFY_COPYRIGHT_NOTICES}" == "1" ]] ; then
+	if ! [[ -e "header-preserve-classify" ]] ; then
+		echo "Missing header-preserve-classify script"
+		exit 1
+	fi
+	source header-preserve-classify
+	#
+	# The file header-preserve-classify should contain the following
+	# functions:
+	#
+	# setup_classify_dirs
+	# classify_copyright_notice
+	#
+	# See
+	#
+	#  setup_classify_dirs_example
+	#  classify_copyright_notice_example
+	#
+	# near the end of this script
+	#
+fi
+
+T=${T:-"/tmp"}
+export MULTI_HEADER_DEST_PATH=${MULTI_HEADER_DEST_PATH:-"licenses_extracted"} # For split license preserving path
+export MERGED_COPYRIGHT_NOTICES_PATH=${MERGED_COPYRIGHT_NOTICES_PATH:-"copyright_notices_merged.txt"}
+
+export FINGERPRINTS_DIR=$(mktemp -d -p "${T}")
+echo -e "FINGERPRINTS_DIR:\t${FINGERPRINTS_DIR}"
+export STAGING_AREA_MERGED_PATH=$(mktemp -d -p "${T}") # For single file, all unique headers
+echo -e "STAGING_AREA_MERGED_PATH:\t\t${STAGING_AREA_MERGED_PATH}"
+export CLASSIFY_DIR=$(mktemp -d -p "${T}") # For license classification
+echo -e "CLASSIFY_DIR:\t\t${CLASSIFY_DIR}"
+export FILE_LIST_DIR=$(mktemp -d -p "${T}")
+export LOG_DIR=$(mktemp -d -p "${T}")
+
+export FILE_LIST=
+export TEMP_DATA=$(mktemp -d -p "${T}")
+export LOCKS_DIR=$(mktemp -d -p "${T}")
+
+# Relative paths
+export IGNORE_FILES=(
+	$(basename $0)
+	${MULTI_HEADER_DEST_PATH}
+)
+
+find_copyrighted_files()
+{
+echo
+echo "Finding copyrighted files"
+echo
+	export FILE_LIST=$(mktemp -p "${T}")
+	find . > "${FILE_LIST}"
+
+	IFS=$'\n'
+	if declare -p IGNORE_FILES 2>/dev/null 1>/dev/null ; then
+		for f in ${IGNORE_FILES[@]} ; do
+echo "Ignoring ${f}"
+			sed -i -e "\|${f}|d" "${FILE_LIST}"
+		done
+	fi
+	IFS=$' \t\n'
+
+echo
+echo "Splitting lists for multicore in ${FILE_LIST_DIR}"
+echo
+	pushd "${FILE_LIST_DIR}"
+		split -d -n l/$(nproc) "${FILE_LIST}" header_extract_list_
+	popd
+}
+
+extract_general_header()
+{
+	local context_lower_size=0
+	while (( ${context_lower_size} < ${nlines} )) ; do
+		local t_line=$(head -n $((${origin} + ${context_lower_size})) "${f}" | sed -e "s|\r||g" | tail -n 1)
+		if (( "${#t_line}" == 0 )) ; then
+			break
+		fi
+		if [[ "${t_line}" =~ ^(".TH"|".SH") ]] ; then
+			break
+		fi
+		context_lower_size=$((${context_lower_size} + 1))
+	done
+#echo -e "context_lower_size:\t${context_lower_size}"
+	terminator_pos=$((${origin} + ${context_lower_size} - 1))
+	header_info=$(head -n ${terminator_pos} "${f}")
+#echo -e "terminator_pos:\t${terminator_pos}"
+	local context_size=1
+	local header_info_nlines=$(echo -e "${header_info}" | wc -l)
+	while (( ${context_size} < ${header_info_nlines} )) ; do
+		local t_line=$(echo -e "${header_info}" | sed -e "s|\r||g" | tail -n ${context_size} | head -n 1)
+		if (( "${#t_line}" == 0 )) ; then
+			break
+		fi
+		context_size=$((${context_size} + 1))
+	done
+#	context_size=$((${context_size} - 1))
+	header_info=$(echo -e "${header_info}" | tail -n ${context_size} )
+}
+
+extract_block_header()
+{
+	local context_lower_size=0
+	while (( ${context_lower_size} < ${nlines} )) ; do
+		local t_line=$(head -n $((${origin} + ${context_lower_size})) "${f}" | sed -e "s|\r||g" | tail -n 1)
+		if [[ "${t_line}" =~ \*/ ]] ; then
+			break
+		fi
+		context_lower_size=$((${context_lower_size} + 1))
+	done
+#echo -e "context_lower_size:\t${context_lower_size}"
+	terminator_pos=$((${origin} + ${context_lower_size} + 1))
+	header_info=$(head -n ${terminator_pos} "${f}")
+#echo -e "terminator_pos:\t${terminator_pos}"
+	local context_size=1
+	local header_info_nlines=$(echo -e "${header_info}" | wc -l)
+	local nheader=0
+	while (( ${context_size} < ${header_info_nlines} )) ; do
+		local t_line=$(echo -e "${header_info}" | sed -e "s|\r||g" | tail -n ${context_size} | head -n 1)
+		if [[ "${t_line}" =~ \/\* ]] ; then
+#echo "Done ${t_line}"
+			break
+		fi
+		context_size=$((${context_size} + 1))
+	done
+	#context_size=$((${context_size} + 1))
+	header_info=$(echo -e "${header_info}" | tail -n ${context_size} )
+}
+
+filter_copyrights()
+{
+	local coreid="${CORE_ID}"
+	mkdir "${LOCKS_DIR}/filtering_licenses_running_${coreid}" # sema lock
+echo "Entered filter_copyrights()"
+echo -e "coreid:\t${coreid}"
+	local filelist="${FILE_LIST_DIR}/header_extract_list_"$(printf "%02d" ${coreid})
+echo -e "filelist:\t${filelist}"
+	local line
+	while IFS= read -r line ; do
+		local f="${line}"
+		f=$(echo "${f}" | sed -e "s|^./||")
+		grep -l -E -r -i -e  "(Copyright|warranty|license|all rights reserved|patent|public domain|royalt)" "${f}" || continue
+		local errors=$(mktemp -p "${T}")
+		lines=$(grep -n -i -e "copyright" "${f}" 2>"${errors}")
+		errcode="$?"
+
+		local dir=$(dirname "${f}")
+		local bn=$(basename "${f}")
+#echo
+		if [[ "${f,,}" =~ (".md"|".txt")$ ]] ; then
+			mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
+			cat "${f}" > "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
+			continue
+		elif grep -q -r -e "binary file matches" "${errors}" ; then
+#echo "Found binary file at "$(realpath "${f}")
+			# strings "${f}" | grep -n -i -e "Copyright"
+			:;
+		else
+			if [[ "${errcode}" == "0" ]] ; then
+				IFS=$'\n'
+				local
+				for line2 in ${lines} ; do
+#echo -e "LINE:\t${line2}"
+					origin=$(echo "${line2}" | cut -f 1 -d ":")
+					nlines=$(wc -l ${f} | cut -f 1 -d " ")
+#echo -e "origin:\t${origin}"
+#echo -e "linecontents:\t${line2}"
+#echo -e "filepath:\t"$(realpath "${f}")
+
+					local header_info=""
+					local t_line_=$(head -n ${origin} "${f}" | tail -n 1)
+					if [[ "${t_line_}" =~ \* || "${t_line_}" =~ \# || "${t_line_}" =~ \/\/ ]] ; then
+						extract_general_header
+					elif grep -q -F -e "/*" "${f}" && grep -q -F -e "*/" "${f}" ; then
+#echo "Found possible C block style comment"
+						extract_block_header
+					else
+						extract_general_header
+					fi
+#echo "Found new copyright notice:"
+#echo -e "${header_info}"
+#echo "${header_info}"
+					mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
+					local fp=$(echo "${header_info}" | sha1sum | cut -f 1 -d " ")
+
+					# For split license
+					if [[ "${MERGED_COPYRIGHT_NOTICES}" == "1" ]] \
+						&& ! [[ -e "${FINGERPRINTS_DIR}/${dir}/${bn}/${fp}" ]] ; then
+# Catch all license blocks even those in the middle or at the end.
+echo -e "${header_info}" >> "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
+						mkdir -p "${FINGERPRINTS_DIR}/${dir}/${bn}"
+						touch "${FINGERPRINTS_DIR}/${dir}/${bn}/${fp}"
+					fi
+
+					# For single license file
+					# Dedupes
+					if [[ "${MERGED_COPYRIGHT_NOTICES}" == "1" ]] ; then
+						if ! [[ -e "${STAGING_AREA_MERGED_PATH}/${fp}" ]] ; then
+# Catch all license blocks even those in the middle or at the end.
+echo -e "${header_info}" >> "${STAGING_AREA_MERGED_PATH}/${fp}"
+						fi
+						sed -i -e "1i Found in: ${f}" "${STAGING_AREA_MERGED_PATH}/${fp}"
+					fi
+
+					if [[ "${CLASSIFY_COPYRIGHT_NOTICES}" == "1" ]] ; then
+						classify_copyright_notice "${STAGING_AREA_MERGED_PATH}/${fp}"
+					fi
+				done
+				export IFS=$' \t\n'
+			fi
+		fi
+		rm "${errors}"
+	done < "${filelist}"
+	rm -rf "${LOCKS_DIR}/filtering_licenses_running_${coreid}" # release mutex
+}
+
+cleanup() {
+echo "Cleaning up"
+	[[ "${SAVE_LOGS}" != "1" ]] && rm -rf "${LOG_DIR}" 2>/dev/null
+	[[ -f "${FILE_LIST}" ]] && rm "${FILE_LIST}" 2>/dev/null
+	rm -rf "${FILE_LIST_DIR}" 2>/dev/null
+	rm -rf "${FINGERPRINTS_DIR}" 2>/dev/null
+	rm -rf "${STAGING_AREA_MERGED_PATH}" 2>/dev/null
+	rm -rf "${TEMP_DATA}" 2>/dev/null
+}
+
+setup() {
+	rm -rf "${MULTI_HEADER_DEST_PATH}"
+	mkdir -p "${MULTI_HEADER_DEST_PATH}"
+
+	if [[ "${CLASSIFY_COPYRIGHT_NOTICES}" == "1" ]] ; then
+		# See setup_classify_dirs_example
+		setup_classify_dirs
+	fi
+
+echo
+echo "IGNORE_FILES:  ${IGNORE_FILES[@]}"
+echo
+}
+
+setup_classify_dirs_example() {
+	# Places to dump headers
+	mkdir -p "${CLASSIFY_DIR}/foo"
+	mkdir -p "${CLASSIFY_DIR}/bar"
+	mkdir -p "${CLASSIFY_DIR}/unknown"
+}
+
+# It is recommended to split this function up into subfiles for
+# license compatibility reasons and source them in separate groups
+# and runs.
+classify_copyright_notice_example() {
+	local f="${1}"
+	local is_known=0 # as in known license name
+	local is_all_rights_reserved=0 # as in known license name
+
+	if \
+		( \
+			grep -F -i -q \
+				-e "example legal text" \
+				"${f}" \
+		) \
+	then
+		cp -a "${f}" "${CLASSIFY_DIR}/bar"
+		is_known=1
+	fi
+
+	if \
+		( \
+			grep -F -i -q \
+				-e "more example legal text" \
+				"${f}" \
+		) \
+	then
+		cp -a "${f}" "${CLASSIFY_DIR}/foo"
+		is_known=1
+	fi
+
+	# Custom licenses follow
+
+	if [[ "${is_all_rights_reserved}" == "1" ]] ; then
+#
+# After filtering through many fragments, you can then reduce the search space
+# of unknown header licenses.  This was the motivation for the
+# CLASSIFY_COPYRIGHT_NOTICES flag.
+#
+		cp -a "${f}" "${CLASSIFY_DIR}/unknown"
+	fi
+}
+
+main()
+{
+	setup
+echo
+echo "Features / options:"
+echo
+echo -e "ATTACH_LOCATION_IN_MERGED:\t${ATTACH_LOCATION_IN_MERGED}"
+echo -e "CLASSIFY_COPYRIGHT_NOTICES\t${CLASSIFY_COPYRIGHT_NOTICES}"
+echo -e "MERGED_COPYRIGHT_NOTICES:\t${MERGED_COPYRIGHT_NOTICES}"
+echo -e "SAVE_LOGS:\t\t\t${SAVE_LOGS}"
+echo -e "MULTI_COPYRIGHT_NOTICES:\t${MULTI_COPYRIGHT_NOTICES}"
+echo
+echo
+echo "Starting header extraction"
+echo
+	find_copyrighted_files
+echo -e "This PID:\t$$"
+echo "$$" > "${TEMP_DATA}/parent.pid"
+echo -e "TEMP_DATA:\t${TEMP_DATA}"
+	local coreid
+	for coreid in $(seq 0 $(($(nproc) -1))) ; do
+		export CORE_ID=${coreid}
+		local logfile="${LOG_DIR}/log.${coreid}"
+echo -e "coreid:\t${coreid}"
+echo -e "logfile:\t${logfile}"
+echo "Forking script for CPU (coreid: ${coreid}).  To see progress of this thread \`tail -f ${logfile}\`."
+		filter_copyrights 1>${logfile} 2>${logfile} &
+	done
+
+echo
+echo "Waiting for ${LOCKS_DIR}/filtering_licenses_running_* to be released"
+echo
+	for coreid in $(seq 0 $(($(nproc) -1))) ; do
+		while [[ -d "${LOCKS_DIR}/filtering_licenses_running_${coreid}" ]] ; do
+			sleep 1
+		done
+	done
+
+	if [[ "${MERGED_COPYRIGHT_NOTICES}" == "1" ]] ; then
+echo
+echo "Merging copyright notices into a single file"
+echo
+		cat "${STAGING_AREA_MERGED_PATH}"/* > "${MERGED_COPYRIGHT_NOTICES_PATH}"
+	fi
+
+echo
+echo "Done extracting licenses"
+echo
+}
+
+trap cleanup EXIT
+
+main

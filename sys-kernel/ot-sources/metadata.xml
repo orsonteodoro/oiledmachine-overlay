@@ -1332,6 +1332,10 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     - It is not recommended to disable this if you are using
     external modules.
 
+    See also
+
+      OT_KERNEL_PRESERVE_HEADER_NOTICES
+
 
 
     OT_KERNEL_IOMMU -- Sets the default IOMMU domain type upon initalization.
@@ -1845,6 +1849,45 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
+    OT_KERNEL_PRESERVE_HEADER_NOTICES - Preserves copyright notices for binary
+    only installation. (EXPERIMENTAL)
+
+    Important:  You still need to save the source code and patches for some
+    licenses such as the GPL.
+
+    Note:  When preserving headers, false positives or partial hunks may appear.
+
+    Acceptable values:
+
+      1 - install preserved headers
+      0 - skip (default due to the assumption tarballs and patches were saved)
+
+    See also:
+
+      OT_KERNEL_PRESERVE_HEADER_NOTICES_CACHED
+
+
+
+    OT_KERNEL_PRESERVE_HEADER_NOTICES_CACHED - Use a cached copy to save time
+    when performing point upgrades.  This option is only valid in the same
+    major.minor version. (EXPERIMENTAL)
+
+    Acceptable values:
+
+      1 - use a cached copy if available (default)
+      0 - produce a fresh new copy
+      unset - produce a fresh new copy
+
+    See also:
+
+      OT_KERNEL_PRESERVE_HEADER_NOTICES_CACHED
+
+    Depends on:
+
+      OT_KERNEL_PRESERVE_HEADER_NOTICES=1
+
+
+
     OT_KERNEL_PRIMARY_EXTRAVERSION (optional) -- sets the primary extraversion
     for the symlink USE flag.  If not set, it defaults to ot.
 
@@ -1889,6 +1932,18 @@ unset OT_KERNEL_PRIVATE_KEY
     See also:
 
       OT_KERNEL_SLAB_ALLOCATOR
+
+
+
+    OT_KERNEL_PRUNE_EXTRA_ARCHES -- remove extra arches for faster install time.
+    The one not pruned is the one corresponding to the value in OT_KERNEL_ARCH.
+    (EXPERIMENTAL)
+
+    Acceptable values:
+
+      1 - prune
+      0 - keep
+      unset - keep
 
 
 
@@ -2278,7 +2333,8 @@ unset OT_KERNEL_PRIVATE_KEY
     option could be multiple referenced, a base option for an another option,
     or library option; it is implied unchanged.  If it seems like the kernel
     option is unlikely a base option, unlikely inherited option, or unlikely
-    multiple reference; it is likely an implied disabled.
+    multiple reference, or is likely independent; it is likely an implied
+    disabled.
 
     ALSA_PC_SPEAKER - Use the ALSA speaker driver for PC speaker.
 

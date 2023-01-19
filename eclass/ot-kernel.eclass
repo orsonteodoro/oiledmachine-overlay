@@ -2173,22 +2173,52 @@ ewarn
 		einfo "Applying patchsets for -${extraversion}"
 		einfo
 		apply_all_patchsets
+		cd "${BUILD_DIR}" || die
 		einfo "Setting the extra version for the -${extraversion} build"
 		sed -i -e "s|EXTRAVERSION =\$|EXTRAVERSION = -${extraversion}|g" \
-			"${BUILD_DIR}/Makefile" || die
+			"Makefile" || die
 		if ot-kernel_use disable_debug ; then
-			chmod +x "${BUILD_DIR}/disable_debug" || die
+			chmod +x "disable_debug" || die
 		fi
 		if [[ -n "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
 			[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing .pem private key"
 			[[ -e "${OT_KERNEL_SHARED_KEY}" ]] || die "Missing .x509 shared key"
 			einfo "Copying private/shared signing keys"
-			cp -a "${OT_KERNEL_PRIVATE_KEY}" "${BUILD_DIR}/certs/signing_key.pem" \
+			cp -a "${OT_KERNEL_PRIVATE_KEY}" "certs/signing_key.pem" \
 				|| die "Cannot copy private key"
-			cp -a "${OT_KERNEL_SHARED_KEY}" "${BUILD_DIR}/certs/signing_key.x509" \
+			cp -a "${OT_KERNEL_SHARED_KEY}" "certs/signing_key.x509" \
 				|| die "Cannot copy shared key"
 		fi
+		# We can't prune earlier than multi arch patches.
+		# Prune now for a faster source code install
+		if [[ "${OT_KERNEL_PRUNE_EXTRA_ARCHES}" == "1" ]] ; then
+			rm -rf "${T}/pruned"
+
+			# Save for make olddefconfig
+			mkdir -p "${T}/pruned"
+			cp --parents -a $(find arch -name "Kconfig*") \
+				"${T}/pruned" || die
+
+			local my_arch=$(ot-kernel_get_my_arch)
+			local all_arches=($(ls arch \
+				| sed -e "/Kconfig/d"))
+			local arch
+			for arch in ${all_arches[@]} ; do
+				[[ "${arch}" =~ "${my_arch}" ]] && continue
+einfo "Pruning ${arch} from ${extraversion}"
+				rm -rf "arch/${arch}"
+			done
+			if ! [[ -e "arch/${my_arch}" ]] ; then
+eerror "arch/${my_arch} is not supported"
+				die
+			fi
+
+			# Restore for make olddefconfig
+			cp -aT "${T}/pruned" \
+				"${BUILD_DIR}" || die
+		fi
 	done
+
 	if [[ -n "${PEM_PATH}" ]] ; then
 		register_die_hook ot-kernel_clear_keys
 	fi
@@ -2456,6 +2486,9 @@ ot-kernel_clear_env() {
 #	unset OT_KERNEL_PRIMARY_EXTRAVERSION			# global var
 #	unset OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR	# global var
 	unset OT_KERNEL_PRIVATE_KEY
+	unset OT_KERNEL_PRESERVE_HEADER_NOTICES
+	unset OT_KERNEL_PRESERVE_HEADER_NOTICES_CACHED
+	unset OT_KERNEL_PRUNE_EXTRA_ARCHES
 	unset OT_KERNEL_PUBLIC_KEY
 	unset OT_KERNEL_SATA_LPM_MAX
 	unset OT_KERNEL_SATA_LPM_MID
@@ -6922,7 +6955,6 @@ ot-kernel_install_source_code() {
 		wait
 		export IFS=$' \t\n'
 	fi
-	# TODO:  prune extra arches
 }
 
 # @FUNCTION: ot-kernel_get_boot_decompressor
@@ -7171,6 +7203,27 @@ ot-kernel_get_nprocs() {
 	echo "${nprocs}"
 }
 
+# @FUNCTION: ot-kernel_get_nprocs
+# @INTERNAL
+# @DESCRIPTION:
+# Gets the corresponding arch value to OT_KERNEL_ARCH
+ot-kernel_get_my_arch() {
+	case ${OT_KERNEL_ARCH} in
+		parisc64)
+			echo "parisc" ;;
+		sparc32|sparc64)
+			echo "sparc" ;;
+		x86_64|i386)
+			echo "x86" ;;
+		sh64)
+			echo "sh" ;;
+		tilepro|tilegx)
+			echo "tile" ;;
+		*)
+			echo "${OT_KERNEL_ARCH}" ;;
+	esac
+}
+
 # @FUNCTION: ot-kernel_src_install
 # @DESCRIPTION:
 # Removes patch cruft.
@@ -7203,6 +7256,48 @@ ot-kernel_src_install() {
 		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
+
+		# Prune all config arches
+		# Prune now for a faster source code install or header preservation
+		if [[ "${OT_KERNEL_PRUNE_EXTRA_ARCHES}" == "1" ]] \
+			&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+			local my_arch=$(ot-kernel_get_my_arch)
+			local all_arches=($(ls arch \
+				| sed -e "/Kconfig/d"))
+			local arch
+			for arch in ${all_arches[@]} ; do
+				[[ "${arch}" =~ "${my_arch}" ]] && continue
+einfo "Pruning ${arch} from ${extraversion}"
+				rm -rf "arch/${arch}"
+			done
+			if ! [[ -e "arch/${my_arch}" ]] ; then
+eerror "arch/${my_arch} is not supported"
+				die
+			fi
+			rm -rf $(find arch -name "Kconfig*")
+		fi
+
+		if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES:-0}" == "1" ]] \
+			&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+			local license_preserve_path="/usr/share/${PN}/${K_MAJOR_MINOR}-${extraversion}/licenses"
+			if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES_CACHED:-1}" == "1" \
+				&& -e "${license_preserve_path}" ]] ; then
+ewarn "Preserving copyright notices (cached)."
+				cp -aT "${license_preserve_path}" \
+					"${ED}/${license_preserve_path}" || die
+			else
+ewarn "Preserving copyright notices.  This may take hours."
+				cat "${FILESDIR}/header-preserve-kernel" \
+					> "${BUILD_DIR}/header-preserve-kernel" || die
+				pushd "${BUILD_DIR}" || die
+					dodir "${license_preserve_path}"
+					export MULTI_HEADER_DEST_PATH="${ED}/${license_preserve_path}"
+					chmod +x header-preserve-kernel || die
+					./header-preserve-kernel || die
+				popd
+			fi
+		fi
+
 		if ot-kernel_is_build ; then
 			local args=(
 				INSTALL_MOD_PATH="${ED}"
@@ -7227,7 +7322,8 @@ ot-kernel_src_install() {
 			insinto /etc/kernels
 			newins "${BUILD_DIR}/.config" $(basename "${default_config}")
 			# dosym src_relpath_real dest_abspath_symlink
-			dosym $(basename "${default_config}") $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${PV})-${extraversion}-${arch}
+			dosym $(basename "${default_config}") \
+				$(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${PV})-${extraversion}-${arch}
 
 			# For linux-info.eclass config checks
 			dosym $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${PV})-${extraversion}-${arch} \
@@ -7255,17 +7351,18 @@ ot-kernel_src_install() {
 			mkdir -p "include/config" || die
 			echo "${PV}-${extraversion}-${arch}" \
 				> include/config/kernel.release || die
-
 		fi
 
 		if [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
 			ewarn "Using OT_KERNEL_INSTALL_SOURCE_CODE is experimental."
 			ot-kernel_install_source_code
 		else
-			local license_path=$(find "${BUILD_DIR}/drivers/video/logo" -name "logo_custom_*.*.license" 2>/dev/null)
-			if [[ -n "${license_path}" && -e "${license_path}" ]] ; then
-				docinto "licenses/${extraversion}"
-				dodoc "${license_path}"
+			local logo_license_path=$(find "${BUILD_DIR}/drivers/video/logo" \
+				-name "logo_custom_*.*.license" \
+				2>/dev/null)
+			if [[ -n "${logo_license_path}" && -e "${logo_license_path}" ]] ; then
+				insinto "/usr/share/${PN}/${K_MAJOR_MINOR}-${extraversion}/licenses/logo"
+				doins "${logo_license_path}"
 			fi
 		fi
 
@@ -7285,7 +7382,8 @@ ot-kernel_src_install() {
 			&& doins "certs/"*".x509"
 		ls "certs/"*".genkey" 2>/dev/null 1>/dev/null \
 			&& doins "certs/"*".genkey"
-		for x in $(find certs -type f) ; do
+		local cert
+		for cert in $(find certs -type f) ; do
 			fperms 600 "${x}"
 		done
 
@@ -7295,6 +7393,7 @@ ot-kernel_src_install() {
 		doins scripts/Kbuild.include
 		doins scripts/Makefile.extrawarn
 		doins scripts/subarch.include
+		local path
 		for path in $(find arch/* -maxdepth 1 -name "Makefile") ; do
 			insinto "/usr/src/linux-${PV}-${extraversion}/"$(dirname "${path}")
 			doins "${path}"
@@ -7309,8 +7408,6 @@ ot-kernel_src_install() {
 		dosym \
 			"/usr/src/linux-${PV}-${extraversion}"
 			"/lib/modules/linux-${PV}-${extraversion}/source"
-
-		# Do arch pruning here for install_source_code.?
 
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
 			einfo "Installing OpenRC iosched script settings"
