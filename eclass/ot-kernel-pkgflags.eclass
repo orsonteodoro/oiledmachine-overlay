@@ -6383,18 +6383,19 @@ _ot-kernel-pkgflags_squashfs() {
 			else
 				ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_SINGLE"
 			fi
-		elif [[ "${SQUASHFS_DECOMPRESSORS_PER_CORE}" =~ "2" ]] ; then
-			einfo "SquashFS multi-threaded decompression applied (Threads Per Core: ${tpc})"
-			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_MULTI"
-		elif [[ \
-			   "${SQUASHFS_DECOMPRESSORS_PER_CORE}" =~ "1" \
-			&& "${SQUASHFS_DECOMPRESSORS_PER_CORE}" != "1uni" \
-		     ]] ; then
-			einfo "SquashFS multicore decompression applied (CPU Cores: ${mc})"
-			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_MULTI_PERCPU"
-		else
+		elif [[ "${SQUASHFS_DECOMPRESSORS_PER_CORE}" =~ ("1uni"|"1up") ]] ; then
+			# 1uni = 1up = uniprocessor = single decompression thread total
 			einfo "SquashFS single thread applied"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_SINGLE"
+		elif [[ "${SQUASHFS_DECOMPRESSORS_PER_CORE}" =~ ([a-z]|[A-Z]) ]] ; then
+			eerror "SQUASHFS_DECOMPRESSORS_PER_CORE must be 1, 2, 1up"
+			die
+		elif (( ${SQUASHFS_DECOMPRESSORS_PER_CORE} == 1 )) ; then
+			einfo "SquashFS multicore decompression applied (CPU Cores: ${mc})"
+			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_MULTI_PERCPU"
+		elif (( ${SQUASHFS_DECOMPRESSORS_PER_CORE} >= 2 )) ; then
+			einfo "SquashFS multi-threaded decompression applied (Threads Per Core: ${tpc})"
+			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_MULTI"
 		fi
 		ot-kernel_n_configopt "CONFIG_SQUASHFS_FILE_CACHE"
 		ot-kernel_n_configopt "CONFIG_SQUASHFS_FILE_DIRECT"
