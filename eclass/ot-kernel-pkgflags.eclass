@@ -6383,10 +6383,10 @@ _ot-kernel-pkgflags_squashfs() {
 			else
 				ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_SINGLE"
 			fi
-		elif [[ "${SQUASHFS_DECOMPRESSORS_PER_CORE}" == "2" ]] ; then
+		elif [[ "${SQUASHFS_DECOMPRESSORS_PER_CORE}" =~ ("2"|"2mc"|"2tpc") ]] ; then
 			einfo "SquashFS multi-threaded decompression applied (Threads Per Core: ${tpc})"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_MULTI"
-		elif [[ "${SQUASHFS_DECOMPRESSORS_PER_CORE}" == "1lb" ]] ; then
+		elif [[ "${SQUASHFS_DECOMPRESSORS_PER_CORE}" =~ ("1lb"|"1mc"|"1tpc") ]] ; then
 			einfo "SquashFS multicore decompression applied (CPU Cores: ${mc})"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_MULTI_PERCPU"
 		else

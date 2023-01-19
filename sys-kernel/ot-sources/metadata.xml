@@ -2548,8 +2548,14 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     Valid values: 0 (upstream default), 1 (ebuild default).
 
     SQUASHFS_DECOMPRESSORS_PER_CORE - Parallel decompression
-    Valid values: 1 (upstream default), 1lb (1 per core load balanced),
-    2, auto (ebuild default).
+    Valid values:
+      1 - decompress with only 1 total (upstream default)
+      1lb - alias for 1tpc
+      1mc - alias for 1tpc
+      1tpc - 1 thread per core, load balanced.  Not the same as 1.
+      2 - 2 threads per core to decompress
+      2tpc - alias for 2tpc
+      auto - (ebuild default)
     auto will judge based on threads per core (TPC) inspection.
     Use manual selection when porting to other machines.
 
