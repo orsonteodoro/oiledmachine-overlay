@@ -1101,13 +1101,6 @@ ewarn "to see the security risk/implications involved in this kind of training"
 ewarn "and to mitigate against sensitive data leaks."
 ewarn
 		sleep 15
-
-		if [[ -z ${FFMPEG_TRAINING_X11_DISPLAY} ]] ; then
-			export FFMPEG_TRAINING_X11_DISPLAY=":0"
-		fi
-einfo
-einfo "FFMPEG_TRAINING_X11_DISPLAY=\"${FFMPEG_TRAINING_X11_DISPLAY}\""
-einfo
 	fi
 
 	# The GLFW does not allow for software rendering.
@@ -1136,9 +1129,14 @@ eerror
 		die
 	fi
 
+	local pid="$$"
+einfo "PID=${pid}"
+	local display=$(grep -z "^DISPLAY=" "/proc/${pid}/environ" \
+		| cut -f 2 -d "=")
+einfo "DISPLAY=${display}"
 	if use trainer-av-streaming \
 		&& ( use pgo || use bolt ) \
-		&& ! pidof X 2>/dev/null 1>/dev/null ; then
+		&& [[ -z "${display}" ]] ; then
 eerror
 eerror "You must run X to do GPU based PGO/BOLT training."
 eerror
@@ -1147,7 +1145,8 @@ eerror
 
 	if use trainer-av-streaming \
 		&& ( use pgo || use bolt ) \
-		&& ! ( DISPLAY="${TRAIN_DISPLAY}" xhost | grep -q -e "LOCAL:" ) ; then
+		&& ! ( DISPLAY="${TRAIN_DISPLAY:-${display}}" xhost \
+			| grep -q -e "LOCAL:" ) ; then
 eerror
 eerror "You must do:  \`xhost +local:root:\` to do GPU based PGO/BOLT training."
 eerror
@@ -2482,8 +2481,11 @@ _wipe_data() {
 }
 
 _get_x11_display() {
-	if [[ -n "${FFMPEG_TRAINING_X11_DISPLAY}" ]] ; then
-		echo "${FFMPEG_TRAINING_X11_DISPLAY}"
+	local pid="$$"
+	local display=$(grep -z "^DISPLAY=" "/proc/${pid}/environ" \
+		| cut -f 2 -d "=")
+	if [[ -n "${display}" ]] ; then
+		echo "${display}"
 		return
 	fi
 }

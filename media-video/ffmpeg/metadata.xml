@@ -325,10 +325,6 @@
   FFMPEG_TRAINER_VAAPI_SCALE_ALG - Choose either CPU or GPU
   VA-API scaling.  Acceptable values:  gpu (default), igp, cpu.
 
-  FFMPEG_TRAINING_X11_DISPLAY - Sets the X11 DISPLAY to grab for
-  PGO/BOLT training.  The default value is ":0".  This needs to be changed
-  if using a custom setup.
-
 
   Custom training
 
