@@ -7280,6 +7280,7 @@ eerror "arch/${my_arch} is not supported"
 		if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES:-0}" == "1" ]] \
 			&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
 			local license_preserve_path="/usr/share/${PN}/${K_MAJOR_MINOR}-${extraversion}/licenses"
+			dodir "${license_preserve_path}"
 			if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES_CACHED:-1}" == "1" \
 				&& -e "${license_preserve_path}" ]] ; then
 ewarn "Preserving copyright notices (cached)."
@@ -7290,7 +7291,6 @@ ewarn "Preserving copyright notices.  This may take hours."
 				cat "${FILESDIR}/header-preserve-kernel" \
 					> "${BUILD_DIR}/header-preserve-kernel" || die
 				pushd "${BUILD_DIR}" || die
-					dodir "${license_preserve_path}"
 					export MULTI_HEADER_DEST_PATH="${ED}/${license_preserve_path}"
 					chmod +x header-preserve-kernel || die
 					./header-preserve-kernel || die
