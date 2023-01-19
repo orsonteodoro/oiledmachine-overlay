@@ -1855,8 +1855,10 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     Important:  You still need to save the source code and patches for some
     licenses such as the GPL.
 
-    Notes:  When preserving headers, false positives or partial hunks may appear.
-    It may take hours to achieve this.
+    Notes:
+
+    - When preserving headers, false positives or partial fragments may appear.
+    - It may take hours to achieve this extraction.
 
     Acceptable values:
 
