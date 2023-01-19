@@ -7297,6 +7297,16 @@ ot-kernel_src_install() {
 			doins "${path}"
 		done
 
+		# Fix symlinks
+		rm -rf "${ED}/lib/modules/linux-${PV}-${extraversion}/build" || true
+		rm -rf "${ED}/lib/modules/linux-${PV}-${extraversion}/source" || true
+		dosym \
+			"/usr/src/linux-${PV}-${extraversion}"
+			"/lib/modules/linux-${PV}-${extraversion}/build"
+		dosym \
+			"/usr/src/linux-${PV}-${extraversion}"
+			"/lib/modules/linux-${PV}-${extraversion}/source"
+
 		# Do arch pruning here for install_source_code.?
 
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then

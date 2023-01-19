@@ -3,11 +3,11 @@
 
 EAPI=8
 
-K_GENPATCHES_VER="172"
+K_GENPATCHES_VER="173"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
 PRJC_LTS="-lts"
 PATCH_PROJC_VER="5.10-lts-r3"
-PATCH_RT_VER="5.10.158-rt77"
+PATCH_RT_VER="5.10.162-rt78"
 
 inherit ot-kernel-v5.10
 
