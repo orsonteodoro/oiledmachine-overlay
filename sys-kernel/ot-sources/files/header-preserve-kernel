@@ -30,8 +30,7 @@
 #     detect false positives
 #     named headerextract
 #
-# 3.0.0 dropped merging to single file
-#       dropped detect false positives
+# 3.0.0 dropped detect false positives
 #       relative dump based on path
 #       simplification of code and design
 #       copy text files directly with copyright notices or licenses
