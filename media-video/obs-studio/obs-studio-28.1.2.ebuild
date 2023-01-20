@@ -195,7 +195,7 @@ CEF_PV="103"
 # https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
 
 #
-# To find difference use:
+# To find differences between release use:
 #
 # S1="/var/tmp/portage/media-video/obs-studio-28.1.2/work/obs-studio-28.1.2" \
 # S2="/var/tmp/portage/media-video/obs-studio-29.0.0/work/obs-studio-29.0.0" ; \
