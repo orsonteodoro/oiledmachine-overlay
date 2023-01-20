@@ -48,7 +48,7 @@
 # Requires bash, coreutils, grep
 
 export MY_PN="header-preserve-kernel" # minimal kernel version
-export MY_PV="3.0.1"
+export MY_PV="3.0.2"
 
 # This means all unique copyright notices in one file.
 MERGED_COPYRIGHT_NOTICES=${MERGED_COPYRIGHT_NOTICES:-0}
@@ -91,11 +91,11 @@ export MULTI_HEADER_DEST_PATH=${MULTI_HEADER_DEST_PATH:-"licenses_extracted"} # 
 export MERGED_COPYRIGHT_NOTICES_PATH=${MERGED_COPYRIGHT_NOTICES_PATH:-"copyright_notices_merged.txt"}
 
 export FINGERPRINTS_DIR=$(mktemp -d -p "${T}")
-echo -e "FINGERPRINTS_DIR:\t${FINGERPRINTS_DIR}"
+echo -e "FINGERPRINTS_DIR:\t\t${FINGERPRINTS_DIR}"
 export STAGING_AREA_MERGED_PATH=$(mktemp -d -p "${T}") # For single file, all unique headers
-echo -e "STAGING_AREA_MERGED_PATH:\t\t${STAGING_AREA_MERGED_PATH}"
+echo -e "STAGING_AREA_MERGED_PATH:\t${STAGING_AREA_MERGED_PATH}"
 export CLASSIFY_DIR=$(mktemp -d -p "${T}") # For license classification
-echo -e "CLASSIFY_DIR:\t\t${CLASSIFY_DIR}"
+echo -e "CLASSIFY_DIR:\t\t\t${CLASSIFY_DIR}"
 export FILE_LIST_DIR=$(mktemp -d -p "${T}")
 export LOG_DIR=$(mktemp -d -p "${T}")
 
@@ -250,7 +250,6 @@ echo -e "filelist:\t${filelist}"
 
 					# For split license
 					if [[ "${MULTI_COPYRIGHT_NOTICES}" == "1" ]] \
-						mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
 						&& ! [[ -e "${FINGERPRINTS_DIR}/${dir}/${bn}/${fp}" ]] ; then
 # Catch all license blocks even those in the middle or at the end.
 echo -e "${header_info}" >> "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
