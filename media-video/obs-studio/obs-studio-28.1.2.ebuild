@@ -187,12 +187,22 @@ BDEPEND+="
 
 # CI uses U 18.04
 
-# 103 is EOL.  Current version is 106.
+# 103 is EOL.  The current Cr version is 109.
 CEF_PV="103"
 # See also
-# https://github.com/obsproject/obs-studio/blob/28.0.3/.github/workflows/main.yml#L20
+# https://github.com/obsproject/obs-studio/blob/28.1.2/.github/workflows/main.yml#L20
 # https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 # https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
+
+#
+# To find difference use:
+#
+# S1="/var/tmp/portage/media-video/obs-studio-28.1.2/work/obs-studio-28.1.2" \
+# S2="/var/tmp/portage/media-video/obs-studio-29.0.0/work/obs-studio-29.0.0" ; \
+# for x in $(find ${S2} -name "CMakeLists.txt" -o -name "*.cmake" | cut -f 9- -d "/" | sort) ; do \
+#   diff -urp "${S1}/${x}" "${S2}/${x}" ; \
+# done
+#
 
 FFMPEG_PV="3.4.2"
 LIBVA_PV="2.1.0"
