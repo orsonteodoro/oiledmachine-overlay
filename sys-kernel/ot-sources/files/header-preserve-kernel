@@ -209,7 +209,6 @@ echo -e "filelist:\t${filelist}"
 		local errors=$(mktemp -p "${T}")
 		file "${f}" | grep -q -E -e "(text|source)" || continue
 
-		# TODO: filter keyword list in readmes but exclude build files and documentation
 		local keywords="copyright|licens|all rights reserved|contract|patent|liable|liabilit|public domain|royalt|warrant"
 		grep -q -E -e "(${keywords})" "${f}" || continue
 
