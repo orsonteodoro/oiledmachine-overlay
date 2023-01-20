@@ -7396,7 +7396,7 @@ ewarn "Preserving copyright notices.  This may take hours."
 			&& doins "certs/"*".genkey"
 		local cert
 		for cert in $(find certs -type f) ; do
-			fperms 600 "${x}"
+			fperms 600 "${cert}"
 		done
 
 		# Required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
