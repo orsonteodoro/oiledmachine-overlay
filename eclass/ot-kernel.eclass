@@ -2193,15 +2193,19 @@ ewarn
 		# Prune now for a faster source code install
 		if [[ "${OT_KERNEL_PRUNE_EXTRA_ARCHES}" == "1" ]] ; then
 			rm -rf "${T}/pruned"
-
-			# Save for make olddefconfig
+			# Save Kconfig* for make olddefconfig.
+			# Save arch/um/scripts/Makefile.rules for make mrproper.
 			mkdir -p "${T}/pruned"
-			cp --parents -a $(find arch -name "Kconfig*") \
+			cp --parents -a $(find arch \
+				-name "Kconfig*") \
+				"${T}/pruned" || die
+			cp --parents -a arch/um/scripts/Makefile.rules \
 				"${T}/pruned" || die
 
 			ot-kernel_prune_arches
 
-			# Restore for make olddefconfig
+			# Restore Kconfig for make olddefconfig.
+			# Restore arch/um/scripts/Makefile.rules for make mrproper.
 			cp -aT "${T}/pruned" \
 				"${BUILD_DIR}" || die
 		fi
@@ -7214,8 +7218,9 @@ ot-kernel_get_my_arch() {
 
 # @FUNCTION: ot-kernel_prune_arches
 # @DESCRIPTION:
-# Delete other arches in the arch folder from ${BUILD_DIR}
+# Deletes source code for other arches in the arch folder from ${BUILD_DIR}.
 ot-kernel_prune_arches() {
+	local is_final="${1}"
 	local my_arch=$(ot-kernel_get_my_arch)
 	local all_arches=($(ls arch \
 		| sed -e "/Kconfig/d"))
@@ -7268,8 +7273,15 @@ ot-kernel_src_install() {
 		# Prune now for a faster source code install or header preservation
 		if [[ "${OT_KERNEL_PRUNE_EXTRA_ARCHES}" == "1" ]] \
 			&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+			# Preserve build files because they are mostly unconditional includes.
+			# Save arch/um/scripts/Makefile.rules for make mrproper.
+			cp --parents -a arch/um/scripts/Makefile.rules \
+				"${T}/pruned" || die
 			ot-kernel_prune_arches
-			rm -rf $(find arch -name "Kconfig*")
+			# Restore arch/um/scripts/Makefile.rules for make mrproper.
+			cp -aT "${T}/pruned" \
+				"${BUILD_DIR}" || die
+			rm -rf $(find arch -name "Kconfig*") # Delete if not using any make *config.
 		fi
 
 		if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES:-0}" == "1" ]] \
@@ -7362,6 +7374,11 @@ ewarn "Preserving copyright notices.  This may take hours."
 		fi
 
 		cd "${BUILD_DIR}" || die
+
+		if ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+			# No longer building (binary only)
+			rm -rf arch/um/scripts/Makefile.rules
+		fi
 
 		# Required for genkernel
 		insinto "/usr/src/linux-${PV}-${extraversion}"
