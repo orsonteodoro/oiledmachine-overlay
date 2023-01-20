@@ -48,7 +48,7 @@
 # Requires bash, coreutils, grep
 
 export MY_PN="header-preserve-kernel" # minimal kernel version
-export MY_PV="3.0.2"
+export MY_PV="3.0.3"
 
 # This means all unique copyright notices in one file.
 MERGED_COPYRIGHT_NOTICES=${MERGED_COPYRIGHT_NOTICES:-0}
@@ -104,9 +104,10 @@ export TEMP_DATA=$(mktemp -d -p "${T}")
 export LOCKS_DIR=$(mktemp -d -p "${T}")
 
 # Relative paths
-export IGNORE_FILES=(
+export IGNORE_PATHS=(
 	$(basename $0)
 	${MULTI_HEADER_DEST_PATH}
+	"Documentation"
 )
 
 find_copyrighted_files()
@@ -115,11 +116,11 @@ echo
 echo "Finding copyrighted files"
 echo
 	export FILE_LIST=$(mktemp -p "${T}")
-	find . > "${FILE_LIST}"
+	find . -type f > "${FILE_LIST}"
 
 	IFS=$'\n'
-	if declare -p IGNORE_FILES 2>/dev/null 1>/dev/null ; then
-		for f in ${IGNORE_FILES[@]} ; do
+	if declare -p IGNORE_PATHS 2>/dev/null 1>/dev/null ; then
+		for f in ${IGNORE_PATHS[@]} ; do
 echo "Ignoring ${f}"
 			sed -i -e "\|${f}|d" "${FILE_LIST}"
 		done
@@ -205,23 +206,29 @@ echo -e "filelist:\t${filelist}"
 	while IFS= read -r line ; do
 		local f="${line}"
 		f=$(echo "${f}" | sed -e "s|^./||")
-		grep -l -E -r -i -e  "(Copyright|warranty|license|all rights reserved|patent|public domain|royalt)" "${f}" || continue
 		local errors=$(mktemp -p "${T}")
+		file "${f}" | grep -q -E -e "(text|source)" || continue
+		grep -E -e "(copyright|licens|all rights reserved|atent|liable|public domain|royalt|warranty)" "${f}" || continue
 		lines=$(grep -n -i -e "copyright" "${f}" 2>"${errors}")
 		errcode="$?"
 
 		local dir=$(dirname "${f}")
 		local bn=$(basename "${f}")
 #echo
-		if [[ "${f,,}" =~ (".md"|".txt")$ ]] ; then
+		if [[ "${f,,}" =~ ("apache"|"bsd"|"cc-by"|"cddl"|"-exception"|"gfdl"|"gpl"|"isc"|"linux-openib"|"linux-syscall-note"|"mit"|"mpl"|"x11"|"zlib") ; then
+			# Names in LICENSES subtree
 			mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
 			cat "${f}" > "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
-			continue
-		elif grep -q -r -e "binary file matches" "${errors}" ; then
-#echo "Found binary file at "$(realpath "${f}")
-			# strings "${f}" | grep -n -i -e "Copyright"
+		elif [[ "${f,,}" =~ ("readme") ]] \
+			&& grep -q -E -e "(apache|bsd|cc-by|cddl|-exception|gfdl|gpl|isc|linux-openib|linux-syscall-note|mit|mpl|x11|zlib)" "${f}" ; then
+			mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
+			cat "${f}" > "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
+		elif [[ "${f,,}" =~ ("authors"|"copying"|"license"|"notice"|"patent") ]] ; then
+			mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
+			cat "${f}" > "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
+		elif [[ "${f,,}" =~ (".md"|".txt"|".rst") ]] ; then
 			:;
-		else
+		elif [[ "${f}" =~ (".c"|".cpp"|".asm"|".S")$ ]] ; then
 			if [[ "${errcode}" == "0" ]] ; then
 				IFS=$'\n'
 				local
@@ -252,7 +259,10 @@ echo -e "filelist:\t${filelist}"
 					if [[ "${MULTI_COPYRIGHT_NOTICES}" == "1" ]] \
 						&& ! [[ -e "${FINGERPRINTS_DIR}/${dir}/${bn}/${fp}" ]] ; then
 # Catch all license blocks even those in the middle or at the end.
+						mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
 echo -e "${header_info}" >> "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
+
+						# For deduping
 						mkdir -p "${FINGERPRINTS_DIR}/${dir}/${bn}"
 						touch "${FINGERPRINTS_DIR}/${dir}/${bn}/${fp}"
 					fi
@@ -291,6 +301,7 @@ echo "Cleaning up"
 
 setup() {
 	rm -rf "${MULTI_HEADER_DEST_PATH}"
+	mkdir -p "${STAGING_AREA_MERGED_PATH}"
 	mkdir -p "${MULTI_HEADER_DEST_PATH}"
 
 	if [[ "${CLASSIFY_COPYRIGHT_NOTICES}" == "1" ]] ; then
@@ -299,7 +310,7 @@ setup() {
 	fi
 
 echo
-echo "IGNORE_FILES:  ${IGNORE_FILES[@]}"
+echo "IGNORE_PATHS:  ${IGNORE_PATHS[@]}"
 echo
 }
 
