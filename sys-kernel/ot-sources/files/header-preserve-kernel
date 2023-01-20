@@ -48,7 +48,7 @@
 # Requires bash, coreutils, grep
 
 export MY_PN="header-preserve-kernel" # minimal kernel version
-export MY_PV="3.0.0"
+export MY_PV="3.0.1"
 
 # This means all unique copyright notices in one file.
 MERGED_COPYRIGHT_NOTICES=${MERGED_COPYRIGHT_NOTICES:-0}
@@ -246,11 +246,11 @@ echo -e "filelist:\t${filelist}"
 #echo "Found new copyright notice:"
 #echo -e "${header_info}"
 #echo "${header_info}"
-					mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
 					local fp=$(echo "${header_info}" | sha1sum | cut -f 1 -d " ")
 
 					# For split license
-					if [[ "${MERGED_COPYRIGHT_NOTICES}" == "1" ]] \
+					if [[ "${MULTI_COPYRIGHT_NOTICES}" == "1" ]] \
+						mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
 						&& ! [[ -e "${FINGERPRINTS_DIR}/${dir}/${bn}/${fp}" ]] ; then
 # Catch all license blocks even those in the middle or at the end.
 echo -e "${header_info}" >> "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
