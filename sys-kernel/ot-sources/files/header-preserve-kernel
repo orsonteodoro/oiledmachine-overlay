@@ -48,7 +48,7 @@
 # Requires bash, coreutils, grep
 
 export MY_PN="header-preserve-kernel" # minimal kernel version
-export MY_PV="3.0.5"
+export MY_PV="3.0.6"
 
 # This means all unique copyright notices in one file.
 MERGED_COPYRIGHT_NOTICES=${MERGED_COPYRIGHT_NOTICES:-0}
@@ -207,10 +207,16 @@ echo -e "filelist:\t${filelist}"
 		local f="${line}"
 		f=$(echo "${f}" | sed -e "s|^./||")
 		local errors=$(mktemp -p "${T}")
-		file "${f}" | grep -q -E -e "(text|source)" || continue
+		if ! file "${f}" | grep -q -E -e "(text|source)" ; then
+			rm -rf "${errors}"
+			continue
+		fi
 
 		local keywords="copyright|licens|all rights reserved|contract|patent|liable|liabilit|public domain|royalt|warrant"
-		grep -q -E -e "(${keywords})" "${f}" || continue
+		if ! grep -q -E -e "(${keywords})" "${f}" ; then
+			rm -rf "${errors}"
+			continue
+		fi
 
 		lines=$(grep -n -i -e "copyright" "${f}" 2>"${errors}")
 		errcode="$?"
