@@ -7415,10 +7415,10 @@ ewarn "Preserving copyright notices.  This may take hours."
 		rm -rf "${ED}/lib/modules/linux-${PV}-${extraversion}/build" || true
 		rm -rf "${ED}/lib/modules/linux-${PV}-${extraversion}/source" || true
 		dosym \
-			"/usr/src/linux-${PV}-${extraversion}"
+			"/usr/src/linux-${PV}-${extraversion}" \
 			"/lib/modules/linux-${PV}-${extraversion}/build"
 		dosym \
-			"/usr/src/linux-${PV}-${extraversion}"
+			"/usr/src/linux-${PV}-${extraversion}" \
 			"/lib/modules/linux-${PV}-${extraversion}/source"
 
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
