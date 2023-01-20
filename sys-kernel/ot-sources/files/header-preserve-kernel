@@ -48,7 +48,7 @@
 # Requires bash, coreutils, grep
 
 export MY_PN="header-preserve-kernel" # minimal kernel version
-export MY_PV="3.0.3"
+export MY_PV="3.0.4"
 
 # This means all unique copyright notices in one file.
 MERGED_COPYRIGHT_NOTICES=${MERGED_COPYRIGHT_NOTICES:-0}
@@ -208,7 +208,7 @@ echo -e "filelist:\t${filelist}"
 		f=$(echo "${f}" | sed -e "s|^./||")
 		local errors=$(mktemp -p "${T}")
 		file "${f}" | grep -q -E -e "(text|source)" || continue
-		grep -E -e "(copyright|licens|all rights reserved|atent|liable|public domain|royalt|warranty)" "${f}" || continue
+		grep -E -e "(copyright|licens|all rights reserved|patent|liable|public domain|royalt|warrant)" "${f}" || continue
 		lines=$(grep -n -i -e "copyright" "${f}" 2>"${errors}")
 		errcode="$?"
 
@@ -220,7 +220,7 @@ echo -e "filelist:\t${filelist}"
 			mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
 			cat "${f}" > "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
 		elif [[ "${f,,}" =~ ("readme") ]] \
-			&& grep -q -E -e "(apache|bsd|cc-by|cddl|-exception|gfdl|gpl|isc|linux-openib|linux-syscall-note|mit|mpl|x11|zlib)" "${f}" ; then
+			&& grep -i -q -E -e "(apache|bsd|cc-by|cddl|-exception|gfdl|gpl|isc|linux-openib|linux-syscall-note|mit|mpl|x11|zlib)" "${f}" ; then
 			mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
 			cat "${f}" > "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
 		elif [[ "${f,,}" =~ ("authors"|"copying"|"license"|"notice"|"patent") ]] ; then
