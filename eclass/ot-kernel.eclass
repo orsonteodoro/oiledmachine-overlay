@@ -2199,19 +2199,7 @@ ewarn
 			cp --parents -a $(find arch -name "Kconfig*") \
 				"${T}/pruned" || die
 
-			local my_arch=$(ot-kernel_get_my_arch)
-			local all_arches=($(ls arch \
-				| sed -e "/Kconfig/d"))
-			local arch
-			for arch in ${all_arches[@]} ; do
-				[[ "${arch}" =~ "${my_arch}" ]] && continue
-einfo "Pruning ${arch} from ${extraversion}"
-				rm -rf "arch/${arch}"
-			done
-			if ! [[ -e "arch/${my_arch}" ]] ; then
-eerror "arch/${my_arch} is not supported"
-				die
-			fi
+			ot-kernel_prune_arches
 
 			# Restore for make olddefconfig
 			cp -aT "${T}/pruned" \
@@ -7224,6 +7212,25 @@ ot-kernel_get_my_arch() {
 	esac
 }
 
+# @FUNCTION: ot-kernel_prune_arches
+# @DESCRIPTION:
+# Delete other arches in the arch folder from ${BUILD_DIR}
+ot-kernel_prune_arches() {
+	local my_arch=$(ot-kernel_get_my_arch)
+	local all_arches=($(ls arch \
+		| sed -e "/Kconfig/d"))
+	local arch
+	for arch in ${all_arches[@]} ; do
+		[[ "${arch}" =~ "${my_arch}" ]] && continue
+einfo "Pruning ${arch} from ${extraversion}"
+		rm -rf "arch/${arch}"
+	done
+	if ! [[ -e "arch/${my_arch}" ]] ; then
+eerror "arch/${my_arch} is not supported"
+		die
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_install
 # @DESCRIPTION:
 # Removes patch cruft.
@@ -7261,19 +7268,7 @@ ot-kernel_src_install() {
 		# Prune now for a faster source code install or header preservation
 		if [[ "${OT_KERNEL_PRUNE_EXTRA_ARCHES}" == "1" ]] \
 			&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
-			local my_arch=$(ot-kernel_get_my_arch)
-			local all_arches=($(ls arch \
-				| sed -e "/Kconfig/d"))
-			local arch
-			for arch in ${all_arches[@]} ; do
-				[[ "${arch}" =~ "${my_arch}" ]] && continue
-einfo "Pruning ${arch} from ${extraversion}"
-				rm -rf "arch/${arch}"
-			done
-			if ! [[ -e "arch/${my_arch}" ]] ; then
-eerror "arch/${my_arch} is not supported"
-				die
-			fi
+			ot-kernel_prune_arches
 			rm -rf $(find arch -name "Kconfig*")
 		fi
 
