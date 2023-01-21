@@ -6380,6 +6380,21 @@ eerror
 				fi
 			fi
 		fi
+
+		# If loglevel_default <= loglevel_quiet, then disable logo.
+		# (Kernel commit: 1099350)
+ewarn
+ewarn "The OT_KERNEL_LOGO_URI will restore the console log levels to defaults."
+ewarn "This may decrease security."
+ewarn
+		if has tresor ${IUSE} ; then
+			if ot-kernel_use tresor ; then
+			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2"
+			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "1"
+		else
+			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "7"
+			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "4"
+		fi
 	fi
 }
 
@@ -6511,8 +6526,6 @@ einfo
 		ot-kernel-pkgflags_apply # Placed before security flags
 		ot-kernel_set_kconfig_ep800 # For testing build time breakage
 
-		ot-kernel_set_kconfig_logo
-
 		is_firmware_ready
 
 		if ot-kernel_use disable_debug ; then
@@ -6522,6 +6535,8 @@ einfo
 		fi
 		ot-kernel_set_kconfig_dmesg ""
 		ot-kernel_set_kconfig_kexec
+
+		ot-kernel_set_kconfig_logo
 
 		local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
 			ot-kernel_set_kconfig_hardening_level

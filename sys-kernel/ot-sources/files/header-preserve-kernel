@@ -48,7 +48,7 @@
 # Requires bash, coreutils, grep
 
 export MY_PN="header-preserve-kernel" # minimal kernel version
-export MY_PV="3.0.9"
+export MY_PV="3.0.10"
 
 # This means all unique copyright notices in one file.
 MERGED_COPYRIGHT_NOTICES=${MERGED_COPYRIGHT_NOTICES:-0}
@@ -202,6 +202,8 @@ echo "Entered filter_copyrights()"
 echo -e "coreid:\t${coreid}"
 	local filelist="${FILE_LIST_DIR}/header_extract_list_"$(printf "%02d" ${coreid})
 echo -e "filelist:\t${filelist}"
+	local license_names="apache|bsd|cc-by|cddl|-exception|gfdl|gpl|isc|linux-openib|linux-syscall-note|mit|mpl|x11|zlib"
+	local keywords="copyright|licens|all rights reserved|contract|patent|liable|liabilit|public domain|royalt|spdx|warrant"
 	local line
 	while IFS= read -r line ; do
 		local f="${line}"
@@ -216,27 +218,27 @@ echo -e "filelist:\t${filelist}"
 			continue
 		fi
 
-		local keywords="copyright|licens|all rights reserved|contract|patent|liable|liabilit|public domain|royalt|warrant"
 		if ! grep -q -E -e "(${keywords})" "${f}" ; then
 			rm -rf "${errors}"
 			continue
 		fi
 
-		lines=$(grep -n -i -e "copyright" "${f}" 2>"${errors}")
+		lines=$(grep -E -n -i -e "(copyright|spdx)" "${f}" 2>"${errors}")
 		errcode="$?"
 
 		local dir=$(dirname "${f}")
 		local bn=$(basename "${f}")
-		if [[ "${f,,}" =~ ("apache"|"bsd"|"cc-by"|"cddl"|"-exception"|"gfdl"|"gpl"|"isc"|"linux-openib"|"linux-syscall-note"|"mit"|"mpl"|"x11"|"zlib") ]] ; then
+		# The *example* file name is a false positive for mpl.
+		if [[ "${f,,}" =~ (${license_names}) ]] ; then
 			# Names in LICENSES subtree
 			mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
 			cat "${f}" > "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
 		elif [[ "${f,,}" =~ ("readme") ]] \
-			&& grep -i -q -E -e "(apache|bsd|cc-by|cddl|-exception|gfdl|gpl|isc|linux-openib|linux-syscall-note|mit|mpl|x11|zlib)" "${f}" ; then
+			&& grep -i -q -E -e "(${license_names})" "${f}" ; then
 			mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
 			cat "${f}" > "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
 		elif [[ "${f,,}" =~ ("readme") ]] \
-			&& grep -i -q -E -e "(${keywords})" "${f}" ; then
+			&& grep -i -q -E -e "(${keywords}|${license_names})" "${f}" ; then
 			mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
 			cat "${f}" > "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
 		elif [[ "${f,,}" =~ ("authors"|"contributors"|"copying"|"credits"|"license"|"maintainers"|"notice"|"patent") ]] ; then
