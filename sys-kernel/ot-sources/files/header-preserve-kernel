@@ -48,7 +48,7 @@
 # Requires bash, coreutils, grep
 
 export MY_PN="header-preserve-kernel" # minimal kernel version
-export MY_PV="3.0.6"
+export MY_PV="3.0.7"
 
 # This means all unique copyright notices in one file.
 MERGED_COPYRIGHT_NOTICES=${MERGED_COPYRIGHT_NOTICES:-0}
@@ -224,7 +224,7 @@ echo -e "filelist:\t${filelist}"
 		local dir=$(dirname "${f}")
 		local bn=$(basename "${f}")
 #echo
-		if [[ "${f,,}" =~ ("apache"|"bsd"|"cc-by"|"cddl"|"-exception"|"gfdl"|"gpl"|"isc"|"linux-openib"|"linux-syscall-note"|"mit"|"mpl"|"x11"|"zlib") ; then
+		if [[ "${f,,}" =~ ("apache"|"bsd"|"cc-by"|"cddl"|"-exception"|"gfdl"|"gpl"|"isc"|"linux-openib"|"linux-syscall-note"|"mit"|"mpl"|"x11"|"zlib") ]] ; then
 			# Names in LICENSES subtree
 			mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
 			cat "${f}" > "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
