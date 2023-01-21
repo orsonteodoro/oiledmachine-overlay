@@ -48,7 +48,7 @@
 # Requires bash, coreutils, grep
 
 export MY_PN="header-preserve-kernel" # minimal kernel version
-export MY_PV="3.0.8"
+export MY_PV="3.0.9"
 
 # This means all unique copyright notices in one file.
 MERGED_COPYRIGHT_NOTICES=${MERGED_COPYRIGHT_NOTICES:-0}
@@ -239,7 +239,7 @@ echo -e "filelist:\t${filelist}"
 			&& grep -i -q -E -e "(${keywords})" "${f}" ; then
 			mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
 			cat "${f}" > "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
-		elif [[ "${f,,}" =~ ("authors"|"copying"|"credits"|"license"|"notice"|"patent") ]] ; then
+		elif [[ "${f,,}" =~ ("authors"|"contributors"|"copying"|"credits"|"license"|"maintainers"|"notice"|"patent") ]] ; then
 			mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
 			cat "${f}" > "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
 		elif [[ "${f,,}" =~ (".md"|".txt"|".rst") ]] ; then

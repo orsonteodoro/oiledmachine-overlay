@@ -126,6 +126,7 @@ einfo
 		-o -iname "*author*" \
 		-o -iname "*CONTRIBUTORS*" \
 		-o -iname "*credits*" \
+		-o -iname "*maintainers*" \
 	) $(grep -i -G -l \
 		-e "copyright" \
 		-e "licen" \
