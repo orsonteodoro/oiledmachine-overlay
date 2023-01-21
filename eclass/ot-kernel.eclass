@@ -111,6 +111,9 @@ LICENSE+=" ( GPL-2+ all-rights-reserved )" # See drivers/gpu/drm/meson/meson_pla
 LICENSE+=" ( all-rights-reserved BSD || ( GPL-2 BSD ) )" # See lib/zstd/compress.c
 LICENSE+=" ( all-rights-reserved MIT || ( GPL-2 MIT ) )" # See drivers/gpu/drm/ttm/ttm_execbuf_util.c
 
+LICENSE+=" ( custom GPL-2+ )" # See drivers/scsi/esas2r/esas2r_main.c, ... ; # \
+# Samples warranty/liability paragraphs from maybe EPL-2.0
+
 LICENSE+=" 0BSD" # See lib/math/cordic.c
 LICENSE+=" Apache-2.0" # See drivers/staging/wfx/hif_api_cmd.h
 
@@ -132,6 +135,7 @@ LICENSE+=" ZLIB" # See lib/zlib_dfltcc/dfltcc.c, ...
 
 LICENSE+=" || ( BSD GPL-2 )" # See lib/test_parman.c
 LICENSE+=" || ( GPL-2 MIT )" # See lib/crypto/poly1305-donna32.c
+LICENSE+=" || ( GPL-2 BSD-2 )" # See arch/x86/crypto/sha512-ssse3-asm.S
 
 HOMEPAGE+="
           https://algo.ing.unimo.it/people/paolo/disk_sched/
