@@ -122,6 +122,7 @@ LICENSE+=" ISC" # See linux/drivers/net/wireless/ath/wil6210/trace.c, \
 LICENSE+=" LGPL-2.1" # See fs/ext4/migrate.c, ...
 LICENSE+=" LGPL-2+ Linux-syscall-note" # See arch/x86/include/uapi/asm/mtrr.h
 LICENSE+=" MIT" # See drivers/gpu/drm/drm_dsc.c
+LICENSE+=" Unlicense" # See tools/usb/ffs-aio-example/multibuff/device_app/aio_multibuff.c
 LICENSE+=" ZLIB" # See lib/zlib_dfltcc/dfltcc.c, ...
 
 LICENSE+=" || ( BSD GPL-2 )" # See lib/test_parman.c
