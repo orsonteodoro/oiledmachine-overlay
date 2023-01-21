@@ -30,6 +30,7 @@ DEPEND+="
 	${PYTHON_DEPS}
 	>=dev-libs/inih-52
 	>=sci-libs/dlib-19.16[${PYTHON_USEDEP},cuda?,python]
+	app-admin/sudo
 	dev-libs/boost[${PYTHON_USEDEP},python]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	media-libs/opencv[${PYTHON_USEDEP},contribhdf,python,v4l]
@@ -263,6 +264,18 @@ ewarn
 ewarn "If problems are encountered, use the ffmpeg USE flag."
 ewarn
 	fi
+einfo
+einfo "To setup, use the following commands:"
+einfo
+einfo "  # Copy the path to the IR camera."
+einfo "  v4l2-ctl --list-devices"
+einfo
+einfo "  # Paste it to the device_path."
+einfo "  sudo ${PN} config"
+einfo
+einfo "  # Add face"
+einfo "  sudo ${PN} add"
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
