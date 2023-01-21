@@ -175,13 +175,6 @@ einfo
 einfo "You need an IR camera for this to work properly."
 einfo
 einfo
-einfo "The following need to be edited in /lib/security/howdy/config.ini:"
-einfo
-einfo "  device_path = none"
-einfo
-einfo "to path of the IR camera (e.g. /dev/video1)."
-einfo
-einfo
 einfo "The pam configuration can be found in"
 einfo
 einfo "  https://github.com/boltgolt/howdy/wiki/Only-using-howdy-for-specific-authentication-types"
