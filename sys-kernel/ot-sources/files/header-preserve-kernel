@@ -331,6 +331,8 @@ setup_classify_dirs_example() {
 	# Places to dump headers
 	mkdir -p "${CLASSIFY_DIR}/foo"
 	mkdir -p "${CLASSIFY_DIR}/bar"
+	mkdir -p "${CLASSIFY_DIR}/all-rights-reserved"
+	mkdir -p "${CLASSIFY_DIR}/all-rights-reserved-unknown"
 	mkdir -p "${CLASSIFY_DIR}/unknown"
 }
 
@@ -367,6 +369,14 @@ classify_copyright_notice_example() {
 	# Custom licenses follow
 
 	if [[ "${is_all_rights_reserved}" == "1" ]] ; then
+		cp -a "${f}" "${CLASSIFY_DIR}/all-rights-reserved"
+	fi
+
+	if [[ "${is_all_rights_reserved}" == "1" && "${is_known}" != "1" ]] ; then
+		cp -a "${f}" "${CLASSIFY_DIR}/all-rights-reserved-unknown"
+	fi
+
+	if [[ "${is_known}" != "1" ]] ; then
 #
 # After filtering through many fragments, you can then reduce the search space
 # of unknown header licenses.  This was the motivation for the
