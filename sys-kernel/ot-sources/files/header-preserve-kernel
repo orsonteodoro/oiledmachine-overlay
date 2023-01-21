@@ -227,7 +227,6 @@ echo -e "filelist:\t${filelist}"
 
 		local dir=$(dirname "${f}")
 		local bn=$(basename "${f}")
-#echo
 		if [[ "${f,,}" =~ ("apache"|"bsd"|"cc-by"|"cddl"|"-exception"|"gfdl"|"gpl"|"isc"|"linux-openib"|"linux-syscall-note"|"mit"|"mpl"|"x11"|"zlib") ]] ; then
 			# Names in LICENSES subtree
 			mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
