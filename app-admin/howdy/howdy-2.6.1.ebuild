@@ -202,10 +202,10 @@ ewarn
 einfo
 einfo "To setup, use the following commands:"
 einfo
-einfo "  # Copy the path to the IR camera."
+einfo "  # Copy the path, prefixed with /dev/, of the IR camera."
 einfo "  v4l2-ctl --list-devices"
 einfo
-einfo "  # Paste it to the device_path."
+einfo "  # Paste it to the device_path, replacing none."
 einfo "  sudo ${PN} config"
 einfo
 einfo "  # Add face"
