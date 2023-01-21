@@ -6387,8 +6387,7 @@ ewarn
 ewarn "The OT_KERNEL_LOGO_URI will restore the console log levels to defaults."
 ewarn "This may decrease security."
 ewarn
-		if has tresor ${IUSE} ; then
-			if ot-kernel_use tresor ; then
+		if has tresor ${IUSE} && ot-kernel_use tresor ; then
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2"
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "1"
 		else
