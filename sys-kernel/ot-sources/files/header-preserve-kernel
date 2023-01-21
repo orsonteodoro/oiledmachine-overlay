@@ -236,7 +236,7 @@ echo -e "filelist:\t${filelist}"
 			&& grep -i -q -E -e "(${keywords})" "${f}" ; then
 			mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
 			cat "${f}" > "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
-		elif [[ "${f,,}" =~ ("authors"|"copying"|"license"|"notice"|"patent") ]] ; then
+		elif [[ "${f,,}" =~ ("authors"|"copying"|"credits"|"license"|"notice"|"patent") ]] ; then
 			mkdir -p "${MULTI_HEADER_DEST_PATH}/${dir}"
 			cat "${f}" > "${MULTI_HEADER_DEST_PATH}/${dir}/${bn}"
 		elif [[ "${f,,}" =~ (".md"|".txt"|".rst") ]] ; then
