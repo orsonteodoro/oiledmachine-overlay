@@ -48,7 +48,7 @@
 # Requires bash, coreutils, grep
 
 export MY_PN="header-preserve-kernel" # minimal kernel version
-export MY_PV="3.0.7"
+export MY_PV="3.0.8"
 
 # This means all unique copyright notices in one file.
 MERGED_COPYRIGHT_NOTICES=${MERGED_COPYRIGHT_NOTICES:-0}
@@ -207,7 +207,11 @@ echo -e "filelist:\t${filelist}"
 		local f="${line}"
 		f=$(echo "${f}" | sed -e "s|^./||")
 		local errors=$(mktemp -p "${T}")
-		if ! file "${f}" | grep -q -E -e "(text|source)" ; then
+
+		# The file command is wrong sometimes.
+		if [[ "${f,,}" =~ "readme" ]] ; then
+			:;
+		elif ! file "${f}" | grep -q -E -e "(text|source)" ; then
 			rm -rf "${errors}"
 			continue
 		fi
