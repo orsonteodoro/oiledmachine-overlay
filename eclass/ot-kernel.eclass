@@ -102,11 +102,14 @@ LICENSE+=" GPL-2 Linux-syscall-note" #  Applies to whole source  \
 
 # The following licenses applies to individual files:
 
+# The distro BSD license template does have all rights reserved and implied.
 # The distro GPL licenses templates do not have all rights reserved but it's
-# found in the headers.  The BSD license template does have all rights reserved.
+# found in the headers.
+# The distro MIT license template does not have all rights reserved.
 LICENSE+=" ( GPL-2 all-rights-reserved )" # See mm/list_lru.c
 LICENSE+=" ( GPL-2+ all-rights-reserved )" # See drivers/gpu/drm/meson/meson_plane.c
 LICENSE+=" ( all-rights-reserved BSD || ( GPL-2 BSD ) )" # See lib/zstd/compress.c
+LICENSE+=" ( all-rights-reserved MIT || ( GPL-2 MIT ) )" # See drivers/gpu/drm/ttm/ttm_execbuf_util.c
 
 LICENSE+=" 0BSD" # See lib/math/cordic.c
 LICENSE+=" Apache-2.0" # See drivers/staging/wfx/hif_api_cmd.h
