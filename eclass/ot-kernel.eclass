@@ -2196,7 +2196,7 @@ ot-kernel_rm_reiserfs() {
 			"Documentation/ioctl/ioctl-number.rst" \
 			|| die
 	fi
-	sed  -e "/REISERFS/,/\/reiserfs/d" \
+	sed -i -e "/REISERFS/,/\/reiserfs/d" \
 		"MAINTAINERS" || die
 	sed -i -e "s|like reiserfs, ||g" \
 		"drivers/block/Kconfig" || die
