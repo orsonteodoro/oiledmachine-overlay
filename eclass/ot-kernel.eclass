@@ -2143,7 +2143,7 @@ ot-kernel_rm_reiserfs() {
 			| sed -e "0,/^Reiserfsprogs/ s|^Reiserfsprogs|1Reiserfsprogs|" \
 			| sed -e "0,/^Reiserfsprogs/ s|^Reiserfsprogs|2Reiserfsprogs|" \
 			| sed -e "/1Reiserfsprogs/,/reiserfsck/d" -e "/2Reiserfsprogs/,/reiserfs/d" \
-		> "Documentation/translations/it_IT/process/changes.rst.t" || die
+			> "Documentation/translations/it_IT/process/changes.rst.t" || die
 		mv "Documentation/translations/it_IT/process/changes.rst"{.t,} || die
 	fi
 
