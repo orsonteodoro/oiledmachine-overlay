@@ -124,7 +124,7 @@ ot-kernel_unset_pat_kconfig_kernel_cmdline() {
 		cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
 		for x in ${inargs[@]} ; do
 			# Remove duplicates
-			cmd=$(echo "${cmd}" | sed -r -e "s|${x}||g")
+			cmd=$(echo "${cmd}" | sed -r -e "s#${x}##g")
 		done
 		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"\""
 		local outargs=(
