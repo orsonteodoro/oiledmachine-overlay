@@ -2109,7 +2109,7 @@ ot-kernel_rm_reiserfs() {
 			"Documentation/kbuild/makefiles.txt" || die
 	fi
 
-	sed -i \
+	sed -i -r \
 		-e "s|. We use \"r5\" hash borrowed from reiserfs||g" \
 		-e "s| \(borrowed from reiserfs\)||g" \
 		"fs/ubifs/key.h" || die
@@ -2196,7 +2196,7 @@ ot-kernel_rm_reiserfs() {
 			"Documentation/ioctl/ioctl-number.rst" \
 			|| die
 	fi
-	sed -i -e "/REISERFS/,/reiserfs/d" \
+	sed  -e "/REISERFS/,/\/reiserfs/d" \
 		"MAINTAINERS" || die
 	sed -i -e "s|like reiserfs, ||g" \
 		"drivers/block/Kconfig" || die
@@ -2218,7 +2218,7 @@ ot-kernel_rm_reiserfs() {
 	einfo "Canceling Reiser4"
 	sed -i -e "/Reiser4/d" \
 		"scripts/ver_linux" || die
-	sed -i -e "/The Reiser4/,/kernel./d" \
+	sed -i -e "/The Reiser4/,/kernel\./d" \
 		"Documentation/process/3.Early-stage.rst" || die
 	if ver_test ${K_MAJOR_MINOR} -ge 5.0 ; then
 		sed -i -e "/Il filesystem Reiser4/,/kernel./d" \
