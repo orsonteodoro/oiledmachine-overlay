@@ -88,7 +88,7 @@ eerror "The ${kopt} kernel option may be used as a possible prerequisite for"
 eerror "DMA side-channel attacks."
 eerror
 eerror "Set OT_KERNEL_DMA_ATTACK_MITIGATIONS=0 to continue or"
-eerror "append ${pkgid} to OT_KERNEL_PKGFLAGS_REJECT."
+eerror "set OT_KERNEL_PKGFLAGS_REJECT[S${pkgid}]=1."
 eerror
 	die
 }
@@ -113,7 +113,7 @@ ban_disable_debug() {
 
 	if [[ "${OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG}" == "1" ]] ; then
 		:
-	elif [[ "${OT_KERNEL_PKGFLAGS_ACCEPT}" =~ "${pkgid}" ]] ; then
+	elif [[ "${OT_KERNEL_PKGFLAGS_ACCEPT[S${pkgid}]}" == "1" ]] ; then
 		:
 	elif [[ "${types}" =~ "NETFILTER" ]] \
 		&& [[ -z "${PERMIT_NETFILTER_SYMBOL_REMOVAL}" \
@@ -128,8 +128,8 @@ eerror
 eerror "Choices:"
 eerror
 eerror "1. Disable the disable_debug USE flag."
-eerror "2. Add OT_KERNEL_PKGFLAGS_REJECT=\"${pkgid}\" in the space separated list."
-eerror "3. Add OT_KERNEL_PKGFLAGS_ACCEPT=\"${pkgid}\" in the space separated list."
+eerror "2. Add OT_KERNEL_PKGFLAGS_REJECT[S${pkgid}]=1."
+eerror "3. Add OT_KERNEL_PKGFLAGS_ACCEPT[S${pkgid}]=1."
 eerror
 eerror "Called from ${FUNCNAME[1]}.  See ot-kernel-pkgflags.eclass from the"
 eerror "eclass folder for details using ${pkgid} for the conflicting debug"
@@ -493,7 +493,7 @@ ot-kernel-pkgflags_apply() {
 # @DESCRIPTION:
 # Applies kernel config flags for the accel-ppp package
 ot-kernel-pkgflags_accel_ppp() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b80fb54" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb80fb54]}" == "1" ]] && return
 	if has_version "net-dialup/accel-ppp" ; then
 		einfo "Applying kernel config flags for the accel-ppp package (id: b80fb54)"
 		ot-kernel_y_configopt "CONFIG_L2TP"
@@ -506,7 +506,7 @@ ot-kernel-pkgflags_accel_ppp() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the acpi_call package
 ot-kernel-pkgflags_acpi_call() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2d5c2ed" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2d5c2ed]}" == "1" ]] && return
 	if has_version "sys-power/acpi_call" ; then
 		einfo "Applying kernel config flags for the acpi_call package (id: 2d5c2ed)"
 		ot-kernel_y_configopt "CONFIG_ACPI"
@@ -517,7 +517,7 @@ ot-kernel-pkgflags_acpi_call() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the acpid package
 ot-kernel-pkgflags_acpid() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "316efa6" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S316efa6]}" =~ "1" ]] && return
 	if has_version "sys-power/acpid" ; then
 		einfo "Applying kernel config flags for the acpid package (id: 316efa6)"
 		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -528,7 +528,7 @@ ot-kernel-pkgflags_acpid() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the actkbd package
 ot-kernel-pkgflags_actkbd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "1ee4e36" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1ee4e36]}" == "1" ]] && return
 	if has_version "app-misc/actkbd" ; then
 		einfo "Applying kernel config flags for the actkbd package (id: 1ee4e36)"
 		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -539,7 +539,7 @@ ot-kernel-pkgflags_actkbd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the alsa package
 ot-kernel-pkgflags_alsa() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "542ac66" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S542ac66]}" == "1" ]] && return
 	if has_version "media-libs/alsa-lib" ; then
 		einfo "Applying kernel config flags for alsa (id: 542ac66)"
 		ot-kernel_y_configopt "CONFIG_SOUND"
@@ -557,7 +557,7 @@ ot-kernel-pkgflags_alsa() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the amt-check package
 ot-kernel-pkgflags_amt_check() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "44d0a26" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S44d0a26]}" == "1" ]] && return
 	if has_version "app-admin/mei-amt-check" ; then
 		einfo "Applying kernel config flags for the amt-check package (id: 44d0a26)"
 		ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME"
@@ -568,7 +568,7 @@ ot-kernel-pkgflags_amt_check() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the apcupsd package
 ot-kernel-pkgflags_apcupsd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "491c232" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S491c232]}" == "1" ]] && return
 	if has_version "sys-power/apcupsd[usb]" ; then
 		einfo "Applying kernel config flags for the apcupsd package (id: 491c232)"
 		ot-kernel_y_configopt "CONFIG_USB_HIDDEV"
@@ -580,7 +580,7 @@ ot-kernel-pkgflags_apcupsd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for appimage packages
 ot-kernel-pkgflags_appimage() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "9d13cec" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S9d13cec]}" == "1" ]] && return
 	if has_version "app-arch/AppImageKit" \
 		|| has_version "app-arch/appimaged" \
 		|| has_version "app-arch/go-appimage" ; then
@@ -602,7 +602,7 @@ ot-kernel-pkgflags_appimage() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the apptainer package
 ot-kernel-pkgflags_apptainer() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "183ad96" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S183ad96]}" == "1" ]] && return
 	if has_version "app-containers/apptainer" ; then
 		einfo "Applying kernel config flags for the apptainer package (id: 183ad96)"
 		ot-kernel_y_configopt "CONFIG_SQUASHFS"
@@ -613,7 +613,7 @@ ot-kernel-pkgflags_apptainer() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the aqtion package
 ot-kernel-pkgflags_aqtion() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "f9ab142" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf9ab142]}" == "1" ]] && return
 	if has_version "net-misc/AQtion" ; then
 		einfo "Applying kernel config flags for the aqtion package (id: f9ab142)"
 		ot-kernel_unset_configopt "CONFIG_AQTION"
@@ -629,7 +629,7 @@ ot-kernel-pkgflags_aqtion() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the arcconf package
 ot-kernel-pkgflags_arcconf() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5b48d6a" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5b48d6a]}" == "1" ]] && return
 	if has_version "sys-block/arcconf" ; then
 		einfo "Applying kernel config flags for the arcconf package (id: 5b48d6a)"
 		warn_lowered_security "5b48d6a"
@@ -642,7 +642,7 @@ ot-kernel-pkgflags_arcconf() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the asterisk package
 ot-kernel-pkgflags_asterisk() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "903f673" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S903f673]}" == "1" ]] && return
 	if has_version "net-misc/asterisk" ; then
 		einfo "Applying kernel config flags for the asterisk package (id: 903f673)"
 		ot-kernel_unset_configopt "CONFIG_NF_CONNTRACK_SIP"
@@ -653,7 +653,7 @@ ot-kernel-pkgflags_asterisk() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the atop package
 ot-kernel-pkgflags_atop() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "54e024f" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S54e024f]}" == "1" ]] && return
 	if has_version "sys-process/atop" ; then
 		einfo "Applying kernel config flags for the atop package (id: 54e024f)"
 		ot-kernel_y_configopt "CONFIG_BSD_PROCESS_ACCT"
@@ -664,7 +664,7 @@ ot-kernel-pkgflags_atop() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the audit package
 ot-kernel-pkgflags_audit() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "0e477ba" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S0e477ba]}" == "1" ]] && return
 	if has_version "sys-process/audit" ; then
 		einfo "Applying kernel config flags for the audit package (id: 0e477ba)"
 		ot-kernel_y_configopt "CONFIG_AUDIT"
@@ -675,7 +675,7 @@ ot-kernel-pkgflags_audit() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the autofs package
 ot-kernel-pkgflags_autofs() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "49dac9d" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S49dac9d]}" == "1" ]] && return
 	if has_version "net-fs/autofs" ; then
 		einfo "Applying kernel config flags for the autofs package (id: 49dac9d)"
 		if ver_test ${K_MAJOR_MINOR} -ge 4.18 ; then
@@ -690,7 +690,7 @@ ot-kernel-pkgflags_autofs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the avahi package
 ot-kernel-pkgflags_avahi() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "1ea9c64" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1ea9c64]}" == "1" ]] && return
 	if has_version "net-dns/avahi" ; then
 		einfo "Applying kernel config flags for the avahi package (id: 1ea9c64)"
 		_ot-kernel-pkgflags_tcpip
@@ -702,7 +702,7 @@ ot-kernel-pkgflags_avahi() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the batctl package
 ot-kernel-pkgflags_batctl() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "e9cc0fc" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se9cc0fc]}" == "1" ]] && return
 	if has_version "net-misc/batctl" ; then
 		einfo "Applying kernel config flags for the batctl package (id: e9cc0fc)"
 		ot-kernel_y_configopt "CONFIG_BATMAN_ADV"
@@ -713,7 +713,7 @@ ot-kernel-pkgflags_batctl() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the bcache-tools package
 ot-kernel-pkgflags_bcache_tools() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "1c16a04" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1c16a04]}" == "1" ]] && return
 	if has_version "sys-fs/bcache-tools" ; then
 		einfo "Applying kernel config flags for the bcache-tools package (id: 1c16a04)"
 		ot-kernel_y_configopt "CONFIG_BCACHE"
@@ -726,7 +726,7 @@ ot-kernel-pkgflags_bcache_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the bcc
 ot-kernel-pkgflags_bcc() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "9e67059" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S9e67059]}" == "1" ]] && return
 	if has_version "dev-util/bcc" ; then
 		einfo "Applying kernel config flags for bcc (id: 9e67059)"
 		ot-kernel_y_configopt "CONFIG_BPF"
@@ -750,7 +750,7 @@ ot-kernel-pkgflags_bcc() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the bcm-sta
 ot-kernel-pkgflags_bcm_sta() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "155d9fc" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S155d9fc]}" == "1" ]] && return
 	if has_version "net-wireless/broadcom-sta" ; then
 		einfo "Applying kernel config flags for bcm-sta (id: 155d9fc)"
 		_s1() {
@@ -818,7 +818,7 @@ _ot-kernel-pkgflags_has_beep_udev_rules() {
 # @DESCRIPTION:
 # Applies kernel config flags for the beep package
 ot-kernel-pkgflags_beep() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "dbffbca" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sdbffbca]}" == "1" ]] && return
 	if has_version "app-misc/beep" ; then
 		einfo "Applying kernel config flags for the beep package (id: dbffbca)"
 		STD_PC_SPEAKER="${STD_PC_SPEAKER:-1}"
@@ -876,7 +876,7 @@ _ot-kernel-pkgflags_blink_suid_sandbox_settings() { # DONE
 eerror
 eerror "Lowered security detected:"
 eerror "The CONFIG_GRKERNSEC flag will break the suid sandbox."
-eerror "Either add 4aa6a9f to OT_KERNEL_PKGFLAGS_REJECT or disable CONFIG_GRKERNSEC."
+eerror "Either set OT_KERNEL_PKGFLAGS_REJECT[S4aa6a9f]=1 or disable CONFIG_GRKERNSEC."
 eerror
 		die
 	fi
@@ -886,7 +886,7 @@ eerror
 # @DESCRIPTION:
 # Applies kernel config flags for the Blink suid sandbox
 ot-kernel-pkgflags_blink_suid_sandbox() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4aa6a9f" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4aa6a9f]}" == "1" ]] && return
 	local pkgs=(
 # Obtained from
 # From /usr/portage \
@@ -970,7 +970,7 @@ www-misc/instatron
 # @DESCRIPTION:
 # Applies kernel config flags for the blink1 package
 ot-kernel-pkgflags_blink1() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2d99dc4" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2d99dc4]}" == "1" ]] && return
 	if has_version "app-misc/blink1" ; then
 		einfo "Applying kernel config flags for the blink1 package (id: 2d99dc4)"
 		ot-kernel_y_configopt "CONFIG_USB_HID"
@@ -981,7 +981,7 @@ ot-kernel-pkgflags_blink1() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the blktrace package
 ot-kernel-pkgflags_blktrace() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "029d340" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S029d340]}" == "1" ]] && return
 	if has_version "sys-block/blktrace" ; then
 		einfo "Applying kernel config flags for the blktrace package (id: 029d340)"
 		ban_disable_debug "029d340"
@@ -993,7 +993,7 @@ ot-kernel-pkgflags_blktrace() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the blueman package
 ot-kernel-pkgflags_blueman() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c3a2203" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc3a2203]}" == "1" ]] && return
 	if has_version "net-wireless/blueman[network]" ; then
 		einfo "Applying kernel config flags for the blueman package (id: c3a2203)"
 		ot-kernel_y_configopt "CONFIG_BRIDGE"
@@ -1007,7 +1007,7 @@ ot-kernel-pkgflags_blueman() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the bmon package
 ot-kernel-pkgflags_bmon() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4ac3437" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4ac3437]}" == "1" ]] && return
 	if has_version "net-analyzer/bmon" ; then
 		einfo "Applying kernel config flags for the bmon package (id: 4ac3437)"
 		ot-kernel_y_configopt "CONFIG_NET_SCHED"
@@ -1018,7 +1018,7 @@ ot-kernel-pkgflags_bmon() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the bluez package
 ot-kernel-pkgflags_bluez() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "73d2a26" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S73d2a26]}" == "1" ]] && return
 	if has_version "sys-apps/bluez" ; then
 		einfo "Applying kernel config flags for the bluez package (id: 73d2a26)"
 		ot-kernel_y_configopt "CONFIG_NET"
@@ -1056,7 +1056,7 @@ ot-kernel-pkgflags_bluez() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the bpftool package
 ot-kernel-pkgflags_bpftool() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "17f8f06" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S17f8f06]}" == "1" ]] && return
 	if has_version "dev-util/bpftool" ; then
 		einfo "Applying kernel config flags for the bpftool package (id: 17f8f06)"
 		ban_disable_debug "17f8f06"
@@ -1068,7 +1068,7 @@ ot-kernel-pkgflags_bpftool() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the bpftrace package
 ot-kernel-pkgflags_bpftrace() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "aa54616" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Saa54616]}" == "1" ]] && return
 	if has_version "dev-util/bpftrace" ; then
 		einfo "Applying kernel config flags for the bpftrace package (id: aa54616)"
 		ot-kernel_y_configopt "CONFIG_BPF"
@@ -1085,7 +1085,7 @@ ot-kernel-pkgflags_bpftrace() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the boinc package
 ot-kernel-pkgflags_boinc() { # TESTING
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "e9d3694" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se9d3694]}" == "1" ]] && return
 	if has_version "sci-misc/boinc" ; then
 		einfo "Applying kernel config flags for the boinc package (id: e9d3694)"
 		if grep -q -E -e "^CONFIG_LEGACY_VSYSCALL_NONE=y" "${path_config}" ; then
@@ -1110,7 +1110,7 @@ ot-kernel-pkgflags_boinc() { # TESTING
 # @DESCRIPTION:
 # Applies kernel config flags for the bolt package
 ot-kernel-pkgflags_bolt() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "0bf997d" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S0bf997d]}" == "1" ]] && return
 	if has_version "sys-apps/bolt[kernel_linux]" ; then
 		einfo "Applying kernel config flags for the bolt package (id: 0bf997d)"
 		if ver_test ${K_MAJOR_MINOR} -lt 5.6 ; then
@@ -1126,7 +1126,7 @@ ot-kernel-pkgflags_bolt() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the bootchart2 package
 ot-kernel-pkgflags_bootchart2() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c913230" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc913230]}" == "1" ]] && return
 	if has_version "app-benchmarks/bootchart2" ; then
 		einfo "Applying kernel config flags for the bootchart2 package (id: c913230)"
 		ot-kernel_y_configopt "CONFIG_PROC_EVENTS"
@@ -1140,7 +1140,7 @@ ot-kernel-pkgflags_bootchart2() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the bridge-utils package
 ot-kernel-pkgflags_bridge_utils() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "8f12596" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S8f12596]}" == "1" ]] && return
 	if has_version "net-misc/bridge-utils" ; then
 		einfo "Applying kernel config flags for the bridge-utils package (id: 8f12596)"
 		ot-kernel_y_configopt "CONFIG_BRIDGE_UTILS"
@@ -1151,7 +1151,7 @@ ot-kernel-pkgflags_bridge_utils() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the btrfs_progs package
 ot-kernel-pkgflags_btrfs_progs() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "8276066" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S8276066]}" == "1" ]] && return
 	if has_version "sys-fs/btrfs-progs" ; then
 		einfo "Applying kernel config flags for the btrfs_progs package (id: 8276066)"
 		ot-kernel_y_configopt "CONFIG_BTRFS_FS"
@@ -1162,7 +1162,7 @@ ot-kernel-pkgflags_btrfs_progs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the bubblewrap package
 ot-kernel-pkgflags_bubblewrap() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4255ad7" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4255ad7]}" == "1" ]] && return
 	if has_version "sys-apps/bubblewrap" ; then
 		einfo "Applying kernel config flags for the bubblewrap package (id: 4255ad7)"
 		ot-kernel_y_configopt "CONFIG_NAMESPACES"
@@ -1178,7 +1178,7 @@ ot-kernel-pkgflags_bubblewrap() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for caja_dbox
 ot-kernel-pkgflags_caja_dbox() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "57a6a4b" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S57a6a4b]}" == "1" ]] && return
 	if has_version "mate-extra/caja-dropbox" ; then
 		einfo "Applying kernel config flags for caja_dbox (id: 57a6a4b)"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
@@ -1189,7 +1189,7 @@ ot-kernel-pkgflags_caja_dbox() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the catalyst package
 ot-kernel-pkgflags_catalyst() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "14ce6b4" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S14ce6b4]}" == "1" ]] && return
 	if has_version "dev-util/catalyst" ; then
 		einfo "Applying kernel config flags for the catalyst package (id: 14ce6b4)"
 		ot-kernel_y_configopt "CONFIG_UTS_NS"
@@ -1205,7 +1205,7 @@ ot-kernel-pkgflags_catalyst() { # DONE
 ot-kernel-pkgflags_cdrom() { #
 	[[ "${CDROM:-1}" == "1" ]] || return
 	# Simplified code without autodetection
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c3a2b46" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc3a2b46]}" == "1" ]] && return
 	einfo "Applying kernel config flags for CD-ROM packages(s) (id: c3a2b46)"
 	ot-kernel_y_configopt "CONFIG_BLOCK"
 	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
@@ -1243,7 +1243,7 @@ ot-kernel-pkgflags_cdrom() { #
 # @DESCRIPTION:
 # Applies kernel config flags for the cifs-utils package
 ot-kernel-pkgflags_cifs_utils() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "f8ae20a" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf8ae20a]}" == "1" ]] && return
 	if has_version "net-fs/cifs-utils" ; then
 		einfo "Applying kernel config flags for the cifs-utils package (id: f8ae20a)"
 		ot-kernel_y_configopt "CONFIG_NETWORK_FILESYSTEMS"
@@ -1484,7 +1484,7 @@ ot-kernel-pkgflags_cipher_optional() {
 # @DESCRIPTION:
 # Applies kernel config flags for the chroot-wrapper package
 ot-kernel-pkgflags_chroot_wrapper() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4a45383" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4a45383]}" == "1" ]] && return
 	if has_version "dev-util/chroot-wrapper" ; then
 		einfo "Applying kernel config flags for the chroot-wrapper package (id: 4a45383)"
 		ot-kernel_y_configopt "CONFIG_TMPFS"
@@ -1497,7 +1497,7 @@ ot-kernel-pkgflags_chroot_wrapper() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the clamav package
 ot-kernel-pkgflags_clamav() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "1545fdb" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1545fdb]}" == "1" ]] && return
 	if has_version "app-antivirus/clamav" ; then
 		einfo "Applying kernel config flags for the clamav package (id: 1545fdb)"
 		ot-kernel_y_configopt "CONFIG_FANOTIFY"
@@ -1509,7 +1509,7 @@ ot-kernel-pkgflags_clamav() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the clamfs package
 ot-kernel-pkgflags_clamfs() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "bbd28c4" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sbbd28c4]}" == "1" ]] && return
 	if has_version "sys-fs/clamfs" ; then
 		einfo "Applying kernel config flags for the clamfs package (id: bbd28c4)"
 		ot-kernel_y_configopt "CONFIG_FUSE_FS"
@@ -1520,7 +1520,7 @@ ot-kernel-pkgflags_clamfs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the clsync package
 ot-kernel-pkgflags_clsync() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "cbd5946" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Scbd5946]}" == "1" ]] && return
 	if has_version "app-admin/clsync[clsync]" ; then
 		einfo "Applying kernel config flags for the clsync package (id: cbd5946)"
 		if has_version "app-admin/clsync[inotify]" ; then
@@ -1544,7 +1544,7 @@ ot-kernel-pkgflags_clsync() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the cni-plugins package
 ot-kernel-pkgflags_cni_plugins() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "dec3486" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sdec3486]}" == "1" ]] && return
 	if has_version "net-misc/cni-plugins" ; then
 		einfo "Applying kernel config flags for the cni-plugins package (id: dec3486)"
 		ot-kernel_y_configopt "CONFIG_BRIDGE_VLAN_FILTERING"
@@ -1555,7 +1555,7 @@ ot-kernel-pkgflags_cni_plugins() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the collectd package
 ot-kernel-pkgflags_collectd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c086216" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc086216]}" == "1" ]] && return
 	if has_version "app-metrics/collectd" ; then
 		einfo "Applying kernel config flags for the collectd package (id: c086216)"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
@@ -1593,7 +1593,7 @@ ot-kernel-pkgflags_collectd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the conky package
 ot-kernel-pkgflags_conky() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "0a83d3b" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S0a83d3b]}" == "1" ]] && return
 	if has_version "app-admin/conky" ; then
 		einfo "Applying kernel config flags for the conky package (id: 0a83d3b)"
 	        _ot-kernel-pkgflags_tcpip
@@ -1605,7 +1605,7 @@ ot-kernel-pkgflags_conky() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the conntrack-tools package
 ot-kernel-pkgflags_conntrack_tools() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "f6a25e5" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf6a25e5]}" == "1" ]] && return
 	if has_version "net-firewall/conntrack-tools" ; then
 		einfo "Applying kernel config flags for the conntrack-tools package (id: f6a25e5)"
 		if ver_test ${PV} -lt 2.6.20 ; then
@@ -1632,7 +1632,7 @@ ot-kernel-pkgflags_conntrack_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the corosync package
 ot-kernel-pkgflags_corosync() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "63be96c" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S63be96c]}" == "1" ]] && return
 	if has_version "sys-cluster/corosync[watchdog]" ; then
 		einfo "Applying kernel config flags for the corosync package (id: 63be96c)"
 		ot-kernel_y_configopt "CONFIG_WATCHDOG"
@@ -1643,7 +1643,7 @@ ot-kernel-pkgflags_corosync() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the crda package
 ot-kernel-pkgflags_crda() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2ac64d4" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2ac64d4]}" == "1" ]] && return
 	if has_version "net-wireless/crda" ; then
 		has_version "net-wireless/wireless-regdb" || die "Install the wireless-regdb package first"
 		einfo "Applying kernel config flags for the crda package (id: 2ac64d4)"
@@ -1677,7 +1677,7 @@ ot-kernel-pkgflags_crda() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the criu package
 ot-kernel-pkgflags_criu() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "484c86a" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S484c86a]}" == "1" ]] && return
 	if has_version "sys-process/criu" ; then
 		einfo "Applying kernel config flags for the criu package (id: 484c86a)"
 		ot-kernel_y_configopt "CONFIG_CHECKPOINT_RESTORE"
@@ -1704,7 +1704,7 @@ ot-kernel-pkgflags_criu() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the cryfs package
 ot-kernel-pkgflags_cryfs() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4cd1f23" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4cd1f23]}" == "1" ]] && return
 	if has_version "sys-fs/cryfs" ; then
 		einfo "Applying kernel config flags for the cryfs package (id: 4cd1f23)"
 		ot-kernel_y_configopt "CONFIG_FUSE_FS"
@@ -1715,7 +1715,7 @@ ot-kernel-pkgflags_cryfs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the cryptodev package
 ot-kernel-pkgflags_cryptodev() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5bfeb14" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5bfeb14]}" == "1" ]] && return
 	if has_version "sys-kernel/cryptodev" ; then
 		einfo "Applying kernel config flags for the cryptodev package (id: 5bfeb14)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
@@ -1732,7 +1732,7 @@ ot-kernel-pkgflags_cryptodev() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the cryptmount package
 ot-kernel-pkgflags_cryptmount() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "42b9891" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S42b9891]}" == "1" ]] && return
 	if has_version "sys-fs/cryptmount" ; then
 		einfo "Applying kernel config flags for the cryptmount package (id: 42b9891)"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
@@ -2401,7 +2401,7 @@ _ot-kernel-pkgflags_poly1305() {
 # @DESCRIPTION:
 # Applies kernel config flags for the cryptsetup package
 ot-kernel-pkgflags_cryptsetup() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "de0f460" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sde0f460]}" == "1" ]] && return
 	if has_version "sys-fs/cryptsetup" ; then
 		einfo "Applying kernel config flags for the cryptsetup package (id: de0f460)"
 		ot-kernel_y_configopt "CONFIG_MODULES"
@@ -2527,7 +2527,7 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the cups package
 ot-kernel-pkgflags_cups() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "dbb3834" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sdbb3834]}" == "1" ]] && return
 	if has_version "net-print/cups[-usb]" ; then
 		# Implied has_version "net-print/cups[linux_kernel]"
 		einfo "Applying kernel config flags for the cups package (id: dbb3834)"
@@ -2539,7 +2539,7 @@ ot-kernel-pkgflags_cups() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the cvmfs package
 ot-kernel-pkgflags_cvmfs() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "967ed28" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S967ed28]}" == "1" ]] && return
 	if has_version "net-fs/cvmfs" ; then
 		einfo "Applying kernel config flags for the cvmfs package (id: 967ed28)"
 		ot-kernel_y_configopt "CONFIG_OVERLAY_FS"
@@ -2550,7 +2550,7 @@ ot-kernel-pkgflags_cvmfs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the dahdi package
 ot-kernel-pkgflags_dahdi() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "31c5fa5" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S31c5fa5]}" == "1" ]] && return
 	if has_version "net-misc/dahdi" ; then
 		einfo "Applying kernel config flags for numa support for the dahdi package (id: 31c5fa5)"
 		ot-kernel_y_configopt "CONFIG_MODULES"
@@ -2565,7 +2565,7 @@ ot-kernel-pkgflags_dahdi() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the db package with numa support
 ot-kernel-pkgflags_db_numa() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b150cb7" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb150cb7]}" == "1" ]] && return
 	if has_version "dev-db/mysql[numa]" \
 		|| has_version "dev-db/percona-server[numa]" ; then
 		einfo "Applying kernel config flags for numa support for a database package (id: b150cb7)"
@@ -2577,7 +2577,7 @@ ot-kernel-pkgflags_db_numa() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the dbus package
 ot-kernel-pkgflags_dbus() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b9e31e7" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb9e31e7]}" == "1" ]] && return
 	if has_version "sys-apps/dbus" ; then
 		# Implied has_version "sys-apps/dbus[linux_kernel]"
 		einfo "Applying kernel config flags for the dbus package (id: b9e31e7)"
@@ -2589,7 +2589,7 @@ ot-kernel-pkgflags_dbus() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the dccutil package
 ot-kernel-pkgflags_dccutil() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "6805d71" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S6805d71]}" == "1" ]] && return
 	if has_version "app-misc/ddcutil" ; then
 		einfo "Applying kernel config flags for the dccutil package (id: 6805d71)"
 		ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
@@ -2606,7 +2606,7 @@ ot-kernel-pkgflags_dccutil() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for discord
 ot-kernel-pkgflags_discord() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "bcc3f54" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sbcc3f54]}" == "1" ]] && return
 	if has_version "net-im/discord-bin" ; then
 		einfo "Applying kernel config flags for discord (id: bcc3f54)"
 		ot-kernel_y_configopt "CONFIG_USER_NS"
@@ -2617,7 +2617,7 @@ ot-kernel-pkgflags_discord() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the distrobuilder package
 ot-kernel-pkgflags_distrobuilder() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "9ed33e8" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S9ed33e8]}" == "1" ]] && return
 	if has_version "app-containers/distrobuilder" ; then
 		einfo "Applying kernel config flags for distrobuilder package (id: 9ed33e8)"
 		ot-kernel_y_configopt "CONFIG_OVERLAY_FS"
@@ -2628,7 +2628,7 @@ ot-kernel-pkgflags_distrobuilder() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the drbd-utils package
 ot-kernel-pkgflags_drbd_utils() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "99eaf4d" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S99eaf4d]}" == "1" ]] && return
 	if has_version "sys-cluster/drbd-utils" ; then
 		einfo "Applying kernel config flags for the drbd-utils package (id: 99eaf4d)"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_DRBD"
@@ -2639,7 +2639,7 @@ ot-kernel-pkgflags_drbd_utils() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the droidcam package
 ot-kernel-pkgflags_droidcam() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "82100d3" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S82100d3]}" == "1" ]] && return
 	if has_version "media-video/droidcam" ; then
 		einfo "Applying kernel config flags for the droidcam package (id: 82100d3)"
 		ot-kernel_y_configopt "CONFIG_SND_ALOOP"
@@ -2654,7 +2654,7 @@ ot-kernel-pkgflags_droidcam() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the dracut package
 ot-kernel-pkgflags_dracut() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "494db6b" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S494db6b]}" == "1" ]] && return
 	if has_version "sys-kernel/dracut" ; then
 		einfo "Applying kernel config flags for the dracut package (id: 494db6b)"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_INITRD"
@@ -2666,7 +2666,7 @@ ot-kernel-pkgflags_dracut() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the dropwatch package
 ot-kernel-pkgflags_dropwatch() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "7422820" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S7422820]}" == "1" ]] && return
 	if has_version "dev-util/dropwatch" ; then
 		einfo "Applying kernel config flags for the dropwatch package (id: 7422820)"
 		ot-kernel_y_configopt "CONFIG_NET_DROP_MONITOR"
@@ -2679,7 +2679,7 @@ ot-kernel-pkgflags_dropwatch() { # DONE
 ot-kernel-pkgflags_dvd() { #
 	[[ "${DVD:-1}" == "1" ]] || return
 	# Simplified code without autodetection
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "080b6ff" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S080b6ff]}" == "1" ]] && return
 	einfo "Applying kernel config flags for DVD package(s) (id: 080b6ff)"
 	ot-kernel_y_configopt "CONFIG_BLOCK"
 	ot-kernel_y_configopt "CONFIG_UDF_FS"
@@ -2689,7 +2689,7 @@ ot-kernel-pkgflags_dvd() { #
 # @DESCRIPTION:
 # Applies kernel config flags for the latencytop package
 ot-kernel-pkgflags_latencytop() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "1e47c47" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1e47c47]}" == "1" ]] && return
 	if has_version "sys-process/latencytop" ; then
 		einfo "Applying kernel config flags for the latencytop package (id: 1e47c47)"
 		ot-kernel_y_configopt "CONFIG_LATENCYTOP"
@@ -2700,7 +2700,7 @@ ot-kernel-pkgflags_latencytop() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libcec package
 ot-kernel-pkgflags_libcec() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c7a68c0" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc7a68c0]}" == "1" ]] && return
 	if has_version "dev-libs/libcec" ; then
 		einfo "Applying kernel config flags for the libcec package (id: c7a68c0)"
 		ot-kernel_y_configopt "CONFIG_USB_ACM"
@@ -2714,7 +2714,7 @@ ot-kernel-pkgflags_libcec() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the docker package
 ot-kernel-pkgflags_docker() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "05309e2" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S05309e2]}" == "1" ]] && return
 	if has_version "app-containers/docker" ; then
 		einfo "Applying kernel config flags for the docker package (id: 05309e2)"
 		ot-kernel_y_configopt "CONFIG_NET"
@@ -2801,7 +2801,7 @@ ot-kernel-pkgflags_docker() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the e2fsprogs package
 ot-kernel-pkgflags_e2fsprogs() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "0d4e223" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S0d4e223]}" == "1" ]] && return
 	if has_version "sys-fs/e2fsprogs" ; then
 		einfo "Applying kernel config flags for the e2fsprogs package (id: 0d4e223)"
 		if [[ "${EXT4_ENCRYPTION:-1}" == "1" ]] ; then
@@ -2815,7 +2815,7 @@ ot-kernel-pkgflags_e2fsprogs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ecryptfs package
 ot-kernel-pkgflags_ecryptfs() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "7e08ae3" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S7e08ae3]}" == "1" ]] && return
 	if has_version "sys-fs/ecryptfs-utils" ; then
 		einfo "Applying kernel config flags for the ecryptfs package (id: 7e08ae3)"
 		ot-kernel_y_configopt "CONFIG_MISC_FILESYSTEMS"
@@ -2828,7 +2828,7 @@ ot-kernel-pkgflags_ecryptfs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the efibootmgr package
 ot-kernel-pkgflags_efibootmgr() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c19b4be" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc19b4be]}" == "1" ]] && return
 	if has_version "sys-boot/efibootmgr" ; then
 		einfo "Applying kernel config flags for the efibootmgr package (id: c19b4be)"
 		ot-kernel_y_configopt "CONFIG_EFI_VARS"
@@ -2839,7 +2839,7 @@ ot-kernel-pkgflags_efibootmgr() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ekeyd package
 ot-kernel-pkgflags_ekeyd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b71bfeb" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb71bfeb]}" == "1" ]] && return
 	if has_version "app-crypt/ekeyd" ; then
 		einfo "Applying kernel config flags for the ekeyd package (id: b71bfeb)"
 		ot-kernel_y_configopt "CONFIG_USB_ACM"
@@ -2850,7 +2850,7 @@ ot-kernel-pkgflags_ekeyd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ell package
 ot-kernel-pkgflags_ell() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "07b5e1f" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S07b5e1f]}" == "1" ]] && return
 	if has_version "dev-libs/ell" ; then
 		einfo "Applying kernel config flags for the ell package (id: 07b5e1f)"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
@@ -2867,7 +2867,7 @@ ot-kernel-pkgflags_ell() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the elogind package
 ot-kernel-pkgflags_elogind() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "e7308d9" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se7308d9]}" == "1" ]] && return
 	if has_version "sys-auth/elogind" ; then
 		einfo "Applying kernel config flags for the elogind package (id: e7308d9)"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
@@ -2882,7 +2882,7 @@ ot-kernel-pkgflags_elogind() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the embree package
 ot-kernel-pkgflags_embree() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "121bc50" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S121bc50]}" == "1" ]] && return
 	if has_version "media-libs/embree" ; then
 		einfo "Applying kernel config flags for the embree package (id: 121bc50)"
 		ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
@@ -2893,7 +2893,7 @@ ot-kernel-pkgflags_embree() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ena_driver package
 ot-kernel-pkgflags_ena_driver() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "0fd4edf" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S0fd4edf]}" == "1" ]] && return
 	if has_version "net-misc/ena-driver" ; then
 		einfo "Applying kernel config flags for the ena-driver package (id: 0fd4edf)"
 		ot-kernel_y_configopt "CONFIG_PCI_MSI"
@@ -2906,7 +2906,7 @@ ot-kernel-pkgflags_ena_driver() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the encfs package
 ot-kernel-pkgflags_encfs() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "3e70419" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S3e70419]}" == "1" ]] && return
 	if has_version "sys-fs/encfs" ; then
 		einfo "Applying kernel config flags for the encfs package (id: 3e70419)"
 		ot-kernel_y_configopt "CONFIG_FUSE_FS"
@@ -2917,7 +2917,7 @@ ot-kernel-pkgflags_encfs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the epoch package
 ot-kernel-pkgflags_epoch() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5e952fe" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5e952fe]}" == "1" ]] && return
 	if has_version "sys-apps/epoch" ; then
 		einfo "Applying kernel config flags for the epoch package (id: 5e952fe)"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
@@ -2928,7 +2928,7 @@ ot-kernel-pkgflags_epoch() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the espeakup package
 ot-kernel-pkgflags_espeakup() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5202028" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5202028]}" == "1" ]] && return
 	if has_version "app-accessibility/espeakup" ; then
 		einfo "Applying kernel config flags for the espeakup package (id: 5202028)"
 		ot-kernel_y_configopt "CONFIG_SPEAKUP"
@@ -2940,7 +2940,7 @@ ot-kernel-pkgflags_espeakup() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the eudev package
 ot-kernel-pkgflags_eudev() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "9c95acb" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S9c95acb]}" == "1" ]] && return
 	if has_version "sys-fs/eudev" ; then
 		einfo "Applying kernel config flags for the eudev package (id: 9c95acb)"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_BSG"
@@ -2961,7 +2961,7 @@ ot-kernel-pkgflags_eudev() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the eventd package
 ot-kernel-pkgflags_eventd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "9baffe9" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S9baffe9]}" == "1" ]] && return
 	if has_version "net-misc/eventd[ipv6]" ; then
 		einfo "Applying kernel config flags for the eventd package (id: 9baffe9)"
 	        _ot-kernel-pkgflags_tcpip
@@ -2973,7 +2973,7 @@ ot-kernel-pkgflags_eventd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the f2fs-tools package
 ot-kernel-pkgflags_f2fs_tools() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "3a3a096" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S3a3a096]}" == "1" ]] && return
 	if has_version "sys-fs/f2fs-tools" ; then
 		einfo "Applying kernel config flags for the f2fs-tools package (id: 3a3a096)"
 		ot-kernel_y_configopt "CONFIG_BLOCK"
@@ -2988,7 +2988,7 @@ ot-kernel-pkgflags_f2fs_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ff package
 ot-kernel-pkgflags_ff() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b5b1507" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb5b1507]}" == "1" ]] && return
 	if has_version "www-client/firefox" \
 		|| has_version "www-client/firefox-bin" \
 		|| has_version "www-client/torbrowser" ; then
@@ -3001,7 +3001,7 @@ ot-kernel-pkgflags_ff() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the firecracker_bin package
 ot-kernel-pkgflags_firecracker_bin() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "16d1550" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S16d1550]}" == "1" ]] && return
 	if has_version "app-emulation/firecracker-bin" ; then
 		einfo "Applying kernel config flags for the firecracker_bin package (id: 16d1550)"
 		ot-kernel-pkgflags_kvm_host_required
@@ -3014,7 +3014,7 @@ ot-kernel-pkgflags_firecracker_bin() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the firehol package
 ot-kernel-pkgflags_firehol() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c2c3d67" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc2c3d67]}" == "1" ]] && return
 	if has_version "net-firewall/firehol" ; then
 		einfo "Applying kernel config flags for the firehol package (id: c2c3d67)"
 		ot-kernel_y_configopt "CONFIG_IP_NF_FILTER"
@@ -3041,7 +3041,7 @@ ot-kernel-pkgflags_firehol() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the firewalld package
 ot-kernel-pkgflags_firewalld() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "6c85b82" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S6c85b82]}" == "1" ]] && return
 	if has_version "net-firewall/firewalld" ; then
 		einfo "Applying kernel config flags for the firewalld package (id: 6c85b82)"
 		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
@@ -3139,7 +3139,7 @@ ot-kernel-pkgflags_firewalld() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the flatpak package
 ot-kernel-pkgflags_flatpak() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "427345a" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S427345a]}" == "1" ]] && return
 	if has_version "sys-apps/flatpak" ; then
 		einfo "Applying kernel config flags for the flatpak package (id: 427345a)"
 		ot-kernel_y_configopt "CONFIG_NAMESPACES"
@@ -3154,7 +3154,7 @@ ot-kernel-pkgflags_flatpak() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the firejail package
 ot-kernel-pkgflags_firejail() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "222b6c4" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S222b6c4]}" == "1" ]] && return
 	if has_version "sys-apps/firejail" ; then
 		einfo "Applying kernel config flags for the firejail package (id: 222b6c4)"
 		ot-kernel_y_configopt "CONFIG_NAMESPACES"
@@ -3166,7 +3166,7 @@ ot-kernel-pkgflags_firejail() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the fuse package
 ot-kernel-pkgflags_fuse() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "7a6e898" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S7a6e898]}" == "1" ]] && return
 	if has_version "sys-fs/fuse" ; then
 		einfo "Applying kernel config flags for the fuse package (id: 7a6e898)"
 		ot-kernel_y_configopt "CONFIG_FUSE_FS"
@@ -3177,7 +3177,7 @@ ot-kernel-pkgflags_fuse() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the fwknop package
 ot-kernel-pkgflags_fwknop() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2f507ac" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2f507ac]}" == "1" ]] && return
 	if has_version "net-firewall/fwknop" ; then
 		einfo "Applying kernel config flags for the fwknop package (id: 2f507ac)"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_COMMENT"
@@ -3191,7 +3191,7 @@ ot-kernel-pkgflags_fwknop() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the g15daemon package
 ot-kernel-pkgflags_g15daemon() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "602f7e1" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S602f7e1]}" == "1" ]] && return
 	if has_version "app-misc/g15daemon" ; then
 		einfo "Applying kernel config flags for the g15daemon package (id: 602f7e1)"
 		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
@@ -3202,7 +3202,7 @@ ot-kernel-pkgflags_g15daemon() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the gerbera package
 ot-kernel-pkgflags_gerbera() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "eca1a38" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Seca1a38]}" == "1" ]] && return
 	if has_version "net-misc/gerbera" ; then
 		einfo "Applying kernel config flags for the gerbera package (id: eca1a38)"
 		_ot-kernel-pkgflags_tcpip
@@ -3215,7 +3215,7 @@ ot-kernel-pkgflags_gerbera() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the glances package
 ot-kernel-pkgflags_glances() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "71ea7b8" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S71ea7b8]}" == "1" ]] && return
 	if has_version "sys-process/glances" ; then
 		einfo "Applying kernel config flags for the glances package (id: 71ea7b8)"
 		ot-kernel_y_configopt "CONFIG_TASK_IO_ACCOUNTING"
@@ -3228,7 +3228,7 @@ ot-kernel-pkgflags_glances() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the glib package
 ot-kernel-pkgflags_glib() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "8210745" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S8210745]}" == "1" ]] && return
 	if has_version "dev-libs/glib" ; then
 		einfo "Applying kernel config flags for the glib package (id: 8210745)"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
@@ -3243,7 +3243,7 @@ ot-kernel-pkgflags_glib() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the gnokii package
 ot-kernel-pkgflags_gnokii() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "a4db0bd" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sa4db0bd]}" == "1" ]] && return
 	if has_version "app-mobilephone/gnokii" ; then
 		einfo "Applying kernel config flags for the gnokii package (id: a4db0bd)"
 		ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
@@ -3254,7 +3254,7 @@ ot-kernel-pkgflags_gnokii() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the gnome-boxes package
 ot-kernel-pkgflags_gnome_boxes() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "768ed31" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S768ed31]}" == "1" ]] && return
 	if has_version "gnome-extra/gnome-boxes" ; then
 		einfo "Applying kernel config flags for the gnome-boxes package (id: 768ed31)"
 		: # See ot-kernel-pkgflags_qemu
@@ -3265,7 +3265,7 @@ ot-kernel-pkgflags_gnome_boxes() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the gpm package
 ot-kernel-pkgflags_gpm() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "ed780a3" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sed780a3]}" == "1" ]] && return
 	if has_version "sys-libs/gpm" ; then
 		einfo "Applying kernel config flags for the gpm package (id: ed780a3)"
 		ot-kernel_y_configopt "CONFIG_INPUT_MOUSEDEV"
@@ -3276,7 +3276,7 @@ ot-kernel-pkgflags_gpm() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the grs package
 ot-kernel-pkgflags_grs() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5cf3aa9" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5cf3aa9]}" == "1" ]] && return
 	if has_version "app-portage/grs" ; then
 		einfo "Applying kernel config flags for the grs package (id: 5cf3aa9)"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
@@ -3287,7 +3287,7 @@ ot-kernel-pkgflags_grs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the gspca_ep800 package
 ot-kernel-pkgflags_gspca_ep800() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "3302dae" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S3302dae]}" == "1" ]] && return
 	if has_version "media-video/gspca_ep800" ; then
 		einfo "Applying kernel config flags for the gspca_ep800 package (id: 3302dae)"
 		ot-kernel_y_configopt "CONFIG_INPUT"
@@ -3304,7 +3304,7 @@ ot-kernel-pkgflags_gspca_ep800() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the guestfs package(s)
 ot-kernel-pkgflags_guestfs() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "59d09c6" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S59d09c6]}" == "1" ]] && return
 	if has_version "app-emulation/libguestfs" \
 		|| has_version "app-emulation/guestfs-tools" ; then
 		einfo "Applying kernel config flags for the guestfs package(s) (id: 59d09c6)"
@@ -3317,7 +3317,7 @@ ot-kernel-pkgflags_guestfs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the gvrpcd package(s)
 ot-kernel-pkgflags_gvrpcd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "6af1f7a" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S6af1f7a]}" == "1" ]] && return
 	if has_version "net-misc/gvrpcd" ; then
 		einfo "Applying kernel config flags for the gvrpcd package(s) (id: 6af1f7a)"
 		ot-kernel_y_configopt "CONFIG_VLAN_8021Q"
@@ -3329,7 +3329,7 @@ ot-kernel-pkgflags_gvrpcd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for hamachi
 ot-kernel-pkgflags_hamachi() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "d871dfa" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd871dfa]}" == "1" ]] && return
 	if has_version "net-vpn/logmein-hamachi" ; then
 		einfo "Applying kernel config flags for the hamachi package (id: d871dfa)"
 		_ot-kernel-pkgflags_tun
@@ -3340,7 +3340,7 @@ ot-kernel-pkgflags_hamachi() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for haproxy
 ot-kernel-pkgflags_haproxy() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5bc6d06" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5bc6d06]}" == "1" ]] && return
 	if has_version "net-proxy/haproxy" ; then
 		einfo "Applying kernel config flags for the haproxy package (id: 5bc6d06)"
 		ot-kernel_y_configopt "CONFIG_NET_NS"
@@ -3351,7 +3351,7 @@ ot-kernel-pkgflags_haproxy() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the hd-idle package
 ot-kernel-pkgflags_hd_idle() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c6f5c62" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc6f5c62]}" == "1" ]] && return
 	if has_version "sys-apps/hd-idle" ; then
 		einfo "Applying kernel config flags for the hd-idle package (id: c6f5c62)"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
@@ -3362,7 +3362,7 @@ ot-kernel-pkgflags_hd_idle() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the hdapsd package
 ot-kernel-pkgflags_hdapsd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2458b68" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2458b68]}" == "1" ]] && return
 	if has_version "app-laptop/hdapsd" ; then
 		einfo "Applying kernel config flags for the hdapsd package (id: 2458b68)"
 		ot-kernel_y_configopt "CONFIG_SENSORS_HDAPS"
@@ -3373,7 +3373,7 @@ ot-kernel-pkgflags_hdapsd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the hid nin controllers
 ot-kernel-pkgflags_hid_nin() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "1169f20" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1169f20]}" == "1" ]] && return
 	if has_version "games-util/hid-nintendo" ; then
 		einfo "Applying kernel config flags for the hid nin controllers (id: 1169f20)"
 		ot-kernel_y_configopt "CONFIG_HID"
@@ -3388,7 +3388,7 @@ ot-kernel-pkgflags_hid_nin() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the hbtinit package
 ot-kernel-pkgflags_htbinit() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "714f5dd" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S714f5dd]}" == "1" ]] && return
 	if has_version "net-misc/htbinit" ; then
 		einfo "Applying kernel config flags for the hbtinit package (id: 714f5dd)"
 		ot-kernel_y_configopt "CONFIG_NET_SCH_HTB"
@@ -3406,7 +3406,7 @@ ot-kernel-pkgflags_htbinit() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the htop package
 ot-kernel-pkgflags_htop() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "843cb8b" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S843cb8b]}" == "1" ]] && return
 	if has_version "sys-process/htop" ; then
 		einfo "Applying kernel config flags for the htop package (id: 843cb8b)"
 		ot-kernel_y_configopt "CONFIG_TASKSTATS"
@@ -3420,7 +3420,7 @@ ot-kernel-pkgflags_htop() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the hplip package
 ot-kernel-pkgflags_hplip() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "45f5321" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S45f5321]}" == "1" ]] && return
 	if has_version "net-print/hplip" ; then
 		einfo "Applying kernel config flags for the hplip package (id: 45f5321)"
 		# The ebuild pulls in virtual/libusb unconditionally
@@ -3443,7 +3443,7 @@ ewarn "Re-emerge net-print/cups[zerconf] and ${PN} for network printing."
 # @DESCRIPTION:
 # Applies kernel config flags for the i2c-tools package
 ot-kernel-pkgflags_i2c_tools() {
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "8fa85cb" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S8fa85cb]}" == "1" ]] && return
 	if has_version "sys-apps/i2c-tools" ; then
 		einfo "Applying kernel config flags for the i8kutils package (id: 8fa85cb)"
 		ot-kernel_y_configopt "CONFIG_I2C"
@@ -3470,7 +3470,7 @@ ot-kernel-pkgflags_i2c_tools() {
 # @DESCRIPTION:
 # Applies kernel config flags for the i8kutils package
 ot-kernel-pkgflags_i8kutils() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "ab2316b" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sab2316b]}" == "1" ]] && return
 	if has_version "app-laptop/i8kutils" ; then
 		einfo "Applying kernel config flags for the i8kutils package (id: ab2316b)"
 		ot-kernel_y_configopt "CONFIG_I8K"
@@ -3481,7 +3481,7 @@ ot-kernel-pkgflags_i8kutils() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ifenslave package
 ot-kernel-pkgflags_ifenslave() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "3d1462a" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S3d1462a]}" == "1" ]] && return
 	if has_version "net-misc/ifenslave" ; then
 		einfo "Applying kernel config flags for the ifensave package (id: 3d1462a)"
 		ot-kernel_y_configopt "CONFIG_BONDING"
@@ -3492,7 +3492,7 @@ ot-kernel-pkgflags_ifenslave() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the iwlmvm package
 ot-kernel-pkgflags_iwlmvm() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c947ca0" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc947ca0]}" == "1" ]] && return
 	if \
 		has_version "sys-firmware/iwl3160-7260-bt-ucode" \
 		|| has_version "sys-firmware/iwl7260-ucode" \
@@ -3508,7 +3508,7 @@ ot-kernel-pkgflags_iwlmvm() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the igmpproxy package
 ot-kernel-pkgflags_igmpproxy() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "7464f82" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S7464f82]}" == "1" ]] && return
 	if has_version "net-misc/igmpproxy" ; then
 		einfo "Applying kernel config flags for the igmpproxy package (id: 7464f82)"
 		ot-kernel_y_configopt "CONFIG_IP_MULTICAST"
@@ -3519,7 +3519,7 @@ ot-kernel-pkgflags_igmpproxy() { # DONE
 # @FUNCTION: ot-kernel-pkgflags_ima_evm_utils
 # @DESCRIPTION:
 ot-kernel-pkgflags_ima_evm_utils() {
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "e993bff" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se993bff]}" == "1" ]] && return
 	if has_version "app-crypt/ima-evm-utils" ; then
 		einfo "Applying kernel config flags for the ima-evm-utils package (id: e993bff)"
 		if [[ "${EVM:-1}" == "1" ]] ; then
@@ -3556,7 +3556,7 @@ ot-kernel-pkgflags_ima_evm_utils() {
 # @DESCRIPTION:
 # Applies kernel config flags for the incron package
 ot-kernel-pkgflags_incron() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2f90fde" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2f90fde]}" == "1" ]] && return
 	if has_version "sys-process/incron" ; then
 		einfo "Applying kernel config flags for the incron package (id: 2f90fde)"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
@@ -3567,7 +3567,7 @@ ot-kernel-pkgflags_incron() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the intel-microcode package
 ot-kernel-pkgflags_iucode() {
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c9acc57" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc9acc57]}" == "1" ]] && return
 	if has_version "sys-firmware/intel-microcode" ; then
 		if [[ "${OT_KERNEL_CPU_MICROCODE}" == "1" || -e "${OT_KERNEL_CPU_MICROCODE}" ]] ; then
 			einfo "Applying kernel config flags for the intel-microcode package (id: c9acc57)"
@@ -3643,7 +3643,7 @@ ot-kernel-pkgflags_iucode() {
 # @DESCRIPTION:
 # Applies kernel config flags for the lkrg package
 ot-kernel-pkgflags_lkrg() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "70df33c" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S70df33c]}" == "1" ]] && return
 	if has_version "app-antivirus/lkrg" ; then
 		einfo "Applying kernel config flags for the lkrg package (id: 70df33c)"
 		ot-kernel_y_configopt "CONFIG_HAVE_KRETPROBES"
@@ -3667,7 +3667,7 @@ ot-kernel-pkgflags_lkrg() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the lksctp-tools package
 ot-kernel-pkgflags_lksctp_tools() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "8767e0d" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S8767e0d]}" == "1" ]] && return
 	if has_version "net-misc/lksctp-tools" ; then
 		einfo "Applying kernel config flags for the lksctp-tools package (id: 8767e0d)"
 		ot-kernel_y_configopt "CONFIG_IP_SCTP"
@@ -3678,7 +3678,7 @@ ot-kernel-pkgflags_lksctp_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the iodine package
 ot-kernel-pkgflags_iodine() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "031191b" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S031191b]}" == "1" ]] && return
 	if has_version "net-vpn/iodine" ; then
 		einfo "Applying kernel config flags for the iodine package (id: 031191b)"
 		_ot-kernel-pkgflags_tun
@@ -3689,7 +3689,7 @@ ot-kernel-pkgflags_iodine() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for ipcm
 ot-kernel-pkgflags_ipcm() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b50e578" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb50e578]}" == "1" ]] && return
 	if has_version "sys-apps/intel-performance-counter-monitor" ; then
 		einfo "Applying kernel config flags for the ipcm package (id: b50e578)"
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
@@ -3701,7 +3701,7 @@ ot-kernel-pkgflags_ipcm() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ipset package
 ot-kernel-pkgflags_ipset() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "45b1cc4" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S45b1cc4]}" == "1" ]] && return
 	if has_version "net-firewall/ipset" ; then
 		einfo "Applying kernel config flags for the ipset package (id: 45b1cc4)"
 		ot-kernel_y_configopt "CONFIG_NETFILTER"
@@ -3718,7 +3718,7 @@ ot-kernel-pkgflags_ipset() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ipt-netflow package
 ot-kernel-pkgflags_ipt_netflow() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2544e60" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2544e60]}" == "1" ]] && return
 	if has_version "net-firewall/ipt_netflow" ; then
 		einfo "Applying kernel config flags for the ipt_netflow package (id: 2544e60)"
 		ot-kernel_y_configopt "CONFIG_BRIDGE_NETFILTER"
@@ -3744,7 +3744,7 @@ ot-kernel-pkgflags_ipt_netflow() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the iptables package
 ot-kernel-pkgflags_iptables() { # MOSTLY DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "351365c" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S351365c]}" == "1" ]] && return
 	if has_version "net-firewall/iptables" ; then
 		einfo "Applying kernel config flags for the iptables package (id: 351365c)"
 		IPTABLES_CLIENT="${IPTABLES_CLIENT:-1}"
@@ -3829,7 +3829,7 @@ ot-kernel-pkgflags_iptables() { # MOSTLY DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the iotop package
 ot-kernel-pkgflags_iotop() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "af7106d" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Saf7106d]}" == "1" ]] && return
 	if has_version "sys-process/iotop" \
 		|| has_version "sys-process/iotop-c" ; then
 		einfo "Applying kernel config flags for the iotop package (id: af7106d)"
@@ -3845,7 +3845,7 @@ ot-kernel-pkgflags_iotop() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the irqbalance package
 ot-kernel-pkgflags_irqbalance() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "115a3c8" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S115a3c8]}" == "1" ]] && return
 	if has_version "sys-apps/irqbalance" ; then
 		einfo "Applying kernel config flags for the irqbalance package (id: 115a3c8)"
 		ot-kernel_y_configopt "CONFIG_PCI_MSI"
@@ -3856,7 +3856,7 @@ ot-kernel-pkgflags_irqbalance() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the isatapd package
 ot-kernel-pkgflags_isatapd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "fa75afb" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sfa75afb]}" == "1" ]] && return
 	if has_version "net-vpn/isatapd" ; then
 		einfo "Applying kernel config flags for the isatapd package (id: fa75afb)"
 		_ot-kernel-pkgflags_tun
@@ -3867,7 +3867,7 @@ ot-kernel-pkgflags_isatapd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the joycond package
 ot-kernel-pkgflags_joycond() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5c83d42" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5c83d42]}" == "1" ]] && return
 	if has_version "games-util/joycond" ; then
 		einfo "Applying kernel config flags for the joycond package (id: 5c83d42)"
 		ot-kernel_y_configopt "CONFIG_HID"
@@ -3880,7 +3880,7 @@ ot-kernel-pkgflags_joycond() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the k3s package
 ot-kernel-pkgflags_k3s() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2fd0506" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2fd0506]}" == "1" ]] && return
 	if has_version "sys-cluster/k3s" ; then
 		einfo "Applying kernel config flags for the k3s package (id: 2fd0506)"
 		ot-kernel_y_configopt "CONFIG_BRIDGE_NETFILTER"
@@ -3901,7 +3901,7 @@ ot-kernel-pkgflags_k3s() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the iscan-plugin package
 ot-kernel-pkgflags_iscan_plugin() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "06561a4" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S06561a4]}" == "1" ]] && return
 	if has_version "media-gfx/iscan-plugin-network-nt" ; then
 		einfo "Applying kernel config flags for the iscan-plugin package (id: 06561a4)"
 		ot-kernel_y_configopt "CONFIG_SYN_COOKIES"
@@ -3912,7 +3912,7 @@ ot-kernel-pkgflags_iscan_plugin() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the iwd package
 ot-kernel-pkgflags_iwd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c4eefdd" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc4eefdd]}" == "1" ]] && return
 	if has_version "net-wireless/iwd" ; then
 		einfo "Applying kernel config flags for the iwd package (id: c4eefdd)"
 		ot-kernel_y_configopt "CONFIG_KEYS"
@@ -3965,7 +3965,7 @@ ot-kernel-pkgflags_iwd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the kexec-tools package
 ot-kernel-pkgflags_kexec_tools() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "39aeb63" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S39aeb63]}" == "1" ]] && return
 	if has_version "sys-apps/kexec-tools" ; then
 		OT_KERNEL_SIGN="${OT_KERNEL_SIGN_KERNEL:-0}" # signing the kernel is not ready yet
 		if [[ "${OT_KERNEL_SIGN_KERNEL}" =~ ("uefi"|"efi"|"kexec") && -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" ]] ; then
@@ -3994,7 +3994,7 @@ ot-kernel-pkgflags_kexec_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the keyutils package
 ot-kernel-pkgflags_keyutils() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2082e35" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2082e35]}" == "1" ]] && return
 	if has_version "sys-apps/keyutils" ; then
 		einfo "Applying kernel config flags for the keyutils package (id: 2082e35)"
 		ot-kernel_y_configopt "CONFIG_KEYS"
@@ -4013,7 +4013,7 @@ ot-kernel-pkgflags_keyutils() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the kio-fuse package
 ot-kernel-pkgflags_kio_fuse() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "70d6e85" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S70d6e85]}" == "1" ]] && return
 	if has_version "kde-misc/kio-fuse" ; then
 		einfo "Applying kernel config flags for the kio-fuse package (id: 70d6e85)"
 		ot-kernel_y_configopt "CONFIG_FUSE_FS"
@@ -4024,7 +4024,7 @@ ot-kernel-pkgflags_kio_fuse() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the knem package
 ot-kernel-pkgflags_knem() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4fb8de2" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4fb8de2]}" == "1" ]] && return
 	if has_version "sys-cluster/knem" ; then
 		einfo "Applying kernel config flags for the knem package (id: 4fb8de2)"
 		ot-kernel_y_configopt "CONFIG_DMA_ENGINE"
@@ -4035,7 +4035,7 @@ ot-kernel-pkgflags_knem() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the kodi package
 ot-kernel-pkgflags_kodi() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "70fdec1" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S70fdec1]}" == "1" ]] && return
 	if has_version "media-tv/kodi" ; then
 		einfo "Applying kernel config flags for the kodi package (id: 70fdec1)"
 		ot-kernel_y_configopt "CONFIG_IP_MULTICAST"
@@ -4046,7 +4046,7 @@ ot-kernel-pkgflags_kodi() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the kpatch package
 ot-kernel-pkgflags_kpatch() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "d26d135" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd26d135]}" == "1" ]] && return
 	if has_version "sys-kernel/kpatch" ; then
 		einfo "Applying kernel config flags for the kpatch package (id: d26d135)"
 		ban_disable_debug "d26d135"
@@ -4065,7 +4065,7 @@ ot-kernel-pkgflags_kpatch() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ksmbd-tools package
 ot-kernel-pkgflags_ksmbd_tools() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "3dd8506" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S3dd8506]}" == "1" ]] && return
 	if has_version "net-fs/ksmbd-tools" ; then
 		einfo "Applying kernel config flags for the ksmbd-tools package (id: 3dd8506)"
 		ot-kernel_y_configopt "CONFIG_SMB_SERVER"
@@ -4076,7 +4076,7 @@ ot-kernel-pkgflags_ksmbd_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libfido2 package
 ot-kernel-pkgflags_libfido2() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4130caa" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4130caa]}" == "1" ]] && return
 	if has_version "dev-libs/libfido2" ; then
 		einfo "Applying kernel config flags for the libfido2 package (id: 4130caa)"
 		ot-kernel_y_configopt "CONFIG_USB_HID"
@@ -4088,7 +4088,7 @@ ot-kernel-pkgflags_libfido2() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libmtp package
 ot-kernel-pkgflags_libmtp() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "ca6ee71" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sca6ee71]}" == "1" ]] && return
 	if has_version "media-libs/libmtp" ; then
 		einfo "Applying kernel config flags for the libmtp package (id: ca6ee71)"
 		ot-kernel_y_configopt "CONFIG_FUSE_FS"
@@ -4099,7 +4099,7 @@ ot-kernel-pkgflags_libmtp() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libcgroup package
 ot-kernel-pkgflags_libcgroup() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "fe830d2" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sfe830d2]}" == "1" ]] && return
 	if has_version "media-libs/libcgroup" ; then
 		einfo "Applying kernel config flags for the libcgroup package (id: fe830d2)"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
@@ -4114,7 +4114,7 @@ ot-kernel-pkgflags_libcgroup() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the linux-atm package
 ot-kernel-pkgflags_linux_atm() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "6df59e4" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S6df59e4]}" == "1" ]] && return
 	if has_version "net-dialup/linux-atm" ; then
 		einfo "Applying kernel config flags for the linux-atm package (id: 6df59e4)"
 		ot-kernel_y_configopt "CONFIG_ATM"
@@ -4125,7 +4125,7 @@ ot-kernel-pkgflags_linux_atm() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the linux-firmware package
 ot-kernel-pkgflags_linux_firmware() {
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4e8e0af" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4e8e0af]}" == "1" ]] && return
 	if has_version "sys-kernel/linux-firmware" ; then
 		if [[ "${OT_KERNEL_CPU_MICROCODE}" == "1" || -e "${OT_KERNEL_CPU_MICROCODE}" ]] ; then
 			einfo "Applying kernel config flags for the linux-firmware package (id: 4e8e0af)"
@@ -4194,7 +4194,7 @@ ot-kernel-pkgflags_linux_firmware() {
 # @DESCRIPTION:
 # Applies kernel config flags for the linuxptp package
 ot-kernel-pkgflags_linuxptp() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "d543959" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd543959]}" == "1" ]] && return
 	if has_version "net-misc/linuxptp" ; then
 		einfo "Applying kernel config flags for the linuxptp package (id: d543959)"
 		ot-kernel_y_configopt "CONFIG_PPS"
@@ -4207,7 +4207,7 @@ ot-kernel-pkgflags_linuxptp() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libnftnl package
 ot-kernel-pkgflags_libnftnl() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "65c6821" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S65c6821]}" == "1" ]] && return
 	if has_version "net-libs/libnftnl" ; then
 		einfo "Applying kernel config flags for the libnftnl package (id: 65c6821)"
 		ot-kernel_y_configopt "CONFIG_NF_TABLES"
@@ -4218,7 +4218,7 @@ ot-kernel-pkgflags_libnftnl() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libnfnetlink package
 ot-kernel-pkgflags_libnfnetlink() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "731aa2e" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S731aa2e]}" == "1" ]] && return
 	if has_version "net-libs/libnfnetlink" ; then
 		einfo "Applying kernel config flags for the libnfnetlink package (id: 731aa2e)"
 		if ver_test ${PV} -lt 2.6.20 ; then
@@ -4233,7 +4233,7 @@ ot-kernel-pkgflags_libnfnetlink() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libnetfilter_acct package
 ot-kernel-pkgflags_libnetfilter_acct() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "cc408fd" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Scc408fd]}" == "1" ]] && return
 	if has_version "net-libs/libnetfilter_acct" ; then
 		einfo "Applying kernel config flags for the libnetfilter_acct package (id: cc408fd)"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_ACCT"
@@ -4244,7 +4244,7 @@ ot-kernel-pkgflags_libnetfilter_acct() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libnetfilter_cthelper package
 ot-kernel-pkgflags_libnetfilter_cthelper() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "563a05c" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S563a05c]}" == "1" ]] && return
 	if has_version "net-libs/libnetfilter_cthelper" ; then
 		einfo "Applying kernel config flags for the libnetfilter_cthelper package (id: 563a05c)"
 		ot-kernel_y_configopt "CONFIG_NF_CT_NETLINK_HELPER"
@@ -4255,7 +4255,7 @@ ot-kernel-pkgflags_libnetfilter_cthelper() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libnetfilter_conntrack package
 ot-kernel-pkgflags_libnetfilter_conntrack() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2616787" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2616787]}" == "1" ]] && return
 	if has_version "net-libs/libnetfilter_conntrack" ; then
 		einfo "Applying kernel config flags for the libnetfilter_conntrack package (id: 2616787)"
 		if ver_test ${PV} -lt 2.6.20 ; then
@@ -4270,7 +4270,7 @@ ot-kernel-pkgflags_libnetfilter_conntrack() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libnetfilter_cttimeout package
 ot-kernel-pkgflags_libnetfilter_cttimeout() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "7cab068" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S7cab068]}" == "1" ]] && return
 	if has_version "net-libs/libnetfilter_cttimeout" ; then
 		einfo "Applying kernel config flags for the libnetfilter_cttimeout package (id: 7cab068)"
 		ot-kernel_y_configopt "CONFIG_NF_CT_NETLINK_TIMEOUT"
@@ -4281,7 +4281,7 @@ ot-kernel-pkgflags_libnetfilter_cttimeout() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libnetfilter_log package
 ot-kernel-pkgflags_libnetfilter_log() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "0359211" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S0359211]}" == "1" ]] && return
 	if has_version "net-libs/libnetfilter_log" ; then
 		einfo "Applying kernel config flags for the libnetfilter_log package (id: 0359211)"
 		ban_disable_debug "0359211" "NETFILTER"
@@ -4293,7 +4293,7 @@ ot-kernel-pkgflags_libnetfilter_log() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libnetfilter_queue package
 ot-kernel-pkgflags_libnetfilter_queue() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "cd31a5e" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Scd31a5e]}" == "1" ]] && return
 	if has_version "net-libs/libnetfilter_queue" ; then
 		einfo "Applying kernel config flags for the libnetfilter_queue package (id: cd31a5e)"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_QUEUE"
@@ -4304,7 +4304,7 @@ ot-kernel-pkgflags_libnetfilter_queue() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libomp package
 ot-kernel-pkgflags_libomp() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "90741ba" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S90741ba]}" == "1" ]] && return
 	if has_version "sys-libs/libomp" ; then
 		ewarn "Severe performance degration with libomp is expected with the PDS scheduler. (id: 90741ba)"
 		if [[ "${cpu_sched}" =~ ("pds"|"prjc-pds") ]] ; then
@@ -4317,7 +4317,7 @@ ot-kernel-pkgflags_libomp() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libsdl2 package
 ot-kernel-pkgflags_libsdl2() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "6f67af3" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S6f67af3]}" == "1" ]] && return
 	if has_version "media-libs/libsdl2" \
 		|| has_version "dev-libs/hidapi" ; then
 		einfo "Applying kernel config flags for the libsdl2 / hidapi package(s) (id: 6f67af3)"
@@ -4331,7 +4331,7 @@ ot-kernel-pkgflags_libsdl2() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libteam package
 ot-kernel-pkgflags_libteam() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "9bb3f42" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S9bb3f42]}" == "1" ]] && return
 	if has_version "net-misc/libteam" ; then
 		einfo "Applying kernel config flags for the libteam package (id: 9bb3f42)"
 		ot-kernel_y_configopt "CONFIG_NET_TEAM"
@@ -4347,7 +4347,7 @@ ot-kernel-pkgflags_libteam() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libu2f-host package
 ot-kernel-pkgflags_libu2f_host() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5513bd3" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5513bd3]}" == "1" ]] && return
 	if has_version "app-crypt/libu2f-host" ; then
 		einfo "Applying kernel config flags for the libu2f-host package (id: 5513bd3)"
 		ot-kernel_y_configopt "CONFIG_HIDRAW"
@@ -4358,7 +4358,7 @@ ot-kernel-pkgflags_libu2f_host() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libugpio package
 ot-kernel-pkgflags_libugpio() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "dd45062" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sdd45062]}" == "1" ]] && return
 	if has_version "dev-libs/libugpio" ; then
 		einfo "Applying kernel config flags for the libv4l package (id: dd45062)"
 		ot-kernel_y_configopt "CONFIG_GPIO_SYSFS"
@@ -4369,7 +4369,7 @@ ot-kernel-pkgflags_libugpio() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libv4l package
 ot-kernel-pkgflags_libv4l() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4b528f3" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4b528f3]}" == "1" ]] && return
 	if has_version "media-libs/libv4l" ; then
 		einfo "Applying kernel config flags for the libv4l package (id: 4b528f3)"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
@@ -4380,7 +4380,7 @@ ot-kernel-pkgflags_libv4l() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libvirt package
 ot-kernel-pkgflags_libvirt() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "7953656" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S7953656]}" == "1" ]] && return
 	if has_version "app-emulation/libvirt" ; then
 		einfo "Applying kernel config flags for the libvirt package (id: 7953656)"
 		ot-kernel_y_configopt "CONFIG_NET"
@@ -4407,7 +4407,7 @@ ot-kernel-pkgflags_libvirt() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the likwid package
 ot-kernel-pkgflags_likwid() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "e64272e" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se64272e]}" == "1" ]] && return
 	if has_version "sys-apps/likwid" ; then
 		einfo "Applying kernel config flags for the likwid package (id: e64272e)"
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
@@ -4418,7 +4418,7 @@ ot-kernel-pkgflags_likwid() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the Linux-Smaps package
 ot-kernel-pkgflags_linux_smaps() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "e76e66e" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se76e66e]}" == "1" ]] && return
 	if has_version "dev-perl/Linux-Smaps" ; then
 		einfo "Applying kernel config flags for the Linux-Smaps package (id: e76e66e)"
 		ot-kernel_y_configopt "CONFIG_MMU"
@@ -4430,7 +4430,7 @@ ot-kernel-pkgflags_linux_smaps() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the lirc package
 ot-kernel-pkgflags_lirc() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "1f8b392" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1f8b392]}" == "1" ]] && return
 	if has_version "app-misc/lirc" ; then
 		einfo "Applying kernel config flags for the lirc package (id: 1f8b392)"
 		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
@@ -4441,7 +4441,7 @@ ot-kernel-pkgflags_lirc() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the lm-sensors package
 ot-kernel-pkgflags_lm_sensors() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "aef80f1" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Saef80f1]}" == "1" ]] && return
 	if has_version "sys-apps/lm-sensors" ; then
 		einfo "Applying kernel config flags for the lm-sensors package (id: aef80f1)"
 		ot-kernel_y_configopt "CONFIG_HWMON"
@@ -4474,7 +4474,7 @@ ot-kernel-pkgflags_lm_sensors() { # DONE
 					| grep "config " \
 					| cut -f 2 -d " " \
 					| sed -e "s|^|CONFIG_|g")
-				$(grep -r -e "config SENSORS" drivers/hwmon/Kconfig \
+				$(grep -e "config SENSORS" drivers/hwmon/Kconfig \
 					| cut -f 2 -d " " \
 					| sed -e "s|^|CONFIG_|g")
 			)
@@ -4517,7 +4517,7 @@ ot-kernel-pkgflags_lm_sensors() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the longrun package
 ot-kernel-pkgflags_longrun() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "17c1e45" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S17c1e45]}" == "1" ]] && return
 	if has_version "app-admin/longrun" ; then
 		einfo "Applying kernel config flags for the longrun package (id: 17c1e45)"
 		ot-kernel_unset_configopt "CONFIG_X86_MSR"
@@ -4529,7 +4529,7 @@ ot-kernel-pkgflags_longrun() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the loopaes package
 ot-kernel-pkgflags_loopaes() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "bba669f" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sbba669f]}" == "1" ]] && return
 	if has_version "sys-fs/loop-aes" ; then
 		einfo "Applying kernel config flags for the loop-aes package (id: bba669f)"
 		ot-kernel_unset_configopt "CONFIG_BLK_DEV_LOOP"
@@ -4540,7 +4540,7 @@ ot-kernel-pkgflags_loopaes() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the lttng-modules package
 ot-kernel-pkgflags_lttng_modules() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "18dd1d9" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S18dd1d9]}" == "1" ]] && return
 	if has_version "dev-util/lttng-modules" ; then
 		einfo "Applying kernel config flags for the lttng-modules package (id: 18dd1d9)"
 		ot-kernel_y_configopt "CONFIG_MODULES"
@@ -4561,7 +4561,7 @@ ot-kernel-pkgflags_lttng_modules() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the lvm2 package
 ot-kernel-pkgflags_lvm2() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "48609ad" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S48609ad]}" == "1" ]] && return
 	if has_version "sys-fs/lvm2" ; then
 		einfo "Applying kernel config flags for the lvm2 package (id: 48609ad)"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
@@ -4586,7 +4586,7 @@ ot-kernel-pkgflags_lvm2() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the lxc package
 ot-kernel-pkgflags_lxc() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "7e097b4" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S7e097b4]}" == "1" ]] && return
 	if has_version "app-containers/lxc" ; then
 		einfo "Applying kernel config flags for the lxc package (id: 7e097b4)"
 		ot-kernel_unset_configopt "CONFIG_NETPRIO_CGROUP"
@@ -4613,7 +4613,7 @@ ot-kernel-pkgflags_lxc() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the lxd package
 ot-kernel-pkgflags_lxd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "cf50245" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Scf50245]}" == "1" ]] && return
 	if has_version "app-containers/lxd" ; then
 		einfo "Applying kernel config flags for the lxd package (id: cf50245)"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
@@ -4633,7 +4633,7 @@ ot-kernel-pkgflags_lxd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the madwimax package
 ot-kernel-pkgflags_madwimax() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "6f56e53" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S6f56e53]}" == "1" ]] && return
 	if has_version "net-wireless/madwimax" ; then
 		einfo "Applying kernel config flags for the madwimax package (id: 6f56e53)"
 		_ot-kernel-pkgflags_tun
@@ -4644,7 +4644,7 @@ ot-kernel-pkgflags_madwimax() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the mcelog package
 ot-kernel-pkgflags_mcelog() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "3683419" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S3683419]}" == "1" ]] && return
 	if has_version "app-admin/mcelog" ; then
 		einfo "Applying kernel config flags for the mcelog package (id: 3683419)"
 		ot-kernel_y_configopt "CONFIG_X86_MCE"
@@ -4659,7 +4659,7 @@ ot-kernel-pkgflags_mcelog() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the mcproxy package
 ot-kernel-pkgflags_mcproxy() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b648130" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb648130]}" == "1" ]] && return
 	if has_version "net-misc/mcproxy" ; then
 		einfo "Applying kernel config flags for the mcproxy package (id: b648130)"
 		ot-kernel_y_configopt "CONFIG_IP_MULTICAST"
@@ -4671,7 +4671,7 @@ ot-kernel-pkgflags_mcproxy() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the mdadm package
 ot-kernel-pkgflags_mdadm() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2c79f42" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2c79f42]}" == "1" ]] && return
 	if has_version "sys-fs/mdadm" ; then
 		MDADM_RAID="${MDADM_RAID:-1}"
 		if [[ "${MDADM_RAID}" == "1" ]] ; then
@@ -4709,7 +4709,7 @@ _ot-kernel-pkgflags_has_midi() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for midi support
 ot-kernel-pkgflags_midi() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b184220" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb184220]}" == "1" ]] && return
 	if \
 		[[ "${ALSA_MIDI}" == "1" ]] \
 		|| _ot-kernel-pkgflags_has_midi \
@@ -4750,7 +4750,7 @@ ot-kernel-pkgflags_midi() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the mesa package
 ot-kernel-pkgflags_mesa() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "a7c616c" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sa7c616c]}" == "1" ]] && return
 	if has_version "media-libs/mesa" ; then
 		einfo "Applying kernel config flags for the mesa package (id: a7c616c)"
 		if ver_test ${K_MAJOR_MINOR} -ge 5 ; then
@@ -4766,7 +4766,7 @@ ot-kernel-pkgflags_mesa() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the minidlna package
 ot-kernel-pkgflags_minidlna() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "e282260" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se282260]}" == "1" ]] && return
 	if has_version "net-misc/minidlna" ; then
 		einfo "Applying kernel config flags for the minidlna package (id: e282260)"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
@@ -4777,7 +4777,7 @@ ot-kernel-pkgflags_minidlna() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the minijail package
 ot-kernel-pkgflags_minijail() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "792b443" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S792b443]}" == "1" ]] && return
 	if has_version "sys-apps/minijail" ; then
 		einfo "Applying kernel config flags for the minijail package (id: 792b443)"
 		ot-kernel_y_configopt "CONFIG_NAMESPACES"
@@ -4796,7 +4796,7 @@ ot-kernel-pkgflags_minijail() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the mono package
 ot-kernel-pkgflags_mono() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "8c7d25b" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S8c7d25b]}" == "1" ]] && return
 	if has_version "dev-lang/mono" ; then
 		einfo "Applying kernel config flags for the mono package (id: 8c7d25b)"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
@@ -4808,7 +4808,7 @@ ot-kernel-pkgflags_mono() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the mpm_itk package
 ot-kernel-pkgflags_mpm_itk() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c76089a" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc76089a]}" == "1" ]] && return
 	if has_version "www-apache/mpm_itk" ; then
 		einfo "Applying kernel config flags for the mpm_itk package (id: c76089a)"
 		ot-kernel_y_configopt "CONFIG_MPM_ITK"
@@ -4819,7 +4819,7 @@ ot-kernel-pkgflags_mpm_itk() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the mptcpd package
 ot-kernel-pkgflags_mptcpd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c69e109" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc69e109]}" == "1" ]] && return
 	if has_version "net-misc/mptcpd" ; then
 		einfo "Applying kernel config flags for the mono package (id: c69e109)"
 		ot-kernel_y_configopt "CONFIG_MPTCP"
@@ -4830,7 +4830,7 @@ ot-kernel-pkgflags_mptcpd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the msr-tools package
 ot-kernel-pkgflags_msr_tools() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "222a4a5" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S222a4a5]}" == "1" ]] && return
 	if has_version "sys-apps/msr-tools" ; then
 		einfo "Applying kernel config flags for the msr-tools package (id: 222a4a5)"
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
@@ -4841,7 +4841,7 @@ ot-kernel-pkgflags_msr_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the mswatch package
 ot-kernel-pkgflags_mswatch() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "17b4fad" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S17b4fad]}" == "1" ]] && return
 	if has_version "net-mail/mswatch" ; then
 		einfo "Applying kernel config flags for the mswatch package (id: 17b4fad)"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
@@ -4852,7 +4852,7 @@ ot-kernel-pkgflags_mswatch() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the multipath-tools package
 ot-kernel-pkgflags_multipath_tools() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "18a1928" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S18a1928]}" == "1" ]] && return
 	if has_version "sys-fs/multipath-tools" ; then
 		einfo "Applying kernel config flags for the multipath-tools package (id: 18a1928)"
 		ot-kernel_y_configopt "CONFIG_DM_MULTIPATH"
@@ -4863,7 +4863,7 @@ ot-kernel-pkgflags_multipath_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the networkmanager package
 ot-kernel-pkgflags_networkmanager() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "f8aec8c" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf8aec8c]}" == "1" ]] && return
 	if has_version "net-misc/networkmanager" ; then
 		einfo "Applying kernel config flags for the networkmanager package (id: f8aec8c)"
 		if has_version "net-misc/networkmanager[connection-sharing]" ; then
@@ -4883,7 +4883,7 @@ ot-kernel-pkgflags_networkmanager() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the nbfc package
 ot-kernel-pkgflags_nbfc() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "0ff68ed" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S0ff68ed]}" == "1" ]] && return
 	if has_version "sys-power/nbfc-linux" ; then
 		einfo "Applying kernel config flags for the nbfc package (id: 0ff68ed)"
 		ban_disable_debug "0ff68ed"
@@ -4897,7 +4897,7 @@ ot-kernel-pkgflags_nbfc() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the nemu package
 ot-kernel-pkgflags_nemu() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "04da78e" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S04da78e]}" == "1" ]] && return
 	if has_version "app-emulation/nemu" ; then
 		einfo "Applying kernel config flags for the nemu package (id: 04da78e)"
 		ot-kernel_y_configopt "CONFIG_VETH"
@@ -4909,7 +4909,7 @@ ot-kernel-pkgflags_nemu() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the nfacct package
 ot-kernel-pkgflags_nfacct() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "baddb97" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sbaddb97]}" == "1" ]] && return
 	if has_version "net-firewall/nfacct" ; then
 		einfo "Applying kernel config flags for the nfacct package (id: baddb97)"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_ACCT"
@@ -4920,7 +4920,7 @@ ot-kernel-pkgflags_nfacct() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the nfs-utils package
 ot-kernel-pkgflags_nfs_utils() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "a06f942" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sa06f942]}" == "1" ]] && return
 	if has_version "net-fs/nfs-utils" ; then
 		einfo "Applying kernel config flags for the nfs-utils package (id: a06f942)"
 		if has_version "net-fs/nfs-utils[nfsv4,-nfsdcld]" ; then
@@ -4956,7 +4956,7 @@ ot-kernel-pkgflags_nfs_utils() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the nftables package
 ot-kernel-pkgflags_nftables() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "70aa284" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S70aa284]}" == "1" ]] && return
 	if has_version "net-firewall/nftables" && ver_test ${K_MAJOR_MINOR} -ge 3.13 ; then
 		einfo "Applying kernel config flags for the nftables package (id: 70aa284)"
 		ot-kernel_y_configopt "CONFIG_NF_TABLES"
@@ -4967,7 +4967,7 @@ ot-kernel-pkgflags_nftables() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the nilfs-utils package
 ot-kernel-pkgflags_nilfs_utils() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "908989f" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S908989f]}" == "1" ]] && return
 	if has_version "sys-fs/nilfs-utils" ; then
 		einfo "Applying kernel config flags for the nilfs-utils package (id: 908989f)"
 		ot-kernel_y_configopt "CONFIG_POSIX_MQUEUE"
@@ -4978,7 +4978,7 @@ ot-kernel-pkgflags_nilfs_utils() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the nodejs package
 ot-kernel-pkgflags_nodejs() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "21e5d87" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S21e5d87]}" == "1" ]] && return
 	if has_version "net-libs/nodejs" ; then
 		einfo "Applying kernel config flags for the nodejs package (id: 21e5d87)"
 		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
@@ -4989,7 +4989,7 @@ ot-kernel-pkgflags_nodejs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the nftlb package
 ot-kernel-pkgflags_nftlb() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "d509fc7" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd509fc7]}" == "1" ]] && return
 	if has_version "net-firewall/nftlb" ; then
 		einfo "Applying kernel config flags for the nftlb package (id: d509fc7)"
 		ot-kernel_y_configopt "CONFIG_NF_TABLES"
@@ -5004,7 +5004,7 @@ ot-kernel-pkgflags_nftlb() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ntfs3g package
 ot-kernel-pkgflags_ntfs3g() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "ed423cb" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sed423cb]}" == "1" ]] && return
 	if has_version "sys-fs/ntfs3g" ; then
 		einfo "Applying kernel config flags for the ntfs3g package (id: ed423cb)"
 		ot-kernel_y_configopt "CONFIG_FUSE_FS"
@@ -5015,7 +5015,7 @@ ot-kernel-pkgflags_ntfs3g() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the nstx package
 ot-kernel-pkgflags_nstx() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5741385" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5741385]}" == "1" ]] && return
 	if has_version "net-vpn/nstx" ; then
 		einfo "Applying kernel config flags for the nstx package (id: 5741385)"
 		_ot-kernel-pkgflags_tun
@@ -5026,7 +5026,7 @@ ot-kernel-pkgflags_nstx() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the numad package
 ot-kernel-pkgflags_numad() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4113a11" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4113a11]}" == "1" ]] && return
 	if has_version "sys-process/numad" ; then
 		einfo "Applying kernel config flags for the numad package (id: 4113a11)"
 		ot-kernel_y_configopt "CONFIG_NUMA"
@@ -5038,7 +5038,7 @@ ot-kernel-pkgflags_numad() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the nv driver
 ot-kernel-pkgflags_nv() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "f314ac3" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf314ac3]}" == "1" ]] && return
 	if has_version "x11-drivers/nvidia-drivers" ; then
 		einfo "Applying kernel config flags for the nv driver (id: f314ac3)"
 
@@ -5064,7 +5064,7 @@ ot-kernel-pkgflags_nv() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the oomd package
 ot-kernel-pkgflags_oomd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "05187fc" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S05187fc]}" == "1" ]] && return
 	if has_version "sys-apps/oomd" ; then
 		einfo "Applying kernel config flags for the oomd package (id: 05187fc)"
 		if ${K_MAJOR_MINOR} -ge 4.20 ; then
@@ -5080,7 +5080,7 @@ ot-kernel-pkgflags_oomd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the opal-utils package
 ot-kernel-pkgflags_opal_utils() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "de97c50" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sde97c50]}" == "1" ]] && return
 	if has_version "sys-apps/opal-utils" ; then
 		einfo "Applying kernel config flags for the opal-utils package (id: de97c50)"
 		ot-kernel_y_configopt "CONFIG_MTD_POWERNV_FLASH"
@@ -5095,7 +5095,7 @@ ot-kernel-pkgflags_opal_utils() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the oprofile package
 ot-kernel-pkgflags_oprofile() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "18e7433" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S18e7433]}" == "1" ]] && return
 	if has_version "dev-util/oprofile" ; then
 		einfo "Applying kernel config flags for the oprofile package (id: 18e7433)"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
@@ -5138,7 +5138,7 @@ _ot-kernel-pkgflags_has_oss_use() {
 # @DESCRIPTION:
 # Applies kernel config flags for oss support
 ot-kernel-pkgflags_oss() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b360c7e" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb360c7e]}" == "1" ]] && return
 	if [[ "${OSS}" == "1" ]] \
 		|| _ot-kernel-pkgflags_has_oss_use ; then
 		einfo "Applying kernel config flags for oss (id: b360c7e)"
@@ -5159,7 +5159,7 @@ ot-kernel-pkgflags_oss() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for external kernel modules
 ot-kernel-pkgflags_external_modules() {
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "d44ca7a" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd44ca7a]}" == "1" ]] && return
 	local external_module=0
 # Discovered with
 # out=$(mktemp) ; \
@@ -5277,7 +5277,7 @@ x11-misc/openrazer
 # @DESCRIPTION:
 # Applies kernel config flags for the osmo-fl2k package
 ot-kernel-pkgflags_osmo_fl2k() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "9830cb3" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S9830cb3]}" == "1" ]] && return
 	if has_version "net-wireless/osmo-fl2k" ; then
 		einfo "Applying kernel config flags for the osmo-fl2k package (id: 9830cb3)"
 		ot-kernel_y_configopt "CONFIG_CMA"
@@ -5289,7 +5289,7 @@ ot-kernel-pkgflags_osmo_fl2k() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the open-iscsi package
 ot-kernel-pkgflags_open_iscsi() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "636a064" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S636a064]}" == "1" ]] && return
 	if has_version "sys-block/open-iscsi" ; then
 		einfo "Applying kernel config flags for the open-iscsi package (id: 636a064)"
 		if has_version "sys-block/open-iscsi[tcp]" ; then
@@ -5311,7 +5311,7 @@ ot-kernel-pkgflags_open_iscsi() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the open-vm-tools package
 ot-kernel-pkgflags_open_vm_tools() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "1628573" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1628573]}" == "1" ]] && return
 	if has_version "app-emulation/open-vm-tools" ; then
 		einfo "Applying kernel config flags for the open-vm-tools package (id: 1628573)"
 		ot-kernel_y_configopt "CONFIG_VMWARE_BALLOON"
@@ -5337,7 +5337,7 @@ ot-kernel-pkgflags_open_vm_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the openafs
 ot-kernel-pkgflags_openafs() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "dc8ba5a" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sdc8ba5a]}" == "1" ]] && return
 	if has_version "net-fs/openafs" && ver_test ${K_MAJOR_MINOR} -lt 5.17 ; then
 		einfo "Applying kernel config flags for openafs (id: dc8ba5a)"
 		if has_version "net-fs/openafs[modules]" ; then
@@ -5355,7 +5355,7 @@ ot-kernel-pkgflags_openafs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the openconnect package
 ot-kernel-pkgflags_openconnect() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "98e7109" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S98e7109]}" == "1" ]] && return
 	if has_version "net-vpn/openconnect" ; then
 		einfo "Applying kernel config flags for the openconnect package (id: 98e7109)"
 		_ot-kernel-pkgflags_tun
@@ -5366,7 +5366,7 @@ ot-kernel-pkgflags_openconnect() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the openl2tp package
 ot-kernel-pkgflags_openl2tp() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "83d4ba7" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S83d4ba7]}" == "1" ]] && return
 	if has_version "net-dialup/openl2tp" ; then
 		einfo "Applying kernel config flags for the openl2tp package (id: 83d4ba7)"
 		ot-kernel_y_configopt "CONFIG_PPPOL2TP"
@@ -5377,7 +5377,7 @@ ot-kernel-pkgflags_openl2tp() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the openfortivpn package
 ot-kernel-pkgflags_openfortivpn() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "64cf079" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S64cf079]}" == "1" ]] && return
 	if has_version "net-vpn/openfortivpn" ; then
 		einfo "Applying kernel config flags for the openfortivpn package (id: 64cf079)"
 		ot-kernel_y_configopt "CONFIG_PPP"
@@ -5389,7 +5389,7 @@ ot-kernel-pkgflags_openfortivpn() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the openrgb package
 ot-kernel-pkgflags_openrgb() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4b52b16" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4b52b16]}" == "1" ]] && return
 	if has_version "app-misc/openrgb" ; then
 		einfo "Applying kernel config flags for the OpenRGB package (id: 4b52b16)"
 		ot-kernel_y_configopt "CONFIG_I2C"
@@ -5413,7 +5413,7 @@ ot-kernel-pkgflags_openrgb() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the openssl package
 ot-kernel-pkgflags_openssl() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "0dcc9b8" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S0dcc9b8]}" == "1" ]] && return
 	if has_version "dev-libs/openssl[ktls]" && ver_test ${K_MAJOR_MINOR} -ge 4.18 ; then
 		einfo "Applying kernel config flags for the openssl package (id: 0dcc9b8)"
 		ot-kernel_y_configopt "CONFIG_TLS"
@@ -5425,7 +5425,7 @@ ot-kernel-pkgflags_openssl() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the openvpn package
 ot-kernel-pkgflags_openvpn() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "d507034" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd507034]}" == "1" ]] && return
 	if has_version "net-vpn/openvpn" ; then
 		einfo "Applying kernel config flags for the openvpn package (id: d507034)"
 		_ot-kernel-pkgflags_tun
@@ -5436,7 +5436,7 @@ ot-kernel-pkgflags_openvpn() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the openvswitch package
 ot-kernel-pkgflags_openvswitch() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "956a1b4" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S956a1b4]}" == "1" ]] && return
 	if has_version "net-misc/openvswitch" ; then
 		einfo "Applying kernel config flags for the openvswitch package (id: 956a1b4)"
 		ot-kernel_y_configopt "CONFIG_NET_CLS_ACT"
@@ -5466,7 +5466,7 @@ _ot-kernel-pkgflags_has_yubikey() {
 # @DESCRIPTION:
 # Applies kernel config flags for the pam_u2f package
 ot-kernel-pkgflags_pam_u2f() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "79bf4ef" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S79bf4ef]}" == "1" ]] && return
 	if has_version "sys-auth/pam_u2f" \
 		&& ( _ot-kernel-pkgflags_has_yubikey || [[ "${YUBIKEY}" == "1" ]] ) ; then
 		einfo "Applying kernel config flags for pam_u2f (id: 79bf4ef)"
@@ -5482,7 +5482,7 @@ ot-kernel-pkgflags_pam_u2f() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the qdmr package
 ot-kernel-pkgflags_qdmr() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "f56d1a2" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf56d1a2]}" == "1" ]] && return
 	if has_version "net-wireless/qdmr" ; then
 		einfo "Applying kernel config flags for the qdmr package (id: f56d1a2)"
 		ot-kernel_y_configopt "CONFIG_USB_ACM"
@@ -5595,7 +5595,7 @@ _ot-kernel-pkgflags_tcpip() {
 # @DESCRIPTION:
 # Applies kernel config flags for the QEMU package.
 ot-kernel-pkgflags_qemu() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "00f70b8" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S00f70b8]}" == "1" ]] && return
 	if has_version "app-emulation/qemu" ; then
 		einfo "Applying kernel config flags for the qemu package (id: 00f70b8)"
 		if [[ "${QEMU_HOST:-1}" == "1" ]] ; then
@@ -5641,7 +5641,7 @@ ot-kernel-pkgflags_qemu() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the portage package
 ot-kernel-pkgflags_portage() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "0be29dc" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S0be29dc]}" == "1" ]] && return
 	if has_version "sys-apps/portage" ; then
 		einfo "Applying kernel config flags for the portage package (id: 0be29dc)"
 		ot-kernel_y_configopt "CONFIG_IPC_NS"
@@ -5655,7 +5655,7 @@ ot-kernel-pkgflags_portage() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the pcmciautils package
 ot-kernel-pkgflags_pcmciautils() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "04119e0" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S04119e0]}" == "1" ]] && return
 	if has_version "sys-apps/pcmciautils" ; then
 		einfo "Applying kernel config flags for the pcmciautils package (id: 04119e0)"
 		ot-kernel_y_configopt "CONFIG_PCMCIA"
@@ -5666,7 +5666,7 @@ ot-kernel-pkgflags_pcmciautils() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the pesign package
 ot-kernel-pkgflags_pesign() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4f9bc98" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4f9bc98]}" == "1" ]] && return
 	if has_version "app-crypt/pesign" ; then
 		einfo "Applying kernel config flags for the pesign package (id: 4f9bc98)"
 		ot-kernel_y_configopt "CONFIG_EFI"
@@ -5766,7 +5766,7 @@ _ot-kernel-pkgflags_cpu_pmu_events_perf() {
 # @DESCRIPTION:
 # Applies kernel config flags for the perf package
 ot-kernel-pkgflags_perf() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "ef529b7" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sef529b7]}" == "1" ]] && return
 	if has_version "dev-util/perf" ; then
 		einfo "Applying kernel config flags for the perf package (id: ef529b7)"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
@@ -5784,7 +5784,7 @@ ot-kernel-pkgflags_perf() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the pglinux package
 ot-kernel-pkgflags_pglinux() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "f219c77" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf219c77]}" == "1" ]] && return
 	if has_version "net-firewall/pglinux" ; then
 		einfo "Applying kernel config flags for the pglinux package (id: f219c77)"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK"
@@ -5808,7 +5808,7 @@ ot-kernel-pkgflags_pglinux() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the plocate package
 ot-kernel-pkgflags_plocate() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "38b20ed" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S38b20ed]}" == "1" ]] && return
 	if has_version "sys-apps/plocate[io-uring]" ; then
 		einfo "Applying kernel config flags for the plocate package (id: 38b20ed)"
 		ot-kernel_y_configopt "CONFIG_IO_URING"
@@ -5819,7 +5819,7 @@ ot-kernel-pkgflags_plocate() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ply package
 ot-kernel-pkgflags_ply() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "da5a055" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sda5a055]}" == "1" ]] && return
 	if has_version "dev-util/ply" ; then
 		einfo "Applying kernel config flags for the ply package (id: da5a055)"
 		ot-kernel_y_configopt "CONFIG_BPF"
@@ -5836,7 +5836,7 @@ ot-kernel-pkgflags_ply() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the plymouth package
 ot-kernel-pkgflags_plymouth() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "17c3464" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S17c3464]}" == "1" ]] && return
 	if has_version "sys-boot/plymouth" ; then
 		einfo "Applying kernel config flags for the plymouth package (id: 17c3464)"
 		ot-kernel_unset_configopt "CONFIG_LOGO"
@@ -5855,7 +5855,7 @@ ot-kernel-pkgflags_plymouth() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the polkit package
 ot-kernel-pkgflags_polkit() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "ce79cdd" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sce79cdd]}" == "1" ]] && return
 	if has_version "sys-auth/polkit" ; then
 		einfo "Applying kernel config flags for the polkit package (id: ce79cdd)"
 		ot-kernel_y_configopt "CONFIG_FUTEX" # For better performance
@@ -5866,7 +5866,7 @@ ot-kernel-pkgflags_polkit() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the pommed package
 ot-kernel-pkgflags_pommed() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "d197558" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd197558]}" == "1" ]] && return
 	if has_version "app-laptop/pommed" ; then
 		einfo "Applying kernel config flags for the pommed package (id: d197558)"
 		ot-kernel_y_configopt "CONFIG_DMIID"
@@ -5877,7 +5877,7 @@ ot-kernel-pkgflags_pommed() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ponyprog package
 ot-kernel-pkgflags_ponyprog() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "dacf3ee" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sdacf3ee]}" == "1" ]] && return
 	if has_version "dev-embedded/ponyprog" ; then
 		einfo "Applying kernel config flags for the ponyprog package (id: dacf3ee)"
 		ot-kernel_y_configopt "CONFIG_SERIO"
@@ -5892,7 +5892,7 @@ ot-kernel-pkgflags_ponyprog() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the pulseaudio package
 ot-kernel-pkgflags_pulseaudio() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "40b66c8" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S40b66c8]}" == "1" ]] && return
 	if has_version "media-sound/pulseaudio" ; then
 		einfo "Applying kernel config flags for the pulseaudio package (id: 40b66c8)"
 		ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
@@ -5904,7 +5904,7 @@ ot-kernel-pkgflags_pulseaudio() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the pqiv package
 ot-kernel-pkgflags_pqiv() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "85b64bd" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S85b64bd]}" == "1" ]] && return
 	if has_version "media-gfx/pqiv" ; then
 		einfo "Applying kernel config flags for the pqiv package (id: 85b64bd)"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
@@ -5915,7 +5915,7 @@ ot-kernel-pkgflags_pqiv() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the pv package
 ot-kernel-pkgflags_pv() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "af7a9a9" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Saf7a9a9]}" == "1" ]] && return
 	if has_version "sys-apps/pv" ; then
 		einfo "Applying kernel config flags for the pv package (id: af7a9a9)"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
@@ -5926,7 +5926,7 @@ ot-kernel-pkgflags_pv() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the postgresql package
 ot-kernel-pkgflags_postgresql() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b3f021a" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb3f021a]}" == "1" ]] && return
 	if has_version "dev-db/postgresql[server]" ; then
 		einfo "Applying kernel config flags for the postgresql package (id: b3f021a)"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
@@ -5937,7 +5937,7 @@ ot-kernel-pkgflags_postgresql() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the powernowd package
 ot-kernel-pkgflags_powernowd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "cceb5ce" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Scceb5ce]}" == "1" ]] && return
 	if has_version "sys-power/powernowd" ; then
 		einfo "Applying kernel config flags for the powernowd package (id: cceb5ce)"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -5948,7 +5948,7 @@ ot-kernel-pkgflags_powernowd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ppp package
 ot-kernel-pkgflags_ppp() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4f2e9a1" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4f2e9a1]}" == "1" ]] && return
 	if has_version "net-dialup/ppp" ; then
 		einfo "Applying kernel config flags for the ppp package (id: 4f2e9a1)"
 		ot-kernel_y_configopt "CONFIG_PPP"
@@ -5972,7 +5972,7 @@ ot-kernel-pkgflags_ppp() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the powertop package
 ot-kernel-pkgflags_powertop() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "87ebe78" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S87ebe78]}" == "1" ]] && return
 	if has_version "sys-power/powertop" ; then
 		einfo "Applying kernel config flags for the powertop package (id: 87ebe78)"
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
@@ -6031,7 +6031,7 @@ ot-kernel-pkgflags_powertop() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for r8152
 ot-kernel-pkgflags_r8152() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5e191f3" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5e191f3]}" == "1" ]] && return
 	if has_version "net-misc/realtek-r8152" ; then
 		einfo "Applying kernel config flags for r8152 (id: 5e191f3)"
 		ot-kernel_set_configopt "CONFIG_USB_USBNET" "m"
@@ -6046,7 +6046,7 @@ ot-kernel-pkgflags_r8152() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for r8168
 ot-kernel-pkgflags_r8168() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "f055b9c" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf055b9c]}" == "1" ]] && return
 	if has_version "net-misc/r8168" ; then
 		einfo "Applying kernel config flags for r8168 (id: f055b9c)"
 		ot-kernel_unset_configopt "CONFIG_R8169"
@@ -6057,7 +6057,7 @@ ot-kernel-pkgflags_r8168() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the rasdaemon package
 ot-kernel-pkgflags_rasdaemon() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "86fee76" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S86fee76]}" == "1" ]] && return
 	if has_version "app-admin/rasdaemon" ; then
 		einfo "Applying kernel config flags for rasdaemon (id: 86fee76)"
 		ban_disable_debug "86fee76"
@@ -6069,7 +6069,7 @@ ot-kernel-pkgflags_rasdaemon() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the read-edid package
 ot-kernel-pkgflags_read_edid() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "ec45905" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sec45905]}" == "1" ]] && return
 	if has_version "x11-misc/read-edid" ; then
 		einfo "Applying kernel config flags for read-edid (id: ec45905)"
 		ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
@@ -6080,7 +6080,7 @@ ot-kernel-pkgflags_read_edid() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the recoil package
 ot-kernel-pkgflags_recoil() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "009d7a4" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S009d7a4]}" == "1" ]] && return
 	if has_version "app-misc/recoll" ; then
 		einfo "Applying kernel config flags for recoil (id: 009d7a4)"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
@@ -6091,7 +6091,7 @@ ot-kernel-pkgflags_recoil() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for roct
 ot-kernel-pkgflags_roct() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2967135" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2967135]}" == "1" ]] && return
 	if has_version "dev-libs/roct-thunk-interface" ; then
 		einfo "Applying kernel config flags for roct (id: 2967135)"
 		ot-kernel_y_configopt "CONFIG_HSA_AMD"
@@ -6106,7 +6106,7 @@ ot-kernel-pkgflags_roct() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for rr
 ot-kernel-pkgflags_rr() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "889cc93" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S889cc93]}" == "1" ]] && return
 	if has_version "dev-util/rr" ; then
 		einfo "Applying kernel config flags for roct (id: 889cc93)"
 		ot-kernel_y_configopt "CONFIG_SECCOMP"
@@ -6117,7 +6117,7 @@ ot-kernel-pkgflags_rr() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the rsyslog package
 ot-kernel-pkgflags_rsyslog() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "16bb03d" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S16bb03d]}" == "1" ]] && return
 	if has_version "dev-libs/rsyslog" ; then
 		einfo "Applying kernel config flags for the rsyslog package (id: 16bb03d)"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
@@ -6128,7 +6128,7 @@ ot-kernel-pkgflags_rsyslog() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the rtirq package
 ot-kernel-pkgflags_rtirq() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "7a6a27c" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S7a6a27c]}" == "1" ]] && return
 	if has_version "sys-process/rtirq" ; then
 		einfo "Applying kernel config flags for rtirq (id: 7a6a27c)"
 		ot-kernel_y_configopt "CONFIG_PREEMPT_RT" # Chosen because it is easier
@@ -6141,7 +6141,7 @@ ot-kernel-pkgflags_rtirq() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the rtkit package
 ot-kernel-pkgflags_rtkit() { # DONE, NEEDS REVIEW
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "e07e9e3" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se07e9e3]}" == "1" ]] && return
 	if has_version "sys-auth/rtkit" ; then
 		einfo "Applying kernel config flags for rtkit (id: e07e9e3)"
 		ot-kernel_unset_configopt "CONFIG_RT_GROUP_SCHED"
@@ -6152,7 +6152,7 @@ ot-kernel-pkgflags_rtkit() { # DONE, NEEDS REVIEW
 # @DESCRIPTION:
 # Applies kernel config flags for the rtsp-conntrack package
 ot-kernel-pkgflags_rtsp_conntrack() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "682cf36" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S682cf36]}" == "1" ]] && return
 	if has_version "net-firewall/rtsp-conntrack" ; then
 		einfo "Applying kernel config flags for the rtsp-conntrack package (id: 682cf36)"
 		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
@@ -6163,7 +6163,7 @@ ot-kernel-pkgflags_rtsp_conntrack() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the runc package
 ot-kernel-pkgflags_runc() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5c1dafb" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5c1dafb]}" == "1" ]] && return
 	if has_version "app-containers/runc" ; then
 		einfo "Applying kernel config flags for the runc package (id: 5c1dafb)"
 		ot-kernel_y_configopt "CONFIG_USER_NS"
@@ -6174,7 +6174,7 @@ ot-kernel-pkgflags_runc() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the samba package
 ot-kernel-pkgflags_samba() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "f22efc1" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf22efc1]}" == "1" ]] && return
 	if has_version "net-fs/samba" ; then
 		einfo "Applying kernel config flags for the samba package (id: f22efc1)"
 		ot-kernel_y_configopt "CONFIG_NETWORK_FILESYSTEMS"
@@ -6192,7 +6192,7 @@ ot-kernel-pkgflags_samba() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the sane package
 ot-kernel-pkgflags_sane() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "949520d" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S949520d]}" == "1" ]] && return
 	if has_version "media-gfx/sane-backends" ; then
 		einfo "Applying kernel config flags for the sane package (id: 949520d)"
 		SANE_SCSI="${SANE_SCSI:-0}"
@@ -6217,7 +6217,7 @@ ewarn "Re-emerge media-gfx/sane-backends[usb] and ${PN} for USB scanner support.
 # @DESCRIPTION:
 # Applies kernel config flags for the sanewall package
 ot-kernel-pkgflags_sanewall() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "745f3ee" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S745f3ee]}" == "1" ]] && return
 	if has_version "net-firewall/sanewall" ; then
 		einfo "Applying kernel config flags for the sanewall package (id: 745f3ee)"
 		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_IPV4"
@@ -6249,7 +6249,7 @@ ot-kernel-pkgflags_sanewall() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the sanlock package
 ot-kernel-pkgflags_sanlock() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b54f34e" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb54f34e]}" == "1" ]] && return
 	if has_version "sys-cluster/sanlock" ; then
 		einfo "Applying kernel config flags for the sanlock package (id: b54f34e)"
 		ot-kernel_y_configopt "CONFIG_SOFT_WATCHDOG"
@@ -6260,7 +6260,7 @@ ot-kernel-pkgflags_sanlock() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the sbsigntools package
 ot-kernel-pkgflags_sbsigntools() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "cc4c186" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Scc4c186]}" == "1" ]] && return
 	if has_version "app-crypt/sbsigntools" ; then
 		einfo "Applying kernel config flags for the sbsigntools package (id: cc4c186)"
 		ot-kernel_y_configopt "CONFIG_EFI"
@@ -6285,7 +6285,7 @@ ot-kernel-pkgflags_sbsigntools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the snapd package
 ot-kernel-pkgflags_snapd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "487fece" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S487fece]}" == "1" ]] && return
 	if has_version "app-containers/snapd" ; then
 		einfo "Applying kernel config flags for the snapd package (id: 487fece)"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
@@ -6309,7 +6309,7 @@ ot-kernel-pkgflags_snapd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the souper package
 ot-kernel-pkgflags_souper() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "cbbf7b0" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Scbbf7b0]}" == "1" ]] && return
 	if has_version "sys-devel/souper[external-cache,tcp]" ; then
 		einfo "Applying kernel config flags for the souper package (id: cbbf7b0)"
 	        _ot-kernel-pkgflags_tcpip
@@ -6326,7 +6326,7 @@ ot-kernel-pkgflags_souper() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the spacenavd package
 ot-kernel-pkgflags_spacenavd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "7c0022c" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S7c0022c]}" == "1" ]] && return
 	if has_version "app-misc/spacenavd" ; then
 		einfo "Applying kernel config flags for the spacenavd package (id: 7c0022c)"
 		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -6337,7 +6337,7 @@ ot-kernel-pkgflags_spacenavd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the spice-vdagent package
 ot-kernel-pkgflags_spice_vdagent() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "239cc81" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S239cc81]}" == "1" ]] && return
 	if has_version "app-emulation/spice-vdagent" ; then
 		einfo "Applying kernel config flags for the spice-vdagent package (id: 239cc81)"
 		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
@@ -6435,7 +6435,7 @@ _ot-kernel-pkgflags_squashfs() {
 # @DESCRIPTION:
 # Applies kernel config flags for the squashfs-tools package or for LIVE CDs
 ot-kernel-pkgflags_squashfs-tools() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "7a8aba0" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S7a8aba0]}" == "1" ]] && return
 	if has_version "sys-fs/squashfs-tools" ; then
 		einfo "Applying kernel config flags for the squashfs-tools package (id: 7a8aba0)"
 		ot-kernel_y_configopt "CONFIG_MISC_FILESYSTEMS"
@@ -6447,7 +6447,7 @@ ot-kernel-pkgflags_squashfs-tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the squid package
 ot-kernel-pkgflags_squid() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5350ae6" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5350ae6]}" == "1" ]] && return
 	if has_version "net-proxy/squid[tproxy]" ; then
 		einfo "Applying kernel config flags for the squid package (id: 5350ae6)"
 		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
@@ -6460,7 +6460,7 @@ ot-kernel-pkgflags_squid() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the sc-controller package
 ot-kernel-pkgflags_sc_controller() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b573d49" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb573d49]}" == "1" ]] && return
 	if has_version "games-util/sc-controller" ; then
 		einfo "Applying kernel config flags for the sc-controller package (id: b573d49)"
 		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
@@ -6471,7 +6471,7 @@ ot-kernel-pkgflags_sc_controller() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the simplevirt package
 ot-kernel-pkgflags_simplevirt() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "9dc3745" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S9dc3745]}" == "1" ]] && return
 	if has_version "app-emulation/simplevirt" ; then
 		einfo "Applying kernel config flags for the simplevirt package (id: 9dc3745)"
 		_ot-kernel-pkgflags_tun
@@ -6483,7 +6483,7 @@ ot-kernel-pkgflags_simplevirt() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the singularity package
 ot-kernel-pkgflags_singularity() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "17d606f" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S17d606f]}" == "1" ]] && return
 	if has_version "sys-cluster/singularity" ; then
 		einfo "Applying kernel config flags for the singularity package (id: 17d606f)"
 		ot-kernel_y_configopt "CONFIG_SQUASHFS"
@@ -6494,7 +6494,7 @@ ot-kernel-pkgflags_singularity() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the solaar package
 ot-kernel-pkgflags_solaar() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "338edae" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S338edae]}" == "1" ]] && return
 	if has_version "app-misc/solaar" ; then
 		einfo "Applying kernel config flags for the solaar package (id: 338edae)"
 		ban_disable_debug "338edae"
@@ -6507,7 +6507,7 @@ ot-kernel-pkgflags_solaar() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the sonic_snap package
 ot-kernel-pkgflags_sonic_snap() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "16c9288" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S16c9288]}" == "1" ]] && return
 	if has_version "media-video/sonic-snap" ; then
 		einfo "Applying kernel config flags for the sonic-snap package (id: 16c9288)"
 		ot-kernel_set_configopt "CONFIG_USB_SN9C102" "m"
@@ -6518,7 +6518,7 @@ ot-kernel-pkgflags_sonic_snap() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the sshuttle package
 ot-kernel-pkgflags_sshuttle() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5f97f7a" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5f97f7a]}" == "1" ]] && return
 	if has_version "net-proxy/sshuttle" ; then
 		einfo "Applying kernel config flags for the sshuttle package (id: 5f97f7a)"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_HL"
@@ -6532,7 +6532,7 @@ ot-kernel-pkgflags_sshuttle() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the shorewall package
 ot-kernel-pkgflags_shorewall() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "6596c21" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S6596c21]}" == "1" ]] && return
 	if has_version "net-firewall/shorewall" ; then
 		einfo "Applying kernel config flags for the shorewall package (id: 6596c21)"
 		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
@@ -6554,7 +6554,7 @@ ot-kernel-pkgflags_shorewall() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the sssd package
 ot-kernel-pkgflags_sssd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "17d280b" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S17d280b]}" == "1" ]] && return
 	if has_version "sys-auth/sssd" ; then
 		einfo "Applying kernel config flags for the sssd package (id: 17d280b)"
 		ot-kernel_y_configopt "CONFIG_KEYS"
@@ -6565,7 +6565,7 @@ ot-kernel-pkgflags_sssd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the sstp-client package
 ot-kernel-pkgflags_sstp_client() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "17dced4" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S17dced4]}" == "1" ]] && return
 	if has_version "net-misc/sstp-client" ; then
 		einfo "Applying kernel config flags for the sstp-client package (id: 17dced4)"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK"
@@ -6576,7 +6576,7 @@ ot-kernel-pkgflags_sstp_client() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the speedtouch-usb package
 ot-kernel-pkgflags_speedtouch_usb() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "d90675b" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd90675b]}" == "1" ]] && return
 	if has_version "net-dialup/speedtouch-usb" ; then
 		einfo "Applying kernel config flags for the speedtouch-usb package (id: d90675b)"
 		ot-kernel_y_configopt "CONFIG_FW_LOADER"
@@ -6598,7 +6598,7 @@ ot-kernel-pkgflags_speedtouch_usb() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the steam-meta package
 ot-kernel-pkgflags_steam() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "f2d2736" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf2d2736]}" == "1" ]] && return
 	if has_version "games-utils/steam-meta" ; then
 		einfo "Applying kernel config flags for the steam package (id: f2d2736)"
 		ot-kernel_y_configopt "CONFIG_COMPAT_32BIT_TIME"
@@ -6617,7 +6617,7 @@ ot-kernel-pkgflags_steam() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the stress-ng package
 ot-kernel-pkgflags_stress_ng() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "3af5aaa" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S3af5aaa]}" == "1" ]] && return
 	if has_version "app-benchmarks/stress-ng[apparmor]" ; then
 		einfo "Applying kernel config flags for the stress-ng package (id: 3af5aaa)"
 		ot-kernel_y_configopt "CONFIG_SECURITY_APPARMOR"
@@ -6628,7 +6628,7 @@ ot-kernel-pkgflags_stress_ng() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the suricata package
 ot-kernel-pkgflags_suricata() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5a1ebf8" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5a1ebf8]}" == "1" ]] && return
 	if has_version "net-analyzer/suricata" ; then
 		einfo "Applying kernel config flags for the suricata package (id: 5a1ebf8)"
 		ot-kernel_y_configopt "CONFIG_XDP_SOCKETS"
@@ -6639,7 +6639,7 @@ ot-kernel-pkgflags_suricata() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the sysdig-kmod package
 ot-kernel-pkgflags_sysdig_kmod() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "0e9fdcf" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S0e9fdcf]}" == "1" ]] && return
 	if has_version "dev-util/sysdig-kmod" ; then
 		einfo "Applying kernel config flags for the sysdig-kmod package (id: 0e9fdcf)"
 		ban_disable_debug "0e9fdcf"
@@ -6652,7 +6652,7 @@ ot-kernel-pkgflags_sysdig_kmod() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the systemd package
 ot-kernel-pkgflags_systemd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "297eb15" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S297eb15]}" == "1" ]] && return
 	if has_version "sys-apps/systemd" ; then
 		einfo "Applying kernel config flags for the systemd package (id: 297eb15)"
 		ot-kernel_y_configopt "CONFIG_AUTOFS4_FS"
@@ -6714,7 +6714,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the systemd-bootchart package
 ot-kernel-pkgflags_systemd_bootchart() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "11dfb63" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S11dfb63]}" == "1" ]] && return
 	if has_version "sys-apps/systemd-bootchart" ; then
 		einfo "Applying kernel config flags for the systemd-bootchart package (id: 11dfb63)"
 		ot-kernel_y_configopt "CONFIG_SCHEDSTATS"
@@ -6727,7 +6727,7 @@ ot-kernel-pkgflags_systemd_bootchart() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the systemtap package
 ot-kernel-pkgflags_systemtap() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "78ae7b9" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S78ae7b9]}" == "1" ]] && return
 	if has_version "dev-util/systemtap" ; then
 		einfo "Applying kernel config flags for systemtap (id: 78ae7b9)"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
@@ -6742,7 +6742,7 @@ ot-kernel-pkgflags_systemtap() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the tas package
 ot-kernel-pkgflags_tas() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b362784" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb362784]}" == "1" ]] && return
 	if has_version "sys-apps/tas" ; then
 		einfo "Applying kernel config flags for tas (id: b362784)"
 		ot-kernel_y_configopt "CONFIG_IPMI_DEVICE_INTERFACE"
@@ -6755,7 +6755,7 @@ ot-kernel-pkgflags_tas() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the tb_us package
 ot-kernel-pkgflags_tb_us() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c800aa5" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc800aa5]}" == "1" ]] && return
 	if has_version "sys-apps/thunderbolt-software-user-space" ; then
 		einfo "Applying kernel config flags for tb-us (id: c800aa5)"
 		ot-kernel_y_configopt "CONFIG_THUNDERBOLT"
@@ -6767,7 +6767,7 @@ ot-kernel-pkgflags_tb_us() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the tboot package
 ot-kernel-pkgflags_tboot() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "e4d2001" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se4d2001]}" == "1" ]] && return
 	if has_version "sys-boot/tboot" ; then
 		einfo "Applying kernel config flags for tb-us (id: e4d2001)"
 		ot-kernel_y_configopt "CONFIG_INTEL_TXT"
@@ -6778,7 +6778,7 @@ ot-kernel-pkgflags_tboot() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the thinkfinger package
 ot-kernel-pkgflags_thinkfinger() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "f096b24" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf096b24]}" == "1" ]] && return
 	if has_version "sys-auth/thinkfinger[pam]" ; then
 		einfo "Applying kernel config flags for thinkfinger (id: f096b24)"
 		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
@@ -6789,7 +6789,7 @@ ot-kernel-pkgflags_thinkfinger() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the torque package
 ot-kernel-pkgflags_torque() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "be14777" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sbe14777]}" == "1" ]] && return
 	if has_version "sys-cluster/torque[cpusets]" ; then
 		einfo "Applying kernel config flags for torque (id: be14777)"
 		ot-kernel_y_configopt "CONFIG_CPUSETS"
@@ -6800,7 +6800,7 @@ ot-kernel-pkgflags_torque() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the tp_smapi package
 ot-kernel-pkgflags_tp_smapi() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "fb3a3a0" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sfb3a3a0]}" == "1" ]] && return
 	if has_version "app-laptop/tp_smapi[hdaps]" ; then
 		einfo "Applying kernel config flags for tp_smapi (id: fb3a3a0)"
 		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
@@ -6812,7 +6812,7 @@ ot-kernel-pkgflags_tp_smapi() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the tpb package
 ot-kernel-pkgflags_tpb() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "1ee9ffd" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1ee9ffd]}" == "1" ]] && return
 	if has_version "app-laptop/tpb" ; then
 		einfo "Applying kernel config flags for tpb (id: 1ee9ffd)"
 		ot-kernel_y_configopt "CONFIG_NVRAM"
@@ -6823,7 +6823,7 @@ ot-kernel-pkgflags_tpb() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the tpm-emulator package
 ot-kernel-pkgflags_tpm_emulator() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b9d0068" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb9d0068]}" == "1" ]] && return
 	if has_version "app-crypt/tpm-emulator" ; then
 		einfo "Applying kernel config flags for tpm-emulator (id: b9d0068)"
 		ot-kernel_y_configopt "CONFIG_MODULES"
@@ -6834,7 +6834,7 @@ ot-kernel-pkgflags_tpm_emulator() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the tpm2_tss package
 ot-kernel-pkgflags_tpm2_tss() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "de73f41" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sde73f41]}" == "1" ]] && return
 	if has_version "app-crypt/tpm2-tss" ; then
 		einfo "Applying kernel config flags for tpm2-tss (id: de73f41)"
 		ot-kernel_y_configopt "CONFIG_TCG_TPM"
@@ -6845,7 +6845,7 @@ ot-kernel-pkgflags_tpm2_tss() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the trace-cmd package
 ot-kernel-pkgflags_trace_cmd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "bb847a6" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sbb847a6]}" == "1" ]] && return
 	if has_version "dev-util/trace-cmd" ; then
 		einfo "Applying kernel config flags for trace-cmd (id: bb847a6)"
 		ban_disable_debug "bb847a6"
@@ -6859,7 +6859,7 @@ ot-kernel-pkgflags_trace_cmd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the tracker package
 ot-kernel-pkgflags_tracker() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "a6270fb" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sa6270fb]}" == "1" ]] && return
 	if has_version "app-misc/tracker" ; then
 		einfo "Applying kernel config flags for tracker (id: a6270fb)"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
@@ -6870,7 +6870,7 @@ ot-kernel-pkgflags_tracker() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the trousers package
 ot-kernel-pkgflags_trousers() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "1041159" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1041159]}" == "1" ]] && return
 	if has_version "app-crypt/trousers" ; then
 		einfo "Applying kernel config flags for trousers (id: 1041159)"
 		ot-kernel_y_configopt "CONFIG_TCG_TPM"
@@ -6881,7 +6881,7 @@ ot-kernel-pkgflags_trousers() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the tup package
 ot-kernel-pkgflags_tup() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4257724" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4257724]}" == "1" ]] && return
 	if has_version "dev-util/tup" ; then
 		einfo "Applying kernel config flags for tup (id: 4257724)"
 		ot-kernel_y_configopt "CONFIG_FUSE_FS"
@@ -6893,7 +6893,7 @@ ot-kernel-pkgflags_tup() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the tvheadend package
 ot-kernel-pkgflags_tvheadend() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2a10779" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2a10779]}" == "1" ]] && return
 	if has_version "media-tv/tvheadend" ; then
 		einfo "Applying kernel config flags for tvheadhead (id: 2a10779)"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
@@ -6904,7 +6904,7 @@ ot-kernel-pkgflags_tvheadend() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the udev package
 ot-kernel-pkgflags_udev() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2841205" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2841205]}" == "1" ]] && return
 	if has_version "sys-fs/udev" ; then
 		einfo "Applying kernel config flags for the udev package (id: 2841205)"
 		ot-kernel_y_configopt "CONFIG_BLOCK"
@@ -6932,7 +6932,7 @@ ot-kernel-pkgflags_udev() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the udisks package
 ot-kernel-pkgflags_udisks() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "98b0478" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S98b0478]}" == "1" ]] && return
 	if has_version "sys-fs/udisks" \
 		&& [[ \
 			"${arch}" == "arm" \
@@ -6955,7 +6955,7 @@ ot-kernel-pkgflags_udisks() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ufw package
 ot-kernel-pkgflags_ufw() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "18d6a56" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S18d6a56]}" == "1" ]] && return
 	if has_version "net-firewall/ufw" ; then
 		einfo "Applying kernel config flags for the ufw package (id: 18d6a56)"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
@@ -6993,7 +6993,7 @@ ot-kernel-pkgflags_ufw() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the uksmd package
 ot-kernel-pkgflags_uksmd() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "6b83c24" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S6b83c24]}" == "1" ]] && return
 	if has_version "sys-process/uksmd" ; then
 		einfo "Applying kernel config flags for the uksmd package (id: 6b83c24)"
 		ot-kernel_y_configopt "CONFIG_KSM"
@@ -7015,7 +7015,7 @@ _ot-kernel-pkgflags_rapl() {
 # @DESCRIPTION:
 # Applies kernel config flags for the undervolt package
 ot-kernel-pkgflags_undervolt() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4047b49" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4047b49]}" == "1" ]] && return
 	if has_version "sys-power/intel-undervolt" ; then
 		einfo "Applying kernel config flags for the undervolt package (id: 4047b49)"
 		_ot-kernel-pkgflags_rapl
@@ -7027,7 +7027,7 @@ ot-kernel-pkgflags_undervolt() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for usb
 ot-kernel-pkgflags_usb() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "33a5d46" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S33a5d46]}" == "1" ]] && return
 	if has_version "virtual/libusb" \
 		|| has_version "dev-libs/libusb" ; then
 		einfo "Applying kernel config flags for usb support (id: 33a5d46)"
@@ -7044,7 +7044,7 @@ ot-kernel-pkgflags_usb() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for usb midi fw
 ot-kernel-pkgflags_usb_midi_fw() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "41122e0" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S41122e0]}" == "1" ]] && return
 	if has_version "sys-firmware/midisport-firmware" ; then
 		einfo "Applying kernel config flags for the usb midi fw package (id: 41122e0)"
 		ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO"
@@ -7055,7 +7055,7 @@ ot-kernel-pkgflags_usb_midi_fw() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the usb_modeswitch package
 ot-kernel-pkgflags_usb_modeswitch() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "1a2ff9d" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1a2ff9d]}" == "1" ]] && return
 	if has_version "sys-apps/usb_modeswitch" ; then
 		einfo "Applying kernel config flags for the usb_modeswitch package (id: 1a2ff9d)"
 		ot-kernel_y_configopt "CONFIG_USB_SERIAL"
@@ -7066,7 +7066,7 @@ ot-kernel-pkgflags_usb_modeswitch() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the usbtop package
 ot-kernel-pkgflags_usbtop() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "8091306" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S8091306]}" == "1" ]] && return
 	if has_version "sys-process/usbtop" ; then
 		einfo "Applying kernel config flags for the usbtop package (id: 8091306)"
 		ot-kernel_y_configopt "CONFIG_USB_MON"
@@ -7077,7 +7077,7 @@ ot-kernel-pkgflags_usbtop() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the usbview package
 ot-kernel-pkgflags_usbview() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "3e735de" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S3e735de]}" == "1" ]] && return
 	if has_version "app-admin/usbview" ; then
 		einfo "Applying kernel config flags for the usbview package (id: 3e735de)"
 		ban_disable_debug "3e735de"
@@ -7090,7 +7090,7 @@ ot-kernel-pkgflags_usbview() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the v4l-dvb-saa716x package
 ot-kernel-pkgflags_v4l_dvb_saa716x() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "dbf8e9f" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sdbf8e9f]}" == "1" ]] && return
 	if has_version "media-tv/v4l-dvb-saa716x" ; then
 		einfo "Applying kernel config flags for the v4l-dvb-saa716x package (id: dbf8e9f)"
 		ot-kernel_y_configopt "CONFIG_DVB_CORE"
@@ -7103,7 +7103,7 @@ ot-kernel-pkgflags_v4l_dvb_saa716x() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the v4l2loopback package
 ot-kernel-pkgflags_v4l2loopback() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b4a9c8a" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb4a9c8a]}" == "1" ]] && return
 	if has_version "media-video/v4l2loopback" ; then
 		einfo "Applying kernel config flags for the v4l2loopback package (id: b4a9c8a)"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
@@ -7114,7 +7114,7 @@ ot-kernel-pkgflags_v4l2loopback() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the vbox package
 ot-kernel-pkgflags_vbox() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c12b08e" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc12b08e]}" == "1" ]] && return
 	if has_version "app-emulation/virtualbox" ; then
 		einfo "Applying kernel config flags for the vbox package (id: c12b08e)"
 		ot-kernel_y_configopt "CONFIG_MODULES"
@@ -7162,7 +7162,7 @@ ot-kernel-pkgflags_vbox() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for vcrypt
 ot-kernel-pkgflags_vcrypt() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "e98f261" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se98f261]}" == "1" ]] && return
 	if has_version "app-crypt/veracrypt" ; then
 		einfo "Applying kernel config flags for vcrypt (id: e98f261)"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
@@ -7177,7 +7177,7 @@ ot-kernel-pkgflags_vcrypt() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the vendor-reset package
 ot-kernel-pkgflags_vendor_reset() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "3bae162" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S3bae162]}" == "1" ]] && return
 	if has_version "app-emulation/vendor-reset" ; then
 		einfo "Applying kernel config flags for the vendor-reset package (id: 3bae162)"
 		ban_disable_debug "3bae162"
@@ -7194,7 +7194,7 @@ ot-kernel-pkgflags_vendor_reset() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the vhba package
 ot-kernel-pkgflags_vhba() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "ce86ab8" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sce86ab8]}" == "1" ]] && return
 	if has_version "sys-fs/vhba" ; then
 		einfo "Applying kernel config flags for the vhba package (id: ce86ab8)"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_SR"
@@ -7206,7 +7206,7 @@ ot-kernel-pkgflags_vhba() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the vinagre package
 ot-kernel-pkgflags_vinagre() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2356e75" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2356e75]}" == "1" ]] && return
 	if has_version "net-misc/vinagre" ; then
 		einfo "Applying kernel config flags for the vinagre package (id: 2356e75)"
 	        _ot-kernel-pkgflags_tcpip
@@ -7218,7 +7218,7 @@ ot-kernel-pkgflags_vinagre() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the vpnc package
 ot-kernel-pkgflags_vpnc() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "ac51429" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sac51429]}" == "1" ]] && return
 	if has_version "net-vpn/vpnc" ; then
 		einfo "Applying kernel config flags for the vpnc package (id: ac51429)"
 		_ot-kernel-pkgflags_tun
@@ -7229,7 +7229,7 @@ ot-kernel-pkgflags_vpnc() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the vtun package
 ot-kernel-pkgflags_vtun() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "205c74a" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S205c74a]}" == "1" ]] && return
 	if has_version "net-vpn/vtun" ; then
 		einfo "Applying kernel config flags for the vtun package (id: 205c74a)"
 		_ot-kernel-pkgflags_tun
@@ -7240,7 +7240,7 @@ ot-kernel-pkgflags_vtun() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xf86-input-wacom package
 ot-kernel-pkgflags_wacom() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "dc77e36" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sdc77e36]}" == "1" ]] && return
 	if has_version "x11-drivers/xf86-input-wacom" ; then
 		einfo "Applying kernel config flags for the xf86-input-wacom package (id: dc77e36)"
 		if ver_test ${K_MAJOR_MINOR} -lt 3.17 ; then
@@ -7263,7 +7263,7 @@ ot-kernel-pkgflags_wacom() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the wavemon package
 ot-kernel-pkgflags_wavemon() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "8960610" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S8960610]}" == "1" ]] && return
 	if has_version "net-wireless/wavemon" ; then
 		einfo "Applying kernel config flags for the wavemon package (id: 8960610)"
 		ot-kernel_y_configopt "CONFIG_CFG80211"
@@ -7274,7 +7274,7 @@ ot-kernel-pkgflags_wavemon() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the wine packages
 ot-kernel-pkgflags_wine() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "ab3aa13" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sab3aa13]}" == "1" ]] && return
 	if \
 		has_version "app-emulation/wine-any" \
 		|| has_version "app-emulation/wine-d3d9" \
@@ -7297,7 +7297,7 @@ ot-kernel-pkgflags_wine() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the wireguard-modules package
 ot-kernel-pkgflags_wireguard_modules() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "a2dab07" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sa2dab07]}" == "1" ]] && return
 	if has_version "net-vpn/wireguard-modules" ; then
 		einfo "Applying kernel config flags for the wireguard-modules package (id: a2dab07)"
 		_ot-kernel-pkgflags_tcpip
@@ -7310,7 +7310,7 @@ ot-kernel-pkgflags_wireguard_modules() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the wireguard-tools package
 ot-kernel-pkgflags_wireguard_tools() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "d0dd1be" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd0dd1be]}" == "1" ]] && return
 	if has_version "net-vpn/wireguard-tools[wg-quick]" ; then
 		einfo "Applying kernel config flags for the wireguard-tools package (id: d0dd1be)"
 		ot-kernel_y_configopt "CONFIG_IP_ADVANCED_ROUTER"
@@ -7359,7 +7359,7 @@ ot-kernel-pkgflags_wireguard_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the wireless-tools package
 ot-kernel-pkgflags_wireless_tools() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "0861c19" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S0861c19]}" == "1" ]] && return
 	if has_version "net-wireless/wireless-tools" ; then
 		einfo "Applying kernel config flags for the wireless-tools package (id: 0861c19)"
 		ot-kernel_y_configopt "CONFIG_NET"
@@ -7373,7 +7373,7 @@ ot-kernel-pkgflags_wireless_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the wireplumber package
 ot-kernel-pkgflags_wireplumber() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "f9df425" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf9df425]}" == "1" ]] && return
 	if has_version "media-video/wireplumber" ; then
 		einfo "Applying kernel config flags for the wireplumber package (id: f9df425)"
 		ot-kernel_y_configopt "CONFIG_SOUND"
@@ -7389,7 +7389,7 @@ ot-kernel-pkgflags_wireplumber() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the wpa_supplicant package
 ot-kernel-pkgflags_wpa_supplicant() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "e0a4d03" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se0a4d03]}" == "1" ]] && return
 	if has_version "net-wireless/wpa_supplicant[crda]" ; then
 		einfo "Applying kernel config flags for the wpa_supplicant package (id: e0a4d03)"
 		: # See ot-kernel-pkgflags_crda
@@ -7401,7 +7401,7 @@ ot-kernel-pkgflags_wpa_supplicant() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xboxdrv package
 ot-kernel-pkgflags_xboxdrv() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "e7ec6f5" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se7ec6f5]}" == "1" ]] && return
 	if has_version "games-util/xboxdrv" ; then
 		einfo "Applying kernel config flags for the xboxdrv package (id: e7ec6f5)"
 		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -7415,7 +7415,7 @@ ot-kernel-pkgflags_xboxdrv() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xe_guest_utilities package
 ot-kernel-pkgflags_xe_guest_utilities() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "fec348c" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sfec348c]}" == "1" ]] && return
 	if has_version "app-emulation/xe-guest-utilities" ; then
 		einfo "Applying kernel config flags for the xe-guest-utilities package (id: fec348c)"
 		ot-kernel_y_configopt "CONFIG_XEN_COMPAT_XENFS"
@@ -7427,7 +7427,7 @@ ot-kernel-pkgflags_xe_guest_utilities() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xen package
 ot-kernel-pkgflags_xen() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c729ba1" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc729ba1]}" == "1" ]] && return
 	if has_version "app-emulation/xen" ; then
 		einfo "Applying kernel config flags for the xen package (id: c729ba1)"
 		if [[ "${ZEN_DOM0:-1}" == "1" ]] ; then # priveleged, backend, host
@@ -7546,7 +7546,7 @@ ot-kernel-pkgflags_xen() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xf86-input-evdev package
 ot-kernel-pkgflags_xf86_input_evdev() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "a9b2291" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sa9b2291]}" == "1" ]] && return
 	if has_version "x11-drivers/xf86-input-evdev" ; then
 		einfo "Applying kernel config flags for the xf86-input-evdev package (id: a9b2291)"
 		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -7557,7 +7557,7 @@ ot-kernel-pkgflags_xf86_input_evdev() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xf86-input-libinput package
 ot-kernel-pkgflags_xf86_input_libinput() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c4e47ff" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc4e47ff]}" == "1" ]] && return
 	if has_version "x11-drivers/xf86-input-libinput" ; then
 		einfo "Applying kernel config flags for the xf86-input-libinput package (id: c4e47ff)"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
@@ -7568,7 +7568,7 @@ ot-kernel-pkgflags_xf86_input_libinput() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xf86-input-synaptics package
 ot-kernel-pkgflags_xf86_input_synaptics() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c940a05" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc940a05]}" == "1" ]] && return
 	if has_version "x11-drivers/xf86-input-synaptics" ; then
 		einfo "Applying kernel config flags for the xf86-input-synaptics package (id: c940a05)"
 		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
@@ -7579,7 +7579,7 @@ ot-kernel-pkgflags_xf86_input_synaptics() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xf86-video-amdgpu package
 ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "affcbb4" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Saffcbb4]}" == "1" ]] && return
 	if has_version "x11-drivers/xf86-video-amdgpu" ; then
 		einfo "Applying kernel config flags for the xf86-video-amdgpu package (id: affcbb4)"
 		ot-kernel_y_configopt "CONFIG_MTRR"
@@ -7637,7 +7637,7 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xf86-video-ati package
 ot-kernel-pkgflags_xf86_video_ati() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2c2d347" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2c2d347]}" == "1" ]] && return
 	if has_version "x11-drivers/xf86-video-ati" ; then
 		einfo "Applying kernel config flags for the xf86-video-ati package (id: 2c2d347)"
 		if ver_test ${K_MAJOR_MINOR} -ge 3.9 ; then
@@ -7654,7 +7654,7 @@ ot-kernel-pkgflags_xf86_video_ati() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xf86-video-intel package
 ot-kernel-pkgflags_xf86_video_intel() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "bc32011" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sbc32011]}" == "1" ]] && return
 	if has_version "x11-drivers/xf86-video-intel" ; then
 		einfo "Applying kernel config flags for the xf86-video-intel package (id: bc32011)"
 		ot-kernel_y_configopt "CONFIG_MTRR"
@@ -7695,7 +7695,7 @@ ot-kernel-pkgflags_xf86_video_intel() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xf86-video-nouveau package
 ot-kernel-pkgflags_xf86_video_nouveau() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "411e952" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S411e952]}" == "1" ]] && return
 	if has_version "x11-drivers/xf86-video-nouveau" ; then
 		einfo "Applying kernel config flags for the xf86-video-nouveau package (id: 411e952)"
 		ot-kernel_y_configopt "CONFIG_DRM"
@@ -7709,7 +7709,7 @@ ot-kernel-pkgflags_xf86_video_nouveau() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xf86-video-vesa package
 ot-kernel-pkgflags_xf86_video_vesa() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "1940044" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1940044]}" == "1" ]] && return
 	if has_version "x11-drivers/xf86-video-vesa" ; then
 		einfo "Applying kernel config flags for the xf86-video-vesa package (id: 1940044)"
 		ot-kernel_y_configopt "CONFIG_DEVMEM"
@@ -7720,7 +7720,7 @@ ot-kernel-pkgflags_xf86_video_vesa() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the x86info package
 ot-kernel-pkgflags_x86info() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c7f9852" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc7f9852]}" == "1" ]] && return
 	if has_version "sys-apps/x86info" ; then
 		einfo "Applying kernel config flags for the x86info package (id: c7f9852)"
 		ot-kernel_y_configopt "CONFIG_MTRR"
@@ -7732,7 +7732,7 @@ ot-kernel-pkgflags_x86info() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xfce4-battery-plugin package
 ot-kernel-pkgflags_xfce4_battery_plugin() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "f54e65c" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf54e65c]}" == "1" ]] && return
 	if has_version "xfce-extra/xfce4-battery-plugin" ; then
 		einfo "Applying kernel config flags for the xfce4-battery-plugin package (id: f54e65c)"
 		ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
@@ -7743,7 +7743,7 @@ ot-kernel-pkgflags_xfce4_battery_plugin() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xoscope package
 ot-kernel-pkgflags_xoscope() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "6a3c3e1" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S6a3c3e1]}" == "1" ]] && return
 	if has_version "sci-electronics/xoscope" ; then
 		einfo "Applying kernel config flags for the xoscope package (id: 6a3c3e1)"
 		ot-kernel_y_configopt "SND_PCM_OSS"
@@ -7754,7 +7754,7 @@ ot-kernel-pkgflags_xoscope() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xpadneo package
 ot-kernel-pkgflags_xpadneo() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "b38bb16" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb38bb16]}" == "1" ]] && return
 	if has_version "games-util/xpadneo" ; then
 		einfo "Applying kernel config flags for the xpadneo package (id: b38bb16)"
 		ot-kernel_y_configopt "CONFIG_INPUT_FF_MEMLESS"
@@ -7765,7 +7765,7 @@ ot-kernel-pkgflags_xpadneo() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xpra package
 ot-kernel-pkgflags_xpra() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "15db603" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S15db603]}" == "1" ]] && return
 	if has_version "x11-wm/xpra[v4l2]" ; then
 		einfo "Applying kernel config flags for the xpra package (id: 15db603)"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
@@ -7779,7 +7779,7 @@ ot-kernel-pkgflags_xpra() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xtables-addons package
 ot-kernel-pkgflags_xtables_addons() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2b5f5b4" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2b5f5b4]}" == "1" ]] && return
 	if has_version "net-firewall/xtables-addons[modules]" ; then
 		einfo "Applying kernel config flags for the xtables-addons package (id: 2b5f5b4)"
 		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
@@ -7792,7 +7792,7 @@ ot-kernel-pkgflags_xtables_addons() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the zfs package
 ot-kernel-pkgflags_zfs() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "bdf10dc" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sbdf10dc]}" == "1" ]] && return
 	if has_version "sys-fs/zfs[test-suite]" ; then
 		einfo "Applying kernel config flags for the zfs package (id: bdf10dc)"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
@@ -7803,7 +7803,7 @@ ot-kernel-pkgflags_zfs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the zfs-kmod package
 ot-kernel-pkgflags_zfs_kmod() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c0bec20" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc0bec20]}" == "1" ]] && return
 	if has_version "sys-fs/zfs-kmod" ; then
 		einfo "Applying kernel config flags for the zfs-kmod package (id: c0bec20)"
 		ban_disable_debug "c0bec20"

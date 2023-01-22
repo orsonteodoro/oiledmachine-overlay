@@ -1826,6 +1826,9 @@ ot-kernel_src_unpack() {
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
+		ot-kernel_clear_env
+		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
+		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 
@@ -2322,6 +2325,9 @@ ewarn
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
+		ot-kernel_clear_env
+		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
+		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
@@ -2355,6 +2361,9 @@ ewarn
 
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
+		ot-kernel_clear_env
+		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
+		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
@@ -2433,6 +2442,9 @@ ot-kernel_clear_keys() {
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
+		ot-kernel_clear_env
+		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
+		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
@@ -2766,8 +2778,31 @@ ot-kernel_clear_env() {
 # @DESCRIPTION:
 # Clear load config
 ot-kernel_load_config() {
-	ot-kernel_clear_env
 	source "${env_path}"
+
+	if declare -p OT_KERNEL_PKGFLAGS_ACCEPT 2>/dev/null 1>/dev/null \
+		&& [[ "${!OT_KERNEL_PKGFLAGS_ACCEPT[@]}" == "0" ]] ; then
+eerror
+eerror "The OT_KERNEL_PKGFLAGS_ACCEPT has been changed from a string to an"
+eerror "associative array (for faster O(1) lookups)."
+eerror
+eerror "See metadata.xml or"
+eerror "\`epkginfo -x ${PN}::oiledmachine-overlay\` for details."
+eerror
+		die
+	fi
+
+	if declare -p OT_KERNEL_PKGFLAGS_REJECT 2>/dev/null 1>/dev/null \
+		&& [[ "${!OT_KERNEL_PKGFLAGS_REJECT[@]}" == "0" ]] ; then
+eerror
+eerror "The OT_KERNEL_PKGFLAGS_REJECT has been changed from a string to an"
+eerror "associative array (for faster O(1) lookups)."
+eerror
+eerror "See metadata.xml or"
+eerror "\`epkginfo -x ${PN}::oiledmachine-overlay\` for details."
+eerror
+		die
+	fi
 
 	if [[ -z "${OT_KERNEL_USE}" ]] ; then
 		export OT_KERNEL_USE="${IUSE}"
@@ -6590,6 +6625,9 @@ ot-kernel_src_configure() {
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
+		ot-kernel_clear_env
+		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
+		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 
@@ -7265,6 +7303,9 @@ ot-kernel_src_compile() {
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
+		ot-kernel_clear_env
+		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
+		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
@@ -7472,6 +7513,9 @@ ot-kernel_src_install() {
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
+		ot-kernel_clear_env
+		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
+		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
@@ -7663,6 +7707,9 @@ ot-kernel_pkg_postinst() {
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
+		ot-kernel_clear_env
+		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
+		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"

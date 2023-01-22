@@ -364,7 +364,9 @@ OT_KERNEL_MODULES_COMPRESSOR="zstd"
 OT_KERNEL_MENUCONFIG_EXTRAVERSION="ot"
 OT_KERNEL_MENUCONFIG_RUN_AT="pre"
 OT_KERNEL_MENUCONFIG_UI="disabled"
-OT_KERNEL_PKGFLAGS_ACCEPT="05309e2 351365c"
+OT_KERNEL_PKGFLAGS_ACCEPT[S05309e2]=1
+OT_KERNEL_PKGFLAGS_ACCEPT[S351365c]=1
+OT_KERNEL_PKGFLAGS_REJECT[S7422820]=1
 OT_KERNEL_SIGN_MODULES="1"
 OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
 OT_KERNEL_WORK_PROFILE="workstation"
@@ -1811,9 +1813,18 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_PKGFLAGS_ACCEPT -- is a list of auto apply-able kernel
-    config symbols to accept per package-wise.  They should be listed as
-    space separated.
+    OT_KERNEL_PKGFLAGS_ACCEPT -- a key-value pair(s) of auto apply-able kernel
+    config symbols to accept per package-wise.
+
+    Examples:
+
+      OT_KERNEL_PKGFLAGS_ACCEPT[S05309e2]=1
+      OT_KERNEL_PKGFLAGS_ACCEPT[S351365c]=1
+
+    Notes:
+
+      You must prefix the id with an S.
+      You do not need to declare the associative array.
 
     See also:
 
@@ -1821,19 +1832,29 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_PKGFLAGS_REJECT -- is a list of auto apply-able kernel config
-    symbols to reject.  These sets of flags are identified (id) with a 7 digit
-    hash code and used to either skip the config and apply the config
+    OT_KERNEL_PKGFLAGS_REJECT -- is a key-value pair(s) auto apply-able kernel
+    config symbols to reject.  These sets of flags are identified (id) with a 7
+    digit hash code and used to either skip the config and apply the config
     manually or permit a disable_debug conflict to priorize disable_debug
-    removal of debug keyworded kernel config symbols. They should be listed as
-    space separated.
+    removal of debug keyworded kernel config symbols.
 
     Currently, this does not unset the kernel config flags but means that it
     will not apply the set of kernel configs.  One must manually unset these
     options.  The reason why it is not so easy to automate unsetting is
     because some of these settings may have multiple dependence on a kernel
     config.
-    
+
+    Examples:
+
+      OT_KERNEL_PKGFLAGS_REJECT[S1ee4e36]=1
+      OT_KERNEL_PKGFLAGS_REJECT[S155d9fc]=1
+      OT_KERNEL_PKGFLAGS_REJECT[S27ea6ce]=1
+
+    Notes:
+
+      You must prefix the id with an S.
+      You do not need to declare the associative array.
+
     See also:
 
       Kernel pkgflags environment variables
@@ -2311,12 +2332,6 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_PKGFLAGS_ACCEPT or OT_KERNEL_PKGFLAGS_REJECT with a space
     separated 7 digit id.  One may use the reject to manually apply
     settings for that package.
-
-    Examples:
-
-      OT_KERNEL_PKGFLAGS_REJECT="1ee4e36"
-      OT_KERNEL_PKGFLAGS_REJECT="1ee4e36 155d9fc"
-      OT_KERNEL_PKGFLAGS_REJECT="1ee4e36 155d9fc 27ea6ce"
 
     Most variables below have values 0 for off and 1 for on.  Not set implies
     the eclass defaults.
