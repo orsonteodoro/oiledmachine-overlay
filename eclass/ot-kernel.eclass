@@ -941,7 +941,7 @@ verify_clang_compiler_updated() {
 		"sys-devel/clang-16.0.0_pre20221217" \
 		"sys-devel/clang-16.0.0.9999" \
 	; do
-		if has_version "=${p}*" ; then
+		if ot-kernel_has_version "=${p}*" ; then
 			einfo "Verifying prereqs for PGO for ${p}"
 			local emerged_llvm_commit=$(bzless \
 				"${ESYSROOT}/var/db/pkg/${p}"*"/environment.bz2" \
@@ -1002,7 +1002,7 @@ verify_profraw_compatibility() {
 		"16.0.0_pre20221210" \
 		"16.0.0.9999" \
 	; do
-		(! has_version "~sys-devel/llvm-${v}" ) && continue
+		(! ot-kernel_has_version "~sys-devel/llvm-${v}" ) && continue
 		local llvm_version
 		einfo "v=${v}"
 		if [[ "${v}" =~ "9999" || "${v}" =~ "_pre" ]] ; then
@@ -1126,7 +1126,7 @@ ewarn
 		fi
 	fi
 
-	if has_version "sys-boot/mokutil" ; then
+	if ot-kernel_has_version "sys-boot/mokutil" ; then
 		if ! ( mokutil --test-key "${OT_KERNEL_PUBLIC_KEY}" | grep "is already enrolled" ) ; then
 			ewarn "Did not find key in MOK"
 			if [[ "${OT_KERNEL_ADD_KEY_TO_MOK}" ]] ; then
@@ -2591,7 +2591,7 @@ ot-kernel_set_kconfig_firmware() {
 	local ot_kernel_firmware="${OT_KERNEL_FIRMWARE}"
 	if [[ -n "${ot_kernel_firmware}" ]] ; then
 		local firmware=()
-		has_version "sys-kernel/linux-firmware" || ewarn "sys-kernel/linux-firmware should be installed first"
+		ot-kernel_has_version "sys-kernel/linux-firmware" || ewarn "sys-kernel/linux-firmware should be installed first"
 		einfo "Adding firmware"
 		pushd /lib/firmware 2>/dev/null 1>/dev/null || die "Missing firmware"
 			for l in $(echo ${ot_kernel_firmware} | tr " " "\n") ; do
@@ -3120,7 +3120,7 @@ ot-kernel_set_kconfig_compiler_toolchain() {
 		&& is_clang_ready \
 	; then
 		einfo "Using Clang ${llvm_slot}"
-		has_version "sys-devel/llvm:${llvm_slot}" || die "sys-devel/llvm:${llvm_slot} is missing"
+		ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" || die "sys-devel/llvm:${llvm_slot} is missing"
 		ot-kernel_y_configopt "CONFIG_AS_IS_LLVM"
 		ot-kernel_set_configopt "CONFIG_AS_VERSION" "${llvm_slot}0000"
 		ot-kernel_y_configopt "CONFIG_CC_IS_CLANG"
@@ -3985,12 +3985,12 @@ einfo "Passed check for ${x}"
 ot-kernel_set_kconfig_init_systems() {
 	if has genpatches ${IUSE} && ot-kernel_use genpatches ; then
 		ot-kernel_unset_configopt "CONFIG_GENTOO_PRINT_FIRMWARE_INFO" # Debug
-		if has_version "sys-apps/openrc" ; then
+		if ot-kernel_has_version "sys-apps/openrc" ; then
 			ot-kernel_y_configopt "CONFIG_GENTOO_LINUX_INIT_SCRIPT"
 		else
 			ot-kernel_unset_configopt "CONFIG_GENTOO_LINUX_INIT_SCRIPT"
 		fi
-		if has_version "sys-apps/systemd" ; then
+		if ot-kernel_has_version "sys-apps/systemd" ; then
 			ot-kernel_y_configopt "CONFIG_GENTOO_LINUX_INIT_SYSTEMD"
 		else
 			ot-kernel_unset_configopt "CONFIG_GENTOO_LINUX_INIT_SYSTEMD"
@@ -4021,9 +4021,9 @@ ot-kernel_set_kconfig_lsms() {
 		einfo "Using the auto LSM settings"
 		OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
 		ot_kernel_lsms="integrity"
-		has_version "sys-apps/apparmor" && ot_kernel_lsms+=",apparmor"
-		has_version "sys-apps/tomoyo-tools" && ot_kernel_lsms+=",tomoyo"
-		has_version "sec-policy/selinux-base" && ot_kernel_lsms+=",selinux"
+		ot-kernel_has_version "sys-apps/apparmor" && ot_kernel_lsms+=",apparmor"
+		ot-kernel_has_version "sys-apps/tomoyo-tools" && ot_kernel_lsms+=",tomoyo"
+		ot-kernel_has_version "sec-policy/selinux-base" && ot_kernel_lsms+=",selinux"
 		ot_kernel_lsms+=",bpf"
 	else
 		ot_kernel_lsms="${OT_KERNEL_LSMS}"
@@ -4473,37 +4473,37 @@ ot-kernel_set_kconfig_pgo() {
 		if (( ${llvm_slot} >= 15 && ${clang_v_maj} >= 15 )) ; then
 			einfo "Using profraw v8 for >= LLVM 15"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.6" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.6" ; then
 			einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.5" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.5" ; then
 			einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.4" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.4" ; then
 			einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.3" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.3" ; then
 			einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.2" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.2" ; then
 			einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.1" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.1" ; then
 			einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.0" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.0" ; then
 			einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && has_version "~sys-devel/clang-13.0.1" ; then
+		elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && ot-kernel_has_version "~sys-devel/clang-13.0.1" ; then
 			einfo "Using profraw v7 for LLVM 13"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
-		elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && has_version "~sys-devel/clang-13.0.0" ; then
+		elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && ot-kernel_has_version "~sys-devel/clang-13.0.0" ; then
 			einfo "Using profraw v7 for LLVM 13"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
-		elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 12 )) && has_version "~sys-devel/clang-12.0.1" ; then
+		elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 12 )) && ot-kernel_has_version "~sys-devel/clang-12.0.1" ; then
 			einfo "Using profraw v5 for LLVM 12"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
-		elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 11 )) && has_version "~sys-devel/clang-11.1.0" ; then
+		elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 11 )) && ot-kernel_has_version "~sys-devel/clang-11.1.0" ; then
 			einfo "Using profraw v5 for LLVM 11"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
 		else
@@ -6359,9 +6359,9 @@ einfo "Using boot logo from ${OT_KERNEL_LOGO_URI}"
 		local image_type=$(file "${T}/boot.logo")
 
 		local gfx_pkg
-		if has_version "media-gfx/imagemagick" ; then
+		if ot-kernel_has_version "media-gfx/imagemagick" ; then
 			gfx_pkg="media-gfx/imagemagick"
-		elif has_version "media-gfx/graphicsmagick" ; then
+		elif ot-kernel_has_version "media-gfx/graphicsmagick" ; then
 			gfx_pkg="media-gfx/graphicsmagick[imagemagick]"
 		else
 eerror
@@ -6382,19 +6382,19 @@ einfo "${OT_KERNEL_LOGO_URI} accepted as bmp."
 			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "GIF image data" ]] ; then
 einfo "${OT_KERNEL_LOGO_URI} accepted as gif."
-			has_version "${gfx_pkg}" \
+			ot-kernel_has_version "${gfx_pkg}" \
 				|| die "Missing ${gfx_pkg} package"
 			image_in_path="${T}/boot.gif"
 			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "JPEG image data" ]] ; then
 einfo "${OT_KERNEL_LOGO_URI} accepted as jpeg."
-			has_version "${gfx_pkg}[jpeg]" \
+			ot-kernel_has_version "${gfx_pkg}[jpeg]" \
 				|| die "Missing image codec in ${gfx_pkg}[jpeg] package"
 			image_in_path="${T}/boot.jpg"
 			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "JPEG 2000 Part 1 (JP2)" ]] ; then
 einfo "${OT_KERNEL_LOGO_URI} accepted as jpeg2k."
-			has_version "${gfx_pkg}[jpeg2k]" \
+			ot-kernel_has_version "${gfx_pkg}[jpeg2k]" \
 				|| die "Missing image codec in ${gfx_pkg}[jpeg2k] package"
 			image_in_path="${T}/boot.jp2"
 			mv "${T}/boot.logo" "${image_in_path}" || die
@@ -6408,37 +6408,37 @@ einfo "${OT_KERNEL_LOGO_URI} accepted as pbm (b&w bitmap)."
 			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "OpenEXR image data" ]] ; then
 einfo "${OT_KERNEL_LOGO_URI} accepted as openexr."
-			has_version "${gfx_pkg}[openexr]" \
+			ot-kernel_has_version "${gfx_pkg}[openexr]" \
 				|| die "Missing image codec in ${gfx_pkg}[openexr] package"
 			image_in_path="${T}/boot.exr"
 			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "PNG image data" ]] ; then
 einfo "${OT_KERNEL_LOGO_URI} accepted as png."
-			has_version "${gfx_pkg}[png]" \
+			ot-kernel_has_version "${gfx_pkg}[png]" \
 				|| die "Missing image codec in ${gfx_pkg}[pkg] package"
 			image_in_path="${T}/boot.png"
 			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "SVG Scalable Vector Graphics image" ]] ; then
 einfo "${OT_KERNEL_LOGO_URI} accepted as svg."
-			has_version "${gfx_pkg}[svg]" \
+			ot-kernel_has_version "${gfx_pkg}[svg]" \
 				|| die "Missing image codec in ${gfx_pkg}[svg] package"
 			image_in_path="${T}/boot.svg"
 			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "Targa image data" ]] ; then
 einfo "${OT_KERNEL_LOGO_URI} accepted as tga."
-			has_version "${gfx_pkg}" \
+			ot-kernel_has_version "${gfx_pkg}" \
 				|| die "Missing ${gfx_pkg} package"
 			image_in_path="${T}/boot.tga"
 			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "TIFF image data" ]] ; then
 einfo "${OT_KERNEL_LOGO_URI} accepted as tiff."
-			has_version "${gfx_pkg}[tiff]" \
+			ot-kernel_has_version "${gfx_pkg}[tiff]" \
 				|| die "Missing image codec in ${gfx_pkg}[tiff] package"
 			image_in_path="${T}/boot.tiff"
 			mv "${T}/boot.logo" "${image_in_path}" || die
 		elif [[ "${image_type}" =~ "Web/P image" ]] ; then
 einfo "${OT_KERNEL_LOGO_URI} accepted as webp."
-			has_version "${gfx_pkg}[webp]" \
+			ot-kernel_has_version "${gfx_pkg}[webp]" \
 				|| die "Missing image codec in ${gfx_pkg}[webp] package"
 			image_in_path="${T}/boot.webp"
 			mv "${T}/boot.logo" "${image_in_path}" || die
@@ -6497,7 +6497,7 @@ eerror "See metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\` for deta
 eerror
 					die
 				fi
-				has_version "${gfx_pkg}" || die
+				ot-kernel_has_version "${gfx_pkg}" || die
 				if [[ -n "${OT_KERNEL_LOGO_PREPROCESS_PATH}" ]] ; then
 einfo "Running preprocessing script"
 					local access_permissions=$(stat -c "%a" "${OT_KERNEL_LOGO_PREPROCESS_PATH}")
@@ -6607,6 +6607,8 @@ ewarn
 ewarn "The OT_KERNEL_LOGO_URI will restore the console log levels to defaults."
 ewarn "This may decrease security."
 ewarn
+		ot-kernel_y_configopt "CONFIG_PRINTK"
+		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
 		if has tresor ${IUSE} && ot-kernel_use tresor ; then
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2"
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "1"
@@ -6806,7 +6808,7 @@ einfo
 get_llvm_slot() {
 	local llvm_slot
 	for llvm_slot in $(seq ${LLVM_MAX_SLOT:-15} -1 ${LLVM_MIN_SLOT:-10}) ; do
-		has_version "sys-devel/llvm:${llvm_slot}" && is_clang_ready && break
+		ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" && is_clang_ready && break
 	done
 	echo "${llvm_slot}"
 }
@@ -6821,7 +6823,7 @@ get_gcc_slot() {
 		[[ -z "${gcc_slot}" ]] && continue
 		gcc_slot=$(echo "${gcc_slot}" | sed -r -e "s|sys-devel/gcc-||" -e "s|-r[0-9]+||")
 		local gcc_slot_maj=$(ver_cut 1 ${gcc_slot})
-		has_version "sys-devel/gcc:${gcc_slot_maj}" && is_gcc_ready && break
+		ot-kernel_has_version "sys-devel/gcc:${gcc_slot_maj}" && is_gcc_ready && break
 	done
 	echo "${gcc_slot}"
 }
@@ -6854,7 +6856,7 @@ ot-kernel_setup_tc() {
 		&& is_clang_ready \
 	; then
 		einfo "Using Clang ${llvm_slot}"
-		has_version "sys-devel/llvm:${llvm_slot}" || die "sys-devel/llvm:${llvm_slot} is missing"
+		ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" || die "sys-devel/llvm:${llvm_slot} is missing"
 		# Assumes we are not cross-compiling or we are only building on CBUILD=CHOST.
 		args+=(
 			CC=${CHOST}-clang-${llvm_slot}
@@ -6967,10 +6969,10 @@ tresor_sysfs"
 # @DESCRIPTION:
 # Checks if user wants EFI boot indirectly.
 ot-kernel_has_efi_prereqs() {
-	if has_version "app-crypt/pesign" \
-		&& has_version "dev-libs/openssl" \
-		&& has_version "dev-libs/nss[utils]" \
-		&& has_version "sys-boot/mokutil" ; then
+	if ot-kernel_has_version "app-crypt/pesign" \
+		&& ot-kernel_has_version "dev-libs/openssl" \
+		&& ot-kernel_has_version "dev-libs/nss[utils]" \
+		&& ot-kernel_has_version "sys-boot/mokutil" ; then
 		return 0
 	fi
 	return 1
@@ -6980,9 +6982,9 @@ ot-kernel_has_efi_prereqs() {
 # @DESCRIPTION:
 # Checks if user wants UEFI secure boot indirectly.
 ot-kernel_has_uefi_prereqs() {
-	if has_version "app-crypt/efitools" \
-		&& has_version "app-crypt/sbsigntools" \
-		&& has_version "dev-libs/openssl" \
+	if ot-kernel_has_version "app-crypt/efitools" \
+		&& ot-kernel_has_version "app-crypt/sbsigntools" \
+		&& ot-kernel_has_version "dev-libs/openssl" \
 		; then
 		return 0
 	fi
@@ -7016,9 +7018,9 @@ ot-kernel_efi_sign_and_install() {
 	local signed_attrs_sig="${1}.sattrs.sig"
 	local certdb_path="${BUILD_DIR}/certs/certdb" # just the root folder
 	local certs_path="${BUILD_DIR}/certs" # just the root folder
-	has_version "app-crypt/pesign" || die "You must emerge app-crypt/pesign"
-	has_version "dev-libs/openssl" || die "You mst emerge dev-libs/openssl"
-	has_version "dev-libs/nss[utils]" || die "You must emerge dev-libs/nss[utils]"
+	ot-kernel_has_version "app-crypt/pesign" || die "You must emerge app-crypt/pesign"
+	ot-kernel_has_version "dev-libs/openssl" || die "You mst emerge dev-libs/openssl"
+	ot-kernel_has_version "dev-libs/nss[utils]" || die "You must emerge dev-libs/nss[utils]"
 	[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
 	[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
 	einfo "Sign prepare:"
@@ -7408,7 +7410,7 @@ ot-kernel_restore_keys() {
 WANT_IOSCHED_OPENRC=0
 ot-kernel_gen_iosched_openrc() {
 	[[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] || return
-	if ! has_version "sys-apps/openrc[bash]" ; then
+	if ! ot-kernel_has_version "sys-apps/openrc[bash]" ; then
 eerror
 eerror "Re-emerge sys-apps/openrc[bash]"
 eerror
@@ -7888,7 +7890,7 @@ ewarn
 	local gcc_v=$(best_version "sys-devel/gcc" \
 		| sed -r -e "s|sys-devel/gcc-||g" \
 		-e "s|-r[0-9]+||"| cut -f 1-3 -d ".")
-	if has_version "sys-devel/clang" ; then
+	if ot-kernel_has_version "sys-devel/clang" ; then
 		has_llvm=1
 		llvm_v_maj=$(best_version "sys-devel/clang" \
 		| sed -r -e "s|sys-devel/clang-||g" \

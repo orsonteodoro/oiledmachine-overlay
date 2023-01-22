@@ -20,6 +20,56 @@ esac
 
 if [[ -z "${OT_KERNEL_KUTILS_ECLASS}" ]] ; then
 
+# @FUNCTION: ot-kernel_has_version
+# @DESCRIPTION:
+# Use the fewest steps to check for the existence of package instead of
+# using has_version if possible.
+ot-kernel_has_version() {
+	local pkg="${1}"
+	local ret
+	if [[ "${pkg}" =~ ("(+)"|"(-)"|":"|"="|"~"|"[-"|",-") ]] ; then
+		has_version "${pkg}"
+		ret="$?"
+		return ${ret}
+	elif [[ "${pkg}" =~ ("["|",") ]] ; then
+		ot-kernel_has_version_use "${pkg}"
+		ret="$?"
+		return ${ret}
+	else
+		if ls "${ESYSROOT}/var/db/pkg/${pkg}-"*"/CONTENTS" 2>/dev/null 1>/dev/null ; then
+			return 0
+		fi
+	fi
+	return 1
+}
+
+# @FUNCTION: ot-kernel_has_version_use
+# @DESCRIPTION:
+# Uses the fewest steps to check for the existence of package USE flags instead
+# of using has_version if possible.
+ot-kernel_has_version_use() {
+	local pkg_raw="${1}"
+	local pkg="${1%[*}"
+	local X
+	local Y
+	local x
+	local y
+
+	local Y=(
+		$(cat "${ESYSROOT}/var/db/pkg/${pkg}-"*"/USE")
+	)
+
+	X=$(echo "${pkg_raw}" | sed -e "s|.*\[||g" -e "s|\].*||g" | tr "," " ")
+	for x in ${X} ; do
+		for y in ${Y[@]} ; do
+			if [[ "${x}" == "${y}" ]] ; then
+				return 0
+			fi
+		done
+	done
+	return 1
+}
+
 # @FUNCTION: ot-kernel_set_configopt
 # @DESCRIPTION:
 # Sets the kernel option with a string value or single char option
