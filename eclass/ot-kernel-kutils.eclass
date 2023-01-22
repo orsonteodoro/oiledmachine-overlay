@@ -56,7 +56,7 @@ ot-kernel_has_version_use() {
 	local y
 
 	local Y=(
-		$(cat "${ESYSROOT}/var/db/pkg/${pkg}-"*"/USE")
+		$(cat "${ESYSROOT}/var/db/pkg/${pkg}-"*"/USE" 2>/dev/null)
 	)
 
 	X=$(echo "${pkg_raw}" | sed -e "s|.*\[||g" -e "s|\].*||g" | tr "," " ")
