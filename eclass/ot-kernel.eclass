@@ -160,6 +160,8 @@ S="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 #PROPERTIES="interactive" # The menuconfig is broken because of emerge or sandbox.  All things were disabled but still doesn't work.
 OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${PV}"
 
+IUSE+=" +reiserfs" # Upstream keeps it.
+
 IUSE+=" cpu_flags_arm_thumb"
 IUSE+=" gtk +ncurses openssl qt5"
 IUSE+=" bzip2 gzip lz4 lzma lzo xz zstd"
@@ -2050,6 +2052,188 @@ ot-kernel_copy_pgo_state() {
 	done
 }
 
+# @FUNCTION: ot-kernel_rm_exfat
+# @DESCRIPTION:
+# Deletes the ExFAT filesystem from the source code.
+ot-kernel_rm_exfat() {
+	einfo "Removing exFAT"
+	sed -i -e "\|fs/exfat/Kconfig|d" \
+		"fs/Kconfig" || die
+	sed -i -e "/CONFIG_EXFAT_FS/d" \
+		"fs/Makefile" || die
+	sed -i -e "s|/EXFAT/|/|g" \
+		"fs/Kconfig" || die
+	rm -rf "fs/exfat" || die
+	for path in $(find "arch" \
+		-name "*_defconfig") ; do
+		sed -i -e "/CONFIG_EXFAT_FS/d" \
+			"${path}" || die
+	done
+}
+
+# @FUNCTION: ot-kernel_rm_reiserfs
+# @DESCRIPTION:
+# Deletes references to both ReiserFS and Reiser4 filesystems from
+# the source code.
+ot-kernel_rm_reiserfs() {
+	einfo "Canceling ReiserFS"
+	sed -i -e "\|fs/reiserfs/Kconfig|d" \
+		"fs/Kconfig" || die
+	sed -i -e "/CONFIG_REISERFS_FS/d" \
+		"fs/Makefile" || die
+	sed -i -e "s|/EXFAT/|/|g" \
+		"fs/Kconfig" || die
+
+	sed -i -e "/REISER/d" \
+		"include/uapi/linux/magic.h" || die
+	sed -i -e "/__reiserfs_panic/d" \
+		"tools/objtool/check.c" || die
+	sed -i -e "s|, reiserfs||g" \
+		"fs/btrfs/tree-log.c" || die
+
+	sed -i -e "s|and reiserfs||g" \
+		"fs/quota/Kconfig" || die
+	sed -i -e "s/|reiserfs//g" \
+		"scripts/selinux/install_policy.sh" || die
+	sed -i -e "/reiserfs/d" \
+		"include/linux/stringhash.h" || die
+
+	sed -i -e "/Reiserfs/d" \
+		"scripts/ver_linux" || die
+
+	if ver_test ${K_MAJOR_MINOR} -ge 5.3 ; then
+		sed -i -e "/reiserfs/d" \
+			"Documentation/kbuild/makefiles.rst" || die
+	else
+		sed -i -e "/reiserfs/d" \
+			"Documentation/kbuild/makefiles.txt" || die
+	fi
+
+	sed -i \
+		-e "s|. We use \"r5\" hash borrowed from reiserfs||g" \
+		-e "s| \(borrowed from reiserfs\)||g" \
+		"fs/ubifs/key.h" || die
+
+	if ver_test ${K_MAJOR_MINOR} -ge 5.3 ; then
+		sed -i \
+			-e "s|/reiserfs||" \
+			-e "s|or ReiserFS filesystems||" \
+			-e "s|\"reiserfs\"||g" \
+			"Documentation/admin-guide/laptops/laptop-mode.rst" \
+			|| die
+	else
+		sed -i \
+			-e "s|/reiserfs||" \
+			-e "s|or ReiserFS filesystems||" \
+			-e "s|\"reiserfs\"||g" \
+			"Documentation/laptops/laptop-mode.txt" \
+			|| die
+	fi
+
+	cat "Documentation/process/changes.rst" \
+		| sed -e "/reiserfsprogs/d" \
+		| sed -e "0,/^Reiserfsprogs/ s|^Reiserfsprogs|1Reiserfsprogs|" \
+		| sed -e "0,/^Reiserfsprogs/ s|^Reiserfsprogs|2Reiserfsprogs|" \
+		| sed -e "/1Reiserfsprogs/,/reiserfsck/d" -e "/2Reiserfsprogs/,/reiserfs/d" \
+		> "Documentation/process/changes.rst.t" || die
+	mv "Documentation/process/changes.rst"{.t,} || die
+	if ver_test ${K_MAJOR_MINOR} -ge 5.1 ; then
+		cat "Documentation/translations/it_IT/process/changes.rst" \
+			| sed -e "/reiserfsprogs/d" \
+			| sed -e "0,/^Reiserfsprogs/ s|^Reiserfsprogs|1Reiserfsprogs|" \
+			| sed -e "0,/^Reiserfsprogs/ s|^Reiserfsprogs|2Reiserfsprogs|" \
+			| sed -e "/1Reiserfsprogs/,/reiserfsck/d" -e "/2Reiserfsprogs/,/reiserfs/d" \
+		> "Documentation/translations/it_IT/process/changes.rst.t" || die
+		mv "Documentation/translations/it_IT/process/changes.rst"{.t,} || die
+	fi
+
+	sed -i \
+		-e "s|;.*reiserfs does this.*|;|" \
+		"fs/buffer.c" || die
+	sed -i \
+		-e "s|blockdev.  Not true|blockdev.|" \
+		-e "/reiserfs/d" \
+		"fs/buffer.c" || die
+
+	if ver_test ${K_MAJOR_MINOR} -ge 4.17 ; then
+		sed -i -e "s|reiserfs_||g" \
+			"Documentation/trace/ftrace.rst" \
+			|| die
+	else
+		sed -i -e "s|reiserfs_||g" \
+			"Documentation/trace/ftrace.txt" \
+			|| die
+	fi
+
+	if ver_test ${K_MAJOR_MINOR} -ge 5.3 ; then
+		sed -i -e "s|Reiserfs does not tolerate errors returned from the block device.||g" \
+			"Documentation/powerpc/eeh-pci-error-recovery.rst" \
+			|| die
+	else
+		sed -i -e "s|Reiserfs does not tolerate errors returned from the block device.||g" \
+			"Documentation/powerpc/eeh-pci-error-recovery.txt" \
+			|| die
+	fi
+	if ver_test ${K_MAJOR_MINOR} -ge 4.20 ; then
+		sed -i -e "s|, JFS, and ReiserFS| and JFS|g" \
+			"Documentation/admin-guide/ext4.rst" \
+			|| die
+	elif ver_test ${K_MAJOR_MINOR} -eq 4.19 ; then
+		sed -i -e "s|, JFS, and ReiserFS| and JFS|g" \
+			"Documentation/filesystems/ext4/ext4.rst" \
+			|| die
+	elif ver_test ${K_MAJOR_MINOR} -le 4.18 ; then
+		sed -i -e "s|, JFS, and ReiserFS| and JFS|g" \
+			"Documentation/filesystems/ext4.txt" \
+			|| die
+	fi
+	if ver_test ${K_MAJOR_MINOR} -ge 5.5 ; then
+		sed -i -e "s|linux/reiserfs_fs.h|Reserved|g" \
+			"Documentation/userspace-api/ioctl/ioctl-number.rst" \
+			|| die
+	else
+		sed -i -e "s|linux/reiserfs_fs.h|Reserved|g" \
+			"Documentation/ioctl/ioctl-number.rst" \
+			|| die
+	fi
+	sed -i -e "/REISERFS/,/reiserfs/d" \
+		"MAINTAINERS" || die
+	sed -i -e "s|like reiserfs, ||g" \
+		"drivers/block/Kconfig" || die
+	sed -i -e "s|ifdef CONFIG_REISERFS_FS_SECURITY|if 0|g" \
+		"scripts/selinux/mdp/mdp.c" || die
+	sed -i -e "/reiserfs/d" \
+		"scripts/selinux/mdp/mdp.c" || die
+	rm -rf \
+		"fs/reiserfs" \
+		"include/uapi/linux/reiserfs_xattr.h" \
+		"include/uapi/linux/reiserfs_fs.h" \
+		|| die
+		for path in $(find "arch" \
+			-name "*_defconfig") ; do
+			sed -i -e "/CONFIG_REISERFS_FS/d" \
+				"${path}" || die
+		done
+
+	einfo "Canceling Reiser4"
+	sed -i -e "/Reiser4/d" \
+		"scripts/ver_linux" || die
+	sed -i -e "/The Reiser4/,/kernel./d" \
+		"Documentation/process/3.Early-stage.rst" || die
+	if ver_test ${K_MAJOR_MINOR} -ge 5.0 ; then
+		sed -i -e "/Il filesystem Reiser4/,/kernel./d" \
+			"Documentation/translations/it_IT/process/3.Early-stage.rst" || die
+	fi
+	if ver_test ${K_MAJOR_MINOR} -ge 5.15 ; then
+		sed -i -e "/Reiser4文/,/Reiser4置/d" \
+			"Documentation/translations/zh_TW/process/3.Early-stage.rst" || die
+	fi
+	if ver_test ${K_MAJOR_MINOR} -ge 5.2 ; then
+		sed -i -e "/Reiser4文/,/Reiser4置/d" \
+			"Documentation/translations/zh_CN/process/3.Early-stage.rst" || die
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_prepare
 # @DESCRIPTION:
 # Patch the kernel a bit
@@ -2062,41 +2246,42 @@ ot-kernel_src_prepare() {
 
 	if has tresor_sysfs ${IUSE} ; then
 		if use tresor_sysfs ; then
-			cat "${EDISTDIR}/tresor_sysfs.c" > "${BUILD_DIR}/tresor_sysfs.c"
+			cat "${EDISTDIR}/tresor_sysfs.c" > "tresor_sysfs.c"
 		fi
 	fi
 
 	if use disable_debug ; then
 		cat "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" \
-			> "${BUILD_DIR}/disable_debug" || die
+			> "disable_debug" || die
 	fi
 
 	cat "${FILESDIR}/all-kernel-options-as-modules" \
-		> "${BUILD_DIR}/all-kernel-options-as-modules" || die
+		> "all-kernel-options-as-modules" || die
 	cat "${FILESDIR}/all-kernel-options-as-yes" \
-		> "${BUILD_DIR}/all-kernel-options-as-yes" || die
+		> "all-kernel-options-as-yes" || die
 
 	if has clang-pgo ${IUSE} && use clang-pgo ; then
-		cat "${FILESDIR}/pgo-trainer.sh" > "${BUILD_DIR}/pgo-trainer.sh"
+		cat "${FILESDIR}/pgo-trainer.sh" > "pgo-trainer.sh"
 	fi
 
 	cat "${FILESDIR}/ep800/ep800.c" \
-		> "${BUILD_DIR}/drivers/media/usb/gspca/ep800.c" || die
+		> "drivers/media/usb/gspca/ep800.c" || die
 	cat "${FILESDIR}/ep800/ep800.h" \
-		> "${BUILD_DIR}/drivers/media/usb/gspca/ep800.h" || die
+		> "drivers/media/usb/gspca/ep800.h" || die
 
-	# Patch for nv driver
+	# Patch for the nv driver.
 	sed -i -e "s|select FB_CMDLINE|select FB_CMDLINE\n\tselect DRM_KMS_HELPER|" \
-		"${BUILD_DIR}/drivers/gpu/drm/Kconfig" || die
+		"drivers/gpu/drm/Kconfig" || die
 
-	if ver_test ${K_MAJOR_MINOR} -ge 5.7 ; then
-		if ! use exfat ; then
-			einfo "Removing exFAT"
-			sed -i -e "\|fs/exfat/Kconfig|d" "${BUILD_DIR}/fs/Kconfig" || die
-			sed -i -e "\|CONFIG_EXFAT_FS|d" "${BUILD_DIR}/fs/Makefile" || die
-			sed -i -e "s|/EXFAT/|/|g" "${BUILD_DIR}/fs/Kconfig" || die
-			rm -rf "${BUILD_DIR}/fs/exfat" || die
-		fi
+	if ver_test ${K_MAJOR_MINOR} -ge 5.7 \
+		&& has exfat ${IUSE} \
+		&& ! use exfat ; then
+		ot-kernel_rm_exfat
+	fi
+
+	if ! use reiserfs \
+		&& [[ -e "fs/reiserfs" ]] ; then
+		ot-kernel_rm_reiserfs
 	fi
 
 	eapply_user
@@ -6558,6 +6743,16 @@ einfo
 		ot-kernel_set_kconfig_eudev
 		ot-kernel_check_kernel_signing_prereqs
 		ot-kernel_set_kconfig_module_signing
+
+		if [[ -e "${BUILD_DIR}/.config" ]] ; then
+			if has exfat ${IUSE} && ! use exfat ; then
+				sed -i -e "/CONFIG_EXFAT_FS/d" "${BUILD_DIR}/.config"
+			fi
+
+			if ! use reiserfs ; then
+				sed -i -e "/CONFIG_REISERFS_FS/d" "${BUILD_DIR}/.config"
+			fi
+		fi
 
 		einfo "Updating the .config for defaults for the newly enabled options."
 		einfo "Running:  make olddefconfig ${args[@]}"

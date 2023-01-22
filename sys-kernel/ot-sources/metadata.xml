@@ -2982,6 +2982,12 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
     <flag name="qt5">
       Add support for xconfig, the Qt5 kernel config editor
     </flag>
+    <flag name="reiserfs">
+      Enable to keep, but not necessarily enabling it.
+      Disable to cancel both ReiserFS and Reiser4 references.
+
+      (EXPERIMENTAL for both using and disabling)
+    </flag>
     <flag name="rt">
       Patches the kernel with the PREEMPT_RT patch which tries to minimize
       non-preemptible parts of the kernel.  It's experimental when combined with
