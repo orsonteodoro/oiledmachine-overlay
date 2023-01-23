@@ -6444,6 +6444,13 @@ eerror "Image not supported for ${OT_KERNEL_LOGO_URI}."
 eerror
 			die
 		fi
+
+		if ot-kernel_has_version "app-antivirus/clamav" \
+			&& [[ "${OT_KERNEL_LOGO_AVSCAN:-1}" == "1" ]] ; then
+einfo "Running avscan on image"
+			clamscan "${image_in_path}" || die
+		fi
+
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_y_configopt "CONFIG_LOGO"
 		ot-kernel_n_configopt "CONFIG_LOGO_LINUX_MONO"
@@ -6580,6 +6587,13 @@ eerror
 					${OT_KERNEL_LOGO_MAGICK_ARGS} \
 					"${BUILD_DIR}/drivers/video/logo/logo_custom_${colors_suffix}.${colors_ext}" \
 					|| die
+
+				if ot-kernel_has_version "app-antivirus/clamav" \
+					&& [[ "${OT_KERNEL_LOGO_AVSCAN:-1}" == "1" ]] ; then
+einfo "Running avscan on image"
+					clamscan "${BUILD_DIR}/drivers/video/logo/logo_custom_${colors_suffix}.${colors_ext}" || die
+				fi
+
 				if [[ "${OT_KERNEL_LOGO_URI}" =~ ("http://"|"https://"|"ftp://") ]] ; then
 					if [[ "${OT_KERNEL_LOGO_LICENSE_URI}" =~ ("http://"|"https://"|"ftp://") ]] ; then
 						wget -O "${BUILD_DIR}/drivers/video/logo/logo_custom_${colors_suffix}.ppm.license" \
@@ -6603,20 +6617,20 @@ ewarn
 ewarn "The OT_KERNEL_LOGO_URI will restore the console log levels to defaults."
 ewarn "This may decrease security."
 ewarn
-		if [[ "${arch}" =~ ("x86_64"|"x86") ]] ; then
-			ot-kernel_y_configopt "CONFIG_X86_VERBOSE_BOOTUP"
-		fi
-		ot-kernel_y_configopt "CONFIG_PRINTK"
-		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
-		ot-kernel_y_configopt "CONFIG_PRINTK_TIME"
+#		if [[ "${arch}" =~ ("x86_64"|"x86") ]] ; then
+#			ot-kernel_y_configopt "CONFIG_X86_VERBOSE_BOOTUP"
+#		fi
+#		ot-kernel_y_configopt "CONFIG_PRINTK"
+#		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
+#		ot-kernel_y_configopt "CONFIG_PRINTK_TIME"
 		if has tresor ${IUSE} && ot-kernel_use tresor ; then
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2"
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "1"
-			ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "1"
+#			ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "1"
 		else
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "7"
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "4"
-			ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "4"
+#			ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "4"
 		fi
 	fi
 }

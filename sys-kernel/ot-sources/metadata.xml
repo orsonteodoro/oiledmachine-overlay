@@ -1523,6 +1523,17 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
+    OT_KERNEL_LOGO_AVSCAN -- Perform antivirus scan on image before running
+      image *magick conversion and adding to kernel if avscanner available.
+
+    Acceptable values:
+
+      0 - disable
+      1 - enable
+      unset - enable (default)
+
+
+
     OT_KERNEL_LOGO_LICENSE_URI -- A uri, local file containing the license
 
     Acceptable values:
