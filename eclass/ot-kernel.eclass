@@ -6367,6 +6367,12 @@ eerror
 			die
 		fi
 
+		if ot-kernel_has_version "app-antivirus/clamav" \
+			&& [[ "${OT_KERNEL_LOGO_AVSCAN:-1}" == "1" ]] ; then
+einfo "Running avscan on logo"
+			clamscan "${T}/boot.logo" || die
+		fi
+
 		local image_in_path=""
 		if [[ "${image_type}" =~ "AVIF Image" ]] ; then
 einfo "${OT_KERNEL_LOGO_URI} accepted as avif."
@@ -6443,12 +6449,6 @@ eerror
 eerror "Image not supported for ${OT_KERNEL_LOGO_URI}."
 eerror
 			die
-		fi
-
-		if ot-kernel_has_version "app-antivirus/clamav" \
-			&& [[ "${OT_KERNEL_LOGO_AVSCAN:-1}" == "1" ]] ; then
-einfo "Running avscan on image"
-			clamscan "${image_in_path}" || die
 		fi
 
 		ot-kernel_y_configopt "CONFIG_FB"
@@ -6590,7 +6590,7 @@ eerror
 
 				if ot-kernel_has_version "app-antivirus/clamav" \
 					&& [[ "${OT_KERNEL_LOGO_AVSCAN:-1}" == "1" ]] ; then
-einfo "Running avscan on image"
+einfo "Running avscan on logo"
 					clamscan "${BUILD_DIR}/drivers/video/logo/logo_custom_${colors_suffix}.${colors_ext}" || die
 				fi
 
