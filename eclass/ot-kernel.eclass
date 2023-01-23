@@ -123,6 +123,7 @@ LICENSE+=" all-rights-reserved" # See lib/dynamic_debug.c
 LICENSE+=" BSD" # See include/linux/packing.h, ...
 LICENSE+=" BSD-2" # See include/linux/firmware/broadcom/tee_bnxt_fw.h
 LICENSE+=" Clear-BSD" # See drivers/net/wireless/ath/ath11k/core.h, ...
+LICENSE+=" custom" # See crypto/cts.c
 LICENSE+=" ISC" # See linux/drivers/net/wireless/ath/wil6210/trace.c, \
 # linux/drivers/net/wireless/ath/ath5k/Makefile, ...
 LICENSE+=" LGPL-2.1" # See fs/ext4/migrate.c, ...
@@ -6602,14 +6603,20 @@ ewarn
 ewarn "The OT_KERNEL_LOGO_URI will restore the console log levels to defaults."
 ewarn "This may decrease security."
 ewarn
+		if [[ "${arch}" =~ ("x86_64"|"x86") ]] ; then
+			ot-kernel_y_configopt "CONFIG_X86_VERBOSE_BOOTUP"
+		fi
 		ot-kernel_y_configopt "CONFIG_PRINTK"
 		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
+		ot-kernel_y_configopt "CONFIG_PRINTK_TIME"
 		if has tresor ${IUSE} && ot-kernel_use tresor ; then
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2"
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "1"
+			ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "1"
 		else
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "7"
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "4"
+			ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "4"
 		fi
 	fi
 }
