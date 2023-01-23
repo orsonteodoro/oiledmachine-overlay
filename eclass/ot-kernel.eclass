@@ -7679,14 +7679,14 @@ ewarn "Preserving copyright notices.  This may take hours."
 		done
 
 		# Fix symlinks
-		rm -rf "${ED}/lib/modules/linux-${PV}-${extraversion}/build" || true
-		rm -rf "${ED}/lib/modules/linux-${PV}-${extraversion}/source" || true
+		rm -rf "${ED}/lib/modules/${PV}-${extraversion}-${arch}/build" || true
+		rm -rf "${ED}/lib/modules/${PV}-${extraversion}-${arch}/source" || true
 		dosym \
 			"/usr/src/linux-${PV}-${extraversion}" \
-			"/lib/modules/linux-${PV}-${extraversion}/build"
+			"/lib/modules/${PV}-${extraversion}-${arch}/build"
 		dosym \
 			"/usr/src/linux-${PV}-${extraversion}" \
-			"/lib/modules/linux-${PV}-${extraversion}/source"
+			"/lib/modules/${PV}-${extraversion}-${arch}/source"
 
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
 			einfo "Installing OpenRC iosched script settings"
