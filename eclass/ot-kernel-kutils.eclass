@@ -27,8 +27,8 @@ if [[ -z "${OT_KERNEL_KUTILS_ECLASS}" ]] ; then
 ot-kernel_has_version() {
 	local pkg="${1}"
 	local ret
-	if [[ "${pkg}" =~ ("(+)"|"(-)"|":"|"="|"~"|"[-"|",-") ]] ; then
-		has_version "${pkg}"
+	if [[ "${pkg}" =~ ("(+)"|"(-)"|":"|"<"|"="|">"|"~"|"[-"|",-") ]] ; then
+		has_version "${pkg}" # It has a *very expensive* time cost.
 		ret="$?"
 		return ${ret}
 	elif [[ "${pkg}" =~ ("["|",") ]] ; then
@@ -36,6 +36,8 @@ ot-kernel_has_version() {
 		ret="$?"
 		return ${ret}
 	else
+		# Upstream uses EROOT for pickled merged package database not ESYSROOT.
+		# No guarantee of atomic tree but very fast.
 		if ls "${ESYSROOT}/var/db/pkg/${pkg}-"*"/CONTENTS" 2>/dev/null 1>/dev/null ; then
 			return 0
 		fi
