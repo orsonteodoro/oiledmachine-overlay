@@ -2672,7 +2672,6 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_LOGO_PREPROCESS_BLAKE2B
 	unset OT_KERNEL_LSMS
 	unset OT_KERNEL_MENUCONFIG_COLORS
-	unset OT_KERNEL_MENUCONFIG_EXTRAVERSION
 	unset OT_KERNEL_MENUCONFIG_RUN_AT
 	unset OT_KERNEL_MENUCONFIG_UI
 	unset OT_KERNEL_MODULE_SUPPORT
@@ -6255,13 +6254,9 @@ ot-kernel_menuconfig() {
 	if [[ "${run_at}" == "${user_run_at}" ]] ; then
 		local menuconfig_ui="${OT_KERNEL_MENUCONFIG_UI:-disabled}"
 		menuconfig_ui="${menuconfig_ui,,}"
-		local menuconfig_extraversion="${OT_KERNEL_MENUCONFIG_EXTRAVERSION}"
-		if [[ -z "${menuconfig_extraversion}" ]] ; then
-			menuconfig_extraversion="${extraversion}"
-		fi
 		if [[ "${menuconfig_ui}" =~ ("none"|"disable") ]] ; then
 			:
-		elif [[ -n "${menuconfig_ui}" && "${menuconfig_extraversion}" == "${extraversion}" ]] ; then
+		elif [[ -n "${menuconfig_ui}" ]] ; then
 			if [[ "${menuconfig_ui}" =~ ("menuconfig"|"nconfig") ]] ; then
 				use ncurses || die "Enable the ncurses USE flag for nconfig or menuconfig support"
 			elif [[ "${menuconfig_ui}" == "gconfig" ]] ; then

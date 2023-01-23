@@ -361,7 +361,6 @@ OT_KERNEL_LOGO_URI="https://upload.wikimedia.org/wikipedia/commons/4/49/Flag_of_
 OT_KERNEL_LSMS="auto"
 OT_KERNEL_MODULES_SUPPORT="1"
 OT_KERNEL_MODULES_COMPRESSOR="zstd"
-OT_KERNEL_MENUCONFIG_EXTRAVERSION="ot"
 OT_KERNEL_MENUCONFIG_RUN_AT="pre"
 OT_KERNEL_MENUCONFIG_UI="disabled"
 OT_KERNEL_PKGFLAGS_ACCEPT[S05309e2]=1
@@ -1688,12 +1687,6 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       blackbg - black with colored borders
       classic - similiar to default but with yellow text
       bluetitle - default colored with black text designed for LCDs
-
-
-
-    OT_KERNEL_MENUCONFIG_EXTRAVERSION -- Tells the ebuild scripts to
-    halt when this extraversion config is being configured.  If unset,
-    it sets it to the current extraversion.
 
 
 
