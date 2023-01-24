@@ -245,6 +245,7 @@ REQUIRED_USE="
 # OpenSSL-3 required for license compatibility
 CURL_PV="7.68.0"
 PYTEST_PV="7.2.0"
+# The dev-libs/libmspack version has been lowered in this ebuild.
 CDEPEND="
 	!libclamav-only? (
 		>=net-misc/curl-${CURL_PV}
@@ -253,7 +254,7 @@ CDEPEND="
 	>=dev-libs/openssl-1.1.1f:=
 	>=dev-libs/json-c-0.13.1:=
 	>=dev-libs/libltdl-2.4.6
-	>=dev-libs/libmspack-0.10.1
+	>=dev-libs/libmspack-0.10.1_alpha
 	>=dev-libs/libpcre2-8.39:=
 	>=dev-libs/libxml2-2.9.10
 	>=sys-libs/zlib-1.2.1:=
