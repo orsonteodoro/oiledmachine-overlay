@@ -6367,7 +6367,7 @@ eerror
 			die
 		fi
 
-		if ot-kernel_has_version "app-antivirus/clamav" \
+		if ot-kernel_has_version "app-antivirus/clamav[clamapp]" \
 			&& [[ "${OT_KERNEL_LOGO_AVSCAN:-1}" == "1" ]] ; then
 einfo "Running avscan on logo"
 			clamscan "${T}/boot.logo" || die
@@ -6588,7 +6588,7 @@ eerror
 					"${BUILD_DIR}/drivers/video/logo/logo_custom_${colors_suffix}.${colors_ext}" \
 					|| die
 
-				if ot-kernel_has_version "app-antivirus/clamav" \
+				if ot-kernel_has_version "app-antivirus/clamav[clamapp]" \
 					&& [[ "${OT_KERNEL_LOGO_AVSCAN:-1}" == "1" ]] ; then
 einfo "Running avscan on logo"
 					clamscan "${BUILD_DIR}/drivers/video/logo/logo_custom_${colors_suffix}.${colors_ext}" || die
