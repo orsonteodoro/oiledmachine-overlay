@@ -949,7 +949,7 @@ npm-utils_avscan() {
 		|| "${NPM_UTILS_AV_SCAN}" == "1" \
 		]] ; then
 		if has_version "app-antivirus/clamav[clamapp]" ; then
-einfo "Running avscan on ${ED}"
+einfo "Running avscan on ${path}"
 			clamscan "${path}" || die
 		fi
 	fi
