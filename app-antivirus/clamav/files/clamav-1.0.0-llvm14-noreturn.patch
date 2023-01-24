@@ -1,0 +1,33 @@
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Subject:  Changes for NORETURN for LLVM 14 for 1.0.0
+Patch status:  Finished
+
+--- a/libclamav/c++/bytecode2llvm.cpp.orig	2022-11-23 10:45:42.000000000 -0800
++++ b/libclamav/c++/bytecode2llvm.cpp	2023-01-23 02:55:13.659674494 -0800
+@@ -188,7 +188,7 @@ namespace
+ 
+ #define DEFINEPASS(passname) passname() : FunctionPass(ID)
+ 
+-#define NORETURN LLVM_ATTRIBUTE_NORETURN
++#define NORETURN [[noreturn]]
+ 
+ static sys::ThreadLocal<const jmp_buf> ExceptionReturn;
+ 
+@@ -267,7 +267,7 @@ void do_shutdown()
+     remove_fatal_error_handler();
+ }
+ 
+-static void NORETURN jit_exception_handler(void)
++NORETURN static void jit_exception_handler(void)
+ {
+     jmp_buf *buf = const_cast<jmp_buf *>(ExceptionReturn.get());
+     if (buf) {
+@@ -283,7 +283,7 @@ static void NORETURN jit_exception_handl
+     }
+ }
+ 
+-static void NORETURN jit_ssp_handler(void)
++NORETURN static void jit_ssp_handler(void)
+ {
+     cli_errmsg("[Bytecode JIT]: *** stack smashing detected, bytecode aborted\n");
+     jit_exception_handler();

@@ -1,0 +1,15 @@
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Subject:  Update JIT for LLVM 16 for 1.0.0
+Patch status:  Incomplete LLVM 16 support.
+
+--- clamav-clamav-1.0.0/CMakeLists.txt.orig	2023-01-23 17:56:09.998809159 -0800
++++ clamav-clamav-1.0.0/CMakeLists.txt	2023-01-23 18:00:18.982805173 -0800
+@@ -596,7 +596,7 @@ endif()
+ 
+ # Support the latest c++ standard available.
+ include(ExtractValidFlags)
+-foreach(_cxx1x_flag -std=c++14 -std=c++11)
++foreach(_cxx1x_flag -std=c++17 -std=c++14 -std=c++11)
+     extract_valid_cxx_flags(_cxx1x_flag_supported ${_cxx1x_flag})
+     if(_cxx1x_flag_supported)
+         set(CXX1XCXXFLAGS ${_cxx1x_flag})

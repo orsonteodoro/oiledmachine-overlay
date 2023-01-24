@@ -1,0 +1,28 @@
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Subject:  Update JIT for LLVM 15 for 1.0.0
+Patch status:  Incomplete LLVM 15 support.
+
+This patch works with LLVM 14.
+
+This patch will likely
+
+--- a/libclamav/c++/bytecode2llvm.cpp.orig	2023-01-23 10:51:44.179216817 -0800
++++ b/libclamav/c++/bytecode2llvm.cpp	2023-01-23 10:53:53.999214738 -0800
+@@ -1054,7 +1054,7 @@ class LLVMCodegen
+     bool createGEP(unsigned dest, Value *Base, ArrayRef<Value *> ARef)
+     {
+         assert(((dest >= numArgs) && (dest < numLocals + numArgs)) && "Instruction destination out of range");
+-        Type *ETy = cast<PointerType>(cast<PointerType>(Values[dest]->getType())->getElementType())->getElementType();
++        Type *ETy = cast<PointerType>(cast<PointerType>(Values[dest]->getType())->getNonOpaquePointerElementType())->getNonOpaquePointerElementType();
+         Value *V  = createGEP(Base, ETy, ARef);
+         if (!V) {
+             if (cli_debug_flag) {
+@@ -1474,7 +1474,7 @@ class LLVMCodegen
+                         case OP_BC_COPY: {
+                             Value *Dest      = Values[inst->u.binop[1]];
+                             PointerType *PTy = cast<PointerType>(Dest->getType());
+-                            Op0              = convertOperand(func, PTy->getElementType(), inst->u.binop[0]);
++                            Op0              = convertOperand(func, PTy->getNonOpaquePointerElementType(), inst->u.binop[0]);
+                             PTy              = PointerType::getUnqual(Op0->getType());
+                             Dest             = Builder.CreateBitCast(Dest, PTy);
+                             Builder.CreateStore(Op0, Dest);

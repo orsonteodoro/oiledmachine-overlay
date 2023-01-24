@@ -1,0 +1,140 @@
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Subject:  Update JIT for LLVM 14 and LLVM 15 for 1.0.0
+Patch status:  Finished
+
+--- clamav-clamav-1.0.0/libclamav/c++/bytecode2llvm.cpp.orig	2023-01-23 04:20:59.271592123 -0800
++++ clamav-clamav-1.0.0/libclamav/c++/bytecode2llvm.cpp	2023-01-23 04:38:42.075575110 -0800
+@@ -289,10 +289,10 @@ NORETURN static void jit_ssp_handler(voi
+     jit_exception_handler();
+ }
+ 
+-void llvm_error_handler(void *user_data, const std::string &reason, bool gen_crash_diag = true)
++void llvm_error_handler(void *user_data, const char *reason, bool gen_crash_diag = true)
+ {
+     // Output it to stderr, it might exceed the 1k/4k limit of cli_errmsg
+-    cli_errmsg("[Bytecode JIT]: [LLVM error] %s\n", reason.c_str());
++    cli_errmsg("[Bytecode JIT]: [LLVM error] %s\n", reason);
+     jit_exception_handler();
+ }
+ 
+@@ -728,13 +728,13 @@ class RuntimeLimits : public FunctionPas
+             Builder.CreateFence(AtomicOrdering::Release);
+ 
+             // Load Flag that tells us we timed out (first byte in bc_ctx)
+-            Instruction *Cond = Builder.CreateLoad(Flag, true);
++            Instruction *Cond = Builder.CreateLoad(Flag->getType()->getNonOpaquePointerElementType(), Flag, true);
+ 
+             /* splitBasicBlock splits AFTER insPt */
+             BasicBlock *newBB = BB->splitBasicBlock(pInst, "runOnFunction_block_");
+ 
+             pInst = llvm::cast<Instruction>(BB->getTerminator());
+-            BranchInst::Create(AbrtBB, newBB, Cond, pInst);
++            BranchInst::Create(AbrtBB, newBB, Cond , pInst);
+             pInst->eraseFromParent();
+ 
+             // Update dominator info
+@@ -865,7 +865,7 @@ class LLVMCodegen
+             if (func->types[operand] & 0x8000 && V->getType() == Ty) {
+                 return V;
+             }
+-            V = Builder.CreateLoad(V);
++            V = Builder.CreateLoad(V->getType()->getNonOpaquePointerElementType(), V);
+             if (V->getType() != Ty &&
+                 isa<PointerType>(V->getType()) &&
+                 isa<PointerType>(Ty))
+@@ -906,7 +906,7 @@ class LLVMCodegen
+         if (operand < func->numValues) {
+             if (func->types[operand] & 0x8000)
+                 return Values[operand];
+-            return Builder.CreateLoad(Values[operand]);
++            return Builder.CreateLoad(Values[operand]->getType()->getNonOpaquePointerElementType(), Values[operand]);
+         }
+ 
+         if (operand & 0x80000000) {
+@@ -1048,7 +1048,7 @@ class LLVMCodegen
+ 
+     Value *createGEP(Value *Base, Type *ETy, ArrayRef<Value *> ARef)
+     {
+-        return Builder.CreateGEP(Base, ARef);
++        return Builder.CreateGEP(Base->getType()->getNonOpaquePointerElementType(), Base, ARef);
+     }
+ 
+     bool createGEP(unsigned dest, Value *Base, ArrayRef<Value *> ARef)
+@@ -1250,11 +1250,11 @@ class LLVMCodegen
+                     Value *Idxs[2]  = {
+                         ConstantInt::get(Type::getInt32Ty(Context), 0),
+                         Idx};
+-                    Value *GEP       = Builder.CreateInBoundsGEP(Ctx, ArrayRef<Value *>(Idxs, Idxs + 2));
++                    Value *GEP       = Builder.CreateInBoundsGEP(Ctx->getType()->getNonOpaquePointerElementType(), Ctx, ArrayRef<Value *>(Idxs, Idxs + 2));
+                     Type *Ty         = GVtypeMap[g];
+                     Ty               = PointerType::getUnqual(PointerType::getUnqual(Ty));
+                     Value *Cast      = Builder.CreateBitCast(GEP, Ty);
+-                    Value *SpecialGV = Builder.CreateLoad(Cast);
++                    Value *SpecialGV = Builder.CreateLoad(Cast->getType()->getNonOpaquePointerElementType(), Cast);
+                     Type *IP8Ty      = Type::getInt8Ty(Context);
+                     IP8Ty            = PointerType::getUnqual(IP8Ty);
+                     SpecialGV        = Builder.CreateBitCast(SpecialGV, IP8Ty);
+@@ -1567,7 +1567,7 @@ class LLVMCodegen
+                         case OP_BC_LOAD: {
+                             Op0 = Builder.CreateBitCast(Op0,
+                                                         Values[inst->dest]->getType());
+-                            Op0 = Builder.CreateLoad(Op0);
++                            Op0 = Builder.CreateLoad(Op0->getType()->getNonOpaquePointerElementType(), Op0);
+                             Store(inst->dest, Op0);
+                             break;
+                         }
+@@ -2221,7 +2221,7 @@ cl_error_t cli_bytecode_prepare_jit(stru
+                     }
+                     if (!dest) {
+                         std::string reason((Twine("No mapping for builtin api ") + api->name).str());
+-                        llvm_error_handler(0, reason);
++                        llvm_error_handler(0, reason.c_str());
+                     }
+                     // addGlobalMapping doesn't work with MCJIT, so use symbol searching instead.
+                     sys::DynamicLibrary::AddSymbol(F->getName(), dest);
+--- a/cmake/FindLLVM.cmake.orig	2022-11-23 10:45:42.000000000 -0800
++++ b/cmake/FindLLVM.cmake	2023-01-23 04:53:52.215560540 -0800
+@@ -32,14 +32,8 @@
+ # We also want an user-specified LLVM_ROOT_DIR to take precedence over the
+ # system default locations such as /usr/local/bin. Executing find_program()
+ # multiples times is the approach recommended in the docs.
+-set(llvm_config_names llvm-config-13.0 llvm-config130 llvm-config-13
+-                      llvm-config-12.0 llvm-config120 llvm-config-12
+-                      llvm-config-11.0 llvm-config110 llvm-config-11
+-                      llvm-config-10.0 llvm-config100 llvm-config-10
+-                      llvm-config-9.0 llvm-config90 llvm-config-9
+-                      llvm-config-8.0 llvm-config80 llvm-config-8
+-                      llvm-config-7.0 llvm-config70 llvm-config-7
+-                      llvm-config-6.0 llvm-config60
++set(llvm_config_names llvm-config-15.0 llvm-config150 llvm-config-15
++                      llvm-config-14.0 llvm-config140 llvm-config-14
+                       llvm-config)
+ find_program(LLVM_CONFIG
+     NAMES ${llvm_config_names}
+@@ -50,13 +44,8 @@ if(APPLE)
+     # extra fallbacks for MacPorts & Homebrew
+     find_program(LLVM_CONFIG
+         NAMES ${llvm_config_names}
+-        PATHS /opt/local/libexec/llvm-13/bin  /opt/local/libexec/llvm-12/bin
+-              /opt/local/libexec/llvm-11/bin  /opt/local/libexec/llvm-10/bin  /opt/local/libexec/llvm-9.0/bin
+-              /opt/local/libexec/llvm-8.0/bin /opt/local/libexec/llvm-7.0/bin /opt/local/libexec/llvm-6.0/bin
+-              /opt/local/libexec/llvm/bin
+-              /usr/local/opt/llvm@13/bin /usr/local/opt/llvm@12/bin
+-              /usr/local/opt/llvm@11/bin /usr/local/opt/llvm@10/bin /usr/local/opt/llvm@9/bin
+-              /usr/local/opt/llvm@8/bin  /usr/local/opt/llvm@7/bin  /usr/local/opt/llvm@6/bin
++        PATHS /opt/local/libexec/llvm-15/bin  /opt/local/libexec/llvm-15/bin
++              /opt/local/libexec/llvm-14/bin  /opt/local/libexec/llvm-14/bin
+               /usr/local/opt/llvm/bin
+         NO_DEFAULT_PATH)
+ endif()
+--- a/CMakeLists.txt.orig	2023-01-23 04:56:45.351557769 -0800
++++ b/CMakeLists.txt	2023-01-23 05:37:36.423518532 -0800
+@@ -523,7 +523,7 @@ if(${bytecodeRuntime} STREQUAL "llvm")
+     if(LLVM_FOUND)
+         if (LLVM_AVAILABLE_LIBS)
+             message(STATUS "LLVM found using LLVMConfig.cmake")
+-            set(LLVM_LIBRARIES ${LLVM_AVAILABLE_LIBS})
++            set(LLVM_LIBRARIES LLVM)
+         else()
+             message(STATUS "LLVM found using FindLLVM.cmake")
+             set(LLVM_PACKAGE_VERSION ${LLVM_VERSION_STRING})

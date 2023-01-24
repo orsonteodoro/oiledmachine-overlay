@@ -1,0 +1,33 @@
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Subject:  Allow LLVM 14 to 16 for 1.0.0
+Patch status:  Finished for LLVM 14
+
+Note LLVM 15 and LLVM 16 are incomplete.
+
+--- clamav-clamav-1.0.0/CMakeLists.txt.orig	2023-01-23 02:07:14.979720576 -0800
++++ clamav-clamav-1.0.0/CMakeLists.txt	2023-01-23 02:10:45.115717212 -0800
+@@ -505,7 +505,7 @@ find_package(JSONC REQUIRED)
+ # Set variable required by libclamav to use libjson-c
+ set(HAVE_JSON 1)
+ 
+-set(LLVM_MAX_VER "13")
++set(LLVM_MAX_VER "16")
+-set(LLVM_MIN_VER "8")
++set(LLVM_MIN_VER "14")
+ 
+ string (TOLOWER ${BYTECODE_RUNTIME} bytecodeRuntime)
+@@ -535,13 +535,7 @@ if(${bytecodeRuntime} STREQUAL "llvm")
+ 
+         math(EXPR TOO_HIGH_VERSION "${LLVM_MAX_VER} + 1" OUTPUT_FORMAT DECIMAL)
+ 
+-        if(${LLVM_PACKAGE_VERSION} VERSION_LESS ${LLVM_MIN_VER})
+-            message(FATAL_ERROR "LLVM version ${LLVM_PACKAGE_VERSION} is too old")
+-        elseif (${LLVM_PACKAGE_VERSION} VERSION_GREATER_EQUAL ${TOO_HIGH_VERSION} )
+-            message(FATAL_ERROR "LLVM version ${LLVM_PACKAGE_VERSION} is too new")
+-        else()
+-            message(STATUS "LLVM version ${LLVM_PACKAGE_VERSION} found")
+-        endif()
++        message(STATUS "LLVM version ${LLVM_PACKAGE_VERSION} found")
+ 
+         # Set variable required by libclamav to use llvm instead of interpreter
+         set(LLVM_VERSION ${LLVM_VERSION_MAJOR}${LLVM_VERSION_MINOR})
