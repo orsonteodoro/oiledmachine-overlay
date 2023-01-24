@@ -950,7 +950,7 @@ npm-utils_avscan() {
 		]] ; then
 		if has_version "app-antivirus/clamav[clamapp]" ; then
 einfo "Running avscan on ${path}"
-			clamscan "${path}" || die
+			clamscan -r "${path}" || die
 		fi
 	fi
 }
