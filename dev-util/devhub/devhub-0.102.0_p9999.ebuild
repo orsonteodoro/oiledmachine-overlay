@@ -142,10 +142,6 @@ eerror
 	fi
 }
 
-electron-app_src_prepare() {
-	electron-app_src_prepare_default
-}
-
 electron-app_src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
@@ -173,6 +169,7 @@ src_install() {
         newicon "node_modules/@devhub/desktop/assets/icons/icon.png" "${PN}.png"
         make_desktop_entry ${PN} "${MY_PN}" ${PN} "Development"
 	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
+	electron-app_src_install_finalize
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

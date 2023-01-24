@@ -144,6 +144,9 @@ einfo "NODE_ENV=development"
 	# Disabled by default because of rapid changes in dependencies over a
 	# short period of time.
 	NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=${NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:-"0"}
+
+	# Scans both the unpacked tarball and the install image.
+	NPM_SECAUDIT_AV_SCAN=${NPM_SECAUDIT_AV_SCAN:-"1"}
 }
 
 
@@ -430,6 +433,7 @@ eerror
 # @FUNCTION: npm-secaudit_src_unpack
 # @DESCRIPTION:
 # Runs phases for downloading dependencies, unpacking, building
+# Compiling is done here to avoid sandbox issues.
 npm-secaudit_src_unpack() {
         debug-print-function ${FUNCNAME} "${@}"
 
@@ -460,13 +464,20 @@ eerror
 		default_src_unpack
 	fi
 
-	# All the phase hooks get run in unpack because of download restrictions
+	npm-utils_avscan "${WORKDIR}"
 
 	cd "${S}" || die
-	if declare -f npm-secaudit_src_preprepare > /dev/null ; then
-		npm-secaudit_src_preprepare
+	if declare -f npm-secaudit_src_postunpack > /dev/null ; then
+		npm-secaudit_src_postunpack
+	else
+		npm-secaudit_src_postunpack_default
 	fi
 
+	npm-utils_avscan "${WORKDIR}"
+
+	# All the phase hooks get run in unpack because of download restrictions
+
+	# Inspect before embedding analytics.
 	npm-utils_check_chromium_eol ${CHROMIUM_PV}
 	npm-secaudit_find_analytics
 	npm-secaudit_find_analytics_within_source_code
@@ -482,16 +493,7 @@ eerror
 
 	cd "${S}" || die
 	npm-secaudit_audit_fix
-
-	cd "${S}" || die
-	if declare -f npm-secaudit_src_postprepare > /dev/null ; then
-		npm-secaudit_src_postprepare
-	fi
-
-	npm-utils_check_chromium_eol ${CHROMIUM_PV}
-	npm-secaudit_find_analytics
-	npm-secaudit_find_session_replay
-	npm-secaudit_find_session_replay_within_source_code
+	npm-utils_avscan "${WORKDIR}"
 
 	cd "${S}" || die
 	if declare -f npm-secaudit_src_compile > /dev/null ; then
@@ -516,6 +518,12 @@ eerror
 	fi
 
 	cd "${S}"
+	npm-utils_check_chromium_eol ${CHROMIUM_PV}
+	npm-secaudit_find_analytics
+	npm-secaudit_find_session_replay
+	npm-secaudit_find_session_replay_within_source_code
+
+	cd "${S}"
 	if declare -f npm-secaudit_src_preinst > /dev/null ; then
 		npm-secaudit_src_preinst
 	else
@@ -523,16 +531,22 @@ eerror
 	fi
 }
 
-# @FUNCTION: npm-secaudit_src_prepare_default
+# @FUNCTION: npm-secaudit_src_postunpack_default
 # @DESCRIPTION:
-# Fetches dependencies and audit fixes them.  Currently a stub.  TODO per package patching support.
-npm-secaudit_src_prepare_default() {
+# Fetches dependencies and audit fixes them.
+npm-secaudit_src_postunpack_default() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	cd "${S}"
 	npm-secaudit_fetch_deps
+}
+
+# @FUNCTION: npm-secaudit_src_prepare_default
+# @DESCRIPTION:
+# Patches before compiling
+npm-secaudit_src_prepare_default() {
 	cd "${S}"
-	#default_src_prepare
+	eapply_user
 }
 
 # @FUNCTION: npm-secaudit_src_install_default
@@ -698,6 +712,13 @@ npm-secaudit_install() {
 	else
 		shopt -u dotglob
 	fi
+}
+
+# @FUNCTION: npm-secaudit_src_install_finalize
+# @DESCRIPTION:
+# Scans ${ED} for malware.
+npm-secaudit_src_install_finalize() {
+	npm-utils_avscan "${ED}"
 }
 
 # For single exe packaging see:

@@ -393,7 +393,6 @@ src_compile() {
 }
 
 npm-secaudit_src_compile() {
-	# no need to build
 	:;
 }
 
@@ -469,6 +468,9 @@ src_install() {
 		-exec rm -vrf "{}" \;
 	#	-o -name "node_modules" was included but removed for closure-compiler
 	cp -R "${S}/" "${D}/${DEST}" || die "Could not install files"
+	if use closure-compiler && ! use system-closure-compiler ; then
+		npm-secaudit_src_install_finalize
+	fi
 }
 
 pkg_postinst() {

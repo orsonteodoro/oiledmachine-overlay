@@ -284,17 +284,15 @@ eerror
 	fi
 }
 
-electron-app_src_preprepare() {
+electron-app_src_postunpack() {
 	cd "${WORKDIR}" || die
 	unpack "${PN}data-${TEXTURELABDATA_COMMIT:0:7}.tar.gz"
 	rm -rf "${S}/public/assets" || die
 	mkdir -p "${S}/public/assets" || die
 	cp -aT "${WORKDIR}/${PN}data-${TEXTURELABDATA_COMMIT}" "${S}/public/assets" || die
 	cd "${S}" || die
-}
-
-electron-app_src_prepare() {
-	electron-app_src_prepare_default
+	electron-app_src_postunpack_default
+	cd "${S}" || die
 	export SHARP_IGNORE_GLOBAL_LIBVIPS=1
 	if use system-vips ; then
 		export SHARP_IGNORE_GLOBAL_LIBVIPS=0
@@ -320,6 +318,7 @@ src_install() {
 		"${ELECTRON_APP_INSTALL_PATH}/texturelab"
 	fperms 0755 ${ELECTRON_APP_INSTALL_PATH}/texturelab
 	npm-utils_install_licenses
+	electron-app_src_install_finalize
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

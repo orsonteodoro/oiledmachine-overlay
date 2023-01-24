@@ -78,6 +78,8 @@ eerror
 	# The internal Chromium is broken
 	# Removed vulnerable version
 	rm -rf "${ED}/opt/carbon-now-cli/node_modules/puppeteer/.local-chromium" || die
+
+	npm-secaudit_src_install_finalize
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

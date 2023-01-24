@@ -492,6 +492,7 @@ ewarn
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/resources/GDJS/Runtime" \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/resources/GDJS/Runtime-sources" \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/src/UI/Theme/"
+	electron-app_src_install_finalize
 }
 
 pkg_postinst() {

@@ -322,16 +322,16 @@ eerror
 	fi
 }
 
-electron-app_src_prepare() {
-	electron-app_src_prepare_default
+electron-app_src_postunpack() {
+	electron-app_src_postunpack_default
 	vrun yarn add ts-clean --dev -W
-}
-
-electron-app_src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
 	vrun yarn
 	vrun yarn download:plugins
+}
+
+electron-app_src_compile() {
 	vrun yarn electron build
 	vrun yarn electron rebuild
 }
@@ -355,6 +355,7 @@ src_install() {
 	doexe "${T}/${PN}"
 	LCNR_SOURCE="${WORKDIR}/${PN}-${PV}${SUFFIX}"
 	npm-utils_install_licenses
+	electron-app_src_install_finalize
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

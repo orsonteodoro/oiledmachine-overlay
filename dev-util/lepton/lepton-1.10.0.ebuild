@@ -130,7 +130,7 @@ eerror
 	fi
 }
 
-electron-app_src_preprepare() {
+electron-app_src_prepare() {
 	cp "${FILESDIR}"/account.js "${S}"/configs || die
 	sed -i -e "s|<your_client_id>|${LEPTON_CLIENT_ID}|" \
 		-e "s|<your_client_secret>|${LEPTON_CLIENT_SECRET}|" \
@@ -161,6 +161,7 @@ src_install() {
 	npm-utils_install_licenses
 	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
 	shred "${S}"/configs/account.js
+	electron-app_src_install_finalize
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

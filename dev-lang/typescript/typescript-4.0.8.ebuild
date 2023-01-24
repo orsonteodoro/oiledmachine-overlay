@@ -89,7 +89,7 @@ pkg_setup() {
 	einfo "Node.js is ${node_pv}"
 }
 
-npm-secaudit_src_postprepare() {
+npm-secaudit_src_prepare() {
 	npm_package_lock_update ./
 }
 
@@ -109,6 +109,7 @@ src_install() {
 	npm-secaudit_install "*"
 	fperms 0755 "${NPM_SECAUDIT_INSTALL_PATH}/bin/tsc" \
 		"${NPM_SECAUDIT_INSTALL_PATH}/bin/tsserver"
+	npm-secaudit_src_install_finalize
 }
 
 pkg_postinst() {

@@ -932,3 +932,25 @@ einfo
 		done
 	fi
 }
+
+# @FUNCTION: npm-utils_avscan
+# @DESCRIPTION:
+# Scans arg for malware.
+
+# Run every time a new file is added to ${WORKDIR} or ${ED} before running
+# anything.
+
+# arg - path to scan
+npm-utils_avscan() {
+	local path="${1}"
+	if [[ \
+		"${ELECTRON_APP_AV_SCAN}" == "1" \
+		|| "${NPM_SECAUDIT_AV_SCAN}" == "1" \
+		|| "${NPM_UTILS_AV_SCAN}" == "1" \
+		]] ; then
+		if has_version "app-antivirus/clamav[clamapp]" ; then
+einfo "Running avscan on ${ED}"
+			clamscan "${path}" || die
+		fi
+	fi
+}

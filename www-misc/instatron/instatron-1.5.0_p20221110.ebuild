@@ -49,6 +49,7 @@ src_install() {
 		"Network" \
 		"${ELECTRON_APP_INSTALL_PATH}/${PN}"
 	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
+	electron-app_src_install_finalize
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

@@ -873,6 +873,9 @@ einfo "NODE_ENV=development"
 
 	# You could define it as a per-package envar.  It not recommended in the ebuild.
 	ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:-"0"}
+
+	# Scans both the unpacked tarball and the install image.
+	ELECTRON_APP_AV_SCAN=${ELECTRON_APP_AV_SCAN:-"1"}
 }
 
 # @FUNCTION: electron-app_pkg_setup
@@ -1394,6 +1397,7 @@ eerror
 # @FUNCTION: electron-app_src_unpack
 # @DESCRIPTION:
 # Runs phases for downloading dependencies, unpacking, building
+# Compiling is done here to avoid sandbox issues.
 electron-app_src_unpack() {
         debug-print-function ${FUNCNAME} "${@}"
 
@@ -1424,14 +1428,20 @@ eerror
 		default_src_unpack
 	fi
 
-	# All the phase hooks get run in unpack because of download restrictions
+	npm-utils_avscan "${WORKDIR}"
 
 	cd "${S}"
-	if declare -f electron-app_src_preprepare > /dev/null ; then
-		electron-app_src_preprepare
+	if declare -f electron-app_src_postunpack > /dev/null ; then
+		electron-app_src_postunpack
+	else
+		electron-app_src_postunpack_default
 	fi
 
-	# Inspect before downloading
+	npm-utils_avscan "${WORKDIR}"
+
+	# All the phase hooks get run in unpack because of download restrictions
+
+	# Inspect before embedding analytics.
 	electron-app_audit_versions
 	electron-app_find_analytics
 	electron-app_find_analytics_within_source_code
@@ -1447,12 +1457,7 @@ eerror
 
 	cd "${S}"
 	electron-app_audit_fix
-
-	cd "${S}"
-	if declare -f electron-app_src_postprepare > /dev/null ; then
-		electron-app_src_postprepare
-	fi
-
+	npm-utils_avscan "${WORKDIR}"
 
 	cd "${S}"
 	if declare -f electron-app_src_compile > /dev/null ; then
@@ -1478,6 +1483,7 @@ eerror
 	cd "${S}"
 	# Another audit happens because electron-builder downloads again
 	# possibly vulnerable libraries.
+	npm-utils_avscan "${WORKDIR}"
 	electron-app_audit_versions
 	electron-app_find_analytics
 	electron-app_find_session_replay
@@ -1491,17 +1497,22 @@ eerror
 	fi
 }
 
-# @FUNCTION: electron-app_src_prepare_default
+# @FUNCTION: electron-app_src_postunpack_default
 # @DESCRIPTION:
-# Fetches dependencies and audit fixes them.  Currently a stub.
-# TODO per package patching support.
-electron-app_src_prepare_default() {
+# Fetches dependencies and audit fixes them.
+electron-app_src_postunpack_default() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	cd "${S}"
 	electron-app_fetch_deps
+}
+
+# @FUNCTION: electron-app_src_prepare_default
+# @DESCRIPTION:
+# Patches before compiling
+electron-app_src_prepare_default() {
 	cd "${S}"
-	#default_src_prepare
+	eapply_user
 }
 
 # @FUNCTION: electron-app_install_default
@@ -2057,4 +2068,11 @@ electron-app_get_node_version()
 			"${T}/node_version.h" | head -n 1 | cut -f 3 -d " ")
 		echo "${node_version_major}.${node_version_minor}.${node_version_patch}"
 	fi
+}
+
+# @FUNCTION: electron-app_src_install_finalize
+# @DESCRIPTION:
+# Scans ${ED} for malware.
+electron-app_src_install_finalize() {
+	npm-utils_avscan "${ED}"
 }

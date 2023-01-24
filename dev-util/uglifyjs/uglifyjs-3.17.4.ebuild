@@ -21,20 +21,14 @@ https://github.com/mishoo/UglifyJS/archive/refs/tags/v${PV}.tar.gz
 RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-${PV}"
 
-npm-secaudit_src_preprepare()
+npm-secaudit_src_postunpack()
 {
 	npm i --package-lock-only || die
-	[ ! -e package-lock.json ] \
-	&& ewarn "package-lock.json was not created in $(pwd)"
-}
-
-src_install()
-{
-	npm-secaudit_src_postinst
+	[ ! -e package-lock.json ] && ewarn "package-lock.json was not created in $(pwd)"
+	npm-secaudit_src_postunpack_default
 }
 
 npm-secaudit_src_compile() {
-	# no need to build
 	:;
 }
 
@@ -43,6 +37,7 @@ src_install() {
 	npm-secaudit_install "*"
 	exeinto /usr/bin
 	doexe "${FILESDIR}/${PN}"
+	npm-secaudit_src_install_finalize
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

@@ -40,10 +40,15 @@ https://github.com/sindresorhus/caprine/archive/v${PV}.tar.gz
 "
 RESTRICT="mirror"
 
-electron-app_src_compile() {
+electron-app_src_postunpack() {
+	electron-app_src_postunpack_default
 	cd "${S}" || die
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	electron-builder install-app-deps || die
+}
+
+electron-app_src_compile() {
+	cd "${S}" || die
 	tsc || die
 	electron-builder -l dir || die
 }
@@ -58,6 +63,7 @@ src_install() {
 		"${ELECTRON_APP_INSTALL_PATH}/${PN}"
 	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
 	npm-utils_install_licenses
+	electron-app_src_install_finalize
 }
 
 pkg_postinst() {

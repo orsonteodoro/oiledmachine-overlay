@@ -100,9 +100,9 @@ eerror
 	fi
 }
 
-electron-app_src_prepare() {
+electron-app_src_postunpack() {
 	export NEXT_TELEMETRY_DISABLED=1
-	electron-app_src_prepare_default
+	electron-app_src_postunpack_default
 }
 
 electron-app_src_compile() {
@@ -131,6 +131,7 @@ src_install() {
         newicon "main/build/icon.png" "${PN}.png"
         make_desktop_entry ${PN} "${MY_PN}" ${PN} "Graphics"
 	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
+	electron-app_src_install_finalize
 }
 
 pkg_postinst() {

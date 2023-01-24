@@ -497,6 +497,9 @@ src_install() {
 	dodoc LICENSE
 	docinto readmes
 	dodoc README.md
+	if use closure_compiler_nodejs ; then
+		npm-secaudit_src_install_finalize
+	fi
 }
 
 pkg_postinst() {
