@@ -424,7 +424,7 @@ src_configure() {
 		# sandbox necessarily(?) + needs certain debug symbols present
 		# in e.g. glibc.
 		mycmakeargs+=(
-			-DCMAKE_DISABLE_FIND_PACKAGE_Valgrind=$(usex valgrind)
+			-DCMAKE_DISABLE_FIND_PACKAGE_Valgrind=$(usex valgrind OFF ON)
 			-DPYTHON_FIND_VERSION="${EPYTHON#python}"
 		)
 
@@ -462,6 +462,7 @@ src_configure() {
 }
 
 src_test() {
+	use valgrind && ewarn "testing with valgrind may likely fail."
 	cd "${BUILD_DIR}" || die
 	use jit && unit_tests/check_clamav || die
 	cmake_src_test
