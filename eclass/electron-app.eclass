@@ -1483,7 +1483,6 @@ eerror
 	cd "${S}"
 	# Another audit happens because electron-builder downloads again
 	# possibly vulnerable libraries.
-	npm-utils_avscan "${WORKDIR}"
 	electron-app_audit_versions
 	electron-app_find_analytics
 	electron-app_find_session_replay
