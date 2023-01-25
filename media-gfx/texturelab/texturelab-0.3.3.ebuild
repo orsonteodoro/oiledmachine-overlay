@@ -297,6 +297,13 @@ electron-app_src_postunpack() {
 	if use system-vips ; then
 		export SHARP_IGNORE_GLOBAL_LIBVIPS=0
 		vrun yarn add "node-gyp@9.3.1"
+	fi
+}
+
+electron-app_src_prepare() {
+	cd "${S}" || die
+	electron-app_eapply_user
+	if use system-vips ; then
 		eapply "${FILESDIR}/texturelab-0.3.3-node-gyp-openssl_fips.patch"
 		export ELECTRON_APP_SKIP_EXIT_CODE_CHECK=0
 	fi
