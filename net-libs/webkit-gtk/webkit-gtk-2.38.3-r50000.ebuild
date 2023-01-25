@@ -345,11 +345,11 @@ ${DEFAULT_GST_PLUGINS}
 
 aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 +dfg-jit +doc -eme
 +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc hardened
-+introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms +libhyphen
--libwebrtc -mediarecorder -mediastream +minibrowser +opengl openmp -seccomp
--spell test thunder +unified-builds variation-fonts wayland +webassembly
-+webassembly-b3-jit +webcore +webcrypto -webdriver +webgl -webgl2 webm-eme
--webrtc webvtt -webxr +woff2 +X +yarr-jit
+hls +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
++libhyphen -libwebrtc -mediarecorder -mediastream +minibrowser +opengl openmp
+-seccomp -spell test thunder +unified-builds variation-fonts wayland
++webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver +webgl -webgl2
+webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
 "
 
 gen_gst_plugins_duse() {
@@ -432,6 +432,9 @@ REQUIRED_USE+="
 	)
 	hardened? (
 		!jit
+	)
+	hls? (
+		gstreamer
 	)
 	jit? (
 		bmalloc
@@ -617,6 +620,9 @@ RDEPEND+="
 		)
 		gstwebrtc? (
 			>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
+		)
+		hls? (
+			>=media-plugins/gst-plugins-hls-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		)
 		libde265? (
 			>=media-plugins/gst-plugins-libde265-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
@@ -1451,12 +1457,16 @@ multilib_src_install() {
 }
 
 multilib_src_install_all() {
+	local vaapi_env
+	local hls_env
 	if ! use vaapi-stateless-decoding && use vaapi ; then
-		dodir /etc/env.d
-newenvd - 50${PN}${API_VERSION} <<-EOF
-WEBKIT_GST_ENABLE_LEGACY_VAAPI=1
-EOF
+		vaapi_env="WEBKIT_GST_ENABLE_LEGACY_VAAPI=1"
 	fi
+
+	dodir /etc/env.d
+newenvd - 50${PN}${API_VERSION} <<-EOF
+${vaapi_env}
+EOF
 
 	LCNR_SOURCE="${S}"
 	lcnr_install_files

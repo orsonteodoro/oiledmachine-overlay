@@ -316,6 +316,7 @@ DEFAULT_GST_PLUGINS="
 +dav1d
 +flac
 +g722
+-hls
 +libde265
 +mp3
 +ogg
@@ -438,6 +439,9 @@ REQUIRED_USE+="
 	)
 	hardened? (
 		!jit
+	)
+	hls? (
+		gstreamer
 	)
 	jit? (
 		bmalloc
@@ -627,6 +631,9 @@ RDEPEND+="
 		)
 		gstwebrtc? (
 			>=dev-libs/openssl-3[${MULTILIB_USEDEP}]
+		)
+		hls? (
+			>=media-plugins/gst-plugins-hls-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		)
 		libde265? (
 			>=media-plugins/gst-plugins-libde265-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
@@ -1450,12 +1457,21 @@ multilib_src_install() {
 }
 
 multilib_src_install_all() {
+	local vaapi_env
+	local hls_env
 	if ! use vaapi-stateless-decoding && use vaapi ; then
-		dodir /etc/env.d
-newenvd - 50${PN}${API_VERSION} <<-EOF
-WEBKIT_GST_ENABLE_LEGACY_VAAPI=1
-EOF
+		vaapi_env="WEBKIT_GST_ENABLE_LEGACY_VAAPI=1"
 	fi
+
+	if use hls ; then
+		hls_env="WEBKIT_GST_ENABLE_HLS_SUPPORT=1"
+	fi
+
+	dodir /etc/env.d
+newenvd - 50${PN}${API_VERSION} <<-EOF
+${vaapi_env}
+${hls_env}
+EOF
 
 	LCNR_SOURCE="${S}"
 	lcnr_install_files
