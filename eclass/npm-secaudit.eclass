@@ -541,12 +541,37 @@ npm-secaudit_src_postunpack_default() {
 	npm-secaudit_fetch_deps
 }
 
+# @FUNCTION: _npm-secaudit_eapply_user
+# @DESCRIPTION:
+# Patch without warning
+_npm-secaudit_eapply_user() {
+	local dirs=(
+		"${CATEGORY}/${P}"
+		"${CATEGORY}/${P}:${SLOT}"
+		"${CATEGORY}/${PN}"
+		"${CATEGORY}/${PN}:${SLOT}"
+		"${CATEGORY}/${P}-${PR}"
+		"${CATEGORY}/${P}-${PR}:${SLOT}"
+	)
+	local dir
+	for dir in ${dirs[@]} ; do
+		if [[ -d "/etc/portage/patches/${dir}" ]] ; then
+			for path in $(find "/etc/portage/patches/${dir}" \
+				-type f \( -name "*.patch" -o -name "*.diff" \) \
+				| sort \
+				) ; do
+				eapply "${path}"
+			done
+		fi
+	done
+}
+
 # @FUNCTION: npm-secaudit_src_prepare_default
 # @DESCRIPTION:
 # Patches before compiling
 npm-secaudit_src_prepare_default() {
 	cd "${S}"
-	eapply_user
+	_npm-secaudit_eapply_user
 }
 
 # @FUNCTION: npm-secaudit_src_install_default

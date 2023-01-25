@@ -1506,12 +1506,37 @@ electron-app_src_postunpack_default() {
 	electron-app_fetch_deps
 }
 
+# @FUNCTION: _electron-app_eapply_user
+# @DESCRIPTION:
+# Patch without warning
+_electron-app_eapply_user() {
+	local dirs=(
+		"${CATEGORY}/${P}"
+		"${CATEGORY}/${P}:${SLOT}"
+		"${CATEGORY}/${PN}"
+		"${CATEGORY}/${PN}:${SLOT}"
+		"${CATEGORY}/${P}-${PR}"
+		"${CATEGORY}/${P}-${PR}:${SLOT}"
+	)
+	local dir
+	for dir in ${dirs[@]} ; do
+		if [[ -d "/etc/portage/patches/${dir}" ]] ; then
+			for path in $(find "/etc/portage/patches/${dir}" \
+				-type f \( -name "*.patch" -o -name "*.diff" \) \
+				| sort \
+				) ; do
+				eapply "${path}"
+			done
+		fi
+	done
+}
+
 # @FUNCTION: electron-app_src_prepare_default
 # @DESCRIPTION:
 # Patches before compiling
 electron-app_src_prepare_default() {
 	cd "${S}"
-	eapply_user
+	_electron-app_eapply_user
 }
 
 # @FUNCTION: electron-app_install_default
