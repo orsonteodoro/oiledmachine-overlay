@@ -7583,19 +7583,22 @@ ot-kernel_src_install() {
 
 		if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES:-0}" == "1" ]] \
 			&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
-			local license_preserve_path="/usr/share/${PN}/${K_MAJOR_MINOR}-${extraversion}/licenses"
+			local last_version=$(best_version "=sys-kernel/${PN}-${K_MAJOR_MINOR}*" \
+				| sed -e "s|sys-kernel/${PN}-||g")
+			local license_preserve_path_src="/usr/share/${PN}/${last_version}-${extraversion}/licenses"
+			local license_preserve_path_dest="/usr/share/${PN}/${PV}-${extraversion}/licenses"
 			dodir "${license_preserve_path}"
 			if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES_CACHED:-1}" == "1" \
-				&& -e "${license_preserve_path}" ]] ; then
+				&& -e "${license_preserve_path_src}" ]] ; then
 ewarn "Preserving copyright notices (cached)."
-				cp -aT "${license_preserve_path}" \
-					"${ED}/${license_preserve_path}" || die
+				cp -aT "${license_preserve_path_src}" \
+					"${ED}/${license_preserve_path_dest}" || die
 			else
 ewarn "Preserving copyright notices.  This may take hours."
 				cat "${FILESDIR}/header-preserve-kernel" \
 					> "${BUILD_DIR}/header-preserve-kernel" || die
 				pushd "${BUILD_DIR}" || die
-					export MULTI_HEADER_DEST_PATH="${ED}/${license_preserve_path}"
+					export MULTI_HEADER_DEST_PATH="${ED}/${license_preserve_path_dest}"
 					chmod +x header-preserve-kernel || die
 					./header-preserve-kernel || die
 				popd
@@ -7660,14 +7663,14 @@ ewarn "Preserving copyright notices.  This may take hours."
 		if [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
 			ewarn "Using OT_KERNEL_INSTALL_SOURCE_CODE is experimental."
 			ot-kernel_install_source_code
-		else
-			local logo_license_path=$(find "${BUILD_DIR}/drivers/video/logo" \
-				-name "logo_custom_*.*.license" \
-				2>/dev/null)
-			if [[ -n "${logo_license_path}" && -e "${logo_license_path}" ]] ; then
-				insinto "/usr/share/${PN}/${K_MAJOR_MINOR}-${extraversion}/licenses/logo"
-				doins "${logo_license_path}"
-			fi
+		fi
+
+		local logo_license_path=$(find "${BUILD_DIR}/drivers/video/logo" \
+			-name "logo_custom_*.*.license" \
+			2>/dev/null)
+		if [[ -n "${logo_license_path}" && -e "${logo_license_path}" ]] ; then
+			insinto "/usr/share/${PN}/${PV}-${extraversion}/licenses/logo"
+			doins "${logo_license_path}"
 		fi
 
 		cd "${BUILD_DIR}" || die
