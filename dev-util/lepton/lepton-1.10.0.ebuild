@@ -131,6 +131,7 @@ eerror
 }
 
 electron-app_src_prepare() {
+	electron-app_eapply_user
 	cp "${FILESDIR}"/account.js "${S}"/configs || die
 	sed -i -e "s|<your_client_id>|${LEPTON_CLIENT_ID}|" \
 		-e "s|<your_client_secret>|${LEPTON_CLIENT_SECRET}|" \

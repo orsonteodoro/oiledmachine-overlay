@@ -541,10 +541,10 @@ npm-secaudit_src_postunpack_default() {
 	npm-secaudit_fetch_deps
 }
 
-# @FUNCTION: _npm-secaudit_eapply_user
+# @FUNCTION: npm-secaudit_eapply_user
 # @DESCRIPTION:
 # Patch without warning
-_npm-secaudit_eapply_user() {
+npm-secaudit_eapply_user() {
 	local dirs=(
 		"${CATEGORY}/${P}"
 		"${CATEGORY}/${P}:${SLOT}"
@@ -571,7 +571,7 @@ _npm-secaudit_eapply_user() {
 # Patches before compiling
 npm-secaudit_src_prepare_default() {
 	cd "${S}"
-	_npm-secaudit_eapply_user
+	npm-secaudit_eapply_user
 }
 
 # @FUNCTION: npm-secaudit_src_install_default

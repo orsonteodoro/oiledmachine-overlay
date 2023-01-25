@@ -90,6 +90,7 @@ pkg_setup() {
 }
 
 npm-secaudit_src_prepare() {
+	npm-secaudit_eapply_user
 	npm_package_lock_update ./
 }
 
