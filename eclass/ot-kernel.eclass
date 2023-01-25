@@ -2539,7 +2539,6 @@ is_firmware_ready() {
 	einfo
 	einfo "Performing a firmware roll call"
 	einfo
-	IFS=$'\n'
 	local fw_relpaths=(
 		$(grep "CONFIG_EXTRA_FIRMWARE" "${BUILD_DIR}/.config" \
 			| head -n 1 | cut -f 2 -d "\"")
@@ -2572,8 +2571,6 @@ is_firmware_ready() {
 einfo "Running avscan on firmware(s)"
 		clamscan "${fw_abspaths[@]}" || die
 	fi
-
-	IFS=$' \t\n'
 }
 
 # Remove blacklisted firmware relpath.
