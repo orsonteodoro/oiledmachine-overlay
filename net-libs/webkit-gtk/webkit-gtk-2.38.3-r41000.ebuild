@@ -343,9 +343,9 @@ ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
 ${DEFAULT_GST_PLUGINS}
 
-aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 +dfg-jit +doc -eme
-+ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc hardened
-hls +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
+aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dash +dfg-jit +doc
+-eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
+hardened hls +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
 +libhyphen -libwebrtc -mediarecorder -mediastream +minibrowser +opengl openmp
 -seccomp -spell test thunder +unified-builds variation-fonts wayland
 +webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver +webgl -webgl2
@@ -407,6 +407,9 @@ REQUIRED_USE+="
 	cpu_flags_arm_thumb2? (
 		!ftl-jit
 		bmalloc
+	)
+	dash? (
+		gstreamer
 	)
 	dfg-jit? (
 		jit
@@ -610,6 +613,9 @@ RDEPEND+="
 		>=media-plugins/gst-plugins-opus-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		aom? (
 			>=media-plugins/gst-plugins-aom-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		)
+		dash? (
+			>=media-plugins/gst-plugins-dash-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		)
 		dav1d? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},dav1d]
