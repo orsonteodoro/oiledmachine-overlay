@@ -322,7 +322,8 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       Support for the DASH streaming protocol
     </flag>
     <flag name="hls">
-      Support for the HLS streaming protocol
+      Support for the HLS streaming protocol (possible issues, deprecated
+      plugin)
     </flag>
 
     <!-- Codecs -->

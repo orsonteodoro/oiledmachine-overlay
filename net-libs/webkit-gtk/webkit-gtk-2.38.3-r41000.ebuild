@@ -1506,6 +1506,14 @@ ewarn
 ewarn "You may need media-sound/pulseaudio-daemon[alsa] to hear sound."
 ewarn
 	fi
+
+# See https://bugs.webkit.org/show_bug.cgi?id=174458
+	if use hls ; then
+ewarn
+ewarn "HLS support may break on some sites.  Consider disabling the hls USE"
+ewarn "flag and unemerging media-plugins/gst-plugins-hls with hard mask."
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
