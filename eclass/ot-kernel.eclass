@@ -2539,6 +2539,7 @@ is_firmware_ready() {
 	einfo
 	einfo "Performing a firmware roll call"
 	einfo
+	IFS=$'\n'
 	local fw_relpaths=(
 		$(grep "CONFIG_EXTRA_FIRMWARE" "${BUILD_DIR}/.config" \
 			| head -n 1 | cut -f 2 -d "\"")
@@ -2556,6 +2557,23 @@ is_firmware_ready() {
 	if (( ${found_missing} == 1 )) ; then
 		die "Remove the entries from CONFIG_EXTRA_FIRMWARE in ${config}"
 	fi
+
+	local fw_abspaths=()
+	for p in ${fw_relpaths[@]} ; do
+		fw_abspaths+=(
+			"/lib/firmware/${p}"
+		)
+	done
+
+	# This scan is done because of the existence of non distro overlays,
+	# local repos, live ebuilds.
+	if ot-kernel_has_version "app-antivirus/clamav[clamapp]" \
+		&& [[ "${OT_KERNEL_FIRMWARE_AVSCAN:-1}" == "1" ]] ; then
+einfo "Running avscan on firmware(s)"
+		clamscan "${fw_abspaths[@]}" || die
+	fi
+
+	IFS=$' \t\n'
 }
 
 # Remove blacklisted firmware relpath.
@@ -2649,6 +2667,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_EXTRAVERSION
 	unset OT_KERNEL_FAST_SOURCE_CODE_INSTALL
 	unset OT_KERNEL_FIRMWARE
+	unset OT_KERNEL_FIRMWARE_AVSCAN
 	unset OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG
 #	unset OT_KERNEL_HALT_ON_LOWERED_SECURITY		# global var
 	unset OT_KERNEL_HARDENING_LEVEL

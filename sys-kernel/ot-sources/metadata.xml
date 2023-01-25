@@ -1121,6 +1121,16 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
+    OT_KERNEL_FIRMWARE_AVSCAN - performs an avscan on firmware files.
+
+    Acceptable values:
+
+      1 - check
+      0 - don't check
+      unset - check (default)
+
+
+
     OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG -- force the applying disable debug
     globally to remove config symbols containing the following keywords:
 
