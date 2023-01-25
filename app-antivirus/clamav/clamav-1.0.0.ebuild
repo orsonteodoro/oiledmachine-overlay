@@ -141,7 +141,7 @@ CRATES="
 	winapi-x86_64-pc-windows-gnu-0.4.0
 "
 
-inherit cargo cmake flag-o-matic llvm python-any-r1 systemd tmpfiles
+inherit cargo cmake flag-o-matic lcnr llvm python-any-r1 systemd tmpfiles
 
 MY_P=${P//_/-}
 
@@ -462,7 +462,7 @@ src_configure() {
 }
 
 src_test() {
-	use valgrind && ewarn "testing with valgrind may likely fail."
+	use valgrind && ewarn "Testing with valgrind may likely fail."
 	cd "${BUILD_DIR}" || die
 	use jit && unit_tests/check_clamav || die
 	cmake_src_test
@@ -562,6 +562,18 @@ src_install() {
 	fi
 
 	find "${ED}" -name '*.la' -delete || die
+
+	# Some rustc/rustfft references in libclamav.so.11.0.0
+	LCNR_TAG="cargo_third_party"
+	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
+	lcnr_install_files
+
+	# ecompress/unxz is being stupid
+	mv "${S}/COPYING/COPYING.lzma"{,_} || die
+
+	LCNR_TAG="${PN}"
+	LCNR_SOURCE="${S}"
+	lcnr_install_files
 }
 
 pkg_postinst() {
