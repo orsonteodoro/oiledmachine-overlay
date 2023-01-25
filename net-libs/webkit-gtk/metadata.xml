@@ -317,6 +317,14 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       Enables JIT regex support.  Otherwise, it falls back to interpretive.
     </flag>
 
+    <!-- Protocols -->
+    <flag name="dash">
+      Support for the DASH streaming protocol
+    </flag>
+    <flag name="hls">
+      Support for the HLS streaming protocol
+    </flag>
+
     <!-- Codecs -->
     <flag name="a52">
       Support for decoding AC-3 audio.
