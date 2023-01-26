@@ -2877,7 +2877,11 @@ ot-kernel_set_kconfig_set_tcp_cong_ctrl() {
 		ot-kernel_unset_configopt "CONFIG_DEFAULT_${alg}"
 	done
 	einfo "Using ${picked_alg} for TCP congestion control"
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_INET"
+	ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
 	ot-kernel_y_configopt "CONFIG_TCP_CONG_${picked_alg}"
+	ot-kernel_y_configopt "CONFIG_DEFAULT_${picked_alg}"
 	ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "\"${picked_alg,,}\""
 }
 
@@ -6225,6 +6229,13 @@ ewarn "or similar."
 			sed -r -i -e "s/${s}=[ymn]/${s}=y/g" "${orig}" || die
 		fi
 	done
+
+	# Fix default TCP congestion
+	if grep -q -e "^CONFIG_DEFAULT_TCP_CONG=" "${orig}" ; then
+		local alg=$(grep "CONFIG_DEFAULT_TCP_CONG" "${orig}" \
+			| cut -f 2 -d '"')
+		ot-kernel_y_configopt "CONFIG_TCP_CONG_${alg^^}"
+	fi
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_eudev
