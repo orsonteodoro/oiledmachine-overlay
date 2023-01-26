@@ -7598,7 +7598,7 @@ ot-kernel_src_install() {
 				| sed -e "s|sys-kernel/${PN}-||g")
 			local license_preserve_path_src="/usr/share/${PN}/${last_version}-${extraversion}/licenses"
 			local license_preserve_path_dest="/usr/share/${PN}/${PV}-${extraversion}/licenses"
-			dodir "${license_preserve_path}"
+			dodir "${license_preserve_path_dest}"
 			if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES_CACHED:-1}" == "1" \
 				&& -e "${license_preserve_path_src}" ]] ; then
 ewarn "Preserving copyright notices (cached)."
