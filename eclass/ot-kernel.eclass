@@ -2058,7 +2058,7 @@ ot-kernel_copy_pgo_state() {
 
 # @FUNCTION: ot-kernel_rm_exfat
 # @DESCRIPTION:
-# Deletes the ExFAT filesystem from the source code.
+# Deletes the exFAT filesystem from the source code.
 ot-kernel_rm_exfat() {
 	einfo "Removing exFAT"
 	sed -i -e "\|fs/exfat/Kconfig|d" \
@@ -2085,8 +2085,6 @@ ot-kernel_rm_reiserfs() {
 		"fs/Kconfig" || die
 	sed -i -e "/CONFIG_REISERFS_FS/d" \
 		"fs/Makefile" || die
-	sed -i -e "s|/EXFAT/|/|g" \
-		"fs/Kconfig" || die
 
 	sed -i -e "/REISER/d" \
 		"include/uapi/linux/magic.h" || die
@@ -2278,7 +2276,7 @@ ot-kernel_src_prepare() {
 		"drivers/gpu/drm/Kconfig" || die
 
 	if ver_test ${K_MAJOR_MINOR} -ge 5.7 \
-		&& has exfat ${IUSE} \
+		&& [[ "${IUSE}" =~ "exfat" ]] \
 		&& ! use exfat ; then
 		ot-kernel_rm_exfat
 	fi
@@ -3525,7 +3523,7 @@ ot-kernel_set_kconfig_ep800() {
 
 # @FUNCTION: ot-kernel_set_kconfig_exfat
 # @DESCRIPTION:
-# Sets the kernel config for the exfat driver
+# Sets the kernel config for the exFAT driver
 ot-kernel_set_kconfig_exfat() {
 	if has exfat ${IUSE} && ot-kernel_use exfat ; then
 		ot-kernel_y_configopt "CONFIG_EXFAT_FS"
