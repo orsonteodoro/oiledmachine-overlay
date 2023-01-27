@@ -23,6 +23,7 @@
 
 EXTRAVERSION="__EXTRAVERSION__"
 PV="__PV__"
+ARCH="__ARCH__"
 if [[ -e /etc/tcca-${PV}-${EXTRAVERSION}.conf ]] ; then
 	source /etc/tcca-${PV}-${EXTRAVERSION}.conf
 fi
@@ -31,7 +32,7 @@ fi
 TCCA_BULK_DOWNLOAD="${TCCA_BULK_DOWNLOAD:-cubic}"
 TCCA_FAIR_SERVER="${TCCA_FAIR_SERVER:-bbr2}"
 TCCA_THROUGHPUT_SERVER="${TCCA_THROUGHPUT_DOWNLOAD:-dctcp}"
-TCCA_STREAMING="${TCCA_STREAMING:-bbr}"
+TCCA_STREAMING="${TCCA_STREAMING:-westwood}"
 TCCA_GAMING_MULTITASK="${TCCA_GAMING_MULTITASK:-westwood}"
 TCCA_GAMING_DEDICATED="${TCCA_GAMING_DEDICATED:-vegas}"
 TCCA_MULTI_DOWNLOAD="${TCCA_MULTI_DOWNLOAD:-bbr2}"
@@ -41,15 +42,22 @@ TCCA_VOIP_GAMING="${TCCA_GAMING:-vegas}"
 TCCA_VOIP_URBAN_2WAY="${TCCA_VOIP_URBAN_2WAY:-westwood}"
 TCCA_VOIP_URBAN_NWAY="${TCCA_VOIP_URBAN_NWAY:-bbr2}"
 TCCA_VOIP_RURAL="${TCCA_VOIP_RURAL:-hybla}"
-TCCA_WWW_CLIENT="${TCCA_WWW_CLIENT:-hybla}"
+TCCA_WWW_CLIENT="${TCCA_WWW_CLIENT:-vegas}"
 MY_NAME=$(basename "$0")
+
+ARGV=( $@ )
+USE_CASE="${1}"
+shift
+PN="${1}"
+shift
+PN_ARGS=( $@ )
 
 print_help() {
 echo
-echo "${MY_NAME} - Helper script to setup the TCP Congestion Flow for new"
-echo "connections for the kernel"
+echo "${MY_NAME} - Helper script to setup the TCP Congestion Control Algorithm"
+echo "for new connections for the kernel"
 echo
-echo "${MY_NAME} [use-case] [cmd] [args]"
+echo "${MY_NAME} [use-case|menu-item] [cmd] [args]"
 echo
 echo "Use cases:"
 echo
@@ -62,10 +70,10 @@ echo "       gaming-server                                             (alias)"
 echo "  gaming - For gaming while VoIP or streaming"
 echo "       gaming-client                                             (alias)"
 echo "       gaming-multitask                                          (alias)"
-echo "  gaming-dedicated - For gaming without any VoIP, streaming, downloading"
+echo "  gaming-dedicated - Exclusively for gaming without VoIP or streaming"
 echo "  gaming-server - For gaming servers"
 echo "  reliable - For a bug free experience"
-echo "  reset - For resetting the TCP Congestion Flow"
+echo "  reset - For resetting the TCP Congestion Control"
 echo "  multi - For parallel downloads"
 echo "       multi-download                                            (alias)"
 echo "       ftp-server                                                (alias)"
@@ -96,6 +104,12 @@ echo "       voip-road                                                 (alias)"
 echo "  www - For browsing without streaming"
 echo "       http-client                                               (alias)"
 echo "       www-client                                                (alias)"
+echo
+echo "Menu item:"
+echo
+echo "  --help - Print this help"
+echo "  --status - For printing TCP Congestion Control details"
+echo "  --use=<alg> - For using the algorithm directly"
 echo
 echo "[cmd]    - program to run (optional)"
 echo "[args]   - list of arguments to pass to the program (optional)"
@@ -160,12 +174,23 @@ declare -A TCCA_MAP=(
 	["http-client"]="${TCCA_WWW_CLIENT}"
 )
 
-ARGV=( $@ )
-USE_CASE="${1}"
-shift
-PN="${1}"
-shift
-PN_ARGS=( $@ )
+print_status() {
+echo
+echo "The Current TCP Congestion Control algorithm for new connections:"
+echo
+	echo -e "\t"$(cat /proc/sys/net/ipv4/tcp_congestion_control)
+echo
+echo "Allowed algorithms:"
+echo
+	echo -e "\t"$(cat /proc/sys/net/ipv4/tcp_available_congestion_control)
+echo
+echo "Available kernel modules:"
+echo
+	pushd /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/ 2>/dev/null 1>/dev/null
+		echo -e "\t"$(ls tcp_*.ko* | sed -e "s|.ko.*$||g")
+	popd 2>/dev/null 1>/dev/null
+echo
+}
 
 process_options() {
 	local x
@@ -173,6 +198,14 @@ process_options() {
 		case ${x} in
 			--help)
 				print_help
+				exit 0
+				;;
+			--status)
+				print_status
+				exit 0
+				;;
+			--use=*)
+				set_tcca $(echo "${x}" | cut -f 2 -d "=" | sed -e "s|^tcp_||g")
 				exit 0
 				;;
 			*)
@@ -197,10 +230,16 @@ check_dependencies() {
 set_tcca() {
 	local alg="${1}"
 	echo -e "TCP_CONGESTION_CONTROL_ALG:\t${alg}"
-	echo "${alg}" \
-		| pkexec dd \
-			of=/proc/sys/net/ipv4/tcp_congestion_control \
-			oflag=append
+	if ls /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/tcp_${alg}.ko* 2>/dev/null 1>/dev/null ; then
+echo
+echo "Loading kernel module for ${alg}"
+echo
+		pkexec modprobe tcp_${alg}
+	fi
+echo
+echo "Setting TCP Congestion Control algorithm"
+echo
+	pkexec sysctl -w net.ipv4.tcp_congestion_control=${alg}
 }
 
 select_tcca() {

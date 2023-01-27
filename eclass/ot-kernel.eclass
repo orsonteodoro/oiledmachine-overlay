@@ -7835,9 +7835,16 @@ ewarn "Preserving copyright notices.  This may take hours."
 				tcca_robust="${default_tcca}"
 			fi
 
-			local tcca_fast_start
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
-				tcca_fast_start="hybla"
+			# Ordered by lowest http-link latency followed by lowest image gallery completion time.
+			local tcca_web_client
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+				tcca_web_client="vegas"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcca_web_client="bbr2"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
+				tcca_web_client="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+				tcca_web_client="hybla"
 			else
 				tcca_robust="${default_tcca}"
 			fi
@@ -7886,13 +7893,31 @@ ewarn "Preserving copyright notices.  This may take hours."
 				tcca_greedy_downloader="${default_tcca}"
 			fi
 
+			# Sorted by average thoughput for support for high video resolutions.
 			local tcca_streaming
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+				tcca_streaming="westwood"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
+				tcca_streaming="illinois"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
+				tcca_streaming="hstcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+				tcca_streaming="cubic"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+				tcca_streaming="htcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+				tcca_streaming="hybla"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+				tcca_streaming="bic"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
+				tcca_streaming="reno"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
 				tcca_streaming="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-				tcca_streaming="vegas"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcca_streaming="bbr2"
+			else
+				tcca_streaming="${default_tcca}"
 			fi
-
 
 			# This value should be at or above streaming service
 			# bitrate for 70% (C grade) of the time.
@@ -7955,15 +7980,16 @@ TCCA_VOIP_GAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_GAMING:-${tcca
 TCCA_VOIP_URBAN_2WAY="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN_2WAY:-${tcca_avg_bitrate_2way}}"
 TCCA_VOIP_URBAN_NWAY="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN_NWAY:-${tcca_avg_bitrate_nway}}"
 TCCA_VOIP_RURAL="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_RURAL:-${tcca_robust}}"
-TCCA_WWW_CLIENT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT:-${tcca_fast_start}}"
+TCCA_WWW_CLIENT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT:-${tcca_web_client}}"
 EOF
 			cat "${FILESDIR}/tcca" > "${T}/tcca" || die
 			sed -i -e "s|__EXTRAVERSION__|${extraversion}|" "${T}/tcca" || die
 			sed -i -e "s|__PV__|${PV}|" "${T}/tcca" || die
+			sed -i -e "s|__ARCH__|${arch}|" "${T}/tcca" || die
 			insinto /etc
-			newins "${T}/tcca.conf" "tcca-${PV}-${extraversion}.conf"
+			newins "${T}/tcca.conf" "tcca-${PV}-${extraversion}-${arch}.conf"
 			exeinto /usr/bin
-			newexe "${T}/tcca" "tcca-${PV}-${extraversion}"
+			newexe "${T}/tcca" "tcca-${PV}-${extraversion}-${arch}"
 		fi
 	done
 

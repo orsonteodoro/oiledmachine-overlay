@@ -2168,8 +2168,8 @@ unset OT_KERNEL_PRIVATE_KEY
       htcp      - For secondary flows when VoIP or streaming with LFNs [ADSL2+,
                   cable, or larger]
       hstcp
-      hybla     - For satellite internet, road trips, web browsing, micropackage
-                  downloads
+      hybla     - For satellite internet, road trips, micropackage downloads,
+                  faster streaming seek times
       vegas     - For the lowest ping times
       nv
       scalable
@@ -2180,10 +2180,9 @@ unset OT_KERNEL_PRIVATE_KEY
       illinois
       dctcp     - For data centers, HPC, high capacity streaming media
       cdg
-      bbr       - For low latency seeking, live streaming, video on demand
-                  streaming, more greedy (production ready)
-      bbr2      - For low latency seeking, live streaming, video on demand
-                  streaming, high fairness (alpha still, experimental)
+      bbr       - For video streaming services, more greedy (production ready)
+      bbr2      - For video streaming services, high fairness (alpha still,
+                  experimental)
 
       clear     - Do not add any (Ebuild only)
 
@@ -2225,18 +2224,21 @@ unset OT_KERNEL_PRIVATE_KEY
         2 flow pairing recommendations (left-to-right launch order) with
         estimated bandwidth in percent:
 
-          - gaming:westwood, online-radio (96 kbps or less):vegas
-          - gaming:westwood, online-radio (128 kbps or less):htcp if LFN class
-            connection [ADSL2+, cable, or larger]
-          - gaming:westwood, online-radio (128 kbps or less):yeah
-          - gaming:westwood, voip (100 kbps):vegas
-          - gaming:westwood (2 Mbps), voip (300 kbps):htcp
-          - gaming:yeah, voip (300 kbps):vegas
-          - voip/radio (300 kbps):yeah, gaming:westwood (2 Mbps)
-          - voip/radio (100 kbps):vegas, gaming:westwood
-          - voip/radio (300 kbps):vegas, gaming:yeah
-          - online-radio:yeah, gaming:westwood
-          - video-streaming:bbr, wget-download:cubic
+            fixed/static connections, dynamic connections
+          - radio:vegas, gaming:westwood
+          - radio:cubic, gaming:westwood
+          - radio:lp, gaming:westwood
+          - radio:hybla, gaming:westwood
+          - radio:hstcp, gaming:westwood
+          - radio:reno, gaming:westwood
+          - radio:htcp, gaming:westwood  # if LFN class connection [ADSL2+, cable, or larger]
+          - radio:bic, gaming:westwood
+          - radio:yeah, gaming:westwood
+          - radio:vegas, gaming:yeah
+          - radio:bbr, gaming:cubic
+          - video-streaming:cubic, micropackage-downloads(s):bbr
+          - single-download:vegas, video-stream(s):cubic
+          - single-download:vegas, video-stream(s):yeah
 
         Note:
 
@@ -2261,13 +2263,19 @@ unset OT_KERNEL_PRIVATE_KEY
 
         Gaming (performance with ~150 ms RTT or less with more than 2+ flows):  vegas, bbr, yeah, westwood, veno *
         Gaming (grinding under bad connection):  hybla
-        Audio or video streaming:  bbr, bbr2, or vegas
+        Audio or video streaming:  westwood, hstcp, cubic, bbr, bbr2
 
-        * Ordered from low-to-high RTT
-        - Most gamers will use cubic
+        * The algorithms for gaming are ordered from low-to-high RTT.
+        * Most gamers will use cubic and do not mess with these settings.
         * In reality, more than one connection is involved so this section
           needs to be revised.
-        * Many games will use UDP not TCP so these settings may not apply.
+        * Many games will use UDP not TCP so these settings may not apply,
+          but TCP based [browser] games do exist.
+        * There seems to be a tradeoff between latency and throughput in
+          algorithm choice for audio / video streaming.
+        * Use any loss feedback based algorithm (like cubic) for support for
+          higher resolutions or better average image quality.
+        * Hybla may be better on initial start of the stream.
 
       - For 4 flows and above, the recommendations change to
 
@@ -2276,8 +2284,7 @@ unset OT_KERNEL_PRIVATE_KEY
         WWW/HTTP servers (home, low capacity):  bbr2 or vegas
         WWW/HTTP servers (600 or less flows, mid capacity):  dctcp
         WWW/HTTP servers (600+ flows, very high capacity):  bbr2
-        WWW client browsing only:  hybla
-        WWW client while streaming:  bbr or bbr2
+        WWW client browsing only (for lower link click latency and faster image gallery loading):  vegas
 
         Further reading:
 
@@ -2321,7 +2328,7 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_DEDICATED - Full screen games without any VoIP, streaming, downloading, etc.  (Default:  vegas)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_DOWNLOAD - For parallel downloads. (Default: bbr)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE - For a bug-free experience.  (Default:  cubic)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING - For streaming audio or video client.  (Default:  bbr)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING - For streaming audio or video client.  (Default:  westwood)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER - For higher thoughput with some fairness.  (Default:  dctcp)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_GAMING - For VoIP while gaming.  (Default:  vegas)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN_2WAY - For dedicated 2-way VoIP in good urban connections.  (Default:  westwood)
@@ -2344,12 +2351,19 @@ unset OT_KERNEL_PRIVATE_KEY
       OT_KERNEL_TCP_CONGESTION_CONTROLS, but fallback to the next best option.
     - The defaults are chosen based on multiple flows bandwidth allocation with
       a primary flow (active focused process) and auxilitary flows (background).
-    - The wrapper will be found in /usr/bin/tcca-${PV}-${EXTRAVERSION}
-    - The wrapper configuration may be changed in /etc/tcca-${PV}-${EXTRAVERSION}.conf
+    - The wrapper will be found in /usr/bin/tcca-${PV}-${EXTRAVERSION}-${ARCH}
+    - The wrapper configuration may be changed in /etc/tcca-${PV}-${EXTRAVERSION}-${ARCH}.conf
     - The wrapper script requires sys-auth/polkit.  Use the gnome or kde USE
       flag to present GUI dialog.
+    - The wrapper script will reqest elevated privileges twice: once to load the
+      kernel module, and the other to change the algorithm.
     - See the contents of the tcca (TCP Congestion Control Algorithm) script to
       learn how to use it.
+    - For OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING you can choose either
+      to target average bitrate (westwood, cubic), low latency load or seek
+      (hybla, vegas), or the well rounded middle (bbr, bbr2).  By default, it will
+      choose the highest average bitrate/thoughput available for max hardware
+      compatibility.
 
 
 
