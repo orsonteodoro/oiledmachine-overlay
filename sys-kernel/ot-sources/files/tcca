@@ -1,0 +1,214 @@
+#!/bin/bash
+#
+# Copyright (c) 2023 Orson Teodoro <orsonteodoro@hotmail.com>.  All rights Reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+
+EXTRAVERSION="__EXTRAVERSION__"
+PV="__PV__"
+if [[ -e /etc/tcca-${PV}-${EXTRAVERSION}.conf ]] ; then
+	source /etc/tcca-${PV}-${EXTRAVERSION}.conf
+fi
+
+# TCCA - TCP Congestion Control Algorithm
+TCCA_BULK_DOWNLOAD="${TCCA_BULK_DOWNLOAD:-cubic}"
+TCCA_FAIR_SERVER="${TCCA_FAIR_SERVER:-bbr2}"
+TCCA_THROUGHPUT_SERVER="${TCCA_THROUGHPUT_DOWNLOAD:-dctcp}"
+TCCA_STREAMING="${TCCA_STREAMING:-bbr}"
+TCCA_GAMING_MULTITASK="${TCCA_GAMING_MULTITASK:-westwood}"
+TCCA_GAMING_DEDICATED="${TCCA_GAMING_DEDICATED:-vegas}"
+TCCA_MULTI_DOWNLOAD="${TCCA_MULTI_DOWNLOAD:-bbr2}"
+TCCA_RELIABLE="${TCCA_RELIABLE:-cubic}"
+TCCA_RESET="${TCCA_RESET:-cubic}"
+TCCA_VOIP_GAMING="${TCCA_VOIP_URBAN:-yeah}"
+TCCA_VOIP_URBAN="${TCCA_VOIP_URBAN:-bbr}"
+TCCA_VOIP_RURAL="${TCCA_VOIP_RURAL:-hybla}"
+MY_NAME=$(basename "$0")
+
+print_help() {
+echo
+echo "${MY_NAME} - Helper script to setup the TCP Congestion Flow for new"
+echo "connections for the kernel"
+echo
+echo "${MY_NAME} [use-case] [cmd] [args]"
+echo
+echo "Use cases:"
+echo
+echo "  bulk - For large downloads"
+echo "       bulk-download                                             (alias)"
+echo "       download                                                  (alias)"
+echo "  fair - For servers"
+echo "       http-server                                               (alias)"
+echo "       gaming-server                                             (alias)"
+echo "  gaming - For gaming while VoIP or streaming"
+echo "       gaming-client                                             (alias)"
+echo "       gaming-multitask                                          (alias)"
+echo "  gaming-dedicated - For gaming without any VoIP, streaming, downloading"
+echo "  gaming-server - For gaming servers"
+echo "  reliable - For a bug free experience"
+echo "  reset - For resetting the TCP Congestion Flow"
+echo "  multi - For parallel downloads"
+echo "       multi-download                                            (alias)"
+echo "       ftp-server                                                (alias)"
+echo "       p2p                                                       (alias)"
+echo "       torrent                                                   (alias)"
+echo "  streaming - For live streaming"
+echo "       live                                                      (alias)"
+echo "       live-streaming                                            (alias)"
+echo "       online-radio                                              (alias)"
+echo "       radio                                                     (alias)"
+echo "  streaming-server - For streaming servers"
+echo "       media-server                                              (alias)"
+echo "  voip-gaming - For VoIP while gaming"
+echo "  voip - For VoIP urban connections"
+echo "       voip-urban                                                (alias)"
+echo "  voip-rural - For VoIP rural or bad connections"
+echo "       bad                                                       (alias)"
+echo "       bad-connection                                            (alias)"
+echo "       voip-bad                                                  (alias)"
+echo "       voip-road                                                 (alias)"
+echo "  www - For browsing without streaming"
+echo "       http-client                                               (alias)"
+echo "       www-client                                                (alias)"
+echo
+echo "[cmd]    - program to run"
+echo "[args]   - list of arguments to pass to the program"
+echo
+}
+
+unset TCCA_MAP
+declare -A TCCA_MAP=(
+	["bulk"]="${TCCA_BULK_DOWNLOAD}"
+	["bulk-download"]="${TCCA_BULK_DOWNLOAD}"
+	["download"]="${TCCA_BULK_DOWNLOAD}"
+
+	["fair"]="${TCCA_FAIR_SERVER}"
+	["http-server"]="${TCCA_FAIR_SERVER}"
+	["gaming-server"]="${TCCA_FAIR_SERVER}"
+
+	["gaming"]="${TCCA_GAMING_MULTITASK}"
+	["gaming-client"]="${TCCA_GAMING_MULTITASK}"
+	["gaming-multitask"]="${TCCA_GAMING_MULTITASK}"
+
+	["gaming-dedicated"]="${TCCA_GAMING_DEDICATED}"
+
+	["reliable"]="${TCCA_RELIABLE}"
+	["reset"]="${TCCA_RESET}"
+
+	["multi"]="${TCCA_MULTI_DOWNLOAD}"
+	["multi-download"]="${TCCA_MULTI_DOWNLOAD}"
+	["ftp-server"]="${TCCA_MULTI_DOWNLOAD}"
+	["p2p"]="${TCCA_MULTI_DOWNLOAD}"
+	["torrent"]="${TCCA_MULTI_DOWNLOAD}"
+
+	["streaming"]="${TCCA_STREAMING}"
+	["live"]="${TCCA_STREAMING}"
+	["live-streaming"]="${TCCA_STREAMING}"
+	["online-radio"]="${TCCA_STREAMING}"
+	["radio"]="${TCCA_STREAMING}"
+
+	["streaming-server"]="${TCCA_THROUGHPUT_SERVER}"
+	["media-server"]="${TCCA_THROUGHPUT_SERVER}"
+
+	["voip-gaming"]="${TCCA_VOIP_GAMING}"
+
+	["voip"]="${TCCA_VOIP_URBAN}"
+	["voip-urban"]="${TCCA_VOIP_URBAN}"
+
+	["bad"]="${TCCA_VOIP_RURAL}"
+	["bad-connection"]="${TCCA_VOIP_RURAL}"
+	["voip-rural"]="${TCCA_VOIP_RURAL}"
+	["voip-bad"]="${TCCA_VOIP_RURAL}"
+	["voip-road"]="${TCCA_VOIP_RURAL}"
+
+	["www"]="${TCCA_WWW_CLIENT}"
+	["www-client"]="${TCCA_WWW_CLIENT}"
+	["http-client"]="${TCCA_WWW_CLIENT}"
+)
+
+ARGV=( $@ )
+USE_CASE="${1}"
+shift
+PN="${1}"
+shift
+PN_ARGS=( $@ )
+
+process_options() {
+	local x
+	for x in ${ARGV[@]} ; do
+		case ${x} in
+			--help)
+				print_help
+				exit 0
+				;;
+			*)
+				;;
+		esac
+	done
+}
+
+check_dependencies() {
+	if [[ -n "${DISPLAY}" ]] && ! which pkexec 2>/dev/null 1>/dev/null ; then
+		echo "You must install polkit"
+		exit 1
+	fi
+	if [[ -z "${USE_CASE}" ]] ; then
+		echo "You must choose a use case.  See ${MY_NAME} --help."
+		exit 1
+	else
+		echo -e "USE_CASE:\t\t\t${USE_CASE}"
+	fi
+}
+
+set_tcca() {
+	local alg="${1}"
+	echo -e "TCP_CONGESTION_CONTROL_ALG:\t${alg}"
+	echo "${alg}" \
+		| pkexec dd \
+			of=/proc/sys/net/ipv4/tcp_congestion_control \
+			oflag=append
+}
+
+select_tcca() {
+	local alg="${USE_CASE,,}"
+	if [[ "${!TCCA_MAP[@]}" =~ "${alg}" ]] ; then
+		set_tcca ${TCCA_MAP[${alg}]}
+	else
+		echo "${alg} does not exist."
+		echo "Valid values: ${!TCCA_MAP[@]}"
+		exit 1
+	fi
+}
+
+run_pn() {
+	if [[ -n "${PN}" ]] ; then
+		echo "Running ${PN} ${PN_ARGS[@]}"
+		"${PN}" "${PN_ARGS[@]}"
+	fi
+}
+
+main() {
+	process_options
+	check_dependencies
+	select_tcca
+	run_pn
+}
+
+main

@@ -2719,6 +2719,20 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_SWAP_COMPRESSION
 	unset OT_KERNEL_USE_LSM_UPSTREAM_ORDER
 	unset OT_KERNEL_TARGET_TRIPLE
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_DOWNLOAD
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_MULTITASK
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_DEDICATED
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_DOWNLOAD
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_DOWNLOAD
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_GAMING
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_RURAL
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT
 	unset OT_KERNEL_USE
 	unset OT_KERNEL_VERBOSITY
 	unset OT_KERNEL_WORK_PROFILE
@@ -2840,23 +2854,22 @@ ot-kernel_is_build() {
 
 # ot-kernel_set_kconfig_mem need rework
 
-# @FUNCTION: ot-kernel_set_kconfig_set_tcp_cong_ctrl_bbr
+# @FUNCTION: ot-kernel_get_tcp_congestion_controls_default
 # @DESCRIPTION:
-# Sets the kernel config for the TCP congestion control to BBR.
-ot-kernel_set_kconfig_set_tcp_cong_ctrl_bbr() {
-	if has bbrv2 ${IUSE} \
-		&& ot-kernel_use bbrv2 ; then
-		ot-kernel_set_kconfig_set_tcp_cong_ctrl "bbr2"
-	else
-		ot-kernel_set_kconfig_set_tcp_cong_ctrl "bbr"
-	fi
+# Gets the default TCP Congestion Control algorithm from
+# OT_KERNEL_TCP_CONGESTION_CONTROLS.
+ot-kernel_get_tcp_congestion_controls_default() {
+	local picked_alg=$(echo "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" \
+		| tr " " "\n" \
+		| head -n 1)
+	echo "${picked_alg}"
 }
 
-# @FUNCTION: ot-kernel_set_kconfig_set_tcp_cong_ctrl
+# @FUNCTION: ot-kernel_set_kconfig_set_tcp_congestion_controls
 # @DESCRIPTION:
-# Sets the kernel config for the TCP congestion control.
-ot-kernel_set_kconfig_set_tcp_cong_ctrl() {
-	local picked_alg="${1^^}"
+# Sets the kernel config for selecting multiple TCP congestion controls for
+# different scenaros.
+ot-kernel_set_kconfig_set_tcp_congestion_controls() {
 	local ALG=(
 		BIC
 		CUBIC
@@ -2871,10 +2884,54 @@ ot-kernel_set_kconfig_set_tcp_cong_ctrl() {
 		BBR2
 		RENO
 	)
+	local alg
 	for alg in ${ALG[@]} ; do
 		ot-kernel_unset_configopt "CONFIG_DEFAULT_${alg}"
 	done
-	einfo "Using ${picked_alg} for TCP congestion control"
+	if has bbrv2 ${IUSE} && ot-kernel_use bbrv2 ; then
+		OT_KERNEL_TCP_CONGESTION_CONTROLS=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic dctcp hybla vegas westwood yeah"}
+	else
+		OT_KERNEL_TCP_CONGESTION_CONTROLS=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr cubic dctcp hybla vegas westwood yeah"}
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" \
+		&& "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" != "clear" ]] ; then
+		for alg in ${OT_KERNEL_TCP_CONGESTION_CONTROLS} ; do
+			if [[ "${alg}" == "bbr2" ]] ; then
+				if has bbrv2 ${IUSE} \
+					&& ! ot-kernel_use bbrv2 ; then
+					# Skip it if not patched.
+					continue
+				fi
+			fi
+einfo "Adding ${alg}"
+			ot-kernel_y_configopt "CONFIG_NET"
+			ot-kernel_y_configopt "CONFIG_INET"
+			ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
+		done
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" \
+		&& "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" != "clear" ]] ; then
+		local picked_alg=$(ot-kernel_get_tcp_congestion_controls_default)
+		picked_alg="${picked_alg,,}"
+		if [[ "${picked_alg}" == "bbr2" ]] ; then
+			if has bbrv2 ${IUSE} \
+				&& ! ot-kernel_use bbrv2 ; then
+				# Skip it if not patched.
+				continue
+			fi
+		fi
+einfo "Using ${picked_alg} as the default TCP congestion control"
+		ot-kernel_y_configopt "CONFIG_DEFAULT_${picked_alg^^}"
+		ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "\"${picked_alg}\""
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_set_tcp_congestion_control_default
+# @DESCRIPTION:
+# Sets the kernel config for the TCP congestion control making it the default.
+ot-kernel_set_kconfig_set_tcp_congestion_control_default() {
+	local picked_alg="${1^^}"
+einfo "Using ${picked_alg} as the default TCP congestion control"
 	ot-kernel_y_configopt "CONFIG_NET"
 	ot-kernel_y_configopt "CONFIG_INET"
 	ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
@@ -5337,15 +5394,6 @@ ot-kernel_set_kconfig_no_hz_full() {
 	ot-kernel_set_kconfig_kernel_cmdline "nohz_full=all"
 }
 
-# @FUNCTION: ot-kernel_set_kconfig_satellite_internet
-# @DESCRIPTION:
-# Optimizes TCP connections for satellite.
-ot-kernel_set_kconfig_satellite_internet() {
-	if [[ "${OT_KERNEL_SATELLITE_INTERNET}" == "1" ]] ; then
-		ot-kernel_set_kconfig_set_tcp_cong_ctrl "hybla" # Optimize satellite internet for throughput
-	fi
-}
-
 # @FUNCTION: ot-kernel_set_rcu_powersave
 # @DESCRIPTION:
 # Saves more power at the expense of latency
@@ -5634,7 +5682,7 @@ ot-kernel_set_kconfig_work_profile() {
 	if [[ -z "${work_profile}" || "${work_profile}" =~ ("custom"|"manual") ]] ; then
 		:
 	else
-		ot-kernel_set_kconfig_set_tcp_cong_ctrl_bbr
+		ot-kernel_set_kconfig_set_tcp_congestion_controls
 	fi
 
 	if [[ "${work_profile}" =~ "greenest" \
@@ -5948,7 +5996,7 @@ ewarn
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize kernel overhead, maximize computation time
 		if [[ "${work_profile}" =~ "hpc" ]] ; then
 			ot-kernel_set_kconfig_no_hz_full
-			ot-kernel_set_kconfig_set_tcp_cong_ctrl "dctcp"
+			ot-kernel_set_kconfig_set_tcp_congestion_control_default "dctcp"
 			ot-kernel_set_kconfig_slab_allocator "slub"
 		else
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -6642,20 +6690,12 @@ ewarn
 ewarn "The OT_KERNEL_LOGO_URI will restore the console log levels to defaults."
 ewarn "This may decrease security."
 ewarn
-#		if [[ "${arch}" =~ ("x86_64"|"x86") ]] ; then
-#			ot-kernel_y_configopt "CONFIG_X86_VERBOSE_BOOTUP"
-#		fi
-#		ot-kernel_y_configopt "CONFIG_PRINTK"
-#		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
-#		ot-kernel_y_configopt "CONFIG_PRINTK_TIME"
 		if has tresor ${IUSE} && ot-kernel_use tresor ; then
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2"
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "1"
-#			ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "1"
 		else
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "7"
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "4"
-#			ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "4"
 		fi
 	fi
 }
@@ -6775,7 +6815,6 @@ einfo
 		ot-kernel_set_kconfig_uksm
 		ot-kernel_set_kconfig_work_profile
 		ot-kernel_set_kconfig_pcie_mps
-		ot-kernel_set_kconfig_satellite_internet
 		ot-kernel_set_kconfig_usb_autosuspend
 		ot-kernel_set_kconfig_usb_flash_disk
 
@@ -7734,6 +7773,102 @@ ewarn "Preserving copyright notices.  This may take hours."
 			einfo "Installing OpenRC iosched script settings"
 			insinto "/etc/ot-sources/iosched/conf"
 			doins "${T}/etc/ot-sources/iosched/conf/${PV}-${extraversion}-${arch}"
+		fi
+
+		if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT:-1}" == "1" ]] ; then
+			# Each kernel config may have different a combo.
+
+			if has bbrv2 ${IUSE} && ot-kernel_use bbrv2 ; then
+				OT_KERNEL_TCP_CONGESTION_CONTROLS=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic dctcp hybla vegas westwood yeah"}
+			else
+				OT_KERNEL_TCP_CONGESTION_CONTROLS=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr cubic dctcp hybla vegas westwood yeah"}
+			fi
+
+			local default_tcca=$(ot-kernel_get_tcp_congestion_controls_default)
+
+			local tcca_fair_server
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcca_fair_server="bbr2"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+				tcca_fair_server="dctcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+				tcca_fair_server="vegas"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
+				tcca_fair_server="bbr" # greedy
+			else
+				tcca_fair_server="${default_tcca}"
+			fi
+
+			local tcca_fair_client
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcca_fair_client="bbr2"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
+				tcca_fair_client="bbr"
+			else
+				tcca_fair_client="${default_tcca}"
+			fi
+
+			local tcca_voip_secondary_flow
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+				tcca_voip_secondary_flow="vegas"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+				tcca_voip_secondary_flow="cubic"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
+				tcca_voip_secondary_flow="reno"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "lp" ]] ; then
+				tcca_voip_secondary_flow="lp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+				tcca_voip_secondary_flow="hybla"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
+				tcca_voip_secondary_flow="yeah"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
+				tcca_voip_secondary_flow="hstcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+				tcca_voip_secondary_flow="htcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+				tcca_voip_secondary_flow="bic"
+			else
+				tcca_voip_secondary_flow="${default_tcca}"
+			fi
+
+			local tcca_voip_gaming_dedicated
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+				tcca_voip_gaming_dedicated="vegas"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
+				tcca_voip_gaming_dedicated="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
+				tcca_voip_gaming_dedicated="yeah"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+				tcca_voip_gaming_dedicated="westwood"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
+				tcca_voip_gaming_dedicated="veno"
+			else
+				tcca_voip_gaming_dedicated="${default_tcca}"
+			fi
+
+
+			cat <<EOF > "${T}/tcca.conf" || die
+TCCA_BULK_DOWNLOAD="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_DOWNLOAD:-cubic}"
+TCCA_FAIR_SERVER="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER:-${tcca_fair_server}}"
+TCCA_GAMING_MULTITASK="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_MULTITASK:-westwood}"
+TCCA_GAMING_DEDICATED="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_DEDICATED:-${tcca_voip_gaming_dedicated}}"
+TCCA_MULTI_DOWNLOAD="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_DOWNLOAD:-${tcca_fair_client}}"
+TCCA_RELIABLE="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE:-cubic}"
+TCCA_RESET="${default_tcca}"
+TCCA_STREAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING:-bbr}"
+TCCA_THROUGHPUT_SERVER="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_DOWNLOAD:-dctcp}"
+TCCA_VOIP_GAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_GAMING:-${tcca_voip_secondary_flow}}"
+TCCA_VOIP_URBAN="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN:-bbr}"
+TCCA_VOIP_RURAL="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_RURAL:-hybla}"
+TCCA_WWW_CLIENT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT:-hybla}"
+EOF
+			cat "${FILESDIR}/tcca" > "${T}/tcca" || die
+			sed -i -e "s|__EXTRAVERSION__|${EXTRAVERSION}|" "${T}/tcca" || die
+			sed -i -e "s|__PV__|${PV}|" "${T}/tcca" || die
+			insinto /etc
+			newins "${T}/tcca.conf" "tcca-${PV}-${extraversion}.conf"
+			exeinto /usr/bin
+			newexe "${T}/tcca" "tcca-${PV}-${extraversion}"
 		fi
 	done
 

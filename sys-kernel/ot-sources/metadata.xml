@@ -1634,7 +1634,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
     OT_KERNEL_LOGO_URI -- A URI, local file, or pre-bundled logo provided by the
-    package.  (EXPERIMENTAL)
+    package.
 
     Acceptable values:
     url - An image off the Internet.
@@ -1887,7 +1887,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
     OT_KERNEL_PRESERVE_HEADER_NOTICES - Preserves copyright notices for binary
-    only installation. (EXPERIMENTAL)
+    only installation.
 
     Important:  You still need to save the source code and patches for some
     licenses such as the GPL.
@@ -2001,16 +2001,6 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Using 3-4 may cause data loss that manifest as freezes.
     Using 4 may cause disk corruption with certain disks.
-
-
-
-    OT_KERNEL_SATELLITE_INTERNET -- Set this to optimize satellite internet.
-
-    Acceptable values:
-
-      1, 0, unset
-
-    Unset is equivalent to manual.
 
 
 
@@ -2162,6 +2152,185 @@ unset OT_KERNEL_PRIVATE_KEY
     cross-compiling.  Use the expanded CHOST value.  (This can be not set but
     then defaults to ${CHOST}.)  If you put just CHOST or just CBUILD it will
     expand for each case.
+
+
+
+    OT_KERNEL_TCP_CONGESTION_CONTROLS -- Select TCP congestion controls to
+    add.  A space separated list may be used.  The first option
+    is the fallback default.  (EXPERIMENTAL)
+
+    Acceptable values:
+
+      bic
+      cubic     - For large downloads, download completely before video play,
+                  upstream default, most used and tested
+      westwood  - For gaming as the primary flow while using VoIP or streaming
+      htcp      - For secondary flows when VoIP or streaming with LFNs [ADSL2+,
+                  cable, or larger]
+      hstcp
+      hybla     - For satellite internet, road trips, web browsing, micropackage
+                  downloads
+      vegas     - For the lowest ping times
+      nv
+      scalable
+      lp
+      veno
+      yeah      - For VoIP or low bitrate radio as the secondary flow during
+                  gaming
+      illinois
+      dctcp     - For data centers, HPC, high capacity streaming media
+      cdg
+      bbr       - For low latency seeking, live streaming, video on demand
+                  streaming, more greedy (production ready)
+      bbr2      - For low latency seeking, live streaming, video on demand
+                  streaming, high fairness (alpha still, experimental)
+
+      clear     - Do not add any (Ebuild only)
+
+    Defaults (EXPERIMENTAL):
+
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr2 cubic dctcp hybla vegas westwood yeah"  # if USE=bbrv2 and OT_KERNEL_USE=bbrv2
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic dctcp hybla vegas westwood yeah"  # otherwise
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="cubic"  # upstream default
+
+      These defaults are choose to maximize quality experience based on the
+      descriptions in the acceptable values section and to cap or make less
+      greedy the secondary flows.
+
+      Again, the first option listed is the fallback default.
+
+      The OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_* can be used to select
+      the secondary flow.  For example, one may need to increase the
+      secondary flow to be more slightly greedy for a higher bitrate and to
+      be less skippy.
+
+    Example:
+
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="clear"
+
+    Notes:
+
+      (DRAFT / EXPERIMENTAL)
+
+      - The bbr2 patch used is the baseline bbr2 with optimal fairness.
+      - Switching to different algorithms can mess up the fair throughput of
+        other programs with the exception of illinois.  Often fairness is
+        undesirable except for web servers.
+      - The throughput unfairness may be desirable and necessary when
+        multitasking.
+
+        2 flow pairing recommendations (left-to-right launch order) with
+        estimated bandwidth in percent:
+
+          - gaming:westwood, online-radio (96 kbps or less):vegas
+          - gaming:westwood, online-radio (128 kbps or less):htcp if LFN class
+            connection [ADSL2+, cable, or larger]
+          - gaming:westwood, online-radio (128 kbps or less):yeah
+          - gaming:westwood, voip (100 kbps):vegas
+          - gaming:westwood (2 Mbps), voip (300 kbps):htcp
+          - gaming:yeah, voip (300 kbps):vegas
+          - voip (300 kbps):yeah, gaming:westwood (2 Mbps)
+          - voip (100 kbps):vegas, gaming:westwood
+          - voip (300 kbps):vegas, gaming:yeah
+          - online-radio:yeah, gaming:westwood
+          - video-streaming:bbr, wget-download:cubic
+
+        Note:
+
+          It is recommended to set the static set first followed by the dynamic
+          set so the newly created connections inherit the TCP Congestion
+          Controls setting.
+
+          There is no obvious technique to control the placement of the primary
+          and secondary flows of two process that spawn new connections at the
+          same time.  (e.g. new players that enter the scene and new VoIP
+          connections)  It is probably better to choose fair algorithm or the
+          same algorithm..
+
+        Further reading:
+
+          Table I. "TCP Congestion Control Comparison", Esterhuizen and Krzesinski.
+          Fig 10. "Statistical Learning Based Congestion Control for Real-time Video Communication", Dai et al.
+
+      - For single flow, the recommendations change to
+
+        Gaming (performance with ~150 ms RTT or less with more than 2+ flows):  vegas, bbr, yeah, westwood, veno *
+        Gaming (grinding under bad connection):  hybla
+        Audio or video streaming:  bbr, bbr2, or vegas
+
+        * Ordered from low-to-high RTT
+        - Most gamers will use cubic
+
+      - For 4 flows and above, the recommendations change to
+
+        FTP servers (home):  bbr2 or dctcp
+        Parallel micropackage downloads (receiver):  hybla
+        WWW/HTTP servers (home, low capacity):  bbr2 or vegas
+        WWW/HTTP servers (600 or less flows, mid capacity):  dctcp
+        WWW/HTTP servers (600+ flows, very high capacity):  bbr2
+        WWW client browsing only:  hybla
+        WWW client while streaming:  bbr or bbr2
+
+        Further reading:
+
+          Table VII and XI. "Fifty Shades of Congestion Control: A Performance and Interactions Evaluation". Turkovic et al.
+          Slide 21. "BBR v2: A Model-based Congestion Control Performance Optimizations". Cardwell et al.
+          P 14. "Comparison of TCP Congestion Control Performance over a Satellite Network". Claypool et al.
+
+      - For descriptions, see
+        https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L480
+
+    See also:
+
+      OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT
+
+
+
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT - Install a helper script to improve
+    throughput experience mostly when multitasking.  (EXPERIMENTAL)
+
+    Acceptable values:
+
+      1 - install
+      0 - don't install
+      unset - install (default)
+
+    See also:
+
+      OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_*
+
+
+
+    The following set the default TCP Congestion Control algorithm for the wrapper:
+
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_DOWNLOAD - For large downloads downloaded serially. (Default:  cubic)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER - For fair throughput servers.  (Default:  bbr2)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_MULTITASK - Full screen games while streaming music or VoIPing.  (Default:  westwood)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_DEDICATED - Full screen games without any VoIP, streaming, downloading, etc.  (Default:  vegas)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_DOWNLOAD - For parallel downloads. (Default: bbr)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE - For a bug-free experience.  (Default:  cubic)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING - For streaming audio or video client.  (Default:  bbr)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER - For higher thoughput with some fairness.  (Default:  dctcp)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_GAMING - For VoIP while gaming.  (Default:  yeah)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN - For dedicated VoIP in good urban connections.  (Default:  bbr)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_RURAL - For dedicated VoIP while road tripping.  (Default:  hybla)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT - For web browsing without streaming.  (Default:  hybla)
+
+    Acceptable values:
+
+      A single value, see OT_KERNEL_TCP_CONGESTION_CONTROLS acceptable values
+      section for details.
+
+    Example:
+
+      OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE="cubic"
+
+    Notes:
+
+    - The defaults are chosen based on multiple flows bandwidth allocation with
+      a primary flow (active focused process) and auxilitary flows (background).
+    - The wrapper will be found in /usr/bin/tcca-${PV}-${EXTRAVERSION}
+    - The wrapper configuration may be changed in /etc/tcca-${PV}-${EXTRAVERSION}.conf
 
 
 
@@ -3015,7 +3184,7 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       Enable to keep, but not necessarily enabling it.
       Disable to cancel both ReiserFS and Reiser4 references.
 
-      (EXPERIMENTAL for both using and disabling)
+      (EXPERIMENTAL)
     </flag>
     <flag name="rt">
       Patches the kernel with the PREEMPT_RT patch which tries to minimize
