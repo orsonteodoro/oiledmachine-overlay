@@ -2908,7 +2908,7 @@ einfo "Adding ${alg}"
 			ot-kernel_y_configopt "CONFIG_NET"
 			ot-kernel_y_configopt "CONFIG_INET"
 			ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
-			ot-kernel_y_configopt "CONFIG_TCP_CONG_${alg}"
+			ot-kernel_y_configopt "CONFIG_TCP_CONG_${alg^^}"
 		done
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" \
