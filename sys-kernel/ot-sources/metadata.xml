@@ -2213,6 +2213,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
       (DRAFT / EXPERIMENTAL)
 
+      - TCP Congestion Control is a misnomer.  Some algorithms are congestion
+        avoidant than control based.
       - The bbr2 patch used is the baseline bbr2 with optimal fairness.
       - Switching to different algorithms can mess up the fair throughput of
         other programs with the exception of illinois.  Often fairness is
@@ -2230,9 +2232,9 @@ unset OT_KERNEL_PRIVATE_KEY
           - gaming:westwood, voip (100 kbps):vegas
           - gaming:westwood (2 Mbps), voip (300 kbps):htcp
           - gaming:yeah, voip (300 kbps):vegas
-          - voip (300 kbps):yeah, gaming:westwood (2 Mbps)
-          - voip (100 kbps):vegas, gaming:westwood
-          - voip (300 kbps):vegas, gaming:yeah
+          - voip/radio (300 kbps):yeah, gaming:westwood (2 Mbps)
+          - voip/radio (100 kbps):vegas, gaming:westwood
+          - voip/radio (300 kbps):vegas, gaming:yeah
           - online-radio:yeah, gaming:westwood
           - video-streaming:bbr, wget-download:cubic
 
@@ -2246,7 +2248,9 @@ unset OT_KERNEL_PRIVATE_KEY
           and secondary flows of two process that spawn new connections at the
           same time.  (e.g. new players that enter the scene and new VoIP
           connections)  It is probably better to choose fair algorithm or the
-          same algorithm..
+          same algorithm.
+
+          Most VoIP is UDP, so these suggestions may not apply.
 
         Further reading:
 
@@ -2319,8 +2323,9 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE - For a bug-free experience.  (Default:  cubic)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING - For streaming audio or video client.  (Default:  bbr)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER - For higher thoughput with some fairness.  (Default:  dctcp)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_GAMING - For VoIP while gaming.  (Default:  yeah)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN - For dedicated VoIP in good urban connections.  (Default:  bbr)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_GAMING - For VoIP while gaming.  (Default:  vegas)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN_2WAY - For dedicated 2-way VoIP in good urban connections.  (Default:  westwood)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN_NWAY - For dedicated group VoIP in good urban connections.  (Default:  bbr2)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_RURAL - For dedicated VoIP while road tripping.  (Default:  hybla)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT - For web browsing without streaming.  (Default:  hybla)
 
@@ -2335,6 +2340,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Notes:
 
+    - The above defaults may change based on availablity in
+      OT_KERNEL_TCP_CONGESTION_CONTROLS, but fallback to the next best option.
     - The defaults are chosen based on multiple flows bandwidth allocation with
       a primary flow (active focused process) and auxilitary flows (background).
     - The wrapper will be found in /usr/bin/tcca-${PV}-${EXTRAVERSION}

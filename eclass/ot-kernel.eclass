@@ -2730,7 +2730,8 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_DOWNLOAD
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_GAMING
-	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN_2WAY
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN_NWAY
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_RURAL
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT
 	unset OT_KERNEL_USE
@@ -2907,6 +2908,7 @@ einfo "Adding ${alg}"
 			ot-kernel_y_configopt "CONFIG_NET"
 			ot-kernel_y_configopt "CONFIG_INET"
 			ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
+			ot-kernel_y_configopt "CONFIG_TCP_CONG_${alg}"
 		done
 	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" \
@@ -7808,62 +7810,155 @@ ewarn "Preserving copyright notices.  This may take hours."
 				tcca_fair_client="${default_tcca}"
 			fi
 
-			local tcca_voip_secondary_flow
+			# Sorted by RTT (lowest top)
+			local tcca_gaming_dedicated
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-				tcca_voip_secondary_flow="vegas"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
-				tcca_voip_secondary_flow="cubic"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
-				tcca_voip_secondary_flow="reno"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "lp" ]] ; then
-				tcca_voip_secondary_flow="lp"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
-				tcca_voip_secondary_flow="hybla"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
-				tcca_voip_secondary_flow="yeah"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
-				tcca_voip_secondary_flow="hstcp"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
-				tcca_voip_secondary_flow="htcp"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
-				tcca_voip_secondary_flow="bic"
-			else
-				tcca_voip_secondary_flow="${default_tcca}"
-			fi
-
-			local tcca_voip_gaming_dedicated
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-				tcca_voip_gaming_dedicated="vegas"
+				tcca_gaming_dedicated="vegas"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcca_gaming_dedicated="bbr2"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
-				tcca_voip_gaming_dedicated="bbr"
+				tcca_gaming_dedicated="bbr"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
-				tcca_voip_gaming_dedicated="yeah"
+				tcca_gaming_dedicated="yeah"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
-				tcca_voip_gaming_dedicated="westwood"
+				tcca_gaming_dedicated="westwood"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
-				tcca_voip_gaming_dedicated="veno"
+				tcca_gaming_dedicated="veno"
 			else
-				tcca_voip_gaming_dedicated="${default_tcca}"
+				tcca_gaming_dedicated="${default_tcca}"
 			fi
 
+			local tcca_robust
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+				tcca_robust="hybla"
+			else
+				tcca_robust="${default_tcca}"
+			fi
+
+			local tcca_fast_start
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+				tcca_fast_start="hybla"
+			else
+				tcca_robust="${default_tcca}"
+			fi
+
+			local tcca_radio_secondary_flow
+			local tcca_multitask_gaming
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+				tcca_multitask_gaming="westwood" # Preferred for latency reasons
+
+				# This also applies to unpopular TCP based VoIP.
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+					tcca_radio_secondary_flow="vegas"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+					tcca_radio_secondary_flow="cubic"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
+					tcca_radio_secondary_flow="reno"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "lp" ]] ; then
+					tcca_radio_secondary_flow="lp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+					tcca_radio_secondary_flow="hybla"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
+					tcca_radio_secondary_flow="yeah"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
+					tcca_radio_secondary_flow="hstcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+					tcca_radio_secondary_flow="htcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+					tcca_radio_secondary_flow="bic"
+				else
+					tcca_radio_secondary_flow="${default_tcca}"
+				fi
+			else
+				tcca_multitask_gaming="${default_tcca}"
+
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+					tcca_radio_secondary_flow="vegas"
+				else
+					tcca_radio_secondary_flow="${default_tcca}"
+				fi
+			fi
+
+			local tcca_greedy_downloader
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+				tcca_greedy_downloader="cubic"
+			else
+				tcca_greedy_downloader="${default_tcca}"
+			fi
+
+			local tcca_streaming
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
+				tcca_streaming="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+				tcca_streaming="vegas"
+			fi
+
+
+			# This value should be at or above streaming service
+			# bitrate for 70% (C grade) of the time.
+			# Sorted from max to min throughput so that higher resolutions are
+			# compatible.
+			local tcca_avg_bitrate_2way
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+				tcca_avg_bitrate_2way="westwood"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
+				tcca_avg_bitrate_2way="illinois"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
+				tcca_avg_bitrate_2way="hstcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+				tcca_avg_bitrate_2way="cubic" # most widely used
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+				tcca_avg_bitrate_2way="htcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+				tcca_avg_bitrate_2way="hybla"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+				tcca_avg_bitrate_2way="bic"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
+				tcca_avg_bitrate_2way="reno"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
+				tcca_avg_bitrate_2way="bbr"
+			else
+				tcca_avg_bitrate_2way="${default_tcca}"
+			fi
+
+			# Sorted by fairness with respect to high flows
+			local tcca_avg_bitrate_nway
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcca_avg_bitrate_nway="bbr2"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+				tcca_avg_bitrate_nway="dctcp"
+			else
+				tcca_avg_bitrate_nway="${default_tcca}"
+			fi
+
+			# Sorted by througput with respect to high flows
+			local tcca_server_throughput
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+				tcca_server_throughput="dctcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcca_server_throughput="bbr2"
+			else
+				tcca_server_throughput="${default_tcca}"
+			fi
 
 			cat <<EOF > "${T}/tcca.conf" || die
-TCCA_BULK_DOWNLOAD="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_DOWNLOAD:-cubic}"
+TCCA_BULK_DOWNLOAD="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_DOWNLOAD:-${tcca_greedy_downloader}}"
 TCCA_FAIR_SERVER="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER:-${tcca_fair_server}}"
-TCCA_GAMING_MULTITASK="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_MULTITASK:-westwood}"
-TCCA_GAMING_DEDICATED="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_DEDICATED:-${tcca_voip_gaming_dedicated}}"
+TCCA_GAMING_MULTITASK="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_MULTITASK:-${tcca_multitask_gaming}}"
+TCCA_GAMING_DEDICATED="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_DEDICATED:-${tcca_gaming_dedicated}}"
 TCCA_MULTI_DOWNLOAD="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_DOWNLOAD:-${tcca_fair_client}}"
 TCCA_RELIABLE="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE:-cubic}"
 TCCA_RESET="${default_tcca}"
-TCCA_STREAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING:-bbr}"
-TCCA_THROUGHPUT_SERVER="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_DOWNLOAD:-dctcp}"
-TCCA_VOIP_GAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_GAMING:-${tcca_voip_secondary_flow}}"
-TCCA_VOIP_URBAN="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN:-bbr}"
-TCCA_VOIP_RURAL="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_RURAL:-hybla}"
-TCCA_WWW_CLIENT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT:-hybla}"
+TCCA_STREAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING:-${tcca_streaming}}"
+TCCA_THROUGHPUT_SERVER="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_DOWNLOAD:-${tcca_server_throughput}}"
+TCCA_VOIP_GAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_GAMING:-${tcca_radio_secondary_flow}}"
+TCCA_VOIP_URBAN_2WAY="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN_2WAY:-${tcca_avg_bitrate_2way}}"
+TCCA_VOIP_URBAN_NWAY="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN_NWAY:-${tcca_avg_bitrate_nway}}"
+TCCA_VOIP_RURAL="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_RURAL:-${tcca_robust}}"
+TCCA_WWW_CLIENT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT:-${tcca_fast_start}}"
 EOF
 			cat "${FILESDIR}/tcca" > "${T}/tcca" || die
-			sed -i -e "s|__EXTRAVERSION__|${EXTRAVERSION}|" "${T}/tcca" || die
+			sed -i -e "s|__EXTRAVERSION__|${extraversion}|" "${T}/tcca" || die
 			sed -i -e "s|__PV__|${PV}|" "${T}/tcca" || die
 			insinto /etc
 			newins "${T}/tcca.conf" "tcca-${PV}-${extraversion}.conf"
