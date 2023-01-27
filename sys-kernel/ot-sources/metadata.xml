@@ -2293,6 +2293,10 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT - Install a helper script to improve
     throughput experience mostly when multitasking.  (EXPERIMENTAL)
 
+    The purpose is to make it easier to use the algorithm(s) or the benefits of
+    the algorithm without remembering the name of it by providing a widely
+    familiar use scenario.
+
     Acceptable values:
 
       1 - install
