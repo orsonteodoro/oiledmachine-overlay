@@ -88,8 +88,8 @@ echo "  www - For browsing without streaming"
 echo "       http-client                                               (alias)"
 echo "       www-client                                                (alias)"
 echo
-echo "[cmd]    - program to run"
-echo "[args]   - list of arguments to pass to the program"
+echo "[cmd]    - program to run (optional)"
+echo "[args]   - list of arguments to pass to the program (optional)"
 echo
 }
 
