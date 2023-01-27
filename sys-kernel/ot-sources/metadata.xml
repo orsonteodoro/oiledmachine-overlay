@@ -2263,6 +2263,7 @@ unset OT_KERNEL_PRIVATE_KEY
         - Most gamers will use cubic
         * In reality, more than one connection is involved so this section
           needs to be revised.
+        * Many games will use UDP not TCP so these settings may not apply.
 
       - For 4 flows and above, the recommendations change to
 
@@ -2334,6 +2335,10 @@ unset OT_KERNEL_PRIVATE_KEY
       a primary flow (active focused process) and auxilitary flows (background).
     - The wrapper will be found in /usr/bin/tcca-${PV}-${EXTRAVERSION}
     - The wrapper configuration may be changed in /etc/tcca-${PV}-${EXTRAVERSION}.conf
+    - The wrapper script requires sys-auth/polkit.  Use the gnome or kde USE
+      flag to present GUI dialog.
+    - See the contents of the tcca (TCP Congestion Control Algorithm) script to
+      learn how to use it.
 
 
 
