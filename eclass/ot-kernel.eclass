@@ -7749,7 +7749,7 @@ ewarn "Preserving copyright notices.  This may take hours."
 
 		# Required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
 		local ed_kernel_path="${ED}/usr/src/linux-${PV}-${extraversion}"
-		insinto "/usr/src/linux-${PV}-${extraversion}"
+		insinto "/usr/src/linux-${PV}-${extraversion}/scripts"
 		doins scripts/Kbuild.include
 		doins scripts/Makefile.extrawarn
 		doins scripts/subarch.include
