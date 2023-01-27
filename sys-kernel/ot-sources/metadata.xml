@@ -2191,7 +2191,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
       OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr2 cubic dctcp hybla vegas westwood yeah"  # if USE=bbrv2 and OT_KERNEL_USE=bbrv2
       OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic dctcp hybla vegas westwood yeah"  # otherwise
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="cubic"  # upstream default
+
+      Cubic alone is the upstream default.
 
       These defaults are choose to maximize quality experience based on the
       descriptions in the acceptable values section and to cap or make less
