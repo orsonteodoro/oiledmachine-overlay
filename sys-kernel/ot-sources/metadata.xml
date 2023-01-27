@@ -2260,6 +2260,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
         * Ordered from low-to-high RTT
         - Most gamers will use cubic
+        * In reality, more than one connection is involved so this section
+          needs to be revised.
 
       - For 4 flows and above, the recommendations change to
 
