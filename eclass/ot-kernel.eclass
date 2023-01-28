@@ -2860,10 +2860,40 @@ ot-kernel_is_build() {
 # Gets the default TCP Congestion Control algorithm from
 # OT_KERNEL_TCP_CONGESTION_CONTROLS.
 ot-kernel_get_tcp_congestion_controls_default() {
+	local NO_DEFAULT_ALGS=(
+		ILLINOIS
+		LP
+		NV
+		SCALABLE
+		YEAH
+	)
 	local picked_alg=$(echo "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" \
 		| tr " " "\n" \
 		| head -n 1)
+	local alg
+	for alg in ${NO_DEFAULT_ALGS[@]} ; do
+		if [[ "${alg}" == "${picked_alg}" ]] ; then
+eerror
+eerror "${picked_alg} cannot be used as a default TCP Congestion Control"
+eerror "algorithm."
+eerror
+			die
+		fi
+	done
 	echo "${picked_alg}"
+}
+
+# @FUNCTION: _ot-kernel_set_kconfig_get_init_tcp_congestion_controls
+# @DESCRIPTION:
+# Get the initial defaults for OT_KERNEL_TCP_CONGESTION_CONTROLS
+_ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
+	local v
+	if has bbrv2 ${IUSE} && ot-kernel_use bbrv2 ; then
+		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic dctcp hybla vegas westwood"}
+	else
+		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr cubic dctcp hybla vegas westwood"}
+	fi
+	echo "${v}"
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_set_tcp_congestion_controls
@@ -2871,7 +2901,7 @@ ot-kernel_get_tcp_congestion_controls_default() {
 # Sets the kernel config for selecting multiple TCP congestion controls for
 # different scenaros.
 ot-kernel_set_kconfig_set_tcp_congestion_controls() {
-	local ALG=(
+	local DEFAULT_ALGS=(
 		BIC
 		CUBIC
 		HTCP
@@ -2886,14 +2916,11 @@ ot-kernel_set_kconfig_set_tcp_congestion_controls() {
 		RENO
 	)
 	local alg
-	for alg in ${ALG[@]} ; do
+	for alg in ${DEFAULT_ALGS[@]} ; do
 		ot-kernel_unset_configopt "CONFIG_DEFAULT_${alg}"
 	done
-	if has bbrv2 ${IUSE} && ot-kernel_use bbrv2 ; then
-		OT_KERNEL_TCP_CONGESTION_CONTROLS=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic dctcp hybla vegas westwood"}
-	else
-		OT_KERNEL_TCP_CONGESTION_CONTROLS=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr cubic dctcp hybla vegas westwood"}
-	fi
+
+	OT_KERNEL_TCP_CONGESTION_CONTROLS=$(_ot-kernel_set_kconfig_get_init_tcp_congestion_controls)
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" \
 		&& "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" != "clear" ]] ; then
 		for alg in ${OT_KERNEL_TCP_CONGESTION_CONTROLS} ; do
@@ -7780,11 +7807,7 @@ ewarn "Preserving copyright notices.  This may take hours."
 		if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT:-1}" == "1" ]] ; then
 			# Each kernel config may have different a combo.
 
-			if has bbrv2 ${IUSE} && ot-kernel_use bbrv2 ; then
-				OT_KERNEL_TCP_CONGESTION_CONTROLS=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic dctcp hybla vegas westwood yeah"}
-			else
-				OT_KERNEL_TCP_CONGESTION_CONTROLS=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr cubic dctcp hybla vegas westwood yeah"}
-			fi
+			OT_KERNEL_TCP_CONGESTION_CONTROLS=$(_ot-kernel_set_kconfig_get_init_tcp_congestion_controls)
 
 			local default_tcca=$(ot-kernel_get_tcp_congestion_controls_default)
 
