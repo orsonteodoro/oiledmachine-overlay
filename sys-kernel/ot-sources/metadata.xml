@@ -2180,22 +2180,25 @@ unset OT_KERNEL_PRIVATE_KEY
       illinois
       dctcp     - For data centers, HPC, high capacity streaming media
       cdg
-      bbr       - For video streaming services, more greedy (production ready)
-      bbr2      - For video streaming services, high fairness (alpha still,
-                  experimental)
+      bbr       - For video streaming services, higher throughput,
+                  more greedy* (production ready)
+      bbr2      - For video streaming services, lower latency,
+                  high fairness* (alpha still, experimental)
+
+      * Due to router's smaller buffer size.
 
       clear     - Do not add any (Ebuild only)
 
     Defaults (EXPERIMENTAL):
 
       OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr2 cubic dctcp hybla vegas westwood"  # if USE=bbrv2 and OT_KERNEL_USE=bbrv2
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic dctcp hybla vegas westwood"  # otherwise
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic dctcp hybla vegas westwood"   # otherwise
 
       Cubic alone is the upstream default.
 
-      These defaults are choose to maximize quality experience based on the
+      These defaults are to maximize the quality experience based on the
       descriptions in the acceptable values section and to cap or make less
-      greedy the secondary flows.
+      greedy certain flows.
 
       Again, the first option listed is the fallback default.
 
