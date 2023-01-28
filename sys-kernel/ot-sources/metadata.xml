@@ -2188,8 +2188,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Defaults (EXPERIMENTAL):
 
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr2 cubic dctcp hybla vegas westwood yeah"  # if USE=bbrv2 and OT_KERNEL_USE=bbrv2
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic dctcp hybla vegas westwood yeah"  # otherwise
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr2 cubic dctcp hybla vegas westwood"  # if USE=bbrv2 and OT_KERNEL_USE=bbrv2
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic dctcp hybla vegas westwood"  # otherwise
 
       Cubic alone is the upstream default.
 
@@ -2222,25 +2222,24 @@ unset OT_KERNEL_PRIVATE_KEY
         multitasking.
 
         2 flow pairing recommendations (left-to-right launch order) with
-        estimated bandwidth in percent:
+        estimated bandwidth:
 
             fixed/static connections, dynamic connections
-          - radio:vegas, gaming:westwood
-          - radio:cubic, gaming:westwood
-          - radio:lp, gaming:westwood
-          - radio:hybla, gaming:westwood
-          - radio:hstcp, gaming:westwood
-          - radio:reno, gaming:westwood
-          - radio:htcp, gaming:westwood  # if LFN class connection [ADSL2+, cable, or larger]
-          - radio:bic, gaming:westwood
-          - radio:yeah, gaming:westwood
-          - radio:vegas, gaming:yeah
-          - radio:bbr, gaming:cubic
+          - radio:bbr2, gaming:bbr2      # This is okay if not live streamer
+          - radio:bbr, gaming:bbr        # This is okay if not live streamer
+          - radio:vegas, gaming:vegas    # This is okay if not live streamer
           - video-streaming:cubic, micropackage-downloads(s):bbr
           - single-download:vegas, video-stream(s):cubic
           - single-download:vegas, video-stream(s):yeah
 
         Note:
+
+          Old school games consume about 64 kbps or less.  This is about 6.4% of 1 Mbps.
+          Online RPGs consume on the order of 21 kbps.  This is about 2.1% of 1 Mbps.
+
+          Since there is evidence that gaming does not require a lot of
+          bandwidth, you may choose higher audio bitrates if you have available
+          downstream kbps.
 
           It is recommended to set the static set first followed by the dynamic
           set so the newly created connections inherit the TCP Congestion
@@ -2249,7 +2248,7 @@ unset OT_KERNEL_PRIVATE_KEY
           There is no obvious technique to control the placement of the primary
           and secondary flows of two process that spawn new connections at the
           same time.  (e.g. new players that enter the scene and new VoIP
-          connections)  It is probably better to choose fair algorithm or the
+          connections)  It is probably better to choose a fair algorithm or the
           same algorithm.
 
           Most VoIP is UDP, so these suggestions may not apply.
@@ -2286,11 +2285,16 @@ unset OT_KERNEL_PRIVATE_KEY
         WWW/HTTP servers (600+ flows, very high capacity):  bbr2
         WWW client browsing only (for lower link click latency and faster image gallery loading):  vegas
 
+        Notes:
+
+          BBRv2 and BBRv1 exhibit similiar fairness patterns when coexisting with cubic.
+
         Further reading:
 
-          Table VII and XI. "Fifty Shades of Congestion Control: A Performance and Interactions Evaluation". Turkovic et al.
+          Table V, VII, and XI. "Fifty Shades of Congestion Control: A Performance and Interactions Evaluation". Turkovic et al.
           Slide 21. "BBR v2: A Model-based Congestion Control Performance Optimizations". Cardwell et al.
           P 14. "Comparison of TCP Congestion Control Performance over a Satellite Network". Claypool et al.
+          P 9. "An Emulation-based Evaluation of TCP BBRv2 Alpha for Wired Broadband". Kfoury et al.
 
       - For descriptions, see
         https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L480
@@ -2324,17 +2328,17 @@ unset OT_KERNEL_PRIVATE_KEY
 
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_DOWNLOAD - For large downloads downloaded serially. (Default:  cubic)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER - For fair throughput servers.  (Default:  bbr2)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_MULTITASK - Full screen games while streaming music or VoIPing.  (Default:  westwood)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_DEDICATED - Full screen games without any VoIP, streaming, downloading, etc.  (Default:  vegas)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_DOWNLOAD - For parallel downloads. (Default: bbr)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING - Full screen games while streaming music or VoIPing.  (Default:  bbr2)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_DOWNLOAD - For parallel downloads. (Default: bbr2)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE - For a bug-free experience.  (Default:  cubic)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING - For streaming audio or video client.  (Default:  westwood)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING - For playing streaming audio or video.  (Default:  westwood)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING_REC - For recording live stream during gaming.  (Default:  cubic)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER - For higher thoughput with some fairness.  (Default:  dctcp)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_GAMING - For VoIP while gaming.  (Default:  vegas)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_GAMING - For voice only VoIP while gaming.  (Default:  bbr2)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN_2WAY - For dedicated 2-way VoIP in good urban connections.  (Default:  westwood)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN_NWAY - For dedicated group VoIP in good urban connections.  (Default:  bbr2)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_RURAL - For dedicated VoIP while road tripping.  (Default:  hybla)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT - For web browsing without streaming.  (Default:  hybla)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT - For web browsing without streaming.  (Default:  vegas)
 
     Acceptable values:
 
@@ -2347,6 +2351,14 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Notes:
 
+    - For web browser games, consider changing
+      OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING to vegas instead of
+      bbr2.  The perceived link-click latency of vegas felt faster than
+      bbr.
+    - The OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING_REC should not be
+      changed for deterministic reasons.  Only change if you are sure if
+      that algorithm can dominate the one in
+      OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_MULTITASK.
     - The above defaults may change based on availablity in
       OT_KERNEL_TCP_CONGESTION_CONTROLS, but fallback to the next best option.
     - The defaults are chosen based on multiple flows bandwidth allocation with
