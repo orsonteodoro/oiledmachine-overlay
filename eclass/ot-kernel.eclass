@@ -7812,22 +7812,22 @@ ewarn "Preserving copyright notices.  This may take hours."
 			local default_tcca=$(ot-kernel_get_tcp_congestion_controls_default)
 
 			local tcca_fair_server
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 				tcca_fair_server="bbr2"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
 				tcca_fair_server="dctcp"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
 				tcca_fair_server="vegas"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcca_fair_server="bbr" # greedy
 			else
 				tcca_fair_server="${default_tcca}"
 			fi
 
 			local tcca_fair_client
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 				tcca_fair_client="bbr2"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcca_fair_client="bbr"
 			else
 				tcca_fair_client="${default_tcca}"
@@ -7835,9 +7835,9 @@ ewarn "Preserving copyright notices.  This may take hours."
 
 			# Sorted by RTT (lowest top) with many flows
 			local tcca_gaming
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" == "bbr2" ]] ; then
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 				tcca_gaming="bbr2"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" == "bbr" ]] ; then
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcca_gaming="bbr"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
 				tcca_gaming="vegas"
@@ -7849,7 +7849,7 @@ ewarn "Preserving copyright notices.  This may take hours."
 			tcca_voip_gaming="${tcca_gaming}"
 
 			local tcca_streaming_rec
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
 					tcca_streaming_rec="cubic"
 				else
@@ -7898,9 +7898,9 @@ ewarn "Preserving copyright notices.  This may take hours."
 			local tcca_web_client
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
 				tcca_web_client="vegas"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 				tcca_web_client="bbr2"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcca_web_client="bbr"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
 				tcca_web_client="hybla"
@@ -7933,9 +7933,9 @@ ewarn "Preserving copyright notices.  This may take hours."
 				tcca_streaming="bic"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
 				tcca_streaming="reno"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcca_streaming="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 				tcca_streaming="bbr2"
 			else
 				tcca_streaming="${default_tcca}"
@@ -7962,7 +7962,9 @@ ewarn "Preserving copyright notices.  This may take hours."
 				tcca_avg_bitrate_2way="bic"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
 				tcca_avg_bitrate_2way="reno"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+				tcca_avg_bitrate_2way="bbr2"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcca_avg_bitrate_2way="bbr"
 			else
 				tcca_avg_bitrate_2way="${default_tcca}"
@@ -7970,8 +7972,10 @@ ewarn "Preserving copyright notices.  This may take hours."
 
 			# Sorted by fairness with respect to high flows
 			local tcca_avg_bitrate_nway
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 				tcca_avg_bitrate_nway="bbr2"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+				tcca_avg_bitrate_nway="bbr"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
 				tcca_avg_bitrate_nway="dctcp"
 			else
@@ -7982,8 +7986,10 @@ ewarn "Preserving copyright notices.  This may take hours."
 			local tcca_server_throughput
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
 				tcca_server_throughput="dctcp"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 				tcca_server_throughput="bbr2"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+				tcca_server_throughput="bbr"
 			else
 				tcca_server_throughput="${default_tcca}"
 			fi
