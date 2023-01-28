@@ -2889,7 +2889,7 @@ eerror
 _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 	local v
 	if has bbrv2 ${IUSE} && ot-kernel_use bbrv2 ; then
-		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic dctcp hybla vegas westwood"}
+		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 bbr cubic dctcp hybla vegas westwood"}
 	else
 		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr cubic dctcp hybla vegas westwood"}
 	fi
@@ -7829,6 +7829,8 @@ ewarn "Preserving copyright notices.  This may take hours."
 				tcca_fair_client="bbr2"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcca_fair_client="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+				tcca_fair_client="vegas"
 			else
 				tcca_fair_client="${default_tcca}"
 			fi
@@ -7976,8 +7978,8 @@ ewarn "Preserving copyright notices.  This may take hours."
 				tcca_avg_bitrate_nway="bbr2"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcca_avg_bitrate_nway="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
-				tcca_avg_bitrate_nway="dctcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+				tcca_avg_bitrate_nway="vegas"
 			else
 				tcca_avg_bitrate_nway="${default_tcca}"
 			fi

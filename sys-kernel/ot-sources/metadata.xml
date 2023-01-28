@@ -2191,7 +2191,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Defaults (EXPERIMENTAL):
 
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr2 cubic dctcp hybla vegas westwood"  # if USE=bbrv2 and OT_KERNEL_USE=bbrv2
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr2 bbr cubic dctcp hybla vegas westwood"  # if USE=bbrv2 and OT_KERNEL_USE=bbrv2
       OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic dctcp hybla vegas westwood"   # otherwise
 
       Cubic alone is the upstream default.
@@ -2332,7 +2332,7 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_DOWNLOAD - For large downloads downloaded serially. (Default:  cubic)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER - For fair throughput servers.  (Default:  bbr2)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING - Full screen games while streaming music or VoIPing.  (Default:  bbr2)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_DOWNLOAD - For parallel downloads. (Default: bbr2)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_DOWNLOAD - For non disruptive parallel downloads. (Default: bbr)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE - For a bug-free experience.  (Default:  cubic)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING - For playing streaming audio or video.  (Default:  westwood)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING_REC - For recording live stream during gaming.  (Default:  cubic)
@@ -2379,6 +2379,9 @@ unset OT_KERNEL_PRIVATE_KEY
       (hybla, vegas), or the well rounded middle (bbr, bbr2).  By default, it will
       choose the highest average bitrate/thoughput available for max hardware
       compatibility.
+    - OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_DOWNLOAD should only be
+      bbr, bbr2, or vegas.  This is so that it submits to flows using
+      cubic/westwood which should dominate.
 
 
 
