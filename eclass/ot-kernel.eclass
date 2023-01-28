@@ -7962,10 +7962,10 @@ ewarn "Preserving copyright notices.  This may take hours."
 				tcca_avg_bitrate_2way="bic"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
 				tcca_avg_bitrate_2way="reno"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
-				tcca_avg_bitrate_2way="bbr2"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcca_avg_bitrate_2way="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+				tcca_avg_bitrate_2way="bbr2"
 			else
 				tcca_avg_bitrate_2way="${default_tcca}"
 			fi
@@ -7986,10 +7986,10 @@ ewarn "Preserving copyright notices.  This may take hours."
 			local tcca_server_throughput
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
 				tcca_server_throughput="dctcp"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
-				tcca_server_throughput="bbr2"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcca_server_throughput="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+				tcca_server_throughput="bbr2"
 			else
 				tcca_server_throughput="${default_tcca}"
 			fi
