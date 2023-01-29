@@ -7975,7 +7975,7 @@ _ot-kernel_set_netfilter() {
 			if [[ "${symbols_ipv4[@]}" =~ "${opt}"( |$) ]] ; then
 einfo "Added ${opt_raw}"
 				if [[ "${opt_raw}" =~ "=" ]] ; then
-					opt_val=$(echo "${opt_raw}" | cut -f 1 -d "=")
+					opt_val=$(echo "${opt_raw}" | cut -f 2 -d "=")
 					ot-kernel_set_configopt "CONFIG_${opt}" "${opt_val}"
 				else
 					ot-kernel_y_configopt "CONFIG_${opt}"
@@ -8022,7 +8022,7 @@ einfo "Added ${opt_raw}"
 			if [[ "${symbols_ipv6[@]}" =~ "${opt}"( |$) ]] ; then
 einfo "Added ${opt_raw}"
 				if [[ "${opt_raw}" =~ "=" ]] ; then
-					opt_val=$(echo "${opt_raw}" | cut -f 1 -d "=")
+					opt_val=$(echo "${opt_raw}" | cut -f 2 -d "=")
 					ot-kernel_set_configopt "CONFIG_${opt}" "${opt_val}"
 				else
 					ot-kernel_y_configopt "CONFIG_${opt}"
@@ -8051,7 +8051,7 @@ einfo "Added ${opt_raw}"
 			if [[ "${symbols_xtables[@]}" =~ "${opt}"( |$) ]] ; then
 einfo "Added ${opt_raw}"
 				if [[ "${opt_raw}" =~ "=" ]] ; then
-					opt_val=$(echo "${opt_raw}" | cut -f 1 -d "=")
+					opt_val=$(echo "${opt_raw}" | cut -f 2 -d "=")
 					ot-kernel_set_configopt "CONFIG_${opt}" "${opt_val}"
 				else
 					ot-kernel_y_configopt "CONFIG_${opt}"
@@ -8313,7 +8313,7 @@ einfo "Added ${opt_raw}"
 			if [[ "${symbols_ipset[@]}" =~ "${opt}"( |$) ]] ; then
 einfo "Added ${opt_raw}"
 				if [[ "${opt_raw}" =~ "=" ]] ; then
-					opt_val=$(echo "${opt_raw}" | cut -f 1 -d "=")
+					opt_val=$(echo "${opt_raw}" | cut -f 2 -d "=")
 					ot-kernel_set_configopt "CONFIG_${opt}" "${opt_val}"
 				else
 					ot-kernel_y_configopt "CONFIG_${opt}"
@@ -8323,7 +8323,7 @@ einfo "Added ${opt_raw}"
 			if [[ "${symbols_ipvs[@]}" =~ "${opt}"( |$) ]] ; then
 einfo "Added ${opt_raw}"
 				if [[ "${opt_raw}" =~ "=" ]] ; then
-					opt_val=$(echo "${opt_raw}" | cut -f 1 -d "=")
+					opt_val=$(echo "${opt_raw}" | cut -f 2 -d "=")
 					ot-kernel_set_configopt "CONFIG_${opt}" "${opt_val}"
 				else
 					ot-kernel_y_configopt "CONFIG_${opt}"
@@ -8353,7 +8353,7 @@ einfo "Added ${opt_raw}"
 			if [[ "${symbols_ebt[@]}" =~ "${opt}"( |$) ]] ; then
 einfo "Added ${opt_raw}"
 				if [[ "${opt_raw}" =~ "=" ]] ; then
-					opt_val=$(echo "${opt_raw}" | cut -f 1 -d "=")
+					opt_val=$(echo "${opt_raw}" | cut -f 2 -d "=")
 					ot-kernel_set_configopt "CONFIG_${opt}" "${opt_val}"
 				else
 					ot-kernel_y_configopt "CONFIG_${opt}"
