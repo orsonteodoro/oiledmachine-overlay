@@ -3060,7 +3060,7 @@ eerror
 # @DESCRIPTION:
 # Get the default net QoS default
 ot-kernel_get_net_qos_schedulers_default() {
-	local picked_alg=$(echo "${OT_KERNEL_NET_QOS}" \
+	local picked_alg=$(echo "${OT_KERNEL_NET_QOS_SCHEDULERS}" \
 		| tr " " "\n" \
 		| head -n 1)
 	echo "${picked_alg}"
