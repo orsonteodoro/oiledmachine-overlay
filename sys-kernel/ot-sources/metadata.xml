@@ -2392,18 +2392,18 @@ unset OT_KERNEL_PRIVATE_KEY
 
     The following set the default TCP Congestion Control algorithm for the wrapper:
 
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_DOWNLOAD - For large downloads downloaded serially. (Default:  cubic)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD - For bad connections with packet loss. (Default:  bbr2)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_FG - For large downloads downloaded serially. (Default:  cubic)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER - For fair throughput servers.  (Default:  bbr2)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING - Full screen games while streaming music or VoIPing.  (Default:  bbr2)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_DOWNLOAD - For non disruptive parallel downloads. (Default: vegas)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_BG - For non-disruptive multi downloads in the background. (Default:  vegas)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_LARGE - For multi downloads that take more than 20 s. (Default:  bbr)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_SMALL - For multi downloads that take less than 20 s. (Default:  hybla)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_REC - For live stream production or VoIP.  (Default:  bbr)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE - For a bug-free experience.  (Default:  cubic)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RURAL - For rural or satellite connections.  (Default:  hybla)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING - For playing streaming audio or video.  (Default:  westwood)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING_REC - For recording live stream during gaming.  (Default:  cubic)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER - For higher thoughput with some fairness.  (Default:  dctcp)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_GAMING - For voice only VoIP while gaming.  (Default:  bbr2)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN_2WAY - For dedicated 2-way VoIP in good urban connections.  (Default:  westwood)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_URBAN_NWAY - For dedicated group VoIP in good urban connections.  (Default:  bbr2)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP_RURAL - For dedicated VoIP while road tripping.  (Default:  hybla)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT - For web browsing without streaming.  (Default:  vegas)
 
     Acceptable values:
@@ -2424,7 +2424,7 @@ unset OT_KERNEL_PRIVATE_KEY
     - The OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING_REC should not be
       changed for deterministic reasons.  Only change if you are sure if
       that algorithm can dominate the one in
-      OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_MULTITASK.
+      OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING.
     - The above defaults may change based on availablity in
       OT_KERNEL_TCP_CONGESTION_CONTROLS, but fallback to the next best option.
     - The defaults are chosen based on multiple flows bandwidth allocation with
@@ -2445,6 +2445,8 @@ unset OT_KERNEL_PRIVATE_KEY
     - OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_DOWNLOAD should only be
       vegas.  This is so that it submits to flows using
       cubic/westwood which should dominate.
+    - bbr is to maximize throughput
+    - bbr2 is to maximize multi flow fairness
 
 
 
