@@ -7974,7 +7974,12 @@ _ot-kernel_set_netfilter() {
 			opt=$(echo "${opt_raw}" | cut -f 1 -d "=")
 			if [[ "${symbols_ipv4[@]}" =~ "${opt}"( |$) ]] ; then
 einfo "Added ${opt_raw}"
-				ot-kernel_y_configopt "CONFIG_${opt_raw}"
+				if [[ "${opt_raw}" =~ "=" ]] ; then
+					opt_val=$(echo "${opt_raw}" | cut -f 1 -d "=")
+					ot-kernel_set_configopt "CONFIG_${opt}" "${opt_val}"
+				else
+					ot-kernel_y_configopt "CONFIG_${opt}"
+				fi
 				flag_ipv4=1
 				if [[ "${opt}" == "NF_NAT_SNMP_BASIC" ]] ; then
 					ot-kernel_y_configopt "CONFIG_NF_NAT"
@@ -8016,7 +8021,12 @@ einfo "Added ${opt_raw}"
 			fi
 			if [[ "${symbols_ipv6[@]}" =~ "${opt}"( |$) ]] ; then
 einfo "Added ${opt_raw}"
-				ot-kernel_y_configopt "CONFIG_${opt_raw}"
+				if [[ "${opt_raw}" =~ "=" ]] ; then
+					opt_val=$(echo "${opt_raw}" | cut -f 1 -d "=")
+					ot-kernel_set_configopt "CONFIG_${opt}" "${opt_val}"
+				else
+					ot-kernel_y_configopt "CONFIG_${opt}"
+				fi
 				flag_ipv6=1
 				if [[ "${opt}" == "IP6_NF_MATCH_RPFILTER" ]] ; then
 					ot-kernel_y_configopt "CONFIG_IP6_NF_MANGLE"
@@ -8040,7 +8050,12 @@ einfo "Added ${opt_raw}"
 			fi
 			if [[ "${symbols_xtables[@]}" =~ "${opt}"( |$) ]] ; then
 einfo "Added ${opt_raw}"
-				ot-kernel_y_configopt "CONFIG_${opt_raw}"
+				if [[ "${opt_raw}" =~ "=" ]] ; then
+					opt_val=$(echo "${opt_raw}" | cut -f 1 -d "=")
+					ot-kernel_set_configopt "CONFIG_${opt}" "${opt_val}"
+				else
+					ot-kernel_y_configopt "CONFIG_${opt}"
+				fi
 				flag_xtables=1
 				if [[ "${opt}" == "NETFILTER_NETLINK_HOOK" ]] ; then
 					ot-kernel_y_configopt "CONFIG_NF_TABLES"
@@ -8297,12 +8312,22 @@ einfo "Added ${opt_raw}"
 			fi
 			if [[ "${symbols_ipset[@]}" =~ "${opt}"( |$) ]] ; then
 einfo "Added ${opt_raw}"
-				ot-kernel_y_configopt "CONFIG_${opt_raw}"
+				if [[ "${opt_raw}" =~ "=" ]] ; then
+					opt_val=$(echo "${opt_raw}" | cut -f 1 -d "=")
+					ot-kernel_set_configopt "CONFIG_${opt}" "${opt_val}"
+				else
+					ot-kernel_y_configopt "CONFIG_${opt}"
+				fi
 				flag_ipset=1
 			fi
 			if [[ "${symbols_ipvs[@]}" =~ "${opt}"( |$) ]] ; then
 einfo "Added ${opt_raw}"
-				ot-kernel_y_configopt "CONFIG_${opt_raw}"
+				if [[ "${opt_raw}" =~ "=" ]] ; then
+					opt_val=$(echo "${opt_raw}" | cut -f 1 -d "=")
+					ot-kernel_set_configopt "CONFIG_${opt}" "${opt_val}"
+				else
+					ot-kernel_y_configopt "CONFIG_${opt}"
+				fi
 				flag_ipvs=1
 				if [[ "${opt}" == "IP_VS" ]] ; then
 					ot-kernel_y_configopt "CONFIG_INET"
@@ -8327,7 +8352,12 @@ einfo "Added ${opt_raw}"
 			fi
 			if [[ "${symbols_ebt[@]}" =~ "${opt}"( |$) ]] ; then
 einfo "Added ${opt_raw}"
-				ot-kernel_y_configopt "CONFIG_${opt_raw}"
+				if [[ "${opt_raw}" =~ "=" ]] ; then
+					opt_val=$(echo "${opt_raw}" | cut -f 1 -d "=")
+					ot-kernel_set_configopt "CONFIG_${opt}" "${opt_val}"
+				else
+					ot-kernel_y_configopt "CONFIG_${opt}"
+				fi
 				flag_ebt=1
 				if [[ "${opt}" == "NF_TABLES_BRIDGE" ]] ; then
 					ot-kernel_y_configopt "CONFIG_BRIDGE"
