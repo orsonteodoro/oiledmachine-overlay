@@ -2691,6 +2691,10 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_MENUCONFIG_UI
 	unset OT_KERNEL_MODULE_SUPPORT
 	unset OT_KERNEL_MODULES_COMPRESSOR
+	unset OT_KERNEL_NET_NETFILTER
+	unset OT_KERNEL_NET_QOS_ACTIONS
+	unset OT_KERNEL_NET_QOS_CLASSIFIERS
+	unset OT_KERNEL_NET_QOS_SCHEDULERS
 	unset OT_KERNEL_PCIE_MPS
 	unset OT_KERNEL_PHYS_MEM_TOTAL_GIB
 	unset OT_KERNEL_PKGFLAGS_ACCEPT
@@ -2855,31 +2859,54 @@ ot-kernel_is_build() {
 
 # ot-kernel_set_kconfig_mem need rework
 
+# @FUNCTION: ot-kernel_validate_tcp_congestion_controls_default
+# @DESCRIPTION:
+# Check if the default for TCP Congestion Control is valid
+ot-kernel_validate_tcp_congestion_controls_default() {
+	local DEFAULT_ALGS=(
+		BIC
+		CUBIC
+		HTCP
+		HYBLA
+		VEGAS
+		VENO
+		WESTWOOD
+		DCTCP
+		CDG
+		BBR
+		BBR2
+		RENO
+	)
+	local picked_alg=$(echo "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" \
+		| tr " " "\n" \
+		| head -n 1)
+	local found=0
+	local alg
+	for alg in ${DEFAULT_ALGS[@]} ; do
+		if [[ "${alg}" == "${picked_alg^^}" ]] ; then
+			found=1
+			break
+		fi
+	done
+	if (( ${found} == 0 )) ; then
+eerror
+eerror "${picked_alg} cannot be used as a default TCP Congestion Control"
+eerror "algorithm."
+eerror
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS:  ${OT_KERNEL_TCP_CONGESTION_CONTROLS}"
+eerror
+		die
+	fi
+}
+
 # @FUNCTION: ot-kernel_get_tcp_congestion_controls_default
 # @DESCRIPTION:
 # Gets the default TCP Congestion Control algorithm from
 # OT_KERNEL_TCP_CONGESTION_CONTROLS.
 ot-kernel_get_tcp_congestion_controls_default() {
-	local NO_DEFAULT_ALGS=(
-		ILLINOIS
-		LP
-		NV
-		SCALABLE
-		YEAH
-	)
 	local picked_alg=$(echo "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" \
 		| tr " " "\n" \
 		| head -n 1)
-	local alg
-	for alg in ${NO_DEFAULT_ALGS[@]} ; do
-		if [[ "${alg}" == "${picked_alg}" ]] ; then
-eerror
-eerror "${picked_alg} cannot be used as a default TCP Congestion Control"
-eerror "algorithm."
-eerror
-			die
-		fi
-	done
 	echo "${picked_alg}"
 }
 
@@ -2901,6 +2928,9 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 # Sets the kernel config for selecting multiple TCP congestion controls for
 # different scenaros.
 ot-kernel_set_kconfig_set_tcp_congestion_controls() {
+	[[ -z "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" ]] && return
+	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
+	[[ -z "${work_profile}" || "${work_profile}" =~ ("custom"|"manual") ]] && return
 	local DEFAULT_ALGS=(
 		BIC
 		CUBIC
@@ -2915,14 +2945,37 @@ ot-kernel_set_kconfig_set_tcp_congestion_controls() {
 		BBR2
 		RENO
 	)
+	local ALGS=(
+		BIC
+		CUBIC
+		WESTWOOD
+		HTCP
+		HSTCP
+		HYBLA
+		VEGAS
+		NV
+		SCALABLE
+		LP
+		VENO
+		YEAH
+		ILLINOIS
+		DCTCP
+		CDG
+		BBR
+		BBR2
+	)
 	local alg
 	for alg in ${DEFAULT_ALGS[@]} ; do
 		ot-kernel_unset_configopt "CONFIG_DEFAULT_${alg}"
 	done
 
+	for alg in ${ALGS[@]} ; do
+		ot-kernel_unset_configopt "CONFIG_TCP_CONG_${alg}"
+	done
+
+	# clear is for configurations without network.
 	OT_KERNEL_TCP_CONGESTION_CONTROLS=$(_ot-kernel_set_kconfig_get_init_tcp_congestion_controls)
-	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" \
-		&& "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" != "clear" ]] ; then
+	if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" != "clear" ]] ; then
 		for alg in ${OT_KERNEL_TCP_CONGESTION_CONTROLS} ; do
 			if [[ "${alg}" == "bbr2" ]] ; then
 				if has bbrv2 ${IUSE} \
@@ -2937,9 +2990,8 @@ einfo "Adding ${alg}"
 			ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
 			ot-kernel_y_configopt "CONFIG_TCP_CONG_${alg^^}"
 		done
-	fi
-	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" \
-		&& "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" != "clear" ]] ; then
+
+		ot-kernel_validate_tcp_congestion_controls_default
 		local picked_alg=$(ot-kernel_get_tcp_congestion_controls_default)
 		picked_alg="${picked_alg,,}"
 		if [[ "${picked_alg}" == "bbr2" ]] ; then
@@ -2967,6 +3019,212 @@ einfo "Using ${picked_alg} as the default TCP congestion control"
 	ot-kernel_y_configopt "CONFIG_TCP_CONG_${picked_alg}"
 	ot-kernel_y_configopt "CONFIG_DEFAULT_${picked_alg}"
 	ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "\"${picked_alg,,}\""
+}
+
+# @FUNCTION: ot-kernel_validate_net_qos_schedulers_default
+# @DESCRIPTION:
+# Does validity checks the default net QoS default
+ot-kernel_validate_net_qos_schedulers_default() {
+	local DEFAULT_ALGS=(
+		FQ
+		CODEL
+		FQ_CODEL
+		FQ_PIE
+		SFQ
+		PFIFO_FAST
+	)
+	local picked_alg=$(echo "${OT_KERNEL_NET_QOS_SCHEDULERS}" \
+		| tr " " "\n" \
+		| head -n 1)
+
+	local found=0
+	local alg
+	for alg in ${DEFAULT_ALGS[@]} ; do
+		if [[ "${alg}" == "${picked_alg^^}" ]] ; then
+			found=1
+			break
+		fi
+	done
+	if (( ${found} == 0 )) ; then
+eerror
+eerror "${picked_alg} cannot be used as a default network QoS"
+eerror "algorithm."
+eerror
+eerror "OT_KERNEL_NET_QOS_SCHEDULERS:  ${OT_KERNEL_NET_QOS_SCHEDULERS}"
+eerror
+		die
+	fi
+}
+
+# @FUNCTION: ot-kernel_get_net_qos_schedulers_default
+# @DESCRIPTION:
+# Get the default net QoS default
+ot-kernel_get_net_qos_schedulers_default() {
+	local picked_alg=$(echo "${OT_KERNEL_NET_QOS}" \
+		| tr " " "\n" \
+		| head -n 1)
+	echo "${picked_alg}"
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_set_net_qos_actions
+# @DESCRIPTION:
+# Setup network QoS classifier support
+ot-kernel_set_kconfig_set_net_qos_actions() {
+	[[ -z "${OT_KERNEL_NET_QOS_ACTIONS}" ]] && return
+	local ALGS=(
+		POLICE
+		GACT
+		MIRRED
+		SAMPLE
+		IPT
+		NAT
+		PEDIT
+		SIMP
+		SKBEDIT
+		CSUM
+		MPLS
+		VLAN
+		BPF
+		SKBMOD
+		IFE
+		TUNNEL_KEY
+		GATE
+	)
+	local alg
+	for alg in ${DEFAULT_ALGS[@]} ; do
+		ot-kernel_unset_configopt "CONFIG_NET_ACT_${alg}"
+	done
+	if [[ "${OT_KERNEL_NET_QOS_ACTIONS}" != "clear" ]] ; then
+		ot-kernel_y_configopt "CONFIG_NET_CLS_ACT"
+		for alg in ${OT_KERNEL_NET_QOS_ACTIONS} ; do
+			ot-kernel_y_configopt "CONFIG_NET_ACT_${alg^^}"
+		done
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_set_net_qos_classifiers
+# @DESCRIPTION:
+# Setup network QoS classifier support
+ot-kernel_set_kconfig_set_net_qos_classifiers() {
+	[[ -z "${OT_KERNEL_NET_QOS_CLASSIFIERS}" ]] && return
+	local ALGS=(
+		BASIC
+		TCINDEX
+		ROUTE4
+		FW
+		U32
+		RSVP
+		RSVP6
+		FLOW
+		CGROUP
+		BPF
+		FLOWER
+		MATCHALL
+
+		EMATCH
+	)
+	local alg
+	for alg in ${DEFAULT_ALGS[@]} ; do
+		if [[ "${alg}" == "EMATCH" ]] ; then
+			ot-kernel_unset_configopt "CONFIG_NET_EMATCH"
+			continue
+		fi
+		ot-kernel_unset_configopt "CONFIG_NET_CLS_${alg}"
+		if [[ "${alg}" == "U32" ]] ; then
+			ot-kernel_unset_configopt "CONFIG_CLS_U32_PERF"
+			ot-kernel_unset_configopt "CONFIG_CLS_U32_MARK"
+		fi
+	done
+	ot-kernel_unset_configopt "CONFIG_NET_EMATCH"
+	if [[ "${OT_KERNEL_NET_QOS_CLASSIFIERS}" != "clear" ]] ; then
+		for alg in ${OT_KERNEL_NET_QOS_CLASSIFIERS} ; do
+			if [[ "${alg,,}" == "ematch" ]] ; then
+				ot-kernel_y_configopt "CONFIG_CONFIG_NET_EMATCH"
+				continue
+			fi
+			ot-kernel_y_configopt "CONFIG_NET_CLS_${alg^^}"
+			if [[ "${alg,,}" == "u32" ]] ; then
+				ot-kernel_y_configopt "CONFIG_CLS_U32_PERF"
+				ot-kernel_y_configopt "CONFIG_CLS_U32_MARK"
+			fi
+		done
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_set_net_qos_schedulers
+# @DESCRIPTION:
+# Setup network QoS to reduce jitter or latency classification
+ot-kernel_set_kconfig_set_net_qos_schedulers() {
+	[[ -z "${OT_KERNEL_NET_QOS_SCHEDULERS}" ]] && return
+	local DEFAULT_ALGS=(
+		FQ
+		CODEL
+		FQ_CODEL
+		FQ_PIE
+		SFQ
+		PFIFO_FAST
+	)
+	local ALGS=(
+		CBQ
+		HTB
+		HFSC
+		ATM
+		PRIO
+		MULTIQ
+		RED
+		SFB
+		SFQ
+		TEQL
+		TBF
+		CBS
+		ETF
+		TAPRIO
+		GRED
+		DSMARK
+		NETEM
+		DRR
+		MQPRIO
+		SKBPRIO
+		CHOKE
+		QFQ
+		CODEL
+		FQ_CODEL
+		CAKE
+		FQ
+		HHF
+		PIE
+		FQ_PIE
+		INGRESS
+		PLUG
+		ETS
+	)
+	local alg
+	for alg in ${DEFAULT_ALGS[@]} ; do
+		ot-kernel_unset_configopt "CONFIG_DEFAULT_${alg}"
+	done
+
+	for alg in ${ALGS[@]} ; do
+		ot-kernel_unset_configopt "NET_SCH_${alg^^}"
+	done
+
+	# clear is for configurations without network.
+
+	if [[ "${OT_KERNEL_NET_QOS_SCHEDULERS}" != "clear" ]] ; then
+		for alg in ${OT_KERNEL_NET_QOS_SCHEDULERS} ; do
+			[[ "${alg,,}" == "pfifo_fast" ]] && continue
+			ot-kernel_y_configopt "CONFIG_${alg^^}"
+		done
+
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_NET_SCHED"
+		ot-kernel_y_configopt "CONFIG_NET_SCH_DEFAULT"
+
+		ot-kernel_validate_net_qos_schedulers_default
+		local picked_alg=$(ot-kernel_get_net_qos_schedulers_default)
+		picked_alg="${picked_alg,,}"
+einfo "Using ${picked_alg} as the default network QoS"
+		ot-kernel_y_configopt "CONFIG_DEFAULT_${picked_alg^^}"
+	fi
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_boot_args
@@ -5708,12 +5966,6 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_set_kconfig_work_profile_init
 	fi
 
-	if [[ -z "${work_profile}" || "${work_profile}" =~ ("custom"|"manual") ]] ; then
-		:
-	else
-		ot-kernel_set_kconfig_set_tcp_congestion_controls
-	fi
-
 	if [[ "${work_profile}" =~ "greenest" \
 		|| "${work_profile}" =~ "solar" ]] \
 		&& [[ "${CFLAGS}" == "-O3" ]] ; then
@@ -6823,11 +7075,11 @@ einfo
 
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
-		ot-kernel_set_kconfig_compiler_toolchain # llvm_slot, gcc_slot
-		ot-kernel_menuconfig "pre" # llvm_slot
+		ot-kernel_set_kconfig_compiler_toolchain # Inits llvm_slot, gcc_slot
+		ot-kernel_menuconfig "pre" # Uses llvm_slot
 		ot-kernel_set_kconfig_march
 		ot-kernel_set_kconfig_oflag
-		ot-kernel_set_kconfig_lto # llvm_slot
+		ot-kernel_set_kconfig_lto # Uses llvm_slot
 		ot-kernel_set_kconfig_abis
 		#ot-kernel_set_kconfig_mem
 
@@ -6842,6 +7094,11 @@ einfo
 		ot-kernel_set_kconfig_swap
 		ot-kernel_set_kconfig_zswap
 		ot-kernel_set_kconfig_uksm
+		ot-kernel_set_kconfig_set_tcp_congestion_controls # Place before ot-kernel_set_kconfig_work_profile
+		ot-kernel_set_kconfig_set_net_qos_schedulers
+		ot-kernel_set_kconfig_set_net_qos_classifiers
+		ot-kernel_set_kconfig_set_net_qos_actions
+		# See also ot-kernel-pkgflags.eclass: _ot-kernel_set_netfilter()
 		ot-kernel_set_kconfig_work_profile
 		ot-kernel_set_kconfig_pcie_mps
 		ot-kernel_set_kconfig_usb_autosuspend
@@ -6873,9 +7130,9 @@ einfo
 
 		local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
 			ot-kernel_set_kconfig_hardening_level
-			ot-kernel_set_kconfig_scs # llvm_slot
-			ot-kernel_set_kconfig_cfi # llvm_slot
-			ot-kernel_set_kconfig_kcfi # llvm_slot
+			ot-kernel_set_kconfig_scs # Uses llvm_slot
+			ot-kernel_set_kconfig_cfi # Uses llvm_slot
+			ot-kernel_set_kconfig_kcfi # Uses llvm_slot
 		ot-kernel_set_kconfig_iommu_domain_type
 		ot-kernel-pkgflags_cipher_optional
 		ot-kernel_set_kconfig_cold_boot_mitigation
@@ -6885,7 +7142,7 @@ einfo
 		ot-kernel_set_kconfig_ima
 		ot-kernel_set_kconfig_lsms
 
-		ot-kernel_set_kconfig_pgo # llvm_slot
+		ot-kernel_set_kconfig_pgo # Uses llvm_slot
 
 		ot-kernel_set_kconfig_module_support
 		ot-kernel_set_kconfig_build_all_modules_as
@@ -6907,7 +7164,7 @@ einfo
 		einfo "Running:  make olddefconfig ${args[@]}"
 		make olddefconfig "${args[@]}" || die
 
-		ot-kernel_menuconfig "post" # llvm_slot
+		ot-kernel_menuconfig "post" # Uses llvm_slot
 	done
 }
 
@@ -7804,7 +8061,8 @@ ewarn "Preserving copyright notices.  This may take hours."
 			doins "${T}/etc/ot-sources/iosched/conf/${PV}-${extraversion}-${arch}"
 		fi
 
-		if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT:-1}" == "1" ]] ; then
+		if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT:-1}" == "1" \
+			&& -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" ]] ; then
 			# Each kernel config may have different a combo.
 
 			OT_KERNEL_TCP_CONGESTION_CONTROLS=$(_ot-kernel_set_kconfig_get_init_tcp_congestion_controls)
@@ -7825,11 +8083,8 @@ ewarn "Preserving copyright notices.  This may take hours."
 			fi
 
 			local tcca_fair_client
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
-				tcca_fair_client="bbr2"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-				tcca_fair_client="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+			# BBR* dominates cubic when too many flows.
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
 				tcca_fair_client="vegas"
 			else
 				tcca_fair_client="${default_tcca}"

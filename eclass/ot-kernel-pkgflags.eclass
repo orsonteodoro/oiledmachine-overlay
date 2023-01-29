@@ -269,6 +269,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_iodine
 	ot-kernel-pkgflags_iotop
 	ot-kernel-pkgflags_ipcm
+	ot-kernel-pkgflags_iproute2
 	ot-kernel-pkgflags_ipset
 	ot-kernel-pkgflags_ipt_netflow
 	ot-kernel-pkgflags_iptables
@@ -485,6 +486,7 @@ ot-kernel-pkgflags_apply() {
 
 	# Post apply
 	_ot-kernel-pkgflags_squashfs
+	_ot-kernel_set_netfilter
 
 	# Out of source modules
 }
@@ -2725,6 +2727,7 @@ ot-kernel-pkgflags_docker() { # DONE
 			ot-kernel_y_configopt "CONFIG_MEMCG_SWAP"
 			ot-kernel_y_configopt "CONFIG_MEMCG_SWAP_ENABLED"
 		fi
+		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_BLK_CGROUP"
 		if ver_test ${K_MAJOR_MINOR} -le 5.2 ; then
 			ban_disable_debug "05309e2"
@@ -2741,6 +2744,7 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_PROC_PID_CPUSET"
 		ot-kernel_y_configopt "CONFIG_CGROUP_DEVICE"
 		ot-kernel_y_configopt "CONFIG_CGROUP_CPUACCT"
+		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
 		ot-kernel_y_configopt "CONFIG_CGROUP_PERF"
 		ot-kernel_unset_configopt "CGROUP_DEBUG" # Same as "Example controller"
 		ot-kernel_y_configopt "CONFIG_NAMESPACES"
@@ -2778,6 +2782,16 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_MASQUERADE"
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_NETMAP"
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_REDIRECT"
+
+		ot-kernel_y_configopt "CONFIG_IPV6"
+		ot-kernel_y_configopt "CONFIG_BRIDGE"
+		ot-kernel_y_configopt "CONFIG_NET_SCHED"
+		ot-kernel_y_configopt "CONFIG_CGROUPS"
+		ot-kernel_y_configopt "CONFIG_NET_CLS_CGROUP"
+		ot-kernel_y_configopt "CONFIG_NET_L3_MASTER_DEV"
+		ot-kernel_y_configopt "CONFIG_CGROUP_NET_PRIO"
+		ot-kernel_y_configopt "CONFIG_CGROUP_NET_CLASSID"
+
 		ot-kernel_y_configopt "CONFIG_MD"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
 		ot-kernel_y_configopt "CONFIG_DM_THIN_PROVISIONING"
@@ -2788,6 +2802,11 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_set_configopt "CONFIG_IPVLAN" "m"
 		ot-kernel_set_configopt "CONFIG_VXLAN" "m"
 		ot-kernel_y_configopt "CONFIG_VETH"
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_TTY"
+		ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+
 		ot-kernel_y_configopt "CONFIG_OVERLAY_FS"
 		ot-kernel_y_configopt "CONFIG_HUGETLBFS"
 		ot-kernel_y_configopt "CONFIG_KEYS"
@@ -3697,6 +3716,33 @@ ot-kernel-pkgflags_ipcm() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_iproute2
+# @DESCRIPTION:
+# Applies kernel config flags for the iproute2 package
+ot-kernel-pkgflags_iproute2() {
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4102555]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-apps/iproute2" ; then  # For tc QoS
+		einfo "Applying kernel config flags for the iproute2 package (id: 4102555)"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_NET_INET"
+		ot-kernel_y_configopt "CONFIG_IP_ADVANCED_ROUTER"
+		ot-kernel_y_configopt "CONFIG_SYN_COOKIES"
+		ot-kernel_set_configopt "CONFIG_IPV6" "m"
+		ot-kernel_y_configopt "CONFIG_INET_DIAG"
+		ot-kernel_set_configopt "CONFIG_INET_UDP_DIAG" "m"
+		ot-kernel_y_configopt "CONFIG_NET_SCHED"
+		ot-kernel_y_configopt "CONFIG_NET_CLS_ACT"
+		ot-kernel_set_configopt "CONFIG_NET_SCH_INGRESS" "m"
+		ot-kernel_set_configopt "CONFIG_NET_SCH_HTB" "m"
+		ot-kernel_set_configopt "CONFIG_NET_SCH_CODEL" "m"
+		ot-kernel_set_configopt "CONFIG_NET_CLS_U32" "m"
+		ot-kernel_y_configopt "CONFIG_NET_ACT_MIRRED"
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_NET_CORE"
+		ot-kernel_set_configopt "CONFIG_IFB" "m"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_ipset
 # @DESCRIPTION:
 # Applies kernel config flags for the ipset package
@@ -3886,6 +3932,7 @@ ot-kernel-pkgflags_k3s() { # DONE
 		ot-kernel_y_configopt "CONFIG_BRIDGE_NETFILTER"
 		ot-kernel_y_configopt "CONFIG_CFS_BANDWIDTH"
 		ot-kernel_y_configopt "CONFIG_CGROUP_DEVICE"
+		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
 		ot-kernel_y_configopt "CONFIG_CGROUP_PERF"
 		ot-kernel_y_configopt "CONFIG_CGROUP_PIDS"
 		ot-kernel_y_configopt "CONFIG_IP_VS"
@@ -4383,23 +4430,74 @@ ot-kernel-pkgflags_libvirt() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S7953656]}" == "1" ]] && return
 	if ot-kernel_has_version "app-emulation/libvirt" ; then
 		einfo "Applying kernel config flags for the libvirt package (id: 7953656)"
-		ot-kernel_y_configopt "CONFIG_NET"
-		ot-kernel_y_configopt "CONFIG_NETFILTER"
-		ot-kernel_y_configopt "CONFIG_BRIDGE"
-		ot-kernel_y_configopt "CONFIG_BRIDGE_NF_EBTABLES"
-		ot-kernel_y_configopt "CONFIG_NETFILTER_XTABLES"
-		ot-kernel_y_configopt "CONFIG_BRIDGE_EBT_MARK_T"
-		ot-kernel_y_configopt "CONFIG_NETFILTER_ADVANCED"
-		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_CONNMARK"
-		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_CHECKSUM"
-		ot-kernel_y_configopt "CONFIG_IP6_NF_NAT"
-		ot-kernel_y_configopt "CONFIG_BRIDGE_EBT_T_NAT"
-		ot-kernel_y_configopt "CONFIG_NET_ACT_POLICE"
-		ot-kernel_y_configopt "CONFIG_NET_CLS_FW"
-		ot-kernel_y_configopt "CONFIG_NET_CLS_U32"
-		ot-kernel_y_configopt "CONFIG_NET_SCH_HTB"
-		ot-kernel_y_configopt "CONFIG_NET_SCH_INGRESS"
-		ot-kernel_y_configopt "CONFIG_NET_SCH_SFQ"
+
+		if ot-kernel_has_version "app-emulation/libvirt[lvm]" ; then
+			ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
+			ot-kernel_y_configopt "CONFIG_DM_MULTIPATH"
+			ot-kernel_y_configopt "CONFIG_DM_SNAPSHOT"
+		fi
+
+		if ot-kernel_has_version "app-emulation/libvirt[lxc]" ; then
+			# See also ot-kernel-pkgflags_lxc
+			ot-kernel_y_configopt "CONFIG_CGROUPS"
+			ot-kernel_y_configopt "CONFIG_BLOCK"
+			ot-kernel_y_configopt "CONFIG_BLK_CGROUP"
+			ot-kernel_y_configopt "CONFIG_CGROUP_NET_PRIO"
+			ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
+			ot-kernel_y_configopt "CONFIG_CGROUP_PERF"
+			ot-kernel_y_configopt "CONFIG_NET_CLS_CGROUP"
+			ot-kernel_y_configopt "CONFIG_SECURITYFS"
+			if ver_test ${K_MAJOR_MINOR} -lt 4.7 ; then
+				ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+				ot-kernel_y_configopt "CONFIG_DEVPTS_MULTIPLE_INSTANCES"
+			fi
+		fi
+
+
+		if ot-kernel_has_version "app-emulation/libvirt[virt-network]" ; then
+			ot-kernel_y_configopt "CONFIG_NET"
+			ot-kernel_y_configopt "CONFIG_INET"
+
+			ot-kernel_y_configopt "CONFIG_NETFILTER"
+			ot-kernel_y_configopt "CONFIG_IP_NF_IPTABLES"
+			ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_REJECT"
+			ot-kernel_y_configopt "CONFIG_IP_NF_MANGLE"
+
+			ot-kernel_y_configopt "CONFIG_IPV6"
+			ot-kernel_y_configopt "CONFIG_IP6_NF_IPTABLES"
+			ot-kernel_y_configopt "CONFIG_IP6_NF_TARGET_REJECT"
+			ot-kernel_y_configopt "CONFIG_IP6_NF_MANGLE"
+			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+
+			ot-kernel_y_configopt "CONFIG_BRIDGE"
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XTABLES"
+
+			ot-kernel_y_configopt "CONFIG_NETFILTER_ADVANCED"
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_CONNMARK"
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MARK"
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_CONNTRACK"
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_CHECKSUM"
+			ot-kernel_y_configopt "CONFIG_IP6_NF_NAT"
+
+			ot-kernel_y_configopt "CONFIG_BRIDGE_NF_EBTABLES"
+			ot-kernel_y_configopt "CONFIG_BRIDGE_EBT_T_NAT"
+			ot-kernel_y_configopt "CONFIG_BRIDGE_EBT_MARK"
+			ot-kernel_y_configopt "CONFIG_BRIDGE_EBT_MARK_T"
+
+			ot-kernel_y_configopt "CONFIG_BRIDGE_EBT_T_NAT"
+			ot-kernel_y_configopt "CONFIG_NET_ACT_POLICE" # Traffic Policing
+			ot-kernel_y_configopt "CONFIG_NET_CLS_FW"
+			ot-kernel_y_configopt "CONFIG_NET_CLS_U32"
+			ot-kernel_y_configopt "CONFIG_NET_SCH_HTB"
+			ot-kernel_y_configopt "CONFIG_NET_SCH_INGRESS"
+			ot-kernel_y_configopt "CONFIG_NET_SCH_SFQ"
+		fi
+
+		ot-kernel_y_configopt "CONFIG_CGROUPS"
+		ot-kernel_y_configopt "CONFIG_BLOCK"
+		ot-kernel_y_configopt "CONFIG_BLK_CGROUP"
+
+		ot-kernel_y_configopt "CONFIG_MEMORY"
 	fi
 }
 
@@ -7826,6 +7924,474 @@ ot-kernel-pkgflags_zfs_kmod() { # DONE
 		fi
 		if ver_test ${K_MAJOR_MINOR} -lt 5 ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
+		fi
+	fi
+}
+
+# @FUNCTION: _ot-kernel_set_netfilter
+# @DESCRIPTION:
+# Checks and enables various netfilter support used for firewalls, NAT,
+# packet filtering.
+_ot-kernel_set_netfilter() {
+	[[ -z "${OT_KERNEL_NETFILTER}" ]] && return
+
+	local symbols_ipv4=(
+		$(grep "config " "${BUILD_DIR}/net/ipv4/netfilter/Kconfig" \
+			| cut -f 2 -d " ")
+	)
+	local symbols_ipv6=(
+		$(grep "config " "${BUILD_DIR}/net/ipv6/netfilter/Kconfig" \
+			| cut -f 2 -d " ")
+	)
+	local symbols_xtables=(
+		$(grep "config " "${BUILD_DIR}/net/netfilter/Kconfig" \
+			| cut -f 2 -d " ")
+	)
+	local symbols_ipset=(
+		$(grep "config " "${BUILD_DIR}/net/netfilter/ipset/Kconfig" \
+			| cut -f 2 -d " ")
+	)
+	local symbols_ipvs=(
+		$(grep "config " "${BUILD_DIR}/net/netfilter/ipvs/Kconfig" \
+			| cut -f 2 -d " ")
+	)
+	local symbols_ebt=(
+		$(grep "config " "${BUILD_DIR}/net/bridge/netfilter/Kconfig" \
+			| cut -f 2 -d " ")
+	)
+
+	if [[ -n "${OT_KERNEL_NETFILTER}" ]] ; then
+		local opt
+		local opt_raw
+		local flag_ipv4=0
+		local flag_ipv6=0
+		local flag_xtables=0
+		local flag_ipset=0
+		local flag_ipvs=0
+		local flag_ebt=0
+		for opt_raw in ${OT_KERNEL_NETFILTER} ; do
+			opt_raw="${opt_raw/CONFIG_/}"
+			opt=$(echo "${opt_raw}" | cut -f 1 -d "=")
+			if [[ "${symbols_ipv4[@]}" =~ "${opt}"( |$) ]] ; then
+einfo "Added ${opt_raw}"
+				ot-kernel_y_configopt "CONFIG_${opt_raw}"
+				flag_ipv4=1
+				if [[ "${opt}" == "NF_NAT_SNMP_BASIC" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_NAT"
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_SNMP"
+				fi
+				if [[ "${opt}" == "NF_NAT_PPTP" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_NAT"
+				fi
+				if [[ "${opt}" == "NF_NAT_H323" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_NAT"
+				fi
+				if [[ "${opt}" == "IP_NF_NAT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "IP_NF_TARGET_REJECT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP_NF_FILTER"
+				fi
+				if [[ "${opt}" == "IP_NF_TARGET_SYNPROXY" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "IP_NF_MATCH_RPFILTER" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP_NF_MANGLE"
+					ot-kernel_y_configopt "CONFIG_IP_NF_RAW"
+				fi
+				if [[ "${opt}" == "IP_NF_TARGET_CLUSTERIP" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP_NF_MANGLE"
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "IP_NF_TARGET_ECN" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP_NF_MANGLE"
+				fi
+				if [[ "${opt}" == "IP_NF_TARGET_TTL" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NETFILTER_ADVANCED"
+					ot-kernel_y_configopt "CONFIG_IP_NF_MANGLE"
+				fi
+				if [[ "${opt}" == "IP_NF_SECURITY" ]] ; then
+					ot-kernel_y_configopt "CONFIG_SECURITY"
+				fi
+			fi
+			if [[ "${symbols_ipv6[@]}" =~ "${opt}"( |$) ]] ; then
+einfo "Added ${opt_raw}"
+				ot-kernel_y_configopt "CONFIG_${opt_raw}"
+				flag_ipv6=1
+				if [[ "${opt}" == "IP6_NF_MATCH_RPFILTER" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP6_NF_MANGLE"
+					ot-kernel_y_configopt "CONFIG_IP6_NF_RAW"
+				fi
+				if [[ "${opt}" == "IP6_NF_TARGET_HL" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP6_NF_MANGLE"
+				fi
+				if [[ "${opt}" == "IP6_NF_TARGET_REJECT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP6_NF_FILTER"
+				fi
+				if [[ "${opt}" == "IP6_NF_TARGET_SYNPROXY" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "IP6_NF_SECURITY" ]] ; then
+					ot-kernel_y_configopt "CONFIG_SECURITY"
+				fi
+				if [[ "${opt}" == "IP6_NF_NAT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+			fi
+			if [[ "${symbols_xtables[@]}" =~ "${opt}"( |$) ]] ; then
+einfo "Added ${opt_raw}"
+				ot-kernel_y_configopt "CONFIG_${opt_raw}"
+				flag_xtables=1
+				if [[ "${opt}" == "NETFILTER_NETLINK_HOOK" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_TABLES"
+				fi
+				if [[ "${opt}" == "NF_CONNTRACK_SECMARK" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NETWORK_SECMARK"
+				fi
+				if [[ "${opt}" == "NF_CONNTRACK_PROCFS" ]] ; then
+					ot-kernel_y_configopt "CONFIG_PROC_FS"
+				fi
+				if [[ "${opt}" == "NF_CONNTRACK_H323" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IPV6"
+				fi
+				if [[ "${opt}" == "NF_CT_NETLINK_TIMEOUT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_TIMEOUT"
+				fi
+				if [[ "${opt}" == "NF_CT_NETLINK_HELPER" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CT_NETLINK"
+					ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_QUEUE"
+					ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_GLUE_CT"
+				fi
+				if [[ "${opt}" == "NETFILTER_NETLINK_GLUE_CT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_QUEUE"
+					ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_LOG"
+					ot-kernel_y_configopt "CONFIG_NF_CT_NETLINK"
+				fi
+				if [[ "${opt}" == "NF_NAT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ \
+					"${opt}" == "NF_NAT_AMANDA" \
+					|| "${opt}" == "NF_NAT_FTP" \
+					|| "${opt}" == "NF_NAT_IRC" \
+					|| "${opt}" == "NF_NAT_SIP" \
+					|| "${opt}" == "NF_NAT_TFTP" \
+				]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+					ot-kernel_y_configopt "CONFIG_NF_NAT"
+				fi
+				if [[ "${opt}" == "NF_TABLES_INET" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IPV6"
+				fi
+				if [[ "${opt}" =~ "NFT_" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_TABLES"
+				fi
+				if [[ "${opt}" == "NFT_CT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "NFT_FLOW_OFFLOAD" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+					ot-kernel_y_configopt "CONFIG_NF_FLOW_TABLE"
+				fi
+				if [[ "${opt}" == "NFT_CONNLIMIT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "NFT_MASQ" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+					ot-kernel_y_configopt "CONFIG_NF_NAT"
+				fi
+				if [[ "${opt}" == "NFT_REDIR" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+					ot-kernel_y_configopt "CONFIG_NF_NAT"
+				fi
+				if [[ "${opt}" == "NFT_NAT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+					ot-kernel_y_configopt "CONFIG_NF_TABLES_IPV4"
+					ot-kernel_y_configopt "CONFIG_NF_TABLES_IPV6"
+				fi
+				if [[ "${opt}" == "NFT_QUEUE" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_QUEUE"
+				fi
+				if [[ "${opt}" == "NFT_REJECT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IPV6"
+				fi
+				if [[ "${opt}" == "NFT_REJECT_INET" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_TABLES_INET"
+				fi
+				if [[ "${opt}" == "NFT_COMPAT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NETFILTER_XTABLES"
+				fi
+				if [[ "${opt}" == "NFT_FIB_INET" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_TABLES_INET"
+					ot-kernel_y_configopt "CONFIG_NFT_FIB_IPV4"
+					ot-kernel_y_configopt "CONFIG_NFT_FIB_IPV6"
+				fi
+				if [[ "${opt}" == "NFT_XFRM" ]] ; then
+					ot-kernel_y_configopt "CONFIG_XFRM"
+				fi
+				if [[ "${opt}" == "NFT_SOCKET" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IPV6"
+				fi
+				if [[ "${opt}" == "NFT_TPROXY" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IPV6"
+				fi
+				if [[ "${opt}" == "NFT_SYNPROXY" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "NFT_FIB_NETDEV" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NFT_FIB_IPV4"
+					ot-kernel_y_configopt "CONFIG_NFT_FIB_IPV6"
+					ot-kernel_y_configopt "CONFIG_NF_TABLES_NETDEV"
+				fi
+				if [[ "${opt}" == "NFT_REJECT_NETDEV" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NFT_REJECT_IPV4"
+					ot-kernel_y_configopt "CONFIG_NFT_REJECT_IPV6"
+					ot-kernel_y_configopt "CONFIG_NF_TABLES_NETDEV"
+				fi
+				if [[ "${opt}" == "NF_FLOW_TABLE_INET" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_FLOW_TABLE"
+				fi
+				if [[ "${opt}" == "NF_FLOW_TABLE" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NETFILTER_INGRESS"
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+					ot-kernel_y_configopt "CONFIG_NF_TABLES"
+				fi
+				if [[ "${opt}" == "NF_FLOW_TABLE_PROCFS" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_FLOW_TABLE"
+					ot-kernel_y_configopt "CONFIG_PROC_FS"
+				fi
+				if [[ "${opt}" =~ ("NETFILTER_XT"|"NETFILTER_XTABLES_COMPAT") ]] ; then
+					ot-kernel_y_configopt "CONFIG_NETFILTER_XTABLES"
+				fi
+				if [[ "${opt}" == "NETFILTER_XTABLES_COMPAT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_COMPAT"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_CONNMARK" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_SET" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP_SET"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_AUDIT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_AUDIT"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_CHECKSUM" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP_NF_MANGLE"
+					ot-kernel_y_configopt "CONFIG_IP6_NF_MANGLE"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_CONNMARK" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_CONNSECMARK" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_SECMARK"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_CT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+					ot-kernel_y_configopt "CONFIG_IP_NF_RAW"
+					ot-kernel_y_configopt "CONFIG_IP6_NF_RAW"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_DSCP" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP_NF_MANGLE"
+					ot-kernel_y_configopt "CONFIG_IP6_NF_MANGLE"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_HL" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP_NF_MANGLE"
+					ot-kernel_y_configopt "CONFIG_IP6_NF_MANGLE"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_HMARK" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP6_NF_IPTABLES"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_LED" ]] ; then
+					ot-kernel_y_configopt "CONFIG_LEDS_CLASS"
+					ot-kernel_y_configopt "CONFIG_LEDS_TRIGGERS"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_NAT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_NAT"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_NETMAP" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_NAT"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_NOTRACK" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+					ot-kernel_y_configopt "CONFIG_IP_NF_RAW"
+					ot-kernel_y_configopt "CONFIG_IP6_NF_RAW"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_REDIRECT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_NAT"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_MASQUERADE" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_NAT"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_TEE" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IPV6"
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+					ot-kernel_y_configopt "CONFIG_IP6_NF_IPTABLES"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_TPROXY" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NETFILTER_XTABLES"
+					ot-kernel_y_configopt "CONFIG_IPV6"
+					ot-kernel_y_configopt "CONFIG_IP6_NF_IPTABLES"
+					ot-kernel_y_configopt "CONFIG_IP_NF_MANGLE"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_TRACE" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP_NF_RAW"
+					ot-kernel_y_configopt "CONFIG_IP6_NF_RAW"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_SECMARK" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NETWORK_SECMARK"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_TCPMSS" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IPV6"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_TARGET_TCPOPTSTRIP" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP_NF_MANGLE"
+					ot-kernel_y_configopt "CONFIG_IP6_NF_MANGLE"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_MATCH_CGROUP" ]] ; then
+					ot-kernel_y_configopt "CONFIG_CGROUPS"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_MATCH_CLUSTER" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_MATCH_CONNBYTES" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_MATCH_CONNLABEL" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_MATCH_CONNLIMIT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_MATCH_CONNMARK" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_MATCH_CONNTRACK" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_MATCH_HASHLIMIT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP6_NF_IPTABLES"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_MATCH_HELPER" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_MATCH_IPVS" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP_VS"
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_MATCH_POLICY" ]] ; then
+					ot-kernel_y_configopt "CONFIG_XFRM"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_MATCH_PHYSDEV" ]] ; then
+					ot-kernel_y_configopt "CONFIG_BRIDGE"
+					ot-kernel_y_configopt "CONFIG_BRIDGE_NETFILTER"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_MATCH_SOCKET" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NETFILTER_XTABLES"
+					ot-kernel_y_configopt "CONFIG_IPV6"
+					ot-kernel_y_configopt "CONFIG_IP6_NF_IPTABLES"
+				fi
+				if [[ "${opt}" == "NETFILTER_XT_MATCH_STATE" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+			fi
+			if [[ "${symbols_ipset[@]}" =~ "${opt}"( |$) ]] ; then
+einfo "Added ${opt_raw}"
+				ot-kernel_y_configopt "CONFIG_${opt_raw}"
+				flag_ipset=1
+			fi
+			if [[ "${symbols_ipvs[@]}" =~ "${opt}"( |$) ]] ; then
+einfo "Added ${opt_raw}"
+				ot-kernel_y_configopt "CONFIG_${opt_raw}"
+				flag_ipvs=1
+				if [[ "${opt}" == "IP_VS" ]] ; then
+					ot-kernel_y_configopt "CONFIG_INET"
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "IP_VS_IPV6" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IPV6"
+				fi
+				if [[ "${opt}" == "IP_VS_FTP" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP_VS_PROTO_TCP"
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+					ot-kernel_y_configopt "CONFIG_NF_NAT"
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_FTP"
+				fi
+				if [[ "${opt}" == "IP_VS_NFCT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "IP_VS_PE_SIP" ]] ; then
+					ot-kernel_y_configopt "CONFIG_IP_VS_PROTO_UDP"
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_SIP"
+				fi
+			fi
+			if [[ "${symbols_ebt[@]}" =~ "${opt}"( |$) ]] ; then
+einfo "Added ${opt_raw}"
+				ot-kernel_y_configopt "CONFIG_${opt_raw}"
+				flag_ebt=1
+				if [[ "${opt}" == "NF_TABLES_BRIDGE" ]] ; then
+					ot-kernel_y_configopt "CONFIG_BRIDGE"
+					ot-kernel_y_configopt "CONFIG_NF_TABLES"
+				fi
+				if [[ "${opt}" == "NFT_BRIDGE_REJECT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NFT_REJECT"
+					ot-kernel_y_configopt "CONFIG_NF_REJECT_IPV4"
+					ot-kernel_y_configopt "CONFIG_NF_REJECT_IPV6"
+				fi
+				if [[ "${opt}" == "NF_CONNTRACK_BRIDGE" ]] ; then
+					ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+				fi
+				if [[ "${opt}" == "BRIDGE_NF_EBTABLES" ]] ; then
+					ot-kernel_y_configopt "CONFIG_BRIDGE"
+					ot-kernel_y_configopt "CONFIG_NETFILTER_XTABLES"
+				fi
+				if [[ "${opt}" == "BRIDGE_EBT_IP6" ]] ; then
+					ot-kernel_y_configopt "CONFIG_BRIDGE_NF_EBTABLES"
+					ot-kernel_y_configopt "CONFIG_IPV6"
+				fi
+				if [[ "${opt}" == "BRIDGE_EBT_ARPREPLY" ]] ; then
+					ot-kernel_y_configopt "CONFIG_BRIDGE_NF_EBTABLES"
+					ot-kernel_y_configopt "CONFIG_INET"
+				fi
+			fi
+		done
+		if (( \
+			   ${flag_ipv4} == 1 \
+			|| ${flag_ipv6} == 1 \
+			|| ${flag_xtables} == 1 \
+			|| ${flag_ipset} == 1 \
+			|| ${flag_ipvs} == 1 \
+			|| ${flag_ebt} == 1 \
+		)) ; then
+			ot-kernel_y_configopt "CONFIG_NET"
+			ot-kernel_y_configopt "CONFIG_NETFILTER"
+			ot-kernel_y_configopt "CONFIG_NETFILTER_ADVANCED"
+		fi
+		if (( ${flag_ipv4} == 1 )) ; then
+			ot-kernel_y_configopt "CONFIG_INET"
+			ot-kernel_y_configopt "CONFIG_IP_NF_IPTABLES"
+		fi
+		if (( ${flag_ipv6} == 1 )) ; then
+			ot-kernel_y_configopt "CONFIG_INET"
+			ot-kernel_y_configopt "CONFIG_IPV6"
+			ot-kernel_y_configopt "CONFIG_IP6_NF_IPTABLES"
+		fi
+		if (( ${flag_xtables} == 1 )) ; then
+			ot-kernel_y_configopt "CONFIG_INET"
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XTABLES"
+			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+
+			ot-kernel_y_configopt "CONFIG_NF_TABLES"
+		fi
+		if (( ${flag_ipset} == 1 )) ; then
+			ot-kernel_y_configopt "CONFIG_IP_SET"
+			ot-kernel_y_configopt "CONFIG_INET"
+		fi
+		if (( ${flag_ipvs} == 1 )) ; then
+			ot-kernel_y_configopt "CONFIG_IP_VS"
+		fi
+		if (( ${flag_ebt} == 1 )) ; then
+			ot-kernel_y_configopt "CONFIG_BRIDGE_NF_EBTABLES"
 		fi
 	fi
 }

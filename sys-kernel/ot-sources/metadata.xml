@@ -1773,6 +1773,24 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
+    OT_KERNEL_NETFILTER -- a space delimited list of kernel config symbols.
+
+    Acceptable values:
+
+      For netfilter ipv4, see https://github.com/torvalds/linux/blob/master/net/ipv4/netfilter/Kconfig
+      For netfilter ipv6, see https://github.com/torvalds/linux/blob/master/net/ipv6/netfilter/Kconfig
+      For netfilter ipvs, see https://github.com/torvalds/linux/blob/master/net/netfilter/ipvs/Kconfig
+      For netfilter ipset, see https://github.com/torvalds/linux/blob/master/net/netfilter/ipset/Kconfig
+      For netfilter xtables, see https://github.com/torvalds/linux/blob/master/net/netfilter/Kconfig
+      For netfilter ebt, see https://github.com/torvalds/linux/blob/master/net/bridge/netfilter/Kconfig
+
+    Examples:
+
+      OT_KERNEL_NETFILTER="NETFILTER_XT_MATCH_ADDRTYPE NETFILTER_XT_MATCH_CONNTRACK NETFILTER_XT_MATCH_IPVS IP_NF_FILTER IP6_NF_FILTER BRIDGE_EBT_T_NAT IP_VS_PROTO_UDP IP_VS_RR"
+      OT_KERNEL_NETFILTER="IP_VS_SH_TAB_BITS=8 CONFIG_IP_VS_MH_TAB_INDEX=12"
+
+
+
     OT_KERNEL_PA_BITS -- the address space of the dynamic memory (e.g. RAM).
     PA_BITS correspond to N in the 2^N physical address space.
 
@@ -1987,6 +2005,51 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
+    OT_KERNEL_NET_QOS_ACTIONS - a space separated list of QoS actions to run
+    after classification.
+
+    Acceptable values:
+
+      See https://github.com/torvalds/linux/blob/master/net/sched/Kconfig#L753
+
+    Exmaple:
+
+      OT_KERNEL_NET_QOS_ACTIONS="mirred sample csum"
+
+
+
+    OT_KERNEL_NET_QOS_CLASSIFIERS - a space separated list of additional QoS
+    classifiers used to categorize packets.
+
+    Acceptable values:
+
+      See https://github.com/torvalds/linux/blob/master/net/sched/Kconfig#L491
+      ematch - extended matches
+
+    Notes:
+
+      See also https://wiki.gentoo.org/wiki/Traffic_shaping
+
+
+
+    OT_KERNEL_NET_QOS_SCHEDULERS - a space separated list of QoS queue
+    schedulers with the first listed as the default.  Similar to like a CPU
+    scheduler but for sending, dropping, prioritizing network packets.  Each
+    network device can have a different one.
+
+    Acceptable values:
+
+      For algorithms, see https://github.com/torvalds/linux/blob/master/net/sched/Kconfig#L48
+      For allowed defaults, see https://github.com/torvalds/linux/blob/master/net/sched/Kconfig#L457
+      pfifo_fast (default)
+      clear - Do not add any (Ebuild only)
+
+    Example:
+
+      OT_KERNEL_NET_QOS_SCHEDULERS="fq pfifo_fast"
+
+
+
     OT_KERNEL_SATA_LPM_MAX -- Set the SATA link power management policy for max performance. (Default:  1)
     OT_KERNEL_SATA_LPM_MID -- Set the SATA link power management policy for mid performance. (Default:  0)
     OT_KERNEL_SATA_LPM_MIN -- Set the SATA link power management policy for power saving. (Default:  0)
@@ -2189,10 +2252,13 @@ unset OT_KERNEL_PRIVATE_KEY
 
       clear     - Do not add any (Ebuild only)
 
+      For descriptions, see https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L480
+
     Defaults (EXPERIMENTAL):
 
       OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr2 bbr cubic dctcp hybla vegas westwood"  # if USE=bbrv2 and OT_KERNEL_USE=bbrv2
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic dctcp hybla vegas westwood"   # otherwise
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic dctcp hybla vegas westwood"       # otherwise
+      For allowed defaults, see https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L682
 
       Cubic alone is the upstream default.
 
@@ -2298,9 +2364,6 @@ unset OT_KERNEL_PRIVATE_KEY
           Slide 21. "BBR v2: A Model-based Congestion Control Performance Optimizations". Cardwell et al.
           P 14. "Comparison of TCP Congestion Control Performance over a Satellite Network". Claypool et al.
           P 9. "An Emulation-based Evaluation of TCP BBRv2 Alpha for Wired Broadband". Kfoury et al.
-
-      - For descriptions, see
-        https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L480
 
     See also:
 
