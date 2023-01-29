@@ -226,11 +226,11 @@ echo
 }
 
 select_tcca() {
-	local alg="${USE_CASE,,}"
-	if [[ "${!TCCA_MAP[@]}" =~ "${alg}" ]] ; then
-		set_tcca ${TCCA_MAP[${alg}]}
+	local key="${USE_CASE,,}"
+	if [[ "${!TCCA_MAP[@]}" =~ "${key}" ]] ; then
+		set_tcca ${TCCA_MAP[${key}]}
 	else
-		echo "${alg} does not exist."
+		echo "${key} does not exist."
 		echo "Valid values: ${!TCCA_MAP[@]}"
 		exit 1
 	fi
