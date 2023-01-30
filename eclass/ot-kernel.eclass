@@ -7924,49 +7924,49 @@ ot-kernel_src_install() {
 		cd "${BUILD_DIR}" || die
 
 		if ot-kernel_is_full_sources_required ; then
+			# Everything will be installed
 			:;
-		elif [[ "${OT_KERNEL_PRUNE_EXTRA_ARCHES}" == "1" ]] \
-			&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
-			# This is allowed if no external modules.
+		else
+			if [[ "${OT_KERNEL_PRUNE_EXTRA_ARCHES}" == "1" ]] \
+				&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+				# This is allowed if no external modules.
 
-			# Prune all config arches
-			# Prune now for a faster source code install or header preservation
+				# Prune all config arches
+				# Prune now for a faster source code install or header preservation
 
-			# Preserve build files because they are mostly unconditional includes.
-			# Save arch/um/scripts/Makefile.rules for make mrproper.
-			cp --parents -a arch/um/scripts/Makefile.rules \
-				"${T}/pruned" || die
-			ot-kernel_prune_arches
-			# Restore arch/um/scripts/Makefile.rules for make mrproper.
-			cp -aT "${T}/pruned" \
-				"${BUILD_DIR}" || die
-			rm -rf $(find arch -name "Kconfig*") # Delete if not using any make *config.
-		fi
+				# Preserve build files because they are mostly unconditional includes.
+				# Save arch/um/scripts/Makefile.rules for make mrproper.
+				cp --parents -a arch/um/scripts/Makefile.rules \
+					"${T}/pruned" || die
+				ot-kernel_prune_arches
+				# Restore arch/um/scripts/Makefile.rules for make mrproper.
+				cp -aT "${T}/pruned" \
+					"${BUILD_DIR}" || die
+				rm -rf $(find arch -name "Kconfig*") # Delete if not using any make *config.
+			fi
 
-		if ot-kernel_is_full_sources_required ; then
-			# Installing sources will preserve headers and notices.
-			:;
-		elif [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES:-0}" == "1" ]] \
-			&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
-			local last_version=$(best_version "=sys-kernel/${PN}-${K_MAJOR_MINOR}*" \
-				| sed -e "s|sys-kernel/${PN}-||g")
-			local license_preserve_path_src="/usr/share/${PN}/${last_version}-${extraversion}/licenses"
-			local license_preserve_path_dest="/usr/share/${PN}/${PV}-${extraversion}/licenses"
-			dodir "${license_preserve_path_dest}"
-			if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES_CACHED:-1}" == "1" \
-				&& -e "${license_preserve_path_src}" ]] ; then
+			if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES:-0}" == "1" ]] \
+				&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+				local last_version=$(best_version "=sys-kernel/${PN}-${K_MAJOR_MINOR}*" \
+					| sed -e "s|sys-kernel/${PN}-||g")
+				local license_preserve_path_src="/usr/share/${PN}/${last_version}-${extraversion}/licenses"
+				local license_preserve_path_dest="/usr/share/${PN}/${PV}-${extraversion}/licenses"
+				dodir "${license_preserve_path_dest}"
+				if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES_CACHED:-1}" == "1" \
+					&& -e "${license_preserve_path_src}" ]] ; then
 ewarn "Preserving copyright notices (cached)."
-				cp -aT "${license_preserve_path_src}" \
-					"${ED}/${license_preserve_path_dest}" || die
-			else
+					cp -aT "${license_preserve_path_src}" \
+						"${ED}/${license_preserve_path_dest}" || die
+				else
 ewarn "Preserving copyright notices.  This may take hours."
-				cat "${FILESDIR}/header-preserve-kernel" \
-					> "${BUILD_DIR}/header-preserve-kernel" || die
-				pushd "${BUILD_DIR}" || die
-					export MULTI_HEADER_DEST_PATH="${ED}/${license_preserve_path_dest}"
-					chmod +x header-preserve-kernel || die
-					./header-preserve-kernel || die
-				popd
+					cat "${FILESDIR}/header-preserve-kernel" \
+						> "${BUILD_DIR}/header-preserve-kernel" || die
+					pushd "${BUILD_DIR}" || die
+						export MULTI_HEADER_DEST_PATH="${ED}/${license_preserve_path_dest}"
+						chmod +x header-preserve-kernel || die
+						./header-preserve-kernel || die
+					popd
+				fi
 			fi
 		fi
 
@@ -8025,11 +8025,8 @@ ewarn "Preserving copyright notices.  This may take hours."
 				> include/config/kernel.release || die
 		fi
 
-		if ot-kernel_is_full_sources_required ; then
-			ot-kernel_install_source_code
-		fi
-
-		local logo_license_path=$(find "${BUILD_DIR}/drivers/video/logo" \
+		cd "${BUILD_DIR}" || die
+		local logo_license_path=$(find "drivers/video/logo" \
 			-name "logo_custom_*.*.license" \
 			2>/dev/null)
 		if [[ -n "${logo_license_path}" && -e "${logo_license_path}" ]] ; then
@@ -8037,14 +8034,16 @@ ewarn "Preserving copyright notices.  This may take hours."
 			doins "${logo_license_path}"
 		fi
 
-		cd "${BUILD_DIR}" || die
-
 		if ot-kernel_is_full_sources_required ; then
-			:;
-		elif ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
-			# No longer building (binary only)
-			rm -rf arch/um/scripts/Makefile.rules
+			ot-kernel_install_source_code
+		else
+			if ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+				# No longer building (binary only)
+				rm -rf arch/um/scripts/Makefile.rules
+			fi
 		fi
+
+		cd "${BUILD_DIR}" || die
 
 		# Required for genkernel
 		insinto "/usr/src/linux-${PV}-${extraversion}"
@@ -8065,17 +8064,23 @@ ewarn "Preserving copyright notices.  This may take hours."
 			fperms 600 "${cert}"
 		done
 
-		# Required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
-		local ed_kernel_path="${ED}/usr/src/linux-${PV}-${extraversion}"
-		insinto "/usr/src/linux-${PV}-${extraversion}/scripts"
-		doins scripts/Kbuild.include
-		doins scripts/Makefile.extrawarn
-		doins scripts/subarch.include
-		local path
-		for path in $(find arch/* -maxdepth 1 -name "Makefile") ; do
-			insinto "/usr/src/linux-${PV}-${extraversion}/"$(dirname "${path}")
-			doins "${path}"
-		done
+		if ot-kernel_is_full_sources_required ; then
+			# Everything already installed
+			:;
+		else
+			# Add files to pass version and kernel config checks for linux-info.eclass.
+			# Required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
+			local ed_kernel_path="${ED}/usr/src/linux-${PV}-${extraversion}"
+			insinto "/usr/src/linux-${PV}-${extraversion}/scripts"
+			doins scripts/Kbuild.include
+			doins scripts/Makefile.extrawarn
+			doins scripts/subarch.include
+			local path
+			for path in $(find arch/* -maxdepth 1 -name "Makefile") ; do
+				insinto "/usr/src/linux-${PV}-${extraversion}/"$(dirname "${path}")
+				doins "${path}"
+			done
+		fi
 
 		# Fix symlinks
 		rm -rf "${ED}/lib/modules/${PV}-${extraversion}-${arch}/build" || true
