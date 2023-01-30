@@ -7537,7 +7537,7 @@ ot-kernel_install_built_kernel() {
 	for f in $(find boot -type f) ; do
 		(
 			if file "${f}" | grep -q -E -e 'Linux kernel.*executable' ; then
-				chmod -x "${f}"
+				fperms -x "/${f}"
 			fi
 		) &
 		local njobs=$(jobs -r -p | wc -l)
@@ -7572,7 +7572,7 @@ ot-kernel_install_source_code() {
 		for f in $(find . -type f) ; do
 			(
 				if file "${f}" | grep -q -F -e 'executable' ; then
-					fperms 0755 "/usr/src/linux-${PV}-${extraversion}/${f#.}"
+					fperms 0755 "/usr/src/linux-${PV}-${extraversion}/${f#./}"
 				fi
 			) &
 			local njobs=$(jobs -r -p | wc -l)
@@ -8061,7 +8061,7 @@ ewarn "Preserving copyright notices.  This may take hours."
 			&& doins "certs/"*".genkey"
 		local cert
 		for cert in $(find certs -type f) ; do
-			fperms 600 "${cert}"
+			fperms 600 "/usr/src/linux-${PV}-${extraversion}/${cert}"
 		done
 
 		if ot-kernel_is_full_sources_required ; then
