@@ -5253,12 +5253,10 @@ ot-kernel-pkgflags_oss() { # DONE
 	fi
 }
 
-# @FUNCTION: ot-kernel-pkgflags_external_modules
+# @FUNCTION: ot-kernel-pkgflags_has_external_module
 # @DESCRIPTION:
-# Applies kernel config flags for external kernel modules
-ot-kernel-pkgflags_external_modules() {
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd44ca7a]}" == "1" ]] && return
-	local external_module=0
+# Check for external modules
+ot-kernel-pkgflags_has_external_module() {
 # Discovered with
 # out=$(mktemp) ; \
 # cd /var/lib/layman ; grep --exclude-dir=.git --exclude-dir=metadata -r -e "linux-mod" -e "sys-kernel/dkms" ./ | cut -f 3-4 -d "/" > "${out}" ; \
@@ -5348,15 +5346,27 @@ sys-process/falco-bin
 x11-drivers/nvidia-drivers
 x11-misc/openrazer
 	)
-
 	local p
 	for p in ${PKGS[@]} ; do
 		if ot-kernel_has_version "${p}" ; then
-			einfo "Detected external kernel module: ${p}"
-			external_module=1
+			return 0
 		fi
 	done
-	ot-kernel_has_version "sys-kernel/dkms" && external_module=1
+	ot-kernel_has_version "sys-kernel/dkms" && return 0
+	return 1
+}
+
+# @FUNCTION: ot-kernel-pkgflags_external_modules
+# @DESCRIPTION:
+# Applies kernel config flags for external kernel modules
+ot-kernel-pkgflags_external_modules() {
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd44ca7a]}" == "1" ]] && return
+	local external_module=0
+
+	if ot-kernel-pkgflags_has_external_module ; then
+		einfo "Detected external kernel module"
+		external_module=1
+	fi
 	[[ "${OT_KERNEL_EXTERNAL_MODULES}" ]] && external_module=1
 
 	if (( ${external_module} == 1 )) ; then

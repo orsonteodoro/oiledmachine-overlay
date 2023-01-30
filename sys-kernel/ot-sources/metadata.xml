@@ -673,23 +673,23 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
       This field can be not set which would default to using cfs.
 
-      Misc notes:
+      Notes:
 
-      * cfs is preferred for server kernels and bug-less experience.
-      * cfs by default disables autogroup or uses previous settings
-      * cfs-interactive is an alias for cfs-autogroup
-      * autogroup will be disabled in all other schedulers.
-      * muqss and pds-mq are better suited for audio production for the
-        ISO priority class.
-      * The rt USE/OT_KERNEL_USE flag can only use the cfs scheduler.
-      * Anagolus to driving with manual and automatic gears, using autogroup or
-        bmq can interfere with controlling individual task placement.
-      * For better manual control of individual task placement use either cfs,
-        cfs-throughput, muqss, or pds or the sysfs to adjust the weights
-        of autogroup.
-      * BMQ has been renamed to Project C.  Project C merged both PDS and
-        BMQ allowing to choose either scheduler.  C means cross.
-      * Project C's version of PDS is not the same as PDS-mq.
+        - cfs is preferred for server kernels and bug-less experience.
+        - cfs by default disables autogroup or uses previous settings
+        - cfs-interactive is an alias for cfs-autogroup
+        - autogroup will be disabled in all other schedulers.
+        - muqss and pds-mq are better suited for audio production for the
+          ISO priority class.
+        - The rt USE/OT_KERNEL_USE flag can only use the cfs scheduler.
+        - Anagolus to driving with manual and automatic gears, using autogroup or
+          bmq can interfere with controlling individual task placement.
+        - For better manual control of individual task placement use either cfs,
+          cfs-throughput, muqss, or pds or the sysfs to adjust the weights
+          of autogroup.
+        - BMQ has been renamed to Project C.  Project C merged both PDS and
+          BMQ allowing to choose either scheduler.  C means cross.
+        - Project C's version of PDS is not the same as PDS-mq.
 
       The following is discussed in great detail because it affects use of
       scheduling apps that only discuss or assume CFS.  These small details
@@ -994,8 +994,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     - Level 1.5 mitigations are changes increase mitigation without disabling
       of use of hardware with additional performance penalty.
     - Level 2 mitigations are changes that severely place security over
-    convenience which may take away ability to use certain hardware or have
-    severe performance degration.
+      convenience which may take away ability to use certain hardware or have
+      severe performance degration.
 
     See also
 
@@ -1064,6 +1064,9 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     OT_KERNEL_EXTERNAL_MODULES -- prepares the kernel for out-of-tree
     modules.  The kernel needs to expose these for packages that build
     kernel drivers outside this package.
+
+    This implies that the source code will be installed in order to build
+    external modules.
 
     Acceptable values:
 
@@ -1331,17 +1334,19 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     Acceptable values:
 
-    0 - don't install (EXPERIMENTAL)
+    0 - don't install
     1 - install
-    n - don't install (EXPERIMENTAL)
+    n - don't install
     y - install
     unset -  install (default)
 
-    - It is not recommended to disable source code install until
-    it is confirmed the minimal set of files from the source code
-    is found in order for initramfs works.
-    - It is not recommended to disable this if you are using
-    external modules.
+    Notes:
+
+      - Explicit or implicit external modules will still force the install
+        of the full source code.
+      - Disabling the source code install will still install the minimal
+        required and source code for portage to do version and kernel config
+        checks.
 
     See also
 
@@ -1628,8 +1633,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     Notes:
 
-      Use `sha512sum /etc/portage/ot-sources/6.1/gaming/x86_64/logo_preprocess.sh | cut -f 1 -d " "` to obtain the sha512 checksum.
-      Use `rhash --blake2b /etc/portage/ot-sources/6.1/gaming/x86_64/logo_preprocess.sh | cut -f 1 -d " "` to obtain the blake2b checksum
+      - Use `sha512sum /etc/portage/ot-sources/6.1/gaming/x86_64/logo_preprocess.sh | cut -f 1 -d " "` to obtain the sha512 checksum.
+      - Use `rhash --blake2b /etc/portage/ot-sources/6.1/gaming/x86_64/logo_preprocess.sh | cut -f 1 -d " "` to obtain the blake2b checksum
 
 
 
@@ -1651,22 +1656,22 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     Notes:
 
       - Custom logos or images provided require imagemagick or graphicsmagick
-      installed via the respective USE flag.
-      Positives for using a kernel logo are ease of deployment, fewest changes,
-      short term satisfaction.
+        installed via the respective USE flag.
+        Positives for using a kernel logo are ease of deployment, fewest changes,
+        short term satisfaction.
       - Negatives for using a kernel logo are it will likely break the seamless
-      integration between initramfs or init system logo transition.
+        integration between initramfs or init system logo transition.
       - It requires that the network-sandbox be disabled if logos are fetched
-      from the Internet.
+        from the Internet.
       - The logo must be license compatible with the kernel.
       - The logo must abide by acceptable trademark use agreements.
       - The logo from the Internet must come from a vetted reliable source to
-      prevent being hacked.
+        prevent being hacked.
       - The logos provided by the kernel are 80x80 or 40x40 with either
-      1, 16, 225 colors.
-      For seemless boot logos or animated logos, it is recommended to use
+        1, 16, 225 colors.
+        For seemless boot logos or animated logos, it is recommended to use
       - Dracut and Plymouth packages instead of the kernel logo.
-      Kernel logos are stills.
+        Kernel logos are stills.
       - Additional modding may be required on PPC.  See
         custom-logo-for-6.1.patch for details.
 
@@ -1855,8 +1860,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     Notes:
 
-      You must prefix the id with an S.
-      You do not need to declare the associative array.
+      - You must prefix the id with an S.
+      - You do not need to declare the associative array.
 
     See also:
 
@@ -1884,8 +1889,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     Notes:
 
-      You must prefix the id with an S.
-      You do not need to declare the associative array.
+      - You must prefix the id with an S.
+      - You do not need to declare the associative array.
 
     See also:
 
@@ -1912,8 +1917,10 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     Notes:
 
-    - When preserving headers, false positives or partial fragments may appear.
-    - It may take hours to achieve this extraction.
+      - When preserving headers, false positives or partial fragments may appear.
+      - It may take hours to achieve this extraction.
+      - This is only useful when doing binary install and without external
+        modules.
 
     Acceptable values:
 
@@ -1995,13 +2002,17 @@ unset OT_KERNEL_PRIVATE_KEY
 
     OT_KERNEL_PRUNE_EXTRA_ARCHES -- remove extra arches for faster install time.
     The one not pruned is the one corresponding to the value in OT_KERNEL_ARCH.
-    (EXPERIMENTAL)
 
     Acceptable values:
 
       1 - prune
       0 - keep
       unset - keep
+
+    Notes:
+
+      - Pruning only applies to binary only install without external modules.
+      - Full source code install disable pruning.
 
 
 
@@ -2028,7 +2039,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Notes:
 
-      See also https://wiki.gentoo.org/wiki/Traffic_shaping
+      - See also https://wiki.gentoo.org/wiki/Traffic_shaping
 
 
 
@@ -2294,31 +2305,30 @@ unset OT_KERNEL_PRIVATE_KEY
         estimated bandwidth:
 
             fixed/static connections, dynamic connections
-          - radio:bbr2, gaming:bbr2      # This is okay if not live streamer
-          - radio:bbr, gaming:bbr        # This is okay if not live streamer
-          - radio:vegas, gaming:vegas    # This is okay if not live streamer
-          - video-streaming:cubic, micropackage-downloads(s):bbr
-          - single-download:vegas, video-stream(s):cubic
-          - single-download:vegas, video-stream(s):yeah
+          * radio:bbr2, gaming:bbr2      # This is okay if not live streamer
+          * radio:bbr, gaming:bbr        # This is okay if not live streamer
+          * radio:vegas, gaming:vegas    # This is okay if not live streamer
+          * video-streaming:cubic, micropackage-downloads(s):bbr
+          * single-download:vegas, video-stream(s):cubic
+          * single-download:vegas, video-stream(s):yeah
 
-        Note:
+        Sub-notes:
 
-          Old school games consume about 64 kbps or less.  This is about 6.4% of 1 Mbps.
-          Online RPGs consume on the order of 21 kbps.  This is about 2.1% of 1 Mbps.
-
-          Since there is evidence that gaming does not require a lot of
-          bandwidth, you may choose higher audio bitrates if you have available
-          downstream kbps.
-
-          It is recommended to set the static set first followed by the dynamic
-          set so the newly created connections inherit the TCP Congestion
-          Controls setting.
-
-          There is no obvious technique to control the placement of the primary
-          and secondary flows of two process that spawn new connections at the
-          same time.  (e.g. new players that enter the scene and new VoIP
-          connections)  It is probably better to choose a fair algorithm or the
-          same algorithm.
+          * Old school games consume about 64 kbps or less.  This is about 6.4%
+            of 1 Mbps.
+          * Online RPGs consume on the order of 21 kbps.  This is about 2.1% of
+            1 Mbps.
+          * Since there is evidence that gaming does not require a lot of
+            bandwidth, you may choose higher audio bitrates if you have
+            available downstream kbps.
+          * It is recommended to set the static set first followed by the
+            dynamic set so the newly created connections inherit the TCP
+            Congestion Controls setting.
+          * There is no obvious technique to control the placement of the
+            primary and secondary flows of two process that spawn new
+            connections at the same time.  (e.g. new players that enter the
+            scene and new VoIP connections)  It is probably better to choose a
+            fair algorithm or the same algorithm.
 
           Most VoIP is UDP, so these suggestions may not apply.
 
@@ -2347,16 +2357,16 @@ unset OT_KERNEL_PRIVATE_KEY
 
       - For 4 flows and above, the recommendations change to
 
-        FTP servers (home):  bbr2 or dctcp
-        Parallel micropackage downloads (receiver):  hybla
-        WWW/HTTP servers (home, low capacity):  bbr2 or vegas
-        WWW/HTTP servers (600 or less flows, mid capacity):  dctcp
-        WWW/HTTP servers (600+ flows, very high capacity):  bbr2
-        WWW client browsing only (for lower link click latency and faster image gallery loading):  vegas
+        * FTP servers (home):  bbr2 or dctcp
+        * Parallel micropackage downloads (receiver):  hybla
+        * WWW/HTTP servers (home, low capacity):  bbr2 or vegas
+        * WWW/HTTP servers (600 or less flows, mid capacity):  dctcp
+        * WWW/HTTP servers (600+ flows, very high capacity):  bbr2
+        * WWW client browsing only (for lower link click latency and faster image gallery loading):  vegas
 
         Notes:
 
-          BBRv2 and BBRv1 exhibit similiar fairness patterns when coexisting with cubic.
+          * BBRv2 and BBRv1 exhibit similiar fairness patterns when coexisting with cubic.
 
         Further reading:
 
@@ -2417,36 +2427,35 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Notes:
 
-    - For web browser games, consider changing
-      OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING to vegas instead of
-      bbr2.  The perceived link-click latency of vegas felt faster than
-      bbr.
-    - The OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING_REC should not be
-      changed for deterministic reasons.  Only change if you are sure if
-      that algorithm can dominate the one in
-      OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING.
-    - The above defaults may change based on availablity in
-      OT_KERNEL_TCP_CONGESTION_CONTROLS, but fallback to the next best option.
-    - The defaults are chosen based on multiple flows bandwidth allocation with
-      a primary flow (active focused process) and auxilitary flows (background).
-    - The wrapper will be found in /usr/bin/tcca-${PV}-${EXTRAVERSION}-${ARCH}
-    - The wrapper configuration may be changed in /etc/tcca-${PV}-${EXTRAVERSION}-${ARCH}.conf
-    - The wrapper script requires sys-auth/polkit.  Use the gnome or kde USE
-      flag to present GUI dialog.
-    - The wrapper script will reqest elevated privileges twice: once to load the
-      kernel module, and the other to change the algorithm.
-    - See the contents of the tcca (TCP Congestion Control Algorithm) script to
-      learn how to use it.
-    - For OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING you can choose either
-      to target average bitrate (westwood, cubic), low latency load or seek
-      (hybla, vegas), or the well rounded middle (bbr, bbr2).  By default, it will
-      choose the highest average bitrate/thoughput available for max hardware
-      compatibility.
-    - OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_DOWNLOAD should only be
-      vegas.  This is so that it submits to flows using
-      cubic/westwood which should dominate.
-    - bbr is to maximize throughput
-    - bbr2 is to maximize multi flow fairness
+      - For web browser games, consider changing
+        OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING to vegas instead of
+        bbr2.  The perceived link-click latency of vegas felt faster than bbr.
+      - The OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING_REC should not be
+        changed for deterministic reasons.  Only change if you are sure if
+        that algorithm can dominate the one in
+        OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING.
+      - The above defaults may change based on availablity in
+        OT_KERNEL_TCP_CONGESTION_CONTROLS, but fallback to the next best option.
+      - The defaults are chosen based on multiple flows bandwidth allocation with
+        a primary flow (active focused process) and auxilitary flows (background).
+      - The wrapper will be found in /usr/bin/tcca-${PV}-${EXTRAVERSION}-${ARCH}
+      - The wrapper configuration may be changed in /etc/tcca-${PV}-${EXTRAVERSION}-${ARCH}.conf
+      - The wrapper script requires sys-auth/polkit.  Use the gnome or kde USE
+        flag to present GUI dialog.
+      - The wrapper script will reqest elevated privileges twice: once to load
+        the kernel module, and the other to change the algorithm.
+      - See the contents of the tcca (TCP Congestion Control Algorithm) script to
+        learn how to use it.
+      - For OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING you can choose
+        either to target average bitrate (westwood, cubic), low latency load or
+        seek (hybla, vegas), or the well rounded middle (bbr, bbr2).  By
+        default, it will choose the highest average bitrate/thoughput available
+        for max hardware compatibility.
+      - OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_DOWNLOAD should only be
+        vegas.  This is so that it submits to flows using
+        cubic/westwood which should dominate.
+      - bbr is to maximize throughput
+      - bbr2 is to maximize multi flow fairness
 
 
 
@@ -2555,17 +2564,14 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Notes:
 
-      Some profiles are conveniently aliases.
-      builder* are used for emerging.
+      - Some profiles are conveniently aliases.
+      - builder* are used for emerging.
+      - The OT_KERNEL_WORK_PROFILE is disjoint from OT_KERNEL_HARDENING_LEVEL to
+        provide flexibility.
+      - You can only use one OT_KERNEL_WORK_PROFILE per profile/extraversion.
+      - It's recommended to have a separate profile/extraversion per profile.
 
-      The OT_KERNEL_WORK_PROFILE is disjoint from OT_KERNEL_HARDENING_LEVEL to
-      provide flexibility.
-
-      You can only use one OT_KERNEL_WORK_PROFILE per profile/extraversion.
-
-      It's recommended to have a separate profile/extraversion per profile.
-
-      Examples:
+    Examples:
 
       # For gaming without user generated content
       /etc/portage/ot-sources/5.16/gaming/x86_64/env:

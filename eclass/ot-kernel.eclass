@@ -2392,9 +2392,15 @@ ewarn
 			cp -a "${OT_KERNEL_SHARED_KEY}" "certs/signing_key.x509" \
 				|| die "Cannot copy shared key"
 		fi
-		# We can't prune earlier than multi arch patches.
-		# Prune now for a faster source code install
-		if [[ "${OT_KERNEL_PRUNE_EXTRA_ARCHES}" == "1" ]] ; then
+		if ot-kernel_is_full_sources_required ; then
+			:;
+		elif [[ "${OT_KERNEL_PRUNE_EXTRA_ARCHES}" == "1" ]] \
+			&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+			# This is allowed if no external modules.
+
+			# We can't prune earlier than multi arch patches.
+			# Prune now for a faster source code install
+
 			rm -rf "${T}/pruned"
 			# Save Kconfig* for make olddefconfig.
 			# Save arch/um/scripts/Makefile.rules for make mrproper.
@@ -7867,6 +7873,20 @@ eerror "arch/${my_arch} is not supported"
 	fi
 }
 
+# @FUNCTION: ot-kernel_is_full_sources_required
+# @DESCRIPTION:
+# Check if sources required.  This is because of possible varations.
+ot-kernel_is_full_sources_required() {
+	if [[ "${OT_KERNEL_EXTERNAL_MODULES}" == "1" ]] ; then
+		return 0
+	elif [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+		return 0
+	elif ot-kernel-pkgflags_has_external_module ; then
+		return 0
+	fi
+	return 1
+}
+
 # @FUNCTION: ot-kernel_src_install
 # @DESCRIPTION:
 # Removes patch cruft.
@@ -7903,10 +7923,15 @@ ot-kernel_src_install() {
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 
-		# Prune all config arches
-		# Prune now for a faster source code install or header preservation
-		if [[ "${OT_KERNEL_PRUNE_EXTRA_ARCHES}" == "1" ]] \
+		if ot-kernel_is_full_sources_required ; then
+			:;
+		elif [[ "${OT_KERNEL_PRUNE_EXTRA_ARCHES}" == "1" ]] \
 			&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+			# This is allowed if no external modules.
+
+			# Prune all config arches
+			# Prune now for a faster source code install or header preservation
+
 			# Preserve build files because they are mostly unconditional includes.
 			# Save arch/um/scripts/Makefile.rules for make mrproper.
 			cp --parents -a arch/um/scripts/Makefile.rules \
@@ -7918,7 +7943,10 @@ ot-kernel_src_install() {
 			rm -rf $(find arch -name "Kconfig*") # Delete if not using any make *config.
 		fi
 
-		if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES:-0}" == "1" ]] \
+		if ot-kernel_is_full_sources_required ; then
+			# Installing sources will preserve headers and notices.
+			:;
+		elif [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES:-0}" == "1" ]] \
 			&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
 			local last_version=$(best_version "=sys-kernel/${PN}-${K_MAJOR_MINOR}*" \
 				| sed -e "s|sys-kernel/${PN}-||g")
@@ -7997,8 +8025,7 @@ ewarn "Preserving copyright notices.  This may take hours."
 				> include/config/kernel.release || die
 		fi
 
-		if [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
-			ewarn "Using OT_KERNEL_INSTALL_SOURCE_CODE is experimental."
+		if ot-kernel_is_full_sources_required ; then
 			ot-kernel_install_source_code
 		fi
 
@@ -8012,7 +8039,9 @@ ewarn "Preserving copyright notices.  This may take hours."
 
 		cd "${BUILD_DIR}" || die
 
-		if ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+		if ot-kernel_is_full_sources_required ; then
+			:;
+		elif ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
 			# No longer building (binary only)
 			rm -rf arch/um/scripts/Makefile.rules
 		fi
