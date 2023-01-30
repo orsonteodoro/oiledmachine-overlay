@@ -8098,11 +8098,11 @@ ewarn "Preserving copyright notices.  This may take hours."
 			doins "${T}/etc/ot-sources/iosched/conf/${PV}-${extraversion}-${arch}"
 		fi
 
+		OT_KERNEL_TCP_CONGESTION_CONTROLS=$(_ot-kernel_set_kconfig_get_init_tcp_congestion_controls)
 		if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT:-1}" == "1" \
 			&& -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" ]] ; then
 			# Each kernel config may have different a combo.
 
-			OT_KERNEL_TCP_CONGESTION_CONTROLS=$(_ot-kernel_set_kconfig_get_init_tcp_congestion_controls)
 
 			local default_tcca=$(ot-kernel_get_tcp_congestion_controls_default)
 
