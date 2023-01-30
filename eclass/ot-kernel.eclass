@@ -7572,7 +7572,7 @@ ot-kernel_install_source_code() {
 		for f in $(find . -type f) ; do
 			(
 				if file "${f}" | grep -q -F -e 'executable' ; then
-					fperms +x "${f#.}"
+					fperms 0755 "/usr/src/linux-${PV}-${extraversion}/${f#.}"
 				fi
 			) &
 			local njobs=$(jobs -r -p | wc -l)
