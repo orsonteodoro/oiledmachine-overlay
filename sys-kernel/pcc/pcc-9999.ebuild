@@ -45,12 +45,12 @@ MAKEOPTS="-j1"
 pkg_setup() {
 	if use allegro ; then
 		MODULE_NAMES+="
-			tcp_pcc(net/ipv4:"${WORKDIR}/allegro/src")
+			tcp_pcc(kernel/net/ipv4:"${WORKDIR}/allegro/src")
 		"
 	fi
 	if use vivace ; then
 		MODULE_NAMES+="
-			tcp_pcc(net/ipv4:"${WORKDIR}/vivace/src")
+			tcp_pcc(kernel/net/ipv4:"${WORKDIR}/vivace/src")
 		"
 	fi
 	if use allegro || use vivace ; then
