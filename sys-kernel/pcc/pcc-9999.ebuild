@@ -23,7 +23,7 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" allegro doc vivace"
+IUSE+=" allegro doc +vivace"
 REQUIRED_USE="
 	^^ ( allegro vivace )
 "
