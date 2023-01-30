@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild only on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+
+    Performance-oriented Congestion Control is a TCP Congestion
+    control kernel module.
+
+    It uses an AI principles, for example to converge towards the best
+    sending rates.
+
+    PCC Vivace has a slow start similar to cubic.  Low consistent RTT.
+    Throughput is very steady with fewest dips.
+
+    Both variants have low bufferbloat.
+
+    PCC Vivace has lower latency than PCC Allegro.
+
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/PCCproject/PCC-Kernel/issues</bugs-to>
+    <remote-id type="github">PCCproject/PCC-Kernel</remote-id>
+  </upstream>
+  <use>
+    <flag name="allegro">
+      Uses loss based sigmoid utility function + heuristic rate control.
+      Created circa 2015.
+    </flag>
+    <flag name="vivace">
+      Uses a concave utility function + gradient descent as rate control.
+      Created circa 2018.
+    </flag>
+  </use>
+</pkgmetadata>
