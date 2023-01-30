@@ -13,24 +13,34 @@ HOMEPAGE="
 http://www.pccproject.net
 https://github.com/PCCproject/PCC-Kernel
 "
-LICENSE="BSD GPL-2"
+LICENSE="
+	allegro? (
+		BSD GPL-2
+	)
+	vivace? (
+		BSD GPL-2
+	)
+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" allegro doc vivace"
 REQUIRED_USE="
 	^^ ( allegro vivace )
 "
+RDEPEND+="
+"
 DEPEND+="
 "
-RDEPEND+="
-	${DEPEND}
-"
 BDEPEND+="
+	|| (
+		sys-devel/gcc
+		sys-devel/clang
+	)
 "
-EGIT_COMMIT="2fcc56c33f8cc3742e5ec05c1f658c9b13a9ae13"
 S="${WORKDIR}"
 RESTRICT="mirror"
 MODULE_NAMES=""
+MAKEOPTS="-j1"
 
 pkg_setup() {
 	if use allegro ; then
@@ -43,39 +53,50 @@ pkg_setup() {
 			tcp_pcc(net/ipv4:"${WORKDIR}/vivace/src")
 		"
 	fi
-	linux-mod_pkg_setup
+	if use allegro || use vivace ; then
+		linux-mod_pkg_setup
+	fi
 }
 
 src_unpack() {
-	EGIT_REPO_URI="https://github.com/PCCproject/PCC-Kernel.git"
 	if use allegro ; then
+		EGIT_REPO_URI="https://github.com/PCCproject/PCC-Kernel.git"
 		EGIT_COMMIT="HEAD"
 		EGIT_BRANCH="master"
-		EGIT_CHECKOUT_DIR="allegro"
+		EGIT_CHECKOUT_DIR="${WORKDIR}/allegro"
 		git-r3_fetch
 		git-r3_checkout
 	fi
 	if use vivace ; then
+		EGIT_REPO_URI="https://github.com/PCCproject/PCC-Kernel.git"
 		EGIT_COMMIT="HEAD"
 		EGIT_BRANCH="vivace"
-		EGIT_CHECKOUT_DIR="vivace"
+		EGIT_CHECKOUT_DIR="${WORKDIR}/vivace"
 		git-r3_fetch
 		git-r3_checkout
+	fi
+}
+
+src_compile() {
+	if use allegro || use vivace ; then
+		linux-mod_src_compile
 	fi
 }
 
 src_install() {
-	linux-mod_src_install
+	if use allegro || use vivace ; then
+		linux-mod_src_install
+	fi
 	if use allegro ; then
 		cd "${WORKDIR}/allegro" || die
-		dodoc LICENSE
-		docinto allegro
-		use doc && "${WORKDIR}/allegro/src/README.rst"
+		docinto "allegro"
+		dodoc "LICENSE"
+		use doc && dodoc "src/README.rst"
 	fi
 	if use vivace ; then
 		cd "${WORKDIR}/vivace" || die
-		dodoc LICENSE
-		docinto vivace
-		use doc && "${WORKDIR}/allegro/src/README.rst"
+		docinto "vivace"
+		dodoc "LICENSE"
+		use doc && dodoc "src/README.rst"
 	fi
 }

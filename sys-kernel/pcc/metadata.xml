@@ -21,6 +21,8 @@
 
     PCC Vivace has lower latency than PCC Allegro.
 
+    It can shave off hours of time sending data compared to cubic.
+
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/PCCproject/PCC-Kernel/issues</bugs-to>
@@ -28,12 +30,14 @@
   </upstream>
   <use>
     <flag name="allegro">
-      Uses loss based sigmoid utility function + heuristic rate control.
-      Created circa 2015.
+      Uses loss based sigmoid utility function without latency consideration
+      [which may contribute to bufferbloat] + heuristic rate control.  Created
+      circa 2015.  TCP version.
     </flag>
     <flag name="vivace">
-      Uses a concave utility function + gradient descent as rate control.
-      Created circa 2018.
+      Uses a latency incorporating concave utility function + gradient
+      ascent as rate control.   Created circa 2018.  TCP version.  Safer
+      version.
     </flag>
   </use>
 </pkgmetadata>
