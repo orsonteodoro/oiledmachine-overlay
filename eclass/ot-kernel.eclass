@@ -7789,9 +7789,10 @@ ot-kernel_restore_keys() {
 # @FUNCTION: ot-kernel_gen_iosched_openrc
 # @DESCRIPTION:
 # Generates an OpenRC script for the iosched
-WANT_IOSCHED_OPENRC=0
+OT_KERNEL_IOSCHED_OPENRC_INSTALL=0
 ot-kernel_gen_iosched_openrc() {
 	[[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] || return
+	OT_KERNEL_IOSCHED_OPENRC_INSTALL=1
 	if ! ot-kernel_has_version "sys-apps/openrc[bash]" ; then
 eerror
 eerror "Re-emerge sys-apps/openrc[bash]"
@@ -7824,7 +7825,6 @@ IOSCHED_SSD="${ssd_iosched}" # Do not change
 HW_RAID="${OT_KERNEL_HWRAID:-0}"
 EOF
 ################################################################################
-	export WANT_IOSCHED_OPENRC=1
 }
 
 # @FUNCTION: ot-kernel_get_nprocs
@@ -7897,6 +7897,7 @@ ot-kernel_is_full_sources_required() {
 # @FUNCTION: ot-kernel_src_install
 # @DESCRIPTION:
 # Removes patch cruft.
+OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=0
 ot-kernel_src_install() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export STRIP="/bin/true" # See https://github.com/torvalds/linux/blob/v5.16/init/Kconfig#L2169
@@ -8327,8 +8328,7 @@ EOF
 			sed -i -e "s|__ARCH__|${arch}|" "${T}/tcca" || die
 			insinto /etc
 			newins "${T}/tcca.conf" "tcca-${PV}-${extraversion}-${arch}.conf"
-			exeinto /usr/bin
-			newexe "${T}/tcca" "tcca-${PV}-${extraversion}-${arch}"
+			OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=1
 		fi
 	done
 
@@ -8799,15 +8799,13 @@ ewarn "with dmesg disabled."
 ewarn
 	fi
 
-	if [[ "${OT_KERNEL_IOSCHED_OPENRC}" == "1" ]] ; then
+	if (( ${OT_KERNEL_IOSCHED_OPENRC_INSTALL} == 1 )) ; then
+		einfo "Installing ot-kernel-iosched"
 		# Installed here to avoid merge conflict.
-		if [[ "${WANT_IOSCHED_OPENRC}" == "1" \
-			&& -e "${EROOT}/etc/init.d" ]] ; then
-			cat "${FILESDIR}/ot-kernel-iosched.openrc" \
-				> "${EROOT}/etc/init.d/ot-kernel-iosched"
-			chmod 0755 "${EROOT}/etc/init.d/ot-kernel-iosched"
-			chown root:root "${EROOT}/etc/init.d/ot-kernel-iosched"
-		fi
+		cat "${FILESDIR}/ot-kernel-iosched.openrc" \
+			> "${EROOT}/etc/init.d/ot-kernel-iosched"
+		chmod 0755 "${EROOT}/etc/init.d/ot-kernel-iosched"
+		chown root:root "${EROOT}/etc/init.d/ot-kernel-iosched"
 
 ewarn
 ewarn "The iosched has been changed to ${EPREFIX}/etc/init.d/ot-kernel-iosched"
@@ -8843,4 +8841,20 @@ ewarn "Retbleed mitigation is WIP (Work In Progress) in other processors."
 ewarn "For an overview about RETBleed and affected processors, see"
 ewarn "https://en.wikipedia.org/wiki/Retbleed"
 ewarn
+	if (( ${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL} == 0 )) ; then
+		einfo "Installing tcca"
+		cat "${FILESDIR}/tcca" \
+			> "${EROOT}/usr/bin/tcca"
+		chmod 0755 "${EROOT}/usr/bin/tcca"
+		chown root:root "${EROOT}/usr/bin/tcca"
+	fi
+}
+
+pkg_prerm() {
+	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
+		einfo "Removing tcca"
+		rm "${EROOT}/usr/bin/tcca" 2>/dev/null
+		einfo "Removing ot-kernel-iosched"
+		rm "${EROOT}/etc/init.d/ot-kernel-iosched" 2>/dev/null
+	fi
 }

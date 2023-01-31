@@ -2439,7 +2439,7 @@ unset OT_KERNEL_PRIVATE_KEY
         OT_KERNEL_TCP_CONGESTION_CONTROLS, but fallback to the next best option.
       - The defaults are chosen based on multiple flows bandwidth allocation with
         a primary flow (active focused process) and auxilitary flows (background).
-      - The wrapper will be found in /usr/bin/tcca-${PV}-${EXTRAVERSION}-${ARCH}
+      - The wrapper will be found in /usr/bin/tcca
       - The wrapper configuration may be changed in /etc/tcca-${PV}-${EXTRAVERSION}-${ARCH}.conf
       - The wrapper script requires sys-auth/polkit.  Use the gnome or kde USE
         flag to present GUI dialog.

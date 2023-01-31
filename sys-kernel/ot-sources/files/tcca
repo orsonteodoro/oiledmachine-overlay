@@ -21,9 +21,11 @@
 # SOFTWARE.
 #
 
-EXTRAVERSION="__EXTRAVERSION__"
-PV="__PV__"
-ARCH="__ARCH__"
+TRIPLE_ID=(cat /proc/version | cut -f 3 -d " ")
+EXTRAVERSION="${TRIPLE_ID%-*}"
+EXTRAVERSION="${EXTRAVERSION#*-}"
+PV="${TRIPLE_ID%%-*}"
+ARCH="${TRIPLE_ID##*-}"
 if [[ -e /etc/tcca-${PV}-${EXTRAVERSION}.conf ]] ; then
 	source /etc/tcca-${PV}-${EXTRAVERSION}.conf
 fi
