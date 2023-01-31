@@ -167,6 +167,7 @@ IUSE+=" cpu_flags_arm_thumb"
 IUSE+=" gtk +ncurses openssl qt5"
 IUSE+=" bzip2 gzip lz4 lzma lzo xz zstd"
 IUSE+=" imagemagick graphicsmagick"
+IUSE+=" pcc"
 NEEDS_DEBUGFS=0
 PYTHON_COMPAT=( python3_{8..10} )
 inherit check-reqs flag-o-matic python-r1 ot-kernel-cve ot-kernel-pkgflags ot-kernel-kutils toolchain-funcs
@@ -292,6 +293,9 @@ REQUIRED_USE+="
 PDEPEND+="
 	sys-apps/coreutils
 	sys-apps/grep[pcre]
+	pcc? (
+		sys-kernel/pcc
+	)
 	ot_kernel_pgt_2d? (
 		sys-apps/findutils
 		sys-process/procps
