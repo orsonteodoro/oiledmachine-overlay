@@ -17,8 +17,8 @@
 
     It feeds the observed data to utility functions (aka Simple Additive
     Weighing [SAW] or Weighted Linear Combo [WLC]).  PCC does send rate changes
-    instead of the problematic AIMD (additive increase multiplicative decrease)
-    cwnd (control window) used in TCP Tahoe inspired variations, changing
+    instead of the problematic additive increase multiplicative decrease (AIMD)
+    on the control window (cwmd) used in TCP Tahoe inspired variations, changing
     assumptions.  It penalizes multiple problematic characterisics through a
     utility function and rewards based on rate increase.
 
