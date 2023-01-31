@@ -343,7 +343,7 @@ ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
 ${DEFAULT_GST_PLUGINS}
 
-aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 +dfg-jit dash +doc
+aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dash +dfg-jit +doc
 -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
 hardened hls +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
 +libhyphen -libwebrtc -mediarecorder -mediastream +minibrowser +opengl openmp

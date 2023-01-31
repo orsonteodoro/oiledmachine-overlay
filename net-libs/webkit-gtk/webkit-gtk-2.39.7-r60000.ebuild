@@ -251,11 +251,11 @@ SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
 # WEBKITGTK_API_VERSION is 6.0
-CURRENT="1"
+CURRENT="2"
 AGE="0"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${API_VERSION%.*}/${SOVERSION}"
-# SLOT=6/1    GTK4 SOUP3
+# SLOT=6/2    GTK4 SOUP3
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4/37   GTK3 SOUP2
 
@@ -348,9 +348,9 @@ aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dash +dfg-jit +doc
 -eme +ftl-jit -gamepad +gbm +geolocation gles2 gnome-keyring +gstreamer
 gstwebrtc hardened +introspection +javascriptcore +jit +journald +jpeg2k jpegxl
 +lcms +libhyphen -libwebrtc -mediarecorder -mediastream +minibrowser +opengl
-openmp -seccomp -spell test thunder +unified-builds variation-fonts wayland
-+webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver +webgl +webgl2
-webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
+openmp -seccomp speech-synthesis -spell test thunder +unified-builds
+variation-fonts wayland +webassembly +webassembly-b3-jit +webcore +webcrypto
+-webdriver +webgl +webgl2 webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
 "
 
 gen_gst_plugins_duse() {
@@ -567,7 +567,7 @@ CAIRO_PV="1.14.0"
 CLANG_PV="13"
 CXX_STD="20"
 GCC_PV="9.3.0"
-GLIB_PV="2.44.0"
+GLIB_PV="2.70.0"
 GSTREAMER_PV="1.20.0" # Upstream min is 1.16.2, but distro only offers 1.20
 MESA_PV="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
@@ -700,6 +700,9 @@ RDEPEND+="
 		>=sys-apps/bubblewrap-0.3.1
 		>=sys-apps/xdg-dbus-proxy-0.1.2
 		>=sys-libs/libseccomp-0.9.0[${MULTILIB_USEDEP}]
+	)
+	speech-synthesis? (
+		>=app-accessibility/flite-2.2[${MULTILIB_USEDEP}]
 	)
 	spell? (
 		>=app-text/enchant-1.6.0:2[${MULTILIB_USEDEP}]
@@ -980,8 +983,8 @@ echo "${actual_list_raw}"
 }
 
 EXPECTED_BUILD_FINGERPRINT="\
-2cd2c3ca87d05cf71acf423665707afdd50068839c73cdaf9a81663298536b29\
-990c8cafcfdb136ec56339d6089ea132476c53af45faa3dc1a0c9f9942964f32\
+a672db6d235407a86a4d8de1b9ce0b573e0a859138018624682ff5e7b50d6a2c\
+881e25723ea84e11f5fc50697c8e489fda27afa090f5a1b41d65a9367483036c\
 "
 EXPECTED_BUILD_FINGERPRINT_WEBRTC="\
 ce7a0164ea0da74de32de8eeac7e541c29355542710f270c2fc6125309315194\
@@ -1177,6 +1180,7 @@ eerror
 		-DENABLE_MINIBROWSER=$(usex minibrowser)
 		-DENABLE_QUARTZ_TARGET=$(usex aqua)
 		-DENABLE_UNIFIED_BUILDS=$(usex unified-builds)
+		-DENABLE_SPEECH_SYNTHESIS=$(usex speech-synthesis)
 		-DENABLE_SPELLCHECK=$(usex spell)
 		-DENABLE_THUNDER=$(usex thunder)
 		-DENABLE_VIDEO=$(usex gstreamer)
