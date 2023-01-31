@@ -8,20 +8,53 @@
   </maintainer>
   <longdescription>
 
-    Performance-oriented Congestion Control is a TCP Congestion
+    Performance-oriented Congestion Control (PCC) is a TCP Congestion
     control kernel module.
 
-    It uses an AI principles, for example to converge towards the best
-    sending rates.
+    It combines empiricalism, decision theory, and game theory.
+    Empiricalism will do send rate tests to gather observed statistics -
+    throughput, latency etc.
 
-    PCC Vivace has a slow start similar to cubic.  Low consistent RTT.
-    Throughput is very steady with fewest dips.
+    It feeds the observed data to utility functions (aka Simple Additive
+    Weighing [SAW] or Weighted Linear Combo [WLC]).  PCC does send rate changes
+    instead of the problematic AIMD (additive increase multiplicative decrease)
+    cwnd (control window) used in TCP Tahoe inspired variations, changing
+    assumptions.  It penalizes multiple problematic characterisics through a
+    utility function and rewards based on rate increase.
+
+    Then, it compares the utility functions score.  These utility functions are
+    associated with possible Nash equilibriums.  It selects the corresponding
+    send rate with the highest utility score.
 
     Both variants have low bufferbloat.
 
-    PCC Vivace has lower latency than PCC Allegro.
+    PCC Vivace has a slow start similar to TCP Cubic.  PCC Vivace has low
+    consistent RTT, and throughput is very steady with fewest dips.
+
+    Packet loss rate is about 4-11% for ~20 multiple flows and 5% or less at
+    ~5 coexisting flows.  PCC has about 5-10% less packet loss than BBR
+    according to upstream graphs.
+
+    PCC Vivace has lower latency than PCC Allegro of less both.
 
     It can shave off hours of time sending data compared to cubic.
+
+        Algorithm       Mathematical model       Inputs to utility function
+         Allegro         SAW with sigmoid        send rate, loss rate
+         Vivace      SAW with gradient ascent    send rate, loss rate, RTT [gradient]
+        Proteus-P    SAW with gradient ascent    send rate, loss rate, [non-negative] RTT [gradient]
+        Proteus-S    SAW with gradient ascent    send rate, loss rate, competitive flow congestion [std dev RTT_mi(i) of the ith monitor interval]
+        Proteus-H         multiple               send rate is less than threshold piecewise function to either Proteus-P or -H utility functions
+                                                 (The threshold send rate is set by application for reasons such as video streaming.)
+
+    * The send rate doubles per RTT as it moves up the gradient during slow start.
+    * the loss rate does depend on packet loss in the source code.
+    * RTT gradient is a linear regression of RTT and time of first and last
+      packets during monitor interval.
+
+    The improved PCC variant, PCC Proteus is currently not packaged on the
+    overlay due to modularity issues.  It is better used as an internal
+    dependency.
 
   </longdescription>
   <upstream>
@@ -30,14 +63,11 @@
   </upstream>
   <use>
     <flag name="allegro">
-      Uses loss based sigmoid utility function without latency consideration
-      [which may contribute to bufferbloat] + heuristic rate control.  Created
-      circa 2015.  TCP version.
+      Loss rate based.  Created circa 2015.  TCP version.
     </flag>
     <flag name="vivace">
-      Uses a latency incorporating concave utility function + gradient
-      ascent as rate control.   Created circa 2018.  TCP version.  Safer
-      version.
+      Loss rate and latency based with RTT probing.  Created circa 2018.  TCP
+      version.  Safer version.
     </flag>
   </use>
 </pkgmetadata>
