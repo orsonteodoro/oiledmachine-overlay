@@ -35,6 +35,12 @@
     ~5 coexisting flows.  PCC has about 5-10% less packet loss than BBR
     according to upstream graphs.
 
+    PCC Allegro is more greedy with multiple flows.  [This implies that it
+    could starve other coexisting flows.]  This greediness increases
+    thoughput.
+
+    PCC Vivace is more fair with multiple flows so less throughput.
+
     PCC Vivace has lower latency than PCC Allegro.
 
     It can shave off hours of time sending data compared to TCP Cubic.
@@ -43,8 +49,8 @@
          Allegro         SAW with sigmoid        send rate, loss rate
          Vivace      SAW with gradient ascent    send rate, loss rate, RTT [gradient]
         Proteus-P    SAW with gradient ascent    send rate, loss rate, [non-negative] RTT [gradient]
-        Proteus-S    SAW with gradient ascent    send rate, loss rate, competitive flow congestion [std dev RTT_mi(i) of the ith monitor interval]
-        Proteus-H         multiple               send rate is less than threshold piecewise function to either Proteus-P or -H utility functions
+        Proteus-S    SAW with gradient ascent    same as Proteus-P but with added competitive flow congestion [std dev RTT_mi(i) of the ith monitor interval] term
+        Proteus-H           multiple             send rate is less than threshold piecewise function to either Proteus-P or -H utility functions
                                                  (The threshold send rate is set by application for reasons such as video streaming.)
 
     * The send rate doubles per RTT as it moves up the gradient during slow start.
