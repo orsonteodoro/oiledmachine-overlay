@@ -35,7 +35,7 @@
     ~5 coexisting flows.  PCC has about 5-10% less packet loss than BBR
     according to upstream graphs.
 
-    PCC Vivace has lower latency than PCC Allegro of less both.
+    PCC Vivace has lower latency than PCC Allegro.
 
     It can shave off hours of time sending data compared to cubic.
 
