@@ -6,7 +6,7 @@ EAPI=8
 # It supports Python 3.7 but 3.7 is deprecated in this distro in python-utils-r1.eclass.
 PYTHON_COMPAT=( python3_{8..11} )
 
-inherit check-reqs linux-info python-r1 unpacker
+inherit check-reqs git-r3 linux-info python-r1 unpacker
 
 DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for
 Blender"
@@ -231,11 +231,14 @@ RIF_DF="RadeonImageFilter-${RIF_PV}-${EGIT_COMMIT_RIF:0:7}.tar.gz"
 RPRSC_DF="RadeonProRenderSharedComponents-${RPRSC_PV}-${EGIT_COMMIT_RPRSC:0:7}.tar.gz"
 RPRSDK_DF="RadeonProRenderSDK-${RPRSDK_PV}-${EGIT_COMMIT_RPRSDK:0:7}.tar.gz"
 GH_ORG_BURI="https://github.com/GPUOpen-LibrariesAndSDKs"
+
+# Download limits?
+#${GH_ORG_BURI}/RadeonImageFilter/archive/${EGIT_COMMIT_RIF}.tar.gz
+#	-> ${RIF_DF}
+
 SRC_URI="
 ${GH_ORG_BURI}/RadeonProRenderBlenderAddon/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-${GH_ORG_BURI}/RadeonImageFilter/archive/${EGIT_COMMIT_RIF}.tar.gz
-	-> ${RIF_DF}
 ${GH_ORG_BURI}/RadeonProRenderSDK/archive/${EGIT_COMMIT_RPRSDK}.tar.gz
 	-> ${RPRSDK_DF}
 ${GH_ORG_BURI}/RadeonProRenderSharedComponents/archive/${EGIT_COMMIT_RPRSC}.tar.gz
@@ -310,15 +313,26 @@ ewarn
 	fi
 }
 
+get_rif() {
+	EGIT_MIN_CLONE_TYPE="single"
+	EGIT_COMMIT="${EGIT_COMMIT_RIF}"
+	EGIT_BRANCH="master"
+	EGIT_CHECKOUT_DIR="${S}/RadeonProImageProcessingSDK"
+	EGIT_REPO_URI="https://github.com/GPUOpen-LibrariesAndSDKs/RadeonImageFilter.git"
+	git-r3_fetch
+	git-r3_checkout
+}
+
 src_unpack() {
 	unpack ${A}
 	cd "${S}" || die
 	rm -rf RadeonProImageProcessingSDK \
 		RadeonProRenderSDK \
 		RadeonProRenderSharedComponents || die
-	ln -s "${S_RIF}" "RadeonProImageProcessingSDK" || die
+#	ln -s "${S_RIF}" "RadeonProImageProcessingSDK" || die
 	ln -s "${S_RPRSDK}" "RadeonProRenderSDK" || die
 	ln -s "${S_RPRSC}" "RadeonProRenderSharedComponents" || die
+	get_rif
 }
 
 src_prepare() {
