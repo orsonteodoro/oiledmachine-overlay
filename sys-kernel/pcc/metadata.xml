@@ -8,8 +8,10 @@
   </maintainer>
   <longdescription>
 
-    Performance-oriented Congestion Control (PCC) is a TCP Congestion
-    control kernel module.
+    Performance-oriented Congestion Control (PCC) is a congestion
+    control algorithm.  Both PCC Allegro and PCC Vivace are TCP variations
+    available as a kernel module, while PCC Proteus is the QUIC version
+    and userspace only.
 
     It combines empiricalism, decision theory, and game theory.
     Empiricalism will do send rate tests to gather observed statistics -
@@ -69,11 +71,11 @@
   </upstream>
   <use>
     <flag name="allegro">
-      Loss rate based.  Created circa 2015.  TCP version.
+      Loss rate based.  2015 edition.
     </flag>
     <flag name="vivace">
-      Loss rate and latency based with RTT probing.  Created circa 2018.  TCP
-      version.  Safer version.
+      Loss rate and latency based with RTT probing.  2018 edition.
+      Safer version.
     </flag>
   </use>
 </pkgmetadata>
