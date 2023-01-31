@@ -5330,6 +5330,7 @@ sys-kernel/cryptodev
 sys-kernel/fragattacks-drivers58
 sys-kernel/ft60x_driver
 sys-kernel/kpatch
+sys-kernel/pcc
 sys-kernel/pf_ring-kmod
 sys-kernel/rte_kni-kmod
 sys-kernel/tirdad

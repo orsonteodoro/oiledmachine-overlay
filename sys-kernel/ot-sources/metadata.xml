@@ -2267,8 +2267,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Defaults (EXPERIMENTAL):
 
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr2 bbr cubic dctcp hybla vegas westwood"  # if USE=bbrv2 and OT_KERNEL_USE=bbrv2
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic dctcp hybla vegas westwood"       # otherwise
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr2 bbr cubic dctcp hybla pcc vegas westwood"  # if USE=bbrv2 and OT_KERNEL_USE=bbrv2
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic dctcp hybla pcc vegas westwood"       # otherwise
       For allowed defaults, see https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L682
 
       Cubic alone is the upstream default.
@@ -2404,6 +2404,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD - For bad connections with packet loss. (Default:  bbr2)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_FG - For large downloads downloaded serially as foreground. (Default:  cubic)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_SEND - For large uploads serially as foreground. (Default:  pcc)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER - For fair throughput servers.  (Default:  bbr2)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING - Full screen games while streaming music or VoIPing.  (Default:  bbr2)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_BG - For non-disruptive multi downloads in the background. (Default:  vegas)
@@ -3292,6 +3293,10 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
     </flag>
     <flag name="openssl">
       Add support for signing modules and kernels
+    </flag>
+    <flag name="pcc">
+      Adds support for PCC (Performance-oriented Congestion Control) optimized
+      for sending data over the Internet.
     </flag>
     <flag name="pds">
       Patches the kernel with an alternative skiplist based scheduler.

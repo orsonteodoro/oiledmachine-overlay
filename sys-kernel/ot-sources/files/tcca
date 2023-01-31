@@ -31,6 +31,7 @@ fi
 # TCCA - TCP Congestion Control Algorithm
 TCCA_BAD="${TCCA_BAD:-bbr2}"
 TCCA_BULK_FG="${TCCA_BULK_FG:-cubic}"
+TCCA_BULK_SEND="${TCCA_BULK_SEND:-pcc}"
 TCCA_FAIR_SERVER="${TCCA_FAIR_SERVER:-bbr2}"
 TCCA_THROUGHPUT_SERVER="${TCCA_THROUGHPUT_SERVER:-dctcp}"
 TCCA_STREAMING="${TCCA_STREAMING:-westwood}"
@@ -64,6 +65,7 @@ echo
 echo "  bulk - For large serial downloads as foreground"
 echo "       bulk-download                                             (alias)"
 echo "       download                                                  (alias)"
+echo "  bulk-send - For large uploads over the Internet"
 echo "  multi-large - For multiple large downloads that each take > 20s as foreground to complete"
 echo "  multi-small - For multiple small downloads that each take <= 20s as foreground to complete"
 echo "  fair - For servers"
@@ -112,6 +114,8 @@ declare -A TCCA_MAP=(
 	["bulk"]="${TCCA_BULK_FG}"
 	["bulk-download"]="${TCCA_BULK_FG}"
 	["download"]="${TCCA_BULK_FG}"
+
+	["bulk-send"]="${TCCA_BULK_SEND}"
 
 	["multi-large"]="${TCCA_MULTI_LARGE}"
 

@@ -2737,6 +2737,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_FG
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_SEND
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_BG
@@ -2926,9 +2927,9 @@ ot-kernel_get_tcp_congestion_controls_default() {
 _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 	local v
 	if has bbrv2 ${IUSE} && ot-kernel_use bbrv2 ; then
-		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 bbr cubic dctcp hybla vegas westwood"}
+		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 bbr cubic dctcp hybla pcc vegas westwood"}
 	else
-		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr cubic dctcp hybla vegas westwood"}
+		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr cubic dctcp hybla pcc vegas westwood"}
 	fi
 	echo "${v}"
 }
@@ -2997,6 +2998,7 @@ ot-kernel_set_kconfig_set_tcp_congestion_controls() {
 einfo "Adding ${alg}"
 			ot-kernel_y_configopt "CONFIG_NET"
 			ot-kernel_y_configopt "CONFIG_INET"
+			[[ "${alg}" == "pcc" ]] && continue
 			if [[ "${ALGS[@]}" =~ "${alg}"( |$) ]] ; then
 				# reno is only a default not advanced option
 				ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
@@ -3011,9 +3013,10 @@ einfo "Adding ${alg}"
 			if has bbrv2 ${IUSE} \
 				&& ! ot-kernel_use bbrv2 ; then
 				# Skip it if not patched.
-				continue
+				return
 			fi
 		fi
+		[[ "${alg}" == "pcc" ]] && return
 einfo "Using ${picked_alg} as the default TCP congestion control"
 		ot-kernel_y_configopt "CONFIG_DEFAULT_${picked_alg^^}"
 		ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "\"${picked_alg}\""
@@ -8259,9 +8262,43 @@ ewarn "Preserving copyright notices.  This may take hours."
 				tcca_bad="${default_tcca}"
 			fi
 
+			local tcc_bulk_send
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
+				tcca_bulk_send="pcc"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+				tcca_bulk_send="westwood"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+				tcca_bulk_send="hybla"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
+				tcca_bulk_send="reno"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
+				tcca_bulk_send="hstcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
+				tcca_bulk_send="veno"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
+				tcca_bulk_send="illinois"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+				tcca_bulk_send="htcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+				tcca_bulk_send="bic"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
+				tcca_bulk_send="yeah"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+				tcca_bulk_send="cubic"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+				tcca_bulk_send="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+				tcca_bulk_send="bbr2"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+				tcca_bulk_send="vegas"
+			else
+				tcca_bad="${default_tcca}"
+			fi
+
 			cat <<EOF > "${T}/tcca.conf" || die
 TCCA_BAD="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD:-${tcca_bad}}"
 TCCA_BULK_FG="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_FG:-${tcca_bulk_fg}}"
+TCCA_BULK_SEND="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_SEND:-${tcca_bulk_send}}"
 TCCA_FAIR_SERVER="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER:-${tcca_fair_server}}"
 TCCA_GAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING:-${tcca_gaming}}"
 TCCA_MULTI_BG="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_BG:-${tcca_multi_bg}}"
