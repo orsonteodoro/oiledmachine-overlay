@@ -13,7 +13,7 @@
 
     It combines empiricalism, decision theory, and game theory.
     Empiricalism will do send rate tests to gather observed statistics -
-    throughput, latency etc.
+    throughput, latency, etc.
 
     It feeds the observed data to utility functions (aka Simple Additive
     Weighing [SAW] or Weighted Linear Combo [WLC]).  PCC does send rate changes
