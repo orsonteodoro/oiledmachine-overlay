@@ -37,11 +37,12 @@
     ~5 coexisting flows.  PCC has about 5-10% less packet loss than BBR
     according to upstream graphs.
 
-    PCC Allegro is more greedy with multiple flows.  [This implies that it
-    could starve other coexisting flows.]  This greediness increases
-    thoughput.
+    PCC Allegro is more greedy with multiple flows of different congestion
+    control disciplines (e.g. cubic) but less greedy than BBR.
 
-    PCC Vivace is more fair with multiple flows so less throughput.
+    PCC Vivace is more fair with multiple flows of different congestion control
+    disciplines (e.g. cubic) so less throughput.  [Throughput and fairness
+    are often tradeoffs.]
 
     PCC Vivace has lower latency than PCC Allegro.
 
