@@ -8262,6 +8262,7 @@ ewarn "Preserving copyright notices.  This may take hours."
 				tcca_bad="${default_tcca}"
 			fi
 
+			# Sorted by completion time, then avg send rate
 			local tcc_bulk_send
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
 				tcca_bulk_send="pcc"
