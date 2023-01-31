@@ -44,6 +44,12 @@ TCCA_RELIABLE="${TCCA_RELIABLE:-cubic}"
 TCCA_RESET="${TCCA_RESET:-cubic}"
 TCCA_RURAL="${TCCA_RURAL:-hybla}"
 TCCA_WWW_CLIENT="${TCCA_WWW_CLIENT:-vegas}"
+
+# This is for loading modules or TCP CC selection from non-root user.
+# sudo is for command line only
+# pkexec is for GUI desktop environments or command line
+TCCA_ELEVATE_PRIV="${TCCA_ELEVATE_PRIV:-pkexec}" # Can be sudo, pkexec, polkit, root, none
+
 MY_NAME=$(basename "$0")
 
 ARGV=( $@ )
@@ -58,7 +64,11 @@ echo
 echo "${MY_NAME} - Helper script to setup the TCP Congestion Control Algorithm"
 echo "for new connections for the kernel"
 echo
+	if [[ "${TCCA_ELEVATE_PRIV}" =~ ("pkexec"|"polkit"|"sudo") ]] ; then
 echo "${MY_NAME} [use-case|menu-item] [cmd] [args]"
+	else
+echo "${MY_NAME} [use-case|menu-item]"
+	fi
 echo
 echo "Use cases:"
 echo
@@ -104,9 +114,11 @@ echo "  --help - Print this help"
 echo "  --status - For printing TCP Congestion Control details"
 echo "  --use=<alg> - For using the algorithm directly"
 echo
+	if [[ "${TCCA_ELEVATE_PRIV}" =~ ("pkexec"|"polkit"|"sudo") ]] ; then
 echo "[cmd]    - program to run (optional)"
 echo "[args]   - list of arguments to pass to the program (optional)"
 echo
+	fi
 }
 
 unset TCCA_MAP
@@ -214,7 +226,7 @@ check_dependencies() {
 	fi
 }
 
-set_tcca() {
+_set_tcca_polkit() {
 	local alg="${1}"
 	echo -e "TCP_CONGESTION_CONTROL_ALG:\t${alg}"
 	if ls /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/tcp_${alg}.ko* 2>/dev/null 1>/dev/null ; then
@@ -227,6 +239,47 @@ echo
 echo "Setting TCP Congestion Control algorithm"
 echo
 	pkexec sysctl -w net.ipv4.tcp_congestion_control=${alg}
+}
+
+_set_tcca_sudo() {
+	local alg="${1}"
+	echo -e "TCP_CONGESTION_CONTROL_ALG:\t${alg}"
+	if ls /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/tcp_${alg}.ko* 2>/dev/null 1>/dev/null ; then
+echo
+echo "Loading kernel module for ${alg}"
+echo
+		sudo modprobe tcp_${alg}
+	fi
+echo
+echo "Setting TCP Congestion Control algorithm"
+echo
+	sudo sysctl -w net.ipv4.tcp_congestion_control=${alg}
+}
+
+_set_tcca_root() {
+	local alg="${1}"
+	echo -e "TCP_CONGESTION_CONTROL_ALG:\t${alg}"
+	if ls /lib/modules/${PV}-${EXTRAVERSION}-${ARCH}/kernel/net/ipv4/tcp_${alg}.ko* 2>/dev/null 1>/dev/null ; then
+echo
+echo "Loading kernel module for ${alg}"
+echo
+		modprobe tcp_${alg}
+	fi
+echo
+echo "Setting TCP Congestion Control algorithm"
+echo
+	sysctl -w net.ipv4.tcp_congestion_control=${alg}
+}
+
+set_tcca() {
+	local alg="${1}"
+	if [[ "${TCCA_ELEVATE_PRIV}" =~ ("pkexec"|"polkit") ]] ; then
+		_set_tcca_polkit "${alg}"
+	elif [[ "${TCCA_ELEVATE_PRIV}" == "sudo" ]] ; then
+		_set_tcca_sudo "${alg}"
+	else
+		_set_tcca_root "${alg}"
+	fi
 }
 
 select_tcca() {
@@ -251,7 +304,9 @@ main() {
 	process_options
 	check_dependencies
 	select_tcca
-	run_pn
+	if [[ "${TCCA_ELEVATE_PRIV}" =~ ("pkexec"|"polkit"|"sudo") ]] ; then
+		run_pn
+	fi
 }
 
 main

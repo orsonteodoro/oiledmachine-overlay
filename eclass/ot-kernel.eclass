@@ -8296,6 +8296,13 @@ ewarn "Preserving copyright notices.  This may take hours."
 				tcca_bad="${default_tcca}"
 			fi
 
+			tcca_elevate_priv="none" # Same as already root
+			if ot-kernel_has_version "sys-auth/polkit" ; then
+				tcca_elevate_priv="polkit"
+			elif ot-kernel_has_version "app-admin/sudo" ; then
+				tcca_elevate_priv="sudo"
+			fi
+
 			cat <<EOF > "${T}/tcca.conf" || die
 TCCA_BAD="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD:-${tcca_bad}}"
 TCCA_BULK_FG="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_FG:-${tcca_bulk_fg}}"
@@ -8312,6 +8319,7 @@ TCCA_STREAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING:-${tcca_str
 TCCA_THROUGHPUT_SERVER="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER:-${tcca_server_throughput}}"
 TCCA_RURAL="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RURAL:-${tcca_rural}}"
 TCCA_WWW_CLIENT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT:-${tcca_web_client}}"
+TCCA_ELEVATE_PRIV="${tcca_elevate_priv}"
 EOF
 			cat "${FILESDIR}/tcca" > "${T}/tcca" || die
 			sed -i -e "s|__EXTRAVERSION__|${extraversion}|" "${T}/tcca" || die
