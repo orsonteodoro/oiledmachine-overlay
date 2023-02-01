@@ -7003,9 +7003,9 @@ ewarn
 			:;
 		elif [[ "${OT_KERNEL_LOGO_COUNT}" =~ [0-9][0-9]* ]] ; then
 			if ver_test ${K_MAJOR_MINOR} -ge 5.6 ; then
-				ot-kernel_set_kconfig_kernel_cmdline "fbcon=logo-count:${OT_KERNEL_LOGO_N_TIMES}"
+				ot-kernel_set_kconfig_kernel_cmdline "fbcon=logo-count:${OT_KERNEL_LOGO_COUNT}"
 			else
-				sed -i -e "s|num_online_cpus()|${OT_KERNEL_LOGO_N_TIMES}|g" \
+				sed -i -e "s|num_online_cpus()|${OT_KERNEL_LOGO_COUNT}|g" \
 					"${BUILD_DIR}/drivers/video/fbdev/core/fbmem.c" || die
 			fi
 		elif [[ "${OT_KERNEL_LOGO_COUNT}" =~ "-" ]] ; then
