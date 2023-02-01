@@ -1680,6 +1680,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
     OT_KERNEL_LOGO_FOOTNOTES_ON_INIT - Display the notes on init boot. (EXPERIMENTAL)
+    This will automatically turn on early printk.
 
     Depends on:
 

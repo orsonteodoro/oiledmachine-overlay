@@ -7030,6 +7030,12 @@ einfo "Adding logo footnote on init:  ${OT_KERNEL_LOGO_FOOTNOTES}"
 				| cut -f 1 -d ":")
 			sed -i -e "${offset}a\\\tprintk(KERN_INFO \"${OT_KERNEL_LOGO_FOOTNOTES}\");" \
 				"${BUILD_DIR}/drivers/video/fbdev/core/fbmem.c"
+			ot-kernel_y_configopt "CONFIG_PRINTK"
+			ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
+ewarn
+ewarn "OT_KERNEL_LOGO_FOOTNOTES_ON_INIT will enable early printk which may"
+ewarn "lower security."
+ewarn
 		fi
 	fi
 }
