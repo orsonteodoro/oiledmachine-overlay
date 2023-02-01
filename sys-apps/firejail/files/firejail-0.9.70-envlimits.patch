@@ -1,7 +1,7 @@
-diff -urP firejail-0.9.68.orig/src/firejail/firejail.h firejail-0.9.68/src/firejail/firejail.h
---- firejail-0.9.68.orig/src/firejail/firejail.h	2022-02-03 07:53:47.000000000 -0700
-+++ firejail-0.9.68/src/firejail/firejail.h	2022-02-06 21:09:35.279071101 -0700
-@@ -689,7 +689,7 @@
+diff -urP firejail-0.9.70.orig/src/firejail/firejail.h firejail-0.9.70/src/firejail/firejail.h
+--- firejail-0.9.70.orig/src/firejail/firejail.h	2022-06-08 07:42:50.000000000 -0600
++++ firejail-0.9.70/src/firejail/firejail.h	2022-06-09 13:06:04.094034022 -0600
+@@ -706,7 +706,7 @@
  int check_kernel_procs(void);
  void run_no_sandbox(int argc, char **argv) __attribute__((noreturn));
  

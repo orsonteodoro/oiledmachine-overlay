@@ -1,5 +1,6 @@
---- a/src/firecfg/firecfg.config	2022-02-03 07:53:47.000000000 -0700
-+++ b/src/firecfg/firecfg.config	2022-02-21 11:56:00.267419833 -0700
+diff -urP firejail-0.9.70.orig/src/firecfg/firecfg.config firejail-0.9.70/src/firecfg/firecfg.config
+--- firejail-0.9.70.orig/src/firecfg/firecfg.config	2022-06-08 07:42:50.000000000 -0600
++++ firejail-0.9.70/src/firecfg/firecfg.config	2022-06-09 13:06:38.646038407 -0600
 @@ -213,7 +213,8 @@
  electron-mail
  electrum
@@ -49,7 +50,7 @@
  mypaint
  mypaint-ora-thumbnailer
  natron
-@@ -632,7 +640,8 @@
+@@ -635,7 +643,8 @@
  palemoon
  #pandoc
  parole
@@ -59,7 +60,7 @@
  pavucontrol
  pavucontrol-qt
  pcsxr
-@@ -758,7 +767,8 @@
+@@ -761,7 +770,8 @@
  stellarium
  strawberry
  straw-viewer
@@ -69,7 +70,7 @@
  studio.sh
  subdownloader
  supertux2
-@@ -877,7 +887,8 @@
+@@ -880,7 +890,8 @@
  weechat
  weechat-curses
  wesnoth
