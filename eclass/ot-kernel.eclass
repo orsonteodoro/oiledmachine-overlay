@@ -1167,7 +1167,9 @@ dump_profraw() {
 	local profraw_dpath="${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
 	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}" || die
 	local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
-	cat "${profraw_spath}" > "${profraw_dpath}" 2>/dev/null || true
+	if [[ -e "${profraw_spath}" ]] ; then
+		cat "${profraw_spath}" > "${profraw_dpath}" 2>/dev/null || true
+	fi
 	if [[ -e "${profraw_spath}" && ! -e "${profraw_dpath}" ]] ; then
 		einfo "Copying ${profraw_spath}"
 		cat "${profraw_spath}" > "${profraw_dpath}" || die
