@@ -8890,7 +8890,7 @@ ewarn "Retbleed mitigation is WIP (Work In Progress) in other processors."
 ewarn "For an overview about RETBleed and affected processors, see"
 ewarn "https://en.wikipedia.org/wiki/Retbleed"
 ewarn
-	if (( ${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL} == 0 )) ; then
+	if (( ${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL} == 1 )) ; then
 		einfo "Installing tcca"
 		cat "${FILESDIR}/tcca" \
 			> "${EROOT}/usr/bin/tcca"
