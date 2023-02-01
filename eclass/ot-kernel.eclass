@@ -7020,7 +7020,7 @@ eerror
 
 		if [[ -n "${OT_KERNEL_LOGO_FOOTNOTES_ON_INIT}" ]] ; then
 einfo "Adding logo footnote on init:  ${OT_KERNEL_LOGO_FOOTNOTES}"
-			grep -n "y = fb_show_logo_line(info, rotate, fb_logo" \
+			grep -q -n "y = fb_show_logo_line(info, rotate, fb_logo" \
                                 "${BUILD_DIR}/drivers/video/fbdev/core/fbmem.c" || die "Missing fragment"
 			local offset
 			offset=$(grep -n "y = fb_show_logo_line(info, rotate, fb_logo" \
