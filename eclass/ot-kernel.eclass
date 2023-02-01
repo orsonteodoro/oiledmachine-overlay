@@ -7020,13 +7020,13 @@ eerror
 
 		if [[ -n "${OT_KERNEL_LOGO_FOOTNOTES_ON_INIT}" ]] ; then
 einfo "Adding logo footnote on init:  ${OT_KERNEL_LOGO_FOOTNOTES}"
-			grep -q -n "y = fb_show_logo_line(info, rotate, fb_logo" \
+			grep -F -q -n "y = fb_show_extra_logos(" \
                                 "${BUILD_DIR}/drivers/video/fbdev/core/fbmem.c" || die "Missing fragment"
 			local offset
-			offset=$(grep -n "y = fb_show_logo_line(info, rotate, fb_logo" \
+			offset=$(grep -F -n "y = fb_show_extra_logos(" \
 				"${BUILD_DIR}/drivers/video/fbdev/core/fbmem.c" \
 				| cut -f 1 -d ":")
-			sed -i -e "${offset}i\\\tprintk(KERN_INFO \"${OT_KERNEL_LOGO_FOOTNOTES}\");" \
+			sed -i -e "${offset}a\\\tprintk(KERN_INFO \"${OT_KERNEL_LOGO_FOOTNOTES}\");" \
 				"${BUILD_DIR}/drivers/video/fbdev/core/fbmem.c"
 		fi
 	fi
