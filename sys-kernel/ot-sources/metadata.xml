@@ -357,7 +357,7 @@ OT_KERNEL_FIRMWARE="regulatory"
 OT_KERNEL_HARDENING_LEVEL="untrusted"
 OT_KERNEL_INSTALL_SOURCE_CODE="1"
 OT_KERNEL_LOGO_COUNT=1
-OT_KERNEL_LOGO_FOOTNOTES="Comet C/2022 E3.  Credits: Auvo Korpi.  License: CC-BY-2.0."
+OT_KERNEL_LOGO_FOOTNOTES="Photo:  Comet 2023.01.27 C-22-E3-ZTF 500 F5.  Credits: Auvo Korpi.  License: CC-BY-2.0."
 OT_KERNEL_LOGO_FOOTNOTES_ON_INIT="1"
 OT_KERNEL_LOGO_MAGICK_ARGS="-geometry 480x -colors 224"
 OT_KERNEL_LOGO_URI="https://upload.wikimedia.org/wikipedia/commons/4/42/Comet_2023.01.27_C-22-E3-ZTF_500_F5.jpg"
@@ -1654,7 +1654,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     Example:
 
-      OT_KERNEL_LOGO_FOOTNOTES="Comet C/2022 E3.  Credits: Auvo Korpi.  License: CC-BY-2.0."
+      OT_KERNEL_LOGO_FOOTNOTES="Photo:  Comet 2023.01.27 C-22-E3-ZTF 500 F5.  Credits: Auvo Korpi.  License: CC-BY-2.0."
 
     Notes:
 
