@@ -2688,6 +2688,9 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_IOSCHED_OVERRIDE
 	unset OT_KERNEL_KERNEL_DIR
 	unset OT_KERNEL_KEXEC
+	unset OT_KERNEL_LOGO_COUNT
+	unset OT_KERNEL_LOGO_FOOTNOTES
+	unset OT_KERNEL_LOGO_FOOTNOTES_ON_INIT
 	unset OT_KERNEL_LOGO_LICENSE_URI
 	unset OT_KERNEL_LOGO_MAGICK_ARGS
 	unset OT_KERNEL_LOGO_MAGICK_PACKAGE
@@ -6994,6 +6997,38 @@ ewarn
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "7"
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "4"
 		fi
+
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "fbcon=logo-count:[-]?[0-9]*"
+		if [[ "${OT_KERNEL_LOGO_COUNT:-auto}" == "auto" ]] ; then
+			:;
+		elif [[ "${OT_KERNEL_LOGO_COUNT}" =~ [0-9][0-9]* ]] ; then
+			if ver_test ${K_MAJOR_MINOR} -ge 5.6 ; then
+				ot-kernel_set_kconfig_kernel_cmdline "fbcon=logo-count:${OT_KERNEL_LOGO_N_TIMES}"
+			else
+				sed -i -e "s|num_online_cpus()|${OT_KERNEL_LOGO_N_TIMES}|g" \
+					"${BUILD_DIR}/drivers/video/fbdev/core/fbmem.c" || die
+			fi
+		elif [[ "${OT_KERNEL_LOGO_COUNT}" =~ "-" ]] ; then
+			:;
+		else
+eerror
+eerror "OT_KERNEL_LOGO_COUNT must be auto or an integer."
+eerror
+			die
+
+		fi
+
+		if [[ -n "${OT_KERNEL_LOGO_FOOTNOTES_ON_INIT}" ]] ; then
+einfo "Adding logo footnote on init:  ${OT_KERNEL_LOGO_FOOTNOTES}"
+			grep -n "y = fb_show_logo_line(info, rotate, fb_logo" \
+                                "${BUILD_DIR}/drivers/video/fbdev/core/fbmem.c" || die "Missing fragment"
+			local offset
+			offset=$(grep -n "y = fb_show_logo_line(info, rotate, fb_logo" \
+				"${BUILD_DIR}/drivers/video/fbdev/core/fbmem.c" \
+				| cut -f 1 -d ":")
+			sed -i -e "${offset}i\\\tprintk(KERN_INFO \"${OT_KERNEL_LOGO_FOOTNOTES}\");" \
+				"${BUILD_DIR}/drivers/video/fbdev/core/fbmem.c"
+		fi
 	fi
 }
 
@@ -8040,6 +8075,11 @@ ewarn "Preserving copyright notices.  This may take hours."
 		if [[ -n "${logo_license_path}" && -e "${logo_license_path}" ]] ; then
 			insinto "/usr/share/${PN}/${PV}-${extraversion}/licenses/logo"
 			doins "${logo_license_path}"
+			if [[ -n "${OT_KERNEL_LOGO_FOOTNOTES}" ]] ; then
+				echo "${OT_KERNEL_LOGO_FOOTNOTES}" > "${T}/logo_footnotes" || die
+				doins "${T}/logo_footnotes"
+			fi
+
 		fi
 
 		if ot-kernel_is_full_sources_required ; then

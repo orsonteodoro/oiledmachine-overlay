@@ -356,8 +356,11 @@ OT_KERNEL_EXTRAVERSION="ot"
 OT_KERNEL_FIRMWARE="regulatory"
 OT_KERNEL_HARDENING_LEVEL="untrusted"
 OT_KERNEL_INSTALL_SOURCE_CODE="1"
+OT_KERNEL_LOGO_COUNT=1
+OT_KERNEL_LOGO_FOOTNOTES="Comet C/2022 E3.  Credits: Auvo Korpi.  License: CC-BY-2.0."
+OT_KERNEL_LOGO_FOOTNOTES_ON_INIT="1"
 OT_KERNEL_LOGO_MAGICK_ARGS="-geometry 480x -colors 224"
-OT_KERNEL_LOGO_URI="https://upload.wikimedia.org/wikipedia/commons/4/49/Flag_of_Ukraine.svg"
+OT_KERNEL_LOGO_URI="https://upload.wikimedia.org/wikipedia/commons/4/42/Comet_2023.01.27_C-22-E3-ZTF_500_F5.jpg"
 OT_KERNEL_LSMS="auto"
 OT_KERNEL_MODULES_SUPPORT="1"
 OT_KERNEL_MODULES_COMPRESSOR="zstd"
@@ -1638,6 +1641,49 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
+    OT_KERNEL_LOGO_COUNT -- number of times to show the logo. (EXPERIMENTAL)
+
+    Acceptable values:
+
+      1 to number of online CPUs - an integer.
+      auto - use the number of online CPUs (upstream default)
+
+
+
+    OT_KERNEL_LOGO_FOOTNOTES -- save notes to a file next to the optional license file. (EXPERIMENTAL)
+
+    Example:
+
+      OT_KERNEL_LOGO_FOOTNOTES="Comet C/2022 E3.  Credits: Auvo Korpi.  License: CC-BY-2.0."
+
+    Notes:
+
+      - Nested double quotes need to be escaped with \" or be replaced with single
+        quotes.
+      - The fille will found in /usr/share/${PN}/${PV}-${extraversion}/licenses/logo/logo_footnotes
+      - It is a good way to save attribution to higher quality CC-BY licensed
+        photos.
+
+    See also:
+
+      OT_KERNEL_LOGO_FOOTNOTES_ON_INIT
+
+
+
+    OT_KERNEL_LOGO_FOOTNOTES_ON_INIT - Display the notes on init boot. (EXPERIMENTAL)
+
+    Depends on:
+
+      OT_KERNEL_LOGO_FOOTNOTES
+
+    Acceptable values:
+
+      1 - show
+      0 - don't show
+      unset - don't show (default)
+
+
+
     OT_KERNEL_LOGO_URI -- A URI, local file, or pre-bundled logo provided by the
     package.
 
@@ -1672,8 +1718,6 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
         For seemless boot logos or animated logos, it is recommended to use
       - Dracut and Plymouth packages instead of the kernel logo.
         Kernel logos are stills.
-      - Additional modding may be required on PPC.  See
-        custom-logo-for-6.1.patch for details.
 
 
 
