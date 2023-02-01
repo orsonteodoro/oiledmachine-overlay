@@ -1088,7 +1088,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     Notes:
 
-      - fast install takes a few seconds to few minutes performing a move into
+      - fast install takes at most a few seconds performing a move into
         image.
       - slow install may take tens of minutes to hours performing copy and
         permissions reset passes into image.
