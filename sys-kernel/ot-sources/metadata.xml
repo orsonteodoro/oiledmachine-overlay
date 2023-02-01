@@ -1082,12 +1082,20 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     Acceptable values:
 
-      1 - fast install without permissions sanitization.
-      unset - slow install with permissions sanitation.  (default)
+      1 - fast install without permissions or ownership sanitization.
+      0 - slow install with permissions or ownership sanitization.
+      unset - slow install with permissions or ownership sanitization.  (default)
+
+    Notes:
+
+      - fast install takes a few seconds to few minutes performing a move into
+        image.
+      - slow install may take tens of minutes to hours performing copy and
+        permissions reset passes into image.
 
     Requires:
 
-    OT_KERNEL_INSTALL_SOURCE_CODE=1
+      OT_KERNEL_INSTALL_SOURCE_CODE=1
 
 
 
@@ -1354,6 +1362,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     See also
 
       OT_KERNEL_PRESERVE_HEADER_NOTICES
+      OT_KERNEL_FAST_SOURCE_CODE_INSTALL
 
 
 
