@@ -21,7 +21,7 @@
 # SOFTWARE.
 #
 
-TRIPLE_ID=(cat /proc/version | cut -f 3 -d " ")
+TRIPLE_ID=$(cat /proc/version | cut -f 3 -d " ")
 EXTRAVERSION="${TRIPLE_ID%-*}"
 EXTRAVERSION="${EXTRAVERSION#*-}"
 PV="${TRIPLE_ID%%-*}"
