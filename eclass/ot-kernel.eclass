@@ -8089,24 +8089,25 @@ ewarn "Preserving copyright notices.  This may take hours."
 				# No longer building (binary only)
 				rm -rf arch/um/scripts/Makefile.rules
 			fi
+
+			cd "${BUILD_DIR}" || die
+
+			# Required for genkernel
+			insinto "/usr/src/linux-${PV}-${extraversion}"
+			doins "Makefile" # Also required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
+			insinto "/usr/src/linux-${PV}-${extraversion}/include/config"
+			doins "include/config/kernel.release"
+
+			# Required for building external modules
+			insinto "/usr/src/linux-${PV}-${extraversion}/certs"
+			ls "certs/"*".pem" 2>/dev/null 1>/dev/null \
+				&& doins "certs/"*".pem"
+			ls "certs/"*".x509" 2>/dev/null 1>/dev/null \
+				&& doins "certs/"*".x509"
+			ls "certs/"*".genkey" 2>/dev/null 1>/dev/null \
+				&& doins "certs/"*".genkey"
 		fi
 
-		cd "${BUILD_DIR}" || die
-
-		# Required for genkernel
-		insinto "/usr/src/linux-${PV}-${extraversion}"
-		doins "Makefile" # Also required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
-		insinto "/usr/src/linux-${PV}-${extraversion}/include/config"
-		doins "include/config/kernel.release"
-
-		# Required for building external modules
-		insinto "/usr/src/linux-${PV}-${extraversion}/certs"
-		ls "certs/"*".pem" 2>/dev/null 1>/dev/null \
-			&& doins "certs/"*".pem"
-		ls "certs/"*".x509" 2>/dev/null 1>/dev/null \
-			&& doins "certs/"*".x509"
-		ls "certs/"*".genkey" 2>/dev/null 1>/dev/null \
-			&& doins "certs/"*".genkey"
 		local cert
 		for cert in $(find certs -type f) ; do
 			fperms 600 "/usr/src/linux-${PV}-${extraversion}/${cert}"
