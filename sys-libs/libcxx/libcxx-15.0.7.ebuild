@@ -1,11 +1,11 @@
-# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 CMAKE_ECLASS=cmake
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{9..11} )
 inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 
 DESCRIPTION="New implementation of the C++ standard library, targeting C++11"
@@ -13,17 +13,17 @@ HOMEPAGE="https://libcxx.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS="amd64 arm arm64 ~riscv x86 ~x64-macos"
+KEYWORDS="amd64 ~arm arm64 ~riscv ~sparc ~x86 ~x64-macos"
 IUSE="
-+libcxxabi +libunwind static-libs test
++libcxxabi static-libs test
 
 hardened r11
 "
-REQUIRED_USE="libunwind? ( libcxxabi )"
+REQUIRED_USE=""
 RESTRICT="!test? ( test )"
 RDEPEND="
 	libcxxabi? (
-		~sys-libs/libcxxabi-${PV}:=[${MULTILIB_USEDEP},hardened?,libunwind=,static-libs?]
+		~sys-libs/libcxxabi-${PV}:=[${MULTILIB_USEDEP},hardened?,static-libs?]
 	)
 	!libcxxabi? (
 		>=sys-devel/gcc-4.7:=[cxx]
@@ -42,14 +42,13 @@ BDEPEND+="
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)
 "
-DOCS=( CREDITS.TXT )
-PATCHES=( "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
+PATCHES=( "${FILESDIR}/libcxx-15.0.0.9999-hardened.patch" )
 
-LLVM_COMPONENTS=( libcxx{,abi} llvm/{cmake,utils/llvm-lit} )
-LLVM_PATCHSET=${PV/_/-}
+LLVM_COMPONENTS=( runtimes libcxx{,abi} llvm/{cmake,utils/llvm-lit} cmake )
 llvm.org_set_globals
 
 python_check_deps() {
+	use test || return 0
 	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
 }
 
@@ -58,9 +57,9 @@ pkg_setup() {
 	# bootstrap-prefix to set the appropriate path vars to LLVM instead
 	# of using llvm_pkg_setup.
 	if [[ ${CHOST} != *-darwin* ]] || has_version dev-lang/llvm; then
-		llvm_pkg_setup
+		LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
 	fi
-	use test && python-any-r1_pkg_setup
+	python-any-r1_pkg_setup
 
 	if ! use libcxxabi && ! tc-is-gcc ; then
 		eerror "To build ${PN} against libsupc++, you have to use gcc. Other"
@@ -185,8 +184,8 @@ src_configure() {
 	# alter the CHOST
 	local cxxabi cxxabi_incs
 	if use libcxxabi; then
-		cxxabi=libcxxabi
-		cxxabi_incs="${EPREFIX}/usr/include/libcxxabi"
+		cxxabi=system-libcxxabi
+		cxxabi_incs="${EPREFIX}/usr/include/c++/v1"
 	else
 		local gcc_inc="${EPREFIX}/usr/lib/gcc/${CHOST}/$(gcc-fullversion)/include/g++-v$(gcc-major-version)"
 		cxxabi=libsupc++
@@ -278,33 +277,9 @@ einfo
 		'-Wl,-z,now' \
 		'-Wl,-z,relro'
 
-	# we want -lgcc_s for unwinder, and for compiler runtime when using
-	# gcc, clang with gcc runtime (or any unknown compiler)
-	local extra_libs=() want_gcc_s=ON want_compiler_rt=OFF
-	if use libunwind; then
-		# work-around missing -lunwind upstream
-		extra_libs+=( -lunwind )
-		# if we're using libunwind and clang with compiler-rt, we want
-		# to link to compiler-rt instead of -lgcc_s
-		if tc-is-clang; then
-			local compiler_rt=$($(tc-getCC) ${CFLAGS} ${CPPFLAGS} \
-			   ${LDFLAGS} -print-libgcc-file-name)
-			if [[ ${compiler_rt} == *libclang_rt* ]]; then
-				want_gcc_s=OFF
-				want_compiler_rt=ON
-				extra_libs+=( "${compiler_rt}" )
-			fi
-		fi
-	elif [[ ${CHOST} == *-darwin* ]] && tc-is-clang; then
-		# clang-based darwin prefix disables libunwind useflag during
-		# bootstrap, because libunwind is not in the prefix yet.
-		# override the default, though, because clang based libcxx
-		# should never use gcc_s on Darwin.
-		want_gcc_s=OFF
-		# compiler_rt is not available in EPREFIX during bootstrap,
-		# so we cannot link to it yet anyway, so keep the defaults
-		# of want_compiler_rt=OFF and extra_libs=()
-	fi
+	# link to compiler-rt
+	local use_compiler_rt=OFF
+	[[ $(tc-get-c-rtlib) == compiler-rt ]] && use_compiler_rt=ON
 
 	# bootstrap: cmake is unhappy if compiler can't link to stdlib
 	local nolib_flags=( -nodefaultlibs -lc )
@@ -317,7 +292,12 @@ einfo
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
-		-DLIBCXX_LIBDIR_SUFFIX=${libdir#lib}
+		-DCMAKE_CXX_COMPILER_TARGET="${CHOST}"
+		-DPython3_EXECUTABLE="${PYTHON}"
+		-DLLVM_ENABLE_RUNTIMES=libcxx
+		-DLLVM_INCLUDE_TESTS=OFF
+		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
+
 		#
 		#
 		-DLIBCXX_CXX_ABI=${cxxabi}
@@ -325,12 +305,10 @@ einfo
 		# we're using our own mechanism for generating linker scripts
 		-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF
 		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
-		-DLIBCXX_HAS_GCC_S_LIB=${want_gcc_s}
+		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
 		-DLIBCXX_INCLUDE_TESTS=$(usex test)
-		-DLIBCXX_USE_COMPILER_RT=${want_compiler_rt}
-		-DLIBCXX_HAS_ATOMIC_LIB=${want_gcc_s}
-		-DLIBCXX_TARGET_TRIPLE="${CHOST}"
-		-DCMAKE_SHARED_LINKER_FLAGS="${extra_libs[*]} ${LDFLAGS}"
+		-DLIBCXX_USE_COMPILER_RT=${use_compiler_rt}
+		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
 
 		-DLTO=${_lto}
 		-DNOEXECSTACK=$(usex hardened)
@@ -394,13 +372,9 @@ einfo
 	fi
 
 	if use test; then
-		local clang_path=$(type -P "${CHOST:+${CHOST}-}clang" 2>/dev/null)
-		[[ -n ${clang_path} ]] || die "Unable to find ${CHOST}-clang for tests"
-
 		mycmakeargs+=(
 			-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
-			-DLLVM_LIT_ARGS="$(get_lit_flags);--param=cxx_under_test=${clang_path}"
-			-DLIBCXX_LINK_TESTS_WITH_SHARED_LIBCXXABI=ON
+			-DLLVM_LIT_ARGS="$(get_lit_flags)"
 			-DPython3_EXECUTABLE="${PYTHON}"
 		)
 	fi
@@ -414,6 +388,10 @@ src_compile() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_compile
+			if [[ ${CHOST} != *-darwin* ]] ; then
+				gen_shared_ldscript
+				use static-libs && gen_static_ldscript
+			fi
 		done
 	}
 	multilib_foreach_abi compile_abi
@@ -448,30 +426,31 @@ END_LDSCRIPT
 }
 
 gen_static_ldscript() {
-	local libdir=$(get_libdir)
-	local cxxabi_lib=$(usex libcxxabi "libc++abi.a" "libsupc++.a")
-
 	# Move it first.
-	mv "${ED}/usr/${libdir}/libc++.a" "${ED}/usr/${libdir}/libc++_static.a" || die
+	mv lib/libc++{,_static}.a || die
 	# Generate libc++.a ldscript for inclusion of its dependencies so that
 	# clang++ -stdlib=libc++ -static works out of the box.
-	local deps="libc++_static.a ${cxxabi_lib} $(usex libunwind libunwind.a libgcc_eh.a)"
+	local deps=(
+		libc++_static.a
+		$(usex libcxxabi libc++abi.a libsupc++.a)
+	)
 	# On Linux/glibc it does not link without libpthread or libdl. It is
 	# fine on FreeBSD.
-	use elibc_glibc && deps+=" libpthread.a libdl.a"
+	use elibc_glibc && deps+=( libpthread.a libdl.a )
 
-	gen_ldscript "${deps}" > "${ED}/usr/${libdir}/libc++.a" || die
+	gen_ldscript "${deps[*]}" > lib/libc++.a || die
 }
 
 gen_shared_ldscript() {
-	local libdir=$(get_libdir)
-	# libsupc++ doesn't have a shared version
-	local cxxabi_lib=$(usex libcxxabi "libc++abi.so" "libsupc++.a")
+	# Move it first.
+	mv lib/libc++{,_shared}.so || die
+	local deps=(
+		libc++_shared.so
+		# libsupc++ doesn't have a shared version
+		$(usex libcxxabi libc++abi.so libsupc++.a)
+	)
 
-	mv "${ED}/usr/${libdir}/libc++.so" "${ED}/usr/${libdir}/libc++_shared.so" || die
-	local deps="libc++_shared.so ${cxxabi_lib} $(usex libunwind libunwind.so libgcc_s.so)"
-
-	gen_ldscript "${deps}" > "${ED}/usr/${libdir}/libc++.so" || die
+	gen_ldscript "${deps[*]}" > lib/libc++.so || die
 }
 
 src_install() {
@@ -481,9 +460,11 @@ src_install() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_install
+			# since we've replaced libc++.{a,so} with ldscripts, now we have to
+			# install the extra symlinks
 			if [[ ${CHOST} != *-darwin* ]] ; then
-				gen_shared_ldscript
-				use static-libs && gen_static_ldscript
+				dolib.so lib/libc++_shared.so
+				use static-libs && dolib.a lib/libc++_static.a
 			fi
 		done
 		multilib_check_headers

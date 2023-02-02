@@ -1,11 +1,11 @@
-# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 CMAKE_ECLASS=cmake
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{9..11} )
 inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 
 DESCRIPTION="New implementation of the C++ standard library, targeting C++11"
@@ -186,6 +186,7 @@ _usex_lto() {
 
 src_prepare() {
 	pushd "${WORKDIR}" || die
+		# Retesting
 		# Still bugged since Sept 30, 2022
 		# Fixes build time failure:
 #
@@ -197,9 +198,9 @@ src_prepare() {
 # include/c++/v1/system_error:263:10: note: declared here
 #   263 |     void make_error_code() = delete;
 #
-		filterdiff -x "*/Cxx2bIssues.csv" "${DISTDIR}/libcxx-commit-ef843c8.patch" \
-			> "${T}/libcxx-commit-ef843c8.patch" || die
-		eapply -R "${T}/libcxx-commit-ef843c8.patch"
+#		filterdiff -x "*/Cxx2bIssues.csv" "${DISTDIR}/libcxx-commit-ef843c8.patch" \
+#			> "${T}/libcxx-commit-ef843c8.patch" || die
+#		eapply -R "${T}/libcxx-commit-ef843c8.patch"
 	popd
 	llvm.org_src_prepare
 }

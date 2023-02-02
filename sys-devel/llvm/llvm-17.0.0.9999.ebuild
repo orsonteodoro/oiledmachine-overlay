@@ -1,10 +1,10 @@
-# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{9..11} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
@@ -23,11 +23,17 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~ppc-macos ~x64-macos"
+KEYWORDS=""
 IUSE="
-+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3
++binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3 zstd
 
--dump r5
+bolt bolt-heatmap -dump jemalloc tcmalloc r5
+"
+REQUIRED_USE="
+	!amd64? ( !arm64? ( !bolt ) )
+	bolt-heatmap? ( bolt )
+	jemalloc? ( bolt )
+	tcmalloc? ( bolt )
 "
 RESTRICT="!test? ( test )"
 
@@ -35,12 +41,15 @@ RDEPEND="
 	sys-libs/zlib:0=[${MULTILIB_USEDEP}]
 	binutils-plugin? ( >=sys-devel/binutils-2.31.1-r4:*[plugins] )
 	exegesis? ( dev-libs/libpfm:= )
+	jemalloc? ( dev-libs/jemalloc )
 	libedit? ( dev-libs/libedit:0=[${MULTILIB_USEDEP}] )
 	libffi? ( >=dev-libs/libffi-3.0.13-r1:0=[${MULTILIB_USEDEP}] )
 	ncurses? ( >=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}] )
+	tcmalloc? ( dev-util/google-perftools )
 	xar? ( app-arch/xar )
 	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
 	z3? ( >=sci-mathematics/z3-4.7.1:0=[${MULTILIB_USEDEP}] )
+	zstd? ( app-arch/zstd:=[${MULTILIB_USEDEP}] )
 "
 DEPEND="
 	${RDEPEND}
@@ -73,15 +82,16 @@ RDEPEND="
 "
 PDEPEND="
 	sys-devel/llvm-common
+	sys-devel/llvm-toolchain-symlinks:${LLVM_MAJOR}
 	binutils-plugin? ( >=sys-devel/llvmgold-${LLVM_MAJOR} )
 "
 PATCHES=(
-	"${FILESDIR}/llvm-12.0.1-stop-triple-spam.patch"
+	"${FILESDIR}/llvm-14.0.0.9999-stop-triple-spam.patch"
 )
 
-LLVM_COMPONENTS=( llvm )
+LLVM_COMPONENTS=( llvm bolt cmake )
+LLVM_TEST_COMPONENTS=( third-party )
 LLVM_MANPAGES=1
-LLVM_PATCHSET=${PV/_/-}
 LLVM_USE_TARGETS=provide
 llvm.org_set_globals
 
@@ -89,6 +99,7 @@ REQUIRED_USE+="
 	amd64? ( llvm_targets_X86 )
 	arm? ( llvm_targets_ARM )
 	arm64? ( llvm_targets_AArch64 )
+	loong? ( llvm_targets_LoongArch )
 	m68k? ( llvm_targets_M68k )
 	mips? ( llvm_targets_Mips )
 	ppc? ( llvm_targets_PowerPC )
@@ -148,8 +159,8 @@ ewarn
 python_check_deps() {
 	use doc || return 0
 
-	python_has_version "dev-python/recommonmark[${PYTHON_USEDEP}]" &&
-	python_has_version "dev-python/sphinx[${PYTHON_USEDEP}]"
+	python_has_version -b "dev-python/recommonmark[${PYTHON_USEDEP}]" &&
+	python_has_version -b "dev-python/sphinx[${PYTHON_USEDEP}]"
 }
 
 check_live_ebuild() {
@@ -201,6 +212,14 @@ check_distribution_components() {
 						;;
 					# TableGen lib + deps
 					LLVMDemangle|LLVMSupport|LLVMTableGen)
+						;;
+					# BOLT static libs
+					LLVMBOLT*)
+						( ( use amd64 || use arm64 ) && use bolt ) || continue
+						;;
+					# BOLT static libs
+					bolt_rt)
+						( use amd64 && use bolt ) || continue
 						;;
 					# static libs
 					LLVM*)
@@ -262,6 +281,12 @@ src_prepare() {
 	check_live_ebuild
 
 	llvm.org_src_prepare
+	if use bolt ; then
+		pushd "${WORKDIR}" || die
+			eapply "${FILESDIR}/llvm-14.0.6-bolt-set-cmake-libdir.patch"
+			eapply "${FILESDIR}/llvm-16.0.0.9999-bolt_rt-RuntimeLibrary.cpp-path.patch"
+		popd
+	fi
 
 	prepare_abi() {
 		uopts_src_prepare
@@ -300,6 +325,7 @@ get_distribution_components() {
 			count
 			not
 			yaml-bench
+			UnicodeNameMappingGenerator
 
 			# tools
 			bugpoint
@@ -321,10 +347,14 @@ get_distribution_components() {
 			llvm-cxxdump
 			llvm-cxxfilt
 			llvm-cxxmap
+			llvm-debuginfo-analyzer
+			llvm-debuginfod
+			llvm-debuginfod-find
 			llvm-diff
 			llvm-dis
 			llvm-dlltool
 			llvm-dwarfdump
+			llvm-dwarfutil
 			llvm-dwp
 			llvm-exegesis
 			llvm-extract
@@ -357,6 +387,8 @@ get_distribution_components() {
 			llvm-readelf
 			llvm-readobj
 			llvm-reduce
+			llvm-remark-size-diff
+			llvm-remarkutil
 			llvm-rtdyld
 			llvm-sim
 			llvm-size
@@ -366,6 +398,7 @@ get_distribution_components() {
 			llvm-strip
 			llvm-symbolizer
 			llvm-tapi-diff
+			llvm-tli-checker
 			llvm-undname
 			llvm-windres
 			llvm-xray
@@ -389,6 +422,18 @@ get_distribution_components() {
 				docs-llvm-man
 			)
 		fi
+		use bolt && use amd64 && out+=(
+			# static libs
+			bolt_rt
+		)
+		( use amd64 || use arm64 ) \
+		&& use bolt && out+=(
+			bolt
+			merge-fdata
+		)
+		use bolt-heatmap && out+=(
+			llvm-bolt-heatmap
+		)
 		use doc && out+=(
 			docs-llvm-html
 		)
@@ -461,6 +506,8 @@ einfo
 		# is that the former list is explicitly verified at cmake time
 		-DLLVM_TARGETS_TO_BUILD=""
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${LLVM_TARGETS// /;}"
+		-DLLVM_INCLUDE_BENCHMARKS=OFF
+		-DLLVM_INCLUDE_TESTS=$(usex test)
 		-DLLVM_BUILD_TESTS=$(usex test)
 
 		-DLLVM_ENABLE_DUMP=$(usex dump)
@@ -470,9 +517,8 @@ einfo
 		-DLLVM_ENABLE_LIBXML2=$(usex xml)
 		-DLLVM_ENABLE_ASSERTIONS=$(usex debug)
 		-DLLVM_ENABLE_LIBPFM=$(usex exegesis)
-		-DLLVM_ENABLE_EH=ON
-		-DLLVM_ENABLE_RTTI=ON
 		-DLLVM_ENABLE_Z3_SOLVER=$(usex z3)
+		-DLLVM_ENABLE_ZSTD=$(usex zstd)
 
 		-DLLVM_HOST_TRIPLE="${CHOST}"
 
@@ -487,23 +533,28 @@ einfo
 		-DOCAMLFIND=NO
 	)
 
+	local suffix=
+	if [[ -n ${EGIT_VERSION} && ${EGIT_BRANCH} != release/* ]]; then
+		# the ABI of the main branch is not stable, so let's include
+		# the commit id in the SOVERSION to contain the breakage
+		suffix+="git${EGIT_VERSION::8}"
+	fi
 	if [[ $(tc-get-cxx-stdlib) == libc++ ]]; then
 		# Smart hack: alter version suffix -> SOVERSION when linking
 		# against libc++. This way we won't end up mixing LLVM libc++
 		# libraries with libstdc++ clang, and the other way around.
+		suffix+="+libcxx"
 		mycmakeargs+=(
-			-DLLVM_VERSION_SUFFIX="libcxx"
 			-DLLVM_ENABLE_LIBCXX=ON
 		)
 	fi
+	mycmakeargs+=(
+		-DLLVM_VERSION_SUFFIX="${suffix}"
+	)
 
-#	Note: go bindings have no CMake rules at the moment
-#	but let's kill the check in case they are introduced
-#	if ! multilib_is_native_abi || ! use go; then
-		mycmakeargs+=(
-			-DGO_EXECUTABLE=GO_EXECUTABLE-NOTFOUND
-		)
-#	fi
+	use bolt && mycmakeargs+=(
+		-DLLVM_ENABLE_PROJECTS="bolt"
+	)
 
 	use test && mycmakeargs+=(
 		-DLLVM_LIT_ARGS="$(get_lit_flags)"
@@ -532,16 +583,6 @@ einfo
 		)
 	fi
 
-	if tc-is-cross-compiler; then
-		local tblgen="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/llvm-tblgen"
-		[[ -x "${tblgen}" ]] \
-			|| die "${tblgen} not found or usable"
-		mycmakeargs+=(
-			-DCMAKE_CROSSCOMPILING=ON
-			-DLLVM_TABLEGEN="${tblgen}"
-		)
-	fi
-
 	mycmakeargs+=(
 		-DCMAKE_C_COMPILER="${CC}"
 		-DCMAKE_CXX_COMPILER="${CXX}"
@@ -550,6 +591,9 @@ einfo
 
 	cmake_src_configure
 
+	grep -q -E "^CMAKE_PROJECT_VERSION_MAJOR(:.*)?=${LLVM_MAJOR}$" \
+			CMakeCache.txt ||
+		die "Incorrect version, did you update _LLVM_MASTER_MAJOR?"
 	multilib_is_native_abi && check_distribution_components
 }
 
@@ -585,6 +629,11 @@ src_test() {
 }
 
 src_install() {
+	if use ebolt ; then
+		# For BOLT requirements, see
+# https://github.com/llvm/llvm-project/tree/main/bolt#input-binary-requirements
+		export STRIP="${BROOT}/bin/true"
+	fi
 	local MULTILIB_CHOST_TOOLS=(
 		/usr/lib/llvm/${LLVM_MAJOR}/bin/llvm-config
 	)
@@ -624,6 +673,9 @@ multilib_src_install_all() {
 
 	docompress "/usr/lib/llvm/${LLVM_MAJOR}/share/man"
 	llvm_install_manpages
+	if [[ -e "${ED}/var/tmp" ]] ; then
+		rm -rf "${ED}/var/tmp" || die
+	fi
 }
 
 pkg_postinst() {

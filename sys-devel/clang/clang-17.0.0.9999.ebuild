@@ -1,10 +1,10 @@
-# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{9..11} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
@@ -21,12 +21,11 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS="amd64 arm arm64 ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x64-macos"
+KEYWORDS=""
 IUSE="
-debug default-compiler-rt default-libcxx default-lld doc +extra llvm-libunwind
-+pie +static-analyzer test xml
+debug doc +extra +pie +static-analyzer test xml
 
-hardened r7
+hardened r6
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -40,8 +39,8 @@ RESTRICT="!test? ( test )"
 
 RDEPEND+="
 	${PYTHON_DEPS}
-	>=sys-devel/clang-common-${PV}
 	~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[debug=,${MULTILIB_USEDEP}]
+	>=sys-devel/clang-common-${PV}
 	ebolt? ( ~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[bolt,debug=,${MULTILIB_USEDEP}] )
 	static-analyzer? ( dev-lang/perl:* )
 	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
@@ -74,20 +73,16 @@ LLVM_COMPONENTS=(
 )
 LLVM_MANPAGES=1
 LLVM_TEST_COMPONENTS=(
-	llvm/lib/Testing/Support
-	llvm/utils/{lit,llvm-lit,unittest}
-	llvm/utils/{UpdateTestChecks,update_cc_test_checks.py}
+	llvm/lib/Testing
+	llvm/utils
+	third-party
 )
-LLVM_PATCHSET=${PV/_/-}
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 
 SRC_URI+="
 https://github.com/llvm/llvm-project/commit/71a9b8833231a285b4d8d5587c699ed45881624b.patch -> ${PN}-71a9b88.patch
 "
-
-# 71a9b88 - [PATCH] [X86] Use unsigned int for return type of __get_cpuid_max.
-#   Fix for compiler-rt-sanitizers[clang,scudo]
 
 REQUIRED_USE+="
 	amd64? ( llvm_targets_X86 )
@@ -125,7 +120,7 @@ PDEPEND+=" "$(gen_pdepend)
 
 PATCHES_HARDENED=(
 	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
-	"${FILESDIR}/clang-13.0.0_rc2-change-SSP-buffer-size-to-4.patch"
+	"${FILESDIR}/clang-16.0.0.9999-change-SSP-buffer-size-to-4.patch"
 	"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-version-info.patch"
@@ -169,7 +164,8 @@ ewarn
 	if [[ -n "${MAKEOPTS}" ]] ; then
 		local nmakeopts=$(echo "${MAKEOPTS}" \
 			| grep -o -E -e "-j[ ]*[0-9]+( |$)" \
-			| sed -e "s|-j||g" -e "s|[ ]*||")
+			| sed -e "s|-j||g" -e "s|[ ]*||" \
+			| tail -n 1)
 		if [[ -n "${nmakeopts}" ]] && (( ${nmakeopts} > 1 )) ; then
 ewarn
 ewarn "MAKEOPTS=-jN should be -j1 if linking with BFD or <= 4 GiB RAM or"
@@ -242,9 +238,8 @@ src_prepare() {
 
 	llvm.org_src_prepare
 
-	eapply -p2 "${DISTDIR}/${PN}-71a9b88.patch"
 	#use pgo && \
-	eapply "${FILESDIR}/clang-14.0.0.9999-add-include-path.patch"
+	eapply "${FILESDIR}/clang-16.0.0.9999-add-include-path.patch"
 
 	if use hardened ; then
 ewarn
@@ -382,18 +377,22 @@ get_distribution_components() {
 			libclang-python-bindings
 
 			# tools
+			amdgpu-arch
 			c-index-test
 			clang
 			clang-format
 			clang-offload-bundler
 			clang-offload-packager
-			clang-offload-wrapper
 			clang-refactor
 			clang-repl
 			clang-rename
 			clang-scan-deps
 			diagtool
 			hmaptool
+			nvptx-arch
+
+			# needed for cross-compiling Clang
+			clang-tblgen
 		)
 
 		if use extra; then
@@ -402,6 +401,7 @@ get_distribution_components() {
 				clang-apply-replacements
 				clang-change-namespace
 				clang-doc
+				clang-include-cleaner
 				clang-include-fixer
 				clang-move
 				clang-pseudo
@@ -526,22 +526,19 @@ einfo "  IS_CROSS_COMPILE=False"
 einfo
 
 	local mycmakeargs=(
+		-DDEFAULT_SYSROOT=$(usex prefix-guest "" "${EPREFIX}")
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/share/man"
 		-DCLANG_CONFIG_FILE_SYSTEM_DIR="${EPREFIX}/etc/clang"
 		# relative to bindir
-		-DCLANG_RESOURCE_DIR="../../../../lib/clang/${LLVM_VERSION}"
+		-DCLANG_RESOURCE_DIR="../../../../lib/clang/${LLVM_MAJOR}"
 
 		-DBUILD_SHARED_LIBS=OFF
 		-DCLANG_LINK_CLANG_DYLIB=ON
 		-DLLVM_DISTRIBUTION_COMPONENTS=$(get_distribution_components)
+		-DCLANG_INCLUDE_TESTS=$(usex test)
 
 		-DLLVM_TARGETS_TO_BUILD="${LLVM_TARGETS// /;}"
-		-DLLVM_BUILD_TESTS=$(usex test)
-
-		# these are not propagated reliably, so redefine them
-		-DLLVM_ENABLE_EH=ON
-		-DLLVM_ENABLE_RTTI=ON
 
 		-DCMAKE_DISABLE_FIND_PACKAGE_LibXml2=$(usex !xml)
 		# libgomp support fails to find headers without explicit -I
@@ -558,9 +555,15 @@ einfo
 
 		-DPython3_EXECUTABLE="${PYTHON}"
 	)
+
+	if ! use elibc_musl; then
+		mycmakeargs+=(
+			-DPPC_LINUX_DEFAULT_IEEELONGDOUBLE=$(usex ieee-long-double)
+		)
+	fi
+
 	use test && mycmakeargs+=(
-		-DLLVM_MAIN_SRC_DIR="${WORKDIR}/llvm"
-		-DLLVM_EXTERNAL_LIT="${BUILD_DIR}/bin/llvm-lit"
+		-DLLVM_BUILD_TESTS=ON
 		-DLLVM_LIT_ARGS="$(get_lit_flags)"
 	)
 
@@ -602,11 +605,12 @@ einfo
 	fi
 
 	if tc-is-cross-compiler; then
-		[[ -x "${EPREFIX}/usr/bin/clang-tblgen" ]] \
-			|| die "${EPREFIX}/usr/bin/clang-tblgen not found or usable"
+		has_version -b sys-devel/clang:${LLVM_MAJOR} ||
+			die "sys-devel/clang:${LLVM_MAJOR} is required on the build host."
+		local tools_bin=${BROOT}/usr/lib/llvm/${LLVM_MAJOR}/bin
 		mycmakeargs+=(
-			-DCMAKE_CROSSCOMPILING=ON
-			-DCLANG_TABLEGEN="${EPREFIX}/usr/bin/clang-tblgen"
+			-DLLVM_TOOLS_BINARY_DIR="${tools_bin}"
+			-DCLANG_TABLEGEN="${tools_bin}"/clang-tblgen
 		)
 	fi
 

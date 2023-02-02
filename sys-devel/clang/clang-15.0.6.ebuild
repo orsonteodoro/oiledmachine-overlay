@@ -1,10 +1,10 @@
-# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{9..11} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
@@ -169,7 +169,8 @@ ewarn
 	if [[ -n "${MAKEOPTS}" ]] ; then
 		local nmakeopts=$(echo "${MAKEOPTS}" \
 			| grep -o -E -e "-j[ ]*[0-9]+( |$)" \
-			| sed -e "s|-j||g" -e "s|[ ]*||")
+			| sed -e "s|-j||g" -e "s|[ ]*||" \
+			| tail -n 1)
 		if [[ -n "${nmakeopts}" ]] && (( ${nmakeopts} > 1 )) ; then
 ewarn
 ewarn "MAKEOPTS=-jN should be -j1 if linking with BFD or <= 4 GiB RAM or"

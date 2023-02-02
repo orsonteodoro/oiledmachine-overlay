@@ -1,10 +1,10 @@
-# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{9..11} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
@@ -73,7 +73,7 @@ LLVM_COMPONENTS=(
 )
 LLVM_MANPAGES=1
 LLVM_TEST_COMPONENTS=(
-	llvm/lib/Testing/Support
+	llvm/lib/Testing
 	llvm/utils
 	third-party
 )
@@ -164,7 +164,8 @@ ewarn
 	if [[ -n "${MAKEOPTS}" ]] ; then
 		local nmakeopts=$(echo "${MAKEOPTS}" \
 			| grep -o -E -e "-j[ ]*[0-9]+( |$)" \
-			| sed -e "s|-j||g" -e "s|[ ]*||")
+			| sed -e "s|-j||g" -e "s|[ ]*||" \
+			| tail -n 1)
 		if [[ -n "${nmakeopts}" ]] && (( ${nmakeopts} > 1 )) ; then
 ewarn
 ewarn "MAKEOPTS=-jN should be -j1 if linking with BFD or <= 4 GiB RAM or"
@@ -376,6 +377,7 @@ get_distribution_components() {
 			libclang-python-bindings
 
 			# tools
+			amdgpu-arch
 			c-index-test
 			clang
 			clang-format
@@ -387,6 +389,10 @@ get_distribution_components() {
 			clang-scan-deps
 			diagtool
 			hmaptool
+			nvptx-arch
+
+			# needed for cross-compiling Clang
+			clang-tblgen
 		)
 
 		if use extra; then
@@ -520,6 +526,7 @@ einfo "  IS_CROSS_COMPILE=False"
 einfo
 
 	local mycmakeargs=(
+		-DDEFAULT_SYSROOT=$(usex prefix-guest "" "${EPREFIX}")
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/share/man"
 		-DCLANG_CONFIG_FILE_SYSTEM_DIR="${EPREFIX}/etc/clang"
@@ -548,6 +555,13 @@ einfo
 
 		-DPython3_EXECUTABLE="${PYTHON}"
 	)
+
+	if ! use elibc_musl; then
+		mycmakeargs+=(
+			-DPPC_LINUX_DEFAULT_IEEELONGDOUBLE=$(usex ieee-long-double)
+		)
+	fi
+
 	use test && mycmakeargs+=(
 		-DLLVM_BUILD_TESTS=ON
 		-DLLVM_LIT_ARGS="$(get_lit_flags)"
@@ -591,11 +605,12 @@ einfo
 	fi
 
 	if tc-is-cross-compiler; then
-		[[ -x "${EPREFIX}/usr/bin/clang-tblgen" ]] \
-			|| die "${EPREFIX}/usr/bin/clang-tblgen not found or usable"
+		has_version -b sys-devel/clang:${LLVM_MAJOR} ||
+			die "sys-devel/clang:${LLVM_MAJOR} is required on the build host."
+		local tools_bin=${BROOT}/usr/lib/llvm/${LLVM_MAJOR}/bin
 		mycmakeargs+=(
-			-DCMAKE_CROSSCOMPILING=ON
-			-DCLANG_TABLEGEN="${EPREFIX}/usr/bin/clang-tblgen"
+			-DLLVM_TOOLS_BINARY_DIR="${tools_bin}"
+			-DCLANG_TABLEGEN="${tools_bin}"/clang-tblgen
 		)
 	fi
 

@@ -1,10 +1,10 @@
-# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{9..11} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
@@ -40,8 +40,11 @@ BDEPEND="
 		$(python_gen_any_dep ">=dev-python/lit-${PV}[\${PYTHON_USEDEP}]")
 	)
 "
+PDEPEND="
+	>=sys-devel/lld-toolchain-symlinks-15-r2:${LLVM_MAJOR}
+"
 
-LLVM_COMPONENTS=( lld libunwind/include/mach-o )
+LLVM_COMPONENTS=( lld cmake libunwind/include/mach-o )
 LLVM_TEST_COMPONENTS=( llvm/utils/{lit,unittest} )
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
@@ -50,6 +53,7 @@ REQUIRED_USE+="
 	amd64? ( llvm_targets_X86 )
 	arm? ( llvm_targets_ARM )
 	arm64? ( llvm_targets_AArch64 )
+	loong? ( llvm_targets_LoongArch )
 	m68k? ( llvm_targets_M68k )
 	mips? ( llvm_targets_Mips )
 	ppc? ( llvm_targets_PowerPC )
@@ -140,6 +144,11 @@ _src_configure() {
 		-DLLVM_LIT_ARGS="$(get_lit_flags)"
 		-DPython3_EXECUTABLE="${PYTHON}"
 	)
+
+	tc-is-cross-compiler &&	mycmakeargs+=(
+		-DLLVM_TABLEGEN_EXE="${BROOT}/usr/lib/llvm/${LLVM_MAJOR}/bin/llvm-tblgen"
+	)
+
 	cmake_src_configure
 }
 

@@ -1,10 +1,10 @@
-# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{9..11} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
@@ -16,9 +16,9 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv x86"
+KEYWORDS=""
 IUSE="
-debug test
+debug test zstd
 
 hardened r1
 "
@@ -28,6 +28,7 @@ RESTRICT="!test? ( test )"
 RDEPEND="
 	!sys-devel/lld:0
 	sys-libs/zlib:=
+	zstd? ( app-arch/zstd:= )
 	~sys-devel/llvm-${PV}
 "
 DEPEND="${RDEPEND}"
@@ -41,11 +42,11 @@ BDEPEND="
 	)
 "
 PDEPEND="
-	>=sys-devel/lld-toolchain-symlinks-15-r2:${LLVM_MAJOR}
+	>=sys-devel/lld-toolchain-symlinks-16-r2:${LLVM_MAJOR}
 "
 
 LLVM_COMPONENTS=( lld cmake libunwind/include/mach-o )
-LLVM_TEST_COMPONENTS=( llvm/utils/{lit,unittest} )
+LLVM_TEST_COMPONENTS=( llvm/utils third-party )
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 
@@ -136,7 +137,6 @@ _src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 		-DBUILD_SHARED_LIBS=ON
 		-DLLVM_INCLUDE_TESTS=$(usex test)
-		-DLLVM_MAIN_SRC_DIR="${WORKDIR}/llvm"
 	)
 	use test && mycmakeargs+=(
 		-DLLVM_BUILD_TESTS=ON
@@ -144,6 +144,11 @@ _src_configure() {
 		-DLLVM_LIT_ARGS="$(get_lit_flags)"
 		-DPython3_EXECUTABLE="${PYTHON}"
 	)
+
+	tc-is-cross-compiler &&	mycmakeargs+=(
+		-DLLVM_TABLEGEN_EXE="${BROOT}/usr/lib/llvm/${LLVM_MAJOR}/bin/llvm-tblgen"
+	)
+
 	cmake_src_configure
 }
 
