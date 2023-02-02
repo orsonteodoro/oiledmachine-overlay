@@ -3860,7 +3860,7 @@ ot-kernel_set_kconfig_dmesg() {
 		ot-kernel_y_configopt "CONFIG_PRINTK"
 		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
 		# See https://www.kernel.org/doc/html/latest/core-api/printk-basics.html
-		ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "6"
+		ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "7" # Excludes >= pr_info
 		ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "4"
 		ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "4"
 	fi
@@ -6997,7 +6997,7 @@ ewarn
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2"
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "1"
 		else
-			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "6"
+			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "5"
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "4"
 		fi
 
@@ -7030,7 +7030,7 @@ einfo "Adding logo footnote on init:  ${OT_KERNEL_LOGO_FOOTNOTES}"
 			offset=$(grep -F -n "argv_init[0] = init_filename;" \
 				"${BUILD_DIR}/${file_path}" \
 				| cut -f 1 -d ":")
-			sed -i -e "${offset}a\\\tpr_info(\"${OT_KERNEL_LOGO_FOOTNOTES}\\\\n\");" \
+			sed -i -e "${offset}a\\\tpr_alert(\"${OT_KERNEL_LOGO_FOOTNOTES}\\\\n\");" \
 				"${BUILD_DIR}/${file_path}"
 			ot-kernel_y_configopt "CONFIG_PRINTK"
 			ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
