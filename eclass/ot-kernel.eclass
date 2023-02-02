@@ -7022,14 +7022,15 @@ eerror
 
 		if [[ -n "${OT_KERNEL_LOGO_FOOTNOTES_ON_INIT}" ]] ; then
 einfo "Adding logo footnote on init:  ${OT_KERNEL_LOGO_FOOTNOTES}"
-			grep -F -q -n "y = fb_show_extra_logos(" \
-                                "${BUILD_DIR}/drivers/video/fbdev/core/fbmem.c" || die "Missing fragment"
+			local file_path="init/main.c"
+			grep -F -q -n "argv_init[0] = init_filename;" \
+                                "${BUILD_DIR}/${file_path}" || die "Missing fragment"
 			local offset
-			offset=$(grep -F -n "y = fb_show_extra_logos(" \
-				"${BUILD_DIR}/drivers/video/fbdev/core/fbmem.c" \
+			offset=$(grep -F -n "argv_init[0] = init_filename;" \
+				"${BUILD_DIR}/${file_path}" \
 				| cut -f 1 -d ":")
-			sed -i -e "${offset}a\\\tprintk(KERN_INFO \"${OT_KERNEL_LOGO_FOOTNOTES}\");" \
-				"${BUILD_DIR}/drivers/video/fbdev/core/fbmem.c"
+			sed -i -e "${offset}a\\\tpr_info(\"${OT_KERNEL_LOGO_FOOTNOTES}\\n\");" \
+				"${BUILD_DIR}/${file_path}"
 			ot-kernel_y_configopt "CONFIG_PRINTK"
 			ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
 ewarn
