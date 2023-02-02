@@ -7029,7 +7029,7 @@ einfo "Adding logo footnote on init:  ${OT_KERNEL_LOGO_FOOTNOTES}"
 			offset=$(grep -F -n "argv_init[0] = init_filename;" \
 				"${BUILD_DIR}/${file_path}" \
 				| cut -f 1 -d ":")
-			sed -i -e "${offset}a\\\tpr_info(\"${OT_KERNEL_LOGO_FOOTNOTES}\\n\");" \
+			sed -i -e "${offset}a\\\tpr_info(\"${OT_KERNEL_LOGO_FOOTNOTES}\\\\n\");" \
 				"${BUILD_DIR}/${file_path}"
 			ot-kernel_y_configopt "CONFIG_PRINTK"
 			ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
