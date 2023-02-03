@@ -1671,7 +1671,7 @@ ot-kernel-pkgflags_corosync() { # DONE
 
 # @FUNCTION: _ot-kernel-pkgflags_cr_suid_sandbox_settings
 # @DESCRIPTION:
-# Add config settings
+# Add config settings for suid sandbox support
 _ot-kernel-pkgflags_cr_suid_sandbox_settings() { # DONE
 	ot-kernel_y_configopt "CONFIG_PID_NS"
 	ot-kernel_y_configopt "CONFIG_NET_NS"
@@ -1760,6 +1760,7 @@ www-misc/instatron
 
 # @FUNCTION: _ot-kernel-pkgflags_cr_based
 # @DESCRIPTION:
+# Returns 0 if it is a cr based package.
 _ot-kernel-pkgflags_cr_based() {
 	local pkg
 	for pkg in ${CR_PKGS[@]} ; do
@@ -1770,7 +1771,7 @@ _ot-kernel-pkgflags_cr_based() {
 
 # @FUNCTION: ot-kernel-pkgflags_cr
 # @DESCRIPTION:
-# Applies kernel config flags for the Blink suid sandbox
+# Applies kernel config flags for the cr based packages
 ot-kernel-pkgflags_cr() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4aa6a9f]}" == "1" ]] && return
 	if _ot-kernel-pkgflags_cr_based ; then
@@ -3208,7 +3209,7 @@ _ot-kernel-pkgflags_ff_based() {
 
 # @FUNCTION: ot-kernel-pkgflags_ff
 # @DESCRIPTION:
-# Applies kernel config flags for the ff package
+# Applies kernel config flags for the ff based packages
 ot-kernel-pkgflags_ff() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb5b1507]}" == "1" ]] && return
 	if _ot-kernel-pkgflags_ff_based ; then
