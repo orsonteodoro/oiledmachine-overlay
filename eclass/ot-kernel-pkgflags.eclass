@@ -8546,7 +8546,7 @@ ot-kernel-pkgflags_xfce4_battery_plugin() { # DONE
 ot-kernel-pkgflags_xorg_server() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sbab5cc6]}" == "1" ]] && return
 	if ot-kernel_has_version "x11-base/xorg-server" ; then
-		einfo "Applying kernel config flags for the xoscope package (id: bab5cc6)"
+		einfo "Applying kernel config flags for the xorg-server package (id: bab5cc6)"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 	fi
 }
