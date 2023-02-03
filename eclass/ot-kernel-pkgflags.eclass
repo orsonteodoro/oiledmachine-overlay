@@ -150,12 +150,14 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_iucode
 	ot-kernel-pkgflags_linux_firmware
 
+	ot-kernel-pkgflags_abseil_cpp
 	ot-kernel-pkgflags_accel_ppp
 	ot-kernel-pkgflags_acpi_call
 	ot-kernel-pkgflags_acpid
 	ot-kernel-pkgflags_actkbd
 	ot-kernel-pkgflags_alsa
 	ot-kernel-pkgflags_amt_check
+	ot-kernel-pkgflags_apache
 	ot-kernel-pkgflags_apcupsd
 	ot-kernel-pkgflags_appimage
 	ot-kernel-pkgflags_apptainer
@@ -171,11 +173,11 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_bcm_sta
 	ot-kernel-pkgflags_beep
 	ot-kernel-pkgflags_bees
-	ot-kernel-pkgflags_blink_suid_sandbox
 	ot-kernel-pkgflags_blink1
 	ot-kernel-pkgflags_blktrace
 	ot-kernel-pkgflags_blueman
 	ot-kernel-pkgflags_bluez
+	ot-kernel-pkgflags_boost
 	ot-kernel-pkgflags_bmon
 	ot-kernel-pkgflags_bpftool
 	ot-kernel-pkgflags_bpftrace
@@ -193,13 +195,16 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_chroot_wrapper
 	ot-kernel-pkgflags_clamav
 	ot-kernel-pkgflags_clamfs
+	ot-kernel-pkgflags_clang
 	ot-kernel-pkgflags_clsync
 	ot-kernel-pkgflags_cni_plugins
 	ot-kernel-pkgflags_collectd
 	ot-kernel-pkgflags_compiler_rt_sanitizers
 	ot-kernel-pkgflags_conky
 	ot-kernel-pkgflags_conntrack_tools
+	ot-kernel-pkgflags_coreutils
 	ot-kernel-pkgflags_corosync
+	ot-kernel-pkgflags_cr
 	ot-kernel-pkgflags_crda
 	ot-kernel-pkgflags_criu
 	ot-kernel-pkgflags_cryfs
@@ -212,6 +217,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_db_numa
 	ot-kernel-pkgflags_dbus
 	ot-kernel-pkgflags_dccutil
+	ot-kernel-pkgflags_dietlibc
 	ot-kernel-pkgflags_discord
 	ot-kernel-pkgflags_distrobuilder
 	ot-kernel-pkgflags_docker
@@ -227,6 +233,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_ekeyd
 	ot-kernel-pkgflags_ell
 	ot-kernel-pkgflags_elogind
+	ot-kernel-pkgflags_embree
 	ot-kernel-pkgflags_ena_driver
 	ot-kernel-pkgflags_encfs
 	ot-kernel-pkgflags_epoch
@@ -236,6 +243,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_external_modules
 	ot-kernel-pkgflags_f2fs_tools
 	ot-kernel-pkgflags_ff
+	ot-kernel-pkgflags_ffmpeg
 	ot-kernel-pkgflags_firecracker_bin
 	ot-kernel-pkgflags_firehol
 	ot-kernel-pkgflags_firewalld
@@ -251,9 +259,12 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_glibc
 	ot-kernel-pkgflags_gnokii
 	ot-kernel-pkgflags_gnome_boxes
+	ot-kernel-pkgflags_go
 	ot-kernel-pkgflags_gpm
 	ot-kernel-pkgflags_grs
 	ot-kernel-pkgflags_gspca_ep800
+	ot-kernel-pkgflags_gst_plugins_ximagesrc
+	ot-kernel-pkgflags_gstreamer
 	ot-kernel-pkgflags_guestfs
 	ot-kernel-pkgflags_gvrpcd
 	ot-kernel-pkgflags_hamachi
@@ -282,6 +293,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_iscan_plugin
 	ot-kernel-pkgflags_iwd
 	ot-kernel-pkgflags_iwlmvm
+	ot-kernel-pkgflags_jemalloc
 	ot-kernel-pkgflags_joycond
 	ot-kernel-pkgflags_k3s
 	ot-kernel-pkgflags_kexec_tools
@@ -294,6 +306,8 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_latencytop
 	ot-kernel-pkgflags_libcec
 	ot-kernel-pkgflags_libcgroup
+	ot-kernel-pkgflags_libcxx
+	ot-kernel-pkgflags_libcxxabi
 	ot-kernel-pkgflags_libfido2
 	ot-kernel-pkgflags_libmtp
 	ot-kernel-pkgflags_libnetfilter_acct
@@ -304,6 +318,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_libnetfilter_queue
 	ot-kernel-pkgflags_libnfnetlink
 	ot-kernel-pkgflags_libnftnl
+	ot-kernel-pkgflags_libomp
 	ot-kernel-pkgflags_libsdl2
 	ot-kernel-pkgflags_libteam
 	ot-kernel-pkgflags_libu2f_host
@@ -317,14 +332,17 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_lirc
 	ot-kernel-pkgflags_lkrg
 	ot-kernel-pkgflags_lksctp_tools
+	ot-kernel-pkgflags_llvm
 	ot-kernel-pkgflags_lm_sensors
 	ot-kernel-pkgflags_longrun
 	ot-kernel-pkgflags_loopaes
 	ot-kernel-pkgflags_lttng_modules
+	ot-kernel-pkgflags_lttng_ust
 	ot-kernel-pkgflags_lvm2
 	ot-kernel-pkgflags_lxc
 	ot-kernel-pkgflags_lxd
 	ot-kernel-pkgflags_madwimax
+	ot-kernel-pkgflags_mariadb
 	ot-kernel-pkgflags_mcelog
 	ot-kernel-pkgflags_mcproxy
 	ot-kernel-pkgflags_mdadm
@@ -333,12 +351,15 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_minidlna
 	ot-kernel-pkgflags_minijail
 	ot-kernel-pkgflags_mono
+	ot-kernel-pkgflags_mplayer
 	ot-kernel-pkgflags_mpm_itk
 	ot-kernel-pkgflags_mptcpd
+	ot-kernel-pkgflags_mpv
 	ot-kernel-pkgflags_msr_tools
 	ot-kernel-pkgflags_mswatch
 	ot-kernel-pkgflags_multipath_tools
 	ot-kernel-pkgflags_musl
+	ot-kernel-pkgflags_mysql
 	ot-kernel-pkgflags_nbfc
 	ot-kernel-pkgflags_nemu
 	ot-kernel-pkgflags_networkmanager
@@ -346,6 +367,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_nfacct
 	ot-kernel-pkgflags_nftables
 	ot-kernel-pkgflags_nftlb
+	ot-kernel-pkgflags_nginx
 	ot-kernel-pkgflags_nilfs_utils
 	ot-kernel-pkgflags_nodejs
 	ot-kernel-pkgflags_nstx
@@ -360,6 +382,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_openconnect
 	ot-kernel-pkgflags_openfortivpn
 	ot-kernel-pkgflags_openl2tp
+	ot-kernel-pkgflags_openrc
 	ot-kernel-pkgflags_openrgb
 	ot-kernel-pkgflags_openssl
 	ot-kernel-pkgflags_openvpn
@@ -372,6 +395,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_pesign
 	ot-kernel-pkgflags_perf
 	ot-kernel-pkgflags_pglinux
+	ot-kernel-pkgflags_php
 	ot-kernel-pkgflags_plocate
 	ot-kernel-pkgflags_ply
 	ot-kernel-pkgflags_plymouth
@@ -386,20 +410,24 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_pulseaudio
 	ot-kernel-pkgflags_pqiv
 	ot-kernel-pkgflags_pv
+	ot-kernel-pkgflags_python
 	ot-kernel-pkgflags_qdmr
 	ot-kernel-pkgflags_qemu
+	ot-kernel-pkgflags_qtcore
 	ot-kernel-pkgflags_r8152
 	ot-kernel-pkgflags_r8168
 	ot-kernel-pkgflags_rasdaemon
 	ot-kernel-pkgflags_read_edid
 	ot-kernel-pkgflags_recoil
 	ot-kernel-pkgflags_roct
+	ot-kernel-pkgflags_rocksdb
 	ot-kernel-pkgflags_rr
 	ot-kernel-pkgflags_rsyslog
 	ot-kernel-pkgflags_rtirq
 	ot-kernel-pkgflags_rtkit
 	ot-kernel-pkgflags_rtsp_conntrack
 	ot-kernel-pkgflags_runc
+	ot-kernel-pkgflags_rust
 	ot-kernel-pkgflags_samba
 	ot-kernel-pkgflags_sane
 	ot-kernel-pkgflags_sanewall
@@ -430,6 +458,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_systemtap
 	ot-kernel-pkgflags_tas
 	ot-kernel-pkgflags_tb_us
+	ot-kernel-pkgflags_tbb
 	ot-kernel-pkgflags_tboot
 	ot-kernel-pkgflags_thinkfinger
 	ot-kernel-pkgflags_torque
@@ -463,6 +492,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_vtun
 	ot-kernel-pkgflags_wacom
 	ot-kernel-pkgflags_wavemon
+	ot-kernel-pkgflags_webkit_gtk
 	ot-kernel-pkgflags_wine
 	ot-kernel-pkgflags_wireguard_modules
 	ot-kernel-pkgflags_wireguard_tools
@@ -482,6 +512,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_xf86_video_vesa
 	ot-kernel-pkgflags_x86info
 	ot-kernel-pkgflags_xfce4_battery_plugin
+	ot-kernel-pkgflags_xorg_server
 	ot-kernel-pkgflags_xoscope
 	ot-kernel-pkgflags_xpadneo
 	ot-kernel-pkgflags_xpra
@@ -492,26 +523,23 @@ ot-kernel-pkgflags_apply() {
 	# Post apply
 	# General commonly used kernel features goes here.
 	_ot-kernel-pkgflags_squashfs
-	_ot-kernel_set_aio
-	_ot-kernel_set_bpf
-	_ot-kernel_set_epoll
-	_ot-kernel_set_eventfd
-	_ot-kernel_set_fhandle
 	_ot-kernel_set_futex
 	_ot-kernel_set_futex2
-	_ot-kernel_set_inotify
-	_ot-kernel_set_io_uring
 	_ot-kernel_set_ldt
-	_ot-kernel_set_madvise
-	_ot-kernel_set_membarrier
-	_ot-kernel_set_netfilter
-	_ot-kernel_set_timers
-	_ot-kernel_set_signalfd
-	_ot-kernel_set_shm
-	_ot-kernel_set_thp
-	_ot-kernel_set_timerfd
 
 	# Out of source modules
+}
+
+# @FUNCTION: ot-kernel-pkgflags_abseil_cpp
+# @DESCRIPTION:
+# Applies kernel config flags for the abseil-cpp package
+ot-kernel-pkgflags_abseil_cpp() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S8476275]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-cpp/abseil-cpp" ; then
+		einfo "Applying kernel config flags for the abseil-cpp package (id: 8476275)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+	fi
 }
 
 # @FUNCTION: ot-kernel-pkgflags_accel_ppp
@@ -586,6 +614,17 @@ ot-kernel-pkgflags_amt_check() { # DONE
 	if ot-kernel_has_version "app-admin/mei-amt-check" ; then
 		einfo "Applying kernel config flags for the amt-check package (id: 44d0a26)"
 		ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_apache
+# @DESCRIPTION:
+# Applies kernel config flags for the apache package
+ot-kernel-pkgflags_apache() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb4e8350]}" == "1" ]] && return
+	if ot-kernel_has_version "www-servers/apache" ; then
+		einfo "Applying kernel config flags for the apache package (id: b4e8350)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 	fi
 }
 
@@ -885,120 +924,6 @@ ot-kernel-pkgflags_bees() { # DONE
 	:
 }
 
-# @FUNCTION: _ot-kernel-pkgflags_blink_suid_sandbox_settings
-# @DESCRIPTION:
-# Add config settings
-_ot-kernel-pkgflags_blink_suid_sandbox_settings() { # DONE
-	einfo "Applying kernel config flags for blink suid sandbox support (id: 4aa6a9f)"
-	ot-kernel_y_configopt "CONFIG_PID_NS"
-	ot-kernel_y_configopt "CONFIG_NET_NS"
-	ot-kernel_y_configopt "CONFIG_USER_NS"
-	ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
-	ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
-	ot-kernel_unset_configopt "CONFIG_COMPAT_VDSO"
-	if grep -q -e "^CONFIG_GRKERNSEC=y" "${path_config}" ; then
-		# Still added because user may add patch via /etc/portage/patches
-eerror
-eerror "Lowered security detected:"
-eerror "The CONFIG_GRKERNSEC flag will break the suid sandbox."
-eerror "Either set OT_KERNEL_PKGFLAGS_REJECT[S4aa6a9f]=1 or disable CONFIG_GRKERNSEC."
-eerror
-		die
-	fi
-}
-
-CR_PKGS=(
-# Obtained from
-# From /usr/portage \
-# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chromium_suid_sandbox_check_kernel_config" ./ | cut -f 2-3 -d "/" | sort | uniq
-# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chrome-sandbox" ./ | cut -f 2-3 -d "/" | sort | uniq
-# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "electron" ./ | grep ".ebuild:" | cut -f 2-3 -d "/"			# Requires manual inspection
-# From /var/lib/layman \
-# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chrome-sandbox" ./ | cut -f 3-4 -d "/" | sort | uniq
-# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "electron-app" ./ | grep ".ebuild:" | cut -f 2-3 -d "/" | sort | uniq
-# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "electron" ./ | grep ".ebuild:" | cut -f 3-4 -d "/" | sort | uniq	# Requires manual inspection
-app-admin/bitwarden-desktop-bin
-app-editors/epic-journal
-app-editors/vscode
-app-editors/vscodium
-app-office/drawio-desktop-bin
-dev-db/dbgate-bin
-dev-games/gdevelop
-dev-qt/qtwebengine
-dev-util/arctype
-dev-util/beekeeper-studio-bin
-dev-util/clion
-dev-util/devhub
-dev-util/eclipse-theia
-dev-util/electron-bin
-dev-util/electron-packager
-dev-util/insomnia-bin
-dev-util/lepton
-dev-util/postman
-dev-util/pycharm-community
-dev-util/pycharm-professional
-dev-util/testmace
-media-gfx/blockbench
-media-gfx/evoluspencil
-media-gfx/texturelab
-media-gfx/WebPlotDigitizer-bin
-media-sound/nuclear-bin
-media-sound/plexamp
-media-sound/teamspeak-client
-media-video/obs-studio
-net-im/caprine
-net-im/discord-bin
-net-im/discord-canary-bin
-net-im/discord-ptb-bin
-net-im/element-desktop-bin
-net-im/guilded-bin
-net-im/signal-desktop-bin
-net-im/skypeforlinux
-net-im/slack
-net-im/teams
-net-im/whatsapp-desktop-bin
-net-libs/cef
-net-libs/cef-bin
-net-proxy/insomnia-bin
-www-apps/BloodHound
-www-client/chromium
-www-client/chromium-bin
-www-client/google-chrome
-www-client/google-chrome-beta
-www-client/google-chrome-unstable
-www-client/microsoft-edge
-www-client/microsoft-edge-beta
-www-client/microsoft-edge-dev
-www-client/opera
-www-client/opera-beta
-www-client/opera-developer
-www-misc/instatron
-)
-
-# @FUNCTION: _ot-kernel-pkgflags_cr_based
-# @DESCRIPTION:
-_ot-kernel-pkgflags_cr_based() {
-	local pkg
-	for pkg in ${CR_PKGS[@]} ; do
-		ot-kernel_has_version "${pkg}" && return 0
-	done
-	return 1
-}
-
-# @FUNCTION: ot-kernel-pkgflags_blink_suid_sandbox
-# @DESCRIPTION:
-# Applies kernel config flags for the Blink suid sandbox
-ot-kernel-pkgflags_blink_suid_sandbox() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4aa6a9f]}" == "1" ]] && return
-	if _ot-kernel-pkgflags_cr_based ; then
-		if [[ "${USE_SUID_SANDBOX:-0}" == "1" ]] ; then
-			_ot-kernel-pkgflags_blink_suid_sandbox_settings
-			return
-		fi
-		_ot-kernel-pkgflags_blink_suid_sandbox_settings
-	fi
-}
-
 # @FUNCTION: ot-kernel-pkgflags_blink1
 # @DESCRIPTION:
 # Applies kernel config flags for the blink1 package
@@ -1033,6 +958,22 @@ ot-kernel-pkgflags_blueman() { # DONE
 		ot-kernel_y_configopt "CONFIG_IP_NF_IPTABLES"
 		ot-kernel_y_configopt "CONFIG_IP_NF_NAT"
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_MASQUERADE"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_boost
+# @DESCRIPTION:
+# Applies kernel config flags for the boost package
+ot-kernel-pkgflags_boost() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S0794a5e]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-libs/boost" ; then
+		einfo "Applying kernel config flags for the boost package (id: 0794a5e)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_EVENTFD"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_IO_URING"
 	fi
 }
 
@@ -1560,6 +1501,19 @@ ot-kernel-pkgflags_clamfs() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_clang
+# @DESCRIPTION:
+# Applies kernel config flags for the clang package
+ot-kernel-pkgflags_clang() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Safc5318]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-devel/clang" ; then
+		einfo "Applying kernel config flags for the clang package (id: afc5318)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_EPOLL"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_clsync
 # @DESCRIPTION:
 # Applies kernel config flags for the clsync package
@@ -1641,6 +1595,14 @@ ot-kernel-pkgflags_compiler_rt_sanitizers() { # DONE
 	if ot-kernel_has_version "sys-libs/compiler-rt-sanitizers" ; then
 		einfo "Applying kernel config flags for the compiler-rt-sanitizers package (id: a0dc43a)"
 	        ot-kernel_y_configopt "CONFIG_SYSVIPC"
+		if ot-kernel_has_version "sys-libs/compiler-rt-sanitizers[test]" ; then
+			ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		fi
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FHANDLE"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 	fi
 }
 
@@ -1683,6 +1645,19 @@ ot-kernel-pkgflags_conntrack_tools() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_coreutils
+# @DESCRIPTION:
+# Applies kernel config flags for the coreutils package
+ot-kernel-pkgflags_coreutils() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S3d041d8]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-apps/coreutils" ; then
+		einfo "Applying kernel config flags for the coreutils package (id: 3d041d8)"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_corosync
 # @DESCRIPTION:
 # Applies kernel config flags for the corosync package
@@ -1691,6 +1666,125 @@ ot-kernel-pkgflags_corosync() { # DONE
 	if ot-kernel_has_version "sys-cluster/corosync[watchdog]" ; then
 		einfo "Applying kernel config flags for the corosync package (id: 63be96c)"
 		ot-kernel_y_configopt "CONFIG_WATCHDOG"
+	fi
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_cr_suid_sandbox_settings
+# @DESCRIPTION:
+# Add config settings
+_ot-kernel-pkgflags_cr_suid_sandbox_settings() { # DONE
+	ot-kernel_y_configopt "CONFIG_PID_NS"
+	ot-kernel_y_configopt "CONFIG_NET_NS"
+	ot-kernel_y_configopt "CONFIG_USER_NS"
+	ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
+	ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+	ot-kernel_unset_configopt "CONFIG_COMPAT_VDSO"
+	if grep -q -e "^CONFIG_GRKERNSEC=y" "${path_config}" ; then
+		# Still added because user may add patch via /etc/portage/patches
+eerror
+eerror "Lowered security detected:"
+eerror "The CONFIG_GRKERNSEC flag will break the suid sandbox."
+eerror "Either set OT_KERNEL_PKGFLAGS_REJECT[S4aa6a9f]=1 or disable CONFIG_GRKERNSEC."
+eerror
+		die
+	fi
+}
+
+CR_PKGS=(
+# Obtained from
+# From /usr/portage \
+# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chromium_suid_sandbox_check_kernel_config" ./ | cut -f 2-3 -d "/" | sort | uniq
+# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chrome-sandbox" ./ | cut -f 2-3 -d "/" | sort | uniq
+# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "electron" ./ | grep ".ebuild:" | cut -f 2-3 -d "/"			# Requires manual inspection
+# From /var/lib/layman \
+# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chrome-sandbox" ./ | cut -f 3-4 -d "/" | sort | uniq
+# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "electron-app" ./ | grep ".ebuild:" | cut -f 2-3 -d "/" | sort | uniq
+# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "electron" ./ | grep ".ebuild:" | cut -f 3-4 -d "/" | sort | uniq	# Requires manual inspection
+app-admin/bitwarden-desktop-bin
+app-editors/epic-journal
+app-editors/vscode
+app-editors/vscodium
+app-office/drawio-desktop-bin
+dev-db/dbgate-bin
+dev-games/gdevelop
+dev-qt/qtwebengine
+dev-util/arctype
+dev-util/beekeeper-studio-bin
+dev-util/clion
+dev-util/devhub
+dev-util/eclipse-theia
+dev-util/electron-bin
+dev-util/electron-packager
+dev-util/insomnia-bin
+dev-util/lepton
+dev-util/postman
+dev-util/pycharm-community
+dev-util/pycharm-professional
+dev-util/testmace
+media-gfx/blockbench
+media-gfx/evoluspencil
+media-gfx/texturelab
+media-gfx/WebPlotDigitizer-bin
+media-sound/nuclear-bin
+media-sound/plexamp
+media-sound/teamspeak-client
+media-video/obs-studio
+net-im/caprine
+net-im/discord-bin
+net-im/discord-canary-bin
+net-im/discord-ptb-bin
+net-im/element-desktop-bin
+net-im/guilded-bin
+net-im/signal-desktop-bin
+net-im/skypeforlinux
+net-im/slack
+net-im/teams
+net-im/whatsapp-desktop-bin
+net-libs/cef
+net-libs/cef-bin
+net-proxy/insomnia-bin
+www-apps/BloodHound
+www-client/chromium
+www-client/chromium-bin
+www-client/google-chrome
+www-client/google-chrome-beta
+www-client/google-chrome-unstable
+www-client/microsoft-edge
+www-client/microsoft-edge-beta
+www-client/microsoft-edge-dev
+www-client/opera
+www-client/opera-beta
+www-client/opera-developer
+www-misc/instatron
+)
+
+# @FUNCTION: _ot-kernel-pkgflags_cr_based
+# @DESCRIPTION:
+_ot-kernel-pkgflags_cr_based() {
+	local pkg
+	for pkg in ${CR_PKGS[@]} ; do
+		ot-kernel_has_version "${pkg}" && return 0
+	done
+	return 1
+}
+
+# @FUNCTION: ot-kernel-pkgflags_cr
+# @DESCRIPTION:
+# Applies kernel config flags for the Blink suid sandbox
+ot-kernel-pkgflags_cr() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4aa6a9f]}" == "1" ]] && return
+	if _ot-kernel-pkgflags_cr_based ; then
+		einfo "Applying kernel config flags for cr and derivatives (id: 4aa6a9f)"
+		if [[ "${USE_SUID_SANDBOX:-0}" == "1" ]] ; then
+			_ot-kernel-pkgflags_cr_suid_sandbox_settings
+			return
+		fi
+		_ot-kernel-pkgflags_cr_suid_sandbox_settings
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
 	fi
 }
 
@@ -2657,6 +2751,31 @@ ot-kernel-pkgflags_dccutil() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_dietlibc
+# @DESCRIPTION:
+# Applies kernel config flags for dietlibc
+ot-kernel-pkgflags_dietlibc() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S88334b9]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-libs/dietlibc" ; then
+		einfo "Applying kernel config flags for dietlibc (id: 88334b9)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+		ot-kernel_y_configopt "CONFIG_AIO"
+		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		ot-kernel_y_configopt "CONFIG_EPOLL"
+		ot-kernel_y_configopt "CONFIG_EVENTFD"
+		ot-kernel_y_configopt "CONFIG_FHANDLE"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SIGNALFD"
+		ot-kernel_y_configopt "CONFIG_TIMERFD"
+		# ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # References it but unknown apparent performance gain/loss
+		# LDT Referenced in dev-libs/dietlibc
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_discord
 # @DESCRIPTION:
 # Applies kernel config flags for discord
@@ -2963,6 +3082,17 @@ ot-kernel-pkgflags_elogind() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_embree
+# @DESCRIPTION:
+# Applies kernel config flags for the embree package
+ot-kernel-pkgflags_embree() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S121bc50]}" == "1" ]] && return
+	if ot-kernel_has_version "media-libs/embree" ; then
+		einfo "Applying kernel config flags for the embree package (id: 121bc50)"
+		ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # ~5 - ~10% improvement
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_ena_driver
 # @DESCRIPTION:
 # Applies kernel config flags for the ena_driver package
@@ -3084,6 +3214,30 @@ ot-kernel-pkgflags_ff() { # DONE
 	if _ot-kernel-pkgflags_ff_based ; then
 		einfo "Applying kernel config flags for ff and derivatives (id: b5b1507)"
 		ot-kernel_y_configopt "CONFIG_SECCOMP"
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		ot-kernel_y_configopt "CONFIG_EPOLL"
+#		ot-kernel_y_configopt "CONFIG_EVENTFD" # __NR_eventfd2
+		ot-kernel_y_configopt "CONFIG_FHANDLE"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_IO_URING"
+		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SIGNALFD"
+		ot-kernel_y_configopt "CONFIG_TIMERFD"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_ffmpeg
+# @DESCRIPTION:
+# Applies kernel config flags for the ffmpeg package
+ot-kernel-pkgflags_ffmpeg() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S13c68c4]}" == "1" ]] && return
+	if ot-kernel_has_version "media-video/ffmpeg[X]" ; then
+		einfo "Applying kernel config flags for the ffmpeg package (id: 13c68c4)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 	fi
 }
 
@@ -3296,6 +3450,16 @@ ot-kernel-pkgflags_gcc() { # DONE
 	if ot-kernel_has_version "sys-devel/gcc" ; then
 		einfo "Applying kernel config flags for the gcc package (id: b22a134)"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_AIO"
+		ot-kernel_y_configopt "CONFIG_FHANDLE"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_IO_URING"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
+		# ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # Referenced but no noted performance gain/loss
 	fi
 }
 
@@ -3337,6 +3501,11 @@ ot-kernel-pkgflags_glib() { # DONE
 		        _ot-kernel-pkgflags_tcpip
 		        ot-kernel_y_configopt "CONFIG_IPV6"
 		fi
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
 	fi
 }
 
@@ -3348,6 +3517,22 @@ ot-kernel-pkgflags_glibc() { # DONE
 	if ot-kernel_has_version "sys-libs/glibc" ; then
 		einfo "Applying kernel config flags for the glibc package (id: a8f0ac7)"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		ot-kernel_y_configopt "CONFIG_EPOLL"
+		ot-kernel_y_configopt "CONFIG_EVENTFD"
+		ot-kernel_y_configopt "CONFIG_FHANDLE"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_IO_URING"
+		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SIGNALFD"
+		ot-kernel_y_configopt "CONFIG_TIMERFD"
+		ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # 14-18% improvement
+		# ldt Referenced in sys-libs/glibc
 	fi
 }
 
@@ -3370,6 +3555,20 @@ ot-kernel-pkgflags_gnome_boxes() { # DONE
 	if ot-kernel_has_version "gnome-extra/gnome-boxes" ; then
 		einfo "Applying kernel config flags for the gnome-boxes package (id: 768ed31)"
 		: # See ot-kernel-pkgflags_qemu
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_go
+# @DESCRIPTION:
+# Applies kernel config flags for the go package
+ot-kernel-pkgflags_go() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se5375a0]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-lang/go" ; then
+		einfo "Applying kernel config flags for the go package (id: e5375a0)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 	fi
 }
 
@@ -3409,6 +3608,30 @@ ot-kernel-pkgflags_gspca_ep800() { # DONE
 		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_VIDEO_V4L2"
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_gst_plugins_ximagesrc
+# @DESCRIPTION:
+# Applies kernel config flags for the gst-plugins-ximagesrc package
+ot-kernel-pkgflags_gst_plugins_ximagesrc() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sa9b82da]}" == "1" ]] && return
+	if ot-kernel_has_version "media-plugins/gst-plugins-ximagesrc" ; then
+		einfo "Applying kernel config flags for the gst-plugins-ximagesrc package (id: a9b82da)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_gstreamer
+# @DESCRIPTION:
+# Applies kernel config flags for the gstreamer package
+ot-kernel-pkgflags_gstreamer() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf295763]}" == "1" ]] && return
+	if ot-kernel_has_version "media-libs/gstreamer" ; then
+		einfo "Applying kernel config flags for the gstreamer package (id: f295763)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 	fi
 }
 
@@ -3775,6 +3998,20 @@ ot-kernel-pkgflags_lkrg() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_llvm
+# @DESCRIPTION:
+# Applies kernel config flags for the llvm package
+ot-kernel-pkgflags_llvm() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S8f5a656]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-devel/llvm" ; then
+		einfo "Applying kernel config flags for the llvm package (id: 8f5a656)"
+		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		if ot-kernel_has_version "sys-devel/llvm[bolt]" ; then
+			ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # for bolt --hugify
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_lksctp_tools
 # @DESCRIPTION:
 # Applies kernel config flags for the lksctp-tools package
@@ -3999,6 +4236,17 @@ ot-kernel-pkgflags_isatapd() { # DONE
 	if ot-kernel_has_version "net-vpn/isatapd" ; then
 		einfo "Applying kernel config flags for the isatapd package (id: fa75afb)"
 		_ot-kernel-pkgflags_tun
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_jemalloc
+# @DESCRIPTION:
+# Applies kernel config flags for the jemalloc package
+ot-kernel-pkgflags_jemalloc() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S8cc11b9]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-libs/jemalloc" ; then
+		einfo "Applying kernel config flags for the jemalloc package (id: 8cc11b9)"
+		ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # Supported but not on by default.
 	fi
 }
 
@@ -4235,6 +4483,30 @@ ot-kernel-pkgflags_libmtp() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_libcxx
+# @DESCRIPTION:
+# Applies kernel config flags for the libcxx package
+ot-kernel-pkgflags_libcxx() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2c54027]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-libs/libcxx" ; then
+		einfo "Applying kernel config flags for the libcxx package (id: 2c54027)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_libcxxabi
+# @DESCRIPTION:
+# Applies kernel config flags for the libcxxabi package
+ot-kernel-pkgflags_libcxxabi() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S3e507a4]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-libs/libcxxabi" ; then
+		einfo "Applying kernel config flags for the libcxxabi package (id: 3e507a4)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_libcgroup
 # @DESCRIPTION:
 # Applies kernel config flags for the libcgroup package
@@ -4446,10 +4718,14 @@ ot-kernel-pkgflags_libnetfilter_queue() { # DONE
 ot-kernel-pkgflags_libomp() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S90741ba]}" == "1" ]] && return
 	if ot-kernel_has_version "sys-libs/libomp" ; then
-		ewarn "Severe performance degration with libomp is expected with the PDS scheduler. (id: 90741ba)"
+		einfo "Applying kernel config flags for the libomp package (id: 90741ba)"
 		if [[ "${cpu_sched}" =~ ("pds"|"prjc-pds") ]] ; then
 			ewarn "Detected use of the PDS scheduler."
+			ewarn "Severe performance degration with libomp is expected with the PDS scheduler. (id: 90741ba)"
+			ewarn "If performance degradion is unacceptable, disable the PDS scheduler."
 		fi
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
 	fi
 }
 
@@ -4748,6 +5024,19 @@ ot-kernel-pkgflags_lttng_modules() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_lttng_ust
+# @DESCRIPTION:
+# Applies kernel config flags for the lttng-ust package
+ot-kernel-pkgflags_lttng_ust() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S06a36a9]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-util/lttng-ust" ; then
+		einfo "Applying kernel config flags for the lttng-ust package (id: 06a36a9)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_lvm2
 # @DESCRIPTION:
 # Applies kernel config flags for the lvm2 package
@@ -4828,6 +5117,25 @@ ot-kernel-pkgflags_madwimax() { # DONE
 	if ot-kernel_has_version "net-wireless/madwimax" ; then
 		einfo "Applying kernel config flags for the madwimax package (id: 6f56e53)"
 		_ot-kernel-pkgflags_tun
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_mariadb
+# @DESCRIPTION:
+# Applies kernel config flags for the mariadb package
+ot-kernel-pkgflags_mariadb() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1216e49]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-db/mariadb" ; then
+		einfo "Applying kernel config flags for the mariadb package (id: 1216e49)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_AIO"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_IO_URING"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
 	fi
 }
 
@@ -4950,6 +5258,17 @@ ot-kernel-pkgflags_mesa() { # DONE
 		else
 			ot-kernel_y_configopt "CONFIG_CHECKPOINT_RESTORE"
 		fi
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		if ot-kernel_has_version "media-libs/mesa[vulkan,video_cards_radeonsi]" ; then
+			ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		fi
+		if ot-kernel_has_version "media-libs/mesa[video_cards_vmware]" ; then
+			ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+			ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # See 8afe12b2
+		fi
 	fi
 }
 
@@ -4995,6 +5314,18 @@ ot-kernel-pkgflags_mono() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_mplayer
+# @DESCRIPTION:
+# Applies kernel config flags for the mplayer package
+ot-kernel-pkgflags_mplayer() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[457e322]}" == "1" ]] && return
+	if ot-kernel_has_version "media-video/mplayer" ; then
+		einfo "Applying kernel config flags for the mplayer package (id: 457e322)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+	fi
+	# LDT referenced and dated 2004 for older glibcs
+}
+
 # @FUNCTION: ot-kernel-pkgflags_mpm_itk
 # @DESCRIPTION:
 # Applies kernel config flags for the mpm_itk package
@@ -5012,8 +5343,22 @@ ot-kernel-pkgflags_mpm_itk() { # DONE
 ot-kernel-pkgflags_mptcpd() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc69e109]}" == "1" ]] && return
 	if ot-kernel_has_version "net-misc/mptcpd" ; then
-		einfo "Applying kernel config flags for the mono package (id: c69e109)"
+		einfo "Applying kernel config flags for the mptcpd package (id: c69e109)"
 		ot-kernel_y_configopt "CONFIG_MPTCP"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_mpv
+# @DESCRIPTION:
+# Applies kernel config flags for the mpv package
+ot-kernel-pkgflags_mpv() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sfdeb27b]}" == "1" ]] && return
+	if \
+		ot-kernel_has_version "media-video/mpv[X]" \
+		|| ot-kernel_has_version "media-video/mpv[xv]" \
+		; then
+		einfo "Applying kernel config flags for the mpv package (id: fdeb27b)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 	fi
 }
 
@@ -5078,6 +5423,44 @@ ot-kernel-pkgflags_musl() { # DONE
 	if ot-kernel_has_version "sys-libs/musl" ; then
 		einfo "Applying kernel config flags for the musl package (id: 32191c8)"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+		ot-kernel_y_configopt "CONFIG_AIO"
+		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		ot-kernel_y_configopt "CONFIG_EPOLL"
+		ot-kernel_y_configopt "CONFIG_EVENTFD"
+		ot-kernel_y_configopt "CONFIG_FHANDLE"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_IO_URING"
+		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
+		# ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # Has THP symbol but not used within lib.
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SIGNALFD"
+		ot-kernel_y_configopt "CONFIG_TIMERFD"
+		# LDT referenced in sys-libs/musl
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_mysql
+# @DESCRIPTION:
+# Applies kernel config flags for the mysql package
+ot-kernel-pkgflags_mysql() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb150cb7]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-db/mysql" ; then
+		einfo "Applying kernel config flags for the mysql package (id: b150cb7)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_AIO"
+		ot-kernel_y_configopt "CONFIG_EPOLL"
+		ot-kernel_y_configopt "CONFIG_EVENTFD"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_IO_URING"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
 	fi
 }
 
@@ -5184,6 +5567,17 @@ ot-kernel-pkgflags_nodejs() { # DONE
 	if ot-kernel_has_version "net-libs/nodejs" ; then
 		einfo "Applying kernel config flags for the nodejs package (id: 21e5d87)"
 		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+
+		ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # See issue 16198
+		if ot-kernel_has_version "net-libs/nodejs[-system-ssl]" ; then
+			ot-kernel_y_configopt "CONFIG_EXPERT"
+			ot-kernel_y_configopt "CONFIG_AIO"
+		fi
+
+		if [[ "${arch}" =~ "ppc" ]]; then
+			ot-kernel_y_configopt "CONFIG_SHMEM"
+		fi
 	fi
 }
 
@@ -5199,6 +5593,22 @@ ot-kernel-pkgflags_nftlb() { # DONE
 		ot-kernel_y_configopt "CONFIG_NFT_HASH"
 		ot-kernel_y_configopt "CONFIG_NF_NAT"
 		ot-kernel_y_configopt "CONFIG_IP_NF_NAT"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_nginx
+# @DESCRIPTION:
+# Applies kernel config flags for the nginx package
+ot-kernel-pkgflags_nginx() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se2ca215]}" == "1" ]] && return
+	if ot-kernel_has_version "www-servers/nginx" ; then
+		einfo "Applying kernel config flags for the nginx package (id: e2ca215)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_AIO"
+		ot-kernel_y_configopt "CONFIG_EVENTFD"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 	fi
 }
 
@@ -5598,6 +6008,18 @@ ot-kernel-pkgflags_openfortivpn() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_openrc
+# @DESCRIPTION:
+# Applies kernel config flags for the openrc package
+ot-kernel-pkgflags_openrc() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2904f07]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-apps/openrc" ; then
+		einfo "Applying kernel config flags for the OpenRC package (id: 2904f07)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_openrgb
 # @DESCRIPTION:
 # Applies kernel config flags for the openrgb package
@@ -5848,6 +6270,36 @@ ot-kernel-pkgflags_qemu() { # DONE
 			ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 			needs_debugfs "app-emulation/qemu[python]" "00f70b8"
 		fi
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_AIO"
+		ot-kernel_y_configopt "CONFIG_FHANDLE"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_IO_URING"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+
+		if ot-kernel_has_version "app-emulation/qemu[test]" ; then
+			ot-kernel_y_configopt "CONFIG_SHMEM"
+		fi
+
+		#ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # slower but supported
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_qtcore
+# @DESCRIPTION:
+# Applies kernel config flags for the qtcore package.
+ot-kernel-pkgflags_qtcore() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S00f70b8]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-qt/qtcore" ; then
+		einfo "Applying kernel config flags for the qtcore package (id: 00f70b8)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
 	fi
 }
 
@@ -5991,6 +6443,10 @@ ot-kernel-pkgflags_perf() { # DONE
 		if [[ "${arch}" =~ ("arm"|"sh"|"mips") ]] ; then
 			ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		fi
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_FUTEX2"
 	fi
 }
 
@@ -6015,6 +6471,17 @@ ot-kernel-pkgflags_pglinux() { # DONE
 		ot-kernel_y_configopt "CONFIG_IP_NF_FILTER"
 		ot-kernel_y_configopt "CONFIG_IP_NF_IPTABLES"
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_REJECT"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_php
+# @DESCRIPTION:
+# Applies kernel config flags for the php package
+ot-kernel-pkgflags_php() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S98e977e]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-lang/php" ; then
+		einfo "Applying kernel config flags for the php package (id: 98e977e)"
+		ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # ~3% improvement
 	fi
 }
 
@@ -6134,6 +6601,21 @@ ot-kernel-pkgflags_pv() { # DONE
 	if ot-kernel_has_version "sys-apps/pv" ; then
 		einfo "Applying kernel config flags for the pv package (id: af7a9a9)"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_python
+# @DESCRIPTION:
+# Applies kernel config flags for the python package
+ot-kernel-pkgflags_python() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-lang/python" ; then
+		einfo "Applying kernel config flags for the python package (id: )"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
+		if ot-kernel_has_version ">=dev-lang/python-3.8" ; then
+			ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # Has symbol but not used
+		fi
 	fi
 }
 
@@ -6317,6 +6799,21 @@ ot-kernel-pkgflags_roct() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_rocksdb
+# @DESCRIPTION:
+# Applies kernel config flags for rocksdb
+ot-kernel-pkgflags_rocksdb() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sdd76993]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-libs/rocksdb" ; then
+		einfo "Applying kernel config flags for rocksdb (id: dd76993)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_IO_URING"
+		if ot-kernel_has_version "<dev-libs/rocksdb-7" ; then
+			ot-kernel_y_configopt "CONFIG_FUTEX"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_rr
 # @DESCRIPTION:
 # Applies kernel config flags for rr
@@ -6382,6 +6879,31 @@ ot-kernel-pkgflags_runc() { # DONE
 	if ot-kernel_has_version "app-containers/runc" ; then
 		einfo "Applying kernel config flags for the runc package (id: 5c1dafb)"
 		ot-kernel_y_configopt "CONFIG_USER_NS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_rust
+# @DESCRIPTION:
+# Applies kernel config flags for the rust package
+ot-kernel-pkgflags_rust() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf89b140]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-lang/rust" \
+		|| ot-kernel_has_version "dev-lang/rust-bin" ; then
+		einfo "Applying kernel config flags for the runc package (id: f89b140)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+		ot-kernel_y_configopt "CONFIG_AIO"
+		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		ot-kernel_y_configopt "CONFIG_EPOLL"
+		ot-kernel_y_configopt "CONFIG_EVENTFD"
+		ot-kernel_y_configopt "CONFIG_FHANDLE"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_FUTEX2"
+		ot-kernel_y_configopt "CONFIG_IO_URING"
+		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SIGNALFD"
+		ot-kernel_y_configopt "CONFIG_TIMERFD"
 	fi
 }
 
@@ -6925,8 +7447,15 @@ ot-kernel-pkgflags_systemd() { # DONE
 
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 
-		#warn_lowered_security "4e97be4"
-		#ot-kernel_y_configopt "CONFIG_MODIFY_LDT_SYSCALL" # optional
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		#ot-kernel_y_configopt "CONFIG_FHANDLE"
+		#ot-kernel_y_configopt "CONFIG_TIMERFD"
+		#ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_IO_URING"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
+
+		# LDT referended in sys-apps/systemd
 	fi
 }
 
@@ -6980,6 +7509,18 @@ ot-kernel-pkgflags_tb_us() { # DONE
 		einfo "Applying kernel config flags for tb-us (id: c800aa5)"
 		ot-kernel_y_configopt "CONFIG_THUNDERBOLT"
 		ot-kernel_y_configopt "CONFIG_HOTPLUG_PCI"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_tbb
+# @DESCRIPTION:
+# Applies kernel config flags for the tbb package
+ot-kernel-pkgflags_tbb() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sbe4a184]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-cpp/tbb" ; then
+		einfo "Applying kernel config flags for tbb (id: be4a184)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
 	fi
 }
 
@@ -7490,6 +8031,19 @@ ot-kernel-pkgflags_wavemon() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_webkit_gtk
+# @DESCRIPTION:
+# Applies kernel config flags for the webkit-gtk package
+ot-kernel-pkgflags_webkit_gtk() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb605226]}" == "1" ]] && return
+	if ot-kernel_has_version "net-libs/webkit-gtk" ; then
+		einfo "Applying kernel config flags for the webkit-gtk package (id: b605226)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_EPOLL"
+		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS" # __NR_process_madvise
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_wine
 # @DESCRIPTION:
 # Applies kernel config flags for the wine packages
@@ -7511,6 +8065,7 @@ ot-kernel-pkgflags_wine() { # DONE
 		fi
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
 	fi
 	if \
 		( \
@@ -7524,6 +8079,18 @@ ot-kernel-pkgflags_wine() { # DONE
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
 		ot-kernel_y_configopt "CONFIG_BPF_JIT"
+	fi
+	if \
+		ot-kernel_has_version "<app-emulation/wine-proton-6" \
+		|| ot-kernel_has_version "app-emulation/wine-ge-custom-bin" \
+		; then
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+	fi
+	if ot-kernel_has_version ">=app-emulation/wine-proton-6" ; then
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_FUTEX2"
 	fi
 }
 
@@ -7970,6 +8537,17 @@ ot-kernel-pkgflags_xfce4_battery_plugin() { # DONE
 	if ot-kernel_has_version "xfce-extra/xfce4-battery-plugin" ; then
 		einfo "Applying kernel config flags for the xfce4-battery-plugin package (id: f54e65c)"
 		ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_xorg_server
+# @DESCRIPTION:
+# Applies kernel config flags for the xorg-server package
+ot-kernel-pkgflags_xorg_server() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sbab5cc6]}" == "1" ]] && return
+	if ot-kernel_has_version "x11-base/xorg-server" ; then
+		einfo "Applying kernel config flags for the xoscope package (id: bab5cc6)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 	fi
 }
 
@@ -8566,141 +9144,21 @@ einfo "Added ${opt_raw}"
 	fi
 }
 
-# @FUNCTION: _ot-kernel_set_aio
-# @DESCRIPTION:
-# Add compatibility for aio
 #
-# Search keywords:
+# CONFIG_AIO search keywords:
 # io_setup
 #
-_ot-kernel_set_aio() {
-	# For people that keep messing with CONFIG_EXPERT.
-	local PKGS=(
-		"app-emulation/qemu"
-		"dev-lang/rust"
-		"dev-lang/rust-bin"
-		"dev-libs/dietlibc"
-		"sys-devel/gcc"
-		"sys-libs/musl"
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling aio for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_EXPERT"
-			ot-kernel_y_configopt "CONFIG_AIO"
-		fi
-	done
-}
 
-# @FUNCTION: _ot-kernel_set_bpf
-# @DESCRIPTION:
-# Add compatibility for bpf
 #
-# Search keywords:
+# CONFIG_BPF_SYSCALL search keywords:
 # BPF_STMT
 #
-_ot-kernel_set_bpf() {
-	local PKGS=(
-		${FF_PKGS[@]}
-		"app-emulation/wine"
-		"dev-lang/rust"
-		"dev-lang/rust-bin"
-		"dev-libs/dietlibc"
-		"sys-apps/systemd"
-		"sys-devel/llvm"
-		"sys-libs/compiler-rt-sanitizers[test]"
-		"sys-libs/glibc"
-		"sys-libs/musl"
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling bpf() for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
-		fi
-	done
-}
 
-# @FUNCTION: _ot-kernel_set_epoll
-# @DESCRIPTION:
-# Add compatibility for epoll
-_ot-kernel_set_epoll() {
-	# For people that keep messing with CONFIG_EXPERT.
-	local PKGS=(
-		${FF_PKGS[@]}
-		"dev-lang/rust"
-		"dev-lang/rust-bin"
-		"dev-libs/dietlibc"
-		"sys-devel/clang"
-		"sys-libs/glibc"
-		"sys-libs/musl"
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling epoll for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_EXPERT"
-			ot-kernel_y_configopt "CONFIG_EPOLL"
-		fi
-	done
-}
-
-
-# @FUNCTION: _ot-kernel_set_eventfd
-# @DESCRIPTION:
-# Add compatibility for eventfd
-_ot-kernel_set_eventfd() {
-	# For people that keep messing with CONFIG_EXPERT.
-	local PKGS=(
-#		${FF_PKGS[@]} # __NR_eventfd2
-		"dev-lang/rust"
-		"dev-lang/rust-bin"
-		"dev-libs/boost"
-		"dev-libs/dietlibc"
-		"sys-libs/glibc"
-		"sys-libs/musl"
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling eventfd() for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_EXPERT"
-			ot-kernel_y_configopt "CONFIG_EVENTFD"
-		fi
-	done
-}
-
-# @FUNCTION: _ot-kernel_set_fhandle
-# @DESCRIPTION:
-# Add compatibility for fhandle
 #
-# Search keywords:
+# CONFIG_FHANDLE search keywords:
 # open_by_handle_at
 # name_to_handle_at
 #
-_ot-kernel_set_fhandle() {
-	local PKGS=(
-		${FF_PKGS[@]}
-		"app-emulation/qemu"
-		"dev-lang/rust"
-		"dev-lang/rust-bin"
-		"dev-libs/dietlibc"
-		"sys-apps/systemd"
-		"sys-devel/gcc"
-		"sys-libs/compiler-rt-sanitizers"
-		"sys-libs/glibc"
-		"sys-libs/musl"
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling fhandle for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_EXPERT"
-			ot-kernel_y_configopt "CONFIG_FHANDLE"
-		fi
-	done
-}
 
 # @FUNCTION: _ot-kernel_set_futex
 # @DESCRIPTION:
@@ -8711,43 +9169,6 @@ einfo "Enabling fhandle for ${pkg}"
 # SYS_futex from libc which aliases it with __NR_futex
 #
 _ot-kernel_set_futex() {
-	# For people that keep messing with CONFIG_EXPERT.
-	# Some threading libraries with synchronization basically.
-	local PKGS=(
-		${CR_PKGS[@]}
-		${FF_PKGS[@]}
-		"<app-emulation/wine-proton-6"
-		"<dev-libs/rocksdb-7"
-		"app-emulation/qemu"
-		"app-emulation/wine-ge-custom-bin"
-		"dev-cpp/abseil-cpp"
-		"dev-cpp/tbb"
-		"dev-lang/go"
-		"dev-lang/rust"
-		"dev-lang/rust-bin"
-		"dev-libs/boost"
-		"dev-libs/dietlibc"
-		"dev-libs/glib"
-		"dev-util/lttng-ust"
-		"dev-util/perf"
-		"sys-devel/gcc"
-		"sys-libs/compiler-rt-sanitizers"
-		"sys-libs/glibc"
-		"sys-libs/libcxx"
-		"sys-libs/libcxxabi"
-		"sys-libs/libomp"
-		"sys-libs/musl"
-
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling futex for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_EXPERT"
-			ot-kernel_y_configopt "CONFIG_FUTEX"
-		fi
-	done
-
 	if has futex ${IUSE} && ot-kernel_use futex ; then
 einfo "Enabling futex in .config"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
@@ -8759,85 +9180,17 @@ einfo "Enabling futex in .config"
 # @DESCRIPTION:
 # Add compatibility for futex2
 #
-# Search keywords:
+# CONFIG_FUTEX2 search keywords:
 # __NR_futex_waitv
 # SYS_futex_waitv from libc which aliases it with __NR_futex_waitv
 #
 _ot-kernel_set_futex2() {
-	# For people that keep messing with CONFIG_EXPERT.
-	local PKGS=(
-		">=app-emulation/wine-proton-6"
-		"dev-lang/rust"
-		"dev-lang/rust-bin"
-		"dev-util/perf"
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling futex2 for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_EXPERT"
-			ot-kernel_y_configopt "CONFIG_FUTEX"
-			ot-kernel_y_configopt "CONFIG_FUTEX2"
-		fi
-	done
 	if has futex2 ${IUSE} && ot-kernel_use futex2 ; then
 einfo "Enabling futex2 in .config"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_FUTEX2"
 	fi
-}
-
-# @FUNCTION: _ot-kernel_set_inotify
-# @DESCRIPTION:
-# Add compatibility for inotify
-_ot-kernel_set_inotify() {
-	local PKGS=(
-		"app-emulation/qemu"
-		"dev-libs/dietlibc"
-		"dev-libs/glib"
-		"sys-apps/coreutils"
-		"sys-apps/systemd"
-		"sys-devel/clang"
-		"sys-devel/gcc"
-		"sys-libs/compiler-rt-sanitizers"
-		"sys-libs/glibc"
-		"sys-libs/musl"
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling inotify for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		fi
-	done
-}
-
-# @FUNCTION: _ot-kernel_set_io_uring
-# @DESCRIPTION:
-# Add compatibility for io_uring
-_ot-kernel_set_io_uring() {
-	# For people that keep messing with CONFIG_EXPERT.
-	local PKGS=(
-		${FF_PKGS[@]}
-		"app-emulation/qemu"
-		"dev-lang/rust"
-		"dev-lang/rust-bin"
-		"dev-libs/boost"
-		"dev-libs/rocksdb"
-		"sys-apps/systemd"
-		"sys-devel/gcc"
-		"sys-libs/glibc"
-		"sys-libs/musl"
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling IO uring for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_EXPERT"
-			ot-kernel_y_configopt "CONFIG_IO_URING"
-		fi
-	done
 }
 
 # @FUNCTION: _ot-kernel_set_ldt
@@ -8849,184 +9202,22 @@ einfo "Enabling 16-bit emulation support"
 		warn_lowered_security "4e97be4"
 		ot-kernel_y_configopt "CONFIG_MODIFY_LDT_SYSCALL"
 	fi
-	# Referenced in dev-libs/dietlibc
-	# Referended in sys-apps/systemd
-	# Referenced in sys-libs/glibc
-	# Referenced in sys-libs/musl
 }
 
-# @FUNCTION: _ot-kernel_set_madvise
-# @DESCRIPTION:
-# Add compatibility for madvise/fadvise
-_ot-kernel_set_madvise() {
-	# For people that keep messing with CONFIG_EXPERT.
-	local PKGS=(
-		${CR_PKGS[@]}
-		${FF_PKGS[@]}
-		"dev-lang/rust"
-		"dev-lang/rust-bin"
-		"dev-lang/go"
-		"dev-libs/dietlibc"
-		"sys-libs/glibc"
-		"sys-libs/musl"
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling madvise/fadvise for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_EXPERT"
-			ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
-		fi
-	done
-}
+# CONFIG_ADVISE_SYSCALLS search keywords:  madvise, fadvise
 
-# @FUNCTION: _ot-kernel_set_membarrier
-# @DESCRIPTION:
-# Add compatibility for membarrier
-_ot-kernel_set_membarrier() {
-	# For people that keep messing with CONFIG_EXPERT.
-	local PKGS=(
-		${CR_PKGS[@]}
-		${FF_PKGS[@]}
-		"dev-lang/rust"
-		"dev-lang/rust-bin"
-		"dev-libs/dietlibc"
-		"dev-util/lttng-ust"
-		"sys-libs/glibc"
-		"sys-libs/musl"
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling membarrier() for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_EXPERT"
-			ot-kernel_y_configopt "CONFIG_MEMBARRIER"
-		fi
-	done
-}
+# Transparent Huge Pages notes:
+#   Anything commented out is capable of using THP, but
+#   disabled if there is no reason to enable it.
+#   It is assumed that enabling will cause a performance
+#   regression or no benefit.
 
-# @FUNCTION: _ot-kernel_set_shm
-# @DESCRIPTION:
-# Add compatibility for /dev/shm
-_ot-kernel_set_shm() {
-	local PKGS=(
-		"app-emulation/qemu[test]"
-		"dev-libs/glib"
-		"sys-apps/openrc"
-		"sys-apps/systemd"
-		"sys-devel/gcc"
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling /dev/shm for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_EXPERT"
-			ot-kernel_y_configopt "CONFIG_SHMEM"
-		fi
-	done
-}
-
-# @FUNCTION: _ot-kernel_set_thp
-# @DESCRIPTION:
-# Add compatibility for Transparent Huge Pages
-_ot-kernel_set_thp() {
-	local PKGS=(
-		">=sys-libs/glibc-2.35" # 14-18% improvement
-		# "app-emulation/qemu" # slower but supported
-		"dev-lang/php" # ~3% improvement
-		# "dev-libs/dietlibc"
-		# "dev-libs/jemalloc" # Supported but not on by default.
-		"media-libs/embree" # ~5 - ~10% improvement
-		# "sys-devel/gcc"
-		# "sys-libs/musl" # Has symbol but not used within lib.
-		"sys-devel/llvm[bolt]" # Optional for bolt --hugify
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling Transparent Huge Pages (THP) for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
-		fi
-	done
-}
-
-# @FUNCTION: _ot-kernel_set_timers
-# @DESCRIPTION:
-# Add compatibility for timers
 #
-# Search keywords:
+# CONFIG_POSIX_TIMERS Search keywords:
 # timer_create
 # timer_gettime
 # __NR_alarm
 #
-_ot-kernel_set_timers() {
-	local PKGS=(
-		${FF_PKGS[@]}
-		"app-emulation/qemu"
-		"dev-lang/rust"
-		"dev-lang/rust-bin"
-		"dev-lang/go"
-		"dev-libs/dietlibc"
-		"sys-apps/coreutils"
-		"sys-devel/gcc"
-		"sys-libs/compiler-rt-sanitizers"
-		"sys-libs/glibc"
-		"sys-libs/musl"
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling posix clocks/timers for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_EXPERT"
-			ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
-		fi
-	done
-}
-
-# @FUNCTION: _ot-kernel_set_signalfd
-# @DESCRIPTION:
-# Add compatibility for signalfd
-_ot-kernel_set_signalfd() {
-	local PKGS=(
-		${FF_PKGS[@]}
-		"dev-lang/rust"
-		"dev-lang/rust-bin"
-		"dev-libs/dietlibc"
-		"sys-libs/glibc"
-		"sys-libs/musl"
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling signalfd for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_EXPERT"
-			ot-kernel_y_configopt "CONFIG_SIGNALFD"
-		fi
-	done
-}
-
-# @FUNCTION: _ot-kernel_set_timerfd
-# @DESCRIPTION:
-# Add compatibility for timerfd
-_ot-kernel_set_timerfd() {
-	local PKGS=(
-		${FF_PKGS[@]}
-		"dev-lang/rust"
-		"dev-lang/rust-bin"
-		"dev-libs/dietlibc"
-		"sys-apps/systemd"
-		"sys-libs/glibc"
-		"sys-libs/musl"
-	)
-	local pkg
-	for pkg in ${PKGS[@]} ; do
-		if ot-kernel_has_version "${pkg}" ; then
-einfo "Enabling timerfd for ${pkg}"
-			ot-kernel_y_configopt "CONFIG_EXPERT"
-			ot-kernel_y_configopt "CONFIG_TIMERFD"
-		fi
-	done
-}
 
 # Scan source code with
 # grep -E -r  -e \
