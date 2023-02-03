@@ -6608,9 +6608,9 @@ ot-kernel-pkgflags_pv() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the python package
 ot-kernel-pkgflags_python() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S]}" == "1" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S70ba67b]}" == "1" ]] && return
 	if ot-kernel_has_version "dev-lang/python" ; then
-		einfo "Applying kernel config flags for the python package (id: )"
+		einfo "Applying kernel config flags for the python package (id: 70ba67b)"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
 		if ot-kernel_has_version ">=dev-lang/python-3.8" ; then
