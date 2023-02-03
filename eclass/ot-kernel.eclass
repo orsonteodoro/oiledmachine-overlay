@@ -2765,11 +2765,13 @@ ot-kernel_clear_env() {
 	# Unset ot-kernel-pkgflags.
 	# These fields toggle the building of additional sets of kernel configs.
 	unset ALSA_PC_SPEAKER
+	unset BPF_JIT
 	unset CRYPTSETUP_CIPHERS
 	unset CRYPTSETUP_INTEGRITIES
 	unset CRYPTSETUP_HASHES
 	unset CRYPTSETUP_MODES
 	unset CRYPTSETUP_TCRYPT
+	unset EMU_16BIT
 	unset HPLIP_PARPORT
 	unset HPLIP_USB
 	unset IPTABLES_CLIENT
@@ -3849,16 +3851,28 @@ ot-kernel_set_kconfig_dmesg() {
 	else
 		dmesg="${OT_KERNEL_DMESG:-0}"
 	fi
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	if [[ "${arch}" == "x86" ]] ; then
+		ot-kernel_unset_configopt "CONFIG_EARLY_PRINTK"
+		ot-kernel_unset_configopt "CONFIG_X86_VERBOSE_BOOTUP"
+	fi
 	if [[ "${dmesg}" == "1" ]] ; then
 		ot-kernel_y_configopt "CONFIG_PRINTK"
-		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
+#		if [[ "${arch}" == "x86" ]] ; then
+#			ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
+#		fi
 	elif [[ "${dmesg}" == "0" ]] ; then
 		ot-kernel_unset_configopt "CONFIG_PRINTK"
-		ot-kernel_unset_configopt "CONFIG_EARLY_PRINTK"
+		if [[ "${arch}" == "x86" ]] ; then
+			ot-kernel_unset_configopt "CONFIG_EARLY_PRINTK"
+			ot-kernel_unset_configopt "CONFIG_X86_VERBOSE_BOOTUP"
+		fi
 		_OT_KERNEL_PRINK_DISABLED=1
 	elif [[ "${dmesg}" == "default" ]] ; then
 		ot-kernel_y_configopt "CONFIG_PRINTK"
-		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
+#		if [[ "${arch}" == "x86" ]] ; then
+#			ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
+#		fi
 		# See https://www.kernel.org/doc/html/latest/core-api/printk-basics.html
 		ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "7" # Excludes >= pr_info
 		ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "4"
@@ -3895,23 +3909,6 @@ ot-kernel_set_kconfig_exfat() {
 		ot-kernel_y_configopt "CONFIG_EXFAT_FS"
 	else
 		ot-kernel_unset_configopt "CONFIG_EXFAT_FS"
-	fi
-}
-
-# @FUNCTION: ot-kernel_set_kconfig_futex
-# @DESCRIPTION:
-# Sets the kernel config for futex and futex2
-ot-kernel_set_kconfig_futex() {
-	if has futex ${IUSE} && ot-kernel_use futex ; then
-		einfo "Enabled futex in .config"
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_FUTEX"
-	fi
-	if has futex2 ${IUSE} && ot-kernel_use futex2 ; then
-		einfo "Enabled futex2 in .config"
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_FUTEX"
-		ot-kernel_y_configopt "CONFIG_FUTEX2"
 	fi
 }
 
@@ -6997,8 +6994,8 @@ ewarn
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2"
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "1"
 		else
-			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "5"
-			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "4"
+			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "4"
+			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "3"
 		fi
 
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "fbcon=logo-count:[-]?[0-9]*"
@@ -7032,8 +7029,11 @@ einfo "Adding logo footnote on init:  ${OT_KERNEL_LOGO_FOOTNOTES}"
 				| cut -f 1 -d ":")
 			sed -i -e "${offset}a\\\tpr_alert(\"${OT_KERNEL_LOGO_FOOTNOTES}\\\\n\");" \
 				"${BUILD_DIR}/${file_path}"
+			ot-kernel_y_configopt "CONFIG_EXPERT"
 			ot-kernel_y_configopt "CONFIG_PRINTK"
-			ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
+#			if [[ "${arch}" == "x86" ]] ; then
+#				ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
+#			fi
 ewarn
 ewarn "OT_KERNEL_LOGO_FOOTNOTES_ON_INIT will enable early printk which may"
 ewarn "lower security."
@@ -7147,7 +7147,6 @@ einfo
 		ot-kernel_set_kconfig_init_systems
 		ot-kernel_set_kconfig_boot_args
 		ot-kernel_set_kconfig_processor_class
-		ot-kernel_set_kconfig_futex
 		ot-kernel_set_kconfig_auto_set_slab_allocator
 		ot-kernel_set_kconfig_cpu_scheduler
 		ot-kernel_set_kconfig_multigen_lru

@@ -2722,6 +2722,12 @@ unset OT_KERNEL_PRIVATE_KEY
 
       0 (default), 1
 
+    BPF_JIT - Support for BPF JIT used in network packet filtering or
+    wine-staging improving long run runtime performance but increasing initial
+    runtime.
+    Valid values:  0 (default), 1, unset [same as 0]
+    Enabling may lower security.
+
     CDROM - Support for CDROM, CD-R, CD-RW
     Valid values:  0, 1 (default)
     See also:  DVD
@@ -2783,6 +2789,10 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     E300C3 - Add support for PMU performance counters for e300c3.
     E300C4 - Add support for PMU performance counters for e300c4.
     Valid values:  0 (default), 1
+
+    EMU_16BIT - Support 16-bit apps in DOSEMU, Wine, QEMU, etc.
+    Valid values: 0 (default), 1
+    This could lower security.
 
     EXT4_ENCRYPTION - Add support for ext4 encryption
     Valid values:  0, 1 (default).
@@ -3293,19 +3303,26 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       Add support for gzip compression
     </flag>
     <flag name="futex">
-      Patches the kernel with FUTEX_WAIT_MULTIPLE futex syscall option which may
-      be used in the proton, proton-wine, experimental-wine version 5 or above
-      packages.  It may reduce CPU usage by less than 5%.
+      Patches the kernel with FUTEX_WAIT_MULTIPLE futex syscall option.
+      It may reduce CPU usage by less than 5%.
     </flag>
     <flag name="futex2">
       Patches the kernel with older futex2 syscall specification.  This may
-      reduce the CPU usage by less than 5%.  It is recommended to combine this
-      USE flag with the futex2-proton USE flag as well since no known software
-      uses the syscall's original data structures.
+      reduce the CPU usage by less than 5%.
+
+      Compatible with the following:
+
+        <pkg>app-emulation/wine-proton</pkg>
+
     </flag>
     <flag name="futex2-proton">
-      Modifies the syscall data structures to be compatible with
-      experimental-wine version 5.13 or above.  This will break compatibility.
+      Modifies the syscall data structures to be compatible the following
+      software.  This will break compatibility.
+
+      Compatible with the following:
+
+        <pkg>app-emulation/wine-ge-custom-bin</pkg>
+
     </flag>
     <flag name="graphicsmagick">
       Adds build time logo conversion support.
