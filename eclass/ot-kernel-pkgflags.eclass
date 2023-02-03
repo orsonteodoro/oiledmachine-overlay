@@ -9180,7 +9180,7 @@ einfo "Enabling futex in .config"
 # @DESCRIPTION:
 # Add compatibility for futex2
 #
-# CONFIG_FUTEX2 search keywords:
+# Search keywords:
 # __NR_futex_waitv
 # SYS_futex_waitv from libc which aliases it with __NR_futex_waitv
 #
