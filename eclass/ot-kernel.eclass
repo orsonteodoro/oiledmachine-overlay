@@ -2705,6 +2705,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_MENUCONFIG_COLORS
 	unset OT_KERNEL_MENUCONFIG_RUN_AT
 	unset OT_KERNEL_MENUCONFIG_UI
+	unset OT_KERNEL_MESSAGE
 	unset OT_KERNEL_MODULE_SUPPORT
 	unset OT_KERNEL_MODULES_COMPRESSOR
 	unset OT_KERNEL_NET_NETFILTER
@@ -7023,7 +7024,7 @@ eerror
 einfo "Adding logo footnote on init:  ${OT_KERNEL_LOGO_FOOTNOTES}"
 			local file_path="init/main.c"
 			grep -F -q -n "argv_init[0] = init_filename;" \
-                                "${BUILD_DIR}/${file_path}" || die "Missing fragment"
+				"${BUILD_DIR}/${file_path}" || die "Missing fragment"
 			local offset
 			offset=$(grep -F -n "argv_init[0] = init_filename;" \
 				"${BUILD_DIR}/${file_path}" \
@@ -7040,6 +7041,26 @@ ewarn "OT_KERNEL_LOGO_FOOTNOTES_ON_INIT will enable early printk which may"
 ewarn "lower security."
 ewarn
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_message
+# @DESCRIPTION:
+# Prints a message at the end of the kernel init.
+ot-kernel_set_message() {
+	if [[ -n "${OT_KERNEL_MESSAGE}" ]] ; then
+einfo "Adding message on init:  ${OT_KERNEL_MESSAGE}"
+		local file_path="init/main.c"
+		grep -F -q -n "argv_init[0] = init_filename;" \
+			"${BUILD_DIR}/${file_path}" || die "Missing fragment"
+		local offset
+		offset=$(grep -F -n "argv_init[0] = init_filename;" \
+			"${BUILD_DIR}/${file_path}" \
+			| cut -f 1 -d ":")
+		sed -i -e "${offset}a\\\tpr_alert(\"${OT_KERNEL_MESSAGE}\\\\n\");" \
+			"${BUILD_DIR}/${file_path}"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_PRINTK"
 	fi
 }
 
@@ -7159,6 +7180,7 @@ einfo
 	ot-kernel_set_kconfig_eudev
 	ot-kernel_check_kernel_signing_prereqs
 	ot-kernel_set_kconfig_module_signing
+	ot-kernel_set_message
 
 	if [[ -e "${BUILD_DIR}/.config" ]] ; then
 		if has exfat ${IUSE} && ! use exfat ; then

@@ -363,6 +363,7 @@ OT_KERNEL_LOGO_FOOTNOTES_ON_INIT="1"
 OT_KERNEL_LOGO_MAGICK_ARGS="-geometry 480x -colors 224"
 OT_KERNEL_LOGO_URI="https://upload.wikimedia.org/wikipedia/commons/4/42/Comet_2023.01.27_C-22-E3-ZTF_500_F5.jpg"
 OT_KERNEL_LSMS="auto"
+OT_KERNEL_MESSAGE="Return lost computer to ... at address ... call me at ..."
 OT_KERNEL_MODULES_SUPPORT="1"
 OT_KERNEL_MODULES_COMPRESSOR="zstd"
 OT_KERNEL_MENUCONFIG_RUN_AT="pre"
@@ -1773,6 +1774,14 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     For a newly generated kernel .config with not set OT_KERNEL_LSMS, it will
     apply auto setting.  For previous installs with OT_KERNEL_LSMS is not set,
     it will apply manual.
+
+
+
+    OT_KERNEL_MESSAGE -- Print a message near the end of the kernel init.
+
+    Examples:
+
+      OT_KERNEL_MESSAGE="Return lost computer to ... at address ... call me at ..."
 
 
 
