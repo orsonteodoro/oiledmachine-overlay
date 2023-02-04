@@ -164,6 +164,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_aqtion
 	ot-kernel-pkgflags_arcconf
 	ot-kernel-pkgflags_atop
+	ot-kernel-pkgflags_audacity
 	ot-kernel-pkgflags_audit
 	ot-kernel-pkgflags_autofs
 	ot-kernel-pkgflags_avahi
@@ -254,6 +255,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_g15daemon
 	ot-kernel-pkgflags_gcc
 	ot-kernel-pkgflags_gerbera
+	ot-kernel-pkgflags_ghc
 	ot-kernel-pkgflags_glances
 	ot-kernel-pkgflags_glib
 	ot-kernel-pkgflags_glibc
@@ -293,6 +295,8 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_iscan_plugin
 	ot-kernel-pkgflags_iwd
 	ot-kernel-pkgflags_iwlmvm
+	ot-kernel-pkgflags_jack_audio_connection_kit
+	ot-kernel-pkgflags_jack2
 	ot-kernel-pkgflags_jemalloc
 	ot-kernel-pkgflags_joycond
 	ot-kernel-pkgflags_k3s
@@ -319,6 +323,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_libnfnetlink
 	ot-kernel-pkgflags_libnftnl
 	ot-kernel-pkgflags_libomp
+	ot-kernel-pkgflags_libpulse
 	ot-kernel-pkgflags_libsdl2
 	ot-kernel-pkgflags_libteam
 	ot-kernel-pkgflags_libu2f_host
@@ -334,6 +339,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_lksctp_tools
 	ot-kernel-pkgflags_llvm
 	ot-kernel-pkgflags_lm_sensors
+	ot-kernel-pkgflags_lmms
 	ot-kernel-pkgflags_longrun
 	ot-kernel-pkgflags_loopaes
 	ot-kernel-pkgflags_lttng_modules
@@ -351,6 +357,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_minidlna
 	ot-kernel-pkgflags_minijail
 	ot-kernel-pkgflags_mono
+	ot-kernel-pkgflags_mpg123
 	ot-kernel-pkgflags_mplayer
 	ot-kernel-pkgflags_mpm_itk
 	ot-kernel-pkgflags_mptcpd
@@ -394,8 +401,10 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_pcmciautils
 	ot-kernel-pkgflags_pesign
 	ot-kernel-pkgflags_perf
+	ot-kernel-pkgflags_perl
 	ot-kernel-pkgflags_pglinux
 	ot-kernel-pkgflags_php
+	ot-kernel-pkgflags_pipewire
 	ot-kernel-pkgflags_plocate
 	ot-kernel-pkgflags_ply
 	ot-kernel-pkgflags_plymouth
@@ -408,6 +417,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_powertop
 	ot-kernel-pkgflags_ppp
 	ot-kernel-pkgflags_pulseaudio
+	ot-kernel-pkgflags_pulseaudio_daemon
 	ot-kernel-pkgflags_pqiv
 	ot-kernel-pkgflags_pv
 	ot-kernel-pkgflags_python
@@ -422,6 +432,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_roct
 	ot-kernel-pkgflags_rocksdb
 	ot-kernel-pkgflags_rr
+	ot-kernel-pkgflags_ruby
 	ot-kernel-pkgflags_rsyslog
 	ot-kernel-pkgflags_rtirq
 	ot-kernel-pkgflags_rtkit
@@ -483,6 +494,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_usbview
 	ot-kernel-pkgflags_v4l_dvb_saa716x
 	ot-kernel-pkgflags_v4l2loopback
+	ot-kernel-pkgflags_vala
 	ot-kernel-pkgflags_vbox
 	ot-kernel-pkgflags_vcrypt
 	ot-kernel-pkgflags_vendor_reset
@@ -512,6 +524,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_xf86_video_vesa
 	ot-kernel-pkgflags_x86info
 	ot-kernel-pkgflags_xfce4_battery_plugin
+	ot-kernel-pkgflags_xmms2
 	ot-kernel-pkgflags_xorg_server
 	ot-kernel-pkgflags_xoscope
 	ot-kernel-pkgflags_xpadneo
@@ -721,6 +734,17 @@ ot-kernel-pkgflags_atop() { # DONE
 	if ot-kernel_has_version "sys-process/atop" ; then
 		einfo "Applying kernel config flags for the atop package (id: 54e024f)"
 		ot-kernel_y_configopt "CONFIG_BSD_PROCESS_ACCT"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_audacity
+# @DESCRIPTION:
+# Applies kernel config flags for the audacity package
+ot-kernel-pkgflags_audacity() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Scef3994]}" == "1" ]] && return
+	if ot-kernel_has_version "media-sound/audacity" ; then
+		einfo "Applying kernel config flags for the audacity package (id: cef3994)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 	fi
 }
 
@@ -1782,10 +1806,24 @@ ot-kernel-pkgflags_cr() { # DONE
 		fi
 		_ot-kernel-pkgflags_cr_suid_sandbox_settings
 
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+		ot-kernel_y_configopt "CONFIG_AIO"
+		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		ot-kernel_y_configopt "CONFIG_EPOLL"
+		ot-kernel_y_configopt "CONFIG_EVENTFD"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_IO_URING"
 		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
+		ot-kernel_y_configopt "CONFIG_SIGNALFD"
+		ot-kernel_y_configopt "CONFIG_TIMERFD"
+
+		# ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # References it but unknown apparent performance gain/loss
+		# LDT referenced
 	fi
 }
 
@@ -2986,6 +3024,19 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_PERSISTENT_KEYRINGS"
 		ot-kernel_set_configopt "CONFIG_ENCRYPTED_KEYS" "m"
 		ot-kernel_y_configopt "CONFIG_KEY_DH_OPERATIONS"
+
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_AIO"
+		ot-kernel_y_configopt "CONFIG_FHANDLE"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_IO_URING"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+#		ot-kernel_y_configopt "CONFIG_SECCOMP" # Referenced in file path but not in code
+		ot-kernel_y_configopt "CONFIG_SHMEM"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+#		# ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # References it but no madvise/fadvise
+		# LDT referenced
 	fi
 }
 
@@ -3477,6 +3528,18 @@ ot-kernel-pkgflags_gerbera() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_ghc
+# @DESCRIPTION:
+# Applies kernel config flags for the ghc package
+ot-kernel-pkgflags_ghc() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4d6a688]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-lang/ghc" ; then
+		einfo "Applying kernel config flags for the ghc package (id: 4d6a688)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_glances
 # @DESCRIPTION:
 # Applies kernel config flags for the glances package
@@ -3566,10 +3629,13 @@ ot-kernel-pkgflags_go() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se5375a0]}" == "1" ]] && return
 	if ot-kernel_has_version "dev-lang/go" ; then
 		einfo "Applying kernel config flags for the go package (id: e5375a0)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+		ot-kernel_y_configopt "CONFIG_EPOLL"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		# ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # References it but not used
 	fi
 }
 
@@ -4240,6 +4306,35 @@ ot-kernel-pkgflags_isatapd() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_jack_audio_connection_kit
+# @DESCRIPTION:
+# Applies kernel config flags for the jack-audio-connection-kit package
+ot-kernel-pkgflags_jack_audio_connection_kit() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sa4243ca]}" == "1" ]] && return
+	if ot-kernel_has_version "media-sound/jack-audio-connection-kit" ; then
+		einfo "Applying kernel config flags for the jack-audio-connection-kit package (id: a4243ca)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_jack2
+# @DESCRIPTION:
+# Applies kernel config flags for the jack2 package
+ot-kernel-pkgflags_jack2() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S7c60608]}" == "1" ]] && return
+	if ot-kernel_has_version "media-sound/jack2" ; then
+		einfo "Applying kernel config flags for the jack2 package (id: 7c60608)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_jemalloc
 # @DESCRIPTION:
 # Applies kernel config flags for the jemalloc package
@@ -4730,6 +4825,19 @@ ot-kernel-pkgflags_libomp() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_libpulse
+# @DESCRIPTION:
+# Applies kernel config flags for the libpulse package
+ot-kernel-pkgflags_libpulse() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sdb14cb5]}" == "1" ]] && return
+	if ot-kernel_has_version "media-libs/libpulse" ; then
+		einfo "Applying kernel config flags for the libpulse package (id: db14cb5)"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_libsdl2
 # @DESCRIPTION:
 # Applies kernel config flags for the libsdl2 package
@@ -4741,6 +4849,9 @@ ot-kernel-pkgflags_libsdl2() { # DONE
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_HID"
 		ot-kernel_y_configopt "CONFIG_HIDRAW"
+
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 	fi
 }
 
@@ -4978,6 +5089,17 @@ ot-kernel-pkgflags_lm_sensors() { # DONE
 		done
 		(( ${found} == 0 )) \
 			&& ewarn "You may need to have at least one CONFIG_SENSOR_... for lm-sensors."
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_lmms
+# @DESCRIPTION:
+# Applies kernel config flags for the lmms package
+ot-kernel-pkgflags_lmms() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se8ebc69]}" == "1" ]] && return
+	if ot-kernel_has_version "media-sound/lmms" ; then
+		einfo "Applying kernel config flags for the lmms package (id: e8ebc69)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 	fi
 }
 
@@ -5312,6 +5434,20 @@ ot-kernel-pkgflags_mono() { # DONE
 		einfo "Applying kernel config flags for the mono package (id: 8c7d25b)"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 		ot-kernel_y_configopt "CONFIG_BINFMT_MISC" # Optional to run exe directly
+
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_DNOTIFY"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_mpg123
+# @DESCRIPTION:
+# Applies kernel config flags for the mpg123 package
+ot-kernel-pkgflags_mpg123() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S0f9fa80]}" == "1" ]] && return
+	if ot-kernel_has_version "media-sound/mpg123" ; then
+		einfo "Applying kernel config flags for the mpg123 package (id: 0f9fa80)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 	fi
 }
 
@@ -5319,7 +5455,7 @@ ot-kernel-pkgflags_mono() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the mplayer package
 ot-kernel-pkgflags_mplayer() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT[457e322]}" == "1" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S457e322]}" == "1" ]] && return
 	if ot-kernel_has_version "media-video/mplayer" ; then
 		einfo "Applying kernel config flags for the mplayer package (id: 457e322)"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
@@ -5723,11 +5859,8 @@ ot-kernel-pkgflags_oprofile() { # DONE
 _ot-kernel-pkgflags_has_oss_use() {
 	# >= 81 packages with oss USE flag
 	if \
-		ot-kernel_has_version "app-emulation/wine-any[oss]" \
-		|| ot-kernel_has_version "app-emulation/wine-d3d9[oss]" \
-		|| ot-kernel_has_version "app-emulation/wine-lutris[oss]" \
+		ot-kernel_has_version "app-emulation/wine-d3d9[oss]" \
 		|| ot-kernel_has_version "app-emulation/wine-staging[oss]" \
-		|| ot-kernel_has_version "app-emulation/wine-tkg[oss]" \
 		|| ot-kernel_has_version "app-emulation/wine-vanilla[oss]" \
 		|| ot-kernel_has_version "app-emulation/wine-wayland[oss]" \
 		|| ot-kernel_has_version "media-libs/allegro[oss]" \
@@ -6279,6 +6412,7 @@ ot-kernel-pkgflags_qemu() { # DONE
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_y_configopt "CONFIG_IO_URING"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_DNOTIFY" # Symbol present but not used
 
 		if ot-kernel_has_version "app-emulation/qemu[test]" ; then
 			ot-kernel_y_configopt "CONFIG_SHMEM"
@@ -6451,6 +6585,20 @@ ot-kernel-pkgflags_perf() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_perl
+# @DESCRIPTION:
+# Applies kernel config flags for the perl package
+ot-kernel-pkgflags_perl() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S72f69a5]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-lang/perl" ; then
+		einfo "Applying kernel config flags for the perl package (id: 72f69a5)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		# ot-kernel_y_configopt "CONFIG_DNOTIFY" # Symbol present but not used
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_pglinux
 # @DESCRIPTION:
 # Applies kernel config flags for the pglinux package
@@ -6483,6 +6631,20 @@ ot-kernel-pkgflags_php() { # DONE
 	if ot-kernel_has_version "dev-lang/php" ; then
 		einfo "Applying kernel config flags for the php package (id: 98e977e)"
 		ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # ~3% improvement
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_pipewire
+# @DESCRIPTION:
+# Applies kernel config flags for the pipewire package
+ot-kernel-pkgflags_pipewire() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4aefe06]}" == "1" ]] && return
+	if ot-kernel_has_version "media-video/pipewire" ; then
+		einfo "Applying kernel config flags for the pipewire package (id: 4aefe06)"
+		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 	fi
 }
 
@@ -6583,6 +6745,19 @@ ot-kernel-pkgflags_pulseaudio() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_pulseaudio_daemon
+# @DESCRIPTION:
+# Applies kernel config flags for the pulseaudio_daemon package
+ot-kernel-pkgflags_pulseaudio() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S738aa6b]}" == "1" ]] && return
+	if ot-kernel_has_version "media-sound/pulseaudio-daemon" ; then
+		einfo "Applying kernel config flags for the pulseaudio package (id: 738aa6b)"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_pqiv
 # @DESCRIPTION:
 # Applies kernel config flags for the pqiv package
@@ -6614,6 +6789,7 @@ ot-kernel-pkgflags_python() { # DONE
 		einfo "Applying kernel config flags for the python package (id: 70ba67b)"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
+		ot-kernel_y_configopt "CONFIG_DNOTIFY"
 		if ot-kernel_has_version ">=dev-lang/python-3.8" ; then
 			ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # Has symbol but not used
 		fi
@@ -6823,6 +6999,20 @@ ot-kernel-pkgflags_rr() { # DONE
 	if ot-kernel_has_version "dev-util/rr" ; then
 		einfo "Applying kernel config flags for roct (id: 889cc93)"
 		ot-kernel_y_configopt "CONFIG_SECCOMP"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_ruby
+# @DESCRIPTION:
+# Applies kernel config flags for ruby
+ot-kernel-pkgflags_ruby() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S6d648f2]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-lang/ruby" ; then
+		einfo "Applying kernel config flags for ruby (id: 6d648f2)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
+		ot-kernel_y_configopt "CONFIG_DNOTIFY"
 	fi
 }
 
@@ -7872,6 +8062,18 @@ ot-kernel-pkgflags_v4l2loopback() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_vala
+# @DESCRIPTION:
+# Applies kernel config flags for the vala package
+ot-kernel-pkgflags_vala() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Scdcd65b]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-lang/vala" ; then
+		einfo "Applying kernel config flags for the vala package (id: cdcd65b)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_vbox
 # @DESCRIPTION:
 # Applies kernel config flags for the vbox package
@@ -8341,6 +8543,27 @@ ot-kernel-pkgflags_xen() { # DONE
 			eerror "Both ZEN_DOM0 or ZEN_DOMU cannot be enabled at the same time."
 			die
 		fi
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+		ot-kernel_y_configopt "CONFIG_AIO"
+		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		ot-kernel_y_configopt "CONFIG_EPOLL"
+		ot-kernel_y_configopt "CONFIG_EVENTFD"
+		ot-kernel_y_configopt "CONFIG_FHANDLE"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_IO_URING"
+		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SECCOMP"
+		ot-kernel_y_configopt "CONFIG_SIGNALFD"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+		ot-kernel_y_configopt "CONFIG_TIMERFD"
+		# ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # References it but unknown apparent performance gain/loss
+
+		# LDT referenced
 	fi
 }
 
@@ -8538,6 +8761,17 @@ ot-kernel-pkgflags_xfce4_battery_plugin() { # DONE
 	if ot-kernel_has_version "xfce-extra/xfce4-battery-plugin" ; then
 		einfo "Applying kernel config flags for the xfce4-battery-plugin package (id: f54e65c)"
 		ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_xmms2
+# @DESCRIPTION:
+# Applies kernel config flags for the xmms2
+ot-kernel-pkgflags_xmms2() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S17be4ae]}" == "1" ]] && return
+	if ot-kernel_has_version "media-sound/xmms2" ; then
+		einfo "Applying kernel config flags for the xmms2 package (id: 17be4ae)"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 	fi
 }
 
@@ -9214,11 +9448,14 @@ einfo "Enabling 16-bit emulation support"
 #   regression or no benefit.
 
 #
-# CONFIG_POSIX_TIMERS Search keywords:
+# CONFIG_POSIX_TIMERS search keywords:
 # timer_create
 # timer_gettime
 # __NR_alarm
 #
+
+# CONFIG_DNOTIFY search keywords:
+# F_NOTIFY
 
 # Scan source code with
 # grep -E -r  -e \
@@ -9227,7 +9464,8 @@ einfo "Enabling 16-bit emulation support"
 # |MADV_HUGEPAGE|DN_(ACCESS|MODIFY|CREATE|DELETE|RENAME|ATTRIB)\
 # |open_by_handle_at|name_to_handle_at|sys_sysfs|timer_create|timer_gettime\
 # |timer_settime|clock_adjtime|io_setup|clock_nanosleep|bpf_jit|msgget|msgsnd\
-# |msgrcv|semget|shmget|shmat|shmdt|modify_ldt)" \
+# |msgrcv|semget|shmget|shmat|shmdt|modify_ldt|F_NOTIFY|fanotify_init\
+# |inotify_init)" \
 # "${S}"
 
 # Manual inspection still required

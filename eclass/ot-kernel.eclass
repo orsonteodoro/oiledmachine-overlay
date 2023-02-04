@@ -2662,6 +2662,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_BUILD_CHECK_MOUNTED
 	unset OT_KERNEL_COLD_BOOT_MITIGATIONS
 	unset OT_KERNEL_CONFIG
+	unset OT_KERNEL_CONFIG_MODE
 	unset OT_KERNEL_CPU_MICROCODE
 	unset OT_KERNEL_CPU_SCHED
 	unset OT_KERNEL_DISABLE
@@ -7042,6 +7043,160 @@ ewarn
 	fi
 }
 
+# @FUNCTION: ot-kernel_src_configure_assisted
+# @DESCRIPTION:
+# More assisted configuration
+ot-kernel_src_configure_assisted() {
+	einfo "Using assisted config mode"
+	local path_config="${BUILD_DIR}/.config"
+	if [[ -e "${config}" ]] ; then
+		einfo "Copying the savedconfig:  ${config} -> ${path_config}"
+		cat "${config}" > "${path_config}" || die
+		einfo "Auto updating the .config"
+		einfo "Running:  make olddefconfig ${args[@]}"
+		make olddefconfig "${args[@]}" || die
+	fi
+
+	local is_default_config=0
+	if [[ ! -e "${path_config}" ]] ; then
+		ewarn "Missing ${path_config} so generating a new default config."
+		make defconfig "${args[@]}" || die
+		is_default_config=1
+		[[ -z "${boot_decomp}" ]] && boot_decomp="default" # Reason why is for compatibility issues.
+	else
+		[[ -z "${boot_decomp}" ]] && boot_decomp="manual" # Assumes it was tested and working.
+	fi
+
+	einfo
+	einfo "Changing config options for -${extraversion}"
+	einfo
+	[[ -e "${path_config}" ]] || die ".config is missing"
+
+	if [[ "${arch}" =~ "x86" ]] ; then
+		local mfg=$(ot-kernel_get_cpu_mfg_id)
+# It is wrong when CBUILD != CHOST/CTARGET.
+einfo
+einfo "The CPU vendor is set to ${mfg}.  If it is wrong, please manually change"
+einfo "it with the CPU_MFG envvar."
+einfo
+einfo "For more info, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`."
+einfo
+	fi
+
+	local llvm_slot=$(get_llvm_slot)
+	local gcc_slot=$(get_gcc_slot)
+	ot-kernel_set_kconfig_compiler_toolchain # Inits llvm_slot, gcc_slot
+	ot-kernel_menuconfig "pre" # Uses llvm_slot
+
+	ot-kernel_set_kconfig_march
+	ot-kernel_set_kconfig_oflag
+	ot-kernel_set_kconfig_lto # Uses llvm_slot
+	ot-kernel_set_kconfig_abis
+	#ot-kernel_set_kconfig_mem
+
+	ot-kernel_set_kconfig_init_systems
+	ot-kernel_set_kconfig_boot_args
+	ot-kernel_set_kconfig_processor_class
+	ot-kernel_set_kconfig_auto_set_slab_allocator
+	ot-kernel_set_kconfig_cpu_scheduler
+	ot-kernel_set_kconfig_multigen_lru
+	ot-kernel_set_kconfig_compressors
+	ot-kernel_set_kconfig_swap
+	ot-kernel_set_kconfig_zswap
+	ot-kernel_set_kconfig_uksm
+	ot-kernel_set_kconfig_set_tcp_congestion_controls # Place before ot-kernel_set_kconfig_work_profile
+	ot-kernel_set_kconfig_set_net_qos_schedulers
+	ot-kernel_set_kconfig_set_net_qos_classifiers
+	ot-kernel_set_kconfig_set_net_qos_actions
+	# See also ot-kernel-pkgflags.eclass: _ot-kernel_set_netfilter()
+	ot-kernel_set_kconfig_work_profile
+	ot-kernel_set_kconfig_pcie_mps
+	ot-kernel_set_kconfig_usb_autosuspend
+	ot-kernel_set_kconfig_usb_flash_disk
+
+	ot-kernel_set_kconfig_usb_mass_storage
+	ot-kernel_set_kconfig_mmc_sd_sdio
+	ot-kernel_set_kconfig_memstick
+	ot-kernel_set_kconfig_exfat
+
+	ot-kernel_set_kconfig_firmware
+
+	# Apply flags to minimize the time cost of reconfigure and rebuild time
+	# from a generated new kernel config.
+	ot-kernel-pkgflags_apply # Placed before security flags
+	ot-kernel_set_kconfig_ep800 # For testing build time breakage
+
+	is_firmware_ready
+
+	if ot-kernel_use disable_debug ; then
+		einfo "Disabling all debug and shortening logging buffers"
+		./disable_debug || die
+		rm "${BUILD_DIR}/.config.dd_backup" 2>/dev/null
+	fi
+	ot-kernel_set_kconfig_dmesg ""
+	ot-kernel_set_kconfig_kexec
+
+	ot-kernel_set_kconfig_logo
+
+	local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
+		ot-kernel_set_kconfig_hardening_level
+		ot-kernel_set_kconfig_scs # Uses llvm_slot
+		ot-kernel_set_kconfig_cfi # Uses llvm_slot
+		ot-kernel_set_kconfig_kcfi # Uses llvm_slot
+	ot-kernel_set_kconfig_iommu_domain_type
+	ot-kernel-pkgflags_cipher_optional
+	ot-kernel_set_kconfig_cold_boot_mitigation
+	ot-kernel_set_kconfig_dma_attack_mitigation
+	ot-kernel_set_kconfig_memory_protection
+	ot-kernel_set_kconfig_tresor
+	ot-kernel_set_kconfig_ima
+	ot-kernel_set_kconfig_lsms
+
+	ot-kernel_set_kconfig_pgo # Uses llvm_slot
+
+	ot-kernel_set_kconfig_module_support
+	ot-kernel_set_kconfig_build_all_modules_as
+	ot-kernel_set_kconfig_eudev
+	ot-kernel_check_kernel_signing_prereqs
+	ot-kernel_set_kconfig_module_signing
+
+	if [[ -e "${BUILD_DIR}/.config" ]] ; then
+		if has exfat ${IUSE} && ! use exfat ; then
+			sed -i -e "/CONFIG_EXFAT_FS/d" "${BUILD_DIR}/.config"
+		fi
+
+		if ! use reiserfs ; then
+			sed -i -e "/CONFIG_REISERFS_FS/d" "${BUILD_DIR}/.config"
+		fi
+	fi
+
+	einfo "Updating the .config for defaults for the newly enabled options."
+	einfo "Running:  make olddefconfig ${args[@]}"
+	make olddefconfig "${args[@]}" || die
+}
+
+# @FUNCTION: ot-kernel_src_configure_custom
+# @DESCRIPTION:
+# More customized
+ot-kernel_src_configure_custom() {
+	einfo "Using custom config mode"
+	local path_config="${BUILD_DIR}/.config"
+	if [[ -e "${config}" ]] ; then
+		einfo "Copying the savedconfig:  ${config} -> ${path_config}"
+		cat "${config}" > "${path_config}" || die
+	fi
+
+	if [[ ! -e "${path_config}" ]] ; then
+		ewarn "Missing ${path_config} so generating a new default config."
+		make defconfig "${args[@]}" || die
+	fi
+
+	local llvm_slot=$(get_llvm_slot)
+	local gcc_slot=$(get_gcc_slot)
+	ot-kernel_set_kconfig_compiler_toolchain # Inits llvm_slot, gcc_slot
+	ot-kernel_menuconfig "pre" # Uses llvm_slot
+}
+
 # @FUNCTION: ot-kernel_src_configure
 # @DESCRIPTION:
 # Run menuconfig
@@ -7099,130 +7254,11 @@ eerror
 		local args=()
 		ot-kernel_setup_tc
 
-		local path_config="${BUILD_DIR}/.config"
-		if [[ -e "${config}" ]] ; then
-			einfo "Copying the savedconfig:  ${config} -> ${path_config}"
-			cat "${config}" > "${path_config}" || die
-			einfo "Auto updating the .config"
-			einfo "Running:  make olddefconfig ${args[@]}"
-			make olddefconfig "${args[@]}" || die
-		fi
-
-		local is_default_config=0
-		if [[ ! -e "${path_config}" ]] ; then
-			ewarn "Missing ${path_config} so generating a new default config."
-			make defconfig "${args[@]}" || die
-			is_default_config=1
-			[[ -z "${boot_decomp}" ]] && boot_decomp="default" # Reason why is for compatibility issues.
+		if [[ "${OT_KERNEL_CONFIG_MODE:-assisted}" == "assisted" ]] ; then
+			ot-kernel_src_configure_assisted
 		else
-			[[ -z "${boot_decomp}" ]] && boot_decomp="manual" # Assumes it was tested and working.
+			ot-kernel_src_configure_custom
 		fi
-
-		einfo
-		einfo "Changing config options for -${extraversion}"
-		einfo
-		[[ -e "${path_config}" ]] || die ".config is missing"
-
-		if [[ "${arch}" =~ "x86" ]] ; then
-			local mfg=$(ot-kernel_get_cpu_mfg_id)
-# It is wrong when CBUILD != CHOST/CTARGET.
-einfo
-einfo "The CPU vendor is set to ${mfg}.  If it is wrong, please manually change"
-einfo "it with the CPU_MFG envvar."
-einfo
-einfo "For more info, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`."
-einfo
-		fi
-
-		local llvm_slot=$(get_llvm_slot)
-		local gcc_slot=$(get_gcc_slot)
-		ot-kernel_set_kconfig_compiler_toolchain # Inits llvm_slot, gcc_slot
-		ot-kernel_menuconfig "pre" # Uses llvm_slot
-		ot-kernel_set_kconfig_march
-		ot-kernel_set_kconfig_oflag
-		ot-kernel_set_kconfig_lto # Uses llvm_slot
-		ot-kernel_set_kconfig_abis
-		#ot-kernel_set_kconfig_mem
-
-		ot-kernel_set_kconfig_init_systems
-		ot-kernel_set_kconfig_boot_args
-		ot-kernel_set_kconfig_processor_class
-		ot-kernel_set_kconfig_auto_set_slab_allocator
-		ot-kernel_set_kconfig_cpu_scheduler
-		ot-kernel_set_kconfig_multigen_lru
-		ot-kernel_set_kconfig_compressors
-		ot-kernel_set_kconfig_swap
-		ot-kernel_set_kconfig_zswap
-		ot-kernel_set_kconfig_uksm
-		ot-kernel_set_kconfig_set_tcp_congestion_controls # Place before ot-kernel_set_kconfig_work_profile
-		ot-kernel_set_kconfig_set_net_qos_schedulers
-		ot-kernel_set_kconfig_set_net_qos_classifiers
-		ot-kernel_set_kconfig_set_net_qos_actions
-		# See also ot-kernel-pkgflags.eclass: _ot-kernel_set_netfilter()
-		ot-kernel_set_kconfig_work_profile
-		ot-kernel_set_kconfig_pcie_mps
-		ot-kernel_set_kconfig_usb_autosuspend
-		ot-kernel_set_kconfig_usb_flash_disk
-
-		ot-kernel_set_kconfig_usb_mass_storage
-		ot-kernel_set_kconfig_mmc_sd_sdio
-		ot-kernel_set_kconfig_memstick
-		ot-kernel_set_kconfig_exfat
-
-		ot-kernel_set_kconfig_firmware
-
-                # Apply flags to minimize the time cost of reconfigure and rebuild time
-                # from a generated new kernel config.
-		ot-kernel-pkgflags_apply # Placed before security flags
-		ot-kernel_set_kconfig_ep800 # For testing build time breakage
-
-		is_firmware_ready
-
-		if ot-kernel_use disable_debug ; then
-			einfo "Disabling all debug and shortening logging buffers"
-			./disable_debug || die
-			rm "${BUILD_DIR}/.config.dd_backup" 2>/dev/null
-		fi
-		ot-kernel_set_kconfig_dmesg ""
-		ot-kernel_set_kconfig_kexec
-
-		ot-kernel_set_kconfig_logo
-
-		local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
-			ot-kernel_set_kconfig_hardening_level
-			ot-kernel_set_kconfig_scs # Uses llvm_slot
-			ot-kernel_set_kconfig_cfi # Uses llvm_slot
-			ot-kernel_set_kconfig_kcfi # Uses llvm_slot
-		ot-kernel_set_kconfig_iommu_domain_type
-		ot-kernel-pkgflags_cipher_optional
-		ot-kernel_set_kconfig_cold_boot_mitigation
-		ot-kernel_set_kconfig_dma_attack_mitigation
-		ot-kernel_set_kconfig_memory_protection
-		ot-kernel_set_kconfig_tresor
-		ot-kernel_set_kconfig_ima
-		ot-kernel_set_kconfig_lsms
-
-		ot-kernel_set_kconfig_pgo # Uses llvm_slot
-
-		ot-kernel_set_kconfig_module_support
-		ot-kernel_set_kconfig_build_all_modules_as
-		ot-kernel_set_kconfig_eudev
-		ot-kernel_check_kernel_signing_prereqs
-		ot-kernel_set_kconfig_module_signing
-
-		if [[ -e "${BUILD_DIR}/.config" ]] ; then
-			if has exfat ${IUSE} && ! use exfat ; then
-				sed -i -e "/CONFIG_EXFAT_FS/d" "${BUILD_DIR}/.config"
-			fi
-
-			if ! use reiserfs ; then
-				sed -i -e "/CONFIG_REISERFS_FS/d" "${BUILD_DIR}/.config"
-			fi
-		fi
-
-		einfo "Updating the .config for defaults for the newly enabled options."
-		einfo "Running:  make olddefconfig ${args[@]}"
-		make olddefconfig "${args[@]}" || die
 
 		ot-kernel_menuconfig "post" # Uses llvm_slot
 	done

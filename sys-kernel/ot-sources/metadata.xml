@@ -349,6 +349,7 @@ OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/char/agp drivers/gpu drivers/video"	# 
 OT_KERNEL_BUILD="1"
 OT_KERNEL_BUILD_ALL_MODULES_AS="y"
 OT_KERNEL_CONFIG="/etc/kernels/kernel-config-5.16-ot-x86_64"
+OT_KERNEL_CONFIG_MODE="assisted"
 OT_KERNEL_CPU_MICROCODE="1"
 OT_KERNEL_CPU_SCHED="cfs"
 OT_KERNEL_DISABLE="0"
@@ -660,6 +661,26 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     OT_KERNEL_CONFIG -- Points to the absolute path of the kernel config. (This
     can be not set but then defaults to
     /etc/kernels/kernel-config-${PV}-${extraversion}-$(uname -m))
+
+
+
+    OT_KERNEL_CONFIG_MODE -- Choose between ebuild assisted and fully custom
+    config.
+
+    Acceptable values:
+
+      assisted - allow the ebuild to assist in configurating the config. (default)
+      custom - have full control over the config.
+
+    Notes:
+
+      - In custom mode:
+        * No kernel config validation will be done.
+        * All or most of the environment variables will not have any affect.
+        * The OT_KERNEL_BUILD is still available.
+        * The OT_KERNEL_MENUCONFIG* environment variables are available.
+        * The OT_KERNEL_USE is still valid in src_prepare() for per-profile
+          patching.
 
 
 
