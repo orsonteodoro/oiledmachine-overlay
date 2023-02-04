@@ -7254,7 +7254,7 @@ eerror
 		local args=()
 		ot-kernel_setup_tc
 
-		if [[ "${OT_KERNEL_CONFIG_MODE:-assisted}" == "assisted" ]] ; then
+		if [[ "${OT_KERNEL_CONFIG_MODE:-assisted}" =~ "assist" ]] ; then
 			ot-kernel_src_configure_assisted
 		else
 			ot-kernel_src_configure_custom
