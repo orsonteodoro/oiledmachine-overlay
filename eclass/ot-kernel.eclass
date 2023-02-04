@@ -7195,6 +7195,7 @@ einfo
 	einfo "Updating the .config for defaults for the newly enabled options."
 	einfo "Running:  make olddefconfig ${args[@]}"
 	make olddefconfig "${args[@]}" || die
+	ot-kernel_menuconfig "post" # Uses llvm_slot
 }
 
 # @FUNCTION: ot-kernel_src_configure_custom
@@ -7217,6 +7218,7 @@ ot-kernel_src_configure_custom() {
 	local gcc_slot=$(get_gcc_slot)
 	ot-kernel_set_kconfig_compiler_toolchain # Inits llvm_slot, gcc_slot
 	ot-kernel_menuconfig "pre" # Uses llvm_slot
+	ot-kernel_menuconfig "post" # Uses llvm_slot
 }
 
 # @FUNCTION: ot-kernel_src_configure
@@ -7281,8 +7283,6 @@ eerror
 		else
 			ot-kernel_src_configure_custom
 		fi
-
-		ot-kernel_menuconfig "post" # Uses llvm_slot
 	done
 }
 
