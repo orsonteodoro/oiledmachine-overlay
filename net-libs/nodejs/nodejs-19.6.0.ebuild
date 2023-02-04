@@ -23,6 +23,7 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 BENCHMARK_TYPES=(
 	assert
 	async_hooks
+	blob
 	buffers
 	child_process
 	cluster
@@ -71,7 +72,7 @@ gen_iuse_pgo() {
 
 IUSE+="
 acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
-npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
++npm pax-kernel +snapshot +ssl system-icu +system-ssl test
 
 $(gen_iuse_pgo)
 man pgo
@@ -94,24 +95,26 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Nov 3, 2022
-NGHTTP2_PV="1.47.0"
+# Last deps commit date:  Jan 31, 2023
+NGHTTP2_PV="1.51.0"
 RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.0.9
-	>=dev-libs/libuv-1.43.0:=
+	>=dev-libs/libuv-1.44.2:=
 	>=net-dns/c-ares-1.18.1
 	>=net-libs/nghttp2-${NGHTTP2_PV}
-	>=sys-libs/zlib-1.2.11
+	>=sys-libs/zlib-1.2.12
 	app-eselect/eselect-nodejs
 	system-icu? (
-		>=dev-libs/icu-71.1:=
+		>=dev-libs/icu-72.1:=
 	)
 	system-ssl? (
 		>=dev-libs/openssl-3.0.7:0=
 	)
 "
-DEPEND+=" ${RDEPEND}"
+DEPEND+="
+	${RDEPEND}
+"
 BDEPEND+="
 	${PYTHON_DEPS}
 	dev-util/ninja
@@ -125,28 +128,25 @@ BDEPEND+="
 			>=net-libs/nghttp2-${NGHTTP2_PV}[utils]
 		)
 	)
-	systemtap? (
-		dev-util/systemtap
-	)
 	test? (
 		net-misc/curl
 	)
 "
 PDEPEND+="
 	acorn? (
-		>=dev-node/acorn-bin-8.8.0
+		>=dev-node/acorn-bin-8.8.2
 	)
 "
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 PATCHES=(
 	"${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
-	"${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch
+	"${FILESDIR}"/${PN}-19.5.0-global-npm-config.patch
 	"${FILESDIR}"/${PN}-16.13.2-use-thinlto.patch
 	"${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch
 	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="8.19.2" # See https://github.com/nodejs/node/blob/v18.12.1/deps/npm/package.json
+NPM_V="9.4.0" # See https://github.com/nodejs/node/blob/v19.6.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
@@ -183,7 +183,7 @@ pkg_setup() {
 	linux-info_pkg_setup
 
 einfo
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2025-04-30."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2023-06-01."
 einfo
 
 	# Prevent merge conflicts
@@ -452,7 +452,6 @@ _src_configure() {
 	"${EPYTHON}" configure.py \
 		--prefix="${EPREFIX}"/usr \
 		--dest-cpu=${myarch} \
-		$(use_with systemtap dtrace) \
 		"${myconf[@]}" || die
 
 	# Prevent double build on install.
@@ -697,13 +696,6 @@ src_install() {
 	fi
 
 	mv "${ED}"/usr/share/doc/node "${ED}"/usr/share/doc/${PF} || die
-
-	if use systemtap ; then
-		# Move tapset to avoid conflict
-		mv "${ED}/usr/share/systemtap/tapset/"node${,${SLOT_MAJOR}}.stp || die
-	else
-		rm "${ED}/usr/share/systemtap/tapset/node.stp" || die
-	fi
 
 	if ! use corepack ; then
 		# Prevent collisions
