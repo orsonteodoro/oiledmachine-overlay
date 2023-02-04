@@ -1734,7 +1734,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
       - Custom logos or images provided require imagemagick or graphicsmagick
         installed via the respective USE flag.
-        Positives for using a kernel logo are ease of deployment, fewest changes,
+      - Positives for using a kernel logo are ease of deployment, fewest changes,
         short term satisfaction.
       - Negatives for using a kernel logo are it will likely break the seamless
         integration between initramfs or init system logo transition.
@@ -1746,8 +1746,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
         prevent being hacked.
       - The logos provided by the kernel are 80x80 or 40x40 with either
         1, 16, 225 colors.
-        For seemless boot logos or animated logos, it is recommended to use
-      - Dracut and Plymouth packages instead of the kernel logo.
+      - For seemless boot logos or animated logos, it is recommended to use
+        Dracut and Plymouth packages instead of the kernel logo.
         Kernel logos are stills.
 
 
@@ -3336,7 +3336,7 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
         <pkg>app-emulation/wine-proton</pkg>
 
     </flag>
-    <flag name="futex2-proton">
+    <flag name="futex-proton">
       Modifies the syscall data structures to be compatible the following
       software.  This will break compatibility.
 
