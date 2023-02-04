@@ -1515,7 +1515,25 @@ ot-kernel-pkgflags_clamav() { # DONE
 	if ot-kernel_has_version "app-antivirus/clamav" ; then
 		einfo "Applying kernel config flags for the clamav package (id: 1545fdb)"
 		ot-kernel_y_configopt "CONFIG_FANOTIFY"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_y_configopt "CONFIG_FANOTIFY_ACCESS_PERMISSIONS"
+
+		# Defined but not used
+		# ot-kernel_y_configopt "CONFIG_EXPERT"
+		# ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+		# ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		# ot-kernel_y_configopt "CONFIG_EPOLL"
+		# ot-kernel_y_configopt "CONFIG_EVENTFD"
+		# ot-kernel_y_configopt "CONFIG_FHANDLE"
+		# ot-kernel_y_configopt "CONFIG_FUTEX"
+		# ot-kernel_y_configopt "CONFIG_FUTEX2"
+		# ot-kernel_y_configopt "CONFIG_IO_URING"
+		# ot-kernel_y_configopt "CONFIG_MEMBARRIER"
+		# ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		# ot-kernel_y_configopt "CONFIG_SIGNALFD"
+		# ot-kernel_y_configopt "CONFIG_TIMERFD"
+
+		# ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # References it in cargo package but not really used
 	fi
 }
 
@@ -1784,6 +1802,7 @@ www-client/microsoft-edge-dev
 www-client/opera
 www-client/opera-beta
 www-client/opera-developer
+www-client/vivaldi
 www-misc/instatron
 )
 
@@ -2776,7 +2795,8 @@ ot-kernel-pkgflags_dbus() { # DONE
 		# Implied ot-kernel_has_version "sys-apps/dbus[linux_kernel]"
 		einfo "Applying kernel config flags for the dbus package (id: b9e31e7)"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_EPOLL"
+		ot-kernel_y_configopt "CONFIG_EPOLL" # Did not find in scan but ebuild suggested.
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 	fi
 }
 
@@ -3296,19 +3316,23 @@ ot-kernel-pkgflags_ff() { # DONE
 		ot-kernel_y_configopt "CONFIG_FANOTIFY"
 
 		ot-kernel_y_configopt "CONFIG_SECCOMP"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
 		ot-kernel_y_configopt "CONFIG_EPOLL"
-#		ot-kernel_y_configopt "CONFIG_EVENTFD" # __NR_eventfd2
+		ot-kernel_y_configopt "CONFIG_EVENTFD"
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_IO_URING"
 		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
 		ot-kernel_y_configopt "CONFIG_SIGNALFD"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
+
+		# ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # References it but unknown apparent performance gain/loss
 	fi
 }
 
