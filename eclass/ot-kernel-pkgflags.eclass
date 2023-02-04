@@ -234,6 +234,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_ekeyd
 	ot-kernel-pkgflags_ell
 	ot-kernel-pkgflags_elogind
+	ot-kernel-pkgflags_emacs
 	ot-kernel-pkgflags_embree
 	ot-kernel-pkgflags_ena_driver
 	ot-kernel-pkgflags_encfs
@@ -253,6 +254,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_fuse
 	ot-kernel-pkgflags_fwknop
 	ot-kernel-pkgflags_g15daemon
+	ot-kernel-pkgflags_gambas
 	ot-kernel-pkgflags_gcc
 	ot-kernel-pkgflags_gerbera
 	ot-kernel-pkgflags_ghc
@@ -440,6 +442,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_runc
 	ot-kernel-pkgflags_rust
 	ot-kernel-pkgflags_samba
+	ot-kernel-pkgflags_sandbox
 	ot-kernel-pkgflags_sane
 	ot-kernel-pkgflags_sanewall
 	ot-kernel-pkgflags_sanlock
@@ -499,7 +502,9 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_vcrypt
 	ot-kernel-pkgflags_vendor_reset
 	ot-kernel-pkgflags_vhba
+	ot-kernel-pkgflags_vim
 	ot-kernel-pkgflags_vinagre
+	ot-kernel-pkgflags_vlc
 	ot-kernel-pkgflags_vpnc
 	ot-kernel-pkgflags_vtun
 	ot-kernel-pkgflags_wacom
@@ -1871,6 +1876,7 @@ ot-kernel-pkgflags_criu() { # DONE
 		ot-kernel_y_configopt "CONFIG_CHECKPOINT_RESTORE"
 		ot-kernel_y_configopt "CONFIG_NAMESPACES"
 		ot-kernel_y_configopt "CONFIG_PID_NS"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
 		ot-kernel_y_configopt "CONFIG_EVENTFD"
 		ot-kernel_y_configopt "CONFIG_EPOLL"
@@ -2769,6 +2775,7 @@ ot-kernel-pkgflags_dbus() { # DONE
 	if ot-kernel_has_version "sys-apps/dbus" ; then
 		# Implied ot-kernel_has_version "sys-apps/dbus[linux_kernel]"
 		einfo "Applying kernel config flags for the dbus package (id: b9e31e7)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_EPOLL"
 	fi
 }
@@ -3109,6 +3116,7 @@ ot-kernel-pkgflags_ell() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S07b5e1f]}" == "1" ]] && return
 	if ot-kernel_has_version "dev-libs/ell" ; then
 		einfo "Applying kernel config flags for the ell package (id: 07b5e1f)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
 		ot-kernel_y_configopt "CONFIG_EVENTFD"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API"
@@ -3127,10 +3135,27 @@ ot-kernel-pkgflags_elogind() { # DONE
 	if ot-kernel_has_version "sys-auth/elogind" ; then
 		einfo "Applying kernel config flags for the elogind package (id: e7308d9)"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_EPOLL"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_y_configopt "CONFIG_SIGNALFD"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_emacs
+# @DESCRIPTION:
+# Applies kernel config flags for the emacs package
+ot-kernel-pkgflags_emacs() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sdc900bc]}" == "1" ]] && return
+	if ot-kernel_has_version "app-editors/emacs" ; then
+		einfo "Applying kernel config flags for the emacs package (id: dc900bc)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SECCOMP"
+		# ot-kernel_y_configopt "CONFIG_SHMEM" # Referenced but maybe sample file
 	fi
 }
 
@@ -3205,6 +3230,7 @@ ot-kernel-pkgflags_eudev() { # DONE
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED"
 		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED_V2"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_SIGNALFD"
 		ot-kernel_y_configopt "CONFIG_EPOLL"
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
@@ -3265,6 +3291,10 @@ ot-kernel-pkgflags_ff() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb5b1507]}" == "1" ]] && return
 	if _ot-kernel-pkgflags_ff_based ; then
 		einfo "Applying kernel config flags for ff and derivatives (id: b5b1507)"
+		ot-kernel_y_configopt "CONFIG_DNOTIFY"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_FANOTIFY"
+
 		ot-kernel_y_configopt "CONFIG_SECCOMP"
 
 		ot-kernel_y_configopt "CONFIG_EXPERT"
@@ -3494,6 +3524,17 @@ ot-kernel-pkgflags_g15daemon() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_gambas
+# @DESCRIPTION:
+# Applies kernel config flags for the gambas package
+ot-kernel-pkgflags_gambas() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5d0a192]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-lang/gambas" ; then
+		einfo "Applying kernel config flags for the gambas package (id: 5d0a192)"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_gcc
 # @DESCRIPTION:
 # Applies kernel config flags for the gcc package
@@ -3630,8 +3671,8 @@ ot-kernel-pkgflags_go() { # DONE
 	if ot-kernel_has_version "dev-lang/go" ; then
 		einfo "Applying kernel config flags for the go package (id: e5375a0)"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
-		ot-kernel_y_configopt "CONFIG_EPOLL"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_EPOLL"
 		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
@@ -4900,6 +4941,7 @@ ot-kernel-pkgflags_libv4l() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4b528f3]}" == "1" ]] && return
 	if ot-kernel_has_version "media-libs/libv4l" ; then
 		einfo "Applying kernel config flags for the libv4l package (id: 4b528f3)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
 	fi
 }
@@ -5713,6 +5755,7 @@ ot-kernel-pkgflags_nodejs() { # DONE
 		fi
 
 		if [[ "${arch}" =~ "ppc" ]]; then
+			ot-kernel_y_configopt "CONFIG_EXPERT"
 			ot-kernel_y_configopt "CONFIG_SHMEM"
 		fi
 	fi
@@ -6373,6 +6416,7 @@ ot-kernel-pkgflags_qemu() { # DONE
 			ot-kernel-pkgflags_kvm_host_extras
 		fi
 		if ot-kernel_has_version "app-emulation/qemu[vhost-net]" ; then
+			ot-kernel_y_configopt "CONFIG_EXPERT"
 			ot-kernel_y_configopt "CONFIG_EVENTFD"
 			ot-kernel_y_configopt "CONFIG_VHOST_MENU"
 			ot-kernel_y_configopt "CONFIG_VHOST_NET"
@@ -6412,7 +6456,7 @@ ot-kernel-pkgflags_qemu() { # DONE
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_y_configopt "CONFIG_IO_URING"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
-		ot-kernel_y_configopt "CONFIG_DNOTIFY" # Symbol present but not used
+		ot-kernel_y_configopt "CONFIG_DNOTIFY"
 
 		if ot-kernel_has_version "app-emulation/qemu[test]" ; then
 			ot-kernel_y_configopt "CONFIG_SHMEM"
@@ -6595,7 +6639,7 @@ ot-kernel-pkgflags_perl() { # DONE
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
-		# ot-kernel_y_configopt "CONFIG_DNOTIFY" # Symbol present but not used
+		ot-kernel_y_configopt "CONFIG_DNOTIFY"
 	fi
 }
 
@@ -6655,6 +6699,7 @@ ot-kernel-pkgflags_plocate() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S38b20ed]}" == "1" ]] && return
 	if ot-kernel_has_version "sys-apps/plocate[io-uring]" ; then
 		einfo "Applying kernel config flags for the plocate package (id: 38b20ed)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_IO_URING"
 	fi
 }
@@ -7012,7 +7057,7 @@ ot-kernel-pkgflags_ruby() { # DONE
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
-		ot-kernel_y_configopt "CONFIG_DNOTIFY"
+		# ot-kernel_y_configopt "CONFIG_DNOTIFY" # Not really used
 	fi
 }
 
@@ -7113,6 +7158,18 @@ ot-kernel-pkgflags_samba() { # DONE
 		if ver_test ${K_MAJOR_MINOR} -le 4.12 ; then
 			ot-kernel_y_configopt "CONFIG_CIFS_SMB2"
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_sandbox
+# @DESCRIPTION:
+# Applies kernel config flags for the sandbox package
+ot-kernel-pkgflags_sane() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S553f342]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-apps/sandbox" ; then
+		einfo "Applying kernel config flags for the sandbox package (id: 553f342)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_SHMEM"
 	fi
 }
 
@@ -7588,6 +7645,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_BSG"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
 		ot-kernel_y_configopt "CONFIG_DEVTMPFS"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_EPOLL"
 		ot-kernel_y_configopt "CONFIG_FANOTIFY"
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
@@ -7871,6 +7929,7 @@ ot-kernel-pkgflags_udev() { # DONE
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED"
 		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED_V2"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_SIGNALFD"
 		ot-kernel_y_configopt "CONFIG_EPOLL"
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
@@ -8166,6 +8225,19 @@ ot-kernel-pkgflags_vhba() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_vim
+# @DESCRIPTION:
+# Applies kernel config flags for the vim package
+ot-kernel-pkgflags_vim() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S0795e0f]}" == "1" ]] && return
+	if ot-kernel_has_version "app-editors/vim" ; then
+		einfo "Applying kernel config flags for the vim package (id: 0795e0f)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		#ot-kernel_y_configopt "CONFIG_SYSVIPC" # Used in config check and .vim files only
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_vinagre
 # @DESCRIPTION:
 # Applies kernel config flags for the vinagre package
@@ -8175,6 +8247,20 @@ ot-kernel-pkgflags_vinagre() { # DONE
 		einfo "Applying kernel config flags for the vinagre package (id: 2356e75)"
 	        _ot-kernel-pkgflags_tcpip
 	        ot-kernel_y_configopt "CONFIG_IPV6"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_vlc
+# @DESCRIPTION:
+# Applies kernel config flags for the vlc package
+ot-kernel-pkgflags_vlc() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc99c6c8]}" == "1" ]] && return
+	if ot-kernel_has_version "media-video/vlc" ; then
+		einfo "Applying kernel config flags for the vlc package (id: c99c6c8)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 	fi
 }
 
@@ -8544,6 +8630,10 @@ ot-kernel-pkgflags_xen() { # DONE
 			die
 		fi
 
+		ot-kernel_y_configopt "CONFIG_DNOTIFY"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_FANOTIFY"
+
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 		ot-kernel_y_configopt "CONFIG_AIO"
@@ -8552,7 +8642,6 @@ ot-kernel-pkgflags_xen() { # DONE
 		ot-kernel_y_configopt "CONFIG_EVENTFD"
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
-		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_y_configopt "CONFIG_IO_URING"
 		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
@@ -8585,6 +8674,7 @@ ot-kernel-pkgflags_xf86_input_libinput() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc4e47ff]}" == "1" ]] && return
 	if ot-kernel_has_version "x11-drivers/xf86-input-libinput" ; then
 		einfo "Applying kernel config flags for the xf86-input-libinput package (id: c4e47ff)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
 	fi
 }
@@ -9430,11 +9520,12 @@ einfo "Enabling futex2 in .config"
 
 # @FUNCTION: _ot-kernel_set_ldt
 # @DESCRIPTION:
-# Add compatibility for ldt used for 16-bit apps
+# Add compatibility for 16-bit apps including LDT.
 _ot-kernel_set_ldt() {
 	if [[ "${EMU_16BIT:-0}" == "1" ]] ; then
 einfo "Enabling 16-bit emulation support"
 		warn_lowered_security "4e97be4"
+		ot-kernel_y_configopt "CONFIG_X86_16BIT"
 		ot-kernel_y_configopt "CONFIG_MODIFY_LDT_SYSCALL"
 	fi
 }
@@ -9465,7 +9556,7 @@ einfo "Enabling 16-bit emulation support"
 # |open_by_handle_at|name_to_handle_at|sys_sysfs|timer_create|timer_gettime\
 # |timer_settime|clock_adjtime|io_setup|clock_nanosleep|bpf_jit|msgget|msgsnd\
 # |msgrcv|semget|shmget|shmat|shmdt|modify_ldt|F_NOTIFY|fanotify_init\
-# |inotify_init)" \
+# |inotify_init|seccomp_init)" \
 # "${S}"
 
 # Manual inspection still required
