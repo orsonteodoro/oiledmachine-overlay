@@ -110,6 +110,10 @@ sys-devel/clang:16 llvm-16-commit.conf
       Build the SafeStack runtime for stack buffer overflow protection using
       disjoint safe/unsafe stacks instead of canaries and additional
       measures to protect and hide the safe stack.
+
+      For the x86_64 implementation, there are several criticisms of
+      SafeStack.  There seems to be a consensus of no benefit in using this.
+      One researcher noted a information disclosure attack/vulnerability.
     </flag>
     <flag name="cfi">
       Build the Control Flow Integrity (CFI) runtime to abort the program on
