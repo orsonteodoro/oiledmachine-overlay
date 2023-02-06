@@ -23,8 +23,8 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS="amd64 arm arm64 ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x64-macos"
 IUSE="
-debug default-compiler-rt default-libcxx default-lld doc +extra llvm-libunwind
-+pie +static-analyzer test xml
+debug default-compiler-rt default-libcxx default-lld doc +extra ieee-long-double
+llvm-libunwind +pie +static-analyzer test xml
 
 hardened r7
 "

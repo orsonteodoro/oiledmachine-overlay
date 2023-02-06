@@ -210,6 +210,9 @@ sys-devel/clang:16 llvm-16-commit.conf
     <flag name="hardened">
       Match the hardened default on settings from hardened GCC
     </flag>
+    <flag name="ieee-long-double">
+      Use accelerated 128-bit IEEE long double ABI (ppc64le only)
+    </flag>
     <flag name="pgo">
       Build with Profile Guided Optimization which may reduce compile times of
       other packages by 20%, with the PGOed llvm package.
