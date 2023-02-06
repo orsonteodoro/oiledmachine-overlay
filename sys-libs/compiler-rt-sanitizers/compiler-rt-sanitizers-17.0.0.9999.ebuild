@@ -241,8 +241,19 @@ SANITIZER_REQUIRED_USE="
 		)
 	)
 "
+#
+# There's some difficulty in setting up per arch package.use.mask in this overlay.
+# Maybe because of the distro overrides.
+#
+# "SafeStack on ${ARCH} is useless and using may add a vulnerability."
+# "Disable the safestack USE flag to continue or fork and remove this"
+# "message."
+#
 REQUIRED_USE="
 	${SANITIZER_REQUIRED_USE}
+	amd64? (
+		!safestack
+	)
 	test? (
 		cfi? ( ubsan )
 		gwp-asan? ( scudo )
@@ -354,15 +365,12 @@ src_configure() {
 		fi
 	done
 
-	if [[ "${ARCH}" == "amd64" ]] && use safestack ; then
-# There's some difficulty in setting up per arch package.use.mask in this overlay.
-# Maybe because of the distro overrides.
+	if use amd64 && use safestack ; then
 eerror
 eerror "SafeStack on ${ARCH} is useless and using may add a vulnerability."
 eerror "Disable the safestack USE flag to continue or fork and remove this"
 eerror "message."
 eerror
-		die
 	fi
 
 	local mycmakeargs=(
