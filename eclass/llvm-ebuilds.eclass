@@ -59,12 +59,6 @@ einfo "static-libs."
 einfo
 		filter-flags "-flto*"
 	fi
-	if has_version "sys-devel/clang-common[default-lld]" ; then
-ewarn
-ewarn "sys-devel/clang-common[default-lld] may need to be disabled if symbol"
-ewarn "errors encountered."
-ewarn
-	fi
 	if [[ "${CC}" =~ ("gcc") || -z "${CC}" ]] \
 		&& ( \
 			is-flagq '-fuse-ld=lld' \
@@ -76,7 +70,8 @@ ewarn "Stripping -fuse-ld=*"
 		filter-flags "-fuse-ld=*"
 	elif [[ "${CC}" =~ ("clang") ]] \
 		&& ( \
-			is-flagq '-fuse-ld=lld' \
+			has_version "sys-devel/clang-common[default-lld]"
+			|| is-flagq '-fuse-ld=lld' \
 			|| is-flagq '-flto=thin' \
 		) ; then
 		if ld.lld --help | grep -q -e "symbol lookup error:" \

@@ -18,6 +18,15 @@ esac
 
 _CHECK_LINKER_ECLASS=1
 
+_is_lld() {
+	if has_version "sys-devel/clang-common[default-lld]" ; then
+		return 0
+	elif is-flagq '-fuse-ld=lld' ; then
+		return 0
+	fi
+	return 1
+}
+
 # @FUNCTION: check-linker_get_lto_type
 # @DESCRIPTION:
 # Gets the requested linker via CFLAGS/LDFLAGS and perform tests to see if
@@ -27,7 +36,7 @@ check-linker_get_lto_type() {
 	if ! is-flagq '-flto*' ; then
 		echo "none"
 	elif tc-is-clang \
-		&& is-flagq '-fuse-ld=lld' \
+		&& _is_lld \
 		&& is-flagq '-flto=thin' \
 		&& test-flag '-flto=thin' \
 		&& test-flag-CCLD '-fuse-ld=lld' ; then
@@ -53,6 +62,11 @@ check-linker_get_lto_type() {
 		&& is-flagq '-fuse-ld=bfd' \
 		&& is-flagq '-flto' ; then
 		echo "bfdlto"
+	elif tc-is-clang \
+		&& has_version "sys-devel/lld" \
+		&& has_version "sys-devel/clang-common[default-lld]" \
+		&& test-flag '-flto=thin' ; then
+		echo "thinlto"
 	elif tc-is-clang \
 		&& has_version "sys-devel/lld" \
 		&& test-flag '-flto=thin' \
