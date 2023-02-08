@@ -610,7 +610,7 @@ einfo
 	fi
 
 	if tc-is-cross-compiler; then
-		local tblgen="${BROOT}/usr/lib/llvm/${SLOT}/bin/llvm-tblgen"
+		local tblgen="${BROOT}/usr/lib/llvm/${LLVM_MAJOR}/bin/llvm-tblgen"
 		[[ -x "${tblgen}" ]] \
 			|| die "${tblgen} not found or usable"
 		mycmakeargs+=(

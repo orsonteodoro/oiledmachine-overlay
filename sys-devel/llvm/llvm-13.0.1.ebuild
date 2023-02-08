@@ -81,7 +81,7 @@ PATCHES=(
 
 LLVM_COMPONENTS=( llvm )
 LLVM_MANPAGES=1
-LLVM_PATCHSET=${PV/_/-}
+LLVM_PATCHSET=${PV/_/-}-r1
 LLVM_USE_TARGETS=provide
 llvm.org_set_globals
 
@@ -533,7 +533,7 @@ einfo
 	fi
 
 	if tc-is-cross-compiler; then
-		local tblgen="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/llvm-tblgen"
+		local tblgen="${BROOT}/usr/lib/llvm/${LLVM_MAJOR}/bin/llvm-tblgen"
 		[[ -x "${tblgen}" ]] \
 			|| die "${tblgen} not found or usable"
 		mycmakeargs+=(
