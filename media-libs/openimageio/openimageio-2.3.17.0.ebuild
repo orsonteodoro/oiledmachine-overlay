@@ -56,7 +56,7 @@ REQUIRED_USE="
 	tbb? ( openvdb )
 "
 # See https://github.com/OpenImageIO/oiio/blob/v2.3.17.0/INSTALL.md
-QT_V="5.6"
+QT_PV="5.6"
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 gen_openvdb_depends() {
@@ -154,10 +154,10 @@ RDEPEND+="
 		')
 	)
 	qt5? (
-		>=dev-qt/qtcore-${QT_V}:5
-		>=dev-qt/qtgui-${QT_V}:5
-		>=dev-qt/qtwidgets-${QT_V}:5
-		opengl? ( >=dev-qt/qtopengl-${QT_V}:5 )
+		>=dev-qt/qtcore-${QT_PV}:5
+		>=dev-qt/qtgui-${QT_PV}:5
+		>=dev-qt/qtwidgets-${QT_PV}:5
+		opengl? ( >=dev-qt/qtopengl-${QT_PV}:5 )
 	)
 	raw? ( !cxx17? ( >=media-libs/libraw-0.15:=
 			  <media-libs/libraw-0.20:= )
