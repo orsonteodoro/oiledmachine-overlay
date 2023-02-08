@@ -17,6 +17,37 @@ esac
 _LLVM_EBUILDS_ECLASS=1
 inherit flag-o-matic toolchain-funcs
 
+_fix_linker() {
+	if ld.lld --help | grep -q -e "symbol lookup error:" \
+		|| ld.lld --help | grep -q -e "undefined symbol:" ; then
+ewarn "Switching to fallback linker.  Detected symbol errors from lld."
+		unset LD
+ewarn "Stripping -fuse-ld=*"
+		filter-flags "-fuse-ld=*"
+ewarn "Stripping -flto=thin"
+		filter-flags "-flto=thin"
+		local s
+		s=$(clang-major-version)
+		if tc-is-clang \
+			&& has_version "sys-devel/binutils[gold,plugins]" \
+			&& has_version "sys-devel/clang:${s}[binutils-plugin]" \
+			&& has_version ">=sys-devel/llvmgold-${s}" \
+			&& test-flag-CCLD '-fuse-ld=gold' ; then
+ewarn "Switching to -fuse-ld=gold"
+			append-ldflags "-fuse-ld=gold"
+		elif tc-is-gcc \
+			&& has_version "sys-devel/binutils[gold,plugins]" \
+			&& test-flag-CCLD '-fuse-ld=gold' ; then
+ewarn "Switching to -fuse-ld=gold"
+			append-ldflags "-fuse-ld=gold"
+		else
+ewarn "Switching to -fuse-ld=bfd"
+			append-ldflags "-fuse-ld=bfd"
+		fi
+		strip-unsupported-flags
+	fi
+}
+
 llvm-ebuilds_fix_toolchain() {
 	if [[ "${CC}" =~ "clang" ]] ; then
 		if "${CC}" --help | grep "symbol lookup error" ; then
@@ -53,6 +84,9 @@ ewarn
 # We allow -flto for clang so that it can use CFI, but disallow -flto when"
 # using GCC.
 #
+# gcc + -flto + -fuse-ld=lld also fails, but gcc + -fuse-ld=lld works for
+# non-broken lld.
+#
 einfo
 einfo "Removing lto flags to avoid possible IR incompatibilities with"
 einfo "static-libs."
@@ -74,33 +108,6 @@ ewarn "Stripping -fuse-ld=*"
 			|| is-flagq '-fuse-ld=lld' \
 			|| is-flagq '-flto=thin' \
 		) ; then
-		if ld.lld --help | grep -q -e "symbol lookup error:" \
-			|| ld.lld --help | grep -q -e "undefined symbol:" ; then
-ewarn "Switching to fallback linker.  Detected symbol errors from lld."
-			unset LD
-ewarn "Stripping -fuse-ld=*"
-			filter-flags "-fuse-ld=*"
-ewarn "Stripping -flto=thin"
-			filter-flags "-flto=thin"
-			local s
-			s=$(clang-major-version)
-			if tc-is-clang \
-				&& has_version "sys-devel/binutils[gold,plugins]" \
-				&& has_version "sys-devel/clang:${s}[binutils-plugin]" \
-				&& has_version ">=sys-devel/llvmgold-${s}" \
-				&& test-flag-CCLD '-fuse-ld=gold' ; then
-ewarn "Switching to -fuse-ld=gold"
-				append-ldflags "-fuse-ld=gold"
-			elif tc-is-gcc \
-				&& has_version "sys-devel/binutils[gold,plugins]" \
-				&& test-flag-CCLD '-fuse-ld=gold' ; then
-ewarn "Switching to -fuse-ld=gold"
-				append-ldflags "-fuse-ld=gold"
-			else
-ewarn "Switching to -fuse-ld=bfd"
-				append-ldflags "-fuse-ld=bfd"
-			fi
-			strip-unsupported-flags
-		fi
+		_fix_linker
 	fi
 }
