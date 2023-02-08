@@ -69,6 +69,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.2-same-files-static-build.patch"
 	"${FILESDIR}/${PN}-1.0.4_p5-complete-pkgconfig.patch"
 	"${FILESDIR}/${PN}-1.0.4_p5-tests-use-std-ofstream.patch"
+	"${FILESDIR}/${PN}-1.0.4_p5-link-appimage_desktop_integration.patch"
+	"${FILESDIR}/${PN}-1.0.4_p5-Thumbnailer-prefixes.patch"
 )
 
 pkg_setup() {
