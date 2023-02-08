@@ -437,7 +437,7 @@ DEPEND+="
 	)
 	vaapi? (
 		>=media-video/ffmpeg-4.4:0=[vaapi]
-		>=media-libs/libva-2.1.0
+		>=media-libs/libva-2.1.0[drm(+),X?,wayland?]
 		media-libs/vaapi-drivers
 	)
 	vpx? (
