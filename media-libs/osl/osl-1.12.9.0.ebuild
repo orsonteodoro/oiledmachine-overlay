@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..11} ) # Upstream tests up to to 3.10
 inherit cmake flag-o-matic llvm multilib-minimal python-any-r1 toolchain-funcs
 
 DESCRIPTION="Advanced shading language for production GI renderers"
@@ -23,20 +23,20 @@ X86_CPU_FEATURES=(
 	f16c:f16c
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
-LLVM_SUPPORT=(10 11 12 13) # Upstream supports llvm:9 to llvm:12 but only >=10 available on the distro.
+LLVM_SUPPORT=(14 15) # Upstream supports llvm:9 to llvm:15 but only >=14 available on the distro.
 LLVM_SUPPORT_=( ${LLVM_SUPPORT[@]/#/llvm-} )
 # The highest stable llvm was used as the default.  Revisions may update this in the future.
 IUSE+="
 ${CPU_FEATURES[@]%:*}
 ${LLVM_SUPPORT_[@]}
-doc +llvm-13 optix partio python qt5 static-libs test
+doc +llvm-15 optix partio python qt5 static-libs test
 "
 REQUIRED_USE+="
 	^^ ( ${LLVM_SUPPORT_[@]} )
 "
-# See https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.11.17.0/INSTALL.md
+# See https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.6.2/INSTALL.md
 # For optix requirements, see
-#   https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.11.17.0/src/cmake/externalpackages.cmake
+#   https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.6.2/src/cmake/externalpackages.cmake
 QT_MIN=5.6
 PATCHES=(
 	"${FILESDIR}/${PN}-1.11.17.0-stddef-includes-path.patch"
@@ -115,7 +115,7 @@ RDEPEND+="
 	dev-libs/libfmt[${MULTILIB_USEDEP}]
 	dev-libs/pugixml[${MULTILIB_USEDEP}]
 	$(python_gen_any_dep '>=media-libs/openimageio-2:=[${PYTHON_SINGLE_USEDEP}]')
-	$(python_gen_any_dep '<media-libs/openimageio-2.4:=[${PYTHON_SINGLE_USEDEP}]')
+	$(python_gen_any_dep '<media-libs/openimageio-2.5:=[${PYTHON_SINGLE_USEDEP}]')
 	sys-libs/zlib:=[${MULTILIB_USEDEP}]
 	optix? (
 		>=dev-libs/optix-5.1
@@ -140,12 +140,12 @@ BDEPEND+=" "$(gen_llvm_depend)
 BDEPEND+="
 	|| (
 		(
-			<sys-devel/gcc-12
-			>=sys-devel/gcc-6
+			<sys-devel/gcc-12.2
+			>=sys-devel/gcc-6.1
 		)
 		$(gen_llvm_bdepend)
 		(
-			>=dev-lang/icc-13[${MULTILIB_USEDEP}]
+			>=dev-lang/icc-17[${MULTILIB_USEDEP}]
 		)
 	)
 	>=dev-util/cmake-3.12
@@ -154,7 +154,7 @@ BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 "
 SRC_URI="
-https://github.com/imageworks/OpenShadingLanguage/archive/Release-${PV}.tar.gz
+https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 # Restricting tests as Make file handles them differently

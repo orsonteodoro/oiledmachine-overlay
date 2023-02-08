@@ -10,7 +10,7 @@
 # The blender-v3.4.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
 
-# Upstream uses LLVM 9 for Linux.  For prebuilt binary only addons, this may be
+# Upstream uses LLVM 12.0.0 for Linux.  For prebuilt binary only addons, this may be
 # problematic so avoid them.
 
 # The ebuild uses the same matching LLVM version used with Mesa to prevent
@@ -41,7 +41,7 @@ flac +gmp +jack +jemalloc +jpeg2k -llvm -man +nanovdb +ndof +nls +nvcc -nvrtc
 +tbb test +tiff +usd -valgrind +wayland r1
 "
 LLVM_MAX_UPSTREAM="13" # (inclusive)
-LLVM_SLOTS=(13 12 11)
+LLVM_SLOTS=(14 13 12 11) # FAIL!  Distro only has >= 14.
 gen_llvm_iuse()
 {
 	local s
@@ -272,7 +272,10 @@ gen_osl_depends()
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
-			llvm-${s}? ( >=media-libs/osl-${OSL_PV}:=[llvm-${s},static-libs] )
+			llvm-${s}? (
+				>=media-libs/osl-${OSL_PV}:=[llvm-${s},static-libs]
+				<media-libs/osl-2:=[llvm-${s},static-libs]
+			)
 		"
 	done
 }
