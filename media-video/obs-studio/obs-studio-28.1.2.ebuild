@@ -335,7 +335,7 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 	)
 	vaapi? (
 		media-libs/vaapi-drivers
-		>=media-libs/libva-${LIBVA_PV}
+		>=media-libs/libva-${LIBVA_PV}[X,wayland?]
 		>=media-video/ffmpeg-${FFMPEG_PV}[vaapi]
 	)
 "
@@ -469,7 +469,7 @@ DEPEND_UI="
 	>=dev-qt/qtcore-5.9.5:5=
 	>=dev-qt/qtnetwork-${QT_PV}:5=
 	>=dev-qt/qtsvg-${QT_PV}:5=
-	>=dev-qt/qtgui-${QT_PV}:5=[wayland?]
+	>=dev-qt/qtgui-${QT_PV}:5=[X,wayland?]
 	>=dev-qt/qtwidgets-${QT_PV}:5=
 	>=dev-qt/qtxml-${QT_PV}:5=
 "
