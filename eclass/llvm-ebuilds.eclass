@@ -59,12 +59,26 @@ einfo "static-libs."
 einfo
 		filter-flags "-flto*"
 	fi
-	if [[ "${CC}" =~ ("gcc") || -z "${CC}" ]] && is-flagq '-fuse-ld=lld' ; then
-		# Avoid ld.lld: error: version script assignment of 'LLVM_13' to symbol 'LLVMCreateDisasm' failed: symbol not defined
+	if has_version "sys-devel/clang-common[default-lld]" ; then
+ewarn
+ewarn "sys-devel/clang-common[default-lld] may need to be disabled if symbol"
+ewarn "errors encountered."
+ewarn
+	fi
+	if [[ "${CC}" =~ ("gcc") || -z "${CC}" ]] \
+		&& ( \
+			is-flagq '-fuse-ld=lld' \
+			|| is-flagq '-flto=thin' \
+		) ; then
+# Avoid ld.lld: error: version script assignment of 'LLVM_13' to symbol" 'LLVMCreateDisasm' failed: symbol not defined
 		unset LD
 ewarn "Stripping -fuse-ld=*"
 		filter-flags "-fuse-ld=*"
-	elif [[ "${CC}" =~ ("clang") ]] && is-flagq '-fuse-ld=lld' ; then
+	elif [[ "${CC}" =~ ("clang") ]] \
+		&& ( \
+			is-flagq '-fuse-ld=lld' \
+			|| is-flagq '-flto=thin' \
+		) ; then
 		if ld.lld --help | grep -q -e "symbol lookup error:" \
 			|| ld.lld --help | grep -q -e "undefined symbol:" ; then
 ewarn "Switching to fallback linker.  Detected symbol errors from lld."
