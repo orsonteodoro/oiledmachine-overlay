@@ -143,7 +143,7 @@ IUSE+="
 	lgpl3_to_gpl3
 	lgpl3x_to_gpl3
 "
-IUSE+=" r2"
+IUSE+=" wayland r2"
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.
 # You can't go backwards if you relicense.  This is why it is mutex.
@@ -663,7 +663,7 @@ RDEPEND+="
 	pulseaudio? ( >=media-sound/pulseaudio-2.1-r1[gdbm?,${MULTILIB_USEDEP}] )
 	rubberband? ( >=media-libs/rubberband-1.8.1-r1[${MULTILIB_USEDEP}] )
 	samba? ( >=net-fs/samba-3.6.23-r1[client,${MULTILIB_USEDEP}] )
-	sdl? ( <media-libs/libsdl2-3[X?,sound,threads,video,${MULTILIB_USEDEP}] )
+	sdl? ( <media-libs/libsdl2-3[X?,sound,threads,video,wayland?,${MULTILIB_USEDEP}] )
 	sndio? ( media-sound/sndio:=[${MULTILIB_USEDEP}] )
 	speex? ( >=media-libs/speex-1.2_rc1-r1[${MULTILIB_USEDEP}] )
 	srt? ( >=net-libs/srt-1.3.0:=[${MULTILIB_USEDEP}] )
@@ -3440,6 +3440,18 @@ ewarn
 ewarn "You must run \`xhost -local:root:\` after PGO training to restore the"
 ewarn "security default."
 ewarn
+	fi
+	if use X ; then
+einfo
+einfo "For X playback use \`ffplay <path>\`"
+einfo "For screencasting use \`ffmpeg ... -f x11grab ...\`"
+einfo
+	fi
+	if use wayland ; then
+einfo
+einfo "For wayland playback use \`SDL_VIDEODRIVER=wayland ffplay <path>\`"
+einfo "For screencasting use \`ffmpeg ... -f kmsgrab ...\`"
+einfo
 	fi
 }
 
