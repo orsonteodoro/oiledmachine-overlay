@@ -19,7 +19,7 @@ uk ur vi zh-CN zh-TW
 
 GCC_MIN="10.4"
 UOPTS_PGO_PV=$(ver_cut 1-3 ${PV})
-LLVM_MAX_SLOT=16
+LLVM_MAX_SLOT=16 # Also bump v in get_llvm_profdata_version_info()
 LLVM_MIN_SLOT=16 # The pregenerated PGO profile needs profdata version 8
 CR_CLANG_SLOT_OFFICIAL=16
 LLVM_SLOTS=(16 ${LLVM_MAX_SLOT}) # [inclusive, inclusive] high to low
@@ -1233,7 +1233,7 @@ get_llvm_profdata_version_info()
 	local ver
 	# The live versions can have different profdata versions over time.
 	for v in \
-		"15.0.0.9999" \
+		"16.0.0.9999" \
 	; do
 		(( $(ver_cut 1 "${v}") != ${LLVM_SLOT} )) && continue
 		(! has_version "~sys-devel/llvm-${v}" ) && continue
