@@ -593,6 +593,7 @@ FFTOOLS=(
 )
 IUSE+=" ${FFTOOLS[@]/#/+fftools_}"
 
+# Only vaapi_x11 and vaapi_drm checks.  No vaapi_wayland checks in configure.
 RDEPEND+="
 	alsa? ( >=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}] )
 	amf? ( media-video/amdgpu-pro-amf )
@@ -680,7 +681,7 @@ RDEPEND+="
 	svt-av1? ( >=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}] )
 	truetype? ( >=media-libs/freetype-2.5.0.1:2[${MULTILIB_USEDEP}] )
 	vaapi? (
-		>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP}]
+		>=media-libs/libva-1.2.1-r1:0=[X?,${MULTILIB_USEDEP}]
 		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 	)
 	vdpau? ( >=x11-libs/libvdpau-0.7[${MULTILIB_USEDEP}] )
