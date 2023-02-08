@@ -282,7 +282,7 @@ if [[ "${ELECTRON_APP_FEATURE_VAAPI}" == "1" ]] ; then
 	ELECTRON_APP_OPTIONAL_DEPEND+="
 		media-video/ffmpeg[vaapi?]
 		vaapi? (
-			media-libs/libva
+			media-libs/libva[drm(+),X?,wayland?]
 			media-libs/vaapi-drivers
 		)
 	"
