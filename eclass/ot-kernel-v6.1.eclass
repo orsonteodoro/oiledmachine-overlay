@@ -18,6 +18,8 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+# For compiler versions, see
+# https://github.com/torvalds/linux/blob/v6.1/scripts/min-tool-version.sh#L26
 CXX_STD="-std=gnu++11"
 GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
@@ -394,6 +396,9 @@ RDEPEND+="
 	clang-pgo? (
 		|| ( $(gen_clang_pgo_rdepend 13 ${LLVM_MAX_SLOT}) )
 		sys-kernel/genkernel[clang-pgo]
+	)
+	s390? (
+		|| ( $(gen_clang_pgo_rdepend 15 ${LLVM_MAX_SLOT}) )
 	)
 "
 RDEPEND+=" lto? ( || ( $(gen_lto_rdepend 11 ${LLVM_MAX_SLOT}) ) )"
