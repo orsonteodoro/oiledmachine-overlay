@@ -1333,7 +1333,7 @@ eerror
 electron-app_find_session_replay_within_source_code() {
 	[[ "${ELECTRON_APP_SESSION_REPLAY}" =~ ("allow"|"accept") ]] && return
 einfo "Scanning for possible unauthorized recording within code."
-	local pat="(kmsgrab|x11grab|screen://)"
+	local pat="(kmsgrab|x11grab|xcbgrab|screen://)"
 	IFS=$'\n'
 	local path
 	for path in $(find "${WORKDIR}" -type f) ; do
