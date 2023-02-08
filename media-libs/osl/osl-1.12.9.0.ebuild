@@ -23,7 +23,7 @@ X86_CPU_FEATURES=(
 	f16c:f16c
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
-LLVM_SUPPORT=(14 15) # Upstream supports llvm:9 to llvm:15 but only >=14 available on the distro.
+LLVM_SUPPORT=(15 14 13) # Upstream supports llvm:9 to llvm:15 but only >=14 available on the distro.
 LLVM_SUPPORT_=( ${LLVM_SUPPORT[@]/#/llvm-} )
 # The highest stable llvm was used as the default.  Revisions may update this in the future.
 IUSE+="
