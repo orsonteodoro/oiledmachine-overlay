@@ -59,15 +59,20 @@ einfo "static-libs."
 einfo
 		filter-flags "-flto*"
 	fi
-	if [[ "${LD}" =~ ("lld"|"clang") ]] || is-flagq '-fuse-ld=lld' ; then
+	if [[ "${CC}" =~ ("gcc") || -z "${CC}" ]] && is-flagq '-fuse-ld=lld' ; then
+		# Avoid ld.lld: error: version script assignment of 'LLVM_13' to symbol 'LLVMCreateDisasm' failed: symbol not defined
+		unset LD
+ewarn "Stripping -fuse-ld=*"
+		filter-flags "-fuse-ld=*"
+	elif [[ "${CC}" =~ ("clang") ]] && is-flagq '-fuse-ld=lld' ; then
 		if ld.lld --help | grep -q -e "symbol lookup error:" \
 			|| ld.lld --help | grep -q -e "undefined symbol:" ; then
-ewarn
-ewarn "Detected symbol errors for lld (linker)"
-ewarn "Switching to fallback linker"
-ewarn
+ewarn "Switching to fallback linker.  Detected symbol errors from lld."
 			unset LD
+ewarn "Stripping -fuse-ld=*"
 			filter-flags "-fuse-ld=*"
+ewarn "Stripping -flto=thin"
+			filter-flags "-flto=thin"
 			local s
 			s=$(clang-major-version)
 			if tc-is-clang \
@@ -75,21 +80,15 @@ ewarn
 				&& has_version "sys-devel/clang:${s}[binutils-plugin]" \
 				&& has_version ">=sys-devel/llvmgold-${s}" \
 				&& test-flag-CCLD '-fuse-ld=gold' ; then
-ewarn
 ewarn "Switching to -fuse-ld=gold"
-ewarn
 				append-ldflags "-fuse-ld=gold"
 			elif tc-is-gcc \
 				&& has_version "sys-devel/binutils[gold,plugins]" \
 				&& test-flag-CCLD '-fuse-ld=gold' ; then
-ewarn
 ewarn "Switching to -fuse-ld=gold"
-ewarn
 				append-ldflags "-fuse-ld=gold"
 			else
-ewarn
 ewarn "Switching to -fuse-ld=bfd"
-ewarn
 				append-ldflags "-fuse-ld=bfd"
 			fi
 			strip-unsupported-flags
