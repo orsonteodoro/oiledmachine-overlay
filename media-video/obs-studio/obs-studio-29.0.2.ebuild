@@ -663,7 +663,7 @@ ewarn "prior to ${PN}.  This package alone should be emerged alone"
 ewarn "when this information is provided."
 ewarn
 ewarn "After being built, this information provided via package.env or"
-ewarn "by patch should be sanitized from forensics attacks."
+ewarn "by patch should be sanitized with shred from forensics attacks."
 ewarn
 	sleep 30
 
