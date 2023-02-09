@@ -1,0 +1,29 @@
+Subject:  Emit linker options when -fsanitize-cfi-cross-dso is used with -shared (v2)
+Patch Status:  Testing (more packages being tested)
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Thu Feb  9 13:27:22 PST 2023 (Unix time:  1675978042)
+
+# License header for clang/include/clang/Basic/CodeGenOptions.def:
+
+//===--- CodeGenOptions.def - Code generation option database ----- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+--- clang/include/clang/Basic/CodeGenOptions.def.orig	2023-02-09 13:18:32.176482721 -0800
++++ clang/include/clang/Basic/CodeGenOptions.def	2023-02-09 13:24:10.408493866 -0800
+@@ -101,9 +101,9 @@ CODEGENOPT(InstrumentFunctionsAfterInlin
+                           ///< -finstrument-functions-after-inlining is enabled.
+ CODEGENOPT(InstrumentFunctionEntryBare , 1, 0) ///< Set when
+                                ///< -finstrument-function-entry-bare is enabled.
+-CODEGENOPT(CFProtectionReturn , 1, 0) ///< if -fcf-protection is
++CODEGENOPT(CFProtectionReturn , 1, 1) ///< if -fcf-protection is                 // oteodoro - enable cf-protection=full for hardened profile
+                                       ///< set to full or return.
+-CODEGENOPT(CFProtectionBranch , 1, 0) ///< if -fcf-protection is
++CODEGENOPT(CFProtectionBranch , 1, 1) ///< if -fcf-protection is                 // oteodoro - enable cf-protection=full for hardened profile
+                                       ///< set to full or branch.
+ CODEGENOPT(FunctionReturnThunks, 1, 0) ///< -mfunction-return={keep|thunk-extern}
+ CODEGENOPT(IndirectBranchCSPrefix, 1, 0) ///< if -mindirect-branch-cs-prefix

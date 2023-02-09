@@ -28,7 +28,7 @@ pie +static-analyzer test xml
 
 default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4
-default-stack-clash-protection hardened hardened-compat ssp
+default-stack-clash-protection cet hardened hardened-compat ssp
 r6
 "
 REQUIRED_USE="
@@ -324,6 +324,15 @@ ewarn
 		patches_hardened+=(
 			"${FILESDIR}/clang-12.0.1-version-info.patch"
 		)
+	fi
+	if use cet ; then
+		patches_hardened+=(
+			"${FILESDIR}/clang-17.0.0.9999-enable-cf-protection-full-by-default.patch"
+		)
+		hardened_features+="CET, "
+ewarn
+ewarn "The CET as default is in testing."
+ewarn
 	fi
 	patches_hardened+=(
 		"${FILESDIR}/clang-14.0.0.9999-cross-dso-cfi-link-with-shared.patch"

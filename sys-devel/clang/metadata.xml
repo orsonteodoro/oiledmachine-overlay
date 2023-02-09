@@ -183,6 +183,10 @@ sys-devel/clang:16 llvm-16-commit.conf
 [2] https://llvm.org/docs/HowToBuildWithPGO.html
   </longdescription>
   <use>
+    <flag name="cet">
+      Enable -fcf-protection=full as the default when building all packages with
+      clang.
+    </flag>
     <flag name="default-compiler-rt">
       Use compiler-rt instead of libgcc as the default rtlib for clang
     </flag>
@@ -237,6 +241,10 @@ sys-devel/clang:16 llvm-16-commit.conf
       For this ebuild, it is for backwards compatibility.  You may individually
       pick the default_* instead.  So if you use a more advanced SSP algorithm,
       you can use that instead.
+
+      The distro uses full CET with Hardened GCC with the hardened USE flag.  It
+      is unknown if this is safe to use in non-CET hardware.  This is why it is
+      optional in this ebuild.
     </flag>
     <flag name="hardened-compat">
       Add the version patch but allow for flexible configuration.  This is
