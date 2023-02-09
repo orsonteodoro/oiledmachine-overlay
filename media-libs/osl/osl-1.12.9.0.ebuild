@@ -38,7 +38,7 @@ REQUIRED_USE+="
 #   https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.6.2/src/cmake/externalpackages.cmake
 QT_MIN=5.6
 PATCHES=(
-	"${FILESDIR}/${PN}-1.11.17.0-stddef-includes-path.patch"
+	"${FILESDIR}/${PN}-1.12.9.0-stddef-includes-path.patch"
 )
 
 gen_llvm_depend()
