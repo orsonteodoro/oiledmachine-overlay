@@ -1,7 +1,7 @@
 # oteodoro changes:
 # Patch status:  testing
 # Changed from Partial RELRO to Full RELRO
-# For use in the hardened profile
+# For use in performance profiles
 
 License header of ELF/Driver.cpp:
 
@@ -20,11 +20,11 @@ License header of ELF/Driver.cpp:
    config->zNodelete = hasZOption(args, "nodelete");
    config->zNodlopen = hasZOption(args, "nodlopen");
 -  config->zNow = getZFlag(args, "now", "lazy", false);
-+  config->zNow = getZFlag(args, "now", "lazy", true);          // Changed by oteodoro to enable Full RELRO by default
++  config->zNow = getZFlag(args, "now", "lazy", false);         // Changed by oteodoro to disable Partial RELRO by default
    config->zOrigin = hasZOption(args, "origin");
    config->zPacPlt = hasZOption(args, "pac-plt");
 -  config->zRelro = getZFlag(args, "relro", "norelro", true);
-+  config->zRelro = getZFlag(args, "relro", "norelro", false);  // Changed by oteodoro to enable Full RELRO by default
++  config->zRelro = getZFlag(args, "relro", "norelro", false);  // Changed by oteodoro to disable Partial RELRO by default
    config->zRetpolineplt = hasZOption(args, "retpolineplt");
    config->zRodynamic = hasZOption(args, "rodynamic");
    config->zSeparate = getZSeparate(args);

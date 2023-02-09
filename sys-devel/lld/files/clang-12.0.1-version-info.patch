@@ -23,7 +23,7 @@ diff -urp lld.orig/ELF/Driver.cpp lld/ELF/Driver.cpp
 -  if (args.hasArg(OPT_v) || args.hasArg(OPT_version))
 +  if (args.hasArg(OPT_v) || args.hasArg(OPT_version)) {		// Changed by oteodoro
      message(getLLDVersion() + " (compatible with GNU linkers)");
-+    message("Hardened:  Full RELRO");					// Added by oteodoro for eclasses/ebuilds to check
++    message("Hardened:  __HARDENED_FLAGS__");					// Added by oteodoro for eclasses/ebuilds to check
 +  }									// Added by oteodoro
  
    if (const char *path = getReproduceOption(args)) {

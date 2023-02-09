@@ -1,0 +1,26 @@
+# oteodoro changes:
+# Patch status:  testing
+# For use for the distro's hardened profile
+
+License header for lib/Frontend/InitPreprocessor.cpp:
+
+//===--- InitPreprocessor.cpp - PP initialization code. ---------*- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+diff -urp clang.orig/lib/Frontend/InitPreprocessor.cpp clang/lib/Frontend/InitPreprocessor.cpp
+--- clang.orig/lib/Frontend/InitPreprocessor.cpp	2021-09-28 19:40:49.027892121 -0700
++++ clang/lib/Frontend/InitPreprocessor.cpp	2021-09-28 19:40:15.829892652 -0700
+@@ -1190,6 +1190,8 @@ static void InitializePredefinedMacros(c
+     Builder.defineMacro("__GLIBCXX_BITSIZE_INT_N_0", "128");
+   }
+ 
++  Builder.defineMacro("_FORTIFY_SOURCE", "3");			// Added by oteodoro for experimental testing
++								// Added by oteodoro
+   // Get other target #defines.
+   TI.getTargetDefines(LangOpts, Builder);
+ }

@@ -115,8 +115,20 @@ sys-devel/clang:16 llvm-16-commit.conf
   https://github.com/llvm/llvm-project/commits/main
   </longdescription>
   <use>
+    <flag name="default-full-relro">
+      Enables Full RELRO by default when linking other packages.
+    </flag>
+    <flag name="default-no-relro">
+      Disables RELRO by default when linking other packages.
+    </flag>
+    <flag name="default-partial-relro">
+      Enables Partial RELRO by default when linking other packages.
+    </flag>
     <flag name="hardened">
-      Enables Full RELRO by default.
+      Adds changes to --version, for use for packages that may use it
+      to detect hardened compilers.
+
+      This USE flag is for backwards compatibility.
     </flag>
     <flag name="ebolt">
       Builds with the event based BOLT strategy.

@@ -1,0 +1,33 @@
+# oteodoro changes:
+# Patch status:  testing
+# For use for the distro's hardened profile
+
+License header for lib/Driver/ToolChains/Linux.cpp:
+
+//===--- Linux.h - Linux ToolChain Implementations --------------*- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+diff -urp clang.orig/lib/Driver/ToolChains/Linux.cpp clang/lib/Driver/ToolChains/Linux.cpp
+--- clang.orig/lib/Driver/ToolChains/Linux.cpp	2021-09-28 20:17:12.117857174 -0700
++++ clang/lib/Driver/ToolChains/Linux.cpp	2021-09-28 20:19:15.141855204 -0700
+@@ -225,13 +225,13 @@ Linux::Linux(const Driver &D, const llvm
+ 
+   Distro Distro(D.getVFS(), Triple);
+ 
+-  if (Distro.IsAlpineLinux() || Triple.isAndroid()) {
++  if (Distro.IsAlpineLinux() || Triple.isAndroid()) {					// Changed by oteodoro, for the hardened profile
+     ExtraOpts.push_back("-z");
+     ExtraOpts.push_back("now");
+   }
+ 
+   if (Distro.IsOpenSUSE() || Distro.IsUbuntu() || Distro.IsAlpineLinux() ||
+-      Triple.isAndroid()) {
++      Distro.IsGentoo() || Triple.isAndroid()) {					// Changed by oteodoro, for the hardened profile
+     ExtraOpts.push_back("-z");
+     ExtraOpts.push_back("relro");
+   }

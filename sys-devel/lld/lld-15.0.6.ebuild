@@ -20,6 +20,7 @@ KEYWORDS="amd64 ~arm arm64 ~ppc ~ppc64 ~riscv ~x86"
 IUSE="
 debug test
 
+default-full-relro +default-partial-relro default-no-relro
 hardened r1
 "
 REQUIRED_USE+=" hardened? ( !test )"
@@ -50,6 +51,12 @@ LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 
 REQUIRED_USE+="
+	^^ (
+		default-full-relro
+		default-no-relro
+		default-partial-relro
+	)
+
 	amd64? ( llvm_targets_X86 )
 	arm? ( llvm_targets_ARM )
 	arm64? ( llvm_targets_AArch64 )
@@ -61,6 +68,17 @@ REQUIRED_USE+="
 	riscv? ( llvm_targets_RISCV )
 	sparc? ( llvm_targets_Sparc )
 	x86? ( llvm_targets_X86 )
+
+	default-full-relro? (
+		!test
+	)
+	default-no-relro? (
+		!test
+	)
+	hardened? (
+		!test
+		default-full-relro
+	)
 "
 
 gen_rdepend() {
@@ -72,11 +90,6 @@ gen_rdepend() {
 	done
 }
 RDEPEND+=" "$(gen_rdepend)
-
-HARDENED_PATCHES=(
-	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
-	"${FILESDIR}/clang-12.0.1-version-info.patch"
-)
 
 python_check_deps() {
 	python_has_version ">=dev-python/lit-${PV}[${PYTHON_USEDEP}]"
@@ -115,12 +128,32 @@ src_unpack() {
 	mkdir -p "${WORKDIR}/llvm" || die
 }
 
+eapply_hardened() {
+ewarn
+ewarn "The hardened USE flag and Full RELRO default ON patch is in testing."
+ewarn
+	local hardened_flags=""
+	if use default-full-relro ; then
+		eapply "${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
+		hardened_flags="Full RELRO"
+	fi
+	if use default-no-relro ; then
+		eapply "${FILESDIR}/clang-12.0.1-disable-relro-by-default.patch"
+		hardened_flags="NO RELRO"
+	fi
+	if use default-partial-relro ; then
+		hardened_flags="Partial RELRO"
+	fi
+	if use hardened ; then
+		eapply "${FILESDIR}/clang-12.0.1-version-info.patch"
+		sed -i -e "s|__HARDENED_FLAGS__|${hardened_flags}|g" \
+			"ELF/Driver.cpp" || die
+	fi
+}
+
 src_prepare() {
 	llvm.org_src_prepare
-	if use hardened ; then
-		ewarn "The hardened USE flag and Full RELRO default ON patch is in testing."
-		eapply ${HARDENED_PATCHES[@]}
-	fi
+	eapply_hardened
 	uopts_src_prepare
 }
 

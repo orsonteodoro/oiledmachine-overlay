@@ -25,14 +25,44 @@ KEYWORDS=""
 IUSE="
 debug doc +extra ieee-long-double +pie +static-analyzer test xml
 
-hardened r6
+default-fortify-source-2 default-fortify-source-3 default-full-relro
+default-partial-relro default-ssp-buffer-size-4
+default-stack-clash-protection hardened ssp
+r6
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 
+	default-fortify-source-2? (
+		!default-fortify-source-3
+		!test
+	)
+	default-fortify-source-3? (
+		!default-fortify-source-2
+		!test
+	)
+	default-full-relro? (
+		!default-partial-relro
+		!test
+	)
+	default-partial-relro? (
+		!default-full-relro
+		!test
+	)
+	default-stack-clash-protection? (
+		!test
+	)
 	hardened? (
 		!test
+		default-fortify-source-3
+		default-full-relro
+		default-ssp-buffer-size-4
+		default-stack-clash-protection
 		pie
+		ssp
+	)
+	ssp? (
+		!test
 	)
 "
 RESTRICT="!test? ( test )"
@@ -117,14 +147,6 @@ gen_pdepend() {
 	done
 }
 PDEPEND+=" "$(gen_pdepend)
-
-PATCHES_HARDENED=(
-	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
-	"${FILESDIR}/clang-16.0.0.9999-change-SSP-buffer-size-to-4.patch"
-	"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
-	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
-	"${FILESDIR}/clang-12.0.1-version-info.patch"
-)
 
 # Multilib notes:
 # 1. ABI_* flags control ABIs libclang* is built for only.
@@ -231,6 +253,91 @@ src_unpack() {
 	llvm.org_src_unpack
 }
 
+eapply_hardened() {
+ewarn
+ewarn "The hardened USE flag and associated patches via default_* are still in"
+ewarn "testing."
+ewarn
+	local hardened_features=""
+	local patches_hardened=()
+	if use pie ; then
+		hardened_features+="PIE, "
+	fi
+	if use ssp ; then
+		patches_hardened+=(
+			"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
+		)
+		hardened_features+="SSP, "
+	fi
+	if use default-ssp-buffer-size-4 ; then
+		patches_hardened+=(
+			"${FILESDIR}/clang-16.0.0.9999-change-SSP-buffer-size-to-4.patch"
+		)
+	fi
+	if use default-fortify-source-2 ; then
+		patches_hardened+=(
+			"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
+		)
+		hardened_features+="_FORITIFY_SOURCE=2, "
+	fi
+	if use default-fortify-source-3 ; then
+		patches_hardened+=(
+			"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-3-by-default.patch"
+		)
+		hardened_features+="_FORITIFY_SOURCE=3, "
+ewarn
+ewarn "The _FORITIFY_SOURCE=3 is in testing."
+ewarn
+	fi
+	if use default-full-relro ; then
+		patches_hardened+=(
+			"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
+		)
+		hardened_features+="Full RELRO, "
+ewarn
+ewarn "The Full RELRO is in testing."
+ewarn
+	fi
+	if use default-partial-relro ; then
+		patches_hardened+=(
+			"${FILESDIR}/clang-12.0.1-enable-partial-relro-by-default.patch"
+		)
+		hardened_features+="Partial RELRO, "
+ewarn
+ewarn "The Partial RELRO is in testing."
+ewarn
+	fi
+	if use default-stack-clash-protection ; then
+		if use x86 || use amd64 ; then
+			patches_hardened+=(
+				"${FILESDIR}/clang-12.0.1-enable-SCP-by-default.patch"
+			)
+			hardened_features+="SCP, "
+		elif use arm64 ; then
+ewarn
+ewarn "arm64 -fstack-clash-protection is not default ON.  The feature is still"
+ewarn "in development."
+ewarn
+		fi
+	fi
+	if use hardened ; then
+		patches_hardened+=(
+			"${FILESDIR}/clang-12.0.1-version-info.patch"
+		)
+	fi
+	patches_hardened+=(
+		"${FILESDIR}/clang-14.0.0.9999-cross-dso-cfi-link-with-shared.patch"
+	)
+	eapply ${patches_hardened[@]}
+
+	if use hardened ; then
+		hardened_features=$(echo "${hardened_features}" \
+			| sed -e "s|, $||g")
+		sed -i -e "s|__HARDENED_FEATURES__|${hardened_features}|g" \
+			lib/Driver/Driver.cpp || die
+	fi
+}
+
 src_prepare() {
 	# Create an extra parent dir for relative CLANG_RESOURCE_DIR access.
 	mkdir -p "${WORKDIR}/x/y" || die
@@ -241,28 +348,7 @@ src_prepare() {
 	#use pgo && \
 	eapply "${FILESDIR}/clang-16.0.0.9999-add-include-path.patch"
 
-	if use hardened ; then
-ewarn
-ewarn "The hardened USE flag and associated patches are still in testing."
-ewarn
-		eapply ${PATCHES_HARDENED[@]}
-		eapply "${FILESDIR}/clang-14.0.0.9999-cross-dso-cfi-link-with-shared.patch"
-		local hardened_features="PIE, SSP, _FORITIFY_SOURCE=2, Full RELRO"
-		if use x86 || use amd64 ; then
-			eapply "${FILESDIR}/clang-12.0.1-enable-FCP-by-default.patch"
-			hardened_features+=", SCP"
-		elif use arm64 ; then
-ewarn
-ewarn "arm64 -fstack-clash-protection is not default on.  The feature is still"
-ewarn "in development."
-ewarn
-		fi
-ewarn
-ewarn "The Full RELRO default on is in testing."
-ewarn
-		sed -i -e "s|__HARDENED_FEATURES__|${hardened_features}|g" \
-			lib/Driver/Driver.cpp || die
-	fi
+	eapply_hardened
 
 	# Add Gentoo Portage Prefix for Darwin.  See prefix-dirs.patch.
 	eprefixify \
