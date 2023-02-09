@@ -104,7 +104,7 @@ ewarn "Stripping -fuse-ld=*"
 		filter-flags "-fuse-ld=*"
 	elif [[ "${CC}" =~ ("clang") ]] \
 		&& ( \
-			has_version "sys-devel/clang-common[default-lld]"
+			has_version "sys-devel/clang-common[default-lld]" \
 			|| is-flagq '-fuse-ld=lld' \
 			|| is-flagq '-flto=thin' \
 		) ; then
