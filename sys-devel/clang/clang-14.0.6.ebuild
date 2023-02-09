@@ -28,7 +28,7 @@ debug default-compiler-rt default-libcxx default-lld doc llvm-libunwind
 
 default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4
-default-stack-clash-protection hardened ssp
+default-stack-clash-protection hardened hardened-compat ssp
 r7
 "
 REQUIRED_USE="
@@ -329,7 +329,7 @@ ewarn "in development."
 ewarn
 		fi
 	fi
-	if use hardened ; then
+	if use hardened || use hardened-compat ; then
 		patches_hardened+=(
 			"${FILESDIR}/clang-12.0.1-version-info.patch"
 		)
@@ -339,7 +339,7 @@ ewarn
 	)
 	eapply ${patches_hardened[@]}
 
-	if use hardened ; then
+	if use hardened || use hardened-compat ; then
 		hardened_features=$(echo "${hardened_features}" \
 			| sed -e "s|, $||g")
 		sed -i -e "s|__HARDENED_FEATURES__|${hardened_features}|g" \

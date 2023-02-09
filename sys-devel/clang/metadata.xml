@@ -238,6 +238,10 @@ sys-devel/clang:16 llvm-16-commit.conf
       pick the default_* instead.  So if you use a more advanced SSP algorithm,
       you can use that instead.
     </flag>
+    <flag name="hardened-compat">
+      Add the version patch but allow for flexible configuration.  This is
+      for ebuild compatibility in clang hardened contexts.
+    </flag>
     <flag name="ieee-long-double">
       Use accelerated 128-bit IEEE long double ABI (ppc64le only)
     </flag>

@@ -21,7 +21,7 @@ IUSE="
 debug test zstd
 
 default-full-relro +default-partial-relro default-no-relro
-hardened r1
+hardened hardened-compat r1
 "
 REQUIRED_USE+=" hardened? ( !test )"
 RESTRICT="!test? ( test )"
@@ -145,7 +145,7 @@ ewarn
 	if use default-partial-relro ; then
 		hardened_flags="Partial RELRO"
 	fi
-	if use hardened ; then
+	if use hardened || use hardened-compat ; then
 		eapply "${FILESDIR}/clang-12.0.1-version-info.patch"
 		sed -i -e "s|__HARDENED_FLAGS__|${hardened_flags}|g" \
 			"ELF/Driver.cpp" || die

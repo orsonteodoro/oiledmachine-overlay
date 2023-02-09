@@ -130,6 +130,10 @@ sys-devel/clang:16 llvm-16-commit.conf
 
       This USE flag is for backwards compatibility.
     </flag>
+    <flag name="hardened-compat">
+      Add the version patch but allow for flexible configuration.  This is
+      for ebuild compatibility in clang hardened contexts.
+    </flag>
     <flag name="ebolt">
       Builds with the event based BOLT strategy.
     </flag>
