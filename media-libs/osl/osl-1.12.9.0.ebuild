@@ -158,7 +158,7 @@ https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/archive/refs/ta
 "
 # Restricting tests as Make file handles them differently
 RESTRICT="mirror test"
-S="${WORKDIR}/OpenShadingLanguage-Release-${PV}"
+S="${WORKDIR}/OpenShadingLanguage-${PV}"
 
 llvm_check_deps() {
 	has_version -r "sys-devel/clang:${LLVM_SLOT}"
