@@ -244,7 +244,8 @@ sys-devel/clang:16 llvm-16-commit.conf
 
       The distro uses full CET with Hardened GCC with the hardened USE flag.  It
       is unknown if this is safe to use in non-CET hardware.  This is why it is
-      optional in this ebuild for non-CET, but for CET hardware it should be ON.
+      optional in this ebuild for non-CET, but for CET hardware the cet USE
+      flag should be ON.
     </flag>
     <flag name="hardened-compat">
       Add the version patch but allow for flexible configuration.  This is
