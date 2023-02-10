@@ -46,7 +46,7 @@
 
     PCC Vivace has lower latency than PCC Allegro.
 
-    It may shave off hours (or order of magnitude of time) when sending data
+    It may shave off hours (or an order of magnitude of time) when sending data
     compared to TCP Cubic.
 
         Algorithm       Mathematical model       Inputs to utility function
