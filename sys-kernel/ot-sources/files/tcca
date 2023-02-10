@@ -226,6 +226,10 @@ check_dependencies() {
 	else
 		echo -e "USE_CASE:\t\t\t${USE_CASE}"
 	fi
+	if ! which sysctl 2>/dev/null 1>/dev/null ; then
+		echo "You must install procps"
+		exit 1
+	fi
 }
 
 _set_tcca_polkit() {
