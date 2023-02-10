@@ -7054,6 +7054,34 @@ ewarn
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_at_system
+# @DESCRIPTION:
+# Required unconditionally to emerge @system
+ot-kernel_set_at_system() {
+# Maybe someday we can start with a complete empty .config which the user just
+# enables the drivers they need.  This function can enable the rest of the
+# required.  This isn't possible at the moment and the reason why we start
+# with the default .config setting.
+	ot-kernel_y_configopt "CONFIG_BINFMT_ELF"
+	ot-kernel_y_configopt "CONFIG_BINFMT_SCRIPT"
+}
+
+# @FUNCTION: ot-kernel_set_tcca
+# @DESCRIPTION:
+# Required tcca script
+ot-kernel_set_tcca() {
+	[[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT:-1}" == "1" ]] || return
+	ot-kernel_y_configopt "CONFIG_PROC_FS"
+}
+
+# @FUNCTION: ot-kernel_set_iosched_openrc
+# @DESCRIPTION:
+# Required for the iosched openrc script
+ot-kernel_set_iosched_openrc() {
+	[[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] || return
+	ot-kernel_y_configopt "CONFIG_SYSFS"
+}
+
 # @FUNCTION: ot-kernel_set_message
 # @DESCRIPTION:
 # Prints a message at the end of the kernel init.
@@ -7155,6 +7183,9 @@ einfo
 	# Apply flags to minimize the time cost of reconfigure and rebuild time
 	# from a generated new kernel config.
 	ot-kernel-pkgflags_apply # Placed before security flags
+	ot-kernel_set_at_system
+	ot-kernel_set_tcca
+	ot-kernel_set_iosched_openrc
 	ot-kernel_set_kconfig_ep800 # For testing build time breakage
 
 	is_firmware_ready
