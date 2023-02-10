@@ -97,6 +97,7 @@ echo "       recording                                                 (alias)"
 echo "       streamer                                                  (alias)"
 echo "       voip                                                      (alias)"
 echo "  rural - For rural connections"
+echo "       satellite                                                 (alias)"
 echo "  streaming - For receiving live streams"
 echo "       live                                                      (alias)"
 echo "       live-streaming                                            (alias)"
@@ -157,6 +158,7 @@ declare -A TCCA_MAP=(
 	["voip"]="${TCCA_STREAMING_REC}"
 
 	["rural"]="${TCCA_RURAL}"
+	["satellite"]="${TCCA_RURAL}"
 
 	["streaming"]="${TCCA_STREAMING}"
 	["live"]="${TCCA_STREAMING}"
