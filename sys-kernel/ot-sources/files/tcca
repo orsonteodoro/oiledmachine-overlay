@@ -26,8 +26,8 @@ EXTRAVERSION="${TRIPLE_ID%-*}"
 EXTRAVERSION="${EXTRAVERSION#*-}"
 PV="${TRIPLE_ID%%-*}"
 ARCH="${TRIPLE_ID##*-}"
-if [[ -e /etc/tcca-${PV}-${EXTRAVERSION}.conf ]] ; then
-	source /etc/tcca-${PV}-${EXTRAVERSION}.conf
+if [[ -e /etc/tcca-${PV}-${EXTRAVERSION}-${ARCH}.conf ]] ; then
+	source /etc/tcca-${PV}-${EXTRAVERSION}-${ARCH}.conf
 fi
 
 # TCCA - TCP Congestion Control Algorithm
@@ -226,10 +226,6 @@ check_dependencies() {
 	else
 		echo -e "USE_CASE:\t\t\t${USE_CASE}"
 	fi
-	if ! which sysctl 2>/dev/null 1>/dev/null ; then
-		echo "You must install procps"
-		exit 1
-	fi
 }
 
 _set_tcca_polkit() {
@@ -244,7 +240,11 @@ echo
 echo
 echo "Setting TCP Congestion Control algorithm"
 echo
-	pkexec sysctl -w net.ipv4.tcp_congestion_control=${alg}
+	echo "${alg}" \
+		| pkexec dd \
+			of=/proc/sys/net/ipv4/tcp_congestion_control \
+			oflag=append \
+			conv=notrunc
 }
 
 _set_tcca_sudo() {
@@ -259,7 +259,11 @@ echo
 echo
 echo "Setting TCP Congestion Control algorithm"
 echo
-	sudo sysctl -w net.ipv4.tcp_congestion_control=${alg}
+	echo "${alg}" \
+		| sudo dd \
+			of=/proc/sys/net/ipv4/tcp_congestion_control \
+			oflag=append \
+			conv=notrunc
 }
 
 _set_tcca_root() {
@@ -274,7 +278,11 @@ echo
 echo
 echo "Setting TCP Congestion Control algorithm"
 echo
-	sysctl -w net.ipv4.tcp_congestion_control=${alg}
+	echo "${alg}" \
+		| dd \
+			of=/proc/sys/net/ipv4/tcp_congestion_control \
+			oflag=append \
+			conv=notrunc
 }
 
 set_tcca() {

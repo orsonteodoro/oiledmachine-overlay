@@ -7072,7 +7072,7 @@ ot-kernel_set_at_system() {
 ot-kernel_set_tcca() {
 	[[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT:-1}" == "1" ]] || return
 	ot-kernel_y_configopt "CONFIG_PROC_FS"
-	ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
+	ot-kernel_y_configopt "CONFIG_PROC_SYSCTL" # For /proc/sys support
 }
 
 # @FUNCTION: ot-kernel_set_iosched_openrc
