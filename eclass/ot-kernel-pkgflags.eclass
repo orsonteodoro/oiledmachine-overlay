@@ -418,6 +418,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_powernowd
 	ot-kernel-pkgflags_powertop
 	ot-kernel-pkgflags_ppp
+	ot-kernel-pkgflags_procps
 	ot-kernel-pkgflags_pulseaudio
 	ot-kernel-pkgflags_pulseaudio_daemon
 	ot-kernel-pkgflags_pqiv
@@ -6908,6 +6909,18 @@ ot-kernel-pkgflags_ppp() { # DONE
 		if ot-kernel_has_version "net-dialup/ppp[atm]" ; then
 			ot-kernel_y_configopt "CONFIG_PPPOATM"
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_procps
+# @DESCRIPTION:
+# Applies kernel config flags for the procps package
+ot-kernel-pkgflags_procps() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf553965]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-process/procps" ; then
+		einfo "Applying kernel config flags for the procps (id: f553965)"
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL" # For sysctl
 	fi
 }
 

@@ -7056,7 +7056,7 @@ ewarn
 
 # @FUNCTION: ot-kernel_set_at_system
 # @DESCRIPTION:
-# Required unconditionally to emerge @system
+# Required unconditionally for `emerge @system`
 ot-kernel_set_at_system() {
 # Maybe someday we can start with a complete empty .config which the user just
 # enables the drivers they need.  This function can enable the rest of the
@@ -7068,10 +7068,11 @@ ot-kernel_set_at_system() {
 
 # @FUNCTION: ot-kernel_set_tcca
 # @DESCRIPTION:
-# Required tcca script
+# Required for the tcca script
 ot-kernel_set_tcca() {
 	[[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT:-1}" == "1" ]] || return
 	ot-kernel_y_configopt "CONFIG_PROC_FS"
+	ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
 }
 
 # @FUNCTION: ot-kernel_set_iosched_openrc
