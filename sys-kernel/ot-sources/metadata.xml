@@ -2465,8 +2465,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT - Install a helper script to improve
-    throughput experience mostly when multitasking.  (EXPERIMENTAL)
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT - Install a helper script, tcca, to
+    improve throughput experience mostly when multitasking.  (EXPERIMENTAL)
 
     The purpose is to make it easier to use the algorithm(s) or the benefits of
     the algorithm without remembering the name of it by providing a widely
@@ -2484,7 +2484,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    The following set the default TCP Congestion Control algorithm for the wrapper:
+    The following set the default TCP Congestion Control algorithm for the tcca wrapper:
 
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD - For bad connections with packet loss. (Default:  bbr2)
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_FG - For large downloads downloaded serially as foreground. (Default:  cubic)
@@ -2541,6 +2541,10 @@ unset OT_KERNEL_PRIVATE_KEY
         cubic/westwood which should dominate.
       - bbr is to maximize throughput
       - bbr2 is to maximize multi flow fairness
+      - It is disallowed to use a loss based TCP congestion control algorithm
+        (like cubic) for OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD.  Doing so
+        may cut throughput prematurely or suffer low thoughput for long periods
+        of time.
 
 
 
