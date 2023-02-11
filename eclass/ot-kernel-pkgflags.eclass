@@ -6872,7 +6872,7 @@ ot-kernel-pkgflags_pulseaudio() { # DONE
 # @FUNCTION: ot-kernel-pkgflags_pulseaudio_daemon
 # @DESCRIPTION:
 # Applies kernel config flags for the pulseaudio_daemon package
-ot-kernel-pkgflags_pulseaudio() { # DONE
+ot-kernel-pkgflags_pulseaudio_daemon() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S738aa6b]}" == "1" ]] && return
 	if ot-kernel_has_version "media-sound/pulseaudio-daemon" ; then
 		einfo "Applying kernel config flags for the pulseaudio package (id: 738aa6b)"
@@ -7255,7 +7255,7 @@ ot-kernel-pkgflags_samba() { # DONE
 # @FUNCTION: ot-kernel-pkgflags_sandbox
 # @DESCRIPTION:
 # Applies kernel config flags for the sandbox package
-ot-kernel-pkgflags_sane() { # DONE
+ot-kernel-pkgflags_sandbox() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S553f342]}" == "1" ]] && return
 	if ot-kernel_has_version "sys-apps/sandbox" ; then
 		einfo "Applying kernel config flags for the sandbox package (id: 553f342)"
