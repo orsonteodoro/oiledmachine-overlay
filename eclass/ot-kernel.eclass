@@ -758,7 +758,7 @@ _dpatch() {
 	local opts="${1}"
 	local path="${2}"
 	local msg_extra="${3}"
-	einfo "Applying ${path}${msg_extra}"
+einfo "Applying ${path}${msg_extra}"
 	patch ${opts} -i "${path}" || die
 }
 
@@ -1009,7 +1009,7 @@ verify_clang_compiler_updated() {
 				die "Re-emerge =${p}"
 			else
 				# If on the same day it may be broken
-				einfo "Clang and LLVM are up-to-date"
+einfo "Clang and LLVM are up-to-date"
 			fi
 		fi
 	done
@@ -1019,7 +1019,7 @@ IPD_RAW_V=5 # < llvm-13 Dec 28, 2020
 IPD_RAW_V_MIN=6
 IPD_RAW_V_MAX=8
 verify_profraw_compatibility() {
-	einfo "Verifying profraw version compatibility"
+einfo "Verifying profraw version compatibility"
 	# The profiling data format is very version sensitive.
 	# If wrong version, expect something like this:
 	# warning: /usr/src/linux/vmlinux.profraw: unsupported instrumentation profile format version
@@ -1155,24 +1155,30 @@ ewarn
 		if [[ -z "${OT_KERNEL_DEVELOPER}" ]] && use tresor ; then
 			if use tresor_i686 && ! grep -F -q "sse2" /proc/cpuinfo ; then
 				if ! grep -F -q "sse2" /proc/cpuinfo ; then
-					die "tresor_i686 requires SSE2 CPU support"
+eerror "tresor_i686 requires SSE2 CPU support"
+					die
 				fi
 				if ! grep -F -q "mmx" /proc/cpuinfo ; then
-					die "tresor_i686 requires MMX CPU support"
+eerror "tresor_i686 requires MMX CPU support"
+					die
 				fi
 			elif use tresor_x86_64 && ! grep -F -q "sse2" /proc/cpuinfo ; then
 				if ! grep -F -q "sse2" /proc/cpuinfo ; then
-					die "tresor_x86_64 requires SSE2 CPU support"
+eerror "tresor_x86_64 requires SSE2 CPU support"
+					die
 				fi
 				if ! grep -F -q "mmx" /proc/cpuinfo ; then
-					die "tresor_x86_64 requires MMX CPU support"
+eerror "tresor_x86_64 requires MMX CPU support"
+					die
 				fi
 			elif use tresor_aesni ; then
 				if ! grep -F -q "aes" /proc/cpuinfo ; then
-					die "tresor_aesni requires AES-NI CPU support"
+eerror "tresor_aesni requires AES-NI CPU support"
+					die
 				fi
 				if ! grep -F -q "sse2" /proc/cpuinfo ; then
-					die "tresor_aesni requires SSE2 CPU support"
+eerror "tresor_aesni requires SSE2 CPU support"
+					die
 				fi
 			fi
 		fi
@@ -1187,9 +1193,9 @@ ewarn
 
 	if ot-kernel_has_version "sys-boot/mokutil" ; then
 		if ! ( mokutil --test-key "${OT_KERNEL_PUBLIC_KEY}" | grep "is already enrolled" ) ; then
-			ewarn "Did not find key in MOK"
+ewarn "Did not find key in MOK"
 			if [[ "${OT_KERNEL_ADD_KEY_TO_MOK}" ]] ; then
-				einfo "Auto adding key in MOK"
+einfo "Auto adding key in MOK"
 				mokutil --root-pw -import "${OT_KERNEL_PUBLIC_KEY}" || die
 			fi
 		fi
@@ -1225,12 +1231,14 @@ dump_profraw() {
 		cat "${profraw_spath}" > "${profraw_dpath}" 2>/dev/null || true
 	fi
 	if [[ -e "${profraw_spath}" && ! -e "${profraw_dpath}" ]] ; then
-		einfo "Copying ${profraw_spath}"
+einfo "Copying ${profraw_spath}"
 		cat "${profraw_spath}" > "${profraw_dpath}" || die
 		chmod 0644 "${profraw_dpath}" || die
 		#rm "${OT_KERNEL_PGO_DATA_DIR}/vmlinux.profraw" || true # It appears because of some bug.
 	else
-		[[ -e "${profraw_dpath}" ]] && einfo "Using cached ${profraw_dpath}.  Delete it if stale."
+		if [[ -e "${profraw_dpath}" ]] ; then
+einfo "Using cached ${profraw_dpath}.  Delete it if stale."
+		fi
 	fi
 }
 
@@ -1258,7 +1266,7 @@ get_current_commit_for_k_major_minor_branch() {
 # @DESCRIPTION:
 # Fetches a local copy of the linux kernel repo.
 ot-kernel_fetch_linux_sources() {
-	einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
+einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
 	cd "${EDISTDIR}" || die
 	d="${EDISTDIR}/ot-sources-src/linux"
 	b="${EDISTDIR}/ot-sources-src"
@@ -1270,7 +1278,7 @@ ot-kernel_fetch_linux_sources() {
 		if ! ( git remote -v | grep -F -e "${LINUX_REPO_URI}" ) \
 			> /dev/null ; \
 		then
-			einfo "Removing ${d}"
+einfo "Removing ${d}"
 			rm -rf "${d}" || die
 		fi
 		popd
@@ -1280,7 +1288,7 @@ ot-kernel_fetch_linux_sources() {
 
 	if [[ ! -d "${d}" ]] ; then
 		mkdir -p "${d}" || die
-		einfo "Cloning the vanilla Linux kernel project"
+einfo "Cloning the vanilla Linux kernel project"
 		git clone "${LINUX_REPO_URI}" "${d}"
 		cd "${d}" || die
 		git checkout master
@@ -1295,9 +1303,10 @@ ot-kernel_fetch_linux_sources() {
 	else
 		local G=$(find "${d}" -group "root")
 		if (( ${#G} > 0 )) ; then
-die "You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
+eerror "You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
+			die
 		fi
-		einfo "Updating the vanilla Linux kernel project"
+einfo "Updating the vanilla Linux kernel project"
 		cd "${d}" || die
 		git clean -fdx
 		git reset --hard master
@@ -1441,9 +1450,9 @@ ewarn
 			for c_bl in ${blacklisted} ; do
 				if [[ "${c:0:7}" == "${c_bl:0:7}" ]]
 				then
-					einfo
-					einfo "Skipping ${c}"
-					einfo
+einfo
+einfo "Skipping ${c}"
+einfo
 					is_blacklisted=1
 					break
 				fi
@@ -1615,7 +1624,7 @@ _filter_genpatches() {
 					fi
 				done
 				if [[ "${is_blacklisted}" == "1" ]] ; then
-					einfo "Skipping genpatches ${l}"
+einfo "Skipping genpatches ${l}"
 					continue
 				fi
 
@@ -1627,7 +1636,7 @@ _filter_genpatches() {
 					fi
 				done
 				if [[ "${is_blacklisted}" == "1" ]] ; then
-					einfo "Skipping genpatches ${l}"
+einfo "Skipping genpatches ${l}"
 					continue
 				fi
 
@@ -1644,7 +1653,7 @@ _filter_genpatches() {
 # Apply the BMQ CPU scheduler patchset.
 apply_bmq() {
 	cd "${BUILD_DIR}" || die
-	einfo "Applying bmq"
+einfo "Applying bmq"
 	_fpatch "${EDISTDIR}/${BMQ_FN}"
 }
 
@@ -1683,7 +1692,7 @@ apply_ck() {
 # @DESCRIPTION:
 # Apply the base genpatches patchset.
 apply_genpatches() {
-	einfo "Applying the genpatches"
+einfo "Applying the genpatches"
 	local dn="${GENPATCHES_FN%.tar.bz2}"
 	local d="${T}/${dn}"
 	if [[ ! -d "${d}" ]] ; then
@@ -1727,7 +1736,7 @@ apply_o3() {
 # Apply the PDS CPU scheduler patchset.
 apply_pds() {
 	cd "${BUILD_DIR}" || die
-	einfo "Applying PDS"
+einfo "Applying PDS"
 	_fpatch "${EDISTDIR}/${PDS_FN}"
 }
 
@@ -1736,7 +1745,7 @@ apply_pds() {
 # Apply the Project C CPU scheduler patchset.
 apply_prjc() {
 	cd "${BUILD_DIR}" || die
-	einfo "Applying Project C"
+einfo "Applying Project C"
 	_fpatch "${EDISTDIR}/${PRJC_FN}"
 }
 
@@ -1748,7 +1757,7 @@ apply_prjc() {
 #
 apply_tresor() {
 	cd "${BUILD_DIR}" || die
-	einfo "Applying TRESOR"
+einfo "Applying TRESOR"
 	local platform
 	if ot-kernel_use tresor_aesni ; then
 		platform="aesni"
@@ -1778,7 +1787,7 @@ apply_vanilla_point_releases() {
 	[[ -n "${KERNEL_NO_POINT_RELEASE}" \
 		&& "${KERNEL_NO_POINT_RELEASE}" == "1" ]] && return
 
-	einfo "Applying vanilla point releases"
+einfo "Applying vanilla point releases"
 	# genpatches places kernel incremental patches starting at 1000
 	local a
 	for a in ${KERNEL_PATCH_FNS_NOEXT[@]} ; do
@@ -1809,7 +1818,7 @@ eerror
 # @DESCRIPTION:
 # Apply a fork of MuQSS maintained by the zen-kernel team.
 apply_zen_muqss() {
-	einfo "Applying some of the zen-kernel MuQSS patches"
+einfo "Applying some of the zen-kernel MuQSS patches"
 	local x
 	for x in ${ZEN_MUQSS_COMMITS[@]} ; do
 		local id="${x:0:7}"
@@ -1921,15 +1930,17 @@ ot-kernel_src_unpack() {
 	if (( ${wants_kcp} == 1 || ${wants_kcp_rpi} == 1 )) ; then
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
-		einfo "llvm_slot=${llvm_slot}"
-		einfo "gcc_slot=${gcc_slot}"
 		local gcc_v=$(best_version "sys-devel/gcc:$(ver_cut 1 ${gcc_slot})" | sed -r -e "s|sys-devel/gcc-||" -e "s|-r[0-9]+||")
 		local clang_v=$(best_version "sys-devel/clang:${llvm_slot}" | sed -r -e "s|sys-devel/clang-||" -e "s|-r[0-9]+||")
 		#local vendor_id=$(cat /proc/cpuinfo | grep vendor_id | head -n 1 | cut -f 2 -d ":" | sed -E -e "s|[ ]+||g")
 		#local cpu_family=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "cpu family" | head -n 1 | grep -E -o "[0-9]+"))
 		#local cpu_model=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "model" | head -n 1 | grep -E -o "[0-9]+"))
-		einfo "Best GCC version:  ${gcc_v}"
-		einfo "Best Clang version:  ${clang_v}"
+einfo
+einfo "llvm_slot:\t${llvm_slot}"
+einfo "gcc_slot:\t${gcc_slot}"
+einfo "Best GCC version:  ${gcc_v}"
+einfo "Best Clang version:  ${clang_v}"
+einfo
 		if [[ -z "${gcc_v}" && -z "${clang_v}" ]] ; then
 			ot-kernel_compiler_not_found "Empty compiler versions found"
 		fi
@@ -1981,7 +1992,7 @@ einfo
 	fi
 
 	ot-kernel_unpack_tarball
-	einfo "Done unpacking."
+einfo "Done unpacking."
 	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 	mv "linux-${K_MAJOR_MINOR}" "${BUILD_DIR}" || die
 	apply_vanilla_point_releases
@@ -2128,7 +2139,7 @@ apply_all_patchsets() {
 # Copy the PGO state file and all PGO profiles
 ot-kernel_copy_pgo_state() {
 	# This is workaround for a sandbox issue.
-	einfo "Copying PGO state file and profiles"
+einfo "Copying PGO state file and profiles"
 	for f in $(find "${OT_KERNEL_PGO_DATA_DIR}" \
 		-name "*.pgophase" \
 		-o -name "*.profraw" \
@@ -2144,7 +2155,7 @@ ot-kernel_copy_pgo_state() {
 # @DESCRIPTION:
 # Deletes the exFAT filesystem from the source code.
 ot-kernel_rm_exfat() {
-	einfo "Removing exFAT"
+einfo "Removing exFAT"
 	sed -i -e "\|fs/exfat/Kconfig|d" \
 		"fs/Kconfig" || die
 	sed -i -e "/CONFIG_EXFAT_FS/d" \
@@ -2164,7 +2175,7 @@ ot-kernel_rm_exfat() {
 # Deletes references to both ReiserFS and Reiser4 filesystems from
 # the source code.
 ot-kernel_rm_reiserfs() {
-	einfo "Canceling ReiserFS"
+einfo "Canceling ReiserFS"
 	sed -i -e "\|fs/reiserfs/Kconfig|d" \
 		"fs/Kconfig" || die
 	sed -i -e "/CONFIG_REISERFS_FS/d" \
@@ -2306,7 +2317,7 @@ ot-kernel_rm_reiserfs() {
 				"${path}" || die
 		done
 
-	einfo "Canceling Reiser4"
+einfo "Canceling Reiser4"
 	sed -i -e "/Reiser4/d" \
 		"scripts/ver_linux" || die
 	sed -i -e "/The Reiser4/,/kernel\./d" \
@@ -2422,7 +2433,7 @@ ewarn
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		if (( ${moved} == 0 )) ; then
-			einfo "Renaming for -${extraversion}"
+einfo "Renaming for -${extraversion}"
 			if [[ "${extraversion}" == "${K_EXTRAVERSION}" ]] ; then
 				:; # Avoid copy into self error
 			else
@@ -2432,8 +2443,8 @@ ewarn
 			export BUILD_DIR_MASTER="${WORKDIR}/linux-${PV}-${extraversion}"
 			moved=1
 		else
-			einfo "Copying sources for -${extraversion}"
-			einfo "${BUILD_DIR_MASTER} -> ${BUILD_DIR}"
+einfo "Copying sources for -${extraversion}"
+einfo "${BUILD_DIR_MASTER} -> ${BUILD_DIR}"
 			cp -a "${BUILD_DIR_MASTER}" "${BUILD_DIR}" || die
 		fi
 	done
@@ -2441,10 +2452,10 @@ ewarn
 	(( ${moved} == 0 )) && die "You need to enable a profile"
 
 	if [[ "${OT_KERNEL_SIGN_KERNEL}" =~ ("uefi"|"efi"|"kexec") ]] ; then
-		eerror
-		eerror "OT_KERNEL_SIGN_KERNEL=${OT_KERNEL_SIGN_KERNEL} is incomplete."
-		eerror "Fork or submit patch."
-		eerror
+eerror
+eerror "OT_KERNEL_SIGN_KERNEL=${OT_KERNEL_SIGN_KERNEL} is incomplete."
+eerror "Fork or submit patch."
+eerror
 		die
 	fi
 
@@ -2462,12 +2473,12 @@ ewarn
 		ot-kernel_use rt && cpu_sched="cfs"
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
-		einfo
-		einfo "Applying patchsets for -${extraversion}"
-		einfo
+einfo
+einfo "Applying patchsets for -${extraversion}"
+einfo
 		apply_all_patchsets
 		cd "${BUILD_DIR}" || die
-		einfo "Setting the extra version for the -${extraversion} build"
+einfo "Setting the extra version for the -${extraversion} build"
 		sed -i -e "s|EXTRAVERSION =\$|EXTRAVERSION = -${extraversion}|g" \
 			"Makefile" || die
 		if ot-kernel_use disable_debug ; then
@@ -2476,7 +2487,7 @@ ewarn
 		if [[ -n "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
 			[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing .pem private key"
 			[[ -e "${OT_KERNEL_SHARED_KEY}" ]] || die "Missing .x509 shared key"
-			einfo "Copying private/shared signing keys"
+einfo "Copying private/shared signing keys"
 			cp -a "${OT_KERNEL_PRIVATE_KEY}" "certs/signing_key.pem" \
 				|| die "Cannot copy private key"
 			cp -a "${OT_KERNEL_SHARED_KEY}" "certs/signing_key.x509" \
@@ -2546,7 +2557,7 @@ ot-kernel_clear_keys() {
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		local p="${BUILD_DIR}/certs/signing_key.pem"
 		if [[ -e "${p}" ]] ; then
-			ewarn "Securely wiping private keys for ${extraversion}"
+ewarn "Securely wiping private keys for ${extraversion}"
 			shred -f "${p}"
 		fi
 		local k="${T}/keys/${extraversion}-${arch}/certs/signing_key.pem"
@@ -2630,9 +2641,9 @@ ewarn
 # @DESCRIPTION:
 # Checks if all firmware is installed to avoid build time failure
 is_firmware_ready() {
-	einfo
-	einfo "Performing a firmware roll call"
-	einfo
+einfo
+einfo "Performing a firmware roll call"
+einfo
 	local fw_relpaths=(
 		$(grep "CONFIG_EXTRA_FIRMWARE" "${BUILD_DIR}/.config" \
 			| head -n 1 | cut -f 2 -d "\"")
@@ -2641,14 +2652,15 @@ is_firmware_ready() {
 	local p
 	for p in ${fw_relpaths[@]} ; do
 		if [[ ! -e "/lib/firmware/${p}" ]] ; then
-			eerror "Missing firmware file for /lib/firmware/${p}"
+eerror "Missing firmware file for /lib/firmware/${p}"
 			found_missing=1
 		else
-			einfo "/lib/firmware/${p} is present"
+einfo "/lib/firmware/${p} is present"
 		fi
 	done
 	if (( ${found_missing} == 1 )) ; then
-		die "Remove the entries from CONFIG_EXTRA_FIRMWARE in ${config}"
+eerror "Remove the entries from CONFIG_EXTRA_FIRMWARE in ${config}"
+		die
 	fi
 
 	local fw_abspaths=()
@@ -2701,21 +2713,28 @@ ot-kernel_set_kconfig_firmware() {
 	local ot_kernel_firmware="${OT_KERNEL_FIRMWARE}"
 	if [[ -n "${ot_kernel_firmware}" ]] ; then
 		local firmware=()
-		ot-kernel_has_version "sys-kernel/linux-firmware" || ewarn "sys-kernel/linux-firmware should be installed first"
-		einfo "Adding firmware"
+		if ! ot-kernel_has_version "sys-kernel/linux-firmware" ; then
+ewarn "sys-kernel/linux-firmware should be installed first"
+		fi
+einfo "Adding firmware"
 		pushd /lib/firmware 2>/dev/null 1>/dev/null || die "Missing firmware"
 			for l in $(echo ${ot_kernel_firmware} | tr " " "\n") ; do
-				firmware+=( $(find . -path "*${l}*" | _remove_blacklisted_firmware_paths | sed -e "s|^\./||g") )
+				firmware+=(
+					$(find . -path "*${l}*" \
+						| _remove_blacklisted_firmware_paths \
+						| sed -e "s|^\./||g")
+				)
 			done
 		popd 2>/dev/null 1>/dev/null
 		firmware=($(echo "${firmware[@]}" | tr " " "\n" | sort))
 		firmware="${firmware[@]}" # bash problems
 		firmware=$(echo "${firmware}" \
-			| sed -r -e "s|[ ]+| |g" \
+			| sed -r \
+				-e "s|[ ]+| |g" \
 				-e "s|^[ ]+||g" \
 				-e 's|[ ]+$||g') # Trim mid/left/right spaces
 		ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
-		einfo "CONFIG_EXTRA_FIRMWARE:  "$(grep "CONFIG_EXTRA_FIRMWARE" \
+einfo "CONFIG_EXTRA_FIRMWARE:  "$(grep "CONFIG_EXTRA_FIRMWARE" \
 			"${BUILD_DIR}/.config" | head -n 1 | cut -f 2 -d "\"")
 	fi
 }
@@ -3360,14 +3379,14 @@ ot-kernel_set_kconfig_cfi() {
 		&& [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
 		[[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 12 )) && die "CFI requires LLVM >= 12 on arm64"
 		[[ "${arch}" == "x86_64" ]] && (( ${llvm_slot} < 13 )) && die "CFI requires LLVM >= 13.0.1 on x86_64"
-		einfo "Enabling CFI support in the in the .config."
+einfo "Enabling CFI support in the in the .config."
 		ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_CFI_CLANG"
 		ot-kernel_y_configopt "CONFIG_CFI_CLANG"
 		ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
 		ban_dma_attack_use "cfi" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 	else
-		einfo "Disabling CFI support in the in the .config."
+einfo "Disabling CFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	fi
 
@@ -3375,7 +3394,7 @@ ot-kernel_set_kconfig_cfi() {
 		&& has cfi ${IUSE} && ot-kernel_use cfi \
 		&& [[ "${arch}" == "arm64" ]] ; then
 		# Need to recheck
-		ewarn "You must manually set arm64 CFI in the .config."
+ewarn "You must manually set arm64 CFI in the .config."
 	fi
 }
 
@@ -3398,14 +3417,14 @@ eerror "See also https://wiki.gentoo.org/wiki//etc/portage/patches"
 eerror
 			die
 		fi
-		einfo "Enabling CFI support in the in the .config."
+einfo "Enabling CFI support in the in the .config."
 		ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_CFI_CLANG"
 		ot-kernel_y_configopt "CONFIG_CFI_CLANG"
 		ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
 		ban_dma_attack_use "cfi" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 	else
-		einfo "Disabling CFI support in the in the .config."
+einfo "Disabling CFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	fi
 
@@ -3413,7 +3432,7 @@ eerror
 		&& has kcfi ${IUSE} && ot-kernel_use kcfi \
 		&& [[ "${arch}" == "arm64" ]] ; then
 		# Need to recheck
-		ewarn "You must manually set arm64 CFI in the .config."
+ewarn "You must manually set arm64 CFI in the .config."
 	fi
 }
 
@@ -3422,13 +3441,13 @@ eerror
 # Sets kexec in the kernel
 ot-kernel_set_kconfig_kexec() {
 	if [[ "${OT_KERNEL_KEXEC}" == "1" ]] ; then
-		einfo "Enabling kexec"
+einfo "Enabling kexec"
 		ot-kernel_y_configopt "CONFIG_KEXEC"
 	elif [[ "${OT_KERNEL_KEXEC}" == "0" ]] ; then
-		einfo "Disabling kexec"
+einfo "Disabling kexec"
 		ot-kernel_unset_configopt "CONFIG_KEXEC"
 	else
-		einfo "Using manual settings for kexec"
+einfo "Using manual settings for kexec"
 	fi
 }
 
@@ -3441,12 +3460,12 @@ ot-kernel_set_kconfig_dma_attack_mitigation() {
 	local ot_kernel_dma_attack_mitigations=${OT_KERNEL_DMA_ATTACK_MITIGATIONS:-1}
 	if (( "${ot_kernel_dma_attack_mitigations}" >= 1 )) ; then
 		export OT_KERNEL_DMA_ATTACK_MITIGATIONS_ENABLED=1
-		einfo "Mitigating against DMA attacks (EXPERIMENTAL / WORK IN PROGRESS)"
+einfo "Mitigating against DMA attacks (EXPERIMENTAL / WORK IN PROGRESS)"
 
 		if grep -q -E -e "(CONFIG_IOMMU_DEFAULT_DMA_STRICT=y|CONFIG_IOMMU_DEFAULT_DMA_LAZY=y)" "${path_config}" ; then
 			:
 		else
-			einfo "Using lazy as the default IOMMU domain type for mitigation against DMA attack."
+einfo "Using lazy as the default IOMMU domain type for mitigation against DMA attack."
 			ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_PASSTHROUGH"
 			ot-kernel_y_configopt "CONFIG_IOMMU_DEFAULT_DMA_LAZY"
 			ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_DMA_STRICT"
@@ -3457,7 +3476,7 @@ ot-kernel_set_kconfig_dma_attack_mitigation() {
 		if [[ "${arch}" =~ "x86" ]] ; then
 			local found=0
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
-				einfo "Adding IOMMU support (VT-d)"
+einfo "Adding IOMMU support (VT-d)"
 				ot-kernel_y_configopt "CONFIG_MMU"
 				ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
 				ot-kernel_y_configopt "CONFIG_ACPI"
@@ -3468,7 +3487,7 @@ ot-kernel_set_kconfig_dma_attack_mitigation() {
 				found=1
 			fi
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
-				einfo "Adding IOMMU support (Vi)"
+einfo "Adding IOMMU support (Vi)"
 				ot-kernel_y_configopt "CONFIG_MMU"
 				ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
 				ot-kernel_y_configopt "CONFIG_ACPI"
@@ -3478,10 +3497,10 @@ ot-kernel_set_kconfig_dma_attack_mitigation() {
 				found=1
 			fi
 			if (( ${found} == 0 )) ; then
-				eerror
-				eerror "Failed to set IOMMU for DMA mitigation.  Set CPU_MFG environment variable."
-				eerror "See metadata.xml or or \`epkginfo -x ${PN}::oiledmachine-overlay\` for details."
-				eerror
+eerror
+eerror "Failed to set IOMMU for DMA mitigation.  Set CPU_MFG environment variable."
+eerror "See metadata.xml or or \`epkginfo -x ${PN}::oiledmachine-overlay\` for details."
+eerror
 				die
 			fi
 		fi
@@ -3490,10 +3509,10 @@ ot-kernel_set_kconfig_dma_attack_mitigation() {
 		# necessary prerequiste details for the attack.
 		ot-kernel_unset_configopt "CONFIG_KALLSYMS"
 
-		ewarn "Coredump is going to be disabled"
+ewarn "Coredump is going to be disabled"
 		ot-kernel_unset_configopt "CONFIG_COREDUMP"
 
-		ewarn "KDB/KGDB_KDB is going to be disabled."
+ewarn "KDB/KGDB_KDB is going to be disabled."
 		ot-kernel_unset_configopt "CONFIG_KGDB"
 		ot-kernel_unset_configopt "CONFIG_KGDB_KDB"
 
@@ -3517,12 +3536,12 @@ ewarn "having the same DMA mitigation settings.  See the ot-kernel eclass."
 ewarn "for details."
 ewarn
 		else
-			einfo "Disabling kexec"
+einfo "Disabling kexec"
 			ot-kernel_unset_configopt "CONFIG_KEXEC"
 		fi
 	fi
 	if python -c "import sys; sys.exit(0) if (${ot_kernel_dma_attack_mitigations}>=1.5) else sys.exit(1)" ; then
-		einfo "Using strict as the default IOMMU domain type for mitigation against DMA attack."
+einfo "Using strict as the default IOMMU domain type for mitigation against DMA attack."
 		ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_PASSTHROUGH"
 		ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_DMA_LAZY"
 		ot-kernel_y_configopt "CONFIG_IOMMU_DEFAULT_DMA_STRICT"
@@ -3534,11 +3553,11 @@ ewarn
 
 		# TODO:  Disable all DMA devices and ports.
 		# This list is incomplete
-		ewarn "USB4 is going to be disabled."
+ewarn "USB4 is going to be disabled."
 		ot-kernel_unset_configopt "CONFIG_USB4"
-		ewarn "XHCI USB3 is going to be disabled."
+ewarn "XHCI USB3 is going to be disabled."
 		ot-kernel_unset_configopt "CONFIG_USB_XHCI_HCD"
-		ewarn "USB Type-C is going to be disabled."
+ewarn "USB Type-C is going to be disabled."
 		ot-kernel_unset_configopt "CONFIG_TYPEC"
 	fi
 }
@@ -3554,17 +3573,17 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 	# The problem is common to many full disk encryption implementations.
 	local ot_kernel_cold_boot_mitigations=${OT_KERNEL_COLD_BOOT_MITIGATIONS:-1}
 	if (( "${ot_kernel_cold_boot_mitigations}" >= 1 )) ; then
-		einfo "Hardening kernel against cold boot attacks. (EXPERIMENTAL / WORK IN PROGRESS)"
+einfo "Hardening kernel against cold boot attacks. (EXPERIMENTAL / WORK IN PROGRESS)"
 
 		# These two may need a separate option.  We assume desktop,
 		# but some users may use the kernel on laptop.  For now,
 		# every user must cold-boot in suspend times 1-15 minutes.
-		ewarn "Suspend is going to be disabled."
+ewarn "Suspend is going to be disabled."
 		ot-kernel_unset_configopt "CONFIG_SUSPEND"
-		ewarn "Hibernation is going to be disabled."
+ewarn "Hibernation is going to be disabled."
 		ot-kernel_unset_configopt "CONFIG_HIBERNATION"
 
-		ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys"
+ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys"
 		ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
 		ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 		ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
@@ -3590,8 +3609,11 @@ ot-kernel_set_kconfig_compiler_toolchain() {
 		&& ! tc-is-cross-compiler \
 		&& is_clang_ready \
 	; then
-		einfo "Using Clang ${llvm_slot}"
-		ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" || die "sys-devel/llvm:${llvm_slot} is missing"
+einfo "Using Clang ${llvm_slot}"
+		if ! ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" ; then
+eerror "sys-devel/llvm:${llvm_slot} is missing"
+			die
+		fi
 		ot-kernel_y_configopt "CONFIG_AS_IS_LLVM"
 		ot-kernel_set_configopt "CONFIG_AS_VERSION" "${llvm_slot}0000"
 		ot-kernel_y_configopt "CONFIG_CC_IS_CLANG"
@@ -3603,7 +3625,7 @@ ot-kernel_set_kconfig_compiler_toolchain() {
 		ot-kernel_set_configopt "CONFIG_LLD_VERSION" "${llvm_slot}0000"
 	else
 		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check"
-		einfo "Using GCC ${gcc_slot}"
+einfo "Using GCC ${gcc_slot}"
 		ot-kernel_unset_configopt "CONFIG_AS_IS_LLVM"
 		ot-kernel_unset_configopt "CONFIG_CC_IS_CLANG"
 		ot-kernel_unset_configopt "CONFIG_LD_IS_LLD"
@@ -3639,10 +3661,10 @@ ot-kernel_set_kconfig_compressors() {
 		done
 		if ver_test ${K_MAJOR_MINOR} -le 5.10 ; then
 			if [[ "${ot_kernel_modules_compressor^^}" == "ZSTD" ]] ; then
-				eerror "ZSTD is not supported for ${K_MAJOR_MINOR} series."
+eerror "ZSTD is not supported for ${K_MAJOR_MINOR} in OT_KERNEL_MODULES_COMPRESSOR."
 				die
 			fi
-			einfo "Changing config to compress modules with ${ot_kernel_modules_compressor}"
+einfo "Changing config to compress modules with ${ot_kernel_modules_compressor}"
 			if [[ "${ot_kernel_modules_compressor^^}" == "NONE" ]] ; then
 				ot-kernel_n_configopt "CONFIG_MODULE_COMPRESS"
 			else
@@ -3650,11 +3672,11 @@ ot-kernel_set_kconfig_compressors() {
 				ot-kernel_y_configopt "CONFIG_MODULE_COMPRESS_${ot_kernel_modules_compressor^^}" # Reset
 			fi
 		else
-			einfo "Changing config to compress modules with ${ot_kernel_modules_compressor}"
+einfo "Changing config to compress modules with ${ot_kernel_modules_compressor}"
 			ot-kernel_y_configopt "CONFIG_MODULE_COMPRESS_${ot_kernel_modules_compressor^^}" # Reset
 		fi
 	else
-		einfo "Using manual setting for compressed modules"
+einfo "Using manual setting for compressed modules"
 	fi
 
 	local decompressors=(
@@ -3669,7 +3691,7 @@ ot-kernel_set_kconfig_compressors() {
 		ZSTD
 	)
 	if ver_test ${K_MAJOR_MINOR} -lt 5.10 && [[ "${boot_decomp^^}" == "ZSTD" ]] ; then
-		eerror "ZSTD is only supported in 5.10+"
+eerror "ZSTD is only supported in 5.10+"
 		die
 	fi
 	local d
@@ -3695,7 +3717,7 @@ ot-kernel_set_kconfig_compressors() {
 		fi
 	done
 	if [[ "${boot_decomp}" == "default" ]] ; then
-		ewarn "Using the default boot decompressor settings"
+ewarn "Using the default boot decompressor settings"
 		ot-kernel_y_configopt "CONFIG_KERNEL_GZIP"
 		for d in ${decompressors[@]} ; do
 			if [[ "${d}" != "UNCOMPRESSED" ]] ; then
@@ -3713,9 +3735,9 @@ ot-kernel_set_kconfig_compressors() {
 			fi
 		done
 	elif [[ "${boot_decomp}" == "manual" ]] ; then
-		einfo "Using the manually chosen boot decompressor settings"
+einfo "Using the manually chosen boot decompressor settings"
 	else
-		einfo "Using the ${boot_decomp} boot decompressor settings"
+einfo "Using the ${boot_decomp} boot decompressor settings"
 		d="${boot_decomp^^}"
 		ot-kernel_y_configopt "CONFIG_KERNEL_${d}"
 		if [[ "${d}" != "UNCOMPRESSED" ]] ; then
@@ -3812,69 +3834,69 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 	local cpu_sched_config_applied=0
 	if has prjc ${IUSE} && ot-kernel_use prjc \
 		&& [[ "${cpu_sched}" == "muqss" ]] ; then
-		einfo "Changed .config to use MuQSS"
+einfo "Changed .config to use MuQSS"
 		ot-kernel_y_configopt "CONFIG_SCHED_MUQSS"
 		cpu_sched_config_applied=1
 	fi
 
 	if has prjc ${IUSE} && ot-kernel_use prjc \
 		&& [[ "${cpu_sched}" == "prjc" ]] ; then
-		einfo "Changed .config to use Project C with BMQ"
+einfo "Changed .config to use Project C with BMQ"
 		ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 		ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
 		ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
 		cpu_sched_config_applied=1
-		ewarn
-		ewarn "Changed .config to disable SCHED_CORE on Project C (unsupported by project)"
-		ewarn "Lowers security in SMT/HT"
-		ewarn
+ewarn
+ewarn "Changed .config to disable SCHED_CORE on Project C (unsupported by project)"
+ewarn "Lowers security in SMT/HT"
+ewarn
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 	fi
 
 	if has prjc ${IUSE} && ot-kernel_use prjc \
 		&& [[ "${cpu_sched}" == "prjc-bmq" ]] ; then
-		einfo "Changed .config to use Project C with BMQ"
+einfo "Changed .config to use Project C with BMQ"
 		ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 		ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
 		ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
 		cpu_sched_config_applied=1
-		ewarn
-		ewarn "Changed .config to disable SCHED_CORE on Project C (unsupported by project)"
-		ewarn "Lowers security in SMT/HT"
-		ewarn
+ewarn
+ewarn "Changed .config to disable SCHED_CORE on Project C (unsupported by project)"
+ewarn "Lowers security in SMT/HT"
+ewarn
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 	fi
 
 	if has prjc ${IUSE} && ot-kernel_use prjc \
 		&& [[ "${cpu_sched}" == "prjc-pds" ]] ; then
-		einfo "Changed .config to use Project C with PDS"
+einfo "Changed .config to use Project C with PDS"
 		ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 		ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
 		ot-kernel_y_configopt "CONFIG_SCHED_PDS"
 		cpu_sched_config_applied=1
-		ewarn
-		ewarn "Changed .config to disable SCHED_CORE on Project C (unsupported by project)"
-		ewarn "Lowers security in SMT/HT"
-		ewarn
+ewarn
+ewarn "Changed .config to disable SCHED_CORE on Project C (unsupported by project)"
+ewarn "Lowers security in SMT/HT"
+ewarn
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 	fi
 
 	if has bmq ${IUSE} && ot-kernel_use bmq \
 		&& [[ "${cpu_sched}" == "bmq" ]] ; then
-		einfo "Changed .config to use BMQ"
+einfo "Changed .config to use BMQ"
 		ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
 		cpu_sched_config_applied=1
 	fi
 
 	if has pds ${IUSE} && ot-kernel_use pds \
 		&& [[ "${cpu_sched}" == "pds" ]] ; then
-		einfo "Changed .config to use PDS"
+einfo "Changed .config to use PDS"
 		ot-kernel_y_configopt "CONFIG_SCHED_PDS"
 		cpu_sched_config_applied=1
 	fi
 
 	if [[ "${cpu_sched}" =~ ("muqss"|"prjc"|"bmq"|"pds") ]] ; then
-		einfo "Changed .config to disable autogroup"
+einfo "Changed .config to disable autogroup"
 		ot-kernel_unset_configopt "CONFIG_SCHED_AUTOGROUP"
 	fi
 
@@ -3883,7 +3905,7 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 		if [[ "${cpu_sched}" =~ ("cfs-throughput"|"cfs-interactive"|"cfs-autogroup") ]] ; then
 			:;
 		else
-			einfo "Changed .config to use CFS with autogroup manually set."
+einfo "Changed .config to use CFS with autogroup manually set."
 		fi
 		ot-kernel_unset_configopt "CONFIG_SCHED_ALT"
 		ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
@@ -3893,14 +3915,14 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 
 	if has cfs ${IUSE} && ot-kernel_use cfs \
 		&& [[ "${cpu_sched}" == "cfs-throughput" ]] ; then
-		einfo "Changed .config to use CFS with disabled autogroup"
+einfo "Changed .config to use CFS with disabled autogroup"
 		ot-kernel_unset_configopt "CONFIG_SCHED_AUTOGROUP"
 		cpu_sched_config_applied=1
 	fi
 
 	if has cfs ${IUSE} && ot-kernel_use cfs \
 		&& [[ "${cpu_sched}" =~ ("cfs-interactive"|"cfs-autogroup") ]] ; then
-		einfo "Changed .config to use CFS with autogroup"
+einfo "Changed .config to use CFS with autogroup"
 		ot-kernel_y_configopt "CONFIG_SCHED_AUTOGROUP"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
 		ot-kernel_y_configopt "CONFIG_CGROUP_SCHED"
@@ -3910,14 +3932,14 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 
 	if (( ${cpu_sched_config_applied} == 0 )) \
 		&& ! [[ "${cpu_sched}" =~ "cfs" ]] ; then
-		ewarn
-		ewarn "The chosen cpu_sched ${cpu_sched} config was not applied"
-		ewarn "because the use flag was not enabled."
-		ewarn
+ewarn
+ewarn "The chosen cpu_sched ${cpu_sched} config was not applied"
+ewarn "because the use flag was not enabled."
+ewarn
 	fi
 
 	if [[ "${cpu_sched}" == "cfs" ]] || (( ${cpu_sched_config_applied} == 0 )) ; then
-		einfo "Changed .config to use CFS (Completely Fair Scheduler)"
+einfo "Changed .config to use CFS (Completely Fair Scheduler)"
 		ot-kernel_unset_configopt "CONFIG_SCHED_ALT"
 		ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
 		ot-kernel_unset_configopt "CONFIG_SCHED_MUQSS"
@@ -3973,7 +3995,7 @@ ot-kernel_set_kconfig_ep800() {
 	[[ -e "${BUILD_DIR}/drivers/media/usb/gspca/ep800.c" ]] || return
 	if [[ "${OT_KERNEL_EP800}" == "1" ]] ; then
 		# Added driver to test driver across all LTS versions
-		einfo "Enabled the ep800 driver"
+einfo "Enabled the ep800 driver"
 		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
@@ -4002,7 +4024,7 @@ ot-kernel_set_kconfig_exfat() {
 # @DESCRIPTION:
 # Sets the kernel config related to kernel hardening
 ot-kernel_set_kconfig_hardening_level() {
-	einfo "Using ${hardening_level} hardening level"
+einfo "Using ${hardening_level} hardening level"
 	ot-kernel_y_configopt "CONFIG_EXPERT"
 
 	local gcc_major_v
@@ -4247,7 +4269,7 @@ eerror
 # root and boot files and customized setups
 ot-kernel_set_kconfig_ima() {
 	[[ -z "${OT_KERNEL_IMA}" ]] && return
-	einfo "Configuring IMA"
+einfo "Configuring IMA"
 	local algs=(
 		sha1
 		sha256
@@ -4263,33 +4285,33 @@ ot-kernel_set_kconfig_ima() {
 	ot-kernel_y_configopt "CONFIG_IMA_APPRAISE"
 	local hash_alg="${OT_KERNEL_IMA_HASH_ALG^^}"
 	if [[ "${hash_alg}" == "default" ]] ; then
-		einfo "Using sha1 for IMA hashing"
+einfo "Using sha1 for IMA hashing"
 		ot-kernel_y_configopt "CONFIG_IMA_DEFAULT_HASH_SHA1"
 		ot-kernel_y_configopt "CONFIG_SHA1"
 	elif [[ "${hash_alg}" == "manual" ]] ; then
-		einfo "Using manual for IMA hashing"
+einfo "Using manual for IMA hashing"
 	elif [[ -n "${hash_alg}" ]] ; then
-		einfo "Using ${hash_alg,,} for IMA hashing"
+einfo "Using ${hash_alg,,} for IMA hashing"
 		ot-kernel_y_configopt "CONFIG_IMA_DEFAULT_HASH_${hash_alg}"
 		ot-kernel_y_configopt "CONFIG_${hash_alg}"
 		if [[ "${hash_alg}" != "SHA1" ]] ; then
 			ot-kernel_unset_configopt "CONFIG_IMA_TEMPLATE"
 		fi
 	else
-		einfo "Using manual for IMA hashing"
+einfo "Using manual for IMA hashing"
 	fi
 	if [[ "${OT_KERNEL_IMA}" == "fix" ]] ; then
-		einfo "Using fix for IMA mode"
+einfo "Using fix for IMA mode"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "ima_appraise=(fix|enforce|off)"
 		ot-kernel_set_kconfig_kernel_cmdline "ima_appraise=fix"
 		export _OT_KERNEL_IMA_USED=1
 	elif [[ "${OT_KERNEL_IMA}" == "enforce" ]] ; then
-		einfo "Using enforce for IMA mode"
+einfo "Using enforce for IMA mode"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "ima_appraise=(fix|enforce|off)"
 		ot-kernel_set_kconfig_kernel_cmdline "ima_appraise=enforce"
 		export _OT_KERNEL_IMA_USED=1
 	elif [[ "${OT_KERNEL_IMA}" == "off" ]] ; then
-		einfo "Disabling IMA"
+einfo "Disabling IMA"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "ima_appraise=(fix|enforce|off)"
 		ot-kernel_set_kconfig_kernel_cmdline "ima_appraise=off"
 	fi
@@ -4299,23 +4321,23 @@ ot-kernel_set_kconfig_ima() {
 	ot-kernel_unset_pat_kconfig_kernel_cmdline "tcb"
 	local ima_policies=""
 	if [[ "${OT_KERNEL_IMA_POLICIES}" =~ "appraise_tcb" ]] ; then
-		einfo "Using appraise_tcb IMA policy"
+einfo "Using appraise_tcb IMA policy"
 		ima_policies+=" ima_policy=appraise_tcb"
 	fi
 	if [[ "${OT_KERNEL_IMA_POLICIES}" =~ "critical_data" ]] ; then
-		einfo "Using critical_data IMA policy"
+einfo "Using critical_data IMA policy"
 		ima_policies+=" ima_policy=critical_data"
 	fi
 	if [[ "${OT_KERNEL_IMA_POLICIES}" =~ "fail_securely" ]] ; then
-		einfo "Using fail_securely IMA policy"
+einfo "Using fail_securely IMA policy"
 		ima_policies+=" ima_policy=fail_securely"
 	fi
 	if [[ "${OT_KERNEL_IMA_POLICIES}" =~ "secure_boot" ]] ; then
-		einfo "Using secure_boot IMA policy"
+einfo "Using secure_boot IMA policy"
 		ima_policies+=" ima_policy=secure_boot"
 	fi
 	if [[ "${OT_KERNEL_IMA_POLICIES}" =~ "tcb" ]] ; then
-		einfo "Using tcb IMA policy"
+einfo "Using tcb IMA policy"
 		ima_policies+=" ima_policy=tcb"
 	fi
 	if [[ -n "${OT_KERNEL_IMA_POLICIES}" ]] ; then
@@ -4368,7 +4390,7 @@ ot-kernel_set_kconfig_iommu_domain_type() {
 ot-kernel_set_kconfig_march() {
 	if [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] ; then
 		if [[ "${X86_MICROARCH_OVERRIDE}" =~ ("manual"|"custom") ]] ; then
-			einfo "Setting .config with ${X86_MICROARCH_OVERRIDE} march setting"
+einfo "Setting .config with ${X86_MICROARCH_OVERRIDE} march setting"
 		else
 			local microarches=(
 				$(grep -r -e "config M" "${BUILD_DIR}/arch/x86/Kconfig.cpu" | sed -e "s|config ||g")
@@ -4382,22 +4404,22 @@ ot-kernel_set_kconfig_march() {
 			local kflag="CONFIG_GENERIC_CPU"
 			ot-kernel_unset_configopt "${kflag}"
 			if [[ -n "${X86_MICROARCH_OVERRIDE}" ]] ; then
-				einfo "Setting .config with CONFIG_${X86_MICROARCH_OVERRIDE}=y"
+einfo "Setting .config with CONFIG_${X86_MICROARCH_OVERRIDE}=y"
 				kflag="CONFIG_${KCP_MICROARCH_OVERRIDE}"
 			elif grep -q -E -e "MNATIVE_" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
 				local mfg=$(ot-kernel_get_cpu_mfg_id)
 				mfg=${mfg^^}
 				kflag="CONFIG_MNATIVE_${mfg}"
 			elif grep -q -F -e "MNATIVE" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
-				einfo "Setting .config with -march=native"
+einfo "Setting .config with -march=native"
 				kflag="CONFIG_MNATIVE"
 			elif grep -q -F -e "GENERIC_CPU" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
-				ewarn
-				ewarn "Setting .config with -march=generic"
-				ewarn
-				ewarn "See X86_MICROARCH_OVERRIDE in metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
-				ewarn "to optimize."
-				ewarn
+ewarn
+ewarn "Setting .config with -march=generic"
+ewarn
+ewarn "See X86_MICROARCH_OVERRIDE in metadata.xml or"
+ewarn "\`epkginfo -x ${PN}::oiledmachine-overlay\` to optimize."
+ewarn
 				kflag="CONFIG_GENERIC_CPU"
 			else
 				ewarn
@@ -4433,14 +4455,19 @@ einfo "Passed check for ${x}"
 		if tc-is-cross-compiler ; then
 			# Cannot use -march=native if doing distcc.
 			if grep "^CONFIG_MNATIVE" "${path_config}" ; then
-				einfo "Detected cross-compiling.  Converting -march=native -> -mtune=generic"
-				einfo "In the future, change the setting to the microarchitecture instead."
+einfo
+einfo "Detected cross-compiling.  Converting -march=native -> -mtune=generic"
+einfo "In the future, change the setting to the microarchitecture instead."
+einfo
 				ot-kernel_unset_configopt "CONFIG_MNATIVE_AMD"
 				ot-kernel_unset_configopt "CONFIG_MNATIVE_INTEL"
 				ot-kernel_unset_configopt "CONFIG_MNATIVE"
 				ot-kernel_y_configopt "CONFIG_GENERIC_CPU"
 			else
-				einfo "Detected cross-compiling.  Using previous generic or microarchitecture setting."
+einfo
+einfo "Detected cross-compiling.  Using previous generic or microarchitecture"
+einfo "setting."
+einfo
 			fi
 		fi
 	fi
@@ -4478,14 +4505,14 @@ ot-kernel_set_kconfig_lsms() {
 	fi
 	local ot_kernel_lsms=()
 	if [[ "${ot_kernel_lsms_choice}" == "manual" ]] ; then
-		einfo "Using the manual LSM settings"
-		einfo "LSMs:  "$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
+einfo "Using the manual LSM settings"
+einfo "LSMs:  "$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
 	elif [[ "${ot_kernel_lsms_choice}" == "default" ]] ; then
-		einfo "Using the default LSM settings"
+einfo "Using the default LSM settings"
 		OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
 		ot_kernel_lsms="integrity,selinux,bpf" # Equivalent upstream settings
 	elif [[ "${ot_kernel_lsms_choice}" == "auto" ]] ; then
-		einfo "Using the auto LSM settings"
+einfo "Using the auto LSM settings"
 		OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
 		ot_kernel_lsms="integrity"
 		ot-kernel_has_version "sys-apps/apparmor" && ot_kernel_lsms+=",apparmor"
@@ -4496,7 +4523,7 @@ ot-kernel_set_kconfig_lsms() {
 		ot_kernel_lsms="${OT_KERNEL_LSMS}"
 		ot_kernel_lsms="${ot_kernel_lsms,,}"
 		ot_kernel_lsms="${ot_kernel_lsms// /}"
-		einfo "Using the custom LSM settings:  ${ot_kernel_lsms}"
+einfo "Using the custom LSM settings:  ${ot_kernel_lsms}"
 	fi
 
 	if [[ -n "${ot_kernel_lsms}" ]] ; then
@@ -4544,8 +4571,8 @@ ot-kernel_set_kconfig_lsms() {
 
 		# Pick the default legacy
 		l=$(echo "${ot_kernel_lsms,,}" | sed -e "s| ||g" | grep -E -o -e "(selinux|smack|tomoyo|apparmor|bpf)" | head -n 1)
-		einfo "ot_kernel_lsms=${ot_kernel_lsms,,}"
-		einfo "Default LSM: ${l}"
+einfo "ot_kernel_lsms=${ot_kernel_lsms,,}"
+einfo "Default LSM: ${l}"
 		ot-kernel_y_configopt "CONFIG_DEFAULT_SECURITY_${LSM_LEGACY[${l}]}" # Implied
 
 		local lsms=()
@@ -4584,10 +4611,10 @@ ot-kernel_set_kconfig_lsms() {
 		if [[ "${OT_KERNEL_USE_LSM_UPSTREAM_ORDER}" == "1" ]] ; then
 			local arg=$(echo "${lsms[@]}" | tr " " ",")
 			ot-kernel_set_configopt "CONFIG_LSM" "\"${arg}\""
-			einfo "LSMs:  ${arg}"
+einfo "LSMs:  ${arg}"
 		else
 			ot-kernel_set_configopt "CONFIG_LSM" "\"${ot_kernel_lsms}\""
-			einfo "LSMs:  ${ot_kernel_lsms}"
+einfo "LSMs:  ${ot_kernel_lsms}"
 		fi
 	fi
 
@@ -4596,9 +4623,9 @@ ot-kernel_set_kconfig_lsms() {
 		if [[ "${lsms_}" =~ "integrity" ]] ; then
 			:
 		else
-			eerror
-			eerror "integrity must be added to OT_KERNEL_LSMS or CONFIG_LSM"
-			eerror
+eerror
+eerror "integrity must be added to OT_KERNEL_LSMS or CONFIG_LSM"
+eerror
 			die
 		fi
 	fi
@@ -4628,14 +4655,14 @@ eerror
 # Show LLVM toolchain requirements and quit
 ot-kernel_show_llvm_requirement() {
 	local msg="${1}"
-	eerror
-	eerror "Make sure the following valid slots is installed:"
-	eerror
-	eerror "LLVM_MIN_SLOT: ${LLVM_MIN_SLOT}"
-	eerror "LLVM_MAX_SLOT: ${LLVM_MAX_SLOT}"
-	eerror
-	eerror "Reason:  ${msg}"
-	eerror
+eerror
+eerror "Make sure the following valid slots is installed:"
+eerror
+eerror "LLVM_MIN_SLOT: ${LLVM_MIN_SLOT}"
+eerror "LLVM_MAX_SLOT: ${LLVM_MAX_SLOT}"
+eerror
+eerror "Reason:  ${msg}"
+eerror
 #	die
 }
 
@@ -4651,7 +4678,7 @@ ot-kernel_set_kconfig_lto() {
 			fi
 			ot-kernel_show_llvm_requirement "LTO requires clang:\${SLOT} == llvm:\${SLOT} and \${SLOT} >= 11"
 		fi
-		einfo "Enabling LTO"
+einfo "Enabling LTO"
 		ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_LTO_CLANG"
 		ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_LTO_CLANG_THIN"
 		ot-kernel_unset_configopt "CONFIG_FTRACE_MCOUNT_USE_RECORDMCOUNT"
@@ -4667,7 +4694,7 @@ ot-kernel_set_kconfig_lto() {
 		ot-kernel_y_configopt "CONFIG_LTO_CLANG_THIN"
 		ot-kernel_unset_configopt "CONFIG_LTO_NONE"
 	else
-		einfo "Disabling LTO"
+einfo "Disabling LTO"
 		ot-kernel_unset_configopt "CONFIG_HAS_LTO_CLANG"
 		ot-kernel_unset_configopt "CONFIG_LTO"
 		ot-kernel_unset_configopt "CONFIG_LTO_CLANG_FULL"
@@ -4689,10 +4716,10 @@ ot-kernel_set_kconfig_memory_protection() {
 			fi
 		fi
 		if [[ "${OT_KERNEL_SGX}" == "1" || "${has_sgx}" == "1" ]] ; then
-			einfo "Enabling SGX"
+einfo "Enabling SGX"
 			ot-kernel_y_configopt "CONFIG_X86_SGX"
 		else
-			einfo "Disabling SGX"
+einfo "Disabling SGX"
 			ot-kernel_unset_configopt "CONFIG_X86_SGX"
 		fi
 		ot-kernel_unset_configopt "CONFIG_AMD_MEM_ENCRYPT_ACTIVE_BY_DEFAULT"
@@ -4703,16 +4730,16 @@ ot-kernel_set_kconfig_memory_protection() {
 			fi
 		fi
 		if [[ "${OT_KERNEL_SME}" == "1" || "${has_sme}" == "1" ]] ; then
-			einfo "Allowing SME"
+einfo "Allowing SME"
 			ot-kernel_y_configopt "CONFIG_AMD_MEM_ENCRYPT"
 			if [[ "${OT_KERNEL_SME_DEFAULT_ON}" == "1" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "mem_encrypt=on"
 				ot-kernel_y_configopt "CONFIG_CMDLINE_OVERRIDE" # Disallow changing
 			else
-				ewarn "Set OT_KERNEL_SME_DEFAULT_ON=1 when testing is successful."
+ewarn "Set OT_KERNEL_SME_DEFAULT_ON=1 when testing is successful."
 			fi
 		else
-			einfo "Disallowing SME"
+einfo "Disallowing SME"
 			ot-kernel_unset_configopt "CONFIG_AMD_MEM_ENCRYPT"
 		fi
 		local has_pku=0
@@ -4722,10 +4749,10 @@ ot-kernel_set_kconfig_memory_protection() {
 			fi
 		fi
 		if [[ "${OT_KERNEL_PKU}" == "1" || "${has_pku}" == "1" ]] ; then
-			einfo "Enabling PKU"
+einfo "Enabling PKU"
 			ot-kernel_y_configopt "CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS"
 		else
-			einfo "Disabling PKU"
+einfo "Disabling PKU"
 			ot-kernel_unset_configopt "CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS"
 		fi
 	fi
@@ -4808,11 +4835,11 @@ ot-kernel_set_kconfig_module_signing() {
 	grep -q -e "^CONFIG_MODULES=y" "${BUILD_DIR}/.config" || return
 	# The default profile does not have module signing default on.
 	if [[ "${OT_KERNEL_SIGN_MODULES}" == "0" ]] ; then
-		einfo "Disabling auto-signed modules"
+einfo "Disabling auto-signed modules"
 		ot-kernel_unset_configopt "CONFIG_MODULE_SIG"
 		ot-kernel_unset_configopt "CONFIG_MODULE_SIG_ALL"
 	elif [[ "${OT_KERNEL_SIGN_MODULES,,}" == "manual" ]] ; then
-		einfo "Using the manual setting for auto-signed modules"
+einfo "Using the manual setting for auto-signed modules"
 	elif [[ -n "${OT_KERNEL_SIGN_MODULES}" ]] ; then
 		if [[ "${OT_KERNEL_SIGN_MODULES,,}" == "sha512" ]] ; then
 			:
@@ -4822,7 +4849,7 @@ ot-kernel_set_kconfig_module_signing() {
 			OT_KERNEL_SIGN_MODULES="sha384"
 		fi
 
-		einfo "Changing config to auto-signed modules with ${OT_KERNEL_SIGN_MODULES^^}"
+einfo "Changing config to auto-signed modules with ${OT_KERNEL_SIGN_MODULES^^}"
 		ot-kernel_y_configopt "CONFIG_MODULE_SIG_FORMAT"
 		ot-kernel_y_configopt "CONFIG_MODULE_SIG"
 		ot-kernel_y_configopt "CONFIG_MODULE_SIG_ALL"
@@ -4844,7 +4871,7 @@ ot-kernel_set_kconfig_module_signing() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_${OT_KERNEL_SIGN_MODULES^^}"
 		ot-kernel_set_configopt "CONFIG_MODULE_SIG_HASH" "\"${OT_KERNEL_SIGN_MODULES,,}\""
 	else
-		einfo "Using the manual setting for auto-signed modules"
+einfo "Using the manual setting for auto-signed modules"
 	fi
 }
 
@@ -4853,13 +4880,13 @@ ot-kernel_set_kconfig_module_signing() {
 # Sets module support
 ot-kernel_set_kconfig_module_support() {
 	if [[ -z "${OT_KERNEL_MODULES_SUPPORT}" ]] ; then
-		einfo "Using manual settings for modules support"
+einfo "Using manual settings for modules support"
 	elif [[ "${OT_KERNEL_MODULES_SUPPORT}" =~ ("y"|"1") ]] \
 		&& grep -q -e "^.*=m" "${BUILD_DIR}/.config" ; then
-		einfo "Modules support enabled"
+einfo "Modules support enabled"
 		ot-kernel_y_configopt "CONFIG_MODULES"
 	else
-		einfo "Modules support disabled"
+einfo "Modules support disabled"
 		ot-kernel_unset_configopt "CONFIG_MODULES"
 		ot-kernel_unset_configopt "CONFIG_MODULE_FORCE_LOAD"
 		ot-kernel_unset_configopt "CONFIG_MODULE_UNLOAD"
@@ -4872,7 +4899,7 @@ ot-kernel_set_kconfig_module_support() {
 ot-kernel_set_kconfig_multigen_lru() {
 	if ( has multigen_lru ${IUSE} && ot-kernel_use multigen_lru ) \
 		|| ( has zen-multigen_lru ${IUSE} && ot-kernel_use zen-multigen_lru ) ; then
-		einfo "Changed .config to use Multi-Gen LRU"
+einfo "Changed .config to use Multi-Gen LRU"
 		ot-kernel_y_configopt "CONFIG_LRU_GEN"
 		ot-kernel_y_configopt "CONFIG_LRU_GEN_ENABLED"
 	fi
@@ -4886,16 +4913,16 @@ ot-kernel_set_kconfig_oflag() {
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
 	if [[ "${CFLAGS}" =~ "O3" ]] ; then
-		einfo "Setting .config with -O3 from CFLAGS"
+einfo "Setting .config with -O3 from CFLAGS"
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
 	elif [[ "${CFLAGS}" =~ "O2" ]] ; then
-		einfo "Setting .config with -O2 from CFLAGS"
+einfo "Setting .config with -O2 from CFLAGS"
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
 	elif [[ "${CFLAGS}" =~ "Os" ]] ; then
-		einfo "Setting .config with -Os from CFLAGS"
+einfo "Setting .config with -Os from CFLAGS"
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
 	else
-		einfo "Setting .config with -O2 from CFLAGS"
+einfo "Setting .config with -O2 from CFLAGS"
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
 	fi
 }
@@ -4938,40 +4965,40 @@ ot-kernel_set_kconfig_pgo() {
 		ot-kernel_n_configopt "CONFIG_PROFRAW_V5"
 		# See grep -r -e "INSTR_PROF_RAW_VERSION" /usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc
 		if (( ${llvm_slot} >= 15 && ${clang_v_maj} >= 15 )) ; then
-			einfo "Using profraw v8 for >= LLVM 15"
+einfo "Using profraw v8 for >= LLVM 15"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.6" ; then
-			einfo "Using profraw v8 for LLVM 14"
+einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.5" ; then
-			einfo "Using profraw v8 for LLVM 14"
+einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.4" ; then
-			einfo "Using profraw v8 for LLVM 14"
+einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.3" ; then
-			einfo "Using profraw v8 for LLVM 14"
+einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.2" ; then
-			einfo "Using profraw v8 for LLVM 14"
+einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.1" ; then
-			einfo "Using profraw v8 for LLVM 14"
+einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.0" ; then
-			einfo "Using profraw v8 for LLVM 14"
+einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 		elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && ot-kernel_has_version "~sys-devel/clang-13.0.1" ; then
-			einfo "Using profraw v7 for LLVM 13"
+einfo "Using profraw v7 for LLVM 13"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
 		elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && ot-kernel_has_version "~sys-devel/clang-13.0.0" ; then
-			einfo "Using profraw v7 for LLVM 13"
+einfo "Using profraw v7 for LLVM 13"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
 		elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 12 )) && ot-kernel_has_version "~sys-devel/clang-12.0.1" ; then
-			einfo "Using profraw v5 for LLVM 12"
+einfo "Using profraw v5 for LLVM 12"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
 		elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 11 )) && ot-kernel_has_version "~sys-devel/clang-11.1.0" ; then
-			einfo "Using profraw v5 for LLVM 11"
+einfo "Using profraw v5 for LLVM 11"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
 		else
 eerror
@@ -4989,7 +5016,7 @@ eerror
 			pgo_phase="${PGO_PHASE_PGI}"
 		fi
 		if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
-			einfo "Forcing PGI flags and config"
+einfo "Forcing PGI flags and config"
 			ot-kernel_y_configopt "CONFIG_CC_HAS_NO_PROFILE_FN_ATTR"
 			ot-kernel_y_configopt "CONFIG_CC_IS_CLANG"
 			ot-kernel_y_configopt "CONFIG_DEBUG_FS"
@@ -5006,7 +5033,7 @@ ewarn
 		ot-kernel_set_kconfig_dmesg "default"
 
 		elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_PGT}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
-			einfo "Forcing PGO flags and config"
+einfo "Forcing PGO flags and config"
 
 			if [[ "${NEEDS_DEBUGFS}" == "1" ]] ; then
 ewarn "debugfs disabled failed.  Unfortunately, a package still requires it."
@@ -5030,11 +5057,25 @@ ot-kernel_set_kconfig_processor_class() {
 	elif [[ "${processor_class}" =~ ("manual"|"custom") ]] ; then
 		:
 	elif [[ "${processor_class}" == "auto" ]] ; then
-		local ncpus=$(lscpu | grep "CPU(s):" | head -n 1 | grep -o -E -e "[0-9]+") # ncores * nsockets * tpc
-		local ncores=$(lscpu | grep "Core(s) per socket:" | head -n 1 | grep -o -E -e "[0-9]+")
-		local nsockets=$(lscpu | grep "Socket(s):" | head -n 1 | grep -o -E -e "[0-9]+")
-		local tpc=$(lscpu | grep "Thread(s) per core:" | head -n 1 | grep -o -E -e "[0-9]+")
-		local n_numa_nodes=$(lscpu | grep "NUMA node(s):" | head -n 1 | grep -o -E -e "[0-9]+")
+		local ncpus=$(lscpu | grep "CPU(s):" \
+			| head -n 1 \
+			| grep -o -E -e "[0-9]+") # ncores * nsockets * tpc
+		local ncores=$(lscpu \
+			| grep "Core(s) per socket:" \
+			| head -n 1 \
+			| grep -o -E -e "[0-9]+")
+		local nsockets=$(lscpu \
+			| grep "Socket(s):" \
+			| head -n 1 \
+			| grep -o -E -e "[0-9]+")
+		local tpc=$(lscpu \
+			| grep "Thread(s) per core:" \
+			| head -n 1 \
+			| grep -o -E -e "[0-9]+")
+		local n_numa_nodes=$(lscpu \
+			| grep "NUMA node(s):" \
+			| head -n 1 \
+			| grep -o -E -e "[0-9]+")
 		if (( ${ncpus} > 1 )) ; then
 			ot-kernel_y_configopt "CONFIG_SMP"
 		else
@@ -5048,7 +5089,8 @@ ot-kernel_set_kconfig_processor_class() {
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_X86_64_ACPI_NUMA"
 			fi
-			ot-kernel_set_configopt "CONFIG_NODES_SHIFT" $(python -c "import math; print(math.ceil(math.log(${nsockets})/math.log(2)))")
+			ot-kernel_set_configopt "CONFIG_NODES_SHIFT" \
+				$(python -c "import math; print(math.ceil(math.log(${nsockets})/math.log(2)))")
 		fi
 	elif [[ "${processor_class}" == "uniprocessor" \
 		|| "${processor_class}" == "unicore" ]] ; then
@@ -5076,7 +5118,7 @@ ot-kernel_set_kconfig_processor_class() {
 		ot-kernel_y_configopt "CONFIG_SMP"
 	fi
 	[[ -z "${processor_class}" ]] && processor_class="not set (manual)"
-	einfo "Processor class is ${processor_class}"
+einfo "Processor class is ${processor_class}"
 	local ncpus="${OT_KERNEL_N_CPUS}"
 	if [[ "${ncpus}" == "auto" ]] ; then
 		ncpus=$(lscpu | grep "CPU(s):" | head -n 1 | grep -o -E -e "[0-9]+")
@@ -5085,7 +5127,7 @@ ot-kernel_set_kconfig_processor_class() {
 		ot-kernel_set_configopt "CONFIG_NR_CPUS" "${ncpus}"
 	fi
 	ncpus=$(grep -r -e "CONFIG_NR_CPUS=" "${BUILD_DIR}/.config" | grep -o -E -e "[0-9]+")
-	einfo "Processor count maximum:  ${ncpus}"
+einfo "Processor count maximum:  ${ncpus}"
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_scs
@@ -5096,11 +5138,11 @@ ot-kernel_set_kconfig_scs() {
 		&& has shadowcallstack ${IUSE} && ot-kernel_use shadowcallstack \
 		&& [[ "${arch}" == "arm64" ]] ; then
 		(( ${llvm_slot} < 10 )) && die "Shadow call stack (SCS) requires LLVM >= 10"
-		einfo "Enabling SCS support in the in the .config."
+einfo "Enabling SCS support in the in the .config."
 		ot-kernel_y_configopt "CONFIG_CFI_CLANG_SHADOW"
 		ot-kernel_y_configopt "CONFIG_MODULES"
 	else
-		einfo "Disabling SCS support in the in the .config."
+einfo "Disabling SCS support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG_SHADOW"
 	fi
 }
@@ -5116,7 +5158,7 @@ ot-kernel_set_kconfig_slab_allocator() {
 	ot-kernel_unset_configopt "CONFIG_SLUB" # For mainframes
 	ot-kernel_unset_configopt "CONFIG_SLOB" # For embedded
 	ot-kernel_y_configopt "CONFIG_${alloc_name}"
-	einfo "Using ${alloc_name}"
+einfo "Using ${alloc_name}"
 	if [[ "${alloc_name}" == "SLUB" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SLUB_CPU_PARTIAL"
 	fi
@@ -5131,7 +5173,7 @@ ot-kernel_set_kconfig_auto_set_slab_allocator() {
 		local x=$(grep -E -e "CONFIG_(SLAB|SLOB|SLUB)=y" "${BUILD_DIR}/.config" \
 			| cut -f 2 -d "_" \
 			| cut -f "1" -d "=")
-		einfo "Using ${x}"
+einfo "Using ${x}"
 	elif [[ "${slab_allocator}" == "auto" ]] ; then
 		if grep -q -E -e "^CONFIG_EMBEDDED=y" "${path_config}" ; then
 			ot-kernel_set_kconfig_slab_allocator "slob"
@@ -5151,13 +5193,13 @@ ot-kernel_set_kconfig_auto_set_slab_allocator() {
 # Sets the kernel config for swap file support
 ot-kernel_set_kconfig_swap() {
 	if [[ "${OT_KERNEL_SWAP}" == "1" || "${OT_KERNEL_SWAP^^}" == "Y" ]] ; then
-		einfo "Swap enabled"
+einfo "Swap enabled"
 		ot-kernel_y_configopt "CONFIG_SWAP"
 	elif [[ "${OT_KERNEL_SWAP}" == "0" || "${OT_KERNEL_SWAP^^}" == "N" ]] ; then
-		einfo "Swap disabled"
+einfo "Swap disabled"
 		ot-kernel_unset_configopt "CONFIG_SWAP"
 	else
-		einfo "Using manual swap settings"
+einfo "Using manual swap settings"
 	fi
 }
 
@@ -5166,7 +5208,7 @@ ot-kernel_set_kconfig_swap() {
 # Sets the kernel config for TRESOR
 ot-kernel_set_kconfig_tresor() {
 	if has tresor_i686 ${IUSE} && ot-kernel_use tresor_i686 && [[ "${arch}" == "x86" ]] ; then
-		einfo "Changed .config to use TRESOR (i686)"
+einfo "Changed .config to use TRESOR (i686)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR"
@@ -5176,7 +5218,7 @@ ot-kernel_set_kconfig_tresor() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER2"
 		if ot-kernel_use tresor_prompt ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_PROMPT" # default on upstream
-			einfo "Disabling boot output for TRESOR early prompt."
+einfo "Disabling boot output for TRESOR early prompt."
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2" # 7 is default
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "2" # 4 is default
 			ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "2" # 4 is default
@@ -5184,7 +5226,7 @@ ot-kernel_set_kconfig_tresor() {
 	fi
 
 	if has tresor_x86_64 ${IUSE} && ot-kernel_use tresor_x86_64 && [[ "${arch}" == "x86_64" ]] ; then
-		einfo "Changed .config to use TRESOR (x86_64)"
+einfo "Changed .config to use TRESOR (x86_64)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR"
@@ -5198,7 +5240,7 @@ ot-kernel_set_kconfig_tresor() {
 	fi
 
 	if has tresor_aesni ${IUSE} && ot-kernel_use tresor_aesni && [[ "${arch}" == "x86_64" ]] ; then
-		einfo "Changed .config to use TRESOR (AES-NI)"
+einfo "Changed .config to use TRESOR (AES-NI)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR"
@@ -5211,11 +5253,13 @@ ot-kernel_set_kconfig_tresor() {
 	fi
 
 	if has tresor_sysfs ${IUSE} && ot-kernel_use tresor_sysfs && [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] ; then
-		einfo "Changed .config to use the TRESOR sysfs interface"
+einfo "Changed .config to use the TRESOR sysfs interface"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_SYSFS"
 
-		ewarn "The sysfs interface for TRESOR is not compatible with suspend or"
-		ewarn "hibernation, so disabling both of these."
+ewarn
+ewarn "The sysfs interface for TRESOR is not compatible with suspend or"
+ewarn "hibernation, so disabling both of these."
+ewarn
 		ot-kernel_n_configopt "CONFIG_SUSPEND"
 		ot-kernel_n_configopt "CONFIG_HIBERNATION"
 	fi
@@ -5235,7 +5279,7 @@ ot-kernel_set_kconfig_tresor() {
 # Sets the kernel config for UKSM
 ot-kernel_set_kconfig_uksm() {
 	if has uksm ${IUSE} && ot-kernel_use uksm ; then
-		einfo "Changed .config to use UKSM"
+einfo "Changed .config to use UKSM"
 		ot-kernel_y_configopt "CONFIG_KSM"
 		ot-kernel_y_configopt "CONFIG_UKSM"
 	fi
@@ -5258,19 +5302,19 @@ ot-kernel_set_kconfig_usb_autosuspend() {
 ot-kernel_set_kconfig_usb_flash_disk() {
 	local usb_flash=0
 	if [[ "${USB_FLASH_EXT2:-0}" == "1" ]] ; then
-		einfo "Adding EXT2 support"
+einfo "Adding EXT2 support"
 		usb_flash=1
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_EXT2_FS"
 	fi
 	if [[ "${USB_FLASH_EXT4:-1}" == "1" ]] ; then
-		einfo "Adding EXT4 support"
+einfo "Adding EXT4 support"
 		usb_flash=1
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_EXT4_FS"
 	fi
 	if [[ "${USB_FLASH_F2FS:-0}" == "1" ]] ; then
-		einfo "Adding F2FS support"
+einfo "Adding F2FS support"
 		usb_flash=1
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_F2FS_FS"
@@ -5280,14 +5324,14 @@ ot-kernel_set_kconfig_usb_flash_disk() {
 
 	fi
 	if [[ "${USB_FLASH_UDF:-0}" == "1" ]] ; then
-		einfo "Adding UDF support"
+einfo "Adding UDF support"
 		usb_flash=1
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_UDF_FS"
 	fi
 
 	if [[ "${usb_flash}" == "1" ]] ; then
-		einfo "Adding USB thumb drive support"
+einfo "Adding USB thumb drive support"
 		ot-kernel_y_configopt "CONFIG_SCSI"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
@@ -5301,7 +5345,7 @@ ot-kernel_set_kconfig_usb_flash_disk() {
 # Add support for USB mass storage
 ot-kernel_set_kconfig_usb_mass_storage() {
 	[[ "${USB_MASS_STORAGE:-0}" == "1" ]] || return
-	einfo "Adding USB mass storage support"
+einfo "Adding USB mass storage support"
 	local hosts=( $(grep -r "config "  | cut -f 2 -d " ") )
 	local not_tristate=(
 		REALTEK_AUTOPM
@@ -5433,7 +5477,7 @@ ot-kernel_set_kconfig_set_timer_hz() {
 	ot-kernel_y_configopt "CONFIG_HZ_${v}"
 	ot-kernel_set_configopt "CONFIG_HZ" "${v}"
 	local x=$(grep -r -e "CONFIG_HZ=" "${BUILD_DIR}/.config" | cut -f 2 -d "=")
-	einfo "Timer frequency is ${x} Hz"
+einfo "Timer frequency is ${x} Hz"
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_set_timer_hz
@@ -5573,7 +5617,7 @@ ot-kernel_set_kconfig_endianess() {
 		ot-kernel_n_configopt "CONFIG_CPU_BIG_ENDIAN"
 		ot-kernel_y_configopt "CONFIG_CPU_LITTLE_ENDIAN"
 	fi
-	einfo "Using ${endianess} endian"
+einfo "Using ${endianess} endian"
 }
 
 # @FUNCTION: ot-kernel_get_lib_bitness
@@ -5609,31 +5653,31 @@ ot-kernel_set_kconfig_abis() {
 	# Assumes stage3 tarball installed
 	[[ -e "/usr/lib/libbz2.so" ]] && lib_bitness=$(ot-kernel_get_lib_bitness $(readlink -f /usr/lib/libbz2.so))
 	if [[ "${arch}" =~ "alpha" ]] ; then
-		einfo "Added support for alpha"
+einfo "Added support for alpha"
 		ot-kernel_y_configopt "CONFIG_64BIT"
 	fi
 	if [[ "${arch}" =~ "arm" ]] ; then
 		if [[ "${OT_KERNEL_ABIS,,}" == "arm64" \
 			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "64" ) \
 			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib64" ) ]] ; then
-			einfo "Added support for arm64"
+einfo "Added support for arm64"
 			ot-kernel_y_configopt "CONFIG_64BIT"
 			if [[ "${OT_KERNEL_ABIS,,}" =~ ("arm "|"arm"$) ]] ; then
 				einfo "Added support for arm"
 				ot-kernel_y_configopt "CONFIG_COMPAT"
 			fi
 		else
-			einfo "Added support for arm"
+einfo "Added support for arm"
 			ot-kernel_n_configopt "CONFIG_64BIT"
 		fi
 		ot-kernel_set_kconfig_endianess
 	fi
 	if [[ "${arch}" =~ "ia64" ]] ; then
-		einfo "Added support for ia64"
+einfo "Added support for ia64"
 		ot-kernel_y_configopt "CONFIG_64BIT"
 	fi
 	if [[ "${arch}" =~ "m68k" ]] ; then
-		einfo "Added support for m68k"
+einfo "Added support for m68k"
 		ot-kernel_unset_configopt "CONFIG_64BIT"
 		ot-kernel_n_configopt "CONFIG_CPU_BIG_ENDIAN"
 	fi
@@ -5645,17 +5689,17 @@ ot-kernel_set_kconfig_abis() {
 			ot-kernel_y_configopt "CONFIG_64BIT"
 			if [[ "${OT_KERNEL_ABIS,,}" =~ "o32" \
 				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" ) ]] ; then
-				einfo "Added support for o32"
+einfo "Added support for o32"
 				ot-kernel_n_configopt "CONFIG_MIPS32_O32"
 			fi
 			if [[ "${OT_KERNEL_ABIS,,}" =~ "n32" \
 				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib32" ) ]] ; then
-				einfo "Added support for n32"
+einfo "Added support for n32"
 				ot-kernel_n_configopt "CONFIG_MIPS32_N32"
 			fi
 			if [[ "${OT_KERNEL_ABIS,,}" =~ "n64" \
 				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib64" ) ]] ; then
-				einfo "Added support for n64"
+einfo "Added support for n64"
 			fi
 		else
 			ot-kernel_y_configopt "CONFIG_32BIT"
@@ -5664,7 +5708,7 @@ ot-kernel_set_kconfig_abis() {
 		ot-kernel_set_kconfig_endianess
 	fi
 	if [[ "${arch}" =~ "parisc" ]] ; then
-		einfo "Added support for hppa"
+einfo "Added support for hppa"
 		if [[ "${lib_bitness}" == "64" ]] ; then
 			ot-kernel_y_configopt "CONFIG_PA8X00"
 			ot-kernel_y_configopt "CONFIG_64BIT"
@@ -5674,12 +5718,12 @@ ot-kernel_set_kconfig_abis() {
 		if [[ "${OT_KERNEL_ABIS,,}" =~ "ppc64" \
 				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "64" ) \
 				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib64" ) ]] ; then
-			einfo "Added support for ppc64"
+einfo "Added support for ppc64"
 			ot-kernel_y_configopt "CONFIG_64BIT"
 			if [[ "${OT_KERNEL_ABIS,,}" =~ "ppc" \
 				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "32" ) \
 				]] ; then
-				einfo "Added support for ppc"
+einfo "Added support for ppc"
 				ot-kernel_y_configopt "CONFIG_COMPAT"
 			fi
 		else
@@ -5699,22 +5743,22 @@ ot-kernel_set_kconfig_abis() {
 			ot-kernel_n_configopt "CONFIG_ARCH_RV32I"
 			if [[ "${OT_KERNEL_ABIS,,}" =~ "lp64d" \
 				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib64/lp64d" ) ]] ; then
-				einfo "Added support for lp64d"
+einfo "Added support for lp64d"
 				ot-kernel_y_configopt "CONFIG_FPU"
 			fi
 			if [[ "${OT_KERNEL_ABIS,,}" =~ "lp64" \
 				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib64/lp64" ) ]] ; then
-				einfo "Added support for lp64"
+einfo "Added support for lp64"
 				:
 			fi
 			if [[ "${OT_KERNEL_ABIS,,}" =~ "ilp32d" \
 					|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib32/ilp32d" ) ]] ; then
-				einfo "Added support for ilp32d"
+einfo "Added support for ilp32d"
 				ot-kernel_y_configopt "CONFIG_FPU"
 			fi
 			if [[ "${OT_KERNEL_ABIS,,}" =~ "ilp32" \
 				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib32/ilp32" ) ]] ; then
-				einfo "Added support for ilp32"
+einfo "Added support for ilp32"
 				:
 			fi
 		else
@@ -5722,18 +5766,18 @@ ot-kernel_set_kconfig_abis() {
 			ot-kernel_y_configopt "CONFIG_ARCH_RV32I"
 			if [[ "${OT_KERNEL_ABIS,,}" =~ "ilp32d" \
 				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib32/ilp32d" ) ]] ; then
-				einfo "Added support for ilp32d"
+einfo "Added support for ilp32d"
 				ot-kernel_y_configopt "CONFIG_FPU"
 			fi
 		fi
 	fi
 	if [[ "${arch}" == "s390" ]] ; then
-		einfo "Added support for s390x"
+einfo "Added support for s390x"
 		ot-kernel_y_configopt "CONFIG_64BIT"
 		if [[ "${OT_KERNEL_ABIS,,}" =~ ("s390"$|"s390 ") \
 			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "32" ) \
 			]] ; then
-			einfo "Added support for s390"
+einfo "Added support for s390"
 			ot-kernel_y_configopt "CONFIG_COMPAT"
 		fi
 		ot-kernel_y_configopt "CONFIG_CPU_BIG_ENDIAN"
@@ -5743,35 +5787,35 @@ ot-kernel_set_kconfig_abis() {
 		if [[ "${OT_KERNEL_ABIS,,}" =~ "sparc64" \
 			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "64" ) \
 			]] ; then
-			einfo "Added support for sparc64"
+einfo "Added support for sparc64"
 			ot-kernel_y_configopt "CONFIG_64BIT"
 		else
-			einfo "Added support for sparc32"
+einfo "Added support for sparc32"
 			ot-kernel_n_configopt "CONFIG_64BIT"
 		fi
 		ot-kernel_y_configopt "CONFIG_CPU_BIG_ENDIAN"
 		ot-kernel_unset_configopt "CONFIG_CPU_LITTLE_ENDIAN"
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
-		einfo "Added support for x86_64"
+einfo "Added support for x86_64"
 		ot-kernel_y_configopt "CONFIG_64BIT"
 		ot-kernel_y_configopt "CONFIG_X86_32"
 		ot-kernel_unset_configopt "CONFIG_X86_64"
 		if [[ "${OT_KERNEL_ABIS,,}" =~ "x32" \
 			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/libx32" ) ]] ; then
-			einfo "Added support for x32"
+einfo "Added support for x32"
 			ot-kernel_y_configopt "CONFIG_X86_X32"
 		fi
 		if [[ "${OT_KERNEL_ABIS,,}" =~ "x86" \
 			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -e "/usr/lib32" ) \
 			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "32" ) \
 			]] ; then
-			einfo "Added support for x86"
+einfo "Added support for x86"
 			ot-kernel_y_configopt "CONFIG_IA32_EMULATION"
 		fi
 	fi
 	if [[ "${arch}" == "x86" ]] ; then
-		einfo "Added support for x86"
+einfo "Added support for x86"
 		ot-kernel_unset_configopt "CONFIG_64BIT"
 		ot-kernel_y_configopt "CONFIG_X86_32"
 		ot-kernel_unset_configopt "CONFIG_X86_64"
@@ -5910,10 +5954,10 @@ ot-kernel_set_iosched() {
 			&& [[ "${s}" =~ ("cfq"|"deadline"|"noop") ]] ; then
 			s_first="${s}"
 		fi
-		einfo "Enabled ${s} as an I/O scheduler"
+einfo "Enabled ${s} as an I/O scheduler"
 	done
 	if ver_test "${K_MAJOR_MINOR}" -lt 5 && [[ -n "${s_first}" ]] ; then
-		einfo "${s_first} is set as the default I/O scheduler"
+einfo "${s_first} is set as the default I/O scheduler"
 		ot-kernel_set_configopt "CONFIG_DEFAULT_IOSCHED" "\"${s_first}\""
 	elif ver_test "${K_MAJOR_MINOR}" -lt 5 && [[ -z "${s_first}" ]] ; then
 		#
@@ -5927,7 +5971,7 @@ ot-kernel_set_iosched() {
 			ot-kernel_y_configopt "CONFIG_IOSCHED_CFQ"
 			s_first="cfq"
 		fi
-		einfo "${s_first} is set as the default I/O scheduler"
+einfo "${s_first} is set as the default I/O scheduler"
 		ot-kernel_set_configopt "CONFIG_DEFAULT_IOSCHED" "\"${s_first}\""
 	fi
 
@@ -6061,13 +6105,13 @@ ot-kernel_iosched_lowest_power() {
 # Configures the default power policies and latencies for the kernel.
 ot-kernel_set_kconfig_work_profile() {
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
-	einfo "Using the ${work_profile} work profile"
+einfo "Using the ${work_profile} work profile"
 	if [[ -z "${work_profile}" ]] ; then
 		:
 	elif [[ "${work_profile}" =~ ("custom"|"manual") ]] ; then
 		:
 	else
-		einfo "Changed .config to use the ${work_profile} work profile"
+einfo "Changed .config to use the ${work_profile} work profile"
 		ot-kernel_set_kconfig_work_profile_init
 	fi
 
@@ -6478,7 +6522,7 @@ ewarn
 # Sets the kernel config for ZSWAP (aka compressed swap)
 ot-kernel_set_kconfig_zswap() {
 	if [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "MANUAL" ]] ; then
-		einfo "Using manual zswap compressor"
+einfo "Using manual zswap compressor"
 	elif [[ -n "${OT_KERNEL_ZSWAP_COMPRESSOR}" ]] ; then
 		ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_DEFLATE"
 		ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZO"
@@ -6487,28 +6531,28 @@ ot-kernel_set_kconfig_zswap() {
 		ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4HC"
 		ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD"
 		if [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "DEFLATE" ]] ; then
-			einfo "Using deflate for zswap"
+einfo "Using deflate for zswap"
 			ot-kernel_y_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_DEFLATE"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_DEFLATE"
 		elif [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "LZO" \
 			|| "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "auto" ]] ; then
-			einfo "Using lzo for zswap"
+einfo "Using lzo for zswap"
 			ot-kernel_y_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZO"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_LZO"
 		elif [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "842" ]] ; then
-			einfo "Using 842 for zswap"
+einfo "Using 842 for zswap"
 			ot-kernel_y_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_842"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_842"
 		elif [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "LZ4" ]] ; then
-			einfo "Using lz4 for zswap"
+einfo "Using lz4 for zswap"
 			ot-kernel_y_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_LZ4"
 		elif [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "LZ4HC" ]] ; then
-			einfo "Using lz4hc for zswap"
+einfo "Using lz4hc for zswap"
 			ot-kernel_y_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4HC"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_LZ4HC"
 		elif [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "ZSTD" ]] ; then
-			einfo "Using zstd for zswap"
+einfo "Using zstd for zswap"
 			ot-kernel_y_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ZSTD"
 		fi
@@ -6519,11 +6563,11 @@ ot-kernel_set_kconfig_zswap() {
 		ot-kernel_y_configopt "CONFIG_ZSWAP"
 		ot-kernel_y_configopt "CONFIG_ZSWAP_DEFAULT_ON"
 	else
-		einfo "Using manual zswap compressor"
+einfo "Using manual zswap compressor"
 	fi
 
 	if [[ "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "MANUAL" ]] ; then
-		einfo "Using manual zswap allocator"
+einfo "Using manual zswap allocator"
 	elif [[ -n "${OT_KERNEL_ZSWAP_ALLOCATOR}" ]] ; then
 		ot-kernel_unset_configopt "CONFIG_ZPOOL"
 		ot-kernel_unset_configopt "CONFIG_ZSWAP"
@@ -6536,20 +6580,20 @@ ot-kernel_set_kconfig_zswap() {
 			|| "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "XN" \
 			|| "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "auto" \
 			]] ; then
-			einfo "Using zsmalloc for zswap"
+einfo "Using zsmalloc for zswap"
 			ot-kernel_y_configopt "CONFIG_MMU"
 			ot-kernel_y_configopt "CONFIG_ZSWAP_ZPOOL_DEFAULT_ZSMALLOC"
 			ot-kernel_y_configopt "CONFIG_ZSMALLOC"
 		elif [[ "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "ZBUD" \
 			|| "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "X2" \
 			]] ; then
-			einfo "Using zbud for zswap"
+einfo "Using zbud for zswap"
 			ot-kernel_y_configopt "CONFIG_ZPOOL"
 			ot-kernel_y_configopt "CONFIG_ZSWAP_ZPOOL_DEFAULT_ZBUD"
 			ot-kernel_y_configopt "CONFIG_ZBUD"
 		elif [[ "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "Z3FOLD" \
 			|| "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "X3" ]] ; then
-			einfo "Using z3fold for zswap"
+einfo "Using z3fold for zswap"
 			ot-kernel_y_configopt "CONFIG_ZPOOL"
 			ot-kernel_y_configopt "CONFIG_ZSWAP_ZPOOL_DEFAULT_Z3FOLD"
 			ot-kernel_y_configopt "CONFIG_Z3FOLD"
@@ -6561,7 +6605,7 @@ ot-kernel_set_kconfig_zswap() {
 		ot-kernel_y_configopt "CONFIG_ZSWAP"
 		ot-kernel_y_configopt "CONFIG_ZSWAP_DEFAULT_ON"
 	else
-		einfo "Using manual zswap allocator"
+einfo "Using manual zswap allocator"
 	fi
 }
 
@@ -6576,7 +6620,7 @@ ot-kernel_convert_tristate_m() {
 	local symbols=(
 		$(grep -E -e "^CONFIG_[0-9A-Z_]+=(y|m|n)" "${orig}" | sed -E -e "s/=(y|n|m)//g")
 	)
-	einfo "Changing .config from CONFIG...=y to CONFIG...=m"
+einfo "Changing .config from CONFIG...=y to CONFIG...=m"
 	for s in ${symbols[@]} ; do
 		if grep -q -e "^${s}=m" "${conv}" && grep -q -e "^${s}=y" "${bak}" ; then
 			einfo "${s}=m"
@@ -6593,7 +6637,7 @@ ot-kernel_convert_tristate_y() {
 		$(grep -E -e "^CONFIG_[0-9A-Z_]+=(y|m|n)" "${orig}" | sed -E -e "s/=(y|n|m)//g")
 	)
 	symbols=($(echo "${symbols[@]}" | tr " " "\n" | sort))
-	einfo "Changing .config from CONFIG...=m to CONFIG...=y"
+einfo "Changing .config from CONFIG...=m to CONFIG...=y"
 	for s in ${symbols[@]} ; do
 		sed -r -i -e "s/${s}=[ymn]/${s}=y/g" "${orig}" || die
 	done
@@ -6637,9 +6681,11 @@ ot-kernel_fix_config_for_boot() {
 		&& "${subsystems[@]}" =~ "drivers/gpu" ]] ; then
 einfo "Early KMS is enabled"
 	else
+ewarn
 ewarn "Detected Early KMS is disabled.  For early KMS, add"
 ewarn "drivers/char/agp, drivers/gpu, drivers/video, to OT_KERNEL_BOOT_SUBSYSTEMS_APPEND"
 ewarn "or similar."
+ewarn
 	fi
 
 	if [[ -n "${OT_KERNEL_BOOT_KOPTIONS}" ]] ; then
@@ -6654,7 +6700,7 @@ ewarn "or similar."
 	fi
 
 	symbols=($(echo "${symbols[@]}" | tr " " "\n" | sort))
-	einfo "Fixing config for boot"
+einfo "Fixing config for boot"
 	for s in ${symbols[@]} ; do
 		if grep -q -e "^${s}=m" "${orig}" ; then
 			einfo "${s}=y"
@@ -6675,7 +6721,7 @@ ewarn "or similar."
 # Fixes kernel config when OT_KERNEL_BUILD_ALL_MODULES_AS=m or fixes
 # undocumented genkernel dependency requirements for the kernel.
 ot-kernel_set_kconfig_eudev() {
-	einfo "Fixing config for genkernel"
+einfo "Fixing config for genkernel"
 	# Genkernel does not add the unix module
 	# This is required for initramfs's eudev (udevadm)
 	ot-kernel_y_configopt "CONFIG_NET"
@@ -6690,7 +6736,7 @@ ot-kernel_set_kconfig_build_all_modules_as() {
 	local bak="${BUILD_DIR}/.config.orig"
 	local conv="${BUILD_DIR}/.config.conv"
 	if ! grep -q -e "^CONFIG_MODULES=y" "${BUILD_DIR}/.config" ; then
-		einfo "Detected modules support disabled"
+einfo "Detected modules support disabled"
 		ot-kernel_convert_tristate_y
 		return
 	fi
@@ -6700,7 +6746,7 @@ ot-kernel_set_kconfig_build_all_modules_as() {
 	elif [[ "${OT_KERNEL_BUILD_ALL_MODULES_AS}" == "y" ]] ; then
 		ot-kernel_convert_tristate_y
 	else
-		einfo "Building all kernel options as manual"
+einfo "Building all kernel options as manual"
 	fi
 	rm "${bak}" "${conv}" 2>/dev/null
 }
@@ -6733,7 +6779,7 @@ ot-kernel_menuconfig() {
 			if [[ -n "${menuconfig_ui}" ]] ; then
 				menuconfig_colors="MENUCONFIG_COLOR=${OT_KERNEL_MENUCONFIG_COLORS}"
 			fi
-			einfo "Running:  ARCH=${arch} make ${menuconfig_ui} ${menuconfig_colors} ${args[@]}"
+einfo "Running:  ARCH=${arch} make ${menuconfig_ui} ${menuconfig_colors} ${args[@]}"
 			cat <<EOF > "${BUILD_DIR}/menuconfig.sh" || die
 #!/bin/bash
 export PATH="/usr/lib/llvm/${llvm_slot}/bin:\${PATH}"
@@ -7184,16 +7230,16 @@ ot-kernel_src_configure_assisted() {
 	einfo "Using assisted config mode"
 	local path_config="${BUILD_DIR}/.config"
 	if [[ -e "${config}" ]] ; then
-		einfo "Copying the savedconfig:  ${config} -> ${path_config}"
+einfo "Copying the savedconfig:  ${config} -> ${path_config}"
 		cat "${config}" > "${path_config}" || die
-		einfo "Auto updating the .config"
-		einfo "Running:  make olddefconfig ${args[@]}"
+einfo "Auto updating the .config"
+einfo "Running:  make olddefconfig ${args[@]}"
 		make olddefconfig "${args[@]}" || die
 	fi
 
 	local is_default_config=0
 	if [[ ! -e "${path_config}" ]] ; then
-		ewarn "Missing ${path_config} so generating a new default config."
+ewarn "Missing ${path_config} so generating a new default config."
 		make defconfig "${args[@]}" || die
 		is_default_config=1
 		[[ -z "${boot_decomp}" ]] && boot_decomp="default" # Reason why is for compatibility issues.
@@ -7201,9 +7247,7 @@ ot-kernel_src_configure_assisted() {
 		[[ -z "${boot_decomp}" ]] && boot_decomp="manual" # Assumes it was tested and working.
 	fi
 
-	einfo
-	einfo "Changing config options for -${extraversion}"
-	einfo
+einfo "Changing config options for -${extraversion}"
 	[[ -e "${path_config}" ]] || die ".config is missing"
 
 	if [[ "${arch}" =~ "x86" ]] ; then
@@ -7266,7 +7310,7 @@ einfo
 	is_firmware_ready
 
 	if ot-kernel_use disable_debug ; then
-		einfo "Disabling all debug and shortening logging buffers"
+einfo "Disabling all debug and shortening logging buffers"
 		./disable_debug || die
 		rm "${BUILD_DIR}/.config.dd_backup" 2>/dev/null
 	fi
@@ -7308,8 +7352,8 @@ einfo
 		fi
 	fi
 
-	einfo "Updating the .config for defaults for the newly enabled options."
-	einfo "Running:  make olddefconfig ${args[@]}"
+einfo "Updating the .config for defaults for the newly enabled options."
+einfo "Running:  make olddefconfig ${args[@]}"
 	make olddefconfig "${args[@]}" || die
 	ot-kernel_menuconfig "post" # Uses llvm_slot
 }
@@ -7318,15 +7362,15 @@ einfo
 # @DESCRIPTION:
 # More customized
 ot-kernel_src_configure_custom() {
-	einfo "Using custom config mode"
+einfo "Using custom config mode"
 	local path_config="${BUILD_DIR}/.config"
 	if [[ -e "${config}" ]] ; then
-		einfo "Copying the savedconfig:  ${config} -> ${path_config}"
+einfo "Copying the savedconfig:  ${config} -> ${path_config}"
 		cat "${config}" > "${path_config}" || die
 	fi
 
 	if [[ ! -e "${path_config}" ]] ; then
-		ewarn "Missing ${path_config} so generating a new default config."
+ewarn "Missing ${path_config} so generating a new default config."
 		make defconfig "${args[@]}" || die
 	fi
 
@@ -7433,7 +7477,7 @@ get_gcc_slot() {
 # Setup toolchain args to pass to make
 ot-kernel_setup_tc() {
 	# The make command likes to complain before the build when trying to make menuconfig.
-	einfo "Setting up the build toolchain"
+einfo "Setting up the build toolchain"
 	args+=(
 		INSTALL_MOD_PATH="${ED}"
 		INSTALL_PATH="${ED}${kernel_dir}"
@@ -7455,7 +7499,7 @@ ot-kernel_setup_tc() {
 		&& ! tc-is-cross-compiler \
 		&& is_clang_ready \
 	; then
-		einfo "Using Clang ${llvm_slot}"
+einfo "Using Clang ${llvm_slot}"
 		ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" || die "sys-devel/llvm:${llvm_slot} is missing"
 		# Assumes we are not cross-compiling or we are only building on CBUILD=CHOST.
 		args+=(
@@ -7479,7 +7523,7 @@ ot-kernel_setup_tc() {
 		LD=ld.lld
 	else
 		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check"
-		einfo "Using GCC ${gcc_slot}"
+einfo "Using GCC ${gcc_slot}"
 		args+=(
 			CC=${CHOST}-gcc-${gcc_slot}
 			CXX=${CHOST}-g++-${gcc_slot}
@@ -7503,19 +7547,25 @@ ot-kernel_setup_tc() {
 
 	#filter-flags '-march=*' '-mtune=*' '-flto*' '-fuse-ld=*' '-f*inline*'
 	strip-unsupported-flags
-	einfo "Kernel CFLAGS:"
-	einfo "CFLAGS=${CFLAGS}"
-	einfo "CXXFLAGS=${CXXFLAGS}"
-	einfo "LDFLAGS=${LDFLAGS}"
+einfo
+einfo "Kernel CFLAGS:"
+einfo
+einfo "CFLAGS=${CFLAGS}"
+einfo "CXXFLAGS=${CXXFLAGS}"
+einfo "LDFLAGS=${LDFLAGS}"
+einfo
 
 	if [[ -z "${HOSTCFLAGS}" ]] ; then
 		HOSTCFLAGS="${CFLAGS}"
 		HOSTLDFLAGS="${LDFLAGS}"
 	fi
 
-	einfo "Host programs CFLAGS:"
-	einfo "HOSTCFLAGS=${HOSTCFLAGS}"
-	einfo "HOSTLDFLAGS=${HOSTLDFLAGS}"
+einfo
+einfo "Host programs CFLAGS:"
+einfo
+einfo "HOSTCFLAGS=${HOSTCFLAGS}"
+einfo "HOSTLDFLAGS=${HOSTLDFLAGS}"
+einfo
 	if tc-is-cross-compiler ; then
 		args+=(
 			"'HOSTCFLAGS=-O1 -pipe'"
@@ -7600,7 +7650,7 @@ ot-kernel_uefi_sign_and_install() {
 	local dbcrt="${OT_KERNEL_UEFI_DBCERT}" # folder containing db.crt
 	local skpath="${1}"
 	local dkpath="${2}"
-	einfo "Signing kernel"
+einfo "Signing kernel"
 	sbsign --cert "${dbcert}" \
 		--key "${dbkey}" \
 		-o "${dkpath}.t" \
@@ -7623,7 +7673,7 @@ ot-kernel_efi_sign_and_install() {
 	ot-kernel_has_version "dev-libs/nss[utils]" || die "You must emerge dev-libs/nss[utils]"
 	[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
 	[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
-	einfo "Sign prepare:"
+einfo "Sign prepare:"
 	mkdir -p "${certdb_path}" || die
 	# Populate certdb using public key \
 	certutil \
@@ -7638,14 +7688,14 @@ ot-kernel_efi_sign_and_install() {
 		-sign "${OT_KERNEL_PRIVATE_KEY}" \
 		"${signed_attrs}" \
 		> "${signed_attrs_sig}" || die
-	einfo "Signing kernel:"
+einfo "Signing kernel:"
 	pesign -n "${certdb_path}" \
 		-c cert \
 		-i "${skpath}" \
 		-I "${signed_attrs}" \
 		-R "${signed_attrs_sig}" \
 		-o "${dkpath}" || die
-	einfo "Signatures:"
+einfo "Signatures:"
 	pesign -S \
 		-i "${dkpath}" || die
 }
@@ -7731,29 +7781,29 @@ ot-kernel_install_built_kernel() {
 	# FIXME:  Complete signing kernel
 	local kimage_dpath="${name}-${PV}-${extraversion}-${arch}"
 	if true ; then
-		einfo "Installing unsigned kernel"
+einfo "Installing unsigned kernel"
 		newins "${kimage_spath}" "${kimage_dpath}"
 	elif [[ "${OT_KERNEL_SIGN_KERNEL}" =~ "uefi" && -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" && -n "${OT_KERNEL_EFI_PARTITION}" ]] \
 		&& ot-kernel_has_uefi_prereqs \
 		&& grep -q -e "^CONFIG_EFI_STUB=y" "${BUILD_DIR}/.config" ; then
 		[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
 		[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
-		einfo "Signing and installing kernel for UEFI"
+einfo "Signing and installing kernel for UEFI"
 		ot-kernel_uefi_sign_and_install
 	elif [[ "${OT_KERNEL_SIGN_KERNEL}" =~ "efi" && -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" ]] \
 		&& ot-kernel_has_efi_prereqs \
 		&& grep -q -e "^CONFIG_EFI_STUB=y" "${BUILD_DIR}/.config" ; then
 		[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
 		[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
-		einfo "Signing and installing kernel for EFI"
+einfo "Signing and installing kernel for EFI"
 		ot-kernel_efi_sign_and_install
 	elif [[ "${OT_KERNEL_SIGN_KERNEL}" =~ "kexec" && -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" ]] ; then
 		[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
 		[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
-		einfo "Signing and installing kernel for kexec"
+einfo "Signing and installing kernel for kexec"
 		ot-kernel_kexec_sign_and_install
 	else
-		einfo "Installing unsigned kernel"
+einfo "Installing unsigned kernel"
 		newins "${kimage_spath}" "${kimage_dpath}"
 	fi
 	export IFS=$'\n'
@@ -7777,7 +7827,7 @@ ot-kernel_install_built_kernel() {
 # Installs the kernel source code.  Installing the source code implies
 # installing the copyright notices.
 ot-kernel_install_source_code() {
-	einfo "Installing the kernel sources"
+einfo "Installing the kernel sources"
 	if [[ "${OT_KERNEL_FAST_SOURCE_CODE_INSTALL:-0}" == "1" ]] ; then
 		cp -a "${ED}/usr/src/linux-${PV}-${extraversion}/.config" "${T}"
 		rm -rf "${ED}/usr/src/linux-${PV}-${extraversion}"
@@ -7789,8 +7839,10 @@ ot-kernel_install_source_code() {
 		doins -r "${BUILD_DIR}" # Sanitize file permissions
 
 		local nprocs=$(ot-kernel_get_nprocs)
-		einfo "nprocs:  ${nprocs}"
-		einfo "Restoring +x bit"
+einfo
+einfo "nprocs:  ${nprocs}"
+einfo "Restoring +x bit"
+einfo
 		cd "${ED}/usr/src/linux-${PV}-${extraversion}" || die
 		export IFS=$'\n'
 		local f
@@ -7854,9 +7906,9 @@ ot-kernel_build_kernel() {
 			fi
 
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
-				einfo "Building PGI"
+einfo "Building PGI"
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_dpath}" ]] ; then
-				einfo "Merging PGT profiles"
+einfo "Merging PGT profiles"
 				which llvm-profdata 2>/dev/null 1>/dev/null || die "Cannot find llvm-profdata"
 				local used_profraw_v=$(od -An -j 8 -N 1 -t d1 "${profraw_dpath}" | grep -E -o -e "[0-9]+")
 				local expected_profraw_v=$(grep -r -e "INSTR_PROF_RAW_VERSION" "/usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc" \
@@ -7878,21 +7930,21 @@ eerror
 					"${profraw_dpath}" || die "PGO profile merging failed"
 				pgo_phase="${PGO_PHASE_PGO}"
 				echo "${PGO_PHASE_PGO}" > "${pgo_phase_statefile}" || die
-				einfo "Building PGO"
+einfo "Building PGO"
 				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
-				einfo "Building PGO"
+einfo "Building PGO"
 				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && ! -e "${profraw_dpath}" ]] ; then
-				ewarn
-				ewarn "Missing ${profraw_spath}.  Delete the ${OT_KERNEL_PGO_DATA_DIR} folder"
-				ewarn "to restart PGO or copy the profdata file into ${OT_KERNEL_PGO_DATA_DIR}."
-				ewarn "Assuming builder machine, continuing to build without PGO."
-				ewarn
+ewarn
+ewarn "Missing ${profraw_spath}.  Delete the ${OT_KERNEL_PGO_DATA_DIR} folder"
+ewarn "to restart PGO or copy the profdata file into ${OT_KERNEL_PGO_DATA_DIR}."
+ewarn "Assuming builder machine, continuing to build without PGO."
+ewarn
 			fi
 		fi
 
-		einfo "Running:  make all ${args[@]}"
+einfo "Running:  make all ${args[@]}"
 		dodir "${kernel_dir}"
 		make all "${args[@]}" || die
 	fi
@@ -7944,16 +7996,16 @@ ot-kernel_src_compile() {
 		cd "${BUILD_DIR}" || die
 
 		# Summary for this compile
-		einfo
-		einfo "Compiling with the following:"
-		einfo
-		einfo "ARCH:  ${arch}"
-		einfo "Boot decompressor:  ${boot_decomp}"
-		einfo "Build flag:  ${build_flag}"
-		einfo "Config:  ${path_config}"
-		einfo "EXTRAVERSION:  ${extraversion}"
-		einfo "Target triple:  ${target_triple}"
-		einfo
+einfo
+einfo "Compiling with the following:"
+einfo
+einfo "ARCH:  ${arch}"
+einfo "Boot decompressor:  ${boot_decomp}"
+einfo "Build flag:  ${build_flag}"
+einfo "Config:  ${path_config}"
+einfo "EXTRAVERSION:  ${extraversion}"
+einfo "Target triple:  ${target_triple}"
+einfo
 
 		local args=()
 		if [[ -n "${OT_KERNEL_VERBOSITY}" ]] ; then
@@ -7980,7 +8032,7 @@ ot-kernel_keep_keys() {
 	)
 	cp -a ${files[@]} \
 		"${d}" || die
-	einfo "Wiping keys securely"
+einfo "Wiping keys securely"
 	shred -f ${files[@]} || die
 	sync
 }
@@ -7999,7 +8051,7 @@ ot-kernel_restore_keys() {
 	cp -a ${files[@]} \
 		"${BUILD_DIR}/certs" || die
 	chmod 0600 "${BUILD_DIR}/certs/signing_key.pem" || die
-	einfo "Wiping keys securely"
+einfo "Wiping keys securely"
 	shred -f ${files[@]} || die
 	sync
 }
@@ -8206,7 +8258,7 @@ ewarn "Preserving copyright notices.  This may take hours."
 
 			ot-kernel_install_built_kernel # It works the same as make install.
 			cd "${BUILD_DIR}" || die
-			einfo "Running:  make modules_install ${args[@]}"
+einfo "Running:  make modules_install ${args[@]}"
 			make modules_install "${args[@]}" || die
 			if [[ "${arch}" =~ "arm" ]] ; then
 				make dtbs_install "${args[@]}" || die
@@ -8216,7 +8268,7 @@ ewarn "Preserving copyright notices.  This may take hours."
 			fi
 
 			local default_config="/etc/kernels/kernel-config-${K_MAJOR_MINOR}-${extraversion}-${arch}"
-			einfo "Saving the config for ${extraversion} to ${default_config}"
+einfo "Saving the config for ${extraversion} to ${default_config}"
 			insinto /etc/kernels
 			newins "${BUILD_DIR}/.config" $(basename "${default_config}")
 			# dosym src_relpath_real dest_abspath_symlink
@@ -8227,7 +8279,7 @@ ewarn "Preserving copyright notices.  This may take hours."
 			dosym $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${PV})-${extraversion}-${arch} \
 				"/usr/src/linux-${PV}-${extraversion}/.config"
 
-			einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
+einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
 			make mrproper ARCH=${arch} || die
 			if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" && -z "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
 				ot-kernel_restore_keys
@@ -8325,7 +8377,7 @@ ewarn "Preserving copyright notices.  This may take hours."
 			"/lib/modules/${PV}-${extraversion}-${arch}/source"
 
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
-			einfo "Installing OpenRC iosched script settings"
+einfo "Installing OpenRC iosched script settings"
 			insinto "/etc/ot-sources/iosched/conf"
 			doins "${T}/etc/ot-sources/iosched/conf/${PV}-${extraversion}-${arch}"
 		fi
@@ -8594,7 +8646,7 @@ ot-kernel_pkg_postinst() {
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		if [[ -e "${BUILD_DIR}/certs/signing_key.pem" ]] ; then
 			cd "${BUILD_DIR}" || die
-			einfo "Secure wiping the private key in build directory for ${extraversion}"
+einfo "Secure wiping the private key in build directory for ${extraversion}"
 			# Secure wipe the private keys if custom config bypassing envvars as well
 			shred -f "${BUILD_DIR}/certs/signing_key.pem" || die
 		fi
@@ -9079,7 +9131,7 @@ ewarn "For an overview about RETBleed and affected processors, see"
 ewarn "https://en.wikipedia.org/wiki/Retbleed"
 ewarn
 	if (( ${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL} == 1 )) ; then
-		einfo "Installing tcca"
+einfo "Installing tcca"
 		cat "${FILESDIR}/tcca" \
 			> "${EROOT}/usr/bin/tcca"
 		chmod 0755 "${EROOT}/usr/bin/tcca"
@@ -9087,11 +9139,14 @@ ewarn
 	fi
 }
 
+# @FUNCTION: pkg_prerm
+# @DESCRIPTION:
+# Remove wrappers
 pkg_prerm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
-		einfo "Removing tcca"
+einfo "Removing tcca"
 		rm "${EROOT}/usr/bin/tcca" 2>/dev/null
-		einfo "Removing ot-kernel-iosched"
+einfo "Removing ot-kernel-iosched"
 		rm "${EROOT}/etc/init.d/ot-kernel-iosched" 2>/dev/null
 	fi
 }
