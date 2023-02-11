@@ -22,7 +22,7 @@ CXX_STD="-std=gnu++98"
 GCC_MAX_SLOT_ALT=13 # Without kernel-compiler-patch
 GCC_MAX_SLOT=10 # With kernel-compiler-patch
 GCC_MIN_SLOT=6
-DISABLE_DEBUG_V="1.4.1"
+DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
@@ -32,6 +32,12 @@ PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # O3 config option
 PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow fix
 PATCH_PDS_V="${PATCH_PDS_V:-098i}"
 PATCH_TRESOR_V="3.18.5"
+
+C2TCP_MAJOR_VER="2"
+C2TCP_VER="2.2"
+C2TCP_EXTRA="0521"
+C2TCP_KV="4.13.1"
+C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
 
 CK_KV="4.14.0"
 CK_COMMITS=(
@@ -102,114 +108,163 @@ ${CK_COMMITS_BL_RQSHARE_SPLIT[@]}
 # Obtained from:  date -d "2017-11-12 10:46:13 -0800" +%s
 LINUX_TIMESTAMP=1510512373
 
-IUSE+=" build symlink"
-IUSE+=" bfq-mq +cfs disable_debug +genpatches -genpatches_1510
-muqss pds rt tresor tresor_aesni tresor_i686
-tresor_prompt tresor_sysfs tresor_x86_64 uksm"
+IUSE+="
+bfq-mq build c2tcp +cfs deepcc disable_debug +genpatches -genpatches_1510 muqss
+orca pds rt symlink tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs
+tresor_x86_64 uksm
+"
 REQUIRED_USE+="
-	bfq-mq? ( muqss )
-	genpatches_1510? ( genpatches )
-	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-	tresor_prompt? ( tresor )
-	tresor_aesni? ( tresor )
-	tresor_i686? ( tresor )
-	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-	tresor_x86_64? ( tresor )
+	bfq-mq? (
+		muqss
+	)
+	genpatches_1510? (
+		genpatches
+	)
+	tresor? (
+		^^ (
+			tresor_aesni
+			tresor_i686
+			tresor_x86_64
+		)
+	)
+	tresor_prompt? (
+		tresor
+	)
+	tresor_aesni? (
+		tresor
+	)
+	tresor_i686? (
+		tresor
+	)
+	tresor_sysfs? (
+		|| (
+			tresor_aesni
+			tresor_i686
+			tresor_x86_64
+		)
+	)
+	tresor_x86_64? (
+		tresor
+	)
 "
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizable kernel package with \
+DESCRIPTION="\
+A customizable kernel package with \
 BFQ-mq updates, \
+C2TCP, \
+DeepCC, \
 genpatches, \
 kernel_compiler_patch, \
 MuQSS, \
+Orca, \
 PDS, \
 RT_PREEMPT (-rt), \
 TRESOR, \
-UKSM."
+UKSM. \
+"
 
 inherit ot-kernel
 
 LICENSE+=" GPL-2" # kernel_compiler_patch
 LICENSE+=" GPL-2" # -O3 patches
+LICENSE+=" c2tcp? ( MIT )"
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
-  # third-party CPU scheduler but the stock CPU scheduler.
+	# third-party CPU scheduler but the stock CPU scheduler.
+LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" muqss? ( GPL-2 )"
+LICENSE+=" orca? ( MIT )"
 LICENSE+=" pds? ( GPL-3 )" # \
-  # See https://gitlab.com/alfredchen/PDS-mq/-/blob/master/LICENSE
+	# See https://gitlab.com/alfredchen/PDS-mq/-/blob/master/LICENSE
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
-  # GPL-2 applies to the files being patched \
-  # all-rights-reserved applies to new files introduced and no default license
-  #   found in the project.  (The implementation is based on an academic paper
-  #   from public universities.)
+	# GPL-2 applies to the files being patched \
+	# all-rights-reserved applies to new files introduced and no default license
+	#   found in the project.  (The implementation is based on an academic paper
+	#   from public universities.)
 
 KCP_RDEPEND=" >=sys-devel/gcc-6.5.0"
 
-RDEPEND+=" ${KCP_RDEPEND}"
+RDEPEND+="
+	${KCP_RDEPEND}
+"
+PDEPEND+="
+	orca? (
+		sys-apps/orca
+	)
+	deepcc? (
+		sys-apps/deepcc
+	)
+"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:
 else
-SRC_URI+="
+	SRC_URI+="
 https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
 	   ${KERNEL_PATCH_URIS[@]}
-"
+	"
 fi
 
 if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
-
-SRC_URI+="
-	${O3_CO_SRC_URI}
-	${O3_RO_SRC_URI}
-	${KCP_SRC_4_9_URI}
-	${KCP_SRC_8_1_URI}
-	${GENPATCHES_URI}
-	${CK_SRC_URIS}
-	${PDS_SRC_URI}
-	${RT_SRC_URI}
-	${TRESOR_AESNI_SRC_URI}
-	${TRESOR_I686_SRC_URI}
-	${TRESOR_SYSFS_SRC_URI}
-	${TRESOR_README_SRC_URI}
-	${TRESOR_RESEARCH_PDF_SRC_URI}
-	${UKSM_SRC_URI}
-"
-
-else
-
-SRC_URI+="
-	${O3_CO_SRC_URI}
-	${O3_RO_SRC_URI}
-	${KCP_SRC_4_9_URI}
-	${KCP_SRC_8_1_URI}
-	genpatches? (
-		${GENPATCHES_URI}
-	)
-	muqss? (
+	SRC_URI+="
+		${KCP_SRC_4_9_URI}
+		${KCP_SRC_8_1_URI}
+		${C2TCP_URI}
 		${CK_SRC_URIS}
-	)
-	pds? (
+		${GENPATCHES_URI}
+		${O3_CO_SRC_URI}
+		${O3_RO_SRC_URI}
 		${PDS_SRC_URI}
-	)
-	rt? (
 		${RT_SRC_URI}
-	)
-	tresor? (
 		${TRESOR_AESNI_SRC_URI}
 		${TRESOR_I686_SRC_URI}
 		${TRESOR_SYSFS_SRC_URI}
 		${TRESOR_README_SRC_URI}
 		${TRESOR_RESEARCH_PDF_SRC_URI}
-	)
-	uksm? (
 		${UKSM_SRC_URI}
-	)
-"
-
+	"
+else
+	SRC_URI+="
+		${O3_CO_SRC_URI}
+		${O3_RO_SRC_URI}
+		${KCP_SRC_4_9_URI}
+		${KCP_SRC_8_1_URI}
+		c2tcp? (
+			${C2TCP_URI}
+		)
+		deepcc? (
+			${C2TCP_URI}
+		)
+		genpatches? (
+			${GENPATCHES_URI}
+		)
+		muqss? (
+			${CK_SRC_URIS}
+		)
+		orca? (
+			${C2TCP_URI}
+		)
+		pds? (
+			${PDS_SRC_URI}
+		)
+		rt? (
+			${RT_SRC_URI}
+		)
+		tresor? (
+			${TRESOR_AESNI_SRC_URI}
+			${TRESOR_I686_SRC_URI}
+			${TRESOR_SYSFS_SRC_URI}
+			${TRESOR_README_SRC_URI}
+			${TRESOR_RESEARCH_PDF_SRC_URI}
+		)
+		uksm? (
+			${UKSM_SRC_URI}
+		)
+	"
 fi
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
@@ -360,6 +415,10 @@ ot-kernel_filter_patch_cb() {
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 "" # 2 hunk failure without fuzz
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/uksm-4.14-rebase-for-4.14.246.patch"
+	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/c2tcp-0521-fix-for-4.14.305.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

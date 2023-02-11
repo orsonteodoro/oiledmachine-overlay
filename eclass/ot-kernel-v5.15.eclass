@@ -23,7 +23,7 @@ GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
 LLVM_MAX_SLOT=15
 LLVM_MIN_SLOT=10
-DISABLE_DEBUG_V="1.4.1"
+DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
@@ -46,10 +46,16 @@ PATCH_ZEN_MULTIGEN_LRU_COMMIT_D="f16e06ddde0e38b172d8da03d4fd39c3296b0564" # des
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A^..D.patch \
-#   | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
+#	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
 # from A to D, where a is ancestor and d is descendant.
 # When using that commit list generator, it may miss some commits, so verify all
 # the commits in order.
+
+#C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
+C2TCP_VER="2.2"
+C2TCP_EXTRA="0521"
+C2TCP_KV="4.13.1"
+C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
 
 ZEN_KV="5.15.0"
 PATCH_ZENSAUCE_COMMITS=(
@@ -211,32 +217,81 @@ cf9b1dacabb1ef62481a452f7f169e1679e2da49
 a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 ) # newest
 
-IUSE+=" build symlink"
-IUSE+=" bbrv2 cfi +cfs clang disable_debug futex futex-proton
-+genpatches -genpatches_1510 lto multigen_lru prjc rt
-shadowcallstack tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs
-tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-multigen_lru zen-sauce
-zen-sauce-all -zen-tune"
-IUSE+=" clang-pgo"
-IUSE+=" -exfat"
+IUSE+="
+bbrv2 build c2tcp cfi +cfs clang clang-pgo deepcc disable_debug -exfat futex
+futex-proton +genpatches -genpatches_1510 lto multigen_lru orca prjc rt
+shadowcallstack symlink tresor tresor_aesni tresor_i686 tresor_prompt
+tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
+zen-multigen_lru zen-sauce zen-sauce-all -zen-tune
+"
 REQUIRED_USE+="
-	futex-proton? ( futex )
-	genpatches_1510? ( genpatches )
-	multigen_lru? ( !zen-multigen_lru )
-	shadowcallstack? ( cfi )
-	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-	tresor_aesni? ( tresor )
-	tresor_i686? ( tresor )
-	tresor_prompt? ( tresor )
-	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-	tresor_x86_64? ( tresor )
-	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
-	zen-multigen_lru? ( !multigen_lru )
-	zen-sauce-all? ( zen-sauce )
-	zen-tune? ( zen-sauce )
+	futex-proton? (
+		futex
+	)
+	genpatches_1510? (
+		genpatches
+	)
+	multigen_lru? (
+		!zen-multigen_lru
+	)
+	shadowcallstack? (
+		cfi
+	)
+	tresor? (
+		^^ (
+			tresor_aesni
+			tresor_i686
+			tresor_x86_64
+		)
+	)
+	tresor_aesni? (
+		tresor
+	)
+	tresor_i686? (
+		tresor
+	)
+	tresor_prompt? (
+		tresor
+	)
+	tresor_sysfs? (
+		|| (
+			tresor_aesni
+			tresor_i686
+			tresor_x86_64
+		)
+	)
+	tresor_x86_64? (
+		tresor
+	)
+	tresor_x86_64-256-bit-key-support? (
+		tresor
+		tresor_x86_64
+	)
+	zen-multigen_lru? (
+		!multigen_lru
+	)
+	zen-sauce-all? (
+		zen-sauce
+	)
+	zen-tune? (
+		zen-sauce
+	)
 "
 
-EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
+EXCLUDE_SCS=(
+	alpha
+	amd64
+	arm
+	hppa
+	ia64
+	mips
+	ppc
+	ppc64
+	riscv
+	s390
+	sparc
+	x86
+)
 gen_scs_exclusion() {
 	local a
         for a in ${EXCLUDE_SCS[@]} ; do
@@ -246,26 +301,31 @@ gen_scs_exclusion() {
 REQUIRED_USE+=" "$(gen_scs_exclusion)
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
-REQUIRED_USE+="
-"
+	REQUIRED_USE+="
+	"
 fi
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizable kernel package with \
+DESCRIPTION="\
+A customizable kernel package with \
 BBRv2, \
+C2TCP, \
 CFI, \
 CVE fixes, \
+DeepCC, \
 FUTEX_WAIT_MULTIPLE, \
 genpatches, \
 kernel_compiler_patch, \
 multigen_lru, \
+Orca, \
 Project C (BMQ, PDS-mq), \
 RT_PREEMPT (-rt), \
 UKSM, \
 zen-multigen_lru, \
 zen-sauce, \
-zen-tune."
+zen-tune. \
+"
 
 inherit ot-kernel
 
@@ -273,24 +333,27 @@ LICENSE+=" GPL-2" # kernel_compiler_patch
 LICENSE+=" GPL-2" # -O3 patch
 LICENSE+=" HPND" # See drivers/gpu/drm/drm_encoder.c
 LICENSE+=" bbrv2? ( || ( GPL-2 BSD ) )" # https://github.com/google/bbr/tree/v2alpha#license
+LICENSE+=" c2tcp? ( MIT )"
 LICENSE+=" clang-pgo? ( GPL-2 )"
 # A gcc pgo patch in 2014 exists but not listed for license reasons.
 LICENSE+=" cfi? ( GPL-2 )"
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
-  # third-party CPU scheduler but the stock CPU scheduler.
+	# third-party CPU scheduler but the stock CPU scheduler.
+LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 LICENSE+=" prjc? ( GPL-3 )" # see \
-  # https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
+	# https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )" # same as original file
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" multigen_lru? ( GPL-2 )"
+LICENSE+=" orca? ( MIT )"
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
-  # GPL-2 applies to the files being patched \
-  # all-rights-reserved applies to new files introduced and no defaults license
-  #   found in the project.  (The implementation is based on an academic paper
-  #   from public universities.)
+	# GPL-2 applies to the files being patched \
+	# all-rights-reserved applies to new files introduced and no defaults license
+	#   found in the project.  (The implementation is based on an academic paper
+	#   from public universities.)
 LICENSE+=" zen-tune? ( GPL-2 )"
 
 _seq() {
@@ -306,16 +369,16 @@ _seq() {
 gen_cfi_rdepend() {
 	local min=${1}
 	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
+	local s
+	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}
-			sys-devel/llvm:${v}
-			=sys-devel/clang-runtime-${v}*[compiler-rt,sanitize]
-			>=sys-devel/lld-${v}
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[cfi]
+			=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]
+			=sys-libs/compiler-rt-${s}*
+			=sys-libs/compiler-rt-sanitizers-${s}*[cfi]
+			>=sys-devel/lld-${s}
+			sys-devel/clang:${s}
+			sys-devel/llvm:${s}
 		)
 		     "
 	done
@@ -324,16 +387,16 @@ gen_cfi_rdepend() {
 gen_shadowcallstack_rdepend() {
 	local min=${1}
 	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
+	local s
+	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}
-			sys-devel/llvm:${v}
-			=sys-devel/clang-runtime-${v}*[compiler-rt,sanitize]
-			>=sys-devel/lld-${v}
-			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack?]
+			=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]
+			=sys-libs/compiler-rt-${s}*
+			=sys-libs/compiler-rt-sanitizers-${s}*[shadowcallstack?]
+			>=sys-devel/lld-${s}
+			sys-devel/clang:${s}
+			sys-devel/llvm:${s}
 		)
 		     "
 	done
@@ -342,66 +405,43 @@ gen_shadowcallstack_rdepend() {
 gen_lto_rdepend() {
 	local min=${1}
 	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
+	local s
+	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}
-			sys-devel/llvm:${v}
-			=sys-devel/clang-runtime-${v}*
-			>=sys-devel/lld-${v}
+			=sys-devel/clang-runtime-${s}*
+			>=sys-devel/lld-${s}
+			sys-devel/clang:${s}
+			sys-devel/llvm:${s}
 		)
-		"
+		     "
 	done
 }
 
 gen_clang_pgo_rdepend() {
 	local min=${1}
 	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
+	local s
+	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}
-			sys-devel/llvm:${v}
-			=sys-devel/clang-runtime-${v}*
+			=sys-devel/clang-runtime-${s}*
+			sys-devel/clang:${s}
+			sys-devel/llvm:${s}
 		)
-		"
+		     "
 	done
 }
-
-RDEPEND+="
-	cfi? (
-		arm64? (
-			|| ( $(gen_cfi_rdepend 12 ${LLVM_MAX_SLOT}) )
-		)
-		amd64? (
-			|| ( $(gen_cfi_rdepend 13 ${LLVM_MAX_SLOT}) )
-		)
-	)
-	clang-pgo? (
-		|| ( $(gen_clang_pgo_rdepend 13 ${LLVM_MAX_SLOT}) )
-		sys-kernel/genkernel[clang-pgo]
-	)
-	lto? (
-		|| ( $(gen_lto_rdepend 11 ${LLVM_MAX_SLOT}) )
-	)
-	shadowcallstack? (
-		arm64? (
-			|| ( $(gen_shadowcallstack_rdepend 10 ${LLVM_MAX_SLOT}) )
-		)
-	)
-"
 
 gen_clang_llvm_pair() {
 	local min=${1}
 	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
+	local s
+	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}
-			sys-devel/llvm:${v}
+			sys-devel/clang:${s}
+			sys-devel/llvm:${s}
 		)
 		     "
 	done
@@ -409,7 +449,9 @@ gen_clang_llvm_pair() {
 
 KCP_RDEPEND="
 	clang? (
-		|| ( $(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT}) )
+		|| (
+			$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+		)
 	)
 	|| (
 		(
@@ -418,16 +460,49 @@ KCP_RDEPEND="
 		$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
 	)
 "
-RDEPEND+=" ${KCP_RDEPEND}"
+
+RDEPEND+="
+	${KCP_RDEPEND}
+	cfi? (
+		amd64? (
+			|| (
+				$(gen_cfi_rdepend 13 ${LLVM_MAX_SLOT})
+			)
+		)
+		arm64? (
+			|| (
+				$(gen_cfi_rdepend 12 ${LLVM_MAX_SLOT})
+			)
+		)
+	)
+	clang-pgo? (
+		sys-kernel/genkernel[clang-pgo]
+		|| (
+			$(gen_clang_pgo_rdepend 13 ${LLVM_MAX_SLOT})
+		)
+	)
+	lto? (
+		|| (
+			$(gen_lto_rdepend 11 ${LLVM_MAX_SLOT})
+		)
+	)
+	shadowcallstack? (
+		arm64? (
+			|| (
+				$(gen_shadowcallstack_rdepend 10 ${LLVM_MAX_SLOT})
+			)
+		)
+	)
+"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:
 else
-KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
-SRC_URI+="
+	KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
+	SRC_URI+="
 https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
 	   ${KERNEL_PATCH_URIS[@]}
-"
+	"
 fi
 
 # Not on the servers yet
@@ -435,81 +510,87 @@ NOT_READY_YET="
 "
 
 if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
-
-SRC_URI+="
-	${KCP_SRC_4_9_URI}
-	${KCP_SRC_8_1_URI}
-	${KCP_SRC_9_1_URI}
-	${KCP_SRC_CORTEX_A72_URI}
-	${BBRV2_SRC_URIS}
-	${CFI_SRC_URIS}
-	${CLANG_PGO_URI}
-	${FUTEX_SRC_URIS}
-	${GENPATCHES_URI}
-	${MULTIGEN_LRU_SRC_URI}
-	${PRJC_SRC_URI}
-	${RT_SRC_ALT_URI}
-	${TRESOR_AESNI_SRC_URI}
-	${TRESOR_I686_SRC_URI}
-	${TRESOR_README_SRC_URI}
-	${TRESOR_RESEARCH_PDF_SRC_URI}
-	${TRESOR_SYSFS_SRC_URI}
-	${UKSM_SRC_URI}
-	${ZEN_MULTIGEN_LRU_SRC_URI}
-	${ZENSAUCE_URIS}
-"
-
-else
-
-SRC_URI+="
-	${KCP_SRC_4_9_URI}
-	${KCP_SRC_8_1_URI}
-	${KCP_SRC_9_1_URI}
-	${KCP_SRC_CORTEX_A72_URI}
-	bbrv2? (
+	SRC_URI+="
+		${C2TCP_URI}
 		${BBRV2_SRC_URIS}
-	)
-	cfi? (
-		amd64? (
-			${CFI_SRC_URIS}
-		)
-	)
-	clang-pgo? (
+		${CFI_SRC_URIS}
 		${CLANG_PGO_URI}
-	)
-	futex? (
 		${FUTEX_SRC_URIS}
-	)
-	genpatches? (
 		${GENPATCHES_URI}
-	)
-	multigen_lru? (
+		${KCP_SRC_4_9_URI}
+		${KCP_SRC_8_1_URI}
+		${KCP_SRC_9_1_URI}
+		${KCP_SRC_CORTEX_A72_URI}
 		${MULTIGEN_LRU_SRC_URI}
-	)
-	prjc? (
 		${PRJC_SRC_URI}
-	)
-	rt? (
 		${RT_SRC_ALT_URI}
-	)
-	tresor? (
 		${TRESOR_AESNI_SRC_URI}
 		${TRESOR_I686_SRC_URI}
 		${TRESOR_README_SRC_URI}
 		${TRESOR_RESEARCH_PDF_SRC_URI}
 		${TRESOR_SYSFS_SRC_URI}
-	)
-	uksm? (
 		${UKSM_SRC_URI}
-	)
-	zen-multigen_lru? (
 		${ZEN_MULTIGEN_LRU_SRC_URI}
-	)
-	zen-sauce? (
 		${ZENSAUCE_URIS}
-	)
-"
-
+	"
+else
+	SRC_URI+="
+		${KCP_SRC_4_9_URI}
+		${KCP_SRC_8_1_URI}
+		${KCP_SRC_9_1_URI}
+		${KCP_SRC_CORTEX_A72_URI}
+		bbrv2? (
+			${BBRV2_SRC_URIS}
+		)
+		c2tcp? (
+			${C2TCP_URI}
+		)
+		cfi? (
+			amd64? (
+				${CFI_SRC_URIS}
+			)
+		)
+		clang-pgo? (
+			${CLANG_PGO_URI}
+		)
+		deepcc? (
+			${C2TCP_URI}
+		)
+		futex? (
+			${FUTEX_SRC_URIS}
+		)
+		genpatches? (
+			${GENPATCHES_URI}
+		)
+		multigen_lru? (
+			${MULTIGEN_LRU_SRC_URI}
+		)
+		orca? (
+			${C2TCP_URI}
+		)
+		prjc? (
+			${PRJC_SRC_URI}
+		)
+		rt? (
+			${RT_SRC_ALT_URI}
+		)
+		tresor? (
+			${TRESOR_AESNI_SRC_URI}
+			${TRESOR_I686_SRC_URI}
+			${TRESOR_README_SRC_URI}
+			${TRESOR_RESEARCH_PDF_SRC_URI}
+			${TRESOR_SYSFS_SRC_URI}
+		)
+		uksm? (
+			${UKSM_SRC_URI}
+		)
+		zen-multigen_lru? (
+			${ZEN_MULTIGEN_LRU_SRC_URI}
+		)
+		zen-sauce? (
+			${ZENSAUCE_URIS}
+		)
+	"
 fi
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
@@ -741,6 +822,12 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-cf9b1da.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-5.15.84.patch"
+	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
+einfo "See ${path}"
+die
+		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

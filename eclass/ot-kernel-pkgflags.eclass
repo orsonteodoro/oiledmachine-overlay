@@ -30,11 +30,26 @@ inherit ot-kernel-kutils
 # 1: grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "CONFIG_CHECK=" ./
 # 2: grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "linux_chkconfig_" ./
 
-X86_FLAGS=(aes avx avx2 avx512vl sha sse2 ssse3 sse4_2)
-ARM_FLAGS=(neon)
-IUSE+=" ${X86_FLAGS[@]/#/cpu_flags_x86_}"
-IUSE+=" ${ARM_FLAGS[@]/#/cpu_flags_arm_}"
-IUSE+=" cpu_flags_ppc_altivec"
+X86_FLAGS=(
+	aes
+	avx
+	avx2
+	avx512vl
+	sha
+	sse2
+	sse4_2
+	ssse3
+)
+
+ARM_FLAGS=(
+	neon
+)
+
+IUSE+="
+	${X86_FLAGS[@]/#/cpu_flags_x86_}
+	${ARM_FLAGS[@]/#/cpu_flags_arm_}
+	cpu_flags_ppc_altivec
+"
 
 # @FUNCTION: needs_debugfs
 # @DESCRIPTION:
@@ -218,6 +233,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_db_numa
 	ot-kernel-pkgflags_dbus
 	ot-kernel-pkgflags_dccutil
+	ot-kernel-pkgflags_deepcc
 	ot-kernel-pkgflags_dietlibc
 	ot-kernel-pkgflags_discord
 	ot-kernel-pkgflags_distrobuilder
@@ -397,6 +413,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_openvpn
 	ot-kernel-pkgflags_openvswitch
 	ot-kernel-pkgflags_oprofile
+	ot-kernel-pkgflags_orca
 	ot-kernel-pkgflags_osmo_fl2k
 	ot-kernel-pkgflags_oss
 	ot-kernel-pkgflags_pam_u2f
@@ -2815,6 +2832,18 @@ ot-kernel-pkgflags_dccutil() { # DONE
 			ot-kernel_y_configopt "CONFIG_HIDRAW"
 			ot-kernel_y_configopt "CONFIG_USB_HIDDEV"
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_deepcc
+# @DESCRIPTION:
+# Applies kernel config flags for the deepcc package
+ot-kernel-pkgflags_deepcc() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S600cf83]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-apps/deepcc[build-models]" ; then
+		einfo "Applying kernel config flags for the deepcc package (id: 600cf83)"
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
 	fi
 }
 
@@ -5917,6 +5946,18 @@ ot-kernel-pkgflags_oprofile() { # DONE
 		einfo "Applying kernel config flags for the oprofile package (id: 18e7433)"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
 		_ot-kernel-pkgflags_cpu_pmu_events_oprofile
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_orca
+# @DESCRIPTION:
+# Applies kernel config flags for the orca package
+ot-kernel-pkgflags_orca() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1247837]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-apps/orca[build-models]" ; then
+		einfo "Applying kernel config flags for the orca package (id: 1247837)"
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
 	fi
 }
 

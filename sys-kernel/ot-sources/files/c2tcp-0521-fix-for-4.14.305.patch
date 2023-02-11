@@ -1,0 +1,11 @@
+--- a/include/uapi/linux/inet_diag.h.orig	2023-02-10 19:01:55.320008734 -0800
++++ b/include/uapi/linux/inet_diag.h	2023-02-10 19:02:51.620010589 -0800
+@@ -151,6 +151,8 @@ enum {
+ 	INET_DIAG_BBRINFO,	/* request as INET_DIAG_VEGASINFO */
+ 	INET_DIAG_CLASS_ID,	/* request as INET_DIAG_TCLASS */
+ 	INET_DIAG_MD5SIG,
++	INET_DIAG_C2TCPINFO,
++	INET_DIAG_DEEPCCINFO,
+ 	__INET_DIAG_MAX,
+ };
+ 

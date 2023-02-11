@@ -23,7 +23,7 @@ GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
 LLVM_MAX_SLOT=15
 LLVM_MIN_SLOT=10
-DISABLE_DEBUG_V="1.4.1"
+DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
@@ -37,10 +37,16 @@ PATCH_KCP_COMMIT="986ea2483af3ba52c0e6c9e647c05c753a548fb8" # from zen repo
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A..D.patch \
-#   | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
+#	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
 # from A to D, where a is ancestor and d is descendant.
 # When using that commit list generator, it may miss some commits, so verify all
 # the commits in order.
+
+#C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
+C2TCP_VER="2.2"
+C2TCP_EXTRA="0521"
+C2TCP_KV="4.13.1"
+C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
 
 CK_KV="5.10.0"
 CK_COMMITS=(
@@ -206,42 +212,75 @@ fe6b56a9c48b934d2ffaafd60eb89b9dae6e912d
 3d76056b85feab3aade8007eb560c3451e7d3433
 ) # newest
 
-IUSE+=" build symlink"
-IUSE+=" bbrv2 +cfs clang disable_debug futex
-+genpatches -genpatches_1510 muqss prjc rt tresor
-tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
-tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce zen-sauce-all
--zen-tune"
-IUSE+=" -exfat"
+IUSE+="
+bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat futex +genpatches
+-genpatches_1510 muqss orca prjc rt symlink tresor tresor_aesni tresor_i686
+tresor_prompt tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
+zen-muqss zen-sauce zen-sauce-all -zen-tune
+"
 REQUIRED_USE+="
-	genpatches_1510? ( genpatches )
-	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-	tresor_aesni? ( tresor )
-	tresor_i686? ( tresor )
-	tresor_prompt? ( tresor )
-	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-	tresor_x86_64? ( tresor )
-	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
-	zen-sauce-all? ( zen-sauce )
-	zen-tune? ( zen-sauce )
+	genpatches_1510? (
+		genpatches
+	)
+	tresor? (
+		^^ (
+			tresor_aesni
+			tresor_i686
+			tresor_x86_64
+		)
+	)
+	tresor_aesni? (
+		tresor
+	)
+	tresor_i686? (
+		tresor
+	)
+	tresor_prompt? (
+		tresor
+	)
+	tresor_sysfs? (
+		|| (
+			tresor_aesni
+			tresor_i686
+			tresor_x86_64
+		)
+	)
+	tresor_x86_64? (
+		tresor
+	)
+	tresor_x86_64-256-bit-key-support? (
+		tresor
+		tresor_x86_64
+	)
+	zen-sauce-all? (
+		zen-sauce
+	)
+	zen-tune? (
+		zen-sauce
+	)
 "
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizable kernel package with \
+DESCRIPTION="\
+A customizable kernel package with \
 BBRv2, \
+C2TCP, \
 CVE fixes, \
+DeepCC, \
 FUTEX_WAIT_MULTIPLE, \
 genpatches, \
 kernel_compiler_patch, \
 MuQSS, \
+Orca, \
 Project C (BMQ, PDS-mq), \
 RT_PREEMPT (-rt), \
 TRESOR, \
 UKSM, \
 zen-muqss, \
 zen-sauce, \
-zen-tune."
+zen-tune. \
+"
 
 inherit ot-kernel
 
@@ -249,21 +288,24 @@ LICENSE+=" GPL-2" # kernel_compiler_patch
 LICENSE+=" GPL-2" # -O3 patch
 LICENSE+=" HPND" # See drivers/gpu/drm/drm_encoder.c
 LICENSE+=" bbrv2? ( || ( GPL-2 BSD ) )" # https://github.com/google/bbr/tree/v2alpha#license
+LICENSE+=" c2tcp? ( MIT )"
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
-  # third-party CPU scheduler but the stock CPU scheduler.
+	# third-party CPU scheduler but the stock CPU scheduler.
+LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" prjc? ( GPL-3 )" # see \
-  # https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
+	# https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" muqss? ( GPL-2 )"
+LICENSE+=" orca? ( MIT )"
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
-  # GPL-2 applies to the files being patched \
-  # all-rights-reserved applies to new files introduced and no defaults license
-  #   found in the project.  (The implementation is based on an academic paper
-  #   from public universities.)
+	# GPL-2 applies to the files being patched \
+	# all-rights-reserved applies to new files introduced and no defaults license
+	#   found in the project.  (The implementation is based on an academic paper
+	#   from public universities.)
 LICENSE+=" zen-muqss? ( GPL-2 )"
 LICENSE+=" zen-tune? ( GPL-2 )"
 
@@ -280,12 +322,12 @@ _seq() {
 gen_clang_llvm_pair() {
 	local min=${1}
 	local max=${2}
-	local v
-	for v in $(_seq ${min} ${max}) ; do
+	local s
+	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}
-			sys-devel/llvm:${v}
+			sys-devel/clang:${s}
+			sys-devel/llvm:${s}
 		)
 		     "
 	done
@@ -293,7 +335,9 @@ gen_clang_llvm_pair() {
 
 KCP_RDEPEND="
 	clang? (
-		|| ( $(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT}) )
+		|| (
+			$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+		)
 	)
 	|| (
 		(
@@ -306,79 +350,85 @@ KCP_RDEPEND="
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:
 else
-KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
-SRC_URI+="
+	KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
+	SRC_URI+="
 https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
 	   ${KERNEL_PATCH_URIS[@]}
-"
+	"
 fi
 
 if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
-
-SRC_URI+="
-	${KCP_SRC_4_9_URI}
-	${KCP_SRC_8_1_URI}
-	${KCP_SRC_9_1_URI}
-	${KCP_SRC_CORTEX_A72_URI}
-	${BBRV2_SRC_URIS}
-	${FUTEX_SRC_URIS}
-	${GENPATCHES_URI}
-	${CK_SRC_URIS}
-	${PRJC_SRC_URI}
-	${RT_SRC_URI}
-	${TRESOR_AESNI_SRC_URI}
-	${TRESOR_I686_SRC_URI}
-	${TRESOR_README_SRC_URI}
-	${TRESOR_RESEARCH_PDF_SRC_URI}
-	${TRESOR_SYSFS_SRC_URI}
-	${UKSM_SRC_URI}
-	${ZEN_MUQSS_SRC_URIS}
-	${ZENSAUCE_URIS}
-"
-
-else
-
-SRC_URI+="
-	${KCP_SRC_4_9_URI}
-	${KCP_SRC_8_1_URI}
-	${KCP_SRC_9_1_URI}
-	${KCP_SRC_CORTEX_A72_URI}
-	bbrv2? (
+	SRC_URI+="
 		${BBRV2_SRC_URIS}
-	)
-	futex? (
-		${FUTEX_SRC_URIS}
-	)
-	genpatches? (
-		${GENPATCHES_URI}
-	)
-	muqss? (
+		${C2TCP_URI}
 		${CK_SRC_URIS}
-	)
-	prjc? (
+		${FUTEX_SRC_URIS}
+		${GENPATCHES_URI}
+		${KCP_SRC_4_9_URI}
+		${KCP_SRC_8_1_URI}
+		${KCP_SRC_9_1_URI}
+		${KCP_SRC_CORTEX_A72_URI}
 		${PRJC_SRC_URI}
-	)
-	rt? (
 		${RT_SRC_URI}
-	)
-	tresor? (
 		${TRESOR_AESNI_SRC_URI}
 		${TRESOR_I686_SRC_URI}
 		${TRESOR_README_SRC_URI}
 		${TRESOR_RESEARCH_PDF_SRC_URI}
 		${TRESOR_SYSFS_SRC_URI}
-	)
-	uksm? (
 		${UKSM_SRC_URI}
-	)
-	zen-muqss? (
 		${ZEN_MUQSS_SRC_URIS}
-	)
-	zen-sauce? (
 		${ZENSAUCE_URIS}
-	)
-"
-
+	"
+else
+	SRC_URI+="
+		${KCP_SRC_4_9_URI}
+		${KCP_SRC_8_1_URI}
+		${KCP_SRC_9_1_URI}
+		${KCP_SRC_CORTEX_A72_URI}
+		bbrv2? (
+			${BBRV2_SRC_URIS}
+		)
+		c2tcp? (
+			${C2TCP_URI}
+		)
+		deepcc? (
+			${C2TCP_URI}
+		)
+		futex? (
+			${FUTEX_SRC_URIS}
+		)
+		genpatches? (
+			${GENPATCHES_URI}
+		)
+		muqss? (
+			${CK_SRC_URIS}
+		)
+		orca? (
+			${C2TCP_URI}
+		)
+		prjc? (
+			${PRJC_SRC_URI}
+		)
+		rt? (
+			${RT_SRC_URI}
+		)
+		tresor? (
+			${TRESOR_AESNI_SRC_URI}
+			${TRESOR_I686_SRC_URI}
+			${TRESOR_README_SRC_URI}
+			${TRESOR_RESEARCH_PDF_SRC_URI}
+			${TRESOR_SYSFS_SRC_URI}
+		)
+		uksm? (
+			${UKSM_SRC_URI}
+		)
+		zen-muqss? (
+			${ZEN_MUQSS_SRC_URIS}
+		)
+		zen-sauce? (
+			${ZENSAUCE_URIS}
+		)
+	"
 fi
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
@@ -558,6 +608,12 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-b8d3909.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-b8d3909-fix-for-5.10.160.patch"
+	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
+einfo "See ${path}"
+die
+		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

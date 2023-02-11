@@ -14,73 +14,78 @@
 # kernel version.
 
 # BBR v2:
-#   https://github.com/google/bbr/compare/2c85ebc...v2alpha-2021-07-07
-#   https://github.com/google/bbr/compare/f428e49...v2alpha-2021-08-21
-#   2c85ebc f428e49 - comes from /Makefile commit history in v2alpha branch
-#		      that corresponds to the same version for that tag
+#	https://github.com/google/bbr/compare/2c85ebc...v2alpha-2021-07-07
+#	https://github.com/google/bbr/compare/f428e49...v2alpha-2021-08-21
+#	2c85ebc f428e49 comes from /Makefile commit history in v2alpha branch
+#		that corresponds to the same version for that tag
 # BMQ CPU Scheduler:
-#   https://cchalpha.blogspot.com/search/label/BMQ
-#   https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
+#	https://cchalpha.blogspot.com/search/label/BMQ
+#	https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
+# C2TCP:
+#	https://github.com/Soheil-ab/c2tcp
 # CFI:
-#   https://github.com/torvalds/linux/compare/v5.15...samitolvanen:cfi-5.15
+#	https://github.com/torvalds/linux/compare/v5.15...samitolvanen:cfi-5.15
+# DeepCC:
+#	https://github.com/Soheil-ab/DeepCC.v1.0
 # KCFI:
-#   https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
+#	https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
 # futex (aka futex_wait_multiple):
-#   https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3
+#	https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3
 # futex2:
-#   https://gitlab.collabora.com/tonyk/linux/-/commits/futex2
-#   https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-proton
-#   https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-dev
+#	https://gitlab.collabora.com/tonyk/linux/-/commits/futex2
+#	https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-proton
+#	https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-dev
 # tonyk/futex_waitv
-#   https://gitlab.collabora.com/tonyk/linux/-/commits/tonyk/futex_waitv
+#	https://gitlab.collabora.com/tonyk/linux/-/commits/tonyk/futex_waitv
 # genpatches:
-#   https://gitweb.gentoo.org/proj/linux-patches.git/
-#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=4.14
-#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.4
-#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.10
-#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
-#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.1
+#	https://gitweb.gentoo.org/proj/linux-patches.git/
+#	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=4.14
+#	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.4
+#	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.10
+#	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
+#	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.1
 # kernel_compiler_patch:
-#   https://github.com/graysky2/kernel_compiler_patch
+#	https://github.com/graysky2/kernel_compiler_patch
 # MUQSS CPU Scheduler (official, EOL 5.12):
-#   https://github.com/torvalds/linux/compare/v4.14...ckolivas:4.14-ck
-#   https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
-#   https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
+#	https://github.com/torvalds/linux/compare/v4.14...ckolivas:4.14-ck
+#	https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
+#	https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
 # Multigenerational LRU:
-#   https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/lru
-#   https://github.com/torvalds/linux/compare/v6.0...zen-kernel:6.0/mglru
+#	https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/lru
+#	https://github.com/torvalds/linux/compare/v6.0...zen-kernel:6.0/mglru
 # O3 (Allow O3):
-#   5.4 https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e
-#   5.10 https://github.com/torvalds/linux/commit/228e792a116fd4cce8856ea73f2958ec8a241c0c
+#	https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e	# 5.4
+#	https://github.com/torvalds/linux/commit/228e792a116fd4cce8856ea73f2958ec8a241c0c	# 5.10
 # O3 (Optimize Harder):
-#   4.9 (O3) https://github.com/torvalds/linux/commit/7d0295dc49233d9ddff5d63d5bdc24f1e80da722
-#   circa 2018 (infiniband O3 read overflow fix) \
-#     https://github.com/torvalds/linux/commit/562a14babcd56efc2f51c772cb2327973d8f90ad
-#   Patch for >= 5.4 can be found on zen-sauce
+#	https://github.com/torvalds/linux/commit/7d0295dc49233d9ddff5d63d5bdc24f1e80da722	# 4.9 (-O3)
+#	https://github.com/torvalds/linux/commit/562a14babcd56efc2f51c772cb2327973d8f90ad	# ~2018 (infiniband O3 read overflow fix)
+#	The Patch for >= 5.4 can be found on zen-sauce.
+# Orca:
+#	https://github.com/Soheil-ab/Orca
 # PDS CPU Scheduler:
-#   https://cchalpha.blogspot.com/search/label/PDS
-#   https://gitlab.com/alfredchen/PDS-mq/-/tree/master
+#	https://cchalpha.blogspot.com/search/label/PDS
+#	https://gitlab.com/alfredchen/PDS-mq/-/tree/master
 # PGO:
-#   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=for-next/clang/pgo
+#	https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=for-next/clang/pgo
 # PREEMPT_RT:
-#  https://wiki.linuxfoundation.org/realtime/start
-#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/
-#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
-#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
-#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
-#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
+#	https://wiki.linuxfoundation.org/realtime/start
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
 # Project C CPU Scheduler:
-#   https://cchalpha.blogspot.com/search/label/Project%20C
-#   https://gitlab.com/alfredchen/projectc/-/tree/master
+#	https://cchalpha.blogspot.com/search/label/Project%20C
+#	https://gitlab.com/alfredchen/projectc/-/tree/master
 # TRESOR:
-#   https://www1.informatik.uni-erlangen.de/tresor
+#	https://www1.informatik.uni-erlangen.de/tresor
 # UKSM:
-#   https://github.com/dolohow/uksm
+#	https://github.com/dolohow/uksm
 # zen-sauce, zen-tune:
-#   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
-#   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
-#   https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
-#   https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
+#	https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
+#	https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
+#	https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
+#	https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
 
 case ${EAPI:-0} in
 	[78]) ;;
@@ -91,14 +96,14 @@ esac
 # and looked it up through github.com or my copy to confirm the license on the file.
 
 # Solo licenses detected by:
-#   `grep -E -r -e "SPDX.*GPL-2" ./ | grep -i -v "GPL"`
+#	`grep -E -r -e "SPDX.*GPL-2" ./ | grep -i -v "GPL"`
 # Replace GPL-2 with SPDX identifier
 
 # For kernel license templates see:
 # https://github.com/torvalds/linux/tree/master/LICENSES
 # See also https://github.com/torvalds/linux/blob/master/Documentation/process/license-rules.rst
 LICENSE+=" GPL-2 Linux-syscall-note" #  Applies to whole source  \
-#   that are GPL-2 compatible.  See paragraph 3 of the above link for details.
+	# that are GPL-2 compatible.  See paragraph 3 of the above link for details.
 
 # The following licenses applies to individual files:
 
@@ -110,10 +115,8 @@ LICENSE+=" ( GPL-2 all-rights-reserved )" # See mm/list_lru.c
 LICENSE+=" ( GPL-2+ all-rights-reserved )" # See drivers/gpu/drm/meson/meson_plane.c
 LICENSE+=" ( all-rights-reserved BSD || ( GPL-2 BSD ) )" # See lib/zstd/compress.c
 LICENSE+=" ( all-rights-reserved MIT || ( GPL-2 MIT ) )" # See drivers/gpu/drm/ttm/ttm_execbuf_util.c
-
 LICENSE+=" ( custom GPL-2+ )" # See drivers/scsi/esas2r/esas2r_main.c, ... ; # \
-# Samples warranty/liability paragraphs from maybe EPL-2.0
-
+	# Samples warranty/liability paragraphs from maybe EPL-2.0
 LICENSE+=" 0BSD" # See lib/math/cordic.c
 LICENSE+=" Apache-2.0" # See drivers/staging/wfx/hif_api_cmd.h
 
@@ -125,7 +128,7 @@ LICENSE+=" BSD-2" # See include/linux/firmware/broadcom/tee_bnxt_fw.h
 LICENSE+=" Clear-BSD" # See drivers/net/wireless/ath/ath11k/core.h, ...
 LICENSE+=" custom" # See crypto/cts.c
 LICENSE+=" ISC" # See linux/drivers/net/wireless/ath/wil6210/trace.c, \
-# linux/drivers/net/wireless/ath/ath5k/Makefile, ...
+	# linux/drivers/net/wireless/ath/ath5k/Makefile, ...
 LICENSE+=" LGPL-2.1" # See fs/ext4/migrate.c, ...
 LICENSE+=" LGPL-2+ Linux-syscall-note" # See arch/x86/include/uapi/asm/mtrr.h
 LICENSE+=" MIT" # See drivers/gpu/drm/drm_dsc.c
@@ -139,17 +142,17 @@ LICENSE+=" || ( GPL-2 MIT )" # See lib/crypto/poly1305-donna32.c
 LICENSE+=" || ( GPL-2 BSD-2 )" # See arch/x86/crypto/sha512-ssse3-asm.S
 
 HOMEPAGE+="
-          https://algo.ing.unimo.it/people/paolo/disk_sched/
-	  https://cchalpha.blogspot.com/search/label/BMQ
-	  https://cchalpha.blogspot.com/search/label/PDS
-	  https://cchalpha.blogspot.com/search/label/Project%20C
-	  https://ck-hack.blogspot.com/
-          https://dev.gentoo.org/~mpagano/genpatches/
-          https://github.com/dolohow/uksm
-          https://github.com/graysky2/kernel_compiler_patch
-          https://liquorix.net/
-	  https://wiki.linuxfoundation.org/realtime/start
-	  https://www1.informatik.uni-erlangen.de/tresor
+https://algo.ing.unimo.it/people/paolo/disk_sched/
+https://cchalpha.blogspot.com/search/label/BMQ
+https://cchalpha.blogspot.com/search/label/PDS
+https://cchalpha.blogspot.com/search/label/Project%20C
+https://ck-hack.blogspot.com/
+https://dev.gentoo.org/~mpagano/genpatches/
+https://github.com/dolohow/uksm
+https://github.com/graysky2/kernel_compiler_patch
+https://liquorix.net/
+https://wiki.linuxfoundation.org/realtime/start
+https://www1.informatik.uni-erlangen.de/tresor
 "
 
 OT_KERNEL_SLOT_STYLE=${OT_KERNEL_SLOT_STYLE:-"MAJOR_MINOR"}
@@ -161,16 +164,15 @@ S="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 #PROPERTIES="interactive" # The menuconfig is broken because of emerge or sandbox.  All things were disabled but still doesn't work.
 OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${PV}"
 
-IUSE+=" +reiserfs" # Upstream keeps it.
-
-IUSE+=" cpu_flags_arm_thumb"
-IUSE+=" gtk +ncurses openssl qt5"
-IUSE+=" bzip2 gzip lz4 lzma lzo xz zstd"
-IUSE+=" imagemagick graphicsmagick"
-IUSE+=" pcc"
+# Upstream keeps reiserfs
+IUSE+="
+bzip2 cpu_flags_arm_thumb graphicsmagick gtk gzip imagemagick lz4 lzma lzo
++ncurses openssl pcc +reiserfs qt5 xz zstd
+"
 NEEDS_DEBUGFS=0
 PYTHON_COMPAT=( python3_{8..10} )
-inherit check-reqs flag-o-matic python-r1 ot-kernel-cve ot-kernel-pkgflags ot-kernel-kutils toolchain-funcs
+inherit check-reqs flag-o-matic python-r1 ot-kernel-cve ot-kernel-pkgflags
+inherit ot-kernel-kutils toolchain-funcs
 CDEPEND="
 	app-arch/cpio
 	app-shells/bash
@@ -246,130 +248,132 @@ BDEPEND+="
 "
 
 if [[ -n "${CLANG_PGO_KV}" ]] ; then
-PGT_CRYPTO_DEPEND="
-	sys-fs/cryptsetup
-"
-PGT_TRAINERS=(
-	2d
-	3d
-	crypto_std
-	crypto_kor
-	crypto_chn
-	crypto_rus
-	crypto_common
-	crypto_less_common
-	crypto_deprecated
-	custom
-	emerge1
-	emerge2
-	filesystem
-	memory
-	network
-	p2p
-	webcam
-	yt
-)
-IUSE+=" ${PGT_TRAINERS[@]/#/ot_kernel_pgt_} "
-REQUIRED_USE+="
-	ot_kernel_pgt_2d? ( clang-pgo )
-	ot_kernel_pgt_3d? ( clang-pgo )
-	ot_kernel_pgt_crypto_std? ( clang-pgo )
-	ot_kernel_pgt_crypto_kor? ( clang-pgo )
-	ot_kernel_pgt_crypto_chn? ( clang-pgo )
-	ot_kernel_pgt_crypto_rus? ( clang-pgo )
-	ot_kernel_pgt_crypto_common? ( clang-pgo )
-	ot_kernel_pgt_crypto_less_common? ( clang-pgo )
-	ot_kernel_pgt_crypto_deprecated? ( clang-pgo )
-	ot_kernel_pgt_custom? ( clang-pgo )
-	ot_kernel_pgt_emerge1? ( clang-pgo )
-	ot_kernel_pgt_emerge2? ( clang-pgo )
-	ot_kernel_pgt_filesystem? ( clang-pgo )
-	ot_kernel_pgt_memory? ( clang-pgo )
-	ot_kernel_pgt_network? ( clang-pgo )
-	ot_kernel_pgt_p2p? ( clang-pgo )
-	ot_kernel_pgt_webcam? ( clang-pgo )
-	ot_kernel_pgt_yt? ( clang-pgo )
-"
-PDEPEND+="
-	sys-apps/coreutils
-	sys-apps/grep[pcre]
-	pcc? (
-		sys-kernel/pcc
+	PGT_CRYPTO_DEPEND="
+		sys-fs/cryptsetup
+	"
+	PGT_TRAINERS=(
+		2d
+		3d
+		crypto_std
+		crypto_kor
+		crypto_chn
+		crypto_rus
+		crypto_common
+		crypto_less_common
+		crypto_deprecated
+		custom
+		emerge1
+		emerge2
+		filesystem
+		memory
+		network
+		p2p
+		webcam
+		yt
 	)
-	ot_kernel_pgt_2d? (
-		sys-apps/findutils
-		sys-process/procps
-		x11-misc/xscreensaver[X]
-	)
-	ot_kernel_pgt_3d? (
-		sys-apps/findutils
-		sys-process/procps
-		x11-misc/xscreensaver[X,opengl]
-		virtual/opengl
-	)
-	ot_kernel_pgt_crypto_std? (
-		${PGT_CRYPTO_DEPEND}
-	)
-	ot_kernel_pgt_crypto_kor? (
-		${PGT_CRYPTO_DEPEND}
-	)
-	ot_kernel_pgt_crypto_chn? (
-		${PGT_CRYPTO_DEPEND}
-	)
-	ot_kernel_pgt_crypto_rus? (
-		${PGT_CRYPTO_DEPEND}
-	)
-	ot_kernel_pgt_crypto_common? (
-		${PGT_CRYPTO_DEPEND}
-	)
-	ot_kernel_pgt_crypto_less_common? (
-		${PGT_CRYPTO_DEPEND}
-	)
-	ot_kernel_pgt_crypto_deprecated? (
-		${PGT_CRYPTO_DEPEND}
-	)
-	ot_kernel_pgt_emerge1? (
-		sys-apps/findutils
-	)
-	ot_kernel_pgt_filesystem? (
-		sys-apps/findutils
-	)
-	ot_kernel_pgt_memory? (
-		${PYTHON_DEPS}
-		sys-apps/util-linux
-		sys-process/procps
-	)
-	ot_kernel_pgt_network? (
-		net-analyzer/traceroute
-		net-misc/curl
-		net-misc/iputils
-	)
-	ot_kernel_pgt_p2p? (
-		net-p2p/ctorrent
-		sys-apps/util-linux
-		sys-process/procps
-	)
-	ot_kernel_pgt_webcam? (
-		media-tv/v4l-utils
-		media-video/ffmpeg[encode,v4l]
-	)
-	ot_kernel_pgt_yt? (
-		${PYTHON_DEPS}
-		$(python_gen_cond_dep 'dev-python/selenium[${PYTHON_USEDEP}]')
-		|| (
-			(
-				www-client/chromium
-			)
-			(
-				www-client/google-chrome
-				www-apps/chromedriver-bin
-			)
-			(
-				www-client/firefox[geckodriver]
+	IUSE+="
+		${PGT_TRAINERS[@]/#/ot_kernel_pgt_}
+	"
+	REQUIRED_USE+="
+		ot_kernel_pgt_2d? ( clang-pgo )
+		ot_kernel_pgt_3d? ( clang-pgo )
+		ot_kernel_pgt_crypto_std? ( clang-pgo )
+		ot_kernel_pgt_crypto_kor? ( clang-pgo )
+		ot_kernel_pgt_crypto_chn? ( clang-pgo )
+		ot_kernel_pgt_crypto_rus? ( clang-pgo )
+		ot_kernel_pgt_crypto_common? ( clang-pgo )
+		ot_kernel_pgt_crypto_less_common? ( clang-pgo )
+		ot_kernel_pgt_crypto_deprecated? ( clang-pgo )
+		ot_kernel_pgt_custom? ( clang-pgo )
+		ot_kernel_pgt_emerge1? ( clang-pgo )
+		ot_kernel_pgt_emerge2? ( clang-pgo )
+		ot_kernel_pgt_filesystem? ( clang-pgo )
+		ot_kernel_pgt_memory? ( clang-pgo )
+		ot_kernel_pgt_network? ( clang-pgo )
+		ot_kernel_pgt_p2p? ( clang-pgo )
+		ot_kernel_pgt_webcam? ( clang-pgo )
+		ot_kernel_pgt_yt? ( clang-pgo )
+	"
+	PDEPEND+="
+		sys-apps/coreutils
+		sys-apps/grep[pcre]
+		pcc? (
+			sys-kernel/pcc
+		)
+		ot_kernel_pgt_2d? (
+			sys-apps/findutils
+			sys-process/procps
+			x11-misc/xscreensaver[X]
+		)
+		ot_kernel_pgt_3d? (
+			sys-apps/findutils
+			sys-process/procps
+			x11-misc/xscreensaver[X,opengl]
+			virtual/opengl
+		)
+		ot_kernel_pgt_crypto_std? (
+			${PGT_CRYPTO_DEPEND}
+		)
+		ot_kernel_pgt_crypto_kor? (
+			${PGT_CRYPTO_DEPEND}
+		)
+		ot_kernel_pgt_crypto_chn? (
+			${PGT_CRYPTO_DEPEND}
+		)
+		ot_kernel_pgt_crypto_rus? (
+			${PGT_CRYPTO_DEPEND}
+		)
+		ot_kernel_pgt_crypto_common? (
+			${PGT_CRYPTO_DEPEND}
+		)
+		ot_kernel_pgt_crypto_less_common? (
+			${PGT_CRYPTO_DEPEND}
+		)
+		ot_kernel_pgt_crypto_deprecated? (
+			${PGT_CRYPTO_DEPEND}
+		)
+		ot_kernel_pgt_emerge1? (
+			sys-apps/findutils
+		)
+		ot_kernel_pgt_filesystem? (
+			sys-apps/findutils
+		)
+		ot_kernel_pgt_memory? (
+			${PYTHON_DEPS}
+			sys-apps/util-linux
+			sys-process/procps
+		)
+		ot_kernel_pgt_network? (
+			net-analyzer/traceroute
+			net-misc/curl
+			net-misc/iputils
+		)
+		ot_kernel_pgt_p2p? (
+			net-p2p/ctorrent
+			sys-apps/util-linux
+			sys-process/procps
+		)
+		ot_kernel_pgt_webcam? (
+			media-tv/v4l-utils
+			media-video/ffmpeg[encode,v4l]
+		)
+		ot_kernel_pgt_yt? (
+			${PYTHON_DEPS}
+			$(python_gen_cond_dep 'dev-python/selenium[${PYTHON_USEDEP}]')
+			|| (
+				(
+					www-client/chromium
+				)
+				(
+					www-client/google-chrome
+					www-apps/chromedriver-bin
+				)
+				(
+					www-client/firefox[geckodriver]
+				)
 			)
 		)
-	)
-"
+	"
 fi
 
 EXPORT_FUNCTIONS \
@@ -406,7 +410,11 @@ gen_zensauce_uris()
 	local c
 	for (( c=0 ; c < ${len} ; c+=1 )) ; do
 		local id="${commits[c]}"
-		s=" ${s} ${ZENSAUCE_BASE_URI}${id}.patch -> zen-sauce-${ZEN_KV}-${id:0:7}.patch"
+		s="
+			${s}
+			${ZENSAUCE_BASE_URI}${id}.patch
+				-> zen-sauce-${ZEN_KV}-${id:0:7}.patch
+		"
 	done
 	echo "$s"
 }
@@ -415,8 +423,7 @@ BMQ_FN="${BMQ_FN:-v${K_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
 BMQ_BASE_URI="https://gitlab.com/alfredchen/bmq/raw/master/${K_MAJOR_MINOR}/"
 BMQ_SRC_URI="${BMQ_BASE_URI}${BMQ_FN}"
 
-BBRV2_BASE_URI=\
-"https://github.com/google/bbr/commit/"
+BBRV2_BASE_URI="https://github.com/google/bbr/commit/"
 gen_bbrv2_uris() {
 	local s=""
 	local c
@@ -427,6 +434,12 @@ gen_bbrv2_uris() {
 }
 if [[ -n "${BBRV2}_KV" ]] ; then
 	BBRV2_SRC_URIS=" "$(gen_bbrv2_uris)
+fi
+
+if [[ -n "${C2TCP_VER}" ]] ; then
+	C2TCP_FN="linux-${C2TCP_KV//./-}-orca-c2tcp-${C2TCP_EXTRA}.patch"
+	C2TCP_BASE_URI="https://raw.githubusercontent.com/Soheil-ab/c2tcp/${C2TCP_COMMIT}/linux-patch"
+	C2TCP_URI="${C2TCP_BASE_URI}/${C2TCP_FN}"
 fi
 
 CLANG_PGO_FN="clang-pgo-${CLANG_PGO_KV}-${PATCH_CLANG_PGO_COMMIT_A:0:7}-${PATCH_CLANG_PGO_COMMIT_D:0:7}.patch"
@@ -456,58 +469,63 @@ KCP_CORTEX_A72_BN=\
 "build-with-mcpu-for-cortex-a72"
 
 if ver_test ${K_MAJOR_MINOR} -ge 5.17 ; then
-KCP_9_1_BN=\
-"more-uarches-for-kernel-5.17%2B"
+	KCP_9_1_BN="more-uarches-for-kernel-5.17%2B"
 elif ver_test ${K_MAJOR_MINOR} -ge 5.15 ; then
-KCP_9_1_BN=\
-"more-uarches-for-kernel-5.15-5.16"
+	KCP_9_1_BN="more-uarches-for-kernel-5.15-5.16"
 elif ver_test ${K_MAJOR_MINOR} -ge 5.8 ; then
-KCP_9_1_BN=\
-"more-uarches-for-kernel-5.8-5.14"
+	KCP_9_1_BN="more-uarches-for-kernel-5.8-5.14"
 elif ver_test ${K_MAJOR_MINOR} -ge 5.4 ; then
-KCP_9_1_BN=\
-"more-uarches-for-kernel-4.19-5.4"
+	KCP_9_1_BN="more-uarches-for-kernel-4.19-5.4"
 elif ver_test ${K_MAJOR_MINOR} -ge 4.13 ; then
-KCP_8_1_BN=\
-"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
-KCP_4_9_BN=\
-"enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
+	KCP_8_1_BN="enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
+	KCP_4_9_BN="enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
 fi
 KCP_URI_BASE=\
 "https://raw.githubusercontent.com/graysky2/kernel_compiler_patch/${KCP_COMMIT_SNAPSHOT}/"
 if [[ -n "${KCP_4_9_BN}" ]] ; then
-KCP_SRC_4_9_URI="${KCP_URI_BASE}/outdated_versions/${KCP_4_9_BN}.patch -> ${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
+	KCP_SRC_4_9_URI="
+		${KCP_URI_BASE}/outdated_versions/${KCP_4_9_BN}.patch
+			-> ${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch
+	"
 fi
 if [[ -n "${KCP_8_1_BN}" ]] ; then
-KCP_SRC_8_1_URI="${KCP_URI_BASE}/outdated_versions/${KCP_8_1_BN}.patch -> ${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
+	KCP_SRC_8_1_URI="
+		${KCP_URI_BASE}/outdated_versions/${KCP_8_1_BN}.patch
+			-> ${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch
+	"
 fi
 if [[ -n "${KCP_9_1_BN}" ]] ; then
-KCP_SRC_9_1_URI="${KCP_URI_BASE}${KCP_9_1_BN}.patch -> ${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
+	KCP_SRC_9_1_URI="
+		${KCP_URI_BASE}${KCP_9_1_BN}.patch
+			-> ${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch
+	"
 fi
 KCP_SRC_CORTEX_A72_URI="${KCP_URI_BASE}${KCP_CORTEX_A72_BN}.patch -> ${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
 
-MULTIGEN_LRU_COMMITS="${PATCH_MULTIGEN_LRU_COMMIT_A}^..${PATCH_MULTIGEN_LRU_COMMIT_D}" # [oldest,newest] [top,bottom]
+MULTIGEN_LRU_COMMITS=\
+"${PATCH_MULTIGEN_LRU_COMMIT_A}^..${PATCH_MULTIGEN_LRU_COMMIT_D}" # [oldest,newest] [top,bottom]
 MULTIGEN_LRU_COMMITS_SHORT=\
 "${PATCH_MULTIGEN_LRU_COMMIT_A:0:7}-${PATCH_MULTIGEN_LRU_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
 MULTIGEN_LRU_BASE_URI=\
 "https://github.com/torvalds/linux/compare/${MULTIGEN_LRU_COMMITS}"
 if [[ -n "${ZEN_KV}" ]] ; then
-MULTIGEN_LRU_FN=\
-"multigen_lru-${ZEN_KV}-${MULTIGEN_LRU_COMMITS_SHORT}.patch"
-MULTIGEN_LRU_SRC_URI=\
-"${MULTIGEN_LRU_BASE_URI}.patch -> ${MULTIGEN_LRU_FN}"
+	MULTIGEN_LRU_FN="multigen_lru-${ZEN_KV}-${MULTIGEN_LRU_COMMITS_SHORT}.patch"
+	MULTIGEN_LRU_SRC_URI="
+		${MULTIGEN_LRU_BASE_URI}.patch -> ${MULTIGEN_LRU_FN}
+	"
 fi
 
-ZEN_MULTIGEN_LRU_COMMITS="${PATCH_ZEN_MULTIGEN_LRU_COMMIT_A}^..${PATCH_ZEN_MULTIGEN_LRU_COMMIT_D}" # [oldest,newest] [top,bottom]
+ZEN_MULTIGEN_LRU_COMMITS=\
+"${PATCH_ZEN_MULTIGEN_LRU_COMMIT_A}^..${PATCH_ZEN_MULTIGEN_LRU_COMMIT_D}" # [oldest,newest] [top,bottom]
 ZEN_MULTIGEN_LRU_COMMITS_SHORT=\
 "${PATCH_ZEN_MULTIGEN_LRU_COMMIT_A:0:7}-${PATCH_ZEN_MULTIGEN_LRU_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
 ZEN_MULTIGEN_LRU_BASE_URI=\
 "https://github.com/torvalds/linux/compare/${ZEN_MULTIGEN_LRU_COMMITS}"
 if [[ -n "${ZEN_KV}" ]] ; then
-ZEN_MULTIGEN_LRU_FN=\
-"zen-multigen_lru-${ZEN_KV}-${ZEN_MULTIGEN_LRU_COMMITS_SHORT}.patch"
-ZEN_MULTIGEN_LRU_SRC_URI=\
-"${ZEN_MULTIGEN_LRU_BASE_URI}.patch -> ${ZEN_MULTIGEN_LRU_FN}"
+	ZEN_MULTIGEN_LRU_FN="zen-multigen_lru-${ZEN_KV}-${ZEN_MULTIGEN_LRU_COMMITS_SHORT}.patch"
+	ZEN_MULTIGEN_LRU_SRC_URI="
+		${ZEN_MULTIGEN_LRU_BASE_URI}.patch -> ${ZEN_MULTIGEN_LRU_FN}
+	"
 fi
 
 ZEN_MUQSS_BASE_URI=\
@@ -659,30 +677,52 @@ if [[ -n "${ZEN_KV}" ]] ; then
 fi
 
 if ver_test ${PV} -eq ${K_MAJOR_MINOR} ; then
-KERNEL_NO_POINT_RELEASE="1"
+	KERNEL_NO_POINT_RELEASE="1"
 elif ver_test ${PV} -eq ${K_MAJOR_MINOR}.1 ; then
-KERNEL_0_TO_1_ONLY="1"
+	KERNEL_0_TO_1_ONLY="1"
 fi
 
 if [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
 	KERNEL_PATCH_URIS=()
 elif [[ -n "${KERNEL_0_TO_1_ONLY}" && "${KERNEL_0_TO_1_ONLY}" == "1" ]] ; then
-	KERNEL_PATCH_URIS=(${KERNEL_PATCH_0_TO_1_URI})
-	KERNEL_PATCH_FNS_EXT=(patch-${K_MAJOR_MINOR}.1.xz)
-	KERNEL_PATCH_FNS_NOEXT=(patch-${K_MAJOR_MINOR}.1)
+	KERNEL_PATCH_URIS=(
+		${KERNEL_PATCH_0_TO_1_URI}
+	)
+	KERNEL_PATCH_FNS_EXT=(
+		patch-${K_MAJOR_MINOR}.1.xz
+	)
+	KERNEL_PATCH_FNS_NOEXT=(
+		patch-${K_MAJOR_MINOR}.1
+	)
 else
-	KERNEL_PATCH_TO_FROM=($(gen_kernel_seq $(ver_cut 3 ${PV})))
-	KERNEL_PATCH_FNS_EXT=(${KERNEL_PATCH_TO_FROM[@]/%/.xz})
-	KERNEL_PATCH_FNS_EXT=\
-(${KERNEL_PATCH_FNS_EXT[@]/#/patch-${K_MAJOR_MINOR}.})
-	KERNEL_PATCH_FNS_NOEXT=\
-(${KERNEL_PATCH_TO_FROM[@]/#/patch-${K_MAJOR_MINOR}.})
-	KERNEL_PATCH_URIS=\
-(${KERNEL_PATCH_0_TO_1_URI} ${KERNEL_PATCH_FNS_EXT[@]/#/${KERNEL_INC_BASE_URI}})
-	KERNEL_PATCH_FNS_EXT=\
-(patch-${K_MAJOR_MINOR}.1.xz ${KERNEL_PATCH_FNS_EXT[@]})
-	KERNEL_PATCH_FNS_NOEXT=\
-(patch-${K_MAJOR_MINOR}.1 ${KERNEL_PATCH_TO_FROM[@]/#/patch-${K_MAJOR_MINOR}.})
+	KERNEL_PATCH_TO_FROM=(
+		$(gen_kernel_seq $(ver_cut 3 ${PV}))
+	)
+	KERNEL_PATCH_FNS_EXT=(
+		${KERNEL_PATCH_TO_FROM[@]/%/.xz}
+	)
+	KERNEL_PATCH_FNS_EXT=(
+		${KERNEL_PATCH_FNS_EXT[@]/#/patch-${K_MAJOR_MINOR}.}
+	)
+	KERNEL_PATCH_FNS_NOEXT=(
+		${KERNEL_PATCH_TO_FROM[@]/#/patch-${K_MAJOR_MINOR}.}
+	)
+	KERNEL_PATCH_URIS=(
+		${KERNEL_PATCH_0_TO_1_URI}
+		${KERNEL_PATCH_FNS_EXT[@]/#/${KERNEL_INC_BASE_URI}}
+	)
+
+	# Do not change the order
+	KERNEL_PATCH_FNS_EXT=(
+		patch-${K_MAJOR_MINOR}.1.xz
+		${KERNEL_PATCH_FNS_EXT[@]}
+	)
+
+	# Do not change the order
+	KERNEL_PATCH_FNS_NOEXT=(
+		patch-${K_MAJOR_MINOR}.1
+		${KERNEL_PATCH_TO_FROM[@]/#/patch-${K_MAJOR_MINOR}.}
+	)
 fi
 
 # Keep the sources clean upon install.
@@ -1426,7 +1466,11 @@ apply_cfi() {
 # Adds custom logo patch
 apply_custom_logo() {
 	if [[ -n "${OT_KERNEL_LOGO_URI}" ]] ; then
-		_fpatch "${FILESDIR}/custom-logo-for-6.1.patch"
+		if ver_test ${K_MAJOR_MINOR} -ge 5.2 ; then
+			_fpatch "${FILESDIR}/custom-logo-for-6.1.patch"
+		else
+			_fpatch "${FILESDIR}/custom-logo-for-4.14.patch"
+		fi
 	fi
 }
 
@@ -1782,6 +1826,14 @@ apply_clang_pgo() {
 	fi
 }
 
+# @FUNCTION: apply_c2tcp_v2
+# @DESCRIPTION:
+# Apply the C2TCP / DeepCC / Orca patch
+apply_c2tcp_v2() {
+	einfo "Applying the C2TCP / DeepCC / Orca patch"
+	_fpatch "${EDISTDIR}/${C2TCP_FN}"
+}
+
 # @FUNCTION: ot-kernel_compiler_not_found
 # @DESCRIPTION:
 # Show compiler is not found message
@@ -2048,6 +2100,18 @@ apply_all_patchsets() {
 		fi
 	fi
 
+	if has c2tcp ${IUSE} \
+		|| has deepcc ${IUSE} \
+		|| has orca ${IUSE} ; then
+		if ot-kernel_use c2tcp \
+			|| ot-kernel_use deepcc \
+			|| ot-kernel_use orca ; then
+			if [[ "${C2TCP_MAJOR_VER}" == "2" ]] ; then
+				apply_c2tcp_v2
+			fi
+		fi
+	fi
+
 	apply_custom_logo
 
 	if (( ${#_PATCHES[@]} > 0 )) ; then
@@ -2209,9 +2273,14 @@ ot-kernel_rm_reiserfs() {
 		sed -i -e "s|linux/reiserfs_fs.h|Reserved|g" \
 			"Documentation/userspace-api/ioctl/ioctl-number.rst" \
 			|| die
-	else
+	elif ver_test ${K_MAJOR_MINOR} -ge 5.3 \
+		&& ver_test ${K_MAJOR_MINOR} -le 5.4 ; then
 		sed -i -e "s|linux/reiserfs_fs.h|Reserved|g" \
 			"Documentation/ioctl/ioctl-number.rst" \
+			|| die
+	else
+		sed -i -e "s|linux/reiserfs_fs.h|Reserved|g" \
+			"Documentation/ioctl/ioctl-number.txt" \
 			|| die
 	fi
 	sed -i -e "/REISERFS/,/\/reiserfs/d" \
@@ -2269,7 +2338,7 @@ ot-kernel_src_prepare() {
 	fi
 
 	if use disable_debug ; then
-		cat "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" \
+		cat "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_PV}" \
 			> "disable_debug" || die
 	fi
 
@@ -2279,7 +2348,8 @@ ot-kernel_src_prepare() {
 		> "all-kernel-options-as-yes" || die
 
 	if has clang-pgo ${IUSE} && use clang-pgo ; then
-		cat "${FILESDIR}/pgo-trainer.sh" > "pgo-trainer.sh"
+		cat "${FILESDIR}/pgo-trainer.sh" \
+			> "pgo-trainer.sh" || die
 	fi
 
 	cat "${FILESDIR}/ep800/ep800.c" \

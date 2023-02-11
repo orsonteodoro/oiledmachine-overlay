@@ -26,6 +26,7 @@ case ${EAPI:-0} in
 esac
 
 IUSE+=" cve_hotfix"
+
 LICENSE+=" cve_hotfix? ( GPL-2 )"
 
 DEPEND+="
