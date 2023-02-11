@@ -439,7 +439,11 @@ fi
 if [[ -n "${C2TCP_VER}" ]] ; then
 	C2TCP_FN="linux-${C2TCP_KV//./-}-orca-c2tcp-${C2TCP_EXTRA}.patch"
 	C2TCP_BASE_URI="https://raw.githubusercontent.com/Soheil-ab/c2tcp/${C2TCP_COMMIT}/linux-patch"
-	C2TCP_URI="${C2TCP_BASE_URI}/${C2TCP_FN}"
+	C2TCP_URIS="
+		${C2TCP_BASE_URI}/${C2TCP_FN}
+		https://raw.githubusercontent.com/Soheil-ab/c2tcp/master/copyright
+			-> copyright.c2tcp.${C2TCP_COMMIT:0:7}
+	"
 fi
 
 CLANG_PGO_FN="clang-pgo-${CLANG_PGO_KV}-${PATCH_CLANG_PGO_COMMIT_A:0:7}-${PATCH_CLANG_PGO_COMMIT_D:0:7}.patch"
@@ -8549,6 +8553,19 @@ EOF
 			insinto /etc
 			newins "${T}/tcca.conf" "tcca-${PV}-${extraversion}-${arch}.conf"
 			OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=1
+		fi
+
+		if has c2tcp ${IUSE} \
+			|| has deepcc ${IUSE} \
+			|| has orca ${IUSE} ; then
+			if ot-kernel_use c2tcp \
+				|| ot-kernel_use deepcc \
+				|| ot-kernel_use orca ; then
+				if [[ "${C2TCP_MAJOR_VER}" == "2" ]] ; then
+					docinto licenses
+					dodoc "${EDISTDIR}/copyright.c2tcp.${C2TCP_COMMIT:0:7}"
+				fi
+			fi
 		fi
 	done
 

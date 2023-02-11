@@ -360,7 +360,7 @@ fi
 if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 	SRC_URI+="
 		${BBRV2_SRC_URIS}
-		${C2TCP_URI}
+		${C2TCP_URIS}
 		${CK_SRC_URIS}
 		${FUTEX_SRC_URIS}
 		${GENPATCHES_URI}
@@ -389,10 +389,10 @@ else
 			${BBRV2_SRC_URIS}
 		)
 		c2tcp? (
-			${C2TCP_URI}
+			${C2TCP_URIS}
 		)
 		deepcc? (
-			${C2TCP_URI}
+			${C2TCP_URIS}
 		)
 		futex? (
 			${FUTEX_SRC_URIS}
@@ -404,7 +404,7 @@ else
 			${CK_SRC_URIS}
 		)
 		orca? (
-			${C2TCP_URI}
+			${C2TCP_URIS}
 		)
 		prjc? (
 			${PRJC_SRC_URI}

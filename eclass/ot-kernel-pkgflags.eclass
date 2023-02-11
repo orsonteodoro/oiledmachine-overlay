@@ -203,6 +203,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_bridge_utils
 	ot-kernel-pkgflags_btrfs_progs
 	ot-kernel-pkgflags_bubblewrap
+	ot-kernel-pkgflags_c2tcp
 	ot-kernel-pkgflags_cairo
 	ot-kernel-pkgflags_caja_dbox
 	ot-kernel-pkgflags_catalyst
@@ -1192,6 +1193,18 @@ ot-kernel-pkgflags_bubblewrap() { # DONE
 		ot-kernel_y_configopt "CONFIG_USER_NS"
 		ot-kernel_y_configopt "CONFIG_PID_NS"
 		ot-kernel_y_configopt "CONFIG_NET_NS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_c2tcp
+# @DESCRIPTION:
+# Applies kernel config flags for the c2tcp package
+ot-kernel-pkgflags_c2tcp() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sedcf537]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-apps/c2tcp" ; then
+		einfo "Applying kernel config flags for the deepcc package (id: edcf537)"
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
 	fi
 }
 

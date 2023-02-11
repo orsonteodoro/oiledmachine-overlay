@@ -537,7 +537,7 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 	"
 	SRC_URI+="
 		${BBRV2_SRC_URIS}
-		${C2TCP_URI}
+		${C2TCP_URIS}
 		${CFI_SRC_URIS}
 		${CLANG_PGO_URI}
 		${GENPATCHES_URI}
@@ -577,13 +577,13 @@ else
 			)
 		)
 		c2tcp? (
-			${C2TCP_URI}
+			${C2TCP_URIS}
 		)
 		clang-pgo? (
 			${CLANG_PGO_URI}
 		)
 		deepcc? (
-			${C2TCP_URI}
+			${C2TCP_URIS}
 		)
 		genpatches? (
 			${GENPATCHES_URI}
@@ -592,7 +592,7 @@ else
 			${PRJC_SRC_URI}
 		)
 		orca? (
-			${C2TCP_URI}
+			${C2TCP_URIS}
 		)
 		rt? (
 			${RT_SRC_ALT_URI}

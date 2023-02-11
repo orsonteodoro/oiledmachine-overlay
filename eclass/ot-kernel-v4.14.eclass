@@ -213,7 +213,7 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 	SRC_URI+="
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
-		${C2TCP_URI}
+		${C2TCP_URIS}
 		${CK_SRC_URIS}
 		${GENPATCHES_URI}
 		${O3_CO_SRC_URI}
@@ -234,10 +234,10 @@ else
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
 		c2tcp? (
-			${C2TCP_URI}
+			${C2TCP_URIS}
 		)
 		deepcc? (
-			${C2TCP_URI}
+			${C2TCP_URIS}
 		)
 		genpatches? (
 			${GENPATCHES_URI}
@@ -246,7 +246,7 @@ else
 			${CK_SRC_URIS}
 		)
 		orca? (
-			${C2TCP_URI}
+			${C2TCP_URIS}
 		)
 		pds? (
 			${PDS_SRC_URI}

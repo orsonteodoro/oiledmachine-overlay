@@ -511,7 +511,7 @@ NOT_READY_YET="
 
 if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 	SRC_URI+="
-		${C2TCP_URI}
+		${C2TCP_URIS}
 		${BBRV2_SRC_URIS}
 		${CFI_SRC_URIS}
 		${CLANG_PGO_URI}
@@ -543,7 +543,7 @@ else
 			${BBRV2_SRC_URIS}
 		)
 		c2tcp? (
-			${C2TCP_URI}
+			${C2TCP_URIS}
 		)
 		cfi? (
 			amd64? (
@@ -554,7 +554,7 @@ else
 			${CLANG_PGO_URI}
 		)
 		deepcc? (
-			${C2TCP_URI}
+			${C2TCP_URIS}
 		)
 		futex? (
 			${FUTEX_SRC_URIS}
@@ -566,7 +566,7 @@ else
 			${MULTIGEN_LRU_SRC_URI}
 		)
 		orca? (
-			${C2TCP_URI}
+			${C2TCP_URIS}
 		)
 		prjc? (
 			${PRJC_SRC_URI}

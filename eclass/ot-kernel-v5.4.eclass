@@ -294,7 +294,7 @@ fi
 if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 	SRC_URI+="
 		${BMQ_SRC_URI}
-		${C2TCP_URI}
+		${C2TCP_URIS}
 		${CK_SRC_URIS}
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
@@ -322,10 +322,10 @@ else
 			${BMQ_SRC_URI}
 		)
 		c2tcp? (
-			${C2TCP_URI}
+			${C2TCP_URIS}
 		)
 		deepcc? (
-			${C2TCP_URI}
+			${C2TCP_URIS}
 		)
 		futex? (
 			${FUTEX_SRC_URIS}
@@ -337,7 +337,7 @@ else
 			${CK_SRC_URIS}
 		)
 		orca? (
-			${C2TCP_URI}
+			${C2TCP_URIS}
 		)
 		rt? (
 			${RT_SRC_URI}
