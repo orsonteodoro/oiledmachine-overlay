@@ -1517,7 +1517,7 @@ apply_futex() {
 			fi
 			(( ${blacklisted} == 1 )) && continue
 		fi
-		_fpatch "${EDISTDIR}/futex-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		_fpatch "${EDISTDIR}/futex-${FUTEX_KV}-${c:0:7}.patch"
 	done
 }
 
@@ -1540,7 +1540,7 @@ apply_futex2() {
 			fi
 			(( ${blacklisted} == 1 )) && continue
 		fi
-		_fpatch "${EDISTDIR}/futex2-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		_fpatch "${EDISTDIR}/futex2-${FUTEX2_KV}-${c:0:7}.patch"
 	done
 }
 

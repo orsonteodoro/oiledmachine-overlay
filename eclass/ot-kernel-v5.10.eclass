@@ -171,6 +171,7 @@ ZEN_MUQSS_EXCLUDED_COMMITS=(
 # For 5.6
 # This corresponds to the futex-proton-v3 branch.
 # Repo order is bottom oldest and top newest.
+# History:  https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3/
 FUTEX_KV="5.6.0_rc1"
 FUTEX_COMMITS=( # oldest
 dc3e0456bf719cde7ce44e1beb49d4ad0e5f0c71
@@ -592,8 +593,11 @@ ot-kernel_filter_patch_cb() {
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
 		_dpatch "${PATCH_OPTS} -F ${fuzz_factor}" "${path}"
 		ot-kernel_apply_tresor_fixes
-	elif [[ "${path}" =~ "futex-5.10-e8d4d6d.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+	elif [[ "${path}" =~ "futex-${FUTEX_KV}-e8d4d6d.patch" ]] ; then
+		cat "${path}" > "${T}/futex-${FUTEX_KV}-e8d4d6d.patch" || die
+		sed -i -e "s|kernel/futex\.c|kernel/futex/core.c|g" \
+			"${T}/futex-${FUTEX_KV}-e8d4d6d.patch" || die
+		_tpatch "${PATCH_OPTS}" "${T}/futex-${FUTEX_KV}-e8d4d6d.patch" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/futex-e8d4d6d-2-hunk-fix-for-5.10.patch"
 	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-f6da35c.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
@@ -614,7 +618,13 @@ die
 		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/"
+	elif [[ "${path}" =~ "futex-${FUTEX_KV}-dc3e045.patch" ]] ; then
+		cat "${path}" > "${T}/futex-${FUTEX_KV}-dc3e045.patch" || die
+		sed -i -e "s|kernel/futex\.c|kernel/futex/core.c|g" \
+			"${T}/futex-${FUTEX_KV}-dc3e045.patch" || die
+		_tpatch "${PATCH_OPTS}" "${T}/futex-${FUTEX_KV}-dc3e045.patch" 0 0 ""
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi
 }
+

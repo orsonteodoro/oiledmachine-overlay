@@ -19,8 +19,8 @@ kernel/futex.h:
  
  #define FUTEX_PRIVATE_FLAG	128
  #define FUTEX_CLOCK_REALTIME	256
---- a/kernel/futex.c.orig	2021-11-07 20:59:07.420018185 -0800
-+++ b/kernel/futex.c	2021-11-07 21:08:32.309981485 -0800
+--- a/kernel/futex/core.c.orig	2021-11-07 20:59:07.420018185 -0800
++++ b/kernel/futex/core.c	2021-11-07 21:08:32.309981485 -0800
 @@ -4091,6 +4091,72 @@ static __always_inline bool futex_cmd_ha
  	return false;
  }

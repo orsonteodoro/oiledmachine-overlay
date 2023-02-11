@@ -3,8 +3,8 @@ License headers:
 kernel/futex.c:
 // SPDX-License-Identifier: GPL-2.0-or-later
 
---- a/kernel/futex.c.orig	2021-09-22 14:00:21.491033355 -0700
-+++ b/kernel/futex.c	2021-09-22 14:02:17.721037185 -0700
+--- a/kernel/futex/core.c.orig	2021-09-22 14:00:21.491033355 -0700
++++ b/kernel/futex/core.c	2021-09-22 14:02:17.721037185 -0700
 @@ -4051,7 +4051,7 @@ SYSCALL_DEFINE6(futex, u32 __user *, uad
  			return -EINVAL;
  

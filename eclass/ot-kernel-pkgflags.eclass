@@ -6875,7 +6875,7 @@ ot-kernel-pkgflags_pulseaudio() { # DONE
 ot-kernel-pkgflags_pulseaudio_daemon() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S738aa6b]}" == "1" ]] && return
 	if ot-kernel_has_version "media-sound/pulseaudio-daemon" ; then
-		einfo "Applying kernel config flags for the pulseaudio package (id: 738aa6b)"
+		einfo "Applying kernel config flags for the pulseaudio-daemon package (id: 738aa6b)"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
