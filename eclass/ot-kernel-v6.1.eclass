@@ -791,10 +791,10 @@ ot-kernel_filter_patch_cb() {
 "${FILESDIR}/ck-patchset-5.12-ck1-fix-cpufreq-gov-performance.patch"
 	elif [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
 		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
-		einfo "Already applied ${path} upstream"
+einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0002-z3fold-stricter-locking-and-more-careful-reclaim.patch" ]] \
 		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
-		einfo "Already applied ${path} upstream"
+einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
@@ -837,8 +837,9 @@ eerror
 eerror "Please use the kcfi USE flag instead."
 eerror "Still investigating alternative CFI patch."
 eerror
-einfo "See cfi-${CFI_KV}-bd6966b.patch"
-die
+eerror "See cfi-${CFI_KV}-bd6966b.patch"
+eerror
+		die
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-bd6966b-fix-for-5.19.10.patch"
 	elif [[ "${path}" =~ "cfi-${CFI_KV}-3cb32c4.patch" ]] ; then
@@ -866,7 +867,7 @@ die
 
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
 einfo "See ${path}"
-die
+		die
 		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"

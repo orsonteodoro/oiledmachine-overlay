@@ -763,10 +763,10 @@ ot-kernel_filter_patch_cb() {
 
 	if [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
 		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
-		einfo "Already applied ${path} upstream"
+einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0002-z3fold-stricter-locking-and-more-careful-reclaim.patch" ]] \
 		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
-		einfo "Already applied ${path} upstream"
+einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "${PRJC_FN}" ]] ; then
@@ -828,7 +828,7 @@ ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-5.15.84.patch"
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
 einfo "See ${path}"
-die
+		die
 		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/"
