@@ -191,14 +191,6 @@ KCP_RDEPEND=" >=sys-devel/gcc-6.5.0"
 RDEPEND+="
 	${KCP_RDEPEND}
 "
-PDEPEND+="
-	orca? (
-		sys-apps/orca
-	)
-	deepcc? (
-		sys-apps/deepcc
-	)
-"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:

@@ -3294,6 +3294,8 @@ https://github.com/dolohow/uksm
       congestion control algorithm.
 
       It requires the use of Cubic.
+
+      Installing the <pkg>sys-apps/c2tcp</pkg> evaluation package is optional.
     </flag>
     <flag name="cfi">
       Ensures that the toolchain is ready for CFI support (for arm64 in
@@ -3340,6 +3342,9 @@ https://github.com/dolohow/uksm
       window.
 
       Prebuilt training models only works with BBR, Cubic, Illinois, Westwood.
+
+      Installing the <pkg>sys-apps/deepcc</pkg> package is required for the DRL
+      Agent and the learned model(s).
     </flag>
     <flag name="disable_debug">
       Installs scripts to disable debugging, tracing, verbose output or related
@@ -3426,8 +3431,8 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
     </flag>
     <flag name="orca">
       (WORK IN PROGRESS / DRAFT)
-      Orca is an AI architecture used in C2TCP that is partially AI driven and
-      partially classical congestion control.
+      Orca is an AI architecture that is partially AI driven and
+      partially classical congestion control (CC).
 
       It is a learning based TCP congestion control using Deep Renforced
       Learning (DRL w/TD3) and Finite State Machine (FSM) based Congestion
@@ -3439,6 +3444,14 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       implementations.
       
       The output of orca is changes in control window (cwnd) and pacing rates.
+
+      The *prebuilt model* and the CC Huristics maybe limited to Cubic.
+
+      Using a different CC may require futher customizations or new AI
+      training.
+
+      Installing the <pkg>sys-apps/orca</pkg> package is required for the DRL
+      Agent and the learned model.
     </flag>
     <flag name="openssl">
       Add support for signing modules and kernels

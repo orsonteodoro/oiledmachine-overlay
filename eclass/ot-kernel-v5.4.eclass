@@ -279,7 +279,9 @@ KCP_RDEPEND="
 		$(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT})
 	)
 "
-RDEPEND+=" ${KCP_RDEPEND}"
+RDEPEND+="
+	${KCP_RDEPEND}
+"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:

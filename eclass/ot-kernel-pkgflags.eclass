@@ -1207,6 +1207,10 @@ ot-kernel-pkgflags_c2tcp() { # DONE
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_INET"
+		ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
+		ot-kernel_y_configopt "CONFIG_TCP_CONG_CUBIC"
 	fi
 }
 
@@ -2855,11 +2859,18 @@ ot-kernel-pkgflags_dccutil() { # DONE
 # Applies kernel config flags for the deepcc package
 ot-kernel-pkgflags_deepcc() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S600cf83]}" == "1" ]] && return
-	if ot-kernel_has_version "sys-apps/deepcc[build-models]" ; then
+	if ot-kernel_has_version "sys-apps/deepcc" ; then
 		einfo "Applying kernel config flags for the deepcc package (id: 600cf83)"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_INET"
+		ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
+		ot-kernel_y_configopt "CONFIG_TCP_CONG_BBR"
+		ot-kernel_y_configopt "CONFIG_TCP_CONG_CUBIC"
+		ot-kernel_y_configopt "CONFIG_TCP_CONG_ILLINOIS"
+		ot-kernel_y_configopt "CONFIG_TCP_CONG_WESTWOOD"
 	fi
 }
 
@@ -5990,11 +6001,15 @@ ot-kernel-pkgflags_oprofile() { # DONE
 # Applies kernel config flags for the orca package
 ot-kernel-pkgflags_orca() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1247837]}" == "1" ]] && return
-	if ot-kernel_has_version "sys-apps/orca[build-models]" ; then
+	if ot-kernel_has_version "sys-apps/orca" ; then
 		einfo "Applying kernel config flags for the orca package (id: 1247837)"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_INET"
+		ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
+		ot-kernel_y_configopt "CONFIG_TCP_CONG_CUBIC"
 	fi
 }
 

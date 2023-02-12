@@ -247,6 +247,17 @@ BDEPEND+="
 	)
 "
 
+if [[ -n "${C2TCP_VER}" ]] ; then
+	PDEPEND+="
+		orca? (
+			sys-apps/orca
+		)
+		deepcc? (
+			sys-apps/deepcc
+		)
+	"
+fi
+
 if [[ -n "${CLANG_PGO_KV}" ]] ; then
 	PGT_CRYPTO_DEPEND="
 		sys-fs/cryptsetup
