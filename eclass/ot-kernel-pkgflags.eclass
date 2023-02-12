@@ -240,6 +240,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_distrobuilder
 	ot-kernel-pkgflags_docker
 	ot-kernel-pkgflags_dosemu
+	ot-kernel-pkgflags_dpdk
 	ot-kernel-pkgflags_dracut
 	ot-kernel-pkgflags_drbd_utils
 	ot-kernel-pkgflags_droidcam
@@ -564,6 +565,7 @@ ot-kernel-pkgflags_apply() {
 	_ot-kernel_set_futex
 	_ot-kernel_set_futex2
 	_ot-kernel_set_ldt
+	_ot-kernel_set_multiuser
 
 	# Out of source modules
 }
@@ -3137,6 +3139,33 @@ ot-kernel-pkgflags_dosemu() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_dpdk
+# @DESCRIPTION:
+# Applies kernel config flags for the dpdk package
+ot-kernel-pkgflags_dpdk() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S7a815b4]}" == "1" ]] && return
+	if ot-kernel_has_version "net-libs/dpdk" ; then
+		einfo "Applying kernel config flags for the dpdk package (id: 7a815b4)"
+		ot-kernel_y_configopt "CONFIG_UIO"
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_PROC_PAGE_MONITOR"
+		ot-kernel_y_configopt "CONFIG_SYSFS"
+		ot-kernel_y_configopt "CONFIG_SYSCTL"
+		ot-kernel_y_configopt "CONFIG_HUGETLBFS" # For performance (optional)
+
+		# This should be the responsibility of the dpdk packager.
+ewarn
+ewarn "Additional setup required for hugetlbfs for net-libs/dpdk for performance.  See"
+ewarn "https://doc.dpdk.org/guides/linux_gsg/sys_reqs.html#running-dpdk-applications"
+ewarn
+
+		# Optional group
+		ot-kernel_y_configopt "CONFIG_ACPI"
+		ot-kernel_y_configopt "CONFIG_HPET"
+		ot-kernel_y_configopt "CONFIG_HPET_MMAP"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_e2fsprogs
 # @DESCRIPTION:
 # Applies kernel config flags for the e2fsprogs package
@@ -4259,6 +4288,10 @@ ot-kernel-pkgflags_iproute2() {
 		ot-kernel_y_configopt "CONFIG_NETDEVICES"
 		ot-kernel_y_configopt "CONFIG_NET_CORE"
 		ot-kernel_set_configopt "CONFIG_IFB" "m"
+
+		ot-kernel_y_configopt "CONFIG_NAMESPACES"
+		#ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_NET_NS"
 	fi
 }
 
@@ -9658,6 +9691,18 @@ einfo "Enabling 16-bit emulation support"
 		warn_lowered_security "4e97be4"
 		ot-kernel_y_configopt "CONFIG_X86_16BIT"
 		ot-kernel_y_configopt "CONFIG_MODIFY_LDT_SYSCALL"
+	fi
+}
+
+# @FUNCTION: _ot-kernel_set_multiuser
+# @DESCRIPTION:
+# Add compatibility for multiuser
+_ot-kernel_set_multiuser() {
+	if [[ -e "${EROOT}/var/db/pkg/acct-group" \
+		|| -e "${EROOT}/var/db/pkg/acct-user" ]] ; then
+einfo "Enabling multiuser / multigroup support"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	fi
 }
 
