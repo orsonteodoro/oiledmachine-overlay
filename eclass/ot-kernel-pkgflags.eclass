@@ -367,6 +367,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_lxc
 	ot-kernel-pkgflags_lxd
 	ot-kernel-pkgflags_madwimax
+	ot-kernel-pkgflags_mahimahi
 	ot-kernel-pkgflags_mariadb
 	ot-kernel-pkgflags_mcelog
 	ot-kernel-pkgflags_mcproxy
@@ -1204,6 +1205,7 @@ ot-kernel-pkgflags_c2tcp() { # DONE
 	if ot-kernel_has_version "sys-apps/c2tcp" ; then
 		einfo "Applying kernel config flags for the deepcc package (id: edcf537)"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
 	fi
 }
@@ -2856,6 +2858,7 @@ ot-kernel-pkgflags_deepcc() { # DONE
 	if ot-kernel_has_version "sys-apps/deepcc[build-models]" ; then
 		einfo "Applying kernel config flags for the deepcc package (id: 600cf83)"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
 	fi
 }
@@ -5352,6 +5355,26 @@ ot-kernel-pkgflags_madwimax() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_mahimahi
+# @DESCRIPTION:
+# Applies kernel config flags for the mahimahi package
+ot-kernel-pkgflags_mahimahi() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se1f96ab]}" == "1" ]] && return
+	if ot-kernel_has_version "www-misc/mahimahi" ; then
+		einfo "Applying kernel config flags for the mahimahi package (id: e1f96ab)"
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_INET"
+
+		ot-kernel_y_configopt "CONFIG_NETDEVICES"
+		ot-kernel_y_configopt "CONFIG_NET_CORE"
+		ot-kernel_y_configopt "CONFIG_INET"
+		ot-kernel_y_configopt "CONFIG_TUN"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_mariadb
 # @DESCRIPTION:
 # Applies kernel config flags for the mariadb package
@@ -5970,6 +5993,7 @@ ot-kernel-pkgflags_orca() { # DONE
 	if ot-kernel_has_version "sys-apps/orca[build-models]" ; then
 		einfo "Applying kernel config flags for the orca package (id: 1247837)"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
 	fi
 }
@@ -6974,6 +6998,7 @@ ot-kernel-pkgflags_procps() { # DONE
 	if ot-kernel_has_version "sys-process/procps" ; then
 		einfo "Applying kernel config flags for the procps (id: f553965)"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL" # For sysctl
 	fi
 }
