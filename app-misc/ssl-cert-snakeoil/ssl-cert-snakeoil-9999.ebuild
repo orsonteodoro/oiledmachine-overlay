@@ -59,6 +59,7 @@ ewarn
 ewarn "Detected cert-only-pem USE flag OFF."
 ewarn
 ewarn "This cert is for testing purposes."
+ewarn "It is unsafe to use it in production."
 ewarn "It contains an assumed private key in the pem cert file."
 ewarn
 		fi
