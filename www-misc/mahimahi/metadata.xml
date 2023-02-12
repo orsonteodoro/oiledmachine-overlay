@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">ravinet/mahimahi</remote-id>
+    <bugs-to>https://github.com/ravinet/mahimahi/issues</bugs-to>
+  </upstream>
+  <use>
+    <flag name="alt-ssl">
+      Use an alternative ssl library.
+    </flag>
+    <flag name="sudo">
+      Use sudo like in the error message.
+    </flag>
+    <flag name="sysctl">
+      Use sysctl like in the error message.
+    </flag>
+  </use>
+</pkgmetadata>

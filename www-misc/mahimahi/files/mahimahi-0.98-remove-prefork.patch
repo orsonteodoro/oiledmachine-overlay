@@ -1,0 +1,26 @@
+diff -urp mahimahi-0.98_p9999.orig/configure.ac mahimahi-0.98_p9999/configure.ac
+--- mahimahi-0.98_p9999.orig/configure.ac	2023-02-11 12:33:09.494087181 -0800
++++ mahimahi-0.98_p9999/configure.ac	2023-02-11 12:36:47.534094366 -0800
+@@ -60,10 +60,6 @@ AC_SUBST([APACHE2_INCLUDE], [$(apxs -q e
+ 
+ # Checks for apache configuration modules
+ 
+-AC_CHECK_FILE([$APACHE2_MODULE_DIR/mod_mpm_prefork.so],
+-	      [AC_DEFINE_UNQUOTED([MOD_MPM_PREFORK], ["$APACHE2_MODULE_DIR/mod_mpm_prefork.so"], [mod_prefork.so])],
+-              [AC_MSG_ERROR([apache2 mod_mpm_prefork.so is required])])
+-
+ AC_CHECK_FILE([$APACHE2_MODULE_DIR/mod_authz_core.so],
+ 	      [AC_DEFINE_UNQUOTED([MOD_AUTHZ_CORE], ["$APACHE2_MODULE_DIR/mod_authz_core.so"], [mod_authz_core.so])],
+               [AC_MSG_ERROR([apache2 mod_authz_core.so is required])])
+diff -urp mahimahi-0.98_p9999.orig/src/httpserver/apache_configuration.hh mahimahi-0.98_p9999/src/httpserver/apache_configuration.hh
+--- mahimahi-0.98_p9999.orig/src/httpserver/apache_configuration.hh	2023-02-11 12:33:09.522087182 -0800
++++ mahimahi-0.98_p9999/src/httpserver/apache_configuration.hh	2023-02-11 12:36:27.642093711 -0800
+@@ -7,7 +7,7 @@
+ #ifndef APACHE_CONFIGURATION_HH
+ #define APACHE_CONFIGURATION_HH
+ 
+-const std::string apache_main_config = "LoadModule mpm_prefork_module " + std::string( MOD_MPM_PREFORK ) + "\nLoadModule authz_core_module " + std::string( MOD_AUTHZ_CORE ) + "\nMutex pthread\nLoadFile " + std::string( MOD_DEEPCGI ) + "\nLoadModule deepcgi_module " + std::string( MOD_DEEPCGI ) + "\nSetHandler deepcgi-handler\n";
++const std::string apache_main_config = "LoadModule authz_core_module " + std::string( MOD_AUTHZ_CORE ) + "\nMutex pthread\nLoadFile " + std::string( MOD_DEEPCGI ) + "\nLoadModule deepcgi_module " + std::string( MOD_DEEPCGI ) + "\nSetHandler deepcgi-handler\n";
+ 
+ const std::string apache_ssl_config = "LoadModule ssl_module " + std::string( MOD_SSL ) + "\nSSLEngine on\nSSLCertificateFile      " + std::string( MOD_SSL_CERTIFICATE_FILE ) + "\nSSLCertificateKeyFile " + std::string( MOD_SSL_KEY ) +"\n";
+ 
