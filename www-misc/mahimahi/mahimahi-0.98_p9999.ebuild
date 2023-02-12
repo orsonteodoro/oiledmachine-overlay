@@ -15,7 +15,7 @@ https://github.com/ravinet/mahimahi
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" alt-ssl fallback-commit +sudo +sysctl"
+IUSE+=" alt-ssl fallback-commit gnuplot +sudo +sysctl"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -31,6 +31,9 @@ DEPEND+="
 	x11-libs/libxcb
 	x11-libs/pango
 	virtual/libc
+	gnuplot? (
+		sci-visualization/gnuplot
+	)
 	sudo? (
 		app-admin/sudo
 	)
