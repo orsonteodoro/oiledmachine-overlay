@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+
+    This contains the DRL (Deep Reinforce Learning) Agent to lower delays or
+    boost throughput performace in existing and future TCP Congestion Controls.
+
+    DRL combines Reinforced Learning and Deep Neural Networks.
+
+    Prebuilt modules are provided for BBR, Cubic, Illinois, Westwood.
+ 
+  </longdescription>
+  <upstream>
+    <remote-id type="github">Soheil-ab/DeepCC.v1.0</remote-id>
+    <bugs-to>https://github.com/Soheil-ab/DeepCC.v1.0/issues</bugs-to>
+  </upstream>
+  <use>
+    <flag name="cellular-traces">
+      Install celluar-traces to train the DRL.
+    </flag>
+    <flag name="kernel-patch">
+      Install the kernel patch to apply on kernel sources.
+    </flag>
+  </use>
+</pkgmetadata>
