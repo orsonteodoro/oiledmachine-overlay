@@ -15,6 +15,9 @@
     DRL combines Reinforced Learning and Deep Neural Networks.
 
     Prebuilt modules are provided for BBR, Cubic, Illinois, Westwood.
+
+    This is a sender side TCP congestion control with changes to 
+    control window (cwnd).
  
     To run:
 
