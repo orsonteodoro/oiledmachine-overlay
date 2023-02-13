@@ -207,6 +207,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_cairo
 	ot-kernel-pkgflags_caja_dbox
 	ot-kernel-pkgflags_catalyst
+	ot-kernel-pkgflags_cdm
 	ot-kernel-pkgflags_cdrom
 	ot-kernel-pkgflags_cifs_utils
 	ot-kernel-pkgflags_chroot_wrapper
@@ -234,11 +235,13 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_db_numa
 	ot-kernel-pkgflags_dbus
 	ot-kernel-pkgflags_dccutil
+	ot-kernel-pkgflags_ddlm
 	ot-kernel-pkgflags_deepcc
 	ot-kernel-pkgflags_dietlibc
 	ot-kernel-pkgflags_discord
 	ot-kernel-pkgflags_distrobuilder
 	ot-kernel-pkgflags_docker
+	ot-kernel-pkgflags_doas
 	ot-kernel-pkgflags_dosemu
 	ot-kernel-pkgflags_dpdk
 	ot-kernel-pkgflags_dracut
@@ -274,6 +277,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_g15daemon
 	ot-kernel-pkgflags_gambas
 	ot-kernel-pkgflags_gcc
+	ot-kernel-pkgflags_gdm
 	ot-kernel-pkgflags_gerbera
 	ot-kernel-pkgflags_ghc
 	ot-kernel-pkgflags_glances
@@ -283,10 +287,12 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_gnome_boxes
 	ot-kernel-pkgflags_go
 	ot-kernel-pkgflags_gpm
+	ot-kernel-pkgflags_greetd
 	ot-kernel-pkgflags_grs
 	ot-kernel-pkgflags_gspca_ep800
 	ot-kernel-pkgflags_gst_plugins_ximagesrc
 	ot-kernel-pkgflags_gstreamer
+	ot-kernel-pkgflags_gtkgreet
 	ot-kernel-pkgflags_guestfs
 	ot-kernel-pkgflags_gvrpcd
 	ot-kernel-pkgflags_hamachi
@@ -350,6 +356,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_libugpio
 	ot-kernel-pkgflags_libv4l
 	ot-kernel-pkgflags_libvirt
+	ot-kernel-pkgflags_lightdm
 	ot-kernel-pkgflags_likwid
 	ot-kernel-pkgflags_linux_atm
 	ot-kernel-pkgflags_linux_smaps
@@ -367,6 +374,8 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_lvm2
 	ot-kernel-pkgflags_lxc
 	ot-kernel-pkgflags_lxd
+	ot-kernel-pkgflags_lxdm
+	ot-kernel-pkgflags_lxqt_sudo
 	ot-kernel-pkgflags_madwimax
 	ot-kernel-pkgflags_mahimahi
 	ot-kernel-pkgflags_mariadb
@@ -446,7 +455,9 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_python
 	ot-kernel-pkgflags_qdmr
 	ot-kernel-pkgflags_qemu
+	ot-kernel-pkgflags_qingy
 	ot-kernel-pkgflags_qtcore
+	ot-kernel-pkgflags_qtgreet
 	ot-kernel-pkgflags_r8152
 	ot-kernel-pkgflags_r8168
 	ot-kernel-pkgflags_rasdaemon
@@ -469,14 +480,17 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_sanlock
 	ot-kernel-pkgflags_sbsigntools
 	ot-kernel-pkgflags_sc_controller
+	ot-kernel-pkgflags_sddm
+	ot-kernel-pkgflags_shadow
 	ot-kernel-pkgflags_simplevirt
 	ot-kernel-pkgflags_singularity
+	ot-kernel-pkgflags_slim
+	ot-kernel-pkgflags_snapd
 	ot-kernel-pkgflags_solaar
 	ot-kernel-pkgflags_sonic_snap
+	ot-kernel-pkgflags_souper
 	ot-kernel-pkgflags_sshuttle
 	ot-kernel-pkgflags_shorewall
-	ot-kernel-pkgflags_snapd
-	ot-kernel-pkgflags_souper
 	ot-kernel-pkgflags_spacenavd
 	ot-kernel-pkgflags_speedtouch_usb
 	ot-kernel-pkgflags_spice_vdagent
@@ -486,6 +500,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_sstp_client
 	ot-kernel-pkgflags_steam
 	ot-kernel-pkgflags_stress_ng
+	ot-kernel-pkgflags_sudo
 	ot-kernel-pkgflags_suricata
 	ot-kernel-pkgflags_sysdig_kmod
 	ot-kernel-pkgflags_systemd
@@ -504,6 +519,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_trace_cmd
 	ot-kernel-pkgflags_tracker
 	ot-kernel-pkgflags_trousers
+	ot-kernel-pkgflags_tuigreet
 	ot-kernel-pkgflags_tup
 	ot-kernel-pkgflags_tvheadend
 	ot-kernel-pkgflags_udev
@@ -516,6 +532,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_usb_modeswitch
 	ot-kernel-pkgflags_usbtop
 	ot-kernel-pkgflags_usbview
+	ot-kernel-pkgflags_util_linux
 	ot-kernel-pkgflags_v4l_dvb_saa716x
 	ot-kernel-pkgflags_v4l2loopback
 	ot-kernel-pkgflags_vala
@@ -530,6 +547,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_vtun
 	ot-kernel-pkgflags_wacom
 	ot-kernel-pkgflags_wavemon
+	ot-kernel-pkgflags_wdm
 	ot-kernel-pkgflags_webkit_gtk
 	ot-kernel-pkgflags_wine
 	ot-kernel-pkgflags_wireguard_modules
@@ -538,6 +556,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_wireplumber
 	ot-kernel-pkgflags_wpa_supplicant
 	ot-kernel-pkgflags_xboxdrv
+	ot-kernel-pkgflags_xdm
 	ot-kernel-pkgflags_xe_guest_utilities
 	ot-kernel-pkgflags_xen
 	ot-kernel-pkgflags_xf86_input_evdev
@@ -550,6 +569,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_xf86_video_vesa
 	ot-kernel-pkgflags_x86info
 	ot-kernel-pkgflags_xfce4_battery_plugin
+	ot-kernel-pkgflags_wlgreet
 	ot-kernel-pkgflags_xmms2
 	ot-kernel-pkgflags_xorg_server
 	ot-kernel-pkgflags_xoscope
@@ -1249,6 +1269,18 @@ ot-kernel-pkgflags_catalyst() { # DONE
 		ot-kernel_y_configopt "CONFIG_IPC_NS"
 		ot-kernel_y_configopt "CONFIG_SQUASHFS"
 		ot-kernel_y_configopt "CONFIG_SQUASHFS_ZLIB"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_cdm
+# @DESCRIPTION:
+# Applies kernel config flags for the cdm package
+ot-kernel-pkgflags_cdm() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5e2da8b]}" == "1" ]] && return
+	if ot-kernel_has_version "x11-misc/cdm" ; then
+		einfo "Applying kernel config flags for the cdm package (id: 5e2da8b)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	fi
 }
 
@@ -2856,6 +2888,18 @@ ot-kernel-pkgflags_dccutil() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_ddlm
+# @DESCRIPTION:
+# Applies kernel config flags for the ddlm package
+ot-kernel-pkgflags_ddlm() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sa70d302]}" == "1" ]] && return
+	if ot-kernel_has_version "gui-apps/ddlm" ; then
+		einfo "Applying kernel config flags for the ddlm package (id: a70d302)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_deepcc
 # @DESCRIPTION:
 # Applies kernel config flags for the deepcc package
@@ -3123,6 +3167,18 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 #		# ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # References it but no madvise/fadvise
 		# LDT referenced
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_doas
+# @DESCRIPTION:
+# Applies kernel config flags for the doas package
+ot-kernel-pkgflags_doas() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S3aa143d]}" == "1" ]] && return
+	if ot-kernel_has_version "app-admin/doas" ; then
+		einfo "Applying kernel config flags for the doas package (id: 3aa143d)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	fi
 }
 
@@ -3666,6 +3722,18 @@ ot-kernel-pkgflags_gcc() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_gdm
+# @DESCRIPTION:
+# Applies kernel config flags for the gdm package
+ot-kernel-pkgflags_gdm() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc879f86]}" == "1" ]] && return
+	if ot-kernel_has_version "gnome-base/gdm" ; then
+		einfo "Applying kernel config flags for the gdm package (id: c879f86)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_gerbera
 # @DESCRIPTION:
 # Applies kernel config flags for the gerbera package
@@ -3801,6 +3869,18 @@ ot-kernel-pkgflags_gpm() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_greetd
+# @DESCRIPTION:
+# Applies kernel config flags for the greetd package
+ot-kernel-pkgflags_greetd() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se08f82d]}" == "1" ]] && return
+	if ot-kernel_has_version "gui-libs/greetd" ; then
+		einfo "Applying kernel config flags for the greetd package (id: e08f82d)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_grs
 # @DESCRIPTION:
 # Applies kernel config flags for the grs package
@@ -3850,6 +3930,18 @@ ot-kernel-pkgflags_gstreamer() { # DONE
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_gtkgreet
+# @DESCRIPTION:
+# Applies kernel config flags for the gtkgreet package
+ot-kernel-pkgflags_gtkgreet() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2c93edf]}" == "1" ]] && return
+	if ot-kernel_has_version "gui-apps/gtkgreet" ; then
+		einfo "Applying kernel config flags for the gtkgreet package (id: 2c93edf)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	fi
 }
 
@@ -5149,6 +5241,18 @@ ot-kernel-pkgflags_likwid() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_lightdm
+# @DESCRIPTION:
+# Applies kernel config flags for the lightdm package
+ot-kernel-pkgflags_lightdm() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S973ff0e]}" == "1" ]] && return
+	if ot-kernel_has_version "x11-misc/lightdm" ; then
+		einfo "Applying kernel config flags for the lightdm package (id: 973ff0e)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_linux_smaps
 # @DESCRIPTION:
 # Applies kernel config flags for the Linux-Smaps package
@@ -5385,6 +5489,30 @@ ot-kernel-pkgflags_lxd() { # DONE
 		ot-kernel-pkgflags_kvm_host_required
 		ot-kernel_y_configopt "CONFIG_MACVTAP"
 		ot-kernel_y_configopt "CONFIG_VHOST_VSOCK"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_lxdm
+# @DESCRIPTION:
+# Applies kernel config flags for the lxdm package
+ot-kernel-pkgflags_lxdm() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S90eb5cb]}" == "1" ]] && return
+	if ot-kernel_has_version "lxde-base/lxdm" ; then
+		einfo "Applying kernel config flags for the lxdm package (id: 90eb5cb)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_lxqt_sudo
+# @DESCRIPTION:
+# Applies kernel config flags for the lxqt-sudo package
+ot-kernel-pkgflags_lxqt_sudo() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Scd536cf]}" == "1" ]] && return
+	if ot-kernel_has_version "lxqt-base/lxqt-sudo" ; then
+		einfo "Applying kernel config flags for the lxqt-sudo package (id: cd536cf)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	fi
 }
 
@@ -6554,6 +6682,18 @@ _ot-kernel-pkgflags_tcpip() {
 	ot-kernel_y_configopt "CONFIG_INET"
 }
 
+# @FUNCTION: ot-kernel-pkgflags_qingy
+# @DESCRIPTION:
+# Applies kernel config flags for the qingy package
+ot-kernel-pkgflags_qingy() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sca52c24]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-apps/qingy" ; then
+		einfo "Applying kernel config flags for the quingy package (id: ca52c24)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_qemu
 # @DESCRIPTION:
 # Applies kernel config flags for the QEMU package.
@@ -6630,6 +6770,18 @@ ot-kernel-pkgflags_qtcore() { # DONE
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_qtgreet
+# @DESCRIPTION:
+# Applies kernel config flags for the qtgreet package
+ot-kernel-pkgflags_qtgreet() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S8a87594]}" == "1" ]] && return
+	if ot-kernel_has_version "gui-apps/qtgreet" ; then
+		einfo "Applying kernel config flags for the qtgreet package (id: 8a87594)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	fi
 }
 
@@ -6902,6 +7054,7 @@ ot-kernel-pkgflags_polkit() { # DONE
 		einfo "Applying kernel config flags for the polkit package (id: ce79cdd)"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX" # For better performance
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	fi
 }
 
@@ -7432,6 +7585,18 @@ ot-kernel-pkgflags_sbsigntools() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_slim
+# @DESCRIPTION:
+# Applies kernel config flags for the slim package
+ot-kernel-pkgflags_slim() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S8775f3d]}" == "1" ]] && return
+	if ot-kernel_has_version "x11-misc/slim" ; then
+		einfo "Applying kernel config flags for the slim package (id: 8775f3d)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_snapd
 # @DESCRIPTION:
 # Applies kernel config flags for the snapd package
@@ -7618,6 +7783,30 @@ ot-kernel-pkgflags_sc_controller() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_sddm
+# @DESCRIPTION:
+# Applies kernel config flags for the sddm package
+ot-kernel-pkgflags_sddm() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4669e71]}" == "1" ]] && return
+	if ot-kernel_has_version "x11-misc/sddm" ; then
+		einfo "Applying kernel config flags for the sddm package (id: 4669e71)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_shadow
+# @DESCRIPTION:
+# Applies kernel config flags for the shadow package
+ot-kernel-pkgflags_shadow() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se80984f]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-apps/shadow" ; then
+		einfo "Applying kernel config flags for the shadow package (id: e80984f)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_simplevirt
 # @DESCRIPTION:
 # Applies kernel config flags for the simplevirt package
@@ -7772,6 +7961,18 @@ ot-kernel-pkgflags_stress_ng() { # DONE
 	if ot-kernel_has_version "app-benchmarks/stress-ng[apparmor]" ; then
 		einfo "Applying kernel config flags for the stress-ng package (id: 3af5aaa)"
 		ot-kernel_y_configopt "CONFIG_SECURITY_APPARMOR"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_sudo
+# @DESCRIPTION:
+# Applies kernel config flags for the sudo package
+ot-kernel-pkgflags_sudo() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S40b9c7e]}" == "1" ]] && return
+	if ot-kernel_has_version "app-admin/sudo" ; then
+		einfo "Applying kernel config flags for the sudo package (id: 40b9c7e)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	fi
 }
 
@@ -8053,6 +8254,18 @@ ot-kernel-pkgflags_trousers() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_tuigreet
+# @DESCRIPTION:
+# Applies kernel config flags for the tuigreet package
+ot-kernel-pkgflags_tuigreet() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sa6754c0]}" == "1" ]] && return
+	if ot-kernel_has_version "gui-apps/tuigreet" ; then
+		einfo "Applying kernel config flags for the tuigreet package (id: a6754c0)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_tup
 # @DESCRIPTION:
 # Applies kernel config flags for the tup package
@@ -8260,6 +8473,18 @@ ot-kernel-pkgflags_usbview() { # DONE
 		ban_disable_debug "3e735de"
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 		needs_debugfs "app-admin/usbview" "3e735de"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_util_linux
+# @DESCRIPTION:
+# Applies kernel config flags for the util-linux package
+ot-kernel-pkgflags_util_linux() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S3267f74]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-apps/util-linux[su]" ; then
+		einfo "Applying kernel config flags for the util-linux package (id: 3267f74)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	fi
 }
 
@@ -8486,6 +8711,18 @@ ot-kernel-pkgflags_wavemon() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_wdm
+# @DESCRIPTION:
+# Applies kernel config flags for the wdm package
+ot-kernel-pkgflags_wdm() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S9f65492]}" == "1" ]] && return
+	if ot-kernel_has_version "x11-misc/wdm" ; then
+		einfo "Applying kernel config flags for the wdm package (id: 9f65492)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_webkit_gtk
 # @DESCRIPTION:
 # Applies kernel config flags for the webkit-gtk package
@@ -8664,6 +8901,18 @@ ot-kernel-pkgflags_xboxdrv() { # DONE
 		ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
 		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
 		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_xdm
+# @DESCRIPTION:
+# Applies kernel config flags for the xdm package
+ot-kernel-pkgflags_xdm() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S9080d05]}" == "1" ]] && return
+	if ot-kernel_has_version "x11-apps/xdm" ; then
+		einfo "Applying kernel config flags for the xdm package (id: 9080d05)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	fi
 }
 
@@ -9017,6 +9266,18 @@ ot-kernel-pkgflags_xfce4_battery_plugin() { # DONE
 	if ot-kernel_has_version "xfce-extra/xfce4-battery-plugin" ; then
 		einfo "Applying kernel config flags for the xfce4-battery-plugin package (id: f54e65c)"
 		ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_wlgreet
+# @DESCRIPTION:
+# Applies kernel config flags for the wlgreet package
+ot-kernel-pkgflags_wlgreet() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S75439ce]}" == "1" ]] && return
+	if ot-kernel_has_version "gui-apps/wlgreet" ; then
+		einfo "Applying kernel config flags for the wlgreet package (id: 75439ce)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	fi
 }
 
