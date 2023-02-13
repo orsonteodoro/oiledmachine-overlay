@@ -190,8 +190,8 @@ ewarn "Build may break if highest gcc version not chosen and profile not"
 ewarn "sourced.  To fix do the following:"
 ewarn
 ewarn "  gcc-config -l"
-ewarn "  gcc-config ${CHOST}-${gcc_slot}  # must match at least one row from \ "
-ewarn "                                   # the above list"
+ewarn "  gcc-config ${CHOST}-${gcc_slot}	# It must match at least one row from \ "
+ewarn "						# the above list."
 ewarn "  source /etc/profile"
 ewarn
 		fi
