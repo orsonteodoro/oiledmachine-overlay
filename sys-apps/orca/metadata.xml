@@ -36,6 +36,9 @@
     <bugs-to>https://github.com/Soheil-ab/Orca/issues</bugs-to>
   </upstream>
   <use>
+    <flag name="evaluate">
+      Install dependencies required for evaluate.
+    </flag>
     <flag name="build-models">
       Train DRL Agent for 6 hours each.
     </flag>

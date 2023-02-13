@@ -39,6 +39,12 @@
     <bugs-to>https://github.com/Soheil-ab/DeepCC.v1.0/issues</bugs-to>
   </upstream>
   <use>
+    <flag name="build-models">
+      Build DRL Agent learned models.
+    </flag>
+    <flag name="evaluate">
+      Install dependencies required for evaluate.
+    </flag>
     <flag name="kernel-patch">
       Install the kernel patch to apply on kernel sources.
     </flag>

@@ -14,9 +14,15 @@ https://github.com/Soheil-ab/Orca
 LICENSE="MIT"
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Build in development
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" build-models cellular-traces fallback-commit kernel-patch"
+IUSE+=" build-models cellular-traces evaluate fallback-commit kernel-patch"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
+	cellular-traces? (
+		|| (
+			build-models
+			evaluate
+		)
+	)
 "
 DEPEND+="
 	${PYTHON_DEPS}
@@ -26,12 +32,15 @@ DEPEND+="
 	dev-python/sysv_ipc[${PYTHON_USEDEP}]
 	sys-process/procps
 	sys-process/psmisc
-	www-misc/mahimahi
+	evaluate? (
+		www-misc/mahimahi
+	)
 	cellular-traces? (
 		sys-apps/cellular-traces-nyc
 	)
 	build-models? (
 		dev-python/gym[${PYTHON_USEDEP}]
+		www-misc/mahimahi
 	)
 "
 RDEPEND+="

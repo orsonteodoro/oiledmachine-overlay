@@ -14,7 +14,7 @@ https://github.com/Soheil-ab/DeepCC.v1.0
 LICENSE="MIT"
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild in development
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" build-models fallback-commit kernel-patch"
+IUSE+=" build-models evaluate fallback-commit kernel-patch"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -27,7 +27,12 @@ DEPEND+="
 	app-alternatives/sh
 	sys-process/procps
 	sys-process/psmisc
-	www-misc/mahimahi
+	build-models? (
+		www-misc/mahimahi
+	)
+	evaluate? (
+		www-misc/mahimahi
+	)
 	|| (
 		sys-apps/shadow[su]
 		sys-apps/util-linux[su]
