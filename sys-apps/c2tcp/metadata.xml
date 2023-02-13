@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+
+    This contains the client-server evaluation application for C2TCP.
+
+    It also demonstrates how to set the average delay target for tuning C2TCP,
+    so you can integrate C2TCP application target in your app.
+
+    Alpha is the setpoint directly controlled by Target.  If alpha
+    increases, throughput increases.  If alpha decreases, the
+    algorithm becomes more delay sensitive.
+ 
+  </longdescription>
+  <upstream>
+    <remote-id type="github">Soheil-ab/DeepCC.v1.0</remote-id>
+    <bugs-to>https://github.com/Soheil-ab/DeepCC.v1.0/issues</bugs-to>
+  </upstream>
+  <use>
+    <flag name="cellular-traces">
+      Install cellular-traces to train the DRL.
+    </flag>
+    <flag name="kernel-patch">
+      Install the kernel patch to apply on kernel sources.
+    </flag>
+  </use>
+</pkgmetadata>
