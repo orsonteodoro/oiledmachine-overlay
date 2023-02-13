@@ -19,13 +19,10 @@
  
   </longdescription>
   <upstream>
-    <remote-id type="github">Soheil-ab/DeepCC.v1.0</remote-id>
-    <bugs-to>https://github.com/Soheil-ab/DeepCC.v1.0/issues</bugs-to>
+    <remote-id type="github">Soheil-ab/c2tcp</remote-id>
+    <bugs-to>https://github.com/Soheil-ab/c2tcp/issues</bugs-to>
   </upstream>
   <use>
-    <flag name="cellular-traces">
-      Install cellular-traces to train the DRL.
-    </flag>
     <flag name="kernel-patch">
       Install the kernel patch to apply on kernel sources.
     </flag>
