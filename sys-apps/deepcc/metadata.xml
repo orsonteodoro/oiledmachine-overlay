@@ -22,7 +22,7 @@
   </upstream>
   <use>
     <flag name="cellular-traces">
-      Install celluar-traces to train the DRL.
+      Install celluar-traces to train the DRL or to playback in the evaluator.
     </flag>
     <flag name="kernel-patch">
       Install the kernel patch to apply on kernel sources.
