@@ -123,7 +123,7 @@ einfo
 einfo
 einfo "Port forwarding is required with either 1 of the following:"
 einfo
-	if use procps ; then
+	if use sysctl ; then
 einfo "  sysctl -w net.ipv4.ip_forward=1           # as root"
 einfo "  sudo sysctl -w net.ipv4.ip_forward=1      # as non-root with sudo"
 einfo "  pkexec sysctl -w net.ipv4.ip_forward=1    # as non-root with pkexec/polkit"
