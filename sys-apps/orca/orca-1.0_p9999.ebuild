@@ -14,7 +14,7 @@ https://github.com/Soheil-ab/Orca
 LICENSE="MIT"
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Build in development
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" build-models cellular-traces evaluate fallback-commit kernel-patch"
+IUSE+=" build-models cellular-traces evaluate fallback-commit kernel-patch polkit +sudo"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	cellular-traces? (
@@ -32,15 +32,21 @@ DEPEND+="
 	dev-python/sysv_ipc[${PYTHON_USEDEP}]
 	sys-process/procps
 	sys-process/psmisc
-	evaluate? (
+	build-models? (
+		dev-python/gym[${PYTHON_USEDEP}]
 		www-misc/mahimahi
 	)
 	cellular-traces? (
 		sys-apps/cellular-traces-nyc
 	)
-	build-models? (
-		dev-python/gym[${PYTHON_USEDEP}]
+	evaluate? (
 		www-misc/mahimahi
+	)
+	polkit? (
+		sys-auth/polkit
+	)
+	sudo? (
+		app-admin/sudo
 	)
 "
 RDEPEND+="
@@ -58,7 +64,7 @@ SRC_URI="
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 PATCHES+=(
-	"${FILESDIR}/${PN}-1.0_p9999-real-network.patch"
+	"${FILESDIR}/${PN}-1.0_p9999-production-with-agnostic-sudo.patch"
 )
 
 src_unpack() {
@@ -76,13 +82,43 @@ src_unpack() {
 src_prepare() {
 	default
 	chmod +x build.sh || die
-	sed -i -e "s|sudo ||g" build.sh || die
 }
-src_configure() { :; }
+src_configure() {
+	local L=(
+		"actor.sh"
+		"build.sh"
+		"orca.sh"
+		"orca-standalone-emulation.sh"
+		"setup.sh"
+	)
+	local path
+	for path in ${L[@]} ; do
+		if use polkit ; then
+einfo "Modding ${path} for polkit"
+			sed -i -e "s|:-sudo|:-pkexec|g" "${path}"
+		elif use sudo ; then
+einfo "Modding ${path} for sudo"
+			sed -i -e "s|:-sudo|:-sudo|g" "${path}"
+		else
+einfo "Modding ${path} to remove sudo"
+			sed -i -e "s|:-sudo|:-\" \"|g" "${path}"
+		fi
+	done
+	if use polkit ; then
+einfo "Modding src/define.h for polkit"
+		sed -i -e "s|elevate_cmd=0|elevate_cmd=1|g" "src/define.h" || die
+	elif use sudo ; then
+einfo "Modding src/define.h for sudo"
+		sed -i -e "s|elevate_cmd=0|elevate_cmd=0|g" "src/define.h" || die
+	else
+einfo "Modding src/define.h to remove sudo"
+		sed -i -e "s|elevate_cmd=0|elevate_cmd=2|g" "src/define.h" || die
+	fi
+}
 
 src_compile() {
 	cd "${S}" || die
-	./build.sh || die
+	ORCA_ELEVATE_CMD=" " ./build.sh || die
 	if use cellular-traces ; then
 		cp -a /usr/share/celluar-traces-nyc/* traces || die
 	fi
