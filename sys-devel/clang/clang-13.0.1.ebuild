@@ -73,9 +73,13 @@ RESTRICT="!test? ( test )"
 
 RDEPEND+="
 	${PYTHON_DEPS}
-	static-analyzer? ( dev-lang/perl:* )
-	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
-	~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[debug=,${MULTILIB_USEDEP}]
+	static-analyzer? (
+		dev-lang/perl:*
+	)
+	xml? (
+		dev-libs/libxml2:2=[${MULTILIB_USEDEP}]
+	)
+	~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[${MULTILIB_USEDEP},debug=]
 "
 
 DEPEND="${RDEPEND}"
@@ -100,7 +104,9 @@ PDEPEND+="
 		)
 		=sys-libs/compiler-rt-${PV%_*}*
 	)
-	default-libcxx? ( >=sys-libs/libcxx-${PV} )
+	default-libcxx? (
+		>=sys-libs/libcxx-${PV}
+	)
 	~sys-devel/clang-runtime-${PV}
 "
 
@@ -116,7 +122,8 @@ LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 
 SRC_URI+="
-https://github.com/llvm/llvm-project/commit/71a9b8833231a285b4d8d5587c699ed45881624b.patch -> ${PN}-71a9b88.patch
+https://github.com/llvm/llvm-project/commit/71a9b8833231a285b4d8d5587c699ed45881624b.patch
+	-> ${PN}-71a9b88.patch
 "
 
 # 71a9b88 - [PATCH] [X86] Use unsigned int for return type of __get_cpuid_max.
