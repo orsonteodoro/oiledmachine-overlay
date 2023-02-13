@@ -29,7 +29,7 @@ pie +static-analyzer test xml
 default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4
 default-stack-clash-protection cet hardened hardened-compat ssp
-r6
+r8
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -73,9 +73,9 @@ RESTRICT="!test? ( test )"
 
 RDEPEND+="
 	${PYTHON_DEPS}
-	~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[debug=,${MULTILIB_USEDEP}]
 	static-analyzer? ( dev-lang/perl:* )
 	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
+	~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[debug=,${MULTILIB_USEDEP}]
 "
 
 DEPEND="${RDEPEND}"
@@ -89,13 +89,19 @@ BDEPEND="
 "
 PDEPEND+="
 	sys-devel/clang-common
-	~sys-devel/clang-runtime-${PV}
 	default-compiler-rt? (
+		(
+			!llvm-libunwind? (
+				sys-libs/libunwind
+			)
+			llvm-libunwind? (
+				sys-libs/llvm-libunwind
+			)
+		)
 		=sys-libs/compiler-rt-${PV%_*}*
-		llvm-libunwind? ( sys-libs/llvm-libunwind )
-		!llvm-libunwind? ( sys-libs/libunwind )
 	)
 	default-libcxx? ( >=sys-libs/libcxx-${PV} )
+	~sys-devel/clang-runtime-${PV}
 "
 
 LLVM_COMPONENTS=( clang clang-tools-extra )
@@ -187,7 +193,8 @@ ewarn
 	if [[ -n "${MAKEOPTS}" ]] ; then
 		local nmakeopts=$(echo "${MAKEOPTS}" \
 			| grep -o -E -e "-j[ ]*[0-9]+( |$)" \
-			| sed -e "s|-j||g" -e "s|[ ]*||")
+			| sed -e "s|-j||g" -e "s|[ ]*||" \
+			| tail -n 1)
 		if [[ -n "${nmakeopts}" ]] && (( ${nmakeopts} > 1 )) ; then
 ewarn
 ewarn "MAKEOPTS=-jN should be -j1 if linking with BFD or <= 4 GiB RAM or"
@@ -598,7 +605,7 @@ einfo
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/share/man"
 		# relative to bindir
-		-DCLANG_RESOURCE_DIR="../../../../lib/clang/${LLVM_MAJOR}"
+		-DCLANG_RESOURCE_DIR="../../../../lib/clang/${LLVM_VERSION}"
 
 		-DBUILD_SHARED_LIBS=OFF
 		-DCLANG_LINK_CLANG_DYLIB=ON

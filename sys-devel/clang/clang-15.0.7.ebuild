@@ -71,10 +71,16 @@ RESTRICT="!test? ( test )"
 RDEPEND+="
 	${PYTHON_DEPS}
 	>=sys-devel/clang-common-${PV}
+	ebolt? (
+		~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[bolt,debug=,${MULTILIB_USEDEP}]
+	)
+	static-analyzer? (
+		dev-lang/perl:*
+	)
+	xml? (
+		dev-libs/libxml2:2=[${MULTILIB_USEDEP}]
+	)
 	~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[debug=,${MULTILIB_USEDEP}]
-	ebolt? ( ~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[bolt,debug=,${MULTILIB_USEDEP}] )
-	static-analyzer? ( dev-lang/perl:* )
-	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
 "
 
 DEPEND="
@@ -211,7 +217,7 @@ ewarn "Build ~clang-${PV} with only gcc and ~llvm-${PV} without LTO."
 ewarn
 ewarn
 ewarn "To avoid missing symbols, both clang-${PV} and llvm-${PV} should be"
-ewarn "built with the same commit."
+ewarn "built with the same version."
 ewarn "See \`epkginfo -x sys-devel/clang::oiledmachine-overlay\` or the"
 ewarn "metadata.xml to see how to accomplish this."
 ewarn

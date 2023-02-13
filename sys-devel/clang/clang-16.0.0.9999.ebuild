@@ -69,11 +69,17 @@ RESTRICT="!test? ( test )"
 
 RDEPEND+="
 	${PYTHON_DEPS}
-	~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[debug=,${MULTILIB_USEDEP}]
 	>=sys-devel/clang-common-${PV}
-	ebolt? ( ~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[bolt,debug=,${MULTILIB_USEDEP}] )
-	static-analyzer? ( dev-lang/perl:* )
-	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
+	ebolt? (
+		~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[bolt,debug=,${MULTILIB_USEDEP}]
+	)
+	static-analyzer? (
+		dev-lang/perl:*
+	)
+	xml? (
+		dev-libs/libxml2:2=[${MULTILIB_USEDEP}]
+	)
+	~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[debug=,${MULTILIB_USEDEP}]
 "
 
 DEPEND="
