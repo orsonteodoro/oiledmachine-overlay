@@ -13,7 +13,7 @@
     It also demonstrates how to set the average delay target for tuning C2TCP,
     so you can integrate C2TCP application target in your app.
 
-    Alpha is the setpoint directly controlled by Target.  If alpha
+    Alpha is the setpoint indirectly controlled by Target.  If alpha
     increases, throughput increases.  If alpha decreases, the
     algorithm becomes more delay sensitive.
  
