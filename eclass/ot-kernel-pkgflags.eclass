@@ -6643,7 +6643,9 @@ ot-kernel-pkgflags_portage() { # DONE
 		ot-kernel_y_configopt "CONFIG_IPC_NS"
 		ot-kernel_y_configopt "CONFIG_PID_NS"
 		ot-kernel_y_configopt "CONFIG_NET_NS"
-		ot-kernel_y_configopt "CONFIG_UTS_NS"
+
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	fi
 }
 
