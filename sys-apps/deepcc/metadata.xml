@@ -10,11 +10,29 @@
 
     This contains the DRL (Deep Reinforce Learning) Agent to lower delays or
     boost throughput performace in existing and future TCP Congestion Controls.
+    Other benefits include lower CPU usage.
 
     DRL combines Reinforced Learning and Deep Neural Networks.
 
     Prebuilt modules are provided for BBR, Cubic, Illinois, Westwood.
  
+    To run:
+
+    # Standalone evaluation (for research only)
+    ./standalone.sh 8000 cubic
+
+    # For a real-network or use in production (ebuild mod)
+    DEEPCC_SCHEME=cubic ./real-network.sh
+
+    # For starting a new learner model for training
+    ./training.sh 1 44444 cubic
+
+    # For contining learner model training
+    ./training.sh 0 44444 cubic
+
+    You may use only cubic, westwood, illinois, bbr.
+    To use other schemes, you must mod run-dcubic.sh.
+
   </longdescription>
   <upstream>
     <remote-id type="github">Soheil-ab/DeepCC.v1.0</remote-id>

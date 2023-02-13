@@ -55,8 +55,9 @@ SRC_URI="
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-
-# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+PATCHES=(
+	"${FILESDIR}/${PN}-1.0_p9999-real-network.patch"
+)
 
 src_unpack() {
 	EGIT_REPO_URI="https://github.com/Soheil-ab/DeepCC.v1.0.git"
@@ -136,4 +137,16 @@ einfo
 einfo "The kernel patch can be found in ${found}."
 einfo
 	fi
+einfo
+einfo "Use the real-network.sh script to load the DRL Agent for a real"
+einfo "network."
+einfo
+einfo "To use other Congestion Control other than Cubic, you must train a new"
+einfo "learned model."
+einfo
+ewarn
+ewarn "real-network.sh is in TESTING."
+ewarn
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

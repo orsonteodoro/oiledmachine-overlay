@@ -126,7 +126,7 @@ einfo "To use other Congestion Control other than Cubic, you must train a new"
 einfo "learned model."
 einfo
 ewarn
-ewarn "The orca-real-network.sh is in TESTING."
+ewarn "orca-real-network.sh is in TESTING."
 ewarn
 }
 

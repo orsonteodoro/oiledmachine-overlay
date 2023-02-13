@@ -7,12 +7,19 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
+
+    This use DRL (Deep Reinforce Learning) Agent and an existing congestion
+    control to lower delays, to max throughput, to lower loss in existing and
+    future TCP Congestion Controls.  Other benefits include lower CPU usage.
+
+    DRL combines Reinforced Learning and Deep Neural Networks.
+
     To run:
 
     # Standalone evaluation (for research only)
     ./orca-standalone-emulation.sh 44444
 
-    # Standalone real-network (ebuild mod)
+    # For a real network or use in production (ebuild mod)
     ORCA_SCHEME=cubic ./orca-real-network.sh
 
     # Actor-Learner for starting a new learner model for training
