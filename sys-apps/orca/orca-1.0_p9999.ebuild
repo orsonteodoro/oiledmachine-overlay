@@ -48,8 +48,9 @@ SRC_URI="
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-
-# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+PATCHES+=(
+	"${FILESDIR}/${PN}-1.0_p9999-real-network.patch"
+)
 
 src_unpack() {
 	EGIT_REPO_URI="https://github.com/Soheil-ab/Orca.git"
@@ -63,12 +64,17 @@ src_unpack() {
 	git-r3_checkout
 }
 
+src_prepare() {
+	default
+	chmod +x build.sh || die
+	sed -i -e "s|sudo ||g" build.sh || die
+}
 src_configure() { :; }
 
 src_compile() {
 	cd "${S}" || die
 	./build.sh || die
-	if use celluar-traces ; then
+	if use cellular-traces ; then
 		cp -a /usr/share/celluar-traces-nyc/* traces || die
 	fi
 	if use build-models ; then
@@ -84,7 +90,7 @@ ewarn "The build-models USE flag is a work in progress."
 	fi
 }
 src_install() {
-	insinto /opt/deepcc
+	insinto /opt/orca
 	doins -r "${S}/"*
 	local path
 	for path in $(find "${ED}" -type f) ; do
@@ -112,4 +118,16 @@ einfo "  CONFIG_TCP_CONG_ADVANCED=y"
 # The entry point defaults to cubic.
 einfo "  CONFIG_TCP_CONG_CUBIC=y"
 einfo
+einfo
+einfo "Use the orca-real-network.sh script to load the DRL Agent for a real"
+einfo "network."
+einfo
+einfo "To use other Congestion Control other than Cubic, you must train a new"
+einfo "learned model."
+einfo
+ewarn
+ewarn "The orca-real-network.sh is in TESTING."
+ewarn
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

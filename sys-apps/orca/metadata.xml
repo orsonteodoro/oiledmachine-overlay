@@ -6,6 +6,24 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <longdescription>
+    To run:
+
+    # Standalone evaluation (for research only)
+    ./orca-standalone-emulation.sh 44444
+
+    # Standalone real-network (ebuild mod)
+    ORCA_SCHEME=cubic ./orca-real-network.sh
+
+    # Actor-Learner for starting a new learner model for training
+    ./orca.sh 1 44444
+
+    # Actor-Learner for contining learner model training
+    ./orca.sh 0 44444
+
+    # Actor-Learner for sample test
+    ./orca.sh 4 44444
+  </longdescription>
   <upstream>
     <remote-id type="github">Soheil-ab/Orca</remote-id>
     <bugs-to>https://github.com/Soheil-ab/Orca/issues</bugs-to>
