@@ -15,7 +15,7 @@ https://github.com/Soheil-ab/DeepCC.v1.0
 LICENSE="MIT"
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild in development
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" build-models evaluate fallback-commit kernel-patch"
+IUSE+=" build-models evaluate fallback-commit kernel-patch polkit +sudo"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -24,7 +24,6 @@ DEPEND+="
 	>=dev-python/sysv_ipc-1.0.0[${PYTHON_USEDEP}]
 	>=net-misc/iperf-3.1.3
 	>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
-	app-admin/sudo
 	app-alternatives/sh
 	sys-process/procps
 	sys-process/psmisc
@@ -33,6 +32,12 @@ DEPEND+="
 	)
 	evaluate? (
 		www-misc/mahimahi
+	)
+	polkit? (
+		sys-auth/polkit
+	)
+	sudo? (
+		app-admin/sudo
 	)
 	|| (
 		sys-apps/shadow[su]
@@ -62,7 +67,7 @@ SRC_URI="
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 PATCHES=(
-	"${FILESDIR}/${PN}-1.0_p9999-real-network.patch"
+	"${FILESDIR}/${PN}-1.0_p9999-real-network-with-agnostic-sudo.patch"
 )
 
 src_unpack() {
@@ -86,10 +91,43 @@ src_unpack() {
 	rm -rf "${WORKDIR}/models" || die
 }
 
-src_configure() { :; }
+src_configure() {
+	cd "${S}/deepcc.v1.0"
+	local L=(
+		"evaluate.sh"
+		"run-dcubic.sh"
+		"run-deep.sh"
+		"setup.sh"
+		"training.sh"
+	)
+	local path
+	for path in ${L[@]} ; do
+		if use polkit ; then
+einfo "Modding ${path} for polkit"
+			sed -i -e "s|:-sudo|:-pkexec|g" "${path}"
+		elif use sudo ; then
+einfo "Modding ${path} for sudo"
+			sed -i -e "s|:-sudo|:-sudo|g" "${path}"
+		else
+einfo "Modding ${path} to remove sudo"
+			sed -i -e "s|:-sudo|:-\" \"|g" "${path}"
+		fi
+	done
+	if use polkit ; then
+einfo "Modding src/define.h for polkit"
+		sed -i -e "s|elevate_cmd=0|elevate_cmd=1|g" "src/define.h" || die
+	elif use sudo ; then
+einfo "Modding src/define.h for sudo"
+		sed -i -e "s|elevate_cmd=0|elevate_cmd=0|g" "src/define.h" || die
+	else
+einfo "Modding src/define.h to remove sudo"
+		sed -i -e "s|elevate_cmd=0|elevate_cmd=2|g" "src/define.h" || die
+	fi
+}
+
 src_compile() {
 	cd "${S}/deepcc.v1.0" || die
-	./build.sh || die
+	DEEPCC_ELEVATE_CMD=" " ./build.sh || die
 	if use build-models ; then
 ewarn "The build-models USE flag is a work in progress."
 		die "Unfinished / untested"
