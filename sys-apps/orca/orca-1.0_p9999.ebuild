@@ -112,6 +112,7 @@ src_install() {
 			fperms 0755 "${path}"
 		fi
 	done
+	dosym orca-real-network.sh /opt/orca/drl-agent
 }
 
 pkg_postinst() {

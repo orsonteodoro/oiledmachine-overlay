@@ -7,7 +7,8 @@ EAPI=8
 PYTHON_COMPAT=( python3_10 ) # Constrained by tensorflow
 inherit distutils-r1 git-r3
 
-DESCRIPTION="DeepCC: A Deep Reinforcement Learning Plug-in to Boost the performance of your TCP scheme in Cellular Networks!"
+DESCRIPTION="DeepCC: A Deep Reinforcement Learning Plug-in to Boost the \
+performance of your TCP scheme in Cellular Networks!"
 HOMEPAGE="
 https://github.com/Soheil-ab/DeepCC.v1.0
 "
@@ -111,6 +112,7 @@ src_install() {
 			fperms 0755 "${path}"
 		fi
 	done
+	dosym real-network.sh /opt/deepcc/drl-agent
 }
 
 pkg_postinst() {
