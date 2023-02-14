@@ -15,7 +15,7 @@ https://github.com/Soheil-ab/DeepCC.v1.0
 LICENSE="MIT"
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild in development
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" build-models evaluate fallback-commit kernel-patch polkit +sudo"
+IUSE+=" build-models evaluate fallback-commit kernel-patch polkit +sudo r1"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -67,7 +67,7 @@ SRC_URI="
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 PATCHES=(
-	"${FILESDIR}/${PN}-1.0_p9999-real-network-with-agnostic-sudo.patch"
+	"A${FILESDIR}/${PN}-1.0_p9999-real-network-with-agnostic-sudo.patch"
 )
 
 src_unpack() {
