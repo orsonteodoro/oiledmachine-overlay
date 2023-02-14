@@ -271,7 +271,7 @@ diff -urpN orca-1.0_p9999.orig/src/orca-server-mahimahi.cc orca-1.0_p9999/src/or
 +
 +    if (production==0)
 +    {
-+        sprintf(container_cmd,"sudo -u `whoami` %s/client $MAHIMAHI_BASE 1 %d",path,client_port);
++        sprintf(container_cmd,"%s %s/client $MAHIMAHI_BASE 1 %d",elevate_arg,path,client_port);
 +        if (first_time==4 || first_time==2)
 +            sprintf(cmd, "%s   mm-delay %d mm-link %s/../traces/%s %s/../traces/%s --downlink-log=%s/log/down-%s --uplink-queue=droptail --uplink-queue-args=\"packets=%d\" --downlink-queue=droptail --downlink-queue-args=\"packets=%d\" -- sh -c \'%s\' &",elevate_arg,delay_ms,path,uplink,path,downlink,path,log_file,qsize,qsize,container_cmd);
 +        else

@@ -14,7 +14,7 @@ https://github.com/Soheil-ab/Orca
 LICENSE="MIT"
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Build in development
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" build-models cellular-traces evaluate fallback-commit kernel-patch polkit +sudo r3"
+IUSE+=" build-models cellular-traces evaluate fallback-commit kernel-patch polkit +sudo r4"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	cellular-traces? (
