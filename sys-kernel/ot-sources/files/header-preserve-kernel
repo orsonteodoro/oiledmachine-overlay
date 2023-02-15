@@ -258,7 +258,7 @@ echo -e "filelist:\t${filelist}"
 		elif [[ "${f}" =~ (".c"|".cpp"|".asm"|".S")$ ]] ; then
 			if [[ "${errcode}" == "0" ]] ; then
 				IFS=$'\n'
-				local
+				local line2
 				for line2 in ${lines} ; do
 #echo -e "LINE:\t${line2}"
 					origin=$(echo "${line2}" | cut -f 1 -d ":")
@@ -432,10 +432,15 @@ echo "Forking script for CPU (coreid: ${coreid}).  To see progress of this threa
 echo
 echo "Waiting for ${LOCKS_DIR}/filtering_licenses_running_* to be released"
 echo
-	for coreid in $(seq 0 ${nproc}) ; do
-		while [[ -d "${LOCKS_DIR}/filtering_licenses_running_${coreid}" ]] ; do
-			sleep 0.1
+	while true ; do
+		local complete=1
+		for coreid in $(seq 0 ${_nproc}) ; do
+			if [[ -d "${LOCKS_DIR}/filtering_licenses_running_${coreid}" ]] ; then
+				complete=0
+				sleep 0.1
+			fi
 		done
+		(( ${complete} == 1 )) && break
 	done
 
 	if [[ "${MERGED_COPYRIGHT_NOTICES}" == "1" ]] ; then
