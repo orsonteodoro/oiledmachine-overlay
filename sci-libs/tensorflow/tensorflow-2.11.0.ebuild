@@ -433,11 +433,7 @@ eerror
 		die
 	fi
 	if [[ "${FEATURES}" =~ "ccache" ]] ; then
-# Temporarily until a fix is found.
-eerror
-eerror "Disable ccache from FEATURES to continue."
-eerror
-		die
+ewarn "ccache support for this package is in TESTING.  Disable ccache if problematic."
 	fi
 }
 
@@ -589,9 +585,17 @@ ewarn
 		echo "build --action_env=KERAS_HOME=\"${T}/.keras\"" >> .bazelrc || die
 		echo "build --host_action_env=KERAS_HOME=\"${T}/.keras\"" >> .bazelrc || die
 		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
-			export CCACHE_DIR="${WORKDIR}/.ccache"
-einfo "Adding build --sandbox_writable_path=\"${WORKDIR}/.ccache\" to .bazelrc"
-			echo "build --sandbox_writable_path=${WORKDIR}/.ccache" >> .bazelrc || die
+			local ccache_dir=$(ccache -sv \
+				| grep "Cache directory" \
+				| cut -f 2 -d ":" \
+				| sed -r -e "s|^[ ]+||g")
+			echo "${ccache_dir}" > "${WORKDIR}/.ccache_dir_val" || die
+einfo "Adding build --sandbox_writable_path=\"${ccache_dir}\" to .bazelrc"
+			echo "build --action_env=CCACHE_DIR=\"${ccache_dir}\"" >> .bazelrc || die
+			echo "build --host_action_env=CCACHE_DIR=\"${ccache_dir}\"" >> .bazelrc || die
+			echo "build --sandbox_writable_path=${ccache_dir}" >> .bazelrc || die
+			export CCACHE_DIR="${ccache_dir}"
+einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 		fi
 
 		for cflag in $($(tc-getPKG_CONFIG) jsoncpp --cflags)
@@ -600,14 +604,6 @@ einfo "Adding build --sandbox_writable_path=\"${WORKDIR}/.ccache\" to .bazelrc"
 			echo "build --host_copt=\"${cflag}\"" >> .bazelrc || die
 		done
 	}
-	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
-		local ccache_dir=$(ccache -sv \
-			| grep "Cache directory" \
-			| cut -f 2 -d ":" \
-			| sed -r -e "s|^[ ]+||g")
-		# Workaround
-		ln -s "${ccache_dir}" "${WORKDIR}/.ccache" || die
-	fi
 	if use python; then
 		python_foreach_impl run_in_build_dir do_configure
 	else
@@ -619,7 +615,7 @@ src_compile() {
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 	export KERAS_HOME="${T}/.keras" # otherwise sandbox violation writing ~/.keras
 	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
-		export CCACHE_DIR="${WORKDIR}/.ccache"
+		export CCACHE_DIR=$(cat "${WORKDIR}/.ccache_dir_val")
 einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 	fi
 
@@ -656,6 +652,10 @@ src_install() {
 	local i l
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 	export KERAS_HOME="${T}/.keras" # otherwise sandbox violation writing ~/.keras
+	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
+		export CCACHE_DIR=$(cat "${WORKDIR}/.ccache_dir_val")
+einfo "CCACHE_DIR:\t${CCACHE_DIR}"
+	fi
 
 	do_install() {
 einfo "Installing ${EPYTHON} files"
