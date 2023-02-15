@@ -432,6 +432,13 @@ eerror "BAZEL_LD_PRELOAD_IGNORED_RISKS=\"deny\"      # to stop (default)"
 eerror
 		die
 	fi
+	if [[ "${FEATURES}" =~ "ccache" ]] ; then
+# Temporarily until a fix is found.
+eerror
+eerror "Disable ccache from FEATURES to continue."
+eerror
+		die
+	fi
 }
 
 src_unpack() {
@@ -582,16 +589,9 @@ ewarn
 		echo "build --action_env=KERAS_HOME=\"${T}/.keras\"" >> .bazelrc || die
 		echo "build --host_action_env=KERAS_HOME=\"${T}/.keras\"" >> .bazelrc || die
 		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
-			local ccache_dir=$(ccache -sv \
-				| grep "Cache directory" \
-				| cut -f 2 -d ":" \
-				| sed -r -e "s|^[ ]+||g")
 			export CCACHE_DIR="${WORKDIR}/.ccache"
 einfo "Adding build --sandbox_writable_path=\"${WORKDIR}/.ccache\" to .bazelrc"
 			echo "build --sandbox_writable_path=${WORKDIR}/.ccache" >> .bazelrc || die
-
-			# Workaround
-			ln -s "${ccache_dir}" "${WORKDIR}/.ccache" || die
 		fi
 
 		for cflag in $($(tc-getPKG_CONFIG) jsoncpp --cflags)
@@ -600,6 +600,14 @@ einfo "Adding build --sandbox_writable_path=\"${WORKDIR}/.ccache\" to .bazelrc"
 			echo "build --host_copt=\"${cflag}\"" >> .bazelrc || die
 		done
 	}
+	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
+		local ccache_dir=$(ccache -sv \
+			| grep "Cache directory" \
+			| cut -f 2 -d ":" \
+			| sed -r -e "s|^[ ]+||g")
+		# Workaround
+		ln -s "${ccache_dir}" "${WORKDIR}/.ccache" || die
+	fi
 	if use python; then
 		python_foreach_impl run_in_build_dir do_configure
 	else
@@ -610,6 +618,10 @@ einfo "Adding build --sandbox_writable_path=\"${WORKDIR}/.ccache\" to .bazelrc"
 src_compile() {
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 	export KERAS_HOME="${T}/.keras" # otherwise sandbox violation writing ~/.keras
+	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
+		export CCACHE_DIR="${WORKDIR}/.ccache"
+einfo "CCACHE_DIR:\t${CCACHE_DIR}"
+	fi
 
 	if use python; then
 		python_setup
