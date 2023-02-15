@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person">
+    <!-- Ebuild originator -->
+    <email>perfinion@gentoo.org</email>
+    <name>Jason Zaman</name>
+  </maintainer>
+  <longdescription>
+  </longdescription>
+  <upstream>
+    <remote-id type="github">tensorflow/tensorflow</remote-id>
+  </upstream>
+  <use>
+    <flag name="cuda">
+      Enable support for CUDA SDK
+    </flag>
+    <flag name="xla">
+      XLA (Accelerated Linear Algebra) Optimizing Compiler for TensorFlow
+    </flag>
+  </use>
+</pkgmetadata>
