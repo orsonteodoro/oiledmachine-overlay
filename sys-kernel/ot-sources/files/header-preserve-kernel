@@ -94,7 +94,7 @@ export FINGERPRINTS_DIR=$(mktemp -d -p "${T}")
 echo -e "FINGERPRINTS_DIR:\t\t${FINGERPRINTS_DIR}"
 export STAGING_AREA_MERGED_PATH=$(mktemp -d -p "${T}") # For single file, all unique headers
 echo -e "STAGING_AREA_MERGED_PATH:\t${STAGING_AREA_MERGED_PATH}"
-export CLASSIFY_DIR=$(mktemp -d -p "${T}") # For license classification
+export CLASSIFY_DIR="classified_licenses" # For license classification
 echo -e "CLASSIFY_DIR:\t\t\t${CLASSIFY_DIR}"
 export FILE_LIST_DIR=$(mktemp -d -p "${T}")
 export LOG_DIR=$(mktemp -d -p "${T}")
@@ -204,26 +204,35 @@ echo -e "coreid:\t${coreid}"
 echo -e "filelist:\t${filelist}"
 	local license_names="apache|bsd|cc-by|cddl|-exception|gfdl|gpl|isc|linux-openib|linux-syscall-note|mit|mpl|x11|zlib"
 	local keywords="copyright|licens|all rights reserved|contract|patent|liable|liabilit|public domain|royalt|spdx|warrant"
+	local remaining=$(wc -l "${filelist}" | cut -f 1 -d " ")
+	local total=${remaining}
 	local line
 	while IFS= read -r line ; do
 		local f="${line}"
 		f=$(echo "${f}" | sed -e "s|^./||")
-		local errors=$(mktemp -p "${T}")
+
+		local pct=$(python -c "print(1.0 - ${remaining}.0 / ${total}.0)")
+		echo -e "Files remaining:\t${remaining} (${pct}%) ${f}" >> "${logfile}"
+		remaining=$((${remaining} - 1))
+
+		# Skip binaries
+		[[ "${type}" =~ "shared object" ]] && continue
+		[[ "${type}" =~ "executable" ]] && continue
+		[[ "${type}" =~ "ELF" ]] && continue # object file
+		[[ "${type}" =~ "compressed" ]] && continue
 
 		# The file command is wrong sometimes.
 		if [[ "${f,,}" =~ "readme" ]] ; then
 			:;
 		elif ! file "${f}" | grep -q -E -e "(text|source)" ; then
-			rm -rf "${errors}"
 			continue
 		fi
 
 		if ! grep -q -E -e "(${keywords})" "${f}" ; then
-			rm -rf "${errors}"
 			continue
 		fi
 
-		lines=$(grep -E -n -i -e "(copyright|spdx)" "${f}" 2>"${errors}")
+		lines=$(grep -E -n -i -e "(copyright|spdx)" "${f}" 2>/dev/null)
 		errcode="$?"
 
 		local dir=$(dirname "${f}")
@@ -302,7 +311,6 @@ echo -e "${header_info}" >> "${STAGING_AREA_MERGED_PATH}/${fp}"
 				export IFS=$' \t\n'
 			fi
 		fi
-		rm "${errors}"
 	done < "${filelist}"
 	rm -rf "${LOCKS_DIR}/filtering_licenses_running_${coreid}" # release mutex
 }
@@ -410,8 +418,9 @@ echo
 echo -e "This PID:\t$$"
 echo "$$" > "${TEMP_DATA}/parent.pid"
 echo -e "TEMP_DATA:\t${TEMP_DATA}"
+	local _nproc=$(($(nproc) - 1)))
 	local coreid
-	for coreid in $(seq 0 $(($(nproc) -1))) ; do
+	for coreid in $(seq 0 ${_nproc}) ; do
 		export CORE_ID=${coreid}
 		local logfile="${LOG_DIR}/log.${coreid}"
 echo -e "coreid:\t${coreid}"
@@ -423,9 +432,9 @@ echo "Forking script for CPU (coreid: ${coreid}).  To see progress of this threa
 echo
 echo "Waiting for ${LOCKS_DIR}/filtering_licenses_running_* to be released"
 echo
-	for coreid in $(seq 0 $(($(nproc) -1))) ; do
+	for coreid in $(seq 0 ${nproc}) ; do
 		while [[ -d "${LOCKS_DIR}/filtering_licenses_running_${coreid}" ]] ; do
-			sleep 1
+			sleep 0.1
 		done
 	done
 
