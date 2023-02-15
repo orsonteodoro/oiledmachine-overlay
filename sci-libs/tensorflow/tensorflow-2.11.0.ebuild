@@ -417,6 +417,21 @@ eerror
 	# 10G to build C/C++ libs, 6G per python impl
 	CHECKREQS_DISK_BUILD="$((10 + 6 * ${num_pythons_enabled}))G"
 	check-reqs_pkg_setup
+
+	if ! [[ "${BAZEL_LD_PRELOAD_IGNORED_RISKS}" =~ ("allow"|"accept") ]] ; then
+# A reaction to "WARNING: ignoring LD_PRELOAD in environment" maybe reported by Bazel.
+eerror
+eerror "Precaution taken..."
+eerror
+eerror "LD_PRELOAD gets ignored by a build tool which could bypass the"
+eerror "ebuild sandbox.  Set one of the following as a per-package"
+eerror "environment variable:"
+eerror
+eerror "BAZEL_LD_PRELOAD_IGNORED_RISKS=\"allow\"     # to continue and consent to accepting risks"
+eerror "BAZEL_LD_PRELOAD_IGNORED_RISKS=\"deny\"      # to stop (default)"
+eerror
+		die
+	fi
 }
 
 src_unpack() {
@@ -571,7 +586,7 @@ ewarn
 				| grep "Cache directory" \
 				| cut -f 2 -d ":" \
 				| sed -r -e "s|^[ ]+||g")
-			CCACHE_DIR="${WORKDIR}/.ccache"
+			export CCACHE_DIR="${WORKDIR}/.ccache"
 einfo "Adding build --sandbox_writable_path=\"${WORKDIR}/.ccache\" to .bazelrc"
 			echo "build --sandbox_writable_path=${WORKDIR}/.ccache" >> .bazelrc || die
 

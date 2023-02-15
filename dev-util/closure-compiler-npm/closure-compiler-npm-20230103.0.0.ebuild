@@ -231,17 +231,17 @@ eerror
 }
 
 pkg_setup() {
-	if ! [[ "${CLOSURE_COMPILER_NPM_LD_PRELOAD_RISKS}" =~ ("allow"|"accept") ]] ; then
+	if ! [[ "${BAZEL_LD_PRELOAD_IGNORED_RISKS}" =~ ("allow"|"accept") ]] ; then
 # A reaction to "WARNING: ignoring LD_PRELOAD in environment" maybe reported by Bazel.
 eerror
 eerror "Precaution taken..."
 eerror
-eerror "LD_PRELOAD gets ignored by a build tool which could make the"
-eerror "ebuild sandbox ineffective.  Set one of the following as a per-package"
+eerror "LD_PRELOAD gets ignored by a build tool which could bypass the"
+eerror "ebuild sandbox.  Set one of the following as a per-package"
 eerror "environment variable:"
 eerror
-eerror "CLOSURE_COMPILER_NPM_LD_PRELOAD_RISKS=\"allow\"     # to continue and consent to accepting risks"
-eerror "CLOSURE_COMPILER_NPM_LD_PRELOAD_RISKS=\"deny\"      # to stop (default)"
+eerror "BAZEL_LD_PRELOAD_IGNORED_RISKS=\"allow\"     # to continue and consent to accepting risks"
+eerror "BAZEL_LD_PRELOAD_IGNORED_RISKS=\"deny\"      # to stop (default)"
 eerror
 		die
 	fi
