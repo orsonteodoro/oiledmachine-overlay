@@ -571,8 +571,12 @@ ewarn
 				| grep "Cache directory" \
 				| cut -f 2 -d ":" \
 				| sed -r -e "s|^[ ]+||g")
-einfo "Adding build --sandbox_writable_path=\"${ccache_dir}\" to .bazelrc"
-			echo "build --sandbox_writable_path=${ccache_dir}" >> .bazelrc || die
+			CCACHE_DIR="${WORKDIR}/.ccache"
+einfo "Adding build --sandbox_writable_path=\"${WORKDIR}/.ccache\" to .bazelrc"
+			echo "build --sandbox_writable_path=${WORKDIR}/.ccache" >> .bazelrc || die
+
+			# Workaround
+			ln -s "${ccache_dir}" "${WORKDIR}/.ccache" || die
 		fi
 
 		for cflag in $($(tc-getPKG_CONFIG) jsoncpp --cflags)
