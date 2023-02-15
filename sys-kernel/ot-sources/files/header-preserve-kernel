@@ -437,7 +437,7 @@ echo
 		for coreid in $(seq 0 ${_nproc}) ; do
 			if [[ -d "${LOCKS_DIR}/filtering_licenses_running_${coreid}" ]] ; then
 				complete=0
-				sleep 0.1
+				sleep 0.001
 			fi
 		done
 		(( ${complete} == 1 )) && break
