@@ -449,6 +449,13 @@ src_prepare() {
 	append-cxxflags -std=c++17
 	export BUILD_CXXFLAGS+=" -std=c++17"
 	filter-flags '-fvtable-verify=@(std|preinit)'
+
+	if ! use custom-optimization-level ; then
+		# Upstream uses a mix of -O3 and -O2.
+		# In some contexts -Os causes a stall.
+		filter-flags '-O*'
+	fi
+
 	bazel_setup_bazelrc
 
 	eapply "${WORKDIR}"/patches/*.patch
@@ -469,12 +476,6 @@ src_prepare() {
 src_configure() {
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 	export KERAS_HOME="${T}/.keras" # otherwise sandbox violation writing ~/.keras
-
-	if ! use custom-optimization-level ; then
-		# Upstream uses a mix of -O3 and -O2.
-		# In some contexts -Os causes a stall.
-		filter-flags '-O*'
-	fi
 
 	do_configure() {
 		export CC_OPT_FLAGS=" "
