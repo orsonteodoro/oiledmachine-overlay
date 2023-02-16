@@ -74,7 +74,7 @@ LICENSE="
 
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE="alt-ssl cuda custom-cflags mpi +python xla"
+IUSE="alt-ssl cuda custom-optimization-level mpi +python xla"
 CPU_USE_FLAGS_X86=( sse sse2 sse3 sse4_1 sse4_2 avx avx2 fma3 fma4 )
 IUSE+=" ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}"
 
@@ -470,11 +470,10 @@ src_configure() {
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 	export KERAS_HOME="${T}/.keras" # otherwise sandbox violation writing ~/.keras
 
-	if ! use custom-cflags ; then
+	if ! use custom-optimization-level ; then
 		# Upstream uses a mix of -O3 and -O2.
 		# In some contexts -Os causes a stall.
 		filter-flags '-O*'
-		strip-flags
 	fi
 
 	do_configure() {
