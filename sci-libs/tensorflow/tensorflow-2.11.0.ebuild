@@ -404,6 +404,7 @@ eerror
 		die
 	fi
 	${CC} --version || die
+	strip-unsupported-flags
 	local num_pythons_enabled
 	num_pythons_enabled=0
 	count_impls() {
@@ -473,6 +474,7 @@ src_configure() {
 		# Upstream uses a mix of -O3 and -O2.
 		# In some contexts -Os causes a stall.
 		filter-flags '-O*'
+		strip-flags
 	fi
 
 	do_configure() {
