@@ -74,7 +74,7 @@ LICENSE="
 
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE="alt-ssl cuda mpi +python xla"
+IUSE="alt-ssl cuda custom-cflags mpi +python xla"
 CPU_USE_FLAGS_X86=( sse sse2 sse3 sse4_1 sse4_2 avx avx2 fma3 fma4 )
 IUSE+=" ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}"
 
@@ -469,6 +469,12 @@ src_configure() {
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 	export KERAS_HOME="${T}/.keras" # otherwise sandbox violation writing ~/.keras
 
+	if ! use custom-cflags ; then
+		# Upstream uses a mix of -O3 and -O2.
+		# In some contexts -Os causes a stall.
+		filter-flags '-O*'
+	fi
+
 	do_configure() {
 		export CC_OPT_FLAGS=" "
 		export TF_ENABLE_XLA=$(usex xla 1 0)
@@ -577,6 +583,7 @@ ewarn
 		# This is not autoconf
 		./configure || die
 
+		echo 'build --subcommands' >> .bazelrc || die # Increase verbosity
 		echo 'build --config=noaws --config=nohdfs --config=nonccl' >> .bazelrc || die
 		echo 'build --define tensorflow_mkldnn_contraction_kernel=0' >> .bazelrc || die
 		echo "build --action_env=KERAS_HOME=\"${T}/.keras\"" >> .bazelrc || die
@@ -595,6 +602,7 @@ einfo "Adding build --sandbox_writable_path=\"${ccache_dir}\" to .bazelrc"
 einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 		fi
 
+		local cflag
 		for cflag in $($(tc-getPKG_CONFIG) jsoncpp --cflags)
 		do
 			echo "build --copt=\"${cflag}\"" >> .bazelrc || die
@@ -646,7 +654,7 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 }
 
 src_install() {
-	local i l
+	local i l n
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 	export KERAS_HOME="${T}/.keras" # otherwise sandbox violation writing ~/.keras
 	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
@@ -697,6 +705,7 @@ einfo "Installing libs"
 	insinto /usr/$(get_libdir)/pkgconfig
 	doins ${PN}.pc ${PN}_cc.pc
 
+	local l
 	for l in libtensorflow{,_framework,_cc}.so; do
 		dolib.so bazel-bin/tensorflow/${l}
 		dolib.so bazel-bin/tensorflow/${l}.$(ver_cut 1)
