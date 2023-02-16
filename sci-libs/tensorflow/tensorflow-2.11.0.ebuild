@@ -229,7 +229,7 @@ SRC_URI="
 # >=grpc-1.27 and >=1.24.3 is upstream minimal but incorrect
 # >=grpc-1.48 is the correct for compatibility with abseil-cpp 20220623 lts
 # grpcio version should match grpc
-# >=openssl-3 is only license compatible with Apache-2.0
+# Apache-2.0 is only license compatible with >=openssl-3
 # protobuf-python has a max limit upstream
 # gast has a max limit upstream
 RDEPEND_DISABLED="
