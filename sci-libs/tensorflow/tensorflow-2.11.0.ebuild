@@ -81,12 +81,13 @@ IUSE+=" ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}"
 # For deps versioning, see
 # https://www.tensorflow.org/install/source#linux
 # https://github.com/google/boringssl/blob/f9eff21461cf79556a0fb8ca9b1bf60c3b283ce8/src/include/openssl/crypto.h#L99
-# https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/pip_package/setup.py#L349                                       # python versions
 # https://github.com/tensorflow/runtime/blob/4ce3e4da2e21ae4dfcee9366415e55f408c884ec/third_party/rules_cuda/cuda/dependencies.bzl#L41   # cc_rules
 # https://github.com/tensorflow/runtime/blob/4ce3e4da2e21ae4dfcee9366415e55f408c884ec/third_party/rules_cuda/cuda/dependencies.bzl#L66   # platforms
-# https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/lite/tools/cmake/modules/eigen.cmake
-# https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/dockerfiles/partials/ubuntu/nvidia.partial.Dockerfile
+# https://github.com/tensorflow/tensorflow/blob/v2.11.0/configure.py#L33
+# https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/lite/tools/cmake/modules/eigen.cmake                         # cuda/cudnn major versions
+# https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/dockerfiles/partials/ubuntu/nvidia.partial.Dockerfile  # cuda major.minor version
 # https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/pip_package/setup.py					# primary
+# https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/pip_package/setup.py#L349                              # python versions
 # https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/tf_sig_build_dockerfiles/devel.requirements.txt	# fallback
 # https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/toolchains/archives.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/workspace0.bzl
@@ -122,6 +123,7 @@ CUDA_PV="11.2"
 BAZEL_SKYLIB_PV="1.3.0"
 CUB_PV="1.9.9"
 CUDNN_FRONTEND_PV="0.7.1"
+GRPC_PV="1.48"
 KISSFFT_PV="131.1.0"
 NCCL_PV="2.13.4-1"
 ONEDNN_PV="2.7.1" # mkl_dnn_v1
@@ -243,7 +245,14 @@ RDEPEND_DISABLED="
 		~dev-python/gast-0.4.0[${PYTHON_USEDEP}]
 	)
 " # For python USE
-GRPC_PV="1.48"
+# The distro only has 11.7, 11.8, 12 for cuda.  The exact version preferred due
+# to binary compatibility.
+CUDA_CDEPEND="
+	(
+		>=dev-util/nvidia-cuda-toolkit-${CUDA_PV}:=[profiler]
+		<dev-util/nvidia-cuda-toolkit-$(( $(ver_cut 1 ${CUDA_PV}) +1 )):=[profiler]
+	)
+"
 RDEPEND="
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
@@ -267,15 +276,9 @@ RDEPEND="
 	>=sys-apps/hwloc-2.7.1:=
 	>=sys-libs/zlib-1.2.13
 	cuda? (
-		=dev-libs/cudnn-8.1*
-		>=dev-libs/cudnn-8.1.0.77
-		|| (
-			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=[profiler]
-			=dev-util/nvidia-cuda-toolkit-11.2*:=[profiler]
-			=dev-util/nvidia-cuda-toolkit-11.1*:=[profiler]
-			=dev-util/nvidia-cuda-toolkit-11.0*:=[profiler]
-			=dev-util/nvidia-cuda-toolkit-10.2*:=[profiler]
-		)
+		${CUDA_RDEPEND}
+		=dev-libs/cudnn-8*
+		>=x11-drivers/nvidia-drivers-450.80.02
 	)
 	mpi? (
 		virtual/mpi
@@ -341,13 +344,7 @@ BDEPEND="
 	app-arch/unzip
 	dev-java/java-config
 	cuda? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=[profiler]
-			=dev-util/nvidia-cuda-toolkit-11.2*:=[profiler]
-			=dev-util/nvidia-cuda-toolkit-11.1*:=[profiler]
-			=dev-util/nvidia-cuda-toolkit-11.0*:=[profiler]
-			=dev-util/nvidia-cuda-toolkit-10.2*:=[profiler]
-		)
+		${CUDA_CDEPEND}
 	)
 	python? (
 		>=dev-python/cython-3.0.0_alpha10
