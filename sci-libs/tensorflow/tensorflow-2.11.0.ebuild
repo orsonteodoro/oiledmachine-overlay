@@ -334,7 +334,7 @@ BDEPEND="
 			<sys-devel/gcc-11
 		)
 		(
-			>=sys-devel/gcc-12.2.1_p20230121-r1
+			>=sys-devel/gcc-11.3.1_p20230120-r1
 			sys-devel/gcc:11
 		)
 	)
