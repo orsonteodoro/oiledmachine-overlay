@@ -456,6 +456,11 @@ src_prepare() {
 		filter-flags '-O*'
 	fi
 
+	if is-flagq '-Os' ; then
+einfo "Preventing stall.  Removing -Os."
+		filter-flags '-Os'
+	fi
+
 	bazel_setup_bazelrc
 
 	eapply "${WORKDIR}"/patches/*.patch
