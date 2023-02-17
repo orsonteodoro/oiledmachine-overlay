@@ -10,7 +10,7 @@ DEP_VER="$(ver_cut 1-2)"
 
 DISTUTILS_OPTIONAL=1
 PYTHON_COMPAT=( python3_{9,10} )
-CHECKREQS_MEMORY="5G"
+CHECKREQS_MEMORY="8G"
 CHECKREQS_DISK_BUILD="10G"
 
 inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr prefix
