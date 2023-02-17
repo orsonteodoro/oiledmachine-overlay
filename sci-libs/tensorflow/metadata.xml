@@ -24,10 +24,8 @@
       If disabled, it will disable SSP and FORTIFY_SOURCE.
     </flag>
     <flag name="low-memory-build-2G">
-      Limit Bazel to 2 GiB RAM
-    </flag>
-    <flag name="low-memory-build-4G">
-      Limit Bazel to 4 GiB RAM
+      Limit the Bazel build system to 2 GiB RAM for systems with limited
+      RAM.
     </flag>
     <flag name="xla">
       XLA (Accelerated Linear Algebra) Optimizing Compiler for TensorFlow
