@@ -83,9 +83,9 @@
       * Has a heavy memory and storage cost compared to the classic CC
         counterparts.
       * The pre-trained models are 35 MiB each.  The CC source code is about
-        ~11KiB for vegas and ~14KiB for BBR.
-      * PCC Vivace and Vegas are 4KiB compressed modules.
-      * BBR, Cubic are an 8KiB compressed modules.
+        ~11 KiB for vegas and ~14 KiB for BBR.
+      * PCC Vivace and Vegas are 4 KiB compressed modules.
+      * BBR, Cubic are an 8 KiB compressed modules.
       * The TensorFlow dependency required for DRL agent is close to 700 MiB
         unpacked.
       * Not auto adaptable like MOCC but requires manual tuning.
