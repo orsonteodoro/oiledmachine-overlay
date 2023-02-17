@@ -75,7 +75,7 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0"
 IUSE="
-alt-ssl cuda custom-optimization-level +hardened low-memory-build-2G
+alt-ssl cuda custom-optimization-level +hardened low-memory-build
 mpi +python xla
 "
 CPU_USE_FLAGS_X86=( sse sse2 sse3 sse4_1 sse4_2 avx avx2 fma3 fma4 )
@@ -658,9 +658,9 @@ ewarn
 		# This is not autoconf
 		./configure || die
 
-		if use low-memory-build-2G ; then
+		if use low-memory-build ; then
 			# See https://www.tensorflow.org/install/source#bazel_build_options
-			echo 'build --local_ram_resources=2048' >> .bazelrc || die # Increase verbosity
+			echo "build --local_ram_resources=${BAZEL_LOCAL_RAM_RESOURCES:-2048}" >> .bazelrc || die # Increase verbosity
 		fi
 
 		echo 'build --subcommands' >> .bazelrc || die # Increase verbosity

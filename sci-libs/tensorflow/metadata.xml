@@ -12,6 +12,16 @@
     <name>Jason Zaman</name>
   </maintainer>
   <longdescription>
+
+    Environment variables:
+
+      BAZEL_LOCAL_RAM_RESOURCES -- The amount of RAM in MiB allowed for Bazel.
+
+    Examples:
+
+      BAZEL_LOCAL_RAM_RESOURCES=2048
+      BAZEL_LOCAL_RAM_RESOURCES=4096
+
   </longdescription>
   <upstream>
     <remote-id type="github">tensorflow/tensorflow</remote-id>
@@ -23,9 +33,9 @@
     <flag name="hardened">
       If disabled, it will disable SSP and FORTIFY_SOURCE.
     </flag>
-    <flag name="low-memory-build-2G">
-      Limit the Bazel build system to 2 GiB RAM for systems with limited
-      RAM.
+    <flag name="low-memory-build">
+      Limit the Bazel build system for systems with limited RAM.
+      (Overridable environment variable for BAZEL_LOCAL_RAM_RESOURCES.)
     </flag>
     <flag name="xla">
       XLA (Accelerated Linear Algebra) Optimizing Compiler for TensorFlow
