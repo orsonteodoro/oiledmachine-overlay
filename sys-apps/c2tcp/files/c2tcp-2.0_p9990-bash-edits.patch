@@ -6,11 +6,11 @@ Patchset changes:
 3.  Add new environment variables:
 3a. C2TCP_ELEVATE_CMD -- sudo, pkexec, " "
 3b. C2TCP_TARGET_DELAY -- allow to override target delay in milliseconds
-3c. C2TCP_BROWSER -- allow to change the web browser command.
+3c. C2TCP_BROWSER -- allow to change the web browser command or disable browser.
 
 diff -urpN c2tcp-2.0_p9999.orig/build.sh c2tcp-2.0_p9999/build.sh
---- c2tcp-2.0_p9999.orig/build.sh	2023-02-16 18:01:06.784971044 -0800
-+++ c2tcp-2.0_p9999/build.sh	2023-02-16 18:09:01.944986702 -0800
+--- c2tcp-2.0_p9999.orig/build.sh	2023-02-16 22:10:28.073464055 -0800
++++ c2tcp-2.0_p9999/build.sh	2023-02-16 22:11:52.561466839 -0800
 @@ -1,3 +1,5 @@
 +#!/bin/bash
 +cd $(dirname "$0")
@@ -18,8 +18,8 @@ diff -urpN c2tcp-2.0_p9999.orig/build.sh c2tcp-2.0_p9999/build.sh
  g++ src/client.c -o client
  
 diff -urpN c2tcp-2.0_p9999.orig/run-sample.sh c2tcp-2.0_p9999/run-sample.sh
---- c2tcp-2.0_p9999.orig/run-sample.sh	2023-02-16 18:01:15.608971335 -0800
-+++ c2tcp-2.0_p9999/run-sample.sh	2023-02-16 18:18:04.125004568 -0800
+--- c2tcp-2.0_p9999.orig/run-sample.sh	2023-02-16 22:10:40.721464472 -0800
++++ c2tcp-2.0_p9999/run-sample.sh	2023-02-16 22:16:40.245476319 -0800
 @@ -1,3 +1,7 @@
 +#!/bin/bash
 +cd $(dirname "$0")
@@ -28,7 +28,7 @@ diff -urpN c2tcp-2.0_p9999.orig/run-sample.sh c2tcp-2.0_p9999/run-sample.sh
  source setup.sh
  qsize=100
  down="downlink-4g-no-cross-subway.pps"
-@@ -9,25 +13,32 @@ init_alpha=150
+@@ -9,25 +13,36 @@ init_alpha=150
  user=`whoami`
  anal_script="mm-thr"
  
@@ -65,11 +65,15 @@ diff -urpN c2tcp-2.0_p9999.orig/run-sample.sh c2tcp-2.0_p9999/run-sample.sh
  echo "---------------------------------------">>log/summary.tr
  cat log/summary.tr
 -firefox log/fig-$log.svg
-+${C2TCP_BROWSER} log/fig-$log.svg
++if [[ "${C2TCP_BROWSER}" =~ ("none"|"skip"|"disable") || "${C2TCP_BROWSER}" == " " || -z "${C2TCP_BROWSER}" ]] ; then
++    :;
++elif [[ -n "${C2TCP_BROWSER}" ]] ; then
++    ${C2TCP_BROWSER} log/fig-$log.svg
++fi
  
 diff -urpN c2tcp-2.0_p9999.orig/setup.sh c2tcp-2.0_p9999/setup.sh
---- c2tcp-2.0_p9999.orig/setup.sh	2023-02-16 18:01:15.608971335 -0800
-+++ c2tcp-2.0_p9999/setup.sh	2023-02-16 18:14:10.712996876 -0800
+--- c2tcp-2.0_p9999.orig/setup.sh	2023-02-16 22:10:40.721464472 -0800
++++ c2tcp-2.0_p9999/setup.sh	2023-02-16 22:11:52.597466840 -0800
 @@ -1,8 +1,11 @@
 -sudo sysctl -q net.ipv4.tcp_wmem="4096 32768 4194304" #Doubling the default value from 16384 to 32768
 -sudo sysctl -w -q net.ipv4.tcp_low_latency=1
