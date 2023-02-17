@@ -30,6 +30,8 @@
       * The model uses 4.4 MiB which is several orders of magnitude larger than
         the classical congestion control which typically is 100 - 1.3k lines of
         code.
+      * PCC Vivace and Vegas are 4KiB compressed modules.
+      * BBR, Cubic are an 8KiB compressed modules.
       * The TensorFlow dependency required for DRL agent is close to 700 MiB
         unpacked.
       * More build/packaging time investment versus kernel only CC for source
