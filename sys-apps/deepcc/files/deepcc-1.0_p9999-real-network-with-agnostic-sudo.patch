@@ -8,6 +8,8 @@ Patchset changes:
 3a. DEEPCC_ELEVATE_CMD - sudo, pkexec, " "
 3b. DEEPCC_PRODUCTION - 0 for research mode, 1 for production mode
 3c. DEEPCC_SCHEME - cubic, westwood, illinois, bbr, ... for real-network.sh only
+3d. DEEPCC_TARGET_DELAY - in miliseconds (ms)
+4e. DEEPCC_TEST_SERVER - the hostname to measure RTT with
 4.  Allow to train with different TCP congestion control than limited choices.
 5.  Rename illi to illinois.
 6.  Allow to run with init scripts with DEEPCC_ELEVATE_CMD=" "
@@ -21,8 +23,8 @@ LF files are real-network.sh, run-dcubic.sh,
 CRLF files are server.cc
 
 diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/build.sh deepcc-1.0_p9999/deepcc.v1.0/build.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/build.sh	2023-02-13 16:05:54.160201987 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/build.sh	2023-02-13 16:07:09.284204463 -0800
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/build.sh	2023-02-16 12:56:49.628369426 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/build.sh	2023-02-16 11:25:38.556189141 -0800
 @@ -1,3 +1,5 @@
 +#!/bin/bash
 +cd $(dirname "$0")
@@ -30,11 +32,12 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/build.sh deepcc-1.0_p9999/deepcc.v1
  g++ src/client.c -o client
  
 diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/evaluate.sh deepcc-1.0_p9999/deepcc.v1.0/evaluate.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/evaluate.sh	2023-02-13 16:05:54.164201987 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/evaluate.sh	2023-02-13 16:07:09.320204464 -0800
-@@ -1,10 +1,13 @@
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/evaluate.sh	2023-02-16 12:56:49.628369426 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/evaluate.sh	2023-02-16 11:29:01.336195823 -0800
+@@ -1,17 +1,21 @@
 +#!/bin/bash
 +export ELEVATE_CMD=${DEEPCC_ELEVATE_CMD:-sudo}
++export TARGET_DELAY=${DEEP_TARGET_DELAY:-50}
 +cd $(dirname "$0")
  if [ $# -ne 2 ]
  then
@@ -49,17 +52,85 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/evaluate.sh deepcc-1.0_p9999/deepcc
  port=$1
  scheme=$2
  
+ trace_index=25      # Check setup.sh for the valid trace indices.
+ 
+ latency=10 # Unidirectional Link Delay ==> minRTT>=2*latency (ms)
+-target=50  # ==>Overall application's Target delay. (ms)
++target=${TARGET_DELAY}  # ==>Overall application's Target delay. (ms)
+ report_period=20
+ ./run-deep.sh $port ${trace_index} $target $report_period $latency 2 $scheme
+ 
 diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/real-network.sh deepcc-1.0_p9999/deepcc.v1.0/real-network.sh
 --- deepcc-1.0_p9999.orig/deepcc.v1.0/real-network.sh	1969-12-31 16:00:00.000000000 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/real-network.sh	2023-02-13 16:07:09.320204464 -0800
-@@ -0,0 +1,4 @@
++++ deepcc-1.0_p9999/deepcc.v1.0/real-network.sh	2023-02-16 21:04:41.101333993 -0800
+@@ -0,0 +1,64 @@
 +#!/bin/bash
++export DEEPCC_TARGET_DELAY=${DEEPCC_TARGET_DELAY:-50} # ms
 +export DEEPCC_PRODUCTION=1
++export DEEPCC_TEST_SERVER=${DEEPCC_TEST_SERVER:-"gentoo.org"}
++export DEEPCC_SCHEME=${DEEPCC_SCHEME:-"cubic"}
++
++set_sweetspot_target_delay() {
++	local max_rtt_at_100_pct_utilization
++	# Based on graph inspection
++	# sweetspot = ${RTT_at_80_pct_utilization} / ${minRTT}
++    if [[ ${DEEPCC_SCHEME} == "bbr" ]] ; then
++        max_rtt_at_100_pct_utilization=58
++        DEEPCC_TARGET_DELAY=$(python -c "(int(2.2 * ${delay}))")
++    elif [[ ${DEEPCC_SCHEME} == "cubic" ]] ; then
++        max_rtt_at_100_pct_utilization=59
++        DEEPCC_TARGET_DELAY=$(python -c "(int(2.15 * ${delay}))")
++    elif [[ ${DEEPCC_SCHEME} == "illinois" ]] ; then
++        max_rtt_at_100_pct_utilization=72
++        DEEPCC_TARGET_DELAY=$(python -c "(int(2.05 * ${delay}))")
++    elif [[ ${DEEPCC_SCHEME} == "westwood" ]] ; then
++        max_rtt_at_100_pct_utilization=42
++        DEEPCC_TARGET_DELAY=$(python -c "print(int(1.6 * ${delay}))")
++    else
++        # 2.0 coefficient obtained by mean average of above coefficients.
++        DEEPCC_TARGET_DELAY=$(python -c "print(int(2.0 * ${delay}))")
++    fi
++}
++
++set_target_delay() {
++	ping || return
++    local delay=$(ping ${DEEPCC_TEST_SERVER} -c 3 2>&1 \
++        | grep -o "time=.*" \
++        | cut -f 2 -d "=" \
++        | sed -e "s| ms||g" \
++        | sort \
++        | head -n 1)
++    if [[ -z "${delay}" ]] ; then
++        echo "WARN:  set_target_delay(): ping failed"
++        export DEEPCC_TARGET_DELAY=50 # Upstream original
++        return
++    fi
++    if [[ "${DEEPCC_TARGET_DELAY}" == "min" ]] ; then
++        DEEPCC_TARGET_DELAY="${delay%.*}"
++    elif [[ "${DEEPCC_TARGET_DELAY}" == "max" ]] ; then
++        DEEPCC_TARGET_DELAY=$(python -c "print(int(5.0 * ${delay}))")
++    elif [[ "${DEEPCC_TARGET_DELAY}" =~ ("sweetspot"|"sweet"|"ss"|"sw"|"swt"|"auto") ]] ; then
++        set_sweetspot_target_delay
++    else
++        DEEPCC_TARGET_DELAY=$(python -c "print(int(2.0 * ${delay}))")
++        set_sweetspot_target_delay
++    fi
++}
++
++if [[ "${DEEPCC_TARGET_DELAY}" =~ ("min"|"max"|"sweetspot"|"sweet"|"ss"|"sw"|"swt"|"auto") ]] ; then
++    set_target_delay
++    if [[ "${DEEPCC_TARGET_DELAY}" =~ ("min"|"max"|"sweetspot"|"sweet"|"ss"|"sw"|"swt"|"auto") \
++        || -z "${DEEPCC_TARGET_DELAY}" ]] ; then
++        echo "WARN:  set_target_delay() failed"
++        export DEEPCC_TARGET_DELAY=50 # Upstream original
++    fi
++fi
++
 +cd $(dirname "$0")
-+./evaluate.sh 8000 ${DEEPCC_SCHEME:-cubic}
++./evaluate.sh 8000 ${DEEPCC_SCHEME}
 diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh deepcc-1.0_p9999/deepcc.v1.0/run-dcubic.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh	2023-02-13 16:05:56.852202076 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/run-dcubic.sh	2023-02-13 16:07:09.340204465 -0800
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh	2023-02-16 12:57:00.516369785 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/run-dcubic.sh	2023-02-16 11:25:38.580189142 -0800
 @@ -1,14 +1,15 @@
  #!/bin/bash
 -
@@ -124,8 +195,8 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh deepcc-1.0_p9999/deep
  echo "Experiment is finished."
  if [ ${training} -eq 2 ] || [ ${training} -eq 4 ]
 diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-deep.sh deepcc-1.0_p9999/deepcc.v1.0/run-deep.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/run-deep.sh	2023-02-13 16:05:56.852202076 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/run-deep.sh	2023-02-13 16:07:09.344204465 -0800
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/run-deep.sh	2023-02-16 12:57:00.516369785 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/run-deep.sh	2023-02-16 11:25:38.580189142 -0800
 @@ -1,5 +1,6 @@
  #!/bin/bash
 -
@@ -135,8 +206,8 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-deep.sh deepcc-1.0_p9999/deepcc
  #sudo killall verus_server sprout*
  sudo killall rl-server client python
 diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/setup.sh deepcc-1.0_p9999/deepcc.v1.0/setup.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/setup.sh	2023-02-13 16:05:56.852202076 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/setup.sh	2023-02-13 16:07:09.344204465 -0800
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/setup.sh	2023-02-16 12:57:00.516369785 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/setup.sh	2023-02-16 11:25:38.580189142 -0800
 @@ -1,4 +1,6 @@
 -
 +#!/bin/bash
@@ -170,8 +241,8 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/setup.sh deepcc-1.0_p9999/deepcc.v1
 +${ELEVATE_CMD} killall rl-server rl-server-eval client python
  
 diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/define.h deepcc-1.0_p9999/deepcc.v1.0/src/define.h
---- deepcc-1.0_p9999.orig/deepcc.v1.0/src/define.h	2023-02-13 16:05:56.852202076 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/src/define.h	2023-02-13 16:07:09.368204466 -0800
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/src/define.h	2023-02-16 12:57:00.520369785 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/src/define.h	2023-02-16 11:25:38.612189143 -0800
 @@ -80,6 +80,8 @@ u32 report_period=5;//5s
  #define FLOW_NUM 1
  int sock[FLOW_NUM];
@@ -182,8 +253,8 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/define.h deepcc-1.0_p9999/deepc
  struct tcp_deepcc_info {
      u32 min_rtt;      /* min-filtered RTT in uSec */
 diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc deepcc-1.0_p9999/deepcc.v1.0/src/server.cc
---- deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc	2023-02-13 16:05:56.852202076 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/src/server.cc	2023-02-13 16:09:00.504208128 -0800
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc	2023-02-16 12:57:00.520369785 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/src/server.cc	2023-02-16 11:25:38.628189144 -0800
 @@ -23,6 +23,9 @@
  #define DBGSERVER 0
  #include <cstdlib>
@@ -299,8 +370,8 @@ diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc deepcc-1.0_p9999/deep
      //Start listen
  	//The maximum number of concurrent connections is 10
 diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/training.sh deepcc-1.0_p9999/deepcc.v1.0/training.sh
---- deepcc-1.0_p9999.orig/deepcc.v1.0/training.sh	2023-02-13 16:06:01.136202217 -0800
-+++ deepcc-1.0_p9999/deepcc.v1.0/training.sh	2023-02-13 16:07:09.408204467 -0800
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/training.sh	2023-02-16 12:57:06.580369985 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/training.sh	2023-02-16 11:25:38.648189144 -0800
 @@ -1,11 +1,14 @@
 +#!/bin/bash
 +export ELEVATE_CMD=${DEEPCC_ELEVATE_CMD:-sudo}

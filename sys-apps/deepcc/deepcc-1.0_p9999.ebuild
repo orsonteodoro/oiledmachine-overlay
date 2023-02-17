@@ -15,7 +15,7 @@ https://github.com/Soheil-ab/DeepCC.v1.0
 LICENSE="MIT"
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild in development
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" build-models evaluate fallback-commit kernel-patch polkit +sudo r2"
+IUSE+=" build-models evaluate fallback-commit kernel-patch polkit +sudo r3"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -82,10 +82,11 @@ src_unpack() {
 	git-r3_checkout
 
 	cd "${S}/models" || die
+	local p
 	for p in $(find . -name "*.tar.gz") ; do
 		unpack "${p}"
-		local name=$(basename "${p}" | sed -e "s|.tar.gz||g")
-		rm -rf "${S}/deepcc.v1.0/rl-module" || die
+		local name=$(basename "${p}" | sed -e "s|\.tar\.gz||g")
+		rm -rf "${S}/deepcc.v1.0/rl-module/${name}" || die
 		mv "${name}" "${S}/deepcc.v1.0/rl-module" || die
 	done
 	rm -rf "${WORKDIR}/models" || die

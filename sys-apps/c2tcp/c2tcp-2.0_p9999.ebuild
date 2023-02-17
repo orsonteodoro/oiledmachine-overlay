@@ -15,7 +15,7 @@ https://github.com/Soheil-ab/c2tcp
 LICENSE="MIT"
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild in development
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" fallback-commit kernel-patch"
+IUSE+=" fallback-commit kernel-patch polkit sudo"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -30,6 +30,12 @@ DEPEND+="
 	sys-process/procps
 	sys-process/psmisc
 	www-misc/mahimahi
+	polkit? (
+		sys-auth/polkit
+	)
+	sudo? (
+		app-admin/sudo
+	)
 "
 RDEPEND+="
 	${DEPEND}
@@ -42,6 +48,9 @@ BDEPEND+="
 SRC_URI=""
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+PATCHES=(
+	"${FILESDIR}/c2tcp-2.0_p9990-bash-edits.patch"
+)
 
 src_unpack() {
 	EGIT_REPO_URI="https://github.com/Soheil-ab/c2tcp.git"
