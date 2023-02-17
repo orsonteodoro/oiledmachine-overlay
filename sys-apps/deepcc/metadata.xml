@@ -92,6 +92,8 @@
       * More build/packaging time investment versus kernel only CC for source
         based distros.
       * The DeepCC version tends to be more fair than the original unboosted.
+      * Training is tractable for individuals, unlike Orca which requires ~400
+        cores + high end GPUs.
 
 
     Prebuilt models were trained with celluar traces.  These celluar traces
@@ -128,7 +130,8 @@
   </upstream>
   <use>
     <flag name="build-models">
-      Build DRL Agent learned models.
+      Build DRL Agent learned models.  Training may take around +15 hrs
+      with a single computer built with components created in 2016.
     </flag>
     <flag name="evaluate">
       Install dependencies required for evaluate.
