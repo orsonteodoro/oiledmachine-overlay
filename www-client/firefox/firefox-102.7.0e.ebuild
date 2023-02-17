@@ -1681,11 +1681,11 @@ ewarn
 				:;
 			elif [[ "${LTO_TYPE}" == "bfdlto" ]] ; then
 				append-ldflags \
-					-Wl,--no-keep-memory
-			else
-				append-ldflags \
 					-Wl,--no-keep-memory \
 					-Wl,--reduce-memory-overheads
+			elif [[ "${LTO_TYPE}" == "goldlto" ]] ; then
+				append-ldflags \
+					-Wl,--no-keep-memory
 			fi
 			;;
 	esac
