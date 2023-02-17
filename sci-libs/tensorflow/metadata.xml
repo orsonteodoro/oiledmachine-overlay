@@ -20,6 +20,9 @@
     <flag name="cuda">
       Enable support for CUDA SDK
     </flag>
+    <flag name="hardened">
+      If disabled, it will disable SSP and FORTIFY_SOURCE.
+    </flag>
     <flag name="xla">
       XLA (Accelerated Linear Algebra) Optimizing Compiler for TensorFlow
     </flag>

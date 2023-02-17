@@ -74,7 +74,7 @@ LICENSE="
 
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE="alt-ssl cuda custom-optimization-level mpi +python xla"
+IUSE="alt-ssl cuda custom-optimization-level +hardened mpi +python xla"
 CPU_USE_FLAGS_X86=( sse sse2 sse3 sse4_1 sse4_2 avx avx2 fma3 fma4 )
 IUSE+=" ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}"
 
@@ -422,7 +422,7 @@ einfo "PATH:\t${PATH}"
 einfo "PATH:\t${PATH}"
 	local found=0
 	local s
-	for s in 9 10 11 ; do
+	for s in 11 10 9 ; do
 		symlink_ver=$(gcc_symlink_ver ${s})
 		export CC=${CHOST}-gcc-${symlink_ver}
 		export CXX=${CHOST}-g++-${symlink_ver}
@@ -506,6 +506,24 @@ src_prepare() {
 	if is-flagq '-Os' ; then
 einfo "Preventing stall.  Removing -Os."
 		filter-flags '-Os'
+	fi
+
+	if ! use hardened ; then
+		# It has to be done this way, because we cannot edit the build
+		# files before configure time because the build system
+		# system generates them in compile time and doesn't unpack them
+		# early.
+
+		# SSP buffer overflow protection
+		# -fstack-protector-all is <7% penalty
+		BUILD_CFLAGS+=" -fno-stack-protector"
+		BUILD_CXXFLAGS+=" -fno-stack-protector"
+		append-flags -fno-stack-protector
+
+		# FORTIFY_SOURCE is buffer overflow checks for string/*alloc functions
+		# -FORTIFY_SOURCE=2 is <1% penalty
+		BUILD_CPPFLAGS+=" -D_FORTIFY_SOURCE=0"
+		append-cppflags -D_FORTIFY_SOURCE=0
 	fi
 
 	bazel_setup_bazelrc
