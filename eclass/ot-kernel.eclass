@@ -9149,6 +9149,33 @@ einfo "Installing tcca"
 		chmod 0755 "${EROOT}/usr/bin/tcca"
 		chown root:root "${EROOT}/usr/bin/tcca"
 	fi
+
+	if has c2tcp ${IUSE} && use c2tcp ; then
+einfo
+einfo "C2TCP is disabled by default."
+einfo
+einfo "See epkginfo -x sys-apps/c2tcp::oiledmachine-overlay for details about"
+einfo "enabling and the tunable target delay knob."
+einfo
+	fi
+	if has deepcc ${IUSE} && use deepcc ; then
+einfo
+einfo "DeepCC is disabled by default and needs the DRL Agent or learned models"
+einfo "loaded."
+einfo
+einfo "See epkginfo -x sys-apps/deepcc::oiledmachine-overlay for details about"
+einfo "enabling and loading the DRL Agent and learned model(s) and tunable"
+einfo "target delay knob."
+einfo
+	fi
+	if has orca ${IUSE} && use orca ; then
+einfo
+einfo "Orca needs the DRL Agent or learned models loaded."
+einfo
+einfo "See epkginfo -x sys-apps/orca::oiledmachine-overlay for details about"
+einfo "loading the DRL Agent with learned model."
+einfo
+	fi
 }
 
 # @FUNCTION: pkg_prerm

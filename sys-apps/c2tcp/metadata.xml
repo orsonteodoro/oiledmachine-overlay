@@ -10,6 +10,14 @@
 
     This contains the client-server evaluation application for C2TCP.
 
+    The evaluation app is used for research.
+
+    C2TCP in the kernel is default off.  To enable it, you can use the
+    sysctl interface.
+
+    To use C2TCP, it must be explicitly on either by the app or
+    through the sysfs interface.
+
     It also demonstrates how to set the average delay target for tuning C2TCP,
     so you can integrate C2TCP application target in your app.
 
@@ -37,6 +45,7 @@
         (5) The idea of the target delay is to improve the user experience.
         (6) For live and real-time scenarios, lower or 2 * minRTT is better.
         (7) For downloading, using 5 * minRTT is better.
+        (8) This value can be changed via the sysctl interface.
 
         At 1080p @ 30 FPS is 6 Mbps, the lowest target delay has enough
         throughput to not be penalized by C2TCP, assuming that the

@@ -23,7 +23,6 @@ DEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/sysv_ipc-1.0.0[${PYTHON_USEDEP}]
 	>=net-misc/iperf-3.1.3
-	app-admin/sudo
 	app-alternatives/sh
 	dev-lang/perl
 	sys-apps/cellular-traces-y2018
