@@ -121,11 +121,6 @@ src_compile() {
 	if use cellular-traces ; then
 		cp -a /usr/share/celluar-traces-nyc/* traces || die
 	fi
-	if use build-models ; then
-ewarn "The build-models USE flag is a work in progress."
-		die "Unfinished / untested"
-		./orca.sh 1 44444 || die
-	fi
 	rm -rf "build.sh" || die
 	if use kernel-patch ; then
 		rm -rf "linux/"*.deb
@@ -173,6 +168,14 @@ einfo
 ewarn
 ewarn "orca-real-network.sh is in TESTING."
 ewarn
+	if use build-models ; then
+# Not feasible for most people.
+ewarn
+ewarn "Build-models requires a cluster, and server with the highest grade"
+ewarn "GPUs to finish in 6 hours.  ~400 combined cores and 13.04% are"
+ewarn "learning servers and remaining actor clients."
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

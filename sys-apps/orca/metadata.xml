@@ -65,7 +65,10 @@
       Install dependencies required for evaluate.
     </flag>
     <flag name="build-models">
-      Train DRL Agent for 6 hours each.
+      Adds dependencies requried for training the DRL Agent for 6 hours.
+      It requires a cluster, and server with the highest grade GPUs to complete.
+      13.04% of the 400 cores combined should be learning servers and remaining
+      actor clients.
     </flag>
     <flag name="cellular-traces">
       Install celluar-traces to train the DRL or to playback in the evaluator.

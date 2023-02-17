@@ -63,3 +63,7 @@ liri-base/liri-meta aurora
 liri-extra/screenshot aurora
 liri-base/xdg-desktop-portal-liri aurora
 liri-base/libliri aurora
+
+# Not feasible for most individuals
+# It needs a lot of computing resources.
+sys-apps/orca build-models
