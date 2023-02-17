@@ -64,7 +64,26 @@ src_unpack() {
 	git-r3_checkout
 }
 
-src_configure() { :; }
+src_configure() {
+	local L=(
+		"run-sample.sh"
+		"setup.sh"
+	)
+	local path
+	for path in ${L[@]} ; do
+		if use polkit ; then
+einfo "Modding ${path} for polkit"
+			sed -i -e "s|:-sudo|:-pkexec|g" "${path}"
+		elif use sudo ; then
+einfo "Modding ${path} for sudo"
+			sed -i -e "s|:-sudo|:-sudo|g" "${path}"
+		else
+einfo "Modding ${path} to remove sudo"
+			sed -i -e "s|:-sudo|:-\" \"|g" "${path}"
+		fi
+	done
+}
+
 src_compile() {
 	cd "${S}" || die
 	./build.sh || die
