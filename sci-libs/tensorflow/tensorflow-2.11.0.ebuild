@@ -450,6 +450,19 @@ src_prepare() {
 	export BUILD_CXXFLAGS+=" -std=c++17"
 	filter-flags '-fvtable-verify=@(std|preinit)'
 
+	if has_version "sys-devel/binutils[gold]" ; then
+		# The build scripts will use gold if it detects it.
+		# Gold can hit 7 GiB without flags.
+		append-ldflags -Wl,--no-keep-memory
+		BUILD_LDFLAGS+=" -Wl,--no-keep-memory"
+	else
+		append-ldflags \
+			-Wl,--no-keep-memory \
+			-Wl,--reduce-memory-overheads
+		BUILD_LDFLAGS+=" -Wl,--no-keep-memory"
+		BUILD_LDFLAGS+=" -Wl,--reduce-memory-overheads"
+	fi
+
 	if ! use custom-optimization-level ; then
 		# Upstream uses a mix of -O3 and -O2.
 		# In some contexts -Os causes a stall.
