@@ -19,7 +19,7 @@
     (cwnd) and the pacing rate.
 
 
-    Comparison versus other TCP CCs
+    Comparison versus other TCP CCs and criticisms
 
       * Send performance is expected to be better than PCC.
       * Combined throughput and delay is optimal on the Production Possibilities
@@ -34,10 +34,14 @@
       * BBR, Cubic are an 8KiB compressed modules.
       * The TensorFlow dependency required for DRL agent is close to 700 MiB
         unpacked.
+      * Training requires a lot of high end computer resources and out of reach
+        for most individuals.
       * More build/packaging time investment versus kernel only CC for source
         based distros.
       * At this time of writing (2023), better algorithms do exist, but
         Orca still outperforms the default CC.
+      * Better newer algorithms by others do not disclose usable source code.
+
 
     To run:
 
