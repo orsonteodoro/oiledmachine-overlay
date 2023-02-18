@@ -18,6 +18,21 @@
     This is a sender only TCP congestion control that changes the control window
     (cwnd) and the pacing rate.
 
+    What distinguishes DeepCC from Orca?
+
+      * DeepCC concerns itself with improvement with throughput based CC while
+        ignoring learning based CCs, whereas Orca concerns itself with solving
+        issues in both classical CCs and learning based CCs in general.
+      * Orca tries to be the one CC that rules them all or replaces them all,
+        where as DeepCC tries to be a boosting plugin to the existing throughput
+        based CC.
+      * Orca incorporates sendRTT, but DeepCC does not.
+      * Orca can rapidly adapt to send rates, but in DeepCC it is not
+        considered.
+      * Orca is more smoother in time frames where link capacity is relatively
+        constant and smooth thanks to pacing, but cubic will periodically drop
+        down ~15 Mbps.
+
 
     Comparison versus other TCP CCs and criticisms
 
@@ -41,6 +56,13 @@
       * At this time of writing (2023), better algorithms do exist, but
         Orca still outperforms the default CC.
       * Better newer algorithms by others do not disclose usable source code.
+      * Orca has better rapid convergance compared to BBR, PCC, etc.
+      * Orca link utilization gets cut in half as it approaches 1% packet loss,
+        where as BBR maintains full link utilization in the same varying
+        packet loss scenario.
+      * Orca may underperform in send link utilization scenario after 36s,
+        but Spine does better after 36s link utilization with varying capacity
+        with spikes.
 
 
     To run:
