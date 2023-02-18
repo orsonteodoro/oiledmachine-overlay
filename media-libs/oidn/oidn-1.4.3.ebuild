@@ -154,15 +154,15 @@ src_configure() {
 	mycmakeargs=()
 
 	if use gcc ; then
-		export CC="gcc"
-		export CXX="g++"
+		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
 		test-flags-CXX "-std=c++11" 2>/dev/null 1>/dev/null \
 	                || die "Switch to a c++11 compatible compiler."
 		# Prevent lock up
 		tc-is-gcc && export MAKEOPTS="-j1"
 	elif use clang ; then
-		export CC="clang"
-		export CXX="clang++"
+		export CC="${CHOST}-clang"
+		export CXX="${CHOST}-clang++"
 		test-flags-CXX "-std=c++11" 2>/dev/null 1>/dev/null \
 	                || die "Switch to a c++11 compatible compiler."
 	else
