@@ -111,8 +111,6 @@
 
     # For a real-network or use in production (ebuild mod)
     DEEPCC_TARGET_DELAY=50 DEEPCC_SCHEME=cubic ./real-network.sh
-    (You can specify auto for DEEPCC_TARGET_DELAY.)
-
 
     # For starting a new learner model for training
     ./training.sh 1 44444 cubic
@@ -122,6 +120,13 @@
 
     You may use only cubic, westwood, illinois, bbr.
     To use other schemes, you must mod run-dcubic.sh.
+
+    DEEPCC_TARGET_DELAY acceptable values:
+
+      * max - highest throughput
+      * min - lowest average delay
+      * sweetspot - Lowest RTT while above 80% utilization.
+          sweet, ss, sw, swt, auto -- are all aliases.
 
   </longdescription>
   <upstream>
