@@ -2065,7 +2065,6 @@ _src_configure() {
 	local s
 	s=$(_get_s)
 	cd "${s}" || die
-	local chost=$(get_abi_CHOST ${ABI})
 
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
@@ -2082,7 +2081,7 @@ einfo "Switching to clang"
 einfo
 		# See build/toolchain/linux/unbundle/BUILD.gn for allowed overridable envvars.
 		# See build/toolchain/gcc_toolchain.gni#L657 for consistency.
-		if tc-is-cross-compiler; then
+		if tc-is-cross-compiler ; then
 			export CC="${CBUILD}-clang -target ${CHOST} --sysroot ${ESYSROOT}"
 			export CXX="${CBUILD}-clang++ -target ${CHOST} --sysroot ${ESYSROOT}"
 			export BUILD_CC=${CBUILD}-clang
