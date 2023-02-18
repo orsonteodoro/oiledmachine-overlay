@@ -50,21 +50,20 @@ lua_src_compile()
 {
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}"
 	cd "${BUILD_DIR}"
-	local chost=$(get_abi_CHOST ${ABI})
-	CC=$(tc-getCC ${ABI})
+	export CC=$(tc-getCC ${ABI})
 	mkdir -p "shared" || die
-	einfo "ELUA=${ELUA}"
-	einfo "Building shared"
+einfo "ELUA:\t${ELUA}"
+einfo "Building shared"
 	${CC} -I$(lua_get_include_dir) -DLSQLITE_VERSION=\"${PV}\" -fPIC -Wall \
 		-c lsqlite3.c \
 		-o shared/lsqlite3.o || die
-	einfo "Linking shared"
+einfo "Linking shared"
 	${CC} -shared -Wl,-soname,lsqlite3.so.0 \
 		-o shared/lsqlite3.so \
 		shared/lsqlite3.o \
 		-lsqlite3 || die
 	if use static-libs ; then
-		einfo "Building static"
+einfo "Building static"
 		mkdir -p "static" || die
 		${CC} -I$(lua_get_include_dir) -DLSQLITE_VERSION=\"${PV}\" \
 			-Dluaopen_lsqlite3=luaopen_lsqlite3complete -fPIC \
@@ -76,7 +75,7 @@ lua_src_compile()
 			-Wall \
 			-c lsqlite3.c \
 			-o static/lsqlite3.o || die
-		einfo "Linking static"
+einfo "Linking static"
 		ar rcs static/lsqlite3complete.a \
 			static/lsqlite3.o \
 			static/sqlite3.o || die
