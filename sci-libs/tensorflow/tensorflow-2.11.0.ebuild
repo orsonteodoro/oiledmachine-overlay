@@ -75,10 +75,32 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0"
 IUSE="
-alt-ssl cuda custom-optimization-level +hardened low-memory-build
-mpi +python xla
+alt-ssl cuda custom-optimization-level +hardened mpi +python
+xla
 "
-CPU_USE_FLAGS_X86=( sse sse2 sse3 sse4_1 sse4_2 avx avx2 fma3 fma4 )
+CPU_USE_FLAGS_X86=(
+#	popcnt     # No preprocessor check but set in CI or some archs
+	sse
+	sse2
+	sse3
+	sse4_1
+	sse4_2
+	avx
+	avx2
+# Addresses the get-cpu-flags() request for keep flags in sync.
+#	avx512f    # *
+#	avx512cd   # *
+#	avx512vnni # *
+#	avx512bf16 # *
+#	avxvnni    # *
+#	amx-tile   # *
+#	amx-int8   # *
+#	amx-bf16   # *
+	fma3
+	fma4
+)
+# * Checks only but does no work.
+
 IUSE+=" ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}"
 
 # For deps versioning, see
@@ -256,6 +278,7 @@ CUDA_CDEPEND="
 		<dev-util/nvidia-cuda-toolkit-$(( $(ver_cut 1 ${CUDA_PV}) +1 )):=[profiler]
 	)
 "
+# Missing extension package for TF_ENABLE_ONEDNN_OPTS=1
 RDEPEND="
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
@@ -371,7 +394,7 @@ RESTRICT="test" # Tests need GPU access
 get-cpu-flags() {
 	local i f=()
 	# Keep this list in sync with tensorflow/core/platform/cpu_feature_guard.cc.
-	for i in sse sse2 sse3 sse4_1 sse4_2 avx avx2 fma4; do
+	for i in ${CPU_USE_FLAGS_X86[@]/fma3/} ; do
 		use cpu_flags_x86_${i} && f+=( -m${i/_/.} )
 	done
 	use cpu_flags_x86_fma3 && f+=( -mfma )
@@ -527,6 +550,13 @@ einfo "Preventing stall.  Removing -Os."
 		# -FORTIFY_SOURCE=2 is <1% penalty
 		BUILD_CPPFLAGS+=" -D_FORTIFY_SOURCE=0"
 		append-cppflags -D_FORTIFY_SOURCE=0
+
+		# Full RELRO is GOT protection
+		# Full RELRO is <1% penalty ; <1 ms difference
+		append-ldflags -Wl,-z,norelro
+		append-ldflags -Wl,-z,lazy
+		BUILD_LDFLAGS+=" -Wl,-z,norelro"
+		BUILD_LDFLAGS+=" -Wl,-z,lazy"
 	fi
 
 	bazel_setup_bazelrc
@@ -658,9 +688,9 @@ ewarn
 		# This is not autoconf
 		./configure || die
 
-		if use low-memory-build ; then
+		if [[ -n "${BAZEL_LOCAL_RAM_RESOURCES}" ]] ; then
 			# See https://www.tensorflow.org/install/source#bazel_build_options
-			echo "build --local_ram_resources=${BAZEL_LOCAL_RAM_RESOURCES:-2048}" >> .bazelrc || die # Increase verbosity
+			echo "build --local_ram_resources=${BAZEL_LOCAL_RAM_RESOURCES:-2048}" >> .bazelrc || die
 		fi
 
 		echo 'build --subcommands' >> .bazelrc || die # Increase verbosity
