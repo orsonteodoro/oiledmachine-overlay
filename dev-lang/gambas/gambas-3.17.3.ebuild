@@ -335,8 +335,9 @@ ewarn
 ewarn "Gambas does not support clang/clang++ as the primary compiler.  Clang"
 ewarn "doesn't support nested functions.  Forcing GCC..."
 ewarn
-		export CC="gcc"
-		export CXX="g++"
+		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
+		strip-unsupported-flags
 	fi
 
 	check_cxx
