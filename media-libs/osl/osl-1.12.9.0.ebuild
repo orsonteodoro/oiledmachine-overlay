@@ -220,8 +220,8 @@ src_prepare() {
 
 src_configure() {
 	configure_abi() {
-		export CC="clang"
-		export CXX="clang++"
+		export CC="${CHOST}-clang"
+		export CXX="${CHOST}-clang++"
 		strip-unsupported-flags
 		local lib_type
 		for lib_type in $(get_lib_type) ; do
