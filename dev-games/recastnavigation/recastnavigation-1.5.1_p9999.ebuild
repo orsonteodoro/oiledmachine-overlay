@@ -45,7 +45,10 @@ S="${WORKDIR}/${P}"
 
 pkg_setup() {
 	export CC=$(tc-getCC)
-	[[ -z "${CC}" ]] && export CC=gcc
+	if [[ -z "${CC}" ]] ; then
+		export CC="${CHOST}-gcc"
+		strip-unsupported-flags
+	fi
 	if tc-is-gcc ; then
 		local gcc_pv=$(gcc-fullversion)
 		if ver_test ${gcc_pv} -lt "8.0" ; then
@@ -60,7 +63,9 @@ get_lib_type() {
 }
 
 src_unpack() {
-	use fallback-commit && export EGIT_COMMIT="b51925bb8720e78a65c77339a532459b96ddfc7e" # Dec 22, 2022
+	if use fallback-commit ; then
+		export EGIT_COMMIT="b51925bb8720e78a65c77339a532459b96ddfc7e" # Dec 22, 2022
+	fi
 	git-r3_fetch
 	git-r3_checkout
 	local actual=$(cat $(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake") \
