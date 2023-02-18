@@ -2,28 +2,39 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
 LUA_COMPAT=( lua5-{1..4} )
 inherit lua multilib-minimal toolchain-funcs
+
 DESCRIPTION="File System Library for the Lua Programming Language"
 HOMEPAGE="https://keplerproject.github.io/luafilesystem/"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~mips ~ppc ~ppc64 ~sparc ~x86"
 SLOT="0"
-IUSE="doc luajit test"
-
+IUSE+=" doc luajit test"
 RESTRICT="!test? ( test )"
 # See doc/us/index.html for current versions of lua supported
-RDEPEND="${LUA_DEPS}
+RDEPEND+="
+	${LUA_DEPS}
 	dev-lang/lua:*[${MULTILIB_USEDEP}]
-	luajit? ( dev-lang/luajit:2 )"
-BDEPEND="
+	luajit? (
+		dev-lang/luajit:2
+	)
+"
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	test? ( ${RDEPEND} )"
-DEPEND="${RDEPEND}"
+	test? (
+		${RDEPEND}
+	)
+"
 MY_PV=${PV//./_}
-SRC_URI=\
-"https://github.com/keplerproject/${PN}/archive/v${MY_PV}.tar.gz \
-	-> ${P}.tar.gz"
+SRC_URI="
+https://github.com/keplerproject/${PN}/archive/v${MY_PV}.tar.gz
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${PN}-${MY_PV}"
 
 src_prepare() {
@@ -38,41 +49,47 @@ src_prepare() {
         multilib_foreach_abi prepare_abi
 }
 
+_gen_config() {
+cat > "${BUILD_DIR}/config" <<-EOF
+# Installation directories
+# Default installation prefix
+PREFIX="$(${CHOST}-pkg-config --variable exec_prefix ${pkgcfgpath})"
+# System's libraries directory (where binary libraries are installed)
+LUA_LIBDIR="$(${CHOST}-pkg-config --variable INSTALL_CMOD ${pkgcfgpath})"
+# Lua includes directory
+# OS dependent
+LIB_OPTION=\$(LDFLAGS) -shared
+LIBNAME=$T.so.$V
+# Compilation directives
+WARN=-O2 -Wall -fPIC -W -Waggregate-return -Wcast-align \
+	-Wmissing-prototypes -Wnested-externs -Wshadow \
+	-Wwrite-strings -pedantic
+INCS=${LUA_INC[@]}
+CFLAGS+=\$(WARN) \$(INCS)
+CC=$(tc-getCC)
+EOF
+}
+
 lua_src_configure()
 {
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${ELUA}"
 	cd "${BUILD_DIR}" || die
-	local chost=$(get_abi_CHOST ${ABI})
-	local _pkgconfig="${chost}-pkg-config"
-	einfo "pkgconfig=${chost}-pkg-config"
+	local _pkgconfig="${CHOST}-pkg-config"
+einfo "pkgconfig:\t${CHOST}-pkg-config"
 	local lua_v=$(ver_cut 1-2 $(lua_get_version))
-	local pkgcfgpath="${EROOT}/usr/$(get_libdir)/pkgconfig/$(usex luajit luajit lua${lua_v}).pc"
+	local pkgcfgpath="${ESYSROOT}/usr/$(get_libdir)/pkgconfig/$(usex luajit luajit lua${lua_v}).pc"
 	if [[ ! -e "${pkgcfgpath}" ]] ; then
-		die \
-"You are missing ${pkgcfgpath}.  You must manually symlink it because eselect \
-for lua is broken for multilib abi_x86_32."
+eerror
+eerror "You are missing ${pkgcfgpath}.  You must manually symlink it because"
+eerror "eselect for lua is broken for multilib abi_x86_32."
+eerror
+		die
 	fi
-	LUA_INC=("-I$(pwd)/src")
-	LUA_INC+=(" -I$(${chost}-pkg-config --variable includedir ${pkgcfgpath})")
-	cat > "${BUILD_DIR}/config" <<-EOF
-		# Installation directories
-		# Default installation prefix
-		PREFIX="$(${chost}-pkg-config --variable exec_prefix ${pkgcfgpath})"
-		# System's libraries directory (where binary libraries are installed)
-		LUA_LIBDIR="$(${chost}-pkg-config --variable INSTALL_CMOD ${pkgcfgpath})"
-		# Lua includes directory
-		# OS dependent
-		LIB_OPTION=\$(LDFLAGS) -shared
-		LIBNAME=$T.so.$V
-		# Compilation directives
-		WARN=-O2 -Wall -fPIC -W -Waggregate-return -Wcast-align \
-			-Wmissing-prototypes -Wnested-externs -Wshadow \
-			-Wwrite-strings -pedantic
-		INCS=${LUA_INC[@]}
-		CFLAGS+=\$(WARN) \$(INCS)
-		CC=$(tc-getCC)
-	EOF
-	einfo  "src_configure done"
+	LUA_INC=(
+		-I"$(pwd)/src"
+		-I$(${CHOST}-pkg-config --variable includedir ${pkgcfgpath})
+	)
+	_gen_config
 }
 
 src_configure() {
