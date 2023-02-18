@@ -354,20 +354,20 @@ _apply_env()
 "$(get_llvm_prefix)/lib:${asan_dso_path}:${LD_LIBRARY_PATH}"
 		preload_libsan
 	fi
-	einfo "ASAN_DSO=${ASAN_DSO}"
-	einfo "LDSHARED=${LDSHARED}"
-	einfo "ASAN_OPTIONS=${ASAN_OPTIONS}"
-	einfo "LSAN_OPTIONS=${LSAN_OPTIONS}"
-	einfo "TSAN_OPTIONS=${TSAN_OPTIONS}"
-	einfo "UBSAN_OPTIONS=${UBSAN_OPTIONS}"
-	einfo "DLCLOSE_PRELOAD=${DLCLOSE_PRELOAD}"
-	einfo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
-	einfo "LD_PRELOAD=${LD_PRELOAD}"
+einfo "ASAN_DSO:\t${ASAN_DSO}"
+einfo "LDSHARED:\t${LDSHARED}"
+einfo "ASAN_OPTIONS:\t${ASAN_OPTIONS}"
+einfo "LSAN_OPTIONS:\t${LSAN_OPTIONS}"
+einfo "TSAN_OPTIONS:\t${TSAN_OPTIONS}"
+einfo "UBSAN_OPTIONS:\t${UBSAN_OPTIONS}"
+einfo "DLCLOSE_PRELOAD:\t${DLCLOSE_PRELOAD}"
+einfo "LD_LIBRARY_PATH:\t${LD_LIBRARY_PATH}"
+einfo "LD_PRELOAD:\t${LD_PRELOAD}"
 }
 
 _strip_flags() {
 	strip-unsupported-flags
-	# sync below
+	# Sync below
 	filter-flags \
 		-g \
 		-fsanitize=* \
@@ -397,8 +397,8 @@ _apply_flags() {
 			-shared-libsan \
 			-fopenmp=libomp
 	fi
-	einfo "CPPFLAGS:\t${CPPFLAGS}"
-	einfo "LDFLAGS:\t${LDFLAGS}"
+einfo "CPPFLAGS:\t${CPPFLAGS}"
+einfo "LDFLAGS:\t${LDFLAGS}"
 }
 
 is_flagq_last() {
@@ -454,20 +454,15 @@ eerror
 			die
 		fi
 
-		local chost=$(get_abi_CHOST ${DEFAULT_ABI})
-		local ctarget=$(get_abi_CTARGET)
-		if use test && [[ -n "${ctarget}" ]] ; then
+		if use test && ! multilib_is_native_abi ; then
 eerror
-eerror "Testing with the test USE flag can only be preformed on BDEPEND (CHOST"
-eerror "or compat)."
+eerror "Testing with the test USE flag can only be preformed on native"
+eerror "unilib profiles."
 eerror
 			die
 		fi
-		[[ -z "${ctarget}" ]] && ctarget=$(get_abi_CHOST ${ABI})
-		einfo "CHOST:\t${chost}"
-		einfo "CTARGET:\t${ctarget}"
-		export CC=${ctarget}-clang
-		export CXX=${ctarget}-clang++
+		export CC=${CHOST}-clang
+		export CXX=${CHOST}-clang++
 		_strip_flags
 		_apply_flags
 		if use fuzz-testing ; then
@@ -628,14 +623,12 @@ eerror
 }
 
 src_test_abi() {
-	einfo "Running test for ${configuration}"
+einfo "Running test for ${configuration}"
 	export EMESON_SOURCE="${S}_${configuration}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${configuration}"
 	cd "${BUILD_DIR}" || die
-	local ctarget=$(get_abi_CTARGET ${ABI})
-	[[ -z "${ctarget}" ]] && ctarget=$(get_abi_CHOST ${ABI})
-	export CC=${ctarget}-clang
-	export CXX=${ctarget}-clang++
+	export CC=${CHOST}-clang
+	export CXX=${CHOST}-clang++
 	_clear_env
 	_apply_env 1
 	${EPYTHON} -m pytest -sv --log-cli-level=WARNING test/test-suite || die
