@@ -1108,16 +1108,15 @@ einfo "Removing pre-built binaries ..."
 	_src_prepare() {
 		cd $(_get_s) || die
 		local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})	# builder machine
-		local chost=$(get_abi_CHOST ${ABI})		# target machine
 		# Only ${cbuild}-objdump exists because in true multilib
 		# logically speaking there should be i686-pc-linux-gnu-objdump
-		if [[ -e "${ESYSROOT}/usr/bin/${chost}-objdump" ]] ; then
+		if [[ -e "${ESYSROOT}/usr/bin/${CHOST}-objdump" ]] ; then
 			# sed-in toolchain prefix
 			sed -i \
-				-e "s/\"objdump/\"${chost}-objdump/" \
+				-e "s/\"objdump/\"${CHOST}-objdump/" \
 				python/mozbuild/mozbuild/configure/check_debug_ranges.py \
 				|| die "sed failed to set toolchain prefix"
-einfo "Using ${chost}-objdump for chost"
+einfo "Using ${CHOST}-objdump for CHOST"
 		else
 			[[ -e "${ESYSROOT}/usr/bin/${cbuild}-objdump" ]] || die
 			# sed-in toolchain prefix
@@ -1135,12 +1134,12 @@ ewarn "Using ${cbuild}-objdump for cbuild"
 
 # Corrections based on the ABI being compiled
 # Preconditions:
-#   chost must be defined
+#   CHOST must be defined
 #   cwd is ABI's S
 _fix_paths() {
 	# For proper rust cargo cross-compile for libloading and glslopt
-	export PKG_CONFIG=${chost}-pkg-config
-	export CARGO_CFG_TARGET_ARCH=$(echo ${chost} | cut -f 1 -d "-")
+	export PKG_CONFIG=${CHOST}-pkg-config
+	export CARGO_CFG_TARGET_ARCH=$(echo ${CHOST} | cut -f 1 -d "-")
 	export MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
 	export BUILD_OBJ_DIR="$(pwd)/ff"
 
@@ -1149,11 +1148,11 @@ _fix_paths() {
 
 	# for rust crates libloading and glslopt
 	if tc-is-clang ; then
-		CC=${chost}-clang
-		CXX=${chost}-clang++
+		CC=${CHOST}-clang
+		CXX=${CHOST}-clang++
 	else
-		CC=${chost}-gcc
-		CXX=${chost}-g++
+		CC=${CHOST}-gcc
+		CXX=${CHOST}-g++
 	fi
 	tc-export CC CXX
 }
@@ -1299,7 +1298,6 @@ _src_configure() {
 	cd "${s}" || die
 
 	local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})
-	local chost=$(get_abi_CHOST ${ABI})
 	# Show flags set at the beginning
 einfo
 einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
@@ -1307,7 +1305,7 @@ einfo "Current CFLAGS:\t\t${CFLAGS:-no value set}"
 einfo "Current CXXFLAGS:\t\t${CXXFLAGS:-no value set}"
 einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
 einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
-einfo "Cross-compile CHOST:\t\t${chost}"
+einfo "Cross-compile CHOST:\t\t${CHOST}"
 einfo
 
 	local have_switched_compiler=
@@ -1319,8 +1317,8 @@ einfo
 		have_switched_compiler=yes
 		AR=llvm-ar
 		AS=llvm-as
-		CC=${chost}-clang
-		CXX=${chost}-clang++
+		CC=${CHOST}-clang
+		CXX=${CHOST}-clang++
 		NM=llvm-nm
 		RANLIB=llvm-ranlib
 		local clang_slot=$(clang-major-version)
@@ -1346,8 +1344,8 @@ einfo
 einfo "Switching to gcc"
 einfo
 		AR=gcc-ar
-		CC=${chost}-gcc
-		CXX=${chost}-g++
+		CC=${CHOST}-gcc
+		CXX=${CHOST}-g++
 		NM=gcc-nm
 		RANLIB=gcc-ranlib
 	fi
@@ -1371,7 +1369,7 @@ einfo
 		export BINDGEN_CFLAGS="
 			${SYSROOT:+--sysroot=${ESYSROOT}}
 			--host=${cbuild}
-			--target=${chost} ${BINDGEN_CFLAGS-}
+			--target=${CHOST} ${BINDGEN_CFLAGS-}
 		"
 	fi
 
@@ -1412,7 +1410,7 @@ einfo
 		--host="${cbuild}" \
 		--libdir="${EPREFIX}/usr/$(get_libdir)" \
 		--prefix="${EPREFIX}/usr" \
-		--target="${chost}" \
+		--target="${CHOST}" \
 		--without-ccache \
 		--without-wasm-sandboxed-libraries \
 		--with-intl-api \
@@ -1420,12 +1418,12 @@ einfo
 		--with-system-nspr \
 		--with-system-nss \
 		--with-system-zlib \
-		--with-toolchain-prefix="${chost}-" \
+		--with-toolchain-prefix="${CHOST}-" \
 		--with-unsigned-addon-scopes=app,system \
 		--x-includes="${ESYSROOT}/usr/include" \
 		--x-libraries="${ESYSROOT}/usr/$(get_libdir)"
 
-	# mozconfig_add_options_ac '' --with-libclang-path="$(${chost}-llvm-config --libdir)"
+	# mozconfig_add_options_ac '' --with-libclang-path="$(${CHOST}-llvm-config --libdir)"
 	#   Disabled because Gentoo doesn't support multilib python, so full
 	#   cross-compile is not supported.
 
@@ -1437,7 +1435,7 @@ einfo
 	[[ -n ${MOZ_ESR} ]] && update_channel=esr
 	mozconfig_add_options_ac '' --update-channel=${update_channel}
 
-	if ! use x86 && [[ ${chost} != armv*h* ]] ; then
+	if ! use x86 && [[ ${CHOST} != armv*h* ]] ; then
 		mozconfig_add_options_ac '' --enable-rust-simd
 	fi
 
@@ -1661,7 +1659,7 @@ einfo "Building without Mozilla API key ..."
 		fi
 	fi
 
-	if [[ ${chost} == armv*h* ]] ; then
+	if [[ ${CHOST} == armv*h* ]] ; then
 		mozconfig_add_options_ac 'CHOST=armv*h*' --with-float-abi=hard
 
 		if ! use system-libvpx ; then
@@ -1741,7 +1739,7 @@ ewarn
 	export MOZ_MAKE_FLAGS="${MAKEOPTS}"
 
 	# Use system's Python environment
-	PIP_NETWORK_INSTALL_RESTRICTED_VIRTUALENVS=mach
+	export PIP_NETWORK_INSTALL_RESTRICTED_VIRTUALENVS=mach
 
 	if use system-python-libs; then
 		export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="system"
@@ -1769,7 +1767,7 @@ einfo "Cross-compile ABI:\t\t${ABI}"
 einfo "Cross-compile CFLAGS:\t${CFLAGS}"
 einfo "Cross-compile CC:\t\t${CC}"
 einfo "Cross-compile CXX:\t\t${CXX}"
-echo "export PKG_CONFIG=${chost}-pkg-config" \
+echo "export PKG_CONFIG=${CHOST}-pkg-config" \
 	>>${MOZCONFIG}
 echo "export PKG_CONFIG_PATH=/usr/$(get_libdir)/pkgconfig:/usr/share/pkgconfig" \
 	>>${MOZCONFIG}
@@ -1811,7 +1809,6 @@ _src_compile() {
 	cd "${s}" || die
 
 	local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})
-	local chost=$(get_abi_CHOST ${ABI})
 	_fix_paths
 	local virtx_cmd=
 
@@ -1948,7 +1945,6 @@ _src_install() {
 	local s=$(_get_s)
 	cd "${s}" || die
 	local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})
-	local chost=$(get_abi_CHOST ${ABI})
 	_fix_paths
 	# xpcshell is getting called during install
 	pax-mark m \
@@ -1987,8 +1983,8 @@ EOF
 	# Force hwaccel prefs if USE=hwaccel is enabled
 	if use hwaccel ; then
 		cat "${FILESDIR}"/gentoo-hwaccel-prefs.js-r2 \
-		>>"${GENTOO_PREFS}" || \
-die "failed to add prefs to force hardware-accelerated rendering to all-gentoo.js"
+		>>"${GENTOO_PREFS}" \
+|| die "failed to add prefs to force hardware-accelerated rendering to all-gentoo.js"
 
 		if use wayland; then
 cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set hwaccel wayland prefs"
