@@ -47,8 +47,8 @@ sed -i -E -e "s|sys-devel/llvm:([0-9]+)|sys-devel/llvm:\1[\${MULTILIB_USEDEP}]|g
 #sed -i -E -e "s|=sys-devel/lld-([0-9]+).|=sys-devel/lld-\1*[\${MULTILIB_USEDEP}]|" "${FILEPATH}.mod"
 sed -i -e "s|profile,\${MULTILIB_USEDEP}|profile|" "${FILEPATH}.mod"
 sed -i -e "s|media-sound/apulse.\[\${MULTILIB_USEDEP}\]|media-sound/apulse.|" "${FILEPATH}.mod"
-sed -i -e "s|CHOST|chost|g" $1.mod
-sed -i -e "s|chost=armv.h.|CHOST=armv*h*|g" $1.mod
+#sed -i -e "s|CHOST|chost|g" $1.mod
+#sed -i -e "s|chost=armv.h.|CHOST=armv*h*|g" $1.mod
 
 # package changes
 sed -i -E -e "s|([>=]*)virtual/rust-([.0-9]+)|\1dev-lang/rust-\2[\${MULTILIB_USEDEP}]\n\t!dev-lang/rust-bin|g" "${FILEPATH}.mod"
