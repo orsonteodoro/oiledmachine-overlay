@@ -160,26 +160,24 @@ src_configure() {
 		-DDISABLE_DOCSTRINGS=$(usex !docstrings)
 	)
 
-	local _PATH=$(echo "${PATH}" | tr ":" "\n" | sed -E -e "\|llvm\/[0-9]+|d")
+	local _PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "\|llvm\/[0-9]+|d")
 	export LLVM_PATH=""
+	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		if use "llvm-${s}" ; then
 			_PATH=$(echo -e "${_PATH}\n/usr/lib/llvm/${s}/bin" | tr "\n" ":")
 			export PATH="${_PATH}"
 			LLVM_PATH="/usr/lib/llvm/${s}"
+			break
 		fi
 	done
-	# Add also LLD's path
-	if has_version "sys-devel/lld" ; then
-		local lld_v_maj=$(ver_cut 1 $(best_version "sys-devel/lld" | sed -e "s|sys-devel/lld-||"))
-		v_major_lld=$(ver_cut 1 "${v_major_lld}")
-		export PATH+=":/usr/lib/llvm/${v_major_lld}/bin"
-	fi
 
-	# Avoid ccache for now
-	export CC="${LLVM_PATH}/bin/clang"
-	export CXX="${LLVM_PATH}/bin/clang++"
+	export CC="${CHOST}-clang-${s}"
+	export CXX="${CHOST}-clang++-${s}"
 	export STRIP="/bin/true" # do not strip
+	strip-unsupported-flags
 
 	# ld.lld: error: /usr/lib/llvm/14/bin/../lib/libclang.so is incompatible with elf64-x86-64
 	if has_version "sys-devel/clang[default-lld]" && has_gold ; then
