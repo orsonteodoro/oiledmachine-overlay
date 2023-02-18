@@ -240,8 +240,10 @@ src_configure() {
 			_PATH=$(echo -e "${_PATH}\n/usr/lib/llvm/${s}/bin" | tr "\n" ":")
 			export PATH="${_PATH}"
 			LLVM_PATH="/usr/lib/llvm/${s}"
-			export CC="clang-${s}"
-			export CXX="clang++-${s}"
+			export CC="${CHOST}-clang-${s}"
+			export CXX="${CHOST}-clang++-${s}"
+			strip-unsupported-flags
+			break
 		fi
 	done
 	clang --version || die
