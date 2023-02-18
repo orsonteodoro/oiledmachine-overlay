@@ -1190,8 +1190,8 @@ einfo "Checking precompiled libclang support"
 einfo
 		local arch="${CHOST%%-*}"
 einfo
-einfo "chost: ${CHOST}"
-einfo "arch: ${arch}"
+einfo "CHOST:\t${CHOST}"
+einfo "arch:\t${arch}"
 einfo
 		case ${arch} in
 			aarch64*)
@@ -1211,8 +1211,9 @@ einfo
 				;;
 			*)
 eerror
-eerror "chost: ${CHOST}"
-eerror "arch: ${arch}"
+eerror "CHOST:\t${CHOST}"
+eerror "arch:\t${arch}"
+eerror
 eerror "Please use the system-libclang USE flag instead"
 eerror
 				die
