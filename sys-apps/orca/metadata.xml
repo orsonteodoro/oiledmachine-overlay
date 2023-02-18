@@ -60,9 +60,10 @@
       * Orca link utilization gets cut in half as it approaches 1% packet loss,
         where as BBR maintains full link utilization in the same varying
         packet loss scenario.
-      * Orca may underperform in send link utilization scenario after 36s,
-        but Spine does better after 36s link utilization with varying capacity
-        with spikes.
+      * Orca may underperform or have a major issue, as in 0 Mbps for several
+        seconds, in the send link utilization scenario after 36s, but Spine
+        does better after 36s link utilization with varying capacity with
+        spikes.
 
 
     To run:
