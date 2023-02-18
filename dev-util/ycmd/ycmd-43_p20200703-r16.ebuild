@@ -1094,10 +1094,10 @@ _install_rust_locally()
 			*)
 eerror
 eerror
-eerror "chost: ${CHOST}"
-eerror "arch: ${arch}"
+eerror "CHOST:\t${CHOST}"
+eerror "arch:\t${arch}"
 eerror
-eerror "Please use the system-rust USE flag instead"
+eerror "Please use the system-rust USE flag instead."
 eerror
 				die
 				;;
