@@ -694,7 +694,13 @@ _compiler_version_checks() {
 			die "At least gcc ${GCC_MIN} is required"
 		fi
 		if tc-is-clang ; then
-			tc-is-cross-compiler && CPP=${CBUILD}-clang++ || CPP=${CHOST}-clang++
+			if tc-is-cross-compiler ; then
+				CPP=${CBUILD}-clang++
+			elif tc-is-cross-compiler && [[ -n ${FORCE_LLVM_SLOT} ]] ; then
+				CPP=${CBUILD}-clang++-${FORCE_LLVM_SLOT}
+			else
+				CPP=${CHOST}-clang++-${LLVM_SLOT}
+			fi
 			CPP+=" -E"
 			local clang_min
 			if use official ; then
@@ -2092,8 +2098,8 @@ einfo
 			export BUILD_CC=${CBUILD}-clang-${FORCE_LLVM_SLOT}
 			export BUILD_CXX=${CBUILD}-clang++${FORCE_LLVM_SLOT}
 		else
-			export CC="clang-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
-			export CXX="clang++-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
+			export CC="${CHOST}-clang-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
+			export CXX="${CHOST}-clang++-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
 		fi
 		export AR=llvm-ar # Required for LTO
 		export NM=llvm-nm
