@@ -27,8 +27,18 @@ esac
 inherit ot-kernel-kutils
 
 # These are discovered by doing one of the following:
-# 1: grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "CONFIG_CHECK=" ./
-# 2: grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "linux_chkconfig_" ./
+# grep -E -r --exclude-dir=.git --exclude-dir=metadata --exclude=Manifest.gz -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" /usr/portage | sort
+
+# linux-info notes:
+
+# Should be set examples
+#CONFIG_CHECK="MTRR" # Example of fatal error ; required
+#CONFIG_CHECK="~MTRR" # Example of non fatal error ; optional
+
+# Should not be set examples
+#CONFIG_CHECK="!MTRR" # Example of fatal ; required
+#CONFIG_CHECK="~!MTRR" # Example of non fatal error ; optional
+
 
 X86_FLAGS=(
 	aes
@@ -383,10 +393,12 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_mcproxy
 	ot-kernel-pkgflags_mdadm
 	ot-kernel-pkgflags_mesa
+	ot-kernel-pkgflags_mesa_amber
 	ot-kernel-pkgflags_midi
 	ot-kernel-pkgflags_minidlna
 	ot-kernel-pkgflags_minijail
 	ot-kernel-pkgflags_mono
+	ot-kernel-pkgflags_mpd
 	ot-kernel-pkgflags_mpg123
 	ot-kernel-pkgflags_mplayer
 	ot-kernel-pkgflags_mpm_itk
@@ -458,6 +470,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_qingy
 	ot-kernel-pkgflags_qtcore
 	ot-kernel-pkgflags_qtgreet
+	ot-kernel-pkgflags_r8125
 	ot-kernel-pkgflags_r8152
 	ot-kernel-pkgflags_r8168
 	ot-kernel-pkgflags_rasdaemon
@@ -578,6 +591,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_xtables_addons
 	ot-kernel-pkgflags_zfs
 	ot-kernel-pkgflags_zfs_kmod
+	ot-kernel-pkgflags_zoom
 
 	# Post apply
 	# General commonly used kernel features goes here.
@@ -908,6 +922,9 @@ ot-kernel-pkgflags_bcm_sta() { # DONE
 			ewarn "Cannot use PREEMPT_RCU OR PREEMPT with bcm-sta"
 			ot-kernel_unset_configopt "CONFIG_PREEMPT_RCU"
 			ot-kernel_unset_configopt "CONFIG_PREEMPT"
+			if grep -q -e "CONFIG_PREEMPT" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY" # fallback to next best
+			fi
 		elif ver_test ${PV} -ge 2.6.32 ; then
 			_s1
 			_s2
@@ -1806,6 +1823,7 @@ eerror "Either set OT_KERNEL_PKGFLAGS_REJECT[S4aa6a9f]=1 or disable CONFIG_GRKER
 eerror
 		die
 	fi
+	ot-kernel_unset_configopt "CONFIG_GRKERNSEC"
 }
 
 CR_PKGS=(
@@ -1893,14 +1911,10 @@ _ot-kernel-pkgflags_cr_based() {
 # Applies kernel config flags for the cr based packages
 ot-kernel-pkgflags_cr() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4aa6a9f]}" == "1" ]] && return
-	if _ot-kernel-pkgflags_cr_based ; then
+	if _ot-kernel-pkgflags_cr_based \
+		|| [[ "${USE_SUID_SANDBOX:-0}" == "1" ]] ; then
 		einfo "Applying kernel config flags for cr and derivatives (id: 4aa6a9f)"
-		if [[ "${USE_SUID_SANDBOX:-0}" == "1" ]] ; then
-			_ot-kernel-pkgflags_cr_suid_sandbox_settings
-			return
-		fi
 		_ot-kernel-pkgflags_cr_suid_sandbox_settings
-
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
@@ -2950,7 +2964,8 @@ ot-kernel-pkgflags_dietlibc() { # DONE
 # Applies kernel config flags for discord
 ot-kernel-pkgflags_discord() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sbcc3f54]}" == "1" ]] && return
-	if ot-kernel_has_version "net-im/discord-bin" ; then
+	if ot-kernel_has_version "net-im/discord-bin" \
+		|| ot-kernel_has_version "net-im/discord" ; then
 		einfo "Applying kernel config flags for discord (id: bcc3f54)"
 		ot-kernel_y_configopt "CONFIG_USER_NS"
 	fi
@@ -4301,7 +4316,7 @@ ot-kernel-pkgflags_lkrg() { # DONE
 		ot-kernel_y_configopt "CONFIG_MODULE_UNLOAD"
 		ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
 		if grep -q -e "CONFIG_PREEMPT_RT" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PREEMPT" # fallback to second best
+			ot-kernel_y_configopt "CONFIG_PREEMPT" # fallback to next best
 		fi
 		ban_disable_debug "70df33c"
 		ot-kernel_y_configopt "CONFIG_STACKTRACE"
@@ -5699,6 +5714,18 @@ ot-kernel-pkgflags_mesa() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_mesa_amber
+# @DESCRIPTION:
+# Applies kernel config flags for the mesa-amber package
+ot-kernel-pkgflags_mesa_amber() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S58b098b]}" == "1" ]] && return
+	if ot-kernel_has_version "media-libs/mesa-amber" ; then
+		einfo "Applying kernel config flags for the mesa-amber package (id: 58b098b)"
+		ot-kernel_y_configopt "CONFIG_KCMP"
+		ot-kernel_y_configopt "CONFIG_CHECKPOINT_RESTORE"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_minidlna
 # @DESCRIPTION:
 # Applies kernel config flags for the minidlna package
@@ -5744,6 +5771,27 @@ ot-kernel-pkgflags_mono() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_mpd
+# @DESCRIPTION:
+# Applies kernel config flags for the mpd package
+ot-kernel-pkgflags_mpd() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S74673fe]}" == "1" ]] && return
+	if ot-kernel_has_version "media-sound/mpd[eventfd]" ; then
+		einfo "Applying kernel config flags for the mpd package (id: 74673fe)"
+		if ot-kernel_has_version "media-sound/mpd[eventfd]" ; then
+			ot-kernel_y_configopt "CONFIG_EXPERT"
+			ot-kernel_y_configopt "CONFIG_EVENTFD"
+		fi
+		if ot-kernel_has_version "media-sound/mpd[signalfd]" ; then
+			ot-kernel_y_configopt "CONFIG_EXPERT"
+			ot-kernel_y_configopt "CONFIG_SIGNALFD"
+		fi
+		if ot-kernel_has_version "media-sound/mpd[inotify]" ; then
+			ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_mpg123
 # @DESCRIPTION:
 # Applies kernel config flags for the mpg123 package
@@ -5774,7 +5822,7 @@ ot-kernel-pkgflags_mpm_itk() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc76089a]}" == "1" ]] && return
 	if ot-kernel_has_version "www-apache/mpm_itk" ; then
 		einfo "Applying kernel config flags for the mpm_itk package (id: c76089a)"
-		ot-kernel_y_configopt "CONFIG_MPM_ITK"
+		ot-kernel_y_configopt "CONFIG_SECCOMP"
 	fi
 }
 
@@ -6537,6 +6585,11 @@ ot-kernel-pkgflags_openvswitch() { # DONE
 	        _ot-kernel-pkgflags_tcpip
 	        ot-kernel_y_configopt "CONFIG_IPV6"
 		_ot-kernel-pkgflags_tun
+		if ot-kernel_has_version "net-misc/openvswitch[modules]" ; then
+		        ot-kernel_unset_configopt "CONFIG_OPENVSWITCH"
+		else
+		        ot-kernel_y_configopt "CONFIG_OPENVSWITCH"
+		fi
 	fi
 }
 
@@ -7265,6 +7318,17 @@ ot-kernel-pkgflags_powertop() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_r8125
+# @DESCRIPTION:
+# Applies kernel config flags for r8125
+ot-kernel-pkgflags_r8125() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sbb3ced9]}" == "1" ]] && return
+	if ot-kernel_has_version "net-misc/r8125" ; then
+		einfo "Applying kernel config flags for r8125 (id: bb3ced9)"
+		ot-kernel_unset_configopt "CONFIG_R8169"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_r8152
 # @DESCRIPTION:
 # Applies kernel config flags for r8152
@@ -7385,7 +7449,7 @@ ot-kernel-pkgflags_ruby() { # DONE
 # Applies kernel config flags for the rsyslog package
 ot-kernel-pkgflags_rsyslog() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S16bb03d]}" == "1" ]] && return
-	if ot-kernel_has_version "dev-libs/rsyslog" ; then
+	if ot-kernel_has_version "app-admin/rsyslog" ; then
 		einfo "Applying kernel config flags for the rsyslog package (id: 16bb03d)"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 	fi
@@ -7398,9 +7462,12 @@ ot-kernel-pkgflags_rtirq() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S7a6a27c]}" == "1" ]] && return
 	if ot-kernel_has_version "sys-process/rtirq" ; then
 		einfo "Applying kernel config flags for rtirq (id: 7a6a27c)"
-		ot-kernel_y_configopt "CONFIG_PREEMPT_RT" # Chosen because it is easier
-		# or
-		# ot-kernel_y_configopt "CONFIG_IRQ_FORCED_THREADING" # must have threadirqs in kernel cmdline
+		if grep -q -e "config PREEMPT_RT" "${BUILD_DIR}/kernel/Kconfig.preempt" ; then
+			ot-kernel_y_configopt "CONFIG_PREEMPT_RT"
+		else
+			ot-kernel_unset_configopt "CONFIG_IRQ_FORCED_THREADING" # Set by the arch
+			ot-kernel_set_kconfig_kernel_cmdline "threadirqs"
+		fi
 	fi
 }
 
@@ -7792,6 +7859,7 @@ ot-kernel-pkgflags_sddm() { # DONE
 		einfo "Applying kernel config flags for the sddm package (id: 4669e71)"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+		ot-kernel_y_configopt "CONFIG_DRM" # has flag dependencies
 	fi
 }
 
@@ -8326,6 +8394,7 @@ ot-kernel-pkgflags_udisks() { # DONE
 	if ot-kernel_has_version "sys-fs/udisks" \
 		&& [[ \
 			"${arch}" == "arm" \
+			|| "${arch}" == "powerpc" \
 			|| "${arch}" == "ppc" \
 			|| "${arch}" == "ppc64" \
 			|| "${arch}" == "x86" \
@@ -9391,6 +9460,21 @@ ot-kernel-pkgflags_zfs_kmod() { # DONE
 		if ver_test ${K_MAJOR_MINOR} -lt 5 ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_zoom
+# @DESCRIPTION:
+# Applies kernel config flags for the zoom package
+ot-kernel-pkgflags_zoom() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se8903fa]}" == "1" ]] && return
+	if ot-kernel_has_version "net-im/zoom" ; then
+		einfo "Applying kernel config flags for the zoom package (id: e8903fa)"
+		ot-kernel_unset_configopt "CONFIG_USER_NS"
+		ot-kernel_unset_configopt "CONFIG_PID_NS"
+		ot-kernel_unset_configopt "CONFIG_NET_NS"
+		ot-kernel_unset_configopt "CONFIG_NET"
+		ot-kernel_unset_configopt "CONFIG_SECCOMP_FILTER"
 	fi
 }
 
