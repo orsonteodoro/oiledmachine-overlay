@@ -16,40 +16,25 @@ LICENSE="Apache-2.0"
 MKL_DNN_COMMIT="f53274c9fef211396655fc4340cb838452334089"
 OIDN_WEIGHTS_COMMIT="a34b7641349c5a79e46a617d61709c35df5d6c28"
 ORG_GH="https://github.com/OpenImageDenoise"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" +apps +built-in-weights custom-tc doc gcc openimageio"
-IUSE+=" +clang gcc"
-REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
-	^^ ( clang gcc )
-"
-# Clang is more smoother multitask-wise
-# c++11 minimal
+# SSE4.1 hardware was released in 2008.
+# See scripts/build.py for release versioning.
+# Clang is more smoother multitask-wise.
+# c++11 is the minimum required.
 MIN_CLANG_V="3.3"
 MIN_GCC_V="4.8.1"
-# SSE4.1 hardware release in 2008
-# See scripts/build.py for release versioning
-CDEPEND=" ${PYTHON_DEPS}"
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
-DEPEND+="
-	${CDEPEND}
-	|| (
-		(
-			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
-			!<dev-cpp/tbb-2021:0=
-		)
-		>=dev-cpp/tbb-2021.5:${ONETBB_SLOT}=
-	)
-	virtual/libc
-	openimageio? (
-		media-libs/openimageio
-	)
-"
-RDEPEND+=" ${DEPEND}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 LLVM_SLOTS=(15 14 13 12 11 10)
-IUSE+=" ${LLVM_SLOTS[@]/#/llvm-}"
-REQUIRED_USE+=" ^^ ( ${LLVM_SLOTS[@]/#/llvm-} )"
+IUSE+="
+${LLVM_SLOTS[@]/#/llvm-}
++apps +built-in-weights +clang custom-tc doc gcc openimageio
+"
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+	^^ ( ${LLVM_SLOTS[@]/#/llvm-} )
+	^^ ( clang gcc )
+"
 gen_clang_depends() {
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
@@ -74,9 +59,27 @@ gen_ispc_depends() {
 		"
 	done
 }
-
+DEPEND+="
+	${PYTHON_DEPS}
+	virtual/libc
+	openimageio? (
+		media-libs/openimageio
+	)
+	|| (
+		(
+			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+			!<dev-cpp/tbb-2021:0=
+		)
+		>=dev-cpp/tbb-2021.5:${ONETBB_SLOT}=
+	)
+"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
-	${CDEPEND}
+	$(gen_ispc_depends)
+	${PYTHON_DEPS}
+	>=dev-util/cmake-3.1
 	|| (
 		clang? (
 			$(gen_clang_depends)
@@ -85,8 +88,6 @@ BDEPEND+="
 			>=sys-devel/gcc-${MIN_GCC_V}
 		)
 	)
-	$(gen_ispc_depends)
-	>=dev-util/cmake-3.1
 "
 if [[ ${PV} = *9999 ]]; then
 	inherit git-r3
@@ -171,9 +172,9 @@ src_configure() {
 	fi
 
 einfo
-einfo "CC=${CC}"
-einfo "CXX=${CXX}"
-einfo "CHOST=${CHOST}"
+einfo "CC:\t${CC}"
+einfo "CXX:\t${CXX}"
+einfo "CHOST:\t${CHOST}"
 einfo
 
 	mycmakeargs+=(
@@ -238,4 +239,3 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-multislot-tbb
-
