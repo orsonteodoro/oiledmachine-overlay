@@ -392,6 +392,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_madwimax
 	ot-kernel-pkgflags_mahimahi
 	ot-kernel-pkgflags_mariadb
+	ot-kernel-pkgflags_mbpfan
 	ot-kernel-pkgflags_mcelog
 	ot-kernel-pkgflags_mcproxy
 	ot-kernel-pkgflags_mdadm
@@ -537,6 +538,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_trousers
 	ot-kernel-pkgflags_tuigreet
 	ot-kernel-pkgflags_tup
+	ot-kernel-pkgflags_tuxedo_keyboard
 	ot-kernel-pkgflags_tvheadend
 	ot-kernel-pkgflags_udev
 	ot-kernel-pkgflags_udisks
@@ -1084,7 +1086,7 @@ ot-kernel-pkgflags_bmon() { # DONE
 # Applies kernel config flags for the bluez package
 ot-kernel-pkgflags_bluez() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S73d2a26]}" == "1" ]] && return
-	if ot-kernel_has_version "sys-apps/bluez" ; then
+	if ot-kernel_has_version "net-wireless/bluez" ; then
 		einfo "Applying kernel config flags for the bluez package (id: 73d2a26)"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_BT"
@@ -1104,8 +1106,8 @@ ot-kernel-pkgflags_bluez() { # DONE
 		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_SKCIPHER"
 		ot-kernel_y_configopt "CONFIG_RFKILL"
 		ot-kernel_y_configopt "CONFIG_UHID"
-		if ot-kernel_has_version "sys-apps/bluez[mesh]" \
-			|| ot-kernel_has_version "sys-apps/bluez[test]" ; then
+		if ot-kernel_has_version "net-wireless/bluez[mesh]" \
+			|| ot-kernel_has_version "net-wireless/bluez[test]" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_USER"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_AEAD"
@@ -1113,6 +1115,10 @@ ot-kernel-pkgflags_bluez() { # DONE
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CCM"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_AEAD"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CMAC"
+
+			ot-kernel_y_configopt "CONFIG_CRYPTO_MD5"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1"
+			ot-kernel_y_configopt "CONFIG_KEY_DH_OPERATIONS"
 		fi
 	fi
 }
@@ -1230,12 +1236,11 @@ ot-kernel-pkgflags_bubblewrap() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4255ad7]}" == "1" ]] && return
 	if ot-kernel_has_version "sys-apps/bubblewrap" ; then
 		einfo "Applying kernel config flags for the bubblewrap package (id: 4255ad7)"
-		ot-kernel_y_configopt "CONFIG_NAMESPACES"
-		ot-kernel_y_configopt "CONFIG_UTS_NS"
-		ot-kernel_y_configopt "CONFIG_IPC_NS"
-		ot-kernel_y_configopt "CONFIG_USER_NS"
-		ot-kernel_y_configopt "CONFIG_PID_NS"
-		ot-kernel_y_configopt "CONFIG_NET_NS"
+		_ot-kernel_set_ipc_ns
+		_ot-kernel_set_net_ns
+		_ot-kernel_set_pid_ns
+		_ot-kernel_set_user_ns
+		_ot-kernel_set_uts_ns
 	fi
 }
 
@@ -1285,8 +1290,8 @@ ot-kernel-pkgflags_catalyst() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S14ce6b4]}" == "1" ]] && return
 	if ot-kernel_has_version "dev-util/catalyst" ; then
 		einfo "Applying kernel config flags for the catalyst package (id: 14ce6b4)"
-		ot-kernel_y_configopt "CONFIG_UTS_NS"
-		ot-kernel_y_configopt "CONFIG_IPC_NS"
+		_ot-kernel_set_ipc_ns
+		_ot-kernel_set_uts_ns
 		ot-kernel_y_configopt "CONFIG_SQUASHFS"
 		ot-kernel_y_configopt "CONFIG_SQUASHFS_ZLIB"
 	fi
@@ -1593,8 +1598,8 @@ ot-kernel-pkgflags_chroot_wrapper() { # DONE
 	if ot-kernel_has_version "dev-util/chroot-wrapper" ; then
 		einfo "Applying kernel config flags for the chroot-wrapper package (id: 4a45383)"
 		ot-kernel_y_configopt "CONFIG_TMPFS"
-		ot-kernel_y_configopt "CONFIG_IPC_NS"
-		ot-kernel_y_configopt "CONFIG_UTS_NS"
+		_ot-kernel_set_ipc_ns
+		_ot-kernel_set_uts_ns
 	fi
 }
 
@@ -1663,12 +1668,11 @@ ot-kernel-pkgflags_clsync() { # DONE
 			ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		fi
 		if ot-kernel_has_version "app-admin/clsync[namespaces]" ; then
-			ot-kernel_y_configopt "CONFIG_NAMESPACES"
-			ot-kernel_y_configopt "CONFIG_UTS_NS"
-			ot-kernel_y_configopt "CONFIG_IPC_NS"
-			ot-kernel_y_configopt "CONFIG_USER_NS"
-			ot-kernel_y_configopt "CONFIG_PID_NS"
-			ot-kernel_y_configopt "CONFIG_NET_NS"
+			_ot-kernel_set_ipc_ns
+			_ot-kernel_set_net_ns
+			_ot-kernel_set_pid_ns
+			_ot-kernel_set_user_ns
+			_ot-kernel_set_uts_ns
 		fi
 		if ot-kernel_has_version "app-admin/clsync[seccomp]" ; then
 			ot-kernel_y_configopt "CONFIG_SECCOMP"
@@ -1811,9 +1815,9 @@ ot-kernel-pkgflags_corosync() { # DONE
 # @DESCRIPTION:
 # Add config settings for suid sandbox support
 _ot-kernel-pkgflags_cr_suid_sandbox_settings() { # DONE
-	ot-kernel_y_configopt "CONFIG_PID_NS"
-	ot-kernel_y_configopt "CONFIG_NET_NS"
-	ot-kernel_y_configopt "CONFIG_USER_NS"
+	_ot-kernel_set_net_ns
+	_ot-kernel_set_pid_ns
+	_ot-kernel_set_user_ns
 	ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
 	ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 	ot-kernel_unset_configopt "CONFIG_COMPAT_VDSO"
@@ -1869,6 +1873,7 @@ media-sound/plexamp
 media-sound/teamspeak-client
 media-video/obs-studio
 net-im/caprine
+net-im/discord
 net-im/discord-bin
 net-im/discord-canary-bin
 net-im/discord-ptb-bin
@@ -1882,6 +1887,7 @@ net-im/whatsapp-desktop-bin
 net-libs/cef
 net-libs/cef-bin
 net-proxy/insomnia-bin
+sci-mathematics/rstudio-desktop-bin
 www-apps/BloodHound
 www-client/chromium
 www-client/chromium-bin
@@ -1981,8 +1987,9 @@ ot-kernel-pkgflags_criu() { # DONE
 	if ot-kernel_has_version "sys-process/criu" ; then
 		einfo "Applying kernel config flags for the criu package (id: 484c86a)"
 		ot-kernel_y_configopt "CONFIG_CHECKPOINT_RESTORE"
-		ot-kernel_y_configopt "CONFIG_NAMESPACES"
-		ot-kernel_y_configopt "CONFIG_PID_NS"
+
+		_ot-kernel_set_pid_ns
+
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
 		ot-kernel_y_configopt "CONFIG_EVENTFD"
@@ -2830,6 +2837,10 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 ot-kernel-pkgflags_cups() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sdbb3834]}" == "1" ]] && return
 	if ot-kernel_has_version "net-print/cups[-usb]" ; then
+		# The usb USE flag is a misnomer.
+		# usb = support via libusb
+		# -usb = kernel usb printer driver
+
 		# Implied ot-kernel_has_version "net-print/cups[linux_kernel]"
 		einfo "Applying kernel config flags for the cups package (id: dbb3834)"
 		ot-kernel_y_configopt "CONFIG_USB_PRINTER"
@@ -2856,6 +2867,7 @@ ot-kernel-pkgflags_dahdi() { # DONE
 		einfo "Applying kernel config flags for numa support for the dahdi package (id: 31c5fa5)"
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_CRC_CCITT"
 		if ot-kernel_has_version "net-misc/dahdi[oslec]" ; then
 			ot-kernel_y_configopt "CONFIG_ECHO"
 		fi
@@ -2970,7 +2982,7 @@ ot-kernel-pkgflags_discord() { # DONE
 	if ot-kernel_has_version "net-im/discord-bin" \
 		|| ot-kernel_has_version "net-im/discord" ; then
 		einfo "Applying kernel config flags for discord (id: bcc3f54)"
-		ot-kernel_y_configopt "CONFIG_USER_NS"
+		_ot-kernel_set_user_ns
 	fi
 }
 
@@ -3078,8 +3090,8 @@ ot-kernel-pkgflags_docker() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S05309e2]}" == "1" ]] && return
 	if ot-kernel_has_version "app-containers/docker" ; then
 		einfo "Applying kernel config flags for the docker package (id: 05309e2)"
+		_ot-kernel_set_posix_mqueue
 		ot-kernel_y_configopt "CONFIG_NET"
-		ot-kernel_y_configopt "CONFIG_POSIX_MQUEUE"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
 		ot-kernel_y_configopt "CONFIG_MEMCG"
 		if ver_test ${K_MAJOR_MINOR} -le 5.7 ; then
@@ -3106,12 +3118,13 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
 		ot-kernel_y_configopt "CONFIG_CGROUP_PERF"
 		ot-kernel_unset_configopt "CGROUP_DEBUG" # Same as "Example controller"
-		ot-kernel_y_configopt "CONFIG_NAMESPACES"
-		ot-kernel_y_configopt "CONFIG_UTS_NS"
-		ot-kernel_y_configopt "CONFIG_IPC_NS"
-		ot-kernel_y_configopt "CONFIG_USER_NS"
-		ot-kernel_y_configopt "CONFIG_PID_NS"
-		ot-kernel_y_configopt "CONFIG_NET_NS"
+
+		_ot-kernel_set_ipc_ns
+		_ot-kernel_set_net_ns
+		_ot-kernel_set_pid_ns
+		_ot-kernel_set_user_ns
+		_ot-kernel_set_uts_ns
+
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_THROTTLING"
 		if ver_test ${K_MAJOR_MINOR} -lt 5.0 ; then
@@ -3652,8 +3665,7 @@ ot-kernel-pkgflags_flatpak() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S427345a]}" == "1" ]] && return
 	if ot-kernel_has_version "sys-apps/flatpak" ; then
 		einfo "Applying kernel config flags for the flatpak package (id: 427345a)"
-		ot-kernel_y_configopt "CONFIG_NAMESPACES"
-		ot-kernel_y_configopt "CONFIG_USER_NS"
+		_ot-kernel_set_user_ns
 		if grep -q -e "config USER_NS_UNPRIVILEGED" "${BUILD_DIR}/init/Kconfig" ; then
 			ot-kernel_y_configopt "CONFIG_USER_NS_UNPRIVILEGED"
 		fi
@@ -3667,8 +3679,7 @@ ot-kernel-pkgflags_firejail() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S222b6c4]}" == "1" ]] && return
 	if ot-kernel_has_version "sys-apps/firejail" ; then
 		einfo "Applying kernel config flags for the firejail package (id: 222b6c4)"
-		ot-kernel_y_configopt "CONFIG_NAMESPACES"
-		ot-kernel_y_configopt "CONFIG_USER_NS"
+		_ot-kernel_set_user_ns
 	fi
 }
 
@@ -3760,7 +3771,7 @@ ot-kernel-pkgflags_gerbera() { # DONE
 	if ot-kernel_has_version "net-misc/gerbera" ; then
 		einfo "Applying kernel config flags for the gerbera package (id: eca1a38)"
 		_ot-kernel-pkgflags_tcpip
-		ot-kernel_y_configopt "CONFIG_IP_MROUTE"
+		ot-kernel_y_configopt "IP_MULTICAST"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 	fi
 }
@@ -4006,7 +4017,9 @@ ot-kernel-pkgflags_haproxy() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5bc6d06]}" == "1" ]] && return
 	if ot-kernel_has_version "net-proxy/haproxy" ; then
 		einfo "Applying kernel config flags for the haproxy package (id: 5bc6d06)"
-		ot-kernel_y_configopt "CONFIG_NET_NS"
+		ot-kernel_y_configopt "CONFIG_NET"
+
+		_ot-kernel_set_net_ns
 	fi
 }
 
@@ -4288,6 +4301,7 @@ ot-kernel-pkgflags_iucode() {
 						-e 's|[ ]+$||g') # Trim mid/left/right spaces
 				ot-kernel_y_configopt "CONFIG_MICROCODE"
 				ot-kernel_y_configopt "CONFIG_MICROCODE_INTEL"
+				ot-kernel_y_configopt "CONFIG_EXPERT"
 				ot-kernel_y_configopt "CONFIG_FW_LOADER"
 				if [[ "${arch}" == "x86_64" ]] ; then
 					# Embed in kernel for EFI
@@ -4399,9 +4413,7 @@ ot-kernel-pkgflags_iproute2() {
 		ot-kernel_y_configopt "CONFIG_NET_CORE"
 		ot-kernel_set_configopt "CONFIG_IFB" "m"
 
-		ot-kernel_y_configopt "CONFIG_NAMESPACES"
-		#ot-kernel_y_configopt "CONFIG_NET"
-		ot-kernel_y_configopt "CONFIG_NET_NS"
+		_ot-kernel_set_net_ns
 	fi
 }
 
@@ -4732,10 +4744,9 @@ ot-kernel-pkgflags_kexec_tools() { # DONE
 			else
 				ot-kernel_y_configopt "CONFIG_VERIFY_SIG"
 			fi
-		else
-			einfo "Applying kernel config flags for the kexec-tools package for unsigned kernels (id: 39aeb63)"
-			ot-kernel_y_configopt "CONFIG_KEXEC"
 		fi
+		einfo "Applying kernel config flags for the kexec-tools package for unsigned kernels (id: 39aeb63)"
+		ot-kernel_y_configopt "CONFIG_KEXEC"
 	fi
 }
 
@@ -4949,6 +4960,7 @@ ot-kernel-pkgflags_linux_firmware() {
 						-e 's|[ ]+$||g') # Trim mid/left/right spaces
 				ot-kernel_y_configopt "CONFIG_MICROCODE"
 				ot-kernel_y_configopt "CONFIG_MICROCODE_AMD"
+				ot-kernel_y_configopt "CONFIG_EXPERT"
 				ot-kernel_y_configopt "CONFIG_FW_LOADER"
 				if [[ "${arch}" == "x86_64" ]] ; then
 					# Embed in kernel for EFI
@@ -4960,6 +4972,9 @@ ot-kernel-pkgflags_linux_firmware() {
 				fi
 			fi
 		fi
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FW_LOADER"
+		ot-kernel_y_configopt "CONFIG_FW_LOADER_COMPRESS"
 	fi
 }
 
@@ -5477,15 +5492,17 @@ ot-kernel-pkgflags_lxc() { # DONE
 		ot-kernel_y_configopt "CONFIG_CGROUP_FREEZER"
 		ot-kernel_y_configopt "CONFIG_CGROUP_SCHED"
 		ot-kernel_y_configopt "CONFIG_CPUSETS"
-		ot-kernel_y_configopt "CONFIG_IPC_NS"
+
+		_ot-kernel_set_ipc_ns
+		_ot-kernel_set_net_ns
+		_ot-kernel_set_pid_ns
+		_ot-kernel_set_user_ns
+		_ot-kernel_set_uts_ns
+
 		ot-kernel_y_configopt "CONFIG_MACVLAN"
 		ot-kernel_y_configopt "CONFIG_MEMCG"
-		ot-kernel_y_configopt "CONFIG_NAMESPACES"
-		ot-kernel_y_configopt "CONFIG_NET_NS"
-		ot-kernel_y_configopt "CONFIG_PID_NS"
-		ot-kernel_y_configopt "CONFIG_POSIX_MQUEUE"
-		ot-kernel_y_configopt "CONFIG_USER_NS"
-		ot-kernel_y_configopt "CONFIG_UTS_NS"
+		ot-kernel_y_configopt "CONFIG_NET"
+		_ot-kernel_set_posix_mqueue
 		ot-kernel_y_configopt "CONFIG_VETH"
 	fi
 }
@@ -5498,12 +5515,14 @@ ot-kernel-pkgflags_lxd() { # DONE
 	if ot-kernel_has_version "app-containers/lxd" ; then
 		einfo "Applying kernel config flags for the lxd package (id: cf50245)"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
-		ot-kernel_y_configopt "CONFIG_IPC_NS"
-		ot-kernel_y_configopt "CONFIG_NET_NS"
-		ot-kernel_y_configopt "CONFIG_PID_NS"
+
+		_ot-kernel_set_ipc_ns
+		_ot-kernel_set_net_ns
+		_ot-kernel_set_pid_ns
+		_ot-kernel_set_user_ns
+		_ot-kernel_set_uts_ns
+
 		ot-kernel_y_configopt "CONFIG_SECCOMP"
-		ot-kernel_y_configopt "CONFIG_USER_NS"
-		ot-kernel_y_configopt "CONFIG_UTS_NS"
 		ot-kernel-pkgflags_kvm_host_required
 		ot-kernel_y_configopt "CONFIG_MACVTAP"
 		ot-kernel_y_configopt "CONFIG_VHOST_VSOCK"
@@ -5581,6 +5600,21 @@ ot-kernel-pkgflags_mariadb() { # DONE
 		ot-kernel_y_configopt "CONFIG_IO_URING"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_mbpfan
+# @DESCRIPTION:
+# Applies kernel config flags for the mbpfan package
+ot-kernel-pkgflags_mbpfan() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb9f381e]}" == "1" ]] && return
+	if ot-kernel_has_version "app-laptop/mbpfan" ; then
+		einfo "Applying kernel config flags for the mbpfan package (id: b9f381e)"
+		if [[ "${arch}" =~ "(x86)" ]]; then
+			ot-kernel_y_configopt "CONFIG_INPUT"
+			ot-kernel_y_configopt "CONFIG_SENSORS_APPLESMC"
+			ot-kernel_y_configopt "CONFIG_SENSORS_CORETEMP"
+		fi
 	fi
 }
 
@@ -5747,12 +5781,13 @@ ot-kernel-pkgflags_minijail() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S792b443]}" == "1" ]] && return
 	if ot-kernel_has_version "sys-apps/minijail" ; then
 		einfo "Applying kernel config flags for the minijail package (id: 792b443)"
-		ot-kernel_y_configopt "CONFIG_NAMESPACES"
-		ot-kernel_y_configopt "CONFIG_UTS_NS"
-		ot-kernel_y_configopt "CONFIG_IPC_NS"
-		ot-kernel_y_configopt "CONFIG_USER_NS"
-		ot-kernel_y_configopt "CONFIG_PID_NS"
-		ot-kernel_y_configopt "CONFIG_NET_NS"
+
+		_ot-kernel_set_ipc_ns
+		_ot-kernel_set_net_ns
+		_ot-kernel_set_pid_ns
+		_ot-kernel_set_user_ns
+		_ot-kernel_set_uts_ns
+
 		ot-kernel_y_configopt "CONFIG_SECCOMP"
 		ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
@@ -5953,6 +5988,9 @@ ot-kernel-pkgflags_mysql() { # DONE
 		ot-kernel_y_configopt "CONFIG_IO_URING"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
+		if ot-kernel_has_version "dev-db/mysql[numa]" ; then
+			ot-kernel_y_configopt "CONFIG_NUMA"
+		fi
 	fi
 }
 
@@ -6047,7 +6085,7 @@ ot-kernel-pkgflags_nilfs_utils() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S908989f]}" == "1" ]] && return
 	if ot-kernel_has_version "sys-fs/nilfs-utils" ; then
 		einfo "Applying kernel config flags for the nilfs-utils package (id: 908989f)"
-		ot-kernel_y_configopt "CONFIG_POSIX_MQUEUE"
+		_ot-kernel_set_posix_mqueue
 	fi
 }
 
@@ -6848,9 +6886,10 @@ ot-kernel-pkgflags_portage() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S0be29dc]}" == "1" ]] && return
 	if ot-kernel_has_version "sys-apps/portage" ; then
 		einfo "Applying kernel config flags for the portage package (id: 0be29dc)"
-		ot-kernel_y_configopt "CONFIG_IPC_NS"
-		ot-kernel_y_configopt "CONFIG_PID_NS"
-		ot-kernel_y_configopt "CONFIG_NET_NS"
+
+		_ot-kernel_set_ipc_ns
+		_ot-kernel_set_net_ns
+		_ot-kernel_set_pid_ns
 
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_MULTIUSER"
@@ -7503,7 +7542,7 @@ ot-kernel-pkgflags_runc() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S5c1dafb]}" == "1" ]] && return
 	if ot-kernel_has_version "app-containers/runc" ; then
 		einfo "Applying kernel config flags for the runc package (id: 5c1dafb)"
-		ot-kernel_y_configopt "CONFIG_USER_NS"
+		_ot-kernel_set_user_ns
 	fi
 }
 
@@ -7990,6 +8029,7 @@ ot-kernel-pkgflags_speedtouch_usb() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd90675b]}" == "1" ]] && return
 	if ot-kernel_has_version "net-dialup/speedtouch-usb" ; then
 		einfo "Applying kernel config flags for the speedtouch-usb package (id: d90675b)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FW_LOADER"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_PACKET"
@@ -8090,14 +8130,16 @@ ot-kernel-pkgflags_systemd() { # DONE
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 	        _ot-kernel-pkgflags_tcpip
 	        ot-kernel_y_configopt "CONFIG_IPV6"
-		ot-kernel_y_configopt "CONFIG_NET_NS"
+
+		_ot-kernel_set_net_ns
+		_ot-kernel_set_user_ns
+
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		ot-kernel_y_configopt "CONFIG_SIGNALFD"
 		ot-kernel_y_configopt "CONFIG_SYSFS"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
 		ot-kernel_y_configopt "CONFIG_TMPFS_XATTR"
 		ot-kernel_y_configopt "CONFIG_UNIX"
-		ot-kernel_y_configopt "CONFIG_USER_NS"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
 		_ot-kernel-pkgflags_sha256
 		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_HASH"
@@ -8349,6 +8391,21 @@ ot-kernel-pkgflags_tup() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_tuxedo_keyboard
+# @DESCRIPTION:
+# Applies kernel config flags for the tuxedo_keyboard package
+ot-kernel-pkgflags_tuxedo_keyboard() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sae30b00]}" == "1" ]] && return
+	if ot-kernel_has_version "app-laptop/tuxedo-keyboard" ; then
+		einfo "Applying kernel config flags for tuxedo-keyboard (id: ae30b00)"
+		ot-kernel_y_configopt "CONFIG_X86_PLATFORM_DEVICES"
+		ot-kernel_y_configopt "CONFIG_ACPI"
+		ot-kernel_y_configopt "CONFIG_ACPI_WMI"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_SPARSEKMAP"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_tvheadend
 # @DESCRIPTION:
 # Applies kernel config flags for the tvheadend package
@@ -8404,6 +8461,7 @@ ot-kernel-pkgflags_udisks() { # DONE
 			|| "${arch}" == "x86_64" \
 		]] ; then
 		einfo "Applying kernel config flags for the udisks package (id: 98b0478)"
+ewarn "CONFIG_IDE is being unset for udisks (id: 98b0478)"
 		ot-kernel_unset_configopt "CONFIG_IDE"
 		ot-kernel_y_configopt "CONFIG_TMPFS_POSIX_ACL"
 		ot-kernel_y_configopt "CONFIG_NLS_UTF8"
@@ -8779,7 +8837,11 @@ ot-kernel-pkgflags_wavemon() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S8960610]}" == "1" ]] && return
 	if ot-kernel_has_version "net-wireless/wavemon" ; then
 		einfo "Applying kernel config flags for the wavemon package (id: 8960610)"
-		ot-kernel_y_configopt "CONFIG_CFG80211"
+		if ot-kernel_has_version "~net-wireless/wavemon-0.9.3" ; then
+			ot-kernel_y_configopt "CONFIG_CFG80211_WEXT"
+		elif ot-kernel_has_version ">=net-wireless/wavemon-0.9.4" ; then
+			ot-kernel_y_configopt "CONFIG_CFG80211"
+		fi
 	fi
 }
 
@@ -9473,9 +9535,9 @@ ot-kernel-pkgflags_zoom() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Se8903fa]}" == "1" ]] && return
 	if ot-kernel_has_version "net-im/zoom" ; then
 		einfo "Applying kernel config flags for the zoom package (id: e8903fa)"
-		ot-kernel_unset_configopt "CONFIG_USER_NS"
-		ot-kernel_unset_configopt "CONFIG_PID_NS"
-		ot-kernel_unset_configopt "CONFIG_NET_NS"
+		_ot-kernel_set_net_ns
+		_ot-kernel_set_pid_ns
+		_ot-kernel_set_user_ns
 		ot-kernel_unset_configopt "CONFIG_NET"
 		ot-kernel_unset_configopt "CONFIG_SECCOMP_FILTER"
 	fi
@@ -10054,6 +10116,66 @@ einfo "Enabling multiuser / multigroup support"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	fi
+}
+
+# @FUNCTION: _ot-kernel_set_ipc_ns
+# @DESCRIPTION:
+# Enable IPC_NS and flag dependencies
+_ot-kernel_set_ipc_ns() {
+	ot-kernel_y_configopt "CONFIG_NAMESPACES"
+	ot-kernel_y_configopt "CONFIG_SYSVIPC"
+	_ot-kernel_set_posix_mqueue
+	ot-kernel_y_configopt "CONFIG_IPC_NS"
+}
+
+# @FUNCTION: _ot-kernel_set_pid_ns
+# @DESCRIPTION:
+# Enable PID_NS and flag dependencies
+_ot-kernel_set_pid_ns() {
+	ot-kernel_y_configopt "CONFIG_NAMESPACES"
+	ot-kernel_y_configopt "CONFIG_PID_NS"
+}
+
+# @FUNCTION: _ot-kernel_set_net_ns
+# @DESCRIPTION:
+# Enable NET_NS and flag dependencies
+_ot-kernel_set_net_ns() {
+	ot-kernel_y_configopt "CONFIG_NAMESPACES"
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_NET_NS"
+}
+
+# @FUNCTION: _ot-kernel_set_time_ns
+# @DESCRIPTION:
+# Enable TIME_NS and flag dependencies
+_ot-kernel_set_time_ns() {
+	ot-kernel_y_configopt "CONFIG_NAMESPACES"
+	ot-kernel_y_configopt "CONFIG_GENERIC_VDSO_TIME_NS"
+	ot-kernel_y_configopt "CONFIG_TIME_NS"
+}
+
+# @FUNCTION: _ot-kernel_set_user_ns
+# @DESCRIPTION:
+# Enable USER_NS and flag dependencies
+_ot-kernel_set_user_ns() {
+	ot-kernel_y_configopt "CONFIG_NAMESPACES"
+	ot-kernel_y_configopt "CONFIG_USER_NS"
+}
+
+# @FUNCTION: _ot-kernel_set_uts_ns
+# @DESCRIPTION:
+# Enable UTS_NS and flag dependencies
+_ot-kernel_set_uts_ns() {
+	ot-kernel_y_configopt "CONFIG_NAMESPACES"
+	ot-kernel_y_configopt "CONFIG_UTS_NS"
+}
+
+# @FUNCTION: _ot-kernel_set_posix_mqueue
+# @DESCRIPTION:
+# Enable POSIX_MQUEUE and flag dependencies
+_ot-kernel_set_posix_mqueue() {
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_POSIX_MQUEUE"
 }
 
 # CONFIG_ADVISE_SYSCALLS search keywords:  madvise, fadvise
