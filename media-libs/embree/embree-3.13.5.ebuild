@@ -217,9 +217,12 @@ pkg_setup() {
 				chcxx "GCC" "${MIN_GCC_V_AVX512SKX}" "AVX512-SKX"
 			fi
 		else
-			ewarn "Unrecognized compiler"
-			ewarn "CC=${CC}"
-			ewarn "CXX=${CXX}"
+ewarn
+ewarn "Unrecognized compiler"
+ewarn
+ewarn "CC:\t${CC}"
+ewarn "CXX:\t${CXX}"
+ewarn
 		fi
 	fi
 

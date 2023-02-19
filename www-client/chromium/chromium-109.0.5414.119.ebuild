@@ -2077,9 +2077,6 @@ _src_configure() {
 
 	local myconf_gn=""
 
-	# Make sure the build system will use the right tools, bug #340795.
-	tc-export AR CC CXX NM READELF STRIP
-
 	# Final CC selected
 	if tc-is-clang || is_using_clang ; then
 einfo
@@ -2112,14 +2109,25 @@ einfo
 einfo
 einfo "Switching to GCC"
 einfo
-		export CC="gcc $(get_abi_CFLAGS ${ABI})"
-		export CXX="g++ $(get_abi_CFLAGS ${ABI})"
+		if tc-is-cross-compiler ; then
+			export CC="${CBUILD}-gcc $(get_abi_CFLAGS ${ABI})"
+			export CXX="${CBUILD}-g++ $(get_abi_CFLAGS ${ABI})"
+			export BUILD_CC=${CBUILD}-gcc
+			export BUILD_CXX=${CBUILD}-g++
+		else
+			export CC="${CHOST}-gcc $(get_abi_CFLAGS ${ABI})"
+			export CXX="${CHOST}-g++ $(get_abi_CFLAGS ${ABI})"
+		fi
 		export AR=ar
 		export NM=nm
 		export READELF=readelf
 		export STRIP=strip
 		export LD=ld.bfd
 	fi
+
+	# Make sure the build system will use the right tools, bug #340795.
+	tc-export AR CC CXX NM READELF STRIP
+
 	strip-unsupported-flags
 	_compiler_version_checks
 

@@ -6,6 +6,15 @@ EAPI=8
 PYTHON_COMPAT=( python3_{8..11} )
 inherit flag-o-matic llvm meson-multilib multilib-minimal vala
 inherit python-r1 toolchain-funcs
+inherit linux-info
+
+# Should be set
+#CONFIG_CHECK="MTRRA" # Example of fatal error ; required
+#CONFIG_CHECK="~MTRRA" # Example of non fatal error ; optional
+
+# Should not be set
+CONFIG_CHECK="!MTRR" # Example of fatal ; required
+CONFIG_CHECK="~!MTRR" # Example of non fatal error ; optional ; 
 
 DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
@@ -461,8 +470,8 @@ eerror "unilib profiles."
 eerror
 			die
 		fi
-		export CC=${CHOST}-clang
-		export CXX=${CHOST}-clang++
+		export CC="${CHOST}-clang"
+		export CXX="${CHOST}-clang++"
 		_strip_flags
 		_apply_flags
 		if use fuzz-testing ; then
@@ -625,8 +634,8 @@ einfo "Running test for ${configuration}"
 	export EMESON_SOURCE="${S}_${configuration}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${configuration}"
 	cd "${BUILD_DIR}" || die
-	export CC=${CHOST}-clang
-	export CXX=${CHOST}-clang++
+	export CC="${CHOST}-clang"
+	export CXX="${CHOST}-clang++"
 	_clear_env
 	_apply_env 1
 	${EPYTHON} -m pytest -sv --log-cli-level=WARNING test/test-suite || die

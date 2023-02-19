@@ -218,6 +218,7 @@ pkg_setup() {
 	if use clang && [[ -z "${CC}" || -z "${CXX}" ]] ; then
 		export CC="${CHOST}-clang"
 		export CXX="${CHOST}-clang++"
+		strip-unsupported-flags
 	fi
 	if test-flags-CXX -std=c++${CXX_STD_MIN} 2>/dev/null 1>/dev/null ; then
 		:;

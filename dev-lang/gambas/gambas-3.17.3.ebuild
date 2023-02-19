@@ -311,9 +311,13 @@ declare -Ax USE_FLAG_TO_MODULE_NAME=(
 )
 
 check_cxx() {
-	CC=$(tc-getCC)
-	CXX=$(tc-getCXX)
-	einfo "CC=${CC} CXX=${CXX}"
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	strip-unsupported-flags
+einfo
+einfo "CC:\t${CC}"
+einfo "CXX:\t${CXX}"
+einfo
 	test-flags-CXX "-std=c++17" 2>/dev/null 1>/dev/null \
 		|| die "Switch to a c++17 compatible compiler."
 	if tc-is-gcc ; then
@@ -569,6 +573,16 @@ find_remove_module() {
 	fi
 }
 
+gen_env() {
+cat <<-EOF > "${T}"/50${PN}-jit
+# Details can be found at http://gambaswiki.org/wiki/doc/jit
+GB_NO_JIT=${EGAMBAS_GB_NO_JIT:=0}
+GB_JIT_DEBUG=${EGAMBAS_GB_JIT_DEBUG:=0}
+GB_JIT_CC="${EGAMBAS_GB_JIT_CC:=gcc}"
+GB_JIT_CFLAGS="${EGAMBAS_GB_JIT_CFLAGS:=-O3}"
+EOF
+}
+
 src_install() {
 	dodir "/usr/share/icons/hicolor/"
 	dodir "/usr/share/mime/packages/"
@@ -626,13 +640,7 @@ src_install() {
 	fi
 
 	if use jit ; then
-		cat <<-EOF > "${T}"/50${PN}-jit
-# Details can be found at http://gambaswiki.org/wiki/doc/jit
-GB_NO_JIT=${EGAMBAS_GB_NO_JIT:=0}
-GB_JIT_DEBUG=${EGAMBAS_GB_JIT_DEBUG:=0}
-GB_JIT_CC="${EGAMBAS_GB_JIT_CC:=gcc}"
-GB_JIT_CFLAGS="${EGAMBAS_GB_JIT_CFLAGS:=-O3}"
-EOF
+		gen_env
 		einfo "Systemwide JIT settings:"
 		cat "${T}"/50${PN}-jit || die
 		doenvd "${T}"/50${PN}-jit

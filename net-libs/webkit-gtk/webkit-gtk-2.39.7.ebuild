@@ -833,8 +833,8 @@ einfo
 			check-reqs_pkg_pretend
 		fi
 
-		CC=$(tc-getCC)
-		CXX=$(tc-getCXX)
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
 		if ! test-flag-CXX -std=c++${CXX_STD} ; then
 # See https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Source/cmake/WebKitCommon.cmake#L72
 # See https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Source/cmake/OptionsCommon.cmake

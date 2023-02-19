@@ -130,12 +130,12 @@ RDEPEND+=" dev-libs/jsoncpp
 	systemd? ( sys-apps/systemd )
 "
 DEPEND+=" test? ( dev-cpp/gtest )"
-GCC_V_MIN="8" # for c++17
-CLANG_V_MIN="6" # for c++17
+GCC_PV_MIN="8" # for c++17
+CLANG_PV_MIN="6" # for c++17
 BDEPEND+="
 	|| (
-		>=sys-devel/gcc-${GCC_V_MIN}[cxx]
-		>=sys-devel/clang-${CLANG_V_MIN}
+		>=sys-devel/gcc-${GCC_PV_MIN}[cxx]
+		>=sys-devel/clang-${CLANG_PV_MIN}
 	)
 	>=dev-util/meson-0.45
 	virtual/pkgconfig
@@ -272,21 +272,21 @@ cmsg "Upstream recommends swap be >=1x of physical memory"
 cmsg
 		cdie
 	fi
-	CXX=$(tc-getCXX)
-	CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	export CC=$(tc-getCC)
 	if tc-is-gcc ; then
-		gcc_v=$(gcc-fullversion)
-		if ! ver_test ${gcc_v} -ge ${GCC_V_MIN} ; then
+		local gcc_pv=$(gcc-fullversion)
+		if ! ver_test ${gcc_pv} -ge ${GCC_PV_MIN} ; then
 eerror
-eerror "Switch the GCC compiler to >=${GCC_V_MIN}.  Detected ${gcc_v} instead."
+eerror "Switch the GCC compiler to >=${GCC_PV_MIN}.  Detected ${gcc_pv} instead."
 eerror
 			die
 		fi
 	elif tc-is-clang ; then
-		clang_v=$(clang-fullversion)
-		if ! ver_test ${clang_v} -ge ${CLANG_V_MIN} ; then
+		local clang_pv=$(clang-fullversion)
+		if ! ver_test ${clang_pv} -ge ${CLANG_PV_MIN} ; then
 eerror
-eerror "Switch the Clang compiler to >=${CLANG_V_MIN}.  Detected ${clang_v}"
+eerror "Switch the Clang compiler to >=${CLANG_PV_MIN}.  Detected ${clang_pv}"
 eerror "instead."
 eerror
 			die

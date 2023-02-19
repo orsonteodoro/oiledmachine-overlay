@@ -252,8 +252,8 @@ eerror
 	fi
 
 einfo
-einfo "CC=${CC}"
-einfo "CXX=${CXX}"
+einfo "CC:\t${CC}"
+einfo "CXX:\t${CXX}"
 einfo
 
 	local _lto=$(_usex_lto)

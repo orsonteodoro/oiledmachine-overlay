@@ -42,9 +42,12 @@ RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md )
 
 pkg_setup() {
-	CC=$(tc-getCC)
-	CXX=$(tc-getCXX)
-	einfo "CC=${CC} CXX=${CXX}"
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+einfo
+einfo "CC:\t${CC}"
+einfo "CXX:\t${CXX}"
+einfo
 	test-flags-CXX "-std=c++17" 2>/dev/null 1>/dev/null \
 		|| die "Switch to a c++17 compatible compiler."
 	if tc-is-gcc ; then

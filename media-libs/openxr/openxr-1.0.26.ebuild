@@ -102,7 +102,6 @@ S="${WORKDIR}/${MY_PN}-release-${PV}"
 src_configure() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
-	strip-unsupported-flags
 	mycmakeargs=(
 		-DBUILD_API_LAYERS=OFF
 		-DBUILD_TESTS=OFF

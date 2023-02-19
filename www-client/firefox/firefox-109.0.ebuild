@@ -1155,6 +1155,7 @@ _fix_paths() {
 		CXX=${CHOST}-g++
 	fi
 	tc-export CC CXX
+	strip-unsupported-flags
 }
 
 append_all() {

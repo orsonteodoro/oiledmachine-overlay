@@ -798,8 +798,8 @@ src_configure() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 einfo
-einfo "CC=${CC}"
-einfo "CXX=${CXX}"
+einfo "CC:\t${CC}"
+einfo "CXX:\t${CXX}"
 einfo
 
 	# For obs-browser

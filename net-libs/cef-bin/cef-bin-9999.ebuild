@@ -13,7 +13,8 @@ EAPI=8
 VIRTUALX_REQUIRED="manual"
 inherit chromium-2 cmake flag-o-matic virtualx
 
-DESCRIPTION="Chromium Embedded Framework (CEF). A simple framework for embedding Chromium-based browsers in other applications."
+DESCRIPTION="Chromium Embedded Framework (CEF). A simple framework for \
+embedding Chromium-based browsers in other applications."
 LICENSE="BSD"
 HOMEPAGE="https://bitbucket.org/chromiumembedded/cef/src/master/"
 KEYWORDS="~arm ~arm64 ~amd64"
@@ -160,7 +161,10 @@ get_xrid() {
 	elif ( use elibc_Winnt || use elibc_Cygwin ) && [[ "${ABI}" == "arm64" ]] ; then
 		echo "windowsarm64"
 	else
-		die "LIBC or ABI not supported"
+eerror
+eerror "The LIBC or ABI not supported."
+eerror
+		die
 	fi
 }
 
@@ -182,19 +186,33 @@ CXX_VER="17"
 check_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
-	einfo "CC=${CC} CXX=${CXX}"
-	test-flags-CXX "-std=c++${CXX_VER}" 2>/dev/null 1>/dev/null \
-		|| die "Switch to a c++${CXX_VER} compatible compiler."
+einfo "CC:\t${CC}"
+einfo "CXX:\t${CXX}"
+	if ! test-flags-CXX "-std=c++${CXX_VER}" 2>/dev/null 1>/dev/null ; then
+eerror
+eerror "Switch to a c++${CXX_VER} compatible compiler."
+eerror
+		die
+	fi
 	if tc-is-gcc ; then
 		if ver_test $(gcc-major-version) -lt ${GCC_PV_MIN} ; then
-			die "${PN} requires GCC >=${GCC_PV_MIN} for c++${CXX_VER} support"
+eerror
+eerror "${PN} requires GCC >=${GCC_PV_MIN} for c++${CXX_VER} support"
+eerror
+			die
 		fi
 	elif tc-is-clang ; then
 		if ver_test $(clang-version) -lt ${CLANG_PV_MIN} ; then
-			die "${PN} requires Clang >=${CLANG_PV_MIN} for c++${CXX_VER} support"
+eerror
+eerror "${PN} requires Clang >=${CLANG_PV_MIN} for c++${CXX_VER} support"
+eerror
+			die
 		fi
 	else
-		die "Compiler is not supported"
+eerror
+eerror "Compiler is not supported"
+eerror
+		die
 	fi
 }
 

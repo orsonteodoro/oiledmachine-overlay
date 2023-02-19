@@ -341,6 +341,7 @@ src_configure() {
 			if [[ "${hplatform}" == "linux" ]] ; then
 				export CC="${CHOST}-gcc"
 				export CXX="${CHOST}-g++"
+				strip-unsupported-flags
 			fi
 
 		        local mycmakeargs=( -DBUILD_BULLET3=1 -DBUILD_EXTRAS=1 )
@@ -355,9 +356,11 @@ src_configure() {
 				append-cppflags -DBULLET_VER=9999999
 			fi
 
-			einfo "CC=${CC}"
-			einfo "CXX=${CXX}"
-			einfo "CHOST=${CHOST}"
+einfo
+einfo "CC:\t${CC}"
+einfo "CXX:\t${CXX}"
+einfo "CHOST:\t${CHOST}"
+einfo
 
 			export CMAKE_USE_DIR="${S}-${hrid}/libbulletc"
 			export BUILD_DIR="${S}-${hrid}/libbulletc"

@@ -621,6 +621,7 @@ check_optimal_compiler_for_cycles_x86() {
 			export CXX="$(tc-getCXX ${CHOST})"
 		fi
 	fi
+	strip-unsupported-flags
 
 einfo
 einfo "CC:\t\t${CC}"

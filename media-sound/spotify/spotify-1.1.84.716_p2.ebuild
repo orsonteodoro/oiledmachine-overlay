@@ -955,7 +955,7 @@ ewarn
 src_compile() {
 	if use wayland ; then
 		cat "${FILESDIR}/xstub.c" > "${T}/xstub.c" || die
-		CC=$(tc-getCC)
+		export CC=$(tc-getCC)
 		${CC} "${T}/xstub.c" -o "${T}/${PN}-xstub.so" -shared || die
 	fi
 }

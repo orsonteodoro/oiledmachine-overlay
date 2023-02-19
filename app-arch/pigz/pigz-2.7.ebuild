@@ -28,7 +28,10 @@ src_prepare() {
 
 multilib_src_compile() {
 	use static && append-ldflags -static
-	emake CC="$(tc-getCC)" CFLAGS="${CFLAGS}" LDFLAGS="${LDFLAGS}"
+	emake \
+		CC="$(tc-getCC)" \
+		CFLAGS="${CFLAGS}" \
+		LDFLAGS="${LDFLAGS}"
 }
 
 multilib_src_install() {

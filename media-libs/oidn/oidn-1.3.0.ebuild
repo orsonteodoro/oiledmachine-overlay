@@ -20,8 +20,8 @@ ORG_GH="https://github.com/OpenImageDenoise"
 # See scripts/build.py for release versioning.
 # Clang is more smoother multitask-wise.
 # c++11 is the minimum required.
-MIN_CLANG_V="3.3"
-MIN_GCC_V="4.8.1"
+MIN_CLANG_PV="3.3"
+MIN_GCC_PV="4.8.1"
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 SLOT="0/$(ver_cut 1-2 ${PV})"
@@ -86,7 +86,7 @@ BDEPEND+="
 			$(gen_clang_depends)
 		)
 		gcc? (
-			>=sys-devel/gcc-${MIN_GCC_V}
+			>=sys-devel/gcc-${MIN_GCC_PV}
 		)
 	)
 "
@@ -161,20 +161,19 @@ src_configure() {
 	if use gcc ; then
 		export CC="${CHOST}-gcc"
 		export CXX="${CHOST}-g++"
-		test-flags-CXX "-std=c++11" 2>/dev/null 1>/dev/null \
-	                || die "Switch to a c++11 compatible compiler."
 		# Prevent lock up
-		tc-is-gcc && export MAKEOPTS="-j1"
+		export MAKEOPTS="-j1"
 	elif use clang ; then
 		export CC="${CHOST}-clang"
 		export CXX="${CHOST}-clang++"
-		test-flags-CXX "-std=c++11" 2>/dev/null 1>/dev/null \
-	                || die "Switch to a c++11 compatible compiler."
 	else
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
 	fi
 
+	strip-unsupported-flags
+	test-flags-CXX "-std=c++11" 2>/dev/null 1>/dev/null \
+                || die "Switch to a c++11 compatible compiler."
 einfo
 einfo "CC:\t${CC}"
 einfo "CXX:\t${CXX}"
@@ -186,7 +185,6 @@ einfo
 		-DCMAKE_C_COMPILER="${CC}"
 	)
 
-	strip-unsupported-flags
 	if use openimageio ; then
 		mycmakeargs+=(
 			-DOIDN_APPS_OPENIMAGEIO=$(usex openimageio)

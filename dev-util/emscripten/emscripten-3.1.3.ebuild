@@ -9,8 +9,8 @@ EAPI=8
 # TC = toolchain
 BINARYEN_PV="104" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
 JAVA_PV="11"
-LLVM_PV=14
-LLVM_MAX_SLOT=${LLVM_PV}
+LLVM_SLOT=14
+LLVM_MAX_SLOT=${LLVM_SLOT}
 PYTHON_COMPAT=( python3_{8..11} )
 inherit flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1
 inherit toolchain-funcs
@@ -106,7 +106,7 @@ LICENSE="
 #   system/lib/libcxx/src/ryu/f2s.cpp -- Apache-2.0-with-LLVM-exceptions, Boost-1.0
 #
 KEYWORDS="~amd64 ~x86"
-SLOT="${LLVM_PV}-$(ver_cut 1-2 ${PV})"
+SLOT="${LLVM_SLOT}-$(ver_cut 1-2 ${PV})"
 CLOSURE_COMPILER_SLOT="0"
 IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
@@ -180,9 +180,9 @@ ${CLOSURE_COMPILER_SLOT}\
 	dev-util/binaryen:${BINARYEN_PV}
 	>=net-libs/nodejs-4.1.1
 	(
-		>=sys-devel/clang-${LLVM_PV}:${LLVM_PV}=[llvm_targets_WebAssembly]
-		>=sys-devel/lld-${LLVM_PV}:${LLVM_PV}
-		>=sys-devel/llvm-${LLVM_PV}:${LLVM_PV}=[llvm_targets_WebAssembly]
+		>=sys-devel/clang-${LLVM_SLOT}:${LLVM_SLOT}=[llvm_targets_WebAssembly]
+		>=sys-devel/lld-${LLVM_SLOT}:${LLVM_SLOT}
+		>=sys-devel/llvm-${LLVM_SLOT}:${LLVM_SLOT}=[llvm_targets_WebAssembly]
 	)
 "
 DEPEND+="
@@ -313,8 +313,9 @@ eerror
 	fi
 	python-single-r1_pkg_setup
 	llvm_pkg_setup
-	export CXX="clang++-${LLVM_PV}"
-	einfo "CXX=${CXX}"
+	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+	strip-unsupported-flags
+einfo "CXX:\t${CXX}"
 }
 
 # The activated_cfg goes in emscripten.config from the json file.
@@ -332,9 +333,9 @@ prepare_file() {
 		die "could not adjust path for '${source_filename}'"
 	sed -i -e "s|\${PYTHON_EXE_ABSPATH}|${PYTHON_EXE_ABSPATH}|g" \
 		"${dest_dir}/${source_filename}" || die
-	sed -i -e "s|__EMSDK_LLVM_ROOT__|${EPREFIX}/usr/lib/llvm/${LLVM_PV}/bin|" \
+	sed -i -e "s|__EMSDK_LLVM_ROOT__|${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}/bin|" \
 		-e "s|__EMCC_WASM_BACKEND__|1|" \
-		-e "s|__LLVM_BIN_PATH__|${EPREFIX}/usr/lib/llvm/${LLVM_PV}/bin|" \
+		-e "s|__LLVM_BIN_PATH__|${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}/bin|" \
 		-e "s|\$(get_libdir)|$(get_libdir)|" \
 		-e "s|\${BINARYEN_SLOT}|${BINARYEN_PV}|" \
 		"${dest_dir}/${source_filename}" || die
@@ -474,7 +475,7 @@ src_install() {
 }
 
 pkg_postinst() {
-	eselect emscripten set "emscripten-${PV},llvm-${LLVM_PV}"
+	eselect emscripten set "emscripten-${PV},llvm-${LLVM_SLOT}"
 	if use closure-compiler && ! use system-closure-compiler ; then
 		export NPM_SECAUDIT_INSTALL_PATH="${DEST}/${P}"
 		npm-secaudit_pkg_postinst
