@@ -156,7 +156,7 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
 <slots>
   <slot name="rapid">
     Major updates every 4 weeks with security and crash fixes every 4 weeks
-    for consumers demand for newer faster feature availability.
+    for consumers to meet the demands for newer features.
   </slot>
   <slot name="esr">
     Major updates every 42 weeks with security and crash fixes every 4 weeks
