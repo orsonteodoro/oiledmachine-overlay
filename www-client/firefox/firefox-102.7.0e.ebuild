@@ -1084,8 +1084,8 @@ einfo "Removing pre-built binaries ..."
 
 	_src_prepare() {
 		cd $(_get_s) || die
-		local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})	# builder machine
-		# Only ${cbuild}-objdump exists because in true multilib
+		local cdefault=$(get_abi_CHOST ${DEFAULT_ABI})
+		# Only ${cdefault}-objdump exists because in true multilib
 		# logically speaking there should be i686-pc-linux-gnu-objdump
 		if [[ -e "${ESYSROOT}/usr/bin/${CHOST}-objdump" ]] ; then
 			# sed-in toolchain prefix
@@ -1095,13 +1095,13 @@ einfo "Removing pre-built binaries ..."
 				|| die "sed failed to set toolchain prefix"
 einfo "Using ${CHOST}-objdump for CHOST"
 		else
-			[[ -e "${ESYSROOT}/usr/bin/${cbuild}-objdump" ]] || die
+			[[ -e "${ESYSROOT}/usr/bin/${cdefault}-objdump" ]] || die
 			# sed-in toolchain prefix
 			sed -i \
-				-e "s/\"objdump/\"${cbuild}-objdump/" \
+				-e "s/\"objdump/\"${cdefault}-objdump/" \
 				python/mozbuild/mozbuild/configure/check_debug_ranges.py \
 				|| die "sed failed to set toolchain prefix"
-ewarn "Using ${cbuild}-objdump for cbuild"
+ewarn "Using ${cdefault}-objdump for cdefault"
 		fi
 		uopts_src_prepare
 	}
@@ -1274,7 +1274,7 @@ _src_configure() {
 	local s=$(_get_s)
 	cd "${s}" || die
 
-	local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})
+	local cdefault=$(get_abi_CHOST ${DEFAULT_ABI})
 	# Show flags set at the beginning
 einfo
 einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
@@ -1345,7 +1345,7 @@ einfo
 	if tc-is-cross-compiler ; then
 		export BINDGEN_CFLAGS="
 			${SYSROOT:+--sysroot=${ESYSROOT}}
-			--host=${cbuild}
+			--host=${cdefault}
 			--target=${CHOST} ${BINDGEN_CFLAGS-}
 		"
 	fi
@@ -1383,7 +1383,7 @@ einfo
 		--enable-release \
 		--enable-system-ffi \
 		--enable-system-pixman \
-		--host="${cbuild}" \
+		--host="${cdefault}" \
 		--libdir="${EPREFIX}/usr/$(get_libdir)" \
 		--prefix="${EPREFIX}/usr" \
 		--target="${CHOST}" \
@@ -1774,7 +1774,7 @@ _src_compile() {
 	local s=$(_get_s)
 	cd "${s}" || die
 
-	local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})
+	local cdefault=$(get_abi_CHOST ${DEFAULT_ABI})
 	_fix_paths
 	local virtx_cmd=
 
@@ -1902,7 +1902,7 @@ _install_licenses() {
 _src_install() {
 	local s=$(_get_s)
 	cd "${s}" || die
-	local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})
+	local cdefault=$(get_abi_CHOST ${DEFAULT_ABI})
 	_fix_paths
 	# xpcshell is getting called during install
 	pax-mark m \
