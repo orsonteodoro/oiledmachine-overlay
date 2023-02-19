@@ -29,6 +29,9 @@ inherit ot-kernel-kutils
 # These are discovered by doing one of the following:
 # grep -E -r --exclude-dir=.git --exclude-dir=metadata --exclude=Manifest.gz -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" /usr/portage | sort
 
+# For checking required unsets:
+# grep -E -r --exclude-dir=.git --exclude-dir=metadata --exclude=Manifest.gz -e '(CHECK_CONFIG|CONFIG_CHECK).*!' /usr/portage
+
 # linux-info notes:
 
 # Should be set examples
