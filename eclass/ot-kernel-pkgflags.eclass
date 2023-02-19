@@ -6177,6 +6177,41 @@ ot-kernel-pkgflags_numad() { # DONE
 	fi
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_tty_fallback
+# @DESCRIPTION:
+# Adds a video driver for TTY as the fallback to binary GPU drivers.
+_ot-kernel-pkgflags_tty_fallback() {
+	if [[ "${TTY_DRIVER}" == "efi" ]] && [[ "${arch}" != "ia64" ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_EFI"
+		ot-kernel_set_configopt "CONFIG_FB_EFI" "y"
+		ot-kernel_unset_configopt "CONFIG_FB_SIMPLE"
+	elif [[ "${TTY_DRIVER}" == "simple" ]] && ver_test ${PV} -lt 5.8.13 ; then
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_set_configopt "CONFIG_FB_SIMPLE" "m"
+		ot-kernel_unset_configopt "CONFIG_DRM_SIMPLEDRM"
+	elif [[ "${TTY_DRIVER}" == "vesa" && "${arch}" =~ ("x86") ]] ; then
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_set_configopt "CONFIG_FB_VESA" "y"
+		ot-kernel_unset_configopt "CONFIG_FB_SIMPLE"
+	elif [[ "${TTY_DRIVER}" =~ ("headless"|"none") ]] ; then
+		ot-kernel_unset_configopt "CONFIG_FB_EFI"
+		ot-kernel_unset_configopt "CONFIG_FB_SIMPLE"
+		ot-kernel_unset_configopt "CONFIG_FB_VESA"
+	else
+eerror
+eerror "You must choose one of the following:"
+eerror
+eerror "  TTY_DRIVER=efi"
+eerror "  TTY_DRIVER=simple    ${message}"
+eerror "  TTY_DRIVER=vesa"
+eerror "  TTY_DRIVER=headless"
+eerror "  TTY_DRIVER=none"
+eerror
+		die
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_nv
 # @DESCRIPTION:
 # Applies kernel config flags for the nv driver
@@ -6189,8 +6224,6 @@ ot-kernel-pkgflags_nv() { # DONE
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_DRM_KMS_HELPER"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
-		warn_lowered_security "f314ac3"
-		ot-kernel_unset_configopt "CONFIG_AMD_MEM_ENCRYPT_ACTIVE_BY_DEFAULT"
 		ot-kernel_unset_configopt "CONFIG_LOCKDEP"
 		ban_disable_debug "f314ac3"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_MUTEXES"
@@ -6200,6 +6233,32 @@ ot-kernel-pkgflags_nv() { # DONE
 		fi
 		# Workaround mentioned in the ebuild
 		# It's better to modify the Kconfig.
+
+		if ot-kernel_has_version ">=x11-drivers/nvidia-drivers-515.86[kernel-open]" ; then
+			ot-kernel_y_configopt "CONFIG_MMU_NOTIFIER"
+		fi
+
+		if ot-kernel_has_version ">=x11-drivers/nvidia-drivers-470.161" ; then
+			ot-kernel_unset_configopt "CONFIG_SLUB_DEBUG_ON"
+		fi
+
+		if ot-kernel_has_version "=x11-drivers/nvidia-drivers-515.86*" \
+			|| ot-kernel_has_version "=x11-drivers/nvidia-drivers-510.108*" \
+			|| ot-kernel_has_version "=x11-drivers/nvidia-drivers-470.161*" \
+			|| ot-kernel_has_version "=x11-drivers/nvidia-drivers-390.157*" \
+			; then
+			warn_lowered_security "f314ac3"
+			ot-kernel_unset_configopt "CONFIG_X86_KERNEL_IBT"
+		fi
+		if ot-kernel_has_version "=x11-drivers/nvidia-drivers-470.161*" \
+			|| ot-kernel_has_version "=x11-drivers/nvidia-drivers-390.157*" \
+			; then
+			warn_lowered_security "f314ac3"
+			ot-kernel_unset_configopt "CONFIG_AMD_MEM_ENCRYPT_ACTIVE_BY_DEFAULT"
+		fi
+
+		local message="# Broken with the x11-drivers/nvidia-drivers package for >= 5.18.13"
+		_ot-kernel-pkgflags_tty_fallback
 	fi
 }
 

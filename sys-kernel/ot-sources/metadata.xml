@@ -2144,6 +2144,15 @@ unset OT_KERNEL_PRIVATE_KEY
       OT_KERNEL_NET_QOS_SCHEDULERS="fq pfifo_fast"
 
 
+    OT_KERNEL_REISUB - allow the use of REISUB, the equivalent to Ctrl+Alt+Del.  It allows access to
+    SysRq debug features.
+
+    Acceptable values:
+
+      1 - allow
+      0 - disallow (default)
+      unset - disallow
+
 
     OT_KERNEL_SATA_LPM_MAX -- Set the SATA link power management policy for max performance. (Default:  1)
     OT_KERNEL_SATA_LPM_MID -- Set the SATA link power management policy for mid performance. (Default:  0)
@@ -2976,6 +2985,15 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
       auto - (ebuild default)
     auto will judge based on threads per core (TPC) inspection.
     Use manual selection when porting to other machines.
+
+    TTY_DRIVER - Add a video driver as a TTY driver fallback for binary GPU drivers
+    Valid values:
+      efi - newer systems
+      simple - greater portability but conflicts with some binary GPU drivers
+      vesa - older systems
+      headless - no tty
+      none - no tty
+    (Valid only in binary driver contexts.)
 
     USB_FLASH_EXT2 - Add support for ext2 USB flash disks (aka USB thumb drive)
     Valid values:  0 (default), 1.

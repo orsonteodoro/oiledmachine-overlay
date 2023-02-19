@@ -2838,6 +2838,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_PRESERVE_HEADER_NOTICES_CACHED
 	unset OT_KERNEL_PRUNE_EXTRA_ARCHES
 	unset OT_KERNEL_PUBLIC_KEY
+	unset OT_KERNEL_REISUB
 	unset OT_KERNEL_SATA_LPM_MAX
 	unset OT_KERNEL_SATA_LPM_MID
 	unset OT_KERNEL_SATA_LPM_MIN
@@ -2918,6 +2919,7 @@ ot-kernel_clear_env() {
 	unset SQUASHFS_XATTR
 	unset SQUASHFS_ZLIB
 	unset STD_PC_SPEAKER
+	unset TTY_DRIVER
 	unset QEMU_GUEST_LINUX
 	unset QEMU_HOST
 	unset QEMU_KVMGT
@@ -3459,6 +3461,19 @@ einfo "Disabling kexec"
 		ot-kernel_unset_configopt "CONFIG_KEXEC"
 	else
 einfo "Using manual settings for kexec"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_reisub
+# @DESCRIPTION:
+# Allow REISUB in the kernel.
+ot-kernel_set_kconfig_reisub() {
+	if [[ "${OT_KERNEL_REISUB:-0}" == "1" ]] ; then
+einfo "Enabling REISUB"
+		ot-kernel_y_configopt "CONFIG_MAGIC_SYSRQ"
+	else
+einfo "Disabling REISUB"
+		ot-kernel_unset_configopt "CONFIG_MAGIC_SYSRQ"
 	fi
 }
 
@@ -6739,6 +6754,20 @@ einfo "Fixing config for genkernel"
 	ot-kernel_y_configopt "CONFIG_UNIX"
 }
 
+# @FUNCTION: ot-kernel_convert_tristate_fix
+# @DESCRIPTION:
+# Fix =y conflicts when a user wants both drivers install.
+ot-kernel_convert_tristate_fix() {
+	if ot-kernel_has_version "x11-drivers/nvidia-drivers" \
+		&& grep -q -e "^CONFIG_DRM_NOUVEAU=y" "${BUILD_DIR}/.config" ; then
+		ot-kernel_set_configopt "CONFIG_DRM_NOUVEAU" "m"
+	fi
+	if ot-kernel_has_version "x11-drivers/nvidia-drivers" \
+		&& grep -q -e "^CONFIG_DRM_SIMPLEDRM=y" "${BUILD_DIR}/.config" ; then
+		ot-kernel_set_configopt "CONFIG_DRM_SIMPLEDRM" "m"
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_build_all_modules_as
 # @DESCRIPTION:
 # Converts all options as modules (m) or builtins (y).
@@ -6749,13 +6778,16 @@ ot-kernel_set_kconfig_build_all_modules_as() {
 	if ! grep -q -e "^CONFIG_MODULES=y" "${BUILD_DIR}/.config" ; then
 einfo "Detected modules support disabled"
 		ot-kernel_convert_tristate_y
+		ot-kernel_convert_tristate_fix
 		return
 	fi
 	if [[ "${OT_KERNEL_BUILD_ALL_MODULES_AS}" == "m" ]] ; then
 		ot-kernel_convert_tristate_m
 		ot-kernel_fix_config_for_boot
+		ot-kernel_convert_tristate_fix
 	elif [[ "${OT_KERNEL_BUILD_ALL_MODULES_AS}" == "y" ]] ; then
 		ot-kernel_convert_tristate_y
+		ot-kernel_convert_tristate_fix
 	else
 einfo "Building all kernel options as manual"
 	fi
@@ -7328,6 +7360,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	fi
 	ot-kernel_set_kconfig_dmesg ""
 	ot-kernel_set_kconfig_kexec
+	ot-kernel_set_kconfig_reisub
 
 	ot-kernel_set_kconfig_logo
 
