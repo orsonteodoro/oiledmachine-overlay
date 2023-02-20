@@ -553,10 +553,10 @@ einfo "CFLAGS:\t${CFLAGS}"
 einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
-	if tc-is-gcc ; then
-		use_gcc
-	elif tc-is-clang ; then
+	if tc-is-clang || use clang ; then
 		use_clang
+	elif tc-is-gcc ; then
+		use_gcc
 	else
 einfo
 einfo "Use only GCC or Clang.  This package (CC=${CC}) also might not be"

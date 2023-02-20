@@ -28,7 +28,7 @@
   </upstream>
   <use>
     <flag name="clang">
-      Check requirements for with Clang + LLD
+      Use of Clang + LLD to build the package
     </flag>
     <flag name="cuda">
       Enable support for CUDA SDK
