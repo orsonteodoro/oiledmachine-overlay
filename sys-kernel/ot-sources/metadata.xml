@@ -2377,7 +2377,9 @@ unset OT_KERNEL_PRIVATE_KEY
       bic
       cubic     - For large downloads, download completely before video play,
                   upstream default, most used and tested
-      westwood  - For gaming as the primary flow while using VoIP or streaming
+      westwood  - For streaming playback with high average bitrates for high
+                  resolutions or for higher average quality video frames, instead
+                  of blurry on average video frames
       htcp      - For secondary flows when VoIP or streaming with LFNs [ADSL2+,
                   cable, or larger]
       hstcp
