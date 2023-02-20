@@ -1546,7 +1546,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_KCONFIG -- A set of key and values pair used to enable or disable
+    OT_KERNEL_KCONFIG -- A set of key-value pairs used to enable or disable
     drivers or set options in the kernel config.  This is another convenient way
     to change the default config slightly without wasting minutes in menuconfig
     hunting down for the flag, or to quickly enable driver support on top of the
