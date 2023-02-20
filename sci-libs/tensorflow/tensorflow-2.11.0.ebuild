@@ -13,8 +13,8 @@ PYTHON_COMPAT=( python3_{9,10} )
 CHECKREQS_MEMORY="10G" # Gold uses above 9.0 GiB
 CHECKREQS_DISK_BUILD="10G"
 GCC_SLOTS=(11 10 9)
-LLVM_MAX_SLOT=16
-LLVM_SLOTS=(17 16 15 14 13 12 11 10)
+LLVM_MAX_SLOT=14
+LLVM_SLOTS=(14 13 12 11 10)
 
 inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr llvm prefix
 inherit toolchain-funcs
@@ -111,6 +111,7 @@ IUSE+=" ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}"
 # https://github.com/google/boringssl/blob/f9eff21461cf79556a0fb8ca9b1bf60c3b283ce8/src/include/openssl/crypto.h#L99
 # https://github.com/tensorflow/runtime/blob/4ce3e4da2e21ae4dfcee9366415e55f408c884ec/third_party/rules_cuda/cuda/dependencies.bzl#L41   # cc_rules
 # https://github.com/tensorflow/runtime/blob/4ce3e4da2e21ae4dfcee9366415e55f408c884ec/third_party/rules_cuda/cuda/dependencies.bzl#L66   # platforms
+# https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/toolchains/remote_config/configs.bzl#L318                       # tested llvm
 # https://github.com/tensorflow/tensorflow/blob/v2.11.0/configure.py#L33
 # https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/lite/tools/cmake/modules/eigen.cmake                         # cuda/cudnn major versions
 # https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/dockerfiles/partials/ubuntu/nvidia.partial.Dockerfile  # cuda major.minor version
@@ -507,6 +508,12 @@ ewarn "Using GCC/Gold is discouraged.  Expect build times around 30 hrs on older
 ewarn
 }
 
+# clang 16 fails:
+#ERROR: /var/tmp/portage/sci-libs/tensorflow-2.11.0/work/tensorflow-2.11.0-python3_10-bazel-base/external/llvm-project/mlir/BUILD.bazel:6993:10: Compiling mlir/tools/mlir-tblgen/OpGenHelpers.cpp failed: undeclared inclusion(s) in rule '@llvm-project//mlir:mlir-tblgen':
+#this rule is missing dependency declarations for the following files included by 'mlir/tools/mlir-tblgen/OpGenHelpers.cpp':
+#  'bazel-out/k8-opt-exec-50AE0418/bin/external/llvm-project/llvm/Demangle.cppmap'
+#  'bazel-out/k8-opt-exec-50AE0418/bin/external/llvm_terminfo/terminfo.cppmap'
+#  'bazel-out/k8-opt-exec-50AE0418/bin/external/llvm_zlib/zlib.cppmap'
 use_clang() {
 	if [[ "${FEATURES}" =~ "ccache" ]] ; then
 eerror
@@ -525,9 +532,9 @@ einfo "FORCE_LLVM_SLOT may be specified."
 	local found=0
 	local s
 	for s in ${_LLVM_SLOTS[@]} ; do
-		[[ -e "${ESYSROOT}/usr/lib/llvm/${s}/bin/clang-${s}" ]] || continue
-		export CC=${CHOST}-clang-${s}
-		export CXX=${CHOST}-clang++-${s}
+		which "${CHOST}-clang-${s}" || continue
+		export CC="${CHOST}-clang-${s}"
+		export CXX="${CHOST}-clang++-${s}"
 		export CPP="${CHOST}-clang++-${s} -E"
 		if ${CC} --version 2>/dev/null 1>/dev/null ; then
 einfo "Switched to clang:${s}"
@@ -541,7 +548,7 @@ eerror "Use only clang slots ${LLVM_SLOTS[@]}"
 eerror
 		die
 	fi
-	if (( ${s} != 10 || ${s} != 11 )) ; then
+	if (( ${s} != 10 || ${s} != 11 || ${s} != 14 )) ; then
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
 	LLVM_MAX_SLOT=${s}
@@ -823,6 +830,7 @@ ewarn
 			echo "build --local_ram_resources=${BAZEL_LOCAL_RAM_RESOURCES:-2048}" >> .bazelrc || die
 		fi
 
+		echo 'build --noshow_progress' >> .bazelrc || die # Disable high CPU usage on xfce4-terminal
 		echo 'build --subcommands' >> .bazelrc || die # Increase verbosity
 		echo 'build --config=noaws --config=nohdfs --config=nonccl' >> .bazelrc || die
 		echo 'build --define tensorflow_mkldnn_contraction_kernel=0' >> .bazelrc || die
@@ -841,9 +849,6 @@ einfo "Adding build --sandbox_writable_path=\"${ccache_dir}\" to .bazelrc"
 			export CCACHE_DIR="${ccache_dir}"
 einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 		fi
-		echo "build --repo_env=CC=${CC}" >> .bazelrc || die
-		echo "build --repo_env=CXX=${CXX}" >> .bazelrc || die
-		echo "build --repo_env=CPP=\"${CPP}\"" >> .bazelrc || die
 
 		for cflag in $($(tc-getPKG_CONFIG) jsoncpp --cflags)
 		do
