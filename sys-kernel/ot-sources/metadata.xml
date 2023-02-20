@@ -1564,6 +1564,10 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       OT_KERNEL_KCONFIG[CONFIG_LSM]="integrity,apparmor,bpf"
       OT_KERNEL_KCONFIG[CONFIG_EXTRA_FIRMWARE]="\"vendor1/model1.bin vendor2/model2.bin vendor3/model3.bin\""
 
+      OT_KERNEL_KCONFIG[CONFIG_BLOCK]=y
+      OT_KERNEL_KCONFIG[CONFIG_PAGE_SIZE_LESS_THAN_256KB]=y
+      OT_KERNEL_KCONFIG[CONFIG_BTRFS_FS]=y
+
     Notes:
 
       * You may use "y" to to enable the driver.
@@ -1576,6 +1580,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       * These get evaluated at the end of the kernel assist configuration.
       * You must add an escaped double quote with backslash for values with
         spaces.
+      * Every option must be prefixed with CONFIG_
 
     See also:
 
