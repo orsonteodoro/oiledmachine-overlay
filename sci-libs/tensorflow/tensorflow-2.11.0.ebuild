@@ -516,9 +516,15 @@ eerror
 		die
 	fi
 
+einfo "FORCE_LLVM_SLOT may be specified."
+	local _LLVM_SLOTS=(${LLVM_SLOTS[@]})
+	if [[ -n "${FORCE_LLVM_SLOT}" ]] ; then
+		_LLVM_SLOTS=( ${FORCE_LLVM_SLOT} )
+	fi
+
 	local found=0
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${_LLVM_SLOTS[@]} ; do
 		[[ -e "${ESYSROOT}/usr/lib/llvm/${s}/bin/clang-${s}" ]] || continue
 		export CC=${CHOST}-clang-${s}
 		export CXX=${CHOST}-clang++-${s}
