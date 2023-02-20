@@ -510,12 +510,6 @@ ewarn "Using GCC/Gold is discouraged.  Expect build times around 30 hrs on older
 ewarn
 }
 
-# clang 16 fails:
-#ERROR: /var/tmp/portage/sci-libs/tensorflow-2.11.0/work/tensorflow-2.11.0-python3_10-bazel-base/external/llvm-project/mlir/BUILD.bazel:6993:10: Compiling mlir/tools/mlir-tblgen/OpGenHelpers.cpp failed: undeclared inclusion(s) in rule '@llvm-project//mlir:mlir-tblgen':
-#this rule is missing dependency declarations for the following files included by 'mlir/tools/mlir-tblgen/OpGenHelpers.cpp':
-#  'bazel-out/k8-opt-exec-50AE0418/bin/external/llvm-project/llvm/Demangle.cppmap'
-#  'bazel-out/k8-opt-exec-50AE0418/bin/external/llvm_terminfo/terminfo.cppmap'
-#  'bazel-out/k8-opt-exec-50AE0418/bin/external/llvm_zlib/zlib.cppmap'
 use_clang() {
 	if [[ "${FEATURES}" =~ "ccache" ]] ; then
 eerror
@@ -621,6 +615,9 @@ src_unpack() {
 
 src_prepare() {
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
+
+	# Prevent build order problems
+	export MAKEOPTS="-j1"
 
 	append-flags $(get-cpu-flags)
 	append-cxxflags -std=c++17
