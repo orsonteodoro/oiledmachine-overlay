@@ -490,7 +490,9 @@ eerror "Use only gcc slots 9, 10, 11"
 eerror
 		die
 	fi
-	if (( ${s} != 9 )) ; then
+	if (( ${s} == 9 || ${s} == 11 )) ; then
+		:;
+	else
 ewarn
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 ewarn
@@ -548,7 +550,9 @@ eerror "Use only clang slots ${LLVM_SLOTS[@]}"
 eerror
 		die
 	fi
-	if (( ${s} != 10 || ${s} != 11 || ${s} != 14 )) ; then
+	if (( ${s} == 10 || ${s} == 11 || ${s} == 14 )) ; then
+		:;
+	else
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
 	LLVM_MAX_SLOT=${s}
