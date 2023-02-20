@@ -10,10 +10,13 @@ DEP_VER="$(ver_cut 1-2)"
 
 DISTUTILS_OPTIONAL=1
 PYTHON_COMPAT=( python3_{9,10} )
-CHECKREQS_MEMORY="8G"
+CHECKREQS_MEMORY="10G" # Gold uses above 9.0 GiB
 CHECKREQS_DISK_BUILD="10G"
+GCC_SLOTS=(11 10 9)
+LLVM_MAX_SLOT=16
+LLVM_SLOTS=(17 16 15 14 13 12 11 10)
 
-inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr prefix
+inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr llvm prefix
 inherit toolchain-funcs
 
 DESCRIPTION="Computation framework using data flow graphs for scalable machine \
@@ -75,7 +78,7 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0"
 IUSE="
-alt-ssl cuda custom-optimization-level +hardened mpi +python
+alt-ssl clang cuda custom-optimization-level +hardened mpi +python
 xla
 "
 CPU_USE_FLAGS_X86=(
@@ -351,12 +354,50 @@ PDEPEND="
 		=sci-libs/tensorflow-estimator-${DEP_VER}*[${PYTHON_USEDEP}]
 	)
 "
+gen_llvm_bdepend() {
+	for s in ${LLVM_SLOTS[@]} ; do
+		if (( ${s} >= 10 && ${s} < 13 )) ; then
+			echo "
+				(
+					sys-devel/clang:${s}
+					sys-devel/llvm:${s}
+					>=sys-devel/lld-10
+				)
+			"
+		else
+			echo "
+				(
+					sys-devel/clang:${s}
+					sys-devel/llvm:${s}
+					sys-devel/lld:${s}
+				)
+			"
+		fi
+	done
+}
+DISABLED="
+"
 BDEPEND="
 	!python? (
 		dev-lang/python
 	)
 	>=dev-util/bazel-5.3.0
 	>=dev-libs/protobuf-3.8.0
+	app-arch/unzip
+	dev-java/java-config
+	clang? (
+		|| (
+			$(gen_llvm_bdepend)
+		)
+	)
+	cuda? (
+		${CUDA_CDEPEND}
+	)
+	python? (
+		>=dev-python/cython-3.0.0_alpha10
+		>=dev-python/grpcio-tools-1.28
+		dev-python/mock
+	)
 	|| (
 		(
 			>=sys-devel/gcc-9.3.0
@@ -366,21 +407,10 @@ BDEPEND="
 			>=sys-devel/gcc-11.3.1_p20230120-r1
 			sys-devel/gcc:11
 		)
-	)
-	app-arch/unzip
-	dev-java/java-config
-	cuda? (
-		${CUDA_CDEPEND}
-	)
-	python? (
-		>=dev-python/cython-3.0.0_alpha10
-		>=dev-python/grpcio-tools-1.28
-		dev-python/mock
+		$(gen_llvm_bdepend)
 	)
 "
 # GCC:11 - Based on archlinux
-# clang-15 - does not build
-# clang-13 - does not build
 # gcc-11.3.1_p20221209-p3 does not build
 REQUIRED_USE="
 	python? (
@@ -434,13 +464,7 @@ gcc_symlink_ver() {
 	ver_cut 1-3 ${pv}
 }
 
-pkg_setup() {
-einfo "CC:\t${CC}"
-einfo "CXX:\t${CXX}"
-einfo "CFLAGS:\t${CFLAGS}"
-einfo "CXXFLAGS:\t${CXXFLAGS}"
-einfo "LDFLAGS:\t${LDFLAGS}"
-einfo "PATH:\t${PATH}"
+use_gcc() {
 	export PATH=$(echo "${PATH}" \
 		| tr ":" "\n" \
 		| sed -e "\|/usr/lib/llvm|d" \
@@ -448,11 +472,13 @@ einfo "PATH:\t${PATH}"
 einfo "PATH:\t${PATH}"
 	local found=0
 	local s
-	for s in 11 10 9 ; do
+	for s in ${GCC_SLOTS[@]} ; do
 		symlink_ver=$(gcc_symlink_ver ${s})
 		export CC=${CHOST}-gcc-${symlink_ver}
 		export CXX=${CHOST}-g++-${symlink_ver}
+		export CPP="${CHOST}-g++-${symlink_ver} -E"
 		if ${CC} --version 2>/dev/null 1>/dev/null ; then
+einfo "Switched to gcc:${s}"
 			found=1
 			break
 		fi
@@ -463,8 +489,82 @@ eerror "Use only gcc slots 9, 10, 11"
 eerror
 		die
 	fi
+	if (( ${s} != 9 )) ; then
+ewarn
+ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
+ewarn
+einfo
+einfo "  Tested mostly working on 2.11.0:"
+einfo
+einfo "    =sys-devel/gcc-11.3.1_p20230120-r1 with gold"
+einfo
+	fi
 	${CC} --version || die
 	strip-unsupported-flags
+	# Linking takes 15 hours will the first .so and has linker lag issues.
+ewarn
+ewarn "Using GCC/Gold is discouraged.  Expect build times around 30 hrs on older machines."
+ewarn
+}
+
+use_clang() {
+	if [[ "${FEATURES}" =~ "ccache" ]] ; then
+eerror
+eerror "For this package, ccache cannot be combined with clang."
+eerror "Disable ccache or use GCC with ccache."
+eerror
+		die
+	fi
+
+	local found=0
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		[[ -e "${ESYSROOT}/usr/lib/llvm/${s}/bin/clang-${s}" ]] || continue
+		export CC=${CHOST}-clang-${s}
+		export CXX=${CHOST}-clang++-${s}
+		export CPP="${CHOST}-clang++-${s} -E"
+		if ${CC} --version 2>/dev/null 1>/dev/null ; then
+einfo "Switched to clang:${s}"
+			found=1
+			break
+		fi
+	done
+	if (( ${found} != 1 )) ; then
+eerror
+eerror "Use only clang slots ${LLVM_SLOTS[@]}"
+eerror
+		die
+	fi
+	if (( ${s} != 10 || ${s} != 11 )) ; then
+ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
+	fi
+	LLVM_MAX_SLOT=${s}
+	llvm_pkg_setup
+	${CC} --version || die
+	strip-unsupported-flags
+}
+
+pkg_setup() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCC)
+einfo "CC:\t${CC}"
+einfo "CXX:\t${CXX}"
+einfo "CFLAGS:\t${CFLAGS}"
+einfo "CXXFLAGS:\t${CXXFLAGS}"
+einfo "LDFLAGS:\t${LDFLAGS}"
+einfo "PATH:\t${PATH}"
+	if tc-is-gcc ; then
+		use_gcc
+	elif tc-is-clang ; then
+		use_clang
+	else
+einfo
+einfo "Use only GCC or Clang.  This package (CC=${CC}) also might not be"
+einfo "completely installed."
+einfo
+		die
+	fi
+
 	local num_pythons_enabled
 	num_pythons_enabled=0
 	count_impls() {
@@ -510,12 +610,23 @@ src_prepare() {
 	export BUILD_CXXFLAGS+=" -std=c++17"
 	filter-flags '-fvtable-verify=@(std|preinit)'
 
-	if has_version "sys-devel/binutils[gold]" ; then
+	if tc-is-clang && ( ! is-flagq '-fuse-ld=gold' && ! is-flagq '-fuse-ld=lld' ) ; then
+einfo "Using LLD (TESTING)"
+einfo "Explicitly set -fuse-ld=gold or -fuse-ld=bfd to disallow linking with lld."
+		filter-flags '-fuse-ld=*'
+		append-ldflags -fuse-ld=lld
+		BUILD_LDFLAGS+=" -fuse-ld=lld"
+	elif has_version "sys-devel/binutils[gold]" ; then
+		# Linking is ~15 hrs per .so.  Avoid!
+		# The package likes to use lld with gcc which is disallowed.
+einfo "Using Gold"
+		ld.gold --version || die
 		# The build scripts will use gold if it detects it.
 		# Gold can hit 7 GiB without flags.
 		append-ldflags -Wl,--no-keep-memory
 		BUILD_LDFLAGS+=" -Wl,--no-keep-memory"
 	else
+einfo "Using BFD"
 		append-ldflags \
 			-Wl,--no-keep-memory \
 			-Wl,--reduce-memory-overheads
@@ -576,9 +687,18 @@ einfo "Preventing stall.  Removing -Os."
 	use cuda && cuda_add_sandbox
 }
 
-src_configure() {
+load_env() {
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 	export KERAS_HOME="${T}/.keras" # otherwise sandbox violation writing ~/.keras
+	if [[ -e "${WORKDIR}/.ccache_dir_val" && "${FEATURES}" =~ "ccache" ]] \
+		&& has_version "dev-util/ccache" ; then
+		export CCACHE_DIR=$(cat "${WORKDIR}/.ccache_dir_val")
+einfo "CCACHE_DIR:\t${CCACHE_DIR}"
+	fi
+}
+
+src_configure() {
+	load_env
 
 	do_configure() {
 		export CC_OPT_FLAGS=" "
@@ -711,8 +831,10 @@ einfo "Adding build --sandbox_writable_path=\"${ccache_dir}\" to .bazelrc"
 			export CCACHE_DIR="${ccache_dir}"
 einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 		fi
+		echo "build --repo_env=CC=${CC}" >> .bazelrc || die
+		echo "build --repo_env=CXX=${CXX}" >> .bazelrc || die
+		echo "build --repo_env=CPP=\"${CPP}\"" >> .bazelrc || die
 
-		local cflag
 		for cflag in $($(tc-getPKG_CONFIG) jsoncpp --cflags)
 		do
 			echo "build --copt=\"${cflag}\"" >> .bazelrc || die
@@ -727,12 +849,7 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 }
 
 src_compile() {
-	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
-	export KERAS_HOME="${T}/.keras" # otherwise sandbox violation writing ~/.keras
-	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
-		export CCACHE_DIR=$(cat "${WORKDIR}/.ccache_dir_val")
-einfo "CCACHE_DIR:\t${CCACHE_DIR}"
-	fi
+	load_env
 
 	if use python; then
 		python_setup
@@ -765,12 +882,7 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 
 src_install() {
 	local i l n
-	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
-	export KERAS_HOME="${T}/.keras" # otherwise sandbox violation writing ~/.keras
-	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
-		export CCACHE_DIR=$(cat "${WORKDIR}/.ccache_dir_val")
-einfo "CCACHE_DIR:\t${CCACHE_DIR}"
-	fi
+	load_env
 
 	do_install() {
 einfo "Installing ${EPYTHON} files"

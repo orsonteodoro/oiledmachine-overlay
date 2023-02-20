@@ -27,6 +27,9 @@
     <remote-id type="github">tensorflow/tensorflow</remote-id>
   </upstream>
   <use>
+    <flag name="clang">
+      Check requirements for with Clang + LLD
+    </flag>
     <flag name="cuda">
       Enable support for CUDA SDK
     </flag>
