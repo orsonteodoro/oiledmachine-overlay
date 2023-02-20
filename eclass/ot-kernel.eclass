@@ -1920,6 +1920,7 @@ ot-kernel_src_unpack() {
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_clear_env
+		declare -A OT_KERNEL_KCONFIG
 		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
 		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
@@ -2437,6 +2438,7 @@ ewarn
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_clear_env
+		declare -A OT_KERNEL_KCONFIG
 		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
 		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
@@ -2473,6 +2475,7 @@ eerror
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_clear_env
+		declare -A OT_KERNEL_KCONFIG
 		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
 		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
@@ -2560,6 +2563,7 @@ ot-kernel_clear_keys() {
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_clear_env
+		declare -A OT_KERNEL_KCONFIG
 		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
 		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
@@ -2803,6 +2807,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_IOSCHED
 	unset OT_KERNEL_IOSCHED_OPENRC
 	unset OT_KERNEL_IOSCHED_OVERRIDE
+	unset OT_KERNEL_KCONFIG
 	unset OT_KERNEL_KERNEL_DIR
 	unset OT_KERNEL_KEXEC
 	unset OT_KERNEL_LOGO_COUNT
@@ -2931,9 +2936,10 @@ ot-kernel_clear_env() {
 	unset USE_SUID_SANDBOX
 	unset VIRTUALBOX_GUEST_LINUX
 	unset VSYSCALL_MODE
+	unset WATCHDOG_DRIVERS
+	unset X86_MICROARCH_OVERRIDE
 	unset XEN_PCI_PASSTHROUGH
 	unset YUBIKEY
-	unset X86_MICROARCH_OVERRIDE
 	unset ZEN_DOM0
 	unset ZEN_DOMU
 
@@ -7267,6 +7273,23 @@ einfo "Adding message on init:  ${OT_KERNEL_MESSAGE}"
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_kconfig_from_envvar_array
+# @DESCRIPTION:
+# Set flag(s) or a string in the the kernel config from an environment variable.
+ot-kernel_set_kconfig_from_envvar_array() {
+	local sym
+	for sym in ${!OT_KERNEL_KCONFIG[@]} ; do
+		if [[ "${OT_KERNEL_KCONFIG[${sym}]}" == "n" \
+			|| "${OT_KERNEL_KCONFIG[${sym}]}" == " " ]] ; then
+einfo "Unsetted ${sym} in .config"
+			ot-kernel_unset_configopt "${sym}"
+		else
+einfo "Changed to ${sym}=${OT_KERNEL_KCONFIG[${sym}]} in .config"
+			ot-kernel_set_configopt "${sym}" "${OT_KERNEL_KCONFIG[${sym}]}"
+		fi
+	done
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -7387,6 +7410,8 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_set_kconfig_module_signing
 	ot-kernel_set_message
 
+	ot-kernel_set_kconfig_from_envvar_array
+
 	if [[ -e "${BUILD_DIR}/.config" ]] ; then
 		if has exfat ${IUSE} && ! use exfat ; then
 			sed -i -e "/CONFIG_EXFAT_FS/d" "${BUILD_DIR}/.config"
@@ -7435,6 +7460,7 @@ ot-kernel_src_configure() {
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_clear_env
+		declare -A OT_KERNEL_KCONFIG
 		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
 		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
@@ -8003,6 +8029,7 @@ ot-kernel_src_compile() {
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_clear_env
+		declare -A OT_KERNEL_KCONFIG
 		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
 		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
@@ -8228,6 +8255,7 @@ ot-kernel_src_install() {
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_clear_env
+		declare -A OT_KERNEL_KCONFIG
 		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
 		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
@@ -8683,6 +8711,7 @@ ot-kernel_pkg_postinst() {
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_clear_env
+		declare -A OT_KERNEL_KCONFIG
 		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
 		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config

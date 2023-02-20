@@ -564,6 +564,8 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_vpnc
 	ot-kernel-pkgflags_vtun
 	ot-kernel-pkgflags_wacom
+	ot-kernel-pkgflags_watchdog
+	ot-kernel-pkgflags_wlgreet
 	ot-kernel-pkgflags_wavemon
 	ot-kernel-pkgflags_wdm
 	ot-kernel-pkgflags_webkit_gtk
@@ -587,7 +589,6 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_xf86_video_vesa
 	ot-kernel-pkgflags_x86info
 	ot-kernel-pkgflags_xfce4_battery_plugin
-	ot-kernel-pkgflags_wlgreet
 	ot-kernel-pkgflags_xmms2
 	ot-kernel-pkgflags_xorg_server
 	ot-kernel-pkgflags_xoscope
@@ -1808,6 +1809,7 @@ ot-kernel-pkgflags_corosync() { # DONE
 	if ot-kernel_has_version "sys-cluster/corosync[watchdog]" ; then
 		einfo "Applying kernel config flags for the corosync package (id: 63be96c)"
 		ot-kernel_y_configopt "CONFIG_WATCHDOG"
+		_ot-kernel-pkgflags_add_watchdog_drivers
 	fi
 }
 
@@ -7725,6 +7727,7 @@ ot-kernel-pkgflags_sanlock() { # DONE
 	if ot-kernel_has_version "sys-cluster/sanlock" ; then
 		einfo "Applying kernel config flags for the sanlock package (id: b54f34e)"
 		ot-kernel_y_configopt "CONFIG_SOFT_WATCHDOG"
+		_ot-kernel-pkgflags_add_watchdog_drivers
 	fi
 }
 
@@ -8889,6 +8892,47 @@ ot-kernel-pkgflags_wacom() { # DONE
 	fi
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_add_watchdog_drivers
+# @DESCRIPTION:
+# Adds a watchdog driver
+_ot-kernel-pkgflags_add_watchdog_drivers() {
+	if [[ -n "${WATCHDOG_DRIVERS:-SOFT_WATCHDOG}" ]] ; then
+		local sym
+		for sym in ${WATCHDOG_DRIVERS} ; do
+			ot-kernel_set_configopt "CONFIG_${sym}" "m"
+		done
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_watchdog
+# @DESCRIPTION:
+# Applies kernel config flags for the watchdog package
+ot-kernel-pkgflags_watchdog() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S1b4f71b]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-apps/watchdog" ; then
+		einfo "Applying kernel config flags for the watchdog package (id: 1b4f71b)"
+		ot-kernel_unset_configopt "CONFIG_WATCHDOG"
+		if [[ "${WATCHDOG_WAYOUT:-1}" == "1" ]] ; then
+			ot-kernel_unset_configopt "CONFIG_WATCHDOG_NOWAYOUT"
+		else
+			ot-kernel_y_configopt "CONFIG_WATCHDOG_NOWAYOUT"
+		fi
+		_ot-kernel-pkgflags_add_watchdog_drivers
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_wlgreet
+# @DESCRIPTION:
+# Applies kernel config flags for the wlgreet package
+ot-kernel-pkgflags_wlgreet() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S75439ce]}" == "1" ]] && return
+	if ot-kernel_has_version "gui-apps/wlgreet" ; then
+		einfo "Applying kernel config flags for the wlgreet package (id: 75439ce)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_MULTIUSER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_wavemon
 # @DESCRIPTION:
 # Applies kernel config flags for the wavemon package
@@ -9459,18 +9503,6 @@ ot-kernel-pkgflags_xfce4_battery_plugin() { # DONE
 	if ot-kernel_has_version "xfce-extra/xfce4-battery-plugin" ; then
 		einfo "Applying kernel config flags for the xfce4-battery-plugin package (id: f54e65c)"
 		ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
-	fi
-}
-
-# @FUNCTION: ot-kernel-pkgflags_wlgreet
-# @DESCRIPTION:
-# Applies kernel config flags for the wlgreet package
-ot-kernel-pkgflags_wlgreet() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S75439ce]}" == "1" ]] && return
-	if ot-kernel_has_version "gui-apps/wlgreet" ; then
-		einfo "Applying kernel config flags for the wlgreet package (id: 75439ce)"
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_MULTIUSER"
 	fi
 }
 
