@@ -3058,8 +3058,8 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     or web browsers.
     Valid values:  0 (default), 1.
 
-    WATCHDOG_DRIVERS - A space of watchdog kernel flag(s) drivers without the
-    CONFIG_ prefix.
+    WATCHDOG_DRIVERS - A space separated list of watchdog kernel flag(s) or drivers
+    without the CONFIG_ prefix.
     Valid values:
       SOFT_WATCHDOG (default ON, but OFF upstream)
       See also https://github.com/torvalds/linux/blob/master/drivers/watchdog/Kconfig
