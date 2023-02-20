@@ -1550,7 +1550,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     drivers or set options in the kernel config.  This is another convenient way
     to change the default config slightly without wasting minutes in menuconfig
     hunting down for the flag, or to quickly enable driver support on top of the
-    default kernel config.  If an ebuild packages announces flags, you can
+    default kernel config.  If an ebuild package(s) announces flags, you can
     easily add them using this.
 
     Examples:
