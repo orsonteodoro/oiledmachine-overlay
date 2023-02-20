@@ -611,8 +611,12 @@ src_prepare() {
 	filter-flags '-fvtable-verify=@(std|preinit)'
 
 	if tc-is-clang && ( ! is-flagq '-fuse-ld=gold' && ! is-flagq '-fuse-ld=lld' ) ; then
+einfo
 einfo "Using LLD (TESTING)"
-einfo "Explicitly set -fuse-ld=gold or -fuse-ld=bfd to disallow linking with lld."
+einfo
+einfo "Explicitly add -fuse-ld=gold or -fuse-ld=bfd to per-package LDFLAGS to"
+einfo "disallow linking with lld."
+einfo
 		filter-flags '-fuse-ld=*'
 		append-ldflags -fuse-ld=lld
 		BUILD_LDFLAGS+=" -fuse-ld=lld"
