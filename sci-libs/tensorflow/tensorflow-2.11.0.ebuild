@@ -12,7 +12,7 @@ DISTUTILS_OPTIONAL=1
 PYTHON_COMPAT=( python3_{9,10} )
 CHECKREQS_MEMORY="10G" # Gold uses above 9.0 GiB
 CHECKREQS_DISK_BUILD="10G"
-GCC_SLOTS=(11 10 9)
+GCC_SLOTS=(12 11 10 9)
 LLVM_MAX_SLOT=14
 LLVM_SLOTS=(14 13 12 11 10)
 
@@ -504,10 +504,6 @@ einfo
 	fi
 	${CC} --version || die
 	strip-unsupported-flags
-	# Linking takes 15 hours will the first .so and has linker lag issues.
-ewarn
-ewarn "Using GCC/Gold is discouraged.  Expect build times around 30 hrs on older machines."
-ewarn
 }
 
 use_clang() {
@@ -558,8 +554,8 @@ ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 pkg_setup() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCC)
-einfo "CC:\t${CC}"
-einfo "CXX:\t${CXX}"
+einfo "CC:\t\t${CC}"
+einfo "CXX:\t\t${CXX}"
 einfo "CFLAGS:\t${CFLAGS}"
 einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
@@ -613,6 +609,99 @@ src_unpack() {
 	bazel_load_distfiles "${bazel_external_uris}"
 }
 
+setup_linker() {
+	# The package likes to use lld with gcc which is disallowed.
+	local ram_tot=0
+	if [[ -e "/proc/meminfo" ]] ; then
+		ram_tot=$(grep "MemTotal:" /proc/meminfo \
+			| awk '{print $2}')
+	fi
+	local lld_pv=-1
+	if tc-is-clang \
+		&& ld.lld --version 2>/dev/null 1>/dev/null ; then
+		lld_pv=$(ld.lld --version \
+			| awk '{print $2}')
+	fi
+	if is-flagq '-fuse-ld=mold' \
+		&& test-flag-CCLD '-fuse-ld=mold' \
+		&& has_version "sys-devel/mold" ; then
+		# Explicit because of license of the linker.
+einfo "Using mold (TESTING)"
+		ld.mold --version || die
+		filter-flags '-fuse-ld=*'
+		append-ldflags -fuse-ld=mold
+		BUILD_LDFLAGS+=" -fuse-ld=mold"
+	elif \
+		tc-is-clang \
+		&& ( \
+			   ! is-flagq '-fuse-ld=gold' \
+			&& ! is-flagq '-fuse-ld=bfd' \
+		) \
+		&& \
+		( \
+			( \
+				has_version "sys_devel/lld:$(clang-major-version)" \
+			) \
+			|| \
+			( \
+				ver_test $(clang-major-version) -lt 13 \
+				&& ver_test ${lld_pv} -ge $(clang-major-version) \
+			) \
+			||
+			(
+				has_version "sys-devel/clang-common[default-lld]"
+			)
+		) \
+	then
+einfo "Using LLD (TESTING)"
+		ld.lld --version || die
+		filter-flags '-fuse-ld=*'
+		append-ldflags -fuse-ld=lld
+		BUILD_LDFLAGS+=" -fuse-ld=lld"
+	elif has_version "sys-devel/binutils[gold]" ; then
+		# Linking takes 15 hours will the first .so and has linker lag issues.
+ewarn "Using gold.  Expect linking times more than 30 hrs on older machines."
+ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
+		ld.gold --version || die
+		# The build scripts will use gold if it detects it.
+		# Gold can hit ~9.01 GiB without flags.
+		if (( ${ram_tot} < $((10*1024*1024)) )) ; then
+			append-ldflags -Wl,--no-keep-memory
+			BUILD_LDFLAGS+=" -Wl,--no-keep-memory"
+		fi
+		# Gold uses --no-threads by default.
+		if ! is-flagq '-Wl,--thread-count,*' ; then
+			# Gold doesn't use threading by default.
+			local ncpus=$(lscpu \
+				| grep -F "CPU(s)" \
+				| head -n 1 \
+				| awk '{print $2}')
+			local tpc=$(lscpu \
+				| grep -F "Thread(s) per core:" \
+				| head -n 1 \
+				| cut -f 2 -d ":" \
+				| sed -r -e "s|[ ]+||g")
+			local nthreads=$(( ${ncpus} * ${tpc} ))
+ewarn "Link times may worsen if -Wl,--thread-count,${nthreads} is not specified in LDFLAGS"
+		fi
+		filter-flags '-Wl,--thread-count,*'
+		append-ldflags -Wl,--thread-count,${nthreads}
+		BUILD_LDFLAGS+=" -Wl,--thread-count,${nthreads}"
+	else
+ewarn "Using BFD.  Expect linking times more than 45 hrs on older machines."
+ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
+		ld.bfd --version || die
+		# No threading flags
+		if (( ${ram_tot} < $((10*1024*1024)) )) ; then
+			append-ldflags \
+				-Wl,--no-keep-memory \
+				-Wl,--reduce-memory-overheads
+			BUILD_LDFLAGS+=" -Wl,--no-keep-memory"
+			BUILD_LDFLAGS+=" -Wl,--reduce-memory-overheads"
+		fi
+	fi
+}
+
 src_prepare() {
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 
@@ -624,33 +713,7 @@ src_prepare() {
 	export BUILD_CXXFLAGS+=" -std=c++17"
 	filter-flags '-fvtable-verify=@(std|preinit)'
 
-	if tc-is-clang && ( ! is-flagq '-fuse-ld=gold' && ! is-flagq '-fuse-ld=lld' ) ; then
-einfo
-einfo "Using LLD (TESTING)"
-einfo
-einfo "Explicitly add -fuse-ld=gold or -fuse-ld=bfd to per-package LDFLAGS to"
-einfo "disallow linking with lld."
-einfo
-		filter-flags '-fuse-ld=*'
-		append-ldflags -fuse-ld=lld
-		BUILD_LDFLAGS+=" -fuse-ld=lld"
-	elif has_version "sys-devel/binutils[gold]" ; then
-		# Linking is ~15 hrs per .so.  Avoid!
-		# The package likes to use lld with gcc which is disallowed.
-einfo "Using Gold"
-		ld.gold --version || die
-		# The build scripts will use gold if it detects it.
-		# Gold can hit 7 GiB without flags.
-		append-ldflags -Wl,--no-keep-memory
-		BUILD_LDFLAGS+=" -Wl,--no-keep-memory"
-	else
-einfo "Using BFD"
-		append-ldflags \
-			-Wl,--no-keep-memory \
-			-Wl,--reduce-memory-overheads
-		BUILD_LDFLAGS+=" -Wl,--no-keep-memory"
-		BUILD_LDFLAGS+=" -Wl,--reduce-memory-overheads"
-	fi
+	setup_linker
 
 	if ! use custom-optimization-level ; then
 		# Upstream uses a mix of -O3 and -O2.
@@ -952,12 +1015,12 @@ einfo "Installing libs"
 
 	einstalldocs
 
-	# Workaround for https://bugs.gentoo.org/831927
-	export MAKEOPTS="-j1"
-
 	LCNR_TAG="${PN}"
 	LCNR_SOURCE="${S}"
 	lcnr_install_files
+
+	# Workaround for https://bugs.gentoo.org/831927
+	export MAKEOPTS="-j1"
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  80 chars, dedupe literals, *DEPENDs changes, increase [third party] LICENSE transparency, preserve copyright notices, fix ccache
