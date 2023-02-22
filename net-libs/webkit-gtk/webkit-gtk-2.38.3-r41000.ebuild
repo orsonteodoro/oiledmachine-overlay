@@ -1061,6 +1061,7 @@ ewarn
 ewarn "Try adding -Wl,--no-keep-memory to per-package LDFLAGS if out of memory (OOM)"
 ewarn "or adding additional swap space.  The latter is more efficient."
 ewarn
+	# You still can have swapping + O(n^2) or swapping + O(1).
 
 	cmake_src_prepare
 	gnome2_src_prepare
