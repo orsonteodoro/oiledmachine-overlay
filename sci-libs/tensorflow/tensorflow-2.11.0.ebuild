@@ -663,6 +663,9 @@ einfo "Using LLD (TESTING)"
 ewarn "Using gold.  Expect linking times more than 30 hrs on older machines."
 ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
 		ld.gold --version || die
+		filter-flags '-fuse-ld=*'
+		append-ldflags -fuse-ld=gold
+		BUILD_LDFLAGS+=" -fuse-ld=gold"
 		# The build scripts will use gold if it detects it.
 		# Gold can hit ~9.01 GiB without flags.
 		if (( ${ram_tot} < $((10*1024*1024)) )) ; then
@@ -691,6 +694,8 @@ ewarn "Link times may worsen if -Wl,--thread-count,${nthreads} is not specified 
 ewarn "Using BFD.  Expect linking times more than 45 hrs on older machines."
 ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
 		ld.bfd --version || die
+		append-ldflags -fuse-ld=bfd
+		BUILD_LDFLAGS+=" -fuse-ld=bfd"
 		# No threading flags
 		if (( ${ram_tot} < $((10*1024*1024)) )) ; then
 			append-ldflags \
@@ -700,6 +705,8 @@ ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
 			BUILD_LDFLAGS+=" -Wl,--reduce-memory-overheads"
 		fi
 	fi
+
+	strip-unsupported-flags # Filter LDFLAGS after switch
 }
 
 src_prepare() {
