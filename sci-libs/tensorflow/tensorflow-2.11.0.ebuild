@@ -611,11 +611,6 @@ src_unpack() {
 
 setup_linker() {
 	# The package likes to use lld with gcc which is disallowed.
-	local ram_tot=0
-	if [[ -e "/proc/meminfo" ]] ; then
-		ram_tot=$(grep "MemTotal:" /proc/meminfo \
-			| awk '{print $2}')
-	fi
 	local lld_pv=-1
 	if tc-is-clang \
 		&& ld.lld --version 2>/dev/null 1>/dev/null ; then
@@ -668,10 +663,6 @@ ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
 		BUILD_LDFLAGS+=" -fuse-ld=gold"
 		# The build scripts will use gold if it detects it.
 		# Gold can hit ~9.01 GiB without flags.
-		if (( ${ram_tot} < $((10*1024*1024)) )) ; then
-			append-ldflags -Wl,--no-keep-memory
-			BUILD_LDFLAGS+=" -Wl,--no-keep-memory"
-		fi
 		# Gold uses --no-threads by default.
 		if ! is-flagq '-Wl,--thread-count,*' ; then
 			# Gold doesn't use threading by default.
@@ -697,13 +688,6 @@ ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
 		append-ldflags -fuse-ld=bfd
 		BUILD_LDFLAGS+=" -fuse-ld=bfd"
 		# No threading flags
-		if (( ${ram_tot} < $((10*1024*1024)) )) ; then
-			append-ldflags \
-				-Wl,--no-keep-memory \
-				-Wl,--reduce-memory-overheads
-			BUILD_LDFLAGS+=" -Wl,--no-keep-memory"
-			BUILD_LDFLAGS+=" -Wl,--reduce-memory-overheads"
-		fi
 	fi
 
 	strip-unsupported-flags # Filter LDFLAGS after switch
