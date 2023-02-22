@@ -1055,6 +1055,10 @@ src_prepare() {
 	eapply "${FILESDIR}/webkit-gtk-2.39.1-jsc-disable-fast-math.patch"
 	eapply "${FILESDIR}/webkit-gtk-2.39.1-webcore-honor-finite-math-and-nan.patch"
 
+	# Drop linker flags that may break mold, etc.
+	sed -i -e "/-Wl,--no-keep-memory/d" "Source/cmake/WebKitCompilerFlags.cmake" || die
+ewarn "Try adding -Wl,--no-keep-memory to per-package LDFLAGS if out of memory (OOM)."
+
 	cmake_src_prepare
 	gnome2_src_prepare
 
