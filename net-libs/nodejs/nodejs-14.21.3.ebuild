@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
-# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
+# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V14.md
 
 EAPI=8
 
@@ -15,7 +15,7 @@ inherit pax-utils python-any-r1 check-linker lcnr toolchain-funcs uopts
 inherit xdg-utils
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
 LICENSE="Apache-1.1 Apache-2.0 Artistic-2 BSD BSD-2 icu-70.1 ISC MIT openssl Unicode-DFS-2016 ZLIB"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 -riscv ~x86 ~amd64-linux ~x64-macos"
 HOMEPAGE="https://nodejs.org/"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
@@ -32,7 +32,6 @@ BENCHMARK_TYPES=(
 	diagnostics_channel
 	dns
 	domain
-	error
 	es
 	esm
 	es
@@ -74,7 +73,7 @@ acorn corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
 npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
-man pgo r1
+man pgo
 "
 
 gen_required_use_pgo() {
@@ -94,8 +93,8 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Dec 7, 2022
-NGHTTP2_PV="1.47.0"
+# Last deps commit date:  Feb 13, 2022
+NGHTTP2_PV="1.42.0"
 RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.0.9
@@ -105,18 +104,20 @@ RDEPEND+="
 	>=sys-libs/zlib-1.2.11
 	app-eselect/eselect-nodejs
 	system-icu? (
-		>=dev-libs/icu-71.1:=
+		>=dev-libs/icu-70.1:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-1.1.1s:0=
+		>=dev-libs/openssl-1.1.1t:0=
+		<dev-libs/openssl-3.0.0_beta1:0=
 	)
 "
-DEPEND+=" ${RDEPEND}"
+DEPEND+="
+	${RDEPEND}
+"
 BDEPEND+="
 	${PYTHON_DEPS}
 	dev-util/ninja
 	sys-apps/coreutils
-	virtual/pkgconfig
 	pax-kernel? (
 		sys-apps/elfix
 	)
@@ -134,27 +135,21 @@ BDEPEND+="
 "
 PDEPEND+="
 	acorn? (
-		>=dev-node/acorn-bin-8.8.0
+		>=dev-node/acorn-bin-8.4.1
 	)
 "
-SRC_URI="
-https://github.com/nodejs/node/archive/refs/tags/v${PV}.tar.gz
-	-> node-v${PV}.tar.gz
-"
+SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 PATCHES=(
-	"${FILESDIR}"/${PN}-16.12.0-jinja_collections_abc.patch
+	"${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
+	"${FILESDIR}"/${PN}-14.18.2-jinja_collections_abc.patch
 	"${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
-	"${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch
-	"${FILESDIR}"/${PN}-16.13.2-use-thinlto.patch
+	"${FILESDIR}"/${PN}-14.15.0-fix_ppc64_crashes.patch
+	"${FILESDIR}"/${PN}-14.19.1-use-thinlto.patch
 	"${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch
 	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
 )
-if [[ -d "${WORKDIR}/node-v${PV}" ]] ; then
-	S="${WORKDIR}/node-v${PV}"
-else
-	S="${WORKDIR}/node-${PV}"
-fi
-NPM_V="8.19.3" # See https://github.com/nodejs/node/blob/v16.19.0/deps/npm/package.json
+S="${WORKDIR}/node-v${PV}"
+NPM_V="6.14.18" # See https://github.com/nodejs/node/blob/v14.21.3/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
@@ -163,7 +158,7 @@ WRK_V="1.2.1"
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
 		die "Your CPU doesn't support the required SSE2 instruction."
-	# Already applied 6ca785b
+	# Does not need 6ca785b
 }
 
 _count_useflag_slots() {
@@ -191,7 +186,7 @@ pkg_setup() {
 	linux-info_pkg_setup
 
 einfo
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2023-09-11."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2023-04-30."
 einfo
 
 	# Prevent merge conflicts
@@ -451,7 +446,6 @@ _src_configure() {
 	local myarch
 	myarch="${ABI/amd64/x64}"
 	myarch="${myarch/x86/ia32}"
-	[[ "${ARCH}:${ABI}" =~ "riscv:lp64" ]] && myarch="riscv64"
 
 	GYP_DEFINES="linux_use_gold_flags=0
 		linux_use_bundled_binutils=0
@@ -661,12 +655,17 @@ src_install() {
 	fi
 
 	if use npm; then
-		keepdir /etc/npm
+		dodir /etc/npm
 
 		# Install bash completion for `npm`
+		# We need to temporarily replace default config path since
+		# npm otherwise tries to write outside of the sandbox
+		local npm_config="${REL_D_BASE}/node_modules/npm/lib/config/core.js"
+		sed -i -e "s|'/etc'|'${ED}/etc'|g" "${ED}/${npm_config}" || die
 		local tmp_npm_completion_file="$(TMPDIR="${T}" mktemp -t npm.XXXXXXXXXX)"
 		"${ED}/usr/bin/npm" completion > "${tmp_npm_completion_file}"
 		newbashcomp "${tmp_npm_completion_file}" npm
+		sed -i -e "s|'${ED}/etc'|'/etc'|g" "${ED}/${npm_config}" || die
 
 		if use man ; then
 			# Move man pages
