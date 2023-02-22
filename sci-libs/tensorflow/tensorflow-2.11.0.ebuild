@@ -625,7 +625,7 @@ setup_linker() {
 	if is-flagq '-fuse-ld=mold' \
 		&& test-flag-CCLD '-fuse-ld=mold' \
 		&& has_version "sys-devel/mold" ; then
-		# Explicit because of license of the linker.
+		# Explicit -fuse-ld=mold because of license of the linker.
 einfo "Using mold (TESTING)"
 		ld.mold --version || die
 		filter-flags '-fuse-ld=*'
