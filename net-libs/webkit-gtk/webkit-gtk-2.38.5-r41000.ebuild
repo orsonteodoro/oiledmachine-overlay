@@ -6,11 +6,11 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (6.0)
+# ab = WEBKITGTK_API_VERSION version (4.1)
 # c = reserved
 # de = ebuild revision
 
-# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Source/WebKit/Configurations/Version.xcconfig
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
 LLVM_MAX_SLOT=14 # This should not be more than Mesa's package LLVM_MAX_SLOT
@@ -24,7 +24,7 @@ inherit check-linker check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr li
 multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs uopts
 inherit cflags-depends
 
-DESCRIPTION="Open source web browser engine (GTK 4 with HTTP/2 support)"
+DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/2 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	( all-rights-reserved MIT )
@@ -244,25 +244,25 @@ LICENSE="
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
 
-API_VERSION="6.0"
+API_VERSION="4.1"
 UOPTS_IMPLS="_${API_VERSION}"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 6.0
+# WEBKITGTK_API_VERSION is 4.1
 CURRENT="2"
-AGE="0"
+AGE="2"
 SOVERSION=$((${CURRENT} - ${AGE}))
-SLOT="${API_VERSION%.*}/${SOVERSION}"
-# SLOT=6/2    GTK4 SOUP3
+SLOT="${API_VERSION}/${SOVERSION}"
+# SLOT=5/0    GTK4 SOUP3
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4/37   GTK3 SOUP2
 
 LANGS=(
 ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hr hu id it
-ja ka kn ko lt lv ml mr nb nl or pa pl pt pt_BR ro ru sl sr sr@latin sv ta te
-tr uk vi zh_CN
+ja kn ko lt lv ml mr nb nl or pa pl pt pt_BR ro ru sl sr sr@latin sv ta te tr
+uk vi zh_CN
 )
 
 # aqua (quartz) is enabled upstream but disabled
@@ -273,7 +273,7 @@ tr uk vi zh_CN
 # For codecs, see
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L49
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp#L280
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
 
 GST_ACODECS_IUSE="
 aac
@@ -307,7 +307,7 @@ MSE_VCODECS_IUSE="
 "
 
 # Based on distro package file lists and
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Tools/glib/dependencies
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Tools/glib/dependencies
 DEFAULT_GST_PLUGINS="
 +a52
 +aac
@@ -316,7 +316,6 @@ DEFAULT_GST_PLUGINS="
 +dav1d
 +flac
 +g722
--hls
 +libde265
 +mp3
 +ogg
@@ -344,13 +343,13 @@ ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
 ${DEFAULT_GST_PLUGINS}
 
-aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dash +dfg-jit +doc
--eme +ftl-jit -gamepad +gbm +geolocation gles2 gnome-keyring +gstreamer
-gstwebrtc hardened +introspection +javascriptcore +jit +journald +jpeg2k jpegxl
-+lcms +libhyphen -libwebrtc -mediarecorder -mediastream +minibrowser +opengl
-openmp -seccomp speech-synthesis -spell test thunder +unified-builds
-variation-fonts wayland +webassembly +webassembly-b3-jit +webcore +webcrypto
--webdriver +webgl +webgl2 webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
+aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dash +dfg-jit +doc
+-eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
+hardened hls +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
++libhyphen -libwebrtc -mediarecorder -mediastream +minibrowser +opengl openmp
+-seccomp -spell test thunder +unified-builds variation-fonts wayland
++webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver +webgl -webgl2
+webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
 "
 
 gen_gst_plugins_duse() {
@@ -417,12 +416,6 @@ REQUIRED_USE+="
 	)
 	ftl-jit? (
 		jit
-	)
-	gbm? (
-		|| (
-			gles2
-			opengl
-		)
 	)
 	geolocation? (
 		introspection
@@ -519,17 +512,17 @@ REQUIRED_USE+="
 # This means also you cannot use the geolocation feature.
 
 # For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Tools/buildstream/elements/sdk-platform.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Tools/gtk/install-dependencies
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Tools/gtk/dependencies
-#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.39.5/Tools/glib/dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Tools/buildstream/elements/sdk-platform.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Tools/gtk/dependencies
+#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.38.3/Tools/glib/dependencies
 #   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
 #   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
 
@@ -566,14 +559,14 @@ WPE_DEPEND="
 CAIRO_PV="1.14.0"
 CLANG_PV="13"
 CXX_STD="20"
-GCC_PV="9.3.0"
-GLIB_PV="2.70.0"
-GSTREAMER_PV="1.20.0" # Upstream min is 1.16.2, but distro only offers 1.20
+GCC_PV="8.3.0"
+GLIB_PV="2.44.0"
+GSTREAMER_PV="1.20.0" # Upstream min is 1.14, but distro only offers 1.20
 MESA_PV="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
@@ -586,26 +579,22 @@ RDEPEND+="
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
-	>=gui-libs/gtk-3.98.5:4[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	>=media-libs/fontconfig-2.8.0:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.4.2:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-0.9.18:=[${MULTILIB_USEDEP},icu(+)]
 	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
-	>=media-libs/libepoxy-1.4.0[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=net-libs/libsoup-2.99.9:3.0[${MULTILIB_USEDEP},introspection?]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
+	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	avif? (
 		>=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}]
 	)
 	gamepad? (
 		>=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}]
-	)
-	gbm? (
-		>=x11-libs/libdrm-2.4.99[${MULTILIB_USEDEP}]
 	)
 	geolocation? (
 		>=app-misc/geoclue-2.6.0:2.0
@@ -636,7 +625,7 @@ RDEPEND+="
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
 		)
 		gstwebrtc? (
-			>=dev-libs/openssl-3[${MULTILIB_USEDEP}]
+			>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
 		)
 		hls? (
 			>=media-plugins/gst-plugins-hls-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
@@ -701,9 +690,6 @@ RDEPEND+="
 		>=sys-apps/xdg-dbus-proxy-0.1.2
 		>=sys-libs/libseccomp-0.9.0[${MULTILIB_USEDEP}]
 	)
-	speech-synthesis? (
-		>=app-accessibility/flite-2.2[${MULTILIB_USEDEP}]
-	)
 	spell? (
 		>=app-text/enchant-1.6.0:2[${MULTILIB_USEDEP}]
 	)
@@ -717,10 +703,15 @@ RDEPEND+="
 		>=x11-libs/cairo-1.16:=[${MULTILIB_USEDEP},X?]
 	)
 	wayland? (
-		${WPE_DEPEND}
 		>=dev-libs/wayland-1.14.0[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.12[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+)]
+		gles2? (
+			${WPE_DEPEND}
+		)
+		opengl? (
+			${WPE_DEPEND}
+		)
 	)
 	webcrypto? (
 		>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
@@ -762,10 +753,9 @@ BDEPEND+="
 	>=dev-lang/perl-5.10.0
 	>=dev-lang/python-2.7
 	>=dev-lang/ruby-1.9
-	>=dev-util/cmake-3.16
+	>=dev-util/cmake-3.12
 	>=dev-util/glib-utils-${GLIB_PV}
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=dev-util/unifdef-2.10
 	>=sys-devel/bison-3.0.4
 	>=sys-devel/gettext-0.19.8.1[${MULTILIB_USEDEP}]
 	virtual/perl-Carp
@@ -835,8 +825,8 @@ einfo
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
 		if ! test-flag-CXX -std=c++${CXX_STD} ; then
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Source/cmake/WebKitCommon.cmake#L72
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Source/cmake/OptionsCommon.cmake
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/cmake/WebKitCommon.cmake#L72
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Source/cmake/OptionsCommon.cmake
 eerror
 eerror "You need at least GCC ${GCC_PV} or Clang >= ${CLANG_PV} for"
 eerror "C++${CXX_STD} specific compiler flags"
@@ -889,12 +879,8 @@ ewarn
 }
 
 pkg_setup() {
-ewarn
-ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
-ewarn "It is currently not recommended due to rendering bug(s)."
-ewarn
 einfo
-einfo "This is the unstable branch."
+einfo "This is the stable branch."
 einfo
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
@@ -987,14 +973,6 @@ echo "${actual_list_raw}"
 	fi
 }
 
-EXPECTED_BUILD_FINGERPRINT="\
-a672db6d235407a86a4d8de1b9ce0b573e0a859138018624682ff5e7b50d6a2c\
-881e25723ea84e11f5fc50697c8e489fda27afa090f5a1b41d65a9367483036c\
-"
-EXPECTED_BUILD_FINGERPRINT_WEBRTC="\
-ce7a0164ea0da74de32de8eeac7e541c29355542710f270c2fc6125309315194\
-2c3acd8d773264875d99304da31c28ec05e5c97ee9af6a352504fb37fa59d8c3\
-"
 src_unpack() {
 	if use libwebrtc ; then
 		EGIT_CLONE_TYPE="single"
@@ -1007,62 +985,6 @@ src_unpack() {
 	fi
 
 	_check_langs
-
-	local actual_build_fingerprint_webrtc
-	if use libwebrtc ; then
-		actual_build_fingerprint_webrtc=$(cat \
-		$(find "${S}/Source/ThirdParty/libwebrtc" \
-			\( \
-				   -name "*.cmake" \
-				-o -name "*CMakeLists.txt" \
-			\) \
-			| sort \
-		) \
-				| sha512sum \
-				| cut -f 1 -d " " \
-						)
-	fi
-
-	local actual_build_fingerprint=$(cat \
-		$(find "${S}" \
-			\( \
-				\( \
-					   -name "*.cmake" \
-					-o -name "*CMakeLists.txt" \
-				\) \
-				-not -path "*Source/ThirdParty/libwebrtc/*" \
-			\) \
-			| sort \
-		) \
-				| sha512sum \
-				| cut -f 1 -d " " \
-					)
-
-	if [[ "${actual_build_fingerprint}" != "${EXPECTED_BUILD_FINGERPRINT}" ]] ; then
-eerror
-eerror "Detected build files update"
-eerror
-eerror "Actual build files fingerprint:\t${actual_build_fingerprint}"
-eerror "Expected build files fingerprint:\t${EXPECTED_BUILD_FINGERPRINT}"
-eerror
-eerror "QA:  Update IUSE, *DEPENDS, options, KEYWORDS, patches"
-eerror
-		die
-	fi
-
-	return
-
-	if use libwebrtc && [[ "${actual_build_fingerprint_webrtc}" != "${EXPECTED_BUILD_FINGERPRINT_WEBRTC}" ]] ; then
-eerror
-eerror "Detected build files update for WebRTC"
-eerror
-eerror "Actual build files fingerprint:\t${actual_build_fingerprint_webrtc}"
-eerror "Expected build files fingerprint:\t${EXPECTED_BUILD_FINGERPRINT_WEBRTC}"
-eerror
-eerror "QA:  Update IUSE, *DEPENDS, options, KEYWORDS, patches"
-eerror
-#		die
-	fi
 }
 
 src_prepare() {
@@ -1151,6 +1073,11 @@ eerror
 	# should somehow let user select between them?
 	# opengl needs to be explictly handled, bug #576634
 
+	local use_wpe_renderer=OFF
+	if use opengl || use gles2; then
+		use wayland && use_wpe_renderer=ON
+	fi
+
 	# For more custom options, see
 	# S="<sources dir>" grep -r -e "WEBKIT_OPTION_DEFINE" \
 	#	${S}/Source/cmake/GStreamerDefinitions.cmake \
@@ -1184,7 +1111,6 @@ eerror
 		-DENABLE_MINIBROWSER=$(usex minibrowser)
 		-DENABLE_QUARTZ_TARGET=$(usex aqua)
 		-DENABLE_UNIFIED_BUILDS=$(usex unified-builds)
-		-DENABLE_SPEECH_SYNTHESIS=$(usex speech-synthesis)
 		-DENABLE_SPELLCHECK=$(usex spell)
 		-DENABLE_THUNDER=$(usex thunder)
 		-DENABLE_VIDEO=$(usex gstreamer)
@@ -1203,7 +1129,7 @@ eerror
 		-DUSE_AVIF=$(usex avif)
 		-DUSE_GSTREAMER_TRANSCODER=$(usex mediarecorder)
 		-DUSE_GSTREAMER_WEBRTC=$(usex gstwebrtc)
-		-DUSE_GTK4=ON
+		-DUSE_GTK4=OFF
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
@@ -1212,6 +1138,8 @@ eerror
 		-DUSE_OPENMP=$(usex openmp)
 		-DUSE_SOUP2=OFF
 		-DUSE_WOFF2=$(usex woff2)
+		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
+# WPE renderer is used to implement accelerated compositing under wayland
 		$(cmake_use_find_package gles2 OpenGLES2)
 		$(cmake_use_find_package opengl OpenGL)
 	)
@@ -1447,7 +1375,7 @@ multilib_src_install() {
 	cmake_src_install
 
 	# Prevent crashes on PaX systems, bug #522808
-	local d="${ED}/usr/$(get_libdir)/misc/webkitgtk-${API_VERSION}"
+	local d="${ED}/usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}"
 	# usr/libexec is not multilib this is why it is changed.
 	pax-mark m "${d}/WebKitPluginProcess"
 	pax-mark m "${d}/WebKitWebProcess"
@@ -1455,7 +1383,7 @@ multilib_src_install() {
 
 	if use minibrowser ; then
 		make_desktop_entry \
-			/usr/$(get_libdir)/misc/webkitgtk-${API_VERSION}/MiniBrowser \
+			/usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}/MiniBrowser \
 			"MiniBrowser (${ABI}, API: ${API_VERSION})" \
 			"" \
 			"Network;WebBrowser"
@@ -1477,14 +1405,9 @@ multilib_src_install_all() {
 		vaapi_env="WEBKIT_GST_ENABLE_LEGACY_VAAPI=1"
 	fi
 
-	if use hls ; then
-		hls_env="WEBKIT_GST_ENABLE_HLS_SUPPORT=1"
-	fi
-
 	dodir /etc/env.d
 newenvd - 50${PN}${API_VERSION} <<-EOF
 ${vaapi_env}
-${hls_env}
 EOF
 
 	LCNR_SOURCE="${S}"
@@ -1495,7 +1418,7 @@ pkg_postinst() {
 	if use minibrowser ; then
 		create_minibrowser_symlink_abi() {
 			ln -sf \
-"${EPREFIX}/usr/$(get_abi_LIBDIR ${ABI})/misc/webkitgtk-${API_VERSION}/MiniBrowser" \
+"${EPREFIX}/usr/$(get_abi_LIBDIR ${ABI})/misc/webkit2gtk-${API_VERSION}/MiniBrowser" \
 				"${EROOT}/usr/bin/minibrowser" || die
 		}
 		multilib_foreach_abi create_minibrowser_symlink_abi
@@ -1504,8 +1427,8 @@ einfo "The symlink for the minibrowser may need to change manually to select"
 einfo "the preferred ABI and/or API version which can be 4.0, 4.1, 5.0."
 einfo "Examples,"
 einfo
-einfo "\`ln -sf /usr/lib64/misc/webkitgtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
-einfo "\`ln -sf /usr/lib/misc/webkitgtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
+einfo "\`ln -sf /usr/lib64/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
+einfo "\`ln -sf /usr/lib/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
 einfo
 	fi
 	check_geolocation
@@ -1527,16 +1450,8 @@ ewarn
 # See https://bugs.webkit.org/show_bug.cgi?id=174458
 	if use hls ; then
 ewarn
-ewarn "HLS support may break on some sites.  Do either:"
-ewarn
-ewarn "  \`unset WEBKIT_GST_ENABLE_HLS_SUPPORT\`"
-ewarn
-ewarn "or"
-ewarn
-ewarn "  \`export WEBKIT_GST_ENABLE_HLS_SUPPORT=0\`"
-ewarn
-ewarn "with a wrapper script or before invocation to use fallback protocol(s)"
-ewarn "requested by the site."
+ewarn "HLS support may break on some sites.  Consider disabling the hls USE"
+ewarn "flag and unemerging media-plugins/gst-plugins-hls with hard mask."
 ewarn
 	fi
 }

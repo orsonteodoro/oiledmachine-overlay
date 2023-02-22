@@ -6,7 +6,7 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.0)
+# ab = WEBKITGTK_API_VERSION version (4.1)
 # c = reserved
 # de = ebuild revision
 
@@ -24,7 +24,7 @@ inherit check-linker check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr li
 multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs uopts
 inherit cflags-depends
 
-DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/1.1 support)"
+DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/2 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	( all-rights-reserved MIT )
@@ -244,18 +244,18 @@ LICENSE="
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
 
-API_VERSION="4.0"
+API_VERSION="4.1"
 UOPTS_IMPLS="_${API_VERSION}"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 4.0
-CURRENT="98"
-AGE="61"
+# WEBKITGTK_API_VERSION is 4.1
+CURRENT="7"
+AGE="7"
 SOVERSION=$((${CURRENT} - ${AGE}))
-SLOT="${API_VERSION%.*}/${SOVERSION}"
-# SLOT=6/2    GTK4 SOUP3
+SLOT="${API_VERSION}/${SOVERSION}"
+# SLOT=6/3    GTK4 SOUP3
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4/37   GTK3 SOUP2
 
@@ -440,11 +440,11 @@ REQUIRED_USE+="
 		gstreamer
 		webrtc
 	)
-	hardened? (
-		!jit
-	)
 	hls? (
 		gstreamer
+	)
+	hardened? (
+		!jit
 	)
 	jit? (
 		bmalloc
@@ -593,7 +593,7 @@ RDEPEND+="
 	>=media-libs/libepoxy-1.4.0[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.54.0:2.4[${MULTILIB_USEDEP},introspection?]
+	>=net-libs/libsoup-2.99.9:3.0[${MULTILIB_USEDEP},introspection?]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
 	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
@@ -728,7 +728,6 @@ RDEPEND+="
 	webgl? (
 		|| (
 			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
-			>=x11-libs/libdrm-2.4.107[${MULTILIB_USEDEP}]
 		)
 	)
 	webm-eme? (
@@ -984,14 +983,6 @@ echo "${actual_list_raw}"
 	fi
 }
 
-EXPECTED_BUILD_FINGERPRINT="\
-a672db6d235407a86a4d8de1b9ce0b573e0a859138018624682ff5e7b50d6a2c\
-881e25723ea84e11f5fc50697c8e489fda27afa090f5a1b41d65a9367483036c\
-"
-EXPECTED_BUILD_FINGERPRINT_WEBRTC="\
-ce7a0164ea0da74de32de8eeac7e541c29355542710f270c2fc6125309315194\
-2c3acd8d773264875d99304da31c28ec05e5c97ee9af6a352504fb37fa59d8c3\
-"
 src_unpack() {
 	if use libwebrtc ; then
 		EGIT_CLONE_TYPE="single"
@@ -1004,62 +995,6 @@ src_unpack() {
 	fi
 
 	_check_langs
-
-	local actual_build_fingerprint_webrtc
-	if use libwebrtc ; then
-		actual_build_fingerprint_webrtc=$(cat \
-		$(find "${S}/Source/ThirdParty/libwebrtc" \
-			\( \
-				   -name "*.cmake" \
-				-o -name "*CMakeLists.txt" \
-			\) \
-			| sort \
-		) \
-				| sha512sum \
-				| cut -f 1 -d " " \
-						)
-	fi
-
-	local actual_build_fingerprint=$(cat \
-		$(find "${S}" \
-			\( \
-				\( \
-					   -name "*.cmake" \
-					-o -name "*CMakeLists.txt" \
-				\) \
-				-not -path "*Source/ThirdParty/libwebrtc/*" \
-			\) \
-			| sort \
-		) \
-				| sha512sum \
-				| cut -f 1 -d " " \
-					)
-
-	if [[ "${actual_build_fingerprint}" != "${EXPECTED_BUILD_FINGERPRINT}" ]] ; then
-eerror
-eerror "Detected build files update"
-eerror
-eerror "Actual build files fingerprint:\t${actual_build_fingerprint}"
-eerror "Expected build files fingerprint:\t${EXPECTED_BUILD_FINGERPRINT}"
-eerror
-eerror "QA:  Update IUSE, *DEPENDS, options, KEYWORDS, patches"
-eerror
-		die
-	fi
-
-	return
-
-	if use libwebrtc && [[ "${actual_build_fingerprint_webrtc}" != "${EXPECTED_BUILD_FINGERPRINT_WEBRTC}" ]] ; then
-eerror
-eerror "Detected build files update for WebRTC"
-eerror
-eerror "Actual build files fingerprint:\t${actual_build_fingerprint_webrtc}"
-eerror "Expected build files fingerprint:\t${EXPECTED_BUILD_FINGERPRINT_WEBRTC}"
-eerror
-eerror "QA:  Update IUSE, *DEPENDS, options, KEYWORDS, patches"
-eerror
-#		die
-	fi
 }
 
 src_prepare() {
@@ -1207,7 +1142,7 @@ eerror
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=ON
+		-DUSE_SOUP2=OFF
 		-DUSE_WOFF2=$(usex woff2)
 		$(cmake_use_find_package gles2 OpenGLES2)
 		$(cmake_use_find_package opengl OpenGL)
