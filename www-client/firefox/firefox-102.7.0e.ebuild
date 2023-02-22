@@ -1671,23 +1671,7 @@ ewarn "Use GCC >= 11.3 or Clang to prevent this bug."
 ewarn
 	fi
 
-	# Additional ARCH support
-	case "${ARCH}" in
-		arm)
-			# Reduce the memory requirements for linking
-			if tc-is-clang ; then
-				# Nothing to do
-				:;
-			elif [[ "${LTO_TYPE}" == "bfdlto" ]] ; then
-				append-ldflags \
-					-Wl,--no-keep-memory \
-					-Wl,--reduce-memory-overheads
-			elif [[ "${LTO_TYPE}" == "goldlto" ]] ; then
-				append-ldflags \
-					-Wl,--no-keep-memory
-			fi
-			;;
-	esac
+	# Use the O(1) algorithm linker algorithm and add more swap instead.
 
 	if ! use elibc_glibc ; then
 		mozconfig_add_options_ac '!elibc_glibc' --disable-jemalloc
