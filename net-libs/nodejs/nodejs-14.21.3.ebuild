@@ -416,6 +416,10 @@ _src_configure() {
 	[[ "${LTO_TYPE}" =~ "goldlto" ]] && myconf+=( --with-goldlto )
 	[[ "${LTO_TYPE}" =~ "moldlto" ]] && myconf+=( --with-moldlto )
 
+	if tc-is-gcc && [[ "${LTO_TYPE}" =~ "moldlto" ]] ; then
+ewarn "If moldlto fails for gcc, try clang."
+	fi
+
 	# LTO compiler flags are handled by configure.py itself
 	filter-flags '-flto*' \
 		'-fuse-ld*' \
