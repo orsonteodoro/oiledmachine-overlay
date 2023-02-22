@@ -1059,7 +1059,7 @@ src_prepare() {
 	# Drop linker flags that may break mold, etc.
 	sed -i -e "/-Wl,--no-keep-memory/d" "Source/cmake/WebKitCompilerFlags.cmake" || die
 ewarn
-ewarn "Try adding -Wl,--no-keep-memory to per-package LDFLAGS if out of memory (OOM)."
+ewarn "Try adding -Wl,--no-keep-memory to per-package LDFLAGS if out of memory (OOM)"
 ewarn "or adding additional swap space.  The latter is more efficient."
 ewarn
 
