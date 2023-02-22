@@ -1672,6 +1672,9 @@ ewarn
 	fi
 
 	# Use the O(1) algorithm linker algorithm and add more swap instead.
+ewarn
+ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
+ewarn
 
 	if ! use elibc_glibc ; then
 		mozconfig_add_options_ac '!elibc_glibc' --disable-jemalloc
