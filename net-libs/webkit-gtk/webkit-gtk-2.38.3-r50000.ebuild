@@ -1108,10 +1108,7 @@ _src_configure() {
 		append-ldflags "-Wl,--no-keep-memory"
 	fi
 
-	# We try to use gold when possible for this package
-#	if ! tc-ld-is-gold ; then
-#		append-ldflags "-Wl,--reduce-memory-overheads"
-#	fi
+	# Add more swap if linker OOMs computer.
 
 	# Multiple rendering bugs on youtube, github, etc without this, bug #547224
 	append-flags $(test-flags -fno-strict-aliasing)
