@@ -1099,12 +1099,6 @@ _src_configure() {
 	# https://bugs.webkit.org/show_bug.cgi?id=42070 , #301634
 	use ppc64 && append-flags "-mminimal-toc"
 
-	# Try to use less memory, bug #469942 (see Fedora .spec for reference)
-	# --no-keep-memory doesn't work on ia64, bug #502492
-	if ! use ia64; then
-		append-ldflags "-Wl,--no-keep-memory"
-	fi
-
 	# Add more swap if linker OOMs computer.
 
 	# Multiple rendering bugs on youtube, github, etc without this, bug #547224
