@@ -42,12 +42,6 @@ SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
 "
-#
-# Some assets encoded by proprietary-codecs (mp3, aac, h264) are found in both
-#   ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
-#   ${PN}-${MTD_V}-media-test-data.tar.gz
-# but shouldn't be necessary to use the USE flag.
-#
 RESTRICT="mirror"
 
 #
@@ -1588,10 +1582,6 @@ ceapply() {
 
 src_unpack() {
 	for a in ${A} ; do
-		[[ "${a}" == "${PN}-${MTD_V}-media-test-data.tar.gz" ]] \
-			&& continue
-		[[ "${a}" == "${PN}-${CTDM_V}-chrome-test-data-media.tar.gz" ]] \
-			&& continue
 		unpack ${a}
 	done
 }
