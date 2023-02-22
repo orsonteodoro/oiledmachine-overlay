@@ -909,6 +909,8 @@ ewarn
 	fi
 
 	if use openmp ; then
+einfo "CC:\t\t\t${CC}"
+einfo "CXX:\t\t\t${CXX}"
 		tc-check-openmp
 	fi
 
