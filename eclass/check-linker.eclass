@@ -35,6 +35,11 @@ check-linker_get_lto_type() {
 	local s=$(clang-major-version)
 	if ! is-flagq '-flto*' ; then
 		echo "none"
+	elif ( tc-is-clang || tc-is-gcc ) \
+		&& is-flagq '-flto' \
+		&& test-flag '-flto' \
+		&& test-flag-CCLD '-fuse-ld=mold' ; then
+		echo "moldlto"
 	elif tc-is-clang \
 		&& _is_lld \
 		&& is-flagq '-flto=thin' \
