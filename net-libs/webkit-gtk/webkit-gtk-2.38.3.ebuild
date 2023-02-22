@@ -900,8 +900,11 @@ ewarn
 	fi
 
 	if use openmp ; then
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
 einfo "CC:\t\t\t${CC}"
 einfo "CXX:\t\t\t${CXX}"
+		${CC} --version
 		tc-check-openmp
 	fi
 

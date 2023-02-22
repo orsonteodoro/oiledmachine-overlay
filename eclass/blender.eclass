@@ -235,6 +235,12 @@ get_dest() {
 }
 
 blender_check_requirements() {
+	# tc-check-openmp does not print slot/version details.
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+einfo "CC:\t\t${CC}"
+einfo "CXX:\t\t${CXX}"
+	${CC} --version
 	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
 
 	if use doc; then

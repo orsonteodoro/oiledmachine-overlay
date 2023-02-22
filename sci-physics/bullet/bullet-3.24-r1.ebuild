@@ -323,14 +323,9 @@ DOCS=( AUTHORS.txt LICENSE.txt README.md )
 RESTRICT="mirror test"
 S="${WORKDIR}/${PN}3-${PV}"
 
-pkg_pretend() {
-	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
-}
-
 pkg_setup() {
 	use ebolt && ewarn "The ebolt USE flag may not generate a BOLT profile."
 	use bolt && ewarn "The bolt USE flag may not generate a BOLT profile."
-	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
 einfo
 einfo "To hard unmask the USE=tbb add the following line to"
 einfo "/etc/portage/profile/package.use.mask:"
@@ -352,6 +347,13 @@ src_prepare() {
 }
 
 _src_configure() {
+	# The tc-check-openmp does not print slot/version details
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+einfo "CC:\t\t${CC}"
+einfo "CXX:\t\t${CXX}"
+	${CC} --version
+	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 	uopts_src_configure

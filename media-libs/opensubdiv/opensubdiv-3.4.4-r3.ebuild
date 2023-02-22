@@ -62,14 +62,6 @@ PATCHES_=(
 
 RESTRICT="!test? ( test )"
 
-pkg_pretend() {
-	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
-}
-
-pkg_setup() {
-	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
-}
-
 src_prepare() {
 	eapply ${PATCHES_[@]}
 	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
@@ -80,6 +72,14 @@ src_prepare() {
 }
 
 src_configure() {
+	# The tc-check-openmp does not print slot information.
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+einfo "CC:\t\t${CC}"
+einfo "CXX:\t\t${CXX}"
+	${CC} --version
+	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
+
 	# GLTESTS are disabled as portage is unable to open a display during test phase
 	local mycmakeargs=(
 		-DGLEW_LOCATION="${EPREFIX}/usr/$(get_libdir)"
