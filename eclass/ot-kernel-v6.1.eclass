@@ -38,7 +38,7 @@ CLANG_PGO_KV="5.13.0_rc2"
 PATCH_CLANG_PGO_COMMIT_A_PARENT="fca41af18e10318e4de090db47d9fa7169e1bf2f"
 PATCH_CLANG_PGO_COMMIT_A="3bc68891829b776b9a5dd9174de05e69138af7b6" # oldest exclusive
 PATCH_CLANG_PGO_COMMIT_D="a15058eaefffc37c31326b59fa08b267b2def603" # descendant / newest
-PATCH_KCP_COMMIT="" # from zen repo
+PATCH_KCP_COMMIT="b88b54d2df7b41ba362df4bf6df7c69536b5bda0" # from zen repo
 PATCH_MULTIGEN_LRU_COMMIT_A_PARENT=""
 PATCH_MULTIGEN_LRU_COMMIT_A="" # ancestor / oldest
 PATCH_MULTIGEN_LRU_COMMIT_D="" # descendant / newest
@@ -203,6 +203,7 @@ tresor_x86_64-256-bit-key-support uksm zen-multigen_lru zen-sauce zen-sauce-all
 
 # Not ready yet
 REQUIRED_USE+="
+	!cfi
 	!uksm
 	!multigen_lru
 	!zen-multigen_lru

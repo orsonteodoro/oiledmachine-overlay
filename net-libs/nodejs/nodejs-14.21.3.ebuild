@@ -144,7 +144,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-14.18.2-jinja_collections_abc.patch
 	"${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
 	"${FILESDIR}"/${PN}-14.15.0-fix_ppc64_crashes.patch
-	"${FILESDIR}"/${PN}-14.19.1-use-thinlto.patch
+	"${FILESDIR}"/${PN}-14.19.1-lto-update.patch
 	"${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch
 	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
 )
@@ -414,6 +414,7 @@ _src_configure() {
 	[[ "${LTO_TYPE}" =~ "lto" ]] && myconf+=( --enable-lto )
 	[[ "${LTO_TYPE}" =~ "thinlto" ]] && myconf+=( --with-thinlto )
 	[[ "${LTO_TYPE}" =~ "goldlto" ]] && myconf+=( --with-goldlto )
+	[[ "${LTO_TYPE}" =~ "moldlto" ]] && myconf+=( --with-moldlto )
 
 	# LTO compiler flags are handled by configure.py itself
 	filter-flags '-flto*' \

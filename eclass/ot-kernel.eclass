@@ -997,13 +997,11 @@ verify_clang_compiler_updated() {
 		"sys-devel/clang-15.0.5" \
 		"sys-devel/clang-15.0.6" \
 		"sys-devel/clang-15.0.7" \
-		"sys-devel/clang-16.0.0_pre20221210" \
-		"sys-devel/clang-16.0.0_pre20221217" \
-		"sys-devel/clang-16.0.0_pre20230107" \
-		"sys-devel/clang-16.0.0_pre20230127" \
 		"sys-devel/clang-16.0.0_rc1" \
+		"sys-devel/clang-16.0.0_rc2" \
 		"sys-devel/clang-16.0.0.9999" \
-		"sys-devel/clang-17.0.0_pre20230203" \
+		"sys-devel/clang-17.0.0_pre20230211" \
+		"sys-devel/clang-17.0.0_pre20230218" \
 		"sys-devel/clang-17.0.0.9999" \
 	; do
 		if ot-kernel_has_version "=${p}*" ; then
@@ -1063,13 +1061,11 @@ einfo "Verifying profraw version compatibility"
 		"15.0.5" \
 		"15.0.6" \
 		"15.0.7" \
-		"16.0.0_pre20221210" \
-		"16.0.0_pre20221217" \
-		"16.0.0_pre20230107" \
-		"16.0.0_pre20230127" \
 		"16.0.0_rc1" \
+		"16.0.0_rc2" \
 		"16.0.0.9999" \
-		"17.0.0.9999_pre20230203" \
+		"17.0.0.9999_pre20230211" \
+		"17.0.0.9999_pre20230218" \
 		"17.0.0.9999" \
 	; do
 		(! ot-kernel_has_version "~sys-devel/llvm-${v}" ) && continue

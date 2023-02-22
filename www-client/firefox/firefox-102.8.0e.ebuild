@@ -22,13 +22,15 @@ curl -l http://ftp.mozilla.org/pub/firefox/releases/ \
 	| grep "^[0-9]" \
 	| sort -V
 '
+unset __
 
 # Version announcements can be found here also:
 # https://wiki.mozilla.org/Release_Management/Calendar
 
-FIREFOX_PATCHSET="firefox-102esr-patches-07j.tar.xz"
+FIREFOX_PATCHSET="firefox-102esr-patches-09j.tar.xz"
 
-LLVM_MAX_SLOT=13 # >= 14 causes build time failures with atomics
+LLVM_SLOTS=(14)
+LLVM_MAX_SLOT=14
 
 PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -263,13 +265,43 @@ REQUIRED_USE="
 	vaapi? ( wayland )
 	wayland? ( X dbus )
 	wifi? ( dbus )
+	|| ( alsa pulseaudio )
 "
 
 # Firefox-only REQUIRED_USE flags
 REQUIRED_USE+=" pgo? ( X )"
 REQUIRED_USE+=" screencast? ( wayland )"
 
-LLVM_SLOTS=(14 13)
+# For dependencies, see also
+# https://firefox-source-docs.mozilla.org/setup/linux_build.html
+# https://www.mozilla.org/en-US/firefox/102.8.0/system-requirements/
+# /var/tmp/portage/www-client/firefox-102.8.0e/work/firefox-102.8.0/taskcluster/ci/fetch/toolchains.yml
+# /var/tmp/portage/www-client/firefox-102.8.0e/work/firefox-102.8.0/taskcluster/ci/packages/
+# /var/tmp/portage/www-client/firefox-102.8.0e/work/firefox-102.8.0/taskcluster/ci/toolchain/
+__='
+# Scan with also:
+SRC="${S}"
+grep -F \
+	-e ">=" \
+	-e "dependency(" \
+	-e "find_library" \
+	-e "find_package" \
+	-e "find_program" \
+	-e "ExternalProject" \
+	-e "PKG_CHECK_MODULES" \
+	-e "pkg_check_modules"  \
+	-e "REQUIRED" \
+	$(find "${SRC}" \
+		-name "*.cmake" \
+		-o -name "*.mozbuild" \
+		-o -name "*configure*" \
+		-o -name "*meson*" \
+		-o -name "moz.build" \
+		-o -name "moz.configure" \
+		-o -name "CMakeLists.txt" \
+	)
+'
+unset __
 
 gen_llvm_bdepends() {
 	local o=""
@@ -354,8 +386,8 @@ CDEPEND="
 	libproxy? ( net-libs/libproxy[${MULTILIB_USEDEP}] )
 	pulseaudio? (
 		|| (
-			media-sound/pulseaudio
-			>=media-sound/apulse-0.1.12-r4
+			media-sound/pulseaudio[${MULTILIB_USEDEP}]
+			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP}]
 		)
 	)
 	sndio? ( >=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}] )
@@ -369,7 +401,7 @@ CDEPEND="
 	)
 	system-icu? ( >=dev-libs/icu-71.1:=[${MULTILIB_USEDEP}] )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1[${MULTILIB_USEDEP}] )
-	system-libevent? ( >=dev-libs/libevent-2.1.12:0=[${MULTILIB_USEDEP},threads] )
+	system-libevent? ( >=dev-libs/libevent-2.1.12:0=[${MULTILIB_USEDEP},threads(+)] )
 	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[${MULTILIB_USEDEP},postproc] )
 	system-png? ( >=media-libs/libpng-1.6.35:0=[${MULTILIB_USEDEP},apng] )
 	system-webp? ( >=media-libs/libwebp-1.1.0:0=[${MULTILIB_USEDEP}] )
@@ -899,8 +931,9 @@ einfo "To set up cross-compile for other ABIs see \`epkginfo -d firefox\` or"
 einfo "the metadata.xml"
 einfo
 
-	local jobs=$(echo "${MAKEOPTS}" | grep -P -o -e "(-j|--jobs=)\s*[0-9]+" \
-			| sed -r -e "s#(-j|--jobs=)\s*##g")
+	local jobs=$(echo "${MAKEOPTS}" \
+		| grep -P -o -e "(-j|--jobs=)\s*[0-9]+" \
+		| sed -r -e "s#(-j|--jobs=)\s*##g")
 	local cores=$(nproc)
 	if (( ${jobs} > $((${cores}/2)) )) ; then
 ewarn
@@ -1502,10 +1535,11 @@ einfo "Building without Mozilla API key ..."
 	use jack && myaudiobackends+="jack,"
 	use sndio && myaudiobackends+="sndio,"
 	use pulseaudio && myaudiobackends+="pulseaudio,"
-	! use pulseaudio && use alsa && myaudiobackends+="alsa,"
+	! use pulseaudio && myaudiobackends+="alsa,"
 
 	mozconfig_add_options_ac '--enable-audio-backends' \
-		--enable-audio-backends="${myaudiobackends:-1}"
+		--enable-audio-backends=$(echo "${myaudiobackends}" \
+			| sed -e "s|,$||g") # Cannot be empty
 
 	mozconfig_use_enable wifi necko-wifi
 
@@ -1521,11 +1555,11 @@ einfo "Building without Mozilla API key ..."
 		LTO_TYPE=$(check-linker_get_lto_type)
 	fi
 	if use pgo \
-		|| [[ "${LTO_TYPE}" =~ ("thinlto"|"bfdlto") ]] ; then
+		|| [[ "${LTO_TYPE}" =~ ("bfdlto"|"thinlto") ]] ; then
 		if tc-is-clang && [[ "${LTO_TYPE}" == "thinlto" ]] ; then
 			# Upstream only supports lld when using clang
 			mozconfig_add_options_ac \
-				"forcing ld=lld due to USE=clang and USE=lto" \
+				"forcing ld=lld" \
 				--enable-linker=lld
 
 			mozconfig_add_options_ac \
@@ -1551,11 +1585,10 @@ einfo "Building without Mozilla API key ..."
 			fi
 		fi
 	else
-		# Avoid auto-magic on linker
 		if tc-is-clang && has_version "sys-devel/lld" ; then
 			# This is upstream's default
 			mozconfig_add_options_ac \
-				"forcing ld=lld due to USE=clang" \
+				"forcing ld=lld" \
 				--enable-linker=lld
 		else
 			mozconfig_add_options_ac \
@@ -1564,8 +1597,14 @@ einfo "Building without Mozilla API key ..."
 		fi
 	fi
 
+	# Set above
+	filter-flags '-fuse-ld=*'
+
 	# LTO flag was handled via configure
 	filter-flags '-flto*'
+
+	# Filter ldflags after linker switch
+	strip-unsupported-flags
 
 	# Default upstream Oflag is -O0 in script, but -bin's default is -O3,
 	# but dav1d's FPS + image quality is only acceptable at >= -O2.
@@ -1659,7 +1698,7 @@ einfo "Building without Mozilla API key ..."
 		fi
 	fi
 
-	if (is_flagq "-O3" || is_flagq "-Ofast") \
+	if (is_flagq_last "-O3" || is_flagq_last "-Ofast") \
 		&& tc-is-gcc \
 		&& ver_test $(gcc-fullversion) -lt 11.3.0 ; then
 ewarn
@@ -2073,23 +2112,23 @@ pkg_postinst() {
 	xdg_pkg_postinst
 
 	if ! use gmp-autoupdate ; then
-elog
-elog "USE='-gmp-autoupdate' has disabled the following plugins from updating or"
-elog "installing into new profiles:"
-elog
+ewarn
+ewarn "USE='-gmp-autoupdate' has disabled the following plugins from updating or"
+ewarn "installing into new profiles:"
+ewarn
 		local plugin
 		for plugin in "${MOZ_GMP_PLUGIN_LIST[@]}" ; do
-elog "\t ${plugin}"
+ewarn "\t ${plugin}"
 		done
-elog
+ewarn
 	fi
 
 	if use pulseaudio && has_version ">=media-sound/apulse-0.1.12-r4" ; then
-elog
-elog "Apulse was detected at merge time on this system and so it will always be"
-elog "used for sound.  If you wish to use pulseaudio instead please unmerge"
-elog "media-sound/apulse."
-elog
+ewarn
+ewarn "Apulse was detected at merge time on this system and so it will always be"
+ewarn "used for sound.  If you wish to use pulseaudio instead please unmerge"
+ewarn "media-sound/apulse."
+ewarn
 	fi
 
 	local show_doh_information
@@ -2113,42 +2152,42 @@ elog
 	fi
 
 	if [[ -n "${show_doh_information}" ]] ; then
-elog
-elog "Note regarding Trusted Recursive Resolver aka DNS-over-HTTPS (DoH):"
-elog "Due to privacy concerns (encrypting DNS might be a good thing, sending"
-elog "all DNS traffic to Cloudflare by default is not a good idea and"
-elog "applications should respect OS configured settings), \"network.trr.mode\""
-elog "was set to 5 (\"Off by choice\") by default."
-elog "You can enable DNS-over-HTTPS in ${PN^}'s preferences."
-elog
+ewarn
+ewarn "Note regarding Trusted Recursive Resolver aka DNS-over-HTTPS (DoH):"
+ewarn "Due to privacy concerns (encrypting DNS might be a good thing, sending"
+ewarn "all DNS traffic to Cloudflare by default is not a good idea and"
+ewarn "applications should respect OS configured settings), \"network.trr.mode\""
+ewarn "was set to 5 (\"Off by choice\") by default."
+ewarn "You can enable DNS-over-HTTPS in ${PN^}'s preferences."
+ewarn
 	fi
 
 	# bug 713782
 	if [[ -n "${show_normandy_information}" ]] ; then
-elog
-elog "Upstream operates a service named Normandy which allows Mozilla to"
-elog "push changes for default settings or even install new add-ons remotely."
-elog "While this can be useful to address problems like 'Armagadd-on 2.0' or"
-elog "revert previous decisions to disable TLS 1.0/1.1, privacy and security"
-elog "concerns prevail, which is why we have switched off the use of this"
-elog "service by default."
-elog
-elog "To re-enable this service set"
-elog
-elog "    app.normandy.enabled=true"
-elog
-elog "in about:config."
-elog
+ewarn
+ewarn "Upstream operates a service named Normandy which allows Mozilla to"
+ewarn "push changes for default settings or even install new add-ons remotely."
+ewarn "While this can be useful to address problems like 'Armagadd-on 2.0' or"
+ewarn "revert previous decisions to disable TLS 1.0/1.1, privacy and security"
+ewarn "concerns prevail, which is why we have switched off the use of this"
+ewarn "service by default."
+ewarn
+ewarn "To re-enable this service set"
+ewarn
+ewarn "    app.normandy.enabled=true"
+ewarn
+ewarn "in about:config."
+ewarn
 	fi
 
 	if [[ -n "${show_shortcut_information}" ]] ; then
-elog
-elog "Since ${PN}-91.0 we no longer install multiple shortcuts for"
-elog "each supported display protocol.  Instead we will only install"
-elog "one generic Mozilla ${PN^} shortcut."
-elog "If you still want to be able to select between running Mozilla ${PN^}"
-elog "on X11 or Wayland, you have to re-create these shortcuts on your own."
-elog
+ewarn
+ewarn "Since ${PN}-91.0 we no longer install multiple shortcuts for"
+ewarn "each supported display protocol.  Instead we will only install"
+ewarn "one generic Mozilla ${PN^} shortcut."
+ewarn "If you still want to be able to select between running Mozilla ${PN^}"
+ewarn "on X11 or Wayland, you have to re-create these shortcuts on your own."
+ewarn
 	fi
 
 	# bug 835078
@@ -2161,16 +2200,20 @@ ewarn "https://bugs.gentoo.org/835078#c5 if Firefox crashes."
 ewarn
 	fi
 
-elog
-elog "Unfortunately Firefox-100.0 breaks compatibility with some sites using "
-elog "useragent checks. To temporarily fix this, enter about:config and modify "
-elog "network.http.useragent.forceVersion preference to \"99\"."
-elog "Or install an addon to change your useragent."
-elog
-elog "See:"
-elog
-elog "  https://support.mozilla.org/en-US/kb/difficulties-opening-or-using-website-firefox-100"
-elog
+ewarn
+ewarn "Unfortunately Firefox-100.0 breaks compatibility with some sites using"
+ewarn "useragent checks. To temporarily fix this, modify about:config with"
+ewarn
+ewarn "  network.http.useragent.forceVersion preference=\"99\","
+ewarn
+ewarn "or"
+ewarn
+ewarn "  install an addon to change your useragent."
+ewarn
+ewarn "See"
+ewarn
+ewarn "  https://support.mozilla.org/en-US/kb/difficulties-opening-or-using-website-firefox-100"
+ewarn
 
 einfo
 einfo "By default, the /usr/bin/firefox symlink is set to the last ABI"

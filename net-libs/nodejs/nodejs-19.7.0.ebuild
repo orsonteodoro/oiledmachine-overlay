@@ -141,7 +141,7 @@ SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 PATCHES=(
 	"${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
 	"${FILESDIR}"/${PN}-19.5.0-global-npm-config.patch
-	"${FILESDIR}"/${PN}-16.13.2-use-thinlto.patch
+	"${FILESDIR}"/${PN}-16.13.2-lto-update.patch
 	"${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch
 	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
 )
@@ -411,6 +411,7 @@ _src_configure() {
 	[[ "${LTO_TYPE}" =~ "lto" ]] && myconf+=( --enable-lto )
 	[[ "${LTO_TYPE}" =~ "thinlto" ]] && myconf+=( --with-thinlto )
 	[[ "${LTO_TYPE}" =~ "goldlto" ]] && myconf+=( --with-goldlto )
+	[[ "${LTO_TYPE}" =~ "moldlto" ]] && myconf+=( --with-moldlto )
 
 	# LTO compiler flags are handled by configure.py itself
 	filter-flags '-flto*' \
