@@ -121,8 +121,17 @@ LICENSE="
 	x11proto
 	ZLIB
 	widevine? ( widevine )
-	|| ( MPL-1.1 GPL-2 LGPL-2.1 )
-	|| ( ( MPL-2.0 GPL-2+ ) ( MPL-2.0 LGPL-2.1+ ) MPL-2.0 GPL-2.0+ )
+	|| (
+		MPL-1.1
+		GPL-2
+		LGPL-2.1
+	)
+	|| (
+		( MPL-2.0 GPL-2+ )
+		( MPL-2.0 LGPL-2.1+ )
+		MPL-2.0
+		GPL-2.0+
+	)
 "
 #
 # Benchmark website licenses:
@@ -324,13 +333,6 @@ r1
 #   https://clang.llvm.org/docs/ControlFlowIntegrity.html#bad-cast-checking
 #
 REQUIRED_USE+="
-	^^ (
-		${IUSE_LIBCXX[@]}
-	)
-	^^ (
-		partitionalloc
-		libcmalloc
-	)
 	!headless (
 		|| (
 			X
@@ -340,6 +342,13 @@ REQUIRED_USE+="
 	!proprietary-codecs? (
 		!system-ffmpeg
 		!vaapi
+	)
+	^^ (
+		${IUSE_LIBCXX[@]}
+	)
+	^^ (
+		partitionalloc
+		libcmalloc
 	)
 	branch-protection? (
 		arm64
@@ -357,6 +366,9 @@ REQUIRED_USE+="
 		!suid
 	)
 	official? (
+		!amd64? (
+			!cfi
+		)
 		!debug
 		!epgo
 		!system-av1
@@ -369,9 +381,6 @@ REQUIRED_USE+="
 		partitionalloc
 		pgo
 		thinlto-opt
-		!amd64? (
-			!cfi
-		)
 		amd64? (
 			cfi
 		)
@@ -397,7 +406,9 @@ REQUIRED_USE+="
 	system-libstdcxx? (
 		!cfi
 	)
-	vaapi? ( proprietary-codecs )
+	vaapi? (
+		proprietary-codecs
+	)
 	widevine? (
 		!arm64
 		!ppc64
@@ -409,8 +420,8 @@ FFMPEG_V="4.3"
 
 LIBVA_DEPEND="
 	vaapi? (
-		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		>=media-libs/libva-${LIBVA_V}:=[${MULTILIB_USEDEP},X?,drm(+),wayland?]
+		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		system-ffmpeg? (
 			>=media-video/ffmpeg-${FFMPEG_V}[${MULTILIB_USEDEP},vaapi]
 		)
@@ -424,11 +435,11 @@ gen_depend_llvm() {
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		t="
-			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${s}
 			=sys-libs/compiler-rt-${s}*
+			=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			epgo? (
 				=sys-libs/compiler-rt-sanitizers-${s}*:=[${MULTILIB_USEDEP},profile]
 			)
@@ -443,143 +454,199 @@ gen_depend_llvm() {
 				)
 			)
 		"
-		o_all+=" ( ${t} ) "
+		o_all+="
+			(
+				${t}
+			)
+		"
 		(( ${s} == ${CR_CLANG_SLOT_OFFICIAL} )) && o_official=" ${t} "
 	done
 	echo -e "
-		|| ( ${o_all} )
-		official? ( ${o_official} )
+		|| (
+			${o_all}
+		)
+		official? (
+			${o_official}
+		)
 	"
 }
 
 COMMON_X_DEPEND="
+	>=x11-libs/libXi-1.6.0:=[${MULTILIB_USEDEP}]
 	x11-libs/libXcomposite:=[${MULTILIB_USEDEP}]
 	x11-libs/libXcursor:=[${MULTILIB_USEDEP}]
 	x11-libs/libXdamage:=[${MULTILIB_USEDEP}]
 	x11-libs/libXfixes:=[${MULTILIB_USEDEP}]
-	>=x11-libs/libXi-1.6.0:=[${MULTILIB_USEDEP}]
 	x11-libs/libXrandr:=[${MULTILIB_USEDEP}]
 	x11-libs/libXrender:=[${MULTILIB_USEDEP}]
-	x11-libs/libXtst:=[${MULTILIB_USEDEP}]
 	x11-libs/libxshmfence:=[${MULTILIB_USEDEP}]
+	x11-libs/libXtst:=[${MULTILIB_USEDEP}]
 "
 
 COMMON_SNAPSHOT_DEPEND="
-	system-icu? ( >=dev-libs/icu-71.1:=[${MULTILIB_USEDEP}] )
-	>=dev-libs/libxml2-2.9.4-r3:=[icu,${MULTILIB_USEDEP}]
-	dev-libs/nspr:=[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.26:=[${MULTILIB_USEDEP}]
-	system-libstdcxx? ( >=dev-libs/re2-0.2019.08.01:=[${MULTILIB_USEDEP}] )
-	dev-libs/libxslt:=[${MULTILIB_USEDEP}]
-	media-libs/fontconfig:=[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.11.0-r1:=[${MULTILIB_USEDEP}]
-	system-harfbuzz? ( >=media-libs/harfbuzz-3:0=[${MULTILIB_USEDEP},icu(-)] )
-	media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
-	system-png? ( media-libs/libpng:=[-apng,${MULTILIB_USEDEP}] )
-	>=media-libs/libwebp-0.4.0:=[${MULTILIB_USEDEP}]
-	media-libs/mesa:=[gbm(+),${MULTILIB_USEDEP}]
-	proprietary-codecs? ( >=media-libs/openh264-1.6.0:=[${MULTILIB_USEDEP}] )
-	system-av1? (
-		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP},8bit]
-		>=media-libs/libaom-3.4.0:=[${MULTILIB_USEDEP}]
-	)
-	sys-libs/zlib:=[${MULTILIB_USEDEP}]
-	x11-libs/libdrm:=[${MULTILIB_USEDEP}]
 	!headless? (
 		${LIBVA_DEPEND}
-		dev-libs/glib:2[${MULTILIB_USEDEP}]
 		>=media-libs/alsa-lib-1.0.19:=[${MULTILIB_USEDEP}]
-		pulseaudio? ( media-sound/pulseaudio:=[${MULTILIB_USEDEP}] )
+		dev-libs/glib:2[${MULTILIB_USEDEP}]
 		sys-apps/pciutils:=[${MULTILIB_USEDEP}]
-		kerberos? ( virtual/krb5[${MULTILIB_USEDEP}] )
-		vaapi? ( >=media-libs/libva-2.7:=[${MULTILIB_USEDEP},X?,wayland?] )
-		X? (
-			x11-libs/libX11:=[${MULTILIB_USEDEP}]
-			x11-libs/libXext:=[${MULTILIB_USEDEP}]
-			x11-libs/libxcb:=[${MULTILIB_USEDEP}]
-		)
 		x11-libs/libxkbcommon:=[${MULTILIB_USEDEP}]
+		kerberos? (
+			virtual/krb5[${MULTILIB_USEDEP}]
+		)
+		pulseaudio? (
+			media-sound/pulseaudio:=[${MULTILIB_USEDEP}]
+		)
+		vaapi? (
+			>=media-libs/libva-2.7:=[${MULTILIB_USEDEP},wayland?,X?]
+		)
 		wayland? (
 			dev-libs/libffi:=[${MULTILIB_USEDEP}]
 			dev-libs/wayland[${MULTILIB_USEDEP}]
-			screencast? ( media-video/pipewire:=[${MULTILIB_USEDEP}] )
+			screencast? (
+				media-video/pipewire:=[${MULTILIB_USEDEP}]
+			)
 		)
+		X? (
+			x11-libs/libX11:=[${MULTILIB_USEDEP}]
+			x11-libs/libxcb:=[${MULTILIB_USEDEP}]
+			x11-libs/libXext:=[${MULTILIB_USEDEP}]
+		)
+	)
+	>=dev-libs/libxml2-2.9.4-r3:=[${MULTILIB_USEDEP},icu]
+	>=dev-libs/nss-3.26:=[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.11.0-r1:=[${MULTILIB_USEDEP}]
+	>=media-libs/libwebp-0.4.0:=[${MULTILIB_USEDEP}]
+	dev-libs/nspr:=[${MULTILIB_USEDEP}]
+	dev-libs/libxslt:=[${MULTILIB_USEDEP}]
+	media-libs/fontconfig:=[${MULTILIB_USEDEP}]
+	media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
+	media-libs/mesa:=[gbm(+),${MULTILIB_USEDEP}]
+	sys-libs/zlib:=[${MULTILIB_USEDEP}]
+	x11-libs/libdrm:=[${MULTILIB_USEDEP}]
+	system-icu? (
+		>=dev-libs/icu-71.1:=[${MULTILIB_USEDEP}]
+	)
+	system-libstdcxx? (
+		>=dev-libs/re2-0.2019.08.01:=[${MULTILIB_USEDEP}]
+	)
+	system-harfbuzz? (
+		>=media-libs/harfbuzz-3:0=[${MULTILIB_USEDEP},icu(-)]
+	)
+	system-png? (
+		media-libs/libpng:=[-apng,${MULTILIB_USEDEP}]
+	)
+	proprietary-codecs? (
+		>=media-libs/openh264-1.6.0:=[${MULTILIB_USEDEP}]
+	)
+	system-av1? (
+		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP},8bit]
+		>=media-libs/libaom-3.4.0:=[${MULTILIB_USEDEP}]
 	)
 "
 
 # No multilib for this virtual/udev when it should be.
 VIRTUAL_UDEV="
 	|| (
+		>=sys-apps/systemd-217[${MULTILIB_USEDEP}]
 		>=sys-fs/udev-217[${MULTILIB_USEDEP}]
 		>=sys-fs/eudev-2.1.1[${MULTILIB_USEDEP}]
-		>=sys-apps/systemd-217[${MULTILIB_USEDEP}]
 	)
 "
 
 COMMON_DEPEND="
-	${COMMON_SNAPSHOT_DEPEND}
-	app-arch/bzip2:=[${MULTILIB_USEDEP}]
-	dev-libs/expat:=[${MULTILIB_USEDEP}]
-	system-ffmpeg? (
-		>=media-video/ffmpeg-${FFMPEG_V}:=[${MULTILIB_USEDEP}]
-		|| (
-			>=media-video/ffmpeg-${FFMPEG_V}[${MULTILIB_USEDEP},-samba]
-			>=net-fs/samba-4.5.10-r1[${MULTILIB_USEDEP},-debug(-)]
-		)
-		>=media-libs/opus-1.3.1:=[${MULTILIB_USEDEP}]
-	)
-	net-misc/curl[${MULTILIB_USEDEP},ssl]
-	sys-apps/dbus:=[${MULTILIB_USEDEP}]
-	media-libs/flac:=[${MULTILIB_USEDEP}]
-	sys-libs/zlib:=[${MULTILIB_USEDEP},minizip]
 	!headless? (
-		X? ( ${COMMON_X_DEPEND} )
-		>=app-accessibility/at-spi2-core-2.46.0:2
-		media-libs/mesa:=[${MULTILIB_USEDEP},X?,wayland?]
-		cups? ( >=net-print/cups-1.3.11:=[${MULTILIB_USEDEP}] )
 		${VIRTUAL_UDEV}
+		>=app-accessibility/at-spi2-core-2.46.0:2
+		media-libs/mesa:=[${MULTILIB_USEDEP},wayland?,X?]
 		x11-libs/cairo:=[${MULTILIB_USEDEP}]
 		x11-libs/gdk-pixbuf:2[${MULTILIB_USEDEP}]
 		x11-libs/pango:=[${MULTILIB_USEDEP}]
+		cups? (
+			>=net-print/cups-1.3.11:=[${MULTILIB_USEDEP}]
+		)
 		qt5? (
 			dev-qt/qtcore:5
 			dev-qt/qtwidgets:5
 		)
+		X? (
+			${COMMON_X_DEPEND}
+		)
+	)
+	${COMMON_SNAPSHOT_DEPEND}
+	app-arch/bzip2:=[${MULTILIB_USEDEP}]
+	dev-libs/expat:=[${MULTILIB_USEDEP}]
+	media-libs/flac:=[${MULTILIB_USEDEP}]
+	net-misc/curl[${MULTILIB_USEDEP},ssl]
+	sys-apps/dbus:=[${MULTILIB_USEDEP}]
+	sys-libs/zlib:=[${MULTILIB_USEDEP},minizip]
+	system-ffmpeg? (
+		>=media-video/ffmpeg-${FFMPEG_V}:=[${MULTILIB_USEDEP}]
+		>=media-libs/opus-1.3.1:=[${MULTILIB_USEDEP}]
+		|| (
+			>=media-video/ffmpeg-${FFMPEG_V}[${MULTILIB_USEDEP},-samba]
+			>=net-fs/samba-4.5.10-r1[${MULTILIB_USEDEP},-debug(-)]
+		)
 	)
 "
 CLANG_RDEPEND="
-	bundled-libcxx? ( $(gen_depend_llvm) )
-	cfi? ( $(gen_depend_llvm) )
-	official? ( $(gen_depend_llvm) )
+	bundled-libcxx? (
+		$(gen_depend_llvm)
+	)
+	cfi? (
+		$(gen_depend_llvm)
+	)
+	official? (
+		$(gen_depend_llvm)
+	)
 "
 RDEPEND="
 	${COMMON_DEPEND}
 	${CLANG_RDEPEND}
 	!headless? (
-		|| (
-			x11-libs/gtk+:3[${MULTILIB_USEDEP},X?,wayland?]
-			gui-libs/gtk:4[X?,wayland?]
+		qt5? (
+			dev-qt/qtgui:5[X?,wayland?]
 		)
-		qt5? ( dev-qt/qtgui:5[X?,wayland?] )
 		x11-misc/xdg-utils
+		|| (
+			gui-libs/gtk:4[X?,wayland?]
+			x11-libs/gtk+:3[${MULTILIB_USEDEP},X?,wayland?]
+		)
 	)
 	virtual/ttf-fonts
-	selinux? ( sec-policy/selinux-chromium )
+	selinux? (
+		sec-policy/selinux-chromium
+	)
 "
 DEPEND="
 	${COMMON_DEPEND}
 	!headless? (
-		gtk4? ( gui-libs/gtk:4[X?,wayland?] )
-		!gtk4? ( x11-libs/gtk+:3[${MULTILIB_USEDEP},X?,wayland?] )
+		!gtk4? (
+			x11-libs/gtk+:3[${MULTILIB_USEDEP},X?,wayland?]
+		)
+		gtk4? (
+			gui-libs/gtk:4[X?,wayland?]
+		)
 	)
 "
 CLANG_BDEPEND="
-	bundled-libcxx? ( $(gen_depend_llvm) )
-	cfi? ( $(gen_depend_llvm) )
-	pre-check-llvm? ( $(gen_depend_llvm) )
-	official? ( $(gen_depend_llvm) )
-	pgo? ( $(gen_depend_llvm) )
-	thinlto-opt? ( $(gen_depend_llvm) )
+	bundled-libcxx? (
+		$(gen_depend_llvm)
+	)
+	cfi? (
+		$(gen_depend_llvm)
+	)
+	official? (
+		$(gen_depend_llvm)
+	)
+	pgo? (
+		$(gen_depend_llvm)
+	)
+	pre-check-llvm? (
+		$(gen_depend_llvm)
+	)
+	thinlto-opt? (
+		$(gen_depend_llvm)
+	)
 "
 BDEPEND="
 	${CLANG_BDEPEND}
@@ -589,17 +656,21 @@ BDEPEND="
 		dev-python/setuptools[${PYTHON_USEDEP}]
 	')
 	>=app-arch/gzip-1.7
-	dev-lang/perl
 	>=dev-util/gn-0.1807
 	>=dev-util/gperf-3.0.3
 	>=dev-util/ninja-1.7.2
-	dev-vcs/git
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=net-libs/nodejs-7.6.0[inspector]
 	>=sys-devel/bison-2.4.3
+	dev-lang/perl
+	dev-vcs/git
 	sys-devel/flex[${MULTILIB_USEDEP}]
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	js-type-check? ( virtual/jre )
-	vaapi? ( media-video/libva-utils )
+	js-type-check? (
+		virtual/jre
+	)
+	vaapi? (
+		media-video/libva-utils
+	)
 "
 
 # One of the major sources of lag comes from dependencies
@@ -608,7 +679,7 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/dav1d"]="-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
 )
 
-# Upstream uses llvm:13
+# Upstream uses llvm:16
 # When CFI + PGO + official was tested, it didn't work well with LLVM12.  Error noted in
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/f0c13049dc89f068370511b4664f7fb111df2d3a/www-client/chromium/bug_notes
 # This is why LLVM13 was set as the minimum and did fix the problem.
