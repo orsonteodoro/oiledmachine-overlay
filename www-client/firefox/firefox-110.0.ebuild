@@ -395,8 +395,8 @@ CDEPEND="
 	)
 	pulseaudio? (
 		|| (
-			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP},sdk]
 			media-libs/libpulse[${MULTILIB_USEDEP}]
+			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP},sdk]
 		)
 	)
 	libproxy? (
@@ -495,8 +495,8 @@ RDEPEND+="
 	)
 	pulseaudio? (
 		|| (
-			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP}]
 			media-sound/pulseaudio[${MULTILIB_USEDEP}]
+			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP}]
 		)
 	)
 	speech? (
@@ -2236,23 +2236,23 @@ pkg_postinst() {
 	xdg_pkg_postinst
 
 	if ! use gmp-autoupdate ; then
-ewarn
-ewarn "USE='-gmp-autoupdate' has disabled the following plugins from updating or"
-ewarn "installing into new profiles:"
-ewarn
+einfo
+einfo "USE='-gmp-autoupdate' has disabled the following plugins from updating or"
+einfo "installing into new profiles:"
+einfo
 		local plugin
 		for plugin in "${MOZ_GMP_PLUGIN_LIST[@]}" ; do
-ewarn "\t ${plugin}"
+einfo "\t ${plugin}"
 		done
-ewarn
+einfo
 	fi
 
 	if use pulseaudio && has_version ">=media-sound/apulse-0.1.12-r4" ; then
-ewarn
-ewarn "Apulse was detected at merge time on this system and so it will always be"
-ewarn "used for sound.  If you wish to use pulseaudio instead please unmerge"
-ewarn "media-sound/apulse."
-ewarn
+einfo
+einfo "Apulse was detected at merge time on this system and so it will always be"
+einfo "used for sound.  If you wish to use pulseaudio instead please unmerge"
+einfo "media-sound/apulse."
+einfo
 	fi
 
 	local show_doh_information
@@ -2305,20 +2305,20 @@ ewarn
 	fi
 
 	if [[ -n "${show_shortcut_information}" ]] ; then
-ewarn
-ewarn "Since ${PN}-91.0 we no longer install multiple shortcuts for"
-ewarn "each supported display protocol.  Instead we will only install"
-ewarn "one generic Mozilla ${PN^} shortcut."
-ewarn "If you still want to be able to select between running Mozilla ${PN^}"
-ewarn "on X11 or Wayland, you have to re-create these shortcuts on your own."
-ewarn
+einfo
+einfo "Since ${PN}-91.0 we no longer install multiple shortcuts for"
+einfo "each supported display protocol.  Instead we will only install"
+einfo "one generic Mozilla ${PN^} shortcut."
+einfo "If you still want to be able to select between running Mozilla ${PN^}"
+einfo "on X11 or Wayland, you have to re-create these shortcuts on your own."
+einfo
 	fi
 
 	# bug 835078
 	if use hwaccel && has_version "x11-drivers/xf86-video-nouveau"; then
 ewarn
 ewarn "You have nouveau drivers installed in your system and 'hwaccel' enabled"
-ewarn "for Firefox. Nouveau / your GPU might not supported the required EGL, so"
+ewarn "for Firefox. Nouveau or your GPU might not support the required EGL, so"
 ewarn "either disable 'hwaccel' or try the workaround explained in"
 ewarn "https://bugs.gentoo.org/835078#c5 if Firefox crashes."
 ewarn
