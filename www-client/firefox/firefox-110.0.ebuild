@@ -254,16 +254,37 @@ sndio selinux speech +system-av1 +system-harfbuzz +system-icu +system-jpeg
 "
 
 # Firefox-only IUSE
-IUSE+=" geckodriver +gmp-autoupdate screencast +X"
+IUSE+="
+geckodriver +gmp-autoupdate screencast +X
+"
 
 REQUIRED_USE="
-	debug? ( !system-av1 )
-	libcanberra? ( || ( alsa pulseaudio ) )
-	vaapi? ( wayland )
-	wayland? ( dbus )
-	wifi? ( dbus )
-	|| ( alsa pulseaudio )
-	|| ( wayland X )
+	debug? (
+		!system-av1
+	)
+	libcanberra? (
+		|| (
+			alsa
+			pulseaudio
+		)
+	)
+	vaapi? (
+		wayland
+	)
+	wayland? (
+		dbus
+	)
+	wifi? (
+		dbus
+	)
+	|| (
+		alsa
+		pulseaudio
+	)
+	|| (
+		wayland
+		X
+	)
 "
 
 # Firefox-only REQUIRED_USE flags
