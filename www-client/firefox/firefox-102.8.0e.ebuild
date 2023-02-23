@@ -87,7 +87,11 @@ PATCH_URIS=(
 SRC_URI="
 	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
 	${PATCH_URIS[@]}
+https://github.com/mozilla/gecko-dev/commit/d4f5769a01531070eb401fd0b78bbd0ce22c4b1f.patch
+	-> ${PN}-d4f5769.patch
 "
+
+# d4f5769 - Bug 1746462 - add support for --enable-linker=mold on linux.
 
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
@@ -1069,6 +1073,8 @@ src_prepare() {
 	# it, it fails because of cbindings is 64-bit and the dependencies use
 	# the build information for 64-bit linking, which should be 32-bit.
 
+	eapply "${DISTDIR}/${PN}-d4f5769.patch"
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
@@ -1555,8 +1561,19 @@ einfo "Building without Mozilla API key ..."
 		LTO_TYPE=$(check-linker_get_lto_type)
 	fi
 	if use pgo \
-		|| [[ "${LTO_TYPE}" =~ ("bfdlto"|"thinlto") ]] ; then
-		if tc-is-clang && [[ "${LTO_TYPE}" == "thinlto" ]] ; then
+		|| [[ "${LTO_TYPE}" =~ ("bfdlto"|"moldlto"|"thinlto") ]] ; then
+		# Mold for gcc works for non-lto but for lto it is likely WIP.
+		if [[ "${LTO_TYPE}" == "moldlto" ]] ; then
+			use tc-is-gcc && ewarn "remove -fuse-ld=mold if it breaks on gcc"
+			mozconfig_add_options_ac \
+				"forcing ld=mold" \
+				--enable-linker=mold
+
+			mozconfig_add_options_ac \
+				'+lto' \
+				--enable-lto=cross
+
+		elif tc-is-clang && [[ "${LTO_TYPE}" == "thinlto" ]] ; then
 			# Upstream only supports lld when using clang
 			mozconfig_add_options_ac \
 				"forcing ld=lld" \
@@ -1585,7 +1602,11 @@ einfo "Building without Mozilla API key ..."
 			fi
 		fi
 	else
-		if tc-is-clang && has_version "sys-devel/lld" ; then
+		if is-flagq '-fuse-ld=mold' ; then
+			mozconfig_add_options_ac \
+				"forcing ld=mold" \
+				--enable-linker=mold
+		elif tc-is-clang && has_version "sys-devel/lld" ; then
 			# This is upstream's default
 			mozconfig_add_options_ac \
 				"forcing ld=lld" \
