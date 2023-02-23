@@ -322,44 +322,43 @@ gen_llvm_bdepends() {
 	done
 }
 
-BDEPEND+=" || ( $(gen_llvm_bdepends) )"
 FF_ONLY_DEPEND="
 	!www-client/firefox:0
 	!www-client/firefox:rapid
-	screencast? ( media-video/pipewire:=[${MULTILIB_USEDEP}] )
-	selinux? ( sec-policy/selinux-mozilla )
+	screencast? (
+		media-video/pipewire:=[${MULTILIB_USEDEP}]
+	)
+	selinux? (
+		sec-policy/selinux-mozilla
+	)
 "
 GAMEPAD_BDEPEND="
 	kernel_linux? (
 		sys-kernel/linux-headers
 	)
 "
-BDEPEND+="
-	${PYTHON_DEPS}
-	${GAMEPAD_BDEPEND}
-	app-arch/unzip
-	app-arch/zip
-	>=dev-util/cbindgen-0.24.3
-	net-libs/nodejs
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=virtual/rust-1.59.0[${MULTILIB_USEDEP}]
-	amd64? ( >=dev-lang/nasm-2.14 )
-	pgo? (
-		sys-devel/gettext
-		x11-base/xorg-server[xvfb]
-		x11-apps/xhost
+
+# Same as virtual/udev-217-r5 but with multilib changes.
+# Required for gamepad, or WebAuthn roaming authenticators (e.g. USB security key)
+UDEV_RDEPEND="
+	kernel_linux? (
+		|| (
+			>=sys-apps/systemd-217[${MULTILIB_USEDEP}]
+			>=sys-fs/eudev-2.1.1[${MULTILIB_USEDEP}]
+			sys-apps/systemd-utils[${MULTILIB_USEDEP},udev]
+			sys-fs/udev[${MULTILIB_USEDEP}]
+		)
 	)
-	x86? ( >=dev-lang/nasm-2.14 )
 "
 
 CDEPEND="
 	${FF_ONLY_DEPEND}
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.79.2[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.34[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.79.2[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.34[${MULTILIB_USEDEP}]
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	media-libs/fontconfig[${MULTILIB_USEDEP}]
 	media-libs/freetype[${MULTILIB_USEDEP}]
@@ -367,34 +366,28 @@ CDEPEND="
 	media-video/ffmpeg[${MULTILIB_USEDEP}]
 	sys-libs/zlib[${MULTILIB_USEDEP}]
 	virtual/freedesktop-icon-theme
-
-
 	x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
-
-
-
-
-
-
-
-
-
-
 	x11-libs/pango[${MULTILIB_USEDEP}]
 	x11-libs/pixman[${MULTILIB_USEDEP}]
 	dbus? (
 		dev-libs/dbus-glib[${MULTILIB_USEDEP}]
 		sys-apps/dbus[${MULTILIB_USEDEP}]
 	)
-	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
-	libproxy? ( net-libs/libproxy[${MULTILIB_USEDEP}] )
+	jack? (
+		virtual/jack[${MULTILIB_USEDEP}]
+	)
+	libproxy? (
+		net-libs/libproxy[${MULTILIB_USEDEP}]
+	)
 	pulseaudio? (
 		|| (
-			media-sound/pulseaudio[${MULTILIB_USEDEP}]
 			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP}]
+			media-sound/pulseaudio[${MULTILIB_USEDEP}]
 		)
 	)
-	sndio? ( >=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}] )
+	sndio? (
+		>=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}]
+	)
 	system-av1? (
 		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP},8bit]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
@@ -403,12 +396,24 @@ CDEPEND="
 		>=media-gfx/graphite2-1.3.13[${MULTILIB_USEDEP}]
 		>=media-libs/harfbuzz-2.8.1:0=[${MULTILIB_USEDEP}]
 	)
-	system-icu? ( >=dev-libs/icu-71.1:=[${MULTILIB_USEDEP}] )
-	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1[${MULTILIB_USEDEP}] )
-	system-libevent? ( >=dev-libs/libevent-2.1.12:0=[${MULTILIB_USEDEP},threads(+)] )
-	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[${MULTILIB_USEDEP},postproc] )
-	system-png? ( >=media-libs/libpng-1.6.35:0=[${MULTILIB_USEDEP},apng] )
-	system-webp? ( >=media-libs/libwebp-1.1.0:0=[${MULTILIB_USEDEP}] )
+	system-icu? (
+		>=dev-libs/icu-71.1:=[${MULTILIB_USEDEP}]
+	)
+	system-jpeg? (
+		>=media-libs/libjpeg-turbo-1.2.1[${MULTILIB_USEDEP}]
+	)
+	system-libevent? (
+		>=dev-libs/libevent-2.1.12:0=[${MULTILIB_USEDEP},threads(+)]
+	)
+	system-libvpx? (
+		>=media-libs/libvpx-1.8.2:0=[${MULTILIB_USEDEP},postproc]
+	)
+	system-png? (
+		>=media-libs/libpng-1.6.35:0=[${MULTILIB_USEDEP},apng]
+	)
+	system-webp? (
+		>=media-libs/libwebp-1.1.0:0=[${MULTILIB_USEDEP}]
+	)
 	wayland? (
 		x11-libs/gtk+:3[${MULTILIB_USEDEP},wayland]
 		x11-libs/libdrm[${MULTILIB_USEDEP}]
@@ -437,26 +442,17 @@ CDEPEND="
 	)
 "
 
-# Same as virtual/udev-217-r5 but with multilib changes.
-# Required for gamepad, or WebAuthn roaming authenticators (e.g. USB security key)
-UDEV_RDEPEND="
-	kernel_linux? (
-		|| (
-			sys-apps/systemd-utils[${MULTILIB_USEDEP},udev]
-			sys-fs/udev[${MULTILIB_USEDEP}]
-			>=sys-fs/eudev-2.1.1[${MULTILIB_USEDEP}]
-			>=sys-apps/systemd-217[${MULTILIB_USEDEP}]
-		)
-	)
-"
-
 # See also PR_LoadLibrary
 # speech-dispatcher-0.11.3 is bugged.
-RDEPEND="
+RDEPEND+="
 	${CDEPEND}
 	${UDEV_RDEPEND}
-	cups? ( net-print/cups[${MULTILIB_USEDEP}] )
-	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
+	cups? (
+		net-print/cups[${MULTILIB_USEDEP}]
+	)
+	jack? (
+		virtual/jack[${MULTILIB_USEDEP}]
+	)
 	libcanberra? (
 		!pulseaudio? (
 			alsa? (
@@ -467,12 +463,16 @@ RDEPEND="
 			media-libs/libcanberra[${MULTILIB_USEDEP},pulseaudio]
 		)
 	)
-	libsecret? ( app-crypt/libsecret[${MULTILIB_USEDEP}] )
-	openh264? ( media-libs/openh264:*[${MULTILIB_USEDEP},plugin] )
+	libsecret? (
+		app-crypt/libsecret[${MULTILIB_USEDEP}]
+	)
+	openh264? (
+		media-libs/openh264:*[${MULTILIB_USEDEP},plugin]
+	)
 	pulseaudio? (
 		|| (
-			media-sound/pulseaudio[${MULTILIB_USEDEP}]
 			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP}]
+			media-sound/pulseaudio[${MULTILIB_USEDEP}]
 		)
 	)
 	speech? (
@@ -487,30 +487,55 @@ RDEPEND="
 		)
 		pulseaudio? (
 			|| (
-				>=app-accessibility/speech-dispatcher-0.11.4[pulseaudio,espeak-ng]
-				>=app-accessibility/speech-dispatcher-0.11.4[pulseaudio,espeak]
-				>=app-accessibility/speech-dispatcher-0.11.4[pulseaudio,flite]
+				>=app-accessibility/speech-dispatcher-0.11.4[espeak-ng,pulseaudio]
+				>=app-accessibility/speech-dispatcher-0.11.4[espeak,pulseaudio]
+				>=app-accessibility/speech-dispatcher-0.11.4[flite,pulseaudio]
 			)
 		)
 	)
 	vaapi? (
-		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		media-libs/libva[${MULTILIB_USEDEP},drm(+),X?,wayland?]
+		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 	)
 "
 
-DEPEND="
+DEPEND+="
 	${CDEPEND}
 	pulseaudio? (
 		|| (
-			media-sound/pulseaudio[${MULTILIB_USEDEP}]
 			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP},sdk]
+			media-sound/pulseaudio[${MULTILIB_USEDEP}]
 		)
 	)
 	X? (
 		x11-base/xorg-proto
 		x11-libs/libICE[${MULTILIB_USEDEP}]
 		x11-libs/libSM[${MULTILIB_USEDEP}]
+	)
+"
+
+BDEPEND+="
+	${PYTHON_DEPS}
+	${GAMEPAD_BDEPEND}
+	>=dev-util/cbindgen-0.24.3
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	>=virtual/rust-1.59.0[${MULTILIB_USEDEP}]
+	app-arch/unzip
+	app-arch/zip
+	net-libs/nodejs
+	amd64? (
+		>=dev-lang/nasm-2.14
+	)
+	pgo? (
+		sys-devel/gettext
+		x11-base/xorg-server[xvfb]
+		x11-apps/xhost
+	)
+	x86? (
+		>=dev-lang/nasm-2.14
+	)
+	|| (
+		$(gen_llvm_bdepends)
 	)
 "
 
