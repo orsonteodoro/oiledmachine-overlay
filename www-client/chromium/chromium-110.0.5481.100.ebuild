@@ -711,78 +711,44 @@ _compiler_version_checks() {
 	fi
 }
 
+has_zswap() {
+# 2.1875 is the average compression ratio (or ratio of uncompressed:compressed)
+	if grep -q -e "Y" "${BROOT}/sys/module/zswap/parameters/enabled" ; then
+		return 0
+	fi
+	return 1
+}
+
+is_debug_flags() {
+	is-flagq '-g?(gdb)?([1-9])'
+}
+
 pre_build_checks() {
-
+# Check build requirements, bug #541816 and bug #471810
+	CHECKREQS_MEMORY="16G"
+	if use official ; then
 # https://github.com/chromium/chromium/blob/110.0.5481.100/docs/linux/build_instructions.md#system-requirements
-# Check build requirements, bug #541816 and bug #471810 .
-	CHECKREQS_MEMORY="4G"
-	CHECKREQS_DISK_BUILD="12G"
-	tc-is-cross-compiler && CHECKREQS_DISK_BUILD="14G"
-	if tc-is-clang ; then
-		CHECKREQS_MEMORY="9G"
-		CHECKREQS_DISK_BUILD="13G"
-		tc-is-cross-compiler && CHECKREQS_DISK_BUILD="16G"
-	fi
-	if ( shopt -s extglob; is-flagq '-g?(gdb)?([1-9])' ) ; then
-		if use custom-cflags || use component-build ; then
-			CHECKREQS_DISK_BUILD="25G"
-		fi
-		if ! use component-build ; then
-			CHECKREQS_MEMORY="16G"
-		fi
-	fi
-
-	# Assumes 2.1875 ratio (as the uncompressed:compressed ratio)
-	local has_compressed_memory=0
-	local required_total_memory=27
-	local required_total_memory_lto=16
-	if use kernel_linux \
-		&& grep -q -e "Y" "${BROOT}/sys/module/zswap/parameters/enabled" ; then
-		has_compressed_memory=1
-		required_total_memory=12 # Done with zswap
-		required_total_memory_lto=8
-	fi
-
-	local total_memory_sources=$(\
-		free --giga \
-		| tail -n +2 \
-		| sed -r -e "s|[ ]+| |g" \
-		| cut -f 2 -d " ")
-	local total_memory=0
-	for total_memory_source in ${total_memory_sources[@]} ; do
-		total_memory=$((${total_memory} + ${total_memory_source}))
-	done
-	if (( ${total_memory} < ${required_total_memory} )) ; then
-#
-# It randomly fails and a success observed with 8 GiB of total memory
-# (ram + swap) when multitasking.  It works with 16 GiB of total memory when
-# multitasking, but peak virtual memory (used + reserved) is ~10.2 GiB for
-# ld.lld.
-#
-# [43742.787803] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0,global_oom,task_memcg=/,task=ld.lld,pid=27154,uid=250
-# [43742.787817] Out of memory: Killed process 27154 (ld.lld) total-vm:10471016kB, anon-rss:2440396kB, file-rss:3180kB, shmem-rss:0kB, UID:250 pgtables:20168kB oom_score_adj:0
-# [43744.101600] oom_reaper: reaped process 27154 (ld.lld), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
-#
-ewarn
-ewarn "You may need >= ${required_total_memory} GiB of total memory to link"
-ewarn "${PN}.  Please add more swap space or enable swap compression.  You"
-ewarn "currently have ${total_memory} GiB of total memory."
-ewarn
+		CHECKREQS_DISK_BUILD="100G"
 	else
+		CHECKREQS_DISK_BUILD="25G"
+		CHECKREQS_MEMORY="16G"
+		if ! is_debug_flags ; then
+			CHECKREQS_MEMORY="12G"
+			if ! has_zswap ; then
+				tot_mem_without_zswap=$(python -c "import math ; v=${CHECKREQS_MEMORY/G}*2.1875 ; print( math.ceil(v/4) * 4 )")"G"
 einfo
-einfo "Total memory is sufficient (>= ${required_total_memory} GiB met)."
+einfo "Detected zswap off.  Total memory required:"
 einfo
+einfo "With zswap:  ${CHECKREQS_MEMORY}"
+einfo "Without zswap:  ${tot_mem_without_zswap}"
+einfo
+				CHECKREQS_MEMORY="${tot_mem_without_zswap}"
+			fi
+		fi
 	fi
 
-	if use thinlto-opt \
-		&& (( ${total_memory} <= ${required_total_memory_lto} )) ; then
-eerror
-eerror "thinlto-opt requires >= ${required_total_memory_lto} of total memory.  Add"
-eerror "more swap space or enable swap compression."
-eerror
-		die
-	fi
-
+	# This is a nice idea but doesn't help noobs.
+ewarn "Set CHECKREQS_DONOTHING=1 to bypass build requirements not met check"
 	check-reqs_pkg_setup
 }
 
