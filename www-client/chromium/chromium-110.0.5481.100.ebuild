@@ -2088,12 +2088,17 @@ einfo
 		myconf_gn+=" is_clang=false"
 	fi
 
+	# Handled by build scripts
+	filter-flags -fuse-ld=*
+
 	if tc-is-clang ; then
-		filter-flags -fuse-ld=*
 		myconf_gn+=" use_lld=true"
 	else
 		myconf_gn+=" use_lld=false"
 	fi
+
+	# Strip incompatable linker flags
+	strip-unsupported-flags
 
 	if use lto || use pgo ; then
 		AR=llvm-ar
