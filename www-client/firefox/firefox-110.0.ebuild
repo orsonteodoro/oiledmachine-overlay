@@ -595,8 +595,8 @@ einfo "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT
 	fi
 
 	if tc-is-clang ; then
-		if ! has_version -b ">=sys-devel/lld-${LLVM_SLOT}" ; then
-einfo ">=sys-devel/lld-${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+		if ! has_version -b "sys-devel/lld:${LLVM_SLOT}" ; then
+einfo "sys-devel/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
 		fi
 
@@ -882,7 +882,7 @@ eerror "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
 		llvm_pkg_setup
 
 		if tc-is-clang && is-flagq '-flto*' ; then
-			has_version "sys-devel/lld" \
+			has_version "sys-devel/lld:$(clang-major-version)" \
 				|| die "Clang PGO requires LLD."
 			local lld_pv=$(ld.lld \
 				--version 2>/dev/null \
@@ -1453,9 +1453,9 @@ einfo
 		NM=llvm-nm
 		RANLIB=llvm-ranlib
 		local clang_slot=$(clang-major-version)
-		if ! has_version ">=sys-devel/lld-${clang_slot}" ; then
+		if ! has_version "sys-devel/lld:${clang_slot}" ; then
 eerror
-eerror "You need to emerge >=sys-devel/lld-${clang_slot}"
+eerror "You need to emerge sys-devel/lld:${clang_slot}"
 eerror
 			die
 		fi
@@ -1743,7 +1743,7 @@ einfo "Building without Mozilla API key ..."
 			mozconfig_add_options_ac \
 				"forcing ld=mold" \
 				--enable-linker=mold
-		elif tc-is-clang && has_version "sys-devel/lld" ; then
+		elif tc-is-clang && has_version "sys-devel/lld:$(clang-major-version)" ; then
 	# This is upstream's default
 			mozconfig_add_options_ac \
 				"forcing ld=lld" \

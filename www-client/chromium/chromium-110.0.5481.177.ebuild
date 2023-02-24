@@ -449,8 +449,8 @@ gen_depend_llvm() {
 			)
 			=sys-libs/compiler-rt-${s}*
 			=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			>=sys-devel/lld-${s}
 			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+			sys-devel/lld:${s}
 			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			epgo? (
 				=sys-libs/compiler-rt-sanitizers-${s}*:=[${MULTILIB_USEDEP},profile]

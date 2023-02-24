@@ -32,19 +32,24 @@ ${LLVM_SLOTS[@]/#/llvm-}
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
-	^^ ( ${LLVM_SLOTS[@]/#/llvm-} )
-	^^ ( clang gcc )
+	^^ (
+		${LLVM_SLOTS[@]/#/llvm-}
+	)
+	^^ (
+		clang
+		gcc
+	)
 "
 gen_clang_depends() {
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
-		llvm-${s}? (
-			sys-devel/clang:${s}
-			sys-devel/llvm:${s}
-			=sys-devel/clang-runtime-${s}*
-			>=sys-devel/lld-${s}
-		)
+			llvm-${s}? (
+				=sys-devel/clang-runtime-${s}*
+				sys-devel/clang:${s}
+				sys-devel/llvm:${s}
+				sys-devel/lld:${s}
+			)
 		"
 	done
 }
@@ -53,9 +58,9 @@ gen_ispc_depends() {
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
-		llvm-${s}? (
-			>=dev-lang/ispc-1.15.0[llvm-${s}]
-		)
+			llvm-${s}? (
+				>=dev-lang/ispc-1.15.0[llvm-${s}]
+			)
 		"
 	done
 }
@@ -68,8 +73,8 @@ DEPEND+="
 	)
 	|| (
 		(
-			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 			!<dev-cpp/tbb-2021:0=
+			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 		)
 		>=dev-cpp/tbb-2021.1.1:${ONETBB_SLOT}=
 	)

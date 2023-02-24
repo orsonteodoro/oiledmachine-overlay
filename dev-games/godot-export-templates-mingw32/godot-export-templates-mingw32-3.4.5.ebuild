@@ -73,20 +73,51 @@ fi
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
-IUSE+=" +3d +advanced-gui camera clang +dds debug +denoise
-jit +lightmapper_cpu lld
-lto +neon +optimize-speed +opensimplex optimize-size +portable +raycast"
-IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
-+theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
+SANITIZERS=(
+	asan
+	lsan
+	msan
+	tsan
+	ubsan
+)
 
-IUSE+=" -mono" # for scripting languages
-
-IUSE+=" -gdscript gdscript_lsp +visual-script" # for scripting languages
-IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
-IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
-IUSE+=" +cvtt +freetype +pcre2 +pulseaudio" # for libraries
-SANITIZERS=" asan lsan msan tsan ubsan"
-IUSE+=" ${SANITIZERS}"
+IUSE_3D="
++3d +bullet +csg +denoise +gridmap +gltf +lightmapper_cpu +mobile-vr +raycast
++recast +vhacd +xatlas
+"
+IUSE_BUILD="
+${SANITIZERS[@]}
+clang +dds debug jit lld lto +neon +optimize-speed optimize-size +portable
+"
+IUSE_CONTAINERS_CODECS_FORMATS="
++bmp +cvtt +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
++theora +tga +vorbis +webm webm-simd +webp
+"
+IUSE_GUI="
++advanced-gui
+"
+IUSE_INPUT="
+camera
+"
+IUSE_LIBS="
++freetype +opensimplex +pcre2 +pulseaudio
+"
+IUSE_NET="
++enet +jsonrpc +mbedtls +upnp +webrtc +websocket
+"
+IUSE_SCRIPTING="
+-gdscript gdscript_lsp -mono +visual-script
+"
+IUSE+="
+	${IUSE_3D}
+	${IUSE_BUILD}
+	${IUSE_CONTAINERS_CODECS_FORMATS}
+	${IUSE_GUI}
+	${IUSE_INPUT}
+	${IUSE_LIBS}
+	${IUSE_NET}
+	${IUSE_SCRIPTING}
+"
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
 # See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
@@ -95,12 +126,25 @@ REQUIRED_USE+="
 	!clang
 	!lld
 	portable
-	denoise? ( lightmapper_cpu )
-	gdscript_lsp? ( jsonrpc websocket )
-	lld? ( clang )
-	lsan? ( asan )
-	optimize-size? ( !optimize-speed )
-	optimize-speed? ( !optimize-size )
+	denoise? (
+		lightmapper_cpu
+	)
+	gdscript_lsp? (
+		jsonrpc
+		websocket
+	)
+	lld? (
+		clang
+	)
+	lsan? (
+		asan
+	)
+	optimize-size? (
+		!optimize-speed
+	)
+	optimize-speed? (
+		!optimize-size
+	)
 	portable? (
 		!asan
 		!tsan
@@ -112,18 +156,20 @@ gen_cdepend_lto_llvm() {
 	local o=""
 	for s in ${LLVM_SLOTS[@]} ; do
 		o+="
-				(
-					sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-					sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
-					>=sys-devel/lld-${s}
-				)
+			(
+				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				sys-devel/lld:${s}
+				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+			)
 		"
 	done
 	echo -e "${o}"
 }
 
 CDEPEND_GCC_SANITIZER="
-	!clang? ( sys-devel/gcc[sanitize] )
+	!clang? (
+		sys-devel/gcc[sanitize]
+	)
 "
 gen_clang_sanitizer() {
 	local san_type="${1}"
@@ -132,10 +178,10 @@ gen_clang_sanitizer() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		o+="
 			(
-				 sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				=sys-devel/clang-runtime-${s}[${MULTILIB_USEDEP},compiler-rt,sanitize]
-				 sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 				=sys-libs/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},${san_type}]
+				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			)
 		"
 	done
@@ -143,12 +189,16 @@ gen_clang_sanitizer() {
 }
 gen_cdepend_sanitizers() {
 	local a
-	for a in ${SANITIZERS} ; do
+	for a in ${SANITIZERS[@]} ; do
 		echo "
 	${a}? (
 		|| (
 			${CDEPEND_GCC_SANITIZER}
-			clang? ( || ( $(gen_clang_sanitizer ${a}) ) )
+			clang? (
+				|| (
+					$(gen_clang_sanitizer ${a})
+				)
+			)
 		)
 	)
 
@@ -163,17 +213,19 @@ DISABLED_CDEPEND="
 "
 # All dependencies are in the project.
 DISABLED_DEPEND+="
-	${PYTHON_DEPS}
 	${CDEPEND}
+	${PYTHON_DEPS}
 	virtual/opengl[${MULTILIB_USEDEP}]
 "
 DISABLED_RDEPEND+=" ${DEPEND}"
 DISABLED_BDEPEND+="
+	lld? (
+		sys-devel/lld
+	)
 	|| (
 		${CDEPEND_CLANG}
 		${CDEPEND_GCC}
 	)
-	lld? ( sys-devel/lld )
 "
 
 CDEPEND_SANITIZER="
@@ -184,12 +236,20 @@ CDEPEND+="
 "
 CDEPEND_CLANG="
 	clang? (
-		!lto? ( sys-devel/clang[${MULTILIB_USEDEP}] )
-		lto? ( || ( $(gen_cdepend_lto_llvm) ) )
+		!lto? (
+			sys-devel/clang[${MULTILIB_USEDEP}]
+		)
+		lto? (
+			|| (
+				$(gen_cdepend_lto_llvm)
+			)
+		)
 	)
 "
 CDEPEND_GCC="
-	!clang? ( sys-devel/gcc[${MULTILIB_USEDEP}] )
+	!clang? (
+		sys-devel/gcc[${MULTILIB_USEDEP}]
+	)
 "
 
 BDEPEND+="
@@ -197,8 +257,8 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	dev-util/scons
 	mono? (
-		dev-games/godot-editor:${SLOT}[mono]
 		=dev-games/godot-mono-runtime-mingw32-$(ver_cut 1-2 ${MONO_PV})*
+		dev-games/godot-editor:${SLOT}[mono]
 	)
 	webm-simd? (
 		dev-lang/yasm

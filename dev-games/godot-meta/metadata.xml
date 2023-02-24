@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- For this ebuild only on the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -54,24 +54,45 @@
       MinGW-w64 (64-bit):  Incomplete / Work In Progress [community help is optional]
 
   </longdescription>
-    <flag name="android">Builds the export template for Android not prebuilt
-      </flag>
-    <flag name="dedicated-server">Builds a dedicated gaming Linux server</flag>
-    <flag name="demos">Installs demos</flag>
-    <flag name="headless-server">Builds a headless Linux server for editing and
-      testing</flag>
-    <flag name="ios">Builds the export template for iOS built from source</flag>
-    <flag name="ios-plugins">Builds iOS plugins</flag>
-    <flag name="javascript">Builds the export template for WASM HTML5</flag>
-    <flag name="linux32">Builds the export template for 32-bit Linux</flag>
-    <flag name="linux64">Builds the export template for 64-bit Linux</flag>
-    <flag name="macos">Builds the export template for macOS</flag>
-    <flag name="mingw32">Builds the export template for MinGW-w64 (32-bit)
-      for Wine32</flag>
-    <flag name="mingw32">Builds the export template for MinGW-w64 (64-bit)
-      for Wine64</flag>
-    <flag name="prebuilt-export-templates">Installs the prebuilt export
-      templates for all supported platforms.</flag>
+    <flag name="android">
+      Builds the export template for Android not prebuilt
+    </flag>
+    <flag name="dedicated-server">
+      Builds a dedicated gaming Linux server
+    </flag>
+    <flag name="demos">
+      Installs demos
+    </flag>
+    <flag name="headless-server">
+      Builds a headless Linux server for editing and testing
+    </flag>
+    <flag name="ios">
+      Builds the export template for iOS built from source
+    </flag>
+    <flag name="ios-plugins">
+      Builds iOS plugins
+    </flag>
+    <flag name="javascript">
+      Builds the export template for WASM HTML5
+    </flag>
+    <flag name="linux32">
+      Builds the export template for 32-bit Linux
+    </flag>
+    <flag name="linux64">
+      Builds the export template for 64-bit Linux
+    </flag>
+    <flag name="macos">
+      Builds the export template for macOS
+    </flag>
+    <flag name="mingw32">
+      Builds the export template for MinGW-w64 (32-bit) for Wine32
+    </flag>
+    <flag name="mingw32">
+      Builds the export template for MinGW-w64 (64-bit) for Wine64
+    </flag>
+    <flag name="prebuilt-export-templates">
+      Installs the prebuilt export templates for all supported platforms.
+    </flag>
   </use>
   <slots>
     <slot name="2">

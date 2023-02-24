@@ -7,8 +7,10 @@ DESCRIPTION="A package for cross building for Android with the Enigma game \
 engine"
 REVISION=0
 SLOT="0/${REVISION}"
-IUSE="box2d bullet freetype gles1 gles2 gme gtest joystick network opengl png
-sdl2 sound threads"
+IUSE="
+box2d bullet freetype gles1 gles2 gme gtest joystick network opengl png sdl2
+sound threads
+"
 REQUIRED_USE="
 	freetype
 	png
@@ -50,8 +52,8 @@ ZLIB_PV="1.2.12"
 
 RDEPEND="
 	>=dev-cpp/gtest-${GTEST_PV}
-	  dev-util/android-ndk
 	>=media-libs/glm-${GLM_PV}
+	dev-util/android-ndk
 	box2d? (
 		|| (
 			<dev-games/box2d-${BOX2D_PV_EMAX}:2.3

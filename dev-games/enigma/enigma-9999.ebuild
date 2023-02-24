@@ -47,7 +47,13 @@ xtest
 fallback-commit
 "
 REQUIRED_USE_PLATFORMS="
-	|| ( android headless macos sdl2 X )
+	|| (
+		android
+		headless
+		macos
+		sdl2
+		X
+	)
 "
 
 # Required to build but sometimes not required as an extension
@@ -60,34 +66,96 @@ REQUIRED_USE+="
 	${REQUIRED_BUILD}
 	${REQUIRED_USE_PLATFORMS}
 	android? (
-		|| ( gles2 gles3 )
+		|| (
+			gles2
+			gles3
+		)
 		sdl2
 	)
-	ds? ( wine )
-	gles2? ( sdl2 )
-	gles3? ( sdl2 )
-	gnome? ( widgets )
-	gtk2? ( widgets )
-	kde? ( widgets )
-	macos? ( sdl2 opengl )
-	mingw32? ( wine )
-	mingw64? ( wine )
-	opengl? ( || ( sdl2 X ) )
-	sdl2? ( || ( d3d gles2 gles3 opengl ) )
-	sound? (
-		|| ( ds openal sdl2 )
-		android? ( sdl2 )
-		macos? ( openal )
+	ds? (
+		wine
 	)
-	widgets? ( || ( gnome gtk2 kde ) )
-	wine? ( || ( d3d opengl ) )
+	gles2? (
+		sdl2
+	)
+	gles3? (
+		sdl2
+	)
+	gnome? (
+		widgets
+	)
+	gtk2? (
+		widgets
+	)
+	kde? (
+		widgets
+	)
+	macos? (
+		sdl2
+		opengl
+	)
+	mingw32? (
+		wine
+	)
+	mingw64? (
+		wine
+	)
+	opengl? (
+		|| (
+			sdl2
+			X
+		)
+	)
+	sdl2? (
+		|| (
+			d3d
+			gles2
+			gles3
+			opengl
+		)
+	)
+	sound? (
+		android? (
+			sdl2
+		)
+		macos? (
+			openal
+		)
+		|| (
+			ds
+			openal
+			sdl2
+		)
+	)
+	widgets? (
+		|| (
+			gnome
+			gtk2
+			kde
+		)
+	)
+	wine? (
+		|| (
+			d3d
+			opengl
+		)
+	)
 	X? (
 		opengl
-		widgets? ( || ( gnome kde ) )
+		widgets? (
+			|| (
+				gnome
+				kde
+			)
+		)
 		xrandr
 	)
-	xrandr? ( X )
-	xtest? ( X )
+	xrandr? (
+		X
+	)
+	xtest? (
+		X
+	)
 "
 #
 # For some list of dependencies, see
@@ -145,6 +213,25 @@ OPENGL_DEPEND="
 	>=media-libs/glm-${GLM_PV}
 	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
 "
+
+LLVM_SLOTS=(10 11 12 13 14 15)
+gen_clang_deps() {
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+		(
+			>=sys-libs/libcxx-${s}[${MULTILIB_USEDEP}]
+			>=sys-libs/libcxxabi-${s}[${MULTILIB_USEDEP}]
+			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+			sys-devel/lld:${s}
+			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+			test? (
+				>=dev-util/lldb-${s}
+			)
+		)
+		"
+	done
+}
+
 DEPEND+="
 	${CDEPEND}
 	>=dev-cpp/abseil-cpp-20211102.0[${MULTILIB_USEDEP}]
@@ -172,11 +259,15 @@ DEPEND+="
 			<games-engines/box2d-2.4:2.3.0[${MULTILIB_USEDEP}]
 		)
 	)
-	bullet? ( >=sci-physics/bullet-${BULLET_PV}[${MULTILIB_USEDEP}] )
+	bullet? (
+		>=sci-physics/bullet-${BULLET_PV}[${MULTILIB_USEDEP}]
+	)
 	externalfuncs? (
 		>=dev-libs/libffi-${LIBFFI_PV}[${MULTILIB_USEDEP}]
 	)
-	freetype? ( >=media-libs/freetype-${FREETYPE_PV}[${MULTILIB_USEDEP},static-libs] )
+	freetype? (
+		>=media-libs/freetype-${FREETYPE_PV}[${MULTILIB_USEDEP},static-libs]
+	)
 	gles2? (
 		${GLES_DEPEND}
 		${OPENGL_DEPEND}
@@ -185,71 +276,81 @@ DEPEND+="
 		${GLES_DEPEND}
 		${OPENGL_DEPEND}
 	)
-	gme? ( >=media-libs/game-music-emu-${GME_PV}[${MULTILIB_USEDEP}] )
-	gnome? ( >=gnome-extra/zenity-3.43.0 )
-	gtk2? ( >=x11-libs/gtk+-2.24.33:2[${MULTILIB_USEDEP}] )
+	gme? (
+		>=media-libs/game-music-emu-${GME_PV}[${MULTILIB_USEDEP}]
+	)
+	gnome? (
+		>=gnome-extra/zenity-3.43.0
+	)
+	gtk2? (
+		>=x11-libs/gtk+-2.24.33:2[${MULTILIB_USEDEP}]
+	)
 	gtest? (
 		>=dev-cpp/gtest-${GTEST_PV}[${MULTILIB_USEDEP}]
 	)
-	kde? ( >=kde-apps/kdialog-19.12.3 )
-	network? ( >=net-misc/curl-${CURL_PV}[${MULTILIB_USEDEP}] )
+	kde? (
+		>=kde-apps/kdialog-19.12.3
+	)
+	network? (
+		>=net-misc/curl-${CURL_PV}[${MULTILIB_USEDEP}]
+	)
 	openal? (
 		>=media-libs/alure-${ALURE_PV}[${MULTILIB_USEDEP},dumb,vorbis]
 		>=media-libs/dumb-2.0.3[${MULTILIB_USEDEP}]
 		>=media-libs/libvorbis-${LIBVORBIS_PV}[${MULTILIB_USEDEP}]
 		>=media-libs/openal-${OPENAL_PV}[${MULTILIB_USEDEP}]
 	)
-	opengl? ( ${OPENGL_DEPEND} )
+	opengl? (
+		${OPENGL_DEPEND}
+	)
 	png? (
 		>=media-libs/libpng-${LIBPNG_PV}[${MULTILIB_USEDEP}]
 		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 	)
 	sdl2? (
-		X? ( >=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},opengl?] )
 		>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},joystick?,sound?,threads?]
 		sound? (
 			>=media-libs/sdl2-mixer-${SDL2_MIXER_PV}[${MULTILIB_USEDEP},flac,mod,mp3,vorbis]
 		)
+		X? (
+			>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},opengl?]
+		)
 	)
 	wine? (
 		sys-devel/crossdev
-		mingw32? ( virtual/wine[abi_x86_32] )
-		mingw64? ( virtual/wine[abi_x86_64] )
+		mingw32? (
+			virtual/wine[abi_x86_32]
+		)
+		mingw64? (
+			virtual/wine[abi_x86_64]
+		)
 	)
 	X? (
 		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 		>=sys-process/procps-3.3.17[${MULTILIB_USEDEP}]
 		>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]
 		>=x11-libs/libXinerama-1.1.4[${MULTILIB_USEDEP}]
-		xrandr? ( >=x11-libs/libXrandr-1.5.2[${MULTILIB_USEDEP}] )
-		xtest? ( >=x11-libs/libXtst-1.2.3[${MULTILIB_USEDEP}] )
+		xrandr? (
+			>=x11-libs/libXrandr-1.5.2[${MULTILIB_USEDEP}]
+		)
+		xtest? (
+			>=x11-libs/libXtst-1.2.3[${MULTILIB_USEDEP}]
+		)
 	)
 "
-
-RDEPEND+=" ${DEPEND}"
-LLVM_SLOTS=(10 11 12 13 14 15)
-
-gen_clang_deps() {
-	for s in ${LLVM_SLOTS[@]} ; do
-		echo "
-		(
-			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
-			>=sys-libs/libcxx-${s}[${MULTILIB_USEDEP}]
-			>=sys-libs/libcxxabi-${s}[${MULTILIB_USEDEP}]
-			>=sys-devel/lld-${s}
-			test? ( >=dev-util/lldb-${s} )
-		)
-		"
-	done
-}
-
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	${CDEPEND}
-	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
 	>=dev-util/cmake-3.23.2
+	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
 	dev-util/patchelf
-	clang? ( || ( $(gen_clang_deps) ) )
+	clang? (
+		|| (
+			$(gen_clang_deps)
+		)
+	)
 	test? (
 		>=dev-libs/boost-${BOOST_PV}[${MULTILIB_USEDEP}]
 		>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]

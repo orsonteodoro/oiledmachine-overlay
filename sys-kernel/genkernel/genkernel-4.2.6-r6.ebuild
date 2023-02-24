@@ -195,8 +195,8 @@ gen_llvm_rdepends() {
 		echo "
 			(
 				sys-devel/clang:${s}
+				sys-devel/lld:${s}
 				sys-devel/llvm:${s}
-				>=sys-devel/lld-${s}
 			)
 		"
 	done
@@ -207,8 +207,8 @@ gen_lto_rdepends() {
 		echo "
 			(
 				sys-devel/clang:${s}
+				sys-devel/lld:${s}
 				sys-devel/llvm:${s}
-				>=sys-devel/lld-${s}
 			)
 		"
 	done
@@ -220,8 +220,8 @@ gen_cfi_arm64_rdepends() {
 			(
 				sys-devel/clang:${s}
 				=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]
+				sys-devel/lld:${s}
 				sys-devel/llvm:${s}
-				>=sys-devel/lld-${s}
 				=sys-libs/compiler-rt-${s}*
 				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
 			)
@@ -235,8 +235,8 @@ gen_cfi_x86_rdepends() {
 			(
 				sys-devel/clang:${s}
 				=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]
+				sys-devel/lld:${s}
 				sys-devel/llvm:${s}
-				>=sys-devel/lld-${s}
 				=sys-libs/compiler-rt-${s}*
 				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
 			)

@@ -113,22 +113,31 @@ SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
 IUSE+=" debug pregenerated-headers"
 
-GODOT_IOS_=(armv7 armv64 x86_64)
+GODOT_IOS_=(
+	armv7
+	armv64
+	x86_64
+)
 
 GODOT_IOS="${GODOT_IOS_[@]/#/godot_ios_}"
-IUSE+=" ${GODOT_IOS}"
-
 GODOT_IOS_PLUGINS_=(apn arkit camera gamecenter icloud inappstore photo_picker)
 GODOT_IOS_PLUGINS="${GODOT_IOS_PLUGINS_[@]/#/godot_ios_plugins_}"
-IUSE+=" ${GODOT_IOS_PLUGINS}"
+IUSE+="
+	${GODOT_IOS}
+	${GODOT_IOS_PLUGINS}
+"
 # See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
 # See https://github.com/tpoechtrager/osxcross/blob/master/build.sh#L36      ; for XCODE VERSION <-> EOSXCROSS_SDK
 # See https://developer.apple.com/ios/submit/ for app store requirement
 # Some are repeated because they were shown to be in the ldd list
 REQUIRED_USE+="
 	pregenerated-headers
-	|| ( ${GODOT_IOS} )
-	|| ( ${GODOT_IOS_PLUGINS} )
+	|| (
+		${GODOT_IOS}
+	)
+	|| (
+		${GODOT_IOS_PLUGINS}
+	)
 "
 # See https://developer.apple.com/ios/submit/ for app store requirement
 APST_REQ_STORE_DATE="April 2022"
@@ -138,8 +147,6 @@ EXPECTED_XCODE_SDK_MIN_VERSION_IOS="10"
 EXPECTED_IOS_SDK_MIN_VERSION="10"
 
 # Optional
-PDEPEND+=""
-DEPEND+=""
 BDEPEND+="
 	${PYTHON_DEPS}
 	dev-util/scons

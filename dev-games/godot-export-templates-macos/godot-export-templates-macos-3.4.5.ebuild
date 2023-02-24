@@ -74,34 +74,72 @@ fi
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
-IUSE+=" +3d +advanced-gui camera +dds debug +denoise
-jit +lightmapper_cpu
-+neon +optimize-speed +opensimplex optimize-size +portable +raycast
-"
-IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
-+theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
-
-IUSE+=" -mono" # for scripting languages
-
-GODOT_OSX_=(arm64 x86_64)
-
 gen_required_use_template()
 {
 	local l=(${1})
 	for x in ${l[@]} ; do
-		echo "${x}? ( || ( ${2} ) )"
+		echo "
+			${x}? (
+				|| (
+					${2}
+				)
+			)
+		"
 	done
 }
 
-GODOT_OSX="${GODOT_OSX_[@]/#/godot_osx_}"
-IUSE+=" ${GODOT_OSX}"
+GODOT_OSX_=(
+	arm64
+	x86_64
+)
 
-IUSE+=" -gdscript gdscript_lsp +visual-script" # for scripting languages
-IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
-IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
-IUSE+=" +cvtt +freetype +pcre2 +pulseaudio" # for libraries
-SANITIZERS=" asan lsan tsan ubsan"
-IUSE+=" ${SANITIZERS}"
+GODOT_OSX="${GODOT_OSX_[@]/#/godot_osx_}"
+
+SANITIZERS=(
+	asan
+	lsan
+	tsan
+	ubsan
+)
+
+IUSE_3D="
++3d +bullet +csg +denoise +gridmap +gltf +lightmapper_cpu +mobile-vr +raycast
++recast +vhacd +xatlas
+"
+IUSE_BUILD="
+${SANITIZERS[@]}
+debug jit +neon +optimize-speed optimize-size +portable
+"
+IUSE_CONTAINERS_CODECS_FORMATS="
++bmp +dds +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
++theora +tga +vorbis +webm webm-simd +webp
+"
+IUSE_GUI="
++advanced-gui
+"
+IUSE_INPUT="
+camera
+"
+IUSE_LIBS="
++cvtt +freetype +opensimplex +pcre2 +pulseaudio
+"
+IUSE_NET="
++enet +jsonrpc +mbedtls +upnp +webrtc +websocket
+"
+IUSE_SCRIPTING="
+-gdscript gdscript_lsp -mono +visual-script
+"
+IUSE+="
+	${GODOT_OSX}
+	${IUSE_3D}
+	${IUSE_BUILD}
+	${IUSE_CONTAINERS_CODECS_FORMATS}
+	${IUSE_GUI}
+	${IUSE_INPUT}
+	${IUSE_LIBS}
+	${IUSE_NET}
+	${IUSE_SCRIPTING}
+"
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
 # See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
@@ -109,15 +147,27 @@ IUSE+=" ${SANITIZERS}"
 # Some are repeated because they were shown to be in the ldd list
 REQUIRED_USE+="
 	portable
-	denoise? ( lightmapper_cpu )
-	gdscript_lsp? ( jsonrpc websocket )
-	|| ( ${GODOT_OSX} )
-	lsan? ( asan )
-	optimize-size? ( !optimize-speed )
-	optimize-speed? ( !optimize-size )
+	denoise? (
+		lightmapper_cpu
+	)
+	gdscript_lsp? (
+		jsonrpc websocket
+	)
+	lsan? (
+		asan
+	)
+	optimize-size? (
+		!optimize-speed
+	)
+	optimize-speed? (
+		!optimize-size
+	)
 	portable? (
 		!asan
 		!tsan
+	)
+	|| (
+		${GODOT_OSX}
 	)
 "
 APST_REQ_STORE_DATE="April 2021"

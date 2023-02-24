@@ -150,9 +150,25 @@ IUSE+="
 	pgo_trainer_yt
 " # Added by the oiledmachine-overlay.
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
+EXCLUDE_SCS=(
+	alpha
+	amd64
+	arm
+	hppa
+	ia64
+	mips
+	ppc
+	ppc64
+	riscv
+	s390
+	sparc
+	x86
+)
 REQUIRED_USE+="
-	cfi? ( llvm lto )
+	cfi? (
+		llvm
+		lto
+	)
 	clang-pgo? (
 		llvm
 		|| (
@@ -166,21 +182,47 @@ REQUIRED_USE+="
 			pgo_trainer_yt
 		)
 	)
-	lto? ( llvm )
-	pgo_trainer_crypto? ( clang-pgo )
-	pgo_trainer_memory? ( clang-pgo )
-	pgo_trainer_network? ( clang-pgo )
-	pgo_trainer_p2p? ( clang-pgo )
-	pgo_trainer_webcam? ( clang-pgo )
-	pgo_trainer_xscreensaver_2d? ( clang-pgo )
-	pgo_trainer_xscreensaver_3d? ( clang-pgo )
-	pgo_trainer_yt? ( clang-pgo )
-	shadowcallstack? ( cfi )
-	steghide? ( entry )
+	lto? (
+		llvm
+	)
+	pgo_trainer_crypto? (
+		clang-pgo
+	)
+	pgo_trainer_memory? (
+		clang-pgo
+	)
+	pgo_trainer_network? (
+		clang-pgo
+	)
+	pgo_trainer_p2p? (
+		clang-pgo
+	)
+	pgo_trainer_webcam? (
+		clang-pgo
+	)
+	pgo_trainer_xscreensaver_2d? (
+		clang-pgo
+	)
+	pgo_trainer_xscreensaver_3d? (
+		clang-pgo
+	)
+	pgo_trainer_yt? (
+		clang-pgo
+	)
+	shadowcallstack? (
+		cfi
+	)
+	steghide? (
+		entry
+	)
 "
 gen_scs_exclusion() {
 	for a in ${EXCLUDE_SCS[@]} ; do
-		echo " ${a}? ( !shadowcallstack )"
+		echo "
+			${a}? (
+				!shadowcallstack
+			)
+		"
 	done
 }
 REQUIRED_USE+=" "$(gen_scs_exclusion)
@@ -207,8 +249,8 @@ gen_llvm_rdepends() {
 		echo "
 			(
 				sys-devel/clang:${s}
+				sys-devel/lld:${s}
 				sys-devel/llvm:${s}
-				>=sys-devel/lld-${s}
 			)
 		"
 	done
@@ -219,8 +261,8 @@ gen_lto_rdepends() {
 		echo "
 			(
 				sys-devel/clang:${s}
+				sys-devel/lld:${s}
 				sys-devel/llvm:${s}
-				>=sys-devel/lld-${s}
 			)
 		"
 	done
@@ -230,12 +272,12 @@ gen_cfi_arm64_rdepends() {
 	for s in ${LLVM_CFI_ARM64_SLOTS[@]} ; do
 		echo "
 			(
-				sys-devel/clang:${s}
 				=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]
-				sys-devel/llvm:${s}
-				>=sys-devel/lld-${s}
 				=sys-libs/compiler-rt-${s}*
 				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
+				sys-devel/clang:${s}
+				sys-devel/lld:${s}
+				sys-devel/llvm:${s}
 			)
 		"
 	done
@@ -245,12 +287,12 @@ gen_cfi_x86_rdepends() {
 	for s in ${LLVM_CFI_X86_SLOTS[@]} ; do
 		echo "
 			(
-				sys-devel/clang:${s}
 				=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]
-				sys-devel/llvm:${s}
-				>=sys-devel/lld-${s}
 				=sys-libs/compiler-rt-${s}*
 				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
+				sys-devel/clang:${s}
+				sys-devel/lld:${s}
+				sys-devel/llvm:${s}
 			)
 		"
 	done
@@ -261,10 +303,10 @@ gen_cfi_x86_rdepends() {
 # because genkernel will usually build things like LVM2, cryptsetup,
 # mdadm... during initramfs generation which will require these
 # things.
-DEPEND=""
-RDEPEND+=" ${PYTHON_DEPS}
-	app-arch/cpio
+RDEPEND+="
+	${PYTHON_DEPS}
 	>=app-misc/pax-utils-1.2.2
+	app-arch/cpio
 	app-portage/elt-patches
 	dev-util/gperf
 	sys-apps/sandbox
@@ -276,25 +318,50 @@ RDEPEND+=" ${PYTHON_DEPS}
 	sys-devel/flex
 	sys-devel/libtool
 	virtual/pkgconfig
-	elibc_glibc? ( sys-libs/glibc[static-libs(+)] )
-	firmware? ( sys-kernel/linux-firmware )"
+	elibc_glibc? (
+		sys-libs/glibc[static-libs(+)]
+	)
+	firmware? (
+		sys-kernel/linux-firmware
+	)
+"
 RDEPEND+="
 	cfi? (
 		amd64? (
-			llvm? ( || ( $(gen_cfi_x86_rdepends) ) )
+			llvm? (
+				|| (
+					$(gen_cfi_x86_rdepends)
+				)
+			)
 		)
 		arm64? (
-			llvm? ( || ( $(gen_cfi_arm64_rdepends) ) )
+			llvm? (
+				|| (
+					$(gen_cfi_arm64_rdepends)
+				)
+			)
 		)
 	)
 	clang-pgo? (
-		|| ( $(gen_clang_pgo_rdepends) )
-		sudo? ( app-admin/sudo )
+		|| (
+			$(gen_clang_pgo_rdepends)
+		)
+		sudo? (
+			app-admin/sudo
+		)
 	)
-	firmware? ( sys-kernel/linux-firmware )
+	firmware? (
+		sys-kernel/linux-firmware
+	)
 	llvm? (
-		|| ( $(gen_llvm_rdepends) )
-		lto? ( || ( $(gen_lto_rdepends) ) )
+		|| (
+			$(gen_llvm_rdepends)
+		)
+		lto? (
+			|| (
+				$(gen_lto_rdepends)
+			)
+		)
 	)
 	pgo_trainer_crypto? (
 		sys-fs/cryptsetup
@@ -337,8 +404,8 @@ RDEPEND+="
 		x11-misc/xscreensaver[X]
 	)
 	pgo_trainer_xscreensaver_3d? (
-		virtual/opengl
 		sys-process/procps
+		virtual/opengl
 		x11-misc/xscreensaver[X,opengl]
 	)
 "

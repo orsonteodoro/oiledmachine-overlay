@@ -97,15 +97,38 @@ IUSE+=" ibm +firmware"
 IUSE+=" crypt_root_plain"			# Added by oteodoro.
 IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
 IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
-EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 s390 sparc x86 )
+EXCLUDE_SCS=(
+	alpha
+	amd64
+	arm
+	hppa
+	ia64
+	mips
+	ppc
+	ppc64
+	s390
+	sparc
+	x86
+)
 REQUIRED_USE+="
-	cfi? ( llvm lto )
-	lto? ( llvm )
-	shadowcallstack? ( cfi )
+	cfi? (
+		llvm
+		lto
+	)
+	lto? (
+		llvm
+	)
+	shadowcallstack? (
+		cfi
+	)
 "
 gen_scs_exclusion() {
 	for a in ${EXCLUDE_SCS[@]} ; do
-		echo " ${a}? ( !shadowcallstack )"
+		echo "
+			${a}? (
+				!shadowcallstack
+			)
+		"
 	done
 }
 REQUIRED_USE+=" "$(gen_scs_exclusion)
@@ -121,8 +144,8 @@ gen_llvm_rdepends() {
 		echo "
 			(
 				sys-devel/clang:${s}
+				sys-devel/lld:${s}
 				sys-devel/llvm:${s}
-				>=sys-devel/lld-${s}
 			)
 		"
 	done
@@ -133,8 +156,8 @@ gen_lto_rdepends() {
 		echo "
 			(
 				sys-devel/clang:${s}
+				sys-devel/lld:${s}
 				sys-devel/llvm:${s}
-				>=sys-devel/lld-${s}
 			)
 		"
 	done
@@ -144,12 +167,12 @@ gen_cfi_arm64_rdepends() {
 	for s in ${LLVM_CFI_ARM64_SLOTS[@]} ; do
 		echo "
 			(
-				sys-devel/clang:${s}
 				=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]
-				sys-devel/llvm:${s}
-				>=sys-devel/lld-${s}
 				=sys-libs/compiler-rt-${s}*
 				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
+				sys-devel/clang:${s}
+				sys-devel/lld:${s}
+				sys-devel/llvm:${s}
 			)
 		"
 	done
@@ -159,12 +182,12 @@ gen_cfi_x86_rdepends() {
 	for s in ${LLVM_CFI_ARM64_SLOTS[@]} ; do
 		echo "
 			(
-				sys-devel/clang:${s}
 				=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]
-				sys-devel/llvm:${s}
-				>=sys-devel/lld-${s}
 				=sys-libs/compiler-rt-${s}*
 				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
+				sys-devel/clang:${s}
+				sys-devel/lld:${s}
+				sys-devel/llvm:${s}
 			)
 		"
 	done
@@ -175,10 +198,10 @@ gen_cfi_x86_rdepends() {
 # because genkernel will usually build things like LVM2, cryptsetup,
 # mdadm... during initramfs generation which will require these
 # things.
-DEPEND+=""
-RDEPEND+=" ${DEPEND}
-	app-arch/cpio
+RDEPEND+="
+	${DEPEND}
 	>=app-misc/pax-utils-1.2.2
+	app-arch/cpio
 	app-portage/elt-patches
 	sys-apps/sandbox
 	sys-devel/autoconf
@@ -188,16 +211,32 @@ RDEPEND+=" ${DEPEND}
 	virtual/pkgconfig
 	cfi? (
 		amd64? (
-			llvm? ( || ( $(gen_cfi_x86_rdepends) ) )
+			llvm? (
+				|| (
+					$(gen_cfi_x86_rdepends)
+				)
+			)
 		)
 		arm64? (
-			llvm? ( || ( $(gen_cfi_arm64_rdepends) ) )
+			llvm? (
+				|| (
+					$(gen_cfi_arm64_rdepends)
+				)
+			)
 		)
 	)
-	firmware? ( sys-kernel/linux-firmware )
+	firmware? (
+		sys-kernel/linux-firmware
+	)
 	llvm? (
-		|| ( $(gen_llvm_rdepends) )
-		lto? ( || ( $(gen_lto_rdepends) ) )
+		lto? (
+			|| (
+				$(gen_lto_rdepends)
+			)
+		)
+		|| (
+			$(gen_llvm_rdepends)
+		)
 	)
 "
 

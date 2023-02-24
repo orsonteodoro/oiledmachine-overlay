@@ -7,8 +7,10 @@ DESCRIPTION="A package for cross building with the MinGW-w64 (32-bit) toolchain 
 and Wine32 for the Enigma game engine"
 REVISION=0
 SLOT="0/${REVISION}"
-IUSE="box2d bullet freetype gme gtest gtk2 joystick network openal opengl png
-sdl2 sound threads"
+IUSE="
+box2d bullet freetype gme gtest gtk2 joystick network openal opengl png sdl2
+sound threads
+"
 REQUIRED_USE="
 	freetype
 	png

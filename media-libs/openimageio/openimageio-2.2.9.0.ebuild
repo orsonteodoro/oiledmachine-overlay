@@ -42,17 +42,30 @@ gen_abi_compat_required_use() {
 	local o
 	local s
 	for s in ${OPENVDB_APIS[@]} ; do
-		o+=" abi${s}-compat? ( openvdb ) "
+		o+="
+			abi${s}-compat? (
+				openvdb
+			)
+		"
 	done
 	echo "${o}"
 }
 REQUIRED_USE="
 	$(gen_abi_compat_required_use)
 	!clang
-	hdf5? ( field3d )
-	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) tbb )
-	python? ( ${PYTHON_REQUIRED_USE} )
-	tbb? ( openvdb )
+	hdf5? (
+		field3d
+	)
+	openvdb? (
+		^^ ( ${OPENVDB_APIS_[@]} )
+		tbb
+	)
+	python? (
+		${PYTHON_REQUIRED_USE}
+	)
+	tbb? (
+		openvdb
+	)
 "
 # See https://github.com/OpenImageIO/oiio/blob/Release-2.2.9.0/INSTALL.md for requirements
 QT_PV="5.6"
@@ -86,7 +99,6 @@ gen_openexr_pairs() {
 
 # Depends Oct 20, 2020
 RDEPEND+="
-	|| ( $(gen_openexr_pairs) )
 	>=dev-cpp/robin-map-0.6.2
 	>=dev-libs/boost-1.53:=
 	>=dev-libs/libfmt-7.1.3:=
@@ -94,42 +106,60 @@ RDEPEND+="
 	>=media-libs/tiff-3.9:0=
 	sys-libs/zlib:=
 	virtual/jpeg:0
-	color-management? ( >=media-libs/opencolorio-1.1:= )
-	dds? ( >=media-libs/libsquish-1.13 )
-	dicom? ( >=sci-libs/dcmtk-3.6.1 )
+	color-management? (
+		>=media-libs/opencolorio-1.1:=
+	)
+	dds? (
+		>=media-libs/libsquish-1.13
+	)
+	dicom? (
+		>=sci-libs/dcmtk-3.6.1
+	)
 	ffmpeg? (
-		>=media-video/ffmpeg-2.6:=
 		<media-video/ffmpeg-4:=
+		>=media-video/ffmpeg-2.6:=
 	)
-	field3d? ( >=media-libs/Field3D-1.7.3:= )
-	gif? ( >=media-libs/giflib-4.1:0= )
+	field3d? (
+		>=media-libs/Field3D-1.7.3:=
+	)
+	gif? (
+		>=media-libs/giflib-4.1:0=
+	)
 	heif? (
-		 >=media-libs/libheif-1.3:=
-		hdf5? ( sci-libs/hdf5 )
+		>=media-libs/libheif-1.3:=
+		hdf5? (
+			sci-libs/hdf5
+		)
 	)
-	jpeg2k? ( >=media-libs/openjpeg-2:2= )
-	opencv? ( >=media-libs/opencv-2:= )
+	jpeg2k? (
+		>=media-libs/openjpeg-2:2=
+	)
+	opencv? (
+		>=media-libs/opencv-2:=
+	)
 	opengl? (
 		media-libs/glew:=
 		virtual/glu
 		virtual/opengl
 	)
 	openvdb? (
+		$(gen_openvdb_depends)
 		tbb? (
 			|| (
 				(
-					>=dev-cpp/tbb-2018:${LEGACY_TBB_SLOT}=
-					 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 					!<dev-cpp/tbb-2021:0=
+					<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+					>=dev-cpp/tbb-2018:${LEGACY_TBB_SLOT}=
 				)
 				(
 					>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
 				)
 			)
 		)
-		$(gen_openvdb_depends)
 	)
-	png? ( media-libs/libpng:0= )
+	png? (
+		media-libs/libpng:0=
+	)
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
@@ -146,15 +176,32 @@ RDEPEND+="
 		>=dev-qt/qtcore-${QT_PV}:5
 		>=dev-qt/qtgui-${QT_PV}:5
 		>=dev-qt/qtwidgets-${QT_PV}:5
-		opengl? ( >=dev-qt/qtopengl-${QT_PV}:5 )
+		opengl? (
+			>=dev-qt/qtopengl-${QT_PV}:5
+		)
 	)
-	raw? ( !cxx17? ( >=media-libs/libraw-0.15:=
-			  <media-libs/libraw-0.20:= )
-		cxx17? ( >=media-libs/libraw-0.20:= ) )
-	truetype? ( media-libs/freetype:2= )
-	webp? ( >=media-libs/libwebp-0.6.1:= )
+	raw? (
+		!cxx17? (
+			<media-libs/libraw-0.20:=
+			>=media-libs/libraw-0.15:=
+		)
+		cxx17? (
+			>=media-libs/libraw-0.20:=
+		)
+	)
+	truetype? (
+		media-libs/freetype:2=
+	)
+	webp? (
+		>=media-libs/libwebp-0.6.1:=
+	)
+	|| (
+		$(gen_openexr_pairs)
+	)
 "
-DEPEND+=" ${RDEPEND}"
+DEPEND+="
+	${RDEPEND}
+"
 gen_bdepend_clang() {
 	local o=""
 	local s
@@ -162,25 +209,24 @@ gen_bdepend_clang() {
 		o+="
 		(
 			sys-devel/clang:${s}
+			sys-devel/lld:${s}
 			sys-devel/llvm:${s}
-			>=sys-devel/lld-${s}
 		)
-"
+		"
 	done
 	echo "${o}"
 }
-BDEPEND_CLANG=" "$(gen_bdepend_clang)
+BDEPEND_CLANG="
+	$(gen_bdepend_clang)
+"
 BDEPEND_ICC="
-		>=sys-devel/icc-13
+	>=sys-devel/icc-13
 "
 BDEPEND+="
 	>=dev-util/cmake-3.12
-	|| (
+	clang? (
 		${BDEPEND_CLANG}
-		${BDEPEND_ICC}
-		>=sys-devel/gcc-8.5
 	)
-	clang? ( ${BDEPEND_CLANG} )
 	doc? (
 		app-doc/doxygen
 		dev-texlive/texlive-bibtexextra
@@ -189,7 +235,15 @@ BDEPEND+="
 		dev-texlive/texlive-latex
 		dev-texlive/texlive-latexextra
 	)
-	icc? ( ${BDEPEND_ICC} )"
+	icc? (
+		${BDEPEND_ICC}
+	)
+	|| (
+		${BDEPEND_CLANG}
+		${BDEPEND_ICC}
+		>=sys-devel/gcc-8.5
+	)
+"
 SRC_URI="
 https://github.com/OpenImageIO/oiio/archive/Release-${PV}.tar.gz
 	-> ${P}.tar.gz

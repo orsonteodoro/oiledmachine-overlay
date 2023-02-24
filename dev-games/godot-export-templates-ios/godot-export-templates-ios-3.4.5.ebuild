@@ -91,16 +91,6 @@ fi
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
-IUSE+=" +3d +advanced-gui camera +dds debug +denoise jit +lightmapper_cpu
-lto +neon +optimize-speed +opensimplex optimize-size +portable +raycast
-"
-IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
-+theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
-
-IUSE+=" mono" # for scripting languages
-
-GODOT_IOS_=(arm armv7 armv64 arm64-sim x86 x86_64)
-
 gen_required_use_template()
 {
 	local l=(${1})
@@ -109,16 +99,68 @@ gen_required_use_template()
 	done
 }
 
-GODOT_IOS="${GODOT_IOS_[@]/#/godot_ios_}"
-IUSE+=" ${GODOT_IOS}"
+GODOT_IOS_=(
+	arm
+	armv7
+	armv64
+	arm64-sim
+	x86
+	x86_64
+)
 
-IUSE+=" -gdscript gdscript_lsp +visual-script" # for scripting languages
-IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
-IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
-IUSE+=" +cvtt +freetype +pcre2 +pulseaudio" # for libraries
-SANITIZERS=" asan lsan msan tsan ubsan"
-IUSE+=" ${SANITIZERS}"
-IUSE+=" -ios-sim +icloud +game-center +store-kit" # ios
+GODOT_IOS="${GODOT_IOS_[@]/#/godot_ios_}"
+
+SANITIZERS=(
+	asan
+	lsan
+	msan
+	tsan
+	ubsan
+)
+
+IUSE_3D="
++3d +bullet +csg +denoise +gridmap +gltf +lightmapper_cpu +mobile-vr +raycast
++recast +vhacd +xatlas
+"
+IUSE_BUILD="
+${SANITIZERS[@]}
+debug jit lto +neon +optimize-speed optimize-size +portable
+"
+IUSE_CONTAINERS_CODECS_FORMATS="
++bmp +cvtt +dds +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
++theora +tga +vorbis +webm webm-simd +webp
+"
+IUSE_GUI="
++advanced-gui
+"
+IUSE_INPUT="
+camera
+"
+IUSE_LIBS="
++freetype +opensimplex +pcre2 +pulseaudio
+"
+IUSE_NET="
++enet +jsonrpc +mbedtls +upnp +webrtc +websocket
+"
+IUSE_PLATFORM_FEATURES="
+-ios-sim +icloud +game-center +store-kit
+"
+IUSE_SCRIPTING="
+-gdscript gdscript_lsp mono +visual-script
+"
+
+IUSE+="
+	${GODOT_IOS}
+	${IUSE_3D}
+	${IUSE_BUILD}
+	${IUSE_CONTAINERS_CODECS_FORMATS}
+	${IUSE_GUI}
+	${IUSE_LIBS}
+	${IUSE_NET}
+	${IUSE_PLATFORM_FEATURES}
+	${IUSE_SCRIPTING}
+"
+
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
 # See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
@@ -128,15 +170,28 @@ IUSE+=" -ios-sim +icloud +game-center +store-kit" # ios
 REQUIRED_USE+="
 	!mono
 	portable
-	denoise? ( lightmapper_cpu )
-	gdscript_lsp? ( jsonrpc websocket )
-	|| ( ${GODOT_IOS} )
-	lsan? ( asan )
-	optimize-size? ( !optimize-speed )
-	optimize-speed? ( !optimize-size )
+	denoise? (
+		lightmapper_cpu
+	)
+	gdscript_lsp? (
+		jsonrpc
+		websocket
+	)
+	lsan? (
+		asan
+	)
+	optimize-size? (
+		!optimize-speed
+	)
+	optimize-speed? (
+		!optimize-size
+	)
 	portable? (
 		!asan
 		!tsan
+	)
+	|| (
+		${GODOT_IOS}
 	)
 "
 # See https://developer.apple.com/ios/submit/ for app store requirement

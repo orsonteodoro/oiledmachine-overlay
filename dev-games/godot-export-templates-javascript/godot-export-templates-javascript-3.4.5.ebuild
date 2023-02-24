@@ -86,37 +86,74 @@ fi
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
-# webxr, camera is enabled upstream by default
-IUSE+=" +3d +advanced-gui camera +dds debug +denoise
-+lightmapper_cpu
-+neon +optimize-speed +opensimplex optimize-size +portable +raycast
-webxr"
-IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
-+theora +tga +vorbis +webm +webp" # encoding/container formats
-
-IUSE+=" -mono" # for scripting languages
-
-GODOT_JAVASCRIPT_=(wasm32)
-
 gen_required_use_template()
 {
 	local l=(${1})
 	for x in ${l[@]} ; do
-		echo "${x}? ( || ( ${2} ) )"
+		echo "
+			${x}? (
+				|| (
+					${2}
+				)
+			)
+		"
 	done
 }
 
+GODOT_JAVASCRIPT_=(
+	wasm32
+)
 GODOT_JAVASCRIPT="${GODOT_JAVASCRIPT_[@]/#/godot_javascript_}"
-IUSE+=" ${GODOT_JAVASCRIPT}"
 
-IUSE+=" -closure-compiler -gdscript gdscript_lsp +javascript_eval
--javascript_threads -mono +visual-script" # for scripting languages
-IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
-IUSE+=" +enet +jsonrpc +upnp +webrtc +websocket" # for connections
-IUSE+=" +cvtt +freetype +pcre2 +pulseaudio" # for libraries
 # in master, sanitizers also applies to javascript
-SANITIZERS=" asan lsan msan tsan ubsan"
-IUSE+=" ${SANITIZERS}"
+SANITIZERS=(
+	asan
+	lsan
+	msan
+	tsan
+	ubsan
+)
+
+# webxr, camera is enabled upstream by default
+IUSE_3D="
++3d +bullet +csg +denoise +gridmap +gltf +lightmapper_cpu +mobile-vr +raycast
++recast +vhacd webxr +xatlas
+"
+IUSE_BUILD="
+${SANITIZERS[@]}
+debug +neon +optimize-speed optimize-size +portable
+"
+IUSE_CONTAINERS_CODECS_FORMATS="
++bmp +cvtt +dds +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
++theora +tga +vorbis +webm +webp
+"
+IUSE_GUI="
++advanced-gui
+"
+IUSE_INPUT="
+camera
+"
+IUSE_LIBS="
++freetype +opensimplex +pcre2 +pulseaudio
+"
+IUSE_NET="
++enet +jsonrpc +upnp +webrtc +websocket
+"
+IUSE_SCRIPTING="
+-closure-compiler -gdscript gdscript_lsp +javascript_eval -javascript_threads
+-mono +visual-script
+"
+IUSE+="
+	${GODOT_JAVASCRIPT}
+	${IUSE_3D}
+	${IUSE_BUILD}
+	${IUSE_CONTAINERS_CODECS_FORMATS}
+	${IUSE_GUI}
+	${IUSE_INPUT}
+	${IUSE_LIBS}
+	${IUSE_NET}
+	${IUSE_SCRIPTING}
+"
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
 # See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
@@ -124,18 +161,31 @@ IUSE+=" ${SANITIZERS}"
 # Some are repeated because they were shown to be in the ldd list
 REQUIRED_USE+="
 	portable
-	denoise? ( lightmapper_cpu )
-	gdscript_lsp? ( jsonrpc websocket )
-	|| ( ${GODOT_JAVASCRIPT} )
-	lsan? ( asan )
-	optimize-size? ( !optimize-speed )
-	optimize-speed? ( !optimize-size )
+	denoise? (
+		lightmapper_cpu
+	)
+	gdscript_lsp? (
+		jsonrpc
+		websocket
+	)
+	lsan? (
+		asan
+	)
+	optimize-size? (
+		!optimize-speed
+	)
+	optimize-speed? (
+		!optimize-size
+	)
 	portable? (
 		!asan
 		!tsan
 	)
+	|| (
+		${GODOT_JAVASCRIPT}
+	)
 "
-EMSCRIPTEN_V="2.0.10"
+EMSCRIPTEN_PV="2.0.10"
 
 LLVM_SLOTS=(14 13) # See https://github.com/godotengine/godot/blob/3.4.5-stable/misc/hooks/pre-commit-clang-format#L79
 gen_cdepend_llvm() {
@@ -143,8 +193,8 @@ gen_cdepend_llvm() {
 		echo "
 			(
 				sys-devel/clang:${s}
+				sys-devel/lld:${s}
 				sys-devel/llvm:${s}
-				>=sys-devel/lld-${s}
 			)
 		"
 	done
@@ -156,21 +206,23 @@ gen_clang_sanitizer() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
 			(
-				 sys-devel/clang:${s}
 				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
-				 sys-devel/llvm:${s}
 				=sys-libs/compiler-rt-sanitizers-${s}*[${san_type}]
+				sys-devel/clang:${s}
+				sys-devel/llvm:${s}
 			)
 		"
 	done
 }
 gen_cdepend_sanitizers() {
 	local a
-	for a in ${SANITIZERS} ; do
+	for a in ${SANITIZERS[@]} ; do
 		echo "
 			${a}? (
 				|| (
-					|| ( $(gen_clang_sanitizer ${a}) )
+					|| (
+						$(gen_clang_sanitizer ${a})
+					)
 				)
 			)
 		"
@@ -179,12 +231,14 @@ gen_cdepend_sanitizers() {
 
 CDEPEND+="
 	$(gen_cdepend_sanitizers)
-	|| ( $(gen_cdepend_llvm) )
 	!closure-compiler? (
-		>=dev-util/emscripten-${EMSCRIPTEN_V}[wasm(+)]
+		>=dev-util/emscripten-${EMSCRIPTEN_PV}[wasm(+)]
 	)
 	closure-compiler? (
-		>=dev-util/emscripten-${EMSCRIPTEN_V}[closure-compiler,closure_compiler_nodejs,wasm(+)]
+		>=dev-util/emscripten-${EMSCRIPTEN_PV}[closure-compiler,closure_compiler_nodejs,wasm(+)]
+	)
+	|| (
+		$(gen_cdepend_llvm)
 	)
 "
 
@@ -239,11 +293,11 @@ eerror
 		die
 	fi
 
-	local emcc_v=$(emcc --version | head -n 1 | grep -E -o -e "[0-9.]+")
-	local emscripten_v=$(echo "${EMSCRIPTEN}" | cut -f 2 -d "-")
-	if [[ "${emcc_v}" != "${emscripten_v}" ]] ; then
+	local emcc_pv=$(emcc --version | head -n 1 | grep -E -o -e "[0-9.]+")
+	local emscripten_pv=$(echo "${EMSCRIPTEN}" | cut -f 2 -d "-")
+	if [[ "${emcc_pv}" != "${emscripten_pv}" ]] ; then
 eerror
-eerror "EMCC_V=${emcc_v} != EMSCRIPTEN_V=${emscripten_v}.  A"
+eerror "EMCC_PV=${emcc_pv} != EMSCRIPTEN_PV=${emscripten_pv}.  A"
 eerror "\`eselect emscripten set <#>\` followed by \`source /etc/profile\`"
 eerror "are required."
 eerror

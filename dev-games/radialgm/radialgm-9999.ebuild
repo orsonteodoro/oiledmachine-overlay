@@ -40,14 +40,16 @@ DEPEND+="
 	>=dev-qt/qtmultimedia-${QT_PV}:5
 	>=dev-qt/qtprintsupport-${QT_PV}:5
 	>=dev-qt/qtwidgets-${QT_PV}:5[png]
-	dev-games/enigma:0/${ENIGMA_ABI_FINGERPRINT}
 	>=media-libs/freetype-2.12.1
 	>=media-libs/harfbuzz-4.4.1
 	>=net-dns/c-ares-1.18.1
 	>=x11-libs/qscintilla-2.13
+	dev-games/enigma:0/${ENIGMA_ABI_FINGERPRINT}
 	virtual/jpeg
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	${CDEPEND}
 	>=dev-util/cmake-3.23.2

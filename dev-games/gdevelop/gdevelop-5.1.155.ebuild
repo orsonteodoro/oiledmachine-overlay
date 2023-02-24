@@ -94,8 +94,8 @@ gen_llvm_depends() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
 		(
-			=sys-devel/lld-${s}*
 			sys-devel/clang:${s}
+			sys-devel/lld:${s}
 			sys-devel/llvm:${s}
 		)
 		"

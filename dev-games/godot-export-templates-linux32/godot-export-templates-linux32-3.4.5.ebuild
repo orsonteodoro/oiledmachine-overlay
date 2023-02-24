@@ -98,39 +98,83 @@ fi
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
-IUSE+=" +3d +advanced-gui camera clang +dds debug +denoise
-jit +lightmapper_cpu lld
-lto +neon +optimize-speed +opensimplex optimize-size portable +raycast
+SANITIZERS=(
+	asan
+	lsan
+	msan
+	tsan
+	ubsan
+)
+
+IUSE_3D="
++3d +bullet +csg +denoise +gridmap +gltf +lightmapper_cpu +mobile-vr +raycast
++recast +vhacd +xatlas
 "
-IUSE+=" ca-certs-relax"
-IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
-+theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
-
-IUSE+=" -mono" # for scripting languages
-
-IUSE+=" -gdscript gdscript_lsp +mono +visual-script" # for scripting languages
-IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
-IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
-IUSE+=" -gamepad +touch" # for input
-IUSE+=" +cvtt +freetype +pcre2 +pulseaudio" # for libraries
-IUSE+=" system-bullet system-embree system-enet system-freetype system-libogg
+IUSE_BUILD="
+${SANITIZERS[@]}
+clang debug jit lld lto +neon +optimize-speed optimize-size portable
+"
+IUSE_CONTAINERS_CODECS_FORMATS="
++bmp +cvtt +dds +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
++theora +tga +vorbis +webm webm-simd +webp
+"
+IUSE_GUI="
++advanced-gui
+"
+IUSE_INPUT="
+camera -gamepad +touch
+"
+IUSE_LIBS="
++freetype +opensimplex +pcre2 +pulseaudio
+"
+IUSE_NET="
+ca-certs-relax +enet +jsonrpc +mbedtls +upnp +webrtc +websocket
+"
+IUSE_SCRIPTING="
+-gdscript gdscript_lsp +mono +visual-script
+"
+IUSE_SYSTEM="
+system-bullet system-embree system-enet system-freetype system-libogg
 system-libpng system-libtheora system-libvorbis system-libvpx system-libwebp
 system-libwebsockets system-mbedtls system-miniupnpc system-mono system-opus
 system-pcre2 system-recast system-squish system-wslay system-xatlas
-system-zlib system-zstd"
-SANITIZERS=" asan lsan msan tsan ubsan"
-IUSE+=" ${SANITIZERS}"
+system-zlib system-zstd
+"
+IUSE+="
+	${IUSE_GUI}
+	${IUSE_BUILD}
+	${IUSE_CONTAINERS_CODECS_FORMATS}
+	${IUSE_SCRIPTING}
+	${IUSE_3D}
+	${IUSE_NET}
+	${IUSE_INPUT}
+	${IUSE_LIBS}
+	${IUSE_SYSTEM}
+"
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
 # See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
 # Some are repeated because they were shown to be in the ldd list
 REQUIRED_USE+="
-	denoise? ( lightmapper_cpu )
-	gdscript_lsp? ( jsonrpc websocket )
-	lld? ( clang )
-	lsan? ( asan )
-	optimize-size? ( !optimize-speed )
-	optimize-speed? ( !optimize-size )
+	denoise? (
+		lightmapper_cpu
+	)
+	gdscript_lsp? (
+		jsonrpc
+		websocket
+	)
+	lld? (
+		clang
+	)
+	lsan? (
+		asan
+	)
+	optimize-size? (
+		!optimize-speed
+	)
+	optimize-speed? (
+		!optimize-size
+	)
 	portable? (
 		!asan
 		!system-bullet
@@ -156,23 +200,27 @@ REQUIRED_USE+="
 		!system-zstd
 		!tsan
 	)
-	riscv? ( mono? ( system-mono ) )
+	riscv? (
+		mono? (
+			system-mono
+		)
+	)
 "
-FREETYPE_V="2.10.4"
-LIBOGG_V="1.3.5"
-LIBVORBIS_V="1.3.7"
-ZLIB_V="1.2.11"
+FREETYPE_PV="2.10.4"
+LIBOGG_PV="1.3.5"
+LIBVORBIS_PV="1.3.7"
+ZLIB_PV="1.2.11"
 
 LLVM_SLOTS=(14 13) # See https://github.com/godotengine/godot/blob/3.4.5-stable/misc/hooks/pre-commit-clang-format#L79
 gen_cdepend_lto_llvm() {
 	local o=""
 	for s in ${LLVM_SLOTS[@]} ; do
 		o+="
-				(
-					sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-					sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
-					>=sys-devel/lld-${s}
-				)
+			(
+				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				sys-devel/lld:${s}
+				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+			)
 		"
 	done
 	echo -e "${o}"
@@ -188,10 +236,10 @@ gen_clang_sanitizer() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		o+="
 			(
-				 sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				=sys-devel/clang-runtime-${s}[${MULTILIB_USEDEP},compiler-rt,sanitize]
-				 sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 				=sys-libs/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},${san_type}]
+				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			)
 		"
 	done
@@ -199,12 +247,16 @@ gen_clang_sanitizer() {
 }
 gen_cdepend_sanitizers() {
 	local a
-	for a in ${SANITIZERS} ; do
+	for a in ${SANITIZERS[@]} ; do
 		echo "
 	${a}? (
 		|| (
 			${CDEPEND_GCC_SANITIZER}
-			clang? ( || ( $(gen_clang_sanitizer ${a}) ) )
+			clang? (
+				|| (
+					$(gen_clang_sanitizer ${a})
+				)
+			)
 		)
 	)
 
@@ -218,10 +270,10 @@ CDEPEND_SANITIZER="
 CDEPEND+="
 	${CDEPEND_SANITIZER}
 	mono? (
-		dev-games/godot-editor:${SLOT}[mono]
 		!system-mono? (
 			=dev-games/godot-mono-runtime-linux-x86-$(ver_cut 1-2 ${MONO_PV})*
 		)
+		dev-games/godot-editor:${SLOT}[mono]
 		system-mono? (
 			=dev-games/godot-mono-runtime-linux-x86-$(ver_cut 1-2 ${MONO_PV})*
 		)
@@ -229,30 +281,38 @@ CDEPEND+="
 "
 CDEPEND_CLANG="
 	clang? (
-		!lto? ( sys-devel/clang[${MULTILIB_USEDEP}] )
-		lto? ( || ( $(gen_cdepend_lto_llvm) ) )
+		!lto? (
+			sys-devel/clang[${MULTILIB_USEDEP}]
+		)
+		lto? (
+			|| (
+				$(gen_cdepend_lto_llvm)
+			)
+		)
 	)
 "
 CDEPEND_GCC="
-	!clang? ( sys-devel/gcc[${MULTILIB_USEDEP}] )
+	!clang? (
+		sys-devel/gcc[${MULTILIB_USEDEP}]
+	)
 "
 DEPEND+="
-	${PYTHON_DEPS}
 	${CDEPEND}
+	${PYTHON_DEPS}
+        >=media-libs/freetype-${FREETYPE_PV}[${MULTILIB_USEDEP}]
+	>=media-libs/libogg-${LIBOGG_PV}[${MULTILIB_USEDEP}]
+	>=media-libs/libvorbis-${LIBVORBIS_PV}[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 	app-arch/bzip2[${MULTILIB_USEDEP}]
 	dev-libs/libbsd[${MULTILIB_USEDEP}]
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	media-libs/flac[${MULTILIB_USEDEP}]
-        >=media-libs/freetype-${FREETYPE_V}[${MULTILIB_USEDEP}]
-	>=media-libs/libogg-${LIBOGG_V}[${MULTILIB_USEDEP}]
 	media-libs/libpng[${MULTILIB_USEDEP}]
 	media-libs/libsndfile[${MULTILIB_USEDEP}]
-	>=media-libs/libvorbis-${LIBVORBIS_V}[${MULTILIB_USEDEP}]
         media-sound/pulseaudio[${MULTILIB_USEDEP}]
 	net-libs/libasyncns[${MULTILIB_USEDEP}]
 	sys-apps/tcp-wrappers[${MULTILIB_USEDEP}]
 	sys-apps/util-linux[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-${ZLIB_V}[${MULTILIB_USEDEP}]
 	virtual/opengl[${MULTILIB_USEDEP}]
 	x11-libs/libICE[${MULTILIB_USEDEP}]
 	x11-libs/libSM[${MULTILIB_USEDEP}]
@@ -271,51 +331,95 @@ DEPEND+="
 	x11-libs/libxcb[${MULTILIB_USEDEP}]
 	x11-libs/libxshmfence[${MULTILIB_USEDEP}]
 	!portable? (
-		ca-certs-relax? (
-			app-misc/ca-certificates[cacert]
-		)
 		!ca-certs-relax? (
 			>=app-misc/ca-certificates-20220331[cacert]
 		)
+		ca-certs-relax? (
+			app-misc/ca-certificates[cacert]
+		)
 	)
-        gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
-	system-bullet? ( >=sci-physics/bullet-3.17[${MULTILIB_USEDEP}] )
-	system-enet? ( >=net-libs/enet-1.3.17[${MULTILIB_USEDEP}] )
-	system-embree? ( >=media-libs/embree-3.13.0[${MULTILIB_USEDEP}] )
-	system-freetype? ( >=media-libs/freetype-${FREETYPE_V}[${MULTILIB_USEDEP}] )
-	system-libogg? ( >=media-libs/libogg-${LIBOGG_V}[${MULTILIB_USEDEP}] )
-	system-libpng? ( >=media-libs/libpng-1.6.37[${MULTILIB_USEDEP}] )
-	system-libtheora? ( >=media-libs/libtheora-1.1.1[${MULTILIB_USEDEP}] )
-	system-libvorbis? ( >=media-libs/libvorbis-${LIBVORBIS_V}[${MULTILIB_USEDEP}] )
-	system-libvpx? ( >=media-libs/libvpx-1.6.0[${MULTILIB_USEDEP}] )
-	system-libwebp? ( >=media-libs/libwebp-1.1.0[${MULTILIB_USEDEP}] )
-	system-mbedtls? ( >=net-libs/mbedtls-2.18.1[${MULTILIB_USEDEP}] )
-	system-miniupnpc? ( >=net-libs/miniupnpc-2.2.2[${MULTILIB_USEDEP}] )
+        gamepad? (
+		virtual/libudev[${MULTILIB_USEDEP}]
+	)
+	system-bullet? (
+		>=sci-physics/bullet-3.17[${MULTILIB_USEDEP}]
+	)
+	system-enet? (
+		>=net-libs/enet-1.3.17[${MULTILIB_USEDEP}]
+	)
+	system-embree? (
+		>=media-libs/embree-3.13.0[${MULTILIB_USEDEP}]
+	)
+	system-freetype? (
+		>=media-libs/freetype-${FREETYPE_PV}[${MULTILIB_USEDEP}]
+	)
+	system-libogg? (
+		>=media-libs/libogg-${LIBOGG_PV}[${MULTILIB_USEDEP}]
+	)
+	system-libpng? (
+		>=media-libs/libpng-1.6.37[${MULTILIB_USEDEP}]
+	)
+	system-libtheora? (
+		>=media-libs/libtheora-1.1.1[${MULTILIB_USEDEP}]
+	)
+	system-libvorbis? (
+		>=media-libs/libvorbis-${LIBVORBIS_PV}[${MULTILIB_USEDEP}]
+	)
+	system-libvpx? (
+		>=media-libs/libvpx-1.6.0[${MULTILIB_USEDEP}]
+	)
+	system-libwebp? (
+		>=media-libs/libwebp-1.1.0[${MULTILIB_USEDEP}]
+	)
+	system-mbedtls? (
+		>=net-libs/mbedtls-2.18.1[${MULTILIB_USEDEP}]
+	)
+	system-miniupnpc? (
+		>=net-libs/miniupnpc-2.2.2[${MULTILIB_USEDEP}]
+	)
 	system-opus? (
 		>=media-libs/opus-1.1.5[${MULTILIB_USEDEP}]
 		>=media-libs/opusfile-0.8[${MULTILIB_USEDEP}]
 	)
-	system-pcre2? ( >=dev-libs/libpcre2-10.36[${MULTILIB_USEDEP},jit?] )
-	system-recast? ( dev-games/recastnavigation[${MULTILIB_USEDEP}] )
-	system-squish? ( >=media-libs/libsquish-1.15[${MULTILIB_USEDEP}] )
-	system-wslay? ( >=net-libs/wslay-1.1.1[${MULTILIB_USEDEP}] )
-	system-xatlas? ( media-libs/xatlas[${MULTILIB_USEDEP}] )
-	system-zlib? ( >=sys-libs/zlib-${ZLIB_V}[${MULTILIB_USEDEP}] )
-	system-zstd? ( >=app-arch/zstd-1.4.8[${MULTILIB_USEDEP}] )
+	system-pcre2? (
+		>=dev-libs/libpcre2-10.36[${MULTILIB_USEDEP},jit?]
+	)
+	system-recast? (
+		dev-games/recastnavigation[${MULTILIB_USEDEP}]
+	)
+	system-squish? (
+		>=media-libs/libsquish-1.15[${MULTILIB_USEDEP}]
+	)
+	system-wslay? (
+		>=net-libs/wslay-1.1.1[${MULTILIB_USEDEP}]
+	)
+	system-xatlas? (
+		media-libs/xatlas[${MULTILIB_USEDEP}]
+	)
+	system-zlib? (
+		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
+	)
+	system-zstd? (
+		>=app-arch/zstd-1.4.8[${MULTILIB_USEDEP}]
+	)
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	dev-util/scons
+	lld? (
+		sys-devel/lld
+	)
+	webm-simd? (
+		dev-lang/yasm
+	)
 	|| (
 		${CDEPEND_CLANG}
 		${CDEPEND_GCC}
-	)
-	dev-util/scons
-	lld? ( sys-devel/lld )
-	webm-simd? (
-		dev-lang/yasm
 	)
 "
 S="${WORKDIR}/godot-${PV}-stable"

@@ -17,46 +17,54 @@ HOMEPAGE="http://lateralgm.org/"
 SLOT="0"
 IUSE+=" libmaker"
 
-JAVA_SRC_V="1.7"
-JAVA_V="1.8"
-JVM_V="1.8"
+JAVA_SRC_VER="1.7"
+JAVA_VER="1.8"
+JVM_VER="1.8"
 
 # Merged libmaker and lgmplugin to let others find them easier.
 
 JNA_SLOT="4"
-DEPEND_LATERALGM=" virtual/jre:${JAVA_V}"
+DEPEND_LATERALGM="
+	virtual/jre:${JAVA_VER}
+"
 DEPEND_LGMPLUGIN="
 	>=dev-java/jna-5.8:4=[nio-buffers(+)]
-	virtual/jre:${JAVA_V}
+	virtual/jre:${JAVA_VER}
 "
-DEPEND_LIBMAKER=" virtual/jre:${JAVA_V}"
+DEPEND_LIBMAKER="
+	virtual/jre:${JAVA_VER}
+"
 CDEPEND="
 	${DEPEND_LATERALGM}
 	${DEPEND_LGMPLUGIN}
-	libmaker? ( ${DEPEND_LIBMAKER} )
+	libmaker? (
+		${DEPEND_LIBMAKER}
+	)
 "
 DEPEND+="
 	${CDEPEND}
-	virtual/jdk:${JAVA_V}
+	virtual/jdk:${JAVA_VER}
 "
 RDEPEND+="
 	${CDEPEND}
 	dev-games/enigma
 "
 BDEPEND_LATERALGM="
-	virtual/jdk:${JAVA_V}
+	virtual/jdk:${JAVA_VER}
 	dev-java/maven-bin
 "
 BDEPEND_LGMPLUGIN="
-	virtual/jdk:${JAVA_V}
+	virtual/jdk:${JAVA_VER}
 "
 BDEPEND_LIBMAKER="
-	virtual/jdk:${JAVA_V}
+	virtual/jdk:${JAVA_VER}
 "
 BDEPEND+="
 	${BDEPEND_LATERALGM}
 	${BDEPEND_LGMPLUGIN}
-	libmaker? ( ${BDEPEND_LIBMAKER} )
+	libmaker? (
+		${BDEPEND_LIBMAKER}
+	)
 "
 
 EGIT_COMMIT_LIBMAKER="072e3eda2f0c4495838f94ad3cd5a376b1fc7ff5"
@@ -64,7 +72,7 @@ EGIT_COMMIT_JE_LATERALGM="487ddbe470032124dcb50ebee01a24b600ae900e"
 EGIT_COMMIT_JE_LIBMAKER="5844d7f047eac15408f7ccf8a9183d2015b962e0" # \
 # dated 20120417, this is required because of namespace changes, KeywordSet \
 # changes, fails to build
-LGMPLUGIN_V="1.8.227r3" # \
+LGMPLUGIN_VER="1.8.227r3" # \
 # lgmplugin updates can be found at: \
 # https://github.com/enigma-dev/lgmplugin/tags
 
@@ -74,7 +82,7 @@ MY_PN_LGMPLUGIN="LateralGM Plugin"
 MY_PN_JOSHEDIT="JoshEdit"
 JE_LATERALGM_FN="${MY_PN_JOSHEDIT}-${EGIT_COMMIT_JE_LATERALGM:0:7}.tar.gz"
 JE_LIBMAKER_FN="${MY_PN_JOSHEDIT}-${EGIT_COMMIT_JE_LIBMAKER:0:7}.tar.gz"
-LGMPLUGIN_FN="lgmplugin-${LGMPLUGIN_V}.tar.gz"
+LGMPLUGIN_FN="lgmplugin-${LGMPLUGIN_VER}.tar.gz"
 LIBMAKER_FN="${MY_PN_LIBMAKER}-${EGIT_COMMIT_LIBMAKER:0:7}.tar.gz"
 BASE_URI_ED="https://github.com/enigma-dev"
 BASE_URI_IA="https://github.com/IsmAvatar"
@@ -94,7 +102,7 @@ ${BASE_URI_JD}/${MY_PN_JOSHEDIT}/archive/${EGIT_COMMIT_JE_LIBMAKER}.tar.gz
 "
 
 SRC_URI_LGMPLUGIN="
-${BASE_URI_ED}/lgmplugin/archive/refs/tags/v${LGMPLUGIN_V}.tar.gz
+${BASE_URI_ED}/lgmplugin/archive/refs/tags/v${LGMPLUGIN_VER}.tar.gz
 	-> ${LGMPLUGIN_FN}
 "
 
@@ -106,7 +114,7 @@ SRC_URI="
 RESTRICT="mirror"
 S_LATERALGM="${WORKDIR}/${MY_PN_LATERALGM}-${PV}"
 S_LIBMAKER="${WORKDIR}/${MY_PN_LIBMAKER}-${EGIT_COMMIT_LIBMAKER}"
-S_LGMPLUGIN="${WORKDIR}/lgmplugin-${LGMPLUGIN_V}"
+S_LGMPLUGIN="${WORKDIR}/lgmplugin-${LGMPLUGIN_VER}"
 S_JOSHEDIT_FOR_LIBMAKER="${WORKDIR}/${MY_PN_JOSHEDIT}-${EGIT_COMMIT_JE_LIBMAKER}"
 S_JOSHEDIT_FOR_LATERALGM="${WORKDIR}/${MY_PN_JOSHEDIT}-${EGIT_COMMIT_JE_LATERALGM}"
 S="${S_LATERALGM}"
@@ -130,8 +138,8 @@ eerror "${JAVA_HOME}/bin/java.  Use \`eselect java-vm\` to set this up."
 eerror
 		die
 	fi
-	java-pkg_ensure-vm-version-eq ${JAVA_V}
-	export JVM_V=$(java-pkg_get-target)
+	java-pkg_ensure-vm-version-eq ${JAVA_VER}
+	export JVM_VER=$(java-pkg_get-target)
 
 	# Fixes:
 #./org/lateralgm/main/LGM.java:105: error: cannot access ProjectFile
@@ -327,7 +335,7 @@ src_compile_lgmplugin()
 src_compile_libmaker()
 {
 	einfo "Compiling ${MY_PN_LIBMAKER}"
-#		-source ${JAVA_SRC_V} -target ${JVM_V} -nowarn \
+#		-source ${JAVA_SRC_VER} -target ${JVM_VER} -nowarn \
 	MAKEOPTS="-j1" \
 	$(java-pkg_get-javac) \
 		-bootclasspath "${JAVA_HOME}/jre/lib/rt.jar" \

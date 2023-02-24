@@ -6,8 +6,10 @@ EAPI=8
 DESCRIPTION="A package for cross building for macOS with the Enigma game engine"
 REVISION=0
 SLOT="0/${REVISION}"
-IUSE="box2d bullet freetype gles1 gles2 gme gtk2 gtest joystick network openal
-opengl png sdl2 sound threads"
+IUSE="
+box2d bullet freetype gles1 gles2 gme gtk2 gtest joystick network openal opengl
+png sdl2 sound threads
+"
 REQUIRED_USE="
 	freetype
 	png
@@ -55,7 +57,7 @@ RDEPEND="
 	>=media-libs/glm-${GLM_PV}
 	>=sys-libs/zlib-${ZLIB_PV}
 	>=sys-devel/clang-13.0.0
-	  sys-devel/osxcross
+	sys-devel/osxcross
 	box2d? (
 		|| (
 			<dev-games/box2d-${BOX2D_PV_EMAX}:2.3

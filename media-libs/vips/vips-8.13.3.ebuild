@@ -33,11 +33,21 @@ openslide orc pangocairo png poppler python rav1e +ppm spng static-libs
 svg test tiff +vala webp x265 zlib
 "
 REQUIRED_USE="
-	cgif? ( imagequant )
-	imagequant? ( png )
-	poppler? ( cairo )
-	svg? ( cairo )
-	fuzz-testing? ( test )
+	cgif? (
+		imagequant
+	)
+	imagequant? (
+		png
+	)
+	poppler? (
+		cairo
+	)
+	svg? (
+		cairo
+	)
+	fuzz-testing? (
+		test
+	)
 "
 # Assumed U 22.04.1
 # See also https://github.com/libvips/libvips/blob/v8.11.0/.github/workflows/ci.yml
@@ -161,9 +171,9 @@ gen_llvm_bdepend()
 	for s in ${LLVM_SLOTS[@]} ; do
 		o+="
 			(
-				>=sys-devel/lld-${s}
 				>=sys-libs/libomp-${s}[${MULTILIB_USEDEP}]
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				sys-devel/lld:${s}
 				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			)
 		"
@@ -180,14 +190,14 @@ gen_llvm_test_bdepend()
 	!fuzz-testing? (
 		=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt]
 	)
-	fuzz-testing? (
-		=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-		=sys-libs/compiler-rt-sanitizers-${s}*[libfuzzer,asan,ubsan]
-	)
 	>=sys-libs/libomp-${s}[${MULTILIB_USEDEP}]
 	sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 	sys-devel/lld:${s}
 	sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+	fuzz-testing? (
+		=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+		=sys-libs/compiler-rt-sanitizers-${s}*[libfuzzer,asan,ubsan]
+	)
 			)
 		"
 	done

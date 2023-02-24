@@ -11,14 +11,22 @@ inherit flag-o-matic
 DESCRIPTION="Godot crossdev dependencies for macOS"
 # U 20.04
 
-SANITIZERS=" asan lsan tsan ubsan"
+SANITIZERS=(
+	asan
+	lsan
+	tsan
+	ubsan
+)
 IUSE+="
-	${SANITIZERS}
-	sdk_10_5_or_less
+	${SANITIZERS[@]}
 	+sdk_10_6_or_newer
+	sdk_10_5_or_less
 "
 REQUIRED_USE="
-	^^ ( sdk_10_5_or_less sdk_10_6_or_newer	)
+	^^ (
+		sdk_10_5_or_less
+		sdk_10_6_or_newer
+	)
 "
 
 GODOT_OSX_=(arm64 x86_64)
@@ -31,8 +39,8 @@ gen_depend_llvm() {
 		o+="
 		(
 			sys-devel/clang:${s}
+			sys-devel/lld:${s}
 			sys-devel/llvm:${s}
-			>=sys-devel/lld-${s}
 		)
 		"
 	done
@@ -46,10 +54,10 @@ gen_clang_sanitizer() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		o+="
 			(
-				 sys-devel/clang:${s}
 				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
-				 sys-devel/llvm:${s}
 				=sys-libs/compiler-rt-sanitizers-${s}*[${san_type}]
+				sys-devel/clang:${s}
+				sys-devel/llvm:${s}
 			)
 		"
 	done
@@ -57,10 +65,12 @@ gen_clang_sanitizer() {
 }
 gen_cdepend_sanitizers() {
 	local a
-	for a in ${SANITIZERS} ; do
+	for a in ${SANITIZERS[@]} ; do
 		echo "
 	${a}? (
-		|| ( $(gen_clang_sanitizer ${a}) )
+		|| (
+			$(gen_clang_sanitizer ${a})
+		)
 	)
 
 		"
@@ -73,7 +83,9 @@ CDEPEND_SANITIZER="
 
 RDEPEND="
 	${CDEPEND_SANITIZER}
-	|| ( $(gen_depend_llvm) )
+	|| (
+		$(gen_depend_llvm)
+	)
 	sdk_10_5_or_less? (
 		~sys-devel/osxcross-1.1
 	)

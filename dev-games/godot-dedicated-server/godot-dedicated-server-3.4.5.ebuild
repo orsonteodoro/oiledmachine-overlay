@@ -92,13 +92,6 @@ fi
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
-IUSE+=" +3d +advanced-gui camera clang +dds debug +denoise
-jit +lightmapper_cpu lld
-lto +neon +optimize-speed +opensimplex optimize-size portable +raycast"
-IUSE+=" ca-certs-relax"
-IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
-+theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
-
 gen_required_use_template()
 {
 	local l=(${1})
@@ -107,29 +100,84 @@ gen_required_use_template()
 	done
 }
 
-IUSE+=" -gdscript gdscript_lsp +mono +visual-script" # for scripting languages
-IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
-IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
-IUSE+=" +cvtt +freetype +pcre2" # for libraries
-IUSE+=" system-bullet system-embree system-enet system-freetype system-libogg
+SANITIZERS=(
+	asan
+	lsan
+	msan
+	tsan
+	ubsan
+)
+
+IUSE_3D="
++3d +bullet +csg +denoise +gridmap +gltf +lightmapper_cpu +mobile-vr +raycast
++recast +vhacd +xatlas
+"
+IUSE_BUILD="
+${SANITIZERS[@]}
+clang debug lld jit lto +neon +optimize-speed optimize-size portable
+"
+IUSE_CONTAINERS_CODECS_FORMATS="
++bmp +cvtt +dds +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
++theora +tga +vorbis +webm webm-simd +webp
+"
+IUSE_GUI="
++advanced-gui
+"
+IUSE_INPUT="
+camera
+"
+IUSE_LIBS="
++freetype +pcre2 +opensimplex
+"
+IUSE_NET="
+ca-certs-relax +enet +jsonrpc +mbedtls +upnp +webrtc +websocket
+"
+IUSE_SCRIPTING="
+-gdscript gdscript_lsp +mono +visual-script
+"
+IUSE_SYSTEM="
+system-bullet system-embree system-enet system-freetype system-libogg
 system-libpng system-libtheora system-libvorbis system-libvpx system-libwebp
 system-libwebsockets system-mbedtls system-miniupnpc system-mono system-opus
-system-pcre2 system-squish system-wslay system-zlib system-zstd"
-SANITIZERS=" asan lsan msan tsan ubsan"
-IUSE+=" ${SANITIZERS}"
+system-pcre2 system-squish system-wslay system-zlib system-zstd
+"
+
+IUSE+="
+	${IUSE_3D}
+	${IUSE_BUILD}
+	${IUSE_CONTAINERS_CODECS_FORMATS}
+	${IUSE_GUI}
+	${IUSE_INPUT}
+	${IUSE_LIBS}
+	${IUSE_NET}
+	${IUSE_SCRIPTING}
+	${IUSE_SYSTEM}
+"
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
 # See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
 # Some are repeated because they were shown to be in the ldd list
 REQUIRED_USE+="
-	denoise? ( lightmapper_cpu )
-	gdscript_lsp? ( jsonrpc websocket )
-	lld? ( clang )
-	lsan? ( asan )
-	optimize-size? ( !optimize-speed )
-	optimize-speed? ( !optimize-size )
+	denoise? (
+		lightmapper_cpu
+	)
+	gdscript_lsp? (
+		jsonrpc
+		websocket
+	)
+	lld? (
+		clang
+	)
+	lsan? (
+		asan
+	)
+	optimize-size? (
+		!optimize-speed
+	)
+	optimize-speed? (
+		!optimize-size
+	)
 	portable? (
-		!asan
 		!asan
 		!system-bullet
 		!system-embree
@@ -151,33 +199,33 @@ REQUIRED_USE+="
 		!system-zlib
 		!system-zstd
 		!tsan
-		!tsan
 	)
-	riscv? ( mono? ( system-mono ) )
+	riscv? (
+		mono? (
+			system-mono
+		)
+	)
 "
-FREETYPE_V="2.10.4"
-LIBOGG_V="1.3.5"
-LIBVORBIS_V="1.3.7"
-ZLIB_V="1.2.11"
+FREETYPE_PV="2.10.4"
+LIBOGG_PV="1.3.5"
+LIBVORBIS_PV="1.3.7"
+ZLIB_PV="1.2.11"
 
 LLVM_SLOTS=(14 13) # See https://github.com/godotengine/godot/blob/3.4.5-stable/misc/hooks/pre-commit-clang-format#L79
 gen_cdepend_lto_llvm() {
 	local o=""
 	for s in ${LLVM_SLOTS[@]} ; do
 		o+="
-				(
-					sys-devel/clang:${s}
-					sys-devel/llvm:${s}
-					>=sys-devel/lld-${s}
-				)
+			(
+				sys-devel/clang:${s}
+				sys-devel/llvm:${s}
+				>=sys-devel/lld-${s}
+			)
 		"
 	done
 	echo -e "${o}"
 }
 
-CDEPEND_GCC_SANITIZER="
-	!clang? ( sys-devel/gcc[sanitize] )
-"
 gen_clang_sanitizer() {
 	local san_type="${1}"
 	local s
@@ -185,10 +233,10 @@ gen_clang_sanitizer() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		o+="
 			(
-				 sys-devel/clang:${s}
 				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
-				 sys-devel/llvm:${s}
 				=sys-libs/compiler-rt-sanitizers-${s}*[${san_type}]
+				sys-devel/clang:${s}
+				sys-devel/llvm:${s}
 			)
 		"
 	done
@@ -196,12 +244,16 @@ gen_clang_sanitizer() {
 }
 gen_cdepend_sanitizers() {
 	local a
-	for a in ${SANITIZERS} ; do
+	for a in ${SANITIZERS[@]} ; do
 		echo "
 	${a}? (
 		|| (
 			${CDEPEND_GCC_SANITIZER}
-			clang? ( || ( $(gen_clang_sanitizer ${a}) ) )
+			clang? (
+				|| (
+					$(gen_clang_sanitizer ${a})
+				)
+			)
 		)
 	)
 
@@ -209,6 +261,12 @@ gen_cdepend_sanitizers() {
 	done
 }
 
+
+CDEPEND_GCC_SANITIZER="
+	!clang? (
+		sys-devel/gcc[sanitize]
+	)
+"
 CDEPEND_SANITIZER="
 	$(gen_cdepend_sanitizers)
 "
@@ -217,8 +275,14 @@ CDEPEND+="
 "
 CDEPEND_CLANG="
 	clang? (
-		!lto? ( sys-devel/clang )
-		lto? ( || ( $(gen_cdepend_lto_llvm) ) )
+		!lto? (
+			sys-devel/clang
+		)
+		lto? (
+			|| (
+				$(gen_cdepend_lto_llvm)
+			)
+		)
 	)
 "
 CDEPEND_GCC="
@@ -227,28 +291,28 @@ CDEPEND_GCC="
 DEPEND+="
 	${PYTHON_DEPS}
 	${CDEPEND}
+        >=media-libs/freetype-${FREETYPE_PV}
+	>=media-libs/libogg-${LIBOGG_PV}
+	>=media-libs/libvorbis-${LIBVORBIS_PV}
+	>=sys-libs/zlib-${ZLIB_PV}
 	app-arch/bzip2
 	dev-libs/libbsd
 	media-libs/alsa-lib
 	media-libs/flac
-        >=media-libs/freetype-${FREETYPE_V}
-	>=media-libs/libogg-${LIBOGG_V}
 	media-libs/libpng
 	media-libs/libsndfile
-	>=media-libs/libvorbis-${LIBVORBIS_V}
 	net-libs/libasyncns
 	sys-apps/tcp-wrappers
 	sys-apps/util-linux
-	>=sys-libs/zlib-${ZLIB_V}
 	virtual/opengl
 	mono? (
 		!system-mono? (
 			|| (
-				x86? (
-					=dev-games/godot-mono-runtime-linux-x86-$(ver_cut 1-2 ${MONO_PV})*
-				)
 				amd64? (
 					=dev-games/godot-mono-runtime-linux-x86_64-$(ver_cut 1-2 ${MONO_PV})*
+				)
+				x86? (
+					=dev-games/godot-mono-runtime-linux-x86-$(ver_cut 1-2 ${MONO_PV})*
 				)
 			)
 		)
@@ -257,46 +321,84 @@ DEPEND+="
 		)
 	)
 	!portable? (
-		ca-certs-relax? (
-			app-misc/ca-certificates[cacert]
-		)
 		!ca-certs-relax? (
 			>=app-misc/ca-certificates-20220331[cacert]
 		)
+		ca-certs-relax? (
+			app-misc/ca-certificates[cacert]
+		)
 	)
-	system-bullet? ( >=sci-physics/bullet-3.17 )
-	system-enet? ( >=net-libs/enet-1.3.17 )
-	system-embree? ( >=media-libs/embree-3.13.0 )
-	system-freetype? ( >=media-libs/freetype-${FREETYPE_V} )
-	system-libogg? ( >=media-libs/libogg-${LIBOGG_V} )
-	system-libpng? ( >=media-libs/libpng-1.6.37 )
-	system-libtheora? ( >=media-libs/libtheora-1.1.1 )
-	system-libvorbis? ( >=media-libs/libvorbis-${LIBVORBIS_V} )
-	system-libvpx? ( >=media-libs/libvpx-1.6.0 )
-	system-libwebp? ( >=media-libs/libwebp-1.1.0 )
-	system-mbedtls? ( >=net-libs/mbedtls-2.18.1 )
-	system-miniupnpc? ( >=net-libs/miniupnpc-2.2.2 )
+	system-bullet? (
+		>=sci-physics/bullet-3.17
+	)
+	system-enet? (
+		>=net-libs/enet-1.3.17
+	)
+	system-embree? (
+		>=media-libs/embree-3.13.0
+	)
+	system-freetype? (
+		>=media-libs/freetype-${FREETYPE_PV}
+	)
+	system-libogg? (
+		>=media-libs/libogg-${LIBOGG_PV}
+	)
+	system-libpng? (
+		>=media-libs/libpng-1.6.37
+	)
+	system-libtheora? (
+		>=media-libs/libtheora-1.1.1
+	)
+	system-libvorbis? (
+		>=media-libs/libvorbis-${LIBVORBIS_PV}
+	)
+	system-libvpx? (
+		>=media-libs/libvpx-1.6.0
+	)
+	system-libwebp? (
+		>=media-libs/libwebp-1.1.0
+	)
+	system-mbedtls? (
+		>=net-libs/mbedtls-2.18.1
+	)
+	system-miniupnpc? (
+		>=net-libs/miniupnpc-2.2.2
+	)
 	system-opus? (
 		>=media-libs/opus-1.1.5
 		>=media-libs/opusfile-0.8
 	)
-	system-pcre2? ( >=dev-libs/libpcre2-10.36[jit?] )
-	system-squish? ( >=media-libs/libsquish-1.15 )
-	system-wslay? ( >=net-libs/wslay-1.1.1 )
-	system-zlib? ( >=sys-libs/zlib-${ZLIB_V} )
-	system-zstd? ( >=app-arch/zstd-1.4.8 )
+	system-pcre2? (
+		>=dev-libs/libpcre2-10.36[jit?]
+	)
+	system-squish? (
+		>=media-libs/libsquish-1.15
+	)
+	system-wslay? (
+		>=net-libs/wslay-1.1.1
+	)
+	system-zlib? (
+		>=sys-libs/zlib-${ZLIB_PV}
+	)
+	system-zstd? (
+		>=app-arch/zstd-1.4.8
+	)
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
 	>=dev-util/pkgconf-1.3.7[pkg-config(+)]
+	dev-util/scons
+	lld? (
+		sys-devel/lld
+	)
 	|| (
 		${CDEPEND_CLANG}
 		${CDEPEND_GCC}
 	)
-	dev-util/scons
-	lld? ( sys-devel/lld )
 "
 S="${WORKDIR}/godot-${PV}-stable"
 PATCHES=(

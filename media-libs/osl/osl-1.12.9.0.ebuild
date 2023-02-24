@@ -31,7 +31,9 @@ ${LLVM_SUPPORT_[@]}
 doc optix partio python qt5 static-libs test
 "
 REQUIRED_USE+="
-	^^ ( ${LLVM_SUPPORT_[@]} )
+	^^ (
+		${LLVM_SUPPORT_[@]}
+	)
 "
 # See https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.6.2/INSTALL.md
 # For optix requirements, see
@@ -47,8 +49,8 @@ gen_llvm_depend()
 	for s in ${LLVM_SUPPORT[@]} ; do
 		echo "
 		llvm-${s}? (
-			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 		)
 		"
 	done
@@ -60,9 +62,9 @@ gen_opx_llvm_rdepend() {
 		echo "
 		llvm-${s}? (
 			(
+				sys-devel/lld:${s}
 				sys-devel/llvm:${s}[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
 				sys-devel/clang:${s}[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
-				>=sys-devel/lld-${s}
 			)
 		)
 		"
@@ -75,9 +77,9 @@ gen_llvm_bdepend() {
 		echo "
 		llvm-${s}? (
 			(
+				sys-devel/lld:${s}
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
-				>=sys-devel/lld-${s}
 			)
 		)
 		"
@@ -109,20 +111,21 @@ gen_openexr_pairs() {
 # Multilib requires openexr built as multilib.
 RDEPEND+=" "$(gen_llvm_depend)
 RDEPEND+="
-	|| ( $(gen_openexr_pairs) )
+	$(python_gen_any_dep '<media-libs/openimageio-2.5:=[${PYTHON_SINGLE_USEDEP}]')
+	$(python_gen_any_dep '>=media-libs/openimageio-2:=[${PYTHON_SINGLE_USEDEP}]')
 	>=dev-libs/boost-1.55:=[${MULTILIB_USEDEP}]
 	dev-libs/libfmt[${MULTILIB_USEDEP}]
 	dev-libs/pugixml[${MULTILIB_USEDEP}]
-	$(python_gen_any_dep '>=media-libs/openimageio-2:=[${PYTHON_SINGLE_USEDEP}]')
-	$(python_gen_any_dep '<media-libs/openimageio-2.5:=[${PYTHON_SINGLE_USEDEP}]')
 	sys-libs/zlib:=[${MULTILIB_USEDEP}]
 	optix? (
+		$(python_gen_any_dep '>=media-libs/openimageio-1.8:=[${PYTHON_SINGLE_USEDEP}]')
 		>=dev-libs/optix-5.1
 		>=dev-util/nvidia-cuda-toolkit-8
-		$(python_gen_any_dep '>=media-libs/openimageio-1.8:=[${PYTHON_SINGLE_USEDEP}]')
 		|| ( $(gen_opx_llvm_rdepend) )
 	)
-	partio? ( media-libs/partio )
+	partio? (
+		media-libs/partio
+	)
 	qt5? (
 		>=dev-qt/qtcore-${QT_MIN}:5
 		>=dev-qt/qtgui-${QT_MIN}:5
@@ -133,24 +136,31 @@ RDEPEND+="
 		$(python_gen_any_dep 'dev-python/numpy[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep '>=dev-python/pybind11-2.4.2[${PYTHON_USEDEP}]')
 	)
-"
-DEPEND+=" ${RDEPEND}"
-BDEPEND+=" "$(gen_llvm_depend)
-BDEPEND+="
 	|| (
+		$(gen_openexr_pairs)
+	)
+"
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	$(gen_llvm_depend)
+"
+BDEPEND+="
+	>=dev-util/cmake-3.12
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	>=sys-devel/bison-2.7
+	>=sys-devel/flex-2.5.35[${MULTILIB_USEDEP}]
+	|| (
+		$(gen_llvm_bdepend)
 		(
 			<sys-devel/gcc-12.2
 			>=sys-devel/gcc-6.1
 		)
-		$(gen_llvm_bdepend)
 		(
 			>=dev-lang/icc-17[${MULTILIB_USEDEP}]
 		)
 	)
-	>=dev-util/cmake-3.12
-	>=sys-devel/bison-2.7
-	>=sys-devel/flex-2.5.35[${MULTILIB_USEDEP}]
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 "
 SRC_URI="
 https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/archive/refs/tags/v${PV}.tar.gz

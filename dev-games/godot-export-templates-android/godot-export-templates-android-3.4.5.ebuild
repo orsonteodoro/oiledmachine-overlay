@@ -75,25 +75,54 @@ fi
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
-IUSE+=" +3d +advanced-gui camera +dds debug +denoise
-jit +lightmapper_cpu
-+neon +optimize-speed +opensimplex optimize-size +portable +raycast"
-IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
-+theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
-
-IUSE+=" mono" # for scripting languages
-
 GODOT_ANDROID_=(arm7 arm64v8 x86 x86_64)
-
 GODOT_ANDROID="${GODOT_ANDROID_[@]/#/godot_android_}"
-IUSE+=" ${GODOT_ANDROID}"
+SANITIZERS=(
+	asan
+	lsan
+	msan
+	tsan
+	ubsan
+)
 
-IUSE+=" -gdscript gdscript_lsp +visual-script" # for scripting languages
-IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
-IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
-IUSE+=" +cvtt +freetype +pcre2 +pulseaudio" # for libraries
-SANITIZERS=" asan lsan msan tsan ubsan"
-IUSE+=" ${SANITIZERS}"
+IUSE_3D="
++3d +bullet +csg +denoise +gridmap +gltf +lightmapper_cpu +mobile-vr +raycast
++recast +vhacd +xatlas
+"
+IUSE_BUILD="
+${SANITIZERS[@]}
+debug jit +neon +optimize-speed optimize-size +portable
+"
+IUSE_CONTAINERS_CODECS_FORMATS="
++bmp +dds +cvtt +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
++theora +tga +vorbis +webm webm-simd +webp
+"
+IUSE_GUI="
++advanced-gui
+"
+IUSE_INPUT="
+camera
+"
+IUSE_LIBS="
++freetype +opensimplex +pcre2 +pulseaudio
+"
+IUSE_NET="
++enet +jsonrpc +mbedtls +upnp +webrtc +websocket
+"
+IUSE_SCRIPTING="
+-gdscript gdscript_lsp mono +visual-script
+"
+IUSE+="
+	${GODOT_ANDROID}
+	${IUSE_3D}
+	${IUSE_BUILD}
+	${IUSE_CONTAINERS_CODECS_FORMATS}
+	${IUSE_GUI}
+	${IUSE_INPUT}
+	${IUSE_LIBS}
+	${IUSE_NET}
+	${IUSE_SCRIPTING}
+"
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
 # See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
@@ -102,63 +131,76 @@ IUSE+=" ${SANITIZERS}"
 REQUIRED_USE+="
 	!mono
 	portable
-	denoise? ( lightmapper_cpu )
-	gdscript_lsp? ( jsonrpc websocket )
-	|| ( ${GODOT_ANDROID} )
-	lsan? ( asan )
-	optimize-size? ( !optimize-speed )
-	optimize-speed? ( !optimize-size )
+	denoise? (
+		lightmapper_cpu
+	)
+	gdscript_lsp? (
+		jsonrpc
+		websocket
+	)
+	lsan? (
+		asan
+	)
+	optimize-size? (
+		!optimize-speed
+	)
+	optimize-speed? (
+		!optimize-size
+	)
 	portable? (
 		!asan
 		!tsan
 	)
+	|| (
+		${GODOT_ANDROID}
+	)
 "
 EXPECTED_MIN_ANDROID_API_LEVEL="29"
-JAVA_V="11" # See https://github.com/godotengine/godot/blob/3.4-stable/.github/workflows/android_builds.yml#L32
-NDK_V="21"
+JAVA_PV="11" # See https://github.com/godotengine/godot/blob/3.4-stable/.github/workflows/android_builds.yml#L32
+NDK_PV="21"
 
 JDK_DEPEND="
 	|| (
-		dev-java/openjdk-bin:${JAVA_V}
-		dev-java/openjdk:${JAVA_V}
+		dev-java/openjdk-bin:${JAVA_PV}
+		dev-java/openjdk:${JAVA_PV}
 	)
 "
 JRE_DEPEND="
 	|| (
 		${JDK_DEPEND}
-		dev-java/openjdk-jre-bin:${JAVA_V}
+		dev-java/openjdk-jre-bin:${JAVA_PV}
 	)
 "
-#JDK_DEPEND=" virtual/jdk:${JAVA_V}"
-#JRE_DEPEND=" virtual/jre:${JAVA_V}"
+#JDK_DEPEND=" virtual/jdk:${JAVA_PV}"
+#JRE_DEPEND=" virtual/jre:${JAVA_PV}"
 
 CDEPEND+="
 	${JDK_DEPEND}
 	>=dev-java/gradle-bin-7.2
+	dev-util/android-sdk-update-manager
 	godot_android_x86_64? (
 		>=dev-util/android-ndk-21:=
 	)
 	godot_android_arm64v8? (
 		>=dev-util/android-ndk-21:=
 	)
-	dev-util/android-sdk-update-manager
 "
 RDEPEND+="
-	${PYTHON_DEPS}
 	${CDEPEND}
+	${PYTHON_DEPS}
 "
 DEPEND+="
 	${RDEPEND}
 	mono? (
-		dev-games/godot-editor:${SLOT}[mono]
 		=dev-games/godot-mono-runtime-monodroid-$(ver_cut 1-2 ${MONO_PV})*
+		dev-games/godot-editor:${SLOT}[mono]
 	)
 "
 BDEPEND+="
 	${CDEPEND}
+	${JDK_DEPEND}
 	${PYTHON_DEPS}
 	dev-util/scons
-	${JDK_DEPEND}
 	webm-simd? (
 		dev-lang/yasm
 	)
@@ -208,26 +250,26 @@ setup_openjdk() {
 	local jdk_basepath
 
 	if find \
-		/usr/$(get_libdir)/openjdk-${JAVA_V}*/ \
+		/usr/$(get_libdir)/openjdk-${JAVA_PV}*/ \
 		-maxdepth 1 \
 		-type d \
 		2>/dev/null 1>/dev/null
 	then
 		export JAVA_HOME=$(find\
-			 /usr/$(get_libdir)/openjdk-${JAVA_V}*/ \
+			 /usr/$(get_libdir)/openjdk-${JAVA_PV}*/ \
 			-maxdepth 1 \
 			-type d \
 			| sort -V \
 			| head -n 1)
 		export PATH="${JAVA_HOME}/bin:${PATH}"
 	elif find \
-		/opt/openjdk-bin-${JAVA_V}*/ \
+		/opt/openjdk-bin-${JAVA_PV}*/ \
 		-maxdepth 1 \
 		-type d \
 		2>/dev/null 1>/dev/null
 	then
 		export JAVA_HOME=$(find \
-			/opt/openjdk-bin-${JAVA_V}*/ \
+			/opt/openjdk-bin-${JAVA_PV}*/ \
 			-maxdepth 1 \
 			-type d \
 			| sort -V \
@@ -235,7 +277,7 @@ setup_openjdk() {
 		export PATH="${JAVA_HOME}/bin:${PATH}"
 	else
 eerror
-eerror "dev-java/openjdk:${JAVA_V} or dev-java/openjdk-bin:${JAVA_V} must be"
+eerror "dev-java/openjdk:${JAVA_PV} or dev-java/openjdk-bin:${JAVA_PV} must be"
 eerror "installed."
 eerror
 		die
