@@ -32,7 +32,7 @@ inherit python-any-r1 qmake-utils readme.gentoo-r1 toolchain-funcs xdg-utils
 inherit check-linker flag-o-matic-om llvm multilib multilib-minimal uopts
 inherit cflags-depends
 
-DESCRIPTION="Open-source version of Google Chrome web browser"
+DESCRIPTION="The open-source version of the Chrome web browser"
 HOMEPAGE="https://chromium.org/"
 PATCHSET="4"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
