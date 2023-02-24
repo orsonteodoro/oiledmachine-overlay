@@ -221,6 +221,9 @@ COMMON_SNAPSHOT_DEPEND="
 			x11-libs/libxcb:=
 		)
 	)
+	!mold? (
+		media-libs/mesa:=[gbm(+)]
+	)
 	>=dev-libs/libxml2-2.9.4-r3:=[icu]
 	>=dev-libs/nss-3.26:=
 	>=media-libs/freetype-2.11.0-r1:=
@@ -229,9 +232,11 @@ COMMON_SNAPSHOT_DEPEND="
 	dev-libs/libxslt:=
 	media-libs/fontconfig:=
 	media-libs/libjpeg-turbo:=
-	media-libs/mesa:=[gbm(+)]
 	sys-libs/zlib:=
 	x11-libs/libdrm:=
+	mold? (
+		media-libs/mesa:=[gbm(+),-proprietary-codecs]
+	)
 	system-av1? (
 		>=media-libs/dav1d-1.0.0:=
 		>=media-libs/libaom-3.4.0:=
@@ -273,8 +278,13 @@ COMMON_DEPEND="
 	app-arch/bzip2:=
 	dev-libs/expat:=
 	system-ffmpeg? (
+		!mold? (
+			>=media-video/ffmpeg-4.3:=
+		)
 		>=media-libs/opus-1.3.1:=
-		>=media-video/ffmpeg-4.3:=
+		mold? (
+			>=media-video/ffmpeg-4.3:=[-fdk,gpl,-openssl]
+		)
 		|| (
 			media-video/ffmpeg[-samba]
 			>=net-fs/samba-4.5.10-r1[-debug(-)]
