@@ -11,7 +11,8 @@
 # 1.  Permanently disable CDM
 # 2.  Permanently disable deprecated services
 # 3.  Permanently remove or permanently disable proprietary codecs or non-free codecs.
-# 4.  Add mold
+# 4.  Disable vaapi for mold builds.
+# 5.  Add mold
 
 EAPI=8
 PYTHON_COMPAT=( python3_{9..11} )
@@ -77,6 +78,17 @@ REQUIRED_USE="
 	)
 	cfi? (
 		thinlto
+	)
+	mold? (
+		!cfi
+		!official
+		!vaapi
+	)
+	official? (
+		pgo
+		thinlto
+		wayland
+		X
 	)
 	optimize-thinlto? (
 		thinlto
@@ -1030,7 +1042,10 @@ eerror "LLD and mold are mutually exclusive.  Choose only one."
 		# Force lld for lto or pgo builds only, otherwise disable, bug 641556
 		myconf_gn+=" use_lld=true"
 		myconf_gn+=" use_mold=false"
+	elif ! use mold && is-flagq '-fuse-ld=mold' ; then
+eerror "You must enable the mold USE flag"
 	elif use mold || is-flagq '-fuse-ld=mold' ; then
+ewarn "Using mold may weaken security"
 		myconf_gn+=" use_lld=false"
 		myconf_gn+=" use_mold=true"
 	else

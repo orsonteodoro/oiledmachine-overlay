@@ -59,7 +59,7 @@
       Requires Java.
     </flag>
     <flag name="mold">
-      Build with the mold linker
+      Build with the mold linker.  This may weaken security if no CFI.
     </flag>
     <flag name="official">
       Enable Official build instead of Developer build.
