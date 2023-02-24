@@ -7,6 +7,8 @@
 # as non-commerical.  We don't mold the chromium-proper ebuild because of
 # possible for-profit analytics.
 
+# The ungoogle-chromium patch will blacklist the analytics domain.
+
 # Fork specifics:
 # 1.  Permanently disable CDM
 # 2.  Permanently disable deprecated services
