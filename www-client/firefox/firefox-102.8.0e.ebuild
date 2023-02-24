@@ -253,7 +253,7 @@ LICENSE+="
 # (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser
 IUSE+="
 alsa cpu_flags_arm_neon cups +dbus debug eme-free +hardened -hwaccel jack
--jemalloc libcanberra libproxy libsecret +openh264 +pgo +pulseaudio
+-jemalloc libcanberra libproxy libsecret mold +openh264 +pgo +pulseaudio
 sndio selinux speech +system-av1 +system-harfbuzz +system-icu +system-jpeg
 +system-libevent +system-libvpx system-png system-python-libs +system-webp
 +vaapi +wayland +webrtc wifi webspeech
@@ -274,6 +274,11 @@ REQUIRED_USE="
 			alsa
 			pulseaudio
 		)
+	)
+	mold? (
+		!openh264
+		!vaapi
+		eme-free
 	)
 	vaapi? (
 		wayland
@@ -372,6 +377,10 @@ UDEV_RDEPEND="
 
 CDEPEND="
 	${FF_ONLY_DEPEND}
+	!mold? (
+		media-video/ffmpeg[${MULTILIB_USEDEP}]
+		media-libs/mesa[${MULTILIB_USEDEP}]
+	)
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.79.2[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.34[${MULTILIB_USEDEP}]
@@ -381,8 +390,6 @@ CDEPEND="
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	media-libs/fontconfig[${MULTILIB_USEDEP}]
 	media-libs/freetype[${MULTILIB_USEDEP}]
-	media-libs/mesa[${MULTILIB_USEDEP}]
-	media-video/ffmpeg[${MULTILIB_USEDEP}]
 	sys-libs/zlib[${MULTILIB_USEDEP}]
 	virtual/freedesktop-icon-theme
 	x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
@@ -397,6 +404,10 @@ CDEPEND="
 	)
 	libproxy? (
 		net-libs/libproxy[${MULTILIB_USEDEP}]
+	)
+	mold? (
+		media-video/ffmpeg[${MULTILIB_USEDEP},-fdk,-openssl]
+		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 	)
 	pulseaudio? (
 		|| (
@@ -544,6 +555,9 @@ BDEPEND+="
 	net-libs/nodejs
 	amd64? (
 		>=dev-lang/nasm-2.14
+	)
+	mold? (
+		sys-devel/mold
 	)
 	pgo? (
 		sys-devel/gettext
@@ -1639,11 +1653,20 @@ einfo "Building without Mozilla API key ..."
 			--enable-default-toolkit=cairo-gtk3
 	fi
 
+	if ! use mold && is-flagq '-fuse-ld=mold' ; then
+eerror
+eerror "-fuse-ld=mold requires the mold USE flag."
+eerror
+		die
+	fi
+
+einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 	if [[ -z "${LTO_TYPE}" ]] ; then
 		LTO_TYPE=$(check-linker_get_lto_type)
 	fi
-	if use pgo \
-		|| [[ "${LTO_TYPE}" =~ ("bfdlto"|"moldlto"|"thinlto") ]] ; then
+
+	if use pgo || [[ "${LTO_TYPE}" =~ ("bfdlto"|"moldlto"|"thinlto") ]]
+	then
 	# Mold for gcc works for non-lto but for lto it is likely WIP.
 		if [[ "${LTO_TYPE}" == "moldlto" ]] ; then
 			use tc-is-gcc && ewarn "remove -fuse-ld=mold if it breaks on gcc"
@@ -1684,7 +1707,7 @@ einfo "Building without Mozilla API key ..."
 			fi
 		fi
 	else
-		if is-flagq '-fuse-ld=mold' ; then
+		if is-flagq '-fuse-ld=mold' || use mold ; then
 			mozconfig_add_options_ac \
 				"forcing ld=mold" \
 				--enable-linker=mold
