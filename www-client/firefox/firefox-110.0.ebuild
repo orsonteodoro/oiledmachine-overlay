@@ -1196,7 +1196,12 @@ src_prepare() {
 		|| die "sed failed to disable ccache stats call"
 
 einfo "Removing pre-built binaries ..."
-	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) \
+	find "${S}"/third_party \
+		-type f \
+		\( \
+			   -name '*.so' \
+			-o -name '*.o' \
+		\) \
 		-print -delete || die
 
 	# Removed creation of a single build dir
@@ -1507,7 +1512,7 @@ einfo
 	mozconfig_add_options_ac '' --enable-application=browser
 	mozconfig_add_options_ac '' --enable-project=browser
 
-	# Set Gentoo defaults
+	# Set distro defaults
 	export MOZILLA_OFFICIAL=1
 
 	mozconfig_add_options_ac 'Gentoo default' \
@@ -1543,12 +1548,16 @@ einfo
 		--x-includes="${ESYSROOT}/usr/include" \
 		--x-libraries="${ESYSROOT}/usr/$(get_libdir)"
 
-	# mozconfig_add_options_ac '' --with-libclang-path="$(${CHOST}-llvm-config --libdir)"
-	#   Disabled because Gentoo doesn't support multilib python, so full
-	#   cross-compile is not supported.
+	# mozconfig_add_options_ac \
+	#	'' \
+	#	--with-libclang-path="$(${CHOST}-llvm-config --libdir)"
+	# Disabled lines above because the distro doesn't support multilib
+	# python, so full cross-compile is not supported.
 
-	#   the commented above is mutually exclusive with this line below.
-	mozconfig_add_options_ac '' --with-libclang-path="$(llvm-config --libdir)"
+	# The commented lines above are mutually exclusive with this line below.
+	mozconfig_add_options_ac \
+		'' \
+		--with-libclang-path="$(llvm-config --libdir)"
 
 	# Set update channel
 	local update_channel=release
@@ -1560,7 +1569,7 @@ einfo
 	fi
 
 	# For future keywording: This is currently (97.0) only supported on:
-	# amd64, arm, arm64 & x86.
+	# amd64, arm, arm64, and x86.
 	# You might want to flip the logic around if Firefox is to support more
 	# arches.
 	if use ppc64; then
@@ -1577,7 +1586,8 @@ einfo
 			key_origin="User value"
 		fi
 
-		mozconfig_add_options_ac "${key_origin}" \
+		mozconfig_add_options_ac \
+			"${key_origin}" \
 			--with-google-safebrowsing-api-keyfile="${s}/api-google.key"
 	else
 einfo "Building without Google API key ..."
@@ -1591,7 +1601,8 @@ einfo "Building without Google API key ..."
 			key_origin="User value"
 		fi
 
-		mozconfig_add_options_ac "${key_origin}" \
+		mozconfig_add_options_ac \
+			"${key_origin}" \
 			--with-google-location-service-api-keyfile="${s}/api-location.key"
 	else
 einfo "Building without Location API key ..."
@@ -1605,7 +1616,8 @@ einfo "Building without Location API key ..."
 			key_origin="User value"
 		fi
 
-		mozconfig_add_options_ac "${key_origin}" \
+		mozconfig_add_options_ac \
+			"${key_origin}" \
 			--with-mozilla-api-keyfile="${s}/api-mozilla.key"
 	else
 einfo "Building without Mozilla API key ..."
@@ -1641,7 +1653,7 @@ einfo "Building without Mozilla API key ..."
 	# The upstream default is hardening on even if unset.
 	if use hardened ; then
 		mozconfig_add_options_ac "+hardened" --enable-hardening
-		append-ldflags "-Wl,-z,relro -Wl,-z,now"
+		append-ldflags "-Wl,-z,relro -Wl,-z,now" # Full Relro
 	else
 		mozconfig_add_options_ac "-hardened" --disable-hardening
 	fi
@@ -1652,7 +1664,8 @@ einfo "Building without Mozilla API key ..."
 	use pulseaudio && myaudiobackends+="pulseaudio,"
 	! use pulseaudio && myaudiobackends+="alsa,"
 
-	mozconfig_add_options_ac '--enable-audio-backends' \
+	mozconfig_add_options_ac \
+		'--enable-audio-backends' \
 		--enable-audio-backends=$(echo "${myaudiobackends}" \
 			| sed -e "s|,$||g") # Cannot be empty
 
@@ -1760,7 +1773,7 @@ einfo "Building without Mozilla API key ..."
 
 	# Fork ebuild, or use distro ebuild, or set USE=debug if you want -Og
 		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
-			einfo "Using Ofast"
+einfo "Using Ofast"
 			OFLAG="-Ofast"
 			mozconfig_add_options_ac \
 				"from CFLAGS" \
@@ -2122,7 +2135,7 @@ _src_install() {
 	local GENTOO_PREFS="${ED}${PREFS_DIR}/gentoo-prefs.js"
 
 	# Set dictionary path to use system hunspell
-cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set spellchecker.dictionary_path pref"
+cat >>"${GENTOO_PREFS}" <<-EOF || die "Failed to set spellchecker.dictionary_path pref"
 pref("spellchecker.dictionary_path",       "${EPREFIX}/usr/share/myspell");
 EOF
 
@@ -2133,11 +2146,11 @@ EOF
 || die "failed to add prefs to force hardware-accelerated rendering to all-gentoo.js"
 
 		if use wayland; then
-cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set hwaccel wayland prefs"
+cat >>"${GENTOO_PREFS}" <<-EOF || die "Failed to set hwaccel wayland prefs"
 pref("gfx.x11-egl.force-enabled",          false);
 EOF
 		else
-cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set hwaccel x11 prefs"
+cat >>"${GENTOO_PREFS}" <<-EOF || die "Failed to set hwaccel x11 prefs"
 pref("gfx.x11-egl.force-enabled",          true);
 EOF
 		fi
@@ -2164,7 +2177,9 @@ EOF
 	fi
 
 	# Install language packs
-	local langpacks=( $(find "${WORKDIR}/language_packs" -type f -name '*.xpi') )
+	local langpacks=(
+		$(find "${WORKDIR}/language_packs" -type f -name '*.xpi')
+	)
 	if [[ -n "${langpacks}" ]] ; then
 		moz_install_xpi \
 			"${MOZILLA_FIVE_HOME}/distribution/extensions" \
