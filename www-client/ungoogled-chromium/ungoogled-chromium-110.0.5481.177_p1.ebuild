@@ -80,6 +80,7 @@ REQUIRED_USE="
 		thinlto
 	)
 	mold? (
+		!thinlto
 		!cfi
 		!official
 		!vaapi
