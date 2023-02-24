@@ -1659,13 +1659,16 @@ einfo "Building without Mozilla API key ..."
 	mozconfig_use_enable wifi necko-wifi
 
 	if use X && use wayland ; then
-		mozconfig_add_options_ac '+x11+wayland' \
+		mozconfig_add_options_ac \
+			'+x11+wayland' \
 			--enable-default-toolkit=cairo-gtk3-x11-wayland
 	elif ! use X && use wayland ; then
-		mozconfig_add_options_ac '+wayland' \
+		mozconfig_add_options_ac \
+			'+wayland' \
 			--enable-default-toolkit=cairo-gtk3-wayland-only
 	else
-		mozconfig_add_options_ac '+x11' \
+		mozconfig_add_options_ac \
+			'+x11' \
 			--enable-default-toolkit=cairo-gtk3
 	fi
 
@@ -1746,36 +1749,43 @@ einfo "Building without Mozilla API key ..."
 		mozconfig_add_options_ac '+debug' --disable-optimize
 		mozconfig_add_options_ac '+debug' --enable-real-time-tracing
 	else
-		mozconfig_add_options_ac 'Gentoo defaults' \
+		mozconfig_add_options_ac \
+			'Gentoo defaults' \
 			--disable-real-time-tracing
 
 	# No -Og beyond this point.
-		mozconfig_add_options_ac 'Gentoo default' \
+		mozconfig_add_options_ac \
+			'Gentoo default' \
 			--disable-debug-symbols
 
 	# Fork ebuild, or use distro ebuild, or set USE=debug if you want -Og
 		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
 			einfo "Using Ofast"
 			OFLAG="-Ofast"
-			mozconfig_add_options_ac "from CFLAGS" \
+			mozconfig_add_options_ac \
+				"from CFLAGS" \
 				--enable-optimize=-Ofast
 		elif is_flagq_last '-O4' || [[ "${OFLAG}" == "-O4" ]] ; then
 	# O4 is the same as O3.
 			OFLAG="-O4"
-			mozconfig_add_options_ac "from CFLAGS" \
+			mozconfig_add_options_ac \
+				"from CFLAGS" \
 				--enable-optimize=-O4
 		elif is_flagq_last '-O3' || [[ "${OFLAG}" == "-O3" ]] ; then
 	# Repeated for multiple Oflags
 			OFLAG="-O3"
-			mozconfig_add_options_ac "from CFLAGS" \
+			mozconfig_add_options_ac \
+				"from CFLAGS" \
 				--enable-optimize=-O3
 		elif is_flagq_last '-O2' || [[ "${OFLAG}" == "-O2" ]] ; then
 			OFLAG="-O2"
-			mozconfig_add_options_ac "from CFLAGS" \
+			mozconfig_add_options_ac \
+				"from CFLAGS" \
 				--enable-optimize=-O2
 		else
 			OFLAG="-O3"
-			mozconfig_add_options_ac "Upstream default" \
+			mozconfig_add_options_ac \
+				"Upstream default" \
 				--enable-optimize=-O3
 		fi
 	fi
@@ -1799,8 +1809,9 @@ einfo "Building without Mozilla API key ..."
 		mozconfig_add_options_ac '+cpu_flags_arm_neon' --with-fpu=neon
 
 		if tc-is-gcc ; then
-	# thumb options aren't supported when using clang, bug 666966
-			mozconfig_add_options_ac '+cpu_flags_arm_neon' \
+	# Thumb options aren't supported when using clang, bug 666966
+			mozconfig_add_options_ac \
+				'+cpu_flags_arm_neon' \
 				--with-thumb=yes \
 				--with-thumb-interwork=no
 		fi
@@ -1901,10 +1912,10 @@ einfo "Cross-compile ABI:\t\t${ABI}"
 einfo "Cross-compile CFLAGS:\t${CFLAGS}"
 einfo "Cross-compile CC:\t\t${CC}"
 einfo "Cross-compile CXX:\t\t${CXX}"
-echo "export PKG_CONFIG=${CHOST}-pkg-config" \
-	>>${MOZCONFIG}
-echo "export PKG_CONFIG_PATH=/usr/$(get_libdir)/pkgconfig:/usr/share/pkgconfig" \
-	>>${MOZCONFIG}
+	echo "export PKG_CONFIG=${CHOST}-pkg-config" \
+		>>${MOZCONFIG}
+	echo "export PKG_CONFIG_PATH=/usr/$(get_libdir)/pkgconfig:/usr/share/pkgconfig" \
+		>>${MOZCONFIG}
 
 	# Show flags we will use
 einfo "Build BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
