@@ -59,7 +59,8 @@ SRC_URI="
 LICENSE="BSD"
 SLOT="0"
 #KEYWORDS="amd64 ~arm64 ~ppc64 ~x86" # Need to test with mold first
-# We don't use official because of mold is not supported upstream.
+# This is assumes mold first policy so official settings which relies on
+# thinlto in build scripts will conflict.
 IUSE="
 cfi +clang convert-dict cups cpu_flags_arm_neon custom-cflags debug
 enable-driver gtk4 headless js-type-check kerberos +mold -official
@@ -563,13 +564,11 @@ src_prepare() {
 	#fi
 
 	if tc-is-clang ; then
-		if tc-is-clang ; then # Duplicate conditional is for testing reasons
-			# Using gcc with these patches results in this error:
-			# Two or more targets generate the same output:
-			#   lib.unstripped/libEGL.so
-			eapply "${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-1.patch"
-			eapply "${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-2.patch"
-		fi
+		# Using gcc with these patches results in this error:
+		# Two or more targets generate the same output:
+		#   lib.unstripped/libEGL.so
+		eapply "${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-1.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-2.patch"
 	fi
 
 	if use arm64 && has_sanitizer_option "shadow-call-stack" ; then
@@ -1060,7 +1059,7 @@ eerror "LLD and mold are mutually exclusive.  Choose only one."
 	elif ! use mold && is-flagq '-fuse-ld=mold' ; then
 eerror "You must enable the mold USE flag"
 	elif use mold || is-flagq '-fuse-ld=mold' ; then
-ewarn "Using mold may weaken security"
+ewarn "Using the mold may weaken security" # No Clang CFI for starters
 		myconf_gn+=" use_lld=false"
 		myconf_gn+=" use_mold=true"
 	else
