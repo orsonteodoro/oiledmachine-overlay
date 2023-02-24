@@ -258,6 +258,12 @@ IUSE+="
 geckodriver +gmp-autoupdate screencast +X
 "
 
+# The vaapi mold restriction needs review on vaapi architecture.  It is possible
+# for a vaapi driver not to require mesa and bypass the disable
+# proprietary-codecs check.
+#
+# The wayland flag actually allows vaapi, but upstream lazy to make it
+# an independent option.
 REQUIRED_USE="
 	debug? (
 		!system-av1
@@ -271,6 +277,7 @@ REQUIRED_USE="
 	mold? (
 		!openh264
 		!vaapi
+		!wayland
 		eme-free
 	)
 	vaapi? (

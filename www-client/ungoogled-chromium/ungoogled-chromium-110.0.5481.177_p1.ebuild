@@ -11,8 +11,7 @@
 # 1.  Permanently disable CDM
 # 2.  Permanently disable deprecated services
 # 3.  Permanently remove or permanently disable proprietary codecs or non-free codecs.
-# 4.  Disable vaapi for mold builds.
-# 5.  Add mold
+# 4.  Add mold
 
 EAPI=8
 PYTHON_COMPAT=( python3_{9..11} )
@@ -69,6 +68,10 @@ optimize-thinlto optimize-webui pgo pic pulseaudio qt5 screencast selinux suid
 "
 RESTRICT="
 "
+
+# The vaapi mold restriction needs review on vaapi architecture.  It is possible
+# for a vaapi driver not to require mesa and bypass the disable
+# proprietary-codecs check.
 REQUIRED_USE="
 	!headless (
 		|| (
@@ -83,7 +86,6 @@ REQUIRED_USE="
 		!thinlto
 		!cfi
 		!official
-		!vaapi
 	)
 	official? (
 		pgo
