@@ -655,8 +655,8 @@ mozilla_set_globals() {
 
 	local lang xflag
 	for lang in "${MOZ_LANGS[@]}" ; do
-	# en and en_US are handled internally
-		if [[ ${lang} == en ]] || [[ ${lang} == en-US ]] ; then
+		if [[ ${lang} == en || ${lang} == en-US ]] ; then
+	# Both are handled internally
 			continue
 		fi
 
@@ -980,8 +980,8 @@ ewarn "/dev/shm is not mounted -- expect build failures!"
 	linux-info_pkg_setup
 
 einfo
-einfo "To set up cross-compile for other ABIs see \`epkginfo -d firefox\` or"
-einfo "the metadata.xml"
+einfo "To set up cross-compile for other ABIs,"
+einfo "see \`epkginfo -x firefox::oiledmachine-overlay\` or the metadata.xml"
 einfo
 
 	local jobs=$(echo "${MAKEOPTS}" \
@@ -1067,7 +1067,8 @@ einfo
 	# Check patched versions and/or new features for differences.
 	if [[ -n "${FF_EBUILD_MAINTAINER}" ]] ; then
 	# For ebuild maintainers
-		if [[ ! ( "${LICENSE}" =~ "${LICENSE_FILE_NAME}" ) \
+		if [[ \
+			   ! ( "${LICENSE}" =~ "${LICENSE_FILE_NAME}" ) \
 			|| ! -e "${MY_OVERLAY_DIR}/licenses/${LICENSE_FILE_NAME}" \
 			|| "${actual_fp}" != "${LICENSE_FINGERPRINT}" \
 		]] ; then
