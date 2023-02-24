@@ -1,0 +1,118 @@
+Subject:  Make SIMD instructions optional for zlib
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Wed Oct 20 03:40:04 PM PDT 2021 (Unix time: 1634769604)
+--- a/third_party/zlib/BUILD.gn.orig	2022-06-15 19:32:07.000000000 -0700
++++ b/third_party/zlib/BUILD.gn	2022-07-02 10:43:08.781475307 -0700
+@@ -4,6 +4,12 @@
+ 
+ import("//build/config/compiler/compiler.gni")
+ 
++declare_args() {
++  use_sse4_2 = true
++  use_ssse3 = true
++  use_sse2 = true
++}
++
+ if (build_with_chromium) {
+   import("//testing/test.gni")
+ }
+@@ -65,10 +71,10 @@ if ((current_cpu == "arm" || current_cpu
+ }
+ 
+ use_x86_x64_optimizations =
+-    (current_cpu == "x86" || current_cpu == "x64") && !is_ios
++    (current_cpu == "x86" || current_cpu == "x64") && !is_ios && use_sse2
+ 
+ config("zlib_adler32_simd_config") {
+-  if (use_x86_x64_optimizations) {
++  if (use_x86_x64_optimizations && use_ssse3) {
+     defines = [ "ADLER32_SIMD_SSSE3" ]
+     if (is_win) {
+       defines += [ "X86_WINDOWS" ]
+@@ -85,13 +91,13 @@ config("zlib_adler32_simd_config") {
+ source_set("zlib_adler32_simd") {
+   visibility = [ ":*" ]
+ 
+-  if (use_x86_x64_optimizations) {
++  if (use_x86_x64_optimizations && use_ssse3) {
+     sources = [
+       "adler32_simd.c",
+       "adler32_simd.h",
+     ]
+ 
+-    if (!is_win || is_clang) {
++    if ((!is_win || is_clang) && use_ssse3) {
+       cflags = [ "-mssse3" ]
+     }
+   }
+@@ -205,7 +211,7 @@ source_set("zlib_inflate_chunk_simd") {
+ }
+ 
+ config("zlib_crc32_simd_config") {
+-  if (use_x86_x64_optimizations) {
++  if (use_x86_x64_optimizations && use_sse4_2) {
+     defines = [ "CRC32_SIMD_SSE42_PCLMUL" ]
+   }
+ }
+@@ -213,7 +219,7 @@ config("zlib_crc32_simd_config") {
+ source_set("zlib_crc32_simd") {
+   visibility = [ ":*" ]
+ 
+-  if (use_x86_x64_optimizations) {
++  if (use_x86_x64_optimizations && use_sse4_2) {
+     sources = [
+       "crc32_simd.c",
+       "crc32_simd.h",
+--- a/third_party/skia/third_party/zlib/BUILD.gn.orig	2022-06-15 19:38:42.000000000 -0700
++++ b/third_party/skia/third_party/zlib/BUILD.gn	2022-07-02 11:14:19.403957300 -0700
+@@ -5,6 +5,9 @@
+ 
+ declare_args() {
+   skia_use_system_zlib = is_official_build
++  use_sse4_2 = true
++  use_ssse3 = true
++  use_sse2 = true
+ }
+ 
+ import("../third_party.gni")
+@@ -18,11 +21,11 @@ if (skia_use_system_zlib) {
+   use_arm_neon_optimizations =
+       (current_cpu == "arm" || current_cpu == "arm64") && !(is_win && !is_clang)
+   use_x86_x64_optimizations =
+-      (current_cpu == "x86" || current_cpu == "x64") && !is_ios
++      (current_cpu == "x86" || current_cpu == "x64") && !is_ios && use_sse2
+ 
+   config("zlib_simd_config") {
+     defines = []
+-    if (use_x86_x64_optimizations) {
++    if (use_x86_x64_optimizations && use_ssse3) {
+       if (is_win) {
+         defines += [ "X86_WINDOWS" ]
+       } else {
+@@ -60,7 +63,7 @@ if (skia_use_system_zlib) {
+   source_set("zlib_adler32_simd") {
+     visibility = [ ":*" ]
+     configs += [ ":zlib_simd_config" ]
+-    if (use_x86_x64_optimizations) {
++    if (use_x86_x64_optimizations && use_ssse3) {
+       defines = [ "ADLER32_SIMD_SSSE3" ]
+       if (!is_win || is_clang) {
+         cflags = [ "-mssse3" ]
+@@ -90,7 +93,7 @@ if (skia_use_system_zlib) {
+       }
+     }
+ 
+-    if (use_x86_x64_optimizations) {
++    if (use_x86_x64_optimizations && use_sse4_2) {
+       defines = [ "CRC32_SIMD_SSE42_PCLMUL" ]
+       if (!is_win || is_clang) {
+         cflags = [
+@@ -133,7 +136,7 @@ if (skia_use_system_zlib) {
+   source_set("zlib_x86_x64_simd") {
+     visibility = [ ":*" ]
+     configs += [ ":zlib_simd_config" ]
+-    if (use_x86_x64_optimizations) {
++    if (use_x86_x64_optimizations && use_sse4_2) {
+       defines = [
+         "CRC32_SIMD_SSE42_PCLMUL",
+         "DEFLATE_FILL_WINDOW_SSE2",
