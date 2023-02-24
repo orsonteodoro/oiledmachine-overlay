@@ -36,8 +36,6 @@ DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
 PATCHSET="4"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
-MTD_V="${PV}"
-CTDM_V="${PV}"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
@@ -284,9 +282,18 @@ KEYWORDS="~amd64 ~arm64"
 # The suid is built by default upstream but not necessarily used:  \
 #   https://github.com/chromium/chromium/blob/110.0.5481.100/sandbox/linux/BUILD.gn
 #
-CPU_FLAGS_ARM=( neon )
-CPU_FLAGS_X86=( sse2 ssse3 sse4_2 )
-IUSE_LIBCXX=( bundled-libcxx system-libstdcxx )
+CPU_FLAGS_ARM=(
+	neon
+)
+CPU_FLAGS_X86=(
+	sse2
+	ssse3
+	sse4_2
+)
+IUSE_LIBCXX=(
+	bundled-libcxx
+	system-libstdcxx
+)
 # CFI Basic (.a) mode requires all third party modules built as static.
 IUSE="
 ${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_}
@@ -335,8 +342,8 @@ r1
 REQUIRED_USE+="
 	!headless (
 		|| (
-			X
 			wayland
+			X
 		)
 	)
 	!proprietary-codecs? (
@@ -420,7 +427,7 @@ FFMPEG_V="4.3"
 
 LIBVA_DEPEND="
 	vaapi? (
-		>=media-libs/libva-${LIBVA_V}:=[${MULTILIB_USEDEP},X?,drm(+),wayland?]
+		>=media-libs/libva-${LIBVA_V}:=[${MULTILIB_USEDEP},drm(+),wayland?,X?]
 		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		system-ffmpeg? (
 			>=media-video/ffmpeg-${FFMPEG_V}[${MULTILIB_USEDEP},vaapi]
@@ -435,9 +442,14 @@ gen_depend_llvm() {
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		t="
-			>=sys-devel/lld-${s}
+			!official? (
+				cfi? (
+					=sys-libs/compiler-rt-sanitizers-${s}*:=[${MULTILIB_USEDEP},cfi]
+				)
+			)
 			=sys-libs/compiler-rt-${s}*
 			=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			>=sys-devel/lld-${s}
 			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			epgo? (
@@ -446,11 +458,6 @@ gen_depend_llvm() {
 			official? (
 				amd64? (
 					=sys-libs/compiler-rt-sanitizers-${s}*:=[${MULTILIB_USEDEP},cfi,profile]
-				)
-			)
-			!official? (
-				cfi? (
-					=sys-libs/compiler-rt-sanitizers-${s}*:=[${MULTILIB_USEDEP},cfi]
 				)
 			)
 		"
@@ -462,11 +469,11 @@ gen_depend_llvm() {
 		(( ${s} == ${CR_CLANG_SLOT_OFFICIAL} )) && o_official=" ${t} "
 	done
 	echo -e "
-		|| (
-			${o_all}
-		)
 		official? (
 			${o_official}
+		)
+		|| (
+			${o_all}
 		)
 	"
 }
@@ -580,8 +587,8 @@ COMMON_DEPEND="
 	sys-apps/dbus:=[${MULTILIB_USEDEP}]
 	sys-libs/zlib:=[${MULTILIB_USEDEP},minizip]
 	system-ffmpeg? (
-		>=media-video/ffmpeg-${FFMPEG_V}:=[${MULTILIB_USEDEP}]
 		>=media-libs/opus-1.3.1:=[${MULTILIB_USEDEP}]
+		>=media-video/ffmpeg-${FFMPEG_V}:=[${MULTILIB_USEDEP}]
 		|| (
 			>=media-video/ffmpeg-${FFMPEG_V}[${MULTILIB_USEDEP},-samba]
 			>=net-fs/samba-4.5.10-r1[${MULTILIB_USEDEP},-debug(-)]
@@ -599,17 +606,17 @@ CLANG_RDEPEND="
 		$(gen_depend_llvm)
 	)
 "
-RDEPEND="
+RDEPEND+="
 	${COMMON_DEPEND}
 	${CLANG_RDEPEND}
 	!headless? (
+		x11-misc/xdg-utils
 		qt5? (
 			dev-qt/qtgui:5[X?,wayland?]
 		)
-		x11-misc/xdg-utils
 		|| (
 			gui-libs/gtk:4[X?,wayland?]
-			x11-libs/gtk+:3[${MULTILIB_USEDEP},X?,wayland?]
+			x11-libs/gtk+:3[${MULTILIB_USEDEP},wayland?,X?]
 		)
 	)
 	virtual/ttf-fonts
@@ -617,11 +624,11 @@ RDEPEND="
 		sec-policy/selinux-chromium
 	)
 "
-DEPEND="
+DEPEND+="
 	${COMMON_DEPEND}
 	!headless? (
 		!gtk4? (
-			x11-libs/gtk+:3[${MULTILIB_USEDEP},X?,wayland?]
+			x11-libs/gtk+:3[${MULTILIB_USEDEP},wayland?,X?]
 		)
 		gtk4? (
 			gui-libs/gtk:4[X?,wayland?]
@@ -648,7 +655,7 @@ CLANG_BDEPEND="
 		$(gen_depend_llvm)
 	)
 "
-BDEPEND="
+BDEPEND+="
 	${CLANG_BDEPEND}
 	${COMMON_SNAPSHOT_DEPEND}
 	${PYTHON_DEPS}
@@ -783,7 +790,8 @@ _compiler_version_checks() {
 }
 
 has_zswap() {
-# 2.1875 is the average compression ratio (or ratio of uncompressed:compressed)
+	# 2.1875 is the average compression ratio
+	# (or ratio of uncompressed:compressed)
 	if grep -q -e "Y" "${BROOT}/sys/module/zswap/parameters/enabled" ; then
 		return 0
 	fi
@@ -795,11 +803,11 @@ is_debug_flags() {
 }
 
 pre_build_checks() {
-# Check build requirements, bug #541816 and bug #471810
-	CHECKREQS_MEMORY="16G"
+	# Check build requirements, bug #541816 and bug #471810
 	if use official ; then
-# https://github.com/chromium/chromium/blob/110.0.5481.100/docs/linux/build_instructions.md#system-requirements
+	# https://github.com/chromium/chromium/blob/110.0.5481.100/docs/linux/build_instructions.md#system-requirements
 		CHECKREQS_DISK_BUILD="100G"
+		CHECKREQS_MEMORY="16G"
 	else
 		CHECKREQS_DISK_BUILD="25G"
 		CHECKREQS_MEMORY="16G"
@@ -810,8 +818,8 @@ pre_build_checks() {
 einfo
 einfo "Detected zswap off.  Total memory required:"
 einfo
-einfo "With zswap:  ${CHECKREQS_MEMORY}"
-einfo "Without zswap:  ${tot_mem_without_zswap}"
+einfo "With zswap:\t${CHECKREQS_MEMORY}"
+einfo "Without zswap:\t${tot_mem_without_zswap}"
 einfo
 				CHECKREQS_MEMORY="${tot_mem_without_zswap}"
 			fi
@@ -845,15 +853,15 @@ ewarn
 	fi
 }
 
+# About PGO version compatibility
+#
 # The answer to the profdata compatibility is answered in
 # https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#format-compatibility-guarantees
-
+#
 # The profdata (aka indexed profile) version is 8 corresponding from >= LLVM 16
 # up to main branch (LLVM 16) and is after the magic (lprofi - i for index) in the
 # profdata file located in chrome/build/pgo_profiles/*.profdata.
-
-# PGO version compatibility
-
+#
 # Profdata versioning:
 # https://github.com/llvm/llvm-project/blob/60809cd2/llvm/include/llvm/ProfileData/InstrProf.h#L1024
 # LLVM version:
@@ -935,7 +943,7 @@ _get_release_hash() {
 	local v="${1}"
 	if [[ -z "${cached_release_hashes[${v}]}" ]] ; then
 
-		# This doesn't redirect to the tip
+	# This doesn't redirect to the tip.
 		#local hash=$(git --no-pager ls-remote \
 		#	https://github.com/llvm/llvm-project.git \
 		#	llvmorg-${v} \
@@ -958,14 +966,15 @@ _get_release_hash() {
 _get_llvm_timestamp() {
 	local emerged_llvm_commit
 	if [[ -z "${emerged_llvm_commit}" ]] ; then
-		# Should check against the llvm milestone if not live
+	# We should check against the llvm milestone if not live.
 		while [[ "${pv:0:1}" =~ [A-Za-z] ]] ; do
 			pv="${pv#*-}"
 		done
 		local v=$(ver_cut 1-3 "${pv}")
 		local suffix=""
 		if [[ "${pv}" =~ "_rc" ]] ; then
-			suffix=$(echo "${pv}" | grep -E -o -e "_rc[0-9]+")
+			suffix=$(echo "${pv}" \
+				| grep -E -o -e "_rc[0-9]+")
 			suffix=${suffix//_/-}
 		fi
 		v="${v}${suffix}"
@@ -975,8 +984,8 @@ _get_llvm_timestamp() {
 einfo
 einfo "Fetching timestamp for ${emerged_llvm_commit}"
 einfo
-		# Uncached
-		# Fetched uncached because of potential partial download problems.
+	# It should be uncached/fetched because of potential partial download
+	# problems.
 		local emerged_llvm_time_desc=$(wget -q -O - \
 	https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch)
 		if [[ -z "${emerged_llvm_time_desc}" ]] ; then
@@ -985,7 +994,8 @@ eerror "${emerged_llvm_commit} didn't download anything."
 eerror
 			die
 		fi
-		if echo "${emerged_llvm_time_desc}" | grep "Not Found" ; then
+		if echo "${emerged_llvm_time_desc}" \
+			| grep "Not Found" ; then
 eerror
 eerror "The commit ${emerged_llvm_commit} doesn't exist."
 eerror
@@ -1060,7 +1070,9 @@ _check_llvm_updated_triple() {
 		#einfo "needs merge"
 		needs_emerge=1
 		llvm_packages_status[${p_}]="1" # needs emerge
-		old_triple_slot_packages+=( "${category}/${pn}:"$(cat "${mp}/SLOT") )
+		old_triple_slot_packages+=(
+			"${category}/${pn}:"$(cat "${mp}/SLOT")
+		)
 	else
 		#einfo "no merge needed"
 		llvm_packages_status[${p_}]="0" # package is okay
@@ -1084,7 +1096,8 @@ verify_llvm_report_card() {
 		for p in ${live_pkgs[@]} ; do
 			local p_=${p//-/_}
 			p_=${p_//\//_}
-			if [[ -z "${llvm_packages_status[${p_}]}" ]] || (( ${llvm_packages_status[${p_}]} == 1 )) ; then
+			if [[ -z "${llvm_packages_status[${p_}]}" ]] \
+					|| (( ${llvm_packages_status[${p_}]} == 1 )) ; then
 				if contains_slotted_major_version "${p}" ; then
 					LLVM_REPORT_CARDS[${llvm_slot}]+="emerge -1vuDN ${p}:${llvm_slot}\n"
 				elif contains_slotted_triple_version "${p}" ; then
@@ -1098,6 +1111,8 @@ verify_llvm_report_card() {
 		LLVM_REPORT_CARDS[${llvm_slot}]="pass"
 	fi
 }
+
+PKGDB_PATH="${EROOT}/var/db/pkg"
 
 # This only exists because the distro has live versions and the project uses
 # a live version snapshot in production.  To make it more deterministic, we
@@ -1128,6 +1143,7 @@ einfo
 	# sys-devel/lld:0
 	local live_pkgs=(
 		# Do not change the order!
+		# The reason why is because we are emerging with -vO.
 		"sys-devel/llvm"
 		"sys-libs/libomp"
 		"sys-devel/lld"
@@ -1151,11 +1167,13 @@ einfo
 
 	local pass=0
 	local needs_emerge=0
-	# The llvm library or llvm-ar doesn't embed the hash info, so scan the /var/db/pkg.
+	# The llvm library or llvm-ar doesn't embed the hash info, so scan the
+	# /var/db/pkg.
 	if has_version "sys-devel/llvm:${llvm_slot}" ; then
+		local p
 		for p in ${live_pkgs[@]} ; do
-			# Check each of the live packages that use llvm.org
-			# eclass.  Especially for forgetful types.
+	# Check each of the live packages that use llvm.org eclass.  Especially
+	# for forgetful types.
 
 			local emerged_llvm_commit
 
@@ -1165,12 +1183,15 @@ einfo
 einfo
 einfo "Checking ${p}:${llvm_slot}"
 einfo
-				local path=$(realpath "${EROOT}/var/db/pkg/${p}-${llvm_slot}"*"/environment.bz2")
+				local path=$(realpath "${PKGDB_PATH}/${p}-${llvm_slot}"*"/environment.bz2")
 				if [[ -e "${path}" ]] ; then
 					emerged_llvm_commit=$(bzcat \
 						"${path}" \
-						| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
-					pv=$(cat "${EROOT}/var/db/pkg/${p}-${llvm_slot}"*"/PF" | sed "s|${p}-||")
+						| grep -F -e "EGIT_VERSION" \
+						| head -n 1 \
+						| cut -f 2 -d '"')
+					pv=$(cat "${PKGDB_PATH}/${p}-${llvm_slot}"*"/PF" \
+						| sed "s|${p}-||")
 					_get_llvm_timestamp
 					[[ "${p}" == "sys-devel/llvm" ]] \
 						&& LLVM_TIMESTAMP=${emerged_llvm_timestamp}
@@ -1179,36 +1200,49 @@ ewarn
 ewarn "Missing ${p}:${llvm_slot}"
 ewarn
 					p="sys-devel/llvm"
-					emerged_llvm_timestamp=$(( ${cr_clang_used_unix_timestamp} -1 ))
+					emerged_llvm_timestamp=$((
+						${cr_clang_used_unix_timestamp} - 1
+					))
 				fi
 				_check_llvm_updated
 			elif contains_slotted_zero "${p}" ; then
 einfo
 einfo "Checking ${p}:0"
 einfo
-				local path=$(realpath "${EROOT}/var/db/pkg/${p}"*"/environment.bz2")
+				local path=$(realpath "${PKGDB_PATH}/${p}"*"/environment.bz2")
 				if [[ -e "${path}" ]] ; then
 					emerged_llvm_commit=$(bzcat \
 						"${path}" \
-						| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
-					pv=$(cat "${EROOT}/var/db/pkg/${p}"*"/PF" | sed "s|${p}-||")
+						| grep -F -e "EGIT_VERSION" \
+						| head -n 1 \
+						| cut -f 2 -d '"')
+					pv=$(cat "${PKGDB_PATH}/${p}"*"/PF" \
+						| sed "s|${p}-||")
 					_get_llvm_timestamp
 				else
 ewarn
 ewarn "Missing ${p}:${llvm_slot}"
 ewarn
 					p="sys-devel/llvm"
-					emerged_llvm_timestamp=$(( ${cr_clang_used_unix_timestamp} -1 ))
+					emerged_llvm_timestamp=$((
+						${cr_clang_used_unix_timestamp} - 1
+					))
 				fi
 				_check_llvm_updated
 			else
 				local category=${p/\/*}
 				local pn=${p/*\/}
-				# Handle multiple slots (i.e multiple sys-libs/compiler-rt-sanitizers:x.y.z)
-				# We shouldn't have to deal with multiple sys-libs/compiler-rt-sanitizers
-				# 13.0.0.9999 13.0.0_rc3 13.0.0_rc2 versions installed at the same time
-				# for just 1 sys-libs/llvm but we have to.
-				for mp in $(find "${EROOT}/var/db/pkg/${category}" \
+	#
+	# Handle multiple slots
+	#
+	# (i.e multiple sys-libs/compiler-rt-sanitizers:x.y.z)
+	# We shouldn't deal with multiple sys-libs/compiler-rt-sanitizers
+	#
+	# For example, 13.0.0.9999 13.0.0_rc3 13.0.0_rc2 are versions installed
+	# at the same time for just 1 sys-libs/llvm but we have to.
+	#
+				local mp
+				for mp in $(find "${PKGDB_PATH}/${category}" \
 					-maxdepth 1 \
 					-type d \
 					-regextype "posix-extended" \
@@ -1220,13 +1254,16 @@ ewarn
 							| grep -F -e "EGIT_VERSION" \
 							| head -n 1 \
 							| cut -f 2 -d '"')
-						pv=$(cat "${mp}/PF" | sed "s|${p}-||")
+						pv=$(cat "${mp}/PF" \
+							| sed "s|${p}-||")
 						_get_llvm_timestamp
 					else
 ewarn
 ewarn "Missing ${p}:${llvm_slot}"
 ewarn
-						emerged_llvm_timestamp=$(( ${cr_clang_used_unix_timestamp} -1 ))
+						emerged_llvm_timestamp=$((
+							${cr_clang_used_unix_timestamp} - 1
+						))
 					fi
 					_check_llvm_updated_triple
 				done
@@ -1236,11 +1273,18 @@ ewarn
 	else
 		# For not installed
 		local compiler_rt_sanitizers_args=()
-		[[ "${USE}" =~ "cfi" ]] \
-			&& compiler_rt_sanitizers_args+=( cfi ubsan )
-		use arm64 \
-			&& has_sanitizer_option "shadow-call-stack" \
-			&& compiler_rt_sanitizers_args+=( shadowcallstack )
+		if [[ "${USE}" =~ "cfi" ]] ; then
+			compiler_rt_sanitizers_args+=(
+				cfi
+				ubsan
+			)
+		fi
+		if use arm64 \
+			&& has_sanitizer_option "shadow-call-stack" ; then
+			compiler_rt_sanitizers_args+=(
+				shadowcallstack
+			)
+		fi
 		if (( ${#compiler_rt_sanitizers_args[@]} > 0 )) ; then
 			local args=$(echo "${compiler_rt_sanitizers_args[@]}" \
 				| tr " " ",")
@@ -1279,8 +1323,10 @@ get_llvm_profdata_version_info()
 		local llvm_version
 		if [[ "${v}" =~ "9999" ]] ; then
 			local llvm_version=$(bzless \
-				"${EROOT}/var/db/pkg/sys-devel/llvm-${v}"*"/environment.bz2" \
-				| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
+				"${PKGDB_PATH}/sys-devel/llvm-${v}"*"/environment.bz2" \
+				| grep -F -e "EGIT_VERSION" \
+				| head -n 1 \
+				| cut -f 2 -d '"')
 		else
 			llvm_version="llvmorg-${v/_/-}"
 		fi
@@ -1305,67 +1351,67 @@ is_profdata_compatible() {
 }
 
 PKG_LIBS=(
-libX11.so.6
-libXau.so.6
-libXcomposite.so.1
-libXdamage.so.1
-libXdmcp.so.6
-libXext.so.6
-libXfixes.so.3
-libXrandr.so.2
-libXrender.so.1
-libasound.so.2
-libatk-1.0.so.0
-libatk-bridge-2.0.so.0
-libatspi.so.0
-libblkid.so.1
-libbsd.so.0
-libc.so.6
-libcairo.so.2
-libcups.so.2
-libdbus-1.so.3
-libdl.so.2
-libdrm.so.2
-libexpat.so.1
-libffi.so.8
-libfontconfig.so.1
-libfreetype.so.6
-libfribidi.so.0
-libgbm.so.1
-libgcc_s.so.1
-libgio-2.0.so.0
-libglib-2.0.so.0
-libgmodule-2.0.so.0
-libgmp.so.10
-libgnutls.so.30
-libgobject-2.0.so.0
-libharfbuzz.so.0
-libhogweed.so.6
-libm.so.6
-libmd.so.0
-libmount.so.1
-libnettle.so.8
-libnspr4.so
-libnss3.so
-libnssutil3.so
-libpango-1.0.so.0
-libpcre.so.1
-libpixman-1.so.0
-libplc4.so
-libplds4.so
-libpng16.so.16
-libpthread.so.0
-librt.so.1
-libsmime3.so
-libstdc++.so.6
-libtasn1.so.6
-libunistring.so.2
-libuuid.so.1
-libxcb-render.so.0
-libxcb-shm.so.0
-libxcb.so.1
-libxkbcommon.so.0
-libz.so.1
+	libX11.so.6
+	libXau.so.6
+	libXcomposite.so.1
+	libXdamage.so.1
+	libXdmcp.so.6
+	libXext.so.6
+	libXfixes.so.3
+	libXrandr.so.2
+	libXrender.so.1
+	libasound.so.2
+	libatk-1.0.so.0
+	libatk-bridge-2.0.so.0
+	libatspi.so.0
+	libblkid.so.1
+	libbsd.so.0
+	libc.so.6
+	libcairo.so.2
+	libcups.so.2
+	libdbus-1.so.3
+	libdl.so.2
+	libdrm.so.2
+	libexpat.so.1
+	libffi.so.8
+	libfontconfig.so.1
+	libfreetype.so.6
+	libfribidi.so.0
+	libgbm.so.1
+	libgcc_s.so.1
+	libgio-2.0.so.0
+	libglib-2.0.so.0
+	libgmodule-2.0.so.0
+	libgmp.so.10
+	libgnutls.so.30
+	libgobject-2.0.so.0
+	libharfbuzz.so.0
+	libhogweed.so.6
+	libm.so.6
+	libmd.so.0
+	libmount.so.1
+	libnettle.so.8
+	libnspr4.so
+	libnss3.so
+	libnssutil3.so
+	libpango-1.0.so.0
+	libpcre.so.1
+	libpixman-1.so.0
+	libplc4.so
+	libplds4.so
+	libpng16.so.16
+	libpthread.so.0
+	librt.so.1
+	libsmime3.so
+	libstdc++.so.6
+	libtasn1.so.6
+	libunistring.so.2
+	libuuid.so.1
+	libxcb-render.so.0
+	libxcb-shm.so.0
+	libxcb.so.1
+	libxkbcommon.so.0
+	libz.so.1
 )
 
 # Check the system for security weaknesses.
@@ -1381,7 +1427,7 @@ einfo
 	# TODO:  Update list for source build.
 
 	# TODO: check dependency n levels deep.
-	# We assume CFI Cross-DSO.
+	# We are assuming CFI Cross-DSO.
 einfo
 einfo "Evaluating system for possible weaknesses."
 einfo "Assuming systemwide CFI Cross-DSO."
@@ -1396,7 +1442,9 @@ ewarn "${f} does not exist."
 			continue
 		fi
 		local path
-		path=$(echo "${paths[@]}" | tr " " "\n" | tail -n 1)
+		path=$(echo "${paths[@]}" \
+			| tr " " "\n" \
+			| tail -n 1)
 		local real_path=$(realpath "${path}")
 		if "${BROOT}/usr/bin/readelf" -Ws "${real_path}" 2>/dev/null \
 			| grep -E -q -e "(cfi_bad_type|cfi_check_fail|__cfi_init)" ; then
@@ -1406,9 +1454,9 @@ ewarn "${f} is NOT CFI protected."
 		fi
 	done
 einfo
-einfo "The information presented is a draft report that may not"
-einfo "represent your configuration.  Some libraries listed"
-einfo "may not be be able to be CFI Cross-DSOed."
+einfo "The information presented is a draft report that may not represent your"
+einfo "configuration.  Some libraries listed may not be be able to be CFI"
+einfo "Cross-DSOed."
 einfo
 einfo "An estimated >= 37.7% (26/69) of the libraries listed should be"
 einfo "marked CFI protected."
@@ -1425,6 +1473,7 @@ is_using_clang() {
 		"thinlto-opt"
 	)
 
+	local u
 	for u in ${U} ; do
 		use "${u}" && return 0
 	done
@@ -1442,14 +1491,15 @@ einfo
 
 	chromium_suid_sandbox_check_kernel_config
 
-	# nvidia-drivers does not work correctly with Wayland due to unsupported
-	# EGLStreams
+	# The package below does not work correctly with Wayland due to
+	# unsupported EGLStreams.
 	if use wayland \
 		&& ! use headless \
 		&& has_version "x11-drivers/nvidia-drivers" ; then
 ewarn
-ewarn "Proprietary nVidia driver does not work with Wayland. You can disable"
-ewarn "Wayland by setting DISABLE_OZONE_PLATFORM=true in /etc/chromium/default."
+ewarn "The x11-drivers/nvidia-drivers package does not work with Wayland.  You"
+ewarn "can disable Wayland by setting DISABLE_OZONE_PLATFORM=true in"
+ewarn "/etc/chromium/default."
 ewarn
 	fi
 
@@ -1461,20 +1511,22 @@ ewarn
 	fi
 
 
-	if ( tc-is-clang && is-flagq '-flto*' ) || use official || use cfi ; then
-		# sys-devel/lld-13 was ~20 mins for v8_context_snapshot_generator
-		# sys-devel/lld-12 was ~4 hrs for v8_context_snapshot_generator
+	if ( tc-is-clang && is-flagq '-flto*' ) \
+		|| use official \
+		|| use cfi ; then
+	# sys-devel/lld-13 was ~20 mins for v8_context_snapshot_generator
+	# sys-devel/lld-12 was ~4 hrs for v8_context_snapshot_generator
 ewarn
 ewarn "Linking times may take longer than usual.  Maybe 1-12+ hour(s)."
 ewarn
 	fi
 
 	# These checks are a maybe required.
+	local s
 	if tc-is-clang || is_using_clang ; then
-		# No LLVM multi version bug here.
-		# Cr will still work if Mesa slot is lower and Cr is built with
-		# a higher version.
-		local s
+	# No LLVM multi version bug here.
+	# Cr will still work if Mesa slot is lower and Cr is built with
+	# a higher version.
 		if use pre-check-llvm ; then
 			unset LLVM_REPORT_CARDS
 			for s in ${LLVM_SLOTS[@]} ; do
@@ -1500,7 +1552,8 @@ ewarn
 			if use official ; then
 				LLVM_SLOT=${CR_CLANG_SLOT_OFFICIAL}
 			else
-				LLVM_SLOT=$(ver_cut 1 $(best_version "sys-devel/clang" \
+				LLVM_SLOT=$(ver_cut 1 \
+					$(best_version "sys-devel/clang" \
 					| sed -e "s|sys-devel/clang-||g"))
 			fi
 		fi
@@ -1534,7 +1587,7 @@ eerror "force a rebuild if the following message is encountered:"
 eerror
 eerror "  Nothing to merge; quitting."
 eerror
-# One reason is possibly for crash reporting.
+	# One reason is possibly for crash reporting.
 			die
 		else
 			export PATH=$(echo "${PATH}" \
@@ -1544,11 +1597,11 @@ eerror
 				| sed -e "/^$/d" \
 				| tr "\n" ":" \
 				| sed -e "s|:$||")
-# If building without ccache, include in the search path:
-# 1.  Path to clang/clang++ (/usr/lib/llvm/${LLVM_SLOT}/bin)
-# 2.  Path to highest LLD (/usr/lib/llvm/${v_major_lld}/bin)
-# If ccache is installed, this really does nothing because
-# /usr/lib/ccache/bin has a higher precedence.
+	# If building without ccache, include in the search path:
+	# 1.  Path to clang/clang++ (/usr/lib/llvm/${LLVM_SLOT}/bin)
+	# 2.  Path to highest LLD (/usr/lib/llvm/${v_major_lld}/bin)
+	# If ccache is installed, this really does nothing because
+	# /usr/lib/ccache/bin has a higher precedence.
 			export PATH+=":${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}/bin"
 einfo
 einfo "Using sys-devel/llvm:${LLVM_SLOT}"
@@ -1618,6 +1671,7 @@ ceapply() {
 }
 
 src_unpack() {
+	local a
 	for a in ${A} ; do
 		unpack ${a}
 	done
@@ -1642,7 +1696,7 @@ verify_clang_commit() {
 	if [[ "${CR_CLANG_USED}" =~ ^"${commit_id}" ]] ; then
 		:;
 	else
-		# Update on every major version of this package.
+	# Update on every major version of this package.
 eerror
 eerror "The LLVM commit is out of date.  Update CR_CLANG_*,"
 eerror "LLVM_SLOTS, CR_CLANG_SLOT_OFFICIAL variables."
@@ -1671,9 +1725,9 @@ src_prepare() {
 
 	local PATCHES=()
 	if ( ! tc-is-clang ) || use system-libstdcxx ; then
-		# Contains arm64 patches for unknown purpose.
-		# TODO: split GCC only and libstdc++ only.
-		# The patches purpose are not documented well.
+	# Contains arm64 patches for unknown purpose.
+	# TODO: split GCC only and libstdc++ only.
+	# The patches purpose are not documented well.
 ewarn
 ewarn "Applying GCC & libstdc++ compatibility patches."
 ewarn
@@ -1730,9 +1784,12 @@ ewarn
 	fi
 
 	mkdir -p third_party/node/linux/node-linux-x64/bin || die
-	ln -s "${EPREFIX}"/usr/bin/node third_party/node/linux/node-linux-x64/bin/node || die
+	ln -s \
+		"${EPREFIX}"/usr/bin/node \
+		third_party/node/linux/node-linux-x64/bin/node \
+		|| die
 
-	# adjust python interpreter version
+	# Adjust the python interpreter version
 	sed -i -e "s|\(^script_executable = \).*|\1\"${EPYTHON}\"|g" .gn || die
 
 	local keeplibs=(
@@ -1965,14 +2022,13 @@ ewarn
 		v8/third_party/inspector_protocol
 		v8/third_party/v8
 
-		# gyp -> gn leftovers
+	# gyp -> gn leftovers
 		third_party/speech-dispatcher
 		third_party/usb_ids
 		third_party/xdg-utils
-	)
-	keeplibs+=( third_party/zlib )
+
 	#
-	# Do not remove the third_party/zlib above. \
+	# Do not remove the third_party/zlib below. \
 	#
 	# Error:  ninja: error: '../../third_party/zlib/adler32_simd.c', \
 	# needed by 'obj/third_party/zlib/zlib_adler32_simd/adler32_simd.o', \
@@ -1981,48 +2037,44 @@ ewarn
 	# third_party/zlib is already kept but may use system no need split \
 	# conditional for CFI or official builds.
 	#
-	if ! use system-ffmpeg ; then
-		keeplibs+=( third_party/ffmpeg third_party/opus )
-	fi
-	if ! use system-icu ; then
-		keeplibs+=( third_party/icu )
-	fi
-	if ! use system-png; then
-		keeplibs+=( third_party/libpng )
-	fi
-	if ! use system-av1; then
-		keep_libs+=(
+		third_party/zlib
+
+		$(usex !system-ffmpeg "
+			third_party/ffmpeg
+			third_party/opus
+		")
+		$(usex !system-icu "
+			third_party/icu
+		")
+		$(usex !system-png "
+			third_party/libpng
+		")
+		$(usex !system-av1 "
 			third_party/dav1d
 			third_party/libaom
 			third_party/libaom/source/libaom/third_party/fastfeat
 			third_party/libaom/source/libaom/third_party/SVT-AV1
 			third_party/libaom/source/libaom/third_party/vector
 			third_party/libaom/source/libaom/third_party/x86inc
-		)
-	fi
-	#
-	# For re2 see ! use system-libstdcxx conditional below
-	#
-	if ! use system-harfbuzz; then
-		keeplibs+=( third_party/harfbuzz-ng )
-	fi
-	#
-	#
-	#
-	if use arm64 || use ppc64 ; then
-		keeplibs+=( third_party/swiftshader/third_party/llvm-10.0 )
-	fi
-	if ! use system-libstdcxx \
-		|| use cfi \
-		|| use official ; then
-		keeplibs+=( third_party/re2 )
-	fi
+		")
+		$(usex !system-harfbuzz "
+			third_party/harfbuzz-ng
+		")
+		$((use arm64 || use ppc64) || echo "
+			third_party/swiftshader/third_party/llvm-10.0
+		")
+		$((use system-libstdcxx \
+			|| use cfi \
+			|| use official) || echo "
+			third_party/re2
+		")
+	)
 	# We need to generate ppc64 stuff because upstream does not ship it yet
 	# it has to be done before unbundling.
 	if use ppc64 ; then
 		pushd third_party/libvpx >/dev/null || die
 		mkdir -p source/config/linux/ppc64 || die
-		# requires git and clang, bug #832803
+	# The script requires git and clang, bug #832803
 		sed -i -e "s|^update_readme||g; s|clang-format|${EPREFIX}/bin/true|g" \
 			generate_gni.sh || die
 		./generate_gni.sh || die
@@ -2038,22 +2090,25 @@ ewarn
 einfo
 einfo "Unbundling third party internal libraries and packages"
 einfo
-		# Remove most bundled libraries. Some are still needed.
+	# Remove most bundled libraries. Some are still needed.
 		build/linux/unbundle/remove_bundled_libraries.py \
 			"${keeplibs[@]}" \
 			--do-remove || die
 	fi
 
 	if use js-type-check ; then
-		ln -s "${EPREFIX}"/usr/bin/java third_party/jdk/current/bin/java || die
+		ln -s \
+			"${EPREFIX}"/usr/bin/java \
+			third_party/jdk/current/bin/java \
+			|| die
 	fi
 
 	if ! is_generating_credits ; then
-#
-# bundled eu-strip is for amd64 only and we don't want to pre-strip binaries.
-#
+	# The bundled eu-strip is for amd64 only and we don't want to pre-strip
+	# binaries.
 		mkdir -p buildtools/third_party/eu-strip/bin || die
-		ln -s "${BROOT}"/bin/true \
+		ln -s \
+			"${BROOT}"/bin/true \
 			buildtools/third_party/eu-strip/bin/eu-strip || die
 	fi
 
@@ -2070,6 +2125,7 @@ einfo
 
 has_sanitizer_option() {
 	local needle="${1}"
+	local haystack
 	for haystack in $(echo "${CFLAGS}" \
 		| grep -E -e "-fsanitize=[a-z,]+( |$)" \
 		| sed -e "s|-fsanitize||g" | tr "," "\n") ; do
@@ -2099,8 +2155,8 @@ _src_configure() {
 einfo
 einfo "Switching to clang"
 einfo
-		# See build/toolchain/linux/unbundle/BUILD.gn for allowed overridable envvars.
-		# See build/toolchain/gcc_toolchain.gni#L657 for consistency.
+	# See build/toolchain/linux/unbundle/BUILD.gn for allowed overridable envvars.
+	# See build/toolchain/gcc_toolchain.gni#L657 for consistency.
 		if tc-is-cross-compiler ; then
 			export CC="${CBUILD}-clang -target ${CHOST} --sysroot ${ESYSROOT}"
 			export CXX="${CBUILD}-clang++ -target ${CHOST} --sysroot ${ESYSROOT}"
@@ -2190,7 +2246,7 @@ einfo
 		myconf_gn+=" pkg_config=\"$(tc-getPKG_CONFIG)\""
 		myconf_gn+=" host_pkg_config=\"$(tc-getBUILD_PKG_CONFIG)\""
 
-		# setup cups-config, build system only uses --libs option
+	# Setup cups-config, build system only uses --libs option
 		if use cups; then
 			mkdir "${T}/cups-config" || die
 			cp "${ESYSROOT}/usr/bin/${CHOST}-cups-config" \
@@ -2198,15 +2254,19 @@ einfo
 			export PATH="${PATH}:${T}/cups-config"
 		fi
 
-		# Don't inherit PKG_CONFIG_PATH from environment
+	# Don't inherit PKG_CONFIG_PATH from environment
 		local -x PKG_CONFIG_PATH=
 	else
 		myconf_gn+=" host_toolchain=\"//build/toolchain/linux/unbundle:default\""
 	fi
 
-# Debug symbols level 2 is still on when official is on even though is_debug=false:
-# See https://github.com/chromium/chromium/blob/110.0.5481.100/build/config/compiler/compiler.gni#L276
-	# GN needs explicit config for Debug/Release as opposed to inferring it from build directory.
+	# Debug symbols level 2 is still on when official is on even though
+	# is_debug=false.
+	#
+	# See https://github.com/chromium/chromium/blob/110.0.5481.100/build/config/compiler/compiler.gni#L276
+	#
+	# GN needs explicit config for Debug/Release as opposed to inferring it
+	# from the build directory.
 	myconf_gn+=" is_debug=false"
 
 	# Enable DCHECK with USE=debug only, increases chrome binary size by 30%, bug #811138.
@@ -2228,7 +2288,8 @@ einfo
 	fi
 
 	# Use system-provided libraries.
-	# TODO: freetype -- remove sources (https://bugs.chromium.org/p/pdfium/issues/detail?id=733).
+	# TODO: freetype -- remove sources
+	# (https://bugs.chromium.org/p/pdfium/issues/detail?id=733).
 	# TODO: use_system_hunspell (upstream changes needed).
 	# TODO: use_system_protobuf (bug #525560).
 	# TODO: use_system_sqlite (http://crbug.com/22208).
@@ -2239,14 +2300,14 @@ einfo
 		flac
 		fontconfig
 		freetype
-		# Need harfbuzz_from_pkgconfig target
+	# harfbuzz_from_pkgconfig target is needed.
 		#harfbuzz-ng
 		libdrm
 		libjpeg
 		libwebp
-		# moved in use system-libstdcxx cond
-		# moved in use system-libstdcxx cond
-		# moved in use system-libstdcxx cond
+	# Moved to use system-libstdcxx condition below.
+	# Moved to use system-libstdcxx condition below.
+	# Moved to use system-libstdcxx condition below.
 		zlib
 	)
 	if use system-ffmpeg ; then
@@ -2262,16 +2323,16 @@ einfo
 		gn_system_libraries+=( dav1d libaom )
 	fi
 	if use system-libstdcxx ; then
-		# re2 library interface relies on std::string and std::vector
+	# The re2 library interface relies on std::string and std::vector
 		gn_system_libraries+=( re2 )
 	fi
 	# [C]
 	if ! use system-libstdcxx \
 		|| use cfi \
 		|| use official ; then
-		# Unbundling breaks cfi-icall and cfi-cast.
-		# Unbundling weakens the security because it removes
-		# noexecstack, full RELRO, SSP.
+	# Unbundling breaks cfi-icall and cfi-cast.
+	# Unbundling weakens the security because it removes noexecstack,
+	# full RELRO, SSP.
 einfo
 einfo "Forcing use of internal libs to maintain upstream security expectations"
 einfo "and requirements."
@@ -2299,7 +2360,7 @@ ewarn
 	myconf_gn+=" enable_hangout_services_extension=$(usex hangouts true false)"
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
 
-	if use headless; then
+	if use headless ; then
 		myconf_gn+=" use_cups=false"
 		myconf_gn+=" use_kerberos=false"
 		myconf_gn+=" use_pulseaudio=false"
@@ -2358,14 +2419,14 @@ ewarn
 	if ! use custom-cflags ; then
 		strip-flags
 
-		# Debug info section overflows without component build
-		# Prevent linker from running out of address space, bug #471810.
+	# Debug info section overflows without component build
+	# Prevent linker from running out of address space, bug #471810.
 		if ! use component-build || use x86 ; then
 			filter-flags '-g*'
 		fi
 
-		# Prevent libvpx/xnnpack build failures. Bug 530248, 544702,
-		# 546984, 853646.
+	# Prevent libvpx/xnnpack build failures. Bug 530248, 544702,
+	# 546984, 853646.
 		if [[ "${myarch}" == "amd64" || "${myarch}" == "x86" ]] ; then
 			filter-flags \
 				'-mno-avx*' \
@@ -2384,7 +2445,7 @@ ewarn
 	replace-flags "-O0" "-O2"
 
 	if is-flagq "-Ofast" ; then
-		# Precaution
+	# Precaution
 		append_all $(test-flags -fno-allow-store-data-races)
 	fi
 
@@ -2395,8 +2456,8 @@ ewarn
 		target_cpu="x86"
 		ffmpeg_target_arch="ia32"
 
-		# This is normally defined by compiler_cpu_abi in
-		# build/config/compiler/BUILD.gn, but we patch that part out.
+	# This is normally defined by compiler_cpu_abi in
+	# build/config/compiler/BUILD.gn, but we patch that part out.
 		append-flags -msse2 -mfpmath=sse -mmmx
 	elif [[ "${myarch}" == "arm64" ]] ; then
 		target_cpu="arm64"
@@ -2429,9 +2490,9 @@ ewarn
 		myconf_gn+=" use_ssse3=false"
 	fi
 
-	# Make sure that -Werror doesn't get added to CFLAGS by the build system.
-	# Depending on GCC version the warnings are different and we don't want
-	# the build to fail because of that.
+	# Make sure that -Werror doesn't get added to CFLAGS by the build
+	# system.  Depending on GCC version the warnings are different and we
+	# don't want the build to fail because of that.
 	myconf_gn+=" treat_warnings_as_errors=false"
 
 	# Disable fatal linker warnings, bug 506268.
@@ -2439,7 +2500,7 @@ ewarn
 
 	# Disable external code space for V8 for ppc64. It is disabled for ppc64
 	# by default, but cross-compiling on amd64 enables it again.
-	if tc-is-cross-compiler; then
+	if tc-is-cross-compiler ; then
 		if ! use amd64 && ! use arm64; then
 			myconf_gn+=" v8_enable_external_code_space=false"
 		fi
@@ -2462,15 +2523,19 @@ ewarn
 			build_ffmpeg_args+=" --disable-asm"
 		fi
 
-		# Re-configure bundled ffmpeg. See bug #491378 for example reasons.
+	# Re-configure bundled ffmpeg. See bug #491378 for example reasons.
 einfo
 einfo "Configuring bundled ffmpeg..."
 einfo
 		pushd third_party/ffmpeg > /dev/null || die
-		chromium/scripts/build_ffmpeg.py linux ${ffmpeg_target_arch} \
-			--branding ${ffmpeg_branding} -- ${build_ffmpeg_args} || die
-		chromium/scripts/copy_config.sh || die
-		chromium/scripts/generate_gn.py || die
+			chromium/scripts/build_ffmpeg.py \
+				linux ${ffmpeg_target_arch} \
+				--branding ${ffmpeg_branding} \
+				-- \
+				${build_ffmpeg_args} \
+				|| die
+			chromium/scripts/copy_config.sh || die
+			chromium/scripts/generate_gn.py || die
 		popd > /dev/null || die
 	fi
 
@@ -2506,7 +2571,8 @@ einfo
 		if use qt5; then
 			local moc_dir="$(qt5_get_bindir)"
 			if tc-is-cross-compiler; then
-				# Hack to workaround get_libdir not being able to handle CBUILD, bug #794181
+	# Hack to workaround get_libdir not being able to handle CBUILD, bug
+	# #794181
 				local cbuild_libdir=$($(tc-getBUILD_PKG_CONFIG) --keep-system-libs --libs-only-L libxslt)
 				cbuild_libdir=${cbuild_libdir:2}
 				moc_dir="${EPREFIX}"/${cbuild_libdir/% }/qt5/bin
@@ -2528,7 +2594,6 @@ einfo
 	#
 	#
 
-	# Enable official builds
 	myconf_gn+=" is_official_build=$(usex official true false)"
 	if [[ -z "${LTO_TYPE}" ]] ; then
 		LTO_TYPE=$(check-linker_get_lto_type)
@@ -2545,26 +2610,26 @@ ewarn
 		filter-flags '-Wl,--lto-O*'
 		use thinlto-opt && myconf_gn+=" thin_lto_enable_optimizations=true"
 	else
-		# gcc doesn't like -fsplit-lto-unit and -fwhole-program-vtables
+	# gcc doesn't like -fsplit-lto-unit and -fwhole-program-vtables
 		myconf_gn+=" use_thin_lto=false "
 	fi
 	if use official ; then
-		# Allow building against system libraries in official builds
+	# Allow building against system libraries in official builds
 		sed -i 's/OFFICIAL_BUILD/GOOGLE_CHROME_BUILD/' \
 			tools/generate_shim_headers/generate_shim_headers.py || die
 	fi
 
-	# user CXXFLAGS might overwrite -march=armv8-a+crc+crypto, bug #851639
+	# CXXFLAGS might overwrite -march=armv8-a+crc+crypto, bug #851639
 	if use arm64 && tc-is-gcc; then
 		sed -i '/^#if HAVE_ARM64_CRC32C/a #pragma GCC target ("+crc+crypto")' \
 			third_party/crc32c/src/src/crc32c_arm64.cc || die
 	fi
 
-# See https://github.com/chromium/chromium/blob/110.0.5481.100/build/config/sanitizers/BUILD.gn#L196
-# See https://github.com/chromium/chromium/blob/110.0.5481.100/tools/mb/mb_config.pyl#L2950
+	# See https://github.com/chromium/chromium/blob/110.0.5481.100/build/config/sanitizers/BUILD.gn#L196
+	# See https://github.com/chromium/chromium/blob/110.0.5481.100/tools/mb/mb_config.pyl#L2950
 	local is_cfi_custom=0
 	if use official ; then
-		# Forced because it is the final official settings.
+	# Forced because it is the final official settings.
 		if [[ "${ABI}" == "amd64" ]] ; then
 			myconf_gn+=" is_cfi=true"
 			myconf_gn+=" use_cfi_icall=true"
@@ -2590,7 +2655,7 @@ ewarn
 		done
 
 		if (( ${is_cfi_custom} == 1 )) ; then
-			# Change by CFLAGS
+	# Change by CFLAGS
 			if has_sanitizer_option "cfi-vcall" ; then
 				myconf_gn+=" is_cfi=true"
 			fi
@@ -2608,7 +2673,7 @@ ewarn
 				myconf_gn+=" use_cfi_icall=false"
 			fi
 		else
-			# Fallback to autoset in non-official
+	# Fallback to autoset in non-official
 			myconf_gn+=" is_cfi=true"
 
 			local cfi_cast_default="false"
@@ -2618,7 +2683,7 @@ ewarn
 				cfi_icall_default="true"
 			fi
 
-			# Allow change by environment variables
+	# Allow change by environment variables
 			if [[ "${USE_CFI_CAST:-${cfi_cast_default}}" == "1" ]] ; then
 				myconf_gn+=" use_cfi_cast=true"
 			else
@@ -2636,6 +2701,7 @@ ewarn
 		myconf_gn+=" use_cfi_cast=false"
 		myconf_gn+=" use_cfi_icall=false"
 	fi
+
 	# Dedupe flags
 	strip-flag-value "cfi-vcall"
 	strip-flag-value "cfi-icall"
@@ -2645,7 +2711,8 @@ ewarn
 	if [[ "${myconf_gn}" =~ "is_cfi=true" ]] \
 		|| has_sanitizer_option "cfi" \
 		|| (( ${is_cfi_custom} == 1 )) ; then
-		if ! [[ "${LTO_TYPE}" =~ ("thinlto"|"goldlto") ]] ; then
+		if ! [[ "${LTO_TYPE}" =~ ("thinlto") ]] ; then
+		# Build scripts can only use ThinLTO for CFI.
 eerror
 eerror "CFI requires ThinLTO or Gold LTO."
 eerror
@@ -2670,7 +2737,7 @@ eerror
 				myconf_gn+=" arm_control_flow_integrity=none"
 			fi
 		fi
-		# Dedupe flags
+	# Dedupe flags
 		filter-flags '-mbranch-protection=*'
 		if use branch-protection || use official ; then
 			filter-flags '-Wl,-z,force-bti'
@@ -2708,20 +2775,20 @@ einfo
 		fi
 	fi
 
-# See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
-# See also https://github.com/chromium/chromium/blob/110.0.5481.100/docs/pgo.md
-# profile-instr-use is clang which that file assumes but gcc doesn't have.
+	# See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
+	# See also https://github.com/chromium/chromium/blob/110.0.5481.100/docs/pgo.md
+	# profile-instr-use is clang which that file assumes but gcc doesn't have.
 	if tc-is-cross-compiler || use epgo ; then
-		# Disallow build files choices because they only do Clang PGO.
+	# Disallow build files choices because they only do Clang PGO.
 		myconf_gn+=" chrome_pgo_phase=0"
 	elif use pgo && tc-is-clang && ver_test $(clang-version) -ge 11 ; then
-		# The profile data is already shipped so use it.
-		# PGO profile location: chrome/build/pgo_profiles/chrome-linux-*.profdata
+	# The profile data is already shipped so use it.
+	# PGO profile location: chrome/build/pgo_profiles/chrome-linux-*.profdata
 		myconf_gn+=" chrome_pgo_phase=2"
 	else
-		# The pregenerated profiles are not GCC compatible.
+	# The pregenerated profiles are not GCC compatible.
 		myconf_gn+=" chrome_pgo_phase=0"
-		# Kept symbols in build for debug reports for official
+	# Kept symbols in build for debug reports for official
 		# myconf_gn+=" symbol_level=0"
 	fi
 
@@ -2884,8 +2951,9 @@ _src_compile() {
 
 	local suffix
 	(( ${NABIS} > 1 )) && suffix=" (${ABI})"
-	sed -i -e "s|@@MENUNAME@@|Chromium${suffix}|g" \
-		-e "s|@@USR_BIN_SYMLINK_NAME@@|chromium-browser-${ABI}|g" \
+	sed -i -e \
+		"s|@@MENUNAME@@|Chromium${suffix}|g;" \
+		"s|@@USR_BIN_SYMLINK_NAME@@|chromium-browser-${ABI}|g;" \
 		out/Release/chromium-browser-chromium.desktop || die
 }
 
@@ -2902,15 +2970,17 @@ _src_install() {
 	newexe out/Release/chromedriver chromedriver-${ABI}
 	doexe out/Release/chrome_crashpad_handler
 
-	ozone_auto_session () {
-		use X && use wayland && ! use headless && echo true || echo false
-	}
-	local sedargs=( -e
-"s:/usr/lib/:/usr/$(get_libdir)/:g;
-s:chromium-browser-chromium.desktop:chromium-browser-chromium-${ABI}.desktop:g;
-s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
-	)
-	sed "${sedargs[@]}" "${FILESDIR}/chromium-launcher-r7.sh" \
+	ozone_auto_session=$(\
+		 ! use headless \
+		&& use wayland \
+		&& use X \
+		&& echo "true" \
+		|| echo "false")
+	sed -e \
+		"s:/usr/lib/:/usr/$(get_libdir)/:g;" \
+		"s:chromium-browser-chromium.desktop:chromium-browser-chromium-${ABI}.desktop:g;" \
+		"s:@@OZONE_AUTO_SESSION@@:${ozone_auto_session}:g;" \
+		"${FILESDIR}/chromium-launcher-r7.sh" \
 		> chromium-launcher.sh || die
 	newexe chromium-launcher.sh chromium-launcher-${ABI}.sh
 
@@ -2920,7 +2990,7 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 		/usr/bin/chromium-browser-${ABI}
 	dosym "${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
 		/usr/bin/chromium-browser
-	# keep the old symlink around for consistency
+	# Keep the old symlink around for consistency
 	dosym "${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
 		/usr/bin/chromium-${ABI}
 	dosym "${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
@@ -2936,7 +3006,7 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	newins "${FILESDIR}/chromium.default" "default"
 
 	pushd out/Release/locales > /dev/null || die
-	chromium_remove_language_paks
+		chromium_remove_language_paks
 	popd
 
 	insinto "${CHROMIUM_HOME}"
@@ -2944,7 +3014,10 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	doins out/Release/*.pak
 	(
 		shopt -s nullglob
-		local files=(out/Release/*.so out/Release/*.so.[0-9])
+		local files=(
+			out/Release/*.so
+			out/Release/*.so.[0-9]
+		)
 		[[ ${#files[@]} -gt 0 ]] && doins "${files[@]}"
 	)
 
@@ -2968,9 +3041,11 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	for size in 16 24 32 48 64 128 256 ; do
 		case ${size} in
 			16|32) branding="chrome/app/theme/default_100_percent/chromium" ;;
-				*) branding="chrome/app/theme/chromium" ;;
+			*)     branding="chrome/app/theme/chromium" ;;
 		esac
-		newicon -s ${size} "${branding}/product_logo_${size}.png" \
+		newicon \
+			-s ${size} \
+			"${branding}/product_logo_${size}.png" \
 			chromium-browser.png
 	done
 
@@ -2988,9 +3063,9 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 
 	readme.gentoo_create_doc
 
-	# This next pass will copy PATENTS files, *ThirdParty*, and NOTICE files
+	# This next pass will copy PATENTS, *ThirdParty*, NOTICE files;
 	# and npm micropackages copyright notices and licenses which may not
-	# have been present in the listed the the .html (about:credits) file
+	# have been present in the listed the the .html (about:credits) file.
 	lcnr_install_files
 
 	uopts_src_install
@@ -3025,28 +3100,28 @@ pkg_postinst() {
 	uopts_pkg_postinst
 	if ! use headless; then
 		if use vaapi ; then
-# It says 3 args:
-# https://github.com/chromium/chromium/blob/110.0.5481.100/docs/gpu/vaapi.md#vaapi-on-linux
+	# It says 3 args:
+	# https://github.com/chromium/chromium/blob/110.0.5481.100/docs/gpu/vaapi.md#vaapi-on-linux
 einfo
-einfo "VA-API is disabled by default at runtime.  You have to enable it"
-einfo "by adding --enable-features=VaapiVideoDecoder --ignore-gpu-blocklist"
-einfo "with either --use-gl=desktop or --use-gl=egl to the CHROMIUM_FLAGS"
-einfo "in /etc/chromium/default."
+einfo "VA-API is disabled by default at runtime.  You have to enable it by"
+einfo "adding --enable-features=VaapiVideoDecoder --ignore-gpu-blocklist with"
+einfo "either --use-gl=desktop or --use-gl=egl to the CHROMIUM_FLAGS in"
+einfo "/etc/chromium/default."
 einfo
 		fi
 		if use screencast ; then
 einfo
-einfo "Screencast is disabled by default at runtime. Either enable it"
-einfo "by navigating to chrome://flags/#enable-webrtc-pipewire-capturer"
-einfo "inside Chromium or add --enable-features=WebRTCPipeWireCapturer"
-einfo "to CHROMIUM_FLAGS in /etc/chromium/default."
+einfo "Screencast is disabled by default at runtime. Either enable it by"
+einfo "navigating to chrome://flags/#enable-webrtc-pipewire-capturer inside"
+einfo "Chromium or add --enable-features=WebRTCPipeWireCapturer to"
+einfo "CHROMIUM_FLAGS in /etc/chromium/default."
 einfo
 		fi
 		if use gtk4; then
 einfo
-einfo "Chromium prefers GTK3 over GTK4 at runtime. To override this"
-einfo "behavior you need to pass --gtk-version=4, e.g. by adding it"
-einfo "to CHROMIUM_FLAGS in /etc/chromium/default."
+einfo "Chromium prefers GTK3 over GTK4 at runtime. To override this behavior"
+einfo "you need to pass --gtk-version=4, e.g. by adding it to CHROMIUM_FLAGS in"
+einfo "/etc/chromium/default."
 einfo
 		fi
 	fi

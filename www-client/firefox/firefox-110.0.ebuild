@@ -354,8 +354,8 @@ GAMEPAD_BDEPEND="
 	)
 "
 
-# Same as virtual/udev-217-r5 but with multilib changes.
-# Required for gamepad, or WebAuthn roaming authenticators (e.g. USB security key)
+# Same as virtual/udev-217-r5 but with multilib changes.  Udev is required for
+# gamepad, or WebAuthn roaming authenticators (e.g. USB security key)
 UDEV_RDEPEND="
 	kernel_linux? (
 		|| (
@@ -569,8 +569,8 @@ RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV%_*}"
 S_BAK="${WORKDIR}/${PN}-${PV%_*}"
 
-# One of the major sources of lag comes from dependencies
-# These are strict to match performance to competition or normal builds.
+# One of the major sources of lag comes from dependencies.  These are strict to
+# match performance to competition or normal builds.
 declare -A CFLAGS_RDEPEND=(
 	["media-libs/dav1d"]="-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
 	["media-libs/libvpx"]="-O1" # -O0 causes FPS to lag below 25 FPS.
@@ -579,10 +579,13 @@ declare -A CFLAGS_RDEPEND=(
 MOZILLA_FIVE_HOME=""
 BUILD_OBJ_DIR=""
 
-# Allow MOZ_GMP_PLUGIN_LIST to be set in an eclass or
-# overridden in the enviromnent (advanced hackers only)
+# Allow MOZ_GMP_PLUGIN_LIST to be set in an eclass or overridden in the
+# enviromnent. (For advanced hackers only)
 if [[ -z "${MOZ_GMP_PLUGIN_LIST+set}" ]] ; then
-	MOZ_GMP_PLUGIN_LIST=( gmp-gmpopenh264 gmp-widevinecdm )
+	MOZ_GMP_PLUGIN_LIST=(
+		gmp-gmpopenh264
+		gmp-widevinecdm
+	)
 fi
 
 llvm_check_deps() {
@@ -609,12 +612,9 @@ einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 }
 
 MOZ_LANGS=(
-	af ar ast be bg br ca cak cs cy da de dsb
-	el en-CA en-GB en-US es-AR es-ES et eu
-	fi fr fy-NL ga-IE gd gl he hr hsb hu
-	id is it ja ka kab kk ko lt lv ms nb-NO nl nn-NO
-	pa-IN pl pt-BR pt-PT rm ro ru
-	sk sl sq sr sv-SE th tr uk uz vi zh-CN zh-TW
+af ar ast be bg br ca cak cs cy da de dsb el en-CA en-GB en-US es-AR es-ES et eu
+fi fr fy-NL ga-IE gd gl he hr hsb hu id is it ja ka kab kk ko lt lv ms nb-NO nl
+nn-NO pa-IN pl pt-BR pt-PT rm ro ru sk sl sq sr sv-SE th tr uk uz vi zh-CN zh-TW
 )
 
 # Firefox-only LANGS
@@ -661,12 +661,12 @@ mozilla_set_globals() {
 
 	local lang xflag
 	for lang in "${MOZ_LANGS[@]}" ; do
-		# en and en_US are handled internally
+	# en and en_US are handled internally
 		if [[ ${lang} == en ]] || [[ ${lang} == en-US ]] ; then
 			continue
 		fi
 
-		# strip region subtag if $lang is in the list
+	# Strip region subtag if $lang is in the list
 		if has ${lang} "${MOZ_TOO_REGIONALIZED_FOR_L10N[@]}" ; then
 			xflag=${lang%%-*}
 		else
@@ -789,7 +789,8 @@ mozconfig_use_enable() {
 	fi
 
 	local flag=$(use_enable "${@}")
-	mozconfig_add_options_ac "$(use ${1} && echo +${1} || echo -${1})" "${flag}"
+	local t=$(use ${1} && echo +${1} || echo -${1})
+	mozconfig_add_options_ac "${t}" "${flag}"
 }
 
 mozconfig_use_with() {
@@ -800,7 +801,8 @@ mozconfig_use_with() {
 	fi
 
 	local flag=$(use_with "${@}")
-	mozconfig_add_options_ac "$(use ${1} && echo +${1} || echo -${1})" "${flag}"
+	local t=$(use ${1} && echo +${1} || echo -${1})
+	mozconfig_add_options_ac "${t}" "${flag}"
 }
 
 virtwl() {
@@ -810,7 +812,8 @@ virtwl() {
 	[[ -n $XDG_RUNTIME_DIR ]] || die "${FUNCNAME} needs XDG_RUNTIME_DIR to be set; try xdg_environment_reset"
 	tinywl -h >/dev/null || die 'tinywl -h failed'
 
-	# TODO: don't run addpredict in utility function. WLR_RENDERER=pixman doesn't work
+	# TODO: don't run addpredict in utility function. WLR_RENDERER=pixman
+	# doesn't work
 	addpredict /dev/dri
 	local VIRTWL VIRTWL_PID
 	coproc VIRTWL { WLR_BACKENDS=headless exec tinywl -s 'echo $WAYLAND_DISPLAY; read _; kill $PPID'; }
@@ -828,7 +831,7 @@ pkg_pretend() {
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		if use pgo ; then
 			if ! has usersandbox $FEATURES ; then
-# Generally speaking, PGO doesn't require usersandbox dropped.
+	# PGO doesn't require usersandbox dropped in general.
 eerror
 eerror "You must enable usersandbox as X server can not run as root!"
 eerror
@@ -836,7 +839,7 @@ eerror
 			fi
 		fi
 
-		# Ensure we have enough disk space to compile
+	# Ensure we have enough disk space to compile
 		if use pgo || is-flagq '-flto*' || use debug ; then
 			CHECKREQS_DISK_BUILD="13500M"
 		else
@@ -859,7 +862,7 @@ eerror "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
 			fi
 		fi
 
-		# Ensure we have enough disk space to compile
+	# Ensure we have enough disk space to compile
 		if use pgo || is-flagq '-flto*' || use debug ; then
 			CHECKREQS_DISK_BUILD="13500M"
 		else
@@ -874,7 +877,7 @@ eerror "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
 			has_version "sys-devel/lld" \
 				|| die "Clang PGO requires LLD."
 			local lld_pv=$(ld.lld \
-					--version 2>/dev/null \
+				--version 2>/dev/null \
 				| awk '{ print $2 }')
 			if [[ -n ${lld_pv} ]] ; then
 				lld_pv=$(ver_cut 1 "${lld_pv}")
@@ -887,7 +890,7 @@ eerror
 			fi
 
 			local llvm_rust_pv=$(rustc \
-					-Vv 2>/dev/null \
+				-Vv 2>/dev/null \
 				| grep -F -- 'LLVM version:' \
 				| awk '{ print $3 }')
 			if [[ -n ${llvm_rust_pv} ]] ; then
@@ -926,8 +929,8 @@ eerror
 
 		python-any-r1_pkg_setup
 
-		# Avoid PGO profiling problems due to enviroment leakage
-		# These should *always* be cleaned up anyway
+	# Avoid PGO profiling problems due to enviroment leakage
+	# These should *always* be cleaned up anyway
 		unset \
 			DBUS_SESSION_BUS_ADDRESS \
 			DISPLAY \
@@ -937,38 +940,41 @@ eerror
 			XDG_CACHE_HOME \
 			XDG_SESSION_COOKIE
 
-		# Build system is using /proc/self/oom_score_adj, bug #604394
+	# Build system is using /proc/self/oom_score_adj, bug #604394
 		addpredict /proc/self/oom_score_adj
 
 		if use pgo ; then
-			# Update 105.0: "/proc/self/oom_score_adj" isn't enough anymore with pgo, but not sure
-			# whether that's due to better OOM handling by Firefox (bmo#1771712), or portage
-			# (PORTAGE_SCHEDULING_POLICY) update...
+	# Update 105.0: "/proc/self/oom_score_adj" isn't enough anymore with
+	# pgo, but not sure whether that's due to better OOM handling by Firefox
+	# (bmo#1771712), or portage (PORTAGE_SCHEDULING_POLICY) update...
 			addpredict /proc
 
-			# May need a wider addpredict when using wayland+pgo.
+	# We may need a wider addpredict when using wayland+pgo.
 			addpredict /dev/dri
 
-			# Allow access to GPU during PGO run
-			local ati_cards mesa_cards nvidia_cards render_cards
+	# Allow access to GPU during PGO run
 			shopt -s nullglob
 
-			ati_cards=$(echo -n /dev/ati/card* | sed 's/ /:/g')
+			local ati_cards=$(echo -n /dev/ati/card* \
+				| sed 's/ /:/g')
 			if [[ -n "${ati_cards}" ]] ; then
 				addpredict "${ati_cards}"
 			fi
 
-			mesa_cards=$(echo -n /dev/dri/card* | sed 's/ /:/g')
+			local mesa_cards=$(echo -n /dev/dri/card* \
+				| sed 's/ /:/g')
 			if [[ -n "${mesa_cards}" ]] ; then
 				addpredict "${mesa_cards}"
 			fi
 
-			nvidia_cards=$(echo -n /dev/nvidia* | sed 's/ /:/g')
+			local nvidia_cards=$(echo -n /dev/nvidia* \
+				| sed 's/ /:/g')
 			if [[ -n "${nvidia_cards}" ]] ; then
 				addpredict "${nvidia_cards}"
 			fi
 
-			render_cards=$(echo -n /dev/dri/renderD128* | sed 's/ /:/g')
+			local render_cards=$(echo -n /dev/dri/renderD128* \
+				| sed 's/ /:/g')
 			if [[ -n "${render_cards}" ]] ; then
 				addpredict "${render_cards}"
 			fi
@@ -977,15 +983,15 @@ eerror
 		fi
 
 		if ! mountpoint -q /dev/shm ; then
-			# If /dev/shm is not available, configure is known to fail with
-			# a traceback report referencing
-			# /usr/lib/pythonN.N/multiprocessing/synchronize.py
+	# If /dev/shm is not available, configure is known to fail with
+	# a traceback report referencing
+	# /usr/lib/pythonN.N/multiprocessing/synchronize.py
 ewarn "/dev/shm is not mounted -- expect build failures!"
 		fi
 
-		# Google API keys (see http://www.chromium.org/developers/how-tos/api-keys)
-		# Note: These are for Gentoo Linux use ONLY. For your own distribution, please
-		# get your own set of keys.
+	# Google API keys (see http://www.chromium.org/developers/how-tos/api-keys)
+	# Note: These are for Gentoo Linux use ONLY. For your own distribution, please
+	# get your own set of keys.
 		if [[ -z "${MOZ_API_KEY_GOOGLE+set}" ]] ; then
 			MOZ_API_KEY_GOOGLE="AIzaSyDEAOvatFogGaPi0eTgsV_ZlEzx0ObmepsMzfAc"
 		fi
@@ -994,14 +1000,14 @@ ewarn "/dev/shm is not mounted -- expect build failures!"
 			MOZ_API_KEY_LOCATION="AIzaSyB2h2OuRgGaPicUgy5N-5hsZqiPW6sH3n_rptiQ"
 		fi
 
-		# Mozilla API keys (see https://location.services.mozilla.com/api)
-		# Note: These are for Gentoo Linux use ONLY. For your own distribution, please
-		# get your own set of keys.
+	# Mozilla API keys (see https://location.services.mozilla.com/api)
+	# Note: These are for Gentoo Linux use ONLY. For your own distribution, please
+	# get your own set of keys.
 		if [[ -z "${MOZ_API_KEY_MOZILLA+set}" ]] ; then
 			MOZ_API_KEY_MOZILLA="edb3d487-3a84-46m0ap1e3-9dfd-92b5efaaa005"
 		fi
 
-		# Ensure we use C locale when building, bug #746215
+	# Ensure we use C locale when building, bug #746215
 		export LC_ALL=C
 	fi
 
@@ -1050,7 +1056,8 @@ eerror
 
 	use system-av1 && cflags-depends_check
 
-	export MAKEOPTS="-j1" # > -j1 breaks building memchr with sccache
+	# > -j1 breaks when building memchr with sccache
+	export MAKEOPTS="-j1"
 
 	if ! use wayland ; then
 ewarn
@@ -1062,7 +1069,11 @@ ewarn "      If the wayland USE flag is enabled, it will use GPU accelerated"
 ewarn "      decoding if supported."
 ewarn
 	fi
-	use webspeech && ewarn "Speech recognition (USE=webspeech) has not been confirmed working."
+	if use webspeech ; then
+ewarn
+ewarn "Speech recognition (USE=webspeech) has not been confirmed working."
+ewarn
+	fi
 }
 
 src_unpack() {
@@ -1095,11 +1106,11 @@ einfo
 		| cut -f 1 -d " ")
 	# Check patched versions and/or new features for differences.
 	if [[ -n "${FF_EBUILD_MAINTAINER}" ]] ; then
+	# For ebuild maintainers
 		if [[ ! ( "${LICENSE}" =~ "${LICENSE_FILE_NAME}" ) \
 			|| ! -e "${MY_OVERLAY_DIR}/licenses/${LICENSE_FILE_NAME}" \
 			|| "${actual_fp}" != "${LICENSE_FINGERPRINT}" \
 		]] ; then
-		# For ebuild maintainers
 eerror
 eerror "A change in the license was detected.  Please change"
 eerror "LICENSE_FINGERPRINT=${actual_fp} and do a"
@@ -1110,7 +1121,7 @@ eerror
 			die
 		fi
 	else
-		# For users
+	# For users
 		if [[ "${actual_fp}" != "${LICENSE_FINGERPRINT}" ]] ; then
 eerror
 eerror "Expected license fingerprint:  ${LICENSE_FINGERPRINT}"
@@ -1173,7 +1184,7 @@ src_prepare() {
 		"${S}"/intl/icu_sources_data.py \
 		|| die "sed failed to set num_cores"
 
-	# sed-in toolchain prefix section was moved to the bottom of function
+	# sed-in toolchain prefix section was moved to the function below.
 	#
 	# Moved down
 	#
@@ -1203,24 +1214,24 @@ einfo "Removing pre-built binaries ..."
 
 	_src_prepare() {
 		cd $(_get_s) || die
-		local cdefault=$(get_abi_CHOST ${DEFAULT_ABI})
-		# Only ${cdefault}-objdump exists because in true multilib
-		# logically speaking there should be i686-pc-linux-gnu-objdump
+		local CDEFAULT=$(get_abi_CHOST ${DEFAULT_ABI})
+	# Only ${CDEFAULT}-objdump exists because in true multilib.
+	# Logically speaking, there should be i686-pc-linux-gnu-objdump.
 		if [[ -e "${ESYSROOT}/usr/bin/${CHOST}-objdump" ]] ; then
-			# sed-in toolchain prefix
+	# Adds the toolchain prefix.
 			sed -i \
 				-e "s/\"objdump/\"${CHOST}-objdump/" \
 				python/mozbuild/mozbuild/configure/check_debug_ranges.py \
 				|| die "sed failed to set toolchain prefix"
 einfo "Using ${CHOST}-objdump for CHOST"
 		else
-			[[ -e "${ESYSROOT}/usr/bin/${cdefault}-objdump" ]] || die
-			# sed-in toolchain prefix
+			[[ -e "${ESYSROOT}/usr/bin/${CDEFAULT}-objdump" ]] || die
+	# Adds the toolchain prefix.
 			sed -i \
-				-e "s/\"objdump/\"${cdefault}-objdump/" \
+				-e "s/\"objdump/\"${CDEFAULT}-objdump/" \
 				python/mozbuild/mozbuild/configure/check_debug_ranges.py \
 				|| die "sed failed to set toolchain prefix"
-ewarn "Using ${cdefault}-objdump for cdefault"
+ewarn "Using ${CDEFAULT}-objdump for CDEFAULT"
 		fi
 		uopts_src_prepare
 	}
@@ -1235,14 +1246,15 @@ ewarn "Using ${cdefault}-objdump for cdefault"
 _fix_paths() {
 	# For proper rust cargo cross-compile for libloading and glslopt
 	export PKG_CONFIG=${CHOST}-pkg-config
-	export CARGO_CFG_TARGET_ARCH=$(echo ${CHOST} | cut -f 1 -d "-")
+	export CARGO_CFG_TARGET_ARCH=$(echo ${CHOST} \
+		| cut -f 1 -d "-")
 	export MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
 	export BUILD_OBJ_DIR="$(pwd)/ff"
 
 	# Set MOZCONFIG
 	export MOZCONFIG="$(pwd)/.mozconfig"
 
-	# for rust crates libloading and glslopt
+	# For rust crates libloading and glslopt
 	if tc-is-clang ; then
 		CC=${CHOST}-clang
 		CXX=${CHOST}-clang++
@@ -1280,7 +1292,8 @@ eerror
 			die
 		fi
 		if has_version "app-accessibility/speech-dispatcher[pulseaudio]" ; then
-			if ! grep -q -e "^AudioOutputMethod.*\"pulse\"" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+			if ! grep -q -e "^AudioOutputMethod.*\"pulse\"" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
 eerror
 eerror "The following changes are required to"
 eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf"
@@ -1293,7 +1306,8 @@ eerror
 				die
 			fi
 		elif has_version "app-accessibility/speech-dispatcher[alsa]" ; then
-			if ! grep -q -e "^AudioOutputMethod.*\"alsa\"" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+			if ! grep -q -e "^AudioOutputMethod.*\"alsa\"" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
 eerror
 eerror "The following changes are required to"
 eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
@@ -1307,7 +1321,8 @@ eerror
 			fi
 		fi
 		if has_version "app-accessibility/speech-dispatcher[espeak-ng]" ; then
-			if ! grep -q -e "^AddModule.*\"espeak-ng\"" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+			if ! grep -q -e "^AddModule.*\"espeak-ng\"" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
 eerror
 eerror "The following changes are required to"
 eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
@@ -1320,7 +1335,8 @@ eerror "the same settings."
 eerror
 				die
 			fi
-			if ! grep -q -e "^DefaultModule.*espeak-ng" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+			if ! grep -q -e "^DefaultModule.*espeak-ng" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
 eerror
 eerror "The following changes are required to"
 eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
@@ -1333,7 +1349,8 @@ eerror
 				die
 			fi
 		elif has_version "app-accessibility/speech-dispatcher[espeak]" ; then
-			if ! grep -q -e "^AddModule.*\"espeak\"" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+			if ! grep -q -e "^AddModule.*\"espeak\"" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
 eerror
 eerror "The following changes are required to"
 eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
@@ -1346,7 +1363,8 @@ eerror "the same settings."
 eerror
 				die
 			fi
-			if ! grep -q -e "^DefaultModule.*espeak" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+			if ! grep -q -e "^DefaultModule.*espeak" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
 eerror
 eerror "The following changes are required to"
 eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
@@ -1359,7 +1377,8 @@ eerror
 				die
 			fi
 		elif has_version "app-accessibility/speech-dispatcher[flite]" ; then
-			if ! grep -q -e "^AddModule.*\"flite\"" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+			if ! grep -q -e "^AddModule.*\"flite\"" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
 eerror
 eerror "The following changes are required to"
 eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
@@ -1372,7 +1391,8 @@ eerror "the same settings."
 eerror
 				die
 			fi
-			if ! grep -q -e "^DefaultModule.*flite" "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+			if ! grep -q -e "^DefaultModule.*flite" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
 eerror
 eerror "The following changes are required to"
 eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
@@ -1394,7 +1414,7 @@ _src_configure() {
 	local s=$(_get_s)
 	cd "${s}" || die
 
-	local cdefault=$(get_abi_CHOST ${DEFAULT_ABI})
+	local CDEFAULT=$(get_abi_CHOST ${DEFAULT_ABI})
 	# Show flags set at the beginning
 einfo
 einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
@@ -1407,7 +1427,7 @@ einfo
 
 	local have_switched_compiler=
 	if tc-is-clang ; then
-		# Force clang
+	# Force clang
 einfo
 einfo "Switching to clang"
 einfo
@@ -1432,6 +1452,7 @@ eerror
 			die
 		fi
 	else
+	# Force gcc
 ewarn
 ewarn "GCC is not the upstream default"
 ewarn
@@ -1448,8 +1469,8 @@ einfo
 	fi
 
 	if [[ -n "${have_switched_compiler}" ]] ; then
-		# Because we switched active compiler we have to ensure
-		# that no unsupported flags are set
+	# Because we switched active compiler we have to ensure that no
+	# unsupported flags are set
 		strip-unsupported-flags
 	fi
 
@@ -1465,7 +1486,7 @@ einfo
 	if tc-is-cross-compiler ; then
 		export BINDGEN_CFLAGS="
 			${SYSROOT:+--sysroot=${ESYSROOT}}
-			--host=${cdefault}
+			--host=${CDEFAULT}
 			--target=${CHOST} ${BINDGEN_CFLAGS-}
 		"
 	fi
@@ -1506,7 +1527,7 @@ einfo
 		--enable-system-ffi \
 		--enable-system-pixman \
 		--enable-system-policies \
-		--host="${cdefault}" \
+		--host="${CDEFAULT}" \
 		--libdir="${EPREFIX}/usr/$(get_libdir)" \
 		--prefix="${EPREFIX}/usr" \
 		--target="${CHOST}" \
@@ -1540,7 +1561,8 @@ einfo
 
 	# For future keywording: This is currently (97.0) only supported on:
 	# amd64, arm, arm64 & x86.
-	# Might want to flip the logic around if Firefox is to support more arches.
+	# You might want to flip the logic around if Firefox is to support more
+	# arches.
 	if use ppc64; then
 		mozconfig_add_options_ac '' --disable-sandbox
 	else
@@ -1590,7 +1612,11 @@ einfo "Building without Mozilla API key ..."
 	fi
 
 	# To find features, use
-	# grep -o -E -r -e "--(with|disable|enable)[^\"]+" ./toolkit/moz.configure | sort | uniq
+	# grep -o -E -r \
+	#	-e "--(with|disable|enable)[^\"]+" \
+	#	./toolkit/moz.configure \
+	#	| sort \
+	#	| uniq
 	mozconfig_use_with system-av1
 	mozconfig_use_with system-harfbuzz
 	mozconfig_use_with system-harfbuzz system-graphite2
@@ -1648,7 +1674,7 @@ einfo "Building without Mozilla API key ..."
 	fi
 	if use pgo \
 		|| [[ "${LTO_TYPE}" =~ ("bfdlto"|"moldlto"|"thinlto") ]] ; then
-		# Mold for gcc works for non-lto but for lto it is likely WIP.
+	# Mold for gcc works for non-lto but for lto it is likely WIP.
 		if [[ "${LTO_TYPE}" == "moldlto" ]] ; then
 			use tc-is-gcc && ewarn "remove -fuse-ld=mold if it breaks on gcc"
 			mozconfig_add_options_ac \
@@ -1660,7 +1686,7 @@ einfo "Building without Mozilla API key ..."
 				--enable-lto=cross
 
 		elif tc-is-clang && [[ "${LTO_TYPE}" == "thinlto" ]] ; then
-			# Upstream only supports lld when using clang
+	# Upstream only supports lld when using clang
 			mozconfig_add_options_ac \
 				"forcing ld=lld" \
 				--enable-linker=lld
@@ -1670,7 +1696,7 @@ einfo "Building without Mozilla API key ..."
 				--enable-lto=cross
 
 		else
-			# ThinLTO is currently broken, see bmo#1644409
+	# ThinLTO is currently broken, see bmo#1644409
 			mozconfig_add_options_ac \
 				'+lto' \
 				--enable-lto=full
@@ -1693,7 +1719,7 @@ einfo "Building without Mozilla API key ..."
 				"forcing ld=mold" \
 				--enable-linker=mold
 		elif tc-is-clang && has_version "sys-devel/lld" ; then
-			# This is upstream's default
+	# This is upstream's default
 			mozconfig_add_options_ac \
 				"forcing ld=lld" \
 				--enable-linker=lld
@@ -1723,22 +1749,23 @@ einfo "Building without Mozilla API key ..."
 		mozconfig_add_options_ac 'Gentoo defaults' \
 			--disable-real-time-tracing
 
-		# No -Og beyond this point.
+	# No -Og beyond this point.
 		mozconfig_add_options_ac 'Gentoo default' \
 			--disable-debug-symbols
 
-		# Fork ebuild, or use distro ebuild, or set USE=debug if you want -Og
+	# Fork ebuild, or use distro ebuild, or set USE=debug if you want -Og
 		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
 			einfo "Using Ofast"
 			OFLAG="-Ofast"
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-Ofast
 		elif is_flagq_last '-O4' || [[ "${OFLAG}" == "-O4" ]] ; then
-			OFLAG="-O4" # Same as O3
+	# O4 is the same as O3.
+			OFLAG="-O4"
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O4
 		elif is_flagq_last '-O3' || [[ "${OFLAG}" == "-O3" ]] ; then
-			# Repeated for multiple Oflags
+	# Repeated for multiple Oflags
 			OFLAG="-O3"
 			mozconfig_add_options_ac "from CFLAGS" \
 				--enable-optimize=-O3
@@ -1772,7 +1799,7 @@ einfo "Building without Mozilla API key ..."
 		mozconfig_add_options_ac '+cpu_flags_arm_neon' --with-fpu=neon
 
 		if tc-is-gcc ; then
-			# thumb options aren't supported when using clang, bug 666966
+	# thumb options aren't supported when using clang, bug 666966
 			mozconfig_add_options_ac '+cpu_flags_arm_neon' \
 				--with-thumb=yes \
 				--with-thumb-interwork=no
@@ -1791,9 +1818,9 @@ einfo "Building without Mozilla API key ..."
 	fi
 
 	if tc-is-clang ; then
-		# https://bugzilla.mozilla.org/show_bug.cgi?id=1482204
-		# https://bugzilla.mozilla.org/show_bug.cgi?id=1483822
-		# toolkit/moz.configure Elfhack section: target.cpu in ('arm', 'x86', 'x86_64')
+	# https://bugzilla.mozilla.org/show_bug.cgi?id=1482204
+	# https://bugzilla.mozilla.org/show_bug.cgi?id=1483822
+	# toolkit/moz.configure Elfhack section: target.cpu in ('arm', 'x86', 'x86_64')
 		local disable_elf_hack=
 		if use amd64 ; then
 			disable_elf_hack=yes
@@ -1900,7 +1927,8 @@ einfo "Build RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 	echo
 	echo "=========================================================="
 	echo "Building ${PF} with the following configuration"
-	grep ^ac_add_options "${MOZCONFIG}" | while read ac opt hash reason; do
+	grep ^ac_add_options "${MOZCONFIG}" | \
+	while read ac opt hash reason; do
 		[[ -z ${hash} || ${hash} == \# ]] \
 			|| die "error reading mozconfig: ${ac} ${opt} ${hash} ${reason}"
 		printf "    %-30s  %s\n" "${opt}" "${reason:-mozilla.org default}"
@@ -1915,12 +1943,12 @@ _src_compile() {
 	local s=$(_get_s)
 	cd "${s}" || die
 
-	local cdefault=$(get_abi_CHOST ${DEFAULT_ABI})
+	local CDEFAULT=$(get_abi_CHOST ${DEFAULT_ABI})
 	_fix_paths
 	local virtx_cmd=
 
 	if use pgo ; then
-		# Reset and cleanup environment variables used by GNOME/XDG
+	# Reset and cleanup environment variables used by GNOME/XDG
 		gnome2_environment_reset
 
 		addpredict /root
@@ -2051,7 +2079,7 @@ _install_licenses() {
 _src_install() {
 	local s=$(_get_s)
 	cd "${s}" || die
-	local cdefault=$(get_abi_CHOST ${DEFAULT_ABI})
+	local CDEFAULT=$(get_abi_CHOST ${DEFAULT_ABI})
 	_fix_paths
 	# xpcshell is getting called during install
 	pax-mark m \
@@ -2221,13 +2249,13 @@ pkg_preinst() {
 einfo "APULSE found; Generating library symlinks for sound support ..."
 		local lib
 		pushd "${ED}${MOZILLA_FIVE_HOME}" &>/dev/null || die
-		for lib in ../apulse/libpulse{.so{,.0},-simple.so{,.0}} ; do
+			for lib in ../apulse/libpulse{.so{,.0},-simple.so{,.0}} ; do
 	# A quickpkg rolled by hand will grab symlinks as part of the package,
 	# so we need to avoid creating them if they already exist.
-			if [[ ! -L ${lib##*/} ]] ; then
-				ln -s "${lib}" ${lib##*/} || die
-			fi
-		done
+				if [[ ! -L ${lib##*/} ]] ; then
+					ln -s "${lib}" ${lib##*/} || die
+				fi
+			done
 		popd &>/dev/null || die
 	fi
 }
@@ -2260,7 +2288,7 @@ einfo
 	local show_shortcut_information
 
 	if [[ -z "${REPLACING_VERSIONS}" ]] ; then
-		# New install; Tell user that DoH is disabled by default
+	# New install; Tell user that DoH is disabled by default
 		show_doh_information=yes
 		show_normandy_information=yes
 		show_shortcut_information=no
@@ -2268,8 +2296,8 @@ einfo
 		local replacing_version
 		for replacing_version in ${REPLACING_VERSIONS} ; do
 			if ver_test "${replacing_version}" -lt 91.0 ; then
-				# Tell user that we no longer install a shortcut
-				# per supported display protocol
+	# Tell user that we no longer install a shortcut per supported display
+	# protocol
 				show_shortcut_information=yes
 			fi
 		done
@@ -2286,7 +2314,7 @@ ewarn "You can enable DNS-over-HTTPS in ${PN^}'s preferences."
 ewarn
 	fi
 
-	# bug 713782
+	# Bug 713782
 	if [[ -n "${show_normandy_information}" ]] ; then
 ewarn
 ewarn "Upstream operates a service named Normandy which allows Mozilla to"
@@ -2314,7 +2342,7 @@ einfo "on X11 or Wayland, you have to re-create these shortcuts on your own."
 einfo
 	fi
 
-	# bug 835078
+	# Bug 835078
 	if use hwaccel && has_version "x11-drivers/xf86-video-nouveau"; then
 ewarn
 ewarn "You have nouveau drivers installed in your system and 'hwaccel' enabled"
@@ -2349,7 +2377,7 @@ einfo "ln -sf /usr/lib64/${PN}/${PN} /usr/bin/firefox"
 einfo "ln -sf /usr/lib/${PN}/${PN} /usr/bin/firefox"
 einfo "ln -sf /usr/lib32/${PN}/${PN} /usr/bin/firefox"
 einfo
-# The FPS problem is gone in the -bin package
+	# The FPS problem is gone in the -bin package
 	uopts_pkg_postinst
 
 	if ! use hwaccel ; then
