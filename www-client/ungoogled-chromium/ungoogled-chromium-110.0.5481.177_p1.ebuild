@@ -89,6 +89,7 @@ REQUIRED_USE="
 		!thinlto
 		!cfi
 		!official
+		!vaapi
 	)
 	official? (
 		pgo
