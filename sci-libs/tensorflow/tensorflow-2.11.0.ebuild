@@ -497,9 +497,10 @@ ewarn
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 ewarn
 einfo
-einfo "  Tested mostly working on 2.11.0:"
+einfo "  Build time success on 2.11.0:"
 einfo
 einfo "    =sys-devel/gcc-11.3.1_p20230120-r1 with gold"
+einfo "    =sys-devel/gcc-12.2.1_p20230121-r1 with mold"
 einfo
 	fi
 	${CC} --version || die
