@@ -612,10 +612,10 @@ RDEPEND+="
 	!headless? (
 		x11-misc/xdg-utils
 		qt5? (
-			dev-qt/qtgui:5[X?,wayland?]
+			dev-qt/qtgui:5[wayland?,X?]
 		)
 		|| (
-			gui-libs/gtk:4[X?,wayland?]
+			gui-libs/gtk:4[wayland?,X?]
 			x11-libs/gtk+:3[${MULTILIB_USEDEP},wayland?,X?]
 		)
 	)
@@ -631,7 +631,7 @@ DEPEND+="
 			x11-libs/gtk+:3[${MULTILIB_USEDEP},wayland?,X?]
 		)
 		gtk4? (
-			gui-libs/gtk:4[X?,wayland?]
+			gui-libs/gtk:4[wayland?,X?]
 		)
 	)
 "
