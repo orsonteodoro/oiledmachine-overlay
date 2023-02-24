@@ -490,7 +490,7 @@ eerror "Use only gcc slots 9, 10, 11"
 eerror
 		die
 	fi
-	if (( ${s} == 9 || ${s} == 11 )) ; then
+	if (( ${s} == 9 || ${s} == 11 || ${s} == 12 )) ; then
 		:;
 	else
 ewarn
@@ -918,9 +918,89 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 	fi
 }
 
+add_sandbox_rules() {
+	# For:
+#SUBCOMMAND: # //tensorflow/python/framework:fast_tensor_util.pyx_cython_translation [action 'Executing genrule //tensorflow/python/framework:fast_tensor_util.pyx_cython_translation', configuration: 2f450aedaa0912301209b45aac2ed7b3e22cd4183f833bd40741ca88cf441d6b, execution platform: @local_execution_config_platform//:platform]
+#(cd /var/tmp/portage/sci-libs/tensorflow-2.11.0/work/tensorflow-2.11.0-python3_10-bazel-base/execroot/org_tensorflow && \
+#  exec env - \
+#    CCACHE_DIR=/var/tmp/ccache \
+#    HOME=/var/tmp/portage/sci-libs/tensorflow-2.11.0/homedir \
+#    KERAS_HOME=/var/tmp/portage/sci-libs/tensorflow-2.11.0/temp/.keras \
+#    PATH=/var/tmp/portage/sci-libs/tensorflow-2.11.0/temp/python3.10/bin:/var/tmp/portage/sci-libs/tensorflow-2.11.0/temp/python3.10/bin:/usr/lib/ccache/bin:/usr/lib/portage/python3.10/ebuild-helpers:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/bin: \
+#    PYTHON_BIN_PATH=/usr/bin/python3.10 \
+#    PYTHON_LIB_PATH=/usr/lib/python3.10/site-packages \
+#    TF2_BEHAVIOR=1 \
+#    TF_SYSTEM_LIBS=absl_py,astor_archive,astunparse_archive,boringssl,com_github_googlecloudplatform_google_cloud_cpp,com_github_grpc_grpc,com_google_absl,com_google_protobuf,curl,cython,dill_archive,double_conversion,flatbuffers,functools32_archive,gast_archive,gif,hwloc,icu,jsoncpp_git,libjpeg_turbo,lmdb,nasm,nsync,opt_einsum_archive,org_sqlite,pasta,png,pybind11,six_archive,snappy,tblib_archive,termcolor_archive,typing_extensions_archive,wrapt,zlib \
+#  /bin/bash -c 'source external/bazel_tools/tools/genrule/genrule-setup.sh; PYTHONHASHSEED=0 bazel-out/k8-opt/bin/external/cython/cython_binary --cplus tensorflow/python/framework/fast_tensor_util.pyx --output-file bazel-out/k8-opt/bin/tensorflow/python/framework/fast_tensor_util.cpp')
+# Configuration: 2f450aedaa0912301209b45aac2ed7b3e22cd4183f833bd40741ca88cf441d6b
+# Execution platform: @local_execution_config_platform//:platform
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/__pycache__/__init__.cpython-310.pyc.140482074809264
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/__pycache__/Shadow.cpython-310.pyc.140482074809264
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/__init__.cpython-310.pyc.140482073609680
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Main.cpython-310.pyc.140482073609680
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Errors.cpython-310.pyc.140482073611984
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/DebugFlags.cpython-310.pyc.140482072107536
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Options.cpython-310.pyc.140482072279872
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/StringEncoding.cpython-310.pyc.140482072323264
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Plex/__pycache__/__init__.cpython-310.pyc.140482072445408
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Plex/__pycache__/Lexicons.cpython-310.pyc.140482072445840
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Plex/__pycache__/Errors.cpython-310.pyc.140482072446704
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Plex/__pycache__/Regexps.cpython-310.pyc.140482072447424
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Lexicon.cpython-310.pyc.140482072889360
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Future.cpython-310.pyc.140482072889648
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Symtab.cpython-310.pyc.140482072889792
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Naming.cpython-310.pyc.140482072897424
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/PyrexTypes.cpython-310.pyc.140482072897712
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Code.cpython-310.pyc.140482065910064
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/__pycache__/cython.cpython-310.pyc.140482065971888
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/TypeSlots.cpython-310.pyc.140482072899296
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/CmdLine.cpython-310.pyc.140482066236448
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Builtin.cpython-310.pyc.140482066078512
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/CythonScope.cpython-310.pyc.140482066079088
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/UtilityCode.cpython-310.pyc.140482066079376
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/TreeFragment.cpython-310.pyc.140482066079808
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Nodes.cpython-310.pyc.140482066787632
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Pythran.cpython-310.pyc.140482066788496
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/ExprNodes.cpython-310.pyc.140482066825840
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Annotate.cpython-310.pyc.140482066826560
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Version.cpython-310.pyc.140482050828896
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/__pycache__/Debugging.cpython-310.pyc.140482060307504
+# * ACCESS DENIED:  mkdir:         /usr/lib/python3.10/site-packages/Cython/Tempita/__pycache__
+# * ACCESS DENIED:  mkdir:         /usr/lib/python3.10/site-packages/Cython/Tempita/__pycache__
+# * ACCESS DENIED:  mkdir:         /usr/lib/python3.10/site-packages/Cython/Tempita/__pycache__
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Parsing.cpython-310.pyc.140482066832176
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/ModuleNode.cpython-310.pyc.140482060965408
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/UtilNodes.cpython-310.pyc.140482061112864
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/MemoryView.cpython-310.pyc.140482060781008
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Buffer.cpython-310.pyc.140482060781728
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Interpreter.cpython-310.pyc.140482060782160
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Pipeline.cpython-310.pyc.140482060795120
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/ParseTreeTransforms.cpython-310.pyc.140482066902640
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/TypeInference.cpython-310.pyc.140482058886368
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/AnalysedTreeTransforms.cpython-310.pyc.140482058160208
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/AutoDocTransforms.cpython-310.pyc.140481972538800
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/__pycache__/CodeWriter.cpython-310.pyc.140482058767280
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/Optimize.cpython-310.pyc.140482035489296
+# * ACCESS DENIED:  open_wr:       /usr/lib/python3.10/site-packages/Cython/Compiler/__pycache__/CodeGeneration.cpython-310.pyc.140482057951040
+# * ACCESS DENIED:  mkdir:         /usr/lib/python3.10/site-packages/Cython/Utility/__pycache__
+
+	local L=(
+		/usr/lib/${EPYTHON}/site-packages/Cython
+		/usr/lib/${EPYTHON}/site-packages/__pycache__
+	)
+	einfo "Adding sandbox rules (TESTING)"
+	local path
+	for path in "${L[@]}" ; do
+		einfo "addpredict ${path}" # Recursive
+		addpredict "${path}"
+	done
+}
+
 src_compile() {
 	load_env
+	add_sandbox_rules
 
+einfo "src_compile():  Step 1"
 	if use python; then
 		python_setup
 		BUILD_DIR="${S}-${EPYTHON/./_}"
@@ -928,12 +1008,14 @@ src_compile() {
 	fi
 
 	# fail early if any deps are missing
+einfo "src_compile():  Step 2"
 	ebazel build -k --nobuild \
 		//tensorflow:libtensorflow_framework.so \
 		//tensorflow:libtensorflow.so \
 		//tensorflow:libtensorflow_cc.so \
 		$(usex python '//tensorflow/tools/pip_package:build_pip_package' '')
 
+einfo "src_compile():  Step 3"
 	ebazel build \
 		//tensorflow:libtensorflow_framework.so \
 		//tensorflow:libtensorflow.so
@@ -941,6 +1023,7 @@ src_compile() {
 	ebazel build //tensorflow:install_headers
 	ebazel shutdown
 
+einfo "src_compile():  Step 4"
 	do_compile() {
 		ebazel build //tensorflow/tools/pip_package:build_pip_package
 		ebazel shutdown
