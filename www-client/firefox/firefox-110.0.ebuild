@@ -408,7 +408,7 @@ CDEPEND="
 		virtual/jack[${MULTILIB_USEDEP}]
 	)
 	mold? (
-		media-video/ffmpeg[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,-openssl,-x264,-x265,-xvid]
+		media-video/ffmpeg[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 	)
 	pulseaudio? (

@@ -56,6 +56,20 @@ SRC_URI="
 	)
 "
 
+#
+# Uncomment below to generate an about_credits.html including bundled internal
+# dependencies.
+#
+GEN_ABOUT_CREDITS=1
+#
+
+# SHA512 about_credits.html fingerprint:
+#
+LICENSE_FINGERPRINT="\
+52febf750673ff0b3e135fdba42f09963dd557542ad56184e2a75f62f4a2fd74\
+426bd7fe23058bc0d95b1bac7fb9aab1096a627881fed96ed50cb6322dc32c05\
+"
+
 LICENSE="
 	BSD
 	chromium-$(ver_cut 1-3 ${PV}).x
@@ -89,12 +103,13 @@ REQUIRED_USE="
 		thinlto
 	)
 	mold? (
-		!thinlto
 		!cfi
 		!official
+		!thinlto
 		!vaapi
 	)
 	official? (
+		cfi
 		pgo
 		thinlto
 		wayland
@@ -292,7 +307,7 @@ COMMON_DEPEND="
 		)
 		>=media-libs/opus-1.3.1:=
 		mold? (
-			>=media-video/ffmpeg-4.3:=[-cuda,-fdk,-openh264,-openssl,-x264,-x265,-xvid]
+			>=media-video/ffmpeg-4.3:=[-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
 		)
 		|| (
 			media-video/ffmpeg[-samba]
@@ -527,6 +542,15 @@ ewarn "/etc/chromium/default."
 ewarn
 	fi
 	llvm_pkg_setup
+}
+
+is_generating_credits() {
+	if [[ -n "${GEN_ABOUT_CREDITS}" \
+		&& "${GEN_ABOUT_CREDITS}" == "1" ]] ; then
+		return 0
+	else
+		return 1
+	fi
 }
 
 src_prepare() {
@@ -994,11 +1018,16 @@ ewarn "No substitutions in ${p}"
 		popd >/dev/null || die
 	fi
 
+	if ! is_generating_credits ; then
+einfo
+einfo "Unbundling third party internal libraries and packages"
+einfo
 	# Remove most bundled libraries.  Some are still needed.
-	build/linux/unbundle/remove_bundled_libraries.py \
-		"${keeplibs[@]}" \
-		--do-remove \
-		|| die
+		build/linux/unbundle/remove_bundled_libraries.py \
+			"${keeplibs[@]}" \
+			--do-remove \
+			|| die
+	fi
 
 	if use js-type-check; then
 		mkdir -p third_party/jdk/current/bin/ || die
@@ -1008,13 +1037,15 @@ ewarn "No substitutions in ${p}"
 			|| die
 	fi
 
+	if ! is_generating_credits ; then
 	# The bundled eu-strip is for amd64 only and we don't want to
 	# pre-strip binaries.
-	mkdir -p buildtools/third_party/eu-strip/bin || die
-	ln -s \
-		"${EPREFIX}"/bin/true \
-		buildtools/third_party/eu-strip/bin/eu-strip \
-		|| die
+		mkdir -p buildtools/third_party/eu-strip/bin || die
+		ln -s \
+			"${EPREFIX}"/bin/true \
+			buildtools/third_party/eu-strip/bin/eu-strip \
+			|| die
+	fi
 }
 
 src_configure() {
@@ -1081,7 +1112,7 @@ ewarn "Using the mold may weaken security" # No Clang CFI for starters
 	fi
 
 	# Already set in build scripts
-	strip-flags '-fuse-ld=*'
+	filter-flags '-fuse-ld=*'
 
 	# Remove flags after linker switch
 	strip-unsupported-flags
@@ -1467,6 +1498,38 @@ einfo "Configuring Chromium..."
 	fi
 }
 
+_update_licenses() {
+	# Upstream doesn't package PATENTS files
+	if [[ -n "${CHROMIUM_EBUILD_MAINTAINER}" \
+		&& -n "${GEN_ABOUT_CREDITS}" \
+		&& "${GEN_ABOUT_CREDITS}" == "1" ]] ; then
+einfo
+einfo "Generating license and copyright notice file"
+einfo
+		eninja -C out/Release about_credits
+		# It should be updated when the major.minor.build.x changes
+		# because of new features.
+		local license_file_name="${PN}-"$(ver_cut 1-3 ${PV})".x"
+		local fp=$(sha512sum \
+"${S}/out/Release/gen/components/resources/about_credits.html" \
+			| cut -f 1 -d " ")
+einfo
+einfo "Update the license file with"
+einfo
+einfo "  \`cp -a ${S}/out/Release/gen/components/resources/about_credits.html \
+${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
+einfo
+einfo "Update ebuild with"
+einfo
+einfo "  LICENSE_FINGERPRINT=\"${fp}\""
+einfo
+einfo "and with LICENSE variable updates.  When you are done updating, comment"
+einfo "out GEN_ABOUT_CREDITS."
+einfo
+		die
+	fi
+}
+
 src_compile() {
 	# Final link uses lots of file descriptors.
 	ulimit -n 2048
@@ -1476,6 +1539,8 @@ src_compile() {
 
 	# Don't inherit PYTHONPATH from environment, bug #789021, #812689
 	local -x PYTHONPATH=
+
+	_update_licenses
 
 	use convert-dict && eninja -C out/Release convert_dict
 
