@@ -14,7 +14,12 @@ inherit bash-completion-r1 flag-o-matic flag-o-matic-om linux-info ninja-utils
 inherit pax-utils python-any-r1 check-linker lcnr toolchain-funcs uopts
 inherit xdg-utils
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
-LICENSE="Apache-1.1 Apache-2.0 Artistic-2 BSD BSD-2 icu-71.1 ISC MIT openssl Unicode-DFS-2016 ZLIB"
+LICENSE="
+	Apache-1.1 Apache-2.0 Artistic-2 BSD BSD-2 icu-71.1 ISC MIT Unicode-DFS-2016 ZLIB
+	ssl? (
+		Apache-2.0
+	)
+"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
 HOMEPAGE="https://nodejs.org/"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
@@ -71,7 +76,7 @@ gen_iuse_pgo() {
 
 IUSE+="
 acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
-npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
+npm mold pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
 man pgo
@@ -85,11 +90,22 @@ gen_required_use_pgo() {
 }
 REQUIRED_USE+="
 	$(gen_required_use_pgo)
-	${PN}_pgo_trainers_module? ( inspector )
-	inspector? ( icu ssl )
-	npm? ( ssl )
-	system-icu? ( icu )
-	system-ssl? ( ssl )
+	${PN}_pgo_trainers_module? (
+		inspector
+	)
+	inspector? (
+		icu
+		ssl
+	)
+	npm? (
+		ssl
+	)
+	system-icu? (
+		icu
+	)
+	system-ssl? (
+		ssl
+	)
 "
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
@@ -119,6 +135,9 @@ BDEPEND+="
 	dev-util/ninja
 	sys-apps/coreutils
 	virtual/pkgconfig
+	mold? (
+		sys-devel/mold
+	)
 	pax-kernel? (
 		sys-apps/elfix
 	)
@@ -423,6 +442,10 @@ ewarn "If moldlto fails for gcc, try clang."
 	filter-flags '-flto*' \
 		'-fuse-ld*' \
 		'-fprofile*'
+
+	if use mold && [[ "${LTO_TYPE}" == "none" || -z "${LTO_TYPE}" ]] ; then
+		append-ldflags -fuse-ld=mold
+	fi
 
 	filter-flags '-O*'
 	use debug && myconf+=( --debug )
