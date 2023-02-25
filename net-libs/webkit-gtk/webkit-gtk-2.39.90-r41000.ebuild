@@ -347,8 +347,8 @@ ${DEFAULT_GST_PLUGINS}
 aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dash +dfg-jit +doc
 -eme +ftl-jit -gamepad +gbm +geolocation gles2 gnome-keyring +gstreamer
 gstwebrtc hardened +introspection +javascriptcore +jit +journald +jpeg2k jpegxl
-+lcms +libhyphen -libwebrtc -mediarecorder -mediastream +minibrowser +opengl
-openmp -seccomp speech-synthesis -spell test thunder +unified-builds
++lcms +libhyphen -libwebrtc -mediarecorder -mediastream +minibrowser mold
++opengl openmp -seccomp speech-synthesis -spell test thunder +unified-builds
 variation-fonts wayland +webassembly +webassembly-b3-jit +webcore +webcrypto
 -webdriver +webgl +webgl2 webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
 "
@@ -440,15 +440,28 @@ REQUIRED_USE+="
 		gstreamer
 		webrtc
 	)
-	hls? (
-		gstreamer
-	)
 	hardened? (
 		!jit
+	)
+	hls? (
+		gstreamer
 	)
 	jit? (
 		bmalloc
 		dfg-jit
+	)
+	mold? (
+		!dash
+		!eme
+		!hls
+		!libde265
+		!libwebrtc
+		!openh264
+		!thunder
+		!vaapi
+		!vaapi-stateless-decoding
+		!webm-eme
+		!x264
 	)
 	opengl? (
 		!gles2
@@ -687,6 +700,33 @@ RDEPEND+="
 		>=media-libs/opus-1.1[${MULTILIB_USEDEP}]
 		media-libs/openh264[${MULTILIB_USEDEP}]
 	)
+	mold? (
+		!media-plugins/gst-plugins-dash
+		!media-plugins/gst-plugins-hls
+		!media-plugins/gst-plugins-libde265
+		!media-plugins/gst-plugins-openh264
+		!media-plugins/gst-plugins-vaapi
+		!media-plugins/gst-plugins-x264
+		!media-plugins/gst-plugins-x265
+		g722? (
+			media-video/ffmpeg[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
+		)
+		gles2? (
+			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
+		)
+		gstreamer? (
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},-vaapi]
+		)
+		opengl? (
+			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
+		)
+		wayland? (
+			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
+		)
+		webgl? (
+			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
+		)
+	)
 	opengl? (
 		!kernel_Winnt? (
 			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+)]
@@ -776,6 +816,9 @@ BDEPEND+="
 	)
 	geolocation? (
 		>=dev-util/gdbus-codegen-${GLIB_PV}
+	)
+	mold? (
+		sys-devel/mold
 	)
 	thunder? (
 		net-libs/thunder
@@ -962,6 +1005,51 @@ ewarn "or any contemporary websites."
 ewarn
 	fi
 
+	if ! use mold && is-flagq '-fuse-ld=mold' ; then
+eerror
+eerror "-fuse-ld=mold requires the mold USE flag."
+eerror
+		die
+	fi
+
+# It is not clear about the end scope/extent of non-commericial.
+	if use mold ; then
+		local use_flags=(
+			"cuda"
+			"fdk"
+			"openh264"
+			"openssl"
+			"vaapi"
+			"x264"
+			"x265"
+			"xvid"
+		)
+		local flag
+		for flag in ${use_flags[@]} ; do
+# We check again because ffmpeg is not required, but user may set USE flags
+# outside of package.
+			if has_version "media-video/ffmpeg[${flag}]" ; then
+# It may use runtime codec detection.
+eerror
+eerror "Detected ${flag} USE enabled for media-video/ffmpeg.  This flag must be"
+eerror "disabled to use mold."
+eerror
+eerror "Required changes:"
+eerror
+eerror   "media-video/ffmpeg[-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]"
+eerror
+				die
+			fi
+		done
+		if has_version "media-libs/gst-plugins-bad[vaapi]" ; then
+eerror
+eerror "Disabling vaapi in the media-libs/gst-plugins-bad package is required"
+eerror "to link with mold."
+eerror
+			die
+		fi
+	fi
+
 	uopts_setup
 }
 
@@ -1004,13 +1092,13 @@ src_prepare() {
 	eapply "${FILESDIR}/webkit-gtk-2.39.1-jsc-disable-fast-math.patch"
 	eapply "${FILESDIR}/webkit-gtk-2.39.1-webcore-honor-finite-math-and-nan.patch"
 
-	# Drop linker flags that may break mold, etc.
-	sed -i -e "/-Wl,--no-keep-memory/d" "Source/cmake/WebKitCompilerFlags.cmake" || die
 ewarn
 ewarn "Try adding -Wl,--no-keep-memory to per-package LDFLAGS if out of memory (OOM)"
 ewarn "or adding additional swap space.  The latter is more efficient."
 ewarn
 	# You still can have swapping + O(n^2) or swapping + O(1).
+
+	eapply "${FILESDIR}/webkit-gtk-2.39.90-linkers.patch"
 
 	cmake_src_prepare
 	gnome2_src_prepare
@@ -1246,10 +1334,18 @@ einfo
 			"${S}/Source/cmake/OptionsGTK.cmake" || die
 	fi
 
+	mycmakeargs+=(
+		-DUSE_LD_BFD=OFF
+		-DUSE_LD_GOLD=OFF
+		-DUSE_LD_MOLD=OFF
+		-DUSE_LD_LLD=OFF
+	)
+
+einfo "Add -flto with one of -fuse-ld=<bfd|gold|lld|mold> for LTO optimization"
 	local linker_type=$(check-linker_get_lto_type)
 	if [[ \
-		    "${linker_type}" =~ ("bfdlto"|"goldlto"|"thinlto") \
-		|| "${SELECTED_LTO}" =~ ("bfdlto"|"goldlto"|"thinlto") \
+		    "${linker_type}" =~ ("bfdlto"|"goldlto"|"moldlto"|"thinlto") \
+		|| "${SELECTED_LTO}" =~ ("bfdlto"|"goldlto"|"moldlto"|"thinlto") \
 	   ]] \
 		&& tc-is-clang ; then
 		local clang_major_pv=$(clang-major-version)
@@ -1258,20 +1354,20 @@ einfo
 			-DCMAKE_CXX_COMPILER="${CHOST}-clang++-${clang_major_pv}"
 		)
 		[[ -z "${SELECTED_LTO}" ]] && SELECTED_LTO="${linker_type}"
-		filter-flags \
-			'-flto*' \
-			'-fuse-ld=*'
 		if [[ "${SELECTED_LTO}" == "bfdlto" ]] ; then
-			append-ldflags -fuse-ld=bfd
 			mycmakeargs+=(
 				-DLTO_MODE=full
-				-DUSE_LD_LLD=OFF
+				-DUSE_LD_BFD=ON
 			)
 		elif [[ "${SELECTED_LTO}" == "goldlto" ]] ; then
-			append-ldflags -fuse-ld=gold
 			mycmakeargs+=(
 				-DLTO_MODE=full
-				-DUSE_LD_LLD=OFF
+				-DUSE_LD_GOLD=ON
+			)
+		elif [[ "${SELECTED_LTO}" == "moldlto" ]] ; then
+			mycmakeargs+=(
+				-DLTO_MODE=full
+				-DUSE_LD_MOLD=ON
 			)
 		elif [[ "${SELECTED_LTO}" == "thinlto" ]] ; then
 			mycmakeargs+=(
@@ -1279,7 +1375,18 @@ einfo
 				-DUSE_LD_LLD=ON
 			)
 		fi
+	else
+		if use mold ; then
+			mycmakeargs+=(
+				-DUSE_LD_MOLD=ON
+			)
+		#else
+		#	Use default linker
+		fi
 	fi
+	filter-flags \
+		'-flto*' \
+		'-fuse-ld=*'
 
 	if use mediastream ; then
 		sed -i -e "s|ENABLE_MEDIA_STREAM PRIVATE|ENABLE_MEDIA_STREAM PUBLIC|g" \

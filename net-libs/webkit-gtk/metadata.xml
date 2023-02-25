@@ -253,6 +253,9 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
     <flag name="mediastream">
       Enables support for MediaStream API (IN DEVELOPMENT / DRAFT).
     </flag>
+    <flag name="mold">
+      Builds with the mold linker ensuring non-commericial preconditions met.
+    </flag>
     <flag name="nsplugin">
       Enable full nsplugin support (GTK2 plugins).
     </flag>
