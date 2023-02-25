@@ -448,9 +448,13 @@ ewarn "If moldlto fails for gcc, try clang."
 		'-fuse-ld*' \
 		'-fprofile*'
 
-	if use mold && [[ "${LTO_TYPE}" == "none" || -z "${LTO_TYPE}" ]] ; then
-		append-ldflags -fuse-ld=mold
+	if use mold ; then
+ewarn "Using mold may weaken security for this 14.x branch."  # SSL is disabled.
+		if [[ "${LTO_TYPE}" == "none" || -z "${LTO_TYPE}" ]] ; then
+			append-ldflags -fuse-ld=mold
+		fi
 	fi
+
 
 	filter-flags '-O*'
 	use debug && myconf+=( --debug )
