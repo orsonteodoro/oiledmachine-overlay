@@ -712,13 +712,14 @@ RDEPEND+="
 		!media-plugins/gst-plugins-x264
 		!media-plugins/gst-plugins-x265
 		g722? (
+			!<media-video/ffmpeg-5[openssl]
 			|| (
 				(
 					!<dev-libs/openssl-3
-					media-video/ffmpeg[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,openssl,-vaapi,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,openssl,-vaapi,-x264,-x265,-xvid]
 				)
 				(
-					media-video/ffmpeg[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
 				)
 			)
 		)
@@ -1071,6 +1072,21 @@ eerror
 eerror "Using <dev-libs/openssl-3 is disallowed with the mold USE flag."
 eerror
 			die
+		fi
+		if has_version ">=dev-libs/openssl-3" \
+			&& has_version "<media-video/ffmpeg-5[openssl]" ; then
+eerror
+eerror "Using <media-video/ffmpeg-3 is disallowed with the mold USE flag."
+eerror "This may add nonfree code paths in ffmpeg."
+eerror
+			die
+		fi
+		if has_version "media-video/ffmpeg" ; then
+ewarn
+ewarn "Use a corrected local copy or the ffmpeg ebuild from the"
+ewarn "oiledmachine-overlay to eliminate the possiblity of nonfree codepaths"
+ewarn "and to ensure the package is LGPL/GPL."
+ewarn
 		fi
 	fi
 
