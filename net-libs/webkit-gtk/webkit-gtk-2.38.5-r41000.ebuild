@@ -446,6 +446,7 @@ REQUIRED_USE+="
 	mold? (
 		!dash
 		!eme
+		!gstwebrtc
 		!hls
 		!libde265
 		!libwebrtc
@@ -639,6 +640,7 @@ RDEPEND+="
 		)
 		gstwebrtc? (
 			>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
+			>=media-plugins/gst-plugins-webrtc-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		)
 		hls? (
 			>=media-plugins/gst-plugins-hls-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
@@ -695,10 +697,12 @@ RDEPEND+="
 		!media-plugins/gst-plugins-libde265
 		!media-plugins/gst-plugins-openh264
 		!media-plugins/gst-plugins-vaapi
+		!media-plugins/gst-plugins-webrtc
 		!media-plugins/gst-plugins-x264
 		!media-plugins/gst-plugins-x265
 		g722? (
-			media-video/ffmpeg[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
+			!<dev-libs/openssl-3
+			media-video/ffmpeg[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,-vaapi,-x264,-x265,-xvid]
 		)
 		gles2? (
 			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
@@ -1008,7 +1012,6 @@ eerror
 			"cuda"
 			"fdk"
 			"openh264"
-			"openssl"
 			"vaapi"
 			"x264"
 			"x265"
@@ -1026,7 +1029,7 @@ eerror "disabled to use mold."
 eerror
 eerror "Required changes:"
 eerror
-eerror   "media-video/ffmpeg[-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]"
+eerror   "media-video/ffmpeg[-cuda,-fdk,-openh264,-vaapi,-x264,-x265,-xvid]"
 eerror
 				die
 			fi
@@ -1035,6 +1038,13 @@ eerror
 eerror
 eerror "Disabling vaapi in the media-libs/gst-plugins-bad package is required"
 eerror "to link with mold."
+eerror
+			die
+		fi
+		if has_version "<dev-libs/openssl-3" ; then
+# Version 3 is allowed because of the Grant of Patent Clause in Apache-2.0.
+eerror
+eerror "Using <dev-libs/openssl-3 is disallowed with the mold USE flag."
 eerror
 			die
 		fi
