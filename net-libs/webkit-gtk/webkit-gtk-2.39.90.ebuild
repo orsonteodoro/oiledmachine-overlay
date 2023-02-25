@@ -590,6 +590,8 @@ OCDM_WV="virtual/libc" # Placeholder
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
+# Reasons for restrictions with mold section are due to the the patent status
+# if not expired or not granted free.
 RDEPEND+="
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-61.2:=[${MULTILIB_USEDEP}]
@@ -710,8 +712,15 @@ RDEPEND+="
 		!media-plugins/gst-plugins-x264
 		!media-plugins/gst-plugins-x265
 		g722? (
-			!<dev-libs/openssl-3
-			media-video/ffmpeg[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,-vaapi,-x264,-x265,-xvid]
+			|| (
+				(
+					!<dev-libs/openssl-3
+					media-video/ffmpeg[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,openssl,-vaapi,-x264,-x265,-xvid]
+				)
+				(
+					media-video/ffmpeg[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
+				)
+			)
 		)
 		gles2? (
 			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
@@ -1038,7 +1047,12 @@ eerror "disabled to use mold."
 eerror
 eerror "Required changes:"
 eerror
-eerror   "media-video/ffmpeg[-cuda,-fdk,-openh264,-vaapi,-x264,-x265,-xvid]"
+eerror    ">=dev-libs/openssl-3"
+eerror    "media-video/ffmpeg[-cuda,-fdk,-openh264,openssl,-vaapi,-x264,-x265,-xvid]"
+eerror
+eerror "or"
+eerror
+eerror    "media-video/ffmpeg[-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]"
 eerror
 				die
 			fi
@@ -1050,7 +1064,8 @@ eerror "to link with mold."
 eerror
 			die
 		fi
-		if has_version "<dev-libs/openssl-3" ; then
+		if has_version "<dev-libs/openssl-3" \
+			&& has_version "media-video/ffmpeg[openssl]" ; then
 # Version 3 is allowed because of the Grant of Patent Clause in Apache-2.0.
 eerror
 eerror "Using <dev-libs/openssl-3 is disallowed with the mold USE flag."
