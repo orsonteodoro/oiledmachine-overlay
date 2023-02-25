@@ -75,7 +75,7 @@ LICENSE="
 # || ( CC0-1.0 Apache-2.0 ) - llvm-project-d8415b02a519f222ecf71b069c96cc85ac635de3/llvm/lib/Support/BLAKE3/LICENSE
 
 
-KEYWORDS="~amd64"
+# KEYWORDS="~amd64" # It still has sandbox violations.  See add_sandbox_rules() below.
 SLOT="0"
 IUSE="
 alt-ssl clang cuda custom-optimization-level +hardened mpi +python
