@@ -59,7 +59,8 @@
       Requires Java.
     </flag>
     <flag name="mold">
-      Build with the mold linker.  This may weaken security if no CFI.
+      Build with the mold linker with met preconditons for non-commercial.  This
+      may weaken security if no CFI.
     </flag>
     <flag name="official">
       Enable Official build instead of Developer build.
