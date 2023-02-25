@@ -413,7 +413,7 @@ CDEPEND="
 		net-libs/libproxy[${MULTILIB_USEDEP}]
 	)
 	mold? (
-		media-video/ffmpeg[${MULTILIB_USEDEP},-fdk,-openssl]
+		media-video/ffmpeg[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,-openssl,-x264,-x265,-xvid]
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 	)
 	pulseaudio? (

@@ -289,7 +289,7 @@ COMMON_DEPEND="
 		)
 		>=media-libs/opus-1.3.1:=
 		mold? (
-			>=media-video/ffmpeg-4.3:=[-fdk,-openssl]
+			>=media-video/ffmpeg-4.3:=[-cuda,-fdk,-openh264,-openssl,-x264,-x265,-xvid]
 		)
 		|| (
 			media-video/ffmpeg[-samba]
