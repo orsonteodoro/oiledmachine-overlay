@@ -411,10 +411,10 @@ CDEPEND="
 		|| (
 			(
 				!<dev-libs/openssl-3
-				media-video/ffmpeg[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,openssl,-vaapi,-x264,-x265,-xvid]
+				>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,openssl,-vaapi,-x264,-x265,-xvid]
 			)
 			(
-				media-video/ffmpeg[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
+				>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
 			)
 		)
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
@@ -1110,6 +1110,31 @@ ewarn
 ewarn
 ewarn "Speech recognition (USE=webspeech) has not been confirmed working."
 ewarn
+	fi
+	if use mold ; then
+		if has_version "<dev-libs/openssl-3" \
+			&& has_version "media-video/ffmpeg[openssl]" ; then
+# Version 3 is allowed because of the Grant of Patent Clause in Apache-2.0.
+eerror
+eerror "Using <dev-libs/openssl-3 is disallowed with the mold USE flag."
+eerror
+			die
+		fi
+		if has_version ">=dev-libs/openssl-3" \
+			&& has_version "<media-video/ffmpeg-5[openssl]" ; then
+eerror
+eerror "Using <media-video/ffmpeg-3 is disallowed with the mold USE flag."
+eerror "This may add nonfree code paths in ffmpeg."
+eerror
+			die
+		fi
+		if has_version "media-video/ffmpeg" ; then
+ewarn
+ewarn "Use a corrected local copy or the ffmpeg ebuild from the"
+ewarn "oiledmachine-overlay to eliminate the possiblity of nonfree codepaths"
+ewarn "and to ensure the package is LGPL/GPL."
+ewarn
+		fi
 	fi
 }
 
