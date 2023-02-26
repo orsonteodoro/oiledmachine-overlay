@@ -400,14 +400,10 @@ BDEPEND="
 		dev-python/mock
 	)
 	|| (
-		(
-			>=sys-devel/gcc-9.3.0
-			<sys-devel/gcc-11
-		)
-		(
-			>=sys-devel/gcc-11.3.1_p20230120-r1
-			sys-devel/gcc:11
-		)
+		>=sys-devel/gcc-12:12
+		>=sys-devel/gcc-11.3.1_p20230120-r1:11
+		>=sys-devel/gcc-10:10
+		>=sys-devel/gcc-9.3.0:9
 		$(gen_llvm_bdepend)
 	)
 "
