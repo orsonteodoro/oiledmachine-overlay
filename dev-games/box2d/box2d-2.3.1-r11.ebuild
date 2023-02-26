@@ -18,11 +18,21 @@ SLOT_MAJ="$(ver_cut 1-2 ${PV})"
 SLOT="${SLOT_MAJ}/${PV}"
 IUSE+=" doc examples static-libs test r1"
 REQUIRED_USE+="
-	test? ( examples )
-	bolt? ( examples )
-	pgo? ( examples )
-	ebolt? ( examples )
-	epgo? ( examples )
+	test? (
+		examples
+	)
+	bolt? (
+		examples
+	)
+	pgo? (
+		examples
+	)
+	ebolt? (
+		examples
+	)
+	epgo? (
+		examples
+	)
 "
 DEPEND+="
 	virtual/libc
