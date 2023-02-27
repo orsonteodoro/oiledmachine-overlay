@@ -234,8 +234,9 @@ ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
 alsa chromium doc +encode gdbm jack-audio-connection-kit jack2 mold
-opencl-icd-loader oss pgo pic pipewire proprietary-codecs sndio static-libs test
-v4l wayland r3
+opencl-icd-loader oss pgo pic pipewire proprietary-codecs-disable
+proprietary-codecs-disable-developer proprietary-codecs-disable-user
+sndio static-libs test v4l wayland r3
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -589,13 +590,30 @@ CPU_REQUIRED_USE="
 	${X86_CPU_REQUIRED_USE}
 "
 
+DISABLED_PROPRIETARY_CODECS="
+	!kvazaar
+	!openh264
+	!x264
+	!x265
+	!xvid
+"
+
 # GPL_REQUIRED_USE moved to LICENSE_REQUIRED_USE
 REQUIRED_USE+="
-	${GPL_REQUIRED_USE}
 	${CPU_REQUIRED_USE}
+	${GPL_REQUIRED_USE}
 	${LICENSE_REQUIRED_USE}
 	!kernel_linux? (
 		!trainer-av-streaming
+	)
+	!proprietary-codecs-disable? (
+		${DISABLED_PROPRIETARY_CODECS}
+	)
+	!proprietary-codecs-disable-developer? (
+		${DISABLED_PROPRIETARY_CODECS}
+	)
+	!proprietary-codecs-disable-user? (
+		${DISABLED_PROPRIETARY_CODECS}
 	)
 	cuda? (
 		nvenc
@@ -614,12 +632,16 @@ REQUIRED_USE+="
 		!kvazaar
 		!nonfree
 		!openh264
-		!proprietary-codecs
 		!x264
 		!x265
 		!xvid
 		openssl? (
 			apache2_0
+		)
+		|| (
+			proprietary-codecs-disable
+			proprietary-codecs-disable-developer
+			proprietary-codecs-disable-user
 		)
 	)
 	openssl? (
@@ -638,13 +660,6 @@ REQUIRED_USE+="
 			trainer-video-lossless
 			trainer-video-lossless-quick
 		)
-	)
-	proprietary-codecs? (
-		!kvazaar
-		!openh264
-		!x264
-		!x265
-		!xvid
 	)
 	test? (
 		encode
@@ -1716,16 +1731,23 @@ eerror
 		myconf+=( $(use_enable ${i%:*} ${i#*:}) )
 	done
 
-	if use proprietary-codecs ; then
-einfo "Allowing proprietary-codecs codecs"
+	if use proprietary-codecs-disable ; then
+einfo "Disabling all proprietary-codecs"
 		myconf+=(
-			--enable-proprietary-codecs
+			--proprietary-codecs=deny
+		)
+	elif use proprietary-codecs-disable-user ; then
+einfo "Disabling proprietary-codecs for users"
+		myconf+=(
+			--proprietary-codecs=user
+		)
+	elif use proprietary-codecs-disable-developer ; then
+einfo "Disabling proprietary-codecs for codec developers"
+		myconf+=(
+			--proprietary-codecs=codec-developer
 		)
 	else
-einfo "Disabling proprietary-codecs codecs"
-		myconf+=(
-			--disable-proprietary-codecs
-		)
+einfo "Allowing proprietary-codecs"
 	fi
 
 	if use openssl ; then
@@ -1822,6 +1844,8 @@ eerror
 	fi
 
 	if use mold ; then
+# May still need to find more non-free codecs if any.
+ewarn "The mold USE flag is in development"
 		filter-flags '-fuse-ld=*'
 		append-ldflags '-fuse-ld=mold'
 		strip-unsupported-flags

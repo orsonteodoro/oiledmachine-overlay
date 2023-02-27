@@ -533,6 +533,7 @@
     Enables lv2 audio filter wrapper.
   </flag>
   <flag name="mold">
+    (EXPERIMENTAL / IN DEVELOPMENT)
     Link with mold and setup preconditions for non-commericial use.
   </flag>
   <flag name="mipsdspr1">
@@ -564,11 +565,14 @@
   <flag name="pic">
     Force shared libraries to be built as PIC (this is slower)
   </flag>
-  <flag name="proprietary-codecs">
-    If disabled, it will disable all codecs or network protocols with a patent
-    status that is not free in this ebuild fork.  If enabled, it will use
-    the previous unpatched behavior meaning patented codecs are allowed.
-    Disabling may however break packages that assume untouched behavior.
+  <flag name="proprietary-codecs-disable">
+    (USE FLAG/PATCH IN DEVELOPMENT)
+
+    If enabled, it will disable codecs or network protocols with a patent
+    status that is not free in this ebuild fork.
+
+    With this flag enabled, this may break dependencies that assume previous
+    unpatched behavior.
 
     In general a codec is allowed to be built into disabled proprietary-codecs
     build if the patent status is one of the following:
@@ -580,6 +584,63 @@
     AND
 
       The code is free with a widely used compatible open source license.
+
+    AND CONDITIONALLY
+
+      The codec may allowed in this ebuild fork if it doesn't require a
+      non-free developer license in a case-by-case basis.
+
+  </flag>
+  <flag name="proprietary-codecs-disable-user">
+    (USE FLAG/PATCH IN DEVELOPMENT)
+
+    If enabled, it will disable codecs or network protocols with a patent
+    status that is not free in this ebuild fork for non codec developers.
+
+    With this flag enabled, this may break dependencies that assume previous
+    unpatched behavior.
+
+    In general a codec is allowed to be built into disabled proprietary-codecs
+    build if the patent status is one of the following:
+
+      (1) Expired patent, typically 20 years.  (e.g. MP3)
+      (2) Similar freedoms like the Grant of Patent License in the Apache 2.0.
+          (e.g. libvpx, libaom)
+
+    AND
+
+      The code is free with a widely used compatible open source license.
+
+    AND CONDITIONALLY
+
+      The codec may allowed in this ebuild fork if it doesn't require a
+      non-free developer license in a case-by-case basis.
+
+  </flag>
+  <flag name="proprietary-codecs-disable-developer">
+    (USE FLAG/PATCH IN DEVELOPMENT)
+
+    If enabled, it will disable codecs or network protocols with a patent
+    status that is not free in this ebuild fork for codec developers.
+
+    With this flag enabled, this may break dependencies that assume previous
+    unpatched behavior.
+
+    In general a codec is allowed to be built into disabled proprietary-codecs
+    build if the patent status is one of the following:
+
+      (1) Expired patent, typically 20 years.  (e.g. MP3)
+      (2) Similar freedoms like the Grant of Patent License in the Apache 2.0.
+          (e.g. libvpx, libaom)
+
+    AND
+
+      The code is free with a widely used compatible open source license.
+
+    AND CONDITIONALLY
+
+      The codec may allowed in this ebuild fork if it doesn't require a
+      non-free developer license in a case-by-case basis.
 
   </flag>
   <flag name="postproc">
