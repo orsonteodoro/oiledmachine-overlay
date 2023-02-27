@@ -13,7 +13,7 @@ EAPI=8
 # changes its ABI then this package will be rebuilt needlessly. Hence, such a
 # package is free _not_ to := depend on FFmpeg but I would strongly encourage
 # doing so since such a case is unlikely.
-FFMPEG_SUBSLOT=57.59.59
+FFMPEG_SUBSLOT=58.60.60
 
 SCM=""
 if [ "${PV#9999}" != "${PV}" ] ; then
@@ -93,7 +93,7 @@ FFMPEG_FLAG_MAP=(
 	# decoders
 	amr:libopencore-amrwb amr:libopencore-amrnb codec2:libcodec2 +dav1d:libdav1d fdk:libfdk-aac
 	jpeg2k:libopenjpeg jpegxl:libjxl bluray:libbluray gme:libgme gsm:libgsm
-	libaribb24 mmal modplug:libmodplug opus:libopus qsv:libmfx libilbc librtmp ssh:libssh
+	libaribb24 mmal modplug:libmodplug opus:libopus qsv:libvpl libilbc librtmp ssh:libssh
 	speex:libspeex srt:libsrt svg:librsvg nvenc:ffnvcodec
 	vorbis:libvorbis vpx:libvpx zvbi:libzvbi
 	# libavfilter options
@@ -233,7 +233,7 @@ ${CPU_FEATURES_MAP[@]%:*}
 ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
-alsa chromium doc +encode gdbm jack-audio-connection-kit jack2 mold
+alsa chromium doc +encode fallback-commit gdbm jack-audio-connection-kit jack2 mold
 opencl-icd-loader oss pgo pic pipewire proprietary-codecs sndio static-libs test
 v4l wayland r3
 
@@ -912,7 +912,7 @@ RDEPEND+="
 		>=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP},gdbm?]
 	)
 	qsv? (
-		media-libs/intel-mediasdk
+		media-libs/oneVPL
 	)
 	rubberband? (
 		>=media-libs/rubberband-1.8.1-r1[${MULTILIB_USEDEP}]
@@ -1063,7 +1063,6 @@ PATCHES=(
 	"${FILESDIR}/chromium-r1.patch"
 	"${FILESDIR}/${PN}-5.1.2-allow-7regs.patch"
 	"${FILESDIR}/${PN}-5.1.2-disable-proprietary-codecs.patch"
-	"${FILESDIR}/${P}-vulkan.patch"
 )
 
 MULTILIB_WRAPPED_HEADERS=(
@@ -1427,6 +1426,15 @@ ewarn
 	fi
 }
 
+src_unpack() {
+	if use fallback-commit ; then
+		EGIT_COMMIT="15992a040dd017d6897131373321522fe2867a6d"
+	fi
+	git-r3_fetch
+	git-r3_checkout
+	verify_subslot
+}
+
 # The order does matter with PGO.
 get_lib_types() {
 	echo "shared"
@@ -1451,12 +1459,13 @@ eerror
 eerror "Actual subslot:\t${FFMPEG_SUBSLOT}"
 eerror "Expected subslot:\t${actual_subslot}"
 eerror
+eerror "Use the fallback-commit USE flag to rewind back to the consistent slot."
+eerror
 		die
 	fi
 }
 
 src_prepare() {
-	verify_subslot
 	if [[ "${PV%_p*}" != "${PV}" ]] ; then # Snapshot
 		export revision=git-N-${FFMPEG_REVISION}
 	fi
@@ -1734,7 +1743,7 @@ einfo "Disabling proprietary-codecs codecs"
 
 	# (temporarily) disable non-multilib deps
 	if ! multilib_is_native_abi; then
-		for i in librav1e libmfx libzmq ; do
+		for i in librav1e libmfx libvpl libzmq ; do
 			myconf+=( --disable-${i} )
 		done
 	fi
