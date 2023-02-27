@@ -295,27 +295,39 @@ IUSE_LIBCXX=(
 	system-libstdcxx
 )
 # CFI Basic (.a) mode requires all third party modules built as static.
+IUSE_CODECS="
+dav1d
+openh264
+opus
+libaom
+vpx
+vaapi-hevc
+vorbis
+"
 IUSE="
 ${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_}
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
-+X component-build cups -debug gtk4 +hangouts headless +js-type-check kerberos
-+official pic +proprietary-codecs pulseaudio qt5 screencast selinux +suid
--system-av1 -system-ffmpeg -system-icu -system-harfbuzz -system-png +vaapi
-wayland widevine
-
+${IUSE_CODECS}
 ${IUSE_LIBCXX[@]}
-+bundled-libcxx branch-protection +cfi libcmalloc +partitionalloc
-+pre-check-llvm +pre-check-vaapi +pgo thinlto-opt
-
++bundled-libcxx branch-protection +cfi component-build cups -debug encode gtk4
++hangouts headless +js-type-check kerberos libcmalloc +official +partitionalloc
+pic +pgo +pre-check-llvm +pre-check-vaapi +proprietary-codecs
+proprietary-codecs-disable proprietary-codecs-disable-user
+proprietary-codecs-disable-developer pulseaudio qt5 screencast selinux +suid
+-system-av1 -system-ffmpeg -system-icu -system-harfbuzz -system-png thinlto-opt
++vaapi wayland widevine +X
 r1
 "
 # What is considered a proprietary codec can be found at:
+#
 #   https://github.com/chromium/chromium/blob/110.0.5481.100/media/filters/BUILD.gn#L160
 #   https://github.com/chromium/chromium/blob/110.0.5481.100/media/media_options.gni#L38
 #   https://github.com/chromium/chromium/blob/110.0.5481.100/media/base/supported_types.cc#L203
-#     Upstream doesn't consider MP3 proprietary, but this ebuild does.
 #   https://github.com/chromium/chromium/blob/110.0.5481.100/media/base/supported_types.cc#L284
-# Codec upstream default: https://github.com/chromium/chromium/blob/110.0.5481.100/tools/mb/mb_config_expectations/chromium.linux.json#L89
+#
+# Codec upstream default:
+#   https://github.com/chromium/chromium/blob/110.0.5481.100/tools/mb/mb_config_expectations/chromium.linux.json#L89
+#
 
 #
 # For cfi-vcall, cfi-icall defaults status, see \
@@ -339,6 +351,8 @@ r1
 #   https://clang.llvm.org/docs/ControlFlowIntegrity.html#indirect-function-call-checking
 #   https://clang.llvm.org/docs/ControlFlowIntegrity.html#bad-cast-checking
 #
+DISABLED_NON_FREE_USE_FLAGS="
+"
 REQUIRED_USE+="
 	!headless (
 		|| (
@@ -346,16 +360,18 @@ REQUIRED_USE+="
 			X
 		)
 	)
-	!proprietary-codecs? (
-		!system-ffmpeg
-		!vaapi
-	)
 	^^ (
 		${IUSE_LIBCXX[@]}
 	)
 	^^ (
 		partitionalloc
 		libcmalloc
+	)
+	^^ (
+		proprietary-codecs
+		proprietary-codecs-disable
+		proprietary-codecs-disable-user
+		proprietary-codecs-disable-developer
 	)
 	branch-protection? (
 		arm64
@@ -371,6 +387,9 @@ REQUIRED_USE+="
 	component-build? (
 		!bundled-libcxx
 		!suid
+	)
+	epgo? (
+		!pgo
 	)
 	official? (
 		!amd64? (
@@ -395,17 +414,38 @@ REQUIRED_USE+="
 			branch-protection
 		)
 	)
+	openh264? (
+		proprietary-codecs
+	)
 	partitionalloc? (
 		!component-build
 	)
 	pgo? (
 		!epgo
 	)
-	epgo? (
-		!pgo
-	)
 	pre-check-vaapi? (
 		vaapi
+	)
+	proprietary-codecs-disable? (
+		!openh264
+		!system-ffmpeg
+		!vaapi
+		!vaapi-hevc
+		!widevine
+	)
+	proprietary-codecs-disable-developer? (
+		!openh264
+		!system-ffmpeg
+		!vaapi
+		!vaapi-hevc
+		!widevine
+	)
+	proprietary-codecs-disable-user? (
+		!openh264
+		!system-ffmpeg
+		!vaapi
+		!vaapi-hevc
+		!widevine
 	)
 	screencast? (
 		wayland
@@ -416,21 +456,29 @@ REQUIRED_USE+="
 	vaapi? (
 		proprietary-codecs
 	)
+	vaapi-hevc? (
+		proprietary-codecs
+		vaapi
+	)
 	widevine? (
 		!arm64
 		!ppc64
+		proprietary-codecs
 	)
 "
 
-LIBVA_V="2.7"
-FFMPEG_V="4.3"
+LIBVA_PV="2.7"
+FFMPEG_LIBAVUTIL_SOVER="57.43.100" # third_party/ffmpeg/libavutil/version.h
+FFMPEG_LIBAVCODEC_SOVER="59.54.100" # third_party/ffmpeg/libavcodec/version.h
+FFMPEG_LIBAVFORMAT_SOVER="59.34.101" # third_party/ffmpeg/libavformat/version.h
+FFMPEG_PV="9999" # Around 0ff18a7 (Nov 21, 2021) ; They don't use a tagged version.
 
 LIBVA_DEPEND="
 	vaapi? (
-		>=media-libs/libva-${LIBVA_V}:=[${MULTILIB_USEDEP},drm(+),wayland?,X?]
+		>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},drm(+),wayland?,X?]
 		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		system-ffmpeg? (
-			>=media-video/ffmpeg-${FFMPEG_V}[${MULTILIB_USEDEP},vaapi]
+			>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},vaapi]
 		)
 	)
 "
@@ -588,9 +636,20 @@ COMMON_DEPEND="
 	sys-libs/zlib:=[${MULTILIB_USEDEP},minizip]
 	system-ffmpeg? (
 		>=media-libs/opus-1.3.1:=[${MULTILIB_USEDEP}]
-		>=media-video/ffmpeg-${FFMPEG_V}:=[${MULTILIB_USEDEP}]
+		proprietary-codecs? (
+			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},encode?,opus?,vorbis?,vpx?]
+		)
+		proprietary-codecs-disable? (
+			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,vorbis?,vpx?,-x264,-x265,-xvid]
+		)
+		proprietary-codecs-disable-developer? (
+			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,vorbis?,vpx?,-x264,-x265,-xvid]
+		)
+		proprietary-codecs-disable-user? (
+			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,vorbis?,vpx?,-x264,-x265,-xvid]
+		)
 		|| (
-			>=media-video/ffmpeg-${FFMPEG_V}[${MULTILIB_USEDEP},-samba]
+			>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-samba]
 			>=net-fs/samba-4.5.10-r1[${MULTILIB_USEDEP},-debug(-)]
 		)
 	)
@@ -2072,17 +2131,23 @@ ewarn
 	# We need to generate ppc64 stuff because upstream does not ship it yet
 	# it has to be done before unbundling.
 	if use ppc64 ; then
-		pushd third_party/libvpx >/dev/null || die
-		mkdir -p source/config/linux/ppc64 || die
+		pushd third_party/libvpx > /dev/null || die
+			mkdir -p source/config/linux/ppc64 || die
 	# The script requires git and clang, bug #832803
-		sed -i -e "s|^update_readme||g; s|clang-format|${EPREFIX}/bin/true|g" \
-			generate_gni.sh || die
-		./generate_gni.sh || die
-		popd >/dev/null || die
+			sed -i -e "s|^update_readme||g; s|clang-format|${EPREFIX}/bin/true|g" \
+				generate_gni.sh || die
+			./generate_gni.sh || die
+		popd > /dev/null || die
 
 		pushd third_party/ffmpeg >/dev/null || die
-		cp libavcodec/ppc/h264dsp.c libavcodec/ppc/h264dsp_ppc.c || die
-		cp libavcodec/ppc/h264qpel.c libavcodec/ppc/h264qpel_ppc.c || die
+			cp \
+				libavcodec/ppc/h264dsp.c \
+				libavcodec/ppc/h264dsp_ppc.c \
+				|| die
+			cp \
+				libavcodec/ppc/h264qpel.c \
+				libavcodec/ppc/h264qpel_ppc.c \
+				|| die
 		popd >/dev/null || die
 	fi
 
@@ -2137,6 +2202,32 @@ has_sanitizer_option() {
 append_all() {
 	append-flags ${@}
 	append-ldflags ${@}
+}
+
+# Just examples why filter-flags '-fuse-ld=*' should not be removed.
+show_mold_adoption_blockers() {
+	if is-flagq '-fuse-ld=mold' \
+		&& [[ -e "third_party/boringssl/src/include/openssl/opensslv.h" ]] ; then
+	# Mold is more compatible with >=dev-libs/openssl-3
+	# There is no non-free guarantees on the patent side.  (e.g. Kyber)
+	# This one cannot be easily removed.
+eerror
+eerror "Detected BoringSSL.  Remove the -fuse-ld=mold from LDFLAGS."
+eerror
+		die
+	fi
+	if is-flagq '-fuse-ld=mold' && use widevine ; then
+eerror
+eerror "-fuse-ld=mold cannot be used with the widevine USE flag."
+eerror
+		die
+	fi
+	if is-flagq '-fuse-ld=mold' && ! use system-ffmpeg ; then
+	# Requires a non-free license for codec developers.
+eerror
+eerror "-fuse-ld=mold cannot be used with the !system-ffmpeg USE flag."
+eerror
+	fi
 }
 
 LTO_TYPE=""
@@ -2215,8 +2306,11 @@ einfo
 		myconf_gn+=" is_clang=false"
 	fi
 
+	# Examples of why the filter-flags '-fuse-ld=*' should not be removed.
+	show_mold_adoption_blockers
+
 	# Handled by build scripts
-	filter-flags -fuse-ld=*
+	filter-flags '-fuse-ld=*'
 
 	if tc-is-clang ; then
 		myconf_gn+=" use_lld=true"
@@ -2396,9 +2490,24 @@ ewarn
 	# Disable code formating of generated files
 	myconf_gn+=" blink_enable_generated_code_formatting=false"
 
+	# See https://github.com/chromium/chromium/blob/110.0.5481.100/media/media_options.gni#L19
 	ffmpeg_branding="$(usex proprietary-codecs Chrome Chromium)"
 	myconf_gn+=" proprietary_codecs=$(usex proprietary-codecs true false)"
 	myconf_gn+=" ffmpeg_branding=\"${ffmpeg_branding}\""
+	myconf_gn+=" enable_av1_decoder=$(usex dav1d true false)"
+	myconf_gn+=" enable_dav1d_decoder=$(usex dav1d true false)"
+	myconf_gn+=" enable_libaom=$(usex libaom $(usex encode true false) false)"
+	myconf_gn+=" enable_platform_hevc=$(usex proprietary-codecs $(usex vaapi-hevc true false) false)"
+	myconf_gn+=" media_use_libvpx=$(usex vpx true false)"
+	myconf_gn+=" media_use_openh264=$(usex proprietary-codecs $(usex openh264 true false) false)"
+	if ! use system-ffmpeg ; then
+		local _media_use_ffmpeg="true"
+		if use proprietary-codecs-disable-developer \
+			|| use proprietary-codecs-disable-all ; then
+			_media_use_ffmpeg="false"
+		fi
+		myconf_gn+=" media_use_ffmpeg=${_media_use_ffmpeg}"
+	fi
 
 	#
 	# Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys .
@@ -2864,12 +2973,12 @@ __clean_build() {
 		rm -f out/Release/chromedriver.unstripped || die
 	fi
 	if [[ -f out/Release/build.ninja ]] ; then
-		pushd out/Release || popd
+		pushd out/Release > /dev/null || die
 einfo
 einfo "Cleaning out build"
 einfo
 			eninja -t clean
-		popd
+		popd > /dev/null || die
 	fi
 }
 
@@ -3007,7 +3116,7 @@ _src_install() {
 
 	pushd out/Release/locales > /dev/null || die
 		chromium_remove_language_paks
-	popd
+	popd > /dev/null || die
 
 	insinto "${CHROMIUM_HOME}"
 	doins out/Release/*.bin

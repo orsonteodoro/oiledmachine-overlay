@@ -276,8 +276,87 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       disable these checks because they can expose bugs.
     </flag>
     <flag name="proprietary-codecs">
-      Enables use of patent-encumbered audio and video formats.  Build flags
-      associate AAC, H264, and others as proprietary
+      Enables use of patent-encumbered audio and video formats, and network
+      protocols.  Upstream build files associate AAC, H264, and others as
+      proprietary.
+    </flag>
+    <flag name="proprietary-codecs-disable">
+      (USE FLAG IN DEVELOPMENT)
+
+      If enabled, it will disable codecs or network protocols with a patent
+      status that is not free in this ebuild fork.
+
+      With this flag enabled, this may break dependencies that assume previous
+      unpatched behavior.
+
+      In general a codec is allowed to be built into disabled proprietary-codecs
+      build if the patent status is one of the following:
+
+        (1) Expired patent, typically 20 years.  (e.g. MP3)
+        (2) Similar freedoms like the Grant of Patent License in the Apache 2.0.
+            (e.g. libvpx, libaom)
+
+      AND
+
+        The code is free with a widely used compatible open source license.
+
+      AND CONDITIONALLY
+
+        The codec may allowed in this ebuild fork if it doesn't require a
+        non-free developer license in a case-by-case basis.
+
+    </flag>
+    <flag name="proprietary-codecs-disable-user">
+      (USE FLAG IN DEVELOPMENT)
+
+      If enabled, it will disable codecs or network protocols with a patent
+      status that is not free in this ebuild fork for non codec developers.
+
+      With this flag enabled, this may break dependencies that assume previous
+      unpatched behavior.
+
+      In general a codec is allowed to be built into disabled proprietary-codecs
+      build if the patent status is one of the following:
+
+        (1) Expired patent, typically 20 years.  (e.g. MP3)
+        (2) Similar freedoms like the Grant of Patent License in the Apache 2.0.
+            (e.g. libvpx, libaom)
+
+      AND
+
+        The code is free with a widely used compatible open source license.
+
+      AND CONDITIONALLY
+
+        The codec may allowed in this ebuild fork if it doesn't require a
+        non-free developer license in a case-by-case basis.
+
+    </flag>
+    <flag name="proprietary-codecs-disable-developer">
+      (USE FLAG IN DEVELOPMENT)
+
+      If enabled, it will disable codecs or network protocols with a patent
+      status that is not free in this ebuild fork for codec developers.
+
+      With this flag enabled, this may break dependencies that assume previous
+      unpatched behavior.
+
+      In general a codec is allowed to be built into disabled proprietary-codecs
+      build if the patent status is one of the following:
+
+        (1) Expired patent, typically 20 years.  (e.g. MP3)
+        (2) Similar freedoms like the Grant of Patent License in the Apache 2.0.
+            (e.g. libvpx, libaom)
+
+      AND
+
+        The code is free with a widely used compatible open source license.
+
+      AND CONDITIONALLY
+
+        The codec may allowed in this ebuild fork if it doesn't require a
+        non-free developer license in a case-by-case basis.
+
     </flag>
     <flag name="screencast">
       Enable support for remote desktop and screen cast using
@@ -325,6 +404,26 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
     <flag name="rN">
       (FOR INTERNAL USE ONLY) Bumps the revision through the USE flag instead of
       file name to reuse previous ccache runs.
+    </flag>
+
+    <!-- Codecs -->
+    <flag name="dav1d">
+      Add CPU based AV1 video decode support
+    </flag>
+    <flag name="hls">
+      Add HLS support for streaming
+    </flag>
+    <flag name="libaom">
+      Add CPU based libaom encode support
+    </flag>
+    <flag name="opus">
+      Add CPU based opus audio codec support
+    </flag>
+    <flag name="vpx">
+      Add CPU based vpx video codec support
+    </flag>
+    <flag name="vaapi-hvec">
+      Add GPU accelerated h265 video decode support
     </flag>
   </use>
 </pkgmetadata>
