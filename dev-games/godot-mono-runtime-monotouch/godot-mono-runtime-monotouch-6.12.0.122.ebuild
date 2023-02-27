@@ -96,14 +96,21 @@ AOT_CROSS_TARGETS=" cross-armv7 cross-arm64"
 DEV_TARGETS=" armv7 arm64"
 SIM_TARGETS=" i386 x86_64 arm64-sim"
 TARGETS=" ${AOT_CROSS_TARGETS} ${DEV_TARGETS} ${SIM_TARGETS}"
-IUSE+=" ${TARGETS}"
-IUSE+=" debug"
-REQUIRED_USE+="
-	|| ( ${TARGETS} )
-	cross-armv7? ( armv7 )
-	cross-arm64? ( arm64 )
+IUSE+="
+${TARGETS}
+debug
 "
-DEPEND+=""
+REQUIRED_USE+="
+	cross-armv7? (
+		armv7
+	)
+	cross-arm64? (
+		arm64
+	)
+	|| (
+		${TARGETS}
+	)
+"
 BDEPEND+="
 	${PYTHON_DEPS}
 	sys-devel/osxcross

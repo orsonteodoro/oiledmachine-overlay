@@ -92,8 +92,9 @@ LICENSE+=" ${MONO_LICENSE}"
 
 #KEYWORDS=""
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" debug"
-DEPEND+=""
+IUSE+="
+debug
+"
 BDEPEND+="
 	${PYTHON_DEPS}
 "

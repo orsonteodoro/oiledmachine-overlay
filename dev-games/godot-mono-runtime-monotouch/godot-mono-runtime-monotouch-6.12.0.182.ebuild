@@ -96,17 +96,24 @@ AOT_CROSS_TARGETS=" cross-armv7 cross-arm64"
 DEV_TARGETS=" armv7 arm64"
 SIM_TARGETS=" i386 x86_64 arm64-sim"
 TARGETS=" ${AOT_CROSS_TARGETS} ${DEV_TARGETS} ${SIM_TARGETS}"
-IUSE+=" ${TARGETS}"
-IUSE+=" debug"
+IUSE+="
+${TARGETS}
+debug
+"
 REQUIRED_USE+="
-	|| ( ${TARGETS} )
-	cross-armv7? ( armv7 )
-	cross-arm64? ( arm64 )
 	!cross-armv7
 	!cross-arm64
+	cross-armv7? (
+		armv7
+	)
+	cross-arm64? (
+		arm64
+	)
+	|| (
+		${TARGETS}
+	)
 "
 # Upstream said that AOT cannot be built with OSX cross
-DEPEND+=""
 BDEPEND+="
 	${PYTHON_DEPS}
 	sys-devel/osxcross

@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- only this ebuild in the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -12,14 +12,6 @@
     Detour is a path-finding and spatial reasoning toolkit.
   </longdescription>
   <upstream>
-    <maintainer status="active">
-      <name>Jakob Botsch Nielsen</name>
-      <email>Jakob.botsch.nielsen@gmail.com</email>
-    </maintainer>
-    <maintainer status="inactive">
-      <name>Mikko Mononen</name>
-      <email>memon@inside.org</email>
-    </maintainer>
     <bugs-to>
       https://github.com/recastnavigation/recastnavigation/issues
     </bugs-to>

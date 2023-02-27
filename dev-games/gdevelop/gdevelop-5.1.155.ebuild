@@ -140,9 +140,6 @@ RDEPEND+="
 #
 # acorn not used in CI
 BDEPEND+="
-	|| (
-		$(gen_llvm_depends)
-	)
 	>=dev-util/cmake-3.12.4
 	>=dev-vcs/git-2.37.3
 	>=media-gfx/imagemagick-6.8.9[png]
@@ -150,6 +147,9 @@ BDEPEND+="
 	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}[npm]
 	>=sys-devel/gcc-5.4
 	dev-util/emscripten:${EMSCRIPTEN_SLOT}[wasm(+)]
+	|| (
+		$(gen_llvm_depends)
+	)
 "
 # Emscripten 3.1.3 used because of node 14.
 SRC_URI="

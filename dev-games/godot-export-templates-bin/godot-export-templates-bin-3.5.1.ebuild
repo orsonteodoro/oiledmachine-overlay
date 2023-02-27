@@ -7,7 +7,7 @@ EAPI=8
 STATUS="stable"
 
 ANDROID_MIN_API="19"
-ANDROID_SDK_V="32"
+ANDROID_SDK_VER="32"
 IOS_MIN="10.0"
 MONO_PV="6.12.0.182"
 EMSCRIPTEN_PV="1.39.9" # emsdk_pv == emscripten-core_pv
@@ -102,9 +102,91 @@ PLATFORMS="
 	windows_x86
 	windows_x86_64
 "
-IUSE="${PLATFORMS} custom debug mono release standard"
+IUSE+="${PLATFORMS} custom debug mono release standard"
 REQUIRED_USE="
-	|| ( standard mono )
+	android? (
+		|| (
+			standard
+			mono
+		)
+	)
+	ios? (
+		|| (
+			standard
+			mono
+		)
+	)
+	javascript? (
+		|| (
+			standard
+			mono
+		)
+	)
+	javascript_gdnative? (
+		|| (
+			standard
+		)
+	)
+	javascript_threads? (
+		|| (
+			standard
+		)
+	)
+	linux_x86? (
+		|| (
+			standard
+			mono
+		)
+	)
+	linux_x86_64? (
+		|| (
+			standard
+			mono
+		)
+	)
+	macos? (
+		|| (
+			standard
+			mono
+		)
+	)
+	uwp_arm? (
+		|| (
+			standard
+		)
+	)
+	uwp_x86? (
+		|| (
+			standard
+		)
+	)
+	uwp_x86_64? (
+		|| (
+			standard
+		)
+	)
+	windows_x86? (
+		|| (
+			standard
+			mono
+		)
+	)
+	windows_x86_64? (
+		|| (
+			standard
+			mono
+		)
+	)
+	custom? (
+		|| (
+			debug
+			release
+		)
+	)
+	|| (
+		mono
+		standard
+	)
 	|| (
 		android
 		ios
@@ -118,22 +200,6 @@ REQUIRED_USE="
 		uwp_x86_64
 		windows_x86
 		windows_x86_64
-	)
-	android? ( || ( standard mono ) )
-	ios? ( || ( standard mono ) )
-	javascript? ( || ( standard mono ) )
-	javascript_gdnative? ( || ( standard ) )
-	javascript_threads? ( || ( standard ) )
-	linux_x86? ( || ( standard mono ) )
-	linux_x86_64? ( || ( standard mono ) )
-	macos? ( || ( standard mono ) )
-	uwp_arm? ( || ( standard ) )
-	uwp_x86? ( || ( standard ) )
-	uwp_x86_64? ( || ( standard ) )
-	windows_x86? ( || ( standard mono ) )
-	windows_x86_64? ( || ( standard mono ) )
-	custom? (
-		|| ( debug release )
 	)
 "
 SLOT_MAJ="$(ver_cut 1 ${PV})"
@@ -351,17 +417,17 @@ eerror
 	unzip -x $(realpath "${DISTDIR}/${src_tarball}") \
 		"templates/android_source.zip" \
 		-d "${T}/sandbox" || die
-	local android_sdk_v=$(unzip -p \
+	local android_sdk_pv=$(unzip -p \
 		"${T}/sandbox/templates/android_source.zip" \
 		"config.gradle" \
 		| grep -e "compileSdk" \
 		| grep -o -E -e "[0-9]+")
-	if [[ "${android_sdk_v}" != "${ANDROID_SDK_V}" ]] ; then
+	if [[ "${android_sdk_pv}" != "${ANDROID_SDK_VER}" ]] ; then
 eerror
-eerror "Expected Android SDK ver:  ${ANDROID_SDK_V}"
-eerror "Actual Android SDK ver:  ${android_sdk_v}"
+eerror "Expected Android SDK ver:  ${ANDROID_SDK_VER}"
+eerror "Actual Android SDK ver:  ${android_sdk_pv}"
 eerror
-eerror "Bump the ANDROID_SDK_V in the ebuild."
+eerror "Bump the ANDROID_SDK_VER in the ebuild."
 eerror
 		needs_update=1
 	fi
@@ -410,7 +476,7 @@ eerror
 fi
 
 	einfo "android_min_api=${android_min_api}"
-	einfo "android_sdk_v=${android_sdk_v}"
+	einfo "android_sdk_pv=${android_sdk_pv}"
 	einfo "emscripten_pv=${emscripten_pv}"
 	einfo "ios_min=${ios_min}"
 	einfo "mono_pv=${mono_pv}"
@@ -457,7 +523,7 @@ pkg_postinst() {
 	use android && einfo "Android min API:  ${ANDROID_MIN_API}"
 	use android || einfo "Android min API:  N/A"
 
-	use android && einfo "Android SDK ver:  ${ANDROID_SDK_V}"
+	use android && einfo "Android SDK ver:  ${ANDROID_SDK_VER}"
 	use android || einfo "Android SDK ver:  N/A"
 
 	use ios && einfo "iOS min:  ${IOS_MIN}"

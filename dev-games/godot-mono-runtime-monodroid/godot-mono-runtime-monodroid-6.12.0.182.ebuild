@@ -96,21 +96,32 @@ AOT_CROSS_TARGETS=" cross-arm cross-arm64 cross-x86 cross-x86_64"
 #AOT_CROSS_MXE_TARGETS=" cross-arm-win cross-arm64-win cross-x86-win cross-x86_64-win"
 RUNTIME_TARGETS=" armeabi-v7a arm64-v8a x86 x86_64"
 TARGETS=" ${RUNTIME_TARGETS} ${AOT_CROSS_TARGETS} ${AOT_CROSS_MXE_TARGETS}"
-IUSE+=" ${TARGETS}"
-IUSE+=" debug"
-REQUIRED_USE+="
-	|| ( ${TARGETS} )
-	cross-arm? ( armeabi-v7a )
-	cross-arm64? ( arm64-v8a )
-	cross-x86? ( x86 )
-	cross-x86_64? ( x86_64 )
+IUSE+="
+${TARGETS}
+debug
 "
-DEPEND+=""
+REQUIRED_USE+="
+	cross-arm? (
+		armeabi-v7a
+	)
+	cross-arm64? (
+		arm64-v8a
+	)
+	cross-x86? (
+		x86
+	)
+	cross-x86_64? (
+		x86_64
+	)
+	|| (
+		${TARGETS}
+	)
+"
 BDEPEND+="
 	${PYTHON_DEPS}
-	  dev-util/android-sdk-update-manager
 	>=dev-util/android-ndk-21
 	>=dev-util/cmake-3.18.1
+	dev-util/android-sdk-update-manager
 "
 S="${WORKDIR}/${MY_PN}-release-${MY_PV}"
 PROPERTIES="live"

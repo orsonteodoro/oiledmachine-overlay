@@ -16,8 +16,8 @@ gen_depend_llvm() {
 		o+="
 		(
 			sys-devel/clang:${s}
+			sys-devel/lld:${s}
 			sys-devel/llvm:${s}
-			>=sys-devel/lld-${s}
 		)
 		"
 	done
@@ -25,8 +25,10 @@ gen_depend_llvm() {
 }
 
 RDEPEND="
-	|| ( $(gen_depend_llvm) )
 	sys-devel/osxcross
+	|| (
+		$(gen_depend_llvm)
+	)
 "
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"

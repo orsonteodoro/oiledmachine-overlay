@@ -93,12 +93,13 @@ LICENSE+=" ${MONO_LICENSE}"
 #KEYWORDS=""
 SLOT="0/$(ver_cut 1-2 ${PV})"
 TARGETS=" arm64 x86_64"
-IUSE+=" debug"
-IUSE+=" ${TARGETS}"
+IUSE+="
+${TARGETS}
+debug
+"
 REQUIRED_USE+="
 	|| ( ${TARGETS} )
 "
-DEPEND+=""
 BDEPEND+="
 	${PYTHON_DEPS}
 	sys-devel/osxcross

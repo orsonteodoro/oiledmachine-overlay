@@ -27,6 +27,8 @@ REQUIRED_USE="
 		sdk_10_5_or_less
 		sdk_10_6_or_newer
 	)
+	!lsan
+	!tsan
 "
 
 GODOT_OSX_=(arm64 x86_64)
@@ -83,14 +85,14 @@ CDEPEND_SANITIZER="
 
 RDEPEND="
 	${CDEPEND_SANITIZER}
-	|| (
-		$(gen_depend_llvm)
-	)
 	sdk_10_5_or_less? (
 		~sys-devel/osxcross-1.1
 	)
 	sdk_10_6_or_newer? (
 		>=sys-devel/osxcross-1.4
+	)
+	|| (
+		$(gen_depend_llvm)
 	)
 "
 SLOT_MAJ="$(ver_cut 1 ${PV})"

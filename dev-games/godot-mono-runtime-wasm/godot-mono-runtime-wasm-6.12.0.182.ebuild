@@ -181,10 +181,16 @@ LICENSE+=" ${EMSCRIPTEN_FASTCOMP_LICENSE}"
 #KEYWORDS=""
 SLOT="0/$(ver_cut 1-2 ${PV})"
 TARGETS=" runtime runtime-threads runtime-dynamic"
-IUSE+=" ${TARGETS}"
-REQUIRED_USE="|| ( ${TARGETS} ) runtime" # The other targets are undocumented.
-IUSE+=" debug"
-DEPEND+=""
+IUSE+="
+${TARGETS}
+debug
+"
+REQUIRED_USE="
+	runtime
+	|| (
+		${TARGETS}
+	)
+" # The other targets are undocumented.
 BDEPEND+="
 	${PYTHON_DEPS}
 "
