@@ -424,6 +424,9 @@
   </flag>
 
   <!-- Added by ebuild originators -->
+  <flag name="amf">
+    Enables support with the Advanced Media Framework (AMF)
+  </flag>
   <flag name="amr">
     Enables Adaptive Multi-Rate Audio support
   </flag>
@@ -432,7 +435,7 @@
     <pkg>media-libs/vo-amrwbenc</pkg>.
   </flag>
   <flag name="appkit">
-    Enables Apple AppKit framework
+    Enables of the AppKit framework
   </flag>
   <flag name="bluray">
     Enable playback of Blu-ray filesystems
@@ -489,11 +492,17 @@
     video game music formats.
   </flag>
   <flag name="hardcoded-tables">
-    Use pre-calculated tables rather than calculating them on the fly.
+    Use pre-calculated tables rather than calculating them on the fly, resulting
+    in initalization savings in table generation time, with a tradeoff of ~15%
+    increase in the size of libavcodec.  Savings are often negligible (~100k
+    cycles) when amortized over the entire encoding/decoding operation.
   </flag>
   <flag name="iec61883">
     Support for FireWire DV/HDV input device using
     <pkg>media-libs/libiec61883</pkg>.
+  </flag>
+  <flag name="jpegxl">
+    Enable JPEG XL de/encoding via <pkg>media-libs/libjxl</pkg>.
   </flag>
   <flag name="kvazaar">
     Enables <pkg>media-libs/kvazaar</pkg> based HEVC encoder.
@@ -646,6 +655,11 @@
   <flag name="postproc">
     Build and install libpostproc.
   </flag>
+  <flag name="qsv">
+    Enable Quick Sync Video via <pkg>media-libs/intel-mediasdk</pkg> (ffmpeg
+    versions older than, and including, 5.1) or <pkg>media-libs/oneVPL</pkg>
+    (ffmpeg version newer than 5.1).
+  </flag>
   <flag name="rav1e">
     Enables AV1 encoding support via <pkg>media-video/rav1e</pkg>.
   </flag>
@@ -672,6 +686,10 @@
   <flag name="vidstab">
     Enables video stabilization filter using vid.stab library
     (<pkg>media-libs/vidstab</pkg>).
+  </flag>
+  <flag name="vmaf">
+    Enables a perceptual video quality assessment filter using the library
+    (<pkg>media-libs/libvmaf</pkg>).
   </flag>
   <flag name="vpx">
     Enables VP8 and VP9 codec support using libvpx: Decoding does not require
