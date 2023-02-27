@@ -390,8 +390,9 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       builder machines.
     </flag>
     <flag name="vaapi">
-      Add support for hardware accelerated JPEG image decoding, and video
-      decoding playback, and hardware accelerated video encoding for WebRTC
+      Add support for hardware accelerated JPEG image decoding, hardware
+      accelerated video decoding playback, and hardware accelerated video
+      encoding for WebRTC
     </flag>
     <flag name="weston">
       Prefer weston to generate wayland PGO profile.  This option is mutually
@@ -406,21 +407,18 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       file name to reuse previous ccache runs.
     </flag>
 
-    <!-- Codecs -->
+    <!-- Codecs and network protocols -->
     <flag name="dav1d">
       Add CPU based AV1 video decode support
-    </flag>
-    <flag name="hls">
-      Add HLS support for streaming
     </flag>
     <flag name="libaom">
       Add CPU based libaom encode support
     </flag>
     <flag name="opus">
-      Add CPU based opus audio codec support
+      Add CPU based Opus audio codec support
     </flag>
     <flag name="vpx">
-      Add CPU based vpx video codec support
+      Add CPU based libvpx video codec support
     </flag>
     <flag name="vaapi-hvec">
       Add GPU accelerated h265 video decode support
