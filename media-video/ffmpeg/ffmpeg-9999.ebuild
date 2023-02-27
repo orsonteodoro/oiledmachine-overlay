@@ -590,14 +590,6 @@ CPU_REQUIRED_USE="
 	${X86_CPU_REQUIRED_USE}
 "
 
-DISABLED_PROPRIETARY_CODECS="
-	!kvazaar
-	!openh264
-	!x264
-	!x265
-	!xvid
-"
-
 # GPL_REQUIRED_USE moved to LICENSE_REQUIRED_USE
 REQUIRED_USE+="
 	${CPU_REQUIRED_USE}
@@ -605,15 +597,6 @@ REQUIRED_USE+="
 	${LICENSE_REQUIRED_USE}
 	!kernel_linux? (
 		!trainer-av-streaming
-	)
-	!proprietary-codecs-disable? (
-		${DISABLED_PROPRIETARY_CODECS}
-	)
-	!proprietary-codecs-disable-developer? (
-		${DISABLED_PROPRIETARY_CODECS}
-	)
-	!proprietary-codecs-disable-user? (
-		${DISABLED_PROPRIETARY_CODECS}
 	)
 	cuda? (
 		nvenc
@@ -660,6 +643,27 @@ REQUIRED_USE+="
 			trainer-video-lossless
 			trainer-video-lossless-quick
 		)
+	)
+	proprietary-codecs-disable? (
+		!kvazaar
+		!openh264
+		!x264
+		!x265
+		!xvid
+	)
+	proprietary-codecs-disable-developer? (
+		!kvazaar
+		!openh264
+		!x264
+		!x265
+		!xvid
+	)
+	proprietary-codecs-disable-user? (
+		!kvazaar
+		!openh264
+		!x264
+		!x265
+		!xvid
 	)
 	test? (
 		encode
