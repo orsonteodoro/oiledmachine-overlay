@@ -716,10 +716,10 @@ RDEPEND+="
 			|| (
 				(
 					!<dev-libs/openssl-3
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,openssl,-vaapi,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,-fdk,-kvazaar,-openh264,openssl,-vaapi,-x264,-x265,-xvid]
 				)
 				(
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,-fdk,-kvazaar,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
 				)
 			)
 		)
