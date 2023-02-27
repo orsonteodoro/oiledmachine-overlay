@@ -12,7 +12,7 @@
   USE flag status:
 
     pgo - done
-    bolt - WIP/testing
+    bolt - done
 
 
   BOLT/PGO optimization requires several steps:
@@ -344,86 +344,6 @@
 
 </longdescription>
 <use>
-  <!-- USE flags added by the oiledmachine-overlay -->
-  <flag name="trainer-audio-cbr">
-    Use the CBR audio trainer.
-  </flag>
-  <flag name="trainer-audio-lossless">
-    Use the lossless audio trainer.
-  </flag>
-  <flag name="trainer-audio-vbr">
-    Use the VBR audio trainer.
-  </flag>
-  <flag name="trainer-av-streaming">
-    Use the audio video stream trainer.  This will access the camera, X11, or
-    active KMS plane as sources of data.  Currently it will train for bitrates
-    requested by live streaming websites, but it may be updated later to train
-    with the network connections.
-  </flag>
-  <flag name="trainer-video-2-pass-constrained-quality">
-    Performs an addtional 2 pass training.  Two pass improves quality and rate
-    control.  This step can be skipped for live streamers.
-
-    Uses 3 second with multiple resolutions.
-  </flag>
-  <flag name="trainer-video-2-pass-constrained-quality-quick">
-    Performs an addtional 2 pass training.  Two pass improves quality and rate
-    control.  This step can be skipped for live streamers.
-
-    Uses 1 second with lowest resolutions.
-
-    (Ebuild maintainer recommended for encoding)
-  </flag>
-  <flag name="trainer-video-constrained-quality">
-    Use the 1 pass constrained quality video trainer.
-
-    Uses 3 second with multiple resolutions.
-  </flag>
-  <flag name="trainer-video-constrained-quality-quick">
-    Use the 1 pass constrained quality video trainer.
-
-    Uses 1 second with lowest resolutions.
-
-    (Ebuild maintainer recommended for decoding)
-  </flag>
-  <flag name="trainer-video-lossless">
-    Use the lossless video trainer.
-
-    Uses 3 second with multiple resolutions.
-  </flag>
-  <flag name="trainer-video-lossless-quick">
-    Use the lossless video trainer.
-
-    Uses 1 second with lowest resolutions.
-  </flag>
-  <flag name="ssp">
-    Build with stack smashing protection
-  </flag>
-  <flag name="rN">
-    (FOR INTERNAL USE ONLY) Ebuild fork revision.
-  </flag>
-  <!-- For license compatibility checking -->
-  <!-- Deal with the restrictive first then back to the permissive. -->
-  <flag name="apache2_0">Checks Apache-2.0 license compatibility</flag>
-  <flag name="gpl2">Checks GPL-2.0 license compatibility</flag>
-  <flag name="gpl2x">Checks GPL-2.0+ license compatibility</flag>
-  <flag name="gpl3">Checks GPL-3 license compatibility</flag>
-  <flag name="lgpl2">Checks LGPL-2 license compatibility</flag>
-  <flag name="lgpl2x">Checks LGPL-2.0+ license compatibility</flag>
-  <flag name="lgpl2_1">Checks LGPL-2.1 license compatibility</flag>
-  <flag name="lgpl2_1x">Checks LGPL-2.1+ license compatibility</flag>
-  <flag name="lgpl3">Checks LGPL-3.0 license compatibility</flag>
-  <flag name="mpl2_0">Checks MPL-2.0 license compatibility</flag>
-  <flag name="debug">Relax license restrictions</flag>
-
-  <!-- Modified -->
-  <flag name="gpl">
-    Synonym for the gpl2 USE flag to build a GPL-2.0 (only) package.  Certain
-    license incompatibilities may be encountered.  This USE flag is kept for
-    compatibility.
-  </flag>
-
-  <!-- Added by ebuild originators -->
   <flag name="amf">
     Enables support with the Advanced Media Framework (AMF)
   </flag>
@@ -679,6 +599,60 @@
   <flag name="ssh">
     Enable SSH/sftp support via <pkg>net-libs/libssh</pkg>.
   </flag>
+  <flag name="ssp">
+    Build with stack smashing protection
+  </flag>
+  <flag name="trainer-audio-cbr">
+    Use the CBR audio trainer.
+  </flag>
+  <flag name="trainer-audio-lossless">
+    Use the lossless audio trainer.
+  </flag>
+  <flag name="trainer-audio-vbr">
+    Use the VBR audio trainer.
+  </flag>
+  <flag name="trainer-av-streaming">
+    Use the audio video stream trainer.  This will access the camera, X11, or
+    active KMS plane as sources of data.  Currently it will train for bitrates
+    requested by live streaming websites, but it may be updated later to train
+    with the network connections.
+  </flag>
+  <flag name="trainer-video-2-pass-constrained-quality">
+    Performs an addtional 2 pass training.  Two pass improves quality and rate
+    control.  This step can be skipped for live streamers.
+
+    Uses 3 second with multiple resolutions.
+  </flag>
+  <flag name="trainer-video-2-pass-constrained-quality-quick">
+    Performs an addtional 2 pass training.  Two pass improves quality and rate
+    control.  This step can be skipped for live streamers.
+
+    Uses 1 second with lowest resolutions.
+
+    (Ebuild maintainer recommended for encoding)
+  </flag>
+  <flag name="trainer-video-constrained-quality">
+    Use the 1 pass constrained quality video trainer.
+
+    Uses 3 second with multiple resolutions.
+  </flag>
+  <flag name="trainer-video-constrained-quality-quick">
+    Use the 1 pass constrained quality video trainer.
+
+    Uses 1 second with lowest resolutions.
+
+    (Ebuild maintainer recommended for decoding)
+  </flag>
+  <flag name="trainer-video-lossless">
+    Use the lossless video trainer.
+
+    Uses 3 second with multiple resolutions.
+  </flag>
+  <flag name="trainer-video-lossless-quick">
+    Use the lossless video trainer.
+
+    Uses 1 second with lowest resolutions.
+  </flag>
   <flag name="twolame">
     Enables MP2 encoding via <pkg>media-sound/twolame</pkg> as an alternative to
     the internal encoder.
@@ -710,6 +684,50 @@
   </flag>
   <flag name="zvbi">
     Enables <pkg>media-libs/zvbi</pkg> based teletext decoder.
+  </flag>
+
+  <!-- For license compatibility checking -->
+  <flag name="apache2_0">
+    Checks Apache-2.0 license compatibility
+  </flag>
+  <flag name="debug">
+    Relax license restrictions
+  </flag>
+  <flag name="gpl">
+    Synonym for the gpl2 USE flag to build a GPL-2.0 (only) package.  Certain
+    license incompatibilities may be encountered.  This USE flag is kept for
+    compatibility.
+  </flag>
+  <flag name="gpl2">
+    Checks GPL-2.0 license compatibility
+  </flag>
+  <flag name="gpl2x">
+    Checks GPL-2.0+ license compatibility
+  </flag>
+  <flag name="gpl3">
+    Checks GPL-3 license compatibility
+  </flag>
+  <flag name="lgpl2">
+    Checks LGPL-2 license compatibility
+  </flag>
+  <flag name="lgpl2x">
+    Checks LGPL-2.0+ license compatibility
+  </flag>
+  <flag name="lgpl2_1">
+    Checks LGPL-2.1 license compatibility
+  </flag>
+  <flag name="lgpl2_1x">
+    Checks LGPL-2.1+ license compatibility
+  </flag>
+  <flag name="lgpl3">
+    Checks LGPL-3.0 license compatibility
+  </flag>
+  <flag name="mpl2_0">
+    Checks MPL-2.0 license compatibility
+  </flag>
+
+  <flag name="rN">
+    (FOR INTERNAL USE ONLY) Ebuild fork revision.
   </flag>
 </use>
 <slots>
