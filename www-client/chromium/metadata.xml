@@ -241,14 +241,15 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       used and tested.
     </flag>
     <flag name="official">
-      Enable the use of official build settings instead of the developer build
-      settings.  Enables security hardending (for both the browser and internal
-      bundled third party dependencies built with the stronger CFI Basic mode
-      with cfi-vcall and cfi-icall [both enabled on x86_64], Full RELRO,
-      noexecstack, PIE, SSP), PGO, debug symbols level 2.  Disables use of
-      third party ebuilds (without CFI and PGO) and uses the internal bundled
-      hardened and PGOed version of those libraries with static linkage.
-      Implies default features.
+      Enable the use of official build settings [similar to the official bin but
+      without branding] instead of the developer build settings.  Enables
+      security hardending (for both the browser and internal bundled third party
+      dependencies built with the stronger CFI Basic mode with cfi-vcall and
+      cfi-icall [both enabled on x86_64], Full RELRO, noexecstack, PIE, SSP),
+      PGO, debug symbols level 2.  Disables use of third party ebuilds (without
+      CFI and PGO) and uses the internal bundled hardened and PGOed version of
+      those libraries with static linkage.  Implies default features and
+      proprietary-codecs.
     </flag>
     <flag name="partitionalloc">
       Use PartitionAlloc as the default allocator.  It's designed for security

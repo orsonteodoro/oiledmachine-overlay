@@ -317,8 +317,8 @@ ${IUSE_LIBCXX[@]}
 +bundled-libcxx branch-protection +cfi component-build +cups -debug +encode -gtk4
 -hangouts -headless +js-type-check +kerberos -libcmalloc +official +partitionalloc
 pic +pgo +pre-check-llvm +pre-check-vaapi +proprietary-codecs
-proprietary-codecs-disable proprietary-codecs-disable-user
-proprietary-codecs-disable-developer +pulseaudio qt5 +screencast selinux +suid
+proprietary-codecs-disable proprietary-codecs-disable-developer
+proprietary-codecs-disable-user +pulseaudio qt5 +screencast selinux +suid
 -system-av1 +system-ffmpeg -system-icu -system-harfbuzz -system-png +thinlto-opt
 +vaapi +wayland -widevine +X
 r1
@@ -369,14 +369,12 @@ DISABLED_NON_FREE_USE_FLAGS="
 	)
 	proprietary-codecs-disable? (
 		!openh264
-		!system-ffmpeg
 		!vaapi
 		!vaapi-hevc
 		!widevine
 	)
 	proprietary-codecs-disable-developer? (
 		!openh264
-		!system-ffmpeg
 		!vaapi
 		!vaapi-hevc
 		!widevine
@@ -668,13 +666,13 @@ COMMON_DEPEND="
 			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},encode?,opus?,vorbis?,vpx?]
 		)
 		proprietary-codecs-disable? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,vorbis?,vpx?,-x264,-x265,-xvid]
+			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		proprietary-codecs-disable-developer? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,vorbis?,vpx?,-x264,-x265,-xvid]
+			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-developer,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		proprietary-codecs-disable-user? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,vorbis?,vpx?,-x264,-x265,-xvid]
+			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-user,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		|| (
 			>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-samba]
@@ -1554,9 +1552,9 @@ is_using_clang() {
 	local U=(
 		"bundled-libcxx"
 		"cfi"
-		"pre-check-llvm"
 		"official"
 		"pgo"
+		"pre-check-llvm"
 		"thinlto-opt"
 	)
 
