@@ -306,17 +306,17 @@ flac
 MSE_VCODECS_IUSE="
 "
 
-# Based on distro package file lists and
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.38.3/Tools/glib/dependencies
+# Based on patent status
+# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.39.5/Tools/glib/dependencies
 DEFAULT_GST_PLUGINS="
 +a52
-+aac
+-aac
 +alsa
 -aom
 +dav1d
 +flac
 +g722
-+libde265
+-libde265
 +mp3
 +ogg
 +pulseaudio
@@ -324,11 +324,11 @@ DEFAULT_GST_PLUGINS="
 +speex
 +theora
 -v4l
-+vaapi
-+vaapi-stateless-decoding
+-vaapi
+-vaapi-stateless-decoding
 +vorbis
 +vpx
-+x264
+-x264
 "
 # alsa is disabled on D11, enabled on A/L, enabled in F/L
 # D11, A/L, F/L are currently not distributing stateless vaapi decoding.
@@ -345,11 +345,13 @@ ${DEFAULT_GST_PLUGINS}
 
 aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dash +dfg-jit +doc
 -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
-hardened hls +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
+hardened -hls +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
 +libhyphen -libwebrtc -mediarecorder -mediastream +minibrowser mold +opengl
-openmp -seccomp -spell test thunder +unified-builds variation-fonts wayland
-+webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver +webgl -webgl2
-webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
+openmp proprietary-codecs proprietary-codecs-disable
+proprietary-codecs-disable-developer proprietary-codecs-disable-user -seccomp
+-spell test thunder +unified-builds variation-fonts wayland +webassembly
++webassembly-b3-jit +webcore +webcrypto -webdriver +webgl -webgl2 webm-eme
+-webrtc webvtt -webxr +woff2 +X +yarr-jit
 "
 
 gen_gst_plugins_duse() {
@@ -400,7 +402,91 @@ REQUIRED_USE+=" "$(gen_gst_plugins_required_use)
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
 
+NON_FREE_REQUIRED_USE="
+	^^ (
+		proprietary-codecs
+		proprietary-codecs-disable
+		proprietary-codecs-disable-developer
+		proprietary-codecs-disable-user
+	)
+	aac? (
+		|| (
+			proprietary-codecs
+			proprietary-codecs-disable-user
+		)
+	)
+	dash? (
+		proprietary-codecs
+	)
+	hls? (
+		proprietary-codecs
+	)
+	libde265? (
+		proprietary-codecs
+	)
+	openh264? (
+		proprietary-codecs
+	)
+	proprietary-codecs-disable? (
+		!aac
+		!dash
+		!eme
+		!gstwebrtc
+		!hls
+		!libde265
+		!libwebrtc
+		!openh264
+		!thunder
+		!vaapi
+		!vaapi-stateless-decoding
+		!webm-eme
+		!x264
+	)
+	proprietary-codecs-disable-developer? (
+		!aac
+		!dash
+		!eme
+		!gstwebrtc
+		!hls
+		!libde265
+		!libwebrtc
+		!openh264
+		!thunder
+		!vaapi
+		!vaapi-stateless-decoding
+		!webm-eme
+		!x264
+	)
+	proprietary-codecs-disable-user? (
+		!dash
+		!eme
+		!gstwebrtc
+		!hls
+		!libde265
+		!libwebrtc
+		!openh264
+		!thunder
+		!vaapi
+		!vaapi-stateless-decoding
+		!webm-eme
+		!x264
+	)
+	v4l? (
+		proprietary-codecs
+	)
+	vaapi? (
+		proprietary-codecs
+	)
+	vaapi-stateless-decoding? (
+		proprietary-codecs
+	)
+	x264? (
+		proprietary-codecs
+	)
+"
+
 REQUIRED_USE+="
+	${NON_FREE_REQUIRED_USE}
 	alsa? (
 		gstreamer
 	)
@@ -444,18 +530,11 @@ REQUIRED_USE+="
 		dfg-jit
 	)
 	mold? (
-		!dash
-		!eme
-		!gstwebrtc
-		!hls
-		!libde265
-		!libwebrtc
-		!openh264
-		!thunder
-		!vaapi
-		!vaapi-stateless-decoding
-		!webm-eme
-		!x264
+		|| (
+			proprietary-codecs-disable
+			proprietary-codecs-disable-developer
+			proprietary-codecs-disable-user
+		)
 	)
 	opengl? (
 		!gles2
@@ -584,6 +663,44 @@ OCDM_WV="virtual/libc" # Placeholder
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
+RDEPEND_PROPRIETARY_CODECS_DISABLE="
+	!media-plugins/gst-plugins-dash
+	!media-plugins/gst-plugins-hls
+	!media-plugins/gst-plugins-libde265
+	!media-plugins/gst-plugins-openh264
+	!media-plugins/gst-plugins-vaapi
+	!media-plugins/gst-plugins-webrtc
+	!media-plugins/gst-plugins-x264
+	!media-plugins/gst-plugins-x265
+	g722? (
+		!<media-video/ffmpeg-5[openssl]
+		|| (
+			(
+				!<dev-libs/openssl-3
+				>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,-fdk,-kvazaar,-openh264,openssl,-vaapi,-x264,-x265,-xvid]
+			)
+			(
+				>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,-fdk,-kvazaar,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
+			)
+		)
+	)
+	gles2? (
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
+	)
+	gstreamer? (
+		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},-vaapi]
+	)
+	opengl? (
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
+	)
+	wayland? (
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
+	)
+	webgl? (
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
+	)
+"
+
 # Reasons for restrictions with mold section are due to the the patent status
 # if not expired or not granted free.
 RDEPEND+="
@@ -693,43 +810,6 @@ RDEPEND+="
 		>=media-libs/opus-1.1[${MULTILIB_USEDEP}]
 		media-libs/openh264[${MULTILIB_USEDEP}]
 	)
-	mold? (
-		!media-plugins/gst-plugins-dash
-		!media-plugins/gst-plugins-hls
-		!media-plugins/gst-plugins-libde265
-		!media-plugins/gst-plugins-openh264
-		!media-plugins/gst-plugins-vaapi
-		!media-plugins/gst-plugins-webrtc
-		!media-plugins/gst-plugins-x264
-		!media-plugins/gst-plugins-x265
-		g722? (
-			!<media-video/ffmpeg-5[openssl]
-			|| (
-				(
-					!<dev-libs/openssl-3
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,-fdk,-kvazaar,-openh264,openssl,-vaapi,-x264,-x265,-xvid]
-				)
-				(
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,-fdk,-kvazaar,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
-				)
-			)
-		)
-		gles2? (
-			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
-		)
-		gstreamer? (
-			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},-vaapi]
-		)
-		opengl? (
-			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
-		)
-		wayland? (
-			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
-		)
-		webgl? (
-			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
-		)
-	)
 	opengl? (
 		!kernel_Winnt? (
 			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+)]
@@ -738,6 +818,17 @@ RDEPEND+="
 	)
 	openmp? (
 		>=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}]
+	)
+	proprietary-codecs-disable? (
+		${RDEPEND_PROPRIETARY_CODECS_DISABLE}
+		!media-plugins/gst-plugins-faad
+	)
+	proprietary-codecs-disable-developer? (
+		${RDEPEND_PROPRIETARY_CODECS_DISABLE}
+		!media-plugins/gst-plugins-faad
+	)
+	proprietary-codecs-disable-user? (
+		${RDEPEND_PROPRIETARY_CODECS_DISABLE}
 	)
 	seccomp? (
 		>=sys-apps/bubblewrap-0.3.1
@@ -1028,6 +1119,12 @@ eerror
 			"x265"
 			"xvid"
 		)
+		if use proprietary-codecs-disable \
+			|| use proprietary-codecs-developer ; then
+			use_flags+=(
+				"aac"
+			)
+		fi
 		local flag
 		for flag in ${use_flags[@]} ; do
 # We check again because ffmpeg is not required, but user may set USE flags

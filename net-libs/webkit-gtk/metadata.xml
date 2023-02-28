@@ -254,6 +254,7 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       Enables support for MediaStream API (IN DEVELOPMENT / DRAFT).
     </flag>
     <flag name="mold">
+      (USE FLAG IN DEVELOPMENT)
       Builds with the mold linker ensuring non-commericial preconditions met.
     </flag>
     <flag name="nsplugin">
@@ -261,6 +262,88 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
     </flag>
     <flag name="openmp">
       Use OpenMP to accelerate SVG filters.
+    </flag>
+    <flag name="proprietary-codecs">
+      Enables use of non-free patent-encumbered audio and video formats, and
+      network protocols.
+    </flag>
+    <flag name="proprietary-codecs-disable">
+      (USE FLAG IN DEVELOPMENT)
+
+      If enabled, it will disable codecs or network protocols with a patent
+      status that is not free in this ebuild fork.
+
+      With this flag enabled, this may break dependencies that assume previous
+      unpatched behavior.
+
+      In general a codec is allowed to be built into disabled proprietary-codecs
+      build if the patent status is one of the following:
+
+        (1) Expired patent, typically 20 years.  (e.g. MP3)
+        (2) Similar perpetual royalty-free freedoms like the
+            Grant of Patent License in the Apache 2.0. (e.g. libvpx, libaom)
+
+      AND
+
+        The code is free with a widely used compatible open source license.
+
+      AND CONDITIONALLY
+
+        The codec may allowed in this ebuild fork if it doesn't require a
+        non-free developer license in a case-by-case basis.
+
+    </flag>
+    <flag name="proprietary-codecs-disable-developer">
+      (USE FLAG IN DEVELOPMENT)
+
+      If enabled, it will disable codecs or network protocols with a patent
+      status that is not free in this ebuild fork for codec developers.
+
+      With this flag enabled, this may break dependencies that assume previous
+      unpatched behavior.
+
+      In general a codec is allowed to be built into disabled proprietary-codecs
+      build if the patent status is one of the following:
+
+        (1) Expired patent, typically 20 years.  (e.g. MP3)
+        (2) Similar perpetual royalty-free freedoms like the
+            Grant of Patent License in the Apache 2.0. (e.g. libvpx, libaom)
+
+      AND
+
+        The code is free with a widely used compatible open source license.
+
+      AND CONDITIONALLY
+
+        The codec may allowed in this ebuild fork if it doesn't require a
+        non-free developer license in a case-by-case basis.
+
+    </flag>
+    <flag name="proprietary-codecs-disable-user">
+      (USE FLAG IN DEVELOPMENT)
+
+      If enabled, it will disable codecs or network protocols with a patent
+      status that is not free in this ebuild fork for non codec developers.
+
+      With this flag enabled, this may break dependencies that assume previous
+      unpatched behavior.
+
+      In general a codec is allowed to be built into disabled proprietary-codecs
+      build if the patent status is one of the following:
+
+        (1) Expired patent, typically 20 years.  (e.g. MP3)
+        (2) Similar perpetual royalty-free freedoms like the
+            Grant of Patent License in the Apache 2.0. (e.g. libvpx, libaom)
+
+      AND
+
+        The code is free with a widely used compatible open source license.
+
+      AND CONDITIONALLY
+
+        The codec may allowed in this ebuild fork if it doesn't require a
+        non-free developer license in a case-by-case basis.
+
     </flag>
     <flag name="pulseaudio">
       Adds PulseAudio and microphone support.
