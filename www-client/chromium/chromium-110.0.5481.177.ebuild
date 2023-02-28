@@ -372,18 +372,21 @@ DISABLED_NON_FREE_USE_FLAGS="
 		!vaapi
 		!vaapi-hevc
 		!widevine
+		system-ffmpeg
 	)
 	proprietary-codecs-disable-developer? (
 		!openh264
 		!vaapi
 		!vaapi-hevc
 		!widevine
+		system-ffmpeg
 	)
 	proprietary-codecs-disable-user? (
 		!openh264
 		!vaapi
 		!vaapi-hevc
 		!widevine
+		system-ffmpeg
 	)
 	vaapi? (
 		proprietary-codecs
