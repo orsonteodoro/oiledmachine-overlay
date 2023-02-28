@@ -248,6 +248,7 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       noexecstack, PIE, SSP), PGO, debug symbols level 2.  Disables use of
       third party ebuilds (without CFI and PGO) and uses the internal bundled
       hardened and PGOed version of those libraries with static linkage.
+      Implies default features.
     </flag>
     <flag name="partitionalloc">
       Use PartitionAlloc as the default allocator.  It's designed for security
@@ -276,9 +277,9 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       disable these checks because they can expose bugs.
     </flag>
     <flag name="proprietary-codecs">
-      Enables use of patent-encumbered audio and video formats, and network
-      protocols.  Upstream build files associate AAC, H264, and others as
-      proprietary.
+      Enables use of non-free patent-encumbered audio and video formats, and
+      network protocols.  Upstream build files associate AAC, H264, and others
+      as proprietary.
     </flag>
     <flag name="proprietary-codecs-disable">
       (USE FLAG IN DEVELOPMENT)
@@ -293,34 +294,8 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       build if the patent status is one of the following:
 
         (1) Expired patent, typically 20 years.  (e.g. MP3)
-        (2) Similar freedoms like the Grant of Patent License in the Apache 2.0.
-            (e.g. libvpx, libaom)
-
-      AND
-
-        The code is free with a widely used compatible open source license.
-
-      AND CONDITIONALLY
-
-        The codec may allowed in this ebuild fork if it doesn't require a
-        non-free developer license in a case-by-case basis.
-
-    </flag>
-    <flag name="proprietary-codecs-disable-user">
-      (USE FLAG IN DEVELOPMENT)
-
-      If enabled, it will disable codecs or network protocols with a patent
-      status that is not free in this ebuild fork for non codec developers.
-
-      With this flag enabled, this may break dependencies that assume previous
-      unpatched behavior.
-
-      In general a codec is allowed to be built into disabled proprietary-codecs
-      build if the patent status is one of the following:
-
-        (1) Expired patent, typically 20 years.  (e.g. MP3)
-        (2) Similar freedoms like the Grant of Patent License in the Apache 2.0.
-            (e.g. libvpx, libaom)
+        (2) Similar perpetual royalty-free freedoms like the
+            Grant of Patent License in the Apache 2.0. (e.g. libvpx, libaom)
 
       AND
 
@@ -345,8 +320,34 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       build if the patent status is one of the following:
 
         (1) Expired patent, typically 20 years.  (e.g. MP3)
-        (2) Similar freedoms like the Grant of Patent License in the Apache 2.0.
-            (e.g. libvpx, libaom)
+        (2) Similar perpetual royalty-free freedoms like the
+            Grant of Patent License in the Apache 2.0. (e.g. libvpx, libaom)
+
+      AND
+
+        The code is free with a widely used compatible open source license.
+
+      AND CONDITIONALLY
+
+        The codec may allowed in this ebuild fork if it doesn't require a
+        non-free developer license in a case-by-case basis.
+
+    </flag>
+    <flag name="proprietary-codecs-disable-user">
+      (USE FLAG IN DEVELOPMENT)
+
+      If enabled, it will disable codecs or network protocols with a patent
+      status that is not free in this ebuild fork for non codec developers.
+
+      With this flag enabled, this may break dependencies that assume previous
+      unpatched behavior.
+
+      In general a codec is allowed to be built into disabled proprietary-codecs
+      build if the patent status is one of the following:
+
+        (1) Expired patent, typically 20 years.  (e.g. MP3)
+        (2) Similar perpetual royalty-free freedoms like the
+            Grant of Patent License in the Apache 2.0. (e.g. libvpx, libaom)
 
       AND
 

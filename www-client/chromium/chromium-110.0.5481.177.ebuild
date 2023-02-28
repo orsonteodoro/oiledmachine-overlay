@@ -286,6 +286,7 @@ CPU_FLAGS_ARM=(
 	neon
 )
 CPU_FLAGS_X86=(
+	avx2
 	sse2
 	ssse3
 	sse4_2
@@ -295,29 +296,34 @@ IUSE_LIBCXX=(
 	system-libstdcxx
 )
 # CFI Basic (.a) mode requires all third party modules built as static.
+
+# Option defaults based on build files.
 IUSE_CODECS="
-dav1d
-openh264
-opus
-libaom
-vpx
-vaapi-hevc
-vorbis
++dav1d
++openh264
++opus
++libaom
++vpx
++vaapi-hevc
++vorbis
 "
+
+# Option defaults based on build files.
 IUSE="
 ${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_}
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS}
 ${IUSE_LIBCXX[@]}
-+bundled-libcxx branch-protection +cfi component-build cups -debug encode gtk4
-+hangouts headless +js-type-check kerberos libcmalloc +official +partitionalloc
++bundled-libcxx branch-protection +cfi component-build +cups -debug +encode -gtk4
+-hangouts -headless +js-type-check +kerberos -libcmalloc +official +partitionalloc
 pic +pgo +pre-check-llvm +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-user
-proprietary-codecs-disable-developer pulseaudio qt5 screencast selinux +suid
--system-av1 -system-ffmpeg -system-icu -system-harfbuzz -system-png thinlto-opt
-+vaapi wayland widevine +X
+proprietary-codecs-disable-developer +pulseaudio qt5 +screencast selinux +suid
+-system-av1 +system-ffmpeg -system-icu -system-harfbuzz -system-png +thinlto-opt
++vaapi +wayland -widevine +X
 r1
 "
+
 # What is considered a proprietary codec can be found at:
 #
 #   https://github.com/chromium/chromium/blob/110.0.5481.100/media/filters/BUILD.gn#L160
@@ -352,8 +358,48 @@ r1
 #   https://clang.llvm.org/docs/ControlFlowIntegrity.html#bad-cast-checking
 #
 DISABLED_NON_FREE_USE_FLAGS="
+	^^ (
+		proprietary-codecs
+		proprietary-codecs-disable
+		proprietary-codecs-disable-developer
+		proprietary-codecs-disable-user
+	)
+	openh264? (
+		proprietary-codecs
+	)
+	proprietary-codecs-disable? (
+		!openh264
+		!system-ffmpeg
+		!vaapi
+		!vaapi-hevc
+		!widevine
+	)
+	proprietary-codecs-disable-developer? (
+		!openh264
+		!system-ffmpeg
+		!vaapi
+		!vaapi-hevc
+		!widevine
+	)
+	proprietary-codecs-disable-user? (
+		!openh264
+		!vaapi
+		!vaapi-hevc
+		!widevine
+	)
+	vaapi? (
+		proprietary-codecs
+	)
+	vaapi-hevc? (
+		proprietary-codecs
+	)
+	widevine? (
+		proprietary-codecs
+	)
 "
+
 REQUIRED_USE+="
+	${DISABLED_NON_FREE_USE_FLAGS}
 	!headless (
 		|| (
 			wayland
@@ -366,12 +412,6 @@ REQUIRED_USE+="
 	^^ (
 		partitionalloc
 		libcmalloc
-	)
-	^^ (
-		proprietary-codecs
-		proprietary-codecs-disable
-		proprietary-codecs-disable-user
-		proprietary-codecs-disable-developer
 	)
 	branch-protection? (
 		arm64
@@ -397,6 +437,7 @@ REQUIRED_USE+="
 		)
 		!debug
 		!epgo
+		!hangouts
 		!system-av1
 		!system-ffmpeg
 		!system-harfbuzz
@@ -404,18 +445,31 @@ REQUIRED_USE+="
 		!system-libstdcxx
 		!system-png
 		bundled-libcxx
+		dav1d
+		cups
+		encode
+		kerberos
+		libaom
+		openh264
+		opus
 		partitionalloc
 		pgo
+		proprietary-codecs
+		screencast
 		thinlto-opt
+		vaapi
+		vaapi-hevc
+		vorbis
+		vpx
+		wayland
+		X
 		amd64? (
+			pulseaudio
 			cfi
 		)
 		arm64? (
 			branch-protection
 		)
-	)
-	openh264? (
-		proprietary-codecs
 	)
 	partitionalloc? (
 		!component-build
@@ -426,44 +480,18 @@ REQUIRED_USE+="
 	pre-check-vaapi? (
 		vaapi
 	)
-	proprietary-codecs-disable? (
-		!openh264
-		!system-ffmpeg
-		!vaapi
-		!vaapi-hevc
-		!widevine
-	)
-	proprietary-codecs-disable-developer? (
-		!openh264
-		!system-ffmpeg
-		!vaapi
-		!vaapi-hevc
-		!widevine
-	)
-	proprietary-codecs-disable-user? (
-		!openh264
-		!system-ffmpeg
-		!vaapi
-		!vaapi-hevc
-		!widevine
-	)
 	screencast? (
 		wayland
 	)
 	system-libstdcxx? (
 		!cfi
 	)
-	vaapi? (
-		proprietary-codecs
-	)
 	vaapi-hevc? (
-		proprietary-codecs
 		vaapi
 	)
 	widevine? (
 		!arm64
 		!ppc64
-		proprietary-codecs
 	)
 "
 
@@ -2227,6 +2255,13 @@ eerror
 eerror
 eerror "-fuse-ld=mold cannot be used with the !system-ffmpeg USE flag."
 eerror
+		die
+	fi
+	if is-flagq '-fuse-ld=mold' && use proprietary-codecs ; then
+eerror
+eerror "-fuse-ld=mold cannot be used with the proprietary-codecs USE flag."
+eerror
+		die
 	fi
 }
 
@@ -2500,7 +2535,10 @@ ewarn
 	myconf_gn+=" enable_platform_hevc=$(usex proprietary-codecs $(usex vaapi-hevc true false) false)"
 	myconf_gn+=" media_use_libvpx=$(usex vpx true false)"
 	myconf_gn+=" media_use_openh264=$(usex proprietary-codecs $(usex openh264 true false) false)"
+	myconf_gn+=" rtc_include_opus=$(usex opus true false)"
+	myconf_gn+=" rtc_use_h264=$(usex proprietary-codecs true false)"
 	if ! use system-ffmpeg ; then
+		# The internal/vendored ffmpeg enables non-free codecs.
 		local _media_use_ffmpeg="true"
 		if use proprietary-codecs-disable-developer \
 			|| use proprietary-codecs-disable-all ; then
@@ -2597,6 +2635,12 @@ ewarn
 
 	if ! use cpu_flags_x86_ssse3 ; then
 		myconf_gn+=" use_ssse3=false"
+	fi
+
+	if use cpu_flags_x86_avx2 ; then
+		myconf_gn+=" rtc_enable_avx2=true"
+	else
+		myconf_gn+=" rtc_enable_avx2=false"
 	fi
 
 	# Make sure that -Werror doesn't get added to CFLAGS by the build
