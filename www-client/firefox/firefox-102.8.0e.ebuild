@@ -251,12 +251,22 @@ LICENSE+="
 #   the vanilla ZLIB lib license doesn't contain all rights reserved
 
 # (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser
+CODEC_IUSE="
+-aac
++dav1d
+-h264
++opus
++vpx
+"
 IUSE+="
-alsa cpu_flags_arm_neon cups +dbus debug eme-free +hardened -hwaccel jack
--jemalloc libcanberra libproxy libsecret mold +openh264 +pgo +pulseaudio
-sndio selinux speech +system-av1 +system-harfbuzz +system-icu +system-jpeg
-+system-libevent +system-libvpx system-png system-python-libs +system-webp
-+vaapi +wayland +webrtc wifi webspeech
+${CODEC_IUSE}
+alsa cpu_flags_arm_neon cups +dbus debug eme-free +ffvpx +hardened -hwaccel jack
+-jemalloc libcanberra libproxy libsecret mold +openh264 +pgo proprietary-codecs
+proprietary-codecs-disable proprietary-codecs-disable-nc-developer
+proprietary-codecs-disable-nc-user
++pulseaudio sndio selinux speech +system-av1 +system-ffmpeg +system-harfbuzz
++system-icu +system-jpeg +system-libevent +system-libvpx system-png
+system-python-libs +system-webp +vaapi +wayland +webrtc wifi webspeech
 "
 
 # Firefox-only IUSE
@@ -270,10 +280,69 @@ geckodriver +gmp-autoupdate screencast +X
 #
 # The wayland flag actually allows vaapi, but upstream lazy to make it
 # an independent option.
+NON_FREE_REQUIRED_USE="
+	^^ (
+		proprietary-codecs
+		proprietary-codecs-disable
+		proprietary-codecs-disable-nc-developer
+		proprietary-codecs-disable-nc-user
+	)
+	aac? (
+		|| (
+			proprietary-codecs
+			proprietary-codecs-disable-nc-user
+		)
+	)
+	h264? (
+		proprietary-codecs
+	)
+	mold? (
+		|| (
+			proprietary-codecs-disable
+			proprietary-codecs-disable-nc-developer
+			proprietary-codecs-disable-nc-user
+		)
+	)
+	openh264? (
+		proprietary-codecs
+		system-ffmpeg
+	)
+	proprietary-codecs-disable? (
+		!openh264
+		!vaapi
+		!wayland
+		eme-free
+	)
+	proprietary-codecs-disable-nc-developer? (
+		!openh264
+		!vaapi
+		!wayland
+		eme-free
+	)
+	proprietary-codecs-disable-nc-user? (
+		!openh264
+		!vaapi
+		!wayland
+		eme-free
+	)
+"
 REQUIRED_USE="
+	${NON_FREE_REQUIRED_USE}
 	X
+	aac? (
+		system-ffmpeg
+	)
+	dav1d? (
+		|| (
+			ffvpx
+			system-ffmpeg
+		)
+	)
 	debug? (
 		!system-av1
+	)
+	h264? (
+		system-ffmpeg
 	)
 	libcanberra? (
 		|| (
@@ -281,14 +350,20 @@ REQUIRED_USE="
 			pulseaudio
 		)
 	)
-	mold? (
-		!openh264
-		!vaapi
-		!wayland
-		eme-free
+	opus? (
+		|| (
+			ffvpx
+			system-ffmpeg
+		)
 	)
 	vaapi? (
 		wayland
+	)
+	vpx? (
+		|| (
+			ffvpx
+			system-ffmpeg
+		)
 	)
 	wayland? (
 		X
@@ -310,6 +385,7 @@ REQUIRED_USE+=" screencast? ( wayland )"
 # For dependencies, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
 # https://www.mozilla.org/en-US/firefox/102.8.0/system-requirements/
+# /var/tmp/portage/www-client/firefox-102.8.0e/work/firefox-102.8.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp
 # /var/tmp/portage/www-client/firefox-102.8.0e/work/firefox-102.8.0/taskcluster/ci/fetch/toolchains.yml
 # /var/tmp/portage/www-client/firefox-102.8.0e/work/firefox-102.8.0/taskcluster/ci/packages/
 # /var/tmp/portage/www-client/firefox-102.8.0e/work/firefox-102.8.0/taskcluster/ci/toolchain/
@@ -382,12 +458,63 @@ UDEV_RDEPEND="
 	)
 "
 
+# x86_64 will use ffvpx and system-ffmpeg but others will use system-ffmpeg
+NON_FREE_CDEPENDS="
+	proprietary-codecs? (
+		media-libs/mesa[${MULTILIB_USEDEP},dav1d?,opus?,vaapi?,vpx?]
+		system-ffmpeg? (
+			media-video/ffmpeg[${MULTILIB_USEDEP},dav1d?,opus?,vaapi?,vpx?]
+		)
+		vaapi? (
+			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
+		)
+	)
+	proprietary-codecs-disable? (
+		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
+		|| (
+			system-ffmpeg? (
+				(
+					!<dev-libs/openssl-3
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable,-vaapi,vpx?,-x264,-x265,-xvid]
+				)
+				(
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable,-vaapi,vpx?,-x264,-x265,-xvid]
+				)
+			)
+		)
+	)
+	proprietary-codecs-disable-nc-developer? (
+		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
+		|| (
+			system-ffmpeg? (
+				(
+					!<dev-libs/openssl-3
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-developer,-vaapi,vpx?,-x264,-x265,-xvid]
+				)
+				(
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-developer,-vaapi,vpx?,-x264,-x265,-xvid]
+				)
+			)
+		)
+	)
+	proprietary-codecs-disable-nc-user? (
+		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
+		|| (
+			system-ffmpeg? (
+				(
+					!<dev-libs/openssl-3
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-user,-vaapi,vpx?,-x264,-x265,-xvid]
+				)
+				(
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-user,-vaapi,vpx?,-x264,-x265,-xvid]
+				)
+			)
+		)
+	)
+"
 CDEPEND="
 	${FF_ONLY_DEPEND}
-	!mold? (
-		media-video/ffmpeg[${MULTILIB_USEDEP}]
-		media-libs/mesa[${MULTILIB_USEDEP}]
-	)
+	${NON_FREE_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.79.2[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.34[${MULTILIB_USEDEP}]
@@ -411,18 +538,6 @@ CDEPEND="
 	)
 	libproxy? (
 		net-libs/libproxy[${MULTILIB_USEDEP}]
-	)
-	mold? (
-		|| (
-			(
-				!<dev-libs/openssl-3
-				>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,-fdk,-kvazaar,-openh264,openssl,-vaapi,-x264,-x265,-xvid]
-			)
-			(
-				>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,-fdk,-kvazaar,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
-			)
-		)
-		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 	)
 	pulseaudio? (
 		|| (
@@ -540,7 +655,6 @@ RDEPEND+="
 	)
 	vaapi? (
 		media-libs/libva[${MULTILIB_USEDEP},drm(+),X?,wayland?]
-		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 	)
 "
 
@@ -634,47 +748,28 @@ einfo "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}* is missing! Cannot use LLV
 einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 }
 
-MOZ_LANGS=(
-af ar ast be bg br ca cak cs cy da de dsb el en-CA en-GB en-US es-AR es-ES et eu
-fi fr fy-NL ga-IE gd gl he hr hsb hu id is it ja ka kab kk ko lt lv ms nb-NO nl
-nn-NO pa-IN pl pt-BR pt-PT rm ro ru sk sl sq sr sv-SE th tr uk uz vi zh-CN zh-TW
-)
+__='
+wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/102.8.0esr/linux-x86_64/xpi/" \
+        | grep "href.*linux-x86_64"  \
+        | cut -f 3 -d ">" \
+        | cut -f 1 -d "<" \
+        | sed -e "s|/||g" \
+        | sed -e "s|.xpi$||g" \
+        | sed -e "s|^\.\.$||g" \
+        | tr "\n" " " \
+        | fold -w 80 -s \
+        | sed -e "s|^ ||g" \
+        | sed -e "s| $||g"
+'
+unset __
 
-# Firefox-only LANGS
-MOZ_LANGS+=( ach )
-MOZ_LANGS+=( an )
-MOZ_LANGS+=( az )
-MOZ_LANGS+=( bn )
-MOZ_LANGS+=( bs )
-MOZ_LANGS+=( ca-valencia )
-MOZ_LANGS+=( eo )
-MOZ_LANGS+=( es-CL )
-MOZ_LANGS+=( es-MX )
-MOZ_LANGS+=( fa )
-MOZ_LANGS+=( ff )
-MOZ_LANGS+=( gn )
-MOZ_LANGS+=( gu-IN )
-MOZ_LANGS+=( hi-IN )
-MOZ_LANGS+=( hy-AM )
-MOZ_LANGS+=( ia )
-MOZ_LANGS+=( km )
-MOZ_LANGS+=( kn )
-MOZ_LANGS+=( lij )
-MOZ_LANGS+=( mk )
-MOZ_LANGS+=( mr )
-MOZ_LANGS+=( my )
-MOZ_LANGS+=( ne-NP )
-MOZ_LANGS+=( oc )
-MOZ_LANGS+=( sco )
-MOZ_LANGS+=( si )
-MOZ_LANGS+=( son )
-MOZ_LANGS+=( szl )
-MOZ_LANGS+=( ta )
-MOZ_LANGS+=( te )
-MOZ_LANGS+=( tl )
-MOZ_LANGS+=( trs )
-MOZ_LANGS+=( ur )
-MOZ_LANGS+=( xh )
+MOZ_LANGS=(
+ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
+en-GB en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fy-NL ga-IE gd gl gn
+gu-IN he hi-IN hr hsb hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv mk
+mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sco si sk sl son
+sq sr sv-SE szl ta te th tl tr trs uk ur uz vi xh zh-CN zh-TW
+)
 
 mozilla_set_globals() {
 	# https://bugs.gentoo.org/587334
@@ -1167,14 +1262,14 @@ src_prepare() {
 		rm -fv "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	fi
 	eapply "${WORKDIR}/firefox-patches"
-	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disallow-store-data-races.patch"
+	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disallow-store-data-races.patch"
 
 	# Flicker prevention with -Ofast
-	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags-gfx-layers.patch"
+	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-gfx-layers.patch"
 
 	# Prevent YT stall prevention with clang with -Ofast.
 	# Prevent audio perma mute with gcc with -Ofast.
-	eapply "${FILESDIR}/multiabi/firefox-106.0.2-disable-broken-flags-js.patch"
+	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-js.patch"
 
 	# Only partial patching was done because Gentoo doesn't support multilib
 	# Python.  Only native ABI is supported.  This means cbindgen cannot
@@ -1183,6 +1278,10 @@ src_prepare() {
 	# the build information for 64-bit linking, which should be 32-bit.
 
 	eapply "${DISTDIR}/${PN}-d4f5769.patch"
+
+	# Allow to use system-ffmpeg completely.
+	eapply "${FILESDIR}/extra-patches/${PN}-102-allow-ffmpeg-decode-av1.patch"
+	eapply "${FILESDIR}/extra-patches/${PN}-102-disable-ffvpx.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -1563,6 +1662,26 @@ einfo
 		--with-unsigned-addon-scopes=app,system \
 		--x-includes="${ESYSROOT}/usr/include" \
 		--x-libraries="${ESYSROOT}/usr/$(get_libdir)"
+
+	if use system-ffmpeg ; then
+		mozconfig_add_options_ac \
+			'+system-ffmpeg' \
+			--enable-ffmpeg
+	else
+		mozconfig_add_options_ac \
+			'-system-ffmpeg' \
+			--disable-ffmpeg
+	fi
+
+	if use ffvpx ; then
+		mozconfig_add_options_ac \
+			'ffvpx=default' \
+			--with-ffvpx=default
+	else
+		mozconfig_add_options_ac \
+			'ffvpx=no' \
+			--with-ffvpx=no
+	fi
 
 	# mozconfig_add_options_ac \
 	#	'' \
@@ -2251,7 +2370,7 @@ einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
 
 	# Install wrapper script
 	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
-	newbin "${FILESDIR}/multiabi/${PN}-r1.sh" ${PN}-${ABI}
+	newbin "${FILESDIR}/extra-patches/${PN}-r1.sh" ${PN}-${ABI}
 	dosym /usr/bin/${PN}-${ABI} /usr/bin/${PN}
 
 	# Update wrapper
