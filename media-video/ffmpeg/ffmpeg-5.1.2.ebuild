@@ -238,7 +238,7 @@ ${FFTOOLS[@]/#/+fftools_}
 alsa chromium doc +encode gdbm jack-audio-connection-kit jack2
 mold opencl-icd-loader oss pgo pic pipewire proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+re-codecs sndio static-libs test v4l wayland r3
++re-codecs sndio static-libs test v4l wayland r4
 
 trainer-audio-cbr
 trainer-audio-lossless
