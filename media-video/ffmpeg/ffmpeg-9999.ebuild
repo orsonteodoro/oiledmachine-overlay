@@ -228,15 +228,18 @@ FFTOOLS=(
 # For some license compatibililty notes, see
 #   https://github.com/FFmpeg/FFmpeg/blob/master/LICENSE.md#external-libraries
 #   https://github.com/FFmpeg/FFmpeg/blob/master/LICENSE.md#incompatible-libraries
+
+# +re-codecs is based on unpatched behavior to prevent breaking changes.
 IUSE+="
 ${CPU_FEATURES_MAP[@]%:*}
 ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
-alsa chromium doc +encode fallback-commit gdbm jack-audio-connection-kit jack2
-mold opencl-icd-loader oss pgo pic pipewire proprietary-codecs-disable
-proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-sndio static-libs test v4l wayland r3
+alsa chromium doc +encode fallback-commit gdbm
+jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo pic pipewire
+proprietary-codecs-disable proprietary-codecs-disable-nc-developer
+proprietary-codecs-disable-nc-user +re-codecs sndio static-libs test v4l
+wayland r3
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -1081,7 +1084,7 @@ N_SAMPLES=1
 PATCHES=(
 	"${FILESDIR}/chromium-r1.patch"
 	"${FILESDIR}/${PN}-5.1.2-allow-7regs.patch"
-	"${FILESDIR}/${PN}-5.1.2-disable-proprietary-codecs.patch"
+	"${FILESDIR}/${PN}-5.1.2-configure-non-free-options.patch"
 )
 
 MULTILIB_WRAPPED_HEADERS=(
@@ -1148,16 +1151,26 @@ eerror
 		die
 	fi
 	if ffprobe "${video_sample_path}" 2>/dev/null 1>/dev/null ; then
-		einfo "Verifying asset requirements"
-		if false && ! ( ffprobe "${video_sample_path}" 2>&1 \
-			| grep -q -e "3840x2160" ) ; then
+einfo "Verifying asset requirements"
+		if false && ! ( \
+			ffprobe \
+				"${video_sample_path}" \
+				2>&1 \
+				| grep -q -e "3840x2160" \
+			) \
+		; then
 eerror
 eerror "The PGO video sample must be 3840x2160 for ${id}."
 eerror
 			die
 		fi
-		if false && ! ( ffprobe "${video_sample_path}" 2>&1 \
-			| grep -q -E -e ", (59|60)[.0-9]* fps" ) ; then
+		if false && ! ( \
+			ffprobe \
+				"${video_sample_path}" \
+				2>&1 \
+				| grep -q -E -e ", (59|60)[.0-9]* fps" \
+			) \
+		; then
 eerror
 eerror "The PGO video sample must be >=59 fps for ${id}."
 eerror
@@ -1198,11 +1211,11 @@ pgo_check_video() {
 		local video_sample_path="${!id}"
 		[[ -e "${video_sample_path}" ]] || continue
 		if [[ -z "${video_sample_path}" ]] ; then
-#			ewarn "Skipping ${id}."
+#ewarn "Skipping ${id}."
 			continue
 		fi
 		if [[ ! -f "${video_sample_path}" ]] ; then
-			ewarn "Skipping ${id} asset with no asset located at ${video_sample_path}."
+ewarn "Skipping ${id} asset with no asset located at ${video_sample_path}."
 			continue
 		fi
 		_pgo_check_video
@@ -1215,15 +1228,15 @@ pgo_check_audio() {
 		local audio_sample_path="${!id}"
 		[[ -e "${audio_sample_path}" ]] || continue
 		if [[ -z "${audio_sample_path}" ]] ; then
-			ewarn "Skipping ${id}."
+ewarn "Skipping ${id}."
 			continue
 		fi
 		if [[ ! -f "${audio_sample_path}" ]] ; then
-			ewarn "Skipping ${id} asset with no asset located at ${audio_sample_path}."
+ewarn "Skipping ${id} asset with no asset located at ${audio_sample_path}."
 			continue
 		fi
 		if ffprobe "${audio_sample_path}" 2>/dev/null 1>/dev/null ; then
-			einfo "Verifying asset requirements"
+einfo "Verifying asset requirements"
 			local d=$(ffprobe "${audio_sample_path}" 2>&1 \
 				| grep -E -e "Duration" \
 				| cut -f 4 -d " " \
@@ -1297,21 +1310,26 @@ pgo_check_av() {
 		local capture_path="${!id}"
 		[[ -e "${capture_path}" ]] || continue
 		if [[ -z "${capture_path}" ]] ; then
-#			ewarn "Skipping ${id}."
+#ewarn "Skipping ${id}."
 			continue
 		fi
 		if [[ ! -e "${capture_path}" ]] ; then
-			ewarn "Skipping ${id} device with no device located at ${capture_path}."
+ewarn "Skipping ${id} device with no device located at ${capture_path}."
 			continue
 		fi
 		_pgo_check_av
 	done
 }
 
+eprintf() {
+	local format="%30s : %-s"
+	printf " \e[32m*\e[0m ${format}\n" "$@"
+}
+
 pkg_setup() {
 	FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE=${FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE:-100} # You must update gen_autosample_suffix
 	if use pgo && has_version "media-video/ffmpeg" ; then
-		ewarn "The PGO use flag is a Work In Progress (WIP)"
+ewarn "The PGO use flag is a Work In Progress (WIP)"
 		if [[ -n "${FFMPEG_TRAINING_VIDEO_CODECS}" ]] ; then
 			pgo_check_video
 		fi
@@ -1326,7 +1344,9 @@ pkg_setup() {
 	uopts_setup
 
 	if use trainer-av-streaming ; then
-		if false && ! grep -q "register_sanitize_hook" $(realpath "${EROOT}/usr/lib/portage/"*"/bashrc-functions.sh") ; then
+		if false \
+			&& ! grep -q "register_sanitize_hook" \
+				$(realpath "${EROOT}/usr/lib/portage/"*"/bashrc-functions.sh") ; then
 eerror
 eerror "You need to use either:"
 eerror
@@ -1385,10 +1405,11 @@ eerror
 	fi
 
 	local pid="$$"
-einfo "PID=${pid}"
+eprintf "PID" "${pid}"
 	local display=$(grep -z "^DISPLAY=" "/proc/${pid}/environ" \
+		| tr -d '\0' \
 		| cut -f 2 -d "=")
-einfo "DISPLAY=${display}"
+eprintf "DISPLAY" "${display}"
 	if use trainer-av-streaming \
 		&& ( use pgo || use bolt ) \
 		&& [[ -z "${display}" ]] ; then
@@ -1410,7 +1431,7 @@ eerror
 
 	# ffmpeg[chromaprint] depends on chromaprint, and chromaprint[tools] depends on ffmpeg.
 	# May cause breakage while updating, #862996, #625210, #833821.
-	if has_version media-libs/chromaprint[tools] && use chromaprint; then
+	if has_version media-libs/chromaprint[tools] && use chromaprint ; then
 ewarn
 ewarn "You have media-libs/chromaprint installed with 'tools' USE flag, which "
 ewarn "links to ffmpeg, and you have enabled 'chromaprint' USE flag for ffmpeg, "
@@ -1475,8 +1496,8 @@ verify_subslot() {
 eerror
 eerror "Subslot inconsistency"
 eerror
-eerror "Actual subslot:\t${FFMPEG_SUBSLOT}"
-eerror "Expected subslot:\t${actual_subslot}"
+eerror $(printf "%30s : %-s" "Actual subslot" "${FFMPEG_SUBSLOT}")
+eerror $(printf "%30s : %-s" "Expected subslot" "${actual_subslot}")
 eerror
 eerror "Use the fallback-commit USE flag to rewind back to the consistent slot."
 eerror
@@ -1497,11 +1518,11 @@ src_prepare() {
 
 	echo 'include $(SRC_PATH)/ffbuild/libffmpeg.mak' >> Makefile || die
 
-	einfo "Copying sources, please wait"
+einfo "Copying sources, please wait"
 	prepare_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			einfo "Copying sources to ${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+einfo "Copying sources to ${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			cp -a "${S_orig}" "${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
 			uopts_src_prepare
 		done
@@ -1570,16 +1591,16 @@ has_codec_requirement() {
 		has_capture_device=1
 	done
 
-	einfo "acodecs_found=${acodecs_found}"
-	einfo "vcodecs_found=${vcodecs_found}"
-	einfo "capture_found=${capture_found}"
-	einfo "has_audio_samples=${has_audio_samples}"
-	einfo "has_video_samples=${has_video_samples}"
-	einfo "has_capture_device=${has_capture_device}"
+eprintf "acodecs_found" "${acodecs_found}"
+eprintf "vcodecs_found" "${vcodecs_found}"
+eprintf "capture_found" "${capture_found}"
+eprintf "has_audio_samples" "${has_audio_samples}"
+eprintf "has_video_samples" "${has_video_samples}"
+eprintf "has_capture_device" "${has_capture_device}"
 	if (( ${has_audio_samples} == 1 && ${acodecs_found} == 1 \
 		&& ${has_video_samples} == 1 && ${vcodecs_found} == 1 \
 		&& ${has_capture_device} == 1 && ${capture_found} == 1 \
-		)) ; then
+	)) ; then
 		return 0
 	elif (( ${has_audio_samples} == 1 && ${acodecs_found} == 1 )) ; then
 		return 0
@@ -1601,8 +1622,8 @@ train_meets_requirements() {
 	if has_codec_requirement ; then
 		codecs=1
 	fi
-	einfo "has_codec_requirement=${codecs}"
-	einfo "has_ffmpeg=${player}"
+eprintf "has_codec_requirement" "${codecs}"
+eprintf "has_ffmpeg" "${player}"
 	if has_ffmpeg && has_codec_requirement ; then
 		return 0
 	fi
@@ -1644,7 +1665,7 @@ _src_configure() {
 	local myconf=( )
 	local extra_libs=( )
 
-	einfo "Configuring ${lib_type} with PGO_PHASE=${PGO_PHASE}"
+einfo "Configuring ${lib_type} with PGO_PHASE=${PGO_PHASE}"
 
 	uopts_src_configure
 
@@ -1745,22 +1766,27 @@ eerror
 	done
 
 	if use proprietary-codecs-disable ; then
-einfo "Disabling all proprietary-codecs"
 		myconf+=(
-			--proprietary-codecs=deny
+			--non-free-patented-codecs=deny
 		)
 	elif use proprietary-codecs-disable-nc-user ; then
-einfo "Disabling proprietary-codecs for users"
 		myconf+=(
-			--proprietary-codecs=user
+			--non-free-patented-codecs=user
 		)
 	elif use proprietary-codecs-disable-nc-developer ; then
-einfo "Disabling proprietary-codecs for codec developers"
 		myconf+=(
-			--proprietary-codecs=codec-developer
+			--non-free-patented-codecs=codec-developer
+		)
+	fi
+
+	if use re-codecs ; then
+		myconf+=(
+			--re-codecs=allow
 		)
 	else
-einfo "Allowing proprietary-codecs"
+		myconf+=(
+			--re-codecs=deny
+		)
 	fi
 
 	if use openssl ; then
@@ -1814,7 +1840,12 @@ einfo "Allowing proprietary-codecs"
 
 	# cross compile support
 	if tc-is-cross-compiler ; then
-		myconf+=( --enable-cross-compile --arch=$(tc-arch-kernel) --cross-prefix=${CHOST}- --host-cc="$(tc-getBUILD_CC)" )
+		myconf+=(
+			--enable-cross-compile
+			--arch=$(tc-arch-kernel)
+			--cross-prefix=${CHOST}-
+			--host-cc="$(tc-getBUILD_CC)"
+		)
 		case ${CHOST} in
 			*freebsd*)
 				myconf+=( --target-os=freebsd )
@@ -1867,11 +1898,11 @@ ewarn "Do not use at this time."
 	fi
 
 einfo
-einfo "CC:\t\t\t${CC}"
-einfo "CXX:\t\t\t${CXX}"
-einfo "CFLAGS:\t\t${CFLAGS}"
-einfo "CXXFLAGS:\t\t${CXXFLAGS}"
-einfo "LDFLAGS:\t\t${LDFLAGS}"
+eprintf "CC" "${CC}"
+eprintf "CXX" "${CXX}"
+eprintf "CFLAGS" "${CFLAGS}"
+eprintf "CXXFLAGS" "${CXXFLAGS}"
+eprintf "LDFLAGS" "${LDFLAGS}"
 einfo
 
 	if tc-is-gcc && ( use pgo || use epgo ) ; then
@@ -1899,32 +1930,32 @@ einfo
 	echo "${@}"
 	"${@}" || die
 
-	if multilib_is_native_abi && use chromium && build_separate_libffmpeg; then
-		einfo "Configuring for Chromium"
+	if multilib_is_native_abi && use chromium && build_separate_libffmpeg ; then
+einfo "Configuring for Chromium"
 		mkdir -p ../chromium || die
 		pushd ../chromium >/dev/null || die
-		set -- "${@}" \
-			--disable-shared \
-			--enable-static \
-			--enable-pic \
-			--disable-opencl
-		echo "${@}"
-		"${@}" || die
+			set -- "${@}" \
+				--disable-shared \
+				--enable-static \
+				--enable-pic \
+				--disable-opencl
+			echo "${@}"
+			"${@}" || die
 		popd >/dev/null || die
 	fi
 }
 
 _adecode() {
-	einfo "Decoding ${1}"
+einfo "Decoding ${1}"
 	cmd=( "${FFMPEG}" -c:a ${decoding_codec} -i "${T}/traintemp/test.${extension}" -f null - )
-	einfo "${cmd[@]}"
+eprintf "Running" "${cmd[@]}"
 	"${cmd[@]}" || die
 }
 
 _vdecode() {
-	einfo "Decoding ${1}"
+einfo "Decoding ${1}"
 	cmd=( "${FFMPEG}" -c:v ${decoding_codec} -i "${T}/traintemp/test.${extension}" -f null - )
-	einfo "${cmd[@]}"
+eprintf "Running" "${cmd[@]}"
 	"${cmd[@]}" || die
 }
 
@@ -2020,84 +2051,84 @@ _get_264_level() {
 	if (( \
 		   ( ${fps} == 60 && ${width} == 8192 && ${height} == 4320 ) \
 		|| ( ${fps} == 60 && ${width} == 7680 && ${height} == 4320 ) \
-		)) ; then
+	)) ; then
 		echo "6.1"
 	elif (( \
 		   ( ${fps} == 30 && ${width} == 8192 && ${height} == 4320 ) \
 		|| ( ${fps} == 30 && ${width} == 7680 && ${height} == 4320 ) \
-		)) ; then
+	)) ; then
 		echo "6"
 	elif (( \
 		   ( ${fps} == 60 && ${width} == 3840 && ${height} == 2160 ) \
 		|| ( ${fps} == 60 && ${width} == 4096 && ${height} == 2048 ) \
 		|| ( ${fps} == 60 && ${width} == 4096 && ${height} == 2160 ) \
-		)) ; then
+	)) ; then
 		echo "5.2"
 	elif (( \
 		   ( ${fps} == 30 && ${width} == 3840 && ${height} == 2160 ) \
 		|| ( ${fps} == 30 && ${width} == 4096 && ${height} == 2048 ) \
-		)) ; then
+	)) ; then
 		echo "5.1"
 	elif (( \
 		   ( ${fps} == 30 && ${width} == 2560 && ${height} == 1920 ) \
 		   ( ${fps} == 60 && ${width} == 2048 && ${height} == 1080 ) \
-		)) ; then
+	)) ; then
 		echo "5"
 	elif (( \
 		   ( ${fps} == 60 && ${width} == 2048 && ${height} == 1080 ) \
 		|| ( ${fps} == 60 && ${width} == 1920 && ${height} == 1080 ) \
-		)) ; then
+	)) ; then
 		echo "4.2"
 	elif (( \
 		   ( ${fps} == 30 && ${width} == 1920 && ${height} == 1080 ) \
 		|| ( ${fps} == 30 && ${width} == 2048 && ${height} == 1024 ) \
 		|| ( ${fps} == 60 && ${width} == 1280 && ${height} == 720 ) \
-		)) ; then
+	)) ; then
 		echo "4.1"
 	elif (( \
 		   ( ${fps} == 30 && ${width} == 2048 && ${height} == 1024 ) \
 		|| ( ${fps} == 30 && ${width} == 1920 && ${height} == 1080 ) \
 		|| ( ${fps} == 60 && ${width} == 1280 && ${height} == 720 ) \
-		)) ; then
+	)) ; then
 		echo "4"
 
 	elif (( \
 		( ${fps} == 60 && ${width} == 1280 && ${height} == 720 ) \
-		)) ; then
+	)) ; then
 		echo "3.2"
 	elif (( \
 		( ${fps} == 30 && ${width} == 1280 && ${height} == 720 ) \
-		)) ; then
+	)) ; then
 		echo "3.1"
 	elif (( \
 		( ${fps} == 30 && ${width} == 720 && ${height} == 480 ) \
 		( ${fps} == 60 && ${width} == 352 && ${height} == 480 ) \
-		)) ; then
+	)) ; then
 		echo "3"
 
 	elif (( \
 		( ${fps} == 30 && ${wdith} == 352 && ${height} == 480 ) \
-		)) ; then
+	)) ; then
 		echo "2.2"
 
 	elif (( \
 		( ${fps} == 30 && ${width} == 352 && ${height} == 288 ) \
-		)) ; then
+	)) ; then
 		echo "1.3"
 
 	elif (( \
 		( ${fps} == 30 && ${width} == 176 && ${height} == 144 ) \
-		)) ; then
+	)) ; then
 		echo "1.1"
 
 	elif (( \
 		( ${fps} == 30 && ${width} == 128  && ${height} == 96 ) \
-		)) ; then
+	)) ; then
 		echo "1b" # 128 kbps
 
 	elif (( \
 		( ${fps} == 30 && ${width} == 128 && ${height} == 96 ) \
-		)) ; then
+	)) ; then
 		echo "1" # 64 kbps
 	fi
 }
@@ -2128,7 +2159,10 @@ _trainer_plan_video_constrained_quality_training_session() {
 
 	local extra_args=()
 
-	local pf=$(ffprobe -show_entries stream=pix_fmt "${video_sample_path}" 2>/dev/null \
+	local pf=$(ffprobe \
+		-show_entries stream=pix_fmt \
+		"${video_sample_path}" \
+		2>/dev/null \
 		| grep "pix_fmt" \
 		| cut -f 2 -d "=")
 
@@ -2229,7 +2263,7 @@ _trainer_plan_video_constrained_quality_training_session() {
 	local minrate=$(python -c "print(${avgrate}*0.5)") # stationary
 
 	local cheight=$(_cheight "${height}")
-	einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
+einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
 	local cmd
 	cmd=(
 		"${FFMPEG}" \
@@ -2244,13 +2278,19 @@ _trainer_plan_video_constrained_quality_training_session() {
 		-t ${duration} \
 		"${T}/traintemp/test.${extension}"
 	)
-	local len=$(ffprobe -i "${video_sample_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+	local len=$(ffprobe \
+		-i "${video_sample_path}" \
+		-show_entries format=duration \
+		-v quiet \
+		-of csv="p=0" \
+		| cut -f 1 -d ".")
 	(( len < 0 )) && len=0
 	for i in $(seq 1 ${N_SAMPLES}) ; do
 		local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
-		einfo "Seek:  ${i} / ${N_SAMPLES}"
-		einfo "Position / Length:  ${pos} / ${len}"
-		einfo "${cmd[@]} -ss ${pos}"
+eprintf "Seek" "${i} / ${N_SAMPLES}"
+eprintf "Position" "${pos}"
+eprintf "Length" "${len}"
+eprintf "Running" "${cmd[@]} -ss ${pos}"
 		"${cmd[@]}" -ss ${pos} || die
 		_vdecode "${cheight}, ${fps} fps"
 	done
@@ -2295,7 +2335,7 @@ eerror
 		for id in $(get_video_sample_ids) ; do
 			local video_sample_path="${!id}"
 			[[ -e "${video_sample_path}" ]] || continue
-			einfo "Running trainer for ${encoding_codec} for 1 pass constrained quality"
+einfo "Running trainer for ${encoding_codec} for 1 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
 				_trainer_plan_video_constrained_quality_training_session "${e}" "${duration}"
@@ -2338,7 +2378,10 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 		mhdr="1.25"
 	fi
 
-	local pf=$(ffprobe -show_entries stream=pix_fmt "${video_sample_path}" 2>/dev/null \
+	local pf=$(ffprobe \
+		-show_entries stream=pix_fmt \
+		"${video_sample_path}" \
+		2>/dev/null \
 		| grep "pix_fmt" \
 		| cut -f 2 -d "=")
 
@@ -2461,7 +2504,7 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 
 	local cmd
 	local cheight=$(_cheight "${height}")
-	einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
+einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
 	cmd1=(
 		"${FFMPEG}" \
 		-y \
@@ -2492,15 +2535,21 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 		-t ${duration} \
 		"${T}/traintemp/test.${extension}"
 	)
-	local len=$(ffprobe -i "${video_sample_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+	local len=$(ffprobe \
+		-i "${video_sample_path}" \
+		-show_entries format=duration \
+		-v quiet \
+		-of csv="p=0" \
+		| cut -f 1 -d ".")
 	(( len < 0 )) && len=0
 	for i in $(seq 1 ${N_SAMPLES}) ; do
 		local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
-		einfo "Seek:  ${i} / ${N_SAMPLES}"
-		einfo "Position / Length:  ${pos} / ${len}"
-		einfo "${cmd1[@]} -ss ${pos}"
+eprintf "Seek" "${i} / ${N_SAMPLES}"
+eprintf "Position" "${pos}"
+eprintf "Length" "${len}"
+eprintf "Running" "${cmd1[@]} -ss ${pos}"
 		"${cmd1[@]}" -ss ${pos} || die
-		einfo "${cmd2[@]} -ss ${pos}"
+eprintf "Running" "${cmd2[@]} -ss ${pos}"
 		"${cmd2[@]}" -ss ${pos} || die
 		_vdecode "${cheight}, ${fps} fps"
 	done
@@ -2545,7 +2594,7 @@ eerror
 		for id in $(get_video_sample_ids) ; do
 			local video_sample_path="${!id}"
 			[[ -e "${video_sample_path}" ]] || continue
-			einfo "Running trainer for ${encoding_codec} for 2 pass constrained quality"
+einfo "Running trainer for ${encoding_codec} for 2 pass constrained quality"
 			local e
 			for e in ${L[@]} ; do
 				_trainer_plan_video_2_pass_constrained_quality_training_session "${e}" "${duration}"
@@ -2581,11 +2630,15 @@ _trainer_plan_audio_lossless() {
 			local audio_sample_path="${!id}"
 			[[ -e "${audio_sample_path}" ]] || continue
 			if [[ -z "${audio_sample_path}" || ! -f "${audio_sample_path}" ]] ; then
-				ewarn "Skipping ${id}"
+ewarn "Skipping ${id}"
 				continue
 			fi
-			if ! ffprobe "${audio_sample_path}" 2>/dev/null 1>/dev/null ; then
-				ewarn "Skipping ${id} with path ${audio_sample_path}.  Decoding not possible or bad file."
+			if ! ffprobe \
+				"${audio_sample_path}" \
+				2>/dev/null \
+				1>/dev/null \
+			; then
+ewarn "Skipping ${id} with path ${audio_sample_path}.  Decoding not possible or bad file."
 				continue
 			fi
 
@@ -2597,8 +2650,8 @@ _trainer_plan_audio_lossless() {
 				continue
 			fi
 
-			einfo "Running trainer for ${encoding_codec} for lossless"
-			einfo "Encoding for lossless audio"
+einfo "Running trainer for ${encoding_codec} for lossless"
+einfo "Encoding for lossless audio"
 			local cmd
 			cmd=(
 				"${FFMPEG}" \
@@ -2609,13 +2662,19 @@ _trainer_plan_audio_lossless() {
 				-t 3 \
 				"${T}/traintemp/test.${extension}"
 			)
-			local len=$(ffprobe -i "${audio_sample_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+			local len=$(ffprobe \
+				-i "${audio_sample_path}" \
+				-show_entries format=duration \
+				-v quiet \
+				-of csv="p=0" \
+				| cut -f 1 -d ".")
 			(( len < 0 )) && len=0
 			for i in $(seq 1 ${N_SAMPLES}) ; do
 				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
-				einfo "Seek:  ${i} / ${N_SAMPLES}"
-				einfo "Position / Length:  ${pos} / ${len}"
-				einfo "${cmd[@]} -ss ${pos}"
+eprintf "Seek" "${i} / ${N_SAMPLES}"
+eprintf "Position" "${pos}"
+eprintf "Length" "${len}"
+eprintf "Running" "${cmd[@]} -ss ${pos}"
 				"${cmd[@]}" -ss ${pos} || die
 				_adecode "lossless"
 			done
@@ -2654,8 +2713,8 @@ _trainer_plan_video_lossless() {
 		for id in $(get_video_sample_ids) ; do
 			local video_sample_path="${!id}"
 			[[ -e "${video_sample_path}" ]] || continue
-			einfo "Running trainer for ${encoding_codec} for lossless"
-			einfo "Encoding for lossless video"
+einfo "Running trainer for ${encoding_codec} for lossless"
+einfo "Encoding for lossless video"
 			local cmd
 			cmd=(
 				"${FFMPEG}" \
@@ -2668,13 +2727,19 @@ _trainer_plan_video_lossless() {
 				-t ${duration} \
 				"${T}/traintemp/test.${extension}"
 			)
-			local len=$(ffprobe -i "${video_sample_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+			local len=$(ffprobe \
+				-i "${video_sample_path}" \
+				-show_entries format=duration \
+				-v quiet \
+				-of csv="p=0" \
+				| cut -f 1 -d ".")
 			(( len < 0 )) && len=0
 			for i in $(seq 1 ${N_SAMPLES}) ; do
 				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
-				einfo "Seek:  ${i} / ${N_SAMPLES}"
-				einfo "Position / Length:  ${pos} / ${len}"
-				einfo "${cmd[@]} -ss ${pos}"
+eprintf "Seek" "${i} / ${N_SAMPLES}"
+eprintf "Position" "${pos}"
+eprintf "Length" "${len}"
+eprintf "Running" "${cmd[@]} -ss ${pos}"
 				"${cmd[@]}" -ss ${pos} || die
 				_vdecode "lossless"
 			done
@@ -2689,7 +2754,7 @@ _get_vaapi_postproc_device() {
 	for d in ls "${ESYSROOT}/dev/dri/render"* ; do
 		if [[ -n "${d}" ]] && vainfo --display drm --device "${d}" 2>/dev/null 1>/dev/null \
 			&& vainfo --display drm --device "${d}" 2>/dev/null \
-				| grep -q -e ".*VideoProc"  ; then
+				| grep -q -e ".*VideoProc" ; then
 			echo "${d}"
 			return
 		fi
@@ -2705,7 +2770,7 @@ _get_vaapi_dec_device() {
 	for d in ls "${ESYSROOT}/dev/dri/render"* ; do
 		if [[ -n "${d}" ]] && vainfo --display drm --device "${d}" 2>/dev/null 1>/dev/null \
 			&& vainfo --display drm --device "${d}" 2>/dev/null \
-				| grep -q -e "${encoding_format^^}${profile}.*VLD"  ; then
+				| grep -q -e "${encoding_format^^}${profile}.*VLD" ; then
 			echo "${d}"
 			return
 		fi
@@ -2721,7 +2786,7 @@ _get_vaapi_enc_device() {
 	for d in ls "${ESYSROOT}/dev/dri/render"* ; do
 		if [[ -n "${d}" ]] && vainfo --display drm --device "${d}" 2>/dev/null 1>/dev/null \
 			&& vainfo --display drm --device "${d}" 2>/dev/null \
-				| grep -q -e "${encoding_format^^}${profile}.*EncSlice"  ; then
+				| grep -q -e "${encoding_format^^}${profile}.*EncSlice" ; then
 			echo "${d}"
 			return
 		fi
@@ -2770,7 +2835,8 @@ _has_camera_resolution() {
 	local device="${1}"
 	local width="${3}"
 	local height="${4}"
-	ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 | grep -q -e "${width}x${height}"
+	ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 \
+		| grep -q -e "${width}x${height}"
 }
 
 _has_camera_codec_resolution() {
@@ -2779,11 +2845,14 @@ _has_camera_codec_resolution() {
 	local width="${3}"
 	local height="${4}"
 	if [[ "${codec}" =~ "264" ]] ; then
-		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 | grep -E -q -e "H\.264 :.*${width}x${height}"
+		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 \
+			| grep -E -q -e "H\.264 :.*${width}x${height}"
 	elif [[ "${codec}" =~ ("mjpeg"|"mjpg") ]] ; then
-		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 | grep -E -q -e "MJPEG :.*${width}x${height}"
+		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 \
+			| grep -E -q -e "MJPEG :.*${width}x${height}"
 	else
-		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 | grep -E -q -e "${codec} :.*${width}x${height}"
+		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 \
+			| grep -E -q -e "${codec} :.*${width}x${height}"
 	fi
 }
 
@@ -2791,11 +2860,14 @@ _has_camera_codec() {
 	local device="${1}"
 	local codec="${2}"
 	if [[ "${codec}" =~ "264" ]] ; then
-		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 | grep -E -q -e "H\.264 : [0-9]"
+		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 \
+			| grep -E -q -e "H\.264 : [0-9]"
 	elif [[ "${codec}" =~ ("mjpeg"|"mjpg") ]] ; then
-		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 | grep -E -q -e "MJPEG : [0-9]"
+		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 \
+			| grep -E -q -e "MJPEG : [0-9]"
 	else
-		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 | grep -E -q -e "${codec} : [0-9]"
+		ffmpeg -f v4l2 -list_formats all -i "${device}" 2>&1 \
+			| grep -E -q -e "${codec} : [0-9]"
 	fi
 }
 
@@ -2804,8 +2876,7 @@ if ! has ffmpeg_pkg_sanitize ${EBUILD_SANITIZE_HOOKS} ; then
 fi
 
 ffmpeg_pkg_sanitize() {
-	einfo "Called ffmpeg_pkg_sanitize()"
-	echo "${T}/omt"
+einfo "Called ffmpeg_pkg_sanitize()"
 	_wipe_data
 }
 
@@ -2814,7 +2885,7 @@ _wipe_data() {
 	local p
 	for p in $(find "${T}/traintemp" -type f) ; do
 		if [[ -e "${p}" ]] ; then
-			einfo "Wiped sensitive camera/screencast data"
+einfo "Wiped sensitive camera/screencast data"
 			shred --remove=wipesync "${p}"
 		fi
 	done
@@ -3054,7 +3125,7 @@ ewarn
 		local cmd
 		if is_vaapi_encoder "${vencoding_codec}" \
 			&& [[ "${input_source_type}" =~ ("camera-mjpeg"|"camera-raw"|"screen") && -n "${vaapi_dev}" ]] ; then
-			ewarn "VA-API training is WIP"
+ewarn "VA-API training is WIP"
 			local custom_filters=""
 
 			local vaapi_args=()
@@ -3148,7 +3219,13 @@ einfo
 # PGI and the ffmpeg program.
 		local lag=15
 		timeout $((${duration} * ${lag})) "${cmd[@]}"
-		if ! ffprobe -count_frames -show_entries stream=nb_read_frames -i "${T}/traintemp/test.${container}" 2>/dev/null 1>/dev/null ; then
+		if ! ffprobe \
+			-count_frames \
+			-show_entries stream=nb_read_frames \
+			-i "${T}/traintemp/test.${container}" \
+			2>/dev/null \
+			1>/dev/null \
+		; then
 #
 # The idea was to have a list of encoding settings considered live stream
 # quality that delivered 30/60 fps in 1 second or met the movie quality
@@ -3162,7 +3239,11 @@ eerror
 			continue
 		fi
 
-		local actual_frames=$(ffprobe -count_frames -show_entries  stream=nb_read_frames -i "${T}/traintemp/test.${container}" 2>/dev/null \
+		local actual_frames=$(ffprobe \
+			-count_frames \
+			-show_entries stream=nb_read_frames \
+			-i "${T}/traintemp/test.${container}" \
+			2>/dev/null \
 			| grep "nb_read_frames.*" \
 			| cut -f 2 -d "=")
 		local expected_frames=$(python -c "print(int(${fps} * ${duration} * (25/30)))")
@@ -3254,7 +3335,7 @@ ewarn
 			[[ -e "${capture_path}" ]] || continue
 			addwrite "${capture_path}"
 			addread "${capture_path}"
-			einfo "Running streaming trainer for ${capture_path} with ${vencoding_codec}, ${aencoding_codec}, ${container} for CBR"
+einfo "Running streaming trainer for ${capture_path} with ${vencoding_codec}, ${aencoding_codec}, ${container} for CBR"
 			local e
 			for e in ${L[@]} ; do
 				_trainer_plan_av_streaming_training_session "${e}"
@@ -3286,7 +3367,7 @@ _trainer_plan_audio_cbr() {
 	cbr_suffix="${cbr_suffix//-/_}"
 	local cbr_table="FFMPEG_TRAINING_CBR_TABLE_${cbr_suffix}_${audio_scenario^^}"
 	if [[ -z "${!cbr_table}" ]] ; then
-		ewarn "Missing CBR table for ${encoding_codec}"
+ewarn "Missing CBR table for ${encoding_codec}"
 		return
 	fi
 
@@ -3295,11 +3376,14 @@ _trainer_plan_audio_cbr() {
 		local audio_sample_path="${!id}"
 		[[ -e "${audio_sample_path}" ]] || continue
 		if [[ -z "${audio_sample_path}" || ! -f "${audio_sample_path}" ]] ; then
-			ewarn "Skipping ${id}"
+ewarn "Skipping ${id}"
 			continue
 		fi
-		if ! ffprobe "${audio_sample_path}" 2>/dev/null 1>/dev/null ; then
-			ewarn "Skipping ${id} with path ${audio_sample_path}.  Decoding not possible or bad file."
+		if ! ffprobe \
+			"${audio_sample_path}" \
+			2>/dev/null \
+			1>/dev/null \
+		; then
 			continue
 		fi
 
@@ -3312,7 +3396,7 @@ _trainer_plan_audio_cbr() {
 		fi
 
 		for bitrate in ${!cbr_table} ; do
-			einfo "Encoding as CBR for 3 sec, ${bitrate} kbps for ${audio_sample_path}"
+einfo "Encoding as CBR for 3 sec, ${bitrate} kbps for ${audio_sample_path}"
 			cmd=(
 				"${FFMPEG}" \
 				-y \
@@ -3324,13 +3408,19 @@ _trainer_plan_audio_cbr() {
 				-t 3 \
 				"${T}/traintemp/test.${extension}"
 			)
-			local len=$(ffprobe -i "${audio_sample_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+			local len=$(ffprobe \
+				-i "${audio_sample_path}" \
+				-show_entries format=duration \
+				-v quiet \
+				-of csv="p=0" \
+				| cut -f 1 -d ".")
 			(( len < 0 )) && len=0
 			for i in $(seq 1 ${N_SAMPLES}) ; do
 				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
-				einfo "Seek:  ${i} / ${N_SAMPLES}"
-				einfo "Position / Length:  ${pos} / ${len}"
-				einfo "${cmd[@]} -ss ${pos}"
+eprintf "Seek" "${i} / ${N_SAMPLES}"
+eprintf "Position" "${pos}"
+eprintf "Length" "${len}"
+eprintf "Running" "${cmd[@]} -ss ${pos}"
 				"${cmd[@]}" -ss ${pos} || die
 				_adecode "${bitrate} kbps"
 			done
@@ -3362,14 +3452,14 @@ _trainer_plan_audio_vbr() {
 
 	local vbr_option="FFMPEG_TRAINING_VBR_OPTION_${vbr_suffix}"
 	if [[ -z "${!vbr_option}" ]] ; then
-		ewarn "Missing VBR option for ${encoding_codec}.  Skipping training."
+ewarn "Missing VBR option for ${encoding_codec}.  Skipping training."
 		return
 	fi
 
 	local vbr_table="FFMPEG_TRAINING_VBR_TABLE_${vbr_suffix}_${audio_scenario^^}"
-	einfo "vbr_table=${vbr_table}"
+eprintf "vbr_table" "${vbr_table}"
 	if [[ -z "${!vbr_table}" ]] ; then
-		ewarn "Missing VBR table for ${encoding_codec}.  Skipping training."
+ewarn "Missing VBR table for ${encoding_codec}.  Skipping training."
 		return
 	fi
 
@@ -3378,11 +3468,14 @@ _trainer_plan_audio_vbr() {
 		local audio_sample_path="${!id}"
 		[[ -e "${audio_sample_path}" ]] || continue
 		if [[ -z "${audio_sample_path}" || ! -f "${audio_sample_path}" ]] ; then
-			ewarn "Skipping ${id}"
+ewarn "Skipping ${id}"
 			continue
 		fi
-		if ! ffprobe "${audio_sample_path}" 2>/dev/null 1>/dev/null ; then
-			ewarn "Skipping ${id} with path ${audio_sample_path}.  Decoding not possible or bad file."
+		if ! ffprobe \
+			"${audio_sample_path}" \
+			2>/dev/null \
+			1>/dev/null \
+		; then
 			continue
 		fi
 
@@ -3395,7 +3488,7 @@ _trainer_plan_audio_vbr() {
 		fi
 
 		for setting in ${!vbr_table} ; do
-			einfo "Encoding as VBR for 3 sec with ${setting} setting for ${audio_sample_path}"
+einfo "Encoding as VBR for 3 sec with ${setting} setting for ${audio_sample_path}"
 			cmd=(
 				"${FFMPEG}" \
 				-y \
@@ -3407,13 +3500,19 @@ _trainer_plan_audio_vbr() {
 				-t 3 \
 				"${T}/traintemp/test.${extension}"
 			)
-			local len=$(ffprobe -i "${audio_sample_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
+			local len=$(ffprobe \
+				-i "${audio_sample_path}" \
+				-show_entries format=duration \
+				-v quiet \
+				-of csv="p=0" \
+				| cut -f 1 -d ".")
 			(( len < 0 )) && len=0
 			for i in $(seq 1 ${N_SAMPLES}) ; do
 				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
-				einfo "Seek:  ${i} / ${N_SAMPLES}"
-				einfo "Position / Length:  ${pos} / ${len}"
-				einfo "${cmd[@]} -ss ${pos}"
+eprintf "Seek" "${i} / ${N_SAMPLES}"
+eprintf "Position" "${pos}"
+eprintf "Length" "${len}"
+eprintf "Running" "${cmd[@]} -ss ${pos}"
 				"${cmd[@]}" -ss ${pos} || die
 				_adecode "${bitrate} setting"
 			done
@@ -3570,18 +3669,18 @@ _src_compile() {
 	cd "${BUILD_DIR}" || die
 	emake V=1
 
-	if multilib_is_native_abi; then
+	if multilib_is_native_abi ; then
 		for i in "${FFTOOLS[@]}" ; do
 			if use fftools_${i} ; then
 				emake V=1 tools/${i}$(get_exeext)
 			fi
 		done
 
-		if use chromium; then
-			if build_separate_libffmpeg; then
-				einfo "Compiling for Chromium"
+		if use chromium ; then
+			if build_separate_libffmpeg ; then
+einfo "Compiling for Chromium"
 				pushd ../chromium >/dev/null || die
-				emake V=1 libffmpeg
+					emake V=1 libffmpeg
 				popd >/dev/null || die
 			else
 				emake V=1 libffmpeg
@@ -3603,7 +3702,7 @@ _src_post_pgo() {
 }
 
 _src_pre_train() {
-	einfo "Installing image into sandbox staging area"
+einfo "Installing image into sandbox staging area"
 	_install
 	export MY_ED="${ED}"
 	export FFMPEG=$(get_multiabi_ffmpeg)
@@ -3611,7 +3710,7 @@ _src_pre_train() {
 }
 
 _src_post_train() {
-	einfo "Clearing old sandboxed image"
+einfo "Clearing old sandboxed image"
 	rm -rf "${ED}" || die
 	unset LD_LIBRARY_PATH
 }
@@ -3624,7 +3723,7 @@ src_compile() {
 			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
-			einfo "Build type is ${lib_type}"
+einfo "Build type is ${lib_type}"
 
 			if [[ "${lib_type}" == "static" ]] ; then
 				uopts_n_training
@@ -3688,7 +3787,7 @@ _install() {
 		exeinto /usr/bin
 		for i in "${FFTOOLS[@]}" ; do
 			if use fftools_${i} ; then
-				einfo "Running dobin tools/${i}$(get_exeext)"
+einfo "Running dobin tools/${i}$(get_exeext)"
 				if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 					# Bugged dobin
 					mkdir -p "${ED}/usr/bin" || die
@@ -3703,9 +3802,9 @@ _install() {
 
 		if use chromium; then
 			if build_separate_libffmpeg; then
-				einfo "Installing for Chromium"
+einfo "Installing for Chromium"
 				pushd ../chromium >/dev/null || die
-				emake V=1 DESTDIR="${D}" install-libffmpeg
+					emake V=1 DESTDIR="${D}" install-libffmpeg
 				popd >/dev/null || die
 			else
 				emake V=1 DESTDIR="${D}" install-libffmpeg
@@ -3775,8 +3874,7 @@ ewarn "The /dev/video* should have portage removed from ACL permissions after"
 ewarn "training."
 ewarn
 	fi
-	if use trainer-av-streaming \
-		&& ( use pgo || use bolt ) ; then
+	if use trainer-av-streaming && ( use pgo || use bolt ) ; then
 ewarn
 ewarn "You must run \`xhost -local:root:\` after PGO training to restore the"
 ewarn "security default."
