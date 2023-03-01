@@ -520,11 +520,12 @@
       non-free developer license in a case-by-case basis.
 
   </flag>
-  <flag name="proprietary-codecs-disable-user">
+  <flag name="proprietary-codecs-disable-nc-developer">
     (USE FLAG/PATCH IN DEVELOPMENT)
 
     If enabled, it will disable codecs or network protocols with a patent
-    status that is not free in this ebuild fork for non codec developers.
+    status that is not free in this ebuild fork for codec developers for
+    non-commercial use.
 
     With this flag enabled, this may break dependencies that assume previous
     unpatched behavior.
@@ -546,11 +547,12 @@
       non-free developer license in a case-by-case basis.
 
   </flag>
-  <flag name="proprietary-codecs-disable-developer">
+  <flag name="proprietary-codecs-disable-nc-user">
     (USE FLAG/PATCH IN DEVELOPMENT)
 
     If enabled, it will disable codecs or network protocols with a patent
-    status that is not free in this ebuild fork for codec developers.
+    status that is not free in this ebuild fork for non codec developers
+    for non-commericial use.
 
     With this flag enabled, this may break dependencies that assume previous
     unpatched behavior.

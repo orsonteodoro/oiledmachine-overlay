@@ -234,7 +234,7 @@ ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
 alsa chromium doc +encode gdbm jack-audio-connection-kit jack2 mold
 opencl-icd-loader oss pgo pic pipewire proprietary-codecs-disable
-proprietary-codecs-disable-developer proprietary-codecs-disable-user
+proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 sndio static-libs test v4l wayland r3
 
 trainer-audio-cbr
@@ -622,8 +622,8 @@ REQUIRED_USE+="
 		)
 		|| (
 			proprietary-codecs-disable
-			proprietary-codecs-disable-developer
-			proprietary-codecs-disable-user
+			proprietary-codecs-disable-nc-developer
+			proprietary-codecs-disable-nc-user
 		)
 	)
 	openssl? (
@@ -650,14 +650,14 @@ REQUIRED_USE+="
 		!x265
 		!xvid
 	)
-	proprietary-codecs-disable-developer? (
+	proprietary-codecs-disable-nc-developer? (
 		!kvazaar
 		!openh264
 		!x264
 		!x265
 		!xvid
 	)
-	proprietary-codecs-disable-user? (
+	proprietary-codecs-disable-nc-user? (
 		!kvazaar
 		!openh264
 		!x264
@@ -1723,12 +1723,12 @@ einfo "Disabling all proprietary-codecs"
 		myconf+=(
 			--proprietary-codecs=deny
 		)
-	elif use proprietary-codecs-disable-user ; then
+	elif use proprietary-codecs-disable-nc-user ; then
 einfo "Disabling proprietary-codecs for users"
 		myconf+=(
 			--proprietary-codecs=user
 		)
-	elif use proprietary-codecs-disable-developer ; then
+	elif use proprietary-codecs-disable-nc-developer ; then
 einfo "Disabling proprietary-codecs for codec developers"
 		myconf+=(
 			--proprietary-codecs=codec-developer
@@ -1826,7 +1826,9 @@ eerror
 
 	if use mold ; then
 # May still need to find more non-free codecs if any.
-ewarn "The mold USE flag is in development"
+ewarn "The mold USE flag is in development."
+ewarn "Do not use at this time."
+		die
 		filter-flags '-fuse-ld=*'
 		append-ldflags '-fuse-ld=mold'
 		strip-unsupported-flags

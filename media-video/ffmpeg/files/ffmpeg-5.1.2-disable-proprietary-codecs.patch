@@ -1,5 +1,10 @@
 Subject:  Disable non-free codecs/protocols
-Patch Status:  WIP / Testing
+Patch Status:  WIP / Testing / Incomplete
+
+TODO:  Disable all codecs in the "patented compression formats" from Wikipedia link below:
+
+https://en.wikipedia.org/wiki/Comparison_of_video_codecs#Codecs_list
+
 --- a/configure.orig	2022-08-31 11:58:25.000000000 -0700
 +++ b/configure	2023-02-27 18:32:05.502056466 -0800
 @@ -100,6 +100,7 @@ Licensing options:
