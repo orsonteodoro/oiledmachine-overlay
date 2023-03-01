@@ -4,6 +4,8 @@ Patch Status:  WIP / Testing / Incomplete
 TODO:  Disable all codecs in the "patented compression formats" from Wikipedia link below:
 
 https://en.wikipedia.org/wiki/Comparison_of_video_codecs#Codecs_list
+https://en.wikipedia.org/wiki/Comparison_of_video_container_formats#Video_coding_formats_support
+https://en.wikipedia.org/wiki/Comparison_of_video_container_formats#Audio_coding_formats_support
 
 --- a/configure.orig	2022-08-31 11:58:25.000000000 -0700
 +++ b/configure	2023-02-27 18:32:05.502056466 -0800
