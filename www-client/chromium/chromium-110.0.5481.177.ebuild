@@ -317,8 +317,8 @@ ${IUSE_LIBCXX[@]}
 +bundled-libcxx branch-protection +cfi component-build +cups -debug +encode -gtk4
 -hangouts -headless +js-type-check +kerberos -libcmalloc +official +partitionalloc
 pic +pgo +pre-check-llvm +pre-check-vaapi +proprietary-codecs
-proprietary-codecs-disable proprietary-codecs-disable-developer
-proprietary-codecs-disable-user +pulseaudio qt5 +screencast selinux +suid
+proprietary-codecs-disable proprietary-codecs-disable-nc-developer
+proprietary-codecs-disable-nc-user +pulseaudio qt5 +screencast selinux +suid
 -system-av1 +system-ffmpeg -system-icu -system-harfbuzz -system-png +thinlto-opt
 +vaapi +wayland -widevine +X
 r1
@@ -361,8 +361,8 @@ DISABLED_NON_FREE_USE_FLAGS="
 	^^ (
 		proprietary-codecs
 		proprietary-codecs-disable
-		proprietary-codecs-disable-developer
-		proprietary-codecs-disable-user
+		proprietary-codecs-disable-nc-developer
+		proprietary-codecs-disable-nc-user
 	)
 	openh264? (
 		proprietary-codecs
@@ -374,14 +374,14 @@ DISABLED_NON_FREE_USE_FLAGS="
 		!widevine
 		system-ffmpeg
 	)
-	proprietary-codecs-disable-developer? (
+	proprietary-codecs-disable-nc-developer? (
 		!openh264
 		!vaapi
 		!vaapi-hevc
 		!widevine
 		system-ffmpeg
 	)
-	proprietary-codecs-disable-user? (
+	proprietary-codecs-disable-nc-user? (
 		!openh264
 		!vaapi
 		!vaapi-hevc
@@ -671,10 +671,10 @@ COMMON_DEPEND="
 		proprietary-codecs-disable? (
 			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
-		proprietary-codecs-disable-developer? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-developer,vorbis?,vpx?,-x264,-x265,-xvid]
+		proprietary-codecs-disable-nc-developer? (
+			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-nc-developer,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
-		proprietary-codecs-disable-user? (
+		proprietary-codecs-disable-nc-user? (
 			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-user,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		|| (
@@ -2541,7 +2541,7 @@ ewarn
 	if ! use system-ffmpeg ; then
 		# The internal/vendored ffmpeg enables non-free codecs.
 		local _media_use_ffmpeg="true"
-		if use proprietary-codecs-disable-developer \
+		if use proprietary-codecs-disable-nc-developer \
 			|| use proprietary-codecs-disable-all ; then
 			_media_use_ffmpeg="false"
 		fi
