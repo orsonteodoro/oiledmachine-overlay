@@ -471,8 +471,8 @@ NON_FREE_CDEPENDS="
 	)
 	proprietary-codecs-disable? (
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
-		|| (
-			system-ffmpeg? (
+		system-ffmpeg? (
+			|| (
 				(
 					!<dev-libs/openssl-3
 					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable,-vaapi,vpx?,-x264,-x265,-xvid]
@@ -485,8 +485,8 @@ NON_FREE_CDEPENDS="
 	)
 	proprietary-codecs-disable-nc-developer? (
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
-		|| (
-			system-ffmpeg? (
+		system-ffmpeg? (
+			|| (
 				(
 					!<dev-libs/openssl-3
 					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-developer,-vaapi,vpx?,-x264,-x265,-xvid]
@@ -499,8 +499,8 @@ NON_FREE_CDEPENDS="
 	)
 	proprietary-codecs-disable-nc-user? (
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
-		|| (
-			system-ffmpeg? (
+		system-ffmpeg? (
+			|| (
 				(
 					!<dev-libs/openssl-3
 					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-user,-vaapi,vpx?,-x264,-x265,-xvid]
