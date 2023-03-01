@@ -348,10 +348,10 @@ aqua avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dash +dfg-jit +doc
 hardened -hls +introspection +javascriptcore +jit +journald +jpeg2k jpegxl +lcms
 +libhyphen -libwebrtc -mediarecorder -mediastream +minibrowser mold +opengl
 openmp proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-developer proprietary-codecs-disable-user -seccomp
--spell test thunder +unified-builds variation-fonts wayland +webassembly
-+webassembly-b3-jit +webcore +webcrypto -webdriver +webgl -webgl2 webm-eme
--webrtc webvtt -webxr +woff2 +X +yarr-jit
+proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
+-seccomp -spell test thunder +unified-builds variation-fonts wayland
++webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver +webgl -webgl2
+webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
 "
 
 gen_gst_plugins_duse() {
@@ -406,13 +406,13 @@ NON_FREE_REQUIRED_USE="
 	^^ (
 		proprietary-codecs
 		proprietary-codecs-disable
-		proprietary-codecs-disable-developer
-		proprietary-codecs-disable-user
+		proprietary-codecs-disable-nc-developer
+		proprietary-codecs-disable-nc-user
 	)
 	aac? (
 		|| (
 			proprietary-codecs
-			proprietary-codecs-disable-user
+			proprietary-codecs-disable-nc-user
 		)
 	)
 	dash? (
@@ -442,7 +442,7 @@ NON_FREE_REQUIRED_USE="
 		!webm-eme
 		!x264
 	)
-	proprietary-codecs-disable-developer? (
+	proprietary-codecs-disable-nc-developer? (
 		!aac
 		!dash
 		!eme
@@ -457,7 +457,7 @@ NON_FREE_REQUIRED_USE="
 		!webm-eme
 		!x264
 	)
-	proprietary-codecs-disable-user? (
+	proprietary-codecs-disable-nc-user? (
 		!dash
 		!eme
 		!gstwebrtc
@@ -532,8 +532,8 @@ REQUIRED_USE+="
 	mold? (
 		|| (
 			proprietary-codecs-disable
-			proprietary-codecs-disable-developer
-			proprietary-codecs-disable-user
+			proprietary-codecs-disable-nc-developer
+			proprietary-codecs-disable-nc-user
 		)
 	)
 	opengl? (
@@ -823,11 +823,11 @@ RDEPEND+="
 		${RDEPEND_PROPRIETARY_CODECS_DISABLE}
 		!media-plugins/gst-plugins-faad
 	)
-	proprietary-codecs-disable-developer? (
+	proprietary-codecs-disable-nc-developer? (
 		${RDEPEND_PROPRIETARY_CODECS_DISABLE}
 		!media-plugins/gst-plugins-faad
 	)
-	proprietary-codecs-disable-user? (
+	proprietary-codecs-disable-nc-user? (
 		${RDEPEND_PROPRIETARY_CODECS_DISABLE}
 	)
 	seccomp? (
