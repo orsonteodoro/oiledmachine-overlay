@@ -83,7 +83,7 @@ https://en.wikipedia.org/wiki/Comparison_of_video_container_formats#Subtitle_for
 +   || test "${non_free_patented_codecs}" = "deny" \
 +   || test "${non_free_patented_codecs}" = "disable" \
 + ; then
-+   echo "Disabling likely patented non-free patented codecs"
++   echo "Disabling likely patented non-free codecs"
 +   disable als_decoder
 +   disable amr_demer
 +   disable amr_muxer
@@ -289,7 +289,7 @@ https://en.wikipedia.org/wiki/Comparison_of_video_container_formats#Subtitle_for
 +   disable wmv3_decoder
 +   disable intrax8 # Uses msmpeg4data.o
 +else
-+   echo "Allowing likely patented non-free patented codecs"
++   echo "Allowing likely patented non-free codecs"
 +fi
 +
 +if [ -z "${proprietary_codecs}" ] ; then
