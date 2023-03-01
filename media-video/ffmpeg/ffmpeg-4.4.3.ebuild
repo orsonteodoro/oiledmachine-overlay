@@ -1858,7 +1858,6 @@ eerror
 # May still need to find more non-free codecs if any.
 ewarn "The mold USE flag is in development."
 ewarn "Do not use at this time."
-		die
 		filter-flags '-fuse-ld=*'
 		append-ldflags '-fuse-ld=mold'
 		strip-unsupported-flags
