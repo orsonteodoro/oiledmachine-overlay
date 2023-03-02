@@ -3860,8 +3860,11 @@ ewarn
 	fi
 	uopts_pkg_postinst
 	if use trainer-av-streaming ; then
+einfo
 einfo "The recommended live streaming settings all of which met deadlines:"
+einfo
 echo -e "${LIVE_STREAMING_REPORT_CARD}" | sort | sed -e "/^$/d"
+einfo
 einfo "The top most is the most recommended.  The ones that follow are runner-ups."
 ewarn
 ewarn
