@@ -296,7 +296,8 @@ QA_PREBUILT="
 "
 
 # From first line of https://www.spotify.com/us/download/linux/
-PUBLIC_KEY_URI="https://download.spotify.com/debian/pubkey_5E3C45D7B312C643.gpg"
+PUBLIC_KEY_ID="7A3A762FAFD4A51F"
+PUBLIC_KEY_URI="https://download.spotify.com/debian/pubkey_${PUBLIC_KEY_ID}.gpg"
 
 SRC_URI+="
 	${PUBLIC_KEY_URI}
@@ -313,7 +314,7 @@ if ! [[ ${PV} =~ 9999 ]] ; then
 	fi
 	CONFIGURATION="stable"
 	FN_CLIENT="${PN}-client_${MY_PV}.${_BUILD_ID_AMD64}_amd64.deb"
-	FN_INRELEASE="${PN}-${PV}-${CONFIGURATION}-InRelease"
+	FN_INRELEASE="${PN}-${PV}-${CONFIGURATION}-InRelease-${PUBLIC_KEY_ID}"
 	FN_PACKAGES="${PN}-${PV}-${CONFIGURATION}-Packages"
 	SRC_URI+="
 		https://repository-origin.spotify.com/dists/stable/InRelease -> ${FN_INRELEASE}
@@ -323,20 +324,20 @@ if ! [[ ${PV} =~ 9999 ]] ; then
 fi
 
 # Details of the repo public key itself
-KEY_ID="F9A211976ED662F00E59361E5E3C45D7B312C643"
+KEY_ID="E27409F51D1B66337F2D2F417A3A762FAFD4A51F" # RSA Key
 EXPECTED_UID="Spotify Public Repository Signing Key <tux@spotify.com>"
 
 # It is possible to fingerprint the public keys using ebuild, but it is only
 # done in the non-live ebuild versions.
 
 PUBKEY_SHA512="\
-0be7a18c4d956356567799e11385542e35e3cf9b89ef2c9972e6cd1ef6929072\
-932dff08ee81c8001fbd389de52a79ea0463440f425325fd0434283b300fb835\
+18a64ad24bc449b433d728c3409bdef13be1226ee0cf1ae06fc637f384403ef1\
+4322352ae0ce611fd26bbf4a49abe7d4785ef2a4a1c63cb2d14e213fef59485d\
 "
 
 PUBKEY_BLAKE2B="\
-bc26a84adb7f39a0594e68d0271cd00c2032115b8a4e6ad264b9b85eb7338a4a\
-7db19e04a06b5fcd62aa0f72e664f3402205e70b0260437969c8caed9833115e\
+8690cf17ba9f06aefe82b5a12684c007a40e20302fe806fa78be4c1d744cc486\
+47232c71b3b3a24caf96ea58e0c1b994fe4618b708b516342e61617e3b53f15a\
 "
 
 EXPECTED_DEPENDS_FINGERPRINT="\
@@ -463,11 +464,11 @@ verify_pubkey() {
 einfo
 einfo "${KEY_FN} fingerprints:"
 einfo
-einfo "Expected SHA512:\t${actual_sha512}"
-einfo "Actual SHA512:\t${PUBKEY_SHA512}"
+einfo "Expected SHA512:\t${PUBKEY_SHA512}"
+einfo "Actual SHA512:\t${actual_sha512}"
 einfo
-einfo "Expected BLAKE2B:\t${actual_blake2b}"
-einfo "Actual BLAKE2B:\t${PUBKEY_BLAKE2B}"
+einfo "Expected BLAKE2B:\t${PUBKEY_BLAKE2B}"
+einfo "Actual BLAKE2B:\t${actual_blake2b}"
 einfo
 	if [[ "${actual_sha512}" == "${PUBKEY_SHA512}" \
 		&& "${actual_blake2b}" == "${PUBKEY_BLAKE2B}" ]] ; then
@@ -486,6 +487,7 @@ eerror
 
 	# Verify validity of key properies.
 
+einfo "Importing GPG key into sandboxed keychain"
 	gpg --import ${KEY_FN} || die # \
 	# Added the public key to the (sandboxed) keychain.
 
@@ -514,6 +516,13 @@ eerror "Actual UID:\t${ACTUAL_UID}"
 eerror
 		die
 	fi
+	local expired_bit=$(gpg --fingerprint "${KEY_ID}" \
+		| grep -o -e "\[ expired\]")
+	if [[ "${expired_bit}" == "[ expired]" ]] ; then
+		expired_bit=1
+	else
+		expired_bit=0
+	fi
 	local EXPIRE_DATE=$(\
 		  gpg --fingerprint "${KEY_ID}" \
 		| grep -E -o -e "expires: [0-9]{4}-[0-9]{2}-[0-9]{2}" \
@@ -524,6 +533,7 @@ eerror
 eerror
 eerror "The key is outdated.  Is ${PN} End Of Life (EOL)?"
 eerror
+eerror "Expired bit:\t${expired_bit}"
 eerror "Key expiration date:\t${EXPIRE_DATE}"
 eerror "Date now\t$(date +%Y-%m-%d)"
 eerror
@@ -773,6 +783,7 @@ verify_inrelease() {
 		cat "${EDISTDIR}/${FN_INRELEASE}" > "${WORKDIR}/InRelease" || die
 	fi
 	[[ -e "InRelease" ]] || die
+	gpg --list-keys
 	if gpg --verify "InRelease" ; then
 		# The public key has no value beyond this point.
 einfo
@@ -1040,8 +1051,34 @@ ewarn
 ewarn "Some podcasts will be broken if the ffmpeg USE flag is disabled."
 ewarn
 	else
+# This min set was required to play certain audio podcasts from the UK.
 ewarn
-ewarn "You may need to hit play it to load the ffmpeg library with a different"
+ewarn "FFmpeg must be built with the following which may be non-free"
+ewarn "patent-encumbered codecs or RE proprietary codecs for some audio"
+ewarn "podcasts to work:"
+ewarn
+ewarn "  aac_decoder"
+ewarn "  adts_header"
+ewarn "  cbs_h264"
+ewarn "  exif"
+ewarn "  h263_parser"
+ewarn "  h263dsp"
+ewarn "  h264chroma"
+ewarn "  h264dsp"
+ewarn "  h264parse"
+ewarn "  h264pred"
+ewarn "  h264qpel"
+ewarn "  intrax8"
+ewarn "  mpeg4video_parser"
+ewarn "  mpegts_demuxer"
+ewarn "  mpegts_muxer"
+ewarn "  tiff_decoder"
+ewarn "  vc1_decoder"
+ewarn "  vc1dsp"
+ewarn
+ewarn "These are enabled by default by the FFmpeg project."
+ewarn
+ewarn "You may need to hit play it to load the FFmpeg library with a different"
 ewarn "audio podcast and play the intended podcast for actual playback."
 ewarn
 	fi
