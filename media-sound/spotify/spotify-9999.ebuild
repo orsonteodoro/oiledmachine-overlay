@@ -23,7 +23,7 @@ EAPI=8
 # http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
 #
 
-inherit desktop gnome2-utils toolchain-funcs unpacker xdg
+inherit desktop flag-o-matic gnome2-utils toolchain-funcs unpacker xdg
 
 DESCRIPTION="A social music platform"
 HOMEPAGE="https://www.spotify.com"
@@ -965,9 +965,10 @@ ewarn
 
 src_compile() {
 	if use wayland ; then
+		filter-flags '-fuse-ld=*'
 		cat "${FILESDIR}/xstub.c" > "${T}/xstub.c" || die
 		export CC=$(tc-getCC)
-		${CC} "${T}/xstub.c" -o "${T}/${PN}-xstub.so" -shared || die
+		${CC} -v "${T}/xstub.c" -o "${T}/${PN}-xstub.so" -shared || die
 	fi
 }
 
