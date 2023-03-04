@@ -258,9 +258,6 @@ Resulting benefits:
 +   disable ividsp
 +   disable kvazaar
 +   disable libdavs2_decoder
-+   disable libuavs3d_decoder
-+   disable libxavs_encoder
-+   disable libxavs2_encoder
 +   disable libkvazaar_encoder
 +   disable libopencore_amrnb
 +   disable libopencore_amrnb_decoder
@@ -271,6 +268,7 @@ Resulting benefits:
 +   disable libopenh264
 +   disable libopenh264_encoder
 +   disable libopenh264_decoder
++   disable libuavs3d_decoder
 +   disable libvo_amrwbenc
 +   disable libvo_amrwbenc_encoder
 +   disable libx264
@@ -278,6 +276,8 @@ Resulting benefits:
 +   disable libx264rgb_encoder
 +   disable libx265
 +   disable libx265_encoder
++   disable libxavs_encoder
++   disable libxavs2_encoder
 +   disable mobiclip_decoder # Format based on h264 according to MultimediaWiki
 +   disable movtext_decoder
 +   disable movtext_encoder
