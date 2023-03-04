@@ -586,8 +586,7 @@
     Enables AV1 encoding support via <pkg>media-video/rav1e</pkg>.
   </flag>
   <flag name="re-codecs">
-    Allow/deny back-engineered codecs, proprietary non-patented SDK assisted or
-    HW accelerated codecs.
+    Allow/deny less likely patented reversed-engineered codecs or closed codecs.
   </flag>
   <flag name="rubberband">
     Adds time-stretching and pitch-shifting audio filter based on
