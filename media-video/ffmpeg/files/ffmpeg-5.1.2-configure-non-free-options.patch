@@ -18,6 +18,9 @@ The safer default blacklist all codecs/muxers/demuxers first may be introduced i
 To confirm disablement use:
 
   ffmpeg -codecs | grep -E -e "(D\.|\.E|DE)[V][I.][L.][S.]"
+  ffmpeg -formats             # aka containers
+  ffmpeg -protocols
+  ffmpeg -bsfs
 
 There is a notiable drop in binary size when using these flags.
 
