@@ -24,9 +24,11 @@ There is a notiable drop in binary size when using these flags.
   With defaults:  29200 KiB ( 28.5 MiB)
   With --non-free-patented-codecs=deny --re-codecs=deny:  21808 KiB ( 21.2 MiB)
 
-7.3 MiB savings.
-More than a quarter of the with defaults binary.
-1848 4k sized pages removed from memory.
+Resulting benefits:
+
+ * 7.3 MiB savings.
+ * More than a quarter of the with defaults binary.
+ * 1848 4k sized pages removed from memory.
 
 --- a/configure.orig	2022-08-31 11:58:25.000000000 -0700
 +++ b/configure	2023-02-27 18:32:05.502056466 -0800
