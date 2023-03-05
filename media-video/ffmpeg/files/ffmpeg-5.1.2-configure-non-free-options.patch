@@ -462,7 +462,7 @@ Resulting benefits:
 +   disable2 mp4_muxer # Requires mov_muxer
 +   disable2 psp_muxer # Requires mov_muxer
 +   disable2 sdr2_demuxer # References h264
-+   disable2 smoothstreaming # References h264, aac, vc1
++   disable2 smoothstreaming_muxer # References h264, aac, vc1
 +   disable2 tg2_muxer # Requires mov_muxer
 +   disable2 tgp_muxer # Requires mov_muxer
 +   disable2 vivo_demuxer # Uses h263 and Siren
