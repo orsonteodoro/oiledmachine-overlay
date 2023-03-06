@@ -425,6 +425,9 @@ NON_FREE_REQUIRED_USE="
 	libde265? (
 		proprietary-codecs
 	)
+	mold? (
+		proprietary-codecs-disable
+	)
 	openh264? (
 		proprietary-codecs
 	)
@@ -532,9 +535,6 @@ REQUIRED_USE+="
 	jit? (
 		bmalloc
 		dfg-jit
-	)
-	mold? (
-		proprietary-codecs-disable
 	)
 	opengl? (
 		!gles2
