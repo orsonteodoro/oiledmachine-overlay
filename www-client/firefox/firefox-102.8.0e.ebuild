@@ -297,11 +297,7 @@ NON_FREE_REQUIRED_USE="
 		proprietary-codecs
 	)
 	mold? (
-		|| (
-			proprietary-codecs-disable
-			proprietary-codecs-disable-nc-developer
-			proprietary-codecs-disable-nc-user
-		)
+		proprietary-codecs-disable
 	)
 	openh264? (
 		proprietary-codecs

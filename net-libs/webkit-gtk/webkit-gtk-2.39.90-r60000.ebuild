@@ -534,11 +534,7 @@ REQUIRED_USE+="
 		dfg-jit
 	)
 	mold? (
-		|| (
-			proprietary-codecs-disable
-			proprietary-codecs-disable-nc-developer
-			proprietary-codecs-disable-nc-user
-		)
+		proprietary-codecs-disable
 	)
 	opengl? (
 		!gles2
