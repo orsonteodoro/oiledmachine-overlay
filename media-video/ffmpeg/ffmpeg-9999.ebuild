@@ -239,7 +239,7 @@ alsa chromium doc +encode fallback-commit gdbm
 jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo pic pipewire
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +re-codecs sndio static-libs test v4l
-wayland r9
+wayland r10
 
 trainer-audio-cbr
 trainer-audio-lossless

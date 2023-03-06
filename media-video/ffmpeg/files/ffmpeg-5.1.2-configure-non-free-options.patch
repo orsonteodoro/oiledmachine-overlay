@@ -33,8 +33,8 @@ Resulting benefits:
  * A little over a quarter savings in binary size relative to the with defaults.
  * 1843 4k sized pages removed from memory.
 
---- a/configure.orig	2023-03-04 16:18:30.940650627 -0800
-+++ b/configure	2023-03-04 16:50:54.296675735 -0800
+--- a/configure.orig	2023-03-05 13:54:45.017655465 -0800
++++ b/configure	2023-03-05 15:51:36.981746059 -0800
 @@ -100,6 +100,10 @@ Licensing options:
    --enable-version3        upgrade (L)GPL to version 3 [no]
    --enable-nonfree         allow use of nonfree code, the resulting libs
@@ -83,38 +83,48 @@ Resulting benefits:
          --enable-*=*|--disable-*=*)
              eval $(echo "${opt%%=*}" | sed 's/--/action=/;s/-/ thing=/')
              is_in "${thing}s" $COMPONENT_LIST || die_unknown "$opt"
-@@ -7288,6 +7322,867 @@ postproc_deps="$(filter_out 'gpl' $postp
+@@ -7288,6 +7322,948 @@ postproc_deps="$(filter_out 'gpl' $postp
  
  map 'expand_deps $v' $LIBRARY_LIST
  
 +disable2() {
 +    local opt=$1
 +    local uopt=${opt%_*}
-+    disable $1
-+    if [[ "${opt}" =~ _decoder$ ]] ; then
-+        export DECODER_LIST=$(echo $DECODER_LIST \
++    disable $opt
++    if echo "$opt" | grep -G -q -e "_bsf$" ; then
++        BSF_LIST=$(echo $BSF_LIST \
 +            | tr " " "\n" \
-+            | sed -e "s|$uopt|^$uopt$|g")
++            | sed -e "/^$opt$/d")
 +    fi
-+    if [[ "${opt}" =~ _encoder$ ]] ; then
-+        export ENCODER_LIST=$(echo $ENCODER_LIST \
++    if echo "$opt" | grep -G -q -e "_decoder$" ; then
++        DECODER_LIST=$(echo $DECODER_LIST \
 +            | tr " " "\n" \
-+            | sed -e "s|$uopt|^$uopt$|g")
++            | sed -e "/^$opt$/d")
 +    fi
-+    if [[ "${opt}" =~ _muxer$ ]] ; then
-+        export MUXER_LIST=$(echo $MUXER_LIST \
++    if echo "$opt" | grep -G -q -e "_demuxer$" || echo "${opt}" | grep -E -q -e "^rtpdec$" ; then
++        DEMUXER_LIST=$(echo $DEMUXER_LIST \
 +            | tr " " "\n" \
-+            | sed -e "s|$uopt|^$uopt$|g")
++            | sed -e "/^$opt$/d")
 +    fi
-+    if [[ "${opt}" =~ _demuxer$ ]] ; then
-+        export DEMUXER_LIST=$(echo $DEMUXER_LIST \
++    if echo "$opt" | grep -G -q -e "_encoder$" ; then
++        ENCODER_LIST=$(echo $ENCODER_LIST \
 +            | tr " " "\n" \
-+            | sed -e "s|$uopt|^$uopt$|g")
++            | sed -e "/^$opt$/d")
 +    fi
-+    if [[ "${opt}" =~ _bsf$ ]] ; then
-+        export BSF_LIST=$(echo $BSF_LIST \
++    if echo "$opt" | grep -G -q -e "_muxer$" || echo "${opt}" | grep -E -q -e "^rtpdec$" ; then
++        MUXER_LIST=$(echo $MUXER_LIST \
 +            | tr " " "\n" \
-+            | sed -e "s|$uopt|^$uopt$|g")
++            | sed -e "/^$opt$/d")
++    fi
++    if echo "$opt" | grep -G -q -e "_parser$" ; then
++        PARSER_LIST=$(echo $PARSER_LIST \
++            | tr " " "\n" \
++            | sed -e "/^$opt$/d")
++    fi
++    if echo "$opt" | grep -G -q -e "_protocol$" ; then
++        PROTOCOL_LIST=$(echo $PROTOCOL_LIST \
++            | tr " " "\n" \
++            | sed -e "/^$opt$/d")
 +    fi
 +}
 +
@@ -143,10 +153,10 @@ Resulting benefits:
 +# Dropped patent applications
 +# Dirac
 +
-+if test "${non_free_patented_codecs}" = "user" \
-+   || test "${non_free_patented_codecs}" = "codec-developer" \
-+   || test "${non_free_patented_codecs}" = "deny" \
-+   || test "${non_free_patented_codecs}" = "disable" \
++if [ "${non_free_patented_codecs}" = "user" ] \
++   || [ "${non_free_patented_codecs}" = "codec-developer" ] \
++   || [ "${non_free_patented_codecs}" = "deny" ] \
++   || [ "${non_free_patented_codecs}" = "disable" ] \
 +; then
 +   echo "Disabling likely patented non-free codecs or non-free network protocols"
 +   disable2 als_decoder
@@ -154,7 +164,9 @@ Resulting benefits:
 +   disable2 amr_muxer
 +   disable2 amr_nb_at_decoder
 +   disable2 amrnb_decoder
++   disable2 amrnb_demuxer
 +   disable2 amrwb_decoder
++   disable2 amrwb_demuxer
 +   disable2 applehttp_protocol # Uses hlsproto.o
 +   disable2 aptx_demuxer
 +   disable2 aptx_encoder
@@ -166,6 +178,7 @@ Resulting benefits:
 +   disable2 aptx_hd_muxer
 +   disable2 atrac1_decoder
 +   disable2 atrac3_decoder
++   disable2 atrac3al_decoder
 +   disable2 atrac3p_decoder
 +   disable2 atrac3pal_decoder
 +   disable2 atrac9_decoder
@@ -213,6 +226,7 @@ Resulting benefits:
 +   disable2 h261_demuxer
 +   disable2 h261_encoder
 +   disable2 h261_muxer
++   disable2 h261_parser
 +   disable2 h263_decoder
 +   disable2 h263_demuxer
 +   disable2 h263_encoder
@@ -244,6 +258,7 @@ Resulting benefits:
 +   disable2 h264_nvenc_encoder
 +   disable2 h264_nvdec_hwaccel
 +   disable2 h264_omx_encoder
++   disable2 h264_parser
 +   disable2 h264_qsv_decoder
 +   disable2 h264_qsv_encoder
 +   disable2 h264_redundant_pps_bsf
@@ -369,9 +384,11 @@ Resulting benefits:
 +   disable2 rv20_decoder
 +   disable2 rv20_encoder
 +   disable2 rv30_decoder
++   disable2 rv30_parser
 +   disable2 rv34dsp
 +   disable2 rv40_decoder
 +   disable2 rv40_decoder
++   disable2 rv40_parser
 +   disable2 rtp_mpegts_muxer
 +   disable2 sbc_decode
 +   disable2 sbc_demuxer
@@ -438,6 +455,7 @@ Resulting benefits:
 +   disable2 wmv3_vaapi_hwaccel
 +   disable2 wmv3_vdpau_hwaccel
 +   disable2 wmv3image_decoder
++   disable2 xma_parser
 +   disable2 xma1_decoder
 +   disable2 xma2_decoder
 +
@@ -447,20 +465,37 @@ Resulting benefits:
 +   disable2 avi_muxer # Uses mpegtsenc.o
 +   disable2 binkaudio_dct_decoder  # references wma_freqs.o
 +   disable2 binkaudio_rdft_decoder # references wma_freqs.o
++   disable2 cook_decoder # References RA
++   disable2 cook_parser
++   disable2 daud_demuxer
++   disable2 daud_muxer # References s320m
 +   disable2 intrax8 # Uses msmpeg4data.o
 +   disable2 f4v_muser # Requires mov_muxer
 +   disable2 flv_demuxer
 +   disable2 flv_muxer
 +   disable2 flv_decoder # Uses/depends H263 in source, but missing in Makefile
 +   disable2 flv_encoder # Uses/depends H263 in source, but missing in Makefile
++   disable2 hds_muxer # Uses aac, h264
 +   disable2 ipod_muxer # Requires mov_muxer
 +   disable2 ismv_muxer # Requires mov_muxer
 +   disable2 iv8_demuxer # Uses mpeg4
++   disable2 ivr_demuxer # Vague documentation but uses acc, atrac, ra_288
++   disable2 luodat_demuxer # Use h264
++   disable2 live_flv_demuxer
++   disable2 lvf_demuxer # May use h264.  See also trac ticket 18
 +   disable2 metasound_decoder # Uses twinvq.o
 +   disable2 mov_demuxer
 +   disable2 mov_muxer
 +   disable2 mp4_muxer # Requires mov_muxer
++   disable2 nsv_demuxer
 +   disable2 psp_muxer # Requires mov_muxer
++   disable2 rtp_demuxer # Needs rtsp.o
++   disable2 rtpdec # Needed by rmdec.c and rtsp.c
++   disable2 rtsp_demuxer # Needs rtsp.o
++   disable2 rtsp_muxer # Needs rtsp.o
++   disable2 s302m_decoder # Implies mpegts
++   disable2 s302m_encoder # Implies mpegts
++   disable2 sdp_demuxer # Requires rtsp.o
 +   disable2 sdr2_demuxer # References h264
 +   disable2 smoothstreaming_muxer # References h264, aac, vc1
 +   disable2 tg2_muxer # Requires mov_muxer
@@ -491,9 +526,11 @@ Resulting benefits:
 +# A specification that is openly accessible is considered restricted
 +# closed.  If the standard is not controlled by either a non-profit
 +# organization or the public AND not ubiquitous, it may be considered closed
-+# even though the proposal is out in the open.
++# even though the proposal is out in the open.  If the consortium consist
++# of mostly of proprietary entities, it associated standard is considered
++# proprietary or closed.
 +#
-+if test "${codec_transparency}" = "open" ; then
++if [ "${codec_transparency}" = "open" ] ; then
 +   echo "Disabling likely patentless closed codecs or likely patentless reversed-engineered codecs"
 +   # Some CONFIG_ flags marked adpcm_* are disabled due to quality control issues related to lack of preprocessor conditonals in adpcm.c and adpcmenc.c
 +   disable2 a64multi_encoder
@@ -505,6 +542,7 @@ Resulting benefits:
 +   disable2 acm_demuxer
 +   disable2 act_demuxer
 +   disable2 adp_demuxer
++   disable2 adf_demuxer # Likely RE
 +   disable2 adpcm_4xm_decoder
 +   disable2 adpcm_adx_decoder
 +   disable2 adpcm_adx_encoder
@@ -631,11 +669,13 @@ Resulting benefits:
 +   disable2 bmv_audio_decoder
 +   disable2 bmv_demuxer
 +   disable2 bmv_video_decoder
++   disable2 bluray_protocol
 +   disable2 boa_demuxer
 +   disable2 c93_decoder
 +   disable2 c93_demuxer
 +   disable2 caf_demuxer
 +   disable2 caf_muxer
++   disable2 cdg_demuxer
 +   disable2 cdgraphics_decoder
 +   disable2 cdtoons_decoder
 +   disable2 cdxl_decoder # Expired patent
@@ -653,18 +693,28 @@ Resulting benefits:
 +   disable2 dcstr_demuxer
 +   disable2 dds_decoder # Used patented S3TC, now expired patent
 +   disable2 derf_demuxer
++   disable2 derf_dpcm_decoder # The others may be closed
 +   disable2 dfa_decoder
 +   disable2 dfa_demuxer
 +   disable2 dhav_demuxer
++   disable2 dolby_e_decoder
++   disable2 dolby_e_parser
 +   disable2 dpx_decoder # Derived from proprietary standard ; Wikipedia says non-free (Mar 4, 2023)
 +   disable2 dpx_encoder
 +   disable2 dpx_parser
 +   disable2 dsicin_demuxer
 +   disable2 dsicinaudio_decoder
 +   disable2 dsicinvideo_decoder
++   disable2 dsf_demuxer
++   disable2 dss_demuxer
++   disable2 dss_sp_decoder
 +   disable2 dv_demuxer
 +   disable2 dv_muxer
++   disable2 dvd_nav_parser
 +   disable2 dvaudio_decoder
++   disable2 dvdsub_decoder
++   disable2 dvdsub_encoder
++   disable2 dvdsub_parser
 +   disable2 dvvideo_decoder
 +   disable2 dvvideo_encoder
 +   disable2 dvprofile
@@ -678,6 +728,9 @@ Resulting benefits:
 +   disable2 eatgv_decoder
 +   disable2 eatqi_decoder
 +   disable2 eightbps_decoder
++   disable2 eightsvx_exp_decoder
++   disable2 eightsvx_fib_decoder
++   disable2 epaf_demuxer
 +   disable2 escape124_decoder
 +   disable2 escape130_decoder
 +   disable2 exif # Uses tiff_common.o
@@ -696,6 +749,7 @@ Resulting benefits:
 +   disable2 gdv_demuxer
 +   disable2 gsm_ms_decoder
 +   disable2 gsm_ms_at_decoder
++   disable2 hca_decoder
 +   disable2 hca_demuxer
 +   disable2 hcom_demuxer
 +   disable2 hnm_demuxer
@@ -722,11 +776,13 @@ Resulting benefits:
 +   disable2 image2_alias_pix_demuxer
 +   disable2 imm4_decoder # Likely RE
 +   disable2 imm5_decoder # Likely RE
++   disable2 imx_dump_header # References proprietary software in first commit
 +   disable2 interplay_acm_decoder
 +   disable2 interplay_dpcm_decoder
 +   disable2 interplay_video_decoder
 +   disable2 ipmovie_demuxer
 +   disable2 ipu_decoder # Likely platform specific, initially non-free SDK
++   disable2 ipu_demuxer
 +   disable2 iss_demuxer
 +   disable2 jv_decoder
 +   disable2 jv_demuxer
@@ -736,15 +792,22 @@ Resulting benefits:
 +   disable2 kvag_muxer
 +   disable2 libgsm_ms_decoder
 +   disable2 libgsm_ms_encoder
++   disable2 lxf_demuxer
 +   disable2 m101_decoder # Likely closed
++   disable2 mace3_decoder
++   disable2 mace6_decoder
 +   disable2 magicyuv_decoder # Newer versions are not open and not free
 +   disable2 magicyuv_encoder #
 +   disable2 mca_demuxer # Associated with THP little endian
 +   disable2 mcc_demuxer
 +   disable2 mdec_decoder
 +   disable2 microdvd_decoder
++   disable2 microdvd_demuxer
++   disable2 microdvd_muxer
 +   disable2 mimic_decoder # RE
 +   disable2 mgsts_demuxer
++   disable2 mods_demuxer
++   disable2 moflex_demuxer
 +   disable2 mjpegb_decoder
 +   disable2 mlp_decoder
 +   disable2 mlp_demuxer
@@ -753,8 +816,15 @@ Resulting benefits:
 +   disable2 mm_demuxer
 +   disable2 mmf_demuxer
 +   disable2 mmf_muxer
++   disable2 mmsh_protocol
++   disable2 mmst_protocol
 +   disable2 mmvideo_decoder
 +   disable2 motionpixels_decoder
++   disable2 mpeg1vcd_muxer
++   disable2 mpeg2dvd_muxer
++   disable2 mpeg2vcd_muxer
++   disable2 mpeg2vob_muxer
++   disable2 mpl2_demuxer # It is not transparent if MPL author okayed derivative.  If inspired, then no source provided so likely RE.
 +   disable2 msa1_decoder
 +   disable2 msf_demuxer
 +   disable2 msnsiren_decoder
@@ -780,6 +850,7 @@ Resulting benefits:
 +   disable2 mvdv_decoder
 +   disable2 mvha_decoder
 +   disable2 mvi_demuxer
++   disable2 mxg_demuxer # Open but site says all rights reserved
 +   disable2 mxpeg_decoder # Open but site says all rights reserved
 +   disable2 nc_demuxer
 +   disable2 notchlc_decoder # Not freely open
@@ -789,7 +860,12 @@ Resulting benefits:
 +   disable2 paf_audio_decoder
 +   disable2 paf_demuxer
 +   disable2 paf_video_decoder
++   disable2 pcm_bluray_decoder
++   disable2 pcm_dvd_decoder
++   disable2 pcm_dvd_encoder
 +   disable2 pcm_sga_decoder
++   disable2 pcm_vidc_demuxer # Not ubiquitous, arch specific
++   disable2 pcm_vidc_muxer
 +   disable2 pcx_decoder
 +   disable2 pcx_encoder
 +   disable2 photocd_decoder
@@ -823,7 +899,7 @@ Resulting benefits:
 +   disable2 sami_decoder
 +   disable2 sami_demuxer
 +   disable2 sanm_decoder
-+   disable2 s337m_decoder # Associated with proprietary technology in first commit of file
++   disable2 s337m_demuxer # Associated with proprietary technology in first commit of file
 +   disable2 scc_demuxer
 +   disable2 scc_muxer
 +   disable2 scpr_decoder # Likely RE
@@ -850,6 +926,8 @@ Resulting benefits:
 +   disable2 spdif_demuxer
 +   disable2 spdif_muxer
 +   disable2 sp5x_decoder
++   disable2 sup_demuxer
++   disable2 sup_muxer
 +   disable2 r3d_demuxer # Restricted
 +   disable2 stl_demuxer
 +   disable2 str_demuxer
@@ -859,7 +937,9 @@ Resulting benefits:
 +   disable2 svs_demuxer # References PSX
 +   disable2 swf_demuxer
 +   disable2 swf_muxer
++   disable2 tak_decoder # Associated program is closed
 +   disable2 tak_demuxer
++   disable2 tak_parser
 +   disable2 targa_decoder
 +   disable2 targa_encoder # A government LOC page noted proprietary and patent claims
 +   disable2 targa_y216_decoder
@@ -917,14 +997,15 @@ Resulting benefits:
 +   echo "Allowing only likely patentless open codecs"
 +fi
 +
-+if test "${non_free_patented_codecs}" = "codec-developer" \
-+   || test "${non_free_patented_codecs}" = "deny" \
-+   || test "${non_free_patented_codecs}" = "disable" \
++if [ "${non_free_patented_codecs}" = "codec-developer" ] \
++   || [ "${non_free_patented_codecs}" = "deny" ] \
++   || [ "${non_free_patented_codecs}" = "disable" ] \
 +; then
 +   echo "Disabling codec developer restricted codecs"
 +   disable2 aac_adtstoasc_bsf
 +   disable2 aac_at_decoder
 +   disable2 aac_decoder
++   disable2 aac_demuxer
 +   disable2 aac_fixed_decoder
 +   disable2 aac_latm_decoder
 +   disable2 aac_latm_muxer
