@@ -22,16 +22,16 @@ To confirm disablement use:
   ffmpeg -protocols
   ffmpeg -bsfs
 
-There is a notiable drop in binary size when using these flags.
+There is a notiable drop in installed package size when using these flags.
 
   With defaults:  29200 KiB ( 28.5 MiB)
-  With --non-free-patented-codecs=deny --re-codecs=deny:  21828 KiB ( 21.3 MiB)
+  With --non-free-patented-codecs=deny --re-codecs=deny:  20200 KiB ( 19.7 MiB)
 
 Resulting benefits:
 
- * 7.1999 MiB savings.
- * A little over a quarter savings in binary size relative to the with defaults.
- * 1843 4k sized pages removed from memory.
+ * 8.789 MiB savings.
+ * ~30.82% savings in total package size relative to the default policy.
+ * 2250 4k sized pages removed from memory.
 
 --- a/configure.orig	2023-03-05 13:54:45.017655465 -0800
 +++ b/configure	2023-03-05 15:51:36.981746059 -0800
@@ -83,7 +83,7 @@ Resulting benefits:
          --enable-*=*|--disable-*=*)
              eval $(echo "${opt%%=*}" | sed 's/--/action=/;s/-/ thing=/')
              is_in "${thing}s" $COMPONENT_LIST || die_unknown "$opt"
-@@ -7288,6 +7322,948 @@ postproc_deps="$(filter_out 'gpl' $postp
+@@ -7288,6 +7322,991 @@ postproc_deps="$(filter_out 'gpl' $postp
  
  map 'expand_deps $v' $LIBRARY_LIST
  
@@ -149,6 +149,7 @@ Resulting benefits:
 +
 +# Expired patents
 +# MP3
++# g711 (μ-law & A-law)
 +
 +# Dropped patent applications
 +# Dirac
@@ -158,7 +159,7 @@ Resulting benefits:
 +   || [ "${non_free_patented_codecs}" = "deny" ] \
 +   || [ "${non_free_patented_codecs}" = "disable" ] \
 +; then
-+   echo "Disabling likely patented non-free codecs or non-free network protocols"
++   echo "Disabling likely patented non-free codecs or likely patented non-free network protocols"
 +   disable2 als_decoder
 +   disable2 amr_demuxer
 +   disable2 amr_muxer
@@ -205,6 +206,7 @@ Resulting benefits:
 +   disable2 dnxhd_demuxer
 +   disable2 dnxhd_encoder
 +   disable2 dnxhd_muxer
++   disable2 dnxhd_parser
 +   disable2 dts_demuxer
 +   disable2 dts_muxer
 +   disable2 dtshd_demuxer
@@ -220,6 +222,8 @@ Resulting benefits:
 +   disable2 eac3_encoder
 +   disable2 eac3_muxer
 +   disable2 f4v_muxer
++   disable2 frm_demuxer
++   disable2 fsb_demuxer
 +   disable2 g723_1_decoder
 +   disable2 g723_1_encoder
 +   disable2 h261_decoder
@@ -465,8 +469,6 @@ Resulting benefits:
 +   disable2 avi_muxer # Uses mpegtsenc.o
 +   disable2 binkaudio_dct_decoder  # references wma_freqs.o
 +   disable2 binkaudio_rdft_decoder # references wma_freqs.o
-+   disable2 cook_decoder # References RA
-+   disable2 cook_parser
 +   disable2 daud_demuxer
 +   disable2 daud_muxer # References s320m
 +   disable2 intrax8 # Uses msmpeg4data.o
@@ -476,19 +478,24 @@ Resulting benefits:
 +   disable2 flv_decoder # Uses/depends H263 in source, but missing in Makefile
 +   disable2 flv_encoder # Uses/depends H263 in source, but missing in Makefile
 +   disable2 hds_muxer # Uses aac, h264
++   disable2 ifv_demuxer # Uses h264
 +   disable2 ipod_muxer # Requires mov_muxer
 +   disable2 ismv_muxer # Requires mov_muxer
 +   disable2 iv8_demuxer # Uses mpeg4
 +   disable2 ivr_demuxer # Vague documentation but uses acc, atrac, ra_288
 +   disable2 luodat_demuxer # Use h264
 +   disable2 live_flv_demuxer
++   disable2 lmlm4_demuxer # Uses mpeg4
 +   disable2 lvf_demuxer # May use h264.  See also trac ticket 18
 +   disable2 metasound_decoder # Uses twinvq.o
 +   disable2 mov_demuxer
 +   disable2 mov_muxer
 +   disable2 mp4_muxer # Requires mov_muxer
 +   disable2 nsv_demuxer
++   disable2 prompeg_protocol # Implies mpegts
 +   disable2 psp_muxer # Requires mov_muxer
++   disable2 realtext_decoder
++   disable2 realtext_demuxer
 +   disable2 rtp_demuxer # Needs rtsp.o
 +   disable2 rtpdec # Needed by rmdec.c and rtsp.c
 +   disable2 rtsp_demuxer # Needs rtsp.o
@@ -634,6 +641,8 @@ Resulting benefits:
 +   disable2 argo_brp_demuxer
 +   disable2 argo_cvg_demuxer
 +   disable2 argo_cvg_muser
++   disable2 ast_demuxer
++   disable2 ast_muxer
 +   disable2 asv1_decoder
 +   disable2 asv1_encoder
 +   disable2 asv2_decoder
@@ -664,8 +673,8 @@ Resulting benefits:
 +   disable2 bink_demuxer
 +   disable2 bit_demuxer # Expired patent(s) and royalty free remaining patents for G.729 codec
 +   disable2 bit_muxer
-+   #disable2 bmp_encoder # A government LOC page says it is proprietary, but "no concerns" for "licensing and patents"
-+   #disable2 bmp_decoder
++   disable2 bmp_encoder # A government LOC page says it is proprietary, but "no concerns" for "licensing and patents"
++   disable2 bmp_decoder
 +   disable2 bmv_audio_decoder
 +   disable2 bmv_demuxer
 +   disable2 bmv_video_decoder
@@ -684,7 +693,10 @@ Resulting benefits:
 +   disable2 cljr_decoder
 +   disable2 cljr_encoder
 +   disable2 cllc_decoder
++   disable2 cook_decoder # References RA
++   disable2 cook_parser
 +   disable2 cri_decoder
++   disable2 cri_parser
 +   disable2 cyuv_decoder
 +   disable2 dca_core_bsf
 +   disable2 dca_decoder
@@ -710,6 +722,7 @@ Resulting benefits:
 +   disable2 dss_sp_decoder
 +   disable2 dv_demuxer
 +   disable2 dv_muxer
++   disable2 dvaudio
 +   disable2 dvd_nav_parser
 +   disable2 dvaudio_decoder
 +   disable2 dvdsub_decoder
@@ -719,6 +732,8 @@ Resulting benefits:
 +   disable2 dvvideo_encoder
 +   disable2 dvprofile
 +   disable2 dxtory_decoder
++   disable2 dxa_decoder
++   disable2 dxa_demuxer
 +   disable2 dxv_decoder # Likely closed
 +   disable2 ea_cdata_demuxer
 +   disable2 ea_demuxer
@@ -747,8 +762,11 @@ Resulting benefits:
 +   disable2 fwse_demuxer
 +   disable2 gdv_decoder
 +   disable2 gdv_demuxer
++   disable2 gremlin_dpcm_decoder
 +   disable2 gsm_ms_decoder
 +   disable2 gsm_ms_at_decoder
++   disable2 gxf_demuxer
++   disable2 gxf_muxer
 +   disable2 hca_decoder
 +   disable2 hca_demuxer
 +   disable2 hcom_demuxer
@@ -774,22 +792,29 @@ Resulting benefits:
 +   disable2 image_sunrast_pipe_demuxer
 +   disable2 image_tiff_pipe_demuxer
 +   disable2 image2_alias_pix_demuxer
++   disable2 imc_decoder # A newer video codec associated with this audio codec may be patented
 +   disable2 imm4_decoder # Likely RE
 +   disable2 imm5_decoder # Likely RE
-+   disable2 imx_dump_header # References proprietary software in first commit
++   disable2 imx_dump_header_bsf # References proprietary software in first commit
 +   disable2 interplay_acm_decoder
 +   disable2 interplay_dpcm_decoder
 +   disable2 interplay_video_decoder
 +   disable2 ipmovie_demuxer
 +   disable2 ipu_decoder # Likely platform specific, initially non-free SDK
 +   disable2 ipu_demuxer
++   disable2 ipu_parser
 +   disable2 iss_demuxer
++   disable2 jacosub_decoder # Spec is publicaly accessible but without license/copyright notice
++   disable2 jacosub_demuxer
++   disable2 jacosub_muxer
 +   disable2 jv_decoder
 +   disable2 jv_demuxer
 +   disable2 kmvc_decoder
 +   disable2 kux_demuxer
 +   disable2 kvag_demuxer
 +   disable2 kvag_muxer
++   disable2 lrc_demuxer # The original spec by the original developer is not apparently easy to find or not disclosed
++   disable2 lrc_muxer
 +   disable2 libgsm_ms_decoder
 +   disable2 libgsm_ms_encoder
 +   disable2 lxf_demuxer
@@ -813,6 +838,7 @@ Resulting benefits:
 +   disable2 mlp_demuxer
 +   disable2 mlp_encoder
 +   disable2 mlp_muxer
++   disable2 mlp_parser
 +   disable2 mm_demuxer
 +   disable2 mmf_demuxer
 +   disable2 mmf_muxer
@@ -820,10 +846,18 @@ Resulting benefits:
 +   disable2 mmst_protocol
 +   disable2 mmvideo_decoder
 +   disable2 motionpixels_decoder
++   #
++   # The hardware support may be better controlled with separate config flag for
++   # diskless/wireless only.
++   #
++   # It is better to avoid any hardware lock-in.
++   #
 +   disable2 mpeg1vcd_muxer
 +   disable2 mpeg2dvd_muxer
-+   disable2 mpeg2vcd_muxer
++   disable2 mpeg2svcd_muxer
 +   disable2 mpeg2vob_muxer
++   disable2 mpegps_demuxer # Open but avoided for reasons above
++   #
 +   disable2 mpl2_demuxer # It is not transparent if MPL author okayed derivative.  If inspired, then no source provided so likely RE.
 +   disable2 msa1_decoder
 +   disable2 msf_demuxer
@@ -870,6 +904,8 @@ Resulting benefits:
 +   disable2 pcx_encoder
 +   disable2 photocd_decoder
 +   disable2 pictor_decoder
++   disable2 pjs_decoder
++   disable2 pjs_demuxer # The original spec cannot be found.  Likely closed/RE.
 +   disable2 pp_bnk_demuxer
 +   disable2 ptx_decoder
 +   disable2 pixlet_decoder
@@ -879,12 +915,16 @@ Resulting benefits:
 +   disable2 qcelp_decoder
 +   disable2 qcp_demuxer
 +   disable2 qdraw_decoder
++   disable2 qdm2_decoder
++   disable2 qdmc_decoder
 +   disable2 qpeg_decoder # Likely closed/RE
 +   disable2 qtrle_decoder
 +   disable2 qtrle_encoder
++   disable2 r3d_demuxer # Restricted
 +   disable2 ra_144_decoder
 +   disable2 ra_144_encoder
 +   disable2 ra_288_decoder
++   disable2 ralf_decoder
 +   disable2 redspark_demuxer # References THP
 +   disable2 rl2_decoder
 +   disable2 rl2_demuxer
@@ -914,6 +954,8 @@ Resulting benefits:
 +   disable2 siff_demuxer
 +   disable2 simbiosis_imx_decoder
 +   disable2 simbiosis_imx_demuxer
++   disable2 sipr_decoder
++   disable2 sipr_parser
 +   disable2 smackaud_decoder
 +   disable2 smacker_decoder
 +   disable2 smacker_demuxer
@@ -928,7 +970,6 @@ Resulting benefits:
 +   disable2 sp5x_decoder
 +   disable2 sup_demuxer
 +   disable2 sup_muxer
-+   disable2 r3d_demuxer # Restricted
 +   disable2 stl_demuxer
 +   disable2 str_demuxer
 +   disable2 sunrast_decoder
@@ -945,6 +986,7 @@ Resulting benefits:
 +   disable2 targa_y216_decoder
 +   disable2 thp_decoder
 +   disable2 thp_demuxer
++   disable2 threedostr_demuxer
 +   disable2 tiertexseq_demuxer
 +   disable2 tiertexseqvideo_decoder
 +   disable2 tiff_decoder # Spec is copyrighted
@@ -1018,6 +1060,7 @@ Resulting benefits:
 +   disable2 asf_muxer
 +   disable2 asf_o_demuxer
 +   disable2 asf_stream_muxer
++   disable2 latm_muxer
 +   disable2 libfdk_aac
 +   disable2 libfdk_aac_decoder
 +   disable2 libfdk_aac_encoder

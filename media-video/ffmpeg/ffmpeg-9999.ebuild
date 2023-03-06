@@ -239,7 +239,7 @@ alsa chromium doc +encode fallback-commit gdbm
 jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo pic pipewire
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +re-codecs sndio static-libs test v4l
-wayland r10
+wayland r11
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -1894,6 +1894,8 @@ ewarn "Do not use at this time."
 	fi
 
 einfo
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCC)
 eprintf "CC" "${CC}"
 eprintf "CXX" "${CXX}"
 eprintf "CFLAGS" "${CFLAGS}"
