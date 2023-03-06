@@ -83,7 +83,7 @@ Resulting benefits:
          --enable-*=*|--disable-*=*)
              eval $(echo "${opt%%=*}" | sed 's/--/action=/;s/-/ thing=/')
              is_in "${thing}s" $COMPONENT_LIST || die_unknown "$opt"
-@@ -7288,6 +7322,991 @@ postproc_deps="$(filter_out 'gpl' $postp
+@@ -7288,6 +7322,1043 @@ postproc_deps="$(filter_out 'gpl' $postp
  
  map 'expand_deps $v' $LIBRARY_LIST
  
@@ -163,6 +163,7 @@ Resulting benefits:
 +   disable2 als_decoder
 +   disable2 amr_demuxer
 +   disable2 amr_muxer
++   disable2 amr_parser
 +   disable2 amr_nb_at_decoder
 +   disable2 amrnb_decoder
 +   disable2 amrnb_demuxer
@@ -471,6 +472,7 @@ Resulting benefits:
 +   disable2 binkaudio_rdft_decoder # references wma_freqs.o
 +   disable2 daud_demuxer
 +   disable2 daud_muxer # References s320m
++   disable2 dst_decoder # Submitter referred indirectly to mpeg4 subpart 10
 +   disable2 intrax8 # Uses msmpeg4data.o
 +   disable2 f4v_muser # Requires mov_muxer
 +   disable2 flv_demuxer
@@ -490,6 +492,8 @@ Resulting benefits:
 +   disable2 metasound_decoder # Uses twinvq.o
 +   disable2 mov_demuxer
 +   disable2 mov_muxer
++   disable2 mp3on4_decoder
++   disable2 mp3on4float_decoder
 +   disable2 mp4_muxer # Requires mov_muxer
 +   disable2 nsv_demuxer
 +   disable2 prompeg_protocol # Implies mpegts
@@ -510,6 +514,7 @@ Resulting benefits:
 +   disable2 vivo_demuxer # Uses h263 and Siren
 +   disable2 webm_dash_manifest_muxer
 +   disable2 wmv3image_decoder
++   disable2 xmd_demuxer
 +   disable2 xmv_demuxer # container
 +   disable2 xwma_demuxer
 +else
@@ -612,6 +617,7 @@ Resulting benefits:
 +   disable2 adpcm_thp_le_decoder
 +   disable2 adpcm_vima_decoder
 +   disable2 adpcm_xa_decoder
++   disable2 adpcm_xmd_decoder
 +   disable2 adpcm_yamaha_decoder
 +   disable2 adpcm_yamaha_encoder
 +   disable2 adpcm_zork_decoder
@@ -631,6 +637,7 @@ Resulting benefits:
 +   disable2 amv_muxer # Of Chinese origin but not ubiquitous
 +   disable2 anm_decoder
 +   disable2 anm_demuxer
++   disable2 apac_demuxer # RE
 +   disable2 apc_demuxer
 +   disable2 apm_demuxer
 +   disable2 apm_muxer
@@ -640,7 +647,7 @@ Resulting benefits:
 +   disable2 argo_asf_muxer
 +   disable2 argo_brp_demuxer
 +   disable2 argo_cvg_demuxer
-+   disable2 argo_cvg_muser
++   disable2 argo_cvg_muxer
 +   disable2 ast_demuxer
 +   disable2 ast_muxer
 +   disable2 asv1_decoder
@@ -675,6 +682,7 @@ Resulting benefits:
 +   disable2 bit_muxer
 +   disable2 bmp_encoder # A government LOC page says it is proprietary, but "no concerns" for "licensing and patents"
 +   disable2 bmp_decoder
++   disable2 bmp_parser
 +   disable2 bmv_audio_decoder
 +   disable2 bmv_demuxer
 +   disable2 bmv_video_decoder
@@ -684,6 +692,7 @@ Resulting benefits:
 +   disable2 c93_demuxer
 +   disable2 caf_demuxer
 +   disable2 caf_muxer
++   disable2 cbd2_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
 +   disable2 cdg_demuxer
 +   disable2 cdgraphics_decoder
 +   disable2 cdtoons_decoder
@@ -705,7 +714,7 @@ Resulting benefits:
 +   disable2 dcstr_demuxer
 +   disable2 dds_decoder # Used patented S3TC, now expired patent
 +   disable2 derf_demuxer
-+   disable2 derf_dpcm_decoder # The others may be closed
++   disable2 derf_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
 +   disable2 dfa_decoder
 +   disable2 dfa_demuxer
 +   disable2 dhav_demuxer
@@ -714,6 +723,10 @@ Resulting benefits:
 +   disable2 dpx_decoder # Derived from proprietary standard ; Wikipedia says non-free (Mar 4, 2023)
 +   disable2 dpx_encoder
 +   disable2 dpx_parser
++   disable2 dsd_lsbf_decoder
++   disable2 dsd_lsbf_planar_decoder
++   disable2 dsd_msbf_decoder
++   disable2 dsd_msbf_planar_decoder
 +   disable2 dsicin_demuxer
 +   disable2 dsicinaudio_decoder
 +   disable2 dsicinvideo_decoder
@@ -721,10 +734,12 @@ Resulting benefits:
 +   disable2 dss_demuxer
 +   disable2 dss_sp_decoder
 +   disable2 dv_demuxer
++   disable2 dv_error_marker_bsf
 +   disable2 dv_muxer
 +   disable2 dvaudio
-+   disable2 dvd_nav_parser
 +   disable2 dvaudio_decoder
++   disable2 dvaudio_parser
++   disable2 dvd_nav_parser
 +   disable2 dvdsub_decoder
 +   disable2 dvdsub_encoder
 +   disable2 dvdsub_parser
@@ -759,16 +774,19 @@ Resulting benefits:
 +   disable2 frwu_decoder # Likely closed
 +   disable2 fourxm_decoder
 +   disable2 fourxm_demuxer
++   disable2 ftr_parser
 +   disable2 fwse_demuxer
 +   disable2 gdv_decoder
 +   disable2 gdv_demuxer
-+   disable2 gremlin_dpcm_decoder
++   disable2 gem_decoder
++   disable2 gremlin_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
 +   disable2 gsm_ms_decoder
 +   disable2 gsm_ms_at_decoder
 +   disable2 gxf_demuxer
 +   disable2 gxf_muxer
 +   disable2 hca_decoder
 +   disable2 hca_demuxer
++   disable2 hcom_decoder
 +   disable2 hcom_demuxer
 +   disable2 hnm_demuxer
 +   disable2 hnm4_video_decoder
@@ -784,6 +802,7 @@ Resulting benefits:
 +   disable2 image_cri_pipe_demuxer
 +   disable2 image_dds_pipe_demuxer
 +   disable2 image_dpx_pipe_demuxer
++   disable2 image_gem_pipe_demuxer
 +   disable2 image_pcx_pipe_demuxer
 +   disable2 image_photocd_pipe_demuxer
 +   disable2 image_pictor_pipe_demuxer
@@ -797,7 +816,7 @@ Resulting benefits:
 +   disable2 imm5_decoder # Likely RE
 +   disable2 imx_dump_header_bsf # References proprietary software in first commit
 +   disable2 interplay_acm_decoder
-+   disable2 interplay_dpcm_decoder
++   disable2 interplay_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
 +   disable2 interplay_video_decoder
 +   disable2 ipmovie_demuxer
 +   disable2 ipu_decoder # Likely platform specific, initially non-free SDK
@@ -826,13 +845,16 @@ Resulting benefits:
 +   disable2 mca_demuxer # Associated with THP little endian
 +   disable2 mcc_demuxer
 +   disable2 mdec_decoder
++   disable2 media100_decoder # Likely closed
++   disable2 media100_demuxer
++   disable2 media100_to_mjpegb_bsf
++   disable2 mgsts_demuxer
 +   disable2 microdvd_decoder
 +   disable2 microdvd_demuxer
 +   disable2 microdvd_muxer
 +   disable2 mimic_decoder # RE
-+   disable2 mgsts_demuxer
-+   disable2 mods_demuxer
-+   disable2 moflex_demuxer
++   disable2 misc4_decoder
++   disable2 misc4_parser
 +   disable2 mjpegb_decoder
 +   disable2 mlp_decoder
 +   disable2 mlp_demuxer
@@ -845,6 +867,8 @@ Resulting benefits:
 +   disable2 mmsh_protocol
 +   disable2 mmst_protocol
 +   disable2 mmvideo_decoder
++   disable2 mods_demuxer
++   disable2 moflex_demuxer
 +   disable2 motionpixels_decoder
 +   #
 +   # The hardware support may be better controlled with separate config flag for
@@ -895,6 +919,7 @@ Resulting benefits:
 +   disable2 paf_demuxer
 +   disable2 paf_video_decoder
 +   disable2 pcm_bluray_decoder
++   disable2 pcm_bluray_encoder
 +   disable2 pcm_dvd_decoder
 +   disable2 pcm_dvd_encoder
 +   disable2 pcm_sga_decoder
@@ -920,16 +945,21 @@ Resulting benefits:
 +   disable2 qpeg_decoder # Likely closed/RE
 +   disable2 qtrle_decoder
 +   disable2 qtrle_encoder
++   disable2 r210_decoder
++   disable2 r210_encoder
 +   disable2 r3d_demuxer # Restricted
 +   disable2 ra_144_decoder
 +   disable2 ra_144_encoder
 +   disable2 ra_288_decoder
 +   disable2 ralf_decoder
 +   disable2 redspark_demuxer # References THP
++   disable2 rka_decoder
++   disable2 rka_demuxer
 +   disable2 rl2_decoder
 +   disable2 rl2_demuxer
 +   disable2 rm_demuxer
 +   disable2 rm_muxer
++   disable2 roq_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
 +   disable2 rpl_demuxer
 +   disable2 rpza_decoder
 +   disable2 rpza_encoder
@@ -943,6 +973,8 @@ Resulting benefits:
 +   disable2 scc_demuxer
 +   disable2 scc_muxer
 +   disable2 scpr_decoder # Likely RE
++   disable2 sdns_demuxer
++   disable2 sdx2_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
 +   disable2 segafilm_demuxer
 +   disable2 segafilm_muxer
 +   disable2 sga_decoder
@@ -964,6 +996,7 @@ Resulting benefits:
 +   disable2 smush_demuxer
 +   disable2 smvjpeg_decoder
 +   disable2 sol_demuxer
++   disable2 sol_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
 +   disable2 spdif_decoder # Uses dca_sample_rate_tab.o
 +   disable2 spdif_demuxer
 +   disable2 spdif_muxer
@@ -1005,7 +1038,22 @@ Resulting benefits:
 +   disable2 ulti_decoder
 +   disable2 vcr1_decoder
 +   disable2 vag_demuxer
++   disable2 wady_demuxer
++   disable2 wady_dpcm_decoder
 +   disable2 vb_decoder
++   disable2 vbn_decoder # Likely closed
++   disable2 vbn_encoder
++   disable2 v210_decoder
++   disable2 v210_encoder
++   disable2 v210_demuxer
++   disable2 v210x_decoder
++   disable2 v210x_demuxer
++   disable2 v308_decoder
++   disable2 v308_encoder
++   disable2 v408_decoder
++   disable2 v408_encoder
++   disable2 v410_decoder
++   disable2 v410_encoder
 +   disable2 voc_demuxer
 +   disable2 voc_muxer
 +   disable2 vmd_demuxer
@@ -1017,7 +1065,9 @@ Resulting benefits:
 +   disable2 wc3_demuxer
 +   disable2 w64_demuxer
 +   disable2 w64_muxer
++   disable2 wady_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
 +   disable2 wnv1_decoder
++   disable2 ws_snd1_decoder
 +   disable2 wsaud_demuxer
 +   disable2 wsaud_muxer
 +   disable2 wsvqa_demuxer
@@ -1026,12 +1076,14 @@ Resulting benefits:
 +   disable2 wtv_muxer
 +   disable2 wve_demuxer
 +   disable2 xa_demuxer
-+   disable2 xan_dpcm_decoder
++   disable2 xan_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
 +   disable2 xan_wc3_decoder
 +   disable2 xan_wc4_decoder
 +   disable2 xvag_demuxer
 +   disable2 yop_decoder
 +   disable2 yop_demuxer
++   disable2 yuv4_decoder
++   disable2 yuv4_encoder
 +
 +   # Disabled as a consequence
 +   disable2 amv_decoder # Found in sp5xdec.o
