@@ -1,7 +1,5 @@
 Subject:  Configure non-free changes
-Patch Status:  WIP / Testing / Incomplete / Draft
-
-TODO:  Disable all codecs in the "patented compression formats" from Wikipedia link below:
+Patch Status:  Testing
 
 https://en.wikipedia.org/wiki/Comparison_of_audio_coding_formats     ; See patented column also
 https://en.wikipedia.org/wiki/Comparison_of_graphics_file_formats    ; See patanted column also
@@ -13,7 +11,8 @@ https://en.wikipedia.org/wiki/Comparison_of_video_container_formats#Subtitle_for
 For re-codecs, we try to infer closed codecs if it is not listed in one of those
 list due to the editorial limits on that website.
 
-The safer default blacklist all codecs/muxers/demuxers first may be introduced in this patch or separate patch.
+The safer default blacklist all codecs/muxers/demuxers first may be introduced
+in this patch or separate patch.
 
 To confirm disablement use:
 
