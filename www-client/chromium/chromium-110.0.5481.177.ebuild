@@ -669,13 +669,13 @@ COMMON_DEPEND="
 			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},encode?,opus?,vorbis?,vpx?]
 		)
 		proprietary-codecs-disable? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable,vorbis?,vpx?,-x264,-x265,-xvid]
+			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		proprietary-codecs-disable-nc-developer? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-nc-developer,vorbis?,vpx?,-x264,-x265,-xvid]
+			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-nc-developer,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		proprietary-codecs-disable-nc-user? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-user,vorbis?,vpx?,-x264,-x265,-xvid]
+			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-user,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		|| (
 			>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-samba]

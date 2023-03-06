@@ -468,10 +468,10 @@ NON_FREE_CDEPENDS="
 			|| (
 				(
 					!<dev-libs/openssl-3
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable,-vaapi,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable,-vaapi,vpx?,-x264,-x265,-xvid]
 				)
 				(
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable,-vaapi,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable,-vaapi,vpx?,-x264,-x265,-xvid]
 				)
 			)
 		)
@@ -482,10 +482,10 @@ NON_FREE_CDEPENDS="
 			|| (
 				(
 					!<dev-libs/openssl-3
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-developer,-vaapi,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-developer,-vaapi,vpx?,-x264,-x265,-xvid]
 				)
 				(
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-developer,-vaapi,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-developer,-vaapi,vpx?,-x264,-x265,-xvid]
 				)
 			)
 		)
@@ -496,10 +496,10 @@ NON_FREE_CDEPENDS="
 			|| (
 				(
 					!<dev-libs/openssl-3
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-user,-vaapi,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-user,-vaapi,vpx?,-x264,-x265,-xvid]
 				)
 				(
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-user,-vaapi,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-user,-vaapi,vpx?,-x264,-x265,-xvid]
 				)
 			)
 		)
