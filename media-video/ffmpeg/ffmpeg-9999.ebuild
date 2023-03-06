@@ -618,17 +618,14 @@ REQUIRED_USE+="
 		!kvazaar
 		!nonfree
 		!openh264
+		!re-codecs
 		!x264
 		!x265
 		!xvid
 		openssl? (
 			apache2_0
 		)
-		|| (
-			proprietary-codecs-disable
-			proprietary-codecs-disable-nc-developer
-			proprietary-codecs-disable-nc-user
-		)
+		proprietary-codecs-disable
 	)
 	openssl? (
 		!gnutls
