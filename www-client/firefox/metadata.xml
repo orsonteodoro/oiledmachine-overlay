@@ -101,7 +101,7 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
     binaries. This option will double the compile time.
   </flag>
   <flag name="proprietary-codecs">
-    Enables use of non-free patent-encumbered audio and video formats, and
+    Enables use of non-free patent-encumbered audio formats, video formats, and
     network protocols.  Upstream build files associate AAC, H264, and others
     as proprietary.
   </flag>

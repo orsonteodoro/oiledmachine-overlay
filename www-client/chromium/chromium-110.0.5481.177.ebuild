@@ -2251,16 +2251,26 @@ eerror "-fuse-ld=mold cannot be used with the widevine USE flag."
 eerror
 		die
 	fi
-	if is-flagq '-fuse-ld=mold' && ! use system-ffmpeg ; then
-	# Requires a non-free license for codec developers.
-eerror
-eerror "-fuse-ld=mold cannot be used with the !system-ffmpeg USE flag."
-eerror
-		die
-	fi
 	if is-flagq '-fuse-ld=mold' && use proprietary-codecs ; then
 eerror
 eerror "-fuse-ld=mold cannot be used with the proprietary-codecs USE flag."
+eerror
+		die
+	fi
+	local atom=$(best_version "media-video/ffmpeg")
+	local repo=$(portageq metadata "${EROOT}" installed "${atom}" repository)
+	if is-flagq '-fuse-ld=mold' \
+		&& use system-ffmpeg \
+		&& [[ "${repo}" != "oiledmachine-overlay" ]] ; then
+	#
+	# The distro FFmpeg uses patent-encumbered settings by default and
+	# unconditionally.
+	#
+	# This has been corrected with the oiledmachine-overlay version with the
+	# proprietary-codecs-disable* USE flags.
+	#
+eerror
+eerror "-fuse-ld=mold cannot be used with the distro's ffmpeg ebuild."
 eerror
 		die
 	fi

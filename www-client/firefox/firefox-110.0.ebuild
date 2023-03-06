@@ -978,6 +978,42 @@ eerror
 	fi
 }
 
+verify_codecs() {
+	if use proprietary-codecs-disable \
+		|| use proprietary-codecs-disable-nc-developer \
+		|| use proprietary-codecs-disable-nc-user \
+	; then
+		:;
+	else
+		return
+	fi
+	if has_version "<dev-libs/openssl-3" \
+		&& has_version "media-video/ffmpeg[openssl]" ; then
+# Version 3 is allowed because of the Grant of Patent Clause in Apache-2.0.
+eerror
+eerror "Using <dev-libs/openssl-3 is disallowed with the"
+eerror "proprietary-codecs-disable* USE flags."
+eerror
+		die
+	fi
+	if has_version ">=dev-libs/openssl-3" \
+		&& has_version "<media-video/ffmpeg-5[openssl]" ; then
+eerror
+eerror "Using <media-video/ffmpeg-3 is disallowed with the"
+eerror "proprietary-codecs-disable* USE flags.  This may add nonfree code paths"
+eerror "in FFmpeg."
+eerror
+		die
+	fi
+	if has_version "media-video/ffmpeg" ; then
+ewarn
+ewarn "Use a corrected local copy or the FFmpeg ebuild from the"
+ewarn "oiledmachine-overlay to eliminate the possiblity of nonfree codepaths"
+ewarn "and to ensure the package is LGPL/GPL."
+ewarn
+	fi
+}
+
 NABIS=0
 pkg_setup() {
 einfo
@@ -1202,31 +1238,7 @@ ewarn
 ewarn "Speech recognition (USE=webspeech) has not been confirmed working."
 ewarn
 	fi
-	if use mold ; then
-		if has_version "<dev-libs/openssl-3" \
-			&& has_version "media-video/ffmpeg[openssl]" ; then
-# Version 3 is allowed because of the Grant of Patent Clause in Apache-2.0.
-eerror
-eerror "Using <dev-libs/openssl-3 is disallowed with the mold USE flag."
-eerror
-			die
-		fi
-		if has_version ">=dev-libs/openssl-3" \
-			&& has_version "<media-video/ffmpeg-5[openssl]" ; then
-eerror
-eerror "Using <media-video/ffmpeg-3 is disallowed with the mold USE flag."
-eerror "This may add nonfree code paths in ffmpeg."
-eerror
-			die
-		fi
-		if has_version "media-video/ffmpeg" ; then
-ewarn
-ewarn "Use a corrected local copy or the ffmpeg ebuild from the"
-ewarn "oiledmachine-overlay to eliminate the possiblity of nonfree codepaths"
-ewarn "and to ensure the package is LGPL/GPL."
-ewarn
-		fi
-	fi
+	verify_codecs
 }
 
 src_unpack() {

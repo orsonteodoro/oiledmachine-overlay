@@ -1024,6 +1024,88 @@ ewarn
 	fi
 }
 
+# It is not clear about the end scope/extent of non-commericial.
+# It may use runtime codec detection for both gst-ffmpeg and in webkit-gtk.
+verify_codecs() {
+	if use proprietary-codecs-disable \
+		|| use proprietary-codecs-disable-nc-developer \
+		|| use proprietary-codecs-disable-nc-user \
+	; then
+		:;
+	else
+		return
+	fi
+	local use_flags=(
+		"amr"
+		"cuda"
+		"fdk"
+		"openh264"
+		"vaapi"
+		"x264"
+		"x265"
+		"xvid"
+	)
+	if use proprietary-codecs-disable \
+		|| use proprietary-codecs-disable-nc-developer ; then
+		use_flags+=(
+			"aac"
+		)
+	fi
+	local flag
+	for flag in ${use_flags[@]} ; do
+# We check again because FFmpeg is not required, but user may set USE flags
+# outside of package.
+		if has_version "media-video/ffmpeg[${flag}]" ; then
+eerror
+eerror "Detected ${flag} USE enabled for media-video/ffmpeg.  This flag must be"
+eerror "disabled to disable proprietary codecs."
+eerror
+eerror "Required changes:"
+eerror
+eerror    ">=dev-libs/openssl-3"
+eerror    "media-video/ffmpeg[-amr,-cuda,-fdk,-openh264,openssl,-vaapi,-x264,-x265,-xvid]"
+eerror
+eerror "or"
+eerror
+eerror    "media-video/ffmpeg[-amr,-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]"
+eerror
+			die
+		fi
+	done
+	if has_version "media-libs/gst-plugins-bad[vaapi]" ; then
+eerror
+eerror "Disabling vaapi in the media-libs/gst-plugins-bad package is required"
+eerror "for proprietary-codecs-disable* USE flags."
+eerror
+		die
+	fi
+	if has_version "<dev-libs/openssl-3" \
+		&& has_version "media-video/ffmpeg[openssl]" ; then
+# Version 3 is allowed because of the Grant of Patent Clause in Apache-2.0.
+eerror
+eerror "Using <dev-libs/openssl-3 is disallowed with the"
+eerror "proprietary-codecs-disable* USE flags."
+eerror
+		die
+	fi
+	if has_version ">=dev-libs/openssl-3" \
+		&& has_version "<media-video/ffmpeg-5[openssl]" ; then
+eerror
+eerror "Using <media-video/ffmpeg-3 is disallowed with the"
+eerror "proprietary-codecs-disable* USE flags.  This may add nonfree code"
+eerror "paths in FFmpeg."
+eerror
+		die
+	fi
+	if has_version "media-video/ffmpeg" ; then
+ewarn
+ewarn "Use a corrected local copy or the FFmpeg ebuild from the"
+ewarn "oiledmachine-overlay to eliminate the possiblity of nonfree codepaths"
+ewarn "and to ensure the package is LGPL/GPL."
+ewarn
+	fi
+}
+
 pkg_setup() {
 einfo
 einfo "This is the stable branch."
@@ -1105,77 +1187,7 @@ eerror
 		die
 	fi
 
-# It is not clear about the end scope/extent of non-commericial.
-	if use mold ; then
-		local use_flags=(
-			"cuda"
-			"fdk"
-			"openh264"
-			"vaapi"
-			"x264"
-			"x265"
-			"xvid"
-		)
-		if use proprietary-codecs-disable \
-			|| use proprietary-codecs-developer ; then
-			use_flags+=(
-				"aac"
-			)
-		fi
-		local flag
-		for flag in ${use_flags[@]} ; do
-# We check again because ffmpeg is not required, but user may set USE flags
-# outside of package.
-			if has_version "media-video/ffmpeg[${flag}]" ; then
-# It may use runtime codec detection.
-eerror
-eerror "Detected ${flag} USE enabled for media-video/ffmpeg.  This flag must be"
-eerror "disabled to use mold."
-eerror
-eerror "Required changes:"
-eerror
-eerror    ">=dev-libs/openssl-3"
-eerror    "media-video/ffmpeg[-cuda,-fdk,-openh264,openssl,-vaapi,-x264,-x265,-xvid]"
-eerror
-eerror "or"
-eerror
-eerror    "media-video/ffmpeg[-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]"
-eerror
-				die
-			fi
-		done
-		if has_version "media-libs/gst-plugins-bad[vaapi]" ; then
-eerror
-eerror "Disabling vaapi in the media-libs/gst-plugins-bad package is required"
-eerror "to link with mold."
-eerror
-			die
-		fi
-		if has_version "<dev-libs/openssl-3" \
-			&& has_version "media-video/ffmpeg[openssl]" ; then
-# Version 3 is allowed because of the Grant of Patent Clause in Apache-2.0.
-eerror
-eerror "Using <dev-libs/openssl-3 is disallowed with the mold USE flag."
-eerror
-			die
-		fi
-		if has_version ">=dev-libs/openssl-3" \
-			&& has_version "<media-video/ffmpeg-5[openssl]" ; then
-eerror
-eerror "Using <media-video/ffmpeg-3 is disallowed with the mold USE flag."
-eerror "This may add nonfree code paths in ffmpeg."
-eerror
-			die
-		fi
-		if has_version "media-video/ffmpeg" ; then
-ewarn
-ewarn "Use a corrected local copy or the ffmpeg ebuild from the"
-ewarn "oiledmachine-overlay to eliminate the possiblity of nonfree codepaths"
-ewarn "and to ensure the package is LGPL/GPL."
-ewarn
-		fi
-	fi
-
+	verify_codecs
 	uopts_setup
 }
 

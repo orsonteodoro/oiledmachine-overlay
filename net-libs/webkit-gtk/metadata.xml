@@ -264,8 +264,8 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       Use OpenMP to accelerate SVG filters.
     </flag>
     <flag name="proprietary-codecs">
-      Enables use of non-free patent-encumbered audio and video formats, and
-      network protocols.
+      Enables use of non-free patent-encumbered audio formats, video formats,
+      and network protocols.
     </flag>
     <flag name="proprietary-codecs-disable">
       (USE FLAG IN DEVELOPMENT)
