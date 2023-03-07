@@ -516,6 +516,7 @@ Resulting benefits:
 +    disable2 vc1image_decoder
 +    disable2 vc1t_demuxer
 +    disable2 vc1t_muxer
++    disable2 vobsub_demuxer
 +    disable2 vp4_decoder
 +    disable2 vp5_decoder
 +    disable2 vp56dsp
@@ -523,7 +524,6 @@ Resulting benefits:
 +    disable2 vp6a_decoder
 +    disable2 vp6f_decoder
 +    disable2 vp7_decoder
-+    disable2 vobsub_demuxer
 +    disable2 vqf_demuxer
 +    disable2 webm_dash_manifest_demuxer
 +    disable2 wma_freqs
@@ -561,7 +561,6 @@ Resulting benefits:
 +    disable2 daud_demuxer
 +    disable2 daud_muxer # References s320m
 +    disable2 dst_decoder # Submitter referred indirectly to mpeg4 subpart 10
-+    disable2 intrax8 # Uses msmpeg4data.o
 +    disable2 f4v_muser # Requires mov_muxer
 +    disable2 flv_demuxer
 +    disable2 flv_muxer
@@ -569,6 +568,7 @@ Resulting benefits:
 +    disable2 flv_encoder # Uses/depends H263 in source, but missing in Makefile
 +    disable2 hds_muxer # Uses aac, h264
 +    disable2 ifv_demuxer # Uses h264
++    disable2 intrax8 # Uses msmpeg4data.o
 +    disable2 ipod_muxer # Requires mov_muxer
 +    disable2 ismv_muxer # Requires mov_muxer
 +    disable2 iv8_demuxer # Uses mpeg4
@@ -594,8 +594,8 @@ Resulting benefits:
 +    disable2 rtsp_muxer # Needs rtsp.o
 +    disable2 s302m_decoder # Implies mpegts
 +    disable2 s302m_encoder # Implies mpegts
-+    disable2 sdp_demuxer # Requires rtsp.o
 +    disable2 sdr2_demuxer # References h264
++    disable2 sdp_demuxer # Requires rtsp.o
 +    disable2 smoothstreaming_muxer # References h264, aac, vc1
 +    disable2 tg2_muxer # Requires mov_muxer
 +    disable2 tgp_muxer # Requires mov_muxer
@@ -716,9 +716,9 @@ Resulting benefits:
 +    disable2 afc_demuxer
 +    disable2 agm_decoder
 +    disable2 aic_decoder
++    disable2 aix_demuxer
 +    disable2 alias_pix_decoder
 +    disable2 alias_pix_encoder
-+    disable2 aix_demuxer
 +    disable2 alp_demuxer
 +    disable2 alp_muxer
 +    disable2 amv_encoder
@@ -1054,10 +1054,10 @@ Resulting benefits:
 +    disable2 rsd_demuxer
 +    disable2 rso_demuxer
 +    disable2 rso_muxer
++    disable2 s337m_demuxer # Associated with proprietary technology in first commit of file
 +    disable2 sami_decoder
 +    disable2 sami_demuxer
 +    disable2 sanm_decoder
-+    disable2 s337m_demuxer # Associated with proprietary technology in first commit of file
 +    disable2 scc_demuxer
 +    disable2 scc_muxer
 +    disable2 scpr_decoder # Likely RE
@@ -1124,8 +1124,8 @@ Resulting benefits:
 +    disable2 txd_demuxer
 +    disable2 ty_demuxer
 +    disable2 ulti_decoder
-+    disable2 vcr1_decoder
 +    disable2 vag_demuxer
++    disable2 vcr1_decoder
 +    disable2 wady_demuxer
 +    disable2 wady_dpcm_decoder
 +    disable2 vb_decoder
@@ -1206,8 +1206,8 @@ Resulting benefits:
 +    disable2 libfdk_aac_encoder
 +
 +    # Disabled as a consequence
-+    disable2 transcode_aac_example
 +    disable2 loas_demuxer # Uses AAC
++    disable2 transcode_aac_example
 +else
 +    echo "Allowing codec developer restricted codecs with exceptions"
 +fi
