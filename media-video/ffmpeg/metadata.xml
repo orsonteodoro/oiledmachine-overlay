@@ -361,8 +361,33 @@
   These have absolute control and are evaluated at the end just before writing
   out the config.mak.
 
-  You can use the clear-config-first USE flag to disable all flags first before
-  whitelisting.
+  You can use either clear-config-pre or clear-config-post USE flags to disable
+  all flags first before whitelisting.
+
+  Examples:
+
+      FFMPEG_CUSTOM_OPTIONS="
+          -CONFIG_LIBVPX_VP8_DECODER
+          -CONFIG_LIBVPX_VP8_ENCODER
+          CONFIG_LIBVPX_VP9_DECODER
+          CONFIG_LIBVPX_VP9_ENCODER
+          CONFIG_OGG_DEMUXER
+          CONFIG_OGG_MUXER
+          CONFIG_OPUS_DECODER
+          -CONFIG_OPUS_ENCODER
+          CONFIG_OPUS_MUXER
+          CONFIG_OPUS_PARSER
+      "
+      FFMPEG_CUSTOM_OPTIONS="
+          -libvpx_vp8_decoder
+          -libvpx_vp8_encoder
+          libvpx_vp9_decoder
+          libvpx_vp9_encoder
+          opus_decoder
+          -opus_encoder
+          opus_muxer
+          opus_parser
+      "
 
   After you have built your package, it would be a good idea to test it first
   to find missing symbols that may prevent the parent app from functioning.
@@ -396,8 +421,12 @@
   <flag name="bs2b">
     Enables <pkg>media-libs/libbs2b</pkg> based Bauer stereo-to-binaural filter.
   </flag>
-  <flag name="clear-config-first">
-    Clear components first before whitelisting.  Only useful with
+  <flag name="clear-config-pre">
+    Clear components first before USE flag settings.  Only useful with
+    FFMPEG_CUSTOM_OPTIONS environment variable.  See metadata.xml for details.
+  </flag>
+  <flag name="clear-config-post">
+    Clear components first after USE flag settings.  Only useful with
     FFMPEG_CUSTOM_OPTIONS environment variable.  See metadata.xml for details.
   </flag>
   <flag name="cdio">
