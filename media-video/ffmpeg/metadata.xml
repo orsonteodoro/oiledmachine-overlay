@@ -374,7 +374,7 @@
   These have absolute control and are evaluated at the end just before writing
   out the config.mak.
 
-  You can use either clear-config-first USE flag to disable all flags first
+  You can use the clear-config-first USE flag to disable all flags first
   before whitelisting.
 
   You may encounter visibility, naming inconsistencies, or config dependency
