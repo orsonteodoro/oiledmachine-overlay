@@ -373,8 +373,8 @@
   These have absolute control and are evaluated at the end just before writing
   out the config.mak.
 
-  You can use either clear-config-pre or clear-config-post USE flags to disable
-  all flags first before whitelisting.
+  You can use either clear-config-first USE flag to disable all flags first
+  before whitelisting.
 
   Examples:
 
@@ -434,13 +434,10 @@
   <flag name="bs2b">
     Enables <pkg>media-libs/libbs2b</pkg> based Bauer stereo-to-binaural filter.
   </flag>
-  <flag name="clear-config-pre">
-    Clear components first before USE flag settings.  Only useful with
-    FFMPEG_CUSTOM_OPTIONS environment variable.  See metadata.xml for details.
-  </flag>
-  <flag name="clear-config-post">
-    Clear components first after USE flag settings.  Only useful with
-    FFMPEG_CUSTOM_OPTIONS environment variable.  See metadata.xml for details.
+  <flag name="clear-config-first">
+    Clear components first before applying FFMPEG_CUSTOM_OPTIONS.  It's only
+    useful with the FFMPEG_CUSTOM_OPTIONS environment variable.  See
+    the decrapify section of the metadata.xml for details.
   </flag>
   <flag name="cdio">
     Enables audio CD grabbing with <pkg>dev-libs/libcdio</pkg>.
