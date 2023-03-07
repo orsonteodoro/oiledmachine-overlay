@@ -1653,6 +1653,7 @@ eerror
 			die
 		fi
 		myconf+=(
+			--disable-bsfs
 			--disable-decoders
 			--disable-demuxers
 			--disable-encoders
@@ -1897,9 +1898,6 @@ einfo
 
 	if tc-is-gcc && ( use pgo || use epgo ) ; then
 		extra_libs+=( --extra-libs="-lgcov" )
-	elif tc-is-gcc && ( use pgo || use epgo ) ; then
-		#$(realpath /usr/lib/clang/16.0.0/lib/linux/libclang_rt.profile-*.a)
-		extra_libs+=( --extra-libs="-lgcov" )
 	fi
 
 	if use clear-config-post ; then
@@ -1911,6 +1909,7 @@ eerror
 			die
 		fi
 		myconf+=(
+			--disable-bsfs
 			--disable-decoders
 			--disable-demuxers
 			--disable-encoders

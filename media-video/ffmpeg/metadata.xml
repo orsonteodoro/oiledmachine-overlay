@@ -354,7 +354,7 @@
   case insensitive or in raw form with the CONFIG_ prefix.  See the following
   links:
 
-  For codecs, parsers, protocols see:
+  For bsfs, codecs, parsers, protocols see:
 
        https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/Makefile
 

@@ -1678,6 +1678,7 @@ eerror
 			die
 		fi
 		myconf+=(
+			--disable-bsfs
 			--disable-decoders
 			--disable-demuxers
 			--disable-encoders
@@ -1940,6 +1941,7 @@ eerror
 			die
 		fi
 		myconf+=(
+			--disable-bsfs
 			--disable-decoders
 			--disable-demuxers
 			--disable-encoders
