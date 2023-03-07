@@ -97,7 +97,7 @@ Resulting benefits:
 +            | tr " " "\n" \
 +            | sed -e "/^$opt$/d")
 +    fi
-+    if echo "$opt" | grep -G -q -e "_demuxer$" || echo "${opt}" | grep -E -q -e "^rtpdec$" ; then
++    if echo "$opt" | grep -G -q -e "_demuxer$" ; then
 +        DEMUXER_LIST=$(echo $DEMUXER_LIST \
 +            | tr " " "\n" \
 +            | sed -e "/^$opt$/d")
@@ -122,7 +122,7 @@ Resulting benefits:
 +            | tr " " "\n" \
 +            | sed -e "/^$opt$/d")
 +    fi
-+    if echo "$opt" | grep -G -q -e "_muxer$" || echo "${opt}" | grep -E -q -e "^rtpdec$" ; then
++    if echo "$opt" | grep -G -q -e "_muxer$" ; then
 +        MUXER_LIST=$(echo $MUXER_LIST \
 +            | tr " " "\n" \
 +            | sed -e "/^$opt$/d")
@@ -160,7 +160,7 @@ Resulting benefits:
 +            $opt
 +        "
 +    fi
-+    if echo "$opt" | grep -G -q -e "_demuxer$" || echo "${opt}" | grep -E -q -e "^rtpdec$" ; then
++    if echo "$opt" | grep -G -q -e "_demuxer$" ; then
 +        DEMUXER_LIST="
 +            $DEMUXER_LIST
 +            $opt
@@ -190,7 +190,7 @@ Resulting benefits:
 +            $opt
 +        "
 +    fi
-+    if echo "$opt" | grep -G -q -e "_muxer$" || echo "${opt}" | grep -E -q -e "^rtpdec$" ; then
++    if echo "$opt" | grep -G -q -e "_muxer$" ; then
 +        MUXER_LIST="
 +            $MUXER_LIST
 +            $opt
