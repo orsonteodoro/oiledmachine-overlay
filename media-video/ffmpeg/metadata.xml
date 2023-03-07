@@ -349,8 +349,8 @@
   The next per-package environment variable addresses these issues.
 
   FFMPEG_CUSTOM_OPTIONS - a space separated list of *_encoders, *_decoders,
-  *_muxers, *_demuxers, *parsers, *_bsfs, *indevs, *outdevs, to blacklist or
-  whitelist.  Options prefixed with a - are blacklisted.  These can be case
+  *_muxers, *_demuxers, *parsers, *_bsfs, *indevs, *outdevs to blacklist or
+  whitelist.  Options prefixed with a - are disabled.  These can be case
   insensitive or in raw form with the CONFIG_ prefix.  See the following links:
 
   For codecs, parsers see:  https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/Makefile
