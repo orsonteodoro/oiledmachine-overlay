@@ -377,6 +377,11 @@
   You can use either clear-config-first USE flag to disable all flags first
   before whitelisting.
 
+  You may encounter visibility, naming inconsistencies, or config dependency
+  isssues.  Check if the option is inside the file.  Also, see the association
+  between the missing symbol, the .o file, and the CONFIG_* option to ultimately
+  whitelist the CONFIG_ option that is causing the missing symbol.
+
   Examples:
 
        FFMPEG_CUSTOM_OPTIONS="
