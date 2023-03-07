@@ -341,12 +341,12 @@
   The FFmpeg package is known to keep around codecs created as far back as the
   80s and 90s and more and more over time keep being added.  From the distro
   perspective, having these old formats around is counter to the aesthetic.
-  From the younger audience, these older codecs are never going to be used by
-  most.  From a security standpoint, it presents a security risk as the attack
-  surface is increased.  This also may break software that depend on FFmpeg.
-  Some options are also being buried or denied being toggled for unknown
-  reasons, or you just don't like what the packager maintainer is doing.  The
-  next per-package environment variable addresses these issues.
+  From the younger audience point of view, these older codecs are never going to
+  be used by most.  From a security standpoint, it presents a security risk as
+  the attack surface is increased.  This also may break software that depends on
+  FFmpeg.  Some options are also being buried or denied being toggled for
+  unknown reasons, or you just don't like what the packager maintainer is doing.
+  The next per-package environment variable addresses these issues.
 
   FFMPEG_CUSTOM_OPTIONS - a space separated list of *_encoders, *_decoders,
   *_muxers, *_demuxers, *parsers, *_bsfs, *indevs, *outdevs, to blacklist or
