@@ -336,11 +336,44 @@
   variables.
 
 
+  Decrapifying
+
+  The FFmpeg package is known to keep around codecs created as far back as the
+  80s and 90s and more and more over time keep being added.  From the distro
+  perspective, having these old formats around is counter to the aesthetic.
+  From the younger audience, these older codecs are never going to be used by
+  most.  From a security standpoint, it presents a security risk as the attack
+  surface is increased.  This also may break software that depend on FFmpeg.
+  Some options are also being buried or denied being toggled for unknown
+  reasons, or you just don't like what the packager maintainer is doing.  The
+  next per-package environment variable addresses these issues.
+
+  FFMPEG_CUSTOM_OPTIONS - a space separated list of *_encoders, *_decoders,
+  *_muxers, *_demuxers, *parsers, *_bsfs, *indevs, *outdevs, to blacklist or
+  whitelist.  Options prefixed with a - are blacklisted.  These can be case
+  insensitive or in raw form with the CONFIG_ prefix.  See the following links:
+
+  For codecs, parsers see:  https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/Makefile
+  For containers see:  https://github.com/FFmpeg/FFmpeg/blob/master/libavformat/Makefile
+  For devices see:   https://github.com/FFmpeg/FFmpeg/blob/master/libavdevice/Makefile
+  For filters see:  https://github.com/FFmpeg/FFmpeg/blob/master/libavfilter/Makefile
+
+  These have absolute control and are evaluated at the end just before writing
+  out the config.mak.
+
+  You can use the clear-config-first USE flag to disable all flags first before
+  whitelisting.
+
+  After you have built your package, it would be a good idea to test it first
+  to find missing symbols that may prevent the parent app from functioning.
+  This can be done with the `ffmpeg -formats` and the
+  `ffmpeg -codecs | grep -E -e "(D\.|\.E|DE)[V][I.][L.][S.] .*"` commands.
+
   Additional notes
 
-  The pic USE flag may be required for LTO builds.
-  Either Gold LTO or Thin LTO may only be used for LTO.
-  Using BFD LTO may result in linker errors.
+   * The pic USE flag may be required for LTO builds.
+   * Either Gold LTO or Thin LTO may only be used for LTO.
+   * Using BFD LTO may result in linker errors.
 
 </longdescription>
 <use>
@@ -362,6 +395,10 @@
   </flag>
   <flag name="bs2b">
     Enables <pkg>media-libs/libbs2b</pkg> based Bauer stereo-to-binaural filter.
+  </flag>
+  <flag name="clear-config-first">
+    Clear components first before whitelisting.  Only useful with
+    FFMPEG_CUSTOM_OPTIONS environment variable.  See metadata.xml for details.
   </flag>
   <flag name="cdio">
     Enables audio CD grabbing with <pkg>dev-libs/libcdio</pkg>.

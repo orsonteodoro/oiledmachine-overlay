@@ -11,9 +11,6 @@ https://en.wikipedia.org/wiki/Comparison_of_video_container_formats#Subtitle_for
 For re-codecs, we try to infer closed codecs if it is not listed in one of those
 list due to the editorial limits on that website.
 
-The safer default blacklist all codecs/muxers/demuxers first may be introduced
-in this patch or separate patch.
-
 To confirm disablement use:
 
   ffmpeg -codecs | grep -E -e "(D\.|\.E|DE)[V][I.][L.][S.]"
@@ -32,8 +29,8 @@ Resulting benefits:
  * ~30.82% savings in total package size relative to the default policy.
  * 2250 4k sized pages removed from memory.
 
---- a/configure.orig	2023-03-05 13:54:45.017655465 -0800
-+++ b/configure	2023-03-05 15:51:36.981746059 -0800
+--- ffmpeg-4.4.3/configure.orig	2023-03-06 16:08:27.142875395 -0800
++++ ffmpeg-4.4.3/configure	2023-03-06 16:53:25.382910256 -0800
 @@ -100,6 +100,10 @@ Licensing options:
    --enable-version3        upgrade (L)GPL to version 3 [no]
    --enable-nonfree         allow use of nonfree code, the resulting libs
@@ -82,7 +79,7 @@ Resulting benefits:
          --enable-*=*|--disable-*=*)
              eval $(echo "${opt%%=*}" | sed 's/--/action=/;s/-/ thing=/')
              is_in "${thing}s" $COMPONENT_LIST || die_unknown "$opt"
-@@ -7288,6 +7322,1043 @@ postproc_deps="$(filter_out 'gpl' $postp
+@@ -7288,6 +7322,1151 @@ postproc_deps="$(filter_out 'gpl' $postp
  
  map 'expand_deps $v' $LIBRARY_LIST
  
@@ -110,8 +107,28 @@ Resulting benefits:
 +            | tr " " "\n" \
 +            | sed -e "/^$opt$/d")
 +    fi
++    if echo "$opt" | grep -G -q -e "_filter$" ; then
++        FILTER_LIST=$(echo $FILTER_LIST \
++            | tr " " "\n" \
++            | sed -e "/^$opt$/d")
++    fi
++    if echo "$opt" | grep -G -q -e "_hwaccel$" ; then
++        HWACCEL_LIST=$(echo $HWACCEL_LIST \
++            | tr " " "\n" \
++            | sed -e "/^$opt$/d")
++    fi
++    if echo "$opt" | grep -G -q -e "_indev$" ; then
++        INDEV_LIST=$(echo $INDEV_LIST \
++            | tr " " "\n" \
++            | sed -e "/^$opt$/d")
++    fi
 +    if echo "$opt" | grep -G -q -e "_muxer$" || echo "${opt}" | grep -E -q -e "^rtpdec$" ; then
 +        MUXER_LIST=$(echo $MUXER_LIST \
++            | tr " " "\n" \
++            | sed -e "/^$opt$/d")
++    fi
++    if echo "$opt" | grep -G -q -e "_outdev$" ; then
++        OUTDEV_LIST=$(echo $OUTDEV_LIST \
 +            | tr " " "\n" \
 +            | sed -e "/^$opt$/d")
 +    fi
@@ -127,6 +144,78 @@ Resulting benefits:
 +    fi
 +}
 +
++enable2() {
++    local opt=$1
++    local uopt=${opt%_*}
++    enable $opt
++    if echo "$opt" | grep -G -q -e "_bsf$" ; then
++        BSF_LIST="
++            $BSF_LIST
++            $opt
++        "
++    fi
++    if echo "$opt" | grep -G -q -e "_decoder$" ; then
++        DECODER_LIST="
++            $DECODER_LIST
++            $opt
++        "
++    fi
++    if echo "$opt" | grep -G -q -e "_demuxer$" || echo "${opt}" | grep -E -q -e "^rtpdec$" ; then
++        DEMUXER_LIST="
++            $DEMUXER_LIST
++            $opt
++        "
++    fi
++    if echo "$opt" | grep -G -q -e "_encoder$" ; then
++        ENCODER_LIST="
++            $ENCODER_LIST
++            $opt
++        "
++    fi
++    if echo "$opt" | grep -G -q -e "_filter$" ; then
++        FILTER_LIST="
++            $FILTER_LIST
++            $opt
++        "
++    fi
++    if echo "$opt" | grep -G -q -e "_hwaccel$" ; then
++        HWACCEL_LIST="
++            $HWACCEL_LIST
++            $opt
++        "
++    fi
++    if echo "$opt" | grep -G -q -e "_indev$" ; then
++        INDEV_LIST="
++            $INDEV_LIST
++            $opt
++        "
++    fi
++    if echo "$opt" | grep -G -q -e "_muxer$" || echo "${opt}" | grep -E -q -e "^rtpdec$" ; then
++        MUXER_LIST="
++            $MUXER_LIST
++            $opt
++        "
++    fi
++    if echo "$opt" | grep -G -q -e "_outdev$" ; then
++        OUTDEV_LIST="
++            $OUTDEV_LIST
++            $opt
++        "
++    fi
++    if echo "$opt" | grep -G -q -e "_parser$" ; then
++        PARSER_LIST="
++            $PARSER_LIST
++            $opt
++        "
++    fi
++    if echo "$opt" | grep -G -q -e "_protocol$" ; then
++        PROTOCOL_LIST="
++            $PROTOCOL_LIST
++            $opt
++        "
++    fi
++}
++
 +if [ -n "${enforceability}" ] ; then
 +    :;
 +else
@@ -134,11 +223,11 @@ Resulting benefits:
 +fi
 +
 +if [ -z "${non_free_patented_codecs}" ] ; then
-+   if [ "${enforceability}" = "enforced" ] ; then
-+       non_free_patented_codecs="deny"
-+   else
-+       non_free_patented_codecs="allow"
-+   fi
++    if [ "${enforceability}" = "enforced" ] ; then
++        non_free_patented_codecs="deny"
++    else
++        non_free_patented_codecs="allow"
++    fi
 +fi
 +
 +# Patented free list
@@ -154,378 +243,378 @@ Resulting benefits:
 +# Dirac
 +
 +if [ "${non_free_patented_codecs}" = "user" ] \
-+   || [ "${non_free_patented_codecs}" = "codec-developer" ] \
-+   || [ "${non_free_patented_codecs}" = "deny" ] \
-+   || [ "${non_free_patented_codecs}" = "disable" ] \
++    || [ "${non_free_patented_codecs}" = "codec-developer" ] \
++    || [ "${non_free_patented_codecs}" = "deny" ] \
++    || [ "${non_free_patented_codecs}" = "disable" ] \
 +; then
-+   echo "Disabling likely patented non-free codecs or likely patented non-free network protocols"
-+   disable2 als_decoder
-+   disable2 amr_demuxer
-+   disable2 amr_muxer
-+   disable2 amr_parser
-+   disable2 amr_nb_at_decoder
-+   disable2 amrnb_decoder
-+   disable2 amrnb_demuxer
-+   disable2 amrwb_decoder
-+   disable2 amrwb_demuxer
-+   disable2 applehttp_protocol # Uses hlsproto.o
-+   disable2 aptx_demuxer
-+   disable2 aptx_encoder
-+   disable2 aptx_decoder
-+   disable2 aptx_muxer
-+   disable2 aptx_hd_encoder
-+   disable2 aptx_hd_decoder
-+   disable2 aptx_hd_demuxer
-+   disable2 aptx_hd_muxer
-+   disable2 atrac1_decoder
-+   disable2 atrac3_decoder
-+   disable2 atrac3al_decoder
-+   disable2 atrac3p_decoder
-+   disable2 atrac3pal_decoder
-+   disable2 atrac9_decoder
-+   disable2 avs_decoder # Moved to patent section as a precaution.  The initial commit was for a 1994 game codec, then commit 162d4fc mistakenly added .long_name for into a different 2006 Chinese codec.
-+   disable2 avs_demuxer # Moved to patent section as a precaution.  Game codec not the Chinese one.
-+   disable2 avs2_demuxer
-+   disable2 avs2_muxer
-+   disable2 avs2_parser
-+   disable2 avs3_demuxer
-+   disable2 avs3_muxer
-+   disable2 avs3_parser
-+   disable2 cavs_decoder # Similar to h264 according to MediamediaWiki
-+   disable2 cavsvideo_demuxer
-+   disable2 cavsvideo_parser
-+   disable2 cavsvideo_muxer
-+   disable2 cbs_h264
-+   disable2 cbs_h265
-+   disable2 cinepak_decoder
-+   disable2 cinepak_encoder
-+   disable2 clearvideo_decoder
-+   disable2 dash_muxer
-+   disable2 dash_demuxer
-+   disable2 dnxhd_decoder
-+   disable2 dnxhd_demuxer
-+   disable2 dnxhd_encoder
-+   disable2 dnxhd_muxer
-+   disable2 dnxhd_parser
-+   disable2 dts_demuxer
-+   disable2 dts_muxer
-+   disable2 dtshd_demuxer
-+   disable2 dts2pts_bsf
-+   disable2 dvbsub_decoder
-+   disable2 dvbsub_encoder
-+   disable2 dvbsub_parser
-+   disable2 dvbsub_demuxer
-+   disable2 eac3_at_decoder
-+   disable2 eac3_core_bsf
-+   disable2 eac3_demuxer
-+   disable2 eac3_decoder
-+   disable2 eac3_encoder
-+   disable2 eac3_muxer
-+   disable2 f4v_muxer
-+   disable2 frm_demuxer
-+   disable2 fsb_demuxer
-+   disable2 g723_1_decoder
-+   disable2 g723_1_encoder
-+   disable2 h261_decoder
-+   disable2 h261_demuxer
-+   disable2 h261_encoder
-+   disable2 h261_muxer
-+   disable2 h261_parser
-+   disable2 h263_decoder
-+   disable2 h263_demuxer
-+   disable2 h263_encoder
-+   disable2 h263_muxer
-+   disable2 h263_parser
-+   disable2 h263_v4l2_m2m
-+   disable2 h263_v4l2m2m_decoder
-+   disable2 h263_v4l2m2m_encoder
-+   disable2 h263_vaapi_hwaccel
-+   disable2 h263_videotoolbox_hwaccel
-+   disable2 h263i_decoder
-+   disable2 h263p_decoder
-+   disable2 h263p_encoder
-+   disable2 h263dsp
-+   disable2 h264_decoder
-+   disable2 h264_amf_encoder
-+   disable2 h264_crystalhd_decoder
-+   disable2 h264_cuvid_decoder
-+   disable2 h264_d3d11va_hwaccel
-+   disable2 h264_d3d11va2_hwaccel
-+   disable2 h264_demuxer
-+   disable2 h264_dxva2_hwaccel
-+   disable2 h264_mediacodec_decoder
-+   disable2 h264_metadata_bsf
-+   disable2 h264_mf_encoder
-+   disable2 h264_mmal_decoder
-+   disable2 h264_muxer
-+   disable2 h264_mp4toannexb_bsf
-+   disable2 h264_nvenc_encoder
-+   disable2 h264_nvdec_hwaccel
-+   disable2 h264_omx_encoder
-+   disable2 h264_parser
-+   disable2 h264_qsv_decoder
-+   disable2 h264_qsv_encoder
-+   disable2 h264_redundant_pps_bsf
-+   disable2 h264_rkmpp_decoder
-+   disable2 h264_vdpau_hwaccel
-+   disable2 h264_vaapi_encoder
-+   disable2 h264_vaapi_hwaccel
-+   disable2 h264_v4l2_m2m
-+   disable2 h264_v4l2m2m_decoder
-+   disable2 h264_v4l2m2m_encoder
-+   disable2 h264_videotoolbox_encoder
-+   disable2 h264_videotoolbox_hwaccel
-+   disable2 h264chroma
-+   disable2 h264dsp
-+   disable2 h264parse
-+   disable2 h264pred
-+   disable2 h264qpel
-+   disable2 hevc_amf_encoder
-+   disable2 hevc_cuvid_decoder
-+   disable2 hevc_d3d11va_hwaccel
-+   disable2 hevc_d3d11va2_hwaccel
-+   disable2 hevc_decoder
-+   disable2 hevc_demuxer
-+   disable2 hevc_dxva2_hwaccel
-+   disable2 hevc_mediacodec_decoder
-+   disable2 hevc_metadata_bsf
-+   disable2 hevc_muxer
-+   disable2 hevc_mf_encoder
-+   disable2 hevc_mp4toannexb_bsf
-+   disable2 hevc_nvenc_encoder
-+   disable2 hevc_nvdec_hwaccel
-+   disable2 hevc_parser
-+   disable2 hevc_qsv_decoder
-+   disable2 hevc_qsv_encoder
-+   disable2 hevc_rkmpp_decoder
-+   disable2 hevc_vaapi_encoder
-+   disable2 hevc_vaapi_hwaccel
-+   disable2 hevc_vdpau_hwaccel
-+   disable2 hevc_v4l2_m2m
-+   disable2 hevc_v4l2m2m_decoder
-+   disable2 hevc_v4l2m2m_encoder
-+   disable2 hevc_videotoolbox_encoder
-+   disable2 hevc_videotoolbox_hwaccel
-+   disable2 hevcparse
-+   disable2 hls_demuxer
-+   disable2 hls_muxer
-+   disable2 hls_protocol
-+   disable2 image_psd_pipe_demuxer
-+   disable2 indeo2_decoder
-+   disable2 indeo3_decoder
-+   disable2 indeo4_decoder
-+   disable2 indeo5_decoder
-+   disable2 ividsp
-+   disable2 kvazaar
-+   disable2 libdavs2_decoder
-+   disable2 libkvazaar_encoder
-+   disable2 libopencore_amrnb
-+   disable2 libopencore_amrnb_decoder
-+   disable2 libopencore_amrnb_encoder
-+   disable2 libopencore_amrnb_encoder
-+   disable2 libopencore_amrwb
-+   disable2 libopencore_amrwb_decoder
-+   disable2 libopenh264
-+   disable2 libopenh264_encoder
-+   disable2 libopenh264_decoder
-+   disable2 libuavs3d_decoder
-+   disable2 libvo_amrwbenc
-+   disable2 libvo_amrwbenc_encoder
-+   disable2 libx264
-+   disable2 libx264_encoder
-+   disable2 libx264rgb_encoder
-+   disable2 libx265
-+   disable2 libx265_encoder
-+   disable2 libxavs_encoder
-+   disable2 libxavs2_encoder
-+   disable2 m4v_demuxer
-+   disable2 m4v_muxer
-+   disable2 mobiclip_decoder # Format based on h264 according to MultimediaWiki
-+   disable2 movtext_decoder
-+   disable2 movtext_encoder
-+   disable2 mpeg4_v4l2_m2m # h264 vbv
-+   disable2 mpeg4audio
-+   disable2 mpeg4_crystalhd_decoder
-+   disable2 mpeg4_cuvid_decoder
-+   disable2 mpeg4_mediacodec_decoder
-+   disable2 mpeg4_mmal_decoder
-+   disable2 mpeg4_omx_encoder
-+   disable2 mpeg4_v4l2_m2m
-+   disable2 mpeg4_v4l2m2m_decoder
-+   disable2 mpeg4_v4l2m2m_encoder
-+   disable2 mpeg4_decoder
-+   disable2 mpeg4_encoder
-+   disable2 mpeg4_nvdec_hwaccel
-+   disable2 mpeg4_unpack_bframes_bsf
-+   disable2 mpeg4_vaapi_hwaccel
-+   disable2 mpeg4_vdpau_hwaccel
-+   disable2 mpeg4_videotoolbox_hwaccel
-+   disable2 mpeg4video_parser
-+   disable2 mpegts_demuxer
-+   disable2 mpegts_muxer
-+   disable2 mpegtsraw_demuxer
-+   disable2 msmpeg4_crystalhd_decoder
-+   disable2 msmpeg4dec
-+   disable2 msmpeg4enc
-+   disable2 msmpeg4v1_decoder
-+   disable2 msmpeg4v2_decoder
-+   disable2 msmpeg4v2_encoder
-+   disable2 msmpeg4v3_decoder
-+   disable2 msmpeg4v3_encoder
-+   disable2 nellymoser_decoder
-+   disable2 nellymoser_encoder
-+   disable2 pgssub_decoder
-+   disable2 prores_aw_encoder
-+   disable2 prores_decoder
-+   disable2 prores_encoder
-+   disable2 prores_ks_encoder
-+   disable2 prores_metadata_bsf
-+   disable2 prores_videotoolbox_encoder
-+   disable2 prores_videotoolbox_hwaccel
-+   disable2 psd_decoder
-+   disable2 rv10_decoder
-+   disable2 rv10_encoder
-+   disable2 rv20_decoder
-+   disable2 rv20_encoder
-+   disable2 rv30_decoder
-+   disable2 rv30_parser
-+   disable2 rv34dsp
-+   disable2 rv40_decoder
-+   disable2 rv40_decoder
-+   disable2 rv40_parser
-+   disable2 rtp_mpegts_muxer
-+   disable2 sbc_decode
-+   disable2 sbc_demuxer
-+   disable2 sbc_encode
-+   disable2 sbc_muxer
-+   disable2 sbc_parser
-+   disable2 svq1_decoder
-+   disable2 svq1_encoder
-+   disable2 svq3_decoder
-+   disable2 svq3_decoder
-+   disable2 truemotion1_decoder
-+   disable2 truemotion2_decoder
-+   disable2 truemotion2rt_decoder
-+   disable2 twinvq_decoder
-+   disable2 vc1_d3d11va_hwaccel
-+   disable2 vc1_d3d11va2_hwaccel
-+   disable2 vc1_decoder
-+   disable2 vc1_demuxer
-+   disable2 vc1_dxva2_hwaccel
-+   disable2 vc1_crystalhd_decoder
-+   disable2 vc1_cuvid_decoder
-+   disable2 vc1_mmal_decoder
-+   disable2 vc1_muxer
-+   disable2 vc1_nvdec_hwaccel
-+   disable2 vc1_parser
-+   disable2 vc1_qsv_decoder
-+   disable2 vc1_v4l2_m2m
-+   disable2 vc1_v4l2m2m_decoder
-+   disable2 vc1_vaapi_hwaccel
-+   disable2 vc1_vdpau_hwaccel
-+   disable2 vc1dsp
-+   disable2 vc1image_decoder
-+   disable2 vc1t_demuxer
-+   disable2 vc1t_muxer
-+   disable2 vp4_decoder
-+   disable2 vp5_decoder
-+   disable2 vp56dsp
-+   disable2 vp6_decoder
-+   disable2 vp6a_decoder
-+   disable2 vp6f_decoder
-+   disable2 vp7_decoder
-+   disable2 vobsub_demuxer
-+   disable2 vqf_demuxer
-+   disable2 webm_dash_manifest_demuxer
-+   disable2 wma_freqs
-+   disable2 wmalossless_decoder
-+   disable2 wmapro_decoder
-+   disable2 wmav1_decoder
-+   disable2 wmav1_encoder
-+   disable2 wmav2_decoder
-+   disable2 wmav2_encoder
-+   disable2 wmavoice_decoder
-+   disable2 wmv1_decoder
-+   disable2 wmv1_encoder
-+   disable2 wmv2_decoder
-+   disable2 wmv2_encoder
-+   disable2 wmv2dsp
-+   disable2 wmv3_crystalhd_decoder
-+   disable2 wmv3_d3d11va_hwaccel
-+   disable2 wmv3_d3d11va2_hwaccel
-+   disable2 wmv3_decoder
-+   disable2 wmv3_dxva2_hwaccel
-+   disable2 wmv3_nvdec_hwaccel
-+   disable2 wmv3_vaapi_hwaccel
-+   disable2 wmv3_vdpau_hwaccel
-+   disable2 wmv3image_decoder
-+   disable2 xma_parser
-+   disable2 xma1_decoder
-+   disable2 xma2_decoder
++    echo "Disabling likely patented non-free codecs or likely patented non-free network protocols"
++    disable2 als_decoder
++    disable2 amr_demuxer
++    disable2 amr_muxer
++    disable2 amr_parser
++    disable2 amr_nb_at_decoder
++    disable2 amrnb_decoder
++    disable2 amrnb_demuxer
++    disable2 amrwb_decoder
++    disable2 amrwb_demuxer
++    disable2 applehttp_protocol # Uses hlsproto.o
++    disable2 aptx_demuxer
++    disable2 aptx_encoder
++    disable2 aptx_decoder
++    disable2 aptx_muxer
++    disable2 aptx_hd_encoder
++    disable2 aptx_hd_decoder
++    disable2 aptx_hd_demuxer
++    disable2 aptx_hd_muxer
++    disable2 atrac1_decoder
++    disable2 atrac3_decoder
++    disable2 atrac3al_decoder
++    disable2 atrac3p_decoder
++    disable2 atrac3pal_decoder
++    disable2 atrac9_decoder
++    disable2 avs_decoder # Moved to patent section as a precaution.  The initial commit was for a 1994 game codec, then commit 162d4fc mistakenly added .long_name for into a different 2006 Chinese codec.
++    disable2 avs_demuxer # Moved to patent section as a precaution.  Game codec not the Chinese one.
++    disable2 avs2_demuxer
++    disable2 avs2_muxer
++    disable2 avs2_parser
++    disable2 avs3_demuxer
++    disable2 avs3_muxer
++    disable2 avs3_parser
++    disable2 cavs_decoder # Similar to h264 according to MediamediaWiki
++    disable2 cavsvideo_demuxer
++    disable2 cavsvideo_parser
++    disable2 cavsvideo_muxer
++    disable2 cbs_h264
++    disable2 cbs_h265
++    disable2 cinepak_decoder
++    disable2 cinepak_encoder
++    disable2 clearvideo_decoder
++    disable2 dash_muxer
++    disable2 dash_demuxer
++    disable2 dnxhd_decoder
++    disable2 dnxhd_demuxer
++    disable2 dnxhd_encoder
++    disable2 dnxhd_muxer
++    disable2 dnxhd_parser
++    disable2 dts_demuxer
++    disable2 dts_muxer
++    disable2 dtshd_demuxer
++    disable2 dts2pts_bsf
++    disable2 dvbsub_decoder
++    disable2 dvbsub_encoder
++    disable2 dvbsub_parser
++    disable2 dvbsub_demuxer
++    disable2 eac3_at_decoder
++    disable2 eac3_core_bsf
++    disable2 eac3_demuxer
++    disable2 eac3_decoder
++    disable2 eac3_encoder
++    disable2 eac3_muxer
++    disable2 f4v_muxer
++    disable2 frm_demuxer
++    disable2 fsb_demuxer
++    disable2 g723_1_decoder
++    disable2 g723_1_encoder
++    disable2 h261_decoder
++    disable2 h261_demuxer
++    disable2 h261_encoder
++    disable2 h261_muxer
++    disable2 h261_parser
++    disable2 h263_decoder
++    disable2 h263_demuxer
++    disable2 h263_encoder
++    disable2 h263_muxer
++    disable2 h263_parser
++    disable2 h263_v4l2_m2m
++    disable2 h263_v4l2m2m_decoder
++    disable2 h263_v4l2m2m_encoder
++    disable2 h263_vaapi_hwaccel
++    disable2 h263_videotoolbox_hwaccel
++    disable2 h263i_decoder
++    disable2 h263p_decoder
++    disable2 h263p_encoder
++    disable2 h263dsp
++    disable2 h264_decoder
++    disable2 h264_amf_encoder
++    disable2 h264_crystalhd_decoder
++    disable2 h264_cuvid_decoder
++    disable2 h264_d3d11va_hwaccel
++    disable2 h264_d3d11va2_hwaccel
++    disable2 h264_demuxer
++    disable2 h264_dxva2_hwaccel
++    disable2 h264_mediacodec_decoder
++    disable2 h264_metadata_bsf
++    disable2 h264_mf_encoder
++    disable2 h264_mmal_decoder
++    disable2 h264_muxer
++    disable2 h264_mp4toannexb_bsf
++    disable2 h264_nvenc_encoder
++    disable2 h264_nvdec_hwaccel
++    disable2 h264_omx_encoder
++    disable2 h264_parser
++    disable2 h264_qsv_decoder
++    disable2 h264_qsv_encoder
++    disable2 h264_redundant_pps_bsf
++    disable2 h264_rkmpp_decoder
++    disable2 h264_vdpau_hwaccel
++    disable2 h264_vaapi_encoder
++    disable2 h264_vaapi_hwaccel
++    disable2 h264_v4l2_m2m
++    disable2 h264_v4l2m2m_decoder
++    disable2 h264_v4l2m2m_encoder
++    disable2 h264_videotoolbox_encoder
++    disable2 h264_videotoolbox_hwaccel
++    disable2 h264chroma
++    disable2 h264dsp
++    disable2 h264parse
++    disable2 h264pred
++    disable2 h264qpel
++    disable2 hevc_amf_encoder
++    disable2 hevc_cuvid_decoder
++    disable2 hevc_d3d11va_hwaccel
++    disable2 hevc_d3d11va2_hwaccel
++    disable2 hevc_decoder
++    disable2 hevc_demuxer
++    disable2 hevc_dxva2_hwaccel
++    disable2 hevc_mediacodec_decoder
++    disable2 hevc_metadata_bsf
++    disable2 hevc_muxer
++    disable2 hevc_mf_encoder
++    disable2 hevc_mp4toannexb_bsf
++    disable2 hevc_nvenc_encoder
++    disable2 hevc_nvdec_hwaccel
++    disable2 hevc_parser
++    disable2 hevc_qsv_decoder
++    disable2 hevc_qsv_encoder
++    disable2 hevc_rkmpp_decoder
++    disable2 hevc_vaapi_encoder
++    disable2 hevc_vaapi_hwaccel
++    disable2 hevc_vdpau_hwaccel
++    disable2 hevc_v4l2_m2m
++    disable2 hevc_v4l2m2m_decoder
++    disable2 hevc_v4l2m2m_encoder
++    disable2 hevc_videotoolbox_encoder
++    disable2 hevc_videotoolbox_hwaccel
++    disable2 hevcparse
++    disable2 hls_demuxer
++    disable2 hls_muxer
++    disable2 hls_protocol
++    disable2 image_psd_pipe_demuxer
++    disable2 indeo2_decoder
++    disable2 indeo3_decoder
++    disable2 indeo4_decoder
++    disable2 indeo5_decoder
++    disable2 ividsp
++    disable2 kvazaar
++    disable2 libdavs2_decoder
++    disable2 libkvazaar_encoder
++    disable2 libopencore_amrnb
++    disable2 libopencore_amrnb_decoder
++    disable2 libopencore_amrnb_encoder
++    disable2 libopencore_amrnb_encoder
++    disable2 libopencore_amrwb
++    disable2 libopencore_amrwb_decoder
++    disable2 libopenh264
++    disable2 libopenh264_encoder
++    disable2 libopenh264_decoder
++    disable2 libuavs3d_decoder
++    disable2 libvo_amrwbenc
++    disable2 libvo_amrwbenc_encoder
++    disable2 libx264
++    disable2 libx264_encoder
++    disable2 libx264rgb_encoder
++    disable2 libx265
++    disable2 libx265_encoder
++    disable2 libxavs_encoder
++    disable2 libxavs2_encoder
++    disable2 m4v_demuxer
++    disable2 m4v_muxer
++    disable2 mobiclip_decoder # Format based on h264 according to MultimediaWiki
++    disable2 movtext_decoder
++    disable2 movtext_encoder
++    disable2 mpeg4_v4l2_m2m # h264 vbv
++    disable2 mpeg4audio
++    disable2 mpeg4_crystalhd_decoder
++    disable2 mpeg4_cuvid_decoder
++    disable2 mpeg4_mediacodec_decoder
++    disable2 mpeg4_mmal_decoder
++    disable2 mpeg4_omx_encoder
++    disable2 mpeg4_v4l2_m2m
++    disable2 mpeg4_v4l2m2m_decoder
++    disable2 mpeg4_v4l2m2m_encoder
++    disable2 mpeg4_decoder
++    disable2 mpeg4_encoder
++    disable2 mpeg4_nvdec_hwaccel
++    disable2 mpeg4_unpack_bframes_bsf
++    disable2 mpeg4_vaapi_hwaccel
++    disable2 mpeg4_vdpau_hwaccel
++    disable2 mpeg4_videotoolbox_hwaccel
++    disable2 mpeg4video_parser
++    disable2 mpegts_demuxer
++    disable2 mpegts_muxer
++    disable2 mpegtsraw_demuxer
++    disable2 msmpeg4_crystalhd_decoder
++    disable2 msmpeg4dec
++    disable2 msmpeg4enc
++    disable2 msmpeg4v1_decoder
++    disable2 msmpeg4v2_decoder
++    disable2 msmpeg4v2_encoder
++    disable2 msmpeg4v3_decoder
++    disable2 msmpeg4v3_encoder
++    disable2 nellymoser_decoder
++    disable2 nellymoser_encoder
++    disable2 pgssub_decoder
++    disable2 prores_aw_encoder
++    disable2 prores_decoder
++    disable2 prores_encoder
++    disable2 prores_ks_encoder
++    disable2 prores_metadata_bsf
++    disable2 prores_videotoolbox_encoder
++    disable2 prores_videotoolbox_hwaccel
++    disable2 psd_decoder
++    disable2 rv10_decoder
++    disable2 rv10_encoder
++    disable2 rv20_decoder
++    disable2 rv20_encoder
++    disable2 rv30_decoder
++    disable2 rv30_parser
++    disable2 rv34dsp
++    disable2 rv40_decoder
++    disable2 rv40_decoder
++    disable2 rv40_parser
++    disable2 rtp_mpegts_muxer
++    disable2 sbc_decode
++    disable2 sbc_demuxer
++    disable2 sbc_encode
++    disable2 sbc_muxer
++    disable2 sbc_parser
++    disable2 svq1_decoder
++    disable2 svq1_encoder
++    disable2 svq3_decoder
++    disable2 svq3_decoder
++    disable2 truemotion1_decoder
++    disable2 truemotion2_decoder
++    disable2 truemotion2rt_decoder
++    disable2 twinvq_decoder
++    disable2 vc1_d3d11va_hwaccel
++    disable2 vc1_d3d11va2_hwaccel
++    disable2 vc1_decoder
++    disable2 vc1_demuxer
++    disable2 vc1_dxva2_hwaccel
++    disable2 vc1_crystalhd_decoder
++    disable2 vc1_cuvid_decoder
++    disable2 vc1_mmal_decoder
++    disable2 vc1_muxer
++    disable2 vc1_nvdec_hwaccel
++    disable2 vc1_parser
++    disable2 vc1_qsv_decoder
++    disable2 vc1_v4l2_m2m
++    disable2 vc1_v4l2m2m_decoder
++    disable2 vc1_vaapi_hwaccel
++    disable2 vc1_vdpau_hwaccel
++    disable2 vc1dsp
++    disable2 vc1image_decoder
++    disable2 vc1t_demuxer
++    disable2 vc1t_muxer
++    disable2 vp4_decoder
++    disable2 vp5_decoder
++    disable2 vp56dsp
++    disable2 vp6_decoder
++    disable2 vp6a_decoder
++    disable2 vp6f_decoder
++    disable2 vp7_decoder
++    disable2 vobsub_demuxer
++    disable2 vqf_demuxer
++    disable2 webm_dash_manifest_demuxer
++    disable2 wma_freqs
++    disable2 wmalossless_decoder
++    disable2 wmapro_decoder
++    disable2 wmav1_decoder
++    disable2 wmav1_encoder
++    disable2 wmav2_decoder
++    disable2 wmav2_encoder
++    disable2 wmavoice_decoder
++    disable2 wmv1_decoder
++    disable2 wmv1_encoder
++    disable2 wmv2_decoder
++    disable2 wmv2_encoder
++    disable2 wmv2dsp
++    disable2 wmv3_crystalhd_decoder
++    disable2 wmv3_d3d11va_hwaccel
++    disable2 wmv3_d3d11va2_hwaccel
++    disable2 wmv3_decoder
++    disable2 wmv3_dxva2_hwaccel
++    disable2 wmv3_nvdec_hwaccel
++    disable2 wmv3_vaapi_hwaccel
++    disable2 wmv3_vdpau_hwaccel
++    disable2 wmv3image_decoder
++    disable2 xma_parser
++    disable2 xma1_decoder
++    disable2 xma2_decoder
 +
-+   # Required disabled as a consequence.  Fails to load when ffmpeg --help
-+   disable2 aax_demuxer # Uses mpeg4
-+   disable2 aea_demuxer # Uses ATRAC1
-+   disable2 avi_muxer # Uses mpegtsenc.o
-+   disable2 binkaudio_dct_decoder  # references wma_freqs.o
-+   disable2 binkaudio_rdft_decoder # references wma_freqs.o
-+   disable2 daud_demuxer
-+   disable2 daud_muxer # References s320m
-+   disable2 dst_decoder # Submitter referred indirectly to mpeg4 subpart 10
-+   disable2 intrax8 # Uses msmpeg4data.o
-+   disable2 f4v_muser # Requires mov_muxer
-+   disable2 flv_demuxer
-+   disable2 flv_muxer
-+   disable2 flv_decoder # Uses/depends H263 in source, but missing in Makefile
-+   disable2 flv_encoder # Uses/depends H263 in source, but missing in Makefile
-+   disable2 hds_muxer # Uses aac, h264
-+   disable2 ifv_demuxer # Uses h264
-+   disable2 ipod_muxer # Requires mov_muxer
-+   disable2 ismv_muxer # Requires mov_muxer
-+   disable2 iv8_demuxer # Uses mpeg4
-+   disable2 ivr_demuxer # Vague documentation but uses acc, atrac, ra_288
-+   disable2 luodat_demuxer # Use h264
-+   disable2 live_flv_demuxer
-+   disable2 lmlm4_demuxer # Uses mpeg4
-+   disable2 lvf_demuxer # May use h264.  See also trac ticket 18
-+   disable2 metasound_decoder # Uses twinvq.o
-+   disable2 mov_demuxer
-+   disable2 mov_muxer
-+   disable2 mp3on4_decoder
-+   disable2 mp3on4float_decoder
-+   disable2 mp4_muxer # Requires mov_muxer
-+   disable2 nsv_demuxer
-+   disable2 prompeg_protocol # Implies mpegts
-+   disable2 psp_muxer # Requires mov_muxer
-+   disable2 realtext_decoder
-+   disable2 realtext_demuxer
-+   disable2 rtp_demuxer # Needs rtsp.o
-+   disable2 rtpdec # Needed by rmdec.c and rtsp.c
-+   disable2 rtsp_demuxer # Needs rtsp.o
-+   disable2 rtsp_muxer # Needs rtsp.o
-+   disable2 s302m_decoder # Implies mpegts
-+   disable2 s302m_encoder # Implies mpegts
-+   disable2 sdp_demuxer # Requires rtsp.o
-+   disable2 sdr2_demuxer # References h264
-+   disable2 smoothstreaming_muxer # References h264, aac, vc1
-+   disable2 tg2_muxer # Requires mov_muxer
-+   disable2 tgp_muxer # Requires mov_muxer
-+   disable2 vivo_demuxer # Uses h263 and Siren
-+   disable2 webm_dash_manifest_muxer
-+   disable2 wmv3image_decoder
-+   disable2 xmd_demuxer
-+   disable2 xmv_demuxer # container
-+   disable2 xwma_demuxer
++    # Required disabled as a consequence.  Fails to load when ffmpeg --help
++    disable2 aax_demuxer # Uses mpeg4
++    disable2 aea_demuxer # Uses ATRAC1
++    disable2 avi_muxer # Uses mpegtsenc.o
++    disable2 binkaudio_dct_decoder  # references wma_freqs.o
++    disable2 binkaudio_rdft_decoder # references wma_freqs.o
++    disable2 daud_demuxer
++    disable2 daud_muxer # References s320m
++    disable2 dst_decoder # Submitter referred indirectly to mpeg4 subpart 10
++    disable2 intrax8 # Uses msmpeg4data.o
++    disable2 f4v_muser # Requires mov_muxer
++    disable2 flv_demuxer
++    disable2 flv_muxer
++    disable2 flv_decoder # Uses/depends H263 in source, but missing in Makefile
++    disable2 flv_encoder # Uses/depends H263 in source, but missing in Makefile
++    disable2 hds_muxer # Uses aac, h264
++    disable2 ifv_demuxer # Uses h264
++    disable2 ipod_muxer # Requires mov_muxer
++    disable2 ismv_muxer # Requires mov_muxer
++    disable2 iv8_demuxer # Uses mpeg4
++    disable2 ivr_demuxer # Vague documentation but uses acc, atrac, ra_288
++    disable2 luodat_demuxer # Use h264
++    disable2 live_flv_demuxer
++    disable2 lmlm4_demuxer # Uses mpeg4
++    disable2 lvf_demuxer # May use h264.  See also trac ticket 18
++    disable2 metasound_decoder # Uses twinvq.o
++    disable2 mov_demuxer
++    disable2 mov_muxer
++    disable2 mp3on4_decoder
++    disable2 mp3on4float_decoder
++    disable2 mp4_muxer # Requires mov_muxer
++    disable2 nsv_demuxer
++    disable2 prompeg_protocol # Implies mpegts
++    disable2 psp_muxer # Requires mov_muxer
++    disable2 realtext_decoder
++    disable2 realtext_demuxer
++    disable2 rtp_demuxer # Needs rtsp.o
++    disable2 rtpdec # Needed by rmdec.c and rtsp.c
++    disable2 rtsp_demuxer # Needs rtsp.o
++    disable2 rtsp_muxer # Needs rtsp.o
++    disable2 s302m_decoder # Implies mpegts
++    disable2 s302m_encoder # Implies mpegts
++    disable2 sdp_demuxer # Requires rtsp.o
++    disable2 sdr2_demuxer # References h264
++    disable2 smoothstreaming_muxer # References h264, aac, vc1
++    disable2 tg2_muxer # Requires mov_muxer
++    disable2 tgp_muxer # Requires mov_muxer
++    disable2 vivo_demuxer # Uses h263 and Siren
++    disable2 webm_dash_manifest_muxer
++    disable2 wmv3image_decoder
++    disable2 xmd_demuxer
++    disable2 xmv_demuxer # container
++    disable2 xwma_demuxer
 +else
-+   echo "Allowing likely patented non-free codecs or likely patented non-free network protocols"
++    echo "Allowing likely patented non-free codecs or likely patented non-free network protocols"
 +fi
 +
 +if [ -z "${codec_transparency}" ] ; then
-+   if [ "${enforceability}" = "enforced" ] ; then
-+       codec_transparency="open"
-+   else
-+       codec_transparency="closed"
-+   fi
++    if [ "${enforceability}" = "enforced" ] ; then
++        codec_transparency="open"
++    else
++        codec_transparency="closed"
++    fi
 +fi
 +
 +#
@@ -542,585 +631,601 @@ Resulting benefits:
 +# proprietary or closed.
 +#
 +if [ "${codec_transparency}" = "open" ] ; then
-+   echo "Disabling likely patentless closed codecs or likely patentless reversed-engineered codecs"
-+   # Some CONFIG_ flags marked adpcm_* are disabled due to quality control issues related to lack of preprocessor conditonals in adpcm.c and adpcmenc.c
-+   disable2 a64multi_encoder
-+   disable2 a64multi5_encoder
-+   disable2 a64_muxer
-+   disable2 aa_demuxer
-+   disable2 aasc_decoder
-+   disable2 ace_demuxer
-+   disable2 acm_demuxer
-+   disable2 act_demuxer
-+   disable2 adp_demuxer
-+   disable2 adf_demuxer # Likely RE
-+   disable2 adpcm_4xm_decoder
-+   disable2 adpcm_adx_decoder
-+   disable2 adpcm_adx_encoder
-+   disable2 adpcm_afc_decoder
-+   disable2 adpcm_agm_decoder
-+   disable2 adpcm_aica_decoder
-+   disable2 adpcm_argo_decoder
-+   disable2 adpcm_argo_encoder
-+   disable2 adpcm_ct_decoder
-+   disable2 adpcm_dtk_decoder
-+   disable2 adpcm_ea_decoder
-+   disable2 adpcm_ea_maxis_xa_decoder
-+   disable2 adpcm_ea_r1_decoder
-+   disable2 adpcm_ea_r2_decoder
-+   disable2 adpcm_ea_r3_decoder
-+   disable2 adpcm_ea_xas_decoder
-+   #disable2 adpcm_g722_decoder
-+   #disable2 adpcm_g722_encoder
-+   #disable2 adpcm_g726_decoder
-+   #disable2 adpcm_g726_encoder
-+   #disable2 adpcm_g726le_decoder
-+   #disable2 adpcm_g726le_encoder
-+   disable2 adpcm_ima_amv_decoder
-+   disable2 adpcm_ima_amv_encoder
-+   disable2 adpcm_ima_alp_decoder
-+   disable2 adpcm_ima_alp_encoder
-+   disable2 adpcm_ima_apc_decoder
-+   disable2 adpcm_ima_apm_decoder
-+   disable2 adpcm_ima_apm_encoder
-+   disable2 adpcm_ima_cunning_decoder
-+   disable2 adpcm_ima_dat4_decoder
-+   disable2 adpcm_ima_dk3_decoder
-+   disable2 adpcm_ima_dk4_decoder
-+   disable2 adpcm_ima_ea_eacs_decoder
-+   disable2 adpcm_ima_ea_sead_decoder
-+   disable2 adpcm_ima_iss_decoder
-+   disable2 adpcm_ima_moflex_decoder
-+   disable2 adpcm_ima_mtf_decoder
-+   disable2 adpcm_ima_oki_decoder
-+   disable2 adpcm_ima_qt_at_decoder
-+   disable2 adpcm_ima_qt_decoder
-+   disable2 adpcm_ima_qt_encoder
-+   disable2 adpcm_ima_rad_decoder
-+   disable2 adpcm_ima_ssi_decoder
-+   disable2 adpcm_ima_ssi_encoder
-+   disable2 adpcm_ima_smjpeg_decoder
-+   disable2 adpcm_ima_wav_decoder
-+   disable2 adpcm_ima_wav_encoder
-+   disable2 adpcm_ima_ws_decoder
-+   disable2 adpcm_ms_decoder
-+   disable2 adpcm_ms_encoder
-+   disable2 adpcm_mtaf_decoder
-+   disable2 adpcm_psx_decoder
-+   disable2 adpcm_sbpro_2_decoder
-+   disable2 adpcm_sbpro_3_decoder
-+   disable2 adpcm_sbpro_4_decoder
-+   disable2 adpcm_swf_decoder
-+   disable2 adpcm_swf_encoder
-+   disable2 adpcm_thp_decoder
-+   disable2 adpcm_thp_le_decoder
-+   disable2 adpcm_vima_decoder
-+   disable2 adpcm_xa_decoder
-+   disable2 adpcm_xmd_decoder
-+   disable2 adpcm_yamaha_decoder
-+   disable2 adpcm_yamaha_encoder
-+   disable2 adpcm_zork_decoder
-+   disable2 ads_demuxer
-+   disable2 adx_demuxer
-+   disable2 adx_parser
-+   disable2 adx_muxer
-+   disable2 afc_demuxer
-+   disable2 agm_decoder
-+   disable2 aic_decoder
-+   disable2 alias_pix_decoder
-+   disable2 alias_pix_encoder
-+   disable2 aix_demuxer
-+   disable2 alp_demuxer
-+   disable2 alp_muxer
-+   disable2 amv_encoder
-+   disable2 amv_muxer # Of Chinese origin but not ubiquitous
-+   disable2 anm_decoder
-+   disable2 anm_demuxer
-+   disable2 apac_demuxer # RE
-+   disable2 apc_demuxer
-+   disable2 apm_demuxer
-+   disable2 apm_muxer
-+   disable2 arbc_decoder # RE
-+   disable2 argo_decoder
-+   disable2 argo_asf_demuxer
-+   disable2 argo_asf_muxer
-+   disable2 argo_brp_demuxer
-+   disable2 argo_cvg_demuxer
-+   disable2 argo_cvg_muxer
-+   disable2 ast_demuxer
-+   disable2 ast_muxer
-+   disable2 asv1_decoder
-+   disable2 asv1_encoder
-+   disable2 asv2_decoder
-+   disable2 asv2_encoder
-+   disable2 au_demuxer
-+   disable2 au_muxer
-+   disable2 aura_decoder
-+   disable2 aura2_decoder
-+   disable2 avi_demuxer
-+   disable2 avi_muxer
-+   disable2 avm2_muxer
-+   disable2 avr_demuxer
-+   disable2 avrn_decoder
-+   disable2 avrp_decoder
-+   disable2 avrp_encoder
-+   disable2 avui_decoder
-+   disable2 avui_encoder
-+   disable2 bethsoftvid_decoder
-+   disable2 bethsoftvid_demuxer
-+   disable2 bfi_decoder
-+   disable2 bfi_demuxer
-+   disable2 bfstm_demuxer
-+   disable2 brstm_demuxer
-+   disable2 bink_decoder
-+   disable2 binka_demuxer
-+   disable2 binkaudio_dct_decoder
-+   disable2 binkaudio_rdft_decoder
-+   disable2 bink_demuxer
-+   disable2 bit_demuxer # Expired patent(s) and royalty free remaining patents for G.729 codec
-+   disable2 bit_muxer
-+   disable2 bmp_encoder # A government LOC page says it is proprietary, but "no concerns" for "licensing and patents"
-+   disable2 bmp_decoder
-+   disable2 bmp_parser
-+   disable2 bmv_audio_decoder
-+   disable2 bmv_demuxer
-+   disable2 bmv_video_decoder
-+   disable2 bluray_protocol
-+   disable2 boa_demuxer
-+   disable2 c93_decoder
-+   disable2 c93_demuxer
-+   disable2 caf_demuxer
-+   disable2 caf_muxer
-+   disable2 cbd2_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
-+   disable2 cdg_demuxer
-+   disable2 cdgraphics_decoder
-+   disable2 cdtoons_decoder
-+   disable2 cdxl_decoder # Expired patent
-+   disable2 cdxl_demuxer
-+   disable2 cine_demuxer
-+   disable2 cljr_decoder
-+   disable2 cljr_encoder
-+   disable2 cllc_decoder
-+   disable2 cook_decoder # References RA
-+   disable2 cook_parser
-+   disable2 cri_decoder
-+   disable2 cri_parser
-+   disable2 cyuv_decoder
-+   disable2 dca_core_bsf
-+   disable2 dca_decoder
-+   disable2 dca_encoder
-+   disable2 dca_parser
-+   disable2 dcstr_demuxer
-+   disable2 dds_decoder # Used patented S3TC, now expired patent
-+   disable2 derf_demuxer
-+   disable2 derf_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
-+   disable2 dfa_decoder
-+   disable2 dfa_demuxer
-+   disable2 dhav_demuxer
-+   disable2 dolby_e_decoder
-+   disable2 dolby_e_parser
-+   disable2 dpx_decoder # Derived from proprietary standard ; Wikipedia says non-free (Mar 4, 2023)
-+   disable2 dpx_encoder
-+   disable2 dpx_parser
-+   disable2 dsd_lsbf_decoder
-+   disable2 dsd_lsbf_planar_decoder
-+   disable2 dsd_msbf_decoder
-+   disable2 dsd_msbf_planar_decoder
-+   disable2 dsicin_demuxer
-+   disable2 dsicinaudio_decoder
-+   disable2 dsicinvideo_decoder
-+   disable2 dsf_demuxer
-+   disable2 dss_demuxer
-+   disable2 dss_sp_decoder
-+   disable2 dv_demuxer
-+   disable2 dv_error_marker_bsf
-+   disable2 dv_muxer
-+   disable2 dvaudio
-+   disable2 dvaudio_decoder
-+   disable2 dvaudio_parser
-+   disable2 dvd_nav_parser
-+   disable2 dvdsub_decoder
-+   disable2 dvdsub_encoder
-+   disable2 dvdsub_parser
-+   disable2 dvvideo_decoder
-+   disable2 dvvideo_encoder
-+   disable2 dvprofile
-+   disable2 dxtory_decoder
-+   disable2 dxa_decoder
-+   disable2 dxa_demuxer
-+   disable2 dxv_decoder # Likely closed
-+   disable2 ea_cdata_demuxer
-+   disable2 ea_demuxer
-+   disable2 eacmv_decoder
-+   disable2 eamad_decoder
-+   disable2 eatgq_decoder
-+   disable2 eatgv_decoder
-+   disable2 eatqi_decoder
-+   disable2 eightbps_decoder
-+   disable2 eightsvx_exp_decoder
-+   disable2 eightsvx_fib_decoder
-+   disable2 epaf_demuxer
-+   disable2 escape124_decoder
-+   disable2 escape130_decoder
-+   disable2 exif # Uses tiff_common.o
-+   disable2 fic_decoder
-+   disable2 flic_decoder
-+   disable2 flic_demuxer
-+   disable2 filmstrip_demuxer
-+   disable2 filmstrip_muxer
-+   disable2 fmvc_decoder # Likely RE
-+   disable2 fraps_decoder
-+   disable2 frwu_decoder # Likely closed
-+   disable2 fourxm_decoder
-+   disable2 fourxm_demuxer
-+   disable2 ftr_parser
-+   disable2 fwse_demuxer
-+   disable2 gdv_decoder
-+   disable2 gdv_demuxer
-+   disable2 gem_decoder
-+   disable2 gremlin_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
-+   disable2 gsm_ms_decoder
-+   disable2 gsm_ms_at_decoder
-+   disable2 gxf_demuxer
-+   disable2 gxf_muxer
-+   disable2 hca_decoder
-+   disable2 hca_demuxer
-+   disable2 hcom_decoder
-+   disable2 hcom_demuxer
-+   disable2 hnm_demuxer
-+   disable2 hnm4_video_decoder
-+   disable2 hq_hqa_decoder
-+   disable2 hqx_decoder
-+   disable2 ico_demuxer
-+   disable2 ico_muxer
-+   disable2 idf_decoder # Closed
-+   disable2 idf_demuxer
-+   disable2 iff_demuxer
-+   disable2 iff_ilbm_decoder
-+   disable2 image_bmp_pipe_demuxer
-+   disable2 image_cri_pipe_demuxer
-+   disable2 image_dds_pipe_demuxer
-+   disable2 image_dpx_pipe_demuxer
-+   disable2 image_gem_pipe_demuxer
-+   disable2 image_pcx_pipe_demuxer
-+   disable2 image_photocd_pipe_demuxer
-+   disable2 image_pictor_pipe_demuxer
-+   disable2 image_qdraw_pipe_demuxer
-+   disable2 image_sgi_pipe_demuxer
-+   disable2 image_sunrast_pipe_demuxer
-+   disable2 image_tiff_pipe_demuxer
-+   disable2 image2_alias_pix_demuxer
-+   disable2 imc_decoder # A newer video codec associated with this audio codec may be patented
-+   disable2 imm4_decoder # Likely RE
-+   disable2 imm5_decoder # Likely RE
-+   disable2 imx_dump_header_bsf # References proprietary software in first commit
-+   disable2 interplay_acm_decoder
-+   disable2 interplay_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
-+   disable2 interplay_video_decoder
-+   disable2 ipmovie_demuxer
-+   disable2 ipu_decoder # Likely platform specific, initially non-free SDK
-+   disable2 ipu_demuxer
-+   disable2 ipu_parser
-+   disable2 iss_demuxer
-+   disable2 jacosub_decoder # Spec is publicaly accessible but without license/copyright notice
-+   disable2 jacosub_demuxer
-+   disable2 jacosub_muxer
-+   disable2 jv_decoder
-+   disable2 jv_demuxer
-+   disable2 kmvc_decoder
-+   disable2 kux_demuxer
-+   disable2 kvag_demuxer
-+   disable2 kvag_muxer
-+   disable2 lrc_demuxer # The original spec by the original developer is not apparently easy to find or not disclosed
-+   disable2 lrc_muxer
-+   disable2 libgsm_ms_decoder
-+   disable2 libgsm_ms_encoder
-+   disable2 lxf_demuxer
-+   disable2 m101_decoder # Likely closed
-+   disable2 mace3_decoder
-+   disable2 mace6_decoder
-+   disable2 magicyuv_decoder # Newer versions are not open and not free
-+   disable2 magicyuv_encoder #
-+   disable2 mca_demuxer # Associated with THP little endian
-+   disable2 mcc_demuxer
-+   disable2 mdec_decoder
-+   disable2 media100_decoder # Likely closed
-+   disable2 media100_demuxer
-+   disable2 media100_to_mjpegb_bsf
-+   disable2 mgsts_demuxer
-+   disable2 microdvd_decoder
-+   disable2 microdvd_demuxer
-+   disable2 microdvd_muxer
-+   disable2 mimic_decoder # RE
-+   disable2 misc4_decoder
-+   disable2 misc4_parser
-+   disable2 mjpegb_decoder
-+   disable2 mlp_decoder
-+   disable2 mlp_demuxer
-+   disable2 mlp_encoder
-+   disable2 mlp_muxer
-+   disable2 mlp_parser
-+   disable2 mm_demuxer
-+   disable2 mmf_demuxer
-+   disable2 mmf_muxer
-+   disable2 mmsh_protocol
-+   disable2 mmst_protocol
-+   disable2 mmvideo_decoder
-+   disable2 mods_demuxer
-+   disable2 moflex_demuxer
-+   disable2 motionpixels_decoder
-+   #
-+   # The hardware support may be better controlled with separate config flag for
-+   # diskless/wireless only.
-+   #
-+   # It is better to avoid any hardware lock-in.
-+   #
-+   disable2 mpeg1vcd_muxer
-+   disable2 mpeg2dvd_muxer
-+   disable2 mpeg2svcd_muxer
-+   disable2 mpeg2vob_muxer
-+   disable2 mpegps_demuxer # Open but avoided for reasons above
-+   #
-+   disable2 mpl2_demuxer # It is not transparent if MPL author okayed derivative.  If inspired, then no source provided so likely RE.
-+   disable2 msa1_decoder
-+   disable2 msf_demuxer
-+   disable2 msnsiren_decoder
-+   disable2 msnwc_tcp_demuxer
-+   disable2 msp_decoder
-+   disable2 msp_demuxer
-+   disable2 msp2_decoder
-+   disable2 msrle_decoder
-+   disable2 mss1_decoder
-+   disable2 mss2_decoder
-+   disable2 mss34dsp
-+   disable2 msvideo1_decoder
-+   disable2 msvideo1_encoder
-+   disable2 mszh_decoder # Likely RE, MSZH compression is proprietary according to MultimediaWiki
-+   disable2 mtaf_demuxer
-+   disable2 mts2_decoder
-+   disable2 mtv_demuxer # Of Chinese origin but not ubiquitous
-+   disable2 musx_demuxer
-+   disable2 mv_demuxer
-+   disable2 mv30_decoder
-+   disable2 mvc1_decoder
-+   disable2 mvc2_decoder
-+   disable2 mvdv_decoder
-+   disable2 mvha_decoder
-+   disable2 mvi_demuxer
-+   disable2 mxg_demuxer # Open but site says all rights reserved
-+   disable2 mxpeg_decoder # Open but site says all rights reserved
-+   disable2 nc_demuxer
-+   disable2 notchlc_decoder # Not freely open
-+   disable2 nsp_demuxer
-+   disable2 oma_demuxer
-+   disable2 oma_muxer
-+   disable2 paf_audio_decoder
-+   disable2 paf_demuxer
-+   disable2 paf_video_decoder
-+   disable2 pcm_bluray_decoder
-+   disable2 pcm_bluray_encoder
-+   disable2 pcm_dvd_decoder
-+   disable2 pcm_dvd_encoder
-+   disable2 pcm_sga_decoder
-+   disable2 pcm_vidc_demuxer # Not ubiquitous, arch specific
-+   disable2 pcm_vidc_muxer
-+   disable2 pcx_decoder
-+   disable2 pcx_encoder
-+   disable2 photocd_decoder
-+   disable2 pictor_decoder
-+   disable2 pjs_decoder
-+   disable2 pjs_demuxer # The original spec cannot be found.  Likely closed/RE.
-+   disable2 pp_bnk_demuxer
-+   disable2 ptx_decoder
-+   disable2 pixlet_decoder
-+   disable2 pmp_demuxer
-+   disable2 prosumer_decoder # Likely closed/RE
-+   disable2 pva_demuxer # White paper is all rights reserved
-+   disable2 qcelp_decoder
-+   disable2 qcp_demuxer
-+   disable2 qdraw_decoder
-+   disable2 qdm2_decoder
-+   disable2 qdmc_decoder
-+   disable2 qpeg_decoder # Likely closed/RE
-+   disable2 qtrle_decoder
-+   disable2 qtrle_encoder
-+   disable2 r210_decoder
-+   disable2 r210_encoder
-+   disable2 r3d_demuxer # Restricted
-+   disable2 ra_144_decoder
-+   disable2 ra_144_encoder
-+   disable2 ra_288_decoder
-+   disable2 ralf_decoder
-+   disable2 redspark_demuxer # References THP
-+   disable2 rka_decoder
-+   disable2 rka_demuxer
-+   disable2 rl2_decoder
-+   disable2 rl2_demuxer
-+   disable2 rm_demuxer
-+   disable2 rm_muxer
-+   disable2 roq_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
-+   disable2 rpl_demuxer
-+   disable2 rpza_decoder
-+   disable2 rpza_encoder
-+   disable2 rsd_demuxer
-+   disable2 rso_demuxer
-+   disable2 rso_muxer
-+   disable2 sami_decoder
-+   disable2 sami_demuxer
-+   disable2 sanm_decoder
-+   disable2 s337m_demuxer # Associated with proprietary technology in first commit of file
-+   disable2 scc_demuxer
-+   disable2 scc_muxer
-+   disable2 scpr_decoder # Likely RE
-+   disable2 sdns_demuxer
-+   disable2 sdx2_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
-+   disable2 segafilm_demuxer
-+   disable2 segafilm_muxer
-+   disable2 sga_decoder
-+   disable2 sga_demuxer
-+   disable2 sgi_decoder
-+   disable2 sgi_encoder
-+   disable2 sgirle_decoder
-+   disable2 sheervideo_decoder # Restricted
-+   disable2 siff_demuxer
-+   disable2 simbiosis_imx_decoder
-+   disable2 simbiosis_imx_demuxer
-+   disable2 sipr_decoder
-+   disable2 sipr_parser
-+   disable2 smackaud_decoder
-+   disable2 smacker_decoder
-+   disable2 smacker_demuxer
-+   disable2 smc_decoder
-+   disable2 smc_encoder
-+   disable2 smush_demuxer
-+   disable2 smvjpeg_decoder
-+   disable2 sol_demuxer
-+   disable2 sol_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
-+   disable2 spdif_decoder # Uses dca_sample_rate_tab.o
-+   disable2 spdif_demuxer
-+   disable2 spdif_muxer
-+   disable2 sp5x_decoder
-+   disable2 sup_demuxer
-+   disable2 sup_muxer
-+   disable2 stl_demuxer
-+   disable2 str_demuxer
-+   disable2 sunrast_decoder
-+   disable2 sunrast_encoder
-+   disable2 svag_demuxer
-+   disable2 svs_demuxer # References PSX
-+   disable2 swf_demuxer
-+   disable2 swf_muxer
-+   disable2 tak_decoder # Associated program is closed
-+   disable2 tak_demuxer
-+   disable2 tak_parser
-+   disable2 targa_decoder
-+   disable2 targa_encoder # A government LOC page noted proprietary and patent claims
-+   disable2 targa_y216_decoder
-+   disable2 thp_decoder
-+   disable2 thp_demuxer
-+   disable2 threedostr_demuxer
-+   disable2 tiertexseq_demuxer
-+   disable2 tiertexseqvideo_decoder
-+   disable2 tiff_decoder # Spec is copyrighted
-+   disable2 tiff_encoder
-+   disable2 tmv_decoder # RE
-+   disable2 tmv_demuxer
-+   disable2 truehd_core_bsf
-+   disable2 truehd_decoder
-+   disable2 truehd_demuxer
-+   disable2 truehd_encoder
-+   disable2 truehd_muxer
-+   disable2 truespeech_decoder
-+   disable2 txd_decoder
-+   disable2 txd_demuxer
-+   disable2 ty_demuxer
-+   disable2 ulti_decoder
-+   disable2 vcr1_decoder
-+   disable2 vag_demuxer
-+   disable2 wady_demuxer
-+   disable2 wady_dpcm_decoder
-+   disable2 vb_decoder
-+   disable2 vbn_decoder # Likely closed
-+   disable2 vbn_encoder
-+   disable2 v210_decoder
-+   disable2 v210_encoder
-+   disable2 v210_demuxer
-+   disable2 v210x_decoder
-+   disable2 v210x_demuxer
-+   disable2 v308_decoder
-+   disable2 v308_encoder
-+   disable2 v408_decoder
-+   disable2 v408_encoder
-+   disable2 v410_decoder
-+   disable2 v410_encoder
-+   disable2 voc_demuxer
-+   disable2 voc_muxer
-+   disable2 vmd_demuxer
-+   disable2 vmdaudio_decoder
-+   disable2 vmdvideo_decoder
-+   disable2 vmnc_decoder
-+   disable2 vpk_demuxer
-+   disable2 vqa_decoder
-+   disable2 wc3_demuxer
-+   disable2 w64_demuxer
-+   disable2 w64_muxer
-+   disable2 wady_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
-+   disable2 wnv1_decoder
-+   disable2 ws_snd1_decoder
-+   disable2 wsaud_demuxer
-+   disable2 wsaud_muxer
-+   disable2 wsvqa_demuxer
-+   disable2 westwood_vqa
-+   disable2 wtv_demuxer
-+   disable2 wtv_muxer
-+   disable2 wve_demuxer
-+   disable2 xa_demuxer
-+   disable2 xan_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
-+   disable2 xan_wc3_decoder
-+   disable2 xan_wc4_decoder
-+   disable2 xvag_demuxer
-+   disable2 yop_decoder
-+   disable2 yop_demuxer
-+   disable2 yuv4_decoder
-+   disable2 yuv4_encoder
++    echo "Disabling likely patentless closed codecs or likely patentless reversed-engineered codecs"
++    # Some CONFIG_ flags marked adpcm_* are disabled due to quality control issues related to lack of preprocessor conditonals in adpcm.c and adpcmenc.c
++    disable2 a64multi_encoder
++    disable2 a64multi5_encoder
++    disable2 a64_muxer
++    disable2 aa_demuxer
++    disable2 aasc_decoder
++    disable2 ace_demuxer
++    disable2 acm_demuxer
++    disable2 act_demuxer
++    disable2 adp_demuxer
++    disable2 adf_demuxer # Likely RE
++    disable2 adpcm_4xm_decoder
++    disable2 adpcm_adx_decoder
++    disable2 adpcm_adx_encoder
++    disable2 adpcm_afc_decoder
++    disable2 adpcm_agm_decoder
++    disable2 adpcm_aica_decoder
++    disable2 adpcm_argo_decoder
++    disable2 adpcm_argo_encoder
++    disable2 adpcm_ct_decoder
++    disable2 adpcm_dtk_decoder
++    disable2 adpcm_ea_decoder
++    disable2 adpcm_ea_maxis_xa_decoder
++    disable2 adpcm_ea_r1_decoder
++    disable2 adpcm_ea_r2_decoder
++    disable2 adpcm_ea_r3_decoder
++    disable2 adpcm_ea_xas_decoder
++    #disable2 adpcm_g722_decoder
++    #disable2 adpcm_g722_encoder
++    #disable2 adpcm_g726_decoder
++    #disable2 adpcm_g726_encoder
++    #disable2 adpcm_g726le_decoder
++    #disable2 adpcm_g726le_encoder
++    disable2 adpcm_ima_amv_decoder
++    disable2 adpcm_ima_amv_encoder
++    disable2 adpcm_ima_alp_decoder
++    disable2 adpcm_ima_alp_encoder
++    disable2 adpcm_ima_apc_decoder
++    disable2 adpcm_ima_apm_decoder
++    disable2 adpcm_ima_apm_encoder
++    disable2 adpcm_ima_cunning_decoder
++    disable2 adpcm_ima_dat4_decoder
++    disable2 adpcm_ima_dk3_decoder
++    disable2 adpcm_ima_dk4_decoder
++    disable2 adpcm_ima_ea_eacs_decoder
++    disable2 adpcm_ima_ea_sead_decoder
++    disable2 adpcm_ima_iss_decoder
++    disable2 adpcm_ima_moflex_decoder
++    disable2 adpcm_ima_mtf_decoder
++    disable2 adpcm_ima_oki_decoder
++    disable2 adpcm_ima_qt_at_decoder
++    disable2 adpcm_ima_qt_decoder
++    disable2 adpcm_ima_qt_encoder
++    disable2 adpcm_ima_rad_decoder
++    disable2 adpcm_ima_ssi_decoder
++    disable2 adpcm_ima_ssi_encoder
++    disable2 adpcm_ima_smjpeg_decoder
++    disable2 adpcm_ima_wav_decoder
++    disable2 adpcm_ima_wav_encoder
++    disable2 adpcm_ima_ws_decoder
++    disable2 adpcm_ms_decoder
++    disable2 adpcm_ms_encoder
++    disable2 adpcm_mtaf_decoder
++    disable2 adpcm_psx_decoder
++    disable2 adpcm_sbpro_2_decoder
++    disable2 adpcm_sbpro_3_decoder
++    disable2 adpcm_sbpro_4_decoder
++    disable2 adpcm_swf_decoder
++    disable2 adpcm_swf_encoder
++    disable2 adpcm_thp_decoder
++    disable2 adpcm_thp_le_decoder
++    disable2 adpcm_vima_decoder
++    disable2 adpcm_xa_decoder
++    disable2 adpcm_xmd_decoder
++    disable2 adpcm_yamaha_decoder
++    disable2 adpcm_yamaha_encoder
++    disable2 adpcm_zork_decoder
++    disable2 ads_demuxer
++    disable2 adx_demuxer
++    disable2 adx_parser
++    disable2 adx_muxer
++    disable2 afc_demuxer
++    disable2 agm_decoder
++    disable2 aic_decoder
++    disable2 alias_pix_decoder
++    disable2 alias_pix_encoder
++    disable2 aix_demuxer
++    disable2 alp_demuxer
++    disable2 alp_muxer
++    disable2 amv_encoder
++    disable2 amv_muxer # Of Chinese origin but not ubiquitous
++    disable2 anm_decoder
++    disable2 anm_demuxer
++    disable2 apac_demuxer # RE
++    disable2 apc_demuxer
++    disable2 apm_demuxer
++    disable2 apm_muxer
++    disable2 arbc_decoder # RE
++    disable2 argo_decoder
++    disable2 argo_asf_demuxer
++    disable2 argo_asf_muxer
++    disable2 argo_brp_demuxer
++    disable2 argo_cvg_demuxer
++    disable2 argo_cvg_muxer
++    disable2 ast_demuxer
++    disable2 ast_muxer
++    disable2 asv1_decoder
++    disable2 asv1_encoder
++    disable2 asv2_decoder
++    disable2 asv2_encoder
++    disable2 au_demuxer
++    disable2 au_muxer
++    disable2 aura_decoder
++    disable2 aura2_decoder
++    disable2 avi_demuxer
++    disable2 avi_muxer
++    disable2 avm2_muxer
++    disable2 avr_demuxer
++    disable2 avrn_decoder
++    disable2 avrp_decoder
++    disable2 avrp_encoder
++    disable2 avui_decoder
++    disable2 avui_encoder
++    disable2 bethsoftvid_decoder
++    disable2 bethsoftvid_demuxer
++    disable2 bfi_decoder
++    disable2 bfi_demuxer
++    disable2 bfstm_demuxer
++    disable2 brstm_demuxer
++    disable2 bink_decoder
++    disable2 binka_demuxer
++    disable2 binkaudio_dct_decoder
++    disable2 binkaudio_rdft_decoder
++    disable2 bink_demuxer
++    disable2 bit_demuxer # Expired patent(s) and royalty free remaining patents for G.729 codec
++    disable2 bit_muxer
++    disable2 bmp_encoder # A government LOC page says it is proprietary, but "no concerns" for "licensing and patents"
++    disable2 bmp_decoder
++    disable2 bmp_parser
++    disable2 bmv_audio_decoder
++    disable2 bmv_demuxer
++    disable2 bmv_video_decoder
++    disable2 bluray_protocol
++    disable2 boa_demuxer
++    disable2 c93_decoder
++    disable2 c93_demuxer
++    disable2 caf_demuxer
++    disable2 caf_muxer
++    disable2 cbd2_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
++    disable2 cdg_demuxer
++    disable2 cdgraphics_decoder
++    disable2 cdtoons_decoder
++    disable2 cdxl_decoder # Expired patent
++    disable2 cdxl_demuxer
++    disable2 cine_demuxer
++    disable2 cljr_decoder
++    disable2 cljr_encoder
++    disable2 cllc_decoder
++    disable2 cook_decoder # References RA
++    disable2 cook_parser
++    disable2 cri_decoder
++    disable2 cri_parser
++    disable2 cyuv_decoder
++    disable2 dca_core_bsf
++    disable2 dca_decoder
++    disable2 dca_encoder
++    disable2 dca_parser
++    disable2 dcstr_demuxer
++    disable2 dds_decoder # Used patented S3TC, now expired patent
++    disable2 derf_demuxer
++    disable2 derf_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
++    disable2 dfa_decoder
++    disable2 dfa_demuxer
++    disable2 dhav_demuxer
++    disable2 dolby_e_decoder
++    disable2 dolby_e_parser
++    disable2 dpx_decoder # Derived from proprietary standard ; Wikipedia says non-free (Mar 4, 2023)
++    disable2 dpx_encoder
++    disable2 dpx_parser
++    disable2 dsd_lsbf_decoder
++    disable2 dsd_lsbf_planar_decoder
++    disable2 dsd_msbf_decoder
++    disable2 dsd_msbf_planar_decoder
++    disable2 dsicin_demuxer
++    disable2 dsicinaudio_decoder
++    disable2 dsicinvideo_decoder
++    disable2 dsf_demuxer
++    disable2 dss_demuxer
++    disable2 dss_sp_decoder
++    disable2 dv_demuxer
++    disable2 dv_error_marker_bsf
++    disable2 dv_muxer
++    disable2 dvaudio
++    disable2 dvaudio_decoder
++    disable2 dvaudio_parser
++    disable2 dvd_nav_parser
++    disable2 dvdsub_decoder
++    disable2 dvdsub_encoder
++    disable2 dvdsub_parser
++    disable2 dvvideo_decoder
++    disable2 dvvideo_encoder
++    disable2 dvprofile
++    disable2 dxtory_decoder
++    disable2 dxa_decoder
++    disable2 dxa_demuxer
++    disable2 dxv_decoder # Likely closed
++    disable2 ea_cdata_demuxer
++    disable2 ea_demuxer
++    disable2 eacmv_decoder
++    disable2 eamad_decoder
++    disable2 eatgq_decoder
++    disable2 eatgv_decoder
++    disable2 eatqi_decoder
++    disable2 eightbps_decoder
++    disable2 eightsvx_exp_decoder
++    disable2 eightsvx_fib_decoder
++    disable2 epaf_demuxer
++    disable2 escape124_decoder
++    disable2 escape130_decoder
++    disable2 exif # Uses tiff_common.o
++    disable2 fic_decoder
++    disable2 flic_decoder
++    disable2 flic_demuxer
++    disable2 filmstrip_demuxer
++    disable2 filmstrip_muxer
++    disable2 fmvc_decoder # Likely RE
++    disable2 fraps_decoder
++    disable2 frwu_decoder # Likely closed
++    disable2 fourxm_decoder
++    disable2 fourxm_demuxer
++    disable2 ftr_parser
++    disable2 fwse_demuxer
++    disable2 gdv_decoder
++    disable2 gdv_demuxer
++    disable2 gem_decoder
++    disable2 gremlin_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
++    disable2 gsm_ms_decoder
++    disable2 gsm_ms_at_decoder
++    disable2 gxf_demuxer
++    disable2 gxf_muxer
++    disable2 hca_decoder
++    disable2 hca_demuxer
++    disable2 hcom_decoder
++    disable2 hcom_demuxer
++    disable2 hnm_demuxer
++    disable2 hnm4_video_decoder
++    disable2 hq_hqa_decoder
++    disable2 hqx_decoder
++    disable2 ico_demuxer
++    disable2 ico_muxer
++    disable2 idf_decoder # Closed
++    disable2 idf_demuxer
++    disable2 iff_demuxer
++    disable2 iff_ilbm_decoder
++    disable2 image_bmp_pipe_demuxer
++    disable2 image_cri_pipe_demuxer
++    disable2 image_dds_pipe_demuxer
++    disable2 image_dpx_pipe_demuxer
++    disable2 image_gem_pipe_demuxer
++    disable2 image_pcx_pipe_demuxer
++    disable2 image_photocd_pipe_demuxer
++    disable2 image_pictor_pipe_demuxer
++    disable2 image_qdraw_pipe_demuxer
++    disable2 image_sgi_pipe_demuxer
++    disable2 image_sunrast_pipe_demuxer
++    disable2 image_tiff_pipe_demuxer
++    disable2 image2_alias_pix_demuxer
++    disable2 imc_decoder # A newer video codec associated with this audio codec may be patented
++    disable2 imm4_decoder # Likely RE
++    disable2 imm5_decoder # Likely RE
++    disable2 imx_dump_header_bsf # References proprietary software in first commit
++    disable2 interplay_acm_decoder
++    disable2 interplay_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
++    disable2 interplay_video_decoder
++    disable2 ipmovie_demuxer
++    disable2 ipu_decoder # Likely platform specific, initially non-free SDK
++    disable2 ipu_demuxer
++    disable2 ipu_parser
++    disable2 iss_demuxer
++    disable2 jacosub_decoder # Spec is publicaly accessible but without license/copyright notice
++    disable2 jacosub_demuxer
++    disable2 jacosub_muxer
++    disable2 jv_decoder
++    disable2 jv_demuxer
++    disable2 kmvc_decoder
++    disable2 kux_demuxer
++    disable2 kvag_demuxer
++    disable2 kvag_muxer
++    disable2 lrc_demuxer # The original spec by the original developer is not apparently easy to find or not disclosed
++    disable2 lrc_muxer
++    disable2 libgsm_ms_decoder
++    disable2 libgsm_ms_encoder
++    disable2 lxf_demuxer
++    disable2 m101_decoder # Likely closed
++    disable2 mace3_decoder
++    disable2 mace6_decoder
++    disable2 magicyuv_decoder # Newer versions are not open and not free
++    disable2 magicyuv_encoder #
++    disable2 mca_demuxer # Associated with THP little endian
++    disable2 mcc_demuxer
++    disable2 mdec_decoder
++    disable2 media100_decoder # Likely closed
++    disable2 media100_demuxer
++    disable2 media100_to_mjpegb_bsf
++    disable2 mgsts_demuxer
++    disable2 microdvd_decoder
++    disable2 microdvd_demuxer
++    disable2 microdvd_muxer
++    disable2 mimic_decoder # RE
++    disable2 misc4_decoder
++    disable2 misc4_parser
++    disable2 mjpegb_decoder
++    disable2 mlp_decoder
++    disable2 mlp_demuxer
++    disable2 mlp_encoder
++    disable2 mlp_muxer
++    disable2 mlp_parser
++    disable2 mm_demuxer
++    disable2 mmf_demuxer
++    disable2 mmf_muxer
++    disable2 mmsh_protocol
++    disable2 mmst_protocol
++    disable2 mmvideo_decoder
++    disable2 mods_demuxer
++    disable2 moflex_demuxer
++    disable2 motionpixels_decoder
++    #
++    # The hardware support may be better controlled with separate config flag for
++    # diskless/wireless only.
++    #
++    # It is better to avoid any hardware lock-in.
++    #
++    disable2 mpeg1vcd_muxer
++    disable2 mpeg2dvd_muxer
++    disable2 mpeg2svcd_muxer
++    disable2 mpeg2vob_muxer
++    disable2 mpegps_demuxer # Open but avoided for reasons above
++    #
++    disable2 mpl2_demuxer # It is not transparent if MPL author okayed derivative.  If inspired, then no source provided so likely RE.
++    disable2 msa1_decoder
++    disable2 msf_demuxer
++    disable2 msnsiren_decoder
++    disable2 msnwc_tcp_demuxer
++    disable2 msp_decoder
++    disable2 msp_demuxer
++    disable2 msp2_decoder
++    disable2 msrle_decoder
++    disable2 mss1_decoder
++    disable2 mss2_decoder
++    disable2 mss34dsp
++    disable2 msvideo1_decoder
++    disable2 msvideo1_encoder
++    disable2 mszh_decoder # Likely RE, MSZH compression is proprietary according to MultimediaWiki
++    disable2 mtaf_demuxer
++    disable2 mts2_decoder
++    disable2 mtv_demuxer # Of Chinese origin but not ubiquitous
++    disable2 musx_demuxer
++    disable2 mv_demuxer
++    disable2 mv30_decoder
++    disable2 mvc1_decoder
++    disable2 mvc2_decoder
++    disable2 mvdv_decoder
++    disable2 mvha_decoder
++    disable2 mvi_demuxer
++    disable2 mxg_demuxer # Open but site says all rights reserved
++    disable2 mxpeg_decoder # Open but site says all rights reserved
++    disable2 nc_demuxer
++    disable2 notchlc_decoder # Not freely open
++    disable2 nsp_demuxer
++    disable2 oma_demuxer
++    disable2 oma_muxer
++    disable2 paf_audio_decoder
++    disable2 paf_demuxer
++    disable2 paf_video_decoder
++    disable2 pcm_bluray_decoder
++    disable2 pcm_bluray_encoder
++    disable2 pcm_dvd_decoder
++    disable2 pcm_dvd_encoder
++    disable2 pcm_sga_decoder
++    disable2 pcm_vidc_demuxer # Not ubiquitous, arch specific
++    disable2 pcm_vidc_muxer
++    disable2 pcx_decoder
++    disable2 pcx_encoder
++    disable2 photocd_decoder
++    disable2 pictor_decoder
++    disable2 pjs_decoder
++    disable2 pjs_demuxer # The original spec cannot be found.  Likely closed/RE.
++    disable2 pp_bnk_demuxer
++    disable2 ptx_decoder
++    disable2 pixlet_decoder
++    disable2 pmp_demuxer
++    disable2 prosumer_decoder # Likely closed/RE
++    disable2 pva_demuxer # White paper is all rights reserved
++    disable2 qcelp_decoder
++    disable2 qcp_demuxer
++    disable2 qdraw_decoder
++    disable2 qdm2_decoder
++    disable2 qdmc_decoder
++    disable2 qpeg_decoder # Likely closed/RE
++    disable2 qtrle_decoder
++    disable2 qtrle_encoder
++    disable2 r210_decoder
++    disable2 r210_encoder
++    disable2 r3d_demuxer # Restricted
++    disable2 ra_144_decoder
++    disable2 ra_144_encoder
++    disable2 ra_288_decoder
++    disable2 ralf_decoder
++    disable2 redspark_demuxer # References THP
++    disable2 rka_decoder
++    disable2 rka_demuxer
++    disable2 rl2_decoder
++    disable2 rl2_demuxer
++    disable2 rm_demuxer
++    disable2 rm_muxer
++    disable2 roq_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
++    disable2 rpl_demuxer
++    disable2 rpza_decoder
++    disable2 rpza_encoder
++    disable2 rsd_demuxer
++    disable2 rso_demuxer
++    disable2 rso_muxer
++    disable2 sami_decoder
++    disable2 sami_demuxer
++    disable2 sanm_decoder
++    disable2 s337m_demuxer # Associated with proprietary technology in first commit of file
++    disable2 scc_demuxer
++    disable2 scc_muxer
++    disable2 scpr_decoder # Likely RE
++    disable2 sdns_demuxer
++    disable2 sdx2_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
++    disable2 segafilm_demuxer
++    disable2 segafilm_muxer
++    disable2 sga_decoder
++    disable2 sga_demuxer
++    disable2 sgi_decoder
++    disable2 sgi_encoder
++    disable2 sgirle_decoder
++    disable2 sheervideo_decoder # Restricted
++    disable2 siff_demuxer
++    disable2 simbiosis_imx_decoder
++    disable2 simbiosis_imx_demuxer
++    disable2 sipr_decoder
++    disable2 sipr_parser
++    disable2 smackaud_decoder
++    disable2 smacker_decoder
++    disable2 smacker_demuxer
++    disable2 smc_decoder
++    disable2 smc_encoder
++    disable2 smush_demuxer
++    disable2 smvjpeg_decoder
++    disable2 sol_demuxer
++    disable2 sol_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
++    disable2 spdif_decoder # Uses dca_sample_rate_tab.o
++    disable2 spdif_demuxer
++    disable2 spdif_muxer
++    disable2 sp5x_decoder
++    disable2 sup_demuxer
++    disable2 sup_muxer
++    disable2 stl_demuxer
++    disable2 str_demuxer
++    disable2 sunrast_decoder
++    disable2 sunrast_encoder
++    disable2 svag_demuxer
++    disable2 svs_demuxer # References PSX
++    disable2 swf_demuxer
++    disable2 swf_muxer
++    disable2 tak_decoder # Associated program is closed
++    disable2 tak_demuxer
++    disable2 tak_parser
++    disable2 targa_decoder
++    disable2 targa_encoder # A government LOC page noted proprietary and patent claims
++    disable2 targa_y216_decoder
++    disable2 thp_decoder
++    disable2 thp_demuxer
++    disable2 threedostr_demuxer
++    disable2 tiertexseq_demuxer
++    disable2 tiertexseqvideo_decoder
++    disable2 tiff_decoder # Spec is copyrighted
++    disable2 tiff_encoder
++    disable2 tmv_decoder # RE
++    disable2 tmv_demuxer
++    disable2 truehd_core_bsf
++    disable2 truehd_decoder
++    disable2 truehd_demuxer
++    disable2 truehd_encoder
++    disable2 truehd_muxer
++    disable2 truespeech_decoder
++    disable2 txd_decoder
++    disable2 txd_demuxer
++    disable2 ty_demuxer
++    disable2 ulti_decoder
++    disable2 vcr1_decoder
++    disable2 vag_demuxer
++    disable2 wady_demuxer
++    disable2 wady_dpcm_decoder
++    disable2 vb_decoder
++    disable2 vbn_decoder # Likely closed
++    disable2 vbn_encoder
++    disable2 v210_decoder
++    disable2 v210_encoder
++    disable2 v210_demuxer
++    disable2 v210x_decoder
++    disable2 v210x_demuxer
++    disable2 v308_decoder
++    disable2 v308_encoder
++    disable2 v408_decoder
++    disable2 v408_encoder
++    disable2 v410_decoder
++    disable2 v410_encoder
++    disable2 voc_demuxer
++    disable2 voc_muxer
++    disable2 vmd_demuxer
++    disable2 vmdaudio_decoder
++    disable2 vmdvideo_decoder
++    disable2 vmnc_decoder
++    disable2 vpk_demuxer
++    disable2 vqa_decoder
++    disable2 wc3_demuxer
++    disable2 w64_demuxer
++    disable2 w64_muxer
++    disable2 wady_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
++    disable2 wnv1_decoder
++    disable2 ws_snd1_decoder
++    disable2 wsaud_demuxer
++    disable2 wsaud_muxer
++    disable2 wsvqa_demuxer
++    disable2 westwood_vqa
++    disable2 wtv_demuxer
++    disable2 wtv_muxer
++    disable2 wve_demuxer
++    disable2 xa_demuxer
++    disable2 xan_dpcm_decoder # Entire module dpcm.o disabled due to missing preprocessor conditionals
++    disable2 xan_wc3_decoder
++    disable2 xan_wc4_decoder
++    disable2 xvag_demuxer
++    disable2 yop_decoder
++    disable2 yop_demuxer
++    disable2 yuv4_decoder
++    disable2 yuv4_encoder
 +
-+   # Disabled as a consequence
-+   disable2 amv_decoder # Found in sp5xdec.o
++    # Disabled as a consequence
++    disable2 amv_decoder # Found in sp5xdec.o
 +else
-+   echo "Allowing only likely patentless open codecs"
++    echo "Allowing only likely patentless open codecs"
 +fi
 +
 +if [ "${non_free_patented_codecs}" = "codec-developer" ] \
 +   || [ "${non_free_patented_codecs}" = "deny" ] \
 +   || [ "${non_free_patented_codecs}" = "disable" ] \
 +; then
-+   echo "Disabling codec developer restricted codecs"
-+   disable2 aac_adtstoasc_bsf
-+   disable2 aac_at_decoder
-+   disable2 aac_decoder
-+   disable2 aac_demuxer
-+   disable2 aac_fixed_decoder
-+   disable2 aac_latm_decoder
-+   disable2 aac_latm_muxer
-+   disable2 aac_latm_parser
-+   disable2 aac_mf_encoder
-+   disable2 aac_parser
-+   disable2 adts_header
-+   disable2 adts_muxer
-+   disable2 asf_demuxer
-+   disable2 asf_muxer
-+   disable2 asf_o_demuxer
-+   disable2 asf_stream_muxer
-+   disable2 latm_muxer
-+   disable2 libfdk_aac
-+   disable2 libfdk_aac_decoder
-+   disable2 libfdk_aac_encoder
++    echo "Disabling codec developer restricted codecs"
++    disable2 aac_adtstoasc_bsf
++    disable2 aac_at_decoder
++    disable2 aac_decoder
++    disable2 aac_demuxer
++    disable2 aac_fixed_decoder
++    disable2 aac_latm_decoder
++    disable2 aac_latm_muxer
++    disable2 aac_latm_parser
++    disable2 aac_mf_encoder
++    disable2 aac_parser
++    disable2 adts_header
++    disable2 adts_muxer
++    disable2 asf_demuxer
++    disable2 asf_muxer
++    disable2 asf_o_demuxer
++    disable2 asf_stream_muxer
++    disable2 latm_muxer
++    disable2 libfdk_aac
++    disable2 libfdk_aac_decoder
++    disable2 libfdk_aac_encoder
 +
-+   # Disabled as a consequence
-+   disable2 transcode_aac_example
-+   disable2 loas_demuxer # Uses AAC
++    # Disabled as a consequence
++    disable2 transcode_aac_example
++    disable2 loas_demuxer # Uses AAC
 +else
-+   echo "Allowing codec developer restricted codecs with exceptions"
++    echo "Allowing codec developer restricted codecs with exceptions"
++fi
++
++# Allow the user to override or remove extra options
++if [ -n "$FFMPEG_CUSTOM_OPTIONS" ] ; then
++    for opt in $FFMPEG_CUSTOM_OPTIONS ; do
++        opt=$(echo "${opt}" \
++            | tr "[:upper:]" "[:lower:]" \
++            | sed -e "s|config_||")
++        if echo "${opt}" | grep -q -e "^-" ; then
++            echo "Disabling ${opt#*-}"
++            disable2 "${opt#*-}"
++        else
++            echo "Enabling ${opt}"
++            enable2 "${opt}"
++        fi
++    done
 +fi
 +
  if test "$quiet" != "yes"; then

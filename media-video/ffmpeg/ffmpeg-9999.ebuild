@@ -235,7 +235,7 @@ ${CPU_FEATURES_MAP[@]%:*}
 ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
-alsa chromium doc +encode fallback-commit gdbm
+alsa chromium -clear-config-first doc +encode fallback-commit gdbm
 jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo pic pipewire
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +re-codecs sndio static-libs test v4l
@@ -1668,6 +1668,27 @@ _src_configure() {
 	local extra_libs=( )
 
 einfo "Configuring ${lib_type} with PGO_PHASE=${PGO_PHASE}"
+
+	if use clear-config-first ; then
+		if [[ -z "${FFMPEG_CUSTOM_OPTIONS}" ]] ; then
+eerror
+eerror "The clear-config-first requires FFMPEG_CUSTOM_OPTIONS to be set."
+eerror "See metadata.xml for details."
+eerror
+			die
+		fi
+		myconf+=(
+			--disable-decoders
+			--disable-demuxers
+			--disable-encoders
+			--disable-filters
+			--disable-hwaccels
+			--disable-indevs
+			--disable-muxers
+			--disable-parsers
+			--disable-outdevs
+		)
+	fi
 
 	uopts_src_configure
 
