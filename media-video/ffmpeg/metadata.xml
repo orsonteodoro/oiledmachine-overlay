@@ -343,10 +343,11 @@
   perspective, having these old formats around is counter to the aesthetic.
   From the younger audience point of view, these older codecs are never going to
   be used by most.  From a security standpoint, it presents a security risk as
-  the attack surface is increased.  This also may break software that depends on
-  FFmpeg.  Some options are also being buried or denied being toggled for
-  unknown reasons, or you just don't like what the packager maintainer is doing.
-  The next per-package environment variable addresses these issues.
+  the attack surface is increased.  Some options are also being buried or denied
+  being toggled for unknown reasons, or you just don't like what the packager
+  maintainer is doing.  The bad side of uncrapifying is that it may also may
+  break software that depends on FFmpeg.  The next per-package environment
+  variable addresses these issues.
 
   FFMPEG_CUSTOM_OPTIONS - a space separated list of *_encoders, *_decoders,
   *_muxers, *_demuxers, *parsers, *protocols, *_bsfs, *indevs, *outdevs to
