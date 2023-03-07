@@ -1661,6 +1661,7 @@ eerror
 			--disable-indevs
 			--disable-muxers
 			--disable-parsers
+			--disable-protocols
 			--disable-outdevs
 		)
 	fi
@@ -1918,6 +1919,7 @@ eerror
 			--disable-indevs
 			--disable-muxers
 			--disable-parsers
+			--disable-protocols
 			--disable-outdevs
 		)
 	fi
