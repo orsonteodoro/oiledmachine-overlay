@@ -350,7 +350,7 @@
   variable addresses these issues.
 
   FFMPEG_CUSTOM_OPTIONS - a space separated list of *_encoders, *_decoders,
-  *_muxers, *_demuxers, *parsers, *protocols, *_bsfs, *indevs, *outdevs to
+  *_muxers, *_demuxers, *_parsers, *_protocols, *_bsfs, *_indevs, *_outdevs to
   blacklist or whitelist.  Options prefixed with a - are disabled.  These can be
   case insensitive or in raw form with the CONFIG_ prefix.  See the following
   links:
