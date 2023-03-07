@@ -394,6 +394,7 @@
   This can be done with the `ffmpeg -formats` and the
   `ffmpeg -codecs | grep -E -e "(D\.|\.E|DE)[V][I.][L.][S.] .*"` commands.
 
+
   Additional notes
 
    * The pic USE flag may be required for LTO builds.
