@@ -79,7 +79,7 @@ Resulting benefits:
          --enable-*=*|--disable-*=*)
              eval $(echo "${opt%%=*}" | sed 's/--/action=/;s/-/ thing=/')
              is_in "${thing}s" $COMPONENT_LIST || die_unknown "$opt"
-@@ -7288,6 +7322,1163 @@ postproc_deps="$(filter_out 'gpl' $postp
+@@ -7288,6 +7322,1167 @@ postproc_deps="$(filter_out 'gpl' $postp
  
  map 'expand_deps $v' $LIBRARY_LIST
  
@@ -147,6 +147,10 @@ Resulting benefits:
 +enable2() {
 +    local opt=$1
 +    local uopt=${opt%_*}
++    if enabled $opt ; then
++        echo "Skipping $opt (already enabled)"
++        return
++    fi
 +    enable $opt
 +    if echo "$opt" | grep -G -q -e "_bsf$" ; then
 +        BSF_LIST="

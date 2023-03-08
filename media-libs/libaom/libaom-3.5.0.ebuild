@@ -267,6 +267,7 @@ has_codec_requirements() {
 	local meets_input_req=1
 	local meets_output_req=0
 	local id
+	addpredict /dev/video*
 	for id in $(get_asset_ids) ; do
 		local video_asset_path="${!id}"
 		[[ ! -e "${video_asset_path}" ]] && continue

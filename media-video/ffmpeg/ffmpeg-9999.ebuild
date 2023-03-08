@@ -1566,6 +1566,7 @@ has_codec_requirement() {
 	local has_video_samples=0
 	local has_audio_samples=0
 	local has_capture_device=0
+	addpredict /dev/video*
 	for id in $(get_audio_sample_ids) ; do
 		local audio_sample_path="${!id}"
 		[[ -e "${audio_sample_path}" ]] || continue
@@ -1705,6 +1706,13 @@ einfo
 		| uniq)
 	echo -e "${FFMPEG_CUSTOM_OPTIONS}"
 einfo
+
+	if [[ "${FFMPEG_CUSTOM_OPTIONS}" =~ "ffwavesynth_decoder" ]] ; then
+ewarn "Adding ffwavesynth_decoder may break functionality"
+	fi
+	if [[ "${FFMPEG_CUSTOM_OPTIONS}" =~ "vaapi_encode" ]] ; then
+ewarn "Adding vaapi_encode may break functionality"
+	fi
 
 	uopts_src_configure
 
