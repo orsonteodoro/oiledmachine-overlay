@@ -1670,7 +1670,16 @@ eerror
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "protocols" ]] && myconf+=( --disable-protocols )
 	fi
 
-	export FFMPEG_CUSTOM_OPTIONS=$(echo "${FFMPEG_CUSTOM_OPTIONS}" | tr " " "\n" | sort | uniq)
+einfo
+einfo "FFMPEG_CUSTOM_OPTIONS:"
+einfo
+	export FFMPEG_CUSTOM_OPTIONS=$(echo "${FFMPEG_CUSTOM_OPTIONS}" \
+		| tr "\t" "\n" \
+		| tr " " "\n" \
+		| sort \
+		| uniq)
+	echo -e "${FFMPEG_CUSTOM_OPTIONS}"
+einfo
 
 	uopts_src_configure
 

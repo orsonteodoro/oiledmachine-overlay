@@ -153,77 +153,77 @@ Resulting benefits:
 +            $BSF_LIST
 +            $opt
 +        "
-+        BSF_LIST=$(echo -e "${BSF_LIST}" | tr " " "\n" | sort | uniq)
++        BSF_LIST=$(echo -e "${BSF_LIST}" | tr "\t" "\n" | tr " " "\n" | sort | uniq)
 +    fi
 +    if echo "$opt" | grep -G -q -e "_decoder$" ; then
 +        DECODER_LIST="
 +            $DECODER_LIST
 +            $opt
 +        "
-+        DECODER_LIST=$(echo -e "${DECODER_LIST}" | tr " " "\n" | sort | uniq)
++        DECODER_LIST=$(echo -e "${DECODER_LIST}" | tr "\t" "\n" | tr " " "\n" | sort | uniq)
 +    fi
 +    if echo "$opt" | grep -G -q -e "_demuxer$" ; then
 +        DEMUXER_LIST="
 +            $DEMUXER_LIST
 +            $opt
 +        "
-+        DEMUXER_LIST=$(echo -e "${DEMUXER_LIST}" | tr " " "\n" | sort | uniq)
++        DEMUXER_LIST=$(echo -e "${DEMUXER_LIST}" | tr "\t" "\n" | tr " " "\n" | sort | uniq)
 +    fi
 +    if echo "$opt" | grep -G -q -e "_encoder$" ; then
 +        ENCODER_LIST="
 +            $ENCODER_LIST
 +            $opt
 +        "
-+        ENCODER_LIST=$(echo -e "${ENCODER_LIST}" | tr " " "\n" | sort | uniq)
++        ENCODER_LIST=$(echo -e "${ENCODER_LIST}" | tr "\t" "\n" | tr " " "\n" | sort | uniq)
 +    fi
 +    if echo "$opt" | grep -G -q -e "_filter$" ; then
 +        FILTER_LIST="
 +            $FILTER_LIST
 +            $opt
 +        "
-+        FILTER_LIST=$(echo -e "${FILTER_LIST}" | tr " " "\n" | sort | uniq)
++        FILTER_LIST=$(echo -e "${FILTER_LIST}" | tr "\t" "\n" | tr " " "\n" | sort | uniq)
 +    fi
 +    if echo "$opt" | grep -G -q -e "_hwaccel$" ; then
 +        HWACCEL_LIST="
 +            $HWACCEL_LIST
 +            $opt
 +        "
-+        HWACCEL_LIST=$(echo -e "${HWACCEL_LIST}" | tr " " "\n" | sort | uniq)
++        HWACCEL_LIST=$(echo -e "${HWACCEL_LIST}" | tr "\t" "\n" | tr " " "\n" | sort | uniq)
 +    fi
 +    if echo "$opt" | grep -G -q -e "_indev$" ; then
 +        INDEV_LIST="
 +            $INDEV_LIST
 +            $opt
 +        "
-+        INDEV_LIST=$(echo -e "${INDEV_LIST}" | tr " " "\n" | sort | uniq)
++        INDEV_LIST=$(echo -e "${INDEV_LIST}" | tr "\t" "\n" | tr " " "\n" | sort | uniq)
 +    fi
 +    if echo "$opt" | grep -G -q -e "_muxer$" ; then
 +        MUXER_LIST="
 +            $MUXER_LIST
 +            $opt
 +        "
-+        MUXER_LIST=$(echo -e "${MUXER_LIST}" | tr " " "\n" | sort | uniq)
++        MUXER_LIST=$(echo -e "${MUXER_LIST}" | tr "\t" "\n" | tr " " "\n" | sort | uniq)
 +    fi
 +    if echo "$opt" | grep -G -q -e "_outdev$" ; then
 +        OUTDEV_LIST="
 +            $OUTDEV_LIST
 +            $opt
 +        "
-+        OUTDEV_LIST=$(echo -e "${OUTDEV_LIST}" | tr " " "\n" | sort | uniq)
++        OUTDEV_LIST=$(echo -e "${OUTDEV_LIST}" | tr "\t" "\n" | tr " " "\n" | sort | uniq)
 +    fi
 +    if echo "$opt" | grep -G -q -e "_parser$" ; then
 +        PARSER_LIST="
 +            $PARSER_LIST
 +            $opt
 +        "
-+        PARSER_LIST=$(echo -e "${PARSER_LIST}" | tr " " "\n" | sort | uniq)
++        PARSER_LIST=$(echo -e "${PARSER_LIST}" | tr "\t" "\n" | tr " " "\n" | sort | uniq)
 +    fi
 +    if echo "$opt" | grep -G -q -e "_protocol$" ; then
 +        PROTOCOL_LIST="
 +            $PROTOCOL_LIST
 +            $opt
 +        "
-+        PROTOCOL_LIST=$(echo -e "${PROTOCOL_LIST}" | tr " " "\n" | sort | uniq)
++        PROTOCOL_LIST=$(echo -e "${PROTOCOL_LIST}" | tr "\t" "\n" | tr " " "\n" | sort | uniq)
 +    fi
 +}
 +
