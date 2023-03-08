@@ -1680,7 +1680,7 @@ eerror
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "filters" ]] && myconf+=( --disable-filters )
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "hwaccels" ]] && myconf+=( --disable-hwaccels )
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "indevs" ]] && myconf+=( --disable-indevs )
-		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ ^"muxers" ]] && myconf+=( --disable-muxers )
+		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ (^| |)"muxers" ]] && myconf+=( --disable-muxers )
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "outdevs" ]] && myconf+=( --disable-outdevs )
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "parsers" ]] && myconf+=( --disable-parsers )
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "protocols" ]] && myconf+=( --disable-protocols )
