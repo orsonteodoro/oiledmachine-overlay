@@ -43,7 +43,10 @@ fi
 FFMPEG_REVISION="${PV#*_p}"
 
 SLOT="0/${FFMPEG_SUBSLOT}"
+# The project license is LGPL-2.1+
+# BSD - libavcodec/ilbcdec.c
 LICENSE="
+	BSD
 	lgpl2_1? ( LGPL-2.1 )
 	lgpl2? ( LGPL-2 )
 	lgpl2x? ( LGPL-2+ )
@@ -1668,19 +1671,18 @@ eerror "See metadata.xml for details."
 eerror
 			die
 		fi
-		myconf+=(
-			--disable-bsfs
-			--disable-decoders
-			--disable-demuxers
-			--disable-encoders
-			--disable-filters
-			--disable-hwaccels
-			--disable-indevs
-			--disable-muxers
-			--disable-parsers
-			--disable-protocols
-			--disable-outdevs
-		)
+		FFMPEG_CLEAR_CONFIG_SETS=${FFMPEG_CLEAR_CONFIG_SETS:-"bsfs decoders demuxers encoders filters hwaccels indevs muxers outdevs parsers protocols"}
+		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "bsfs" ]] && myconf+=( --disable-bsfs )
+		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "decoders" ]] && myconf+=( --disable-decoders )
+		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "demuxers" ]] && myconf+=( --disable-demuxers )
+		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "encoders" ]] && myconf+=( --disable-encoders )
+		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "filters" ]] && myconf+=( --disable-filters )
+		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "hwaccels" ]] && myconf+=( --disable-hwaccels )
+		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "indevs" ]] && myconf+=( --disable-indevs )
+		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ ^"muxers" ]] && myconf+=( --disable-muxers )
+		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "outdevs" ]] && myconf+=( --disable-outdevs )
+		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "parsers" ]] && myconf+=( --disable-parsers )
+		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "protocols" ]] && myconf+=( --disable-protocols )
 	fi
 
 	uopts_src_configure

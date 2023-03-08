@@ -359,6 +359,9 @@
 
        https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/Makefile
 
+  Note the subsection section in the above link is can be added and
+  should be considered for FFMPEG_CUSTOM_OPTIONS.
+
   For containers see:
 
        https://github.com/FFmpeg/FFmpeg/blob/master/libavformat/Makefile
@@ -370,6 +373,12 @@
   For filters see:
 
        https://github.com/FFmpeg/FFmpeg/blob/master/libavfilter/Makefile
+
+  For the dependency chain see:
+
+       https://github.com/FFmpeg/FFmpeg/blob/master/configure
+
+  These options may need to be customized exactly per major.minor version.
 
   These have absolute control and are evaluated at the end just before writing
   out the config.mak.
@@ -411,7 +420,24 @@
   to find missing symbols that may prevent the parent app from functioning.
   This can be done with the `ffmpeg -formats` and the
   `ffmpeg -codecs | grep -E -e "(D\.|\.E|DE)[V][I.][L.][S.] .*"` commands.
+  Also test with actual scenario also.
 
+  FFMPEG_CLEAR_CONFIG_SETS -- space delimited list to of component types to disable.
+  This can be used to find problematic sets of options.  Only valid when
+  clear-config-first USE flag is enabled.
+
+  Examples:
+
+    FFMPEG_CLEAR_CONFIG_SETS="decoders demuxer" # Clears decoders or demuxers
+    FFMPEG_CLEAR_CONFIG_SETS="bsfs decoders demuxers encoders indevs muxers outdevs parsers protocols" # Default
+
+  Acceptable values:
+
+    bsfs, decoders, demuxers, encoders, indevs, muxers, outdevs, parsers,
+    protocols
+
+
+  The default value
 
   Additional notes
 
