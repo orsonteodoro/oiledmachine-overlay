@@ -1058,8 +1058,6 @@ ewarn "FFmpeg must be built with the following which may be non-free"
 ewarn "patent-encumbered codecs or RE proprietary codecs for some audio"
 ewarn "podcasts to work:"
 ewarn
-ewarn "  aac_decoder"
-ewarn "  adts_header"
 ewarn "  cbs_h264"
 ewarn "  h263_parser"
 ewarn "  h263dsp"
@@ -1073,6 +1071,7 @@ ewarn "  mp3_decoder"
 ewarn "  mpeg4video_parser"
 ewarn "  mpegaudio"
 ewarn "  mpegaudiodsp"
+ewarn "  mpegvideo"
 ewarn
 ewarn "These are enabled by default by the FFmpeg project."
 ewarn
