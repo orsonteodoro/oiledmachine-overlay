@@ -571,6 +571,9 @@ LICENSE_REQUIRED_USE="
 	svg? (
 		$(gen_relicense lgpl2x)
 	)
+	tensorflow? (
+		apache2_0
+	)
 	truetype? (
 		$(gen_relicense gpl2x)
 	)
