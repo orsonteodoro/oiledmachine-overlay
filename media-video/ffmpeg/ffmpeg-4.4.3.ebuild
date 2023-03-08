@@ -1670,6 +1670,8 @@ eerror
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "protocols" ]] && myconf+=( --disable-protocols )
 	fi
 
+	export FFMPEG_CUSTOM_OPTIONS=$(echo "${FFMPEG_CUSTOM_OPTIONS}" | tr " " "\n" | sort | uniq)
+
 	uopts_src_configure
 
 	if is-flagq "-Ofast" ; then

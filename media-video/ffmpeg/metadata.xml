@@ -391,6 +391,9 @@
   between the missing symbol, the .o file, and the CONFIG_* option to ultimately
   whitelist the CONFIG_ option that is causing the missing symbol.
 
+  IMPORTANT:
+  Adding a config option twice may break the library during runtime.
+
   Examples:
 
        FFMPEG_CUSTOM_OPTIONS="
