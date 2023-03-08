@@ -428,7 +428,7 @@
 
   Examples:
 
-    FFMPEG_CLEAR_CONFIG_SETS="decoders demuxer" # Clears decoders or demuxers
+    FFMPEG_CLEAR_CONFIG_SETS="decoders demuxers" # Clears decoders or demuxers
     FFMPEG_CLEAR_CONFIG_SETS="bsfs decoders demuxers encoders indevs muxers outdevs parsers protocols" # Default
 
   Acceptable values:
