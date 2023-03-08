@@ -718,6 +718,11 @@
   <flag name="ssp">
     Build with stack smashing protection
   </flag>
+  <flag name="tensorflow">
+    Enable use of AI based TensorFlow library for sr (super-resolution) AI
+    upscaling filter, but requires you to provide AI models.  Using SR will
+    improve the image quality of low resolution images/videos.
+  </flag>
   <flag name="trainer-audio-cbr">
     Use the CBR audio trainer.
   </flag>

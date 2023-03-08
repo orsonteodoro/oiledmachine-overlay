@@ -103,7 +103,7 @@ FFMPEG_FLAG_MAP=(
 	appkit
 	bs2b:libbs2b chromaprint cuda:cuda-llvm flite:libflite frei0r vmaf:libvmaf
 	fribidi:libfribidi fontconfig ladspa libass libtesseract lv2 truetype:libfreetype vidstab:libvidstab
-	rubberband:librubberband zeromq:libzmq zimg:libzimg
+	rubberband:librubberband tensorflow:libtensorflow zeromq:libzmq zimg:libzimg
 	# libswresample options
 	libsoxr
 	# Threads; we only support pthread for now but ffmpeg supports more
@@ -958,6 +958,9 @@ RDEPEND+="
 	)
 	svt-av1? (
 		>=media-libs/svt-av1-0.8.4[${MULTILIB_USEDEP}]
+	)
+	tensorflow? (
+		sci-libs/tensorflow
 	)
 	truetype? (
 		>=media-libs/freetype-2.5.0.1:2[${MULTILIB_USEDEP}]
