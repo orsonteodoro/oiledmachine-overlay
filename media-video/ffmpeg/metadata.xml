@@ -391,9 +391,6 @@
   between the missing symbol, the .o file, and the CONFIG_* option to ultimately
   whitelist the CONFIG_ option that is causing the missing symbol.
 
-  IMPORTANT:
-  Adding a config option twice may break the library during runtime.
-
   Examples:
 
        FFMPEG_CUSTOM_OPTIONS="
@@ -432,12 +429,17 @@
   Examples:
 
     FFMPEG_CLEAR_CONFIG_SETS="decoders demuxers" # Clears decoders or demuxers
-    FFMPEG_CLEAR_CONFIG_SETS="bsfs decoders demuxers encoders indevs muxers outdevs parsers protocols" # Default
+    FFMPEG_CLEAR_CONFIG_SETS="bsfs decoders demuxers encoders indevs muxers outdevs protocols" # Default
 
   Acceptable values:
 
     bsfs, decoders, demuxers, encoders, indevs, muxers, outdevs, parsers,
     protocols
+
+  Notes:
+
+  Adding parsers to the list may break.  It may be better to remove parsers
+  individually.
 
 
   The default value
