@@ -1704,10 +1704,16 @@ einfo
 einfo
 
 	if [[ "${FFMPEG_CUSTOM_OPTIONS}" =~ "ffwavesynth_decoder" ]] ; then
-ewarn "Adding ffwavesynth_decoder may break functionality"
+ewarn "Adding ffwavesynth_decoder in FFMPEG_CUSTOM_OPTIONS may break functionality"
 	fi
 	if [[ "${FFMPEG_CUSTOM_OPTIONS}" =~ "vaapi_encode" ]] ; then
-ewarn "Adding vaapi_encode may break functionality"
+ewarn "Adding vaapi_encode in FFMPEG_CUSTOM_OPTIONS may break functionality"
+	fi
+	if [[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "parsers" ]] ; then
+ewarn "Adding parsers in FFMPEG_CLEAR_CONFIG_SETS may break functionality.  See metadata.xml for workaround."
+	fi
+	if [[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "filters" ]] ; then
+ewarn "Adding filters in FFMPEG_CLEAR_CONFIG_SETS may break functionality.  See metadata.xml for workaround."
 	fi
 
 	uopts_src_configure
