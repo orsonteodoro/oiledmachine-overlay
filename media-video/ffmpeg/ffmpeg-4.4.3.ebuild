@@ -240,8 +240,7 @@ ${FFTOOLS[@]/#/+fftools_}
 alsa chromium -clear-config-first doc +encode gdbm jack-audio-connection-kit
 jack2 mold opencl-icd-loader oss pgo pic pipewire proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+re-codecs sndio sr static-libs test v4l
-wayland r13
++re-codecs sndio sr sr-headers static-libs test v4l wayland r13
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -1015,6 +1014,9 @@ DEPEND+="
 	amf? (
 		media-libs/amf-headers
 	)
+	sr-headers? (
+		media-video/sr[libavfilter-headers]
+	)
 	ladspa? (
 		>=media-libs/ladspa-sdk-1.13-r2[${MULTILIB_USEDEP}]
 	)
@@ -1495,6 +1497,18 @@ src_prepare() {
 	verify_subslot
 	if [[ "${PV%_p*}" != "${PV}" ]] ; then # Snapshot
 		export revision=git-N-${FFMPEG_REVISION}
+	fi
+
+	if use sr-headers ; then
+		local alg
+		for alg in espcn srcnn ; do
+			if [[ -e "${ESYSROOT}/usr/share/sr/headers/dnn_${alg}.h" ]] ; then
+				cp -a \
+					"${ESYSROOT}/usr/share/sr/headers/dnn_${alg}.h" \
+					"${S}/libavfilter" \
+					|| die
+			fi
+		done
 	fi
 
 	eapply "${FILESDIR}/vmaf-models-default-path.patch"
