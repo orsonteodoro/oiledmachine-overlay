@@ -1678,7 +1678,7 @@ eerror "See metadata.xml for details."
 eerror
 			die
 		fi
-		FFMPEG_CLEAR_CONFIG_SETS=${FFMPEG_CLEAR_CONFIG_SETS:-"bsfs decoders demuxers encoders hwaccels indevs muxers outdevs protocols"}
+		FFMPEG_CLEAR_CONFIG_SETS=${FFMPEG_CLEAR_CONFIG_SETS:-"bsfs decoders demuxers encoders hwaccels indevs muxers outdevs"}
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "bsfs" ]] && myconf+=( --disable-bsfs )
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "decoders" ]] && myconf+=( --disable-decoders )
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "demuxers" ]] && myconf+=( --disable-demuxers )
@@ -1710,10 +1710,22 @@ ewarn "Adding ffwavesynth_decoder in FFMPEG_CUSTOM_OPTIONS may break functionali
 ewarn "Adding vaapi_encode in FFMPEG_CUSTOM_OPTIONS may break functionality"
 	fi
 	if [[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "parsers" ]] ; then
-ewarn "Adding parsers in FFMPEG_CLEAR_CONFIG_SETS may break functionality.  See metadata.xml for workaround."
+eerror
+eerror "Adding parsers in FFMPEG_CLEAR_CONFIG_SETS will break functionality.  See metadata.xml for workaround."
+eerror
+		die
+	fi
+	if [[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "protocols" ]] ; then
+eerror
+eerror "Adding protocols in FFMPEG_CLEAR_CONFIG_SETS will break functionality.  See metadata.xml for workaround."
+eerror
+		die
 	fi
 	if [[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "filters" ]] ; then
-ewarn "Adding filters in FFMPEG_CLEAR_CONFIG_SETS may break functionality.  See metadata.xml for workaround."
+eerror
+eerror "Adding filters in FFMPEG_CLEAR_CONFIG_SETS will break functionality.  See metadata.xml for workaround."
+eerror
+		die
 	fi
 
 	uopts_src_configure

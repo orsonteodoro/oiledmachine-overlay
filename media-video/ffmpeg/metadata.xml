@@ -429,23 +429,24 @@
   Examples:
 
     FFMPEG_CLEAR_CONFIG_SETS="decoders demuxers" # Clears decoders or demuxers
-    FFMPEG_CLEAR_CONFIG_SETS="bsfs decoders demuxers encoders indevs muxers outdevs protocols" # Default
+    FFMPEG_CLEAR_CONFIG_SETS="bsfs decoders demuxers encoders indevs muxers outdevs" # Default
 
   Acceptable values:
 
-    bsfs, decoders, demuxers, encoders, filters, indevs, muxers, outdevs,
-    parsers, protocols
+    bsfs, decoders, demuxers, encoders, indevs, muxers, outdevs
 
   Notes:
 
-  Adding parsers or filters to FFMPEG_CLEAR_CONFIG_SETS may break.  It may be
-  better to remove options individually.
+  Adding parsers, protocol, protocols to FFMPEG_CLEAR_CONFIG_SETS will likely
+  break.  It is better to remove options individually.
 
-  You can use one of the following one liners with 3 column entries under
-  the "Enabled parsers" or "Enabled filters" sections during the configure
-  phase dumped to a file t to disable all individually:
+  You can use the corresponding one liners with 3 column entries under
+  the "Enabled parsers", "Enabled protocols", "Enabled filters" sections during
+  the configure phase dumped to a file t to disable each corresponding set
+  individually:
 
   for x in $(cat t | tr " " "\n" | sort | uniq) ; do echo "-${x}_parser" ; done
+  for x in $(cat t | tr " " "\n" | sort | uniq) ; do echo "-${x}_protocol" ; done
   for x in $(cat t | tr " " "\n" | sort | uniq) ; do echo "-${x}_filter" ; done
 
   Additional notes
