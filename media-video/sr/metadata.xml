@@ -36,6 +36,8 @@
       Use pretrained models provided by the user community of this repo.
 
       (Not provided officially by the repo.)
+
+      If disabled, the training process may take hours to accomplish.
     </flag>
     <flag name="srcnn">
       Generate/build/install SRCNN trained models
