@@ -240,7 +240,7 @@ ${FFTOOLS[@]/#/+fftools_}
 alsa chromium -clear-config-first doc +encode gdbm jack-audio-connection-kit
 jack2 mold opencl-icd-loader oss pgo pic pipewire proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+re-codecs sndio static-libs test v4l
++re-codecs sndio sr static-libs test v4l
 wayland r13
 
 trainer-audio-cbr
@@ -1058,6 +1058,9 @@ BDEPEND+="
 PDEPEND+="
 	pgo? (
 		media-video/ffmpeg[encode,${MULTILIB_USEDEP}]
+	)
+	sr? (
+		media-video/sr
 	)
 "
 
