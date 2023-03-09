@@ -441,8 +441,12 @@
   Adding parsers or filters to FFMPEG_CLEAR_CONFIG_SETS may break.  It may be
   better to remove options individually.
 
+  You can use one of the following one liners with 3 column entries under
+  the "Enabled parsers" or "Enabled filters" sections during the configure
+  phase dumped to a file t to disable all individually:
 
-  The default value
+  for x in $(cat t | tr " " "\n" | sort | uniq) ; do echo "-${x}_parser" ; done
+  for x in $(cat t | tr " " "\n" | sort | uniq) ; do echo "-${x}_filter" ; done
 
   Additional notes
 
