@@ -33,7 +33,9 @@
       Use files for single threaded native use.
     </flag>
     <flag name="pretrained">
-      Use pretrained models provided by this repo.
+      Use pretrained models provided by the user community of this repo.
+
+      (Not provided officially by the repo.)
     </flag>
     <flag name="srcnn">
       Generate/build/install SRCNN trained models
