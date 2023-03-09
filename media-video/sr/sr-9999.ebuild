@@ -58,7 +58,7 @@ FORMATS=(
 IUSE+="
 ${ALGS[@]}
 ${FORMATS[@]}
-convert fallback-commit libavfilter-headers pretrained
+convert fallback-commit libavfilter-headers +pretrained
 "
 # See formats see, https://ffmpeg.org/ffmpeg-filters.html#sr-1
 # We use the tensorflow .pb because it is multicore.
