@@ -1,4 +1,4 @@
-Subject:  Configure non-free changes
+Subject:  Configure non-free changes and environment variables override
 Patch Status:  Testing
 
 https://en.wikipedia.org/wiki/Comparison_of_audio_coding_formats     ; See patented column also
@@ -18,16 +18,44 @@ To confirm disablement use:
   ffmpeg -protocols
   ffmpeg -bsfs
 
+Additional environment variable FFMPEG_CUSTOM_OPTIONS
+
+FFMPEG_CUSTOM_OPTIONS is a space separated list of either
+CONFIG_ prefixed symbols or without the prefix.  Options
+prefixed with - will disable the option.
+
+The environment variable override can be used as follows:
+
+FFMPEG_CUSTOM_OPTIONS="
+CONFIG_MP3_DEMUXER
+CONFIG_MP3_DECODER
+-CONFIG_OPUS_ENCODER
+"
+
+FFMPEG_CUSTOM_OPTIONS="
+mp3_demuxer
+mp3_decoder
+-opus_encoder
+"
+
 There is a notiable drop in installed package size when using these flags.
 
   With defaults:  29200 KiB ( 28.5 MiB)
   With --non-free-patented-codecs=deny --re-codecs=deny:  20200 KiB ( 19.7 MiB)
+  With FFMPEG_CUSTOM_OPTIONS and --disabled-{decoders,muxers,...}:  12036 KiB ( 11.7 MiB)
 
 Resulting benefits:
 
+ For defaults vs new options:
  * 8.789 MiB savings.
  * ~30.82% savings in total package size relative to the default policy.
  * 2250 4k sized pages removed from memory.
+
+ For defaults vs env-var (min set required for real-world streaming audio):
+ * 16.76 MiB savings
+ * %41.2 savings
+ * 4291 4k sized pages removed from memory.
+
 
 --- ffmpeg-4.4.3/configure.orig	2023-03-06 16:08:27.142875395 -0800
 +++ ffmpeg-4.4.3/configure	2023-03-06 16:53:25.382910256 -0800
