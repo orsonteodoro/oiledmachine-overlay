@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+
+  Further reading:
+
+    PSNRs:  https://github.com/HighVoltageRocknRoll/sr#benchmark-results
+    Descriptions:  https://en.wikipedia.org/wiki/Video_super-resolution
+
+  </longdescription>
+  <upstream>
+    <doc lang="en">https://github.com/HighVoltageRocknRoll/sr</doc>
+  </upstream>
+  <use>
+    <flag name="convert">
+      Convert tensorflow models to native models.
+    </flag>    
+    <flag name="espcn">
+      Generate/build/install ESPCN trained models.
+
+      Marginally fastest and marginally highest quality algorithm in this package.
+    </flag>
+    <flag name="libavfilter-headers">
+      Generate/install headers for FFmpeg
+    </flag>
+    <flag name="native">
+      Use files for single threaded native use.
+    </flag>
+    <flag name="pretrained">
+      Use pretrained models provided by this repo.
+    </flag>
+    <flag name="srcnn">
+      Generate/build/install SRCNN trained models
+
+      Inspired by waifu2x.  Estimated around 1.5-3 PSNR difference to waifu2x.
+    </flag>
+    <flag name="tensorflow">
+      Use files for multicore + GPU use.
+    </flag>
+    <flag name="vespcn">
+      Generate/build/install VESPCN trained models
+    </flag>
+    <flag name="vespcn-mc">
+      Generate/build/install motion compensated VESPCN trained models
+    </flag>
+    <flag name="vsrnet">
+      Generate/build/install VSRNet trained models
+
+      Marginally slowest and marginally lowest quality algorithm in this package.
+    </flag>
+  </use>
+  <upstream>
+    <remote-id type="github">HighVoltageRocknRoll/sr</remote-id>
+  </upstream>
+</pkgmetadata>
