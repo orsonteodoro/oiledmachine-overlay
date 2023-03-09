@@ -40,7 +40,7 @@ LICENSE="
 
 # TODO:
 # Extract quality, resolutions, duration from assets.
-# Modify source code with custom asset support to make licensing more .
+# Modify source code with custom asset support to make licensing more free.
 
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
