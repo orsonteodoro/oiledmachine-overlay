@@ -433,13 +433,13 @@
 
   Acceptable values:
 
-    bsfs, decoders, demuxers, encoders, indevs, muxers, outdevs, parsers,
-    protocols
+    bsfs, decoders, demuxers, encoders, filters, indevs, muxers, outdevs,
+    parsers, protocols
 
   Notes:
 
-  Adding parsers to the list may break.  It may be better to remove parsers
-  individually.
+  Adding parsers or filters to FFMPEG_CLEAR_CONFIG_SETS may break.  It may be
+  better to remove options individually.
 
 
   The default value
