@@ -105,10 +105,10 @@ BDEPEND+="
 	!pretrained? (
 		${PYTHON_DEPS}
 		app-crypt/rhash
-		media-libs/opencv[${PYTHON_USEDEP},ffmpeg?,gstreamer?,nvdec?,python]
+		media-libs/opencv[${PYTHON_USEDEP},ffmpeg?,gstreamer?,python]
 		sci-libs/tensorflow[${PYTHON_USEDEP},python]
 		ffmpeg? (
-			>=media-video/ffmpeg-4[vaapi?,vdpau?,vpx?]
+			>=media-video/ffmpeg-4[nvdec?,vaapi?,vdpau?,vpx?]
 		)
 		gstreamer? (
 			media-plugins/gst-plugins-meta[ffmpeg?]
