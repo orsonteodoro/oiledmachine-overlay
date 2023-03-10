@@ -1707,9 +1707,9 @@ eerror
 
 	if \
 		( \
-			   use proprietary-codecs-disable-nc-developer \
-			|| use proprietary-codecs-disable-nc \
-			|| use proprietary-codecs-disable \
+			   use proprietary-codecs-disable \
+			|| use proprietary-codecs-disable-nc-developer \
+			|| use proprietary-codecs-disable-nc-user \
 		) \
 		&& \
 		[[ -z "${FFMPEG_CUSTOM_OPTIONS}" ]] \
