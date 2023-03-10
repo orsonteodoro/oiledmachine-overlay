@@ -144,7 +144,7 @@
       See metadata.xml for adding custom assets for training.
     </flag>
     <flag name="native">
-      Use files for single threaded native use.
+      Build/install binary *.models for single threaded native use.
     </flag>
     <flag name="nvdec">
       Utilize nvdec to hardware accelerate h264/vp8
@@ -165,7 +165,7 @@
       improved waifu2x implying a significant difference.
     </flag>
     <flag name="tensorflow">
-      Use files for multicore + GPU use.
+      Build/install *.pb binary models for multicore + GPU use.
     </flag>
     <flag name="vaapi">
       Use hardware accelerated decoding for h264/vp8 videos
