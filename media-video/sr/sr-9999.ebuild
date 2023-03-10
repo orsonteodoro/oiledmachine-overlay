@@ -242,8 +242,8 @@ src_prepare() {
 	default
 	if ! use pretrained ; then
 		eapply "${FILESDIR}/${PN}-9999-skip-unpack.patch"
-		av_scan_assets
 	fi
+	av_scan_assets
 }
 
 src_configure() {
