@@ -8,6 +8,10 @@
   </maintainer>
   <longdescription>
 
+  See also asset_list.txt for descriptions for criticisms for ideas for
+  replacing with freeable licensed ones when custom-assets USE flag
+  (in planning) is used.
+
   FFmpeg compatibility:
 
     SCRNN:  y
