@@ -171,7 +171,7 @@
       Use hardware accelerated decoding for h264
     </flag>
     <flag name="vpx">
-      Use non patent-encumbered vp8
+      Use free vp8
     </flag>
     <flag name="vespcn">
       Generate/build/install VESPCN trained models.
