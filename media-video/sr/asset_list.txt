@@ -3,6 +3,8 @@
 # specific aestheics if you do not like how these preselected assets are
 # selected.
 
+# See also metadata.xml for integration of custom assets into ebuild.
+
 Harmonic summary:
 
 wrlzswfdvyprz10hegws74d4wzh7270o properties:
@@ -17,9 +19,17 @@ DIV2K summary:
 
 # Content keywords:  realistic, people, insects, animals, man made objects,
 # culture, uniforms, underwater, natural landscapes, landmarks, text, reptiles,
-# all zoom levels, professional grade, present era
+# all zoom levels, professional grade, present era, street signs, riot gear,
+# plexiglass shields, garage
 
 100 PNG assets in loaded_div2k/test/hr/ 8-bit sRGB
+
+Filenames:
+0801.png # corresponds to the same content as 0801x2.png
+0802.png # corresponds to the same content as 0802x2.png
+0803.png # corresponds to the same content as 0803x2.png
+...
+
 
 Resolutions:
 1356x2040
@@ -49,6 +59,13 @@ Resolutions:
 
 100 PNG assets in loaded_div2k/test/lr/ 8-bit sRGB
 
+Filenames:
+0801x2.png # corresponds to same content as 0801.png
+0802x2.png # corresponds to same content as 0802.png
+0803x2.png # corresponds to same content as 0803.png
+...
+
+Resolutions:
 1020x1020
 1020x408
 1020x534
@@ -74,8 +91,17 @@ Resolutions:
 810x1020
 834x1020
 
+
+
 800 PNG assets in loaded_div2k/train/lr/ 8-bit sRGB
 
+Filenames:
+0001x2.png # corresponds to the same content as 0001.png
+0002x2.png # corresponds to the same content as 0002.png
+0003x2.png # corresponds to the same content as 0003.png
+...
+
+Resolutions:
 1020x1002
 1020x1020
 1020x324
@@ -173,6 +199,13 @@ Resolutions:
 
 800 PNG assets in loaded_div2k/train/hr/ 8-bit sRGB
 
+Filenames:
+0001.png # corresponds to the same content as 0001x2.png
+0002.png # corresponds to the same content as 0002x2.png
+0003.png # corresponds to the same content as 0003x2.png
+...
+
+Resolutions:
 1116x2040
 1140x2040
 1164x2040

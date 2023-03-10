@@ -9,16 +9,73 @@
   <longdescription>
 
   See also asset_list.txt for descriptions for criticisms for ideas for
-  replacing with freeable licensed ones when custom-assets USE flag
-  (in planning) is used.
+  replacing with freeable licensed ones is used.
+
+  Per-package environment variables:
+
+    SR_SECURITY_SCAN - scan assets and prebuilt models for malware.
+    Acceptable values: 1 (default) - enable, 0 - disable
+    (See ebuild for details for required scanner.)
+
+    STILL_IMAGE_HR_TEST_PATHS     - Space delimited list of additional high resolution test assets
+    STILL_IMAGE_HR_TRAINING_PATHS - Space delimited list of additional high resolution training assets
+    STILL_IMAGE_LR_TEST_PATHS     - Space delimited list of additional low resolution test assets
+    STILL_IMAGE_LR_TRAINING_PATHS - Space delimited list of additional low resolution test assets
+    VIDEO_ASSET_PATHS             - Space delimited list of additional assets
+
+    All paths are absolute paths to each individual assets without spaces.
+
+  Examples:
+
+    STILL_IMAGE_HR_TEST_PATHS="
+      /usr/portage/distfiles/assets/sr/images/test/hr/0801.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/test/hr/0802.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/test/hr/0803.png:size:blake2b_fingerprint:sha512_fingerprint
+    "
+    STILL_IMAGE_LR_TEST_PATHS="
+      /usr/portage/distfiles/assets/sr/images/test/lr/0801x2.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/test/lr/0802x2.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/test/lr/0803x2.png:size:blake2b_fingerprint:sha512_fingerprint
+    "
+
+    STILL_IMAGE_HR_TRAINING_PATHS="
+      /usr/portage/distfiles/assets/sr/images/training/hr/0001.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/training/hr/0002.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/training/hr/0003.png:size:blake2b_fingerprint:sha512_fingerprint
+    "
+    STILL_IMAGE_LR_TRAINING_PATHS="
+      /usr/portage/distfiles/assets/sr/images/training/lr/0001x2.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/training/lr/0002x2.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/training/lr/0003x2.png:size:blake2b_fingerprint:sha512_fingerprint
+    "
+
+    size, blake2b_fingerprint, and sha512_fingerprint are placeholders which
+    should be replaced with the following generated values.
+
+    Use `sha512sum path` to generate a sha512_fingerprint.
+    Use `rhash --blake2b path` to generate a blake2b fingerprint.
+    Use `stat -c "%s" path` to get the file size.
+
+    The :size:blake2b_fingerprint:sha512_fingerprint suffix provide integrity
+    verification to have the same integrity guarantees as the package manager.
+
+    The index may be changed to prevent clobbering with DIV2K.
+
+    # FIXME:  Test viability of free formats.  The below is patent-encumbered.
+    VIDEO_ASSET_PATHS="
+      /usr/portage/distfiles/assets/sr/videos/asset1.mp4
+      /usr/portage/distfiles/assets/sr/videos/asset2.mp4
+      /usr/portage/distfiles/assets/sr/videos/asset3.mp4
+      /usr/portage/distfiles/assets/sr/videos/asset4.mp4
+    "
 
   FFmpeg compatibility:
 
-    SCRNN:  y
-    ESPCN:  y
-    VESPCN:  n
+          SCRNN:  y
+          ESPCN:  y
+         VSRNet:  n
+         VESPCN:  n
     VESPCN (mc):  n
-    VSRNet: n
 
     VESPCN/VSRNet known issue
 
@@ -46,6 +103,12 @@
     <flag name="convert">
       Convert tensorflow models to native models.
     </flag>    
+    <flag name="div2k">
+      Download and train with DIV2K still images.
+      License restricted for academics only.
+
+      See longdescription of metadata.xml for custom assets.
+    </flag>    
     <flag name="espcn">
       Generate/build/install ESPCN trained models.
 
@@ -53,6 +116,11 @@
       package.
 
       (Compatible with FFmpeg)
+    </flag>
+    <flag name="harmonic">
+      Download and train with Harmonic video assets.
+
+      See longdescription of metadata.xml for custom assets.
     </flag>
     <flag name="native">
       Use files for single threaded native use.

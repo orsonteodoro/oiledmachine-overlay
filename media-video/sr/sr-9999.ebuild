@@ -12,9 +12,15 @@ HOMEPAGE="https://github.com/HighVoltageRocknRoll/sr"
 LICENSE="
 	MIT
 	!pretrained? (
-		convert? ( LGPL-2.1 )
-		custom
-		all-rights-reserved
+		convert? (
+			LGPL-2.1
+		)
+		div2k? (
+			custom
+		)
+		harmonic? (
+			all-rights-reserved
+		)
 	)
 	pretrained? (
 		all-rights-reserved
@@ -58,7 +64,7 @@ FORMATS=(
 IUSE+="
 ${ALGS[@]}
 ${FORMATS[@]}
-convert fallback-commit +pretrained
+convert div2k fallback-commit harmonic +pretrained
 "
 # See formats see, https://ffmpeg.org/ffmpeg-filters.html#sr-1
 # We use the tensorflow .pb because it is multicore.
@@ -80,6 +86,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
+	app-crypt/rhash
 	sci-libs/tensorflow[python]
 "
 # See https://github.com/HighVoltageRocknRoll/sr/issues/8
@@ -89,6 +96,7 @@ FFMPEG_PV="5.1.2"
 # Still needs rehash.  About 3 GiB each
 DISABLED_ASSETS_SRC_URI="
 	!pretrained? (
+		harmonic? (
 https://harmonicinc.box.com/shared/static/58pxpuh1dsieye19pkj182hgv6fg4gof.mp4
 https://harmonicinc.box.com/shared/static/6uws3kg4ldxtkeg5k5jwubueaolkqsr0.mp4
 https://harmonicinc.box.com/shared/static/51ma04aviaeunhzelpw455sodv7judiu.mp4
@@ -99,6 +107,7 @@ https://harmonicinc.box.com/shared/static/n8x168w6vhpv240hggw7wtj8mszg7wnb.mp4
 https://harmonicinc.box.com/shared/static/6inss29is5b7jzxv1qkuf2p9qeaomi04.mp4
 https://harmonicinc.box.com/shared/static/v21fqn77ib1r8zlrbnl6fsyzt6rrjj0v.mp4
 https://harmonicinc.box.com/shared/static/tmzm8y7bfzpote9obs7le3olh5j87iir.mp4
+		)
 	)
 "
 
@@ -114,11 +123,15 @@ https://raw.githubusercontent.com/FFmpeg/FFmpeg/n${FFMPEG_PV}/tools/python/conve
 https://raw.githubusercontent.com/FFmpeg/FFmpeg/n${FFMPEG_PV}/tools/python/tf_sess_config.py
 	-> tf_sess_config.py.${FFMPEG_PV}
 		)
-https://harmonicinc.box.com/shared/static/wrlzswfdvyprz10hegws74d4wzh7270o.mp4
+		div2k? (
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_LR_bicubic_X2.zip
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_HR.zip
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_LR_bicubic_X2.zip
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_HR.zip
+		)
+		harmonic? (
+https://harmonicinc.box.com/shared/static/wrlzswfdvyprz10hegws74d4wzh7270o.mp4
+		)
 	)
 	pretrained? (
 https://github.com/HighVoltageRocknRoll/sr/files/6957728/dnn_models.tar.gz
@@ -128,10 +141,10 @@ https://github.com/HighVoltageRocknRoll/sr/files/6957728/dnn_models.tar.gz
 # dnn_models.tar.gz:  sha256 ac3e1b20bb942a3156042a07b7e68ed2aec66f49d92b48f5a4dfbf6cb5283417
 RESTRICT="mirror"
 
+#	die
 request_sandbox_permissions() {
 eerror "The trained version is still a Work In Progress (WIP)"
 eerror "QA:  Assets still needs to be downloaded for Manifest."
-	die
 	if has network-sandbox $FEATURES ; then
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
@@ -174,46 +187,153 @@ copy_converters() {
 	done
 }
 
+copy_div2k_assets() {
+	if [[ "${name}" =~ "DIV2K_train_LR" ]] ; then
+		unpack "${name}"
+		mv \
+			"${WORKDIR}/DIV2K_train_LR_bicubic/X2" \
+			"${S}/datasets/loaded_div2k/train/lr" \
+			|| die
+	fi
+	if [[ "${name}" =~ "DIV2K_train_HR" ]] ; then
+		unpack "${name}"
+		mv \
+			"${WORKDIR}/DIV2K_train_HR" \
+			"${S}/datasets/loaded_div2k/train/hr" \
+			|| die
+	fi
+	if [[ "${name}" =~ "DIV2K_valid_LR" ]] ; then
+		unpack "${name}"
+		mv \
+			"${WORKDIR}/DIV2K_valid_LR_bicubic/X2" \
+			"${S}/datasets/loaded_div2k/test/lr" \
+			|| die
+	fi
+	if [[ "${name}" =~ "DIV2K_valid_HR" ]] ; then
+		unpack "${name}"
+		mv \
+			"${WORKDIR}/DIV2K_valid_HR" \
+			"${S}/datasets/loaded_div2k/test/hr" \
+			|| die
+	fi
+}
+
+copy_harmonic_assets() {
+	if [[ "${name}" =~ ".mp4" ]] ; then
+		cp -v -a \
+			"${EDISTDIR}/${name}" \
+			"${S}/datasets/loaded_harmonic" \
+			|| die
+	fi
+}
+
+verify_integrity() {
+	local esize=$(echo "${row}" | cut -f 2 -d ":")
+	local eblake2b=$(echo "${row}" | cut -f 3 -d ":")
+	local esha512=$(echo "${row}" | cut -f 4 -d ":")
+	local asize=$(stat -c "%s" "${path}" | cut -f 4 -d " ")
+	local ablake2b=$(rhash --blake2b "${path}" | cut -f 1 -d " ")
+	local asha512=$(sha512sum "${path}" | cut -f 1 -d " ")
+	if [[ \
+		   "${esize}" != "${asize}" \
+		&& "${eblake2b}" != "${ablake2b}" \
+		&& "${esha512}" != "${asha512}" \
+	]] ; then
+eerror
+eerror "Asset integrity failure detected"
+eerror
+eerror "Path:\t${path}"
+eerror
+eerror "Actual size:\t${asize}"
+eerror "Expected size:\t${esize}"
+eerror
+eerror "Actual blake2b:\t${ablake2b}"
+eerror "Expected blake2b:\t${eblake2b}"
+eerror
+eerror "Actual sha512:\t${asha512}"
+eerror "Expected sha512:\t${esha512}"
+eerror
+		die
+	fi
+}
+
+copy_custom_still_image_assets() {
+	if [[ -n "${STILL_IMAGE_HR_TEST_PATHS}" ]] ; then
+		einfo "Adding highres still image test assets"
+		local row
+		for row in ${STILL_IMAGE_HR_TEST_PATHS} ; do
+			local path=$(echo "${row}" | cut -f 1 -d ":")
+			verify_integrity
+			cp -v -a \
+				"${path}" \
+				"${S}/datasets/loaded_div2k/test/hr" \
+				|| die
+		done
+	fi
+	if [[ -n "${STILL_IMAGE_HR_TRAINING_PATHS}" ]] ; then
+		einfo "Adding highres still image training assets"
+		local row
+		for row in ${STILL_IMAGE_HR_TRAINING_PATHS} ; do
+			local path=$(echo "${row}" | cut -f 1 -d ":")
+			verify_integrity
+			cp -v -a \
+				"${path}" \
+				"${S}/datasets/loaded_div2k/train/hr" \
+				|| die
+		done
+	fi
+	if [[ -n "${STILL_IMAGE_LR_TEST_PATHS}" ]] ; then
+		einfo "Adding lowres still image test assets"
+		local row
+		for row in ${STILL_IMAGE_LR_TEST_PATHS} ; do
+			local path=$(echo "${row}" | cut -f 1 -d ":")
+			verify_integrity
+			cp -v -a \
+				"${path}" \
+				"${S}/datasets/loaded_div2k/test/lr" \
+				|| die
+		done
+	fi
+	if [[ -n "${STILL_IMAGE_LR_TRAINING_PATHS}" ]] ; then
+		einfo "Adding lowres still image training assets"
+		local row
+		for row in ${STILL_IMAGE_LR_TRAINING_PATHS} ; do
+			local path=$(echo "${row}" | cut -f 1 -d ":")
+			verify_integrity
+			cp -v -a \
+				"${path}" \
+				"${S}/datasets/loaded_div2k/train/lr" \
+				|| die
+		done
+	fi
+}
+
+copy_custom_movie_assets() {
+	if [[ -n "${VIDEO_ASSET_PATHS}" ]] ; then
+		einfo "Adding video assets"
+		local path
+		for path in ${VIDEO_ASSET_PATHS} ; do
+			local path=$(echo "${row}" | cut -f 1 -d ":")
+			verify_integrity
+			cp -a \
+				"${path}" \
+				"${S}/datasets/loaded_harmonic" \
+				|| die
+		done
+	fi
+}
+
 copy_assets() {
 	mkdir -p "${S}/datasets/loaded_div2k/train" || die
 	mkdir -p "${S}/datasets/loaded_div2k/test" || die
 	mkdir -p "${S}/datasets/loaded_harmonic" || die
 	local name
 	for name in ${A} ; do
-		if [[ "${name}" =~ "DIV2K_train_LR" ]] ; then
-			unpack "${name}"
-			mv \
-				"${WORKDIR}/DIV2K_train_LR_bicubic/X2" \
-				"${S}/datasets/loaded_div2k/train/lr" \
-				|| die
-		fi
-		if [[ "${name}" =~ "DIV2K_train_HR" ]] ; then
-			unpack "${name}"
-			mv \
-				"${WORKDIR}/DIV2K_train_HR" \
-				"${S}/datasets/loaded_div2k/train/hr" \
-				|| die
-		fi
-		if [[ "${name}" =~ "DIV2K_valid_LR" ]] ; then
-			unpack "${name}"
-			mv \
-				"${WORKDIR}/DIV2K_valid_LR_bicubic/X2" \
-				"${S}/datasets/loaded_div2k/test/lr" \
-				|| die
-		fi
-		if [[ "${name}" =~ "DIV2K_valid_HR" ]] ; then
-			unpack "${name}"
-			mv \
-				"${WORKDIR}/DIV2K_valid_HR" \
-				"${S}/datasets/loaded_div2k/test/hr" \
-				|| die
-		fi
-		if [[ "${name}" =~ ".mp4" ]] ; then
-			cp -a \
-				"${EDISTDIR}/${name}" \
-				"${S}/datasets/loaded_harmonic" \
-				|| die
-		fi
+		use div2k && copy_div2k_assets
+		use harmonic && copy_harmonic_assets
+		einfo "Custom assets may be used.  See metadata.xml for details."
+		copy_custom_still_image_assets
+		copy_custom_movie_assets
 	done
 }
 
@@ -243,7 +363,9 @@ src_prepare() {
 	if ! use pretrained ; then
 		eapply "${FILESDIR}/${PN}-9999-skip-unpack.patch"
 	fi
-	av_scan_assets
+	if [[ "${SR_SECURITY_SCAN:-1}" == "1" ]] ; then
+		av_scan_assets
+	fi
 }
 
 src_configure() {
