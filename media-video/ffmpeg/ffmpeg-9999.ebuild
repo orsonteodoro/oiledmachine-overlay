@@ -97,7 +97,7 @@ FFMPEG_FLAG_MAP=(
 	amr:libopencore-amrwb amr:libopencore-amrnb codec2:libcodec2 +dav1d:libdav1d fdk:libfdk-aac
 	jpeg2k:libopenjpeg jpegxl:libjxl bluray:libbluray gme:libgme gsm:libgsm
 	libaribb24 mmal modplug:libmodplug opus:libopus qsv:libvpl libilbc librtmp ssh:libssh
-	speex:libspeex srt:libsrt svg:librsvg nvenc:ffnvcodec
+	speex:libspeex srt:libsrt svg:librsvg nvdec nvenc:ffnvcodec
 	vorbis:libvorbis vpx:libvpx zvbi:libzvbi
 	# libavfilter options
 	appkit
@@ -617,7 +617,10 @@ REQUIRED_USE+="
 		)
 	)
 	cuda? (
-		nvenc
+		|| (
+			nvdec
+			nvenc
+		)
 	)
 	gnutls? (
 		!openssl

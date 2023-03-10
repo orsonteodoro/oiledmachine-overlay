@@ -19,7 +19,7 @@
     STILL_IMAGE_HR_TEST_PATHS     - Space delimited list of additional high resolution test assets
     STILL_IMAGE_HR_TRAINING_PATHS - Space delimited list of additional high resolution training assets
     STILL_IMAGE_LR_TEST_PATHS     - Space delimited list of additional low resolution test assets
-    STILL_IMAGE_LR_TRAINING_PATHS - Space delimited list of additional low resolution test assets
+    STILL_IMAGE_LR_TRAINING_PATHS - Space delimited list of additional low resolution training assets
     VIDEO_ASSET_PATHS             - Space delimited list of additional assets
 
     All paths are absolute paths to each individual assets without spaces.
@@ -146,6 +146,9 @@
     <flag name="native">
       Use files for single threaded native use.
     </flag>
+    <flag name="nvdec">
+      Utilize nvdec to hardware accelerate h264/vp8
+    </flag>
     <flag name="pretrained">
       Use pretrained models provided by the user community of this repo.
 
@@ -172,6 +175,8 @@
     </flag>
     <flag name="vpx">
       Use free CPU based or hardware accelerated vp8 for decoding videos
+
+      vaapi or cuda is required for accelerated
     </flag>
     <flag name="vespcn">
       Generate/build/install VESPCN trained models.

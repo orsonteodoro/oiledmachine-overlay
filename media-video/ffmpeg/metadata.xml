@@ -5,7 +5,7 @@
 	<!-- ebuild originator -->
 	<email>media-video@gentoo.org</email>
 </maintainer>
-<longdescription>
+<!--
   The oiledmachine-overlay provides this ebuild for PGO/BOLT optimization.
 
 
@@ -468,8 +468,7 @@
    * The pic USE flag may be required for LTO builds.
    * Either Gold LTO or Thin LTO may only be used for LTO.
    * Using BFD LTO may result in linker errors.
-
-</longdescription>
+-->
 <use>
   <flag name="amf">
     Enables support with the Advanced Media Framework (AMF)

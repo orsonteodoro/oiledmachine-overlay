@@ -65,7 +65,8 @@ FORMATS=(
 IUSE+="
 ${ALGS[@]}
 ${FORMATS[@]}
-convert div2k fallback-commit ffmpeg gstreamer harmonic +pretrained vaapi vdpau vpx
+convert div2k fallback-commit ffmpeg gstreamer harmonic nvdec +pretrained vaapi
+vdpau vpx
 "
 # See formats see, https://ffmpeg.org/ffmpeg-filters.html#sr-1
 # We use the tensorflow .pb because it is multicore.
@@ -76,6 +77,9 @@ REQUIRED_USE="
 			gstreamer
 		)
 		gstreamer? (
+			ffmpeg
+		)
+		nvdec? (
 			ffmpeg
 		)
 		vpx? (
@@ -101,7 +105,7 @@ BDEPEND+="
 	!pretrained? (
 		${PYTHON_DEPS}
 		app-crypt/rhash
-		media-libs/opencv[${PYTHON_USEDEP},ffmpeg?,gstreamer?,python]
+		media-libs/opencv[${PYTHON_USEDEP},ffmpeg?,gstreamer?,nvdec?,python]
 		sci-libs/tensorflow[${PYTHON_USEDEP},python]
 		ffmpeg? (
 			>=media-video/ffmpeg-4[vaapi?,vdpau?,vpx?]
