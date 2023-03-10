@@ -598,12 +598,20 @@ CPU_REQUIRED_USE="
 "
 
 # GPL_REQUIRED_USE moved to LICENSE_REQUIRED_USE
+# FIXME: fix missing symbols with -re-codecs
 REQUIRED_USE+="
 	${CPU_REQUIRED_USE}
 	${GPL_REQUIRED_USE}
 	${LICENSE_REQUIRED_USE}
 	!kernel_linux? (
 		!trainer-av-streaming
+	)
+	!proprietary-codecs-disable? (
+		!proprietary-codecs-disable-nc-user? (
+			!proprietary-codecs-disable-nc-user? (
+				re-codecs
+			)
+		)
 	)
 	cuda? (
 		nvenc
@@ -1677,11 +1685,6 @@ eerror
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "outdevs" ]] && myconf+=( --disable-outdevs )
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "parsers" ]] && myconf+=( --disable-parsers )
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "protocols" ]] && myconf+=( --disable-protocols )
-	fi
-
-	if ! use re-codecs && [[ -z "${FFMPEG_CUSTOM_OPTIONS}" ]] ; then
-		# libavcodec.so.58: undefined symbol: ff_iac_decoder
-		FFMPEG_CUSTOM_OPTIONS="imc_decoder"
 	fi
 
 einfo

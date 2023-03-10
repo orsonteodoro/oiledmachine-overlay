@@ -240,8 +240,9 @@ ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
 alsa chromium -clear-config-first doc +encode fallback-commit gdbm
 jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo pic pipewire
-proprietary-codecs-disable proprietary-codecs-disable-nc-developer
-proprietary-codecs-disable-nc-user +re-codecs sndio sr static-libs
+proprietary-codecs proprietary-codecs-disable
+proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
++re-codecs sndio sr static-libs
 test v4l wayland r13
 
 trainer-audio-cbr
@@ -600,12 +601,20 @@ CPU_REQUIRED_USE="
 "
 
 # GPL_REQUIRED_USE moved to LICENSE_REQUIRED_USE
+# FIXME: fix missing symbols with -re-codecs
 REQUIRED_USE+="
 	${CPU_REQUIRED_USE}
 	${GPL_REQUIRED_USE}
 	${LICENSE_REQUIRED_USE}
 	!kernel_linux? (
 		!trainer-av-streaming
+	)
+	!proprietary-codecs-disable? (
+		!proprietary-codecs-disable-nc-user? (
+			!proprietary-codecs-disable-nc-user? (
+				re-codecs
+			)
+		)
 	)
 	cuda? (
 		nvenc
@@ -640,6 +649,9 @@ REQUIRED_USE+="
 			trainer-video-lossless
 			trainer-video-lossless-quick
 		)
+	)
+	proprietary-codecs? (
+		re-codecs
 	)
 	proprietary-codecs-disable? (
 		!amr
@@ -1703,11 +1715,6 @@ eerror
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "outdevs" ]] && myconf+=( --disable-outdevs )
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "parsers" ]] && myconf+=( --disable-parsers )
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "protocols" ]] && myconf+=( --disable-protocols )
-	fi
-
-	if ! use re-codecs && [[ -z "${FFMPEG_CUSTOM_OPTIONS}" ]] ; then
-		# libavcodec.so.58: undefined symbol: ff_iac_decoder
-		FFMPEG_CUSTOM_OPTIONS="imc_decoder"
 	fi
 
 einfo
