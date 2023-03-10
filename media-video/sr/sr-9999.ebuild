@@ -107,7 +107,7 @@ BDEPEND+="
 			>=media-video/ffmpeg-4[vaapi?,vdpau?,vpx?]
 		)
 		gstreamer? (
-			media-plugins/gst-plugins-meta[ffmpeg?,vpx?]
+			media-plugins/gst-plugins-meta[ffmpeg?]
 		)
 	)
 "
