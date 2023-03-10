@@ -8,6 +8,18 @@
   </maintainer>
   <longdescription>
 
+  FFmpeg compatibility:
+
+    SCRNN:  y
+    ESPCN:  y
+    VESPCN:  n
+    VESPCN (mc):  n
+    VSRNet: n
+
+    VESPCN/VSRNet known issue
+
+      https://github.com/HighVoltageRocknRoll/sr/issues/7
+
   Further reading:
 
     PSNRs:  https://github.com/HighVoltageRocknRoll/sr#benchmark-results
@@ -25,6 +37,8 @@
       Generate/build/install ESPCN trained models.
 
       Marginally fastest and marginally highest quality algorithm in this package.
+
+      (Compatible with FFmpeg)
     </flag>
     <flag name="native">
       Use files for single threaded native use.
@@ -35,6 +49,8 @@
       (Not provided officially by the repo.)
 
       If disabled, the training process may take hours to accomplish.
+
+      (Compatible with FFmpeg)
     </flag>
     <flag name="srcnn">
       Generate/build/install SRCNN trained models
@@ -45,15 +61,21 @@
       Use files for multicore + GPU use.
     </flag>
     <flag name="vespcn">
-      Generate/build/install VESPCN trained models
+      Generate/build/install VESPCN trained models.
+
+      (Not compatible with FFmpeg)
     </flag>
     <flag name="vespcn-mc">
       Generate/build/install motion compensated VESPCN trained models
+
+      (Not compatible with FFmpeg)
     </flag>
     <flag name="vsrnet">
-      Generate/build/install VSRNet trained models
+      Generate/build/install VSRNet trained models.
 
       Marginally slowest and marginally lowest quality algorithm in this package.
+
+      (Not compatible with FFmpeg)
     </flag>
   </use>
   <upstream>
