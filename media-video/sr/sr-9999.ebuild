@@ -239,6 +239,8 @@ verify_integrity() {
 		&& "${eblake2b}" != "${ablake2b}" \
 		&& "${esha512}" != "${asha512}" \
 	]] ; then
+		:;
+	else
 eerror
 eerror "Asset integrity failure detected"
 eerror
