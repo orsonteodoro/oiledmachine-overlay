@@ -1,6 +1,7 @@
 # The asset list will give you an idea to replace individual assets with more
-# free compareable ones or come up with your own asset list targeted for
-# specific aestheics if you do not like how these prebuilt assets are selected.
+# free comparable ones or come up with your own asset list targeted for
+# specific aestheics if you do not like how these preselected assets are
+# selected.
 
 Harmonic summary:
 
@@ -10,13 +11,13 @@ Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59397 kb/
 Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
 # Content keywords:  realistic, people, thailand, ox, temple, professional grade, rain,
 # river, plant, boat, insect, animals, food, snake, architecture, close ups, skyline
-# dusk
+# dusk, present era
 
 DIV2K summary:
 
 # Content keywords:  realistic, people, insects, animals, man made objects,
 # culture, uniforms, underwater, natural landscapes, landmarks, text, reptiles,
-# all zoom levels, professional grade
+# all zoom levels, professional grade, present era
 
 100 PNG assets in loaded_div2k/test/hr/ 8-bit sRGB
 
