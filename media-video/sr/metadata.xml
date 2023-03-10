@@ -165,13 +165,13 @@
       Use files for multicore + GPU use.
     </flag>
     <flag name="vaapi">
-      Use hardware accelerated decoding for h264
+      Use hardware accelerated decoding for h264 videos
     </flag>
     <flag name="vdpau">
-      Use hardware accelerated decoding for h264
+      Use hardware accelerated decoding for h264 videos
     </flag>
     <flag name="vpx">
-      Use free vp8
+      Use free CPU based vp8 for decoding videos
     </flag>
     <flag name="vespcn">
       Generate/build/install VESPCN trained models.
