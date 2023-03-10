@@ -131,7 +131,7 @@ RESTRICT="mirror"
 request_sandbox_permissions() {
 eerror "The trained version is still a Work In Progress (WIP)"
 eerror "QA:  Assets still needs to be downloaded for Manifest."
-#	die
+	die
 	if has network-sandbox $FEATURES ; then
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
