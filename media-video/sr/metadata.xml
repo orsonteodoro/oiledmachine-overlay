@@ -49,6 +49,16 @@
       /usr/portage/distfiles/assets/sr/images/training/lr/0003x2.png:size:blake2b_fingerprint:sha512_fingerprint
     "
 
+    The index may be changed to prevent clobbering with DIV2K.
+
+    # FIXME:  Test viability of free formats.  The below is patent-encumbered.
+    VIDEO_ASSET_PATHS="
+      /usr/portage/distfiles/assets/sr/videos/asset1.mp4:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/videos/asset2.mp4:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/videos/asset3.mp4:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/videos/asset4.mp4:size:blake2b_fingerprint:sha512_fingerprint
+    "
+
     size, blake2b_fingerprint, and sha512_fingerprint are placeholders which
     should be replaced with the following generated values.
 
@@ -59,15 +69,6 @@
     The :size:blake2b_fingerprint:sha512_fingerprint suffix provide integrity
     verification to have the same integrity guarantees as the package manager.
 
-    The index may be changed to prevent clobbering with DIV2K.
-
-    # FIXME:  Test viability of free formats.  The below is patent-encumbered.
-    VIDEO_ASSET_PATHS="
-      /usr/portage/distfiles/assets/sr/videos/asset1.mp4
-      /usr/portage/distfiles/assets/sr/videos/asset2.mp4
-      /usr/portage/distfiles/assets/sr/videos/asset3.mp4
-      /usr/portage/distfiles/assets/sr/videos/asset4.mp4
-    "
 
   FFmpeg compatibility:
 
