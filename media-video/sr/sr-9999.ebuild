@@ -58,7 +58,7 @@ FORMATS=(
 IUSE+="
 ${ALGS[@]}
 ${FORMATS[@]}
-convert fallback-commit libavfilter-headers +pretrained
+convert fallback-commit +pretrained
 "
 # See formats see, https://ffmpeg.org/ffmpeg-filters.html#sr-1
 # We use the tensorflow .pb because it is multicore.
@@ -302,10 +302,6 @@ src_compile() {
 src_install() {
 	local alg
 	for alg in $(get_algs) ; do
-		insinto /usr/share/${PN}/headers
-		if use libavfilter-headers ; then
-			doins dnn_${alg}.h
-		fi
 		insinto /usr/share/${PN}/models
 		if use native ; then
 			doins ${alg}.model

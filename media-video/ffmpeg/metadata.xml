@@ -719,10 +719,6 @@
   <flag name="sr">
     Generate sr (super-resolution) training models.
   </flag>
-  <flag name="sr-headers">
-    Replace the internal CNN weight headers with the one provided by
-    <pkg>media-video/sr</pkg>.
-  </flag>
   <flag name="srt">
     Enable support for Secure Reliable Transport (SRT) via <pkg>net-libs/srt</pkg>
   </flag>

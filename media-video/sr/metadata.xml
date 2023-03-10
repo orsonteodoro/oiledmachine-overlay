@@ -26,9 +26,6 @@
 
       Marginally fastest and marginally highest quality algorithm in this package.
     </flag>
-    <flag name="libavfilter-headers">
-      Generate/install headers for FFmpeg
-    </flag>
     <flag name="native">
       Use files for single threaded native use.
     </flag>
