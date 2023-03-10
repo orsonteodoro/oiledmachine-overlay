@@ -69,6 +69,15 @@
     The :size:blake2b_fingerprint:sha512_fingerprint suffix provide integrity
     verification to have the same integrity guarantees as the package manager.
 
+    The below script template can be used to generate a list:
+
+    path="/usr/portage/distfiles/assets/sr/images/training/lr"
+    for path in $(find "${path}" -type -f -name "*.png") ; do
+        esize=$(stat -c "%s" "${path}")
+        eblake2b=$(rhash --blake2b "${path}" | cut -f 1 -d " ")
+        esha512=$(sha512sum "${path}" | cut -f 1 -d " ")
+        echo "${path}:${esize}:${eblake2b}:${esha512}"
+    done
 
   FFmpeg compatibility:
 
