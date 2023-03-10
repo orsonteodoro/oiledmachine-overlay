@@ -1679,6 +1679,19 @@ eerror
 		[[ "${FFMPEG_CLEAR_CONFIG_SETS}" =~ "protocols" ]] && myconf+=( --disable-protocols )
 	fi
 
+	if \
+		( \
+			   use proprietary-codecs-disable-nc-developer \
+			|| use proprietary-codecs-disable-nc \
+			|| use proprietary-codecs-disable \
+		) \
+		&& \
+		[[ -z "${FFMPEG_CUSTOM_OPTIONS}" ]] \
+	; then
+		# libavcodec.so.58: undefined symbol: ff_iac_decoder
+		FFMPEG_CUSTOM_OPTIONS="imc_decoder"
+	fi
+
 einfo
 einfo "FFMPEG_CUSTOM_OPTIONS:"
 einfo
