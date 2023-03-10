@@ -25,6 +25,15 @@
     PSNRs:  https://github.com/HighVoltageRocknRoll/sr#benchmark-results
     Descriptions:  https://en.wikipedia.org/wiki/Video_super-resolution
 
+  Note:
+
+    The PSNR may be used to measure image quality with many sources implying
+    that higher values are better, but the number is doesn't always correlate to
+    what you see.  Always check the image visually to confirm.  A value of ~1.5
+    PSNR difference may have significantly different quality results.  Wikipedia
+    also noted that validity of PSNR is correct only for same codec and same
+    image.
+
   </longdescription>
   <upstream>
     <doc lang="en">https://github.com/HighVoltageRocknRoll/sr</doc>
@@ -36,7 +45,8 @@
     <flag name="espcn">
       Generate/build/install ESPCN trained models.
 
-      Marginally fastest and marginally highest quality algorithm in this package.
+      Marginally fastest and marginally highest quality algorithm in this
+      package.
 
       (Compatible with FFmpeg)
     </flag>
@@ -55,7 +65,8 @@
     <flag name="srcnn">
       Generate/build/install SRCNN trained models
 
-      Inspired by waifu2x.  Estimated around 1.5-3 PSNR difference to waifu2x.
+      Inspired by waifu2x.  Estimated around 1.5-3 PSNR difference to the
+      improved waifu2x implying a significant difference.
     </flag>
     <flag name="tensorflow">
       Use files for multicore + GPU use.
