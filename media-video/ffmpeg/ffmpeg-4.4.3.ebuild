@@ -97,7 +97,7 @@ FFMPEG_FLAG_MAP=(
 	amr:libopencore-amrwb amr:libopencore-amrnb codec2:libcodec2 +dav1d:libdav1d fdk:libfdk-aac
 	jpeg2k:libopenjpeg bluray:libbluray gme:libgme gsm:libgsm
 	libaribb24 mmal modplug:libmodplug opus:libopus libilbc librtmp ssh:libssh
-	speex:libspeex srt:libsrt svg:librsvg nvdec nvenc:ffnvcodec
+	speex:libspeex srt:libsrt svg:librsvg nvdec nvdec:ffnvcodec nvenc nvenc:ffnvcodec
 	vorbis:libvorbis vpx:libvpx zvbi:libzvbi
 	# libavfilter options
 	appkit
@@ -965,6 +965,9 @@ RDEPEND+="
 	svg? (
 		gnome-base/librsvg:2=[${MULTILIB_USEDEP}]
 		x11-libs/cairo[${MULTILIB_USEDEP}]
+	)
+	nvdec? (
+		>=media-libs/nv-codec-headers-9.1.23.1
 	)
 	nvenc? (
 		>=media-libs/nv-codec-headers-9.1.23.1
