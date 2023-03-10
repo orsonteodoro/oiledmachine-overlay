@@ -1,0 +1,13 @@
+diff -urpN sr-9999.orig/generate_datasets.sh sr-9999/generate_datasets.sh
+--- sr-9999.orig/generate_datasets.sh	2023-03-09 14:48:29.650162266 -0800
++++ sr-9999/generate_datasets.sh	2023-03-09 15:01:27.390172314 -0800
+@@ -1,7 +1,7 @@
+ #!/bin/bash
+ 
+-python3 datasets/load_harmonic_video.py --save_folder=datasets/loaded_harmonic
+-python3 datasets/load_div2k.py --save_folder=datasets/loaded_div2k
++#python3 datasets/load_harmonic_video.py --save_folder=datasets/loaded_harmonic
++#python3 datasets/load_div2k.py --save_folder=datasets/loaded_div2k
+ 
+ python3 datasets/prepare_dataset.py --video_folder=datasets/loaded_harmonic --dataset_folder=datasets/train --type=blocks --temporal_radius=1 --frames_per_scene=2 --block_size=36 --stride=36 --crop --scene_changes=datasets/scene_changes_harmonic.json --block_min_std=20.0
+ python3 datasets/prepare_div2k_dataset.py --div2k_folder=datasets/loaded_div2k/train --dataset_folder=datasets/train_div2k --type=blocks --temporal_radius=1 --block_size=36 --stride=36

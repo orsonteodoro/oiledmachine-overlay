@@ -131,7 +131,7 @@ RESTRICT="mirror"
 request_sandbox_permissions() {
 eerror "The trained version is still a Work In Progress (WIP)"
 eerror "QA:  Assets still needs to be downloaded for Manifest."
-	die
+#	die
 	if has network-sandbox $FEATURES ; then
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
@@ -176,13 +176,36 @@ copy_converters() {
 
 copy_assets() {
 	mkdir -p "${S}/datasets/loaded_div2k/train" || die
+	mkdir -p "${S}/datasets/loaded_div2k/test" || die
 	mkdir -p "${S}/datasets/loaded_harmonic" || die
 	local name
 	for name in ${A} ; do
-		if [[ "${name}" =~ "DIV2k" ]] ; then
-			cp -a \
-				"${EDISTDIR}/${name}" \
-				"${S}/datasets/loaded_div2k/train" \
+		if [[ "${name}" =~ "DIV2K_train_LR" ]] ; then
+			unpack "${name}"
+			mv \
+				"${WORKDIR}/DIV2K_train_LR_bicubic/X2" \
+				"${S}/datasets/loaded_div2k/train/lr" \
+				|| die
+		fi
+		if [[ "${name}" =~ "DIV2K_train_HR" ]] ; then
+			unpack "${name}"
+			mv \
+				"${WORKDIR}/DIV2K_train_HR" \
+				"${S}/datasets/loaded_div2k/train/hr" \
+				|| die
+		fi
+		if [[ "${name}" =~ "DIV2K_valid_LR" ]] ; then
+			unpack "${name}"
+			mv \
+				"${WORKDIR}/DIV2K_valid_LR_bicubic/X2" \
+				"${S}/datasets/loaded_div2k/test/lr" \
+				|| die
+		fi
+		if [[ "${name}" =~ "DIV2K_valid_HR" ]] ; then
+			unpack "${name}"
+			mv \
+				"${WORKDIR}/DIV2K_valid_HR" \
+				"${S}/datasets/loaded_div2k/test/hr" \
 				|| die
 		fi
 		if [[ "${name}" =~ ".mp4" ]] ; then
@@ -196,7 +219,7 @@ copy_assets() {
 
 av_scan_assets() {
 	if has_version "app-antivirus/clamav[clamapp]" ; then
-		einfo "Malware scanning assets"
+		einfo "Scanning assets for malware"
 		clamscan -r "${WORKDIR}" || die
 	fi
 }
@@ -213,7 +236,14 @@ ewarn "Expect training to last hours"
 		use convert && copy_converters
 		copy_assets
 	fi
-	#av_scan_assets
+}
+
+src_prepare() {
+	default
+	if ! use pretrained ; then
+		eapply "${FILESDIR}/${PN}-9999-skip-unpack.patch"
+		av_scan_assets
+	fi
 }
 
 src_configure() {
