@@ -6,8 +6,7 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
-
+  <!--
   See also asset_list.txt for descriptions for criticisms for ideas for
   replacing with freeable licensed ones is used.
 
@@ -104,8 +103,7 @@
     PSNR difference may have significantly different quality results.  Wikipedia
     also noted that validity of PSNR is correct only for same codec and same
     image.
-
-  </longdescription>
+  -->
   <upstream>
     <doc lang="en">https://github.com/HighVoltageRocknRoll/sr</doc>
   </upstream>
