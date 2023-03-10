@@ -231,7 +231,7 @@ verify_integrity() {
 	local esize=$(echo "${row}" | cut -f 2 -d ":")
 	local eblake2b=$(echo "${row}" | cut -f 3 -d ":")
 	local esha512=$(echo "${row}" | cut -f 4 -d ":")
-	local asize=$(stat -c "%s" "${path}" | cut -f 4 -d " ")
+	local asize=$(stat -c "%s" "${path}")
 	local ablake2b=$(rhash --blake2b "${path}" | cut -f 1 -d " ")
 	local asha512=$(sha512sum "${path}" | cut -f 1 -d " ")
 	if [[ \
