@@ -1,6 +1,6 @@
 # The asset list will give you an idea to replace individual assets with more
 # free comparable ones or come up with your own asset list targeted for
-# specific aestheics if you do not like how these preselected assets are
+# specific aesthetics if you do not like how these preselected assets are
 # selected.
 
 # See also metadata.xml for integration of custom assets into ebuild.
