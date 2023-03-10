@@ -176,7 +176,7 @@
     <flag name="vpx">
       Use free CPU based or hardware accelerated vp8 for decoding videos
 
-      vaapi or cuda is required for accelerated
+      vaapi or nvdec is required for hardware accelerated
     </flag>
     <flag name="vespcn">
       Generate/build/install VESPCN trained models.
