@@ -4,8 +4,8 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
-inherit git-r3 python-any-r1
+PYTHON_COMPAT=( python3_10 ) # Limited by tensorflow
+inherit git-r3 python-r1
 
 DESCRIPTION="Image and video super resolution"
 HOMEPAGE="https://github.com/HighVoltageRocknRoll/sr"
@@ -30,12 +30,13 @@ LICENSE="
 
 # E. Agustsson, R. Timofte.  NTIRE 2017 Challenge on Single Image Super-Resolution: Dataset and Study, August 2017.
 
-# @InProceedings{Ignatov_2018_ECCV_Workshops,
-# author = {Ignatov, Andrey and Timofte, Radu and others},
-# title = {PIRM challenge on perceptual image enhancement on smartphones: report},
-# booktitle = {European Conference on Computer Vision (ECCV) Workshops},
-# month = {January},
-# year = {2019}
+# @InProceedings{Timofte_2018_CVPR_Workshops,
+# author = {Timofte, Radu and Gu, Shuhang and Wu, Jiqing and Van Gool, Luc and Zhang, Lei and
+# Yang, Ming-Hsuan and Haris, Muhammad and others},
+# title = {NTIRE 2018 Challenge on Single Image Super-Resolution: Methods and Results},
+# booktitle = {The IEEE Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
+# month = {June},
+# year = {2018}
 # }
 
 # harmonicinc.box.com assets - all-rights-reserved (unknown license)
@@ -64,11 +65,23 @@ FORMATS=(
 IUSE+="
 ${ALGS[@]}
 ${FORMATS[@]}
-convert div2k fallback-commit harmonic +pretrained
+convert div2k fallback-commit ffmpeg gstreamer harmonic +pretrained vaapi vdpau vpx
 "
 # See formats see, https://ffmpeg.org/ffmpeg-filters.html#sr-1
 # We use the tensorflow .pb because it is multicore.
 REQUIRED_USE="
+	!pretrained? (
+		|| (
+			ffmpeg
+			gstreamer
+		)
+		gstreamer? (
+			ffmpeg
+		)
+		vpx? (
+			gstreamer
+		)
+	)
 	|| (
 		${FORMATS[@]}
 	)
@@ -85,21 +98,25 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	${PYTHON_DEPS}
-	app-crypt/rhash
-	sci-libs/tensorflow[python]
+	!pretrained? (
+		${PYTHON_DEPS}
+		app-crypt/rhash
+		media-libs/opencv[${PYTHON_USEDEP},ffmpeg?,gstreamer?,python]
+		sci-libs/tensorflow[${PYTHON_USEDEP},python]
+		ffmpeg? (
+			>=media-video/ffmpeg-4[vaapi?,vdpau?,vpx?]
+		)
+		gstreamer? (
+			media-plugins/gst-plugins-meta[ffmpeg?,vpx?]
+		)
+	)
 "
 # See https://github.com/HighVoltageRocknRoll/sr/issues/8
 FFMPEG_PV="5.1.2"
 
 # Save outside sandbox to avoid redownloads
 # Still needs rehash.  About 3 GiB each
-DISABLED_ASSETS_SRC_URI="
-	!pretrained? (
-		harmonic? (
-https://harmonicinc.box.com/shared/static/58pxpuh1dsieye19pkj182hgv6fg4gof.mp4
-https://harmonicinc.box.com/shared/static/6uws3kg4ldxtkeg5k5jwubueaolkqsr0.mp4
-https://harmonicinc.box.com/shared/static/51ma04aviaeunhzelpw455sodv7judiu.mp4
+DISABLED_SRC_URI="
 https://harmonicinc.box.com/shared/static/uaj2o8ku7qhwwzviga9znzviwqg14x1g.mp4
 https://harmonicinc.box.com/shared/static/e425git3jtnugqh8llzlgvr0r2j4j351.mp4
 https://harmonicinc.box.com/shared/static/29b0z4w9lj4p54q2hf7il9jz6codx36v.mp4
@@ -107,8 +124,6 @@ https://harmonicinc.box.com/shared/static/n8x168w6vhpv240hggw7wtj8mszg7wnb.mp4
 https://harmonicinc.box.com/shared/static/6inss29is5b7jzxv1qkuf2p9qeaomi04.mp4
 https://harmonicinc.box.com/shared/static/v21fqn77ib1r8zlrbnl6fsyzt6rrjj0v.mp4
 https://harmonicinc.box.com/shared/static/tmzm8y7bfzpote9obs7le3olh5j87iir.mp4
-		)
-	)
 "
 
 SRC_URI="
@@ -131,6 +146,9 @@ http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_HR.zip
 		)
 		harmonic? (
 https://harmonicinc.box.com/shared/static/wrlzswfdvyprz10hegws74d4wzh7270o.mp4
+https://harmonicinc.box.com/shared/static/58pxpuh1dsieye19pkj182hgv6fg4gof.mp4
+https://harmonicinc.box.com/shared/static/6uws3kg4ldxtkeg5k5jwubueaolkqsr0.mp4
+https://harmonicinc.box.com/shared/static/51ma04aviaeunhzelpw455sodv7judiu.mp4
 		)
 	)
 	pretrained? (

@@ -78,6 +78,13 @@
         echo "${path}:${esize}:${eblake2b}:${esha512}"
     done
 
+  Supported formats:
+
+    For image stills:  https://github.com/opencv/opencv/blob/4.7.0/doc/tutorials/introduction/config_reference/config_reference.markdown#built-in-formats
+    For video formats:
+      FFmpeg - https://github.com/opencv/opencv/blob/4.7.0/modules/videoio/src/cap_ffmpeg_impl.hpp#L1343
+      gstreamer - https://github.com/opencv/opencv/blob/4.7.0/samples/cpp/videocapture_gstreamer_pipeline.cpp#L37
+
   FFmpeg compatibility:
 
           SCRNN:  y
@@ -125,6 +132,12 @@
 
       (Compatible with FFmpeg)
     </flag>
+    <flag name="ffmpeg">
+      Use ffmpeg for h264 decoding
+    </flag>
+    <flag name="gstreamer">
+      Use gstreamer for h264 or vpx decoding
+    </flag>
     <flag name="harmonic">
       Download and train with Harmonic video assets.
 
@@ -150,6 +163,15 @@
     </flag>
     <flag name="tensorflow">
       Use files for multicore + GPU use.
+    </flag>
+    <flag name="vaapi">
+      Use hardware accelerated decoding for h264
+    </flag>
+    <flag name="vdpau">
+      Use hardware accelerated decoding for h264
+    </flag>
+    <flag name="vpx">
+      Use non patent-encumbered vp8
     </flag>
     <flag name="vespcn">
       Generate/build/install VESPCN trained models.
