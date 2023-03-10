@@ -115,7 +115,7 @@
       Download and train with DIV2K still images.
       License restricted for academics only.
 
-      See longdescription of metadata.xml for custom assets.
+      See metadata.xml for adding custom assets for training.
     </flag>    
     <flag name="espcn">
       Generate/build/install ESPCN trained models.
@@ -128,7 +128,7 @@
     <flag name="harmonic">
       Download and train with Harmonic video assets.
 
-      See longdescription of metadata.xml for custom assets.
+      See metadata.xml for adding custom assets for training.
     </flag>
     <flag name="native">
       Use files for single threaded native use.
