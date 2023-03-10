@@ -235,9 +235,9 @@ verify_integrity() {
 	local ablake2b=$(rhash --blake2b "${path}" | cut -f 1 -d " ")
 	local asha512=$(sha512sum "${path}" | cut -f 1 -d " ")
 	if [[ \
-		   "${esize}" != "${asize}" \
-		&& "${eblake2b}" != "${ablake2b}" \
-		&& "${esha512}" != "${asha512}" \
+		   "${esize}" == "${asize}" \
+		&& "${eblake2b}" == "${ablake2b}" \
+		&& "${esha512}" == "${asha512}" \
 	]] ; then
 		:;
 	else
