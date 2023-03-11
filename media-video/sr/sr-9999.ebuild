@@ -86,14 +86,14 @@ REQUIRED_USE="
 			gstreamer
 		)
 	)
+	convert? (
+		!pretrained
+	)
 	|| (
 		${FORMATS[@]}
 	)
 	|| (
 		${ALGS[@]}
-	)
-	convert? (
-		!pretrained
 	)
 "
 DEPEND+="
