@@ -338,10 +338,7 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 		net-libs/srt
 	)
 	nvenc? (
-		|| (
-			>=media-video/ffmpeg-4[nvenc]
-			>=media-video/ffmpeg-4[video_cards_nvidia]
-		)
+		>=media-video/ffmpeg-4[nvenc]
 	)
 	vaapi? (
 		>=media-libs/libva-${LIBVA_PV}[X,wayland?]
