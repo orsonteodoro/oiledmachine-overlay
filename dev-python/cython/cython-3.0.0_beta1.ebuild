@@ -4,7 +4,7 @@
 
 EAPI=8
 
-MY_PV="${PV/_alpha/a}"
+MY_PV="${PV/_beta/b}"
 
 DISTUTILS_USE_PEP517=setuptools
 PYTHON_COMPAT=( python3_{8..11} pypy3 )
@@ -44,17 +44,18 @@ BDEPEND="
 	${RDEPEND}
 	doc? (
 		>=dev-python/jinja-3.0.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-3.5.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-issues-1.2.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-tabs-3[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-issues-3.0.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-tabs-3.4.0[${PYTHON_USEDEP}]
 		dev-python/jupyter[${PYTHON_USEDEP}]
 	)
 	test? (
 		$(python_gen_cond_dep '
-			dev-python/coverage[${PYTHON_USEDEP}]
+			<dev-python/setuptools-60[${PYTHON_USEDEP}]
 			dev-python/numpy[${PYTHON_USEDEP}]
+			dev-python/coverage[${PYTHON_USEDEP}]
 			dev-python/pycodestyle[${PYTHON_USEDEP}]
-		' python3_{8..10})
+		' python3_{8..11})
 	)
 "
 PATCHES=(
