@@ -358,7 +358,8 @@ ewarn
 	if use qt5 ; then
 		einfo "Checking Qt versions"
 		local QT_VERSION=$("${EROOT}/usr/$(get_libdir)/libQt5Core.so.5" \
-					| head -n 1 | cut -f 8 -d " ")
+			| head -n 1 \
+			| cut -f 8 -d " ")
 		if ver_test ${QT_VERSION} -lt ${QT_MIN_PV} ; then
 			die "You need >=${QT_MIN_PV} for the Qt system libraries."
 		fi
@@ -403,7 +404,8 @@ ewarn
 		if [[ "${?}" != "0" ]] ; then
 			QT5WEBKIT_HIGHEST=$(strings \
 				"${EROOT}/usr/$(get_libdir)/libQt5WebKit.so" \
-				| grep -F -e "Qt_5." | tail -n 1 \
+				| grep -F -e "Qt_5." \
+				| tail -n 1 \
 				| cut -f 2 -d "_")
 			die \
 "Qt5WebKit is not compatible.  Highest supported by this library is \
@@ -535,10 +537,12 @@ src_configure() {
 		fi
 		local state=$(grep -F -e "State" "${p}" | cut -f 2 -d "=")
 		local component=$(
-			echo "${p}" | sed -r \
-			-e "s|comp/src/||g" \
-                        -e "s|main/lib/[^/]+/||g" \
-			-e "s|[^/]+/src/[^/]+/||g" \
+			echo "${p}" \
+			| sed \
+				-r \
+				-e "s|comp/src/||g" \
+				-e "s|main/lib/[^/]+/||g" \
+				-e "s|[^/]+/src/[^/]+/||g" \
 			| cut -f 2 -d "/"
 		)
 		# See app/src/gambas3/.src/Component/CComponent.class
@@ -574,11 +578,16 @@ find_remove_module() {
 	if find "${ED}" -name "${name}" -type d 2>/dev/null 1>/dev/null ; then
 		find "${ED}" -name "${name}" -type d -delete
 	fi
-	if find "${ED}" -regextype 'posix-egrep' \
-	   -regex ".*/${name}.(gambas|component|info|list|so|so.0|so\.0\.0\.0)" \
-	   2>/dev/null 1>/dev/null ; then
-		find "${ED}" -regextype 'posix-egrep' \
-		-regex ".*/${name}.(gambas|component|info|list|so|so.0|so\.0\.0\.0)" -delete
+	if find "${ED}" \
+		-regextype 'posix-egrep' \
+		-regex ".*/${name}.(gambas|component|info|list|so|so.0|so\.0\.0\.0)" \
+		2>/dev/null \
+		1>/dev/null \
+	; then
+		find "${ED}" \
+			-regextype 'posix-egrep' \
+			-regex ".*/${name}.(gambas|component|info|list|so|so.0|so\.0\.0\.0)" \
+			-delete
 	fi
 }
 
@@ -602,8 +611,11 @@ src_install() {
 		doicon -s 48 "app/desktop/gambas3.png"
 		doicon -s 256 "app/desktop/gambas3.svg"
 		doicon -s scalable "app/desktop/gambas3.svg"
-		make_desktop_entry "/usr/bin/gambas3.gambas" "Gambas" \
-			"/usr/share/gambas/gambas3.png" "Development;IDE"
+		make_desktop_entry \
+			"/usr/bin/gambas3.gambas" \
+			"Gambas" \
+			"/usr/share/gambas/gambas3.png" \
+			"Development;IDE"
 	fi
 
 	# Quality control sections:
