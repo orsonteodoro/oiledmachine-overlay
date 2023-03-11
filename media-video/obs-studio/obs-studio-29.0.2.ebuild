@@ -21,7 +21,7 @@ inherit cmake flag-o-matic git-r3 lcnr lua-single python-single-r1 xdg-utils
 DESCRIPTION="Software for Recording and Streaming Live Video Content"
 HOMEPAGE="https://obsproject.com"
 LICENSE="
-	GPL-CC-1.0
+	CC0-1.0
 	GPL-2+
 	amf? (
 		custom
@@ -86,22 +86,6 @@ kernel_OpenBSD
 r1
 "
 REQUIRED_USE+="
-	ftl? (
-		|| ( amf nvenc vaapi win-mf x264 )
-	)
-	kernel_Winnt? (
-		kernel_Darwin? (
-			!virtualcam
-		)
-	)
-	lua? ( ${LUA_REQUIRED_USE} )
-	hevc? (
-		|| (
-			amf
-			nvenc
-		)
-	)
-	python? ( ${PYTHON_REQUIRED_USE} )
 	!kernel_Darwin? (
 		!mac-syphon
 		!kernel_linux? (
@@ -112,6 +96,9 @@ REQUIRED_USE+="
 		!kernel_Winnt? (
 			!coreaudio-encoder
 		)
+	)
+	!kernel_FreeBSD? (
+		!oss
 	)
 	!kernel_linux? (
 		!kernel_FreeBSD? (
@@ -124,15 +111,6 @@ REQUIRED_USE+="
 			!v4l2
 			!vaapi
 		)
-	)
-	!kernel_FreeBSD? (
-		!oss
-	)
-	kernel_FreeBSD? (
-		!vst
-	)
-	kernel_OpenBSD? (
-		!vst
 	)
 	!kernel_Winnt? (
 		!nvafx
@@ -149,6 +127,38 @@ REQUIRED_USE+="
 			)
 		)
 	)
+	ftl? (
+		|| (
+			amf
+			nvenc
+			vaapi
+			win-mf
+			x264
+		)
+	)
+	kernel_Winnt? (
+		kernel_Darwin? (
+			!virtualcam
+		)
+	)
+	lua? (
+		${LUA_REQUIRED_USE}
+	)
+	hevc? (
+		|| (
+			amf
+			nvenc
+		)
+	)
+	python? (
+		${PYTHON_REQUIRED_USE}
+	)
+	kernel_FreeBSD? (
+		!vst
+	)
+	kernel_OpenBSD? (
+		!vst
+	)
 "
 
 # Based on 18.04 See
@@ -157,24 +167,24 @@ REQUIRED_USE+="
 # deps/obs-scripting/obslua/CMakeLists.txt
 # deps/obs-scripting/obspython/CMakeLists.txt
 BDEPEND+="
-	app-misc/jq
 	>=dev-util/cmake-3.10.2
 	>=dev-util/pkgconf-1.3.7[pkg-config(+)]
+	app-misc/jq
 	lua? (
-		kernel_Darwin? (
-			>=dev-lang/swig-4
-		)
 		!kernel_Darwin? (
 			>=dev-lang/swig-3.0.12
+		)
+		kernel_Darwin? (
+			>=dev-lang/swig-4
 		)
 	)
 	python? (
 		${PYTHON_DEPS}
-		kernel_Darwin? (
-			>=dev-lang/swig-4
-		)
 		!kernel_Darwin? (
 			>=dev-lang/swig-3.0.12
+		)
+		kernel_Darwin? (
+			>=dev-lang/swig-4
 		)
 	)
 	test? (
@@ -253,8 +263,8 @@ DEPEND_ZLIB="
 DEPEND_PLUGINS_AJA="
 	aja? (
 		${DEPEND_LIBX11}
-		media-libs/ntv2
 		>=dev-qt/qtwidgets-${QT_PV}:5=
+		media-libs/ntv2
 	)
 "
 
@@ -311,8 +321,8 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
         >=x11-libs/libXinerama-1.1.3
         >=x11-libs/libXrandr-1.5.1
 	pipewire? (
-		dev-libs/glib:2
 		>=media-video/pipewire-0.3.33
+		dev-libs/glib:2
 		x11-libs/libdrm
 	)
 "
@@ -334,9 +344,9 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 		)
 	)
 	vaapi? (
-		media-libs/vaapi-drivers
 		>=media-libs/libva-${LIBVA_PV}[X,wayland?]
 		>=media-video/ffmpeg-${FFMPEG_PV}[vaapi]
+		media-libs/vaapi-drivers
 	)
 "
 
@@ -370,7 +380,9 @@ DEPEND_PLUGINS_OBS_BROWSER="
 DEPEND_PLUGINS_QSV11="
 	qsv11? (
 		>=media-libs/intel-mediasdk-21.1
-		elibc_mingw? ( dev-util/mingw64-runtime )
+		elibc_mingw? (
+			dev-util/mingw64-runtime
+		)
 	)
 "
 
@@ -384,9 +396,9 @@ DEPEND_PLUGINS_VST="
 DEPEND_PLUGINS_WEBSOCKET="
 	websocket? (
 		>=dev-qt/qtcore-5.9.5:5=
-		>=dev-qt/qtwidgets-${QT_PV}:5=
 		>=dev-qt/qtnetwork-${QT_PV}:5=
 		>=dev-qt/qtsvg-${QT_PV}:5=
+		>=dev-qt/qtwidgets-${QT_PV}:5=
 	)
 "
 
@@ -404,8 +416,11 @@ DEPEND_PLUGINS_WEBSOCKET="
 # >=media-sound/jack2-1.9.12
 # >=sys-fs/udev-237
 DEPEND_PLUGINS="
+	${DEPEND_CURL}
 	${DEPEND_DEPS_FILE_UPDATER}
 	${DEPEND_DEPS_MEDIA_PLAYBACK}
+	${DEPEND_LIBOBS}
+	${DEPEND_LIBX264}
 	${DEPEND_PLUGINS_AJA}
 	${DEPEND_PLUGINS_DECKLINK}
 	${DEPEND_PLUGINS_DECKLINK_OUTPUT_UI}
@@ -418,17 +433,22 @@ DEPEND_PLUGINS="
 	${DEPEND_PLUGINS_QSV11}
 	${DEPEND_PLUGINS_RNNOISE}
 	${DEPEND_PLUGINS_VST}
-	${DEPEND_CURL}
-	${DEPEND_LIBOBS}
-	${DEPEND_LIBX264}
 	>=media-video/ffmpeg-${FFMPEG_PV}:=[x264]
-	alsa? ( >=media-libs/alsa-lib-1.1.3 )
-	fdk? ( >=media-libs/fdk-aac-1.5:= )
-	jack? ( virtual/jack )
-	speexdsp? ( >=media-libs/speexdsp-1.2 )
+	alsa? (
+		>=media-libs/alsa-lib-1.1.3
+	)
+	fdk? (
+		>=media-libs/fdk-aac-1.5:=
+	)
 	freetype? (
 		>=media-libs/fontconfig-2.12.6
 		>=media-libs/freetype-2.8.1
+	)
+	jack? (
+		virtual/jack
+	)
+	speexdsp? (
+		>=media-libs/speexdsp-1.2
 	)
 	v4l2? (
 		${DEPEND_FFMPEG}
@@ -436,7 +456,9 @@ DEPEND_PLUGINS="
 		media-tv/v4l-utils
 		virtual/udev
 	)
-	vlc? ( >=media-video/vlc-3.0.1:= )
+	vlc? (
+		>=media-video/vlc-3.0.1:=
+	)
 "
 
 # These are not mentioned in .github/workflows/main.yml
@@ -505,8 +527,12 @@ DEPEND_LIBOBS_OPENGL="
 # See deps/obs-scripting/CMakeLists.txt
 DEPEND_DEPS_OBS_SCRIPTING="
 	${DEPEND_LIBOBS}
-	lua? ( >=dev-lang/luajit-2.1:2 )
-	python? ( ${PYTHON_DEPS} )
+	lua? (
+		>=dev-lang/luajit-2.1:2
+	)
+	python? (
+		${PYTHON_DEPS}
+	)
 "
 
 # See deps/media-playback/CMakeLists.txt
@@ -535,7 +561,9 @@ RDEPEND+="
 	${DEPEND_PLUGINS}
 	${DEPEND_UI}
 	>=dev-qt/qtwidgets-${QT_PV}:5=
-	test? ( ${DEPEND_LIBOBS} )
+	test? (
+		${DEPEND_LIBOBS}
+	)
 "
 
 DEPEND+=" ${RDEPEND}"

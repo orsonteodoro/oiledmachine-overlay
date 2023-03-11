@@ -16,7 +16,8 @@
     "Open Broadcaster Software", originally designed for recording and streaming
     live video content, efficiently.  Aims to be multi-platform, and improved
     upon internally.
-
+  </longdescription>
+  <!--
     This is an ebuild fork with more detailed VA-API dependency requirement
     checks.
 
@@ -100,7 +101,7 @@
 
       https://obsproject.com/wiki/System-Requirements
 
-  </longdescription>
+  -->
   <upstream>
     <doc lang="en">https://obsproject.com/wiki/Home</doc>
   </upstream>
