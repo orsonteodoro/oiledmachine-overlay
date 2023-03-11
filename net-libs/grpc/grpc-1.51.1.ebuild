@@ -3,6 +3,10 @@
 
 EAPI=8
 
+# For versioning, see
+# https://github.com/grpc/grpc/blob/master/doc/g_stands_for.md
+# https://grpc.io/docs/what-is-grpc/faq/#how-long-are-grpc-releases-supported-for
+
 inherit cmake multilib-minimal
 
 DESCRIPTION="Modern open source high performance RPC framework"
@@ -95,7 +99,7 @@ soversion_check() {
 		| head -n 1 | cut -f 2 -d "\"" | sed -e "s|\.||")
 	local new_slot="${SLOT_MAJ}/${f1}.${f2}"
 	[[ "${SLOT}" != "${new_slot}" ]] \
-		&& die "Ebuild Q/A: Update SLOT=\"\${SLOT_MAJ}/${f1}.${f2}\""
+		&& die "Ebuild QA: Update to SLOT=\"\${SLOT_MAJ}/${f1}.${f2}\""
 }
 
 src_unpack() {
