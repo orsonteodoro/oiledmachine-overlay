@@ -97,7 +97,7 @@ FFMPEG_FLAG_MAP=(
 	amr:libopencore-amrwb amr:libopencore-amrnb codec2:libcodec2 +dav1d:libdav1d fdk:libfdk-aac
 	jpeg2k:libopenjpeg jpegxl:libjxl bluray:libbluray gme:libgme gsm:libgsm
 	libaribb24 mmal modplug:libmodplug opus:libopus qsv:libmfx libilbc librtmp ssh:libssh
-	speex:libspeex srt:libsrt svg:librsvg nvdec nvdec:ffnvcodec nvenc nvenc:ffnvcodec
+	speex:libspeex srt:libsrt svg:librsvg nvdec nvenc
 	vorbis:libvorbis vpx:libvpx zvbi:libzvbi
 	# libavfilter options
 	appkit
@@ -1845,6 +1845,16 @@ eerror
 	for i in "${ffuse[@]#+}" ; do
 		myconf+=( $(use_enable ${i%:*} ${i#*:}) )
 	done
+
+	if use nvdec || use nvenc ; then
+		myconf+=(
+			--enable-ffnvcodec
+		)
+	else
+		myconf+=(
+			--disable-ffnvcodec
+		)
+	fi
 
 	if use proprietary-codecs-disable ; then
 		myconf+=(
