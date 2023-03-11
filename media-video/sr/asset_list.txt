@@ -48,6 +48,18 @@ Duration: 00:10:10.65, start: 0.000000, bitrate: 15116 kb/s
 Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59489 kb/s, 59.94 fps
 Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
 # Content keywords:  
+# College football, professional statium, cheerleaders, cheering fans, close ups, end zone,
+# band, outside stadium, sky, clouds, inside stadium, 4K, digital screen, vuvuzela, 
+# cowgirls, texas outline, drawn 5 pointed star, lines, dashes, turf, stadium windows,
+# golf cart wheels, back shot, blurry fan stand
+
+e425git3jtnugqh8llzlgvr0r2j4j351.mp4 properties:
+major_brand     : mp42
+Duration: 00:13:22.05, start: 0.000000, bitrate: 8078 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59669 kb/s, 59.94 fps
+Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
+# Content keywords:
+
 
 DIV2K summary:
 
