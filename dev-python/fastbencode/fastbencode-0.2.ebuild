@@ -12,7 +12,7 @@ HOMEPAGE="https://github.com/breezy-team/fastbencode"
 LICENSE="GPL-2+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" cext test"
+IUSE+=" test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -24,9 +24,8 @@ RDEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	cext? (
-		>=dev-python/cython-0.29[${PYTHON_USEDEP}]
-	)
+	>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29[${PYTHON_USEDEP}]
 	test? (
 		dev-python/flake8[${PYTHON_USEDEP}]
 	)
