@@ -7,7 +7,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <!-- Distro request: maintainer-needed -->
-  <longdescription>
+  <!--
     This ebuild fork is for security updates (with latest stable) and PGO support.
 
     See also
@@ -16,6 +16,7 @@
       https://github.com/orsonteodoro/oiledmachine-overlay#custom-trainer
 
     for details on PGO support and custom PGO training.
+  -->
   </longdescription>
   <upstream>
     <remote-id type="github">mono/mono</remote-id>

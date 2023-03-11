@@ -145,11 +145,19 @@ gen_pgo_trainers_required_use() {
 	done
 }
 REQUIRED_USE+="
-	jemalloc-default? ( jemalloc )
-	jemalloc-assert? ( jemalloc )
-	jemalloc-custom-cflags? ( jemalloc )
+	jemalloc-assert? (
+		jemalloc
+	)
+	jemalloc-custom-cflags? (
+		jemalloc
+	)
+	jemalloc-default? (
+		jemalloc
+	)
 	pgo? (
-		|| ( ${PGO_TRAINERS[@]} )
+		|| (
+			${PGO_TRAINERS[@]}
+		)
 	)
 "
 REQUIRED_USE+=" "$(gen_pgo_trainers_required_use)
@@ -164,20 +172,28 @@ JEMALLOC_PV="5.3.0" # 5.0.1 (circa 2018) was the upstream selected.
 # See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=jemalloc&search_type=all
 
 DEPEND+="
+	!minimal? (
+		>=dev-dotnet/libgdiplus-6.0.2
+	)
 	app-crypt/mit-krb5[${MULTILIB_USEDEP}]
 	sys-libs/zlib[${MULTILIB_USEDEP}]
-	ia64? ( sys-libs/libunwind )
-	!minimal? ( >=dev-dotnet/libgdiplus-6.0.2 )
-	nls? ( sys-devel/gettext )
+	ia64? (
+		sys-libs/libunwind
+	)
+	nls? (
+		sys-devel/gettext
+	)
 "
 RDEPEND+="
 	${DEPEND}
 	app-misc/ca-certificates
 "
 BDEPEND+="
+	dev-util/yacc
 	sys-devel/bc
-	virtual/yacc
-	pax-kernel? ( sys-apps/elfix )
+	pax-kernel? (
+		sys-apps/elfix
+	)
 	mono-benchmark-trainer? (
 		sys-process/time
 	)
