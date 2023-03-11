@@ -2,27 +2,18 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Ebuild Only on the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <maintainer type="person">
+    <!-- Ebuild Originator -->
     <!-- Obtained from the science overlay -->
-    <!-- Originator -->
     <email>harald.weiner@jku.at</email>
     <name>Harald Weiner</name>
   </maintainer>
-  <upstream>
-    <bugs-to>
-      https://github.com/emscripten-core/emscripten/issues
-    </bugs-to>
-    <changelog>
-      https://github.com/emscripten-core/emscripten/blob/main/ChangeLog.md
-    </changelog>
-    <remote-id type="github">emscripten-core/emscripten</remote-id>
-  </upstream>
-  <longdescription>
-    Only in the oiledmachine-overlay:
+  <!--
+    oiledmachine-overlay notes:
 
     This ebuild package tracks releases corresponding to both the LLVM version
     and the highest point release of the major minor version.
@@ -40,7 +31,16 @@
 
     These ebuilds only version by tags and release notes for a particular point
     release may be found in the next version bump.
-  </longdescription>
+  -->
+  <upstream>
+    <bugs-to>
+      https://github.com/emscripten-core/emscripten/issues
+    </bugs-to>
+    <changelog>
+      https://github.com/emscripten-core/emscripten/blob/main/ChangeLog.md
+    </changelog>
+    <remote-id type="github">emscripten-core/emscripten</remote-id>
+  </upstream>
   <use>
     <flag name="asmjs">
       Adds asm.js output support.  This is deprecated.
