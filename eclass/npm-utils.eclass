@@ -45,7 +45,7 @@ inherit lcnr
 
 # Keep up to date from
 # https://omahaproxy.appspot.com/
-CHROMIUM_STABLE_PV="110"
+CHROMIUM_STABLE_PV="111"
 
 # See https://nodejs.dev/en/about/releases/
 NODE_VERSIONS_SUPPORTED=(14 16 18 19 20)
