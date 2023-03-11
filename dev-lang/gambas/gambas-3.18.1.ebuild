@@ -72,6 +72,7 @@ REQUIRED_USE+="
 	)
 	remove_deprecated? (
 		!gnome-keyring
+		!pdf
 		!sdl
 		!v4l
 	)
@@ -85,8 +86,10 @@ REQUIRED_USE+="
 	)
 	remove_stable_not_finished? (
 		!sdl2
+		!xml
 	)
 	remove_unstable? (
+		!jit
 		!mysql
 		!pdf
 	)
@@ -609,11 +612,13 @@ src_install() {
 		find_remove_module "gb.option.component"
 		find_remove_module "gb.pdf"
 		find_remove_module "gb.report"
+		find_remove_module "gb.web.form"
 	fi
 
 	if use remove_stable_not_finished ; then
 		find_remove_module "gb.desktop"
 		find_remove_module "gb.desktop.x11"
+		find_remove_module "gb.form.htmlview"
 		find_remove_module "gb.form.terminal"
 		find_remove_module "gb.map"
 		find_remove_module "gb.memcached"
@@ -623,7 +628,6 @@ src_install() {
 		find_remove_module "gb.util"
 		find_remove_module "gb.util.web"
 		find_remove_module "gb.web.feed"
-		find_remove_module "gb.web.form"
 		find_remove_module "gb.web.gui"
 	fi
 

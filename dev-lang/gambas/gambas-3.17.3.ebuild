@@ -72,6 +72,7 @@ REQUIRED_USE+="
 	)
 	remove_deprecated? (
 		!gnome-keyring
+		!pdf
 		!sdl
 		!v4l
 	)
@@ -84,8 +85,10 @@ REQUIRED_USE+="
 	)
 	remove_stable_not_finished? (
 		!sdl2
+		!xml
 	)
 	remove_unstable? (
+		!jit
 		!mysql
 		!pdf
 		!poppler
@@ -614,6 +617,7 @@ src_install() {
 	if use remove_stable_not_finished ; then
 		find_remove_module "gb.desktop"
 		find_remove_module "gb.desktop.x11"
+		find_remove_module "gb.form.htmlview"
 		find_remove_module "gb.form.terminal"
 		find_remove_module "gb.map"
 		find_remove_module "gb.memcached"
@@ -629,8 +633,8 @@ src_install() {
 	if use remove_unstable ; then
 		find_remove_module "gb.chart"
 		find_remove_module "gb.dbus.trayicon"
-		find_remove_module "gb.term.form"
 		find_remove_module "gb.poppler"
+		find_remove_module "gb.term.form"
 	fi
 	find "${D}" -name '*.la' -delete || die
 
