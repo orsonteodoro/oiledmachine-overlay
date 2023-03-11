@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Ebuild fork only on the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -14,7 +14,7 @@
   <upstream>
     <remote-id type="github">MediaArea/MediaInfoLib</remote-id>
   </upstream>
-  <longdescription>
+  <!--
     This ebuild fork exists to provide multilib support.
-  </longdescription>
+  -->
 </pkgmetadata>
