@@ -12,10 +12,16 @@ DESCRIPTION="Patiencediff implementation"
 HOMEPAGE="https://github.com/breezy-team/patiencediff"
 LICENSE="GPL-2+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-RDEPEND+=" ${PYTHON_DEPS}"
-DEPEND+=" ${RDEPEND}"
+RDEPEND+="
+	${PYTHON_DEPS}
+"
+DEPEND+="
+	${RDEPEND}
+"
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/cython-0.29[${PYTHON_USEDEP}]
