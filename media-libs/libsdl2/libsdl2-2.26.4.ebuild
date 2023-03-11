@@ -156,7 +156,6 @@ MULTILIB_WRAPPED_HEADERS=(
 SRC_URI="https://www.libsdl.org/release/${MY_P}.tar.gz"
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.0.16-static-libs.patch
-	"${FILESDIR}"/${PN}-2.26.0-wayland.patch
 )
 
 S="${WORKDIR}/${MY_P}"

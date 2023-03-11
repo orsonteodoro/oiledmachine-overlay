@@ -2,12 +2,12 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- only for this ebuild fork only on the oiledmachine-overlay -->
+    <!-- Ebuild fork on the oiledmachine-overlay -->
     <email>games@gentoo.org</email>
     <name>Gentoo Games Project</name>
   </maintainer>
   <maintainer type="project">
-    <!-- ebuild originator -->
+    <!-- Ebuild originator -->
     <email>games@gentoo.org</email>
     <name>Gentoo Games Project</name>
   </maintainer>
@@ -20,10 +20,11 @@
     SDL is written in C, but works with C++ natively, and has bindings to
     several other languages, including Ada, Eiffel, Java, Lua, ML, Perl, PHP,
     Pike, Python, and Ruby.
-
+  </longdescription>
+  <!--
     The oiledmachine-overlay adds access to hidapi-hidraw, hidapi-libusb, ARMv6
     SIMD & ARMv7a NEON optimizations.
-  </longdescription>
+  -->
   <upstream>
     <bugs-to>https://github.com/libsdl-org/SDL/issues</bugs-to>
   </upstream>
