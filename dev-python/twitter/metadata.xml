@@ -20,4 +20,9 @@
       <name>Mike Verdone</name>
     </maintainer>
   </upstream>
+  <use>
+    <flag name="fallback-commit">
+      Rewind commit back to when patch was apply tested.
+    </flag>
+  </use>
 </pkgmetadata>
