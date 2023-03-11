@@ -854,9 +854,6 @@ org.hamcrest/hamcrest-core/1.3/872e413497b906e7c9fa85ccc96046c5d1ef7ece/hamcrest
 org.hamcrest/hamcrest-parent/1.3/80391bd32bfa4837a15215d5e9f07c60555c379a/hamcrest-parent-1.3.pom
 org.hdrhistogram/HdrHistogram/2.1.12/6eb7552156e0d517ae80cc2247be1427c8d90452/HdrHistogram-2.1.12.jar
 org.hdrhistogram/HdrHistogram/2.1.12/9797702ee3e52e4be6bfbbc9fd20ac5447e7a541/HdrHistogram-2.1.12.pom
-org.jacoco/org.jacoco.agent/0.8.7/e7a0e1e605965e2fd8e92d8ddc9d4a29800c1cb7/org.jacoco.agent-0.8.7.jar
-org.jacoco/org.jacoco.agent/0.8.7/ea782b5dd63854e0691c3e62a450af8474a907f9/org.jacoco.agent-0.8.7.pom
-org.jacoco/org.jacoco.build/0.8.7/492fd345ea752983327442fe383590995e40a7aa/org.jacoco.build-0.8.7.pom
 org.javassist/javassist/3.24.0-GA/d7466fc2e3af7c023e95c510f06448ad29b225b3/javassist-3.24.0-GA.jar
 org.javassist/javassist/3.24.0-GA/eb5345e1531ecaee8f01c9b211f2fed81d400352/javassist-3.24.0-GA.pom
 org.jdom/jdom2/2.0.6/11e250d112bc9f2a0e1a595a5f6ecd2802af2691/jdom2-2.0.6.pom
@@ -1392,9 +1389,6 @@ https://maven-central.storage-download.googleapis.com/maven2/org/hamcrest/hamcre
 https://maven-central.storage-download.googleapis.com/maven2/org/hamcrest/hamcrest-parent/1.3/hamcrest-parent-1.3.pom
 https://maven-central.storage-download.googleapis.com/maven2/org/hdrhistogram/HdrHistogram/2.1.12/HdrHistogram-2.1.12.jar
 https://maven-central.storage-download.googleapis.com/maven2/org/hdrhistogram/HdrHistogram/2.1.12/HdrHistogram-2.1.12.pom
-https://maven-central.storage-download.googleapis.com/maven2/org/jacoco/org.jacoco.agent/0.8.7/org.jacoco.agent-0.8.7.jar
-https://maven-central.storage-download.googleapis.com/maven2/org/jacoco/org.jacoco.agent/0.8.7/org.jacoco.agent-0.8.7.pom
-https://maven-central.storage-download.googleapis.com/maven2/org/jacoco/org.jacoco.build/0.8.7/org.jacoco.build-0.8.7.pom
 https://maven-central.storage-download.googleapis.com/maven2/org/junit/junit-bom/5.8.1/junit-bom-5.8.1.pom
 https://maven-central.storage-download.googleapis.com/maven2/org/junit/junit-bom/5.8.2/junit-bom-5.8.2.pom
 https://maven-central.storage-download.googleapis.com/maven2/org/mockito/mockito-core/3.3.3/mockito-core-3.3.3.jar
@@ -2115,12 +2109,12 @@ einfo
 einfo "Update GRADLE_PKGS_UNPACK:"
 einfo
 		# For EPREFIX offset adjust 12-
-		find "${HOME}/.gradle/caches/modules-2/files-2.1/" \
+		find "${HOME}/caches/modules-2/files-2.1/" \
 			-name "*.pom" \
 			-o -name "*.jar" \
 			-o -name "*.signature" \
 			-not -type d \
-			| cut -f 12- -d "/" \
+			| cut -f 11- -d "/" \
 			| sort \
 			| uniq
 		die
