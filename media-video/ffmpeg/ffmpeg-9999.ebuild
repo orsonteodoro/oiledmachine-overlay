@@ -1803,27 +1803,6 @@ eerror
 	_is_gpl && myconf+=( --enable-gpl )
 	_is_version3 && myconf+=( --enable-version3 )
 
-	original_licensing_enablement() {
-		use openssl && myconf+=( --enable-nonfree )
-		has_version dev-libs/openssl:0/3 && myconf+=( --enable-version3 )
-		use samba && myconf+=( --enable-version3 )
-
-		# Encoders
-		if use encode ; then
-			# Licensing.
-			if use amrenc ; then
-				myconf+=( --enable-version3 )
-			fi
-		fi
-
-		# Decoders
-		use amr && myconf+=( --enable-version3 )
-		use gmp && myconf+=( --enable-version3 )
-		use libaribb24 && myconf+=( --enable-version3 )
-		use fdk && use gpl2x && myconf+=( --enable-nonfree )
-	}
-	# original_licensing_enablement # enables function if uncommented
-
 	# bug 842201
 	use ia64 && tc-is-gcc && append-flags \
 		-fno-tree-ccp \
