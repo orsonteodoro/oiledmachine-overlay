@@ -6,11 +6,11 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <!--
+  <longdescription>
     This manages the 99emscripten envd file and the emscripten.config file.
-    Works like the emsdk package but the Gentoo way.
-
-
+    Works like the emsdk package but using the distro's eselect tool.
+  </longdescription>
+  <!--
     Examples for listing possible emscripten configurations:
 
       eselect emscripten list
