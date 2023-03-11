@@ -20,7 +20,7 @@ inherit cmake flag-o-matic llvm python-r1 toolchain-funcs
 
 MY_P=pyside-setup-opensource-src-$(ver_cut 1-3 ${PV})
 # Minimal supported version of Qt.
-QT_PV="$(ver_cut 1-2):5"
+QT_PV="$(ver_cut 1-2)*:5"
 
 DESCRIPTION="Python binding generator for C++ libraries"
 HOMEPAGE="https://wiki.qt.io/PySide2"
@@ -31,7 +31,7 @@ SRC_URI="https://download.qt.io/official_releases/QtForPython/pyside2/PySide2-${
 # arbitrarily relicensed. (TODO)
 LICENSE="|| ( GPL-2 GPL-3+ LGPL-3 ) GPL-3"
 SLOT="0"
-KEYWORDS="amd64 ~arm arm64 x86"
+KEYWORDS="amd64 ~arm arm64 ~x86"
 IUSE="+docstrings numpy test vulkan"
 IUSE+=" ${LLVM_SLOTS[@]/#/llvm-}"
 IUSE+=" +llvm-13" # latest stable
@@ -39,12 +39,12 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+=" ^^ ( ${LLVM_SLOTS[@]/#/llvm-} )"
 # Since Clang is required at both build- and runtime, BDEPEND is omitted here.
 RDEPEND="${PYTHON_DEPS}
-	>=dev-qt/qtcore-${QT_PV}
+	=dev-qt/qtcore-${QT_PV}
 	docstrings? (
 		>=dev-libs/libxml2-2.6.32
 		>=dev-libs/libxslt-1.1.19
-		>=dev-qt/qtxml-${QT_PV}
-		>=dev-qt/qtxmlpatterns-${QT_PV}
+		=dev-qt/qtxml-${QT_PV}
+		=dev-qt/qtxmlpatterns-${QT_PV}
 	)
 	numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
 	vulkan? ( dev-util/vulkan-headers )
@@ -64,7 +64,7 @@ RDEPEND+="
 "
 DEPEND="
 	${RDEPEND}
-	test? ( >=dev-qt/qttest-${QT_PV} )
+	test? ( =dev-qt/qttest-${QT_PV} )
 "
 BDEPEND="
 	dev-util/patchelf
@@ -76,6 +76,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.15.5-python311-2.patch"
 	"${FILESDIR}/${PN}-5.15.5-python311-3.patch"
 	"${FILESDIR}/${PN}-5.15.6-fix-pyside2-compile.patch"
+	"${FILESDIR}/${PN}-5.15.8-py-limited-api.patch"
 	"${FILESDIR}/${PN}-5.15.5-add-numpy-1.23-compatibility.patch"
 	"${FILESDIR}/${PN}-5.12.2.1-oflag.patch"
 )

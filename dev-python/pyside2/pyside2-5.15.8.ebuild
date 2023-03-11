@@ -24,7 +24,7 @@ MY_P=pyside-setup-opensource-src-$(ver_cut 1-3 ${PV})
 #     https://bugreports.qt.io/browse/PYSIDE-535
 PYTHON_COMPAT=( python3_{8..11} )
 # Minimal supported version of Qt.
-QT_PV="$(ver_cut 1-2):5"
+QT_PV="$(ver_cut 1-2)*:5"
 
 inherit cmake llvm python-r1 virtualx
 
@@ -154,38 +154,42 @@ gen_llvm_rdepend() {
 RDEPEND="
 	${PYTHON_DEPS}
 	$(gen_llvm_rdepend)
-	>=dev-python/shiboken2-${PV}[${PYTHON_USEDEP}]
-	dev-qt/qtcore:5=
-	dev-qt/qtopengl:5=[gles2-only=]
-	dev-qt/qtserialport:5=
-	3d? ( >=dev-qt/qt3d-${QT_PV}[qml?,gles2-only=] )
-	charts? ( >=dev-qt/qtcharts-${QT_PV}[qml?] )
-	concurrent? ( >=dev-qt/qtconcurrent-${QT_PV} )
-	datavis? ( >=dev-qt/qtdatavis3d-${QT_PV}[qml?,gles2-only=] )
-	designer? ( >=dev-qt/designer-${QT_PV} )
-	gui? ( >=dev-qt/qtgui-${QT_PV}[jpeg,gles2-only=] )
-	help? ( >=dev-qt/qthelp-${QT_PV} )
-	location? ( >=dev-qt/qtlocation-${QT_PV} )
-	multimedia? ( >=dev-qt/qtmultimedia-${QT_PV}[qml?,gles2-only=,widgets?] )
-	network? ( >=dev-qt/qtnetwork-${QT_PV} )
-	positioning? ( >=dev-qt/qtpositioning-${QT_PV}[qml?] )
-	printsupport? ( >=dev-qt/qtprintsupport-${QT_PV}[gles2-only=] )
-	qml? ( >=dev-qt/qtdeclarative-${QT_PV}[widgets?] )
-	quickcontrols2? ( >=dev-qt/qtquickcontrols2-${QT_PV} )
-	script? ( >=dev-qt/qtscript-${QT_PV}[scripttools?] )
-	scxml? ( >=dev-qt/qtscxml-${QT_PV} )
-	sensors? ( >=dev-qt/qtsensors-${QT_PV}[qml?] )
-	speech? ( >=dev-qt/qtspeech-${QT_PV} )
-	sql? ( >=dev-qt/qtsql-${QT_PV} )
-	svg? ( >=dev-qt/qtsvg-${QT_PV} )
-	testlib? ( >=dev-qt/qttest-${QT_PV} )
-	webchannel? ( >=dev-qt/qtwebchannel-${QT_PV}[qml] )
-	webengine? ( >=dev-qt/qtwebengine-${QT_PV}[widgets?] )
-	websockets? ( >=dev-qt/qtwebsockets-${QT_PV}[qml?] )
-	widgets? ( >=dev-qt/qtwidgets-${QT_PV}[gles2-only=] )
-	x11extras? ( >=dev-qt/qtx11extras-${QT_PV} )
-	xml? ( >=dev-qt/qtxml-${QT_PV} )
-	xmlpatterns? ( >=dev-qt/qtxmlpatterns-${QT_PV}[qml?] )
+	~dev-python/shiboken2-${PV}[${PYTHON_USEDEP}]
+	=dev-qt/qtcore-${QT_PV}
+	=dev-qt/qtopengl-${QT_PV}[gles2-only=]
+	=dev-qt/qtserialport-${QT_PV}
+	3d? ( =dev-qt/qt3d-${QT_PV}[qml?,gles2-only=] )
+	charts? ( =dev-qt/qtcharts-${QT_PV}[qml?] )
+	concurrent? ( =dev-qt/qtconcurrent-${QT_PV} )
+	datavis? ( =dev-qt/qtdatavis3d-${QT_PV}[qml?,gles2-only=] )
+	designer? ( =dev-qt/designer-${QT_PV} )
+	gui? ( =dev-qt/qtgui-${QT_PV}[jpeg,gles2-only=] )
+	help? ( =dev-qt/qthelp-${QT_PV} )
+	location? ( =dev-qt/qtlocation-${QT_PV} )
+	multimedia? ( =dev-qt/qtmultimedia-${QT_PV}[qml?,gles2-only=,widgets?] )
+	network? ( =dev-qt/qtnetwork-${QT_PV} )
+	positioning? ( =dev-qt/qtpositioning-${QT_PV}[qml?] )
+	printsupport? ( =dev-qt/qtprintsupport-${QT_PV}[gles2-only=] )
+	qml? ( =dev-qt/qtdeclarative-${QT_PV}[widgets?] )
+	quick? (
+		=dev-qt/qtdeclarative-${QT_PV}[widgets?]
+		=dev-qt/qtquickcontrols2-${QT_PV}[widgets?]
+	)
+	quickcontrols2? ( =dev-qt/qtquickcontrols2-${QT_PV} )
+	script? ( =dev-qt/qtscript-${QT_PV}[scripttools?] )
+	scxml? ( =dev-qt/qtscxml-${QT_PV} )
+	sensors? ( =dev-qt/qtsensors-${QT_PV}[qml?] )
+	speech? ( =dev-qt/qtspeech-${QT_PV} )
+	sql? ( =dev-qt/qtsql-${QT_PV} )
+	svg? ( =dev-qt/qtsvg-${QT_PV} )
+	testlib? ( =dev-qt/qttest-${QT_PV} )
+	webchannel? ( =dev-qt/qtwebchannel-${QT_PV}[qml] )
+	webengine? ( =dev-qt/qtwebengine-${QT_PV}[alsa,widgets?] )
+	websockets? ( =dev-qt/qtwebsockets-${QT_PV}[qml?] )
+	widgets? ( =dev-qt/qtwidgets-${QT_PV}[gles2-only=] )
+	x11extras? ( =dev-qt/qtx11extras-${QT_PV} )
+	xml? ( =dev-qt/qtxml-${QT_PV} )
+	xmlpatterns? ( =dev-qt/qtxmlpatterns-${QT_PV}[qml?] )
 "
 DEPEND="
 	${RDEPEND}
