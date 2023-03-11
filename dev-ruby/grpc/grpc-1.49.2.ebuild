@@ -59,8 +59,8 @@ ruby_add_bdepend "
 	$(tw dev-ruby/signet 0.7)
 	$(tw dev-ruby/simplecov 0.14.1)
 	(
-		>=dev-ruby/googleauth-0.5.1
 		<dev-ruby/googleauth-0.10
+		>=dev-ruby/googleauth-0.5.1
 	)
 	(
 		$(tw dev-ruby/rspec 3.6)
@@ -72,10 +72,10 @@ ruby_add_bdepend "
 	)
 "
 RDEPEND+="
-	~dev-cpp/abseil-cpp-20220623.0
 	>=dev-libs/re2-0.2021.09.01
 	>=net-dns/c-ares-1.17.2
 	>=sys-libs/zlib-1.2.13
+	~dev-cpp/abseil-cpp-20220623.0
 "
 BDEPEND+="
 	$(gen_ruby_bdepend)

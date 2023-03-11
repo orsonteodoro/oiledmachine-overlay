@@ -55,9 +55,9 @@ ruby_add_bdepend "
 	$(tw dev-ruby/logging 2.0)
 	$(tw dev-ruby/rake 13.0)
 	$(tw dev-ruby/rake-compiler-dock 1.2)
-	$(tw dev-ruby/rubocop 0.49.1)
+	$(tw dev-ruby/rubocop 1.41.0)
 	$(tw dev-ruby/signet 0.7)
-	$(tw dev-ruby/simplecov 0.14.1)
+	$(tw dev-ruby/simplecov 0.22)
 	(
 		<dev-ruby/googleauth-0.10
 		>=dev-ruby/googleauth-0.5.1
@@ -72,7 +72,7 @@ ruby_add_bdepend "
 	)
 "
 RDEPEND+="
-	>=dev-libs/re2-0.2021.09.01
+	>=dev-libs/re2-0.2022.04.01
 	>=net-dns/c-ares-1.17.2
 	>=sys-libs/zlib-1.2.13
 	~dev-cpp/abseil-cpp-20220623.0
@@ -83,7 +83,7 @@ BDEPEND+="
 RESTRICT="mirror"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
-EGIT_BORINGSSL_COMMIT="b9232f9e27e5668bc0414879dcdedb2a59ea75f2"
+EGIT_BORINGSSL_COMMIT="6195bf8242156c9a2fa75702eee058f91b86a88b"
 SRC_URI="
 https://github.com/grpc/grpc/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
