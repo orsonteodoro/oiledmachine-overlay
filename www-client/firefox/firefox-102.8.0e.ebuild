@@ -274,10 +274,6 @@ IUSE+="
 geckodriver +gmp-autoupdate screencast +X
 "
 
-# The vaapi mold restriction needs review on vaapi architecture.  It is possible
-# for a vaapi driver not to require mesa and bypass the disable
-# proprietary-codecs check.
-#
 # The wayland flag actually allows vaapi, but upstream lazy to make it
 # an independent option.
 NON_FREE_REQUIRED_USE="
@@ -305,19 +301,16 @@ NON_FREE_REQUIRED_USE="
 	)
 	proprietary-codecs-disable? (
 		!openh264
-		!vaapi
 		!wayland
 		eme-free
 	)
 	proprietary-codecs-disable-nc-developer? (
 		!openh264
-		!vaapi
 		!wayland
 		eme-free
 	)
 	proprietary-codecs-disable-nc-user? (
 		!openh264
-		!vaapi
 		!wayland
 		eme-free
 	)
@@ -471,10 +464,10 @@ NON_FREE_CDEPENDS="
 			|| (
 				(
 					!<dev-libs/openssl-3
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable,-vaapi,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable,vaapi?,vpx?,-x264,-x265,-xvid]
 				)
 				(
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable,-vaapi,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable,vaapi?,vpx?,-x264,-x265,-xvid]
 				)
 			)
 		)
@@ -485,10 +478,10 @@ NON_FREE_CDEPENDS="
 			|| (
 				(
 					!<dev-libs/openssl-3
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-developer,-vaapi,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vpx?,-x264,-x265,-xvid]
 				)
 				(
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-developer,-vaapi,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vpx?,-x264,-x265,-xvid]
 				)
 			)
 		)
@@ -499,10 +492,10 @@ NON_FREE_CDEPENDS="
 			|| (
 				(
 					!<dev-libs/openssl-3
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-user,-vaapi,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-user,vaapi?,vpx?,-x264,-x265,-xvid]
 				)
 				(
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-user,-vaapi,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-user,vaapi?,vpx?,-x264,-x265,-xvid]
 				)
 			)
 		)
