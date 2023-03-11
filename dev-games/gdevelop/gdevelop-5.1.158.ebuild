@@ -10,9 +10,9 @@ MY_PV="${PV//_/-}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV%%.*}-${PV}.AppImage"
 ELECTRON_APP_ELECTRON_PV="18.2.2" # See \
-# https://raw.githubusercontent.com/4ian/GDevelop/v5.1.155/newIDE/electron-app/package-lock.json
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.1.158/newIDE/electron-app/package-lock.json
 ELECTRON_APP_REACT_PV="16.14.0" # See \
-# https://raw.githubusercontent.com/4ian/GDevelop/v5.1.155/newIDE/app/package-lock.json
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.1.158/newIDE/app/package-lock.json
 NODE_ENV=development
 
 inherit check-reqs desktop electron-app eutils flag-o-matic user-info
@@ -73,9 +73,9 @@ SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+=" openrc r3"
 # Dependency lists:
-# https://github.com/4ian/GDevelop/blob/v5.1.155/.circleci/config.yml#L85
-# https://github.com/4ian/GDevelop/blob/v5.1.155/.travis.yml
-# https://github.com/4ian/GDevelop/blob/v5.1.155/ExtLibs/installDeps.sh
+# https://github.com/4ian/GDevelop/blob/v5.1.158/.circleci/config.yml#L85
+# https://github.com/4ian/GDevelop/blob/v5.1.158/.travis.yml
+# https://github.com/4ian/GDevelop/blob/v5.1.158/ExtLibs/installDeps.sh
 # https://app.travis-ci.com/github/4ian/GDevelop (raw log)
 # U 16.04
 # Dependencies for the native build are not installed in CI
@@ -118,8 +118,8 @@ DEPEND_NOT_USED_IN_CI="
 	)
 "
 DEPEND_NOT_USED_IN_CI2="
-	>=sys-fs/udev-${UDEV_PV}
 	>=sys-fs/eudev-3.1.5
+	>=sys-fs/udev-${UDEV_PV}
 "
 DEPEND+="
 	${DEPEND_NOT_USED_IN_CI}
@@ -367,7 +367,7 @@ electron-app_src_compile() {
 		einfo
 		einfo "Compiling ${MY_PN}.js"
 		einfo
-# In https://github.com/4ian/GDevelop/blob/v5.1.155/GDevelop.js/Gruntfile.js#L88
+# In https://github.com/4ian/GDevelop/blob/v5.1.158/GDevelop.js/Gruntfile.js#L88
 		npm run build -- --force --dev || die
 		if [[ ! -f "${S_BAK}/Binaries/embuild/${MY_PN}.js/libGD.wasm" ]]
 		then
