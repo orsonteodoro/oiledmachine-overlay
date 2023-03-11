@@ -295,17 +295,14 @@ NON_FREE_REQUIRED_USE="
 	)
 	proprietary-codecs-disable? (
 		!openh264
-		!wayland
 		eme-free
 	)
 	proprietary-codecs-disable-nc-developer? (
 		!openh264
-		!wayland
 		eme-free
 	)
 	proprietary-codecs-disable-nc-user? (
 		!openh264
-		!wayland
 		eme-free
 	)
 "
