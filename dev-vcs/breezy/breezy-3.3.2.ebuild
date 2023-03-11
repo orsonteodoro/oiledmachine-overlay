@@ -4,7 +4,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit autotools distutils-r1 lcnr
 
 DESCRIPTION="Breezy is a friendly powerful distributed version control system."
@@ -34,18 +34,24 @@ LICENSE+="
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 IUSE+=" cext doc fastimport git gpg sftp test workspace"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+"
 # See also:  https://github.com/breezy-team/breezy/blob/upstream-3.2.2/setup.py#L60
 DEPEND="
 	${PYTHON_DEPS}
-	$(python_gen_cond_dep '>=dev-python/dulwich-0.20.23[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep '>=dev-python/dulwich-0.21.2[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep '>=dev-python/fastbencode-0.0.5[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep '>=dev-python/urllib3-1.24.1[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep 'dev-python/configobj[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep 'dev-python/patiencediff[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep 'dev-python/pyyaml[${PYTHON_USEDEP}]')
-	cext? ( $(python_gen_cond_dep '>=dev-python/cython-0.29[${PYTHON_USEDEP}]') )
-	fastimport? ( $(python_gen_cond_dep 'dev-python/fastimport[${PYTHON_USEDEP}]') )
+	cext? (
+		$(python_gen_cond_dep '>=dev-python/cython-0.29[${PYTHON_USEDEP}]')
+	)
+	fastimport? (
+		$(python_gen_cond_dep 'dev-python/fastimport[${PYTHON_USEDEP}]')
+	)
 	gpg? (
 		$(python_gen_cond_dep 'app-crypt/gpgme[${PYTHON_USEDEP}]')
 	)
@@ -53,21 +59,27 @@ DEPEND="
 		$(python_gen_cond_dep 'dev-python/paramiko[${PYTHON_USEDEP}]')
 		$(python_gen_cond_dep 'dev-python/pycrypto[${PYTHON_USEDEP}]')
 	)
-	workspace? ( $(python_gen_cond_dep 'dev-python/pyinotify[${PYTHON_USEDEP}]') )
+	workspace? (
+		$(python_gen_cond_dep 'dev-python/pyinotify[${PYTHON_USEDEP}]')
+	)
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep 'dev-python/setuptools-rust[${PYTHON_USEDEP}]')
 	doc? (
-		$(python_gen_cond_dep 'dev-python/setuptools[${PYTHON_USEDEP}]')
+		$(python_gen_cond_dep '>=dev-python/setuptools-60[${PYTHON_USEDEP}]')
 		$(python_gen_cond_dep 'dev-python/sphinx[${PYTHON_USEDEP}]')
 		$(python_gen_cond_dep 'dev-python/sphinx-epytext[${PYTHON_USEDEP}]')
 	)
 	test? (
-		$(python_gen_cond_dep '>=dev-python/dulwich-0.20.29[${PYTHON_USEDEP}]')
+		$(python_gen_cond_dep '>=dev-python/dulwich-0.21.2[${PYTHON_USEDEP}]')
+		$(python_gen_cond_dep 'dev-python/testscenarios[${PYTHON_USEDEP}]')
 		$(python_gen_cond_dep 'dev-python/testtools[${PYTHON_USEDEP}]')
 		$(python_gen_cond_dep 'dev-python/subunit[${PYTHON_USEDEP}]')
+		$(python_gen_cond_dep 'dev-python/flake8[${PYTHON_USEDEP}]')
 	)
 "
 SRC_URI="
