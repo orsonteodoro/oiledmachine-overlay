@@ -12,17 +12,30 @@ HOMEPAGE="https://github.com/breezy-team/fastbencode"
 LICENSE="GPL-2+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-DEPEND+=" ${PYTHON_DEPS}"
-RDEPEND+=" ${DEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}
-	test? ( dev-python/flake8[${PYTHON_USEDEP}] )"
-EGIT_COMMIT="26d4e8715ece3c5a381c815e2e916f38d9515f3d"
+IUSE+=" cext test"
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+"
+DEPEND+="
+	${PYTHON_DEPS}
+"
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
+	${PYTHON_DEPS}
+	cext? (
+		>=dev-python/cython-0.29[${PYTHON_USEDEP}]
+	)
+	test? (
+		dev-python/flake8[${PYTHON_USEDEP}]
+	)
+"
 SRC_URI="
-https://github.com/breezy-team/fastbencode/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+https://github.com/breezy-team/fastbencode/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
