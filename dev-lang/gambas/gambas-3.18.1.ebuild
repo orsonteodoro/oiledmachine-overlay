@@ -81,6 +81,7 @@ REQUIRED_USE+="
 		!gtk3
 		!imlib2
 		!ncurses
+		!poppler
 	)
 	remove_stable_not_finished? (
 		!sdl2
@@ -88,7 +89,6 @@ REQUIRED_USE+="
 	remove_unstable? (
 		!mysql
 		!pdf
-		!poppler
 	)
 	qt5? (
 		X
@@ -201,11 +201,11 @@ DEPEND+="
 		>=app-text/poppler-0.58
 		<app-text/poppler-23
 	)
-	pixbuf? (
-		>=x11-libs/gdk-pixbuf-2.4.13
-	)
 	poppler? (
 		>=app-text/poppler-0.20
+	)
+	pixbuf? (
+		>=x11-libs/gdk-pixbuf-2.4.13
 	)
 	postgresql? (
 		dev-db/postgresql
@@ -617,6 +617,7 @@ src_install() {
 		find_remove_module "gb.form.terminal"
 		find_remove_module "gb.map"
 		find_remove_module "gb.memcached"
+		find_remove_module "gb.poppler"
 		find_remove_module "gb.test"
 		find_remove_module "gb.test.component"
 		find_remove_module "gb.util"
@@ -630,7 +631,6 @@ src_install() {
 		find_remove_module "gb.chart"
 		find_remove_module "gb.dbus.trayicon"
 		find_remove_module "gb.term.form"
-		find_remove_module "gb.poppler"
 	fi
 	find "${D}" -name '*.la' -delete || die
 
