@@ -10,7 +10,7 @@
     <!-- ebuild originator -->
     <email>media-video@gentoo.org</email>
   </maintainer>
-  <longdescription>
+  <!--
     This ebuild fork will allow use of PGO for this library.  Currently it only
     optimizes the default settings, but may be PGO optimized for multithreaded a
     custom trainer script or changing the LIBAOM_TRAINING_ARGS explained at the 
@@ -114,7 +114,7 @@
 
     For custom training details, see README.md of this overlay.
 
-  </longdescription>
+  -->
   <use>
     <flag name="asm">
       Use the optimized assembly based code paths
