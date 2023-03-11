@@ -4,7 +4,7 @@
 EAPI=8
 
 # It supports Python 3.7 but 3.7 is deprecated in this distro in python-utils-r1.eclass.
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{9..11} )
 
 inherit check-reqs git-r3 linux-info python-r1 unpacker
 
@@ -55,20 +55,33 @@ PLUGIN_NAME="rprblender"
 MIN_BLENDER_PV="2.80"
 MAX_BLENDER_PV="3.5" # exclusive
 SLOT="0"
-IUSE+=" +blender-lts +blender-stable blender-master"
-IUSE+=" denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca -systemwide
-video_cards_amdgpu video_cards_intel video_cards_nvidia
-video_cards_radeonsi +vulkan"
+IUSE+="
+blender-lts-2_93 blender-lts-3_3 blender-master blender-stable denoiser
+intel-ocl +matlib +opencl opencl_rocr opencl_orca -systemwide video_cards_amdgpu
+video_cards_intel video_cards_nvidia video_cards_radeonsi +vulkan
+"
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
 NV_DRIVER_VERSION_VULKAN="390.132"
 # Systemwide is preferred but currently doesn't work but did in the past in <2.0
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	!systemwide
-	python_targets_python3_9
-	blender-lts? ( python_targets_python3_9 )
-	blender-master? ( python_targets_python3_9 )
-	blender-stable? ( python_targets_python3_9 )
+	blender-lts-2_93? (
+		python_targets_python3_9
+		python_targets_python3_10
+	)
+	blender-lts-3_3? (
+		python_targets_python3_10
+		python_targets_python3_11
+	)
+	blender-master? (
+		python_targets_python3_10
+		python_targets_python3_11
+	)
+	blender-stable? (
+		python_targets_python3_10
+		python_targets_python3_11
+	)
 	opencl_orca? (
 		video_cards_amdgpu
 	)
@@ -83,7 +96,8 @@ REQUIRED_USE+="
 		)
 	)
 	|| (
-		blender-lts
+		blender-lts-2_93
+		blender-lts-3_3
 		blender-master
 		blender-stable
 	)
@@ -91,7 +105,8 @@ REQUIRED_USE+="
 # Assumes U 18.04.03 minimal
 CDEPEND_NOT_LISTED="
 	dev-lang/python[xml]
-	sys-devel/gcc[openmp]"
+	sys-devel/gcc[openmp]
+"
 DEPEND_NOT_LISTED=""
 # See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.3.5/README-LNX.md#build-requirements
 DEPEND+="
@@ -132,6 +147,8 @@ RDEPEND_NOT_LISTED="
 	x11-libs/libxshmfence
 	x11-libs/libXxf86vm
 	denoiser? (
+		dev-lang/vtune
+		sys-libs/libomp
 		|| (
 			(
 				 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
@@ -142,8 +159,6 @@ RDEPEND_NOT_LISTED="
 				>=dev-cpp/tbb-2020.1:0=
 			)
 		)
-		dev-lang/vtune
-		sys-libs/libomp
 	)
 "
 # See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.3.5/README-LNX.md#addon-runuse-linux-ubuntu-requirements
@@ -154,26 +169,34 @@ RDEPEND+="
 	>=media-libs/embree-2.12.0
 	>=media-libs/openimageio-1.6
 	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
-	blender-lts? (
-		>=media-gfx/blender-${MIN_BLENDER_PV}[python_single_target_python3_9]
-		 <media-gfx/blender-${MAX_BLENDER_PV}[python_single_target_python3_9]
+	blender-lts-2_93? (
+		$(python_gen_any_dep "=media-gfx/blender-2.93*["'${PYTHON_SINGLE_USEDEP}'"]")
 	)
-	blender-stable? (
-		>=media-gfx/blender-${MIN_BLENDER_PV}[python_single_target_python3_9]
-		 <media-gfx/blender-${MAX_BLENDER_PV}[python_single_target_python3_9]
+	blender-lts-3_3? (
+		$(python_gen_any_dep "=media-gfx/blender-3.3*["'${PYTHON_SINGLE_USEDEP}'"]")
 	)
 	blender-master? (
-		>=media-gfx/blender-9999[python_single_target_python3_9]
+		$(python_gen_any_dep "=media-gfx/blender-9999*["'${PYTHON_SINGLE_USEDEP}'"]")
 	)
-	matlib? ( media-plugins/RadeonProRenderMaterialLibrary )
+	blender-stable? (
+		$(python_gen_any_dep "<media-gfx/blender-9999["'${PYTHON_SINGLE_USEDEP}'"]")
+		$(python_gen_any_dep ">=media-gfx/blender-3.4["'${PYTHON_SINGLE_USEDEP}'"]")
+	)
+	matlib? (
+		media-plugins/RadeonProRenderMaterialLibrary
+	)
 	opencl? (
 		intel-ocl? (
 			dev-util/intel-ocl-sdk
 		)
 		|| (
 			video_cards_amdgpu? (
-				opencl_orca? ( dev-libs/amdgpu-pro-opencl )
-				opencl_rocr? ( dev-libs/rocm-opencl-runtime )
+				opencl_orca? (
+					dev-libs/amdgpu-pro-opencl
+				)
+				opencl_rocr? (
+					dev-libs/rocm-opencl-runtime
+				)
 			)
 			video_cards_intel? (
 				dev-libs/intel-neo
