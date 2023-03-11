@@ -84,7 +84,6 @@ PDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-1.3.0-sparc-configure.patch" # 501010
 	"${FILESDIR}/${PN}-1.10.0-exeldflags.patch"
-	"${FILESDIR}/${PN}-1.12.0-configure-clang16.patch"
 )
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
