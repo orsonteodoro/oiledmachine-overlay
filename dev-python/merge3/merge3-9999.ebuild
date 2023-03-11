@@ -24,7 +24,7 @@ DEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/setuptools-61.2
+	>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
 "
 SRC_URI=""
 S="${WORKDIR}/${P}"
