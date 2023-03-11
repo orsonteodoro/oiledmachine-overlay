@@ -6,7 +6,7 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
     This manages the 99emscripten envd file and the emscripten.config file.
     Works like the emsdk package but the Gentoo way.
 
@@ -29,7 +29,7 @@
 
       eselect emscripten show
 
-  </longdescription>
+  -->
   <upstream>
     <bugs-to>https://github.com/orsonteodoro/oiledmachine-overlay/issues</bugs-to>
     <remote-id type="github">orsonteodoro/oiledmachine-overlay</remote-id>

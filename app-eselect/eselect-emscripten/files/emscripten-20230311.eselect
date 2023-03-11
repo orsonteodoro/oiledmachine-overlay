@@ -7,11 +7,14 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20230101"
+VERSION="20230311"
 PN="emscripten"
 
-# 3.1.31 llvm 17 ; node 4.1.1 ; binaryen 111
-# 3.1.30 llvm 16 ; node 4.1.1 ; binaryen 111
+# 3.1.33 llvm 17 ; node 10.19.0 ; binaryen 112
+# 3.1.32 llvm 17 ; node 10.19.0 ; binaryen 111
+# 3.1.31 llvm 17 ; node 10.19.0 ; binaryen 111
+# 3.1.30 llvm 16 ; node 10.19.0 ; binaryen 111
+# 3.1.29 llvm 16 ; node 4.1.1 ; binaryen 111
 # 3.1.27 llvm 16 ; node 4.1.1 ; binaryen 111
 # 3.1.26 llvm 16 ; node 4.1.1 ; binaryen 109
 # 3.1.18 llvm 16 ; node 4.1.1 ; binaryen 109
@@ -343,13 +346,18 @@ set_config() {
         PYTHON_EXE_ABSPATH=/usr/bin/python3.6
     fi
 
-    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.37.28" ; then
+    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.30" ; then
+        __EMSDK_NODE_VERSION_MIN__="10.19.0"
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "1.37.28" ; then
         __EMSDK_NODE_VERSION_MIN__="4.1.1"
     elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "1.37.28" ; then
         __EMSDK_NODE_VERSION_MIN__="0.8.0"
     fi
 
-    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.27" ; then
+    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.33" ; then
+        __EMSDK_BINARYEN_VERSION__="112"
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.33" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.27" ; then
         __EMSDK_BINARYEN_VERSION__="111"
     elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.27" \
         && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.14" ; then
