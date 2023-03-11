@@ -612,6 +612,14 @@
   <flag name="network">
     Enables network streaming support
   </flag>
+  <flag name="nvdec">
+    Enables GPU accelerated decode for mjpeg, mpeg1, mpeg2, vc-1, h264,
+    h265, vp8, vp9, av1 if available on the GPU
+  </flag>
+  <flag name="nvenc">
+    Enables GPU accelerated encode for mpeg1, mpeg2, vc-1, h264,
+    h265, vp8, vp9, av1 if available on the GPU
+  </flag>
   <flag name="opencl">
     Enable OpenCL support
   </flag>
@@ -803,6 +811,12 @@
   <flag name="twolame">
     Enables MP2 encoding via <pkg>media-sound/twolame</pkg> as an alternative to
     the internal encoder.
+  </flag>
+  <flag name="vaapi">
+    Enables GPU acceleration for mjpeg, mpeg2, vc-1, h264, h265, vp8, vp9,
+    av1 if supported by the GPU only if a VAAPI driver is available or the
+    proprietary-codecs USE flag was manually enabled in
+    <pkg>media-video/mesa</pkg>.
   </flag>
   <flag name="vidstab">
     Enables video stabilization filter using vid.stab library
