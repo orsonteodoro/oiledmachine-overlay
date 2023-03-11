@@ -44,6 +44,7 @@ DEPEND="
 	$(python_gen_cond_dep '>=dev-python/fastbencode-0.0.5[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep '>=dev-python/urllib3-1.24.1[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep 'dev-python/configobj[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/merge3[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep 'dev-python/patiencediff[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep 'dev-python/pyyaml[${PYTHON_USEDEP}]')
 	cext? (
