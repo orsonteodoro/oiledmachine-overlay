@@ -196,7 +196,7 @@
       Add support for CPU based AV1 video encoding via
       <pkg>media-libs/svt-av1</pkg>.
     </flag>
-    <flag name="qsv11">
+    <flag name="qsv">
       Enable use of the Quick Sync Video hardware accelerated encoder for h264,
       h265, av1.
     </flag>

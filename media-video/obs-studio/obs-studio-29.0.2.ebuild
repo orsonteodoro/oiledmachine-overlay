@@ -44,7 +44,7 @@ LICENSE="
 		BSD
 		BSD-2
 	)
-	qsv11? (
+	qsv? (
 		GPL-2
 		BSD
 	)
@@ -71,13 +71,13 @@ SLOT="0"
 # nvafx is enabled by default upstream
 # nvvfx is enabled by default upstream
 # oss is enabled by default upstream
-# qsv11 is enabled by default upstream
+# qsv is enabled by default upstream
 # vlc is enabled by default upstream
 IUSE+="
 +alsa aja amf +browser +browser-panels browser-qt-loop coreaudio-encoder
 -decklink -fdk +freetype ftl +ipv6 jack libaom +lua +new-mpegts-output nvafx
 nvenc nvvfx oss +pipewire +pulseaudio +python +rtmps +speexdsp -test +hevc
-mac-syphon qsv11 +rnnoise -service-updates -sndio +speexdsp svt-av1 +v4l2 vaapi
+mac-syphon qsv +rnnoise -service-updates -sndio +speexdsp svt-av1 +v4l2 vaapi
 vlc +virtualcam +vst +wayland win-dshow +websocket -win-mf +whatsnew x264
 
 kernel_FreeBSD
@@ -115,7 +115,7 @@ REQUIRED_USE+="
 	!kernel_Winnt? (
 		!nvafx
 		!nvvfx
-		!qsv11
+		!qsv
 		!win-dshow
 		!win-mf
 		!kernel_Darwin? (
@@ -374,9 +374,10 @@ DEPEND_PLUGINS_OBS_BROWSER="
 	)
 "
 
-DEPEND_PLUGINS_QSV11="
-	qsv11? (
-		>=media-libs/intel-mediasdk-21.1
+# The media-libs/intel-mediasdk is not prefix ready
+#		>=media-libs/intel-mediasdk-21.1
+DEPEND_PLUGINS_QSV="
+	qsv? (
 		elibc_mingw? (
 			dev-util/mingw64-runtime
 		)
@@ -427,7 +428,7 @@ DEPEND_PLUGINS="
 	${DEPEND_PLUGINS_OBS_FFMPEG}
 	${DEPEND_PLUGINS_OBS_OUTPUTS}
 	${DEPEND_PLUGINS_SNDIO}
-	${DEPEND_PLUGINS_QSV11}
+	${DEPEND_PLUGINS_QSV}
 	${DEPEND_PLUGINS_RNNOISE}
 	${DEPEND_PLUGINS_VST}
 	>=media-video/ffmpeg-${FFMPEG_PV}:=[x264]
@@ -891,7 +892,7 @@ einfo
 			-DBUILD_AMD_ENCODER=$(usex amf)
 			-DENABLE_NVAFX=$(usex nvafx)
 			-DENABLE_NVVFX=$(usex nvvfx)
-			-DENABLE_QSV11=$(usex qsv11)
+			-DENABLE_QSV11=$(usex qsv)
 		)
 	fi
 
