@@ -11,7 +11,7 @@
     <email>x11@gentoo.org</email>
     <name>X11</name>
   </maintainer>
-  <longdescription>
+  <!--
 
     oiledmachine-overlay changes:
 
@@ -26,7 +26,7 @@
 
       2.  2nd emerge will do actual PGO or testing.
 
-  </longdescription>
+  -->
   <use>
     <flag name="opengl" restrict="&gt;=x11-libs/cairo-1.10.0">
       Build the OpenGL backend
