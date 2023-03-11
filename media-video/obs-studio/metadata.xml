@@ -157,7 +157,7 @@
       Enable native SRT/RIST for mpegts output when using FFMpeg
     </flag>
     <flag name="nvenc">
-      Enable GPU accelerated encoding for NVIDIA GPUs for h264, h265, av1.
+      Enable GPU accelerated encoding for using NVENC for h264, h265, av1.
     </flag>
     <flag name="nvafx">
       Enable building with NVAFX.
