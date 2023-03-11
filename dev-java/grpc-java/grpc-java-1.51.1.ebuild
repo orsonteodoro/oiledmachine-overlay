@@ -71,8 +71,8 @@ KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~s390 ~x86"
 IUSE+=" android doc source test"
 #REQUIRED_USE+=" !android" # Cannot fix at the moment ANDROID_HOME="/var/lib/portage/home/.android" sandbox violation
 RESTRICT="mirror"
-GRADLE_PV="7.3.3"
-JAVA_PV="11"
+GRADLE_PV="7.3.3" # https://github.com/grpc/grpc-java/blob/v1.51.3/gradle/wrapper/gradle-wrapper.properties
+JAVA_PV="11" # https://github.com/grpc/grpc-java/blob/v1.51.3/.github/workflows/testing.yml#L20
 JDK_DEPEND="
 	|| (
 		dev-java/openjdk-bin:${JAVA_PV}
@@ -90,6 +90,7 @@ RDEPEND+="
 	>=dev-libs/protobuf-3.21.7:=[static-libs]
 "
 DEPEND+=" ${RDEPEND}"
+# SDK ver: https://github.com/grpc/grpc-java/blob/v1.51.1/android/build.gradle#L10
 BDEPEND+="
 	${JDK_DEPEND}
 	dev-java/gradle-bin:${GRADLE_PV}
