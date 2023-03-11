@@ -81,9 +81,9 @@ REQUIRED_USE+="
 	)
 "
 # For the node version, see
-# https://github.com/google/closure-compiler-npm/blob/v20230103.0.0/packages/google-closure-compiler/package.json
+# https://github.com/google/closure-compiler-npm/blob/v20230228.0.0/packages/google-closure-compiler/package.json
 # For dependencies, see
-# https://github.com/google/closure-compiler-npm/blob/v20230103.0.0/.github/workflows/build.yml
+# https://github.com/google/closure-compiler-npm/blob/v20230228.0.0/.github/workflows/build.yml
 JDK_DEPEND="
 	|| (
 		dev-java/openjdk-bin:${JAVA_SLOT}
