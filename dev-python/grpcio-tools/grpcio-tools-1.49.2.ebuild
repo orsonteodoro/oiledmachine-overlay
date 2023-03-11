@@ -14,12 +14,14 @@ LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 RDEPEND="
-	>=dev-python/cython-0.29.8[${PYTHON_USEDEP}]
-	~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
 	<dev-python/protobuf-python-5[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29.8[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-python-4.21.3[${PYTHON_USEDEP}]
+	~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
 "
-DEPEND="${RDEPEND}"
+DEPEND="
+	${RDEPEND}
+"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 PROTOBUF_PV="21.6"

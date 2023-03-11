@@ -28,7 +28,7 @@ LICENSE="
 # Unlicense third_party/upb/third_party/wyhash/LICENSE
 KEYWORDS="~amd64 ~ppc64 ~x86"
 # LSRT - language specific runtime
-LSRT_IUSE=(csharp cxx csharpext java nodejs objc php python ruby) # Upstream enables all
+LSRT_IUSE=( csharp cxx csharpext java nodejs objc php python ruby ) # Upstream enables all
 IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx
@@ -53,8 +53,8 @@ RDEPEND+="
 
 DEPEND+=" ${RDEPEND}"
 BDEPEND+="
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=dev-util/cmake-3.5.1
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	test? (
 		>=dev-cpp/benchmark-1.6.0
 	)
@@ -75,8 +75,8 @@ PDEPEND+="
 		~dev-python/grpcio-${PV}
 	)
 	ruby? (
-		~dev-ruby/grpc-${PV}
 		>=dev-lang/ruby-2
+		~dev-ruby/grpc-${PV}
 	)
 "
 RESTRICT="test"

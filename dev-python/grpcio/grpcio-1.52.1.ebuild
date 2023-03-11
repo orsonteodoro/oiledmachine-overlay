@@ -12,15 +12,14 @@ DESCRIPTION="High-performance RPC framework (python libraries)"
 HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 SLOT="0"
-KEYWORDS="amd64 ~arm ~arm64 ~ppc64 ~riscv x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
 IUSE+=" doc"
 RDEPEND="
 	<dev-python/protobuf-python-5[${PYTHON_USEDEP}]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-)]
-	>=dev-libs/re2-0.2021.09.01:=
+	>=dev-libs/re2-0.2022.04.01:=
 	>=dev-python/cython-0.29.8[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-python-4.21.3[${PYTHON_USEDEP}]
-	>=dev-python/six-1.10[${PYTHON_USEDEP}]
 	>=net-dns/c-ares-1.17.2:=
 	>=sys-libs/zlib-1.2.13:=
 "
@@ -29,7 +28,6 @@ BDEPEND+="
 	>=dev-python/coverage-4[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
 	doc? (
-		>=dev-python/six-1.10[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-1.8.1[${PYTHON_USEDEP}]
 	)
 "
@@ -41,7 +39,7 @@ https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
 "
 S="${WORKDIR}/${GRPC_P}"
 PATCHES=(
-	"${FILESDIR}/grpcio-1.49.2-cc-flag-test-fix.patch"
+	"${FILESDIR}/1.51.0-respect-cc.patch"
 )
 
 python_prepare_all() {

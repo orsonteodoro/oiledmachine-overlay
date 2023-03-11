@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Ebuild fork only on the oiledmachine-overlay -->
+    <!-- Ebuild fork on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -15,11 +15,11 @@
     <email>gyakovlev@gentoo.org</email>
     <name>Georgy Yakovlev</name>
   </maintainer>
-  <longdescription>
+  <!--
     The purpose of the ebuild fork is to provide multilib support.  This
     ebuild-package may be deleted once multilib support is added to the original
     ebuild.
-  </longdescription>
+  -->
   <upstream>
     <remote-id type="cpe">cpe:/a:grpc:grpc</remote-id>
     <remote-id type="github">grpc/grpc</remote-id>

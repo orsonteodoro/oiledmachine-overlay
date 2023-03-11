@@ -15,10 +15,10 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
 IUSE+=" doc"
 RDEPEND="
+	<dev-python/protobuf-python-5[${PYTHON_USEDEP}]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-)]
 	>=dev-libs/re2-0.2021.09.01:=
 	>=dev-python/cython-0.29.8[${PYTHON_USEDEP}]
-	 <dev-python/protobuf-python-5[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-python-4.21.3[${PYTHON_USEDEP}]
 	>=net-dns/c-ares-1.17.2:=
 	>=sys-libs/zlib-1.2.13:=
@@ -38,7 +38,9 @@ https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
 	-> ${GRPC_P}.tar.gz
 "
 S="${WORKDIR}/${GRPC_P}"
-PATCHES=( "${FILESDIR}/1.51.0-respect-cc.patch" )
+PATCHES=(
+	"${FILESDIR}/1.51.0-respect-cc.patch"
+)
 
 python_prepare_all() {
 	distutils-r1_python_prepare_all
