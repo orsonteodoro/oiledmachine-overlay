@@ -6,6 +6,9 @@ EAPI=8
 
 inherit flag-o-matic savedconfig toolchain-funcs
 
+WLROOTS_PV="0.16.2" # Prevent crash
+WLROOTS_SUBSLOT=$(ver_cut 2 ${WLROOTS_PV})
+WLROOTS_PKG=">=gui-libs/wlroots-${WLROOTS_PV}:0/${WLROOTS_SUBSLOT}[X(-)?]"
 if [[ ${PV} == *9999 ]]; then
 	EGIT_REPO_URI="https://github.com/djpohly/dwl"
 	inherit git-r3
@@ -15,11 +18,10 @@ if [[ ${PV} == *9999 ]]; then
 	case ${PVR} in
 		9999)
 			EGIT_BRANCH=main
-			WLROOTS_SLOT="0/16"
 			;;
 		9999-r1)
 			EGIT_BRANCH=wlroots-next
-			WLROOTS_SLOT="0/9999"
+			WLROOTS_PKG="gui-libs/wlroots:0/9999[X(-)?]"
 			;;
 	esac
 	IUSE+=" fallback-commit"
@@ -36,9 +38,9 @@ SLOT="0"
 IUSE+=" somebar X"
 
 RDEPEND="
+	${WLROOTS_PKG}
 	dev-libs/libinput:=
 	dev-libs/wayland
-	gui-libs/wlroots:${WLROOTS_SLOT}[X(-)?]
 	x11-libs/libxkbcommon
 	X? (
 		x11-libs/libxcb:=

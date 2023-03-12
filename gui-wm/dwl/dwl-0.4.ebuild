@@ -15,12 +15,17 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="somebar X"
 
+WLROOTS_PV="0.16.2" # Prevent crash
+WLROOTS_SUBSLOT=$(ver_cut 2 ${WLROOTS_PV})
+WLROOTS_PKG=">=gui-libs/wlroots-${WLROOTS_PV}:0/${WLROOTS_SUBSLOT}[X(-)?]"
 RDEPEND="
+	${WLROOTS_PKG}
 	dev-libs/libinput
 	dev-libs/wayland
-	gui-libs/wlroots:0/15[X(-)?]
 	x11-libs/libxkbcommon
-	X? ( x11-libs/libxcb )
+	X? (
+		x11-libs/libxcb
+	)
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
