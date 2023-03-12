@@ -4,7 +4,7 @@
 EAPI=8
 
 K_GENPATCHES_VER="7"
-PATCH_PROJC_VER="6.2-r0"
+PATCH_PROJC_VER="6.2-r1"
 PATCH_RT_VER="6.2-rt3"
 
 inherit ot-kernel-v6.2
