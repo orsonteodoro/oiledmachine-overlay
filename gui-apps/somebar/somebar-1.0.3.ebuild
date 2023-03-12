@@ -1,3 +1,4 @@
+# Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -13,7 +14,17 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64"
 
-IUSE+=" ipc"
+CONTRIB_PATCHES_IUSE=(
+	colorless-status
+	hide-vacant-tags
+	indicator-size-props
+	ipc
+	markup-in-status-messages
+	show-status-on-selected-monitor
+)
+IUSE+="
+	${CONTRIB_PATCHES_IUSE[@]}
+"
 DEPEND="
 	dev-libs/wayland
 	x11-libs/cairo
@@ -27,7 +38,17 @@ BDEPEND="
 
 src_prepare() {
 	default
-	use ipc && eapply "contrib/ipc.patch"
+	local u
+	for u in ${CONTRIB_PATCHES_IUSE[@]} ; do
+		if use ${u} ; then
+ewarn "${u} is a contrib patch.  Enabling too many contribs may result in merge conflicts."
+			if use ipc && [[ "${u}" == "ipc" ]] ; then
+				eapply "${FILESDIR}/${PN}-9999-ipc.patch"
+			elif use ${u} && ! [[ "${u}" == "ipc" ]] ; then
+				eapply "contrib/${u}.patch"
+			fi
+		fi
+	done
 	if ! [[ -f src/config.hpp ]] ; then
 		cat src/config.def.hpp > src/config.hpp || die
 	fi

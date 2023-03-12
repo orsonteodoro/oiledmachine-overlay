@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Ebuild fork only from the oiledmachine-overlay -->
+    <!-- Ebuild fork from the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -11,7 +11,7 @@
     <email>efe.izbudak@metu.edu.tr</email>
     <name>Efe İzbudak</name>
   </maintainer>
-  <longdescription>
+  <!--
 
     Buildtime environment variables
 
@@ -66,7 +66,7 @@
 
         SOMEBAR_ACTIVECOLOR_BG="0x00, 0x55, 0x77"
 
-  </longdescription>
+  -->
   <use>
     <flag name="colorless-status">
      Sets the color of status component to inactive.

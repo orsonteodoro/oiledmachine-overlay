@@ -1,3 +1,4 @@
+# Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -14,8 +15,14 @@ SLOT="0"
 KEYWORDS=""
 
 CONTRIB_PATCHES_IUSE=(
-colorless-status hide-vacant-tags indicator-size-props ipc
-markup-in-status-messages show-status-on-selected-monitor
+	colorless-status
+	disable-window-title
+	dwm-like-tag-indicator
+	hide-vacant-tags
+	indicator-size-props
+	ipc
+	markup-in-status-messages
+	show-status-on-selected-monitor
 )
 IUSE+="
 	${CONTRIB_PATCHES_IUSE[@]}
@@ -34,7 +41,7 @@ BDEPEND="
 
 src_unpack() {
 	if use fallback-commit ; then
-		EGIT_COMMIT="5bb988bc803c44e7726d2dcabdf6b2b94d6b2d16"
+		EGIT_COMMIT="af73bc39965e289020704456139f5f486ae1ba26"
 	fi
 	git-r3_fetch
 	git-r3_checkout
