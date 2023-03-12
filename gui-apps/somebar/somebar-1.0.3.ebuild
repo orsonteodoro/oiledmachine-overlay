@@ -24,6 +24,7 @@ CONTRIB_PATCHES_IUSE=(
 )
 IUSE+="
 	${CONTRIB_PATCHES_IUSE[@]}
+	r1
 "
 DEPEND="
 	dev-libs/wayland
@@ -43,7 +44,7 @@ src_prepare() {
 		if use ${u} ; then
 ewarn "${u} is a contrib patch.  Enabling too many contribs may result in merge conflicts."
 			if use ipc && [[ "${u}" == "ipc" ]] ; then
-				eapply "${FILESDIR}/${PN}-9999-ipc.patch"
+				eapply "${FILESDIR}/${PN}-1.0.3-ipc.patch"
 			elif use ${u} && ! [[ "${u}" == "ipc" ]] ; then
 				eapply "contrib/${u}.patch"
 			fi

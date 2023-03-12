@@ -91,5 +91,8 @@
     <flag name="show-status-on-selected-monitor">
       Show status on selected monitor
     </flag>
+    <flag name="rN">
+      Ebuild revision bumps (FOR INTERNAL USE ONLY)
+    </flag>
   </use>
 </pkgmetadata>
