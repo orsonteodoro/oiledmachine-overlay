@@ -1833,13 +1833,11 @@ ewarn
 	fi
 
 	if tc-is-clang ; then
-		if tc-is-clang ; then # Duplicate conditional is for testing reasons
-			# Using gcc with these patches results in this error:
-			# Two or more targets generate the same output:
-			#   lib.unstripped/libEGL.so
-			ceapply "${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-1.patch"
-			ceapply "${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-2.patch"
-		fi
+	# Using gcc with these patches results in this error:
+	# Two or more targets generate the same output:
+	#   lib.unstripped/libEGL.so
+		ceapply "${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-1.patch"
+		ceapply "${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-2.patch"
 	fi
 
 	if use arm64 && has_sanitizer_option "shadow-call-stack" ; then
@@ -2361,7 +2359,7 @@ einfo
 	# Strip incompatable linker flags
 	strip-unsupported-flags
 
-	if use lto || use pgo ; then
+	if is-flagq '-flto' || use pgo ; then
 		AR=llvm-ar
 		NM=llvm-nm
 		if tc-is-cross-compiler; then
@@ -2536,6 +2534,7 @@ ewarn
 	myconf_gn+=" ffmpeg_branding=\"${ffmpeg_branding}\""
 	myconf_gn+=" enable_av1_decoder=$(usex dav1d true false)"
 	myconf_gn+=" enable_dav1d_decoder=$(usex dav1d true false)"
+	myconf_gn+=" enable_hevc_parser_and_hw_decoder=$(usex proprietary-codecs $(usex vaapi-hevc true false) false)"
 	myconf_gn+=" enable_libaom=$(usex libaom $(usex encode true false) false)"
 	myconf_gn+=" enable_platform_hevc=$(usex proprietary-codecs $(usex vaapi-hevc true false) false)"
 	myconf_gn+=" media_use_libvpx=$(usex vpx true false)"
@@ -2545,8 +2544,9 @@ ewarn
 	if ! use system-ffmpeg ; then
 		# The internal/vendored ffmpeg enables non-free codecs.
 		local _media_use_ffmpeg="true"
-		if use proprietary-codecs-disable-nc-developer \
-			|| use proprietary-codecs-disable-all ; then
+		if \
+			   use proprietary-codecs-disable-nc-developer \
+			|| use proprietary-codecs-disable ; then
 			_media_use_ffmpeg="false"
 		fi
 		myconf_gn+=" media_use_ffmpeg=${_media_use_ffmpeg}"
