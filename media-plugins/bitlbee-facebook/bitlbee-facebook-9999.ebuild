@@ -4,7 +4,6 @@
 
 EAPI=8
 
-EGIT_REPO_URI="https://github.com/jgeboski/bitlbee-facebook.git"
 inherit git-r3 autotools
 
 DESCRIPTION="The Facebook protocol plugin for bitlbee. This plugin uses the Facebook Mobile API."
@@ -13,7 +12,7 @@ SRC_URI=""
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~x86 ~amd64"
-IUSE="debug"
+IUSE="debug fallback-commit"
 DEPEND="
 	>=dev-libs/glib-2.28.0:2
 	>=dev-libs/json-glib-0.14.0
@@ -26,6 +25,15 @@ BDEPEND="
 	dev-util/glib-utils
 	virtual/pkgconfig
 "
+
+src_unpack() {
+	EGIT_REPO_URI="https://github.com/jgeboski/bitlbee-facebook.git"
+	EGIT_BRANCH="master"
+	EGIT_COMMIT="HEAD"
+	use fallback-commit && EGIT_COMMIT="a31ccbe8331d57a49f77557b82304f02bb8d0105"
+	git-r3_fetch
+	git-r3_checkout
+}
 
 src_prepare() {
 	default
