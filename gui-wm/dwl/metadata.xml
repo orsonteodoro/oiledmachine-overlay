@@ -34,5 +34,8 @@
     <flag name="fallback-commit">
       Use the last non-breaking commit that works with patches.
     </flag>
+    <flag name="rN">
+      Ebuild revision bump for oiledmachine-overlay (INTERNAL USE ONLY)
+    </flag>
   </use>
 </pkgmetadata>

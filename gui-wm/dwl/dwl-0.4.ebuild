@@ -13,7 +13,7 @@ SRC_URI="https://github.com/djpohly/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="CC0-1.0 GPL-3 MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="somebar X"
+IUSE="somebar X r1"
 
 WLROOTS_PV="0.16.2" # Prevent crash
 WLROOTS_SUBSLOT=$(ver_cut 2 ${WLROOTS_PV})
@@ -37,7 +37,7 @@ BDEPEND="
 src_prepare() {
 	default
 	# Patch from https://git.sr.ht/~raphi/dwl
-	use somebar && eapply "${FILESDIR}/${PN}-9999-r1-wayland-ipc.patch"
+	use somebar && eapply "${FILESDIR}/${PN}-0.4-wayland-ipc.patch"
 
 	restore_config config.h
 }

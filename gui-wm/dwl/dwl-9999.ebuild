@@ -35,7 +35,7 @@ HOMEPAGE="https://github.com/djpohly/dwl"
 
 LICENSE="CC0-1.0 GPL-3 MIT"
 SLOT="0"
-IUSE+=" somebar X"
+IUSE+=" somebar X r1"
 
 RDEPEND="
 	${WLROOTS_PKG}
@@ -69,7 +69,7 @@ src_unpack() {
 src_prepare() {
 	restore_config config.h
 	# Patch from https://git.sr.ht/~raphi/dwl
-	use somebar && eapply "${FILESDIR}/${PN}-9999-r1-wayland-ipc.patch"
+	use somebar && eapply "${FILESDIR}/${PN}-0.4-wayland-ipc.patch"
 
 	default
 }
