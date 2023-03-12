@@ -42,7 +42,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 # -system-pajlada-settings is not packaged on this distro
 IUSE+="
--benchmarks -coverage -crashpad -lto -nls -system-libcommuni
+-benchmarks -coverage -crashpad -lto -system-libcommuni
 -system-qtkeychain -test -qt6 +qtkeychain wayland X
 "
 # Building benchmarks is broken
@@ -247,7 +247,7 @@ src_configure() {
 		-DCHATTERINO_GENERATE_COVERAGE=$(usex coverage "ON" "OFF")
 		-DBUILD_BENCHMARKS=$(usex benchmarks "ON" "OFF")
 		-DBUILD_TESTS=$(usex test "ON" "OFF")
-		-DBUILD_TRANSLATIONS=$(usex nls "ON" "OFF")
+		-DBUILD_TRANSLATIONS=OFF # A design choice by project to always turn it off for qtkeychain.
 		-DBUILD_WITH_CRASHPAD=$(usex crashpad "ON" "OFF")
 		-DBUILD_WITH_QT6=$(usex qt6 "ON" "OFF")
 		-DBUILD_WITH_QTKEYCHAIN=$(usex qtkeychain "ON" "OFF")
