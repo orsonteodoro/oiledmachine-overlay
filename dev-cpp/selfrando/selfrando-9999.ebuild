@@ -18,20 +18,26 @@ CDEPEND="
 	>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
 	sys-devel/gcc[cxx(+)]
 	virtual/libc
-	gold? ( sys-devel/binutils[gold,plugins] )
+	gold? (
+		sys-devel/binutils[gold,plugins]
+	)
 "
-DEPEND+=" ${CDEPEND}"
-RDEPEND+=" ${DEPEND}"
+DEPEND+="
+	${CDEPEND}
+"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	${CDEPEND}
 	>=dev-libs/elfutils-0.176[static-libs,${MULTILIB_USEDEP}]
-	dev-python/future
 	>=dev-util/cmake-3.3
 	>=dev-util/pkgconf-0.29.1[${MULTILIB_USEDEP},pkg-config(+)]
 	>=dev-vcs/git-2.25.1
 	>=sys-devel/m4-1.4.18
 	>=sys-devel/make-4.2.1
 	>=virtual/libelf-3
+	dev-python/future
 "
 SRC_URI=""
 S="${WORKDIR}/${P}"
