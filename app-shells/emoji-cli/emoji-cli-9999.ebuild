@@ -3,32 +3,48 @@
 
 EAPI=8
 
-inherit
+inherit git-r3
 
 DESCRIPTION="Emoji completion on the command line"
 LICENSE="MIT"
 HOMEPAGE="https://github.com/b4b4r07/emoji-cli"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
 SLOT="0"
-IUSE="doc fzf peco percol"
-REQUIRED_USE="^^ ( fzf peco percol )"
+IUSE="doc fallback-commit fzf peco percol"
+REQUIRED_USE="
+	^^ (
+		fzf
+		peco
+		percol
+	)
+"
 RDEPEND="
 	app-misc/jq
 	app-shells/zsh
 	|| (
-		fzf? ( app-shells/fzf[zsh-completion,tmux] )
-		peco? ( app-shells/peco )
-		percol? ( app-shells/percol )
+		fzf? (
+			app-shells/fzf[zsh-completion,tmux]
+		)
+		peco? (
+			app-shells/peco
+		)
+		percol? (
+			app-shells/percol
+		)
 	)
 "
-EGIT_COMMIT="26e2d67d566bfcc741891c8e063a00e0674abc92"
-SRC_URI="
-https://github.com/b4b4r07/emoji-cli/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md )
+
+src_unpack() {
+	EGIT_REPO_URI="https://github.com/b4b4r07/emoji-cli.git"
+	EGIT_BRANCH="master"
+	EGIT_COMMIT="HEAD"
+	use fallback-commit && EGIT_COMMIT="0fbb2e48e07218c5a2776100a4c708b21cb06688"
+	git-r3_fetch
+	git-r3_checkout
+}
 
 src_prepare() {
 	default
