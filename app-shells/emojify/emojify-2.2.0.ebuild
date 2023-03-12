@@ -3,8 +3,6 @@
 
 EAPI=8
 
-inherit
-
 DESCRIPTION="Emoji on the command line"
 HOMEPAGE="https://github.com/mrowa44/emojify"
 LICENSE="MIT"
@@ -12,10 +10,11 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
 SLOT="0"
 IUSE="doc"
 RDEPEND="app-shells/bash"
-SRC_URI="\
+SRC_URI="
 https://github.com/mrowa44/emojify/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( README.md )
 
