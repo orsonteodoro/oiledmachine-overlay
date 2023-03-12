@@ -43,7 +43,7 @@ KEYWORDS="~amd64 ~x86"
 # -system-pajlada-settings is not packaged on this distro
 IUSE+="
 -benchmarks -coverage -crashpad -lto -nls -system-libcommuni
--system-qtkeychain -test -qt6 qtkeychain wayland X
+-system-qtkeychain -test -qt6 +qtkeychain wayland X
 "
 REQUIRED_USE="
 	qt6? (
