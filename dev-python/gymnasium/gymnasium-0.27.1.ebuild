@@ -40,8 +40,8 @@ DEPEND+="
 	>=sci-libs/pytorch-1.0.0[${PYTHON_USEDEP}]
 
 	atari? (
-		>=dev-python/shimmy-0.1.0[${PYTHON_USEDEP}]
 		<dev-python/shimmy-1.0[${PYTHON_USEDEP}]
+		>=dev-python/shimmy-0.1.0[${PYTHON_USEDEP}]
 	)
 	accept-rom-license? (
 		>=dev-python/autorom-0.4.2[${PYTHON_USEDEP}]
@@ -59,8 +59,8 @@ DEPEND+="
 		>=dev-python/imageio-2.3.1_p1[${PYTHON_USEDEP}]
 	)
 	mujoco_py? (
-		>=dev-python/mujoco-2.1[${PYTHON_USEDEP}]
 		<dev-python/mujoco-2.2[${PYTHON_USEDEP}]
+		>=dev-python/mujoco-2.1[${PYTHON_USEDEP}]
 	)
 	pygame? (
 		>=dev-python/pygame-2.1.3_pre[${PYTHON_USEDEP}]
