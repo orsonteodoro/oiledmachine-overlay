@@ -16,11 +16,12 @@ HOMEPAGE="
 	https://github.com/Chatterino/chatterino2
 "
 THIRD_PARTY_LICENSES="
+	( all-rights-reserved MIT BSD JSON )
+	( BSD MIT ZLIB )
 	Apache-2.0
 	BSD
 	Boost-1.0
 	MIT
-	( BSD MIT ZLIB )
 	|| (
 		Unlicense
 		MIT-0
