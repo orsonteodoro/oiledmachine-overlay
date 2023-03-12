@@ -4,7 +4,7 @@
 
 EAPI=8
 
-inherit desktop xdg
+inherit desktop git-r3 xdg
 
 DESCRIPTION="Film Emulsion-Like Camera Rendering Transforms for Blender"
 HOMEPAGE="https://sobotka.github.io/filmic-blender/"
@@ -15,25 +15,25 @@ LICENSE="all-rights-reserved"
 KEYWORDS="amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})" # 0/${PV} for latest
 RDEPEND+=" media-gfx/blender:=[color-management]" # reinstall if new blender
-FILMIC_COMMIT="183784a03c37b3ff51f20c435e0711ceffe3ddd3"
-DEST_FN="filmic-${FILMIC_COMMIT}.zip"
-SRC_URI="
-https://github.com/sobotka/filmic-blender/archive/${FILMIC_COMMIT}.zip
-	-> ${DEST_FN}"
-DL_URL="https://github.com/sobotka/filmic-blender/tree/${FILMIC_COMMIT}"
-S="${WORKDIR}/filmic-blender-${FILMIC_COMMIT}"
+IUSE+=" fallback-commit"
+SRC_URI=""
+S="${WORKDIR}/${P}"
 RESTRICT="fetch mirror"
 
-pkg_nofetch() {
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	einfo \
-"You need to obtain filmic-blender from ${DN_URL} and rename it as ${DEST_FN} \
-then place it in ${distdir}"
+src_unpack() {
+	EGIT_REPO_URI="https://github.com/sobotka/filmic-blender.git"
+	EGIT_BRANCH="master"
+	EGIT_COMMIT="HEAD"
+	use fallback-commit && EGIT_COMMIT="84bf836a4d9e130045c962c47ac4206395d4393b"
+	git-r3_fetch
+	git-r3_checkout
 }
 
 src_install() {
 	cd "${S}" || die
-	for p in $(find "${EROOT}/var/db/pkg/media-gfx/" -maxdepth 1 \
+	for p in $(find \
+			"${EROOT}/var/db/pkg/media-gfx/" \
+			-maxdepth 1 \
 			-name "blender*") ; do
 		local blender_slot=
 		local ebuild_path=$(realpath ${p}/*ebuild)
@@ -49,7 +49,7 @@ src_install() {
 		slot_maj=${slot%/*}
 		if bzcat "${p}/environment.bz2" \
 			| grep -q -F -e "parent-datafiles-dir-change" ; then
-			# ebuild from this overlay
+			# Ebuild from this overlay
 			exe_path="/usr/bin/blender-${slot_maj}"
 			entry_name="Blender ${pv}"
 			icon_name="blender-${slot_maj}"
@@ -57,7 +57,7 @@ src_install() {
 			blender_slot="${slot_maj}"
 			exe_path="/usr/bin/blender-${slot_maj}"
 		else
-			# ebuild from gentoo-overlay
+			# Ebuild from gentoo-overlay
 			exe_path="/usr/bin/blender"
 			entry_name="Blender"
 			icon_name="blender"
@@ -66,17 +66,16 @@ src_install() {
 			exe_path="/usr/bin/blender"
 		fi
 
-		insinto \
-/usr/share/blender/${share_slot}/datafiles/colormanagement_filmic
+		insinto /usr/share/blender/${share_slot}/datafiles/colormanagement_filmic
 		doins -r *
 
 		make_desktop_entry \
-"env OCIO=/usr/share/blender/${share_slot}/datafiles/colormanagement_filmic/config.ocio ${exe_path} %f" \
+			"env OCIO=/usr/share/blender/${share_slot}/datafiles/colormanagement_filmic/config.ocio ${exe_path} %f" \
 			"${entry_name} (Filmic)" \
 			"${icon_name}" \
 			"Graphics;3DGraphics;"
 
-		# avoid file conflict
+		# Avoid file conflict
 		cp "${ED}/usr/share/applications/env-filmic-blender"{,-${pv}}".desktop" || die
 
 		exeinto /usr/bin

@@ -2,6 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -9,7 +10,8 @@
     Filmic Blender is a OpenColorIO configuration that brings either
     photorealism, or brings dynamic range and lighting for non-photorealistic
     rendering.
-
+  </longdescription>
+  <!--
     Launch wrappers for the desktop menu and command line have been
     provided to conveniently switch to Filmic Blender.
 
@@ -20,11 +22,10 @@
 
     For 3.x see:
       https://docs.blender.org/manual/en/2.83/render/color_management.html?highlight=color%20management#settings
+  -->
   </longdescription>
   <upstream>
-    <bugs-to>
-      https://github.com/sobotka/filmic-blender/issues
-    </bugs-to>
+    <bugs-to>https://github.com/sobotka/filmic-blender/issues</bugs-to>
     <remote-id type="github">sobotka/filmic-blender</remote-id>
   </upstream>
 </pkgmetadata>
