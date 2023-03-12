@@ -46,6 +46,8 @@ eerror
 eerror "Expected version:\t${expected_pv}"
 eerror "Actual version:\t${expected_pv}"
 eerror
+eerror "Use the fallback-commit USE flag to continue."
+eerror
 		die
 	fi
 }
