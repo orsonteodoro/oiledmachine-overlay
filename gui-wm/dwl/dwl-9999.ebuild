@@ -57,7 +57,7 @@ BDEPEND="
 src_unpack() {
 	if [[ ${PV} == *9999 ]]; then
 		if use fallback-commit ; then
-			EGIT_COMMIT="c60f65195186e6c72ec66ba7f10139a420a595a0"
+			EGIT_COMMIT="6722a8953243387545a6bab23514b84cffd6a3bf"
 		fi
 		git-r3_fetch
 		git-r3_checkout

@@ -37,7 +37,7 @@ BDEPEND="
 src_prepare() {
 	default
 	# Patch from https://git.sr.ht/~raphi/dwl
-	use somebar && eapply "${FILESDIR}/${PN}-0.3.1-wayland-ipc.patch"
+	use somebar && eapply "${FILESDIR}/${PN}-9999-r1-wayland-ipc.patch"
 
 	restore_config config.h
 }
