@@ -6,6 +6,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
+
     percol allows you to pick individual items from a newline seperated list
     through a pipe using arrow keys which can be fed as the argument to another
     program.
@@ -14,14 +15,9 @@
     list through an input prompt which the result can be pick using arrow
     keys.
 
-    See it in action at
-    https://github.com/mooz/percol#whats-this
   </longdescription>
   <upstream>
-    <maintainer>
-      <email>stillpedant@gmail.com</email>
-      <name>Masafumi Oyamada</name>
-    </maintainer>
     <remote-id type="github">mooz/percol</remote-id>
+    <bugs-to>https://github.com/mooz/percol/issues</bugs-to>
   </upstream>
 </pkgmetadata>
