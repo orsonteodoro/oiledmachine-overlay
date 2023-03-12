@@ -45,7 +45,9 @@ IUSE+="
 -benchmarks -coverage -crashpad -lto -nls -system-libcommuni
 -system-qtkeychain -test -qt6 +qtkeychain wayland X
 "
+# Building benchmarks is broken
 REQUIRED_USE="
+	!benchmarks
 	qt6? (
 		!system-libcommuni
 		!system-qtkeychain
@@ -86,6 +88,10 @@ RDEPEND="
 			>=dev-libs/qtkeychain-13
 		)
 	)
+	>=dev-libs/openssl-1.1.1f:=
+	benchmarks? (
+		dev-cpp/benchmark
+	)
 	qt6? (
 		>=dev-qt/qt5compat-${QT6_PV}:6
 		>=dev-qt/qtconcurrent-${QT6_PV}:6
@@ -98,7 +104,6 @@ RDEPEND="
 		>=dev-qt/qtsvg-${QT6_PV}:6
 		>=dev-qt/qtwidgets-${QT6_PV}:6
 	)
-	>=dev-libs/openssl-1.1.1f:=
 "
 DEPEND="
 	${RDEPEND}
@@ -203,7 +208,7 @@ einfo
 }
 
 pkg_setup() {
-	pkg_setup
+	check-reqs_pkg_setup
 	verify_qt_consistency
 	verify_cxx20
 }
