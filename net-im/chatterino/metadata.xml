@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <name>Orson Teodoro</name>
+    <email>orsonteodoro@hotmail.com</email>
+  </maintainer>
+  <maintainer type="person">
+    <!-- Ebuild obtained from the guru overlay -->
+    <!-- Ebuild originator -->
+    <name>Maria Keating</name>
+    <email>maria@mariakeating.com</email>
+  </maintainer>
+  <!--
+    oiledmachine-overlay notes:
+
+    Ebuild fork for just the latest bumps.  Guru is ~8 months behind.
+
+    I don't use this program.
+  -->
+  <longdescription>
+    Chatterino is a chat client for the live streaming gamer community
+    specifically for https://twitch.tv used among popular and verified users.
+  </longdescription>
+  <upstream>
+    <doc>https://wiki.chatterino.com/</doc>
+    <bugs-to>https://github.com/Chatterino/chatterino2/issues</bugs-to>
+    <remote-id type="github">Chatterino/chatterino2</remote-id>
+  </upstream>
+  <use>
+    <flag name="benchmark">
+      Build benchmarking program.  (For developers)
+    </flag>
+    <flag name="crashpad">
+      Build with crash reporting support
+    </flag>
+    <flag name="coverage">
+      Generate code coverage files.  (For developers)
+    </flag>
+  </use>
+</pkgmetadata>
