@@ -16,7 +16,7 @@ https://github.com/deepmind/mujoco
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" +examples +simulate +test"
+IUSE+=" +examples +test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -32,7 +32,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-util/cmake-3.16
+	>=dev-util/cmake-3.15
 "
 PDEPEND+="
 	dev-python/mujoco
@@ -51,7 +51,6 @@ pkg_setup() {
 src_configure() {
 	local mycmakeargs=(
 		-DMUJOCO_BUILD_EXAMPLES=$(usex examples "ON" "OFF")
-		-DMUJOCO_BUILD_SIMULATE=$(usex simulate "ON" "OFF")
 		-DMUJOCO_BUILD_TESTS=$(usex test "ON" "OFF")
 		-DMUJOCO_TEST_PYTHON_UTIL=$(usex test $(usex python "ON" "OFF") "OFF")
 	)

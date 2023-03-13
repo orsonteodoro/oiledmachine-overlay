@@ -10,4 +10,12 @@
     <remote-id type="github">Farama-Foundation/Gymnasium</remote-id>
     <bugs-to>https://github.com/Farama-Foundation/Gymnasium/issues</bugs-to>
   </upstream>
+  <use>
+    <flag name="mujoco">
+      Use the current MuJoCo version of the physics engine.
+    </flag>
+    <flag name="mujoco-py">
+      Use the older MuJoCo version of the physics engine.
+    </flag>
+  </use>
 </pkgmetadata>

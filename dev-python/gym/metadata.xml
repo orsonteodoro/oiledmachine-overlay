@@ -10,4 +10,12 @@
     <remote-id type="github">openai/gym</remote-id>
     <bugs-to>https://github.com/openai/gym/issues</bugs-to>
   </upstream>
+  <use>
+    <flag name="mujoco">
+      Use the current MuJoCo version of the physics engine.
+    </flag>
+    <flag name="mujoco-py">
+      Use the alternative deprecated fork of MuJoCo python bindings.
+    </flag>
+  </use>
 </pkgmetadata>
