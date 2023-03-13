@@ -11,10 +11,22 @@ EAPI=7
 PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="xml(+)"
 
+# LANGS obtainable from:
+# src="./build/config/locales.gni"
+# s=$(grep -n "all_chrome_locales =" "${src}" | cut -f 1 -d ":") ; \
+# f=$(grep -F -n "+ pseudolocales" "${src}" | cut -f 1 -d ":") ; \
+# sed -ne "${s},${f}p" "${src}" \
+#	| grep "\"" \
+#	| cut -f 2 -d "\"" \
+#	| tr "\n" " " \
+#	| sed -E -e "s/(as|az|be|bs|cy|eu|fr-CA|gl|hy|is|ka|kk|km|ky|lo|mk|mn|my|ne|or|pa|si|sq|sr-Latn|uz|zh-HK|zu)[ ]?//g" \
+#	| fold -s -w 80 \
+#	| sed -e "s| $||g"
+
 CHROMIUM_LANGS="
-af am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he hi hr hu id
-it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr sv sw ta te th tr
-uk ur vi zh-CN zh-TW
+af am ar bg bn ca cs da de el en-GB en-US es es-419 et fa fi fil fr gu he hi hr
+hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr sv sw ta
+te th tr uk ur vi zh-CN zh-TW
 "
 
 GCC_MIN="10.4"
