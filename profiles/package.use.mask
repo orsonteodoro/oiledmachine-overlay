@@ -50,11 +50,6 @@ x11-libs/cairo bolt ebolt
 # Force >= -O2 for dav1d
 www-client/firefox debug
 
-# An unstable feature which can lead to lost work/data
-# Freezes input
-gui-apps/somebar ipc
-gui-wm/dwl somebar
-
 # Aurora breaks all GTK apps and X based apps with popups
 liri-base/shell aurora
 liri-base/session aurora

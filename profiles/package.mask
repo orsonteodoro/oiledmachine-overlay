@@ -106,8 +106,3 @@ dev-dotnet/monodevelop
 =sys-libs/libcxx-13*
 =sys-libs/libcxxabi-13*
 =sys-libs/libomp-13*
-
-# Unstable for general use
-# Vanishing windows and status bar when monitor is turned off and on
-gui-apps/somebar
-gui-wm/dwl
