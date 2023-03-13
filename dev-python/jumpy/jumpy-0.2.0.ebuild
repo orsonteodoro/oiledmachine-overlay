@@ -32,6 +32,7 @@ RDEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/hatchling-1.4.0[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-61.0.0[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/pytest-7.1.3[${PYTHON_USEDEP}]
 	)
