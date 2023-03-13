@@ -100,7 +100,7 @@ Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 3
 # Content keywords:
 # Realistic, 4K, chinese golden statues, garden, traditional chinese
 # architecture, traditional chinese writing close ups, walking up hill of golden
-# statues, golden asian statues with swatizkas.  All male statues?
+# statues, golden asian statues with swastikas.  All male statues?
 
 n8x168w6vhpv240hggw7wtj8mszg7wnb.mp4 properties:
 Duration: 00:10:11.05, start: 0.000000, bitrate: 59858 kb/s
