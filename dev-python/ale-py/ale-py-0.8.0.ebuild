@@ -20,10 +20,10 @@ REQUIRED_USE+="
 "
 DEPEND+="
 	${PYTHON_DEPS}
+	$(python_gen_cond_dep '>=dev-python/importlib_metadata-4.10.0[${PYTHON_USEDEP}]' python3_{8,9})
+	$(python_gen_cond_dep 'dev-python/typing-extensions[${PYTHON_USEDEP}]' python3_{8,9,10} )
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
-	>=dev-python/importlib_metadata-4.10.0
 	dev-python/importlib_resources[${PYTHON_USEDEP}]
-	dev-python/typing-extensions[${PYTHON_USEDEP}]
 	media-libs/libsdl2
 	sys-libs/zlib
 "

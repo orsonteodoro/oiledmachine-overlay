@@ -41,6 +41,7 @@ RDEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 "
 RESTRICT="mirror"
 PATCHES=( "${FILESDIR}/${PN}-9999-ansi-fix.patch" )

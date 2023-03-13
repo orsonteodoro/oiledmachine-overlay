@@ -12,26 +12,26 @@ major_brand     : mp42
 Duration: 00:08:47.17, start: 0.000000, bitrate: 59716 kb/s
 Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59397 kb/s, 59.94 fps
 Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
-# Content keywords:  realistic, people, thailand, ox, temple, professional grade, rain,
-# river, plant, boat, insect, animals, food, snake, architecture, close ups, skyline
-# dusk, present era, detailed, pro quality, 4K, realistic
+# Content keywords:  realistic, people, thailand, ox, temple, professional
+# grade, rain, river, plant, boat, insect, animals, food, snake, architecture,
+# close ups, skyline dusk, present era, detailed, pro quality, 4K, realistic
 
 58pxpuh1dsieye19pkj182hgv6fg4gof.mp4 properties:
 major_brand     : mp42
 Duration: 00:02:20.33, start: 0.000000, bitrate: 60633 kb/s
 Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 60326 kb/s, 59.94 fps
 Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
-# Content keywords:  realistic, desert, cave, colorado river, sun, sunrays, poppy,
-# erosion, closeups, distance shot, first person view, arches, buttes, cactus,
-# the bend, detailed, pro quality, 4K, realistic
+# Content keywords:  realistic, desert, cave, colorado river, sun, sunrays,
+# poppy, erosion, closeups, distance shot, first person view, arches, buttes,
+# cactus, the bend, detailed, pro quality, 4K, realistic
 
 6uws3kg4ldxtkeg5k5jwubueaolkqsr0.mp4 properties:
 major_brand     : mp42
 Duration: 00:03:30.90, start: 0.000000, bitrate: 60665 kb/s
 Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 60352 kb/s, 50 fps
 Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
-# Content keywords:  realistic, desert, cave, cactus, shrub, arch, buttes, close ups
-# high quality, 4K, realistic
+# Content keywords:  realistic, desert, cave, cactus, shrub, arch, buttes, close
+# ups high quality, 4K, realistic
 
 51ma04aviaeunhzelpw455sodv7judiu.mp4 properties:
 major_brand     : mp42
@@ -39,8 +39,8 @@ Duration: 00:01:50.27, start: 0.000000, bitrate: 59704 kb/s
 Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59408 kb/s, 50 fps
 Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
 # Content keywords:  india, city, many people, vehicles, commercial signs, cars,
-# motorcycles, close up, pro quality, 4K, walking pace, english text, sanskrit text
-# realistic
+# motorcycles, close up, pro quality, 4K, walking pace, english text, sanskrit
+# text realistic
 
 uaj2o8ku7qhwwzviga9znzviwqg14x1g.mp4 properties:
 major_brand     : mp42
@@ -48,17 +48,68 @@ Duration: 00:10:10.65, start: 0.000000, bitrate: 15116 kb/s
 Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59489 kb/s, 59.94 fps
 Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
 # Content keywords:  
-# College football, professional statium, cheerleaders, cheering fans, close ups, end zone,
-# band, outside stadium, sky, clouds, inside stadium, 4K, digital screen, vuvuzela, 
-# cowgirls, texas outline, drawn 5 pointed star, lines, dashes, turf, stadium windows,
-# golf cart wheels, back shot, blurry fan stand
+# College football, professional statium, cheerleaders, cheering fans, close
+# ups, end zone, band, outside stadium, sky, clouds, inside stadium, 4K, digital
+# screen, vuvuzela,  cowgirls, texas outline, drawn 5 pointed star, lines,
+# dashes, turf, stadium windows, golf cart wheels, back shot, blurry fan stand
 
 e425git3jtnugqh8llzlgvr0r2j4j351.mp4 properties:
 major_brand     : mp42
-Duration: 00:13:22.05, start: 0.000000, bitrate: 8078 kb/s
+Duration: 00:13:22.05, start: 0.000000, bitrate: 59990 kb/s
 Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59669 kb/s, 59.94 fps
 Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
 # Content keywords:
+# Realistic, 4K, close up, baboons, snow, snow falling, snow on the ground,
+# rocks, river, river bubbles, bottom of waterfall, hugging baboons in the
+# water, grooming baboons, baboons playing on the snow, baboons on top of trunk
+# of dead plants, baboons in warm water
+
+v21fqn77ib1r8zlrbnl6fsyzt6rrjj0v.mp4 properties:
+Duration: 00:18:52.65, start: 0.000000, bitrate: 59743 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59422 kb/s, 59.94 fps
+Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
+# Content keywords:
+# Realistic, 4K, road, race cars, dusty dirt road, cowboys, cowgirls, horses,
+# baby horse, san francisco, prison island, san francisco bridge, cliff shot of
+# bridge, close up shots, walking people on the bridge, dead grass, cliff side,
+# mt rushmore, trees on a hill, mechanic, ferry
+
+tmzm8y7bfzpote9obs7le3olh5j87iir.mp4 properties:
+Duration: 00:17:57.31, start: 0.000000, bitrate: 59944 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59623 kb/s, 59.94 fps
+Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, 5.1, fltp, 317 kb/s
+# Content keywords:
+# Realistic, 4K, venice, gondola, boat, brick road, hotel sign, red brick
+# buildings, masked people, mature age crowd, glass blowing factory, hot glass
+# horse, water, daylight, burry colored night lights (bokeh) gondola operator,
+# rows of gondolas, classically dressed, umbrella
+
+6inss29is5b7jzxv1qkuf2p9qeaomi04.mp4 properties:
+Duration: 00:12:36.76, start: 0.000000, bitrate: 59189 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 58868 kb/s, 50 fps
+Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
+# Content keywords:
+# Realistic, 4K, kayakers, river, snowy top, thawed warm hill, frozen blue river
+# with liquid river kayakers, green grass, rocky cliff, rivers down a hill,
+# people on that frozen river, man playing saxaphone
+
+29b0z4w9lj4p54q2hf7il9jz6codx36v.mp4 properties:
+Duration: 00:02:12.63, start: 0.000000, bitrate: 59725 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59421 kb/s, 59.94 fps
+Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
+# Content keywords:
+# Realistic, 4K, chinese golden statues, garden, traditional chinese
+# architecture, traditional chinese writing close ups, walking up hill of golden
+# statues, golden asian statues with swatizkas.  All male statues?
+
+n8x168w6vhpv240hggw7wtj8mszg7wnb.mp4 properties:
+Duration: 00:10:11.05, start: 0.000000, bitrate: 59858 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59539 kb/s, 50 fps
+Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
+# Content keywords:
+# Realistic, 4K, Indian mausoleum (taj mahal), indian woman chilli worker,
+# indians women with bowl over head, camel, pidgeons in the distance, elephant
+# in the distance, green parrot, rugs, silk, chrysanthemums, flowers
 
 
 DIV2K summary:

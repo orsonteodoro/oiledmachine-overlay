@@ -17,9 +17,15 @@ HOMEPAGE="https://github.com/maxbachmann/rapidfuzz_capi"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-DEPEND+=" ${PYTHON_DEPS}"
-RDEPEND+=" ${DEPEND}"
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+"
+DEPEND+="
+	${PYTHON_DEPS}
+"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/setuptools-58.1.0[${PYTHON_USEDEP}]

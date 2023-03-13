@@ -12,21 +12,28 @@ HOMEPAGE="https://github.com/duanhongyi/pyv4l2"
 LICENSE="LGPL-3"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" examples"
 REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}"
+	${PYTHON_REQUIRED_USE}
+"
 RDEPEND+="
 	${PYTHON_DEPS}
 	media-libs/libv4l
+	examples? (
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/pillow[${PYTHON_USEDEP}]
+	)
 "
 DEPEND+=" ${RDEPEND}
 	>=dev-python/cython-0.18[${PYTHON_USEDEP}]
+	dev-python/setuptools[${PYTHON_USEDEP}]
 "
 BDEPEND+=" ${PYTHON_DEPS}"
 EGIT_COMMIT="f12f0b3a14e44852f0a0d13ab561cbcae8b5e0c3"
 SRC_URI="
 https://github.com/duanhongyi/pyv4l2/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 PATCHES=(

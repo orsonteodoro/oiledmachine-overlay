@@ -12,7 +12,9 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+"
 CDEPEND="
 	${PYTHON_DEPS}
 	>=dev-python/cffi-1.0.0[${PYTHON_USEDEP}]
@@ -26,6 +28,7 @@ RDEPEND+="
 # TODO pyperf needs to be packaged.
 BDEPEND+="
 	${CDEPEND}
+	dev-python/pkgconfig[${PYTHON_USEDEP}]
 	test? (
 		dev-python/pyperf[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]

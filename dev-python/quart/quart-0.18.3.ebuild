@@ -18,18 +18,17 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 # Deps last updated Oct 15, 2021
 DEPEND+="
 	${PYTHON_DEPS}
+	$(python_gen_cond_dep 'dev-python/importlib_metadata[${PYTHON_USEDEP}]' python3_{8..9})
 	>=dev-python/click-8[${PYTHON_USEDEP}]
 	>=dev-python/hypercorn-0.11.2[${PYTHON_USEDEP}]
 	>=dev-python/jinja-2[${PYTHON_USEDEP}]
 	>=dev-python/werkzeug-2.2.0[${PYTHON_USEDEP}]
 	dev-python/aiofiles[${PYTHON_USEDEP}]
 	dev-python/blinker[${PYTHON_USEDEP}]
-	dev-python/importlib_metadata[${PYTHON_USEDEP}]
 	dev-python/itsdangerous[${PYTHON_USEDEP}]
 	dev-python/markupsafe[${PYTHON_USEDEP}]
 	dev-python/python-dotenv[${PYTHON_USEDEP}]
 	dev-python/toml[${PYTHON_USEDEP}]
-	dev-python/typing-extensions[${PYTHON_USEDEP}]
 	doc? (
 		dev-python/pydata-sphinx-theme[${PYTHON_USEDEP}]
 		dev-python/sphinx[${PYTHON_USEDEP}]
@@ -38,16 +37,25 @@ DEPEND+="
 RDEPEND+="
 	${DEPEND}
 "
+#missing
+# test? (
+#	dev-python/pep8-naming[${PYTHON_USEDEP}]
+#	dev-python/flake8-future-import[${PYTHON_USEDEP}]
+#	dev-python/flake8-print[${PYTHON_USEDEP}]
+#	dev-python/types-toml[${PYTHON_USEDEP}]
+#	dev-python/types-aiofiles[${PYTHON_USEDEP}]
+# )
 BDEPEND+="
 	${PYTHON_DEPS}
+	>=dev-python/poetry-core-1.0.0
 	test? (
+		$(python_gen_cond_dep 'dev-python/mock[${PYTHON_USEDEP}]' python3_7)
 		>=dev-python/poetry-1[${PYTHON_USEDEP}]
 		dev-python/black[${PYTHON_USEDEP}]
 		dev-python/isort[${PYTHON_USEDEP}]
 		dev-python/hypothesis[${PYTHON_USEDEP}]
 		dev-python/flask[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
-		dev-python/mock[${PYTHON_USEDEP}]
 		dev-python/mypy[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-asyncio[${PYTHON_USEDEP}]
