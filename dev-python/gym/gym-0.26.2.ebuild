@@ -16,7 +16,7 @@ https://github.com/openai/gym
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" atari accept-rom-license box2d classic-control mujoco mujoco_py pygame toy_text test"
+IUSE+=" atari accept-rom-license box2d classic-control mujoco mujoco-py pygame toy_text test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	box2d? (
@@ -58,7 +58,7 @@ DEPEND+="
 		>=dev-python/mujoco-2.2.0[${PYTHON_USEDEP}]
 		>=dev-python/imageio-2.14.1[${PYTHON_USEDEP}]
 	)
-	mujoco_py? (
+	mujoco-py? (
 		<dev-python/mujoco-py-2.2[${PYTHON_USEDEP}]
 		>=dev-python/mujoco-py-2.1[${PYTHON_USEDEP}]
 	)

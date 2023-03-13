@@ -17,7 +17,7 @@ https://github.com/Farama-Foundation/Gymnasium
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" atari accept-rom-license box2d jax mujoco mujoco_py pygame"
+IUSE+=" atari accept-rom-license box2d jax mujoco mujoco-py pygame"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	box2d? (
@@ -58,9 +58,9 @@ DEPEND+="
 		>=dev-python/mujoco-2.3.1[${PYTHON_USEDEP}]
 		>=dev-python/imageio-2.3.1_p1[${PYTHON_USEDEP}]
 	)
-	mujoco_py? (
-		<dev-python/mujoco-2.2[${PYTHON_USEDEP}]
-		>=dev-python/mujoco-2.1[${PYTHON_USEDEP}]
+	mujoco-py? (
+		<dev-python/mujoco-py-2.2[${PYTHON_USEDEP}]
+		>=dev-python/mujoco-py-2.1[${PYTHON_USEDEP}]
 	)
 	pygame? (
 		>=dev-python/pygame-2.1.3_pre[${PYTHON_USEDEP}]
