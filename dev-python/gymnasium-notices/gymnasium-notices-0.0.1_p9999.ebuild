@@ -44,6 +44,20 @@ src_unpack() {
 	fi
 	git-r3_fetch
 	git-r3_checkout
+	local actual_pv=$(grep -r -e "version=" "${S}/setup.py" \
+		| cut -f 2 -d '"')
+	local expected_pv=$(ver_cut 1-3 ${PV})
+	if [[ "${actual_pv}" != "${expected_pv}" ]] ; then
+eerror
+eerror "Version change detected that may alter *DEPENDs requirements"
+eerror
+eerror "Expected version:\t${expected_pv}"
+eerror "Actual version:\t${actual_pv}"
+eerror
+eerror "Use the fallback-commit to continue."
+eerror
+		die
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
