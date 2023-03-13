@@ -80,9 +80,10 @@ Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 38
 Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, 5.1, fltp, 317 kb/s
 # Content keywords:
 # Realistic, 4K, venice, gondola, boat, brick road, hotel sign, red brick
-# buildings, masked people, mature age crowd, glass blowing factory, hot glass
-# horse, water, daylight, burry colored night lights (bokeh) gondola operator,
-# rows of gondolas, classically dressed, umbrella
+# buildings, carnival/volta/ventian masked people, mature age crowd, glass
+# blowing factory, hot glass horse, water, daylight, burry colored night lights
+# (bokeh) gondola operator, rows of gondolas, classically dressed, umbrella,
+# naked statues
 
 6inss29is5b7jzxv1qkuf2p9qeaomi04.mp4 properties:
 Duration: 00:12:36.76, start: 0.000000, bitrate: 59189 kb/s
