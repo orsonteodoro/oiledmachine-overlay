@@ -52,7 +52,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DMUJOCO_BUILD_EXAMPLES=$(usex examples "ON" "OFF")
 		-DMUJOCO_BUILD_TESTS=$(usex test "ON" "OFF")
-		-DMUJOCO_TEST_PYTHON_UTIL=$(usex test $(usex python "ON" "OFF") "OFF")
+		-DMUJOCO_TEST_PYTHON_UTIL=$(usex test "ON" "OFF")
 	)
 	cmake_src_configure
 }
