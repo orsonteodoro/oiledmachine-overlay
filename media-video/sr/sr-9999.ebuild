@@ -72,10 +72,7 @@ vdpau vpx
 # We use the tensorflow .pb because it is multicore.
 REQUIRED_USE="
 	!pretrained? (
-		|| (
-			ffmpeg
-			gstreamer
-		)
+		${PYTHON_REQUIRED_USE}
 		gstreamer? (
 			ffmpeg
 		)
@@ -83,6 +80,10 @@ REQUIRED_USE="
 			ffmpeg
 		)
 		vpx? (
+			gstreamer
+		)
+		|| (
+			ffmpeg
 			gstreamer
 		)
 	)
@@ -96,10 +97,13 @@ REQUIRED_USE="
 		${ALGS[@]}
 	)
 "
-DEPEND+="
-"
 RDEPEND+="
-	${DEPEND}
+"
+DEPEND+="
+	${RDEPEND}
+	!pretrained? (
+		${PYTHON_DEPS}
+	)
 "
 BDEPEND+="
 	!pretrained? (
