@@ -1,4 +1,4 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -8,10 +8,13 @@ LLVM_MAX_SLOT=15
 LLVM_SLOTS=(15 14 13)
 inherit cmake python-any-r1 llvm
 
+# For version, see
+# https://github.com/ispc/ispc/blob/main/common/version.h
+
 DESCRIPTION="Intel SPMD Program Compiler"
 HOMEPAGE="https://ispc.github.io/"
 
-if [[ ${PV} == 9999 ]]; then
+if [[ ${PV} =~ 9999 ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/ispc/ispc.git"
 else
@@ -21,7 +24,7 @@ fi
 
 LICENSE="BSD BSD-2 UoI-NCSA"
 SLOT="0"
-IUSE="examples test"
+IUSE="examples fallback-commit test"
 IUSE+=" ${LLVM_SLOTS[@]/#/llvm-}"
 REQUIRED_USE+=" ^^ ( ${LLVM_SLOTS[@]/#/llvm-} ) "
 RESTRICT="!test? ( test )"
@@ -50,13 +53,50 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-1.18.0-llvm.patch"
+	"${FILESDIR}/${PN}-1.19.0-llvm.patch"
 	"${FILESDIR}/${PN}-1.18.1-curses-cmake.patch"
 )
 
+CMAKE_BUILD_TYPE="RelWithDebInfo"
+
 pkg_setup() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		if use llvm-${s} ; then
+			export LLVM_MAX_SLOT=${s}
+			break
+		fi
+	done
+
 	llvm_pkg_setup
 	python-any-r1_pkg_setup
+}
+
+src_unpack() {
+	if [[ ${PV} =~ 9999 ]]; then
+		use fallback-commit && export EGIT_COMMIT="5daed1f62f318d79e429906833d4eff335767044" # Dec 16, 2022
+		git-r3_fetch
+		git-r3_checkout
+		cd "${S}" || die
+		local actual_pv=$(grep -r -e "ISPC_VERSION " common/version.h \
+			| sed -e "s|dev||g" \
+			| cut -f 2 -d '"')
+		local expected_pv=$(ver_cut 1-3 ${PV})
+		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
+eerror
+eerror "Version mismatch detected that might result in broken patches or"
+eerror "incompatible *DEPENDs."
+eerror
+eerror "Expected version:\t${expected_pv}"
+eerror "Actual version:\t${actual_pv}"
+eerror
+eerror "Use the fallback-commit USE flag to continue."
+eerror
+			die
+		fi
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {

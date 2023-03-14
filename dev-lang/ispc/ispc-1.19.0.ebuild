@@ -53,8 +53,8 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-9999-llvm.patch"
-	"${FILESDIR}"/${PN}-1.18.1-curses-cmake.patch
+	"${FILESDIR}/${PN}-1.19.0-llvm.patch"
+	"${FILESDIR}/${PN}-1.18.1-curses-cmake.patch"
 )
 
 CMAKE_BUILD_TYPE="RelWithDebInfo"
@@ -73,9 +73,13 @@ pkg_setup() {
 }
 
 src_unpack() {
-	use fallback-commit && export EGIT_COMMIT="09bae5fa6c03cc379c549d52f3660bdaa1b53b8c" # Dec 16, 2022
-	git-r3_fetch
-	git-r3_checkout
+	if [[ ${PV} =~ 9999 ]]; then
+		use fallback-commit && export EGIT_COMMIT="09bae5fa6c03cc379c549d52f3660bdaa1b53b8c" # Dec 16, 2022
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {
