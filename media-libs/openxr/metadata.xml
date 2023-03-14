@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Ebuild only on the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -14,14 +14,8 @@
     <remote-id type="github">KhronosGroup/OpenXR-SDK-Source</remote-id>
   </upstream>
   <use>
-    <flag name="doc">
-      Install documentation.
-    </flag>
     <flag name="system-jsoncpp">
       Use the system provide jsoncpp package instead of the internal version.
-    </flag>
-    <flag name="test">
-      Builds tests
     </flag>
     <flag name="video_cards_amdgpu">
       Checks if Vulkan driver is installed.

@@ -43,6 +43,27 @@ REQUIRED_USE+="
 "
 DEPEND+="
 	${PYTHON_DEPS}
+	media-libs/mesa[egl(+),gles2?,libglvnd(+)]
+	media-libs/vulkan-loader
+	virtual/libc
+	system-jsoncpp? (
+		dev-libs/jsoncpp
+	)
+	xcb? (
+		x11-libs/libxcb
+		x11-libs/xcb-util-keysyms
+		x11-libs/xcb-util-wm
+	)
+	xlib? (
+		x11-base/xorg-proto
+		x11-libs/libX11
+	)
+	wayland? (
+		dev-libs/wayland
+		dev-libs/wayland-protocols
+		dev-util/wayland-scanner
+		media-libs/mesa[egl(+)]
+	)
 	|| (
 		video_cards_amdgpu? (
 			media-libs/mesa[video_cards_radeonsi,vulkan]
@@ -60,28 +81,7 @@ DEPEND+="
 			x11-base/xorg-drivers[video_cards_radeonsi]
 		)
 	)
-	media-libs/mesa[egl(+),gles2?,libglvnd(+)]
-	media-libs/vulkan-loader
-	system-jsoncpp? ( dev-libs/jsoncpp )
-	virtual/libc
-	xcb? (
-		x11-libs/libxcb
-		x11-libs/xcb-util-keysyms
-		x11-libs/xcb-util-wm
-	)
-	xlib? (
-		x11-base/xorg-proto
-		x11-libs/libX11
-	)
-	wayland? (
-		dev-libs/wayland
-		dev-libs/wayland-protocols
-		dev-util/wayland-scanner
-		media-libs/mesa[egl(+)]
-	)
 "
-#	x11-libs/libXrandr
-#	x11-libs/libXxf86vm
 RDEPEND+="
 	${DEPEND}
 "
