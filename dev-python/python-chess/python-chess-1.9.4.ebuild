@@ -36,18 +36,18 @@ BDEPEND+="
 		dev-python/sphinx[${PYTHON_USEDEP}]
 	)
 	test? (
-		dev-python/crafty[${PYTHON_USEDEP}]
-		dev-python/stockfish[${PYTHON_USEDEP}]
+		games-board/crafty[${PYTHON_USEDEP}]
+		games-board/stockfish[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
 		net-libs/tox[${PYTHON_USEDEP}]
 	)
 "
 PDEPEND+="
 	crafty? (
-		dev-python/crafty[${PYTHON_USEDEP}]
+		games-board/crafty[${PYTHON_USEDEP}]
 	)
 	stockfish? (
-		dev-python/stockfish[${PYTHON_USEDEP}]
+		games-board/stockfish[${PYTHON_USEDEP}]
 	)
 "
 SRC_URI="
