@@ -19,6 +19,7 @@ build-models cellular-traces evaluate fallback-commit kernel-patch polkit +sudo
 r4
 "
 REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
 	cellular-traces? (
 		|| (
 			build-models
@@ -27,6 +28,7 @@ REQUIRED_USE+="
 	)
 "
 DEPEND+="
+	${PYTHON_DEPS}
 	>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
 	app-alternatives/sh
 	dev-python/sysv_ipc[${PYTHON_USEDEP}]
@@ -53,6 +55,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
+	${PYTHON_DEPS}
 	app-alternatives/sh
 	dev-python/pip[${PYTHON_USEDEP}]
 	dev-python/virtualenv[${PYTHON_USEDEP}]

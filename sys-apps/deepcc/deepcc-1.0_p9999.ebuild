@@ -16,7 +16,11 @@ LICENSE="MIT"
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild in development
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" build-models evaluate fallback-commit kernel-patch polkit +sudo r3"
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+"
 DEPEND+="
+	${PYTHON_DEPS}
 	>=dev-python/sysv_ipc-1.0.0[${PYTHON_USEDEP}]
 	>=net-misc/iperf-3.1.3
 	>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
@@ -44,6 +48,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
+	${PYTHON_DEPS}
 	app-alternatives/sh
 	dev-python/pip[${PYTHON_USEDEP}]
 	dev-python/virtualenv[${PYTHON_USEDEP}]
