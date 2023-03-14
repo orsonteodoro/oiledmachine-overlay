@@ -10,7 +10,10 @@ inherit distutils-r1
 MY_PN="nvidia-ml-py"
 
 DESCRIPTION="Python Bindings for the NVIDIA Management Library"
-HOMEPAGE="http://www.nvidia.com/"
+HOMEPAGE="
+https://developer.nvidia.com/nvidia-management-library-nvml
+https://pypi.org/project/nvidia-ml-py/
+"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~x86 ~arm64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
