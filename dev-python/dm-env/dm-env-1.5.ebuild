@@ -4,6 +4,8 @@
 
 EAPI=8
 
+MY_PN="${PN/-/_}"
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
@@ -33,7 +35,7 @@ SRC_URI="
 https://github.com/deepmind/dm_env/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${P}"
+S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md docs/index.md README.md )
 
