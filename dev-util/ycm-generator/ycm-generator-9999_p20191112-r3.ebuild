@@ -14,24 +14,40 @@ HOMEPAGE="https://github.com/rdnetto/YCM-Generator"
 LICENSE="GPL-3"
 SLOT="0"
 IUSE+=" autotools cmake qt5"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-RDEPEND+=" sys-devel/clang
-	autotools? ( sys-devel/make )
-	cmake? ( dev-util/cmake )
-	qt5? ( dev-qt/qtcore:5 )"
-CDEPEND+=" ${PYTHON_DEPS}
-	dev-python/future[${PYTHON_USEDEP}]"
-RDEPEND+=" ${CDEPEND}"
-DEPEND+=" ${RDEPEND}"
-BDEPEND+=" ${CDEPEND}"
+RDEPEND+="
+	sys-devel/clang
+	autotools? (
+		sys-devel/make
+	)
+	cmake? (
+		dev-util/cmake
+	)
+	qt5? (
+		dev-qt/qtcore:5
+	)
+"
+CDEPEND+="
+	dev-python/future[${PYTHON_USEDEP}]
+"
+RDEPEND+="
+	${CDEPEND}
+"
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	${CDEPEND}
+"
 EGIT_COMMIT="7c0f5701130f4178cb63d10da88578b9b705fbb1"
 SRC_URI="
 https://github.com/rdnetto/YCM-Generator/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/YCM-Generator-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
 src_prepare() {
+	ewarn "This package has reached End Of Life (EOL)"
 	default
 	futurize -0 -v -w "${S}" || die
 	sed -i -e "s|#!/usr/bin/env python2|#!/usr/bin/env python|" \
