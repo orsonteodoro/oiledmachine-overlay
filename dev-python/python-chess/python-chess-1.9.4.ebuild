@@ -62,7 +62,7 @@ https://github.com/michiguel/Gaviota-Tablebases/archive/${GAVIOTA_TABLEBASES_COM
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-DOCS=( CHANGELOG.rst CHANGELOG-OLD.rst README.rst )
+DOCS=( CHANGELOG-OLD.rst CHANGELOG.rst README.rst )
 
 build_libgtb() {
 	pushd "${WORKDIR}/Gaviota-Tablebases-${GAVIOTA_TABLEBASES_COMMIT}" || die
