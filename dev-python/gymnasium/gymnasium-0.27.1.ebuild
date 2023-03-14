@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
@@ -17,7 +18,7 @@ https://github.com/Farama-Foundation/Gymnasium
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" atari accept-rom-license box2d jax mujoco mujoco-py pygame"
+IUSE+=" atari accept-rom-license box2d jax mujoco mujoco-py pygame test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	box2d? (
@@ -26,8 +27,8 @@ REQUIRED_USE+="
 "
 DEPEND+="
 	${PYTHON_DEPS}
+	$(python_gen_cond_dep '>=dev-python/importlib_metadata-4.8.0[${PYTHON_USEDEP}]' python3_{8..9})
 	>=dev-python/cloudpickle-1.2.0[${PYTHON_USEDEP}]
-	>=dev-python/importlib_metadata-4.8.0[${PYTHON_USEDEP}]
 	>=dev-python/jumpy-0.2.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.3.0[${PYTHON_USEDEP}]
@@ -56,7 +57,7 @@ DEPEND+="
 	)
 	mujoco? (
 		>=dev-python/mujoco-2.3.1[${PYTHON_USEDEP}]
-		>=dev-python/imageio-2.3.1_p1[${PYTHON_USEDEP}]
+		>=dev-python/imageio-2.14.1[${PYTHON_USEDEP}]
 	)
 	mujoco-py? (
 		<dev-python/mujoco-py-2.2[${PYTHON_USEDEP}]
@@ -71,6 +72,13 @@ RDEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
+	>=dev-python/setuptools-61.0.0[${PYTHON_USEDEP}]
+	test? (
+		>=dev-python/pytest-7.1.3[${PYTHON_USEDEP}]
+		dev-python/black[${PYTHON_USEDEP}]
+		dev-python/isort[${PYTHON_USEDEP}]
+		dev-python/pyright[${PYTHON_USEDEP}]
+	)
 "
 SRC_URI="
 https://github.com/Farama-Foundation/Gymnasium/archive/refs/tags/v${PV}.tar.gz
@@ -78,5 +86,7 @@ https://github.com/Farama-Foundation/Gymnasium/archive/refs/tags/v${PV}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+
+distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

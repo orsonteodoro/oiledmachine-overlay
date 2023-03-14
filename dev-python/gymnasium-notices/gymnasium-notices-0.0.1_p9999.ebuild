@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1 git-r3
 
@@ -15,19 +16,13 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" fallback-commit"
-REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
-"
 DEPEND+="
-	${PYTHON_DEPS}
 "
 RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	${PYTHON_DEPS}
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
 "
 SRC_URI="
 "

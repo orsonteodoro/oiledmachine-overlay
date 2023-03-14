@@ -61,7 +61,8 @@ PATCHES=(
 
 SITEFILE=50cython-gentoo.el
 
-distutils_enable_sphinx docs
+distutils_enable_sphinx \
+	"docs"
 
 python_compile() {
 	# Python gets confused when it is in sys.path before build.
@@ -83,8 +84,8 @@ python_test() {
 	tc-export CC
 	# https://github.com/cython/cython/issues/1911
 	local -x CFLAGS="${CFLAGS} -fno-strict-overflow"
-	"${PYTHON}" runtests.py -vv --work-dir "${BUILD_DIR}"/tests ||
-		die "Tests fail with ${EPYTHON}"
+	"${PYTHON}" runtests.py -vv --work-dir "${BUILD_DIR}"/tests \
+		|| die "Tests fail with ${EPYTHON}"
 }
 
 python_install_all() {

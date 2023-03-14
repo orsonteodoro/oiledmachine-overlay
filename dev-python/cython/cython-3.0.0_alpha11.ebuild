@@ -51,6 +51,7 @@ BDEPEND="
 	)
 	test? (
 		$(python_gen_cond_dep '
+			<dev-python/setuptools-60[${PYTHON_USEDEP}]
 			dev-python/coverage[${PYTHON_USEDEP}]
 			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/pycodestyle[${PYTHON_USEDEP}]
@@ -65,10 +66,11 @@ S="${WORKDIR}/${PN}-${MY_PV}"
 
 SITEFILE=50cython-gentoo.el
 
-distutils_enable_sphinx docs \
-	dev-python/jinja \
-	dev-python/sphinx-issues \
-	dev-python/sphinx-tabs
+distutils_enable_sphinx \
+	"docs" \
+	"dev-python/jinja" \
+	"dev-python/sphinx-issues" \
+	"dev-python/sphinx-tabs"
 
 python_compile() {
 	# Python gets confused when it is in sys.path before build.
@@ -90,8 +92,8 @@ python_test() {
 	tc-export CC
 	# https://github.com/cython/cython/issues/1911
 	local -x CFLAGS="${CFLAGS} -fno-strict-overflow"
-	"${PYTHON}" runtests.py -vv --work-dir "${BUILD_DIR}"/tests ||
-		die "Tests fail with ${EPYTHON}"
+	"${PYTHON}" runtests.py -vv --work-dir "${BUILD_DIR}"/tests \
+		|| die "Tests fail with ${EPYTHON}"
 }
 
 python_install_all() {

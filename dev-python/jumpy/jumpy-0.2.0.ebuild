@@ -4,8 +4,9 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
-inherit python-r1
+inherit distutils-r1
 
 DESCRIPTION="On-the-fly conversions between Jax and NumPy tensors"
 HOMEPAGE="
@@ -15,12 +16,8 @@ LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" jax test"
-REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
-"
 DEPEND+="
-	${PYTHON_DEPS}
-	>=dev-python/numpy-1.18.0
+	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 	jax? (
 		>=dev-python/jax-0.3.24[${PYTHON_USEDEP}]
 		>=dev-python/jaxlib-0.3.24[${PYTHON_USEDEP}]
@@ -30,7 +27,6 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	${PYTHON_DEPS}
 	>=dev-python/hatchling-1.4.0[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-61.0.0[${PYTHON_USEDEP}]
 	test? (
@@ -47,5 +43,7 @@ RESTRICT="mirror"
 src_install() {
 	python_foreach_impl python_domodule .
 }
+
+distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

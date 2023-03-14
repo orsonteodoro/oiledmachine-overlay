@@ -3,7 +3,7 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517=setuptools
+DISTUTILS_USE_PEP517="poetry"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
@@ -14,10 +14,8 @@ LICENSE="MIT CC0-1.0"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 # Deps last updated Oct 15, 2021
 DEPEND+="
-	${PYTHON_DEPS}
 	$(python_gen_cond_dep 'dev-python/importlib_metadata[${PYTHON_USEDEP}]' python3_{8..9})
 	>=dev-python/click-8[${PYTHON_USEDEP}]
 	>=dev-python/hypercorn-0.11.2[${PYTHON_USEDEP}]
@@ -46,7 +44,6 @@ RDEPEND+="
 #	dev-python/types-aiofiles[${PYTHON_USEDEP}]
 # )
 BDEPEND+="
-	${PYTHON_DEPS}
 	>=dev-python/poetry-core-1.0.0
 	test? (
 		$(python_gen_cond_dep 'dev-python/mock[${PYTHON_USEDEP}]' python3_7)
@@ -72,5 +69,7 @@ https://github.com/pallets/quart/archive/refs/tags/${PV}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+
+distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META-TAGS:  orphaned

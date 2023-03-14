@@ -4,27 +4,42 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
 DESCRIPTION="A Python 2/3 compatibility layer for C extensions"
 HOMEPAGE="https://github.com/encukou/py3c"
-LICENSE="MIT doc? ( CC-BY-NC-SA-3.0 )"
+LICENSE="
+	MIT
+	doc? ( CC-BY-SA-3.0 )
+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-DEPEND+=" ${PYTHON_DEPS}"
-RDEPEND+=" ${DEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}
-	doc? ( dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}] )"
+IUSE+=" doc test"
+DEPEND+="
+"
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
+	>=dev-python/setuptools-42.2[${PYTHON_USEDEP}]
+	doc? (
+		dev-python/sphinx[${PYTHON_USEDEP},latex]
+		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
+	)
+	test? (
+		net-libs/tox[${PYTHON_USEDEP}]
+	)
+"
 SRC_URI="
 https://github.com/encukou/py3c/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
-distutils_enable_sphinx doc
+distutils_enable_sphinx "doc"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-TAGS:  orphaned

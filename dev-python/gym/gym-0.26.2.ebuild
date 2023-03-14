@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
@@ -32,10 +33,10 @@ REQUIRED_USE+="
 #	>=dev-python/dataclasses-0.8[${PYTHON_USEDEP}] # 3.6 only
 DEPEND+="
 	${PYTHON_DEPS}
+	$(python_gen_cond_dep '>=dev-python/importlib_metadata-4.8.0[${PYTHON_USEDEP}]' python3_{8..9})
 	>=dev-python/ale-py-0.8.0[${PYTHON_USEDEP}]
 	>=dev-python/cloudpickle-1.2.0[${PYTHON_USEDEP}]
 	>=dev-python/gym-notices-0.0.4[${PYTHON_USEDEP}]
-	>=dev-python/importlib_metadata-4.8.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.3.0[${PYTHON_USEDEP}]
 
@@ -92,5 +93,7 @@ https://github.com/openai/gym/archive/refs/tags/${PV}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+
+distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

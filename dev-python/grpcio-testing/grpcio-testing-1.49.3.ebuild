@@ -3,9 +3,8 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
-DISTUTILS_USE_PEP517=setuptools
-
 inherit distutils-r1
 
 DESCRIPTION="Testing utilities for gRPC Python"
@@ -14,8 +13,10 @@ LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 RDEPEND="
-	<dev-python/protobuf-python-5[${PYTHON_USEDEP}]
-	>=dev-python/protobuf-python-4.21.3[${PYTHON_USEDEP}]
+	(
+		<dev-python/protobuf-python-5[${PYTHON_USEDEP}]
+		>=dev-python/protobuf-python-4.21.3[${PYTHON_USEDEP}]
+	)
 	~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
 "
 BDEPEND="
@@ -23,6 +24,7 @@ BDEPEND="
 "
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
+MY_PV=$(ver_cut 1-3 "${PV}")
 SRC_URI+="
 https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
 	-> ${GRPC_P}.tar.gz

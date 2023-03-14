@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} ) # Upstream tested up to 3.9
 inherit distutils-r1
 
@@ -16,18 +17,15 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
 "
 DEPEND+="
-	${PYTHON_DEPS}
 	dev-python/tqdm[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	${PYTHON_DEPS}
-	dev-python/setuptools
+	dev-python/setuptools[${PYTHON_USEDEP}]
 "
 SRC_URI="
 https://github.com/Edinburgh-Genome-Foundry/Proglog/archive/refs/tags/v${PV}.tar.gz

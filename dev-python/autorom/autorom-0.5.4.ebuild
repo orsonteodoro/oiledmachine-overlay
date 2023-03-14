@@ -15,25 +15,29 @@ https://github.com/Farama-Foundation/AutoROM
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
 DEPEND+="
-	$(python_gen_any_dep 'net-libs/libtorrent-rasterbar[${PYTHON_SINGLE_USEDEP},python]')
 	${PYTHON_DEPS}
+	$(python_gen_any_dep 'net-libs/libtorrent-rasterbar[${PYTHON_SINGLE_USEDEP},python]')
+	$(python_gen_cond_dep 'dev-python/importlib_resources[${PYTHON_USEDEP}]' python3_8)
 	dev-python/click[${PYTHON_USEDEP}]
-	dev-python/importlib_resources
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/tqdm[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${DEPEND}
 "
+# TODO package:
+# multi_agent_ale_py
 BDEPEND+="
 	${PYTHON_DEPS}
-	dev-python/wheel[${PYTHON_USEDEP}]
-	dev-python/setuptools[${PYTHON_USEDEP}]
+	test? (
+		dev-python/ale-py[${PYTHON_USEDEP}]
+		dev-python/multi_agent_ale_py[${PYTHON_USEDEP}]
+	)
 "
 SRC_URI="
 https://github.com/Farama-Foundation/AutoROM/archive/refs/tags/v${PV}.tar.gz

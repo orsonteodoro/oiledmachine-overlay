@@ -3,9 +3,8 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
-DISTUTILS_USE_PEP517=setuptools
-
 inherit distutils-r1 multiprocessing prefix
 
 DESCRIPTION="High-performance RPC framework (python libraries)"
@@ -14,27 +13,35 @@ LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="amd64 ~arm ~arm64 ~ppc64 ~riscv x86"
 IUSE+=" doc"
-RDEPEND="
-	<dev-python/protobuf-python-5[${PYTHON_USEDEP}]
+# See src/include/openssl/crypto.h#L99 for versioning
+# See src/include/openssl/base.h#L187 for versioning
+RDEPEND+="
+	(
+		<dev-python/protobuf-python-5[${PYTHON_USEDEP}]
+		>=dev-python/protobuf-python-4.21.3[${PYTHON_USEDEP}]
+	)
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-)]
 	>=dev-libs/re2-0.2021.09.01:=
-	>=dev-python/cython-0.29.8[${PYTHON_USEDEP}]
-	>=dev-python/protobuf-python-4.21.3[${PYTHON_USEDEP}]
 	>=dev-python/six-1.10[${PYTHON_USEDEP}]
 	>=net-dns/c-ares-1.17.2:=
 	>=sys-libs/zlib-1.2.13:=
 "
-DEPEND="${RDEPEND}"
+DEPEND+="
+	${RDEPEND}
+"
 BDEPEND+="
 	>=dev-python/coverage-4[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29.8[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/six-1.10[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-1.8.1[${PYTHON_USEDEP}]
+		dev-python/alabaster[${PYTHON_USEDEP}]
 	)
 "
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
+MY_PV=$(ver_cut 1-3 ${PV})
 SRC_URI+="
 https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
 	-> ${GRPC_P}.tar.gz
@@ -61,4 +68,7 @@ python_configure_all() {
 	export GRPC_PYTHON_BUILD_SYSTEM_ZLIB=1
 	export GRPC_PYTHON_BUILD_WITH_SYSTEM_RE2=1
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
+	export GRPC_PYTHON_ENABLE_DOCUMENTATION_BUILD=$(usex doc "1" "0")
 }
+
+distutils_enable_sphinx "doc/python/sphinx"

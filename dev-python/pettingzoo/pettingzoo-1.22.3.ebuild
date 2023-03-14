@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
@@ -18,13 +19,9 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" atari butterfly classic mpe other sisl test"
-REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
-"
+IUSE+=" atari butterfly classic doc mpe other sisl test"
 PYGAME_PV="2.1.3_pre"
 DEPEND+="
-	${PYTHON_DEPS}
 	>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
 	>=dev-python/gymnasium-0.26.0[${PYTHON_USEDEP}]
 	atari? (
@@ -57,27 +54,39 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	${PYTHON_DEPS}
 	>=dev-python/setuptools-61.0.0
+	doc? (
+		dev-python/sphinx[${PYTHON_USEDEP}]
+		dev-python/myst_parser[${PYTHON_USEDEP}]
+		dev-python/celshast[${PYTHON_USEDEP},furo]
+	)
 	test? (
 		dev-python/autorom[${PYTHON_USEDEP}]
+		dev-python/bandit[${PYTHON_USEDEP}]
+		dev-python/flake8[${PYTHON_USEDEP}]
+		dev-python/isort[${PYTHON_USEDEP}]
 		dev-python/pynput[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
+		dev-util/codespell[${PYTHON_USEDEP}]
 		dev-vcs/pre-commit[${PYTHON_USEDEP}]
 	)
 "
-# package the following
-# pymunk
-# rlcard
-# multi_agent_ale_py
+# TODO ebuild-package needs to be created:
+# celshast
 # chess
 # hanabi_learning_environment
+# multi_agent_ale_py
+# pymunk
+# rlcard
 SRC_URI="
 https://github.com/Farama-Foundation/PettingZoo/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+
+distutils_enable_sphinx "docs"
+distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

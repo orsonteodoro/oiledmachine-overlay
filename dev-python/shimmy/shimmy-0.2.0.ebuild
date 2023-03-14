@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
@@ -16,12 +17,8 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" atari dm-control dm-control-multi-agent gym openspiel test"
-REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
-"
 PETTINGZOO_PV="1.22"
 DEPEND+="
-	${PYTHON_DEPS}
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 	>=dev-python/gymnasium-0.27.0[${PYTHON_USEDEP}]
 	atari? (
@@ -48,7 +45,6 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	${PYTHON_DEPS}
 	test? (
 		>=dev-python/autorom-0.4.2[${PYTHON_USEDEP}]
 		>=dev-python/pillow-9.3.0[${PYTHON_USEDEP}]
@@ -61,5 +57,7 @@ https://github.com/Farama-Foundation/Shimmy/archive/refs/tags/v${PV}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+
+distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

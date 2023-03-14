@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} ) # Upstream tested up to 3.9
 inherit distutils-r1
 
@@ -14,20 +15,23 @@ https://github.com/openai/box2d-py
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
-REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
-"
+IUSE+=" examples"
 DEPEND+="
 	${PYTHON_DEPS}
 	!dev-python/pybox2d
 	>=dev-lang/swig-4
+	examples? (
+		|| (
+			dev-python/pygame[${PYTHON_USEDEP}]
+			dev-python/pygame_sdl2[${PYTHON_USEDEP}]
+			dev-python/pyglet[${PYTHON_USEDEP}]
+			dev-python/PyQt4[${PYTHON_USEDEP}]
+			media-libs/opencv[${PYTHON_USEDEP},python]
+		)
+	)
 "
 RDEPEND+="
 	${DEPEND}
-"
-BDEPEND+="
-	${PYTHON_DEPS}
 "
 SRC_URI="
 https://github.com/openai/box2d-py/archive/refs/tags/${PV}.tar.gz
@@ -35,5 +39,13 @@ https://github.com/openai/box2d-py/archive/refs/tags/${PV}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+
+src_install() {
+	distutils-r1_src_install
+	cd "${S}" || die
+	insinto /usr/share/${PN}/examples
+	doins -r examples/*
+	doins LICENSE
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

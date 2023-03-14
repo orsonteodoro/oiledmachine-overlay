@@ -7,6 +7,7 @@ EAPI=8
 MY_PN="${PN,,}"
 MY_PN="${MY_PN/-/_}"
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
@@ -17,11 +18,7 @@ HOMEPAGE="https://github.com/maxbachmann/rapidfuzz_capi"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
-REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
-"
 DEPEND+="
-	${PYTHON_DEPS}
 "
 RDEPEND+="
 	${DEPEND}

@@ -3,6 +3,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
@@ -12,11 +13,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
-REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
-"
 CDEPEND="
-	${PYTHON_DEPS}
 	>=dev-python/cffi-1.0.0[${PYTHON_USEDEP}]
 "
 DEPEND+="
@@ -49,3 +46,6 @@ https://github.com/libvips/pyvips/archive/refs/tags/v${PV}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+
+distutils_enable_sphinx "doc"
+distutils_enable_tests "pytest"

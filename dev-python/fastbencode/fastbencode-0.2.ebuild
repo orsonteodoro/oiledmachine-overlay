@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
@@ -12,7 +13,7 @@ HOMEPAGE="https://github.com/breezy-team/fastbencode"
 LICENSE="GPL-2+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test"
+IUSE+=" "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -26,9 +27,7 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
 	>=dev-python/cython-0.29[${PYTHON_USEDEP}]
-	test? (
-		dev-python/flake8[${PYTHON_USEDEP}]
-	)
+	dev-python/packaging[${PYTHON_USEDEP}]
 "
 SRC_URI="
 https://github.com/breezy-team/fastbencode/archive/refs/tags/v${PV}.tar.gz

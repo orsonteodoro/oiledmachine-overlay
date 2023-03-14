@@ -3,6 +3,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
@@ -12,19 +13,28 @@ LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-DEPEND+=" ${PYTHON_DEPS}"
-RDEPEND+=" ${DEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}
-	test? ( >=dev-python/coverage-3.7.1[${PYTHON_USEDEP}]
+DEPEND+="
+	dev-python/requests[${PYTHON_USEDEP}]
+"
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
+	test? (
+		>=dev-python/coverage-3.7.1[${PYTHON_USEDEP}]
 		>=dev-python/distribute-0.7.3[${PYTHON_USEDEP}]
 		>=dev-python/mock-1.0.1[${PYTHON_USEDEP}]
 		>=dev-python/nose-1.3.0[${PYTHON_USEDEP}]
-		>=dev-python/requests-2.1.0[${PYTHON_USEDEP}] )"
+		>=dev-python/requests-2.1.0[${PYTHON_USEDEP}]
+	)
+"
 SRC_URI="
 https://github.com/tapanpandita/pocket/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+
+distutils_enable_tests "nose"
 
 # OILEDMACHINE-OVERLAY-META-REVDEP:  rainbowstream

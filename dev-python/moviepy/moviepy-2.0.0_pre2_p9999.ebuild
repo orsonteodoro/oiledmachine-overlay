@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} ) # Upstream listed only up to 3.9
 inherit distutils-r1 git-r3
 
@@ -16,13 +17,9 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-doc fallback-commit imagemagick matplotlib opencv pygame scipy scikit test
-"
-REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
+doc fallback-commit imagemagick lint matplotlib opencv pygame scipy scikit test
 "
 DEPEND+="
-	${PYTHON_DEPS}
 	(
 		<dev-python/decorator-6[${PYTHON_USEDEP}]
 		>=dev-python/decorator-4.0.2[${PYTHON_USEDEP}]
@@ -54,13 +51,27 @@ DEPEND+="
 RDEPEND+="
 	${DEPEND}
 "
+# TODO: create package:
+# flake8-absolute-import
+# flake8-docstrings
+# flake8-rst-docstrings
+# flake8-implicit-str-concat
+#
 BDEPEND+="
-	${PYTHON_DEPS}
-	dev-python/setuptools[${PYTHON_USEDEP}]
 	doc? (
 		<dev-python/numpydoc-2[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-3.4.3[${PYTHON_USEDEP}]
 		>=dev-python/sphinx_rtd_theme-0.5.1[${PYTHON_USEDEP}]
+	)
+	lint? (
+		dev-python/black[${PYTHON_USEDEP}]
+		dev-python/flake8[${PYTHON_USEDEP}]
+		dev-python/flake8-absolute-import[${PYTHON_USEDEP}]
+		dev-python/flake8-docstrings[${PYTHON_USEDEP}]
+		dev-python/flake8-rst-docstrings[${PYTHON_USEDEP}]
+		dev-python/flake8-implicit-str-concat[${PYTHON_USEDEP}]
+		dev-python/isort[${PYTHON_USEDEP}]
+		dev-vcs/pre-commit[${PYTHON_USEDEP}]
 	)
 	test? (
 		(
@@ -81,6 +92,9 @@ SRC_URI="
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+
+distutils_enable_sphinx "docs"
+distutils_enable_tests "pytest"
 
 src_unpack() {
 	EGIT_REPO_URI="https://github.com/Zulko/moviepy.git"

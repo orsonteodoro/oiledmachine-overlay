@@ -1,9 +1,10 @@
-# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 MY_PN="pyGLFW"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
@@ -13,20 +14,15 @@ HOMEPAGE="https://github.com/FlorianRhiem/pyGLFW"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
-REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
-"
+IUSE+=" preview"
 DEPEND+="
-	${PYTHON_DEPS}
 	media-libs/glfw
+	preview? (
+		>=dev-python/glfw_preview-0.0.3[${PYTHON_USEDEP}]
+	)
 "
 RDEPEND+="
 	${DEPEND}
-"
-BDEPEND+="
-	${PYTHON_DEPS}
-	dev-python/setuptools[${PYTHON_USEDEP}]
 "
 SRC_URI="
 https://github.com/FlorianRhiem/pyGLFW/archive/refs/tags/v${PV}.tar.gz

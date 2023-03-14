@@ -15,15 +15,18 @@ LICENSE="BSD"
 KEYWORDS="~amd64 ~x86 ~arm64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" sdk +runtime"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 # See https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
 RDEPEND+="
-	${PYTHON_DEPS}
-	sdk? ( >=dev-util/nvidia-cuda-toolkit-11.5 )
-	runtime? ( >=x11-drivers/nvidia-drivers-$(ver_cut 2 ${PV}) )
+	runtime? (
+		>=x11-drivers/nvidia-drivers-$(ver_cut 2 ${PV})
+	)
+	sdk? (
+		>=dev-util/nvidia-cuda-toolkit-11.5
+	)
 "
-DEPEND+=" ${RDEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}"
+DEPEND+="
+	${RDEPEND}
+"
 # See https://pypi.org/project/nvidia-ml-py/#history
 SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_PN}-${PV}.tar.gz"
 S="${WORKDIR}/${MY_PN}-${PV}"

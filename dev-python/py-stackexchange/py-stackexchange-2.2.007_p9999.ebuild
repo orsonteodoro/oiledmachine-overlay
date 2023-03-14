@@ -3,6 +3,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} ) # Upstream listed 2.7 and 3
 inherit distutils-r1 git-r3
 
@@ -12,17 +13,12 @@ LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" fallback-commit"
-REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
-"
 RDEPEND+="
-	${PYTHON_DEPS}
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	${PYTHON_DEPS}
 	>=dev-python/six-1.8.0[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "

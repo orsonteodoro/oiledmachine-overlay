@@ -2,12 +2,12 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- only in this ebuild fork on the oiledmachine-overlay -->
+    <!-- Ebuild fork on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <!-- originator -->
   <maintainer status="unknown">
+    <!-- Ebuild originator -->
     <email>michael.shepanski@gmail.com</email>
     <name>Michael Shepanski</name>
   </maintainer>
@@ -15,13 +15,7 @@
     Unofficial Python bindings for the Plex API.
   </longdescription>
   <upstream>
-    <!-- for the full list see
-    https://github.com/pkkid/python-plexapi/blob/master/AUTHORS.txt-->
-    <maintainer>
-      <name>Michael Shepanski</name>
-    </maintainer>
-    <maintainer>
-      <name>Hellowlol</name>
-    </maintainer>
+    <remote-id type="github">pkkid/python-plexapi</remote-id>
+    <bugs-to>https://github.com/pkkid/python-plexapi/issues</bugs-to>
   </upstream>
 </pkgmetadata>

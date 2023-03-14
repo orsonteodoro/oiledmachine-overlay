@@ -3,21 +3,28 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1 git-r3
 
 DESCRIPTION="An implementation of figlet written in Python"
 HOMEPAGE="https://github.com/pwaller/pyfiglet"
 LICENSE="MIT BSD"
+# For font licensing, see https://github.com/pwaller/pyfiglet/issues/89
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-RDEPEND+=" ${PYTHON_DEPS}"
-DEPEND+=" ${RDEPEND}"
-IUSE="minimal"
+IUSE+=" minimal"
+RDEPEND+="
+"
+DEPEND+="
+	${RDEPEND}
+"
 BDEPEND+="
-	${PYTHON_DEPS}
-	dev-python/setuptools[${PYTHON_USEDEP}]"
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	test? (
+		dev-python/pytest[${PYTHON_USEDEP}]
+	)
+"
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/pwaller/pyfiglet.git"
 SRC_URI=""
@@ -44,5 +51,7 @@ src_configure() {
 	fi
 	distutils-r1_src_configure
 }
+
+distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META-REVDEP:  rainbowstream
