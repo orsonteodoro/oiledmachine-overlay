@@ -16,13 +16,17 @@ HOMEPAGE="
 "
 LICENSE="
 	GPL-3+
+	test? (
+		MIT
+		ZLIB
+		BSD-2
+	)
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" crafty doc stockfish test"
+IUSE+=" doc stockfish test"
 REQUIRED_USE+="
 	test? (
-		crafty
 		stockfish
 	)
 "
@@ -36,27 +40,41 @@ BDEPEND+="
 		dev-python/sphinx[${PYTHON_USEDEP}]
 	)
 	test? (
-		games-board/crafty[${PYTHON_USEDEP}]
-		games-board/stockfish[${PYTHON_USEDEP}]
+		games-board/gaviota-tablebases
+		games-board/stockfish
 		dev-python/flake8[${PYTHON_USEDEP}]
 		net-libs/tox[${PYTHON_USEDEP}]
 	)
 "
 PDEPEND+="
-	crafty? (
-		games-board/crafty[${PYTHON_USEDEP}]
-	)
 	stockfish? (
 		games-board/stockfish[${PYTHON_USEDEP}]
 	)
 "
+GAVIOTA_TABLEBASES_COMMIT="981472cc83e3a8b6e996191e564295609ea4ce30"
 SRC_URI="
 https://github.com/niklasf/python-chess/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
+	test? (
+https://github.com/michiguel/Gaviota-Tablebases/archive/${GAVIOTA_TABLEBASES_COMMIT}.zip
+	-> Gaviota-Tablebases-${GAVIOTA_TABLEBASES_COMMIT:0:7}.zip
+	)
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.rst CHANGELOG-OLD.rst README.rst )
+
+build_libgtb() {
+	pushd "${WORKDIR}/Gaviota-Tablebases-${GAVIOTA_TABLEBASES_COMMIT}" || die
+		emake
+	popd
+	export LD_LIBRARY_PATH="${WORKDIR}/Gaviota-Tablebases-${GAVIOTA_TABLEBASES_COMMIT}:${LD_LIBRARY_PATH}"
+}
+
+src_compile() {
+	use test && build_libgbt
+	distutils-r1_src_compile
+}
 
 src_install() {
 	distutils-r1_src_install
