@@ -53,13 +53,31 @@ mod_simple_bookmarking_redux mpv tabbed update_adblock plumb -pointer-lock
 +pulseaudio savedconfig -smoothscrolling +url-bar +v4l
 "
 REQUIRED_USE+="
-	^^ ( gtk3 gtk4 )
-	gtk4? ( !mod_adblock )
-	mod_adblock_easylist? ( mod_adblock )
-	mod_adblock_spam404? ( mod_adblock )
-	mod_searchengines? ( savedconfig )
-	mod_simple_bookmarking_redux? ( savedconfig )
-	update_adblock? ( mod_adblock )
+	^^ (
+		gtk3
+		gtk4
+	)
+	gtk4? (
+		!mod_adblock
+	)
+	mod_adblock_easylist? (
+		mod_adblock
+	)
+	mod_adblock_spam404? (
+		mod_adblock
+	)
+	mod_searchengines? (
+		savedconfig
+	)
+	mod_simple_bookmarking_redux? (
+		savedconfig
+	)
+	update_adblock? (
+		mod_adblock
+	)
+	mod_adblock? (
+		${PYTHON_REQUIRED_USE}
+	)
 "
 SET_PROP_RDEPEND="
 "
@@ -105,6 +123,7 @@ RDEPEND+="
 		)
 	)
 	mod_adblock? (
+		${PYTHON_DEPS}
 		$(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
 	)
 	mpv? (
@@ -136,9 +155,15 @@ AUTOOPEN_FN="surf-0.3-autoopen.diff"
 LINK_HINTS_FN="surf-9999-link-hints.diff"
 SEARCHENGINES_FN="surf-git-20170323-webkit2-searchengines.diff"
 SRC_URI="
-	mod_autoopen? ( ${AUTOOPEN_FN} )
-	mod_link_hints? ( ${LINK_HINTS_FN} )
-	mod_searchengines? ( ${SEARCHENGINES_FN} )
+	mod_autoopen? (
+		${AUTOOPEN_FN}
+	)
+	mod_link_hints? (
+		${LINK_HINTS_FN}
+	)
+	mod_searchengines? (
+		${SEARCHENGINES_FN}
+	)
 "
 PATCHES=( "${FILESDIR}/${PN}-2.1-gentoo.patch" )
 DOCS=( README )

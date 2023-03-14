@@ -13,7 +13,8 @@
   <longdescription>
     surf is a minimalist web browser that uses extensive use of the keyboard.
     It supports HTML5 and WebKit2GTK as the backend.
-
+  </longdescription>
+  <!--
     Build time environment variables:
 
       SAVEDCONFIG_PATH - absolute path to config.h
@@ -21,8 +22,7 @@
     Bugs:
 
       Clipboard copy and paste in both gtk3 and gtk4 support.
-
-  </longdescription>
+  -->
   <upstream>
     <doc lang="en">https://git.suckless.org/surf/file/README.html</doc>
     <!-- for keybindings -->
