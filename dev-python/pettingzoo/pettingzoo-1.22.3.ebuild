@@ -75,9 +75,7 @@ BDEPEND+="
 # TODO ebuild-package needs to be created:
 # celshast
 # chess
-# hanabi-learning-environment
 # pymunk
-# rlcard
 SRC_URI="
 https://github.com/Farama-Foundation/PettingZoo/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
