@@ -6,4 +6,7 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <upstream>
+    <remote-id type="launchpad">brz</remote-id>
+  </upstream>
 </pkgmetadata>
