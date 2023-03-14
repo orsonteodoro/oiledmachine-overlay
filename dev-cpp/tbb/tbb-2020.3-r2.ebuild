@@ -10,19 +10,30 @@ PV2="$(ver_cut 2)"
 MY_PV="${PV1}_U${PV2}"
 
 DESCRIPTION="High level abstract threading library"
-LICENSE="Apache-2.0"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ppc ppc64 ~riscv ~sparc x86
-~amd64-linux ~x86-linux"
 HOMEPAGE="https://www.threadingbuildingblocks.org"
+LICENSE="Apache-2.0"
+KEYWORDS="
+~alpha amd64 arm arm64 ~hppa ~ia64 ppc ppc64 ~riscv ~sparc x86 ~amd64-linux
+~x86-linux
+"
 SLOT_MAJOR="2"
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE="debug examples"
-DEPEND="!<dev-cpp/tbb-2021:0"
-RDEPEND="${DEPEND}"
-SRC_URI="https://github.com/intel/${PN}/archive/${MY_PV}.tar.gz -> ${P}.tar.gz"
+IUSE+=" debug examples"
+DEPEND+="
+	!<dev-cpp/tbb-2021:0
+"
+RDEPEND+="
+	${DEPEND}
+"
+SRC_URI="
+https://github.com/intel/${PN}/archive/${MY_PV}.tar.gz
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/oneTBB-${MY_PV}"
 DOCS=( CHANGES README README.md doc/Release_Notes.txt )
-PATCHES=( "${FILESDIR}"/${PN}-2020.1-makefile-debug.patch )
+PATCHES=(
+	"${FILESDIR}/${PN}-2020.1-makefile-debug.patch"
+)
 
 src_prepare() {
 	default

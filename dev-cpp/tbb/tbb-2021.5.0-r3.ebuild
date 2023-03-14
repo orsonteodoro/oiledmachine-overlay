@@ -12,10 +12,12 @@ PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake flag-o-matic multilib-minimal python-r1 toolchain-funcs
 
 DESCRIPTION="oneAPI Threading Building Blocks (oneTBB)"
-LICENSE="Apache-2.0"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86
-~amd64-linux ~x86-linux"
 HOMEPAGE="https://www.threadingbuildingblocks.org"
+LICENSE="Apache-2.0"
+KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86 ~amd64-linux
+~x86-linux
+"
 
 #
 # Distinct archive filenames are required prevent wrong hashing.
@@ -51,15 +53,12 @@ fi
 
 SLOT_MAJOR="0"
 SLOT="${SLOT_MAJOR}/${PV}"
-
 # Upstream enables tests by default.
 IUSE+=" -X debug doc -examples -python +tbbmalloc -test"
-
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	X? ( examples )
 "
-
 RDEPEND+="
 	sys-apps/hwloc:=
 	examples? (
@@ -69,16 +68,22 @@ RDEPEND+="
 			x11-libs/libXext[${MULTILIB_USEDEP}]
 		)
 	)
-	python? ( ${PYTHON_DEPS} )
+	python? (
+		${PYTHON_DEPS}
+	)
 "
-
-DEPEND+=" ${RDEPEND}"
-
+DEPEND+="
+	${RDEPEND}
+"
 BDEPEND+="
 	>=dev-util/cmake-3.1
 	dev-util/patchelf
-	doc? ( app-doc/doxygen[dot] )
-	python? ( ${PYTHON_DEPS} )
+	doc? (
+		app-doc/doxygen[dot]
+	)
+	python? (
+		${PYTHON_DEPS}
+	)
 "
 
 if [[ "${VER_SCH}" == "marketing" ]] ; then
