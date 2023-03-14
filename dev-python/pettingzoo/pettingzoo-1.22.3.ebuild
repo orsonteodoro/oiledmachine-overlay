@@ -33,7 +33,7 @@ DEPEND+="
 		>=dev-python/pymunk-6.2.0[${PYTHON_USEDEP}]
 	)
 	classic? (
-		>=dev-python/chess-1.7.0[${PYTHON_USEDEP}]
+		>=dev-python/python-chess-1.7.0[${PYTHON_USEDEP}]
 		>=dev-python/pygame-${PYGAME_PV}[${PYTHON_USEDEP}]
 		>=dev-python/rlcard-1.0.5[${PYTHON_USEDEP}]
 		>=dev-python/hanabi-learning-environment-0.0.4[${PYTHON_USEDEP}]
@@ -74,7 +74,6 @@ BDEPEND+="
 "
 # TODO ebuild-package needs to be created:
 # celshast
-# chess
 # pymunk
 SRC_URI="
 https://github.com/Farama-Foundation/PettingZoo/archive/refs/tags/${PV}.tar.gz
