@@ -57,7 +57,7 @@ BDEPEND+="
 	>=dev-python/setuptools-61.0.0
 	doc? (
 		dev-python/sphinx[${PYTHON_USEDEP}]
-		dev-python/myst_parser[${PYTHON_USEDEP}]
+		dev-python/myst-parser[${PYTHON_USEDEP}]
 		dev-python/celshast[${PYTHON_USEDEP},furo]
 	)
 	test? (
@@ -74,7 +74,6 @@ BDEPEND+="
 "
 # TODO ebuild-package needs to be created:
 # celshast
-# pymunk
 SRC_URI="
 https://github.com/Farama-Foundation/PettingZoo/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
