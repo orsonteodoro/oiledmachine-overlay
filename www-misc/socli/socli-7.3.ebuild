@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
@@ -12,22 +13,27 @@ overflow without leaving the terminal"
 HOMEPAGE="https://github.com/gautamkrishnar/socli"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
-IUSE+=" man"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
+IUSE+=" man test"
 SLOT="0"
 # Last DEPENDs commit date Jan 17, 2021
 DEPEND+="
-	${PYTHON_DEPS}
-	  dev-python/argcomplete[${PYTHON_USEDEP}]
 	>=dev-python/beautifulsoup4-4.9.1[${PYTHON_USEDEP}]
 	>=dev-python/colorama-0.4.3[${PYTHON_USEDEP}]
 	>=dev-python/py-stackexchange-2.2.007[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.24.0[${PYTHON_USEDEP}]
 	>=dev-python/urwid-2.1.1[${PYTHON_USEDEP}]
 	>=dev-python/sentry-sdk-0.18.0[${PYTHON_USEDEP}]
+	dev-python/argcomplete[${PYTHON_USEDEP}]
 "
-RDEPEND+=" ${DEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}"
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
+	test? (
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/pytest-runner[${PYTHON_USEDEP}]
+	)
+"
 SRC_URI="
 https://github.com/gautamkrishnar/socli/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
