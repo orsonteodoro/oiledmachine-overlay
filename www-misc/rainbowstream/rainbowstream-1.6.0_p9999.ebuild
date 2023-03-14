@@ -4,8 +4,7 @@
 
 EAPI=8
 
-EGIT_BRANCH="master"
-EGIT_REPO_URI="https://github.com/orakaro/rainbowstream.git"
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1 git-r3
 
@@ -14,10 +13,8 @@ HOMEPAGE="http://www.rainbowstream.org/"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
 SLOT="0"
-IUSE+=" jpeg sixel"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
+IUSE+=" doc fallback-commit jpeg sixel"
 DEPEND+="
-	${PYTHON_DEPS}
 	dev-python/arrow[${PYTHON_USEDEP}]
 	dev-python/pillow[jpeg?,${PYTHON_USEDEP}]
 	dev-python/pocket[${PYTHON_USEDEP}]
@@ -27,31 +24,51 @@ DEPEND+="
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/twitter[${PYTHON_USEDEP}]
 	sixel? (
-		media-libs/libsixel[${PYTHON_USEDEP}]
+		media-libs/libsixel[${PYTHON_USEDEP},python]
 		dev-python/python-resize-image[${PYTHON_USEDEP}]
 	)
 "
-RDEPEND+=" ${DEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}"
-S="${WORKDIR}/${PN}-${PV}"
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
+	doc? (
+		dev-python/sphinx[${PYTHON_USEDEP}]
+	)
+"
+S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-PROPERTIES="live"
-PATCHES=( "${FILESDIR}/${PN}-1.3.7-no-user-env.patch" )
+PATCHES=(
+	"${FILESDIR}/${PN}-1.3.7-no-user-env.patch"
+)
 
 EXPECTED_PV="${PV%_*}"
 
+distutils_enable_sphinx "docs"
+
 src_unpack() {
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/orakaro/rainbowstream.git"
+	EGIT_COMMIT="HEAD"
+	use fallback-commit && EGIT_COMMIT="8b2efa52574865646adfb157f4563a72d9e37d96"
 	git-r3_fetch
 	git-r3_checkout
-	local pv=$(grep "version = " "${S}/setup.py" | cut -f 3 -d " " | sed -e "s|'||g")
+	local pv=$(grep "version = " "${S}/setup.py" \
+		| cut -f 3 -d " " \
+		| sed -e "s|'||g")
 #einfo "pv:  ${pv}"
 	if ver_test "${pv}" -ne "${EXPECTED_PV}" ; then
 eerror
-eerror "Old version detected:  pv != EXPECTED_PV"
-eerror "EXPECTED_PV:  ${EXPECTED_PV}"
-eerror "pv:  ${pv}"
+eerror "Version change detected"
 eerror
-eerror "Bump EXPECTED_PV, check dependencies, check patches"
+eerror "Expected version:  ${EXPECTED_PV}"
+eerror "Actual version:  ${pv}"
+eerror
+eerror "Bump the EXPECTED_PV, check dependencies, check patches"
+eerror
+eerror "\tor"
+eerror
+eerror "Use the fallback-commit USE flag to continue"
 eerror
 		die
 	fi
@@ -68,8 +85,9 @@ python_install_all() {
 	insinto "/usr/share/${P}/homedir/"
 	doins "${T}/.rainbow_config.json"
 	for python_target in ${PYTHON_TARGETS}; do
-		dosym "/etc/rainbowstream/consumer.py" \
-		"/usr/lib/${python_target}/site-packages/${PN}/consumer.py"
+		dosym \
+			"/etc/rainbowstream/consumer.py" \
+			"/usr/lib/${python_target}/site-packages/${PN}/consumer.py"
 	done
 	insinto /etc/rainbowstream
 	doins "${FILESDIR}"/consumer.py
@@ -82,6 +100,7 @@ einfo "You need to create a consumer.py in /etc/rainbowstream.  Details about"
 einfo "this is in /usr/share/${P}/consumer.py and online at"
 einfo
 einfo "  https://github.com/DTVD/rainbowstream"
+einfo
 einfo
 einfo "You need to copy"
 einfo
