@@ -17,9 +17,9 @@ HOMEPAGE="
 LICENSE="
 	GPL-3+
 	test? (
+		BSD-2
 		MIT
 		ZLIB
-		BSD-2
 	)
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
