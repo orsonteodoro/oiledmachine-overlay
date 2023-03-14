@@ -104,8 +104,8 @@ src_configure() {
 	export CXX=$(tc-getCXX)
 	mycmakeargs=(
 		-DBUILD_API_LAYERS=OFF
-		-DBUILD_TESTS=OFF
 		-DBUILD_CONFORMANCE_TESTS=OFF
+		-DBUILD_TESTS=OFF
 		-DBUILD_WITH_SYSTEM_JSONCPP=$(usex system-jsoncpp)
 	)
 	if use xlib ; then
