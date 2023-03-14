@@ -30,13 +30,11 @@ DEPEND+="
 RDEPEND+="
 	${DEPEND}
 "
-# TODO package:
-# multi_agent_ale_py
 BDEPEND+="
 	${PYTHON_DEPS}
 	test? (
 		dev-python/ale-py[${PYTHON_USEDEP}]
-		dev-python/multi_agent_ale_py[${PYTHON_USEDEP}]
+		dev-python/multi-agent-ale-py[${PYTHON_USEDEP}]
 	)
 "
 SRC_URI="
