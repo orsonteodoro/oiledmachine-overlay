@@ -3,6 +3,7 @@
 
 EAPI=8
 
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1 git-r3
 
@@ -14,11 +15,7 @@ KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 SLOT="0"
 LANGS="en ja"
 IUSE+=" doc fallback-commit +l10n_en l10n_ja"
-REQUIRED_USE="
-	${PYTHON_REQUIRED_USE}
-"
 RDEPEND+="
-	${PYTHON_DEPS}
 	>=dev-python/six-1.7.3[${PYTHON_USEDEP}]
 	l10n_ja? (
 		>=app-text/cmigemo-0.1.5
@@ -26,10 +23,6 @@ RDEPEND+="
 "
 DEPEND+="
 	${RDEPEND}
-"
-BDEPEND+="
-	${PYTHON_DEPS}
-	dev-python/setuptools[${PYTHON_USEDEP}]
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
