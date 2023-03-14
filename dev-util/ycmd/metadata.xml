@@ -23,6 +23,9 @@
     The simple protocol makes it easy to add these commericial text editor IDE 
     features in any free and open source text editor.
 
+  </longdescription>
+  <!--  
+
     oiledmachine-overlay tracks the last commit or before the last pull request
     for the previous CORE_VERSION which is assumed to be feature complete and
     the final version.
@@ -41,7 +44,7 @@
 
     You must add EPREFIX to these variables if cross-compiling.
 
-  </longdescription>
+  -->
   <upstream>
     <!-- send reports to oiledmachine-overlay first -->
     <remote-id type="github">ycm-core/ycmd</remote-id>

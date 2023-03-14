@@ -88,10 +88,6 @@ LICENSE="
 	)
 	rust? (
 		!system-rust? (
-			|| (
-				MIT
-				Apache-2.0
-			)
 			Apache-2.0
 			BSD
 			BSD-1
@@ -108,6 +104,10 @@ LICENSE="
 			Unlicense
 			UoI-NCSA
 			ZLIB
+			|| (
+				MIT
+				Apache-2.0
+			)
 		)
 	)
 	!system-bottle? (
@@ -254,11 +254,11 @@ PV_MAJ=$(ver_cut 1 ${PV})
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	c? (
+		cxx
 		|| (
 			clangd
 			libclang
 		)
-		cxx
 	)
 	clangd? (
 		|| (
@@ -275,11 +275,11 @@ REQUIRED_USE+="
 		)
 	)
 	cuda? (
+		cxx
 		|| (
 			clangd
 			libclang
 		)
-		cxx
 	)
 	cxx? (
 		|| (
@@ -296,27 +296,27 @@ REQUIRED_USE+="
 		)
 	)
 	objc? (
+		cxx
 		|| (
 			clangd
 			libclang
 		)
-		cxx
 	)
 	objcxx? (
+		cxx
 		|| (
 			clangd
 			libclang
 		)
-		cxx
 	)
 	system-clangd? (
+		clangd
 		|| (
 			c
 			cxx
 			objc
 			objcxx
 		)
-		clangd
 	)
 	system-go-tools? (
 		go
@@ -328,13 +328,13 @@ REQUIRED_USE+="
 		python
 	)
 	system-libclang? (
+		libclang
 		|| (
 			c
 			cxx
 			objc
 			objcxx
 		)
-		libclang
 	)
 	system-rust? (
 		rust
@@ -461,13 +461,11 @@ DEPEND+="
 		${RDEPEND_NODEJS}
 	)
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	${PYTHON_DEPS}
-	|| (
-		>=sys-devel/gcc-4.8
-		>=sys-devel/clang-3.9
-	)
 	>=dev-util/cmake-${CMAKE_PV}
 	javascript? (
 		${BDEPEND_NODEJS}
@@ -486,6 +484,10 @@ BDEPEND+="
 	)
 	typescript? (
 		${BDEPEND_NODEJS}
+	)
+	|| (
+		>=sys-devel/gcc-4.8
+		>=sys-devel/clang-3.9
 	)
 "
 # Speed up downloads for rebuilds.  Precache outside of sandbox so we don't keep
