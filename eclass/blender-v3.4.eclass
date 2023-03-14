@@ -403,7 +403,10 @@ RDEPEND+="
 	)
 	cycles? (
 		cycles-path-guiding? (
-			>=media-libs/openpgl-0.4.1_beta
+			(
+				>=media-libs/openpgl-0.4.1_beta
+				<media-libs/openpgl-0.5
+			)
 		)
 		osl? (
 			>=dev-libs/pugixml-${PUGIXML_V}
