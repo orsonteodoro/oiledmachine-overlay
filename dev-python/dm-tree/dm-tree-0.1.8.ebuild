@@ -49,6 +49,6 @@ src_install() {
 	dodoc LICENSE
 }
 
-distutils_enable_tests "nose"
+distutils_enable_sphinx "docs"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
