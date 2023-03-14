@@ -48,7 +48,7 @@ BDEPEND+="
 "
 PDEPEND+="
 	stockfish? (
-		games-board/stockfish[${PYTHON_USEDEP}]
+		games-board/stockfish
 	)
 "
 GAVIOTA_TABLEBASES_COMMIT="981472cc83e3a8b6e996191e564295609ea4ce30"
