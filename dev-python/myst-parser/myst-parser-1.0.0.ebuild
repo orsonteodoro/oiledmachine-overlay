@@ -18,11 +18,27 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" codestyle linkify rtd test test-docutils"
+IUSE+=" codestyle doc linkify rtd test test-docutils"
+REQUIRED_USE="
+	doc? (
+		linkify
+		rtd
+	)
+"
 DEPEND+="
-	>=dev-python/absl-py-0.7.1[${PYTHON_USEDEP}]
-	>=dev-python/dm-tree-0.1.1[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.16.4[${PYTHON_USEDEP}]
+	(
+		<dev-python/markdown-it-py-3[${PYTHON_USEDEP}]
+		>=dev-python/markdown-it-py-1[${PYTHON_USEDEP}]
+	)
+	>=dev-python/jinja-2[${PYTHON_USEDEP}]
+	>=dev-python/mdit-py-plugins-0.3.4[${PYTHON_USEDEP}]
+	dev-python/docutils[${PYTHON_USEDEP}]
+	dev-python/pyyaml[${PYTHON_USEDEP}]
+	(
+		<dev-python/sphinx-7[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-5[${PYTHON_USEDEP}]
+	)
+
 "
 RDEPEND+="
 	${DEPEND}
@@ -36,21 +52,11 @@ RDEPEND+="
 # sphinx-togglebutton
 # sphinxext-rediraffe
 BDEPEND+="
-	(
-		<dev-python/markdown-it-py-3[${PYTHON_USEDEP}]
-		>=dev-python/markdown-it-py-1[${PYTHON_USEDEP}]
-	)
-	(
-		<dev-python/sphinx-7[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-5[${PYTHON_USEDEP}]
-	)
-	>=dev-python/jinja-2[${PYTHON_USEDEP}]
-	>=dev-python/mdit-py-plugins-0.3.4[${PYTHON_USEDEP}]
-	dev-python/docutils[${PYTHON_USEDEP}]
+	dev-python/black[${PYTHON_USEDEP}]
+	dev-python/flake8[${PYTHON_USEDEP}]
 	dev-python/flit_core[${PYTHON_USEDEP}]
 	dev-python/isort[${PYTHON_USEDEP}]
 	dev-python/mypy[${PYTHON_USEDEP}]
-	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-util/ruff[${PYTHON_USEDEP}]
 	codestyle? (
 		>=dev-vcs/pre-commit-3[${PYTHON_USEDEP}]
