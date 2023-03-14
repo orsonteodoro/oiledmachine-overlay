@@ -56,8 +56,8 @@ SRC_URI="
 https://github.com/niklasf/python-chess/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	test? (
-https://github.com/michiguel/Gaviota-Tablebases/archive/${GAVIOTA_TABLEBASES_COMMIT}.zip
-	-> Gaviota-Tablebases-${GAVIOTA_TABLEBASES_COMMIT:0:7}.zip
+https://github.com/michiguel/Gaviota-Tablebases/archive/${GAVIOTA_TABLEBASES_COMMIT}.tar.gz
+	-> Gaviota-Tablebases-${GAVIOTA_TABLEBASES_COMMIT:0:7}.tar.gz
 	)
 "
 S="${WORKDIR}/${P}"
