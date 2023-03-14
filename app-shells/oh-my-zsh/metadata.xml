@@ -15,6 +15,9 @@
     reporting display or more stylistic fancy look.  Themes may report
     information about local copy of a repository.
 
+  </longdescription>
+  <!--  
+
     For plugins_common-aliases:
 
       OMZ_CHM_VIEWER
@@ -24,7 +27,7 @@
       OMZ_DJVU_VIEWER
       OMZ_MEDIA_PLAYER
 
-  </longdescription>
+  -->
   <upstream>
     <bugs-to>https://github.com/robbyrussell/oh-my-zsh/issues</bugs-to>
     <doc lang="en">https://github.com/robbyrussell/oh-my-zsh/wiki</doc>
