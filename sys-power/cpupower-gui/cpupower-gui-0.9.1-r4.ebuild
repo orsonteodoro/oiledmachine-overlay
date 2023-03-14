@@ -15,32 +15,43 @@ HOMEPAGE="https://github.com/vagnum08/cpupower-gui"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-LANGS=(el_GR en en_GB hu nl zh_CN)
-IUSE+=" ${LANGS[@]/#/l10n_} +l10n_en -pkla"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
+LANGS=( el_GR en en_GB hu nl zh_CN )
+IUSE+="
+${LANGS[@]/#/l10n_}
++l10n_en -pkla
+"
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+"
 # See README.md for dependencies
-RDEPEND+=" ${PYTHON_DEPS}
-	 dev-libs/glib:2
-	 dev-libs/libappindicator:3
-	 dev-python/dbus-python[${PYTHON_USEDEP}]
-	 >=dev-python/pygobject-3.30[${PYTHON_USEDEP}]
-	 sys-auth/polkit
-	 x11-libs/gtk+:3
-	 x11-themes/hicolor-icon-theme"
-DEPEND+=" ${RDEPEND}
-	dev-libs/glib:2"
-BDEPEND+=" ${PYTHON_DEPS}
+RDEPEND+="
+	${PYTHON_DEPS}
+	>=dev-python/pygobject-3.30[${PYTHON_USEDEP}]
+	dev-libs/glib:2
+	dev-libs/libappindicator:3
+	dev-python/dbus-python[${PYTHON_USEDEP}]
+	sys-auth/polkit
+	x11-libs/gtk+:3
+	x11-themes/hicolor-icon-theme
+"
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	${PYTHON_DEPS}
 	>=dev-util/meson-0.50
 	dev-util/ninja
-	virtual/pkgconfig"
-RESTRICT="mirror"
+	virtual/pkgconfig
+"
 SRC_URI="
 https://github.com/vagnum08/cpupower-gui/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${PN}-${PV}"
-CPUPOWER_GUI_SYSTEMD_SYSTEM_DIR=${CPUPOWER_GUI_SYSTEMD_SYSTEM_DIR:="/usr/lib/systemd"}
+RESTRICT="mirror"
 
 pkg_setup() {
+	CPUPOWER_GUI_SYSTEMD_SYSTEM_DIR=${CPUPOWER_GUI_SYSTEMD_SYSTEM_DIR:="/usr/lib/systemd"}
 	einfo "See \`epkginfo -du cpupower-gui\` for details on setting up this package."
 }
 

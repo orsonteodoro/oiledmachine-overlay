@@ -7,14 +7,16 @@
   </maintainer>
   <longdescription>
     cpupower-gui is a Python GTK+ 3 frontend for CPU frequency scaling.
+  </longdescription>
+  <!--
 
     It may require a sudo to change settings.
 
-
-    Per-package environmental variables for systemd users:
+    Available per-package environmental variables for systemd users:
 
       CPUPOWER_GUI_SYSTEMD_SYSTEM_DIR - the systemd directory (default: /usr/lib/systemd)
-  </longdescription>
+
+  -->
   <upstream>
     <bugs-to>https://github.com/vagnum08/cpupower-gui/issues</bugs-to>
     <maintainer status="active" type="person">
