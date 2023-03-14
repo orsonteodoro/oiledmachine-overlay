@@ -40,7 +40,6 @@ BDEPEND+="
 		dev-python/sphinx[${PYTHON_USEDEP}]
 	)
 	test? (
-		games-board/gaviota-tablebases
 		games-board/stockfish
 		dev-python/flake8[${PYTHON_USEDEP}]
 		net-libs/tox[${PYTHON_USEDEP}]
