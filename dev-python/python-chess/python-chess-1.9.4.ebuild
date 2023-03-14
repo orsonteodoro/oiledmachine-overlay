@@ -63,6 +63,8 @@ S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG-OLD.rst CHANGELOG.rst README.rst )
 
+distutils_enable_sphinx "docs"
+
 build_libgtb() {
 	pushd "${WORKDIR}/Gaviota-Tablebases-${GAVIOTA_TABLEBASES_COMMIT}" || die
 		emake
@@ -80,7 +82,5 @@ src_install() {
 	docinto licenses
 	dodoc LICENSE.txt
 }
-
-distutils_enable_sphinx "docs"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
