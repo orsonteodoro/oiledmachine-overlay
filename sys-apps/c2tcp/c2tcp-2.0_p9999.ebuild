@@ -4,8 +4,8 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8,9,10,11} )
-inherit distutils-r1 git-r3
+PYTHON_COMPAT=( python3_{8..11} )
+inherit python-r1 git-r3
 
 DESCRIPTION="C2TCP: A Flexible Cellular TCP to Meet Stringent Delay \
 Requirements."
@@ -16,11 +16,7 @@ LICENSE="MIT"
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild in development
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" fallback-commit kernel-patch polkit sudo"
-REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
-"
 DEPEND+="
-	${PYTHON_DEPS}
 	>=dev-python/sysv_ipc-1.0.0[${PYTHON_USEDEP}]
 	>=net-misc/iperf-3.1.3
 	app-alternatives/sh
@@ -40,7 +36,6 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	${PYTHON_DEPS}
 	app-alternatives/sh
 	sys-devel/gcc
 "

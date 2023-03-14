@@ -6,8 +6,7 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
-
+  <!--
     This contains the client-server evaluation application for C2TCP.
 
     The evaluation app is used for research.
@@ -62,7 +61,7 @@
           a problem.
        2. Jitter is about less than minRTT for C2TCP.  BBR is ~2x, Cubic is ~7x.
 
-  </longdescription>
+  -->
   <upstream>
     <remote-id type="github">Soheil-ab/c2tcp</remote-id>
     <bugs-to>https://github.com/Soheil-ab/c2tcp/issues</bugs-to>
