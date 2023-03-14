@@ -55,6 +55,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
+	${PYTHON_DEPS}
 	dev-util/meson
 	|| (
 		>=sys-devel/gcc-5
