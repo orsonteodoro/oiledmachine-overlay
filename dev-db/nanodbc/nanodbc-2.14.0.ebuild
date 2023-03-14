@@ -4,7 +4,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake flag-o-matic multilib-build python-any-r1  toolchain-funcs
+inherit cmake flag-o-matic multilib-build python-any-r1 toolchain-funcs
 
 DESCRIPTION="A small C++ wrapper for the native C ODBC API"
 HOMEPAGE="https://nanodbc.github.io/nanodbc/"
@@ -13,14 +13,18 @@ LICENSE="MIT"
 # Live ebuilds/snapshots won't get KEYWORed.
 
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" -boost doxygen +debug html +examples -handle_nodata_bug
-+libcxx man pdf -unicode -static-libs singlehtml texinfo"
+IUSE+="
+-boost doxygen +debug html +examples -handle_nodata_bug +libcxx man pdf -unicode
+-static-libs singlehtml texinfo
+"
 REQUIRED_USE+=" !libcxx" # static-libs not supported unless boost has static-libs support
 #building with USE libcxx is broken?
 DEPEND+="
 	dev-libs/boost:=[${MULTILIB_USEDEP},nls]
 	dev-db/unixODBC[${MULTILIB_USEDEP}]
-	libcxx? ( sys-libs/libcxx[${MULTILIB_USEDEP}] )
+	libcxx? (
+		sys-libs/libcxx[${MULTILIB_USEDEP}]
+	)
 "
 RDEPEND+=" ${DEPEND}"
 DEPEND_SPHINX="
@@ -32,16 +36,26 @@ DEPEND_SPHINX="
 "
 BDEPEND+="
 	>=dev-util/cmake-2.6
-	doxygen? ( app-doc/doxygen )
-	html? ( ${DEPEND_SPHINX} )
-	man? ( ${DEPEND_SPHINX} )
+	doxygen? (
+		app-doc/doxygen
+	)
+	html? (
+		${DEPEND_SPHINX}
+	)
+	man? (
+		${DEPEND_SPHINX}
+	)
 	pdf? (
 		${DEPEND_SPHINX}
 		$(python_gen_any_dep 'dev-python/sphinx[${PYTHON_USEDEP},latex]')
 		dev-tex/latexmk
 	)
-	singlehtml? ( ${DEPEND_SPHINX} )
-	texinfo? ( ${DEPEND_SPHINX} )
+	singlehtml? (
+		${DEPEND_SPHINX}
+	)
+	texinfo? (
+		${DEPEND_SPHINX}
+	)
 "
 SRC_URI="
 https://github.com/nanodbc/${PN}/archive/refs/tags/v${PV}.tar.gz
