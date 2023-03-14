@@ -6,7 +6,7 @@ EAPI=7
 
 MY_PV="$(ver_cut 1-4)"
 
-DISTUTILS_USE_SETUPTOOLS=no
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..10} )
 inherit distutils-r1 eutils flag-o-matic linux-info prefix tmpfiles udev
 inherit user-info xdg
@@ -17,7 +17,13 @@ HOMEPAGE="
 	http://xpra.org/
 	https://github.com/Xpra-org/xpra
 "
-LICENSE="GPL-2+ BSD-2 CC-BY-SA-3.0 MIT LGPL-3+"
+LICENSE="
+	GPL-2+
+	BSD-2
+	CC-BY-SA-3.0
+	LGPL-3+
+	MIT
+"
 # BSD-2 - xpra/buffers/xxhash.c
 # CC-BY-3.0 - xpra/platform/win32/printer_notify.py
 # GPL-2+ - xpra/gtk_common/about.p
@@ -105,7 +111,6 @@ SERVER_OPTIONS="
 # LIMD # ATM, GEN 5-12
 # LID # C2M, GEN 5-9
 REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
 	${CLIENT_OPTIONS}
 	${SERVER_OPTIONS}
 	gtk3
@@ -137,7 +142,10 @@ REQUIRED_USE+="
 		websockets
 	)
 	gtk3? (
-		|| ( X wayland )
+		|| (
+			X
+			wayland
+		)
 		client? (
 			webp
 			opengl? (
@@ -214,11 +222,10 @@ PILLOW_DEPEND="
 "
 
 DEPEND+="
-	${PYTHON_DEPS}
 	acct-group/xpra
 	app-admin/sudo
-	dev-libs/gobject-introspection
 	dev-lang/python[sqlite?,ssl?]
+	dev-libs/gobject-introspection
 	dev-libs/glib[dbus?]
 	dev-python/pygobject[${PYTHON_USEDEP}]
 	aes? (
@@ -232,8 +239,8 @@ DEPEND+="
 		>=media-libs/libavif-0.9
 	)
 	avahi? (
-		net-dns/avahi[${PYTHON_USEDEP},python]
 		dev-python/netifaces[${PYTHON_USEDEP}]
+		net-dns/avahi[${PYTHON_USEDEP},python]
 	)
 	brotli? (
 		app-arch/brotli[${PYTHON_USEDEP}]
@@ -436,8 +443,8 @@ DEPEND+="
 		sys-kernel/linux-headers
 	)
 	vaapi? (
-		>=media-video/ffmpeg-4.4:0=[vaapi]
 		>=media-libs/libva-2.1.0[drm(+),X?,wayland?]
+		>=media-video/ffmpeg-4.4:0=[vaapi]
 		media-libs/vaapi-drivers
 	)
 	vpx? (
@@ -450,13 +457,13 @@ DEPEND+="
 		client? (
 			>=media-libs/opencv-2.0[${PYTHON_USEDEP},python]
 		)
+		pyinotify? (
+			dev-python/pyinotify[${PYTHON_USEDEP}]
+		)
 		webcam-forwarding? (
 			kernel_linux? (
 				media-video/v4l2loopback
 			)
-		)
-		pyinotify? (
-			dev-python/pyinotify[${PYTHON_USEDEP}]
 		)
 	)
 	webp? (
@@ -472,10 +479,10 @@ DEPEND+="
 		x11-libs/libXdamage
 		x11-libs/libXfixes
 		x11-libs/libXi
+		x11-libs/libxkbfile
 		x11-libs/libXrandr
 		x11-libs/libXres
 		x11-libs/libXtst
-		x11-libs/libxkbfile
 	)
 	xdg? (
 		dev-python/pyxdg[${PYTHON_USEDEP}]
@@ -492,7 +499,6 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	${PYTHON_DEPS}
 	virtual/pkgconfig
 	cython? (
 		>=dev-python/cython-3.0.0_alpha11[${PYTHON_USEDEP}]
