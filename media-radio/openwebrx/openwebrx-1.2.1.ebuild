@@ -4,7 +4,7 @@
 
 EAPI=7
 
-DISTUTILS_USE_PEP517=setuptools
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1 user-info
 
@@ -12,10 +12,8 @@ DESCRIPTION="Open source, multi-user SDR receiver software with a web interface"
 HOMEPAGE="https://www.openwebrx.de/"
 LICENSE="AGPL-3"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
-DOCS=( CHANGELOG.md LICENSE.txt README.md )
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" openrc systemd"
 DEVICES=(
 	rtl_sdr
 	rtl_sdr_soapy
@@ -47,30 +45,30 @@ OPTIONAL_FEATURES=(
 	js8
 	drm
 )
-IUSE+=" ${DEVICES[@]/#/openwebrx_sdr_}"
-IUSE+=" ${OPTIONAL_FEATURES[@]}"
-REQUIRED_USE="|| ( openrc systemd )"
-SRC_URI="
-https://github.com/jketterl/openwebrx/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
+IUSE+="
+${DEVICES[@]/#/openwebrx_sdr_}
+${OPTIONAL_FEATURES[@]}
+openrc systemd
 "
+REQUIRED_USE+="
+|| ( openrc systemd )
+"
+SOAPY_DEVICES=(
+	airspy
+	airspyhf
+	fcdpp
+	hackrf
+	lime_sdr
+	pluto_sdr
+	radioberry
+	rtl_sdr_soapy
+	sdrplay
+	soapy_remote
+	uhd
+)
 OWRX_CONNECTOR_DEPEND="
 	>=media-radio/owrx_connector-0.5
 "
-SOAPY_DEVICES=(
-	rtl_sdr_soapy
-	sdrplay
-	hackrf
-	airspy
-	airspyhf
-	lime_sdr
-	pluto_sdr
-	soapy_remote
-	uhd
-	radioberry
-	fcdpp
-)
 gen_soapy_depends() {
 	local d
 	for d in ${SOAPY_DEVICES[@]} ; do
@@ -112,7 +110,6 @@ gen_soapy_depends() {
 		fi
 	done
 }
-RDEPEND+=" "$(gen_soapy_depends)
 RDEPEND_UNPACKAGED+="
 	openwebrx_sdr_airspy? (
 		net-wireless/soapyairspy
@@ -129,14 +126,11 @@ RDEPEND_UNPACKAGED+="
 	openwebrx_sdr_fifi_sdr? (
 		net-wireless/rockprog
 	)
-"
-RDEPEND+=" ${RDEPEND_UNPACKAGED}" # Package it yourself
-RDEPEND+=" ${PYTHON_DEPS}
+" # Package it yourself
+RDEPEND+="
+	${RDEPEND_UNPACKAGED}
+	$(gen_soapy_depends)
 	>=dev-python/pycsdr-0.18.1[${PYTHON_USEDEP}]
-	|| (
-		net-analyzer/netcat
-		net-analyzer/openbsd-netcat
-	)
 	digital_voice_digiham? (
 		>=media-radio/codecserver-0.2
 		>=media-radio/digiham-0.6
@@ -155,15 +149,6 @@ RDEPEND+=" ${PYTHON_DEPS}
 		dev-python/js8py[${PYTHON_USEDEP}]
 		media-radio/js8call
 	)
-	openwebrx_sdr_perseussdr? (
-		net-libs/libperseus-sdr
-	)
-	openwebrx_sdr_rtl_sdr? (
-		${OWRX_CONNECTOR_DEPEND}
-	)
-	openwebrx_sdr_rtl_tcp? (
-		${OWRX_CONNECTOR_DEPEND}
-	)
 	openwebrx_sdr_fifi_sdr? (
 		media-libs/alsa-lib
 		media-sound/alsa-utils
@@ -175,7 +160,14 @@ RDEPEND+=" ${PYTHON_DEPS}
 		net-wireless/limesuite
 	)
 	openwebrx_sdr_perseussdr? (
+		net-libs/libperseus-sdr
 		virtual/libusb
+	)
+	openwebrx_sdr_rtl_sdr? (
+		${OWRX_CONNECTOR_DEPEND}
+	)
+	openwebrx_sdr_rtl_tcp? (
+		${OWRX_CONNECTOR_DEPEND}
 	)
 	openwebrx_sdr_runds? (
 		>=media-radio/runds_connector-0.2.1
@@ -202,12 +194,20 @@ RDEPEND+=" ${PYTHON_DEPS}
 	wsjtx? (
 		>=media-radio/wsjtx-2.5.4
 	)
+	|| (
+		net-analyzer/netcat
+		net-analyzer/openbsd-netcat
+	)
 "
-DEPEND+=" ${RDEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}
-	dev-python/setuptools[${PYTHON_USEDEP}]
+DEPEND+="
+	${RDEPEND}
+"
+SRC_URI="
+https://github.com/jketterl/openwebrx/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
 "
 S="${WORKDIR}/${P}"
+DOCS=( CHANGELOG.md LICENSE.txt README.md )
 
 pkg_setup() {
 	ewarn "This ebuild is in development"

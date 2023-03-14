@@ -2,11 +2,12 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer status="active" type="person">
-    <!-- only in the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription lang="en">
+  <!--
+
     Hardware support is listed in
 
       https://github.com/jketterl/openwebrx/wiki/Supported-Hardware
@@ -18,7 +19,7 @@
 
       openwebrx admin resetpassword admin
 
-  </longdescription>
+  -->
   <upstream>
     <bugs-to>https://github.com/jketterl/openwebrx/issues</bugs-to>
     <changelog lang="en">https://www.openwebrx.de/news.php</changelog>
@@ -26,13 +27,30 @@
     <remote-id type="github">jketterl/openwebrx</remote-id>
   </upstream>
   <use>
-    <flag name="dream">Adds support for DRM (Digital Radio Mondiale) broadcasts</flag>
-    <flag name="digital_voice_digiham">Adds support for using digital voice modes (DMR, D-Star, NXDN, YSF)</flag>
-    <flag name="digital_voice_freedv">Adds support for demodulating FreeDV digital voice transmissions</flag>
-    <flag name="digital_voice_m17">Adds support for demodulating M17 digital voice signals</flag>
-    <flag name="js8">Adds support for decoding JS8</flag>
-    <flag name="packet">Adds support for APRS and packet radio</flag>
-    <flag name="pocsag">Adds support for the POCSAG protocol</flag>
-    <flag name="wsjtx">Adds support for WSJT-X modes (FT8, FT4, WSPR, JT65, JT9, FST4, FST4W, Q65)</flag>
+    <flag name="dream">
+      Adds support for DRM (Digital Radio Mondiale) broadcasts
+    </flag>
+    <flag name="digital_voice_digiham">
+      Adds support for using digital voice modes (DMR, D-Star, NXDN, YSF)
+    </flag>
+    <flag name="digital_voice_freedv">
+      Adds support for demodulating FreeDV digital voice transmissions
+    </flag>
+    <flag name="digital_voice_m17">
+      Adds support for demodulating M17 digital voice signals
+    </flag>
+    <flag name="js8">
+      Adds support for decoding JS8
+    </flag>
+    <flag name="packet">
+      Adds support for APRS and packet radio
+    </flag>
+    <flag name="pocsag">
+      Adds support for the POCSAG protocol
+    </flag>
+    <flag name="wsjtx">
+      Adds support for WSJT-X modes (FT8, FT4, WSPR, JT65, JT9, FST4, FST4W,
+      Q65)
+    </flag>
   </use>
 </pkgmetadata>
