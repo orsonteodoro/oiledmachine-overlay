@@ -24,6 +24,7 @@ openexr openslide orc pangocairo png poppler python rav1e +ppm spng static-libs
 svg test tiff +vala webp x265 zlib
 "
 REQUIRED_USE="
+	${PYTHON_REQUIRED_USE}
 	cgif? (
 		imagequant
 	)
@@ -45,6 +46,7 @@ REQUIRED_USE="
 LIBJPEG_TURBO_V="2.1.2"
 # See CI for versioning
 RDEPEND+="
+	${PYTHON_DEPS}
 	$(python_gen_any_dep '>=dev-libs/gobject-introspection-1.72.0[${PYTHON_SINGLE_USEDEP}]')
 	>=dev-libs/glib-2.72.4:2[${MULTILIB_USEDEP}]
 	>=dev-libs/expat-2.4.7[${MULTILIB_USEDEP}]
@@ -197,6 +199,7 @@ gen_llvm_test_bdepend()
 
 GCC_PV="11.3.0"
 BDEPEND+="
+	${PYTHON_DEPS}
 	>=dev-util/gtk-doc-am-1.32
 	>=dev-util/meson-0.61.2
 	>=dev-util/ninja-1.10.1
@@ -215,7 +218,6 @@ BDEPEND+="
 		>=dev-util/gtk-doc-1.33.2
 	)
 	test? (
-		${PYTHON_DEPS}
 		$(python_gen_any_dep '>=dev-python/pip-22.0.2[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep '>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep '>=dev-python/setuptools-59.6.0[${PYTHON_USEDEP}]')
@@ -234,7 +236,7 @@ BDEPEND+="
 "
 PDEPEND+="
 	python? (
-		dev-python/pyvips
+		dev-python/pyvips[${PYTHON_USEDEP}]
 	)
 "
 RESTRICT="mirror"
