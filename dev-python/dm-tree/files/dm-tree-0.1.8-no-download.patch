@@ -1,0 +1,75 @@
+diff -urp tree-0.1.8.orig/tree/CMakeLists.txt tree-0.1.8/tree/CMakeLists.txt
+--- tree-0.1.8.orig/tree/CMakeLists.txt	2022-12-18 01:22:12.000000000 -0800
++++ tree-0.1.8/tree/CMakeLists.txt	2023-03-14 13:39:06.735643393 -0700
+@@ -51,17 +51,22 @@ if(APPLE)
+ endif()
+ 
+ # Fetch pybind to be able to use pybind11_add_module symbol.
+-set(PYBIND_VER v2.10.1)
+-include(FetchContent)
+-FetchContent_Declare(
+-  pybind11
+-  GIT_REPOSITORY https://github.com/pybind/pybind11
+-  GIT_TAG        ${PYBIND_VER}
+-)
+-if(NOT pybind11_POPULATED)
+-    FetchContent_Populate(pybind11)
+-    add_subdirectory(${pybind11_SOURCE_DIR} ${pybind11_BINARY_DIR})
+-    include_directories(${pybind11_INCLUDE_DIR})
++option(USE_SYSTEM_PYBIND11 "Use the system's pybind11" ON)
++if(USE_SYSTEM_PYBIND11)
++  find_package(pybind11 2.10.1 CONFIG REQUIRED)
++else()
++  set(PYBIND_VER v2.10.1)
++  include(FetchContent)
++  FetchContent_Declare(
++    pybind11
++    GIT_REPOSITORY https://github.com/pybind/pybind11
++    GIT_TAG        ${PYBIND_VER}
++  )
++  if(NOT pybind11_POPULATED)
++      FetchContent_Populate(pybind11)
++      add_subdirectory(${pybind11_SOURCE_DIR} ${pybind11_BINARY_DIR})
++      include_directories(${pybind11_INCLUDE_DIR})
++  endif()
+ endif()
+ 
+ # Needed to disable Abseil tests.
+@@ -69,6 +74,7 @@ set (BUILD_TESTING OFF)
+ 
+ # Include abseil-cpp.
+ set(ABSEIL_VER 20210324.2)
++option(USE_PREFETCHED_ABSEIL "Use a prefetched copy of Abseil" ON)
+ include(ExternalProject)
+ set(ABSEIL_CMAKE_ARGS
+     "-DCMAKE_INSTALL_PREFIX=${CMAKE_SOURCE_DIR}/abseil-cpp"
+@@ -83,15 +89,23 @@ if(DEFINED CMAKE_OSX_ARCHITECTURES)
+         ${ABSEIL_CMAKE_ARGS}
+         "-DCMAKE_OSX_ARCHITECTURES=${CMAKE_OSX_ARCHITECTURES}")
+ endif()
+-ExternalProject_Add(abseil-cpp
+-  GIT_REPOSITORY    https://github.com/abseil/abseil-cpp.git
+-  GIT_TAG           ${ABSEIL_VER}
+-  PREFIX            ${CMAKE_SOURCE_DIR}/abseil-cpp
+-  CMAKE_ARGS        ${ABSEIL_CMAKE_ARGS}
+-)
++if(USE_PREFETCHED_ABSEIL)
++  ExternalProject_Add(abseil-cpp
++    URL               $ENV{WORKDIR}/abseil-cpp-20210324.2
++    PREFIX            ${CMAKE_SOURCE_DIR}/abseil-cpp
++    CMAKE_ARGS        ${ABSEIL_CMAKE_ARGS}
++  )
++else()
++  ExternalProject_Add(abseil-cpp
++    GIT_REPOSITORY    https://github.com/abseil/abseil-cpp.git
++    GIT_TAG           ${ABSEIL_VER}
++    PREFIX            ${CMAKE_SOURCE_DIR}/abseil-cpp
++    CMAKE_ARGS        ${ABSEIL_CMAKE_ARGS}
++  )
++endif()
+ ExternalProject_Get_Property(abseil-cpp install_dir)
+ set(abseil_install_dir ${install_dir})
+ include_directories (${abseil_install_dir}/include)
+ 
+ 
+ # Define pybind11 tree module.

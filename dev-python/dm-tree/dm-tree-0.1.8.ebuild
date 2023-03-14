@@ -24,6 +24,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
+	dev-python/pybind11[${PYTHON_USEDEP}]
 	doc? (
 		dev-python/sphinx[${PYTHON_USEDEP}]
 		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
@@ -35,13 +36,23 @@ BDEPEND+="
 		>=dev-python/wrapt-1.11.2[${PYTHON_USEDEP}]
 	)
 "
+ABSEIL_CPP_PV="20210324.2"
 SRC_URI="
 https://github.com/deepmind/tree/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/abseil/abseil-cpp/archive/refs/tags/${ABSEIL_CPP_PV}.tar.gz
+	-> abseil-cpp-${ABSEIL_CPP_PV}.tar.gz
 "
 S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
 DOCS=( README.md )
+PATCHES=(
+	"${FILESDIR}/${PN}-0.1.8-no-download.patch"
+)
+
+src_unpack() {
+	unpack ${A}
+}
 
 src_install() {
 	distutils-r1_src_install
