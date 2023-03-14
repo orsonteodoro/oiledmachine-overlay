@@ -36,7 +36,7 @@ DEPEND+="
 		>=dev-python/chess-1.7.0[${PYTHON_USEDEP}]
 		>=dev-python/pygame-${PYGAME_PV}[${PYTHON_USEDEP}]
 		>=dev-python/rlcard-1.0.5[${PYTHON_USEDEP}]
-		>=dev-python/hanabi_learning_environment-0.0.4[${PYTHON_USEDEP}]
+		>=dev-python/hanabi-learning-environment-0.0.4[${PYTHON_USEDEP}]
 	)
 	mpe? (
 		>=dev-python/pygame-${PYGAME_PV}[${PYTHON_USEDEP}]
@@ -75,8 +75,7 @@ BDEPEND+="
 # TODO ebuild-package needs to be created:
 # celshast
 # chess
-# hanabi_learning_environment
-# multi_agent_ale_py
+# hanabi-learning-environment
 # pymunk
 # rlcard
 SRC_URI="
