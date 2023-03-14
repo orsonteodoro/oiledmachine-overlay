@@ -83,7 +83,7 @@ BDEPEND+="
 RESTRICT="mirror"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
-EGIT_BORINGSSL_COMMIT="b9232f9e27e5668bc0414879dcdedb2a59ea75f2"
+EGIT_BORINGSSL_COMMIT="6195bf8242156c9a2fa75702eee058f91b86a88b"
 SRC_URI="
 https://github.com/grpc/grpc/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -95,7 +95,7 @@ EGIT_REPO_URI="https://github.com/grpc/grpc.git"
 EGIT_BRANCH="master"
 EGIT_COMMIT="v${PV}"
 PATCHES=(
-	"${FILESDIR}/${PN}-1.51.1-ruby-unvendor.patch"
+	"${FILESDIR}/${PN}-1.49.2-ruby-unvendor.patch"
 	"${FILESDIR}/${PN}-1.51.1-ruby-embed-changes.patch"
 	"${FILESDIR}/${PN}-1.51.1-ruby-unvendor-re2.patch"
 	"${FILESDIR}/${PN}-1.51.1-ruby-unvendor-abseil.patch"

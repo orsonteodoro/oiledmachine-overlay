@@ -10,7 +10,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
 RESTRICT="mirror"
 RDEPEND+="
-	>=dev-lang/php-5.5
+	>=dev-lang/php-7
 	dev-php/composer
 	dev-php/PEAR-PEAR
 	~net-libs/grpc-${PV}
