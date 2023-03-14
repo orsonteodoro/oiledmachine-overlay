@@ -14,12 +14,9 @@ HOMEPAGE="https://github.com/FlorianRhiem/pyGLFW"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" preview"
+IUSE+=" "
 DEPEND+="
 	media-libs/glfw
-	preview? (
-		>=dev-python/glfw_preview-0.0.3[${PYTHON_USEDEP}]
-	)
 "
 RDEPEND+="
 	${DEPEND}
