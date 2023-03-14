@@ -6,7 +6,7 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
 
     This contains the DRL (Deep Reinforce Learning) Agent to lower delays or
     boost throughput performace in existing and future throughput based
@@ -61,14 +61,14 @@
         stick shaped, normal arc shaped, or l shaped.
 
            Left J PP   Right J PP     Normal arc              l shaped
-        ^                          x Vanilla Cubic
+        +                          x Vanilla Cubic
         |   **            **       ******                     *
         M      *         *               *x = The sweet spot   *
         b      *        *                 *   DeepCC w/Cubic   *
         p      *        *                  *                   *
         s      *        *                  *                   *
         |      *        *                  *                   *
-        +-------------------------- delay --------------------------->
+        0-------------------------- delay ---------------------------+
 
     Criticisms and comparisons with other TCP CCs:
 
@@ -132,7 +132,7 @@
     discover the approximate minRTT used by sweetspot.  It uses the distro
     website by default.  (Only for real-network.sh)
 
-  </longdescription>
+  -->
   <upstream>
     <remote-id type="github">Soheil-ab/DeepCC.v1.0</remote-id>
     <bugs-to>https://github.com/Soheil-ab/DeepCC.v1.0/issues</bugs-to>

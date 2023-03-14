@@ -6,9 +6,9 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
 
-    This use DRL (Deep Reinforce Learning) Agent and an existing congestion
+    This uses DRL (Deep Reinforce Learning) Agent and an existing congestion
     control to lower delays, to max throughput, to lower loss in existing and
     future TCP Congestion Controls (CC).  Other benefits include lower CPU usage,
     better convergence towards the send link capacity and in unseen scenarios.
@@ -82,7 +82,7 @@
 
     # Actor-Learner for sample test
     ./orca.sh 4 44444
-  </longdescription>
+  -->
   <upstream>
     <remote-id type="github">Soheil-ab/Orca</remote-id>
     <bugs-to>https://github.com/Soheil-ab/Orca/issues</bugs-to>

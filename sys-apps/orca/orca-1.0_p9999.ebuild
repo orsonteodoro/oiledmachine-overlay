@@ -5,7 +5,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_10 ) # Constrained by tensorflow
-inherit distutils-r1 git-r3
+inherit python-r1 git-r3
 
 DESCRIPTION="Orca: Towards Mastering Congestion Control In the Internet"
 HOMEPAGE="
@@ -14,9 +14,11 @@ https://github.com/Soheil-ab/Orca
 LICENSE="MIT"
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Build in development
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" build-models cellular-traces evaluate fallback-commit kernel-patch polkit +sudo r4"
+IUSE+="
+build-models cellular-traces evaluate fallback-commit kernel-patch polkit +sudo
+r4
+"
 REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
 	cellular-traces? (
 		|| (
 			build-models
@@ -25,7 +27,6 @@ REQUIRED_USE+="
 	)
 "
 DEPEND+="
-	${PYTHON_DEPS}
 	>=sci-libs/tensorflow-1.14[${PYTHON_USEDEP},python]
 	app-alternatives/sh
 	dev-python/sysv_ipc[${PYTHON_USEDEP}]
@@ -52,7 +53,6 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	${PYTHON_DEPS}
 	app-alternatives/sh
 	dev-python/pip[${PYTHON_USEDEP}]
 	dev-python/virtualenv[${PYTHON_USEDEP}]
