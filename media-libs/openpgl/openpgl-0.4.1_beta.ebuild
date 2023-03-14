@@ -116,3 +116,5 @@ src_install() {
 		third-party-programs-TBB.txt
 	einstalldocs
 }
+
+# OILEDMACHINE-OVERLAY-META-REVDEP:  blender-3.4
