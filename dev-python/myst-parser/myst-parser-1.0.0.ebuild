@@ -107,13 +107,14 @@ S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md docs/index.md README.md )
 
+distutils_enable_sphinx "docs"
+distutils_enable_tests "pytest"
+
 src_install() {
 	distutils-r1_src_install
 	docinto licenses
 	dodoc LICENSE
 }
-
-distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # A previous myst_parser ebuild did exist but this was independently created.
