@@ -18,7 +18,7 @@ SLOT="0"
 LANGS=( el_GR en en_GB hu it nl zh_CN )
 IUSE+="
 ${LANGS[@]/#/l10n_}
-+l10n_en -libexec -pkla
++l10n_en -libexec -pkla wayland X
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -33,7 +33,7 @@ RDEPEND+="
 	dev-python/dbus-python[${PYTHON_USEDEP}]
 	dev-python/pyxdg[${PYTHON_USEDEP}]
 	sys-auth/polkit
-	x11-libs/gtk+:3
+	x11-libs/gtk+:3[wayland?,X?]
 	x11-themes/hicolor-icon-theme
 "
 DEPEND+="
@@ -93,6 +93,12 @@ src_install() {
 
 pkg_postinst() {
 	xdg_icon_cache_update
+einfo
+einfo "You may want to use a GUI authentication agent (analog of sudo under"
+einfo "desktop environments).  See"
+einfo
+einfo "  https://wiki.archlinux.org/title/Polkit#Authentication_agents"
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
