@@ -41,7 +41,7 @@ RESTRICT="mirror"
 src_test() {
 	run_test() {
 einfo "Running test for ${PYTHON}"
-		python -m pytest --cov proglog --cov-report term-missing || die
+		${EPYTHON} -m pytest --cov proglog --cov-report term-missing || die
 	}
 	python_foreach_impl run_test
 }
