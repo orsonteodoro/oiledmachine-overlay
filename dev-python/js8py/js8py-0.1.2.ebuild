@@ -13,11 +13,13 @@ HOMEPAGE="https://github.com/jketterl/js8py"
 LICENSE="GPL-3"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" test"
 RDEPEND+="
 "
 DEPEND+="
 	${RDEPEND}
+"
+BDEPEND+="
 "
 SRC_URI="
 https://github.com/jketterl/js8py/archive/refs/tags/${PV}.tar.gz
@@ -26,6 +28,15 @@ https://github.com/jketterl/js8py/archive/refs/tags/${PV}.tar.gz
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( LICENSE README.md )
+
+src_test() {
+	run_test() {
+einfo "Running test for ${PYTHON}"
+		${PYTHON} setup.py test || die
+		:;
+	}
+	python_foreach_impl run_test
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-REVDEP:  openwebrx
