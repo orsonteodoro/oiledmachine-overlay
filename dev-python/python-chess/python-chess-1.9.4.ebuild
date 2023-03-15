@@ -77,6 +77,14 @@ src_compile() {
 	distutils-r1_src_compile
 }
 
+src_test() {
+	run_test() {
+einfo "Running test for ${PYTHON}"
+		tox || die
+	}
+	python_foreach_impl run_test
+}
+
 src_install() {
 	distutils-r1_src_install
 	docinto licenses
