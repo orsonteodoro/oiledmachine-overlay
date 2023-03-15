@@ -41,5 +41,13 @@ RESTRICT="mirror"
 
 distutils_enable_sphinx "doc"
 
+src_test() {
+	run_test() {
+einfo "Running test for ${PYTHON}"
+		tox || die
+	}
+	python_foreach_impl run_test
+}
+
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-TAGS:  orphaned
