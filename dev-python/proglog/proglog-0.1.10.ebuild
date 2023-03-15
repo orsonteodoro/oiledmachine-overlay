@@ -15,7 +15,7 @@ https://github.com/Edinburgh-Genome-Foundry/Proglog
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" test"
 REQUIRED_USE+="
 "
 DEPEND+="
@@ -26,6 +26,10 @@ RDEPEND+="
 "
 BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
+	test? (
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/pytest-cov[${PYTHON_USEDEP}]
+	)
 "
 SRC_URI="
 https://github.com/Edinburgh-Genome-Foundry/Proglog/archive/refs/tags/v${PV}.tar.gz
@@ -33,6 +37,14 @@ https://github.com/Edinburgh-Genome-Foundry/Proglog/archive/refs/tags/v${PV}.tar
 "
 S="${WORKDIR}/${PN^}-${PV}"
 RESTRICT="mirror"
+
+src_test() {
+	run_test() {
+einfo "Running test for ${PYTHON}"
+		python -m pytest --cov proglog --cov-report term-missing || die
+	}
+	python_foreach_impl run_test
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-REVDEP:  moviepy
