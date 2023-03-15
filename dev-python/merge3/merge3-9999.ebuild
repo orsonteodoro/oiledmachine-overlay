@@ -41,8 +41,8 @@ src_unpack() {
 
 src_test() {
 	run_test() {
-einfo "Running test for ${PYTHON}"
-		${PYTHON} -m unittest test_merge3 || die
+einfo "Running test for ${EPYTHON}"
+		${EPYTHON} -m unittest test_merge3 || die
 	}
 	python_foreach_impl run_test
 }

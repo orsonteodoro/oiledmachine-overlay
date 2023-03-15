@@ -70,6 +70,14 @@ https://github.com/pallets/quart/archive/refs/tags/${PV}.tar.gz
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
-distutils_enable_tests "pytest"
+#distutils_enable_tests "pytest"
+
+src_test() {
+	run_test() {
+einfo "Running test for ${EPYTHON}"
+		tox || die
+	}
+	python_foreach_impl run_test
+}
 
 # OILEDMACHINE-OVERLAY-META-TAGS:  orphaned

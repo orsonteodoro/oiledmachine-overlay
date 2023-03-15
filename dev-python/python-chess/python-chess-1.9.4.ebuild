@@ -79,7 +79,7 @@ src_compile() {
 
 src_test() {
 	run_test() {
-einfo "Running test for ${PYTHON}"
+einfo "Running test for ${EPYTHON}"
 		tox || die
 	}
 	python_foreach_impl run_test
