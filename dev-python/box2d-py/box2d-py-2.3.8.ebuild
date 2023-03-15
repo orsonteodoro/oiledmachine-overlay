@@ -15,7 +15,7 @@ https://github.com/openai/box2d-py
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" examples"
+IUSE+=" examples test"
 DEPEND+="
 	${PYTHON_DEPS}
 	!dev-python/pybox2d
@@ -39,6 +39,14 @@ https://github.com/openai/box2d-py/archive/refs/tags/${PV}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+
+src_test() {
+	run_test() {
+einfo "Running test for ${PYTHON}"
+		${EPYTHON} setup.py test || die
+	}
+	python_foreach_impl run_test
+}
 
 src_install() {
 	distutils-r1_src_install
