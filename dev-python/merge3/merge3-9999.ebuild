@@ -21,9 +21,6 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
-	test? (
-		dev-python/tox[${PYTHON_USEDEP}]
-	)
 "
 SRC_URI=""
 S="${WORKDIR}/${P}"
@@ -40,6 +37,14 @@ src_unpack() {
 	fi
 	git-r3_fetch
 	git-r3_checkout
+}
+
+src_test() {
+	run_test() {
+einfo "Running test for ${PYTHON}"
+		${PYTHON} -m unittest test_merge3 || die
+	}
+	python_foreach_impl run_test
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
