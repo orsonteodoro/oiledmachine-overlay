@@ -63,7 +63,6 @@ dev-libs/libspotify
 dev-libs/log4c
 dev-libs/pugixml
 dev-libs/rapidjson
-dev-python/pocket
 dev-python/py-stackexchange
 dev-python/python-plexapi
 dev-python/soundcloud-python

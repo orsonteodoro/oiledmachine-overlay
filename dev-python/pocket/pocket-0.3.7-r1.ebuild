@@ -37,4 +37,15 @@ RESTRICT="mirror"
 
 distutils_enable_tests "nose"
 
+# Python 3.10
+#test_pocket_init (test_pocket.PocketTest) ... ok
+#test_pocket_init_payload (test_pocket.PocketTest) ... ok
+#test_post_request (test_pocket.PocketTest) ... ok
+
+#----------------------------------------------------------------------
+#Ran 3 tests in 1.039s
+
+#OK
+
+
 # OILEDMACHINE-OVERLAY-META-REVDEP:  rainbowstream
