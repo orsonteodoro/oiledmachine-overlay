@@ -1,0 +1,12 @@
+diff -urp flake8-print-5.0.0.orig/pyproject.toml flake8-print-5.0.0/pyproject.toml
+--- flake8-print-5.0.0.orig/pyproject.toml	2022-04-30 09:18:26.374678900 -0700
++++ flake8-print-5.0.0/pyproject.toml	2023-03-15 12:46:25.244718831 -0700
+@@ -39,7 +39,7 @@ classifiers = [
+ ]
+ 
+ 
+-include = ["pyproject.toml", "flake8_print.py", "LICENCE"]
++include = ["flake8_print.py"]
+ 
+ [tool.poetry.plugins."flake8.extension"]
+ T20 = "flake8_print:PrintChecker"
