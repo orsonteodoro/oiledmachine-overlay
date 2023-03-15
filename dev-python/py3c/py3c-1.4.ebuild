@@ -29,7 +29,7 @@ BDEPEND+="
 		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
 	)
 	test? (
-		net-libs/tox[${PYTHON_USEDEP}]
+		dev-python/tox[${PYTHON_USEDEP}]
 	)
 "
 SRC_URI="

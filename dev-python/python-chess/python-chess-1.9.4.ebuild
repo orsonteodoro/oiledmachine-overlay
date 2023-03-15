@@ -42,7 +42,7 @@ BDEPEND+="
 	test? (
 		games-board/stockfish
 		dev-python/flake8[${PYTHON_USEDEP}]
-		net-libs/tox[${PYTHON_USEDEP}]
+		dev-python/tox[${PYTHON_USEDEP}]
 	)
 "
 PDEPEND+="
