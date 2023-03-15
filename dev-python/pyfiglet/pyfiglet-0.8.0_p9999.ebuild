@@ -23,14 +23,17 @@ BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	test? (
 		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/subprocess32[${PYTHON_USEDEP}]
 	)
 "
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/pwaller/pyfiglet.git"
 SRC_URI=""
 PROPERTIES="live"
-RESTRICT="mirror test" # Unpacked dependency
+RESTRICT="mirror test" # test requires subprocess32 which is EOL
 MY_PV="0.8.post1"
+
+distutils_enable_tests "pytest"
 
 src_unpack() {
 	git-r3_fetch
@@ -51,7 +54,5 @@ src_configure() {
 	fi
 	distutils-r1_src_configure
 }
-
-distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META-REVDEP:  rainbowstream
