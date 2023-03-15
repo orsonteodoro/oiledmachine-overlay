@@ -37,7 +37,7 @@ RESTRICT="mirror"
 
 distutils_enable_tests "nose"
 
-# Python 3.10
+# Pocket 0.3.7, Python 3.10
 #test_pocket_init (test_pocket.PocketTest) ... ok
 #test_pocket_init_payload (test_pocket.PocketTest) ... ok
 #test_post_request (test_pocket.PocketTest) ... ok
