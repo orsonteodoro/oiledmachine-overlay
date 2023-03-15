@@ -13,7 +13,7 @@ HOMEPAGE="https://github.com/breezy-team/fastbencode"
 LICENSE="GPL-2+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -35,6 +35,14 @@ https://github.com/breezy-team/fastbencode/archive/refs/tags/v${PV}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+
+src_test() {
+	run_test() {
+einfo "Running test for ${PYTHON}"
+		${EPYTHON} setup.py test || die
+	}
+	python_foreach_impl run_test
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-REVDEP:  breezy
