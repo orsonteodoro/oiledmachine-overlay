@@ -24,7 +24,6 @@ RDEPEND+="
 BDEPEND+="
 	test? (
 		dev-python/coverage[${PYTHON_USEDEP}]
-		dev-python/tox[${PYTHON_USEDEP}]
 	)
 "
 ASSET_COMMIT="fb3e82d0da2c108e05499f57cdf5c02210b482f7" # In the repo but not in the pypi tarball.
