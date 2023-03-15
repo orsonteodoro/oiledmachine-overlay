@@ -15,7 +15,7 @@ https://github.com/Farama-Foundation/Jumpy
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" jax test"
+IUSE+=" jax test r1"
 DEPEND+="
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 	jax? (
@@ -41,10 +41,8 @@ S="${WORKDIR}/Jumpy-${PV}"
 RESTRICT="mirror"
 
 src_install() {
+	python_moduleinto ${PN}
 	python_foreach_impl python_domodule .
-	if use test ; then
-		rm -rf "${ED}/usr/lib/"*"/site-packages/tests"
-	fi
 }
 
 distutils_enable_tests "pytest"
