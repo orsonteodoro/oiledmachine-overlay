@@ -19,10 +19,10 @@ DEPEND+="
 RDEPEND+="
 	${DEPEND}
 "
+#		>=dev-python/distribute-0.7.3[${PYTHON_USEDEP}] # Removed in HEAD
 BDEPEND+="
 	test? (
 		>=dev-python/coverage-3.7.1[${PYTHON_USEDEP}]
-		>=dev-python/distribute-0.7.3[${PYTHON_USEDEP}]
 		>=dev-python/mock-1.0.1[${PYTHON_USEDEP}]
 		>=dev-python/nose-1.3.0[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.1.0[${PYTHON_USEDEP}]
