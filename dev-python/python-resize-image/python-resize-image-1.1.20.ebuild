@@ -27,8 +27,33 @@ BDEPEND+="
 		dev-python/tox[${PYTHON_USEDEP}]
 	)
 "
-SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
+ASSET_COMMIT="fb3e82d0da2c108e05499f57cdf5c02210b482f7" # In the repo but not in the pypi tarball.
+SRC_URI="
+mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz
+	test? (
+https://github.com/VingtCinq/python-resize-image/raw/${ASSET_COMMIT}/tests/test-image.jpeg
+	-> ${PN}-test-image.jpeg.${ASSET_COMMIT:0:7}
+	)
+"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+PATCHES=(
+	"${FILESDIR}/${PN}-1.1.20-use-rgb-convert.patch"
+)
+
+src_unpack() {
+	unpack ${A}
+	cp -a \
+		$(realpath "${DISTDIR}/${PN}-test-image.jpeg.${ASSET_COMMIT:0:7}") \
+		"${S}/tests/test-image.jpeg"
+}
+
+src_test() {
+	run_test() {
+einfo "Running test for ${PYTHON}"
+		coverage run --source resizeimage setup.py test || die
+	}
+	python_foreach_impl run_test
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

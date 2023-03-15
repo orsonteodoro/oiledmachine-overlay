@@ -1,0 +1,21 @@
+Convert only supports few modes and RGBA is not one of them
+https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image.convert
+--- python-resize-image-1.1.20/resizeimage/resizeimage.py.orig	2021-11-04 01:37:19.000000000 -0700
++++ python-resize-image-1.1.20/resizeimage/resizeimage.py	2023-03-14 20:24:33.083957689 -0700
+@@ -104,14 +104,14 @@ def resize_contain(image, size, resample
+     img_format = image.format
+     img = image.copy()
+     img.thumbnail((size[0], size[1]), resample)
+-    background = Image.new('RGBA', (size[0], size[1]), bg_color)
++    background = Image.new('RGBA', (size[0], size[1]), bg_color)
+     img_position = (
+         int(math.ceil((size[0] - img.size[0]) / 2)),
+         int(math.ceil((size[1] - img.size[1]) / 2))
+     )
+     background.paste(img, img_position)
+     background.format = img_format
+-    return background.convert('RGBA')
++    return background.convert('RGB')
+ 
+ 
+ @validate(_width_is_big_enough)
