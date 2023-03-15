@@ -14,7 +14,7 @@ https://mujoco.org/
 https://github.com/deepmind/mujoco
 "
 LICENSE="Apache-2.0"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+# KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild not finished
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" +examples +test"
 REQUIRED_USE+="
