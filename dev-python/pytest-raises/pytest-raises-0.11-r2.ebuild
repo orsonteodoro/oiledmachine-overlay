@@ -12,7 +12,7 @@ HOMEPAGE="https://github.com/Lemmons/pytest-raises"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" develop"
+IUSE+=" test"
 DEPEND+="
 	>=dev-python/pytest-3.2.2[${PYTHON_USEDEP}]
 "
@@ -20,8 +20,9 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	develop? (
-		dev-python/pylint[${PYTHON_USEDEP}]
+	dev-python/pylint[${PYTHON_USEDEP}]
+	test? (
+		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 	)
 "
