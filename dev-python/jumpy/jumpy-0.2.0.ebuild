@@ -42,6 +42,9 @@ RESTRICT="mirror"
 
 src_install() {
 	python_foreach_impl python_domodule .
+	if use test ; then
+		rm -rf "${ED}/usr/lib/"*"/site-packages/tests"
+	fi
 }
 
 distutils_enable_tests "pytest"
