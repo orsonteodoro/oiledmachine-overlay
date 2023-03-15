@@ -56,11 +56,19 @@ S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
 
 src_configure() {
-	local cython_pv=$(cython --version 2>&1 \
+	local actual_cython_pv=$(cython --version 2>&1 \
 		| cut -f 3 -d " " \
-		| sed -e "s|a|_alpha|g")
-	if ver_test ${cython_pv} -lt 3 && use cpp ; then
-		eerror "Switch cython to >= 3.0.0_alpha10 via eselect-cython"
+		| sed -e "s|a|_alpha|g" \
+		| sed -e "s|b|_beta|g")
+	local expected_cython_pv="3.0.0_alpha10"
+	local required_cython_major=$(ver_cut 1 ${expected_cython_pv})
+	if ver_test ${actual_cython_pv} -lt ${required_cython_major} && use cpp ; then
+eerror
+eerror "Switch cython to >= ${expected_cython_pv} via eselect-cython"
+eerror
+eerror "Actual cython version:\t${actual_cython_pv}"
+eerror "Expected cython version\t${expected_cython_pv}"
+eerror
 		die
 	fi
 	export RAPIDFUZZ_IMPLEMENTATION=$(usex cpp "cpp" "python")

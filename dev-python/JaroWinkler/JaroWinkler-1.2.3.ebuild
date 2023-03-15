@@ -42,7 +42,8 @@ RESTRICT="mirror"
 src_configure() {
 	local cython_pv=$(cython --version 2>&1 \
 		| cut -f 3 -d " " \
-		| sed -e "s|a|_alpha|g")
+		| sed -e "s|a|_alpha|g" \
+		| sed -e "s|b|_beta")
 	if ver_test ${cython_pv} -lt 3 && use cpp ; then
 		eerror "Switch cython to >= 3.0.0_alpha10 via eselect-cython"
 		die
