@@ -42,10 +42,6 @@
     <flag name="fuzz-matching">
       Add support for fuzz-matching with wildcard asterisk(s)
     </flag>
-    <flag name="musicbrainz">
-      Enables support for musicbrainz, needs
-      <pkg>dev-python/python-musicbrainz</pkg>
-    </flag>
     <flag name="pyacoustid">
       Use pyacoustid as a acoustid fingerprinter
     </flag>

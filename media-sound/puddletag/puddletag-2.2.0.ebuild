@@ -26,7 +26,7 @@ https://github.com/puddletag/puddletag/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 IUSE+="
-acoustid amg audioread cover doc fpcalc fuzz-matching musicbrainz pyacoustid
+acoustid amg audioread cover doc fpcalc fuzz-matching pyacoustid
 quodlibet
 "
 REQUIRED_USE+="
@@ -64,9 +64,6 @@ RDEPEND+="
 	fuzz-matching? (
 		>=dev-python/Levenshtein-0.18.0[${PYTHON_USEDEP}]
 		>=dev-python/RapidFuzz-2.0.2[${PYTHON_USEDEP}]
-	)
-	musicbrainz? (
-		>=dev-python/python-musicbrainz-0.7.4-r1[${PYTHON_USEDEP}]
 	)
 	pyacoustid? (
 		>=dev-python/pyacoustid-1.2.2[${PYTHON_USEDEP}]
