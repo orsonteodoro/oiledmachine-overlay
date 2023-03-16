@@ -1,0 +1,11 @@
+--- a/setup.py.orig	2023-03-16 14:40:05.641923235 -0700
++++ b/setup.py	2023-03-16 14:52:46.629933067 -0700
+@@ -28,7 +28,7 @@ setuptools.setup(
+     long_description_content_type="text/markdown",
+     url="https://github.com/datamllab/rlcard",
+     keywords=["Reinforcement Learning", "game", "RL", "AI"],
+-    packages=setuptools.find_packages(exclude=('tests',)),
++    packages=setuptools.find_packages(exclude=['tests.*','*tests']),
+     package_data={
+         'rlcard': ['models/pretrained/leduc_holdem_cfr/*',
+                    'games/uno/jsondata/action_space.json',

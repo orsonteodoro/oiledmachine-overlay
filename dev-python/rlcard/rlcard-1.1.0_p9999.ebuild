@@ -57,6 +57,9 @@ RDEPEND+="
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( README.md )
+PATCHES=(
+	"${FILESDIR}/${PN}-1.1.0-fix-exclude-tests.patch"
+)
 
 verify_version() {
 	cd "${S}"
