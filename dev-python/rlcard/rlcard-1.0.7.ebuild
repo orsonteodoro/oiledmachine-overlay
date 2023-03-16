@@ -19,9 +19,18 @@ LICENSE="
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" docs test torch"
+REQUIRED_USE="
+	test? (
+		torch
+	)
+"
 DEPEND+="
 	>=dev-python/numpy-1.16.3[${PYTHON_USEDEP}]
 	dev-python/termcolor[${PYTHON_USEDEP}]
+	test? (
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/pytest-cov[${PYTHON_USEDEP}]
+	)
 	torch? (
 		dev-python/gitdb2[${PYTHON_USEDEP}]
 		dev-python/GitPython[${PYTHON_USEDEP}]
@@ -46,6 +55,14 @@ src_install() {
 	dodoc LICENSE.md
 	docinto docs
 	dodoc -r docs/*
+}
+
+src_test() {
+	run_test() {
+einfo "Running test for ${EPYTHON}"
+		py.test tests/ --cov=rlcard || die
+	}
+	python_foreach_impl run_test
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
