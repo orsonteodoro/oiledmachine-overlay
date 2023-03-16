@@ -7,6 +7,19 @@ EAPI=8
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
+if [[ ${PV} =~ 9999 ]] ; then
+	inherit git-r3
+	IUSE+=" fallback-commit"
+	EGIT_OVERRIDE_REPO_GIT_GITHUB_COM_VIBLO_CHIPMUNK2D="https://github.com/viblo/Chipmunk2D.git"
+else
+	CHIPMUNK2D_COMMIT="0593976ef47fcb3957166bd342f6b2bafe4d0e44"
+	SRC_URI="
+https://github.com/viblo/pymunk/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/viblo/Chipmunk2D/archive/${CHIPMUNK2D_COMMIT}.tar.gz
+	-> Chipmunk2D-${CHIPMUNK2D_COMMIT:0:7}.tar.gz
+	"
+fi
 
 DESCRIPTION="Pymunk is a easy-to-use pythonic 2d physics library that can be \
 used whenever you need 2d rigid body physics from Python"
@@ -19,7 +32,7 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev doc"
+IUSE+=" dev doc test"
 DEPEND+="
 	>=dev-python/cffi-1.15.0[${PYTHON_USEDEP}]
 "
@@ -43,24 +56,37 @@ BDEPEND+="
 		dev-python/matplotlib[${PYTHON_USEDEP}]
 	)
 "
-CHIPMUNK2D_COMMIT="0593976ef47fcb3957166bd342f6b2bafe4d0e44"
-SRC_URI="
-https://github.com/viblo/pymunk/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
-https://github.com/viblo/Chipmunk2D/archive/${CHIPMUNK2D_COMMIT}.tar.gz
-	-> Chipmunk2D-${CHIPMUNK2D_COMMIT:0:7}.tar.gz
-"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.rst CITATION.cff THANKS.txt README.rst )
 
 src_unpack() {
-	unpack ${A}
-	rm -rf "${S}/Chipmunk2D" || die
-	mv \
-		"${WORKDIR}/Chipmunk2D-${CHIPMUNK2D_COMMIT}" \
-		"${S}/Chipmunk2D" \
-		|| die
+	if [[ ${PV} =~ 9999 ]] ; then
+		EGIT_REPO_URI="https://github.com/viblo/pymunk.git"
+		EGIT_BRANCH="master"
+		EGIT_COMMIT="HEAD"
+		use fallback-commit && EGIT_COMMIT="ec7bf669729d72a81e8dd0333966d8328c4c4ca0"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+		rm -rf "${S}/Chipmunk2D" || die
+		mv \
+			"${WORKDIR}/Chipmunk2D-${CHIPMUNK2D_COMMIT}" \
+			"${S}/Chipmunk2D" \
+			|| die
+	fi
+}
+
+src_test() {
+	run_test() {
+		pushd "${S}-${EPYTHON/./_}/install/usr/lib/${EPYTHON}/site-packages" || die
+einfo "${LD_LIBRARY_PATH}"
+einfo "Running test for ${EPYTHON}"
+			${EPYTHON} -m pymunk.tests || die
+		popd
+	}
+	python_foreach_impl run_test
 }
 
 src_install() {
