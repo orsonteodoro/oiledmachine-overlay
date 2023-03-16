@@ -8,10 +8,10 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
-DESCRIPTION=""
+DESCRIPTION="Typing stubs for aiofiles"
 HOMEPAGE="https://github.com/python/typeshed"
 LICENSE="
-	
+	Apache-2.0
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
