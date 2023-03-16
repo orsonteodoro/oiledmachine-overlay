@@ -12,10 +12,10 @@ if [[ ${PV} =~ 9999 ]] ; then
 	inherit git-r3
 	IUSE+=" fallback-commit"
 else
-SRC_URI="
+	SRC_URI="
 https://github.com/datamllab/rlcard/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
-"
+	"
 fi
 
 DESCRIPTION="Reinforcement Learning / AI Bots in Card (Poker) Games - Blackjack, Leduc, Texas, DouDizhu, Mahjong, UNO."
