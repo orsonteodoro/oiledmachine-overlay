@@ -43,7 +43,7 @@ DEPEND+="
 	)
 	torch? (
 		$(python_gen_any_dep '
-			sci-libs/caffe2[${PYTHON_USEDEP},numpy]
+			sci-libs/caffe2[${PYTHON_SINGLE_USEDEP},numpy]
 			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
 		')
 		>=dev-python/gitdb-2[${PYTHON_USEDEP}]
