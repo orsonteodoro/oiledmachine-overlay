@@ -52,6 +52,8 @@ S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
 DOCS=( README.rst )
 
+distutils_enable_sphinx "doc"
+
 src_unpack() {
 	unpack ${A}
 	rm -rf gitdb/ext/smmap || die
