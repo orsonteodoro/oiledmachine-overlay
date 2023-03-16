@@ -36,30 +36,30 @@ RDEPEND+="
 	${DEPEND}
 "
 #missing
-# test? (
-#	dev-python/pep8-naming[${PYTHON_USEDEP}]
-#	dev-python/flake8-future-import[${PYTHON_USEDEP}]
-#	dev-python/flake8-print[${PYTHON_USEDEP}]
-#	dev-python/types-toml[${PYTHON_USEDEP}]
-#	dev-python/types-aiofiles[${PYTHON_USEDEP}]
-# )
+#
+#		>=dev-python/poetry-1[${PYTHON_USEDEP}]
 BDEPEND+="
 	>=dev-python/poetry-core-1.0.0
 	test? (
-		$(python_gen_cond_dep 'dev-python/mock[${PYTHON_USEDEP}]' python3_7)
 		>=dev-python/poetry-1[${PYTHON_USEDEP}]
 		dev-python/black[${PYTHON_USEDEP}]
 		dev-python/isort[${PYTHON_USEDEP}]
 		dev-python/hypothesis[${PYTHON_USEDEP}]
 		dev-python/flask[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
+		dev-python/flake8-future-import[${PYTHON_USEDEP}]
+		dev-python/flake8-print[${PYTHON_USEDEP}]
+		dev-python/mock[${PYTHON_USEDEP}]
 		dev-python/mypy[${PYTHON_USEDEP}]
+		dev-python/pep8-naming[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-asyncio[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 		dev-python/python-dotenv[${PYTHON_USEDEP}]
 		dev-python/pytest-sugar[${PYTHON_USEDEP}]
 		dev-python/toml[${PYTHON_USEDEP}]
+		dev-python/types-toml[${PYTHON_USEDEP}]
+		dev-python/types-aiofiles[${PYTHON_USEDEP}]
 		dev-python/twine[${PYTHON_USEDEP}]
 	)
 "
