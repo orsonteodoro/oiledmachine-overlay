@@ -32,10 +32,10 @@ DEPEND+="
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 	)
 	torch? (
-		dev-python/gitdb2[${PYTHON_USEDEP}]
+		$(python_gen_any_dep 'sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]')
+		>=dev-python/gitdb-2[${PYTHON_USEDEP}]
 		dev-python/GitPython[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
-		sci-libs/pytorch[${PYTHON_USEDEP}]
 	)
 "
 RDEPEND+="

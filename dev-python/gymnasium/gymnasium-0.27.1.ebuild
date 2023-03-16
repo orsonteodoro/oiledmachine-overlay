@@ -34,11 +34,11 @@ DEPEND+="
 	>=dev-python/typing-extensions-4.3.0[${PYTHON_USEDEP}]
 	>=dev-python/gymnasium-notices-0.0.1[${PYTHON_USEDEP}]
 
+	$(python_gen_any_dep '>=sci-libs/pytorch-1.0.0[${PYTHON_SINGLE_USEDEP}]')
 	>=dev-python/lz4-3.1.0[${PYTHON_USEDEP}]
 	>=dev-python/matplotlib-3.0[${PYTHON_USEDEP}]
 	>=dev-python/moviepy-1.0.0[${PYTHON_USEDEP}]
 	>=media-libs/opencv-3.0[${PYTHON_USEDEP}]
-	>=sci-libs/pytorch-1.0.0[${PYTHON_USEDEP}]
 
 	atari? (
 		<dev-python/shimmy-1.0[${PYTHON_USEDEP}]
