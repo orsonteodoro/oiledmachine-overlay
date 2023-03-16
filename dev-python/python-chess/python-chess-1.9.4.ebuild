@@ -73,7 +73,7 @@ build_libgtb() {
 }
 
 src_compile() {
-	use test && build_libgbt
+	use test && build_libgtb
 	distutils-r1_src_compile
 }
 
