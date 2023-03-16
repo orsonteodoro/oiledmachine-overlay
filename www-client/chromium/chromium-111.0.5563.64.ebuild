@@ -48,9 +48,15 @@ DESCRIPTION="The open-source version of the Chrome web browser"
 HOMEPAGE="https://chromium.org/"
 PATCHSET="2"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
+PATCHSET_URI_PPC64="https://quickbuild.io/~raptor-engineering-public"
+PATCHSET_NAME_PPC64="chromium_111.0.5563.64-1raptor0~deb11u1.debian"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
+	ppc64? (
+		${PATCHSET_URI_PPC64}/+archive/ubuntu/chromium/+files/${PATCHSET_NAME_PPC64}.tar.xz
+		https://dev.gentoo.org/~sultan/distfiles/www-client/chromium/chromium-ppc64le-gentoo-patches-1.tar.xz
+	)
 "
 RESTRICT="mirror"
 
@@ -286,7 +292,7 @@ LICENSE="
 #   domain.
 #
 SLOT="0/stable"
-KEYWORDS="~amd64 ~arm64"
+KEYWORDS="~amd64 ~arm64 ~ppc64"
 #
 # vaapi is enabled by default upstream for some arches \
 # See https://github.com/chromium/chromium/blob/111.0.5563.64/media/gpu/args.gni#L24
@@ -768,9 +774,6 @@ BDEPEND+="
 	dev-lang/perl
 	dev-vcs/git
 	sys-devel/flex[${MULTILIB_USEDEP}]
-	js-type-check? (
-		virtual/jre
-	)
 	vaapi? (
 		media-video/libva-utils
 	)
@@ -1836,14 +1839,25 @@ ewarn
 	fi
 
 	PATCHES+=(
-		#"${FILESDIR}/chromium-93-InkDropHost-crash.patch" # Breaks during apply
 		"${FILESDIR}/chromium-98-gtk4-build.patch"
 		"${FILESDIR}/chromium-108-EnumTable-crash.patch"
 		"${FILESDIR}/chromium-109-system-zlib.patch"
 		"${FILESDIR}/chromium-109-system-openh264.patch"
+		"${FILESDIR}/chromium-111-ozone-platform.patch"
 		"${FILESDIR}/chromium-use-oauth2-client-switches-as-default.patch"
 		"${FILESDIR}/chromium-cross-compile.patch"
 	)
+
+        if use ppc64 ; then
+		local p
+		for p in $(grep -v "^#" "${WORKDIR}/debian/patches/series" \
+				| grep "^ppc64le" || die); do
+			if [[ ! $p =~ "fix-breakpad-compile.patch" ]]; then
+				ceapply "${WORKDIR}/debian/patches/${p}"
+			fi
+		done
+		PATCHES+=( "${WORKDIR}/ppc64le" )
+	fi
 
 	if use epgo ; then
 		ceapply "${FILESDIR}/extra-patches/chromium-104.0.5112.79-gcc-pgo-link-gcov.patch"
@@ -1888,6 +1902,7 @@ ewarn
 
 	# Adjust the python interpreter version
 	sed -i -e "s|\(^script_executable = \).*|\1\"${EPYTHON}\"|g" .gn || die
+	sed -i -e "s|vpython3|${EPYTHON}|g" testing/xvfb.py || die
 
 	local keeplibs=(
 		base/third_party/cityhash
@@ -1968,6 +1983,7 @@ ewarn
 		third_party/devtools-frontend/src/front_end/third_party/marked
 		third_party/devtools-frontend/src/front_end/third_party/puppeteer
 		third_party/devtools-frontend/src/front_end/third_party/puppeteer/package/lib/esm/third_party/mitt
+		third_party/devtools-frontend/src/front_end/third_party/vscode.web-custom-data
 		third_party/devtools-frontend/src/front_end/third_party/wasmparser
 		third_party/devtools-frontend/src/test/unittests/front_end/third_party/i18n
 		third_party/devtools-frontend/src/third_party
@@ -2516,7 +2532,7 @@ ewarn
 	myconf_gn+=" use_gnome_keyring=false"
 
 	# Optional dependencies.
-	myconf_gn+=" enable_js_type_check=$(usex js-type-check true false)"
+	myconf_gn+=" enable_js_type_check=false"
 	myconf_gn+=" enable_hangout_services_extension=$(usex hangouts true false)"
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
 
@@ -2769,10 +2785,7 @@ einfo
 		myconf_gn+=" ozone_platform_x11=$(usex X true false)"
 		myconf_gn+=" ozone_platform_wayland=$(usex wayland true false)"
 		myconf_gn+=" ozone_platform=$(usex wayland \"wayland\" \"x11\")"
-		if use wayland; then
-			myconf_gn+=" use_system_libwayland=true"
-			myconf_gn+=" use_system_wayland_scanner=true"
-		fi
+		myconf_gn+=" use_system_libwayland=true"
 	fi
 
 	#

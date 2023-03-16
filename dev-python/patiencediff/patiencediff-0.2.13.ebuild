@@ -21,7 +21,6 @@ DEPEND+="
 BDEPEND+="
 	>=dev-python/cython-0.29[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
-	
 "
 SRC_URI="
 https://github.com/breezy-team/patiencediff/archive/v${PV}.tar.gz
@@ -29,5 +28,13 @@ https://github.com/breezy-team/patiencediff/archive/v${PV}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+
+src_test() {
+	run_test() {
+einfo "Running test for ${EPYTHON}"
+		${EPYTHON} -m unittest patiencediff.test_patiencediff || die
+	}
+	python_foreach_impl run_test
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

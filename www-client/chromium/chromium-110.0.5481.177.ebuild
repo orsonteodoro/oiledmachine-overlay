@@ -48,6 +48,8 @@ DESCRIPTION="The open-source version of the Chrome web browser"
 HOMEPAGE="https://chromium.org/"
 PATCHSET="4"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
+PATCHSET_URI_PPC64="https://quickbuild.io/~raptor-engineering-public"
+PATCHSET_NAME_PPC64="chromium_110.0.5481.77-1raptor0~deb11u1.debian"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
@@ -283,7 +285,7 @@ LICENSE="
 #   domain.
 #
 SLOT="0/stable"
-KEYWORDS="~amd64 ~arm64"
+KEYWORDS="~amd64 ~arm64 ~ppc64"
 #
 # vaapi is enabled by default upstream for some arches \
 # See https://github.com/chromium/chromium/blob/110.0.5481.100/media/gpu/args.gni#L24
@@ -1840,6 +1842,17 @@ ewarn
 		"${FILESDIR}/chromium-cross-compile.patch"
 	)
 
+	if use ppc64 ; then
+		local p
+		for p in $(grep -v "^#" "${WORKDIR}/debian/patches/series" \
+			| grep "^ppc64le" || die); do
+			if [[ ! $p =~ "fix-breakpad-compile.patch" ]]; then
+				ceapply "${WORKDIR}/debian/patches/${p}"
+			fi
+		done
+		PATCHES+=( "${WORKDIR}/ppc64le" )
+	fi
+
 	if use epgo ; then
 		ceapply "${FILESDIR}/extra-patches/chromium-104.0.5112.79-gcc-pgo-link-gcov.patch"
 	fi
@@ -1883,6 +1896,7 @@ ewarn
 
 	# Adjust the python interpreter version
 	sed -i -e "s|\(^script_executable = \).*|\1\"${EPYTHON}\"|g" .gn || die
+	sed -i -e "s|vpython3|${EPYTHON}|g" testing/xvfb.py || die
 
 	local keeplibs=(
 		base/third_party/cityhash
@@ -2753,10 +2767,7 @@ einfo
 		myconf_gn+=" ozone_platform_x11=$(usex X true false)"
 		myconf_gn+=" ozone_platform_wayland=$(usex wayland true false)"
 		myconf_gn+=" ozone_platform=$(usex wayland \"wayland\" \"x11\")"
-		if use wayland; then
-			myconf_gn+=" use_system_libwayland=true"
-			myconf_gn+=" use_system_wayland_scanner=true"
-		fi
+		myconf_gn+=" use_system_wayland_scanner=true"
 	fi
 
 	#
