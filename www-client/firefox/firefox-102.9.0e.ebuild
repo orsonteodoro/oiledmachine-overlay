@@ -96,7 +96,7 @@ https://github.com/mozilla/gecko-dev/commit/d4f5769a01531070eb401fd0b78bbd0ce22c
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-KEYWORDS="amd64 arm64 ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
 SLOT="esr"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -734,8 +734,10 @@ einfo "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}* is missing! Cannot use LLV
 einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 }
 
+# Check every minor version
 __='
-wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/102.8.0esr/linux-x86_64/xpi/" \
+PV="102.9.0"
+wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}esr/linux-x86_64/xpi/" \
         | grep "href.*linux-x86_64"  \
         | cut -f 3 -d ">" \
         | cut -f 1 -d "<" \

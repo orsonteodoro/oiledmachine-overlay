@@ -29,7 +29,7 @@ unset __
 # https://wiki.mozilla.org/Release_Management/Calendar
 
 
-FIREFOX_PATCHSET="firefox-110-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-111-patches-01j.tar.xz"
 
 LLVM_SLOTS=(15 14)
 LLVM_MAX_SLOT=15
@@ -96,8 +96,8 @@ SLOT="rapid"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
 LICENSE_FINGERPRINT="\
-b3c12f437e5a65cdc12a92193f59c2a01ec04b17066d23dcb44adb86ab1e15de\
-79493ff2220bd90c73cccab5e0f367bbae8e42ad7a7fc7ddfc12666f0f4d2571\
+2a8f94bf0a3274e855964049bfd2680cb2855a48ed3dbecddc2dc7ed80d6f3b6\
+038632b75fbf432be59878dafabc17180aec755990a27316a75db365e653150f\
 " # SHA512
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
@@ -360,10 +360,8 @@ REQUIRED_USE="
 	)
 "
 
-# Firefox-only REQUIRED_USE flags
 REQUIRED_USE+=" || ( X wayland )"
 REQUIRED_USE+=" pgo? ( X )"
-REQUIRED_USE+=" screencast? ( wayland )"
 
 # For dependencies, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
@@ -499,7 +497,7 @@ CDEPEND="
 	${FF_ONLY_DEPEND}
 	${NON_FREE_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.46.0:2
-	>=dev-libs/nss-3.87[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.88[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
@@ -740,8 +738,10 @@ einfo "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}* is missing! Cannot use LLV
 einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 }
 
+# Check every minor version
 __='
-wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/110.0/linux-x86_64/xpi/" \
+PV="111.0"
+wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}/linux-x86_64/xpi/" \
         | grep "href.*linux-x86_64"  \
         | cut -f 3 -d ">" \
         | cut -f 1 -d "<" \
@@ -757,10 +757,10 @@ unset __
 
 MOZ_LANGS=(
 ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
-en-GB en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fy-NL ga-IE gd gl gn
-gu-IN he hi-IN hr hsb hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv mk
-mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sco si sk sl son
-sq sr sv-SE szl ta te th tl tr trs uk ur uz vi xh zh-CN zh-TW
+en-GB en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fur fy-NL ga-IE gd gl
+gn gu-IN he hi-IN hr hsb hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv
+mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sc sco si sk
+sl son sq sr sv-SE szl ta te th tl tr trs uk ur uz vi xh zh-CN zh-TW
 )
 
 mozilla_set_globals() {
@@ -1685,6 +1685,7 @@ einfo
 		--disable-strip \
 		--disable-tests \
 		--disable-updater \
+		--disable-wmf-cdm \
 		--enable-negotiateauth \
 		--enable-new-pass-manager \
 		--enable-official-branding \
