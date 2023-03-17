@@ -32,27 +32,25 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev doc test"
+IUSE+=" doc test"
 DEPEND+="
 	>=dev-python/cffi-1.15.0[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${DEPEND}
 "
-# TODO: package
-# aafigure
 BDEPEND+="
 	dev-python/isort[${PYTHON_USEDEP}]
 	dev-python/mypy[${PYTHON_USEDEP}]
 	dev-util/cmake
 	doc? (
-		dev-python/sphinx[${PYTHON_USEDEP}]
+		dev-python/aafigure[${PYTHON_USEDEP}]
 		dev-python/alabaster[${PYTHON_USEDEP}]
+		dev-python/sphinx[${PYTHON_USEDEP}]
 	)
-	dev? (
+	test? (
 		<dev-python/pyglet-2.0.0[${PYTHON_USEDEP}]
 		dev-python/pygame[${PYTHON_USEDEP}]
-		dev-python/aafigure[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
 	)
 "

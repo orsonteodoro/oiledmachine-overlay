@@ -10,9 +10,4 @@
     <remote-id type="github">viblo/pymunk</remote-id>
     <bugs-to>https://github.com/viblo/pymunk/issues</bugs-to>
   </upstream>
-  <use>
-    <flag name="dev">
-      Add developer dependencies only during build time.
-    </flag>
-  </use>
 </pkgmetadata>
