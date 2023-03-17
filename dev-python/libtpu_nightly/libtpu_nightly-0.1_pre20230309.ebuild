@@ -5,6 +5,7 @@
 EAPI=8
 
 MY_PN="libtpu-nightly"
+MY_PV="${PV/_pre/.dev}"
 
 DISTUTILS_USE_PEP517="hatchling"
 PYTHON_COMPAT=( python3_{8..11} )
@@ -28,17 +29,18 @@ RDEPEND+="
 "
 BDEPEND+="
 "
+# See also
+# https://storage.googleapis.com/jax-releases/libtpu_releases.html
 SRC_URI="
-mirror://pypi/${PN:0:1}/${PN}/${PN}-${PV}.tar.gz
+https://storage.googleapis.com/cloud-tpu-tpuvm-artifacts/wheels/libtpu-nightly/libtpu_nightly-${MY_PV}-py3-none-any.whl
 "
 S="${WORKDIR}/libtpu-${PV}"
 RESTRICT="mirror"
 DOCS=( README.md )
 
-src_install() {
-	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+python_compile() {
+	distutils_wheel_install "${BUILD_DIR}/install" \
+		"${DISTDIR}/libtpu_nightly-${MY_PV}-py3-none-any.whl"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

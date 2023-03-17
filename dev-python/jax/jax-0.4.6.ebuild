@@ -47,7 +47,7 @@ DEPEND+="
 	)
 	tpu? (
 		$(gen_jaxlib_depend ${PV})
-		>=dev-python/libtpu-0.1_pre20230309[${PYTHON_USEDEP}]
+		~dev-python/libtpu_nightly-0.1_pre20230309[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
 	)
 "
