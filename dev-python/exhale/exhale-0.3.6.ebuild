@@ -68,16 +68,11 @@ https://github.com/svenevs/exhale/archive/v${PV}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+PATCHES=(
+	"${FILESDIR}/${PN}-0.3.6-fix-degrees_to_radians_s-fn-matching-linux.patch"
+)
 
 distutils_enable_sphinx "docs"
-#distutils_enable_tests "pytest"
-
-src_test() {
-	run_test() {
-einfo "Running test for ${EPYTHON}"
-		tox || die
-	}
-	python_foreach_impl run_test
-}
+distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META-TAGS:  orphaned
