@@ -53,7 +53,10 @@ DEPEND+="
 	)
 	jax? (
 		>=dev-python/jax-0.3.24[${PYTHON_USEDEP}]
-		>=dev-python/jaxlib-0.3.24[${PYTHON_USEDEP}]
+		|| (
+			>=dev-python/jaxlib-0.3.24[${PYTHON_USEDEP}]
+			>=dev-python/jaxlib-bin-0.3.24[${PYTHON_USEDEP}]
+		)
 	)
 	mujoco? (
 		>=dev-python/mujoco-2.3.1[${PYTHON_USEDEP}]

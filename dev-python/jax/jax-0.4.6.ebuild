@@ -20,7 +20,7 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" australis cpu cuda doc test tpu"
+IUSE+=" australis cpu cuda doc test"
 gen_jaxlib_depend() {
 	local pv="${1}"
 	echo "
@@ -44,11 +44,6 @@ DEPEND+="
 	cuda? (
 		$(gen_jaxlib_depend ${PV})
 		=dev-util/nvidia-cuda-toolkit-11*
-	)
-	tpu? (
-		$(gen_jaxlib_depend ${PV})
-		dev-python/requests[${PYTHON_USEDEP}]
-		~dev-python/libtpu_nightly-0.1_pre20230309[${PYTHON_USEDEP}]
 	)
 "
 RDEPEND+="

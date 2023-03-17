@@ -20,8 +20,5 @@
     <flag name="cpu">
       Add dependencies for CPU support
     </flag>
-    <flag name="tpu">
-      Add dependencies for TPU (Tensor Processing Unit) support
-    </flag>
   </use>
 </pkgmetadata>
