@@ -41,14 +41,14 @@ DEPEND+="
 	cpu? (
 		$(gen_jaxlib_depend ${PV})
 	)
+	cuda? (
+		$(gen_jaxlib_depend ${PV})
+		=dev-util/nvidia-cuda-toolkit-11*
+	)
 	tpu? (
 		$(gen_jaxlib_depend ${PV})
 		>=dev-python/libtpu-0.1_pre20230309[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
-	)
-	cuda? (
-		$(gen_jaxlib_depend ${PV})
-		=dev-util/nvidia-cuda-toolkit-11*
 	)
 "
 RDEPEND+="
