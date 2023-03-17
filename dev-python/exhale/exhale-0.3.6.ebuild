@@ -39,10 +39,6 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
-# TODO: packaging:
-# flake8-colors
-# flake8-docstrings
-# flake8-import-order
 BDEPEND+="
 	doc? (
 		>=dev-python/sphinx_rtd_theme-1[${PYTHON_USEDEP}]
