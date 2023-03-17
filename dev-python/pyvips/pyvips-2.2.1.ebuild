@@ -22,23 +22,27 @@ DEPEND+="
 RDEPEND+="
 	${DEPEND}
 "
-# TODO pyperf needs to be packaged.
 BDEPEND+="
 	${CDEPEND}
 	dev-python/pkgconfig[${PYTHON_USEDEP}]
+	doc? (
+		dev-python/sphinx[${PYTHON_USEDEP}]
+		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
+	)
 	test? (
 		dev-python/pyperf[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-flake8[${PYTHON_USEDEP}]
 		dev-python/pytest-runner[${PYTHON_USEDEP}]
 	)
-	doc? (
-		dev-python/sphinx[${PYTHON_USEDEP}]
-		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
-	)
 "
 PDEPEND+="
-	media-libs/vips
+	!test? (
+		media-libs/vips
+	)
+	test? (
+		media-libs/vips[jpeg,png]
+	)
 "
 SRC_URI="
 https://github.com/libvips/pyvips/archive/refs/tags/v${PV}.tar.gz
@@ -49,3 +53,26 @@ RESTRICT="mirror"
 
 distutils_enable_sphinx "doc"
 distutils_enable_tests "pytest"
+
+pkg_setup() {
+	if use test ; then
+		if ! has_version "media-libs/vips" ; then
+eerror
+eerror "Test require media-libs/vips be installed"
+eerror
+			die
+		fi
+		if has_version "media-libs/vips[-jpeg]" ; then
+eerror
+eerror "Test require media-libs/vips[jpeg]"
+eerror
+			die
+		fi
+		if has_version "media-libs/vips[-png]" ; then
+eerror
+eerror "Test require media-libs/vips[png]"
+eerror
+			die
+		fi
+	fi
+}
