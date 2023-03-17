@@ -61,6 +61,7 @@ BDEPEND+="
 		dev-python/celshast[${PYTHON_USEDEP},furo]
 	)
 	test? (
+		$(python_gen_any_dep 'dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]')
 		dev-python/autorom[${PYTHON_USEDEP}]
 		dev-python/bandit[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
@@ -69,7 +70,6 @@ BDEPEND+="
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 		dev-util/codespell[${PYTHON_USEDEP}]
-		dev-vcs/pre-commit[${PYTHON_USEDEP}]
 	)
 "
 # TODO ebuild-package needs to be created:

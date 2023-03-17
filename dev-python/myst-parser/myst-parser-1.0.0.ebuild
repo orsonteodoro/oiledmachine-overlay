@@ -59,7 +59,7 @@ BDEPEND+="
 	dev-python/mypy[${PYTHON_USEDEP}]
 	dev-util/ruff[${PYTHON_USEDEP}]
 	codestyle? (
-		>=dev-vcs/pre-commit-3[${PYTHON_USEDEP}]
+		$(python_gen_any_dep '>=dev-vcs/pre-commit-3[${PYTHON_SINGLE_USEDEP}]')
 	)
 	linkify? (
 		>=dev-python/linkify-it-py-1[${PYTHON_USEDEP}]

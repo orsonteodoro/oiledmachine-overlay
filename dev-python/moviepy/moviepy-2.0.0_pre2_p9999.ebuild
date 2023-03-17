@@ -64,6 +64,7 @@ BDEPEND+="
 		>=dev-python/sphinx_rtd_theme-0.5.1[${PYTHON_USEDEP}]
 	)
 	lint? (
+		$(python_gen_any_dep 'dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]')
 		dev-python/black[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/flake8-absolute-import[${PYTHON_USEDEP}]
@@ -71,7 +72,6 @@ BDEPEND+="
 		dev-python/flake8-rst-docstrings[${PYTHON_USEDEP}]
 		dev-python/flake8-implicit-str-concat[${PYTHON_USEDEP}]
 		dev-python/isort[${PYTHON_USEDEP}]
-		dev-vcs/pre-commit[${PYTHON_USEDEP}]
 	)
 	test? (
 		(
