@@ -192,7 +192,7 @@ eerror "All ROCm direct/indirect DEPENDs must be the same version"
 eerror
 eerror "Package:  ${catpn}"
 eerror
-eerror "Expected version:\t${pv}"
+eerror "Expected version:\t${expected_pv}"
 eerror "Actual version:\t${actual_pv}"
 eerror
 			die
