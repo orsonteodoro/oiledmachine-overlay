@@ -5,6 +5,9 @@
 
 # See also metadata.xml for integration of custom assets into ebuild.
 
+No hash fingerprints so if you notice that the blake2b or sha512 is different
+on your side please report.
+
 Harmonic summary:
 
 wrlzswfdvyprz10hegws74d4wzh7270o.mp4 properties:
@@ -72,7 +75,8 @@ Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
 # Realistic, 4K, road, race cars, dusty dirt road, cowboys, cowgirls, horses,
 # baby horse, san francisco, prison island, san francisco bridge, cliff shot of
 # bridge, close up shots, walking people on the bridge, dead grass, cliff side,
-# mt rushmore, trees on a hill, mechanic, ferry
+# mt rushmore, trees on a hill, mechanic, ferry, train, cargo ship, sail boat,
+# aged terrain
 
 tmzm8y7bfzpote9obs7le3olh5j87iir.mp4 properties:
 Duration: 00:17:57.31, start: 0.000000, bitrate: 59944 kb/s
