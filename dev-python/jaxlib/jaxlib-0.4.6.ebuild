@@ -36,7 +36,6 @@ REQUIRED_USE+="
 "
 # Missing
 # hipsolver
-# miopen-hip
 
 ROCM_PV="5.3.0"
 ROCM_DEPEND="
