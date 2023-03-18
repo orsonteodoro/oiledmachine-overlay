@@ -422,7 +422,7 @@ eerror "Use only clang slots ${LLVM_SLOTS[@]}"
 eerror
 		die
 	fi
-	if (( ${s} == 10 || ${s} == 11 || ${s} == 14 )) ; then
+	if (( ${s} == 10 || ${s} == 11 || ${s} == 14 || ${s} == 15 )) ; then
 		:;
 	else
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
@@ -432,7 +432,6 @@ ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	${CC} --version || die
 	strip-unsupported-flags
 }
-
 
 setup_tc() {
 	export CC=$(tc-getCC)
