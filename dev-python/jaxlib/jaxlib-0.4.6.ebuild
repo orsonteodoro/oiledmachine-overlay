@@ -79,7 +79,15 @@ JRE_DEPEND="
 RDEPEND+="
 	!dev-python/jaxlib-bin
 	${JRE_DEPEND}
+	=dev-cpp/abseil-cpp-20220623*:=
+	>=app-arch/snappy-1.1.10
 	>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
+	>=dev-libs/double-conversion-3.2.0
+	>=dev-libs/nsync-1.25.0
+	>=net-libs/grpc-1.27_p9999:=
+	>=dev-libs/protobuf-3.21.9:=
+	>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
+	>=sys-libs/zlib-1.2.13
 	rocm? (
 		${ROCM_DEPEND}
 	)
@@ -125,25 +133,93 @@ BDEPEND+="
 	)
 "
 
+# PLATFORMS_PV uses commit from tensorflow/runtime
+
+APPLE_SUPPORT_PV="1.1.0"	# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
 BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace3.bzl
+DOUBLE_CONVERSION_PV="3.2.0"	# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
+FLATBUFFERS_PV="2.0.6"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/flatbuffers/workspace.bzl
+JSONCPP_PV="1.9.5"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
+NSYNC_PV="1.25.0"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
+ONEDNN_PV="2.7.3"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
+PLATFORMS_PV="0.0.6"		# From https://github.com/tensorflow/runtime/blob/8016602194b2e29d6c26d40b8ddacf2929f2112c/third_party/rules_cuda/cuda/dependencies.bzl
+PROTOBUF_PV="3.21.9"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
+PYBIND11_PV="2.10.0"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
+RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
+RULES_APPLE_PV="1.0.1"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
 RULES_JVM_EXTERNAL_PV="4.3"	# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace3.bzl
 RULES_PKG_PV="0.7.1"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace3.bzl
+RULES_PYTHON_PV="0.0.1"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
+RULES_SWIFT_PV="1.0.0"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
+ZLIB_PV="1.2.13"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
 
+EGIT_ABSEIL_CPP_COMMIT="273292d1cfc0a94a65082ee350509af1d113344d"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/absl/workspace.bzl
+EGIT_BAZEL_TOOLCHAINS_COMMIT="8c717f8258cd5f6c7a45b97d974292755852b658"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace1.bzl
+EGIT_DLPACK_COMMIT="9351cf542ab478499294864ff3acfdab5c8c5f3d"			# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/dlpack/workspace.bzl
+EGIT_DUCC_COMMIT="356d619a4b5f6f8940d15913c14a043355ef23be"			# From /var/tmp/portage/dev-python/jaxlib-0.4.6/work/jax-jax-v0.4.6/third_party/ducc/workspace.bzl
+EGIT_FARMHASH_COMMIT="0d859a811870d10f53a594927d0d0b97573ad06d"			# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/farmhash/workspace.bzl
+EGIT_EIGEN_COMMIT="2e9b945baf2901b644decf3fe48c84679d303d14"			# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/eigen3/workspace.bzl
+EGIT_PYBIND11_ABSEIL_COMMIT="2c4932ed6f6204f1656e245838f4f5eae69d2e29"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/pybind11_abseil/workspace.bzl
 EGIT_LLVM_COMMIT="d2e0a98391e3657a679b98475d65954622c44a9e"			# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/llvm/workspace.bzl
+EGIT_RE2_COMMIT="a276a8c738735a0fe45a6ee590fe2df69bcf4502"			# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
+EGIT_RULES_CC_COMMIT="081771d4a0e9d7d3aa0eed2ef389fa4700dfb23e"			# From https://github.com/tensorflow/runtime/blob/8016602194b2e29d6c26d40b8ddacf2929f2112c/third_party/rules_cuda/cuda/dependencies.bzl
 EGIT_RULES_CLOSURE_COMMIT="308b05b2419edb5c8ee0471b67a40403df940149"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace3.bzl
+EGIT_RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"
+EGIT_RULES_PROTO_COMMIT="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace0.bzl
+EGIT_SNAPPY_COMMIT="984b191f0fefdeb17050b42a90b7625999c13b8d"			# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
 EGIT_TENSORFLOW_COMMIT="2aaeef25361311b21b9e81e992edff94bcb6bae3"		# From https://github.com/google/jax/blob/jaxlib-v0.4.6/WORKSPACE#L13
 EGIT_TENSORFLOW_RUNTIME_COMMIT="8016602194b2e29d6c26d40b8ddacf2929f2112c"	# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/tf_runtime/workspace.bzl
+EGIT_GRPC_COMMIT="b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd"			# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
+EGIT_GOOGLEAPIS_COMMIT="6b3fdcea8bc5398be4e7e9930c693f0ea09316a0"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
+EGIT_PYBIND11_BAZEL_COMMIT="72cbbf1fbc830e487e3012862b7b720001b70672"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/pybind11_abseil/workspace.bzl
+EGIT_STABLEHLO_COMMIT="48b32cb5126471481774244ddd8fee2f3efe66e1"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/stablehlo/workspace.bzl
 # DO NOT HARD WRAP
+# DO NOT CHANGE TARBALL FILE EXT
+# Do not use GH urls if .gitmodules exists in that project
 bazel_external_uris="
-https://github.com/bazelbuild/rules_closure/archive/${EGIT_RULES_CLOSURE_COMMIT}.tar.gz -> bazelbuild-rules_closure-${EGIT_RULES_CLOSURE_COMMIT}.tar.gz
-https://github.com/bazelbuild/rules_jvm_external/archive/${RULES_JVM_EXTERNAL_PV}.zip -> rules_jvm_external-${RULES_JVM_EXTERNAL_PV}.zip
+https://github.com/abseil/abseil-cpp/archive/${EGIT_ABSEIL_CPP_COMMIT}.tar.gz -> abseil-cpp-${EGIT_ABSEIL_CPP_COMMIT}.tar.gz
+https://github.com/bazelbuild/apple_support/releases/download/${APPLE_SUPPORT_PV}/apple_support.${APPLE_SUPPORT_PV}.tar.gz -> apple_support-${APPLE_SUPPORT_PV}.tar.gz
+https://github.com/bazelbuild/bazel-toolchains/archive/${EGIT_BAZEL_TOOLCHAINS_COMMIT}.tar.gz -> bazel-toolchains-${EGIT_BAZEL_TOOLCHAINS_COMMIT}.tar.gz
 https://github.com/bazelbuild/bazel-skylib/releases/download/${BAZEL_SKYLIB_PV}/bazel-skylib-${BAZEL_SKYLIB_PV}.tar.gz -> bazel-skylib-${BAZEL_SKYLIB_PV}.tar.gz
+https://github.com/bazelbuild/platforms/releases/download/${PLATFORMS_PV}/platforms-${PLATFORMS_PV}.tar.gz -> platforms-${PLATFORMS_PV}.tar.gz
+https://github.com/bazelbuild/rules_android/archive/v${RULES_ANDROID_PV}.zip -> rules_android-${RULES_ANDROID_PV}.zip
+https://github.com/bazelbuild/rules_apple/releases/download/${RULES_APPLE_PV}/rules_apple.${RULES_APPLE_PV}.tar.gz
+https://github.com/bazelbuild/rules_cc/archive/${EGIT_RULES_CC_COMMIT}.tar.gz -> rules_cc-${EGIT_RULES_CC_COMMIT}.tar.gz
+https://github.com/bazelbuild/rules_closure/archive/${EGIT_RULES_CLOSURE_COMMIT}.tar.gz -> bazelbuild-rules_closure-${EGIT_RULES_CLOSURE_COMMIT}.tar.gz
+https://github.com/bazelbuild/rules_java/archive/${EGIT_RULES_JAVA_COMMIT}.zip -> rules_java-${EGIT_RULES_JAVA_COMMIT}.zip
+https://github.com/bazelbuild/rules_jvm_external/archive/${RULES_JVM_EXTERNAL_PV}.zip -> rules_jvm_external-${RULES_JVM_EXTERNAL_PV}.zip
 https://github.com/bazelbuild/rules_pkg/releases/download/${RULES_PKG_PV}/rules_pkg-${RULES_PKG_PV}.tar.gz
+https://github.com/bazelbuild/rules_proto/archive/${EGIT_RULES_PROTO_COMMIT}.tar.gz -> rules_proto-${EGIT_RULES_PROTO_COMMIT}.tar.gz
+https://github.com/bazelbuild/rules_python/releases/download/${RULES_PYTHON_PV}/rules_python-${RULES_PYTHON_PV}.tar.gz -> rules_python-${RULES_PYTHON_PV}.tar.gz
+https://github.com/bazelbuild/rules_swift/releases/download/${RULES_SWIFT_PV}/rules_swift.${RULES_SWIFT_PV}.tar.gz
+https://github.com/dmlc/dlpack/archive/${EGIT_DLPACK_COMMIT}.tar.gz -> dlpack-${EGIT_DLPACK_COMMIT}.tar.gz
+https://github.com/google/re2/archive/${EGIT_RE2_COMMIT}.tar.gz -> re2-${EGIT_RE2_COMMIT}.tar.gz
 https://github.com/llvm/llvm-project/archive/${EGIT_LLVM_COMMIT}.tar.gz -> llvm-${EGIT_LLVM_COMMIT}.tar.gz
+https://github.com/mreineck/ducc/archive/${EGIT_DUCC_COMMIT}.tar.gz -> ducc-${EGIT_DUCC_COMMIT}.tar.gz
+https://github.com/pybind/pybind11_abseil/archive/${EGIT_PYBIND11_ABSEIL_COMMIT}.tar.gz -> pybind11_abseil-${EGIT_PYBIND11_ABSEIL_COMMIT}.tar.gz
+https://github.com/pybind/pybind11_bazel/archive/${EGIT_PYBIND11_BAZEL_COMMIT}.tar.gz -> pybind11_bazel-${EGIT_PYBIND11_BAZEL_COMMIT}.tar.gz
 https://github.com/tensorflow/runtime/archive/${EGIT_TENSORFLOW_RUNTIME_COMMIT}.tar.gz -> tensorflow-runtime-${EGIT_TENSORFLOW_RUNTIME_COMMIT}.tar.gz
 https://github.com/tensorflow/tensorflow/archive/${EGIT_TENSORFLOW_COMMIT}.tar.gz -> tensorflow-${EGIT_TENSORFLOW_COMMIT}.tar.gz
+https://github.com/google/farmhash/archive/${EGIT_FARMHASH_COMMIT}.tar.gz -> farmhash-${EGIT_FARMHASH_COMMIT}.tar.gz
+https://github.com/google/flatbuffers/archive/v${FLATBUFFERS_PV}.tar.gz -> flatbuffers-${FLATBUFFERS_PV}.tar.gz
+https://github.com/googleapis/googleapis/archive/${EGIT_GOOGLEAPIS_COMMIT}.tar.gz -> googleapis-${EGIT_GOOGLEAPIS_COMMIT}.tar.gz
+https://github.com/openxla/stablehlo/archive/${EGIT_STABLEHLO_COMMIT}.zip -> stablehlo-${EGIT_STABLEHLO_COMMIT}.zip
+https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN_COMMIT}/eigen-${EGIT_EIGEN_COMMIT}.tar.gz -> eigen-${EGIT_EIGEN_COMMIT}.tar.gz
+https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/snappy/archive/${EGIT_SNAPPY_COMMIT}.tar.gz -> snappy-${EGIT_SNAPPY_COMMIT}.tar.gz
 
+
+
+https://storage.googleapis.com/mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.zip -> protobuf-${PROTOBUF_PV}.zip
+https://github.com/oneapi-src/oneDNN/archive/refs/tags/v${ONEDNN_PV}.tar.gz -> oneDNN-${ONEDNN_PV}.tar.gz
+https://github.com/open-source-parsers/jsoncpp/archive/${JSONCPP_PV}.tar.gz -> jsoncpp-${JSONCPP_PV}.tar.gz
 "
+#https://github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.zip -> protobuf-${PROTOBUFF_PV}.zip
+
+#https://github.com/pybind/pybind11/archive/v${PYBIND11_PV}.tar.gz -> pybind11-${PYBIND11_PV}.tar.gz
+#https://github.com/google/nsync/archive/${NSYNC_PV}.tar.gz -> nsync-${NSYNC_PV}.tar.gz
+#https://zlib.net/fossils/zlib-${ZLIB_PV}.tar.gz
+#https://github.com/google/double-conversion/archive/v${DOUBLE_CONVERSION_PV}.tar.gz -> double-conversion-${DOUBLE_CONVERSION_PV}.tar.gz
+#https://storage.googleapis.com/mirror.tensorflow.org/github.com/grpc/grpc/archive/${EGIT_GRPC_COMMIT}.tar.gz -> grpc-${EGIT_GRPC_COMMIT}.tar.gz
 SRC_URI="
 	${bazel_external_uris}
 https://github.com/google/jax/archive/refs/tags/${PN}-v${PV}.tar.gz
@@ -503,8 +579,19 @@ src_unpack() {
 	fi
 }
 
+load_env() {
+	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
+#	export KERAS_HOME="${T}/.keras" # otherwise sandbox violation writing ~/.keras
+	if [[ -e "${WORKDIR}/.ccache_dir_val" && "${FEATURES}" =~ "ccache" ]] \
+		&& has_version "dev-util/ccache" ; then
+		export CCACHE_DIR=$(cat "${WORKDIR}/.ccache_dir_val")
+einfo "CCACHE_DIR:\t${CCACHE_DIR}"
+	fi
+}
+
 # Keep in sync with tensorflow ebuild
 prepare_tensorflow() {
+	load_env
 	setup_linker
 
 	if ! use custom-optimization-level ; then
@@ -545,11 +632,51 @@ einfo "Preventing stall.  Removing -Os."
 }
 
 python_configure() {
+	load_env
 	local args=()
 
 	prepare_tensorflow
 
 	bazel_setup_bazelrc
+
+	local SYSLIBS=(
+#		absl_py
+#		astor_archive
+#		astunparse_archive
+#		boringssl
+#		com_github_googlecloudplatform_google_cloud_cpp
+		com_github_grpc_grpc
+#		com_google_absl # broken?
+#		com_google_protobuf # broken?
+#		curl
+#		cython
+#		dill_archive
+		double_conversion
+#		flatbuffers
+#		functools32_archive
+#		gast_archive
+#		gif
+#		hwloc
+#		icu
+#		jsoncpp_git
+#		libjpeg_turbo
+#		lmdb
+#		nasm
+		nsync
+#		opt_einsum_archive
+#		org_sqlite
+#		pasta
+#		png
+		pybind11
+#		six_archive
+#		snappy # broken?
+#		tblib_archive
+#		termcolor_archive
+#		typing_extensions_archive
+#		wrapt
+		zlib
+	)
+	export TF_SYSTEM_LIBS=$(echo "${SYSLIBS[@]}" | tr " " ",")
 
 	# The default is release which forces avx by default.
 	if is-flagq '-march=native' ; then
@@ -589,7 +716,26 @@ ewarn
 	# Merge
 	cat ".jax_configure.bazelrc" > "${T}/bazelrc_merged" || die
 	cat "${T}/bazelrc" >> "${T}/bazelrc_merged" || die
-	mv "${T}/bazelrc_merged" "${T}/bazelrc" || die
+
+	echo 'build --noshow_progress' >> "${T}/bazelrc_merged" || die # Disable high CPU usage on xfce4-terminal
+	echo 'build --subcommands' >> "${T}/bazelrc_merged" || die # Increase verbosity
+
+	echo "build --action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> "${T}/bazelrc_merged" || die
+	echo "build --host_action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> "${T}/bazelrc_merged" || die
+
+	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
+		local ccache_dir=$(ccache -sv \
+			| grep "Cache directory" \
+			| cut -f 2 -d ":" \
+			| sed -r -e "s|^[ ]+||g")
+		echo "${ccache_dir}" > "${WORKDIR}/.ccache_dir_val" || die
+einfo "Adding build --sandbox_writable_path=\"${ccache_dir}\" to ${T}/bazelrc_merged"
+		echo "build --action_env=CCACHE_DIR=\"${ccache_dir}\"" >> "${T}/bazelrc_merged" || die
+		echo "build --host_action_env=CCACHE_DIR=\"${ccache_dir}\"" >> "${T}/bazelrc_merged" || die
+		echo "build --sandbox_writable_path=${ccache_dir}" >> "${T}/bazelrc_merged" || die
+	fi
+
+	mv "${T}/bazelrc_merged" "${S}/build/.jax_configure.bazelrc" || die
 }
 
 get_host() {
@@ -625,19 +771,36 @@ eerror
 	fi
 }
 
+# From bazel.eclass
+_ebazel() {
+	bazel_setup_bazelrc
+
+	# Use different build folders for each multibuild variant.
+	local output_base="${BUILD_DIR:-${S}}"
+	output_base="${output_base%/}-bazel-base"
+	mkdir -p "${output_base}" || die
+
+	set -- bazel --bazelrc="${S}/build/.jax_configure.bazelrc" --output_base="${output_base}" ${@}
+	echo "${*}" >&2
+	"${@}" || die "ebazel failed"
+}
+
 python_compile() {
+	load_env
 	[[ -e ".jax_configure.bazelrc" ]] || die "Missing file"
 einfo "Building for ${EPYTHON}"
-	ebazel run \
+	cd "${S}/build" || die
+	_ebazel run \
 		--verbose_failures=true \
-		:build_wheel \
+		":build_wheel" \
 		-- \
 		--output_path=$(pwd)/dist \
 		--cpu=$(get_host)
-	ebazel shutdown
+	_ebazel shutdown
 }
 
 src_install() {
+	load_env
 	distutils-r1_src_install
 	docinto licenses
 	dodoc AUTHORS LICENSE
