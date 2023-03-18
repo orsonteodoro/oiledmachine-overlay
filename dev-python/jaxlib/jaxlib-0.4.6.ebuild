@@ -159,20 +159,20 @@ EGIT_DLPACK_COMMIT="9351cf542ab478499294864ff3acfdab5c8c5f3d"			# From https://g
 EGIT_DUCC_COMMIT="356d619a4b5f6f8940d15913c14a043355ef23be"			# From https://github.com/google/jax/blob/jaxlib-v0.4.6/third_party/ducc/workspace.bzl
 EGIT_FARMHASH_COMMIT="0d859a811870d10f53a594927d0d0b97573ad06d"			# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/farmhash/workspace.bzl
 EGIT_EIGEN_COMMIT="2e9b945baf2901b644decf3fe48c84679d303d14"			# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/eigen3/workspace.bzl
-EGIT_PYBIND11_ABSEIL_COMMIT="2c4932ed6f6204f1656e245838f4f5eae69d2e29"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/pybind11_abseil/workspace.bzl
+EGIT_GOOGLEAPIS_COMMIT="6b3fdcea8bc5398be4e7e9930c693f0ea09316a0"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
+EGIT_GRPC_COMMIT="b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd"			# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
 EGIT_LLVM_COMMIT="d2e0a98391e3657a679b98475d65954622c44a9e"			# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/llvm/workspace.bzl
+EGIT_PYBIND11_ABSEIL_COMMIT="2c4932ed6f6204f1656e245838f4f5eae69d2e29"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/pybind11_abseil/workspace.bzl
+EGIT_PYBIND11_BAZEL_COMMIT="72cbbf1fbc830e487e3012862b7b720001b70672"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/pybind11_abseil/workspace.bzl
 EGIT_RE2_COMMIT="a276a8c738735a0fe45a6ee590fe2df69bcf4502"			# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
 EGIT_RULES_CC_COMMIT="081771d4a0e9d7d3aa0eed2ef389fa4700dfb23e"			# From https://github.com/tensorflow/runtime/blob/8016602194b2e29d6c26d40b8ddacf2929f2112c/third_party/rules_cuda/cuda/dependencies.bzl
 EGIT_RULES_CLOSURE_COMMIT="308b05b2419edb5c8ee0471b67a40403df940149"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace3.bzl
 EGIT_RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"
 EGIT_RULES_PROTO_COMMIT="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace0.bzl
 EGIT_SNAPPY_COMMIT="984b191f0fefdeb17050b42a90b7625999c13b8d"			# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
+EGIT_STABLEHLO_COMMIT="48b32cb5126471481774244ddd8fee2f3efe66e1"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/stablehlo/workspace.bzl
 EGIT_TENSORFLOW_COMMIT="2aaeef25361311b21b9e81e992edff94bcb6bae3"		# From https://github.com/google/jax/blob/jaxlib-v0.4.6/WORKSPACE#L13
 EGIT_TENSORFLOW_RUNTIME_COMMIT="8016602194b2e29d6c26d40b8ddacf2929f2112c"	# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/tf_runtime/workspace.bzl
-EGIT_GRPC_COMMIT="b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd"			# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
-EGIT_GOOGLEAPIS_COMMIT="6b3fdcea8bc5398be4e7e9930c693f0ea09316a0"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace2.bzl
-EGIT_PYBIND11_BAZEL_COMMIT="72cbbf1fbc830e487e3012862b7b720001b70672"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/pybind11_abseil/workspace.bzl
-EGIT_STABLEHLO_COMMIT="48b32cb5126471481774244ddd8fee2f3efe66e1"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/stablehlo/workspace.bzl
 # DO NOT HARD WRAP
 # DO NOT CHANGE TARBALL FILE EXT
 # Do not use GH urls if .gitmodules exists in that project
@@ -196,6 +196,8 @@ https://github.com/dmlc/dlpack/archive/${EGIT_DLPACK_COMMIT}.tar.gz -> dlpack-${
 https://github.com/google/re2/archive/${EGIT_RE2_COMMIT}.tar.gz -> re2-${EGIT_RE2_COMMIT}.tar.gz
 https://github.com/llvm/llvm-project/archive/${EGIT_LLVM_COMMIT}.tar.gz -> llvm-${EGIT_LLVM_COMMIT}.tar.gz
 https://github.com/mreineck/ducc/archive/${EGIT_DUCC_COMMIT}.tar.gz -> ducc-${EGIT_DUCC_COMMIT}.tar.gz
+https://github.com/oneapi-src/oneDNN/archive/refs/tags/v${ONEDNN_PV}.tar.gz -> oneDNN-${ONEDNN_PV}.tar.gz
+https://github.com/open-source-parsers/jsoncpp/archive/${JSONCPP_PV}.tar.gz -> jsoncpp-${JSONCPP_PV}.tar.gz
 https://github.com/pybind/pybind11_abseil/archive/${EGIT_PYBIND11_ABSEIL_COMMIT}.tar.gz -> pybind11_abseil-${EGIT_PYBIND11_ABSEIL_COMMIT}.tar.gz
 https://github.com/pybind/pybind11_bazel/archive/${EGIT_PYBIND11_BAZEL_COMMIT}.tar.gz -> pybind11_bazel-${EGIT_PYBIND11_BAZEL_COMMIT}.tar.gz
 https://github.com/tensorflow/runtime/archive/${EGIT_TENSORFLOW_RUNTIME_COMMIT}.tar.gz -> tensorflow-runtime-${EGIT_TENSORFLOW_RUNTIME_COMMIT}.tar.gz
@@ -207,19 +209,14 @@ https://github.com/openxla/stablehlo/archive/${EGIT_STABLEHLO_COMMIT}.zip -> sta
 https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN_COMMIT}/eigen-${EGIT_EIGEN_COMMIT}.tar.gz -> eigen-${EGIT_EIGEN_COMMIT}.tar.gz
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/snappy/archive/${EGIT_SNAPPY_COMMIT}.tar.gz -> snappy-${EGIT_SNAPPY_COMMIT}.tar.gz
 
-
-
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.zip -> protobuf-${PROTOBUF_PV}.zip
-https://github.com/oneapi-src/oneDNN/archive/refs/tags/v${ONEDNN_PV}.tar.gz -> oneDNN-${ONEDNN_PV}.tar.gz
-https://github.com/open-source-parsers/jsoncpp/archive/${JSONCPP_PV}.tar.gz -> jsoncpp-${JSONCPP_PV}.tar.gz
 "
-#https://github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.zip -> protobuf-${PROTOBUFF_PV}.zip
 
 #https://github.com/pybind/pybind11/archive/v${PYBIND11_PV}.tar.gz -> pybind11-${PYBIND11_PV}.tar.gz
-#https://github.com/google/nsync/archive/${NSYNC_PV}.tar.gz -> nsync-${NSYNC_PV}.tar.gz
-#https://zlib.net/fossils/zlib-${ZLIB_PV}.tar.gz
 #https://github.com/google/double-conversion/archive/v${DOUBLE_CONVERSION_PV}.tar.gz -> double-conversion-${DOUBLE_CONVERSION_PV}.tar.gz
+#https://github.com/google/nsync/archive/${NSYNC_PV}.tar.gz -> nsync-${NSYNC_PV}.tar.gz
 #https://storage.googleapis.com/mirror.tensorflow.org/github.com/grpc/grpc/archive/${EGIT_GRPC_COMMIT}.tar.gz -> grpc-${EGIT_GRPC_COMMIT}.tar.gz
+#https://zlib.net/fossils/zlib-${ZLIB_PV}.tar.gz
 SRC_URI="
 	${bazel_external_uris}
 https://github.com/google/jax/archive/refs/tags/${PN}-v${PV}.tar.gz
