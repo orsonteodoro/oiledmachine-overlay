@@ -125,21 +125,24 @@ BDEPEND+="
 	)
 "
 
-BAZEL_SKYLIB_PV="1.3.0" # From /var/tmp/portage/dev-python/jaxlib-0.4.6/work/jax-jax-v0.4.6-python3_10-bazel-base/external/org_tensorflow/tensorflow/workspace3.bzl
-RULES_JVM_EXTERNAL_PV="4.3" # From /var/tmp/portage/dev-python/jaxlib-0.4.6/work/jax-jax-v0.4.6-python3_10-bazel-base/external/org_tensorflow/tensorflow/workspace3.bzl
+BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace3.bzl
+RULES_JVM_EXTERNAL_PV="4.3"	# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace3.bzl
+RULES_PKG_PV="0.7.1"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace3.bzl
 
-EGIT_LLVM_COMMIT="d2e0a98391e3657a679b98475d65954622c44a9e" # From /var/tmp/portage/dev-python/jaxlib-0.4.6/homedir/.cache/bazel/_bazel_portage/5c7deb603c463ba8f76d96704568ef60/external/org_tensorflow/third_party/llvm/workspace.bzl
-EGIT_RULES_CLOSURE_COMMIT="308b05b2419edb5c8ee0471b67a40403df940149" # From /var/tmp/portage/dev-python/jaxlib-0.4.6/homedir/.cache/bazel/_bazel_portage/c90713b0d9faf938004b848351177f30/external/org_tensorflow/tensorflow/workspace3.bzl
-EGIT_TENSORFLOW_COMMIT="2aaeef25361311b21b9e81e992edff94bcb6bae3" # From https://github.com/google/jax/blob/jaxlib-v0.4.6/WORKSPACE#L13
-EGIT_TENSORFLOW_RUNTIME_COMMIT="8016602194b2e29d6c26d40b8ddacf2929f2112c" # From /var/tmp/portage/dev-python/jaxlib-0.4.6/homedir/.cache/bazel/_bazel_portage/5c7deb603c463ba8f76d96704568ef60/external/org_tensorflow/third_party/tf_runtime/workspace.bzl
+EGIT_LLVM_COMMIT="d2e0a98391e3657a679b98475d65954622c44a9e"			# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/llvm/workspace.bzl
+EGIT_RULES_CLOSURE_COMMIT="308b05b2419edb5c8ee0471b67a40403df940149"		# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/tensorflow/workspace3.bzl
+EGIT_TENSORFLOW_COMMIT="2aaeef25361311b21b9e81e992edff94bcb6bae3"		# From https://github.com/google/jax/blob/jaxlib-v0.4.6/WORKSPACE#L13
+EGIT_TENSORFLOW_RUNTIME_COMMIT="8016602194b2e29d6c26d40b8ddacf2929f2112c"	# From https://github.com/tensorflow/tensorflow/blob/2aaeef25361311b21b9e81e992edff94bcb6bae3/third_party/tf_runtime/workspace.bzl
 # DO NOT HARD WRAP
 bazel_external_uris="
 https://github.com/bazelbuild/rules_closure/archive/${EGIT_RULES_CLOSURE_COMMIT}.tar.gz -> bazelbuild-rules_closure-${EGIT_RULES_CLOSURE_COMMIT}.tar.gz
 https://github.com/bazelbuild/rules_jvm_external/archive/${RULES_JVM_EXTERNAL_PV}.zip -> rules_jvm_external-${RULES_JVM_EXTERNAL_PV}.zip
 https://github.com/bazelbuild/bazel-skylib/releases/download/${BAZEL_SKYLIB_PV}/bazel-skylib-${BAZEL_SKYLIB_PV}.tar.gz -> bazel-skylib-${BAZEL_SKYLIB_PV}.tar.gz
+https://github.com/bazelbuild/rules_pkg/releases/download/${RULES_PKG_PV}/rules_pkg-${RULES_PKG_PV}.tar.gz
 https://github.com/llvm/llvm-project/archive/${EGIT_LLVM_COMMIT}.tar.gz -> llvm-${EGIT_LLVM_COMMIT}.tar.gz
 https://github.com/tensorflow/runtime/archive/${EGIT_TENSORFLOW_RUNTIME_COMMIT}.tar.gz -> tensorflow-runtime-${EGIT_TENSORFLOW_RUNTIME_COMMIT}.tar.gz
 https://github.com/tensorflow/tensorflow/archive/${EGIT_TENSORFLOW_COMMIT}.tar.gz -> tensorflow-${EGIT_TENSORFLOW_COMMIT}.tar.gz
+
 "
 SRC_URI="
 	${bazel_external_uris}
