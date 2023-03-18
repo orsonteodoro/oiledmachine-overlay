@@ -313,6 +313,127 @@ ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
 	strip-unsupported-flags # Filter LDFLAGS after switch
 }
 
+# Modified tc_use_major_version_only() from toolchain.eclass
+gcc_symlink_ver() {
+	local slot="${1}"
+	local ncomponents=3
+
+	local pv=$(best_version "sys-devel/gcc:${slot}" \
+		| sed -e "s|sys-devel/gcc-||g")
+	if [[ -z "${pv}" ]] ; then
+		return
+	fi
+
+	if ver_test ${pv} -lt 10 ; then
+		ncomponents=3
+	elif [[ ${slot} -eq 10 ]] && ver_test ${pv} -ge 10.4.1_p20220929 ; then
+		ncomponents=1
+	elif [[ ${slot} -eq 11 ]] && ver_test ${pv} -ge 11.3.1_p20220930 ; then
+		ncomponents=1
+	elif [[ ${slot} -eq 12 ]] && ver_test ${pv} -ge 12.2.1_p20221001 ; then
+		ncomponents=1
+	elif [[ ${slot} -eq 13 ]] && ver_test ${pv} -ge 13.0.0_pre20221002 ; then
+		ncomponents=1
+	elif [[ ${slot} -gt 13 ]] ; then
+		ncomponents=1
+	fi
+
+	if [[ ${ncomponents} -eq 1 ]] ; then
+		ver_cut 1 ${pv}
+		return
+	fi
+
+	ver_cut 1-3 ${pv}
+}
+
+use_gcc() {
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -e "\|/usr/lib/llvm|d" \
+		| tr "\n" ":")
+einfo "PATH:\t${PATH}"
+	local found=0
+	local s
+	for s in ${GCC_SLOTS[@]} ; do
+		symlink_ver=$(gcc_symlink_ver ${s})
+		export CC=${CHOST}-gcc-${symlink_ver}
+		export CXX=${CHOST}-g++-${symlink_ver}
+		export CPP="${CHOST}-g++-${symlink_ver} -E"
+		if ${CC} --version 2>/dev/null 1>/dev/null ; then
+einfo "Switched to gcc:${s}"
+			found=1
+			break
+		fi
+	done
+	if (( ${found} != 1 )) ; then
+eerror
+eerror "Use only gcc slots 9, 10, 11"
+eerror
+		die
+	fi
+	if (( ${s} == 9 || ${s} == 11 || ${s} == 12 )) ; then
+		:;
+	else
+ewarn
+ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
+ewarn
+einfo
+einfo "  Build time success on 2.11.0:"
+einfo
+einfo "    =sys-devel/gcc-11.3.1_p20230120-r1 with gold"
+einfo "    =sys-devel/gcc-12.2.1_p20230121-r1 with mold"
+einfo
+	fi
+	${CC} --version || die
+	strip-unsupported-flags
+}
+
+use_clang() {
+	if [[ "${FEATURES}" =~ "ccache" ]] ; then
+eerror
+eerror "For this package, ccache cannot be combined with clang."
+eerror "Disable ccache or use GCC with ccache."
+eerror
+		die
+	fi
+
+einfo "FORCE_LLVM_SLOT may be specified."
+	local _LLVM_SLOTS=(${LLVM_SLOTS[@]})
+	if [[ -n "${FORCE_LLVM_SLOT}" ]] ; then
+		_LLVM_SLOTS=( ${FORCE_LLVM_SLOT} )
+	fi
+
+	local found=0
+	local s
+	for s in ${_LLVM_SLOTS[@]} ; do
+		which "${CHOST}-clang-${s}" || continue
+		export CC="${CHOST}-clang-${s}"
+		export CXX="${CHOST}-clang++-${s}"
+		export CPP="${CHOST}-clang++-${s} -E"
+		if ${CC} --version 2>/dev/null 1>/dev/null ; then
+einfo "Switched to clang:${s}"
+			found=1
+			break
+		fi
+	done
+	if (( ${found} != 1 )) ; then
+eerror
+eerror "Use only clang slots ${LLVM_SLOTS[@]}"
+eerror
+		die
+	fi
+	if (( ${s} == 10 || ${s} == 11 || ${s} == 14 )) ; then
+		:;
+	else
+ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
+	fi
+	LLVM_MAX_SLOT=${s}
+	llvm_pkg_setup
+	${CC} --version || die
+	strip-unsupported-flags
+}
+
+
 setup_tc() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCC)
