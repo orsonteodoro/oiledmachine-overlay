@@ -6,9 +6,13 @@ EAPI=8
 
 MY_PN="jax"
 
-DISTUTILS_USE_PEP517="setuptools"
+GCC_SLOTS=(12 11 10 9)
+LLVM_MAX_SLOT=14
+LLVM_SLOTS=(14 13 12 11 10)
+
+DISTUTILS_USE_SETUPTOOLS="bdepend"
 PYTHON_COMPAT=( python3_{8..11} )
-inherit bazel distutils-r1 git-r3
+inherit bazel distutils-r1 flag-o-matic git-r3
 
 DESCRIPTION="Support library for JAX"
 HOMEPAGE="
@@ -25,7 +29,7 @@ LICENSE="
 "
 # KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild is unfinished
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" cpu cuda portable rocm"
+IUSE+=" clang custom-optimization-level cpu cuda hardened portable rocm"
 # We don't add tpu because licensing issue with libtpu_nightly.
 REQUIRED_USE+="
 	|| (
@@ -84,17 +88,58 @@ DEPEND+="
 	${RDEPEND}
 	${JDK_DEPEND}
 "
+gen_llvm_bdepend() {
+	for s in ${LLVM_SLOTS[@]} ; do
+		if (( ${s} >= 10 && ${s} < 13 )) ; then
+			echo "
+				(
+					sys-devel/clang:${s}
+					sys-devel/llvm:${s}
+					>=sys-devel/lld-10
+				)
+			"
+		else
+			echo "
+				(
+					sys-devel/clang:${s}
+					sys-devel/llvm:${s}
+					sys-devel/lld:${s}
+				)
+			"
+		fi
+	done
+}
 BDEPEND+="
 	dev-util/bazel
+	clang? (
+		|| (
+			$(gen_llvm_bdepend)
+		)
+	)
 	|| (
-		sys-devel/gcc
-		sys-devel/clang
+		>=sys-devel/gcc-12:12
+		>=sys-devel/gcc-11.3.1_p20230120-r1:11
+		>=sys-devel/gcc-10:10
+		>=sys-devel/gcc-9.3.0:9
+		$(gen_llvm_bdepend)
 	)
 "
+
+BAZEL_SKYLIB_PV="1.3.0" # From /var/tmp/portage/dev-python/jaxlib-0.4.6/work/jax-jax-v0.4.6-python3_10-bazel-base/external/org_tensorflow/tensorflow/workspace3.bzl
+RULES_JVM_EXTERNAL_PV="4.3" # From /var/tmp/portage/dev-python/jaxlib-0.4.6/work/jax-jax-v0.4.6-python3_10-bazel-base/external/org_tensorflow/tensorflow/workspace3.bzl
+
+EGIT_LLVM_COMMIT="d2e0a98391e3657a679b98475d65954622c44a9e" # From /var/tmp/portage/dev-python/jaxlib-0.4.6/homedir/.cache/bazel/_bazel_portage/5c7deb603c463ba8f76d96704568ef60/external/org_tensorflow/third_party/llvm/workspace.bzl
+EGIT_RULES_CLOSURE_COMMIT="308b05b2419edb5c8ee0471b67a40403df940149" # From /var/tmp/portage/dev-python/jaxlib-0.4.6/homedir/.cache/bazel/_bazel_portage/c90713b0d9faf938004b848351177f30/external/org_tensorflow/tensorflow/workspace3.bzl
 EGIT_TENSORFLOW_COMMIT="2aaeef25361311b21b9e81e992edff94bcb6bae3" # From https://github.com/google/jax/blob/jaxlib-v0.4.6/WORKSPACE#L13
-# DO NOT HARDWRAP
+EGIT_TENSORFLOW_RUNTIME_COMMIT="8016602194b2e29d6c26d40b8ddacf2929f2112c" # From /var/tmp/portage/dev-python/jaxlib-0.4.6/homedir/.cache/bazel/_bazel_portage/5c7deb603c463ba8f76d96704568ef60/external/org_tensorflow/third_party/tf_runtime/workspace.bzl
+# DO NOT HARD WRAP
 bazel_external_uris="
-	https://github.com/tensorflow/tensorflow/archive/${EGIT_TENSORFLOW_COMMIT}.tar.gz -> tensorflow-${EGIT_TENSORFLOW_COMMIT}.tar.gz
+https://github.com/bazelbuild/rules_closure/archive/${EGIT_RULES_CLOSURE_COMMIT}.tar.gz -> bazelbuild-rules_closure-${EGIT_RULES_CLOSURE_COMMIT}.tar.gz
+https://github.com/bazelbuild/rules_jvm_external/archive/${RULES_JVM_EXTERNAL_PV}.zip -> rules_jvm_external-${RULES_JVM_EXTERNAL_PV}.zip
+https://github.com/bazelbuild/bazel-skylib/releases/download/${BAZEL_SKYLIB_PV}/bazel-skylib-${BAZEL_SKYLIB_PV}.tar.gz -> bazel-skylib-${BAZEL_SKYLIB_PV}.tar.gz
+https://github.com/llvm/llvm-project/archive/${EGIT_LLVM_COMMIT}.tar.gz -> llvm-${EGIT_LLVM_COMMIT}.tar.gz
+https://github.com/tensorflow/runtime/archive/${EGIT_TENSORFLOW_RUNTIME_COMMIT}.tar.gz -> tensorflow-runtime-${EGIT_TENSORFLOW_RUNTIME_COMMIT}.tar.gz
+https://github.com/tensorflow/tensorflow/archive/${EGIT_TENSORFLOW_COMMIT}.tar.gz -> tensorflow-${EGIT_TENSORFLOW_COMMIT}.tar.gz
 "
 SRC_URI="
 	${bazel_external_uris}
@@ -174,7 +219,125 @@ eerror
 	done
 }
 
+check_network_sandbox_permissions() {
+	if has network-sandbox $FEATURES ; then
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to download micropackages."
+eerror
+		die
+	fi
+}
+
+setup_linker() {
+	# The package likes to use lld with gcc which is disallowed.
+	local lld_pv=-1
+	if tc-is-clang \
+		&& ld.lld --version 2>/dev/null 1>/dev/null ; then
+		lld_pv=$(ld.lld --version \
+			| awk '{print $2}')
+	fi
+	if is-flagq '-fuse-ld=mold' \
+		&& test-flag-CCLD '-fuse-ld=mold' \
+		&& has_version "sys-devel/mold" ; then
+		# Explicit -fuse-ld=mold because of license of the linker.
+einfo "Using mold (TESTING)"
+		ld.mold --version || die
+		filter-flags '-fuse-ld=*'
+		append-ldflags -fuse-ld=mold
+		BUILD_LDFLAGS+=" -fuse-ld=mold"
+	elif \
+		tc-is-clang \
+		&& ( \
+			   ! is-flagq '-fuse-ld=gold' \
+			&& ! is-flagq '-fuse-ld=bfd' \
+		) \
+		&& \
+		( \
+			( \
+				has_version "sys_devel/lld:$(clang-major-version)" \
+			) \
+			|| \
+			( \
+				ver_test $(clang-major-version) -lt 13 \
+				&& ver_test ${lld_pv} -ge $(clang-major-version) \
+			) \
+			||
+			(
+				has_version "sys-devel/clang-common[default-lld]"
+			)
+		) \
+	then
+einfo "Using LLD (TESTING)"
+		ld.lld --version || die
+		filter-flags '-fuse-ld=*'
+		append-ldflags -fuse-ld=lld
+		BUILD_LDFLAGS+=" -fuse-ld=lld"
+	elif has_version "sys-devel/binutils[gold]" ; then
+		# Linking takes 15 hours will the first .so and has linker lag issues.
+ewarn "Using gold.  Expect linking times more than 30 hrs on older machines."
+ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
+		ld.gold --version || die
+		filter-flags '-fuse-ld=*'
+		append-ldflags -fuse-ld=gold
+		BUILD_LDFLAGS+=" -fuse-ld=gold"
+		# The build scripts will use gold if it detects it.
+		# Gold can hit ~9.01 GiB without flags.
+		# Gold uses --no-threads by default.
+		if ! is-flagq '-Wl,--thread-count,*' ; then
+			# Gold doesn't use threading by default.
+			local ncpus=$(lscpu \
+				| grep -F "CPU(s)" \
+				| head -n 1 \
+				| awk '{print $2}')
+			local tpc=$(lscpu \
+				| grep -F "Thread(s) per core:" \
+				| head -n 1 \
+				| cut -f 2 -d ":" \
+				| sed -r -e "s|[ ]+||g")
+			local nthreads=$(( ${ncpus} * ${tpc} ))
+ewarn "Link times may worsen if -Wl,--thread-count,${nthreads} is not specified in LDFLAGS"
+		fi
+		filter-flags '-Wl,--thread-count,*'
+		append-ldflags -Wl,--thread-count,${nthreads}
+		BUILD_LDFLAGS+=" -Wl,--thread-count,${nthreads}"
+	else
+ewarn "Using BFD.  Expect linking times more than 45 hrs on older machines."
+ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
+		ld.bfd --version || die
+		append-ldflags -fuse-ld=bfd
+		BUILD_LDFLAGS+=" -fuse-ld=bfd"
+		# No threading flags
+	fi
+
+	strip-unsupported-flags # Filter LDFLAGS after switch
+}
+
+setup_tc() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCC)
+einfo "CC:\t\t${CC}"
+einfo "CXX:\t\t${CXX}"
+einfo "CFLAGS:\t${CFLAGS}"
+einfo "CXXFLAGS:\t${CXXFLAGS}"
+einfo "LDFLAGS:\t${LDFLAGS}"
+einfo "PATH:\t${PATH}"
+	if tc-is-clang || use clang ; then
+		use_clang
+	elif tc-is-gcc ; then
+		use_gcc
+	else
+einfo
+einfo "Use only GCC or Clang.  This package (CC=${CC}) also might not be"
+einfo "completely installed."
+einfo
+		die
+	fi
+}
+
 pkg_setup() {
+	setup_tc
+
 	if ! [[ "${BAZEL_LD_PRELOAD_IGNORED_RISKS}" =~ ("allow"|"accept") ]] ; then
 	# A reaction to "WARNING: ignoring LD_PRELOAD in environment" maybe
 	# reported by Bazel.
@@ -192,20 +355,21 @@ eerror
 	fi
 
 	setup_openjdk
-
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download micropackages."
-eerror
-		die
-	fi
+	#check_network_sandbox_permissions
 
 	use rocm && verify_rocm
 }
 
 src_unpack() {
-	unpack ${A}
+	unpack ${MY_PN}-${PV}.tar.gz
+	mkdir -p "${WORKDIR}/tarballs" || die
+	mkdir -p "${WORKDIR}/patches" || die
+	cp -a \
+		$(realpath "${DISTDIR}/tensorflow-${EGIT_TENSORFLOW_COMMIT}.tar.gz") \
+		"${WORKDIR}/tarballs" \
+		|| die
+	bazel_load_distfiles "${bazel_external_uris}"
+	cd "${S}" || die
 	if use rocm ; then
 		EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream.git"
 		EGIT_BRANCH="develop-upstream" # Default branch
@@ -216,8 +380,53 @@ src_unpack() {
 	fi
 }
 
-python_compile() {
+# Keep in sync with tensorflow ebuild
+prepare_tensorflow() {
+	setup_linker
+
+	if ! use custom-optimization-level ; then
+		# Upstream uses a mix of -O3 and -O2.
+		# In some contexts -Os causes a stall.
+		filter-flags '-O*'
+	fi
+
+	if is-flagq '-Os' ; then
+einfo "Preventing stall.  Removing -Os."
+		filter-flags '-Os'
+	fi
+
+	if ! use hardened ; then
+		# It has to be done this way, because we cannot edit the build
+		# files before configure time because the build system
+		# system generates them in compile time and doesn't unpack them
+		# early.
+
+		# SSP buffer overflow protection
+		# -fstack-protector-all is <7% penalty
+		BUILD_CFLAGS+=" -fno-stack-protector"
+		BUILD_CXXFLAGS+=" -fno-stack-protector"
+		append-flags -fno-stack-protector
+
+		# FORTIFY_SOURCE is buffer overflow checks for string/*alloc functions
+		# -FORTIFY_SOURCE=2 is <1% penalty
+		BUILD_CPPFLAGS+=" -D_FORTIFY_SOURCE=0"
+		append-cppflags -D_FORTIFY_SOURCE=0
+
+		# Full RELRO is GOT protection
+		# Full RELRO is <1% penalty ; <1 ms difference
+		append-ldflags -Wl,-z,norelro
+		append-ldflags -Wl,-z,lazy
+		BUILD_LDFLAGS+=" -Wl,-z,norelro"
+		BUILD_LDFLAGS+=" -Wl,-z,lazy"
+	fi
+}
+
+python_configure() {
 	local args=()
+
+	prepare_tensorflow
+
+	bazel_setup_bazelrc
 
 	# The default is release which forces avx by default.
 	if is-flagq '-march=native' ; then
@@ -244,13 +453,65 @@ ewarn
 			--enable_rocm \
 			--rocm_path=/usr \
 			--bazel_options=--override_repository=xla=/path/to/xla-upstream \
+			--configure_only \
 			${args[@]} \
 			|| die
 	else
 		${EPYTHON} build/build.py \
+			--configure_only \
 			${args[@]} \
 			|| die
 	fi
+
+	# Merge
+	cat ".jax_configure.bazelrc" > "${T}/bazelrc_merged" || die
+	cat "${T}/bazelrc" >> "${T}/bazelrc_merged" || die
+	mv "${T}/bazelrc_merged" "${T}/bazelrc" || die
+}
+
+get_host() {
+	# See https://github.com/bazelbuild/bazel/blob/master/src/main/java/com/google/devtools/build/lib/bazel/repository/LocalConfigPlatformFunction.java#L106
+	if use arm ; then
+		echo "arm"
+	elif use arm64 && use elibc_Darwin ; then
+		echo "arm64"
+	elif use arm64 ; then
+		echo "aarch64"
+	elif use amd64 ; then
+		echo "x86_64"
+	elif use mips && [[ "${CHOST}" =~ "mips64" ]] ; then
+		echo "mips64"
+	elif use ppc64 && [[ "${CHOST}" =~ "powerpc64le" ]] ; then
+		echo "ppc64le"
+	elif use ppc ; then
+		echo "ppc"
+	elif use riscv ; then
+		echo "riscv64"
+	elif use s390 && [[ "${CHOST}" =~ "s390x" ]] ; then
+		echo "s390x"
+	elif use x86 ; then
+		echo "x86_32"
+	else
+eerror
+eerror "Your arch is not supported"
+eerror
+eerror "ARCH:\t${ARCH}"
+eerror "CHOST:\t${CHOST}"
+eerror
+		die
+	fi
+}
+
+python_compile() {
+	[[ -e ".jax_configure.bazelrc" ]] || die "Missing file"
+einfo "Building for ${EPYTHON}"
+	ebazel run \
+		--verbose_failures=true \
+		:build_wheel \
+		-- \
+		--output_path=$(pwd)/dist \
+		--cpu=$(get_host)
+	ebazel shutdown
 }
 
 src_install() {
