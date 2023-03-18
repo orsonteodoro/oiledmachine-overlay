@@ -91,7 +91,7 @@ BDEPEND+="
 		sys-devel/clang
 	)
 "
-EGIT_TENSORFLOW_COMMIT="2aaeef25361311b21b9e81e992edff94bcb6bae3"
+EGIT_TENSORFLOW_COMMIT="2aaeef25361311b21b9e81e992edff94bcb6bae3" # From https://github.com/google/jax/blob/jaxlib-v0.4.6/WORKSPACE#L13
 # DO NOT HARDWRAP
 bazel_external_uris="
 	https://github.com/tensorflow/tensorflow/archive/${EGIT_TENSORFLOW_COMMIT}.tar.gz -> tensorflow-${EGIT_TENSORFLOW_COMMIT}.tar.gz
