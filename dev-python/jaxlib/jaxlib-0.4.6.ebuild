@@ -174,10 +174,10 @@ eerror
 		die
 	fi
 
-	# In the upstream they have /opt/rocm-<ver> for--rocm_path.  This
-	# indicates that interdependence is important for all.  Plus, I don't
-	# think they test each permutation in this distro, so breakage may
-	# likely happen.
+	# In the upstream build guide, they set /opt/rocm-<ver> for --rocm_path.
+	# This indicates that interdependence is important for all in that
+	# version slot.  Plus, I don't think they test each version combo in
+	# this distro, so breakage may likely happen.
 	local expected_pv=$(best_version "sci-libs/rocFFT" \
 		| sed -e "sci-libs/rocFFT-")
 	expected_pv=$(ver_cut 1-3 ${expected_pv})
