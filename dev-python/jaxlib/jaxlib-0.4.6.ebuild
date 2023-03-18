@@ -147,6 +147,33 @@ eerror
 	fi
 }
 
+verify_rocm() {
+	# In the upstream build guide, they set /opt/rocm-<ver> for --rocm_path.
+	# This indicates that interdependence is important for all in that
+	# version slot.  Plus, I don't think they test each version combo in
+	# this distro, so breakage may likely happen.
+	local expected_pv=$(best_version "sci-libs/rocFFT" \
+		| sed -e "s|sci-libs/rocFFT-||")
+	expected_pv=$(ver_cut 1-3 ${expected_pv})
+	local catpn
+	for catpn in ${ROCM_DEPEND[@]} ${ROCM_INDIRECT_DEPEND[@]} ; do
+		if ! has_version "~${catpn}-${pv}" ; then
+			local actual_pv=$(best_version "${catpn}" \
+				| sed -e "s|${catpn}-||g")
+			actual_pv=$(ver_cut 1-3 ${actual_pv})
+eerror
+eerror "All ROCm direct/indirect DEPENDs must be the same version"
+eerror
+eerror "Package:  ${catpn}"
+eerror
+eerror "Expected version:\t${expected_pv}"
+eerror "Actual version:\t${actual_pv}"
+eerror
+			die
+		fi
+	done
+}
+
 pkg_setup() {
 	if ! [[ "${BAZEL_LD_PRELOAD_IGNORED_RISKS}" =~ ("allow"|"accept") ]] ; then
 	# A reaction to "WARNING: ignoring LD_PRELOAD in environment" maybe
@@ -174,30 +201,7 @@ eerror
 		die
 	fi
 
-	# In the upstream build guide, they set /opt/rocm-<ver> for --rocm_path.
-	# This indicates that interdependence is important for all in that
-	# version slot.  Plus, I don't think they test each version combo in
-	# this distro, so breakage may likely happen.
-	local expected_pv=$(best_version "sci-libs/rocFFT" \
-		| sed -e "sci-libs/rocFFT-")
-	expected_pv=$(ver_cut 1-3 ${expected_pv})
-	local catpn
-	for catpn in ${ROCM_DEPEND[@]} ${ROCM_INDIRECT_DEPEND[@]} ; do
-		if ! has_version "~${catpn}-${pv}" ; then
-			local actual_pv=$(best_version "${catpn}" \
-				| sed -e "s|${catpn}-||g")
-			actual_pv=$(ver_cut 1-3 ${actual_pv})
-eerror
-eerror "All ROCm direct/indirect DEPENDs must be the same version"
-eerror
-eerror "Package:  ${catpn}"
-eerror
-eerror "Expected version:\t${expected_pv}"
-eerror "Actual version:\t${actual_pv}"
-eerror
-			die
-		fi
-	done
+	use rocm && verify_rocm
 }
 
 src_unpack() {
@@ -233,7 +237,7 @@ ewarn
 	use cuda && args=( --enable_cuda )
 	if use rocm ; then
 		local rocm_pv=$(best_version "sci-libs/rocFFT" \
-			| sed -e "sci-libs/rocFFT-")
+			| sed -e "s|sci-libs/rocFFT-||")
 		ewarn "You may need to fork ebuild to complete implementation for rocm"
 	# See https://jax.readthedocs.io/en/latest/developer.html#additional-notes-for-building-a-rocm-jaxlib-for-amd-gpus
 		${EPYTHON} build/build.py \
