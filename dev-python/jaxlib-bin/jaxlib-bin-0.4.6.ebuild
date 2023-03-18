@@ -29,10 +29,11 @@ REQUIRED_USE="
 		cpu_flags_x86_avx
 	)
 "
-DEPEND+="
+RDEPEND+="
+	!dev-python/jaxlib
 	>=dev-python/jaxlib-${PV}[${PYTHON_USEDEP}]
 "
-RDEPEND+="
+DEPEND+="
 	${DEPEND}
 "
 BDEPEND+="

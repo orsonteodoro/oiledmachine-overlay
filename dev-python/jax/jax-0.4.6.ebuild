@@ -21,6 +21,7 @@ LICENSE="
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" australis cpu cuda doc test"
+# We don't add tpu because licensing issue with libtpu_nightly.
 gen_jaxlib_depend() {
 	local pv="${1}"
 	echo "
