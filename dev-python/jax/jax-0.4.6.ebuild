@@ -31,10 +31,14 @@ gen_jaxlib_depend() {
 		)
 	"
 }
+# flax and tensorstore are missing in setup.py *_require sections but referenced
+# in experimental but not in tests folder.
 DEPEND+="
 	>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
+	dev-python/flax[${PYTHON_USEDEP}]
 	dev-python/opt-einsum[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
+	dev-python/tensorstore[${PYTHON_USEDEP}]
 	australis? (
 		<dev-libs/protobuf-4
 		>=dev-libs/protobuf-3.13
