@@ -20,13 +20,13 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" australis cpu cuda doc test"
+IUSE+=" australis cpu cuda doc rocm test"
 # We don't add tpu because licensing issue with libtpu_nightly.
 gen_jaxlib_depend() {
 	local pv="${1}"
 	echo "
 		|| (
-			~dev-python/jaxlib-${pv}[${PYTHON_USEDEP}]
+			~dev-python/jaxlib-${pv}[${PYTHON_USEDEP},cpu?,cuda?,rocm?]
 			~dev-python/jaxlib-bin-${pv}[${PYTHON_USEDEP}]
 		)
 	"
