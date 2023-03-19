@@ -10,7 +10,7 @@ GCC_SLOTS=(12 11 10 9)
 LLVM_MAX_SLOT=15
 LLVM_SLOTS=(15 14 13 12 11 10)
 
-DISTUTILS_USE_SETUPTOOLS="bdepend"
+DISTUTILS_USE_PEP517="standalone"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit bazel distutils-r1 flag-o-matic git-r3
 
@@ -76,16 +76,16 @@ JRE_DEPEND="
 		dev-java/openjdk-jre-bin:${JAVA_SLOT}
 	)
 "
+#	=dev-cpp/abseil-cpp-20220623*:=
+#	>=dev-libs/protobuf-3.21.9:=
 RDEPEND+="
 	!dev-python/jaxlib-bin
 	${JRE_DEPEND}
-	=dev-cpp/abseil-cpp-20220623*:=
 	>=app-arch/snappy-1.1.10
 	>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
 	>=dev-libs/double-conversion-3.2.0
 	>=dev-libs/nsync-1.25.0
 	>=net-libs/grpc-1.27_p9999:=
-	>=dev-libs/protobuf-3.21.9:=
 	>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
 	>=sys-libs/zlib-1.2.13
 	rocm? (
@@ -578,7 +578,6 @@ src_unpack() {
 
 load_env() {
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
-#	export KERAS_HOME="${T}/.keras" # otherwise sandbox violation writing ~/.keras
 	if [[ -e "${WORKDIR}/.ccache_dir_val" && "${FEATURES}" =~ "ccache" ]] \
 		&& has_version "dev-util/ccache" ; then
 		export CCACHE_DIR=$(cat "${WORKDIR}/.ccache_dir_val")
@@ -643,8 +642,18 @@ python_configure() {
 #		boringssl
 #		com_github_googlecloudplatform_google_cloud_cpp
 		com_github_grpc_grpc
+
+## tensorflow/compiler/xla/stream_executor/BUILD:527:11: no such target
+## '@com_google_absl//absl/functional:any_invocable': target 'any_invocable' not
+## declared in package 'absl/functional' defined by
+## [...]/external/com_google_absl/absl/functional/BUILD.bazel and referenced by
+## '@org_tensorflow//tensorflow/compiler/xla/stream_executor:timer'
 #		com_google_absl # broken?
+
+## com_google_protobuf/BUILD.bazel:50:8: in cmd attribute of genrule rule
+## @com_google_protobuf//:link_proto_files: $(PROTOBUF_INCLUDE_PATH) not defined
 #		com_google_protobuf # broken?
+
 #		curl
 #		cython
 #		dill_archive
@@ -666,7 +675,15 @@ python_configure() {
 #		png
 		pybind11
 #		six_archive
+
+## tensorflow/tsl/platform/default/port.cc:328:11: error: 'RawCompressFromIOVec'
+## is not a member of 'snappy'; did you mean 'RawUncompressToIOVec'?
+##  328 |   snappy::RawCompressFromIOVec(iov, uncompressed_length, &(*output)[0],
+##      |           ^~~~~~~~~~~~~~~~~~~~
+##      |           RawUncompressToIOVec
 #		snappy # broken?
+
+
 #		tblib_archive
 #		termcolor_archive
 #		typing_extensions_archive
@@ -794,6 +811,13 @@ einfo "Building for ${EPYTHON}"
 		--output_path=$(pwd)/dist \
 		--cpu=$(get_host)
 	_ebazel shutdown
+
+	local python_pv="${EPYTHON}"
+	python_pv="${python_pv/python}"
+	python_pv="${python_pv/./}"
+	local wheel_path=$(realpath "${S}/build/dist/${PN}-${PV}-cp${python_pv}-cp${python_pv}-manylinux2014_"*".whl")
+	distutils_wheel_install "${BUILD_DIR}/install" \
+		"${wheel_path}"
 }
 
 src_install() {
