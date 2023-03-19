@@ -27,7 +27,7 @@ LICENSE="
 		BSD-2
 	)
 "
-# KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild is unfinished
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" clang custom-optimization-level cpu cuda hardened portable rocm"
 # We don't add tpu because licensing issue with libtpu_nightly.
