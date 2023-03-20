@@ -4,8 +4,6 @@
 
 EAPI=8
 
-SHALLOW_TEST=1
-
 PYTHON_COMPAT=( python3_10 ) # Limited by tensorflow
 inherit git-r3 python-r1
 
@@ -185,6 +183,7 @@ eerror
 
 pkg_setup()
 {
+	export SR_QUICK_TEST=${SR_QUICK_TEST:-0}
 	python_setup
 	use pretrained || request_sandbox_permissions
 }
@@ -368,7 +367,7 @@ copy_assets() {
 	done
 
 	# For testing ebuild correctness
-	if [[ "${SHALLOW_TEST}" == "1" ]] ; then
+	if [[ "${SR_QUICK_TEST}" == "1" ]] ; then
 einfo "Removing extra still image assets"
 		# For debug, save just one of each
 		rm $(find "${S}/datasets/loaded_div2k/train/hr" -type f | tr " " "\n" | sort | tail -n +2)
