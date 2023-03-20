@@ -4,6 +4,8 @@
 
 EAPI=8
 
+SHALLOW_TEST=1
+
 PYTHON_COMPAT=( python3_10 ) # Limited by tensorflow
 inherit git-r3 python-r1
 
@@ -108,9 +110,10 @@ DEPEND+="
 BDEPEND+="
 	!pretrained? (
 		${PYTHON_DEPS}
+		>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
 		app-crypt/rhash
+		dev-python/pillow[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP},ffmpeg?,gstreamer?,python]
-		sci-libs/tensorflow[${PYTHON_USEDEP},python]
 		ffmpeg? (
 			>=media-video/ffmpeg-4[nvdec?,vaapi?,vdpau?,vpx?]
 		)
@@ -363,6 +366,20 @@ copy_assets() {
 		copy_custom_still_image_assets
 		copy_custom_movie_assets
 	done
+
+	# For testing ebuild correctness
+	if [[ "${SHALLOW_TEST}" == "1" ]] ; then
+einfo "Removing extra still image assets"
+		# For debug, save just one of each
+		rm $(find "${S}/datasets/loaded_div2k/train/hr" -type f | tr " " "\n" | sort | tail -n +2)
+		rm $(find "${S}/datasets/loaded_div2k/train/lr" -type f | tr " " "\n" | sort | tail -n +2)
+		rm $(find "${S}/datasets/loaded_div2k/test/hr" -type f | tr " " "\n" | sort | tail -n +2)
+		rm $(find "${S}/datasets/loaded_div2k/test/lr" -type f | tr " " "\n" | sort | tail -n +2)
+
+einfo "Removing extra movie assets"
+		# For debug, save just one
+		rm $(find "${S}/datasets/loaded_harmonic" -type f | tr " " "\n" | sort | tail -n +2)
+	fi
 }
 
 av_scan_assets() {
@@ -390,6 +407,8 @@ src_prepare() {
 	default
 	if ! use pretrained ; then
 		eapply "${FILESDIR}/${PN}-9999-skip-unpack.patch"
+		eapply "${FILESDIR}/${PN}-9999-tensorflow2-compat.patch"
+		eapply "${FILESDIR}/${PN}-9999-use-pillow-resize.patch"
 	fi
 	if [[ "${SR_SECURITY_SCAN:-1}" == "1" ]] ; then
 		av_scan_assets
