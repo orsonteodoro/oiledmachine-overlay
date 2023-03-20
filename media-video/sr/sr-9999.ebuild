@@ -168,10 +168,8 @@ https://github.com/HighVoltageRocknRoll/sr/files/6957728/dnn_models.tar.gz
 # dnn_models.tar.gz:  sha256 ac3e1b20bb942a3156042a07b7e68ed2aec66f49d92b48f5a4dfbf6cb5283417
 RESTRICT="mirror"
 
-#	die
 request_sandbox_permissions() {
 eerror "The trained version is still a Work In Progress (WIP)"
-eerror "QA:  Assets still needs to be downloaded for Manifest."
 	if has network-sandbox $FEATURES ; then
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
@@ -289,7 +287,7 @@ eerror
 
 copy_custom_still_image_assets() {
 	if [[ -n "${STILL_IMAGE_HR_TEST_PATHS}" ]] ; then
-		einfo "Adding highres still image test assets"
+einfo "Adding highres still image test assets"
 		local row
 		for row in ${STILL_IMAGE_HR_TEST_PATHS} ; do
 			local path=$(echo "${row}" | cut -f 1 -d ":")
@@ -301,7 +299,7 @@ copy_custom_still_image_assets() {
 		done
 	fi
 	if [[ -n "${STILL_IMAGE_HR_TRAINING_PATHS}" ]] ; then
-		einfo "Adding highres still image training assets"
+einfo "Adding highres still image training assets"
 		local row
 		for row in ${STILL_IMAGE_HR_TRAINING_PATHS} ; do
 			local path=$(echo "${row}" | cut -f 1 -d ":")
@@ -313,7 +311,7 @@ copy_custom_still_image_assets() {
 		done
 	fi
 	if [[ -n "${STILL_IMAGE_LR_TEST_PATHS}" ]] ; then
-		einfo "Adding lowres still image test assets"
+einfo "Adding lowres still image test assets"
 		local row
 		for row in ${STILL_IMAGE_LR_TEST_PATHS} ; do
 			local path=$(echo "${row}" | cut -f 1 -d ":")
@@ -325,7 +323,7 @@ copy_custom_still_image_assets() {
 		done
 	fi
 	if [[ -n "${STILL_IMAGE_LR_TRAINING_PATHS}" ]] ; then
-		einfo "Adding lowres still image training assets"
+einfo "Adding lowres still image training assets"
 		local row
 		for row in ${STILL_IMAGE_LR_TRAINING_PATHS} ; do
 			local path=$(echo "${row}" | cut -f 1 -d ":")
@@ -340,7 +338,7 @@ copy_custom_still_image_assets() {
 
 copy_custom_movie_assets() {
 	if [[ -n "${VIDEO_ASSET_PATHS}" ]] ; then
-		einfo "Adding video assets"
+einfo "Adding video assets"
 		local path
 		for path in ${VIDEO_ASSET_PATHS} ; do
 			local path=$(echo "${row}" | cut -f 1 -d ":")
@@ -353,15 +351,23 @@ copy_custom_movie_assets() {
 	fi
 }
 
+keep_one_asset() {
+	local path="${1}"
+	rm $(find "${path}" -type f \
+		| tr " " "\n" \
+		| sort \
+		| tail -n +2)
+}
+
 copy_assets() {
 	mkdir -p "${S}/datasets/loaded_div2k/train" || die
 	mkdir -p "${S}/datasets/loaded_div2k/test" || die
 	mkdir -p "${S}/datasets/loaded_harmonic" || die
+einfo "Custom assets may be used.  See metadata.xml for details."
 	local name
 	for name in ${A} ; do
 		use div2k && copy_div2k_assets
 		use harmonic && copy_harmonic_assets
-		einfo "Custom assets may be used.  See metadata.xml for details."
 		copy_custom_still_image_assets
 		copy_custom_movie_assets
 	done
@@ -369,21 +375,21 @@ copy_assets() {
 	# For testing ebuild correctness
 	if [[ "${SR_QUICK_TEST}" == "1" ]] ; then
 einfo "Removing extra still image assets"
-		# For debug, save just one of each
-		rm $(find "${S}/datasets/loaded_div2k/train/hr" -type f | tr " " "\n" | sort | tail -n +2)
-		rm $(find "${S}/datasets/loaded_div2k/train/lr" -type f | tr " " "\n" | sort | tail -n +2)
-		rm $(find "${S}/datasets/loaded_div2k/test/hr" -type f | tr " " "\n" | sort | tail -n +2)
-		rm $(find "${S}/datasets/loaded_div2k/test/lr" -type f | tr " " "\n" | sort | tail -n +2)
+	# For debug, save just one of each
+		keep_one_asset "${S}/datasets/loaded_div2k/train/hr"
+		keep_one_asset "${S}/datasets/loaded_div2k/train/lr"
+		keep_one_asset "${S}/datasets/loaded_div2k/test/hr"
+		keep_one_asset "${S}/datasets/loaded_div2k/test/lr"
 
 einfo "Removing extra movie assets"
-		# For debug, save just one
-		rm $(find "${S}/datasets/loaded_harmonic" -type f | tr " " "\n" | sort | tail -n +2)
+	# For debug, save just one
+		keep_one_asset "${S}/datasets/loaded_harmonic"
 	fi
 }
 
 av_scan_assets() {
 	if has_version "app-antivirus/clamav[clamapp]" ; then
-		einfo "Scanning assets for malware"
+einfo "Scanning assets for malware"
 		clamscan -r "${WORKDIR}" || die
 	fi
 }
@@ -408,6 +414,8 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-9999-skip-unpack.patch"
 		eapply "${FILESDIR}/${PN}-9999-tensorflow2-compat.patch"
 		eapply "${FILESDIR}/${PN}-9999-use-pillow-resize.patch"
+
+		sed -i -e "1aset -e" "${S}/generate_datasets.sh" || die
 	fi
 	if [[ "${SR_SECURITY_SCAN:-1}" == "1" ]] ; then
 		av_scan_assets
@@ -426,26 +434,27 @@ get_algs() {
 }
 
 generate_datasets() {
-	einfo "Generating datasets"
+einfo "Generating datasets"
 	./generate_datasets.sh || die
 }
 
 train_algs() {
 	local alg
 	for alg in $(get_algs) ; do
-		einfo "Generating binary model for ${alg^^}"
-		train_${alg}.sh
-		# See https://github.com/HighVoltageRocknRoll/sr/issues/2#issuecomment-691790435
+einfo "Generating binary model for ${alg^^}"
+einfo "CWD:\t"$(pwd)
+		./train_${alg}.sh || die
+	# See https://github.com/HighVoltageRocknRoll/sr/issues/2#issuecomment-691790435
 		${EPYTHON} generate_header_and_model.py \
 			--model="${alg}" \
 			--ckpt_path="logdir/${alg}_batch_32_lr_1e-3_decay_adam/train" \
 			|| die
-		# The above produces ./${alg}.pb
+	# The above produces ./${alg}.pb
 	done
 }
 
 convert_all_pb_to_model() {
-	einfo "Converting .pb to .model"
+einfo "Converting .pb to .model"
 	local alg
 	for alg in $(get_algs) ; do
 		${EPYTHON} "${S}/python/convert.py" \
@@ -453,7 +462,7 @@ convert_all_pb_to_model() {
 			--outdir . \
 			${alg}.pb \
 			|| die
-		# The above produces ./${alg}.model
+	# The above produces ./${alg}.model
 	done
 }
 
