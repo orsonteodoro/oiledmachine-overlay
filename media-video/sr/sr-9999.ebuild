@@ -65,8 +65,8 @@ FORMATS=(
 IUSE+="
 ${ALGS[@]}
 ${FORMATS[@]}
-convert div2k fallback-commit ffmpeg gstreamer harmonic nvdec +pretrained vaapi
-vdpau vpx
+convert div2k fallback-commit ffmpeg gstreamer harmonic nvdec +pretrained
+vaapi vdpau vpx
 "
 # See formats see, https://ffmpeg.org/ffmpeg-filters.html#sr-1
 # We use the tensorflow .pb because it is multicore.
@@ -143,8 +143,14 @@ https://raw.githubusercontent.com/FFmpeg/FFmpeg/n${FFMPEG_PV}/tools/python/tf_se
 		div2k? (
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_LR_bicubic_X2.zip
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_train_HR.zip
+			espcn? (
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_LR_bicubic_X2.zip
 http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_HR.zip
+			)
+			srcnn? (
+http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_LR_bicubic_X2.zip
+http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_HR.zip
+			)
 		)
 		harmonic? (
 https://harmonicinc.box.com/shared/static/wrlzswfdvyprz10hegws74d4wzh7270o.mp4
@@ -228,19 +234,21 @@ copy_div2k_assets() {
 			"${S}/datasets/loaded_div2k/train/hr" \
 			|| die
 	fi
-	if [[ "${name}" =~ "DIV2K_valid_LR" ]] ; then
-		unpack "${name}"
-		mv \
-			"${WORKDIR}/DIV2K_valid_LR_bicubic/X2" \
-			"${S}/datasets/loaded_div2k/test/lr" \
-			|| die
-	fi
-	if [[ "${name}" =~ "DIV2K_valid_HR" ]] ; then
-		unpack "${name}"
-		mv \
-			"${WORKDIR}/DIV2K_valid_HR" \
-			"${S}/datasets/loaded_div2k/test/hr" \
-			|| die
+	if use espcn || use srcnn ; then
+		if [[ "${name}" =~ "DIV2K_valid_LR" ]] ; then
+			unpack "${name}"
+			mv \
+				"${WORKDIR}/DIV2K_valid_LR_bicubic/X2" \
+				"${S}/datasets/loaded_div2k/test/lr" \
+				|| die
+		fi
+		if [[ "${name}" =~ "DIV2K_valid_HR" ]] ; then
+			unpack "${name}"
+			mv \
+				"${WORKDIR}/DIV2K_valid_HR" \
+				"${S}/datasets/loaded_div2k/test/hr" \
+				|| die
+		fi
 	fi
 }
 
@@ -378,8 +386,10 @@ einfo "Removing extra still image assets"
 	# For debug, save just one of each
 		keep_one_asset "${S}/datasets/loaded_div2k/train/hr"
 		keep_one_asset "${S}/datasets/loaded_div2k/train/lr"
-		keep_one_asset "${S}/datasets/loaded_div2k/test/hr"
-		keep_one_asset "${S}/datasets/loaded_div2k/test/lr"
+		if use espcn || use srcnn ; then
+			keep_one_asset "${S}/datasets/loaded_div2k/test/hr"
+			keep_one_asset "${S}/datasets/loaded_div2k/test/lr"
+		fi
 
 einfo "Removing extra movie assets"
 	# For debug, save just one
@@ -389,10 +399,15 @@ einfo "Removing extra movie assets"
 	local L=(
 		"${S}/datasets/loaded_div2k/train/hr"
 		"${S}/datasets/loaded_div2k/train/lr"
-		"${S}/datasets/loaded_div2k/test/hr"
-		"${S}/datasets/loaded_div2k/test/lr"
 		"${S}/datasets/loaded_harmonic"
 	)
+	if use espcn || use srcnn ; then
+		L+=(
+			"${S}/datasets/loaded_div2k/test/hr"
+			"${S}/datasets/loaded_div2k/test/lr"
+		)
+	fi
+
 	local path
 	for path in ${L[@]} ; do
 		local nrows=$(ls -1 "${path}" \
@@ -434,6 +449,11 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-9999-use-pillow-resize.patch"
 
 		sed -i -e "1aset -e" "${S}/generate_datasets.sh" || die
+		if use espcn || use srcnn ; then
+			:;
+		else
+			sed -i -e "/test/d" "${S}/generate_datasets.sh" || die
+		fi
 	fi
 	if [[ "${SR_SECURITY_SCAN:-1}" == "1" ]] ; then
 		av_scan_assets
