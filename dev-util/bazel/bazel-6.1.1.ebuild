@@ -17,11 +17,16 @@ IUSE="examples tools"
 # strip corrupts the bazel binary
 # test fails with network-sandbox: An error occurred during the fetch of repository 'io_bazel_skydoc' (bug 690794)
 RESTRICT="strip test"
-RDEPEND=">=virtual/jre-11:*"
+RDEPEND="
+	>=virtual/jre-11:*
+	sys-devel/gcc[cxx]
+	sys-libs/glibc
+"
 DEPEND="
 	virtual/jdk:11
 	app-arch/unzip
-	app-arch/zip"
+	app-arch/zip
+"
 
 S="${WORKDIR}"
 
@@ -60,7 +65,8 @@ src_compile() {
 		--bazel=output/bazel \
 		--output=bazel-complete.bash \
 		--prepend=scripts/bazel-complete-header.bash \
-		--prepend=scripts/bazel-complete-template.bash || die "Failed to generate bash completions"
+		--prepend=scripts/bazel-complete-template.bash \
+		|| die "Failed to generate bash completions"
 }
 
 src_test() {
