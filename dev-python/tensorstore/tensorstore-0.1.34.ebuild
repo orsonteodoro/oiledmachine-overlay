@@ -44,7 +44,7 @@ DEPEND+="
 # Bazel needs --host_per_file_copt in 7.0.0*
 BDEPEND+="
 	dev-util/cmake
-	dev-python/setuptools_scm[${PYTHON_USEDEP}]
+	dev-python/setuptools-scm[${PYTHON_USEDEP}]
 	doc? (
 		dev-python/sphinx[${PYTHON_USEDEP}]
 		dev-python/sphinx-immaterial[${PYTHON_USEDEP}]
