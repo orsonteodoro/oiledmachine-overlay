@@ -385,6 +385,24 @@ einfo "Removing extra movie assets"
 	# For debug, save just one
 		keep_one_asset "${S}/datasets/loaded_harmonic"
 	fi
+
+	local L=(
+		"${S}/datasets/loaded_div2k/train/hr"
+		"${S}/datasets/loaded_div2k/train/lr"
+		"${S}/datasets/loaded_div2k/test/hr"
+		"${S}/datasets/loaded_div2k/test/lr"
+		"${S}/datasets/loaded_harmonic"
+	)
+	local path
+	for path in ${L[@]} ; do
+		local nrows=$(ls -1 "${path}" \
+			| tr " " "\n" \
+			| wc -l)
+		if (( ${nrows} <= 0 )) ; then
+eerror "${path} must have at least 1 asset."
+			die
+		fi
+	done
 }
 
 av_scan_assets() {
