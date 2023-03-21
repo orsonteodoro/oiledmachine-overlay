@@ -55,18 +55,19 @@ RDEPEND+="
 # dp-accounting
 BDEPEND+="
 	doc? (
-		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-book-theme-0.3.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-katex-0.9.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-bibtex-2.4.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-autodoc-typehints-1.11.1[${PYTHON_USEDEP}]
+		>=dev-python/dm-haiku-0.0.8[${PYTHON_USEDEP}]
+		>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
 		>=dev-python/ipython-7.16.3[${PYTHON_USEDEP}]
 		>=dev-python/ipykernel-5.3.4[${PYTHON_USEDEP}]
-		>=dev-python/pandoc-1.0.2[${PYTHON_USEDEP}]
-		>=dev-python/myst_nb-0.13.1[${PYTHON_USEDEP}]
-		>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.5.0[${PYTHON_USEDEP}]
-		>=dev-python/dm-haiku-0.0.8[${PYTHON_USEDEP}]
+		>=dev-python/myst_nb-0.13.1[${PYTHON_USEDEP}]
+		>=dev-python/pandoc-1.0.2[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-autodoc-typehints-1.11.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-book-theme-0.3.3[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-bibtex-2.4.2[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-katex-0.9.0[${PYTHON_USEDEP}]
+
 	)
 	dp-accounting? (
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
