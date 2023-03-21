@@ -10,4 +10,9 @@
     <remote-id type="github">google/tensorstore</remote-id>
     <bugs-to>https://github.com/google/tensorstore/issues</bugs-to>
   </upstream>
+  <use>
+    <flag name="clang">
+      Build with clang.
+    </flag>
+  <use>
 </pkgmetadata>
