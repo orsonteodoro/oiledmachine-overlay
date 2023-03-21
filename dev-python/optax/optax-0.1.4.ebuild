@@ -20,6 +20,10 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc examples dp-accounting test"
 REQUIRED_USE+="
+	test? (
+		dp-accounting
+		examples
+	)
 	dp-accounting? (
 		test
 	)
@@ -88,6 +92,17 @@ RESTRICT="mirror"
 DOCS=( README.md )
 
 distutils_enable_sphinx "docs"
+
+src_test() {
+	sed -i -e "s|^pip |#pip |g" test.sh || die
+	sed -i -e "s|^wget |#wget |g" test.sh || die
+ewarn "src_test() is not tested"
+	run_test() {
+einfo "Running test for ${EPYTHON}"
+		./test.sh || die
+	}
+	python_foreach_impl run_test
+}
 
 src_install() {
 	distutils-r1_src_install
