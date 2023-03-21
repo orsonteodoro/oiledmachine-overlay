@@ -62,7 +62,7 @@ EGIT_ABSEIL_CPP_COMMIT="78f9680225b9792c26dfdd99d0bd26c96de53dd4"
 EGIT_BENCHMARK_COMMIT="0d98dba29d66e93259db7daa53a9327df767a415"
 EGIT_CCD_COMMIT="7931e764a19ef6b21b443376c699bbc9c6d4fba8"
 EGIT_EIGEN_COMMIT="3147391d946bb4b6c68edd901f2add6ac1f31f8c"  # cmake/MujocoDependencies.cmake
-EGIT_EIGEN3_COMMIT="b02c384ef4e8eba7b8bdef16f9dc6f8f4d6a6b2b" # python/mujoco/CMakeLists.txt
+EGIT_EIGEN_PY_COMMIT="b02c384ef4e8eba7b8bdef16f9dc6f8f4d6a6b2b" # python/mujoco/CMakeLists.txt
 EGIT_GLFW_COMMIT="7482de6071d21db77a7236155da44c172a7f6c9e"
 EGIT_GOOGLETEST_COMMIT="e2239ee6043f73722e7aa812a459f54a28552929"
 EGIT_LODEPNG_COMMIT="48e5364ef48ec2408f44c727657ac1b6703185f8"
@@ -82,10 +82,10 @@ https://github.com/danfis/libccd/archive/${EGIT_CCD_COMMIT}.tar.gz
 	-> libccd-${EGIT_CCD_COMMIT}.tar.gz
 https://github.com/deepmind/mujoco/archive/${EGIT_MUJOCO_COMMIT}.tar.gz
 	-> mujoco-${EGIT_MUJOCO_COMMIT}.tar.gz
-https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN3_COMMIT}/eigen-${EGIT_EIGEN_COMMIT}.tar.gz
+https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN_COMMIT}/eigen-${EGIT_EIGEN_COMMIT}.tar.gz
 	-> eigen-${EGIT_EIGEN_COMMIT}.tar.gz
-https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN3_COMMIT}/eigen-${EGIT_EIGEN3_COMMIT}.tar.gz
-	-> eigen3-${EGIT_EIGEN3_COMMIT}.tar.gz
+https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN_PY_COMMIT}/eigen-${EGIT_EIGEN_PY_COMMIT}.tar.gz
+	-> eigen-${EGIT_EIGEN_PY_COMMIT}.tar.gz
 https://github.com/glfw/glfw/archive/${EGIT_GLFW_COMMIT}.tar.gz
 	-> glfw-${EGIT_GLFW_COMMIT}.tar.gz
 https://github.com/google/benchmark/archive/${EGIT_BENCHMARK_COMMIT}.tar.gz
