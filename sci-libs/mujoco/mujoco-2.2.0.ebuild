@@ -58,12 +58,13 @@ PDEPEND+="
 	)
 "
 
-EGIT_ABSEIL_COMMIT="78f9680225b9792c26dfdd99d0bd26c96de53dd4"
+EGIT_ABSEIL_CPP_COMMIT="78f9680225b9792c26dfdd99d0bd26c96de53dd4"
 EGIT_BENCHMARK_COMMIT="0d98dba29d66e93259db7daa53a9327df767a415"
 EGIT_CCD_COMMIT="7931e764a19ef6b21b443376c699bbc9c6d4fba8"
-EGIT_EIGEN3_COMMIT="3147391d946bb4b6c68edd901f2add6ac1f31f8c"
+EGIT_EIGEN_COMMIT="3147391d946bb4b6c68edd901f2add6ac1f31f8c"  # cmake/MujocoDependencies.cmake
+EGIT_EIGEN3_COMMIT="b02c384ef4e8eba7b8bdef16f9dc6f8f4d6a6b2b" # python/mujoco/CMakeLists.txt
 EGIT_GLFW_COMMIT="7482de6071d21db77a7236155da44c172a7f6c9e"
-EGIT_GTEST_COMMIT="e2239ee6043f73722e7aa812a459f54a28552929"
+EGIT_GOOGLETEST_COMMIT="e2239ee6043f73722e7aa812a459f54a28552929"
 EGIT_LODEPNG_COMMIT="48e5364ef48ec2408f44c727657ac1b6703185f8"
 EGIT_MUJOCO_COMMIT="95a07e85ccaf31a7daabfb2f34f376e75534881d"
 EGIT_PYBIND11_COMMIT="a8f1a5567608f346bdba293b3d062a288ee16cd4"
@@ -75,20 +76,22 @@ SRC_URI="
 https://github.com/deepmind/mujoco/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 
-https://github.com/abseil/abseil-cpp/archive/${EGIT_ABSEIL_COMMIT}.tar.gz
-	-> abseil-${EGIT_ABSEIL_COMMIT}.tar.gz
+https://github.com/abseil/abseil-cpp/archive/${EGIT_ABSEIL_CPP_COMMIT}.tar.gz
+	-> abseil-cpp-${EGIT_ABSEIL_CPP_COMMIT}.tar.gz
 https://github.com/danfis/libccd/archive/${EGIT_CCD_COMMIT}.tar.gz
 	-> libccd-${EGIT_CCD_COMMIT}.tar.gz
 https://github.com/deepmind/mujoco/archive/${EGIT_MUJOCO_COMMIT}.tar.gz
 	-> mujoco-${EGIT_MUJOCO_COMMIT}.tar.gz
+https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN3_COMMIT}/eigen-${EGIT_EIGEN_COMMIT}.tar.gz
+	-> eigen-${EGIT_EIGEN_COMMIT}.tar.gz
 https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN3_COMMIT}/eigen-${EGIT_EIGEN3_COMMIT}.tar.gz
-	-> eigen-${EGIT_EIGEN3_COMMIT}.tar.gz
+	-> eigen3-${EGIT_EIGEN3_COMMIT}.tar.gz
 https://github.com/glfw/glfw/archive/${EGIT_GLFW_COMMIT}.tar.gz
 	-> glfw-${EGIT_GLFW_COMMIT}.tar.gz
 https://github.com/google/benchmark/archive/${EGIT_BENCHMARK_COMMIT}.tar.gz
 	-> benchmark-${EGIT_BENCHMARK_COMMIT}.tar.gz
-https://github.com/google/googletest/archive/${EGIT_GTEST_COMMIT}.tar.gz
-	-> gtest-${EGIT_GTEST_COMMIT}.tar.gz
+https://github.com/google/googletest/archive/${EGIT_GOOGLETEST_COMMIT}.tar.gz
+	-> googletest-${EGIT_GOOGLETEST_COMMIT}.tar.gz
 https://github.com/leethomason/tinyxml2/archive/${EGIT_TINYXML2_COMMIT}.tar.gz
 	-> tinyxml2-${EGIT_TINYXML2_COMMIT}.tar.gz
 https://github.com/lvandeve/lodepng/archive/${EGIT_LODEPNG_COMMIT}.tar.gz
@@ -101,7 +104,7 @@ https://github.com/tinyobjloader/tinyobjloader/archive/${EGIT_TINYOBJLOADER_COMM
 	-> tinyobjloader-${EGIT_TINYOBJLOADER_COMMIT}.tar.gz
 "
 S="${WORKDIR}/${P}"
-RESTRICT="mirror"
+RESTRICT="mirror test"
 PATCHES=(
 	"${FILESDIR}/${PN}-2.2.0-use-local-tarballs.patch"
 )

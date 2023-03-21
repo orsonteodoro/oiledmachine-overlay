@@ -168,7 +168,7 @@ diff -urp mujoco-2.2.0.orig/cmake/MujocoDependencies.cmake mujoco-2.2.0/cmake/Mu
 +    if(USE_LOCAL_TARBALL)
 +      FetchContent_Declare(
 +        Eigen3
-+        URL $ENV{DISTDIR}/eigen-${MUJOCO_DEP_VERSION_Eigen3}.tar.gz
++        URL $ENV{DISTDIR}/eigen3-${MUJOCO_DEP_VERSION_Eigen3}.tar.gz
 +      )
 +    else()
 +      FetchContent_Declare(

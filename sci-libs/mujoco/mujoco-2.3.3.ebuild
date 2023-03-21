@@ -58,12 +58,12 @@ PDEPEND+="
 	)
 "
 
-EGIT_ABSEIL_COMMIT="c8a2f92586fe9b4e1aff049108f5db8064924d8e"
+EGIT_ABSEIL_CPP_COMMIT="c8a2f92586fe9b4e1aff049108f5db8064924d8e"
 EGIT_BENCHMARK_COMMIT="d572f4777349d43653b21d6c2fc63020ab326db2"
 EGIT_CCD_COMMIT="7931e764a19ef6b21b443376c699bbc9c6d4fba8"
 EGIT_EIGEN3_COMMIT="3460f3558e7b469efb8a225894e21929c8c77629"
 EGIT_GLFW_COMMIT="7482de6071d21db77a7236155da44c172a7f6c9e"
-EGIT_GTEST_COMMIT="b796f7d44681514f58a683a3a71ff17c94edb0c1"
+EGIT_GOOGLETEST_COMMIT="b796f7d44681514f58a683a3a71ff17c94edb0c1"
 EGIT_LODEPNG_COMMIT="b4ed2cd7ecf61d29076169b49199371456d4f90b"
 EGIT_MUJOCO_COMMIT="95a07e85ccaf31a7daabfb2f34f376e75534881d"
 EGIT_PYBIND11_COMMIT="0bd8896a4010f2d91b2340570c24fa08606ec406"
@@ -75,8 +75,8 @@ SRC_URI="
 https://github.com/deepmind/mujoco/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 
-https://github.com/abseil/abseil-cpp/archive/${EGIT_ABSEIL_COMMIT}.tar.gz
-	-> abseil-${EGIT_ABSEIL_COMMIT}.tar.gz
+https://github.com/abseil/abseil-cpp/archive/${EGIT_ABSEIL_CPP_COMMIT}.tar.gz
+	-> abseil-cpp-${EGIT_ABSEIL_CPP_COMMIT}.tar.gz
 https://github.com/danfis/libccd/archive/${EGIT_CCD_COMMIT}.tar.gz
 	-> libccd-${EGIT_CCD_COMMIT}.tar.gz
 https://github.com/deepmind/mujoco/archive/${EGIT_MUJOCO_COMMIT}.tar.gz
@@ -87,8 +87,8 @@ https://github.com/glfw/glfw/archive/${EGIT_GLFW_COMMIT}.tar.gz
 	-> glfw-${EGIT_GLFW_COMMIT}.tar.gz
 https://github.com/google/benchmark/archive/${EGIT_BENCHMARK_COMMIT}.tar.gz
 	-> benchmark-${EGIT_BENCHMARK_COMMIT}.tar.gz
-https://github.com/google/googletest/archive/${EGIT_GTEST_COMMIT}.tar.gz
-	-> gtest-${EGIT_GTEST_COMMIT}.tar.gz
+https://github.com/google/googletest/archive/${EGIT_GOOGLETEST_COMMIT}.tar.gz
+	-> googletest-${EGIT_GOOGLETEST_COMMIT}.tar.gz
 https://github.com/leethomason/tinyxml2/archive/${EGIT_TINYXML2_COMMIT}.tar.gz
 	-> tinyxml2-${EGIT_TINYXML2_COMMIT}.tar.gz
 https://github.com/lvandeve/lodepng/archive/${EGIT_LODEPNG_COMMIT}.tar.gz
@@ -101,9 +101,9 @@ https://github.com/tinyobjloader/tinyobjloader/archive/${EGIT_TINYOBJLOADER_COMM
 	-> tinyobjloader-${EGIT_TINYOBJLOADER_COMMIT}.tar.gz
 "
 S="${WORKDIR}/${P}"
-RESTRICT="mirror"
+RESTRICT="mirror test"
 PATCHES=(
-	"${FILESDIR}/${PN}-2.3.2-use-local-tarballs.patch"
+	"${FILESDIR}/${PN}-2.3.3-use-local-tarballs.patch"
 )
 
 #distutils_enable_sphinx "doc"
