@@ -66,7 +66,6 @@ BDEPEND+="
 		>=dev-python/pytest-xdist-1.34.0[${PYTHON_USEDEP}]
 		>=dev-python/tensorflow_text-2.11.0[${PYTHON_USEDEP}]
 		dev-python/clu[${PYTHON_USEDEP}]
-		dev-python/jaxlib[${PYTHON_USEDEP}]
 		dev-python/ml-collections[${PYTHON_USEDEP}]
 		dev-python/mypy[${PYTHON_USEDEP}]
 		dev-python/nbstripout[${PYTHON_USEDEP}]
@@ -79,6 +78,10 @@ BDEPEND+="
 		dev-python/tensorflow_datasets[${PYTHON_USEDEP}]
 		dev-python/tensorflow[${PYTHON_USEDEP},python]
 		media-libs/opencv[${PYTHON_USEDEP},python]
+		|| (
+			dev-python/jaxlib[${PYTHON_USEDEP}]
+			dev-python/jaxlib-bin[${PYTHON_USEDEP}]
+		)
 	)
 "
 SRC_URI="

@@ -32,13 +32,16 @@ DEPEND+="
 	>=dev-python/absl-py-0.7.1[${PYTHON_USEDEP}]
 	>=dev-python/chex-0.1.5[${PYTHON_USEDEP}]
 	>=dev-python/jax-0.1.55[${PYTHON_USEDEP}]
-	>=dev-python/jaxlib-0.1.37[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 	>=dev-python/typing_extensions-3.10.0[${PYTHON_USEDEP}]
 	examples? (
 		>=dev-python/dm-haiku-0.0.3[${PYTHON_USEDEP}]
 		>=dev-python/tensorflow-datasets-4.2.0[${PYTHON_USEDEP}]
 		>=sci-libs/tensorflow-2.4.0[${PYTHON_USEDEP}]
+	)
+	|| (
+		>=dev-python/jaxlib-0.1.37[${PYTHON_USEDEP}]
+		>=dev-python/jaxlib-bin-0.1.37[${PYTHON_USEDEP}]
 	)
 "
 RDEPEND+="
