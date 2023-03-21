@@ -51,7 +51,6 @@ RDEPEND+="
 # dm-haiku
 # sphinxcontrib-katex
 # myst_nb
-# chex
 # dp-accounting
 BDEPEND+="
 	doc? (
