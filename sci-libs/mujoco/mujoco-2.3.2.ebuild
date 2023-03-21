@@ -112,4 +112,10 @@ src_configure() {
 	cmake_src_configure
 }
 
+src_install() {
+	cmake_src_install
+	exeinto /usr/$(get_libdir)/mujoco_plugin
+	doexe "${BUILD_DIR}"/$(get_libdir)/libelasticity.so
+}
+
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
