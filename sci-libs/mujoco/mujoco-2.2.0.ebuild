@@ -17,7 +17,7 @@ https://github.com/deepmind/mujoco
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc +examples python +test"
+IUSE+=" doc +examples hardened python +test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -108,6 +108,17 @@ src_configure() {
 		-DMUJOCO_BUILD_TESTS=$(usex test "ON" "OFF")
 		-DMUJOCO_TEST_PYTHON_UTIL=$(usex test "ON" "OFF")
 	)
+
+	if tc-is-clang ; then
+		mycmakeargs+=(
+			-DMUJOCO_HARDEN:BOOL=$(usex hardened "ON" "OFF")
+		)
+	else
+		mycmakeargs+=(
+			-DMUJOCO_HARDEN:BOOL=OFF
+		)
+	fi
+
 	cmake_src_configure
 }
 

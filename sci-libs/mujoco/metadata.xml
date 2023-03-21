@@ -11,6 +11,9 @@
     <bugs-to>https://github.com/deepmind/mujoco/issues</bugs-to>
   </upstream>
   <use>
+    <flag name="hardened">
+      Upstream only makes it available to clang.
+    </flag>
     <flag name="python">
       Install mujoco python bindings
     </flag>
