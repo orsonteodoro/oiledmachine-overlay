@@ -2,6 +2,10 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# TODO:
+# Fix/test examples USE flag.  See CI settings:  https://github.com/deepmind/mujoco/blob/2.3.2/.github/workflows/build.yml
+# Fix/test simulate USE flag.  See CI settings.
+
 EAPI=8
 
 DISTUTILS_USE_PEP517="standalone"
