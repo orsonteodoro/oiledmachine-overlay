@@ -17,7 +17,7 @@ https://github.com/deepmind/mujoco
 LICENSE="Apache-2.0"
 # KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild not finish
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc +examples +simulate +test"
+IUSE+=" doc +examples python +simulate +test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -43,7 +43,9 @@ BDEPEND+="
 	)
 "
 PDEPEND+="
-	dev-python/mujoco
+	python? (
+		dev-python/mujoco[${PYTHON_USEDEP}]
+	)
 "
 
 EGIT_ABSEIL_COMMIT="78be63686ba732b25052be15f8d6dee891c05749"
