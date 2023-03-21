@@ -5,6 +5,7 @@
 # TODO:
 # Fix/test examples USE flag.  See CI settings:  https://github.com/deepmind/mujoco/blob/2.3.2/.github/workflows/build.yml
 # Fix/test simulate USE flag.  See CI settings.
+# Update LICENSE variable for vendored third party libs
 
 EAPI=8
 
@@ -18,7 +19,12 @@ HOMEPAGE="
 https://mujoco.org/
 https://github.com/deepmind/mujoco
 "
-LICENSE="Apache-2.0"
+LICENSE="
+	Apache-2.0
+	doc? (
+		CC-BY-4.0
+	)
+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc +examples hardened python +test"
