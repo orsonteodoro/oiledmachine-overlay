@@ -55,6 +55,7 @@ BDEPEND+="
 	doc? (
 		dev-python/codediff[${PYTHON_USEDEP}]
 		dev-python/myst_nb[${PYTHON_USEDEP}]
+		dev-python/sphinx[${PYTHON_USEDEP}]
 		dev-python/sphinx_design[${PYTHON_USEDEP}]
 		dev-python/sphinx-book-theme[${PYTHON_USEDEP}]
 	)
