@@ -12,7 +12,7 @@ LLVM_SLOTS=(15 14 13 12 11 10)
 
 DISTUTILS_USE_PEP517="standalone"
 PYTHON_COMPAT=( python3_{8..11} )
-inherit bazel distutils-r1 flag-o-matic git-r3
+inherit bazel distutils-r1 flag-o-matic git-r3 toolchain-funcs
 
 DESCRIPTION="Support library for JAX"
 HOMEPAGE="
