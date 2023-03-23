@@ -34,8 +34,8 @@ REQUIRED_USE+="
 DEPEND+="
 	${PYTHON_DEPS}
 	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/pyglfw[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/pyglfw[${PYTHON_USEDEP}]
 	dev-python/pyopengl[${PYTHON_USEDEP}]
 "
 RDEPEND+="
