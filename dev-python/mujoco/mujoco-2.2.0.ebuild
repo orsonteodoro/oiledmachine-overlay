@@ -27,7 +27,7 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc +test"
+IUSE+=" doc +test r1"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -130,6 +130,19 @@ python_compile() {
 	${EPYTHON} setup.py build || die
 }
 
+fix_permissions() {
+	local path
+	for path in $(find "${ED}" -type f) ; do
+		local is_exe=0
+		if file "${path}" | grep -q -e "Python script" ; then
+			is_exe=1
+		elif file "${path}" | grep -q -E -e "ELF (32|64)-bit LSB shared object" ; then
+			is_exe=1
+		fi
+		fperms 0755 $(echo "${path}" | sed -e "s|^${ED}||g")
+	done
+}
+
 src_install() {
 	distutils-r1_src_install
 	rm -rf "${ED}/usr/share/doc/mujoco-${PV}/README.md" || die
@@ -147,6 +160,7 @@ einfo "Installing for ${EPYTHON}"
 		python_domodule "${S}/build/lib.${os_prefix}-${arch}-${pyver}/mujoco/"*
 	}
 	python_foreach_impl install_impl
+	fix_permissions
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

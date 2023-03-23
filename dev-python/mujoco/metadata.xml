@@ -17,5 +17,8 @@
     <flag name="python">
       Install mujoco python bindings
     </flag>
+    <flag name="rN">
+      Internal revision bumps
+    </flag>
   </use>
 </pkgmetadata>
