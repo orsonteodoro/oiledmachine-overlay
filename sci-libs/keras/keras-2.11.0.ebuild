@@ -25,11 +25,14 @@ SRC_URI="
 https://github.com/keras-team/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 "
 RDEPEND="
+	(
+		<sci-libs/tensorflow-2.12[${PYTHON_USEDEP},python]
+		>=sci-libs/tensorflow-2.11[${PYTHON_USEDEP},python]
+	)
 	>=dev-libs/protobuf-3.13.0:=
 	>=dev-python/protobuf-python-3.13.0[${PYTHON_USEDEP}]
 	>=sci-libs/keras-applications-1.0.8[${PYTHON_USEDEP}]
 	>=sci-libs/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
-	>=sci-libs/tensorflow-2.10[${PYTHON_USEDEP},python]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/h5py[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]

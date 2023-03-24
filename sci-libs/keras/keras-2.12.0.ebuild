@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9,10} )
+PYTHON_COMPAT=( python3_{9..11} )
 inherit bazel distutils-r1
 
 DESCRIPTION="Deep Learning for humans"
@@ -20,16 +20,19 @@ bazel_external_uris="
 	https://github.com/bazelbuild/rules_cc/archive/b1c40e1de81913a3c40e5948f78719c28152486d.zip -> bazelbuild-rules_cc-b1c40e1de81913a3c40e5948f78719c28152486d.zip
 	https://github.com/bazelbuild/rules_java/archive/7cf3cefd652008d0a64a419c34c13bdca6c8f178.zip -> bazelbuild-rules_java-7cf3cefd652008d0a64a419c34c13bdca6c8f178.zip
 "
+#	${bazel_external_uris}
 SRC_URI="
-	${bazel_external_uris}
 https://github.com/keras-team/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 "
 RDEPEND="
+	(
+		<sci-libs/tensorflow-2.12[${PYTHON_USEDEP},python]
+		>=sci-libs/tensorflow-2.11[${PYTHON_USEDEP},python]
+	)
 	>=dev-libs/protobuf-3.13.0:=
 	>=dev-python/protobuf-python-3.13.0[${PYTHON_USEDEP}]
 	>=sci-libs/keras-applications-1.0.8[${PYTHON_USEDEP}]
 	>=sci-libs/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
-	>=sci-libs/tensorflow-2.10[${PYTHON_USEDEP},python]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/h5py[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
@@ -51,7 +54,7 @@ BDEPEND="
 RESTRICT=""
 DOCS=( CONTRIBUTING.md README.md )
 PATCHES=(
-	"${FILESDIR}/keras-2.10.0-0001-bazel-Use-system-protobuf.patch"
+	"A${FILESDIR}/keras-2.11.0-0001-bazel-Use-system-protobuf.patch"
 )
 
 src_unpack() {
