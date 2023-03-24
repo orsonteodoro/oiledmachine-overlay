@@ -15,7 +15,7 @@ PYTHON_COMPAT=( python3_{8,9} )
 # TypeError: required field "lineno" missing from alias
 
 
-DISTUTILS_USE_PEP517=setuptools
+DISTUTILS_USE_PEP517="setuptools"
 inherit distutils-r1 pypi
 
 DESCRIPTION="A generic AST to represent Python2 and Python3's Abstract Syntax Tree (AST)"
