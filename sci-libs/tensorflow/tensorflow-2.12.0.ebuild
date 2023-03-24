@@ -338,10 +338,6 @@ RDEPEND="
 			>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP}]
 		)
 		(
-			<dev-python/numpy-1.24[${PYTHON_USEDEP}]
-			>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
-		)
-		(
 			!~dev-python/protobuf-python-4.21.0[${PYTHON_USEDEP}]
 			!~dev-python/protobuf-python-4.21.1[${PYTHON_USEDEP}]
 			!~dev-python/protobuf-python-4.21.2[${PYTHON_USEDEP}]
@@ -368,6 +364,7 @@ RDEPEND="
 		>=dev-python/google-pasta-0.1.1[${PYTHON_USEDEP}]
 		>=dev-python/h5py-2.9.0[${PYTHON_USEDEP}]
 		>=dev-python/jax-0.3.15[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
 		>=dev-python/opt-einsum-2.3.2[${PYTHON_USEDEP}]
 		>=dev-python/six-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
@@ -471,7 +468,7 @@ REQUIRED_USE="
 "
 S="${WORKDIR}/${MY_P}"
 DOCS=( AUTHORS CONTRIBUTING.md ISSUE_TEMPLATE.md README.md RELEASE.md )
-RESTRICT="test" # Tests need GPU access
+RESTRICT="test" # Tests need GPU access.  Relaxed python deps patches breaks tests.
 
 get-cpu-flags() {
 	local i f=()

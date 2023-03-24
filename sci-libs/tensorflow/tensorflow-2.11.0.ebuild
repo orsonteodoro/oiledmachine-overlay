@@ -402,7 +402,7 @@ REQUIRED_USE="
 "
 S="${WORKDIR}/${MY_P}"
 DOCS=( AUTHORS CONTRIBUTING.md ISSUE_TEMPLATE.md README.md RELEASE.md )
-RESTRICT="test" # Tests need GPU access
+RESTRICT="test" # Tests need GPU access.  Relaxed python deps patches breaks tests.
 
 get-cpu-flags() {
 	local i f=()
