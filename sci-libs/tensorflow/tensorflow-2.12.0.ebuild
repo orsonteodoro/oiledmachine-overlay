@@ -108,7 +108,7 @@ KEYWORDS="~amd64"
 SLOT="0"
 IUSE="
 alt-ssl clang cuda custom-optimization-level +hardened mpi +python
-xla
+test xla
 "
 CPU_USE_FLAGS_X86=(
 #	popcnt     # No preprocessor check but set in CI or some archs
@@ -375,6 +375,21 @@ RDEPEND="
 		>=dev-python/dill-0.3.6[${PYTHON_USEDEP}]
 		>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
 		>=dev-python/tblib-1.7.0[${PYTHON_USEDEP}]
+
+		test? (
+			(
+				<dev-python/numpy-1.24[${PYTHON_USEDEP}]
+				>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
+			)
+			(
+				<dev-python/grpcio-${DEP_VER_MAX}[${PYTHON_USEDEP}]
+				>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
+			)
+			(
+				<dev-python/gast-0.4.0[${PYTHON_USEDEP}]
+				>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
+			)
+		)
 	)
 "
 DEPEND="
@@ -465,10 +480,14 @@ REQUIRED_USE="
 	python? (
 		${PYTHON_REQUIRED_USE}
 	)
+	test? (
+		python
+		python_targets_python3_9
+	)
 "
 S="${WORKDIR}/${MY_P}"
 DOCS=( AUTHORS CONTRIBUTING.md ISSUE_TEMPLATE.md README.md RELEASE.md )
-RESTRICT="test" # Tests need GPU access.  Relaxed python deps patches breaks tests.
+RESTRICT="" # Tests need GPU access.  Relaxed python deps patches breaks tests.
 
 get-cpu-flags() {
 	local i f=()

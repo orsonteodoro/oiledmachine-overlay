@@ -7,6 +7,7 @@ EAPI=8
 MY_PV=${PV/_rc/-rc}
 MY_P=${PN}-${MY_PV}
 DEP_VER="$(ver_cut 1-2)"
+DEP_VER_MAX="${DEP_VER%%.*}.$(( $(ver_cut 2 ${DEP_VER}) + 1 ))"
 
 DISTUTILS_OPTIONAL=1
 PYTHON_COMPAT=( python3_{9,10} )
@@ -80,7 +81,7 @@ KEYWORDS="~amd64"
 SLOT="0"
 IUSE="
 alt-ssl clang cuda custom-optimization-level +hardened mpi +python
-xla
+test xla
 "
 CPU_USE_FLAGS_X86=(
 #	popcnt     # No preprocessor check but set in CI or some archs
@@ -326,6 +327,21 @@ RDEPEND="
 		>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
 		>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
 		>=net-libs/google-cloud-cpp-1.17.1
+
+		test? (
+			(
+				<dev-python/gast-0.4.0[${PYTHON_USEDEP}]
+				>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
+			)
+			(
+				<dev-python/grpcio-${DEP_VER_MAX}[${PYTHON_USEDEP}]
+				>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
+			)
+			(
+				<dev-python/protobuf-python-3.20[${PYTHON_USEDEP}]
+				>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
+			)
+		)
 	)
 "
 DEPEND="
@@ -399,10 +415,14 @@ REQUIRED_USE="
 	python? (
 		${PYTHON_REQUIRED_USE}
 	)
+	test? (
+		python
+		python_targets_python3_9
+	)
 "
 S="${WORKDIR}/${MY_P}"
 DOCS=( AUTHORS CONTRIBUTING.md ISSUE_TEMPLATE.md README.md RELEASE.md )
-RESTRICT="test" # Tests need GPU access.  Relaxed python deps patches breaks tests.
+RESTRICT="" # Tests need GPU access.  Relaxed python deps patches breaks tests.
 
 get-cpu-flags() {
 	local i f=()
