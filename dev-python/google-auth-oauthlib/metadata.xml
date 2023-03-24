@@ -20,7 +20,7 @@
 
   -->
   <upstream>
-    <remote-id type="pypi">google-auth-oauthlib</remote-id>
     <remote-id type="github">googleapis/google-auth-library-python-oauthlib</remote-id>
+    <remote-id type="pypi">google-auth-oauthlib</remote-id>
   </upstream>
 </pkgmetadata>
