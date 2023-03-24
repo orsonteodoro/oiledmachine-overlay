@@ -1,0 +1,11 @@
+--- a/tensorflow/tools/pip_package/setup.py.orig	2023-03-20 16:12:24.000000000 -0700
++++ b/tensorflow/tools/pip_package/setup.py	2023-03-24 02:53:53.110306062 -0700
+@@ -86,7 +86,7 @@ REQUIRED_PACKAGES = [
+     'astunparse >= 1.6.0',
+     'flatbuffers >= 2.0',
+     # TODO(b/213222745) gast versions above 0.4.0 break TF's tests
+-    'gast >= 0.2.1, <= 0.4.0',
++    'gast >= 0.2.1', # oteodoro:  allow support for python >= 3.10
+     'google_pasta >= 0.1.1',
+     'h5py >= 2.9.0',
+     # TODO(b/239052279): replace with external dependency on JAX repo once JAX

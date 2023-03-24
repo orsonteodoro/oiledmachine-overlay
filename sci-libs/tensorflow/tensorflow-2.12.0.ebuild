@@ -333,10 +333,6 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		(
-			<dev-python/gast-0.4[${PYTHON_USEDEP}]
-			>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
-		)
-		(
 			<dev-python/grpcio-${GRPCIO_PV_MAX}[${PYTHON_USEDEP}]
 			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
 			>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP}]
@@ -368,6 +364,7 @@ RDEPEND="
 		>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]
 		>=dev-python/clang-python-13.0.0[${PYTHON_USEDEP}]
 		>=dev-python/flatbuffers-2.0[${PYTHON_USEDEP}]
+		>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
 		>=dev-python/google-pasta-0.1.1[${PYTHON_USEDEP}]
 		>=dev-python/h5py-2.9.0[${PYTHON_USEDEP}]
 		>=dev-python/jax-0.3.15[${PYTHON_USEDEP}]
@@ -663,9 +660,9 @@ src_unpack() {
 	unpack tensorflow-patches-${TF_PATCHES}.tar.bz2
 	bazel_load_distfiles "${bazel_external_uris}"
 
-	# Breaks during patching
+	# Fix patches
 	cp -a "${FILESDIR}/2.12.0/0003-mkl_dnn-Must-link-against-libm-for-round-and-log2.patch" "${WORKDIR}/patches" || die
-	rm -rf "${WORKDIR}/patches/0005-Relax-setup.py-version-requirements.patch" || die
+	cp -a "${FILESDIR}/2.12.0/0005-Relax-setup.py-version-requirements.patch" "${WORKDIR}/patches" || die
 }
 
 setup_linker() {

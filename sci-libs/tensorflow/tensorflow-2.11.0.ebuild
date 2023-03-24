@@ -302,10 +302,6 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		(
-			<dev-python/gast-0.4[${PYTHON_USEDEP}]
-			>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
-		)
-		(
 			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
 			>=dev-python/grpcio-1.24.3[${PYTHON_USEDEP}]
 		)
@@ -318,6 +314,7 @@ RDEPEND="
 		>=dev-python/clang-python-13.0.0[${PYTHON_USEDEP}]
 		>=dev-python/dill-0.3.4[${PYTHON_USEDEP}]
 		>=dev-python/flatbuffers-2.0[${PYTHON_USEDEP}]
+		>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
 		>=dev-python/google-pasta-0.2.0[${PYTHON_USEDEP}]
 		>=dev-python/h5py-2.9.0[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
