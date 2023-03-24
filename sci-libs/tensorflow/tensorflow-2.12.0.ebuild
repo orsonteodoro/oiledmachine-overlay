@@ -291,20 +291,7 @@ SRC_URI="
 # >=grpc-1.48 is the correct for compatibility with abseil-cpp 20220623 lts
 # grpcio version should match grpc
 # Apache-2.0 is only license compatible with >=openssl-3
-# protobuf-python has a max limit upstream
-# gast has a max limit upstream
 RDEPEND_DISABLED="
-	(
-		<dev-python/protobuf-python-3.20[${PYTHON_USEDEP}]
-		>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
-	)
-	|| (
-		(
-			<dev-python/gast-0.4[${PYTHON_USEDEP}]
-			>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
-		)
-		~dev-python/gast-0.4.0[${PYTHON_USEDEP}]
-	)
 " # For python USE
 # The distro only has 11.7, 11.8, 12 for cuda.  The exact version preferred due
 # to binary compatibility.
@@ -346,6 +333,10 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		(
+			<dev-python/gast-0.4[${PYTHON_USEDEP}]
+			>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
+		)
+		(
 			<dev-python/grpcio-${GRPCIO_PV_MAX}[${PYTHON_USEDEP}]
 			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
 			>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP}]
@@ -361,8 +352,8 @@ RDEPEND="
 			!~dev-python/protobuf-python-4.21.3[${PYTHON_USEDEP}]
 			!~dev-python/protobuf-python-4.21.4[${PYTHON_USEDEP}]
 			!~dev-python/protobuf-python-4.21.5[${PYTHON_USEDEP}]
-			<dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
-			>=dev-python/protobuf-python-3.20[${PYTHON_USEDEP}]
+			<dev-python/protobuf-python-5[${PYTHON_USEDEP}]
+			>=dev-python/protobuf-python-3.20.3[${PYTHON_USEDEP}]
 		)
 		(
 			<dev-python/wrapt-1.15[${PYTHON_USEDEP}]
@@ -377,7 +368,6 @@ RDEPEND="
 		>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]
 		>=dev-python/clang-python-13.0.0[${PYTHON_USEDEP}]
 		>=dev-python/flatbuffers-2.0[${PYTHON_USEDEP}]
-		>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
 		>=dev-python/google-pasta-0.1.1[${PYTHON_USEDEP}]
 		>=dev-python/h5py-2.9.0[${PYTHON_USEDEP}]
 		>=dev-python/jax-0.3.15[${PYTHON_USEDEP}]
@@ -673,6 +663,7 @@ src_unpack() {
 	unpack tensorflow-patches-${TF_PATCHES}.tar.bz2
 	bazel_load_distfiles "${bazel_external_uris}"
 
+	die
 	# Breaks during patching
 	rm -rf "${WORKDIR}/patches/0003-mkl_dnn-Must-link-against-libm-for-round-and-log2.patch" || die
 	rm -rf "${WORKDIR}/patches/0005-Relax-setup.py-version-requirements.patch" || die

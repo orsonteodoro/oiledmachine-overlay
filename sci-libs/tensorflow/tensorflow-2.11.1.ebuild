@@ -282,19 +282,11 @@ SRC_URI="
 # >=grpc-1.48 is the correct for compatibility with abseil-cpp 20220623 lts
 # grpcio version should match grpc
 # Apache-2.0 is only license compatible with >=openssl-3
-# protobuf-python has a max limit upstream
-# gast has a max limit upstream
+# protobuf-python has a max limit <3.20 upstream, but distro only supports 4.21.9
 RDEPEND_DISABLED="
 	(
 		<dev-python/protobuf-python-3.20[${PYTHON_USEDEP}]
 		>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
-	)
-	|| (
-		(
-			<dev-python/gast-0.4[${PYTHON_USEDEP}]
-			>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
-		)
-		~dev-python/gast-0.4.0[${PYTHON_USEDEP}]
 	)
 " # For python USE
 # The distro only has 11.7, 11.8, 12 for cuda.  The exact version preferred due
@@ -338,13 +330,13 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		(
+			<dev-python/gast-0.4[${PYTHON_USEDEP}]
+			>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
+		)
+		(
 			<dev-python/grpcio-${GRPCIO_PV_MAX}[${PYTHON_USEDEP}]
 			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
 			>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP}]
-		)
-		(
-			<dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
-			>=dev-python/protobuf-python-3.20[${PYTHON_USEDEP}]
 		)
 		(
 			<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP}]
@@ -355,11 +347,11 @@ RDEPEND="
 		>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]
 		>=dev-python/clang-python-13.0.0[${PYTHON_USEDEP}]
 		>=dev-python/flatbuffers-2.0[${PYTHON_USEDEP}]
-		>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
 		>=dev-python/google-pasta-0.1.1[${PYTHON_USEDEP}]
 		>=dev-python/h5py-2.9.0[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
 		>=dev-python/opt-einsum-2.3.2[${PYTHON_USEDEP}]
+		>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
 		>=dev-python/six-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-3.6.6[${PYTHON_USEDEP}]
