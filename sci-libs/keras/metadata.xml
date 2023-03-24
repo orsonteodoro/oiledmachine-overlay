@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person">
+    <!-- Ebuild originator -->
+    <email>perfinion@gentoo.org</email>
+    <name>Jason Zaman</name>
+  </maintainer>
+  <longdescription lang="en">
+    A deep learning for humans. TensorFlow Keras is an implementation of the
+    Keras API that uses TensorFlow as a backend.
+  </longdescription>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  These ebuilds/packages are provided for test dependencies.
+  For production, use the ebuild from the distro overlay instead.
+
+  -->
+  <upstream>
+    <remote-id type="github">keras-team/keras</remote-id>
+  </upstream>
+</pkgmetadata>
