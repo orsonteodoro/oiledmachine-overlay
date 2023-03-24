@@ -1,0 +1,17 @@
+Forward port of
+Subject: [PATCH 3/5] mkl_dnn: Must link against libm for round and log2
+--- a/third_party/mkl_dnn/mkldnn_v1.BUILD.orig	2023-03-20 16:12:24.000000000 -0700
++++ b/third_party/mkl_dnn/mkldnn_v1.BUILD	2023-03-24 02:18:52.222278918 -0700
+@@ -162,9 +162,9 @@ cc_library(
+     includes = _INCLUDES_LIST,
+     # TODO(penpornk): Use lrt_if_needed from tensorflow.bzl instead.
+     linkopts = select({
+-        "@org_tensorflow//tensorflow/tsl:linux_aarch64": ["-lrt"],
+-        "@org_tensorflow//tensorflow/tsl:linux_x86_64": ["-lrt"],
+-        "@org_tensorflow//tensorflow/tsl:linux_ppc64le": ["-lrt"],
++        "@org_tensorflow//tensorflow/tsl:linux_aarch64": ["-lrt", "-lm"], # oteodoro: forward port patch
++        "@org_tensorflow//tensorflow/tsl:linux_x86_64": ["-lrt", "-lm"],  # oteodoro: '
++        "@org_tensorflow//tensorflow/tsl:linux_ppc64le": ["-lrt", "-lm"], # oteodoro: '
+         "//conditions:default": [],
+     }),
+     textual_hdrs = _TEXTUAL_HDRS_LIST,

@@ -664,7 +664,7 @@ src_unpack() {
 	bazel_load_distfiles "${bazel_external_uris}"
 
 	# Breaks during patching
-	rm -rf "${WORKDIR}/patches/0003-mkl_dnn-Must-link-against-libm-for-round-and-log2.patch" || die
+	cp -a "${FILESDIR}/2.12.0/0003-mkl_dnn-Must-link-against-libm-for-round-and-log2.patch" "${WORKDIR}/patches" || die
 	rm -rf "${WORKDIR}/patches/0005-Relax-setup.py-version-requirements.patch" || die
 }
 
