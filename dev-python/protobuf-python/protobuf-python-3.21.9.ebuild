@@ -4,17 +4,15 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517=setuptools
+PARENT_PN="${PN/-python/}"
+PARENT_PV="$(ver_cut 2-)"
+PARENT_P="${PARENT_PN}-${PARENT_PV}"
 PYTHON_COMPAT=( python3_{9..11} )
 
 inherit distutils-r1
 
-PARENT_PN="${PN/-python/}"
-PARENT_PV="$(ver_cut 2-)"
-PARENT_P="${PARENT_PN}-${PARENT_PV}"
-
 if [[ "${PV}" == *9999 ]]; then
 	inherit git-r3
-
 	EGIT_REPO_URI="https://github.com/protocolbuffers/protobuf.git"
 	EGIT_SUBMODULES=()
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${PARENT_P}"
@@ -34,11 +32,6 @@ HOMEPAGE="
 
 LICENSE="BSD"
 SLOT="0/32"
-
-S="${WORKDIR}/${PARENT_P}/python"
-
-BDEPEND="
-"
 DEPEND="
 	${PYTHON_DEPS}
 	!~dev-python/protobuf-python-4.21.9
@@ -47,6 +40,9 @@ RDEPEND="
 	${BDEPEND}
 	dev-libs/protobuf:${SLOT}
 "
+BDEPEND="
+"
+S="${WORKDIR}/${PARENT_P}/python"
 
 distutils_enable_tests setup.py
 
@@ -58,13 +54,13 @@ PARENT_PATCHES=(
 
 # Here for patches within "python/" subdirectory.
 PATCHES=(
-	"${FILESDIR}"/${PN}-3.20.3-python311.patch
+	"${FILESDIR}/${PN}-3.20.3-python311.patch"
 )
 
 python_prepare_all() {
 	pushd "${WORKDIR}/${PARENT_P}" > /dev/null || die
-	[[ -n "${PARENT_PATCHES[@]}" ]] && eapply "${PARENT_PATCHES[@]}"
-	eapply_user
+		[[ -n "${PARENT_PATCHES[@]}" ]] && eapply "${PARENT_PATCHES[@]}"
+		eapply_user
 	popd > /dev/null || die
 
 	distutils-r1_python_prepare_all
