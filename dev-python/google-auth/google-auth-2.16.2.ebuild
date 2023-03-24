@@ -3,7 +3,7 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517=setuptools
+DISTUTILS_USE_PEP517="setuptools"
 PYPI_NO_NORMALIZE=1
 PYTHON_COMPAT=( python3_{9..11} )
 
@@ -20,12 +20,12 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 
 RDEPEND="
+	!dev-python/namespace-google
 	<dev-python/cachetools-6.0.0[${PYTHON_USEDEP}]
 	>=dev-python/pyasn1-0.1.7[${PYTHON_USEDEP}]
 	>=dev-python/pyasn1-modules-0.2.1[${PYTHON_USEDEP}]
 	>=dev-python/rsa-3.1.4[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
-	!dev-python/namespace-google
 "
 BDEPEND="
 	test? (
@@ -44,7 +44,7 @@ BDEPEND="
 	)
 "
 
-distutils_enable_tests pytest
+distutils_enable_tests "pytest"
 
 EPYTEST_IGNORE=(
 	# these are compatibility tests with oauth2client
