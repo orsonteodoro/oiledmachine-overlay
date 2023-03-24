@@ -378,16 +378,16 @@ RDEPEND="
 
 		test? (
 			(
-				<dev-python/numpy-1.24[${PYTHON_USEDEP}]
-				>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
+				<dev-python/gast-0.4.0[${PYTHON_USEDEP}]
+				>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
 			)
 			(
 				<dev-python/grpcio-${DEP_VER_MAX}[${PYTHON_USEDEP}]
 				>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
 			)
 			(
-				<dev-python/gast-0.4.0[${PYTHON_USEDEP}]
-				>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
+				<dev-python/numpy-1.24[${PYTHON_USEDEP}]
+				>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
 			)
 		)
 	)
