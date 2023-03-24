@@ -464,10 +464,11 @@ REQUIRED_USE="
 		${PYTHON_REQUIRED_USE}
 	)
 	test? (
+		!python_targets_python3_10
 		python
 		python_targets_python3_9
 	)
-"
+" # The test USE flag is limited by the dev-python/gast package.
 S="${WORKDIR}/${MY_P}"
 DOCS=( AUTHORS CONTRIBUTING.md ISSUE_TEMPLATE.md README.md RELEASE.md )
 RESTRICT="" # Tests need GPU access.  Relaxed python deps patches breaks tests.
