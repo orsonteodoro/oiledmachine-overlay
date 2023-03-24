@@ -941,6 +941,12 @@ add_sandbox_rules() {
 src_compile() {
 	load_env
 
+	local args=()
+
+	if has_version ">=dev-util/bazel-6" ; then
+		args+=( --incompatible_fix_package_group_reporoot_syntax=false )
+	fi
+
 einfo "src_compile():  Step 1"
 	if use python; then
 		python_setup
@@ -949,9 +955,11 @@ einfo "src_compile():  Step 1"
 		cd "${BUILD_DIR}" || die
 	fi
 
-	# fail early if any deps are missing
 einfo "src_compile():  Step 2"
-	ebazel build -k --nobuild \
+	ebazel build \
+		${args[@]} \
+		-k \
+		--nobuild \
 		//tensorflow:libtensorflow_framework.so \
 		//tensorflow:libtensorflow.so \
 		//tensorflow:libtensorflow_cc.so \
@@ -959,15 +967,24 @@ einfo "src_compile():  Step 2"
 
 einfo "src_compile():  Step 3"
 	ebazel build \
+		${args[@]} \
 		//tensorflow:libtensorflow_framework.so \
 		//tensorflow:libtensorflow.so
-	ebazel build //tensorflow:libtensorflow_cc.so
-	ebazel build //tensorflow:install_headers
+einfo "src_compile():  Step 4"
+	ebazel build \
+		${args[@]} \
+		//tensorflow:libtensorflow_cc.so
+einfo "src_compile():  Step 5"
+	ebazel build \
+		${args[@]} \
+		//tensorflow:install_headers
 	ebazel shutdown
 
-einfo "src_compile():  Step 4"
 	do_compile() {
-		ebazel build //tensorflow/tools/pip_package:build_pip_package
+einfo "src_compile():  Step 6"
+		ebazel build \
+			${args[@]} \
+			//tensorflow/tools/pip_package:build_pip_package
 		ebazel shutdown
 	}
 	BUILD_DIR="${S}"
