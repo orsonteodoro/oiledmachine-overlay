@@ -384,7 +384,7 @@ PDEPEND="
 	python? (
 		!arm64? (
 			!kernel_Darwin? (
-				>=dev-python/tensorflow-io-0.23.1[${PYTHON_USEDEP}]
+				>=dev-python/tensorflow-io-0.23.1[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
 			)
 		)
 		(
