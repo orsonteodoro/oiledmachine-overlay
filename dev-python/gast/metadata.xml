@@ -21,9 +21,12 @@
     versions, as produced by ast.parse from the standard ast module.
   </longdescription>
   <!--
+
     oiledmachine-overlay notes:
 
-    Version bumps limited by sci-libs/tensorflow in this repo.
+    Version bumps limited by sci-libs/tensorflow in this repo.  Use
+    the distro ebuild instead for production.
+
   -->
   <stabilize-allarches/>
   <upstream>
