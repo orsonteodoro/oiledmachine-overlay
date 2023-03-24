@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person" proxied="yes">
+    <!-- Ebuild originator -->
+    <email>arfrever.fta@gmail.com</email>
+    <name>Arfrever Frehtes Taifersar Arahesis</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- Ebuild originators -->
+    <email>cjk@gentoo.org</email>
+    <name>Cjk</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Ebuild fork provided as a dependency requirement for testing packages.
+  For production, use the ebuild on the distro overlay.
+
+  -->
+  <slots>
+    <subslots>Soname version number of Protobuf</subslots>
+  </slots>
+  <upstream>
+    <remote-id type="github">protocolbuffers/protobuf</remote-id>
+    <remote-id type="pypi">protobuf</remote-id>
+  </upstream>
+</pkgmetadata>
