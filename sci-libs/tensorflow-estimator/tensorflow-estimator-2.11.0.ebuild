@@ -5,14 +5,13 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{9,10} )
 MY_PN="estimator"
-MY_PV=${PV}-rc0
-MY_P=${MY_PN}-${MY_PV}
+MY_PV="${PV}-rc0"
+MY_P="${MY_PN}-${MY_PV}"
 
 inherit bazel distutils-r1
 
 DESCRIPTION="A high-level TensorFlow API that greatly simplifies machine learning programming"
 HOMEPAGE="https://www.tensorflow.org/"
-
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
@@ -20,19 +19,26 @@ IUSE=""
 
 bazel_external_uris="
 	https://github.com/bazelbuild/rules_cc/archive/b1c40e1de81913a3c40e5948f78719c28152486d.zip -> bazelbuild-rules_cc-b1c40e1de81913a3c40e5948f78719c28152486d.zip
-	https://github.com/bazelbuild/rules_java/archive/7cf3cefd652008d0a64a419c34c13bdca6c8f178.zip -> bazelbuild-rules_java-7cf3cefd652008d0a64a419c34c13bdca6c8f178.zip"
+	https://github.com/bazelbuild/rules_java/archive/7cf3cefd652008d0a64a419c34c13bdca6c8f178.zip -> bazelbuild-rules_java-7cf3cefd652008d0a64a419c34c13bdca6c8f178.zip
+"
 
-SRC_URI="https://github.com/tensorflow/${MY_PN}/archive/v${MY_PV}.tar.gz -> ${P}-rc0.tar.gz
-	${bazel_external_uris}"
+SRC_URI="
+	${bazel_external_uris}
+https://github.com/tensorflow/${MY_PN}/archive/v${MY_PV}.tar.gz -> ${P}-rc0.tar.gz
+"
 
 RDEPEND="
-	sci-libs/tensorflow[python,${PYTHON_USEDEP}]
-	sci-libs/keras[${PYTHON_USEDEP}]"
-DEPEND="${RDEPEND}"
+	sci-libs/keras[${PYTHON_USEDEP}]
+	sci-libs/tensorflow[${PYTHON_USEDEP},python]
+"
+DEPEND="
+	${RDEPEND}
+"
 BDEPEND="
+	>=dev-util/bazel-5.1.1
 	app-arch/unzip
 	dev-java/java-config
-	>=dev-util/bazel-5.1.1"
+"
 
 S="${WORKDIR}/${MY_P}"
 
