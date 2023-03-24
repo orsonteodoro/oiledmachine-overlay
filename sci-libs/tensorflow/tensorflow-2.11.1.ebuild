@@ -379,7 +379,6 @@ DEPEND="
 		dev-python/setuptools
 	)
 "
-# TODO package: tensorflow-io-gcs-filesystem
 PDEPEND="
 	python? (
 		!arm64? (
