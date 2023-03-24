@@ -15,7 +15,6 @@ PYTHON_COMPAT=( python3_{8,9} )
 #     compile(gast.gast_to_ast(gnode), src_py, 'exec')
 # TypeError: required field "lineno" missing from alias
 
-
 inherit distutils-r1 pypi
 
 DESCRIPTION="A generic AST to represent Python2 and Python3's Abstract Syntax Tree (AST)"
