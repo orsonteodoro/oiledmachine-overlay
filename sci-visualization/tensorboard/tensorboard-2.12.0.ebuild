@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_10 )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit python-r1
 
 DESCRIPTION="TensorFlow's Visualization Toolkit"
@@ -33,7 +33,12 @@ REQUIRED_USE="
 #	>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
 # TODO: create packages:
 # tensorboard-data-server
-# tensorboard-plugin-wit
+DISABLED_DEPEND="
+	(
+		<sci-visualization/tensorboard-data-server-0.8.0
+		>=sci-visualization/tensorboard-data-server-0.7.0
+	)
+"
 RDEPEND="
 	${PYTHON_DEPS}
 	(
@@ -48,16 +53,12 @@ RDEPEND="
 		<dev-python/requests-2.21.0[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.21.0[${PYTHON_USEDEP}]
 	)
-	(
-		<dev-python/tensorboard-data-server-0.8.0
-		>=dev-python/tensorboard-data-server-0.7.0
-	)
 	>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 	>=dev-python/grpcio-1.48.2[${PYTHON_USEDEP}]
 	>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-python-3.19.6[${PYTHON_USEDEP}]
-	>=dev-python/tensorboard-plugin-wit-1.6.0
+	>=dev-python/tensorboard-plugin-wit-1.6.0[${PYTHON_USEDEP}]
 	>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
 
 	>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
