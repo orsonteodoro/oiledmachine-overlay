@@ -663,7 +663,6 @@ src_unpack() {
 	unpack tensorflow-patches-${TF_PATCHES}.tar.bz2
 	bazel_load_distfiles "${bazel_external_uris}"
 
-	die
 	# Breaks during patching
 	rm -rf "${WORKDIR}/patches/0003-mkl_dnn-Must-link-against-libm-for-round-and-log2.patch" || die
 	rm -rf "${WORKDIR}/patches/0005-Relax-setup.py-version-requirements.patch" || die
