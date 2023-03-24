@@ -20,7 +20,7 @@
 
   oiledmachine-overlay notes:
 
-  Ebuild fork provided as a dependency requirement for testing packages.
+  This ebuild fork is provided as a dependency requirement for testing packages.
   For production, use the ebuild on the distro overlay.
 
   -->
