@@ -19,7 +19,10 @@ DISTUTILS_USE_PEP517=setuptools
 inherit distutils-r1 pypi
 
 DESCRIPTION="A generic AST to represent Python2 and Python3's Abstract Syntax Tree (AST)"
-HOMEPAGE="https://pypi.org/project/gast/"
+HOMEPAGE="
+https://pypi.org/project/gast/
+https://github.com/serge-sans-paille/gast/
+"
 
 LICENSE="BSD PSF-2"
 SLOT="0"

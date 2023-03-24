@@ -30,6 +30,8 @@
   -->
   <stabilize-allarches/>
   <upstream>
+    <bugs-to>https://github.com/serge-sans-paille/gast/issues</bugs-to>
+    <remote-id type="github">serge-sans-paille/gast</remote-id>
     <remote-id type="pypi">gast</remote-id>
   </upstream>
 </pkgmetadata>
