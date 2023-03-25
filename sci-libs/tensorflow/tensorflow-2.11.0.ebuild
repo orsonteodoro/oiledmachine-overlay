@@ -2,6 +2,17 @@
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# SECURITY:  Bump every minor version.  Several CVEs announced:
+# https://github.com/tensorflow/tensorflow/releases/tag/v2.11.1
+
+# About testing:
+
+# If you used PYTHON_TARGETS="python3_10" in make.conf, you need to manually
+# disable some of the rows in python? in *DEPEND for the test USE flag to work
+# by adding python_targets_python3_9 -python_targets_python3_10 to package.use.
+
+# These checks will not be done in the ebuild for maintenance cost reasons.
+
 EAPI=8
 
 MY_PV=${PV/_rc/-rc}
