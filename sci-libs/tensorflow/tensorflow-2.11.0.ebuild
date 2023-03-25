@@ -8,8 +8,8 @@
 #
 # About testing:
 #
-# If you used PYTHON_TARGETS="python3_10" in make.conf, you need to do the
-# following:
+# If you used PYTHON_TARGETS="python3_10 python3_11" in make.conf, you need to
+# do the following:
 #
 # 1. Disable USE flags for python_targets_python3_10 python_targets_python3_11
 # some rows in python? in *DEPENDs section.  These are connected to grpcio,
