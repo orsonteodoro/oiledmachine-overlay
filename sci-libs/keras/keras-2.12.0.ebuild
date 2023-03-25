@@ -14,7 +14,7 @@ https://github.com/keras-team/keras
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=""
+IUSE=" test"
 
 # Versions and hashes are obtained by console and removing items below.
 # They do not appear in the tarball.
@@ -34,6 +34,8 @@ PROTOBUF_PV="3.21.9"
 #	>=sci-libs/keras-applications-1.0.8[${PYTHON_USEDEP}]
 #	>=sci-libs/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
 RDEPEND="
+	$(python_gen_cond_dep '>=dev-python/numpy-1.22[${PYTHON_USEDEP}]' python3_{9..10})
+	$(python_gen_cond_dep '>=dev-python/numpy-1.23[${PYTHON_USEDEP}]' python3_11)
 	(
 		<sci-libs/tensorflow-2.12[${PYTHON_USEDEP},python]
 		>=sci-libs/tensorflow-2.11[${PYTHON_USEDEP},python]
@@ -44,7 +46,6 @@ RDEPEND="
 	>=sys-libs/zlib-1.2.13
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/h5py[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/pandas[${PYTHON_USEDEP}]
 	dev-python/pillow[${PYTHON_USEDEP}]
 "
