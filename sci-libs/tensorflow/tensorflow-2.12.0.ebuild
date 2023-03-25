@@ -403,7 +403,7 @@ RDEPEND="
 			)
 			(
 				<dev-python/grpcio-${GRPCIO_PV_MAX}[${PYTHON_USEDEP}]
-				>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
+				>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP}]
 			)
 			(
 				<dev-python/numpy-1.24[${PYTHON_USEDEP}]
