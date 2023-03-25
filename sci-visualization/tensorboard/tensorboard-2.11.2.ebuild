@@ -28,7 +28,7 @@ REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
 
-# See https://github.com/tensorflow/tensorboard/blob/2.12.0/tensorboard/pip_package/requirements.txt
+# See https://github.com/tensorflow/tensorboard/blob/2.11.2/tensorboard/pip_package/requirements.txt
 # Not used:
 #	>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
 # TODO: create packages:
