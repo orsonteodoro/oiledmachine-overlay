@@ -37,10 +37,8 @@ DEPEND="
 	!>=dev-python/protobuf-python-4
 "
 RDEPEND="
-	${BDEPEND}
-	dev-libs/protobuf:${SLOT}
-"
-BDEPEND="
+	<dev-libs/protobuf-22:${SLOT}
+	>=dev-libs/protobuf-21.9:${SLOT}
 "
 S="${WORKDIR}/${PARENT_P}/python"
 
