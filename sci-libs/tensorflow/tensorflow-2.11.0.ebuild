@@ -11,14 +11,19 @@
 # If you used PYTHON_TARGETS="python3_10 python3_11" in make.conf, you need to
 # do the following:
 #
-# 1. Disable USE flags for python_targets_python3_10 python_targets_python3_11
+# 1. Add "sci-libs/tensorflow python python_targets_python3_9 test" to package.use.
+#
+# 2. Disable USE flags for python_targets_python3_10 python_targets_python3_11
 # some rows in python? in *DEPENDs section.  These are connected to grpcio,
-# grpcio-testing, grpcio-tools, protobuf, protobuf-protobuf.
+# grpcio-testing, grpcio-tools, protobuf, protobuf-python.
 #
-# 2. Uninstall issues related to slotting.
+# 3. Uninstall packages related to slotting issues.
 #
-# 3. Hard mask/block some python ebuilds in from the distro overlay due to
+# 4. Hard mask/block some python ebuilds in from the distro overlay due to
 # missing python3.9 support in PYTHON_COMPAT.
+#
+# 5. Remerge the this package and dependencies.
+# (emerge -1vuDN =tensorflow-2.11.0)
 #
 
 EAPI=8
