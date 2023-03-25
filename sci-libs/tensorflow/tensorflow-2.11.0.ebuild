@@ -292,7 +292,10 @@ RDEPEND="
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
 	)
-	=dev-cpp/abseil-cpp-20220623*:=
+	!test? (
+		=dev-cpp/abseil-cpp-20220623*:=
+		>=net-libs/grpc-${GRPC_PV}:=
+	)
 	>=app-arch/snappy-1.1.8
 	>=dev-db/lmdb-0.9.29
 	>=dev-db/sqlite-3.39.4
@@ -306,8 +309,6 @@ RDEPEND="
 	>=media-libs/libjpeg-turbo-2.1.0
 	>=media-libs/libpng-1.6.37:0
 	>=net-misc/curl-7.85.0
-	>=net-libs/grpc-1.27_p9999:=
-	>=net-libs/grpc-${GRPC_PV}:=
 	>=sys-apps/hwloc-2.7.1:=
 	>=sys-libs/zlib-1.2.13
 	cuda? (
@@ -321,8 +322,12 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		(
-			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
-			>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP}]
+			!test? (
+				>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
+			)
+			test? (
+				>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP}]
+			)
 		)
 		=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP}]
 		>=dev-libs/flatbuffers-2.0.6:=
@@ -360,6 +365,9 @@ RDEPEND="
 				>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
 			)
 		)
+	)
+	test? (
+		>=net-libs/grpc-1.27_p9999:=
 	)
 "
 DEPEND="

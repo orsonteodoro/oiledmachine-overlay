@@ -239,6 +239,7 @@ EGIT_COMMIT_STABLEHLO="51f005f0a8ff6e28f535adfec4de936cb4097aa4"		# From https:/
 EGIT_COMMIT_TF_RUNTIME="91d765cad5599f9710973d3e34d4dc22583e2e79"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/tf_runtime/workspace.bzl
 EGIT_COMMIT_XNNPACK="659147817805d17c7be2d60bd7bbca7e780f9c82"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
 
+
 # WARN: DO NOT HARDWRAP
 bazel_external_uris="
 	${bazel_external_uris_unknown}
@@ -320,7 +321,10 @@ RDEPEND="
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
 	)
-	=dev-cpp/abseil-cpp-20220623*:=
+	!test? (
+		=dev-cpp/abseil-cpp-20220623*:=
+		>=net-libs/grpc-${GRPC_PV}:=
+	)
 	>=dev-db/lmdb-0.9.29
 	>=dev-db/sqlite-3.40.1
 	>=dev-libs/double-conversion-3.2.0
@@ -333,8 +337,6 @@ RDEPEND="
 	>=media-libs/libjpeg-turbo-2.1.4
 	>=media-libs/libpng-1.6.38:0
 	>=net-misc/curl-7.88.0
-	>=net-libs/grpc-1.27_p9999:=
-	>=net-libs/grpc-${GRPC_PV}:=
 	>=sys-apps/hwloc-2.7.1:=
 	>=sys-libs/zlib-1.2.13
 	cuda? (
@@ -347,9 +349,13 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		(
+			!test? (
+				>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
+			)
 			<dev-python/grpcio-${GRPCIO_PV_MAX}[${PYTHON_USEDEP}]
-			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
-			>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP}]
+			test? (
+				>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP}]
+			)
 		)
 		(
 			!~dev-python/protobuf-python-4.21.0[${PYTHON_USEDEP}]
@@ -404,6 +410,9 @@ RDEPEND="
 				>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
 			)
 		)
+	)
+	test? (
+		>=net-libs/grpc-1.27_p9999:=
 	)
 "
 DEPEND="
