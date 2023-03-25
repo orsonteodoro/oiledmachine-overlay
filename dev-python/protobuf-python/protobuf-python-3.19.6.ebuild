@@ -7,7 +7,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PARENT_PN="${PN/-python/}"
 PARENT_PV="$(ver_cut 2-)"
 PARENT_P="${PARENT_PN}-${PARENT_PV}"
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{9..10} )
 
 inherit distutils-r1
 
@@ -18,10 +18,11 @@ if [[ "${PV}" == *9999 ]]; then
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${PARENT_P}"
 else
 	SRC_URI="
-		https://github.com/protocolbuffers/protobuf/archive/v${PARENT_PV}.tar.gz
-			-> ${PARENT_P}.tar.gz
+		https://github.com/protocolbuffers/protobuf/archive/refs/tags/v${PV}.tar.gz
+			-> ${P}.tar.gz
 	"
 	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~x86-linux ~x64-macos"
+	PARENT_P="${PARENT_PN}-${PV}"
 fi
 
 DESCRIPTION="Google's Protocol Buffers - Python bindings"
@@ -31,7 +32,7 @@ HOMEPAGE="
 "
 
 LICENSE="BSD"
-SLOT="0/32"
+SLOT="0/30"
 DEPEND="
 	${PYTHON_DEPS}
 	!>=dev-python/protobuf-python-4
@@ -54,7 +55,6 @@ PARENT_PATCHES=(
 
 # Here for patches within "python/" subdirectory.
 PATCHES=(
-	"${FILESDIR}/${PN}-3.20.3-python311.patch"
 )
 
 python_prepare_all() {
