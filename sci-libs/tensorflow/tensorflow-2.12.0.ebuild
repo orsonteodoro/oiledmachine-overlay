@@ -413,6 +413,7 @@ RDEPEND="
 	)
 	test? (
 		>=net-libs/grpc-1.27_p9999:=
+		<net-libs/grpc-1.49
 	)
 "
 DEPEND="
