@@ -50,7 +50,7 @@ RDEPEND="
 		>=dev-python/google-auth-oauthlib-0.5[${PYTHON_USEDEP}]
 	)
 	(
-		<dev-python/grpcio-1.48.4[${PYTHON_USEDEP}]
+		<dev-python/grpcio-1.48.5[${PYTHON_USEDEP}]
 		>=dev-python/grpcio-1.24.3[${PYTHON_USEDEP}]
 	)
 	(
