@@ -28,7 +28,8 @@ https://github.com/keras-team/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 "
 # https://github.com/keras-team/keras/blob/v2.11.0/requirements.txt
 # https://github.com/keras-team/keras/blob/v2.11.0/WORKSPACE
-PROTOBUF_PV="3.9.2"
+# The bazel version was unspecified, but this ebuild uses the same bazel version by tensorflow 2.11.x.
+PROTOBUF_PV="3.9.2" # From WORKSPACE which differs from requirements.txt
 # TODO: Fix sci-libs/keras-applications, sci-libs/keras-preprocessing
 # These have moved in this package.
 #	>=sci-libs/keras-applications-1.0.8[${PYTHON_USEDEP}]
@@ -54,7 +55,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-libs/protobuf-${PROTOBUF_PV}
-	>=dev-util/bazel-4.2.2
+	>=dev-util/bazel-5.3.0
 	app-arch/unzip
 	dev-java/java-config
 "
