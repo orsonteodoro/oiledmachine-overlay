@@ -50,6 +50,10 @@ RDEPEND="
 		>=dev-python/google-auth-oauthlib-0.5[${PYTHON_USEDEP}]
 	)
 	(
+		<dev-python/grpcio-1.48.4[${PYTHON_USEDEP}]
+		>=dev-python/grpcio-1.24.3[${PYTHON_USEDEP}]
+	)
+	(
 		<dev-python/protobuf-python-4[${PYTHON_USEDEP}]
 		>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
 	)
@@ -58,7 +62,6 @@ RDEPEND="
 		>=dev-python/requests-2.21.0[${PYTHON_USEDEP}]
 	)
 	>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
-	>=dev-python/grpcio-1.24.3[${PYTHON_USEDEP}]
 	>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
 	>=dev-python/tensorboard-plugin-wit-1.6.0[${PYTHON_USEDEP}]
