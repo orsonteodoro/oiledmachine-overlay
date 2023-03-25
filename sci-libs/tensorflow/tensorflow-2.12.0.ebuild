@@ -392,7 +392,7 @@ RDEPEND="
 
 		test? (
 			(
-				<dev-python/gast-0.4.0[${PYTHON_USEDEP}]
+				<dev-python/gast-0.4.1[${PYTHON_USEDEP}]
 				>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
 			)
 			(
