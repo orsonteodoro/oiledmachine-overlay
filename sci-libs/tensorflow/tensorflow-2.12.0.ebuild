@@ -5,18 +5,21 @@
 # SECURITY:  Bump every minor version.  Several CVEs announced:
 # https://github.com/tensorflow/tensorflow/releases/tag/v2.11.1
 
+#
 # About testing:
 #
-# If you used PYTHON_TARGETS="python3_10 python3_11" in make.conf, you need to
-# manually disable some of the rows in python? in *DEPEND for the test USE flag
-# to work by adding python_targets_python3_9 -python_targets_python3_10
-# -python_targets_python3_11 to package.use.
+# If you used PYTHON_TARGETS="python3_10" in make.conf, you need to do the
+# following:
 #
-# These checks will not be done in the ebuild for maintenance cost reasons.
+# 1. Disable USE flags for python_targets_python3_10 python_targets_python3_11
+# some rows in python? in *DEPENDs section.  These are connected to grpcio,
+# grpcio-testing, grpcio-tools, protobuf, protobuf-protobuf.
 #
-# You also need to hard mask some of the the distro ebuilds because they do
-# not enable python3_9 for PYTHON_COMPAT.  Use the ebuilds in this overlay
-# for the missing python 3.9 support.
+# 2. Uninstall issues related to slotting.
+#
+# 3. Hard mask/block some python ebuilds in from the distro overlay due to
+# missing python3.9 support in PYTHON_COMPAT.
+#
 
 EAPI=8
 
@@ -26,7 +29,6 @@ DEP_VER="$(ver_cut 1-2)"
 DEP_VER_MAX="${DEP_VER%%.*}.$(( $(ver_cut 2 ${DEP_VER}) + 1 ))"
 
 DISTUTILS_OPTIONAL=1
-PYTHON_COMPAT=( python3_{9..11} )
 CHECKREQS_MEMORY="10G" # Gold uses above 9.0 GiB
 CHECKREQS_DISK_BUILD="19G"
 CHECKREQS_DISK_USR="5G"
@@ -36,6 +38,8 @@ GCC_SLOTS=( ${GCC_MAX_SLOT} 11 10 ${GCC_MIN_SLOT} )
 LLVM_MAX_SLOT=14
 LLVM_MIN_SLOT=10
 LLVM_SLOTS=( ${LLVM_MAX_SLOT} 13 12 11 ${LLVM_MIN_SLOT} )
+PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_USEDEP_TEST="python_targets_python3_9,-python_targets_python3_10(-),-python_targets_python3_11(-)"
 
 # *seq* can only be done in the eclass.
 gen_seq_dec() {
@@ -323,6 +327,7 @@ RDEPEND="
 	)
 	!test? (
 		=dev-cpp/abseil-cpp-20220623*:=
+		>=dev-libs/protobuf-3.21.9:=
 		>=net-libs/grpc-${GRPC_PV}:=
 	)
 	>=dev-db/lmdb-0.9.29
@@ -331,7 +336,6 @@ RDEPEND="
 	>=dev-libs/icu-69.1:=
 	>=dev-libs/jsoncpp-1.9.5:=
 	>=dev-libs/nsync-1.25.0
-	>=dev-libs/protobuf-3.21.9:=
 	>=dev-libs/re2-0.2022.05.01:=
 	>=media-libs/giflib-5.2.1
 	>=media-libs/libjpeg-turbo-2.1.4
@@ -348,13 +352,11 @@ RDEPEND="
 	)
 	python? (
 		${PYTHON_DEPS}
-		(
-			!test? (
-				>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
-			)
-			<dev-python/grpcio-${GRPCIO_PV_MAX}[${PYTHON_USEDEP}]
-			test? (
-				>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP}]
+		!test? (
+			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
+			(
+				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP}]
+				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP}]
 			)
 		)
 		(
@@ -370,10 +372,6 @@ RDEPEND="
 		(
 			<dev-python/wrapt-1.15[${PYTHON_USEDEP}]
 			>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
-		)
-		(
-			<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP}]
-			>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP}]
 		)
 		>=dev-libs/flatbuffers-2.0.6:=
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
@@ -398,22 +396,27 @@ RDEPEND="
 
 		test? (
 			(
-				<dev-python/gast-0.4.1[${PYTHON_USEDEP}]
-				>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
+				<dev-python/gast-0.4.1[${PYTHON_USEDEP_TEST}]
+				>=dev-python/gast-0.2.1[${PYTHON_USEDEP_TEST}]
 			)
 			(
-				<dev-python/grpcio-${GRPCIO_PV_MAX}[${PYTHON_USEDEP}]
-				>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP}]
+				<dev-python/grpcio-${GRPCIO_PV_MAX}[${PYTHON_USEDEP_TEST}]
+				>=dev-python/grpcio-1.49.3[${PYTHON_USEDEP_TEST}]
 			)
 			(
-				<dev-python/numpy-1.24[${PYTHON_USEDEP}]
-				>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
+				<dev-python/numpy-1.24[${PYTHON_USEDEP_TEST}]
+				>=dev-python/numpy-1.22[${PYTHON_USEDEP_TEST}]
+			)
+			(
+				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP_TEST}]
+				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP_TEST}]
 			)
 		)
 	)
 	test? (
 		>=net-libs/grpc-1.27_p9999:=
 		<net-libs/grpc-1.49
+		dev-libs/protobuf:0/32
 	)
 "
 DEPEND="

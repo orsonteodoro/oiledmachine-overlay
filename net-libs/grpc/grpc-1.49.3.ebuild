@@ -41,7 +41,7 @@ SLOT="${SLOT_MAJ}/27.149" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSIO
 # third_party last update: 20230214
 RDEPEND+="
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-),${MULTILIB_USEDEP}]
-	>=dev-libs/protobuf-21.6:=[${MULTILIB_USEDEP}]
+	>=dev-libs/protobuf-21.6:0/32[${MULTILIB_USEDEP}]
 	>=dev-libs/re2-0.2021.09.01:=[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.17.2:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.13:=[${MULTILIB_USEDEP}]

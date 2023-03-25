@@ -32,13 +32,12 @@ HOMEPAGE="
 
 LICENSE="BSD"
 SLOT="0/32"
-DEPEND="
-	${PYTHON_DEPS}
-	!>=dev-python/protobuf-python-4
-"
 RDEPEND="
-	<dev-libs/protobuf-22:${SLOT}
-	>=dev-libs/protobuf-21.9:${SLOT}
+	${PYTHON_DEPS}
+	=dev-libs/protobuf-21.9*
+"
+DEPEND="
+	${RDEPEND}
 "
 S="${WORKDIR}/${PARENT_P}/python"
 

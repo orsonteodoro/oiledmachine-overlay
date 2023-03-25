@@ -18,6 +18,7 @@ IUSE+=" doc"
 RDEPEND+="
 	(
 		<dev-python/protobuf-python-4[${PYTHON_USEDEP}]
+		<dev-python/protobuf-python-3.21[${PYTHON_USEDEP}]
 		>=dev-python/protobuf-python-3.5.0_p1[${PYTHON_USEDEP}]
 	)
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-)]
