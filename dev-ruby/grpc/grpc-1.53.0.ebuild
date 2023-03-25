@@ -54,7 +54,7 @@ ruby_add_bdepend "
 	$(tw dev-ruby/facter 3)
 	$(tw dev-ruby/logging 2.0)
 	$(tw dev-ruby/rake 13.0)
-	$(tw dev-ruby/rake-compiler-dock 1.2)
+	$(tw dev-ruby/rake-compiler-dock 1.3)
 	$(tw dev-ruby/rubocop 1.41.0)
 	$(tw dev-ruby/signet 0.7)
 	$(tw dev-ruby/simplecov 0.22)
@@ -75,7 +75,7 @@ RDEPEND+="
 	>=dev-libs/re2-0.2022.04.01
 	>=net-dns/c-ares-1.17.2
 	>=sys-libs/zlib-1.2.13
-	~dev-cpp/abseil-cpp-20220623.0
+	~dev-cpp/abseil-cpp-20230125.0
 "
 BDEPEND+="
 	$(gen_ruby_bdepend)
@@ -95,7 +95,7 @@ EGIT_REPO_URI="https://github.com/grpc/grpc.git"
 EGIT_BRANCH="master"
 EGIT_COMMIT="v${PV}"
 PATCHES=(
-	"${FILESDIR}/${PN}-1.51.1-ruby-unvendor.patch"
+	"${FILESDIR}/${PN}-1.53.0-ruby-unvendor.patch"
 	"${FILESDIR}/${PN}-1.51.1-ruby-embed-changes.patch"
 	"${FILESDIR}/${PN}-1.51.1-ruby-unvendor-re2.patch"
 	"${FILESDIR}/${PN}-1.51.1-ruby-unvendor-abseil.patch"

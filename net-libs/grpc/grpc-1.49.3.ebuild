@@ -48,8 +48,8 @@ RDEPEND+="
 	~dev-cpp/abseil-cpp-20220623.0:=[${MULTILIB_USEDEP},cxx17(+)]
 "
 # See also
-# third_party/boringssl-with-bazel/src/include/include/openssl/crypto.h: OPENSSL_VERSION_TEXT
-# third_party/boringssl-with-bazel/src/include/include/openssl/base.h: OPENSSL_VERSION_NUMBER
+# third_party/boringssl-with-bazel/src/include/openssl/crypto.h: OPENSSL_VERSION_TEXT
+# third_party/boringssl-with-bazel/src/include/openssl/base.h: OPENSSL_VERSION_NUMBER
 
 DEPEND+=" ${RDEPEND}"
 BDEPEND+="
