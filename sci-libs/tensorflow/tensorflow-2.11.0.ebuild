@@ -6,12 +6,16 @@
 # https://github.com/tensorflow/tensorflow/releases/tag/v2.11.1
 
 # About testing:
-
+#
 # If you used PYTHON_TARGETS="python3_10" in make.conf, you need to manually
 # disable some of the rows in python? in *DEPEND for the test USE flag to work
 # by adding python_targets_python3_9 -python_targets_python3_10 to package.use.
-
+#
 # These checks will not be done in the ebuild for maintenance cost reasons.
+#
+# You also need to hard mask some of the the distro ebuilds because they do
+# not enable python3_9 for PYTHON_COMPAT.  Use the ebuilds in this overlay
+# for the missing python 3.9 support.
 
 EAPI=8
 
