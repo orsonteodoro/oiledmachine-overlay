@@ -396,7 +396,7 @@ RDEPEND="
 				>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
 			)
 			(
-				<dev-python/grpcio-${DEP_VER_MAX}[${PYTHON_USEDEP}]
+				<dev-python/grpcio-${GRPCIO_PV_MAX}[${PYTHON_USEDEP}]
 				>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
 			)
 			(

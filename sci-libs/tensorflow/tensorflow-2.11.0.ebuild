@@ -170,6 +170,8 @@ BAZEL_SKYLIB_PV="1.3.0"
 CUB_PV="1.9.9"
 CUDNN_FRONTEND_PV="0.7.1"
 GRPC_PV="1.48"
+GRPCIO_PV="1.24.3"
+GRPCIO_PV_MAX="2.0"
 KISSFFT_PV="131.1.0"
 NCCL_PV="2.13.4-1"
 ONEDNN_PV="2.7.1" # mkl_dnn_v1
@@ -320,7 +322,7 @@ RDEPEND="
 		${PYTHON_DEPS}
 		(
 			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
-			>=dev-python/grpcio-1.24.3[${PYTHON_USEDEP}]
+			>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP}]
 		)
 		=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP}]
 		>=dev-libs/flatbuffers-2.0.6:=
@@ -350,7 +352,7 @@ RDEPEND="
 				>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
 			)
 			(
-				<dev-python/grpcio-${DEP_VER_MAX}[${PYTHON_USEDEP}]
+				<dev-python/grpcio-${GRPCIO_PV_MAX}[${PYTHON_USEDEP}]
 				>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
 			)
 			(
