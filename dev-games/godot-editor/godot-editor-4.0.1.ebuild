@@ -212,10 +212,10 @@ REQUIRED_USE+="
 		csharp-external-editor
 	)
 "
-FREETYPE_PV="2.10.4"
+FREETYPE_PV="2.12.1"
 LIBOGG_PV="1.3.5"
 LIBVORBIS_PV="1.3.7"
-ZLIB_PV="1.2.11"
+ZLIB_PV="1.2.13"
 
 LLVM_SLOTS=(14 13) # See https://github.com/godotengine/godot/blob/3.4.5-stable/misc/hooks/pre-commit-clang-format#L79
 gen_cdepend_lto_llvm() {
@@ -313,6 +313,10 @@ CDEPEND_GCC="
 		sys-devel/gcc
 	)
 "
+# Missing
+# bullet
+# libvpx
+# opus
 DEPEND+="
 	${PYTHON_DEPS}
 	${CDEPEND}
@@ -365,7 +369,7 @@ DEPEND+="
 		>=net-libs/enet-1.3.17
 	)
 	system-embree? (
-		>=media-libs/embree-3.13.0
+		>=media-libs/embree-3.13.5
 	)
 	system-freetype? (
 		>=media-libs/freetype-${FREETYPE_PV}
@@ -377,7 +381,7 @@ DEPEND+="
 		>=media-libs/libpng-1.6.38
 	)
 	system-libtheora? (
-		>=media-libs/libtheora-1.1.1
+		>=media-libs/libtheora-9999
 	)
 	system-libvorbis? (
 		>=media-libs/libvorbis-${LIBVORBIS_PV}
@@ -386,20 +390,20 @@ DEPEND+="
 		>=media-libs/libvpx-1.6.0
 	)
 	system-libwebp? (
-		>=media-libs/libwebp-1.1.0
+		>=media-libs/libwebp-1.3.0
 	)
 	system-mbedtls? (
-		>=net-libs/mbedtls-2.18.1
+		>=net-libs/mbedtls-2.18.2
 	)
 	system-miniupnpc? (
-		>=net-libs/miniupnpc-2.2.2
+		>=net-libs/miniupnpc-2.2.4
 	)
 	system-opus? (
 		>=media-libs/opus-1.1.5
 		>=media-libs/opusfile-0.8
 	)
 	system-pcre2? (
-		>=dev-libs/libpcre2-10.36[jit?]
+		>=dev-libs/libpcre2-10.40[jit?]
 	)
 	system-recast? (
 		dev-games/recastnavigation
@@ -417,7 +421,7 @@ DEPEND+="
 		>=sys-libs/zlib-${ZLIB_PV}
 	)
 	system-zstd? (
-		>=app-arch/zstd-1.4.8
+		>=app-arch/zstd-1.5.0
 	)
 "
 RDEPEND+="
