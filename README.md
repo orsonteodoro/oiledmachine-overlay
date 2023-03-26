@@ -122,7 +122,9 @@ vulnerability is announced or after several strings of high vulnerabilties.
 
 ot-kernel is updated every release to minimize unpatched 0-day exploits.  Old
 ebuilds are removed intentionally and assume to contain one or an unannounced
-one.
+one by comparing keywords in the kernel changelog with the
+[CWE Top 25 Most Dangerous Software Weaknesses (2022)](https://cwe.mitre.org/top25/archive/2022/2022_cwe_top25.html)
+list.
 
 Packages are updated based on [GLSA](https://security.gentoo.org/glsa) and
 random [NVD](https://nvd.nist.gov/vuln/search) searches.
