@@ -271,6 +271,33 @@ npm-secaudit_find_analytics() {
 		"analytics"
 		"telemetry"
 		"glean"
+
+		# Translation provided by Wikipedia
+		# Major languages scanned only
+
+		# analytics
+		"أناليتكس"		# arabic
+		"分析"			# chinese
+		"אנאליטיקס"		# hebrew/yiddish
+		"एनालिटिक्स"		# hindi (indian)
+		"アナリティクス"	# japanese
+		"애널리틱스"		# korean
+		"آنالیتیکس"		# persian
+
+		# telemetry
+		"قياس عن بعد"		# arabic
+		"遠測"			# chinese
+		"télémesure"		# french
+		"telemetrie"		# german
+		"טלמטריה"		# hebrew
+		"दूरमिति"		# hindi (indian)
+		"telemetria"		# italian
+		"遠隔測定法"		# japanese
+		"원격 측정법"		# korean
+		"دورسنجی"		# persian
+		"Телеметри́я"		# russian
+		"telemetría"		# spanish
+		"telemetri"		# turkish
 	)
 
 einfo "Scanning for analytics packages in package*.json or yarn.lock."
