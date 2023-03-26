@@ -177,11 +177,6 @@ ELECTRON_APP_SESSION_REPLAY="allow"
 ```
 
 ```
-# Contents of /etc/portage/env/ot-kernel.conf
-OT_KERNEL_FIRMWARE_AVSCAN=0
-```
-
-```
 # Contents of package.env:
 sys-kernel/ot-sources ot-kernel.conf
 media-gfx/blockbench js-disable-av-scan.conf
