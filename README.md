@@ -150,8 +150,8 @@ To use the proactive malware scan, you must install `app-antivirus/clamav[clamap
 
 The policy for suspected analytics or session replay is "deny" build and install.
 
-It can be disabled using per-package USE flags or systemwide through make.conf.
-Examples how to do this are shown below:
+It can be enabled or disabled using per-package USE flags or systemwide through
+make.conf.  Examples how to do this are shown below:
 
 ```
 # Contents of /etc/portage/env/ot-kernel.conf
