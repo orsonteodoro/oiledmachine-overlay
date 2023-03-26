@@ -1215,6 +1215,48 @@ ewarn
 	fi
 }
 
+analytics_keywords=(
+	# Translation provided by Wikipedia
+	# Major languages scanned only
+
+	# analytics
+	"أناليتكس"		# arabic
+	"分析"			# chinese
+	"אנאליטיקס"		# hebrew/yiddish
+	"एनालिटिक्स"		# hindi (indian)
+	"アナリティクス"	# japanese
+	"애널리틱스"		# korean
+	"آنالیتیکس"		# persian
+	"Аналитика"		# russian
+	"แอนะลิติกส์"		# thai
+	"Аналітика"		# ukrainian
+
+	# telemetry
+	"قياس عن بعد"		# arabic
+	"遠測"			# chinese
+	"télémesure"		# french
+	"telemetrie"		# german
+	"טלמטריה"		# hebrew
+	"दूरमिति"		# hindi (indian)
+	"telemetria"		# italian
+	"遠隔測定法"		# japanese
+	"원격 측정법"		# korean
+	"دورسنجی"		# persian
+	"Телеметри́я"		# russian
+	"telemetría"		# spanish
+	"โทรมาตร"		# thai
+	"telemetri"		# turkish
+	"Телеметрія"		# ukrainian
+)
+
+_electron-app_get_analytics_keywords() {
+	IFS="\n"
+	for row in ${analytics_keywords[@]} ; do
+		echo "${row}"
+	done
+	IFS=" \t\n"
+}
+
 # @FUNCTION: electron-app_find_analytics
 # @DESCRIPTION:
 # Inspect and block apps that may spy on users without consent or no opt-out.
@@ -1235,38 +1277,6 @@ electron-app_find_analytics() {
 		"analytics"
 		"telemetry"
 		"glean"
-
-		# Translation provided by Wikipedia
-		# Major languages scanned only
-
-		# analytics
-		"أناليتكس"		# arabic
-		"分析"			# chinese
-		"אנאליטיקס"		# hebrew/yiddish
-		"एनालिटिक्स"		# hindi (indian)
-		"アナリティクス"	# japanese
-		"애널리틱스"		# korean
-		"آنالیتیکس"		# persian
-		"Аналитика"		# russian
-		"แอนะลิติกส์"		# thai
-		"Аналітика"		# ukrainian
-
-		# telemetry
-		"قياس عن بعد"		# arabic
-		"遠測"			# chinese
-		"télémesure"		# french
-		"telemetrie"		# german
-		"טלמטריה"		# hebrew
-		"दूरमिति"		# hindi (indian)
-		"telemetria"		# italian
-		"遠隔測定法"		# japanese
-		"원격 측정법"		# korean
-		"دورسنجی"		# persian
-		"Телеметри́я"		# russian
-		"telemetría"		# spanish
-		"โทรมาตร"		# thai
-		"telemetri"		# turkish
-		"Телеметрія"		# ukrainian
 	)
 
 einfo "Scanning for analytics packages in package*.json or yarn.lock."
@@ -1398,12 +1408,12 @@ eerror
 electron-app_find_analytics_within_source_code() {
 	[[ "${ELECTRON_APP_ANALYTICS}" =~ ("allow"|"accept") ]] && return
 einfo "Scanning for possible analytics within code."
-	local pat="analytics"
+	local pat="analytics|$(_electron-app_get_analytics_keywords)"
 	IFS=$'\n'
 	local path
 	for path in $(find "${WORKDIR}" -type f) ; do
 		path=$(realpath "${path}")
-		if grep -i -r -e "${pat}" "${path}" ; then
+		if grep -E -i -r -e "(${pat})" "${path}" ; then
 eerror
 eerror "Analytics use within the code has detected in ${PN} that may track user"
 eerror "behavior.  Often times, this kind of collection is unannounced in"
