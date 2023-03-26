@@ -283,6 +283,8 @@ npm-secaudit_find_analytics() {
 		"アナリティクス"	# japanese
 		"애널리틱스"		# korean
 		"آنالیتیکس"		# persian
+		"Аналитика"		# russian
+		"Аналітика"		# ukrainian
 
 		# telemetry
 		"قياس عن بعد"		# arabic
@@ -298,6 +300,7 @@ npm-secaudit_find_analytics() {
 		"Телеметри́я"		# russian
 		"telemetría"		# spanish
 		"telemetri"		# turkish
+		"Телеметрія"		# ukrainian
 	)
 
 einfo "Scanning for analytics packages in package*.json or yarn.lock."
