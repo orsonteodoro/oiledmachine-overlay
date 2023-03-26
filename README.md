@@ -145,8 +145,9 @@ Due to recent hacking near the beginning of the year (or earlier) of a prominent
 member of the open source community who happens to also use the distro, it was
 decided to (1) add proactive scanning of malware for binary blobs and
 Electron/NPM based packages; and to (2) add proactive scanning of Electron/NPM
-based packages of session-replay that may steal sensitive information and also
-scan for analytics.
+based packages for session-replay dependencies or options that may result in
+unauthorized screen capture that may steal sensitive information and also scan
+for analytics.
 
 To use the proactive malware scan, you must install `app-antivirus/clamav[clamapp]`.
 
