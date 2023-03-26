@@ -13,7 +13,7 @@ https://github.com/tensorflow/tensorboard
 "
 SRC_URI="
 https://github.com/tensorflow/tensorboard/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.zip
+	-> ${P}.tar.gz
 "
 #https://files.pythonhosted.org/packages/py3/${PN::1}/${PN}/${P}-py3-none-any.whl
 
