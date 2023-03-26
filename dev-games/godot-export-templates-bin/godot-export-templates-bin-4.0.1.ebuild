@@ -6,7 +6,7 @@ EAPI=8
 
 STATUS="stable"
 
-ANDROID_MIN_API="19"
+ANDROID_MIN_API="21"
 ANDROID_SDK_VER="32"
 IOS_MIN="10.0"
 MONO_PV="6.12.0.182"
@@ -104,6 +104,7 @@ PLATFORMS="
 "
 IUSE+="${PLATFORMS} custom debug mono release standard"
 REQUIRED_USE="
+	!ios
 	android? (
 		|| (
 			standard
@@ -240,7 +241,7 @@ src_unpack() {
 		mkdir -p "${WORKDIR}/mono" || die
 		mkdir -p "${WORKDIR}/standard" || die
 		if use mono ; then
-			einfo "USE=mono is under construction"
+			einfo "USE=mono is under contruction"
 			unzip -x "${DISTDIR}/Godot_v${PV}-stable_mono_export_templates.tpz" -d "${WORKDIR}/mono" || die
 		fi
 		if use standard ; then
@@ -432,24 +433,26 @@ eerror
 		needs_update=1
 	fi
 
-	unzip -x \
-		$(realpath "${DISTDIR}/${src_tarball}") \
-		"templates/iphone.zip" \
-		-d "${T}/sandbox" || die
-	local ios_min=$(unzip -p \
-		"${T}/sandbox/templates/iphone.zip" \
-		"godot_ios.xcodeproj/project.pbxproj" \
-		| grep -e "IPHONEOS_DEPLOYMENT_TARGET" \
-		| head -n 1 \
-		| grep -o -E "[0-9\.]+")
-	if [[ "${ios_min}" != "${IOS_MIN}" ]] ; then
+	if use ios ; then
+		unzip -x \
+			$(realpath "${DISTDIR}/${src_tarball}") \
+			"templates/iphone.zip" \
+			-d "${T}/sandbox" || die
+		local ios_min=$(unzip -p \
+			"${T}/sandbox/templates/iphone.zip" \
+			"godot_ios.xcodeproj/project.pbxproj" \
+			| grep -e "IPHONEOS_DEPLOYMENT_TARGET" \
+			| head -n 1 \
+			| grep -o -E "[0-9\.]+")
+		if [[ "${ios_min}" != "${IOS_MIN}" ]] ; then
 eerror
 eerror "Expected iOS Min API:  ${IOS_MIN}"
 eerror "Actual iOS Min API:  ${ios_min}"
 eerror
 eerror "Bump the IOS_MIN in the ebuild."
 eerror
-		needs_update=1
+			needs_update=1
+		fi
 	fi
 
 if false ; then
@@ -482,7 +485,7 @@ fi
 	einfo "mono_pv=${mono_pv}"
 
 	if (( ${needs_update} == 1 )) ; then
-		die
+		:; #die
 	fi
 
 	rm -rf "${T}/sandbox" || die

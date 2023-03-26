@@ -240,7 +240,7 @@ src_unpack() {
 		mkdir -p "${WORKDIR}/mono" || die
 		mkdir -p "${WORKDIR}/standard" || die
 		if use mono ; then
-			einfo "USE=mono is under contruction"
+			einfo "USE=mono is under construction"
 			unzip -x "${DISTDIR}/Godot_v${PV}-stable_mono_export_templates.tpz" -d "${WORKDIR}/mono" || die
 		fi
 		if use standard ; then
