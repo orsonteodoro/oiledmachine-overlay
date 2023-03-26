@@ -68,18 +68,12 @@ for ways to control vulnerability patching using per-package environmental varia
 
 ### .NET Framework stack or .NET Core stack
 
-(May be revised)
+It was decided to keep these packages around, however, they are not tested
+in actual programs.
 
-This section applies only to this overlay.  It is decided that the entire
-.NET Core stack or any packages that sits on top of .NET Core on the
-oiledmachine-overlay will be removed for the difficulty of getting a source
-only build primarily, and due to critical vulnerabilities.  Some packages will
-be modded to remove dotnet or C# support.
-
-Packages that rely alone on mono (.NET Framework) but not .NET Core may be kept.
-
-Some packages will be moved to 
-[oiledmachine-overlay-legacy](https://github.com/orsonteodoro/oiledmachine-overlay-legacy).
+Since there is no official distro package developer guide or eclass for
+.NET 6.0+ packages, the install locations may be off for ebuilds in this
+overlay.
 
 ## Legacy packages
 
@@ -107,7 +101,12 @@ the metadata.xml, or obtainable through `epkginfo -x =dev-games/box2d-2.4.1-r2`
 for example.  Some of that information is only obtained by inspecting the
 comments of that file.  See `epkginfo --help` for details.
 
+Additional troubleshooting details can also be found by inspecting the header
+and footer of the ebuild.
+
 ## Security policy
+
+### 2020 policy
 
 In 2020 for this overlay only, it was decided that ebuild-packages would be
 dropped or migrated into oiledmachine-legacy to ideally eliminate
@@ -137,6 +136,65 @@ Some packages or ebuilds may be hard masked in
 [profiles/package.mask](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/profiles/package.mask)
 if the package still has some utility but unable to be removed, or
 contains a known infamous critical vulnerability.
+
+### 2023 policy
+
+Due to recent hacking near the beginning of the year (or earlier) of a prominent
+member of the open source community who happens to also use the distro, it was
+decided to (1) add proactive scanning of malware for binary blobs and
+Electron/NPM based packages; and to (2) add proactive scanning of Electron/NPM
+based packages of session-replay that may steal sensitive information and also
+scan for analytics.
+
+To use the proactive malware scan, you must install `app-antivirus/clamav[clamapp]`.
+
+The policy for suspected analytics or session replay is "deny" build and install.
+
+It can be disabled using per-package USE flags or systemwide through make.conf.
+Examples how to do this are shown below:
+
+```
+# Contents of /etc/portage/env/ot-kernel.conf
+OT_KERNEL_FIRMWARE_AVSCAN=0
+```
+
+```
+# Contents of /etc/portage/env/js-disable-av-scan.conf
+ELECTRON_APP_AV_SCAN=0
+NPM_SECAUDIT_AV_SCAN=0
+NPM_UTILS_AV_SCAN=0
+```
+
+```
+# Contents of /etc/portage/env/npm-allow-analytics.conf
+ELECTRON_APP_ANALYTICS="allow"
+NPM_SECAUDIT_ANALYTICS="allow"
+```
+
+```
+# Contents of /etc/portage/env/npm-allow-session-replay.conf
+ELECTRON_APP_SESSION_REPLAY="allow"
+```
+
+```
+# Contents of /etc/portage/env/ot-kernel.conf
+OT_KERNEL_FIRMWARE_AVSCAN=0
+```
+
+```
+# Contents of package.env:
+sys-kernel/ot-sources ot-kernel.conf
+media-gfx/blockbench js-disable-av-scan.conf
+media-gfx/upscayl npm-allow-session-replay.conf
+```
+
+#### Limitations
+
+These scans may, however, be too sensitive or may result in false positives.
+The scans for session-replay/analytics are limited to plaintext only and can be
+easily circumvented with obfuscated forms.  Only ot-sources,
+Electron and NPM based packages are scanned.  You may need to set up your own
+bashrc for additional comprehensive scans.
 
 ## PGO packages
 
