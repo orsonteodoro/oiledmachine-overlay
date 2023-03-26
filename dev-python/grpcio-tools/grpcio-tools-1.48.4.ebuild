@@ -15,6 +15,7 @@ KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 RDEPEND="
 	(
 		<dev-python/protobuf-python-4[${PYTHON_USEDEP}]
+		<dev-python/protobuf-python-3.21[${PYTHON_USEDEP}]
 		>=dev-python/protobuf-python-3.5.0_p1[${PYTHON_USEDEP}]
 	)
 	>=dev-python/cython-0.29.8[${PYTHON_USEDEP}]
