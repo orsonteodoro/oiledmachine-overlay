@@ -204,7 +204,9 @@ for additional comprehensive scans that scan again malware, and session replay
 and analytics keywords.
 
 Source code scans for unauthorized microphone and webcam use are currently not
-done but can be added via the bashrc with a grep on found die check.
+done but can be added via the bashrc with a grep on found die check.  Some of
+these issues can be mitigated by running the app under isolation or in a
+sandbox.
 
 Additional packages with binary blobs or prebuilt packages may be modified with
 these extra scans.
