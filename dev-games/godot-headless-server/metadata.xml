@@ -18,6 +18,7 @@ End of Life details can be found at
 https://docs.godotengine.org/en/stable/about/release_policy.html#release-support-timeline
 -->
     <bugs-to>https://github.com/godotengine/godot/issues</bugs-to>
+    <changelog>https://github.com/godotengine/godot/blob/master/CHANGELOG.md</changelog>
     <doc lang="en">https://docs.godotengine.org/en/stable/</doc>
     <doc lang="en">https://docs.godotengine.org/en/3.4/</doc>
     <doc lang="de">https://docs.godotengine.org/de/latest/</doc>

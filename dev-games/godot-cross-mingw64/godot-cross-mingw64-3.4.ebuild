@@ -4,6 +4,7 @@
 
 EAPI=8
 
+inherit godot-3.4
 inherit flag-o-matic
 
 DESCRIPTION="Godot crossdev dependencies for MinGW64-w64 (for 64-bit)"

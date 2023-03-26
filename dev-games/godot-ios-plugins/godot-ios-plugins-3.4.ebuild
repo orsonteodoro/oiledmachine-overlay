@@ -15,9 +15,8 @@ MY_P="${MY_PN}-${PV}"
 GODOT_PN="godot"
 GODOT_PV="3.4"
 GODOT_P="${GODOT_PN}-${GODOT_PV}"
-STATUS="stable"
 
-PYTHON_COMPAT=( python3_{8..11} )
+inherit godot-3.4
 inherit desktop eutils flag-o-matic multilib-build python-any-r1 scons-utils
 
 DESCRIPTION="Godot export template for iOS"
@@ -43,7 +42,7 @@ LICENSE="
 	ZLIB
 "
 
-# See https://github.com/godotengine/godot/blob/3.4.4-stable/thirdparty/README.md for Apache-2.0 licensed third party.
+# See https://github.com/godotengine/godot/blob/3.4.5-stable/thirdparty/README.md for Apache-2.0 licensed third party.
 
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # \
 #   The MIT license does not have all rights reserved but the source does
@@ -88,7 +87,7 @@ if [[ "${AUPDATE}" == "1" ]] ; then
 	SRC_URI="
 ${GODOT_IOS_PLUGINS_URI_PROJECT}/archive/refs/tags/${GODOT_IOS_PLUGINS_FN_SRC}
 	-> ${GODOT_IOS_PLUGINS_FN_DEST}
-${GODOT_IOS_PLUGINS_URI_PROJECT}/releases/download/${PV}-stable/${GODOT_EXTRACTED_HEADERS_FN_SRC}
+${GODOT_IOS_PLUGINS_URI_PROJECT}/releases/download/${PV}-${STATUS}/${GODOT_EXTRACTED_HEADERS_FN_SRC}
 	-> ${GODOT_EXTRACTED_HEADERS_FN_DEST}
 ${GODOT_URI_PROJECT}/archive/${GODOT_FN_SRC}
 	-> ${GODOT_FN_DEST}
@@ -98,7 +97,7 @@ else
 ${GODOT_IOS_PLUGINS_URI_PROJECT}/archive/refs/tags/${GODOT_IOS_PLUGINS_FN_SRC}
 	-> ${GODOT_IOS_PLUGINS_FN_DEST}
 	pregenerated-headers? (
-${GODOT_IOS_PLUGINS_URI_PROJECT}/releases/download/${PV}-stable/${GODOT_EXTRACTED_HEADERS_FN_SRC}
+${GODOT_IOS_PLUGINS_URI_PROJECT}/releases/download/${PV}-${STATUS}/${GODOT_EXTRACTED_HEADERS_FN_SRC}
 	-> ${GODOT_EXTRACTED_HEADERS_FN_DEST}
 	)
 	!pregenerated-headers? (
@@ -280,11 +279,8 @@ einfo
 pkg_nofetch() {
 	# fetch restriction is on third party packages with all-rights-reserved in code
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	if use pregenerated-headers ; then
-		_no_fetch_godot_extracted_headers
-	else
-		_no_fetch_godot
-	fi
+	_no_fetch_godot_extracted_headers
+	_no_fetch_godot
 	_no_fetch_godot_ios_plugins
 }
 

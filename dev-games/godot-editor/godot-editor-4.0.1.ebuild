@@ -10,13 +10,10 @@ EAPI=7
 MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 
-STATUS="stable"
-MONO_PV="6.12.0.182" # same as godot-export-templates-bin
-
 FRAMEWORK="4.5" # Target .NET Framework
-VIRTUALX_REQUIRED=manual
-PYTHON_COMPAT=( python3_{8..11} )
+VIRTUALX_REQUIRED="manual"
 
+inherit godot-4.0
 inherit desktop eutils flag-o-matic llvm python-any-r1 scons-utils \
 virtualx
 
@@ -43,7 +40,7 @@ LICENSE="
 	ZLIB
 "
 
-# See https://github.com/godotengine/godot/blob/3.5.1-stable/thirdparty/README.md for Apache-2.0 licensed third party.
+# See https://github.com/godotengine/godot/blob/4.0.1-stable/thirdparty/README.md for Apache-2.0 licensed third party.
 
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # \
 #   The MIT license does not have all rights reserved but the source does
@@ -58,12 +55,12 @@ LICENSE="
 
 KEYWORDS="~amd64 ~riscv ~x86"
 
-FN_SRC="${PV}-stable.tar.gz"
+FN_SRC="${PV}-${STATUS}.tar.gz"
 FN_DEST="${MY_P}.tar.gz"
 URI_ORG="https://github.com/godotengine"
 URI_PROJECT="${URI_ORG}/godot"
 URI_DL="${URI_PROJECT}/releases"
-URI_A="${URI_PROJECT}/archive/${PV}-stable.tar.gz"
+URI_A="${URI_PROJECT}/archive/${PV}-${STATUS}.tar.gz"
 if [[ "${AUPDATE}" == "1" ]] ; then
 	# Used to generate hashes and download all assets.
 	SRC_URI="
@@ -212,12 +209,7 @@ REQUIRED_USE+="
 		csharp-external-editor
 	)
 "
-FREETYPE_PV="2.12.1"
-LIBOGG_PV="1.3.5"
-LIBVORBIS_PV="1.3.7"
-ZLIB_PV="1.2.13"
 
-LLVM_SLOTS=(14 13) # See https://github.com/godotengine/godot/blob/3.4.5-stable/misc/hooks/pre-commit-clang-format#L79
 gen_cdepend_lto_llvm() {
 	local o=""
 	for s in ${LLVM_SLOTS[@]} ; do
@@ -281,7 +273,7 @@ CDEPEND+="
 	mono? (
 		system-mono? (
 			=dev-lang/mono-$(ver_cut 1-2 ${MONO_PV})*
-			>=dev-lang/mono-6.0.0.176
+			>=dev-lang/mono-${MONO_PV_MIN}
 		)
 		!system-mono? (
 			|| (
@@ -353,7 +345,7 @@ DEPEND+="
 	x11-libs/libxshmfence
 	!portable? (
 		!ca-certs-relax? (
-			>=app-misc/ca-certificates-20220719[cacert]
+			>=app-misc/ca-certificates-${CA_CERTIFICATES_PV}[cacert]
 		)
 		ca-certs-relax? (
 			app-misc/ca-certificates[cacert]
@@ -363,13 +355,13 @@ DEPEND+="
 		virtual/libudev
 	)
 	system-bullet? (
-		>=sci-physics/bullet-3.17
+		>=sci-physics/bullet-${BULLET_PV}
 	)
 	system-enet? (
-		>=net-libs/enet-1.3.17
+		>=net-libs/enet-${ENET_PV}
 	)
 	system-embree? (
-		>=media-libs/embree-3.13.5
+		>=media-libs/embree-${EMBREE_PV}
 	)
 	system-freetype? (
 		>=media-libs/freetype-${FREETYPE_PV}
@@ -378,41 +370,41 @@ DEPEND+="
 		>=media-libs/libogg-${LIBOGG_PV}
 	)
 	system-libpng? (
-		>=media-libs/libpng-1.6.38
+		>=media-libs/libpng-${LIBPNG_PV}
 	)
 	system-libtheora? (
-		>=media-libs/libtheora-9999
+		>=media-libs/libtheora-${LIBTHEORA_PV}
 	)
 	system-libvorbis? (
 		>=media-libs/libvorbis-${LIBVORBIS_PV}
 	)
 	system-libvpx? (
-		>=media-libs/libvpx-1.6.0
+		>=media-libs/libvpx-${LIBVPX_PV}
 	)
 	system-libwebp? (
-		>=media-libs/libwebp-1.3.0
+		>=media-libs/libwebp-${LIBWEBP_PV}
 	)
 	system-mbedtls? (
-		>=net-libs/mbedtls-2.18.2
+		>=net-libs/mbedtls-${MBEDTLS_PV}
 	)
 	system-miniupnpc? (
-		>=net-libs/miniupnpc-2.2.4
+		>=net-libs/miniupnpc-${MINIUPNPC_PV}
 	)
 	system-opus? (
-		>=media-libs/opus-1.1.5
-		>=media-libs/opusfile-0.8
+		>=media-libs/opus-${OPUS_PV}
+		>=media-libs/opusfile-${OPUSFILE_PV}
 	)
 	system-pcre2? (
-		>=dev-libs/libpcre2-10.40[jit?]
+		>=dev-libs/libpcre2-${LIBPCRE2_PV}[jit?]
 	)
 	system-recast? (
 		dev-games/recastnavigation
 	)
 	system-squish? (
-		>=media-libs/libsquish-1.15
+		>=media-libs/libsquish-${LIBSQUISH_PV}
 	)
 	system-wslay? (
-		>=net-libs/wslay-1.1.1
+		>=net-libs/wslay-${WSLAY_PV}
 	)
 	system-xatlas? (
 		media-libs/xatlas
@@ -421,7 +413,7 @@ DEPEND+="
 		>=sys-libs/zlib-${ZLIB_PV}
 	)
 	system-zstd? (
-		>=app-arch/zstd-1.5.0
+		>=app-arch/zstd-${ZSTD_PV}
 	)
 "
 RDEPEND+="
@@ -439,7 +431,7 @@ RDEPEND+="
 BDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
-	>=dev-util/pkgconf-1.3.7[pkg-config(+)]
+	>=dev-util/pkgconf-${PKGCONF_PV}[pkg-config(+)]
 	dev-util/scons
 	lld? (
 		sys-devel/lld
@@ -456,7 +448,7 @@ BDEPEND+="
 		${CDEPEND_GCC}
 	)
 "
-S="${WORKDIR}/godot-${PV}-stable"
+S="${WORKDIR}/godot-${PV}-${STATUS}"
 PATCHES=(
 	"${FILESDIR}/godot-3.4.4-set-ccache-dir.patch"
 )

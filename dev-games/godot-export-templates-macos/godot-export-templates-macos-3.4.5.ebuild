@@ -9,11 +9,9 @@ EAPI=7
 
 MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
-STATUS="stable"
-MONO_PV="6.12.0.158" # same as godot-export-templates-bin
 
-PYTHON_COMPAT=( python3_{8..11} )
 # 64 bit only
+inherit godot-3.4
 inherit desktop eutils flag-o-matic python-any-r1 scons-utils
 
 DESCRIPTION="Godot export template for macOS"
@@ -39,7 +37,7 @@ LICENSE="
 	ZLIB
 "
 
-# See https://github.com/godotengine/godot/blob/3.4.4-stable/thirdparty/README.md for Apache-2.0 licensed third party.
+# See https://github.com/godotengine/godot/blob/3.4.5-stable/thirdparty/README.md for Apache-2.0 licensed third party.
 
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # \
 #   The MIT license does not have all rights reserved but the source does
@@ -54,12 +52,12 @@ LICENSE="
 
 #KEYWORDS=""
 
-FN_SRC="${PV}-stable.tar.gz"
+FN_SRC="${PV}-${STATUS}.tar.gz"
 FN_DEST="${MY_P}.tar.gz"
 URI_ORG="https://github.com/godotengine"
 URI_PROJECT="${URI_ORG}/${MY_PN}"
 URI_DL="${URI_PROJECT}/releases"
-URI_A="${URI_PROJECT}/archive/${PV}-stable.tar.gz"
+URI_A="${URI_PROJECT}/archive/${PV}-${STATUS}.tar.gz"
 if [[ "${AUPDATE}" == "1" ]] ; then
 	# Used to generate hashes and download all assets.
 	SRC_URI="
@@ -187,7 +185,7 @@ BDEPEND+="
 		dev-lang/yasm
 	)
 "
-S="${WORKDIR}/godot-${PV}-stable"
+S="${WORKDIR}/godot-${PV}-${STATUS}"
 PATCHES=(
 	"${FILESDIR}/godot-3.4.4-set-ccache-dir.patch"
 )

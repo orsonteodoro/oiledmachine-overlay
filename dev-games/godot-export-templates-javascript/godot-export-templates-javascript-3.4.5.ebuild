@@ -9,10 +9,9 @@ EAPI=7
 
 MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
-STATUS="stable"
-MONO_PV="6.12.0.158" # same as godot-export-templates-bin
 
-PYTHON_COMPAT=( python3_{8..11} )
+inherit godot-3.4
+EMSCRIPTEN_PV="2.0.10"
 inherit desktop eutils flag-o-matic llvm multilib-build python-any-r1 scons-utils
 
 DESCRIPTION="Godot export template for JavaScript"
@@ -38,7 +37,7 @@ LICENSE="
 	ZLIB
 "
 
-# See https://github.com/godotengine/godot/blob/3.4.4-stable/thirdparty/README.md for Apache-2.0 licensed third party.
+# See https://github.com/godotengine/godot/blob/3.4.5-stable/thirdparty/README.md for Apache-2.0 licensed third party.
 
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # \
 #   The MIT license does not have all rights reserved but the source does
@@ -66,12 +65,12 @@ LICENSE+=" mono? ( ${MONO_LICENSE} )"
 
 KEYWORDS="~amd64"
 
-FN_SRC="${PV}-stable.tar.gz"
+FN_SRC="${PV}-${STATUS}.tar.gz"
 FN_DEST="${MY_P}.tar.gz"
 URI_ORG="https://github.com/godotengine"
 URI_PROJECT="${URI_ORG}/${MY_PN}"
 URI_DL="${URI_PROJECT}/releases"
-URI_A="${URI_PROJECT}/archive/${PV}-stable.tar.gz"
+URI_A="${URI_PROJECT}/archive/${PV}-${STATUS}.tar.gz"
 if [[ "${AUPDATE}" == "1" ]] ; then
 	# Used to generate hashes and download all assets.
 	SRC_URI="
@@ -89,6 +88,7 @@ SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 gen_required_use_template()
 {
 	local l=(${1})
+	local x
 	for x in ${l[@]} ; do
 		echo "
 			${x}? (
@@ -185,9 +185,7 @@ REQUIRED_USE+="
 		${GODOT_JAVASCRIPT}
 	)
 "
-EMSCRIPTEN_PV="2.0.10"
 
-LLVM_SLOTS=(14 13) # See https://github.com/godotengine/godot/blob/3.4.5-stable/misc/hooks/pre-commit-clang-format#L79
 gen_cdepend_llvm() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
@@ -242,7 +240,9 @@ CDEPEND+="
 	)
 "
 
-RDEPEND=" ${CDEPEND}"
+RDEPEND="
+	${CDEPEND}
+"
 
 DEPEND+="
 	${CDEPEND}
@@ -257,7 +257,7 @@ BDEPEND="
 	${PYTHON_DEPS}
 	dev-util/scons
 "
-S="${WORKDIR}/godot-${PV}-stable"
+S="${WORKDIR}/godot-${PV}-${STATUS}"
 PATCHES=(
 	"${FILESDIR}/godot-3.4.4-set-ccache-dir.patch"
 )

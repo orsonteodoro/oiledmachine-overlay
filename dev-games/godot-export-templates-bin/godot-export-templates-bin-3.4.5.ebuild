@@ -208,16 +208,16 @@ RESTRICT="binchecks"
 BDEPEND="app-arch/unzip"
 if [[ "AUPDATE" == "1" ]] ; then
 	SRC_URI="
-		https://downloads.tuxfamily.org/godotengine/${PV}/mono/Godot_v${PV}-stable_mono_export_templates.tpz
-		https://downloads.tuxfamily.org/godotengine/${PV}/Godot_v${PV}-stable_export_templates.tpz
+		https://downloads.tuxfamily.org/godotengine/${PV}/mono/Godot_v${PV}-${STATUS}_mono_export_templates.tpz
+		https://downloads.tuxfamily.org/godotengine/${PV}/Godot_v${PV}-${STATUS}_export_templates.tpz
 	"
 else
 	SRC_URI="
 		mono? (
-			https://downloads.tuxfamily.org/godotengine/${PV}/mono/Godot_v${PV}-stable_mono_export_templates.tpz
+			https://downloads.tuxfamily.org/godotengine/${PV}/mono/Godot_v${PV}-${STATUS}_mono_export_templates.tpz
 		)
 		standard? (
-			https://downloads.tuxfamily.org/godotengine/${PV}/Godot_v${PV}-stable_export_templates.tpz
+			https://downloads.tuxfamily.org/godotengine/${PV}/Godot_v${PV}-${STATUS}_export_templates.tpz
 		)
 	"
 fi
@@ -241,10 +241,10 @@ src_unpack() {
 		mkdir -p "${WORKDIR}/standard" || die
 		if use mono ; then
 			einfo "USE=mono is under construction"
-			unzip -x "${DISTDIR}/Godot_v${PV}-stable_mono_export_templates.tpz" -d "${WORKDIR}/mono" || die
+			unzip -x "${DISTDIR}/Godot_v${PV}-${STATUS}_mono_export_templates.tpz" -d "${WORKDIR}/mono" || die
 		fi
 		if use standard ; then
-			unzip -x "${DISTDIR}/Godot_v${PV}-stable_export_templates.tpz" -d "${WORKDIR}/standard" || die
+			unzip -x "${DISTDIR}/Godot_v${PV}-${STATUS}_export_templates.tpz" -d "${WORKDIR}/standard" || die
 		fi
 		for type in mono standard ; do
 			! use mono && [[ "${type}" == "mono" ]] && continue
@@ -371,7 +371,7 @@ src_configure() {
 	# Verify metadata:
 	if use mono ; then
 		local mono_pv=$(unzip -p \
-			$(realpath "${DISTDIR}/Godot_v${PV}-stable_mono_export_templates.tpz") \
+			$(realpath "${DISTDIR}/Godot_v${PV}-${STATUS}_mono_export_templates.tpz") \
 			"templates/data.mono.x11.64.release_debug/Mono/lib/libmono-native.so" \
 			| strings \
 			| grep -o -E "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" \
@@ -389,9 +389,9 @@ eerror
 
 	local src_tarball
 	if use standard ; then
-		src_tarball="Godot_v${PV}-stable_export_templates.tpz"
+		src_tarball="Godot_v${PV}-${STATUS}_export_templates.tpz"
 	else
-		src_tarball="Godot_v${PV}-stable_mono_export_templates.tpz"
+		src_tarball="Godot_v${PV}-${STATUS}_mono_export_templates.tpz"
 	fi
 
 	mkdir -p "${T}/sandbox" || die
@@ -492,8 +492,8 @@ src_install() {
 	use debug && export STRIP="true"
 	insinto "/usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates"
 	if ! use custom ; then
-		use mono && doins $(realpath "${DISTDIR}/Godot_v${PV}-stable_mono_export_templates.tpz")
-		use standard && doins $(realpath "${DISTDIR}/Godot_v${PV}-stable_export_templates.tpz")
+		use mono && doins $(realpath "${DISTDIR}/Godot_v${PV}-${STATUS}_mono_export_templates.tpz")
+		use standard && doins $(realpath "${DISTDIR}/Godot_v${PV}-${STATUS}_export_templates.tpz")
 	else
 		if use mono ; then
 			insinto "/usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates/mono"

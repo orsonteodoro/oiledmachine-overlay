@@ -4,12 +4,12 @@
 
 EAPI=8
 
+inherit godot-3.4
 inherit flag-o-matic
 
 DESCRIPTION="Godot crossdev dependencies for iOS"
 # U 20.04
 
-LLVM_SLOTS=(14 13) # See https://github.com/godotengine/godot/blob/3.4.5-stable/misc/hooks/pre-commit-clang-format#L79
 gen_depend_llvm() {
 	local o=""
 	for s in ${LLVM_SLOTS[@]} ; do

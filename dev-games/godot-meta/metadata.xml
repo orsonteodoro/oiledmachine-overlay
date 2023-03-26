@@ -54,6 +54,29 @@
       MinGW-w64 (64-bit):  Incomplete / Work In Progress [community help is optional]
 
   </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/godotengine/godot/issues</bugs-to>
+    <changelog>https://github.com/godotengine/godot/blob/master/CHANGELOG.md</changelog>
+    <doc lang="en">https://docs.godotengine.org/en/stable/</doc>
+    <doc lang="en">https://docs.godotengine.org/en/3.4/</doc>
+    <doc lang="en">https://docs.godotengine.org/en/3.5/</doc>
+    <doc lang="en">https://docs.godotengine.org/en/4.0/</doc>
+    <doc lang="de">https://docs.godotengine.org/de/latest/</doc>
+    <doc lang="es">https://docs.godotengine.org/es/latest/</doc>
+    <doc lang="fi">https://docs.godotengine.org/fi/latest/</doc>
+    <doc lang="fr">https://docs.godotengine.org/fr/latest/</doc>
+    <doc lang="it">https://docs.godotengine.org/it/latest/</doc>
+    <doc lang="ja">https://docs.godotengine.org/ja/latest/</doc>
+    <doc lang="ko">https://docs.godotengine.org/ko/latest/</doc>
+    <doc lang="pl">https://docs.godotengine.org/pl/latest/</doc>
+    <doc lang="pt_BR">https://docs.godotengine.org/pt_BR/latest/</doc>
+    <doc lang="pt_BR">https://docs.godotengine.org/pt_BR/latest/</doc>
+    <doc lang="ru">https://docs.godotengine.org/ru/latest/</doc>
+    <doc lang="uk">https://docs.godotengine.org/uk/latest/</doc>
+    <doc lang="zh_CN">https://docs.godotengine.org/zh_CN/latest/</doc>
+    <remote-id type="github">godotengine/godot</remote-id>
+  </upstream>
+  <use>
     <flag name="android">
       Builds the export template for Android not prebuilt
     </flag>
