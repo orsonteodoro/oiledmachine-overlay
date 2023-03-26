@@ -102,7 +102,7 @@ IUSE_INPUT="
 camera
 "
 IUSE_LIBS="
-+freetype +opensimplex +pcre2 +pulseaudio
++freetype +opensimplex +pcre2 +pulseaudio +vulkan
 "
 IUSE_NET="
 +enet +jsonrpc +mbedtls +upnp +webrtc +websocket
@@ -455,6 +455,7 @@ src_compile() {
 	local myoptions=()
 	local options_android=(
 		platform=android
+		vulkan=$(usex vulkan)
 	)
 	local options_modules_static=(
 		builtin_bullet=True

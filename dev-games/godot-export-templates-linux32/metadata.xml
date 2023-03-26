@@ -238,6 +238,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="s3tc">
       Enables DXT compression.
     </flag>
+    <flag name="speech">
+      Enables text-to-speech.
+    </flag>
     <flag name="speex">
       Enable speex voice compression support used in voice acting asset samples.
       Removed in 3.x and superceeded by Opus.

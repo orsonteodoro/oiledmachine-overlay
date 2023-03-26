@@ -108,6 +108,9 @@ IUSE_3D="
 +3d +bullet +csg +denoise +gridmap +gltf +lightmapper_cpu +mobile-vr +raycast
 +recast +vhacd +xatlas
 "
+IUSE_AUDIO="
++alsa +pulseaudio +speech
+"
 IUSE_BUILD="
 ${SANITIZERS[@]}
 clang debug jit lld lto +neon +optimize-speed optimize-size portable
@@ -123,7 +126,7 @@ IUSE_INPUT="
 camera -gamepad +touch
 "
 IUSE_LIBS="
-+freetype +opensimplex +pcre2 +pulseaudio
++freetype +opensimplex +pcre2 +pulseaudio +vulkan
 "
 IUSE_NET="
 ca-certs-relax +enet +jsonrpc +mbedtls +upnp +webrtc +websocket
@@ -139,9 +142,10 @@ system-pcre2 system-recast system-squish system-wslay system-xatlas
 system-zlib system-zstd
 "
 IUSE+="
-	${IUSE_GUI}
+	${IUSE_AUDIO}
 	${IUSE_BUILD}
 	${IUSE_CONTAINERS_CODECS_FORMATS}
+	${IUSE_GUI}
 	${IUSE_SCRIPTING}
 	${IUSE_3D}
 	${IUSE_NET}
@@ -197,6 +201,12 @@ REQUIRED_USE+="
 		!system-zlib
 		!system-zstd
 		!tsan
+	)
+	speech? (
+		|| (
+			alsa
+			pulseaudio
+		)
 	)
 	riscv? (
 		mono? (
@@ -334,6 +344,24 @@ DEPEND+="
         gamepad? (
 		virtual/libudev[${MULTILIB_USEDEP}]
 	)
+	speech? (
+		!pulseaudio? (
+			alsa? (
+				|| (
+					>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[alsa,espeak-ng]
+					>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[alsa,espeak]
+					>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[alsa,flite]
+				)
+			)
+		)
+		pulseaudio? (
+			|| (
+				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[espeak-ng,pulseaudio]
+				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[espeak,pulseaudio]
+				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[flite,pulseaudio]
+			)
+		)
+	)
 	system-bullet? (
 		>=sci-physics/bullet-${BULLET_PV}[${MULTILIB_USEDEP}]
 	)
@@ -395,6 +423,9 @@ DEPEND+="
 	system-zstd? (
 		>=app-arch/zstd-${ZSTD_PV}[${MULTILIB_USEDEP}]
 	)
+	vulkan? (
+		media-libs/vulkan-loader[${MULTILIB_USEDEP},X]
+	)
 "
 RDEPEND+="
 	${DEPEND}
@@ -419,6 +450,131 @@ S="${WORKDIR}/godot-${PV}-${STATUS}"
 PATCHES=(
 	"${FILESDIR}/godot-3.4.4-set-ccache-dir.patch"
 )
+
+check_speech_dispatcher() {
+	if use speech ; then
+		if [[ ! -f "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ]] ; then
+eerror
+eerror "Missing ${ESYSROOT}/etc/speech-dispatcher/speechd.conf"
+eerror
+			die
+		fi
+		if has_version "app-accessibility/speech-dispatcher[pulseaudio]" ; then
+			if ! grep -q -e "^AudioOutputMethod.*\"pulse\"" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf"
+eerror
+eerror "AudioOutputMethod \"pulse\""
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "the same settings."
+eerror
+				die
+			fi
+		elif has_version "app-accessibility/speech-dispatcher[alsa]" ; then
+			if ! grep -q -e "^AudioOutputMethod.*\"alsa\"" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
+eerror
+eerror "AudioOutputMethod \"alsa\""
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "the same settings."
+eerror
+				die
+			fi
+		fi
+		if has_version "app-accessibility/speech-dispatcher[espeak-ng]" ; then
+			if ! grep -q -e "^AddModule.*\"espeak-ng\"" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
+eerror
+eerror "AddModule \"espeak-ng\"                \"sd_espeak-ng\" \"espeak-ng.conf\""
+eerror "DefaultModule espeak-ng"
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "the same settings."
+eerror
+				die
+			fi
+			if ! grep -q -e "^DefaultModule.*espeak-ng" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
+eerror
+eerror "DefaultModule espeak-ng"
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "the same settings."
+eerror
+				die
+			fi
+		elif has_version "app-accessibility/speech-dispatcher[espeak]" ; then
+			if ! grep -q -e "^AddModule.*\"espeak\"" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
+eerror
+eerror "AddModule \"espeak\"                   \"sd_espeak\"    \"espeak.conf\""
+eerror "DefaultModule espeak"
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "the same settings."
+eerror
+				die
+			fi
+			if ! grep -q -e "^DefaultModule.*espeak" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
+eerror
+eerror "DefaultModule espeak"
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "the same settings."
+eerror
+				die
+			fi
+		elif has_version "app-accessibility/speech-dispatcher[flite]" ; then
+			if ! grep -q -e "^AddModule.*\"flite\"" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
+eerror
+eerror "#AddModule \"flite\"                    \"sd_flite\"     \"flite.conf\""
+eerror "DefaultModule flite"
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "the same settings."
+eerror
+				die
+			fi
+			if ! grep -q -e "^DefaultModule.*flite" \
+				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
+eerror
+eerror "The following changes are required to"
+eerror "${ESYSROOT}/etc/speech-dispatcher/speechd.conf:"
+eerror
+eerror "DefaultModule flite"
+eerror
+eerror "The ~/.config/speech-dispatcher/speechd.conf should be removed or have"
+eerror "the same settings."
+eerror
+				die
+			fi
+		fi
+	fi
+}
 
 pkg_setup() {
 ewarn
@@ -475,6 +631,8 @@ eerror
 			die
 		fi
 	fi
+
+	use speech && check_speech_dispatcher
 }
 
 pkg_nofetch() {
@@ -609,6 +767,7 @@ src_compile() {
 		pulseaudio=$(usex pulseaudio)
 		udev=$(usex gamepad)
 		touch=$(usex touch)
+		use_alsa=$(usex alsa)
 		use_asan=$(usex asan)
 		use_lld=$(usex lld)
 		use_llvm=$(usex clang)
@@ -618,6 +777,7 @@ src_compile() {
 		use_thinlto=$(usex lto)
 		use_tsan=$(usex tsan)
 		use_ubsan=$(usex ubsan)
+		vulkan=$(usex vulkan)
 	)
 	local options_modules_shared=(
 		builtin_bullet=$(usex !system-bullet)

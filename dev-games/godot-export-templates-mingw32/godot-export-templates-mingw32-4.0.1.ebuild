@@ -98,7 +98,7 @@ IUSE_INPUT="
 camera
 "
 IUSE_LIBS="
-+freetype +opensimplex +pcre2 +pulseaudio
++freetype +opensimplex +pcre2 +pulseaudio +vulkan
 "
 IUSE_NET="
 +enet +jsonrpc +mbedtls +upnp +webrtc +websocket
@@ -452,6 +452,7 @@ src_compile() {
 		use_lto=$(usex lto)
 		use_thinlto=$(usex lto)
 		use_asan=$(usex asan)
+		vulkan=$(usex vulkan)
 	)
 	local options_modules_static=(
 		builtin_bullet=True

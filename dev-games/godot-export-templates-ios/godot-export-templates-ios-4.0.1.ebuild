@@ -135,7 +135,7 @@ IUSE_INPUT="
 camera
 "
 IUSE_LIBS="
-+freetype +opensimplex +pcre2 +pulseaudio
++freetype +opensimplex +pcre2 +pulseaudio +vulkan
 "
 IUSE_NET="
 +enet +jsonrpc +mbedtls +upnp +webrtc +websocket
@@ -525,6 +525,7 @@ src_compile() {
 		icloud=$(usex icloud)
 		use_lto=$(usex lto)
 		store_kit=$(usex store-kit)
+		vulkan=$(usex vulkan)
 	)
 	local options_modules_static=(
 		builtin_bullet=True
