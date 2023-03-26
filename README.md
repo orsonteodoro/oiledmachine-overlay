@@ -203,6 +203,9 @@ set up your own
 for additional comprehensive scans that scan again malware, and session replay
 and analytics keywords.
 
+Source code scans for unauthorized microphone and webcam use are currently not
+done but can be added via the bashrc with a grep on found die check.
+
 Additional packages with binary blobs or prebuilt packages may be modified with
 these extra scans.
 
