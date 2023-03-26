@@ -187,10 +187,13 @@ media-gfx/upscayl npm-allow-session-replay.conf
 
 These scans may, however, be too sensitive or may result in false positives.
 The scans for session-replay/analytics are limited to plaintext only and can be
-easily circumvented with obfuscated forms.  Only ot-sources,
-Electron and NPM based packages are scanned.  You may need to set up your own
-[/etc/portage/bashrc](https://wiki.gentoo.org/wiki//etc/portage/bashrc) for
-additional comprehensive scans.
+easily circumvented with obfuscated forms.  Only firmware/logos provided to
+ot-sources, Electron and NPM based packages are scanned.  You may need to set
+up your own [/etc/portage/bashrc](https://wiki.gentoo.org/wiki//etc/portage/bashrc)
+for additional comprehensive scans.
+
+Additional packages with binary blobs or prebuilt packages may be modified with
+these extra scans.
 
 ## PGO packages
 
