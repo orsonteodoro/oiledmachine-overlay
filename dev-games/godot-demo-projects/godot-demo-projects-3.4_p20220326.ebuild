@@ -6,6 +6,20 @@ EAPI=8
 
 STATUS="stable"
 
+if [[ ${PV} =~ 9999 ]] ; then
+	inherit git-r3
+	S="${WORKDIR}/${P}"
+else
+	# The latest release
+	EGIT_COMMIT_DEMOS_STABLE="b0d4a7cb8ad6c592c94606fdf968b6614b162808"
+	FN_DEST="${PN}-${EGIT_COMMIT_DEMOS_STABLE:0:7}.tar.gz"
+	SRC_URI="
+https://github.com/godotengine/${PN}/archive/refs/tags/$(ver_cut 1-2 ${PV})-${EGIT_COMMIT_DEMOS_STABLE:0:7}.tar.gz
+		-> ${FN_DEST}
+	"
+	S="${WORKDIR}/${PN}-${EGIT_COMMIT_DEMOS_STABLE}"
+fi
+
 DESCRIPTION="Demonstration and Template Projects"
 HOMEPAGE="
 http://godotengine.org
@@ -15,16 +29,6 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~riscv ~x86"
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
-
-# latest release
-EGIT_COMMIT_DEMOS_STABLE="b0d4a7cb8ad6c592c94606fdf968b6614b162808"
-FN_DEST="${PN}-${EGIT_COMMIT_DEMOS_STABLE:0:7}.tar.gz"
-SRC_URI="
-https://github.com/godotengine/${PN}/archive/refs/tags/3.4-${EGIT_COMMIT_DEMOS_STABLE:0:7}.tar.gz
-	-> ${FN_DEST}
-"
-
-S="${WORKDIR}/${PN}-${EGIT_COMMIT_DEMOS_STABLE}"
 RDEPEND="
 	!dev-games/godot
 "
@@ -33,6 +37,18 @@ pkg_setup() {
 ewarn
 ewarn "Do not emerge this directly use dev-games/godot-meta instead."
 ewarn
+}
+
+src_unpack() {
+	if [[ ${PV} =~ 9999 ]] ; then
+		EGIT_REPO_URI="https://github.com/godotengine/godot-demo-projects.git"
+		EGIT_BRANCH="3.4"
+		EGIT_COMMIT="HEAD"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_configure() { :; }

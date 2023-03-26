@@ -23,7 +23,7 @@ RDEPEND="
 		dev-games/godot-dedicated-server:${SLOT}
 	)
 	demos? (
-		dev-games/godot-demo-projects:${SLOT}
+		dev-games/godot-demo-projects:${PV%%.*}/$(ver_cut 1-2 ${PV})
 	)
 	headless-server? (
 		dev-games/godot-headless-server:${SLOT}
