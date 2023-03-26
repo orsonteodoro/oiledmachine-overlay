@@ -12,19 +12,7 @@ android dedicated-server headless-server ios ios-plugins javascript linux32
 "
 IUSE="${IUSE_EXPORT_TEMPLATES} +demos -export-templates"
 REQUIRED_USE="
-	!android
-	!dedicated-server
-	!headless-server
-	!ios
 	!ios-plugins
-	!javascript
-	!linux32
-	!linux64
-	!linux-server
-	!macos
-	!mingw32
-	!mingw64
-	prebuilt-export-templates
 "
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
