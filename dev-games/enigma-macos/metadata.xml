@@ -6,7 +6,7 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
 
     Required environment variables:
 
@@ -14,7 +14,8 @@
       OSXCROSS_ROOT - Path to OSXCross with target as a subfolder
       OSXCROSS_CHOST - The CHOST prefix to clang, cpp, etc
 
-  </longdescription>
+  -->
+  <use>
     <flag name="box2">
       Adds Box2D support for 2D physics support.
     </flag>

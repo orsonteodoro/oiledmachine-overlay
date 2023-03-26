@@ -6,7 +6,8 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
+
     These are bundled export templates.
 
     If you don't unpack them, allow the Godot editor to unpack them.
@@ -38,7 +39,8 @@
       macOS (x86-64, 64-bit)
       Windows (x86, 32-bit)
       Windows (x86-64, 64-bit)
-  </longdescription>
+
+  -->
   <use>
     <flag name="android">
       Install Android export templates

@@ -6,13 +6,13 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
 
     Ebuild status:
 
       Tested working for for 5.1.155 on Jan 3, 2023.
 
-  </longdescription>
+  -->
   <upstream>
     <bugs-to>https://github.com/4ian/GDevelop/issues</bugs-to>
     <!-- GDevelop 5 wiki -->

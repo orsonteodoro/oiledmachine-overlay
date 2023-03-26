@@ -6,7 +6,7 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
 
     Package status:
 
@@ -19,5 +19,5 @@
 
     Emerge this package only within the crossdev context.
 
-  </longdescription>
+  -->
 </pkgmetadata>

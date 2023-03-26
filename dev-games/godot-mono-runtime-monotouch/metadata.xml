@@ -9,7 +9,7 @@
   <upstream>
     <remote-id type="github">godotengine/godot-mono-builds</remote-id>
   </upstream>
-  <longdescription>
+  <!--
 
     Two ebuild versions are offered:
 
@@ -25,5 +25,5 @@
 
       OSXCROSS_IOS - Path to OSXCross
 
-  </longdescription>
+  -->
 </pkgmetadata>

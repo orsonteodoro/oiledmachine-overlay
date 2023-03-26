@@ -18,7 +18,8 @@
     It also supports C/C++, C# 7.0, visual programming similar to UDK,
     GDScript similar to Python.
     It has a built in 3D level editor, IDE object manager.
-
+  </longdescription>
+  <!--  
 
     Cross-compile notes:
 
@@ -29,7 +30,7 @@
 
     See dev-games/godot-meta for cross-compile package status.
 
-  </longdescription>
+  -->
   <upstream>
 <!--
 End of Life details can be found at

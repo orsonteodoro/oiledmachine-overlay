@@ -6,6 +6,7 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <use>
     <flag name="box2">
       Adds Box2D support for 2D physics support.
     </flag>

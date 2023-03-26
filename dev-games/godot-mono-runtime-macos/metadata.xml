@@ -9,7 +9,7 @@
   <upstream>
     <remote-id type="github">godotengine/godot-mono-builds</remote-id>
   </upstream>
-  <longdescription>
+  <!--
 
     Two ebuild versions are offered:
 
@@ -29,5 +29,5 @@
       *The OSXCross install must contain the target subfolder.  Fork a local
        copy of the the osxcross ebuild to fix mistakes.
 
-  </longdescription>
+  -->
 </pkgmetadata>

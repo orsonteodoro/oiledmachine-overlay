@@ -6,11 +6,14 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
+
     Use this package within a crossdev image.
 
     The 32-bit crossdev image is assumed monolib not multilib.
-  </longdescription>
+
+  -->
+  <use>
     <flag name="box2">
       Adds Box2D support for 2D physics support.
     </flag>

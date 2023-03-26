@@ -6,7 +6,8 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
+
     This package is allowed to be emerged in native context.
 
 
@@ -24,7 +25,7 @@
 
       Incomplete / Work In Progress (WIP) [needs community help]
 
-  </longdescription>
+  -->
   <upstream>
 <!--
 End of Life details can be found at

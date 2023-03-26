@@ -6,7 +6,8 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
+
     This plugin can only used within an iOS device or simulator.
 
     Required environment variables
@@ -19,7 +20,7 @@
 
       XCODE_SDK_VERSION - The Xcode SDK version
 
-  </longdescription>
+  -->
   <upstream>
 <!--
 End of Life details can be found at

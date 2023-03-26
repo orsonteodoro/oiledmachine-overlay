@@ -6,7 +6,8 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
+
     For overview of Godot see either the website or dev-games/godot-editor.
 
 
@@ -53,7 +54,7 @@
       MinGW-w64 (32-bit):  Incomplete / Work In Progress [community help is optional]
       MinGW-w64 (64-bit):  Incomplete / Work In Progress [community help is optional]
 
-  </longdescription>
+  -->
   <upstream>
     <bugs-to>https://github.com/godotengine/godot/issues</bugs-to>
     <changelog>https://github.com/godotengine/godot/blob/master/CHANGELOG.md</changelog>

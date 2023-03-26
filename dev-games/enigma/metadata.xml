@@ -12,6 +12,8 @@
     to compile Game Maker games, GML (Game Maker Language) scripts, and
     EDL (Enigma Development Language) scripts that have syntax between GML
     and C++.
+  </longdescription>
+  <!--
 
     Cross build ebuild level support status:
 
@@ -68,7 +70,7 @@
 
       https://github.com/enigma-dev/enigma-android
 
-  </longdescription>
+  -->
   <upstream>
     <bugs-to>https://github.com/enigma-dev/enigma-dev/issues</bugs-to>
     <doc lang="en">https://enigma-dev.org/docs/Wiki/Main_Page</doc>

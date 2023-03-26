@@ -9,6 +9,8 @@
   <longdescription>
     LateralGM is a cross platform Game Maker editor and IDE.  It allows game
     designers to rearrange the scene and levels.
+  </longdescription>
+  <!--
 
     Due to dialog filters, only the following asset formats are supported
 
@@ -18,7 +20,7 @@
       Project save:  gm6, gm81, gmk, project.gmx, 
       Project load:  project.gmx, gb1, ..., gb7, gm6, gm8, gm81 gmd, gmk, 
 
-  </longdescription>
+  -->
   <upstream>
     <doc lang="en">http://enigma-dev.org/docs/Wiki/LateralGM</doc>
     <bugs-to>https://github.com/IsmAvatar/LateralGM/issues</bugs-to>
