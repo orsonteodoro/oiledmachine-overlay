@@ -1250,11 +1250,12 @@ analytics_keywords=(
 )
 
 _electron-app_get_analytics_keywords() {
-	IFS="\n"
+	IFS=$'\n'
+	local row
 	for row in ${analytics_keywords[@]} ; do
 		echo "${row}"
 	done
-	IFS=" \t\n"
+	IFS=$' \t\n'
 }
 
 # @FUNCTION: electron-app_find_analytics
