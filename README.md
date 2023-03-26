@@ -189,7 +189,8 @@ These scans may, however, be too sensitive or may result in false positives.
 The scans for session-replay/analytics are limited to plaintext only and can be
 easily circumvented with obfuscated forms.  Only ot-sources,
 Electron and NPM based packages are scanned.  You may need to set up your own
-bashrc for additional comprehensive scans.
+[/etc/portage/bashrc](https://wiki.gentoo.org/wiki//etc/portage/bashrc) for
+additional comprehensive scans.
 
 ## PGO packages
 
