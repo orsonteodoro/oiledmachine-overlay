@@ -1376,7 +1376,8 @@ eerror
 electron-app_find_session_replay_within_source_code() {
 	[[ "${ELECTRON_APP_SESSION_REPLAY}" =~ ("allow"|"accept") ]] && return
 einfo "Scanning for possible unauthorized recording within code."
-	local pat="(kmsgrab|x11grab|xcbgrab|screen://)"
+	magick_formats="aai|ai|apng|art|ashlar|avs|bayer|bayera|bgr|bgra|bgro|bmp|bmp2|bmp3|brf|cal|cals|cin|cip|clip|cmyk|cmyka|cur|data|dcx|dds|dpx|dxt1|dxt5|epdf|epi|eps|eps2|eps3|epsf|epsi|ept|ept2|ept3|farbfeld|fax|ff|fits|fl32|flv|fts|ftxt|g3|g4|gif|gif87|gray|graya|group4|hdr|histogram|hrz|htm|html|icb|ico|icon|info|inline|ipl|isobrl|isobrl6|jng|jpe|jpeg|jpg|jps|json|kernel|m2v|m4v|map|mask|mat|matte|miff|mkv|mng|mono|mov|mp4|mpc|mpeg|mpg|msl|msvg|mtv|mvg|null|otb|pal|palm|pam|pbm|pcd|pcds|pcl|pct|pcx|pdb|pdf|pdfa|pfm|pgm|pgx|phm|picon|pict|pjpeg|png|png00|png24|png32|png48|png64|png8|pnm|pocketmod|ppm|ps|ps2|ps3|psb|psd|ptif|qoi|ras|rgb|rgba|rgbo|rgf|rsvg|sgi|shtml|six|sixel|sparse-co|strimg|sun|svg|svgz|tga|thumbnail|tiff|tiff64|txt|ubrl|ubrl6|uil|uyvy|vda|vicar|vid|viff|vips|vst|wbmp|webm|wmv|wpg|xbm|xpm|xv|yaml|ycbcr|ycbcra|yuv"
+	local pat="(magick.*import|import.*\.(${magick_formats})|kmsgrab|x11grab|xcbgrab|screen://|recordmydesktop)"
 	IFS=$'\n'
 	local path
 	for path in $(find "${WORKDIR}" -type f) ; do
