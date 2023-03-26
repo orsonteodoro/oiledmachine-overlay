@@ -68,7 +68,7 @@ for ways to control vulnerability patching using per-package environmental varia
 
 ### .NET Framework stack or .NET Core stack
 
-It was decided to keep these packages around, however, they are not tested
+It was decided to keep these packages around; however, they are not tested
 in actual programs.
 
 Since there is no official distro package developer guide or eclass for
@@ -157,11 +157,14 @@ make.conf.  Examples how to do this are shown below:
 
 ```
 # Contents of /etc/portage/env/ot-kernel.conf
+# 0 to disable, 1 to enable.
 OT_KERNEL_FIRMWARE_AVSCAN=0
+OT_KERNEL_LOGO_AVSCAN=0
 ```
 
 ```
 # Contents of /etc/portage/env/js-disable-av-scan.conf
+# 0 to disable, 1 to enable.
 ELECTRON_APP_AV_SCAN=0
 NPM_SECAUDIT_AV_SCAN=0
 NPM_UTILS_AV_SCAN=0
@@ -169,12 +172,14 @@ NPM_UTILS_AV_SCAN=0
 
 ```
 # Contents of /etc/portage/env/npm-allow-analytics.conf
+# allow means continue build/install, disable or unset means stop build/install.
 ELECTRON_APP_ANALYTICS="allow"
 NPM_SECAUDIT_ANALYTICS="allow"
 ```
 
 ```
 # Contents of /etc/portage/env/npm-allow-session-replay.conf
+# allow means continue build/install, disable or unset means stop build/install.
 ELECTRON_APP_SESSION_REPLAY="allow"
 ```
 
