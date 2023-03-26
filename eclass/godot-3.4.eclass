@@ -3,7 +3,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 STATUS="stable"
-LLVM_SLOTS=(14 13) # See https://github.com/godotengine/godot/blob/3.4.5-stable/misc/hooks/pre-commit-clang-format#L79
+# LLVM has been relaxed here.  Upstream recommends LLVM 12-13 for 3.4.x.
+LLVM_SLOTS=(14 13) # See https://github.com/godotengine/godot/blob/3.4-stable/misc/hooks/pre-commit-clang-format#L79
 PYTHON_COMPAT=( python3_{8..10} )
 
 BULLET_PV="3.17"
