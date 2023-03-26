@@ -139,14 +139,14 @@ system-pcre2 system-recast system-squish system-wslay system-xatlas
 system-zlib system-zstd
 "
 IUSE+="
-	${IUSE_GUI}
+	${IUSE_3D}
 	${IUSE_BUILD}
 	${IUSE_CONTAINERS_CODECS_FORMATS}
-	${IUSE_SCRIPTING}
-	${IUSE_3D}
-	${IUSE_NET}
+	${IUSE_GUI}
 	${IUSE_INPUT}
 	${IUSE_LIBS}
+	${IUSE_NET}
+	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 "
 # media-libs/xatlas is a placeholder

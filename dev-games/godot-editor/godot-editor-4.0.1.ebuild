@@ -97,8 +97,9 @@ SANITIZERS=(
 	ubsan
 )
 
-IUSE_GUI="
-+advanced-gui
+IUSE_3D="
++3d +bullet +csg +denoise +gridmap +gltf +lightmapper_cpu +mobile-vr +raycast
++recast +vhacd +xatlas
 "
 IUSE_AUDIO="
 +alsa +pulseaudio +speech
@@ -111,21 +112,20 @@ IUSE_CONTAINERS_CODECS_FORMATS="
 +bmp +dds +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
 +theora +tga +vorbis +webm webm-simd +webp
 "
-IUSE_SCRIPTING="
-csharp-external-editor -gdscript gdscript_lsp -mono +visual-script vscode
-"
-IUSE_3D="
-+3d +bullet +csg +denoise +gridmap +gltf +lightmapper_cpu +mobile-vr +raycast
-+recast +vhacd +xatlas
-"
-IUSE_NET="
-ca-certs-relax +enet +jsonrpc +mbedtls +upnp +webrtc +websocket
+IUSE_GUI="
++advanced-gui
 "
 IUSE_INPUT="
 camera -gamepad +touch
 "
 IUSE_LIBS="
 +cvtt +freetype +opensimplex +pcre2 +vulkan
+"
+IUSE_NET="
+ca-certs-relax +enet +jsonrpc +mbedtls +upnp +webrtc +websocket
+"
+IUSE_SCRIPTING="
+csharp-external-editor -gdscript gdscript_lsp -mono +visual-script vscode
 "
 IUSE_SYSTEM="
 system-bullet system-embree system-enet system-freetype system-libogg
@@ -135,15 +135,15 @@ system-pcre2 system-recast system-squish system-wslay system-xatlas system-zlib
 system-zstd
 "
 IUSE+="
+	${IUSE_3D}
 	${IUSE_AUDIO}
 	${IUSE_BUILD}
 	${IUSE_CONTAINERS_CODECS_FORMATS}
 	${IUSE_GUI}
-	${IUSE_SCRIPTING}
-	${IUSE_3D}
-	${IUSE_NET}
 	${IUSE_INPUT}
 	${IUSE_LIBS}
+	${IUSE_NET}
+	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
 "
 # media-libs/xatlas is a placeholder

@@ -126,7 +126,7 @@ IUSE_INPUT="
 camera -gamepad +touch
 "
 IUSE_LIBS="
-+cvtt +freetype +opensimplex +pcre2 +pulseaudio +vulkan
++cvtt +freetype +opensimplex +pcre2 +vulkan
 "
 IUSE_NET="
 ca-certs-relax +enet +jsonrpc +mbedtls +upnp +webrtc +websocket
