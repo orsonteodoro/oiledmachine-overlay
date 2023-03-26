@@ -1248,6 +1248,7 @@ electron-app_find_analytics() {
 		"애널리틱스"		# korean
 		"آنالیتیکس"		# persian
 		"Аналитика"		# russian
+		"แอนะลิติกส์"		# thai
 		"Аналітика"		# ukrainian
 
 		# telemetry
@@ -1263,6 +1264,7 @@ electron-app_find_analytics() {
 		"دورسنجی"		# persian
 		"Телеметри́я"		# russian
 		"telemetría"		# spanish
+		"โทรมาตร"		# thai
 		"telemetri"		# turkish
 		"Телеметрія"		# ukrainian
 	)
