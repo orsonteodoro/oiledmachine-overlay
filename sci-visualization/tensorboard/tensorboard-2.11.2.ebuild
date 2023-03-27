@@ -94,9 +94,10 @@ PDEPEND="
 	sci-libs/tensorflow[${PYTHON_USEDEP},python]
 "
 
-S="${WORKDIR}"
+S="${WORKDIR}/${P}"
 
-src_prepare() {
+# Those prefixed with pypi_ are for the pypi tarball
+pypi_src_prepare() {
 	eapply_user
 
 	sed -i -e '/_vendor.__init__/d' -e '/_vendor.bleach/d' -e '/_vendor.html5lib/d' -e '/_vendor.webencodings/d' \
@@ -110,15 +111,15 @@ src_prepare() {
 
 	rm -rf "${S}/${PN}/_vendor" || die
 
-#	sed -i -e '/tensorboard-plugin-/d' "${S}/${P}.dist-info/METADATA" || die "failed to remove plugin deps"
-#	sed -i -e '/tensorboard-data-server/d' "${S}/${P}.dist-info/METADATA" || die "failed to remove data-server deps"
+	sed -i -e '/tensorboard-plugin-/d' "${S}/${P}.dist-info/METADATA" || die "failed to remove plugin deps"
+	sed -i -e '/tensorboard-data-server/d' "${S}/${P}.dist-info/METADATA" || die "failed to remove data-server deps"
 	sed -i -e 's/google-auth-oauthlib.*$/google-auth-oauthlib/' "${S}/${P}.dist-info/METADATA" \
 		|| die "failed to relax oauth deps"
 	sed -i -e 's/protobuf.*$/protobuf/' "${S}/${P}.dist-info/METADATA" \
 		|| die "failed to relax protobuf deps"
 }
 
-src_install() {
+pypi_src_install() {
 	do_install() {
 		python_domodule "${PN}"
 		python_domodule "${P}.dist-info"
