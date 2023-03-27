@@ -438,7 +438,7 @@ DEPEND+="
 		>=dev-libs/libpcre2-${LIBPCRE2_PV}[${MULTILIB_USEDEP},jit?]
 	)
 	system-recast? (
-		dev-games/recastnavigation[${MULTILIB_USEDEP}]
+		>=dev-games/recastnavigation-${RECASTNAVIGATION_PV}[${MULTILIB_USEDEP}]
 	)
 	system-squish? (
 		>=media-libs/libsquish-${LIBSQUISH_PV}[${MULTILIB_USEDEP}]
