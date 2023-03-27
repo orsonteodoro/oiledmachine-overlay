@@ -160,6 +160,7 @@ IUSE+="
 # See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
 # Some are repeated because they were shown to be in the ldd list
 REQUIRED_USE+="
+	!system-rvo2
 	denoise? (
 		lightmapper_rd
 	)
