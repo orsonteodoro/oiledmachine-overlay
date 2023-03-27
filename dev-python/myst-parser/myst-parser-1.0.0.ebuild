@@ -16,7 +16,7 @@ HOMEPAGE="
 LICENSE="
 	MIT
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Still needs retest
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" codestyle doc linkify rtd test test-docutils"
 REQUIRED_USE="
