@@ -63,7 +63,7 @@ MONO_LICENSE="
 LICENSE+=" mono? ( ${MONO_LICENSE} )"
 # See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
 
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64"
 
 FN_SRC="${PV}-${STATUS}.tar.gz"
 FN_DEST="${MY_P}.tar.gz"
