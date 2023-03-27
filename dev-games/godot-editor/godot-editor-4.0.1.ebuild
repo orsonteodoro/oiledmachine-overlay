@@ -98,8 +98,8 @@ SANITIZERS=(
 )
 
 IUSE_3D="
-+3d +bullet +csg +denoise +gridmap +gltf +lightmapper_cpu +mobile-vr +raycast
-+recast +vhacd +xatlas
++3d +bullet +csg +denoise +glslang +gltf +gridmap +lightmapper_rd +meshoptimizer
++mobile-vr +msdfgen +raycast +recast +vhacd +xatlas
 "
 IUSE_AUDIO="
 +alsa +pulseaudio +speech
@@ -109,29 +109,32 @@ ${SANITIZERS[@]}
 clang debug jit lld lto +neon +optimize-speed optimize-size portable
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
-+bmp +dds +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
-+theora +tga +vorbis +webm webm-simd +webp
++astc +bmp +brotli +cvtt +dds +etc +exr +hdr +jpeg +minizip +mp3 +ogg +opus
++pvrtc +s3tc +svg +tga +theora +vorbis +webm webm-simd +webp
 "
 IUSE_GUI="
-+advanced-gui
++advanced-gui +dbus
 "
 IUSE_INPUT="
 camera -gamepad +touch
 "
 IUSE_LIBS="
-+cvtt +freetype +opensimplex +pcre2 +vulkan
++freetype +graphite +opengl3 +opensimplex +pcre2 +text-server-adv
+-text-server-fb +volk +vulkan
 "
 IUSE_NET="
-ca-certs-relax +enet +jsonrpc +mbedtls +upnp +webrtc +websocket
+ca-certs-relax +enet +jsonrpc +mbedtls +multiplayer +text-server-adv
+-text-server-fb +upnp +webrtc +websocket
 "
 IUSE_SCRIPTING="
 csharp-external-editor -gdscript gdscript_lsp -mono +visual-script vscode
 "
 IUSE_SYSTEM="
-system-bullet system-embree system-enet system-freetype system-libogg
-system-libpng system-libtheora system-libvorbis system-libvpx system-libwebp
-system-libwebsockets system-mbedtls system-miniupnpc -system-mono system-opus
-system-pcre2 system-recast system-squish system-wslay system-xatlas system-zlib
+system-bullet system-embree system-enet system-freetype system-glslang
+system-icu system-libogg system-libpng system-libtheora system-libvorbis
+system-libvpx system-libwebp system-libwebsockets system-mbedtls
+system-miniupnpc system-msdfgen -system-mono system-opus system-pcre2
+system-recast system-rvo2 system-squish system-wslay system-xatlas system-zlib
 system-zstd
 "
 IUSE+="
@@ -161,7 +164,7 @@ REQUIRED_USE+="
 		)
 	)
 	denoise? (
-		lightmapper_cpu
+		lightmapper_rd
 	)
 	gdscript_lsp? (
 		jsonrpc
@@ -172,6 +175,9 @@ REQUIRED_USE+="
 	)
 	lsan? (
 		asan
+	)
+	msdfgen? (
+		freetype
 	)
 	optimize-size? (
 		!optimize-speed
@@ -185,6 +191,8 @@ REQUIRED_USE+="
 		!system-embree
 		!system-enet
 		!system-freetype
+		!system-glslang
+		!system-icu
 		!system-libogg
 		!system-libpng
 		!system-libtheora
@@ -195,14 +203,19 @@ REQUIRED_USE+="
 		!system-mbedtls
 		!system-miniupnpc
 		!system-mono
+		!system-msdfgen
 		!system-opus
 		!system-pcre2
 		!system-recast
+		!system-rvo2
 		!system-squish
 		!system-xatlas
 		!system-zlib
 		!system-zstd
 		!tsan
+		vulkan? (
+			volk
+		)
 	)
 	riscv? (
 		mono? (
@@ -361,6 +374,9 @@ DEPEND+="
 			app-misc/ca-certificates[cacert]
 		)
 	)
+	dbus? (
+		sys-apps/dbus
+	)
         gamepad? (
 		virtual/libudev
 	)
@@ -394,6 +410,12 @@ DEPEND+="
 	system-freetype? (
 		>=media-libs/freetype-${FREETYPE_PV}
 	)
+	system-glslang? (
+		>=dev-util/glslang-${GLSLANG_PV}
+	)
+	system-icu? (
+		>=dev-libs/icu-${ICU_PV}
+	)
 	system-libogg? (
 		>=media-libs/libogg-${LIBOGG_PV}
 	)
@@ -418,6 +440,9 @@ DEPEND+="
 	system-miniupnpc? (
 		>=net-libs/miniupnpc-${MINIUPNPC_PV}
 	)
+	system-msdfgen? (
+		>=media-libs/msdfgen-${MSDFGEN_PV}
+	)
 	system-opus? (
 		>=media-libs/opus-${OPUS_PV}
 		>=media-libs/opusfile-${OPUSFILE_PV}
@@ -426,7 +451,10 @@ DEPEND+="
 		>=dev-libs/libpcre2-${LIBPCRE2_PV}[jit?]
 	)
 	system-recast? (
-		dev-games/recastnavigation
+		>=dev-games/recastnavigation-${RECASTNAVIGATION_PV}
+	)
+	system-rvo2? (
+		>=dev-games/rvo2-${RVO2_PV}
 	)
 	system-squish? (
 		>=media-libs/libsquish-${LIBSQUISH_PV}
@@ -444,7 +472,9 @@ DEPEND+="
 		>=app-arch/zstd-${ZSTD_PV}
 	)
 	vulkan? (
-		media-libs/vulkan-loader[X]
+		!volk? (
+			media-libs/vulkan-loader[X]
+		)
 	)
 "
 RDEPEND+="
@@ -887,15 +917,19 @@ src_compile_linux() {
 
 src_compile() {
 	local myoptions=()
-	myoptions+=( production=$(usex !debug) )
+	myoptions+=(
+		production=$(usex !debug)
+	)
 	local options_linux=(
-		platform=linux
+		platform="linuxbsd"
 	)
 	local options_x11=(
-		platform=x11
+		platform="x11"
+		dbus=$(usex dbus)
 		pulseaudio=$(usex pulseaudio)
-		udev=$(usex gamepad)
+		opengl3=$(usex opengl3)
 		touch=$(usex touch)
+		udev=$(usex gamepad)
 		use_alsa=$(usex alsa)
 		use_asan=$(usex asan)
 		use_lld=$(usex lld)
@@ -907,13 +941,17 @@ src_compile() {
 		use_thinlto=$(usex lto)
 		use_tsan=$(usex tsan)
 		use_ubsan=$(usex ubsan)
+		use_volk=$(usex volk)
 		vulkan=$(usex vulkan)
 	)
 	local options_modules_shared=(
 		builtin_bullet=$(usex !system-bullet)
+		builtin_certs=$(usex portable)
 		builtin_embree=$(usex !system-embree)
 		builtin_enet=$(usex !system-enet)
 		builtin_freetype=$(usex !system-freetype)
+		builtin_glslang=$(usex glslang)
+		builtin_icu4c=$(usex !system-icu)
 		builtin_libogg=$(usex !system-libogg)
 		builtin_libpng=$(usex !system-libpng)
 		builtin_libtheora=$(usex !system-libtheora)
@@ -922,9 +960,11 @@ src_compile() {
 		builtin_libwebp=$(usex !system-libwebp)
 		builtin_mbedtls=$(usex !system-mbedtls)
 		builtin_miniupnpc=$(usex !system-miniupnpc)
+		builtin_msdfgen=$(usex !system-msdfgen)
 		builtin_pcre2=$(usex !system-pcre2)
 		builtin_opus=$(usex !system-opus)
 		builtin_recast=$(usex !system-recast)
+		builtin_rvo2=$(usex !system-rvo2)
 		builtin_squish=$(usex !system-squish)
 		builtin_wslay=$(usex !system-wslay)
 		builtin_xatlas=$(usex !system-xatlas)
@@ -932,15 +972,16 @@ src_compile() {
 		builtin_zstd=$(usex !system-zstd)
 		pulseaudio=$(usex pulseaudio)
 		use_static_cpp=$(usex portable)
-		builtin_certs=$(usex portable)
 		$(usex portable "" \
 "system_certs_path=/etc/ssl/certs/ca-certificates.crt")
 	)
 	local options_modules_static=(
+		builtin_certs=True
 		builtin_bullet=True
 		builtin_embree=True
 		builtin_enet=True
 		builtin_freetype=True
+		builtin_glslang=True
 		builtin_libogg=True
 		builtin_libpng=True
 		builtin_libtheora=True
@@ -949,9 +990,11 @@ src_compile() {
 		builtin_libwebp=True
 		builtin_mbedtls=True
 		builtin_miniupnpc=True
+		builtin_msdfgen=True
 		builtin_pcre2=True
 		builtin_opus=True
 		builtin_recast=True
+		builtin_rvo2=True
 		builtin_squish=True
 		builtin_wslay=True
 		builtin_xatlas=True
@@ -959,7 +1002,6 @@ src_compile() {
 		builtin_zstd=True
 		pulseaudio=False
 		use_static_cpp=True
-		builtin_certs=True
 	)
 
 	if use optimize-size ; then
@@ -969,10 +1011,13 @@ src_compile() {
 	fi
 
 	options_modules+=(
+		brotli=$(usex brotli)
+		builtin_pcre2_with_jit=$(usex jit)
 		disable_3d=$(usex !3d)
 		disable_advanced_gui=$(usex !advanced-gui)
+		graphite=$(usex graphite)
 		minizip=$(usex minizip)
-		builtin_pcre2_with_jit=$(usex jit)
+		module_astcenc_enabled=$(usex astc)
 		module_bmp_enabled=$(usex bmp)
 		module_bullet_enabled=$(usex bullet)
 		module_camera_enabled=$(usex camera)
@@ -980,30 +1025,36 @@ src_compile() {
 		module_cvtt_enabled=$(usex cvtt)
 		module_dds_enabled=$(usex dds)
 		module_denoise_enabled=$(usex denoise)
-		module_etc_enabled=$(usex etc1)
+		module_etcpak_enabled=$(usex etc)
 		module_enet_enabled=$(usex enet)
 		module_freetype_enabled=$(usex freetype)
 		module_gdnative_enabled=False
 		module_gdscript_enabled=$(usex gdscript)
+		module_glslang_enabled=$(usex glslang)
 		module_gltf_enabled=$(usex gltf)
 		module_gridmap_enabled=$(usex gridmap)
 		module_hdr_enabled=$(usex hdr)
 		module_jpg_enabled=$(usex jpeg)
 		module_jsonrpc_enabled=$(usex jsonrpc)
-		module_lightmapper_cpu_enabled=$(usex lightmapper_cpu)
+		module_lightmapper_rd_enabled=$(usex lightmapper_rd)
 		module_mbedtls_enabled=$(usex mbedtls)
+		module_meshoptimizer_enabled=$(usex meshoptimizer)
 		module_minimp3_enabled=$(usex mp3)
 		module_mobile_vr_enabled=$(usex mobile-vr)
+		module_msdfgen_enabled=$(usex msdfgen)
+		module_multiplayer_enabled=$(usex multiplayer)
+		module_navigation_enabled=$(usex recast)
 		module_ogg_enabled=$(usex ogg)
 		module_opensimplex_enabled=$(usex opensimplex)
 		module_opus_enabled=$(usex opus)
 		module_pvr_enabled=$(usex pvrtc)
 		module_raycast_enabled=$(usex raycast)
 		module_regex_enabled=$(usex pcre2)
-		module_recast_enabled=$(usex recast)
 		module_squish_enabled=$(usex s3tc)
 		module_stb_vorbis_enabled=$(usex vorbis)
 		module_svg_enabled=$(usex svg)
+		module_text_server_adv_enabled=$(usex text-server-adv)
+		module_text_server_fb_enabled=$(usex text-server-fb)
 		module_theora_enabled=$(usex theora)
 		module_tinyexr_enabled=$(usex exr)
 		module_tga_enabled=$(usex tga)
@@ -1017,6 +1068,7 @@ src_compile() {
 		module_webrtc_enabled=$(usex webrtc)
 		module_webxr_enabled=False
 		module_xatlas_enabled=$(usex xatlas)
+		module_zip_enabled=$(usex minizip)
 	)
 
 	src_compile_linux

@@ -98,16 +98,16 @@ SANITIZERS=(
 )
 
 IUSE_3D="
-+3d +bullet +csg +denoise +gridmap +gltf +lightmapper_cpu +mobile-vr +raycast
-+recast +vhacd +xatlas
++3d +bullet +csg +denoise +gltf +gridmap +lightmapper_cpu +mobile-vr
++raycast +recast +vhacd +xatlas
 "
 IUSE_BUILD="
 ${SANITIZERS[@]}
 clang debug jit lld lto +neon +optimize-speed optimize-size portable
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
-+bmp +dds +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
-+theora +tga +vorbis +webm webm-simd +webp
++bmp +dds +etc +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +s3tc +svg
++tga +theora +vorbis +webm webm-simd +webp
 "
 IUSE_GUI="
 +advanced-gui
@@ -394,7 +394,7 @@ DEPEND+="
 		>=dev-libs/libpcre2-${LIBPCRE2_PV}[jit?]
 	)
 	system-recast? (
-		dev-games/recastnavigation
+		>=dev-games/recastnavigation-${RECASTNAVIGATION_PV}
 	)
 	system-squish? (
 		>=media-libs/libsquish-${LIBSQUISH_PV}
@@ -725,15 +725,17 @@ src_compile_linux() {
 
 src_compile() {
 	local myoptions=()
-	myoptions+=( production=$(usex !debug) )
+	myoptions+=(
+		production=$(usex !debug)
+	)
 	local options_linux=(
-		platform=linux
+		platform="linux"
 	)
 	local options_x11=(
-		platform=x11
+		platform="x11"
 		pulseaudio=$(usex pulseaudio)
-		udev=$(usex gamepad)
 		touch=$(usex touch)
+		udev=$(usex gamepad)
 		use_asan=$(usex asan)
 		use_lld=$(usex lld)
 		use_llvm=$(usex clang)
@@ -746,6 +748,7 @@ src_compile() {
 	)
 	local options_modules_shared=(
 		builtin_bullet=$(usex !system-bullet)
+		builtin_certs=$(usex portable)
 		builtin_embree=$(usex !system-embree)
 		builtin_enet=$(usex !system-enet)
 		builtin_freetype=$(usex !system-freetype)
@@ -767,11 +770,11 @@ src_compile() {
 		builtin_zstd=$(usex !system-zstd)
 		pulseaudio=$(usex pulseaudio)
 		use_static_cpp=$(usex portable)
-		builtin_certs=$(usex portable)
 		$(usex portable "" \
 "system_certs_path=/etc/ssl/certs/ca-certificates.crt")
 	)
 	local options_modules_static=(
+		builtin_certs=True
 		builtin_bullet=True
 		builtin_embree=True
 		builtin_enet=True
@@ -794,7 +797,6 @@ src_compile() {
 		builtin_zstd=True
 		pulseaudio=False
 		use_static_cpp=True
-		builtin_certs=True
 	)
 
 	if use optimize-size ; then
@@ -804,10 +806,10 @@ src_compile() {
 	fi
 
 	options_modules+=(
+		builtin_pcre2_with_jit=$(usex jit)
 		disable_3d=$(usex !3d)
 		disable_advanced_gui=$(usex !advanced-gui)
 		minizip=$(usex minizip)
-		builtin_pcre2_with_jit=$(usex jit)
 		module_bmp_enabled=$(usex bmp)
 		module_bullet_enabled=$(usex bullet)
 		module_camera_enabled=$(usex camera)
@@ -815,7 +817,7 @@ src_compile() {
 		module_cvtt_enabled=$(usex cvtt)
 		module_dds_enabled=$(usex dds)
 		module_denoise_enabled=$(usex denoise)
-		module_etc_enabled=$(usex etc1)
+		module_etc_enabled=$(usex etc)
 		module_enet_enabled=$(usex enet)
 		module_freetype_enabled=$(usex freetype)
 		module_gdnative_enabled=False

@@ -116,16 +116,16 @@ SANITIZERS=(
 
 # webxr, camera is enabled upstream by default
 IUSE_3D="
-+3d +bullet +csg +denoise +gridmap +gltf +lightmapper_cpu +mobile-vr +raycast
-+recast +vhacd webxr +xatlas
++3d +bullet +csg +denoise +glslang +gltf +gridmap +lightmapper_rd +mobile-vr
++msdfgen +raycast +recast +vhacd +webxr +xatlas
 "
 IUSE_BUILD="
 ${SANITIZERS[@]}
 debug +neon +optimize-speed optimize-size +portable
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
-+bmp +cvtt +dds +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
-+theora +tga +vorbis +webm +webp
++astc +bmp +brotli +cvtt +dds +etc +exr +hdr +jpeg +minizip +mp3 +ogg +opus
++pvrtc +s3tc +svg +tga +theora +vorbis +webm +webp
 "
 IUSE_GUI="
 +advanced-gui
@@ -134,17 +134,17 @@ IUSE_INPUT="
 camera
 "
 IUSE_LIBS="
-+freetype +opensimplex +pcre2 +pulseaudio
++freetype +graphite +opensimplex +pcre2 +pulseaudio
 "
 IUSE_NET="
-+enet +jsonrpc +upnp +webrtc +websocket
++enet +jsonrpc +multiplayer +text-server-adv -text-server-fb +upnp +webrtc
++websocket
 "
 IUSE_SCRIPTING="
 -closure-compiler -gdscript gdscript_lsp +javascript_eval -javascript_threads
 -mono +visual-script
 "
 IUSE+="
-	${GODOT_JAVASCRIPT}
 	${IUSE_3D}
 	${IUSE_BUILD}
 	${IUSE_CONTAINERS_CODECS_FORMATS}
@@ -153,6 +153,7 @@ IUSE+="
 	${IUSE_LIBS}
 	${IUSE_NET}
 	${IUSE_SCRIPTING}
+	${GODOT_JAVASCRIPT}
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -162,7 +163,7 @@ IUSE+="
 REQUIRED_USE+="
 	portable
 	denoise? (
-		lightmapper_cpu
+		lightmapper_rd
 	)
 	gdscript_lsp? (
 		jsonrpc
@@ -462,9 +463,11 @@ src_compile() {
 	)
 	local options_modules_static=(
 		builtin_bullet=True
+		builtin_certs=True
 		builtin_embree=True
 		builtin_enet=True
 		builtin_freetype=True
+		builtin_glslang=True
 		builtin_libogg=True
 		builtin_libpng=True
 		builtin_libtheora=True
@@ -476,6 +479,7 @@ src_compile() {
 		builtin_pcre2=True
 		builtin_opus=True
 		builtin_recast=True
+		builtin_rvo2=True
 		builtin_squish=True
 		builtin_wslay=True
 		builtin_xatlas=True
@@ -483,7 +487,6 @@ src_compile() {
 		builtin_zstd=True
 		pulseaudio=False
 		use_static_cpp=True
-		builtin_certs=True
 	)
 
 	if use optimize-size ; then
@@ -493,10 +496,13 @@ src_compile() {
 	fi
 
 	options_modules+=(
+		builtin_pcre2_with_jit=False
+		brotli=$(usex brotli)
 		disable_3d=$(usex !3d)
 		disable_advanced_gui=$(usex !advanced-gui)
+		graphite=$(usex graphite)
 		minizip=$(usex minizip)
-		builtin_pcre2_with_jit=False
+		module_astcenc_enabled=$(usex astc)
 		module_bmp_enabled=$(usex bmp)
 		module_bullet_enabled=$(usex bullet)
 		module_camera_enabled=$(usex camera)
@@ -504,30 +510,35 @@ src_compile() {
 		module_cvtt_enabled=$(usex cvtt)
 		module_dds_enabled=$(usex dds)
 		module_denoise_enabled=$(usex denoise)
-		module_etc_enabled=$(usex etc1)
+		module_etcpak_enabled=$(usex etc)
 		module_enet_enabled=$(usex enet)
 		module_freetype_enabled=$(usex freetype)
 		module_gdnative_enabled=False
 		module_gdscript_enabled=$(usex gdscript)
+		module_glslang_enabled=$(usex glslang)
 		module_gltf_enabled=$(usex gltf)
 		module_gridmap_enabled=$(usex gridmap)
 		module_hdr_enabled=$(usex hdr)
 		module_jpg_enabled=$(usex jpeg)
 		module_jsonrpc_enabled=$(usex jsonrpc)
-		module_lightmapper_cpu_enabled=$(usex lightmapper_cpu)
+		module_lightmapper_rd_enabled=$(usex lightmapper_rd)
 		module_mbedtls_enabled=False
 		module_minimp3_enabled=$(usex mp3)
 		module_mobile_vr_enabled=$(usex mobile-vr)
+		module_msdfgen_enabled=$(usex msdfgen)
+		module_multiplayer_enabled=$(usex multiplayer)
+		module_navigation_enabled=$(usex recast)
 		module_ogg_enabled=$(usex ogg)
 		module_opensimplex_enabled=$(usex opensimplex)
 		module_opus_enabled=$(usex opus)
 		module_pvr_enabled=$(usex pvrtc)
 		module_raycast_enabled=$(usex raycast)
 		module_regex_enabled=$(usex pcre2)
-		module_recast_enabled=$(usex recast)
 		module_squish_enabled=$(usex s3tc)
 		module_stb_vorbis_enabled=$(usex vorbis)
 		module_svg_enabled=$(usex svg)
+		module_text_server_adv_enabled=$(usex text-server-adv)
+		module_text_server_fb_enabled=$(usex text-server-fb)
 		module_theora_enabled=$(usex theora)
 		module_tinyexr_enabled=$(usex exr)
 		module_tga_enabled=$(usex tga)
@@ -541,6 +552,7 @@ src_compile() {
 		module_webrtc_enabled=$(usex webrtc)
 		module_webxr_enabled=$(usex webxr)
 		module_xatlas_enabled=$(usex xatlas)
+		module_zip_enabled=$(usex minizip)
 	)
 
 	src_compile_javascript

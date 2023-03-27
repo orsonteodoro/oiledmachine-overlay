@@ -102,7 +102,7 @@ PLATFORMS="
 	windows_x86
 	windows_x86_64
 "
-IUSE+="${PLATFORMS} custom debug mono release standard"
+IUSE+=" ${PLATFORMS} custom debug mono release standard"
 REQUIRED_USE="
 	android? (
 		|| (

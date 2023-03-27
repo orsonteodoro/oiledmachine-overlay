@@ -68,7 +68,7 @@ MONO_LICENSE="
 LICENSE+=" mono? ( ${MONO_LICENSE} )"
 # See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
 
-KEYWORDS="~amd64 ~riscv ~x86"
+#KEYWORDS="~amd64 ~riscv ~x86"
 
 FN_SRC="${PV}-${STATUS}.tar.gz"
 FN_DEST="${MY_P}.tar.gz"
@@ -107,7 +107,7 @@ SANITIZERS=(
 )
 
 IUSE_3D="
-+3d +bullet +csg +denoise +gridmap +gltf +lightmapper_cpu +mobile-vr +raycast
++3d +bullet +csg +denoise +gltf +gridmap +lightmapper_cpu +mobile-vr +raycast
 +recast +vhacd +xatlas
 "
 IUSE_BUILD="
@@ -115,8 +115,8 @@ ${SANITIZERS[@]}
 clang debug lld jit lto +neon +optimize-speed optimize-size portable
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
-+bmp +cvtt +dds +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
-+theora +tga +vorbis +webm webm-simd +webp
++bmp +cvtt +dds +etc +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +s3tc +svg
++tga +theora +vorbis +webm webm-simd +webp
 "
 IUSE_GUI="
 +advanced-gui
@@ -128,7 +128,7 @@ IUSE_LIBS="
 +freetype +pcre2 +opensimplex
 "
 IUSE_NET="
-ca-certs-relax +enet +jsonrpc +mbedtls +upnp +webrtc +websocket
+ca-certs-relax +enet +jsonrpc +mbedtls +multiplayer +upnp +webrtc +websocket
 "
 IUSE_SCRIPTING="
 -gdscript gdscript_lsp +mono +visual-script
@@ -137,7 +137,7 @@ IUSE_SYSTEM="
 system-bullet system-embree system-enet system-freetype system-libogg
 system-libpng system-libtheora system-libvorbis system-libvpx system-libwebp
 system-libwebsockets system-mbedtls system-miniupnpc system-mono system-opus
-system-pcre2 system-squish system-wslay system-zlib system-zstd
+system-pcre2 system-recast system-squish system-wslay system-zlib system-zstd
 "
 
 IUSE+="
@@ -564,7 +564,9 @@ src_compile_server() {
 
 src_compile() {
 	local myoptions=()
-	#myoptions+=( production=$(usex !debug) )
+	#myoptions+=(
+	#	production=$(usex !debug)
+	#)
 	local options_server=(
 		platform=server
 		use_asan=$(usex asan)
@@ -592,7 +594,7 @@ src_compile() {
 		builtin_miniupnpc=$(usex !system-miniupnpc)
 		builtin_pcre2=$(usex !system-pcre2)
 		builtin_opus=$(usex !system-opus)
-		builtin_recast=True
+		builtin_recast=$(usex !system-recast)
 		builtin_squish=$(usex !system-squish)
 		builtin_wslay=$(usex !system-wslay)
 		builtin_xatlas=True
@@ -606,6 +608,7 @@ src_compile() {
 	)
 	local options_modules_static=(
 		builtin_bullet=True
+		builtin_certs=True
 		builtin_embree=True
 		builtin_enet=True
 		builtin_freetype=True
@@ -627,7 +630,6 @@ src_compile() {
 		builtin_zstd=True
 		pulseaudio=False
 		use_static_cpp=True
-		builtin_certs=True
 	)
 
 	if use optimize-size ; then
@@ -637,10 +639,10 @@ src_compile() {
 	fi
 
 	options_modules+=(
+		builtin_pcre2_with_jit=$(usex jit)
 		disable_3d=$(usex !3d)
 		disable_advanced_gui=$(usex !advanced-gui)
 		minizip=$(usex minizip)
-		builtin_pcre2_with_jit=$(usex jit)
 		module_bmp_enabled=$(usex bmp)
 		module_bullet_enabled=$(usex bullet)
 		module_camera_enabled=$(usex camera)
@@ -648,7 +650,7 @@ src_compile() {
 		module_cvtt_enabled=$(usex cvtt)
 		module_dds_enabled=$(usex dds)
 		module_denoise_enabled=$(usex denoise)
-		module_etc_enabled=$(usex etc1)
+		module_etc_enabled=$(usex etc)
 		module_enet_enabled=$(usex enet)
 		module_freetype_enabled=$(usex freetype)
 		module_gdnative_enabled=False
@@ -662,11 +664,12 @@ src_compile() {
 		module_mbedtls_enabled=$(usex mbedtls)
 		module_minimp3_enabled=$(usex mp3)
 		module_mobile_vr_enabled=$(usex mobile-vr)
+		module_multiplayer_enabled=$(usex multiplayer)
+		module_navigation_enabled=$(usex recast)
 		module_ogg_enabled=$(usex ogg)
 		module_opensimplex_enabled=$(usex opensimplex)
 		module_opus_enabled=$(usex opus)
 		module_pvr_enabled=$(usex pvrtc)
-		module_raycast_enabled=$(usex raycast)
 		module_regex_enabled=$(usex pcre2)
 		module_recast_enabled=$(usex recast)
 		module_squish_enabled=$(usex s3tc)

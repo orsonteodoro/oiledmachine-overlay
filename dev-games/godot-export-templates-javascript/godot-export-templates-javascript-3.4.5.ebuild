@@ -116,16 +116,16 @@ SANITIZERS=(
 
 # webxr, camera is enabled upstream by default
 IUSE_3D="
-+3d +bullet +csg +denoise +gridmap +gltf +lightmapper_cpu +mobile-vr +raycast
-+recast +vhacd webxr +xatlas
++3d +bullet +csg +denoise +gltf +gridmap +lightmapper_cpu +mobile-vr +raycast
++recast +vhacd +webxr +xatlas
 "
 IUSE_BUILD="
 ${SANITIZERS[@]}
 debug +neon +optimize-speed optimize-size +portable
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
-+bmp +cvtt +dds +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
-+theora +tga +vorbis +webm +webp
++bmp +cvtt +dds +etc +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +s3tc +svg
++tga +theora +vorbis +webm +webp
 "
 IUSE_GUI="
 +advanced-gui
@@ -144,7 +144,6 @@ IUSE_SCRIPTING="
 -mono +visual-script
 "
 IUSE+="
-	${GODOT_JAVASCRIPT}
 	${IUSE_3D}
 	${IUSE_BUILD}
 	${IUSE_CONTAINERS_CODECS_FORMATS}
@@ -153,6 +152,7 @@ IUSE+="
 	${IUSE_LIBS}
 	${IUSE_NET}
 	${IUSE_SCRIPTING}
+	${GODOT_JAVASCRIPT}
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -462,6 +462,7 @@ src_compile() {
 	)
 	local options_modules_static=(
 		builtin_bullet=True
+		builtin_certs=True
 		builtin_embree=True
 		builtin_enet=True
 		builtin_freetype=True
@@ -483,7 +484,6 @@ src_compile() {
 		builtin_zstd=True
 		pulseaudio=False
 		use_static_cpp=True
-		builtin_certs=True
 	)
 
 	if use optimize-size ; then
@@ -493,10 +493,10 @@ src_compile() {
 	fi
 
 	options_modules+=(
+		builtin_pcre2_with_jit=False
 		disable_3d=$(usex !3d)
 		disable_advanced_gui=$(usex !advanced-gui)
 		minizip=$(usex minizip)
-		builtin_pcre2_with_jit=False
 		module_bmp_enabled=$(usex bmp)
 		module_bullet_enabled=$(usex bullet)
 		module_camera_enabled=$(usex camera)
@@ -504,7 +504,7 @@ src_compile() {
 		module_cvtt_enabled=$(usex cvtt)
 		module_dds_enabled=$(usex dds)
 		module_denoise_enabled=$(usex denoise)
-		module_etc_enabled=$(usex etc1)
+		module_etc_enabled=$(usex etc)
 		module_enet_enabled=$(usex enet)
 		module_freetype_enabled=$(usex freetype)
 		module_gdnative_enabled=False

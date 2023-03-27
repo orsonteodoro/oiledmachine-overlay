@@ -8,7 +8,7 @@ DESCRIPTION="Godot metapackage"
 KEYWORDS="~amd64 ~riscv ~x86"
 IUSE_EXPORT_TEMPLATES="
 android dedicated-server headless-server ios ios-plugins javascript linux32
-+linux64 linux-server macos mingw32 mingw64 prebuilt-export-templates
++linux64 macos mingw32 mingw64 prebuilt-export-templates
 "
 IUSE="${IUSE_EXPORT_TEMPLATES} +demos -export-templates"
 SLOT_MAJ="$(ver_cut 1 ${PV})"

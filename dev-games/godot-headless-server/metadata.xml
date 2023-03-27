@@ -40,12 +40,18 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="3d">
       Enables 3D support.
     </flag>
+    <flag name="advanced-gui">
+      Enables the advanced GUI.
+    </flag>
     <flag name="asan">
       Enables ASAN for reporting but not necessarily preventing memory use
       problems or possible vulnerabilities.
     </flag>
-    <flag name="advanced-gui">
-      Enables the advanced GUI.
+    <flag name="astc">
+      Enables CPU based ASTC texture compression/decompression.
+    </flag>
+    <flag name="brotli">
+      Allows to use WOFF2 fonts compressed with brotli.
     </flag>
     <flag name="bullet">
       Enables support for the Bullet 3D physics engine.
@@ -70,6 +76,10 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="cvtt">
       Enables use for BPTC texture compression / decompression.
     </flag>
+    <flag name="dbus">
+      Enables support for prevention of the screensaver while gaming and
+      support for dark mode.
+    </flag>
     <flag name="denoise">
       Enables the denoiser module to improve lightmap generation quality.
     </flag>
@@ -83,9 +93,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="enet">
       Enables multiplayer networking support.
     </flag>
-    <flag name="etc1">
-      Enables support for Ericsson Texture Compression and loading textures
-      from the PKM file format.
+    <flag name="etc">
+      Enables support for Ericsson Texture Compression (ETC1/ETC2) and loading
+      textures from the PKM file format.
     </flag>
     <flag name="exr">
       Enables support for OpenEXR texture images used in association with 3D
@@ -96,6 +106,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="freetype">
       Enables support for the FreeType library.
+    </flag>
+    <flag name="glslang">
+      Disable to unbundle glslang.
     </flag>
     <flag name="gamepad">
       Enables gamepad support.
@@ -115,7 +128,10 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
 
         https://godotengine.org/article/introducing-the-godot-gltf-2-0-scene-exporter
 
-      </flag>
+    </flag>
+    <flag name="graphite">
+      Enables support for SIL Graphite smart fonts.
+    </flag>
     <flag name="gridmap">
       Enables support for gridmaps for 3D level making similar to tile maps but
       for 3D.
@@ -140,7 +156,10 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables JPEG support.
     </flag>
     <flag name="lightmapper_cpu">
-      Enables building the a new lightmap generator module.
+      Enables the CPU based lightmapper generator module.
+    </flag>
+    <flag name="lightmapper_rd">
+      Enables the GPU based lightmapper generator module.
     </flag>
     <flag name="lld">
       Uses the LLD linker for faster linking.  Disable to fall back to the gold
@@ -156,6 +175,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="mbedtls">
       Enables the use of mbed TLS for X509 digital certificates, secured TLS
       networking.
+    </flag>
+    <flag name="meshoptimizer">
+      Enables the mesh optimizer to optimize 3D mesh processing on import.
     </flag>
     <flag name="minizip">
       Enables support for compressed ZIP files.
@@ -177,15 +199,21 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables MSAN for reporting but not necessarily fixing uninitialized
       variables.
     </flag>
+    <flag name="msdfgen">
+      Enables use of the msdfgen library to better sharpen text when the camera
+      is up close to objects.
+    </flag>
+    <flag name="multiplayer">
+      Enables RPC based network multiplayer support.
+    </flag>
     <flag name="musepack">
       Enables support for Musepack audio files.
     </flag>
     <flag name="ogg">
       Enables support for the Ogg container format.
     </flag>
-    <flag name="opus">
-      Enables Opus voice compression support used in used in voice acting asset
-      samples.
+    <flag name="opengl3">
+      Enables support for OpenGL3/GLES3.
     </flag>
     <flag name="opensimplex">
       Enables OpenSimplex for random level generation and/or for visual effects
@@ -216,16 +244,16 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="pvrtc">
       Enables PowerVR texture compression.
     </flag>
-    <flag name="python_targets_python3_6">
-      For generating docs and translations.
-    </flag>
-    <flag name="python_targets_python3_7">
-      For generating docs and translations.
-    </flag>
     <flag name="python_targets_python3_8">
       For generating docs and translations.
     </flag>
     <flag name="python_targets_python3_9">
+      For generating docs and translations.
+    </flag>
+    <flag name="python_targets_python3_10">
+      For generating docs and translations.
+    </flag>
+    <flag name="python_targets_python3_11">
       For generating docs and translations.
     </flag>
     <flag name="raycast">
@@ -236,6 +264,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="s3tc">
       Enables DXT compression.
+    </flag>
+    <flag name="speech">
+      Enables text-to-speech.
     </flag>
     <flag name="speex">
       Enable speex voice compression support used in voice acting asset samples.
@@ -257,6 +288,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Uses the system's external library instead of the internal version.
     </flag>
     <flag name="system-glew">
+      Uses the system's external library instead of the internal version.
+    </flag>
+    <flag name="system-glslang">
       Uses the system's external library instead of the internal version.
     </flag>
     <flag name="system-libmpcdec">
@@ -289,6 +323,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="system-mono">
       Uses the system's external library instead of the internal version.
     </flag>
+    <flag name="system-msdfgen">
+      Uses the system's external library instead of the internal version.
+    </flag>
     <flag name="system-openssl">
       Uses the system's external library instead of the internal version.
     </flag>
@@ -299,6 +336,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Uses the system's external library instead of the internal version.
     </flag>
     <flag name="system-recast">
+      Uses the system's external library instead of the internal version.
+    </flag>
+    <flag name="system-rvo2">
       Uses the system's external library instead of the internal version.
     </flag>
     <flag name="system-squish">
@@ -312,6 +352,15 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="system-zstd">
       Uses the system's external library instead of the internal version.
+    </flag>
+    <flag name="text-server-adv">
+      Enables support for bidirectional fonts, complex text layout,
+      contexutal OpenType features.
+    </flag>
+    <flag name="text-server-fb">
+      Enables support for the fallback text server without bidirectional
+      fonts, without complex text layout, and without contexutal OpenType
+      features.
     </flag>
     <flag name="tga">
       Enables support for the TGA image format.
@@ -361,6 +410,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="vorbis">
       Enables support for the Vorbis audio codec.
+    </flag>
+    <flag name="volk">
+      Enables use of volk library to reduce overhead.
     </flag>
     <flag name="vscode">
       Use Visual Studio Code for C# scripting
