@@ -23,7 +23,7 @@ LICENSE="
 " # The distro Apache-2.0 template doesn't have all-rights-reserved
 SLOT="0"
 #KEYWORDS="~amd64" # Missing dependencies
-IUSE+=" test"
+IUSE+=" test testing-tensorflow"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "

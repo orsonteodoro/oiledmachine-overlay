@@ -360,8 +360,8 @@ RDEPEND="
 		!test? (
 			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
 			(
-				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP}]
-				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP}]
+				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP},-testing-tensorflow]
+				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP},-testing-tensorflow]
 			)
 		)
 		(
@@ -413,8 +413,8 @@ RDEPEND="
 				>=dev-python/numpy-1.22[${PYTHON_USEDEP_TEST}]
 			)
 			(
-				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP_TEST}]
-				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP_TEST}]
+				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP_TEST},testing-tensorflow]
+				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP_TEST},testing-tensorflow]
 			)
 		)
 	)

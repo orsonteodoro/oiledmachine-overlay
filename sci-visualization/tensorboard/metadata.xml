@@ -18,4 +18,9 @@
   <upstream>
     <remote-id type="github">tensorflow/tensorboard</remote-id>
   </upstream>
+  <use>
+    <flag name="testing-tensorflow">
+      Used to avoid emerge issues
+    </flag>
+  </use>
 </pkgmetadata>

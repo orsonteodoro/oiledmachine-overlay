@@ -357,8 +357,8 @@ RDEPEND="
 			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
 			>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
 			(
-				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP}]
-				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP}]
+				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP},-testing-tensorflow]
+				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP},-testing-tensorflow]
 			)
 		)
 		>=dev-libs/flatbuffers-2.0.6:=
@@ -396,8 +396,8 @@ RDEPEND="
 				>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP_TEST}]
 			)
 			(
-				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP_TEST}]
-				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP_TEST}]
+				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP_TEST},testing-tensorflow]
+				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP_TEST},testing-tensorflow]
 			)
 		)
 	)

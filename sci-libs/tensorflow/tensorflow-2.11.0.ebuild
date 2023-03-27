@@ -334,7 +334,7 @@ RDEPEND="
 		!test? (
 			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
 			>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
-			=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP}]
+			=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP},-testing-tensorflow]
 		)
 		>=dev-libs/flatbuffers-2.0.6:=
 		>=dev-python/astunparse-1.6.3[${PYTHON_USEDEP}]
@@ -369,7 +369,7 @@ RDEPEND="
 				<dev-python/protobuf-python-3.20[${PYTHON_USEDEP_TEST}]
 				>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP_TEST}]
 			)
-			=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP_TEST}]
+			=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP_TEST},testing-tensorflow]
 		)
 	)
 	test? (

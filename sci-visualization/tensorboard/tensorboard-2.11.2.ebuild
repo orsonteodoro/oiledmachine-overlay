@@ -23,7 +23,7 @@ LICENSE="
 " # The distro Apache-2.0 template doesn't have all-rights-reserved
 SLOT="0"
 #KEYWORDS="~amd64" # Missing dependencies
-IUSE+=" test"
+IUSE+=" test testing-tensorflow"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -50,12 +50,17 @@ RDEPEND="
 		>=dev-python/google-auth-oauthlib-0.5[${PYTHON_USEDEP}]
 	)
 	(
-		<dev-python/grpcio-1.48.5[${PYTHON_USEDEP}]
+		testing-tensorflow? (
+			<dev-python/grpcio-1.49.3[${PYTHON_USEDEP}]
+		)
 		>=dev-python/grpcio-1.24.3[${PYTHON_USEDEP}]
 	)
 	(
 		<dev-python/protobuf-python-4[${PYTHON_USEDEP}]
 		>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
+		testing-tensorflow? (
+			<dev-python/protobuf-python-3.21[${PYTHON_USEDEP}]
+		)
 	)
 	(
 		<dev-python/requests-3[${PYTHON_USEDEP}]
