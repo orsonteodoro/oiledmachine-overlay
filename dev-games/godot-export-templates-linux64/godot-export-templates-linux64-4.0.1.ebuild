@@ -140,7 +140,7 @@ system-bullet system-embree system-enet system-freetype system-glslang
 system-icu system-libogg system-libpng system-libtheora system-libvorbis
 system-libvpx system-libwebp system-libwebsockets system-mbedtls
 system-miniupnpc system-mono system-msdfgen system-opus system-pcre2
-system-recast system-rvo2 system-squish system-wslay system-xatlas system-zlib
+system-recast system-squish system-wslay system-xatlas system-zlib
 system-zstd
 "
 IUSE+="
@@ -160,7 +160,6 @@ IUSE+="
 # See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
 # Some are repeated because they were shown to be in the ldd list
 REQUIRED_USE+="
-	!system-rvo2
 	denoise? (
 		lightmapper_rd
 	)
@@ -205,7 +204,6 @@ REQUIRED_USE+="
 		!system-opus
 		!system-pcre2
 		!system-recast
-		!system-rvo2
 		!system-squish
 		!system-xatlas
 		!system-zlib
@@ -831,7 +829,7 @@ src_compile() {
 		builtin_pcre2=$(usex !system-pcre2)
 		builtin_opus=$(usex !system-opus)
 		builtin_recast=$(usex !system-recast)
-		builtin_rvo2=$(usex !system-rvo2)
+		builtin_rvo2=True
 		builtin_squish=$(usex !system-squish)
 		builtin_wslay=$(usex !system-wslay)
 		builtin_xatlas=$(usex !system-xatlas)
