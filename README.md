@@ -206,6 +206,9 @@ and analytics keywords.
 Additional packages with binary blobs or prebuilt packages may be modified with
 these extra scans.
 
+Source code scans are limited to command line patterns and keyword search.
+Scanning based on library API calls or function names is not done.
+
 Source code scans for unauthorized microphone and webcam use are currently not
 done but can be added via the bashrc with a grep on found die check.  Some of
 these issues can be mitigated by running the app under isolation or in a
