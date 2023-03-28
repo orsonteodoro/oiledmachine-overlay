@@ -665,7 +665,7 @@ python_prepare_all() {
 }
 
 python_configure_all() {
-	check_cython
+	use cython && check_cython
 	if use evdi && [[ ! -e "${ESYSROOT}/usr/$(get_libdir)/pkgconfig/evdi.pc" ]] ; then
 eerror
 eerror "Missing evdi.pc"
