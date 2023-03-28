@@ -234,10 +234,17 @@ ELECTRON_APP_SESSION_REPLAY="allow"
 ```
 
 ```
+# Contents of /etc/portage/env/sr.conf
+# 0 to disable, 1 to enable.
+SR_SECURITY_SCAN=0
+```
+
+```
 # Contents of /etc/portage/package.env:
 sys-kernel/ot-sources ot-kernel.conf
 media-gfx/blockbench js-disable-av-scan.conf
 media-gfx/upscayl npm-allow-session-replay.conf
+media-video/sr sr.conf
 ```
 
 #### Limitations
