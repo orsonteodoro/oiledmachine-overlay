@@ -168,7 +168,8 @@ based on an outdated style guide.
     ebuild ecosystem so that Linux doesn't suck.  In other words, you may package
     optional features you like but skip over things you don't want.  The
     unpackaged dependencies should have a TODO list within the ebuild of packages
-    that are missing in the ebuild ecosystem.
+    that are missing in the ebuild ecosystem.  Incomplete dependencies relates to
+    the package default USE flag features breaking also.
   - You must edit profile/package.use.force or profile/package.use.mask to hard
     mask the feature or force the alternative if it breaks something or has
     a serious security issue.
@@ -223,8 +224,7 @@ based on an outdated style guide.
 * code review checklist:
   - Header copyright notices
   - License files for free open source compatibility
-  - The URIs will be reviewed.
-  - *DEPENDs will be check for sorting.
+  - The URIs will be reviewed for https and trust.
   - ASCII sorted configure, *DEPENDs, IUSE, REQUIRED_USE, etc.
   - Each and every ebuild will be manually checked for security.
   - File permissions and ownership.
