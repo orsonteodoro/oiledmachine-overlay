@@ -298,11 +298,13 @@ You need at least one of the following to qualify:
 2. We have met in person.
 3. Brief interview over voice with a demo of your project on a video sharing
 site and code samples.
-4. Overlay maintainer
+4. A overlay maintainer.
 
 ### Skills required
 
-1. git command line experience (or prior experience with version control and willing to learn git)
+1. git command line experience (or prior experience with version control
+and willing to learn git)
 2. Shell scripting
 3. Ebuild experience
-3. Experience with this distro.
+4. Experience with this distro
+5. Experience with creating patch files
