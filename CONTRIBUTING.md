@@ -188,7 +188,7 @@ based on an outdated style guide.
 
 * upload rules:
   - You may submit many ebuilds at the same time, but do not send more than
-    reasonable amount.
+    a reasonable amount.
   - It is better to send one package folder at a time.
 
 * code review checklist:
@@ -196,7 +196,7 @@ based on an outdated style guide.
   - License files for free open source compatibility
   - The URIs will be reviewed.
   - *DEPENDs will be check for sorting.
-  - IUSE will be checked for sorting.
+  - ASCII sorted configure, *DEPENDs, IUSE, REQUIRED_USE, etc.
   - Each and every ebuild will be manually checked for security.
   - File permissions and ownership.
   - The project licenses will be reviewed.
