@@ -168,6 +168,12 @@ based on an outdated style guide.
   - If the license header says all rights reserved but the license does not
     have it in the license template, it should be disclosed.
   - All patents licenses should be disclosed and should be free.
+  - If a license says copyright notices must be preserved, then the license
+    file or that header containing that copyright notice should be saved.
+    Use the `lcnr` eclass or see
+    [header-preserve-kernel](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/sys-kernel/ot-sources/files/header-preserve-kernel)
+    script to accomplish this.  You may want to use the lcnr eclass when
+    dealing with micropackages.
 
 * metadata.xml rules:
   - Everything is space indented.
