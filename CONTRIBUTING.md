@@ -105,7 +105,8 @@ based on an outdated style guide.
       [libc USE flags](https://packages.gentoo.org/useflags/elibc_glibc)
     - etc...
   - Giving write permissions is disallowed in certain scenarios.
-  - Adding test USE flag and dependencies is required for dev-python.
+  - Adding the test USE flag and test dependencies is required for
+    dev-python in this overlay only if the package supports testing.
   - If a python package does provide a test suite but not through pytest,
     then src_test() must be explicitly defined in the ebuild.
   - Adding src_test and test *DEPENDs for C/C++ libraries is optional, but
