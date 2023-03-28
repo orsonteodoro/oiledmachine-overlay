@@ -144,10 +144,10 @@ as a result of running test suites.  These test suites are also inspected
 for usefulness in PGO optimization on the ebuild level which some ebuilds
 take advantage of.
 
-### Markings for testing
+### Markings for test-suite testing
 
-Testing is done randomly.  Tentative details can be found at the footer of the
-ebuild:
+Test-suite testing is done randomly.  Tentative details can be found at the
+footer of the ebuild:
 
 ```
 # OILEDMACHINE-OVERLAY-EBUILD-TESTED-VERSIONS:  1.2.1 1.2.1[python_targets_python3_10] commit-id
