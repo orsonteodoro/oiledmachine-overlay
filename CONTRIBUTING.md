@@ -116,6 +116,7 @@ based on an outdated style guide.
     `+` or - in front of the USE flag.  You may go against upstream defaults
     if the setting is not platform agnostic or would likely lead to
     breakage.
+  - Daemons/servers must run as limited (non-root) user.
 
 * eclass rules:
   - All `.eclass`es must be GPL2 only or have a GPL2 compatible license header.
@@ -167,6 +168,7 @@ based on an outdated style guide.
   - The project licenses will be reviewed.
   - All eclasses are inspected for comprehensive documentation.
   - Vulnerability database checks for each submitted package.
+  - The security of init scripts if any.
 
 #### Uploading to this repo
 
