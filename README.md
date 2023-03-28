@@ -591,3 +591,7 @@ should be a bash script.
 | www-servers/civetweb | TBA |
 | x11-wm/dwm | This ebuild fixes the emoji titlebar crash and has integrated Fibonacci layout patch applied. |
 | x11-wm/xpra | This is an alternative VNC like client.  It's kept around for Firejail. |
+
+### Contributing ebuilds
+
+See CONTRIBUTING.md
