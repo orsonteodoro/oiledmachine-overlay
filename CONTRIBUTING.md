@@ -6,6 +6,24 @@ When you submit an ebuild on this overlay exclusively, they will not be
 disseminated or searchable in the overlay search engine.  Consider uploading
 them to another overlay if you would like them more searchable.
 
+### Submissions that are considered for acceptance
+
+1. Enhancements and optimization (PGO, BOLT, algorithms, ...)
+2. Fixes and completness
+3. New ebuilds related to
+   - Game development (for programmers, for artists, for producers, for musicians)
+   - Game libraries
+   - Porting games outside of Linux
+   - Programmer developer tools
+   - Graphics arts
+   - Games and gamer tools
+   - Electron based apps
+   - Emoji related
+   - Security
+   - AI (Artificial Intelligence)
+4. Version bumps
+5. Porting to different hardware
+
 Sending them is covered in the following sections below.
 
 ### Code review
