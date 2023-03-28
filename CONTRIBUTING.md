@@ -91,7 +91,7 @@ based on an outdated style guide.
     - RDEPEND, DEPEND, BDEPEND, PDEPEND are using an ASCII inspired decision
       tree sort.
     - USE flags in *DEPENDs need to be ASCII sorted.
-  - Configure options should be ASCII sorted.
+    - Configure options should be ASCII sorted.
   - Comments should be placed in either column 0 or first tab and no more.
   - If a package has many internal vendored dependencies, the YYYYMMDD of the
     last commit of the third_party or depends folder should be recorded and
