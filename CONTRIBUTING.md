@@ -9,7 +9,7 @@ them to another overlay if you would like them more searchable.
 ### Submissions that are considered for acceptance
 
 1. Enhancements and optimization (PGO, BOLT, algorithms, ...)
-2. Fixes and completness
+2. Fixes and completeness
 3. New ebuilds related to
    - Game development (for programmers, for artists, for producers, for musicians)
    - Game libraries
