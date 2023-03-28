@@ -113,12 +113,13 @@ based on an outdated style guide.
   - Giving write permissions is disallowed in certain scenarios.
   - Adding the test USE flag and test dependencies is required for
     dev-python in this overlay only if the package supports testing.
-  - If a python package does provide a test suite but not through pytest,
-    then src_test() must be explicitly defined in the ebuild.
+  - If a python package does provide a test suite but not through supported
+    distutils_enable_tests values like pytest, then src_test() must be
+    explicitly defined in the ebuild.
   - Adding src_test and test *DEPENDs for C/C++ libraries is optional, but
     highly recommended and may be required in the future in this overlay.
   - If an ebuild can be trivially PGOed, then it is highly recommended to
-    add tpgo USE flag.
+    add tpgo USE flag or use the build script's pgo.
   - The default IUSE must mostly respect upstream defaults by prefixing
     `+` or `-` in front of the USE flag.  You may go against upstream defaults
     if the setting is not platform agnostic or would likely lead to
