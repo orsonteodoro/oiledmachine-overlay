@@ -9,7 +9,7 @@ HOMEPAGE="https://github.com/AppImage/appimaged"
 LICENSE="MIT" # appimaged project's default license
 LICENSE+=" all-rights-reserved" # src/main.c ; \
 # The vanilla MIT license doesn't have all-rights-reserved
-KEYWORDS="~amd64 ~x86"
+#KEYWORDS="" # Live ebuilds do not get keyworded.
 inherit cmake git-r3 linux-info user-info xdg
 IUSE+="
 disable_watching_user_downloads_folder disable_watching_opt_folder firejail

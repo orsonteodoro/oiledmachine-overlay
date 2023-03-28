@@ -13,7 +13,7 @@ inherit cmake desktop git-r3 toolchain-funcs xdg
 
 DESCRIPTION="A native IDE for ENIGMA written in C++ using the Qt Framework."
 LICENSE="GPL-3+"
-#KEYWORDS="~amd64 ~x86" # Cannot build simple hello world
+#KEYWORDS="~amd64 ~x86" # Cannot build simple hello world.  Project is likely pre-alpha.
 HOMEPAGE="https://github.com/enigma-dev/RadialGM"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="doc"
@@ -164,12 +164,11 @@ eerror
 		| tr "\n" ":")
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="/usr/$(get_libdir)/${MY_PN}"
-		-DEXTERNAL_ENIGMA=ON
 		-DCMAKE_LIBRARY_PATH="${dirs}"
+		-DEXTERNAL_ENIGMA=ON
 		-DRGM_BUILD_EMAKE=OFF
 	)
 	cmake_src_configure
-#	CMAKE_LIBRARY_PATH=\"${dirs}\" \
 }
 
 src_compile() {
@@ -224,3 +223,4 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES

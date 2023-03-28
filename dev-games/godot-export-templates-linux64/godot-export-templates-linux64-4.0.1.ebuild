@@ -36,6 +36,7 @@ LICENSE="
 	Unlicense
 	ZLIB
 "
+#KEYWORDS="" # Ebuild not recently tested
 
 # See https://github.com/godotengine/godot/blob/4.0.1-stable/thirdparty/README.md for Apache-2.0 licensed third party.
 
@@ -1008,3 +1009,4 @@ einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

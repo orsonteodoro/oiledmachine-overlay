@@ -3,9 +3,12 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
+REVISION=0
+
 DESCRIPTION="A package for cross building for Android with the Enigma game \
 engine"
-REVISION=0
+#KEYWORDS="" # Ebuild not finished
 SLOT="0/${REVISION}"
 IUSE="
 box2d bullet freetype gles1 gles2 gme gtest joystick network opengl png sdl2
@@ -198,3 +201,4 @@ eerror
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

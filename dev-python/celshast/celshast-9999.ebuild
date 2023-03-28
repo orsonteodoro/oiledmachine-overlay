@@ -13,7 +13,7 @@ HOMEPAGE="https://github.com/Farama-Foundation/Celshast"
 LICENSE="
 	MIT
 "
-#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Untested
+#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild is not tested.
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" fallback-commit test"
 DEPEND+="
@@ -46,3 +46,4 @@ src_unpack() {
 distutils_enable_sphinx "docs"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

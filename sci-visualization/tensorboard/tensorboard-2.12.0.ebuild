@@ -22,7 +22,7 @@ LICENSE="
 	Apache-2.0
 " # The distro Apache-2.0 template doesn't have all-rights-reserved
 SLOT="0"
-#KEYWORDS="~amd64" # Missing dependencies
+#KEYWORDS="~amd64" # Ebuild not finished.  See TODO list.
 IUSE+=" test testing-tensorflow"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -120,3 +120,5 @@ pypi_src_install() {
 	}
 	python_foreach_impl do_install
 }
+
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

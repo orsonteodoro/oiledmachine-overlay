@@ -37,7 +37,7 @@ LICENSE="
 # monotools - GPL-2, LGPL-2, MIT
 # nuget-binary - Apache-2.0
 #
-KEYWORDS="~amd64 ~x86"
+#KEYWORDS="~amd64 ~x86" # Ebuild not finished
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE=" developer test"
 REQUIRED_USE=" "
@@ -315,3 +315,4 @@ EOF
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

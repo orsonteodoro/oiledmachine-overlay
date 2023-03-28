@@ -37,6 +37,7 @@ LICENSE="
 	Unlicense
 	ZLIB
 "
+#KEYWORDS="" # Ebuild not finished
 
 # See https://github.com/godotengine/godot/blob/4.0.1-stable/thirdparty/README.md for Apache-2.0 licensed third party.
 
@@ -50,8 +51,6 @@ LICENSE="
 
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
-
-#KEYWORDS="~amd64"
 
 FN_SRC="${PV}-${STATUS}.tar.gz"
 FN_DEST="${MY_P}.tar.gz"
@@ -627,4 +626,4 @@ einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

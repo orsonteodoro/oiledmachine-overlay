@@ -3,9 +3,12 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
+REVISION=0
+
 DESCRIPTION="A package for cross building with the MinGW-w64 (64-bit) toolchain \
 and Wine64 for the Enigma game engine"
-REVISION=0
+#KEYWORDS="" # Ebuild not finished
 SLOT="0/${REVISION}"
 IUSE="
 box2d bullet freetype gme gtest gtk2 joystick network openal opengl png sdl2
@@ -166,4 +169,4 @@ src_configure() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

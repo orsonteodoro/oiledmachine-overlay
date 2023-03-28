@@ -6,19 +6,18 @@ EAPI=8
 
 DESCRIPTION="Godot metapackage"
 KEYWORDS="~amd64 ~riscv ~x86"
+SLOT_MAJ="$(ver_cut 1 ${PV})"
+SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 IUSE_EXPORT_TEMPLATES="
 android dedicated-server headless-server ios ios-plugins javascript linux32
 +linux64 macos mingw32 mingw64 prebuilt-export-templates
 "
-IUSE="${IUSE_EXPORT_TEMPLATES} +demos -export-templates"
+IUSE=" ${IUSE_EXPORT_TEMPLATES} +demos -export-templates"
 REQUIRED_USE="
 	!dedicated-server
 	!headless-server
 	!ios-plugins
 "
-SLOT_MAJ="$(ver_cut 1 ${PV})"
-SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
-
 RDEPEND="
 	!dev-games/godot
 	dev-games/godot-editor:${SLOT}

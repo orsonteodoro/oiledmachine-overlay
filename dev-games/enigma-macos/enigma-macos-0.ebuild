@@ -3,8 +3,11 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-DESCRIPTION="A package for cross building for macOS with the Enigma game engine"
+
 REVISION=0
+
+DESCRIPTION="A package for cross building for macOS with the Enigma game engine"
+#KEYWORDS="" # Ebuild not finished
 SLOT="0/${REVISION}"
 IUSE="
 box2d bullet freetype gles1 gles2 gme gtk2 gtest joystick network openal opengl
@@ -159,3 +162,4 @@ eerror
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

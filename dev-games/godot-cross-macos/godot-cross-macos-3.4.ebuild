@@ -11,6 +11,7 @@ inherit flag-o-matic
 
 DESCRIPTION="Godot crossdev dependencies for macOS"
 # U 20.04
+#KEYWORDS="" # Ebuild not finished
 
 SANITIZERS=(
 	asan
@@ -130,3 +131,4 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

@@ -17,6 +17,7 @@ DESCRIPTION="Mono build scripts for Godot on macOS"
 HOMEPAGE="https://github.com/godotengine/godot-mono-builds"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
 LICENSE="MIT"
+#KEYWORDS="" # Ebuild not finished
 
 # Extra licenses because it is in source code form and third party external
 # modules.  Also, additional licenses for additional files through git not
@@ -254,3 +255,4 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

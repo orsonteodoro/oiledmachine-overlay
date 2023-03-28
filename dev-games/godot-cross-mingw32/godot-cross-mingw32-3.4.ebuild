@@ -8,14 +8,15 @@ inherit godot-3.4
 inherit flag-o-matic
 
 DESCRIPTION="Godot crossdev dependencies for MinGW64-w64 (for 32-bit)"
+#KEYWORDS="" # Ebuild not finished
+SLOT_MAJ="$(ver_cut 1 ${PV})"
+SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 # U 20.04
 RDEPEND="
 	>=dev-util/mingw64-runtime-7
 	>=sys-devel/gcc-9.3
 	>=sys-devel/binutils-2.34
 "
-SLOT_MAJ="$(ver_cut 1 ${PV})"
-SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
 pkg_setup() {
 ewarn
@@ -54,3 +55,4 @@ eerror
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

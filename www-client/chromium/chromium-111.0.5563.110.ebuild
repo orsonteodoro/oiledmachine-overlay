@@ -292,7 +292,7 @@ LICENSE="
 #   domain.
 #
 SLOT="0/stable"
-#KEYWORDS="~amd64 ~arm64 ~ppc64" # Waiting for patch update from original ebuild
+#KEYWORDS="~amd64 ~arm64 ~ppc64" # Ebuild not finished.  Waiting for patch update from original ebuild.
 #
 # vaapi is enabled by default upstream for some arches \
 # See https://github.com/chromium/chromium/blob/111.0.5563.110/media/gpu/args.gni#L24
@@ -3372,3 +3372,5 @@ einfo
 #
 # *Sync update means to keep it updated with the distro ebuild.
 #
+
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

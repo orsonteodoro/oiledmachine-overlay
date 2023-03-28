@@ -9,6 +9,9 @@ inherit flag-o-matic
 
 DESCRIPTION="Godot crossdev dependencies for iOS"
 # U 20.04
+#KEYWORDS="" # Ebuild not finished
+SLOT_MAJ="$(ver_cut 1 ${PV})"
+SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
 gen_depend_llvm() {
 	local o=""
@@ -30,8 +33,6 @@ RDEPEND="
 		$(gen_depend_llvm)
 	)
 "
-SLOT_MAJ="$(ver_cut 1 ${PV})"
-SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
 test_path() {
 	local p="${1}"
@@ -58,3 +59,4 @@ eerror
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

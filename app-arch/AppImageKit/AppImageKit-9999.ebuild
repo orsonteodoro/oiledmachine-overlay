@@ -7,6 +7,7 @@ EAPI=8
 # The AppImageKit project currently is just the non Go version of appimagetool.
 # AppImageKit is the set of utils and assets used for appimagetool.
 
+CMAKE_MAKEFILE_GENERATOR="emake"
 MAKEOPTS="-j1"
 
 inherit cmake flag-o-matic git-r3
@@ -16,7 +17,7 @@ HOMEPAGE="https://github.com/AppImage/AppImageKit"
 LICENSE="MIT" # project's default license
 LICENSE+=" all-rights-reserved" # src/appimagetool.c ; The vanilla MIT license doesn't have all-rights-reserved
 
-# live ebuilds do not get keyworded
+#KEYWORDS="" # live ebuilds do not get keyworded.  Bug during testing with newer squashfuse/fuse.
 
 IUSE+="
 additional-tools appimagetool appstream runtime
@@ -24,7 +25,10 @@ additional-tools appimagetool appstream runtime
 r1
 "
 REQUIRED_USE+="
-	|| ( appimagetool runtime )
+	|| (
+		appimagetool
+		runtime
+	)
 "
 SLOT="0/9999"
 RDEPEND+="
@@ -71,7 +75,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-9999_p20200707-extern-appimage_get_elf_size.patch"
 	"${FILESDIR}/${PN}-9999_p20220929-gentooize-build-scripts.patch"
 )
-CMAKE_MAKEFILE_GENERATOR="emake"
 
 pkg_setup() {
 	if has network-sandbox $FEATURES ; then
@@ -171,3 +174,4 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
