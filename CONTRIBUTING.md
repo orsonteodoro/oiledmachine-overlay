@@ -145,6 +145,34 @@ based on an outdated style guide.
     `99999999` for live ebuild versions.
   - If a project has no tag but the distro uses `20230903`, you must use
     `99999999` for live ebuild versions.
+  - Live ebuilds must have KEYWORDS disabled or removed.
+  - All python dependencies must have either PYTHON_USEDEP or PYTHON_SINGLE_USEDEP.
+  - Adding multilib is optional for decade 2020 in this overlay and may be dropped
+    in this decade.  If multilib is provided in the package, all dependencies must
+    use MULTILIB_USEDEP if the dependency is capable of using it.  For python
+    dependencies, it must not have it.
+  - For apps, if Wayland support is possible or mentioned in the build files, it
+    should be made available as a USE flag.  Wayland should have higher priority
+    than X in || checks.  If an app package supports both but is not automatic,
+    then a wrapper may provided by the ebuild.  For decade 2020, use of X may
+    likely decline.
+  - The versioning of the dependencies must be explicit if available.
+  - For python pacakages, all dependencies must be listed.
+  - For C/C++ packages, all dependencies for Linux must be listed.
+  - If a dependency package is not available on any overlay but is required, you
+    must package it, version bump it, or patch the software to disable/meet the
+    hard requirement.
+  - For extra/optional dependencies, you do not need to package it but it is
+    strongly recommended for a higher quality release and to improve the
+    ebuild ecosystem so that Linux doesn't suck.  In other words, you may package
+    optional features you like but skip over things you don't want.  The
+    unpackaged dependencies should have a TODO list within the ebuild of packages
+    that are missing in the ebuild ecosystem.
+  - You must edit profile/package.use.force or profile/package.use.mask to hard
+    mask the feature or force the alternative if it breaks something or has
+    a serious security issue.
+  - If a dependency package is for hardware that you do not have access to,
+    you do not need to package it.
 
 * eclass rules:
   - All `.eclass`es must be GPL2 only or have a GPL2 compatible license header.
