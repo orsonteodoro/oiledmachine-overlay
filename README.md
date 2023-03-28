@@ -130,7 +130,8 @@ KEYWORDS does the same thing but it has different meanings over time.  It could
 mean fresh install without problems or widely tested.
 
 Production ready means that it simply installs and the package is working
-acceptable without necessarily running test suites.
+acceptably without necessarily running test suites with minimal install
+features or the arbitrary tested USE flag combination at that time.
 
 But in this overlay, running test suites are optional but done so for mostly
 library packages or packages that are rarely used with unknown runtime
