@@ -75,13 +75,9 @@ based on an outdated style guide.
   - Paths should be completely in double quotes from start to end of the string.
   - Conditional blocks are symmetric.
   - Inline conditionals should only fit in 80 characters.
-  - Use of a pipe (|) with command should always be the next line.
+  - The use of a pipe (|) with command should hard wrap with backslash and
+    be the start of the next line.
     (Historically, people got paid per line of code.)
-```
-local version=$(cat "CMakeLists.txt" \
-	| grep "VERSION" \
-	| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
-```
   - The operator should start the new line most of the time, unless better
     symmetric presentation is found.
   - The uploaded point release is not vulnerable and does not have security
