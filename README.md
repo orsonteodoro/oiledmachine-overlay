@@ -120,8 +120,8 @@ footer the following metainfo:
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
 ```
 
-To see a list which ebuilds are not production ready run the following at the root
-of this overlay:
+To see a list which ebuilds are not production ready, run the following at the
+root of this overlay:
 ```
 grep -l --exclude-dir=.git -r -e "OILEDMACHINE-OVERLAY-EBUILD-FINISHED:.*NO" ./
 ```
@@ -141,8 +141,8 @@ next, smaller/trivial packages next, then high MLOC packages over time.
 This testing will be limited to only latest stable for dependencies.  This
 overlay has fixed missing required USE flags and applied regressions fixes
 as a result of running test suites.  These test suites are also inspected
-for usefulness in PGO optimization on the ebuild level which some ebuilds
-take advantage of.
+for usefulness (e.g. a benchmark, demos, or similar real world tasks) in
+PGO optimization on the ebuild level which some ebuilds exploit.
 
 ### Markings for test-suite testing
 
