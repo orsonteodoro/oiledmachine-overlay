@@ -76,14 +76,12 @@ based on an outdated style guide.
   - Conditional blocks are symmetric.
   - Inline conditionals should only fit in 80 characters.
   - Use of a pipe (|) with command should always be the next line.
-    ```
-    <pre>
-    local version=$(cat "CMakeLists.txt" \
+    (Historically, people got paid per line of code.)
+```
+local version=$(cat "CMakeLists.txt" \
 	| grep "VERSION" \
 	| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
-    </pre>
-    ```
-    (Historically, people got paid per line of code.)
+```
   - The operator should start the new line most of the time, unless better
     symmetric presentation is found.
   - The uploaded point release is not vulnerable and does not have security
