@@ -213,7 +213,7 @@ based on an outdated style guide.
 [pull request from a fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork).
 5. In your pull request state the following:
    - The purpose/summary.
-   - Estimate of long you expect to finish.
+   - Estimate of how long you expect to finish.
      - Do not exceed a week.
      - For scheduled submissions like ot-kernel eclass, you are only allowed
        8 hours.
