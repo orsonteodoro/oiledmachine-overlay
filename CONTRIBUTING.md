@@ -97,9 +97,9 @@ based on an outdated style guide.
   - Refrain from using non free trademarks.
   - Variables in functions must be scoped with the `local` keyword.
   - Ebuilds should be Prefix aware for C/C++ programs.
-    - Use "${ESYSROOT}/usr/include" as a source
-    - Use "${ESYSROOT}/usr/$(get_lib)" as a source
-    - Use "${EPREFIX}/" as destination
+    - Use "${ESYSROOT}/usr/include" as a source.
+    - Use "${ESYSROOT}/usr/$(get_libdir)" as a source.
+    - Use "${EPREFIX}/" as destination.
     - Use of prefix USE flags.
       [kernel USE flags](https://packages.gentoo.org/useflags/kernel_linux)
       [libc USE flags](https://packages.gentoo.org/useflags/elibc_glibc)
