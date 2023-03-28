@@ -179,6 +179,8 @@ based on an outdated style guide.
     a serious security issue.
   - If a dependency package is for hardware that you do not have access to,
     you do not need to package it.
+  - If a dependency exists on other overlay(s), you do not need to submit it for
+    review.
 
 * eclass rules:
   - All `.eclass`es must be GPL2 only or have a GPL2 compatible license header.
