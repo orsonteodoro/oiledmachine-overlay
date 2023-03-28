@@ -589,6 +589,24 @@ ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	strip-unsupported-flags
 }
 
+check_cython() {
+	local actual_cython_pv=$(cython --version 2>&1 \
+		| cut -f 3 -d " " \
+		| sed -e "s|a|_alpha|g" \
+		| sed -e "s|b|_beta|g")
+	local expected_cython_pv="3.0.0_alpha10"
+	local required_cython_major=$(ver_cut 1 ${expected_cython_pv})
+	if ver_test ${actual_cython_pv} -lt ${required_cython_major} && use cpp ; then
+eerror
+eerror "Switch cython to >= ${expected_cython_pv} via eselect-cython"
+eerror
+eerror "Actual cython version:\t${actual_cython_pv}"
+eerror "Expected cython version\t${expected_cython_pv}"
+eerror
+		die
+	fi
+}
+
 pkg_setup() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCC)
@@ -809,6 +827,7 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 
 src_configure() {
 	load_env
+	check_cython
 
 	do_configure() {
 		export CC_OPT_FLAGS=" "

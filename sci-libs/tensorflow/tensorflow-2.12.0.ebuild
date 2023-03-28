@@ -175,7 +175,7 @@ IUSE+=" ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}"
 # https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/tools/toolchains/remote_config/configs.bzl#L318		# tested llvm
 
 # commits/versions for
-# astor, boringssl, curl, dill, double-conversion, giflib, jsoncpp,
+# astor, boringssl, curl, cython, dill, double-conversion, giflib, jsoncpp,
 # libpng, lmdb, nsync, protobuf, pybind11, snappy, sqlite, tblib,
 # zlib:
 # https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl#L567
@@ -494,7 +494,7 @@ BDEPEND="
 			>=dev-python/grpcio-tools-${GRPC_PV}[${PYTHON_USEDEP}]
 			>=dev-python/grpcio-tools-${GRPCIO_PV}[${PYTHON_USEDEP}]
 		)
-		>=dev-python/cython-3.0.0_alpha10[${PYTHON_USEDEP}]
+		>=dev-python/cython-3.0.0_alpha11[${PYTHON_USEDEP}]
 		dev-python/mock[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 	)
@@ -651,6 +651,24 @@ ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	llvm_pkg_setup
 	${CC} --version || die
 	strip-unsupported-flags
+}
+
+check_cython() {
+	local actual_cython_pv=$(cython --version 2>&1 \
+		| cut -f 3 -d " " \
+		| sed -e "s|a|_alpha|g" \
+		| sed -e "s|b|_beta|g")
+	local expected_cython_pv="3.0.0_alpha11"
+	local required_cython_major=$(ver_cut 1 ${expected_cython_pv})
+	if ver_test ${actual_cython_pv} -lt ${required_cython_major} && use cpp ; then
+eerror
+eerror "Switch cython to >= ${expected_cython_pv} via eselect-cython"
+eerror
+eerror "Actual cython version:\t${actual_cython_pv}"
+eerror "Expected cython version\t${expected_cython_pv}"
+eerror
+		die
+	fi
 }
 
 pkg_setup() {
@@ -877,6 +895,7 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 
 src_configure() {
 	load_env
+	check_cython
 
 	do_configure() {
 		export CC_OPT_FLAGS=" "
