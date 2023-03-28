@@ -298,7 +298,7 @@ You need at least one of the following to qualify:
 2. We have met in person.
 3. Brief interview over voice with a demo of your project on a video sharing
 site and code samples.
-4. A overlay maintainer.
+4. An overlay maintainer.
 
 ### Skills required
 
