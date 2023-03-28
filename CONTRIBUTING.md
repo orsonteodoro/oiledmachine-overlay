@@ -119,7 +119,7 @@ based on an outdated style guide.
   - If an ebuild can be trivially PGOed, then it is highly recommended to
     add tpgo USE flag.
   - The default IUSE must mostly respect upstream defaults by prefixing
-    `+` or - in front of the USE flag.  You may go against upstream defaults
+    `+` or `-` in front of the USE flag.  You may go against upstream defaults
     if the setting is not platform agnostic or would likely lead to
     breakage.
   - Daemons/servers must run as limited (non-root) user.
@@ -127,7 +127,7 @@ based on an outdated style guide.
     In addition, the YYYYMMDD date of that commit recorded.
   - Live ebuilds should perform versioning checks between the current live
     and the expected live for deterministic builds.
-  - Live ebuilds without versioning, it should use fingerprinting.  To
+  - For live ebuilds without versioning, it should use fingerprinting.  To
     accomplish this, do the following:
     - Get a list of build files, command line option files, file formats,
       dependencies, etc.
