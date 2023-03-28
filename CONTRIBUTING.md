@@ -1,4 +1,4 @@
-### Contributing ebuilds
+## Contributing ebuilds
 
 You may send contributions many ways.
 
@@ -8,7 +8,7 @@ them to another overlay if you would like them more searchable.
 
 Sending them is covered in the following sections below.
 
-#### Code review
+### Code review
 
 Difficulty:  Easy
 
@@ -16,14 +16,14 @@ Difficulty:  Easy
 2. Add the link to the line with the flaw.
 3. Describe the flaw.
 
-#### Trivial fixes
+### Trivial fixes
 
 Difficulty:  Easy
 
 1. Create an issue request.
 2. Add the patch in the issue request.
 
-#### Longer patches
+### Longer patches
 
 Difficulty:  Easy
 
@@ -31,11 +31,11 @@ Difficulty:  Easy
 2. Use pastebin or gist to submit a patch.
 3. Link the patch to your issue request.
 
-#### Pull request
+### Pull request
 
 Difficulty:  Hard for noobs, easy for experienced
 
-##### Rules
+#### Rules
 
 All ebuilds must conform to specifically 2023 ebuild style guide only recognized
 by this overlay.  We do not use the distro recommendations because they are
@@ -69,6 +69,7 @@ based on an outdated style guide.
     - USE flags in *DEPENDs need to be ASCII sorted.
   - Comments should be placed in either column 0 or first tab and no more.
   - User output commands (echo/einfo) should be column 0 and only 80 characters.
+    Additional einfos may follow.
   - You must put `OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO` in the footer and
     disable the KEYWORDS variable if the ebuild is unfinished.
   - Refrain from using non free trademarks.
@@ -93,6 +94,18 @@ based on an outdated style guide.
     + or - in front of the USE flag.  You may go against upstream defaults
     if the setting is not platform agnostic or would likely lead to
     breakage.
+
+* eclass rules:
+  - All .eclass must be GPL2 only or have a GPL2 compatible license header.
+  - All ebuilds have the basic headers rows @ECLASS, @MAINTAINER, 
+    @SUPPORTED_EAPIS, @BLURB, @DESCRIPTION.
+  - All public functions must have the following @FUNCTION, @DESCRIPTION,
+    and the same prefix matching the filename without extension.
+  - All internal functions must have @INTERNAL and be prefixed with _.
+  - All eclass variables and globals must have the following
+    @ECLASS_VARIABLE, @DESCRIPTION
+  - All eclasses must have EAPI compatibility switch-case or conditional
+    check.
 
 * ebuild license rules:
   - All .ebuilds must be GPL2 only or have a GPL2 compatible license header.
@@ -120,15 +133,18 @@ based on an outdated style guide.
   - It is better to send one package folder at a time.
 
 * code review checklist:
-  - Header license
+  - Header copyright notices
+  - License files for free open source compatibility
   - The URIs will be reviewed.
   - *DEPENDs will be check for sorting.
   - IUSE will be checked for sorting.
   - Each and every ebuild will be manually checked for security.
   - File permissions and ownership.
   - The project licenses will be reviewed.
+  - All eclasses are inspected for comprehensive documentation.
+  - Vulnerability database checks for each submitted package.
 
-##### Uploading to this repo
+#### Uploading to this repo
 
 1. Fork the repo
 2. Create a feature branch
@@ -145,7 +161,7 @@ based on an outdated style guide.
      conflicts.
 6. After the merges are done, you may delete the feature branch and forked repo.
 
-##### Rejected pull requests
+#### Rejected pull requests
 
 Your pull request may be rejected for reasons below:
 
@@ -153,6 +169,8 @@ Your pull request may be rejected for reasons below:
    end of life (EOL).
 2. Security reasons.
    - The point release is vulnerable and will be replaced with a non-vulnerable.
+   - Project owners have a questionable background.
+   - The project credibility is in question.
 3. Exceeded time limits.
    - Submissions are to be evaluated merged no more than a week.
    (The reason is that I may edit the whole thing or whole category).
@@ -163,7 +181,7 @@ Your pull request may be rejected for reasons below:
    - No code repository and with explicit UNKNOWN is rejected.
 5. Code review checklist violations.
 
-##### Deleted ebuilds
+#### Deleted ebuilds
 
 Your ebuilds may be deleted for the following reasons:
 
@@ -174,7 +192,7 @@ Your ebuilds may be deleted for the following reasons:
 5. Clearly pre alpha when better alternatives exists.
 6. The minor branch is older than 2, except when they are needed for testing.
 
-### Overlay maintainers
+## Overlay maintainers
 
 Spots for overlay maintainers are available.  Due to security reasons, extra
 level of qualification standards and checks are required.
