@@ -13,7 +13,7 @@ HOMEPAGE="
 https://github.com/Soheil-ab/DeepCC.v1.0
 "
 LICENSE="MIT"
-#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild in development
+#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild needs testing
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" build-models evaluate fallback-commit kernel-patch polkit +sudo r3"
 REQUIRED_USE+="
@@ -196,3 +196,4 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

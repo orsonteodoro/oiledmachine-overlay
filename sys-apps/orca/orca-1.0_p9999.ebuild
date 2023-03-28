@@ -12,7 +12,7 @@ HOMEPAGE="
 https://github.com/Soheil-ab/Orca
 "
 LICENSE="MIT"
-#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Build in development
+#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild needs testing
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 build-models cellular-traces evaluate fallback-commit kernel-patch polkit +sudo
@@ -182,3 +182,4 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
