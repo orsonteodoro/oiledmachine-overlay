@@ -36,6 +36,8 @@ Difficulty:  Easy
 
 ### Trivial fixes
 
+These are limited to ebuild only changes.
+
 Difficulty:  Easy
 
 1. Create an issue request.
@@ -46,8 +48,10 @@ Difficulty:  Easy
 Difficulty:  Easy
 
 1. Create an issue request.
-2. Use pastebin or gist to submit a patch.
-3. Link the patch to your issue request.
+2. Use pastebin or gist to submit a patch(s) or ebuild(s).
+3. Link the patch(s) or ebuild(s) to your issue request.
+
+If you submit a ebuild this way, you still need to follow the rules below.
 
 ### Pull request
 
