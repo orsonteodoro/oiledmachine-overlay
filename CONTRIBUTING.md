@@ -75,7 +75,13 @@ based on an outdated style guide.
   - Paths should be completely in double quotes from start to end of the string.
   - Conditional blocks are symmetric.
   - Inline conditionals should only fit in 80 characters.
-  - Use of a pipe (|) line should always be the next line
+  - Use of a pipe (|) with command should always be the next line.
+    ```
+    local version=$(cat "CMakeLists.txt" \
+	| grep "VERSION" \
+	| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
+    ```
+    (Historically, people got paid per line of code.)
   - The operator should start the new line most of the time, unless better
     symmetric presentation is found.
   - The uploaded point release is not vulnerable and does not have security
@@ -90,6 +96,9 @@ based on an outdated style guide.
       tree sort.
     - USE flags in *DEPENDs need to be ASCII sorted.
   - Comments should be placed in either column 0 or first tab and no more.
+  - If a package has many internal vendored dependencies, the YYYYMMDD of the
+    last commit of the third_party or depends folder should be recorded and
+    place at the top of the *DEPENDs lists.
   - User output commands (echo/einfo) should be column 0 and only 80 characters.
     Additional einfos may follow.
   - You must put `OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO` in the footer and
@@ -118,6 +127,27 @@ based on an outdated style guide.
     if the setting is not platform agnostic or would likely lead to
     breakage.
   - Daemons/servers must run as limited (non-root) user.
+  - Live commits should have a `fallback-commit` USE flag that sets EGIT_COMMIT.
+    In addition, the YYYYMMDD date of that commit recorded.
+  - Live ebuilds should perform versioning checks between the current live
+    and the expected live for deterministic builds.
+  - Live ebuilds without versioning, it should use fingerprinting.  To
+    accomplish this, do the following:
+    - Get a list of build files, command line option files, file formats,
+      dependencies, etc.
+    - Sort file list.
+    - Hash files.
+    - Hash the hash.
+    - Compare the hash of the hash to ensure determinism in live ebuilds or
+      else recommend the `fallback-commit` USE flag.
+  - If a project has git tags, you may use use `9999`, `<PV>_p9999`,
+    `<PV>_pre9999` for live ebuild versions.
+  - If a project has git tags, but the distro uses `<PV>_p20230903`, you must
+    use `<PV>_p99999999` for live ebuild versions.
+  - If a project has no tag (i.e. no point releases), you can use `9999` or
+    `99999999` for live ebuild versions.
+  - If a project has no tag but the distro uses `20230903`, you must use
+    `99999999` for live ebuild versions.
 
 * eclass rules:
   - All `.eclass`es must be GPL2 only or have a GPL2 compatible license header.
