@@ -596,7 +596,7 @@ check_cython() {
 		| sed -e "s|b|_beta|g")
 	local expected_cython_pv="3.0.0_alpha10"
 	local required_cython_major=$(ver_cut 1 ${expected_cython_pv})
-	if ver_test ${actual_cython_pv} -lt ${required_cython_major} && use cpp ; then
+	if ver_test ${actual_cython_pv} -lt ${required_cython_major} ; then
 eerror
 eerror "Switch cython to >= ${expected_cython_pv} via eselect-cython"
 eerror
