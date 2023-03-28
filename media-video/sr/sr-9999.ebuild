@@ -175,7 +175,6 @@ https://github.com/HighVoltageRocknRoll/sr/files/6957728/dnn_models.tar.gz
 RESTRICT="mirror"
 
 request_sandbox_permissions() {
-eerror "The trained version is still a Work In Progress (WIP)"
 	if has network-sandbox $FEATURES ; then
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
@@ -187,6 +186,16 @@ eerror
 
 pkg_setup()
 {
+	if use pretrained ; then
+eerror
+eerror "The trained version is still a Work In Progress (WIP)."
+eerror "Use the pretrained USE flag instead."
+eerror
+	else
+einfo
+einfo "Using the pretrained version."
+einfo
+	fi
 	export SR_QUICK_TEST=${SR_QUICK_TEST:-0}
 	python_setup
 	use pretrained || request_sandbox_permissions
@@ -526,3 +535,4 @@ src_install() {
 		fi
 	done
 }
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
