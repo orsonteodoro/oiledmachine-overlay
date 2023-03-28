@@ -540,6 +540,24 @@ https://github.com/Xpra-org/xpra/commit/d4ff2b0a6a966dffdc1856ea5d3cc5a57f2239bf
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
+check_cython() {
+	local actual_cython_pv=$(cython --version 2>&1 \
+		| cut -f 3 -d " " \
+		| sed -e "s|a|_alpha|g" \
+		| sed -e "s|b|_beta|g")
+	local expected_cython_pv="3.0.0_alpha11"
+	local required_cython_major=$(ver_cut 1 ${expected_cython_pv})
+	if ver_test ${actual_cython_pv} -lt ${required_cython_major} ; then
+eerror
+eerror "Switch cython to >= ${expected_cython_pv} via eselect-cython"
+eerror
+eerror "Actual cython version:\t${actual_cython_pv}"
+eerror "Expected cython version\t${expected_cython_pv}"
+eerror
+		die
+	fi
+}
+
 pkg_setup() {
 	if use nvenc ; then
 einfo
@@ -647,6 +665,7 @@ python_prepare_all() {
 }
 
 python_configure_all() {
+	check_cython
 	if use evdi && [[ ! -e "${ESYSROOT}/usr/$(get_libdir)/pkgconfig/evdi.pc" ]] ; then
 eerror
 eerror "Missing evdi.pc"
