@@ -111,9 +111,9 @@ based on an outdated style guide.
       [libc USE flags](https://packages.gentoo.org/useflags/elibc_glibc)
     - etc...
   - Giving write permissions is disallowed in certain scenarios.
-  - Disclose all unreported security weakness in src_postinst to allow the
-    user to uninstall it or hard mask the ebuild.  See the CWE database for
-    weakness descriptions.
+  - Disclose all unreported security weakness in pkg_postinst to allow the
+    user to uninstall, hard mask the ebuild, or take necessary precautions
+    to mitigate.  See the CWE database for weakness descriptions.
   - Check all password stores for proper encryption.
   - Adding the test USE flag and test dependencies is required for
     dev-python in this overlay only if the package supports testing.
