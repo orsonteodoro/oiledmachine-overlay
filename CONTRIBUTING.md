@@ -215,10 +215,10 @@ based on an outdated style guide.
    - The purpose/summary.
    - Estimate of how long you expect to finish.
      - Do not exceed a week.
-     - For scheduled submissions like ot-kernel eclass, you are only allowed
+     - For scheduled updates like ot-kernel eclass, you are only allowed
        8 hours.
-   - State all `<category>/<package>` that you will be editing so we avoid merge
-     conflicts.
+   - State all `<category>/<package>` or paths that you will be editing so we
+     avoid merge conflicts.
 6. After the merges are done, you may delete the feature branch and forked repo.
 
 #### Rejected pull requests
