@@ -108,7 +108,7 @@ and footer of the ebuild.
 
 Most ebuilds in this ebuild are assumed production ready.
 
-Disabled KEYWORDS has ambiguious meanings.  It can mean that it is either a live
+Disabled KEYWORDS has ambiguous meanings.  It can mean that it is either a live
 ebuild, or is incomplete, etc.
 
 ### Markings for not production ready
