@@ -1,11 +1,5 @@
 ## Contributing ebuilds
 
-You may send contributions many ways.
-
-When you submit an ebuild on this overlay exclusively, they will not be
-disseminated or searchable in the overlay search engine.  Consider uploading
-them to another overlay if you would like them more searchable.
-
 ### Submissions that are considered for acceptance
 
 1. Enhancements and optimization (PGO, BOLT, algorithms, ...)
@@ -15,7 +9,7 @@ them to another overlay if you would like them more searchable.
    - Game libraries
    - Porting games outside of Linux
    - Programmer developer tools
-   - Graphics arts
+   - Graphic arts
    - Games and gamer tools
    - Electron based apps
    - Emoji related
@@ -23,6 +17,12 @@ them to another overlay if you would like them more searchable.
    - AI (Artificial Intelligence)
 4. Version bumps
 5. Porting to different hardware
+
+When you submit an ebuild on this overlay exclusively, they will not be
+disseminated or searchable in the overlay search engine.  Consider uploading
+them to another overlay if you would like them more searchable.
+
+You may send contributions many ways.
 
 Sending them is covered in the following sections below.
 
