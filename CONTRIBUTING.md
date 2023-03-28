@@ -111,6 +111,10 @@ based on an outdated style guide.
       [libc USE flags](https://packages.gentoo.org/useflags/elibc_glibc)
     - etc...
   - Giving write permissions is disallowed in certain scenarios.
+  - Disclose all unreported security weakness in src_postinst to allow the
+    user to uninstall it or hard mask the ebuild.  See the CWE database for
+    weakness descriptions.
+  - Check all password stores for proper encryption.
   - Adding the test USE flag and test dependencies is required for
     dev-python in this overlay only if the package supports testing.
   - If a python package does provide a test suite but not through supported
@@ -131,8 +135,8 @@ based on an outdated style guide.
     and the expected live for deterministic builds.
   - For live ebuilds without versioning, it should use fingerprinting.  To
     accomplish this, do the following:
-    - Get a list of build files, command line option files, file formats,
-      dependencies, etc.
+    - Get a list of build files, command line option files, file format
+      versions, dependencies, etc.
     - Sort file list.
     - Hash files.
     - Hash the hash.
