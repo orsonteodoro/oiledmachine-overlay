@@ -114,8 +114,8 @@ based on an outdated style guide.
     breakage.
 
 * eclass rules:
-  - All .eclass must be GPL2 only or have a GPL2 compatible license header.
-  - All ebuilds have the basic headers rows @ECLASS, @MAINTAINER, 
+  - All `.eclass`es must be GPL2 only or have a GPL2 compatible license header.
+  - All `.eclass`es have the basic headers rows @ECLASS, @MAINTAINER, 
     @SUPPORTED_EAPIS, @BLURB, @DESCRIPTION.
   - All public functions must have the following @FUNCTION, @DESCRIPTION,
     and the same prefix matching the filename without extension.
@@ -126,7 +126,7 @@ based on an outdated style guide.
     check.
 
 * ebuild license rules:
-  - All .ebuilds must be GPL2 only or have a GPL2 compatible license header.
+  - All `.ebuild`s must be GPL2 only or have a GPL2 compatible license header.
   - You may add your name to the license header, or AUTHORS.md of the root of
     the overlay, or remain anonymous.
   - Attach custom licenses to the license folder.
@@ -144,6 +144,8 @@ based on an outdated style guide.
   - Instructions should be in comments.
   - longdescription is only promo.
   - Do not put personal info or *marks if project is BSDed.
+  - If the project is ZLIBed, you must clearly put that you made
+    the ebuild and not the project that you are packaging.
 
 * upload rules:
   - You may submit many ebuilds at the same time, but do not send more than
