@@ -332,10 +332,10 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		!test? (
-			=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP},-testing-tensorflow]
+			=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP},-testing-tensorflow(-)]
 			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
 			>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
-			>=net-libs/google-cloud-cpp-1.17.1[-testing-tensorflow]
+			>=net-libs/google-cloud-cpp-1.17.1[-testing-tensorflow(-)]
 		)
 		>=dev-libs/flatbuffers-2.0.6:=
 		>=dev-python/astunparse-1.6.3[${PYTHON_USEDEP}]
