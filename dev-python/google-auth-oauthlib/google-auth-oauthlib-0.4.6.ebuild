@@ -19,10 +19,9 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 RDEPEND="
 	>=dev-python/click-6.0.0[${PYTHON_USEDEP}]
-	>=dev-python/google-auth-2.15.0[${PYTHON_USEDEP}]
+	>=dev-python/google-auth-1.0.0[${PYTHON_USEDEP}]
 	>=dev-python/requests-oauthlib-0.7.0[${PYTHON_USEDEP}]
 "
-
 BDEPEND="
 	test? (
 		dev-python/mock[${PYTHON_USEDEP}]
