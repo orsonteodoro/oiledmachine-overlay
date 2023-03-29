@@ -1092,10 +1092,11 @@ einfo "src_compile():  Step 1"
 	# Some determinism problem
 	# I ask it to build python_targets_python3_9 only and it causes a
 	# violation with python3.10 in the path.
-		EPYTHON="python3.10" add_sandbox_rules
-		EPYTHON="python3.11" add_sandbox_rules
+		local i
+		for i in "${_PYTHON_ALL_IMPLS[@]}"; do
+			EPYTHON="${i/_/.}" add_sandbox_rules
+		done
 
-		add_sandbox_rules
 		BUILD_DIR="${S}-${EPYTHON/./_}"
 		cd "${BUILD_DIR}" || die
 	fi
