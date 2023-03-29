@@ -183,8 +183,9 @@ based on an outdated style guide.
     review.
   - The package should also be polished as much as possible.  This means to
     disable options or patch the code so that it is either is feature complete
-    or completely disables/hides the early (buggy) implementation.  Patches that
-    address encountered issues or encountered bugs may be added.
+    or completely disables/hides the early (buggy) implementation.  Upstream
+    commit patches or ones produced by you that address encountered issues or
+    encountered bugs may be added.
 
 * eclass rules:
   - All `.eclass`es must be GPL2 only or have a GPL2 compatible license header.
