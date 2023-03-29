@@ -69,6 +69,9 @@ based on an outdated style guide.
     - Long strings need to be hard wrapped.
     - URIs processed by bazel should not be hard wrapped.
   - Constants are capitalized.
+  - Variables are lower case and have _ between words.
+  - USE flags should be hyphenated between words most of the time.
+    Underscores can used by USE flags in profiles/desc.
   - Most strings should be in double quotes.
   - Floats should be in double quotes.
   - Integers do not need to be double quotes.
@@ -198,6 +201,7 @@ based on an outdated style guide.
     @ECLASS_VARIABLE, @DESCRIPTION
   - All eclasses must have EAPI compatibility switch-case or conditional
     check.
+  - Eclasses need to support either EAPI 7 or EAPI 8
 
 * ebuild license rules:
   - All `.ebuild`s must be GPL2 only or have a GPL2 compatible license header.
@@ -215,6 +219,16 @@ based on an outdated style guide.
     [header-preserve-kernel](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/sys-kernel/ot-sources/files/header-preserve-kernel)
     script to accomplish this.  You may want to use the lcnr eclass when
     dealing with micropackages.
+  - For patches, the terms of the licenses must be met.
+    - Read and follow 4 of the Apache-2.0 license if the project uses that license.
+    - Read and follow 3.3 of the MPL-1.0 license if the project uses that license.
+    - Read and follow 3.3 of the MPL-1.1 license if the project uses that license.
+  - For NOTICES* and PATENTS* files must be made available in install if the
+    build scripts did not install them.
+  - You must follow the license terms.
+  - All variations of the license must be documented in the LICENSE variable.
+  - If it appears to be a license incompatibility, document the name of the
+    license and at least one path to the license file.
 
 * metadata.xml rules:
   - Everything is space indented.
@@ -235,6 +249,7 @@ based on an outdated style guide.
 * code review checklist:
   - Header copyright notices
   - License files for free open source compatibility
+  - Patches conform to project terms.
   - The URIs will be reviewed for https and trust.
   - ASCII sorted configure, *DEPENDs, IUSE, REQUIRED_USE, etc.
   - Each and every ebuild will be manually checked for security.
@@ -313,3 +328,4 @@ and willing to learn git)
 3. Ebuild experience
 4. Experience with this distro
 5. Experience with creating patch files
+6. Be able to follow the terms and obligations of the project licenses.
