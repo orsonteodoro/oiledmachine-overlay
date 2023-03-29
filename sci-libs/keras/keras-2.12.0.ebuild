@@ -19,7 +19,7 @@ IUSE=" test"
 # Versions and hashes are obtained by console and removing items below.
 # They do not appear in the tarball.
 bazel_external_uris="
-	https://github.com/bazelbuild/rules_cc/archive/refs/tags/0.0.2.tar.gz -> bazelbuild-rules_cc-0.0.2.tar.gz
+	https://github.com/bazelbuild/rules_cc/releases/download/0.0.2/rules_cc-0.0.2.tar.gz
 	https://github.com/bazelbuild/rules_java/archive/7cf3cefd652008d0a64a419c34c13bdca6c8f178.zip -> bazelbuild-rules_java-7cf3cefd652008d0a64a419c34c13bdca6c8f178.zip
 "
 SRC_URI="
