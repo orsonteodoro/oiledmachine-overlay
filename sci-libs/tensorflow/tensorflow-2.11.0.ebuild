@@ -332,9 +332,10 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		!test? (
+			=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP},-testing-tensorflow]
 			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
 			>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
-			=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP},-testing-tensorflow]
+			>=net-libs/google-cloud-cpp-1.17.1[-testing-tensorflow]
 		)
 		>=dev-libs/flatbuffers-2.0.6:=
 		>=dev-python/astunparse-1.6.3[${PYTHON_USEDEP}]
@@ -354,7 +355,6 @@ RDEPEND="
 		>=dev-python/tblib-1.7.0[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
 		>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
-		>=net-libs/google-cloud-cpp-1.17.1
 
 		test? (
 			(
@@ -370,6 +370,7 @@ RDEPEND="
 				>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP_TEST}]
 			)
 			=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP_TEST},testing-tensorflow]
+			>=net-libs/google-cloud-cpp-1.17.1[testing-tensorflow]
 		)
 	)
 	test? (

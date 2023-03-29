@@ -358,11 +358,12 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		!test? (
-			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
 			(
 				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP},-testing-tensorflow]
 				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP},-testing-tensorflow]
 			)
+			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
+			>=net-libs/google-cloud-cpp-1.17.1[-testing-tensorflow]
 		)
 		(
 			!~dev-python/protobuf-python-4.21.0[${PYTHON_USEDEP}]
@@ -392,7 +393,6 @@ RDEPEND="
 		>=dev-python/six-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-3.6.6[${PYTHON_USEDEP}]
-		>=net-libs/google-cloud-cpp-1.17.1
 
 		>=dev-python/astor-0.7.1[${PYTHON_USEDEP}]
 		>=dev-python/dill-0.3.6[${PYTHON_USEDEP}]
@@ -416,6 +416,7 @@ RDEPEND="
 				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP_TEST},testing-tensorflow]
 				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP_TEST},testing-tensorflow]
 			)
+			>=net-libs/google-cloud-cpp-1.17.1[testing-tensorflow]
 		)
 	)
 	test? (
