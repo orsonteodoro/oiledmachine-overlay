@@ -181,6 +181,10 @@ based on an outdated style guide.
     you do not need to package it.
   - If a dependency exists on other overlay(s), you do not need to submit it for
     review.
+  - The package should also be polished as much as possible.  This means to
+    disable options or patch the code so that it is either is feature complete
+    or completely disables/hides the early (buggy) implementation.  Patches that
+    address encountered issues or encountered bugs may be added.
 
 * eclass rules:
   - All `.eclass`es must be GPL2 only or have a GPL2 compatible license header.
