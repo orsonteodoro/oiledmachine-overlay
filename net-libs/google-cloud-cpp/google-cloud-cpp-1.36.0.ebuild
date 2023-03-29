@@ -10,12 +10,12 @@ HOMEPAGE="https://cloud.google.com/"
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=" test tensorflow-testing"
+IUSE=" test testing-tensorflow"
 # Tests need a GCP account
 RESTRICT="test"
 # U 18.04
 RDEPEND="
-	!tensorflow-testing? (
+	!testing-tensorflow? (
 		>=net-libs/grpc-1.43.2:=
 	)
 	>=dev-cpp/abseil-cpp-20211102:=
@@ -26,7 +26,7 @@ RDEPEND="
 	>=dev-libs/re2-0.2020.11.01:=
 	>=net-misc/curl-7.69.1
 	>=sys-libs/zlib-1.2.11
-	!tensorflow-testing? (
+	!testing-tensorflow? (
 		<net-libs/grpc-1.49.3:=
 		>=net-libs/grpc-1.43.2:=
 	)
