@@ -56,7 +56,26 @@ python_prepare_all() {
 	hprefixify setup.py
 }
 
+check_cython() {
+	local actual_cython_pv=$(cython --version 2>&1 \
+		| cut -f 3 -d " " \
+		| sed -e "s|a|_alpha|g" \
+		| sed -e "s|b|_beta|g")
+	local expected_cython_pv="<3.0"
+	local required_cython_major=$(ver_cut 1 ${expected_cython_pv})
+	if ver_test ${actual_cython_pv} -ge 3.0 ; then
+eerror
+eerror "Switch cython to ${expected_cython_pv} via eselect-cython"
+eerror
+eerror "Actual cython version:\t${actual_cython_pv}"
+eerror "Expected cython version\t${expected_cython_pv}"
+eerror
+		die
+	fi
+}
+
 python_configure_all() {
+	check_cython
 	# os.environ.get('GRPC_BUILD_WITH_BORING_SSL_ASM', True)
 	export GRPC_BUILD_WITH_BORING_SSL_ASM=
 	export GRPC_PYTHON_DISABLE_LIBC_COMPATIBILITY=1
