@@ -120,11 +120,11 @@ based on an outdated style guide.
     descriptions.
   - Disclose all criticial vulnerabilities in -bin packages including
     internal vendored libraries.
-  - If patching micropackages, the policy is best effort.  This means that
-    you may bump micropatches to later patch versions without breaking the
-    software.  Bumping minor or major versions are allowed as long the
-    package has been tested and working.  If a test suite is provided, you
-    must use it since it has better test coverage than interactive
+  - If updating micropackages to resolve vulnerability issues, the policy is
+    best effort.  This means that you may bump micropatches to later patch
+    versions without breaking the software.  Bumping minor or major versions are
+    allowed as long the package has been tested and working.  If a test suite is
+    provided, you must use it since it has better test coverage than interactive
     testing.
   - Check all password stores for proper encryption.
   - Adding the test USE flag and test dependencies is required for
