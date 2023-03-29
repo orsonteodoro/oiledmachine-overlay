@@ -252,10 +252,11 @@ based on an outdated style guide.
 * code review checklist:
   - Header copyright notices
   - License files for free open source compatibility
-  - Patches conform to project terms.
+  - Patches conform to project license terms.
   - The URIs will be reviewed for https and trust.
   - ASCII sorted configure, *DEPENDs, IUSE, REQUIRED_USE, etc.
-  - Each and every ebuild will be manually checked for security.
+  - Each and every ebuild, patches, and other files will be manually checked for
+    security.
   - File permissions and ownership.
   - The project licenses will be reviewed.
   - All eclasses are inspected for comprehensive documentation.
