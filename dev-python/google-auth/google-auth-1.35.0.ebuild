@@ -5,7 +5,7 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PYPI_NO_NORMALIZE=1
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_9 )
 
 inherit distutils-r1 pypi
 
@@ -18,14 +18,41 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-
+IUSE+="
+aiohttp pyopenssl reauth
+"
 RDEPEND="
 	!dev-python/namespace-google
-	<dev-python/cachetools-6.0.0[${PYTHON_USEDEP}]
+	(
+		<dev-python/cachetools-5.0.0[${PYTHON_USEDEP}]
+		>=dev-python/cachetools-2.0.0[${PYTHON_USEDEP}]
+	)
+	(
+		<dev-python/rsa-5[${PYTHON_USEDEP}]
+		>=dev-python/rsa-3.1.4[${PYTHON_USEDEP}]
+	)
 	>=dev-python/pyasn1-0.1.7[${PYTHON_USEDEP}]
 	>=dev-python/pyasn1-modules-0.2.1[${PYTHON_USEDEP}]
-	>=dev-python/rsa-3.1.4[${PYTHON_USEDEP}]
-	dev-python/six[${PYTHON_USEDEP}]
+	>=dev-python/six-1.9.0[${PYTHON_USEDEP}]
+	aiohttp? (
+		(
+			<dev-python/aiohttp-4_pre[${PYTHON_USEDEP}]
+			>=dev-python/aiohttp-3.6.2[${PYTHON_USEDEP}]
+		)
+		(
+			<dev-python/requests-3.0.0_pre[${PYTHON_USEDEP}]
+			>=dev-python/requests-2.20.0[${PYTHON_USEDEP}]
+		)
+	)
+	pyopenssl? (
+		>=dev-python/pyopenssl-20.0.0[${PYTHON_USEDEP}]
+	)
+	reauth? (
+		>=dev-python/pyu2f-0.1.5[${PYTHON_USEDEP}]
+	)
+"
+DEPEND="
+	${RDEPEND}
 "
 BDEPEND="
 	test? (
