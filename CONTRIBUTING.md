@@ -228,7 +228,8 @@ based on an outdated style guide.
   - You must follow the license terms.
   - All variations of the license must be documented in the LICENSE variable.
   - If it appears to be a license incompatibility, document the name of the
-    license and at least one path to the license file.
+    license and at least one path to the license file or the path to the
+    source/header file.
 
 * metadata.xml rules:
   - Everything is space indented.
