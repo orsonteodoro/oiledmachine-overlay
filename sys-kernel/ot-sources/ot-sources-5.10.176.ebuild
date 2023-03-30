@@ -7,7 +7,7 @@ K_GENPATCHES_VER="185"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
 PRJC_LTS="-lts"
 PATCH_PROJC_VER="5.10-lts-r3"
-PATCH_RT_VER="5.10.175-rt84"
+PATCH_RT_VER="5.10.176-rt86"
 
 inherit ot-kernel-v5.10
 
