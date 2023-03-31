@@ -174,7 +174,10 @@ based on an outdated style guide.
   - Adding multilib is optional for decade 2020 in this overlay and may be dropped
     in this decade.  If multilib is provided in the package, all dependencies must
     use MULTILIB_USEDEP if the dependency is capable of using it.  For python
-    dependencies, it must not have it.
+    dependencies, it must not have it.  It is not recommended to support multilib
+    because a distro core developer wanted it
+    [retired](https://blogs.gentoo.org/mgorny/2021/06/03/retiring-the-multilib-project/).
+    Also, there is concern of underflows lack of asan underflow testing.
   - For apps, if Wayland support is possible or mentioned in the build files, it
     should be made available as a USE flag.  Wayland should have higher priority
     than X in || checks.  If an app package supports both but is not automatic,
@@ -205,6 +208,22 @@ based on an outdated style guide.
     or completely disables/hides the early (buggy) implementation.  Upstream
     commit patches or ones produced by you that address encountered issues or
     encountered bugs may be added.
+  - The ebuilds must be tractable for 1 machine.  This means that if a package 
+    requires 400 machines, you must build it in a way that it works for one
+    machine by either providing prebuilt package(s) or disabling that feature
+    that requires this as a requirement.  You may encounter this for machine
+    learning so do your research.
+  - The ebuilds must be built in reasonable time.  This means that if a package
+    is monolthic or forced unconditionally with too many flag bloat, it needs
+    to be patched so that it build files are more modular and these hard coded
+    {c,cxx,ld}flag options are optional.
+  - You must not increase the time cost no more than 5 times the normal build
+    time cost.  This is the estimate required by LTO.  Increasing the time
+    cost beyond a day may decrease security by blocking security updates.
+    Some security standards require critical updates be applied within 24
+    hours.  This means that you do not abuse profile/package.use.force to
+    force unnecessary USE flags that require 400 machines, or require more
+    than .75-1.5 days to build the package.
 
 * eclass rules:
   - All `.eclass`es must be GPL2 only or have a GPL2 compatible license header.
@@ -218,6 +237,8 @@ based on an outdated style guide.
   - All eclasses must have EAPI compatibility switch-case or conditional
     check.
   - Eclasses need to support either EAPI 7 or EAPI 8
+  - You must not increase the time cost that it may decrease security by
+    blocking security updates.
 
 * ebuild license rules:
   - All `.ebuild`s must be GPL2 only or have a GPL2 compatible license header.
