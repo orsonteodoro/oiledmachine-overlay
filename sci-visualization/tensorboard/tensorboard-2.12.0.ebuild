@@ -1,3 +1,4 @@
+# Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -1476,6 +1477,7 @@ APPLE_SUPPORT_PV="0.11.0"
 BAZEL_GAZELLE_PV="0.24.0"
 BAZEL_SKYLIB_PV="1.1.1"
 GRPC_PV="1.48.2"
+MARKDOWN_PV="2.6.8"
 NODE_PV="16.15.0"
 PLATFORMS_PV="0.0.4"
 PROTOBUF_PV="3.19.6"
@@ -1522,6 +1524,7 @@ http://mirror.tensorflow.org/github.com/bazelbuild/bazel-skylib/archive/${BAZEL_
 http://mirror.tensorflow.org/github.com/grpc/grpc/archive/v${GRPC_PV}.tar.gz -> grpc-${GRPC_PV}.tar.gz
 http://mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.tar.gz -> protobuf-${PROTOBUF_PV}.tar.gz
 https://nodejs.org/dist/v${NODE_PV}/node-v${NODE_PV}-linux-x64.tar.xz
+https://pypi.python.org/packages/1d/25/3f6d2cb31ec42ca5bd3bfbea99b63892b735d76e26f20dd2dcc34ffe4f0d/Markdown-${MARKDOWN_PV}.tar.gz
 "
 SRC_URI="
 	${YARN_EXTERNAL_URIS}
