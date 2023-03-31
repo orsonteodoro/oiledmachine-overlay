@@ -162,6 +162,13 @@ based on an outdated style guide.
     `99999999` for live ebuild versions.
   - If a project has no tag but the distro uses `20230903`, you must use
     `99999999` for live ebuild versions.
+  - The destination filenames in SRC_URI must be prefixed with the project name
+    if the source is just version.ext to avoid name collisions.
+  - The destination filenames in SRC_URI must be prefixed with the service name
+    or repo owner name or other non-colliding salt id if the name has been already
+    used or too generic for reuse.  For example a rust/js tarball may use the name
+    and version as a c/c++ tarball.  The repo or previous tarball name has right
+    of way.
   - Live ebuilds must have KEYWORDS disabled or removed.
   - All python dependencies must have either PYTHON_USEDEP or PYTHON_SINGLE_USEDEP.
   - Adding multilib is optional for decade 2020 in this overlay and may be dropped
@@ -262,7 +269,7 @@ based on an outdated style guide.
   - Header copyright notices
   - License files for free open source compatibility
   - Patches conform to project license terms.
-  - The URIs will be reviewed for https and trust.
+  - The URIs will be reviewed for https, trust, and file naming collisions.
   - ASCII sorted configure, *DEPENDs, IUSE, REQUIRED_USE, etc.
   - Each and every ebuild, patches, and other files will be manually checked for
     security.
