@@ -13,7 +13,7 @@ SRC_URI="https://github.com/bazelbuild/bazel/releases/download/${PV}/${P}-dist.z
 LICENSE="Apache-2.0"
 SLOT="${PV%%.*}/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
-IUSE="bash-completion  examples tools r3 zsh-completion"
+IUSE="bash-completion  examples tools r4 zsh-completion"
 RDEPEND="
 	!dev-util/bazel:0
 	>=virtual/jre-11:*
@@ -84,7 +84,7 @@ src_test() {
 }
 
 src_install() {
-	newbin output/bazel bazel-${PV##.*}
+	newbin output/bazel bazel-${PV%%.*}
 	if use bash-completion ; then
 		newbashcomp bazel-complete.bash ${PN}
 		bashcomp_alias ${PN} ibazel
