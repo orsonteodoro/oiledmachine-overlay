@@ -227,7 +227,7 @@ based on an outdated style guide.
   - Packages that have active Long Term Support (LTS) support should have
     versions available support it if the LTS versions are widely used with
     multislot support.  If two popular apps use different major LTS versions of
-    a library then the library package should support both.  If a library is
+    a library, then the library package should support both.  If a library is
     guaranteed backwards compatible, then it is not needed and you may just use
     0 for the slot.
   - SLOT are up to the ebuild (SLOT="slot/subslot"), but recommened for
