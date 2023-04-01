@@ -13,7 +13,7 @@ SRC_URI="https://github.com/bazelbuild/bazel/releases/download/${PV}/${P}-dist.z
 LICENSE="Apache-2.0"
 SLOT="${PV%%.*}/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
-IUSE="bash-completion examples tools r2"
+IUSE="bash-completion examples tools r3 zsh-completion"
 RDEPEND="
 	!dev-util/bazel:0
 	>=virtual/jre-11:*
@@ -89,8 +89,10 @@ src_install() {
 		newbashcomp bazel-complete.bash ${PN}
 		bashcomp_alias ${PN} ibazel
 	fi
-	insinto /usr/share/zsh/site-functions
-	doins scripts/zsh_completion/_bazel
+	if use zsh-completion ; then
+		insinto /usr/share/zsh/site-functions
+		doins scripts/zsh_completion/_bazel
+	fi
 
 	if use examples; then
 		docinto examples

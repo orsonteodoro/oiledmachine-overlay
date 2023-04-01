@@ -33,5 +33,9 @@
     <flag name="tools">
       Install extra bazel tools to build from sources
     </flag>
+    <flag name="zsh-completion">
+      Support for zsh completion, but may conflict with multislot
+      if enabled in multiple slots.
+    </flag>
   </use>
 </pkgmetadata>
