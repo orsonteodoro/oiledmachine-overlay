@@ -379,7 +379,8 @@ Your ebuilds may be deleted for the following reasons:
 3. A better alternative with duplicated functionality.
 4. Improved fork.
 5. Clearly pre alpha when better alternatives exists.
-6. The minor branch is older than 2, except when they are needed for testing.
+6. The minor branch is older than 2 relative to the current version, except
+when they are needed for testing.
 
 ## Overlay maintainers
 
