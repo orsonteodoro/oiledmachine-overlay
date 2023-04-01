@@ -251,7 +251,7 @@ based on an outdated style guide.
     - Good reasons:
       - Test dependency for package X
       - Active project X still uses it
-      - Still use it
+      - Still use it with YYYYMMDD timestamp [renew/rechecked ever year]
       - Orphan but for future use
     - Bad reasons:
       - Orphaned [delete]
