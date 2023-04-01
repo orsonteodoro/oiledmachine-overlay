@@ -11,12 +11,12 @@ HOMEPAGE="https://bazel.build/"
 SRC_URI="https://github.com/bazelbuild/bazel/releases/download/${PV}/${P}-dist.zip"
 
 LICENSE="Apache-2.0"
-SLOT="${PV##.*}/$(ver_cut 1-2 ${PV})"
+SLOT="${PV%%.*}/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
 IUSE="examples tools"
 # strip corrupts the bazel binary
 # test fails with network-sandbox: An error occurred during the fetch of repository 'io_bazel_skydoc' (bug 690794)
-RESTRICT="bash-completion strip test r1"
+RESTRICT="bash-completion strip test r2"
 RDEPEND="
 	>=virtual/jre-11:*
 	sys-devel/gcc[cxx]
