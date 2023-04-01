@@ -18,6 +18,7 @@ IUSE="examples tools"
 # test fails with network-sandbox: An error occurred during the fetch of repository 'io_bazel_skydoc' (bug 690794)
 RESTRICT="bash-completion strip test r2"
 RDEPEND="
+	!dev-util/bazel:0
 	>=virtual/jre-11:*
 	sys-devel/gcc[cxx]
 	sys-libs/glibc
@@ -26,6 +27,9 @@ DEPEND="
 	virtual/jdk:11
 	app-arch/unzip
 	app-arch/zip
+"
+BDEPEND="
+	!dev-util/bazel:0
 "
 
 S="${WORKDIR}"
