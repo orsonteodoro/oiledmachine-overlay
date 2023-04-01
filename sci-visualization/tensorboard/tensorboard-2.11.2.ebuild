@@ -70,6 +70,10 @@ RDEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
+	(
+		<dev-util/bazel-6
+		>=dev-util/bazel-4.2.2
+	)
 	>=dev-python/setuptools-41[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.26[${PYTHON_USEDEP}]
 	>=dev-python/black-22.6.0[${PYTHON_USEDEP}]
@@ -769,7 +773,14 @@ https://registry.yarnpkg.com/zone.js/-/zone.js-0.11.4.tgz -> yarnpkg-zone.js-0.1
 APPLE_SUPPORT_PV="0.7.1"
 BAZEL_SKYLIB_PV="1.1.1"
 BLEACH_PV="2.0"
+CLOSURE_LIBRARY_PV="20191027"
+CHROMEDRIVER_PV="2.41"
+CHROMIUM_REV="768959"
 GO_PV="1.12.5"
+HTML5LIB_PYTHON_PV="1.1"
+MARKDOWN_PV="2.6.8"
+MATERIAL_DESIGN_ICONS_3_0_1_PV="3.0.1"
+MATERIAL_DESIGN_ICONS_3_0_2_PV="3.0.2"
 NODE_PV="16.15.0"
 PROTOBUF_PV="3.9.2"
 RULES_APPLE_PV="0.31.3"
@@ -777,24 +788,146 @@ RULES_GO_PV="0.18.5"
 RULES_NODEJS_PV="5.7.0"
 RULES_NODEJS_CORE_PV="5.7.0"
 RULES_SASS_PV="1.55.0"
+RULES_SWIFT_PV="0.21.0"
 RULES_WEBTESTING_PV="0.3.3"
+SIX_PV="1.13.0"
+WEBENCODINGS_PV="0.5.1"
 WERKZUG_PV="0.15.4"
 YARN_PV="1.22.11"
 EGIT_DATA_PLANE_API_COMMIT="c83ed7ea9eb5fb3b93d1ad52b59750f1958b8bde"
 EGIT_GRPC_COMMIT="b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd"
+EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT="224895a86501195e7a7ff3dde18e39f00b8e3d5a"
+EGIT_MATERIAL_DESIGN_ICONS_AB12F16_COMMIT="ab12f16d050ecb1886b606f08825d24b30acafea"
+EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT="b3f05bfbf4329a5b63f50a720f867c2bac163f98"
+EGIT_MATERIAL_DESIGN_ICONS_D3D4ACA_COMMIT="d3d4aca5a7cf50bc68bbd401cefa708e364194e8"
 EGIT_ROBOTO_COMMIT="ba03b84b90b50afd99f9688059447bc545e5c0e1"
+EGIT_RULES_CC_COMMIT="b7fe9697c0c76ab2fd431a891dbb9a6a32ed7c3e"
 EGIT_RULES_CLOSURE_COMMIT="db4683a2a1836ac8e265804ca5fa31852395185b"
 EGIT_RULES_JAVA_COMMIT="981f06c3d2bd10225e85209904090eb7b5fb26bd"
 EGIT_RULES_PROTO_COMMIT="97d8af4dc474595af3900dd85cb3a29ad28cc313"
 EGIT_RULES_RUST_COMMIT="d5ab4143245af8b33d1947813d411a6cae838409"
 EGIT_UPB_COMMIT="9effcbcb27f0a665f9f345030188c0b291e32482"
-#https://dl.google.com/go/go${GO_PV}.linux-amd64.tar.gz
+bazel_external_uris2="
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}/action/svg/production/ic_get_app_24px.svg -> material-design-icons-action-svg-production--ic_get_app_24px-${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}/action/svg/production/ic_visibility_off_24px.svg -> material-design-icons-action-svg-production--ic_visibility_off_24px-${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}/content/svg/production/ic_clear_24px.svg -> material-design-icons-content-svg-production--ic_clear_24px-${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}/content/svg/production/ic_flag_24px.svg -> material-design-icons-content-svg-production--ic_flag_24px-${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}/navigation/svg/production/ic_cancel_24px.svg -> material-design-icons-navigation-svg-production--ic_cancel_24px-${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}/navigation/svg/production/ic_chevron_left_24px.svg -> material-design-icons-navigation-svg-production--ic_chevron_left_24px-${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}/navigation/svg/production/ic_chevron_right_24px.svg -> material-design-icons-navigation-svg-production--ic_chevron_right_24px-${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}/navigation/svg/production/ic_expand_less_24px.svg -> material-design-icons-navigation-svg-production--ic_expand_less_24px-${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}/navigation/svg/production/ic_expand_more_24px.svg -> material-design-icons-navigation-svg-production--ic_expand_more_24px-${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${MATERIAL_DESIGN_ICONS_3_0_1_PV}/action/svg/production/ic_change_history_24px.svg -> material-design-icons-action-svg-production--ic_change_history_24px-${MATERIAL_DESIGN_ICONS_3_0_1_PV}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${MATERIAL_DESIGN_ICONS_3_0_1_PV}/action/svg/production/ic_group_work_24px.svg -> material-design-icons-action-svg-production--ic_group_work_24px-${MATERIAL_DESIGN_ICONS_3_0_1_PV}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${MATERIAL_DESIGN_ICONS_3_0_1_PV}/action/svg/production/ic_help_outline_24px.svg -> material-design-icons-action-svg-production--ic_help_outline_24px-${MATERIAL_DESIGN_ICONS_3_0_1_PV}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${MATERIAL_DESIGN_ICONS_3_0_1_PV}/action/svg/production/ic_info_outline_24px.svg -> material-design-icons-action-svg-production--ic_info_outline_24px-${MATERIAL_DESIGN_ICONS_3_0_1_PV}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${MATERIAL_DESIGN_ICONS_3_0_1_PV}/action/svg/production/ic_search_24px.svg -> material-design-icons-action-svg-production--ic_search_24px-${MATERIAL_DESIGN_ICONS_3_0_1_PV}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${MATERIAL_DESIGN_ICONS_3_0_1_PV}/action/svg/production/ic_settings_24px.svg -> material-design-icons-action-svg-production--ic_settings_24px-${MATERIAL_DESIGN_ICONS_3_0_1_PV}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${MATERIAL_DESIGN_ICONS_3_0_1_PV}/alert/svg/production/ic_error_24px.svg -> material-design-icons-alert-svg-production--ic_error_24px-${MATERIAL_DESIGN_ICONS_3_0_1_PV}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${MATERIAL_DESIGN_ICONS_3_0_1_PV}/content/svg/production/ic_content_copy_24px.svg -> material-design-icons-content-svg-production--ic_content_copy_24px-${MATERIAL_DESIGN_ICONS_3_0_1_PV}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${MATERIAL_DESIGN_ICONS_3_0_1_PV}/navigation/svg/production/ic_arrow_downward_24px.svg -> material-design-icons-navigation-svg-production--ic_arrow_downward_24px-${MATERIAL_DESIGN_ICONS_3_0_1_PV}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${MATERIAL_DESIGN_ICONS_3_0_1_PV}/navigation/svg/production/ic_arrow_upward_24px.svg -> material-design-icons-navigation-svg-production--ic_arrow_upward_24px-${MATERIAL_DESIGN_ICONS_3_0_1_PV}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${MATERIAL_DESIGN_ICONS_3_0_1_PV}/navigation/svg/production/ic_refresh_24px.svg -> material-design-icons-navigation-svg-production--ic_refresh_24px-${MATERIAL_DESIGN_ICONS_3_0_1_PV}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${MATERIAL_DESIGN_ICONS_3_0_2_PV}/action/svg/production/ic_done_24px.svg -> material-design-icons-action-svg-production--ic_done_24px-${MATERIAL_DESIGN_ICONS_3_0_2_PV}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${MATERIAL_DESIGN_ICONS_3_0_2_PV}/image/svg/production/ic_palette_24px.svg -> material-design-icons-image-svg-production--ic_palette_24px-${MATERIAL_DESIGN_ICONS_3_0_2_PV}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_AB12F16_COMMIT}/src/device/dark_mode/materialicons/24px.svg -> material-design-icons-src-device-dark_mode-materialicons--dark_mode_24px-${EGIT_MATERIAL_DESIGN_ICONS_AB12F16_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_AB12F16_COMMIT}/src/device/light_mode/materialicons/24px.svg -> material-design-icons-src-device-light_mode-materialicons--light_mode_24px-${EGIT_MATERIAL_DESIGN_ICONS_AB12F16_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}/src/action/bug_report/materialicons/24px.svg -> material-design-icons-src-action-bug_report-materialicons--bug_report_24px-${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}/src/action/filter_alt/materialicons/24px.svg -> material-design-icons-src-action-filter_alt-materialicons--filter_alt_24px-${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}/src/action/line_weight/materialicons/24px.svg -> material-design-icons-src-action-line_weight-materialicons--line_weight_24px-${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}/src/action/settings_backup_restore/materialicons/24px.svg -> material-design-icons-src-action-settings_backup_restore-materialicons--settings_backup_restore_24px-${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}/src/action/settings_overscan/materialicons/24px.svg -> material-design-icons-src-action-settings_overscan-materialicons--settings_overscan_24px-${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}/src/alert/warning/materialicons/24px.svg -> material-design-icons-src-alert-warning-materialicons--warning_24px-${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}/src/content/push_pin/materialicons/24px.svg -> material-design-icons-src-content-push_pin-materialicons--keep_24px-${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}/src/content/push_pin/materialiconsoutlined/24px.svg -> material-design-icons-src-content-push_pin-materialiconsoutlined--keep_outline_24px-${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}/src/image/image_search/materialicons/24px.svg -> material-design-icons-src-image-image_search-materialicons--image_search_24px-${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}/src/navigation/close/materialicons/24px.svg -> material-design-icons-src-navigation-close-materialicons--close_24px-${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}/src/navigation/fullscreen/materialicons/24px.svg -> material-design-icons-src-navigation-fullscreen-materialicons--fullscreen_24px-${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}/src/navigation/fullscreen_exit/materialicons/24px.svg -> material-design-icons-src-navigation-fullscreen_exit-materialicons--fullscreen_exit_24px-${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}/src/navigation/more_vert/materialicons/24px.svg -> material-design-icons-src-navigation-more_vert-materialicons--more_vert_24px-${EGIT_MATERIAL_DESIGN_ICONS_B3F05BF_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_D3D4ACA_COMMIT}/src/action/drag_indicator/materialicons/24px.svg -> material-design-icons-src-action-drag_indicator-materialicons--drag_indicator_24px-${EGIT_MATERIAL_DESIGN_ICONS_D3D4ACA_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_D3D4ACA_COMMIT}/src/image/brightness_6/materialicons/24px.svg -> material-design-icons-src-image-brightness_6-materialicons--brightness_6_24px-${EGIT_MATERIAL_DESIGN_ICONS_D3D4ACA_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_D3D4ACA_COMMIT}/src/image/edit/materialicons/24px.svg -> material-design-icons-src-image-edit-materialicons--edit_24px-${EGIT_MATERIAL_DESIGN_ICONS_D3D4ACA_COMMIT}.svg
+https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_D3D4ACA_COMMIT}/src/social/notifications_none/materialicons/24px.svg -> material-design-icons-src-social-notifications_none-materialicons--notifications_none_24px-${EGIT_MATERIAL_DESIGN_ICONS_D3D4ACA_COMMIT}.svg
+"
 bazel_external_uris="
+https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_PV}/chromedriver_linux64.zip -> chromedriver_linux64-${CHROMEDRIVER_PV}.zip
+https://dl.google.com/go/go${GO_PV}.linux-amd64.tar.gz
+https://files.pythonhosted.org/packages/0b/02/ae6ceac1baeda530866a85075641cec12989bd8d31af6d5ab4a3e8c92f47/webencodings-${WEBENCODINGS_PV}.tar.gz
 https://files.pythonhosted.org/packages/59/2d/b24bab64b409e22f026fee6705b035cb0698399a7b69449c49442b30af47/Werkzeug-${WERKZUG_PV}.tar.gz
+https://fonts.gstatic.com/s/roboto/v18/-L14Jk06m6pUHB-5mXQQnYX0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/0eC6fl06luXEYWpBSJvXCIX0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/1hZf02POANh32k2VkgEoUBkAz4rYn47Zy2rvigWQf6w.woff2
+https://fonts.gstatic.com/s/roboto/v18/77FXFjRbGzN4aCrSFhlh3oX0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/7m8l7TlFO-S3VkhHuR0at14sYYdJg5dU2qzJEVSuta0.woff2
+https://fonts.gstatic.com/s/roboto/v18/7m8l7TlFO-S3VkhHuR0at1BW26QxpSj-_ZKm_xT4hWw.woff2
+https://fonts.gstatic.com/s/roboto/v18/7m8l7TlFO-S3VkhHuR0at4gp9Q8gbYrhqGlRav_IXfk.woff2
+https://fonts.gstatic.com/s/roboto/v18/7m8l7TlFO-S3VkhHuR0at6E8kM4xWR1_1bYURRojRGc.woff2
+https://fonts.gstatic.com/s/roboto/v18/7m8l7TlFO-S3VkhHuR0at9DiNsR5a-9Oe_Ivpu8XWlY.woff2
+https://fonts.gstatic.com/s/roboto/v18/7m8l7TlFO-S3VkhHuR0at_ZraR2Tg8w2lzm7kLNL0-w.woff2
+https://fonts.gstatic.com/s/roboto/v18/7m8l7TlFO-S3VkhHuR0atwt_Rm691LTebKfY2ZkKSmI.woff2
+https://fonts.gstatic.com/s/roboto/v18/97uahxiqZRoncBaCEI3aW4X0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/Fl4y0QdOxyyTHEGMXX8kcYX0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/Hgo13k-tfSpn0qi1SFdUfZBw1xU1rKptJj_0jans920.woff2
+https://fonts.gstatic.com/s/roboto/v18/I3S1wsgSg9YCurV6PUkTOYX0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/K23cxWVTrIFD6DJsEVi07RkAz4rYn47Zy2rvigWQf6w.woff2
+https://fonts.gstatic.com/s/roboto/v18/Ks_cVxiCiwUWVsFWFA3Bjn-_kf6ByYO6CLYdB4HQE-Y.woff2
+https://fonts.gstatic.com/s/roboto/v18/NJ4vxlgWwWbEsv18dAhqnn-_kf6ByYO6CLYdB4HQE-Y.woff2
+https://fonts.gstatic.com/s/roboto/v18/NYDWBdD4gIq26G5XYbHsFIX0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/OLffGBTaF0XFOW1gnuHF0Qt_Rm691LTebKfY2ZkKSmI.woff2
+https://fonts.gstatic.com/s/roboto/v18/OLffGBTaF0XFOW1gnuHF0V4sYYdJg5dU2qzJEVSuta0.woff2
+https://fonts.gstatic.com/s/roboto/v18/OLffGBTaF0XFOW1gnuHF0VBW26QxpSj-_ZKm_xT4hWw.woff2
+https://fonts.gstatic.com/s/roboto/v18/OLffGBTaF0XFOW1gnuHF0Ygp9Q8gbYrhqGlRav_IXfk.woff2
+https://fonts.gstatic.com/s/roboto/v18/OLffGBTaF0XFOW1gnuHF0aE8kM4xWR1_1bYURRojRGc.woff2
+https://fonts.gstatic.com/s/roboto/v18/OLffGBTaF0XFOW1gnuHF0dDiNsR5a-9Oe_Ivpu8XWlY.woff2
+https://fonts.gstatic.com/s/roboto/v18/OLffGBTaF0XFOW1gnuHF0fZraR2Tg8w2lzm7kLNL0-w.woff2
+https://fonts.gstatic.com/s/roboto/v18/OpXUqTo0UgQQhGj_SFdLWBkAz4rYn47Zy2rvigWQf6w.woff2
+https://fonts.gstatic.com/s/roboto/v18/Pru33qjShpZSmG3z6VYwnYX0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/PwZc-YbIL414wB9rB1IAPYX0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/RxZJdnzeo3R5zSexge8UUZBw1xU1rKptJj_0jans920.woff2
+https://fonts.gstatic.com/s/roboto/v18/UX6i4JxQDm3fVTc1CPuwqoX0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/WxrXJa0C3KdtC7lMafG4dRkAz4rYn47Zy2rvigWQf6w.woff2
+https://fonts.gstatic.com/s/roboto/v18/ZLqKeelYbATG60EpZBSDy4X0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/_VYFx-s824kXq_Ul2BHqYH-_kf6ByYO6CLYdB4HQE-Y.woff2
+https://fonts.gstatic.com/s/roboto/v18/cDKhRaXnQTOVbaoxwdOr9xkAz4rYn47Zy2rvigWQf6w.woff2
+https://fonts.gstatic.com/s/roboto/v18/d-6IYplOFocCacKzxwXSOJBw1xU1rKptJj_0jans920.woff2
+https://fonts.gstatic.com/s/roboto/v18/isZ-wbCXNKAbnjo6_TwHToX0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/jSN2CGVDbcVyCnfJfjSdfIX0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/mbmhprMH69Zi6eEPBYVFhYX0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/mx9Uck6uB63VIKFYnEMXrYX0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/oHi30kwQWvpCWqAhzHcCSIX0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/oMMgfZMQthOryQo9n22dcuvvDin1pK8aKteLpeZ5c0A.woff2
+https://fonts.gstatic.com/s/roboto/v18/oOeFwZNlrTefzLYmlVV1UIX0hVgzZQUfRDuZrPvH3D8.woff2
+https://fonts.gstatic.com/s/roboto/v18/rGvHdJnr2l75qb0YND9NyIX0hVgzZQUfRDuZrPvH3D8.woff2
 https://fonts.gstatic.com/s/roboto/v18/sTdaA6j0Psb920Vjv-mrzH-_kf6ByYO6CLYdB4HQE-Y.woff2
+https://fonts.gstatic.com/s/roboto/v18/t6Nd4cfPRhZP44Q5QAjcC14sYYdJg5dU2qzJEVSuta0.woff2
+https://fonts.gstatic.com/s/roboto/v18/t6Nd4cfPRhZP44Q5QAjcC1BW26QxpSj-_ZKm_xT4hWw.woff2
+https://fonts.gstatic.com/s/roboto/v18/t6Nd4cfPRhZP44Q5QAjcC4gp9Q8gbYrhqGlRav_IXfk.woff2
+https://fonts.gstatic.com/s/roboto/v18/t6Nd4cfPRhZP44Q5QAjcC6E8kM4xWR1_1bYURRojRGc.woff2
+https://fonts.gstatic.com/s/roboto/v18/t6Nd4cfPRhZP44Q5QAjcC9DiNsR5a-9Oe_Ivpu8XWlY.woff2
+https://fonts.gstatic.com/s/roboto/v18/t6Nd4cfPRhZP44Q5QAjcC_ZraR2Tg8w2lzm7kLNL0-w.woff2
+https://fonts.gstatic.com/s/roboto/v18/t6Nd4cfPRhZP44Q5QAjcCwt_Rm691LTebKfY2ZkKSmI.woff2
+https://fonts.gstatic.com/s/roboto/v18/tnj4SB6DNbdaQnsM8CFqBX-_kf6ByYO6CLYdB4HQE-Y.woff2
 https://fonts.gstatic.com/s/roboto/v18/uYECMKoHcO9x1wdmbyHIm3-_kf6ByYO6CLYdB4HQE-Y.woff2
+https://fonts.gstatic.com/s/roboto/v18/vPcynSL0qHq_6dX7lKVByXYhjbSpvc47ee6xR_80Hnw.woff2
+https://fonts.gstatic.com/s/roboto/v18/vSzulfKSK0LLjjfeaxcREhkAz4rYn47Zy2rvigWQf6w.woff2
+https://fonts.gstatic.com/s/robotomono/v5/N4duVc9C58uwPiY8_59Fz1T7aJLK6nKpn36IMwTcMMc.woff2
+https://fonts.gstatic.com/s/robotomono/v5/N4duVc9C58uwPiY8_59Fz1x-M1I1w5OMiqnVF8xBLhU.woff2
+https://fonts.gstatic.com/s/robotomono/v5/N4duVc9C58uwPiY8_59Fz4gd9OEPUCN3AdYW0e8tat4.woff2
+https://fonts.gstatic.com/s/robotomono/v5/N4duVc9C58uwPiY8_59Fz8bIQSYZnWLaWC9QNCpTK_U.woff2
+https://fonts.gstatic.com/s/robotomono/v5/N4duVc9C58uwPiY8_59Fz_79_ZuUxCigM2DespTnFaw.woff2
+https://fonts.gstatic.com/s/robotomono/v5/N4duVc9C58uwPiY8_59FzwXaAXup5mZlfK6xRLrhsco.woff2
+https://fonts.gstatic.com/s/robotomono/v5/N4duVc9C58uwPiY8_59Fzwn6Wqxo-xwxilDXPU8chVU.woff2
+https://fonts.gstatic.com/s/robotomono/v5/hMqPNLsu_dywMa4C_DEpY14sYYdJg5dU2qzJEVSuta0.woff2
+https://fonts.gstatic.com/s/robotomono/v5/hMqPNLsu_dywMa4C_DEpY1BW26QxpSj-_ZKm_xT4hWw.woff2
+https://fonts.gstatic.com/s/robotomono/v5/hMqPNLsu_dywMa4C_DEpY4gp9Q8gbYrhqGlRav_IXfk.woff2
+https://fonts.gstatic.com/s/robotomono/v5/hMqPNLsu_dywMa4C_DEpY6E8kM4xWR1_1bYURRojRGc.woff2
+https://fonts.gstatic.com/s/robotomono/v5/hMqPNLsu_dywMa4C_DEpY9DiNsR5a-9Oe_Ivpu8XWlY.woff2
+https://fonts.gstatic.com/s/robotomono/v5/hMqPNLsu_dywMa4C_DEpY_ZraR2Tg8w2lzm7kLNL0-w.woff2
+https://fonts.gstatic.com/s/robotomono/v5/hMqPNLsu_dywMa4C_DEpYwt_Rm691LTebKfY2ZkKSmI.woff2
 https://github.com/bazelbuild/apple_support/releases/download/${APPLE_SUPPORT_PV}/apple_support.${APPLE_SUPPORT_PV}.tar.gz
 https://github.com/bazelbuild/rules_apple/releases/download/${RULES_APPLE_PV}/rules_apple.${RULES_APPLE_PV}.tar.gz
+https://github.com/bazelbuild/rules_cc/archive/${EGIT_RULES_CC_COMMIT}.tar.gz -> rules_cc-${EGIT_RULES_CC_COMMIT}.tar.gz
 https://github.com/bazelbuild/rules_closure/archive/${EGIT_RULES_CLOSURE_COMMIT}.tar.gz -> rules_closure-${EGIT_RULES_CLOSURE_COMMIT}.tar.gz
 https://github.com/bazelbuild/rules_go/releases/download/${RULES_GO_PV}/rules_go-${RULES_GO_PV}.tar.gz
 https://github.com/bazelbuild/rules_java/archive/${EGIT_RULES_JAVA_COMMIT}.tar.gz -> rules_java-${EGIT_RULES_JAVA_COMMIT}.tar.gz
@@ -803,38 +936,31 @@ https://github.com/bazelbuild/rules_nodejs/releases/download/${RULES_NODEJS_CORE
 https://github.com/bazelbuild/rules_proto/archive/${EGIT_RULES_PROTO_COMMIT}.tar.gz -> rules_proto-${EGIT_RULES_PROTO_COMMIT}.tar.gz
 https://github.com/bazelbuild/rules_rust/archive/${EGIT_RULES_RUST_COMMIT}.tar.gz -> rules_rust-${EGIT_RULES_RUST_COMMIT}.tar.gz
 https://github.com/bazelbuild/rules_sass/archive/${RULES_SASS_PV}.zip -> rules_sass-${RULES_SASS_PV}.zip
+https://github.com/bazelbuild/rules_swift/releases/download/${RULES_SWIFT_PV}/rules_swift.${RULES_SWIFT_PV}.tar.gz
 https://github.com/bazelbuild/rules_webtesting/releases/download/${RULES_WEBTESTING_PV}/rules_webtesting.tar.gz -> rules_webtesting-${RULES_WEBTESTING_PV}.tar.gz
 https://github.com/envoyproxy/data-plane-api/archive/${EGIT_DATA_PLANE_API_COMMIT}.tar.gz -> data-plane-api-${EGIT_DATA_PLANE_API_COMMIT}.tar.gz
+https://github.com/google/closure-library/archive/v${CLOSURE_LIBRARY_PV}.tar.gz -> closure-library-${CLOSURE_LIBRARY_PV}.tar.gz
+https://github.com/mozilla/bleach/archive/v2.0.tar.gz -> bleach-${BLEACH_PV}.tar.gz
 https://github.com/protocolbuffers/upb/archive/${EGIT_UPB_COMMIT}.tar.gz -> upb-${EGIT_UPB_COMMIT}.tar.gz
 https://github.com/yarnpkg/yarn/releases/download/v${YARN_PV}/yarn-v${YARN_PV}.tar.gz
 http://mirror.tensorflow.org/github.com/bazelbuild/bazel-skylib/archive/${BAZEL_SKYLIB_PV}.tar.gz -> tf-bazel-skylib-${BAZEL_SKYLIB_PV}.tar.gz
 http://mirror.tensorflow.org/github.com/grpc/grpc/archive/${EGIT_GRPC_COMMIT}.tar.gz -> grpc-${EGIT_GRPC_COMMIT}.tar.gz
+http://mirror.tensorflow.org/github.com/html5lib/html5lib-python/archive/${HTML5LIB_PYTHON_PV}.tar.gz -> html5lib-python-${HTML5LIB_PYTHON_PV}.tar.gz
 http://mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.tar.gz -> protobuf-${PROTOBUF_PV}.tar.gz
 https://nodejs.org/dist/v${NODE_PV}/node-v${NODE_PV}-linux-x64.tar.xz
+https://pypi.python.org/packages/1d/25/3f6d2cb31ec42ca5bd3bfbea99b63892b735d76e26f20dd2dcc34ffe4f0d/Markdown-${MARKDOWN_PV}.tar.gz
+https://pypi.python.org/packages/source/s/six/six-${SIX_PV}.tar.gz
 https://raw.githubusercontent.com/google/roboto/${EGIT_ROBOTO_COMMIT}/LICENSE -> roboto-${EGIT_ROBOTO_COMMIT}-LICENSE
-https://github.com/mozilla/bleach/archive/v2.0.tar.gz -> bleach-${BLEACH_PV}.tar.gz
+https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/${CHROMIUM_REV}/chrome-linux.zip -> chrome-linux-x64-${CHROMIUM_REV}.zip
 "
 SRC_URI="
 	${YARN_EXTERNAL_URIS}
 	${bazel_external_uris}
+	${bazel_external_uris2}
 https://github.com/tensorflow/tensorboard/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 S="${WORKDIR}/${P}"
-
-cp_yarn_tarballs() {
-	local dest="${HOME}/npm-packages-offline-cache"
-	mkdir -p "${dest}" || die
-	IFS=$'\n'
-	local uri
-	local bn
-	for uri in ${YARN_EXTERNAL_URIS} ; do
-		bn=$(basename "${uri}")
-einfo "Copying ${DISTDIR}/yarnpkg-${bn} -> ${dest}/${bn}"
-		cat "${DISTDIR}/yarnpkg-${bn}" > "${dest}/${bn}" || die
-	done
-	IFS=$' \t\n'
-}
 
 yarn-utils_cpy_yarn_tarballs() {
 	local dest="${WORKDIR}/npm-packages-offline-cache"
@@ -865,10 +991,30 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
 	IFS=$' \t\n'
 }
 
+
+cp_material_icons() {
+	IFS=$'\n'
+	local path
+	for path in ${bazel_external_uris2} ; do
+		local srcfn=$(echo "${path}" \
+			| cut -f 3 -d " ")
+		local destfn=$(echo "${path}" \
+			| cut -f 3 -d " " \
+			| sed -E \
+				-e "s|.*--||g" \
+				-e "s|-[0-9]\.[0-9]\.[0-9]||g" \
+				-e "s|-[a-zA-Z0-9]{40}||g")
+einfo "Copying ${DISTDIR}/${srcfn} -> ${T}/bazel-distdir"
+		cat "${DISTDIR}/${srcfn}" > "${T}/bazel-distdir/${destfn}" || die
+	done
+	IFS=$' \t\n'
+}
+
 src_unpack() {
 	unpack ${P}.tar.gz
 	bazel_load_distfiles "${bazel_external_uris}"
 	yarn-utils_cpy_yarn_tarballs
+	cp_material_icons
 	cd "${S}" || die
 	yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
 	cp "${HOME}/.yarnrc" "${WORKDIR}" || die
@@ -881,6 +1027,30 @@ src_prepare() {
 	sed -i -e "s|\.yarnrc|${WORKDIR}/.yarnrc|g" WORKSPACE || die
 	sed -i -e "s|\.cache/yarn2|${HOME}/.cache/yarn2|g" WORKSPACE || die
 	bazel_setup_bazelrc
+}
+
+src_configure() {
+	mkdir -p "${WORKDIR}/bin"
+	export PATH="${WORKDIR}/bin:${PATH}"
+	local has_multislot_bazel=0
+	local slot
+	for slot in 5 4 ; do
+		if has_version "dev-util/bazel:${slot}" ; then
+einfo "Detected dev-util/bazel:${slot} (multislot)"
+			ln -sf \
+				"${ESYSROOT}/usr/bin/bazel-${slot}" \
+				"${WORKDIR}/bin/bazel" \
+				|| die
+			has_multislot_bazel=1
+			bazel --version || die
+		fi
+	done
+	if (( ${has_multislot_bazel} == 0 )) ; then
+ewarn
+ewarn "Using unslotted bazel.  Use the one from the oiledmachine-overlay"
+ewarn "instead or downgrade to bazel < 6"
+ewarn
+	fi
 }
 
 # From bazel.eclass
