@@ -221,9 +221,41 @@ based on an outdated style guide.
     time cost.  This is the estimate required by LTO.  Increasing the time
     cost beyond a day may decrease security by blocking security updates.
     Some security standards require critical updates be applied within 24
-    hours.  This means that you do not abuse profile/package.use.force to
-    force unnecessary USE flags that require 400 machines, or require more
-    than .75-1.5 days to build the package.
+    hours.  This means that you do not abuse profile/package.use.force or
+    profile/package.use.mask to force unnecessary USE flags that require
+    400 machines, or require more than .75-1.5 days to build the package.
+  - Packages that have active Long Term Support (LTS) support should have
+    versions available support it if the LTS versions are widely used with
+    multislot support.  If two popular apps use different major LTS versions of
+    a library then the library package should support both.  If a library is
+    guaranteed backwards compatible, then it is not needed and you may just use
+    0 for the slot.
+  - SLOT are up to the ebuild (SLOT="slot/subslot"), but recommened for
+    packages where there is difficultly updating or the API/interface has
+    changed dramatically when updating to the next major or minor version.
+    Both the subslot should be easy to remember and apply.  Most packages will
+    use the default.
+    Common schemes:
+    - slot:  0 (default), stable, branch names, major versions, major.minor versions
+    - subslot:  major.minor version, current - age, empty (default)
+  - There must be a way to avoid slot file collisions typically conditionally
+    or by renaming if multislotted.
+  - Switching slots is typically done with either a muxer or handled upstream
+    via preprocessor symbols and different installation paths for major
+    versions.
+    - eselect as the muxer is recommended for drop in replacement forks,
+      or handling multiple symlinks to headers/exes.
+    - a wrapper script as a muxer is recommended for exe only packages.
+  - If you are going to keep EOL slots/versions, put the reason why as a comment
+    in the footer or near the header.
+    - Good reasons:
+      - Test dependency for package X
+      - Active project X still uses it
+      - Still use it
+      - Orphan but for future use
+    - Bad reasons:
+      - Orphaned [delete]
+      - Blank [deleted because EOL]
 
 * eclass rules:
   - All `.eclass`es must be GPL2 only or have a GPL2 compatible license header.
@@ -299,6 +331,7 @@ based on an outdated style guide.
   - All eclasses are inspected for comprehensive documentation.
   - Vulnerability database checks for each submitted package.
   - The security of init scripts if any.
+  - Multislot file collisions
 
 #### Uploading to this repo
 
