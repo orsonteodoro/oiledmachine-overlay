@@ -233,8 +233,8 @@ based on an outdated style guide.
   - SLOT are up to the ebuild (SLOT="slot/subslot"), but recommened for
     packages where there is difficultly updating or the API/interface has
     changed dramatically when updating to the next major or minor version.
-    Both the subslot should be easy to remember and apply.  Most packages will
-    use the default.
+    Both the slot and subslot should be easy to remember and apply.  Most
+    packages will use the explicit default.
     Common schemes:
     - slot:  0 (default), stable, branch names, major versions, major.minor versions
     - subslot:  major.minor version, current - age, empty (default)
