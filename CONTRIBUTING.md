@@ -177,7 +177,8 @@ based on an outdated style guide.
     dependencies, it must not have it.  It is not recommended to support multilib
     because a distro core developer wanted it
     [retired](https://blogs.gentoo.org/mgorny/2021/06/03/retiring-the-multilib-project/).
-    Also, there is concern of underflows lack of asan underflow testing.
+    Also, there is concern of underflows because of the lack of asan underflow
+    testing.
   - For apps, if Wayland support is possible or mentioned in the build files, it
     should be made available as a USE flag.  Wayland should have higher priority
     than X in || checks.  If an app package supports both but is not automatic,
