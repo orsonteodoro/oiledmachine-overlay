@@ -11,7 +11,7 @@ HOMEPAGE="https://bazel.build/"
 SRC_URI="https://github.com/bazelbuild/bazel/releases/download/${PV}/${P}-dist.zip"
 
 LICENSE="Apache-2.0"
-SLOT="${PV##.*}/${PV}"
+SLOT="${PV##.*}/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
 IUSE="examples tools"
 # strip corrupts the bazel binary
