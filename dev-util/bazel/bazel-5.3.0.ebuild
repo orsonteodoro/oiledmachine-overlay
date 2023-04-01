@@ -13,10 +13,7 @@ SRC_URI="https://github.com/bazelbuild/bazel/releases/download/${PV}/${P}-dist.z
 LICENSE="Apache-2.0"
 SLOT="${PV%%.*}/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
-IUSE="examples tools"
-# strip corrupts the bazel binary
-# test fails with network-sandbox: An error occurred during the fetch of repository 'io_bazel_skydoc' (bug 690794)
-RESTRICT="bash-completion strip test r2"
+IUSE="bash-completion examples tools r2"
 RDEPEND="
 	!dev-util/bazel:0
 	>=virtual/jre-11:*
@@ -31,6 +28,9 @@ DEPEND="
 BDEPEND="
 	!dev-util/bazel:0
 "
+# strip corrupts the bazel binary
+# test fails with network-sandbox: An error occurred during the fetch of repository 'io_bazel_skydoc' (bug 690794)
+RESTRICT="strip test"
 
 S="${WORKDIR}"
 
