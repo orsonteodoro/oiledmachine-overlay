@@ -1,0 +1,16 @@
+--- a/WORKSPACE.orig	2023-04-01 20:40:27.980063151 -0700
++++ b/WORKSPACE	2023-04-01 20:41:40.732064091 -0700
+@@ -111,6 +111,13 @@ http_archive(
+     ],
+ )
+ 
++# oteodoro:  Use system go for offline install
++load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
++go_rules_dependencies()
++go_register_toolchains(
++    version = "host",
++)
++
+ load("@io_bazel_rules_sass//:defs.bzl", "sass_repositories")
+ 
+ sass_repositories()

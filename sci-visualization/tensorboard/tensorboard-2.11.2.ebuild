@@ -764,8 +764,31 @@ https://registry.yarnpkg.com/yargs/-/yargs-17.5.1.tgz -> yarnpkg-yargs-17.5.1.tg
 https://registry.yarnpkg.com/yarn-deduplicate/-/yarn-deduplicate-5.0.0.tgz -> yarnpkg-yarn-deduplicate-5.0.0.tgz
 https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz -> yarnpkg-yocto-queue-0.1.0.tgz
 https://registry.yarnpkg.com/zone.js/-/zone.js-0.11.4.tgz -> yarnpkg-zone.js-0.11.4.tgz
+https://registry.yarnpkg.com/@bazel/worker/-/worker-5.1.0.tgz -> yarnpkg-@bazel-worker-5.1.0.tgz
+https://registry.yarnpkg.com/anymatch/-/anymatch-3.1.2.tgz -> yarnpkg-anymatch-3.1.2.tgz
+https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.0.0.tgz -> yarnpkg-binary-extensions-2.0.0.tgz
+https://registry.yarnpkg.com/braces/-/braces-3.0.2.tgz -> yarnpkg-braces-3.0.2.tgz
+https://registry.yarnpkg.com/chokidar/-/chokidar-3.5.1.tgz -> yarnpkg-chokidar-3.5.1.tgz
+https://registry.yarnpkg.com/fill-range/-/fill-range-7.0.1.tgz -> yarnpkg-fill-range-7.0.1.tgz
+https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.2.tgz -> yarnpkg-fsevents-2.3.2.tgz
+https://registry.yarnpkg.com/glob-parent/-/glob-parent-5.1.2.tgz -> yarnpkg-glob-parent-5.1.2.tgz
+https://registry.yarnpkg.com/google-protobuf/-/google-protobuf-3.19.4.tgz -> yarnpkg-google-protobuf-3.19.4.tgz
+https://registry.yarnpkg.com/immutable/-/immutable-4.0.0.tgz -> yarnpkg-immutable-4.0.0.tgz
+https://registry.yarnpkg.com/is-binary-path/-/is-binary-path-2.1.0.tgz -> yarnpkg-is-binary-path-2.1.0.tgz
+https://registry.yarnpkg.com/is-extglob/-/is-extglob-2.1.1.tgz -> yarnpkg-is-extglob-2.1.1.tgz
+https://registry.yarnpkg.com/is-glob/-/is-glob-4.0.1.tgz -> yarnpkg-is-glob-4.0.1.tgz
+https://registry.yarnpkg.com/is-number/-/is-number-7.0.0.tgz -> yarnpkg-is-number-7.0.0.tgz
+https://registry.yarnpkg.com/normalize-path/-/normalize-path-3.0.0.tgz -> yarnpkg-normalize-path-3.0.0.tgz
+https://registry.yarnpkg.com/picomatch/-/picomatch-2.0.7.tgz -> yarnpkg-picomatch-2.0.7.tgz
+https://registry.yarnpkg.com/picomatch/-/picomatch-2.2.3.tgz -> yarnpkg-picomatch-2.2.3.tgz
+https://registry.yarnpkg.com/readdirp/-/readdirp-3.5.0.tgz -> yarnpkg-readdirp-3.5.0.tgz
+https://registry.yarnpkg.com/sass/-/sass-1.55.0.tgz -> yarnpkg-sass-1.55.0.tgz
+https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.0.1.tgz -> yarnpkg-source-map-js-1.0.1.tgz
+https://registry.yarnpkg.com/to-regex-range/-/to-regex-range-5.0.1.tgz -> yarnpkg-to-regex-range-5.0.1.tgz
 "
-# From:  grep "resolved" /var/tmp/portage/sci-visualization/tensorboard-2.11.2/work/tensorboard-2.11.2/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
+# From:
+# grep "resolved" /var/tmp/portage/sci-visualization/tensorboard-2.11.2/work/tensorboard-2.11.2/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
+# grep -o -E -r -e "https://registry.yarnpkg.com[^\"]+" /var/tmp/portage/sci-visualization/tensorboard-2.11.2/work/tensorboard-2.11.2-bazel-base/external/io_bazel_rules_sass/sass/yarn.lock | sed -r -e "s|#.*||g"
 # Transformed with transform-uris.sh.
 
 # The versions and commits were obtained from console.  To update, temporarily
@@ -776,8 +799,12 @@ BLEACH_PV="2.0"
 CLOSURE_LIBRARY_PV="20191027"
 CHROMEDRIVER_PV="2.41"
 CHROMIUM_REV="768959"
+COVERAGE_OUTPUT_GENERATOR_PV="2.5"
 GO_PV="1.12.5"
+GOOGLE_PROTOBUF_PV="3.19.4"
+GUAVA_PV="25.1"
 HTML5LIB_PYTHON_PV="1.1"
+JSOUP_PV="1.11.3"
 MARKDOWN_PV="2.6.8"
 MATERIAL_DESIGN_ICONS_3_0_1_PV="3.0.1"
 MATERIAL_DESIGN_ICONS_3_0_2_PV="3.0.2"
@@ -790,10 +817,53 @@ RULES_NODEJS_CORE_PV="5.7.0"
 RULES_SASS_PV="1.55.0"
 RULES_SWIFT_PV="0.21.0"
 RULES_WEBTESTING_PV="0.3.3"
+RUST_PV="1.58.1"
 SIX_PV="1.13.0"
 WEBENCODINGS_PV="0.5.1"
 WERKZUG_PV="0.15.4"
 YARN_PV="1.22.11"
+
+AOPALLIANCE_PV="1.0"
+ARGS4J_PV="2.0.26"
+AUTO_COMMON_PV="0.7"
+AUTO_FACTORY_PV="1.0-beta5"
+AUTO_VALUE_PV="1.6"
+AUTO_VALUE_ANNOTATIONS_PV="1.6"
+ASM_ANALYSIS_PV="6.0"
+ASM_COMMONS_PV="6.0"
+ASM_PV="6.0"
+ASM_TREE_PV="6.0"
+ASM_UTIL_PV="6.0"
+CLOSURE_COMPILER_UNSHADED_PV="20191027"
+CLOSURE_STYLESHEETS_PV="1.5.0"
+DAGGER_PV="2.14.1"
+DAGGER_SPI_PV="2.14.1"
+DAGGER_PRODUCERS_PV="2.14.1"
+DAGGER_COMPILER_PV="2.14.1"
+GOOGLE_JAVA_FORMAT_PV="1.5"
+GSON_PV="2.7"
+GUICE_ASSISTEDINJECT_PV="4.1.0"
+GUICE_MULTIBINDINGS_PV="4.1.0"
+GUICE_PV="4.1.0"
+ERROR_PRONE_ANNOTATIONS_PV="2.1.3"
+ICU4J_PV="57.1"
+JAVA_TOOLS_PV="11.7.1"
+JAVAC_SHADED_PV="9-dev-r4023-3"
+JAVAPOET_PV="1.9.0"
+JAVAX_INJECT_PV="1"
+JSINTEROP_ANNOTATIONS_PV="1.0.1"
+JSON_PV="20160212"
+JSOUP_PV="1.11.3"
+JSR250_API_PV="1.0"
+JSR305_PV="2.0.3"
+MAVEN2_TYPES_PV="1.0.7"
+SOY_PV="2019-07-14"
+TOMCAT_ANNOTATIONS_API_PV="8.0.5"
+EGIT_RULES_PYTHON_COMMIT="4b84ad270387a7c439ebdccfd530e2339601ef27"
+ZLIB_PV="1.2.11"
+AZUL_ZULU_PV="11.50.19-ca-jdk11.0.12"
+JAVA_TOOLS_PV="11.7.1"
+
 EGIT_DATA_PLANE_API_COMMIT="c83ed7ea9eb5fb3b93d1ad52b59750f1958b8bde"
 EGIT_GRPC_COMMIT="b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd"
 EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT="224895a86501195e7a7ff3dde18e39f00b8e3d5a"
@@ -807,6 +877,192 @@ EGIT_RULES_JAVA_COMMIT="981f06c3d2bd10225e85209904090eb7b5fb26bd"
 EGIT_RULES_PROTO_COMMIT="97d8af4dc474595af3900dd85cb3a29ad28cc313"
 EGIT_RULES_RUST_COMMIT="d5ab4143245af8b33d1947813d411a6cae838409"
 EGIT_UPB_COMMIT="9effcbcb27f0a665f9f345030188c0b291e32482"
+
+rust_crates_uris="
+https://crates.io/api/v1/crates/aho-corasick/0.7.18/download -> rust-crates--aho-corasick-0.7.18.tar.gz
+https://crates.io/api/v1/crates/anyhow/1.0.34/download -> rust-crates--anyhow-1.0.34.tar.gz
+https://crates.io/api/v1/crates/async-stream/0.3.0/download -> rust-crates--async-stream-0.3.0.tar.gz
+https://crates.io/api/v1/crates/async-stream-impl/0.3.0/download -> rust-crates--async-stream-impl-0.3.0.tar.gz
+https://crates.io/api/v1/crates/async-trait/0.1.41/download -> rust-crates--async-trait-0.1.41.tar.gz
+https://crates.io/api/v1/crates/atty/0.2.14/download -> rust-crates--atty-0.2.14.tar.gz
+https://crates.io/api/v1/crates/autocfg/1.0.1/download -> rust-crates--autocfg-1.0.1.tar.gz
+https://crates.io/api/v1/crates/base64/0.13.0/download -> rust-crates--base64-0.13.0.tar.gz
+https://crates.io/api/v1/crates/bitflags/1.2.1/download -> rust-crates--bitflags-1.2.1.tar.gz
+https://crates.io/api/v1/crates/build_const/0.2.1/download -> rust-crates--build_const-0.2.1.tar.gz
+https://crates.io/api/v1/crates/bumpalo/3.6.0/download -> rust-crates--bumpalo-3.6.0.tar.gz
+https://crates.io/api/v1/crates/byteorder/1.3.4/download -> rust-crates--byteorder-1.3.4.tar.gz
+https://crates.io/api/v1/crates/bytes/0.5.6/download -> rust-crates--bytes-0.5.6.tar.gz
+https://crates.io/api/v1/crates/bytes/1.0.1/download -> rust-crates--bytes-1.0.1.tar.gz
+https://crates.io/api/v1/crates/cc/1.0.66/download -> rust-crates--cc-1.0.66.tar.gz
+https://crates.io/api/v1/crates/cfg-if/0.1.10/download -> rust-crates--cfg-if-0.1.10.tar.gz
+https://crates.io/api/v1/crates/cfg-if/1.0.0/download -> rust-crates--cfg-if-1.0.0.tar.gz
+https://crates.io/api/v1/crates/clap/3.0.0-beta.2/download -> rust-crates--clap-3.0.0-beta.2.tar.gz
+https://crates.io/api/v1/crates/clap_derive/3.0.0-beta.2/download -> rust-crates--clap_derive-3.0.0-beta.2.tar.gz
+https://crates.io/api/v1/crates/const_fn/0.4.5/download -> rust-crates--const_fn-0.4.5.tar.gz
+https://crates.io/api/v1/crates/crc/1.8.1/download -> rust-crates--crc-1.8.1.tar.gz
+https://crates.io/api/v1/crates/crossbeam/0.8.0/download -> rust-crates--crossbeam-0.8.0.tar.gz
+https://crates.io/api/v1/crates/crossbeam-channel/0.5.0/download -> rust-crates--crossbeam-channel-0.5.0.tar.gz
+https://crates.io/api/v1/crates/crossbeam-deque/0.8.1/download -> rust-crates--crossbeam-deque-0.8.1.tar.gz
+https://crates.io/api/v1/crates/crossbeam-epoch/0.9.1/download -> rust-crates--crossbeam-epoch-0.9.1.tar.gz
+https://crates.io/api/v1/crates/crossbeam-queue/0.3.1/download -> rust-crates--crossbeam-queue-0.3.1.tar.gz
+https://crates.io/api/v1/crates/crossbeam-utils/0.8.8/download -> rust-crates--crossbeam-utils-0.8.8.tar.gz
+https://crates.io/api/v1/crates/either/1.6.1/download -> rust-crates--either-1.6.1.tar.gz
+https://crates.io/api/v1/crates/encoding_rs/0.8.26/download -> rust-crates--encoding_rs-0.8.26.tar.gz
+https://crates.io/api/v1/crates/env_logger/0.8.2/download -> rust-crates--env_logger-0.8.2.tar.gz
+https://crates.io/api/v1/crates/fixedbitset/0.4.1/download -> rust-crates--fixedbitset-0.4.1.tar.gz
+https://crates.io/api/v1/crates/fnv/1.0.7/download -> rust-crates--fnv-1.0.7.tar.gz
+https://crates.io/api/v1/crates/form_urlencoded/1.0.0/download -> rust-crates--form_urlencoded-1.0.0.tar.gz
+https://crates.io/api/v1/crates/futures-channel/0.3.8/download -> rust-crates--futures-channel-0.3.8.tar.gz
+https://crates.io/api/v1/crates/futures-core/0.3.12/download -> rust-crates--futures-core-0.3.12.tar.gz
+https://crates.io/api/v1/crates/futures-io/0.3.12/download -> rust-crates--futures-io-0.3.12.tar.gz
+https://crates.io/api/v1/crates/futures-macro/0.3.8/download -> rust-crates--futures-macro-0.3.8.tar.gz
+https://crates.io/api/v1/crates/futures-sink/0.3.8/download -> rust-crates--futures-sink-0.3.8.tar.gz
+https://crates.io/api/v1/crates/futures-task/0.3.8/download -> rust-crates--futures-task-0.3.8.tar.gz
+https://crates.io/api/v1/crates/futures-util/0.3.8/download -> rust-crates--futures-util-0.3.8.tar.gz
+https://crates.io/api/v1/crates/getrandom/0.1.15/download -> rust-crates--getrandom-0.1.15.tar.gz
+https://crates.io/api/v1/crates/getrandom/0.2.1/download -> rust-crates--getrandom-0.2.1.tar.gz
+https://crates.io/api/v1/crates/h2/0.3.13/download -> rust-crates--h2-0.3.13.tar.gz
+https://crates.io/api/v1/crates/hashbrown/0.11.2/download -> rust-crates--hashbrown-0.11.2.tar.gz
+https://crates.io/api/v1/crates/heck/0.3.1/download -> rust-crates--heck-0.3.1.tar.gz
+https://crates.io/api/v1/crates/hermit-abi/0.1.17/download -> rust-crates--hermit-abi-0.1.17.tar.gz
+https://crates.io/api/v1/crates/http/0.2.1/download -> rust-crates--http-0.2.1.tar.gz
+https://crates.io/api/v1/crates/http-body/0.4.5/download -> rust-crates--http-body-0.4.5.tar.gz
+https://crates.io/api/v1/crates/httparse/1.7.1/download -> rust-crates--httparse-1.7.1.tar.gz
+https://crates.io/api/v1/crates/httpdate/1.0.2/download -> rust-crates--httpdate-1.0.2.tar.gz
+https://crates.io/api/v1/crates/humantime/2.0.1/download -> rust-crates--humantime-2.0.1.tar.gz
+https://crates.io/api/v1/crates/hyper/0.14.19/download -> rust-crates--hyper-0.14.19.tar.gz
+https://crates.io/api/v1/crates/hyper-rustls/0.22.1/download -> rust-crates--hyper-rustls-0.22.1.tar.gz
+https://crates.io/api/v1/crates/hyper-timeout/0.4.1/download -> rust-crates--hyper-timeout-0.4.1.tar.gz
+https://crates.io/api/v1/crates/idna/0.2.0/download -> rust-crates--idna-0.2.0.tar.gz
+https://crates.io/api/v1/crates/indexmap/1.8.2/download -> rust-crates--indexmap-1.8.2.tar.gz
+https://crates.io/api/v1/crates/ipnet/2.3.0/download -> rust-crates--ipnet-2.3.0.tar.gz
+https://crates.io/api/v1/crates/itertools/0.10.3/download -> rust-crates--itertools-0.10.3.tar.gz
+https://crates.io/api/v1/crates/itoa/0.4.6/download -> rust-crates--itoa-0.4.6.tar.gz
+https://crates.io/api/v1/crates/itoa/1.0.2/download -> rust-crates--itoa-1.0.2.tar.gz
+https://crates.io/api/v1/crates/js-sys/0.3.47/download -> rust-crates--js-sys-0.3.47.tar.gz
+https://crates.io/api/v1/crates/lazy_static/1.4.0/download -> rust-crates--lazy_static-1.4.0.tar.gz
+https://crates.io/api/v1/crates/libc/0.2.126/download -> rust-crates--libc-0.2.126.tar.gz
+https://crates.io/api/v1/crates/log/0.4.11/download -> rust-crates--log-0.4.11.tar.gz
+https://crates.io/api/v1/crates/matches/0.1.8/download -> rust-crates--matches-0.1.8.tar.gz
+https://crates.io/api/v1/crates/memchr/2.5.0/download -> rust-crates--memchr-2.5.0.tar.gz
+https://crates.io/api/v1/crates/memoffset/0.6.1/download -> rust-crates--memoffset-0.6.1.tar.gz
+https://crates.io/api/v1/crates/mime/0.3.16/download -> rust-crates--mime-0.3.16.tar.gz
+https://crates.io/api/v1/crates/mio/0.8.3/download -> rust-crates--mio-0.8.3.tar.gz
+https://crates.io/api/v1/crates/multimap/0.8.2/download -> rust-crates--multimap-0.8.2.tar.gz
+https://crates.io/api/v1/crates/num_cpus/1.13.0/download -> rust-crates--num_cpus-1.13.0.tar.gz
+https://crates.io/api/v1/crates/once_cell/1.5.2/download -> rust-crates--once_cell-1.5.2.tar.gz
+https://crates.io/api/v1/crates/os_str_bytes/2.4.0/download -> rust-crates--os_str_bytes-2.4.0.tar.gz
+https://crates.io/api/v1/crates/percent-encoding/2.1.0/download -> rust-crates--percent-encoding-2.1.0.tar.gz
+https://crates.io/api/v1/crates/petgraph/0.6.2/download -> rust-crates--petgraph-0.6.2.tar.gz
+https://crates.io/api/v1/crates/pin-project/0.4.27/download -> rust-crates--pin-project-0.4.27.tar.gz
+https://crates.io/api/v1/crates/pin-project/1.0.1/download -> rust-crates--pin-project-1.0.1.tar.gz
+https://crates.io/api/v1/crates/pin-project-internal/0.4.27/download -> rust-crates--pin-project-internal-0.4.27.tar.gz
+https://crates.io/api/v1/crates/pin-project-internal/1.0.1/download -> rust-crates--pin-project-internal-1.0.1.tar.gz
+https://crates.io/api/v1/crates/pin-project-lite/0.2.9/download -> rust-crates--pin-project-lite-0.2.9.tar.gz
+https://crates.io/api/v1/crates/pin-utils/0.1.0/download -> rust-crates--pin-utils-0.1.0.tar.gz
+https://crates.io/api/v1/crates/ppv-lite86/0.2.10/download -> rust-crates--ppv-lite86-0.2.10.tar.gz
+https://crates.io/api/v1/crates/proc-macro-error/1.0.4/download -> rust-crates--proc-macro-error-1.0.4.tar.gz
+https://crates.io/api/v1/crates/proc-macro-error-attr/1.0.4/download -> rust-crates--proc-macro-error-attr-1.0.4.tar.gz
+https://crates.io/api/v1/crates/proc-macro-hack/0.5.19/download -> rust-crates--proc-macro-hack-0.5.19.tar.gz
+https://crates.io/api/v1/crates/proc-macro-nested/0.1.7/download -> rust-crates--proc-macro-nested-0.1.7.tar.gz
+https://crates.io/api/v1/crates/proc-macro2/1.0.24/download -> rust-crates--proc-macro2-1.0.24.tar.gz
+https://crates.io/api/v1/crates/prost/0.9.0/download -> rust-crates--prost-0.9.0.tar.gz
+https://crates.io/api/v1/crates/prost-build/0.9.0/download -> rust-crates--prost-build-0.9.0.tar.gz
+https://crates.io/api/v1/crates/prost-derive/0.9.0/download -> rust-crates--prost-derive-0.9.0.tar.gz
+https://crates.io/api/v1/crates/prost-types/0.9.0/download -> rust-crates--prost-types-0.9.0.tar.gz
+https://crates.io/api/v1/crates/quote/1.0.7/download -> rust-crates--quote-1.0.7.tar.gz
+https://crates.io/api/v1/crates/rand/0.7.3/download -> rust-crates--rand-0.7.3.tar.gz
+https://crates.io/api/v1/crates/rand/0.8.2/download -> rust-crates--rand-0.8.2.tar.gz
+https://crates.io/api/v1/crates/rand_chacha/0.2.2/download -> rust-crates--rand_chacha-0.2.2.tar.gz
+https://crates.io/api/v1/crates/rand_chacha/0.3.0/download -> rust-crates--rand_chacha-0.3.0.tar.gz
+https://crates.io/api/v1/crates/rand_core/0.5.1/download -> rust-crates--rand_core-0.5.1.tar.gz
+https://crates.io/api/v1/crates/rand_core/0.6.1/download -> rust-crates--rand_core-0.6.1.tar.gz
+https://crates.io/api/v1/crates/rand_hc/0.2.0/download -> rust-crates--rand_hc-0.2.0.tar.gz
+https://crates.io/api/v1/crates/rand_hc/0.3.0/download -> rust-crates--rand_hc-0.3.0.tar.gz
+https://crates.io/api/v1/crates/rayon/1.5.0/download -> rust-crates--rayon-1.5.0.tar.gz
+https://crates.io/api/v1/crates/rayon-core/1.9.0/download -> rust-crates--rayon-core-1.9.0.tar.gz
+https://crates.io/api/v1/crates/redox_syscall/0.1.57/download -> rust-crates--redox_syscall-0.1.57.tar.gz
+https://crates.io/api/v1/crates/regex/1.5.6/download -> rust-crates--regex-1.5.6.tar.gz
+https://crates.io/api/v1/crates/regex-syntax/0.6.26/download -> rust-crates--regex-syntax-0.6.26.tar.gz
+https://crates.io/api/v1/crates/remove_dir_all/0.5.3/download -> rust-crates--remove_dir_all-0.5.3.tar.gz
+https://crates.io/api/v1/crates/reqwest/0.11.0/download -> rust-crates--reqwest-0.11.0.tar.gz
+https://crates.io/api/v1/crates/ring/0.16.20/download -> rust-crates--ring-0.16.20.tar.gz
+https://crates.io/api/v1/crates/rustls/0.19.0/download -> rust-crates--rustls-0.19.0.tar.gz
+https://crates.io/api/v1/crates/ryu/1.0.5/download -> rust-crates--ryu-1.0.5.tar.gz
+https://crates.io/api/v1/crates/same-file/1.0.6/download -> rust-crates--same-file-1.0.6.tar.gz
+https://crates.io/api/v1/crates/scopeguard/1.1.0/download -> rust-crates--scopeguard-1.1.0.tar.gz
+https://crates.io/api/v1/crates/sct/0.6.1/download -> rust-crates--sct-0.6.1.tar.gz
+https://crates.io/api/v1/crates/serde/1.0.118/download -> rust-crates--serde-1.0.118.tar.gz
+https://crates.io/api/v1/crates/serde_derive/1.0.118/download -> rust-crates--serde_derive-1.0.118.tar.gz
+https://crates.io/api/v1/crates/serde_json/1.0.61/download -> rust-crates--serde_json-1.0.61.tar.gz
+https://crates.io/api/v1/crates/serde_urlencoded/0.7.0/download -> rust-crates--serde_urlencoded-0.7.0.tar.gz
+https://crates.io/api/v1/crates/slab/0.4.2/download -> rust-crates--slab-0.4.2.tar.gz
+https://crates.io/api/v1/crates/socket2/0.4.4/download -> rust-crates--socket2-0.4.4.tar.gz
+https://crates.io/api/v1/crates/spin/0.5.2/download -> rust-crates--spin-0.5.2.tar.gz
+https://crates.io/api/v1/crates/strsim/0.10.0/download -> rust-crates--strsim-0.10.0.tar.gz
+https://crates.io/api/v1/crates/syn/1.0.67/download -> rust-crates--syn-1.0.67.tar.gz
+https://crates.io/api/v1/crates/tempfile/3.1.0/download -> rust-crates--tempfile-3.1.0.tar.gz
+https://crates.io/api/v1/crates/termcolor/1.1.0/download -> rust-crates--termcolor-1.1.0.tar.gz
+https://crates.io/api/v1/crates/textwrap/0.12.1/download -> rust-crates--textwrap-0.12.1.tar.gz
+https://crates.io/api/v1/crates/thiserror/1.0.22/download -> rust-crates--thiserror-1.0.22.tar.gz
+https://crates.io/api/v1/crates/thiserror-impl/1.0.22/download -> rust-crates--thiserror-impl-1.0.22.tar.gz
+https://crates.io/api/v1/crates/tinyvec/1.1.1/download -> rust-crates--tinyvec-1.1.1.tar.gz
+https://crates.io/api/v1/crates/tinyvec_macros/0.1.0/download -> rust-crates--tinyvec_macros-0.1.0.tar.gz
+https://crates.io/api/v1/crates/tokio/1.19.2/download -> rust-crates--tokio-1.19.2.tar.gz
+https://crates.io/api/v1/crates/tokio-io-timeout/1.2.0/download -> rust-crates--tokio-io-timeout-1.2.0.tar.gz
+https://crates.io/api/v1/crates/tokio-macros/1.8.0/download -> rust-crates--tokio-macros-1.8.0.tar.gz
+https://crates.io/api/v1/crates/tokio-rustls/0.22.0/download -> rust-crates--tokio-rustls-0.22.0.tar.gz
+https://crates.io/api/v1/crates/tokio-stream/0.1.2/download -> rust-crates--tokio-stream-0.1.2.tar.gz
+https://crates.io/api/v1/crates/tokio-util/0.6.6/download -> rust-crates--tokio-util-0.6.6.tar.gz
+https://crates.io/api/v1/crates/tokio-util/0.7.3/download -> rust-crates--tokio-util-0.7.3.tar.gz
+https://crates.io/api/v1/crates/tonic/0.6.2/download -> rust-crates--tonic-0.6.2.tar.gz
+https://crates.io/api/v1/crates/tonic-build/0.6.2/download -> rust-crates--tonic-build-0.6.2.tar.gz
+https://crates.io/api/v1/crates/tonic-reflection/0.3.0/download -> rust-crates--tonic-reflection-0.3.0.tar.gz
+https://crates.io/api/v1/crates/tower/0.4.11/download -> rust-crates--tower-0.4.11.tar.gz
+https://crates.io/api/v1/crates/tower-layer/0.3.1/download -> rust-crates--tower-layer-0.3.1.tar.gz
+https://crates.io/api/v1/crates/tower-service/0.3.0/download -> rust-crates--tower-service-0.3.0.tar.gz
+https://crates.io/api/v1/crates/tracing/0.1.34/download -> rust-crates--tracing-0.1.34.tar.gz
+https://crates.io/api/v1/crates/tracing-attributes/0.1.21/download -> rust-crates--tracing-attributes-0.1.21.tar.gz
+https://crates.io/api/v1/crates/tracing-core/0.1.26/download -> rust-crates--tracing-core-0.1.26.tar.gz
+https://crates.io/api/v1/crates/tracing-futures/0.2.4/download -> rust-crates--tracing-futures-0.2.4.tar.gz
+https://crates.io/api/v1/crates/try-lock/0.2.3/download -> rust-crates--try-lock-0.2.3.tar.gz
+https://crates.io/api/v1/crates/unicode-bidi/0.3.4/download -> rust-crates--unicode-bidi-0.3.4.tar.gz
+https://crates.io/api/v1/crates/unicode-normalization/0.1.16/download -> rust-crates--unicode-normalization-0.1.16.tar.gz
+https://crates.io/api/v1/crates/unicode-segmentation/1.6.0/download -> rust-crates--unicode-segmentation-1.6.0.tar.gz
+https://crates.io/api/v1/crates/unicode-width/0.1.8/download -> rust-crates--unicode-width-0.1.8.tar.gz
+https://crates.io/api/v1/crates/unicode-xid/0.2.1/download -> rust-crates--unicode-xid-0.2.1.tar.gz
+https://crates.io/api/v1/crates/untrusted/0.7.1/download -> rust-crates--untrusted-0.7.1.tar.gz
+https://crates.io/api/v1/crates/url/2.2.0/download -> rust-crates--url-2.2.0.tar.gz
+https://crates.io/api/v1/crates/vec_map/0.8.2/download -> rust-crates--vec_map-0.8.2.tar.gz
+https://crates.io/api/v1/crates/version_check/0.9.2/download -> rust-crates--version_check-0.9.2.tar.gz
+https://crates.io/api/v1/crates/walkdir/2.3.1/download -> rust-crates--walkdir-2.3.1.tar.gz
+https://crates.io/api/v1/crates/want/0.3.0/download -> rust-crates--want-0.3.0.tar.gz
+https://crates.io/api/v1/crates/wasi/0.10.1+wasi-snapshot-preview1/download -> rust-crates--wasi-0.10.1+wasi-snapshot-preview1.tar.gz
+https://crates.io/api/v1/crates/wasi/0.11.0+wasi-snapshot-preview1/download -> rust-crates--wasi-0.11.0+wasi-snapshot-preview1.tar.gz
+https://crates.io/api/v1/crates/wasi/0.9.0+wasi-snapshot-preview1/download -> rust-crates--wasi-0.9.0+wasi-snapshot-preview1.tar.gz
+https://crates.io/api/v1/crates/wasm-bindgen/0.2.70/download -> rust-crates--wasm-bindgen-0.2.70.tar.gz
+https://crates.io/api/v1/crates/wasm-bindgen-backend/0.2.70/download -> rust-crates--wasm-bindgen-backend-0.2.70.tar.gz
+https://crates.io/api/v1/crates/wasm-bindgen-futures/0.4.20/download -> rust-crates--wasm-bindgen-futures-0.4.20.tar.gz
+https://crates.io/api/v1/crates/wasm-bindgen-macro/0.2.70/download -> rust-crates--wasm-bindgen-macro-0.2.70.tar.gz
+https://crates.io/api/v1/crates/wasm-bindgen-macro-support/0.2.70/download -> rust-crates--wasm-bindgen-macro-support-0.2.70.tar.gz
+https://crates.io/api/v1/crates/wasm-bindgen-shared/0.2.70/download -> rust-crates--wasm-bindgen-shared-0.2.70.tar.gz
+https://crates.io/api/v1/crates/web-sys/0.3.47/download -> rust-crates--web-sys-0.3.47.tar.gz
+https://crates.io/api/v1/crates/webpki/0.21.4/download -> rust-crates--webpki-0.21.4.tar.gz
+https://crates.io/api/v1/crates/webpki-roots/0.21.1/download -> rust-crates--webpki-roots-0.21.1.tar.gz
+https://crates.io/api/v1/crates/which/4.0.2/download -> rust-crates--which-4.0.2.tar.gz
+https://crates.io/api/v1/crates/winapi/0.3.9/download -> rust-crates--winapi-0.3.9.tar.gz
+https://crates.io/api/v1/crates/winapi-i686-pc-windows-gnu/0.4.0/download -> rust-crates--winapi-i686-pc-windows-gnu-0.4.0.tar.gz
+https://crates.io/api/v1/crates/winapi-util/0.1.5/download -> rust-crates--winapi-util-0.1.5.tar.gz
+https://crates.io/api/v1/crates/winapi-x86_64-pc-windows-gnu/0.4.0/download -> rust-crates--winapi-x86_64-pc-windows-gnu-0.4.0.tar.gz
+https://crates.io/api/v1/crates/windows-sys/0.36.1/download -> rust-crates--windows-sys-0.36.1.tar.gz
+https://crates.io/api/v1/crates/windows_aarch64_msvc/0.36.1/download -> rust-crates--windows_aarch64_msvc-0.36.1.tar.gz
+https://crates.io/api/v1/crates/windows_i686_gnu/0.36.1/download -> rust-crates--windows_i686_gnu-0.36.1.tar.gz
+https://crates.io/api/v1/crates/windows_i686_msvc/0.36.1/download -> rust-crates--windows_i686_msvc-0.36.1.tar.gz
+https://crates.io/api/v1/crates/windows_x86_64_gnu/0.36.1/download -> rust-crates--windows_x86_64_gnu-0.36.1.tar.gz
+https://crates.io/api/v1/crates/windows_x86_64_msvc/0.36.1/download -> rust-crates--windows_x86_64_msvc-0.36.1.tar.gz
+https://crates.io/api/v1/crates/winreg/0.7.0/download -> rust-crates--winreg-0.7.0.tar.gz
+"
+
 bazel_external_uris2="
 https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}/action/svg/production/ic_get_app_24px.svg -> material-design-icons-action-svg-production--ic_get_app_24px-${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}.svg
 https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}/action/svg/production/ic_visibility_off_24px.svg -> material-design-icons-action-svg-production--ic_visibility_off_24px-${EGIT_MATERIAL_DESIGN_ICONS_224895A_COMMIT}.svg
@@ -852,6 +1108,7 @@ https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_D
 "
 bazel_external_uris="
 https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_PV}/chromedriver_linux64.zip -> chromedriver_linux64-${CHROMEDRIVER_PV}.zip
+https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/${CHROMIUM_REV}/chrome-linux.zip -> chrome-linux-x64-${CHROMIUM_REV}.zip
 https://dl.google.com/go/go${GO_PV}.linux-amd64.tar.gz
 https://files.pythonhosted.org/packages/0b/02/ae6ceac1baeda530866a85075641cec12989bd8d31af6d5ab4a3e8c92f47/webencodings-${WEBENCODINGS_PV}.tar.gz
 https://files.pythonhosted.org/packages/59/2d/b24bab64b409e22f026fee6705b035cb0698399a7b69449c49442b30af47/Werkzeug-${WERKZUG_PV}.tar.gz
@@ -943,6 +1200,7 @@ https://github.com/google/closure-library/archive/v${CLOSURE_LIBRARY_PV}.tar.gz 
 https://github.com/mozilla/bleach/archive/v2.0.tar.gz -> bleach-${BLEACH_PV}.tar.gz
 https://github.com/protocolbuffers/upb/archive/${EGIT_UPB_COMMIT}.tar.gz -> upb-${EGIT_UPB_COMMIT}.tar.gz
 https://github.com/yarnpkg/yarn/releases/download/v${YARN_PV}/yarn-v${YARN_PV}.tar.gz
+https://mirror.bazel.build/bazel_coverage_output_generator/releases/coverage_output_generator-v${COVERAGE_OUTPUT_GENERATOR_PV}.zip
 http://mirror.tensorflow.org/github.com/bazelbuild/bazel-skylib/archive/${BAZEL_SKYLIB_PV}.tar.gz -> tf-bazel-skylib-${BAZEL_SKYLIB_PV}.tar.gz
 http://mirror.tensorflow.org/github.com/grpc/grpc/archive/${EGIT_GRPC_COMMIT}.tar.gz -> grpc-${EGIT_GRPC_COMMIT}.tar.gz
 http://mirror.tensorflow.org/github.com/html5lib/html5lib-python/archive/${HTML5LIB_PYTHON_PV}.tar.gz -> html5lib-python-${HTML5LIB_PYTHON_PV}.tar.gz
@@ -951,12 +1209,63 @@ https://nodejs.org/dist/v${NODE_PV}/node-v${NODE_PV}-linux-x64.tar.xz
 https://pypi.python.org/packages/1d/25/3f6d2cb31ec42ca5bd3bfbea99b63892b735d76e26f20dd2dcc34ffe4f0d/Markdown-${MARKDOWN_PV}.tar.gz
 https://pypi.python.org/packages/source/s/six/six-${SIX_PV}.tar.gz
 https://raw.githubusercontent.com/google/roboto/${EGIT_ROBOTO_COMMIT}/LICENSE -> roboto-${EGIT_ROBOTO_COMMIT}-LICENSE
-https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/${CHROMIUM_REV}/chrome-linux.zip -> chrome-linux-x64-${CHROMIUM_REV}.zip
+https://repo1.maven.org/maven2/com/google/guava/guava/${GUAVA_PV}-jre/guava-${GUAVA_PV}-jre.jar
+https://static.rust-lang.org/dist/rust-${RUST_PV}-x86_64-unknown-linux-gnu.tar.gz
+
+https://repo1.maven.org/maven2/aopalliance/aopalliance/${AOPALLIANCE_PV}/aopalliance-${AOPALLIANCE_PV}.jar
+https://repo1.maven.org/maven2/args4j/args4j/${ARGS4J_PV}/args4j-${ARGS4J_PV}.jar
+https://repo1.maven.org/maven2/com/google/auto/auto-common/${AUTO_COMMON_PV}/auto-common-${AUTO_COMMON_PV}.jar
+https://repo1.maven.org/maven2/com/google/auto/factory/auto-factory/${AUTO_FACTORY_PV}/auto-factory-${AUTO_FACTORY_PV}.jar
+https://repo1.maven.org/maven2/com/google/auto/value/auto-value-annotations/${AUTO_VALUE_ANNOTATIONS_PV}/auto-value-annotations-${AUTO_VALUE_ANNOTATIONS_PV}.jar
+https://repo1.maven.org/maven2/com/google/auto/value/auto-value/${AUTO_VALUE_PV}/auto-value-${AUTO_VALUE_PV}.jar
+https://repo1.maven.org/maven2/com/google/closure-stylesheets/closure-stylesheets/${CLOSURE_STYLESHEETS_PV}/closure-stylesheets-${CLOSURE_STYLESHEETS_PV}.jar
+https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/${JSR305_PV}/jsr305-${JSR305_PV}.jar
+https://repo1.maven.org/maven2/com/google/code/gson/gson/${GSON_PV}/gson-${GSON_PV}.jar
+https://repo1.maven.org/maven2/com/google/common/html/types/types/${MAVEN2_TYPES_PV}/types-${MAVEN2_TYPES_PV}.jar
+https://repo1.maven.org/maven2/com/google/dagger/dagger-compiler/${DAGGER_COMPILER_PV}/dagger-compiler-${DAGGER_COMPILER_PV}.jar
+https://repo1.maven.org/maven2/com/google/dagger/dagger-producers/${DAGGER_PRODUCERS_PV}/dagger-producers-${DAGGER_PRODUCERS_PV}.jar
+https://repo1.maven.org/maven2/com/google/dagger/dagger-spi/${DAGGER_SPI_PV}/dagger-spi-${DAGGER_SPI_PV}.jar
+https://repo1.maven.org/maven2/com/google/dagger/dagger/${DAGGER_PV}/dagger-${DAGGER_PV}.jar
+https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/${ERROR_PRONE_ANNOTATIONS_PV}/error_prone_annotations-${ERROR_PRONE_ANNOTATIONS_PV}.jar
+https://repo1.maven.org/maven2/com/google/errorprone/javac-shaded/${JAVAC_SHADED_PV}/javac-shaded-${JAVAC_SHADED_PV}.jar
+https://repo1.maven.org/maven2/com/google/googlejavaformat/google-java-format/${GOOGLE_JAVA_FORMAT_PV}/google-java-format-${GOOGLE_JAVA_FORMAT_PV}.jar
+https://repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/${GUICE_ASSISTEDINJECT_PV}/guice-assistedinject-${GUICE_ASSISTEDINJECT_PV}.jar
+https://repo1.maven.org/maven2/com/google/inject/extensions/guice-multibindings/${GUICE_MULTIBINDINGS_PV}/guice-multibindings-${GUICE_MULTIBINDINGS_PV}.jar
+https://repo1.maven.org/maven2/com/google/inject/guice/${GUICE_PV}/guice-${GUICE_PV}.jar
+https://repo1.maven.org/maven2/com/google/jsinterop/jsinterop-annotations/${JSINTEROP_ANNOTATIONS_PV}/jsinterop-annotations-${JSINTEROP_ANNOTATIONS_PV}.jar
+https://repo1.maven.org/maven2/com/google/template/soy/${SOY_PV}/soy-${SOY_PV}-jssrc_js.jar
+https://repo1.maven.org/maven2/com/google/template/soy/${SOY_PV}/soy-${SOY_PV}.jar
+https://repo1.maven.org/maven2/com/ibm/icu/icu4j/${ICU4J_PV}/icu4j-${ICU4J_PV}.jar
+https://repo1.maven.org/maven2/com/squareup/javapoet/${JAVAPOET_PV}/javapoet-${JAVAPOET_PV}.jar
+https://repo1.maven.org/maven2/javax/annotation/jsr250-api/${JSR250_API_PV}/jsr250-api-${JSR250_API_PV}.jar
+https://repo1.maven.org/maven2/javax/inject/javax.inject/${JAVAX_INJECT_PV}/javax.inject-${JAVAX_INJECT_PV}.jar
+https://repo1.maven.org/maven2/org/apache/tomcat/tomcat-annotations-api/${TOMCAT_ANNOTATIONS_API_PV}/tomcat-annotations-api-${TOMCAT_ANNOTATIONS_API_PV}.jar
+https://repo1.maven.org/maven2/org/json/json/${JSON_PV}/json-${JSON_PV}.jar
+https://repo1.maven.org/maven2/org/jsoup/jsoup/${JSOUP_PV}/jsoup-${JSOUP_PV}.jar
+https://repo1.maven.org/maven2/org/ow2/asm/asm-analysis/${ASM_ANALYSIS_PV}/asm-analysis-${ASM_ANALYSIS_PV}.jar
+https://repo1.maven.org/maven2/org/ow2/asm/asm-commons/${ASM_COMMONS_PV}/asm-commons-${ASM_COMMONS_PV}.jar
+https://repo1.maven.org/maven2/org/ow2/asm/asm-tree/${ASM_TREE_PV}/asm-tree-${ASM_TREE_PV}.jar
+https://repo1.maven.org/maven2/org/ow2/asm/asm-util/${ASM_UTIL_PV}/asm-util-${ASM_UTIL_PV}.jar
+https://repo1.maven.org/maven2/org/ow2/asm/asm/${ASM_PV}/asm-${ASM_PV}.jar
+
+https://repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v${CLOSURE_COMPILER_UNSHADED_PV}/closure-compiler-unshaded-v${CLOSURE_COMPILER_UNSHADED_PV}.jar
+https://github.com/bazelbuild/java_tools/releases/download/java_v${JAVA_TOOLS_PV}/java_tools-v${JAVA_TOOLS_PV}.zip
+https://github.com/bazelbuild/rules_python/archive/${EGIT_RULES_PYTHON_COMMIT}.tar.gz -> rules_python-${EGIT_RULES_PYTHON_COMMIT}.tar.gz
+https://zlib.net/zlib-${ZLIB_PV}.tar.gz
+https://mirror.bazel.build/openjdk/azul-zulu${AZUL_ZULU_PV}/zulu${AZUL_ZULU_PV}-linux_x64.tar.gz
+https://github.com/bazelbuild/java_tools/releases/download/java_v${JAVA_TOOLS_PV}/java_tools_linux-v${JAVA_TOOLS_PV}.zip
+https://static.rust-lang.org/dist/rustfmt-${RUST_PV}-x86_64-unknown-linux-gnu.tar.gz
+https://static.rust-lang.org/dist/llvm-tools-${RUST_PV}-x86_64-unknown-linux-gnu.tar.gz
+https://static.rust-lang.org/dist/rust-std-${RUST_PV}-x86_64-unknown-linux-gnu.tar.gz
+https://static.rust-lang.org/dist/rust-std-${RUST_PV}-wasm32-unknown-unknown.tar.gz
+https://static.rust-lang.org/dist/rust-std-${RUST_PV}-wasm32-wasi.tar.gz
+
 "
 SRC_URI="
 	${YARN_EXTERNAL_URIS}
 	${bazel_external_uris}
 	${bazel_external_uris2}
+	${rust_crates_uris}
 https://github.com/tensorflow/tensorboard/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
@@ -993,6 +1302,7 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
 
 
 cp_material_icons() {
+	local dest="${T}/bazel-distdir"
 	IFS=$'\n'
 	local path
 	for path in ${bazel_external_uris2} ; do
@@ -1004,10 +1314,29 @@ cp_material_icons() {
 				-e "s|.*--||g" \
 				-e "s|-[0-9]\.[0-9]\.[0-9]||g" \
 				-e "s|-[a-zA-Z0-9]{40}||g")
-einfo "Copying ${DISTDIR}/${srcfn} -> ${T}/bazel-distdir"
-		cat "${DISTDIR}/${srcfn}" > "${T}/bazel-distdir/${destfn}" || die
+einfo "Copying ${DISTDIR}/${srcfn} -> ${dest}/${destfn}"
+		cat "${DISTDIR}/${srcfn}" > "${dest}/${destfn}" || die
 	done
 	IFS=$' \t\n'
+}
+
+cp_rust_crates() {
+	local dest="${T}/bazel-distdir"
+	mkdir -p "${dest}" || die
+	IFS=$'\n'
+	local path
+	for path in ${rust_crates_uris} ; do
+		local srcfn=$(echo "${path}" \
+			| cut -f 3 -d " ")
+		local destfn=$(echo "${path}" \
+			| cut -f 3 -d " " \
+			| sed -E \
+				-e "s|.*--||g")
+einfo "Copying ${DISTDIR}/${srcfn} -> ${dest}/${destfn}"
+		cat "${DISTDIR}/${srcfn}" > "${dest}/${destfn}" || die
+	done
+	IFS=$' \t\n'
+
 }
 
 src_unpack() {
@@ -1015,6 +1344,7 @@ src_unpack() {
 	bazel_load_distfiles "${bazel_external_uris}"
 	yarn-utils_cpy_yarn_tarballs
 	cp_material_icons
+	cp_rust_crates
 	cd "${S}" || die
 	yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
 	cp "${HOME}/.yarnrc" "${WORKDIR}" || die
@@ -1043,6 +1373,7 @@ einfo "Detected dev-util/bazel:${slot} (multislot)"
 				|| die
 			has_multislot_bazel=1
 			bazel --version || die
+			break
 		fi
 	done
 	if (( ${has_multislot_bazel} == 0 )) ; then
@@ -1060,8 +1391,27 @@ _ebazel() {
 	output_base="${output_base%/}-bazel-base"
 	mkdir -p "${output_base}" || die
 
+	export GOROOT="${ESYSROOT}/usr/lib/go"
 	echo 'build --noshow_progress' >> "${T}/bazelrc" || die # Disable high CPU usage on xfce4-terminal
 	echo 'build --subcommands' >> "${T}/bazelrc" || die # Increase verbosity
+
+	echo "build --action_env=GOROOT=\"${GOROOT}\"" >> "${T}/bazelrc" || die
+	echo "build --host_action_env=GOROOT=\"${GOROOT}\"" >> "${T}/bazelrc" || die
+
+	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
+		local ccache_dir=$(ccache -sv \
+			| grep "Cache directory" \
+			| cut -f 2 -d ":" \
+			| sed -r -e "s|^[ ]+||g")
+		echo "${ccache_dir}" > "${WORKDIR}/.ccache_dir_val" || die
+einfo "Adding build --sandbox_writable_path=\"${ccache_dir}\" to ${T}/bazelrc"
+		echo "build --action_env=CCACHE_DIR=\"${ccache_dir}\"" >> "${T}/bazelrc" || die
+		echo "build --host_action_env=CCACHE_DIR=\"${ccache_dir}\"" >> "${T}/bazelrc" || die
+		echo "build --sandbox_writable_path=${ccache_dir}" >> "${T}/bazelrc" || die
+		export CCACHE_DIR="${ccache_dir}"
+einfo "CCACHE_DIR:\t${CCACHE_DIR}"
+	fi
+
 	cat "${S}/.bazelrc" >> "${T}/bazelrc" || die
 	rm "${S}/.bazelrc" || die
 

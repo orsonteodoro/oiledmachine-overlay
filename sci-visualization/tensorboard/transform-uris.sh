@@ -3,6 +3,7 @@
 # Helper script to transform URIs
 
 YARN_EXTERNAL_URIS="
+$(cat yarn-uris.txt)
 "
 
 yarn-utils_gen_yarn_uris() {
