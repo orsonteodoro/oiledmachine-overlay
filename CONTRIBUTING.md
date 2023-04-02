@@ -128,10 +128,10 @@ based on an outdated style guide.
     testing.
   - Check all password stores for proper encryption.  Make sure it doesn't do
     any of the following:
-    -[CWE-312](https://cwe.mitre.org/data/definitions/312.html)
-     (Storage of passwords in plaintext.  #40 on the most dangerous weakness list.)
-    -[CWE-759](https://cwe.mitre.org/data/definitions/759.html)
-     (Unsalted passwords)
+    - [CWE-312](https://cwe.mitre.org/data/definitions/312.html)
+      (Storage of passwords in plaintext.  #40 on the most dangerous weakness list.)
+    - [CWE-759](https://cwe.mitre.org/data/definitions/759.html)
+      (Unsalted passwords)
   - Adding the test USE flag and test dependencies is required for
     dev-python in this overlay only if the package supports testing.
   - If a python package does provide a test suite but not through supported
