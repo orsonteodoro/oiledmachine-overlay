@@ -1876,6 +1876,7 @@ SRC_URI="
 	${YARN_EXTERNAL_URIS}
 	${bazel_external_uris}
 	${bazel_external_uris2}
+	${rust_crates_uris}
 https://github.com/tensorflow/tensorboard/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
