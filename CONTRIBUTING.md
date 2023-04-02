@@ -319,7 +319,7 @@ based on an outdated style guide.
   - All variations of the license must be documented in the LICENSE variable.
   - If it appears to be a license incompatibility, document the name of the
     license and at least one path to the license file or the path to the
-    source/header file relative to S, WORKDIR, or homedir.
+    source/header file relative to S, WORKDIR, or HOME.
     - If possible, try to unvendor or modify the build files to prevent
       license incompatibility.
 
