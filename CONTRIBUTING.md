@@ -175,6 +175,7 @@ based on an outdated style guide.
     and version as a c/c++ tarball.  The repo or previous tarball name has right
     of way.
   - Live ebuilds must have KEYWORDS disabled or removed.
+  - Live ebuilds should disable analytics/telemetry in the build system.
   - All python dependencies must have either PYTHON_USEDEP or PYTHON_SINGLE_USEDEP.
   - Adding multilib is optional for decade 2020 in this overlay and may be dropped
     in this decade.  If multilib is provided in the package, all dependencies must
