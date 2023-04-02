@@ -237,7 +237,7 @@ based on an outdated style guide.
     400 machines, or require more than 36 hours to build the package,
     or any hidden agenda to non-free.
   - Do not abuse opt in default to non-free (by deleting USE flags or by
-    negligence).  If an opt out to non-free features is possible, it should
+    negligence).  If an opt out to non-free features is possible, it must
     be made available.
   - Packages that have active Long Term Support (LTS) support should have
     versions available support it if the LTS versions are widely used with
