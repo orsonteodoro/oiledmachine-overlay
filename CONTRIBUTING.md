@@ -262,6 +262,8 @@ based on an outdated style guide.
     - eselect as the muxer is recommended for drop in replacement forks,
       or handling multiple symlinks to headers/exes.
     - a wrapper script as a muxer is recommended for exe only packages.
+    - PATH manipulation typically done by eclasses
+    - PATH prioritization to symlinks in for example ${WORKDIR}/bin.  (Uncommon)
   - If you are going to keep EOL slots/versions, put the reason why as a comment
     in the footer or near the header.
     - Good reasons:
