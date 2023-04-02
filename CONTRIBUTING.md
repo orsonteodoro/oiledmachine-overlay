@@ -118,7 +118,7 @@ based on an outdated style guide.
     user to uninstall, hard mask the ebuild, fork and patch locally, or take
     necessary precautions to mitigate.  See the CWE database for weakness
     descriptions.
-  - Disclose all criticial vulnerabilities in -bin packages including
+  - Disclose all critical vulnerabilities in -bin packages including
     internal vendored libraries.
   - If updating micropackages to resolve vulnerability issues, the policy is
     best effort.  This means that you may bump micropackages to later patch
@@ -126,7 +126,12 @@ based on an outdated style guide.
     allowed as long the package has been tested and working.  If a test suite is
     provided, you must use it since it has better test coverage than interactive
     testing.
-  - Check all password stores for proper encryption.
+  - Check all password stores for proper encryption.  Make sure it doesn't do
+    any of the following:
+    -[CWE-312](https://cwe.mitre.org/data/definitions/312.html)
+     (Storage of passwords in plaintext.  #40 on the most dangerous weakness list.)
+    -[CWE-759](https://cwe.mitre.org/data/definitions/759.html)
+     (Unsalted passwords)
   - Adding the test USE flag and test dependencies is required for
     dev-python in this overlay only if the package supports testing.
   - If a python package does provide a test suite but not through supported
@@ -218,19 +223,28 @@ based on an outdated style guide.
     is monolthic or forced unconditionally with too many flag bloat, it needs
     to be patched so that it build files are more modular and these hard coded
     {c,cxx,ld}flag options are optional.
-  - You must not increase the time cost no more than 5 times the normal build
-    time cost.  This is the estimate required by LTO.  Increasing the time
-    cost beyond a day may decrease security by blocking security updates.
-    Some security standards require critical updates be applied within 24
-    hours.  This means that you do not abuse profile/package.use.force or
+  - Assuming -O2 and minimal install:
+    - Tiny packages may be emerged in less than 30 seconds or less.
+    - Small packages may be emerged in less than 30 minutes or less.
+    - Medium packages may be emerged in 1-2 hrs or less.
+    - Large packages may be emerged in 19 hrs or less.
+    Again, if longer, the package should use more system packages instead.
+  - Increasing the time cost beyond a day may decrease security by blocking
+    security updates.  Some security standards require critical updates be
+    applied within 24 hours.
+  - Do not abuse the use of profile/package.use.force or
     profile/package.use.mask to force unnecessary USE flags that require
-    400 machines, or require more than .75-1.5 days to build the package.
+    400 machines, or require more than 36 hours to build the package,
+    or any hidden agenda to non-free.
+  - Do not abuse opt in default to non-free (by deleting USE flags or by
+    negligence).  If an opt out to non-free features is possible, it should
+    be made available.
   - Packages that have active Long Term Support (LTS) support should have
     versions available support it if the LTS versions are widely used with
     multislot support.  If two popular apps use different major LTS versions of
     a library, then the library package should support both.  If a library is
     guaranteed backwards compatible, then it is not needed and you may just use
-    0 for the slot.
+    0 for the SLOT.
   - SLOT are up to the ebuild (SLOT="slot/subslot"), but recommened for
     packages where there is difficultly updating or the API/interface has
     changed dramatically when updating to the next major or minor version.
@@ -257,6 +271,9 @@ based on an outdated style guide.
     - Bad reasons:
       - Orphaned [delete]
       - Blank [deleted because EOL]
+  - Packages that rely on EOL versions and not stable versions of python, gcc,
+    and do not have a ebuild version from the distro overlay and this overlay
+    are not supported.
 
 * eclass rules:
   - All `.eclass`es must be GPL2 only or have a GPL2 compatible license header.
