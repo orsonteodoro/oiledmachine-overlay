@@ -16,10 +16,11 @@
 # For the URI generator, see the tensorboard/transform-uris.sh script.
 
 # For package.json -> yarn.lock:
+# (The network-sandbox needs to be disabled temporarily.)
 # npm i --package-lock-only
 # yarn import
 
-# The yarn.lock must be regenerated for security updates.
+# The yarn.lock must be regenerated for security updates every week.
 
 case ${EAPI:-0} in
 	[78]) ;;
@@ -43,11 +44,15 @@ BDEPEND+="
 # @DESCRIPTION:
 # The main package tarball.
 
-# @FUNCTION: _yarn_cpy_yarn_tarballs
+# @ECLASS_VARIABLE: YARN_ROOT
+# @DESCRIPTION:
+# The project root containing the yarn.lock file.
+
+# @FUNCTION: _yarn_cp_tarballs
 # @INTERNAL
 # @DESCRIPTION:
 # Copies all tarballs to the offline cache
-_yarn_cpy_yarn_tarballs() {
+_yarn_cp_tarballs() {
 	local dest="${WORKDIR}/npm-packages-offline-cache"
 	mkdir -p "${dest}" || die
 	IFS=$'\n'
@@ -85,20 +90,41 @@ yarn_src_unpack() {
 	else
 		unpack ${P}.tar.gz
 	fi
-	_yarn_cpy_yarn_tarballs
-	yarn install --verbose --prefer-offline || die
+	_yarn_cp_tarballs
+	cd "${S}" || die
+	rm -rf "package-lock.json" || true
+	yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
+	mv "${HOME}/.yarnrc" "${WORKDIR}" || die
+	if [[ -f "${FILESDIR}/${PV}/yarn.lock" && -n "${YARN_ROOT}" ]] ; then
+		cp "${FILESDIR}/${PV}/yarn.lock" "${YARN_ROOT}" || die
+	elif [[ -f "${FILESDIR}/${PV}/yarn.lock" && -n "${S}" ]] ; then
+		cp "${FILESDIR}/${PV}/yarn.lock" "${S}" || die
+	fi
+	if [[ -n "${YARN_ROOT}" ]] ; then
+		rm -rf "${YARN_ROOT}/.yarnrc" || die
+	fi
+	rm -rf "${S}/.yarnrc" || die
+	yarn install \
+		--frozen-lockfile \
+		--prefer-offline \
+		--verbose \
+		|| die
 }
 
 # @FUNCTION: yarn_src_compile
 # @DESCRIPTION:
 # Builds a yarn application.
 yarn_src_compile() {
-	yarn build --verbose --prefer-offline || die
+	yarn build \
+		--frozen-lockfile \
+		--prefer-offline \
+		--verbose \
+		|| die
 }
 
 # @FUNCTION: yarn_src_test
 # @DESCRIPTION:
-# Runts a yarn application test suite.
+# Runs a yarn application test suite.
 yarn_src_test() {
 	yarn test --verbose || die
 }
