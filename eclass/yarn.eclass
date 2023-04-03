@@ -191,6 +191,7 @@ yarn_src_install() {
 			| cut -f 4 -d '"' \
 			| sed -e "s|^\./||g")
 		if [[ -n "${NODE_VERSION}" ]] ; then
+			dodir /usr/bin
 cat <<EOF > "${ED}/usr/bin/${name}"
 #!/bin/bash
 NODE_VERSION=${NODE_VERSION}
