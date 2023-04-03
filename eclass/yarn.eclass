@@ -190,11 +190,20 @@ yarn_src_install() {
 		local cmd=$(echo "${row}" \
 			| cut -f 4 -d '"' \
 			| sed -e "s|^\./||g")
-		dosym "${YARN_INSTALL_PATH}/${cmd}" "/usr/bin/${name}"
+		if [[ -n "${NODE_VERSION}" ]] ; then
+cat <<EOF > "${ED}/usr/bin/${name}"
+#!/bin/bash
+NODE_VERSION=${NODE_VERSION}
+"${YARN_INSTALL_PATH}/${cmd}" "$@"
+EOF
+			fperms 0755 "/usr/bin/${name}"
+		else
+			dosym "${YARN_INSTALL_PATH}/${cmd}" "/usr/bin/${name}"
+		fi
 	done
 	local path
 	for path in ${YARN_EXE_LIST} ; do
-		chmod 0755 "${ED}${path}" || die
+		fperms 0755 "${path}" || die
 	done
 	IFS=$' \t\n'
 }
