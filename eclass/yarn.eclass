@@ -2,6 +2,8 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# (WIP) Use the pnpm.eclass instead.
+
 # @ECLASS: yarn-utils.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
