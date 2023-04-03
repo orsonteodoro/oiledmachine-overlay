@@ -115,6 +115,7 @@ yarn_src_unpack() {
 # @DESCRIPTION:
 # Builds a yarn application.
 yarn_src_compile() {
+	grep -q -e '"build"' package.json || return
 	yarn build \
 		--frozen-lockfile \
 		--prefer-offline \
@@ -126,6 +127,7 @@ yarn_src_compile() {
 # @DESCRIPTION:
 # Runs a yarn application test suite.
 yarn_src_test() {
+	grep -q -e '"test"' package.json || return
 	yarn test --verbose || die
 }
 
