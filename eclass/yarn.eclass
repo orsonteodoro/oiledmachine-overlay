@@ -195,7 +195,7 @@ yarn_src_install() {
 cat <<EOF > "${ED}/usr/bin/${name}"
 #!/bin/bash
 NODE_VERSION=${NODE_VERSION}
-"${YARN_INSTALL_PATH}/${cmd}" "$@"
+"${YARN_INSTALL_PATH}/${cmd}" "\$@"
 EOF
 			fperms 0755 "/usr/bin/${name}"
 		else
