@@ -150,9 +150,18 @@ yarn_src_test() {
 # Installs a yarn application.
 yarn_src_install() {
 	local install_path="${YARN_INSTALL_PATH:-/opt/${PN}}"
-	local rows=$(cat package.json \
-		| jq '.bin' \
-		| grep ":")
+	local rows
+	if cat package-lock.json | jq '.bin' | grep ":" ; then
+		rows=$(cat package.json \
+			| jq '.bin' \
+			| grep ":")
+	elif cat package-lock.json | jq '.packages."".bin' | grep ":" ; then
+		rows=$(cat package.json \
+			| jq '.packages."".bin' \
+			| grep ":")
+	else
+		rows=""
+	fi
 	insinto "${install_path}"
 	doins -r *
 	IFS=$'\n'
