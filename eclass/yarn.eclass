@@ -151,11 +151,11 @@ yarn_src_test() {
 yarn_src_install() {
 	local install_path="${YARN_INSTALL_PATH:-/opt/${PN}}"
 	local rows
-	if cat package-lock.json | jq '.bin' | grep ":" ; then
+	if cat package.json | jq '.bin' | grep ":" ; then
 		rows=$(cat package.json \
 			| jq '.bin' \
 			| grep ":")
-	elif cat package-lock.json | jq '.packages."".bin' | grep ":" ; then
+	elif cat package.json | jq '.packages."".bin' | grep ":" ; then
 		rows=$(cat package.json \
 			| jq '.packages."".bin' \
 			| grep ":")
