@@ -67,6 +67,7 @@ ${YARN_INSTALL_PATH}/node_modules/standard/node_modules/.bin/eslint
 ${YARN_INSTALL_PATH}/node_modules/tape/node_modules/.bin/ignored
 ${YARN_INSTALL_PATH}/node_modules/tsconfig-paths/node_modules/.bin/json5
 "
+YARN_TEST_SCRIPT="test"
 inherit yarn
 
 DESCRIPTION="Convert yarn.lock to package-lock.json and vice versa"
@@ -74,7 +75,7 @@ HOMEPAGE="https://github.com/imsnif/synp"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" test"
 DEPEND+="
 "
 RDEPEND+="

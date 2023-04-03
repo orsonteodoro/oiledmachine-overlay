@@ -34,6 +34,15 @@ BDEPEND+="
 	sys-apps/yarn
 "
 
+# @ECLASS_VARIABLE: YARN_BUILD_SCRIPT
+# @DESCRIPTION:
+# The build script to run from package.json:scripts section.
+
+# @ECLASS_VARIABLE: YARN_EXE_LIST
+# @DESCRIPTION:
+# A pregenerated list of paths to turn on executable bit.
+# Obtained partially from find ${YARN_INSTALL_PATH}/node_modules/ -path "*/.bin/*" | sort
+
 # @ECLASS_VARIABLE: YARN_EXTERNAL_URIS
 # @DESCRIPTION:
 # Rows of URIs.
@@ -41,22 +50,21 @@ BDEPEND+="
 # Git snapshot URIs must manually added and look like:
 # https://github.com/angular/dev-infra-private-build-tooling-builds/archive/<commit-id>.tar.gz -> yarnpkg-dev-infra-private-build-tooling-builds.git-<commit-id>.tgz
 
-# @ECLASS_VARIABLE: YARN_TARBALL
+# @ECLASS_VARIABLE: YARN_INSTALL_PATH
 # @DESCRIPTION:
-# The main package tarball.
+# The destination install path relative to EROOT.
 
 # @ECLASS_VARIABLE: YARN_ROOT
 # @DESCRIPTION:
 # The project root containing the yarn.lock file.
 
-# @ECLASS_VARIABLE: YARN_INSTALL_PATH
+# @ECLASS_VARIABLE: YARN_TARBALL
 # @DESCRIPTION:
-# The destination install path relative to EROOT.
+# The main package tarball.
 
-# @ECLASS_VARIABLE: YARN_EXE_LIST
+# @ECLASS_VARIABLE: YARN_TEST_SCRIPT
 # @DESCRIPTION:
-# A pregenerated list of paths to turn on executable bit.
-# Obtained partially from find ${YARN_INSTALL_PATH}/node_modules/ -path "*/.bin/*" | sort
+# The test script to run from package.json:scripts section.
 
 # @FUNCTION: _yarn_cp_tarballs
 # @INTERNAL
@@ -125,7 +133,10 @@ yarn_src_unpack() {
 # @DESCRIPTION:
 # Builds a yarn application.
 yarn_src_compile() {
-	local cmd="${YARN_TEST_SCRIPT:-build}"
+	[[ "${YARN_BUILD_SCRIPT}" == "none" ]] && return
+	[[ "${YARN_BUILD_SCRIPT}" == "null" ]] && return
+	[[ "${YARN_BUILD_SCRIPT}" == "skip" ]] && return
+	local cmd="${YARN_BUILD_SCRIPT:-build}"
 	grep -q -e "\"${cmd}\"" package.json || return
 	yarn run ${cmd} \
 		--frozen-lockfile \
@@ -138,6 +149,9 @@ yarn_src_compile() {
 # @DESCRIPTION:
 # Runs a yarn application test suite.
 yarn_src_test() {
+	[[ "${YARN_TEST_SCRIPT}" == "none" ]] && return
+	[[ "${YARN_TEST_SCRIPT}" == "null" ]] && return
+	[[ "${YARN_TEST_SCRIPT}" == "skip" ]] && return
 	local cmd="${YARN_TEST_SCRIPT:-test}"
 	grep -q -e "\"${cmd}\"" package.json || return
 	yarn run ${cmd} \
