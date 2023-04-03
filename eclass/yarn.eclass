@@ -30,6 +30,7 @@ esac
 EXPORT_FUNCTIONS src_unpack src_compile src_test src_install
 
 BDEPEND+="
+	app-misc/jq
 	sys-apps/yarn
 "
 
