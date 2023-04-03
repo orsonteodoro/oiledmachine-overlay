@@ -1,4 +1,4 @@
-# Copyright 2019-2022 Orson Teodoro
+# Copyright 2019-2022 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -19,7 +19,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-inherit chromium-2 desktop npm-utils
+inherit chromium-2 desktop npm-utils security-scan
 
 
 # ############## START Per-package environmental variables #####################
@@ -1215,230 +1215,9 @@ ewarn
 	fi
 }
 
-analytics_keywords=(
-	# Translation provided by Wikipedia
-	# Major languages scanned only
-
-	# analytics
-	"أناليتكس"		# arabic
-	"分析"			# chinese
-	"אנאליטיקס"		# hebrew/yiddish
-	"एनालिटिक्स"		# hindi (indian)
-	"アナリティクス"	# japanese
-	"애널리틱스"		# korean
-	"آنالیتیکس"		# persian
-	"Аналитика"		# russian
-	"แอนะลิติกส์"		# thai
-	"Аналітика"		# ukrainian
-
-	# telemetry
-	"قياس عن بعد"		# arabic
-	"遠測"			# chinese
-	"télémesure"		# french
-	"telemetrie"		# german
-	"טלמטריה"		# hebrew
-	"दूरमिति"		# hindi (indian)
-	"telemetria"		# italian
-	"遠隔測定法"		# japanese
-	"원격 측정법"		# korean
-	"دورسنجی"		# persian
-	"Телеметри́я"		# russian
-	"telemetría"		# spanish
-	"โทรมาตร"		# thai
-	"telemetri"		# turkish
-	"Телеметрія"		# ukrainian
-)
-
-_electron-app_get_analytics_keywords() {
-	IFS=$'\n'
-	local row
-	for row in ${analytics_keywords[@]} ; do
-		echo "${row}"
-	done
-	IFS=$' \t\n'
-}
-
-# @FUNCTION: electron-app_find_analytics
-# @DESCRIPTION:
-# Inspect and block apps that may spy on users without consent or no opt-out.
-electron-app_find_analytics() {
-	[[ "${ELECTRON_APP_ANALYTICS}" =~ ("allow"|"accept") ]] && return
-	local path
-
-	IFS=$'\n'
-	local L=(
-		$(find "${WORKDIR}" \
-			-name "package.json" \
-			-o -name "package.json" \
-			-o -name "package-lock.json" \
-			-o -name "yarn.lock")
-	)
-
-	local analytics_packages=(
-		"analytics"
-		"telemetry"
-		"glean"
-	)
-
-einfo "Scanning for analytics packages in package*.json or yarn.lock."
-	for path in ${L[@]} ; do
-		path=$(realpath "${path}")
-		local ap
-		for ap in ${analytics_packages[@]} ; do
-			if grep -q -e "${ap}" "${path}" ; then
-eerror
-eerror "An analytics package has been detected in ${PN} that may track user"
-eerror "behavior.  Often times, this kind of collection is unannounced in"
-eerror "in READMEs, or cowardly buried hidden under several subfolders, and"
-eerror "many times no way to opt out."
-eerror
-eerror "Keyword found:\t${ap}"
-eerror "Details:"
-	grep -n -e "${ap}" "${path}"
-eerror
-eerror "ELECTRON_APP_ANALYTICS=\"allow\"  # to continue installing"
-eerror "ELECTRON_APP_ANALYTICS=\"deny\"   # to stop installing (default)"
-eerror
-eerror "You should only apply these rules as a per-package environment"
-eerror "variable."
-eerror
-				die
-			fi
-		done
-
-	done
-	IFS=$' \t\n'
-}
-
-# @FUNCTION: electron-app_find_session_replay
-# @DESCRIPTION:
-# Inspect and block apps that may spy on users without consent or no opt-out.
-electron-app_find_session_replay() {
-	[[ "${ELECTRON_APP_SESSION_REPLAY}" =~ ("allow"|"accept") ]] && return
-	local path
-
-	IFS=$'\n'
-	local L=(
-		$(find "${WORKDIR}" \
-			-name "package.json" \
-			-o -name "package.json" \
-			-o -name "package-lock.json" \
-			-o -name "yarn.lock")
-	)
-
-	local session_replay_packages=(
-		"ffmpeg" # may access system ffmpeg with x11grab
-		"ffmpeg-screen-recorder" # tagged x11grab
-		"puppeteer-stream" # tagged x11grab
-		"record-screen" # tagged x11grab
-		"rrweb"
-		"recorder"
-		"screencast"
-		"woobi" # tagged x11grab
-
-		# User can define this globally in /etc/make.conf.
-		# It must be a space delimited string.
-		${ELECTRON_APP_SESSION_REPLAY_BLACKLIST}
-	)
-
-einfo "Scanning for session replay packages or recording packages in package*.json or yarn.lock."
-	for path in ${L[@]} ; do
-		path=$(realpath "${path}")
-		local ap
-		for ap in ${session_replay_packages[@]} ; do
-			if grep -q -e "${ap}" "${path}" ; then
-eerror
-eerror "A possible session replay or recording package has been detected in"
-eerror "${PN} that may record user behavior or sensitive data with greater"
-eerror "specificity which can be abused or compromise anonymity."
-eerror
-eerror "Package/pattern:\t${ap}"
-eerror "Details:"
-	grep -n -e "${ap}" "${path}"
-eerror
-eerror "ELECTRON_APP_SESSION_REPLAY=\"allow\"  # to continue installing"
-eerror "ELECTRON_APP_SESSION_REPLAY=\"deny\"   # to stop installing (default)"
-eerror
-eerror "You should only apply these rules as a per-package environment"
-eerror "variable."
-eerror
-				die
-			fi
-		done
-
-	done
-	IFS=$' \t\n'
-}
-
-# @FUNCTION: electron-app_find_session_replay_within_source_code
-# @DESCRIPTION:
-# Check abuse with exec/spawn
-electron-app_find_session_replay_within_source_code() {
-	[[ "${ELECTRON_APP_SESSION_REPLAY}" =~ ("allow"|"accept") ]] && return
-einfo "Scanning for possible unauthorized recording within code."
-	magick_formats="aai|ai|apng|art|ashlar|avs|bayer|bayera|bgr|bgra|bgro|bmp|bmp2|bmp3|brf|cal|cals|cin|cip|clip|cmyk|cmyka|cur|data|dcx|dds|dpx|dxt1|dxt5|epdf|epi|eps|eps2|eps3|epsf|epsi|ept|ept2|ept3|farbfeld|fax|ff|fits|fl32|flv|fts|ftxt|g3|g4|gif|gif87|gray|graya|group4|hdr|histogram|hrz|htm|html|icb|ico|icon|info|inline|ipl|isobrl|isobrl6|jng|jpe|jpeg|jpg|jps|json|kernel|m2v|m4v|map|mask|mat|matte|miff|mkv|mng|mono|mov|mp4|mpc|mpeg|mpg|msl|msvg|mtv|mvg|null|otb|pal|palm|pam|pbm|pcd|pcds|pcl|pct|pcx|pdb|pdf|pdfa|pfm|pgm|pgx|phm|picon|pict|pjpeg|png|png00|png24|png32|png48|png64|png8|pnm|pocketmod|ppm|ps|ps2|ps3|psb|psd|ptif|qoi|ras|rgb|rgba|rgbo|rgf|rsvg|sgi|shtml|six|sixel|sparse-co|strimg|sun|svg|svgz|tga|thumbnail|tiff|tiff64|txt|ubrl|ubrl6|uil|uyvy|vda|vicar|vid|viff|vips|vst|wbmp|webm|wmv|wpg|xbm|xpm|xv|yaml|ycbcr|ycbcra|yuv"
-	local pat="(magick.*import|import.*\.(${magick_formats})|kmsgrab|x11grab|xcbgrab|screen://|recordmydesktop)"
-	IFS=$'\n'
-	local path
-	for path in $(find "${WORKDIR}" -type f) ; do
-		path=$(realpath "${path}")
-		if grep -E -r -e "${pat}" "${path}" ; then
-eerror
-eerror "Possible unauthorized screen recording has been detected in"
-eerror "${PN} that may record user behavior or sensitive data with greater"
-eerror "specificity which can be abused or compromise anonymity."
-eerror
-eerror "Pattern:\t${pat}"
-eerror "Details:"
-	grep -n -e "${pat}" "${path}"
-eerror
-eerror "ELECTRON_APP_SESSION_REPLAY=\"allow\"  # to continue installing"
-eerror "ELECTRON_APP_SESSION_REPLAY=\"deny\"   # to stop installing (default)"
-eerror
-eerror "You should only apply these rules as a per-package environment"
-eerror "variable."
-eerror
-			die
-		fi
-	done
-	IFS=$' \t\n'
-}
-
-# @FUNCTION: electron-app_find_analytics_within_source_code
-# @DESCRIPTION:
-# Check unauthorized analytics within source code
-electron-app_find_analytics_within_source_code() {
-	[[ "${ELECTRON_APP_ANALYTICS}" =~ ("allow"|"accept") ]] && return
-einfo "Scanning for possible analytics within code."
-	local pat="analytics|$(_electron-app_get_analytics_keywords)"
-	IFS=$'\n'
-	local path
-	for path in $(find "${WORKDIR}" -type f) ; do
-		path=$(realpath "${path}")
-		if grep -E -i -r -e "(${pat})" "${path}" ; then
-eerror
-eerror "Analytics use within the code has detected in ${PN} that may track user"
-eerror "behavior.  Often times, this kind of collection is unannounced in"
-eerror "in READMEs, or cowardly buried hidden under several subfolders, and"
-eerror "many times no way to opt out."
-eerror
-eerror "Pattern:\t${pat}"
-eerror "Details:"
-	grep -n -e "${pat}" "${path}"
-eerror
-eerror "ELECTRON_APP_ANALYTICS=\"allow\"  # to continue installing"
-eerror "ELECTRON_APP_ANALYTICS=\"deny\"   # to stop installing (default)"
-eerror
-eerror "You should only apply these rules as a per-package environment"
-eerror "variable."
-eerror
-			die
-		fi
-	done
-	IFS=$' \t\n'
-}
-
 # @FUNCTION: electron-app_src_unpack
+# @DEPRECATED
+# Use the yarn eclass.
 # @DESCRIPTION:
 # Runs phases for downloading dependencies, unpacking, building
 # Compiling is done here to avoid sandbox issues.
@@ -1487,10 +1266,10 @@ eerror
 
 	# Inspect before embedding analytics.
 	electron-app_audit_versions
-	electron-app_find_analytics
-	electron-app_find_analytics_within_source_code
-	electron-app_find_session_replay
-	electron-app_find_session_replay_within_source_code
+	security-scan_find_analytics
+	security-scan_find_analytics_within_source_code
+	security-scan_find_session_replay
+	security-scan_find_session_replay_within_source_code
 
 	cd "${S}"
 	if declare -f electron-app_src_prepare > /dev/null ; then
@@ -1528,9 +1307,9 @@ eerror
 	# Another audit happens because electron-builder downloads again
 	# possibly vulnerable libraries.
 	electron-app_audit_versions
-	electron-app_find_analytics
-	electron-app_find_session_replay
-	electron-app_find_session_replay_within_source_code
+	security-scan_find_analytics
+	security-scan_find_session_replay
+	security-scan_find_session_replay_within_source_code
 
 	cd "${S}"
 	if declare -f electron-app_src_preinst > /dev/null ; then
@@ -1541,6 +1320,8 @@ eerror
 }
 
 # @FUNCTION: electron-app_src_postunpack_default
+# @DEPRECATED
+# Use the yarn eclass.
 # @DESCRIPTION:
 # Fetches dependencies and audit fixes them.
 electron-app_src_postunpack_default() {
@@ -1551,6 +1332,8 @@ electron-app_src_postunpack_default() {
 }
 
 # @FUNCTION: electron-app_eapply_user
+# @DEPRECATED
+# Use the yarn eclass.
 # @DESCRIPTION:
 # Patch without warning
 electron-app_eapply_user() {
@@ -1576,6 +1359,8 @@ electron-app_eapply_user() {
 }
 
 # @FUNCTION: electron-app_src_prepare_default
+# @DEPRECATED
+# Use the yarn eclass.
 # @DESCRIPTION:
 # Patches before compiling
 electron-app_src_prepare_default() {
@@ -1600,6 +1385,8 @@ eerror
 }
 
 # @FUNCTION: electron-app-build-npm
+# @DEPRECATED
+# Use the yarn eclass.
 # @DESCRIPTION:
 # Builds an electron app with npm
 electron-app-build-npm() {
@@ -1608,6 +1395,8 @@ electron-app-build-npm() {
 }
 
 # @FUNCTION: electron-app-build-yarn
+# @DEPRECATED
+# Use the yarn eclass.
 # @DESCRIPTION:
 # Builds an electron app with yarn
 electron-app-build-yarn() {
@@ -1615,6 +1404,8 @@ electron-app-build-yarn() {
 }
 
 # @FUNCTION: electron-app_src_compile_default
+# @DEPRECATED
+# Use the yarn eclass.
 # @DESCRIPTION:
 # Builds an electron app.
 electron-app_src_compile_default() {
@@ -1640,6 +1431,8 @@ eerror
 
 
 # @FUNCTION: electron-app_src_preinst_default
+# @DEPRECATED
+# Use the yarn eclass.
 # @DESCRIPTION:
 # Dummy function
 electron-app_src_preinst_default() {
@@ -2139,8 +1932,9 @@ electron-app_get_node_version()
 }
 
 # @FUNCTION: electron-app_src_install_finalize
+# @DEPRECATED
 # @DESCRIPTION:
 # Scans ${ED} for malware.
 electron-app_src_install_finalize() {
-	npm-utils_avscan "${ED}"
+	security-scan_avscan "${ED}"
 }

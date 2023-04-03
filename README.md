@@ -207,45 +207,30 @@ It can be enabled or disabled using per-package USE flags or systemwide through
 make.conf.  Examples how to do this are shown below:
 
 ```
-# Contents of /etc/portage/env/ot-kernel.conf
+# Contents of /etc/portage/env/disable-avscan.conf
 # 0 to disable, 1 to enable.
-OT_KERNEL_FIRMWARE_AVSCAN=0
-OT_KERNEL_LOGO_AVSCAN=0
+SECURITY_SCAN_AVSCAN=0
 ```
 
 ```
-# Contents of /etc/portage/env/js-disable-av-scan.conf
-# 0 to disable, 1 to enable.
-ELECTRON_APP_AV_SCAN=0
-NPM_SECAUDIT_AV_SCAN=0
-NPM_UTILS_AV_SCAN=0
-```
-
-```
-# Contents of /etc/portage/env/npm-allow-analytics.conf
+# Contents of /etc/portage/env/allow-analytics.conf
 # allow means continue build/install, deny or unset means stop build/install.
-ELECTRON_APP_ANALYTICS="allow"
-NPM_SECAUDIT_ANALYTICS="allow"
+SECURITY_SCAN_ANALYTICS="allow"
 ```
 
 ```
-# Contents of /etc/portage/env/npm-allow-session-replay.conf
+# Contents of /etc/portage/env/allow-session-replay.conf
 # allow means continue build/install, deny or unset means stop build/install.
-ELECTRON_APP_SESSION_REPLAY="allow"
-```
-
-```
-# Contents of /etc/portage/env/sr.conf
-# 0 to disable, 1 to enable.
-SR_SECURITY_SCAN=0
+SECURITY_SCAN_SESSION_REPLAY="allow"
 ```
 
 ```
 # Contents of /etc/portage/package.env:
-sys-kernel/ot-sources ot-kernel.conf
-media-gfx/blockbench js-disable-av-scan.conf
-media-gfx/upscayl npm-allow-session-replay.conf
-media-video/sr sr.conf
+dev-util/devhub allow-analytics.conf
+sys-kernel/ot-sources disable-avscan.conf
+media-gfx/blockbench disable-avscan.conf
+media-gfx/upscayl allow-session-replay.conf
+media-video/sr disable-avscan.conf
 ```
 
 #### Limitations

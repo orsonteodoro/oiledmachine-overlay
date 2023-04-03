@@ -5,7 +5,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_10 ) # Limited by tensorflow
-inherit git-r3 python-r1
+inherit git-r3 python-r1 security-scan
 
 DESCRIPTION="Image and video super resolution"
 HOMEPAGE="https://github.com/HighVoltageRocknRoll/sr"
@@ -430,10 +430,7 @@ eerror "${path} must have at least 1 asset."
 }
 
 av_scan_assets() {
-	if has_version "app-antivirus/clamav[clamapp]" ; then
-einfo "Scanning assets for malware"
-		clamscan -r "${WORKDIR}" || die
-	fi
+	security-scan_avscan "${WORKDIR}"
 }
 
 src_unpack() {
