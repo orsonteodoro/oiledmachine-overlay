@@ -1,4 +1,4 @@
-# Copyright 2023 Orson Teodoro
+# Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -47,6 +47,15 @@ BDEPEND+="
 # @ECLASS_VARIABLE: YARN_ROOT
 # @DESCRIPTION:
 # The project root containing the yarn.lock file.
+
+# @ECLASS_VARIABLE: YARN_INSTALL_PATH
+# @DESCRIPTION:
+# The destination install path relative to EROOT.
+
+# @ECLASS_VARIABLE: YARN_EXE_LIST
+# @DESCRIPTION:
+# A pregenerated list of paths to turn on executable bit.
+# Obtained partially from find ${YARN_INSTALL_PATH}/node_modules/ -path "*/.bin/*" | sort
 
 # @FUNCTION: _yarn_cp_tarballs
 # @INTERNAL
@@ -115,8 +124,9 @@ yarn_src_unpack() {
 # @DESCRIPTION:
 # Builds a yarn application.
 yarn_src_compile() {
-	grep -q -e '"build"' package.json || return
-	yarn build \
+	local cmd="${YARN_TEST_SCRIPT:-build}"
+	grep -q -e "\"${cmd}\"" package.json || return
+	yarn run ${cmd} \
 		--frozen-lockfile \
 		--prefer-offline \
 		--verbose \
@@ -127,15 +137,36 @@ yarn_src_compile() {
 # @DESCRIPTION:
 # Runs a yarn application test suite.
 yarn_src_test() {
-	grep -q -e '"test"' package.json || return
-	yarn test --verbose || die
+	local cmd="${YARN_TEST_SCRIPT:-test}"
+	grep -q -e "\"${cmd}\"" package.json || return
+	yarn run ${cmd} \
+		--verbose \
+		|| die
 }
 
 # @FUNCTION: yarn_src_install
 # @DESCRIPTION:
 # Installs a yarn application.
 yarn_src_install() {
-	if declare -f yarn_install_all ; then
-		yarn_install_all
-	fi
+	local install_path="${YARN_INSTALL_PATH:-/opt/${PN}}"
+	local rows=$(cat package.json \
+		| jq '.bin' \
+		| grep ":")
+	insinto "${install_path}"
+	doins -r *
+	IFS=$'\n'
+	local row
+	for row in ${rows[@]} ; do
+		local name=$(echo "${row}" \
+			| cut -f 2 -d '"')
+		local cmd=$(echo "${row}" \
+			| cut -f 4 -d '"' \
+			| sed -e "s|^\./||g")
+		dosym "${YARN_INSTALL_PATH}/${cmd}" "/usr/bin/${name}"
+	done
+	local path
+	for path in ${YARN_EXE_LIST} ; do
+		chmod 0755 "${ED}${path}" || die
+	done
+	IFS=$' \t\n'
 }

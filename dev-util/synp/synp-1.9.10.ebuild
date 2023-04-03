@@ -4,6 +4,69 @@
 
 EAPI=8
 
+YARN_INSTALL_PATH="/opt/${PN}"
+YARN_EXE_LIST="
+${YARN_INSTALL_PATH}/cli/synp.js
+${YARN_INSTALL_PATH}/cli/write-output.js
+${YARN_INSTALL_PATH}/cli/validate-path.js
+${YARN_INSTALL_PATH}/cli/validate-args.js
+${YARN_INSTALL_PATH}/cli/run.js
+${YARN_INSTALL_PATH}/node_modules/.bin/acorn
+${YARN_INSTALL_PATH}/node_modules/.bin/eslint
+${YARN_INSTALL_PATH}/node_modules/.bin/esparse
+${YARN_INSTALL_PATH}/node_modules/.bin/esvalidate
+${YARN_INSTALL_PATH}/node_modules/.bin/ignored
+${YARN_INSTALL_PATH}/node_modules/.bin/js-yaml
+${YARN_INSTALL_PATH}/node_modules/.bin/jsesc
+${YARN_INSTALL_PATH}/node_modules/.bin/json5
+${YARN_INSTALL_PATH}/node_modules/.bin/loose-envify
+${YARN_INSTALL_PATH}/node_modules/.bin/nmtree
+${YARN_INSTALL_PATH}/node_modules/.bin/nyc
+${YARN_INSTALL_PATH}/node_modules/.bin/parser
+${YARN_INSTALL_PATH}/node_modules/.bin/rimraf
+${YARN_INSTALL_PATH}/node_modules/.bin/semver
+${YARN_INSTALL_PATH}/node_modules/.bin/standard
+${YARN_INSTALL_PATH}/node_modules/.bin/tape
+${YARN_INSTALL_PATH}/node_modules/.bin/uuid
+${YARN_INSTALL_PATH}/node_modules/.bin/which
+${YARN_INSTALL_PATH}/node_modules/@babel/core/node_modules/.bin/json5
+${YARN_INSTALL_PATH}/node_modules/@babel/core/node_modules/.bin/parser
+${YARN_INSTALL_PATH}/node_modules/@babel/core/node_modules/.bin/semver
+${YARN_INSTALL_PATH}/node_modules/@babel/generator/node_modules/.bin/jsesc
+${YARN_INSTALL_PATH}/node_modules/@babel/template/node_modules/.bin/parser
+${YARN_INSTALL_PATH}/node_modules/@babel/traverse/node_modules/.bin/parser
+${YARN_INSTALL_PATH}/node_modules/@eslint/eslintrc/node_modules/.bin/js-yaml
+${YARN_INSTALL_PATH}/node_modules/@istanbuljs/load-nyc-config/node_modules/.bin/js-yaml
+${YARN_INSTALL_PATH}/node_modules/acorn-jsx/node_modules/.bin/acorn
+${YARN_INSTALL_PATH}/node_modules/bash-glob/node_modules/cross-spawn/node_modules/.bin/which
+${YARN_INSTALL_PATH}/node_modules/cross-spawn/node_modules/.bin/node-which
+${YARN_INSTALL_PATH}/node_modules/eslint-config-standard-jsx/node_modules/.bin/eslint
+${YARN_INSTALL_PATH}/node_modules/eslint-config-standard/node_modules/.bin/eslint
+${YARN_INSTALL_PATH}/node_modules/eslint-plugin-es/node_modules/.bin/eslint
+${YARN_INSTALL_PATH}/node_modules/eslint-plugin-import/node_modules/.bin/eslint
+${YARN_INSTALL_PATH}/node_modules/eslint-plugin-node/node_modules/.bin/eslint
+${YARN_INSTALL_PATH}/node_modules/eslint-plugin-node/node_modules/.bin/semver
+${YARN_INSTALL_PATH}/node_modules/eslint-plugin-promise/node_modules/.bin/eslint
+${YARN_INSTALL_PATH}/node_modules/eslint-plugin-react/node_modules/.bin/eslint
+${YARN_INSTALL_PATH}/node_modules/eslint/node_modules/.bin/js-yaml
+${YARN_INSTALL_PATH}/node_modules/eslint/node_modules/.bin/semver
+${YARN_INSTALL_PATH}/node_modules/espree/node_modules/.bin/acorn
+${YARN_INSTALL_PATH}/node_modules/flat-cache/node_modules/.bin/rimraf
+${YARN_INSTALL_PATH}/node_modules/istanbul-lib-instrument/node_modules/.bin/semver
+${YARN_INSTALL_PATH}/node_modules/istanbul-lib-processinfo/node_modules/.bin/rimraf
+${YARN_INSTALL_PATH}/node_modules/istanbul-lib-processinfo/node_modules/.bin/uuid
+${YARN_INSTALL_PATH}/node_modules/js-yaml/node_modules/.bin/esparse
+${YARN_INSTALL_PATH}/node_modules/js-yaml/node_modules/.bin/esvalidate
+${YARN_INSTALL_PATH}/node_modules/make-dir/node_modules/.bin/semver
+${YARN_INSTALL_PATH}/node_modules/normalize-package-data/node_modules/.bin/semver
+${YARN_INSTALL_PATH}/node_modules/nyc/node_modules/.bin/rimraf
+${YARN_INSTALL_PATH}/node_modules/prop-types/node_modules/.bin/loose-envify
+${YARN_INSTALL_PATH}/node_modules/spawn-wrap/node_modules/.bin/node-which
+${YARN_INSTALL_PATH}/node_modules/spawn-wrap/node_modules/.bin/rimraf
+${YARN_INSTALL_PATH}/node_modules/standard/node_modules/.bin/eslint
+${YARN_INSTALL_PATH}/node_modules/tape/node_modules/.bin/ignored
+${YARN_INSTALL_PATH}/node_modules/tsconfig-paths/node_modules/.bin/json5
+"
 inherit yarn
 
 DESCRIPTION="Convert yarn.lock to package-lock.json and vice versa"
@@ -11,7 +74,7 @@ HOMEPAGE="https://github.com/imsnif/synp"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test"
+IUSE+=" "
 DEPEND+="
 "
 RDEPEND+="
@@ -20,7 +83,7 @@ RDEPEND+="
 BDEPEND+="
 	dev-util/yarn
 "
-# grep "resolved" /var/tmp/portage/dev-lang/typescript-4.9.5/work/TypeScript-4.9.5/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
+# grep "resolved" /var/tmp/portage/dev-util/synp-1.9.10/work/synp-1.9.10/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
 # UPDATER_START_YARN_EXTERNAL_URIS
 YARN_EXTERNAL_URIS="
 https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.12.11.tgz -> yarnpkg-@babel-code-frame-7.12.11.tgz
@@ -411,11 +474,3 @@ https://github.com/imsnif/synp/archive/refs/tags/v${PV}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-
-src_install() {
-	export NPM_SECAUDIT_INSTALL_PATH="/opt/${PN}"
-	insinto "${NPM_SECAUDIT_INSTALL_PATH}"
-	doins -r *
-	fperms 0755 "${NPM_SECAUDIT_INSTALL_PATH}/cli/synp.js"
-	dosym "${NPM_SECAUDIT_INSTALL_PATH}/cli/synp.js" /usr/bin/synp
-}
