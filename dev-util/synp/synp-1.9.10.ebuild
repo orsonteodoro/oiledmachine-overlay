@@ -4,6 +4,7 @@
 
 EAPI=8
 
+NODE_VERSION=16
 YARN_INSTALL_PATH="/opt/${PN}"
 YARN_EXE_LIST="
 ${YARN_INSTALL_PATH}/cli/synp.js
@@ -77,11 +78,13 @@ KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 DEPEND+="
+	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 "
 RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
+	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	dev-util/yarn
 "
 # grep "resolved" /var/tmp/portage/dev-util/synp-1.9.10/work/synp-1.9.10/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
