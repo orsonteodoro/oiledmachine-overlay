@@ -20,7 +20,7 @@
 
     The project is rolling release.  No LTS versions.
 
-    LLVM 17 (dev) - 3.1.34 (Upstream supported 3.1.x)
+    LLVM 17 (dev) - 3.1.35 (Upstream supported 3.1.x)
     LLVM 16 (dev) - 3.1.30 (Upstream supported 3.1.x)
     LLVM 15 (stable) - 3.1.17 (EOL)
     LLVM 14 (stable) - 3.1.3 (EOL)

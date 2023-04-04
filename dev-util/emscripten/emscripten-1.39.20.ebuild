@@ -205,34 +205,14 @@ BDEPEND+="
 "
 FN_DEST="${P}.tar.gz"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
-RESTRICT="fetch mirror"
+RESTRICT="mirror"
 DEST="/usr/share/"
 TEST="${WORKDIR}/test/"
-DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
-FN_SRC="${PV}.tar.gz"
 _PATCHES=(
 	"${FILESDIR}/${PN}-1.39.20-set-wrappers-path.patch"
 	"${FILESDIR}/${PN}-1.40.1-78a5618.patch"
 )
 EMSCRIPTEN_CONFIG_V="2.0.26"
-
-pkg_nofetch() {
-	# No fetch on all-rights-reserved
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	local dl_uri="https://github.com/emscripten-core/emscripten/archive/${FN_SRC}"
-eerror
-eerror "Please download"
-eerror
-eerror "  ${FN_SRC}"
-eerror
-eerror "from ${DOWNLOAD_SITE} and rename it to ${FN_DEST} place it in"
-eerror "${distdir}."
-eerror
-eerror "If you are in a hurry, you can do"
-eerror
-eerror "  wget -O ${distdir}/${FN_DEST} ${dl_uri}"
-eerror
-}
 
 setup_openjdk() {
 	local jdk_bin_basepath

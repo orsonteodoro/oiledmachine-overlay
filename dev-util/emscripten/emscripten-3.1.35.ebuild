@@ -4,7 +4,7 @@
 EAPI=8
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/3.1.34/tools/config_template.py
+# https://github.com/emscripten-core/emscripten/blob/3.1.35/tools/config_template.py
 
 # TC = toolchain
 BINARYEN_PV="112" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
@@ -136,13 +136,13 @@ REQUIRED_USE+="
 "
 # For DEPENDs:
 # See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/3.1.34/site/source/docs/building_from_source/toolchain_what_is_needed.rst
-# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/3.1.34/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
-# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.34/package.json
+# See also https://github.com/emscripten-core/emscripten/blob/3.1.35/site/source/docs/building_from_source/toolchain_what_is_needed.rst
+# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/3.1.35/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
+# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.35/package.json
 # For the required closure-compiler-nodejs node version, see https://github.com/google/closure-compiler-npm/blob/v20220502.0.0/packages/google-closure-compiler/package.json
 # For the required Java, See https://github.com/google/closure-compiler/blob/v20220502/.github/workflows/ci.yaml#L43
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.34/tools/shared.py#L50
-# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.34/tools/shared.py#L43
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.35/tools/shared.py#L50
+# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.35/tools/shared.py#L43
 JDK_DEPEND="
 	|| (
 		dev-java/openjdk-bin:${JAVA_PV}
@@ -205,35 +205,15 @@ BDEPEND+="
 "
 FN_DEST="${P}.tar.gz"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
-RESTRICT="fetch mirror"
+RESTRICT="mirror"
 DEST="/usr/share/"
 TEST="${WORKDIR}/test/"
-DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
-FN_SRC="${PV}.tar.gz"
 _PATCHES=(
 	"${FILESDIR}/${PN}-3.1.20-set-wrappers-path.patch"
 	"${FILESDIR}/${PN}-3.1.28-includes.patch"
 	"${FILESDIR}/${PN}-3.1.28-libcxxabi_no_exceptions-already-defined.patch"
 )
 EMSCRIPTEN_CONFIG_V="2.0.26"
-
-pkg_nofetch() {
-	# No fetch on all-rights-reserved
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	local dl_uri="https://github.com/emscripten-core/emscripten/archive/${FN_SRC}"
-eerror
-eerror "Please download"
-eerror
-eerror "  ${FN_SRC}"
-eerror
-eerror "from ${DOWNLOAD_SITE} and rename it to ${FN_DEST} place it in"
-eerror "${distdir}."
-eerror
-eerror "If you are in a hurry, you can do"
-eerror
-eerror "  wget -O ${distdir}/${FN_DEST} ${dl_uri}"
-eerror
-}
 
 setup_openjdk() {
 	local jdk_bin_basepath
