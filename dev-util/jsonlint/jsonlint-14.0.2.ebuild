@@ -6,7 +6,45 @@ EAPI=8
 
 NODE_VERSION="18"
 YARN_INSTALL_PATH="/opt/${PN}"
+YARN_TARBALL="prantlf-${P}.tar.gz"
 YARN_EXE_LIST="
+${YARN_INSTALL_PATH}/lib/cli.js
+${YARN_INSTALL_PATH}/node_modules/.bin/c8
+${YARN_INSTALL_PATH}/node_modules/.bin/cat.js
+${YARN_INSTALL_PATH}/node_modules/.bin/denolint
+${YARN_INSTALL_PATH}/node_modules/.bin/esbuild
+${YARN_INSTALL_PATH}/node_modules/.bin/he
+${YARN_INSTALL_PATH}/node_modules/.bin/http-server
+${YARN_INSTALL_PATH}/node_modules/.bin/js-yaml
+${YARN_INSTALL_PATH}/node_modules/.bin/mime
+${YARN_INSTALL_PATH}/node_modules/.bin/mkdirp
+${YARN_INSTALL_PATH}/node_modules/.bin/mv.js
+${YARN_INSTALL_PATH}/node_modules/.bin/node-which
+${YARN_INSTALL_PATH}/node_modules/.bin/opener
+${YARN_INSTALL_PATH}/node_modules/.bin/resolve
+${YARN_INSTALL_PATH}/node_modules/.bin/rimraf
+${YARN_INSTALL_PATH}/node_modules/.bin/rollup
+${YARN_INSTALL_PATH}/node_modules/.bin/semver
+${YARN_INSTALL_PATH}/node_modules/.bin/tehanu
+${YARN_INSTALL_PATH}/node_modules/.bin/teru
+${YARN_INSTALL_PATH}/node_modules/.bin/teru-cjs
+${YARN_INSTALL_PATH}/node_modules/.bin/teru-esm
+${YARN_INSTALL_PATH}/node_modules/.bin/tsc
+${YARN_INSTALL_PATH}/node_modules/.bin/tsserver
+${YARN_INSTALL_PATH}/node_modules/@rollup/plugin-commonjs/node_modules/.bin/rollup
+${YARN_INSTALL_PATH}/node_modules/@rollup/plugin-json/node_modules/.bin/rollup
+${YARN_INSTALL_PATH}/node_modules/@rollup/plugin-node-resolve/node_modules/.bin/resolve
+${YARN_INSTALL_PATH}/node_modules/@rollup/plugin-node-resolve/node_modules/.bin/rollup
+${YARN_INSTALL_PATH}/node_modules/@rollup/pluginutils/node_modules/.bin/rollup
+${YARN_INSTALL_PATH}/node_modules/c8/node_modules/.bin/rimraf
+${YARN_INSTALL_PATH}/node_modules/cosmiconfig/node_modules/.bin/js-yaml
+${YARN_INSTALL_PATH}/node_modules/cross-spawn/node_modules/.bin/node-which
+${YARN_INSTALL_PATH}/node_modules/http-server/node_modules/.bin/he
+${YARN_INSTALL_PATH}/node_modules/http-server/node_modules/.bin/mime
+${YARN_INSTALL_PATH}/node_modules/http-server/node_modules/.bin/opener
+${YARN_INSTALL_PATH}/node_modules/make-dir/node_modules/.bin/semver
+${YARN_INSTALL_PATH}/node_modules/portfinder/node_modules/.bin/mkdirp
+${YARN_INSTALL_PATH}/node_modules/rollup-plugin-swc-minify/node_modules/.bin/rollup
 "
 YARN_TEST_SCRIPT="test"
 inherit yarn
@@ -30,7 +68,7 @@ BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}
 	dev-util/yarn
 "
-# grep "resolved" /var/tmp/portage/dev-util/jsonlint-14.0.2/work/jsonlint-14.0.2/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
+# grep "resolved" ${YARN_INSTALL_PATH}/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
 # UPDATER_START_YARN_EXTERNAL_URIS
 YARN_EXTERNAL_URIS="
 https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.21.4.tgz -> yarnpkg-@babel-code-frame-7.21.4.tgz
