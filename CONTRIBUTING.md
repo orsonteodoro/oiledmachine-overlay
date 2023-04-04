@@ -277,6 +277,7 @@ based on an outdated style guide.
   - Packages that rely on EOL versions and not stable versions of python, gcc,
     and do not have a ebuild version from the distro overlay and this overlay
     are not supported.
+  - For npm based packages, use the yarn for offline install instead.
 
 * eclass rules:
   - All `.eclass`es must be GPL2 only or have a GPL2 compatible license header.
