@@ -8,7 +8,7 @@ main() {
 			| grep -E -o -e "[0-9]+.[0-9]+.[0-9]+(-r[0-9]+)?")
 	)
 # Do one by one because of flakey servers.
-	versions=( 4.5.5 4.8.4 4.9.5 5.0.2)
+#	versions=(4.5.5 4.8.4 4.9.5 5.0.2)
 #	versions=(4.2.4-r1 4.4.4 4.5.5 4.8.4 4.9.5 5.0.2)
 #	versions=(4.2.4-r1 4.4.4)
 #	versions=(5.0.2)
