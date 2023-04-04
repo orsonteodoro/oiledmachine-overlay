@@ -287,7 +287,7 @@ https://github.com/prantlf/jsonlint/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 S="${WORKDIR}/${P}"
-RESTRICT="mirror"
+RESTRICT="mirror test" # Missing dev dependencies
 
 pkg_setup() {
 	[[ "${UPDATE_YARN_LOCK}" == "1" ]] && return
