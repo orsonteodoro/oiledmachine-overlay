@@ -17,8 +17,15 @@
 
 # For package.json -> yarn.lock:
 # (The network-sandbox needs to be disabled temporarily.)
-# npm i --package-lock-only
+# npm i --package-lock
 # yarn import
+
+# When creating a lockfile, one of the dev dependencies may have vanished.
+# If it fails with:
+#
+#   error Failed to import from package-lock.json, source file(s) corrupted
+#
+# Try with `npm i --prod` to generate the lockfile.
 
 # The yarn.lock must be regenerated for security updates every week.
 
