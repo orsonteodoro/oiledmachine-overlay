@@ -8,10 +8,13 @@ main() {
 			| grep -E -o -e "[0-9]+.[0-9]+.[0-9]+(-r[0-9]+)?")
 	)
 # Do one by one because of flakey servers.
+	versions=( 4.5.5 4.8.4 4.9.5 5.0.2)
+#	versions=(4.2.4-r1 4.4.4 4.5.5 4.8.4 4.9.5 5.0.2)
+#	versions=(4.2.4-r1 4.4.4)
 #	versions=(5.0.2)
 #	versions=(3.9.10)
 #	versions=(4.0.8)
-	versions=(4.1.6)
+#	versions=(4.1.6)
 	export UPDATE_YARN_LOCK=1
 	local pv
 	for pv in ${versions[@]} ; do
@@ -37,7 +40,7 @@ EOF
 		mv "typescript-${pv}.ebuild"{.t,}
 cat <<EOF > extern-uris.txt
 YARN_EXTERNAL_URIS="
-$(cat yarn-uris.txt)
+$(cat transformed-uris.txt)
 "
 EOF
 		block=$(cat extern-uris.txt)
