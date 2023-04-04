@@ -17,7 +17,8 @@
 
 # For package.json -> yarn.lock:
 # (The network-sandbox needs to be disabled temporarily.)
-# npm i --package-lock
+# npm i            # or use npm i --prod
+# npm audit fix
 # yarn import
 
 # When creating a lockfile, one of the dev dependencies may have vanished.

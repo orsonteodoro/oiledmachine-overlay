@@ -4,11 +4,16 @@
 
 EAPI=8
 
+YARN_INSTALL_PATH="/opt/${PN}/${PV}"
 MY_PN="TypeScript"
 NPM_SECAUDIT_AT_TYPES_NODE_PV="14.14.2"
 # Same as package-lock but uses latest always latest.
 # See https://www.npmjs.com/package/@types/node
 NODE_VERSION="${NPM_SECAUDIT_AT_TYPES_NODE_PV%%.*}" # Using nodejs muxer variable name.
+YARN_EXE_LIST="
+"${YARN_INSTALL_PATH}/bin/tsc"
+"${YARN_INSTALL_PATH}/bin/tsserver"
+"
 
 NPM_SECAUDIT_TYPESCRIPT_PV="${PV}"
 inherit yarn
@@ -45,6 +50,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
+	dev-util/synp
 	media-libs/vips
 	sys-apps/yarn
 "
@@ -878,19 +884,13 @@ src_unpack() {
 	if [[ "${UPDATE_YARN_LOCK}" == "1" ]] ; then
 		unpack ${P}.tar.gz
 		cd "${S}" || die
+		rm package-lock.json
+		npm i || die
+		npm audit fix || die
 		yarn import || die
 	else
 		yarn_src_unpack
 	fi
-}
-
-src_install() {
-	export NPM_SECAUDIT_INSTALL_PATH="/opt/${PN}/${PV}"
-	insinto "${NPM_SECAUDIT_INSTALL_PATH}"
-	doins -r *
-	fperms 0755 \
-		"${NPM_SECAUDIT_INSTALL_PATH}/bin/tsc" \
-		"${NPM_SECAUDIT_INSTALL_PATH}/bin/tsserver"
 }
 
 pkg_postinst() {
