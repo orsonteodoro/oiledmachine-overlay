@@ -7,9 +7,11 @@ main() {
 			| tr " " "\n" \
 			| grep -E -o -e "[0-9]+.[0-9]+.[0-9]+(-r[0-9]+)?")
 	)
+# Do one by one because of flakey servers.
 #	versions=(5.0.2)
-#	versions=(3.9.10) # Do one by one because of flakey servers.
-	versions=(4.0.8) # Do one by one because of flakey servers.
+#	versions=(3.9.10)
+#	versions=(4.0.8)
+	versions=(4.1.6)
 	export UPDATE_YARN_LOCK=1
 	local pv
 	for pv in ${versions[@]} ; do
