@@ -284,7 +284,7 @@ https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz -> yarnpkg-yoct
 SRC_URI="
 ${YARN_EXTERNAL_URIS}
 https://github.com/prantlf/jsonlint/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
+	-> prantlf-${P}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror test" # Missing dev dependencies
