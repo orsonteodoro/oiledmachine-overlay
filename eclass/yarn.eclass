@@ -35,7 +35,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-EXPORT_FUNCTIONS src_unpack src_compile src_test src_install
+EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test src_install
 
 BDEPEND+="
 	app-misc/jq
@@ -73,6 +73,41 @@ BDEPEND+="
 # @ECLASS_VARIABLE: YARN_TEST_SCRIPT
 # @DESCRIPTION:
 # The test script to run from package.json:scripts section.
+
+# @FUNCTION: yarn_pkg_setup
+# @DESCRIPTION:
+# Checks node slot required for building
+yarn_pkg_setup() {
+	local found=0
+	local slot
+	if [[ -n "${NODE_SLOTS}" ]] ; then
+		for slot in ${NODE_SLOTS} ; do
+			if has_version "=net-libs/nodejs-${slot}*" ; then
+				export NODE_VERSION=${slot}
+				found=1
+				break
+			fi
+		done
+		if (( ${found} == 0 )) ; then
+eerror
+eerror "Did not find an installed nodejs slot."
+eerror "Expected node versions:  ${NODE_SLOTS}"
+eerror
+			die
+		fi
+	elif [[ -n "${NODE_VERSION}" ]] ; then
+		if has_version "=net-libs/nodejs-${NODE_VERSION}*" ; then
+			found=1
+		fi
+		if (( ${found} == 0 )) ; then
+eerror
+eerror "Did not find an installed nodejs slot."
+eerror "Expected node version:  ${NODE_VERSION}"
+eerror
+			die
+		fi
+	fi
+}
 
 # @FUNCTION: _yarn_cp_tarballs
 # @INTERNAL

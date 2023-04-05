@@ -54,7 +54,8 @@ BDEPEND+="
 	media-libs/vips
 	sys-apps/yarn
 "
-# grep "resolved" /var/tmp/portage/dev-lang/typescript-4.0.8/work/TypeScript-4.0.8/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
+# Initially generated from:
+#   grep "resolved" /var/tmp/portage/dev-lang/typescript-4.0.8/work/TypeScript-4.0.8/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
 # UPDATER_START_YARN_EXTERNAL_URIS
 YARN_EXTERNAL_URIS="
 https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.21.4.tgz -> yarnpkg-@babel-code-frame-7.21.4.tgz

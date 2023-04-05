@@ -54,7 +54,8 @@ BDEPEND+="
 	media-libs/vips
 	sys-apps/yarn
 "
-# grep "resolved" /var/tmp/portage/dev-lang/typescript-4.8.4/work/TypeScript-4.8.4/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
+# Initially generated from:
+#   grep "resolved" /var/tmp/portage/dev-lang/typescript-4.8.4/work/TypeScript-4.8.4/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
 # UPDATER_START_YARN_EXTERNAL_URIS
 YARN_EXTERNAL_URIS="
 https://registry.yarnpkg.com/@es-joy/jsdoccomment/-/jsdoccomment-0.31.0.tgz -> yarnpkg-@es-joy-jsdoccomment-0.31.0.tgz

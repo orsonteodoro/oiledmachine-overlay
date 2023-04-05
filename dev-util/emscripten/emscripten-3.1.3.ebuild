@@ -7,13 +7,12 @@ EAPI=8
 # https://github.com/emscripten-core/emscripten/blob/3.1.3/tools/config_template.py
 
 # TC = toolchain
-BINARYEN_PV="104" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
-JAVA_PV="11"
+BINARYEN_PV=104 # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
+JAVA_PV=11
 LLVM_SLOT=14
 LLVM_MAX_SLOT=${LLVM_SLOT}
 PYTHON_COMPAT=( python3_{8..11} )
-inherit flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1
-inherit toolchain-funcs
+inherit flag-o-matic java-utils-2 llvm python-single-r1 toolchain-funcs
 
 DESCRIPTION="LLVM-to-JavaScript Compiler"
 HOMEPAGE="http://emscripten.org/"
@@ -110,7 +109,7 @@ SLOT="${LLVM_SLOT}-$(ver_cut 1-2 ${PV})"
 CLOSURE_COMPILER_SLOT="0"
 IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
-closure_compiler_nodejs system-closure-compiler test
+closure_compiler_nodejs test
 
 r3
 "
@@ -125,8 +124,7 @@ REQUIRED_USE+="
 	closure_compiler_nodejs? (
 		closure-compiler
 	)
-	system-closure-compiler? (
-		closure-compiler
+	closure-compiler? (
 		^^ (
 			closure_compiler_native
 			closure_compiler_java
@@ -161,15 +159,9 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	closure-compiler? (
-		!system-closure-compiler? (
-			${JRE_DEPEND}
-			>=net-libs/nodejs-10
-		)
-		system-closure-compiler? (
-			>=dev-util/closure-compiler-npm-20220104.0.0:\
+		>=dev-util/closure-compiler-npm-20220104.0.0:\
 ${CLOSURE_COMPILER_SLOT}\
 [closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?]
-		)
 		closure_compiler_java? (
 			${JRE_DEPEND}
 		)
@@ -188,9 +180,6 @@ ${CLOSURE_COMPILER_SLOT}\
 DEPEND+="
 	${RDEPEND}
 	closure-compiler? (
-		!system-closure-compiler? (
-			${JRE_DEPEND}
-		)
 		closure_compiler_java? (
 			${JRE_DEPEND}
 		)
@@ -278,9 +267,6 @@ eerror
 			fi
 			# java-pkg_ensure-vm-version-ge ${JAVA_PV}
 		fi
-		if ! use system-closure-compiler ; then
-			npm-secaudit_pkg_setup
-		fi
 	fi
 	if use test ; then
 		if [[ ! "${FEATURES}" =~ test ]] ; then
@@ -324,33 +310,19 @@ prepare_file() {
 	sed -i "s|\${EPREFIX}|${EPREFIX}|g" \
 		"${dest_dir}/${source_filename}" || die
 	if use closure-compiler ; then
-		if use system-closure-compiler ; then
-			local cmd
-			if use closure_compiler_java ; then
-				cmd="${EPREFIX}/usr/bin/closure-compiler-java"
-			elif use closure_compiler_nodejs ; then
-				cmd="${EPREFIX}/usr/bin/closure-compiler-node"
-			elif use closure_compiler_native ; then
-				cmd="${EPREFIX}/usr/bin/closure-compiler"
-			fi
-			sed -i -e "s|__EMSDK_CLOSURE_COMPILER__|\"${cmd}\"|" \
-				"${dest_dir}/${source_filename}" || die
-		else
-			# Using defaults
-			sed -i -e "/EMSDK_CLOSURE_COMPILER/d" \
-				"${dest_dir}/${source_filename}" || die
+		local cmd
+		if use closure_compiler_java ; then
+			cmd="${EPREFIX}/usr/bin/closure-compiler-java"
+		elif use closure_compiler_nodejs ; then
+			cmd="${EPREFIX}/usr/bin/closure-compiler-node"
+		elif use closure_compiler_native ; then
+			cmd="${EPREFIX}/usr/bin/closure-compiler"
 		fi
+		sed -i -e "s|__EMSDK_CLOSURE_COMPILER__|\"${cmd}\"|" \
+			"${dest_dir}/${source_filename}" || die
 	else
 		sed -i "/EMSDK_CLOSURE_COMPILER/d" \
 			"${dest_dir}/${source_filename}" || die
-	fi
-}
-
-src_unpack() {
-	unpack ${A}
-	if use closure-compiler && ! use system-closure-compiler ; then
-		# Fetches and builds the closure compiler here.
-		npm-secaudit_src_unpack
 	fi
 }
 
@@ -370,10 +342,6 @@ src_configure() {
 }
 
 src_compile() {
-	:;
-}
-
-npm-secaudit_src_compile() {
 	:;
 }
 
@@ -449,17 +417,10 @@ src_install() {
 		-exec rm -vrf "{}" \;
 	#	-o -name "node_modules" was included but removed for closure-compiler
 	cp -R "${S}/" "${D}/${DEST}" || die "Could not install files"
-	if use closure-compiler && ! use system-closure-compiler ; then
-		npm-secaudit_src_install_finalize
-	fi
 }
 
 pkg_postinst() {
 	eselect emscripten set "emscripten-${PV},llvm-${LLVM_SLOT}"
-	if use closure-compiler && ! use system-closure-compiler ; then
-		export NPM_SECAUDIT_INSTALL_PATH="${DEST}/${P}"
-		npm-secaudit_pkg_postinst
-	fi
 einfo
 einfo "Set to wasm (llvm) output via app-eselect/eselect-emscripten."
 einfo

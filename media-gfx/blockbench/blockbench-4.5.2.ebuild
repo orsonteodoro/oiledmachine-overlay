@@ -6,13 +6,14 @@ EAPI=8
 
 MY_PN="${PN^}"
 
+export YARN_INSTALL_PATH="/opt/${PN}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}_${PV}.AppImage"
 ELECTRON_APP_ELECTRON_PV="21.2.2"
 ELECTRON_APP_MODE="npm"
 NODE_VERSION=16
 NODE_ENV=development
-inherit desktop electron-app npm-utils
+inherit desktop electron-app lcnr
 
 DESCRIPTION="Blockbench - A boxy 3D model editor"
 HOMEPAGE="https://www.blockbench.net"
@@ -122,40 +123,45 @@ BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
 "
+# Initially generated from:
+#   grep "resolved" /var/tmp/portage/media-gfx/blockbench-4.5.2/work/blockbench-4.5.2/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
+# For the generator script, see the typescript/transform-uris.sh ebuild-package.
+# UPDATER_START_YARN_EXTERNAL_URIS
+YARN_EXTERNAL_URIS="
+"
+# UPDATER_END_YARN_EXTERNAL_URIS
 SRC_URI="
+${YARN_EXTERNAL_URIS}
 https://github.com/JannisX11/blockbench/archive/v${PV}.tar.gz
 	-> ${PN}-${PV}.tar.gz
 "
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 
-pkg_setup() {
-	electron-app_pkg_setup
-	if [[ "${NPM_UTILS_ALLOW_AUDIT}" != "0" ]] ; then
+src_compile() {
 eerror
-eerror "NPM_UTILS_ALLOW_AUDIT=0 needs to be added as a per-package envvar"
+eerror "This ebuild is under maintenance for Yarn offline install."
 eerror
-		die
-	fi
-}
-
-electron-app_src_compile() {
+die
 	cd "${S}" || die
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	electron-builder -l dir || die
 }
 
 src_install() {
-	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}/"
-	electron-app_desktop_install \
-		"dist/linux-unpacked/*" \
-		"icon.png" \
+	electron-app_gen_wrapper \
+		"${PN}" \
+		"${YARN_INSTALL_PATH}/${PN}"
+	newicon "icon.png" "${PN}.png"
+	make_desktop_entry \
+		"/usr/bin/${PN}"
 		"${PN^}" \
-		"Graphics;3DGraphics" \
-		"${ELECTRON_APP_INSTALL_PATH}/${PN}"
-	fperms 0755 ${ELECTRON_APP_INSTALL_PATH}/blockbench
-	npm-utils_install_licenses
-	electron-app_src_install_finalize
+		"${PN}.png"
+		"Graphics;3DGraphics"
+	insinto "${YARN_INSTALL_PATH}"
+	doins -r "dist/linux-unpacked/"*
+	fperms 0755 "${YARN_INSTALL_PATH}/blockbench"
+	lcnr_install_files
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

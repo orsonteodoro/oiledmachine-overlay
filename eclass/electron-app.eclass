@@ -11,15 +11,14 @@
 # @BLURB: Eclass for GUI based Electron packages
 # @DESCRIPTION:
 # The electron-app eclass defines phase functions and utility functions for
-# Electron app packages. It depends on the app-portage/npm-secaudit package to
-# maintain a secure environment.
+# Electron app packages.
 
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-inherit chromium-2 desktop npm-utils security-scan
+inherit chromium-2 desktop
 
 
 # ############## START Per-package environmental variables #####################
@@ -699,8 +698,6 @@ fi
 RDEPEND+=" ${COMMON_DEPEND}"
 DEPEND+=" ${COMMON_DEPEND}"
 
-EXPORT_FUNCTIONS pkg_setup src_unpack pkg_preinst pkg_postinst
-
 if (( ${EAPI} == 7 )) ; then
 	BDEPEND+="
 		app-misc/jq
@@ -766,831 +763,34 @@ fi
 IUSE+=" ${_ELECTRON_APP_PACKAGING_METHODS[@]/unpacked/+unpacked}"
 REQUIRED_USE+=" || ( ${_ELECTRON_APP_PACKAGING_METHODS[@]} )"
 
+# The sandbox support via appimage/snap is on hold.
+# To restore appimage/snap parts, see
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/290569a4d3c98d225cd6576beea3bf5b6bb41b20/eclass/electron-app.eclass
 
 # ##################  END ebuild and eclass global variables ###################
 
-# @FUNCTION: _electron-app-flakey-check
+# @FUNCTION: electron-app_gen_wrapper
 # @DESCRIPTION:
-# Warns user that download or building can fail randomly
-_electron-app-flakey-check() {
-	local l=$(find "${S}" -name "package.json")
-	grep -q -F -e "electron-builder" $l
-	if [[ "$?" == "0" ]] ; then
-ewarn
-ewarn "This ebuild may fail when building with electron-builder.  Re-emerge if"
-ewarn "it fails."
-ewarn
-	fi
-
-	grep -q -F -e "\"electron\":" $l
-	if [[ "$?" == "0" ]] ; then
-ewarn
-ewarn "This ebuild may fail when downloading Electron as a dependency."
-ewarn "Re-emerge if it fails."
-ewarn
-	fi
-}
-
-# @FUNCTION: electron-app_audit_fix_npm
-# @DESCRIPTION:
-# Removes vulnerable packages.  It will audit every folder containing a
-# package-lock.json
-electron-app_audit_fix_npm() {
-	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT_FIX}" \
-		&& "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
-		:;
-	else
-		return
-	fi
-
-einfo
-einfo "Performing recursive package-lock.json audit fix"
-einfo
-	npm_update_package_locks_recursive ./ # calls npm_pre_audit
-einfo
-einfo "Audit fix done"
-einfo
-}
-
-# @FUNCTION: electron-app_audit_fix
-# @DESCRIPTION:
-# Removes vulnerable packages based on the packaging system.
-electron-app_audit_fix() {
-	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT_FIX}" \
-		&& "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
-		:;
-	else
-		return
-	fi
-
-	case "$ELECTRON_APP_MODE" in
-		npm)
-			electron-app_audit_fix_npm
-			;;
-		yarn)
-			# use npm audit anyway?
-ewarn
-ewarn "No audit fix implemented in yarn.  Package may be likely vulnerable."
-ewarn
-			;;
-		*)
-			;;
-	esac
-
-}
-
-# @FUNCTION: electron-app_pkg_setup_per_package_environment_variables
-# @DESCRIPTION:
-# Initializes per-package environment variables
-electron-app_pkg_setup_per_package_environment_variables() {
-	npm-utils_pkg_setup
-
-	# Accepts production or development [or unset as development]
-	export NODE_ENV=${NODE_ENV:-production}
-	if [[ "${NODE_ENV}" == "production" ]] ; then
-einfo "NODE_ENV=production"
-	else
-einfo "NODE_ENV=development"
-	fi
-
-	# Set this in your make.conf to control number of HTTP requests.  50 is npm
-	# default but it is too high.
-	ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:-"1"}
-
-	# You could define it as a per-package envar.  It not recommended in the ebuild.
-	ELECTRON_APP_ALLOW_AUDIT=${ELECTRON_APP_ALLOW_AUDIT:-"1"}
-
-	# You could define it as a per-package envar.  It not recommended in the ebuild.
-	ELECTRON_APP_ALLOW_AUDIT_FIX=${ELECTRON_APP_ALLOW_AUDIT_FIX:-"1"}
-
-	# You could define it as a per-package envar.  It not recommended in the ebuild.
-	# Applies to only vulnerability testing not the tool itself.
-	ELECTRON_APP_NO_DIE_ON_AUDIT=${ELECTRON_APP_NO_DIE_ON_AUDIT:-"0"}
-
-	# You could define it as a per-package envar.  Disabled by default because
-	# rapid changes in dependencies over short period of time.
-	ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:-"0"}
-
-	# You could define it as a per-package envar.  It not recommended in the ebuild.
-	ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:-"0"}
-
-	# Scans both the unpacked tarball and the install image.
-	ELECTRON_APP_AV_SCAN=${ELECTRON_APP_AV_SCAN:-"1"}
-}
-
-# @FUNCTION: electron-app_pkg_setup
-# @DESCRIPTION:
-# Initializes globals
-electron-app_pkg_setup() {
-        debug-print-function ${FUNCNAME} "${@}"
-
-	electron-app_pkg_setup_per_package_environment_variables
-
-	chromium_suid_sandbox_check_kernel_config
-
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
-eerror "to be able to download micropackages and obtain version releases"
-eerror "information."
-eerror
-		die
-	fi
-
-	#export ELECTRON_PV=$(strings /usr/bin/electron \
-	#	| grep -F -e "%s Electron/" \
-	#	| sed -r -e "s|[%s A-Za-z/]||g")
-
-	# For @electron/get caches used by electron-packager and electron-builder, see
-# https://github.com/electron/get#using-environment-variables-for-mirror-options
-	# export ELECTRON_CUSTOM_DIR="${ELECTRON_APP_DATA_DIR}/at-electron-get"
-	# mkdir -p ${ELECTRON_CUSTOM_DIR} || die
-
-	# Caches are stored in the sandbox because it is faster and less
-	# problematic as in part of the cache will be owned by root and
-	# the other by portage.  By avoiding irrelevant checking and resetting
-	# file ownership of packages used by other apps, we speed it up.
-	export NPM_STORE_DIR="${HOME}/npm" # npm cache location
-	export YARN_STORE_DIR="${HOME}/yarn" # yarn cache location
-	export npm_config_maxsockets=${ELECTRON_APP_MAXSOCKETS}
-
-	case "$ELECTRON_APP_MODE" in
-		npm)
-			# Lame bug.  We cannot run `electron --version` because
-			# it requires X.
-			# It is okay to emerge package outside of X without
-			# problems.
-			export npm_config_cache="${NPM_STORE_DIR}"
-#einfo
-#einfo "Electron version: ${ELECTRON_PV}"
-#einfo
-			#if [[ -z "${ELECTRON_PV}" ]] ; then
-			#	echo "Some ebuilds may break.  Restart and run in X."
-			#fi
-
-			addwrite "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-			mkdir -p "${NPM_STORE_DIR}/offline"
-			chown -R portage:portage "${NPM_STORE_DIR}"
-
-			# Some npm package.json use yarn.
-			addwrite ${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-			mkdir -p ${YARN_STORE_DIR}/offline
-			chown -R portage:portage "${YARN_STORE_DIR}"
-			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:-${YARN_STORE_DIR}}
-			;;
-		yarn)
-ewarn
-ewarn "Using yarn mode which has no audit fix yet."
-ewarn
-
-			# Some npm package.json use yarn.
-			addwrite ${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-			mkdir -p ${YARN_STORE_DIR}/offline
-			chown -R portage:portage "${YARN_STORE_DIR}"
-			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:-${YARN_STORE_DIR}}
-			;;
-		*)
-eerror
-eerror "Unsupported package system"
-eerror
-			die
-			;;
-	esac
-
-	local prev_update
-	if [[ -f "${ELECTRON_APP_VERSION_DATA_PATH}" ]] ; then
-		prev_update=$(stat -c "%W" "${ELECTRON_APP_VERSION_DATA_PATH}")
-	else
-		prev_update=0
-	fi
-	local now=$(date +%s)
-	local next_update_seconds=86400
-	if [[ ! -d "${ELECTRON_APP_DATA_DIR}" ]] ; then
-		mkdir -p "${ELECTRON_APP_DATA_DIR}" || die
-	fi
-	if (( $((${prev_update} + ${next_update_seconds})) < ${now} )) ; then
-einfo
-einfo "Updating Electron release data"
-einfo
-		rm -rf "${ELECTRON_APP_VERSION_DATA_PATH}" || true
-		wget -O "${ELECTRON_APP_VERSION_DATA_PATH}" \
-		"https://raw.githubusercontent.com/electron/releases/master/lite.json" || die
-	else
-einfo
-einfo "Using cached Electron release data"
-einfo
-	fi
-
-	npm-utils_is_nodejs_header_exe_same
-	if [[ -n "${NODEJS_BDEPEND}" ]] ; then
-		npm-utils_check_nodejs "${NODEJS_BDEPEND}"
-	elif [[ -n "${BDEPEND}" ]] ; then
-		npm-utils_check_nodejs "${BDEPEND}"
-	elif [[ -n "${DEPEND}" ]] ; then
-		npm-utils_check_nodejs "${DEPEND}"
-	fi
-
-	npm-utils_check_chromium_eol ${CHROMIUM_PV}
-}
-
-# @FUNCTION: electron-app_fetch_deps_npm
-# @DESCRIPTION:
-# Fetches an Electron npm app with security checks
-# MUST be called after default unpack AND patching.
-electron-app_fetch_deps_npm() {
-	_electron-app-flakey-check
-
-	pushd "${S}" || die
-		local install_args=()
-		# Avoid adding fsevent (a macOS dependency) which may require older node
-		if [[ -e "yarn.lock" ]] ; then
-			grep -q -F -e "chokidar" "yarn.lock" \
-				&& install_args+=( --no-optional )
-		elif [[ -e "package-lock.json" ]] ; then
-			grep -q -F -e "chokidar" "package-lock.json" \
-				&& install_args+=( --no-optional )
-		else
-			grep -q -F \
-				-e "vue-cli-plugin-electron-builder" \
-				-e "chokidar" \
-				"package.json" \
-				&& install_args+=( --no-optional )
-		fi
-		npm_update_package_locks_recursive ./
-		rm "${HOME}/npm/_logs"/* 2>/dev/null
-einfo
-einfo "Running npm install ${install_args[@]} inside electron-app_fetch_deps_npm"
-einfo
-		npm install ${install_args[@]} || die
-		npm_check_npm_error
-	popd
-}
-
-# @FUNCTION: electron-app_fetch_deps_yarn
-# @DESCRIPTION:
-# Fetches an Electron yarn app with security checks
-# MUST be called after default unpack AND patching.
-electron-app_fetch_deps_yarn() {
-	pushd "${S}" || die
-# don't check /usr/local/share/.yarnrc .  same number used in their testing.
-		export FAKEROOTKEY="15574641"
-
-		# set global dir
-		cp "${S}"/.yarnrc{,.orig} 2>/dev/null
-		echo "prefix \"${S}/.yarn\"" >> "${S}/.yarnrc" || die
-		echo "global-folder \"${S}/.yarn\"" >> "${S}/.yarnrc" || die
-		echo "offline-cache-mirror \"${YARN_STORE_DIR}/offline\"" \
-			>> "${S}/.yarnrc" || die
-
-		mkdir -p "${S}/.yarn" || die
-einfo
-einfo "yarn prefix:\t\t\t$(yarn config get prefix)"
-einfo "yarn global-folder:\t\t$(yarn config get global-folder)"
-einfo "yarn offline-cache-mirror:\t$(yarn config get offline-cache-mirror)"
-einfo
-
-		local extra_args=()
-		if [[ "${ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY}" == "1" ]] ; then
-ewarn
-ewarn "Using exact versions in lockfile."
-ewarn "This implies that security updates are NOT performed."
-ewarn
-			extra_args+=( --frozen-lockfile )
-		fi
-
-		yarn install \
-			--network-concurrency ${ELECTRON_APP_MAXSOCKETS} \
-			--verbose \
-			${extra_args[@]} \
-			|| die
-		# todo yarn audit auto patch
-		# an analog to yarn audix fix doesn't exit yet
-	popd
-}
-
-# @FUNCTION: electron-app_fetch_deps
-# @DESCRIPTION:
-# Fetches an electron app with security checks
-# MUST be called after default unpack AND patching.
-electron-app_fetch_deps() {
-	cd "${S}"
-
-	# todo handle yarn
-	case "$ELECTRON_APP_MODE" in
-		npm)
-			electron-app_fetch_deps_npm
-			;;
-		yarn)
-			electron-app_fetch_deps_yarn
-			;;
-		*)
-eerror
-eerror "Unsupported package system"
-eerror
-			die
-			;;
-	esac
-}
-
-_query_lite_json() {
-	echo $(cat "${ELECTRON_APP_VERSION_DATA_PATH}" \
-		| jq '.[] | select(.tag_name == "v'${ELECTRON_PV}'")' \
-		| jq ${1} \
-		| sed -r -e "s|[\"]*||g")
-}
-
-# @FUNCTION: adie
-# @DESCRIPTION:
-# Print warnings for audits or die depending on ELECTRON_APP_NO_DIE_ON_AUDIT
-adie() {
-	if [[ "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "1" ]] ; then
-ewarn
-ewarn "${1}"
-ewarn
-	else
-eerror
-eerror "${1}"
-eerror
-eerror "Set ELECTRON_APP_NO_DIE_ON_AUDIT=1 to continue"
-eerror
-		die
-	fi
-}
-
-# @FUNCTION: electron-app_audit_versions
-# @DESCRIPTION:
-# Audits json logs for vulnerable versions and min requirements
-electron-app_audit_versions() {
-einfo
-einfo "Inspecting package versions for vulnerabilities and minimum version"
-einfo "requirements"
-einfo
-
-	if [[ "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" == "1" ]] ; then
-ewarn
-ewarn "It's strongly recommended re-emerge the app weekly to mitigate against"
-ewarn "critical vulnerabilities in the internal Chromium."
-ewarn
-	fi
-
-	local ELECTRON_PV
-	local ELECTRON_PV_
-	if [[ -n "${ELECTRON_APP_ELECTRON_PV}" ]] ; then
-		# fallback based on analysis on package.json
-		ELECTRON_PV=${ELECTRON_APP_ELECTRON_PV} # for json search
-		ELECTRON_PV_=${ELECTRON_APP_ELECTRON_PV}
-		ELECTRON_PV_=${ELECTRON_PV_/-/_}
-		ELECTRON_PV_=${ELECTRON_PV_/alpha./alpha}
-		ELECTRON_PV_=${ELECTRON_PV_/beta./beta}
-		ELECTRON_PV_=${ELECTRON_PV_/nightly./pre} # sanitize for ver_test
-	elif npm ls electron | grep -q -F -e " electron@" ; then
-		# case when ^ or latest used
-		ELECTRON_PV=$(npm ls electron \
-			| grep -E -e "electron@[0-9.]+" \
-			| tail -n 1 \
-			| grep -E -o -e "[0-9\.a-z-]*" \
-			| tail -n 1) # used by package and json search
-		ELECTRON_PV_=${ELECTRON_PV}
-		ELECTRON_PV_=${ELECTRON_PV_/-/_}
-		ELECTRON_PV_=${ELECTRON_PV_/alpha./alpha}
-		ELECTRON_PV_=${ELECTRON_PV_/beta./beta}
-		ELECTRON_PV_=${ELECTRON_PV_/nightly./pre} # sanitize for ver_test
-	else
-		# Skip for dependency but not building ui yet
-		return
-	fi
-	# BORINGSSL_PV=$(_query_lite_json '.deps.openssl')
-	CHROMIUM_PV=$(_query_lite_json '.deps.chrome')
-	LIBUV_PV=$(_query_lite_json '.deps.uv')
-	NODE_PV=$(_query_lite_json '.deps.node')
-	V8_PV=$(_query_lite_json '.deps.v8')
-	ZLIB_PV=$(_query_lite_json '.deps.zlib')
-
-
-
-	# ##### Compatibity Tests ##############################################
-
-
-	if ! has_version ">=dev-libs/libuv-${LIBUV_PV}" ; then
-		adie \
-"Electron ${ELECTRON_PV} requires at least >=dev-libs/libuv-${LIBUV_PV} libuv"
-	fi
-	# It's actually BoringSSL not OpenSSL in Chromium.
-	# Commented out because Chromium checks
-	if ! has_version ">=net-libs/nodejs-${NODE_PV}" ; then
-ewarn
-ewarn "Electron ${ELECTRON_PV} requires at least >=net-libs/nodejs-${NODE_PV}"
-ewarn
-	fi
-	if ! has_version ">=sys-libs/zlib-${ZLIB_PV%-*}" ; then
-		adie \
-"Electron ${ELECTRON_PV} requires at least >=sys-libs/zlib-${ZLIB_PV%-*}"
-	fi
-
-	# ##### EOL Tests ######################################################
-
-	npm-utils_check_chromium_eol ${CHROMIUM_PV}
-
-	# ##### EOL Tests ######################################################
-
-einfo
-einfo "Electron version report with internal/external dependencies:"
-einfo
-einfo "ELECTRON_PV:\t\t${ELECTRON_PV}"
-einfo "CHROMIUM_PV:\t\t${CHROMIUM_PV} (internal)"
-einfo "LIBUV_PV:\t\t${LIBUV_PV}"
-einfo "NODE_PV:\t\t${NODE_PV} (internal)"
-einfo "V8_PV:\t\t${V8_PV} (internal)"
-einfo "ZLIB_PV:\t\t${ZLIB_PV} (external)"
-einfo
-
-	local node_pv=$(node --version | sed -e "s|v||")
-	if ver_test $(ver_cut 1 ${NODE_PV}) -ne $(ver_cut 1 ${node_pv}) ; then
-ewarn
-ewarn "Detected a version mismatch between the node version bundled with"
-ewarn "Electron (NODE_PV=${NODE_PV}) and the current active node version"
-ewarn "(node_pv=${node_pv}).  Build failures may occur if deviation is too"
-ewarn "much."
-ewarn
-	fi
-}
-
-# @FUNCTION: electron-app_src_unpack
-# @DEPRECATED
-# Use the yarn eclass.
-# @DESCRIPTION:
-# Runs phases for downloading dependencies, unpacking, building
-# Compiling is done here to avoid sandbox issues.
-electron-app_src_unpack() {
-        debug-print-function ${FUNCNAME} "${@}"
-
+# Generates a wrapper script for deterministic execution and for
+# dynamic X/Wayland support.
+electron-app_gen_wrapper() {
+	local name="${1}"
+	local cmd="${2}"
+	exeinto "/usr/bin"
+	local node_version=""
+	local node_env=""
 	if [[ -n "${NODE_VERSION}" ]] ; then
-		local node_header_pv=$(grep \
-			"NODE_MAJOR_VERSION" \
-			"${ESYSROOT}/usr/include/node/node_version.h" \
-			| head -n 1 \
-			| cut -f 3 -d " ")
-		if ver_test \
-			$(ver_cut 1 ${node_header_pv}) \
-			-ne \
-			$(ver_cut 1 ${NODE_VERSION}) ; then
-eerror
-eerror "Node header version:\t\t${node_header_pv}"
-eerror "Ebuild selected version:\t${NODE_VERSION}"
-eerror
-eerror "Switch the headers to ${NODE_VERSION}."
-eerror "Did you perform \`eselect nodejs set node${NODE_VERSION}\`"
-eerror
-			die
-		fi
-	fi
-
-	cd "${WORKDIR}"
-
-	if [[ ! -d "${S}" ]] ; then
-		default_src_unpack
-	fi
-
-	npm-utils_avscan "${WORKDIR}"
-
-	cd "${S}"
-	if declare -f electron-app_src_postunpack > /dev/null ; then
-		electron-app_src_postunpack
-	else
-		electron-app_src_postunpack_default
-	fi
-
-	npm-utils_avscan "${WORKDIR}"
-
-	# All the phase hooks get run in unpack because of download restrictions
-
-	# Inspect before embedding analytics.
-	electron-app_audit_versions
-	security-scan_find_analytics
-	security-scan_find_analytics_within_source_code
-	security-scan_find_session_replay
-	security-scan_find_session_replay_within_source_code
-
-	cd "${S}"
-	if declare -f electron-app_src_prepare > /dev/null ; then
-		electron-app_src_prepare
-	else
-		electron-app_src_prepare_default
-	fi
-
-	cd "${S}"
-	electron-app_audit_fix
-	npm-utils_avscan "${WORKDIR}"
-
-	cd "${S}"
-	if declare -f electron-app_src_compile > /dev/null ; then
-		electron-app_src_compile
-	else
-		electron-app_src_compile_default
-	fi
-
-	cd "${S}"
-	if declare -f electron-app_src_postcompile > /dev/null ; then
-		electron-app_src_postcompile
-	fi
-
-	if [[ "${ELECTRON_APP_SKIP_EXIT_CODE_CHECK}" == "1" ]] ; then
-		:;
-	elif grep -q -e "Exit code:" "${T}/build.log" ; then
-eerror
-eerror "Detected failure.  Re-emerge..."
-eerror
-		die
-	fi
-
-	cd "${S}"
-	# Another audit happens because electron-builder downloads again
-	# possibly vulnerable libraries.
-	electron-app_audit_versions
-	security-scan_find_analytics
-	security-scan_find_session_replay
-	security-scan_find_session_replay_within_source_code
-
-	cd "${S}"
-	if declare -f electron-app_src_preinst > /dev/null ; then
-		electron-app_src_preinst
-	else
-		electron-app_src_preinst_default
-	fi
-}
-
-# @FUNCTION: electron-app_src_postunpack_default
-# @DEPRECATED
-# Use the yarn eclass.
-# @DESCRIPTION:
-# Fetches dependencies and audit fixes them.
-electron-app_src_postunpack_default() {
-        debug-print-function ${FUNCNAME} "${@}"
-
-	cd "${S}"
-	electron-app_fetch_deps
-}
-
-# @FUNCTION: electron-app_eapply_user
-# @DEPRECATED
-# Use the yarn eclass.
-# @DESCRIPTION:
-# Patch without warning
-electron-app_eapply_user() {
-	local dirs=(
-		"${CATEGORY}/${P}"
-		"${CATEGORY}/${P}:${SLOT}"
-		"${CATEGORY}/${PN}"
-		"${CATEGORY}/${PN}:${SLOT}"
-		"${CATEGORY}/${P}-${PR}"
-		"${CATEGORY}/${P}-${PR}:${SLOT}"
-	)
-	local dir
-	for dir in ${dirs[@]} ; do
-		if [[ -d "/etc/portage/patches/${dir}" ]] ; then
-			for path in $(find "/etc/portage/patches/${dir}" \
-				-type f \( -name "*.patch" -o -name "*.diff" \) \
-				| sort \
-				) ; do
-				eapply "${path}"
-			done
-		fi
-	done
-}
-
-# @FUNCTION: electron-app_src_prepare_default
-# @DEPRECATED
-# Use the yarn eclass.
-# @DESCRIPTION:
-# Patches before compiling
-electron-app_src_prepare_default() {
-	cd "${S}"
-	electron-app_eapply_user
-}
-
-# @FUNCTION: electron-app_install_default
-# @DESCRIPTION:
-# Installs the app.  Currently a stub.
-electron-app_src_install_default() {
-        debug-print-function ${FUNCNAME} "${@}"
-
-	cd "${S}"
-
-eerror
-eerror "electron-app_src_install_default is currently unimplemented.  You must"
-eerror "use an override."
-eerror
-	die
-# todo electron-app_src_install_default
-}
-
-# @FUNCTION: electron-app-build-npm
-# @DEPRECATED
-# Use the yarn eclass.
-# @DESCRIPTION:
-# Builds an electron app with npm
-electron-app-build-npm() {
-	# electron-builder can still pull packages at the build step.
-	npm run build || die
-}
-
-# @FUNCTION: electron-app-build-yarn
-# @DEPRECATED
-# Use the yarn eclass.
-# @DESCRIPTION:
-# Builds an electron app with yarn
-electron-app-build-yarn() {
-	yarn run build || die
-}
-
-# @FUNCTION: electron-app_src_compile_default
-# @DEPRECATED
-# Use the yarn eclass.
-# @DESCRIPTION:
-# Builds an electron app.
-electron-app_src_compile_default() {
-        debug-print-function ${FUNCNAME} "${@}"
-
-	cd "${S}"
-
-	case "$ELECTRON_APP_MODE" in
-		npm)
-			electron-app-build-npm
-			;;
-		yarn)
-			electron-app-build-yarn
-			;;
-		*)
-eerror
-eerror "Unsupported package system"
-eerror
-			die
-			;;
-	esac
-}
-
-
-# @FUNCTION: electron-app_src_preinst_default
-# @DEPRECATED
-# Use the yarn eclass.
-# @DESCRIPTION:
-# Dummy function
-electron-app_src_preinst_default() {
-	:;
-}
-
-# @FUNCTION: electron-app_desktop_install_program_raw
-# @DESCRIPTION:
-# Installs program only without resetting permissions or owner.
-# Use electron-app_desktop_install_program instead.
-electron-app_desktop_install_program_raw() {
-	use unpacked || return
-	_electron-app_check_missing_install_path
-	local rel_src_path="$1"
-	local d="${ELECTRON_APP_INSTALL_PATH}"
-	local ed="${ED}/${d}"
-	case "$ELECTRON_APP_MODE" in
-		npm|yarn)
-			local old_dotglob=$(shopt dotglob | cut -f 2)
-			shopt -s dotglob # copy hidden files
-
-			mkdir -p "${ed}" || die
-			cp -a ${rel_src_path} "${ed}" || die
-
-			if [[ "${old_dotglob}" == "on" ]] ; then
-				shopt -s dotglob
-			else
-				shopt -u dotglob
-			fi
-			;;
-		*)
-eerror
-eerror "Unsupported package system"
-eerror
-			die
-			;;
-	esac
-}
-
-# @FUNCTION: electron-app_get_nprocs
-# @INTERNAL
-# @DESCRIPTION:
-# Gets the number N from -jN defined by MAKEOPTS.
-electron-app_get_nprocs() {
-	local nprocs=$(echo "${MAKEOPTS}" \
-		| grep -E -e "-j[ ]*[0-9]+" \
-		| grep -E -o -e "[0-9]+")
-	[[ -z "${nprocs}" ]] && nprocs=1
-	echo "${nprocs}"
-}
-
-# @FUNCTION: electron-app_desktop_install_program
-# @DESCRIPTION:
-# Installs program only.  Resets permissions and ownership.  Additional change
-# of ownership and permissions should be done after running this.
-electron-app_desktop_install_program() {
-	use unpacked || return
-	_electron-app_check_missing_install_path
-	local rel_src_path="$1"
-	local d="${ELECTRON_APP_INSTALL_PATH}"
-	local ed="${ED}/${d}"
-	local nprocs=$(electron-app_get_nprocs)
-	case "$ELECTRON_APP_MODE" in
-		npm|yarn)
-			local old_dotglob=$(shopt dotglob | cut -f 2)
-			shopt -s dotglob # copy hidden files
-
-			insinto "${d}"
-			doins -r ${rel_src_path}
-
-			export IFS=$'\n'
-			for f in $(find "${ed}" -type f) ; do
-				(
-					if file "${f}" | grep -q "executable" ; then
-						chmod 0755 $(realpath "${f}") || die
-					elif file "${f}" | grep -q "shared object" ; then
-						chmod 0755 $(realpath "${f}") || die
-					fi
-				) &
-				local njobs=$(jobs -r -p | wc -l)
-				[[ ${njobs} -ge ${nprocs} ]] && wait -n
-			done
-			wait
-			export IFS=$' \t\n'
-
-			if [[ "${old_dotglob}" == "on" ]] ; then
-				shopt -s dotglob
-			else
-				shopt -u dotglob
-			fi
-			;;
-		*)
-eerror
-eerror "Unsupported package system"
-eerror
-			die
-			;;
-	esac
-}
-
-# @FUNCTION: _electron-app_check_missing_install_path
-# @DESCRIPTION:
-# Checks to see if ELECTRON_APP_INSTALL_PATH has been defined.
-_electron-app_check_missing_install_path() {
-	if [[ -z "${ELECTRON_APP_INSTALL_PATH}" ]] ; then
-eerror
-eerror "You must specify ELECTRON_APP_INSTALL_PATH.  Usually same location as"
-eerror "/usr/\$(get_libdir)/node/\${PN}/\${SLOT} without \$ED"
-eerror
-		die
-	fi
-}
-
-# @FUNCTION: electron-app_desktop_install
-# @DESCRIPTION:
-# Installs a desktop app with wrapper and desktop menu entry.
-electron-app_desktop_install() {
-	local rel_src_path="$1"
-	local rel_icon_path="$2"
-	local pkg_name="$3"
-	local category="$4"
-	local cmd="$5"
-
-	if [[ -z "${rel_icon_path}" ]] ; then
-eerror
-eerror "You must provide 2nd arg to electron-app_desktop_install containing the"
-eerror "relative icon path"
-eerror
-		die
-	fi
-
-	if [[ -z "${cmd}" ]] ; then
-eerror
-eerror "You must provide 5th arg to electron-app_desktop_install containing the"
-eerror "command to execute in the wrapper script"
-eerror
-		die
-	fi
-
-	if use unpacked ; then
-		electron-app_desktop_install_program "${rel_src_path}"
-		# Create wrapper
-		exeinto "/usr/bin"
-		local node_version=""
-		local node_env=""
-		if [[ -n "${NODE_VERSION}" ]] ; then
 einfo "Setting NODE_VERSION=${NODE_VERSION} in wrapper."
-			node_version="export NODE_VERSION=${NODE_VERSION}"
-		fi
-		if [[ "${NODE_ENV}" == "production" ]] ; then
+		node_version="export NODE_VERSION=${NODE_VERSION}"
+	fi
+	if [[ "${NODE_ENV}" == "production" ]] ; then
 einfo "Setting NODE_ENV=\${NODE_ENV:-production} in wrapper."
-			node_env="export NODE_ENV=\${NODE_ENV:-production}"
-		else
+		node_env="export NODE_ENV=\${NODE_ENV:-production}"
+	else
 einfo "Setting NODE_ENV=\${NODE_ENV:-development} in wrapper."
-			node_env="export NODE_ENV=\${NODE_ENV:-development}"
-		fi
-
-cat <<EOF > "${T}/${PN}" || die
+		node_env="export NODE_ENV=\${NODE_ENV:-development}"
+	fi
+cat <<EOF > "${T}/${name}" || die
 #!/bin/bash
 ${node_version}
 ${node_env}
@@ -1605,336 +805,146 @@ else
 	${cmd} --enable-features=UseOzonePlatform --ozone-platform-hint=wayland \${extra_args} "\${@}"
 fi
 EOF
-		doexe "${T}/${PN}"
-
-		local icon=""
-		local mime_type=$(file --mime-type $(realpath "./${rel_icon_path}"))
-		if echo "${mime_type}" | grep -q -F -e "image/png" ; then
-			icon="${PN}"
-			newicon "${rel_icon_path}" "${icon}.png"
-		elif echo "${mime_type}" | grep -q -F -e "image/svg" ; then
-			icon="${PN}"
-			newicon "${rel_icon_path}" "${icon}.svg"
-		elif echo "${mime_type}" | grep -q -F -e "image/x-xpmi" ; then
-			icon="${PN}"
-			newicon "${rel_icon_path}" "${icon}.xpm"
-		else
-# See https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
-ewarn
-ewarn "Only png, svg, xpm accepted as icons for the XDG desktop icon theme"
-ewarn "spec.  Skipping."
-ewarn
-		fi
-		make_desktop_entry "${PN}" "${pkg_name}" "${icon}" "${category}"
-	fi
-	# Some below already already adds .desktop
-	if has appimage ${IUSE_EFFECTIVE} ; then
-		if use appimage ; then
-			exeinto "${ELECTRON_APP_APPIMAGE_INSTALL_DIR}"
-			doexe $(find . -name "${ELECTRON_APP_APPIMAGE_ARCHIVE_NAME}")
-		fi
-	fi
-	if has flatpak ${IUSE_EFFECTIVE} ; then
-		if use flatpak ; then
-			insinto "${ELECTRON_APP_FLATPAK_INSTALL_DIR}"
-			doins $(find . -name "${ELECTRON_APP_FLATPAK_ARCHIVE_NAME}")
-		fi
-	fi
-	if has snap ${IUSE_EFFECTIVE} ; then
-		if use snap ; then
-			insinto "${ELECTRON_APP_SNAP_INSTALL_DIR}"
-			doins $(find . -name "${ELECTRON_APP_SNAP_ARCHIVE_NAME}")
-			local assert_path=$(find . -name "${ELECTRON_APP_SNAP_ARCHIVE_NAME/.snap/.assert}")
-			[[ -e "${assert_path}" ]] && doins "${assert_path}"
-		fi
-	fi
+	doexe "${T}/${name}"
 }
 
-electron-app_pkg_preinst() {
-        debug-print-function ${FUNCNAME} "${@}"
-	if has snap ${IUSE_EFFECTIVE} ; then
-		if use snap ; then
-			# Remove previous install
-			local revision_arg
-			if [[ -n "${ELECTRON_APP_SNAP_REVISION}" ]] ; then
-				revision_arg="--revision=${ELECTRON_APP_SNAP_REVISION}"
-			fi
-			if snap info "${ELECTRON_APP_SNAP_NAME}" \
-				2>/dev/null 1>/dev/null ; then
-				snap remove \
-					${ELECTRON_APP_SNAP_NAME} \
-					${ELECTRON_APP_SNAP_REVISION} --purge \
-					|| die
-			fi
-		fi
-	fi
-}
-
-# @FUNCTION: electron-app_pkg_postinst
+#https://github.com/electron/electron/releases/tag/v21.4.4
+# @FUNCTION: electron-app_get_electron_platarch
 # @DESCRIPTION:
-# Performs post-merge actions
-electron-app_pkg_postinst() {
-        debug-print-function ${FUNCNAME} "${@}"
-
-	if has snap ${IUSE_EFFECTIVE} ; then
-		if use snap ; then
-ewarn
-ewarn "snap support is untested"
-ewarn
-			local has_assertion_file="--dangerous"
-			local assert_path=\
-"${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_ARCHIVE_NAME/.snap/.assert}"
-			if [[ -e "${assert_path}" ]] ; then
-				snap ack "${assert_path}"
-				has_assertion_file=""
-			else
-ewarn
-ewarn "Missing assertion file for snap.  Installing with --dangerous."
-ewarn
-			fi
-			# This will add the desktop links to the snap.
-			snap install ${has_assertion_file} \
-"${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_ARCHIVE_NAME}"
-		fi
-	fi
-	if has flatpak ${IUSE_EFFECTIVE} ; then
-		if use flatpak ; then
-			flatpak --install \
-"${EROOT}/${ELECTRON_APP_FLATPAK_INSTALL_DIR}/${ELECTRON_APP_FLATPAK_ARCHIVE_NAME}"
-		fi
+# Gets the platform and architecture for electron tarballs.
+electron-app_get_electron_platarch() {
+	if use kernel_linux && use arm64 ; then
+		echo "linux-arm64"
+	elif use kernel_linux && use arm ; then
+		echo "linux-armv7l"
+	elif use kernel_linux && use amd64 ; then
+		echo "linux-x64"
+	elif use kernel_Winnt && use x86-winnt ; then
+		echo "win32-ia32"
+	elif use kernel_Winnt && ( use x64-winnt || use x64-cygwin ) ; then
+		echo "win32-x64"
+	elif use kernel_Darwin && use arm64-macos ; then
+		echo "darwin-arm64"
+	elif use kernel_Darwin && use x64-macos ; then
+		echo "darwin-x64"
 	fi
 }
 
-electron-app_pkg_prerm() {
-	if has snap ${IUSE_EFFECTIVE} ; then
-		if use snap ; then
-			snap remove "${SNAP_NAME}"
-		fi
-	fi
-	if has flatpak ${IUSE_EFFECTIVE} ; then
-		if use flatpak ; then
-			flatpak uninstall "${FLATPACK_NAME}"
-		fi
-	fi
+# @FUNCTION: electron-app_gen_electron_uris
+# @DESCRIPTION:
+# Generate URIs for offline install of electron based apps
+Aelectron-app_gen_electron_uris() {
+	echo "
+		kernel_linux? (
+			amd64? (
+				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-linux-x64.zip
+			)
+			arm64? (
+				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-linux-arm64.zip
+			)
+			arm? (
+				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-linux-armv7l.zip
+			)
+		)
+		kernel_Winnt? (
+			x64-winnt? (
+				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-win32-x64.zip
+			)
+			x64-cygwin? (
+				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-win32-x64.zip
+			)
+			x86-winnt? (
+				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-win32-ia32.zip
+			)
+		)
+		kernel_Darwin? (
+			x64-macos? (
+				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-darwin-x64.zip
+			)
+			arm64-macos? (
+				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-darwin-arm64.zip
+			)
+		)
+		https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/SHASUMS256.txt -> SHASUMS256.txt.${ELECTRON_APP_ELECTRON_PV}
+	"
 }
 
-# @FUNCTION: electron-app_get_arch
-# @DESCRIPTION: Gets the suffix based on ARCH and possibly CHOST
-# This applies to use of electron-packager and electron-builder
-electron-app_get_arch() {
-	if [[ "${ARCH}" == "amd64" ]] ; then
-                echo "x64"
-        elif [[ "${ARCH}" == "x86" ]] ; then
-                echo "ia32"
-        elif [[ "${ARCH}" == "arm64" ]] ; then
-                echo "arm64"
-        elif [[ "${ARCH}" == "arm" ]] ; then
-		if [[ "${CHOST}" =~ armv7* ]] ; then
-	                echo "armv7l"
-		else
-eerror
-eerror "${CHOST} is not supported"
-eerror
-			die
-		fi
-        elif [[ "${ARCH}" == "n64" ]] ; then
-                echo "mips64el"
-	else
-eerror
-eerror "${ARCH} not supported"
-eerror
-		die
-        fi
+# For testing
+electron-app_gen_electron_uris() {
+	echo "
+		kernel_linux? (
+			amd64? (
+				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-linux-x64.zip
+			)
+		)
+		https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/SHASUMS256.txt -> electron-SHASUMS256.txt.${ELECTRON_APP_ELECTRON_PV}
+	"
 }
 
-# @FUNCTION: electron-app_get_arch_suffix_snap
-# @DESCRIPTION: Gets the arch suffix found at the end of the archive
-electron-app_get_arch_suffix_snap() {
-	[[ "${ARCH}" == "amd64" ]] && echo "amd64"
-	[[ "${ARCH}" == "x86" ]] && echo "i386"
-	[[ "${ARCH}" == "arm64" ]] && echo "arm64"
-	[[ "${ARCH}" == "arm" && "${CHOST}" =~ armv7* ]] && echo "armhf"
-	echo "${CHOST%%-*}"
-}
-
-# @FUNCTION: electron-app_get_arch_suffix_appimage
-# @DESCRIPTION: Gets the arch suffix found at the end of the archive
-electron-app_get_arch_suffix_appimage() {
-	[[ "${ARCH}" == "amd64" ]] && echo "x86_64"
-	[[ "${ARCH}" == "x86" ]] && echo "i386"
-	[[ "${ARCH}" == "arm64" ]] && echo "arm64"
-	[[ "${ARCH}" == "arm" && "${CHOST}" =~ armv7* ]] && echo "armhf"
-	echo "${CHOST%%-*}"
-}
-
-# @FUNCTION: electron-builder_download_electron_builder
-# @DESCRIPTION: Downloads and installs electron-builder in the devDependencies
-# for packages without an Electron packager.
-electron-app_download_electron_builder()
-{
-	npm_install_dev electron-builder
-}
-
-# @FUNCTION: electron-builder_download_electron_packager
-# @DESCRIPTION: Downloads and installs electron-packager in the devDependencies
-# for packages without an Electron packager.
-electron-app_download_electron_packager()
-{
-	npm_install_dev electron-packager
-}
-
-
-# @FUNCTION: electron-app_src_compile_electron_packager
-# @DESCRIPTION: Places all npm production packages in a single exe
-# for Electron based ebuild-packages.
-# For non-electron packages use pkg (via npm-utils_src_compile_pkg) instead.
-#
-# Assumes current dir will be packaged.
-#
-# Current support is tentative based on security requirements like with the
-# npm-utils_src_compile_pkg.  Check back on this eclass for update details.
-#
-# Consumers are required to add to RDEPEND either:
-#
-# virtual/electron-builder:10=
-# virtual/electron-builder:11=
-# virtual/electron-builder:12=
-#
-# corresponding to the current Electron LTS versions to ensure
-# that Electron + Chromium security updates are being passed down since
-# the packer embeds Electron & Chromium parts.
-#
-# myelectronpackager args can be defined and appended to the defaults.
-#
-# Preference for electron-packager or electron-builder is based on the
-# contents of package.json, but electron-builder is preferred for
-# future sandboxing with AppImage & Snap.
-#
-# Exe will be placed in dist/${exe_name}-linux-"$(electron-app_get_arch)"/*
-#
-# @CODE
-# Parameters:
-# $1 - executable name
-# $2 - icon path optional
-# @CODE
-electron-app_src_compile_electron_packager()
-{
-	local exe_name="${1}"
-	local icon_path="${2}"
-	mkdir -p dist || die
-	# Make into exe.  Disabled because it works sometimes but not all the time.
-
-	local myelectronpackager_
-
-	if [[ -n "${icon_path}" ]] ; then
-		myelectronpackager_=( --icon=${icon_path} )
-	fi
-
-	electron-packager . ${exe_name} \
-		--platform=linux \
-		--arch=$(electron-app_get_arch) \
-		--asar \
-		--out=dist \
-		--overwrite \
-		${myelectronpackager[@]} \
-		${myelectronpackager_[@]} \
+# @FUNCTION: electron-app_cp_electron
+# @DESCRIPTION:
+# Copies the electron tarball for offline install.
+electron-app_cp_electron() {
+	export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
+	export ELECTRON_CACHE="${HOME}/.cache/electron"
+	mkdir -p "${ELECTRON_CACHE}" || die
+	local fn="electron-v${ELECTRON_APP_ELECTRON_PV}-$(electron-app_get_electron_platarch).zip"
+	export ELECTRON_CUSTOM_FILENAME="${fn}"
+	cat \
+		  "${DISTDIR}/${fn}" \
+		> "${ELECTRON_CACHE}/${fn}" \
+		|| die
+	cat \
+		  "${DISTDIR}/electron-SHASUMS256.txt.${ELECTRON_APP_ELECTRON_PV}" \
+		> "${ELECTRON_CACHE}/SHASUMS256.txt" \
 		|| die
 }
 
-# @FUNCTION: electron-app_src_compile_electron_builder
-# @DESCRIPTION: Places all npm production packages in a single exe
-# for Electron based ebuild-packages.
-# For non-electron packages use pkg (via npm-utils_src_compile_pkg) instead.
-#
-# Current support is tentative based on security requirements like with the
-# npm-utils_src_compile_pkg.  Check back on this eclass for update details.
-#
-# Consumers are required to add to RDEPEND either:
-#
-# virtual/electron-builder:10=
-# virtual/electron-builder:11=
-# virtual/electron-builder:12=
-#
-# corresponding to the current Electron LTS versions to ensure
-# that Electron + Chromium security updates are being passed down since
-# the packer embeds Electron & Chromium parts.
-#
-# myelectronbuilder args can be defined and appended to the defaults.
-#
-# Preference for electron-packager or electron-builder is based on the
-# contents of package.json, but electron-builder is preferred for
-# future sandboxing with AppImage & Snap.
-#
-# The contents are usually placed in dist/
-#
-# @CODE
-# Parameters:
-# $1 - executable name
-# @CODE
-electron-app_src_compile_electron_builder()
-{
-	local myelectronbuilder_
-	if [[ -z "${myelectronbuilder}" ]] ; then
-		myelectronbuilder_=( --dir )
-	fi
-
-	electron-builder -l \
-		${myelectronbuilder[@]} \
-		${myelectronbuilder_[@]} \
-		|| die
-}
-
-# @FUNCTION: electron-app_get_node_version
-# @DESCRIPTION: Gets the minimum node version required with an Electron release
-#
-# The versions reported by lite.json are newer and differ from the DEPS file
-# in tagged.
-#
-# @CODE
-# Parameters:
-# $1 - nodejs version
-# @CODE
-electron-app_get_node_version()
-{
-	local node_version="${1}"
-	wget -O "${T}/DEPS" \
-"https://raw.githubusercontent.com/electron/electron/v${node_version}/DEPS" || die
-	if ver_test ${node_version} -ge 6.0 ; then
-		echo $(cat "${T}/DEPS" | tr "\r\n" "\n" \
-			| sed -e "s| = |=|g" \
-			| sed "/#/d" \
-			| pcregrep -M "vars=[^=]+" \
-			| head -n -1 \
-			| sed -e "s|'|\"|g" -e "s|vars=||"  -e "s|True|1|" -e "s|False|0|" \
-			| sed -e ':a;N;$!ba' -e "s|,\n\}|\n}|" \
-			| jq ".node_version" \
-			| sed -e "s|\"||g" -e "s|v||")
-	else
-		local commit=$(cat "${T}/DEPS" | tr "\r\n" "\n" \
-			| sed -e "s| = |=|g" \
-			| sed "/#/d" \
-			| pcregrep -M "vars=[^=]+" \
-			| head -n -1 \
-			| sed -e "s|'|\"|g" -e "s|vars=||"  -e "s|True|1|" -e "s|False|0|" \
-			| sed -e ':a;N;$!ba' -e "s|,\n\}|\n}|" \
-			| jq ".node_version" \
-			| sed -e "s|\"||g")
-		wget -O "${T}/node_version.h" \
-"https://raw.githubusercontent.com/electron/node/${commit}/src/node_version.h" || die
-		local node_version_major=$(grep -r -e "NODE_MAJOR_VERSION" \
-			"${T}/node_version.h" | head -n 1 | cut -f 3 -d " ")
-		local node_version_minor=$(grep -r -e "NODE_MINOR_VERSION" \
-			"${T}/node_version.h" | head -n 1 | cut -f 3 -d " ")
-		local node_version_patch=$(grep -r -e "NODE_PATCH_VERSION" \
-			"${T}/node_version.h" | head -n 1 | cut -f 3 -d " ")
-		echo "${node_version_major}.${node_version_minor}.${node_version_patch}"
-	fi
-}
-
-# @FUNCTION: electron-app_src_install_finalize
-# @DEPRECATED
+# @FUNCTION: electron-app_get_electron_platarch_args
 # @DESCRIPTION:
-# Scans ${ED} for malware.
-electron-app_src_install_finalize() {
-	security-scan_avscan "${ED}"
+# Generate platform and architecture arguments
+electron-app_get_electron_platarch_args() {
+	local args=()
+	if use kernel_Darwin ; then
+		args+=(
+			--mac
+		)
+	elif use kernel_linux ; then
+		args+=(
+			--linux
+		)
+	elif use kernel_linux ; then
+		args+=(
+			--win
+		)
+	fi
+	if use kernel_linux && use arm64 ; then
+		args+=(
+			--arm64
+		)
+	elif use kernel_linux && use arm ; then
+		args+=(
+			--armv7l
+		)
+	elif use kernel_linux && use amd64 ; then
+		args+=(
+			--arm64
+		)
+	elif use kernel_Winnt && use x86-winnt ; then
+		args+=(
+			--ia32
+		)
+	elif use kernel_Winnt && ( use x64-winnt || use x64-cygwin ) ; then
+		args+=(
+			--x64
+		)
+	elif use kernel_Darwin && use arm64-macos ; then
+		args+=(
+			--arm64
+		)
+	elif use kernel_Darwin && use x64-macos ; then
+		args+=(
+			--x64
+		)
+	fi
 }

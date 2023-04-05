@@ -2,10 +2,13 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# FIXME: Fix unpack
+
 EAPI=8
 
 MY_PN="Lepton"
 
+YARN_INSTALL_PATH="/opt/${PN}"
 NODE_VERSION=14
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV}.AppImage"
@@ -17,7 +20,7 @@ ELECTRON_APP_MODE="yarn"
 ELECTRON_APP_REACT_PV="17.0.0"
 NODE_ENV="development"
 
-inherit desktop electron-app npm-utils
+inherit desktop electron-app yarn
 
 DESCRIPTION="Democratizing Snippet Management (macOS/Win/Linux)"
 HOMEPAGE="http://hackjutsu.com/Lepton"
@@ -75,7 +78,15 @@ BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
 	sys-apps/yarn
 "
+# Initially generated from:
+#   grep "resolved" /var/tmp/portage/dev-util/lepton-1.10.0/work/lepton-1.10.0/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
+# For the generator script, see typescript/transform-uris.sh ebuild-package.
+# UPDATER_START_YARN_EXTERNAL_URIS
+YARN_EXTERNAL_URIS="
+"
+# UPDATER_END_YARN_EXTERNAL_URIS
 SRC_URI="
+${YARN_EXTERNAL_URIS}
 https://github.com/hackjutsu/Lepton/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
@@ -83,7 +94,7 @@ S="${WORKDIR}/${PN^}-${PV}"
 RESTRICT="mirror"
 LIBSASS_EXT="auto"
 
-pkg_setup() {
+check_credentials() {
 #
 # This is why emerge needs an API or procedure for sensitive data.
 #
@@ -109,7 +120,10 @@ eerror "https://github.com/hackjutsu/Lepton/issues/265"
 eerror
 		die
 	fi
-	electron-app_pkg_setup
+}
+
+pkg_setup() {
+	:;#check_credentials
 }
 
 sanitize_variables() {
@@ -130,12 +144,35 @@ eerror
 	fi
 }
 
-electron-app_src_prepare() {
-	electron-app_eapply_user
-	cp "${FILESDIR}"/account.js "${S}"/configs || die
-	sed -i -e "s|<your_client_id>|${LEPTON_CLIENT_ID}|" \
+src_unpack() {
+eerror
+eerror "This ebuild is under maintenance."
+eerror "Undergoing Yarn offline install conversion."
+eerror
+die
+	if [[ "${UPDATE_YARN_LOCK}" == "1" ]] ; then
+		unpack ${P}.tar.gz
+		cd "${S}" || die
+		rm package-lock.json
+		npm i --legacy-peer-deps || die
+		npm audit fix || die
+		yarn import || die
+	else
+		yarn_src_unpack
+	fi
+}
+
+src_prepare() {
+	default
+	cp \
+		"${FILESDIR}"/account.js \
+		"${S}"/configs \
+		|| die
+	sed -i \
+		-e "s|<your_client_id>|${LEPTON_CLIENT_ID}|" \
 		-e "s|<your_client_secret>|${LEPTON_CLIENT_SECRET}|" \
-		"${S}"/configs/account.js || die
+		"${S}"/configs/account.js \
+		|| die
 
 	sanitize_variables
 
@@ -143,7 +180,7 @@ electron-app_src_prepare() {
 	unset LEPTON_CLIENT_SECRET
 }
 
-electron-app_src_compile() {
+src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
 	vrun yarn run build
@@ -151,18 +188,18 @@ electron-app_src_compile() {
 }
 
 src_install() {
-	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}"
-	electron-app_desktop_install \
-		"dist/linux-unpacked/*" \
-		"build/icon/icon.png" \
+	insinto "${YARN_INSTALL_PATH}"
+	doins -r "dist/linux-unpacked/"*
+	newicon "build/icon/icon.png" "${PN}.png"
+	make_desktop_entry \
+		"${YARN_INSTALL_PATH}/${PN}"
 		"${PN^}" \
-		"Development" \
-		"${ELECTRON_APP_INSTALL_PATH}/${PN}"
-	LCNR_SOURCE="${WORKDIR}/Lepton-${PV}"
-	npm-utils_install_licenses
-	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
+		"${PN}.png" \
+		"Development"
+	fperms 0755 "${YARN_INSTALL_PATH}/${PN}"
 	shred "${S}"/configs/account.js
-	electron-app_src_install_finalize
+	LCNR_SOURCE="${WORKDIR}/Lepton-${PV}"
+	lcnr_install_files
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

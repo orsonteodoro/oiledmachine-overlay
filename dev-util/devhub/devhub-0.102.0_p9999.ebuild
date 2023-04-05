@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="DevHub"
 
+export YARN_INSTALL_PATH="/opt/${PN}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV}.AppImage"
 ELECTRON_APP_MODE="yarn"
@@ -15,12 +16,20 @@ ELECTRON_APP_REACT_NATIVE_PV="0.64.0_rc1"
 NODE_ENV="development"
 NODE_VERSION="14" # Upstream uses 12
 
-inherit desktop electron-app git-r3 npm-utils
+inherit desktop electron-app git-r3 lcnr yarn
 if [[ ${PV} =~ 9999 ]] ; then
 	inherit git-r3
 	IUSE+=" fallback-commit"
 else
+# Initially generated from:
+#   grep "resolved" /var/tmp/portage/dev-util/devhub-0.102.0_p9999/work/devhub-0.102.0_p9999/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
+# For the generator script, see typescript/transform-uris.sh ebuild-package.
+# UPDATER_START_YARN_EXTERNAL_URIS
+YARN_EXTERNAL_URIS="
+"
+# UPDATER_END_YARN_EXTERNAL_URIS
 	SRC_URI="
+${YARN_EXTERNAL_URIS}
 https://github.com/devhubapp/devhub/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
@@ -100,7 +109,6 @@ eerror "env to be able to download micropackages."
 eerror
 		die
 	fi
-	electron-app_pkg_setup
 }
 
 src_unpack() {
@@ -128,7 +136,6 @@ eerror "version variables and *DEPENDs."
 eerror
 		die
 	fi
-	electron-app_src_unpack
 }
 
 vrun() {
@@ -142,34 +149,35 @@ eerror
 	fi
 }
 
-electron-app_src_compile() {
+src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
 	vrun yarn workspace @devhub/web build
 	vrun yarn workspace @devhub/desktop build:base
 	vrun yarn workspace @devhub/desktop build:web:post
 	vrun yarn workspace @devhub/desktop build:electron --linux dir
-	cd "${S}" || die
 }
 
 src_install() {
-	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}"
-	electron-app_desktop_install_program \
-		"packages/desktop/build/linux-unpacked/*"
-	npm-utils_install_licenses
-
+	insinto "${YARN_INSTALL_PATH}"
+	doins -r "packages/desktop/build/linux-unpacked/"*
 	exeinto /usr/bin
 	doexe "${FILESDIR}/${PN}"
 	sed -i \
-		-e "s|\${INSTALL_PATH}|${ELECTRON_APP_INSTALL_PATH}|g" \
+		-e "s|\${INSTALL_PATH}|${YARN_INSTALL_PATH}|g" \
 		-e "s|\${NODE_ENV}|${NODE_ENV}|g" \
 		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
 		"${ED}/usr/bin/${PN}" || die
-
-        newicon "node_modules/@devhub/desktop/assets/icons/icon.png" "${PN}.png"
-        make_desktop_entry ${PN} "${MY_PN}" ${PN} "Development"
-	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
-	electron-app_src_install_finalize
+        newicon \
+		"node_modules/@devhub/desktop/assets/icons/icon.png" \
+		"${PN}.png"
+        make_desktop_entry \
+		"${PN}" \
+		"${MY_PN}" \
+		"${PN}.png" \
+		"Development"
+	fperms 0755 "${YARN_INSTALL_PATH}/${PN}"
+	lcnr_install_files
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

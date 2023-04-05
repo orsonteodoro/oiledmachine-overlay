@@ -54,7 +54,8 @@ BDEPEND+="
 	media-libs/vips
 	sys-apps/yarn
 "
-# grep "resolved" /var/tmp/portage/dev-lang/typescript-5.0.2/work/TypeScript-5.0.2/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
+# Initially generated from:
+#   grep "resolved" /var/tmp/portage/dev-lang/typescript-5.0.2/work/TypeScript-5.0.2/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
 # UPDATER_START_YARN_EXTERNAL_URIS
 YARN_EXTERNAL_URIS="
 https://registry.yarnpkg.com/@esbuild/android-arm/-/android-arm-0.17.15.tgz -> yarnpkg-@esbuild-android-arm-0.17.15.tgz

@@ -4,6 +4,7 @@
 
 EAPI=8
 
+YARN_INSTALL_PATH="/opt/${PN}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${PN}-${PV}-linux.AppImage"
 ELECTRON_APP_MODE="yarn"
@@ -13,13 +14,21 @@ ELECTRON_APP_REACT_PV="18.2.0"
 NODE_ENV="development"
 NODE_VERSION="16"
 
-inherit desktop electron-app git-r3 npm-utils
+inherit desktop electron-app git-r3 lcnr yarn
 if [[ ${PV} =~ 9999 ]] ; then
 	inherit git-r3
 	IUSE+=" fallback-commit"
 else
+# Initially generated from:
+#   grep "resolved" /var/tmp/portage/media-gfx/upscayl-2.0.1/work/upscayl-2.0.1/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
+# For the generator script, see the typescript/transform-uris.sh ebuild-package.
+# UPDATER_START_YARN_EXTERNAL_URIS
+YARN_EXTERNAL_URIS="
+"
+# UPDATER_END_YARN_EXTERNAL_URIS
 	SRC_URI="
-https://github.com/upscayl/upscayl/archive/refs/tags/v2.0.1.tar.gz
+${YARN_EXTERNAL_URIS}
+https://github.com/upscayl/upscayl/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
@@ -74,11 +83,6 @@ eerror "env to be able to download micropackages."
 eerror
 		die
 	fi
-	electron-app_pkg_setup
-}
-
-src_unpack() {
-	electron-app_src_unpack
 }
 
 vrun() {
@@ -100,12 +104,13 @@ eerror
 	fi
 }
 
-electron-app_src_postunpack() {
+src_compile() {
+eerror
+eerror "This ebuild is under maintenance."
+eerror "Undergoing Yarn offline install conversion."
+eerror
+die
 	export NEXT_TELEMETRY_DISABLED=1
-	electron-app_src_postunpack_default
-}
-
-electron-app_src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
 	vrun yarn build
@@ -114,28 +119,27 @@ electron-app_src_compile() {
 }
 
 src_install() {
-	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}"
-	electron-app_desktop_install_program \
-		"dist/linux-unpacked/*"
-	npm-utils_install_licenses
-
+	insinto "${YARN_INSTALL_PATH}"
+	doins -r "dist/linux-unpacked/"*
 	exeinto /usr/bin
 	doexe "${FILESDIR}/${PN}"
 	sed -i \
-		-e "s|\${INSTALL_DIR}|${ELECTRON_APP_INSTALL_PATH}|g" \
+		-e "s|\${INSTALL_DIR}|${YARN_INSTALL_PATH}|g" \
 		-e "s|\${NODE_ENV}|${NODE_ENV}|g" \
 		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
 		-e "s|\${PN}|${PN}|g" \
 		"${ED}/usr/bin/${PN}" || die
-
         newicon "main/build/icon.png" "${PN}.png"
-        make_desktop_entry ${PN} "${MY_PN}" ${PN} "Graphics"
-	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
-	electron-app_src_install_finalize
+        make_desktop_entry \
+		"${PN}" \
+		"${MY_PN}" \
+		"${PN}.png"
+		 "Graphics"
+	fperms 0755 "${YARN_INSTALL_PATH}/${PN}"
+	lcnr_install_files
 }
 
 pkg_postinst() {
-	electron-app_pkg_postinst
 ewarn
 ewarn "You need vulkan drivers to use ${PN}."
 ewarn

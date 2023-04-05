@@ -7,6 +7,7 @@ EAPI=7
 MY_PN="GDevelop"
 MY_PV="${PV//_/-}"
 
+export YARN_INSTALL_PATH="/opt/${PN}/${SLOT_MAJOR}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV%%.*}-${PV}.AppImage"
 ELECTRON_APP_ELECTRON_PV="18.2.2" # See \
@@ -147,6 +148,7 @@ BDEPEND+="
 	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}[npm]
 	>=sys-devel/gcc-5.4
 	dev-util/emscripten:${EMSCRIPTEN_SLOT}[wasm(+)]
+	sys-apps/yarn
 	|| (
 		$(gen_llvm_depends)
 	)
@@ -186,7 +188,6 @@ eerror
 		fi
 	fi
 
-	electron-app_pkg_setup
 	if [[ -z "${EM_CONFIG}" ]] ; then
 eerror
 eerror "EM_CONFIG is empty.  Did you install the emscripten package?"
@@ -211,6 +212,10 @@ eerror
 }
 
 pkg_setup() {
+eerror
+eerror "This ebuild is undergoing maintenance for yarn offline install"
+eerror
+die
 	pkg_setup_html5
 	check-reqs_pkg_setup
 
@@ -330,23 +335,6 @@ einfo "PATH:\t${PATH}"
 einfo
 einfo "Building ${MY_PN}.js"
 einfo
-	export STEP="BUILDING_GDEVELOP_JS"
-	S="${WORKDIR}/${MY_PN}-${MY_PV}/${MY_PN}.js" \
-	electron-app_src_unpack
-
-einfo
-einfo "Building ${MY_PN} IDE"
-einfo
-	export STEP="BUILDING_GDEVELOP_IDE"
-	S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/app" \
-	electron-app_src_unpack
-
-einfo
-einfo "Building ${MY_PN} $(ver_cut 1 ${PV}) on the Electron runtime"
-einfo
-	export STEP="BUILDING_GDEVELOP_IDE_ELECTRON"
-	S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/electron-app" \
-	electron-app_src_unpack
 	xdg_src_prepare
 }
 
@@ -360,9 +348,29 @@ src_prepare() {
 }
 
 src_configure() { :; }
-src_compile() { :; }
 
-electron-app_src_compile() {
+src_compile() {
+	export STEP="BUILDING_GDEVELOP_JS"
+	S="${WORKDIR}/${MY_PN}-${MY_PV}/${MY_PN}.js" \
+	compile_step
+
+einfo
+einfo "Building ${MY_PN} IDE"
+einfo
+	export STEP="BUILDING_GDEVELOP_IDE"
+	S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/app" \
+	build_step
+
+einfo
+einfo "Building ${MY_PN} $(ver_cut 1 ${PV}) on the Electron runtime"
+einfo
+	export STEP="BUILDING_GDEVELOP_IDE_ELECTRON"
+	S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/electron-app" \
+	build_step
+
+}
+
+build_step() {
 	if [[ "${STEP}" == "BUILDING_GDEVELOP_JS" ]] ; then
 		einfo
 		einfo "Compiling ${MY_PN}.js"
@@ -388,16 +396,14 @@ eerror
 einfo
 einfo "Compiling app"
 einfo
-		#PATH="${S}/node_modules/.bin:${PATH}" \
 		S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/app" \
-		electron-app_src_compile_default
+		yarn run build || die
 	elif [[ "${STEP}" == "BUILDING_GDEVELOP_IDE_ELECTRON" ]] ; then
 einfo
 einfo "Compiling electron-app"
 einfo
-		#PATH="${S}/node_modules/.bin:${PATH}" \
 		S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/electron-app" \
-		electron-app_src_compile_default
+		yarn run build || die
 	fi
 }
 
@@ -414,7 +420,6 @@ ewarn
 			eapply "${FILESDIR}/${PN}-5.1.555-wrapper-file-signal.patch"
 		fi
 	fi
-	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}/${SLOT_MAJOR}"
 
 	#
 	# We can't use .ico because of XDG icon standards.  .ico is not
@@ -434,19 +439,19 @@ ewarn
 		newicon -s 32 icon-32x32.png ${PN}.png
 		newicon -s 16 icon-16x16.png ${PN}.png
 	popd
-	electron-app_desktop_install \
-		"*" \
-		"newIDE/electron-app/build/icon-256x256.png" \
+	newicon "newIDE/electron-app/build/icon-256x256.png" "${PN}.png"
+	make_desktop_entry \
+		"/usr/bin/${PN}" \
 		"${MY_PN} $(ver_cut 1 ${PV})" \
-		"Development;IDE" \
-		"/usr/bin/${PN}"
+		"${PN}.png" \
+		"Development;IDE"
 
 	if [[ -e "${ED}/usr/bin/${PN}" ]] ; then
 		rm "${ED}/usr/bin/${PN}" || die # Replace wrapper with the one below
 	fi
 	cp "${FILESDIR}/${PN}" "${T}/${PN}" || die
 	sed -i \
-		-e "s|\${INSTALL_PATH}|${ELECTRON_APP_INSTALL_PATH}|g" \
+		-e "s|\${INSTALL_PATH}|${YARN_INSTALL_PATH}|g" \
 		-e "s|\$(get_libdir)|$(get_libdir)|g" \
 		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
 		-e "s|\${PN}|${PN}|g" \
@@ -470,30 +475,28 @@ ewarn
 	fi
 
 	fowners ${PN}:${PN} \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules" \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/libGD.js-for-tests-only" \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/libGD.js-for-tests-only/index.js" \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/libGD.js-for-tests-only/libGD.wasm" \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/public" \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/public/libGD.js" \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/public/libGD.wasm" \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/src/Version/VersionMetadata.js"
-	keepdir "${ELECTRON_APP_INSTALL_PATH}/.cache/.eslintcache"
-	keepdir "${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime"
+		"${YARN_INSTALL_PATH}/newIDE/app/node_modules" \
+		"${YARN_INSTALL_PATH}/newIDE/app/node_modules/libGD.js-for-tests-only" \
+		"${YARN_INSTALL_PATH}/newIDE/app/node_modules/libGD.js-for-tests-only/index.js" \
+		"${YARN_INSTALL_PATH}/newIDE/app/node_modules/libGD.js-for-tests-only/libGD.wasm" \
+		"${YARN_INSTALL_PATH}/newIDE/app/public" \
+		"${YARN_INSTALL_PATH}/newIDE/app/public/libGD.js" \
+		"${YARN_INSTALL_PATH}/newIDE/app/public/libGD.wasm" \
+		"${YARN_INSTALL_PATH}/newIDE/app/src/Version/VersionMetadata.js"
+	keepdir "${YARN_INSTALL_PATH}/.cache/.eslintcache"
+	keepdir "${YARN_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime"
         fowners -R ${PN}:${PN} \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/.cache/.eslintcache"
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime" \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime-sources" \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/public/external" \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/resources/GDJS" \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/resources/GDJS/Runtime" \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/resources/GDJS/Runtime-sources" \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/src/UI/Theme/"
-	electron-app_src_install_finalize
+		"${YARN_INSTALL_PATH}/newIDE/app/node_modules/.cache/.eslintcache"
+		"${YARN_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime" \
+		"${YARN_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime-sources" \
+		"${YARN_INSTALL_PATH}/newIDE/app/public/external" \
+		"${YARN_INSTALL_PATH}/newIDE/app/resources/GDJS" \
+		"${YARN_INSTALL_PATH}/newIDE/app/resources/GDJS/Runtime" \
+		"${YARN_INSTALL_PATH}/newIDE/app/resources/GDJS/Runtime-sources" \
+		"${YARN_INSTALL_PATH}/newIDE/app/src/UI/Theme/"
 }
 
 pkg_postinst() {
-	electron-app_pkg_postinst
 	xdg_pkg_postinst
 einfo
 	if use openrc ; then
