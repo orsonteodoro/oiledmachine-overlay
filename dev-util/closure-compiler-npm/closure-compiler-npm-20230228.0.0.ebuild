@@ -4,9 +4,14 @@
 
 EAPI=8
 
+# All builds require npm/node.
+
+BAZEL_PV="5.3.0"
+GRAALVM_JAVA_PV=17
+GRAALVM_PV="22.3.0"
 NODE_ENV=development
 NODE_VERSION=14 # Upstream uses 14 on linux but others 16, 18
-inherit check-reqs java-utils-2 yarn
+inherit bazel check-reqs java-utils-2 graalvm yarn
 
 DESCRIPTION="Check, compile, optimize and compress Javascript with \
 Closure-Compiler"
@@ -14,39 +19,6 @@ HOMEPAGE="
 https://developers.google.com/closure/compiler/
 https://github.com/google/closure-compiler-npm
 "
-
-GRAAL_VM_CE_LICENSES="
-	GraalVM_CE_22.3_LICENSE
-	GraalVM_CE_22.3_LICENSE_NATIVEIMAGE
-	GraalVM_CE_22.3_THIRD_PARTY_LICENSE
-	UPL-1.0
-	GPL-2-with-classpath-exception
-	( MIT all-rights-reserved )
-	Apache-2.0
-	BSD
-	BSD-2
-	CPL-1.0
-	CDDL
-	CDDL-1.1
-	CC0-1.0
-	EPL-1.0
-	EPL-2.0
-	icu-68.1
-	JDOM
-	JSON
-	LGPL-2.1
-	LGPL-2.1+
-	MIT
-	NAIST-IPADIC
-	unicode
-	Unicode-DFS-2016
-	W3C
-	W3C-Software-Notice-and-License
-	W3C-Software-and-Document-Notice-and-License
-	W3C-Software-and-Document-Notice-and-License-20021231
-	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
-	|| ( Apache-2.0 GPL-2+-with-classpath-exception )
-" # It includes third party licenses.
 
 LICENSE="
 	Apache-2.0
@@ -71,6 +43,7 @@ IUSE+="
 	closure_compiler_native
 	closure_compiler_nodejs
 	doc
+	test
 "
 REQUIRED_USE+="
 	closure_compiler_nodejs? (
@@ -117,13 +90,9 @@ DEPEND+="
 	${RDEPEND}
 	${JDK_DEPEND}
 "
-GRAALVM_CE_DEPENDS="
-	sys-devel/gcc[cxx]
-	sys-libs/glibc
-	sys-libs/zlib
-"
 BDEPEND+="
 	${JDK_DEPEND}
+	=dev-util/bazel-$(ver_cut 1 ${BAZEL_PV})*
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
 	dev-java/maven-bin
@@ -141,8 +110,6 @@ BAZELISK_ABIS="
 	amd64
 	arm64
 "
-GRAAL_VM_CE_PV="22.3.0"
-GRAAL_VM_CE_JAVA_VER="17"
 gen_bazelisk_src_uris() {
 	local abi
 	for abi in ${BAZELISK_ABIS} ; do
@@ -154,23 +121,7 @@ https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_PV}/bazelis
 		"
 	done
 }
-declare -A GRAALVM_ABIS=(
-	[amd64]="amd64"
-	[arm64]="aarch64"
-)
 
-gen_graalvm_ce_uris() {
-	local abi
-	for abi in ${!GRAALVM_ABIS[@]} ; do
-		echo "
-	${abi}? (
-		closure_compiler_native? (
-https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${GRAAL_VM_CE_PV}/graalvm-ce-java${GRAAL_VM_CE_JAVA_VER}-linux-${GRAALVM_ABIS[${abi}]}-${GRAAL_VM_CE_PV}.tar.gz
-		)
-	)
-		"
-	done
-}
 # Initially generated from:
 #   grep "resolved" /var/tmp/portage/dev-util/closure-compiler-npm-20230228.0.0/work/closure-compiler-npm-20230228.0.0/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
 # For the generator script, see the typescript/transform-uris.sh ebuild-package.
@@ -641,7 +592,63 @@ https://registry.yarnpkg.com/yargs/-/yargs-7.1.0.tgz -> yarnpkg-yargs-7.1.0.tgz
 https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz -> yarnpkg-yocto-queue-0.1.0.tgz
 "
 # UPDATER_END_YARN_EXTERNAL_URIS
+ANT_PV="1.10.11"
+ARGS4J_PV="2.33"
+COURSIER_PV="2.0.16"
+ERROR_PRONE_ANNOTATIONS_PV="2.15.0"
+FAILUREACCESS_PV="1.0.1"
+GSON_PV="2.9.1"
+GUAVA_PV="31.0.1"
+JAVA_DIFF_UTILS_PV="4.0"
+JAVA_TOOLS_PV="11.9"
+JIMFS_PV="1.2"
+JQ_PV="1.6"
+JSPECIFY_PV="0.2.0"
+PROTOBUF_JAVA_PV="3.21.12"
+RE2J_PV="1.3"
+RULES_JAVA_PV="5.1.0"
+RULES_JVM_EXTERNAL_PV="4.2"
+RULES_PROTO_PV="4.0.0"
+TRUTH_LITEPROTO_EXTENSION_PV="1.1"
+TRUTH_PROTO_EXTENSION_PV="1.1"
+ZULU_PV="11.56.19-ca-jdk11.0.15"
+EGIT_BAZEL_COMMON_COMMIT="aaa4d801588f7744c6f4428e4f133f26b8518f42"
+EGIT_BAZEL_JAR_JAR_COMMIT="171f268569384c57c19474b04aebe574d85fde0d"
+EGIT_RULES_CC_COMMIT="b7fe9697c0c76ab2fd431a891dbb9a6a32ed7c3e"
+EGIT_RULES_PROTO_COMMIT="7e4afce6fe62dbff0a4a03450143146f9f2d7488"
+bazel_external_uris="
+https://cdn.azul.com/zulu/bin/zulu${ZULU_PV}-linux_x64.tar.gz
+https://github.com/bazelbuild/rules_jvm_external/archive/${RULES_JVM_EXTERNAL_PV}.zip -> rules_jvm_external-${RULES_JVM_EXTERNAL_PV}.zip
+https://github.com/coursier/coursier/releases/download/v${COURSIER_PV}/coursier.jar -> coursier-${COURSIER_PV}.jar
+https://github.com/google/bazel-common/archive/${EGIT_BAZEL_COMMON_COMMIT}.zip -> bazel-common-${EGIT_BAZEL_COMMON_COMMIT}.zip
+https://github.com/bazelbuild/java_tools/releases/download/java_v${JAVA_TOOLS_PV}/java_tools-v${JAVA_TOOLS_PV}.zip
+https://github.com/bazelbuild/java_tools/releases/download/java_v${JAVA_TOOLS_PV}/java_tools_linux-v${JAVA_TOOLS_PV}.zip
+https://github.com/bazelbuild/rules_cc/archive/${EGIT_RULES_CC_COMMIT}.tar.gz -> rules_cc-${EGIT_RULES_CC_COMMIT}.tar.gz
+https://github.com/bazelbuild/rules_proto/archive/refs/tags/${RULES_PROTO_PV}.tar.gz -> rules_proto-${RULES_PROTO_PV}.tar.gz
+https://github.com/bazelbuild/rules_proto/archive/${EGIT_RULES_PROTO_COMMIT}.tar.gz -> rules_proto-${EGIT_RULES_PROTO_COMMIT}.tar.gz
+https://github.com/bazelbuild/rules_java/releases/download/${RULES_JAVA_PV}/rules_java-${RULES_JAVA_PV}.tar.gz -> rules_java-${RULES_JAVA_PV}.tar.gz
+https://github.com/johnynek/bazel_jar_jar/archive/${EGIT_BAZEL_JAR_JAR_COMMIT}.zip -> bazel_jar_jar-${EGIT_BAZEL_JAR_JAR_COMMIT}.zip
+https://github.com/stedolan/jq/releases/download/jq-${JQ_PV}/jq-linux64 -> jq-${JQ_PV}-linux64
+https://github.com/stedolan/jq/releases/download/jq-${JQ_PV}/jq-osx-amd64 -> jq-${JQ_PV}-osx-amd64
+https://github.com/stedolan/jq/releases/download/jq-${JQ_PV}/jq-win64.exe -> jq-${JQ_PV}-win64-amd64
+https://repo1.maven.org/maven2/args4j/args4j/${ARGS4J_PV}/args4j-${ARGS4J_PV}.jar
+https://repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils/${JAVA_DIFF_UTILS_PV}/java-diff-utils-${JAVA_DIFF_UTILS_PV}.jar
+https://repo1.maven.org/maven2/com/google/code/gson/gson/${GSON_PV}/gson-${GSON_PV}.jar
+https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/${ERROR_PRONE_ANNOTATIONS_PV}/error_prone_annotations-${ERROR_PRONE_ANNOTATIONS_PV}.jar
+https://repo1.maven.org/maven2/com/google/guava/failureaccess/${FAILUREACCESS_PV}/failureaccess-${FAILUREACCESS_PV}.jar
+https://repo1.maven.org/maven2/com/google/guava/guava/${GUAVA_PV}-jre/guava-${GUAVA_PV}-jre.jar
+https://repo1.maven.org/maven2/com/google/jimfs/jimfs/${JIMFS_PV}/jimfs-${JIMFS_PV}.jar
+https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_PV}/protobuf-java-${PROTOBUF_JAVA_PV}.pom
+https://repo1.maven.org/maven2/com/google/re2j/re2j/${RE2J_PV}/re2j-${RE2J_PV}.jar
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-liteproto-extension/${TRUTH_LITEPROTO_EXTENSION_PV}/truth-liteproto-extension-${TRUTH_LITEPROTO_EXTENSION_PV}.jar
+https://repo1.maven.org/maven2/com/google/truth/extensions/truth-proto-extension/${TRUTH_PROTO_EXTENSION_PV}/truth-proto-extension-${TRUTH_PROTO_EXTENSION_PV}.jar
+https://repo1.maven.org/maven2/org/apache/ant/ant/${ANT_PV}/ant-${ANT_PV}.jar
+https://repo1.maven.org/maven2/org/jspecify/jspecify/${JSPECIFY_PV}/jspecify-${JSPECIFY_PV}.jar
+"
 SRC_URI="
+$(graalvm_gen_base_uris)
+$(graalvm_gen_native_image_uris)
+${bazel_external_uris}
 ${YARN_EXTERNAL_URIS}
 https://github.com/google/closure-compiler-npm/archive/v${PV}.tar.gz
 	-> ${FN_DEST}
@@ -650,11 +657,13 @@ https://github.com/google/closure-compiler/archive/v${CC_PV}.tar.gz
 "
 SRC_URI+="
 	$(gen_bazelisk_src_uris)
-	$(gen_graalvm_ce_uris)
 "
 S="${WORKDIR}/${PN}-${PV}"
 S_CLOSURE_COMPILER="${WORKDIR}/closure-compiler-${CC_PV}"
 RESTRICT="mirror"
+PATCHES=(
+	"${FILESDIR}/closure-compiler-npm-20230228.0.0-maven_install-m2Local.patch"
+)
 
 _set_check_reqs_requirements() {
 	CHECKREQS_DISK_BUILD="1688M"
@@ -770,8 +779,10 @@ eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
 eerror "env to be able to download micropackages."
 eerror
-		die
+:;#		die
 	fi
+
+	# Do not make conditional.
 	yarn_pkg_setup
 
 	_set_check_reqs_requirements
@@ -785,27 +796,24 @@ eerror
 	fi
 }
 
-attach_graalvm_ce() {
-	export GRAALVM_HOME="${WORKDIR}/graalvm-ce-java${GRAAL_VM_CE_JAVA_VER}-${GRAAL_VM_CE_PV}"
-	export PATH="${WORKDIR}/graalvm-ce-java${GRAAL_VM_CE_JAVA_VER}-${GRAAL_VM_CE_PV}/bin:${PATH}"
-	export JAVA_HOME="${WORKDIR}/graalvm-ce-java${GRAAL_VM_CE_JAVA_VER}-${GRAAL_VM_CE_PV}"
-einfo "GRAALVM_HOME:\t${GRAALVM_HOME}"
-einfo "PATH:\t${PATH}"
-einfo "JAVA_HOME:\t${JAVA_HOME}"
-	java -version 2>&1 | grep -q "GraalVM CE ${GRAAL_VM_CE_PV}" || die
-	gu install native-image || die
-}
-
 src_unpack() {
 eerror "Ebuild under maintenance."
 eerror "TODO:  bazel offline install."
 eerror "Testing yarn offline install."
-die
-	unpack ${A}
-	use closure_compiler_nodejs && yarn_src_unpack
+:;#die
+	unpack ${FN_DEST}
+	unpack ${FN_DEST2}
+
+	bazel_load_distfiles "${bazel_external_uris}"
+
 	if use closure_compiler_native ; then
-		attach_graalvm_ce
+		unpack $(graalvm_get_base_tarball_name)
+		graalvm_attach_graalvm
 	fi
+
+	# Do not make this section conditional.
+	yarn_src_unpack
+
 	rm -rf "${S}/compiler" || die
 	mv \
 		"${S_CLOSURE_COMPILER}" \
@@ -858,8 +866,6 @@ einfo "Adding .git folder"
 	git commit -m "Dummy" || die
 	git tag v${PV} || die
 
-	yarn_src_unpack
-
 	if grep -e "Read timed out" "${T}/build.log" ; then
 eerror
 eerror "Detected download failure.  Re-emerge."
@@ -904,10 +910,86 @@ eerror
 	fi
 }
 
-src_compile() {
-	if use closure_compiler_js ; then
-		yarn_src_compile
+get_bazel() {
+	# https://github.com/bazelbuild/bazel/releases
+	local bazel_pv=$(bazel --version \
+		| cut -f 2 -d " " \
+		| sed -e "s|-||g")
+	if use kernel_linux && use amd64 ; then
+		local dest="${HOME}/.cache/bazelisk/downloads/bazelbuild/bazel-${BAZEL_PV}-linux-x86_64/bin"
+		mkdir -p "${dest}"
+		ln -s $(which bazel) "${dest}/bazel" || die
+	elif use kernel_linux && use arm64 ; then
+		local dest="${HOME}/.cache/bazelisk/downloads/bazelbuild/bazel-${BAZEL_PV}-linux-arm64/bin"
+		mkdir -p "${dest}"
+		ln -s $(which bazel) "${dest}/bazel" || die
+	else
+eerror
+eerror "Arch is not supported in the ebuild level."
+eerror "Fork ebuild locally."
+eerror
+		die
 	fi
+}
+
+src_prepare() {
+	default
+	if use closure_compiler_native || use closure_compiler_java ; then
+		bazel_setup_bazelrc
+	fi
+}
+
+setup_bazel_slot() {
+	mkdir -p "${WORKDIR}/bin"
+	export PATH="${WORKDIR}/bin:${PATH}"
+	local has_multislot_bazel=0
+	local slot
+	for slot in 5 ; do
+		if has_version "dev-util/bazel:${slot}" ; then
+einfo "Detected dev-util/bazel:${slot} (multislot)"
+			ln -sf \
+				"${ESYSROOT}/usr/bin/bazel-${slot}" \
+				"${WORKDIR}/bin/bazel" \
+				|| die
+			has_multislot_bazel=1
+			bazel --version || die
+			break
+		fi
+	done
+	if (( ${has_multislot_bazel} == 0 )) ; then
+ewarn
+ewarn "Using unslotted bazel.  Use the one from the oiledmachine-overlay"
+ewarn "instead or downgrade to bazel == 5"
+ewarn
+	fi
+
+	echo 'build --noshow_progress' >> "${T}/bazelrc" || die # Disable high CPU usage on xfce4-terminal
+	echo 'build --subcommands' >> "${T}/bazelrc" || die # Increase verbosity
+
+	# There is a bug that keeps popping up when building java packages:
+	# /var/lib/portage/home/ should be /var/tmp/portage/dev-util/closure-compiler-npm-20230228.0.0/homedir/
+	#echo "bazel run --define \"maven_repo=file://$HOME/.m2/repository\"" >> "${T}/bazelrc" || die # Does not fix
+
+	cat "${T}/bazelrc" >> "${S}/compiler/.bazelrc" || die
+
+	if use closure_compiler_native || use closure_compiler_java ; then
+einfo "HOME:\t${HOME}"
+		export USER_HOME="${HOME}"
+		mkdir -p "${HOME}/.m2/repository/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_PV}" || die
+		cat "${DISTDIR}/protobuf-java-3.21.12.pom" > "${HOME}/.m2/repository/com/google/protobuf/protobuf-java/${PROTOBUF_JAVA_PV}/protobuf-java-${PROTOBUF_JAVA_PV}.pom" || die
+	fi
+}
+
+src_configure() {
+	get_bazel
+	if use closure_compiler_native || use closure_compiler_java ; then
+		setup_bazel_slot
+	fi
+}
+
+src_compile() {
+	# Do not make conditional.
+	yarn_src_compile
 }
 
 src_install() {
