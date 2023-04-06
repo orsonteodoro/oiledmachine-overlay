@@ -80,9 +80,12 @@ BDEPEND+="
 yarn_pkg_setup() {
 	local found=0
 	local slot
+	local node_pv=$(node --version \
+		| sed -e "s|v||g")
 	if [[ -n "${NODE_SLOTS}" ]] ; then
 		for slot in ${NODE_SLOTS} ; do
-			if has_version "=net-libs/nodejs-${slot}*" ; then
+			if has_version "=net-libs/nodejs-${slot}*" \
+				&& (( ${node_pv%%.*} == ${slot} )) ; then
 				export NODE_VERSION=${slot}
 				found=1
 				break
@@ -96,7 +99,8 @@ eerror
 			die
 		fi
 	elif [[ -n "${NODE_VERSION}" ]] ; then
-		if has_version "=net-libs/nodejs-${NODE_VERSION}*" ; then
+		if has_version "=net-libs/nodejs-${NODE_VERSION}*" \
+			&& (( ${node_pv%%.*} == ${NODE_VERSION} )) ; then
 			found=1
 		fi
 		if (( ${found} == 0 )) ; then
