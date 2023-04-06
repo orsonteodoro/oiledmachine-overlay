@@ -13,16 +13,16 @@ KEYWORDS="
 IUSE="4_14 5_4 5_10 5_15 6_1"
 RDEPEND="
 	4_14? (
-		~sys-kernel/ot-sources-4.14.311
+		~sys-kernel/ot-sources-4.14.312
 	)
 	5_4? (
-		~sys-kernel/ot-sources-5.4.239
+		~sys-kernel/ot-sources-5.4.240
 	)
 	5_10? (
-		~sys-kernel/ot-sources-5.10.176
+		~sys-kernel/ot-sources-5.10.177
 	)
 	5_15? (
-		~sys-kernel/ot-sources-5.15.105
+		~sys-kernel/ot-sources-5.15.106
 	)
 	6_1? (
 		~sys-kernel/ot-sources-6.1.22
