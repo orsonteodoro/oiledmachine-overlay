@@ -49,6 +49,7 @@ src_unpack() {
 		unpack ${P}.tar.gz
 		cd "${S}" || die
 		rm package-lock.json
+		rm yarn.lock
 		npm i || die
 		npm audit fix || die
 		yarn import || die

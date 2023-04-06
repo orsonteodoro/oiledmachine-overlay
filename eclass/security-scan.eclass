@@ -267,3 +267,14 @@ eerror
 	done
 	IFS=$' \t\n'
 }
+
+# @FUNCTION: security-scan_js_scan_all
+# @DESCRIPTION:
+# Run all scans for npm/yarn/electron based packages.
+security-scan_js_scan_all() {
+	npm-utils_avscan "${WORKDIR}"
+	security-scan_find_analytics
+	security-scan_find_analytics_within_source_code
+	security-scan_find_session_replay
+	security-scan_find_session_replay_within_source_code
+}

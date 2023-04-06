@@ -1016,6 +1016,7 @@ src_compile() {
 	local args=()
 
 	if has_version ">=dev-util/bazel-6" ; then
+		# See https://github.com/tensorflow/tensorflow/issues/58825
 		args+=( --incompatible_fix_package_group_reporoot_syntax=false )
 	fi
 

@@ -101,7 +101,7 @@ BDEPEND+="
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 
-pkg_setup() {
+check_network_sandbox() {
 	if has network-sandbox $FEATURES ; then
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
@@ -109,6 +109,17 @@ eerror "env to be able to download micropackages."
 eerror
 		die
 	fi
+}
+
+pkg_setup() {
+	:;#check_network_sandbox
+}
+
+gen_yarn_lock() {
+	cd "${S}" || die
+	npm i || die
+	npm audit fix || die
+	yarn import || die
 }
 
 src_unpack() {
@@ -119,8 +130,17 @@ src_unpack() {
 		EGIT_COMMIT="HEAD"
 		git-r3_fetch
 		git-r3_checkout
+		cd "${S}" || die
+		rm yarn.lock || die
+		gen_yarn_lock
 	else
 		unpack ${A}
+		if [[ "${UPDATE_YARN_LOCK}" == "1" ]] ; then
+			gen_yarn_lock
+			die
+		else
+			yarn_src_unpack
+		fi
 	fi
 	local actual_pv=$(grep "version" "${S}/package.json" | cut -f 4 -d '"')
 	local expected_pv=$(ver_cut 1-3 ${PV})

@@ -1339,12 +1339,216 @@ einfo "Copying ${DISTDIR}/${srcfn} -> ${dest}/${destfn}"
 
 }
 
+cp_raze_crates() {
+	local L=(
+aho-corasick/0.7.18
+anyhow/1.0.34
+async-stream/0.3.0
+async-stream-impl/0.3.0
+async-trait/0.1.41
+atty/0.2.14
+autocfg/1.0.1
+base64/0.13.0
+bitflags/1.2.1
+build_const/0.2.1
+bumpalo/3.6.0
+byteorder/1.3.4
+bytes/0.5.6
+bytes/1.0.1
+cc/1.0.66
+cfg-if/0.1.10
+cfg-if/1.0.0
+clap/3.0.0-beta.2
+clap_derive/3.0.0-beta.2
+const_fn/0.4.5
+crc/1.8.1
+crossbeam/0.8.0
+crossbeam-channel/0.5.0
+crossbeam-deque/0.8.1
+crossbeam-epoch/0.9.1
+crossbeam-queue/0.3.1
+crossbeam-utils/0.8.8
+either/1.6.1
+encoding_rs/0.8.26
+env_logger/0.8.2
+fixedbitset/0.4.1
+fnv/1.0.7
+form_urlencoded/1.0.0
+futures-channel/0.3.8
+futures-core/0.3.12
+futures-io/0.3.12
+futures-macro/0.3.8
+futures-sink/0.3.8
+futures-task/0.3.8
+futures-util/0.3.8
+getrandom/0.1.15
+getrandom/0.2.1
+h2/0.3.13
+hashbrown/0.11.2
+heck/0.3.1
+hermit-abi/0.1.17
+http/0.2.1
+http-body/0.4.5
+httparse/1.7.1
+httpdate/1.0.2
+humantime/2.0.1
+hyper/0.14.19
+hyper-rustls/0.22.1
+hyper-timeout/0.4.1
+idna/0.2.0
+indexmap/1.8.2
+ipnet/2.3.0
+itertools/0.10.3
+itoa/0.4.6
+itoa/1.0.2
+js-sys/0.3.47
+lazy_static/1.4.0
+libc/0.2.126
+log/0.4.11
+matches/0.1.8
+memchr/2.5.0
+memoffset/0.6.1
+mime/0.3.16
+mio/0.8.3
+multimap/0.8.2
+num_cpus/1.13.0
+once_cell/1.5.2
+os_str_bytes/2.4.0
+percent-encoding/2.1.0
+petgraph/0.6.2
+pin-project/0.4.27
+pin-project/1.0.1
+pin-project-internal/0.4.27
+pin-project-internal/1.0.1
+pin-project-lite/0.2.9
+pin-utils/0.1.0
+ppv-lite86/0.2.10
+proc-macro-error/1.0.4
+proc-macro-error-attr/1.0.4
+proc-macro-hack/0.5.19
+proc-macro-nested/0.1.7
+proc-macro2/1.0.24
+prost/0.9.0
+prost-build/0.9.0
+prost-derive/0.9.0
+prost-types/0.9.0
+quote/1.0.7
+rand/0.7.3
+rand/0.8.2
+rand_chacha/0.2.2
+rand_chacha/0.3.0
+rand_core/0.5.1
+rand_core/0.6.1
+rand_hc/0.2.0
+rand_hc/0.3.0
+rayon/1.5.0
+rayon-core/1.9.0
+redox_syscall/0.1.57
+regex/1.5.6
+regex-syntax/0.6.26
+remove_dir_all/0.5.3
+reqwest/0.11.0
+ring/0.16.20
+rustls/0.19.0
+ryu/1.0.5
+same-file/1.0.6
+scopeguard/1.1.0
+sct/0.6.1
+serde/1.0.118
+serde_derive/1.0.118
+serde_json/1.0.61
+serde_urlencoded/0.7.0
+slab/0.4.2
+socket2/0.4.4
+spin/0.5.2
+strsim/0.10.0
+syn/1.0.67
+tempfile/3.1.0
+termcolor/1.1.0
+textwrap/0.12.1
+thiserror/1.0.22
+thiserror-impl/1.0.22
+tinyvec/1.1.1
+tinyvec_macros/0.1.0
+tokio/1.19.2
+tokio-io-timeout/1.2.0
+tokio-macros/1.8.0
+tokio-rustls/0.22.0
+tokio-stream/0.1.2
+tokio-util/0.6.6
+tokio-util/0.7.3
+tonic/0.6.2
+tonic-build/0.6.2
+tonic-reflection/0.3.0
+tower/0.4.11
+tower-layer/0.3.1
+tower-service/0.3.0
+tracing/0.1.34
+tracing-attributes/0.1.21
+tracing-core/0.1.26
+tracing-futures/0.2.4
+try-lock/0.2.3
+unicode-bidi/0.3.4
+unicode-normalization/0.1.16
+unicode-segmentation/1.6.0
+unicode-width/0.1.8
+unicode-xid/0.2.1
+untrusted/0.7.1
+url/2.2.0
+vec_map/0.8.2
+version_check/0.9.2
+walkdir/2.3.1
+want/0.3.0
+wasi/0.10.1+wasi-snapshot-preview1
+wasi/0.11.0+wasi-snapshot-preview1
+wasi/0.9.0+wasi-snapshot-preview1
+wasm-bindgen/0.2.70
+wasm-bindgen-backend/0.2.70
+wasm-bindgen-futures/0.4.20
+wasm-bindgen-macro/0.2.70
+wasm-bindgen-macro-support/0.2.70
+wasm-bindgen-shared/0.2.70
+web-sys/0.3.47
+webpki/0.21.4
+webpki-roots/0.21.1
+which/4.0.2
+winapi/0.3.9
+winapi-i686-pc-windows-gnu/0.4.0
+winapi-util/0.1.5
+winapi-x86_64-pc-windows-gnu/0.4.0
+windows-sys/0.36.1
+windows_aarch64_msvc/0.36.1
+windows_i686_gnu/0.36.1
+windows_i686_msvc/0.36.1
+windows_x86_64_gnu/0.36.1
+windows_x86_64_msvc/0.36.1
+winreg/0.7.0
+	)
+	local row
+	for row in ${L[@]} ; do
+		local pn=$(echo "${row}" \
+			| cut -f 1 -d "/")
+		local pv=$(echo "${row}" \
+			| cut -f 2 -d "/")
+		local spv="${pv}"
+		spv="${spv//+/_}"
+		spv="${spv//-/_}"
+		spv="${spv//./_}"
+		local folder="raze__${pn}__${pv}"
+		local dist="${WORKDIR}/tensorboard-${PV}-bazel-base/external/${folder}/temp4412435098408312724"
+		mkdir -p "${dist}" || die
+einfo "Copying ${DISTDIR}/rust-crates--${pn}-${pv}.tar.gz -> ${dist}/download.tar.gz"
+		cat "${DISTDIR}/rust-crates--${pn}-${pv}.tar.gz" > "${dist}/download.tar.gz" || die
+	done
+}
+
 src_unpack() {
 	unpack ${P}.tar.gz
 	bazel_load_distfiles "${bazel_external_uris}"
 	yarn-utils_cpy_yarn_tarballs
 	cp_material_icons
 	cp_rust_crates
+#	cp_raze_crates
 	cd "${S}" || die
 	yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
 	cp "${HOME}/.yarnrc" "${WORKDIR}" || die

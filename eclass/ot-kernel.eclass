@@ -172,7 +172,7 @@ bzip2 cpu_flags_arm_thumb graphicsmagick gtk gzip imagemagick lz4 lzma lzo
 NEEDS_DEBUGFS=0
 PYTHON_COMPAT=( python3_{8..10} )
 inherit check-reqs flag-o-matic python-r1 ot-kernel-cve ot-kernel-pkgflags
-inherit ot-kernel-kutils toolchain-funcs
+inherit ot-kernel-kutils security-scan toolchain-funcs
 CDEPEND="
 	app-arch/cpio
 	app-shells/bash
@@ -2691,11 +2691,7 @@ eerror "Remove the entries from CONFIG_EXTRA_FIRMWARE in ${config}"
 
 	# This scan is done because of the existence of non distro overlays,
 	# local repos, live ebuilds.
-	if ot-kernel_has_version "app-antivirus/clamav[clamapp]" \
-		&& [[ "${OT_KERNEL_FIRMWARE_AVSCAN:-1}" == "1" ]] ; then
-einfo "Running avscan on firmware(s)"
-		clamscan "${fw_abspaths[@]}" || die
-	fi
+	security-scan_avscan "${fw_abspaths[@]}"
 }
 
 # Remove blacklisted firmware relpath.
@@ -6925,11 +6921,7 @@ eerror
 			die
 		fi
 
-		if ot-kernel_has_version "app-antivirus/clamav[clamapp]" \
-			&& [[ "${OT_KERNEL_LOGO_AVSCAN:-1}" == "1" ]] ; then
-einfo "Running avscan on logo"
-			clamscan "${T}/boot.logo" || die
-		fi
+		security-scan_avscan "${T}/boot.logo"
 
 		local image_in_path=""
 		if [[ "${image_type}" =~ "AVIF Image" ]] ; then
@@ -7146,11 +7138,7 @@ eerror
 					"${BUILD_DIR}/drivers/video/logo/logo_custom_${colors_suffix}.${colors_ext}" \
 					|| die
 
-				if ot-kernel_has_version "app-antivirus/clamav[clamapp]" \
-					&& [[ "${OT_KERNEL_LOGO_AVSCAN:-1}" == "1" ]] ; then
-einfo "Running avscan on logo"
-					clamscan "${BUILD_DIR}/drivers/video/logo/logo_custom_${colors_suffix}.${colors_ext}" || die
-				fi
+				security-scan_avscan "${BUILD_DIR}/drivers/video/logo/logo_custom_${colors_suffix}.${colors_ext}"
 
 				if [[ "${OT_KERNEL_LOGO_URI}" =~ ("http://"|"https://"|"ftp://") ]] ; then
 					if [[ "${OT_KERNEL_LOGO_LICENSE_URI}" =~ ("http://"|"https://"|"ftp://") ]] ; then

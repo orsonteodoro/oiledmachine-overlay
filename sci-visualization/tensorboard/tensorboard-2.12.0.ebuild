@@ -1483,6 +1483,7 @@ APPLE_SUPPORT_PV="0.11.0"
 BAZEL_GAZELLE_PV="0.24.0"
 BAZEL_SKYLIB_PV="1.1.1"
 BLEACH_PV="2.0"
+CHROMEDRIVER_PV="2.41"
 CHROMIUM_REV="768959"
 CLOSURE_LIBRARY_PV="20191027"
 GRPC_PV="1.48.2"
@@ -1769,6 +1770,7 @@ https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_D
 https://raw.githubusercontent.com/google/material-design-icons/${EGIT_MATERIAL_DESIGN_ICONS_D3D4ACA_COMMIT}/src/social/notifications_none/materialicons/24px.svg -> material-design-icons-src-social-notifications_none-materialicons--notifications_none_24px-${EGIT_MATERIAL_DESIGN_ICONS_D3D4ACA_COMMIT}.svg
 "
 bazel_external_uris="
+https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_PV}/chromedriver_linux64.zip -> chromedriver_linux64-${CHROMEDRIVER_PV}.zip
 https://commondatastorage.googleapis.com/chromium-browser-snapshots/Linux_x64/${CHROMIUM_REV}/chrome-linux.zip -> chrome-linux-x64-${CHROMIUM_REV}.zip
 https://files.pythonhosted.org/packages/0b/02/ae6ceac1baeda530866a85075641cec12989bd8d31af6d5ab4a3e8c92f47/webencodings-${WEBENCODINGS_PV}.tar.gz
 https://files.pythonhosted.org/packages/59/2d/b24bab64b409e22f026fee6705b035cb0698399a7b69449c49442b30af47/Werkzeug-${WERKZUG_PV}.tar.gz
@@ -1964,7 +1966,7 @@ src_prepare() {
 	default
 	export JAVA_HOME=$(java-config --jre-home)
 	eapply "${FILESDIR}/tensorboard-2.11.2-yarn-local-cache.patch"
-	eapply "A${FILESDIR}/tensorboard-2.11.2-use-system-go.patch"
+	eapply "${FILESDIR}/tensorboard-2.11.2-use-system-go.patch"
 	sed -i -e "s|\.yarnrc|${WORKDIR}/.yarnrc|g" WORKSPACE || die
 	sed -i -e "s|\.cache/yarn2|${HOME}/.cache/yarn2|g" WORKSPACE || die
 	bazel_setup_bazelrc
@@ -2008,6 +2010,7 @@ _ebazel() {
 
 	echo "build --action_env=GOROOT=\"${GOROOT}\"" >> "${T}/bazelrc" || die
 	echo "build --host_action_env=GOROOT=\"${GOROOT}\"" >> "${T}/bazelrc" || die
+	echo "build --@io_bazel_rules_go//go/toolchain:sdk_version=\"1.14.15\"" >> "${T}/bazelrc" || die
 
 	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 		local ccache_dir=$(ccache -sv \
