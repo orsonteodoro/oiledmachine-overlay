@@ -278,6 +278,10 @@ based on an outdated style guide.
     and do not have a ebuild version from the distro overlay and this overlay
     are not supported.
   - For npm based packages, use the yarn for offline install instead.
+  - You must do a `npm audit fix` for yarn.lock or package-lock.json and update
+    the lock files for js app packages that has not bumped the patch version
+    within one month.  If the package has not been bumped for more than a year,
+    it is a hard requirement.
 
 * eclass rules:
   - All `.eclass`es must be GPL2 only or have a GPL2 compatible license header.
