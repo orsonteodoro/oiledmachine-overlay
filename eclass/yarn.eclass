@@ -13,7 +13,8 @@
 # Eclass similar to the cargo.eclass.
 
 # Requirements:  yarn.lock or package.json -> package-lock.json -> yarn.lock
-# For the URI generator, see the tensorboard/transform-uris.sh script.
+# For the URI generator, see the scripts/yarn_updater_transform_uris.sh and
+# yarn_updater_update_locks.sh scripts.
 
 # For package.json -> yarn.lock:
 # (The network-sandbox needs to be disabled temporarily.)
@@ -158,6 +159,10 @@ yarn_src_unpack() {
 	_yarn_cp_tarballs
 	cd "${S}" || die
 	rm -rf "package-lock.json" || true
+	if [[ -n "${YARN_ROOT}" ]] ; then
+		rm -rf "${YARN_ROOT}/.yarnrc" || die
+	fi
+	rm -rf "${S}/.yarnrc" || die
 	yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
 	mv "${HOME}/.yarnrc" "${WORKDIR}" || die
 	if [[ -f "${FILESDIR}/${PV}/yarn.lock" && -n "${YARN_ROOT}" ]] ; then
@@ -165,13 +170,11 @@ yarn_src_unpack() {
 	elif [[ -f "${FILESDIR}/${PV}/yarn.lock" && -n "${S}" ]] ; then
 		cp "${FILESDIR}/${PV}/yarn.lock" "${S}" || die
 	fi
-	if [[ -n "${YARN_ROOT}" ]] ; then
-		rm -rf "${YARN_ROOT}/.yarnrc" || die
-	fi
-	rm -rf "${S}/.yarnrc" || die
+	local args=()
+#		--prefer-offline \
 	yarn install \
-		--frozen-lockfile \
-		--prefer-offline \
+		--offline \
+		--pure-lockfile \
 		--verbose \
 		|| die
 }
@@ -185,9 +188,10 @@ yarn_src_compile() {
 	[[ "${YARN_BUILD_SCRIPT}" == "skip" ]] && return
 	local cmd="${YARN_BUILD_SCRIPT:-build}"
 	grep -q -e "\"${cmd}\"" package.json || return
+	local args=()
 	yarn run ${cmd} \
-		--frozen-lockfile \
-		--prefer-offline \
+		--offline \
+		--pure-lockfile \
 		--verbose \
 		|| die
 }

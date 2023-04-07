@@ -885,6 +885,7 @@ electron-app_gen_electron_uris() {
 # @DESCRIPTION:
 # Copies the electron tarball for offline install.
 electron-app_cp_electron() {
+	#export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 	export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
 	export ELECTRON_CACHE="${HOME}/.cache/electron"
 	mkdir -p "${ELECTRON_CACHE}" || die
