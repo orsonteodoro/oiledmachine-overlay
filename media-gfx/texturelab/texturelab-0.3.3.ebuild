@@ -2259,9 +2259,9 @@ src_unpack() {
                 cd "${S}" || die
                 rm package-lock.json
 		rm yarn.lock
-                npm i --legacy-peer-deps || die
-                npm audit fix || die
-                yarn import || die
+		npm i --legacy-peer-deps || die
+		npm audit fix || die
+		yarn import || die
 
 	# Fix the following upgrade breakage manually by downgrading:
 
@@ -2277,11 +2277,16 @@ src_unpack() {
 	# Change to ^0.6.2 afterwards.
 		yarn upgrade "vue-toast-notification@0.6.2" || die
 
-                die
+		synp -s yarn.lock || die
+		npm audit fix || die
+		yarn import || die
+		rm yarn.lock || die
+
+		die
         else
-                #export ELECTRON_SKIP_BINARY_DOWNLOAD=1
-                export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
-                export ELECTRON_CACHE="${HOME}/.cache/electron"
+		#export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+		export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
+		export ELECTRON_CACHE="${HOME}/.cache/electron"
 		mkdir -p "${S}" || die
 		cp -a "${FILESDIR}/${PV}/package.json" "${S}" || die
 		cp_sharp_deps
