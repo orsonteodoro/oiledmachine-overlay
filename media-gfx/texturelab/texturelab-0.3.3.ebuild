@@ -2144,7 +2144,9 @@ eerror
 		fi
 	fi
 
+	# Online is still required for Electron based packages.
 	check_network_sandbox
+
 	yarn_pkg_setup
 }
 
@@ -2261,7 +2263,7 @@ src_unpack() {
                 npm audit fix || die
                 yarn import || die
 
-	# Fix the following upgrade breakage manually:
+	# Fix the following upgrade breakage manually by downgrading:
 
 	# Change to ^2.6.10 afterwards.
 		yarn upgrade "vue@2.6.x" || die
