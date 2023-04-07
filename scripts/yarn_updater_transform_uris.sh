@@ -1,7 +1,7 @@
 #!/bin/bash
 
-_PKG_FOLDER=$(pwd)
-PKG_FOLDER="${PKG_FOLDER:-${_PKG_FOLDER}}"
+__YARN_UPDATER_PKG_FOLDER_PATH=$(pwd)
+YARN_UPDATER_PKG_FOLDER="${YARN_UPDATER_PKG_FOLDER:-${__YARN_UPDATER_PKG_FOLDER_PATH}}"
 YARN_UPDATER_SCRIPTS_PATH=$(realpath $(dirname "${BASH_SOURCE[0]}"))
 
 # Helper script to transform URIs
@@ -43,7 +43,7 @@ yarn_updater_gen_yarn_uris() {
 }
 
 yarn_updater_transform_yarn_uris() {
-	cd "${PKG_FOLDER}"
+	cd "${YARN_UPDATER_PKG_FOLDER}"
 	yarn_updater_gen_yarn_uris
 }
 

@@ -4,6 +4,8 @@
 
 EAPI=8
 
+EGIT_COMMIT="0916d8dd64f06580d640e645334586d8ba319cbf"
+YARN_TARBALL="${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
 YARN_INSTALL_PATH="/opt/${PN}"
 ELECTRON_APP_ELECTRON_PV="18.3.7"
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
@@ -27,12 +29,12 @@ SLOT="0"
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 "
-EGIT_COMMIT="0916d8dd64f06580d640e645334586d8ba319cbf"
 # Initially generated from:
-#   grep "resolved" /var/tmp/portage/www-misc/instatron-1.5.0_p20221110/work/instatron-1.5.0_p20221110/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
+#   grep "resolved" /var/tmp/portage/www-misc/instatron-1.5.0_p20221110/work/instatron-0916d8dd64f06580d640e645334586d8ba319cbf/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
 # For the generator script, see typescript/transform-uris.sh ebuild-package.
 # UPDATER_START_YARN_EXTERNAL_URIS
 YARN_EXTERNAL_URIS="
+
 "
 # UPDATER_END_YARN_EXTERNAL_URIS
 SRC_URI="
@@ -43,15 +45,36 @@ https://github.com/alexdevero/instatron/archive/${EGIT_COMMIT}.tar.gz
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 
+src_unpack() {
+	if [[ "${UPDATE_YARN_LOCK}" == "1" ]] ; then
+		unpack ${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz
+		cd "${S}" || die
+		rm package-lock.json
+		rm yarn.lock
+		npm i || die
+		npm audit fix || die
+		yarn import || die
+		die
+	else
+		yarn_src_unpack
+	fi
+}
+
 src_compile() {
 	cd "${S}"
 	export PATH="${S}/node_modules/.bin:${PATH}"
-	yarn run "package:linux" || die
+	if use kernel_linux ; then
+		yarn run "package:linux" || die
+	elif use kernel_Darwin ; then
+		yarn run "package:osx" || die
+	elif use kernel_Winnt ; then
+		yarn run "package:win" || die
+	fi
 }
 
 src_install() {
 	insinto "${YARN_INSTALL_PATH}"
-	doins -r "builds/${PN}-linux-$(electron-app_get_arch)/"*
+	doins -r "builds/${PN}-$(electron-app_get_electron_platarch)/"*
 	fperms 0755 "${YARN_INSTALL_PATH}/${PN}"
 	electron-app_gen_wrapper \
 		"${PN}" \

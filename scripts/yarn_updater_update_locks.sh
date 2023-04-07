@@ -1,11 +1,15 @@
 #!/bin/bash
 # Update once a week
-_PKG_FOLDER=$(pwd)
-export PKG_FOLDER="${PKG_FOLDER:-${_PKG_FOLDER}}"
+__YARN_UPDATER_PKG_FOLDER_PATH=$(pwd)
+export YARN_UPDATER_PKG_FOLDER="${YARN_UPDATER_PKG_FOLDER:-${__YARN_UPDATER_PKG_FOLDER_PATH}}"
 YARN_UPDATER_SCRIPTS_PATH=$(realpath $(dirname "${BASH_SOURCE[0]}"))
-MODE="uri-list-only"
-CATEGORY="${1}"
-PN="${2}"
+YARN_UPDATER_MODE="${YARN_UPDATER_MODE:-uri-list-only}"
+
+len=$(echo "${__YARN_UPDATER_PKG_FOLDER_PATH}" | tr "/" "\n" | wc -l)
+CATEGORY=$(echo "${__YARN_UPDATER_PKG_FOLDER_PATH}" | cut -f $((${len} - 1)) -d "/")
+PN=$(echo "${__YARN_UPDATER_PKG_FOLDER_PATH}" | cut -f ${len} -d "/")
+#echo -e "CATEGORY:\t${CATEGORY}"
+#echo -e "PN:\t\t${PN}"
 
 if [[ -z "${CATEGORY}" ]] ; then
 echo "Arg 1 must be the category"
@@ -20,11 +24,11 @@ fi
 MY_PN="${PN}"
 my_dir=$(dirname "$0")
 yarn_updater_update_yarn_locks() {
-	cd "${PKG_FOLDER}"
+	cd "${YARN_UPDATER_PKG_FOLDER}"
 	local versions=(
 		$(ls *ebuild \
 			| tr " " "\n" \
-			| grep -E -o -e "[0-9]+.[0-9]+.[0-9]+(-r[0-9]+)?")
+			| grep -E -o -e "[0-9]+.[0-9]+.[0-9]+(_p[0-9]*)?(-r[0-9]+)?")
 	)
 # Do one by one because of flakey servers.
 #	versions=(4.1.6)
@@ -41,12 +45,12 @@ EOF
 		local block
 		block=$(cat extern-uris.txt)
 		sed -i "/UPDATER_START_YARN_EXTERNAL_URIS/r extern-uris.txt" "${PN}-${pv}.ebuild"
-		if [[ "${MODE}" == "uri-list-only" ]] ; then
+		if [[ "${YARN_UPDATER_MODE}" == "uri-list-only" ]] ; then
 			ebuild "${PN}-${pv}.ebuild" digest
-			grep "resolved" "${PKG_FOLDER}/files/${pv%-*}/yarn.lock" \
+			grep "resolved" "${YARN_UPDATER_PKG_FOLDER}/files/${pv%-*}/yarn.lock" \
 				| cut -f 2 -d '"' \
 				> yarn-uris.txt
-		elif [[ "${MODE}" == "full" ]] ; then
+		elif [[ "${YARN_UPDATER_MODE}" == "full" ]] ; then
 			ebuild "${PN}-${pv}.ebuild" digest clean unpack
 			cp -a "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${MY_PN}-${pv%-*}/yarn.lock" "${my_dir}/files/${pv%-*}"
 			grep "resolved" "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${MY_PN}-${pv%-*}/yarn.lock" \
@@ -69,7 +73,7 @@ EOF
 
 yarn_updater_cleanup() {
 echo "Called yarn_updater_cleanup()"
-	cd "${PKG_FOLDER}"
+	cd "${YARN_UPDATER_PKG_FOLDER}"
 	rm extern-uris.txt
 	rm transformed-uris.txt
 	rm yarn-uris.txt
