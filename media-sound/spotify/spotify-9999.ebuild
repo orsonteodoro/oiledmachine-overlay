@@ -1083,7 +1083,7 @@ ewarn
 
 	if ! use emoji ; then
 ewarn
-ewarn "Some tracks will be blank with emoji USE flag disabled."
+ewarn "Some tracks will be blank with the emoji USE flag disabled."
 ewarn
 	fi
 
