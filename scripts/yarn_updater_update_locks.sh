@@ -21,8 +21,6 @@ echo "Arg 2 must be the package name"
 	exit 1
 fi
 
-MY_PN="${PN}"
-my_dir=$(dirname "$0")
 yarn_updater_update_yarn_locks() {
 	cd "${YARN_UPDATER_PKG_FOLDER}"
 	local versions=(
@@ -47,13 +45,18 @@ EOF
 		sed -i "/UPDATER_START_YARN_EXTERNAL_URIS/r extern-uris.txt" "${PN}-${pv}.ebuild"
 		if [[ "${YARN_UPDATER_MODE}" == "uri-list-only" ]] ; then
 			ebuild "${PN}-${pv}.ebuild" digest
-			grep "resolved" "${YARN_UPDATER_PKG_FOLDER}/files/${pv%-*}/yarn.lock" \
+			grep "resolved" "${YARN_UPDATER_PKG_FOLDER}/files/${pv}/yarn.lock" \
 				| cut -f 2 -d '"' \
 				> yarn-uris.txt
 		elif [[ "${YARN_UPDATER_MODE}" == "full" ]] ; then
 			ebuild "${PN}-${pv}.ebuild" digest clean unpack
-			cp -a "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${MY_PN}-${pv%-*}/yarn.lock" "${my_dir}/files/${pv%-*}"
-			grep "resolved" "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${MY_PN}-${pv%-*}/yarn.lock" \
+			local dest="${__YARN_UPDATER_PKG_FOLDER_PATH}/files/${pv%-*}"
+			mkdir -p "${__YARN_UPDATER_PKG_FOLDER_PATH}"
+			local path=$(ls "/var/tmp/portage/www-misc/${PN}-${pv}/work/"*"/package.json")
+			cp -a "${path}" "${dest}"
+			local path=$(ls "/var/tmp/portage/www-misc/${PN}-${pv}/work/"*"/yarn.lock")
+			cp -a "${path}" "${dest}"
+			grep "resolved" "${path}" \
 				| cut -f 2 -d '"' \
 				> yarn-uris.txt
 		fi

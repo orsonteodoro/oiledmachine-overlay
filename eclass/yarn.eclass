@@ -167,8 +167,13 @@ yarn_src_unpack() {
 	mv "${HOME}/.yarnrc" "${WORKDIR}" || die
 	if [[ -f "${FILESDIR}/${PV}/yarn.lock" && -n "${YARN_ROOT}" ]] ; then
 		cp "${FILESDIR}/${PV}/yarn.lock" "${YARN_ROOT}" || die
-	elif [[ -f "${FILESDIR}/${PV}/yarn.lock" && -n "${S}" ]] ; then
+	elif [[ -f "${FILESDIR}/${PV}/yarn.lock" ]] ; then
 		cp "${FILESDIR}/${PV}/yarn.lock" "${S}" || die
+	fi
+	if [[ -f "${FILESDIR}/${PV}/package.json" && -n "${YARN_ROOT}" ]] ; then
+		cp "${FILESDIR}/${PV}/package.json" "${YARN_ROOT}" || die
+	elif [[ -f "${FILESDIR}/${PV}/package.json" ]] ; then
+		cp "${FILESDIR}/${PV}/package.json" "${S}" || die
 	fi
 	local args=()
 #		--prefer-offline \
