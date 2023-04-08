@@ -94,6 +94,9 @@ REQUIRED_USE+="
 	${PN}_pgo_trainers_module? (
 		inspector
 	)
+	acorn? (
+		npm
+	)
 	inspector? (
 		icu
 		ssl
@@ -113,6 +116,7 @@ RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 # Last deps commit date:  Feb 20, 2023
+ACORN_PV="8.8.2"
 NGHTTP2_PV="1.51.0"
 RDEPEND+="
 	!net-libs/nodejs:0
@@ -151,11 +155,6 @@ BDEPEND+="
 	)
 	test? (
 		net-misc/curl
-	)
-"
-PDEPEND+="
-	acorn? (
-		>=dev-node/acorn-bin-8.8.2
 	)
 "
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
@@ -763,6 +762,10 @@ install_corepack() {
 	corepack prepare --all
 }
 
+install_acorn() {
+	npm -g "acorn@${ACORN_PV}"
+}
+
 pkg_postinst() {
 	if has_version ">=net-libs/nodejs-${PV}" ; then
 einfo
@@ -784,11 +787,13 @@ einfo "SLOTS simultaneously."
 einfo
 	uopts_pkg_postinst
 	use corepack && install_corepack
+	use acorn && install_acorn
 }
 
 pkg_prerm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
 		corepack disable
+		npm remove -g acorn
 	fi
 }
 
