@@ -286,14 +286,14 @@ src_prepare() {
 	export V=1
 	export BUILDTYPE=Release
 
-	# fix compilation on Darwin
+	# Fix compilation on Darwin
 	# https://code.google.com/p/gyp/issues/detail?id=260
 	sed -i -e "/append('-arch/d" tools/gyp/pylib/gyp/xcode_emulation.py || die
 
-	# less verbose install output (stating the same as portage, basically)
+	# Less verbose install output (stating the same as portage, basically)
 	sed -i -e "/print/d" tools/install.py || die
 
-	# proper libdir, hat tip @ryanpcmcquen https://github.com/iojs/io.js/issues/504
+	# Proper libdir, hat tip @ryanpcmcquen https://github.com/iojs/io.js/issues/504
 	local LIBDIR=$(get_libdir)
 	sed -i -e "s|lib/|${LIBDIR}/|g" tools/install.py || die
 	sed -i -e "s/'lib'/'${LIBDIR}'/" deps/npm/lib/npm.js || die
