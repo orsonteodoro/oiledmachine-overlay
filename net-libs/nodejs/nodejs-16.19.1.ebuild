@@ -97,10 +97,6 @@ REQUIRED_USE+="
 		icu
 		ssl
 	)
-	mold? (
-		!ssl
-		!system-ssl
-	)
 	npm? (
 		corepack
 		ssl
@@ -140,9 +136,6 @@ BDEPEND+="
 	dev-util/ninja
 	sys-apps/coreutils
 	virtual/pkgconfig
-	mold? (
-		sys-devel/mold
-	)
 	pax-kernel? (
 		sys-apps/elfix
 	)
@@ -428,6 +421,9 @@ _src_configure() {
 	uopts_src_configure
 	xdg_environment_reset
 
+	# Ban only for this slot for license compatibility reasons.
+	filter-flags "-fuse-ld=mold"
+
 	local myconf=(
 		--ninja
 		--shared-brotli
@@ -440,23 +436,11 @@ _src_configure() {
 	[[ "${LTO_TYPE}" =~ "lto" ]] && myconf+=( --enable-lto )
 	[[ "${LTO_TYPE}" =~ "thinlto" ]] && myconf+=( --with-thinlto )
 	[[ "${LTO_TYPE}" =~ "goldlto" ]] && myconf+=( --with-goldlto )
-	[[ "${LTO_TYPE}" =~ "moldlto" ]] && myconf+=( --with-moldlto )
-
-	if tc-is-gcc && [[ "${LTO_TYPE}" =~ "moldlto" ]] ; then
-ewarn "If moldlto fails for gcc, try clang."
-	fi
 
 	# LTO compiler flags are handled by configure.py itself
 	filter-flags '-flto*' \
 		'-fuse-ld*' \
 		'-fprofile*'
-
-	if use mold ; then
-ewarn "Using mold may weaken security for this 16.x branch."  # SSL is disabled.
-		if [[ "${LTO_TYPE}" == "none" || -z "${LTO_TYPE}" ]] ; then
-			append-ldflags -fuse-ld=mold
-		fi
-	fi
 
 	filter-flags '-O*'
 	use debug && myconf+=( --debug )
