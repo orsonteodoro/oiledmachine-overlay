@@ -115,6 +115,7 @@ RESTRICT="!test? ( test )"
 NGHTTP2_PV="1.51.0"
 RDEPEND+="
 	!net-libs/nodejs:0
+	!sys-apps/yarn
 	>=app-arch/brotli-1.0.9
 	>=dev-libs/libuv-1.44.2:=
 	>=net-dns/c-ares-1.19.0
@@ -755,6 +756,12 @@ ewarn
 		|| die
 }
 
+install_corepack() {
+	corepack disable 2>/dev/null
+	corepack enable
+	corepack prepare --all
+}
+
 pkg_postinst() {
 	if has_version ">=net-libs/nodejs-${PV}" ; then
 einfo
@@ -775,6 +782,13 @@ einfo "corresponding SLOT.  This means that you cannot compile with different"
 einfo "SLOTS simultaneously."
 einfo
 	uopts_pkg_postinst
+	use corepack && install_corepack
+}
+
+pkg_prerm() {
+	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
+		corepack disable
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multislot, pgo

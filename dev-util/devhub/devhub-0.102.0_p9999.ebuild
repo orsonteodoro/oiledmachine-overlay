@@ -26,6 +26,7 @@ else
 # For the generator script, see typescript/transform-uris.sh ebuild-package.
 # UPDATER_START_YARN_EXTERNAL_URIS
 YARN_EXTERNAL_URIS="
+
 "
 # UPDATER_END_YARN_EXTERNAL_URIS
 	SRC_URI="
@@ -96,7 +97,6 @@ SLOT="0"
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
-	>=sys-apps/yarn-1.13.0
 "
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
@@ -117,7 +117,8 @@ pkg_setup() {
 
 gen_yarn_lock() {
 	cd "${S}" || die
-	npm i || die
+	yarn config set link-duplicates true
+	npm i --legacy-peer-deps || die
 	npm audit fix || die
 	yarn import || die
 }
@@ -139,6 +140,8 @@ src_unpack() {
 			gen_yarn_lock
 			die
 		else
+			cd "${S}" || die
+			yarn config set link-duplicates true
 			yarn_src_unpack
 		fi
 	fi

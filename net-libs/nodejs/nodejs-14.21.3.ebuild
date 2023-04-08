@@ -75,7 +75,7 @@ gen_iuse_pgo() {
 
 IUSE+="
 acorn corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
-npm mold pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
+npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
 man pgo
@@ -92,13 +92,12 @@ REQUIRED_USE+="
 	${PN}_pgo_trainers_module? (
 		inspector
 	)
+	corepack? (
+		npm
+	)
 	inspector? (
 		icu
 		ssl
-	)
-	mold? (
-		!ssl
-		!system-ssl
 	)
 	npm? (
 		ssl
@@ -117,6 +116,7 @@ RESTRICT="!test? ( test )"
 NGHTTP2_PV="1.42.0"
 RDEPEND+="
 	!net-libs/nodejs:0
+	!sys-apps/yarn
 	>=app-arch/brotli-1.0.9
 	>=dev-libs/libuv-1.44.0:=
 	>=net-dns/c-ares-1.18.1
@@ -138,9 +138,6 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	dev-util/ninja
 	sys-apps/coreutils
-	mold? (
-		sys-devel/mold
-	)
 	pax-kernel? (
 		sys-apps/elfix
 	)
@@ -425,6 +422,9 @@ _src_configure() {
 	uopts_src_configure
 	xdg_environment_reset
 
+	# Ban only for this slot for license compatibility reasons.
+	filter-flags "-fuse-ld=mold"
+
 	local myconf=(
 		--ninja
 		--shared-brotli
@@ -437,24 +437,11 @@ _src_configure() {
 	[[ "${LTO_TYPE}" =~ "lto" ]] && myconf+=( --enable-lto )
 	[[ "${LTO_TYPE}" =~ "thinlto" ]] && myconf+=( --with-thinlto )
 	[[ "${LTO_TYPE}" =~ "goldlto" ]] && myconf+=( --with-goldlto )
-	[[ "${LTO_TYPE}" =~ "moldlto" ]] && myconf+=( --with-moldlto )
-
-	if tc-is-gcc && [[ "${LTO_TYPE}" =~ "moldlto" ]] ; then
-ewarn "If moldlto fails for gcc, try clang."
-	fi
 
 	# LTO compiler flags are handled by configure.py itself
 	filter-flags '-flto*' \
 		'-fuse-ld*' \
 		'-fprofile*'
-
-	if use mold ; then
-ewarn "Using mold may weaken security for this 14.x branch."  # SSL is disabled.
-		if [[ "${LTO_TYPE}" == "none" || -z "${LTO_TYPE}" ]] ; then
-			append-ldflags -fuse-ld=mold
-		fi
-	fi
-
 
 	filter-flags '-O*'
 	use debug && myconf+=( --debug )
@@ -777,6 +764,12 @@ ewarn
 		|| die
 }
 
+install_corepack() {
+	npm remove -g corepack
+	npm i -g corepack
+	corepack prepare yarn@3.5.0 --activate
+}
+
 pkg_postinst() {
 	if has_version ">=net-libs/nodejs-${PV}" ; then
 einfo
@@ -797,6 +790,14 @@ einfo "corresponding SLOT.  This means that you cannot compile with different"
 einfo "SLOTS simultaneously."
 einfo
 	uopts_pkg_postinst
+	use corepack && install_corepack
+}
+
+pkg_prerm() {
+	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
+		corepack disable
+		npm remove -g corepack
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multislot, pgo

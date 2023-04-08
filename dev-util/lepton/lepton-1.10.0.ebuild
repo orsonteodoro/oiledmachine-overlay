@@ -76,7 +76,6 @@ RDEPEND+="
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
-	sys-apps/yarn
 "
 # Initially generated from:
 #   grep "resolved" /var/tmp/portage/dev-util/lepton-1.10.0/work/lepton-1.10.0/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq

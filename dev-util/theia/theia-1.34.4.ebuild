@@ -284,10 +284,6 @@ BDEPEND+="
 	>=sys-devel/gcc-11.2.0
 	>=sys-devel/make-4.3
 	virtual/pkgconfig
-	(
-		>=sys-apps/yarn-1.7.0
-		<sys-apps/yarn-2
-	)
 "
 if [[ "${SLOT}" =~ "community" ]] ; then
 	SUFFIX="-community"

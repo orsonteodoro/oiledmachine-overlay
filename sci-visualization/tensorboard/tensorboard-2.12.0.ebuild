@@ -76,7 +76,6 @@ BDEPEND="
 	>=dev-util/yamllint-1.17.0[${PYTHON_USEDEP}]
 	app-arch/unzip
 	dev-java/java-config
-	sys-apps/yarn
 	test? (
 		>=dev-python/boto3-1.9.86[${PYTHON_USEDEP}]
 		>=dev-python/fsspec-0.7.4[${PYTHON_USEDEP}]

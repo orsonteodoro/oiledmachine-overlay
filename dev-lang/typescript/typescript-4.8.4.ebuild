@@ -52,7 +52,6 @@ BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
 	dev-util/synp
 	media-libs/vips
-	sys-apps/yarn
 "
 # Initially generated from:
 #   grep "resolved" /var/tmp/portage/dev-lang/typescript-4.8.4/work/TypeScript-4.8.4/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq

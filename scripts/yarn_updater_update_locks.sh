@@ -52,9 +52,9 @@ EOF
 			ebuild "${PN}-${pv}.ebuild" digest clean unpack
 			local dest="${__YARN_UPDATER_PKG_FOLDER_PATH}/files/${pv%-*}"
 			mkdir -p "${__YARN_UPDATER_PKG_FOLDER_PATH}"
-			local path=$(ls "/var/tmp/portage/www-misc/${PN}-${pv}/work/"*"/package.json")
+			local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/package.json")
 			cp -a "${path}" "${dest}"
-			local path=$(ls "/var/tmp/portage/www-misc/${PN}-${pv}/work/"*"/yarn.lock")
+			local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/yarn.lock")
 			cp -a "${path}" "${dest}"
 			grep "resolved" "${path}" \
 				| cut -f 2 -d '"' \

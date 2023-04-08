@@ -40,8 +40,8 @@ EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test src_install
 
 BDEPEND+="
 	app-misc/jq
-	sys-apps/yarn
 "
+# Eclass requires yarn >= 2.x
 
 # @ECLASS_VARIABLE: YARN_BUILD_SCRIPT
 # @DESCRIPTION:
@@ -181,6 +181,7 @@ yarn_src_unpack() {
 		--offline \
 		--pure-lockfile \
 		--verbose \
+		${YARN_UNPACK_ARGS} \
 		|| die
 }
 

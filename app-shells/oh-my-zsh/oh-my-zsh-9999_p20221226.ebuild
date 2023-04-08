@@ -670,9 +670,6 @@ PLUGINS_RDEPEND="
 	omz_plugins_watson? (
 		dev-python/td-watson
 	)
-	omz_plugins_yarn? (
-		sys-apps/yarn
-	)
 	omz_plugins_wp-cli? (
 		app-admin/wp-cli
 	)

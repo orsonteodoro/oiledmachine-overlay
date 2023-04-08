@@ -70,7 +70,6 @@ RDEPEND+="
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
-	sys-apps/yarn
 "
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"

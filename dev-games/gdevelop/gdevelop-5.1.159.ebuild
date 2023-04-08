@@ -148,7 +148,6 @@ BDEPEND+="
 	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}[npm]
 	>=sys-devel/gcc-5.4
 	dev-util/emscripten:${EMSCRIPTEN_SLOT}[wasm(+)]
-	sys-apps/yarn
 	|| (
 		$(gen_llvm_depends)
 	)

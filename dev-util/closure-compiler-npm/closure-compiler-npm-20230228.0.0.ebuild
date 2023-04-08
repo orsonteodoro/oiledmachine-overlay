@@ -97,7 +97,6 @@ BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
 	dev-java/maven-bin
 	dev-vcs/git
-	sys-apps/yarn
 	closure_compiler_native? (
 		${GRAALVM_CE_DEPENDS}
 	)
