@@ -93,9 +93,6 @@ REQUIRED_USE+="
 	${PN}_pgo_trainers_module? (
 		inspector
 	)
-	acorn? (
-		npm
-	)
 	inspector? (
 		icu
 		ssl
@@ -511,6 +508,10 @@ ewarn "Using mold may weaken security for this 16.x branch."  # SSL is disabled.
 			"${S}/out/Release/obj/test_crypto_engine.ninja" || die
 		sed -i -e "s|-fsanitize-cfi-cross-dso||g" \
 			"${S}/out/Debug/obj/test_crypto_engine.ninja" || die
+	fi
+
+	if use acorn && ! which npm ; then
+ewarn "Auto installing acorn requires npm."
 	fi
 }
 

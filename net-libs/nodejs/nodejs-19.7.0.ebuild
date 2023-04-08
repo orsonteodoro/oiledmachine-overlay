@@ -94,9 +94,6 @@ REQUIRED_USE+="
 	${PN}_pgo_trainers_module? (
 		inspector
 	)
-	acorn? (
-		npm
-	)
 	inspector? (
 		icu
 		ssl
@@ -523,6 +520,10 @@ EOF
 			cd "${S}/node_modules/autocannon" || die
 			npm install autocannon@${AUTOCANNON_V} || die
 		fi
+	fi
+
+	if use acorn && ! which npm ; then
+ewarn "Auto installing acorn requires npm."
 	fi
 }
 
