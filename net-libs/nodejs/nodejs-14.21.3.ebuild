@@ -100,6 +100,7 @@ REQUIRED_USE+="
 		ssl
 	)
 	npm? (
+		corepack
 		ssl
 	)
 	system-icu? (
