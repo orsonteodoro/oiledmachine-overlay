@@ -75,6 +75,24 @@ BDEPEND+="
 # @DESCRIPTION:
 # The test script to run from package.json:scripts section.
 
+# @FUNCTION: yarn_check
+# @DESCRIPTION:
+# Checks for yarn installation.
+yarn_check() {
+	if ! which yarn 2>/dev/null 1>/dev/null ; then
+eerror
+eerror "Yarn is missing.  Pick one of the following:"
+eerror
+eerror "1. \`emerge sys-apps/yarn\` # For yarn 1.x"
+eerror "2. \`emerge net-libs/nodejs[corepack]::oiledmachine-overlay\` # For yarn 3.x"
+eerror "3. \`emerge -C sys-apps/yarn\`"
+eerror "   \`emerge >=net-libs/nodejs-16.17[corepack]\` # For yarn 3.x"
+eerror "   \`enable corepack\`"
+eerror "   \`corepack prepare --all --activate\`"
+		die
+	fi
+}
+
 # @FUNCTION: yarn_pkg_setup
 # @DESCRIPTION:
 # Checks node slot required for building
@@ -151,6 +169,7 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
 # @DESCRIPTION:
 # Unpacks a yarn application.
 yarn_src_unpack() {
+	yarn_check
 	if [[ -n "${YARN_TARBALL}" ]] ; then
 		unpack ${YARN_TARBALL}
 	else
@@ -189,6 +208,7 @@ yarn_src_unpack() {
 # @DESCRIPTION:
 # Builds a yarn application.
 yarn_src_compile() {
+	yarn_check
 	[[ "${YARN_BUILD_SCRIPT}" == "none" ]] && return
 	[[ "${YARN_BUILD_SCRIPT}" == "null" ]] && return
 	[[ "${YARN_BUILD_SCRIPT}" == "skip" ]] && return
