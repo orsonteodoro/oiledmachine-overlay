@@ -65,6 +65,9 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0"
 IUSE=" r3"
+REQUIRED_USE="
+!wayland X
+"
 DEPEND+="
 	dev-libs/libsass
 "
