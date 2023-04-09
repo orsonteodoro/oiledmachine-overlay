@@ -51,7 +51,7 @@ EOF
 		elif [[ "${YARN_UPDATER_MODE}" == "full" ]] ; then
 			ebuild "${PN}-${pv}.ebuild" digest clean unpack
 			local dest="${__YARN_UPDATER_PKG_FOLDER_PATH}/files/${pv%-*}"
-			mkdir -p "${__YARN_UPDATER_PKG_FOLDER_PATH}"
+			mkdir -p "${dest}"
 			local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/package.json")
 			cp -a "${path}" "${dest}"
 			local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/yarn.lock")
