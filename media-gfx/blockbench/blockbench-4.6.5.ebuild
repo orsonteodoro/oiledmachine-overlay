@@ -761,7 +761,7 @@ src_install() {
 		"${YARN_INSTALL_PATH}/${PN}"
 	newicon "icon.png" "${PN}.png"
 	make_desktop_entry \
-		"/usr/bin/${PN}"
+		"/usr/bin/${PN}" \
 		"${PN^}" \
 		"${PN}.png" \
 		"Graphics;3DGraphics"
