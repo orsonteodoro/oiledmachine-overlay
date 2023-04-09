@@ -125,6 +125,7 @@ yarn_pkg_setup() {
 eerror
 eerror "Did not find an installed nodejs slot."
 eerror "Expected node versions:  ${NODE_SLOTS}"
+eerror "See eselect nodejs for details."
 eerror
 			die
 		fi
@@ -137,6 +138,7 @@ eerror
 eerror
 eerror "Did not find an installed nodejs slot."
 eerror "Expected node version:  ${NODE_VERSION}"
+eerror "See eselect nodejs for details."
 eerror
 			die
 		fi
