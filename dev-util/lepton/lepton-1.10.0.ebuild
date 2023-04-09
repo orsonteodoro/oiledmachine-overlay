@@ -123,6 +123,7 @@ eerror
 
 pkg_setup() {
 	:;#check_credentials
+	yarn_pkg_setup
 }
 
 sanitize_variables() {
@@ -196,8 +197,8 @@ src_install() {
 		"${PN}.png" \
 		"Development"
 	fperms 0755 "${YARN_INSTALL_PATH}/${PN}"
-	shred "${S}"/configs/account.js
-	LCNR_SOURCE="${WORKDIR}/Lepton-${PV}"
+	shred "${S}/configs/account.js"
+	LCNR_SOURCE="${WORKDIR}/${PN^}-${PV}"
 	lcnr_install_files
 }
 

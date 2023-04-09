@@ -82,6 +82,7 @@ eerror "env to be able to download micropackages."
 eerror
 		die
 	fi
+	yarn_pkg_setup
 }
 
 vrun() {

@@ -113,6 +113,7 @@ eerror
 
 pkg_setup() {
 	:;#check_network_sandbox
+	yarn_pkg_setup
 }
 
 gen_yarn_lock() {

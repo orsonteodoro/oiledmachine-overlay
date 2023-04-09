@@ -915,21 +915,6 @@ https://github.com/microsoft/TypeScript/archive/refs/tags/v${PV}.tar.gz
 S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
 
-pkg_setup() {
-	[[ "${UPDATE_YARN_LOCK}" == "1" ]] && return
-	local node_pv=$(/usr/bin/node --version \
-		| sed -e "s|v||g" \
-		| cut -f 1 -d ".")
-        if (( ${node_pv} < ${NODE_VERSION} )) ; then
-		eerror
-		eerror "node_pv must be >=${NODE_VERSION}"
-		eerror "Switch Node.js to >=${NODE_VERSION}"
-		eerror
-		die
-        fi
-	einfo "Node.js is ${node_pv}"
-}
-
 src_unpack() {
 	if [[ "${UPDATE_YARN_LOCK}" == "1" ]] ; then
 		unpack ${P}.tar.gz
