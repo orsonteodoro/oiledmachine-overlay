@@ -54,6 +54,7 @@ inherit chromium-2 desktop
 ELECTRON_APP_ELECTRON_PV_SUPPORTED="20.0"
 
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:-"npm"} # can be npm, yarn
+ELECTRON_APP_ECLASS_DEBUG=${ELECTRON_APP_ECLASS_DEBUG:-"debug"} # debug or production
 
 # The recurrance interval between critical vulnerabilities in chrome is 10-14
 # days recently (worst cases), but longer interval between vulnerabilites with
@@ -830,10 +831,10 @@ electron-app_get_electron_platarch() {
 	fi
 }
 
-# @FUNCTION: electron-app_gen_electron_uris
+# @FUNCTION: _electron-app_gen_electron_uris_prod
 # @DESCRIPTION:
-# Generate URIs for offline install of electron based apps
-Aelectron-app_gen_electron_uris() {
+# Generate URIs for offline install of electron based apps for production.
+_electron-app_gen_electron_uris_prod() {
 	echo "
 		kernel_linux? (
 			amd64? (
@@ -869,8 +870,10 @@ Aelectron-app_gen_electron_uris() {
 	"
 }
 
-# For testing
-electron-app_gen_electron_uris() {
+# @FUNCTION: _electron-app_gen_electron_uris_devel
+# @DESCRIPTION:
+# Generate URIs for offline install of electron based apps for ebuild/eclass development.
+_electron-app_gen_electron_uris_devel() {
 	echo "
 		kernel_linux? (
 			amd64? (
@@ -879,6 +882,17 @@ electron-app_gen_electron_uris() {
 		)
 		https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/SHASUMS256.txt -> electron-SHASUMS256.txt.${ELECTRON_APP_ELECTRON_PV}
 	"
+}
+
+# @FUNCTION: electron-app_gen_electron_uris
+# @DESCRIPTION:
+# Generate URIs for offline install of electron based apps.
+electron-app_gen_electron_uris() {
+	if [[ "${ELECTRON_APP_ECLASS_DEBUG}" == "debug" ]] ; then
+		_electron-app_gen_electron_uris_devel
+	else
+		_electron-app_gen_electron_uris_prod
+	fi
 }
 
 # @FUNCTION: electron-app_cp_electron

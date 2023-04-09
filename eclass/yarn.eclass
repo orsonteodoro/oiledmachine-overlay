@@ -223,9 +223,8 @@ yarn_src_unpack() {
 		cp "${FILESDIR}/${PV}/package.json" "${S}" || die
 	fi
 	local args=()
-#		--prefer-offline \
 	yarn install \
-		--offline \
+		--prefer-offline \
 		--pure-lockfile \
 		--verbose \
 		${YARN_UNPACK_ARGS} \
@@ -244,7 +243,7 @@ yarn_src_compile() {
 	grep -q -e "\"${cmd}\"" package.json || return
 	local args=()
 	yarn run ${cmd} \
-		--offline \
+		--prefer-offline \
 		--pure-lockfile \
 		--verbose \
 		|| die
