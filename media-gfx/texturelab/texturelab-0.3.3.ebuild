@@ -224,7 +224,7 @@ KEYWORDS="~amd64"
 SLOT="0"
 IUSE+=" system-vips"
 REQUIRED_USE="
-	!wayland
+!wayland X
 "
 # wayland error:  /usr/bin/texturelab: line 13: 2993280 Trace/breakpoint trap
 SHARP_DEPENDS="
