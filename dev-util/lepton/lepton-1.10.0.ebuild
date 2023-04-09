@@ -1296,6 +1296,7 @@ src_install() {
 	electron-app_gen_wrapper \
 		"${PN^}" \
 		"${YARN_INSTALL_PATH}/${PN}"
+	dosym "/usr/bin/${PN^}" "/usr/bin/${PN}"
 	LCNR_SOURCE="${WORKDIR}/${PN^}-${PV}"
 	lcnr_install_files
 }
