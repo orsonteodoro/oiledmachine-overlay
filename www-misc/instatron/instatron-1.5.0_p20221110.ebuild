@@ -282,6 +282,7 @@ src_install() {
 		"${PN^}" \
 		"${PN}.png" \
 		"Network"
+	LCNR_SOURCE="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 	lcnr_install_files
 }
 
