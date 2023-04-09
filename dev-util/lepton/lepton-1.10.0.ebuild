@@ -64,7 +64,7 @@ LICENSE="
 
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE=" r2"
+IUSE=" r3"
 DEPEND+="
 	dev-libs/libsass
 "
@@ -1293,6 +1293,9 @@ src_install() {
 		"Development"
 	fperms 0755 "${YARN_INSTALL_PATH}/${PN}"
 	shred "${S}/configs/account.js"
+	electron-app_gen_wrapper \
+		"${PN^}" \
+		"${YARN_INSTALL_PATH}/${PN}"
 	LCNR_SOURCE="${WORKDIR}/${PN^}-${PV}"
 	lcnr_install_files
 }
