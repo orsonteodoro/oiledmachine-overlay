@@ -763,7 +763,7 @@ src_install() {
 	make_desktop_entry \
 		"/usr/bin/${PN}"
 		"${PN^}" \
-		"${PN}.png"
+		"${PN}.png" \
 		"Graphics;3DGraphics"
 	insinto "${YARN_INSTALL_PATH}"
 	doins -r "dist/linux-unpacked/"*
