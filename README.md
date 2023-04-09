@@ -50,21 +50,12 @@ are dependencies for the latest stable MonoDevelop and for MonoGame.
 
 ## Broken / Still in development
 
-### NPM / Electron apps
+### Node / Electron apps
 
-If it complains about "emerge: there are no ebuilds to satisfy" and 
-refers to @npm-security-update.  You can remove the deleted package by 
-editing /etc/portage/sets/npm-security-update.
+These ebuilds are currently being converted to yarn for mostly offline install.
 
-If you can't unemerge a npm or electron ebuild from this overlay, please 
-read the `eselect news` item 
-["Manual removal of npm or electron based packages required"](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2020-07-19-manual-removal-npm-and-electron/2020-07-19-manual-removal-npm-and-electron.en.txt).
-
-See 
-[npm-secaudit.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/npm-secaudit.eclass), 
-[npm-utils.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/npm-utils.eclass), 
-[electron-app.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass) 
-for ways to control vulnerability patching using per-package environmental variables.
+These ebuilds will be `npm audit fix`ed without breaking changes before
+converted to yarn.lock.
 
 ### .NET Framework stack or .NET Core stack
 
