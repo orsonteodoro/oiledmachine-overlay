@@ -91,6 +91,17 @@ eerror "   \`enable corepack\`"
 eerror "   \`corepack prepare --all --activate\`"
 		die
 	fi
+	local yarn_pv=$(/usr/bin/yarn --version)
+	if ver_test ${yarn_pv} -ge 1 ; then
+# Corepack problems.  Cannot do complete offline install.
+		if has network-sandbox $FEATURES ; then
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to download micropackages."
+eerror
+			die
+		fi
+	fi
 }
 
 # @FUNCTION: yarn_pkg_setup
