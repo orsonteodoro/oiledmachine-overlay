@@ -91,17 +91,32 @@ eerror "   \`enable corepack\`"
 eerror "   \`corepack prepare --all --activate\`"
 		die
 	fi
-	local yarn_pv=$(/usr/bin/yarn --version)
-	if ver_test ${yarn_pv} -ge 1 ; then
-# Corepack problems.  Cannot do complete offline install.
-		if has network-sandbox $FEATURES ; then
+
+	local path=$(find "${WORKDIR}" -name "package.json" -type f \
+		| head -n 1)
+	path=$(realpath $(dirname "${path}"))
+	pushd "${path}" || die
+		local yarn_pv=$(/usr/bin/yarn --version)
+		if ! [[ "${yarn_pv}" =~ [0-9]+\.[0-9]+\.[0-9]+ ]] ; then
+eerror
+eerror "Failed to detect version.  Install yarn or disable network-sandbox in"
+eerror "FEATURES."
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
 eerror "env to be able to download micropackages."
 eerror
-			die
+				die
+		elif ver_test ${yarn_pv} -ge 1 ; then
+# Corepack problems.  Cannot do complete offline install.
+			if has network-sandbox $FEATURES ; then
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to download micropackages."
+eerror
+				die
+			fi
 		fi
-	fi
+	popd
 }
 
 # @FUNCTION: yarn_pkg_setup
@@ -182,12 +197,12 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
 # @DESCRIPTION:
 # Unpacks a yarn application.
 yarn_src_unpack() {
-	yarn_check
 	if [[ -n "${YARN_TARBALL}" ]] ; then
 		unpack ${YARN_TARBALL}
 	else
 		unpack ${P}.tar.gz
 	fi
+	yarn_check
 	_yarn_cp_tarballs
 	cd "${S}" || die
 	rm -rf "package-lock.json" || true
