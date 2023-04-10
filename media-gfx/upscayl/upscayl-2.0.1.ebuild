@@ -24,8 +24,10 @@ else
 # For the generator script, see the typescript/transform-uris.sh ebuild-package.
 # UPDATER_START_YARN_EXTERNAL_URIS
 YARN_EXTERNAL_URIS="
+
 "
 # UPDATER_END_YARN_EXTERNAL_URIS
+#$(electron-app_gen_electron_uris)
 	SRC_URI="
 ${YARN_EXTERNAL_URIS}
 https://github.com/upscayl/upscayl/archive/refs/tags/v${PV}.tar.gz
@@ -71,7 +73,7 @@ BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
 "
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
 pkg_setup() {
@@ -85,9 +87,53 @@ eerror
 	yarn_pkg_setup
 }
 
-vrun() {
-einfo "Running:\t${@}"
-	"${@}" || die
+__npm_run() {
+	local cmd=( "${@}" )
+	local tries
+	tries=0
+	while (( ${tries} < 5 )) ; do
+einfo "Tries:\t${tries}"
+einfo "Running:\t${cmd[@]}"
+		"${cmd[@]}" || die
+		if ! grep -q -r -e "ERR_SOCKET_TIMEOUT" "${HOME}/.npm/_logs" ; then
+			break
+		fi
+		tries=$((${tries} + 1))
+	done
+	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
+}
+
+src_unpack() {
+        if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
+                unpack ${P}.tar.gz
+                cd "${S}" || die
+                rm package-lock.json
+		rm yarn.lock
+
+		__npm_run npm i
+		__npm_run npm audit fix
+
+		yarn import || die
+		die
+        else
+		#export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+		export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
+		export ELECTRON_CACHE="${HOME}/.cache/electron"
+		mkdir -p "${S}" || die
+		cp -a "${FILESDIR}/${PV}/package.json" "${S}" || die
+		cp_sharp_deps
+		cp_phantomjs
+		cp_sentry_cli
+		yarn_src_unpack
+		cp_assets
+		add_deps
+        fi
+}
+
+__yarn_run() {
+	local cmd=( "${@}" )
+einfo "Running:\t${cmd[@]}"
+	"${cmd[@]}" || die
 	if grep -q -e "Exit code:" "${T}/build.log" ; then
 eerror
 eerror "Detected failure.  Re-emerge..."
@@ -113,8 +159,9 @@ die
 	export NEXT_TELEMETRY_DISABLED=1
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
-	vrun yarn build
-	vrun yarn electron-builder build --linux dir
+	electron-app_cp_electron
+	__yarn_run yarn build
+	__yarn_run yarn electron-builder build --linux dir
 	cd "${S}" || die
 }
 
@@ -131,9 +178,9 @@ src_install() {
 		"${ED}/usr/bin/${PN}" || die
         newicon "main/build/icon.png" "${PN}.png"
         make_desktop_entry \
-		"${PN}" \
+		"/usr/bin/${PN}" \
 		"${MY_PN}" \
-		"${PN}.png"
+		"${PN}.png" \
 		 "Graphics"
 	fperms 0755 "${YARN_INSTALL_PATH}/${PN}"
 	lcnr_install_files

@@ -1084,6 +1084,22 @@ get_deps() {
 		|| die
 }
 
+__npm_run() {
+	local cmd=("${@}")
+	local tries
+	tries=0
+	while (( ${tries} < 5 )) ; do
+einfo "Tries:\t${tries}"
+einfo "Running:\t${cmd[@]}"
+		"${cmd[@]}" || die
+		if ! grep -q -r -e "ERR_SOCKET_TIMEOUT" "${HOME}/.npm/_logs" ; then
+			break
+		fi
+		rm -rf "${HOME}/.npm/_logs"
+		tries=$((${tries} + 1))
+	done
+	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
+}
 
 src_unpack() {
 eerror
@@ -1091,22 +1107,23 @@ eerror "This ebuild is under maintenance."
 eerror "Undergoing Yarn offline install conversion."
 eerror
 #die
-	if [[ "${UPDATE_YARN_LOCK}" == "1" ]] ; then
+	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 		unpack ${P}.tar.gz
 		cd "${S}" || die
 		rm package-lock.json
-		npm i || die
+
+		__npm_run npm i
 
 	# Change to ^0.51.1
-		npm i "eslint-config-xo-typescript@^0.51.1" || die
+		__npm_run npm i "eslint-config-xo-typescript@^0.51.1" || die
 
 	# Change to ^5.27.1
-		npm i "@typescript-eslint/eslint-plugin@^5.27.1" || die
+		__npm_run npm i "@typescript-eslint/eslint-plugin@^5.27.1" || die
 
 	# Change to ^5.27.1
-		npm i "@typescript-eslint/parser@^5.27.1" || die
+		__npm_run npm i "@typescript-eslint/parser@^5.27.1" || die
 
-		npm audit fix || die
+		__npm_run npm audit fix || die
 		yarn import || die
 		die
 	else

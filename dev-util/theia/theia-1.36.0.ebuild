@@ -1933,9 +1933,10 @@ die
 	yarn_pkg_setup
 }
 
-vrun() {
-einfo "Running:\t${@}"
-	"${@}" || die
+__yarn_run() {
+	local cmd=( "${@}" )
+einfo "Running:\t${cmd[@]}"
+	"${cmd[@]}" || die
 	if [[ "${ELECTRON_APP_SKIP_EXIT_CODE_CHECK}" == "1" ]] ; then
 		:;
 	elif grep -q -e "Exit code:" "${T}/build.log" ; then
@@ -1955,10 +1956,10 @@ eerror
 }
 
 get_plugins() {
-	vrun yarn add ts-clean --dev -W
+	__yarn_run yarn add ts-clean --dev -W
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
-	vrun yarn download:plugins
+	__yarn_run yarn download:plugins
 }
 
 src_unpack() {
@@ -1967,8 +1968,8 @@ src_unpack() {
 }
 
 src_compile() {
-	vrun yarn electron build
-	vrun yarn electron rebuild
+	__yarn_run yarn electron build
+	__yarn_run yarn electron rebuild
 }
 
 src_install() {

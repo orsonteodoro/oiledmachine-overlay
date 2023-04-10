@@ -116,11 +116,31 @@ pkg_setup() {
 	yarn_pkg_setup
 }
 
+__npm_run() {
+	local cmd=( "${@}" )
+	local tries
+
+	tries=0
+	while (( ${tries} < 5 )) ; do
+einfo "Tries:\t${tries}"
+einfo "Running:\t${cmd[@]}"
+		"${cmd[@]}" || die
+		if ! grep -q -r -e "ERR_SOCKET_TIMEOUT" "${HOME}/.npm/_logs" ; then
+			break
+		fi
+		rm -rf "${HOME}/.npm/_logs"
+		tries=$((${tries} + 1))
+	done
+	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
+}
+
 gen_yarn_lock() {
 	cd "${S}" || die
 	yarn config set link-duplicates true
-	npm i --legacy-peer-deps || die
-	npm audit fix || die
+
+	__npm_run npm i --legacy-peer-deps
+	__npm_run npm audit fix
+
 	yarn import || die
 }
 
@@ -137,7 +157,7 @@ src_unpack() {
 		gen_yarn_lock
 	else
 		unpack ${A}
-		if [[ "${UPDATE_YARN_LOCK}" == "1" ]] ; then
+		if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 			gen_yarn_lock
 			die
 		else
@@ -162,9 +182,10 @@ eerror
 	fi
 }
 
-vrun() {
-einfo "Running:\t${@}"
-	"${@}" || die
+__yarn_run() {
+	local cmd=( "${@}" )
+einfo "Running:\t${cmd[@]}"
+	"${cmd[@]}" || die
 	if grep -q -e "Exit code:" "${T}/build.log" ; then
 eerror
 eerror "Detected failure.  Re-emerge..."
@@ -176,10 +197,10 @@ eerror
 src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
-	vrun yarn workspace @devhub/web build
-	vrun yarn workspace @devhub/desktop build:base
-	vrun yarn workspace @devhub/desktop build:web:post
-	vrun yarn workspace @devhub/desktop build:electron --linux dir
+	__yarn_run yarn workspace @devhub/web build
+	__yarn_run yarn workspace @devhub/desktop build:base
+	__yarn_run yarn workspace @devhub/desktop build:web:post
+	__yarn_run yarn workspace @devhub/desktop build:electron --linux dir
 }
 
 src_install() {

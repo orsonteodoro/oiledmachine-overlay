@@ -2109,9 +2109,10 @@ S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 MY_PN="TextureLab"
 
-vrun() {
-einfo "Running:\t${@}"
-	"${@}" || die
+__yarn_run() {
+	local cmd=( "${@}" )
+einfo "Running:\t${cmd[@]}"
+	"${cmd[@]}" || die
 	if [[ "${ELECTRON_APP_SKIP_EXIT_CODE_CHECK}" == "1" ]] ; then
 		:;
 	elif grep -q -e "Exit code:" "${T}/build.log" ; then
@@ -2248,18 +2249,38 @@ add_deps() {
 	export SHARP_IGNORE_GLOBAL_LIBVIPS=1
 	if use system-vips ; then
 		export SHARP_IGNORE_GLOBAL_LIBVIPS=0
-		#vrun yarn add "node-gyp@9.3.1"
+		#__yarn_run yarn add "node-gyp@9.3.1"
 	fi
 }
 
+__npm_run() {
+	local cmd=( "${@}" )
+	local tries
+
+	tries=0
+	while (( ${tries} < 5 )) ; do
+einfo "Tries:\t${tries}"
+einfo "Running:\t${cmd[@]}"
+		"${cmd[@]}" || die
+		if ! grep -q -r -e "ERR_SOCKET_TIMEOUT" "${HOME}/.npm/_logs" ; then
+			break
+		fi
+		rm -rf "${HOME}/.npm/_logs"
+		tries=$((${tries} + 1))
+	done
+	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
+}
+
 src_unpack() {
-        if [[ "${UPDATE_YARN_LOCK}" == "1" ]] ; then
+        if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
                 unpack ${P}.tar.gz
                 cd "${S}" || die
                 rm package-lock.json
 		rm yarn.lock
-		npm i --legacy-peer-deps || die
-		npm audit fix || die
+
+		__npm_run npm i --legacy-peer-deps
+		__npm_run npm audit fix
+
 		yarn import || die
 
 	# Fix the following upgrade breakage manually by downgrading:
@@ -2277,9 +2298,8 @@ src_unpack() {
 		yarn upgrade "vue-toast-notification@0.6.2" || die
 
 		synp -s yarn.lock || die
-		npm audit fix || die
+		__npm_run npm audit fix || die
 		yarn import || die
-		rm yarn.lock || die
 
 		die
         else
@@ -2311,7 +2331,7 @@ src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	NODE_VERSION="16"
 	electron-app_cp_electron
-	vrun yarn electron:build --publish=never
+	__yarn_run yarn electron:build --publish=never
 }
 
 src_install() {

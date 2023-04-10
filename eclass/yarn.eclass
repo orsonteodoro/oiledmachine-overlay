@@ -63,6 +63,14 @@ BDEPEND+="
 # @DESCRIPTION:
 # The destination install path relative to EROOT.
 
+# @ECLASS_VARIABLE: YARN_INSTALL_UNPACK_ARGS
+# @DESCRIPTION:
+# Arguments to append to `npm i ` during package-lock.json generation.
+
+# @ECLASS_VARIABLE: YARN_INSTALL_UNPACK_AUDIT_FIX_ARGS
+# @DESCRIPTION:
+# Arguments to append to `npm audit fix ` during package-lock.json generation.
+
 # @ECLASS_VARIABLE: YARN_ROOT
 # @DESCRIPTION:
 # The project root containing the yarn.lock file.
@@ -193,10 +201,10 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
 	IFS=$' \t\n'
 }
 
-# @FUNCTION: yarn_src_unpack
+# @FUNCTION: _yarn_src_unpack_default
 # @DESCRIPTION:
 # Unpacks a yarn application.
-yarn_src_unpack() {
+_yarn_src_unpack_default() {
 	if [[ -n "${YARN_TARBALL}" ]] ; then
 		unpack ${YARN_TARBALL}
 	else
@@ -227,8 +235,79 @@ yarn_src_unpack() {
 		--prefer-offline \
 		--pure-lockfile \
 		--verbose \
-		${YARN_UNPACK_ARGS} \
+		${YARN_INSTALL_UNPACK_ARGS} \
 		|| die
+}
+
+# @FUNCTION: _npm_run
+# @DESCRIPTION:
+# Rerun command if flakey connection.
+_npm_run() {
+	local cmd=("${@}")
+	local tries
+	tries=0
+	while (( ${tries} < 5 )) ; do
+einfo "Tries:\t${tries}"
+einfo "Running:\t${cmd[@]}"
+		"${cmd[@]}" || die
+		if ! grep -q -r -e "ERR_SOCKET_TIMEOUT" "${HOME}/.npm/_logs" ; then
+			break
+		fi
+		rm -rf "${HOME}/.npm/_logs"
+		tries=$((${tries} + 1))
+	done
+	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
+}
+
+# @FUNCTION: _yarn_src_unpack
+# @DESCRIPTION:
+# Unpacks a yarn application.
+yarn_src_unpack() {
+	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
+		unpack ${P}.tar.gz
+		cd "${S}" || die
+		rm -f package-lock.json
+		rm -f yarn.lock
+
+		if declare -f \
+			yarn_update_lock_install_pre > /dev/null ; then
+			yarn_update_lock_install_pre
+		fi
+		_npm_run npm i ${YARN_INSTALL_UNPACK_ARGS}
+		if declare -f \
+			yarn_update_lock_install_post > /dev/null ; then
+			yarn_update_lock_install_post
+		fi
+		if declare -f \
+			yarn_update_lock_audit_pre > /dev/null ; then
+			yarn_update_lock_audit_pre
+		fi
+		_npm_run npm audit fix ${YARN_INSTALL_UNPACK_AUDIT_FIX_ARGS}
+		if declare -f \
+			yarn_update_lock_audit_post > /dev/null ; then
+			yarn_update_lock_audit_post
+		fi
+
+		if declare -f \
+			yarn_update_lock_yarn_import_pre > /dev/null ; then
+			yarn_update_lock_yarn_import_pre
+		fi
+		yarn import || die
+		if declare -f \
+			yarn_update_lock_yarn_import_post > /dev/null ; then
+			yarn_update_lock_yarn_import_post
+		fi
+		die
+	else
+		#export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+		export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
+		export ELECTRON_CACHE="${HOME}/.cache/electron"
+		mkdir -p "${S}" || die
+		if [[ -e "${FILESDIR}/${PV}/package.json" ]] ; then
+			cp -a "${FILESDIR}/${PV}/package.json" "${S}" || die
+		fi
+		_yarn_src_unpack_default
+	fi
 }
 
 # @FUNCTION: yarn_src_compile

@@ -728,26 +728,6 @@ https://github.com/JannisX11/blockbench/archive/v${PV}.tar.gz
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
-src_unpack() {
-        if [[ "${UPDATE_YARN_LOCK}" == "1" ]] ; then
-                unpack ${P}.tar.gz
-                cd "${S}" || die
-                rm package-lock.json
-		rm yarn.lock
-		npm i || die
-		npm audit fix || die
-		yarn import || die
-		die
-        else
-		#export ELECTRON_SKIP_BINARY_DOWNLOAD=1
-		export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
-		export ELECTRON_CACHE="${HOME}/.cache/electron"
-		mkdir -p "${S}" || die
-		cp -a "${FILESDIR}/${PV}/package.json" "${S}" || die
-		yarn_src_unpack
-        fi
-}
-
 src_compile() {
 	cd "${S}" || die
 	export PATH="${S}/node_modules/.bin:${PATH}"

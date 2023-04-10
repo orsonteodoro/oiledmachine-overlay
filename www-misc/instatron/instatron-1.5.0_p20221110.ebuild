@@ -242,21 +242,6 @@ https://github.com/alexdevero/instatron/archive/${EGIT_COMMIT}.tar.gz
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 
-src_unpack() {
-	if [[ "${UPDATE_YARN_LOCK}" == "1" ]] ; then
-		unpack ${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz
-		cd "${S}" || die
-		rm package-lock.json
-		rm yarn.lock
-		npm i || die
-		npm audit fix || die
-		yarn import || die
-		die
-	else
-		yarn_src_unpack
-	fi
-}
-
 src_compile() {
 	cd "${S}"
 	export PATH="${S}/node_modules/.bin:${PATH}"

@@ -44,18 +44,4 @@ https://github.com/mishoo/UglifyJS/archive/refs/tags/v${PV}.tar.gz
 RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-${PV}"
 
-src_unpack() {
-	if [[ "${UPDATE_YARN_LOCK}" == "1" ]] ; then
-		unpack ${P}.tar.gz
-		cd "${S}" || die
-		rm package-lock.json
-		rm yarn.lock
-		npm i || die
-		npm audit fix || die
-		yarn import || die
-	else
-		yarn_src_unpack
-	fi
-}
-
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

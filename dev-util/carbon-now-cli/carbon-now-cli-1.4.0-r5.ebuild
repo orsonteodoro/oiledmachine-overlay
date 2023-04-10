@@ -956,19 +956,6 @@ https://github.com/mixn/carbon-now-cli/archive/v${PV}.tar.gz
 "
 S="${WORKDIR}/${PN}-${PV}"
 
-src_unpack() {
-	if [[ "${UPDATE_YARN_LOCK}" == "1" ]] ; then
-		unpack ${P}.tar.gz
-		cd "${S}" || die
-		rm package-lock.json
-		npm i || die
-		npm audit fix || die
-		yarn import || die
-	else
-		yarn_src_unpack
-	fi
-}
-
 src_compile() { :; }
 
 src_install() {

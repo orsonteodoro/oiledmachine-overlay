@@ -6,6 +6,7 @@ EAPI=8
 
 NODE_VERSION="18"
 YARN_INSTALL_PATH="/opt/${PN}"
+YARN_INSTALL_UNPACK_ARGS="--prod"
 YARN_TARBALL="prantlf-${P}.tar.gz"
 YARN_EXE_LIST="
 ${YARN_INSTALL_PATH}/lib/cli.js
@@ -326,20 +327,3 @@ https://github.com/prantlf/jsonlint/archive/refs/tags/v${PV}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror test" # Missing dev dependencies
-
-pkg_setup() {
-	yarn_pkg_setup
-}
-
-src_unpack() {
-	if [[ "${UPDATE_YARN_LOCK}" == "1" ]] ; then
-		unpack ${P}.tar.gz
-		cd "${S}" || die
-		rm package-lock.json
-		npm i --prod || die
-		npm audit fix || die
-		yarn import || die
-	else
-		yarn_src_unpack
-	fi
-}
