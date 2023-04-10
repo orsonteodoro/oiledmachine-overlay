@@ -58,6 +58,7 @@ BDEPEND+="
 #   grep "resolved" /var/tmp/portage/dev-lang/typescript-4.0.8/work/TypeScript-4.0.8/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
 # UPDATER_START_YARN_EXTERNAL_URIS
 YARN_EXTERNAL_URIS="
+
 "
 # UPDATER_END_YARN_EXTERNAL_URIS
 SRC_URI="
@@ -87,8 +88,8 @@ einfo "Running:\t${cmd[@]}"
 }
 
 yarn_update_lock_install_pre() {
+	__npm_run npm i "lru-cache@7.x" -D
 	__npm_run npm i gulp-cli -D
-	__npm_run npm i "lru-cache@7.x"
 }
 
 pkg_postinst() {

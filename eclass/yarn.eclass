@@ -263,6 +263,7 @@ einfo "Running:\t${cmd[@]}"
 # @DESCRIPTION:
 # Unpacks a yarn application.
 yarn_src_unpack() {
+	export PATH="${S}/node_modules/.bin:${PATH}"
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 		unpack ${P}.tar.gz
 		cd "${S}" || die

@@ -75,12 +75,14 @@
         "fs-extra": "^9.0.0",
         "glob": "latest",
         "gulp": "^4.0.0",
+        "gulp-cli": "^2.3.0",
         "gulp-concat": "latest",
         "gulp-insert": "latest",
         "gulp-newer": "latest",
         "gulp-rename": "latest",
         "gulp-sourcemaps": "latest",
         "istanbul": "latest",
+        "lru-cache": "^7.18.3",
         "merge2": "latest",
         "minimist": "latest",
         "mkdirp": "latest",
@@ -129,6 +131,5 @@
         "@microsoft/typescript-etw": false,
         "source-map-support": false,
         "inspector": false
-    },
-    "dependencies": {}
+    }
 }

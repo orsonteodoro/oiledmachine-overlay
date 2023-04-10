@@ -87,8 +87,8 @@ einfo "Running:\t${cmd[@]}"
 }
 
 yarn_update_lock_install_pre() {
+	__npm_run npm i "lru-cache@7.x" -D
 	__npm_run npm i gulp-cli -D
-	__npm_run npm i "lru-cache@7.x"
 }
 
 pkg_postinst() {
