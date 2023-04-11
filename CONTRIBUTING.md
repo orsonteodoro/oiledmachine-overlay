@@ -103,7 +103,7 @@ based on an outdated style guide.
   - Variables in functions must be scoped with the `local` keyword.
   - All user messages printed with einfo/ewarn/errror must be formal.
   - Comments should be mostly formal and unambiguous.
-  - Makefile comments should be formal.
+  - metadata.xml longdescription and flags should be formal.
 
 * Security rules/guidelines
   - The uploaded point release is not vulnerable and does not have security
