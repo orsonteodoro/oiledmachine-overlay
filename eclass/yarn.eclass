@@ -205,6 +205,7 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
 # @DESCRIPTION:
 # Unpacks a yarn application.
 _yarn_src_unpack_default() {
+	export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 	if [[ -n "${YARN_TARBALL}" ]] ; then
 		unpack ${YARN_TARBALL}
 	else
@@ -250,7 +251,7 @@ _npm_run() {
 einfo "Tries:\t${tries}"
 einfo "Running:\t${cmd[@]}"
 		"${cmd[@]}" || die
-		if ! grep -q -r -e "ERR_SOCKET_TIMEOUT" "${HOME}/.npm/_logs" ; then
+		if ! grep -q -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
 			break
 		fi
 		rm -rf "${HOME}/.npm/_logs"

@@ -188,6 +188,7 @@ eerror
 # @DESCRIPTION:
 # Unpacks a npm application.
 _npm_src_unpack_default() {
+	export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 	if [[ -n "${NPM_TARBALL}" ]] ; then
 		unpack ${NPM_TARBALL}
 	else
@@ -233,7 +234,7 @@ _npm_run() {
 einfo "Tries:\t${tries}"
 einfo "Running:\t${cmd[@]}"
 		"${cmd[@]}" || die
-		if ! grep -q -r -e "ERR_SOCKET_TIMEOUT" "${HOME}/.npm/_logs" ; then
+		if ! grep -E -q -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
 			break
 		fi
 		rm -rf "${HOME}/.npm/_logs"
