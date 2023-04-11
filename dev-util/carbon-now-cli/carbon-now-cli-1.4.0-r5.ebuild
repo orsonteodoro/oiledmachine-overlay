@@ -9,6 +9,7 @@ NODE_VERSION=14 # Using nodejs muxer variable name.
 NPM_INSTALL_PATH="/opt/${PN}"
 NPM_EXE_LIST="
 ${NPM_INSTALL_PATH}/cli.js
+
 ${NPM_INSTALL_PATH}/node_modules/.bin/acorn
 ${NPM_INSTALL_PATH}/node_modules/.bin/atob
 ${NPM_INSTALL_PATH}/node_modules/.bin/ava
@@ -29,89 +30,26 @@ ${NPM_INSTALL_PATH}/node_modules/.bin/mime
 ${NPM_INSTALL_PATH}/node_modules/.bin/mkdirp
 ${NPM_INSTALL_PATH}/node_modules/.bin/pixelmatch
 ${NPM_INSTALL_PATH}/node_modules/.bin/prettier
-${NPM_INSTALL_PATH}/node_modules/.bin/pretty-ms
 ${NPM_INSTALL_PATH}/node_modules/.bin/rc
 ${NPM_INSTALL_PATH}/node_modules/.bin/regjsparser
 ${NPM_INSTALL_PATH}/node_modules/.bin/resolve
 ${NPM_INSTALL_PATH}/node_modules/.bin/rimraf
 ${NPM_INSTALL_PATH}/node_modules/.bin/run-node
 ${NPM_INSTALL_PATH}/node_modules/.bin/semver
-${NPM_INSTALL_PATH}/node_modules/.bin/strip-ansi
-${NPM_INSTALL_PATH}/node_modules/.bin/strip-indent
 ${NPM_INSTALL_PATH}/node_modules/.bin/which
 ${NPM_INSTALL_PATH}/node_modules/.bin/xo
 ${NPM_INSTALL_PATH}/node_modules/@ladjs/time-require/node_modules/.bin/pretty-ms
-${NPM_INSTALL_PATH}/node_modules/@ladjs/time-require/node_modules/chalk/node_modules/.bin/strip-ansi
+${NPM_INSTALL_PATH}/node_modules/@ladjs/time-require/node_modules/.bin/strip-ansi
 ${NPM_INSTALL_PATH}/node_modules/@sindresorhus/jimp/node_modules/.bin/mime
 ${NPM_INSTALL_PATH}/node_modules/@sindresorhus/jimp/node_modules/.bin/mkdirp
-${NPM_INSTALL_PATH}/node_modules/@sindresorhus/jimp/node_modules/.bin/pixelmatch
 ${NPM_INSTALL_PATH}/node_modules/acorn-jsx/node_modules/.bin/acorn
-${NPM_INSTALL_PATH}/node_modules/ava/node_modules/.bin/import-local-fixture
-${NPM_INSTALL_PATH}/node_modules/ava/node_modules/.bin/is-ci
-${NPM_INSTALL_PATH}/node_modules/ava/node_modules/.bin/semver
-${NPM_INSTALL_PATH}/node_modules/ava/node_modules/redent/node_modules/.bin/strip-indent
-${NPM_INSTALL_PATH}/node_modules/babel-core/node_modules/.bin/babylon
-${NPM_INSTALL_PATH}/node_modules/babel-core/node_modules/.bin/json5
-${NPM_INSTALL_PATH}/node_modules/babel-generator/node_modules/.bin/jsesc
-${NPM_INSTALL_PATH}/node_modules/babel-plugin-espower/node_modules/.bin/babylon
-${NPM_INSTALL_PATH}/node_modules/babel-register/node_modules/.bin/mkdirp
-${NPM_INSTALL_PATH}/node_modules/babel-template/node_modules/.bin/babylon
-${NPM_INSTALL_PATH}/node_modules/babel-traverse/node_modules/.bin/babylon
-${NPM_INSTALL_PATH}/node_modules/caching-transform/node_modules/.bin/mkdirp
-${NPM_INSTALL_PATH}/node_modules/child-process-promise/node_modules/cross-spawn/node_modules/.bin/which
-${NPM_INSTALL_PATH}/node_modules/concordance/node_modules/.bin/semver
-${NPM_INSTALL_PATH}/node_modules/cosmiconfig/node_modules/.bin/js-yaml
-${NPM_INSTALL_PATH}/node_modules/cross-spawn-async/node_modules/.bin/which
-${NPM_INSTALL_PATH}/node_modules/cross-spawn/node_modules/.bin/which
-${NPM_INSTALL_PATH}/node_modules/del/node_modules/.bin/rimraf
-${NPM_INSTALL_PATH}/node_modules/eslint-config-prettier/node_modules/.bin/eslint
-${NPM_INSTALL_PATH}/node_modules/eslint-config-xo/node_modules/.bin/eslint
-${NPM_INSTALL_PATH}/node_modules/eslint-import-resolver-node/node_modules/.bin/resolve
-${NPM_INSTALL_PATH}/node_modules/eslint-plugin-ava/node_modules/.bin/eslint
-${NPM_INSTALL_PATH}/node_modules/eslint-plugin-import/node_modules/.bin/eslint
-${NPM_INSTALL_PATH}/node_modules/eslint-plugin-import/node_modules/.bin/resolve
+${NPM_INSTALL_PATH}/node_modules/ava/node_modules/.bin/strip-indent
 ${NPM_INSTALL_PATH}/node_modules/eslint-plugin-import/node_modules/.bin/semver
-${NPM_INSTALL_PATH}/node_modules/eslint-plugin-node/node_modules/.bin/eslint
-${NPM_INSTALL_PATH}/node_modules/eslint-plugin-node/node_modules/.bin/resolve
-${NPM_INSTALL_PATH}/node_modules/eslint-plugin-node/node_modules/.bin/semver
-${NPM_INSTALL_PATH}/node_modules/eslint-plugin-prettier/node_modules/.bin/prettier
-${NPM_INSTALL_PATH}/node_modules/eslint-plugin-unicorn/node_modules/.bin/eslint
-${NPM_INSTALL_PATH}/node_modules/eslint/node_modules/.bin/js-yaml
-${NPM_INSTALL_PATH}/node_modules/eslint/node_modules/.bin/mkdirp
-${NPM_INSTALL_PATH}/node_modules/eslint/node_modules/.bin/semver
-${NPM_INSTALL_PATH}/node_modules/espree/node_modules/.bin/acorn
-${NPM_INSTALL_PATH}/node_modules/execa/node_modules/cross-spawn/node_modules/.bin/semver
-${NPM_INSTALL_PATH}/node_modules/execa/node_modules/cross-spawn/node_modules/.bin/which
-${NPM_INSTALL_PATH}/node_modules/extract-zip/node_modules/.bin/mkdirp
 ${NPM_INSTALL_PATH}/node_modules/flat-cache/node_modules/.bin/rimraf
-${NPM_INSTALL_PATH}/node_modules/hullabaloo-config-manager/node_modules/.bin/json5
 ${NPM_INSTALL_PATH}/node_modules/husky/node_modules/.bin/is-ci
-${NPM_INSTALL_PATH}/node_modules/husky/node_modules/.bin/run-node
-${NPM_INSTALL_PATH}/node_modules/invariant/node_modules/.bin/loose-envify
-${NPM_INSTALL_PATH}/node_modules/js-yaml/node_modules/.bin/esparse
-${NPM_INSTALL_PATH}/node_modules/js-yaml/node_modules/.bin/esvalidate
 ${NPM_INSTALL_PATH}/node_modules/load-bmfont/node_modules/.bin/mime
-${NPM_INSTALL_PATH}/node_modules/normalize-package-data/node_modules/.bin/resolve
-${NPM_INSTALL_PATH}/node_modules/normalize-package-data/node_modules/.bin/semver
-${NPM_INSTALL_PATH}/node_modules/package-json/node_modules/.bin/semver
-${NPM_INSTALL_PATH}/node_modules/puppeteer/node_modules/.bin/extract-zip
-${NPM_INSTALL_PATH}/node_modules/puppeteer/node_modules/.bin/mime
-${NPM_INSTALL_PATH}/node_modules/puppeteer/node_modules/.bin/rimraf
-${NPM_INSTALL_PATH}/node_modules/regexpu-core/node_modules/.bin/regjsparser
-${NPM_INSTALL_PATH}/node_modules/registry-auth-token/node_modules/.bin/rc
-${NPM_INSTALL_PATH}/node_modules/registry-url/node_modules/.bin/rc
 ${NPM_INSTALL_PATH}/node_modules/regjsparser/node_modules/.bin/jsesc
-${NPM_INSTALL_PATH}/node_modules/semver-diff/node_modules/.bin/semver
-${NPM_INSTALL_PATH}/node_modules/source-map-resolve/node_modules/.bin/atob
-${NPM_INSTALL_PATH}/node_modules/supertap/node_modules/.bin/js-yaml
 ${NPM_INSTALL_PATH}/node_modules/tsconfig-paths/node_modules/.bin/json5
-${NPM_INSTALL_PATH}/node_modules/unique-temp-dir/node_modules/.bin/mkdirp
-${NPM_INSTALL_PATH}/node_modules/update-notifier/node_modules/.bin/is-ci
-${NPM_INSTALL_PATH}/node_modules/write/node_modules/.bin/mkdirp
-${NPM_INSTALL_PATH}/node_modules/xo/node_modules/.bin/eslint
-${NPM_INSTALL_PATH}/node_modules/xo/node_modules/.bin/eslint-config-prettier-check
-${NPM_INSTALL_PATH}/node_modules/xo/node_modules/.bin/prettier
-${NPM_INSTALL_PATH}/node_modules/xo/node_modules/.bin/semver
 "
 inherit desktop npm
 
@@ -143,7 +81,7 @@ BDEPEND="
 "
 MY_PN="${PN//-cli/}"
 # Initially generated from:
-#   grep "resolved" /var/tmp/portage/dev-util/carbon-now-cli-1.4.0-r5/work/carbon-now-cli-1.4.0/npm.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
+#   grep "resolved" ${NPM_INSTALL_PATH}/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
 # For the generator script, see the typescript/transform-uris.sh ebuild-package.
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
@@ -1121,7 +1059,6 @@ src_install() {
 		|| die
 	exeinto /usr/bin
 	doexe "${T}/${MY_PN}"
-	sed -i -e ""
 	if use custom-browser && [[ -z "${CARBON_NOW_BROWSER_PATH}" ]] ; then
 eerror
 eerror "custom-browser USE flag requires CARBON_NOW_BROWSER_PATH"
