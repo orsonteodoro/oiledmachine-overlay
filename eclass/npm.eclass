@@ -217,10 +217,16 @@ einfo "Missing package-lock.json"
 		npm_transform_uris_default
 	fi
 	local args=()
+	if declare -f npm_unpack_install_pre > /dev/null ; then
+		npm_unpack_install_pre
+	fi
 	npm install \
 		--prefer-offline \
 		${NPM_INSTALL_UNPACK_ARGS} \
 		|| die
+	if declare -f npm_unpack_install_post > /dev/null ; then
+		npm_unpack_install_post
+	fi
 }
 
 # @FUNCTION: _npm_run

@@ -232,12 +232,18 @@ _yarn_src_unpack_default() {
 		cp "${FILESDIR}/${PV}/yarn.lock" "${S}" || die
 	fi
 	local args=()
+	if declare -f yarn_unpack_install_pre > /dev/null ; then
+		yarn_unpack_install_pre
+	fi
 	yarn install \
 		--prefer-offline \
 		--pure-lockfile \
 		--verbose \
 		${YARN_INSTALL_UNPACK_ARGS} \
 		|| die
+	if declare -f yarn_unpack_install_post > /dev/null ; then
+		yarn_unpack_install_post
+	fi
 }
 
 # @FUNCTION: _npm_run
