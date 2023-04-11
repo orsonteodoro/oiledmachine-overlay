@@ -64,14 +64,14 @@ by this overlay.  We do not use the distro recommendations because they are
 based on an outdated style guide.
 
 * ebuild rules:
+
+* Coding style rules/guidelines:
   - Ebuilds contents must be symmetric/even or ANSI C like code style.
   - The ~90% of the code must be within 80 characters boundary.
     - Long strings need to be hard wrapped.
     - URIs processed by bazel should not be hard wrapped.
   - Constants are capitalized.
   - Variables are lower case and have _ between words.
-  - USE flags should be hyphenated between words most of the time.
-    Underscores can used by USE flags in profiles/desc.
   - Most strings should be in double quotes.
   - Floats should be in double quotes.
   - Integers do not need to be double quotes.
@@ -83,13 +83,9 @@ based on an outdated style guide.
     (Historically, people got paid per line of code.)
   - The operator should start the new line most of the time, unless better
     symmetric presentation is found.
-  - The uploaded point release is not vulnerable and does not have security
-    advisories.  Use NVD, CVE, GLSA to see if the package is vulerable.
-  - Phase functions must be sorted in chronological order.
   - || conditionals in REQUIRED_USE and *DEPENDs must have free alternatives at
     the top of the list and proprietary alternatives at the bottom of the list.
   - Indents are mostly tabs.
-  - *DEPENDs sources should be documented if not centralized.
   - Sorting is generally ASCII sorted.
     - RDEPEND, DEPEND, BDEPEND, PDEPEND are using an ASCII inspired decision
       tree sort.
@@ -103,23 +99,28 @@ based on an outdated style guide.
     Additional einfos may follow.
   - You must put `OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO` in the footer and
     disable the KEYWORDS variable if the ebuild is unfinished.
-  - Refrain from using non free trademarks.
+  - Phase functions must be sorted in chronological order.
   - Variables in functions must be scoped with the `local` keyword.
-  - Ebuilds should be Prefix aware for C/C++ programs.
-    - Use "${ESYSROOT}/usr/include" as a source.
-    - Use "${ESYSROOT}/usr/$(get_libdir)" as a source.
-    - Use "${EPREFIX}/" as destination.
-    - Use of prefix USE flags.
-      [kernel USE flags](https://packages.gentoo.org/useflags/kernel_linux)
-      [libc USE flags](https://packages.gentoo.org/useflags/elibc_glibc)
-    - etc...
-  - Giving write permissions is disallowed in certain scenarios.
+  - All user messages printed with einfo/ewarn/errror must be formal.
+  - Comments should be mostly formal and unambiguous.
+  - Makefile comments should be formal.
+
+* Security rules/guidelines
+  - The uploaded point release is not vulnerable and does not have security
+    advisories.  Use NVD, CVE, GLSA to see if the package is vulnerable.
+  - You must edit profile/package.use.force or profile/package.use.mask to hard
+    mask the feature or force the alternative if it breaks something or has
+    a serious security issue.
+  - Daemons/servers must run as limited (non-root) user.
   - Disclose all unreported security weakness in pkg_postinst to allow the
     user to uninstall, hard mask the ebuild, fork and patch locally, or take
     necessary precautions to mitigate.  See the CWE database for weakness
     descriptions.
   - Disclose all critical vulnerabilities in -bin packages including
     internal vendored libraries.
+  - Giving write permissions is disallowed if there is a possibility to
+    run/inject custom malicious scripts/configs or writable assets between
+    different users.
   - If updating micropackages to resolve vulnerability issues, the policy is
     best effort.  This means that you may bump micropackages to later patch
     versions without breaking the software.  Bumping minor or major versions are
@@ -132,20 +133,40 @@ based on an outdated style guide.
       (Storage of passwords in plaintext.  #40 on the most dangerous weakness list.)
     - [CWE-759](https://cwe.mitre.org/data/definitions/759.html)
       (Unsalted passwords)
-  - Adding the test USE flag and test dependencies is required for
-    dev-python in this overlay only if the package supports testing.
-  - If a python package does provide a test suite but not through supported
-    distutils_enable_tests values like pytest, then src_test() must be
-    explicitly defined in the ebuild.
-  - Adding src_test and test *DEPENDs for C/C++ libraries is optional, but
-    highly recommended and may be required in the future in this overlay.
-  - If an ebuild can be trivially PGOed, then it is highly recommended to
-    add tpgo USE flag or use the build script's pgo.
-  - The default IUSE must mostly respect upstream defaults by prefixing
-    `+` or `-` in front of the USE flag.  You may go against upstream defaults
-    if the setting is not platform agnostic or would likely lead to
-    breakage.
-  - Daemons/servers must run as limited (non-root) user.
+  - Storing passwords in environment variables is disallowed.
+  - JS/Cargo dependency snapshots or SRC_URI lists should be updated monthly or
+    weekly.
+
+* *DEPENDs rules/guidelines
+  - *DEPENDs sources should be documented if not centralized.
+  - If a dependency package is not available on any overlay but is required, you
+    must package it, version bump it, or patch the software to disable/meet the
+    hard requirement.
+
+* Versioning rules/guidelines:
+  - If a project has git tags, you may use use `9999`, `<PV>_p9999`,
+    `<PV>_pre9999` for live ebuild versions.
+  - If a project has git tags, but the distro uses `<PV>_p20230903`, you must
+    use `<PV>_p99999999` for live ebuild versions.
+  - If a project has no tag (i.e. no point releases), you can use `9999` or
+    `99999999` for live ebuild versions.
+  - If a project has no tag but the distro uses `20230903`, you must use
+    `99999999` for live ebuild versions.
+  - The versioning of the dependencies must be explicit if available.
+
+* SRC_URI rules/guidelines:
+  - The destination filenames in SRC_URI must be prefixed with the project name
+    if the source is just version.ext to avoid name collisions.
+  - The destination filenames in SRC_URI must be prefixed with the service name
+    or repo owner name or other non-colliding salt id if the name has been already
+    used or too generic for reuse.  For example a rust/js tarball may use the name
+    and version as a c/c++ tarball.  The distro repo or previous tarball name has
+    right of way.
+
+* Live ebuilds rules/guidelines:
+  - Live ebuilds must have KEYWORDS disabled or removed.
+  - Live ebuild snapshots should have KEYWORDs disabled or removed.
+  - Live ebuilds should disable analytics/telemetry in the build system.
   - Live commits should have a `fallback-commit` USE flag that sets EGIT_COMMIT.
     In addition, the YYYYMMDD date of that commit recorded.
   - Live ebuilds should perform versioning checks between the current live
@@ -159,24 +180,34 @@ based on an outdated style guide.
     - Hash the hash.
     - Compare the hash of the hash to ensure determinism in live ebuilds or
       else recommend the `fallback-commit` USE flag.
-  - If a project has git tags, you may use use `9999`, `<PV>_p9999`,
-    `<PV>_pre9999` for live ebuild versions.
-  - If a project has git tags, but the distro uses `<PV>_p20230903`, you must
-    use `<PV>_p99999999` for live ebuild versions.
-  - If a project has no tag (i.e. no point releases), you can use `9999` or
-    `99999999` for live ebuild versions.
-  - If a project has no tag but the distro uses `20230903`, you must use
-    `99999999` for live ebuild versions.
-  - The destination filenames in SRC_URI must be prefixed with the project name
-    if the source is just version.ext to avoid name collisions.
-  - The destination filenames in SRC_URI must be prefixed with the service name
-    or repo owner name or other non-colliding salt id if the name has been already
-    used or too generic for reuse.  For example a rust/js tarball may use the name
-    and version as a c/c++ tarball.  The repo or previous tarball name has right
-    of way.
-  - Live ebuilds must have KEYWORDS disabled or removed.
-  - Live ebuilds should disable analytics/telemetry in the build system.
+
+* Python ebuilds rules/guidelines:
   - All python dependencies must have either PYTHON_USEDEP or PYTHON_SINGLE_USEDEP.
+  - For python pacakages, all dependencies must be listed.
+  - If a python package does provide a test suite but not through supported
+    distutils_enable_tests values like pytest, then src_test() must be
+    explicitly defined in the ebuild.
+
+* JS packages rules/guidelines:
+  - Use the npm_updater_update_locks.sh to update dependencies and produce a
+    lockfile.
+  - Both yarn and npm offline install support has been added in the eclass
+    level, but it is preferred to use npm to avoid problems.
+  - Update the lock files for js app packages that has not bumped the patch
+    version within one month.  If the package has not been bumped for more than
+    a year, it is a hard requirement.  JS packages with criticial dependencies
+    must be updated.  JS ebuilds with dependencies without without further
+    updates may be deleted.
+
+* C/C++ ebuilds rules/guidelines:
+  - Ebuilds should be Prefix aware for C/C++ programs.
+    - Use "${ESYSROOT}/usr/include" as a source.
+    - Use "${ESYSROOT}/usr/$(get_libdir)" as a source.
+    - Use "${EPREFIX}/" as destination.
+    - Use of prefix USE flags.
+      [kernel USE flags](https://packages.gentoo.org/useflags/kernel_linux)
+      [libc USE flags](https://packages.gentoo.org/useflags/elibc_glibc)
+    - etc...
   - Adding multilib is optional for decade 2020 in this overlay and may be dropped
     in this decade.  If multilib is provided in the package, all dependencies must
     use MULTILIB_USEDEP if the dependency is capable of using it.  For python
@@ -190,12 +221,7 @@ based on an outdated style guide.
     than X in || checks.  If an app package supports both but is not automatic,
     then a wrapper may provided by the ebuild.  For decade 2020, use of X may
     likely decline.
-  - The versioning of the dependencies must be explicit if available.
-  - For python pacakages, all dependencies must be listed.
   - For C/C++ packages, all dependencies for Linux must be listed.
-  - If a dependency package is not available on any overlay but is required, you
-    must package it, version bump it, or patch the software to disable/meet the
-    hard requirement.
   - For extra/optional dependencies, you do not need to package it but it is
     strongly recommended for a higher quality release and to improve the
     ebuild ecosystem so that Linux doesn't suck.  In other words, you may package
@@ -203,9 +229,22 @@ based on an outdated style guide.
     unpackaged dependencies should have a TODO list within the ebuild of packages
     that are missing in the ebuild ecosystem.  Incomplete dependencies relates to
     the package default USE flag features breaking also.
-  - You must edit profile/package.use.force or profile/package.use.mask to hard
-    mask the feature or force the alternative if it breaks something or has
-    a serious security issue.
+  - Adding src_test and test *DEPENDs for C/C++ libraries is optional, but
+    highly recommended and may be required in the future in this overlay.
+
+* USE flags rules/guidelines:
+  - USE flags should be hyphenated between words most of the time.
+    Underscores can used by USE flags in profiles/desc.
+  - Adding the test USE flag and test dependencies is required for
+    dev-python in this overlay only if the package supports testing.
+  - If an ebuild can be trivially PGOed, then it is highly recommended to
+    add tpgo USE flag or use the build script's pgo.
+  - The default IUSE must mostly respect upstream defaults by prefixing
+    `+` or `-` in front of the USE flag.  You may go against upstream defaults
+    if the setting is not platform agnostic or would likely lead to
+    breakage.
+
+* Quality, time limits, optional, extent of support guidelines:
   - If a dependency package is for hardware that you do not have access to,
     you do not need to package it.
   - If a dependency exists on other overlay(s), you do not need to submit it for
@@ -246,6 +285,10 @@ based on an outdated style guide.
     a library, then the library package should support both.  If a library is
     guaranteed backwards compatible, then it is not needed and you may just use
     0 for the SLOT.
+  - You must not increase the time cost that it may decrease security by
+    blocking security updates.
+
+* Multislot rules/guidelines:
   - SLOT are up to the ebuild (SLOT="slot/subslot"), but recommened for
     packages where there is difficultly updating or the API/interface has
     changed dramatically when updating to the next major or minor version.
@@ -264,6 +307,8 @@ based on an outdated style guide.
     - a wrapper script as a muxer is recommended for exe only packages.
     - PATH manipulation typically done by eclasses
     - PATH prioritization to symlinks in for example ${WORKDIR}/bin.  (Uncommon)
+
+* Ebuild End of Life rules/guidelines:
   - If you are going to keep EOL slots/versions, put the reason why as a comment
     in the footer or near the header.
     - Good reasons:
@@ -277,11 +322,6 @@ based on an outdated style guide.
   - Packages that rely on EOL versions and not stable versions of python, gcc,
     and do not have a ebuild version from the distro overlay and this overlay
     are not supported.
-  - For npm based packages, use the yarn for offline install instead.
-  - You must do a `npm audit fix` for yarn.lock or package-lock.json and update
-    the lock files for js app packages that has not bumped the patch version
-    within one month.  If the package has not been bumped for more than a year,
-    it is a hard requirement.
 
 * eclass rules:
   - All `.eclass`es must be GPL2 only or have a GPL2 compatible license header.
@@ -295,8 +335,6 @@ based on an outdated style guide.
   - All eclasses must have EAPI compatibility switch-case or conditional
     check.
   - Eclasses need to support either EAPI 7 or EAPI 8
-  - You must not increase the time cost that it may decrease security by
-    blocking security updates.
 
 * ebuild license rules:
   - All `.ebuild`s must be GPL2 only or have a GPL2 compatible license header.
@@ -327,6 +365,7 @@ based on an outdated style guide.
     source/header file relative to S, WORKDIR, or HOME.
     - If possible, try to unvendor or modify the build files to prevent
       license incompatibility.
+  - Refrain from using non free trademarks.
 
 * metadata.xml rules:
   - Everything is space indented.
