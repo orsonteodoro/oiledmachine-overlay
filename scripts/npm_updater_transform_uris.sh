@@ -1,20 +1,20 @@
 #!/bin/bash
 
-__YARN_UPDATER_PKG_FOLDER_PATH=$(pwd)
-YARN_UPDATER_PKG_FOLDER="${YARN_UPDATER_PKG_FOLDER:-${__YARN_UPDATER_PKG_FOLDER_PATH}}"
-YARN_UPDATER_SCRIPTS_PATH=$(realpath $(dirname "${BASH_SOURCE[0]}"))
+__NPM_UPDATER_PKG_FOLDER_PATH=$(pwd)
+NPM_UPDATER_PKG_FOLDER="${NPM_UPDATER_PKG_FOLDER:-${__NPM_UPDATER_PKG_FOLDER_PATH}}"
+NPM_UPDATER_SCRIPTS_PATH=$(realpath $(dirname "${BASH_SOURCE[0]}"))
 
 # Helper script to transform URIs
 
-YARN_EXTERNAL_URIS="
-$(cat yarn-uris.txt)
+NPM_EXTERNAL_URIS="
+$(cat npm-uris.txt)
 "
 
-yarn_updater_gen_yarn_uris() {
+npm_updater_gen_npm_uris() {
 	IFS=$'\n'
 	local row
 	local uri
-	for row in ${YARN_EXTERNAL_URIS} ; do
+	for row in ${NPM_EXTERNAL_URIS} ; do
 		local uri=$(echo "${row}" \
 			| cut -f 1 -d "#")
 		if [[ "${row}" =~ ".git" && "${row}" =~ "github" ]] ; then
@@ -26,26 +26,26 @@ yarn_updater_gen_yarn_uris() {
 				| cut -f 5 -d "/" \
 				| cut -f 1 -d "#" \
 				| cut -f 1 -d ".")
-			echo "https://github.com/${owner}/${project_name}/archive/${commit_id}.tar.gz -> yarnpkg-${project_name}.git-${commit_id}.tgz"
+			echo "https://github.com/${owner}/${project_name}/archive/${commit_id}.tar.gz -> npmpkg-${project_name}.git-${commit_id}.tgz"
 		elif [[ "${row}" =~ "->" ]] ; then
 			echo "${uri}"
 		elif [[ "${row}" =~ "@" ]] ; then
 			local ns=$(echo "${uri}" \
 				| grep -E -o -e "@[a-zA-Z0-9._-]+")
 			local bn="${uri##*/}"
-			echo "${uri} -> yarnpkg-${ns}-${bn}"
+			echo "${uri} -> npmpkg-${ns}-${bn}"
 		else
 			local bn="${uri##*/}"
-			echo "${uri} -> yarnpkg-${bn}"
+			echo "${uri} -> npmpkg-${bn}"
 		fi
 	done
 	IFS=$' \t\n'
 }
 
-yarn_updater_transform_yarn_uris() {
-	cd "${YARN_UPDATER_PKG_FOLDER}"
-	yarn_updater_gen_yarn_uris
+npm_updater_transform_npm_uris() {
+	cd "${NPM_UPDATER_PKG_FOLDER}"
+	npm_updater_gen_npm_uris
 }
 
-yarn_updater_transform_yarn_uris
+npm_updater_transform_npm_uris
 

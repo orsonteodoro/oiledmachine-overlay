@@ -2,6 +2,8 @@
 # Update once a week
 __YARN_UPDATER_PKG_FOLDER_PATH=$(pwd)
 export YARN_UPDATER_PKG_FOLDER="${YARN_UPDATER_PKG_FOLDER:-${__YARN_UPDATER_PKG_FOLDER_PATH}}"
+echo "A:${__YARN_UPDATER_PKG_FOLDER_PATH}"
+echo "B:${YARN_UPDATER_PKG_FOLDER}"
 YARN_UPDATER_SCRIPTS_PATH=$(realpath $(dirname "${BASH_SOURCE[0]}"))
 YARN_UPDATER_MODE="${YARN_UPDATER_MODE:-full}"
 
@@ -22,6 +24,7 @@ echo "Arg 2 must be the package name"
 fi
 
 yarn_updater_update_yarn_locks() {
+	echo "YARN_UPDATER_PKG_FOLDER=${YARN_UPDATER_PKG_FOLDER}"
 	cd "${YARN_UPDATER_PKG_FOLDER}"
 	local versions=(
 		$(ls *ebuild \

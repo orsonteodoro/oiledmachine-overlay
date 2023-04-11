@@ -8,7 +8,7 @@
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
-# @BLURB: Eclass for offline install for npm/yarn eclass
+# @BLURB: Eclass for yarn offline install
 # @DESCRIPTION:
 # Eclass similar to the cargo.eclass.
 
@@ -55,7 +55,7 @@ BDEPEND+="
 # @ECLASS_VARIABLE: YARN_EXTERNAL_URIS
 # @DESCRIPTION:
 # Rows of URIs.
-# Must be process through a URI transformer.  See tensorboard ebuild.
+# Must be process through a URI transformer.  See scripts/*.
 # Git snapshot URIs must manually added and look like:
 # https://github.com/angular/dev-infra-private-build-tooling-builds/archive/<commit-id>.tar.gz -> yarnpkg-dev-infra-private-build-tooling-builds.git-<commit-id>.tgz
 
@@ -195,7 +195,7 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
 			bn=$(echo "${uri}" \
 				| cut -f 3 -d " ")
 einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
-			cat "${DISTDIR}/${bn}" > "${dest}/${bn/yarnpkg-}" || die
+			cp -a "${DISTDIR}/${bn}" "${dest}/${bn/yarnpkg-}" || die
 		fi
 	done
 	IFS=$' \t\n'
@@ -220,15 +220,15 @@ _yarn_src_unpack_default() {
 	rm -rf "${S}/.yarnrc" || die
 	yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
 	mv "${HOME}/.yarnrc" "${WORKDIR}" || die
-	if [[ -f "${FILESDIR}/${PV}/yarn.lock" && -n "${YARN_ROOT}" ]] ; then
-		cp "${FILESDIR}/${PV}/yarn.lock" "${YARN_ROOT}" || die
-	elif [[ -f "${FILESDIR}/${PV}/yarn.lock" ]] ; then
-		cp "${FILESDIR}/${PV}/yarn.lock" "${S}" || die
-	fi
 	if [[ -f "${FILESDIR}/${PV}/package.json" && -n "${YARN_ROOT}" ]] ; then
 		cp "${FILESDIR}/${PV}/package.json" "${YARN_ROOT}" || die
 	elif [[ -f "${FILESDIR}/${PV}/package.json" ]] ; then
 		cp "${FILESDIR}/${PV}/package.json" "${S}" || die
+	fi
+	if [[ -f "${FILESDIR}/${PV}/yarn.lock" && -n "${YARN_ROOT}" ]] ; then
+		cp "${FILESDIR}/${PV}/yarn.lock" "${YARN_ROOT}" || die
+	elif [[ -f "${FILESDIR}/${PV}/yarn.lock" ]] ; then
+		cp "${FILESDIR}/${PV}/yarn.lock" "${S}" || die
 	fi
 	local args=()
 	yarn install \
