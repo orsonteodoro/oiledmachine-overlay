@@ -270,8 +270,8 @@ enpm() {
 	tries=0
 	while (( ${tries} < ${NPM_TRIES} )) ; do
 einfo "Tries:\t${tries}"
-einfo "Running:\t${cmd[@]}"
-		"${cmd[@]}" || die
+einfo "Running:\tnpm ${cmd[@]}"
+		npm "${cmd[@]}" || die
 		if ! grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
 			break
 		fi
