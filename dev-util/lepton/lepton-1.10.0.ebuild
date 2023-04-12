@@ -66,7 +66,7 @@ LICENSE="
 
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE=" r3"
+IUSE=" r5"
 REQUIRED_USE="
 !wayland X
 "

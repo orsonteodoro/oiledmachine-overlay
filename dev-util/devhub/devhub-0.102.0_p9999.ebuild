@@ -6,31 +6,32 @@ EAPI=8
 
 MY_PN="DevHub"
 
-export YARN_INSTALL_PATH="/opt/${PN}"
+export NPM_INSTALL_PATH="/opt/${PN}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV}.AppImage"
-ELECTRON_APP_MODE="yarn"
+ELECTRON_APP_MODE="npm"
 ELECTRON_APP_ELECTRON_PV="11.0.3"
 ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY=1
 ELECTRON_APP_REACT_NATIVE_PV="0.64.0_rc1"
 NODE_ENV="development"
 NODE_VERSION="14" # Upstream uses 12
+NPM_INSTALL_UNPACK_ARGS="--legacy-peer-deps"
+NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS="--legacy-peer-deps"
 
-inherit desktop electron-app git-r3 lcnr yarn
+inherit desktop electron-app git-r3 lcnr npm
 if [[ ${PV} =~ 9999 ]] ; then
 	inherit git-r3
 	IUSE+=" fallback-commit"
 else
 # Initially generated from:
-#   grep "resolved" /var/tmp/portage/dev-util/devhub-0.102.0_p9999/work/devhub-0.102.0_p9999/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
+#   grep "resolved" /var/tmp/portage/dev-util/devhub-0.102.0_p9999/work/devhub-0.102.0_p9999/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
 # For the generator script, see typescript/transform-uris.sh ebuild-package.
-# UPDATER_START_YARN_EXTERNAL_URIS
-YARN_EXTERNAL_URIS="
-
+# UPDATER_START_NPM_EXTERNAL_URIS
+NPM_EXTERNAL_URIS="
 "
-# UPDATER_END_YARN_EXTERNAL_URIS
+# UPDATER_END_NPM_EXTERNAL_URIS
 	SRC_URI="
-${YARN_EXTERNAL_URIS}
+${NPM_EXTERNAL_URIS}
 https://github.com/devhubapp/devhub/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
@@ -70,27 +71,27 @@ LICENSE="
 # For ELECTRON_APP_LICENSES, see
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass#L67
 
-# ( WTFPL-2 MIT ) - homedir/yarn/v6/npm-path-is-inside-1.0.2-365417dede44430d1c11af61027facf074bdfc53-integrity/node_modules/path-is-inside/LICENSE.txt
-# ( all-rights-reserved OFL-1.1 ) - homedir/yarn/v6/npm-polished-3.4.1-1eb5597ec1792206365635811d465751f5cbf71c-integrity/node_modules/polished/docs/assets/fonts/LICENSE.txt
-# ( Apache-2.0 all-rights-reserved ) - homedir/yarn/v6/npm-typescript-4.3.4-3f85b986945bcf31071decdd96cf8bfa65f9dcbc-integrity/node_modules/typescript/CopyrightNotice.txt
-# ( Apache-2.0 CC-BY-3.0 ) - yarn/v6/npm-@react-native-firebase-app-10.1.0-4242933c52b4b753ba48216092c0447677118342-integrity/node_modules/@react-native-firebase/app/LICENSE
-# ( MIT all-rights-reserved ) - homedir/yarn/v6/npm-http-parser-js-0.5.2-da2e31d237b393aae72ace43882dd7e270a8ff77-integrity/node_modules/http-parser-js/LICENSE.md
-# ( MIT all-rights-reserved ) - homedir/yarn/v6/npm-minizlib-2.1.2-e90d3466ba209b932451508a11ce3d3632145931-integrity/node_modules/minizlib/LICENSE
+# ( WTFPL-2 MIT ) - homedir/npm/v6/npm-path-is-inside-1.0.2-365417dede44430d1c11af61027facf074bdfc53-integrity/node_modules/path-is-inside/LICENSE.txt
+# ( all-rights-reserved OFL-1.1 ) - homedir/npm/v6/npm-polished-3.4.1-1eb5597ec1792206365635811d465751f5cbf71c-integrity/node_modules/polished/docs/assets/fonts/LICENSE.txt
+# ( Apache-2.0 all-rights-reserved ) - homedir/npm/v6/npm-typescript-4.3.4-3f85b986945bcf31071decdd96cf8bfa65f9dcbc-integrity/node_modules/typescript/CopyrightNotice.txt
+# ( Apache-2.0 CC-BY-3.0 ) - npm/v6/npm-@react-native-firebase-app-10.1.0-4242933c52b4b753ba48216092c0447677118342-integrity/node_modules/@react-native-firebase/app/LICENSE
+# ( MIT all-rights-reserved ) - homedir/npm/v6/npm-http-parser-js-0.5.2-da2e31d237b393aae72ace43882dd7e270a8ff77-integrity/node_modules/http-parser-js/LICENSE.md
+# ( MIT all-rights-reserved ) - homedir/npm/v6/npm-minizlib-2.1.2-e90d3466ba209b932451508a11ce3d3632145931-integrity/node_modules/minizlib/LICENSE
 # ( MIT CC0-1.0 )
-# ( Unicode-DFS-2016 W3C-Software-and-Document-Notice-and-License W3C-Community-Final-Specification-Agreement CC-BY-4.0 MIT ) - homedir/yarn/v6/npm-typescript-4.3.4-3f85b986945bcf31071decdd96cf8bfa65f9dcbc-integrity/node_modules/typescript/ThirdPartyNoticeText.txt
+# ( Unicode-DFS-2016 W3C-Software-and-Document-Notice-and-License W3C-Community-Final-Specification-Agreement CC-BY-4.0 MIT ) - homedir/npm/v6/npm-typescript-4.3.4-3f85b986945bcf31071decdd96cf8bfa65f9dcbc-integrity/node_modules/typescript/ThirdPartyNoticeText.txt
 # Apache-2.0
 # BSD
 # BSD-2
 # CC0-1.0
-# custom, MIT - homedir/yarn/v6/npm-node-notifier-8.0.0-a7eee2d51da6d0f7ff5094bc7108c911240c1620-integrity/node_modules/node-notifier/vendor/terminal-notifier-LICENSE
-# custom, MIT with no advertising clause - homedir/yarn/v6/npm-ecc-jsbn-0.1.2-3a83a904e54353287874c564b7549386849a98c9-integrity/node_modules/ecc-jsbn/lib/LICENSE-jsbn
+# custom, MIT - homedir/npm/v6/npm-node-notifier-8.0.0-a7eee2d51da6d0f7ff5094bc7108c911240c1620-integrity/node_modules/node-notifier/vendor/terminal-notifier-LICENSE
+# custom, MIT with no advertising clause - homedir/npm/v6/npm-ecc-jsbn-0.1.2-3a83a904e54353287874c564b7549386849a98c9-integrity/node_modules/ecc-jsbn/lib/LICENSE-jsbn
 # ISC
 # MIT
-# MPL-2.0 - homedir/yarn/v6/npm-axe-core-4.1.1-70a7855888e287f7add66002211a423937063eaf-integrity/node_modules/axe-core/LICENSE
-# CC-BY-SA-4.0 - homedir/yarn/v6/npm-glob-7.1.6-141f33b81a7c2492e125594307480c46679278a6-integrity/node_modules/glob/LICENSE
-# CC-BY-3.0 - homedir/yarn/v6/npm-@react-native-firebase-app-10.1.0-4242933c52b4b753ba48216092c0447677118342-integrity/node_modules/@react-native-firebase/app/LICENSE
-# LGPL-3.0 - homedir/yarn/v6/npm-node-notifier-8.0.0-a7eee2d51da6d0f7ff5094bc7108c911240c1620-integrity/node_modules/node-notifier/vendor/snoreToast/LICENSE
-# ODC-By - homedir/yarn/v6/npm-language-subtag-registry-0.3.21-04ac218bea46f04cb039084602c6da9e788dd45a-integrity/node_modules/language-subtag-registry/LICENSE.md
+# MPL-2.0 - homedir/npm/v6/npm-axe-core-4.1.1-70a7855888e287f7add66002211a423937063eaf-integrity/node_modules/axe-core/LICENSE
+# CC-BY-SA-4.0 - homedir/npm/v6/npm-glob-7.1.6-141f33b81a7c2492e125594307480c46679278a6-integrity/node_modules/glob/LICENSE
+# CC-BY-3.0 - homedir/npm/v6/npm-@react-native-firebase-app-10.1.0-4242933c52b4b753ba48216092c0447677118342-integrity/node_modules/@react-native-firebase/app/LICENSE
+# LGPL-3.0 - homedir/npm/v6/npm-node-notifier-8.0.0-a7eee2d51da6d0f7ff5094bc7108c911240c1620-integrity/node_modules/node-notifier/vendor/snoreToast/LICENSE
+# ODC-By - homedir/npm/v6/npm-language-subtag-registry-0.3.21-04ac218bea46f04cb039084602c6da9e788dd45a-integrity/node_modules/language-subtag-registry/LICENSE.md
 
 KEYWORDS="~amd64"
 SLOT="0"
@@ -113,7 +114,7 @@ eerror
 
 pkg_setup() {
 	:;#check_network_sandbox
-	yarn_pkg_setup
+	npm_pkg_setup
 }
 
 __npm_run() {
@@ -134,17 +135,15 @@ einfo "Running:\t${cmd[@]}"
 	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
 }
 
-gen_yarn_lock() {
+gen_npm_lock() {
 	cd "${S}" || die
-	yarn config set link-duplicates true
-
-	__npm_run npm i --legacy-peer-deps
-	__npm_run npm audit fix
-
-	yarn import || die
+	__npm_run npm i ${NPM_INSTALL_UNPACK_ARGS}
+	__npm_run npm audit fix ${NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS}
 }
 
 src_unpack() {
+eerror "This ebuild is currently under maintenance."
+die
 	if [[ ${PV} =~ 9999 ]] ; then
 		use fallback-commit && EGIT_COMMIT="6e31725a63f42986eb040153aec7eb11723b8289"
 		EGIT_REPO_URI="https://github.com/devhubapp/devhub.git"
@@ -153,17 +152,16 @@ src_unpack() {
 		git-r3_fetch
 		git-r3_checkout
 		cd "${S}" || die
-		rm yarn.lock || die
-		gen_yarn_lock
+		rm -f package-lock.json || die
+		gen_npm_lock
 	else
 		unpack ${A}
-		if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
-			gen_yarn_lock
+		if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+			gen_npm_lock
 			die
 		else
 			cd "${S}" || die
-			yarn config set link-duplicates true
-			yarn_src_unpack
+			npm_src_unpack
 		fi
 	fi
 	local actual_pv=$(grep "version" "${S}/package.json" | cut -f 4 -d '"')
@@ -182,34 +180,41 @@ eerror
 	fi
 }
 
-__yarn_run() {
+__npm_run() {
 	local cmd=( "${@}" )
 einfo "Running:\t${cmd[@]}"
 	"${cmd[@]}" || die
-	if grep -q -e "Exit code:" "${T}/build.log" ; then
-eerror
-eerror "Detected failure.  Re-emerge..."
-eerror
-		die
-	fi
+	local tries
+	tries=0
+	while (( ${tries} < 5 )) ; do
+einfo "Tries:\t${tries}"
+einfo "Running:\t${cmd[@]}"
+		"${cmd[@]}" || die
+		if ! grep -E -q -r -e "(ERESOLVE|ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
+			break
+		fi
+		rm -rf "${HOME}/.npm/_logs"
+		tries=$((${tries} + 1))
+	done
+	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
 }
 
 src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
-	__yarn_run yarn workspace @devhub/web build
-	__yarn_run yarn workspace @devhub/desktop build:base
-	__yarn_run yarn workspace @devhub/desktop build:web:post
-	__yarn_run yarn workspace @devhub/desktop build:electron --linux dir
+	__npm_run npm workspace @devhub/web build
+	__npm_run npm workspace @devhub/desktop build:base
+	__npm_run npm workspace @devhub/desktop build:web:post
+	__npm_run npm workspace @devhub/desktop build:electron --linux dir
 }
 
 src_install() {
-	insinto "${YARN_INSTALL_PATH}"
+	insinto "${NPM_INSTALL_PATH}"
 	doins -r "packages/desktop/build/linux-unpacked/"*
 	exeinto /usr/bin
 	doexe "${FILESDIR}/${PN}"
 	sed -i \
-		-e "s|\${INSTALL_PATH}|${YARN_INSTALL_PATH}|g" \
+		-e "s|\${INSTALL_PATH}|${NPM_INSTALL_PATH}|g" \
 		-e "s|\${NODE_ENV}|${NODE_ENV}|g" \
 		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
 		"${ED}/usr/bin/${PN}" || die
@@ -221,7 +226,7 @@ src_install() {
 		"${MY_PN}" \
 		"${PN}.png" \
 		"Development"
-	fperms 0755 "${YARN_INSTALL_PATH}/${PN}"
+	fperms 0755 "${NPM_INSTALL_PATH}/${PN}"
 	lcnr_install_files
 }
 

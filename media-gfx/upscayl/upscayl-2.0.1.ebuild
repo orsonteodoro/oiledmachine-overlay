@@ -644,6 +644,7 @@ LICENSE="
 
 KEYWORDS="~amd64"
 SLOT="0"
+IUSE+=" r1"
 RDEPEND+="
 	media-libs/vulkan-loader
 "

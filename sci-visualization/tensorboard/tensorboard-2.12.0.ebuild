@@ -1474,7 +1474,6 @@ https://registry.yarnpkg.com/zone.js/-/zone.js-0.12.0.tgz -> yarnpkg-zone.js-0.1
 # List initially from:
 # grep "resolved" /var/tmp/portage/sci-visualization/tensorboard-2.12.0/work/tensorboard-2.12.0/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
 # grep -o -E -r -e "https://registry.yarnpkg.com[^\"]+" /var/tmp/portage/sci-visualization/tensorboard-2.12.0/work/tensorboard-2.11.2-bazel-base/external/io_bazel_rules_sass/sass/yarn.lock | sed -r -e "s|#.*||g"
-# Transformed with transform-uris.sh.
 
 # The versions and commits were obtained from console.  To update, temporarily
 # remove links in bazel_external_uris.
@@ -1951,6 +1950,8 @@ einfo "Copying ${DISTDIR}/${srcfn} -> ${dest}/${destfn}"
 }
 
 src_unpack() {
+eerror "This ebuild is currently under maintenance."
+die
 	unpack ${P}.tar.gz
 	bazel_load_distfiles "${bazel_external_uris}"
 	yarn-utils_cpy_yarn_tarballs

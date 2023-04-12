@@ -51,7 +51,7 @@ HOMEPAGE="https://github.com/imsnif/synp"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test"
+IUSE+=" test r2"
 DEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 "

@@ -6,21 +6,21 @@ EAPI=8
 
 MY_PN="UglifyJS"
 NODEJS_PV="0.8"
-YARN_BUILD_SCRIPT="none"
-YARN_INSTALL_PATH="/opt/${PN}"
-YARN_EXE_LIST="
-${YARN_INSTALL_PATH}/bin/uglifyjs
-${YARN_INSTALL_PATH}/node_modules/.bin/acorn
-${YARN_INSTALL_PATH}/node_modules/.bin/semver
+NPM_BUILD_SCRIPT="none"
+NPM_INSTALL_PATH="/opt/${PN}"
+NPM_EXE_LIST="
+${NPM_INSTALL_PATH}/bin/uglifyjs
+${NPM_INSTALL_PATH}/node_modules/.bin/acorn
+${NPM_INSTALL_PATH}/node_modules/.bin/semver
 "
-inherit yarn
+inherit npm
 
 DESCRIPTION="JavaScript parser / mangler / compressor / beautifier toolkit"
 HOMEPAGE="https://github.com/mishoo/UglifyJS"
 LICENSE="BSD-2"
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE=" test"
+IUSE=" test r1"
 RDEPEND+="
 	>=net-libs/nodejs-${NODEJS_PV}
 "
@@ -28,16 +28,15 @@ BDEPEND+="
 	>=net-libs/nodejs-${NODEJS_PV}
 "
 # Initially generated from:
-#   grep "resolved" /var/tmp/portage/dev-util/uglifyjs-3.17.4/work/UglifyJS-3.17.4/yarn.lock | cut -f 2 -d '"' | cut -f 1 -d "#" | sort | uniq
-# For the generator script, see the typescript/transform-uris.sh ebuild-package.
-# UPDATER_START_YARN_EXTERNAL_URIS
-YARN_EXTERNAL_URIS="
-https://registry.yarnpkg.com/acorn/-/acorn-8.7.1.tgz -> yarnpkg-acorn-8.7.1.tgz
-https://registry.yarnpkg.com/semver/-/semver-6.3.0.tgz -> yarnpkg-semver-6.3.0.tgz
+#   grep "resolved" /var/tmp/portage/dev-util/uglifyjs-3.17.4/work/UglifyJS-3.17.4/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
+# UPDATER_START_NPM_EXTERNAL_URIS
+NPM_EXTERNAL_URIS="
+https://registry.npmjs.org/acorn/-/acorn-8.7.1.tgz -> npmpkg-acorn-8.7.1.tgz
+https://registry.npmjs.org/semver/-/semver-6.3.0.tgz -> npmpkg-semver-6.3.0.tgz
 "
-# UPDATER_END_YARN_EXTERNAL_URIS
+# UPDATER_END_NPM_EXTERNAL_URIS
 SRC_URI="
-${YARN_EXTERNAL_URIS}
+${NPM_EXTERNAL_URIS}
 https://github.com/mishoo/UglifyJS/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "

@@ -119,6 +119,7 @@ LICENSE="
 
 KEYWORDS="~amd64"
 SLOT="0"
+IUSE+=" r1"
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]

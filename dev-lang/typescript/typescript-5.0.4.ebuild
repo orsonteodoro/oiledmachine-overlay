@@ -37,7 +37,7 @@ LICENSE="
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="$(ver_cut 1-2 ${PV})/${PV}"
 IUSE+="
-test r1
+test r2
 "
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}

@@ -905,13 +905,13 @@ electron-app_cp_electron() {
 	mkdir -p "${ELECTRON_CACHE}" || die
 	local fn="electron-v${ELECTRON_APP_ELECTRON_PV}-$(electron-app_get_electron_platarch).zip"
 	export ELECTRON_CUSTOM_FILENAME="${fn}"
-	cat \
-		  "${DISTDIR}/${fn}" \
-		> "${ELECTRON_CACHE}/${fn}" \
+	cp -a \
+		"${DISTDIR}/${fn}" \
+		"${ELECTRON_CACHE}/${fn}" \
 		|| die
-	cat \
-		  "${DISTDIR}/electron-SHASUMS256.txt.${ELECTRON_APP_ELECTRON_PV}" \
-		> "${ELECTRON_CACHE}/SHASUMS256.txt" \
+	cp -a \
+		"${DISTDIR}/electron-SHASUMS256.txt.${ELECTRON_APP_ELECTRON_PV}" \
+		"${ELECTRON_CACHE}/SHASUMS256.txt" \
 		|| die
 }
 

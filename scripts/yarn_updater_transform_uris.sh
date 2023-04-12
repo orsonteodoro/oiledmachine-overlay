@@ -15,6 +15,7 @@ yarn_updater_gen_yarn_uris() {
 	local row
 	local uri
 	for row in ${YARN_EXTERNAL_URIS} ; do
+		[[ "${row}" =~ "http" ]] || continue
 		local uri=$(echo "${row}" \
 			| cut -f 1 -d "#")
 		if [[ "${row}" =~ ".git" && "${row}" =~ "github" ]] ; then

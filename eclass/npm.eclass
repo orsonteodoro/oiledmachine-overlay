@@ -18,6 +18,12 @@ BDEPEND+="
 	app-misc/jq
 "
 
+_npm_set_globals() {
+	NPM_TRIES="${NPM_TRIES:-10}"
+}
+_npm_set_globals
+unset -f _npm_set_globals
+
 # @ECLASS_VARIABLE: NPM_BUILD_SCRIPT
 # @DESCRIPTION:
 # The build script to run from package.json:scripts section.
@@ -58,6 +64,9 @@ BDEPEND+="
 # @DESCRIPTION:
 # The test script to run from package.json:scripts section.
 
+# @ECLASS_VARIABLE: NPM_TRIES
+# @DESCRIPTION:
+# The number of reconnect tries.
 
 # @FUNCTION: npm_pkg_setup
 # @DESCRIPTION:
@@ -229,6 +238,21 @@ einfo "Missing package-lock.json"
 	fi
 }
 
+# @FUNCTION: _npm_auto_rename
+# @INTERNAL
+# @DESCRIPTION:
+# Auto-rename dir
+_npm_auto_rename() {
+	local row
+	IFS=$'\n'
+	for row in $(grep "ENOTEMPTY:") ; do
+		local from=$(echo "${row}" | cut -f 2 -d "'")
+		local to=$(echo "${row}" | cut -f 4 -d "'")
+		mv "${from}" "${to}" || true
+	done
+	IFS=$' \t\n'
+}
+
 # @FUNCTION: _npm_run
 # @DESCRIPTION:
 # Rerun command if flakey connection.
@@ -236,15 +260,16 @@ _npm_run() {
 	local cmd=("${@}")
 	local tries
 	tries=0
-	while (( ${tries} < 5 )) ; do
+	while (( ${tries} < ${NPM_TRIES} )) ; do
 einfo "Tries:\t${tries}"
 einfo "Running:\t${cmd[@]}"
 		"${cmd[@]}" || die
-		if ! grep -E -q -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
+		if ! grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
 			break
 		fi
 		rm -rf "${HOME}/.npm/_logs"
 		tries=$((${tries} + 1))
+		_npm_auto_rename
 	done
 	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
 }
@@ -255,7 +280,11 @@ einfo "Running:\t${cmd[@]}"
 npm_src_unpack() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		unpack ${P}.tar.gz
+		if [[ -n "${NPM_TARBALL}" ]] ; then
+			unpack ${NPM_TARBALL}
+		else
+			unpack ${P}.tar.gz
+		fi
 		cd "${S}" || die
 		rm -f package-lock.json
 
