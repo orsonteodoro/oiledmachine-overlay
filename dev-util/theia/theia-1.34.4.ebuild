@@ -321,41 +321,11 @@ pkg_setup() {
 	yarn_pkg_setup
 }
 
-__auto_rename() {
-	local row
-	IFS=$'\n'
-	for row in $(grep "ENOTEMPTY:") ; do
-		local from=$(echo "${row}" | cut -f 2 -d "'")
-		local to=$(echo "${row}" | cut -f 4 -d "'")
-		mv "${from}" "${to}" || true
-	done
-	IFS=$' \t\n'
-}
-
-__yarn_run() {
-	local cmd=( "${@}" )
-	local tries
-	tries=0
-	while (( ${tries} < ${YARN_TRIES} )) ; do
-einfo "Tries:\t${tries}"
-einfo "Running:\t${cmd[@]}"
-		"${cmd[@]}" || die
-		if ! grep -E -q -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.yarn/_logs" ; then
-			break
-		fi
-		rm -rf "${HOME}/.yarn/_logs"
-		tries=$((${tries} + 1))
-
-		__auto_rename
-	done
-	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
-}
-
 get_plugins() {
-	__yarn_run yarn add ts-clean --dev -W
+	eyarn add ts-clean --dev -W
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
-	__yarn_run yarn download:plugins
+	eyarn download:plugins
 }
 
 src_unpack() {
@@ -366,8 +336,8 @@ die
 }
 
 src_compile() {
-	__yarn_run yarn electron build
-	__yarn_run yarn electron rebuild
+	eyarn electron build
+	eyarn electron rebuild
 }
 
 src_install() {

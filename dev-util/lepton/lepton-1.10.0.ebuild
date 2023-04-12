@@ -1491,24 +1491,6 @@ pkg_setup() {
 	npm_pkg_setup
 }
 
-__npm_run() {
-	local cmd=( "${@}" )
-	local tries
-	tries=0
-
-	while (( ${tries} < 5 )) ; do
-einfo "Tries:\t${tries}"
-einfo "Running:\t${cmd[@]}"
-		"${cmd[@]}" || die
-		if ! grep -q -r -e "ERR_SOCKET_TIMEOUT" "${HOME}/.npm/_logs" ; then
-			break
-		fi
-		rm -rf "${HOME}/.npm/_logs"
-		tries=$((${tries} + 1))
-	done
-	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
-}
-
 src_prepare() {
 	default
 	cat \
@@ -1522,8 +1504,8 @@ src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
 	electron-app_cp_electron
-	__npm_run npm run build
-	__npm_run electron-builder -l --dir
+	enpm run build
+	electron-builder -l --dir
 }
 
 src_install() {

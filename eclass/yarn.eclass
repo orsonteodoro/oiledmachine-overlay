@@ -36,6 +36,9 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+if [[ -z ${_YARN_ECLASS} ]]; then
+_YARN_ECLASS=1
+
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test src_install
 
 BDEPEND+="
@@ -254,12 +257,11 @@ _yarn_src_unpack_default() {
 	if declare -f yarn_unpack_install_pre > /dev/null ; then
 		yarn_unpack_install_pre
 	fi
-	yarn install \
+	eyarn install \
 		--prefer-offline \
 		--pure-lockfile \
 		--verbose \
-		${YARN_INSTALL_UNPACK_ARGS} \
-		|| die
+		${YARN_INSTALL_UNPACK_ARGS}
 	if declare -f yarn_unpack_install_post > /dev/null ; then
 		yarn_unpack_install_post
 	fi
@@ -272,7 +274,7 @@ _yarn_src_unpack_default() {
 _npm_auto_rename() {
 	local row
 	IFS=$'\n'
-	for row in $(grep "ENOTEMPTY:") ; do
+	for row in $(grep "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs") ; do
 		local from=$(echo "${row}" | cut -f 2 -d "'")
 		local to=$(echo "${row}" | cut -f 4 -d "'")
 		mv "${from}" "${to}" || true
@@ -280,10 +282,11 @@ _npm_auto_rename() {
 	IFS=$' \t\n'
 }
 
-# @FUNCTION: _npm_run
+# @FUNCTION: enpm
 # @DESCRIPTION:
+# Wrapper for the npm command.
 # Rerun command if flakey connection.
-_npm_run() {
+enpm() {
 	local cmd=("${@}")
 	local tries
 	tries=0
@@ -297,9 +300,18 @@ einfo "Running:\t${cmd[@]}"
 		rm -rf "${HOME}/.npm/_logs"
 		tries=$((${tries} + 1))
 
-		_npm_run
+		_npm_auto_rename
 	done
 	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
+}
+
+# @FUNCTION: eyarn
+# @DESCRIPTION:
+# Wrapper for yarn command.
+eyarn() {
+	local cmd=("${@}")
+einfo "Running:\t${cmd[@]}"
+	"${cmd[@]}" || die
 }
 
 # @FUNCTION: _yarn_src_unpack
@@ -321,7 +333,7 @@ yarn_src_unpack() {
 			yarn_update_lock_install_pre > /dev/null ; then
 			yarn_update_lock_install_pre
 		fi
-		_npm_run npm i ${NPM_INSTALL_UNPACK_ARGS}
+		enpm i ${NPM_INSTALL_UNPACK_ARGS}
 		if declare -f \
 			yarn_update_lock_install_post > /dev/null ; then
 			yarn_update_lock_install_post
@@ -330,7 +342,7 @@ yarn_src_unpack() {
 			yarn_update_lock_audit_pre > /dev/null ; then
 			yarn_update_lock_audit_pre
 		fi
-		_npm_run npm audit fix ${NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS}
+		enpm audit fix ${NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS}
 		if declare -f \
 			yarn_update_lock_audit_post > /dev/null ; then
 			yarn_update_lock_audit_post
@@ -439,3 +451,5 @@ EOF
 	done
 	IFS=$' \t\n'
 }
+
+fi

@@ -666,28 +666,13 @@ eerror
 	npm_pkg_setup
 }
 
-__npm_run() {
-	local cmd=( "${@}" )
-	local tries=0
-einfo "Running:\t${cmd[@]}"
-	while (( ${tries} < 5 )) ; do
-		"${cmd[@]}" || die
-		if ! grep -E -q -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
-			break
-		fi
-		rm -rf "${HOME}/.npm/_logs"
-		tries=$((${tries} + 1))
-	done
-	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
-}
-
 src_compile() {
 	export NEXT_TELEMETRY_DISABLED=1
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
 	electron-app_cp_electron
-	__npm_run npm run build
-	__npm_run electron-builder build --linux dir
+	enpm run build
+	electron-builder build --linux dir
 	cd "${S}" || die
 }
 

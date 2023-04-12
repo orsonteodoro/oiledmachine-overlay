@@ -12,6 +12,14 @@
 # @DESCRIPTION:
 # Eclass similar to the cargo.eclass.
 
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
+
+if [[ -z ${_NPM_ECLASS} ]]; then
+_NPM_ECLASS=1
+
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test src_install
 
 BDEPEND+="
@@ -229,10 +237,9 @@ einfo "Missing package-lock.json"
 	if declare -f npm_unpack_install_pre > /dev/null ; then
 		npm_unpack_install_pre
 	fi
-	npm install \
+	enpm install \
 		--prefer-offline \
-		${NPM_INSTALL_UNPACK_ARGS} \
-		|| die
+		${NPM_INSTALL_UNPACK_ARGS}
 	if declare -f npm_unpack_install_post > /dev/null ; then
 		npm_unpack_install_post
 	fi
@@ -245,7 +252,7 @@ einfo "Missing package-lock.json"
 _npm_auto_rename() {
 	local row
 	IFS=$'\n'
-	for row in $(grep "ENOTEMPTY:") ; do
+	for row in $(grep "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs") ; do
 		local from=$(echo "${row}" | cut -f 2 -d "'")
 		local to=$(echo "${row}" | cut -f 4 -d "'")
 		mv "${from}" "${to}" || true
@@ -253,10 +260,11 @@ _npm_auto_rename() {
 	IFS=$' \t\n'
 }
 
-# @FUNCTION: _npm_run
+# @FUNCTION: enpm
 # @DESCRIPTION:
+# Wrapper for the npm command.
 # Rerun command if flakey connection.
-_npm_run() {
+enpm() {
 	local cmd=("${@}")
 	local tries
 	tries=0
@@ -292,7 +300,7 @@ npm_src_unpack() {
 			npm_update_lock_install_pre > /dev/null ; then
 			npm_update_lock_install_pre
 		fi
-		_npm_run npm i ${NPM_INSTALL_UNPACK_ARGS}
+		enpm i ${NPM_INSTALL_UNPACK_ARGS}
 		if declare -f \
 			npm_update_lock_install_post > /dev/null ; then
 			npm_update_lock_install_post
@@ -301,7 +309,7 @@ npm_src_unpack() {
 			npm_update_lock_audit_pre > /dev/null ; then
 			npm_update_lock_audit_pre
 		fi
-		_npm_run npm audit fix ${NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS}
+		enpm audit fix ${NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS}
 		if declare -f \
 			npm_update_lock_audit_post > /dev/null ; then
 			npm_update_lock_audit_post
@@ -398,3 +406,5 @@ EOF
 	done
 	IFS=$' \t\n'
 }
+
+fi

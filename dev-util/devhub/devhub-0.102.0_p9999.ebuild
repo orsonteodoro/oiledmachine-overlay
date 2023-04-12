@@ -117,28 +117,10 @@ pkg_setup() {
 	npm_pkg_setup
 }
 
-__npm_run() {
-	local cmd=( "${@}" )
-	local tries
-
-	tries=0
-	while (( ${tries} < 5 )) ; do
-einfo "Tries:\t${tries}"
-einfo "Running:\t${cmd[@]}"
-		"${cmd[@]}" || die
-		if ! grep -q -r -e "ERR_SOCKET_TIMEOUT" "${HOME}/.npm/_logs" ; then
-			break
-		fi
-		rm -rf "${HOME}/.npm/_logs"
-		tries=$((${tries} + 1))
-	done
-	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
-}
-
 gen_npm_lock() {
 	cd "${S}" || die
-	__npm_run npm i ${NPM_INSTALL_UNPACK_ARGS}
-	__npm_run npm audit fix ${NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS}
+	enpm i ${NPM_INSTALL_UNPACK_ARGS}
+	enpm audit fix ${NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS}
 }
 
 src_unpack() {
@@ -180,32 +162,13 @@ eerror
 	fi
 }
 
-__npm_run() {
-	local cmd=( "${@}" )
-einfo "Running:\t${cmd[@]}"
-	"${cmd[@]}" || die
-	local tries
-	tries=0
-	while (( ${tries} < 5 )) ; do
-einfo "Tries:\t${tries}"
-einfo "Running:\t${cmd[@]}"
-		"${cmd[@]}" || die
-		if ! grep -E -q -r -e "(ERESOLVE|ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
-			break
-		fi
-		rm -rf "${HOME}/.npm/_logs"
-		tries=$((${tries} + 1))
-	done
-	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
-}
-
 src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
-	__npm_run npm workspace @devhub/web build
-	__npm_run npm workspace @devhub/desktop build:base
-	__npm_run npm workspace @devhub/desktop build:web:post
-	__npm_run npm workspace @devhub/desktop build:electron --linux dir
+	enpm workspace @devhub/web build
+	enpm workspace @devhub/desktop build:base
+	enpm workspace @devhub/desktop build:web:post
+	enpm workspace @devhub/desktop build:electron --linux dir
 }
 
 src_install() {
