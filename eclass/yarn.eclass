@@ -72,11 +72,7 @@ unset -f _yarn_set_globals
 
 # @ECLASS_VARIABLE: YARN_INSTALL_UNPACK_ARGS
 # @DESCRIPTION:
-# Arguments to append to `npm i ` during package-lock.json generation.
-
-# @ECLASS_VARIABLE: YARN_INSTALL_UNPACK_AUDIT_FIX_ARGS
-# @DESCRIPTION:
-# Arguments to append to `npm audit fix ` during package-lock.json generation.
+# Arguments to append to `yarn install ` during yarn.lock generation.
 
 # @ECLASS_VARIABLE: YARN_ROOT
 # @DESCRIPTION:
@@ -97,6 +93,14 @@ unset -f _yarn_set_globals
 # @ECLASS_VARIABLE: NPM_TRIES
 # @DESCRIPTION:
 # The number of reconnect tries for npm.
+
+# @ECLASS_VARIABLE: NPM_INSTALL_UNPACK_ARGS
+# @DESCRIPTION:
+# Arguments to append to `npm i ` contexts during package-lock.json generation.
+
+# @ECLASS_VARIABLE: NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS
+# @DESCRIPTION:
+# Arguments to append to `npm audit fix ` contexts during package-lock.json generation.
 
 # @FUNCTION: yarn_check
 # @DESCRIPTION:
@@ -317,7 +321,7 @@ yarn_src_unpack() {
 			yarn_update_lock_install_pre > /dev/null ; then
 			yarn_update_lock_install_pre
 		fi
-		_npm_run npm i ${YARN_INSTALL_UNPACK_ARGS}
+		_npm_run npm i ${NPM_INSTALL_UNPACK_ARGS}
 		if declare -f \
 			yarn_update_lock_install_post > /dev/null ; then
 			yarn_update_lock_install_post
@@ -326,7 +330,7 @@ yarn_src_unpack() {
 			yarn_update_lock_audit_pre > /dev/null ; then
 			yarn_update_lock_audit_pre
 		fi
-		_npm_run npm audit fix ${YARN_INSTALL_UNPACK_AUDIT_FIX_ARGS}
+		_npm_run npm audit fix ${NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS}
 		if declare -f \
 			yarn_update_lock_audit_post > /dev/null ; then
 			yarn_update_lock_audit_post

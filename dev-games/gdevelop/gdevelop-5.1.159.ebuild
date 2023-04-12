@@ -7,14 +7,14 @@ EAPI=7
 MY_PN="GDevelop"
 MY_PV="${PV//_/-}"
 
-export YARN_INSTALL_PATH="/opt/${PN}/${SLOT_MAJOR}"
+export NPM_INSTALL_PATH="/opt/${PN}/${SLOT_MAJOR}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV%%.*}-${PV}.AppImage"
 ELECTRON_APP_ELECTRON_PV="18.2.2" # See \
 # https://raw.githubusercontent.com/4ian/GDevelop/v5.1.158/newIDE/electron-app/package-lock.json
 ELECTRON_APP_REACT_PV="16.14.0" # See \
 # https://raw.githubusercontent.com/4ian/GDevelop/v5.1.158/newIDE/app/package-lock.json
-NODE_ENV=development
+NODE_ENV="development"
 
 inherit check-reqs desktop electron-app eutils flag-o-matic user-info
 inherit toolchain-funcs xdg
@@ -212,7 +212,7 @@ eerror
 
 pkg_setup() {
 eerror
-eerror "This ebuild is undergoing maintenance for yarn offline install"
+eerror "This ebuild is undergoing maintenance for npm offline install"
 eerror
 die
 	pkg_setup_html5
@@ -396,13 +396,13 @@ einfo
 einfo "Compiling app"
 einfo
 		S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/app" \
-		yarn run build || die
+		npm run build || die
 	elif [[ "${STEP}" == "BUILDING_GDEVELOP_IDE_ELECTRON" ]] ; then
 einfo
 einfo "Compiling electron-app"
 einfo
 		S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/electron-app" \
-		yarn run build || die
+		npm run build || die
 	fi
 }
 
@@ -450,7 +450,7 @@ ewarn
 	fi
 	cp "${FILESDIR}/${PN}" "${T}/${PN}" || die
 	sed -i \
-		-e "s|\${INSTALL_PATH}|${YARN_INSTALL_PATH}|g" \
+		-e "s|\${INSTALL_PATH}|${NPM_INSTALL_PATH}|g" \
 		-e "s|\$(get_libdir)|$(get_libdir)|g" \
 		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
 		-e "s|\${PN}|${PN}|g" \
@@ -474,25 +474,25 @@ ewarn
 	fi
 
 	fowners ${PN}:${PN} \
-		"${YARN_INSTALL_PATH}/newIDE/app/node_modules" \
-		"${YARN_INSTALL_PATH}/newIDE/app/node_modules/libGD.js-for-tests-only" \
-		"${YARN_INSTALL_PATH}/newIDE/app/node_modules/libGD.js-for-tests-only/index.js" \
-		"${YARN_INSTALL_PATH}/newIDE/app/node_modules/libGD.js-for-tests-only/libGD.wasm" \
-		"${YARN_INSTALL_PATH}/newIDE/app/public" \
-		"${YARN_INSTALL_PATH}/newIDE/app/public/libGD.js" \
-		"${YARN_INSTALL_PATH}/newIDE/app/public/libGD.wasm" \
-		"${YARN_INSTALL_PATH}/newIDE/app/src/Version/VersionMetadata.js"
-	keepdir "${YARN_INSTALL_PATH}/.cache/.eslintcache"
-	keepdir "${YARN_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime"
+		"${NPM_INSTALL_PATH}/newIDE/app/node_modules" \
+		"${NPM_INSTALL_PATH}/newIDE/app/node_modules/libGD.js-for-tests-only" \
+		"${NPM_INSTALL_PATH}/newIDE/app/node_modules/libGD.js-for-tests-only/index.js" \
+		"${NPM_INSTALL_PATH}/newIDE/app/node_modules/libGD.js-for-tests-only/libGD.wasm" \
+		"${NPM_INSTALL_PATH}/newIDE/app/public" \
+		"${NPM_INSTALL_PATH}/newIDE/app/public/libGD.js" \
+		"${NPM_INSTALL_PATH}/newIDE/app/public/libGD.wasm" \
+		"${NPM_INSTALL_PATH}/newIDE/app/src/Version/VersionMetadata.js"
+	keepdir "${NPM_INSTALL_PATH}/.cache/.eslintcache"
+	keepdir "${NPM_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime"
         fowners -R ${PN}:${PN} \
-		"${YARN_INSTALL_PATH}/newIDE/app/node_modules/.cache/.eslintcache"
-		"${YARN_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime" \
-		"${YARN_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime-sources" \
-		"${YARN_INSTALL_PATH}/newIDE/app/public/external" \
-		"${YARN_INSTALL_PATH}/newIDE/app/resources/GDJS" \
-		"${YARN_INSTALL_PATH}/newIDE/app/resources/GDJS/Runtime" \
-		"${YARN_INSTALL_PATH}/newIDE/app/resources/GDJS/Runtime-sources" \
-		"${YARN_INSTALL_PATH}/newIDE/app/src/UI/Theme/"
+		"${NPM_INSTALL_PATH}/newIDE/app/node_modules/.cache/.eslintcache"
+		"${NPM_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime" \
+		"${NPM_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime-sources" \
+		"${NPM_INSTALL_PATH}/newIDE/app/public/external" \
+		"${NPM_INSTALL_PATH}/newIDE/app/resources/GDJS" \
+		"${NPM_INSTALL_PATH}/newIDE/app/resources/GDJS/Runtime" \
+		"${NPM_INSTALL_PATH}/newIDE/app/resources/GDJS/Runtime-sources" \
+		"${NPM_INSTALL_PATH}/newIDE/app/src/UI/Theme/"
 }
 
 pkg_postinst() {
