@@ -223,7 +223,7 @@ LICENSE="
 
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE+=" system-vips r1"
+IUSE+=" system-vips r2"
 REQUIRED_USE="
 !wayland X
 "
