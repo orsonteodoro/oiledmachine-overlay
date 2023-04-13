@@ -1322,8 +1322,6 @@ add_deps() {
 }
 
 src_unpack() {
-eerror "This ebuild is currently under maintenance."
-#die
         if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
                 unpack ${P}.tar.gz
                 cd "${S}" || die
