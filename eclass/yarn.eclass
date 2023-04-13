@@ -228,7 +228,9 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
 # Unpacks a yarn application.
 _yarn_src_unpack_default() {
 	export ELECTRON_SKIP_BINARY_DOWNLOAD=1
-	if [[ -n "${YARN_TARBALL}" ]] ; then
+	if [[ ${PV} =~ 9999 ]] ; then
+		:;
+	elif [[ -n "${YARN_TARBALL}" ]] ; then
 		unpack ${YARN_TARBALL}
 	else
 		unpack ${P}.tar.gz
@@ -325,7 +327,9 @@ einfo "Running:\tyarn ${cmd[@]}"
 yarn_src_unpack() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
-		if [[ -n "${YARN_TARBALL}" ]] ; then
+		if [[ ${PV} =~ 9999 ]] ; then
+			:;
+		elif [[ -n "${YARN_TARBALL}" ]] ; then
 			unpack ${YARN_TARBALL}
 		else
 			unpack ${P}.tar.gz

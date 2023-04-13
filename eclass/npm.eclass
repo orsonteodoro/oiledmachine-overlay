@@ -206,7 +206,9 @@ eerror
 # Unpacks a npm application.
 _npm_src_unpack_default() {
 	export ELECTRON_SKIP_BINARY_DOWNLOAD=1
-	if [[ -n "${NPM_TARBALL}" ]] ; then
+	if [[ ${PV} =~ 9999 ]] ; then
+		:;
+	elif [[ -n "${NPM_TARBALL}" ]] ; then
 		unpack ${NPM_TARBALL}
 	else
 		unpack ${P}.tar.gz
@@ -294,7 +296,9 @@ einfo "Running:\tnpm ${cmd[@]}"
 npm_src_unpack() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		if [[ -n "${NPM_TARBALL}" ]] ; then
+		if [[ ${PV} =~ 9999 ]] ; then
+			:;
+		elif [[ -n "${NPM_TARBALL}" ]] ; then
 			unpack ${NPM_TARBALL}
 		else
 			unpack ${P}.tar.gz
