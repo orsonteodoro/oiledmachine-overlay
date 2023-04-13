@@ -127,8 +127,8 @@ based on an outdated style guide.
     allowed as long the package has been tested and working.  If a test suite is
     provided, you must use it since it has better test coverage than interactive
     testing.
-  - Check all password stores for proper hashing.  Make sure it
-    doesn't do any of the following:
+  - Check all password stores during interactive testing for proper hashing.
+    Make sure it doesn't do any of the following:
     - [CWE-312](https://cwe.mitre.org/data/definitions/312.html)
       (Storage of passwords in plaintext.  #40 on the most dangerous weakness list.)
     - [CWE-759](https://cwe.mitre.org/data/definitions/759.html)
