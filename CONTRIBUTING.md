@@ -136,6 +136,7 @@ based on an outdated style guide.
   - Storing passwords in environment variables is disallowed.
   - JS/Cargo dependency snapshots or SRC_URI lists should be updated monthly or
     weekly.
+  - Ebuilds with multiple critical vulnerabilities may be dropped.
 
 * *DEPENDs rules/guidelines
   - *DEPENDs sources should be documented if not centralized.
@@ -196,8 +197,8 @@ based on an outdated style guide.
   - Update the lock files for js app packages that has not bumped the patch
     version within one month.  If the package has not been bumped for more than
     a year, it is a hard requirement.  JS packages with criticial dependencies
-    must be updated.  JS ebuilds with dependencies without without further
-    updates may be deleted.
+    must be updated.  JS ebuilds with dependencies reporting "No fix available"
+    during audit fix may be deleted.
 
 * C/C++ ebuilds rules/guidelines:
   - Ebuilds should be Prefix aware for C/C++ programs.
