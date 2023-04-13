@@ -148,7 +148,6 @@ based on an outdated style guide.
     `99999999` for live ebuild versions.
   - If a project has no tag but the distro uses `20230903`, you must use
     `99999999` for live ebuild versions.
-  - The versioning of the dependencies must be explicit if available.
 
 * SRC_URI rules/guidelines:
   - The destination filenames in SRC_URI must be prefixed with the project name
@@ -210,8 +209,8 @@ based on an outdated style guide.
     dependencies, it must not have it.  It is not recommended to support multilib
     because a distro core developer wanted it
     [retired](https://blogs.gentoo.org/mgorny/2021/06/03/retiring-the-multilib-project/).
-    Also, there is concern of underflows because of the lack of asan underflow
-    testing.
+    Also, there is concern of overflows for array indices because of the lack
+    of asan overflow testing.
   - For apps, if Wayland support is possible or mentioned in the build files, it
     should be made available as a USE flag.  Wayland should have higher priority
     than X in || checks.  If an app package supports both but is not automatic,
@@ -248,6 +247,8 @@ based on an outdated style guide.
   - If a dependency package is not available on any overlay but is required, you
     must package it, version bump it, or patch the software to disable/meet the
     hard requirement.
+  - The dependency versioning must be explicit if versioning details are
+    available.
   - The package should also be polished as much as possible.  This means to
     disable options or patch the code so that it is either is feature complete
     or completely disables/hides the early (buggy) implementation.  Upstream
