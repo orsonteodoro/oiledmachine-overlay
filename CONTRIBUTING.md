@@ -104,6 +104,7 @@ based on an outdated style guide.
   - All user messages printed with einfo/ewarn/errror must be formal.
   - Comments should be mostly formal and unambiguous.
   - metadata.xml longdescription and flags should be formal.
+  - *DEPENDs sources should be documented if not centralized.
 
 * Security rules/guidelines
   - The uploaded point release is not vulnerable and does not have security
@@ -137,12 +138,6 @@ based on an outdated style guide.
   - JS/Cargo dependency snapshots or SRC_URI lists should be updated monthly or
     weekly.
   - Ebuilds with multiple critical vulnerabilities may be dropped.
-
-* *DEPENDs rules/guidelines
-  - *DEPENDs sources should be documented if not centralized.
-  - If a dependency package is not available on any overlay but is required, you
-    must package it, version bump it, or patch the software to disable/meet the
-    hard requirement.
 
 * Versioning rules/guidelines:
   - If a project has git tags, you may use use `9999`, `<PV>_p9999`,
@@ -250,6 +245,9 @@ based on an outdated style guide.
     you do not need to package it.
   - If a dependency exists on other overlay(s), you do not need to submit it for
     review.
+  - If a dependency package is not available on any overlay but is required, you
+    must package it, version bump it, or patch the software to disable/meet the
+    hard requirement.
   - The package should also be polished as much as possible.  This means to
     disable options or patch the code so that it is either is feature complete
     or completely disables/hides the early (buggy) implementation.  Upstream
@@ -321,8 +319,10 @@ based on an outdated style guide.
       - Orphaned [delete]
       - Blank [deleted because EOL]
   - Packages that rely on EOL versions and not stable versions of python, gcc,
-    and do not have a ebuild version from the distro overlay and this overlay
-    are not supported.
+    and do not have a stable slot or stable version from the distro overlay
+    and this overlay are not supported and can be deleted.  For example, if
+    an ebuild needs on python 2.7 but cannot support python 3 or be patched
+    to support python 3 or disable that requirement, it will be deleted.
 
 * eclass rules:
   - All `.eclass`es must be GPL2 only or have a GPL2 compatible license header.
