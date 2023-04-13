@@ -256,9 +256,9 @@ TEXTURELABDATA_COMMIT="eed449f3f9abe8f17ae354ab4cb9932272c7811b"
 # For the generator script, see the typescript/transform-uris.sh ebuild-package.
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
+https://registry.npmjs.org/@babel/core/-/core-7.21.4.tgz -> npmpkg-@babel-core-7.21.4.tgz
 https://registry.npmjs.org/semver/-/semver-6.3.0.tgz -> npmpkg-semver-6.3.0.tgz
 https://registry.npmjs.org/semver/-/semver-6.3.0.tgz -> npmpkg-semver-6.3.0.tgz
-https://registry.npmjs.org/resolve/-/resolve-1.22.2.tgz -> npmpkg-resolve-1.22.2.tgz
 https://registry.npmjs.org/semver/-/semver-6.3.0.tgz -> npmpkg-semver-6.3.0.tgz
 https://registry.npmjs.org/semver/-/semver-6.3.0.tgz -> npmpkg-semver-6.3.0.tgz
 https://registry.npmjs.org/semver/-/semver-5.7.1.tgz -> npmpkg-semver-5.7.1.tgz
@@ -294,7 +294,6 @@ https://registry.npmjs.org/@types/sharp/-/sharp-0.29.5.tgz -> npmpkg-@types-shar
 https://registry.npmjs.org/@types/three/-/three-0.103.2.tgz -> npmpkg-@types-three-0.103.2.tgz
 https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-2.34.0.tgz -> npmpkg-@typescript-eslint-eslint-plugin-2.34.0.tgz
 https://registry.npmjs.org/@typescript-eslint/parser/-/parser-2.34.0.tgz -> npmpkg-@typescript-eslint-parser-2.34.0.tgz
-https://registry.npmjs.org/@typescript-eslint/typescript-estree/-/typescript-estree-2.34.0.tgz -> npmpkg-@typescript-eslint-typescript-estree-2.34.0.tgz
 https://registry.npmjs.org/@vue/cli-plugin-babel/-/cli-plugin-babel-3.12.1.tgz -> npmpkg-@vue-cli-plugin-babel-3.12.1.tgz
 https://registry.npmjs.org/@vue/cli-plugin-eslint/-/cli-plugin-eslint-3.12.1.tgz -> npmpkg-@vue-cli-plugin-eslint-3.12.1.tgz
 https://registry.npmjs.org/acorn/-/acorn-5.7.4.tgz -> npmpkg-acorn-5.7.4.tgz
@@ -335,8 +334,6 @@ https://registry.npmjs.org/@vue/cli-plugin-unit-jest/-/cli-plugin-unit-jest-3.12
 https://registry.npmjs.org/@vue/cli-service/-/cli-service-3.12.1.tgz -> npmpkg-@vue-cli-service-3.12.1.tgz
 https://registry.npmjs.org/semver/-/semver-6.3.0.tgz -> npmpkg-semver-6.3.0.tgz
 https://registry.npmjs.org/semver/-/semver-6.3.0.tgz -> npmpkg-semver-6.3.0.tgz
-https://registry.npmjs.org/picocolors/-/picocolors-1.0.0.tgz -> npmpkg-picocolors-1.0.0.tgz
-https://registry.npmjs.org/postcss/-/postcss-8.4.21.tgz -> npmpkg-postcss-8.4.21.tgz
 https://registry.npmjs.org/lru-cache/-/lru-cache-4.1.5.tgz -> npmpkg-lru-cache-4.1.5.tgz
 https://registry.npmjs.org/yallist/-/yallist-2.1.2.tgz -> npmpkg-yallist-2.1.2.tgz
 https://registry.npmjs.org/@vue/eslint-config-prettier/-/eslint-config-prettier-4.0.1.tgz -> npmpkg-@vue-eslint-config-prettier-4.0.1.tgz
@@ -353,6 +350,7 @@ https://registry.npmjs.org/semver/-/semver-5.5.0.tgz -> npmpkg-semver-5.5.0.tgz
 https://registry.npmjs.org/@vue/test-utils/-/test-utils-1.0.0-beta.29.tgz -> npmpkg-@vue-test-utils-1.0.0-beta.29.tgz
 https://registry.npmjs.org/adm-zip/-/adm-zip-0.4.16.tgz -> npmpkg-adm-zip-0.4.16.tgz
 https://registry.npmjs.org/normalize-path/-/normalize-path-2.1.1.tgz -> npmpkg-normalize-path-2.1.1.tgz
+https://registry.npmjs.org/7zip-bin/-/7zip-bin-5.0.3.tgz -> npmpkg-7zip-bin-5.0.3.tgz
 https://registry.npmjs.org/ci-info/-/ci-info-2.0.0.tgz -> npmpkg-ci-info-2.0.0.tgz
 https://registry.npmjs.org/fs-extra/-/fs-extra-8.1.0.tgz -> npmpkg-fs-extra-8.1.0.tgz
 https://registry.npmjs.org/is-ci/-/is-ci-2.0.0.tgz -> npmpkg-is-ci-2.0.0.tgz
@@ -372,11 +370,9 @@ https://registry.npmjs.org/strip-ansi/-/strip-ansi-3.0.1.tgz -> npmpkg-strip-ans
 https://registry.npmjs.org/supports-color/-/supports-color-2.0.0.tgz -> npmpkg-supports-color-2.0.0.tgz
 https://registry.npmjs.org/babel-core/-/babel-core-7.0.0-bridge.0.tgz -> npmpkg-babel-core-7.0.0-bridge.0.tgz
 https://registry.npmjs.org/babel-eslint/-/babel-eslint-10.1.0.tgz -> npmpkg-babel-eslint-10.1.0.tgz
-https://registry.npmjs.org/resolve/-/resolve-1.22.2.tgz -> npmpkg-resolve-1.22.2.tgz
 https://registry.npmjs.org/jsesc/-/jsesc-1.3.0.tgz -> npmpkg-jsesc-1.3.0.tgz
 https://registry.npmjs.org/source-map/-/source-map-0.5.7.tgz -> npmpkg-source-map-0.5.7.tgz
 https://registry.npmjs.org/babel-helpers/-/babel-helpers-6.24.1.tgz -> npmpkg-babel-helpers-6.24.1.tgz
-https://registry.npmjs.org/resolve/-/resolve-1.22.2.tgz -> npmpkg-resolve-1.22.2.tgz
 https://registry.npmjs.org/semver/-/semver-6.3.0.tgz -> npmpkg-semver-6.3.0.tgz
 https://registry.npmjs.org/babel-register/-/babel-register-6.26.0.tgz -> npmpkg-babel-register-6.26.0.tgz
 https://registry.npmjs.org/babel-core/-/babel-core-6.26.3.tgz -> npmpkg-babel-core-6.26.3.tgz
@@ -408,6 +404,7 @@ https://registry.npmjs.org/resolve/-/resolve-1.1.7.tgz -> npmpkg-resolve-1.1.7.t
 https://registry.npmjs.org/readable-stream/-/readable-stream-3.6.2.tgz -> npmpkg-readable-stream-3.6.2.tgz
 https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz -> npmpkg-safe-buffer-5.2.1.tgz
 https://registry.npmjs.org/pako/-/pako-1.0.11.tgz -> npmpkg-pako-1.0.11.tgz
+https://registry.npmjs.org/7zip-bin/-/7zip-bin-5.0.3.tgz -> npmpkg-7zip-bin-5.0.3.tgz
 https://registry.npmjs.org/app-builder-bin/-/app-builder-bin-3.4.3.tgz -> npmpkg-app-builder-bin-3.4.3.tgz
 https://registry.npmjs.org/ci-info/-/ci-info-2.0.0.tgz -> npmpkg-ci-info-2.0.0.tgz
 https://registry.npmjs.org/fs-extra/-/fs-extra-8.1.0.tgz -> npmpkg-fs-extra-8.1.0.tgz
@@ -537,9 +534,7 @@ https://registry.npmjs.org/mime/-/mime-2.6.0.tgz -> npmpkg-mime-2.6.0.tgz
 https://registry.npmjs.org/electron-settings/-/electron-settings-4.0.2.tgz -> npmpkg-electron-settings-4.0.2.tgz
 https://registry.npmjs.org/mkdirp/-/mkdirp-1.0.4.tgz -> npmpkg-mkdirp-1.0.4.tgz
 https://registry.npmjs.org/@types/node/-/node-14.18.42.tgz -> npmpkg-@types-node-14.18.42.tgz
-https://registry.npmjs.org/element-resize-detector/-/element-resize-detector-1.2.4.tgz -> npmpkg-element-resize-detector-1.2.4.tgz
 https://registry.npmjs.org/bn.js/-/bn.js-4.12.0.tgz -> npmpkg-bn.js-4.12.0.tgz
-https://registry.npmjs.org/eslint/-/eslint-5.16.0.tgz -> npmpkg-eslint-5.16.0.tgz
 https://registry.npmjs.org/json5/-/json5-1.0.2.tgz -> npmpkg-json5-1.0.2.tgz
 https://registry.npmjs.org/loader-utils/-/loader-utils-1.4.2.tgz -> npmpkg-loader-utils-1.4.2.tgz
 https://registry.npmjs.org/eslint-scope/-/eslint-scope-4.0.3.tgz -> npmpkg-eslint-scope-4.0.3.tgz
@@ -769,7 +764,6 @@ https://registry.npmjs.org/schema-utils/-/schema-utils-1.0.0.tgz -> npmpkg-schem
 https://registry.npmjs.org/webpack-sources/-/webpack-sources-1.4.3.tgz -> npmpkg-webpack-sources-1.4.3.tgz
 https://registry.npmjs.org/pump/-/pump-2.0.1.tgz -> npmpkg-pump-2.0.1.tgz
 https://registry.npmjs.org/is-extendable/-/is-extendable-1.0.1.tgz -> npmpkg-is-extendable-1.0.1.tgz
-https://registry.npmjs.org/nanoid/-/nanoid-3.3.6.tgz -> npmpkg-nanoid-3.3.6.tgz
 https://registry.npmjs.org/extend-shallow/-/extend-shallow-3.0.2.tgz -> npmpkg-extend-shallow-3.0.2.tgz
 https://registry.npmjs.org/is-extendable/-/is-extendable-1.0.1.tgz -> npmpkg-is-extendable-1.0.1.tgz
 https://registry.npmjs.org/kind-of/-/kind-of-6.0.3.tgz -> npmpkg-kind-of-6.0.3.tgz
@@ -782,7 +776,6 @@ https://registry.npmjs.org/punycode/-/punycode-1.4.1.tgz -> npmpkg-punycode-1.4.
 https://registry.npmjs.org/is-wsl/-/is-wsl-1.1.0.tgz -> npmpkg-is-wsl-1.1.0.tgz
 https://registry.npmjs.org/semver/-/semver-5.7.1.tgz -> npmpkg-semver-5.7.1.tgz
 https://registry.npmjs.org/which/-/which-1.3.1.tgz -> npmpkg-which-1.3.1.tgz
-https://registry.npmjs.org/resolve/-/resolve-1.22.2.tgz -> npmpkg-resolve-1.22.2.tgz
 https://registry.npmjs.org/semver/-/semver-5.7.1.tgz -> npmpkg-semver-5.7.1.tgz
 https://registry.npmjs.org/pify/-/pify-3.0.0.tgz -> npmpkg-pify-3.0.0.tgz
 https://registry.npmjs.org/debug/-/debug-2.6.9.tgz -> npmpkg-debug-2.6.9.tgz
@@ -871,6 +864,7 @@ https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz -> npmpkg
 https://registry.npmjs.org/randomatic/-/randomatic-3.1.1.tgz -> npmpkg-randomatic-3.1.1.tgz
 https://registry.npmjs.org/is-number/-/is-number-4.0.0.tgz -> npmpkg-is-number-4.0.0.tgz
 https://registry.npmjs.org/kind-of/-/kind-of-6.0.3.tgz -> npmpkg-kind-of-6.0.3.tgz
+https://registry.npmjs.org/react-dom/-/react-dom-16.14.0.tgz -> npmpkg-react-dom-16.14.0.tgz
 https://registry.npmjs.org/dotenv/-/dotenv-8.6.0.tgz -> npmpkg-dotenv-8.6.0.tgz
 https://registry.npmjs.org/fs-extra/-/fs-extra-8.1.0.tgz -> npmpkg-fs-extra-8.1.0.tgz
 https://registry.npmjs.org/find-up/-/find-up-1.1.2.tgz -> npmpkg-find-up-1.1.2.tgz
@@ -934,7 +928,6 @@ https://registry.npmjs.org/ms/-/ms-2.0.0.tgz -> npmpkg-ms-2.0.0.tgz
 https://registry.npmjs.org/source-map/-/source-map-0.5.7.tgz -> npmpkg-source-map-0.5.7.tgz
 https://registry.npmjs.org/debug/-/debug-3.2.7.tgz -> npmpkg-debug-3.2.7.tgz
 https://registry.npmjs.org/sort-keys/-/sort-keys-1.1.2.tgz -> npmpkg-sort-keys-1.1.2.tgz
-https://registry.npmjs.org/source-map-js/-/source-map-js-1.0.2.tgz -> npmpkg-source-map-js-1.0.2.tgz
 https://registry.npmjs.org/readable-stream/-/readable-stream-3.6.2.tgz -> npmpkg-readable-stream-3.6.2.tgz
 https://registry.npmjs.org/extend-shallow/-/extend-shallow-3.0.2.tgz -> npmpkg-extend-shallow-3.0.2.tgz
 https://registry.npmjs.org/is-extendable/-/is-extendable-1.0.1.tgz -> npmpkg-is-extendable-1.0.1.tgz
@@ -975,11 +968,11 @@ https://registry.npmjs.org/dom-serializer/-/dom-serializer-0.2.2.tgz -> npmpkg-d
 https://registry.npmjs.org/domutils/-/domutils-1.7.0.tgz -> npmpkg-domutils-1.7.0.tgz
 https://registry.npmjs.org/domelementtype/-/domelementtype-1.3.1.tgz -> npmpkg-domelementtype-1.3.1.tgz
 https://registry.npmjs.org/nth-check/-/nth-check-1.0.2.tgz -> npmpkg-nth-check-1.0.2.tgz
-https://registry.npmjs.org/ansi-regex/-/ansi-regex-4.1.1.tgz -> npmpkg-ansi-regex-4.1.1.tgz
 https://registry.npmjs.org/emoji-regex/-/emoji-regex-7.0.3.tgz -> npmpkg-emoji-regex-7.0.3.tgz
 https://registry.npmjs.org/is-fullwidth-code-point/-/is-fullwidth-code-point-2.0.0.tgz -> npmpkg-is-fullwidth-code-point-2.0.0.tgz
 https://registry.npmjs.org/string-width/-/string-width-3.1.0.tgz -> npmpkg-string-width-3.1.0.tgz
 https://registry.npmjs.org/strip-ansi/-/strip-ansi-5.2.0.tgz -> npmpkg-strip-ansi-5.2.0.tgz
+https://registry.npmjs.org/ansi-regex/-/ansi-regex-4.1.1.tgz -> npmpkg-ansi-regex-4.1.1.tgz
 https://registry.npmjs.org/readable-stream/-/readable-stream-3.6.2.tgz -> npmpkg-readable-stream-3.6.2.tgz
 https://registry.npmjs.org/fs-extra/-/fs-extra-10.1.0.tgz -> npmpkg-fs-extra-10.1.0.tgz
 https://registry.npmjs.org/jsonfile/-/jsonfile-6.1.0.tgz -> npmpkg-jsonfile-6.1.0.tgz
@@ -1021,18 +1014,17 @@ https://github.com/nicolaspanel/three-orbitcontrols-ts/archive/b5b2685a88b880822
 https://registry.npmjs.org/three/-/three-0.94.0.tgz -> npmpkg-three-0.94.0.tgz
 https://registry.npmjs.org/extend-shallow/-/extend-shallow-3.0.2.tgz -> npmpkg-extend-shallow-3.0.2.tgz
 https://registry.npmjs.org/is-extendable/-/is-extendable-1.0.1.tgz -> npmpkg-is-extendable-1.0.1.tgz
-https://registry.npmjs.org/resolve/-/resolve-1.22.2.tgz -> npmpkg-resolve-1.22.2.tgz
 https://registry.npmjs.org/semver/-/semver-5.7.1.tgz -> npmpkg-semver-5.7.1.tgz
 https://registry.npmjs.org/json5/-/json5-1.0.2.tgz -> npmpkg-json5-1.0.2.tgz
 https://registry.npmjs.org/loader-utils/-/loader-utils-1.4.2.tgz -> npmpkg-loader-utils-1.4.2.tgz
 https://registry.npmjs.org/semver/-/semver-5.7.1.tgz -> npmpkg-semver-5.7.1.tgz
 https://registry.npmjs.org/strip-bom/-/strip-bom-3.0.0.tgz -> npmpkg-strip-bom-3.0.0.tgz
 https://registry.npmjs.org/diff/-/diff-4.0.2.tgz -> npmpkg-diff-4.0.2.tgz
-https://registry.npmjs.org/resolve/-/resolve-1.22.2.tgz -> npmpkg-resolve-1.22.2.tgz
 https://registry.npmjs.org/semver/-/semver-5.7.1.tgz -> npmpkg-semver-5.7.1.tgz
 https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz -> npmpkg-tslib-1.14.1.tgz
 https://registry.npmjs.org/tsutils/-/tsutils-2.29.0.tgz -> npmpkg-tsutils-2.29.0.tgz
 https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz -> npmpkg-tslib-1.14.1.tgz
+https://registry.npmjs.org/typeface-open-sans/-/typeface-open-sans-0.0.75.tgz -> npmpkg-typeface-open-sans-0.0.75.tgz
 https://registry.npmjs.org/commander/-/commander-2.19.0.tgz -> npmpkg-commander-2.19.0.tgz
 https://registry.npmjs.org/uniq/-/uniq-1.0.1.tgz -> npmpkg-uniq-1.0.1.tgz
 https://registry.npmjs.org/has-value/-/has-value-0.3.1.tgz -> npmpkg-has-value-0.3.1.tgz
@@ -1051,7 +1043,8 @@ https://registry.npmjs.org/punycode/-/punycode-1.3.2.tgz -> npmpkg-punycode-1.3.
 https://registry.npmjs.org/pako/-/pako-1.0.11.tgz -> npmpkg-pako-1.0.11.tgz
 https://registry.npmjs.org/inherits/-/inherits-2.0.3.tgz -> npmpkg-inherits-2.0.3.tgz
 https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.2.tgz -> npmpkg-core-util-is-1.0.2.tgz
-https://registry.npmjs.org/vue/-/vue-2.7.14.tgz -> npmpkg-vue-2.7.14.tgz
+https://registry.npmjs.org/vue/-/vue-2.6.11.tgz -> npmpkg-vue-2.6.11.tgz
+https://registry.npmjs.org/vue-class-component/-/vue-class-component-7.2.6.tgz -> npmpkg-vue-class-component-7.2.6.tgz
 https://registry.npmjs.org/anymatch/-/anymatch-3.1.3.tgz -> npmpkg-anymatch-3.1.3.tgz
 https://registry.npmjs.org/braces/-/braces-3.0.2.tgz -> npmpkg-braces-3.0.2.tgz
 https://registry.npmjs.org/fill-range/-/fill-range-7.0.1.tgz -> npmpkg-fill-range-7.0.1.tgz
@@ -1081,20 +1074,17 @@ https://registry.npmjs.org/strip-ansi/-/strip-ansi-5.2.0.tgz -> npmpkg-strip-ans
 https://registry.npmjs.org/webpack-chain/-/webpack-chain-5.2.4.tgz -> npmpkg-webpack-chain-5.2.4.tgz
 https://registry.npmjs.org/yargs/-/yargs-14.2.3.tgz -> npmpkg-yargs-14.2.3.tgz
 https://registry.npmjs.org/yargs-parser/-/yargs-parser-15.0.3.tgz -> npmpkg-yargs-parser-15.0.3.tgz
-https://registry.npmjs.org/vue-color/-/vue-color-2.8.1.tgz -> npmpkg-vue-color-2.8.1.tgz
 https://registry.npmjs.org/eslint-scope/-/eslint-scope-4.0.3.tgz -> npmpkg-eslint-scope-4.0.3.tgz
 https://registry.npmjs.org/espree/-/espree-4.1.0.tgz -> npmpkg-espree-4.1.0.tgz
-https://registry.npmjs.org/vue-final-modal/-/vue-final-modal-2.4.3.tgz -> npmpkg-vue-final-modal-2.4.3.tgz
 https://registry.npmjs.org/vue-class-component/-/vue-class-component-6.3.2.tgz -> npmpkg-vue-class-component-6.3.2.tgz
 https://registry.npmjs.org/source-map/-/source-map-0.5.7.tgz -> npmpkg-source-map-0.5.7.tgz
-https://registry.npmjs.org/vue-loader/-/vue-loader-15.10.1.tgz -> npmpkg-vue-loader-15.10.1.tgz
 https://registry.npmjs.org/json5/-/json5-1.0.2.tgz -> npmpkg-json5-1.0.2.tgz
 https://registry.npmjs.org/loader-utils/-/loader-utils-1.4.2.tgz -> npmpkg-loader-utils-1.4.2.tgz
-https://registry.npmjs.org/vue-router/-/vue-router-3.6.5.tgz -> npmpkg-vue-router-3.6.5.tgz
+https://registry.npmjs.org/vue-router/-/vue-router-3.3.4.tgz -> npmpkg-vue-router-3.3.4.tgz
 https://registry.npmjs.org/json5/-/json5-1.0.2.tgz -> npmpkg-json5-1.0.2.tgz
 https://registry.npmjs.org/loader-utils/-/loader-utils-1.4.2.tgz -> npmpkg-loader-utils-1.4.2.tgz
-https://registry.npmjs.org/vue-template-compiler/-/vue-template-compiler-2.7.14.tgz -> npmpkg-vue-template-compiler-2.7.14.tgz
-https://registry.npmjs.org/vue-toast-notification/-/vue-toast-notification-0.6.3.tgz -> npmpkg-vue-toast-notification-0.6.3.tgz
+https://registry.npmjs.org/vue-template-compiler/-/vue-template-compiler-2.6.11.tgz -> npmpkg-vue-template-compiler-2.6.11.tgz
+https://registry.npmjs.org/vue-toast-notification/-/vue-toast-notification-0.6.2.tgz -> npmpkg-vue-toast-notification-0.6.2.tgz
 https://registry.npmjs.org/anymatch/-/anymatch-3.1.3.tgz -> npmpkg-anymatch-3.1.3.tgz
 https://registry.npmjs.org/braces/-/braces-3.0.2.tgz -> npmpkg-braces-3.0.2.tgz
 https://registry.npmjs.org/fill-range/-/fill-range-7.0.1.tgz -> npmpkg-fill-range-7.0.1.tgz
@@ -1343,22 +1333,19 @@ eerror "This ebuild is currently under maintenance."
 		enpm i --legacy-peer-deps
 		enpm audit fix --legacy-peer-deps
 
-	# Fix electron-builder
-#	enpm install "detect-libc@^2.0.1" --legacy-peer-deps
-
 	# Fix the following upgrade breakage manually by downgrading:
 
 	# Change to ^2.6.10 afterwards.
-		enpm install "vue@^2.6.11" --legacy-peer-deps # In upstream lockfile
+		enpm install "vue@2.6.11" --legacy-peer-deps # Exact version in upstream lockfile
 
 	# Change to ^2.6.10 afterwards.
-		enpm install "vue-template-compiler@^2.6.11" --legacy-peer-deps # In upstream lockfile
+		enpm install "vue-template-compiler@2.6.11" --legacy-peer-deps # Exact version in upstream lockfile
 
 	# Change to ^3.0.3 afterwards.
-		enpm install "vue-router@^3.3.4" --legacy-peer-deps # In upstream lockfile
+		enpm install "vue-router@3.3.4" --legacy-peer-deps # Exact version in upstream lockfile
 
 	# Change to ^0.6.2 afterwards.
-		enpm install "vue-toast-notification@^0.6.2" --legacy-peer-deps # In upstream lockfile
+		enpm install "vue-toast-notification@0.6.2" --legacy-peer-deps # Exact version in upstream lockfile
 
 		die
         else
@@ -1389,6 +1376,7 @@ src_compile() {
 	cd "${S}" || die
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	NODE_VERSION="16"
+	export ELECTRON_OVERRIDE_DIST_PATH="${S}/node_modules/.bin/electron"
 	electron-app_cp_electron
 	enpm run electron:build --publish=never
 }
