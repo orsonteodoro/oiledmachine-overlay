@@ -274,10 +274,14 @@ _yarn_src_unpack_default() {
 _npm_auto_rename() {
 	local row
 	IFS=$'\n'
-	for row in $(grep "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs") ; do
+	for row in $(grep -r -e "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs") ; do
 		local from=$(echo "${row}" | cut -f 2 -d "'")
 		local to=$(echo "${row}" | cut -f 4 -d "'")
-		mv "${from}" "${to}" || true
+		if [[ -e "${from}" ]] ; then
+einfo "Moving ${from} -> ${to}"
+			mv "${from}" "${to}" || true
+			sed -i -e "\|${to}|d" "${T}/build.log" || die
+		fi
 	done
 	IFS=$' \t\n'
 }
@@ -294,13 +298,14 @@ enpm() {
 einfo "Tries:\t${tries}"
 einfo "Running:\tnpm ${cmd[@]}"
 		npm "${cmd[@]}" || die
-		if ! grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
+		if ! grep -q -E -r -e "(ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
 			break
 		fi
-		rm -rf "${HOME}/.npm/_logs"
-		tries=$((${tries} + 1))
-
 		_npm_auto_rename
+		if grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
+			tries=$((${tries} + 1))
+		fi
+		rm -rf "${HOME}/.npm/_logs"
 	done
 	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
 }

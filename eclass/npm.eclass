@@ -155,15 +155,12 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/npmpkg-}"
 # Generate new name with @ in URIs to prevent wrong hash.
 npm_gen_new_name() {
 	local uri="${1}"
-	if [[ "${uri}" =~ ".git" && "${uri}" =~ "github" ]] ; then
-eerror "FIXME:  npm_gen_new_name()"
-# Needs support for live release if any.
-		die
+	if [[ "${uri}" =~ ("git+https"|"git+ssh") && "${uri}" =~ "github" ]] ; then
 		local commit_id=$(echo "${uri}" \
 			| cut -f 2 -d "#")
-		local owner=$(echo "${row}" \
+		local owner=$(echo "${uri}" \
 			| cut -f 4 -d "/")
-		local project_name=$(echo "${row}" \
+		local project_name=$(echo "${uri}" \
 			| cut -f 5 -d "/" \
 			| cut -f 1 -d "#" \
 			| cut -f 1 -d ".")
@@ -187,7 +184,10 @@ npm_transform_uris_default() {
 	[[ -f "package-lock.json" ]] || die "Missing package-lock.json"
 	IFS=$'\n'
 	local uri
-	for uri in $(grep -E -o -e "https://registry.npmjs.org/([@a-zA-Z0-9._-]+/)+-/([@a-zA-Z0-9._-]+.tgz)" "package-lock.json") ; do
+	for uri in $(grep -E -o -e "https://registry.npmjs.org/([@a-zA-Z0-9._-]+/)+-/([@a-zA-Z0-9._-]+.tgz)" \
+		-e "git\+https://git@github.com[^#]+#[a-zA-Z0-9]+" \
+		-e "git\+ssh://git@github.com[^#]+#[a-zA-Z0-9]+" \
+		"package-lock.json") ; do
 		local bn=$(basename "${uri}")
 		local newname=$(npm_gen_new_name "${uri}")
 		sed -i -e "s|${uri}|file:${WORKDIR}/npm-packages-offline-cache/${newname}|g" package-lock.json || die
@@ -252,10 +252,14 @@ einfo "Missing package-lock.json"
 _npm_auto_rename() {
 	local row
 	IFS=$'\n'
-	for row in $(grep "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs") ; do
+	for row in $(grep -r -e "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs") ; do
 		local from=$(echo "${row}" | cut -f 2 -d "'")
 		local to=$(echo "${row}" | cut -f 4 -d "'")
-		mv "${from}" "${to}" || true
+		if [[ -e "${from}" ]] ; then
+einfo "Moving ${from} -> ${to}"
+			mv "${from}" "${to}" || true
+			sed -i -e "\|${to}|d" "${T}/build.log" || die
+		fi
 	done
 	IFS=$' \t\n'
 }
@@ -272,12 +276,14 @@ enpm() {
 einfo "Tries:\t${tries}"
 einfo "Running:\tnpm ${cmd[@]}"
 		npm "${cmd[@]}" || die
-		if ! grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
+		if ! grep -q -E -r -e "(ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
 			break
 		fi
-		rm -rf "${HOME}/.npm/_logs"
-		tries=$((${tries} + 1))
 		_npm_auto_rename
+		if grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
+			tries=$((${tries} + 1))
+		fi
+		rm -rf "${HOME}/.npm/_logs"
 	done
 	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
 }

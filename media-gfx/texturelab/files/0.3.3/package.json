@@ -40,14 +40,14 @@
 		"three-orbitcontrols-ts": "git+https://git@github.com/nicolaspanel/three-orbitcontrols-ts.git",
 		"typeface-open-sans": "^0.0.75",
 		"upng-js": "^2.1.0",
-		"vue": "^2.6.10",
+		"vue": "^2.7.14",
 		"vue-class-component": "^7.0.2",
 		"vue-color": "^2.7.1",
 		"vue-final-modal": "^2.4.1",
 		"vue-golden-layout": "^1.6.0",
 		"vue-property-decorator": "^8.1.0",
-		"vue-router": "^3.0.3",
-		"vue-toast-notification": "^0.6.2",
+		"vue-router": "^3.6.5",
+		"vue-toast-notification": "^0.6.3",
 		"vuex": "^3.0.1"
 	},
 	"devDependencies": {
@@ -75,6 +75,6 @@
 		"ts-jest": "^23.0.0",
 		"typescript": "^3.9.5",
 		"vue-cli-plugin-electron-builder": "^1.4.0",
-		"vue-template-compiler": "^2.6.10"
+		"vue-template-compiler": "^2.7.14"
 	}
 }

@@ -79,7 +79,7 @@ acorn corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
 npm mold pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
-man pgo r2
+man pgo r3
 "
 
 gen_required_use_pgo() {
@@ -770,7 +770,7 @@ install_corepack() {
 }
 
 install_acorn() {
-	npm -g "acorn@${ACORN_PV}"
+	npm i "acorn@${ACORN_PV}" -g
 }
 
 pkg_postinst() {
@@ -800,7 +800,7 @@ einfo
 pkg_prerm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
 		corepack disable
-		npm remove -g acorn
+		npm remove acorn -g
 	fi
 }
 
