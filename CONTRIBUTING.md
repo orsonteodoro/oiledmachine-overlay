@@ -249,6 +249,9 @@ based on an outdated style guide.
     hard requirement.
   - The dependency versioning must be explicit if versioning details are
     available.
+  - If *DEPENDs versioning is not available in build files, the fallback for
+    is the CI logs for that particular point release or that particular
+    major.minor version from the oldest LTS distro.
   - The package should also be polished as much as possible.  This means to
     disable options or patch the code so that it is either is feature complete
     or completely disables/hides the early (buggy) implementation.  Upstream
