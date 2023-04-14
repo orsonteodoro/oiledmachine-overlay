@@ -10,11 +10,8 @@ if [[ "${PV}" == *9999 ]]; then
 	EGIT_REPO_URI="https://github.com/protocolbuffers/protobuf.git"
 	EGIT_SUBMODULES=()
 else
-	EGIT_ABSEIL_CPP_COMMIT="78be63686ba732b25052be15f8d6dee891c05749"
 	SRC_URI="
 https://github.com/protocolbuffers/protobuf/archive/v${PV}.tar.gz -> ${P}.tar.gz
-https://github.com/abseil/abseil-cpp/archive/${EGIT_ABSEIL_CPP_COMMIT}.tar.gz
-	-> abseil-cpp-${EGIT_ABSEIL_CPP_COMMIT:0:7}.tar.gz
 	"
 	# KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-macos" # Test failure
 fi
