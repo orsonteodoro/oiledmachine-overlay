@@ -1,0 +1,11 @@
+diff -urp protobuf-22.3.orig/src/google/protobuf/io/zero_copy_stream_unittest.cc protobuf-22.3/src/google/protobuf/io/zero_copy_stream_unittest.cc
+--- protobuf-22.3.orig/src/google/protobuf/io/zero_copy_stream_unittest.cc	2023-04-12 15:43:07.000000000 -0700
++++ protobuf-22.3/src/google/protobuf/io/zero_copy_stream_unittest.cc	2023-04-13 21:13:37.161484268 -0700
+@@ -60,6 +60,7 @@
+ #include <chrono>
+ #include <iterator>
+ #include <memory>
++#include <mutex>
+ #include <sstream>
+ #include <thread>
+ #include <utility>
