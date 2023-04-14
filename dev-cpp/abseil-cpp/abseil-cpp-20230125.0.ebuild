@@ -14,7 +14,7 @@ LICENSE="
 HOMEPAGE="https://abseil.io"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" cxx17 test"
+IUSE+=" cxx17 test r1"
 BDEPEND+="
 	${PYTHON_DEPS}
 	test? (
@@ -25,8 +25,15 @@ BDEPEND+="
 SRC_URI="
 https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/abseil/abseil-cpp/commit/807763a7f57dcf0ba4af7c3b218013e8f525e811.patch
+	-> ${PN}-807763a.patch
 "
+# 807763a - [PATCH] CMake: Install TESTONLY libraries and their dependencies when they are built
+#	for protobuff
 RESTRICT="!test? ( test ) mirror"
+PATCHES=(
+	"${DISTDIR}/${PN}-807763a.patch"
+)
 
 src_prepare() {
 	cmake_src_prepare
