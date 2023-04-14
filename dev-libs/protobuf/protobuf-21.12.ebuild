@@ -26,20 +26,20 @@ SLOT="0/32" # Based on highest .so file
 IUSE="emacs examples static-libs test zlib"
 RESTRICT="!test? ( test )"
 # Abseil 20230125.rc3
-DEPEND="
-	test? (
-		>=dev-cpp/gtest-1.9[${MULTILIB_USEDEP}]
-	)
+RDEPEND="
 	zlib? (
 		sys-libs/zlib[${MULTILIB_USEDEP}]
 	)
 "
-RDEPEND="
+DEPEND="
+	${RDEPEND}
+	test? (
+		>=dev-cpp/gtest-1.9[${MULTILIB_USEDEP}]
+	)
+"
+RDEPEND+="
 	emacs? (
 		app-editors/emacs:*
-	)
-	zlib? (
-		sys-libs/zlib[${MULTILIB_USEDEP}]
 	)
 "
 BDEPEND="

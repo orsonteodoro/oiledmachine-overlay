@@ -16,7 +16,7 @@ https://github.com/protocolbuffers/protobuf/archive/v${PV}.tar.gz -> ${P}.tar.gz
 https://github.com/abseil/abseil-cpp/archive/${EGIT_ABSEIL_CPP_COMMIT}.tar.gz
 	-> abseil-cpp-${EGIT_ABSEIL_CPP_COMMIT:0:7}.tar.gz
 	"
-	# KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-macos" # Test failure, merge conflict
+	# KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-macos" # Test failure
 fi
 
 DESCRIPTION="Google's Protocol Buffers - Extensible mechanism for serializing structured data"
@@ -29,24 +29,22 @@ SLOT="0/22" # Based on highest .so file
 IUSE="emacs examples static-libs test zlib"
 RESTRICT="!test? ( test )"
 ABSEIL_CPP_PV="20230125"
-DEPEND="
+RDEPEND="
 	=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}*[${MULTILIB_USEDEP},test-helpers]
 	dev-libs/utf8_range[${MULTILIB_USEDEP}]
-	test? (
-		>=dev-cpp/gtest-1.9[${MULTILIB_USEDEP}]
-	)
 	zlib? (
 		sys-libs/zlib[${MULTILIB_USEDEP}]
 	)
 "
-RDEPEND="
-	=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}*[${MULTILIB_USEDEP},test-helpers]
-	dev-libs/utf8_range[${MULTILIB_USEDEP}]
+DEPEND="
+	${RDEPEND}
+	test? (
+		>=dev-cpp/gtest-1.9[${MULTILIB_USEDEP}]
+	)
+"
+RDEPEND+="
 	emacs? (
 		app-editors/emacs:*
-	)
-	zlib? (
-		sys-libs/zlib[${MULTILIB_USEDEP}]
 	)
 "
 # Abseil 20230125.rc3
@@ -57,10 +55,6 @@ BDEPEND="
 	)
 "
 PATCHES=(
-#	"A${FILESDIR}/${PN}-3.19.0-disable_no-warning-test.patch"
-#	"A${FILESDIR}/${PN}-3.19.0-system_libraries.patch"
-#	"${FILESDIR}/${PN}-3.20.2-protoc_input_output_files.patch"
-#	"A${FILESDIR}/${PN}-21.9-disable-32-bit-tests.patch"
 	"${FILESDIR}/protobuf-22.3-zero_copy_stream_unittest-mutex-header.patch"
 	"${FILESDIR}/protobuf-22.3-utf8_range.patch"
 )
@@ -83,6 +77,11 @@ src_unpack() {
 }
 
 src_prepare() {
+	mkdir -p "third_party/protobuf" || die
+	ln -s \
+		"${S}/src/google/protobuf/testdata" \
+		"third_party/protobuf/testdata" \
+		|| die
 	cmake_src_prepare
 }
 
