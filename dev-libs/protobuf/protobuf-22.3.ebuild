@@ -36,7 +36,7 @@ BDEPEND="
 "
 ABSEIL_CPP_PV="20230125"
 DEPEND="
-	=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}*[${MULTILIB_USEDEP}]
+	=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}*[${MULTILIB_USEDEP},test?]
 	test? (
 		>=dev-cpp/gtest-1.9[${MULTILIB_USEDEP}]
 	)
@@ -45,7 +45,7 @@ DEPEND="
 	)
 "
 RDEPEND="
-	=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}*[${MULTILIB_USEDEP}]
+	=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}*[${MULTILIB_USEDEP},test?]
 	emacs? (
 		app-editors/emacs:*
 	)
