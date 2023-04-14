@@ -14,7 +14,7 @@ LICENSE="
 HOMEPAGE="https://abseil.io"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" cxx17 test r1"
+IUSE+=" cxx17 test -test-helpers r1"
 BDEPEND+="
 	${PYTHON_DEPS}
 	test? (
@@ -47,15 +47,12 @@ src_prepare() {
 	# Now generate cmake files
 	python_fix_shebang absl/copts/generate_copts.py
 	absl/copts/generate_copts.py || die
-	if use test ; then
-		sed -i 's/-Werror//g' \
-"${WORKDIR}/googletest-${GTEST_COMMIT}/googletest/cmake/internal_utils.cmake" \
-			|| die
-	fi
 }
 
 src_configure() {
 	local mycmakeargs=(
+		-DABSL_BUILD_TESTING=$(usex test ON OFF)
+		-DABSL_BUILD_TEST_HELPERS=$(usex test-helpers ON OFF)
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_PROPAGATE_CXX_STD=TRUE
 		-DABSL_USE_EXTERNAL_GOOGLETEST=TRUE

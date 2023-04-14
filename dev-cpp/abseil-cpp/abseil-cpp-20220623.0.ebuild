@@ -40,15 +40,11 @@ src_prepare() {
 	# Now generate cmake files
 	python_fix_shebang absl/copts/generate_copts.py
 	absl/copts/generate_copts.py || die
-	if use test ; then
-		sed -i 's/-Werror//g' \
-"${WORKDIR}/googletest-${GTEST_COMMIT}/googletest/cmake/internal_utils.cmake" \
-			|| die
-	fi
 }
 
 src_configure() {
 	local mycmakeargs=(
+		-DABSL_BUILD_TESTING=$(usex test ON OFF)
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_PROPAGATE_CXX_STD=TRUE
 		-DABSL_USE_EXTERNAL_GOOGLETEST=TRUE
