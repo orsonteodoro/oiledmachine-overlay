@@ -28,15 +28,10 @@ LICENSE="BSD"
 SLOT="0/22" # Based on highest .so file
 IUSE="emacs examples static-libs test zlib"
 RESTRICT="!test? ( test )"
-# Abseil 20230125.rc3
-BDEPEND="
-	emacs? (
-		app-editors/emacs:*
-	)
-"
 ABSEIL_CPP_PV="20230125"
 DEPEND="
 	=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}*[${MULTILIB_USEDEP},test-helpers]
+	dev-libs/utf8_range[${MULTILIB_USEDEP}]
 	test? (
 		>=dev-cpp/gtest-1.9[${MULTILIB_USEDEP}]
 	)
@@ -46,11 +41,19 @@ DEPEND="
 "
 RDEPEND="
 	=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}*[${MULTILIB_USEDEP},test-helpers]
+	dev-libs/utf8_range[${MULTILIB_USEDEP}]
 	emacs? (
 		app-editors/emacs:*
 	)
 	zlib? (
 		sys-libs/zlib[${MULTILIB_USEDEP}]
+	)
+"
+# Abseil 20230125.rc3
+BDEPEND="
+	dev-libs/utf8_range[${MULTILIB_USEDEP}]
+	emacs? (
+		app-editors/emacs:*
 	)
 "
 PATCHES=(
@@ -59,6 +62,7 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-3.20.2-protoc_input_output_files.patch"
 #	"A${FILESDIR}/${PN}-21.9-disable-32-bit-tests.patch"
 	"${FILESDIR}/protobuf-22.3-zero_copy_stream_unittest-mutex-header.patch"
+	"${FILESDIR}/protobuf-22.3-utf8_range.patch"
 )
 DOCS=( CONTRIBUTORS.txt README.md )
 
@@ -82,30 +86,36 @@ src_prepare() {
 	cmake_src_prepare
 }
 
-src_configure() {
-	local with_ccache=OFF
-	if [[ "${FEATURES}" =~ "ccache" ]] ; then
-		with_ccache=ON
-	fi
+src_configure_abi() {
 	local mycmakeargs=(
+		-DUTF8_RANGE_MODULE_PATH="${ESYSROOT}/usr/$(get_libdir)/cmake/utf8_range"
 		-DBUILD_SHARED_LIBS=ON
 		-Dprotobuf_USE_EXTERNAL_GTEST=ON
 		-Dprotobuf_BUILD_TESTS=$(usex test)
 		-Dprotobuf_WITH_ZLIB=$(usex zlib)
 		-Dprotobuf_ALLOW_CCACHE=${with_ccache}
 		-Dprotobuf_ABSL_PROVIDER=package
+		-Dprotobuf_UTF8_RANGE_PROVIDER=package
 	)
 	if tc-is-cross-compiler; then
 		mycmakeargs=(
 			-Dprotobuf_PROTOC_EXE="$(pwd)/src/protoc"
 		)
 	fi
+	cmake_src_configure
+}
+
+src_configure() {
+	local with_ccache=OFF
+	if [[ "${FEATURES}" =~ "ccache" ]] ; then
+		with_ccache=ON
+	fi
 	append-cppflags -DGOOGLE_PROTOBUF_NO_RTTI
 	if tc-ld-is-gold; then
 	# https://sourceware.org/bugzilla/show_bug.cgi?id=24527
 		tc-ld-disable-gold
 	fi
-	cmake-multilib_src_configure
+	multilib_foreach_abi src_configure_abi
 }
 
 src_compile() {
@@ -157,4 +167,4 @@ pkg_postrm() {
 	use emacs && elisp-site-regen
 }
 
-# OILEDMACHINE-OVERLAY-TESTS:  PASSED 21.12 (20220413) x86 and amd64
+# OILEDMACHINE-OVERLAY-TESTS:  

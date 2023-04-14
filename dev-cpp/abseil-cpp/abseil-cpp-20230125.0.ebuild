@@ -62,3 +62,13 @@ src_configure() {
 	cmake-multilib_src_configure
 }
 
+# OILEDMACHINE-OVERLAY-TEST:  PASSED x86 and amd64
+# USE="cxx17 test test-helpers -r1" ABI_X86="32 (64) (-x32)"
+
+# x86 ABI:
+# 100% tests passed, 0 tests failed out of 207
+# Total Test time (real) = 267.15 sec
+
+# amd64 ABI:
+# 100% tests passed, 0 tests failed out of 207
+# Total Test time (real) = 204.20 sec
