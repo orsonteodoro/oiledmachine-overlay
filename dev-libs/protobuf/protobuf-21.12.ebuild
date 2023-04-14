@@ -128,16 +128,17 @@ multilib_src_test() {
 multilib_src_install_all() {
 	find "${ED}" -name "*.la" -delete || die
 	if [[ ! -f "${ED}/usr/$(get_libdir)/libprotobuf.so.${SLOT#*/}" ]]; then
-		local expected_slot="${SLOT#*/}"
-		local actual_slot=$(ls "${ED}/usr/$(get_libdir)/libprotobuf.so."*)
-		actual_slot=$(basename "${actual_slot}" \
+		local expected_subslot="${SLOT#*/}"
+		local actual_subslot=$(ls "${ED}/usr/$(get_libdir)/libprotobuf.so."*)
+		actual_subslot=$(basename "${actual_subslot}" \
 			| cut -f 3 -d ".")
-		if [[ "${expected_slot}" != "${actual_slot}" ]] ; then
+		if [[ "${expected_subslot}" != "${actual_subslot}" ]] ; then
 eerror
-eerror "No matching library found with SLOT variable, currently set: ${SLOT}"
+eerror "No matching library found with SLOT variable."
 eerror
-eerror "Expected slot:\t${expected_slot}"
-eerror "Actual slot:\t\t${actual_slot}"
+eerror "SLOT:\t\t${SLOT}"
+eerror "Expected subslot:\t${expected_subslot}"
+eerror "Actual subslot:\t\t${actual_subslot}"
 eerror
 eerror "Please update the SLOT's subslot with the actual slot value."
 eerror
