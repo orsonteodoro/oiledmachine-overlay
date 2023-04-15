@@ -26,9 +26,8 @@ LICENSE="BSD"
 SLOT="0/22" # Based on highest .so file.
 IUSE="emacs examples static-libs test zlib"
 RESTRICT="!test? ( test )"
-ABSEIL_CPP_PV="20230125"
 RDEPEND="
-	=dev-cpp/abseil-cpp-${ABSEIL_CPP_PV}*[${MULTILIB_USEDEP},test-helpers]
+	~dev-cpp/abseil-cpp-20230125.0[${MULTILIB_USEDEP},test-helpers]
 	dev-libs/utf8_range[${MULTILIB_USEDEP}]
 	zlib? (
 		sys-libs/zlib[${MULTILIB_USEDEP}]

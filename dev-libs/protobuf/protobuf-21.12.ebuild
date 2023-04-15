@@ -25,7 +25,6 @@ LICENSE="BSD"
 SLOT="0/32" # Based on highest .so file
 IUSE="emacs examples static-libs test zlib"
 RESTRICT="!test? ( test )"
-# Abseil 20230125.rc3
 RDEPEND="
 	zlib? (
 		sys-libs/zlib[${MULTILIB_USEDEP}]
