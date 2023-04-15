@@ -17,6 +17,7 @@
    - AI (Artificial Intelligence)
 4. Version bumps
 5. Porting to different hardware
+6. Automated scripts to speed up updating or bumping of ebuilds
 
 When you submit an ebuild on this overlay exclusively, they will not be
 disseminated or searchable in the overlay search engine.  Consider uploading
