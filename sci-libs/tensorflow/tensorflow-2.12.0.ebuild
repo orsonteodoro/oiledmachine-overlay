@@ -331,7 +331,10 @@ RDEPEND="
 		>=dev-libs/openssl-3:0=
 	)
 	!test? (
-		~dev-cpp/abseil-cpp-20220623.0:=
+		(
+			<dev-cpp/abseil-cpp-20220624:=
+			>=dev-cpp/abseil-cpp-20220623.0:=
+		)
 		>=dev-libs/protobuf-3.21.9:=
 		>=net-libs/grpc-${GRPC_PV}:=
 	)

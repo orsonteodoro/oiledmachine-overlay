@@ -18,7 +18,10 @@ RDEPEND="
 	!testing-tensorflow? (
 		>=net-libs/grpc-1.43.2:=
 	)
-	>=dev-cpp/abseil-cpp-20211102.0:=
+	(
+		<dev-cpp/abseil-cpp-20211103:=
+		>=dev-cpp/abseil-cpp-20211102.0:=
+	)
 	>=dev-cpp/nlohmann_json-3.10.5
 	>=dev-libs/protobuf-3.19.4:=
 	>=dev-libs/crc32c-1.1.2

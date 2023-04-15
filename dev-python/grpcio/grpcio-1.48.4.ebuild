@@ -21,7 +21,10 @@ RDEPEND+="
 		<dev-python/protobuf-python-3.21[${PYTHON_USEDEP}]
 		>=dev-python/protobuf-python-3.5.0_p1[${PYTHON_USEDEP}]
 	)
-	~dev-cpp/abseil-cpp-20220623.0:=
+	(
+		<dev-cpp/abseil-cpp-20220624:=
+		>=dev-cpp/abseil-cpp-20220623.0:=
+	)
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-)]
 	>=dev-libs/re2-0.2021.09.01:=
 	>=dev-python/six-1.10[${PYTHON_USEDEP}]
