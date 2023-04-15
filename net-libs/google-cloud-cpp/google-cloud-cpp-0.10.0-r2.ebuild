@@ -11,22 +11,14 @@ HOMEPAGE="https://cloud.google.com/"
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=" testing-tensorflow r1"
+IUSE=" r1"
 RESTRICT="test"
 RDEPEND="
-	!testing-tensorflow? (
-		>=net-libs/grpc-1.19.1:=
-	)
 	>=dev-libs/protobuf-1.19.1:0/30
 	>=dev-libs/crc32c-1.0.6
 	>=dev-libs/openssl-1.1.1:=
+	>=net-libs/grpc-1.19.1:=
 	>=net-misc/curl-7.60.0
-	testing-tensorflow? (
-		(
-			<net-libs/grpc-1.49.3:=
-			>=net-libs/grpc-1.19.1:=
-		)
-	)
 "
 DEPEND="
 	${RDEPEND}
