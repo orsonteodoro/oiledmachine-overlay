@@ -28,8 +28,8 @@ IUSE="emacs examples static-libs test zlib"
 RESTRICT="!test? ( test )"
 RDEPEND="
 	(
-		<dev-cpp/abseil-cpp-20230126[${MULTILIB_USEDEP},test-helpers]
-		>=dev-cpp/abseil-cpp-20230125.0[${MULTILIB_USEDEP},test-helpers]
+		<dev-cpp/abseil-cpp-20230126[${MULTILIB_USEDEP},test-helpers(-)]
+		>=dev-cpp/abseil-cpp-20230125.0[${MULTILIB_USEDEP},test-helpers(-)]
 	)
 	dev-libs/utf8_range[${MULTILIB_USEDEP}]
 	zlib? (
