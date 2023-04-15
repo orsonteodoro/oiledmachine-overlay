@@ -46,7 +46,6 @@ https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
 "
 S="${WORKDIR}/${GRPC_P}"
 PATCHES=(
-	"${FILESDIR}/1.51.0-respect-cc.patch"
 )
 
 python_prepare_all() {
