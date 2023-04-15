@@ -227,7 +227,6 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
 # @DESCRIPTION:
 # Unpacks a yarn application.
 _yarn_src_unpack_default() {
-	einfo "In _yarn_src_unpack_default()"
 	export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 	if [[ ${PV} =~ 9999 ]] ; then
 		:;
