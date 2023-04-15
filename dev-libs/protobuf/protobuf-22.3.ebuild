@@ -79,7 +79,7 @@ einfo "Patching for 32-bit (${ABI})"
 }
 
 src_prepare() {
-	# Temp disable
+	# Temp disable.  It breaks on 32-bit and 64-bit.
 	sed -e "/^TEST_F(Utf8ValidationTest, OldVerifyUTF8String) {$/,/^}$/d" \
 		-i src/google/protobuf/wire_format_unittest.inc \
 		|| die
