@@ -416,7 +416,7 @@ RDEPEND="
 				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP_TEST},testing-tensorflow]
 				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP_TEST},testing-tensorflow]
 			)
-			>=net-libs/google-cloud-cpp-1.17.1[testing-tensorflow]
+			>=net-libs/google-cloud-cpp-1.40[testing-tensorflow]
 		)
 	)
 	test? (

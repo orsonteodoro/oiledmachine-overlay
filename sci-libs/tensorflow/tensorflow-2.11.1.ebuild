@@ -396,7 +396,7 @@ RDEPEND="
 				>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP_TEST}]
 			)
 			(
-				<net-libs/google-cloud-cpp-2.3[testing-tensorflow]
+				<net-libs/google-cloud-cpp-1.40[testing-tensorflow]
 				>=net-libs/google-cloud-cpp-1.17.1[testing-tensorflow]
 			)
 			(

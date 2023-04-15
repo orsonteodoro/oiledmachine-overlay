@@ -10,7 +10,7 @@ HOMEPAGE="https://cloud.google.com/"
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=" test testing-tensorflow"
+IUSE=" test testing-tensorflow r1"
 # Tests need a GCP account
 RESTRICT="test"
 # U 18.04
@@ -20,7 +20,7 @@ RDEPEND="
 	)
 	>=dev-cpp/abseil-cpp-20211102.0:0/20211102
 	>=dev-cpp/nlohmann_json-3.10.5
-	>=dev-libs/protobuf-3.19.4:=
+	>=dev-libs/protobuf-3.19.4:0/30
 	>=dev-libs/crc32c-1.1.2
 	>=dev-libs/openssl-1.1.1:=
 	>=dev-libs/re2-0.2020.11.01:=
@@ -31,7 +31,6 @@ RDEPEND="
 			<net-libs/grpc-1.49.3:=
 			>=net-libs/grpc-1.43.2:=
 		)
-		<sci-libs/tensorflow-2.12.0
 	)
 "
 DEPEND="
