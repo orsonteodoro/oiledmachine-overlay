@@ -231,7 +231,7 @@ gen_clang_deps() {
 
 DEPEND+="
 	${CDEPEND}
-	>=dev-cpp/abseil-cpp-20211102.0[${MULTILIB_USEDEP}]
+	>=dev-cpp/abseil-cpp-20211102.0:=[${MULTILIB_USEDEP}]
 	>=dev-cpp/yaml-cpp-0.7.0[${MULTILIB_USEDEP}]
 	>=dev-libs/boost-${BOOST_PV}[${MULTILIB_USEDEP}]
 	>=dev-libs/double-conversion-3.2.0[${MULTILIB_USEDEP}]

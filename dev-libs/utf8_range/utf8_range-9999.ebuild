@@ -14,10 +14,7 @@ SLOT="0"
 IUSE+=" fallback-commit test"
 # See https://github.com/protocolbuffers/utf8_range/blob/main/.github/workflows/cmake_tests.yml#L14
 RDEPEND+="
-	(
-		<dev-cpp/abseil-cpp-20220624:=
-		>=dev-cpp/abseil-cpp-20220623.0:=
-	)
+	>=dev-cpp/abseil-cpp-20220623.0:0/20220623
 "
 BDEPEND+="
 	>=dev-util/cmake-3.5

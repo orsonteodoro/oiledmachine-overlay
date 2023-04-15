@@ -398,14 +398,8 @@ DEPEND+="
 	)
 	system-abseil? (
 		|| (
-			(
-				<dev-cpp/abseil-cpp-20211103
-				>=dev-cpp/abseil-cpp-20211102.0
-			)
-			(
-				<dev-cpp/abseil-cpp-20220624
-				>=dev-cpp/abseil-cpp-20220623.0
-			)
+			>=dev-cpp/abseil-cpp-20211102.0:0/20211102
+			>=dev-cpp/abseil-cpp-20220623.0:0/20220623
 		)
 	)
 	system-bottle? (

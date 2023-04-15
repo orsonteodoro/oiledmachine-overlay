@@ -14,13 +14,14 @@ IUSE=" test testing-tensorflow"
 # Tests need a GCP account
 RESTRICT="test"
 # U 18.04
+# See https://github.com/googleapis/google-cloud-cpp/blob/v2.2.1/bazel/google_cloud_cpp_deps.bzl
 RDEPEND="
 	!testing-tensorflow? (
-		>=net-libs/grpc-1.43.2:=
+		>=net-libs/grpc-1.48.1:=
 	)
-	>=dev-cpp/abseil-cpp-20211102.0:0/20211102
-	>=dev-cpp/nlohmann_json-3.10.5
-	>=dev-libs/protobuf-3.19.4:=
+	>=dev-cpp/abseil-cpp-20220623.1:0/20220623
+	>=dev-cpp/nlohmann_json-3.11.2
+	>=dev-libs/protobuf-21.6:=
 	>=dev-libs/crc32c-1.1.2
 	>=dev-libs/openssl-1.1.1:=
 	>=dev-libs/re2-0.2020.11.01:=
@@ -29,7 +30,7 @@ RDEPEND="
 	testing-tensorflow? (
 		(
 			<net-libs/grpc-1.49.3:=
-			>=net-libs/grpc-1.43.2:=
+			>=net-libs/grpc-1.48.1:=
 		)
 		<sci-libs/tensorflow-2.12.0
 	)
@@ -38,12 +39,12 @@ DEPEND="
 	${RDEPEND}
 	>=dev-cpp/gtest-1.11.0
 	test? (
-		>=dev-cpp/benchmark-1.6.1
+		>=dev-cpp/benchmark-1.7.0
 	)
 "
 
 # From cmake/GoogleapisConfig.cmake
-GOOGLEAPIS_COMMIT="28c6bb97cac6f16c69879be4e655674a74b886ef"
+GOOGLEAPIS_COMMIT="67b2d7c2fb11188776bc398f02c67fccd8187502"
 
 SRC_URI="
 https://github.com/GoogleCloudPlatform/google-cloud-cpp/archive/v${PV}.tar.gz -> ${P}.tar.gz

@@ -21,9 +21,12 @@ RDEPEND="
 	>=dev-libs/crc32c-1.0.6
 	>=dev-libs/openssl-1.1.1:=
 	>=net-misc/curl-7.60.0
-	!testing-tensorflow? (
-		<net-libs/grpc-1.49.3:=
-		>=net-libs/grpc-1.19.1:=
+	testing-tensorflow? (
+		(
+			<net-libs/grpc-1.49.3:=
+			>=net-libs/grpc-1.19.1:=
+		)
+		<sci-libs/tensorflow-2.12.0
 	)
 "
 DEPEND="
@@ -32,7 +35,10 @@ DEPEND="
 "
 DOCS=( README.md )
 JSON_VER="3.4.0"
+
+# From cmake/external/googleapis.cmake
 GOOGLEAPIS_COMMIT="6a3277c0656219174ff7c345f31fb20a90b30b97"
+
 SRC_URI="
 https://github.com/GoogleCloudPlatform/google-cloud-cpp/archive/v${PV}.tar.gz -> ${P}.tar.gz
 https://github.com/googleapis/googleapis/archive/${GOOGLEAPIS_COMMIT}.tar.gz -> googleapis-${GOOGLEAPIS_COMMIT}.tar.gz

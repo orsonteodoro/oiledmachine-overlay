@@ -76,7 +76,7 @@ JRE_DEPEND="
 		dev-java/openjdk-jre-bin:${JAVA_SLOT}
 	)
 "
-#	=dev-cpp/abseil-cpp-20220623*:=
+#	>=dev-cpp/abseil-cpp-20220623:0/20220623
 #	>=dev-libs/protobuf-3.21.9:=
 RDEPEND+="
 	!dev-python/jaxlib-bin

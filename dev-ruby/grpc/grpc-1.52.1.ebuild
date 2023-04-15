@@ -72,10 +72,7 @@ ruby_add_bdepend "
 	)
 "
 RDEPEND+="
-	(
-		<dev-cpp/abseil-cpp-20220624:=
-		>=dev-cpp/abseil-cpp-20220623.0:=
-	)
+	>=dev-cpp/abseil-cpp-20220623.0:0/20220623
 	>=dev-libs/re2-0.2022.04.01
 	>=net-dns/c-ares-1.17.2
 	>=sys-libs/zlib-1.2.13

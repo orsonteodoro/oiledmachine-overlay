@@ -326,10 +326,7 @@ RDEPEND="
 		>=dev-libs/openssl-3:0=
 	)
 	!test? (
-		(
-			<dev-cpp/abseil-cpp-20220624:=
-			>=dev-cpp/abseil-cpp-20220623.0:=
-		)
+		>=dev-cpp/abseil-cpp-20220623.0:0/20220623
 		>=dev-libs/protobuf-3.9.2:=
 		>=net-libs/grpc-${GRPC_PV}:=
 	)
@@ -399,10 +396,13 @@ RDEPEND="
 				>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP_TEST}]
 			)
 			(
+				<net-libs/google-cloud-cpp-2.3[testing-tensorflow]
+				>=net-libs/google-cloud-cpp-1.17.1[testing-tensorflow]
+			)
+			(
 				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP_TEST},testing-tensorflow]
 				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP_TEST},testing-tensorflow]
 			)
-			>=net-libs/google-cloud-cpp-1.17.1[testing-tensorflow]
 		)
 	)
 	test? (

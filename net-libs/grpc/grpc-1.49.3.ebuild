@@ -40,10 +40,7 @@ SLOT_MAJ="0"
 SLOT="${SLOT_MAJ}/27.149" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
 # third_party last update: 20230214
 RDEPEND+="
-	(
-		<dev-cpp/abseil-cpp-20220624:=[${MULTILIB_USEDEP}]
-		>=dev-cpp/abseil-cpp-20220623.0:=[${MULTILIB_USEDEP}]
-	)
+	>=dev-cpp/abseil-cpp-20220623.0:0/20220623[${MULTILIB_USEDEP}]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-),${MULTILIB_USEDEP}]
 	>=dev-libs/protobuf-21.6:0/32[${MULTILIB_USEDEP}]
 	>=dev-libs/re2-0.2021.09.01:=[${MULTILIB_USEDEP}]
