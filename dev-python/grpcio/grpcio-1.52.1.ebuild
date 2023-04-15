@@ -20,6 +20,7 @@ RDEPEND+="
 		<dev-python/protobuf-python-5[${PYTHON_USEDEP}]
 		>=dev-python/protobuf-python-4.21.3[${PYTHON_USEDEP}]
 	)
+	=dev-cpp/abseil-cpp-20220623.0
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-)]
 	>=dev-libs/re2-0.2022.04.01:=
 	>=net-dns/c-ares-1.17.2:=
