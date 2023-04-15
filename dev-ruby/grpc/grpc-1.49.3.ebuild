@@ -75,7 +75,7 @@ RDEPEND+="
 	>=dev-libs/re2-0.2021.09.01
 	>=net-dns/c-ares-1.17.2
 	>=sys-libs/zlib-1.2.13
-	~dev-cpp/abseil-cpp-20220623.0
+	~dev-cpp/abseil-cpp-20220623.0:=
 "
 BDEPEND+="
 	$(gen_ruby_bdepend)

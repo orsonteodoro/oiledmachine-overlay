@@ -45,7 +45,7 @@ RDEPEND+="
 	>=dev-libs/re2-0.2022.04.01:=[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.17.2:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.13:=[${MULTILIB_USEDEP}]
-	~dev-cpp/abseil-cpp-20230125.0:=[${MULTILIB_USEDEP},cxx17(+)]
+	~dev-cpp/abseil-cpp-20230125.0:=[${MULTILIB_USEDEP}]
 "
 # See also
 # third_party/boringssl-with-bazel/src/include/openssl/crypto.h: OPENSSL_VERSION_TEXT
