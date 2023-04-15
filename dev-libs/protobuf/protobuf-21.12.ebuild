@@ -65,15 +65,18 @@ src_prepare() {
 	sed -e "/^TEST_F(IoTest, LargeOutput) {$/,/^}$/d" \
 		-i src/google/protobuf/io/zero_copy_stream_unittest.cc \
 		|| die
+	# 32-bit test breakage
 	# https://github.com/protocolbuffers/protobuf/issues/8459
 	sed \
 		-e "/^TEST(ArenaTest, BlockSizeSmallerThanAllocation) {$/a\\  if (sizeof(void*) == 4) {\n    GTEST_SKIP();\n  }" \
 		-e "/^TEST(ArenaTest, SpaceAllocated_and_Used) {$/a\\  if (sizeof(void*) == 4) {\n    GTEST_SKIP();\n  }" \
 		-i src/google/protobuf/arena_unittest.cc || die
+	# 32-bit test breakage
 	# https://github.com/protocolbuffers/protobuf/issues/8460
 	sed -e "/^TEST(AnyTest, TestPackFromSerializationExceedsSizeLimit) {$/a\\  if (sizeof(void*) == 4) {\n    GTEST_SKIP();\n  }" \
 		-i src/google/protobuf/any_test.cc \
 		|| die
+	# hppa breakage
 	# https://github.com/protocolbuffers/protobuf/issues/9433
 	sed -e "/^[[:space:]]*static_assert(alignof(U) <= 8, \"\");$/d" \
 		-i src/google/protobuf/descriptor.cc \
@@ -168,5 +171,5 @@ pkg_postrm() {
 	use emacs && elisp-site-regen
 }
 
-# OILEDMACHINE-OVERLAY-TESTS:  PASSED 21.12 (20220413) x86 and amd64 with
+# OILEDMACHINE-OVERLAY-TESTS:  PASSED with some disabled tests 21.12 (20230413) on x86 and amd64
 # USE="static-libs test -emacs -examples -zlib" ABI_X86="32 (64) (-x32)"
