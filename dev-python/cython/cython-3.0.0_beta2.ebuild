@@ -4,6 +4,8 @@
 
 EAPI=8
 
+MY_PV="${PV/_beta/b}"
+
 DISTUTILS_USE_PEP517=setuptools
 PYTHON_COMPAT=( python3_{8..11} pypy3 )
 PYTHON_REQ_USE="threads(+)"
@@ -17,7 +19,7 @@ HOMEPAGE="
 	https://pypi.org/project/Cython/
 "
 SRC_URI="
-	https://github.com/cython/cython/archive/${PV}.tar.gz
+	https://github.com/cython/cython/archive/${MY_PV}.tar.gz
 		-> ${P}.gh.tar.gz
 "
 
@@ -25,9 +27,9 @@ LICENSE="Apache-2.0"
 SLOT_MAJOR="$(ver_cut 1)"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 KEYWORDS="
-~alpha amd64 arm arm64 hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
-sparc x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x64-solaris
-~x86-solaris
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
+~s390 ~sparc ~x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
+~x64-solaris ~x86-solaris
 "
 IUSE="emacs test"
 RESTRICT="!test? ( test )"
@@ -41,28 +43,35 @@ RDEPEND="
 BDEPEND="
 	${RDEPEND}
 	doc? (
-		>=dev-python/sphinx-3.5.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-issues-1.2.0[${PYTHON_USEDEP}]
+		>=dev-python/jinja-3.0.3[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-issues-3.0.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-tabs-3.4.0[${PYTHON_USEDEP}]
 		dev-python/jupyter[${PYTHON_USEDEP}]
 	)
 	test? (
 		$(python_gen_cond_dep '
-			dev-python/coverage[${PYTHON_USEDEP}]
+			<dev-python/setuptools-60[${PYTHON_USEDEP}]
 			dev-python/numpy[${PYTHON_USEDEP}]
+			dev-python/coverage[${PYTHON_USEDEP}]
 			dev-python/pycodestyle[${PYTHON_USEDEP}]
-		' python3_{8..10})
+		' python3_{8..11})
 	)
 "
-
 PATCHES=(
 	"${FILESDIR}/${PN}-0.29.22-spawn-multiprocessing.patch"
 	"${FILESDIR}/${PN}-0.29.23-test_exceptions-py310.patch"
+	"${FILESDIR}/${PN}-0.29.23-pythran-parallel-install.patch"
 )
+S="${WORKDIR}/${PN}-${MY_PV}"
 
 SITEFILE=50cython-gentoo.el
 
 distutils_enable_sphinx \
-	"docs"
+	"docs" \
+	"dev-python/jinja" \
+	"dev-python/sphinx-issues" \
+	"dev-python/sphinx-tabs"
 
 python_compile() {
 	# Python gets confused when it is in sys.path before build.
@@ -129,5 +138,4 @@ pkg_postrm() {
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multislot
-# OILEDMACHINE-OVERLAY-META-REVDEP:  distro-packages
-
+# OILEDMACHINE-OVERLAY-META-REVDEP:  RapidFuzz, JaroWinkler
