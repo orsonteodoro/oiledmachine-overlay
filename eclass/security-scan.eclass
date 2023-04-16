@@ -17,13 +17,6 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-# @ECLASS_VARIABLE: YARN_EXTERNAL_URIS
-# @DESCRIPTION:
-
-# @FUNCTION: _yarn_cpy_yarn_tarballs
-# @INTERNAL
-# @DESCRIPTION:
-
 # @FUNCTION: security-scan_avscan
 # @DESCRIPTION:
 # Scans arg for malware.
@@ -272,7 +265,7 @@ eerror
 # @DESCRIPTION:
 # Run all scans for npm/yarn/electron based packages.
 security-scan_js_scan_all() {
-	npm-utils_avscan "${WORKDIR}"
+	security-scan_avscan "${WORKDIR}"
 	security-scan_find_analytics
 	security-scan_find_analytics_within_source_code
 	security-scan_find_session_replay
