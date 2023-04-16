@@ -42,6 +42,13 @@ https://github.com/GoogleCloudPlatform/google-cloud-cpp/archive/v${PV}.tar.gz ->
 https://github.com/googleapis/googleapis/archive/${GOOGLEAPIS_COMMIT}.tar.gz -> googleapis-${GOOGLEAPIS_COMMIT}.tar.gz
 "
 DOCS=( README.md )
+PATCHES=(
+	"${FILESDIR}/${PN}-2.2.1-no-download.patch"
+)
+
+src_unpack() {
+	unpack ${P}.tar.gz
+}
 
 src_configure() {
 	local mycmakeargs=(

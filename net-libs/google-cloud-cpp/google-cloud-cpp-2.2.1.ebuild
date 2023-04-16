@@ -35,13 +35,20 @@ DEPEND="
 "
 
 # From cmake/GoogleapisConfig.cmake
-GOOGLEAPIS_COMMIT="67b2d7c2fb11188776bc398f02c67fccd8187502"
+GOOGLEAPIS_COMMIT="343f52cd370556819da24df078308f3f709ff24b"
 
 SRC_URI="
 https://github.com/GoogleCloudPlatform/google-cloud-cpp/archive/v${PV}.tar.gz -> ${P}.tar.gz
 https://github.com/googleapis/googleapis/archive/${GOOGLEAPIS_COMMIT}.tar.gz -> googleapis-${GOOGLEAPIS_COMMIT}.tar.gz
 "
 DOCS=( README.md )
+PATCHES=(
+	"${FILESDIR}/${PN}-2.2.1-no-download.patch"
+)
+
+src_unpack() {
+	unpack ${P}.tar.gz
+}
 
 src_configure() {
 	local mycmakeargs=(
