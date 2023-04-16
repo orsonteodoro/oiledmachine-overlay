@@ -5,7 +5,7 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
-inherit distutils-r1 multiprocessing prefix
+inherit distutils-r1 flag-o-matic multiprocessing prefix
 
 DESCRIPTION="High-performance RPC framework (python libraries)"
 HOMEPAGE="https://grpc.io"
@@ -50,6 +50,7 @@ PATCHES=(
 )
 
 python_prepare_all() {
+	sed -i -e "s|-std=c++14|-std=c++17|g" setup.py || die
 	distutils-r1_python_prepare_all
 	hprefixify setup.py
 }
@@ -86,6 +87,7 @@ python_configure_all() {
 	export GRPC_PYTHON_BUILD_WITH_SYSTEM_RE2=1
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_ENABLE_DOCUMENTATION_BUILD=$(usex doc "1" "0")
+	append-cxxflags -std=c++17
 }
 
 distutils_enable_sphinx "doc/python/sphinx"
