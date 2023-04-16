@@ -43,7 +43,7 @@ https://github.com/googleapis/googleapis/archive/${GOOGLEAPIS_COMMIT}.tar.gz -> 
 "
 DOCS=( README.md )
 PATCHES=(
-	"${FILESDIR}/${PN}-2.2.1-no-download.patch"
+	"${FILESDIR}/${PN}-2.9.0-no-download.patch"
 )
 
 src_unpack() {

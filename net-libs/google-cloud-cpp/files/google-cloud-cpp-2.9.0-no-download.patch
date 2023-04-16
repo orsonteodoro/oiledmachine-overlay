@@ -33,7 +33,7 @@
 +        googleapis_download
 +        EXCLUDE_FROM_ALL ON
 +        PREFIX "${EXTERNAL_GOOGLEAPIS_PREFIX}"
-+        URL $ENV{DISTDIR}/googleapis-${GOOGLE_CLOUD_CPP_GOOGLEAPIS_COMMIT_SHA}.tar.gz
++        URL $ENV{DISTDIR}/googleapis-${_GOOGLE_CLOUD_CPP_GOOGLEAPIS_COMMIT_SHA}.tar.gz
 +        URL_HASH SHA256=${GOOGLE_CLOUD_CPP_GOOGLEAPIS_URL_HASH}
 +        PATCH_COMMAND
 +            ""
