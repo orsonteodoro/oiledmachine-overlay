@@ -112,9 +112,9 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Feb 20, 2023
+# Last deps commit date:  Apr 8, 2023
 ACORN_PV="8.8.2"
-NGHTTP2_PV="1.51.0"
+NGHTTP2_PV="1.52.0"
 RDEPEND+="
 	!net-libs/nodejs:0
 	!sys-apps/yarn
@@ -163,7 +163,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="9.5.0" # See https://github.com/nodejs/node/blob/v19.7.0/deps/npm/package.json
+NPM_V="9.6.2" # See https://github.com/nodejs/node/blob/v19.9.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
@@ -494,6 +494,10 @@ ewarn "If moldlto fails for gcc, try clang."
 		sed -i -e "s|-fsanitize-cfi-cross-dso||g" \
 			"${S}/out/Debug/obj/test_crypto_engine.ninja" || die
 	fi
+
+	if use acorn && ! which npm ; then
+ewarn "Auto installing acorn requires npm."
+	fi
 }
 
 _src_compile() {
@@ -520,10 +524,6 @@ EOF
 			cd "${S}/node_modules/autocannon" || die
 			npm install autocannon@${AUTOCANNON_V} || die
 		fi
-	fi
-
-	if use acorn && ! which npm ; then
-ewarn "Auto installing acorn requires npm."
 	fi
 }
 

@@ -165,7 +165,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="9.5.0" # See https://github.com/nodejs/node/blob/v18.14.2/deps/npm/package.json
+NPM_V="9.5.0" # See https://github.com/nodejs/node/blob/v18.15.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
