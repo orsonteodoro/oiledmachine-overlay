@@ -64,10 +64,17 @@ echo "Fail lockfile for =${CATEGORY}/${PN}-${pv}"
 
 			local dest="${__YARN_UPDATER_PKG_FOLDER_PATH}/files/${pv%-*}"
 			mkdir -p "${dest}"
-			local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/package.json")
-			cp -a "${path}" "${dest}"
-			local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/yarn.lock")
-			cp -a "${path}" "${dest}"
+			if [[ -n "${YARN_UPDATER_PROJECT_ROOT}" ]] ; then
+				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${YARN_UPDATER_PROJECT_ROOT}/package.json")
+				cp -a "${path}" "${dest}"
+				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${YARN_UPDATER_PROJECT_ROOT}/yarn.lock")
+				cp -a "${path}" "${dest}"
+			else
+				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/package.json")
+				cp -a "${path}" "${dest}"
+				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/yarn.lock")
+				cp -a "${path}" "${dest}"
+			fi
 			grep "resolved" "${path}" \
 				| cut -f 2 -d '"' \
 				> yarn-uris.txt

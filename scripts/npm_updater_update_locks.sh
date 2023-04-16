@@ -61,14 +61,25 @@ echo "Fail lockfile for =${CATEGORY}/${PN}-${pv} (1)"
 
 			local dest="${__NPM_UPDATER_PKG_FOLDER_PATH}/files/${pv%-*}"
 			mkdir -p "${dest}"
-			local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/package.json")
-			cp -a "${path}" "${dest}"
-			local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/package-lock.json")
-			if ! [[ -e "${path}" ]] ; then
-echo "Fail lockfile for =${CATEGORY}/${PN}-${pv} (2)"
-				exit 1
+			if [[ -n "${NPM_UPDATER_PROJECT_ROOT}" ]] ; then
+				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${NPM_UPDATER_PROJECT_ROOT}/package.json")
+				cp -a "${path}" "${dest}"
+				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${NPM_UPDATER_PROJECT_ROOT}/package-lock.json")
+				if ! [[ -e "${path}" ]] ; then
+echo "Fail lockfile for =${CATEGORY}/${PN}-${pv} (2a)"
+					exit 1
+				fi
+				cp -a "${path}" "${dest}"
+			else
+				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/package.json")
+				cp -a "${path}" "${dest}"
+				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/package-lock.json")
+				if ! [[ -e "${path}" ]] ; then
+echo "Fail lockfile for =${CATEGORY}/${PN}-${pv} (2b)"
+					exit 1
+				fi
+				cp -a "${path}" "${dest}"
 			fi
-			cp -a "${path}" "${dest}"
 			grep "resolved" "${path}" \
 				| cut -f 4 -d '"' \
 				> npm-uris.txt
