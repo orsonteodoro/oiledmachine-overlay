@@ -1,6 +1,6 @@
 --- google-cloud-cpp-2.9.0.orig/external/googleapis/CMakeLists.txt	2023-04-03 12:00:18.000000000 -0700
 +++ google-cloud-cpp-2.9.0/external/googleapis/CMakeLists.txt	2023-04-15 17:30:30.335543880 -0700
-@@ -123,29 +123,56 @@ endforeach ()
+@@ -123,29 +123,57 @@ endforeach ()
  
  include(ExternalProject)
  
@@ -27,6 +27,7 @@
 -    INSTALL_COMMAND ""
 -    BUILD_BYPRODUCTS ${EXTERNAL_GOOGLEAPIS_BYPRODUCTS}
 -    LOG_DOWNLOAD OFF)
++# oteodoro:  changes for offline install
 +option(CACHED_GOOGLEAPIS "Use cached googleapi's tarball" ON)
 +if (CACHED_GOOGLEAPIS)
 +    externalproject_add(
