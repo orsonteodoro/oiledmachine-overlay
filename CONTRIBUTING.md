@@ -291,6 +291,7 @@ based on an outdated style guide.
     0 for the SLOT.
   - You must not increase the time cost that it may decrease security by
     blocking security updates.
+  - If a package is orphaned in this overlay, it may be dropped.
 
 * Multislot rules/guidelines:
   - SLOT are up to the ebuild (SLOT="slot/subslot"), but recommened for
