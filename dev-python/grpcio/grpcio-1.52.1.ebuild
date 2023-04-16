@@ -29,6 +29,7 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+# TODO: doc: requirements.bazel.txt
 BDEPEND+="
 	>=dev-python/coverage-4[${PYTHON_USEDEP}]
 	>=dev-python/cython-0.29.8[${PYTHON_USEDEP}]
