@@ -9497,7 +9497,7 @@ src_compile() {
 
 src_install() {
 	insinto "${NPM_INSTALL_PATH}"
-	doins -R newIDE/electron-app/dist/linux-unpacked/*
+	doins -r newIDE/electron-app/dist/linux-unpacked/*
 	electron-app_gen_wrapper \
 		"${PN}" \
 		"${NPM_INSTALL_PATH}/${PN}"
