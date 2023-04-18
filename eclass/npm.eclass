@@ -181,31 +181,37 @@ npm_gen_new_name() {
 # @DESCRIPTION:
 # Convert package-lock.json for offline install.
 npm_transform_uris_default() {
-	[[ -f "package-lock.json" ]] || die "Missing package-lock.json"
-	IFS=$'\n'
-	local uri
-	for uri in $(grep -E -o -e "https://registry.npmjs.org/([@a-zA-Z0-9._-]+/)+-/([@a-zA-Z0-9._-]+.tgz)" \
-		-e "git\+https://git@github.com[^#]+#[a-zA-Z0-9]+" \
-		-e "git\+ssh://git@github.com[^#]+#[a-zA-Z0-9]+" \
-		"package-lock.json") ; do
-		local bn=$(basename "${uri}")
-		local newname=$(npm_gen_new_name "${uri}")
-		sed -i -e "s|${uri}|file:${WORKDIR}/npm-packages-offline-cache/${newname}|g" package-lock.json || die
-	done
-	IFS=$' \t\n'
-	if grep -q "registry.npmjs.org" "package-lock.json" ; then
+	local lockfile
+	for lockfile in $(find . -name "package-lock.json") ; do
+		IFS=$'\n'
+		local uri
+		for uri in $(grep -E -o \
+			-e "https://registry.npmjs.org/([@a-zA-Z0-9._-]+/)+-/([@a-zA-Z0-9._-]+.tgz)" \
+			-e "git\+https://git@github.com[^#]+#[a-zA-Z0-9]+" \
+			-e "git\+ssh://git@github.com[^#]+#[a-zA-Z0-9]+" \
+			"${lockfile}") ; do
+			local bn=$(basename "${uri}")
+			local newname=$(npm_gen_new_name "${uri}")
+			sed -i -e "s|${uri}|file:${WORKDIR}/npm-packages-offline-cache/${newname}|g" "${lockfile}" || die
+		done
+		IFS=$' \t\n'
+		if grep -q "registry.npmjs.org" "${lockfile}" ; then
 eerror
 eerror "Detected URI in lockfile that is not converted to offline format."
+eerror "File:  ${lockfile}"
 eerror
-		die
-	fi
+			die
+		fi
+	done
 }
 
 # @FUNCTION: _npm_src_unpack_default
 # @DESCRIPTION:
 # Unpacks a npm application.
 _npm_src_unpack_default() {
-	export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+	if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
+		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+	fi
 	if [[ ${PV} =~ 9999 ]] ; then
 		:;
 	elif [[ -n "${NPM_TARBALL}" ]] ; then
@@ -213,34 +219,48 @@ _npm_src_unpack_default() {
 	else
 		unpack ${P}.tar.gz
 	fi
-	_npm_cp_tarballs
 	cd "${S}" || die
-	rm -rf "package-lock.json" || true
-	if [[ -f "${FILESDIR}/${PV}/package.json" && -n "${NPM_ROOT}" ]] ; then
-		cp "${FILESDIR}/${PV}/package.json" "${NPM_ROOT}" || die
-	elif [[ -f "${FILESDIR}/${PV}/package.json" ]] ; then
-		cp "${FILESDIR}/${PV}/package.json" "${S}" || die
-	fi
-	if [[ -f "${FILESDIR}/${PV}/package-lock.json" && -n "${NPM_ROOT}" ]] ; then
-		cp "${FILESDIR}/${PV}/package-lock.json" "${NPM_ROOT}" || die
-	elif [[ -f "${FILESDIR}/${PV}/package-lock.json" ]] ; then
-		cp "${FILESDIR}/${PV}/package-lock.json" "${S}" || die
-	else
+	if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
+		_npm_cp_tarballs
+		rm -rf "package-lock.json" || true
+		if [[ -e "${FILESDIR}/${PV}" && "${NPM_MULTI_LOCKFILE}" == "1" && -n "${NPM_ROOT}" ]] ; then
+			cp -aT "${FILESDIR}/${PV}" "${NPM_ROOT}" || die
+		elif [[ -e "${FILESDIR}/${PV}" && "${NPM_MULTI_LOCKFILE}" == "1" ]] ; then
+			cp -aT "${FILESDIR}/${PV}" "${S}" || die
+		elif [[ -f "${FILESDIR}/${PV}/package.json" && -n "${NPM_ROOT}" ]] ; then
+			cp "${FILESDIR}/${PV}/package.json" "${NPM_ROOT}" || die
+		elif [[ -f "${FILESDIR}/${PV}/package.json" ]] ; then
+			cp "${FILESDIR}/${PV}/package.json" "${S}" || die
+		fi
+		if [[ -e "${FILESDIR}/${PV}" && "${NPM_MULTI_LOCKFILE}" == "1" && -n "${NPM_ROOT}" ]] ; then
+			cp -aT "${FILESDIR}/${PV}" "${NPM_ROOT}" || die
+		elif [[ -e "${FILESDIR}/${PV}" && "${NPM_MULTI_LOCKFILE}" == "1" ]] ; then
+			cp -aT "${FILESDIR}/${PV}" "${S}" || die
+		elif [[ -f "${FILESDIR}/${PV}/package-lock.json" && -n "${NPM_ROOT}" ]] ; then
+			cp "${FILESDIR}/${PV}/package-lock.json" "${NPM_ROOT}" || die
+		elif [[ -f "${FILESDIR}/${PV}/package-lock.json" ]] ; then
+			cp "${FILESDIR}/${PV}/package-lock.json" "${S}" || die
+		else
 einfo "Missing package-lock.json"
-		die
-	fi
-	if declare -f npm_transform_uris > /dev/null ; then
-		# For repo
-		npm_transform_uris
-	else
-		npm_transform_uris_default
+			die
+		fi
+		if declare -f npm_transform_uris > /dev/null ; then
+			# For repo
+			npm_transform_uris
+		else
+			npm_transform_uris_default
+		fi
 	fi
 	local args=()
 	if declare -f npm_unpack_install_pre > /dev/null ; then
 		npm_unpack_install_pre
 	fi
+	local extra_args=()
+	if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
+		extra_args+=( "--prefer-offline" )
+	fi
 	enpm install \
-		--prefer-offline \
+		${extra_args[@]} \
 		${NPM_INSTALL_UNPACK_ARGS}
 	if declare -f npm_unpack_install_post > /dev/null ; then
 		npm_unpack_install_post
@@ -258,11 +278,25 @@ _npm_auto_rename() {
 		local from=$(echo "${row}" | cut -f 2 -d "'")
 		local to=$(echo "${row}" | cut -f 4 -d "'")
 		if [[ -e "${from}" ]] ; then
-einfo "Moving ${from} -> ${to}"
-			mv "${from}" "${to}" || true
+			local ts=$(date "+%s")
+einfo "Moving ${from} -> ${to}.${ts}"
+			mv "${from}" "${to}.${ts}" || true
 			sed -i -e "\|${to}|d" "${T}/build.log" || die
 		fi
 	done
+	IFS=$' \t\n'
+}
+
+# @FUNCTION: _npm_auto_remove_node_modules
+# @INTERNAL
+# @DESCRIPTION:
+# Removes all node_modules folders
+_npm_auto_remove_node_modules() {
+	local row
+	IFS=$'\n'
+	if grep -r -e "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs" ; then
+		find . -type d -name "node_modules" -exec rm -rf '{}' \;
+	fi
 	IFS=$' \t\n'
 }
 
@@ -281,7 +315,7 @@ einfo "Running:\tnpm ${cmd[@]}"
 		if ! grep -q -E -r -e "(ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
 			break
 		fi
-		_npm_auto_rename
+		_npm_auto_remove_node_modules
 		if grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
 			tries=$((${tries} + 1))
 		fi
@@ -327,9 +361,11 @@ npm_src_unpack() {
 
 		die
 	else
-		#export ELECTRON_SKIP_BINARY_DOWNLOAD=1
-		export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
-		export ELECTRON_CACHE="${HOME}/.cache/electron"
+		if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
+			#export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+			export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
+			export ELECTRON_CACHE="${HOME}/.cache/electron"
+		fi
 		mkdir -p "${S}" || die
 		if [[ -e "${FILESDIR}/${PV}/package.json" ]] ; then
 			cp -a "${FILESDIR}/${PV}/package.json" "${S}" || die
@@ -347,9 +383,12 @@ npm_src_compile() {
 	[[ "${NPM_BUILD_SCRIPT}" == "skip" ]] && return
 	local cmd="${NPM_BUILD_SCRIPT:-build}"
 	grep -q -e "\"${cmd}\"" package.json || return
-	local args=()
+	local extra_args=()
+	if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
+		extra_args+=( "--prefer-offline" )
+	fi
 	npm run ${cmd} \
-		--prefer-offline \
+		${extra_args[@]} \
 		|| die
 	grep -q -e "ENOENT" "${T}/build.log" && die
 }

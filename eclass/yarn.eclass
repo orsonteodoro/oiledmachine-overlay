@@ -245,12 +245,20 @@ _yarn_src_unpack_default() {
 	rm -rf "${S}/.yarnrc" || die
 	yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
 	mv "${HOME}/.yarnrc" "${WORKDIR}" || die
-	if [[ -f "${FILESDIR}/${PV}/package.json" && -n "${YARN_ROOT}" ]] ; then
+	if [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" && -n "${YARN_ROOT}" ]] ; then
+		cp -aT "${FILESDIR}/${PV}" "${YARN_ROOT}" || die
+	elif [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" ]] ; then
+		cp -aT "${FILESDIR}/${PV}" "${S}" || die
+	elif [[ -f "${FILESDIR}/${PV}/package.json" && -n "${YARN_ROOT}" ]] ; then
 		cp "${FILESDIR}/${PV}/package.json" "${YARN_ROOT}" || die
 	elif [[ -f "${FILESDIR}/${PV}/package.json" ]] ; then
 		cp "${FILESDIR}/${PV}/package.json" "${S}" || die
 	fi
-	if [[ -f "${FILESDIR}/${PV}/yarn.lock" && -n "${YARN_ROOT}" ]] ; then
+	if [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" && -n "${YARN_ROOT}" ]] ; then
+		cp -aT "${FILESDIR}/${PV}" "${YARN_ROOT}" || die
+	elif [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" ]] ; then
+		cp -aT "${FILESDIR}/${PV}" "${S}" || die
+	elif [[ -f "${FILESDIR}/${PV}/yarn.lock" && -n "${YARN_ROOT}" ]] ; then
 		cp "${FILESDIR}/${PV}/yarn.lock" "${YARN_ROOT}" || die
 	elif [[ -f "${FILESDIR}/${PV}/yarn.lock" ]] ; then
 		cp "${FILESDIR}/${PV}/yarn.lock" "${S}" || die
@@ -280,11 +288,25 @@ _npm_auto_rename() {
 		local from=$(echo "${row}" | cut -f 2 -d "'")
 		local to=$(echo "${row}" | cut -f 4 -d "'")
 		if [[ -e "${from}" ]] ; then
-einfo "Moving ${from} -> ${to}"
-			mv "${from}" "${to}" || true
+			local ts=$(date "+%s")
+einfo "Moving ${from} -> ${to}.${ts}"
+			mv "${from}" "${to}.${ts}" || true
 			sed -i -e "\|${to}|d" "${T}/build.log" || die
 		fi
 	done
+	IFS=$' \t\n'
+}
+
+# @FUNCTION: _npm_auto_remove_node_modules
+# @INTERNAL
+# @DESCRIPTION:
+# Removes all node_modules folders
+_npm_auto_remove_node_modules() {
+	local row
+	IFS=$'\n'
+	if grep -r -e "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs" ; then
+		find . -type d -name "node_modules" -exec rm -rf '{}' \;
+	fi
 	IFS=$' \t\n'
 }
 
@@ -303,7 +325,7 @@ einfo "Running:\tnpm ${cmd[@]}"
 		if ! grep -q -E -r -e "(ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
 			break
 		fi
-		_npm_auto_rename
+		_npm_auto_remove_node_modules
 		if grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
 			tries=$((${tries} + 1))
 		fi

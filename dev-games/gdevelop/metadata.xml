@@ -23,9 +23,6 @@
     <doc lang="en">https://docs.gdevelop-app.com/GDCore%20Documentation/</doc>
   </upstream>
   <use>
-    <flag name="openrc">
-      Installs script to load the server
-    </flag>
     <flag name="rN">
       Bumps ebuild revision (FOR INTERNAL USE ONLY)
     </flag>

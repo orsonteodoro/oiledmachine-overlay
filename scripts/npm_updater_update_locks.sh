@@ -30,7 +30,7 @@ npm_updater_update_npm_locks() {
 	)
 	if [[ -n "${NPM_UPDATER_VERSIONS}" ]] ; then
 # Do one by one because of flakey servers or node slot restrictions.
-		versions=(${NPM_UPDATER_VERSIONS})
+		versions=( ${NPM_UPDATER_VERSIONS} )
 	fi
 	export NPM_UPDATE_LOCK=1
 	local pv
@@ -47,9 +47,19 @@ EOF
 		sed -i "/UPDATER_START_NPM_EXTERNAL_URIS/r extern-uris.txt" "${PN}-${pv}.ebuild"
 		if [[ "${NPM_UPDATER_MODE}" == "uri-list-only" ]] ; then
 			ebuild "${PN}-${pv}.ebuild" digest
-			grep "resolved" "${NPM_UPDATER_PKG_FOLDER}/files/${pv}/package-lock.json" \
-				| cut -f 4 -d '"' \
-				> npm-uris.txt
+
+			local dest="${NPM_UPDATER_PKG_FOLDER}/files/${pv%-*}"
+			local nlocks=$(grep -r -l -e "resolved" "${dest}" | wc -l)
+			if (( ${nlocks} > 1 )) ; then
+echo "Multilock package detected"
+				grep -r -e "resolved" "${dest}" \
+					| cut -f 4 -d '"' \
+					> npm-uris.txt
+			else
+				grep "resolved" "${NPM_UPDATER_PKG_FOLDER}/files/${pv}/package-lock.json" \
+					| cut -f 4 -d '"' \
+					> npm-uris.txt
+			fi
 		elif [[ "${NPM_UPDATER_MODE}" == "full" ]] ; then
 			ebuild "${PN}-${pv}.ebuild" digest clean unpack
 
@@ -59,9 +69,14 @@ echo "Fail lockfile for =${CATEGORY}/${PN}-${pv} (1)"
 				exit 1
 			fi
 
-			local dest="${__NPM_UPDATER_PKG_FOLDER_PATH}/files/${pv%-*}"
+			local dest="${NPM_UPDATER_PKG_FOLDER}/files/${pv%-*}"
 			mkdir -p "${dest}"
-			if [[ -n "${NPM_UPDATER_PROJECT_ROOT}" ]] ; then
+			if [[ -d "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/lockfile-image" ]] ; then
+				cp -aT "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/lockfile-image" "${dest}"
+				grep -r -e "resolved" "${dest}" \
+					| cut -f 4 -d '"' \
+					> npm-uris.txt
+			elif [[ -n "${NPM_UPDATER_PROJECT_ROOT}" ]] ; then
 				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${NPM_UPDATER_PROJECT_ROOT}/package.json")
 				cp -a "${path}" "${dest}"
 				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${NPM_UPDATER_PROJECT_ROOT}/package-lock.json")
@@ -70,6 +85,9 @@ echo "Fail lockfile for =${CATEGORY}/${PN}-${pv} (2a)"
 					exit 1
 				fi
 				cp -a "${path}" "${dest}"
+				grep "resolved" "${path}" \
+					| cut -f 4 -d '"' \
+					> npm-uris.txt
 			else
 				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/package.json")
 				cp -a "${path}" "${dest}"
@@ -79,10 +97,10 @@ echo "Fail lockfile for =${CATEGORY}/${PN}-${pv} (2b)"
 					exit 1
 				fi
 				cp -a "${path}" "${dest}"
+				grep "resolved" "${path}" \
+					| cut -f 4 -d '"' \
+					> npm-uris.txt
 			fi
-			grep "resolved" "${path}" \
-				| cut -f 4 -d '"' \
-				> npm-uris.txt
 		fi
 		"${NPM_UPDATER_SCRIPTS_PATH}/npm_updater_transform_uris.sh" > transformed-uris.txt
 		cat "${PN}-${pv}.ebuild" | sed -e '/UPDATER_START_NPM_EXTERNAL_URIS/,/UPDATER_END_NPM_EXTERNAL_URIS/{//!d}' > "${PN}-${pv}.ebuild.t"

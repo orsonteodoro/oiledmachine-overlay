@@ -2,8 +2,6 @@
 # Update once a week
 __YARN_UPDATER_PKG_FOLDER_PATH=$(pwd)
 export YARN_UPDATER_PKG_FOLDER="${YARN_UPDATER_PKG_FOLDER:-${__YARN_UPDATER_PKG_FOLDER_PATH}}"
-echo "A:${__YARN_UPDATER_PKG_FOLDER_PATH}"
-echo "B:${YARN_UPDATER_PKG_FOLDER}"
 YARN_UPDATER_SCRIPTS_PATH=$(realpath $(dirname "${BASH_SOURCE[0]}"))
 YARN_UPDATER_MODE="${YARN_UPDATER_MODE:-full}"
 
@@ -24,7 +22,6 @@ echo "Arg 2 must be the package name"
 fi
 
 yarn_updater_update_yarn_locks() {
-	echo "YARN_UPDATER_PKG_FOLDER=${YARN_UPDATER_PKG_FOLDER}"
 	cd "${YARN_UPDATER_PKG_FOLDER}"
 	local versions=(
 		$(ls *ebuild \
@@ -33,7 +30,7 @@ yarn_updater_update_yarn_locks() {
 	)
 	if [[ -n "${YARN_UPDATER_VERSIONS}" ]] ; then
 # Do one by one because of flakey servers or node slot restrictions.
-		versions=(${YARN_UPDATER_VERSIONS})
+		versions=( ${YARN_UPDATER_VERSIONS} )
 	fi
 	export YARN_UPDATE_LOCK=1
 	local pv
@@ -50,9 +47,19 @@ EOF
 		sed -i "/UPDATER_START_YARN_EXTERNAL_URIS/r extern-uris.txt" "${PN}-${pv}.ebuild"
 		if [[ "${YARN_UPDATER_MODE}" == "uri-list-only" ]] ; then
 			ebuild "${PN}-${pv}.ebuild" digest
-			grep "resolved" "${YARN_UPDATER_PKG_FOLDER}/files/${pv}/yarn.lock" \
-				| cut -f 2 -d '"' \
-				> yarn-uris.txt
+
+			local dest="${YARN_UPDATER_PKG_FOLDER}/files/${pv%-*}"
+			local nlocks=$(grep -r -l -e "resolved" "${dest}" | wc -l)
+			if (( ${nlocks} > 1 )) ; then
+echo "Multilock package detected"
+				grep -r -e "resolved" "${dest}" \
+					| cut -f 2 -d '"' \
+					> yarn-uris.txt
+			else
+				grep "resolved" "${YARN_UPDATER_PKG_FOLDER}/files/${pv}/yarn.lock" \
+					| cut -f 2 -d '"' \
+					> yarn-uris.txt
+			fi
 		elif [[ "${YARN_UPDATER_MODE}" == "full" ]] ; then
 			ebuild "${PN}-${pv}.ebuild" digest clean unpack
 
@@ -62,22 +69,30 @@ echo "Fail lockfile for =${CATEGORY}/${PN}-${pv}"
 				exit 1
 			fi
 
-			local dest="${__YARN_UPDATER_PKG_FOLDER_PATH}/files/${pv%-*}"
+			local dest="${YARN_UPDATER_PKG_FOLDER}/files/${pv%-*}"
 			mkdir -p "${dest}"
-			if [[ -n "${YARN_UPDATER_PROJECT_ROOT}" ]] ; then
+			if [[ -d "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/lockfile-image" ]] ; then
+				cp -aT "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/lockfile-image" "${dest}"
+				grep -r -e "resolved" "${dest}" \
+					| cut -f 2 -d '"' \
+					> yarn-uris.txt
+			elif [[ -n "${YARN_UPDATER_PROJECT_ROOT}" ]] ; then
 				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${YARN_UPDATER_PROJECT_ROOT}/package.json")
 				cp -a "${path}" "${dest}"
 				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${YARN_UPDATER_PROJECT_ROOT}/yarn.lock")
 				cp -a "${path}" "${dest}"
+				grep "resolved" "${path}" \
+					| cut -f 2 -d '"' \
+					> yarn-uris.txt
 			else
 				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/package.json")
 				cp -a "${path}" "${dest}"
 				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/yarn.lock")
 				cp -a "${path}" "${dest}"
+				grep "resolved" "${path}" \
+					| cut -f 2 -d '"' \
+					> yarn-uris.txt
 			fi
-			grep "resolved" "${path}" \
-				| cut -f 2 -d '"' \
-				> yarn-uris.txt
 		fi
 		"${YARN_UPDATER_SCRIPTS_PATH}/yarn_updater_transform_uris.sh" > transformed-uris.txt
 		cat "${PN}-${pv}.ebuild" | sed -e '/UPDATER_START_YARN_EXTERNAL_URIS/,/UPDATER_END_YARN_EXTERNAL_URIS/{//!d}' > "${PN}-${pv}.ebuild.t"
