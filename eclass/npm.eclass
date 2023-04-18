@@ -186,7 +186,7 @@ npm_transform_uris_default() {
 		IFS=$'\n'
 		local uri
 		for uri in $(grep -E -o \
-			-e "https://registry.npmjs.org/([@a-zA-Z0-9._-]+/)+-/([@a-zA-Z0-9._-]+.tgz)" \
+			-e "http[s]?://registry.npmjs.org/([@a-zA-Z0-9._-]+/)+-/([@a-zA-Z0-9._-]+.tgz)" \
 			-e "git\+https://git@github.com[^#]+#[a-zA-Z0-9]+" \
 			-e "git\+ssh://git@github.com[^#]+#[a-zA-Z0-9]+" \
 			"${lockfile}") ; do
