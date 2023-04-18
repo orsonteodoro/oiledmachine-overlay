@@ -17,7 +17,7 @@
     "folder-hash": "^3.0.0",
     "follow-redirects": "^1.2.3",
     "iso-639-1": "^2.0.3",
-    "minimist": "1.2.5",
+    "minimist": "1.2.6",
     "patch-package": "^6.4.7",
     "prettier": "1.15.3",
     "react-error-overlay": "^6.0.9",
