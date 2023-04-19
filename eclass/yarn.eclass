@@ -18,7 +18,7 @@
 
 # For package.json -> yarn.lock:
 # (The network-sandbox needs to be disabled temporarily.)
-# npm i            # or use npm i --prod
+# npm install            # or use npm install --prod
 # npm audit fix
 # yarn import
 
@@ -27,7 +27,7 @@
 #
 #   error Failed to import from package-lock.json, source file(s) corrupted
 #
-# Try with `npm i --prod` to generate the lockfile.
+# Try with `npm install --prod` to generate the lockfile.
 
 # The yarn.lock must be regenerated for security updates every week.
 
@@ -93,13 +93,17 @@ unset -f _yarn_set_globals
 # @DESCRIPTION:
 # The number of reconnect tries for yarn.
 
+# @ECLASS_VARIABLE: NPM_AUDIT_FIX
+# @DESCRIPTION:
+# Allow audit fix
+
 # @ECLASS_VARIABLE: NPM_TRIES
 # @DESCRIPTION:
 # The number of reconnect tries for npm.
 
 # @ECLASS_VARIABLE: NPM_INSTALL_UNPACK_ARGS
 # @DESCRIPTION:
-# Arguments to append to `npm i ` contexts during package-lock.json generation.
+# Arguments to append to `npm install ` contexts during package-lock.json generation.
 
 # @ECLASS_VARIABLE: NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS
 # @DESCRIPTION:
@@ -300,12 +304,13 @@ einfo "Moving ${from} -> ${to}.${ts}"
 # @FUNCTION: _npm_auto_remove_node_modules
 # @INTERNAL
 # @DESCRIPTION:
-# Removes all node_modules folders
+# Removes node_modules from the current folder
 _npm_auto_remove_node_modules() {
 	local row
 	IFS=$'\n'
 	if grep -r -e "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs" ; then
-		find . -type d -name "node_modules" -exec rm -rf '{}' \;
+einfo "Removing node_modules from $(pwd)"
+		rm -rf "node_modules"
 	fi
 	IFS=$' \t\n'
 }
@@ -316,6 +321,12 @@ _npm_auto_remove_node_modules() {
 # Rerun command if flakey connection.
 enpm() {
 	local cmd=("${@}")
+
+	if [[ "${cmd[@]}" =~ "audit fix" && "${NPM_AUDIT_FIX:-1}" == "0" ]] ; then
+einfo "Skipping audit fix."
+		return
+	fi
+
 	local tries
 	tries=0
 	while (( ${tries} < ${NPM_TRIES} )) ; do
@@ -332,6 +343,14 @@ einfo "Running:\tnpm ${cmd[@]}"
 		rm -rf "${HOME}/.npm/_logs"
 	done
 	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
+	if [[ "${cmd[@]}" =~ "build" ]] ; then
+		grep -q -e "ENOENT" "${T}/build.log" && die
+	fi
+	if [[ "${cmd[@]}" =~ ("audit fix"|"install") ]] ; then
+		# Indeterministic or random failure bug
+		grep -q -e "npm ERR! Invalid Version" "${T}/build.log" && die "Detected error"
+	fi
+	grep -q -e "npm ERR! Exit handler never called!" && die "Possible indeterministic behavior"
 }
 
 # @FUNCTION: eyarn
@@ -364,7 +383,7 @@ yarn_src_unpack() {
 			yarn_update_lock_install_pre > /dev/null ; then
 			yarn_update_lock_install_pre
 		fi
-		enpm i ${NPM_INSTALL_UNPACK_ARGS}
+		enpm install ${NPM_INSTALL_UNPACK_ARGS}
 		if declare -f \
 			yarn_update_lock_install_post > /dev/null ; then
 			yarn_update_lock_install_post

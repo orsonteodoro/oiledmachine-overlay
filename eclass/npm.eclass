@@ -32,6 +32,10 @@ _npm_set_globals() {
 _npm_set_globals
 unset -f _npm_set_globals
 
+# @ECLASS_VARIABLE: NPM_AUDIT_FIX
+# @DESCRIPTION:
+# Allow audit fix
+
 # @ECLASS_VARIABLE: NPM_BUILD_SCRIPT
 # @DESCRIPTION:
 # The build script to run from package.json:scripts section.
@@ -54,7 +58,7 @@ unset -f _npm_set_globals
 
 # @ECLASS_VARIABLE: NPM_INSTALL_UNPACK_ARGS
 # @DESCRIPTION:
-# Arguments to append to `npm i ` during package-lock.json generation.
+# Arguments to append to `npm install ` during package-lock.json generation.
 
 # @ECLASS_VARIABLE: NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS
 # @DESCRIPTION:
@@ -290,12 +294,13 @@ einfo "Moving ${from} -> ${to}.${ts}"
 # @FUNCTION: _npm_auto_remove_node_modules
 # @INTERNAL
 # @DESCRIPTION:
-# Removes all node_modules folders
+# Removes node_modules from the current folder
 _npm_auto_remove_node_modules() {
 	local row
 	IFS=$'\n'
 	if grep -r -e "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs" ; then
-		find . -type d -name "node_modules" -exec rm -rf '{}' \;
+einfo "Removing node_modules from $(pwd)"
+		rm -rf "node_modules"
 	fi
 	IFS=$' \t\n'
 }
@@ -306,6 +311,12 @@ _npm_auto_remove_node_modules() {
 # Rerun command if flakey connection.
 enpm() {
 	local cmd=("${@}")
+
+	if [[ "${cmd[@]}" =~ "audit fix" && "${NPM_AUDIT_FIX:-1}" == "0" ]] ; then
+einfo "Skipping audit fix."
+		return
+	fi
+
 	local tries
 	tries=0
 	while (( ${tries} < ${NPM_TRIES} )) ; do
@@ -322,6 +333,14 @@ einfo "Running:\tnpm ${cmd[@]}"
 		rm -rf "${HOME}/.npm/_logs"
 	done
 	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
+	if [[ "${cmd[@]}" =~ "build" ]] ; then
+		grep -q -e "ENOENT" "${T}/build.log" && die
+	fi
+	if [[ "${cmd[@]}" =~ ("audit fix"|"install") ]] ; then
+		# Indeterministic or random failure bug
+		grep -q -e "npm ERR! Invalid Version" "${T}/build.log" && die "Detected error"
+	fi
+	grep -q -e "npm ERR! Exit handler never called!" && die "Possible indeterministic behavior"
 }
 
 # @FUNCTION: _npm_src_unpack
@@ -344,7 +363,7 @@ npm_src_unpack() {
 			npm_update_lock_install_pre > /dev/null ; then
 			npm_update_lock_install_pre
 		fi
-		enpm i ${NPM_INSTALL_UNPACK_ARGS}
+		enpm install ${NPM_INSTALL_UNPACK_ARGS}
 		if declare -f \
 			npm_update_lock_install_post > /dev/null ; then
 			npm_update_lock_install_post
@@ -391,6 +410,7 @@ npm_src_compile() {
 		${extra_args[@]} \
 		|| die
 	grep -q -e "ENOENT" "${T}/build.log" && die
+	grep -q -e "npm ERR! Exit handler never called!" && die "Possible indeterministic behavior"
 }
 
 # @FUNCTION: npm_src_test
