@@ -3106,11 +3106,11 @@ __npm_src_unpack() {
 		local lockfiles=(
 			"GDevelop.js/package-lock.json"			# Required step #1
 			"newIDE/app/package-lock.json"			# Required step #2
+#			"GDJS/package-lock.json"			# Required step #2a
 			"newIDE/electron-app/package-lock.json"		# Required step #3
-#			"newIDE/electron-app/app/package-lock.json"
+#			"newIDE/electron-app/app/package-lock.json"	# Required step #3a
 #			"newIDE/web-app/package-lock.json"
 #			"GDJS/tests/package-lock.json"
-#			"GDJS/package-lock.json"
 		)
 
 		local lockfile
@@ -3203,11 +3203,11 @@ einfo "Updating lockfiles"
 		local lockfiles=(
 			"GDevelop.js/package-lock.json"			# Required step #1
 			"newIDE/app/package-lock.json"			# Required step #2
+#			"GDJS/package-lock.json"			# Required step #2a
 			"newIDE/electron-app/package-lock.json"		# Required step #3
-#			"newIDE/electron-app/app/package-lock.json"
+#			"newIDE/electron-app/app/package-lock.json"	# Required step #3a
 #			"newIDE/web-app/package-lock.json"
 #			"GDJS/tests/package-lock.json"
-#			"GDJS/package-lock.json"
 		)
 
 		local lockfile
