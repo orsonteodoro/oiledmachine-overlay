@@ -3000,10 +3000,6 @@ eerror
 }
 
 pkg_setup() {
-eerror
-eerror "This ebuild is undergoing maintenance for npm offline install"
-eerror
-:;#die
 	pkg_setup_html5
 	check-reqs_pkg_setup
 	npm_pkg_setup
