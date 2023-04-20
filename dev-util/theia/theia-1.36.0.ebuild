@@ -2355,6 +2355,7 @@ src_compile() {
 	eyarn run browser build
 	eyarn run electron build
 
+	# Fix for issue #10246
 	eyarn browser rebuild
 	eyarn electron rebuild
 
