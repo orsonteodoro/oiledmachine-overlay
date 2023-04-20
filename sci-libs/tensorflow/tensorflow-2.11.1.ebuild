@@ -360,7 +360,7 @@ RDEPEND="
 			)
 			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
 			>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
-			>=net-libs/google-cloud-cpp-1.17.1[-testing-tensorflow(-)]
+			>=net-libs/google-cloud-cpp-1.17.1
 		)
 		>=dev-libs/flatbuffers-2.0.6:=
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
@@ -396,8 +396,8 @@ RDEPEND="
 				>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP_TEST}]
 			)
 			(
-				<net-libs/google-cloud-cpp-1.40[testing-tensorflow]
-				>=net-libs/google-cloud-cpp-1.17.1[testing-tensorflow]
+				<net-libs/google-cloud-cpp-1.40
+				>=net-libs/google-cloud-cpp-1.17.1
 			)
 			(
 				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP_TEST},testing-tensorflow]
