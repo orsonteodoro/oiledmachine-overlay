@@ -30,7 +30,6 @@ YARN_EXE_LIST="
 /opt/theia/node_modules/lunr/build/release.sh
 /opt/theia/node_modules/native-keymap/build/Release/keymapping.node
 /opt/theia/node_modules/native-keymap/build/Release/obj.target/keymapping.node
-/opt/theia/node_modules/native-keymap/bin/linux-x64-98/native-keymap.node
 /opt/theia/node_modules/puppeteer/node_modules/js-yaml/bin/js-yaml.js
 /opt/theia/node_modules/nan/tools/1to2.js
 /opt/theia/node_modules/webpack/bin/webpack.js
@@ -55,6 +54,15 @@ YARN_EXE_LIST="
 /opt/theia/node_modules/electron/node_modules/semver/bin/semver.js
 /opt/theia/node_modules/electron/node_modules/extract-zip/cli.js
 /opt/theia/node_modules/electron/cli.js
+/opt/theia/node_modules/electron/dist/swiftshader/libGLESv2.so
+/opt/theia/node_modules/electron/dist/swiftshader/libEGL.so
+/opt/theia/node_modules/electron/dist/electron
+/opt/theia/node_modules/electron/dist/libGLESv2.so
+/opt/theia/node_modules/electron/dist/libvk_swiftshader.so
+/opt/theia/node_modules/electron/dist/libEGL.so
+/opt/theia/node_modules/electron/dist/chrome-sandbox
+/opt/theia/node_modules/electron/dist/libvulkan.so.1
+/opt/theia/node_modules/electron/dist/chrome_crashpad_handler
 /opt/theia/node_modules/unicode-canonical-property-names-ecmascript/index.js
 /opt/theia/node_modules/playwright-core/lib/cli/cli.js
 /opt/theia/node_modules/playwright-core/cli.js
@@ -149,7 +157,6 @@ YARN_EXE_LIST="
 /opt/theia/node_modules/slice-ansi/index.js
 /opt/theia/node_modules/drivelist/build/Release/drivelist.node
 /opt/theia/node_modules/drivelist/build/Release/obj.target/drivelist.node
-/opt/theia/node_modules/drivelist/bin/linux-x64-98/drivelist.node
 /opt/theia/node_modules/@msgpackr-extract/msgpackr-extract-linux-x64/node.napi.glibc.node
 /opt/theia/node_modules/@msgpackr-extract/msgpackr-extract-linux-x64/node.abi108.glibc.node
 /opt/theia/node_modules/@msgpackr-extract/msgpackr-extract-linux-x64/node.abi108.musl.node
@@ -193,9 +200,7 @@ YARN_EXE_LIST="
 /opt/theia/node_modules/sshpk/bin/sshpk-conv
 /opt/theia/node_modules/sshpk/bin/sshpk-sign
 /opt/theia/node_modules/node-pty/build/Release/spawn-helper
-/opt/theia/node_modules/node-pty/build/Release/obj.target/pty.node
 /opt/theia/node_modules/node-pty/build/Release/pty.node
-/opt/theia/node_modules/node-pty/bin/linux-x64-98/node-pty.node
 /opt/theia/node_modules/conventional-commits-parser/cli.js
 /opt/theia/node_modules/rc/cli.js
 /opt/theia/node_modules/rc/index.js
@@ -326,7 +331,6 @@ YARN_EXE_LIST="
 /opt/theia/node_modules/jsdom/node_modules/acorn/bin/acorn
 /opt/theia/node_modules/find-git-repositories/build/Release/findGitRepos.node
 /opt/theia/node_modules/find-git-repositories/build/Release/obj.target/findGitRepos.node
-/opt/theia/node_modules/find-git-repositories/bin/linux-x64-98/find-git-repositories.node
 /opt/theia/node_modules/nanoid/bin/nanoid.cjs
 /opt/theia/node_modules/cacheable-lookup/source/index.js
 /opt/theia/node_modules/axios/lib/adapters/http.js
@@ -354,7 +358,6 @@ YARN_EXE_LIST="
 /opt/theia/node_modules/nsfw/node_modules/node-addon-api/tools/conversion.js
 /opt/theia/node_modules/nsfw/build/Release/nsfw.node
 /opt/theia/node_modules/nsfw/build/Release/obj.target/nsfw.node
-/opt/theia/node_modules/nsfw/bin/linux-x64-98/nsfw.node
 /opt/theia/node_modules/istanbul-lib-instrument/node_modules/semver/bin/semver.js
 /opt/theia/node_modules/meow/node_modules/read-pkg/node_modules/semver/bin/semver
 /opt/theia/node_modules/node-gyp-build-optional-packages/build-test.js
@@ -399,17 +402,6 @@ YARN_EXE_LIST="
 /opt/theia/packages/task/test-resources/task
 /opt/theia/packages/plugin-ext/node_modules/semver/bin/semver
 /opt/theia/packages/plugin-ext/node_modules/mime/cli.js
-/opt/theia/.browser_modules/native-keymap/build/Release/keymapping.node
-/opt/theia/.browser_modules/native-keymap/build/Release/obj.target/keymapping.node
-/opt/theia/.browser_modules/drivelist/build/Release/drivelist.node
-/opt/theia/.browser_modules/drivelist/build/Release/obj.target/drivelist.node
-/opt/theia/.browser_modules/node-pty/build/Release/spawn-helper
-/opt/theia/.browser_modules/node-pty/build/Release/pty.node
-/opt/theia/.browser_modules/find-git-repositories/build/Release/findGitRepos.node
-/opt/theia/.browser_modules/find-git-repositories/build/Release/obj.target/findGitRepos.node
-/opt/theia/.browser_modules/nsfw/node_modules/node-addon-api/tools/conversion.js
-/opt/theia/.browser_modules/nsfw/build/Release/nsfw.node
-/opt/theia/.browser_modules/nsfw/build/Release/obj.target/nsfw.node
 /opt/theia/scripts/prepare-initial.js
 /opt/theia/scripts/check_git_status.sh
 /opt/theia/scripts/deps/arch.sh
@@ -418,8 +410,8 @@ YARN_EXE_LIST="
 /opt/theia/scripts/deps/alpine.sh
 /opt/theia/scripts/deps/debian.sh
 "
-YARN_ELECTRON_OFFLINE=0
-YARN_OFFLINE=0
+YARN_ELECTRON_OFFLINE=1
+YARN_OFFLINE=1
 
 inherit desktop electron-app python-r1 yarn
 
@@ -2311,6 +2303,7 @@ https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz -> yarnpkg-yoct
 "
 # UPDATER_END_YARN_EXTERNAL_URIS
 SRC_URI="
+$(electron-app_gen_electron_uris)
 ${YARN_EXTERNAL_URIS}
 https://github.com/eclipse-theia/theia/archive/refs/tags/v${PV}${SUFFIX}.tar.gz
 	-> ${P}${SUFFIX}.tar.gz
@@ -2344,20 +2337,29 @@ get_plugins() {
 }
 
 src_unpack() {
-eerror "This ebuild is currently under maintenance."
-die
 einfo "YARN_UPDATE_LOCK=${YARN_UPDATE_LOCK}"
 	yarn_src_unpack
 	if [[ -z "${YARN_UPDATE_LOCK}" ]] ; then
 		use plugins && get_plugins
 	fi
+	local path="${S}/node_modules/electron/dist"
+	mkdir -p "${S}/node_modules/electron/dist" || die
+	pushd "${path}" || die
+		unpack "electron-v${ELECTRON_APP_ELECTRON_PV}-$(electron-app_get_electron_platarch).zip"
+	popd
+	[[ "${path}/version" ]] || die "Missing file"
 }
 
 src_compile() {
-	eyarn electron build
+	eyarn run compile
+	eyarn run browser build
+	eyarn run electron build
+
+	eyarn browser rebuild
 	eyarn electron rebuild
+
 	grep -q -e "Error: ENOENT: no such file or directory, open '${S}/node_modules/electron/dist/version'" \
-		|| ewarn "Build failure"
+		&& die "Build failure"
 }
 
 src_install() {
