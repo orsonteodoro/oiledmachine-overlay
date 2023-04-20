@@ -4,7 +4,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit bazel python-r1
 
 DESCRIPTION="TensorFlow's Visualization Toolkit"

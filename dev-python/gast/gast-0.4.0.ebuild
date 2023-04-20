@@ -4,7 +4,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8,9} )
+PYTHON_COMPAT=( python3_{8,9} ) # Lists up to 3.7
 
 # python3.10 error:
 # ======================================================================
@@ -41,3 +41,9 @@ einfo "Running test for ${EPYTHON}"
 	}
 	python_foreach_impl run_test
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED for 0.4.0 20230420
+# USE="test" PYTHON_TARGETS="python3_9"
+# Ran 35 tests in 0.386s
+#
+# OK

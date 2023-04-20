@@ -35,8 +35,13 @@ PROTOBUF_PV="3.21.9" # From WORKSPACE which differs from requirements.txt
 #	>=sci-libs/keras-applications-1.0.8[${PYTHON_USEDEP}]
 #	>=sci-libs/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
 RDEPEND="
-	$(python_gen_cond_dep '>=dev-python/numpy-1.22[${PYTHON_USEDEP}]' python3_{9..10})
-	$(python_gen_cond_dep '>=dev-python/numpy-1.23[${PYTHON_USEDEP}]' python3_11)
+	(
+		$(python_gen_cond_dep '<dev-python/numpy-1.23[${PYTHON_USEDEP}]' python3_{9..10})
+		$(python_gen_cond_dep '>=dev-python/numpy-1.22.0[${PYTHON_USEDEP}]' python3_{9..10})
+	)
+	(
+		$(python_gen_cond_dep '>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]' python3_11)
+	)
 	(
 		<sci-libs/tensorflow-2.12[${PYTHON_USEDEP},python]
 		>=sci-libs/tensorflow-2.11[${PYTHON_USEDEP},python]

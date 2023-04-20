@@ -44,7 +44,7 @@ LLVM_MAX_SLOT=14
 LLVM_MIN_SLOT=10
 LLVM_SLOTS=( ${LLVM_MAX_SLOT} 13 12 11 ${LLVM_MIN_SLOT} )
 PYTHON_COMPAT=( python3_{9..11} )
-PYTHON_USEDEP_TEST="python_targets_python3_9,-python_targets_python3_10(-),-python_targets_python3_11(-)"
+PYTHON_USEDEP_TEST="python_targets_python3_9,-python_targets_python3_10(-),-python_targets_python3_11(-)" # Limited by gast
 
 # *seq* can only be done in the eclass.
 gen_seq_dec() {

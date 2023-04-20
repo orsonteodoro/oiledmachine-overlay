@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..11} ) # Upstream lists only up to 3.7
 inherit distutils-r1
 
 DESCRIPTION="Flax is a neural network library for JAX that is designed for \
