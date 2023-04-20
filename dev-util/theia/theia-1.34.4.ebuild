@@ -2366,7 +2366,7 @@ eerror
 pkg_setup() {
 	einfo "This is the monthly release."
 	python_setup
-	use plugins && check_network_sandbox
+	check_network_sandbox
 	yarn_pkg_setup
 }
 
