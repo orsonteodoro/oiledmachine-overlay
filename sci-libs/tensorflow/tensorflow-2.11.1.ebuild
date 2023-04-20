@@ -206,7 +206,7 @@ CUB_PV="1.9.9"			# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/te
 CUDNN_FRONTEND_PV="0.7.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/workspace2.bzl
 GRPC_PV="1.48"			# Based on the oldest grpc supporting abseil 20220623
 GRPCIO_PV="1.24.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/pip_package/setup.py#L84
-GRPCIO_PV_MAX="2.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/pip_package/setup.py#L84
+GRPCIO_PV_MAX="3.21"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/pip_package/setup.py#L84	; Exclusive ; Upstream is wrong
 KISSFFT_PV="131.1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/third_party/kissfft/workspace.bzl
 NCCL_PV="2.13.4-1"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/workspace2.bzl
 ONEDNN_PV="2.7.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/workspace2.bzl ; mkl_dnn_v1
@@ -388,7 +388,7 @@ RDEPEND="
 				>=dev-python/gast-0.2.1[${PYTHON_USEDEP_TEST}]
 			)
 			(
-				<dev-python/grpcio-1.49.3[${PYTHON_USEDEP_TEST}]
+				<dev-python/grpcio-1.49[${PYTHON_USEDEP_TEST}]
 				>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP_TEST}]
 			)
 			(
@@ -396,7 +396,7 @@ RDEPEND="
 				>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP_TEST}]
 			)
 			(
-				<net-libs/google-cloud-cpp-1.40
+				<net-libs/google-cloud-cpp-1.41
 				>=net-libs/google-cloud-cpp-1.17.1
 			)
 			(

@@ -181,7 +181,7 @@ CUB_PV="1.9.9"
 CUDNN_FRONTEND_PV="0.7.1"
 GRPC_PV="1.48"
 GRPCIO_PV="1.24.3"
-GRPCIO_PV_MAX="2.0"
+GRPCIO_PV_MAX="3.21"			# Exclusive ; Upstream is wrong
 KISSFFT_PV="131.1.0"
 NCCL_PV="2.13.4-1"
 ONEDNN_PV="2.7.1" # mkl_dnn_v1
@@ -362,11 +362,11 @@ RDEPEND="
 				>=dev-python/gast-0.2.1[${PYTHON_USEDEP_TEST}]
 			)
 			(
-				<dev-python/grpcio-1.49.3[${PYTHON_USEDEP_TEST}]
+				<dev-python/grpcio-1.49[${PYTHON_USEDEP_TEST}]
 				>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP_TEST}]
 			)
 			(
-				<net-libs/google-cloud-cpp-1.40
+				<net-libs/google-cloud-cpp-1.41
 				>=net-libs/google-cloud-cpp-1.17.1
 			)
 			(
