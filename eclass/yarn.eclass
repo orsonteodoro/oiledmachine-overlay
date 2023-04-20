@@ -77,6 +77,15 @@ unset -f _yarn_set_globals
 # @DESCRIPTION:
 # Arguments to append to `yarn install ` during yarn.lock generation.
 
+# @ECLASS_VARIABLE: YARN_LOCKFILE_SOURCE
+# @DESCRIPTION:
+# The preferred yarn.lock file source.
+# Acceptable values:  upstream, ebuild
+
+# @ECLASS_VARIABLE: YARN_OFFLINE
+# @DESCRIPTION:
+# Use yarn eclass in offline install mode.
+
 # @ECLASS_VARIABLE: YARN_ROOT
 # @DESCRIPTION:
 # The project root containing the yarn.lock file.
@@ -227,11 +236,15 @@ einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
 	IFS=$' \t\n'
 }
 
-# @FUNCTION: _yarn_src_unpack_default
+# @FUNCTION: _yarn_src_unpack_default_ebuild
 # @DESCRIPTION:
-# Unpacks a yarn application.
-_yarn_src_unpack_default() {
-	export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+# Use the ebuild lockfiles
+_yarn_src_unpack_default_ebuild() {
+	if [[ "${YARN_ELECTRON_OFFLINE:-1}" == "0" ]] ; then
+		:;
+	elif [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
+		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+	fi
 	if [[ ${PV} =~ 9999 ]] ; then
 		:;
 	elif [[ -n "${YARN_TARBALL}" ]] ; then
@@ -240,32 +253,34 @@ _yarn_src_unpack_default() {
 		unpack ${P}.tar.gz
 	fi
 	yarn_check
-	_yarn_cp_tarballs
 	cd "${S}" || die
-	rm -rf "package-lock.json" || true
-	if [[ -n "${YARN_ROOT}" ]] ; then
-		rm -rf "${YARN_ROOT}/.yarnrc" || die
-	fi
-	rm -rf "${S}/.yarnrc" || die
-	yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
-	mv "${HOME}/.yarnrc" "${WORKDIR}" || die
-	if [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" && -n "${YARN_ROOT}" ]] ; then
-		cp -aT "${FILESDIR}/${PV}" "${YARN_ROOT}" || die
-	elif [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" ]] ; then
-		cp -aT "${FILESDIR}/${PV}" "${S}" || die
-	elif [[ -f "${FILESDIR}/${PV}/package.json" && -n "${YARN_ROOT}" ]] ; then
-		cp "${FILESDIR}/${PV}/package.json" "${YARN_ROOT}" || die
-	elif [[ -f "${FILESDIR}/${PV}/package.json" ]] ; then
-		cp "${FILESDIR}/${PV}/package.json" "${S}" || die
-	fi
-	if [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" && -n "${YARN_ROOT}" ]] ; then
-		cp -aT "${FILESDIR}/${PV}" "${YARN_ROOT}" || die
-	elif [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" ]] ; then
-		cp -aT "${FILESDIR}/${PV}" "${S}" || die
-	elif [[ -f "${FILESDIR}/${PV}/yarn.lock" && -n "${YARN_ROOT}" ]] ; then
-		cp "${FILESDIR}/${PV}/yarn.lock" "${YARN_ROOT}" || die
-	elif [[ -f "${FILESDIR}/${PV}/yarn.lock" ]] ; then
-		cp "${FILESDIR}/${PV}/yarn.lock" "${S}" || die
+	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
+		_yarn_cp_tarballs
+		rm -rf "package-lock.json" || true
+		if [[ -n "${YARN_ROOT}" ]] ; then
+			rm -rf "${YARN_ROOT}/.yarnrc" || die
+		fi
+		rm -rf "${S}/.yarnrc" || die
+		yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
+		mv "${HOME}/.yarnrc" "${WORKDIR}" || die
+		if [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" && -n "${YARN_ROOT}" ]] ; then
+			cp -aT "${FILESDIR}/${PV}" "${YARN_ROOT}" || die
+		elif [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" ]] ; then
+			cp -aT "${FILESDIR}/${PV}" "${S}" || die
+		elif [[ -f "${FILESDIR}/${PV}/package.json" && -n "${YARN_ROOT}" ]] ; then
+			cp "${FILESDIR}/${PV}/package.json" "${YARN_ROOT}" || die
+		elif [[ -f "${FILESDIR}/${PV}/package.json" ]] ; then
+			cp "${FILESDIR}/${PV}/package.json" "${S}" || die
+		fi
+		if [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" && -n "${YARN_ROOT}" ]] ; then
+			cp -aT "${FILESDIR}/${PV}" "${YARN_ROOT}" || die
+		elif [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" ]] ; then
+			cp -aT "${FILESDIR}/${PV}" "${S}" || die
+		elif [[ -f "${FILESDIR}/${PV}/yarn.lock" && -n "${YARN_ROOT}" ]] ; then
+			cp "${FILESDIR}/${PV}/yarn.lock" "${YARN_ROOT}" || die
+		elif [[ -f "${FILESDIR}/${PV}/yarn.lock" ]] ; then
+			cp "${FILESDIR}/${PV}/yarn.lock" "${S}" || die
+		fi
 	fi
 	local args=()
 	if declare -f yarn_unpack_install_pre > /dev/null ; then
@@ -281,37 +296,71 @@ _yarn_src_unpack_default() {
 	fi
 }
 
-# @FUNCTION: _npm_auto_rename
-# @INTERNAL
+# @FUNCTION: _yarn_src_unpack_default_upstream
 # @DESCRIPTION:
-# Auto-rename dir
-_npm_auto_rename() {
-	local row
-	IFS=$'\n'
-	for row in $(grep -r -e "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs") ; do
-		local from=$(echo "${row}" | cut -f 2 -d "'")
-		local to=$(echo "${row}" | cut -f 4 -d "'")
-		if [[ -e "${from}" ]] ; then
-			local ts=$(date "+%s")
-einfo "Moving ${from} -> ${to}.${ts}"
-			mv "${from}" "${to}.${ts}" || true
-			sed -i -e "\|${to}|d" "${T}/build.log" || die
+# Use the upstream lockfiles
+_yarn_src_unpack_default_upstream() {
+	export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+	if [[ ${PV} =~ 9999 ]] ; then
+		:;
+	elif [[ -n "${YARN_TARBALL}" ]] ; then
+		unpack ${YARN_TARBALL}
+	else
+		unpack ${P}.tar.gz
+	fi
+	yarn_check
+	cd "${S}" || die
+	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
+		_yarn_cp_tarballs
+		if [[ -n "${YARN_ROOT}" ]] ; then
+			rm -rf "${YARN_ROOT}/.yarnrc" || die
 		fi
-	done
-	IFS=$' \t\n'
+		rm -rf "${S}/.yarnrc" || die
+		yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
+		mv "${HOME}/.yarnrc" "${WORKDIR}" || die
+	fi
+	local args=()
+	if declare -f yarn_unpack_install_pre > /dev/null ; then
+		yarn_unpack_install_pre
+	fi
+	eyarn install \
+		--prefer-offline \
+		--pure-lockfile \
+		--verbose \
+		${YARN_INSTALL_UNPACK_ARGS}
+	if declare -f yarn_unpack_install_post > /dev/null ; then
+		yarn_unpack_install_post
+	fi
+}
+
+# @FUNCTION: _yarn_src_unpack_default
+# @DESCRIPTION:
+# Unpacks a yarn application.
+_yarn_src_unpack_default() {
+	if [[ "${YARN_LOCKFILE_SOURCE:-ebuild}" == "ebuild" ]] ; then
+		_yarn_src_unpack_default_ebuild
+	else
+		_yarn_src_unpack_default_upstream
+	fi
 }
 
 # @FUNCTION: _npm_auto_remove_node_modules
 # @INTERNAL
 # @DESCRIPTION:
-# Removes node_modules from the current folder
+# Auto-remove node_modules
 _npm_auto_remove_node_modules() {
 	local row
 	IFS=$'\n'
-	if grep -r -e "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs" ; then
-einfo "Removing node_modules from $(pwd)"
-		rm -rf "node_modules"
-	fi
+	for row in $(grep -r -e "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs") ; do
+		local from=$(echo "${row}" | cut -f 2 -d "'")
+		local to=$(echo "${row}" | cut -f 4 -d "'")
+		local node_modules_path=$(dirname "${from}")
+		if [[ -e "${node_modules_path}" ]] ; then
+			rm -rf "${node_modules_path}"
+einfo "Removing ${node_modules_path}"
+			sed -i -e "\|${to}|d" "${T}/build.log" || die
+		fi
+	done
 	IFS=$' \t\n'
 }
 
@@ -333,11 +382,11 @@ einfo "Skipping audit fix."
 einfo "Tries:\t${tries}"
 einfo "Running:\tnpm ${cmd[@]}"
 		npm "${cmd[@]}" || die
-		if ! grep -q -E -r -e "(ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
+		if ! grep -q -E -r -e "(ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
 			break
 		fi
 		_npm_auto_remove_node_modules
-		if grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
+		if grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
 			tries=$((${tries} + 1))
 		fi
 		rm -rf "${HOME}/.npm/_logs"
@@ -362,12 +411,11 @@ einfo "Running:\tyarn ${cmd[@]}"
 	yarn "${cmd[@]}" || die
 }
 
-# @FUNCTION: _yarn_src_unpack
+# @FUNCTION: _yarn_src_unpack_update_ebuild
 # @DESCRIPTION:
-# Unpacks a yarn application.
-yarn_src_unpack() {
-	export PATH="${S}/node_modules/.bin:${PATH}"
-	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
+# Use the default ebuild updater
+_yarn_src_unpack_update_ebuild() {
+einfo "Updating lockfile"
 		if [[ ${PV} =~ 9999 ]] ; then
 			:;
 		elif [[ -n "${YARN_TARBALL}" ]] ; then
@@ -406,6 +454,36 @@ yarn_src_unpack() {
 		if declare -f \
 			yarn_update_lock_yarn_import_post > /dev/null ; then
 			yarn_update_lock_yarn_import_post
+		fi
+
+}
+
+# @FUNCTION: _yarn_src_unpack_update_upstream
+# @DESCRIPTION:
+# Use the default yarn updater with upstream lockfiles
+_yarn_src_unpack_update_upstream() {
+einfo "Updating lockfile"
+		if [[ ${PV} =~ 9999 ]] ; then
+			:;
+		elif [[ -n "${YARN_TARBALL}" ]] ; then
+			unpack ${YARN_TARBALL}
+		else
+			unpack ${P}.tar.gz
+		fi
+		cd "${S}" || die
+}
+
+# @FUNCTION: _yarn_src_unpack
+# @DESCRIPTION:
+# Unpacks a yarn application.
+yarn_src_unpack() {
+einfo "Called yarn_src_unpack"
+	export PATH="${S}/node_modules/.bin:${PATH}"
+	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
+		if [[ "${YARN_LOCKFILE_SOURCE:-ebuild}" == "ebuild" ]] ; then
+			_yarn_src_unpack_update_ebuild
+		else
+			_yarn_src_unpack_update_upstream
 		fi
 		die
 	else
@@ -475,6 +553,7 @@ yarn_src_install() {
 	fi
 	insinto "${install_path}"
 	doins -r *
+	ls .* > /dev/null && doins -r .*
 	IFS=$'\n'
 	local row
 	for row in ${rows[@]} ; do
@@ -497,7 +576,11 @@ EOF
 	done
 	local path
 	for path in ${YARN_EXE_LIST} ; do
-		fperms 0755 "${path}" || die
+		if [[ -e "${ED}/${path}" ]] ; then
+			fperms 0755 "${path}" || die
+		else
+eerror "Skipping fperms 0755 ${path}.  Missing file."
+		fi
 	done
 	IFS=$' \t\n'
 }

@@ -33,6 +33,7 @@ yarn_updater_update_yarn_locks() {
 		versions=( ${YARN_UPDATER_VERSIONS} )
 	fi
 	export YARN_UPDATE_LOCK=1
+echo "YARN_UPDATE_LOCK=${YARN_UPDATE_LOCK}"
 	local pv
 	for pv in ${versions[@]} ; do
 		echo "Updating ${pv}"

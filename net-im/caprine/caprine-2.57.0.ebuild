@@ -594,18 +594,18 @@ src_unpack() {
 		cd "${S}" || die
 		rm package-lock.json
 
-		enpm i
+		enpm install
 
 	# Change to ^0.51.1
-		enpm i "eslint-config-xo-typescript@^0.51.1" || die
+		enpm install "eslint-config-xo-typescript@^0.51.1"
 
 	# Change to ^5.27.1
-		enpm i "@typescript-eslint/eslint-plugin@^5.27.1" || die
+		enpm install "@typescript-eslint/eslint-plugin@^5.27.1"
 
 	# Change to ^5.27.1
-		enpm i "@typescript-eslint/parser@^5.27.1" || die
+		enpm install "@typescript-eslint/parser@^5.27.1"
 
-		enpm audit fix || die
+		enpm audit fix
 		die
 	else
 		#export ELECTRON_SKIP_BINARY_DOWNLOAD=1

@@ -33,6 +33,7 @@ npm_updater_update_npm_locks() {
 		versions=( ${NPM_UPDATER_VERSIONS} )
 	fi
 	export NPM_UPDATE_LOCK=1
+echo "NPM_UPDATE_LOCK=${NPM_UPDATE_LOCK}"
 	local pv
 	for pv in ${versions[@]} ; do
 		echo "Updating ${pv}"

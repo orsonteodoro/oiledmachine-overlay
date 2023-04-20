@@ -770,7 +770,7 @@ install_corepack() {
 }
 
 install_acorn() {
-	npm i "acorn@${ACORN_PV}" -g
+	npm install "acorn@${ACORN_PV}" -g
 }
 
 pkg_postinst() {

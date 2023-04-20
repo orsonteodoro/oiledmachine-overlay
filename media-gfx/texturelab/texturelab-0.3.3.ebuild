@@ -1328,7 +1328,7 @@ src_unpack() {
                 rm package-lock.json
 		rm yarn.lock
 
-		enpm i --legacy-peer-deps
+		enpm install --legacy-peer-deps
 		enpm audit fix --legacy-peer-deps
 
 	# Fix the following upgrade breakage manually by downgrading:

@@ -64,6 +64,15 @@ unset -f _npm_set_globals
 # @DESCRIPTION:
 # Arguments to append to `npm audit fix ` during package-lock.json generation.
 
+# @ECLASS_VARIABLE: NPM_LOCKFILE_SOURCE
+# @DESCRIPTION:
+# The preferred yarn.lock file source.
+# Acceptable values:  upstream, ebuild
+
+# @ECLASS_VARIABLE: NPM_OFFLINE
+# @DESCRIPTION:
+# Use npm eclass in offline install mode.
+
 # @ECLASS_VARIABLE: NPM_ROOT
 # @DESCRIPTION:
 # The project root containing the package-lock.json file.
@@ -209,11 +218,13 @@ eerror
 	done
 }
 
-# @FUNCTION: _npm_src_unpack_default
+# @FUNCTION: _npm_src_unpack_default_upstream
 # @DESCRIPTION:
-# Unpacks a npm application.
-_npm_src_unpack_default() {
-	if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
+# Use the ebuild lockfiles
+_npm_src_unpack_default_ebuild() {
+	if [[ "${NPM_ELECTRON_OFFLINE:-1}" == "0" ]] ; then
+		:;
+	elif [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
 		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 	fi
 	if [[ ${PV} =~ 9999 ]] ; then
@@ -271,37 +282,65 @@ einfo "Missing package-lock.json"
 	fi
 }
 
-# @FUNCTION: _npm_auto_rename
-# @INTERNAL
+# @FUNCTION: _npm_src_unpack_default_upstream
 # @DESCRIPTION:
-# Auto-rename dir
-_npm_auto_rename() {
-	local row
-	IFS=$'\n'
-	for row in $(grep -r -e "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs") ; do
-		local from=$(echo "${row}" | cut -f 2 -d "'")
-		local to=$(echo "${row}" | cut -f 4 -d "'")
-		if [[ -e "${from}" ]] ; then
-			local ts=$(date "+%s")
-einfo "Moving ${from} -> ${to}.${ts}"
-			mv "${from}" "${to}.${ts}" || true
-			sed -i -e "\|${to}|d" "${T}/build.log" || die
-		fi
-	done
-	IFS=$' \t\n'
+# Use the upstream lockfiles
+_npm_src_unpack_default_upstream() {
+	if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
+		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+	fi
+	if [[ ${PV} =~ 9999 ]] ; then
+		:;
+	elif [[ -n "${NPM_TARBALL}" ]] ; then
+		unpack ${NPM_TARBALL}
+	else
+		unpack ${P}.tar.gz
+	fi
+	cd "${S}" || die
+	local args=()
+	if declare -f npm_unpack_install_pre > /dev/null ; then
+		npm_unpack_install_pre
+	fi
+	local extra_args=()
+	if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
+		extra_args+=( "--prefer-offline" )
+	fi
+	enpm install \
+		${extra_args[@]} \
+		${NPM_INSTALL_UNPACK_ARGS}
+	if declare -f npm_unpack_install_post > /dev/null ; then
+		npm_unpack_install_post
+	fi
+}
+
+# @FUNCTION: _npm_src_unpack_default
+# @DESCRIPTION:
+# Unpacks a npm application.
+_npm_src_unpack_default() {
+	if [[ "${NPM_LOCKFILE_SOURCE:-ebuild}" == "ebuild" ]] ; then
+		_npm_src_unpack_default_ebuild
+	else
+		_npm_src_unpack_default_upstream
+	fi
 }
 
 # @FUNCTION: _npm_auto_remove_node_modules
 # @INTERNAL
 # @DESCRIPTION:
-# Removes node_modules from the current folder
+# Auto-remove node_modules
 _npm_auto_remove_node_modules() {
 	local row
 	IFS=$'\n'
-	if grep -r -e "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs" ; then
-einfo "Removing node_modules from $(pwd)"
-		rm -rf "node_modules"
-	fi
+	for row in $(grep -r -e "ENOTEMPTY: directory not empty, rename" "${HOME}/.npm/_logs") ; do
+		local from=$(echo "${row}" | cut -f 2 -d "'")
+		local to=$(echo "${row}" | cut -f 4 -d "'")
+		local node_modules_path=$(dirname "${from}")
+		if [[ -e "${node_modules_path}" ]] ; then
+			rm -rf "${node_modules_path}"
+einfo "Removing ${node_modules_path}"
+			sed -i -e "\|${to}|d" "${T}/build.log" || die
+		fi
+	done
 	IFS=$' \t\n'
 }
 
@@ -323,11 +362,11 @@ einfo "Skipping audit fix."
 einfo "Tries:\t${tries}"
 einfo "Running:\tnpm ${cmd[@]}"
 		npm "${cmd[@]}" || die
-		if ! grep -q -E -r -e "(ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
+		if ! grep -q -E -r -e "(ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
 			break
 		fi
 		_npm_auto_remove_node_modules
-		if grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT)" "${HOME}/.npm/_logs" ; then
+		if grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
 			tries=$((${tries} + 1))
 		fi
 		rm -rf "${HOME}/.npm/_logs"
@@ -449,6 +488,7 @@ npm_src_install() {
 	fi
 	insinto "${install_path}"
 	doins -r *
+	ls .* > /dev/null && doins -r .*
 	IFS=$'\n'
 	local row
 	for row in ${rows[@]} ; do
@@ -471,7 +511,11 @@ EOF
 	done
 	local path
 	for path in ${NPM_EXE_LIST} ; do
-		fperms 0755 "${path}" || die
+		if [[ -e "${ED}/${path}" ]] ; then
+			fperms 0755 "${path}" || die
+		else
+eerror "Skipping fperms 0755 ${path}.  Missing file."
+		fi
 	done
 	IFS=$' \t\n'
 }

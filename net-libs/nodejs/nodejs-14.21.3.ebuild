@@ -767,12 +767,12 @@ ewarn
 
 install_corepack() {
 	npm remove corepack -g
-	npm i corepack -g
+	npm install corepack -g
 	corepack prepare yarn@3.5.0 --activate
 }
 
 install_acorn() {
-	npm i "acorn@${ACORN_PV}" -g
+	npm install "acorn@${ACORN_PV}" -g
 }
 
 pkg_postinst() {

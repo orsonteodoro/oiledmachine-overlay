@@ -825,7 +825,7 @@ S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
 
 npm_update_lock_install_pre() {
-	enpm i gulp-cli
+	enpm install gulp-cli
 }
 
 src_install() {
