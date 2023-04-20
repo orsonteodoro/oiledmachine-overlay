@@ -15,7 +15,7 @@ IUSE=" test r1"
 RESTRICT="test"
 # U 18.04
 RDEPEND="
-	>=dev-cpp/abseil-cpp-20211102.0:0/20211102
+	>=dev-cpp/abseil-cpp-20211102.0:=
 	>=dev-cpp/nlohmann_json-3.10.5
 	>=dev-libs/protobuf-3.19.4:0/30
 	>=dev-libs/crc32c-1.1.2
