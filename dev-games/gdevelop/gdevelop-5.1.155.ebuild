@@ -3062,7 +3062,7 @@ __npm_src_unpack() {
 			npm_update_lock_install_pre > /dev/null ; then
 			npm_update_lock_install_pre
 		fi
-		enpm i ${NPM_INSTALL_UNPACK_ARGS}
+		enpm install ${NPM_INSTALL_UNPACK_ARGS}
 		if declare -f \
 			npm_update_lock_install_post > /dev/null ; then
 			npm_update_lock_install_post
@@ -3106,9 +3106,9 @@ __npm_src_unpack() {
 		local lockfiles=(
 			"GDevelop.js/package-lock.json"			# Required step #1
 			"newIDE/app/package-lock.json"			# Required step #2
-#			"GDJS/package-lock.json"			# Required step #2a
+			"GDJS/package-lock.json"			# Required step #2a
 			"newIDE/electron-app/package-lock.json"		# Required step #3
-#			"newIDE/electron-app/app/package-lock.json"	# Required step #3a
+			"newIDE/electron-app/app/package-lock.json"	# Required step #3a
 #			"newIDE/web-app/package-lock.json"
 #			"GDJS/tests/package-lock.json"
 		)
@@ -3203,9 +3203,9 @@ einfo "Updating lockfiles"
 		local lockfiles=(
 			"GDevelop.js/package-lock.json"			# Required step #1
 			"newIDE/app/package-lock.json"			# Required step #2
-#			"GDJS/package-lock.json"			# Required step #2a
+			"GDJS/package-lock.json"			# Required step #2a
 			"newIDE/electron-app/package-lock.json"		# Required step #3
-#			"newIDE/electron-app/app/package-lock.json"	# Required step #3a
+			"newIDE/electron-app/app/package-lock.json"	# Required step #3a
 #			"newIDE/web-app/package-lock.json"
 #			"GDJS/tests/package-lock.json"
 		)
@@ -3217,7 +3217,7 @@ einfo "Processing ${lockfile}"
 			pushd "${S}/${d}" || die
 				rm package-lock.json
 				rm yarn.lock
-				enpm i
+				enpm install
 				enpm audit fix
 				local dest="${WORKDIR}/lockfile-image/${d}"
 				mkdir -p "${dest}"
