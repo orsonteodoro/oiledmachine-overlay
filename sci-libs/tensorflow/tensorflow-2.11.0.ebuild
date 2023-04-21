@@ -41,7 +41,7 @@ GCC_SLOTS=(12 11 10 9)
 LLVM_MAX_SLOT=14
 LLVM_SLOTS=(14 13 12 11 10)
 PYTHON_COMPAT=( python3_{9,10} )
-PYTHON_USEDEP_TEST="python_targets_python3_9,-python_targets_python3_10" # Limited by gast
+PYTHON_USEDEP_TEST="python_targets_python3_9" # Limited by gast-4.0[python_targets_python3_9]
 
 inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr llvm prefix
 inherit toolchain-funcs
