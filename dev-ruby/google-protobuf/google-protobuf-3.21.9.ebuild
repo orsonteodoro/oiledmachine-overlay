@@ -42,7 +42,7 @@ RDEPEND+="
 "
 DEPEND+="
 	test? (
-		>=dev-libs/protobuf-${PV}
+		dev-libs/protobuf:0/32
 	)
 "
 

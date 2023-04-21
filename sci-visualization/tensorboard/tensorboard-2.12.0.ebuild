@@ -18,13 +18,15 @@ LICENSE="
 " # The distro Apache-2.0 template doesn't have all-rights-reserved
 SLOT="0"
 #KEYWORDS="~amd64" # Ebuild not finished.  See TODO list.
-IUSE+=" test testing-tensorflow"
+IUSE+=" test"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
 # See https://github.com/tensorflow/tensorboard/blob/2.12.0/tensorboard/pip_package/requirements.txt
 # Not used:
 #	>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
+# Requirements for dev-python/protobuf-python modified by this ebuild to avoid multi instance single slot issue.
+PROTOBUF_SLOT="0/32"
 RDEPEND="
 	${PYTHON_DEPS}
 	(
@@ -36,23 +38,14 @@ RDEPEND="
 		>=dev-python/google-auth-oauthlib-0.4.1[${PYTHON_USEDEP}]
 	)
 	(
-		>=dev-python/grpcio-1.48.2[${PYTHON_USEDEP}]
-		testing-tensorflow? (
-			<dev-python/grpcio-1.49.3[${PYTHON_USEDEP}]
-		)
-	)
-	(
 		<dev-python/requests-3[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.21.0[${PYTHON_USEDEP}]
 	)
-	(
-		<sci-visualization/tensorboard-data-server-0.8[${PYTHON_USEDEP},testing-tensorflow=]
-		>=sci-visualization/tensorboard-data-server-0.7[${PYTHON_USEDEP},testing-tensorflow=]
-	)
+	=sci-visualization/tensorboard-data-server-0.7*[${PYTHON_USEDEP}]
 	>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 	>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
-	>=dev-python/protobuf-python-3.19.6[${PYTHON_USEDEP}]
+	>=dev-python/grpcio-1.49:=[${PYTHON_USEDEP}]
 	>=dev-python/tensorboard-plugin-wit-1.6.0[${PYTHON_USEDEP}]
 	>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
 
@@ -60,6 +53,7 @@ RDEPEND="
 
 	dev-python/bleach[${PYTHON_USEDEP}]
 	dev-python/html5lib[${PYTHON_USEDEP}]
+	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
 "
 BDEPEND="
@@ -79,7 +73,7 @@ BDEPEND="
 	test? (
 		>=dev-python/boto3-1.9.86[${PYTHON_USEDEP}]
 		>=dev-python/fsspec-0.7.4[${PYTHON_USEDEP}]
-		>=dev-python/grpcio-testing-1.24.3[${PYTHON_USEDEP}]
+		>=dev-python/grpcio-testing-1.49:=[${PYTHON_USEDEP}]
 		>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.0[${PYTHON_USEDEP}]
 	)

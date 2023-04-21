@@ -44,7 +44,7 @@ LLVM_MAX_SLOT=14
 LLVM_MIN_SLOT=10
 LLVM_SLOTS=( ${LLVM_MAX_SLOT} 13 12 11 ${LLVM_MIN_SLOT} )
 PYTHON_COMPAT=( python3_{9,10} )
-PYTHON_USEDEP_TEST="python_targets_python3_9" # Limited by gast-4.0[python_targets_python3_9]
+# PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
 
 # *seq* can only be done in the eclass.
 gen_seq_dec() {
@@ -206,13 +206,14 @@ CUB_PV="1.9.9"			# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/te
 CUDNN_FRONTEND_PV="0.7.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/workspace2.bzl
 GRPC_PV="1.48"			# Based on the oldest grpc supporting abseil 20220623
 GRPCIO_PV="1.24.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/pip_package/setup.py#L84
-GRPCIO_PV_MAX="3.21"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/pip_package/setup.py#L84	; Exclusive ; Upstream is wrong
+GRPCIO_PV_MAX="1.49"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/pip_package/setup.py#L84	; < (Exclusive) ; Upstream is wrong
 KISSFFT_PV="131.1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/third_party/kissfft/workspace.bzl
 NCCL_PV="2.13.4-1"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/workspace2.bzl
 ONEDNN_PV="2.7.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/workspace2.bzl ; mkl_dnn_v1
 OOURA_FFT_PV="1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/workspace2.bzl
 OPENMP_PV="10.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/workspace2.bzl
 PLATFORMS_PV="0.0.5"		# From https://github.com/tensorflow/runtime/blob/4ce3e4da2e21ae4dfcee9366415e55f408c884ec/third_party/rules_cuda/cuda/dependencies.bzl#L66
+PROTOBUF_SLOT="0/30"
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/workspace2.bzl
 RULES_APPLE_PV="1.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/workspace2.bzl
 RULES_JVM_PV="3.2"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/workspace3.bzl
@@ -305,12 +306,6 @@ SRC_URI="
 # grpcio version should match grpc
 # Apache-2.0 is only license compatible with >=openssl-3
 # protobuf-python has a max limit <3.20 upstream, but distro only supports 4.21.9
-RDEPEND_DISABLED="
-	(
-		<dev-python/protobuf-python-3.20[${PYTHON_USEDEP}]
-		>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
-	)
-" # For python USE
 # The distro only has 11.7, 11.8, 12 for cuda.  The exact version preferred due
 # to binary compatibility.
 CUDA_CDEPEND="
@@ -325,12 +320,9 @@ RDEPEND="
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
 	)
-	!test? (
-		>=dev-cpp/abseil-cpp-20220623.0:0/20220623
-		>=dev-libs/protobuf-3.9.2:=
-		>=net-libs/grpc-${GRPC_PV}:=
-	)
+	=net-libs/grpc-1.48
 	>=app-arch/snappy-1.1.8
+	>=dev-cpp/abseil-cpp-20220623.0:0/20220623
 	>=dev-db/lmdb-0.9.29
 	>=dev-db/sqlite-3.39.4
 	>=dev-libs/double-conversion-3.2.0
@@ -344,6 +336,7 @@ RDEPEND="
 	>=net-misc/curl-7.85.0
 	>=sys-apps/hwloc-2.7.1:=
 	>=sys-libs/zlib-1.2.13
+	dev-libs/protobuf:${PROTOBUF_SLOT}
 	cuda? (
 		${CUDA_RDEPEND}
 		=dev-libs/cudnn-8*
@@ -353,15 +346,12 @@ RDEPEND="
 	)
 	python? (
 		${PYTHON_DEPS}
-		!test? (
-			(
-				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP},-testing-tensorflow(-)]
-				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP},-testing-tensorflow(-)]
-			)
-			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
-			>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
+		(
 			>=net-libs/google-cloud-cpp-1.17.1
+			<net-libs/google-cloud-cpp-1.41
 		)
+		=dev-python/grpcio-1.48*[${PYTHON_USEDEP}]
+		=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP}]
 		>=dev-libs/flatbuffers-2.0.6:=
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]
@@ -381,58 +371,33 @@ RDEPEND="
 		>=dev-python/dill-0.3.4[${PYTHON_USEDEP}]
 		>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
 		>=dev-python/tblib-1.7.0[${PYTHON_USEDEP}]
+		dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 
 		test? (
 			(
-				<dev-python/gast-0.4.1[${PYTHON_USEDEP_TEST}]
-				>=dev-python/gast-0.2.1[${PYTHON_USEDEP_TEST}]
-			)
-			(
-				<dev-python/grpcio-1.49[${PYTHON_USEDEP_TEST}]
-				>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP_TEST}]
-			)
-			(
-				<dev-python/protobuf-python-3.20[${PYTHON_USEDEP_TEST}]
-				>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP_TEST}]
-			)
-			(
-				<net-libs/google-cloud-cpp-1.41
-				>=net-libs/google-cloud-cpp-1.17.1
-			)
-			(
-				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP_TEST},testing-tensorflow]
-				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP_TEST},testing-tensorflow]
+				>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
+				<dev-python/gast-0.4.1[${PYTHON_USEDEP}]
 			)
 		)
-	)
-	test? (
-		>=net-libs/grpc-1.27_p9999:=
-		<net-libs/grpc-1.49
-		dev-libs/protobuf:0/30
 	)
 "
 DEPEND="
 	${RDEPEND}
 	python? (
-		dev-python/mock
-		dev-python/setuptools
+		dev-python/mock[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
 	)
 "
 PDEPEND="
 	python? (
 		!arm64? (
 			!kernel_Darwin? (
-				>=dev-python/tensorflow-io-0.23.1[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
+				<dev-python/tensorflow-io-0.32[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
+				>=dev-python/tensorflow-io-0.28[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
 			)
 		)
-		(
-			<sci-libs/tensorflow-estimator-${DEP_VER_MAX}[${PYTHON_USEDEP}]
-			>=sci-libs/tensorflow-estimator-${DEP_VER}[${PYTHON_USEDEP}]
-		)
-		(
-			<sci-libs/keras-${DEP_VER_MAX}[${PYTHON_USEDEP}]
-			>=sci-libs/keras-${DEP_VER}[${PYTHON_USEDEP}]
-		)
+		=sci-libs/keras-${DEP_VER}*[${PYTHON_USEDEP}]
+		=sci-libs/tensorflow-estimator-${DEP_VER}*[${PYTHON_USEDEP}]
 	)
 "
 gen_llvm_bdepend() {
@@ -464,9 +429,9 @@ BDEPEND="
 		dev-lang/python
 	)
 	>=dev-util/bazel-5.3.0
-	>=dev-libs/protobuf-3.9.2
 	app-arch/unzip
 	dev-java/java-config
+	dev-libs/protobuf:${PROTOBUF_SLOT}
 	clang? (
 		|| (
 			$(gen_llvm_bdepend)
@@ -476,11 +441,8 @@ BDEPEND="
 		${CUDA_CDEPEND}
 	)
 	python? (
-		(
-			<dev-python/grpcio-tools-${GRPCIO_PV_MAX}[${PYTHON_USEDEP}]
-			>=dev-python/grpcio-tools-${GRPC_PV}[${PYTHON_USEDEP}]
-			>=dev-python/grpcio-tools-${GRPCIO_PV}[${PYTHON_USEDEP}]
-		)
+		=dev-python/grpcio-1.48*[${PYTHON_USEDEP}]
+		=dev-python/grpcio-tools-1.48*[${PYTHON_USEDEP}]
 		>=dev-python/cython-3.0.0_alpha10[${PYTHON_USEDEP}]
 		dev-python/mock[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]

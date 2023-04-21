@@ -12,13 +12,10 @@ HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+PROTOBUF_SLOT="0/30"
 RDEPEND="
-	(
-		<dev-python/protobuf-python-4[${PYTHON_USEDEP}]
-		<dev-python/protobuf-python-3.21[${PYTHON_USEDEP}]
-		>=dev-python/protobuf-python-3.5.0_p1[${PYTHON_USEDEP}]
-	)
 	~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
+	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 "
 BDEPEND="
 	${RDEPEND}

@@ -5,7 +5,8 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..9} )
+# Limited by jax
 inherit distutils-r1
 
 DESCRIPTION="OpenSpiel is a collection of environments and algorithms for \

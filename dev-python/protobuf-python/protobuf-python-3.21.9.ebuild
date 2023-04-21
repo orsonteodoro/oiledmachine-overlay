@@ -34,7 +34,7 @@ LICENSE="BSD"
 SLOT="0/32"
 RDEPEND="
 	${PYTHON_DEPS}
-	=dev-libs/protobuf-21.9*
+	dev-libs/protobuf:${SLOT}
 "
 DEPEND="
 	${RDEPEND}

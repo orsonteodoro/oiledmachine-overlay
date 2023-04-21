@@ -30,40 +30,38 @@ https://github.com/keras-team/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 # https://github.com/keras-team/keras/blob/v2.12.0/WORKSPACE
 # https://github.com/keras-team/keras/blob/v2.12.0/.bazelversion
 PROTOBUF_PV="3.21.9" # From WORKSPACE which differs from requirements.txt
+PROTOBUF_SLOT="0/32"
 # TODO: Fix sci-libs/keras-applications, sci-libs/keras-preprocessing
 # These have moved in this package.
 #	>=sci-libs/keras-applications-1.0.8[${PYTHON_USEDEP}]
 #	>=sci-libs/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
 RDEPEND="
 	(
-		$(python_gen_cond_dep '<dev-python/numpy-1.23[${PYTHON_USEDEP}]' python3_{9..10})
+		$(python_gen_cond_dep '<dev-python/numpy-1.24[${PYTHON_USEDEP}]' python3_{9..10})
 		$(python_gen_cond_dep '>=dev-python/numpy-1.22.0[${PYTHON_USEDEP}]' python3_{9..10})
 	)
 	(
 		$(python_gen_cond_dep '>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]' python3_11)
 	)
-	(
-		<sci-libs/tensorflow-2.12[${PYTHON_USEDEP},python]
-		>=sci-libs/tensorflow-2.11[${PYTHON_USEDEP},python]
-	)
-	>=dev-libs/protobuf-${PROTOBUF_PV}:=
-	>=dev-python/protobuf-python-${PROTOBUF_PV}[${PYTHON_USEDEP}]
+	=sci-libs/tensorflow-2.12*[${PYTHON_USEDEP},python]
 	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 	>=sys-libs/zlib-1.2.13
+	dev-libs/protobuf:${PROTOBUF_SLOT}
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/h5py[${PYTHON_USEDEP}]
 	dev-python/pandas[${PYTHON_USEDEP}]
 	dev-python/pillow[${PYTHON_USEDEP}]
+	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "
 BDEPEND="
-	>=dev-libs/protobuf-${PROTOBUF_PV}
 	>=dev-util/bazel-5.4.0
 	app-arch/unzip
 	dev-java/java-config
+	dev-libs/protobuf:${PROTOBUF_SLOT}
 "
 # Bazel tests not pytest, also want GPU access
 RESTRICT=""

@@ -5,7 +5,8 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="hatchling"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..9} )
+# Limited by jax
 inherit distutils-r1
 
 DESCRIPTION="On-the-fly conversions between Jax and NumPy tensors"

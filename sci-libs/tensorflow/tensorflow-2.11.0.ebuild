@@ -41,7 +41,7 @@ GCC_SLOTS=(12 11 10 9)
 LLVM_MAX_SLOT=14
 LLVM_SLOTS=(14 13 12 11 10)
 PYTHON_COMPAT=( python3_{9,10} )
-PYTHON_USEDEP_TEST="python_targets_python3_9" # Limited by gast-4.0[python_targets_python3_9]
+# PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
 
 inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr llvm prefix
 inherit toolchain-funcs
@@ -181,13 +181,14 @@ CUB_PV="1.9.9"
 CUDNN_FRONTEND_PV="0.7.1"
 GRPC_PV="1.48"
 GRPCIO_PV="1.24.3"
-GRPCIO_PV_MAX="3.21"			# Exclusive ; Upstream is wrong
+GRPCIO_PV_MAX="1.49"			# < (Exclusive) ; Upstream is wrong
 KISSFFT_PV="131.1.0"
 NCCL_PV="2.13.4-1"
 ONEDNN_PV="2.7.1" # mkl_dnn_v1
 OOURA_FFT_PV="1.0"
 OPENMP_PV="10.0.1"
 PLATFORMS_PV="0.0.5"
+PROTOBUF_SLOT="0/30"
 RULES_ANDROID_PV="0.1.1"
 RULES_APPLE_PV="1.0.1"
 RULES_PKG_PV="0.7.0"
@@ -282,12 +283,6 @@ SRC_URI="
 # grpcio version should match grpc
 # Apache-2.0 is only license compatible with >=openssl-3
 # protobuf-python has a max limit <3.20 upstream, but distro only supports 4.21.9
-RDEPEND_DISABLED="
-	(
-		<dev-python/protobuf-python-3.20[${PYTHON_USEDEP}]
-		>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
-	)
-" # For python USE
 # The distro only has 11.7, 11.8, 12 for cuda.  The exact version preferred due
 # to binary compatibility.
 CUDA_CDEPEND="
@@ -302,12 +297,9 @@ RDEPEND="
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
 	)
-	!test? (
-		>=dev-cpp/abseil-cpp-20220623.0:0/20220623
-		>=dev-libs/protobuf-3.9.2:=
-		>=net-libs/grpc-${GRPC_PV}:=
-	)
+	=net-libs/grpc-1.48*
 	>=app-arch/snappy-1.1.8
+	>=dev-cpp/abseil-cpp-20220623.0:0/20220623
 	>=dev-db/lmdb-0.9.29
 	>=dev-db/sqlite-3.39.4
 	>=dev-libs/double-conversion-3.2.0
@@ -321,6 +313,7 @@ RDEPEND="
 	>=net-misc/curl-7.85.0
 	>=sys-apps/hwloc-2.7.1:=
 	>=sys-libs/zlib-1.2.13
+	dev-libs/protobuf:${PROTOBUF_SLOT}
 	cuda? (
 		${CUDA_RDEPEND}
 		=dev-libs/cudnn-8*
@@ -330,13 +323,18 @@ RDEPEND="
 		virtual/mpi
 	)
 	python? (
-		${PYTHON_DEPS}
 		!test? (
-			=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP},-testing-tensorflow(-)]
-			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
-			>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP}]
+			=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP}]
+		)
+		${PYTHON_DEPS}
+		(
+			<net-libs/google-cloud-cpp-1.41
 			>=net-libs/google-cloud-cpp-1.17.1
 		)
+		(
+			dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+		)
+		=dev-python/grpcio-1.48*[${PYTHON_USEDEP}]
 		>=dev-libs/flatbuffers-2.0.6:=
 		>=dev-python/astunparse-1.6.3[${PYTHON_USEDEP}]
 		>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
@@ -355,38 +353,22 @@ RDEPEND="
 		>=dev-python/tblib-1.7.0[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
 		>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
+		dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 
 		test? (
 			(
-				<dev-python/gast-0.4.1[${PYTHON_USEDEP_TEST}]
-				>=dev-python/gast-0.2.1[${PYTHON_USEDEP_TEST}]
+				>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
+				<dev-python/gast-0.4.1[${PYTHON_USEDEP}]
 			)
-			(
-				<dev-python/grpcio-1.49[${PYTHON_USEDEP_TEST}]
-				>=dev-python/grpcio-${GRPCIO_PV}[${PYTHON_USEDEP_TEST}]
-			)
-			(
-				<net-libs/google-cloud-cpp-1.41
-				>=net-libs/google-cloud-cpp-1.17.1
-			)
-			(
-				<dev-python/protobuf-python-3.20[${PYTHON_USEDEP_TEST}]
-				>=dev-python/protobuf-python-3.9.2[${PYTHON_USEDEP_TEST}]
-			)
-			=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP_TEST},testing-tensorflow]
+			=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP}]
 		)
-	)
-	test? (
-		>=net-libs/grpc-1.27_p9999:=
-		<net-libs/grpc-1.49
-		dev-libs/protobuf:0/30
 	)
 "
 DEPEND="
 	${RDEPEND}
 	python? (
-		dev-python/mock
-		dev-python/setuptools
+		dev-python/mock[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
 	)
 "
 PDEPEND="
@@ -423,9 +405,9 @@ BDEPEND="
 		dev-lang/python
 	)
 	>=dev-util/bazel-5.3.0
-	>=dev-libs/protobuf-3.8.0
 	app-arch/unzip
 	dev-java/java-config
+	dev-libs/protobuf:${PROTOBUF_SLOT}
 	clang? (
 		|| (
 			$(gen_llvm_bdepend)
@@ -435,9 +417,10 @@ BDEPEND="
 		${CUDA_CDEPEND}
 	)
 	python? (
-		>=dev-python/cython-3.0.0_alpha10
-		>=dev-python/grpcio-tools-1.28
-		dev-python/mock
+		=dev-python/grpcio-1.48*[${PYTHON_USEDEP}]
+		=dev-python/grpcio-tools-1.48*[${PYTHON_USEDEP}]
+		>=dev-python/cython-3.0.0_alpha10[${PYTHON_USEDEP}]
+		dev-python/mock[${PYTHON_USEDEP}]
 	)
 	|| (
 		>=sys-devel/gcc-12:12

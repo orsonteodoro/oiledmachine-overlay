@@ -87,7 +87,7 @@ JRE_DEPEND="
 "
 RDEPEND+="
 	${JRE_DEPEND}
-	>=dev-libs/protobuf-3.21.7:=[static-libs]
+	dev-libs/protobuf:0/32[static-libs]
 "
 DEPEND+=" ${RDEPEND}"
 # SDK ver: https://github.com/grpc/grpc-java/blob/v1.52.1/android/build.gradle#L10

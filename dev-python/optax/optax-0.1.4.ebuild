@@ -33,7 +33,7 @@ DEPEND+="
 	>=dev-python/chex-0.1.5[${PYTHON_USEDEP}]
 	>=dev-python/jax-0.1.55[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
-	>=dev-python/typing_extensions-3.10.0[${PYTHON_USEDEP}]
+	>=dev-python/typing-extensions-3.10.0[${PYTHON_USEDEP}]
 	examples? (
 		>=dev-python/dm-haiku-0.0.3[${PYTHON_USEDEP}]
 		>=dev-python/tensorflow-datasets-4.2.0[${PYTHON_USEDEP}]

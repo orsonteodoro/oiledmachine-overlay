@@ -4,10 +4,8 @@
 
 EAPI=8
 
-MY_PN="${PN/-/_}"
-
 DISTUTILS_USE_PEP517="flit"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..9} ) # Upstream only tests up to 3.9 for this release
 inherit distutils-r1
 
 DESCRIPTION="Orbax is a library providing common utilities for JAX users."
@@ -20,15 +18,18 @@ LICENSE="
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
+REQUIRED_USE="
+python_targets_python3_9
+"
 # TODO: create packages:
 # etils
 DEPEND+="
+	$(python_gen_cond_dep 'dev-python/importlib-resources[${PYTHON_USEDEP}]' python3_9)
 	>=dev-python/jax-0.4.6[${PYTHON_USEDEP}]
 	>=dev-python/tensorstore-0.1.20[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/cached-property[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP}]
-	dev-python/importlib_resources[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/nest_asyncio[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
@@ -44,8 +45,8 @@ RDEPEND+="
 "
 BDEPEND+="
 	(
-		<dev-python/flit_core-4
-		>=dev-python/flit_core-3.5
+		<dev-python/flit_core-4[${PYTHON_USEDEP}]
+		>=dev-python/flit_core-3.5[${PYTHON_USEDEP}]
 	)
 	test? (
 		dev-python/pytest[${PYTHON_USEDEP}]
@@ -57,7 +58,7 @@ SRC_URI="
 https://github.com/google/orbax/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${MY_PN}-${PV}"
+S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md )
 

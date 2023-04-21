@@ -5,7 +5,8 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..9} )
+# Limited by jax
 inherit distutils-r1
 
 DESCRIPTION="Chex is a library of utilities for helping to write reliable JAX code."

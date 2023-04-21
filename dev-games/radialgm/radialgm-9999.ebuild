@@ -21,9 +21,9 @@ ENIGMA_ABI_FINGERPRINT="3660f4e5cab9d7d7db6fd8b5c4b6f7089b923e283daef5eb7c410946
 # See CI for *DEPENDs
 # Upstream uses gcc 12.1.0 but relaxed in this ebuild
 CDEPEND="
-	>=dev-libs/protobuf-21.1
 	>=net-libs/grpc-1.47.0
 	>=sys-devel/gcc-10.3.0
+	dev-libs/protobuf:0/32
 "
 QT_PV="5.15.5"
 # Upstream uses qscintilla 2.13.3.  Downgraded because no ebuild available yet.

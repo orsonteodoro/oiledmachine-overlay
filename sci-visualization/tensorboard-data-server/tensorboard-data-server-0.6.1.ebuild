@@ -211,8 +211,8 @@ LICENSE="
 # it appears in the LICENSE file.
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test testing-tensorflow"
-
+IUSE+=" test"
+PROTOBUF_SLOT="0/30"
 RDEPEND="
 	${PYTHON_DEPS}
 	(
@@ -224,27 +224,16 @@ RDEPEND="
 		>=dev-python/google-auth-oauthlib-0.4.1[${PYTHON_USEDEP}]
 	)
 	(
-		>=dev-python/grpcio-1.24.3[${PYTHON_USEDEP}]
-		testing-tensorflow? (
-			<dev-python/grpcio-1.49.3[${PYTHON_USEDEP}]
-		)
-	)
-	(
-		<dev-python/protobuf-python-4[${PYTHON_USEDEP}]
-		>=dev-python/protobuf-python-3.6.0[${PYTHON_USEDEP}]
-		testing-tensorflow? (
-			<dev-python/protobuf-python-3.21[${PYTHON_USEDEP}]
-		)
-	)
-	(
 		<dev-python/requests-3[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.21.0[${PYTHON_USEDEP}]
 	)
+	=dev-python/grpcio-1.48[${PYTHON_USEDEP}]
 	>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 	>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
 	>=dev-python/tensorboard-plugin-wit-1.6.0[${PYTHON_USEDEP}]
 	>=dev-python/werkzeug-0.11.15[${PYTHON_USEDEP}]
+	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 "
 BDEPEND="
 	${PYTHON_DEPS}
@@ -255,8 +244,8 @@ BDEPEND="
 	>=dev-python/virtualenv-20.0.31[${PYTHON_USEDEP}]
 	>=dev-util/yamllint-1.17.0[${PYTHON_USEDEP}]
 	test? (
+		=dev-python/grpcio-testing-1.48[${PYTHON_USEDEP}]
 		>=dev-python/boto3-1.9.86[${PYTHON_USEDEP}]
-		>=dev-python/grpcio-testing-1.24.3[${PYTHON_USEDEP}]
 		>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.0[${PYTHON_USEDEP}]
 	)

@@ -17,13 +17,13 @@ RESTRICT="test"
 RDEPEND="
 	>=dev-cpp/abseil-cpp-20211102.0:=
 	>=dev-cpp/nlohmann_json-3.10.5
-	>=dev-libs/protobuf-3.19.4:0/30
 	>=dev-libs/crc32c-1.1.2
 	>=dev-libs/openssl-1.1.1:=
 	>=dev-libs/re2-0.2020.11.01:=
 	>=net-libs/grpc-1.43.2:=
 	>=net-misc/curl-7.69.1
 	>=sys-libs/zlib-1.2.11
+	dev-libs/protobuf:0/30
 "
 DEPEND="
 	${RDEPEND}

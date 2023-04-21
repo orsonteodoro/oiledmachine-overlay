@@ -14,11 +14,11 @@ KEYWORDS="~amd64 ~x86"
 IUSE=" r1"
 RESTRICT="test"
 RDEPEND="
-	>=dev-libs/protobuf-1.19.1:0/30
 	>=dev-libs/crc32c-1.0.6
 	>=dev-libs/openssl-1.1.1:=
 	>=net-libs/grpc-1.19.1:=
 	>=net-misc/curl-7.60.0
+	dev-libs/protobuf:0/30
 "
 DEPEND="
 	${RDEPEND}

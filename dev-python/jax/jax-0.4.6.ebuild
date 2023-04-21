@@ -7,7 +7,8 @@ EAPI=8
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..9} )
+# Limited by flax
 inherit distutils-r1
 
 DESCRIPTION="Differentiate, compile, and transform Numpy code"
@@ -26,8 +27,8 @@ gen_jaxlib_depend() {
 	local pv="${1}"
 	echo "
 		|| (
-			~dev-python/jaxlib-${pv}[${PYTHON_USEDEP},cpu?,cuda?,rocm?]
-			~dev-python/jaxlib-bin-${pv}[${PYTHON_USEDEP}]
+			>=dev-python/jaxlib-${pv}[${PYTHON_USEDEP},cpu?,cuda?,rocm?]
+			>=dev-python/jaxlib-bin-${pv}[${PYTHON_USEDEP}]
 		)
 	"
 }
@@ -40,8 +41,7 @@ DEPEND+="
 	dev-python/scipy[${PYTHON_USEDEP}]
 	dev-python/tensorstore[${PYTHON_USEDEP}]
 	australis? (
-		<dev-libs/protobuf-4
-		>=dev-libs/protobuf-3.13
+		dev-libs/protobuf:=
 	)
 	cpu? (
 		$(gen_jaxlib_depend ${PV})
@@ -55,7 +55,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	dev-libs/protobuf
+	dev-libs/protobuf:=
 	dev-python/flake8[${PYTHON_USEDEP}]
 	test? (
 		$(gen_jaxlib_depend 0.4.4)

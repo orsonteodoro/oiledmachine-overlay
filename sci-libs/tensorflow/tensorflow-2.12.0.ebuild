@@ -44,7 +44,8 @@ LLVM_MAX_SLOT=14
 LLVM_MIN_SLOT=10
 LLVM_SLOTS=( ${LLVM_MAX_SLOT} 13 12 11 ${LLVM_MIN_SLOT} )
 PYTHON_COMPAT=( python3_{9..11} )
-PYTHON_USEDEP_TEST="python_targets_python3_9" # Limited by gast-4.0[python_targets_python3_9]
+# Limited by jax/flax
+# PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
 
 # *seq* can only be done in the eclass.
 gen_seq_dec() {
@@ -207,7 +208,7 @@ CUB_PV="1.9.9"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/te
 CUDNN_FRONTEND_PV="0.7.3"	# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
 GRPC_PV="1.48"			# Based on the oldest grpc supporting abseil 20220623
 GRPCIO_PV="1.24.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/tools/pip_package/setup.py#L84
-GRPCIO_PV_MAX="2.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/tools/pip_package/setup.py#L84
+GRPCIO_PV_MAX="1.53"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/tools/pip_package/setup.py#L84 ; < (Exclusive) ; Upstream is wrong
 KISSFFT_PV="131.1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/kissfft/workspace.bzl
 NCCL_PV="2.16.2-1"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
 ONEDNN_PV="2.7.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl ; mkl_dnn_v1
@@ -215,6 +216,7 @@ OOURA_FFT_PV="1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0
 OPENMP_PV="10.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
 PLATFORMS_PV="0.0.6"		# From https://github.com/tensorflow/runtime/blob/91d765cad5599f9710973d3e34d4dc22583e2e79/third_party/rules_cuda/cuda/dependencies.bzl#L66
 PROTOBUF_PV="3.21.9"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
+PROTOBUF_SLOT="0/32"
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
 RULES_APPLE_PV="1.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
 RULES_JVM_PV="4.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace3.bzl
@@ -330,13 +332,15 @@ RDEPEND="
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
 	)
-	!test? (
-		>=dev-cpp/abseil-cpp-20220623.0:0/20220623
-		>=dev-libs/protobuf-3.21.9:=
-		>=net-libs/grpc-${GRPC_PV}:=
+	|| (
+		=net-libs/grpc-1.49*:=
+		=net-libs/grpc-1.50*:=
+		=net-libs/grpc-1.51*:=
+		=net-libs/grpc-1.52*:=
 	)
 	>=dev-db/lmdb-0.9.29
 	>=dev-db/sqlite-3.40.1
+	>=dev-cpp/abseil-cpp-20220623.0:0/20220623
 	>=dev-libs/double-conversion-3.2.0
 	>=dev-libs/icu-69.1:=
 	>=dev-libs/jsoncpp-1.9.5:=
@@ -348,6 +352,7 @@ RDEPEND="
 	>=net-misc/curl-7.88.0
 	>=sys-apps/hwloc-2.7.1:=
 	>=sys-libs/zlib-1.2.13
+	dev-libs/protobuf:${PROTOBUF_SLOT}
 	cuda? (
 		${CUDA_RDEPEND}
 		=dev-libs/cudnn-8*
@@ -357,13 +362,13 @@ RDEPEND="
 	)
 	python? (
 		${PYTHON_DEPS}
-		!test? (
-			(
-				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP},-testing-tensorflow(-)]
-				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP},-testing-tensorflow(-)]
-			)
-			>=dev-python/grpcio-${GRPC_PV}[${PYTHON_USEDEP}]
+		(
 			>=net-libs/google-cloud-cpp-1.17.1
+			<net-libs/google-cloud-cpp-2.6.0
+		)
+		(
+			>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
+			<dev-python/numpy-1.24[${PYTHON_USEDEP}]
 		)
 		(
 			!~dev-python/protobuf-python-4.21.0[${PYTHON_USEDEP}]
@@ -372,13 +377,13 @@ RDEPEND="
 			!~dev-python/protobuf-python-4.21.3[${PYTHON_USEDEP}]
 			!~dev-python/protobuf-python-4.21.4[${PYTHON_USEDEP}]
 			!~dev-python/protobuf-python-4.21.5[${PYTHON_USEDEP}]
-			<dev-python/protobuf-python-5[${PYTHON_USEDEP}]
-			>=dev-python/protobuf-python-3.20.3[${PYTHON_USEDEP}]
+			dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 		)
 		(
-			<dev-python/wrapt-1.15[${PYTHON_USEDEP}]
 			>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
+			<dev-python/wrapt-1.15[${PYTHON_USEDEP}]
 		)
+		=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_USEDEP}]
 		>=dev-libs/flatbuffers-2.0.6:=
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]
@@ -388,8 +393,15 @@ RDEPEND="
 		>=dev-python/google-pasta-0.1.1[${PYTHON_USEDEP}]
 		>=dev-python/h5py-2.9.0[${PYTHON_USEDEP}]
 		>=dev-python/jax-0.3.15[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
+
 		>=dev-python/opt-einsum-2.3.2[${PYTHON_USEDEP}]
+		!>=dev-python/grpcio-1.53[${PYTHON_USEDEP}]
+		|| (
+			=dev-python/grpcio-1.49*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
+		)
 		>=dev-python/six-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-3.6.6[${PYTHON_USEDEP}]
@@ -401,52 +413,28 @@ RDEPEND="
 
 		test? (
 			(
-				<dev-python/gast-0.4.1[${PYTHON_USEDEP_TEST}]
-				>=dev-python/gast-0.2.1[${PYTHON_USEDEP_TEST}]
+				>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
+				<dev-python/gast-0.4.1[${PYTHON_USEDEP}]
 			)
-			(
-				<dev-python/grpcio-${GRPCIO_PV_MAX}[${PYTHON_USEDEP_TEST}]
-				>=dev-python/grpcio-1.49.3[${PYTHON_USEDEP_TEST}]
-			)
-			(
-				<dev-python/numpy-1.24[${PYTHON_USEDEP_TEST}]
-				>=dev-python/numpy-1.22[${PYTHON_USEDEP_TEST}]
-			)
-			(
-				<sci-visualization/tensorboard-${DEP_VER_MAX}[${PYTHON_USEDEP_TEST},testing-tensorflow]
-				>=sci-visualization/tensorboard-${DEP_VER}[${PYTHON_USEDEP_TEST},testing-tensorflow]
-			)
-			>=net-libs/google-cloud-cpp-1.40
 		)
-	)
-	test? (
-		>=net-libs/grpc-1.27_p9999:=
-		>=net-libs/grpc-1.49
-		dev-libs/protobuf:0/32
 	)
 "
 DEPEND="
 	${RDEPEND}
 	python? (
-		dev-python/mock
-		dev-python/setuptools
+		dev-python/mock[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
 	)
 "
 PDEPEND="
 	python? (
 		!arm64? (
 			!kernel_Darwin? (
-				>=dev-python/tensorflow-io-0.23.1[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
+				>=dev-python/tensorflow-io-0.32[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
 			)
 		)
-		(
-			<sci-libs/tensorflow-estimator-${DEP_VER_MAX}[${PYTHON_USEDEP}]
-			>=sci-libs/tensorflow-estimator-${DEP_VER}[${PYTHON_USEDEP}]
-		)
-		(
-			<sci-libs/keras-${DEP_VER_MAX}[${PYTHON_USEDEP}]
-			>=sci-libs/keras-${DEP_VER}[${PYTHON_USEDEP}]
-		)
+		=sci-libs/keras-${DEP_VER}*[${PYTHON_USEDEP}]
+		=sci-libs/tensorflow-estimator-${DEP_VER}*[${PYTHON_USEDEP}]
 	)
 "
 gen_llvm_bdepend() {
@@ -478,9 +466,9 @@ BDEPEND="
 		dev-lang/python
 	)
 	>=dev-util/bazel-5.3.0
-	>=dev-libs/protobuf-3.9.2
 	app-arch/unzip
 	dev-java/java-config
+	dev-libs/protobuf:${PROTOBUF_SLOT}
 	clang? (
 		|| (
 			$(gen_llvm_bdepend)
@@ -490,10 +478,17 @@ BDEPEND="
 		${CUDA_CDEPEND}
 	)
 	python? (
-		(
-			<dev-python/grpcio-tools-${GRPCIO_PV_MAX}[${PYTHON_USEDEP}]
-			>=dev-python/grpcio-tools-${GRPC_PV}[${PYTHON_USEDEP}]
-			>=dev-python/grpcio-tools-${GRPCIO_PV}[${PYTHON_USEDEP}]
+		|| (
+			=dev-python/grpcio-1.49*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
+		)
+		|| (
+			=dev-python/grpcio-tools-1.49*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-tools-1.50*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-tools-1.51*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-tools-1.52*:=[${PYTHON_USEDEP}]
 		)
 		>=dev-python/cython-3.0.0_alpha11[${PYTHON_USEDEP}]
 		dev-python/mock[${PYTHON_USEDEP}]

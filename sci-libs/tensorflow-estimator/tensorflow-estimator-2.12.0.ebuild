@@ -32,8 +32,8 @@ https://github.com/tensorflow/${MY_PN}/archive/v${MY_PV}.tar.gz -> ${P}-rc0.tar.
 
 # https://github.com/tensorflow/tensorflow/blob/v2.12.0/.bazelversion
 RDEPEND="
-	>=sci-libs/keras-${TF_PV}[${PYTHON_USEDEP}]
-	>=sci-libs/tensorflow-${TF_PV}[${PYTHON_USEDEP},python]
+	=sci-libs/keras-${TF_PV}*[${PYTHON_USEDEP}]
+	=sci-libs/tensorflow-${TF_PV}*[${PYTHON_USEDEP},python]
 "
 DEPEND="
 	${RDEPEND}

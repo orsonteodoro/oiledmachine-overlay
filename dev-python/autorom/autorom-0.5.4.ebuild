@@ -4,7 +4,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} ) # Upstream tested up to 3.9
+PYTHON_COMPAT=( python3_{8..10} ) # Upstream tested up to 3.10
 inherit distutils-r1
 
 DESCRIPTION="A tool to automate installing Atari ROMs for the Arcade Learning \
@@ -22,7 +22,7 @@ REQUIRED_USE+="
 DEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_any_dep 'net-libs/libtorrent-rasterbar[${PYTHON_SINGLE_USEDEP},python]')
-	$(python_gen_cond_dep 'dev-python/importlib_resources[${PYTHON_USEDEP}]' python3_8)
+	$(python_gen_cond_dep 'dev-python/importlib-resources[${PYTHON_USEDEP}]' python3_9)
 	dev-python/click[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/tqdm[${PYTHON_USEDEP}]

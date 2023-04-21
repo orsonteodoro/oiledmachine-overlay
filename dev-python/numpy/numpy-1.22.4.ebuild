@@ -20,7 +20,7 @@ HOMEPAGE="
 	https://pypi.org/project/numpy/
 "
 SRC_URI="
-	mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz
+	mirror://pypi/${PN:0:1}/${PN}/${P}.zip
 	doc? (
 		https://numpy.org/doc/$(ver_cut 1-2 ${DOC_PV})/numpy-html.zip -> numpy-html-${DOC_PV}.zip
 		https://numpy.org/doc/$(ver_cut 1-2 ${DOC_PV})/numpy-ref.pdf -> numpy-ref-${DOC_PV}.pdf
@@ -44,12 +44,8 @@ RDEPEND="
 "
 BDEPEND="
 	${RDEPEND}
-	(
-		<dev-python/cython-3[${PYTHON_USEDEP}]
-		>=dev-python/cython-0.29.30[${PYTHON_USEDEP}]
-	)
+	>=dev-python/cython-0.29.30[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
-	>=dev-python/setuptools-59.2.0[${PYTHON_USEDEP}]
 	doc? (
 		app-arch/unzip
 	)
@@ -59,15 +55,17 @@ BDEPEND="
 	test? (
 		>=dev-python/cffi-1.14.0[${PYTHON_USEDEP}]
 		>=dev-python/hypothesis-6.24.1[${PYTHON_USEDEP}]
-		>=dev-python/mypy-0.940[${PYTHON_USEDEP}]
+		>=dev-python/mypy-0.981[${PYTHON_USEDEP}]
 		>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cov-3.0.0[${PYTHON_USEDEP}]
 		>=dev-python/pytz-2021.3[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
 	)
 "
 
 PATCHES=(
 	"${FILESDIR}/numpy-1.22.0-no-hardcode-blasv2.patch"
+	"${FILESDIR}/numpy-1.22.4-py311.patch"
 )
 
 distutils_enable_tests "pytest"
@@ -172,6 +170,11 @@ python_test() {
 			numpy/core/tests/test_ufunc.py::TestUfunc::test_identityless_reduction_huge_array
 		)
 	fi
+
+	[[ ${EPYTHON} == python3.11 ]] && EPYTEST_DESELECT+=(
+		# known problem
+		'numpy/typing/tests/test_generic_alias.py::TestGenericAlias::test_pass[__dir__-<lambda>]'
+	)
 
 	distutils_install_for_testing --single-version-externally-managed \
 		--record "${TMPDIR}/record.txt" ${NUMPY_FCONFIG}
