@@ -105,3 +105,6 @@ dev-dotnet/monodevelop
 =sys-libs/libcxx-13*
 =sys-libs/libcxxabi-13*
 =sys-libs/libomp-13*
+
+# Too early
+=dev-libs/protobuf-22*
