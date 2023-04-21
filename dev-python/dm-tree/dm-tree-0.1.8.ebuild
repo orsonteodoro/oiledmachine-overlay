@@ -51,6 +51,7 @@ PATCHES=(
 )
 
 src_unpack() {
+	export MAKEOPTS="-j1"
 	unpack ${A}
 }
 
