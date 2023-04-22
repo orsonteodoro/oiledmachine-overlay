@@ -36,7 +36,6 @@ gen_jaxlib_depend() {
 # in experimental but not in tests folder.
 DEPEND+="
 	>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
-	dev-python/flax[${PYTHON_USEDEP}]
 	dev-python/opt-einsum[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
 	dev-python/tensorstore[${PYTHON_USEDEP}]
@@ -62,6 +61,9 @@ BDEPEND+="
 		dev-python/pytest[${PYTHON_USEDEP}]
 	)
 "
+PDEPEND+="
+	dev-python/flax[${PYTHON_USEDEP}]
+" # Avoid circular
 SRC_URI="
 https://github.com/google/jax/archive/refs/tags/${PN}-v${PV}.tar.gz
 	-> ${P}.tar.gz
