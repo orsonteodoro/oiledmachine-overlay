@@ -106,6 +106,6 @@ dev-dotnet/monodevelop
 =sys-libs/libcxxabi-13*
 =sys-libs/libomp-13*
 
-# Too early
+# Too early.  Avoid multiple instances single slot issues.
 =dev-libs/protobuf-22*
 >=dev-cpp/abseil-cpp-20230125
