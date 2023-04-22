@@ -108,4 +108,4 @@ dev-dotnet/monodevelop
 
 # Too early
 =dev-libs/protobuf-22*
-#=dev-cpp/abseil-cpp-20230125*
+>=dev-cpp/abseil-cpp-20230125

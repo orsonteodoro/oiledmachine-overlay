@@ -5,7 +5,8 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..9} )
+# Limited by jax/flax
 inherit distutils-r1
 
 DESCRIPTION="Optax is a gradient processing and optimization library for JAX."
@@ -23,6 +24,7 @@ REQUIRED_USE+="
 	test? (
 		dp-accounting
 		examples
+		python_targets_python3_9
 	)
 	dp-accounting? (
 		test

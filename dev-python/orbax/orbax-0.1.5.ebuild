@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="flit"
-PYTHON_COMPAT=( python3_{8..9} ) # Upstream only tests up to 3.9 for this release
+PYTHON_COMPAT=( python3_{8..10} ) # Upstream only tests up to 3.9 for this release
 inherit distutils-r1
 
 DESCRIPTION="Orbax is a library providing common utilities for JAX users."
@@ -21,8 +21,6 @@ IUSE+=" doc test"
 REQUIRED_USE="
 python_targets_python3_9
 "
-# TODO: create packages:
-# etils
 DEPEND+="
 	$(python_gen_cond_dep 'dev-python/importlib-resources[${PYTHON_USEDEP}]' python3_9)
 	>=dev-python/jax-0.4.6[${PYTHON_USEDEP}]

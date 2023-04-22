@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..9} ) # Upstream lists only up to 3.7
+PYTHON_COMPAT=( python3_{8..10} ) # Upstream lists only up to 3.10
 # Limited by orbax
 inherit distutils-r1
 
