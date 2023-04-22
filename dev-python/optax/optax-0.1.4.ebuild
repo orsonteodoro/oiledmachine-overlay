@@ -55,6 +55,7 @@ RDEPEND+="
 # myst_nb
 # dp-accounting
 BDEPEND+="
+	app-arch/zip
 	doc? (
 		>=dev-python/dm-haiku-0.0.8[${PYTHON_USEDEP}]
 		>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
@@ -110,6 +111,16 @@ einfo "Running test for ${EPYTHON}"
 }
 
 src_install() {
+	if use examples ; then
+		insinto /usr/share/${PN}
+		doins -r "examples"
+	fi
+
+	rm_examples() {
+		rm -rf "${WORKDIR}/optax-${PV}-${EPYTHON/./_}/install/usr/lib/${EPYTHON}/site-packages/examples" || die
+	}
+	python_foreach_impl rm_examples
+
 	distutils-r1_src_install
 	docinto licenses
 	dodoc LICENSE
