@@ -29,7 +29,7 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" clang custom-optimization-level cpu cuda hardened portable rocm"
+IUSE+=" clang custom-optimization-level cpu cuda hardened portable rocm r1"
 # We don't add tpu because licensing issue with libtpu_nightly.
 REQUIRED_USE+="
 	|| (
@@ -802,8 +802,13 @@ _ebazel() {
 python_compile() {
 	load_env
 	[[ -e ".jax_configure.bazelrc" ]] || die "Missing file"
-einfo "Building for ${EPYTHON}"
+einfo "Building for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 	cd "${S}/build" || die
+	export PYTHON_BIN_PATH="${PYTHON}"
+
+	sed -i -r -e "s|python[0-9].[0-9]+|${EPYTHON}|g" \
+		"${S}/build/.jax_configure.bazelrc" || die
+
 	_ebazel run \
 		--verbose_failures=true \
 		":build_wheel" \
