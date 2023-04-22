@@ -89,6 +89,20 @@ unset -f _npm_set_globals
 # @DESCRIPTION:
 # The number of reconnect tries.
 
+# @FUNCTION: npm_check_network_sandbox
+# @DESCRIPTION:
+# Check the network sandbox.
+npm_check_network_sandbox() {
+# Corepack problems.  Cannot do complete offline install.
+	if has network-sandbox $FEATURES ; then
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to download micropackages."
+eerror
+		die
+	fi
+}
+
 # @FUNCTION: npm_pkg_setup
 # @DESCRIPTION:
 # Checks node slot required for building
@@ -128,6 +142,7 @@ eerror
 			die
 		fi
 	fi
+	:;#npm_check_network_sandbox
 }
 
 # @FUNCTION: _npm_cp_tarballs
@@ -382,10 +397,23 @@ einfo "Running:\tnpm ${cmd[@]}"
 	grep -q -e "npm ERR! Exit handler never called!" && die "Possible indeterministic behavior"
 }
 
+# @FUNCTION: npm_hydrate
+# @DESCRIPTION:
+# Load the package manager in the sandbox.
+npm_hydrate() {
+	if [[ "${NPM_OFFLINE:-1}" == "0" ]] ; then
+		COREPACK_ENABLE_NETWORK="1"
+	else
+		COREPACK_ENABLE_NETWORK="${COREPACK_ENABLE_NETWORK:-0}"
+	fi
+	corepack hydrate --activate "${EROOT}/usr/share/nodejs/corepack.tgz" || die
+}
+
 # @FUNCTION: _npm_src_unpack
 # @DESCRIPTION:
 # Unpacks a npm application.
 npm_src_unpack() {
+	npm_hydrate
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		if [[ ${PV} =~ 9999 ]] ; then

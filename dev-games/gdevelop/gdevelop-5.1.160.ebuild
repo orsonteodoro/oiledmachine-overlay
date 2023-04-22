@@ -1620,6 +1620,7 @@ einfo
 einfo "Building ${MY_PN}.js"
 einfo
 
+	npm_hydrate
 	if [[ -n "${NPM_UPDATE_LOCK}" ]] ; then
 		if [[ ${PV} =~ 9999 ]] ; then
 			:;

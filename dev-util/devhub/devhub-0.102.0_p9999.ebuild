@@ -3014,6 +3014,7 @@ pkg_setup() {
 
 gen_npm_lock() {
 	cd "${S}" || die
+	npm_hydrate
 	enpm install "jsonfile@6.1.0" --legacy-peer-deps
 	enpm install ${NPM_INSTALL_UNPACK_ARGS}
 	enpm audit fix ${NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS}

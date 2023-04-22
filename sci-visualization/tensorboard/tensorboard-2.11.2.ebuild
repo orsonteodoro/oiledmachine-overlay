@@ -817,6 +817,7 @@ ASM_COMMONS_PV="6.0"
 ASM_PV="6.0"
 ASM_TREE_PV="6.0"
 ASM_UTIL_PV="6.0"
+AZUL_ZULU_PV="11.50.19-ca-jdk11.0.12"
 CLOSURE_COMPILER_UNSHADED_PV="20191027"
 CLOSURE_STYLESHEETS_PV="1.5.0"
 DAGGER_PV="2.14.1"
@@ -842,10 +843,7 @@ JSR305_PV="2.0.3"
 MAVEN2_TYPES_PV="1.0.7"
 SOY_PV="2019-07-14"
 TOMCAT_ANNOTATIONS_API_PV="8.0.5"
-EGIT_RULES_PYTHON_COMMIT="4b84ad270387a7c439ebdccfd530e2339601ef27"
 ZLIB_PV="1.2.11"
-AZUL_ZULU_PV="11.50.19-ca-jdk11.0.12"
-JAVA_TOOLS_PV="11.7.1"
 
 EGIT_DATA_PLANE_API_COMMIT="c83ed7ea9eb5fb3b93d1ad52b59750f1958b8bde"
 EGIT_GRPC_COMMIT="b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd"
@@ -858,6 +856,7 @@ EGIT_RULES_CC_COMMIT="b7fe9697c0c76ab2fd431a891dbb9a6a32ed7c3e"
 EGIT_RULES_CLOSURE_COMMIT="db4683a2a1836ac8e265804ca5fa31852395185b"
 EGIT_RULES_JAVA_COMMIT="981f06c3d2bd10225e85209904090eb7b5fb26bd"
 EGIT_RULES_PROTO_COMMIT="97d8af4dc474595af3900dd85cb3a29ad28cc313"
+EGIT_RULES_PYTHON_COMMIT="4b84ad270387a7c439ebdccfd530e2339601ef27"
 EGIT_RULES_RUST_COMMIT="d5ab4143245af8b33d1947813d411a6cae838409"
 EGIT_UPB_COMMIT="9effcbcb27f0a665f9f345030188c0b291e32482"
 
@@ -1525,9 +1524,28 @@ einfo "Copying ${DISTDIR}/rust-crates--${pn}-${pv}.tar.gz -> ${dist}/download.ta
 	done
 }
 
+check_network_sandbox() {
+	# Required for yarn config set yarn-offline-mirror
+	if has network-sandbox $FEATURES ; then
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
+eerror "to be able to download micropackages and obtain version releases"
+eerror "information."
+eerror
+		die
+	fi
+}
+
+pkg_setup() {
+:;#	check_network_sandbox
+}
+
 src_unpack() {
 eerror "This ebuild is currently under maintenance."
 die
+	YARN_OFFLINE=1
+	yarn_hydrate
+
 	unpack ${P}.tar.gz
 	bazel_load_distfiles "${bazel_external_uris}"
 	yarn-utils_cpy_yarn_tarballs
@@ -1535,6 +1553,8 @@ die
 	cp_rust_crates
 #	cp_raze_crates
 	cd "${S}" || die
+	corepack prepare --all || die
+	export COREPACK_ENABLE_NETWORK=0
 	yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
 	cp "${HOME}/.yarnrc" "${WORKDIR}" || die
 }
@@ -1580,12 +1600,12 @@ _ebazel() {
 	output_base="${output_base%/}-bazel-base"
 	mkdir -p "${output_base}" || die
 
-	export GOROOT="${ESYSROOT}/usr/lib/go"
-	echo 'build --noshow_progress' >> "${T}/bazelrc" || die # Disable high CPU usage on xfce4-terminal
-	echo 'build --subcommands' >> "${T}/bazelrc" || die # Increase verbosity
+#	export GOROOT="${ESYSROOT}/usr/lib/go"
+#	echo 'build --noshow_progress' >> "${T}/bazelrc" || die # Disable high CPU usage on xfce4-terminal
+#	echo 'build --subcommands' >> "${T}/bazelrc" || die # Increase verbosity
 
-	echo "build --action_env=GOROOT=\"${GOROOT}\"" >> "${T}/bazelrc" || die
-	echo "build --host_action_env=GOROOT=\"${GOROOT}\"" >> "${T}/bazelrc" || die
+#	echo "build --action_env=GOROOT=\"${GOROOT}\"" >> "${T}/bazelrc" || die
+#	echo "build --host_action_env=GOROOT=\"${GOROOT}\"" >> "${T}/bazelrc" || die
 
 	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 		local ccache_dir=$(ccache -sv \

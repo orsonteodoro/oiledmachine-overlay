@@ -118,6 +118,20 @@ unset -f _yarn_set_globals
 # @DESCRIPTION:
 # Arguments to append to `npm audit fix ` contexts during package-lock.json generation.
 
+# @FUNCTION: yarn_check_network_sandbox
+# @DESCRIPTION:
+# Check the network sandbox.
+yarn_check_network_sandbox() {
+# Corepack problems.  Cannot do complete offline install.
+	if has network-sandbox $FEATURES ; then
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to download micropackages."
+eerror
+		die
+	fi
+}
+
 # @FUNCTION: yarn_check
 # @DESCRIPTION:
 # Checks for yarn installation.
@@ -150,14 +164,7 @@ eerror "env to be able to download micropackages."
 eerror
 				die
 		elif ver_test ${yarn_pv} -ge 1 ; then
-# Corepack problems.  Cannot do complete offline install.
-			if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download micropackages."
-eerror
-				die
-			fi
+			:;#yarn_check_network_sandbox
 		fi
 	popd
 }
@@ -473,11 +480,24 @@ einfo "Updating lockfile"
 		cd "${S}" || die
 }
 
+# @FUNCTION: yarn_hydrate
+# @DESCRIPTION:
+# Load the package manager in the sandbox.
+yarn_hydrate() {
+	if [[ "${YARN_OFFLINE:-1}" == "0" ]] ; then
+		COREPACK_ENABLE_NETWORK="1"
+	else
+		COREPACK_ENABLE_NETWORK="${COREPACK_ENABLE_NETWORK:-0}"
+	fi
+	corepack hydrate --activate "${EROOT}/usr/share/nodejs/corepack.tgz" || die
+}
+
 # @FUNCTION: _yarn_src_unpack
 # @DESCRIPTION:
 # Unpacks a yarn application.
 yarn_src_unpack() {
 einfo "Called yarn_src_unpack"
+	yarn_hydrate
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 		if [[ "${YARN_LOCKFILE_SOURCE:-ebuild}" == "ebuild" ]] ; then

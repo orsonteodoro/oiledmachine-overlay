@@ -79,7 +79,7 @@ acorn corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
 npm mold pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
-man pgo r3
+man pgo r4
 "
 
 gen_required_use_pgo() {
@@ -766,7 +766,12 @@ ewarn
 install_corepack() {
 	corepack disable 2>/dev/null
 	corepack enable
-	corepack prepare --all --activate # install >= yarn 3, pnpm, ...
+	mkdir -p "${EROOT}/usr/share/nodejs"
+	corepack prepare --all -o="${EROOT}/usr/share/nodejs/corepack.tgz"  # install >= yarn 3, pnpm, ...
+einfo
+einfo "Use \`corepack hydrate ${EROOT}/usr/share/nodejs/corepack.tgz\` to load"
+einfo "package managers"
+einfo
 }
 
 install_acorn() {

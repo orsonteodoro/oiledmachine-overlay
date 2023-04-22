@@ -1323,6 +1323,7 @@ add_deps() {
 
 src_unpack() {
         if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		npm_hydrate
                 unpack ${P}.tar.gz
                 cd "${S}" || die
                 rm package-lock.json

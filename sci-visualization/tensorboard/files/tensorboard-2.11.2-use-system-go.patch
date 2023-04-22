@@ -1,6 +1,6 @@
 --- a/WORKSPACE.orig	2023-04-02 22:05:17.629245194 -0700
 +++ b/WORKSPACE	2023-04-02 22:06:10.141245872 -0700
-@@ -12,6 +12,30 @@ http_archive(
+@@ -12,6 +12,24 @@ http_archive(
      ],
  )
  
@@ -16,17 +16,11 @@
 +
 +# oteodoro:  Use static version
 +load("@io_bazel_rules_go//go:deps.bzl",
-+    "go_download_sdk",
-+    "go_rules_dependencies",
 +    "go_register_toolchains",
++    "go_rules_dependencies",
 +)
 +go_rules_dependencies()
-+go_download_sdk(
-+    name = "go_sdk",
-+    version = "1.14.15",
-+    sdks = { "linux_amd64": ("go1.14.15.linux-amd64.tar.gz", "c64a57b374a81f7cf1408d2c410a28c6f142414f1ffa9d1062de1d653b0ae0d6"), }
-+)
-+#go_register_toolchains()
++go_register_toolchains(go_version = "host")
 +
  load("@bazel_skylib//lib:versions.bzl", "versions")
  

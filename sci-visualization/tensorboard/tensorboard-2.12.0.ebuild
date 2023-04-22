@@ -1480,6 +1480,7 @@ https://registry.yarnpkg.com/zone.js/-/zone.js-0.12.0.tgz -> yarnpkg-zone.js-0.1
 # The versions and commits were obtained from console.  To update, temporarily
 # remove links in bazel_external_uris.
 APPLE_SUPPORT_PV="0.11.0"
+AZUL_ZULU_PV="11.56.19-ca-jdk11.0.15"
 BAZEL_GAZELLE_PV="0.24.0"
 BAZEL_SKYLIB_PV="1.1.1"
 BLEACH_PV="2.0"
@@ -1873,6 +1874,10 @@ http://mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/v${PROT
 https://nodejs.org/dist/v${NODE_PV}/node-v${NODE_PV}-linux-x64.tar.xz
 https://pypi.python.org/packages/1d/25/3f6d2cb31ec42ca5bd3bfbea99b63892b735d76e26f20dd2dcc34ffe4f0d/Markdown-${MARKDOWN_PV}.tar.gz
 https://raw.githubusercontent.com/google/roboto/${EGIT_ROBOTO_COMMIT}/LICENSE -> roboto-${EGIT_ROBOTO_COMMIT}-LICENSE
+
+
+https://registry.npmjs.org/esbuild-linux-64/-/esbuild-linux-64-0.15.10.tgz
+https://cdn.azul.com/zulu/bin/zulu${AZUL_ZULU_PV}-linux_x64.tar.gz
 "
 SRC_URI="
 	${YARN_EXTERNAL_URIS}
@@ -1951,15 +1956,37 @@ einfo "Copying ${DISTDIR}/${srcfn} -> ${dest}/${destfn}"
 
 }
 
+check_network_sandbox() {
+	# Required for yarn config set yarn-offline-mirror
+	if has network-sandbox $FEATURES ; then
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
+eerror "to be able to download micropackages and obtain version releases"
+eerror "information."
+eerror
+		die
+	fi
+}
+
+pkg_setup() {
+:;#	check_network_sandbox
+}
+
 src_unpack() {
 eerror "This ebuild is currently under maintenance."
 die
+
+	YARN_OFFLINE=1
+	yarn_hydrate
+
 	unpack ${P}.tar.gz
 	bazel_load_distfiles "${bazel_external_uris}"
 	yarn-utils_cpy_yarn_tarballs
 	cp_material_icons
 	cp_rust_crates
 	cd "${S}" || die
+	corepack prepare --all || die
+	export COREPACK_ENABLE_NETWORK=0
 	yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
 	cp "${HOME}/.yarnrc" "${WORKDIR}" || die
 }
@@ -1968,7 +1995,7 @@ src_prepare() {
 	default
 	export JAVA_HOME=$(java-config --jre-home)
 	eapply "${FILESDIR}/tensorboard-2.11.2-yarn-local-cache.patch"
-	eapply "${FILESDIR}/tensorboard-2.11.2-use-system-go.patch"
+#	eapply "${FILESDIR}/tensorboard-2.11.2-use-system-go.patch"
 	sed -i -e "s|\.yarnrc|${WORKDIR}/.yarnrc|g" WORKSPACE || die
 	sed -i -e "s|\.cache/yarn2|${HOME}/.cache/yarn2|g" WORKSPACE || die
 	bazel_setup_bazelrc
@@ -2006,13 +2033,17 @@ _ebazel() {
 	output_base="${output_base%/}-bazel-base"
 	mkdir -p "${output_base}" || die
 
-	export GOROOT="${ESYSROOT}/usr/lib/go"
-	echo 'build --noshow_progress' >> "${T}/bazelrc" || die # Disable high CPU usage on xfce4-terminal
-	echo 'build --subcommands' >> "${T}/bazelrc" || die # Increase verbosity
+#	export GOROOT="${ESYSROOT}/usr/lib/go"
+#	echo 'build --noshow_progress' >> "${T}/bazelrc" || die # Disable high CPU usage on xfce4-terminal
+#	echo 'build --subcommands' >> "${T}/bazelrc" || die # Increase verbosity
 
-	echo "build --action_env=GOROOT=\"${GOROOT}\"" >> "${T}/bazelrc" || die
-	echo "build --host_action_env=GOROOT=\"${GOROOT}\"" >> "${T}/bazelrc" || die
-	echo "build --@io_bazel_rules_go//go/toolchain:sdk_version=\"1.14.15\"" >> "${T}/bazelrc" || die
+#	echo 'build --verbose_failures' >> "${T}/bazelrc" || die
+#	echo 'build --worker_verbose' >> "${T}/bazelrc" || die
+#	echo 'build --output_filter=' >> "${T}/bazelrc" || die
+
+#	echo "build --action_env=GOROOT=\"${GOROOT}\"" >> "${T}/bazelrc" || die
+#	echo "build --host_action_env=GOROOT=\"${GOROOT}\"" >> "${T}/bazelrc" || die
+#	echo "build --@io_bazel_rules_go//go/toolchain:sdk_version=\"1.14.15\"" >> "${T}/bazelrc" || die
 
 	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 		local ccache_dir=$(ccache -sv \
