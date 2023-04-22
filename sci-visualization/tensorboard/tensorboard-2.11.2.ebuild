@@ -46,10 +46,8 @@ RDEPEND="
 	>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
 	>=dev-python/tensorboard-plugin-wit-1.6.0[${PYTHON_USEDEP}]
-	>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
-
 	>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
-
+	>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
 	dev-python/bleach[${PYTHON_USEDEP}]
 	dev-python/html5lib[${PYTHON_USEDEP}]
 	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]

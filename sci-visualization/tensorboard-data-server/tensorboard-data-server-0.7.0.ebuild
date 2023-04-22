@@ -257,13 +257,19 @@ RDEPEND="
 		<dev-python/requests-3[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.21.0[${PYTHON_USEDEP}]
 	)
-	>=dev-python/grpcio-1.49:=[${PYTHON_USEDEP}]
 	>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 	>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
 	>=dev-python/tensorboard-plugin-wit-1.6.0[${PYTHON_USEDEP}]
 	>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
 	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	|| (
+		=dev-python/grpcio-1.49*:=[${PYTHON_USEDEP}]
+		=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
+		=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
+		=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
+		=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
+	)
 "
 BDEPEND="
 	${PYTHON_DEPS}
@@ -276,11 +282,16 @@ BDEPEND="
 	>=virtual/rust-1.65.0
 	app-arch/unzip
 	test? (
-		>=dev-python/grpcio-testing-1.49:=[${PYTHON_USEDEP}]
 		>=dev-python/boto3-1.9.86[${PYTHON_USEDEP}]
 		>=dev-python/fsspec-0.7.4[${PYTHON_USEDEP}]
 		>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.0[${PYTHON_USEDEP}]
+		|| (
+			=dev-python/grpcio-testing-1.49*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-testing-1.50*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-testing-1.51*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-testing-1.52*:=[${PYTHON_USEDEP}]
+		)
 	)
 	|| (
 		>=dev-lang/rust-bin-1.51.0[rustfmt]

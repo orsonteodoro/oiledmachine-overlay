@@ -395,7 +395,6 @@ RDEPEND="
 		>=dev-python/jax-0.3.15[${PYTHON_USEDEP}]
 
 		>=dev-python/opt-einsum-2.3.2[${PYTHON_USEDEP}]
-		!>=dev-python/grpcio-1.53[${PYTHON_USEDEP}]
 		|| (
 			=dev-python/grpcio-1.49*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
