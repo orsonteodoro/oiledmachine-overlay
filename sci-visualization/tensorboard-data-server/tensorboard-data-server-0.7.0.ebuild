@@ -287,9 +287,8 @@ BDEPEND="
 		>=dev-lang/rust-1.51.0[rustfmt]
 	)
 "
-BDEPEND+="
-"
 SRC_URI="
+$(cargo_crate_uris)
 https://github.com/tensorflow/tensorboard/archive/refs/tags/data-server-v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
