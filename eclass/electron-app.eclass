@@ -899,12 +899,13 @@ electron-app_gen_electron_uris() {
 # @DESCRIPTION:
 # Copies the electron tarball for offline install.
 electron-app_cp_electron() {
-	#export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+	#export ELECTRON_SKIP_BINARY_DOWNLOAD=${ELECTRON_SKIP_BINARY_DOWNLOAD:-1}
 	export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
 	export ELECTRON_CACHE="${HOME}/.cache/electron"
 	mkdir -p "${ELECTRON_CACHE}" || die
 	local fn="electron-v${ELECTRON_APP_ELECTRON_PV}-$(electron-app_get_electron_platarch).zip"
 	export ELECTRON_CUSTOM_FILENAME="${fn}"
+	export ELECTRON_CUSTOM_DIR="${ELECTRON_APP_ELECTRON_PV}"
 	cp -a \
 		"${DISTDIR}/${fn}" \
 		"${ELECTRON_CACHE}/${fn}" \
