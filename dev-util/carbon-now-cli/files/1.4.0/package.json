@@ -52,14 +52,14 @@
 		"query-string": "^6.2.0",
 		"tempy": "^0.2.1",
 		"terminal-image": "^0.1.2",
-		"update-notifier": "^2.5.0"
+		"update-notifier": "^6.0.2"
 	},
 	"devDependencies": {
-		"ava": "^0.25.0",
+		"ava": "^5.2.0",
 		"child-process-promise": "^2.2.1",
 		"execa": "^1.0.0",
 		"husky": "^1.0.0-rc.14",
-		"xo": "^0.21.1"
+		"xo": "^0.54.1"
 	},
 	"xo": {
 		"ignores": [
