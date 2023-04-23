@@ -406,6 +406,7 @@ npm_hydrate() {
 	else
 		COREPACK_ENABLE_NETWORK="${COREPACK_ENABLE_NETWORK:-0}"
 	fi
+einfo "Hydrating..."
 	corepack hydrate --activate "${EROOT}/usr/share/nodejs/corepack.tgz" || die
 }
 
