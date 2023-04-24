@@ -4,7 +4,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit bazel flag-o-matic python-r1 yarn
 
 DESCRIPTION="TensorFlow's Visualization Toolkit"
@@ -23,10 +23,11 @@ REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
 PROPERTIES="live"
-# See https://github.com/tensorflow/tensorboard/blob/2.11.2/tensorboard/pip_package/requirements.txt
+# See https://github.com/tensorflow/tensorboard/blob/2.12.0/tensorboard/pip_package/requirements.txt
 # Not used:
 #	>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
-PROTOBUF_SLOT="0/30"
+# Requirements for dev-python/protobuf-python modified by this ebuild to avoid multi instance single slot issue.
+PROTOBUF_SLOT="0/32"
 RDEPEND="
 	${PYTHON_DEPS}
 	(
@@ -41,8 +42,7 @@ RDEPEND="
 		<dev-python/requests-3[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.21.0[${PYTHON_USEDEP}]
 	)
-	=dev-python/grpcio-1.48*[${PYTHON_USEDEP}]
-	=sci-visualization/tensorboard-data-server-0.6*[${PYTHON_USEDEP}]
+	=sci-visualization/tensorboard-data-server-0.7*[${PYTHON_USEDEP}]
 	>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 	>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
@@ -53,11 +53,17 @@ RDEPEND="
 	dev-python/html5lib[${PYTHON_USEDEP}]
 	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
+	|| (
+		=dev-python/grpcio-1.49*:=[${PYTHON_USEDEP}]
+		=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
+		=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
+		=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
+	)
 "
 BDEPEND="
 	${PYTHON_DEPS}
 	(
-		<dev-util/bazel-6
+		<dev-util/bazel-7
 		>=dev-util/bazel-4.2.2
 	)
 	>=dev-python/setuptools-41[${PYTHON_USEDEP}]
@@ -69,17 +75,27 @@ BDEPEND="
 	app-arch/unzip
 	dev-java/java-config
 	test? (
-		=dev-python/grpcio-testing-1.48*[${PYTHON_USEDEP}]
 		>=dev-python/boto3-1.9.86[${PYTHON_USEDEP}]
 		>=dev-python/fsspec-0.7.4[${PYTHON_USEDEP}]
 		>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.0[${PYTHON_USEDEP}]
+		|| (
+			=dev-python/grpcio-testing-1.49*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-testing-1.50*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-testing-1.51*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-testing-1.52*:=[${PYTHON_USEDEP}]
+		)
 	)
 "
 PDEPEND="
 	=sci-libs/tensorflow-$(ver_cut 1-2 ${PV})*[${PYTHON_USEDEP},python]
 "
+bazel_external_uris="
+https://mirror.bazel.build/cdn.azul.com/zulu/bin/zulu11.56.19-ca-jdk11.0.15-linux_x64.tar.gz
+https://mirror.bazel.build/bazel_java_tools/releases/java/v11.9/java_tools-v11.9.zip
+"
 SRC_URI="
+${bazel_external_uris}
 https://github.com/tensorflow/tensorboard/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
@@ -105,11 +121,12 @@ pkg_setup() {
 src_unpack() {
 eerror "This ebuild is currently under maintenance."
 :;#die
+
 	YARN_OFFLINE=0
 	yarn_hydrate
 
 	unpack ${P}.tar.gz
-#	bazel_load_distfiles "${bazel_external_uris}"
+	bazel_load_distfiles "${bazel_external_uris}"
 	cd "${S}" || die
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	addwrite "${distdir}"
@@ -172,7 +189,7 @@ src_configure() {
 	export PATH="${WORKDIR}/bin:${PATH}"
 	local has_multislot_bazel=0
 	local slot
-	for slot in 5 4 ; do
+	for slot in 6 5 4 ; do
 		if has_version "dev-util/bazel:${slot}" ; then
 einfo "Detected dev-util/bazel:${slot} (multislot)"
 			ln -sf \
@@ -187,7 +204,7 @@ einfo "Detected dev-util/bazel:${slot} (multislot)"
 	if (( ${has_multislot_bazel} == 0 )) ; then
 ewarn
 ewarn "Using unslotted bazel.  Use the one from the oiledmachine-overlay"
-ewarn "instead or downgrade to bazel < 6"
+ewarn "instead or downgrade to bazel < 7"
 ewarn
 	fi
 	filter-flags -fuse-ld=*
@@ -201,7 +218,6 @@ _ebazel() {
 }
 
 check_file_count() {
-#TODO:  update numbers
 	local nfiles_expected=1769
 	local nfiles_actual
 	nfiles_actual=$(find "${distdir}/${PN}/${PV}" \

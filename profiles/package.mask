@@ -109,3 +109,4 @@ dev-dotnet/monodevelop
 # Too early.  Avoid multiple instances single slot issues.
 =dev-libs/protobuf-22*
 >=dev-cpp/abseil-cpp-20230125
+>=dev-python/protobuf-python-4.22

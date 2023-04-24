@@ -320,7 +320,7 @@ RDEPEND="
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
 	)
-	=net-libs/grpc-1.48
+	=net-libs/grpc-1.48*
 	>=app-arch/snappy-1.1.8
 	>=dev-cpp/abseil-cpp-20220623.0:0/20220623
 	>=dev-db/lmdb-0.9.29
