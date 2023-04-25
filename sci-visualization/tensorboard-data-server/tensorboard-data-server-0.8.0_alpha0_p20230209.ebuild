@@ -307,7 +307,7 @@ $(cargo_crate_uris)
 https://github.com/tensorflow/tensorboard/archive/refs/tags/${MY_PV}.tar.gz
 	-> tensorboard-${MY_PV}.tar.gz
 "
-S_PROJ="${WORKDIR}/tensorboard-v${PV}"
+S_PROJ="${WORKDIR}/tensorboard-v${MY_PV}"
 S="${S_PROJ}/tensorboard/data/server"
 RESTRICT="mirror"
 DOCS=( )
