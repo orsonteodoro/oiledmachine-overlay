@@ -227,7 +227,7 @@ RDEPEND="
 		<dev-python/requests-3[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.21.0[${PYTHON_USEDEP}]
 	)
-	=dev-python/grpcio-1.48[${PYTHON_USEDEP}]
+	=dev-python/grpcio-1.48*[${PYTHON_USEDEP}]
 	>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 	>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
@@ -244,7 +244,7 @@ BDEPEND="
 	>=dev-python/virtualenv-20.0.31[${PYTHON_USEDEP}]
 	>=dev-util/yamllint-1.17.0[${PYTHON_USEDEP}]
 	test? (
-		=dev-python/grpcio-testing-1.48[${PYTHON_USEDEP}]
+		=dev-python/grpcio-testing-1.48*[${PYTHON_USEDEP}]
 		>=dev-python/boto3-1.9.86[${PYTHON_USEDEP}]
 		>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.0[${PYTHON_USEDEP}]

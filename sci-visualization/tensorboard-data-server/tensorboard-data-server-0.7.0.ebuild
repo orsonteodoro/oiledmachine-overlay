@@ -268,7 +268,6 @@ RDEPEND="
 		=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
 		=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
 		=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
-		=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
 	)
 "
 BDEPEND="

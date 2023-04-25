@@ -5,7 +5,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit bazel flag-o-matic python-r1 yarn
+inherit bazel flag-o-matic llvm python-r1 yarn
 
 DESCRIPTION="TensorFlow's Visualization Toolkit"
 HOMEPAGE="
@@ -27,6 +27,32 @@ PROPERTIES="live"
 # Not used:
 #	>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
 PROTOBUF_SLOT="0/30"
+LLVM_MAX_SLOT=14
+LLVM_MIN_SLOT=10
+LLVM_SLOTS=( ${LLVM_MAX_SLOT} 13 12 11 ${LLVM_MIN_SLOT} )
+
+gen_llvm_bdepend() {
+	for s in ${LLVM_SLOTS[@]} ; do
+		if (( ${s} >= ${LLVM_MIN_SLOT} && ${s} < ${LLVM_MAX_SLOT} )) ; then
+			echo "
+				(
+					sys-devel/clang:${s}
+					sys-devel/llvm:${s}
+					>=sys-devel/lld-10
+				)
+			"
+		else
+			echo "
+				(
+					sys-devel/clang:${s}
+					sys-devel/llvm:${s}
+					sys-devel/lld:${s}
+				)
+			"
+		fi
+	done
+}
+
 RDEPEND="
 	${PYTHON_DEPS}
 	(
@@ -75,6 +101,9 @@ BDEPEND="
 		>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.0[${PYTHON_USEDEP}]
 	)
+	|| (
+		$(gen_llvm_bdepend)
+	)
 "
 PDEPEND="
 	=sci-libs/tensorflow-$(ver_cut 1-2 ${PV})*[${PYTHON_USEDEP},python]
@@ -98,8 +127,54 @@ eerror
 	fi
 }
 
+# Fix linking problems.  gcc+lld cannot be combined.
+use_clang() {
+einfo "FORCE_LLVM_SLOT may be specified."
+	local _LLVM_SLOTS=(${LLVM_SLOTS[@]})
+	if [[ -n "${FORCE_LLVM_SLOT}" ]] ; then
+		_LLVM_SLOTS=( ${FORCE_LLVM_SLOT} )
+	fi
+
+	local found=0
+	local s
+	for s in ${_LLVM_SLOTS[@]} ; do
+		which "${CHOST}-clang-${s}" || continue
+		export CC="${CHOST}-clang-${s}"
+		export CXX="${CHOST}-clang++-${s}"
+		export CPP="${CHOST}-clang++-${s} -E"
+		if ${CC} --version 2>/dev/null 1>/dev/null ; then
+einfo "Switched to clang:${s}"
+			found=1
+			break
+		fi
+	done
+	if (( ${found} != 1 )) ; then
+eerror
+eerror "Use only clang slots ${LLVM_SLOTS[@]}"
+eerror
+		die
+	fi
+	if (( ${s} == 10 || ${s} == 11 || ${s} == 14 )) ; then
+		:;
+	else
+ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
+	fi
+	LLVM_MAX_SLOT=${s}
+	llvm_pkg_setup
+	${CC} --version || die
+	strip-unsupported-flags
+}
+
 pkg_setup() {
 	check_network_sandbox
+	use_clang
+	python_setup
+einfo "CC:\t\t${CC}"
+einfo "CXX:\t\t${CXX}"
+einfo "CFLAGS:\t${CFLAGS}"
+einfo "CXXFLAGS:\t${CXXFLAGS}"
+einfo "LDFLAGS:\t${LDFLAGS}"
+einfo "PATH:\t${PATH}"
 }
 
 src_unpack() {
@@ -123,6 +198,8 @@ src_prepare() {
 	eapply "${FILESDIR}/tensorboard-2.11.2-yarn-local-cache.patch"
 	sed -i -e "s|\.yarnrc|${WORKDIR}/.yarnrc|g" WORKSPACE || die
 	sed -i -e "s|\.cache/yarn2|${HOME}/.cache/yarn2|g" WORKSPACE || die
+
+	filter-flags '-fuse-ld=*'
 	bazel_setup_bazelrc
 }
 
@@ -135,7 +212,7 @@ _ebazel_configure() {
 
 #	echo 'fetch --noshow_progress' >> "${T}/bazelrc" || die # Disable high CPU usage on xfce4-terminal
 #	echo 'build --noshow_progress' >> "${T}/bazelrc" || die # Disable high CPU usage on xfce4-terminal
-#	echo 'build --subcommands' >> "${T}/bazelrc" || die # Increase verbosity
+	echo 'build --subcommands' >> "${T}/bazelrc" || die # Increase verbosity
 
 	# Place cache outside of ebuild sandbox to reduce redownloads
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
@@ -160,6 +237,10 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 	mkdir -p "${CARGO_HOME}"
 	echo "build --action_env=CARGO_HOME=\"${CARGO_HOME}\"" >> "${T}/bazelrc" || die
 	echo "build --host_action_env=CARGO_HOME=\"${CARGO_HOME}\"" >> "${T}/bazelrc" || die
+
+	echo "build --repo_env PYTHON_BIN_PATH=\"${PYTHON}\"" >> "${T}/bazelrc" || die
+	echo "build --action_env=PYENV_ROOT=\"${HOME}/.pyenv\"" >> "${T}/bazelrc" || die
+	echo "build --python_path=\"${PYTHON}\"" >> "${T}/bazelrc" || die
 
 	if [[ -e "${S}/.bazelrc" ]] ; then
 		cat "${S}/.bazelrc" >> "${T}/bazelrc" || die
@@ -190,7 +271,6 @@ ewarn "Using unslotted bazel.  Use the one from the oiledmachine-overlay"
 ewarn "instead or downgrade to bazel < 6"
 ewarn
 	fi
-	filter-flags -fuse-ld=*
 	_ebazel_configure
 }
 
@@ -233,7 +313,6 @@ einfo "Wiping incomplete yarn download."
 		//tensorboard/...
 	touch "${distdir}/${PN}/${PV}/.finished" || die
 	check_file_count
-	export MAKEOPTS="-j1"
 	_ebazel build \
 		//tensorboard/...
 }
