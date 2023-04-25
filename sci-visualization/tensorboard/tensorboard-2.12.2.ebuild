@@ -66,14 +66,14 @@ RDEPEND="
 		>=dev-python/google-auth-1.6.3[${PYTHON_USEDEP}]
 	)
 	(
-		<dev-python/google-auth-oauthlib-0.5[${PYTHON_USEDEP}]
-		>=dev-python/google-auth-oauthlib-0.4.1[${PYTHON_USEDEP}]
+		<dev-python/google-auth-oauthlib-1.1[${PYTHON_USEDEP}]
+		>=dev-python/google-auth-oauthlib-0.5[${PYTHON_USEDEP}]
 	)
 	(
 		<dev-python/requests-3[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.21.0[${PYTHON_USEDEP}]
 	)
-	=sci-visualization/tensorboard-data-server-0.7*[${PYTHON_USEDEP}]
+	=sci-visualization/tensorboard-data-server-0.8*[${PYTHON_USEDEP}]
 	>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 	>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
@@ -134,6 +134,9 @@ https://github.com/tensorflow/tensorboard/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 S="${WORKDIR}/${P}"
+PATCHES=(
+	"${FILESDIR}/tensorboard-2.12.0-regex_edit_dialog_component-window-settimeout.patch"
+)
 
 check_network_sandbox() {
 	# It takes too much time to package and third party bazel ruins offline install.
@@ -259,6 +262,8 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 	mkdir -p "${CARGO_HOME}"
 	echo "build --action_env=CARGO_HOME=\"${CARGO_HOME}\"" >> "${T}/bazelrc" || die
 	echo "build --host_action_env=CARGO_HOME=\"${CARGO_HOME}\"" >> "${T}/bazelrc" || die
+
+	echo "build --local_cpu_resources=1" >> "${T}/bazelrc" || die
 
 	echo "build --repo_env PYTHON_BIN_PATH=\"${PYTHON}\"" >> "${T}/bazelrc" || die
 	echo "build --action_env=PYENV_ROOT=\"${HOME}/.pyenv\"" >> "${T}/bazelrc" || die

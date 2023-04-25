@@ -113,6 +113,9 @@ https://github.com/tensorflow/tensorboard/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 S="${WORKDIR}/${P}"
+PATCHES=(
+	"${FILESDIR}/tensorboard-2.12.0-regex_edit_dialog_component-window-settimeout.patch"
+)
 
 check_network_sandbox() {
 	# It takes too much time to package and third party bazel ruins offline install.
@@ -237,6 +240,8 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 	mkdir -p "${CARGO_HOME}"
 	echo "build --action_env=CARGO_HOME=\"${CARGO_HOME}\"" >> "${T}/bazelrc" || die
 	echo "build --host_action_env=CARGO_HOME=\"${CARGO_HOME}\"" >> "${T}/bazelrc" || die
+
+	echo "build --local_cpu_resources=1" >> "${T}/bazelrc" || die
 
 	echo "build --repo_env PYTHON_BIN_PATH=\"${PYTHON}\"" >> "${T}/bazelrc" || die
 	echo "build --action_env=PYENV_ROOT=\"${HOME}/.pyenv\"" >> "${T}/bazelrc" || die

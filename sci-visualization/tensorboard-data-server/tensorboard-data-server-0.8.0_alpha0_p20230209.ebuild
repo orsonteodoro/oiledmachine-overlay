@@ -4,6 +4,8 @@
 
 EAPI=8
 
+MY_PV="2.12.2"
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 
@@ -250,8 +252,8 @@ RDEPEND="
 		>=dev-python/google-auth-1.6.3[${PYTHON_USEDEP}]
 	)
 	(
-		<dev-python/google-auth-oauthlib-0.5[${PYTHON_USEDEP}]
-		>=dev-python/google-auth-oauthlib-0.4.1[${PYTHON_USEDEP}]
+		<dev-python/google-auth-oauthlib-1.1[${PYTHON_USEDEP}]
+		>=dev-python/google-auth-oauthlib-0.5[${PYTHON_USEDEP}]
 	)
 	(
 		<dev-python/requests-3[${PYTHON_USEDEP}]
@@ -299,11 +301,11 @@ BDEPEND="
 "
 SRC_URI="
 $(cargo_crate_uris)
-https://github.com/tensorflow/tensorboard/archive/refs/tags/data-server-v${PV}.tar.gz
-	-> ${P}.tar.gz
+https://github.com/tensorflow/tensorboard/archive/refs/tags/${MY_PV}.tar.gz
+	-> tensorboard-${MY_PV}.tar.gz
 "
-S_PROJ="${WORKDIR}/${PN}-v${PV}"
-S="${WORKDIR}/${PN}-v${PV}/tensorboard/data/server"
+S_PROJ="${WORKDIR}/tensorboard-v${PV}"
+S="${S_PROJ}/tensorboard/data/server"
 RESTRICT="mirror"
 DOCS=( )
 
@@ -318,7 +320,15 @@ pkg_postinst() {
 einfo "Reported by cargo-ebuild"
 echo \
 "
-Error: Found 3 vulnerabilities:
+Error: Found 4 vulnerabilities:
+
+Crate:    h2
+Version:  0.3.13
+Title:    Resource exhaustion vulnerability in h2 may lead to Denial of Service (DoS)
+Date:     2023-04-14
+ID:       RUSTSEC-2023-0034
+URL:      https://rustsec.org/advisories/RUSTSEC-2023-0034
+Solution: Upgrade to >=0.3.17
 
 Crate:    rand_core
 Version:  0.6.1

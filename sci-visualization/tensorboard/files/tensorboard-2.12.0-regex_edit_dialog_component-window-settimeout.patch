@@ -1,0 +1,15 @@
+tensorboard/webapp/runs/views/runs_table/regex_edit_dialog_component.ts:82:5 - error TS2322: Type 'Timeout' is not assignable to type 'number'.
+
+82     this.timeOutId = setTimeout(this.resetFocus.bind(this), 0);
+       ~~~~~~~~~~~~~~
+
+--- a/tensorboard/webapp/runs/views/runs_table/regex_edit_dialog_component.ts.orig	2023-02-09 14:58:06.000000000 -0800
++++ b/tensorboard/webapp/runs/views/runs_table/regex_edit_dialog_component.ts	2023-04-25 02:27:47.478143042 -0700
+@@ -79,6 +79,6 @@ export class RegexEditDialogComponent {
+ 
+   handleFocusOut() {
+     clearTimeout(this.timeOutId);
+-    this.timeOutId = setTimeout(this.resetFocus.bind(this), 0);
++    this.timeOutId = window.setTimeout(this.resetFocus.bind(this), 0); // oteodoro: changed setTimeout -> window.setTimeout
+   }
+ }
