@@ -297,7 +297,7 @@ ewarn
 ewarn "Detected missing files.  Run \`rm -rf ${distdir}/${PN}/${PV}\` if build"
 ewarn "doesn't work."
 ewarn
-ewarn "nfile_actual:\t${nfiles}."
+ewarn "nfile_actual:\t${nfiles_actual}."
 ewarn "nfile_expected:\t${nfiles_expected}."
 ewarn
 	fi
