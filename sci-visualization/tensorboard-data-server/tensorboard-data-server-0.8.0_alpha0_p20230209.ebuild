@@ -2,6 +2,9 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# p20230209 is based on last commit of
+# https://github.com/tensorflow/tensorboard/tree/2.12.2/tensorboard/data/server
+
 EAPI=8
 
 MY_PV="2.12.2"
