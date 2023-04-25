@@ -2,6 +2,11 @@
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# FIXME:
+# tensorboard/webapp/runs/views/runs_table/regex_edit_dialog_component.ts:82:5 - error TS2322: Type 'Timeout' is not assignable to type 'number'.
+#
+# 82     this.timeOutId = setTimeout(this.resetFocus.bind(this), 0);
+
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
