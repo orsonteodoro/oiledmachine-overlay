@@ -256,11 +256,23 @@ BDEPEND="
 "
 SRC_URI="
 $(cargo_crate_uris)
+"
+TARBALL_TYPE="tensorboard-data-server" # Can be tensorboard, tensorboard-data-server
+if [[ "${TARBALL_TYPE}" == "tensorboard" ]] ; then
+	SRC_URI+="
+https://github.com/tensorflow/tensorboard/archive/refs/tags/${MY_PV}.tar.gz
+	-> tensorboard-${MY_PV}.tar.gz
+	"
+	S_PROJ="${WORKDIR}/tensorboard-${MY_PV}"
+	S="${S_PROJ}/tensorboard/data/server"
+else
+	SRC_URI+="
 https://github.com/tensorflow/tensorboard/archive/refs/tags/data-server-v${PV}.tar.gz
 	-> ${P}.tar.gz
-"
-S_PROJ="${WORKDIR}/${PN}-v${PV}"
-S="${WORKDIR}/${PN}-v${PV}/tensorboard/data/server"
+	"
+	S_PROJ="${WORKDIR}/${PN}-v${PV}"
+	S="${WORKDIR}/${PN}-v${PV}/tensorboard/data/server"
+fi
 RESTRICT="mirror"
 DOCS=( )
 
