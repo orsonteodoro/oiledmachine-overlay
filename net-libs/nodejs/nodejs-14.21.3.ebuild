@@ -78,7 +78,7 @@ acorn corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
 npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
-man pgo r4
+man pgo r5
 "
 
 gen_required_use_pgo() {
@@ -166,11 +166,11 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.18" # See https://github.com/nodejs/node/blob/v14.21.3/deps/npm/package.json
+NPM_PV="6.14.18" # See https://github.com/nodejs/node/blob/v14.21.3/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
-AUTOCANNON_V="7.4.0"
-WRK_V="1.2.1"
+AUTOCANNON_PV="7.4.0"
+WRK_PV="1.2.1"
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
@@ -508,7 +508,7 @@ init_local_npm() {
 			# FIXME:  Problems with benchmark script when using wrk.
 			mkdir -p "${S}/node_modules/wrk" || die
 			cd "${S}/node_modules/wrk" || die
-			npm install wrk@${WRK_V} || die
+			npm install wrk@${WRK_PV} || die
 			mkdir -p "${S}/node_modules/.bin" || die
 			cat > "${S}/node_modules/.bin/wrk" <<EOF
 #!${EPREFIX}/bin/bash
@@ -518,7 +518,7 @@ EOF
 		elif [[ "${DEFAULT_BENCHMARKER}" == "autocannon" ]] ; then
 			mkdir -p "${S}/node_modules/autocannon" || die
 			cd "${S}/node_modules/autocannon" || die
-			npm install autocannon@${AUTOCANNON_V} || die
+			npm install autocannon@${AUTOCANNON_PV} || die
 		fi
 	fi
 }
@@ -770,10 +770,16 @@ install_corepack() {
 	npm install corepack -g
 	#corepack prepare yarn@3.5.0 --activate
 	mkdir -p "${EROOT}/usr/share/nodejs"
-	corepack prepare --all -o="${EROOT}/usr/share/nodejs/corepack.tgz"  # install >= yarn 3, pnpm, ...
+
+	# Install npm, pnpm, yarn 3.x
+	corepack prepare "npm@${NPM_PV}" "pnpm@latest" "yarn@stable" -o="${EROOT}/usr/share/nodejs/corepack.tgz"
+
+	# Install yarn 1.x
+	corepack prepare "yarn@^1.0.0" -o="${EROOT}/usr/share/nodejs/yarn1.tgz"
+
 einfo
-einfo "Use \`corepack hydrate ${EROOT}/usr/share/nodejs/corepack.tgz\` to load"
-einfo "package managers"
+einfo "Use \`corepack hydrate --activate ${EROOT}/usr/share/nodejs/corepack.tgz\` to load npm, pnpm, yarn 3.x"
+einfo "Use \`corepack hydrate --activate ${EROOT}/usr/share/nodejs/yarn1.tgz\` to yarn 1.x"
 einfo
 }
 
