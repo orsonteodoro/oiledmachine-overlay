@@ -274,8 +274,10 @@ _yarn_src_unpack_default_ebuild() {
 			rm -rf "${YARN_ROOT}/.yarnrc" || die
 		fi
 		rm -rf "${S}/.yarnrc" || die
-		yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
-		mv "${HOME}/.yarnrc" "${WORKDIR}" || die
+		if [[ "${YARN_SLOT}" == "1" ]] ; then
+			yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
+			mv "${HOME}/.yarnrc" "${WORKDIR}" || die
+		fi
 		if [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" && -n "${YARN_ROOT}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${YARN_ROOT}" || die
 		elif [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" ]] ; then
@@ -329,8 +331,10 @@ _yarn_src_unpack_default_upstream() {
 			rm -rf "${YARN_ROOT}/.yarnrc" || die
 		fi
 		rm -rf "${S}/.yarnrc" || die
-		yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
-		mv "${HOME}/.yarnrc" "${WORKDIR}" || die
+		if [[ "${YARN_SLOT}" == "1" ]] ; then
+			yarn config set yarn-offline-mirror ./npm-packages-offline-cache || die
+			mv "${HOME}/.yarnrc" "${WORKDIR}" || die
+		fi
 	fi
 	local args=()
 	if declare -f yarn_unpack_install_pre > /dev/null ; then
