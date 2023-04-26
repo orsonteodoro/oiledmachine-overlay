@@ -72,7 +72,6 @@ RDEPEND="
 			>=dev-python/requests-2.21.0[${PYTHON_USEDEP}]
 		)
 		=dev-python/grpcio-1.48*[${PYTHON_USEDEP}]
-		=sci-visualization/tensorboard-data-server-0.6*[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 		>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
@@ -84,6 +83,7 @@ RDEPEND="
 		dev-python/protobuf-python:'${PROTOBUF_SLOT}'[${PYTHON_USEDEP}]
 		dev-python/six[${PYTHON_USEDEP}]
 	')
+	=sci-visualization/tensorboard-data-server-0.6*[${PYTHON_SINGLE_USEDEP}]
 "
 BDEPEND="
 	${PYTHON_DEPS}

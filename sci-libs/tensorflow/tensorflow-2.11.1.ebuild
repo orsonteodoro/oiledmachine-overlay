@@ -464,7 +464,6 @@ REQUIRED_USE="
 		${PYTHON_REQUIRED_USE}
 	)
 	test? (
-		!python_targets_python3_10
 		python
 		python_targets_python3_9
 	)
