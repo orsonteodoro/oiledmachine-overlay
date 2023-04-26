@@ -80,7 +80,7 @@ acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
 +npm mold pax-kernel +snapshot +ssl system-icu +system-ssl test
 
 $(gen_iuse_pgo)
-man pgo r5
+man pgo r6
 "
 
 gen_required_use_pgo() {
@@ -164,6 +164,7 @@ PATCHES=(
 )
 S="${WORKDIR}/node-v${PV}"
 NPM_PV="9.6.2" # See https://github.com/nodejs/node/blob/v19.9.0/deps/npm/package.json
+YARN1_PV="1.22.19"
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_PV="7.4.0"
@@ -765,8 +766,7 @@ install_corepack() {
 	# Install npm, pnpm, yarn 3.x
 	corepack prepare "npm@${NPM_PV}" "pnpm@latest" "yarn@stable" -o="${EROOT}/usr/share/nodejs/corepack.tgz"
 
-	# Install yarn 1.x
-	corepack prepare "yarn@^1.0.0" -o="${EROOT}/usr/share/nodejs/yarn1.tgz"
+	corepack prepare "yarn@${YARN1_PV}" -o="${EROOT}/usr/share/nodejs/yarn1.tgz"
 
 einfo
 einfo "Use \`corepack hydrate --activate ${EROOT}/usr/share/nodejs/corepack.tgz\` to load npm, pnpm, yarn 3.x"
