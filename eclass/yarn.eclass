@@ -49,6 +49,7 @@ BDEPEND+="
 _yarn_set_globals() {
 	NPM_TRIES="${NPM_TRIES:-10}"
 	YARN_TRIES="${YARN_TRIES:-10}"
+	YARN_SLOT="${YARN_SLOT:-1}"
 }
 _yarn_set_globals
 unset -f _yarn_set_globals
