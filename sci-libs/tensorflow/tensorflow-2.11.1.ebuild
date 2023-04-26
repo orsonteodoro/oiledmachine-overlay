@@ -345,13 +345,15 @@ RDEPEND="
 		virtual/mpi
 	)
 	python? (
+		$(python_gen_any_dep '
+			=sci-visualization/tensorboard-'${DEP_VER}'*[${PYTHON_SINGLE_USEDEP}]
+		')
 		${PYTHON_DEPS}
 		(
 			>=net-libs/google-cloud-cpp-1.17.1
 			<net-libs/google-cloud-cpp-1.41
 		)
 		=dev-python/grpcio-1.48*[${PYTHON_USEDEP}]
-		=sci-visualization/tensorboard-${DEP_VER}*
 		>=dev-libs/flatbuffers-2.0.6:=
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]

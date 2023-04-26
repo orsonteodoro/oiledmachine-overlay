@@ -323,6 +323,9 @@ RDEPEND="
 		virtual/mpi
 	)
 	python? (
+		$(python_gen_any_dep '
+			=sci-visualization/tensorboard-'${DEP_VER}'*[${PYTHON_SINGLE_USEDEP}]
+		')
 		${PYTHON_DEPS}
 		(
 			<net-libs/google-cloud-cpp-1.41
@@ -332,7 +335,6 @@ RDEPEND="
 			dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 		)
 		=dev-python/grpcio-1.48*[${PYTHON_USEDEP}]
-		=sci-visualization/tensorboard-${DEP_VER}*
 		>=dev-libs/flatbuffers-2.0.6:=
 		>=dev-python/astunparse-1.6.3[${PYTHON_USEDEP}]
 		>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
