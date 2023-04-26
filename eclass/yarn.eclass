@@ -102,6 +102,11 @@ unset -f _yarn_set_globals
 # @DESCRIPTION:
 # The number of reconnect tries for yarn.
 
+# @ECLASS_VARIABLE: YARN_SLOT
+# @DESCRIPTION:
+# Use 1.x or 3.x.
+# Valid values:  1, 3
+
 # @ECLASS_VARIABLE: NPM_AUDIT_FIX
 # @DESCRIPTION:
 # Allow audit fix
@@ -491,6 +496,9 @@ yarn_hydrate() {
 	fi
 einfo "Hydrating..."
 	corepack hydrate --activate "${EROOT}/usr/share/nodejs/corepack.tgz" || die
+	if [[ "${YARN_SLOT}" == "1" ]] ; then
+		corepack hydrate --activate "${EROOT}/usr/share/nodejs/yarn1.tgz" || die
+	fi
 }
 
 # @FUNCTION: _yarn_src_unpack
