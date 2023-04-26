@@ -4,6 +4,7 @@
 
 EAPI=8
 
+YARN_SLOT="1"
 PYTHON_COMPAT=( python3_{8..10} )
 inherit bazel flag-o-matic llvm python-r1 yarn
 
@@ -191,8 +192,10 @@ eerror "This ebuild is currently under maintenance."
 	cd "${S}" || die
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	addwrite "${distdir}"
-	yarn config set yarn-offline-mirror "${distdir}/${PN}/${PV}/npm-packages-offline-cache" || die
-	cp "${HOME}/.yarnrc" "${WORKDIR}" || die
+	if [[ "${YARN_SLOT}" == "1" ]] ; then
+		yarn config set yarn-offline-mirror "${distdir}/${PN}/${PV}/npm-packages-offline-cache" || die
+		cp "${HOME}/.yarnrc" "${WORKDIR}" || die
+	fi
 }
 
 src_prepare() {
@@ -240,8 +243,6 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 	mkdir -p "${CARGO_HOME}"
 	echo "build --action_env=CARGO_HOME=\"${CARGO_HOME}\"" >> "${T}/bazelrc" || die
 	echo "build --host_action_env=CARGO_HOME=\"${CARGO_HOME}\"" >> "${T}/bazelrc" || die
-
-	echo "build --local_cpu_resources=1" >> "${T}/bazelrc" || die
 
 	echo "build --repo_env PYTHON_BIN_PATH=\"${PYTHON}\"" >> "${T}/bazelrc" || die
 	echo "build --action_env=PYENV_ROOT=\"${HOME}/.pyenv\"" >> "${T}/bazelrc" || die

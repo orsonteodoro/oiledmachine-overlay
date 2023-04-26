@@ -2,13 +2,19 @@
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# FIXME:
-# tensorboard/webapp/runs/views/runs_table/regex_edit_dialog_component.ts:82:5 - error TS2322: Type 'Timeout' is not assignable to type 'number'.
-#
-# 82     this.timeOutId = setTimeout(this.resetFocus.bind(this), 0);
-
 EAPI=8
 
+# FIXME:
+#tensorboard/plugins/projector/vz_projector/projectorScatterPlotAdapter.ts:15:24 - error TS2307: Cannot find module 'three' or its corresponding type declarations.
+#
+#15 import * as THREE from 'three';
+#                          ~~~~~~~
+#tensorboard/plugins/projector/vz_projector/renderContext.ts:15:24 - error TS2307: Cannot find module 'three' or its corresponding type declarations.
+#
+#15 import * as THREE from 'three';
+#                          ~~~~~~~
+
+YARN_SLOT="1"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit bazel flag-o-matic llvm python-r1 yarn
 
@@ -213,8 +219,10 @@ eerror "This ebuild is currently under maintenance."
 	cd "${S}" || die
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	addwrite "${distdir}"
-	yarn config set yarn-offline-mirror "${distdir}/${PN}/${PV}/npm-packages-offline-cache" || die
-	cp "${HOME}/.yarnrc" "${WORKDIR}" || die
+	if [[ "${YARN_SLOT}" == "1" ]] ; then
+		yarn config set yarn-offline-mirror "${distdir}/${PN}/${PV}/npm-packages-offline-cache" || die
+		cp "${HOME}/.yarnrc" "${WORKDIR}" || die
+	fi
 }
 
 src_prepare() {
@@ -262,8 +270,6 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 	mkdir -p "${CARGO_HOME}"
 	echo "build --action_env=CARGO_HOME=\"${CARGO_HOME}\"" >> "${T}/bazelrc" || die
 	echo "build --host_action_env=CARGO_HOME=\"${CARGO_HOME}\"" >> "${T}/bazelrc" || die
-
-	echo "build --local_cpu_resources=1" >> "${T}/bazelrc" || die
 
 	echo "build --repo_env PYTHON_BIN_PATH=\"${PYTHON}\"" >> "${T}/bazelrc" || die
 	echo "build --action_env=PYENV_ROOT=\"${HOME}/.pyenv\"" >> "${T}/bazelrc" || die
