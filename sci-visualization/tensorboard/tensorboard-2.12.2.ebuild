@@ -14,9 +14,11 @@ EAPI=8
 #15 import * as THREE from 'three';
 #                          ~~~~~~~
 
-YARN_SLOT="1"
+DISTUTILS_SINGLE_IMPL=1
+DISTUTILS_USE_PEP517="standalone"
 PYTHON_COMPAT=( python3_{8..11} )
-inherit bazel flag-o-matic llvm python-r1 yarn
+YARN_SLOT="1"
+inherit bazel flag-o-matic llvm distutils-r1 yarn
 
 DESCRIPTION="TensorFlow's Visualization Toolkit"
 HOMEPAGE="
@@ -67,68 +69,74 @@ gen_llvm_bdepend() {
 
 RDEPEND="
 	${PYTHON_DEPS}
-	(
-		<dev-python/google-auth-3[${PYTHON_USEDEP}]
-		>=dev-python/google-auth-1.6.3[${PYTHON_USEDEP}]
-	)
-	(
-		<dev-python/google-auth-oauthlib-1.1[${PYTHON_USEDEP}]
-		>=dev-python/google-auth-oauthlib-0.5[${PYTHON_USEDEP}]
-	)
-	(
-		<dev-python/requests-3[${PYTHON_USEDEP}]
-		>=dev-python/requests-2.21.0[${PYTHON_USEDEP}]
-	)
-	=sci-visualization/tensorboard-data-server-0.8*[${PYTHON_USEDEP}]
-	>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
-	>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
-	>=dev-python/tensorboard-plugin-wit-1.6.0[${PYTHON_USEDEP}]
-	>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
-	>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
-	dev-python/bleach[${PYTHON_USEDEP}]
-	dev-python/html5lib[${PYTHON_USEDEP}]
-	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
-	dev-python/six[${PYTHON_USEDEP}]
-	|| (
-		=dev-python/grpcio-1.49*:=[${PYTHON_USEDEP}]
-		=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
-		=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
-		=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		(
+			<dev-python/google-auth-3[${PYTHON_USEDEP}]
+			>=dev-python/google-auth-1.6.3[${PYTHON_USEDEP}]
+		)
+		(
+			<dev-python/google-auth-oauthlib-1.1[${PYTHON_USEDEP}]
+			>=dev-python/google-auth-oauthlib-0.5[${PYTHON_USEDEP}]
+		)
+		(
+			<dev-python/requests-3[${PYTHON_USEDEP}]
+			>=dev-python/requests-2.21.0[${PYTHON_USEDEP}]
+		)
+		=sci-visualization/tensorboard-data-server-0.8*[${PYTHON_SINGLE_USEDEP}]
+		>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
+		>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
+		>=dev-python/tensorboard-plugin-wit-1.6.0[${PYTHON_USEDEP}]
+		>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
+		>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
+		dev-python/bleach[${PYTHON_USEDEP}]
+		dev-python/html5lib[${PYTHON_USEDEP}]
+		dev-python/protobuf-python:'${PROTOBUF_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/six[${PYTHON_USEDEP}]
+		|| (
+			=dev-python/grpcio-1.49*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
+		)
+	')
 "
 BDEPEND="
 	${PYTHON_DEPS}
+	$(python_gen_cond_dep '
+		>=dev-python/setuptools-41[${PYTHON_USEDEP}]
+		>=dev-python/wheel-0.26[${PYTHON_USEDEP}]
+		>=dev-python/black-22.6.0[${PYTHON_USEDEP}]
+		>=dev-python/flake8-3.7.8[${PYTHON_USEDEP}]
+		>=dev-python/virtualenv-20.0.31[${PYTHON_USEDEP}]
+		>=dev-util/yamllint-1.17.0[${PYTHON_USEDEP}]
+		test? (
+			>=dev-python/boto3-1.9.86[${PYTHON_USEDEP}]
+			>=dev-python/fsspec-0.7.4[${PYTHON_USEDEP}]
+			>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
+			>=dev-python/pandas-1.0[${PYTHON_USEDEP}]
+			|| (
+				=dev-python/grpcio-testing-1.49*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.50*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.51*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.52*:=[${PYTHON_USEDEP}]
+			)
+		)
+	')
 	(
 		<dev-util/bazel-7
 		>=dev-util/bazel-4.2.2
 	)
-	>=dev-python/setuptools-41[${PYTHON_USEDEP}]
-	>=dev-python/wheel-0.26[${PYTHON_USEDEP}]
-	>=dev-python/black-22.6.0[${PYTHON_USEDEP}]
-	>=dev-python/flake8-3.7.8[${PYTHON_USEDEP}]
-	>=dev-python/virtualenv-20.0.31[${PYTHON_USEDEP}]
-	>=dev-util/yamllint-1.17.0[${PYTHON_USEDEP}]
 	app-arch/unzip
 	dev-java/java-config
-	test? (
-		>=dev-python/boto3-1.9.86[${PYTHON_USEDEP}]
-		>=dev-python/fsspec-0.7.4[${PYTHON_USEDEP}]
-		>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
-		>=dev-python/pandas-1.0[${PYTHON_USEDEP}]
-		|| (
-			=dev-python/grpcio-testing-1.49*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-testing-1.50*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-testing-1.51*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-testing-1.52*:=[${PYTHON_USEDEP}]
-		)
-	)
 	|| (
 		$(gen_llvm_bdepend)
 	)
 "
 PDEPEND="
-	=sci-libs/tensorflow-$(ver_cut 1-2 ${PV})*[${PYTHON_USEDEP},python]
+	$(python_gen_cond_dep '
+		=sci-libs/tensorflow-'$(ver_cut 1-2 ${PV})'*[${PYTHON_USEDEP},python]
+	')
 "
 bazel_external_uris="
 https://mirror.bazel.build/cdn.azul.com/zulu/bin/zulu11.56.19-ca-jdk11.0.15-linux_x64.tar.gz
@@ -142,6 +150,7 @@ https://github.com/tensorflow/tensorboard/archive/refs/tags/${PV}.tar.gz
 S="${WORKDIR}/${P}"
 PATCHES=(
 	"${FILESDIR}/tensorboard-2.12.0-regex_edit_dialog_component-window-settimeout.patch"
+	"${FILESDIR}/tensorboard-2.12.0-vz_projector-BUILD-add-types-three.patch"
 )
 
 check_network_sandbox() {
@@ -347,6 +356,14 @@ einfo "Wiping incomplete yarn download."
 	check_file_count
 	_ebazel build \
 		//tensorboard/...
+	mkdir -p "${T}/pip_package"
+	_ebazel run //tensorboard/pip_package:build_pip_package -- "${T}/pip_package"
+
+	# TODO: update d
+	local d="${S}/install"
+	local wheel_path=$(realpath "${T}/pip_package/"*".whl")
+	distutils_wheel_install "${d}" \
+		"${wheel_path}"
 }
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
