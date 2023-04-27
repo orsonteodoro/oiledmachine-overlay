@@ -333,14 +333,17 @@ einfo "Wiping incomplete yarn download."
 	mkdir -p "${T}/pip_package"
 	_ebazel run //tensorboard/pip_package:build_pip_package -- "${T}/pip_package"
 
-	# TODO: update d
-	local d="${S}/install"
+	local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
 	local wheel_path=$(realpath "${T}/pip_package/"*".whl")
 	distutils_wheel_install "${d}" \
 		"${wheel_path}"
 }
 
 src_install() {
+	# The distfiles-r1 eclass is broken.
+	local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install/usr/bin"
+	mkdir -p "${d}"
+	touch "${d}"/{"${EPYTHON}",python3,python,pyvenv.cfg}
 	distutils-r1_src_install
 }
 
