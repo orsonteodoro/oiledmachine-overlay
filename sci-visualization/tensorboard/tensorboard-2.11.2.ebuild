@@ -340,4 +340,8 @@ einfo "Wiping incomplete yarn download."
 		"${wheel_path}"
 }
 
+src_install() {
+	distutils-r1_src_install
+}
+
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
