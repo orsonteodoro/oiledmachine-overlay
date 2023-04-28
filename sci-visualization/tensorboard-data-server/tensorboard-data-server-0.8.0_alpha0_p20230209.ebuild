@@ -285,8 +285,8 @@ BDEPEND="
 		>=dev-python/wheel-0.26[${PYTHON_USEDEP}]
 		>=dev-python/black-22.6.0[${PYTHON_USEDEP}]
 		>=dev-python/flake8-3.7.8[${PYTHON_USEDEP}]
-		>=dev-python/virtualenv-20.0.31[${PYTHON_USEDEP}]
 		>=dev-util/yamllint-1.17.0[${PYTHON_USEDEP}]
+		dev-python/virtualenv[${PYTHON_USEDEP}]
 		test? (
 			>=dev-python/boto3-1.9.86[${PYTHON_USEDEP}]
 			>=dev-python/fsspec-0.7.4[${PYTHON_USEDEP}]
@@ -329,20 +329,24 @@ fi
 RESTRICT="mirror"
 DOCS=( )
 
+pkg_setup() {
+	python_setup
+}
+
 src_unpack() {
 	cargo_src_unpack
 }
 
-src_prepare() {
-	default
-}
-
-src_configure() {
-	python_setup
+python_configure() {
 	cargo_src_configure
 }
 
+src_configure() {
+	distutils-r1_src_prepare
+}
+
 python_compile() {
+	cargo_src_compile
 	cd "${S_PROJ}" || die
 	mkdir -p "${T}/pip_package" || die
 	${EPYTHON} tensorboard/data/server/pip_package/build.py \
@@ -350,7 +354,7 @@ python_compile() {
 		--out-dir "${T}/pip_package" \
 		|| die
 	local wheel_path=$(realpath "${T}/pip_package/"*".whl")
-	local d="${S}/install"
+	local d
 	if [[ "${TARBALL_TYPE}" == "tensorboard" ]] ; then
 		d="${WORKDIR}/tensorboard-${MY_PV}_${EPYTHON}/install"
 	else
@@ -358,27 +362,19 @@ python_compile() {
 	fi
 	distutils_wheel_install "${d}" \
 		"${wheel_path}"
+	local d2="${d}/usr/bin"
+	mkdir -p "${d2}" || die
+	touch "${d2}/"{"${EPYTHON}",python3,python,pyvenv.cfg}
 }
 
 src_compile() {
-	cargo_src_compile
 	distutils-r1_src_compile
 }
 
 src_install() {
-	#cargo_src_install
 	docinto licenses
 	cd "${S_PROJ}" || die
 	dodoc LICENSE
-	# The distfiles-r1 eclass is broken.
-	local d
-	if [[ "${TARBALL_TYPE}" == "tensorboard" ]] ; then
-		d="${WORKDIR}/tensorboard-${MY_PV}_${EPYTHON}/install/usr/bin"
-	else
-		d="${WORKDIR}/tensorboard-$(ver_cut 1-3 ${PV})_${EPYTHON}/install/usr/bin"
-	fi
-	mkdir -p "${d}"
-	touch "${d}"/{"${EPYTHON}",python3,python,pyvenv.cfg}
 	BUILD_DIR="${S_PROJ}"
 	distutils-r1_src_install
 }

@@ -20,8 +20,8 @@ LICENSE="
 	Apache-2.0
 " # The distro Apache-2.0 template doesn't have all-rights-reserved
 SLOT="0"
-#KEYWORDS="~amd64" # Ebuild not finished.  See TODO list.
-IUSE+=" test"
+KEYWORDS="~amd64"
+IUSE+=" test r1"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -191,8 +191,6 @@ einfo "PATH:\t${PATH}"
 }
 
 src_unpack() {
-eerror "This ebuild is currently under maintenance."
-:;#die
 	YARN_OFFLINE=0
 	yarn_hydrate
 
@@ -337,14 +335,16 @@ einfo "Wiping incomplete yarn download."
 	local wheel_path=$(realpath "${T}/pip_package/"*".whl")
 	distutils_wheel_install "${d}" \
 		"${wheel_path}"
+	local d2
+	d2="${d}/usr/bin"
+	mkdir -p "${d2}"
+	touch "${d2}"/{"${EPYTHON}",python3,python,pyvenv.cfg}
 }
 
 src_install() {
-	# The distfiles-r1 eclass is broken.
-	local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install/usr/bin"
-	mkdir -p "${d}"
-	touch "${d}"/{"${EPYTHON}",python3,python,pyvenv.cfg}
-	distutils-r1_src_install
+	# The distutils eclass is broken.
+	local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
+	multibuild_merge_root "${d}" "${D%/}"
 }
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
