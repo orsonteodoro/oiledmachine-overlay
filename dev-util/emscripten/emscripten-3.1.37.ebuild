@@ -4,7 +4,7 @@
 EAPI=8
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/3.1.35/tools/config_template.py
+# https://github.com/emscripten-core/emscripten/blob/3.1.37/tools/config_template.py
 
 # TC = toolchain
 BINARYEN_PV=112 # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
@@ -134,13 +134,13 @@ REQUIRED_USE+="
 "
 # For DEPENDs:
 # See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/3.1.35/site/source/docs/building_from_source/toolchain_what_is_needed.rst
-# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/3.1.35/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
-# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.35/package.json
+# See also https://github.com/emscripten-core/emscripten/blob/3.1.37/site/source/docs/building_from_source/toolchain_what_is_needed.rst
+# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/3.1.37/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
+# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.37/package.json
 # For the required closure-compiler-nodejs node version, see https://github.com/google/closure-compiler-npm/blob/v20220502.0.0/packages/google-closure-compiler/package.json
 # For the required Java, See https://github.com/google/closure-compiler/blob/v20220502/.github/workflows/ci.yaml#L43
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.35/tools/shared.py#L50
-# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.35/tools/shared.py#L43
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.37/tools/shared.py#L50
+# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.37/tools/shared.py#L43
 JDK_DEPEND="
 	|| (
 		dev-java/openjdk-bin:${JAVA_PV}
