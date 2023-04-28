@@ -17,7 +17,7 @@ IUSE+=" doc"
 # See src/include/openssl/base.h#L187 for versioning
 PROTOBUF_SLOT="0/30"
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20220623.0:0/20220623
+	>=dev-cpp/abseil-cpp-20220623.0:0/20220623[cxx17(+)]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-)]
 	>=dev-libs/re2-0.2021.09.01:=
 	>=dev-python/six-1.10[${PYTHON_USEDEP}]

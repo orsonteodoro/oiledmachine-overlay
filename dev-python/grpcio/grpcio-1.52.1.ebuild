@@ -17,7 +17,7 @@ IUSE+=" doc"
 # See src/include/openssl/base.h#L187 for versioning
 PROTOBUF_SLOT="0/32"
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20220623.0:0/20220623
+	>=dev-cpp/abseil-cpp-20220623.0:0/20220623[cxx17(+)]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-)]
 	>=dev-libs/re2-0.2022.04.01:=
 	>=net-dns/c-ares-1.17.2:=
