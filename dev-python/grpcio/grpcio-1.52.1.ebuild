@@ -12,7 +12,7 @@ HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
-IUSE+=" doc"
+IUSE+=" doc r1"
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
 PROTOBUF_SLOT="0/32"
@@ -49,6 +49,7 @@ PATCHES=(
 )
 
 python_prepare_all() {
+	sed -i -e "s|-std=c++14|-std=c++17|g" setup.py || die
 	distutils-r1_python_prepare_all
 	hprefixify setup.py
 }
