@@ -4,16 +4,6 @@
 
 EAPI=8
 
-# FIXME:
-#tensorboard/plugins/projector/vz_projector/projectorScatterPlotAdapter.ts:15:24 - error TS2307: Cannot find module 'three' or its corresponding type declarations.
-#
-#15 import * as THREE from 'three';
-#                          ~~~~~~~
-#tensorboard/plugins/projector/vz_projector/renderContext.ts:15:24 - error TS2307: Cannot find module 'three' or its corresponding type declarations.
-#
-#15 import * as THREE from 'three';
-#                          ~~~~~~~
-
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="standalone"
 PYTHON_COMPAT=( python3_{8..11} )
@@ -25,13 +15,14 @@ HOMEPAGE="
 https://www.tensorflow.org/
 https://github.com/tensorflow/tensorboard
 "
+# TODO:  List licenses of third party if any.
 LICENSE="
 	all-rights-reserved
 	Apache-2.0
 " # The distro Apache-2.0 template doesn't have all-rights-reserved
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE+=" test r1"
+IUSE+=" test r2"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -360,10 +351,6 @@ einfo "Wiping incomplete yarn download."
 	local wheel_path=$(realpath "${T}/pip_package/"*".whl")
 	distutils_wheel_install "${d}" \
 		"${wheel_path}"
-	local d2
-	d2="${d}/usr/bin"
-	mkdir -p "${d2}"
-	touch "${d2}"/{"${EPYTHON}",python3,python,pyvenv.cfg}
 }
 
 src_install() {
@@ -371,5 +358,3 @@ src_install() {
 	local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
 	multibuild_merge_root "${d}" "${D%/}"
 }
-
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
