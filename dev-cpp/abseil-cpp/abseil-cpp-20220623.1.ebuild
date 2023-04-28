@@ -14,7 +14,7 @@ LICENSE="
 HOMEPAGE="https://abseil.io"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="0/${PV%%.*}"
-IUSE+=" cxx17 test r1"
+IUSE+=" +cxx17 test r1"
 BDEPEND+="
 	${PYTHON_DEPS}
 	test? (
