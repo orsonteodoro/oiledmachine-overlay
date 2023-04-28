@@ -112,7 +112,7 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Apr 8, 2023
+# Last deps commit date:  Apr 13, 2023
 ACORN_PV="8.8.2"
 NGHTTP2_PV="1.52.0"
 RDEPEND+="
@@ -122,7 +122,7 @@ RDEPEND+="
 	>=dev-libs/libuv-1.44.2:=
 	>=net-dns/c-ares-1.19.0
 	>=net-libs/nghttp2-${NGHTTP2_PV}
-	>=sys-libs/zlib-1.2.12
+	>=sys-libs/zlib-1.2.13
 	app-eselect/eselect-nodejs
 	system-icu? (
 		>=dev-libs/icu-72.1:=
@@ -163,7 +163,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_PV="9.6.2" # See https://github.com/nodejs/node/blob/v19.9.0/deps/npm/package.json
+NPM_PV="9.6.4" # See https://github.com/nodejs/node/blob/v20.0.0/deps/npm/package.json
 YARN1_PV="1.22.19"
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.

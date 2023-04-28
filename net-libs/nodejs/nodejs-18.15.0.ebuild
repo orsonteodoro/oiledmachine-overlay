@@ -182,7 +182,7 @@ _count_useflag_slots() {
 	local useflag="${1}"
 	local tot=0
 	local x
-	for x in $(seq 14 19) ; do
+	for x in $(seq 14 20) ; do
 		has_version "net-libs/nodejs:${x}[${useflag}]" \
 			&& tot=$(( ${tot} + 1 ))
 	done
@@ -192,7 +192,7 @@ _count_useflag_slots() {
 _print_merge_useflag_conflicts() {
 	local useflag="${1}"
 	local x
-	for x in $(seq 14 19) ; do
+	for x in $(seq 14 20) ; do
 		has_version "net-libs/nodejs:${x}[${useflag}]" \
 			&& eerror "net-libs/nodejs:${x}[${useflag}]"
 	done
@@ -796,7 +796,7 @@ einfo
 	else
 		eselect nodejs set node${SLOT_MAJOR}
 	fi
-	cp "${FILESDIR}/node-multiplexer-v6" "${EROOT}/usr/bin/node" || die
+	cp "${FILESDIR}/node-multiplexer-v7" "${EROOT}/usr/bin/node" || die
 	sed -i -e "s|__EPREFIX__|${EPREFIX}|g" "${EROOT}/usr/bin/node" || die
 	chmod 0755 /usr/bin/node || die
 	chown root:root /usr/bin/node || die
