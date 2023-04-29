@@ -1,0 +1,18 @@
+Patch copied from the gentoo overlay and forwardported from 2.79b to 3.5.1.
+----
+diff -urp blender-3.5.1.orig/source/creator/CMakeLists.txt blender-3.5.1/source/creator/CMakeLists.txt
+--- blender-3.5.1.orig/source/creator/CMakeLists.txt	2023-04-05 00:48:14.000000000 -0700
++++ blender-3.5.1/source/creator/CMakeLists.txt	2023-04-28 12:38:30.917667449 -0700
+@@ -387,12 +387,6 @@ endif()
+ # Install Targets (Generic, All Platforms)
+ 
+ 
+-# Important to make a clean install each time, else old scripts get loaded.
+-install(
+-  CODE
+-  "file(REMOVE_RECURSE ${TARGETDIR_VER})"
+-)
+-
+ if(WITH_PYTHON)
+   # install(CODE "message(\"copying blender scripts...\")")
+ 

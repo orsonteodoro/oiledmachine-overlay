@@ -21,26 +21,52 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-CXXABI_V=17 # Linux builds should be gnu11, but in Win builds it is c++17
-PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11. For the max exclusive Python supported (and
-# others), see \
-# https://github.com/blender/blender/blob/v3.3.2/build_files/build_environment/install_deps.sh#L382
+ARM_CPU_FLAGS_3_3=(
+	neon2x:neon2x
+)
 
-# Platform defaults based on CMakeList.txt
-OPENVDB_ABIS_MAJOR_VERS=9
-OPENVDB_ABIS=( ${OPENVDB_ABIS_MAJOR_VERS/#/abi} )
-OPENVDB_ABIS=( ${OPENVDB_ABIS[@]/%/-compat} )
-IUSE+=" ${OPENVDB_ABIS[@]}"
-IUSE+="
-+X +abi9-compat +alembic -asan +boost +bullet +collada -cycles-hip
-+color-management -cpudetection +cuda +cycles -cycles-device-oneapi +dds -debug
-doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp +jack +jemalloc +jpeg2k -llvm
--man +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
-+openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace
-+pulseaudio release +sdl +sndfile +tbb test +tiff +usd -valgrind r1
+CPU_FLAGS_3_3=(
+	${ARM_CPU_FLAGS_3_3[@]/#/cpu_flags_arm_}
+)
+
+CXXABI_V=17 # Linux builds should be gnu11, but in Win builds it is c++17
+
+# For max and min package versions see link below. \
+# https://github.com/blender/blender/blob/v3.3.6/build_files/build_environment/install_deps.sh#L488
+FFMPEG_IUSE+="
+	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
 "
-LLVM_MAX_UPSTREAM="13" # (inclusive)
-LLVM_SLOTS=(14 13 12 11) # FAIL!  Distro only has >= 14.
+
+LLVM_MAX_UPSTREAM=13 # (inclusive)
+
+# FAIL!  Distro only has >= 14.
+LLVM_SLOTS=( 14 13 12 11 )
+
+# For the max exclusive Python supported (and others), see \
+# https://github.com/blender/blender/blob/v3.3.6/build_files/build_environment/install_deps.sh#L382
+PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11.
+
+OPENVDB_ABIS_MAJOR_VERS=9
+OPENVDB_ABIS=(
+	${OPENVDB_ABIS_MAJOR_VERS/#/abi}
+)
+OPENVDB_ABIS=(
+	${OPENVDB_ABIS[@]/%/-compat}
+)
+
+BOOST_PV="1.78"
+CLANG_MIN="8.0"
+GCC_MIN="9.3"
+LEGACY_TBB_SLOT="2"
+ONETBB_SLOT="0"
+OPENEXR_V3="3.1.5"
+LIBOGG_PV="1.3.5"
+LIBSNDFILE_PV="1.1.0"
+OSL_PV="1.11.17.0"
+PUGIXML_PV="1.10"
+THEORA_PV="1.1.1"
+
+# gen_llvm_iuse is same as Mesa and LLVM latest stable keyword.
 gen_llvm_iuse()
 {
 	local s
@@ -48,25 +74,20 @@ gen_llvm_iuse()
 		echo " llvm-${s}"
 	done
 }
-IUSE+=" "$(gen_llvm_iuse) # same as Mesa and LLVM latest stable keyword \
-# For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v3.3.2/build_files/build_environment/install_deps.sh#L488
-FFMPEG_IUSE+=" +aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid"
-IUSE+=" ${FFMPEG_IUSE}"
 
-ARM_CPU_FLAGS_3_3=(
-	neon2x:neon2x
-)
-CPU_FLAGS_3_3=(
-	${ARM_CPU_FLAGS_3_3[@]/#/cpu_flags_arm_}
-)
-IUSE+=" ${CPU_FLAGS_3_3[@]%:*}"
+IUSE+="
+$(gen_llvm_iuse)
+${CPU_FLAGS_3_3[@]%:*}
+${FFMPEG_IUSE}
+${OPENVDB_ABIS[@]}
++X +abi9-compat +alembic -asan +boost +bullet +collada -cycles-hip
++color-management -cpudetection +cuda +cycles -cycles-device-oneapi +dds -debug
+doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp +jack +jemalloc +jpeg2k -llvm
+-man +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
++openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace
++pulseaudio release +sdl +sndfile +tbb test +tiff +usd -valgrind r1
+"
 
-ONETBB_SLOT="0"
-LEGACY_TBB_SLOT="2"
-
-CLANG_MIN="8.0"
-GCC_MIN="9.3"
 inherit blender
 
 # See the blender.eclass for the LICENSE variable.
@@ -83,9 +104,6 @@ IMPLIED_RELEASE_BUILD_REQUIRED_USE="
 	xvid
 "
 REQUIRED_USE+="
-	^^ ( ${LLVM_SLOTS[@]/#/llvm-} )
-	^^ ( ${OPENVDB_ABIS[@]} )
-	aom? ( ffmpeg )
 	!boost? (
 		!alembic
 		!cycles
@@ -99,7 +117,18 @@ REQUIRED_USE+="
 		!openimagedenoise
 		!openvdb
 	)
-	build_creator? ( X )
+	^^ (
+		${LLVM_SLOTS[@]/#/llvm-}
+	)
+	^^ (
+		${OPENVDB_ABIS[@]}
+	)
+	aom? (
+		ffmpeg
+	)
+	build_creator? (
+		X
+	)
 	cuda? (
 		^^ (
 			nvcc
@@ -107,17 +136,27 @@ REQUIRED_USE+="
 		)
 		cycles
 	)
-	cycles? ( tbb )
-	cycles-device-oneapi? ( cycles )
-	cycles-hip? ( cycles )
-	embree? ( cycles )
-	mp3? ( ffmpeg )
+	cycles? (
+		tbb
+	)
+	cycles-device-oneapi? (
+		cycles
+	)
+	cycles-hip? (
+		cycles
+	)
+	embree? (
+		cycles
+	)
+	mp3? (
+		ffmpeg
+	)
 	nanovdb? (
 		cycles
 		openvdb
 		|| (
-			cuda
 			opencl
+			cuda
 		)
 	)
 	nvcc? (
@@ -132,34 +171,43 @@ REQUIRED_USE+="
 			optix
 		)
 	)
-	opencl? ( cycles )
-	openimagedenoise? ( tbb )
+	opencl? (
+		cycles
+	)
+	openimagedenoise? (
+		tbb
+	)
 	openvdb? (
-		|| ( ${OPENVDB_ABIS[@]} )
 		openexr
 		tbb
+		|| (
+			${OPENVDB_ABIS[@]}
+		)
 	)
 	optix? (
 		cuda
 		cycles
 		nvcc
 	)
-	opus? ( ffmpeg )
+	opus? (
+		ffmpeg
+	)
 	osl? (
 		cycles
 		llvm
 	)
 	release? (
+		!debug
+		!test
+		!valgrind
 		alembic
 		boost
 		build_creator
 		bullet
 		collada
 		color-management
-		cuda? ( nvcc )
 		cycles
 		dds
-		!debug
 		draco
 		elbeem
 		embree
@@ -187,33 +235,50 @@ REQUIRED_USE+="
 		sdl
 		sndfile
 		tbb
-		!test
 		tiff
 		usd
-		!valgrind
 		webp
+		cuda? (
+			nvcc
+		)
 	)
-	theora? ( ffmpeg )
-	usd? ( tbb )
-	vorbis? ( ffmpeg )
-	vpx? ( ffmpeg )
-	webm? ( ffmpeg opus vpx )
-	x264? ( ffmpeg )
-	xvid? ( ffmpeg )
+	theora? (
+		ffmpeg
+	)
+	usd? (
+		tbb
+	)
+	vorbis? (
+		ffmpeg
+	)
+	vpx? (
+		ffmpeg
+	)
+	webm? (
+		ffmpeg
+		opus
+		vpx
+	)
+	x264? (
+		ffmpeg
+	)
+	xvid? (
+		ffmpeg
+	)
 "
 
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # no need to look past those dates.
 
 # Last change was Jul 29, 2022 for:
-# https://github.com/blender/blender/commits/v3.3.2/build_files/build_environment/install_deps.sh
+# https://github.com/blender/blender/commits/v3.3.6/build_files/build_environment/install_deps.sh
 
 # Last change was Aug 24, 2021 for:
-# https://github.com/blender/blender/commits/v3.3.2/build_files/cmake/config/blender_release.cmake
+# https://github.com/blender/blender/commits/v3.3.6/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
-# Last change was Nov 2, 2022 for:
-# https://github.com/blender/blender/commits/v3.3.2/build_files/build_environment/cmake/versions.cmake
+# Last change was Nov 2, 2023 for:
+# https://github.com/blender/blender/commits/v3.3.6/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
 # dependency version requirements see
@@ -231,12 +296,39 @@ REQUIRED_USE+="
 # The LLVM linked to Blender should match mesa's linked llvm version to avoid
 # multiple version problem if using system's mesa.
 
+gen_asan_bdepend() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+			llvm-${s}? (
+				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
+				=sys-libs/compiler-rt-sanitizers-${s}*[asan]
+				sys-devel/clang:${s}
+			)
+		"
+	done
+}
+
 gen_llvm_depends()
 {
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
-			llvm-${s}? ( >=sys-devel/llvm-${s}:${s}= )
+			llvm-${s}? (
+				>=sys-devel/llvm-${s}:${s}=
+			)
+		"
+	done
+}
+
+gen_oidn_depends() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+		llvm-${s}? (
+			<media-libs/oidn-1.5[llvm-${s}]
+			>=media-libs/oidn-1.4.3[llvm-${s}]
+		)
 		"
 	done
 }
@@ -246,10 +338,22 @@ gen_oiio_depends() {
 	for s in ${OPENVDB_ABIS[@]} ; do
 		echo "
 			${s}? (
+				<media-libs/openimageio-2.4
 				>=dev-cpp/robin-map-0.6.2
 				>=dev-libs/libfmt-8
 				>=media-libs/openimageio-2.3.20.0[${s},color-management?,jpeg2k?,png,webp?]
-				<media-libs/openimageio-2.4
+			)
+		"
+	done
+}
+
+gen_openexr_pairs() {
+	local v
+	for v in ${OPENEXR_V3} ; do
+		echo "
+			(
+				~dev-libs/imath-${v}:=
+				~media-libs/openexr-${v}:=
 			)
 		"
 	done
@@ -270,36 +374,14 @@ gen_osl_depends()
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
 			llvm-${s}? (
-				>=media-libs/osl-${OSL_PV}:=[llvm-${s},static-libs]
 				<media-libs/osl-2:=[llvm-${s},static-libs]
+				>=media-libs/osl-${OSL_PV}:=[llvm-${s},static-libs]
 			)
 		"
 	done
 }
 
-OPENEXR_V3="3.1.5"
-gen_openexr_pairs() {
-	local v
-	for v in ${OPENEXR_V3} ; do
-		echo "
-			(
-				~media-libs/openexr-${v}:=
-				~dev-libs/imath-${v}:=
-			)
-		"
-	done
-}
-
-EXTRA_DEPENDS="
-"
-
-BOOST_PV="1.78"
-LIBOGG_PV="1.3.5"
-LIBSNDFILE_PV="1.1.0"
-OSL_PV="1.11.17.0"
-PUGIXML_PV="1.10"
-THEORA_PV="1.1.1"
-# the ffplay contradicts in
+# The ffplay contradicts in
 # build_files/build_environment/cmake/ffmpeg.cmake : --enable-ffplay
 # build_files/build_environment/install_deps.sh : --disable-ffplay
 CODECS="
@@ -334,34 +416,10 @@ CODECS="
 	)
 "
 
-gen_oidn_depends() {
-	local s
-	for s in ${LLVM_SLOTS[@]} ; do
-		echo "
-		llvm-${s}? (
-			>=media-libs/oidn-1.4.3[llvm-${s}]
-			<media-libs/oidn-1.5[llvm-${s}]
-		)
-		"
-	done
-}
-
-# distro's llvm 14 for mesa is 22.05
+# The distro's llvm 14 for mesa is 22.05.
+# The required openjpeg version is different for security update.  It is not tagged but newer commit.
 
 RDEPEND+="
-	${CODECS}
-	${PYTHON_DEPS}
-	|| (
-		>=media-libs/glu-9.0.1
-		virtual/glu
-	)
-	|| (
-		>=media-libs/libjpeg-turbo-2.1.3
-		virtual/jpeg:0=
-	)
-	>=dev-cpp/pystring-1.1.3
-	>=dev-lang/python-3.10.8
-	  dev-libs/lzo:2
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2021.10.8[${PYTHON_USEDEP}]
 		>=dev-python/charset_normalizer-2.0.6[${PYTHON_USEDEP}]
@@ -371,13 +429,18 @@ RDEPEND+="
 		>=dev-python/urllib3-1.26.7[${PYTHON_USEDEP}]
 		>=dev-python/python-zstandard-0.16.0[${PYTHON_USEDEP}]
 	')
+	${CODECS}
+	${PYTHON_DEPS}
+	>=dev-cpp/pystring-1.1.3
+	>=dev-lang/python-3.10.9
 	>=media-libs/freetype-2.12.1
 	>=media-libs/glew-1.13.0:*
 	>=media-libs/libpng-1.6.37:0=
-	  media-libs/libglvnd
-	  media-libs/libsamplerate
 	>=sys-libs/zlib-1.2.13
-	  virtual/libintl
+	dev-libs/lzo:2
+	media-libs/libglvnd
+	media-libs/libsamplerate
+	virtual/libintl
 	alembic? (
 		>=media-gfx/alembic-1.8.3[boost(+),hdf(+)]
 	)
@@ -392,12 +455,12 @@ RDEPEND+="
 		>=media-libs/opencollada-1.6.68:=
 	)
 	color-management? (
-		>=media-libs/opencolorio-2.1.1
 		>=dev-libs/expat-2.5.0
+		>=media-libs/opencolorio-2.1.1
 	)
 	cuda? (
-		>=x11-drivers/nvidia-drivers-418.39
 		>=dev-util/nvidia-cuda-toolkit-10.1:=
+		>=x11-drivers/nvidia-drivers-418.39
 	)
 	cycles? (
 		osl? (
@@ -405,8 +468,8 @@ RDEPEND+="
 		)
 	)
 	cycles-device-oneapi? (
-		>=dev-libs/level-zero-1.7.15
 		<dev-libs/level-zero-2
+		>=dev-libs/level-zero-1.7.15
 	)
 	cycles-hip? (
 		|| (
@@ -421,15 +484,16 @@ cpu_flags_x86_sse4_2?,\
 cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 	)
 	ffmpeg? (
+		<media-video/ffmpeg-6:=
+[encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
 		>=media-video/ffmpeg-4:=\
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
-		<media-video/ffmpeg-6:=\
 	)
 	fftw? (
 		>=sci-libs/fftw-3.3.10:3.0=
 	)
 	flac? (
-		>=media-libs/flac-1.3.4
+		>=media-libs/flac-1.4.2
 	)
 	gmp? (
 		>=dev-libs/gmp-6.2.1
@@ -482,8 +546,10 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		>=dev-libs/pugixml-${PUGIXML_PV}
 	)
 	openexr? (
-		|| ( $(gen_openexr_pairs) )
 		!<media-libs/openexr-3
+		|| (
+			$(gen_openexr_pairs)
+		)
 	)
 	opensubdiv? (
 		>=media-libs/opensubdiv-3.4.4:=[cuda=,opencl=,tbb?]
@@ -526,15 +592,15 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		>=dev-cpp/tbb-2021:${ONETBB_SLOT}
 		usd? (
 			!<dev-cpp/tbb-2021:0=
-			 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 		)
 	)
 	tiff? (
-		>=media-libs/tiff-4.4.0:0[webp?,zlib]
+		>=media-libs/tiff-4.5.0:0[webp?,zlib]
 	)
 	usd? (
-		>=media-libs/openusd-22.03[monolithic]
 		<media-libs/openusd-23[monolithic]
+		>=media-libs/openusd-22.03[monolithic]
 	)
 	valgrind? (
 		dev-util/valgrind
@@ -547,31 +613,28 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		x11-libs/libXi
 		x11-libs/libXxf86vm
 	)
+	|| (
+		virtual/glu
+		>=media-libs/glu-9.0.1
+	)
+	|| (
+		virtual/jpeg:0=
+		>=media-libs/libjpeg-turbo-2.1.3
+	)
 "
 DEPEND+="
 	${RDEPEND}
 	>=dev-cpp/eigen-3.3.7:3=
 "
-gen_asan_bdepend() {
-	local s
-	for s in ${LLVM_SLOTS[@]} ; do
-		echo "
-			llvm-${s}? (
-				 sys-devel/clang:${s}
-				=sys-libs/compiler-rt-sanitizers-${s}*[asan]
-				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
-			)
-		"
-	done
-}
 BDEPEND+="
-	|| (
-		>=sys-devel/clang-${CLANG_MIN}
-		>=sys-devel/gcc-${GCC_MIN}
-	)
+	$(python_gen_cond_dep '
+		>=dev-python/setuptools-63.2.0[${PYTHON_USEDEP}]
+		>=dev-python/cython-0.29.26[${PYTHON_USEDEP}]
+	')
+	>=dev-cpp/yaml-cpp-0.6.3
 	>=dev-util/cmake-3.10
-	  dev-util/patchelf
-	  virtual/pkgconfig
+	dev-util/patchelf
+	virtual/pkgconfig
 	asan? (
 		|| (
 			$(gen_asan_bdepend)
@@ -584,22 +647,26 @@ BDEPEND+="
 		x86? (
 			|| (
 				>=sys-devel/clang-${CLANG_MIN}
-				  dev-lang/icc
+				dev-lang/icc
 			)
 		)
 	)
 	doc? (
-		  app-doc/doxygen[dot]
 		>=dev-python/sphinx-3.3.1[latex]
 		>=dev-python/sphinx_rtd_theme-0.5.0
-		  dev-texlive/texlive-bibtexextra
-		  dev-texlive/texlive-fontsextra
-		  dev-texlive/texlive-fontutils
-		  dev-texlive/texlive-latex
-		  dev-texlive/texlive-latexextra
+		app-doc/doxygen[dot]
+		dev-texlive/texlive-bibtexextra
+		dev-texlive/texlive-fontsextra
+		dev-texlive/texlive-fontutils
+		dev-texlive/texlive-latex
+		dev-texlive/texlive-latexextra
 	)
 	nls? (
 		sys-devel/gettext
+	)
+	|| (
+		>=sys-devel/gcc-${GCC_MIN}
+		>=sys-devel/clang-${CLANG_MIN}
 	)
 "
 
@@ -712,21 +779,25 @@ eerror
 _src_prepare_patches() {
 	eapply "${FILESDIR}/blender-3.2.2-findtbb2.patch"
 	eapply "${FILESDIR}/blender-3.2.0-parent-datafiles-dir-change.patch"
-	if ( has_version "<dev-cpp/tbb-2021:0" \
-		|| \
-	     has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" \
-	   ) \
+	if \
+		(
+			has_version "<dev-cpp/tbb-2021:0" \
+				|| \
+			has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" \
+		) \
 		&& \
-	     use usd ; then
+		use usd ; then
 		:;
-	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
-	   ! has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
-	     use usd ; then
+	elif \
+		! has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
+		has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
+		use usd ; then
 		show_tbb_error
 	fi
-	if   has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
-	     has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
-	     use usd ; then
+	if \
+		has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
+		has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
+		use usd ; then
 		eapply "${FILESDIR}/blender-2.93.10-tbb2-usd.patch"
 	elif use usd ;then
 ewarn
@@ -850,7 +921,7 @@ _src_configure() {
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v3.3.2/build_files/cmake/config
+# https://github.com/blender/blender/tree/v3.3.6/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(

@@ -17,44 +17,63 @@ esac
 
 UOPTS_SUPPORT_TPGO=0
 UOPTS_SUPPORT_TBOLT=0
-inherit check-reqs cmake flag-o-matic llvm pax-utils \
-	python-single-r1 toolchain-funcs xdg uopts
+
+inherit check-reqs cmake flag-o-matic llvm pax-utils python-single-r1
+inherit toolchain-funcs xdg uopts
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
 KEYWORDS=${KEYWORDS:-"~amd64 ~x86"}
 
 LICENSE="
-	|| ( GPL-2 BL )
 	all-rights-reserved
+	|| (
+		GPL-2
+		BL
+	)
+
+	(
+		(
+			0BSD
+			PSF-2
+		)
+		PSF-2.4
+	)
 	LGPL-2.1+
 	MPL-2.0
-	( PSF-2.4 ( PSF-2 0BSD ) )
 	build_creator? (
 		Apache-2.0
 		AFL-3.0
 		BitstreamVera
 		CC-BY-SA-3.0
-		color-management? ( BSD )
-		jemalloc? ( BSD-2 )
 		GPL-2
 		GPL-3
 		GPL-3-with-font-exception
 		LGPL-2.1+
 		ZLIB
+		color-management? (
+			BSD
+		)
+		jemalloc? (
+			BSD-2
+		)
 	)
 	build_headless? (
 		Apache-2.0
 		AFL-3.0
 		BitstreamVera
 		CC-BY-SA-3.0
-		color-management? ( BSD )
-		jemalloc? ( BSD-2 )
 		GPL-2
 		GPL-3
 		GPL-3-with-font-exception
 		LGPL-2.1+
 		ZLIB
+		color-management? (
+			BSD
+		)
+		jemalloc? (
+			BSD-2
+		)
 	)
 	cycles? (
 		Apache-2.0
@@ -69,9 +88,14 @@ LICENSE="
 #   all rights reserved in the vanilla GPL-2
 
 # Slotting is for scripting and plugin compatibility
-SLOT="${PV}"
 SLOT_MAJ=${SLOT%/*}
-RESTRICT="mirror !test? ( test )"
+SLOT="${PV}"
+RESTRICT="
+	!test? (
+		test
+	)
+	mirror
+"
 
 BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
 
@@ -79,11 +103,11 @@ BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
 # .gitmodules.  The download.blender.org tarball is preferred because they
 # bundle all the dependencies.
 if [[ "${PV}" == "2.83" ]] ; then
-SRC_URI="https://download.blender.org/source/blender-${PV}.0.tar.xz"
+	SRC_URI="https://download.blender.org/source/blender-${PV}.0.tar.xz"
 elif ver_test $(ver_cut 1-2 ${PV}) -ge 2.81 ; then
-SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
+	SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
 else
-SRC_URI="https://download.blender.org/source/${P}.tar.gz"
+	SRC_URI="https://download.blender.org/source/${P}.tar.gz"
 fi
 
 X86_CPU_FLAGS=(
@@ -130,23 +154,8 @@ REQUIRED_USE_MINIMAL_CPU_FLAGS="
 
 REQUIRED_USE_CYCLES="
 	cycles? (
-		openexr
-		openimageio
-		tiff
-		amd64? (
-			cpu_flags_x86_sse2
-		)
-		cpu_flags_x86_sse? (
-			cpu_flags_x86_sse2
-		)
-		cpu_flags_x86_sse2? (
-			cpu_flags_x86_sse
-		)
 		!cpudetection? (
 			amd64? (
-				cpu_flags_x86_sse4_1? (
-					cpu_flags_x86_sse3
-				)
 				cpu_flags_x86_avx? (
 					cpu_flags_x86_sse4_1
 				)
@@ -158,6 +167,9 @@ REQUIRED_USE_CYCLES="
 					cpu_flags_x86_bmi
 					cpu_flags_x86_f16c
 				)
+				cpu_flags_x86_sse4_1? (
+					cpu_flags_x86_sse3
+				)
 			)
 			cpu_flags_x86_sse3? (
 				cpu_flags_x86_sse2
@@ -166,6 +178,18 @@ REQUIRED_USE_CYCLES="
 			cpu_flags_x86_ssse3? (
 				cpu_flags_x86_sse3
 			)
+		)
+		openexr
+		openimageio
+		tiff
+		amd64? (
+			cpu_flags_x86_sse2
+		)
+		cpu_flags_x86_sse? (
+			cpu_flags_x86_sse2
+		)
+		cpu_flags_x86_sse2? (
+			cpu_flags_x86_sse
 		)
 		cpudetection? (
 			cpu_flags_x86_avx? (
@@ -210,8 +234,8 @@ REQUIRED_USE_EIGEN="
 
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
-	${REQUIRED_USE_EIGEN}
 	${REQUIRED_USE_CYCLES}
+	${REQUIRED_USE_EIGEN}
 	${REQUIRED_USE_MINIMAL_CPU_FLAGS}
 "
 
