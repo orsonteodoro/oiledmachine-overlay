@@ -424,7 +424,6 @@ CODECS="
 "
 
 # The distro's llvm 14 for mesa is 22.05.
-# TODO: materialx
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2021.10.8[${PYTHON_USEDEP}]
@@ -540,6 +539,9 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 	llvm-13? (
 		>=media-libs/mesa-21.2.5
 		>=sys-libs/libomp-13
+	)
+	materialx? (
+		media-libs/materialx
 	)
 	ndof? (
 		>=dev-libs/libspnav-1.1
