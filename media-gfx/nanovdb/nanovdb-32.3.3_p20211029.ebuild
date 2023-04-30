@@ -7,8 +7,9 @@ inherit cmake flag-o-matic
 
 DESCRIPTION="A lightweight GPU friendly version of VDB initially targeting \
 rendering applications."
-HOMEPAGE=\
-"https://github.com/AcademySoftwareFoundation/openvdb/tree/feature/nanovdb/nanovdb"
+HOMEPAGE="
+https://github.com/AcademySoftwareFoundation/openvdb/tree/feature/nanovdb/nanovdb
+"
 LICENSE="MPL-2.0"
 # For versioning, see
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/0ed0f19ea4fbb0d8bf64d3dca07abab3c7429803/nanovdb/nanovdb/NanoVDB.h#L104
@@ -16,47 +17,80 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # Live ebuilds do not get keyworded.
 # cuda, optix, allow-fetchcontent are enabled upstream by default but
 # are disabled
-IUSE+=" +benchmark +blosc cuda -doc +examples +interactive-renderer
--log4cplus -magicavoxel +opencl optix +opengl -openexr +openvdb
-system-glfw +tbb +test test-renderer +tools +zlib"
+IUSE+="
++benchmark +blosc cuda -doc +examples +interactive-renderer -log4cplus
+-magicavoxel +opencl optix +opengl -openexr +openvdb system-glfw +tbb +test
+test-renderer +tools +zlib
+"
 REQUIRED_USE+="
-	benchmark? ( openvdb )
-	blosc? ( openvdb )
-	interactive-renderer? ( tools )
-	log4cplus? ( openvdb )
-	magicavoxel? ( examples )
-	openexr? ( openvdb )
-	openvdb? ( tbb zlib )
-	test? ( openvdb tbb )
-	test-renderer? ( test )
+	benchmark? (
+		openvdb
+	)
+	blosc? (
+		openvdb
+	)
+	interactive-renderer? (
+		tools
+	)
+	log4cplus? (
+		openvdb
+	)
+	magicavoxel? (
+		examples
+	)
+	openexr? (
+		openvdb
+	)
+	openvdb? (
+		tbb
+		zlib
+	)
+	test? (
+		openvdb
+		tbb
+	)
+	test-renderer? (
+		test
+	)
 "
 # For dependencies, see
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/0ed0f19ea4fbb0d8bf64d3dca07abab3c7429803/doc/dependencies.txt
-ONETBB_SLOT="0"
+EGIT_COMMIT="0ed0f19ea4fbb0d8bf64d3dca07abab3c7429803"
+GH_ORG_URI="https://github.com/AcademySoftwareFoundation"
+GTEST_PV="1.11.0"
 LEGACY_TBB_SLOT="2"
-GTEST_V="1.11.0"
-DEPEND_GTEST=" >=dev-cpp/gtest-${GTEST_V}"
-# media-gfx/openvdb-8.1[abi8-compat] # Placed here because the constraint has be relaxed.
+OGT_COMMIT="e1743d37cf7a8128568769cf71cf598166c2cd30"
+ONETBB_SLOT="0"
+OPENEXR_V2_PV="2.5.8 2.5.7"
 
-OPENEXR_V2="2.5.7 2.5.8"
+DEPEND_GTEST=" >=dev-cpp/gtest-${GTEST_PV}"
+
+OGT_DFN="ogt-${OGT_COMMIT:0:7}.tar.gz"
+
 gen_openexr_pairs() {
-	local v
-	for v in ${OPENEXR_V2} ; do
+	local pv
+	for pv in ${OPENEXR_V2_PV} ; do
 		echo "
 			(
-				openexr? ( ~media-libs/openexr-${v}:=[blosc?,log4cplus?,openexr?] )
-				~media-libs/ilmbase-${v}:=
+				openexr? (
+					~media-libs/openexr-${pv}:=[blosc?,log4cplus?,openexr?]
+				)
+				~media-libs/ilmbase-${pv}:=
 			)
 		"
 	done
 }
 
 DEPEND+="
-	benchmark? ( ${DEPEND_GTEST} )
-	blosc? ( >=dev-libs/c-blosc-1.17 )
+	benchmark? (
+		${DEPEND_GTEST}
+	)
+	blosc? (
+		>=dev-libs/c-blosc-1.17
+	)
 	cuda? (
-		>=x11-drivers/nvidia-drivers-352.31
 		>=dev-util/nvidia-cuda-toolkit-7.5:=
+		>=x11-drivers/nvidia-drivers-352.31
 	)
 	opencl? (
 		virtual/opencl
@@ -65,9 +99,11 @@ DEPEND+="
 		virtual/opengl
 	)
 	openvdb? (
-		|| ( $(gen_openexr_pairs) )
 		>=dev-libs/boost-1.68
 		>=media-gfx/openvdb-8.1
+		|| (
+			$(gen_openexr_pairs)
+		)
 	)
 	optix? (
 		>=dev-libs/optix-7
@@ -88,32 +124,35 @@ DEPEND+="
 		media-libs/mesa[egl(+)]
 		>=media-libs/glfw-3.3
 		interactive-renderer? (
-			system-glfw? ( >=media-libs/glfw-3.1 )
+			system-glfw? (
+				>=media-libs/glfw-3.1
+			)
 		)
 	)
-	zlib? ( >=sys-libs/zlib-1.2.7 )
-"
-RDEPEND+=" ${DEPEND}"
-BDEPEND+="
-	|| (
-		>=sys-devel/clang-3.8
-		>=sys-devel/gcc-6.3.1
-		>=dev-lang/icc-17
+	zlib? (
+		>=sys-libs/zlib-1.2.7
 	)
+"
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
 	>=dev-util/cmake-3.15
-	doc? ( >=app-doc/doxygen-1.8.8 )
+	doc? (
+		>=app-doc/doxygen-1.8.8
+	)
 	test? (
 		${DEPEND_GTEST}
 		test-renderer? (
 			media-gfx/imagemagick[png]
 		)
 	)
+	|| (
+		>=sys-devel/gcc-6.3.1
+		>=sys-devel/clang-3.8
+		>=dev-lang/icc-17
+	)
 "
-GH_ORG_URI="https://github.com/AcademySoftwareFoundation"
-EGIT_COMMIT="0ed0f19ea4fbb0d8bf64d3dca07abab3c7429803"
-OGT_COMMIT="e1743d37cf7a8128568769cf71cf598166c2cd30"
-
-OGT_DFN="ogt-${OGT_COMMIT:0:7}.tar.gz"
 SRC_URI="
 ${GH_ORG_URI}/openvdb/archive/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz

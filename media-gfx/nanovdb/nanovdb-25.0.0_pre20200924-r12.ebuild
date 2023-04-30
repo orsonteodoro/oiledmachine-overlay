@@ -7,8 +7,9 @@ inherit cmake flag-o-matic
 
 DESCRIPTION="A lightweight GPU friendly version of VDB initially targeting \
 rendering applications."
-HOMEPAGE=\
-"https://github.com/AcademySoftwareFoundation/openvdb/tree/feature/nanovdb/nanovdb"
+HOMEPAGE="
+https://github.com/AcademySoftwareFoundation/openvdb/tree/feature/nanovdb/nanovdb
+"
 LICENSE="MPL-2.0"
 # For versioning, see
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/e62f7a0bf1e27397223c61ddeaaf57edf111b77f/nanovdb/nanovdb/NanoVDB.h#L68
@@ -16,48 +17,87 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # Live ebuilds do not get keyworded.
 # cuda, optix, allow-fetchcontent are enabled upstream by default but
 # are disabled
-IUSE+=" +benchmark +blosc cuda -doc +examples -imgui +interactive-renderer
--log4cplus -native-file-dialog +opencl optix +opengl -openexr +openvdb
-system-glfw +tbb +test test-renderer +tools +zlib"
+IUSE+="
++benchmark +blosc cuda -doc +examples -imgui +interactive-renderer -log4cplus
+-native-file-dialog +opencl optix +opengl -openexr +openvdb system-glfw +tbb
++test test-renderer +tools +zlib
+"
 REQUIRED_USE+="
-	benchmark? ( openvdb )
-	blosc? ( openvdb )
-	interactive-renderer? ( tools )
-	log4cplus? ( openvdb )
-	native-file-dialog? ( imgui tools )
-	openexr? ( openvdb )
-	openvdb? ( tbb zlib )
-	test? ( openvdb tbb )
-	test-renderer? ( test )
+	benchmark? (
+		openvdb
+	)
+	blosc? (
+		openvdb
+	)
+	interactive-renderer? (
+		tools
+	)
+	log4cplus? (
+		openvdb
+	)
+	native-file-dialog? (
+		imgui
+		tools
+	)
+	openexr? (
+		openvdb
+	)
+	openvdb? (
+		tbb
+		zlib
+	)
+	test? (
+		openvdb
+		tbb
+	)
+	test-renderer? (
+		test
+	)
 "
 # For dependencies, see
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/e62f7a0bf1e27397223c61ddeaaf57edf111b77f/doc/dependencies.txt
 # openvdb should be 7.1.1 but downgraded to minor.  No 7.1.1 release either.
-ONETBB_SLOT="0"
+EGIT_COMMIT="e62f7a0bf1e27397223c61ddeaaf57edf111b77f"
+EGIT_COMMIT_NFD="67345b80ebb429ecc2aeda94c478b3bcc5f7888e" # 20190930
+GH_ORG_URI="https://github.com/AcademySoftwareFoundation"
+GLFW_PV="3.3"
+GTEST_PV="1.10.0"
+IMGUI_PV="1.78"
 LEGACY_TBB_SLOT="2"
-GTEST_V="1.10.0"
-DEPEND_GTEST=" >=dev-cpp/gtest-${GTEST_V}"
-# media-gfx/openvdb-7.1[abi7-compat] # Placed here because the constraint has be relaxed.
+ONETBB_SLOT="0"
+OPENEXR_V2_PV="2.5.8 2.5.7"
 
-OPENEXR_V2="2.5.7 2.5.8"
+DEPEND_GTEST=" >=dev-cpp/gtest-${GTEST_PV}"
+
+GLFW_DFN="glfw-${GLFW_PV}.tar.gz"
+GTEST_DFN="gtest-${GTEST_PV}.tar.gz"
+IMGUI_DFN="imgui-${IMGUI_PV}.tar.gz"
+NFD_DFN="nativefiledialog-${EGIT_COMMIT_NFD:0:7}.tar.gz"
+
 gen_openexr_pairs() {
-	local v
-	for v in ${OPENEXR_V2} ; do
+	local pv
+	for pv in ${OPENEXR_V2_PV} ; do
 		echo "
 			(
-				openexr? ( ~media-libs/openexr-${v}:=[blosc?,log4cplus?,openexr?] )
-				~media-libs/ilmbase-${v}:=
+				openexr? (
+					~media-libs/openexr-${pv}:=[blosc?,log4cplus?,openexr?]
+				)
+				~media-libs/ilmbase-${pv}:=
 			)
 		"
 	done
 }
 
 DEPEND+="
-	benchmark? ( ${DEPEND_GTEST} )
-	blosc? ( >=dev-libs/c-blosc-1.5 )
+	benchmark? (
+		${DEPEND_GTEST}
+	)
+	blosc? (
+		>=dev-libs/c-blosc-1.5
+	)
 	cuda? (
-		>=x11-drivers/nvidia-drivers-352.31
 		>=dev-util/nvidia-cuda-toolkit-7.5:=
+		>=x11-drivers/nvidia-drivers-352.31
 	)
 	opencl? (
 		virtual/opencl
@@ -66,9 +106,11 @@ DEPEND+="
 		virtual/opengl
 	)
 	openvdb? (
-		|| ( $(gen_openexr_pairs) )
 		>=dev-libs/boost-1.68
 		>=media-gfx/openvdb-7.1
+		|| (
+			$(gen_openexr_pairs)
+		)
 	)
 	optix? (
 		>=dev-libs/optix-7
@@ -76,9 +118,9 @@ DEPEND+="
 	tbb? (
 		|| (
 			(
-				>=dev-cpp/tbb-2017.6:${LEGACY_TBB_SLOT}=
-				 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 				!<dev-cpp/tbb-2021:0=
+				<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+				>=dev-cpp/tbb-2017.6:${LEGACY_TBB_SLOT}=
 			)
 			(
 				>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
@@ -86,60 +128,58 @@ DEPEND+="
 		)
 	)
 	tools? (
-		media-libs/mesa[egl(+)]
 		>=media-libs/glfw-3.3
+		media-libs/mesa[egl(+)]
 		interactive-renderer? (
-			system-glfw? ( >=media-libs/glfw-3.1 )
+			system-glfw? (
+				>=media-libs/glfw-3.1
+			)
 			native-file-dialog? (
 				>=x11-libs/gtk+-3:3
 			)
 		)
 	)
-	zlib? ( >=sys-libs/zlib-1.2.7 )
-"
-RDEPEND+=" ${DEPEND}"
-BDEPEND+="
-	|| (
-		>=sys-devel/clang-3.8
-		>=sys-devel/gcc-6.3.1
-		>=dev-lang/icc-17
+	zlib? (
+		>=sys-libs/zlib-1.2.7
 	)
+"
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
 	>=dev-util/cmake-3.11.4
-	doc? ( >=app-doc/doxygen-1.8.8 )
+	doc? (
+		>=app-doc/doxygen-1.8.8
+	)
 	test? (
 		${DEPEND_GTEST}
 		test-renderer? (
 			media-gfx/imagemagick[png]
 		)
 	)
+	|| (
+		>=sys-devel/gcc-6.3.1
+		>=sys-devel/clang-3.8
+		>=dev-lang/icc-17
+	)
 "
-GH_ORG_URI="https://github.com/AcademySoftwareFoundation"
-EGIT_COMMIT="e62f7a0bf1e27397223c61ddeaaf57edf111b77f"
-EGIT_COMMIT_NFD="67345b80ebb429ecc2aeda94c478b3bcc5f7888e" # 20190930
-GLFW_V="3.3"
-IMGUI_V="1.78"
-
-GLFW_DFN="glfw-${GLFW_V}.tar.gz"
-GTEST_DFN="gtest-${GTEST_V}.tar.gz"
-IMGUI_DFN="imgui-${IMGUI_V}.tar.gz"
-NFD_DFN="nativefiledialog-${EGIT_COMMIT_NFD:0:7}.tar.gz"
 SRC_URI="
 ${GH_ORG_URI}/openvdb/archive/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz
-https://github.com/glfw/glfw/archive/refs/tags/${GLFW_V}.tar.gz
+https://github.com/glfw/glfw/archive/refs/tags/${GLFW_PV}.tar.gz
 	-> ${GLFW_DFN}
-https://github.com/ocornut/imgui/archive/refs/tags/v${IMGUI_V}.tar.gz
-	-> ${IMGUI_DFN}
+https://github.com/google/googletest/archive/refs/tags/release-${GTEST_PV}.tar.gz
+	-> ${GTEST_DFN}
 https://github.com/mlabbe/nativefiledialog/archive/${EGIT_COMMIT_NFD}.tar.gz
 	-> ${NFD_DFN}
-https://github.com/google/googletest/archive/refs/tags/release-${GTEST_V}.tar.gz
-	-> ${GTEST_DFN}
+https://github.com/ocornut/imgui/archive/refs/tags/v${IMGUI_PV}.tar.gz
+	-> ${IMGUI_DFN}
 "
 S="${WORKDIR}/openvdb-${EGIT_COMMIT}/${PN}"
 S_IMGUI="${WORKDIR}/imgui-${EGIT_COMMIT_IMGUI}"
-S_GLFW="${WORKDIR}/glfw-${GLFW_V}"
+S_GLFW="${WORKDIR}/glfw-${GLFW_PV}"
 S_NFD="${WORKDIR}/nativefiledialog-${EGIT_COMMIT_NFD}"
-S_GTEST="${WORKDIR}/googletest-${GTEST_V}"
+S_GTEST="${WORKDIR}/googletest-${GTEST_PV}"
 RESTRICT="mirror"
 CMAKE_BUILD_TYPE=Release
 PATCHES_=(
@@ -257,7 +297,7 @@ src_configure()
 	if use tools ; then
 		mycmakeargs+=(
 	-DEGLFW_SOURCE_DIR="${S_GLFW}"
-	-DEGLFW_BINARY_DIR="${WORKDIR}/glfw-${GLFW_V}_${ABI}_build"
+	-DEGLFW_BINARY_DIR="${WORKDIR}/glfw-${GLFW_PV}_${ABI}_build"
 	-DEIMGUI_SOURCE_DIR="${S_IMGUI}"
 	-DENFD_SOURCE_DIR="${S_NFD}"
 
@@ -272,7 +312,7 @@ src_configure()
 	if use benchmark || use test ; then
 		mycmakeargs+=(
 	-DEGOOGLETEST_SOURCE_DIR="${S_GTEST}"
-	-DEGOOGLETEST_BINARY_DIR="${WORKDIR}/googletest-${GTEST_V}-${ABI}_build"
+	-DEGOOGLETEST_BINARY_DIR="${WORKDIR}/googletest-${GTEST_PV}-${ABI}_build"
 	-DNANOVDB_USE_INTERNAL_GTEST=NO
 		)
 	fi

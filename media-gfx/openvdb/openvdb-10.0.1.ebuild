@@ -6,14 +6,15 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake flag-o-matic python-single-r1
+inherit cmake flag-o-matic python-single-r1 toolchain-funcs
 
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
 LICENSE="MPL-2.0"
 HOMEPAGE="https://www.openvdb.org"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 SLOT="0"
-OPENVDB_ABIS=( 8 7 6 )
+LLVM_SLOTS=( 14 13 )
+OPENVDB_ABIS=( 10 9 8 7 6 )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
 X86_CPU_FLAGS=( avx sse4_2 )
@@ -23,20 +24,17 @@ IUSE+=" +blosc doc -imath-half +jemalloc -log4cplus -numpy -python +static-libs
 -tbbmalloc -no-concurrent-malloc -openexr test -vdb_lod +vdb_print -vdb_render
 -vdb_view"
 VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
-# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.0.1/CMakeLists.txt#L205
+# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.0.1/CMakeLists.txt#L256
 REQUIRED_USE+="
 	^^ ( ${OPENVDB_ABIS_[@]} )
 	^^ ( jemalloc tbbmalloc no-concurrent-malloc )
-	imath-half
 	jemalloc? ( || ( test ${VDB_UTILS} ) )
 	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
-	openexr? ( imath-half )
-	vdb_render? ( imath-half )
 "
 # See
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.0.1/doc/dependencies.txt
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.0.1/ci/install.sh
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.0.1/doc/dependencies.txt
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.0.1/ci/install.sh
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 
@@ -70,17 +68,11 @@ gen_openexr_pairs() {
 	done
 }
 
-DEPEND_DISABLED="
-		(
-			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
-		)
-"
-
 DEPEND+="
 	>=dev-libs/boost-1.66:=
 	>=sys-libs/zlib-1.2.7:=
 	blosc? (
-		>=dev-libs/c-blosc-1.5:=
+		>=dev-libs/c-blosc-1.17:=
 	)
 	jemalloc? (
 		dev-libs/jemalloc:=
@@ -124,6 +116,9 @@ DEPEND+="
 			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 			>=dev-cpp/tbb-2018.0:${LEGACY_TBB_SLOT}=
 		)
+		(
+			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
+		)
 	)
 "
 RDEPEND+="
@@ -144,8 +139,8 @@ BDEPEND+="
 		dev-texlive/texlive-latexextra
 	)
 	test? (
+		>=dev-cpp/gtest-1.10
 		>=dev-util/cppunit-1.10
-		>=dev-cpp/gtest-1.8
 	)
 	|| (
 		>=sys-devel/gcc-6.3.1
@@ -161,9 +156,10 @@ https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
-	"${FILESDIR}/${PN}-8.0.1-add-consistency-for-NumPy-find_package-call.patch"
 	"${FILESDIR}/${PN}-8.1.0-glfw-libdir.patch"
+	"${FILESDIR}/${PN}-9.0.0-fix-atomic.patch"
+	"${FILESDIR}/${PN}-9.0.0-numpy.patch"
+	"${FILESDIR}/${PN}-9.0.0-unconditionally-search-Python-interpreter.patch"
 )
 RESTRICT="!test? ( test )"
 
@@ -184,10 +180,10 @@ src_prepare() {
 	cmake_src_prepare
 	sed -i -e "s|lib/cmake|$(get_libdir)/cmake|g" \
 		cmake/OpenVDBGLFW3Setup.cmake || die
-	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		eapply "${FILESDIR}/openvdb-8.0.1-findtbb-more-debug-messages.patch"
-		eapply "${FILESDIR}/openvdb-8.0.1-prioritize-onetbb.patch"
-	fi
+#	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+		eapply "${FILESDIR}/openvdb-8.1.0-findtbb-more-debug-messages.patch"
+		eapply "${FILESDIR}/openvdb-8.1.0-prioritize-onetbb.patch"
+#	fi
 }
 
 check_clang() {
@@ -235,7 +231,7 @@ src_configure() {
 		-DOPENVDB_BUILD_BINARIES=$(usex vdb_lod ON \
 						$(usex vdb_print ON \
 							$(usex vdb_render ON \
-								$(usex vdb_view ON OFF)) \
+								$(usex vdb_view ON OFF))\
 						)\
 					)
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
@@ -271,16 +267,7 @@ src_configure() {
 		mycmakeargs+=( -DOPENVDB_SIMD=SSE42 )
 	fi
 
-	if has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
-		einfo "Legacy TBB"
-		mycmakeargs+=(
-			-DUSE_PKGCONFIG=ON
-			-DTbb_INCLUDE_DIR="${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}"
-			-DTBB_LIBRARYDIR="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
-			-DTBB_FORCE_ONETBB=OFF
-			-DTBB_SLOT="-${LEGACY_TBB_SLOT}"
-		)
-	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		einfo "Using oneTBB"
 		mycmakeargs+=(
 			-DUSE_PKGCONFIG=ON
@@ -288,6 +275,15 @@ src_configure() {
 			-DTBB_LIBRARYDIR="${ESYSROOT}/usr/$(get_libdir)"
 			-DTBB_FORCE_ONETBB=ON
 			-DTBB_SLOT=""
+		)
+	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+		einfo "Legacy TBB"
+		mycmakeargs+=(
+			-DUSE_PKGCONFIG=ON
+			-DTbb_INCLUDE_DIR="${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}"
+			-DTBB_LIBRARYDIR="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
+			-DTBB_FORCE_ONETBB=OFF
+			-DTBB_SLOT="-${LEGACY_TBB_SLOT}"
 		)
 	fi
 
@@ -300,7 +296,9 @@ src_install()
 	dodoc README.md
 	docinto licenses
 	dodoc LICENSE openvdb/openvdb/COPYRIGHT
-	if has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+		:;
+	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			if readelf -h "${f}" 2>/dev/null 1>/dev/null && test -x "${f}" ; then
 				einfo "Setting rpath for ${f}"
@@ -308,8 +306,6 @@ src_install()
 					"${f}" || die
 			fi
 		done
-	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		:;
 	fi
 
 	if ! is_crosscompile && which "${ED}/usr/bin/vdb_print" ; then

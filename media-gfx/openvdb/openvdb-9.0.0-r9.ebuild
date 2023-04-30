@@ -13,7 +13,7 @@ LICENSE="MPL-2.0"
 HOMEPAGE="https://www.openvdb.org"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 SLOT="0"
-OPENVDB_ABIS=( 6 7 8 9 10 )
+OPENVDB_ABIS=( 10 9 8 7 6 )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
 X86_CPU_FLAGS=( avx sse4_2 )
@@ -37,23 +37,31 @@ REQUIRED_USE+="
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 
-OPENEXR_V2="2.5.7 2.5.8"
-OPENEXR_V3="3.1.4 3.1.5"
+OPENEXR_V2_PV="2.5.8 2.5.7"
+OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
 gen_openexr_pairs() {
-	local v
-	for v in ${OPENEXR_V2} ; do
+	local pv
+	for pv in ${OPENEXR_V2_PV} ; do
 		echo "
 			(
-				openexr? ( ~media-libs/openexr-${v}:= )
-				imath-half? ( ~media-libs/ilmbase-${v}:= )
+				openexr? (
+					~media-libs/openexr-${pv}:=
+				)
+				imath-half? (
+					~media-libs/ilmbase-${pv}:=
+				)
 			)
 		"
 	done
-	for v in ${OPENEXR_V3} ; do
+	for pv in ${OPENEXR_V3_PV} ; do
 		echo "
 			(
-				openexr? ( ~media-libs/openexr-${v}:= )
-				imath-half? ( ~dev-libs/imath-${v}:= )
+				openexr? (
+					~media-libs/openexr-${pv}:=
+				)
+				imath-half? (
+					~dev-libs/imath-${pv}:=
+				)
 			)
 		"
 	done
@@ -62,13 +70,17 @@ gen_openexr_pairs() {
 DEPEND+="
 	|| (
                 $(gen_openexr_pairs)
-                !openexr? ( !imath-half? ( virtual/libc ) )
+                !openexr? (
+			!imath-half? (
+				virtual/libc
+			)
+		)
         )
 	|| (
 		(
-			>=dev-cpp/tbb-2018.0:${LEGACY_TBB_SLOT}=
-			 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 			!<dev-cpp/tbb-2021:0=
+			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+			>=dev-cpp/tbb-2018.0:${LEGACY_TBB_SLOT}=
 		)
 		(
 			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
@@ -76,19 +88,29 @@ DEPEND+="
 	)
 	>=dev-libs/boost-1.66:=
 	>=sys-libs/zlib-1.2.7:=
-	blosc? ( >=dev-libs/c-blosc-1.17:= )
-	jemalloc? ( dev-libs/jemalloc:= )
-	log4cplus? ( >=dev-libs/log4cplus-1.1.2:= )
+	blosc? (
+		>=dev-libs/c-blosc-1.17:=
+	)
+	jemalloc? (
+		dev-libs/jemalloc:=
+	)
+	log4cplus? (
+		>=dev-libs/log4cplus-1.1.2:=
+	)
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
 			>=dev-libs/boost-1.68:=[numpy?,python?,${PYTHON_USEDEP}]
-			numpy? ( >=dev-python/numpy-1.14[${PYTHON_USEDEP}] )
+			numpy? (
+				>=dev-python/numpy-1.14[${PYTHON_USEDEP}]
+			)
 		')
 	)
 	vdb_view? (
-		media-libs/glu
 		>=media-libs/glfw-3.1
+		>=media-libs/glfw-3.3
+		media-libs/glu
+		media-libs/mesa[egl(+)]
 		virtual/opengl
 		x11-libs/libX11
 		x11-libs/libXcursor
@@ -96,17 +118,12 @@ DEPEND+="
 		x11-libs/libXinerama
 		x11-libs/libXrandr
 		x11-libs/libXxf86vm
-		>=media-libs/glfw-3.3
-		media-libs/mesa[egl(+)]
 	)
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
-	|| (
-		>=sys-devel/clang-3.8
-		>=sys-devel/gcc-6.3.1
-		>=dev-lang/icc-17
-	)
 	>=dev-util/cmake-3.16.2-r1
 	>=sys-devel/bison-3
 	>=sys-devel/flex-2.6
@@ -123,6 +140,14 @@ BDEPEND+="
 	test? (
 		>=dev-util/cppunit-1.10
 		>=dev-cpp/gtest-1.10
+	)
+	|| (
+		>=sys-devel/gcc-6.3.1
+		(
+			<sys-devel/clang-15
+			>=sys-devel/clang-3.8
+		)
+		>=dev-lang/icc-17
 	)
 "
 SRC_URI="
@@ -160,7 +185,32 @@ src_prepare() {
 #	fi
 }
 
+check_clang() {
+	local found=0
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		if has_version "sys-devel/clang:${s}" ; then
+			found=1
+			export CC="${CHOST}-clang-${s}"
+			export CXX="${CHOST}-clang++-${s}"
+			break
+		fi
+	done
+	if (( ${found} == 0 )) ; then
+eerror
+eerror "${PN} requires either clang ${LLVM_SLOTS[@]}"
+eerror
+eerror "Either use GCC or install and use one of those clang slots."
+eerror
+		die
+	fi
+	clang --version || die
+}
+
 src_configure() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	tc-is-clang && check_clang
 	export MAKEOPTS="-j1" # prevent stall
 
 	local version

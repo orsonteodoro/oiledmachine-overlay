@@ -35,8 +35,8 @@ REQUIRED_USE="
 
 # Works with older OIIO but need to force a version w/ OpenEXR 3
 
-OPENEXR_V2_PV="2.5.7 2.5.8"
-OPENEXR_V3_PV="3.1.4 3.1.5"
+OPENEXR_V2_PV="2.5.8 2.5.7"
+OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
 gen_half_pairs() {
 	local pv
 	for pv in ${OPENEXR_V2_PV} ; do

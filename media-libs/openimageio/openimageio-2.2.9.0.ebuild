@@ -4,14 +4,17 @@
 EAPI=8
 
 CXX_STD_MIN="11"
-LLVM_MAX_SLOT=13 # Originally 11..
+LLVM_MAX_SLOT=13 # Originally 11.
 LLVM_SLOTS=(13 12 11) # INSTALL.md says minimum is 11.
 FONT_PN=OpenImageIO
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..9} ) # Upstream only lists up to 3.8
 inherit cmake font llvm python-single-r1
 
 DESCRIPTION="A library for reading and writing images"
-HOMEPAGE="https://sites.google.com/site/openimageio/ https://github.com/OpenImageIO"
+HOMEPAGE="
+https://sites.google.com/site/openimageio/
+https://github.com/OpenImageIO
+"
 LICENSE="BSD"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64 ~ppc64 ~x86"
@@ -27,7 +30,7 @@ X86_CPU_FEATURES=(
 	f16c:f16c
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
-OPENVDB_APIS=( 5 6 7 8 9 )
+OPENVDB_APIS=( 9 8 7 6 5 )
 OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
 OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
 # font install is enabled upstream
@@ -84,14 +87,14 @@ gen_openvdb_depends() {
 	echo "${o}"
 }
 
-OPENEXR_V2="2.5.8"
+OPENEXR_V2_PV="2.5.8"
 gen_openexr_pairs() {
-	local v
-	for v in ${OPENEXR_V2} ; do
+	local pv
+	for pv in ${OPENEXR_V2_PV} ; do
 		echo "
 			(
-				~media-libs/openexr-${v}:=
-				~media-libs/ilmbase-${v}:=
+				~media-libs/openexr-${pv}:=
+				~media-libs/ilmbase-${pv}:=
 			)
 		"
 	done

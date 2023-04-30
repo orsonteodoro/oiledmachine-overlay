@@ -4,8 +4,8 @@
 EAPI=8
 
 CXX_STD_MIN="14"
-LLVM_MAX_SLOT=15
-LLVM_SLOTS=(15 14 13)
+LLVM_MAX_SLOT=16
+LLVM_SLOTS=(16 15 14 13)
 FONT_PN=OpenImageIO
 PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake font llvm python-single-r1
@@ -30,7 +30,7 @@ X86_CPU_FEATURES=(
 	f16c:f16c
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
-OPENVDB_APIS=( 9 8 7 6 5 )
+OPENVDB_APIS=( 10 9 8 7 6 5 )
 OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
 OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
 # font install is enabled upstream
@@ -39,7 +39,7 @@ IUSE+="
 ${CPU_FEATURES[@]%:*}
 ${OPENVDB_APIS_[@]}
 aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc
-jpeg2k opencv opengl openvdb png ptex +python +qt5 raw rav1e tbb +truetype webp
+jpeg2k opencv opengl openvdb png ptex +python +qt5 qt6 raw rav1e tbb +truetype webp
 "
 gen_abi_compat_required_use() {
 	local o
@@ -80,8 +80,9 @@ REQUIRED_USE="
 		openvdb
 	)
 "
-# See https://github.com/OpenImageIO/oiio/blob/v2.3.21.0/INSTALL.md
-QT_PV="5.6"
+# See https://github.com/OpenImageIO/oiio/blob/v2.4.10.0/INSTALL.md
+QT5_PV="5.6"
+QT6_PV="6"
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 gen_openvdb_depends() {
@@ -198,11 +199,19 @@ RDEPEND+="
 		')
 	)
 	qt5? (
-		>=dev-qt/qtcore-${QT_PV}:5
-		>=dev-qt/qtgui-${QT_PV}:5
-		>=dev-qt/qtwidgets-${QT_PV}:5
+		>=dev-qt/qtcore-${QT5_PV}:5
+		>=dev-qt/qtgui-${QT5_PV}:5
+		>=dev-qt/qtwidgets-${QT5_PV}:5
 		opengl? (
-			>=dev-qt/qtopengl-${QT_PV}:5
+			>=dev-qt/qtopengl-${QT5_PV}:5
+		)
+	)
+	qt6? (
+		>=dev-qt/qtcore-${QT6_PV}:6
+		>=dev-qt/qtgui-${QT6_PV}:6
+		>=dev-qt/qtwidgets-${QT6_PV}:6
+		opengl? (
+			>=dev-qt/qtopengl-${QT6_PV}:6
 		)
 	)
 	raw? (
