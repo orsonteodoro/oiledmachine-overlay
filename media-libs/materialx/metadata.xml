@@ -10,6 +10,9 @@
     <remote-id type="github">AcademySoftwareFoundation/MaterialX</remote-id>
   </upstream>
   <use>
+    <flag name="oiio">
+      Add support for OpenImageIO to MaterialXRender
+    </flag>
     <flag name="test">
       Performs testing
     </flag>
