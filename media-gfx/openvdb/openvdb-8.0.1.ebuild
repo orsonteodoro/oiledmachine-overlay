@@ -17,31 +17,58 @@ OPENVDB_ABIS=( 8 7 6 )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
 X86_CPU_FLAGS=( avx sse4_2 )
-IUSE+=" ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}"
-IUSE+=" ${OPENVDB_ABIS_[@]} +abi$(ver_cut 1 ${PV})-compat"
-IUSE+=" +blosc doc -imath-half +jemalloc -log4cplus -numpy -python +static-libs
+IUSE+="
+${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
+${OPENVDB_ABIS_[@]} +abi$(ver_cut 1 ${PV})-compat
++blosc doc -imath-half +jemalloc -log4cplus -numpy -python +static-libs
 -tbbmalloc -no-concurrent-malloc -openexr test -vdb_lod +vdb_print -vdb_render
--vdb_view"
-VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
+-vdb_view
+"
+VDB_UTILS="
+	vdb_lod
+	vdb_print
+	vdb_render
+	vdb_view
+"
 # For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.0.1/CMakeLists.txt#L205
 REQUIRED_USE+="
-	^^ ( ${OPENVDB_ABIS_[@]} )
-	^^ ( jemalloc tbbmalloc no-concurrent-malloc )
+	^^ (
+		${OPENVDB_ABIS_[@]}
+	)
+	^^ (
+		jemalloc
+		tbbmalloc
+		no-concurrent-malloc
+	)
 	imath-half
-	jemalloc? ( || ( test ${VDB_UTILS} ) )
-	numpy? ( python )
-	python? ( ${PYTHON_REQUIRED_USE} )
-	openexr? ( imath-half )
-	vdb_render? ( imath-half )
+	jemalloc? (
+		|| (
+			${VDB_UTILS}
+			test
+		)
+	)
+	numpy? (
+		python
+	)
+	python? (
+		${PYTHON_REQUIRED_USE}
+	)
+	openexr? (
+		imath-half
+	)
+	vdb_render? (
+		imath-half
+	)
 "
+
 # See
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.0.1/doc/dependencies.txt
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.0.1/ci/install.sh
-ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
-
 OPENEXR_V2_PV="2.5.8 2.5.7"
 OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
+ONETBB_SLOT="0"
+
 gen_openexr_pairs() {
 	local pv
 	for pv in ${OPENEXR_V2_PV} ; do
@@ -144,8 +171,8 @@ BDEPEND+="
 		dev-texlive/texlive-latexextra
 	)
 	test? (
-		>=dev-util/cppunit-1.10
 		>=dev-cpp/gtest-1.8
+		>=dev-util/cppunit-1.10
 	)
 	|| (
 		>=sys-devel/gcc-6.3.1

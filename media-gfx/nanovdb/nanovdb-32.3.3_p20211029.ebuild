@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# This version corresponds to OpenVDB 9.0.0.
+
 inherit cmake flag-o-matic
 
 DESCRIPTION="A lightweight GPU friendly version of VDB initially targeting \
@@ -12,7 +14,7 @@ https://github.com/AcademySoftwareFoundation/openvdb/tree/feature/nanovdb/nanovd
 "
 LICENSE="MPL-2.0"
 # For versioning, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/0ed0f19ea4fbb0d8bf64d3dca07abab3c7429803/nanovdb/nanovdb/NanoVDB.h#L104
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/nanovdb/nanovdb/NanoVDB.h#L104
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # Live ebuilds do not get keyworded.
 # cuda, optix, allow-fetchcontent are enabled upstream by default but
@@ -54,7 +56,7 @@ REQUIRED_USE+="
 	)
 "
 # For dependencies, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/0ed0f19ea4fbb0d8bf64d3dca07abab3c7429803/doc/dependencies.txt
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/doc/dependencies.txt
 EGIT_COMMIT="0ed0f19ea4fbb0d8bf64d3dca07abab3c7429803"
 GH_ORG_URI="https://github.com/AcademySoftwareFoundation"
 GTEST_PV="1.11.0"
@@ -100,7 +102,7 @@ DEPEND+="
 	)
 	openvdb? (
 		>=dev-libs/boost-1.68
-		>=media-gfx/openvdb-8.1
+		>=media-gfx/openvdb-9
 		|| (
 			$(gen_openexr_pairs)
 		)
@@ -112,7 +114,7 @@ DEPEND+="
 		|| (
 			(
 				>=dev-cpp/tbb-2017.6:${LEGACY_TBB_SLOT}=
-				 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+				<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 				!<dev-cpp/tbb-2021:0=
 			)
 			(
