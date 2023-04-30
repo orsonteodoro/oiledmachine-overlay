@@ -16,7 +16,7 @@ KEYWORDS="~amd64"
 IUSE+="
 -alembic -doc +draco -embree +examples -experimental +hdf5 +imaging +jemalloc
 -materialx -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
-+ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
+-ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
 -vulkan r3
 "
 REQUIRED_USE+="
@@ -244,7 +244,7 @@ src_configure() {
 			-DDRACO_ATTRIBUTE_INDICES_DEDUPLICATION_SUPPORTED=ON \
 			-DTBB_SUPPRESS_DEPRECATED_MESSAGES=1
 	fi
-        # See https://github.com/PixarAnimationStudios/USD/blob/v21.05/cmake/defaults/Options.cmake
+        # See https://github.com/PixarAnimationStudios/USD/blob/v22.11/cmake/defaults/Options.cmake
 	mycmakeargs+=(
 		-DBUILD_SHARED_LIBS=ON
 #		-DCMAKE_DEBUG_POSTFIX=_d
@@ -255,7 +255,6 @@ src_configure() {
 		-DPXR_BUILD_EMBREE_PLUGIN=$(usex embree ON OFF)
 		-DPXR_BUILD_EXAMPLES=$(usex examples ON OFF)
 		-DPXR_BUILD_IMAGING=$(usex imaging ON OFF)
-		-DPXR_BUILD_MATERIALX_PLUGIN=$(usex materialx)
 		-DPXR_BUILD_MONOLITHIC=$(usex monolithic ON OFF)
 		-DPXR_BUILD_OPENCOLORIO_PLUGIN=$(usex opencolorio ON OFF)
 		-DPXR_BUILD_OPENIMAGEIO_PLUGIN=$(usex openimageio ON OFF)
@@ -267,6 +266,7 @@ src_configure() {
 		-DPXR_BUILD_USDVIEW=$(usex usdview ON OFF)
 		-DPXR_ENABLE_GL_SUPPORT=$(usex opengl ON OFF)
 		-DPXR_ENABLE_HDF5_SUPPORT=$(usex hdf5 ON OFF)
+		-DPXR_ENABLE_MATERIALX_SUPPORT=$(usex materialx)
 		-DPXR_ENABLE_OPENVDB_SUPPORT=$(usex openvdb ON OFF)
 		-DPXR_ENABLE_OSL_SUPPORT=$(usex osl ON OFF)
 		-DPXR_ENABLE_PTEX_SUPPORT=$(usex ptex ON OFF)
