@@ -2,17 +2,13 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
     libyuv performs YUV scaling and conversion.
   </longdescription>
-  <upstream>
-    <maintainer status="active">
-      <name>Google Inc.</name>
-    </maintainer>
-  </upstream>
   <use>
     <flag name="test">
       Performs testing
