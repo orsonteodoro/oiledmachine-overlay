@@ -81,7 +81,7 @@ $(gen_llvm_iuse)
 ${CPU_FLAGS_3_3[@]%:*}
 ${FFMPEG_IUSE}
 ${OPENVDB_ABIS[@]}
-+X +abi9-compat +alembic -asan +boost +bullet +collada -cycles-hip
++X +abi10-compat +alembic -asan +boost +bullet +collada -cycles-hip
 +color-management -cpudetection +cuda +cycles -cycles-device-oneapi
 +cycles-path-guiding +dds -debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw
 flac +gmp +jack +jemalloc +jpeg2k -llvm -man -materialx +nanovdb +ndof +nls
@@ -432,7 +432,7 @@ RDEPEND+="
 		>=dev-python/idna-3.2[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.23.5[${PYTHON_USEDEP}]
 		>=dev-python/pybind11-2.10.1[${PYTHON_USEDEP}]
-		>=dev-python/python-zstandard-0.16.0[${PYTHON_USEDEP}]
+		>=dev-python/zstandard-0.16.0[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.26.0[${PYTHON_USEDEP}]
 		>=dev-python/urllib3-1.26.7[${PYTHON_USEDEP}]
 	')

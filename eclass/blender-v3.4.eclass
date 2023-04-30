@@ -418,7 +418,7 @@ RDEPEND+="
 		>=dev-python/charset_normalizer-2.0.6[${PYTHON_USEDEP}]
 		>=dev-python/idna-3.2[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.22.0[${PYTHON_USEDEP}]
-		>=dev-python/python-zstandard-0.16.0[${PYTHON_USEDEP}]
+		>=dev-python/zstandard-0.16.0[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.26.0[${PYTHON_USEDEP}]
 		>=dev-python/urllib3-1.26.7[${PYTHON_USEDEP}]
 	')

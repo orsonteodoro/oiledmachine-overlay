@@ -427,7 +427,7 @@ RDEPEND+="
 		>=dev-python/numpy-1.21.2[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.26.0[${PYTHON_USEDEP}]
 		>=dev-python/urllib3-1.26.7[${PYTHON_USEDEP}]
-		>=dev-python/python-zstandard-0.16.0[${PYTHON_USEDEP}]
+		>=dev-python/zstandard-0.16.0[${PYTHON_USEDEP}]
 	')
 	${CODECS}
 	${PYTHON_DEPS}
