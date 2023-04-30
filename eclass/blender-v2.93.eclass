@@ -316,8 +316,8 @@ gen_oiio_depends() {
 	for s in ${OPENVDB_ABIS[@]} ; do
 		echo "
 			${s}? (
-				<media-libs/openimageio-2.2.10.0
-				>=media-libs/openimageio-2.1.15.0[${s},color-management?,jpeg2k?,png,webp?]
+				<media-libs/openimageio-2.2.10.0[${s}(+),color-management?,jpeg2k?,png,webp?]
+				>=media-libs/openimageio-2.1.15.0[${s}(+),color-management?,jpeg2k?,png,webp?]
 			)
 		"
 	done
@@ -370,7 +370,7 @@ DISABLED_RDEPENDS="
 # build_files/build_environment/install_deps.sh : --disable-ffplay
 CODECS="
 	mp3? (
-		>=media-sound/lame-3.100
+		>=media-sound/lame-3.100[sndfile]
 	)
 	opus? (
 		>=media-libs/opus-1.3.1
@@ -474,16 +474,20 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		$(gen_llvm_depends)
 	)
 	llvm-11? (
-		>=media-libs/mesa-20.3.5
+		>=media-libs/mesa-20.3.5[X?]
 		>=sys-libs/libomp-11
 	)
 	llvm-12? (
-		>=media-libs/mesa-20.1.1
+		>=media-libs/mesa-20.1.1[X?]
 		>=sys-libs/libomp-12
 	)
 	llvm-13? (
-		>=media-libs/mesa-21.2.5
+		>=media-libs/mesa-21.2.5[X?]
 		>=sys-libs/libomp-13
+	)
+	llvm-14? (
+		>=media-libs/mesa-21.1.0[X?]
+		>=sys-libs/libomp-14
 	)
 	ndof? (
 		>=dev-libs/libspnav-0.2.3
@@ -496,7 +500,10 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		)
 	)
 	openal? (
-		>=media-libs/openal-1.20.1
+		!pulseaudio? (
+			>=media-libs/openal-1.20.1[alsa]
+		)
+		>=media-libs/openal-1.20.1[pulseaudio?]
 	)
 	opencl? (
 		virtual/opencl
@@ -543,7 +550,10 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		media-sound/pulseaudio
 	)
 	sdl? (
-		>=media-libs/libsdl2-2.0.12[sound]
+		!pulseaudio? (
+			>=media-libs/libsdl2-2.0.12[alsa,opengl,sound]
+		)
+		>=media-libs/libsdl2-2.0.12[opengl,pulseaudio?,sound]
 	)
 	sndfile? (
 		>=media-libs/libsndfile-${LIBSNDFILE_PV}
@@ -554,25 +564,26 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 	tbb? (
 		openvdb? (
 			!<dev-cpp/tbb-2021:0=
-			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=[tbbmalloc(+)]
 		)
 		usd? (
 			!<dev-cpp/tbb-2021:0=
-			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=[tbbmalloc(+)]
 		)
 	)
 	tiff? (
 		>=media-libs/tiff-4.1.0:0[webp?,zlib]
 	)
 	usd? (
-		<media-libs/openusd-22[monolithic]
-		>=media-libs/openusd-21.11[monolithic]
+		<media-libs/openusd-22[monolithic,openvdb]
+		>=media-libs/openusd-21.11[monolithic,openvdb]
+
 	)
 	valgrind? (
 		dev-util/valgrind
 	)
 	webp? (
-		>=media-libs/libwebp-0.6.1
+		>=media-libs/libwebp-0.6.1[cpu_flags_x86_sse2?]
 	)
 	X? (
 		x11-libs/libX11

@@ -57,6 +57,7 @@ PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11.
 
 BOOST_PV="1.80"
 CLANG_MIN="8.0"
+FREETYPE_PV="2.12.1"
 GCC_MIN="9.3"
 LEGACY_TBB_SLOT="2"
 LIBOGG_PV="1.3.5"
@@ -345,10 +346,10 @@ gen_oiio_depends() {
 	for s in ${OPENVDB_ABIS[@]} ; do
 		echo "
 			${s}? (
-				<media-libs/openimageio-2.4
+				<media-libs/openimageio-2.5[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
+				>=media-libs/openimageio-2.4.9.0[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 				>=dev-cpp/robin-map-0.6.2
 				>=dev-libs/libfmt-8
-				>=media-libs/openimageio-2.4.9.0[${s},color-management?,jpeg2k?,png,tools(+),webp?]
 			)
 		"
 	done
@@ -370,7 +371,7 @@ gen_openvdb_depends() {
 	local s=${OPENVDB_ABIS_MAJOR_VERS}
 	echo "
 		abi${s}-compat? (
-			=media-gfx/openvdb-${s}.0*[${PYTHON_SINGLE_USEDEP},abi${s}-compat,blosc]
+			=media-gfx/openvdb-${s}.0*[${PYTHON_SINGLE_USEDEP},abi${s}-compat,blosc,numpy]
 		)
 	"
 }
@@ -396,7 +397,7 @@ CODECS="
 		>=media-libs/libaom-3.3.0
 	)
 	mp3? (
-		>=media-sound/lame-3.100
+		>=media-sound/lame-3.100[sndfile]
 	)
 	opus? (
 		>=media-libs/opus-1.3.1
@@ -440,7 +441,7 @@ RDEPEND+="
 	>=dev-cpp/pystring-1.1.3
 	>=dev-lang/python-3.10.9
 	>=dev-libs/fribidi-1.0.12
-	>=media-libs/freetype-2.12.1
+	>=media-libs/freetype-${FREETYPE_PV}
 	>=media-libs/libpng-1.6.37:0=
 	>=media-libs/shaderc-2022.3
 	>=media-libs/vulkan-loader-1.2.198
@@ -465,7 +466,7 @@ RDEPEND+="
 	)
 	color-management? (
 		>=dev-libs/expat-2.5.0
-		>=media-libs/opencolorio-2.2.0
+		>=media-libs/opencolorio-2.2.0[cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-10.1:=
@@ -474,8 +475,8 @@ RDEPEND+="
 	cycles? (
 		cycles-path-guiding? (
 			(
-				<media-libs/openpgl-0.5
-				>=media-libs/openpgl-0.4.1_beta
+				<media-libs/openpgl-0.5[tbb?]
+				>=media-libs/openpgl-0.4.1_beta[tbb?]
 			)
 		)
 		osl? (
@@ -499,7 +500,7 @@ RDEPEND+="
 		>=media-libs/embree-3.13.4:=\
 [-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,\
 cpu_flags_x86_sse4_2?,\
-cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
+cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tbb?]
 	)
 	ffmpeg? (
 		<media-video/ffmpeg-6:=\
@@ -529,16 +530,20 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		$(gen_llvm_depends)
 	)
 	llvm-11? (
-		>=media-libs/mesa-20.3.5
+		>=media-libs/mesa-20.3.5[X?]
 		>=sys-libs/libomp-11
 	)
 	llvm-12? (
-		>=media-libs/mesa-20.1.5
+		>=media-libs/mesa-20.1.5[X?]
 		>=sys-libs/libomp-12
 	)
 	llvm-13? (
-		>=media-libs/mesa-21.2.5
+		>=media-libs/mesa-21.2.5[X?]
 		>=sys-libs/libomp-13
+	)
+	llvm-14? (
+		>=media-libs/mesa-21.1.0[X?]
+		>=sys-libs/libomp-14
 	)
 	materialx? (
 		media-libs/materialx
@@ -554,7 +559,10 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		)
 	)
 	openal? (
-		>=media-libs/openal-1.21.1
+		!pulseaudio? (
+			>=media-libs/openal-1.21.1[alsa]
+		)
+		>=media-libs/openal-1.21.1[pulseaudio?]
 	)
 	opencl? (
 		virtual/opencl
@@ -579,7 +587,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		$(gen_openvdb_depends)
 		>=dev-libs/c-blosc-1.21.1[zlib]
 		nanovdb? (
-			~media-gfx/nanovdb-32.3.3_p20211029:0=
+			~media-gfx/nanovdb-32.4.2_p20221027:0=
 		)
 	)
 	openxr? (
@@ -600,8 +608,15 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 	pulseaudio? (
 		media-sound/pulseaudio
 	)
+	release? (
+		>=media-libs/freetype-${FREETYPE_PV}[brotli,bzip2,harfbuzz,png]
+		media-libs/harfbuzz[truetype]
+	)
 	sdl? (
-		>=media-libs/libsdl2-2.0.20[sound]
+		!pulseaudio? (
+			>=media-libs/libsdl2-2.0.20[alsa,opengl,sound]
+		)
+		>=media-libs/libsdl2-2.0.20[opengl,pulseaudio?,sound]
 	)
 	sndfile? (
 		>=media-libs/libsndfile-${LIBSNDFILE_PV}
@@ -610,18 +625,18 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		)
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021:${ONETBB_SLOT}
+		>=dev-cpp/tbb-2021:${ONETBB_SLOT}[tbbmalloc]
 		usd? (
 			!<dev-cpp/tbb-2021:0=
-			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=[tbbmalloc(+)]
 		)
 	)
 	tiff? (
-		>=media-libs/tiff-4.4.0:0[webp?,zlib]
+		>=media-libs/tiff-4.4.0:0[jpeg,zlib]
 	)
 	usd? (
-		<media-libs/openusd-23[monolithic]
-		>=media-libs/openusd-22.11[monolithic]
+		<media-libs/openusd-23[imaging,monolithic,opengl,openvdb,openimageio,python]
+		>=media-libs/openusd-22.11[imaging,monolithic,opengl,openvdb,openimageio,python]
 	)
 	valgrind? (
 		dev-util/valgrind
@@ -656,6 +671,9 @@ BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/setuptools-63.2.0[${PYTHON_USEDEP}]
 		>=dev-python/cython-0.29.30[${PYTHON_USEDEP}]
+		>=dev-python/autopep8-1.6.0[${PYTHON_USEDEP}]
+		>=dev-python/pycodestyle-2.8.0[${PYTHON_USEDEP}]
+		>=dev-python/toml-0.10.2[${PYTHON_USEDEP}]
 	')
 	>=dev-cpp/yaml-cpp-0.7.0
 	>=dev-util/cmake-3.10

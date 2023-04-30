@@ -57,6 +57,7 @@ OPENVDB_ABIS=(
 BOOST_PV="1.78"
 CLANG_MIN="8.0"
 GCC_MIN="9.3"
+FREETYPE_PV="2.12.1"
 LEGACY_TBB_SLOT="2"
 ONETBB_SLOT="0"
 OPENEXR_V3="3.1.5 3.1.7"
@@ -338,10 +339,10 @@ gen_oiio_depends() {
 	for s in ${OPENVDB_ABIS[@]} ; do
 		echo "
 			${s}? (
-				<media-libs/openimageio-2.4
+				<media-libs/openimageio-2.4[${s}(+),color-management?,jpeg2k?,png,webp?]
 				>=dev-cpp/robin-map-0.6.2
 				>=dev-libs/libfmt-8
-				>=media-libs/openimageio-2.3.20.0[${s},color-management?,jpeg2k?,png,webp?]
+				>=media-libs/openimageio-2.3.20.0[${s}(+),color-management?,jpeg2k?,png,webp?]
 			)
 		"
 	done
@@ -389,7 +390,7 @@ CODECS="
 		>=media-libs/libaom-3.3.0
 	)
 	mp3? (
-		>=media-sound/lame-3.100
+		>=media-sound/lame-3.100[sndfile]
 	)
 	opus? (
 		>=media-libs/opus-1.3.1
@@ -433,7 +434,7 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-cpp/pystring-1.1.3
 	>=dev-lang/python-3.10.9
-	>=media-libs/freetype-2.12.1
+	>=media-libs/freetype-${FREETYPE_PV}
 	>=media-libs/glew-1.13.0:*
 	>=media-libs/libpng-1.6.37:0=
 	>=sys-libs/zlib-1.2.13
@@ -456,7 +457,7 @@ RDEPEND+="
 	)
 	color-management? (
 		>=dev-libs/expat-2.5.0
-		>=media-libs/opencolorio-2.1.1
+		>=media-libs/opencolorio-2.1.1[cpu_flags_x86_sse2?]
 	)
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-10.1:=
@@ -481,7 +482,7 @@ RDEPEND+="
 		>=media-libs/embree-3.13.4:=\
 [-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,\
 cpu_flags_x86_sse4_2?,\
-cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
+cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tbb?]
 	)
 	ffmpeg? (
 		<media-video/ffmpeg-6:=
@@ -511,20 +512,24 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		$(gen_llvm_depends)
 	)
 	llvm-11? (
-		>=media-libs/mesa-20.3.5
+		>=media-libs/mesa-20.3.5[X?]
 		>=sys-libs/libomp-11
 	)
 	llvm-12? (
-		>=media-libs/mesa-20.1.5
+		>=media-libs/mesa-20.1.5[X?]
 		>=sys-libs/libomp-12
 	)
 	llvm-13? (
-		>=media-libs/mesa-21.2.5
+		>=media-libs/mesa-21.2.5[X?]
 		>=sys-libs/libomp-13
 	)
+	llvm-14? (
+		>=media-libs/mesa-21.1.0[X?]
+		>=sys-libs/libomp-14
+	)
 	ndof? (
-		app-misc/spacenavd
 		>=dev-libs/libspnav-0.2.3
+		app-misc/spacenavd
 	)
 	nls? (
 		|| (
@@ -533,7 +538,10 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		)
 	)
 	openal? (
-		>=media-libs/openal-1.21.1
+		!pulseaudio? (
+			>=media-libs/openal-1.21.1[alsa]
+		)
+		>=media-libs/openal-1.21.1[pulseaudio?]
 	)
 	opencl? (
 		virtual/opencl
@@ -579,8 +587,14 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 	pulseaudio? (
 		media-sound/pulseaudio
 	)
+	release? (
+		>=media-libs/freetype-${FREETYPE_PV}[brotli,bzip2,harfbuzz,png]
+	)
 	sdl? (
-		>=media-libs/libsdl2-2.0.20[sound]
+		!pulseaudio? (
+			>=media-libs/libsdl2-2.0.20[alsa,opengl,sound]
+		)
+		>=media-libs/libsdl2-2.0.20[opengl,pulseaudio?,sound]
 	)
 	sndfile? (
 		>=media-libs/libsndfile-${LIBSNDFILE_PV}
@@ -589,18 +603,18 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs]
 		)
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021:${ONETBB_SLOT}
+		>=dev-cpp/tbb-2021:${ONETBB_SLOT}[tbbmalloc]
 		usd? (
 			!<dev-cpp/tbb-2021:0=
-			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=[tbbmalloc(+)]
 		)
 	)
 	tiff? (
-		>=media-libs/tiff-4.5.0:0[webp?,zlib]
+		>=media-libs/tiff-4.5.0:0[jpeg,zlib]
 	)
 	usd? (
-		<media-libs/openusd-23[monolithic]
-		>=media-libs/openusd-22.03[monolithic]
+		<media-libs/openusd-23[imaging,monolithic]
+		>=media-libs/openusd-22.03[imaging,monolithic]
 	)
 	valgrind? (
 		dev-util/valgrind
