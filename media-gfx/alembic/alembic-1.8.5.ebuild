@@ -22,12 +22,12 @@ REQUIRED_USE="
 "
 RESTRICT="!test? ( test )"
 
-OPENEXR_V2="2.5.8 2.5.4"
-OPENEXR_V3="3.1.7 3.1.5 3.1.4"
+OPENEXR_V2_PV="2.5.8 2.5.4"
+OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
 
 gen_openexr_pairs() {
 	local pv
-	for pv in ${OPENEXR_V2} ; do
+	for pv in ${OPENEXR_V2_PV} ; do
 		echo "
 			(
 				~media-libs/ilmbase-${pv}:=
@@ -35,7 +35,7 @@ gen_openexr_pairs() {
 			)
 		"
 	done
-	for pv in ${OPENEXR_V3} ; do
+	for pv in ${OPENEXR_V3_PV} ; do
 		echo "
 			(
 				~dev-libs/imath-${pv}:=
@@ -47,7 +47,7 @@ gen_openexr_pairs() {
 
 gen_openexr_py_pairs() {
 	local pv
-	for pv in ${OPENEXR_V3} ; do
+	for pv in ${OPENEXR_V3_PV} ; do
 		echo "
 			(
 				~dev-libs/imath-${pv}:=[${PYTHON_SINGLE_USEDEP},python]

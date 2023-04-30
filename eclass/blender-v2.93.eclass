@@ -54,7 +54,7 @@ LEGACY_TBB_SLOT="2"
 LIBOGG_PV="1.3.4"
 LIBSNDFILE_PV="1.0.28"
 ONETBB_SLOT="0"
-OPENEXR_V2="2.5.7 2.5.8"
+OPENEXR_V2_PV="2.5.7 2.5.8"
 OSL_PV="1.11.10.0"
 PUGIXML_PV="1.10"
 THEORA_V="1.1.1"
@@ -348,12 +348,12 @@ gen_osl_depends()
 
 
 gen_openexr_pairs() {
-	local v
-	for v in ${OPENEXR_V2} ; do
+	local pv
+	for pv in ${OPENEXR_V2_PV} ; do
 		echo "
 			(
-				~media-libs/ilmbase-${v}:=
-				~media-libs/openexr-${v}:=
+				~media-libs/ilmbase-${pv}:=
+				~media-libs/openexr-${pv}:=
 			)
 		"
 	done

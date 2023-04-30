@@ -63,7 +63,7 @@ LEGACY_TBB_SLOT="2"
 LIBOGG_PV="1.3.5"
 LIBSNDFILE_PV="1.1.0"
 ONETBB_SLOT="0"
-OPENEXR_V3="3.1.5 3.1.7"
+OPENEXR_V3_PV="3.1.5 3.1.7"
 OSL_PV="1.13.0.2_pre"
 PUGIXML_V="1.10"
 THEORA_PV="1.1.1"
@@ -356,12 +356,12 @@ gen_oiio_depends() {
 }
 
 gen_openexr_pairs() {
-	local v
-	for v in ${OPENEXR_V3} ; do
+	local pv
+	for pv in ${OPENEXR_V3_PV} ; do
 		echo "
 			(
-				~dev-libs/imath-${v}:=
-				~media-libs/openexr-${v}:=
+				~dev-libs/imath-${pv}:=
+				~media-libs/openexr-${pv}:=
 			)
 		"
 	done
