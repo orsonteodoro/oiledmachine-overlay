@@ -40,6 +40,8 @@ ${CPU_FEATURES[@]%:*}
 ${OPENVDB_APIS_[@]}
 aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc
 jpeg2k opencv opengl openvdb png ptex +python +qt5 qt6 raw rav1e tbb +truetype webp
+
+r1
 "
 gen_abi_compat_required_use() {
 	local o
@@ -340,6 +342,11 @@ src_configure() {
 	# If no CPU SIMDs were used, completely disable them
 	[[ -z ${mysimd} ]] && mysimd=("0")
 
+	local has_qt="OFF"
+	if use qt5 || use qt6 ; then
+		has_qt="ON"
+	fi
+
 	local mycmakeargs=(
 		-DBUILD_DOCS=$(usex doc)
 		-DVERBOSE=ON
@@ -352,7 +359,7 @@ src_configure() {
 		-DUSE_EXTERNAL_PUGIXML=ON
 		-DUSE_PYTHON=$(usex python)
 		-DUSE_SIMD=$(local IFS=','; echo "${mysimd[*]}")
-		-DUSE_QT=$(usex qt5)
+		-DUSE_QT=${has_qt}
 
 		# No option() but uses custom enablement.
 		-DUSE_DCMTK=$(usex dicom)

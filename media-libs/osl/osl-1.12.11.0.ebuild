@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} ) # Upstream tests up to to 3.10
+PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake flag-o-matic llvm multilib-minimal python-any-r1 toolchain-funcs
 
 DESCRIPTION="Advanced shading language for production GI renderers"
@@ -23,12 +23,13 @@ X86_CPU_FEATURES=(
 	f16c:f16c
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
-LLVM_SUPPORT=(15 14 13) # Upstream supports llvm:9 to llvm:15 but only >=14 available on the distro.
+LLVM_SLOTS=( 16 15 14 13 )
+LLVM_SUPPORT=( ${LLVM_SLOTS[@]} ) # Upstream supports llvm:9 to llvm:15 but only >=14 available on the distro.
 LLVM_SUPPORT_=( ${LLVM_SUPPORT[@]/#/llvm-} )
 IUSE+="
 ${CPU_FEATURES[@]%:*}
 ${LLVM_SUPPORT_[@]}
-doc optix partio python qt5 static-libs test
+doc optix partio python qt5 qt6 static-libs test
 "
 REQUIRED_USE+="
 	^^ (
@@ -38,9 +39,9 @@ REQUIRED_USE+="
 # See https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.6.2/INSTALL.md
 # For optix requirements, see
 #   https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.6.2/src/cmake/externalpackages.cmake
-QT_MIN=5.6
+QT5_MIN="5.6"
+QT6_MIN="6"
 PATCHES=(
-	"${FILESDIR}/${PN}-1.12.9.0-stddef-includes-path.patch"
 )
 
 gen_llvm_depend()
@@ -62,9 +63,9 @@ gen_opx_llvm_rdepend() {
 		echo "
 		llvm-${s}? (
 			(
+				sys-devel/clang:${s}[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
 				sys-devel/llvm:${s}[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
-				sys-devel/clang:${s}[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
 			)
 		)
 		"
@@ -77,8 +78,8 @@ gen_llvm_bdepend() {
 		echo "
 		llvm-${s}? (
 			(
-				sys-devel/lld:${s}
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				sys-devel/lld:${s}
 				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			)
 		)
@@ -86,55 +87,66 @@ gen_llvm_bdepend() {
 	done
 }
 
-OPENEXR_V2="2.5.7 2.5.8"
-OPENEXR_V3="3.1.4 3.1.5"
+OPENEXR_V2="2.5.8 2.5.7"
+OPENEXR_V3="3.1.7 3.1.5 3.1.4"
 gen_openexr_pairs() {
-	local v
-	for v in ${OPENEXR_V2} ; do
+	local pv
+	for pv in ${OPENEXR_V2} ; do
 		echo "
 			(
-				~media-libs/openexr-${v}:=
-				~media-libs/ilmbase-${v}:=[${MULTILIB_USEDEP}]
+				~media-libs/ilmbase-${pv}:=[${MULTILIB_USEDEP}]
+				~media-libs/openexr-${pv}:=
 			)
 		"
 	done
-	for v in ${OPENEXR_V3} ; do
+	for pv in ${OPENEXR_V3} ; do
 		echo "
 			(
-				~media-libs/openexr-${v}:=
-				~dev-libs/imath-${v}:=
+				~dev-libs/imath-${pv}:=
+				~media-libs/openexr-${pv}:=
 			)
 		"
 	done
 }
 
 # Multilib requires openexr built as multilib.
-RDEPEND+=" "$(gen_llvm_depend)
 RDEPEND+="
-	$(python_gen_any_dep '<media-libs/openimageio-2.5:=[${PYTHON_SINGLE_USEDEP}]')
-	$(python_gen_any_dep '>=media-libs/openimageio-2:=[${PYTHON_SINGLE_USEDEP}]')
+	$(gen_llvm_depend)
+	$(python_gen_any_dep '
+		<media-libs/openimageio-2.5:=[${PYTHON_SINGLE_USEDEP}]
+		>=media-libs/openimageio-2:=[${PYTHON_SINGLE_USEDEP}]
+	')
 	>=dev-libs/boost-1.55:=[${MULTILIB_USEDEP}]
+	>=dev-libs/pugixml-1.8[${MULTILIB_USEDEP}]
 	dev-libs/libfmt[${MULTILIB_USEDEP}]
-	dev-libs/pugixml[${MULTILIB_USEDEP}]
 	sys-libs/zlib:=[${MULTILIB_USEDEP}]
 	optix? (
 		$(python_gen_any_dep '>=media-libs/openimageio-1.8:=[${PYTHON_SINGLE_USEDEP}]')
 		>=dev-libs/optix-5.1
 		>=dev-util/nvidia-cuda-toolkit-8
-		|| ( $(gen_opx_llvm_rdepend) )
+		|| (
+			$(gen_opx_llvm_rdepend)
+		)
 	)
 	partio? (
 		media-libs/partio
 	)
-	qt5? (
-		>=dev-qt/qtcore-${QT_MIN}:5
-		>=dev-qt/qtgui-${QT_MIN}:5
-		>=dev-qt/qtwidgets-${QT_MIN}:5
-	)
 	python? (
 		${PYTHON_DEPS}
-		$(python_gen_any_dep 'dev-python/numpy[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep '>=dev-python/pybind11-2.4.2[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '
+			>=dev-python/pybind11-2.4.2[${PYTHON_USEDEP}]
+			dev-python/numpy[${PYTHON_USEDEP}]
+		')
+	)
+	qt5? (
+		>=dev-qt/qtcore-${QT5_MIN}:5
+		>=dev-qt/qtgui-${QT5_MIN}:5
+		>=dev-qt/qtwidgets-${QT5_MIN}:5
+	)
+	qt6? (
+		>=dev-qt/qtcore-${QT6_MIN}:6
+		>=dev-qt/qtgui-${QT6_MIN}:6
+		>=dev-qt/qtwidgets-${QT6_MIN}:6
 	)
 	|| (
 		$(gen_openexr_pairs)
@@ -251,6 +263,12 @@ src_configure() {
 			local gcc=$(tc-getCC)
 			# LLVM needs CPP11. Do not disable.
 			# LLVM_STATIC=ON is broken for llvm:10
+
+			local has_qt="OFF"
+			if use qt5 || use qt6 ; then
+				has_qt="ON"
+			fi
+
 			local mycmakeargs=(
 				-DCMAKE_CXX_STANDARD=14
 				-DCMAKE_INSTALL_BINDIR="${EPREFIX}/usr/$(get_libdir)/osl/bin"
@@ -264,7 +282,7 @@ src_configure() {
 				-DUSE_OPTIX=$(usex optix)
 				-DUSE_PARTIO=$(usex partio)
 				-DUSE_PYTHON=$(usex python)
-				-DUSE_QT=$(usex qt5)
+				-DUSE_QT=${has_qt}
 				-DUSE_SIMD="$(IFS=","; echo "${mysimd[*]}")"
 			)
 
