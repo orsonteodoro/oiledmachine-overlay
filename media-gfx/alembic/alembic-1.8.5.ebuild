@@ -3,12 +3,13 @@
 
 EAPI=8
 
-# py311 needs imath-3.1.6+, see PR #28265
 PYTHON_COMPAT=( python3_{8..11} )
 
 inherit cmake python-single-r1
 
-DESCRIPTION="Open framework for storing and sharing scene data"
+DESCRIPTION="Alembic is an open framework for storing and sharing scene data \
+that includes a C++ library, a file format, and client plugins and \
+applications."
 HOMEPAGE="https://www.alembic.io/"
 SRC_URI="https://github.com/${PN}/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
@@ -16,68 +17,87 @@ LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="examples hdf5 python test"
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+REQUIRED_USE="
+	${PYTHON_REQUIRED_USE}
+"
 RESTRICT="!test? ( test )"
 
-OPENEXR_V2="2.5.7 2.5.8"
-OPENEXR_V3="3.1.4 3.1.5"
+OPENEXR_V2="2.5.8 2.5.4"
+OPENEXR_V3="3.1.7 3.1.5 3.1.4"
+
 gen_openexr_pairs() {
-	local v
-	for v in ${OPENEXR_V2} ; do
+	local pv
+	for pv in ${OPENEXR_V2} ; do
 		echo "
 			(
-				~media-libs/openexr-${v}:=
-				~media-libs/ilmbase-${v}:=
+				~media-libs/ilmbase-${pv}:=
+				~media-libs/openexr-${pv}:=
 			)
 		"
 	done
-	for v in ${OPENEXR_V3} ; do
+	for pv in ${OPENEXR_V3} ; do
 		echo "
 			(
-				~media-libs/openexr-${v}:=
-				~dev-libs/imath-${v}:=
-
+				~dev-libs/imath-${pv}:=
+				~media-libs/openexr-${pv}:=
 			)
 		"
 	done
 }
 
 gen_openexr_py_pairs() {
-	local v
-	for v in ${OPENEXR_V3} ; do
+	local pv
+	for pv in ${OPENEXR_V3} ; do
 		echo "
 			(
-				~media-libs/openexr-${v}:=
-				~dev-libs/imath-${v}:=[python,${PYTHON_SINGLE_USEDEP}]
+				~dev-libs/imath-${pv}:=[${PYTHON_SINGLE_USEDEP},python]
+				~media-libs/openexr-${pv}:=
 			)
 		"
 	done
 }
 
-RDEPEND="
+RDEPEND+="
 	${PYTHON_DEPS}
-	|| ( $(gen_openexr_pairs) )
 	hdf5? (
 		>=sci-libs/hdf5-1.10.2:=[zlib(+)]
 		>=sys-libs/zlib-1.2.11-r1
 	)
 	python? (
-		$(python_gen_cond_dep 'dev-libs/boost[python,${PYTHON_USEDEP}]')
-		|| ( $(gen_openexr_py_pairs) )
+		$(python_gen_cond_dep '
+			dev-python/numpy[${PYTHON_USEDEP}]
+			dev-libs/boost[${PYTHON_USEDEP},python]
+		')
+		|| (
+			$(gen_openexr_py_pairs)
+		)
+	)
+	|| (
+		$(gen_openexr_pairs)
 	)
 "
-DEPEND="${RDEPEND}"
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	>=dev-util/cmake-3.13
+	python? (
+		$(python_gen_cond_dep '
+			dev-python/setuptools
+		')
+	)
+"
 
-PATCHES=( "${FILESDIR}"/${PN}-1.8.0-0001-set-correct-libdir.patch )
+PATCHES=( "${FILESDIR}/${PN}-1.8.5-set-correct-libdir.patch" )
 
 DOCS=( ACKNOWLEDGEMENTS.txt FEEDBACK.txt NEWS.txt README.txt )
 
 src_configure() {
 	local mycmakeargs=(
+		$(usex python "-DPython3_EXECUTABLE=${PYTHON}" "")
 		-DALEMBIC_BUILD_LIBS=ON
 		-DALEMBIC_DEBUG_WARNINGS_AS_ERRORS=OFF
 		-DALEMBIC_SHARED_LIBS=ON
-		# currently does nothing but require doxygen
 		-DDOCS_PATH=OFF
 		-DUSE_ARNOLD=OFF
 		-DUSE_BINARIES=ON
@@ -88,8 +108,6 @@ src_configure() {
 		-DUSE_PYALEMBIC=$(usex python)
 		-DUSE_TESTS=$(usex test)
 	)
-
-	use python && mycmakeargs+=( -DPython3_EXECUTABLE=${PYTHON} )
 
 	cmake_src_configure
 }
