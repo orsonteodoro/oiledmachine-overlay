@@ -137,6 +137,7 @@ CMAKE_BUILD_TYPE=RelWithDebInfo
 
 PATCHES=(
 	"${FILESDIR}/${PN}-2.1.1-gcc12.patch"
+	"${FILESDIR}/${PN}-2.2.1-python-exact.patch"
 )
 
 pkg_setup() {
