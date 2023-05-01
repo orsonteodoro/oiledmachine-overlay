@@ -360,8 +360,8 @@ gen_openexr_pairs() {
 	for pv in ${OPENEXR_V3_PV} ; do
 		echo "
 			(
-				~dev-libs/imath-${pv}:=
 				~media-libs/openexr-${pv}:=
+				~dev-libs/imath-${pv}:=
 			)
 		"
 	done

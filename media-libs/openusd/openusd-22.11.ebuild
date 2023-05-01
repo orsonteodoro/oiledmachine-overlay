@@ -38,10 +38,12 @@ REQUIRED_USE+="
 	)
 	openimageio? (
 		imaging
-		openexr
 	)
 	openvdb? (
 		imaging
+		openexr
+	)
+	osl? (
 		openexr
 	)
 	ptex? (
@@ -63,21 +65,28 @@ REQUIRED_USE+="
 LEGACY_TBB_SLOT="2"
 ONETBB_SLOT="0"
 OPENEXR_V2_PV="2.5.8 2.5.7"
+OPENEXR_V3_PV="3.1.7 3.1.5"
 
 gen_openexr_pairs() {
 	local pv
+	for pv in ${OPENEXR_V3_PV} ; do
+		echo "
+			(
+				~media-libs/openexr-${pv}:=
+				~dev-libs/imath-${pv}:=
+			)
+		"
+	done
 	for pv in ${OPENEXR_V2_PV} ; do
 		echo "
 			(
-				~media-libs/ilmbase-${pv}:=
 				~media-libs/openexr-${pv}:=
+				~media-libs/ilmbase-${pv}:=
 			)
 		"
 	done
 }
 
-# TODO package:
-# materialx
 RDEPEND+="
 	!experimental? (
 		!<dev-cpp/tbb-2021:0=

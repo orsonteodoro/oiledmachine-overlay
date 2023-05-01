@@ -36,12 +36,13 @@ REQUIRED_USE="
 # Works with older OIIO but need to force a version w/ OpenEXR 3
 
 OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
+
 gen_half_pairs() {
 	for pv in ${OPENEXR_V3_PV} ; do
 		echo "
 			(
-				~dev-libs/imath-${pv}:=
 				~media-libs/openexr-${pv}:=
+				~dev-libs/imath-${pv}:=
 			)
 		"
 	done
@@ -52,8 +53,8 @@ gen_imath() {
 	for pv in ${OPENEXR_V3_PV} ; do
 		echo "
 			(
-				~dev-libs/imath-${pv}:=
 				~media-libs/openexr-${pv}:=
+				~dev-libs/imath-${pv}:=
 			)
 		"
 	done

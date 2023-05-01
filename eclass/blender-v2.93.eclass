@@ -352,8 +352,8 @@ gen_openexr_pairs() {
 	for pv in ${OPENEXR_V2_PV} ; do
 		echo "
 			(
-				~media-libs/ilmbase-${pv}:=
 				~media-libs/openexr-${pv}:=
+				~media-libs/ilmbase-${pv}:=
 			)
 		"
 	done

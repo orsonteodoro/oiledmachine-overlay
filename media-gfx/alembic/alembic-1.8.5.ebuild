@@ -27,19 +27,19 @@ OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
 
 gen_openexr_pairs() {
 	local pv
-	for pv in ${OPENEXR_V2_PV} ; do
-		echo "
-			(
-				~media-libs/ilmbase-${pv}:=
-				~media-libs/openexr-${pv}:=
-			)
-		"
-	done
 	for pv in ${OPENEXR_V3_PV} ; do
 		echo "
 			(
-				~dev-libs/imath-${pv}:=
 				~media-libs/openexr-${pv}:=
+				~dev-libs/imath-${pv}:=
+			)
+		"
+	done
+	for pv in ${OPENEXR_V2_PV} ; do
+		echo "
+			(
+				~media-libs/openexr-${pv}:=
+				~media-libs/ilmbase-${pv}:=
 			)
 		"
 	done
@@ -50,8 +50,8 @@ gen_openexr_py_pairs() {
 	for pv in ${OPENEXR_V3_PV} ; do
 		echo "
 			(
-				~dev-libs/imath-${pv}:=[${PYTHON_SINGLE_USEDEP},python]
 				~media-libs/openexr-${pv}:=
+				~dev-libs/imath-${pv}:=[${PYTHON_SINGLE_USEDEP},python]
 			)
 		"
 	done
