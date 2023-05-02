@@ -95,6 +95,7 @@ RDEPEND+="
 	)
 	!python? (
 		>=dev-libs/boost-1.70.0
+		<dev-libs/boost-1.81.0
 	)
 	>=sys-libs/zlib-1.2.11
 	alembic? (
@@ -153,6 +154,7 @@ RDEPEND+="
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
 			>=dev-libs/boost-1.70.0:=[python,${PYTHON_USEDEP}]
+			<dev-libs/boost-1.81.0
 			usdview? (
 				(
 					>=dev-python/pyside2-2.0.0[${PYTHON_USEDEP},quickcontrols2(+),script,scripttools]
@@ -197,8 +199,6 @@ BDEPEND+="
 SRC_URI="
 https://github.com/PixarAnimationStudios/USD/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/PixarAnimationStudios/USD/commit/045d4e6fc9335f6c292a16c8c26772f4662b9e34.patch
-	-> ${PN}-045d4e6.patch
 "
 PATCHES=(
 	"${FILESDIR}/algorithm.patch"
@@ -207,9 +207,7 @@ PATCHES=(
 	"${FILESDIR}/openusd-21.11-glibc-2.34.patch"
 	"${FILESDIR}/openusd-21.11-clang-14-compat.patch"
 	"${FILESDIR}/openusd-21.11-use-whole-archive-for-lld.patch"
-	"${DISTDIR}/${PN}-045d4e6.patch"
 )
-# 045d4e6 - Merge pull request #2176 from nvmkuruc/vthash
 S="${WORKDIR}/USD-${PV}"
 DOCS=( CHANGELOG.md README.md )
 
