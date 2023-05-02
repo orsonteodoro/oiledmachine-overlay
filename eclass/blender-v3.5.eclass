@@ -864,6 +864,13 @@ _src_configure() {
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${CMAKE_USE_DIR}" || die
 
+	if has_version "dev-libs/wayland" && ! use wayland ; then
+eerror
+eerror "You must enable the wayland USE flag or uninstall wayland."
+eerror
+		die
+	fi
+
 	# FIX: forcing '-funsigned-char' fixes an anti-aliasing issue with menu
 	# shadows, see bug #276338 for reference
 	append-flags -funsigned-char
