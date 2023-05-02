@@ -241,6 +241,12 @@ einfo "Using legacy TBB"
 }
 
 src_configure() {
+	if has_version "media-libs/openusd" ; then
+ewarn
+ewarn "Uninstall ${PN} to avoid build failure."
+ewarn
+		die
+	fi
 	if use experimental ; then
 		if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 			append-cppflags -DTBB_ALLOCATOR_TRAITS_BROKEN
@@ -249,12 +255,22 @@ src_configure() {
 
 	export USD_PATH="/usr/$(get_libdir)/${PN}"
 	if use draco; then
-		append-cppflags -DDRACO_ATTRIBUTE_VALUES_DEDUPLICATION_SUPPORTED=ON \
+		append-cppflags \
 			-DDRACO_ATTRIBUTE_INDICES_DEDUPLICATION_SUPPORTED=ON \
+			-DDRACO_ATTRIBUTE_VALUES_DEDUPLICATION_SUPPORTED=ON \
 			-DTBB_SUPPRESS_DEPRECATED_MESSAGES=1
 	fi
         # See https://github.com/PixarAnimationStudios/USD/blob/v22.11/cmake/defaults/Options.cmake
-	mycmakeargs+=(
+	local mycmakeargs+=(
+		$(usex experimental "
+			-DTBB_INCLUDE_DIR=${ESYSROOT}/usr/include
+			-DTBB_LIBRARY=${ESYSROOT}/usr/$(get_libdir)
+		" "
+			-DTBB_INCLUDE_DIR=${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}
+			-DTBB_LIBRARY=${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}
+		")
+		$(usex jemalloc "-DPXR_MALLOC_LIBRARY=${ESYSROOT}/usr/$(get_libdir)/${PN}/$(get_libdir)/libjemalloc.so" "")
+		$(usex usdview "-DPYSIDEUICBINARY:PATH=${S}/pyside2-uic" "")
 		-DBUILD_SHARED_LIBS=ON
 #		-DCMAKE_DEBUG_POSTFIX=_d
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${USD_PATH}"
@@ -287,27 +303,6 @@ src_configure() {
 		-DPXR_SET_INTERNAL_NAMESPACE="usdBlender"
 		-DPXR_USE_PYTHON_3=ON
 	)
-	if use usdview ; then
-		mycmakeargs+=(
-			-DPYSIDEUICBINARY:PATH="${S}/pyside2-uic"
-		)
-	fi
-	if use jemalloc ; then
-		mycmakeargs+=(
-			-DPXR_MALLOC_LIBRARY="${ESYSROOT}/usr/$(get_libdir)/${PN}/$(get_libdir)/libjemalloc.so"
-		)
-	fi
-	if use experimental ; then
-		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include"
-			-DTBB_LIBRARY="${ESYSROOT}/usr/$(get_libdir)"
-		)
-	else
-		mycmakeargs+=(
-                        -DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}"
-                        -DTBB_LIBRARY="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
-		)
-	fi
 	cmake_src_configure
 }
 
