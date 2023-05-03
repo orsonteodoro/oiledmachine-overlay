@@ -761,7 +761,7 @@ _src_prepare_patches() {
 		eapply "${FILESDIR}/blender-2.93.10-tbb2-openvdb.patch"
 	fi
 	if \
-		(
+		( \
 			has_version "<dev-cpp/tbb-2021:0" \
 				|| \
 			has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" \

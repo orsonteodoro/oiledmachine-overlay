@@ -719,7 +719,7 @@ BDEPEND+="
 PATCHES=(
 	"${FILESDIR}/${PN}-3.5.1-fix-install-rules.patch"
 	"${FILESDIR}/${PN}-3.0.0-install-paths-change.patch"
-#	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-python.patch"		# Testing disabled.  Some differences.
+	"${FILESDIR}/${PN}-3.5.1-openusd-21.11-python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-openusd-21-ConnectToSource.patch"
 #	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lightapi.patch"
 	"${FILESDIR}/${PN}-2.93.7-build-draco.patch"

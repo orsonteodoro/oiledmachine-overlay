@@ -812,7 +812,7 @@ _src_prepare_patches() {
 	eapply "${FILESDIR}/blender-3.2.2-findtbb2.patch"
 	eapply "${FILESDIR}/blender-3.4.1-parent-datafiles-dir-change.patch"
 	if \
-		(
+		( \
 			has_version "<dev-cpp/tbb-2021:0" \
 				|| \
 			has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" \

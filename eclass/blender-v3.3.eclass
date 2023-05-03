@@ -485,7 +485,7 @@ cpu_flags_x86_sse4_2?,\
 cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tbb?]
 	)
 	ffmpeg? (
-		<media-video/ffmpeg-6:=
+		<media-video/ffmpeg-6:=\
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
 		>=media-video/ffmpeg-4:=\
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
@@ -794,7 +794,7 @@ _src_prepare_patches() {
 	eapply "${FILESDIR}/blender-3.2.2-findtbb2.patch"
 	eapply "${FILESDIR}/blender-3.2.0-parent-datafiles-dir-change.patch"
 	if \
-		(
+		( \
 			has_version "<dev-cpp/tbb-2021:0" \
 				|| \
 			has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" \
