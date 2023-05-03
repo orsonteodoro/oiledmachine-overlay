@@ -1394,6 +1394,13 @@ ewarn
 	fi
 
 	uopts_pkg_postinst
+
+	if use openimagedenoise ; then
+ewarn
+ewarn "The CPU must support SSE4 or preview render doesn't work."
+ewarn "If you do not have SSE4, disable the openimagedenoise USE flag."
+ewarn
+	fi
 }
 
 blender_pkg_postrm() {
