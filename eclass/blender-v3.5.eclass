@@ -10,6 +10,8 @@
 # The blender-v3.5.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
 
+# FIXME:  alembic requires imath
+
 # Upstream uses LLVM 12.0.0 for Linux.  For prebuilt binary only addons, this may be
 # problematic so avoid them.
 
@@ -774,7 +776,6 @@ eerror
 }
 
 _blender_pkg_setup() {
-ewarn "This ebuild and patches are in testing."
 	# TODO: ldd oiio for webp and warn user if missing
 	# Needs OpenCL 1.2 (GCN 2)
 	check_multiple_llvm_versions_in_native_libs
@@ -846,7 +847,6 @@ _src_prepare_patches() {
 		has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
 		has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
 		use usd ; then
-		ewarn "The /blender-3.5.1-tbb2-usd.patch is in testing."
 		eapply "${FILESDIR}/blender-3.5.1-tbb2-usd.patch"
 	elif use usd ;then
 ewarn
@@ -863,6 +863,13 @@ _src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${CMAKE_USE_DIR}" || die
+
+	if use openimagedenoise ; then
+ewarn
+ewarn "The CPU must support SSE4 or preview render doesn't work."
+ewarn "If you do not have SSE4, disable the openimagedenoise USE flag."
+ewarn
+	fi
 
 	if has_version "dev-libs/wayland" && ! use wayland ; then
 eerror

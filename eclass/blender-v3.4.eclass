@@ -847,6 +847,13 @@ _src_configure() {
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${CMAKE_USE_DIR}" || die
 
+	if use openimagedenoise ; then
+ewarn
+ewarn "The CPU must support SSE4 or preview render doesn't work."
+ewarn "If you do not have SSE4, disable the openimagedenoise USE flag."
+ewarn
+	fi
+
 	if has_version "dev-libs/wayland" && ! use wayland ; then
 eerror
 eerror "You must enable the wayland USE flag or uninstall wayland."
