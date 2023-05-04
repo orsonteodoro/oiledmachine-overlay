@@ -1364,21 +1364,20 @@ blender_src_install() {
 }
 
 blender_pkg_postinst() {
-elog
-elog "Blender uses python integration. As such, may have some"
-elog "inherit risks with running unknown python scripts."
-elog
-elog "It is recommended to change your blender temp directory"
-elog "from /tmp to /home/user/tmp or another tmp file under your"
-elog "home directory. This can be done by starting blender, then"
-elog "dragging the main menu down do display all paths."
-elog
 ewarn
-ewarn "This ebuild does not unbundle the massive amount of 3rd party"
-ewarn "libraries which are shipped with blender. Note that"
-ewarn "these have caused security issues in the past."
-ewarn "If you are concerned about security, file a bug upstream:"
-ewarn "  https://developer.blender.org/"
+ewarn "Blender uses python integration. As such, may have some risks with"
+ewarn "running unknown python scripts."
+ewarn
+ewarn "It is recommended to change your blender temp directoryfrom /tmp to"
+ewarn "/home/user/tmp or another tmp file under your home directory. This can"
+ewarn "be done by starting blender, then dragging the main menu down do"
+ewarn "display all paths."
+ewarn
+ewarn
+ewarn "This ebuild does not unbundle the massive amount of 3rd party libraries"
+ewarn "which are shipped with blender. Note that these have caused security"
+ewarn "issues in the past.  If you are concerned about security, file a bug"
+ewarn "to upstream at https://developer.blender.org."
 ewarn
 
 	xdg_pkg_postinst
@@ -1386,7 +1385,7 @@ ewarn
 	local d_src="${EROOT}/usr/$(get_libdir)/${PN}"
 	local pv=""
 	if [[ "${BLENDER_MAIN_SYMLINK_MODE}" == "latest-lts" ]] ; then
-		# highest lts
+		# The highest LTS
 		pv=$(basename \
 			$(dirname \
 				$(dirname \
@@ -1399,14 +1398,14 @@ ewarn
 			) \
 		)
 	elif [[ "${BLENDER_MAIN_SYMLINK_MODE}" == "latest" ]] ; then
-		# highest v
+		# The highest pv
 		pv=$(ls "${d_src}/" \
 			| sed -e "/^[a-z]/d" \
 			| sort -V \
 			| tail -n 1 \
 		)
 	elif [[ "${BLENDER_MAIN_SYMLINK_MODE}" =~ ^custom-[0-9]\.[0-9]+$ ]] ; then
-		# custom v
+		# A custom pv
 		pv=$(echo "${BLENDER_MAIN_SYMLINK_MODE}" \
 			| cut -f 2 -d "-")
 	fi
