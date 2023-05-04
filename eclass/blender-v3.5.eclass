@@ -955,6 +955,12 @@ eerror
 
 	blender_configure_linker_flags
 
+	if use materialx ; then
+		mycmakeargs+=(
+			-DMaterialX_DIR:PATH="${ESYSROOT}/usr/lib/materialx/lib/cmake/MaterialX"
+		)
+	fi
+
 	if use usd ; then
 		blender_configure_openusd
 	fi
