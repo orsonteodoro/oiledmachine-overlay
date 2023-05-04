@@ -1401,6 +1401,10 @@ ewarn "The CPU must support SSE4 or preview render doesn't work."
 ewarn "If you do not have SSE4, disable the openimagedenoise USE flag."
 ewarn
 	fi
+ewarn
+ewarn "Invoking the blender binary directly may result in a segfault."
+ewarn "Call it indirectly through the wrapper (/usr/bin/blender) instead."
+ewarn
 }
 
 blender_pkg_postrm() {
