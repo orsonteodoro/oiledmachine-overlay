@@ -15,6 +15,13 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+_blender_set_globals() {
+	BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:-latest}
+einfo "BLENDER_MAIN_SYMLINK_MODE:\t${BLENDER_MAIN_SYMLINK_MODE}"
+}
+_blender_set_globals
+unset -f _blender_set_globals
+
 UOPTS_SUPPORT_TPGO=0
 UOPTS_SUPPORT_TBOLT=0
 
@@ -96,8 +103,6 @@ RESTRICT="
 	)
 	mirror
 "
-
-BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
 
 # If you use git tarballs, you need to download the submodules listed in
 # .gitmodules.  The download.blender.org tarball is preferred because they
@@ -339,9 +344,9 @@ ewarn
 }
 
 check_compiler() {
-	if ! test-flags-CXX "-std=c++${CXXABI_V}" 2>/dev/null 1>/dev/null ; then
+	if ! test-flags-CXX "-std=c++${CXXABI_VER}" 2>/dev/null 1>/dev/null ; then
 eerror
-eerror "Switch to a c++${CXXABI_V} compatible compiler."
+eerror "Switch to a c++${CXXABI_VER} compatible compiler."
 eerror
 	fi
 	if tc-is-gcc ; then
@@ -782,6 +787,30 @@ blender_configure_linker_flags() {
 		-DWITH_LINKER_LLD=OFF
 		-DWITH_LINKER_GOLD=OFF
 	)
+
+	if use usd && ldd "${ESYSROOT}/usr/$(get_libdir)/openusd/lib/libusd_ms.so" 2>/dev/null \
+		| grep -q -e "libtbb.so.${LEGACY_TBB_SLOT} " ; then
+einfo "Adding tbb:${LEGACY_TBB_SLOT} to rpath for USD (libusd_ms.so)"
+		mycmakeargs+=(
+			-DTBB_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
+		)
+	fi
+
+	if use usd && ldd "${ESYSROOT}/usr/$(get_libdir)/openusd/lib/libusd_usd_ms.so" 2>/dev/null \
+		| grep -q -e "libtbb.so.${LEGACY_TBB_SLOT} " ; then
+einfo "Adding tbb:${LEGACY_TBB_SLOT} to rpath for USD (libusd_usd_ms.so)"
+		mycmakeargs+=(
+			-DTBB_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
+		)
+	fi
+
+	if use openvdb && ldd "${ESYSROOT}/usr/$(get_libdir)/libopenvdb.so" 2>/dev/null \
+		| grep -q -e "libtbb.so.${LEGACY_TBB_SLOT} " ; then
+einfo "Adding tbb:${LEGACY_TBB_SLOT} to rpath for OpenVDB (libopenvdb.so)"
+		mycmakeargs+=(
+			-DTBB_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
+		)
+	fi
 }
 
 blender_configure_simd_cycles() {
@@ -978,14 +1007,14 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 
 blender_configure_openusd() {
 	if use usd ; then
-		export USD_ROOT_DIR="${EPREFIX}/usr/$(get_libdir)/openusd/lib"
+		export USD_ROOT_DIR="${ESYSROOT}/usr/$(get_libdir)/openusd/lib"
 	fi
 }
 
 blender_configure_nvcc() {
 	if use nvcc ; then
 		mycmakeargs+=(
-			-DCUDA_NVCC_EXECUTABLE="${EPREFIX}/opt/cuda/bin/nvcc"
+			-DCUDA_NVCC_EXECUTABLE="${ESYSROOT}/opt/cuda/bin/nvcc"
 		)
 	fi
 }
@@ -993,7 +1022,7 @@ blender_configure_nvcc() {
 blender_configure_nvrtc() {
 	if use nvrtc ; then
 		mycmakeargs+=(
-			-DCUDA_TOOLKIT_ROOT_DIR="${EPREFIX}/opt/cuda"
+			-DCUDA_TOOLKIT_ROOT_DIR="${ESYSROOT}/opt/cuda"
 		)
 	fi
 }
@@ -1001,7 +1030,7 @@ blender_configure_nvrtc() {
 blender_configure_optix() {
 	if use optix ; then
 		mycmakeargs+=(
-			-DOPTIX_ROOT_DIR="${EPREFIX}/opt/optix"
+			-DOPTIX_ROOT_DIR="${ESYSROOT}/opt/optix"
 		)
 	fi
 }
@@ -1303,20 +1332,6 @@ fecho1
 	use doc && install_readmes
 
 	uopts_src_install
-
-	if use openvdb ; then
-		local openvdb_rpath=$(patchelf --print-rpath $(realpath "${EPREFIX}/usr/$(get_libdir)/libopenvdb.so"))
-		if [[ "${openvdb_rpath}" =~ "${EPREFIX}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" ]] ; then
-			patchelf --set-rpath "${EPREFIX}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
-				"${ED}${d_dest}/blender" || die
-		fi
-	elif use usd ; then
-		local openusd_rpath=$(patchelf --print-rpath $(realpath "/usr/$(get_libdir)/openusd/lib/libusd_usd_ms.so"))
-		if [[ "${openusd_rpath}" =~ "${EPREFIX}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" ]] ; then
-			patchelf --set-rpath "${EPREFIX}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
-				"${ED}${d_dest}/blender" || die
-		fi
-	fi
 }
 
 blender_src_install() {
@@ -1365,31 +1380,48 @@ ewarn "these have caused security issues in the past."
 ewarn "If you are concerned about security, file a bug upstream:"
 ewarn "  https://developer.blender.org/"
 ewarn
+
 	xdg_pkg_postinst
+
 	local d_src="${EROOT}/usr/$(get_libdir)/${PN}"
-	local V=""
-	if [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" \
-	&& "${BLENDER_MAIN_SYMLINK_MODE}" == "latest-lts" ]] ; then
+	local pv=""
+	if [[ "${BLENDER_MAIN_SYMLINK_MODE}" == "latest-lts" ]] ; then
 		# highest lts
-		V=$(basename $(dirname $(dirname $(ls \
-			"${d_src}"/*/creator/.lts | sort -V | tail -n 1))))
-	elif [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" \
-	&& "${BLENDER_MAIN_SYMLINK_MODE}" == "latest" ]] ; then
+		pv=$(basename \
+			$(dirname \
+				$(dirname \
+					$(ls \
+						"${d_src}"/*/creator/.lts \
+						| sort -V \
+						| tail -n 1 \
+					) \
+				) \
+			) \
+		)
+	elif [[ "${BLENDER_MAIN_SYMLINK_MODE}" == "latest" ]] ; then
 		# highest v
-		V=$(ls "${d_src}/" | sed -e "/^[a-z]/d" | sort -V | tail -n 1)
-	elif [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" \
-	&& "${BLENDER_MAIN_SYMLINK_MODE}" =~ ^custom-[0-9]\.[0-9]+$ ]] ; then
+		pv=$(ls "${d_src}/" \
+			| sed -e "/^[a-z]/d" \
+			| sort -V \
+			| tail -n 1 \
+		)
+	elif [[ "${BLENDER_MAIN_SYMLINK_MODE}" =~ ^custom-[0-9]\.[0-9]+$ ]] ; then
 		# custom v
-		V=$(echo "${BLENDER_MAIN_SYMLINK_MODE}" | cut -f 2 -d "-")
+		pv=$(echo "${BLENDER_MAIN_SYMLINK_MODE}" \
+			| cut -f 2 -d "-")
 	fi
-	if [[ -n "${V}" ]] ; then
+	if [[ -n "${pv}" ]] ; then
 		if use build_creator ; then
-			ln -sf "${EROOT}/usr/bin/${PN}-${V}" \
-				"${EROOT}/usr/bin/${PN}" || die
+			ln -sf \
+				"${EROOT}/usr/bin/${PN}-${pv}" \
+				"${EROOT}/usr/bin/${PN}" \
+				|| die
 		fi
 		if use build_headless ; then
-			ln -sf "${EROOT}/usr/bin/${PN}-headless-${V}" \
-				"${EROOT}/usr/bin/${PN}-headless" || die
+			ln -sf \
+				"${EROOT}/usr/bin/${PN}-headless-${pv}" \
+				"${EROOT}/usr/bin/${PN}-headless" \
+				|| die
 		fi
 	fi
 

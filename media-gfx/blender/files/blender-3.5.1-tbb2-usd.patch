@@ -1,6 +1,6 @@
 diff -urp blender-3.5.1.orig/build_files/cmake/platform/platform_unix.cmake blender-3.5.1/build_files/cmake/platform/platform_unix.cmake
---- blender-3.5.1.orig/build_files/cmake/platform/platform_unix.cmake	2023-05-02 10:49:26.898290914 -0700
-+++ blender-3.5.1/build_files/cmake/platform/platform_unix.cmake	2023-05-02 13:58:39.662579657 -0700
+--- blender-3.5.1.orig/build_files/cmake/platform/platform_unix.cmake	2023-05-04 01:26:34.773826914 -0700
++++ blender-3.5.1/build_files/cmake/platform/platform_unix.cmake	2023-05-04 01:36:08.225841499 -0700
 @@ -374,6 +374,12 @@ if(WITH_MATERIALX)
  endif()
  add_bundled_libraries(materialx/lib)
@@ -15,8 +15,8 @@ diff -urp blender-3.5.1.orig/build_files/cmake/platform/platform_unix.cmake blen
    # uses in build instructions to override include and library variables
    if(NOT BOOST_CUSTOM)
 diff -urp blender-3.5.1.orig/source/blender/io/usd/CMakeLists.txt blender-3.5.1/source/blender/io/usd/CMakeLists.txt
---- blender-3.5.1.orig/source/blender/io/usd/CMakeLists.txt	2023-05-02 10:49:27.122290920 -0700
-+++ blender-3.5.1/source/blender/io/usd/CMakeLists.txt	2023-05-02 13:23:13.510525581 -0700
+--- blender-3.5.1.orig/source/blender/io/usd/CMakeLists.txt	2023-05-04 01:26:34.997826920 -0700
++++ blender-3.5.1/source/blender/io/usd/CMakeLists.txt	2023-05-04 01:31:51.073834959 -0700
 @@ -55,7 +55,7 @@ set(INC
  set(INC_SYS
    ${USD_INCLUDE_DIRS}
@@ -35,5 +35,3 @@ diff -urp blender-3.5.1.orig/source/blender/io/usd/CMakeLists.txt blender-3.5.1/
    ${PYTHON_LINKFLAGS}
    ${PYTHON_LIBRARIES}
  )
-Only in blender-3.5.1/source/blender/io/usd: CMakeLists.txt.orig
-Only in blender-3.5.1/source/blender/io/usd: CMakeLists.txt.rej

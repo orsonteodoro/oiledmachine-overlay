@@ -1,0 +1,11 @@
+diff -urp blender-3.3.6.orig/build_files/cmake/platform/platform_unix.cmake blender-3.3.6/build_files/cmake/platform/platform_unix.cmake
+--- blender-3.3.6.orig/build_files/cmake/platform/platform_unix.cmake	2023-05-04 01:54:10.925869036 -0700
++++ blender-3.3.6/build_files/cmake/platform/platform_unix.cmake	2023-05-04 01:55:30.937871071 -0700
+@@ -963,4 +963,6 @@ function(CONFIGURE_ATOMIC_LIB_IF_NEEDED)
+   endif()
+ endfunction()
+ 
++list(APPEND CMAKE_INSTALL_RPATH ${TBB_LIB_DIR} ${TBB2_LIB_DIR})
++message(STATUS "TBB_LIB_DIR=${TBB_LIB_DIR} TBB2_LIB_DIR=${TBB2_LIB_DIR}")
++
+ CONFIGURE_ATOMIC_LIB_IF_NEEDED()

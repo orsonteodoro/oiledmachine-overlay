@@ -21,7 +21,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-CXXABI_V=17 # Linux builds should be gnu11, but in Win builds it is c++17
+CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 # For max and min package versions see link below. \
 # https://github.com/blender/blender/blob/v2.93.17/build_files/build_environment/install_deps.sh#L488
@@ -663,6 +663,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.93.7-openusd-21.11-lightapi.patch"
 	"${FILESDIR}/${PN}-2.93.7-build-draco.patch"
 	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
+	"${FILESDIR}/${PN}-3.5.1-tbb-rpath.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -677,8 +678,8 @@ check_multiple_llvm_versions_in_native_libs() {
 		fi
 	done
 
-	if ldd "${EPREFIX}/usr/$(get_libdir)/dri/"*".so" 2>/dev/null 1>/dev/null ; then
-		local llvm_ret=$(ldd "${EPREFIX}/usr/$(get_libdir)/dri/"*".so" \
+	if ldd "${ESYSROOT}/usr/$(get_libdir)/dri/"*".so" 2>/dev/null 1>/dev/null ; then
+		local llvm_ret=$(ldd "${ESYSROOT}/usr/$(get_libdir)/dri/"*".so" \
 			| grep -q -e "LLVM-${llvm_slot}")
 		if [[ "${llvm_ret}" != "0" ]] ; then
 ewarn
@@ -690,15 +691,15 @@ ewarn
 		fi
 	fi
 
-	if use osl && [[ -e "${EPREFIX}/usr/$(get_libdir)/liboslexec.so" ]] ; then
+	if use osl && [[ -e "${ESYSROOT}/usr/$(get_libdir)/liboslexec.so" ]] ; then
 		osl_llvm=
-		if ldd "${EPREFIX}/usr/$(get_libdir)/liboslexec.so" \
+		if ldd "${ESYSROOT}/usr/$(get_libdir)/liboslexec.so" \
 			| grep -q -F "libLLVMAnalysis.so.9" ; then
 			# split llvm
 			osl_llvm=9
 		else
 			# monolithic llvm
-			osl_llvm=$(ldd "${EPREFIX}/usr/$(get_libdir)/liboslexec.so" \
+			osl_llvm=$(ldd "${ESYSROOT}/usr/$(get_libdir)/liboslexec.so" \
 				| grep -F -i -e "LLVM" | head -n 1 \
 				| grep -o -E -e "libLLVM-[0-9]+.so" \
 				| head -n 1 | grep -o -E -e "[0-9]+")

@@ -62,6 +62,3 @@ liri-base/libliri aurora
 # Not feasible for most individuals
 # It needs a lot of computing resources.
 sys-apps/orca build-models
-
-# Crash-linking problems relating to tbb... will fix asap
-=media-gfx/blender-3.5* release openvdb nanovdb
