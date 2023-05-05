@@ -10,6 +10,10 @@ Header license for include/net/tcp.h:
 
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
+Header license for include/net/inet_connection_sock.h:
+
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
 --- linux-6.3.1-builder.orig/net/ipv4/tcp_bbr2.c	2023-05-05 02:31:58.376470126 -0700
 +++ linux-6.3.1-builder/net/ipv4/tcp_bbr2.c	2023-05-05 10:12:37.916860630 -0700
 @@ -167,6 +167,7 @@ struct bbr {
@@ -158,5 +162,16 @@ Header license for include/net/tcp.h:
 +		enabled:1,	/* Check if PLB is enabled */
 +		unused:2;
  	u32	pause_until; /* jiffies32 when PLB can resume rerouting */
+ };
+ 
+--- include/net/inet_connection_sock.h.orig	2023-05-05 11:25:12.708922157 -0700
++++ include/net/inet_connection_sock.h	2023-05-05 11:26:40.604923399 -0700
+@@ -135,7 +135,7 @@ struct inet_connection_sock {
+ 	u32			  icsk_probes_tstamp;
+ 	u32			  icsk_user_timeout;
+ 
+-#define ICSK_CA_PRIV_SIZE	  (216)
++#define ICSK_CA_PRIV_SIZE	  (224)
+ 	u64			  icsk_ca_priv[ICSK_CA_PRIV_SIZE / sizeof(u64)];
  };
  
