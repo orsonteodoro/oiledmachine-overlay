@@ -7532,10 +7532,7 @@ get_llvm_slot() {
 # Gets a ready to use gcc compiler
 get_gcc_slot() {
 	local gcc_slot
-	local gcc_pv
 	for gcc_slot in $(seq ${GCC_MAX_SLOT:-13} -1 ${GCC_MIN_SLOT:-6}) ; do
-		gcc_pv=$(best_version "sys-devel/gcc:${gcc_slot}")
-		[[ -z "${gcc_pv}" ]] && continue
 		ot-kernel_has_version "sys-devel/gcc:${gcc_slot}" && is_gcc_ready && break
 	done
 	echo "${gcc_slot}"
