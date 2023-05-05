@@ -880,9 +880,6 @@ eerror
 einfo "See ${path}"
 		die
 		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
-	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-3ff0ac8.patch" ]] ; then
-einfo "See ${path}"
-		die
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi
