@@ -19,8 +19,24 @@ Header license for net/ipv4/sysctl_net_ipv4.c:
 
 // SPDX-License-Identifier: GPL-2.0
 
---- a/include/net/inet_connection_sock.h.orig	2023-05-04 17:42:34.975316319 -0700
-+++ b/include/net/inet_connection_sock.h	2023-05-04 17:45:10.267320269 -0700
+Header license for b/include/net/tcp.h:
+
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+/*
+ * INET         An implementation of the TCP/IP protocol suite for the LINUX
+ *              operating system.  INET is implemented using the  BSD Socket
+ *              interface as the means of communication with the user level.
+ *
+ *              Definitions for the TCP module.
+ *
+ * Version:     @(#)tcp.h       1.0.5   05/23/93
+ *
+ * Authors:     Ross Biro
+ *              Fred N. van Kempen, <waltje@uWalt.NL.Mugnet.ORG>
+ */
+
+--- a/include/net/inet_connection_sock.h.orig	2023-05-04 21:23:06.971652859 -0700
++++ b/include/net/inet_connection_sock.h	2023-05-04 21:24:48.931655452 -0700
 @@ -135,7 +135,7 @@ struct inet_connection_sock {
  	u32			  icsk_probes_tstamp;
  	u32			  icsk_user_timeout;
@@ -31,7 +47,7 @@ Header license for net/ipv4/sysctl_net_ipv4.c:
  };
  
 --- a/include/uapi/linux/snmp.h.orig	2023-04-23 12:02:52.000000000 -0700
-+++ b/include/uapi/linux/snmp.h	2023-05-04 17:48:35.023325477 -0700
++++ b/include/uapi/linux/snmp.h	2023-05-04 21:24:48.931655452 -0700
 @@ -296,6 +296,7 @@ enum
  	LINUX_MIB_TCPMIGRATEREQSUCCESS,		/* TCPMigrateReqSuccess */
  	LINUX_MIB_TCPMIGRATEREQFAILURE,		/* TCPMigrateReqFailure */
@@ -41,7 +57,7 @@ Header license for net/ipv4/sysctl_net_ipv4.c:
  };
  
 --- a/net/ipv4/proc.c.orig	2023-04-23 12:02:52.000000000 -0700
-+++ b/net/ipv4/proc.c	2023-05-04 17:50:27.615328340 -0700
++++ b/net/ipv4/proc.c	2023-05-04 21:24:48.931655452 -0700
 @@ -298,6 +298,7 @@ static const struct snmp_mib snmp4_net_l
  	SNMP_MIB_ITEM("TCPMigrateReqSuccess", LINUX_MIB_TCPMIGRATEREQSUCCESS),
  	SNMP_MIB_ITEM("TCPMigrateReqFailure", LINUX_MIB_TCPMIGRATEREQFAILURE),
@@ -50,3 +66,39 @@ Header license for net/ipv4/sysctl_net_ipv4.c:
  	SNMP_MIB_SENTINEL
  };
  
+--- a/include/net/tcp.h.orig	2023-05-04 21:23:07.195652864 -0700
++++ b/include/net/tcp.h	2023-05-04 21:25:51.523657044 -0700
+@@ -2188,7 +2188,8 @@ extern void tcp_rack_update_reo_wnd(stru
+ /* State for PLB (Protective Load Balancing) for a single TCP connection. */
+ struct tcp_plb_state {
+ 	u8	consec_cong_rounds:5, /* consecutive congested rounds */
+-		unused:3;
++		enabled:1,	/* Check if PLB is enabled */
++		unused:2;
+ 	u32	pause_until; /* jiffies32 when PLB can resume rerouting */
+ };
+ 
+@@ -2201,23 +2202,6 @@ static inline void tcp_plb_init(const st
+ void tcp_plb_update_state(const struct sock *sk, struct tcp_plb_state *plb,
+ 			  const int cong_ratio);
+ void tcp_plb_check_rehash(struct sock *sk, struct tcp_plb_state *plb);
+-void tcp_plb_update_state_upon_rto(struct sock *sk, struct tcp_plb_state *plb);
+-
+-/* tcp_plb.c */
+-
+-#define TCP_PLB_SCALE 8	/* scaling factor for fractions in PLB (e.g. ce_ratio) */
+-
+-/* State for PLB (Protective Load Balancing) for a single TCP connection. */
+-struct tcp_plb_state {
+-	u8	consec_cong_rounds:5, /* consecutive congested rounds */
+-		enabled:1,	/* Check if PLB is enabled */
+-		unused:2;
+-	u32	pause_until; /* jiffies32 when PLB can resume repathing */
+-};
+-
+-void tcp_plb_update_state(const struct sock *sk, struct tcp_plb_state *plb,
+-			  const int cong_ratio);
+-void tcp_plb_check_rehash(struct sock *sk, struct tcp_plb_state *plb);
+ void tcp_plb_update_state_upon_rto(struct sock *sk, struct tcp_plb_state *plb);
+ 
+ /* At how many usecs into the future should the RTO fire? */
