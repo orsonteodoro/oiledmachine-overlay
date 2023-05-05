@@ -1,104 +1,146 @@
-
 Header license for include/net/inet_connection_sock.h:
 
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 
-Header license include/net/netns/ipv4.h:
+License for net/ipv4/tcp_bbr2.c:
 
-/* SPDX-License-Identifier: GPL-2.0 */
+Dual BSD/GPL
 
-Header license for include/uapi/linux/snmp.h:
-
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-
-Header license for net/ipv4/proc.c:
-
-// SPDX-License-Identifier: GPL-2.0-or-later
-
-Header license for net/ipv4/sysctl_net_ipv4.c:
-
-// SPDX-License-Identifier: GPL-2.0
-
-Header license for b/include/net/tcp.h:
-
-/* SPDX-License-Identifier: GPL-2.0-or-later */
-/*
- * INET         An implementation of the TCP/IP protocol suite for the LINUX
- *              operating system.  INET is implemented using the  BSD Socket
- *              interface as the means of communication with the user level.
- *
- *              Definitions for the TCP module.
- *
- * Version:     @(#)tcp.h       1.0.5   05/23/93
- *
- * Authors:     Ross Biro
- *              Fred N. van Kempen, <waltje@uWalt.NL.Mugnet.ORG>
- */
-
---- a/include/net/inet_connection_sock.h.orig	2023-05-04 21:23:06.971652859 -0700
-+++ b/include/net/inet_connection_sock.h	2023-05-04 21:24:48.931655452 -0700
-@@ -135,7 +135,7 @@ struct inet_connection_sock {
- 	u32			  icsk_probes_tstamp;
- 	u32			  icsk_user_timeout;
+--- linux-6.3.1-builder.orig/net/ipv4/tcp_bbr2.c	2023-05-05 02:31:58.376470126 -0700
++++ linux-6.3.1-builder/net/ipv4/tcp_bbr2.c	2023-05-05 10:12:37.916860630 -0700
+@@ -167,6 +167,7 @@ struct bbr {
+ 		initialized:1;	       /* has bbr_init() been called? */
+ 	u32	alpha_last_delivered;	 /* tp->delivered    at alpha update */
+ 	u32	alpha_last_delivered_ce; /* tp->delivered_ce at alpha update */
++	struct	tcp_plb_state plb;
  
--#define ICSK_CA_PRIV_SIZE	  (216)
-+#define ICSK_CA_PRIV_SIZE	  (224)
- 	u64			  icsk_ca_priv[ICSK_CA_PRIV_SIZE / sizeof(u64)];
- };
+ 	/* Params configurable using setsockopt. Refer to correspoding
+ 	 * module param for detailed description of params.
+@@ -733,7 +734,11 @@ static void bbr_cwnd_event(struct sock *
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	struct bbr *bbr = inet_csk_ca(sk);
  
---- a/include/uapi/linux/snmp.h.orig	2023-04-23 12:02:52.000000000 -0700
-+++ b/include/uapi/linux/snmp.h	2023-05-04 21:24:48.931655452 -0700
-@@ -296,6 +296,7 @@ enum
- 	LINUX_MIB_TCPMIGRATEREQSUCCESS,		/* TCPMigrateReqSuccess */
- 	LINUX_MIB_TCPMIGRATEREQFAILURE,		/* TCPMigrateReqFailure */
- 	LINUX_MIB_TCPPLBREHASH,			/* TCPPLBRehash */
-+	LINUX_MIB_TCPECNREHASH,			/* TCPECNRehash */
- 	__LINUX_MIB_MAX
- };
+-	if (event == CA_EVENT_TX_START && tp->app_limited) {
++	if (event == CA_EVENT_TX_START) {
++		tcp_plb_check_rehash(sk, &bbr->plb);
++
++		if (!tp->app_limited)
++			return;
+ 		bbr->idle_restart = 1;
+ 		bbr->ack_epoch_mstamp = tp->tcp_mstamp;
+ 		bbr->ack_epoch_acked = 0;
+@@ -1389,7 +1394,7 @@ static void bbr2_check_ecn_too_high_in_s
+ 	}
+ }
  
---- a/net/ipv4/proc.c.orig	2023-04-23 12:02:52.000000000 -0700
-+++ b/net/ipv4/proc.c	2023-05-04 21:24:48.931655452 -0700
-@@ -298,6 +298,7 @@ static const struct snmp_mib snmp4_net_l
- 	SNMP_MIB_ITEM("TCPMigrateReqSuccess", LINUX_MIB_TCPMIGRATEREQSUCCESS),
- 	SNMP_MIB_ITEM("TCPMigrateReqFailure", LINUX_MIB_TCPMIGRATEREQFAILURE),
- 	SNMP_MIB_ITEM("TCPPLBRehash", LINUX_MIB_TCPPLBREHASH),
-+	SNMP_MIB_ITEM("TCPECNRehash", LINUX_MIB_TCPECNREHASH),
- 	SNMP_MIB_SENTINEL
- };
+-static void bbr2_update_ecn_alpha(struct sock *sk)
++static int bbr2_update_ecn_alpha(struct sock *sk)
+ {
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	struct bbr *bbr = inet_csk_ca(sk);
+@@ -1398,14 +1403,14 @@ static void bbr2_update_ecn_alpha(struct
+ 	u32 gain;
  
---- a/include/net/tcp.h.orig	2023-05-04 21:23:07.195652864 -0700
-+++ b/include/net/tcp.h	2023-05-04 21:25:51.523657044 -0700
-@@ -2188,7 +2188,8 @@ extern void tcp_rack_update_reo_wnd(stru
- /* State for PLB (Protective Load Balancing) for a single TCP connection. */
- struct tcp_plb_state {
- 	u8	consec_cong_rounds:5, /* consecutive congested rounds */
--		unused:3;
-+		enabled:1,	/* Check if PLB is enabled */
-+		unused:2;
- 	u32	pause_until; /* jiffies32 when PLB can resume rerouting */
- };
+ 	if (bbr->params.ecn_factor == 0)
+-		return;
++		return -1;
  
-@@ -2201,23 +2202,6 @@ static inline void tcp_plb_init(const st
- void tcp_plb_update_state(const struct sock *sk, struct tcp_plb_state *plb,
- 			  const int cong_ratio);
- void tcp_plb_check_rehash(struct sock *sk, struct tcp_plb_state *plb);
--void tcp_plb_update_state_upon_rto(struct sock *sk, struct tcp_plb_state *plb);
--
--/* tcp_plb.c */
--
--#define TCP_PLB_SCALE 8	/* scaling factor for fractions in PLB (e.g. ce_ratio) */
--
--/* State for PLB (Protective Load Balancing) for a single TCP connection. */
--struct tcp_plb_state {
--	u8	consec_cong_rounds:5, /* consecutive congested rounds */
--		enabled:1,	/* Check if PLB is enabled */
--		unused:2;
--	u32	pause_until; /* jiffies32 when PLB can resume repathing */
--};
--
--void tcp_plb_update_state(const struct sock *sk, struct tcp_plb_state *plb,
--			  const int cong_ratio);
--void tcp_plb_check_rehash(struct sock *sk, struct tcp_plb_state *plb);
- void tcp_plb_update_state_upon_rto(struct sock *sk, struct tcp_plb_state *plb);
+ 	delivered = tp->delivered - bbr->alpha_last_delivered;
+ 	delivered_ce = tp->delivered_ce - bbr->alpha_last_delivered_ce;
  
- /* At how many usecs into the future should the RTO fire? */
+ 	if (delivered == 0 ||		/* avoid divide by zero */
+ 	    WARN_ON_ONCE(delivered < 0 || delivered_ce < 0))  /* backwards? */
+-		return;
++		return -1;
+ 
+ 	/* See if we should use ECN sender logic for this connection. */
+ 	if (!bbr->ecn_eligible && bbr_ecn_enable &&
+@@ -1424,6 +1429,7 @@ static void bbr2_update_ecn_alpha(struct
+ 	bbr->alpha_last_delivered_ce = tp->delivered_ce;
+ 
+ 	bbr2_check_ecn_too_high_in_startup(sk, ce_ratio);
++	return (int)ce_ratio;
+ }
+ 
+ /* Each round trip of BBR_BW_PROBE_UP, double volume of probing data. */
+@@ -2238,6 +2244,7 @@ static void bbr2_main(struct sock *sk, c
+ 	struct bbr_context ctx = { 0 };
+ 	bool update_model = true;
+ 	u32 bw;
++	int ce_ratio = -1;
+ 
+ 	bbr->debug.event = '.';  /* init to default NOP (no event yet) */
+ 
+@@ -2245,7 +2252,9 @@ static void bbr2_main(struct sock *sk, c
+ 	if (bbr->round_start) {
+ 		bbr->rounds_since_probe =
+ 			min_t(s32, bbr->rounds_since_probe + 1, 0xFF);
+-		bbr2_update_ecn_alpha(sk);
++		ce_ratio = bbr2_update_ecn_alpha(sk);
++		tcp_plb_update_state(sk, &bbr->plb, ce_ratio);
++		tcp_plb_check_rehash(sk, &bbr->plb);
+ 	}
+ 
+ 	bbr->ecn_in_round  |= rs->is_ece;
+@@ -2408,6 +2417,7 @@ static void bbr2_init(struct sock *sk)
+ {
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	struct bbr *bbr = inet_csk_ca(sk);
++	const struct net *net = sock_net(sk);
+ 
+ 	bbr_init(sk);	/* run shared init code for v1 and v2 */
+ 
+@@ -2470,6 +2480,13 @@ static void bbr2_init(struct sock *sk)
+ 	bbr->alpha_last_delivered = 0;
+ 	bbr->alpha_last_delivered_ce = 0;
+ 
++	bbr->plb.enabled = 0;
++	bbr->plb.consec_cong_rounds = 0;
++	bbr->plb.pause_until = 0;
++	if ((tp->ecn_flags & TCP_ECN_OK) &&
++	    READ_ONCE(net->ipv4.sysctl_tcp_plb_enabled))
++		bbr->plb.enabled = 1;
++
+ 	tp->fast_ack_mode = min_t(u32, 0x2U, bbr_fast_ack_mode);
+ 
+ 	if ((tp->ecn_flags & TCP_ECN_OK) && bbr_ecn_enable)
+@@ -2614,6 +2631,7 @@ static void bbr2_set_state(struct sock *
+ 		struct rate_sample rs = { .losses = 1 };
+ 		struct bbr_context ctx = { 0 };
+ 
++		tcp_plb_update_state_upon_rto(sk, &bbr->plb);
+ 		bbr->prev_ca_state = TCP_CA_Loss;
+ 		bbr->full_bw = 0;
+ 		if (!bbr2_is_probing_bandwidth(sk) && bbr->inflight_lo == ~0U) {
+--- linux-6.3.1-builder.orig/net/ipv4/tcp_plb.c	2023-04-23 12:02:52.000000000 -0700
++++ linux-6.3.1-builder/net/ipv4/tcp_plb.c	2023-05-05 10:13:25.260861299 -0700
+@@ -30,6 +30,9 @@ void tcp_plb_update_state(const struct s
+ 	if (!READ_ONCE(net->ipv4.sysctl_tcp_plb_enabled))
+ 		return;
+ 
++	if (!plb->enabled)
++		return;
++
+ 	if (cong_ratio >= 0) {
+ 		if (cong_ratio < READ_ONCE(net->ipv4.sysctl_tcp_plb_cong_thresh))
+ 			plb->consec_cong_rounds = 0;
+@@ -52,6 +55,9 @@ void tcp_plb_check_rehash(struct sock *s
+ 	if (!READ_ONCE(net->ipv4.sysctl_tcp_plb_enabled))
+ 		return;
+ 
++	if (!plb->enabled)
++		return;
++
+ 	forced_rehash = plb->consec_cong_rounds >=
+ 			READ_ONCE(net->ipv4.sysctl_tcp_plb_rehash_rounds);
+ 	/* If sender goes idle then we check whether to rehash. */
+@@ -96,6 +102,9 @@ void tcp_plb_update_state_upon_rto(struc
+ 	if (!READ_ONCE(net->ipv4.sysctl_tcp_plb_enabled))
+ 		return;
+ 
++	if (!plb->enabled)
++		return;
++
+ 	pause = READ_ONCE(net->ipv4.sysctl_tcp_plb_suspend_rto_sec) * HZ;
+ 	pause += get_random_u32_below(pause);
+ 	plb->pause_until = tcp_jiffies32 + pause;
