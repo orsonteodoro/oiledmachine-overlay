@@ -436,8 +436,8 @@ gen_zensauce_uris()
 	echo "$s"
 }
 
-BMQ_FN="${BMQ_FN:-v${K_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
-BMQ_BASE_URI="https://gitlab.com/alfredchen/bmq/raw/master/${K_MAJOR_MINOR}/"
+BMQ_FN="${BMQ_FN:-v${KV_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
+BMQ_BASE_URI="https://gitlab.com/alfredchen/bmq/raw/master/${KV_MAJOR_MINOR}/"
 BMQ_SRC_URI="${BMQ_BASE_URI}${BMQ_FN}"
 
 BBRV2_BASE_URI="https://github.com/google/bbr/commit/"
@@ -473,31 +473,31 @@ ${CLANG_PGO_BASE_URI}&id=${PATCH_CLANG_PGO_COMMIT_D}&id2=${PATCH_CLANG_PGO_COMMI
 fi
 
 GENPATCHES_URI_BASE_URI="https://gitweb.gentoo.org/proj/linux-patches.git/snapshot/"
-GENPATCHES_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
+GENPATCHES_MAJOR_MINOR_REVISION="${KV_MAJOR_MINOR}-${GENPATCHES_VER}"
 GENPATCHES_FN="linux-patches-${GENPATCHES_MAJOR_MINOR_REVISION}.tar.bz2"
 GENPATCHES_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_FN}"
 
 KCP_COMMIT_SNAPSHOT="9d14420af9da0dc0715d769232e0bcd8fa16b096" # 20230108
 
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
-KERNEL_SERIES_TARBALL_FN="linux-${K_MAJOR_MINOR}.tar.xz"
+KERNEL_SERIES_TARBALL_FN="linux-${KV_MAJOR_MINOR}.tar.xz"
 KERNEL_INC_BASE_URI=\
-"https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/incr/"
+"https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/incr/"
 KERNEL_PATCH_0_TO_1_URI=\
-"https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/patch-${K_MAJOR_MINOR}.1.xz"
+"https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/patch-${KV_MAJOR_MINOR}.1.xz"
 
 KCP_CORTEX_A72_BN=\
 "build-with-mcpu-for-cortex-a72"
 
-if ver_test ${K_MAJOR_MINOR} -ge 5.17 ; then
+if ver_test ${KV_MAJOR_MINOR} -ge 5.17 ; then
 	KCP_9_1_BN="more-uarches-for-kernel-5.17%2B"
-elif ver_test ${K_MAJOR_MINOR} -ge 5.15 ; then
+elif ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
 	KCP_9_1_BN="more-uarches-for-kernel-5.15-5.16"
-elif ver_test ${K_MAJOR_MINOR} -ge 5.8 ; then
+elif ver_test ${KV_MAJOR_MINOR} -ge 5.8 ; then
 	KCP_9_1_BN="more-uarches-for-kernel-5.8-5.14"
-elif ver_test ${K_MAJOR_MINOR} -ge 5.4 ; then
+elif ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
 	KCP_9_1_BN="more-uarches-for-kernel-4.19-5.4"
-elif ver_test ${K_MAJOR_MINOR} -ge 4.13 ; then
+elif ver_test ${KV_MAJOR_MINOR} -ge 4.13 ; then
 	KCP_8_1_BN="enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
 	KCP_4_9_BN="enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
 fi
@@ -655,17 +655,17 @@ O3_CO_SRC_URI="${O3_SRC_URI}${O3_CO_SRC_FN} -> ${O3_CO_FN}"
 O3_RO_SRC_URI="${O3_SRC_URI}${O3_RO_SRC_FN} -> ${O3_RO_FN}"
 
 PDS_URI_BASE=\
-"https://gitlab.com/alfredchen/PDS-mq/raw/master/${K_MAJOR_MINOR}/"
-PDS_FN="v${K_MAJOR_MINOR}_pds${PATCH_PDS_V}.patch"
+"https://gitlab.com/alfredchen/PDS-mq/raw/master/${KV_MAJOR_MINOR}/"
+PDS_FN="v${KV_MAJOR_MINOR}_pds${PATCH_PDS_V}.patch"
 PDS_SRC_URI="${PDS_URI_BASE}${PDS_FN}"
 
 PRJC_URI_BASE=\
-"https://gitlab.com/alfredchen/projectc/-/raw/master/${K_MAJOR_MINOR}${PRJC_LTS}/"
+"https://gitlab.com/alfredchen/projectc/-/raw/master/${KV_MAJOR_MINOR}${PRJC_LTS}/"
 PRJC_FN="prjc_v${PATCH_PROJC_VER}.patch"
 PRJC_SRC_URI="${PRJC_URI_BASE}${PRJC_FN}"
 
 RT_BASE_URI=\
-"http://cdn.kernel.org/pub/linux/kernel/projects/rt/${K_MAJOR_MINOR}/"
+"http://cdn.kernel.org/pub/linux/kernel/projects/rt/${KV_MAJOR_MINOR}/"
 RT_FN="patches-${PATCH_RT_VER}.tar.xz"
 RT_SRC_URI="${RT_BASE_URI}${RT_FN}"
 RT_ALT_FN="patches-${PATCH_RT_VER}.tar.gz"
@@ -689,17 +689,17 @@ TRESOR_RESEARCH_PDF_SRC_URI=\
 TRESOR_README_SRC_URI="${TRESOR_README_SRC_URI} -> ${TRESOR_README_FN}"
 
 UKSM_BASE_URI=\
-"https://raw.githubusercontent.com/dolohow/uksm/master/v${K_MAJOR}.x/"
-UKSM_FN="uksm-${K_MAJOR_MINOR}.patch"
+"https://raw.githubusercontent.com/dolohow/uksm/master/v${KV_MAJOR}.x/"
+UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
 if [[ -n "${ZEN_KV}" ]] ; then
 	ZENSAUCE_URIS=$(gen_zensauce_uris "${PATCH_ZENSAUCE_COMMITS[@]}")
 fi
 
-if ver_test ${PV} -eq ${K_MAJOR_MINOR} ; then
+if ver_test ${PV} -eq ${KV_MAJOR_MINOR} ; then
 	KERNEL_NO_POINT_RELEASE="1"
-elif ver_test ${PV} -eq ${K_MAJOR_MINOR}.1 ; then
+elif ver_test ${PV} -eq ${KV_MAJOR_MINOR}.1 ; then
 	KERNEL_0_TO_1_ONLY="1"
 fi
 
@@ -710,10 +710,10 @@ elif [[ -n "${KERNEL_0_TO_1_ONLY}" && "${KERNEL_0_TO_1_ONLY}" == "1" ]] ; then
 		${KERNEL_PATCH_0_TO_1_URI}
 	)
 	KERNEL_PATCH_FNS_EXT=(
-		patch-${K_MAJOR_MINOR}.1.xz
+		patch-${KV_MAJOR_MINOR}.1.xz
 	)
 	KERNEL_PATCH_FNS_NOEXT=(
-		patch-${K_MAJOR_MINOR}.1
+		patch-${KV_MAJOR_MINOR}.1
 	)
 else
 	KERNEL_PATCH_TO_FROM=(
@@ -723,10 +723,10 @@ else
 		${KERNEL_PATCH_TO_FROM[@]/%/.xz}
 	)
 	KERNEL_PATCH_FNS_EXT=(
-		${KERNEL_PATCH_FNS_EXT[@]/#/patch-${K_MAJOR_MINOR}.}
+		${KERNEL_PATCH_FNS_EXT[@]/#/patch-${KV_MAJOR_MINOR}.}
 	)
 	KERNEL_PATCH_FNS_NOEXT=(
-		${KERNEL_PATCH_TO_FROM[@]/#/patch-${K_MAJOR_MINOR}.}
+		${KERNEL_PATCH_TO_FROM[@]/#/patch-${KV_MAJOR_MINOR}.}
 	)
 	KERNEL_PATCH_URIS=(
 		${KERNEL_PATCH_0_TO_1_URI}
@@ -735,14 +735,14 @@ else
 
 	# Do not change the order
 	KERNEL_PATCH_FNS_EXT=(
-		patch-${K_MAJOR_MINOR}.1.xz
+		patch-${KV_MAJOR_MINOR}.1.xz
 		${KERNEL_PATCH_FNS_EXT[@]}
 	)
 
 	# Do not change the order
 	KERNEL_PATCH_FNS_NOEXT=(
-		patch-${K_MAJOR_MINOR}.1
-		${KERNEL_PATCH_TO_FROM[@]/#/patch-${K_MAJOR_MINOR}.}
+		patch-${KV_MAJOR_MINOR}.1
+		${KERNEL_PATCH_TO_FROM[@]/#/patch-${KV_MAJOR_MINOR}.}
 	)
 fi
 
@@ -848,49 +848,49 @@ ot-kernel_pkg_pretend() {
 # Reports the estimated End Of Life (EOL).  Sourced from
 # https://www.kernel.org/category/releases.html
 _report_eol() {
-	if [[ "${K_MAJOR_MINOR}" == "6.1" ]] ; then
+	if [[ "${KV_MAJOR_MINOR}" == "6.1" ]] ; then
 einfo
-einfo "The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is"
+einfo "The expected End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel series is"
 einfo "Dec 2026."
 einfo
 einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
 einfo "the same major.minor branch."
 einfo
-	elif [[ "${K_MAJOR_MINOR}" == "5.15" ]] ; then
+	elif [[ "${KV_MAJOR_MINOR}" == "5.15" ]] ; then
 einfo
-einfo "The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is"
+einfo "The expected End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel series is"
 einfo "Dec 2026."
 einfo
 einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
 einfo "the same major.minor branch."
 einfo
-	elif [[ "${K_MAJOR_MINOR}" == "5.10" ]] ; then
+	elif [[ "${KV_MAJOR_MINOR}" == "5.10" ]] ; then
 einfo
-einfo "The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is"
+einfo "The expected End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel series is"
 einfo "Dec 2026."
 einfo
 einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
 einfo "the same major.minor branch."
 einfo
-	elif [[ "${K_MAJOR_MINOR}" == "5.4" ]] ; then
+	elif [[ "${KV_MAJOR_MINOR}" == "5.4" ]] ; then
 einfo
-einfo "The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is"
+einfo "The expected End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel series is"
 einfo "Dec 2025."
 einfo
 einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
 einfo "the same major.minor branch."
 einfo
-	elif [[ "${K_MAJOR_MINOR}" == "4.19" ]] ; then
+	elif [[ "${KV_MAJOR_MINOR}" == "4.19" ]] ; then
 einfo
-einfo "The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is"
+einfo "The expected End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel series is"
 einfo "Dec 2024."
 einfo
 einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
 einfo "the same major.minor branch."
 einfo
-	elif [[ "${K_MAJOR_MINOR}" == "4.14" ]] ; then
+	elif [[ "${KV_MAJOR_MINOR}" == "4.14" ]] ; then
 einfo
-einfo "The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is"
+einfo "The expected End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel series is"
 einfo "Jan 2024."
 einfo
 einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
@@ -898,7 +898,7 @@ einfo "the same major.minor branch."
 einfo
 	else
 ewarn
-ewarn "The ${K_MAJOR_MINOR} kernel series is not a Long Term Support (LTS)"
+ewarn "The ${KV_MAJOR_MINOR} kernel series is not a Long Term Support (LTS)"
 ewarn "kernel.  It may suddenly stop receiving security updates completely"
 ewarn "between a week to several months."
 ewarn
@@ -915,7 +915,7 @@ einfo
 check_zen_tune_deps() {
 	local zentune_commit="${1}"
 	local v="ZENSAUCE_WHITELIST"
-	if ver_test ${K_MAJOR_MINOR} -ge 5.10 ; then
+	if ver_test ${KV_MAJOR_MINOR} -ge 5.10 ; then
 		local p
 		for p in ${PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE[@]} ; do
 			local ztc=$(echo "${p}" | cut -f 1 -d ":")
@@ -951,7 +951,7 @@ zensauce_setup() {
 		if [[ -z "${!zw}" ]] ; then
 			local zensauce_uri
 			local zensauce_cmprange=\
-"v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}"
+"v${KV_MAJOR_MINOR}...zen-kernel:${KV_MAJOR_MINOR}"
 			local zensauce_cmpbase_uri=\
 "https://github.com/torvalds/linux/compare/${zensauce_cmprange}"
 			if ver_test ${PV} -ge 5.4 ; then
@@ -1222,7 +1222,7 @@ einfo "Auto adding key in MOK"
 		fi
 	fi
 
-	if (( $(find "/etc/portage/ot-sources/${K_MAJOR_MINOR}/" -type f -name "env" | wc -l) == 0 )) ; then
+	if (( $(find "/etc/portage/ot-sources/${KV_MAJOR_MINOR}/" -type f -name "env" | wc -l) == 0 )) ; then
 eerror
 eerror "Missing per extraconfig env file."
 eerror "See the 'The config file-directory structure' section metadata.xml or"
@@ -1318,8 +1318,8 @@ einfo "Cloning the vanilla Linux kernel project"
 			git checkout -b v${PV} tags/v${PV}
 		elif [[ -n "${FETCH_VANILLA_SOURCES_BY_BRANCH}" \
 			&& "${FETCH_VANILLA_SOURCES_BY_BRANCH}" == "1" ]] ; then
-			git checkout -b linux-${K_MAJOR_MINOR}.y \
-				origin/linux-${K_MAJOR_MINOR}.y
+			git checkout -b linux-${KV_MAJOR_MINOR}.y \
+				origin/linux-${KV_MAJOR_MINOR}.y
 		fi
 	else
 		local G=$(find "${d}" -group "root")
@@ -1340,9 +1340,9 @@ einfo "Updating the vanilla Linux kernel project"
 			git checkout -b v${PV} tags/v${PV}
 		elif [[ -n "${FETCH_VANILLA_SOURCES_BY_BRANCH}" \
 			&& "${FETCH_VANILLA_SOURCES_BY_BRANCH}" == "1" ]] ; then
-			git branch -D linux-${K_MAJOR_MINOR}.y
-			git checkout -b linux-${K_MAJOR_MINOR}.y \
-				origin/linux-${K_MAJOR_MINOR}.y
+			git branch -D linux-${KV_MAJOR_MINOR}.y
+			git checkout -b linux-${KV_MAJOR_MINOR}.y \
+				origin/linux-${KV_MAJOR_MINOR}.y
 		fi
 		git pull
 		if [[ -n "${TEST_REWIND_SOURCES_BACK_TO}" ]] ; then
@@ -1500,7 +1500,7 @@ apply_cfi() {
 # Adds custom logo patch
 apply_custom_logo() {
 	if [[ -n "${OT_KERNEL_LOGO_URI}" ]] ; then
-		if ver_test ${K_MAJOR_MINOR} -ge 5.2 ; then
+		if ver_test ${KV_MAJOR_MINOR} -ge 5.2 ; then
 			_fpatch "${FILESDIR}/custom-logo-for-6.1.patch"
 		else
 			_fpatch "${FILESDIR}/custom-logo-for-4.14.patch"
@@ -1691,7 +1691,7 @@ apply_ck() {
 				blacklisted=1
 				break
 			fi
-			if ver_test ${K_MAJOR_MINOR} -eq 4.14 ; then
+			if ver_test ${KV_MAJOR_MINOR} -eq 4.14 ; then
 				if ! ot-kernel_use bfq-mq ; then
 					local b2
 					for b2 in ${CK_BFQ_MQ[@]} ; do
@@ -1734,7 +1734,7 @@ einfo "Applying the genpatches"
 #
 apply_o3() {
 	cd "${BUILD_DIR}" || die
-	if ver_test "${K_MAJOR_MINOR}" -eq 4.14 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -eq 4.14 ; then
 		# fix patch
 		sed -e 's|-1028,6 +1028,13|-1076,6 +1076,13|' \
 			"${EDISTDIR}/${O3_CO_FN}" \
@@ -1952,26 +1952,26 @@ ot-kernel_src_unpack() {
 	if (( ${wants_kcp} == 1 || ${wants_kcp_rpi} == 1 )) ; then
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
-		local gcc_v=$(best_version "sys-devel/gcc:$(ver_cut 1 ${gcc_slot})" | sed -r -e "s|sys-devel/gcc-||" -e "s|-r[0-9]+||")
-		local clang_v=$(best_version "sys-devel/clang:${llvm_slot}" | sed -r -e "s|sys-devel/clang-||" -e "s|-r[0-9]+||")
+		local gcc_pv=$(best_version "sys-devel/gcc:$(ver_cut 1 ${gcc_slot})" | sed -r -e "s|sys-devel/gcc-||" -e "s|-r[0-9]+||")
+		local clang_pv=$(best_version "sys-devel/clang:${llvm_slot}" | sed -r -e "s|sys-devel/clang-||" -e "s|-r[0-9]+||")
 		#local vendor_id=$(cat /proc/cpuinfo | grep vendor_id | head -n 1 | cut -f 2 -d ":" | sed -E -e "s|[ ]+||g")
 		#local cpu_family=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "cpu family" | head -n 1 | grep -E -o "[0-9]+"))
 		#local cpu_model=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "model" | head -n 1 | grep -E -o "[0-9]+"))
 einfo
 einfo "llvm_slot:\t${llvm_slot}"
 einfo "gcc_slot:\t${gcc_slot}"
-einfo "Best GCC version:  ${gcc_v}"
-einfo "Best Clang version:  ${clang_v}"
+einfo "Best GCC version:  ${gcc_pv}"
+einfo "Best Clang version:  ${clang_pv}"
 einfo
-		if [[ -z "${gcc_v}" && -z "${clang_v}" ]] ; then
-			ot-kernel_compiler_not_found "Empty compiler versions found"
+		if [[ -z "${gcc_pv}" && -z "${clang_pv}" ]] ; then
+			ot-kernel_compiler_not_found "Empty compiler versions found for both gcc and clang"
 		fi
 	fi
 
 	# KCP is applied globally
 	if (( ${wants_kcp} == 1 )) ; then
-		if (  (				 $(ver_test ${gcc_v}   -ge 9.1) ) \
-		   || ( [[ -n "${clang_v}" ]] && $(ver_test ${clang_v} -ge 10.0) ) \
+		if (  (				 $(ver_test ${gcc_pv}   -ge 9.1) ) \
+		   || ( [[ -n "${clang_pv}" ]] && $(ver_test ${clang_pv} -ge 10.0) ) \
 		   ) \
 			&& test -f "${EDISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
@@ -1979,14 +1979,14 @@ einfo
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 9.1 or clang >= 10.0."
 einfo
 			_PATCHES+=( "${EDISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch")
-		elif ( tc-is-gcc && $(ver_test ${gcc_v} -ge 8.1) ) \
+		elif ( tc-is-gcc && $(ver_test ${gcc_pv} -ge 8.1) ) \
 			&& test -f "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
 einfo
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 8.1"
 einfo
 			_PATCHES+=( "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
-		elif ( tc-is-gcc && $(ver_test ${gcc_v} -ge 4.9) ) \
+		elif ( tc-is-gcc && $(ver_test ${gcc_pv} -ge 4.9) ) \
 			&& test -f "${EDISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
 einfo
@@ -1995,8 +1995,8 @@ einfo
 			_PATCHES+=( "${EDISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		else
 ewarn
-ewarn "Cannot find a compatible kernel_compiler_patch for gcc_v = ${gcc_v}"
-ewarn "and kernel ${K_MAJOR_MINOR}.  Skipping the kernel_compiler_patch."
+ewarn "Cannot find a compatible kernel_compiler_patch for gcc_pv = ${gcc_pv}"
+ewarn "and kernel ${KV_MAJOR_MINOR}.  Skipping the kernel_compiler_patch."
 ewarn
 		fi
 	else
@@ -2016,7 +2016,7 @@ einfo
 	ot-kernel_unpack_tarball
 einfo "Done unpacking."
 	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
-	mv "linux-${K_MAJOR_MINOR}" "${BUILD_DIR}" || die
+	mv "linux-${KV_MAJOR_MINOR}" "${BUILD_DIR}" || die
 	apply_vanilla_point_releases
 	verify_point_release
 }
@@ -2220,7 +2220,7 @@ einfo "Canceling ReiserFS"
 	sed -i -e "/Reiserfs/d" \
 		"scripts/ver_linux" || die
 
-	if ver_test ${K_MAJOR_MINOR} -ge 5.3 ; then
+	if ver_test ${KV_MAJOR_MINOR} -ge 5.3 ; then
 		sed -i -e "/reiserfs/d" \
 			"Documentation/kbuild/makefiles.rst" || die
 	else
@@ -2233,7 +2233,7 @@ einfo "Canceling ReiserFS"
 		-e "s| \(borrowed from reiserfs\)||g" \
 		"fs/ubifs/key.h" || die
 
-	if ver_test ${K_MAJOR_MINOR} -ge 5.3 ; then
+	if ver_test ${KV_MAJOR_MINOR} -ge 5.3 ; then
 		sed -i \
 			-e "s|/reiserfs||" \
 			-e "s|or ReiserFS filesystems||" \
@@ -2256,7 +2256,7 @@ einfo "Canceling ReiserFS"
 		| sed -e "/1Reiserfsprogs/,/reiserfsck/d" -e "/2Reiserfsprogs/,/reiserfs/d" \
 		> "Documentation/process/changes.rst.t" || die
 	mv "Documentation/process/changes.rst"{.t,} || die
-	if ver_test ${K_MAJOR_MINOR} -ge 5.1 ; then
+	if ver_test ${KV_MAJOR_MINOR} -ge 5.1 ; then
 		cat "Documentation/translations/it_IT/process/changes.rst" \
 			| sed -e "/reiserfsprogs/d" \
 			| sed -e "0,/^Reiserfsprogs/ s|^Reiserfsprogs|1Reiserfsprogs|" \
@@ -2274,7 +2274,7 @@ einfo "Canceling ReiserFS"
 		-e "/reiserfs/d" \
 		"fs/buffer.c" || die
 
-	if ver_test ${K_MAJOR_MINOR} -ge 4.17 ; then
+	if ver_test ${KV_MAJOR_MINOR} -ge 4.17 ; then
 		sed -i -e "s|reiserfs_||g" \
 			"Documentation/trace/ftrace.rst" \
 			|| die
@@ -2284,7 +2284,7 @@ einfo "Canceling ReiserFS"
 			|| die
 	fi
 
-	if ver_test ${K_MAJOR_MINOR} -ge 5.3 ; then
+	if ver_test ${KV_MAJOR_MINOR} -ge 5.3 ; then
 		sed -i -e "s|Reiserfs does not tolerate errors returned from the block device.||g" \
 			"Documentation/powerpc/eeh-pci-error-recovery.rst" \
 			|| die
@@ -2293,25 +2293,25 @@ einfo "Canceling ReiserFS"
 			"Documentation/powerpc/eeh-pci-error-recovery.txt" \
 			|| die
 	fi
-	if ver_test ${K_MAJOR_MINOR} -ge 4.20 ; then
+	if ver_test ${KV_MAJOR_MINOR} -ge 4.20 ; then
 		sed -i -e "s|, JFS, and ReiserFS| and JFS|g" \
 			"Documentation/admin-guide/ext4.rst" \
 			|| die
-	elif ver_test ${K_MAJOR_MINOR} -eq 4.19 ; then
+	elif ver_test ${KV_MAJOR_MINOR} -eq 4.19 ; then
 		sed -i -e "s|, JFS, and ReiserFS| and JFS|g" \
 			"Documentation/filesystems/ext4/ext4.rst" \
 			|| die
-	elif ver_test ${K_MAJOR_MINOR} -le 4.18 ; then
+	elif ver_test ${KV_MAJOR_MINOR} -le 4.18 ; then
 		sed -i -e "s|, JFS, and ReiserFS| and JFS|g" \
 			"Documentation/filesystems/ext4.txt" \
 			|| die
 	fi
-	if ver_test ${K_MAJOR_MINOR} -ge 5.5 ; then
+	if ver_test ${KV_MAJOR_MINOR} -ge 5.5 ; then
 		sed -i -e "s|linux/reiserfs_fs.h|Reserved|g" \
 			"Documentation/userspace-api/ioctl/ioctl-number.rst" \
 			|| die
-	elif ver_test ${K_MAJOR_MINOR} -ge 5.3 \
-		&& ver_test ${K_MAJOR_MINOR} -le 5.4 ; then
+	elif ver_test ${KV_MAJOR_MINOR} -ge 5.3 \
+		&& ver_test ${KV_MAJOR_MINOR} -le 5.4 ; then
 		sed -i -e "s|linux/reiserfs_fs.h|Reserved|g" \
 			"Documentation/ioctl/ioctl-number.rst" \
 			|| die
@@ -2344,15 +2344,15 @@ einfo "Canceling Reiser4"
 		"scripts/ver_linux" || die
 	sed -i -e "/The Reiser4/,/kernel\./d" \
 		"Documentation/process/3.Early-stage.rst" || die
-	if ver_test ${K_MAJOR_MINOR} -ge 5.0 ; then
+	if ver_test ${KV_MAJOR_MINOR} -ge 5.0 ; then
 		sed -i -e "/Il filesystem Reiser4/,/kernel./d" \
 			"Documentation/translations/it_IT/process/3.Early-stage.rst" || die
 	fi
-	if ver_test ${K_MAJOR_MINOR} -ge 5.15 ; then
+	if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
 		sed -i -e "/Reiser4文/,/Reiser4置/d" \
 			"Documentation/translations/zh_TW/process/3.Early-stage.rst" || die
 	fi
-	if ver_test ${K_MAJOR_MINOR} -ge 5.2 ; then
+	if ver_test ${KV_MAJOR_MINOR} -ge 5.2 ; then
 		sed -i -e "/Reiser4文/,/Reiser4置/d" \
 			"Documentation/translations/zh_CN/process/3.Early-stage.rst" || die
 	fi
@@ -2398,7 +2398,7 @@ ot-kernel_src_prepare() {
 	sed -i -e "s|select FB_CMDLINE|select FB_CMDLINE\n\tselect DRM_KMS_HELPER|" \
 		"drivers/gpu/drm/Kconfig" || die
 
-	if ver_test ${K_MAJOR_MINOR} -ge 5.7 \
+	if ver_test ${KV_MAJOR_MINOR} -ge 5.7 \
 		&& [[ "${IUSE}" =~ "exfat" ]] \
 		&& ! use exfat ; then
 		ot-kernel_rm_exfat
@@ -2436,7 +2436,7 @@ ewarn
 	#	cp -a "/lib/firmware/regulatory.db.p7s" "${BUILD_DIR}/"
 	#fi
 
-	if ver_test ${K_MAJOR_MINOR} -ge 5.18 ; then
+	if ver_test ${KV_MAJOR_MINOR} -ge 5.18 ; then
 		eapply "${FILESDIR}/ep800/add-ep800-to-build-for-5.18.patch"
 	else
 		eapply "${FILESDIR}/ep800/add-ep800-to-build.patch"
@@ -2636,6 +2636,7 @@ ewarn
 # @DESCRIPTION:
 # Checks if the compiler has no problems
 is_gcc_ready() {
+einfo "Testing gcc slot ${gcc_slot}"
 	which gcc-${gcc_slot} 2>/dev/null 1>/dev/null || return 1
 	local has_error=0
 	if gcc-${gcc_slot} --help | grep -q -F -e "symbol lookup error" ; then
@@ -2764,8 +2765,8 @@ einfo "CONFIG_EXTRA_FIRMWARE:  "$(grep "CONFIG_EXTRA_FIRMWARE" \
 # @DESCRIPTION:
 # Gets list of envs
 ot-kernel_get_envs() {
-	# The envs /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
-	find "/etc/portage/ot-sources/${K_MAJOR_MINOR}/" -type f -name "env"
+	# The envs /etc/portage/ot-sources/${KV_MAJOR_MINOR}/${extraversion}/${arch}/env
+	find "/etc/portage/ot-sources/${KV_MAJOR_MINOR}/" -type f -name "env"
 }
 
 # @FUNCTION: ot-kernel_clear_env
@@ -3662,19 +3663,19 @@ eerror "sys-devel/llvm:${llvm_slot} is missing"
 		ot-kernel_set_configopt "CONFIG_LD_VERSION" "0"
 		ot-kernel_set_configopt "CONFIG_LLD_VERSION" "${llvm_slot}0000"
 	else
-		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check"
+		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for gcc"
 einfo "Using GCC ${gcc_slot}"
 		ot-kernel_unset_configopt "CONFIG_AS_IS_LLVM"
 		ot-kernel_unset_configopt "CONFIG_CC_IS_CLANG"
 		ot-kernel_unset_configopt "CONFIG_LD_IS_LLD"
-		local gcc_v=$(gcc --version \
+		local gcc_pv=$(gcc --version \
 			| head -n 1 \
 			| grep -o -E -e " [0-9]+.[0-9]+.[0-9]+" \
 			| head -n 1 \
 			| sed -e "s|[ ]*||g")
-		local gcc_major_v=$(printf "%02d" $(echo ${gcc_v} | cut -f 1 -d "."))
-		local gcc_minor_v=$(printf "%02d" $(echo ${gcc_v} | cut -f 2 -d "."))
-		ot-kernel_set_configopt "CONFIG_GCC_VERSION" "${gcc_major_v}${gcc_minor_v}00"
+		local gcc_pv_major=$(printf "%02d" $(echo ${gcc_pv} | cut -f 1 -d "."))
+		local gcc_pv_minor=$(printf "%02d" $(echo ${gcc_pv} | cut -f 2 -d "."))
+		ot-kernel_set_configopt "CONFIG_GCC_VERSION" "${gcc_pv_major}${gcc_pv_minor}00"
 	fi
 }
 
@@ -3697,9 +3698,9 @@ ot-kernel_set_kconfig_compressors() {
 		for alg in ${mod_comp_algs[@]} ; do
 			ot-kernel_n_configopt "CONFIG_MODULE_COMPRESS_${alg}" # Reset
 		done
-		if ver_test ${K_MAJOR_MINOR} -le 5.10 ; then
+		if ver_test ${KV_MAJOR_MINOR} -le 5.10 ; then
 			if [[ "${ot_kernel_modules_compressor^^}" == "ZSTD" ]] ; then
-eerror "ZSTD is not supported for ${K_MAJOR_MINOR} in OT_KERNEL_MODULES_COMPRESSOR."
+eerror "ZSTD is not supported for ${KV_MAJOR_MINOR} in OT_KERNEL_MODULES_COMPRESSOR."
 				die
 			fi
 einfo "Changing config to compress modules with ${ot_kernel_modules_compressor}"
@@ -3728,7 +3729,7 @@ einfo "Using manual setting for compressed modules"
 		XZ
 		ZSTD
 	)
-	if ver_test ${K_MAJOR_MINOR} -lt 5.10 && [[ "${boot_decomp^^}" == "ZSTD" ]] ; then
+	if ver_test ${KV_MAJOR_MINOR} -lt 5.10 && [[ "${boot_decomp^^}" == "ZSTD" ]] ; then
 eerror "ZSTD is only supported in 5.10+"
 		die
 	fi
@@ -4065,23 +4066,23 @@ ot-kernel_set_kconfig_hardening_level() {
 einfo "Using ${hardening_level} hardening level"
 	ot-kernel_y_configopt "CONFIG_EXPERT"
 
-	local gcc_major_v
-	local gcc_minor_v
+	local gcc_pv_major
+	local gcc_pv_minor
 	local clang_major_v
 	local clang_minor_v
 	if tc-is-gcc ; then
-		local gcc_v=$(gcc --version \
+		local gcc_pv=$(gcc --version \
 			| head -n 1 \
 			| grep -o -E -e " [0-9]+.[0-9]+.[0-9]+" \
 			| head -n 1 \
 			| sed -e "s|[ ]*||g")
-		gcc_major_v=$(printf "%02d" $(echo ${gcc_v} | cut -f 1 -d "."))
-		gcc_minor_v=$(printf "%02d" $(echo ${gcc_v} | cut -f 2 -d "."))
+		gcc_pv_major=$(printf "%02d" $(echo ${gcc_pv} | cut -f 1 -d "."))
+		gcc_pv_minor=$(printf "%02d" $(echo ${gcc_pv} | cut -f 2 -d "."))
 	fi
 	if tc-is-clang ; then
-		local clang_v=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
-		clang_major_v=$(echo "${clang_v}" | cut -f 1 -d ".")
-		clang_minor_v=$(echo "${clang_v}" | cut -f 2 -d ".")
+		local clang_pv=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
+		clang_major_v=$(echo "${clang_pv}" | cut -f 1 -d ".")
+		clang_minor_v=$(echo "${clang_pv}" | cut -f 2 -d ".")
 	fi
 
 	if [[ "${hardening_level}" =~ ("custom"|"manual") ]] ; then
@@ -4122,11 +4123,11 @@ einfo "Using ${hardening_level} hardening level"
 			ot-kernel_unset_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
-		if ver_test ${K_MAJOR_MINOR} -ge 5.19 ; then
+		if ver_test ${KV_MAJOR_MINOR} -ge 5.19 ; then
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|unret)"
 			ot-kernel_set_kconfig_kernel_cmdline "retbleed=off"
 		fi
-		if ver_test ${K_MAJOR_MINOR} -ge 5.10 ; then
+		if ver_test ${KV_MAJOR_MINOR} -ge 5.10 ; then
 			ot-kernel_unset_configopt "CONFIG_SPECULATION_MITIGATIONS"
 			ot-kernel_unset_configopt "CONFIG_CPU_IBPB_ENTRY"
 			ot-kernel_unset_configopt "CONFIG_CPU_IBRS_ENTRY"
@@ -4162,9 +4163,9 @@ einfo "Using ${hardening_level} hardening level"
 		elif [[ "${arch}" == "x86" ]] ; then
 			ot-kernel_y_configopt "CONFIG_RETPOLINE"
 			local ready=0
-			if tc-is-gcc && ver_test ${gcc_major_v}.${gcc_minor_v} -ge 8.1 ; then
+			if tc-is-gcc && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 8.1 ; then
 				ready=1
-			elif tc-is-clang && ver_test ${gcc_major_v}.${gcc_minor_v} -ge 7 ; then
+			elif tc-is-clang && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 7 ; then
 				ready=1
 			fi
 			if (( ${ready} == 0 )) ; then
@@ -4190,7 +4191,7 @@ eerror
 		if [[ "${cpu_sched}" =~ "cfs" && "${HT}" =~ ("1"|"2") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
 		fi
-		if ver_test ${K_MAJOR_MINOR} -ge 5.10 ; then
+		if ver_test ${KV_MAJOR_MINOR} -ge 5.10 ; then
 			ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 			ot-kernel_y_configopt "CONFIG_RETHUNK"
 			if ! test-flags "-mfunction-return=thunk-extern" ; then
@@ -4212,7 +4213,7 @@ eerror
 				ot-kernel_y_configopt "CONFIG_SLS"
 			fi
 		fi
-		if ver_test ${K_MAJOR_MINOR} -ge 5.19 ; then
+		if ver_test ${KV_MAJOR_MINOR} -ge 5.19 ; then
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|unret)"
 			ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 		fi
@@ -4244,9 +4245,9 @@ eerror
 		elif [[ "${arch}" == "x86" ]] ; then
 			ot-kernel_y_configopt "CONFIG_RETPOLINE"
 			local ready=0
-			if tc-is-gcc && ver_test ${gcc_major_v}.${gcc_minor_v} -ge 8.1 ; then
+			if tc-is-gcc && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 8.1 ; then
 				ready=1
-			elif tc-is-clang && ver_test ${gcc_major_v}.${gcc_minor_v} -ge 7 ; then
+			elif tc-is-clang && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 7 ; then
 				ready=1
 			fi
 			if (( ${ready} == 0 )) ; then
@@ -4272,7 +4273,7 @@ eerror
 		if [[ "${cpu_sched}" =~ "cfs" && "${HT}" =~ ("1"|"2") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
 		fi
-		if ver_test ${K_MAJOR_MINOR} -ge 5.15 ; then
+		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
 			ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 			ot-kernel_y_configopt "CONFIG_RETHUNK"
 			if ! test-flags "-mfunction-return=thunk-extern" ; then
@@ -4294,7 +4295,7 @@ eerror
 				ot-kernel_y_configopt "CONFIG_SLS"
 			fi
 		fi
-		if ver_test ${K_MAJOR_MINOR} -ge 5.19 ; then
+		if ver_test ${KV_MAJOR_MINOR} -ge 5.19 ; then
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|unret)"
 			ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 		fi
@@ -4993,8 +4994,8 @@ ot-kernel_set_kconfig_pgo() {
 	local profdata_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}.profdata"
 	if has clang-pgo ${IUSE} && ot-kernel_use clang-pgo ; then
 		(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
-		local clang_v=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
-		local clang_v_maj=$(echo "${clang_v}" | cut -f 1 -d ".")
+		local clang_pv=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
+		local clang_pv_major=$(echo "${clang_pv}" | cut -f 1 -d ".")
 		#ot-kernel_y_configopt "CONFIG_PGO_CLANG_LLVM_SELECT"
 		ot-kernel_n_configopt "CONFIG_PROFRAW_V8" # Reset
 		ot-kernel_n_configopt "CONFIG_PROFRAW_V7_LLVM14"
@@ -5002,45 +5003,45 @@ ot-kernel_set_kconfig_pgo() {
 		ot-kernel_n_configopt "CONFIG_PROFRAW_V6"
 		ot-kernel_n_configopt "CONFIG_PROFRAW_V5"
 		# See grep -r -e "INSTR_PROF_RAW_VERSION" /usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc
-		if (( ${llvm_slot} >= 15 && ${clang_v_maj} >= 15 )) ; then
+		if (( ${llvm_slot} >= 15 && ${clang_pv_major} >= 15 )) ; then
 einfo "Using profraw v8 for >= LLVM 15"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.6" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.6" ; then
 einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.5" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.5" ; then
 einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.4" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.4" ; then
 einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.3" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.3" ; then
 einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.2" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.2" ; then
 einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.1" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.1" ; then
 einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.0" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.0" ; then
 einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && ot-kernel_has_version "~sys-devel/clang-13.0.1" ; then
+		elif (( ${llvm_slot} == 13 && ${clang_pv_major} == 13 )) && ot-kernel_has_version "~sys-devel/clang-13.0.1" ; then
 einfo "Using profraw v7 for LLVM 13"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
-		elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && ot-kernel_has_version "~sys-devel/clang-13.0.0" ; then
+		elif (( ${llvm_slot} == 13 && ${clang_pv_major} == 13 )) && ot-kernel_has_version "~sys-devel/clang-13.0.0" ; then
 einfo "Using profraw v7 for LLVM 13"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
-		elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 12 )) && ot-kernel_has_version "~sys-devel/clang-12.0.1" ; then
+		elif (( ${llvm_slot} <= 12 && ${clang_pv_major} == 12 )) && ot-kernel_has_version "~sys-devel/clang-12.0.1" ; then
 einfo "Using profraw v5 for LLVM 12"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
-		elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 11 )) && ot-kernel_has_version "~sys-devel/clang-11.1.0" ; then
+		elif (( ${llvm_slot} <= 12 && ${clang_pv_major} == 11 )) && ot-kernel_has_version "~sys-devel/clang-11.1.0" ; then
 einfo "Using profraw v5 for LLVM 11"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
 		else
 eerror
-eerror "PGO is not supported for ${clang_v}.  Ask the ebuild maintainer to"
+eerror "PGO is not supported for ${clang_pv}.  Ask the ebuild maintainer to"
 eerror "update ot-kernel.eclass with the exact version to match the profraw"
 eerror "version, or update the patch for a newer profraw format. Currently only"
 eerror "profraw versions 5 to 8 are support."
@@ -5927,7 +5928,7 @@ ot-kernel_set_iosched() {
 	ot-kernel_unset_configopt "CONFIG_MQ_IOSCHED_KYBER"
 	ot-kernel_unset_configopt "CONFIG_IOSCHED_BFQ"
 	ot-kernel_unset_configopt "CONFIG_BFQ_GROUP_IOSCHED"
-	if ver_test "${K_MAJOR_MINOR}" -lt 5 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -lt 5 ; then
 		ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
 		ot-kernel_unset_configopt "CONFIG_IOSCHED_DEADLINE"
 		ot-kernel_unset_configopt "CONFIG_IOSCHED_CFQ"
@@ -5936,13 +5937,13 @@ ot-kernel_set_iosched() {
 	fi
 
 	# Translate.  eclass simplifies to 5.x iosched
-	if ver_test ${K_MAJOR_MINOR} -ge 5 ; then
+	if ver_test ${KV_MAJOR_MINOR} -ge 5 ; then
 		[[ "${ssd_iosched}" == "noop" ]] && ssd_iosched="none"
 		[[ "${hdd_iosched}" == "noop" ]] && hdd_iosched="none"
 	fi
 
 	# Translate to 4.x iosched
-	if ver_test ${K_MAJOR_MINOR} -lt 5 ; then
+	if ver_test ${KV_MAJOR_MINOR} -lt 5 ; then
 		[[ "${ssd_iosched}" == "none" ]] && ssd_iosched="noop"
 		[[ "${hdd_iosched}" == "none" ]] && hdd_iosched="noop"
 	fi
@@ -5972,32 +5973,32 @@ ot-kernel_set_iosched() {
 		elif [[ "${s}" == "bfq-custom-interactive" ]] ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_BFQ"
 			s="bfq"
-		elif [[ "${s}" == "deadline" ]] && ver_test ${K_MAJOR_MINOR} -lt 5  ; then
+		elif [[ "${s}" == "deadline" ]] && ver_test ${KV_MAJOR_MINOR} -lt 5  ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_DEADLINE"
 		elif [[ "${s}" == "mq-deadline" ]] ; then
 			ot-kernel_y_configopt "CONFIG_MQ_IOSCHED_DEADLINE"
-		elif [[ "${s}" == "cfq" ]] && ver_test ${K_MAJOR_MINOR} -lt 5 ; then
+		elif [[ "${s}" == "cfq" ]] && ver_test ${KV_MAJOR_MINOR} -lt 5 ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_CFQ"
 		elif [[ "${s}" == "kyber" ]] ; then
 			ot-kernel_y_configopt "CONFIG_MQ_IOSCHED_KYBER"
-		elif [[ "${s}" == "noop" ]] && ver_test ${K_MAJOR_MINOR} -lt 5 ; then
+		elif [[ "${s}" == "noop" ]] && ver_test ${KV_MAJOR_MINOR} -lt 5 ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
-		elif [[ "${s}" == "none" ]] && ver_test ${K_MAJOR_MINOR} -ge 5 ; then
+		elif [[ "${s}" == "none" ]] && ver_test ${KV_MAJOR_MINOR} -ge 5 ; then
 			:;
 		else
 			continue
 		fi
-		if ver_test "${K_MAJOR_MINOR}" -lt 5 \
+		if ver_test "${KV_MAJOR_MINOR}" -lt 5 \
 			&& [[ -z "${s_first}" ]] \
 			&& [[ "${s}" =~ ("cfq"|"deadline"|"noop") ]] ; then
 			s_first="${s}"
 		fi
 einfo "Enabled ${s} as an I/O scheduler"
 	done
-	if ver_test "${K_MAJOR_MINOR}" -lt 5 && [[ -n "${s_first}" ]] ; then
+	if ver_test "${KV_MAJOR_MINOR}" -lt 5 && [[ -n "${s_first}" ]] ; then
 einfo "${s_first} is set as the default I/O scheduler"
 		ot-kernel_set_configopt "CONFIG_DEFAULT_IOSCHED" "\"${s_first}\""
-	elif ver_test "${K_MAJOR_MINOR}" -lt 5 && [[ -z "${s_first}" ]] ; then
+	elif ver_test "${KV_MAJOR_MINOR}" -lt 5 && [[ -z "${s_first}" ]] ; then
 		#
 		# We need either cfq, deadline, noop or it may result in a null
 		# pointer dereference.
@@ -6115,7 +6116,7 @@ ot-kernel_iosched_max_tps() {
 # @DESCRIPTION:
 # Configures the I/O scheduler with the upstream default
 ot-kernel_iosched_default() {
-	if ver_test ${K_MAJOR_MINOR} -lt 5 ; then
+	if ver_test ${KV_MAJOR_MINOR} -lt 5 ; then
 		ot-kernel_set_iosched "cfq" "cfq"
 	else
 		ot-kernel_set_iosched "mq-deadline" "mq-deadline"
@@ -7181,7 +7182,7 @@ ewarn
 		if [[ "${OT_KERNEL_LOGO_COUNT:-auto}" == "auto" ]] ; then
 			:;
 		elif [[ "${OT_KERNEL_LOGO_COUNT}" =~ [0-9][0-9]* ]] ; then
-			if ver_test ${K_MAJOR_MINOR} -ge 5.6 ; then
+			if ver_test ${KV_MAJOR_MINOR} -ge 5.6 ; then
 				ot-kernel_set_kconfig_kernel_cmdline "fbcon=logo-count:${OT_KERNEL_LOGO_COUNT}"
 			else
 				sed -i -e "s|num_online_cpus()|${OT_KERNEL_LOGO_COUNT}|g" \
@@ -7467,7 +7468,7 @@ ot-kernel_src_configure() {
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		local config="${OT_KERNEL_CONFIG}"
 		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
-		local default_config="/etc/kernels/kernel-config-${K_MAJOR_MINOR}-${extraversion}-${arch}"
+		local default_config="/etc/kernels/kernel-config-${KV_MAJOR_MINOR}-${extraversion}-${arch}"
 		[[ -z "${config}" ]] && config="${default_config}"
 		local target_triple="${OT_KERNEL_TARGET_TRIPLE}"
 		local cpu_sched="${OT_KERNEL_CPU_SCHED}"
@@ -7531,12 +7532,11 @@ get_llvm_slot() {
 # Gets a ready to use gcc compiler
 get_gcc_slot() {
 	local gcc_slot
+	local gcc_pv
 	for gcc_slot in $(seq ${GCC_MAX_SLOT:-13} -1 ${GCC_MIN_SLOT:-6}) ; do
-		gcc_slot=$(best_version "sys-devel/gcc:${gcc_slot}")
-		[[ -z "${gcc_slot}" ]] && continue
-		gcc_slot=$(echo "${gcc_slot}" | sed -r -e "s|sys-devel/gcc-||" -e "s|-r[0-9]+||")
-		local gcc_slot_maj=$(ver_cut 1 ${gcc_slot})
-		ot-kernel_has_version "sys-devel/gcc:${gcc_slot_maj}" && is_gcc_ready && break
+		gcc_pv=$(best_version "sys-devel/gcc:${gcc_slot}")
+		[[ -z "${gcc_pv}" ]] && continue
+		ot-kernel_has_version "sys-devel/gcc:${gcc_slot}" && is_gcc_ready && break
 	done
 	echo "${gcc_slot}"
 }
@@ -7591,7 +7591,7 @@ einfo "Using Clang ${llvm_slot}"
 		CXX=clang++
 		LD=ld.lld
 	else
-		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check"
+		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for gcc"
 einfo "Using GCC ${gcc_slot}"
 		args+=(
 			CC=${CHOST}-gcc-${gcc_slot}
@@ -8036,7 +8036,7 @@ ot-kernel_src_compile() {
 		local build_flag="${OT_KERNEL_BUILD}" # Can be 0, 1, true, false, yes, no, nobuild, build, unset
 		local config="${OT_KERNEL_CONFIG}"
 		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
-		local default_config="/etc/kernels/kernel-config-${K_MAJOR_MINOR}-${extraversion}-${arch}"
+		local default_config="/etc/kernels/kernel-config-${KV_MAJOR_MINOR}-${extraversion}-${arch}"
 		[[ -z "${config}" ]] && config="${default_config}"
 		local target_triple="${OT_KERNEL_TARGET_TRIPLE}"
 		local cpu_sched="${OT_KERNEL_CPU_SCHED}"
@@ -8296,7 +8296,7 @@ ot-kernel_src_install() {
 
 			if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES:-0}" == "1" ]] \
 				&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
-				local last_version=$(best_version "=sys-kernel/${PN}-${K_MAJOR_MINOR}*" \
+				local last_version=$(best_version "=sys-kernel/${PN}-${KV_MAJOR_MINOR}*" \
 					| sed -e "s|sys-kernel/${PN}-||g")
 				local license_preserve_path_src="/usr/share/${PN}/${last_version}-${extraversion}/licenses"
 				local license_preserve_path_dest="/usr/share/${PN}/${PV}-${extraversion}/licenses"
@@ -8338,7 +8338,7 @@ einfo "Running:  make modules_install ${args[@]}"
 				ot-kernel_keep_keys
 			fi
 
-			local default_config="/etc/kernels/kernel-config-${K_MAJOR_MINOR}-${extraversion}-${arch}"
+			local default_config="/etc/kernels/kernel-config-${KV_MAJOR_MINOR}-${extraversion}-${arch}"
 einfo "Saving the config for ${extraversion} to ${default_config}"
 			insinto /etc/kernels
 			newins "${BUILD_DIR}/.config" $(basename "${default_config}")
@@ -8887,7 +8887,7 @@ ewarn
 	local wants_cfi=0
 	local wants_kcfi=0
 	local wants_lto=0
-	local gcc_v=$(best_version "sys-devel/gcc" \
+	local gcc_pv=$(best_version "sys-devel/gcc" \
 		| sed -r -e "s|sys-devel/gcc-||g" \
 		-e "s|-r[0-9]+||"| cut -f 1-3 -d ".")
 	if ot-kernel_has_version "sys-devel/clang" ; then
@@ -8944,7 +8944,7 @@ einfo
 einfo
 einfo "The kernel_compiler patch requires that you either add"
 einfo
-einfo "  --kernel-cc=/usr/bin/\${CHOST}-gcc-\${gcc_v}"
+einfo "  --kernel-cc=/usr/bin/\${CHOST}-gcc-\${gcc_pv}"
 einfo
 einfo "    or"
 einfo
@@ -9191,9 +9191,9 @@ ewarn "For mitigations of side-channels because of hardware flaws, see also"
 ewarn "https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/index.html"
 ewarn
 
-	if ver_test ${K_MAJOR_MINOR} -lt 5.10 ; then
+	if ver_test ${KV_MAJOR_MINOR} -lt 5.10 ; then
 ewarn
-ewarn "There's currently no backport for RETBleed in the ${K_MAJOR_MINOR}"
+ewarn "There's currently no backport for RETBleed in the ${KV_MAJOR_MINOR}"
 ewarn "series.  Use >= 5.10 for RETBleed mitigation for ARCH=x86."
 ewarn
 	fi

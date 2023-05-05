@@ -27,9 +27,9 @@ LLVM_MAX_SLOT=15
 LLVM_MIN_SLOT=11
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
-K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
-K_MAJOR=$(ver_cut 1 ${PV})
-K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
+GENPATCHES_VER="${GENPATCHES_VER:?1}"
+KV_MAJOR=$(ver_cut 1 ${PV})
+KV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 PATCH_ALLOW_O3_COMMIT="58c80177a3c7a80258336faf346acecdc411dbde" # from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor / oldest
@@ -521,7 +521,7 @@ if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 else
 	KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 	SRC_URI+="
-https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
+https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
 	   ${KERNEL_PATCH_URIS[@]}
 	"
 fi
@@ -623,7 +623,7 @@ ot-kernel_pkg_setup_cb() {
 		else
 ewarn
 # Need to fix linking problem
-ewarn "TRESOR for ${K_MAJOR_MINOR} is in development."
+ewarn "TRESOR for ${KV_MAJOR_MINOR} is in development."
 ewarn
 ewarn "Please migrate your data outside the XTS(tresor) partition(s) into a different"
 ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to commit"
@@ -763,7 +763,7 @@ ot-kernel_apply_tresor_fixes() {
 # Show messages and avoid collision triggering
 ot-kernel_pkg_postinst_cb() {
 einfo
-einfo "You may require the genkernel 4.x series to build the ${K_MAJOR_MINOR}.x"
+einfo "You may require the genkernel 4.x series to build the ${KV_MAJOR_MINOR}.x"
 einfo "kernel series."
 einfo
 }

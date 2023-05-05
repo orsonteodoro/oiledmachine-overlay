@@ -24,9 +24,9 @@ LLVM_MIN_SLOT=10
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 GENPATCHES_BLACKLIST=" 2400"
-K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
-K_MAJOR=$(ver_cut 1 ${PV})
-K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
+GENPATCHES_VER="${GENPATCHES_VER:?1}"
+KV_MAJOR=$(ver_cut 1 ${PV})
+KV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.196"
 
 PATCH_ALLOW_O3_COMMIT="4edc8050a41d333e156d2ae1ed3ab91d0db92c7e" # from zen repo
@@ -289,7 +289,7 @@ else
 	KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 	SRC_URI+="
 		${KERNEL_PATCH_URIS[@]}
-https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
+https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
 	"
 fi
 
@@ -550,7 +550,7 @@ ot-kernel_filter_patch_cb() {
 # Filter
 ot-kernel_filter_genpatches_blacklist_cb() {
 	if ( ver_test $(ver_cut 1-3 ${PV}) -eq 5.4.85 ) \
-		&& ( ver_test ${K_GENPATCHES_VER} -eq 87 ) ; then
+		&& ( ver_test ${GENPATCHES_VER} -eq 87 ) ; then
 		echo "2400"
 	else
 		echo ""

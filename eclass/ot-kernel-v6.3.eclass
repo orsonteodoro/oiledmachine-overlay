@@ -27,9 +27,9 @@ LLVM_MAX_SLOT=15
 LLVM_MIN_SLOT=11
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
-K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
-K_MAJOR=$(ver_cut 1 ${PV})
-K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
+GENPATCHES_VER="${GENPATCHES_VER:?1}"
+KV_MAJOR=$(ver_cut 1 ${PV})
+KV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 PATCH_ALLOW_O3_COMMIT="1646f7d3d494731d8d39910d6b2488bde2f2da7d" # from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor / oldest
@@ -203,7 +203,6 @@ tresor_x86_64-256-bit-key-support uksm zen-multigen_lru zen-sauce zen-sauce-all
 
 # Not ready yet
 REQUIRED_USE+="
-	!bbrv2
 	!cfi
 	!uksm
 	!multigen_lru
@@ -523,7 +522,7 @@ if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 else
 	KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 	SRC_URI+="
-https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
+https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
 	   ${KERNEL_PATCH_URIS[@]}
 	"
 fi
@@ -625,7 +624,7 @@ ot-kernel_pkg_setup_cb() {
 		else
 ewarn
 # Need to fix linking problem
-ewarn "TRESOR for ${K_MAJOR_MINOR} is in development."
+ewarn "TRESOR for ${KV_MAJOR_MINOR} is in development."
 ewarn
 ewarn "Please migrate your data outside the XTS(tresor) partition(s) into a different"
 ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to commit"
@@ -765,7 +764,7 @@ ot-kernel_apply_tresor_fixes() {
 # Show messages and avoid collision triggering
 ot-kernel_pkg_postinst_cb() {
 einfo
-einfo "You may require the genkernel 4.x series to build the ${K_MAJOR_MINOR}.x"
+einfo "You may require the genkernel 4.x series to build the ${KV_MAJOR_MINOR}.x"
 einfo "kernel series."
 einfo
 }
@@ -833,7 +832,7 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-3ff0ac8.patch" ]] ; then
 		# Dropped hunk from net/ipv4/bpf_tcp_ca.c
 		_tpatch "${PATCH_OPTS}" "${path}" 3 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-3ff0ac8-fix-for-6.0.patch"
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-3ff0ac8-fix-for-6.3.patch"
 	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-c6ef88b.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
@@ -874,13 +873,15 @@ eerror
 #		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
 
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-cf9b1da.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 5 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-6.1.patch"
-
+		_tpatch "${PATCH_OPTS}" "${path}" 5 1 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-6.3.patch"
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
 einfo "See ${path}"
 		die
 		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-3ff0ac8.patch" ]] ; then
+einfo "See ${path}"
+		die
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

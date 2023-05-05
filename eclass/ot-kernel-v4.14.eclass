@@ -24,9 +24,9 @@ GCC_MAX_SLOT=10 # With kernel-compiler-patch
 GCC_MIN_SLOT=6
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
-K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
-K_MAJOR=$(ver_cut 1 ${PV})
-K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
+GENPATCHES_VER="${GENPATCHES_VER:?1}"
+KV_MAJOR=$(ver_cut 1 ${PV})
+KV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.162"
 PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # O3 config option
 PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow fix
@@ -196,7 +196,7 @@ if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:
 else
 	SRC_URI+="
-https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
+https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
 	   ${KERNEL_PATCH_URIS[@]}
 	"
 fi
@@ -267,7 +267,7 @@ ot-kernel_pkg_setup_cb() {
 	# version.
 ewarn
 ewarn "This ot-sources ${PV} release is only for research purposes or to access"
-ewarn "TRESOR devices.  This ${K_MAJOR_MINOR}.x series is EOL for this repo but"
+ewarn "TRESOR devices.  This ${KV_MAJOR_MINOR}.x series is EOL for this repo but"
 ewarn "not for upstream.  It will be removed immediately once TRESOR has been"
 ewarn "fixed for mainline / stable for >= 5.x."
 ewarn

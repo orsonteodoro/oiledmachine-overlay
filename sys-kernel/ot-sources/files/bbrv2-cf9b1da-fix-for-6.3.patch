@@ -1,0 +1,52 @@
+
+Header license for include/net/inet_connection_sock.h:
+
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
+Header license include/net/netns/ipv4.h:
+
+/* SPDX-License-Identifier: GPL-2.0 */
+
+Header license for include/uapi/linux/snmp.h:
+
+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
+Header license for net/ipv4/proc.c:
+
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+Header license for net/ipv4/sysctl_net_ipv4.c:
+
+// SPDX-License-Identifier: GPL-2.0
+
+--- a/include/net/inet_connection_sock.h.orig	2023-05-04 17:42:34.975316319 -0700
++++ b/include/net/inet_connection_sock.h	2023-05-04 17:45:10.267320269 -0700
+@@ -135,7 +135,7 @@ struct inet_connection_sock {
+ 	u32			  icsk_probes_tstamp;
+ 	u32			  icsk_user_timeout;
+ 
+-#define ICSK_CA_PRIV_SIZE	  (216)
++#define ICSK_CA_PRIV_SIZE	  (224)
+ 	u64			  icsk_ca_priv[ICSK_CA_PRIV_SIZE / sizeof(u64)];
+ };
+ 
+--- a/include/uapi/linux/snmp.h.orig	2023-04-23 12:02:52.000000000 -0700
++++ b/include/uapi/linux/snmp.h	2023-05-04 17:48:35.023325477 -0700
+@@ -296,6 +296,7 @@ enum
+ 	LINUX_MIB_TCPMIGRATEREQSUCCESS,		/* TCPMigrateReqSuccess */
+ 	LINUX_MIB_TCPMIGRATEREQFAILURE,		/* TCPMigrateReqFailure */
+ 	LINUX_MIB_TCPPLBREHASH,			/* TCPPLBRehash */
++	LINUX_MIB_TCPECNREHASH,			/* TCPECNRehash */
+ 	__LINUX_MIB_MAX
+ };
+ 
+--- a/net/ipv4/proc.c.orig	2023-04-23 12:02:52.000000000 -0700
++++ b/net/ipv4/proc.c	2023-05-04 17:50:27.615328340 -0700
+@@ -298,6 +298,7 @@ static const struct snmp_mib snmp4_net_l
+ 	SNMP_MIB_ITEM("TCPMigrateReqSuccess", LINUX_MIB_TCPMIGRATEREQSUCCESS),
+ 	SNMP_MIB_ITEM("TCPMigrateReqFailure", LINUX_MIB_TCPMIGRATEREQFAILURE),
+ 	SNMP_MIB_ITEM("TCPPLBRehash", LINUX_MIB_TCPPLBREHASH),
++	SNMP_MIB_ITEM("TCPECNRehash", LINUX_MIB_TCPECNREHASH),
+ 	SNMP_MIB_SENTINEL
+ };
+ 

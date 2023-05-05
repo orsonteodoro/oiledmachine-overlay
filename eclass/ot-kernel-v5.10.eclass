@@ -25,9 +25,9 @@ LLVM_MAX_SLOT=15
 LLVM_MIN_SLOT=10
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
-K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
-K_MAJOR=$(ver_cut 1 ${PV})
-K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
+GENPATCHES_VER="${GENPATCHES_VER:?1}"
+KV_MAJOR=$(ver_cut 1 ${PV})
+KV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.205"
 PATCH_ALLOW_O3_COMMIT="228e792a116fd4cce8856ea73f2958ec8a241c0c" # from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442" # 5.10
@@ -356,7 +356,7 @@ if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 else
 	KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 	SRC_URI+="
-https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
+https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
 	   ${KERNEL_PATCH_URIS[@]}
 	"
 fi
@@ -548,7 +548,7 @@ ot-kernel_apply_tresor_fixes() {
 # Show messages and avoid collision triggering
 ot-kernel_pkg_postinst_cb() {
 einfo
-einfo "You may require the genkernel 4.x series to build the ${K_MAJOR_MINOR}.x"
+einfo "You may require the genkernel 4.x series to build the ${KV_MAJOR_MINOR}.x"
 einfo "kernel series."
 einfo
 }

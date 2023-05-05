@@ -23,7 +23,8 @@ if [[ -z "${OT_KERNEL_KUTILS_ECLASS}" ]] ; then
 # @FUNCTION: ot-kernel_has_version
 # @DESCRIPTION:
 # Use the fewest steps to check for the existence of package instead of
-# using has_version if possible.
+# using has_version if possible.  There is a big slow down introducted by
+# emerge.
 ot-kernel_has_version() {
 	local pkg="${1}"
 	local ret

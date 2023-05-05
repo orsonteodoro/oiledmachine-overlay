@@ -309,10 +309,10 @@
 
     The tree structure is as follows in abstract form:
 
-      /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
-      /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/patches
+      /etc/portage/ot-sources/${KV_MAJOR_MINOR}/${extraversion}/${arch}/env
+      /etc/portage/ot-sources/${KV_MAJOR_MINOR}/${extraversion}/${arch}/patches
 
-    K_MAJOR_MINOR will be expanded to either 4.14, 5.4, 5.10, 5.15, 6.1.
+    KV_MAJOR_MINOR will be expanded to either 4.14, 5.4, 5.10, 5.15, 6.1.
 
     extraversion will be expanded to ot, rt, or a custom name.
 
@@ -325,14 +325,14 @@
 
     Files:
 
-      /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
+      /etc/portage/ot-sources/${KV_MAJOR_MINOR}/${extraversion}/${arch}/env
       Contains all environment variables for this buildconfig.  The
       per package extraversion and per package buildconfig are synonymous
       for this file.
 
     Directories (In planning):
 
-      /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/patches
+      /etc/portage/ot-sources/${KV_MAJOR_MINOR}/${extraversion}/${arch}/patches
       Contains extra user patches to apply per buildconfig.
 
 
@@ -457,7 +457,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     x86_64 and arm64 are recognized as 64 with possibly 32 compatibility, but
     x86 and arm are recognized as strictly 32-bit.
     Both the folder path (${arch} in
-    /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env) and
+    /etc/portage/ot-sources/${KV_MAJOR_MINOR}/${extraversion}/${arch}/env) and
     the OT_KERNEL_ARCH need to be the same.
 
     Acceptable values:
