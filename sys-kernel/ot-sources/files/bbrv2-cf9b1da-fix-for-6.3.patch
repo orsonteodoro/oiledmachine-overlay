@@ -6,6 +6,10 @@ License for net/ipv4/tcp_bbr2.c:
 
 Dual BSD/GPL
 
+Header license for include/net/tcp.h:
+
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
 --- linux-6.3.1-builder.orig/net/ipv4/tcp_bbr2.c	2023-05-05 02:31:58.376470126 -0700
 +++ linux-6.3.1-builder/net/ipv4/tcp_bbr2.c	2023-05-05 10:12:37.916860630 -0700
 @@ -167,6 +167,7 @@ struct bbr {
@@ -144,3 +148,15 @@ Dual BSD/GPL
  	pause = READ_ONCE(net->ipv4.sysctl_tcp_plb_suspend_rto_sec) * HZ;
  	pause += get_random_u32_below(pause);
  	plb->pause_until = tcp_jiffies32 + pause;
+--- a/include/net/tcp.h.orig	2023-05-05 10:58:25.980899456 -0700
++++ b/include/net/tcp.h	2023-05-05 11:07:21.932907028 -0700
+@@ -2188,7 +2188,8 @@ extern void tcp_rack_update_reo_wnd(stru
+ /* State for PLB (Protective Load Balancing) for a single TCP connection. */
+ struct tcp_plb_state {
+ 	u8	consec_cong_rounds:5, /* consecutive congested rounds */
+-		unused:3;
++		enabled:1,	/* Check if PLB is enabled */
++		unused:2;
+ 	u32	pause_until; /* jiffies32 when PLB can resume rerouting */
+ };
+ 
