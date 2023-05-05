@@ -62,7 +62,3 @@ liri-base/libliri aurora
 # Not feasible for most individuals
 # It needs a lot of computing resources.
 sys-apps/orca build-models
-
-# Broken on boot
-=sys-kernel/ot-sources-6.2* bbrv2
-=sys-kernel/ot-sources-6.3* bbrv2
