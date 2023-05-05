@@ -28,6 +28,7 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 BENCHMARK_TYPES=(
 	assert
 	async_hooks
+	blob
 	buffers
 	child_process
 	cluster
@@ -76,10 +77,10 @@ gen_iuse_pgo() {
 
 IUSE+="
 acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
-npm mold pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
++npm mold pax-kernel +snapshot +ssl system-icu +system-ssl test
 
 $(gen_iuse_pgo)
-man pgo r6
+man pgo
 "
 
 gen_required_use_pgo() {
@@ -111,7 +112,7 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Apr 11, 2023
+# Last deps commit date:  May 2, 2023
 ACORN_PV="8.8.2"
 NGHTTP2_PV="1.52.0"
 RDEPEND+="
@@ -121,10 +122,10 @@ RDEPEND+="
 	>=dev-libs/libuv-1.44.2:=
 	>=net-dns/c-ares-1.19.0
 	>=net-libs/nghttp2-${NGHTTP2_PV}
-	>=sys-libs/zlib-1.2.12
+	>=sys-libs/zlib-1.2.13
 	app-eselect/eselect-nodejs
 	system-icu? (
-		>=dev-libs/icu-72.1:=
+		>=dev-libs/icu-73.1:=
 	)
 	system-ssl? (
 		>=dev-libs/openssl-3.0.8:0=
@@ -149,9 +150,6 @@ BDEPEND+="
 			>=net-libs/nghttp2-${NGHTTP2_PV}[utils]
 		)
 	)
-	systemtap? (
-		dev-util/systemtap
-	)
 	test? (
 		net-misc/curl
 	)
@@ -159,13 +157,13 @@ BDEPEND+="
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 PATCHES=(
 	"${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
-	"${FILESDIR}"/${PN}-18.14.0-global-npm-config.patch
+	"${FILESDIR}"/${PN}-19.5.0-global-npm-config.patch
 	"${FILESDIR}"/${PN}-16.13.2-lto-update.patch
-	"${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch
+	"${FILESDIR}"/${PN}-20.1.0-support-clang-pgo.patch
 	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_PV="9.5.1" # See https://github.com/nodejs/node/blob/v18.16.0/deps/npm/package.json
+NPM_PV="9.6.4" # See https://github.com/nodejs/node/blob/v20.0.0/deps/npm/package.json
 YARN1_PV="1.22.19"
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
@@ -203,7 +201,7 @@ pkg_setup() {
 	linux-info_pkg_setup
 
 einfo
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2025-04-30."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2023-06-01."
 einfo
 
 	# Prevent merge conflicts
@@ -481,7 +479,6 @@ ewarn "If moldlto fails for gcc, try clang."
 	"${EPYTHON}" configure.py \
 		--prefix="${EPREFIX}"/usr \
 		--dest-cpu=${myarch} \
-		$(use_with systemtap dtrace) \
 		"${myconf[@]}" || die
 
 	# Prevent double build on install.
@@ -730,13 +727,6 @@ src_install() {
 	fi
 
 	mv "${ED}"/usr/share/doc/node "${ED}"/usr/share/doc/${PF} || die
-
-	if use systemtap ; then
-		# Move tapset to avoid conflict
-		mv "${ED}/usr/share/systemtap/tapset/"node${,${SLOT_MAJOR}}.stp || die
-	else
-		rm "${ED}/usr/share/systemtap/tapset/node.stp" || die
-	fi
 
 	if ! use corepack ; then
 		# Prevent collisions

@@ -778,8 +778,8 @@ install_corepack() {
 	corepack prepare "yarn@${YARN1_PV}" -o="${EROOT}/usr/share/nodejs/yarn1.tgz"
 
 einfo
-einfo "Use \`corepack hydrate --activate ${EROOT}/usr/share/nodejs/corepack.tgz\` to load npm, pnpm, yarn 3.x"
-einfo "Use \`corepack hydrate --activate ${EROOT}/usr/share/nodejs/yarn1.tgz\` to yarn 1.x"
+einfo "Use \`corepack hydrate --activate ${EPREFIX}/usr/share/nodejs/corepack.tgz\` to load npm, pnpm, and yarn 3.x."
+einfo "Use \`corepack hydrate --activate ${EPREFIX}/usr/share/nodejs/yarn1.tgz\` to load yarn 1.x."
 einfo
 }
 
