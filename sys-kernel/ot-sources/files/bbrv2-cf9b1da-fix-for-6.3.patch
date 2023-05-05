@@ -164,8 +164,8 @@ Header license for include/net/inet_connection_sock.h:
  	u32	pause_until; /* jiffies32 when PLB can resume rerouting */
  };
  
---- include/net/inet_connection_sock.h.orig	2023-05-05 11:25:12.708922157 -0700
-+++ include/net/inet_connection_sock.h	2023-05-05 11:26:40.604923399 -0700
+--- a/include/net/inet_connection_sock.h.orig	2023-05-05 11:25:12.708922157 -0700
++++ b/include/net/inet_connection_sock.h	2023-05-05 11:26:40.604923399 -0700
 @@ -135,7 +135,7 @@ struct inet_connection_sock {
  	u32			  icsk_probes_tstamp;
  	u32			  icsk_user_timeout;
