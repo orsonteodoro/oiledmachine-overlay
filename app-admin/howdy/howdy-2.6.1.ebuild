@@ -57,7 +57,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2.6.1-use-py3-pythonparser.patch"
+	"A${FILESDIR}/${PN}-2.6.1-use-py3-pythonparser.patch"
 )
 EGIT_COMMIT_DLIB_MODELS="daf943f7819a3dda8aec4276754ef918dc26491f"
 DLIB_MODELS_DATE="20210412"

@@ -63,7 +63,6 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-3.0_beta_pre20220131-use-py3-pythonparser.patch"
 )
 EGIT_COMMIT_DLIB_MODELS="daf943f7819a3dda8aec4276754ef918dc26491f"
 DLIB_MODELS_DATE="20210412"
@@ -105,7 +104,7 @@ ewarn
 
 src_unpack() {
 	if [[ ${PV} =~ 9999 ]] ; then
-		use fallback-commit && EGIT_COMMIT="943f1e14e2c05159c22fb5176db377c0c1610bba" # Apr 26, 2022
+		use fallback-commit && EGIT_COMMIT="30728a6d3634479c24ffd4e094c34a30bbb43058" # Mar 8, 2022
 		EGIT_BRANCH="beta"
 		EGIT_REPO_URI="https://github.com/boltgolt/howdy.git"
 		git-r3_fetch
