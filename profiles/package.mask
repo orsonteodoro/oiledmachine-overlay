@@ -118,12 +118,20 @@ dev-dotnet/monodevelop
 #
 # Ebuilds are planned to drop because of issues connected with
 #
-#   1. uncertain ebuild quality for very complex packages depending on old
-#      python version (3.9) which is not EOL yet and required for testing
+#   1. uncertain python quality targeting 3.10, 3.11 for very complex packages
+#      depending on old python version (3.9) which is not EOL yet and required
+#      for testing
 #   2. Forced REQUIRED_USE blocking which cannot be disabled
-#   3. _PYTHON_ALL_IMPLS (from  python-utils-r1.eclass) bumping faster than the
-#      EOL date caused by commit d4f682f.
-#   4. laziness of upstream for related test packages
+#   3. _PYTHON_ALL_IMPLS (from python-utils-r1.eclass) bumping suspiciously
+#      [back-to-back] faster than the EOL date (Oct 2025 for py3.9 and Oct 2024
+#      for py3.8 compared to now (May 2023)) caused by commit d4f682f.  As
+#      a consequence, ebuild devs are forced to use newer version or denied
+#      updating on a current upstream supported release and raises quality
+#      issues since no proof of testing on the distro side provided for these
+#      unofficial patches for support for newer python versions.  This also
+#      raises other big issues.
+#   4. laziness of upstream to fix python compatibility for newer python in
+#      related python test packages
 #   5. a bad condition which can't be disabled in the link below
 # https://github.com/gentoo-mirror/gentoo/blob/d4f682ffb030d6f8d8afac8438bda89bf1967dce/eclass/python-utils-r1.eclass#L171
 #
