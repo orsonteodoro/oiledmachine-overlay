@@ -58,15 +58,13 @@ If you submit a ebuild this way, you still need to follow the rules below.
 
 Difficulty:  Hard for noobs, easy for experienced
 
-#### Rules
+#### Ebuild guidelines
 
 All ebuilds must conform to specifically 2023 ebuild style guide only recognized
 by this overlay.  We do not use the distro recommendations because they are
 based on an outdated style guide.
 
-* ebuild rules:
-
-* Coding style rules/guidelines:
+* Coding style:
   - Ebuilds contents must be symmetric/even or ANSI C like code style.
   - The ~90% of the code must be within 80 characters boundary.
     - Long strings need to be hard wrapped.
@@ -107,7 +105,7 @@ based on an outdated style guide.
   - metadata.xml longdescription and flags should be formal.
   - *DEPENDs sources should be documented if not centralized.
 
-* Security rules/guidelines
+* Security:
   - The uploaded point release is not vulnerable and does not have security
     advisories.  Use NVD, CVE, GLSA to see if the package is vulnerable.
   - You must edit profile/package.use.force or profile/package.use.mask to hard
@@ -140,7 +138,7 @@ based on an outdated style guide.
     weekly.
   - Ebuilds with multiple critical vulnerabilities may be dropped.
 
-* Versioning rules/guidelines:
+* Versioning:
   - If a project has git tags, you may use use `9999`, `<PV>_p9999`,
     `<PV>_pre9999` for live ebuild versions.
   - If a project has git tags, but the distro uses `<PV>_p20230903`, you must
@@ -150,7 +148,7 @@ based on an outdated style guide.
   - If a project has no tag but the distro uses `20230903`, you must use
     `99999999` for live ebuild versions.
 
-* SRC_URI rules/guidelines:
+* SRC_URI:
   - The destination filenames in SRC_URI must be prefixed with the project name
     if the source is just version.ext to avoid name collisions.
   - The destination filenames in SRC_URI must be prefixed with the service name
@@ -159,7 +157,7 @@ based on an outdated style guide.
     and version as a c/c++ tarball.  The distro repo or previous tarball name has
     right of way.
 
-* Live ebuilds rules/guidelines:
+* Live ebuilds:
   - Live ebuilds must have KEYWORDS disabled or removed.
   - Live ebuild snapshots should have KEYWORDs disabled or removed.
   - Live ebuilds should disable analytics/telemetry in the build system.
@@ -177,7 +175,7 @@ based on an outdated style guide.
     - Compare the hash of the hash to ensure determinism in live ebuilds or
       else recommend the `fallback-commit` USE flag.
 
-* Python ebuilds rules/guidelines:
+* Python ebuilds:
   - All python dependencies must have either PYTHON_USEDEP or PYTHON_SINGLE_USEDEP.
   - For python pacakages, all dependencies must be listed.
   - If a python package does provide a test suite but not through supported
@@ -187,7 +185,7 @@ based on an outdated style guide.
     the footer of the ebuild per each unofficially supported python versions.
   - You may not use scripts to auto bump PYTHON_COMPAT.
 
-* JS packages rules/guidelines:
+* JS packages:
   - Use the npm_updater_update_locks.sh to update dependencies and produce a
     lockfile.
   - Both yarn and npm offline install support has been added in the eclass
@@ -198,7 +196,7 @@ based on an outdated style guide.
     must be updated.  JS ebuilds with dependencies reporting "No fix available"
     during audit fix may be deleted.
 
-* C/C++ ebuilds rules/guidelines:
+* C/C++ ebuilds:
   - Ebuilds should be Prefix aware for C/C++ programs.
     - Use "${ESYSROOT}/usr/include" as a source.
     - Use "${ESYSROOT}/usr/$(get_libdir)" as a source.
@@ -231,7 +229,7 @@ based on an outdated style guide.
   - Adding src_test and test *DEPENDs for C/C++ libraries is optional, but
     highly recommended and may be required in the future in this overlay.
 
-* USE flags rules/guidelines:
+* USE flags:
   - USE flags should be hyphenated between words most of the time.
     Underscores can used by USE flags in profiles/desc.
   - Adding the test USE flag and test dependencies is required for
@@ -243,7 +241,7 @@ based on an outdated style guide.
     if the setting is not platform agnostic or would likely lead to
     breakage.
 
-* Quality, time limits, optional, extent of support guidelines:
+* Quality, time limits, optional, extent of support:
   - If a dependency package is for hardware that you do not have access to,
     you do not need to package it.
   - If a dependency exists on other overlay(s), you do not need to submit it for
@@ -296,7 +294,7 @@ based on an outdated style guide.
     blocking security updates.
   - If a package is orphaned in this overlay, it may be dropped.
 
-* Multislot rules/guidelines:
+* Multislot:
   - SLOT are up to the ebuild (SLOT="slot/subslot"), but recommened for
     packages where there is difficultly updating or the API/interface has
     changed dramatically when updating to the next major or minor version.
@@ -316,7 +314,7 @@ based on an outdated style guide.
     - PATH manipulation typically done by eclasses
     - PATH prioritization to symlinks in for example ${WORKDIR}/bin.  (Uncommon)
 
-* Ebuild End of Life rules/guidelines:
+* Ebuild End of Life (EOL):
   - If you are going to keep EOL slots/versions, put the reason why as a comment
     in the footer or near the header.
     - Good reasons:
@@ -346,7 +344,7 @@ based on an outdated style guide.
     check.
   - Eclasses need to support either EAPI 7 or EAPI 8
 
-* ebuild license rules:
+* Licenses:
   - All `.ebuild`s must be GPL2 only or have a GPL2 compatible license header.
   - You may add your name to the license header, or AUTHORS.md of the root of
     the overlay, or remain anonymous.
@@ -377,7 +375,7 @@ based on an outdated style guide.
       license incompatibility.
   - Refrain from using non free trademarks.
 
-* metadata.xml rules:
+* metadata.xml:
   - Everything is space indented.
   - Generally indents are two spaces.
   - Tags are symmetric.
@@ -388,12 +386,12 @@ based on an outdated style guide.
   - If the project is ZLIBed, you must clearly put that you made
     the ebuild and not the project that you are packaging.
 
-* upload rules:
+* Uploading:
   - You may submit many ebuilds at the same time, but do not send more than
     a reasonable amount.
   - It is better to send one package folder at a time.
 
-* code review checklist:
+* Code review checklist:
   - Header copyright notices
   - License files for free open source compatibility
   - Patches conform to project license terms.
