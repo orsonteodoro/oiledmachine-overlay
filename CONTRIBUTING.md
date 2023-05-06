@@ -183,6 +183,9 @@ based on an outdated style guide.
   - If a python package does provide a test suite but not through supported
     distutils_enable_tests values like pytest, then src_test() must be
     explicitly defined in the ebuild.
+  - You must present the overall summary of the test results in comment form in
+    the footer of the ebuild per each unofficially supported python versions.
+  - You may not use scripts to auto bump PYTHON_COMPAT.
 
 * JS packages rules/guidelines:
   - Use the npm_updater_update_locks.sh to update dependencies and produce a
