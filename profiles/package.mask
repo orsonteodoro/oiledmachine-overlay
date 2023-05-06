@@ -114,3 +114,31 @@ dev-dotnet/monodevelop
 >=dev-python/grpcio-1.53
 >=dev-python/grpcio-testing-1.53
 >=dev-python/grpcio-tools-1.53
+
+#
+# Ebuilds are planned to drop because of issues connected with
+#
+#   1. uncertain ebuild quality for very complex packages depending on old
+#      python version (3.9) which is not EOL yet and required for testing
+#   2. Forced REQUIRED_USE blocking which cannot be disabled
+#   3. _PYTHON_ALL_IMPLS (from  python-utils-r1.eclass) bumping faster than the
+#      EOL date.
+#   4. laziness of upstream for related test packages
+#   5. a bad condition caused by commit d4f682f which can't be disabled in the
+#      link below
+# https://github.com/gentoo-mirror/gentoo/blob/d4f682ffb030d6f8d8afac8438bda89bf1967dce/eclass/python-utils-r1.eclass#L171
+#
+# The solution is to fork ebuild overlay which is not going to happen or delete
+# or change to warning for the link above.  It will never be fixed because
+# the same people or core devs keep breaking it.
+#
+dev-python/chex
+dev-python/etils
+dev-python/gast
+dev-python/jax
+dev-python/jumpy
+dev-python/optax
+media-libs/materialx
+sci-libs/tensorflow
+sci-visualization/tensorboard
+sci-visualization/tensorboard-data-server
