@@ -122,10 +122,9 @@ dev-dotnet/monodevelop
 #      python version (3.9) which is not EOL yet and required for testing
 #   2. Forced REQUIRED_USE blocking which cannot be disabled
 #   3. _PYTHON_ALL_IMPLS (from  python-utils-r1.eclass) bumping faster than the
-#      EOL date.
+#      EOL date caused by commit d4f682f.
 #   4. laziness of upstream for related test packages
-#   5. a bad condition caused by commit d4f682f which can't be disabled in the
-#      link below
+#   5. a bad condition which can't be disabled in the link below
 # https://github.com/gentoo-mirror/gentoo/blob/d4f682ffb030d6f8d8afac8438bda89bf1967dce/eclass/python-utils-r1.eclass#L171
 #
 # The solution is to fork ebuild overlay which is not going to happen or delete
@@ -139,9 +138,9 @@ dev-python/jax
 dev-python/jumpy
 dev-python/optax
 media-libs/materialx
-sci-libs/tensorflow # aka tf
+sci-libs/tensorflow # Actually this can build without python but added on overlay for c2tcp/deepcc/orca.  Removing because it is now orphaned without python support in this overlay.
 sci-visualization/tensorboard
 sci-visualization/tensorboard-data-server
-sys-apps/c2tcp # tf
-sys-apps/deepcc # tf
-sys-apps/orca # tf
+sys-apps/c2tcp # Uses sci-libs/tensorflow[python]
+sys-apps/deepcc # Uses sci-libs/tensorflow[python]
+sys-apps/orca # Uses sci-libs/tensorflow[python]
