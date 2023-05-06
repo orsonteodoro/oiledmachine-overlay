@@ -139,6 +139,8 @@ dev-dotnet/monodevelop
 # or change to warning for the link above.  It will never be fixed because
 # the same people or core devs keep breaking it.
 #
+# To be removed after 1 week from now (May 5 2023)
+#
 dev-python/chex
 dev-python/etils
 dev-python/gast
