@@ -141,12 +141,41 @@ dev-dotnet/monodevelop
 #
 # To be removed after 1 week from now (May 5 2023)
 #
-dev-python/chex
-dev-python/etils
-dev-python/gast
-dev-python/jax
-dev-python/jumpy
-dev-python/optax
+dev-python/ale-py # orphaned because removal of orca
+dev-python/box2d-py # orphaned because removal of orca
+dev-python/autorom # orphaned because removal of c2tcp/orca
+dev-python/celshast # orphaned because removal of orca
+dev-python/chex # orphaned because removal of orca
+dev-python/dm-env # orphaned because removal of orca
+dev-python/dm-tree # orphaned because removal of orca
+dev-python/dm_control # orphaned because removal of orca
+dev-python/google-auth # orphaned because removal of tensorflow
+dev-python/google-auth-oauthlib # orphaned because removal of tensorflow
+dev-python/etils # orphaned because removal of tensorflow
+dev-python/flax # orphaned because removal of orca
+dev-python/gast # orphaned because removal of tensorflow
+dev-python/gym # orphaned because removal of orca
+dev-python/gym-notices # orphaned because removal of orca
+dev-python/gymnasium # orphaned because removal of orca
+dev-python/gymnasium-notices # orphaned because removal of orca
+dev-python/hanabi-learning-environment # orphaned because removal of orca
+dev-python/jax # orphaned because removal of orca
+dev-python/jumpy # orphaned because removal of orca
+dev-python/labmaze # orphaned because removal of orca
+dev-python/moviepy # orphaned because removal of orca
+dev-python/mujoco # orphaned because removal of orca
+dev-python/numpy # orphaned because removal of tensorflow
+dev-python/open_spiel # orphaned because removal of orca
+dev-python/optax # orphaned because removal of orca
+dev-python/orbax # orphaned because removal of orca
+dev-python/pettingzoo # orphaned because removal of orca
+dev-python/pymunk # orphaned because removal of orca
+dev-python/python-chess # orphaned because removal of orca
+dev-python/rlcard # orphaned because removal of orca
+dev-python/shimmy # orphaned because removal of orca
+dev-python/tensorboard-plugin-wit # orphaned because removal of tensorflow
+dev-python/tensorflow-io # orphaned because removal of tensorflow
+dev-python/tensorstore # orphaned because removal of tensorflow
 media-libs/materialx
 sci-libs/tensorflow # Actually this can build without python but added on overlay for c2tcp/deepcc/orca.  Removing because it is now orphaned without python support in this overlay.
 sci-visualization/tensorboard
