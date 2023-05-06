@@ -184,6 +184,11 @@ based on an outdated style guide.
   - You must present the overall summary of the test results in comment form in
     the footer of the ebuild per each unofficially supported python versions.
   - You may not use scripts to auto bump PYTHON_COMPAT.
+  - The PYTHON_COMPAT may be downgraded if no recept from the test suite run
+    is not presented in the footer.
+  - List officially supported versions (listed in setup.py, CI, etc) + python
+    versions that you have tested through the test suite.  Do not put versions
+    that were not tested by either you or by upstream.
 
 * JS packages:
   - Use the npm_updater_update_locks.sh to update dependencies and produce a
