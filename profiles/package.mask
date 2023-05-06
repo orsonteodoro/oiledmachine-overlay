@@ -39,7 +39,6 @@ media-libs/alure
 # Packages may contain multiple critical or multiple high vulnerabilities.
 dev-util/devhub # Electron 11.0.3 with Chromium 87.0.4280.67 parts
 dev-util/lepton # Electron 13.1.2 with Chromium 91.0.4472.77 parts
-dev-util/theia # Electron 15.5.7 with Chromium 94.0.4606.81 parts
 media-gfx/texturelab # Electron 13.1.4 with Chromium 91.0.4472.106 parts
 media-gfx/upscayl # Electron 21.2.2 with Chromium 106.0.5249.168 parts
 net-im/caprine # Electron 21.3.3 with Chromium 106.0.5249.199 parts
@@ -59,7 +58,6 @@ dev-libs/hyphen
 dev-libs/leveldb
 dev-libs/libev
 dev-libs/libfreenect
-dev-libs/libspotify
 dev-libs/log4c
 dev-libs/pugixml
 dev-libs/rapidjson
@@ -71,7 +69,6 @@ media-libs/libcaca
 media-libs/libfishsound
 media-libs/libmp4v2
 media-libs/liboggz
-media-libs/libomxil-bellagio
 media-libs/nestegg
 media-libs/openimageio
 media-libs/opusfile
@@ -79,7 +76,6 @@ media-libs/theorafile
 media-libs/theoraplay
 media-libs/vips
 media-libs/woff2
-media-plugins/gst-plugins-omx
 
 # worked in the past but untested today
 dev-util/bear

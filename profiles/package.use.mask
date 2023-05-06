@@ -50,15 +50,6 @@ x11-libs/cairo bolt ebolt
 # Force >= -O2 for dav1d
 www-client/firefox debug
 
-# Aurora breaks all GTK apps and X based apps with popups
-liri-base/shell aurora
-liri-base/session aurora
-liri-base/qtintegration aurora
-liri-base/liri-meta aurora
-liri-extra/screenshot aurora
-liri-base/xdg-desktop-portal-liri aurora
-liri-base/libliri aurora
-
 # Not feasible for most individuals
 # It needs a lot of computing resources.
 sys-apps/orca build-models
