@@ -4,7 +4,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8,9} ) # Lists up to 3.7
+PYTHON_COMPAT=( python3_{8,9,10} ) # Lists up to 3.7.  3.9 was tested.
 
 # python3.10 error:
 # ======================================================================
@@ -33,6 +33,17 @@ BDEPEND+="
 		dev-python/astunparse[${PYTHON_USEDEP}]
 	)
 "
+
+pkg_setup() {
+	if use python_targets_python3_10 ; then
+eerror
+eerror "python_targets_python3_10 breaks during testing."
+eerror "Disable the python_targets_python3_10 USE flag."
+eerror
+		die
+	fi
+	python_setup
+}
 
 src_test() {
 	run_test() {
