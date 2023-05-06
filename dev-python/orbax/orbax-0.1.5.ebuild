@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="flit"
-PYTHON_COMPAT=( python3_{8..10} ) # Upstream only tests up to 3.9 for this release
+PYTHON_COMPAT=( python3_{8..10} ) # Upstream only tests up to 3.9
 inherit distutils-r1
 
 DESCRIPTION="Orbax is a library providing common utilities for JAX users."
@@ -17,7 +17,10 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc test"
+IUSE+="
+doc test
+python_targets_python3_9
+"
 REQUIRED_USE="
 python_targets_python3_9
 "
@@ -59,6 +62,16 @@ https://github.com/google/orbax/archive/refs/tags/v${PV}.tar.gz
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md )
+
+pkg_setup() {
+	if use python_target_python3_10 ; then
+eerror
+eerror "python_target_python3_10 is a dummy placeholder"
+eerror "Please remove it.  Upstream only supports up to 3.9."
+eerror
+		die
+	fi
+}
 
 src_install() {
 	distutils-r1_src_install
