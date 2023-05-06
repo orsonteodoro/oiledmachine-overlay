@@ -55,7 +55,7 @@ are dependencies for the latest stable MonoDevelop and for MonoGame.
 Please add `PYTHON_COMPAT_NO_STRICT=1` to /etc/portage/make.conf if the 
 "No supported implementation in PYTHON_COMPAT" appears.  The PYTHON_COMPAT
 will be upstream's set + proof of testing.  The maximum slot will not be
-auto bumped by scripts anymore.
+auto bumped by scripts in this overlay anymore.
 
 ### Node / Electron apps
 
