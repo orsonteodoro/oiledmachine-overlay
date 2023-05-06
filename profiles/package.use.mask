@@ -62,3 +62,6 @@ liri-base/libliri aurora
 # Not feasible for most individuals
 # It needs a lot of computing resources.
 sys-apps/orca build-models
+
+# tensorflow is being removed from this overlay
+media-video/ffmpeg tensorflow

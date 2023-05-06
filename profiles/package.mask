@@ -149,8 +149,8 @@ dev-python/chex # orphaned because removal of orca
 dev-python/dm-env # orphaned because removal of orca
 dev-python/dm-tree # orphaned because removal of orca
 dev-python/dm_control # orphaned because removal of orca
-dev-python/google-auth # orphaned because removal of tensorflow
-dev-python/google-auth-oauthlib # orphaned because removal of tensorflow
+dev-python/google-auth # orphaned because removal of tensorflow in this overlay
+dev-python/google-auth-oauthlib # orphaned because removal of tensorflow in this overlay
 dev-python/etils # orphaned because removal of tensorflow
 dev-python/flax # orphaned because removal of orca
 dev-python/gast # orphaned because removal of tensorflow
@@ -173,10 +173,11 @@ dev-python/pymunk # orphaned because removal of orca
 dev-python/python-chess # orphaned because removal of orca
 dev-python/rlcard # orphaned because removal of orca
 dev-python/shimmy # orphaned because removal of orca
-dev-python/tensorboard-plugin-wit # orphaned because removal of tensorflow
+dev-python/tensorboard-plugin-wit # orphaned because removal of tensorflow in this overlay
 dev-python/tensorflow-io # orphaned because removal of tensorflow
-dev-python/tensorstore # orphaned because removal of tensorflow
+dev-python/tensorstore # orphaned because removal of tensorflow in this overlay
 media-libs/materialx
+media-video/sr # orphaned because removal of tensorflow in this overlay
 sci-libs/tensorflow # Actually this can build without python but added on overlay for c2tcp/deepcc/orca.  Removing because it is now orphaned without python support in this overlay.
 sci-visualization/tensorboard
 sci-visualization/tensorboard-data-server
