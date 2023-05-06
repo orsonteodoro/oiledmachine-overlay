@@ -135,15 +135,15 @@ dev-dotnet/monodevelop
 #   5. a bad condition which can't be disabled in the link below
 # https://github.com/gentoo-mirror/gentoo/blob/d4f682ffb030d6f8d8afac8438bda89bf1967dce/eclass/python-utils-r1.eclass#L171
 #
-# The solution is to fork ebuild overlay which is not going to happen or delete
-# or change to warning for the link above.  It will never be fixed because
-# the same people or core devs keep breaking it.
+# The solution is to fork the ebuild overlay which is not going to happen or
+# delete or change to warning for the link above.  It will never be fixed
+# because the same people or core devs keep breaking it.
 #
 # To be removed after 1 week from now (May 5 2023)
 #
 dev-python/ale-py # orphaned because removal of orca
 dev-python/box2d-py # orphaned because removal of orca
-dev-python/autorom # orphaned because removal of c2tcp/orca
+dev-python/autorom # orphaned because removal of orca
 dev-python/celshast # orphaned because removal of orca
 dev-python/chex # orphaned because removal of orca
 dev-python/dm-env # orphaned because removal of orca
