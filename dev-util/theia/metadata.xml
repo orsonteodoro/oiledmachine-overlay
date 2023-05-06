@@ -20,7 +20,7 @@
     <subslots>
       Reflect the release channel
 
-      community - Stable releases every 3 months
+      community - Stable releases every 3 months, version tagged as community
       monthly - Improvements every month
     </subslots>
   </slots>
