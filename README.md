@@ -60,6 +60,12 @@ You will need to uninstall these packages.
 
 The maximum slot will not be auto bumped by scripts in this overlay anymore.
 
+Python maximums for PYTHON_COMPAT in this overlay are upstream set listed
+in python.py + proof of test (aka summary of the test result(s) passed)
+which are listed in the footer of the ebuild as the standard in this
+overlay.  This overlay may downgrade the PYTHON_COMPAT if no proof is
+provided.
+
 ### Node / Electron apps
 
 These ebuilds are currently being converted to yarn for mostly offline install.
