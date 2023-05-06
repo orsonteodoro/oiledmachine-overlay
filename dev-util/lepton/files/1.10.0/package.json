@@ -85,7 +85,7 @@
     "nconf": "^0.11.0",
     "notebookjs": "^0.6.0",
     "prismjs": "^1.15.0",
-    "proxy-agent": "^4.0.0",
+    "proxy-agent": "^6.1.2",
     "react": "^17.0.0",
     "react-bootstrap": "^0.32.4",
     "react-chartjs": "^1.2.0",
