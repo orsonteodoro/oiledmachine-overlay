@@ -52,10 +52,12 @@ are dependencies for the latest stable MonoDevelop and for MonoGame.
 
 ### Python
 
-Please add `PYTHON_COMPAT_NO_STRICT=1` to /etc/portage/make.conf if the 
-"No supported implementation in PYTHON_COMPAT" appears.  The PYTHON_COMPAT
-will be upstream's set + proof of testing (aka test results) for newer
-versions not listed in the footer of the ebuild.
+Several packages hard depend on Python 3.9 and will emit
+"No supported implementation in PYTHON_COMPAT" because of the eager version
+bump of this version which is not EOL until Oct 2025 but EOL on this distro.
+
+You will need to uninstall these packages.
+
 The maximum slot will not be auto bumped by scripts in this overlay anymore.
 
 ### Node / Electron apps
