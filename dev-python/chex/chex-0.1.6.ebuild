@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..9} )
+PYTHON_COMPAT=( python3_{9,10} ) # See https://github.com/deepmind/chex/blob/v0.1.6/.github/workflows/ci.yml
 # Limited by jax
 inherit distutils-r1
 
