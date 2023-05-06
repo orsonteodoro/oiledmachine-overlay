@@ -39,6 +39,7 @@ inherit multiprocessing toolchain-funcs
 # @DESCRIPTION:
 # All supported Python implementations, most preferred last.
 _PYTHON_ALL_IMPLS=(
+# See https://devguide.python.org/versions/ for EOL versions.
 	pypy3
 	python3_{10..11}
 )
