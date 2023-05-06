@@ -139,6 +139,9 @@ dev-python/jax
 dev-python/jumpy
 dev-python/optax
 media-libs/materialx
-sci-libs/tensorflow
+sci-libs/tensorflow # aka tf
 sci-visualization/tensorboard
 sci-visualization/tensorboard-data-server
+sys-apps/c2tcp # tf
+sys-apps/deepcc # tf
+sys-apps/orca # tf
