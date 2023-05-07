@@ -34,7 +34,7 @@ UOPTS_PGO_PV=$(ver_cut 1-3 ${PV})
 LLVM_MAX_SLOT=17
 LLVM_MIN_SLOT=16 # The pregenerated PGO profile needs profdata index version 9.
 CR_CLANG_SLOT_OFFICIAL=17
-LLVM_SLOTS=(17 ${LLVM_MAX_SLOT}) # [inclusive, inclusive] high to low
+LLVM_SLOTS=(${LLVM_MIN_SLOT} ${LLVM_MAX_SLOT}) # [inclusive, inclusive] high to low
 UOPTS_SUPPORT_TPGO=0
 UOPTS_SUPPORT_TBOLT=0
 inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils
@@ -514,20 +514,18 @@ REQUIRED_USE+="
 "
 
 LIBVA_PV="2.7"
-#										# order of subslot concat from left to right
-FFMPEG_LIBAVUTIL_SOVER="57.44.100" # third_party/ffmpeg/libavutil/version.h	# 1
-FFMPEG_LIBAVCODEC_SOVER="59.61.100" # third_party/ffmpeg/libavcodec/version.h	# 2
-FFMPEG_LIBAVFORMAT_SOVER="59.37.100" # third_party/ffmpeg/libavformat/version.h	# 3
+FFMPEG_LIBAVUTIL_SOVER="57.44.100" # third_party/ffmpeg/libavutil/version.h
+FFMPEG_LIBAVCODEC_SOVER="59.61.100" # third_party/ffmpeg/libavcodec/version.h
+FFMPEG_LIBAVFORMAT_SOVER="59.37.100" # third_party/ffmpeg/libavformat/version.h
 FFMPEG_PV="5.1" # It should be 9999 but relaxed.  Around 0ff18a7 (Nov 21, 2021) ; They don't use a tagged version.
-FFMPEG_SUBSLOT="57.59.59"
-# FFmpeg subslot:  libavutil major.libavcodec major.libavformat major
+FFMPEG_SUBSLOT="$(ver_cut 1 ${FFMPEG_LIBAVUTIL_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVCODEC_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVFORMAT_SOVER})"
 
 LIBVA_DEPEND="
 	vaapi? (
 		>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},drm(+),wayland?,X?]
 		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		system-ffmpeg? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},vaapi]
+			media-video/ffmpeg:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},vaapi]
 		)
 	)
 "
@@ -686,19 +684,19 @@ COMMON_DEPEND="
 	system-ffmpeg? (
 		>=media-libs/opus-1.3.1:=[${MULTILIB_USEDEP}]
 		proprietary-codecs? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},encode?,opus?,vorbis?,vpx?]
+			media-video/ffmpeg:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},encode?,opus?,vorbis?,vpx?]
 		)
 		proprietary-codecs-disable? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+			media-video/ffmpeg:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		proprietary-codecs-disable-nc-developer? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+			media-video/ffmpeg:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		proprietary-codecs-disable-nc-user? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-user,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+			media-video/ffmpeg:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-nc-user,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		|| (
-			>=media-video/ffmpeg-${FFMPEG_PV}:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-samba]
+			media-video/ffmpeg:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-samba]
 			>=net-fs/samba-4.5.10-r1[${MULTILIB_USEDEP},-debug(-)]
 		)
 	)
