@@ -1,5 +1,5 @@
-# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -497,7 +497,7 @@ CDEPEND="
 	${FF_ONLY_DEPEND}
 	${NON_FREE_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.46.0:2
-	>=dev-libs/nss-3.88[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.89[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
@@ -545,7 +545,7 @@ CDEPEND="
 		>=media-libs/harfbuzz-2.8.1:0=[${MULTILIB_USEDEP}]
 	)
 	system-icu? (
-		>=dev-libs/icu-71.1:=[${MULTILIB_USEDEP}]
+		>=dev-libs/icu-72.1:=[${MULTILIB_USEDEP}]
 	)
 	system-jpeg? (
 		>=media-libs/libjpeg-turbo-1.2.1[${MULTILIB_USEDEP}]
@@ -616,7 +616,7 @@ RDEPEND+="
 		app-crypt/libsecret[${MULTILIB_USEDEP}]
 	)
 	openh264? (
-		media-libs/openh264:*[plugin,${MULTILIB_USEDEP}]
+		media-libs/openh264:*[${MULTILIB_USEDEP},plugin]
 	)
 	pulseaudio? (
 		|| (
@@ -661,7 +661,7 @@ BDEPEND+="
 	${GAMEPAD_BDEPEND}
 	>=dev-util/cbindgen-0.24.3
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=virtual/rust-1.61.0[${MULTILIB_USEDEP}]
+	>=virtual/rust-1.65.0[${MULTILIB_USEDEP}]
 	app-alternatives/awk
 	app-arch/unzip
 	app-arch/zip
