@@ -514,17 +514,20 @@ REQUIRED_USE+="
 "
 
 LIBVA_PV="2.7"
-FFMPEG_LIBAVUTIL_SOVER="57.43.100" # third_party/ffmpeg/libavutil/version.h
-FFMPEG_LIBAVCODEC_SOVER="59.54.100" # third_party/ffmpeg/libavcodec/version.h
-FFMPEG_LIBAVFORMAT_SOVER="59.34.101" # third_party/ffmpeg/libavformat/version.h
-FFMPEG_PV="9999" # Around 0ff18a7 (Nov 21, 2021) ; They don't use a tagged version.
+#										# order of subslot concat from left to right
+FFMPEG_LIBAVUTIL_SOVER="57.44.100" # third_party/ffmpeg/libavutil/version.h	# 1
+FFMPEG_LIBAVCODEC_SOVER="59.61.100" # third_party/ffmpeg/libavcodec/version.h	# 2
+FFMPEG_LIBAVFORMAT_SOVER="59.37.100" # third_party/ffmpeg/libavformat/version.h	# 3
+FFMPEG_PV="5.1" # It should be 9999 but relaxed.  Around 0ff18a7 (Nov 21, 2021) ; They don't use a tagged version.
+FFMPEG_SUBSLOT="57.59.59"
+# FFmpeg subslot:  libavutil major.libavcodec major.libavformat major
 
 LIBVA_DEPEND="
 	vaapi? (
 		>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},drm(+),wayland?,X?]
 		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		system-ffmpeg? (
-			>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},vaapi]
+			>=media-video/ffmpeg-${FFMPEG_PV}:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},vaapi]
 		)
 	)
 "
@@ -683,19 +686,19 @@ COMMON_DEPEND="
 	system-ffmpeg? (
 		>=media-libs/opus-1.3.1:=[${MULTILIB_USEDEP}]
 		proprietary-codecs? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},encode?,opus?,vorbis?,vpx?]
+			>=media-video/ffmpeg-${FFMPEG_PV}:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},encode?,opus?,vorbis?,vpx?]
 		)
 		proprietary-codecs-disable? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+			>=media-video/ffmpeg-${FFMPEG_PV}:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		proprietary-codecs-disable-nc-developer? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+			>=media-video/ffmpeg-${FFMPEG_PV}:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		proprietary-codecs-disable-nc-user? (
-			>=media-video/ffmpeg-${FFMPEG_PV}:=[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-user,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+			>=media-video/ffmpeg-${FFMPEG_PV}:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-user,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		|| (
-			>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-samba]
+			>=media-video/ffmpeg-${FFMPEG_PV}:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-samba]
 			>=net-fs/samba-4.5.10-r1[${MULTILIB_USEDEP},-debug(-)]
 		)
 	)
