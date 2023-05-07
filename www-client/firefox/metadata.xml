@@ -247,8 +247,49 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
     Use the system-wide <pkg>media-libs/libwebp</pkg> instead of bundled.
   </flag>
   <flag name="telemetry">
-    Opt-in to volunteer to send measured user behavior about the use of the
-    application.  In addition, opt-in to volunteering in sending bug reports.
+    Opt-in to volunteer to send measurements [aka phone home] and bugs to
+    developers which for some people is a privacy issue and unpaid labor issues
+    [aka volunteering].
+
+    The following will be enabled to send and record the following:
+
+      - crash reporter :
+          - breakpad data
+            - CPU identification
+            - CPU register data [can be a security risk]
+            - stacks [aka local variables]
+            - heap [aka dynamic memory]
+            - executable/library names and IDs
+            - operating system version
+            - reason of dump
+            - thread stack memory
+          - stack traces
+          - process IDs
+          - crash ID
+          - conditionally a memory crash report, of a process as a result of a crash
+          - conditionally plugin hang report, with minidumps of processes
+          - UUID associated with the sent data
+      - data reporting : associated with normandy and studies
+          - studies participation will increase the opt-in agreement of more
+            collected data for experimental features
+      - health report : performance and stability of both the browser and
+          environment over time.  This information is then used to give
+          suggestions/directions to upgrade versions.
+          - Days worth of data collected
+          - Data retention:  180 days
+      - telemetry reporting : submission of Telemetry to developers
+
+    Possibly, information about CPU may be sent.
+
+    Further reading:
+
+      Breakpad:                       https://chromium.googlesource.com/breakpad/breakpad/+/master/docs/getting_started_with_breakpad.md
+      Crash reporter:                 https://firefox-source-docs.mozilla.org/toolkit/crashreporter/crashreporter/index.html
+      Preprocessor symbols:           https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/internals/preferences.html
+        Specifically -- MOZ_CRASHREPORTER, MOZ_DATA_REPORTING, MOZ_SERVICES_HEALTHREPORT, MOZ_TELEMETRY_REPORTING
+      Normandy:                       https://mozilla.github.io/normandy/user/end_user_interaction.html#opt-out-preference
+      Studies:                        https://support.mozilla.org/en-US/kb/shield
+      Firefox Health Report (FHR):    https://blog.mozilla.org/metrics/fhr-faq/
   </flag>
   <flag name="webspeech">
     Add support for input speech recognition for websites.  (EXPERIMENTAL AT
