@@ -616,6 +616,12 @@ REQUIRED_USE+="
 			)
 		)
 	)
+	^^ (
+		proprietary-codecs
+		proprietary-codecs-disable
+		proprietary-codecs-disable-nc-developer
+		proprietary-codecs-disable-nc-user
+	)
 	cuda? (
 		|| (
 			nvdec
