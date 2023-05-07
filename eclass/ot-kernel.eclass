@@ -1011,11 +1011,10 @@ verify_clang_compiler_updated() {
 		"sys-devel/clang-15.0.5" \
 		"sys-devel/clang-15.0.6" \
 		"sys-devel/clang-15.0.7" \
-		"sys-devel/clang-16.0.0_rc1" \
-		"sys-devel/clang-16.0.0_rc2" \
-		"sys-devel/clang-16.0.0.9999" \
-		"sys-devel/clang-17.0.0_pre20230211" \
-		"sys-devel/clang-17.0.0_pre20230218" \
+		"sys-devel/clang-16.0.0" \
+		"sys-devel/clang-16.0.1" \
+		"sys-devel/clang-16.0.2" \
+		"sys-devel/clang-16.0.3" \
 		"sys-devel/clang-17.0.0.9999" \
 	; do
 		if ot-kernel_has_version "=${p}*" ; then
@@ -1054,8 +1053,8 @@ einfo "Verifying profraw version compatibility"
 
 	local found_upstream_version=0 # corresponds to original patch requirements for < llvm 13 (broken)
 	local found_patched_version=0 # corresponds to oiledmachine patches to use >= llvm 13 (fixed)
-	local v
-	for v in \
+	local pv
+	for pv in \
 		"11.1.0" \
 		"12.0.1" \
 		"13.0.0" \
@@ -1075,22 +1074,21 @@ einfo "Verifying profraw version compatibility"
 		"15.0.5" \
 		"15.0.6" \
 		"15.0.7" \
-		"16.0.0_rc1" \
-		"16.0.0_rc2" \
-		"16.0.0.9999" \
-		"17.0.0.9999_pre20230211" \
-		"17.0.0.9999_pre20230218" \
+		"16.0.0" \
+		"16.0.1" \
+		"16.0.2" \
+		"16.0.3" \
 		"17.0.0.9999" \
 	; do
-		(! ot-kernel_has_version "~sys-devel/llvm-${v}" ) && continue
+		(! ot-kernel_has_version "~sys-devel/llvm-${pv}" ) && continue
 		local llvm_version
-		einfo "v=${v}"
-		if [[ "${v}" =~ "9999" || "${v}" =~ "_pre" ]] ; then
+		einfo "pv=${pv}"
+		if [[ "${pv}" =~ "9999" || "${pv}" =~ "_pre" ]] ; then
 			local llvm_version=$(bzless \
-				"${ESYSROOT}/var/db/pkg/sys-devel/llvm-${v}"*"/environment.bz2" \
+				"${ESYSROOT}/var/db/pkg/sys-devel/llvm-${pv}"*"/environment.bz2" \
 				| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
 		else
-			llvm_version="llvmorg-${v/_/-}"
+			llvm_version="llvmorg-${pv/_/-}"
 		fi
 		local instr_prof_raw_v=$(wget -q -O - \
 https://raw.githubusercontent.com/llvm/llvm-project/${llvm_version}/llvm/include/llvm/ProfileData/InstrProfData.inc \
@@ -1120,7 +1118,7 @@ eerror
 eerror "No installed LLVM versions are compatible.  Please send an issue"
 eerror "request with your LLVM version.  If you are using a live LLVM version,"
 eerror "send the EGIT_VERSION found in"
-eerror "\${ESYSROOT}/var/db/pkg/sys-devel/llvm-\${v}*/environment.bz2"
+eerror "\${ESYSROOT}/var/db/pkg/sys-devel/llvm-\${pv}*/environment.bz2"
 eerror
 		die
 	fi
