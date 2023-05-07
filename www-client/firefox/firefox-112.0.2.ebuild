@@ -260,8 +260,9 @@ alsa cpu_flags_arm_neon cups +dbus debug eme-free +ffvpx +hardened -hwaccel jack
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user sndio
 selinux speech +system-av1 +system-ffmpeg +system-harfbuzz +system-icu
 +system-jpeg +system-libevent +system-libvpx system-png system-python-libs
-+system-webp +telemetry +vaapi +wayland +webrtc wifi webspeech
++system-webp -telemetry +vaapi +wayland +webrtc wifi webspeech
 "
+# telemetry disabled for crypto/security reasons
 
 # Firefox-only IUSE
 IUSE+="
