@@ -1419,6 +1419,11 @@ get_llvm_profdata_version_info()
 	local ver
 	# The live versions can have different profdata versions over time.
 	for v in \
+		"16.0.0" \
+		"16.0.1" \
+		"16.0.2" \
+		"16.0.3" \
+		"16.0.4.9999" \
 		"${CR_CLANG_SLOT_OFFICIAL}.0.0.9999" \
 	; do
 		(( $(ver_cut 1 "${v}") != ${LLVM_SLOT} )) && continue
