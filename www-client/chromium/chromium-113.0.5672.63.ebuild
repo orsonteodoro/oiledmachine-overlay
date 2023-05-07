@@ -31,8 +31,8 @@ te th tr uk ur vi zh-CN zh-TW
 
 GCC_MIN="10.4"
 UOPTS_PGO_PV=$(ver_cut 1-3 ${PV})
-LLVM_MAX_SLOT=17 # Also bump v in get_llvm_profdata_version_info()
-LLVM_MIN_SLOT=17 # The pregenerated PGO profile needs profdata version 8
+LLVM_MAX_SLOT=17
+LLVM_MIN_SLOT=16 # The pregenerated PGO profile needs profdata index version 9.
 CR_CLANG_SLOT_OFFICIAL=17
 LLVM_SLOTS=(17 ${LLVM_MAX_SLOT}) # [inclusive, inclusive] high to low
 UOPTS_SUPPORT_TPGO=0
