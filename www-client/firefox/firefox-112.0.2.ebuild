@@ -2671,6 +2671,23 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild, new-patches
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, license-completness, license-transparency
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (INTERACTIVE) 112.0.2 (May 7, 2023)
+# USE="X dav1d dbus eme-free jemalloc jumbo-build libcanberra opus \
+#   proprietary-codecs-disable-nc-user pulseaudio speech system-ffmpeg \
+#   vaapi vpx wayland webspeech -aac -alsa -cups (-debug) -ebolt -ffvpx \
+#   -geckodriver -gmp-autoupdate -h264 -hardened -hwaccel -jack -libproxy \
+#   -libsecret -mold -openh264 -pgo -proprietary-codecs \
+#   -proprietary-codecs-disable -proprietary-codecs-disable-nc-developer \
+#   -screencast (-selinux) -sndio -system-av1 -system-harfbuzz -system-icu \
+#   -system-jpeg -system-libevent -system-libvpx -system-png \
+#   (-system-python-libs) -system-webp -telemetry -webrtc -wifi" \
+#   ABI_X86="(64) -32 (-x32)" L10N="-ach -af -an -ar -ast -az -be -bg -bn -br \
+#   -bs -ca -ca-valencia -cak -cs -cy -da -de -dsb -el -en-CA -en-GB -eo \
+#   -es-AR -es-CL -es-ES -es-MX -et -eu -fa -ff -fi -fr -fur -fy -ga -gd -gl \
+#   -gn -gu -he -hi -hr -hsb -hu -hy -ia -id -is -it -ja -ka -kab -kk -km -kn \
+#   -ko -lij -lt -lv -mk -mr -ms -my -nb -ne -nl -nn -oc -pa -pl -pt-BR -pt-PT \
+#   -rm -ro -ru -sc -sco -si -sk -sl -son -sq -sr -sv -szl -ta -te -th -tl -tr \
+#   -trs -uk -ur -uz -vi -xh -zh-CN -zh-TW"
 
 # = Ebuild fork checklist =
 # Bump to latest release every week
