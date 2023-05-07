@@ -25,40 +25,83 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS=""
 IUSE="
-+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3 zstd
++binutils-plugin debug debuginfod doc exegesis libedit +libffi ncurses test xar
+xml z3 zstd
 
 bolt bolt-heatmap -dump jemalloc tcmalloc r6
 "
 REQUIRED_USE="
-	!amd64? ( !arm64? ( !bolt ) )
-	bolt-heatmap? ( bolt )
-	jemalloc? ( bolt )
-	tcmalloc? ( bolt )
+	!amd64? (
+		!arm64? (
+			!bolt
+		)
+	)
+	bolt-heatmap? (
+		bolt
+	)
+	jemalloc? (
+		bolt
+	)
+	tcmalloc? (
+		bolt
+	)
 "
-RESTRICT="!test? ( test )"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 
 RDEPEND="
 	sys-libs/zlib:0=[${MULTILIB_USEDEP}]
-	binutils-plugin? ( >=sys-devel/binutils-2.31.1-r4:*[plugins] )
-	exegesis? ( dev-libs/libpfm:= )
-	jemalloc? ( dev-libs/jemalloc )
-	libedit? ( dev-libs/libedit:0=[${MULTILIB_USEDEP}] )
-	libffi? ( >=dev-libs/libffi-3.0.13-r1:0=[${MULTILIB_USEDEP}] )
-	ncurses? ( >=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}] )
-	tcmalloc? ( dev-util/google-perftools )
-	xar? ( app-arch/xar )
-	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
-	z3? ( >=sci-mathematics/z3-4.7.1:0=[${MULTILIB_USEDEP}] )
-	zstd? ( app-arch/zstd:=[${MULTILIB_USEDEP}] )
+	binutils-plugin? (
+		>=sys-devel/binutils-2.31.1-r4:*[plugins]
+	)
+	debuginfod? (
+		dev-cpp/cpp-httplib:=
+		net-misc/curl:=
+	)
+	exegesis? (
+		dev-libs/libpfm:=
+	)
+	jemalloc? (
+		dev-libs/jemalloc
+	)
+	libedit? (
+		dev-libs/libedit:0=[${MULTILIB_USEDEP}]
+	)
+	libffi? (
+		>=dev-libs/libffi-3.0.13-r1:0=[${MULTILIB_USEDEP}]
+	)
+	ncurses? (
+		>=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}]
+	)
+	tcmalloc? (
+		dev-util/google-perftools
+	)
+	xar? (
+		app-arch/xar
+	)
+	xml? (
+		dev-libs/libxml2:2=[${MULTILIB_USEDEP}]
+	)
+	z3? (
+		>=sci-mathematics/z3-4.7.1:0=[${MULTILIB_USEDEP}]
+	)
+	zstd? (
+		app-arch/zstd:=[${MULTILIB_USEDEP}]
+	)
 "
 DEPEND="
 	${RDEPEND}
-	binutils-plugin? ( sys-libs/binutils-libs )
+	binutils-plugin? (
+		sys-libs/binutils-libs
+	)
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	dev-lang/perl
 	>=dev-util/cmake-3.16
+	dev-lang/perl
 	sys-devel/gnuconfig
 	doc? (
 		$(python_gen_any_dep '
@@ -83,7 +126,9 @@ RDEPEND="
 PDEPEND="
 	sys-devel/llvm-common
 	sys-devel/llvm-toolchain-symlinks:${LLVM_MAJOR}
-	binutils-plugin? ( >=sys-devel/llvmgold-${LLVM_MAJOR} )
+	binutils-plugin? (
+		>=sys-devel/llvmgold-${LLVM_MAJOR}
+	)
 "
 PATCHES=(
 	"${FILESDIR}/llvm-14.0.0.9999-stop-triple-spam.patch"
@@ -96,17 +141,39 @@ LLVM_USE_TARGETS=provide
 llvm.org_set_globals
 
 REQUIRED_USE+="
-	amd64? ( llvm_targets_X86 )
-	arm? ( llvm_targets_ARM )
-	arm64? ( llvm_targets_AArch64 )
-	loong? ( llvm_targets_LoongArch )
-	m68k? ( llvm_targets_M68k )
-	mips? ( llvm_targets_Mips )
-	ppc? ( llvm_targets_PowerPC )
-	ppc64? ( llvm_targets_PowerPC )
-	riscv? ( llvm_targets_RISCV )
-	sparc? ( llvm_targets_Sparc )
-	x86? ( llvm_targets_X86 )
+	amd64? (
+		llvm_targets_X86
+	)
+	arm? (
+		llvm_targets_ARM
+	)
+	arm64? (
+		llvm_targets_AArch64
+	)
+	loong? (
+		llvm_targets_LoongArch
+	)
+	m68k? (
+		llvm_targets_M68k
+	)
+	mips? (
+		llvm_targets_Mips
+	)
+	ppc? (
+		llvm_targets_PowerPC
+	)
+	ppc64? (
+		llvm_targets_PowerPC
+	)
+	riscv? (
+		llvm_targets_RISCV
+	)
+	sparc? (
+		llvm_targets_Sparc
+	)
+	x86? (
+		llvm_targets_X86
+	)
 "
 
 pkg_setup() {
@@ -213,6 +280,9 @@ check_distribution_components() {
 					# TableGen lib + deps
 					LLVMDemangle|LLVMSupport|LLVMTableGen)
 						;;
+					# testing libraries
+					LLVMTestingAnnotations|LLVMTestingSupport)
+						;;
 					# BOLT static libs
 					LLVMBOLT*)
 						( ( use amd64 || use arm64 ) && use bolt ) || continue
@@ -314,6 +384,12 @@ get_distribution_components() {
 		LLVMDemangle
 		LLVMSupport
 		LLVMTableGen
+
+		# testing libraries
+		llvm_gtest
+		llvm_gtest_main
+		LLVMTestingAnnotations
+		LLVMTestingSupport
 	)
 
 	if multilib_is_native_abi; then
@@ -348,7 +424,6 @@ get_distribution_components() {
 			llvm-cxxfilt
 			llvm-cxxmap
 			llvm-debuginfo-analyzer
-			llvm-debuginfod
 			llvm-debuginfod-find
 			llvm-diff
 			llvm-dis
@@ -507,8 +582,9 @@ einfo
 		-DLLVM_TARGETS_TO_BUILD=""
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${LLVM_TARGETS// /;}"
 		-DLLVM_INCLUDE_BENCHMARKS=OFF
-		-DLLVM_INCLUDE_TESTS=$(usex test)
+		-DLLVM_INCLUDE_TESTS=ON
 		-DLLVM_BUILD_TESTS=$(usex test)
+		-DLLVM_INSTALL_GTEST=ON
 
 		-DLLVM_ENABLE_DUMP=$(usex dump)
 		-DLLVM_ENABLE_FFI=$(usex libffi)
@@ -521,6 +597,8 @@ einfo
 		-DLLVM_ENABLE_RTTI=ON
 		-DLLVM_ENABLE_Z3_SOLVER=$(usex z3)
 		-DLLVM_ENABLE_ZSTD=$(usex zstd)
+		-DLLVM_ENABLE_CURL=$(usex debuginfod)
+		-DLLVM_ENABLE_HTTPLIB=$(usex debuginfod)
 
 		-DLLVM_HOST_TRIPLE="${CHOST}"
 

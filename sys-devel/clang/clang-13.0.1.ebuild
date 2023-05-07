@@ -69,7 +69,11 @@ REQUIRED_USE="
 		!test
 	)
 "
-RESTRICT="!test? ( test )"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 
 RDEPEND+="
 	${PYTHON_DEPS}
@@ -82,7 +86,9 @@ RDEPEND+="
 	~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[${MULTILIB_USEDEP},debug=]
 "
 
-DEPEND="${RDEPEND}"
+DEPEND="
+	${RDEPEND}
+"
 BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-util/cmake-3.16
@@ -110,7 +116,10 @@ PDEPEND+="
 	~sys-devel/clang-runtime-${PV}
 "
 
-LLVM_COMPONENTS=( clang clang-tools-extra )
+LLVM_COMPONENTS=(
+	clang
+	clang-tools-extra
+)
 LLVM_MANPAGES=1
 LLVM_TEST_COMPONENTS=(
 	llvm/lib/Testing/Support
@@ -611,7 +620,8 @@ einfo
 		-DLLVM_CMAKE_PATH="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/cmake/llvm"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/share/man"
-		# relative to bindir
+
+		# This is relative to bindir.
 		-DCLANG_RESOURCE_DIR="../../../../lib/clang/${LLVM_VERSION}"
 
 		-DBUILD_SHARED_LIBS=OFF
@@ -621,19 +631,20 @@ einfo
 		-DLLVM_TARGETS_TO_BUILD="${LLVM_TARGETS// /;}"
 		-DLLVM_BUILD_TESTS=$(usex test)
 
-		# these are not propagated reliably, so redefine them
+		# These are not propagated reliably, so redefine them.
 		-DLLVM_ENABLE_EH=ON
 		-DLLVM_ENABLE_RTTI=ON
 
 		-DCMAKE_DISABLE_FIND_PACKAGE_LibXml2=$(usex !xml)
+
 		# libgomp support fails to find headers without explicit -I
 		# furthermore, it provides only syntax checking
 		-DCLANG_DEFAULT_OPENMP_RUNTIME=libomp
 
-		# disable using CUDA to autodetect GPU, just build for all
+		# Disable using CUDA to autodetect GPU, so build for all.
 		-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
 
-		# override default stdlib and rtlib
+		# Override default stdlib and rtlib.
 		-DCLANG_DEFAULT_CXX_STDLIB=$(usex default-libcxx libc++ "")
 		-DCLANG_DEFAULT_RTLIB=$(usex default-compiler-rt compiler-rt "")
 		-DCLANG_DEFAULT_LINKER=$(usex default-lld lld "")
@@ -712,7 +723,10 @@ _src_compile() {
 	# Provide a symlink for tests.
 	if [[ ! -L ${WORKDIR}/lib/clang ]]; then
 		mkdir -p "${WORKDIR}"/lib || die
-		ln -s "${BUILD_DIR}/$(get_libdir)/clang" "${WORKDIR}"/lib/clang || die
+		ln -s \
+			"${BUILD_DIR}/$(get_libdir)/clang" \
+			"${WORKDIR}"/lib/clang \
+			|| die
 	fi
 }
 
@@ -789,10 +803,16 @@ multilib_src_install() {
 	# (Also, drop the version suffix from runtime headers.)
 	rm -rf "${ED}"/usr/include || die
 	if [[ -e "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/include ]] ; then
-		mv "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/include "${ED}"/usr/include || die
+		mv \
+			"${ED}"/usr/lib/llvm/${LLVM_MAJOR}/include \
+			"${ED}"/usr/include \
+			|| die
 	fi
 	if [[ -e "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/clang ]] ; then
-		mv "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/clang "${ED}"/usr/include/clangrt || die
+		mv \
+			"${ED}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/clang \
+			"${ED}"/usr/include/clangrt \
+			|| die
 	fi
 
 	uopts_src_install

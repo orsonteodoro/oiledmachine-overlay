@@ -7,11 +7,18 @@ EAPI=8
 CMAKE_ECLASS=cmake
 PYTHON_COMPAT=( python3_{9..11} )
 inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
+LLVM_MAX_SLOT=${LLVM_MAJOR}
 
 DESCRIPTION="New implementation of the C++ standard library, targeting C++11"
 HOMEPAGE="https://libcxx.llvm.org/"
 
-LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
+LICENSE="
+	Apache-2.0-with-LLVM-exceptions
+	|| (
+		UoI-NCSA
+		MIT
+	)
+"
 SLOT="0"
 KEYWORDS="amd64 ~arm arm64 ~riscv ~sparc ~x86 ~x64-macos"
 IUSE="
@@ -20,31 +27,40 @@ IUSE="
 hardened r11
 "
 REQUIRED_USE=""
-RESTRICT="!test? ( test )"
-RDEPEND="
-	libcxxabi? (
-		~sys-libs/libcxxabi-${PV}:=[${MULTILIB_USEDEP},hardened?,static-libs?]
+RESTRICT="
+	!test? (
+		test
 	)
+"
+RDEPEND="
 	!libcxxabi? (
 		>=sys-devel/gcc-4.7:=[cxx]
 	)
+	libcxxabi? (
+		~sys-libs/libcxxabi-${PV}:=[${MULTILIB_USEDEP},hardened?,static-libs?]
+	)
 "
-LLVM_MAX_SLOT=${LLVM_MAJOR}
 DEPEND="
 	${RDEPEND}
 	sys-devel/llvm:${LLVM_MAJOR}
 "
 BDEPEND+="
 	test? (
+		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 		>=dev-util/cmake-3.16
 		>=sys-devel/clang-3.9.0
 		sys-devel/gdb[python]
-		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)
 "
-PATCHES=( "${FILESDIR}/libcxx-15.0.0.9999-hardened.patch" )
+PATCHES=(
+	"${FILESDIR}/libcxx-15.0.0.9999-hardened.patch"
+)
 
-LLVM_COMPONENTS=( runtimes libcxx{,abi} llvm/{cmake,utils/llvm-lit} cmake )
+LLVM_COMPONENTS=(
+	runtimes
+	libcxx{,abi}
+	llvm/{cmake,utils/llvm-lit} cmake
+)
 llvm.org_set_globals
 
 python_check_deps() {
@@ -56,7 +72,7 @@ pkg_setup() {
 	# Darwin Prefix builds do not have llvm installed yet, so rely on
 	# bootstrap-prefix to set the appropriate path vars to LLVM instead
 	# of using llvm_pkg_setup.
-	if [[ ${CHOST} != *-darwin* ]] || has_version dev-lang/llvm; then
+	if [[ ${CHOST} != *-darwin* ]] || has_version sys-devel/llvm; then
 		LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
 	fi
 	python-any-r1_pkg_setup
@@ -197,8 +213,10 @@ src_configure() {
 	has_sanitizer_option "cfi-vcall" && HAVE_FLAG_CFI_VCALL="1"
 	has_sanitizer_option "shadow-call-stack" && HAVE_FLAG_SHADOW_CALL_STACK="1"
 	is-flagq '-fsanitize-cfi-cross-dso' && HAVE_FLAG_CFI_CROSS_DSO="1"
-	( has_sanitizer_option "cfi-derived-cast" \
-		|| has_sanitizer_option "cfi-unrelated-cast" ) \
+	( \
+		   has_sanitizer_option "cfi-derived-cast" \
+		|| has_sanitizer_option "cfi-unrelated-cast" \
+	) \
 		&& HAVE_FLAG_CFI_CAST="1"
 
 	configure_abi() {

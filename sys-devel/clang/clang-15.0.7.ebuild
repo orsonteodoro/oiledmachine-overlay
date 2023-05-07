@@ -66,7 +66,11 @@ REQUIRED_USE="
 		!test
 	)
 "
-RESTRICT="!test? ( test )"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 
 RDEPEND+="
 	${PYTHON_DEPS}
@@ -105,7 +109,9 @@ PDEPEND+="
 "
 
 LLVM_COMPONENTS=(
-	clang clang-tools-extra cmake
+	clang
+	clang-tools-extra
+	cmake
 	llvm/lib/Transforms/Hello
 )
 LLVM_MANPAGES=1
@@ -377,6 +383,12 @@ src_prepare() {
 		lib/Lex/InitHeaderSearch.cpp \
 		lib/Driver/ToolChains/Darwin.cpp || die
 
+	if ! use prefix-guest && [[ -n ${EPREFIX} ]]; then
+		sed -i "/LibDir.*Loader/s@return \"\/\"@return \"${EPREFIX}/\"@" \
+			lib/Driver/ToolChains/Linux.cpp \
+			|| die
+	fi
+
 	prepare_abi() {
 		uopts_src_prepare
 	}
@@ -636,7 +648,8 @@ einfo
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/share/man"
 		-DCLANG_CONFIG_FILE_SYSTEM_DIR="${EPREFIX}/etc/clang"
-		# relative to bindir
+
+		# This is relative to bindir.
 		-DCLANG_RESOURCE_DIR="../../../../lib/clang/${LLVM_VERSION}"
 
 		-DBUILD_SHARED_LIBS=OFF
@@ -646,16 +659,17 @@ einfo
 		-DLLVM_TARGETS_TO_BUILD="${LLVM_TARGETS// /;}"
 		-DLLVM_BUILD_TESTS=$(usex test)
 
-		# these are not propagated reliably, so redefine them
+		# These are not propagated reliably, so redefine them.
 		-DLLVM_ENABLE_EH=ON
 		-DLLVM_ENABLE_RTTI=ON
 
 		-DCMAKE_DISABLE_FIND_PACKAGE_LibXml2=$(usex !xml)
+
 		# libgomp support fails to find headers without explicit -I
 		# furthermore, it provides only syntax checking
 		-DCLANG_DEFAULT_OPENMP_RUNTIME=libomp
 
-		# disable using CUDA to autodetect GPU, just build for all
+		# Disable using CUDA to autodetect GPU, so build for all.
 		-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
 
 		-DCLANG_DEFAULT_PIE_ON_LINUX=$(usex pie)
@@ -750,7 +764,10 @@ _src_compile() {
 	# Provide a symlink for tests.
 	if [[ ! -L ${WORKDIR}/lib/clang ]]; then
 		mkdir -p "${WORKDIR}"/lib || die
-		ln -s "${BUILD_DIR}/$(get_libdir)/clang" "${WORKDIR}"/lib/clang || die
+		ln -s \
+			"${BUILD_DIR}/$(get_libdir)/clang" \
+			"${WORKDIR}"/lib/clang \
+			|| die
 	fi
 }
 
@@ -835,10 +852,16 @@ multilib_src_install() {
 	# (Also, drop the version suffix from runtime headers.)
 	rm -rf "${ED}"/usr/include || die
 	if [[ -e "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/include ]] ; then
-		mv "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/include "${ED}"/usr/include || die
+		mv \
+			"${ED}"/usr/lib/llvm/${LLVM_MAJOR}/include \
+			"${ED}"/usr/include \
+			|| die
 	fi
 	if [[ -e "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/clang ]] ; then
-		mv "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/clang "${ED}"/usr/include/clangrt || die
+		mv \
+			"${ED}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/clang \
+			"${ED}"/usr/include/clangrt \
+			|| die
 	fi
 	if multilib_is_native_abi && [[ -e "${ED}"/usr/include/clang-tidy ]] ; then
 		# Don't wrap clang-tidy headers; the list is too long.

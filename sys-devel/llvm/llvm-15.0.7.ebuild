@@ -30,26 +30,58 @@ IUSE="
 bolt bolt-heatmap -dump jemalloc tcmalloc r5
 "
 REQUIRED_USE="
-	!amd64? ( !arm64? ( !bolt ) )
-	bolt-heatmap? ( bolt )
-	jemalloc? ( bolt )
-	tcmalloc? ( bolt )
+	!amd64? (
+		!arm64? (
+			!bolt
+		)
+	)
+	bolt-heatmap? (
+		bolt
+	)
+	jemalloc? (
+		bolt
+	)
+	tcmalloc? (
+		bolt
+	)
 "
 RESTRICT="!test? ( test )"
 
 RDEPEND="
 	sys-libs/zlib:0=[${MULTILIB_USEDEP}]
-	binutils-plugin? ( >=sys-devel/binutils-2.31.1-r4:*[plugins] )
-	exegesis? ( dev-libs/libpfm:= )
-	jemalloc? ( dev-libs/jemalloc )
-	libedit? ( dev-libs/libedit:0=[${MULTILIB_USEDEP}] )
-	libffi? ( >=dev-libs/libffi-3.0.13-r1:0=[${MULTILIB_USEDEP}] )
-	ncurses? ( >=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}] )
-	tcmalloc? ( dev-util/google-perftools )
-	xar? ( app-arch/xar )
-	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
-	z3? ( >=sci-mathematics/z3-4.7.1:0=[${MULTILIB_USEDEP}] )
-	zstd? ( app-arch/zstd:=[${MULTILIB_USEDEP}] )
+	binutils-plugin? (
+		>=sys-devel/binutils-2.31.1-r4:*[plugins]
+	)
+	exegesis? (
+		dev-libs/libpfm:=
+	)
+	jemalloc? (
+		dev-libs/jemalloc
+	)
+	libedit? (
+		dev-libs/libedit:0=[${MULTILIB_USEDEP}]
+	)
+	libffi? (
+		>=dev-libs/libffi-3.0.13-r1:0=[${MULTILIB_USEDEP}]
+	)
+	ncurses? (
+		>=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}]
+	)
+	tcmalloc? (
+		dev-util/google-perftools
+	)
+	xar? (
+		app-arch/xar
+	)
+	xml? (
+		dev-libs/libxml2:2=[${MULTILIB_USEDEP}]
+	)
+	z3? (
+		>=sci-mathematics/z3-4.7.1:0=[${MULTILIB_USEDEP}]
+	)
+	zstd? (
+		app-arch/zstd:=[${MULTILIB_USEDEP}]
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -57,8 +89,8 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	dev-lang/perl
 	>=dev-util/cmake-3.16
+	dev-lang/perl
 	sys-devel/gnuconfig
 	bolt? (
 		dev-util/patchutils
@@ -86,7 +118,9 @@ RDEPEND="
 PDEPEND="
 	sys-devel/llvm-common
 	sys-devel/llvm-toolchain-symlinks:${LLVM_MAJOR}
-	binutils-plugin? ( >=sys-devel/llvmgold-${LLVM_MAJOR} )
+	binutils-plugin? (
+		>=sys-devel/llvmgold-${LLVM_MAJOR}
+	)
 "
 PATCHES=(
 	"${FILESDIR}/llvm-14.0.0.9999-stop-triple-spam.patch"
@@ -117,17 +151,39 @@ SRC_URI+="
 #   Fixes linking problem
 
 REQUIRED_USE+="
-	amd64? ( llvm_targets_X86 )
-	arm? ( llvm_targets_ARM )
-	arm64? ( llvm_targets_AArch64 )
-	loong? ( llvm_targets_LoongArch )
-	m68k? ( llvm_targets_M68k )
-	mips? ( llvm_targets_Mips )
-	ppc? ( llvm_targets_PowerPC )
-	ppc64? ( llvm_targets_PowerPC )
-	riscv? ( llvm_targets_RISCV )
-	sparc? ( llvm_targets_Sparc )
-	x86? ( llvm_targets_X86 )
+	amd64? (
+		llvm_targets_X86
+	)
+	arm? (
+		llvm_targets_ARM
+	)
+	arm64? (
+		llvm_targets_AArch64
+	)
+	loong? (
+		llvm_targets_LoongArch
+	)
+	m68k? (
+		llvm_targets_M68k
+	)
+	mips? (
+		llvm_targets_Mips
+	)
+	ppc? (
+		llvm_targets_PowerPC
+	)
+	ppc64? (
+		llvm_targets_PowerPC
+	)
+	riscv? (
+		llvm_targets_RISCV
+	)
+	sparc? (
+		llvm_targets_Sparc
+	)
+	x86? (
+		llvm_targets_X86
+	)
 "
 
 pkg_setup() {

@@ -23,12 +23,27 @@ IUSE="
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
 SANITIZER_FLAGS=(
-	asan dfsan lsan msan hwasan tsan ubsan safestack cfi scudo
-	shadowcallstack gwp-asan
+	asan
+	cfi
+	dfsan
+	gwp-asan
+	hwasan
+	lsan
+	msan
+	safestack
+	scudo
+	shadowcallstack
+	tsan
+	ubsan
 )
-CPU_X86_FLAGS=( sse3 sse4_2 )
-IUSE+=" ${SANITIZER_FLAGS[@]/#/+}"
-IUSE+=" ${CPU_X86_FLAGS[@]/#/cpu_flags_x86_}"
+CPU_X86_FLAGS=(
+	sse3
+	sse4_2
+)
+IUSE+="
+${CPU_X86_FLAGS[@]/#/cpu_flags_x86_}
+${SANITIZER_FLAGS[@]/#/+}
+"
 # See also https://github.com/llvm/llvm-project/blob/llvmorg-15.0.6/compiler-rt/cmake/Modules/AllSupportedArchDefs.cmake
 SANITIZER_REQUIRED_USE="
 	asan? (
@@ -37,12 +52,12 @@ SANITIZER_REQUIRED_USE="
 			arm
 			arm64
 			hexagon
+			loong
 			mips
 			ppc64
 			riscv
 			s390
 			sparc
-			loong
 			x86
 		)
 	)
@@ -255,8 +270,12 @@ REQUIRED_USE="
 		!safestack
 	)
 	test? (
-		cfi? ( ubsan )
-		gwp-asan? ( scudo )
+		cfi? (
+			ubsan
+		)
+		gwp-asan? (
+			scudo
+		)
 	)
 	|| (
 		${SANITIZER_FLAGS[*]}
@@ -267,8 +286,12 @@ REQUIRED_USE="
 	)
 "
 RESTRICT="
-	!clang? ( test )
-	!test? ( test )
+	!clang? (
+		test
+	)
+	!test? (
+		test
+	)
 "
 PATCHES=(
 	"${FILESDIR}/compiler-rt-sanitizers-13.0.0-disable-cfi-assert-for-autoconf.patch"
@@ -281,8 +304,12 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.16
-	clang? ( sys-devel/clang )
-	elibc_glibc? ( net-libs/libtirpc )
+	clang? (
+		sys-devel/clang
+	)
+	elibc_glibc? (
+		net-libs/libtirpc
+	)
 	test? (
 		!!<sys-apps/sandbox-2.13
 		$(python_gen_any_dep ">=dev-python/lit-15[\${PYTHON_USEDEP}]")
@@ -294,7 +321,11 @@ BDEPEND="
 	)
 "
 
-LLVM_COMPONENTS=( compiler-rt cmake llvm/cmake )
+LLVM_COMPONENTS=(
+	compiler-rt
+	cmake
+	llvm/cmake
+)
 LLVM_TEST_COMPONENTS=( llvm/lib/Testing/Support llvm/utils/unittest )
 LLVM_PATCHSET=${PV/_/-}
 llvm.org_set_globals
@@ -471,4 +502,4 @@ src_test() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  ebuild, hardending
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  ebuild, hardening

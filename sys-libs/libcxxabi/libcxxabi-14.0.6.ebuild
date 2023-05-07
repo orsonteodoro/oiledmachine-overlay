@@ -7,10 +7,18 @@ EAPI=8
 CMAKE_ECLASS=cmake
 PYTHON_COMPAT=( python3_{9..11} )
 inherit cmake-multilib llvm llvm.org python-any-r1 toolchain-funcs
+# llvm-6 for new lit options
+LLVM_MAX_SLOT=${LLVM_MAJOR}
 
 DESCRIPTION="Low level support for a standard C++ library"
 HOMEPAGE="https://libcxxabi.llvm.org/"
-LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
+LICENSE="
+	Apache-2.0-with-LLVM-exceptions
+	|| (
+		UoI-NCSA
+		MIT
+	)
+"
 SLOT="0"
 KEYWORDS="amd64 arm arm64 ~riscv sparc x86 ~x64-macos"
 IUSE="
@@ -26,8 +34,6 @@ RDEPEND="
 		)
 	)
 "
-# llvm-6 for new lit options
-LLVM_MAX_SLOT=${LLVM_MAJOR}
 DEPEND+="
 	${RDEPEND}
 	sys-devel/llvm:${LLVM_MAJOR}
@@ -37,21 +43,31 @@ BDEPEND+="
 		${PYTHON_DEPS}
 	)
 	test? (
-		>=sys-devel/clang-3.9.0
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
+		>=sys-devel/clang-3.9.0
 	)
 "
-S="${WORKDIR}"
-RESTRICT="!test? ( test )"
 # Don't strip CFI from .so files
-RESTRICT+=" strip"
+RESTRICT="
+	!test? (
+		test
+	)
+	strip
+"
+S="${WORKDIR}"
 PATCHES=(
 	"${FILESDIR}/libcxxabi-15.0.0.9999-hardened.patch"
 	"${FILESDIR}/libcxx-13.0.0.9999-hardened.patch"
 )
 
-LLVM_COMPONENTS=( runtimes libcxx{abi,} llvm/cmake cmake )
-LLVM_TEST_COMPONENTS=( llvm/utils/llvm-lit )
+LLVM_COMPONENTS=(
+	runtimes
+	libcxx{abi,}
+	llvm/cmake cmake
+)
+LLVM_TEST_COMPONENTS=(
+	llvm/utils/llvm-lit
+)
 llvm.org_set_globals
 
 python_check_deps() {
@@ -62,7 +78,7 @@ python_check_deps() {
 pkg_setup() {
 	# darwin prefix builds do not have llvm installed yet, so rely on bootstrap-prefix
 	# to set the appropriate path vars to LLVM instead of using llvm_pkg_setup.
-	if [[ ${CHOST} != *-darwin* ]] || has_version dev-lang/llvm; then
+	if [[ ${CHOST} != *-darwin* ]] || has_version sys-devel/llvm; then
 		llvm_pkg_setup
 	fi
 	python-any-r1_pkg_setup
@@ -93,8 +109,10 @@ src_configure() {
 	has_sanitizer_option "cfi-vcall" && HAVE_FLAG_CFI_VCALL="1"
 	has_sanitizer_option "shadow-call-stack" && HAVE_FLAG_SHADOW_CALL_STACK="1"
 	is-flagq '-fsanitize-cfi-cross-dso' && HAVE_FLAG_CFI_CROSS_DSO="1"
-	( has_sanitizer_option "cfi-derived-cast" \
-		|| has_sanitizer_option "cfi-unrelated-cast" ) \
+	( \
+		   has_sanitizer_option "cfi-derived-cast" \
+		|| has_sanitizer_option "cfi-unrelated-cast" \
+	) \
 		&& HAVE_FLAG_CFI_CAST="1"
 
 	configure_abi() {

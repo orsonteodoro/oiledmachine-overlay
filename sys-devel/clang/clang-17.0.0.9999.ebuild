@@ -23,7 +23,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS=""
 IUSE="
-debug doc +extra ieee-long-double +pie +static-analyzer test xml
++debug doc +extra ieee-long-double +pie +static-analyzer test xml
 
 default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4
@@ -65,7 +65,11 @@ REQUIRED_USE="
 		!test
 	)
 "
-RESTRICT="!test? ( test )"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 
 RDEPEND+="
 	${PYTHON_DEPS}
@@ -104,14 +108,14 @@ PDEPEND+="
 "
 
 LLVM_COMPONENTS=(
-	clang clang-tools-extra cmake
+	clang
+	clang-tools-extra
+	cmake
 	llvm/lib/Transforms/Hello
 )
 LLVM_MANPAGES=1
 LLVM_TEST_COMPONENTS=(
-	llvm/lib/Testing
 	llvm/utils
-	third-party
 )
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
@@ -371,6 +375,12 @@ src_prepare() {
 		lib/Lex/InitHeaderSearch.cpp \
 		lib/Driver/ToolChains/Darwin.cpp || die
 
+	if ! use prefix-guest && [[ -n ${EPREFIX} ]]; then
+		sed -i "/LibDir.*Loader/s@return \"\/\"@return \"${EPREFIX}/\"@" \
+			lib/Driver/ToolChains/Linux.cpp \
+			|| die
+	fi
+
 	prepare_abi() {
 		uopts_src_prepare
 	}
@@ -483,6 +493,7 @@ get_distribution_components() {
 			c-index-test
 			clang
 			clang-format
+			clang-linker-wrapper
 			clang-offload-bundler
 			clang-offload-packager
 			clang-refactor
@@ -632,7 +643,8 @@ einfo
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/share/man"
 		-DCLANG_CONFIG_FILE_SYSTEM_DIR="${EPREFIX}/etc/clang"
-		# relative to bindir
+
+		# This is relative to bindir.
 		-DCLANG_RESOURCE_DIR="../../../../lib/clang/${LLVM_MAJOR}"
 
 		-DBUILD_SHARED_LIBS=OFF
@@ -642,18 +654,27 @@ einfo
 
 		-DLLVM_TARGETS_TO_BUILD="${LLVM_TARGETS// /;}"
 
-		-DCMAKE_DISABLE_FIND_PACKAGE_LibXml2=$(usex !xml)
+		# these are not propagated reliably, so redefine them
+		-DLLVM_ENABLE_EH=ON
+		-DLLVM_ENABLE_RTTI=ON
+
 		# libgomp support fails to find headers without explicit -I
 		# furthermore, it provides only syntax checking
 		-DCLANG_DEFAULT_OPENMP_RUNTIME=libomp
 
-		# disable using CUDA to autodetect GPU, just build for all
-		-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
+		# Disable CUDA to autodetect GPU, so build for all.
+		-DCMAKE_DISABLE_FIND_PACKAGE_CUDAToolkit=ON
+
+		# Disable linking to HSA to avoid automagic dep.
+		# Load it dynamically instead.
+		-DCMAKE_DISABLE_FIND_PACKAGE_hsa-runtime64=ON
 
 		-DCLANG_DEFAULT_PIE_ON_LINUX=$(usex pie)
 
+		-DCLANG_ENABLE_LIBXML2=$(usex xml)
 		-DCLANG_ENABLE_ARCMT=$(usex static-analyzer)
 		-DCLANG_ENABLE_STATIC_ANALYZER=$(usex static-analyzer)
+		# TODO: CLANG_ENABLE_HLSL?
 
 		-DPython3_EXECUTABLE="${PYTHON}"
 	)
@@ -741,7 +762,10 @@ _src_compile() {
 	# Provide a symlink for tests.
 	if [[ ! -L ${WORKDIR}/lib/clang ]]; then
 		mkdir -p "${WORKDIR}"/lib || die
-		ln -s "${BUILD_DIR}/$(get_libdir)/clang" "${WORKDIR}"/lib/clang || die
+		ln -s \
+			"${BUILD_DIR}/$(get_libdir)/clang" \
+			"${WORKDIR}"/lib/clang \
+			|| die
 	fi
 }
 
@@ -826,10 +850,16 @@ multilib_src_install() {
 	# (Also, drop the version suffix from runtime headers.)
 	rm -rf "${ED}"/usr/include || die
 	if [[ -e "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/include ]] ; then
-		mv "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/include "${ED}"/usr/include || die
+		mv \
+			"${ED}"/usr/lib/llvm/${LLVM_MAJOR}/include \
+			"${ED}"/usr/include \
+			|| die
 	fi
 	if [[ -e "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/clang ]] ; then
-		mv "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/clang "${ED}"/usr/include/clangrt || die
+		mv \
+			"${ED}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/clang \
+			"${ED}"/usr/include/clangrt \
+			|| die
 	fi
 	if multilib_is_native_abi && [[ -e "${ED}"/usr/include/clang-tidy ]] ; then
 		# Don't wrap clang-tidy headers; the list is too long.

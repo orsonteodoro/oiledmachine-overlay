@@ -23,15 +23,25 @@ debug test
 default-full-relro +default-partial-relro default-no-relro
 hardened hardened-compat r1
 "
-REQUIRED_USE+=" hardened? ( !test )"
-RESTRICT="!test? ( test )"
+REQUIRED_USE+="
+	hardened? (
+		!test
+	)
+"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 
 RDEPEND="
 	!sys-devel/lld:0
 	sys-libs/zlib:=
 	~sys-devel/llvm-${PV}
 "
-DEPEND="${RDEPEND}"
+DEPEND="
+	${RDEPEND}
+"
 BDEPEND="
 	ebolt? (
 		>=sys-devel/llvm-14[bolt]
@@ -42,8 +52,14 @@ BDEPEND="
 	)
 "
 
-LLVM_COMPONENTS=( lld cmake libunwind/include/mach-o )
-LLVM_TEST_COMPONENTS=( llvm/utils/{lit,unittest} )
+LLVM_COMPONENTS=(
+	lld
+	cmake
+	libunwind/include/mach-o
+)
+LLVM_TEST_COMPONENTS=(
+	llvm/utils/{lit,unittest}
+)
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 
@@ -54,16 +70,36 @@ REQUIRED_USE+="
 		default-partial-relro
 	)
 
-	amd64? ( llvm_targets_X86 )
-	arm? ( llvm_targets_ARM )
-	arm64? ( llvm_targets_AArch64 )
-	m68k? ( llvm_targets_M68k )
-	mips? ( llvm_targets_Mips )
-	ppc? ( llvm_targets_PowerPC )
-	ppc64? ( llvm_targets_PowerPC )
-	riscv? ( llvm_targets_RISCV )
-	sparc? ( llvm_targets_Sparc )
-	x86? ( llvm_targets_X86 )
+	amd64? (
+		llvm_targets_X86
+	)
+	arm? (
+		llvm_targets_ARM
+	)
+	arm64? (
+		llvm_targets_AArch64
+	)
+	m68k? (
+		llvm_targets_M68k
+	)
+	mips? (
+		llvm_targets_Mips
+	)
+	ppc? (
+		llvm_targets_PowerPC
+	)
+	ppc64? (
+		llvm_targets_PowerPC
+	)
+	riscv? (
+		llvm_targets_RISCV
+	)
+	sparc? (
+		llvm_targets_Sparc
+	)
+	x86? (
+		llvm_targets_X86
+	)
 
 	default-full-relro? (
 		!test
