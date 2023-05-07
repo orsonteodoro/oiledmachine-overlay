@@ -280,8 +280,6 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
           - Country name converted from IP address
       - telemetry reporting : submission of Telemetry to developers
 
-    Possibly, information about CPU may be sent.
-
     Further reading:
 
       Breakpad:                       https://chromium.googlesource.com/breakpad/breakpad/+/master/docs/getting_started_with_breakpad.md
