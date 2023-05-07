@@ -31,8 +31,8 @@ te th tr uk ur vi zh-CN zh-TW
 
 GCC_MIN="10.4"
 UOPTS_PGO_PV=$(ver_cut 1-3 ${PV})
-LLVM_MAX_SLOT=16 # Also bump v in get_llvm_profdata_version_info()
-LLVM_MIN_SLOT=16 # The pregenerated PGO profile needs profdata version 8
+LLVM_MAX_SLOT=17 # Also bump v in get_llvm_profdata_version_info()
+LLVM_MIN_SLOT=17 # The pregenerated PGO profile needs profdata version 8
 CR_CLANG_SLOT_OFFICIAL=17
 LLVM_SLOTS=(17 ${LLVM_MAX_SLOT}) # [inclusive, inclusive] high to low
 UOPTS_SUPPORT_TPGO=0
@@ -1410,6 +1410,8 @@ get_pregenerated_profdata_version()
 		| grep -E -o -e "[0-9]+")
 }
 
+# Grabs the INSTR_PROF_INDEX_VERSION in the pgo profile.
+# https://github.com/llvm/llvm-project/blob/llvmorg-17-init/compiler-rt/include/profile/InstrProfData.inc#L653
 get_llvm_profdata_version_info()
 {
 	local profdata_v=0
@@ -1417,7 +1419,7 @@ get_llvm_profdata_version_info()
 	local ver
 	# The live versions can have different profdata versions over time.
 	for v in \
-		"16.0.0.9999" \
+		"${CR_CLANG_SLOT_OFFICIAL}.0.0.9999" \
 	; do
 		(( $(ver_cut 1 "${v}") != ${LLVM_SLOT} )) && continue
 		(! has_version "~sys-devel/llvm-${v}" ) && continue
