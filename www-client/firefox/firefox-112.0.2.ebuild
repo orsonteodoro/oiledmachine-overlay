@@ -1707,7 +1707,7 @@ einfo
 		--disable-strip \
 		--disable-tests \
 		--disable-updater \
-		--disable-wmf-cdm \
+		--disable-wmf \
 		--enable-negotiateauth \
 		--enable-new-pass-manager \
 		--enable-official-branding \
