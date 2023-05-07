@@ -37,6 +37,18 @@ CR_CLANG_SLOT_OFFICIAL=17
 LLVM_SLOTS=(${LLVM_MIN_SLOT} ${LLVM_MAX_SLOT}) # [inclusive, inclusive] high to low
 UOPTS_SUPPORT_TPGO=0
 UOPTS_SUPPORT_TBOLT=0
+
+# For PGO
+# *_pre* not supported due to ebuild scripting issue.
+PGO_LLVM_SUPPORTED_VERSIONS=(
+	"16.0.0"
+	"16.0.1"
+	"16.0.2"
+	"16.0.3"
+	"16.0.4.9999"
+	"${CR_CLANG_SLOT_OFFICIAL}.0.0.9999"
+)
+
 inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils
 inherit python-any-r1 qmake-utils readme.gentoo-r1 toolchain-funcs xdg-utils
 
@@ -1042,27 +1054,27 @@ einfo
 }
 
 _get_release_hash() {
-	local v="${1}"
-	if [[ -z "${cached_release_hashes[${v}]}" ]] ; then
+	local pv_key="${1}"
+	if [[ -z "${cached_release_hashes[${pv_key}]}" ]] ; then
 
 	# This doesn't redirect to the tip.
 		#local hash=$(git --no-pager ls-remote \
 		#	https://github.com/llvm/llvm-project.git \
-		#	llvmorg-${v} \
+		#	llvmorg-${pv_key} \
 		#	| cut -f 1 -d $'\t')
 
 		# Get the tip
 		local hash=$(
 			wget -q -O - \
-		https://github.com/llvm/llvm-project/commits/llvmorg-${v} \
+		https://github.com/llvm/llvm-project/commits/llvmorg-${pv_key} \
 				| grep "/commit/" \
 				| head -n 1 \
 				| cut -f 2 -d "\"" \
 				| cut -f 5 -d "/"
 		)
-		cached_release_hashes[${v}]="${hash}"
+		cached_release_hashes[${pv_key}]="${hash}"
 	fi
-	echo "${cached_release_hashes[${v}]}"
+	echo "${cached_release_hashes[${pv_key}]}"
 }
 
 _get_llvm_timestamp() {
@@ -1070,17 +1082,17 @@ _get_llvm_timestamp() {
 	if [[ -z "${emerged_llvm_commit}" ]] ; then
 	# We should check against the llvm milestone if not live.
 		while [[ "${pv:0:1}" =~ [A-Za-z] ]] ; do
-			pv="${pv#*-}"
+			pv="${pv#*-}" # any pv
 		done
-		local v=$(ver_cut 1-3 "${pv}")
+		local pv_key=$(ver_cut 1-3 "${pv}")
 		local suffix=""
 		if [[ "${pv}" =~ "_rc" ]] ; then
 			suffix=$(echo "${pv}" \
 				| grep -E -o -e "_rc[0-9]+")
 			suffix=${suffix//_/-}
 		fi
-		v="${v}${suffix}"
-		emerged_llvm_commit=$(_get_release_hash ${v})
+		pv_key="${pv_key}${suffix}"
+		emerged_llvm_commit=$(_get_release_hash ${pv_key})
 	fi
 	if [[ -z "${emerged_llvm_timestamps[${emerged_llvm_commit}]}" ]] ; then
 einfo
@@ -1401,7 +1413,7 @@ ewarn
 	fi
 }
 
-get_pregenerated_profdata_version()
+get_pregenerated_profdata_index_version()
 {
 	local s
 	s=$(_get_s)
@@ -1415,42 +1427,58 @@ get_pregenerated_profdata_version()
 # https://github.com/llvm/llvm-project/blob/llvmorg-17-init/compiler-rt/include/profile/InstrProfData.inc#L653
 get_llvm_profdata_version_info()
 {
-	local profdata_v=0
-	local v
-	local ver
+	[[ -z "${LLVM_SLOT}" ]] && die "LLVM_SLOT is empty"
+	local profdata_index_version=0
+	local compatible_pv
+	local found_ver
 	# The live versions can have different profdata versions over time.
-	for v in \
-		"16.0.0" \
-		"16.0.1" \
-		"16.0.2" \
-		"16.0.3" \
-		"16.0.4.9999" \
-		"${CR_CLANG_SLOT_OFFICIAL}.0.0.9999" \
-	; do
-		(( $(ver_cut 1 "${v}") != ${LLVM_SLOT} )) && continue
-		(! has_version "~sys-devel/llvm-${v}" ) && continue
+
+	for compatible_pv in ${PGO_LLVM_SUPPORTED_VERSIONS[@]} ; do
+		(( $(ver_cut 1 "${compatible_pv}") != ${LLVM_SLOT} )) && continue
+		( ! has_version "~sys-devel/llvm-${compatible_pv}" ) && continue
 		local llvm_version
-		if [[ "${v}" =~ "9999" ]] ; then
-			local llvm_version=$(bzless \
-				"${PKGDB_PATH}/sys-devel/llvm-${v}"*"/environment.bz2" \
+		if [[ "${compatible_pv}" =~ "9999" ]] ; then
+			# Process -rX revisions
+			local llvm_version=$(bzcat \
+				"${PKGDB_PATH}/sys-devel/llvm-${compatible_pv}"*"/environment.bz2" \
 				| grep -F -e "EGIT_VERSION" \
 				| head -n 1 \
 				| cut -f 2 -d '"')
 		else
-			llvm_version="llvmorg-${v/_/-}"
+			llvm_version="llvmorg-${compatible_pv/_/-}"
 		fi
-		ver=${v}
-		profdata_v=$(wget -q -O - \
+		found_ver=${compatible_pv}
+		profdata_index_version=$(wget -q -O - \
 "https://raw.githubusercontent.com/llvm/llvm-project/${llvm_version}/llvm/include/llvm/ProfileData/InstrProfData.inc" \
 			| grep "INSTR_PROF_INDEX_VERSION" \
 			| head -n 1 \
 			| grep -E -o -e "[0-9]+")
+		break
 	done
-	echo "${profdata_v}:${ver}"
+	if [[ -z "${profdata_index_version}" ]] ; then
+eerror
+eerror "Missing INSTR_PROF_INDEX_VERSION (aka profdata_index_version)"
+eerror
+		die
+	fi
+	if (( ${profdata_index_version} == 0 )) ; then
+eerror
+eerror "The profdata_index_version should not be 0.  Install the clang slot."
+eerror
+		request_clang_switch_message
+		die
+	fi
+	if [[ -z "${found_ver}" ]] ; then
+eerror
+eerror "Missing the sys-devel/llvm version (aka found_ver)"
+eerror
+		die
+	fi
+	echo "${profdata_index_version}:${found_ver}"
 }
 
 is_profdata_compatible() {
-	local a=$(get_pregenerated_profdata_version)
+	local a=$(get_pregenerated_profdata_index_version)
 	local b=${CURRENT_PROFDATA_VERSION}
 	if (( ${a} == ${b} )) ; then
 		return 0
@@ -1572,6 +1600,28 @@ einfo "marked CFI protected."
 einfo
 }
 
+request_clang_switch_message() {
+eerror
+eerror "You must switch to Clang to use the prebuilt PGO profile."
+eerror
+eerror "Supported clang slots:\t${LLVM_SLOTS[@]}"
+eerror "Supported clang versions:\t${PGO_LLVM_SUPPORTED_VERSIONS[@]}"
+eerror
+eerror "To switch add a per-profile config file create the following files:"
+eerror
+eerror
+eerror "Contents of ${EROOT}/etc/portage/env/clang-${CR_CLANG_SLOT_OFFICIAL}.conf:"
+eerror
+eerror "CC=clang-${CR_CLANG_SLOT_OFFICIAL}"
+eerror "CXX=clang++-${CR_CLANG_SLOT_OFFICIAL}"
+eerror
+eerror
+eerror "Contents of ${EROOT}/etc/portage/package.env"
+eerror
+eerror "${CATEGORY}/${PN} clang-${CR_CLANG_SLOT_OFFICIAL}.conf"
+eerror
+}
+
 is_using_clang() {
 	local U=(
 		"bundled-libcxx"
@@ -1628,6 +1678,11 @@ ewarn
 ewarn
 ewarn "Linking times may take longer than usual.  Maybe 1-12+ hour(s)."
 ewarn
+	fi
+
+	if ! tc-is-clang && use pgo ; then
+		request_clang_switch_message
+		die
 	fi
 
 	# These checks are a maybe required.
@@ -1708,24 +1763,26 @@ eerror
 				| sed -e "s|:$||")
 	# If building without ccache, include in the search path:
 	# 1.  Path to clang/clang++ (/usr/lib/llvm/${LLVM_SLOT}/bin)
-	# 2.  Path to highest LLD (/usr/lib/llvm/${v_major_lld}/bin)
+	# 2.  Path to highest LLD (/usr/lib/llvm/${lld_pv_major}/bin)
 	# If ccache is installed, this really does nothing because
 	# /usr/lib/ccache/bin has a higher precedence.
 			export PATH+=":${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}/bin"
 einfo
 einfo "Using sys-devel/llvm:${LLVM_SLOT}"
 einfo
-			local lld_v_maj=$(ver_cut 1 \
+			local lld_pv_major=$(ver_cut 1 \
 				$(best_version "sys-devel/lld" \
 					| sed -e "s|sys-devel/lld-||"))
-			v_major_lld=$(ver_cut 1 "${v_major_lld}")
-			export PATH+=":${EPREFIX}/usr/lib/llvm/${v_major_lld}/bin"
+			lld_pv_major=$(ver_cut 1 "${lld_pv_major}")
+			export PATH+=":${EPREFIX}/usr/lib/llvm/${lld_pv_major}/bin"
 		fi
 		if use pgo ; then
-			local vi=$(get_llvm_profdata_version_info)
-			CURRENT_PROFDATA_VERSION=$(echo "${vi}" \
+			einfo "LLVM_SLOT:\t${LLVM_SLOT}"
+			local profdata_index_version=$(get_llvm_profdata_version_info)
+			einfo "profdata_index_version=|${profdata_index_version}|"
+			CURRENT_PROFDATA_VERSION=$(echo "${profdata_index_version}" \
 				| cut -f 1 -d ":")
-			CURRENT_PROFDATA_LLVM_VERSION=$(echo "${vi}" \
+			CURRENT_PROFDATA_LLVM_VERSION=$(echo "${profdata_index_version}" \
 				| cut -f 2 -d ":")
 		fi
 	fi
@@ -2173,13 +2230,13 @@ ewarn
 		$(usex !system-ffmpeg "
 			third_party/ffmpeg
 			third_party/opus
-		")
+		" "")
 		$(usex !system-icu "
 			third_party/icu
-		")
+		" "")
 		$(usex !system-png "
 			third_party/libpng
-		")
+		" "")
 		$(usex !system-av1 "
 			third_party/dav1d
 			third_party/libaom
@@ -2187,10 +2244,10 @@ ewarn
 			third_party/libaom/source/libaom/third_party/SVT-AV1
 			third_party/libaom/source/libaom/third_party/vector
 			third_party/libaom/source/libaom/third_party/x86inc
-		")
+		" "")
 		$(usex !system-harfbuzz "
 			third_party/harfbuzz-ng
-		")
+		" "")
 		$((use arm64 || use ppc64) || echo "
 			third_party/swiftshader/third_party/llvm-10.0
 		")
@@ -2976,8 +3033,8 @@ eerror
 eerror "Profdata compatibility:"
 eerror
 eerror "The PGO profile is not compatible with this version of LLVM."
-eerror "Expected:  $(get_pregenerated_profdata_version)"
-eerror "Found:  ${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
+eerror "Expected:\t$(get_pregenerated_profdata_index_version)"
+eerror "Found:\t${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
 eerror
 eerror "The solution is to rebuild using a newer/older commit or tag."
 eerror
@@ -2989,8 +3046,8 @@ eerror
 einfo
 einfo "Profdata compatibility:"
 einfo
-einfo "Expected:  $(get_pregenerated_profdata_version)"
-einfo "Found:  ${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
+einfo "Expected:\t$(get_pregenerated_profdata_index_version)"
+einfo "Found:\t${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
 einfo
 		fi
 	fi
