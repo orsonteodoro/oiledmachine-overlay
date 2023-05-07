@@ -342,6 +342,12 @@ REQUIRED_USE="
 			system-ffmpeg
 		)
 	)
+	pgo? (
+		X
+	)
+	screencast? (
+		wayland
+	)
 	vaapi? (
 		wayland
 	)
@@ -363,10 +369,6 @@ REQUIRED_USE="
 		pulseaudio
 	)
 "
-
-# Firefox-only REQUIRED_USE flags
-REQUIRED_USE+=" pgo? ( X )"
-REQUIRED_USE+=" screencast? ( wayland )"
 
 # For dependencies, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html

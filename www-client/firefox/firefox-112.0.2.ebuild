@@ -335,6 +335,9 @@ REQUIRED_USE="
 			system-ffmpeg
 		)
 	)
+	pgo? (
+		X
+	)
 	vaapi? (
 		wayland
 	)
@@ -359,9 +362,6 @@ REQUIRED_USE="
 		X
 	)
 "
-
-REQUIRED_USE+=" || ( X wayland )"
-REQUIRED_USE+=" pgo? ( X )"
 
 # For dependencies, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
