@@ -1968,6 +1968,13 @@ einfo
 		export READELF=readelf
 		export STRIP=strip
 		export LD=ld.bfd
+
+		if ! use vanilla ; then
+eerror
+eerror "The vanilla USE flag must be disabled for GCC builds."
+eerror
+			die
+		fi
 	fi
 	${CC} --version || die
 	_compiler_version_checks
