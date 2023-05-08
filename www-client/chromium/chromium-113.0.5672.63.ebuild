@@ -1403,6 +1403,8 @@ ewarn "Applying the distro patchset."
 		# Proper CFI requires static linkage.
 		# You can use Cross DSO CFI but the attack surface would increase.
 		distro_patchset
+	else
+ewarn "Disabling the distro patchset."
 	fi
 
 	if use epgo ; then

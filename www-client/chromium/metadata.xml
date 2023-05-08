@@ -404,6 +404,11 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
     </flag>
     <flag name="vanilla">
       Disabling will apply distro patches.
+
+      Enable for Clang CFI.  This may also increase performance.
+
+      Disable to unvendor internal depends and improve libstdc++ compatibility.
+      This may also decrease the performance and increase the attack surface.
     </flag>
     <flag name="weston">
       Prefer weston to generate wayland PGO profile.  This option is mutually
