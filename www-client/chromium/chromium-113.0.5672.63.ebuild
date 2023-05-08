@@ -1888,15 +1888,12 @@ einfo
 			die
 		fi
 
-		local cargs=""
 		if tc-is-cross-compiler ; then
-			cargs="$(get_abi_CFLAGS ${ABI})"
 			export CC="${CBUILD}-clang-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
 			export CXX="${CBUILD}-clang++-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
 			export BUILD_CC=${CBUILD}-clang-${LLVM_SLOT}
 			export BUILD_CXX=${CBUILD}-clang++${LLVM_SLOT}
 		elif tc-is-cross-compiler ; then
-			cargs="-target ${CHOST} --sysroot ${ESYSROOT}"
 			export CC="${CBUILD}-clang-${LLVM_SLOT} -target ${CHOST} --sysroot ${ESYSROOT}"
 			export CXX="${CBUILD}-clang++-${LLVM_SLOT} -target ${CHOST} --sysroot ${ESYSROOT}"
 			export BUILD_CC=${CBUILD}-clang-${LLVM_SLOT}
