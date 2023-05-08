@@ -258,11 +258,11 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
             - CPU identification
             - CPU register data [can be a security risk]
             - stacks [aka local variables]
-            - heap [aka dynamic memory]
+            - heap [aka dynamic memory for arrays, lists, etc.  this may contain sensitive data.]
             - executable/library names and IDs
             - operating system version
             - reason of dump
-            - thread stack memory
+            - thread stack memory [global variables?]
           - stack traces
           - process IDs
           - crash ID
