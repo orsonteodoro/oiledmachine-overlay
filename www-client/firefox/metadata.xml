@@ -268,7 +268,7 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
           - crash ID
           - conditionally a memory crash report, of a process as a result of a crash
           - conditionally plugin hang report, with minidumps of processes
-          - UUID associated with the sent data
+          - UUID [aka ID] associated with the sent data
       - data reporting : associated with normandy and studies
           - studies participation will increase the opt-in agreement of more
             collected data for experimental features
