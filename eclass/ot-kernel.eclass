@@ -991,36 +991,38 @@ NO_INSTR_FIX_TIMESTAMP="1624048424" # Fri Jun 18 08:33:44 PM UTC 2021
 NO_INSTRUMENT_FUNCTION="a63d4f6cbab133b0f1ce9afb562546fcc5bb2680"
 NO_INSTRUMENT_FUNCTION_TIMESTAMP="1624300463" # Mon Jun 21 06:34:23 PM UTC 2021
 
+PGO_LLVM_SUPPORTED_VERSIONS=(
+	"13.0.0"
+	"13.0.1"
+	"14.0.0"
+	"14.0.1"
+	"14.0.2"
+	"14.0.3"
+	"14.0.4"
+	"14.0.5"
+	"14.0.6"
+	"15.0.0"
+	"15.0.1"
+	"15.0.2"
+	"15.0.3"
+	"15.0.4"
+	"15.0.5"
+	"15.0.6"
+	"15.0.7"
+	"16.0.0"
+	"16.0.1"
+	"16.0.2"
+	"16.0.3"
+	"17.0.0.9999"
+)
+
 verify_clang_compiler_updated() {
-	local p
-	for p in \
-		"sys-devel/clang-13.0.0" \
-		"sys-devel/clang-13.0.1" \
-		"sys-devel/clang-14.0.0" \
-		"sys-devel/clang-14.0.1" \
-		"sys-devel/clang-14.0.2" \
-		"sys-devel/clang-14.0.3" \
-		"sys-devel/clang-14.0.4" \
-		"sys-devel/clang-14.0.5" \
-		"sys-devel/clang-14.0.6" \
-		"sys-devel/clang-15.0.0" \
-		"sys-devel/clang-15.0.1" \
-		"sys-devel/clang-15.0.2" \
-		"sys-devel/clang-15.0.3" \
-		"sys-devel/clang-15.0.4" \
-		"sys-devel/clang-15.0.5" \
-		"sys-devel/clang-15.0.6" \
-		"sys-devel/clang-15.0.7" \
-		"sys-devel/clang-16.0.0" \
-		"sys-devel/clang-16.0.1" \
-		"sys-devel/clang-16.0.2" \
-		"sys-devel/clang-16.0.3" \
-		"sys-devel/clang-17.0.0.9999" \
-	; do
-		if ot-kernel_has_version "=${p}*" ; then
-			einfo "Verifying prereqs for PGO for ${p}"
+	local pv
+	for pv in ${PGO_LLVM_SUPPORTED_VERSIONS[@]} ; do
+		if ot-kernel_has_version "=sys-devel/clang-${pv}*" ; then
+			einfo "Verifying prereqs for PGO for sys-devel/clang-${pv}"
 			local emerged_llvm_commit=$(bzless \
-				"${ESYSROOT}/var/db/pkg/${p}"*"/environment.bz2" \
+				"${ESYSROOT}/var/db/pkg/sys-devel/clang-${pv}"*"/environment.bz2" \
 				| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
 			local emerged_llvm_time_desc=$(wget -q -O - \
 				https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch \
@@ -1028,7 +1030,17 @@ verify_clang_compiler_updated() {
 			local emerged_llvm_timestamp=$(date -u -d "${emerged_llvm_time_desc}" +%s)
 			if (( ${emerged_llvm_timestamp} <= ${NO_INSTRUMENT_FUNCTION_TIMESTAMP} )) \
 				&& (( ${emerged_llvm_timestamp} <= ${NO_INSTRUMENT_FUNCTION_TIMESTAMP} )) ; then
-				die "Re-emerge =${p}"
+eerror
+eerror "Detected outdated commit"
+eerror
+eerror "  Re-emerge =sys-devel/clang-${pv}"
+eerror
+eerror "or"
+eerror
+eerror "  Use one of the following versions:"
+eerror "  ${PGO_LLVM_SUPPORTED_VERSIONS[@]}"
+eerror
+				die
 			else
 				# If on the same day it may be broken
 einfo "Clang and LLVM are up-to-date"
@@ -1037,6 +1049,7 @@ einfo "Clang and LLVM are up-to-date"
 	done
 }
 
+# IPD_RAW_V* is the same as INSTR_PROF_RAW_VERSION.
 IPD_RAW_V=5 # < llvm-13 Dec 28, 2020
 IPD_RAW_V_MIN=6
 IPD_RAW_V_MAX=8
@@ -1054,33 +1067,8 @@ einfo "Verifying profraw version compatibility"
 	local found_upstream_version=0 # corresponds to original patch requirements for < llvm 13 (broken)
 	local found_patched_version=0 # corresponds to oiledmachine patches to use >= llvm 13 (fixed)
 	local pv
-	for pv in \
-		"11.1.0" \
-		"12.0.1" \
-		"13.0.0" \
-		"13.0.1" \
-		"14.0.0" \
-		"14.0.1" \
-		"14.0.2" \
-		"14.0.3" \
-		"14.0.4" \
-		"14.0.5" \
-		"14.0.6" \
-		"15.0.0" \
-		"15.0.1" \
-		"15.0.2" \
-		"15.0.3" \
-		"15.0.4" \
-		"15.0.5" \
-		"15.0.6" \
-		"15.0.7" \
-		"16.0.0" \
-		"16.0.1" \
-		"16.0.2" \
-		"16.0.3" \
-		"17.0.0.9999" \
-	; do
-		(! ot-kernel_has_version "~sys-devel/llvm-${pv}" ) && continue
+	for pv in ${PGO_LLVM_SUPPORTED_VERSIONS[@]} ; do
+		( ! ot-kernel_has_version "~sys-devel/llvm-${pv}" ) && continue
 		local llvm_version
 		einfo "pv=${pv}"
 		if [[ "${pv}" =~ "9999" || "${pv}" =~ "_pre" ]] ; then
@@ -1119,6 +1107,9 @@ eerror "No installed LLVM versions are compatible.  Please send an issue"
 eerror "request with your LLVM version.  If you are using a live LLVM version,"
 eerror "send the EGIT_VERSION found in"
 eerror "\${ESYSROOT}/var/db/pkg/sys-devel/llvm-\${pv}*/environment.bz2"
+eerror
+eerror "You may also use one of the supported LLVM versions for PGO support below:"
+eerror "${PGO_LLVM_SUPPORTED_VERSIONS[@]}"
 eerror
 		die
 	fi
