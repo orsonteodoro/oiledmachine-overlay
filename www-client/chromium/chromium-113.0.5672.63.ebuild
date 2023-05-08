@@ -1782,9 +1782,7 @@ einfo
 			export PATH+=":${EPREFIX}/usr/lib/llvm/${lld_pv_major}/bin"
 		fi
 		if use pgo ; then
-			einfo "LLVM_SLOT:\t${LLVM_SLOT}"
 			local profdata_index_version=$(get_llvm_profdata_version_info)
-			einfo "profdata_index_version=|${profdata_index_version}|"
 			CURRENT_PROFDATA_VERSION=$(echo "${profdata_index_version}" \
 				| cut -f 1 -d ":")
 			CURRENT_PROFDATA_LLVM_VERSION=$(echo "${profdata_index_version}" \
