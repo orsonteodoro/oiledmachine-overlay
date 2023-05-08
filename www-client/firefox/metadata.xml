@@ -256,7 +256,7 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
       - crash reporter :
           - breakpad data
             - CPU identification [can be a security risk as in recon for hardware vulnerabilies]
-            - CPU register data [can be a security risk]
+            - CPU register data [can be a security risk, may scrape disk encryption keys]
             - stacks [aka local variables]
             - heap [aka dynamic memory for arrays, lists, etc.  this may contain sensitive data.]
             - executable/library names and IDs
