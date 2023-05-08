@@ -1645,6 +1645,17 @@ is_using_clang() {
 	return 1
 }
 
+check_network_sandbox() {
+	if has network-sandbox $FEATURES ; then
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to verify that the LLVM toolchain live ebuilds are"
+eerror "up-to-date."
+eerror
+		die
+	fi
+}
+
 CURRENT_PROFDATA_VERSION=
 CURRENT_PROFDATA_LLVM_VERSION=
 NABIS=0
@@ -1841,6 +1852,7 @@ einfo
 	done
 
 	use system-av1 && cflags-depends_check
+	use pre-check-llvm && check_network_sandbox
 }
 
 USED_EAPPLY=0
