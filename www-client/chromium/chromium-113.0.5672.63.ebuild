@@ -7,8 +7,8 @@
 # for security updates.  They are announced faster than NVD.
 # See https://omahaproxy.appspot.com/ for the latest linux version
 
-EAPI=7
-PYTHON_COMPAT=( python3_{8..11} )
+EAPI=8
+PYTHON_COMPAT=( python3_{9..11} )
 PYTHON_REQ_USE="xml(+)"
 
 # LANGS obtainable from:
@@ -31,17 +31,19 @@ te th tr uk ur vi zh-CN zh-TW
 
 GCC_MIN="10.4"
 UOPTS_PGO_PV=$(ver_cut 1-3 ${PV})
-LLVM_MAX_SLOT=16
-LLVM_MIN_SLOT=17 # The pregenerated PGO profile needs profdata index version 9.
-CR_CLANG_SLOT_OFFICIAL=17
+LLVM_MAX_SLOT=17 # Same slot listed in https://github.com/chromium/chromium/blob/113.0.5672.63/tools/clang/scripts/update.py#L42
+LLVM_MIN_SLOT=16 # The pregenerated PGO profile needs profdata index version 9.
+CR_CLANG_SLOT_OFFICIAL=${LLVM_MAX_SLOT}
 LLVM_SLOTS=( ${LLVM_MAX_SLOT} ${LLVM_MIN_SLOT} ) # [inclusive, inclusive] high to low
+GCC_SLOTS=( 14 13 12 11 10 )
 UOPTS_SUPPORT_TPGO=0
 UOPTS_SUPPORT_TBOLT=0
 
 # For PGO
-# *_pre* not supported due to ebuild scripting issue.
 PGO_LLVM_SUPPORTED_VERSIONS=(
 	"${CR_CLANG_SLOT_OFFICIAL}.0.0.9999"
+	"17.0.0_pre20230502"
+	"16.0.4.9999"
 	"16.0.3"
 	"16.0.2"
 	"16.0.1"
@@ -350,7 +352,7 @@ ${IUSE_CODECS}
 ${IUSE_LIBCXX[@]}
 +bundled-libcxx branch-protection +cfi component-build +cups -debug +encode -gtk4
 -hangouts -headless +js-type-check +kerberos -libcmalloc +official +partitionalloc
-pax-kernel pic +pgo +pre-check-llvm +pre-check-vaapi +proprietary-codecs
+pax-kernel pic +pgo +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio qt5 +screencast selinux +suid
 -system-av1 +system-ffmpeg -system-icu -system-harfbuzz -system-png +thinlto-opt
@@ -764,9 +766,6 @@ CLANG_BDEPEND="
 	pgo? (
 		$(gen_depend_llvm)
 	)
-	pre-check-llvm? (
-		$(gen_depend_llvm)
-	)
 	thinlto-opt? (
 		$(gen_depend_llvm)
 	)
@@ -878,15 +877,17 @@ _compiler_version_checks() {
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		local -x CPP="$(tc-getCXX) -E"
 		if tc-is-gcc && ! ver_test "$(gcc-version)" -ge ${GCC_MIN} ; then
-			die "At least gcc ${GCC_MIN} is required"
+eerror
+eerror "At least gcc ${GCC_MIN} is required"
+eerror
+			die
 		fi
 		if tc-is-clang ; then
+			local slot=$(clang-major-version)
 			if tc-is-cross-compiler ; then
-				CPP=${CBUILD}-clang++
-			elif tc-is-cross-compiler && [[ -n ${FORCE_LLVM_SLOT} ]] ; then
-				CPP=${CBUILD}-clang++-${FORCE_LLVM_SLOT}
+				CPP=${CBUILD}-clang++-${slot}
 			else
-				CPP=${CHOST}-clang++-${LLVM_SLOT}
+				CPP=${CHOST}-clang++-${slot}
 			fi
 			CPP+=" -E"
 			local clang_min
@@ -895,8 +896,16 @@ _compiler_version_checks() {
 			else
 				clang_min=${LLVM_MIN_SLOT}
 			fi
-			if ! ver_test "$(clang-major-version)" -ge ${clang_min} ; then
-				die "At least clang ${clang_min} is required"
+			if ver_test ${slot} -lt ${clang_min} ; then
+eerror
+eerror "Your chosen clang does not meet requirements."
+eerror
+eerror "Actual slot:\t${slot}"
+eerror "Expected slot:\t>= ${clang_min}"
+eerror
+clang --version
+eerror
+				die
 			fi
 		fi
 	fi
@@ -989,429 +998,6 @@ CR_CLANG_USED_UNIX_TIMESTAMP="1678745103" # Cached.  Use below to obtain this. \
 #	| grep -F -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
 # Change also CR_CLANG_SLOT_OFFICIAL
 
-contains_slotted_major_version() {
-	# For sys-devel/llvm:x slot style
-	local live_pkgs_=(
-		"sys-devel/llvm"
-		"sys-devel/clang"
-	)
-	local x="${1}"
-	local p
-	for p in ${live_pkgs_[@]} ; do
-		[[ "${x}" == "${p}" ]] && return 0
-	done
-	return 1
-}
-
-contains_slotted_triple_version() {
-	# For sys-libs/compiler-rt-sanitizers:x.y.z slot style
-	local live_pkgs_=(
-		"sys-libs/compiler-rt"
-		"sys-libs/compiler-rt-sanitizers"
-	)
-	local x="${1}"
-	local p
-	for p in ${live_pkgs_[@]} ; do
-		[[ "${x}" == "${p}" ]] && return 0
-	done
-	return 1
-}
-
-contains_slotted_zero() {
-	# For sys-devel/llvm:0 slot style
-	local live_pkgs_=(
-		"sys-libs/libomp"
-		"sys-devel/lld"
-	)
-	local x="${1}"
-	local p
-	for p in ${live_pkgs_[@]} ; do
-		[[ "${x}" == "${p}" ]] && return 0
-	done
-	return 1
-}
-
-_print_timestamps() {
-	local timestamp
-	if [[ -n "${emerged_llvm_timestamp}" ]] ; then
-		timestamp=$(date -d "@${emerged_llvm_timestamp}")
-einfo
-einfo "System's ${p} timestamp:  ${timestamp}"
-einfo
-		if [[ "${p}" == "sys-devel/llvm" ]] ; then
-			timestamp=$(date -d "@${cr_clang_used_unix_timestamp}")
-einfo
-einfo "${PN^}'s LLVM timestamp:  ${timestamp}"
-einfo
-		else
-			timestamp=$(date -d "@${LLVM_TIMESTAMP}")
-einfo
-einfo "System's sys-devel/llvm timestamp:  ${timestamp}"
-einfo
-		fi
-	fi
-}
-
-_get_release_hash() {
-	local pv_key="${1}"
-	if [[ -z "${cached_release_hashes[${pv_key}]}" ]] ; then
-
-	# This doesn't redirect to the tip.
-		#local hash=$(git --no-pager ls-remote \
-		#	https://github.com/llvm/llvm-project.git \
-		#	llvmorg-${pv_key} \
-		#	| cut -f 1 -d $'\t')
-
-		# Get the tip
-		local hash=$(
-			wget -q -O - \
-		https://github.com/llvm/llvm-project/commits/llvmorg-${pv_key} \
-				| grep "/commit/" \
-				| head -n 1 \
-				| cut -f 2 -d "\"" \
-				| cut -f 5 -d "/"
-		)
-		cached_release_hashes[${pv_key}]="${hash}"
-	fi
-	echo "${cached_release_hashes[${pv_key}]}"
-}
-
-_get_llvm_timestamp() {
-	local emerged_llvm_commit
-	if [[ -z "${emerged_llvm_commit}" ]] ; then
-	# We should check against the llvm milestone if not live.
-		while [[ "${pv:0:1}" =~ [A-Za-z] ]] ; do
-			pv="${pv#*-}" # any pv
-		done
-		local pv_key=$(ver_cut 1-3 "${pv}")
-		local suffix=""
-		if [[ "${pv}" =~ "_rc" ]] ; then
-			suffix=$(echo "${pv}" \
-				| grep -E -o -e "_rc[0-9]+")
-			suffix=${suffix//_/-}
-		fi
-		pv_key="${pv_key}${suffix}"
-		emerged_llvm_commit=$(_get_release_hash ${pv_key})
-	fi
-	if [[ -z "${emerged_llvm_timestamps[${emerged_llvm_commit}]}" ]] ; then
-einfo
-einfo "Fetching timestamp for ${emerged_llvm_commit}"
-einfo
-	# It should be uncached/fetched because of potential partial download
-	# problems.
-		local emerged_llvm_time_desc=$(wget -q -O - \
-	https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch)
-		if [[ -z "${emerged_llvm_time_desc}" ]] ; then
-eerror
-eerror "${emerged_llvm_commit} didn't download anything."
-eerror
-			die
-		fi
-		if echo "${emerged_llvm_time_desc}" \
-			| grep "Not Found" ; then
-eerror
-eerror "The commit ${emerged_llvm_commit} doesn't exist."
-eerror
-			die
-		fi
-		emerged_llvm_time_desc=$(echo -e "${emerged_llvm_time_desc}" \
-			| grep -F -e "Date:" \
-			| sed -e "s|Date: ||")
-		emerged_llvm_timestamp=$(date -u -d "${emerged_llvm_time_desc}" +%s)
-		emerged_llvm_timestamps[${emerged_llvm_commit}]=${emerged_llvm_timestamp}
-einfo
-einfo "Timestamp comparison for ${p}"
-einfo
-		_print_timestamps
-	else
-einfo
-einfo "Using cached timestamp for ${emerged_llvm_commit}"
-einfo
-		# Cached
-		emerged_llvm_timestamp=${emerged_llvm_timestamps[${emerged_llvm_commit}]}
-einfo
-einfo "Timestamp comparison for ${p}"
-einfo
-		_print_timestamps
-	fi
-}
-
-_check_llvm_updated() {
-	local root_pkg_timestamp=""
-
-	local timestamp_type=-1
-	if [[ "${p}" == "sys-devel/llvm" ]] ; then
-		if use official ; then
-			root_pkg_timestamp="${cr_clang_used_unix_timestamp}"
-		else
-			root_pkg_timestamp="${LLVM_TIMESTAMP}"
-		fi
-		timestamp_type=0
-	else
-		root_pkg_timestamp="${LLVM_TIMESTAMP}"
-		timestamp_type=1
-	fi
-
-	[[ -z "${emerged_llvm_timestamp}" ]] && die
-	[[ -z "${root_pkg_timestamp}" ]] && die
-
-	if (( ${timestamp_type} == 0 )) ; then
-		if (( ${emerged_llvm_timestamp} < ${root_pkg_timestamp} )) ; then
-			needs_emerge=1
-			llvm_packages_status[${p_}]="1" # needs emerge
-		else
-			llvm_packages_status[${p_}]="0" # package is okay
-		fi
-	else
-		if (( ${emerged_llvm_timestamp} < ${root_pkg_timestamp} )) ; then
-			needs_emerge=1
-			llvm_packages_status[${p_}]="1" # needs emerge
-		else
-			llvm_packages_status[${p_}]="0" # package is okay
-		fi
-	fi
-}
-
-# For multiple sys-libs/compiler-rt-sanitizers:x.y.z
-_check_llvm_updated_triple() {
-	[[ -z "${emerged_llvm_timestamp}" ]] && die
-	[[ -z "${LLVM_TIMESTAMP}" ]] && die
-
-	#einfo "Using LLVM_TIMESTAMP"
-	#einfo "${emerged_llvm_timestamp} < ${LLVM_TIMESTAMP} ? ${p} (2)"
-	if (( ${emerged_llvm_timestamp} < ${LLVM_TIMESTAMP} )) ; then
-		#einfo "needs merge"
-		needs_emerge=1
-		llvm_packages_status[${p_}]="1" # needs emerge
-		old_triple_slot_packages+=(
-			"${category}/${pn}:"$(cat "${mp}/SLOT")
-		)
-	else
-		#einfo "no merge needed"
-		llvm_packages_status[${p_}]="0" # package is okay
-	fi
-}
-
-print_old_live_llvm_multislot_pkgs() {
-	local arg="${1}"
-	local llvm_slot="${2}"
-	for x in ${old_triple_slot_packages[@]} ; do
-		local slot=${x/:*}
-		if [[ "${arg}" == "${slot}" ]] ; then
-			LLVM_REPORT_CARDS[${llvm_slot}]+="emerge -1vuDN ${x}\n"
-		fi
-	done
-}
-
-verify_llvm_report_card() {
-	local llvm_slot=${1}
-	if (( ${needs_emerge} == 1 )) ; then
-		for p in ${live_pkgs[@]} ; do
-			local p_=${p//-/_}
-			p_=${p_//\//_}
-			if [[ -z "${llvm_packages_status[${p_}]}" ]] \
-					|| (( ${llvm_packages_status[${p_}]} == 1 )) ; then
-				if contains_slotted_major_version "${p}" ; then
-					LLVM_REPORT_CARDS[${llvm_slot}]+="emerge -1vuDN ${p}:${llvm_slot}\n"
-				elif contains_slotted_triple_version "${p}" ; then
-					print_old_live_llvm_multislot_pkgs "${p}" ${llvm_slot}
-				elif contains_slotted_zero "${p}" ; then
-					LLVM_REPORT_CARDS[${llvm_slot}]+="emerge -1vuDN ${p}:0\n"
-				fi
-			fi
-		done
-	else
-		LLVM_REPORT_CARDS[${llvm_slot}]="pass"
-	fi
-}
-
-PKGDB_PATH="${EROOT}/var/db/pkg"
-
-# This only exists because the distro has live versions and the project uses
-# a live version snapshot in production.  To make it more deterministic, we
-# check if the commits of the live versions to see if they are same or newer
-# to the official build essentially for all toolchain parts.  This commit
-# check also has security and ABI compatibility implications.
-LLVM_TIMESTAMP=
-verify_llvm_toolchain() {
-	local llvm_slot=${1}
-einfo
-einfo "Inspecting for llvm:${llvm_slot}"
-einfo
-
-	if use official ; then
-		cr_clang_used_unix_timestamp=${CR_CLANG_USED_UNIX_TIMESTAMP}
-	else
-		cr_clang_used_unix_timestamp=${CR_CLANG_USED_UNIX_TIMESTAMP}
-	fi
-
-	# Everything that inherits the llvm.org must be checked.
-	# sys-devel/clang-runtime doesn't need check
-	# 3 slot types
-	# sys-devel/llvm:x
-	# sys-devel/clang:x
-	# sys-libs/compiler-rt:x.y.z
-	# sys-libs/compiler-rt-sanitizers:x.y.z
-	# sys-libs/libomp:0
-	# sys-devel/lld:0
-	local live_pkgs=(
-		# Do not change the order!
-		# The reason why is because we are emerging with -vO.
-		"sys-devel/llvm"
-		"sys-libs/libomp"
-		"sys-devel/lld"
-		"sys-devel/clang"
-		"sys-libs/compiler-rt"
-		"sys-libs/compiler-rt-sanitizers"
-	)
-
-	unset emerged_llvm_timestamps
-	declare -A emerged_llvm_timestamps
-
-	unset llvm_packages_status
-	declare -A llvm_packages_status
-
-	unset cached_release_hashes
-	declare -A cached_release_hashes
-
-	local old_triple_slot_packages=()
-
-	[[ -z "${llvm_slot}" ]] && die "llvm_slot is empty"
-
-	local pass=0
-	local needs_emerge=0
-	# The llvm library or llvm-ar doesn't embed the hash info, so scan the
-	# /var/db/pkg.
-	if has_version "sys-devel/llvm:${llvm_slot}" ; then
-		local p
-		for p in ${live_pkgs[@]} ; do
-	# Check each of the live packages that use llvm.org eclass.  Especially
-	# for forgetful types.
-
-			local emerged_llvm_commit
-
-			local p_=${p//-/_}
-			p_=${p_//\//_}
-			if contains_slotted_major_version "${p}" ; then
-einfo
-einfo "Checking ${p}:${llvm_slot}"
-einfo
-				local path=$(realpath "${PKGDB_PATH}/${p}-${llvm_slot}"*"/environment.bz2")
-				if [[ -e "${path}" ]] ; then
-					emerged_llvm_commit=$(bzcat \
-						"${path}" \
-						| grep -F -e "EGIT_VERSION" \
-						| head -n 1 \
-						| cut -f 2 -d '"')
-					pv=$(cat "${PKGDB_PATH}/${p}-${llvm_slot}"*"/PF" \
-						| sed "s|${p}-||")
-					_get_llvm_timestamp
-					[[ "${p}" == "sys-devel/llvm" ]] \
-						&& LLVM_TIMESTAMP=${emerged_llvm_timestamp}
-				else
-ewarn
-ewarn "Missing ${p}:${llvm_slot}"
-ewarn
-					p="sys-devel/llvm"
-					emerged_llvm_timestamp=$((
-						${cr_clang_used_unix_timestamp} - 1
-					))
-				fi
-				_check_llvm_updated
-			elif contains_slotted_zero "${p}" ; then
-einfo
-einfo "Checking ${p}:0"
-einfo
-				local path=$(realpath "${PKGDB_PATH}/${p}"*"/environment.bz2")
-				if [[ -e "${path}" ]] ; then
-					emerged_llvm_commit=$(bzcat \
-						"${path}" \
-						| grep -F -e "EGIT_VERSION" \
-						| head -n 1 \
-						| cut -f 2 -d '"')
-					pv=$(cat "${PKGDB_PATH}/${p}"*"/PF" \
-						| sed "s|${p}-||")
-					_get_llvm_timestamp
-				else
-ewarn
-ewarn "Missing ${p}:${llvm_slot}"
-ewarn
-					p="sys-devel/llvm"
-					emerged_llvm_timestamp=$((
-						${cr_clang_used_unix_timestamp} - 1
-					))
-				fi
-				_check_llvm_updated
-			else
-				local category=${p/\/*}
-				local pn=${p/*\/}
-	#
-	# Handle multiple slots
-	#
-	# (i.e multiple sys-libs/compiler-rt-sanitizers:x.y.z)
-	# We shouldn't deal with multiple sys-libs/compiler-rt-sanitizers
-	#
-	# For example, 13.0.0.9999 13.0.0_rc3 13.0.0_rc2 are versions installed
-	# at the same time for just 1 sys-libs/llvm but we have to.
-	#
-				local mp
-				for mp in $(find "${PKGDB_PATH}/${category}" \
-					-maxdepth 1 \
-					-type d \
-					-regextype "posix-extended" \
-					-regex ".*${pn}-${llvm_slot}.[0-9.]+") ; do
-					local path=$(realpath "${mp}/environment.bz2")
-					if [[ -e "${path}" ]] ; then
-						emerged_llvm_commit=$(bzcat \
-							"${path}" \
-							| grep -F -e "EGIT_VERSION" \
-							| head -n 1 \
-							| cut -f 2 -d '"')
-						pv=$(cat "${mp}/PF" \
-							| sed "s|${p}-||")
-						_get_llvm_timestamp
-					else
-ewarn
-ewarn "Missing ${p}:${llvm_slot}"
-ewarn
-						emerged_llvm_timestamp=$((
-							${cr_clang_used_unix_timestamp} - 1
-						))
-					fi
-					_check_llvm_updated_triple
-				done
-			fi
-		done
-		verify_llvm_report_card ${llvm_slot}
-	else
-		# For not installed
-		local compiler_rt_sanitizers_args=()
-		if [[ "${USE}" =~ "cfi" ]] ; then
-			compiler_rt_sanitizers_args+=(
-				cfi
-				ubsan
-			)
-		fi
-		if use arm64 \
-			&& has_sanitizer_option "shadow-call-stack" ; then
-			compiler_rt_sanitizers_args+=(
-				shadowcallstack
-			)
-		fi
-		if (( ${#compiler_rt_sanitizers_args[@]} > 0 )) ; then
-			local args=$(echo "${compiler_rt_sanitizers_args[@]}" \
-				| tr " " ",")
-			LLVM_REPORT_CARDS[${llvm_slot}]=\
-"emerge -1vuDN clang:${llvm_slot} llvm:${llvm_slot} "\
-"=clang-runtime-${llvm_slot}*[compiler-rt,sanitize] "\
-"=sys-libs/compiler-rt-sanitizers-${llvm_slot}*[${args}]\n"
-		else
-			LLVM_REPORT_CARDS[${llvm_slot}]=\
-"emerge -1vuDN clang:${llvm_slot} llvm:${llvm_slot}\n"
-		fi
-	fi
-}
-
 get_pregenerated_profdata_index_version()
 {
 	local s
@@ -1432,23 +1018,13 @@ get_llvm_profdata_version_info()
 	local found_ver
 	# The live versions can have different profdata versions over time.
 
+	local PKGDB_PATH="${ESYSROOT}/var/db/pkg"
 	for compatible_pv in ${PGO_LLVM_SUPPORTED_VERSIONS[@]} ; do
 		(( $(ver_cut 1 "${compatible_pv}") != ${LLVM_SLOT} )) && continue
 		( ! has_version "~sys-devel/llvm-${compatible_pv}" ) && continue
-		local llvm_version
-		if [[ "${compatible_pv}" =~ "9999" ]] ; then
-			# Process -rX revisions
-			local llvm_version=$(bzcat \
-				"${PKGDB_PATH}/sys-devel/llvm-${compatible_pv}"*"/environment.bz2" \
-				| grep -F -e "EGIT_VERSION" \
-				| head -n 1 \
-				| cut -f 2 -d '"')
-		else
-			llvm_version="llvmorg-${compatible_pv/_/-}"
-		fi
 		found_ver=${compatible_pv}
-		profdata_index_version=$(wget -q -O - \
-"https://raw.githubusercontent.com/llvm/llvm-project/${llvm_version}/llvm/include/llvm/ProfileData/InstrProfData.inc" \
+		profdata_index_version=$(cat \
+"${ESYSROOT}/usr/lib/llvm/$(ver_cut 1 ${found_ver})/include/llvm/ProfileData/InstrProfData.inc" \
 			| grep "INSTR_PROF_INDEX_VERSION" \
 			| head -n 1 \
 			| grep -E -o -e "[0-9]+")
@@ -1601,7 +1177,7 @@ einfo
 
 request_clang_switch_message() {
 eerror
-eerror "You must switch to Clang to use the prebuilt PGO profile."
+eerror "You must switch to the proper Clang slot."
 eerror
 eerror "Supported clang slots:\t${LLVM_SLOTS[@]}"
 eerror "Supported clang versions:\t${PGO_LLVM_SUPPORTED_VERSIONS[@]}"
@@ -1633,7 +1209,6 @@ is_using_clang() {
 		"cfi"
 		"official"
 		"pgo"
-		"pre-check-llvm"
 		"thinlto-opt"
 	)
 
@@ -1642,17 +1217,6 @@ is_using_clang() {
 		use "${u}" && return 0
 	done
 	return 1
-}
-
-check_network_sandbox() {
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to verify that the LLVM toolchain live ebuilds are"
-eerror "up-to-date."
-eerror
-		die
-	fi
 }
 
 CURRENT_PROFDATA_VERSION=
@@ -1685,123 +1249,22 @@ ewarn "Disable them if problematic."
 ewarn
 	fi
 
+	local cprefix
+	if tc-is-cross-compiler ; then
+		cprefix="${CBUILD}"
+	else
+		cprefix="${CHOST}"
+	fi
+
+	# Do checks here because of references to tc-is-clang in src_prepare.
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP="$(tc-getCXX) -E"
 
-	# These checks are a maybe required.
-	local s
-	if tc-is-clang || is_using_clang ; then
-	# No LLVM multi version bug here.
-	# Cr will still work if Mesa slot is lower and Cr is built with
-	# a higher version.
-		if use pre-check-llvm ; then
-			unset LLVM_REPORT_CARDS
-			for s in ${LLVM_SLOTS[@]} ; do
-				verify_llvm_toolchain ${s}
-			done
-			LLVM_SLOT=
-			local slots
-			if use official ; then
-				slots=${CR_CLANG_SLOT_OFFICIAL}
-			else
-				slots=$(echo "${LLVM_SLOTS[@]}" \
-					| tr " " "\n" \
-					| tac \
-					| tr "\n" " ")
-			fi
-			for s in ${slots} ; do
-				if [[ ${LLVM_REPORT_CARDS[${s}]} == "pass" ]] ; then
-					export LLVM_SLOT=${s}
-					break
-				fi
-			done
-		else
-			if use official ; then
-				LLVM_SLOT=${CR_CLANG_SLOT_OFFICIAL}
-			else
-				LLVM_SLOT=$(ver_cut 1 \
-					$(best_version "sys-devel/clang" \
-					| sed -e "s|sys-devel/clang-||g"))
-			fi
-		fi
-		if [[ -z "${LLVM_SLOT}" ]] ; then
-eerror
-eerror "You must choose a LLVM slot to update properly:"
-eerror
-			for s in ${slots} ; do
-eerror
-eerror "The LLVM ${s} toolchain needs the following update(s):"
-echo -e "${LLVM_REPORT_CARDS[${s}]}"
-			done
-eerror
-eerror "OR"
-eerror
-eerror "You can remove the official USE flag.  The official USE flag strictly"
-eerror "requires LLVM ${CR_CLANG_SLOT_OFFICIAL} and for related packages.  To"
-eerror "use a different slotted LLVM, disable the official USE flag."
-eerror
-eerror "You must ensure that the timestamps of the installed packages are the"
-eerror "same or newer than the installed LLVM for that slot for missing symbols"
-eerror "avoidance AND the timestamp or commit is the same or newer than the"
-eerror "timestamp of the one used to build the official build if using the"
-eerror "official USE flag.  Some of these issue may be avoided if the official"
-eerror "USE flag is disabled for more relaxed requirement constraints which"
-eerror "requires the commits/version be the same or newer as the LLVM lib"
-eerror "for missing symbols reasons."
-eerror
-eerror "For live ebuilds (*.9999) you might have to replace -1vuDN with -1vO to"
-eerror "force a rebuild if the following message is encountered:"
-eerror
-eerror "  Nothing to merge; quitting."
-eerror
-	# One reason is possibly for crash reporting.
-			die
-		else
-			export PATH=$(echo "${PATH}" \
-				| tr ":" "\n" \
-				| sed -e "s|.*llvm/.*||" \
-				| uniq \
-				| sed -e "/^$/d" \
-				| tr "\n" ":" \
-				| sed -e "s|:$||")
-	# If building without ccache, include in the search path:
-	# 1.  Path to clang/clang++ (/usr/lib/llvm/${LLVM_SLOT}/bin)
-	# 2.  Path to highest LLD (/usr/lib/llvm/${lld_pv_major}/bin)
-	# If ccache is installed, this really does nothing because
-	# /usr/lib/ccache/bin has a higher precedence.
-			export PATH+=":${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}/bin"
-einfo
-einfo "Using sys-devel/llvm:${LLVM_SLOT}"
-einfo
-			local lld_pv_major=$(ver_cut 1 \
-				$(best_version "sys-devel/lld" \
-					| sed -e "s|sys-devel/lld-||"))
-			lld_pv_major=$(ver_cut 1 "${lld_pv_major}")
-			export PATH+=":${EPREFIX}/usr/lib/llvm/${lld_pv_major}/bin"
-		fi
-		if use pgo ; then
-			local profdata_index_version=$(get_llvm_profdata_version_info)
-			CURRENT_PROFDATA_VERSION=$(echo "${profdata_index_version}" \
-				| cut -f 1 -d ":")
-			CURRENT_PROFDATA_LLVM_VERSION=$(echo "${profdata_index_version}" \
-				| cut -f 2 -d ":")
-		fi
-	fi
-
-	if ( tc-is-clang && is-flagq '-flto*' ) \
-		|| use official \
-		|| use cfi ; then
-	# sys-devel/lld-13 was ~20 mins for v8_context_snapshot_generator
-	# sys-devel/lld-12 was ~4 hrs for v8_context_snapshot_generator
-ewarn
-ewarn "Linking times may take longer than usual.  Maybe 1-12+ hour(s)."
-ewarn
-	fi
-
-	if ! tc-is-clang && use pgo ; then
-		request_clang_switch_message
-		die
+	if is_using_clang && ! tc-is-clang ; then
+		CC="clang"
+		CXX="clang++"
+		export CPP="clang++ -E"
 	fi
 
 	if [[ -n "${CHROMIUM_EBUILD_MAINTAINER}" ]] ; then
@@ -1853,7 +1316,6 @@ einfo
 	done
 
 	use system-av1 && cflags-depends_check
-	use pre-check-llvm && check_network_sandbox
 }
 
 USED_EAPPLY=0
@@ -1875,25 +1337,6 @@ is_generating_credits() {
 		return 0
 	else
 		return 1
-	fi
-}
-
-verify_clang_commit() {
-	use pre-check-llvm || return
-	local commit_id=$(grep -r -e "CLANG_REVISION" \
-		"${S}/tools/clang/scripts/update.py" \
-		| head -n 1 \
-		| grep -E -o -e "-g[a-f0-9]+" \
-		| sed -e "s|-g||g")
-	if [[ "${CR_CLANG_USED}" =~ ^"${commit_id}" ]] ; then
-		:;
-	else
-	# Update on every major version of this package.
-eerror
-eerror "The LLVM commit is out of date.  Update CR_CLANG_*,"
-eerror "LLVM_SLOTS, CR_CLANG_SLOT_OFFICIAL variables."
-eerror
-		die
 	fi
 }
 
@@ -1968,6 +1411,20 @@ src_prepare() {
 	fi
 
 	ceapply "${FILESDIR}/extra-patches/chromium-111.0.5563.64-zlib-selective-simd.patch"
+
+	# Slot 16 selected but spits out 17
+#
+# Fixes:
+#
+# Returned 1 and printed out:
+#
+# The expected clang version is llvmorg-17-init-4759-g547e3456-1 but the actual version is 
+# Did you run "gclient sync"?
+#
+	sed -i \
+		-e "/verify-version/d" \
+		"build/config/compiler/BUILD.gn" \
+		|| die
 
 	default
 
@@ -2246,27 +1703,27 @@ ewarn
 	#
 		third_party/zlib
 
-		$(usex !system-ffmpeg "
+		$(use !system-ffmpeg && echo "
 			third_party/ffmpeg
 			third_party/opus
-		" "")
-		$(usex !system-icu "
+		")
+		$(use !system-icu && echo "
 			third_party/icu
-		" "")
-		$(usex !system-png "
+		")
+		$(use !system-png && echo "
 			third_party/libpng
-		" "")
-		$(usex !system-av1 "
+		")
+		$(use !system-av1 && echo "
 			third_party/dav1d
 			third_party/libaom
 			third_party/libaom/source/libaom/third_party/fastfeat
 			third_party/libaom/source/libaom/third_party/SVT-AV1
 			third_party/libaom/source/libaom/third_party/vector
 			third_party/libaom/source/libaom/third_party/x86inc
-		" "")
-		$(usex !system-harfbuzz "
+		")
+		$(use !system-harfbuzz "
 			third_party/harfbuzz-ng
-		" "")
+		")
 		$((use arm64 || use ppc64) || echo "
 			third_party/swiftshader/third_party/llvm-10.0
 		")
@@ -2283,7 +1740,8 @@ ewarn
 			mkdir -p source/config/linux/ppc64 || die
 	# The script requires git and clang, bug #832803
 			sed -i -e "s|^update_readme||g; s|clang-format|${EPREFIX}/bin/true|g" \
-				generate_gni.sh || die
+				generate_gni.sh \
+				|| die
 			./generate_gni.sh || die
 		popd > /dev/null || die
 
@@ -2317,8 +1775,6 @@ einfo
 			"${BROOT}"/bin/true \
 			buildtools/third_party/eu-strip/bin/eu-strip || die
 	fi
-
-	verify_clang_commit
 
 	(( ${NABIS} > 1 )) && multilib_copy_sources
 
@@ -2389,6 +1845,8 @@ eerror
 	fi
 }
 
+LLVM_SLOT=""
+GCC_SLOT=""
 LTO_TYPE=""
 _src_configure() {
 	local s
@@ -2401,26 +1859,53 @@ _src_configure() {
 	local myconf_gn=""
 
 	# Final CC selected
+	LLVM_SLOT=""
 	if tc-is-clang || is_using_clang ; then
 einfo
 einfo "Switching to clang"
 einfo
 	# See build/toolchain/linux/unbundle/BUILD.gn for allowed overridable envvars.
 	# See build/toolchain/gcc_toolchain.gni#L657 for consistency.
+
+		local slot
+		if use official ; then
+			slot="${CR_CLANG_SLOT_OFFICIAL}"
+		elif tc-is-clang ; then
+			slot="$(clang-major-version)"
+		else
+			local s
+			for s in ${LLVM_SLOTS[@]} ; do
+				if has_version "sys-devel/clang:${s}" ; then
+					slot="${s}"
+					break
+				fi
+			done
+		fi
+
+		LLVM_SLOT="${slot}"
+		if [[ -z "${LLVM_SLOT}" ]] ; then
+			request_clang_switch_message
+			die
+		fi
+
+		local cargs=""
 		if tc-is-cross-compiler ; then
-			export CC="${CBUILD}-clang -target ${CHOST} --sysroot ${ESYSROOT}"
-			export CXX="${CBUILD}-clang++ -target ${CHOST} --sysroot ${ESYSROOT}"
-			export BUILD_CC=${CBUILD}-clang
-			export BUILD_CXX=${CBUILD}-clang++
-		elif tc-is-cross-compiler && [[ -n ${FORCE_LLVM_SLOT} ]] ; then
-			export CC="${CBUILD}-clang-${FORCE_LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
-			export CXX="${CBUILD}-clang++-${FORCE_LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
-			export BUILD_CC=${CBUILD}-clang-${FORCE_LLVM_SLOT}
-			export BUILD_CXX=${CBUILD}-clang++${FORCE_LLVM_SLOT}
+			cargs="$(get_abi_CFLAGS ${ABI})"
+			export CC="${CBUILD}-clang-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
+			export CXX="${CBUILD}-clang++-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
+			export BUILD_CC=${CBUILD}-clang-${LLVM_SLOT}
+			export BUILD_CXX=${CBUILD}-clang++${LLVM_SLOT}
+		elif tc-is-cross-compiler ; then
+			cargs="-target ${CHOST} --sysroot ${ESYSROOT}"
+			export CC="${CBUILD}-clang-${LLVM_SLOT} -target ${CHOST} --sysroot ${ESYSROOT}"
+			export CXX="${CBUILD}-clang++-${LLVM_SLOT} -target ${CHOST} --sysroot ${ESYSROOT}"
+			export BUILD_CC=${CBUILD}-clang-${LLVM_SLOT}
+			export BUILD_CXX=${CBUILD}-clang++-${LLVM_SLOT}
 		else
 			export CC="${CHOST}-clang-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
 			export CXX="${CHOST}-clang++-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
 		fi
+
 		export AR=llvm-ar # Required for LTO
 		export NM=llvm-nm
 		export READELF=llvm-readelf
@@ -2428,18 +1913,39 @@ einfo
 		if ! which llvm-ar 2>/dev/null 1>/dev/null ; then
 			die "llvm-ar is unreachable"
 		fi
+		local pv=$(best_version "sys-devel/llvm:${LLVM_SLOT}" \
+			| sed -e "s|sys-devel/llvm-||g")
+		if [[ ${pv} =~ 9999 ]] ; then
+			local ts=$(date -d "@${CR_CLANG_USED_UNIX_TIMESTAMP}")
+ewarn
+ewarn "Only the latest commit of the latest live ebuild is supported for Clang."
+ewarn
+ewarn "LLVM slot:         ${CR_CLANG_SLOT_OFFICIAL}"
+ewarn "Commit:            ${CR_CLANG_USED}"
+ewarn "Commit timestamp:  >= ${ts}"
+ewarn
+		fi
 	else
 einfo
 einfo "Switching to GCC"
 einfo
+		unset GCC_SLOT
+		local s
+		for s in ${GCC_SLOTS[@]} ; do
+			if has_version "sys-devel/gcc:${s}" ; then
+				GCC_SLOT="${s}"
+				break
+			fi
+		done
+
 		if tc-is-cross-compiler ; then
-			export CC="${CBUILD}-gcc $(get_abi_CFLAGS ${ABI})"
-			export CXX="${CBUILD}-g++ $(get_abi_CFLAGS ${ABI})"
-			export BUILD_CC=${CBUILD}-gcc
-			export BUILD_CXX=${CBUILD}-g++
+			export CC="${CBUILD}-gcc-${GCC_SLOT} $(get_abi_CFLAGS ${ABI})"
+			export CXX="${CBUILD}-g++-${GCC_SLOT} $(get_abi_CFLAGS ${ABI})"
+			export BUILD_CC=${CBUILD}-gcc-${GCC_SLOT}
+			export BUILD_CXX=${CBUILD}-g++-${GCC_SLOT}
 		else
-			export CC="${CHOST}-gcc $(get_abi_CFLAGS ${ABI})"
-			export CXX="${CHOST}-g++ $(get_abi_CFLAGS ${ABI})"
+			export CC="${CHOST}-gcc-${GCC_SLOT} $(get_abi_CFLAGS ${ABI})"
+			export CXX="${CHOST}-g++-${GCC_SLOT} $(get_abi_CFLAGS ${ABI})"
 		fi
 		export AR=ar
 		export NM=nm
@@ -2447,12 +1953,23 @@ einfo
 		export STRIP=strip
 		export LD=ld.bfd
 	fi
+	${CC} --version || die
+	_compiler_version_checks
+
+	if ( tc-is-clang && is-flagq '-flto*' ) \
+		|| use official \
+		|| use cfi ; then
+	# sys-devel/lld-13 was ~20 mins for v8_context_snapshot_generator
+	# sys-devel/lld-12 was ~4 hrs for v8_context_snapshot_generator
+ewarn
+ewarn "Linking times may take longer than usual.  Maybe 1-12+ hour(s)."
+ewarn
+	fi
 
 	# Make sure the build system will use the right tools, bug #340795.
 	tc-export AR CC CXX NM READELF STRIP
 
 	strip-unsupported-flags
-	_compiler_version_checks
 
 	# Handled by the build scripts
 	filter-flags \
@@ -2491,6 +2008,10 @@ einfo
 
 	# Define a custom toolchain for GN
 	myconf_gn+=" custom_toolchain=\"//build/toolchain/linux/unbundle:default\""
+
+	if tc-is-clang ; then
+		myconf_gn+=" clang_base_path=\"${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}\""
+	fi
 
 	if tc-is-cross-compiler ; then
 		tc-export BUILD_{AR,CC,CXX,NM}
@@ -2571,23 +2092,27 @@ einfo
 	# Moved to use system-libstdcxx condition below.
 	# Moved to use system-libstdcxx condition below.
 		zlib
+
+		$(use system-ffmpeg && echo "
+			ffmpeg
+			opus
+		")
+		$(use system-icu && echo "
+			icu
+		")
+		$(use system-png && echo "
+			libpng
+		")
+		$(use system-av1 && echo "
+			dav1d
+			libaom
+		")
+
+		# The re2 library interface relies on std::string and std::vector
+		$(use system-libstdcxx && echo "
+			re2
+		")
 	)
-	if use system-ffmpeg ; then
-		gn_system_libraries+=( ffmpeg opus )
-	fi
-	if use system-icu ; then
-		gn_system_libraries+=( icu )
-	fi
-	if use system-png ; then
-		gn_system_libraries+=( libpng )
-	fi
-	if use system-av1; then
-		gn_system_libraries+=( dav1d libaom )
-	fi
-	if use system-libstdcxx ; then
-	# The re2 library interface relies on std::string and std::vector
-		gn_system_libraries+=( re2 )
-	fi
 	# [C]
 	if ! use system-libstdcxx \
 		|| use cfi \
@@ -2607,7 +2132,8 @@ ewarn "Full RELRO)."
 ewarn
 			build/linux/unbundle/replace_gn_files.py \
 				--system-libraries \
-				"${gn_system_libraries[@]}" || die
+				"${gn_system_libraries[@]}" \
+				|| die
 		fi
 	fi
 
@@ -2846,14 +2372,20 @@ einfo
 	fi
 
 	# Enable ozone wayland and/or headless support
-	myconf_gn+=" use_ozone=true ozone_auto_platforms=false"
+	myconf_gn+=" use_ozone=true"
+	myconf_gn+=" ozone_auto_platforms=false"
 	myconf_gn+=" ozone_platform_headless=true"
 	if use headless ; then
 		myconf_gn+=" ozone_platform=\"headless\""
-		myconf_gn+=" use_xkbcommon=false use_gtk=false use_qt=false"
-		myconf_gn+=" use_glib=false use_gio=false"
-		myconf_gn+=" use_pangocairo=false use_alsa=false"
-		myconf_gn+=" use_libpci=false use_udev=false"
+		myconf_gn+=" use_xkbcommon=false"
+		myconf_gn+=" use_gtk=false"
+		myconf_gn+=" use_qt=false"
+		myconf_gn+=" use_glib=false"
+		myconf_gn+=" use_gio=false"
+		myconf_gn+=" use_pangocairo=false"
+		myconf_gn+=" use_alsa=false"
+		myconf_gn+=" use_libpci=false"
+		myconf_gn+=" use_udev=false"
 		myconf_gn+=" enable_print_preview=false"
 		myconf_gn+=" enable_remoting=false"
 	else
@@ -2904,14 +2436,23 @@ ewarn
 	fi
 	if use official ; then
 	# Allow building against system libraries in official builds
-		sed -i 's/OFFICIAL_BUILD/GOOGLE_CHROME_BUILD/' \
-			tools/generate_shim_headers/generate_shim_headers.py || die
+		sed -i \
+			's/OFFICIAL_BUILD/GOOGLE_CHROME_BUILD/' \
+			tools/generate_shim_headers/generate_shim_headers.py \
+			|| die
 	fi
 
 	# CXXFLAGS might overwrite -march=armv8-a+crc+crypto, bug #851639
 	if use arm64 && tc-is-gcc; then
-		sed -i '/^#if HAVE_ARM64_CRC32C/a #pragma GCC target ("+crc+crypto")' \
-			third_party/crc32c/src/src/crc32c_arm64.cc || die
+		sed -i \
+			'/^#if HAVE_ARM64_CRC32C/a #pragma GCC target ("+crc+crypto")' \
+			third_party/crc32c/src/src/crc32c_arm64.cc \
+			|| die
+	fi
+
+	# Skipping typecheck is only supported on amd64, bug #876157
+	if ! use amd64; then
+		myconf_gn+=" devtools_skip_typecheck=false"
 	fi
 
 	# See https://github.com/chromium/chromium/blob/113.0.5672.63/build/config/sanitizers/BUILD.gn#L196
@@ -3040,11 +2581,23 @@ eerror
 	fi
 
 	if use pgo ; then
+
+		if ! tc-is-clang ; then
+			request_clang_switch_message
+			die
+		fi
+
+		local profdata_index_version=$(get_llvm_profdata_version_info)
+		CURRENT_PROFDATA_VERSION=$(echo "${profdata_index_version}" \
+			| cut -f 1 -d ":")
+		CURRENT_PROFDATA_LLVM_VERSION=$(echo "${profdata_index_version}" \
+			| cut -f 2 -d ":")
 		if ! is_profdata_compatible ; then
 eerror
 eerror "Profdata compatibility:"
 eerror
 eerror "The PGO profile is not compatible with this version of LLVM."
+eerror
 eerror "Expected:\t$(get_pregenerated_profdata_index_version)"
 eerror "Found:\t${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
 eerror
