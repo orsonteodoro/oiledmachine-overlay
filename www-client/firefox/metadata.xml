@@ -255,7 +255,7 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
 
       - crash reporter :
           - breakpad data
-            - CPU identification
+            - CPU identification [can be a security risk as in recon for hardware vulnerabilies]
             - CPU register data [can be a security risk]
             - stacks [aka local variables]
             - heap [aka dynamic memory for arrays, lists, etc.  this may contain sensitive data.]
@@ -282,13 +282,14 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
 
     Further reading:
 
-      Breakpad:                       https://chromium.googlesource.com/breakpad/breakpad/+/master/docs/getting_started_with_breakpad.md
-      Crash reporter:                 https://firefox-source-docs.mozilla.org/toolkit/crashreporter/crashreporter/index.html
-      Preprocessor symbols:           https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/internals/preferences.html
+      Breakpad:                                   https://chromium.googlesource.com/breakpad/breakpad/+/master/docs/getting_started_with_breakpad.md
+        Minidump data struct source code (BSD):   https://github.com/google/breakpad/blob/main/src/google_breakpad/common/minidump_format.h
+      Crash reporter:                             https://firefox-source-docs.mozilla.org/toolkit/crashreporter/crashreporter/index.html
+      Preprocessor symbols:                       https://firefox-source-docs.mozilla.org/toolkit/components/telemetry/internals/preferences.html
         Specifically -- MOZ_CRASHREPORTER, MOZ_DATA_REPORTING, MOZ_SERVICES_HEALTHREPORT, MOZ_TELEMETRY_REPORTING
-      Normandy:                       https://mozilla.github.io/normandy/user/end_user_interaction.html#opt-out-preference
-      Studies:                        https://support.mozilla.org/en-US/kb/shield
-      Firefox Health Report (FHR):    https://blog.mozilla.org/metrics/fhr-faq/
+      Normandy:                                   https://mozilla.github.io/normandy/user/end_user_interaction.html#opt-out-preference
+      Studies:                                    https://support.mozilla.org/en-US/kb/shield
+      Firefox Health Report (FHR):                https://blog.mozilla.org/metrics/fhr-faq/
   </flag>
   <flag name="webspeech">
     Add support for input speech recognition for websites.  (EXPERIMENTAL AT
