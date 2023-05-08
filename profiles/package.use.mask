@@ -56,3 +56,6 @@ sys-apps/orca build-models
 
 # tensorflow is being removed from this overlay
 media-video/ffmpeg tensorflow
+
+# Block for security
+www-client/firefox telemetry
