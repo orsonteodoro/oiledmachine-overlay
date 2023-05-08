@@ -356,7 +356,7 @@ pax-kernel pic +pgo +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio qt5 +screencast selinux +suid
 -system-av1 +system-ffmpeg -system-icu -system-harfbuzz -system-png +thinlto-opt
-+vaapi +vanilla +wayland -widevine +X
++vaapi +wayland -widevine +X
 r1
 "
 
@@ -454,7 +454,6 @@ REQUIRED_USE+="
 		!system-icu
 		!system-libstdcxx
 		!system-png
-		vanilla
 	)
 	component-build? (
 		!bundled-libcxx
@@ -491,7 +490,6 @@ REQUIRED_USE+="
 		thinlto-opt
 		vaapi
 		vaapi-hevc
-		vanilla
 		vorbis
 		vpx
 		wayland
@@ -1398,7 +1396,7 @@ src_prepare() {
 
 	local PATCHES=()
 
-	if ! use vanilla ; then
+	if use system-libstdcxx ; then
 ewarn "Applying the distro patchset."
 	# Proper CFI requires static linkage.
 	# You can use Cross DSO CFI (aka dynamic .so linkage) but the attack
@@ -1718,7 +1716,7 @@ ewarn
 	# third_party/zlib is already kept but may use system no need split \
 	# conditional for CFI or official builds.
 	#
-		$(use vanilla && echo "
+		$(use !system-libstdcxx && echo "
 			third_party/zlib
 		")
 
@@ -1969,9 +1967,9 @@ einfo
 		export STRIP=strip
 		export LD=ld.bfd
 
-		if ! use vanilla ; then
+		if ! use system-libstdcxx ; then
 eerror
-eerror "The vanilla USE flag must be disabled for GCC builds."
+eerror "The system-libstdcxx USE flag must be enabled for GCC builds."
 eerror
 			die
 		fi
