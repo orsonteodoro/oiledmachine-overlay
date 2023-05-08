@@ -454,6 +454,7 @@ REQUIRED_USE+="
 		!system-icu
 		!system-libstdcxx
 		!system-png
+		bundled-libcxx
 	)
 	component-build? (
 		!bundled-libcxx
@@ -1716,10 +1717,6 @@ ewarn
 	# third_party/zlib is already kept but may use system no need split \
 	# conditional for CFI or official builds.
 	#
-		$(use !system-libstdcxx && echo "
-			third_party/zlib
-		")
-
 		$(use !system-ffmpeg && echo "
 			third_party/ffmpeg
 			third_party/opus
@@ -1738,16 +1735,15 @@ ewarn
 			third_party/libaom/source/libaom/third_party/vector
 			third_party/libaom/source/libaom/third_party/x86inc
 		")
-		$(use !system-harfbuzz "
+		$(use !system-harfbuzz && echo "
 			third_party/harfbuzz-ng
 		")
 		$((use arm64 || use ppc64) || echo "
 			third_party/swiftshader/third_party/llvm-10.0
 		")
-		$((use system-libstdcxx \
-			|| use cfi \
-			|| use official) || echo "
+		$(use bundled-libcxx || echo "
 			third_party/re2
+			third_party/zlib
 		")
 	)
 	# We need to generate ppc64 stuff because upstream does not ship it yet
