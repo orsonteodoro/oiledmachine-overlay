@@ -1400,8 +1400,10 @@ src_prepare() {
 
 	if ! use vanilla ; then
 ewarn "Applying the distro patchset."
-		# Proper CFI requires static linkage.
-		# You can use Cross DSO CFI but the attack surface would increase.
+	# Proper CFI requires static linkage.
+	# You can use Cross DSO CFI (aka dynamic .so linkage) but the attack
+	# surface would increase.
+	# cfi-icall with static linkage may have less breakage than dynamic.
 		distro_patchset
 	else
 ewarn "Disabling the distro patchset."
