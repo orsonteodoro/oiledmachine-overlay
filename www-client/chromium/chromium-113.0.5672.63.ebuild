@@ -350,7 +350,7 @@ ${IUSE_CODECS}
 ${IUSE_LIBCXX[@]}
 +bundled-libcxx branch-protection +cfi component-build +cups -debug +encode -gtk4
 -hangouts -headless +js-type-check +kerberos -libcmalloc +official +partitionalloc
-pic +pgo +pre-check-llvm +pre-check-vaapi +proprietary-codecs
+pax-kernel pic +pgo +pre-check-llvm +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio qt5 +screencast selinux +suid
 -system-av1 +system-ffmpeg -system-icu -system-harfbuzz -system-png +thinlto-opt
@@ -2309,13 +2309,6 @@ einfo
 			--do-remove || die
 	fi
 
-	if use js-type-check ; then
-		ln -s \
-			"${EPREFIX}"/usr/bin/java \
-			third_party/jdk/current/bin/java \
-			|| die
-	fi
-
 	if ! is_generating_credits ; then
 	# The bundled eu-strip is for amd64 only and we don't want to pre-strip
 	# binaries.
@@ -2882,7 +2875,7 @@ einfo
 		myconf_gn+=" ozone_platform_x11=$(usex X true false)"
 		myconf_gn+=" ozone_platform_wayland=$(usex wayland true false)"
 		myconf_gn+=" ozone_platform=$(usex wayland \"wayland\" \"x11\")"
-		myconf_gn+=" use_system_libwayland=true"
+		use wayland && myconf_gn+=" use_system_libffi=true"
 	fi
 
 	#
