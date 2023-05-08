@@ -1714,7 +1714,9 @@ ewarn
 	# third_party/zlib is already kept but may use system no need split \
 	# conditional for CFI or official builds.
 	#
-		third_party/zlib
+		$(use vanilla && echo "
+			third_party/zlib
+		")
 
 		$(use !system-ffmpeg && echo "
 			third_party/ffmpeg
