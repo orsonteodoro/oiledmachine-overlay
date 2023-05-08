@@ -1614,6 +1614,12 @@ eerror "Contents of ${EROOT}/etc/portage/env/clang-${CR_CLANG_SLOT_OFFICIAL}.con
 eerror
 eerror "CC=clang-${CR_CLANG_SLOT_OFFICIAL}"
 eerror "CXX=clang++-${CR_CLANG_SLOT_OFFICIAL}"
+eerror "AR=\"llvm-ar\""
+eerror "NM=\"llvm-nm\""
+eerror "OBJCOPY=\"llvm-objcopy\""
+eerror "OBJDUMP=\"llvm-objdump\""
+eerror "READELF=\"llvm-readelf\""
+eerror "STRIP=\"llvm-strip\""
 eerror
 eerror
 eerror "Contents of ${EROOT}/etc/portage/package.env"
