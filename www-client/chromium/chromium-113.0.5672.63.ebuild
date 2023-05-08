@@ -31,7 +31,7 @@ te th tr uk ur vi zh-CN zh-TW
 
 GCC_MIN="10.4"
 UOPTS_PGO_PV=$(ver_cut 1-3 ${PV})
-LLVM_MAX_SLOT=17
+LLVM_MAX_SLOT=16
 LLVM_MIN_SLOT=17 # The pregenerated PGO profile needs profdata index version 9.
 CR_CLANG_SLOT_OFFICIAL=17
 LLVM_SLOTS=( ${LLVM_MAX_SLOT} ${LLVM_MIN_SLOT} ) # [inclusive, inclusive] high to low
@@ -42,6 +42,10 @@ UOPTS_SUPPORT_TBOLT=0
 # *_pre* not supported due to ebuild scripting issue.
 PGO_LLVM_SUPPORTED_VERSIONS=(
 	"${CR_CLANG_SLOT_OFFICIAL}.0.0.9999"
+	"16.0.3"
+	"16.0.2"
+	"16.0.1"
+	"16.0.0"
 )
 
 inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils
@@ -967,7 +971,7 @@ ewarn
 # The answer to the profdata compatibility is answered in
 # https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#format-compatibility-guarantees
 #
-# The profdata (aka indexed profile) version is 10 corresponding from >= LLVM main branch
+# The profdata (aka indexed profile) version is 9 corresponding from LLVM 16+
 # and is after the magic (lprofi - i for index) in the profdata file located in
 # chrome/build/pgo_profiles/*.profdata.
 #
@@ -1475,7 +1479,7 @@ eerror
 is_profdata_compatible() {
 	local a=$(get_pregenerated_profdata_index_version)
 	local b=${CURRENT_PROFDATA_VERSION}
-	if (( ${a} == ${b} )) ; then
+	if (( ${b} >= ${a} )) ; then
 		return 0
 	else
 		return 1
