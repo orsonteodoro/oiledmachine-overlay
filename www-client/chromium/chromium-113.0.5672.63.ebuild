@@ -356,7 +356,7 @@ pax-kernel pic +pgo +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio qt5 +screencast selinux +suid
 -system-av1 +system-ffmpeg -system-icu -system-harfbuzz -system-png +thinlto-opt
-+vaapi +wayland -widevine +X
++vaapi +vanilla +wayland -widevine +X
 r1
 "
 
@@ -454,6 +454,7 @@ REQUIRED_USE+="
 		!system-icu
 		!system-libstdcxx
 		!system-png
+		vanilla
 	)
 	component-build? (
 		!bundled-libcxx
@@ -490,6 +491,7 @@ REQUIRED_USE+="
 		thinlto-opt
 		vaapi
 		vaapi-hevc
+		vanilla
 		vorbis
 		vpx
 		wayland
@@ -1340,12 +1342,7 @@ is_generating_credits() {
 	fi
 }
 
-src_prepare() {
-	# Calling this here supports resumption via FEATURES=keepwork
-	python_setup
-
-	check_deps_cfi_cross_dso
-
+distro_patchset() {
 	# Some web pages are crashing.
 	if use system-icu; then
 		sed -i -e \
@@ -1359,8 +1356,6 @@ src_prepare() {
 		"/\"GlobalMediaControlsCastStartStop\",/{n;s/ENABLED/DISABLED/;}" \
 		"third_party/blink/common/features.cc" \
 		|| die
-
-	local PATCHES=()
 
 	rm "${WORKDIR}/chromium-112-gcc-13-patches/chromium-112-gcc-13-0002-perfetto.patch" || die
 	rm "${WORKDIR}/chromium-112-gcc-13-patches/chromium-112-gcc-13-0012-webrtc-base64.patch" || die
@@ -1392,6 +1387,22 @@ src_prepare() {
 			fi
 		done
 		PATCHES+=( "${WORKDIR}/ppc64le" )
+	fi
+}
+
+src_prepare() {
+	# Calling this here supports resumption via FEATURES=keepwork
+	python_setup
+
+	check_deps_cfi_cross_dso
+
+	local PATCHES=()
+
+	if ! use vanilla ; then
+ewarn "Applying the distro patchset."
+		# Proper CFI requires static linkage.
+		# You can use Cross DSO CFI but the attack surface would increase.
+		distro_patchset
 	fi
 
 	if use epgo ; then

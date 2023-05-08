@@ -402,6 +402,9 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       accelerated video decoding playback, and hardware accelerated video
       encoding for WebRTC
     </flag>
+    <flag name="vanilla">
+      Disabling will apply distro patches.
+    </flag>
     <flag name="weston">
       Prefer weston to generate wayland PGO profile.  This option is mutually
       exclusive to X windowing system PGO profile generation
