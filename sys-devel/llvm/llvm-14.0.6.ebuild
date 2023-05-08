@@ -123,7 +123,12 @@ PATCHES=(
 	"${FILESDIR}/llvm-14.0.0.9999-stop-triple-spam.patch"
 )
 
-LLVM_COMPONENTS=( llvm bolt cmake third-party )
+LLVM_COMPONENTS=(
+	llvm
+	bolt
+	cmake
+	third-party
+)
 LLVM_MANPAGES=1
 LLVM_PATCHSET=${PV}-r2
 LLVM_USE_TARGETS=provide

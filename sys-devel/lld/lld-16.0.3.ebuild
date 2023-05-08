@@ -58,8 +58,15 @@ PDEPEND="
 	>=sys-devel/lld-toolchain-symlinks-16-r2:${LLVM_MAJOR}
 "
 
-LLVM_COMPONENTS=( lld cmake libunwind/include/mach-o )
-LLVM_TEST_COMPONENTS=( llvm/utils third-party )
+LLVM_COMPONENTS=(
+	lld
+	cmake
+	libunwind/include/mach-o
+)
+LLVM_TEST_COMPONENTS=(
+	llvm/utils
+	third-party
+)
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 

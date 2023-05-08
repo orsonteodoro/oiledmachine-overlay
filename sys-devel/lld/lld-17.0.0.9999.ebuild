@@ -18,7 +18,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS=""
 IUSE="
-debug test zstd
++debug test zstd
 
 default-full-relro +default-partial-relro default-no-relro
 hardened hardened-compat r1
@@ -58,8 +58,11 @@ PDEPEND="
 	>=sys-devel/lld-toolchain-symlinks-16-r2:${LLVM_MAJOR}
 "
 
-LLVM_COMPONENTS=( lld cmake libunwind/include/mach-o )
-LLVM_TEST_COMPONENTS=( llvm/utils third-party )
+LLVM_COMPONENTS=(
+	lld
+	cmake
+	libunwind/include/mach-o
+)
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 

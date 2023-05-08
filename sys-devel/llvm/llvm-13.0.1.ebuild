@@ -103,7 +103,9 @@ PATCHES=(
 	"${FILESDIR}/llvm-12.0.1-stop-triple-spam.patch"
 )
 
-LLVM_COMPONENTS=( llvm )
+LLVM_COMPONENTS=(
+	llvm
+)
 LLVM_MANPAGES=1
 LLVM_PATCHSET=${PV/_/-}-r1
 LLVM_USE_TARGETS=provide
