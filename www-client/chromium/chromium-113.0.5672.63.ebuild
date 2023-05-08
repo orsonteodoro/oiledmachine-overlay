@@ -34,19 +34,19 @@ UOPTS_PGO_PV=$(ver_cut 1-3 ${PV})
 LLVM_MAX_SLOT=17
 LLVM_MIN_SLOT=16 # The pregenerated PGO profile needs profdata index version 9.
 CR_CLANG_SLOT_OFFICIAL=17
-LLVM_SLOTS=(${LLVM_MIN_SLOT} ${LLVM_MAX_SLOT}) # [inclusive, inclusive] high to low
+LLVM_SLOTS=(${LLVM_MAX_SLOT} ${LLVM_MIN_SLOT}) # [inclusive, inclusive] high to low
 UOPTS_SUPPORT_TPGO=0
 UOPTS_SUPPORT_TBOLT=0
 
 # For PGO
 # *_pre* not supported due to ebuild scripting issue.
 PGO_LLVM_SUPPORTED_VERSIONS=(
-	"16.0.0"
-	"16.0.1"
-	"16.0.2"
-	"16.0.3"
-	"16.0.4.9999"
 	"${CR_CLANG_SLOT_OFFICIAL}.0.0.9999"
+	"16.0.4.9999"
+	"16.0.3"
+	"16.0.2"
+	"16.0.1"
+	"16.0.0"
 )
 
 inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils
@@ -1686,21 +1686,9 @@ ewarn "Disable them if problematic."
 ewarn
 	fi
 
-
-	if ( tc-is-clang && is-flagq '-flto*' ) \
-		|| use official \
-		|| use cfi ; then
-	# sys-devel/lld-13 was ~20 mins for v8_context_snapshot_generator
-	# sys-devel/lld-12 was ~4 hrs for v8_context_snapshot_generator
-ewarn
-ewarn "Linking times may take longer than usual.  Maybe 1-12+ hour(s)."
-ewarn
-	fi
-
-	if ! tc-is-clang && use pgo ; then
-		request_clang_switch_message
-		die
-	fi
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	export CPP="$(tc-getCXX) -E"
 
 	# These checks are a maybe required.
 	local s
@@ -1803,6 +1791,22 @@ einfo
 				| cut -f 2 -d ":")
 		fi
 	fi
+
+	if ( tc-is-clang && is-flagq '-flto*' ) \
+		|| use official \
+		|| use cfi ; then
+	# sys-devel/lld-13 was ~20 mins for v8_context_snapshot_generator
+	# sys-devel/lld-12 was ~4 hrs for v8_context_snapshot_generator
+ewarn
+ewarn "Linking times may take longer than usual.  Maybe 1-12+ hour(s)."
+ewarn
+	fi
+
+	if ! tc-is-clang && use pgo ; then
+		request_clang_switch_message
+		die
+	fi
+
 	if [[ -n "${CHROMIUM_EBUILD_MAINTAINER}" ]] ; then
 		if [[ -z "${MY_OVERLAY_DIR}" ]] ; then
 eerror
