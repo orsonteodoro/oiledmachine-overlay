@@ -373,6 +373,43 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
     <flag name="suid">
       Build the SUID sandbox, which is only needed on CONFIG_USER_NS=n kernels
     </flag>
+    <flag name="system-dav1d">
+      Use system dav1d instead of the bundled one
+    </flag>
+    <flag name="system-ffmpeg">
+      Use system ffmpeg instead of the bundled one
+
+      The internal vendered version has additional codecs that are not removeable,
+      but the system one may be able to remove them.
+    </flag>
+    <flag name="system-flac">
+      Use system flac instead of the bundled one
+    </flag>
+    <flag name="system-fontconfig">
+      Use system fontconfig instead of the bundled one
+    </flag>
+    <flag name="system-harfbuzz">
+      Use system harfbuzz instead of the bundled one
+    </flag>
+    <flag name="system-icu">
+      Use system icu instead of the bundled one
+
+      The internal vendored version has bug fixes, size reduced, adds spell check
+      support few languages, locale style changes related to
+      time/currency/regions/number-represenation.
+    </flag>
+    <flag name="system-libaom">
+      Use system libaom instead of the bundled one
+    </flag>
+    <flag name="system-libdrm">
+      Use system libdrm instead of the bundled one
+    </flag>
+    <flag name="system-libjpeg-turbo">
+      Use system libjpeg-turbo instead of the bundled one
+    </flag>
+    <flag name="system-libpng">
+      Use system libpng instead of the bundled one
+    </flag>
     <flag name="system-libstdcxx">
       Build against the system's libstdc++ for compatibility reasons which
       is protected with CET (if supported by CPU, similar to CFI).  This could
@@ -383,14 +420,23 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       to IR (Intermediate Representation) compatibility or disabled LTO
       systemwide.
     </flag>
-    <flag name="system-ffmpeg">
-      Use system ffmpeg instead of the bundled one
-
-      The internal vendered version has additional codecs that are not removeable,
-      but the system one may be able to remove them.
+    <flag name="system-libwebp">
+      Use system libwebp instead of the bundled one
     </flag>
-    <flag name="system-icu">
-      Use system icu instead of the bundled one
+    <flag name="system-libxml">
+      Use system libxml instead of the bundled one
+    </flag>
+    <flag name="system-libxslt">
+      Use system libxslt instead of the bundled one
+    </flag>
+    <flag name="system-openh264">
+      Use system openh264 instead of the bundled one
+    </flag>
+    <flag name="system-opus">
+      Use system opus instead of the bundled one
+    </flag>
+    <flag name="system-re2">
+      Use system re2 instead of the bundled one
     </flag>
     <flag name="system-zlib">
       Use system zlib instead of the bundled one

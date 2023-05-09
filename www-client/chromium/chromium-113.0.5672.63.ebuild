@@ -350,13 +350,17 @@ ${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_}
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS}
 ${IUSE_LIBCXX[@]}
-+bundled-libcxx branch-protection +cfi component-build +cups -debug +encode -gtk4
--hangouts -headless +js-type-check +kerberos -libcmalloc +official +partitionalloc
-pax-kernel pic +pgo +pre-check-vaapi +proprietary-codecs
++bundled-libcxx branch-protection +cfi component-build +cups -debug +encode
+-gtk4 -hangouts -headless +js-type-check +kerberos -libcmalloc +official
++partitionalloc pax-kernel pic +pgo +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio qt5 +screencast selinux +suid
--system-av1 +system-ffmpeg -system-icu -system-harfbuzz -system-png -system-zlib
-+thinlto-opt +vaapi +wayland -widevine +X
+-system-dav1d +system-ffmpeg -system-flac -system-fontconfig -system-freetype
+-system-harfbuzz -system-icu -system-libaom -system-libdrm -system-libjpeg-turbo
+-system-libpng -system-libwebp -system-libxml -system-libxslt -system-openh264
+-system-opus -system-re2 -system-zlib +thinlto-opt +vaapi +wayland -widevine
++X
+
 r1
 "
 
@@ -429,6 +433,22 @@ DISABLED_NON_FREE_USE_FLAGS="
 	)
 "
 
+# Unconditionals
+# Retesting disablement
+DISTRO_REQUIRE_USE="
+	system-flac
+	system-fontconfig
+	system-freetype
+	-system-harfbuzz
+	system-libdrm
+	system-libjpeg-turbo
+	system-libwebp
+	system-libxml
+	system-libxslt
+	system-openh264
+	system-zlib
+"
+
 REQUIRED_USE+="
 	${DISABLED_NON_FREE_USE_FLAGS}
 	!headless (
@@ -448,12 +468,23 @@ REQUIRED_USE+="
 		arm64
 	)
 	cfi? (
-		!system-av1
+		!system-dav1d
 		!system-ffmpeg
+		!system-flac
+		!system-fontconfig
 		!system-harfbuzz
 		!system-icu
+		!system-libaom
+		!system-libdrm
+		!system-libjpeg-turbo
+		!system-libpng
 		!system-libstdcxx
-		!system-png
+		!system-libwebp
+		!system-libxml
+		!system-libxslt
+		!system-openh264
+		!system-opus
+		!system-re2
 		!system-zlib
 		bundled-libcxx
 	)
@@ -471,12 +502,23 @@ REQUIRED_USE+="
 		!debug
 		!epgo
 		!hangouts
-		!system-av1
+		!system-dav1d
 		!system-ffmpeg
+		!system-flac
+		!system-fontconfig
 		!system-harfbuzz
 		!system-icu
+		!system-libaom
+		!system-libdrm
+		!system-libjpeg-turbo
+		!system-libpng
 		!system-libstdcxx
-		!system-png
+		!system-libwebp
+		!system-libxml
+		!system-libxslt
+		!system-openh264
+		!system-opus
+		!system-re2
 		!system-zlib
 		bundled-libcxx
 		dav1d
@@ -630,35 +672,55 @@ COMMON_SNAPSHOT_DEPEND="
 			x11-libs/libXext:=[${MULTILIB_USEDEP}]
 		)
 	)
-	>=dev-libs/libxml2-2.9.4-r3:=[${MULTILIB_USEDEP},icu]
 	>=dev-libs/nss-3.26:=[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.11.0-r1:=[${MULTILIB_USEDEP}]
-	>=media-libs/libwebp-0.4.0:=[${MULTILIB_USEDEP}]
 	dev-libs/nspr:=[${MULTILIB_USEDEP}]
-	dev-libs/libxslt:=[${MULTILIB_USEDEP}]
-	media-libs/fontconfig:=[${MULTILIB_USEDEP}]
-	media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
 	media-libs/mesa:=[gbm(+),${MULTILIB_USEDEP}]
-	sys-libs/zlib:=[${MULTILIB_USEDEP}]
-	x11-libs/libdrm:=[${MULTILIB_USEDEP}]
+	proprietary-codecs? (
+		system-openh264? (
+			>=media-libs/openh264-1.6.0:=[${MULTILIB_USEDEP}]
+		)
+	)
+	system-dav1d? (
+		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP},8bit]
+	)
+	system-fontconfig? (
+		media-libs/fontconfig:=[${MULTILIB_USEDEP}]
+	)
+	system-freetype? (
+		>=media-libs/freetype-2.11.0-r1:=[${MULTILIB_USEDEP}]
+	)
+	system-harfbuzz? (
+		>=media-libs/harfbuzz-3:0=[${MULTILIB_USEDEP},icu(-)]
+	)
 	system-icu? (
 		>=dev-libs/icu-71.1:=[${MULTILIB_USEDEP}]
 	)
 	system-libstdcxx? (
 		>=dev-libs/re2-0.2019.08.01:=[${MULTILIB_USEDEP}]
 	)
-	system-harfbuzz? (
-		>=media-libs/harfbuzz-3:0=[${MULTILIB_USEDEP},icu(-)]
+	system-libaom? (
+		>=media-libs/libaom-3.4.0:=[${MULTILIB_USEDEP}]
 	)
-	system-png? (
+	system-libdrm? (
+		x11-libs/libdrm:=[${MULTILIB_USEDEP}]
+	)
+	system-libjpeg-turbo? (
+		media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
+	)
+	system-libpng? (
 		media-libs/libpng:=[-apng,${MULTILIB_USEDEP}]
 	)
-	proprietary-codecs? (
-		>=media-libs/openh264-1.6.0:=[${MULTILIB_USEDEP}]
+	system-libwebp? (
+		>=media-libs/libwebp-0.4.0:=[${MULTILIB_USEDEP}]
 	)
-	system-av1? (
-		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP},8bit]
-		>=media-libs/libaom-3.4.0:=[${MULTILIB_USEDEP}]
+	system-libxml? (
+		>=dev-libs/libxml2-2.9.4-r3:=[${MULTILIB_USEDEP},icu]
+	)
+	system-libxslt? (
+		dev-libs/libxslt:=[${MULTILIB_USEDEP}]
+	)
+	system-zlib? (
+		sys-libs/zlib:=[${MULTILIB_USEDEP}]
 	)
 "
 
@@ -693,12 +755,13 @@ COMMON_DEPEND="
 	${COMMON_SNAPSHOT_DEPEND}
 	app-arch/bzip2:=[${MULTILIB_USEDEP}]
 	dev-libs/expat:=[${MULTILIB_USEDEP}]
-	media-libs/flac:=[${MULTILIB_USEDEP}]
 	net-misc/curl[${MULTILIB_USEDEP},ssl]
 	sys-apps/dbus:=[${MULTILIB_USEDEP}]
 	sys-libs/zlib:=[${MULTILIB_USEDEP},minizip]
 	system-ffmpeg? (
-		>=media-libs/opus-1.3.1:=[${MULTILIB_USEDEP}]
+		system-opus? (
+			>=media-libs/opus-1.3.1:=[${MULTILIB_USEDEP}]
+		)
 		proprietary-codecs? (
 			media-video/ffmpeg:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},encode?,opus?,vorbis?,vpx?]
 		)
@@ -715,6 +778,9 @@ COMMON_DEPEND="
 			media-video/ffmpeg:0/${FFMPEG_SUBSLOT}[${MULTILIB_USEDEP},-samba]
 			>=net-fs/samba-4.5.10-r1[${MULTILIB_USEDEP},-debug(-)]
 		)
+	)
+	system-flac? (
+		media-libs/flac:=[${MULTILIB_USEDEP}]
 	)
 "
 CLANG_RDEPEND="
@@ -1318,7 +1384,7 @@ einfo
 		NABIS=$((${NABIS} + 1))
 	done
 
-	use system-av1 && cflags-depends_check
+	( use system-dav1d || use system-libaom ) && cflags-depends_check
 }
 
 USED_EAPPLY=0
@@ -1366,7 +1432,7 @@ apply_distro_patchset() {
 		"${FILESDIR}/chromium-98-gtk4-build.patch"
 		"${FILESDIR}/chromium-108-EnumTable-crash.patch"
 		$(use system-zlib && echo "${FILESDIR}/chromium-109-system-zlib.patch")
-		"${FILESDIR}/chromium-109-system-openh264.patch"
+		$(use system-openh264 && echo "${FILESDIR}/chromium-109-system-openh264.patch")
 		"${FILESDIR}/chromium-111-InkDropHost-crash.patch"
 		"${FILESDIR}/chromium-use-oauth2-client-switches-as-default.patch"
 		"${FILESDIR}/chromium-cross-compile.patch"
@@ -1709,6 +1775,61 @@ ewarn
 		third_party/usb_ids
 		third_party/xdg-utils
 
+		$(use !system-dav1d && echo "
+			third_party/dav1d
+		")
+		$(use !system-ffmpeg && echo "
+			third_party/ffmpeg
+		")
+		$(use !system-flac && echo "
+			third_party/flac
+		")
+		$(use !system-fontconfig && echo "
+			third_party/fontconfig
+		")
+		$(use !system-harfbuzz && echo "
+			third_party/harfbuzz-ng
+		")
+		$(use !system-icu && echo "
+			third_party/icu
+		")
+		$(use !system-libaom && echo "
+			third_party/libaom
+			third_party/libaom/source/libaom/third_party/fastfeat
+			third_party/libaom/source/libaom/third_party/SVT-AV1
+			third_party/libaom/source/libaom/third_party/vector
+			third_party/libaom/source/libaom/third_party/x86inc
+		")
+		$(use !system-libdrm && echo "
+			third_party/libdrm
+		")
+		$(use !system-libjpeg-turbo && echo "
+			third_party/libjpeg_turbo
+		")
+		$(use !system-libpng && echo "
+			third_party/libpng
+		")
+		$(use !system-libwebp && echo "
+			third_party/libwebp
+		")
+		$(use !system-libxml && echo "
+			third_party/libxml
+		")
+		$(use !system-libxslt && echo "
+			third_party/libxslt
+		")
+		$(use !system-openh264 && echo "
+			third_party/openh264
+		")
+		$(use !system-opus && echo "
+			third_party/opus
+		")
+		$(use !system-re2 && echo "
+			third_party/re2
+		")
+		$(use !system-zlib && echo "
+			third_party/zlib
+		")
 	#
 	# Do not remove the third_party/zlib below. \
 	#
@@ -1722,33 +1843,8 @@ ewarn
 		$(use !system-zlib && echo "
 			third_party/zlib
 		")
-
-		$(use !system-ffmpeg && echo "
-			third_party/ffmpeg
-			third_party/opus
-		")
-		$(use !system-icu && echo "
-			third_party/icu
-		")
-		$(use !system-png && echo "
-			third_party/libpng
-		")
-		$(use !system-av1 && echo "
-			third_party/dav1d
-			third_party/libaom
-			third_party/libaom/source/libaom/third_party/fastfeat
-			third_party/libaom/source/libaom/third_party/SVT-AV1
-			third_party/libaom/source/libaom/third_party/vector
-			third_party/libaom/source/libaom/third_party/x86inc
-		")
-		$(use !system-harfbuzz && echo "
-			third_party/harfbuzz-ng
-		")
 		$((use arm64 || use ppc64) || echo "
 			third_party/swiftshader/third_party/llvm-10.0
-		")
-		$(use bundled-libcxx || echo "
-			third_party/re2
 		")
 	)
 	# We need to generate ppc64 stuff because upstream does not ship it yet
@@ -2098,14 +2194,60 @@ ewarn
 	# libevent: https://bugs.gentoo.org/593458
 	# [B] all of gn_system_libraries set
 	local gn_system_libraries=(
-		flac
-		fontconfig
-		freetype
+		$(use system-dav1d && echo "
+			dav1d
+		")
+		$(use system-ffmpeg && echo "
+			ffmpeg
+		")
+		$(use system-flac && echo "
+			flac
+		")
+		$(use system-freetype && echo "
+			freetype
+		")
+		$(use system-fontconfig && echo "
+			fontconfig
+		")
 	# harfbuzz_from_pkgconfig target is needed.
-		#harfbuzz-ng
-		libdrm
-		libjpeg
-		libwebp
+		$(use system-harfbuzz && echo "
+			harfbuzz-ng
+		")
+		$(use system-icu && echo "
+			icu
+		")
+		$(use system-libaom && echo "
+			libaom
+		")
+		$(use system-libdrm && echo "
+			libdrm
+		")
+		$(use system-libjpeg-turbo && echo "
+			libjpeg
+		")
+		$(use system-libpng && echo "
+			libpng
+		")
+		$(use system-libwebp && echo "
+			libwebp
+		")
+		$(use system-libxml && echo "
+			libxml
+		")
+		$(use system-libxslt && echo "
+			libxslt
+		")
+		$(use system-openh264 && echo "
+			openh264
+		")
+		$(use system-opus && echo "
+			opus
+		")
+		# The re2 library interface relies on std::string and std::vector
+		$(use system-re2 && echo "
+			re2
+		")
+
 	# Moved to use system-libstdcxx condition below.
 	# Moved to use system-libstdcxx condition below.
 	# Moved to use system-libstdcxx condition below.
@@ -2116,25 +2258,6 @@ ewarn
 			zlib
 		")
 
-		$(use system-ffmpeg && echo "
-			ffmpeg
-			opus
-		")
-		$(use system-icu && echo "
-			icu
-		")
-		$(use system-png && echo "
-			libpng
-		")
-		$(use system-av1 && echo "
-			dav1d
-			libaom
-		")
-
-		# The re2 library interface relies on std::string and std::vector
-		$(use system-libstdcxx && echo "
-			re2
-		")
 	)
 	# [C]
 	if ! use system-libstdcxx \
