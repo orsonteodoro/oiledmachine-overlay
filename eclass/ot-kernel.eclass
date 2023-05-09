@@ -992,62 +992,32 @@ NO_INSTRUMENT_FUNCTION="a63d4f6cbab133b0f1ce9afb562546fcc5bb2680"
 NO_INSTRUMENT_FUNCTION_TIMESTAMP="1624300463" # Mon Jun 21 06:34:23 PM UTC 2021
 
 PGO_LLVM_SUPPORTED_VERSIONS=(
-	"13.0.0"
-	"13.0.1"
-	"14.0.0"
-	"14.0.1"
-	"14.0.2"
-	"14.0.3"
-	"14.0.4"
-	"14.0.5"
-	"14.0.6"
-	"15.0.0"
-	"15.0.1"
-	"15.0.2"
-	"15.0.3"
-	"15.0.4"
-	"15.0.5"
-	"15.0.6"
-	"15.0.7"
-	"16.0.0"
-	"16.0.1"
-	"16.0.2"
-	"16.0.3"
 	"17.0.0.9999"
-)
+	"17.0.0_pre20230502"
+	"16.0.4.9999"
+	"16.0.3"
+	"16.0.2"
+	"16.0.1"
+	"16.0.0"
+	"15.0.7"
+	"15.0.6"
+	"15.0.5"
+	"15.0.4"
+	"15.0.3"
+	"15.0.2"
+	"15.0.1"
+	"15.0.0"
+	"14.0.6"
+	"14.0.5"
+	"14.0.4"
+	"14.0.3"
+	"14.0.2"
+	"14.0.1"
+	"14.0.0"
+	"13.0.1"
+	"13.0.0"
 
-verify_clang_compiler_updated() {
-	local pv
-	for pv in ${PGO_LLVM_SUPPORTED_VERSIONS[@]} ; do
-		if ot-kernel_has_version "=sys-devel/clang-${pv}*" ; then
-			einfo "Verifying prereqs for PGO for sys-devel/clang-${pv}"
-			local emerged_llvm_commit=$(bzless \
-				"${ESYSROOT}/var/db/pkg/sys-devel/clang-${pv}"*"/environment.bz2" \
-				| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
-			local emerged_llvm_time_desc=$(wget -q -O - \
-				https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch \
-				| grep -F -e "Date:" | sed -e "s|Date: ||")
-			local emerged_llvm_timestamp=$(date -u -d "${emerged_llvm_time_desc}" +%s)
-			if (( ${emerged_llvm_timestamp} <= ${NO_INSTRUMENT_FUNCTION_TIMESTAMP} )) \
-				&& (( ${emerged_llvm_timestamp} <= ${NO_INSTRUMENT_FUNCTION_TIMESTAMP} )) ; then
-eerror
-eerror "Detected outdated commit"
-eerror
-eerror "  Re-emerge =sys-devel/clang-${pv}"
-eerror
-eerror "or"
-eerror
-eerror "  Use one of the following versions:"
-eerror "  ${PGO_LLVM_SUPPORTED_VERSIONS[@]}"
-eerror
-				die
-			else
-				# If on the same day it may be broken
-einfo "Clang and LLVM are up-to-date"
-			fi
-		fi
-	done
-}
+)
 
 # IPD_RAW_V* is the same as INSTR_PROF_RAW_VERSION.
 IPD_RAW_V=5 # < llvm-13 Dec 28, 2020
@@ -1069,17 +1039,9 @@ einfo "Verifying profraw version compatibility"
 	local pv
 	for pv in ${PGO_LLVM_SUPPORTED_VERSIONS[@]} ; do
 		( ! ot-kernel_has_version "~sys-devel/llvm-${pv}" ) && continue
-		local llvm_version
 		einfo "pv=${pv}"
-		if [[ "${pv}" =~ "9999" || "${pv}" =~ "_pre" ]] ; then
-			local llvm_version=$(bzless \
-				"${ESYSROOT}/var/db/pkg/sys-devel/llvm-${pv}"*"/environment.bz2" \
-				| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
-		else
-			llvm_version="llvmorg-${pv/_/-}"
-		fi
-		local instr_prof_raw_v=$(wget -q -O - \
-https://raw.githubusercontent.com/llvm/llvm-project/${llvm_version}/llvm/include/llvm/ProfileData/InstrProfData.inc \
+		local instr_prof_raw_v=$(cat \
+"${ESYSROOT}/usr/lib/llvm/$(ver_cut 1 ${found_ver})/include/llvm/ProfileData/InstrProfData.inc" \
 			| grep "INSTR_PROF_RAW_VERSION" \
 			| head -n 1 \
 			| grep -E -o -e "[0-9]+")
@@ -1113,6 +1075,20 @@ eerror "${PGO_LLVM_SUPPORTED_VERSIONS[@]}"
 eerror
 		die
 	fi
+}
+
+# @FUNCTION: display_required_clang
+# @DESCRIPTION:
+# Show a user message of the clang versions supported for the profraw raw version.
+display_required_clang() {
+einfo
+einfo "For Clang PGO support, if you use a live ebuild, only the latest commit"
+einfo "for one of these live versions (with the 9999 version) is supported."
+einfo "You may also use one of the tag versions listed:"
+einfo
+einfo "Clang versions supported:"
+einfo "${PGO_LLVM_SUPPORTED_VERSIONS[@]}"
+einfo
 }
 
 # @FUNCTION: ot-kernel_use
@@ -1196,7 +1172,7 @@ eerror "tresor_aesni requires SSE2 CPU support"
 
 	if has clang-pgo ${IUSE} ; then
 		if use clang-pgo ; then
-			verify_clang_compiler_updated
+			display_required_clang
 			#verify_profraw_compatibility
 		fi
 	fi
