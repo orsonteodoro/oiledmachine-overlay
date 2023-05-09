@@ -1137,6 +1137,10 @@ ewarn
 		fi
 	fi
 
+	if [[ -n "${OT_KERNEL_LOGO_URI}" ]] ; then
+		_check_network_sandbox
+	fi
+
 	if has tresor ${IUSE} ; then
 		if [[ -z "${OT_KERNEL_DEVELOPER}" ]] && use tresor ; then
 			if use tresor_i686 && ! grep -F -q "sse2" /proc/cpuinfo ; then
