@@ -1930,7 +1930,7 @@ einfo
 		fi
 		local pv=$(best_version "sys-devel/llvm:${LLVM_SLOT}" \
 			| sed -e "s|sys-devel/llvm-||g")
-		if [[ ${pv} =~ 9999 ]] ; then
+		if [[ ${pv} =~ 9999 || ${pv} =~ pre ]] ; then
 			local ts=$(date -d "@${CR_CLANG_USED_UNIX_TIMESTAMP}")
 ewarn
 ewarn "Only the commit below or newer for the latest live ebuilds are supported for Clang."
