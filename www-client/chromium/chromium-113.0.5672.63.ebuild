@@ -1933,7 +1933,7 @@ einfo
 		if [[ ${pv} =~ 9999 ]] ; then
 			local ts=$(date -d "@${CR_CLANG_USED_UNIX_TIMESTAMP}")
 ewarn
-ewarn "Only the latest commit of the latest live ebuild is supported for Clang."
+ewarn "Only the commit below or newer for the latest live ebuilds are supported for Clang."
 ewarn
 ewarn "LLVM slot:         ${CR_CLANG_SLOT_OFFICIAL}"
 ewarn "Commit:            ${CR_CLANG_USED}"
