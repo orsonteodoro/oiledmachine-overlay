@@ -1907,13 +1907,8 @@ einfo
 		fi
 
 		if tc-is-cross-compiler ; then
-			export CC="${CBUILD}-clang-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
-			export CXX="${CBUILD}-clang++-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
-			export BUILD_CC=${CBUILD}-clang-${LLVM_SLOT}
-			export BUILD_CXX=${CBUILD}-clang++${LLVM_SLOT}
-		elif tc-is-cross-compiler ; then
-			export CC="${CBUILD}-clang-${LLVM_SLOT} -target ${CHOST} --sysroot ${ESYSROOT}"
-			export CXX="${CBUILD}-clang++-${LLVM_SLOT} -target ${CHOST} --sysroot ${ESYSROOT}"
+			export CC="${CBUILD}-clang-${LLVM_SLOT} -target ${CHOST} --sysroot ${ESYSROOT} $(get_abi_CFLAGS ${ABI})"
+			export CXX="${CBUILD}-clang++-${LLVM_SLOT} -target ${CHOST} --sysroot ${ESYSROOT} $(get_abi_CFLAGS ${ABI})"
 			export BUILD_CC=${CBUILD}-clang-${LLVM_SLOT}
 			export BUILD_CXX=${CBUILD}-clang++-${LLVM_SLOT}
 		else
