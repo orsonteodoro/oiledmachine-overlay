@@ -355,8 +355,8 @@ ${IUSE_LIBCXX[@]}
 pax-kernel pic +pgo +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio qt5 +screencast selinux +suid
--system-av1 +system-ffmpeg -system-icu -system-harfbuzz -system-png +thinlto-opt
-+vaapi +wayland -widevine +X
+-system-av1 +system-ffmpeg -system-icu -system-harfbuzz -system-png -system-zlib
++thinlto-opt +vaapi +wayland -widevine +X
 r1
 "
 
@@ -454,6 +454,7 @@ REQUIRED_USE+="
 		!system-icu
 		!system-libstdcxx
 		!system-png
+		!system-zlib
 		bundled-libcxx
 	)
 	component-build? (
@@ -476,6 +477,7 @@ REQUIRED_USE+="
 		!system-icu
 		!system-libstdcxx
 		!system-png
+		!system-zlib
 		bundled-libcxx
 		dav1d
 		cups
@@ -1341,7 +1343,7 @@ is_generating_credits() {
 	fi
 }
 
-distro_patchset() {
+apply_distro_patchset() {
 	# Some web pages are crashing.
 	if use system-icu; then
 		sed -i -e \
@@ -1363,7 +1365,7 @@ distro_patchset() {
 	PATCHES+=(
 		"${FILESDIR}/chromium-98-gtk4-build.patch"
 		"${FILESDIR}/chromium-108-EnumTable-crash.patch"
-		$(tc-is-gcc && echo "${FILESDIR}/chromium-109-system-zlib.patch")
+		$(use system-zlib && echo "${FILESDIR}/chromium-109-system-zlib.patch")
 		"${FILESDIR}/chromium-109-system-openh264.patch"
 		"${FILESDIR}/chromium-111-InkDropHost-crash.patch"
 		"${FILESDIR}/chromium-use-oauth2-client-switches-as-default.patch"
@@ -1371,7 +1373,7 @@ distro_patchset() {
 		"${FILESDIR}/chromium-113-compiler.patch"
 		"${WORKDIR}/chromium-112-gcc-13-patches"
 		"${FILESDIR}/chromium-113-swiftshader-cstdint.patch"
-		$(tc-is-gcc && echo "${FILESDIR}/chromium-113-system-zlib.patch")
+		$(use system-zlib && echo "${FILESDIR}/chromium-113-system-zlib.patch")
 		"${FILESDIR}/chromium-113-web_view_impl-cstring.patch"
 		"${FILESDIR}/chromium-113-std-monospace.patch"
 		"${FILESDIR}/chromium-113-gcc-13-0001-vulkanmemoryallocator.patch"
@@ -1405,7 +1407,7 @@ ewarn "Applying the distro patchset."
 	# cfi-icall with static linkage may have less breakage than dynamic,
 	# which will force user to disable cfi-icall in Cross DSO CFI unvendored
 	# lib.
-		distro_patchset
+		apply_distro_patchset
 	else
 ewarn "Disabling the distro patchset."
 	fi
@@ -1717,9 +1719,7 @@ ewarn
 	# third_party/zlib is already kept but may use system no need split \
 	# conditional for CFI or official builds.
 	#
-	# ld.lld: error: undefined symbol: Cr_z_adler32
-	#
-		$(tc-is-clang && echo "
+		$(use !system-zlib && echo "
 			third_party/zlib
 		")
 
@@ -2114,7 +2114,12 @@ ewarn
 	# Moved to use system-libstdcxx condition below.
 	# Moved to use system-libstdcxx condition below.
 	# Moved to use system-libstdcxx condition below.
-		zlib
+	#
+	# ld.lld: error: undefined symbol: Cr_z_adler32
+	#
+		$(use system-zlib && echo "
+			zlib
+		")
 
 		$(use system-ffmpeg && echo "
 			ffmpeg

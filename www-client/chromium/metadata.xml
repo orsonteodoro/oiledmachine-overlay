@@ -385,9 +385,18 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
     </flag>
     <flag name="system-ffmpeg">
       Use system ffmpeg instead of the bundled one
+
+      The internal vendered version has additional codecs that are not removeable,
+      but the system one may be able to remove them.
     </flag>
     <flag name="system-icu">
       Use system icu instead of the bundled one
+    </flag>
+    <flag name="system-zlib">
+      Use system zlib instead of the bundled one
+
+      The internal vendored version is SIMD optimized but the vanilla zlib provided
+      by the system is not.
     </flag>
     <flag name="thinlto-opt">
       Enables selective ThinLTO -O2 optimizations for the browser binary and
