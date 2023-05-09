@@ -2193,6 +2193,7 @@ ewarn
 
 	# libevent: https://bugs.gentoo.org/593458
 	# [B] all of gn_system_libraries set
+	# List obtained from /var/tmp/portage/www-client/chromium-113.0.5672.63/work/chromium-113.0.5672.63/build/linux/unbundle/
 	local gn_system_libraries=(
 		$(use system-dav1d && echo "
 			dav1d
