@@ -1263,8 +1263,8 @@ ewarn
 	export CPP="$(tc-getCXX) -E"
 
 	if is_using_clang && ! tc-is-clang ; then
-		CC="clang"
-		CXX="clang++"
+		export CC="clang"
+		export CXX="clang++"
 		export CPP="clang++ -E"
 	fi
 
@@ -1363,7 +1363,7 @@ distro_patchset() {
 	PATCHES+=(
 		"${FILESDIR}/chromium-98-gtk4-build.patch"
 		"${FILESDIR}/chromium-108-EnumTable-crash.patch"
-		"${FILESDIR}/chromium-109-system-zlib.patch"
+		$(tc-is-gcc && echo "${FILESDIR}/chromium-109-system-zlib.patch")
 		"${FILESDIR}/chromium-109-system-openh264.patch"
 		"${FILESDIR}/chromium-111-InkDropHost-crash.patch"
 		"${FILESDIR}/chromium-use-oauth2-client-switches-as-default.patch"
@@ -1371,7 +1371,7 @@ distro_patchset() {
 		"${FILESDIR}/chromium-113-compiler.patch"
 		"${WORKDIR}/chromium-112-gcc-13-patches"
 		"${FILESDIR}/chromium-113-swiftshader-cstdint.patch"
-		"${FILESDIR}/chromium-113-system-zlib.patch"
+		$(tc-is-gcc && echo "${FILESDIR}/chromium-113-system-zlib.patch")
 		"${FILESDIR}/chromium-113-web_view_impl-cstring.patch"
 		"${FILESDIR}/chromium-113-std-monospace.patch"
 		"${FILESDIR}/chromium-113-gcc-13-0001-vulkanmemoryallocator.patch"
@@ -1717,6 +1717,12 @@ ewarn
 	# third_party/zlib is already kept but may use system no need split \
 	# conditional for CFI or official builds.
 	#
+	# ld.lld: error: undefined symbol: Cr_z_adler32
+	#
+		$(tc-is-clang && echo "
+			third_party/zlib
+		")
+
 		$(use !system-ffmpeg && echo "
 			third_party/ffmpeg
 			third_party/opus
@@ -1743,7 +1749,6 @@ ewarn
 		")
 		$(use bundled-libcxx || echo "
 			third_party/re2
-			third_party/zlib
 		")
 	)
 	# We need to generate ppc64 stuff because upstream does not ship it yet
