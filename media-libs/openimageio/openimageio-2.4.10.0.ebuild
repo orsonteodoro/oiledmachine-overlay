@@ -7,7 +7,7 @@ CXX_STD_MIN="14"
 LLVM_MAX_SLOT=16
 LLVM_SLOTS=(16 15 14 13)
 FONT_PN=OpenImageIO
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{9..10} )
 inherit cmake font llvm python-single-r1
 
 DESCRIPTION="A library for reading and writing images"
@@ -39,9 +39,10 @@ IUSE+="
 ${CPU_FEATURES[@]%:*}
 ${OPENVDB_APIS_[@]}
 aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc
-jpeg2k opencv opengl openvdb png ptex +python +qt5 qt6 raw rav1e tbb +truetype webp
+jpeg2k opencv opengl openvdb png ptex +python +qt5 qt6 raw rav1e tbb +truetype
+wayland webp X
 
-r1
+r2
 "
 gen_abi_compat_required_use() {
 	local o
@@ -202,18 +203,19 @@ RDEPEND+="
 	)
 	qt5? (
 		>=dev-qt/qtcore-${QT5_PV}:5
-		>=dev-qt/qtgui-${QT5_PV}:5
-		>=dev-qt/qtwidgets-${QT5_PV}:5
+		>=dev-qt/qtgui-${QT5_PV}:5[wayland?,X?]
+		>=dev-qt/qtwidgets-${QT5_PV}:5[X?]
 		opengl? (
 			>=dev-qt/qtopengl-${QT5_PV}:5
 		)
+		wayland? (
+			>=dev-qt/qtwayland-${QT5_PV}:5
+		)
 	)
 	qt6? (
-		>=dev-qt/qtcore-${QT6_PV}:6
-		>=dev-qt/qtgui-${QT6_PV}:6
-		>=dev-qt/qtwidgets-${QT6_PV}:6
-		opengl? (
-			>=dev-qt/qtopengl-${QT6_PV}:6
+		>=dev-qt/qtbase-${QT6_PV}:6[gui,opengl?,widgets,X?]
+		wayland? (
+			>=dev-qt/qtwayland-${QT6_PV}:6
 		)
 	)
 	raw? (

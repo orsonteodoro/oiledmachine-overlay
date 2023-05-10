@@ -7,7 +7,7 @@ CXX_STD_MIN="14"
 LLVM_MAX_SLOT=15
 LLVM_SLOTS=(15 14 13)
 FONT_PN=OpenImageIO
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{9..10} )
 inherit cmake font llvm python-single-r1
 
 DESCRIPTION="A library for reading and writing images"
@@ -39,7 +39,10 @@ IUSE+="
 ${CPU_FEATURES[@]%:*}
 ${OPENVDB_APIS_[@]}
 aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc
-jpeg2k opencv opengl openvdb png ptex +python +qt5 raw rav1e tbb +truetype webp
+jpeg2k opencv opengl openvdb png ptex +python +qt5 raw rav1e tbb +truetype
+wayland webp X
+
+r2
 "
 gen_abi_compat_required_use() {
 	local o
@@ -81,7 +84,7 @@ REQUIRED_USE="
 	)
 "
 # See https://github.com/OpenImageIO/oiio/blob/v2.3.21.0/INSTALL.md
-QT_PV="5.6"
+QT5_PV="5.6"
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 gen_openvdb_depends() {
@@ -198,11 +201,14 @@ RDEPEND+="
 		')
 	)
 	qt5? (
-		>=dev-qt/qtcore-${QT_PV}:5
-		>=dev-qt/qtgui-${QT_PV}:5
-		>=dev-qt/qtwidgets-${QT_PV}:5
+		>=dev-qt/qtcore-${QT5_PV}:5
+		>=dev-qt/qtgui-${QT5_PV}:5[wayland?,X?]
+		>=dev-qt/qtwidgets-${QT5_PV}:5[X?]
 		opengl? (
-			>=dev-qt/qtopengl-${QT_PV}:5
+			>=dev-qt/qtopengl-${QT5_PV}:5
+		)
+		wayland? (
+			>=dev-qt/qtwayland-${QT5_PV}:5
 		)
 	)
 	raw? (
