@@ -684,14 +684,14 @@ qt_check() {
 }
 
 #
-# Should be preformed when the die hook is called also, but
-# the ebuild system doesn't support this!
+# This should be preformed when the die hook is called also, but the ebuild
+# system doesn't support this!
 #
 # Before compile finishes (or specifically before sanitize_login_tokens gets
-# called), these info will be in plaintext or *unsanitized* because the die hook
+# called), this info will be in plaintext or *unsanitized* because the die hook
 # cannot be called.
 #
-# So the package manager is flawed and needs a special API or hooks to clean.
+# So the package manager is flawed and needs a special API or hooks to clean
 # up sensitive information when emerge crashes.
 #
 sanitize_login_tokens() {
@@ -759,8 +759,8 @@ ewarn "by patch should be sanitized with shred from forensics attacks."
 ewarn
 	sleep 30
 
-	if ! use browser || [[ -z "${RESTREAM_CLIENTID}" \
-		|| -z "${RESTREAM_HASH}" ]] ; then
+	if ! use browser || \
+		[[ -z "${RESTREAM_CLIENTID}" || -z "${RESTREAM_HASH}" ]] ; then
 ewarn
 ewarn "Restream integration is disabled.  For details on how to enable it, see"
 ewarn "the metadata.xml or \`epkginfo -x obs-studio::oiledmachine-overlay\`."
@@ -768,8 +768,8 @@ ewarn "The browser USE flag must be enabled."
 ewarn
 	fi
 
-	if ! use browser || [[ -z "${TWITCH_CLIENTID}" \
-		|| -z "${TWITCH_HASH}" ]] ; then
+	if ! use browser \
+		|| [[ -z "${TWITCH_CLIENTID}" || -z "${TWITCH_HASH}" ]] ; then
 ewarn
 ewarn "Twitch integration is disabled.  For details on how to enable it, see"
 ewarn "the metadata.xml or \`epkginfo -x obs-studio::oiledmachine-overlay\`."
@@ -777,10 +777,12 @@ ewarn "The browser USE flag must be enabled."
 ewarn
 	fi
 
-	if [[ -z "${YOUTUBE_CLIENTID}" \
+	if [[ \
+		   -z "${YOUTUBE_CLIENTID}" \
 		|| -z "${YOUTUBE_CLIENTID_HASH}" \
 		|| -z "${YOUTUBE_SECRET}" \
-		|| -z "${YOUTUBE_SECRET_HASH}" ]] ; then
+		|| -z "${YOUTUBE_SECRET_HASH}" \
+	]] ; then
 ewarn
 ewarn "YT integration is disabled.  For details on how to enable it, see the"
 ewarn "metadata.xml or \`epkginfo -x obs-studio::oiledmachine-overlay\`."
@@ -898,9 +900,9 @@ einfo
 	# obs-browser-source.cpp:25:10: fatal error: QApplication: No such file or directory
 	# browser-client.cpp:27:10: fatal error: QThread: No such file or directory
 	if use browser ; then
-		append-cppflags -I"${ESYSROOT}"/usr/include/qt5
-		append-cppflags -I"${ESYSROOT}"/usr/include/qt5/QtWidgets
-		append-cppflags -I"${ESYSROOT}"/usr/include/qt5/QtCore
+		append-cppflags -I"${ESYSROOT}/usr/include/qt5"
+		append-cppflags -I"${ESYSROOT}/usr/include/qt5/QtWidgets"
+		append-cppflags -I"${ESYSROOT}/usr/include/qt5/QtCore"
 	fi
 
 	local libdir=$(get_libdir)
