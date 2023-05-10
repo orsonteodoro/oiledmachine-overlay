@@ -17,21 +17,10 @@ IUSE+="
 ${LUA_COMPAT[@]/#/lua_targets_}
 
 +asan +c11 c89 c99 cxx98 cxx11 +cxx14 +cgi gnu17 -cxx +caching debug doc
--duktape -ipv6 -lua -serve_no_files +server_executable -server_stats +ssl
-ssl_1_0 +ssl_1_1 static-libs -test -websockets -zlib
+-duktape +ipv6 -lua -serve_no_files +server_executable -server_stats +ssl
+static-libs -test -websockets -zlib
 "
 REQUIRED_USE+="
-	^^ (
-		c11
-		c89
-		c99
-		gnu17
-	)
-	^^ (
-		cxx11
-		cxx14
-		cxx98
-	)
 	lua? (
 		${LUA_REQUIRED_USE}
 		gnu17
@@ -48,11 +37,16 @@ REQUIRED_USE+="
 	lua_targets_lua5-4? (
 		lua
 	)
-	ssl? (
-		^^ (
-			ssl_1_0
-			ssl_1_1
-		)
+	^^ (
+		c11
+		c89
+		c99
+		gnu17
+	)
+	^^ (
+		cxx11
+		cxx14
+		cxx98
 	)
 "
 # CMakeLists.txt lists versions
@@ -62,8 +56,18 @@ LUA_5_2_MIN="5.2.4"
 LUA_5_3_MIN="5.3.6"
 LUA_5_4_MIN="5.4.3"
 # CI uses U 14.04
-LUA_IMPLS=( 5.1 5.2 5.3 5.4 )
-LUA_PV_SUPPORTED=( 5.1.5 5.2.4 5.3.5 5.4.0 ) # Upstream supported specifically
+LUA_IMPLS=(
+	5.1
+	5.2
+	5.3
+	5.4
+)
+LUA_PV_SUPPORTED=(
+	5.1.5
+	5.2.4
+	5.3.5
+	5.4.0
+) # Upstream supported specifically
 gen_lua_targets() {
 	for x in ${LUA_IMPLS[@]} ; do
 		local v="LUA_${x/./_}_MIN"
@@ -79,15 +83,11 @@ RDEPEND+="
 	>=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
 	virtual/libc
 	ssl? (
-		ssl_1_0? (
-			|| (
-				=dev-libs/openssl-1.0*[${MULTILIB_USEDEP}]
-				dev-libs/openssl-compat:1.0.0[${MULTILIB_USEDEP}]
-			)
-		)
-		ssl_1_1? ( =dev-libs/openssl-1.1*[${MULTILIB_USEDEP}] )
+		>=dev-libs/openssl-1.0[${MULTILIB_USEDEP}]
 	)
-	zlib? ( sys-libs/zlib[${MULTILIB_USEDEP}] )
+	zlib? (
+		sys-libs/zlib[${MULTILIB_USEDEP}]
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -102,6 +102,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-util/cmake-3.3.0
+	virtual/pkgconfig
 "
 SRC_URI="
 https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz
@@ -237,7 +238,6 @@ _configure() {
 							$(usex cxx98 cxx11 auto) \
 						) \
 					)
-		-DCIVETWEB_ENABLE_SERVER_EXECUTABLE=$(usex server_executable)
 		-DCIVETWEB_DISABLE_CACHING=$(usex caching "OFF" "ON")
 		-DCIVETWEB_DISABLE_CGI=$(usex cgi "OFF" "ON")
 		-DCIVETWEB_ENABLE_ASAN=$(usex asan)
@@ -246,12 +246,38 @@ _configure() {
 		-DCIVETWEB_ENABLE_LTO=$(usex lto)
 		-DCIVETWEB_ENABLE_LUA=$(usex lua)
 		-DCIVETWEB_ENABLE_IPV6=$(usex ipv6)
+		-DCIVETWEB_ENABLE_SERVER_EXECUTABLE=$(usex server_executable)
 		-DCIVETWEB_ENABLE_SERVER_STATS=$(usex server_stats)
 		-DCIVETWEB_ENABLE_WEBSOCKETS=$(usex websockets)
 		-DCIVETWEB_ENABLE_ZLIB=$(usex zlib)
 		-DCIVETWEB_SERVE_NO_FILES=$(usex serve_no_files)
 	)
 	filter-flags '-flto*'
+	if has_version "dev-libs/openssl:0/3" ; then
+		mycmakeargs+=(
+			-DCIVETWEB_SSL_OPENSSL_API_1_0=OFF
+			-DCIVETWEB_SSL_OPENSSL_API_1_1=OFF
+			-DCIVETWEB_SSL_OPENSSL_API_3_0=ON
+		)
+	elif has_version "dev-libs/openssl:0/1.1" ; then
+		mycmakeargs+=(
+			-DCIVETWEB_SSL_OPENSSL_API_1_0=OFF
+			-DCIVETWEB_SSL_OPENSSL_API_1_1=ON
+			-DCIVETWEB_SSL_OPENSSL_API_3_0=OFF
+		)
+	elif has_version "dev-libs/openssl:0" ; then
+		mycmakeargs+=(
+			-DCIVETWEB_SSL_OPENSSL_API_1_0=ON
+			-DCIVETWEB_SSL_OPENSSL_API_1_1=OFF
+			-DCIVETWEB_SSL_OPENSSL_API_3_0=OFF
+		)
+	else
+		mycmakeargs+=(
+			-DCIVETWEB_SSL_OPENSSL_API_1_0=OFF
+			-DCIVETWEB_SSL_OPENSSL_API_1_1=OFF
+			-DCIVETWEB_SSL_OPENSSL_API_3_0=OFF
+		)
+	fi
 	if [[ "${lib_type}" == "shared" ]] ;then
 		mycmakeargs+=(
 			-DBUILD_SHARED_LIBS=ON
