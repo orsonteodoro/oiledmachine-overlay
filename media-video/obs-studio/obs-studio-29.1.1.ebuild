@@ -15,7 +15,7 @@ EGIT_SUBMODULES=(
 
 CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
 LUA_COMPAT=( luajit )
-PYTHON_COMPAT=( python3_{8..10} ) # 18.04 is only 3.6
+PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake flag-o-matic git-r3 lcnr lua-single python-single-r1 xdg-utils
 
 DESCRIPTION="Software for Recording and Streaming Live Video Content"
@@ -197,8 +197,6 @@ BDEPEND+="
 	)
 "
 
-# CI uses U 18.04
-
 # 103 is EOL.  The current Cr version is 109.
 CEF_PV="103"
 # See also
@@ -249,7 +247,6 @@ DEPEND_LIBXCB="
         >=x11-libs/libxcb-1.14
 "
 
-# >=dev-libs/jansson-2.5 # in cmake
 DEPEND_JANSSON="
 	>=dev-libs/jansson-2.12
 "
