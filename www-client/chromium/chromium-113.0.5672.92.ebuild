@@ -2254,9 +2254,6 @@ ewarn
 			re2
 		")
 
-	# Moved to use system-libstdcxx condition below.
-	# Moved to use system-libstdcxx condition below.
-	# Moved to use system-libstdcxx condition below.
 	#
 	# ld.lld: error: undefined symbol: Cr_z_adler32
 	#
