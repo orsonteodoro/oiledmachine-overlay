@@ -103,14 +103,14 @@ REQUIRED_USE+="
 	)
 	!kernel_linux? (
 		!kernel_FreeBSD? (
-			!kernel_OpenBSD? (
-				!sndio
-				!wayland
-			)
 			!alsa
 			!pulseaudio
 			!v4l2
 			!vaapi
+			!kernel_OpenBSD? (
+				!sndio
+				!wayland
+			)
 		)
 	)
 	!kernel_Winnt? (
@@ -148,10 +148,10 @@ REQUIRED_USE+="
 		vaapi
 	)
 	kernel_Winnt? (
+		amf
 		kernel_Darwin? (
 			!virtualcam
 		)
-		amf
 	)
 	lua? (
 		${LUA_REQUIRED_USE}
@@ -183,7 +183,7 @@ REQUIRED_USE+="
 # done
 #
 
-# 103 is EOL.  The current Cr version is 109.
+# 103 is EOL.  The current Cr version is 113.
 CEF_PV="103"
 # See also
 # https://github.com/obsproject/obs-studio/blob/29.1.1/.github/workflows/main.yml#L20
@@ -206,9 +206,9 @@ SWIG_PV="4.0.1"
 # deps/obs-scripting/obslua/CMakeLists.txt
 # deps/obs-scripting/obspython/CMakeLists.txt
 BDEPEND+="
+	>=app-misc/jq-1.6
 	>=dev-util/cmake-3.25
 	>=dev-util/pkgconf-1.3.7[pkg-config(+)]
-	>=app-misc/jq-1.6
 	lua? (
 		>=dev-lang/swig-${SWIG_PV}
 	)
@@ -561,10 +561,10 @@ DEPEND_MESA="
 
 # See deps/glad/CMakeLists.txt
 DEPEND_GLAD="
-	>=media-libs/libglvnd-1.3.1
-	>=media-libs/mesa-${MESA_PV}[egl(+)]
 	${DEPEND_MESA}
 	${DEPEND_LIBX11}
+	>=media-libs/libglvnd-1.3.1
+	>=media-libs/mesa-${MESA_PV}[egl(+)]
 "
 
 # See libobs-opengl/CMakeLists.txt
@@ -855,12 +855,15 @@ src_prepare() {
 
 	# typos
 	sed -i -e "s|LIBVA_LBRARIES|LIBVA_LIBRARIES|g" \
-		plugins/obs-ffmpeg/CMakeLists.txt || die
+		plugins/obs-ffmpeg/CMakeLists.txt \
+		|| die
 
 	sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
-		plugins/obs-browser/FindCEF.cmake || die
+		plugins/obs-browser/FindCEF.cmake \
+		|| die
 	sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
-		cmake/Modules/FindCEF.cmake || die
+		cmake/Modules/FindCEF.cmake \
+		|| die
 }
 
 gen_rtmp_services() {
@@ -868,7 +871,8 @@ gen_rtmp_services() {
 		einfo "Removing streaming services from services whitelist"
 		jq '{"$schema","format_version","services": [.services[] | select(null)]}' \
 			"${S}/plugins/rtmp-services/data/services.json" \
-			> "${S}/plugins/rtmp-services/data/services.json.t" || die
+			> "${S}/plugins/rtmp-services/data/services.json.t" \
+			|| die
 		mv "${S}/plugins/rtmp-services/data/services.json"{.t,} || die
 		return
 	fi
@@ -884,7 +888,8 @@ gen_rtmp_services() {
 
 	jq '{"$schema","format_version","services": [.services[] | select(null '"${services}"')]}' \
 		"${S}/plugins/rtmp-services/data/services.json" \
-		> "${S}/plugins/rtmp-services/data/services.json.t" || die
+		> "${S}/plugins/rtmp-services/data/services.json.t" \
+		|| die
 	mv "${S}/plugins/rtmp-services/data/services.json"{.t,} || die
 }
 
