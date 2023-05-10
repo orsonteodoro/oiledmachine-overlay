@@ -24,17 +24,30 @@ if [[ ${PV} == *9999* ]]; then
 	SRC_URI=""
 else
 	SRC_URI="https://gitlab.freedesktop.org/cairo/cairo/-/archive/${PV}/cairo-${PV}.tar.bz2"
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
+	KEYWORDS="
+~alpha amd64 arm arm64 hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
+sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris
+~sparc64-solaris ~x64-solaris ~x86-solaris
+	"
 fi
 
 DESCRIPTION="A vector graphics library with cross-device output support"
 HOMEPAGE="https://www.cairographics.org/ https://gitlab.freedesktop.org/cairo/cairo"
-LICENSE="|| ( LGPL-2.1 MPL-1.1 )"
+LICENSE="
+	|| (
+		LGPL-2.1
+		MPL-1.1
+	)
+"
 SLOT="0"
 IUSE="X aqua debug gles2-only gles3 +glib gtk-doc opengl test"
 REQUIRED_USE="
-	gles2-only? ( !opengl )
-	gles3? ( gles2-only )
+	gles2-only? (
+		!opengl
+	)
+	gles3? (
+		gles2-only
+	)
 "
 #RESTRICT="!test? ( test ) test" # Requires poppler-glib, which isn't available in multilib
 
@@ -64,7 +77,9 @@ TEST_DEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	X? ( x11-base/xorg-proto )
+	X? (
+		x11-base/xorg-proto
+	)
 "
 PDEPEND="
 	pgo? (
@@ -128,30 +143,27 @@ _src_configure() {
 		append-ldflags -Wno-error=coverage-mismatch
         fi
 
-        export PKG_CONFIG_LIBDIR="${ESYSROOT}/usr/$(get_libdir)/pkgconfig"
         export PKG_CONFIG="$(tc-getPKG_CONFIG)"
+        export PKG_CONFIG_LIBDIR="${ESYSROOT}/usr/$(get_libdir)/pkgconfig"
         export PKG_CONFIG_PATH="${ESYSROOT}/usr/share/pkgconfig"
 
 	local emesonargs=(
-		-Ddwrite=disabled
-		-Dfontconfig=enabled
-		-Dfreetype=enabled
-		-Dpng=enabled
 		$(meson_feature aqua quartz)
+		$(meson_feature debug symbol-lookup)
+		$(meson_feature glib)
 		$(meson_feature X tee)
 		$(meson_feature X xcb)
 		$(meson_feature X xlib)
+		$(meson_use gtk-doc gtk_doc)
+		-Ddwrite=disabled
+		-Dfontconfig=enabled
+		-Dfreetype=enabled
+		-Dgtk2-utils=disabled
+		-Dpng=enabled
+		-Dspectre=disabled # only used for tests
 		-Dxlib-xcb=disabled
 		-Dxml=disabled
 		-Dzlib=enabled
-
-		-Dgtk2-utils=disabled
-
-		$(meson_feature glib)
-		-Dspectre=disabled # only used for tests
-		$(meson_feature debug symbol-lookup)
-
-		$(meson_use gtk-doc gtk_doc)
 	)
 
 	if [[ "${TEST_READY}" == "0" ]] ; then
