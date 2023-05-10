@@ -31,7 +31,7 @@ ${CPU_FEATURES[@]%:*}
 ${LLVM_SUPPORT_[@]}
 doc optix partio python qt5 qt6 static-libs test wayland X
 
-r1
+r2
 "
 REQUIRED_USE+="
 	^^ (
@@ -155,7 +155,7 @@ RDEPEND+="
 	qt5? (
 		>=dev-qt/qtcore-${QT5_MIN}:5
 		>=dev-qt/qtgui-${QT5_MIN}:5[wayland?,X?]
-		>=dev-qt/qtwidgets-${QT5_MIN}:5
+		>=dev-qt/qtwidgets-${QT5_MIN}:5[X?]
 	)
 	qt6? (
 		>=dev-qt/qtbase-${QT6_MIN}:6[gui,widgets,X?]
