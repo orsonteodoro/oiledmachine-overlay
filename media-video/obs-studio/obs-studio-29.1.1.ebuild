@@ -173,37 +173,6 @@ REQUIRED_USE+="
 	)
 "
 
-# Based on 20.04 See
-# azure-pipelines.yml
-# .github/workflows/main.yml
-# deps/obs-scripting/obslua/CMakeLists.txt
-# deps/obs-scripting/obspython/CMakeLists.txt
-BDEPEND+="
-	>=dev-util/cmake-3.25
-	>=dev-util/pkgconf-1.3.7[pkg-config(+)]
-	app-misc/jq
-	lua? (
-		>=dev-lang/swig-4
-	)
-	python? (
-		${PYTHON_DEPS}
-		>=dev-lang/swig-4
-	)
-	test? (
-		>=dev-util/cmocka-1.1.1
-		websocket? (
-			>=dev-libs/boost-1.39
-		)
-	)
-"
-
-# 103 is EOL.  The current Cr version is 109.
-CEF_PV="103"
-# See also
-# https://github.com/obsproject/obs-studio/blob/29.1.1/.github/workflows/main.yml#L20
-# https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
-# https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
-
 #
 # To find differences between release use:
 #
@@ -214,14 +183,52 @@ CEF_PV="103"
 # done
 #
 
+# 103 is EOL.  The current Cr version is 109.
+CEF_PV="103"
+# See also
+# https://github.com/obsproject/obs-studio/blob/29.1.1/.github/workflows/main.yml#L20
+# https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
+# https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
+
 FFMPEG_PV="4.2.2"
 LIBVA_PV="2.7.0"
 LIBX11_PV="1.6.9"
 MESA_PV="20.0.4"
-QT5_PV="5.15.2" # Found in 27.2.4 CI
+QT5_PV="5.12.8" # Found in CI logs
 QT5_SLOT="$(ver_cut 1 ${QT5_PV})"
 QT6_PV="6.4.3"
 QT6_SLOT="$(ver_cut 1 ${QT6_PV})"
+SWIG_PV="4.0.1"
+
+# Based on 20.04 See
+# azure-pipelines.yml
+# .github/workflows/main.yml
+# deps/obs-scripting/obslua/CMakeLists.txt
+# deps/obs-scripting/obspython/CMakeLists.txt
+BDEPEND+="
+	>=dev-util/cmake-3.25
+	>=dev-util/pkgconf-1.3.7[pkg-config(+)]
+	>=app-misc/jq-1.6
+	lua? (
+		>=dev-lang/swig-${SWIG_PV}
+	)
+	python? (
+		${PYTHON_DEPS}
+		>=dev-lang/swig-${SWIG_PV}
+	)
+	test? (
+		>=dev-util/cmocka-1.1.5
+		qt5? (
+			>=dev-qt/qttest-${QT5_PV}:${QT5_SLOT}=
+		)
+		qt6? (
+			>=dev-qt/qttest-${QT6_PV}:${QT6_SLOT}=
+		)
+		websocket? (
+			>=dev-libs/boost-1.71.0
+		)
+	)
+"
 
 DEPEND_FFMPEG="
 	>=media-video/ffmpeg-${FFMPEG_PV}:=[libaom?,opus,svt-av1?]
@@ -376,7 +383,6 @@ DEPEND_PLUGINS_OBS_OUTPUTS="
 	ftl? (
 		${DEPEND_CURL}
 		${DEPEND_JANSSON}
-		>=dev-libs/jansson-2.12
 	)
 "
 
@@ -436,10 +442,8 @@ DEPEND_PLUGINS_WEBSOCKET="
 			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
 		)
 		qt6? (
-			>=dev-qt/qtcore-${QT6_PV}:${QT6_SLOT}=
-			>=dev-qt/qtnetwork-${QT6_PV}:${QT6_SLOT}=
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[network,widgets]
 			>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=
-			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
 		)
 	)
 "
@@ -515,10 +519,9 @@ DEPEND_UNSOURCED="
 		>=dev-qt/qtsql-${QT5_PV}:${QT5_SLOT}=
 	)
 	qt6? (
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[sql]
 		>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}=
 		>=dev-qt/qtmultimedia-${QT6_PV}:${QT6_SLOT}=
-		>=dev-qt/qtquickcontrols-${QT6_PV}:${QT6_SLOT}=
-		>=dev-qt/qtsql-${QT6_PV}:${QT6_SLOT}=
 	)
 "
 
@@ -548,14 +551,16 @@ DEPEND_UI="
 		>=dev-qt/qtgui-${QT5_PV}:${QT5_SLOT}=[X,wayland?]
 		>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
 		>=dev-qt/qtxml-${QT5_PV}:${QT5_SLOT}=
+		wayland? (
+			>=dev-qt/qtwayland-${QT5_PV}:${QT5_SLOT}=
+		)
 	)
 	qt6? (
-		>=dev-qt/qtcore-${QT6_PV}:${QT6_SLOT}=
-		>=dev-qt/qtnetwork-${QT6_PV}:${QT6_SLOT}=
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui,network,widgets,wayland?,X,xml]
 		>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=
-		>=dev-qt/qtgui-${QT6_PV}:${QT6_SLOT}=[X,wayland?]
-		>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
-		>=dev-qt/qtxml-${QT6_PV}:${QT6_SLOT}=
+		wayland? (
+			>=dev-qt/qtwayland-${QT6_PV}:${QT6_SLOT}=
+		)
 	)
 "
 
@@ -626,7 +631,7 @@ RDEPEND+="
 	qt5? (
 		>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
 	)
-	qt5? (
+	qt6? (
 		>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
 	)
 	test? (
@@ -727,8 +732,13 @@ sanitize_login_tokens() {
 }
 
 pkg_setup() {
-	use qt6 && qt_check 6
 	use qt5 && qt_check 5
+	if use qt6 ; then
+ewarn
+ewarn "qt_check for Qt6 is not implemented.  You are responsible for ensuring"
+ewarn "version compatibility/consistency."
+ewarn
+	fi
 	use lua && lua-single_pkg_setup
 	use python && python-single-r1_pkg_setup
 
