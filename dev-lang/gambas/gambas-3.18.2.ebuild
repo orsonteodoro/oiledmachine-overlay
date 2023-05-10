@@ -168,7 +168,7 @@ DEPEND+="
 		)
 	)
 	mime? (
-		>=dev-libs/gmime-2.6
+		>=dev-libs/gmime-3
 	)
 	mixer? (
 		sdl? (
@@ -355,7 +355,7 @@ ewarn
 
 	check_cxx
 
-	if use qt5 ; then
+	if false && use qt5 ; then
 		einfo "Checking Qt versions"
 		local QT_VERSION=$("${EROOT}/usr/$(get_libdir)/libQt5Core.so.5" \
 			| head -n 1 \

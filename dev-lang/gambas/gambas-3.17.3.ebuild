@@ -168,7 +168,7 @@ DEPEND+="
 		)
 	)
 	mime? (
-		>=dev-libs/gmime-2.6
+		>=dev-libs/gmime-3
 	)
 	mixer? (
 		sdl? (

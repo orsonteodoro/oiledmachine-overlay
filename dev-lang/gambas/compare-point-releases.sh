@@ -12,7 +12,7 @@ main() {
 	S_NEW="/var/tmp/portage/dev-lang/gambas-${PV2}/work/gambas-${PV2}/"
 	local P=(
 		$(grep -l "State=" $(find "${S_NEW}" -name "*.component") | cut -f 9- -d "/")
-		$(find "${S_NEW}" -name "configure.ac" | cut -f 9- -d "/")
+		$(find "${S_NEW}" -name "configure.ac" -o -name ".gitlab-ci.yml" | cut -f 9- -d "/")
 	)
 	for p in ${P[@]} ; do
 		echo
