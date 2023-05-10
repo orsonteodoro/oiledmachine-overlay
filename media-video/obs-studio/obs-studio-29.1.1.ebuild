@@ -214,7 +214,7 @@ CEF_PV="103"
 # done
 #
 
-FFMPEG_PV="3.4.2"
+FFMPEG_PV="4.2.2"
 LIBVA_PV="2.7.0"
 LIBX11_PV="1.6.9"
 MESA_PV="20.0.4"
