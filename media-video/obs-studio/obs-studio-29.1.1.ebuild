@@ -63,7 +63,7 @@ LICENSE="
 	)
 "
 # custom - plugins/enc-amf/AMF/LICENSE.txt
-KEYWORDS="~amd64 ~ppc64 ~x86"
+KEYWORDS="~amd64 ~x86"
 SLOT="0"
 # aja is enabled by default upstream
 # amf is enabled by default upstream
@@ -74,11 +74,12 @@ SLOT="0"
 # qsv is enabled by default upstream
 # vlc is enabled by default upstream
 IUSE+="
-+alsa aja amf +browser +browser-panels browser-qt-loop coreaudio-encoder
++alsa aja amf +browser +browser-panels coreaudio-encoder
 -decklink -fdk +freetype ftl +ipv6 jack libaom +lua +new-mpegts-output nvafx
-nvenc nvvfx oss +pipewire +pulseaudio +python +rtmps +speexdsp -test +hevc
-mac-syphon qsv +rnnoise -service-updates -sndio +speexdsp svt-av1 +v4l2 vaapi
-vlc +virtualcam +vst +wayland win-dshow +websocket -win-mf +whatsnew x264
+nvenc nvvfx oss +pipewire +pulseaudio +python qt5 qt6 +rtmps +speexdsp -test
++hevc mac-syphon qsv +rnnoise +service-updates -sndio +speexdsp svt-av1
++v4l2 vaapi +vlc +virtualcam +vst +wayland win-dshow +websocket -win-mf
++whatsnew x264
 
 kernel_FreeBSD
 kernel_OpenBSD
@@ -127,6 +128,10 @@ REQUIRED_USE+="
 			)
 		)
 	)
+	^^ (
+		qt5
+		qt6
+	)
 	ftl? (
 		|| (
 			amf
@@ -136,10 +141,17 @@ REQUIRED_USE+="
 			x264
 		)
 	)
+	kernel_FreeBSD? (
+		vaapi
+	)
+	kernel_linux? (
+		vaapi
+	)
 	kernel_Winnt? (
 		kernel_Darwin? (
 			!virtualcam
 		)
+		amf
 	)
 	lua? (
 		${LUA_REQUIRED_USE}
@@ -161,31 +173,21 @@ REQUIRED_USE+="
 	)
 "
 
-# Based on 18.04 See
+# Based on 20.04 See
 # azure-pipelines.yml
 # .github/workflows/main.yml
 # deps/obs-scripting/obslua/CMakeLists.txt
 # deps/obs-scripting/obspython/CMakeLists.txt
 BDEPEND+="
-	>=dev-util/cmake-3.10.2
+	>=dev-util/cmake-3.25
 	>=dev-util/pkgconf-1.3.7[pkg-config(+)]
 	app-misc/jq
 	lua? (
-		!kernel_Darwin? (
-			>=dev-lang/swig-3.0.12
-		)
-		kernel_Darwin? (
-			>=dev-lang/swig-4
-		)
+		>=dev-lang/swig-4
 	)
 	python? (
 		${PYTHON_DEPS}
-		!kernel_Darwin? (
-			>=dev-lang/swig-3.0.12
-		)
-		kernel_Darwin? (
-			>=dev-lang/swig-4
-		)
+		>=dev-lang/swig-4
 	)
 	test? (
 		>=dev-util/cmocka-1.1.1
@@ -200,7 +202,7 @@ BDEPEND+="
 # 103 is EOL.  The current Cr version is 109.
 CEF_PV="103"
 # See also
-# https://github.com/obsproject/obs-studio/blob/29.0.0/.github/workflows/main.yml#L20
+# https://github.com/obsproject/obs-studio/blob/29.1.1/.github/workflows/main.yml#L20
 # https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 # https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
 
@@ -208,17 +210,20 @@ CEF_PV="103"
 # To find differences between release use:
 #
 # S1="/var/tmp/portage/media-video/obs-studio-28.1.2/work/obs-studio-28.1.2" \
-# S2="/var/tmp/portage/media-video/obs-studio-29.0.0/work/obs-studio-29.0.0" ; \
+# S2="/var/tmp/portage/media-video/obs-studio-29.1.1/work/obs-studio-29.1.1" ; \
 # for x in $(find ${S2} -name "CMakeLists.txt" -o -name "*.cmake" | cut -f 9- -d "/" | sort) ; do \
 #   diff -urp "${S1}/${x}" "${S2}/${x}" ; \
 # done
 #
 
 FFMPEG_PV="3.4.2"
-LIBVA_PV="2.1.0"
-LIBX11_PV="1.6.4"
-MESA_PV="18"
-QT_PV="5.15.2"
+LIBVA_PV="2.7.0"
+LIBX11_PV="1.6.9"
+MESA_PV="20.0.4"
+QT5_PV="5.15.2" # Found in 27.2.4 CI
+QT5_SLOT="$(ver_cut 1 ${QT5_PV})"
+QT6_PV="6.4.3"
+QT6_SLOT="$(ver_cut 1 ${QT6_PV})"
 
 DEPEND_FFMPEG="
 	>=media-video/ffmpeg-${FFMPEG_PV}:=[libaom?,opus,svt-av1?]
@@ -237,22 +242,22 @@ DEPEND_LIBX11="
 "
 
 DEPEND_LIBX264="
-	>=media-libs/x264-0.0.20171224
+	>=media-libs/x264-0.0.20180806
 "
 
 DEPEND_LIBXCB="
-        >=x11-libs/libxcb-1.13
+        >=x11-libs/libxcb-1.14
 "
 
 # >=dev-libs/jansson-2.5 # in cmake
 DEPEND_JANSSON="
-	>=dev-libs/jansson-2.11
+	>=dev-libs/jansson-2.12
 "
 
 DEPEND_WAYLAND="
 	wayland? (
-		>=dev-libs/wayland-1.14.0
-		>=x11-libs/libxkbcommon-0.8.0
+		>=dev-libs/wayland-1.18.0
+		>=x11-libs/libxkbcommon-0.10.0
 	)
 "
 
@@ -263,8 +268,13 @@ DEPEND_ZLIB="
 DEPEND_PLUGINS_AJA="
 	aja? (
 		${DEPEND_LIBX11}
-		>=dev-qt/qtwidgets-${QT_PV}:5=
 		media-libs/ntv2
+		qt5? (
+			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
+		)
+		qt6? (
+			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
+		)
 	)
 "
 
@@ -278,7 +288,7 @@ DEPEND_PLUGINS_RNNOISE="
 DEPEND_PLUGINS_SNDIO="
 	sndio? (
 		${DEPEND_LIBOBS}
-		media-sound/sndio
+		>=media-sound/sndio-1.5.0
 	)
 "
 
@@ -286,7 +296,12 @@ DEPEND_PLUGINS_SNDIO="
 DEPEND_PLUGINS_DECKLINK_CAPTIONS="
 	decklink? (
 		${DEPEND_LIBX11}
-		>=dev-qt/qtwidgets-${QT_PV}:5=
+		qt5? (
+			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
+		)
+		qt6? (
+			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
+		)
 	)
 "
 
@@ -294,6 +309,12 @@ DEPEND_PLUGINS_DECKLINK_CAPTIONS="
 DEPEND_PLUGINS_DECKLINK_OUTPUT_UI="
 	decklink? (
 		${DEPEND_LIBX11}
+		qt5? (
+			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
+		)
+		qt6? (
+			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
+		)
 	)
 "
 
@@ -316,14 +337,14 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
 	${DEPEND_LIBOBS}
 	${DEPEND_LIBX11}
 	${DEPEND_LIBXCB}
-        >=x11-libs/libXcomposite-0.4.4
+        >=x11-libs/libXcomposite-0.4.5
         >=x11-libs/libXfixes-5.0.3
-        >=x11-libs/libXinerama-1.1.3
-        >=x11-libs/libXrandr-1.5.1
+        >=x11-libs/libXinerama-1.1.4
+        >=x11-libs/libXrandr-1.5.2
 	pipewire? (
 		>=media-video/pipewire-0.3.33
-		dev-libs/glib:2
-		x11-libs/libdrm
+		>=dev-libs/glib-2.64.6:2
+		>=x11-libs/libdrm-2.4.101
 	)
 "
 
@@ -332,10 +353,10 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
 # From inspection, the video_cards_nouveau supports h264 decode but not h264
 # encode.  This is why it is omitted below in the vaapi driver section.
 DEPEND_PLUGINS_OBS_FFMPEG="
-	>=sys-apps/pciutils-3.5.2
+	>=sys-apps/pciutils-3.6.4
 	new-mpegts-output? (
-		net-libs/rist
-		net-libs/srt
+		>=net-libs/rist-0.2.7
+		>=net-libs/srt-1.4.0
 	)
 	nvenc? (
 		>=media-video/ffmpeg-4[nvenc]
@@ -348,29 +369,32 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 "
 
 DEPEND_CURL="
-	>=net-misc/curl-7.58
+	>=net-misc/curl-7.68
 "
 
 DEPEND_PLUGINS_OBS_OUTPUTS="
-	${DEPEND_JANSSON}
 	${DEPEND_LIBOBS}
+	${DEPEND_ZLIB}
+	>=net-libs/mbedtls-2.16.4:=
 	ftl? (
 		${DEPEND_CURL}
-		>=dev-libs/jansson-2.8
-	)
-	rtmps? (
-		${DEPEND_ZLIB}
-		>=net-libs/mbedtls-2.8:=
+		${DEPEND_JANSSON}
+		>=dev-libs/jansson-2.12
 	)
 "
 
 DEPEND_PLUGINS_OBS_BROWSER="
 	browser? (
+		qt5? (
+			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
+		)
+		qt6? (
+			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
+		)
 		|| (
 			>=net-libs/cef-bin-${CEF_PV}:=
 			>=net-libs/cef-${CEF_PV}:=
 		)
-		>=dev-qt/qtwidgets-${QT_PV}:5=
 	)
 "
 
@@ -384,19 +408,42 @@ DEPEND_PLUGINS_QSV="
 	)
 "
 
+# Includes rtmp-services
+DEPEND_PLUGINS_RTMP="
+	${DEPEND_DEPS_FILE_UPDATER}
+	${DEPEND_JANSSON}
+	${DEPEND_LIBOBS}
+"
+
 DEPEND_PLUGINS_VST="
 	vst? (
 		${DEPEND_LIBOBS}
-		>=dev-qt/qtwidgets-${QT_PV}:5=
+		qt5? (
+			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
+		)
+		qt6? (
+			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
+		)
 	)
 "
 
 DEPEND_PLUGINS_WEBSOCKET="
+	>=dev-cpp/asio-1.12.2
+	>=dev-cpp/nlohmann_json-3.7.3
+	>=dev-cpp/websocketpp-0.8.1
 	websocket? (
-		>=dev-qt/qtcore-5.9.5:5=
-		>=dev-qt/qtnetwork-${QT_PV}:5=
-		>=dev-qt/qtsvg-${QT_PV}:5=
-		>=dev-qt/qtwidgets-${QT_PV}:5=
+		qt5? (
+			>=dev-qt/qtcore-${QT5_PV}:${QT5_SLOT}=
+			>=dev-qt/qtnetwork-${QT5_PV}:${QT5_SLOT}=
+			>=dev-qt/qtsvg-${QT5_PV}:${QT5_SLOT}=
+			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
+		)
+		qt6? (
+			>=dev-qt/qtcore-${QT6_PV}:${QT6_SLOT}=
+			>=dev-qt/qtnetwork-${QT6_PV}:${QT6_SLOT}=
+			>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=
+			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
+		)
 	)
 "
 
@@ -429,18 +476,19 @@ DEPEND_PLUGINS="
 	${DEPEND_PLUGINS_OBS_OUTPUTS}
 	${DEPEND_PLUGINS_SNDIO}
 	${DEPEND_PLUGINS_QSV}
+	${DEPEND_PLUGINS_RTMP}
 	${DEPEND_PLUGINS_RNNOISE}
 	${DEPEND_PLUGINS_VST}
 	>=media-video/ffmpeg-${FFMPEG_PV}:=[x264]
 	alsa? (
-		>=media-libs/alsa-lib-1.1.3
+		>=media-libs/alsa-lib-1.0.25
 	)
 	fdk? (
-		>=media-libs/fdk-aac-1.5:=
+		>=media-libs/fdk-aac-0.6.3:=
 	)
 	freetype? (
-		>=media-libs/fontconfig-2.12.6
-		>=media-libs/freetype-2.8.1
+		>=media-libs/fontconfig-2.13.1
+		>=media-libs/freetype-2.10.1
 	)
 	jack? (
 		virtual/jack
@@ -450,12 +498,12 @@ DEPEND_PLUGINS="
 	)
 	v4l2? (
 		${DEPEND_FFMPEG}
-		>=media-libs/libv4l-1.14.2
-		media-tv/v4l-utils
+		>=media-libs/libv4l-1.18.0
+		>=media-tv/v4l-utils-1.18.0
 		virtual/udev
 	)
 	vlc? (
-		>=media-video/vlc-3.0.1:=
+		>=media-video/vlc-3.0.9.2:=
 	)
 "
 
@@ -463,10 +511,18 @@ DEPEND_PLUGINS="
 # but could not find headers in obs source for these packages.
 # They were mentioned in the original ebuild.
 DEPEND_UNSOURCED="
-	>=dev-qt/qtdeclarative-${QT_PV}:5=
-	>=dev-qt/qtmultimedia-${QT_PV}:5=
-	>=dev-qt/qtquickcontrols-${QT_PV}:5=
-	>=dev-qt/qtsql-${QT_PV}:5=
+	qt5? (
+		>=dev-qt/qtdeclarative-${QT5_PV}:${QT5_SLOT}=
+		>=dev-qt/qtmultimedia-${QT5_PV}:${QT5_SLOT}=
+		>=dev-qt/qtquickcontrols-${QT5_PV}:${QT5_SLOT}=
+		>=dev-qt/qtsql-${QT5_PV}:${QT5_SLOT}=
+	)
+	qt6? (
+		>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}=
+		>=dev-qt/qtmultimedia-${QT6_PV}:${QT6_SLOT}=
+		>=dev-qt/qtquickcontrols-${QT6_PV}:${QT6_SLOT}=
+		>=dev-qt/qtsql-${QT6_PV}:${QT6_SLOT}=
+	)
 "
 
 # See libobs/CMakeLists.txt
@@ -476,8 +532,10 @@ DEPEND_LIBOBS="
 	${DEPEND_LIBX11}
 	${DEPEND_LIBXCB}
 	${DEPEND_ZLIB}
-	>=sys-apps/dbus-1.12.2
-	pulseaudio? ( >=media-sound/pulseaudio-11.1 )
+	>=sys-apps/dbus-1.12.16
+	pulseaudio? (
+		>=media-sound/pulseaudio-13.99.1
+	)
 "
 
 # See UI/CMakeLists.txt
@@ -486,12 +544,22 @@ DEPEND_UI="
 	${DEPEND_CURL}
 	${DEPEND_FFMPEG}
 	${DEPEND_LIBOBS}
-	>=dev-qt/qtcore-5.9.5:5=
-	>=dev-qt/qtnetwork-${QT_PV}:5=
-	>=dev-qt/qtsvg-${QT_PV}:5=
-	>=dev-qt/qtgui-${QT_PV}:5=[X,wayland?]
-	>=dev-qt/qtwidgets-${QT_PV}:5=
-	>=dev-qt/qtxml-${QT_PV}:5=
+	qt5? (
+		>=dev-qt/qtcore-${QT5_PV}:${QT5_SLOT}=
+		>=dev-qt/qtnetwork-${QT5_PV}:${QT5_SLOT}=
+		>=dev-qt/qtsvg-${QT5_PV}:${QT5_SLOT}=
+		>=dev-qt/qtgui-${QT5_PV}:${QT5_SLOT}=[X,wayland?]
+		>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
+		>=dev-qt/qtxml-${QT5_PV}:${QT5_SLOT}=
+	)
+	qt6? (
+		>=dev-qt/qtcore-${QT6_PV}:${QT6_SLOT}=
+		>=dev-qt/qtnetwork-${QT6_PV}:${QT6_SLOT}=
+		>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=
+		>=dev-qt/qtgui-${QT6_PV}:${QT6_SLOT}=[X,wayland?]
+		>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
+		>=dev-qt/qtxml-${QT6_PV}:${QT6_SLOT}=
+	)
 "
 
 # See deps/libff/CMakeLists.txt
@@ -506,7 +574,7 @@ DEPEND_MESA="
 
 # See deps/glad/CMakeLists.txt
 DEPEND_GLAD="
-	media-libs/libglvnd
+	>=media-libs/libglvnd-1.3.1
 	>=media-libs/mesa-${MESA_PV}[egl(+)]
 	${DEPEND_MESA}
 	${DEPEND_LIBX11}
@@ -526,7 +594,7 @@ DEPEND_LIBOBS_OPENGL="
 DEPEND_DEPS_OBS_SCRIPTING="
 	${DEPEND_LIBOBS}
 	lua? (
-		>=dev-lang/luajit-2.1:2
+		>=dev-lang/luajit-2.1.0:2
 	)
 	python? (
 		${PYTHON_DEPS}
@@ -558,13 +626,20 @@ RDEPEND+="
 	${DEPEND_DEPS}
 	${DEPEND_PLUGINS}
 	${DEPEND_UI}
-	>=dev-qt/qtwidgets-${QT_PV}:5=
+	qt5? (
+		>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
+	)
+	qt5? (
+		>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
+	)
 	test? (
 		${DEPEND_LIBOBS}
 	)
 "
 
-DEPEND+=" ${RDEPEND}"
+DEPEND+="
+	${RDEPEND}
+"
 
 # The obs-amd-encoder submodule currently doesn't support Linux
 # https://github.com/obsproject/obs-amd-encoder/archive/${OBS_AMD_ENCODER_COMMIT}.tar.gz \
@@ -584,42 +659,43 @@ PATCHES=(
 )
 
 qt_check() {
-	QTCORE_PV=$(pkg-config --modversion Qt5Core)
-	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
-#	QTMULTIMEDIA_PV=$(pkg-config --modversion Qt5Multimedia)
-	QTNETWORK_PV=$(pkg-config --modversion Qt5Network)
-#	QTSQL_PV=$(pkg-config --modversion Qt5Sql)
-	QTSVG_PV=$(pkg-config --modversion Qt5Svg)
-#	QTQML_PV=$(pkg-config --modversion Qt5Qml)
-#	QTQUICKCONTROLS_PV=$(pkg-config --modversion Qt5QuickControls)
-	QTWIDGETS_PV=$(pkg-config --modversion Qt5Widgets)
-	QTXML_PV=$(pkg-config --modversion Qt5Xml)
+	local slot="${1}"
+	local QTCORE_PV=$(pkg-config --modversion Qt${slot}Core)
+	local QTGUI_PV=$(pkg-config --modversion Qt${slot}Gui)
+#	local QTMULTIMEDIA_PV=$(pkg-config --modversion Qt${slot}Multimedia)
+	local QTNETWORK_PV=$(pkg-config --modversion Qt${slot}Network)
+#	local QTSQL_PV=$(pkg-config --modversion Qt${slot}Sql)
+	local QTSVG_PV=$(pkg-config --modversion Qt${slot}Svg)
+#	local QTQML_PV=$(pkg-config --modversion Qt${slot}Qml)
+#	local QTQUICKCONTROLS_PV=$(pkg-config --modversion Qt${slot}QuickControls)
+	local QTWIDGETS_PV=$(pkg-config --modversion Qt${slot}Widgets)
+	local QTXML_PV=$(pkg-config --modversion Qt${slot}Xml)
 	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
-		die "Qt5Core is not the same version as Qt5Gui"
+		die "Qt${slot}Core is not the same version as Qt${slot}Gui"
 	fi
 #	if ver_test ${QTCORE_PV} -ne ${QTMULTIMEDIA_PV} ; then
-#		die "Qt5Core is not the same version as Qt5Multimedia"
+#		die "Qt${slot}Core is not the same version as Qt${slot}Multimedia"
 #	fi
 	if ver_test ${QTCORE_PV} -ne ${QTNETWORK_PV} ; then
-		die "Qt5Core is not the same version as Qt5Network"
+		die "Qt${slot}Core is not the same version as Qt${slot}Network"
 	fi
 #	if ver_test ${QTCORE_PV} -ne ${QTSQL_PV} ; then
-#		die "Qt5Core is not the same version as Qt5Sql"
+#		die "Qt${slot}Core is not the same version as Qt${slot}Sql"
 #	fi
 	if ver_test ${QTCORE_PV} -ne ${QTSVG_PV} ; then
-		die "Qt5Core is not the same version as Qt5Svg"
+		die "Qt${slot}Core is not the same version as Qt${slot}Svg"
 	fi
 #	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
-#		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
+#		die "Qt${slot}Core is not the same version as Qt${slot}Qml (qtdeclarative)"
 #	fi
 #	if ver_test ${QTCORE_PV} -ne ${QTQUICKCONTROLS_PV} ; then
-#		die "Qt5Core is not the same version as Qt5QuickControls"
+#		die "Qt${slot}Core is not the same version as Qt${slot}QuickControls"
 #	fi
 	if ver_test ${QTCORE_PV} -ne ${QTWIDGETS_PV} ; then
-		die "Qt5Core is not the same version as Qt5Widgets"
+		die "Qt${slot}Core is not the same version as Qt${slot}Widgets"
 	fi
 	if ver_test ${QTCORE_PV} -ne ${QTXML_PV} ; then
-		die "Qt5Core is not the same version as Qt5Xml"
+		die "Qt${slot}Core is not the same version as Qt${slot}Xml"
 	fi
 }
 
@@ -654,7 +730,8 @@ sanitize_login_tokens() {
 }
 
 pkg_setup() {
-	qt_check
+	use qt6 && qt_check 6
+	use qt5 && qt_check 5
 	use lua && lua-single_pkg_setup
 	use python && python-single-r1_pkg_setup
 
@@ -797,7 +874,7 @@ src_prepare() {
 
 gen_rtmp_services() {
 	if [[ -z "${OBS_STUDIO_STREAMING_SERVICES_WHITELIST}" ]] ; then
-		einfo "Removing streaming services"
+		einfo "Removing streaming services from services whitelist"
 		jq '{"$schema","format_version","services": [.services[] | select(null)]}' \
 			"${S}/plugins/rtmp-services/data/services.json" \
 			> "${S}/plugins/rtmp-services/data/services.json.t" || die
@@ -809,7 +886,7 @@ gen_rtmp_services() {
 	local services=""
 	local s
 	for s in ${OBS_STUDIO_STREAMING_SERVICES_WHITELIST} ; do
-		einfo "Added ${s} streaming service"
+		einfo "Added ${s} streaming service to services whitelist"
 		services+=" or .name==\"${s}\""
 	done
 	export IFS=$' \t\n'
@@ -844,7 +921,6 @@ einfo
 		-DENABLE_ALSA=$(usex alsa)
 		-DENABLE_BROWSER=$(usex browser)
 		-DENABLE_BROWSER_PANELS=$(usex browser-panels)
-		-DENABLE_BROWSER_QT_LOOP=$(usex browser-qt-loop)
 		-DENABLE_COREAUDIO_ENCODER=$(usex coreaudio-encoder)
 		-DENABLE_DECKLINK=$(usex decklink)
 		-DENABLE_FREETYPE=$(usex freetype)
@@ -934,7 +1010,6 @@ einfo
 
 src_compile() {
 	cmake_src_compile
-	sanitize_login_tokens
 }
 
 src_install() {
