@@ -31,11 +31,19 @@ LLVM_SUPPORT_=( ${LLVM_SUPPORT[@]/#/llvm-} )
 IUSE+="
 ${CPU_FEATURES[@]%:*}
 ${LLVM_SUPPORT_[@]}
-doc optix partio python qt5 static-libs test
+doc optix partio python qt5 static-libs test wayland X
+
+r1
 "
 REQUIRED_USE+="
 	^^ (
 		${LLVM_SUPPORT_[@]}
+	)
+	qt5? (
+		|| (
+			wayland
+			X
+		)
 	)
 "
 # See https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.13.2.2-dev/INSTALL.md
@@ -141,7 +149,7 @@ RDEPEND+="
 	)
 	qt5? (
 		>=dev-qt/qtcore-${QT5_MIN}:5
-		>=dev-qt/qtgui-${QT5_MIN}:5
+		>=dev-qt/qtgui-${QT5_MIN}:5[wayland?,X?]
 		>=dev-qt/qtwidgets-${QT5_MIN}:5
 	)
 	|| (

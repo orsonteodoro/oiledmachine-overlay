@@ -29,11 +29,25 @@ LLVM_SUPPORT_=( ${LLVM_SUPPORT[@]/#/llvm-} )
 IUSE+="
 ${CPU_FEATURES[@]%:*}
 ${LLVM_SUPPORT_[@]}
-doc optix partio python qt5 qt6 static-libs test
+doc optix partio python qt5 qt6 static-libs test wayland X
+
+r1
 "
 REQUIRED_USE+="
 	^^ (
 		${LLVM_SUPPORT_[@]}
+	)
+	qt5? (
+		|| (
+			wayland
+			X
+		)
+	)
+	qt6? (
+		|| (
+			wayland
+			X
+		)
 	)
 "
 # See https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.6.2/INSTALL.md
@@ -140,13 +154,14 @@ RDEPEND+="
 	)
 	qt5? (
 		>=dev-qt/qtcore-${QT5_MIN}:5
-		>=dev-qt/qtgui-${QT5_MIN}:5
+		>=dev-qt/qtgui-${QT5_MIN}:5[wayland?,X?]
 		>=dev-qt/qtwidgets-${QT5_MIN}:5
 	)
 	qt6? (
-		>=dev-qt/qtcore-${QT6_MIN}:6
-		>=dev-qt/qtgui-${QT6_MIN}:6
-		>=dev-qt/qtwidgets-${QT6_MIN}:6
+		>=dev-qt/qtbase-${QT6_MIN}:6[gui,widgets,X?]
+		wayland? (
+			>=dev-qt/qtwayland-${QT6_MIN}:6
+		)
 	)
 	|| (
 		$(gen_openexr_pairs)
