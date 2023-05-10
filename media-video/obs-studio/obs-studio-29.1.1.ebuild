@@ -18,7 +18,7 @@ LUA_COMPAT=( luajit )
 PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake flag-o-matic git-r3 lcnr lua-single python-single-r1 xdg-utils
 
-DESCRIPTION="Software for Recording and Streaming Live Video Content"
+DESCRIPTION="Software for live streaming and screen recording"
 HOMEPAGE="https://obsproject.com"
 LICENSE="
 	CC0-1.0
