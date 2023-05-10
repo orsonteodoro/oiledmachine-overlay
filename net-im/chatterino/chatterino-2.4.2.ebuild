@@ -45,12 +45,15 @@ IUSE+="
 -benchmarks -coverage -crashpad -lto -system-libcommuni
 -system-qtkeychain -test +qt5 -qt6 +qtkeychain wayland X
 
-r1
+r2
 "
 # Building benchmarks is broken
 REQUIRED_USE="
 	!benchmarks
-	^^ ( qt5 qt6 )
+	^^ (
+		qt5
+		qt6
+	)
 	qt6? (
 		!system-libcommuni
 		!system-qtkeychain
@@ -101,7 +104,9 @@ RDEPEND="
 		>=dev-qt/qtimageformats-${QT6_PV}:6
 		>=dev-qt/qtmultimedia-${QT6_PV}:6
 		>=dev-qt/qtsvg-${QT6_PV}:6
-		>=dev-qt/qtwayland-${QT6_PV}:6
+		wayland? (
+			>=dev-qt/qtwayland-${QT6_PV}:6
+		)
 	)
 "
 DEPEND="
