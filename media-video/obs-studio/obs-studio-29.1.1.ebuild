@@ -546,9 +546,9 @@ DEPEND_UI="
 	${DEPEND_LIBOBS}
 	qt5? (
 		>=dev-qt/qtcore-${QT5_PV}:${QT5_SLOT}=
+		>=dev-qt/qtgui-${QT5_PV}:${QT5_SLOT}=[X,wayland?]
 		>=dev-qt/qtnetwork-${QT5_PV}:${QT5_SLOT}=
 		>=dev-qt/qtsvg-${QT5_PV}:${QT5_SLOT}=
-		>=dev-qt/qtgui-${QT5_PV}:${QT5_SLOT}=[X,wayland?]
 		>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
 		>=dev-qt/qtxml-${QT5_PV}:${QT5_SLOT}=
 		wayland? (
