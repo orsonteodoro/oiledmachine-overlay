@@ -19,7 +19,7 @@ IUSE+=" curl doc mms static-libs"
 # See MediaInfoLib/Project/GNU/libmediainfo.dsc
 DEPEND+="
 	>=dev-libs/tinyxml2-7.0.0:=[${MULTILIB_USEDEP}]
-	>=media-libs/libzen-0.4.39:=[${MULTILIB_USEDEP},static-libs=]
+	>=media-libs/libzen-0.4.12:=[${MULTILIB_USEDEP},static-libs=]
 	>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
 	curl? (
 		>=net-misc/curl-7.68.0[${MULTILIB_USEDEP}]
