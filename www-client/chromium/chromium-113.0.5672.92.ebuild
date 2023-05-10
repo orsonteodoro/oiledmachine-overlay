@@ -945,7 +945,7 @@ python_check_deps() {
 _compiler_version_checks() {
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		local -x CPP="$(tc-getCXX) -E"
-		if tc-is-gcc && ! ver_test "$(gcc-version)" -ge ${GCC_MIN} ; then
+		if tc-is-gcc && ! ver_test "$(gcc-version)" -ge "${GCC_MIN}" ; then
 eerror
 eerror "At least gcc ${GCC_MIN} is required"
 eerror
@@ -954,9 +954,9 @@ eerror
 		if tc-is-clang ; then
 			local slot=$(clang-major-version)
 			if tc-is-cross-compiler ; then
-				CPP=${CBUILD}-clang++-${slot}
+				CPP="${CBUILD}-clang++-${slot}"
 			else
-				CPP=${CHOST}-clang++-${slot}
+				CPP="${CHOST}-clang++-${slot}"
 			fi
 			CPP+=" -E"
 			local clang_min
@@ -1216,7 +1216,10 @@ einfo
 	local f
 	for f in ${PKG_LIBS[@]} ; do
 		local paths=(
-$(realpath {"${EPREFIX}"/usr/lib/gcc/*/{,32/},/lib,/usr/lib}*"/${f}" 2>/dev/null)
+$(realpath "${EPREFIX}/usr/lib/gcc/"*"/"*"/${f}" 2>/dev/null)
+$(realpath "${EPREFIX}/usr/lib/gcc/"*"/"*"/32/${f}" 2>/dev/null)
+$(realpath "${EPREFIX}/lib"*"/${f}" 2>/dev/null)
+$(realpath "${EPREFIX}/usr/lib"*"/${f}" 2>/dev/null)
 		)
 		if (( "${#paths[@]}" == 0 )) ; then
 ewarn "${f} does not exist."
@@ -1503,7 +1506,7 @@ ewarn "Disabling the distro patchset."
 #
 # Returned 1 and printed out:
 #
-# The expected clang version is llvmorg-17-init-4759-g547e3456-1 but the actual version is 
+# The expected clang version is llvmorg-17-init-4759-g547e3456-1 but the actual version is
 # Did you run "gclient sync"?
 #
 	sed -i \
@@ -2546,7 +2549,10 @@ einfo
 			if tc-is-cross-compiler; then
 	# Hack to workaround get_libdir not being able to handle CBUILD, bug
 	# #794181
-				local cbuild_libdir=$($(tc-getBUILD_PKG_CONFIG) --keep-system-libs --libs-only-L libxslt)
+				local cbuild_libdir=$($(tc-getBUILD_PKG_CONFIG) \
+					--keep-system-libs \
+					--libs-only-L \
+					libxslt)
 				cbuild_libdir=${cbuild_libdir:2}
 				moc_dir="${EPREFIX}"/${cbuild_libdir/% }/qt5/bin
 			fi
@@ -2925,7 +2931,8 @@ _src_compile() {
 	sed -e 's|@@PACKAGE@@|chromium-browser|g;
 		s|@@MENUNAME@@|Chromium|g;' \
 		chrome/app/resources/manpage.1.in \
-		> out/Release/chromium-browser.1 || die
+		> out/Release/chromium-browser.1 \
+		|| die
 
 	# Build desktop file; bug #706786
 	# Moved down
@@ -2933,19 +2940,22 @@ _src_compile() {
 	sed -e 's|@@PACKAGE@@|chromium-browser|g;
 		s|\(^Exec=\)/usr/bin/|\1|g;' \
 		chrome/installer/linux/common/desktop.template \
-		> out/Release/chromium-browser-chromium.desktop || die
+		> out/Release/chromium-browser-chromium.desktop \
+		|| die
 
 	# Build vk_swiftshader_icd.json; bug #827861
 	sed -e 's|${ICD_LIBRARY_PATH}|./libvk_swiftshader.so|g' \
 		third_party/swiftshader/src/Vulkan/vk_swiftshader_icd.json.tmpl \
-		> out/Release/vk_swiftshader_icd.json || die
+		> out/Release/vk_swiftshader_icd.json \
+		|| die
 
 	local suffix
 	(( ${NABIS} > 1 )) && suffix=" (${ABI})"
 	sed -i -e \
 		"s|@@MENUNAME@@|Chromium${suffix}|g;" \
 		"s|@@USR_BIN_SYMLINK_NAME@@|chromium-browser-${ABI}|g;" \
-		out/Release/chromium-browser-chromium.desktop || die
+		out/Release/chromium-browser-chromium.desktop \
+		|| die
 }
 
 _src_install() {
