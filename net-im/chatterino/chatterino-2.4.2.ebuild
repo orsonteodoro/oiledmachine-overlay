@@ -43,11 +43,14 @@ KEYWORDS="~amd64 ~x86"
 # -system-pajlada-settings is not packaged on this distro
 IUSE+="
 -benchmarks -coverage -crashpad -lto -system-libcommuni
--system-qtkeychain -test -qt6 +qtkeychain wayland X
+-system-qtkeychain -test +qt5 -qt6 +qtkeychain wayland X
+
+r1
 "
 # Building benchmarks is broken
 REQUIRED_USE="
 	!benchmarks
+	^^ ( qt5 qt6 )
 	qt6? (
 		!system-libcommuni
 		!system-qtkeychain
@@ -71,7 +74,11 @@ QT6_PV="6.2.4" # Based on CI
 # Upstream uses a live version for qtkeychain but downgraded in this ebuild with
 # the system-qtkeychain USE flag to test if it works.
 RDEPEND="
-	!qt6? (
+	>=dev-libs/openssl-1.1.1f:=
+	benchmarks? (
+		dev-cpp/benchmark
+	)
+	qt5? (
 		>=dev-qt/qtconcurrent-${QT5_PV}:5
 		>=dev-qt/qtcore-${QT5_PV}:5
 		>=dev-qt/qtdbus-${QT5_PV}:5
@@ -88,28 +95,20 @@ RDEPEND="
 			>=dev-libs/qtkeychain-13
 		)
 	)
-	>=dev-libs/openssl-1.1.1f:=
-	benchmarks? (
-		dev-cpp/benchmark
-	)
 	qt6? (
 		>=dev-qt/qt5compat-${QT6_PV}:6
-		>=dev-qt/qtconcurrent-${QT6_PV}:6
-		>=dev-qt/qtcore-${QT6_PV}:6
-		>=dev-qt/qtdbus-${QT6_PV}:6
-		>=dev-qt/qtgui-${QT6_PV}:6[wayland?,X?]
+		>=dev-qt/qtbase-${QT6_PV}:6[concurrent,dbus,gui,network,widgets,X?]
 		>=dev-qt/qtimageformats-${QT6_PV}:6
 		>=dev-qt/qtmultimedia-${QT6_PV}:6
-		>=dev-qt/qtnetwork-${QT6_PV}:6
 		>=dev-qt/qtsvg-${QT6_PV}:6
-		>=dev-qt/qtwidgets-${QT6_PV}:6
+		>=dev-qt/qtwayland-${QT6_PV}:6
 	)
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	!qt6? (
+	qt5? (
 		>=dev-qt/linguist-tools-${QT5_PV}:5
 	)
 	>=dev-libs/boost-1.71.0
@@ -117,9 +116,6 @@ BDEPEND="
 	>=dev-util/cmake-3.16.3
 	>=sys-devel/gcc-9.4.0
 	virtual/pkgconfig
-	qt6? (
-		>=dev-qt/linguist-tools-${QT6_PV}:6
-	)
 "
 S="${WORKDIR}/${P}"
 
@@ -127,8 +123,13 @@ verify_qt_consistency() {
 	local QT_SLOT
 	if use qt6 ; then
 		QT_SLOT="6"
-	else
+	elif use qt5 ; then
 		QT_SLOT="5"
+	else
+eerror
+eerror "You need to enable qt5 or qt6 USE flag."
+eerror
+		die
 	fi
 	local QTCORE_PV=$(pkg-config --modversion Qt${QT_SLOT}Core)
 
@@ -138,7 +139,7 @@ eerror
 eerror "QtCore is not 6.x"
 eerror
 		die
-	elif ! use qt6 && [[ "${qt_pv_major}" != "5" ]] ; then
+	elif use qt5 && [[ "${qt_pv_major}" != "5" ]] ; then
 eerror
 eerror "QtCore is not 5.x"
 eerror
@@ -209,7 +210,14 @@ einfo
 
 pkg_setup() {
 	check-reqs_pkg_setup
-	verify_qt_consistency
+	use qt5 && verify_qt_consistency 5
+	if use qt6 ; then
+ewarn
+ewarn "verify_qt_consistency is not implemented for Qt6.  You are responsible"
+ewarn "for ensuring version consistency."
+ewarn
+		#verify_qt_consistency 6
+	fi
 	verify_cxx20
 }
 
