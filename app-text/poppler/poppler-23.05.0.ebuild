@@ -1,9 +1,9 @@
-# Copyright 2005-2022 Gentoo Authors
+# Copyright 2005-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-inherit cmake-multilib toolchain-funcs xdg-utils
+inherit cmake-multilib flag-o-matic toolchain-funcs xdg-utils
 
 if [[ ${PV} == *9999* ]] ; then
 	inherit git-r3
@@ -15,54 +15,85 @@ else
 
 	SRC_URI="https://poppler.freedesktop.org/${P}.tar.xz"
 	SRC_URI+=" verify-sig? ( https://poppler.freedesktop.org/${P}.tar.xz.sig )"
-	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
-	SLOT="0/125"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
+	KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
+~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris
+~sparc64-solaris ~x64-solaris ~x86-solaris
+	"
+	SLOT="0/128"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
 fi
 
 DESCRIPTION="PDF rendering library based on the xpdf-3.0 code base"
 HOMEPAGE="https://poppler.freedesktop.org/"
 
 LICENSE="GPL-2"
-IUSE="boost cairo cjk curl +cxx debug doc +introspection +jpeg +jpeg2k +lcms nss png qt5 tiff +utils"
+IUSE="
+boost cairo cjk curl +cxx debug doc +introspection +jpeg +jpeg2k +lcms nss png
+qt5 tiff +utils
+"
 
 # No test data provided
 RESTRICT="test"
 
 COMMON_DEPEND="
-	media-libs/fontconfig[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.8[${MULTILIB_USEDEP}]
+	>=media-libs/fontconfig-2.13[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.10[${MULTILIB_USEDEP}]
 	sys-libs/zlib[${MULTILIB_USEDEP}]
 	cairo? (
-		dev-libs/glib:2[${MULTILIB_USEDEP}]
-		x11-libs/cairo[${MULTILIB_USEDEP}]
-		introspection? ( dev-libs/gobject-introspection:= )
+		>=dev-libs/glib-2.64:2[${MULTILIB_USEDEP}]
+		>=x11-libs/cairo-1.16[${MULTILIB_USEDEP}]
+		introspection? (
+			>=dev-libs/gobject-introspection-1.64:=
+		)
 	)
-	curl? ( net-misc/curl[${MULTILIB_USEDEP}] )
-	jpeg? ( media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}] )
-	jpeg2k? ( >=media-libs/openjpeg-2.3.0-r1:2=[${MULTILIB_USEDEP}] )
-	lcms? ( media-libs/lcms:2[${MULTILIB_USEDEP}] )
-	nss? ( >=dev-libs/nss-3.19:0[${MULTILIB_USEDEP}] )
-	png? ( media-libs/libpng:0=[${MULTILIB_USEDEP}] )
+	curl? (
+		net-misc/curl[${MULTILIB_USEDEP}]
+	)
+	jpeg? (
+		>=media-libs/libjpeg-turbo-1.1.0:=[${MULTILIB_USEDEP}]
+	)
+	jpeg2k? (
+		>=media-libs/openjpeg-2.3.0-r1:2=[${MULTILIB_USEDEP}]
+	)
+	lcms? (
+		media-libs/lcms:2[${MULTILIB_USEDEP}]
+	)
+	nss? (
+		>=dev-libs/nss-3.49[${MULTILIB_USEDEP}]
+	)
+	png? (
+		media-libs/libpng:0=[${MULTILIB_USEDEP}]
+	)
 	qt5? (
 		dev-qt/qtcore:5[${MULTILIB_USEDEP}]
 		dev-qt/qtgui:5[${MULTILIB_USEDEP}]
 		dev-qt/qtxml:5[${MULTILIB_USEDEP}]
 	)
-	tiff? ( media-libs/tiff:=[${MULTILIB_USEDEP}] )
+	tiff? (
+		media-libs/tiff:=[${MULTILIB_USEDEP}]
+	)
 "
 RDEPEND="${COMMON_DEPEND}
-	cjk? ( app-text/poppler-data )
+	cjk? (
+		app-text/poppler-data
+	)
 "
 DEPEND="${COMMON_DEPEND}
-	boost? ( dev-libs/boost[${MULTILIB_USEDEP}] )
+	boost? (
+		>=dev-libs/boost-1.71[${MULTILIB_USEDEP}]
+	)
 "
 BDEPEND="
-	dev-util/glib-utils
+	>=dev-util/glib-utils-2.64
 	virtual/pkgconfig
 "
 
 if [[ ${PV} != *9999* ]] ; then
-	BDEPEND+=" verify-sig? ( sec-keys/openpgp-keys-aacid )"
+	BDEPEND+="
+		verify-sig? (
+			>=sec-keys/openpgp-keys-aacid-20230313
+		)
+	"
 fi
 
 DOCS=( AUTHORS NEWS README.md README-XPDF )
@@ -91,41 +122,42 @@ src_prepare() {
 }
 
 src_configure() {
+	append-lfs-flags # bug #898506
 	xdg_environment_reset
 	local mycmakeargs=(
-		-DBUILD_GTK_TESTS=OFF
-		-DBUILD_QT5_TESTS=OFF
+		$(cmake_use_find_package qt5 Qt5Core)
+		$(use cairo && "
+			-DWITH_GObjectIntrospection=$(usex introspection)
+		")
 		-DBUILD_CPP_TESTS=OFF
+		-DBUILD_GTK_TESTS=OFF
 		-DBUILD_MANUAL_TESTS=OFF
-		-DRUN_GPERF_IF_PRESENT=OFF
+		-DBUILD_QT5_TESTS=OFF
 		-DENABLE_BOOST="$(usex boost)"
+		-DENABLE_CMS=$(usex lcms lcms2 none)
+		-DENABLE_CPP=$(usex cxx)
+		-DENABLE_DCTDECODER=$(usex jpeg libjpeg none)
+		-DENABLE_LIBCURL=$(usex curl)
+		-DENABLE_LIBOPENJPEG=$(usex jpeg2k openjpeg2 none)
+		-DENABLE_QT6=OFF
+		-DENABLE_UNSTABLE_API_ABI_HEADERS=ON
+		-DENABLE_UTILS=$(usex utils)
 		-DENABLE_ZLIB=ON
 		-DENABLE_ZLIB_UNCOMPRESS=OFF
-		-DENABLE_UNSTABLE_API_ABI_HEADERS=ON
+		-DRUN_GPERF_IF_PRESENT=OFF
 		-DUSE_FLOAT=OFF
 		-DWITH_Cairo=$(usex cairo)
-		-DENABLE_LIBCURL=$(usex curl)
-		-DENABLE_CPP=$(usex cxx)
 		-DWITH_JPEG=$(usex jpeg)
-		-DENABLE_DCTDECODER=$(usex jpeg libjpeg none)
-		-DENABLE_LIBOPENJPEG=$(usex jpeg2k openjpeg2 none)
-		-DENABLE_CMS=$(usex lcms lcms2 none)
 		-DWITH_NSS3=$(usex nss)
 		-DWITH_PNG=$(usex png)
-		$(cmake_use_find_package qt5 Qt5Core)
 		-DWITH_TIFF=$(usex tiff)
-		-DENABLE_UTILS=$(usex utils)
-		-DENABLE_QT6=OFF
 	)
-	use cairo && mycmakeargs+=( -DWITH_GObjectIntrospection=$(usex introspection) )
-
 	cmake-multilib_src_configure
 }
 
 src_install() {
 	cmake-multilib_src_install
-
-	# live version doesn't provide html documentation
+	# The live version doesn't provide html documentation.
 	if use cairo && use doc && [[ ${PV} != *9999* ]]; then
 		# For now install gtk-doc there
 		insinto /usr/share/gtk-doc/html/poppler
