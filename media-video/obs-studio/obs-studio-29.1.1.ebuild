@@ -84,7 +84,7 @@ nvenc nvvfx oss +pipewire +pulseaudio +python qt5 qt6 +rtmps +speexdsp -test
 kernel_FreeBSD
 kernel_OpenBSD
 
-r1
+r2
 "
 REQUIRED_USE+="
 	!kernel_Darwin? (
@@ -274,10 +274,7 @@ DEPEND_PLUGINS_AJA="
 		${DEPEND_LIBX11}
 		media-libs/ntv2
 		qt5? (
-			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
-		)
-		qt6? (
-			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
+			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
 		)
 	)
 "
@@ -301,10 +298,7 @@ DEPEND_PLUGINS_DECKLINK_CAPTIONS="
 	decklink? (
 		${DEPEND_LIBX11}
 		qt5? (
-			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
-		)
-		qt6? (
-			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
+			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
 		)
 	)
 "
@@ -314,10 +308,7 @@ DEPEND_PLUGINS_DECKLINK_OUTPUT_UI="
 	decklink? (
 		${DEPEND_LIBX11}
 		qt5? (
-			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
-		)
-		qt6? (
-			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
+			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
 		)
 	)
 "
@@ -389,10 +380,7 @@ DEPEND_PLUGINS_OBS_OUTPUTS="
 DEPEND_PLUGINS_OBS_BROWSER="
 	browser? (
 		qt5? (
-			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
-		)
-		qt6? (
-			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
+			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
 		)
 		|| (
 			>=net-libs/cef-bin-${CEF_PV}:=
@@ -422,10 +410,7 @@ DEPEND_PLUGINS_VST="
 	vst? (
 		${DEPEND_LIBOBS}
 		qt5? (
-			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
-		)
-		qt6? (
-			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
+			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
 		)
 	)
 "
@@ -439,7 +424,7 @@ DEPEND_PLUGINS_WEBSOCKET="
 			>=dev-qt/qtcore-${QT5_PV}:${QT5_SLOT}=
 			>=dev-qt/qtnetwork-${QT5_PV}:${QT5_SLOT}=
 			>=dev-qt/qtsvg-${QT5_PV}:${QT5_SLOT}=
-			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
+			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
 		)
 		qt6? (
 			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[network,widgets]
@@ -549,7 +534,7 @@ DEPEND_UI="
 		>=dev-qt/qtgui-${QT5_PV}:${QT5_SLOT}=[X,wayland?]
 		>=dev-qt/qtnetwork-${QT5_PV}:${QT5_SLOT}=
 		>=dev-qt/qtsvg-${QT5_PV}:${QT5_SLOT}=
-		>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
+		>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
 		>=dev-qt/qtxml-${QT5_PV}:${QT5_SLOT}=
 		wayland? (
 			>=dev-qt/qtwayland-${QT5_PV}:${QT5_SLOT}=
@@ -629,10 +614,7 @@ RDEPEND+="
 	${DEPEND_PLUGINS}
 	${DEPEND_UI}
 	qt5? (
-		>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=
-	)
-	qt6? (
-		>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=
+		>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
 	)
 	test? (
 		${DEPEND_LIBOBS}
