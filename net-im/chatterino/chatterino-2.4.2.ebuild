@@ -45,7 +45,7 @@ IUSE+="
 -benchmarks -coverage -crashpad -lto -system-libcommuni
 -system-qtkeychain -test +qt5 -qt6 +qtkeychain wayland X
 
-r2
+r3
 "
 # Building benchmarks is broken
 REQUIRED_USE="
@@ -90,7 +90,7 @@ RDEPEND="
 		>=dev-qt/qtmultimedia-${QT5_PV}:5
 		>=dev-qt/qtnetwork-${QT5_PV}:5
 		>=dev-qt/qtsvg-${QT5_PV}:5
-		>=dev-qt/qtwidgets-${QT5_PV}:5
+		>=dev-qt/qtwidgets-${QT5_PV}:5[X?]
 		system-libcommuni? (
 			>=net-im/libcommuni-3.7
 		)
