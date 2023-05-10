@@ -1,4 +1,4 @@
-# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -9,20 +9,36 @@ inherit flag-o-matic meson multilib-build toolchain-funcs uopts
 DESCRIPTION="libspng is a C library for reading and writing Portable Network \
 Graphics (PNG) format files with a focus on security and ease of use."
 HOMEPAGE="https://libspng.org"
-LICENSE="BSD-2
-	test? ( libpng2 )"
+LICENSE="
+	BSD-2
+	test? (
+		libpng2
+	)
+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc examples +opt -static-libs -test -threads zlib"
-REQUIRED_USE+=" pgo? ( examples )"
-DEPEND+=" virtual/libc
-	 test? ( >=media-libs/libpng-1.6 )
-	 !zlib? ( dev-libs/miniz:=[static-libs?] )
-	 zlib? ( sys-libs/zlib:=[static-libs?,${MULTILIB_USEDEP}] )
+REQUIRED_USE+="
+	pgo? (
+		examples
+	)
+"
+DEPEND+="
+	!zlib? (
+		dev-libs/miniz:=[static-libs?]
+	)
+	virtual/libc
+	test? (
+		>=media-libs/libpng-1.6
+	)
+	zlib? (
+		sys-libs/zlib:=[static-libs?,${MULTILIB_USEDEP}]
+	)
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	>=dev-util/meson-0.54.0
 	dev-util/meson-format-array
 	doc? (
 		dev-python/mkdocs
@@ -48,7 +64,7 @@ RESTRICT="mirror"
 DOCS=( "${S}/CONTRIBUTING.md" "${S}/README.md" "${S}/docs" )
 HTML_DOCS=( "${S}/site" )
 PATCHES=(
-	"${FILESDIR}/libspng-0.6.2-disable-target-clones.patch"
+	"${FILESDIR}/libspng-0.7.4-disable-target-clones.patch"
 )
 
 pkg_setup() {
@@ -61,12 +77,18 @@ src_unpack() {
 		local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 		local dbi="${WORKDIR}/benchmark_images"
 		mkdir -p "${dbi}" || die
-		cp -a "${distdir}/libspng-medium_rgb8-${BENCHMARK_IMAGES_COMMIT}.png" \
-			"${dbi}/medium_rgb8.png" || die
-		cp -a "${distdir}/libspng-medium_rgba8-${BENCHMARK_IMAGES_COMMIT}.png" \
-			"${dbi}/medium_rgba8.png" || die
-		cp -a "${distdir}/libspng-large_palette-${BENCHMARK_IMAGES_COMMIT}.png" \
-			"${dbi}/large_palette.png" || die
+		cp -a \
+			"${distdir}/libspng-medium_rgb8-${BENCHMARK_IMAGES_COMMIT}.png" \
+			"${dbi}/medium_rgb8.png" \
+			|| die
+		cp -a \
+			"${distdir}/libspng-medium_rgba8-${BENCHMARK_IMAGES_COMMIT}.png" \
+			"${dbi}/medium_rgba8.png" \
+			|| die
+		cp -a \
+			"${distdir}/libspng-large_palette-${BENCHMARK_IMAGES_COMMIT}.png" \
+			"${dbi}/large_palette.png" \
+			|| die
 	fi
 }
 
@@ -86,13 +108,13 @@ _src_configure() {
 	uopts_src_configure
 
 	local emesonargs=(
-		-Duse_miniz=$(usex zlib "false" "true")
 		$(meson_feature threads multithreading)
 		$(meson_use examples build_examples)
 		$(meson_use opt enable_opt)
 		$(meson_use test dev_build)
-		--buildtype release
 		$(tpgo_meson_src_configure)
+		-Duse_miniz=$(usex zlib "false" "true")
+		--buildtype release
 	)
 	if [[ "${lib_type}" == "shared" ]] ; then
 		emesonargs+=(
