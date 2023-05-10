@@ -562,6 +562,9 @@ REQUIRED_USE+="
 	system-libstdcxx? (
 		!cfi
 	)
+	system-ffmpeg? (
+		!component-build
+	)
 	vaapi-hevc? (
 		vaapi
 	)
@@ -1448,7 +1451,8 @@ apply_distro_patchset() {
         if use ppc64 ; then
 		local p
 		for p in $(grep -v "^#" "${WORKDIR}/debian/patches/series" \
-				| grep "^ppc64le" || die); do
+				| grep "^ppc64le" \
+				|| die); do
 			if [[ ! $p =~ "fix-breakpad-compile.patch" ]]; then
 				ceapply "${WORKDIR}/debian/patches/${p}"
 			fi
@@ -1775,11 +1779,11 @@ ewarn
 		third_party/usb_ids
 		third_party/xdg-utils
 
+	# Required in both cases
+			third_party/ffmpeg
+
 		$(use !system-dav1d && echo "
 			third_party/dav1d
-		")
-		$(use !system-ffmpeg && echo "
-			third_party/ffmpeg
 		")
 		$(use !system-flac && echo "
 			third_party/flac
@@ -1878,7 +1882,8 @@ einfo
 	# Remove most bundled libraries. Some are still needed.
 		build/linux/unbundle/remove_bundled_libraries.py \
 			"${keeplibs[@]}" \
-			--do-remove || die
+			--do-remove \
+			|| die
 	fi
 
 	if ! is_generating_credits ; then
@@ -1887,7 +1892,8 @@ einfo
 		mkdir -p buildtools/third_party/eu-strip/bin || die
 		ln -s \
 			"${BROOT}"/bin/true \
-			buildtools/third_party/eu-strip/bin/eu-strip || die
+			buildtools/third_party/eu-strip/bin/eu-strip \
+			|| die
 	fi
 
 	(( ${NABIS} > 1 )) && multilib_copy_sources
@@ -2137,8 +2143,10 @@ ewarn
 	# Setup cups-config, build system only uses --libs option
 		if use cups; then
 			mkdir "${T}/cups-config" || die
-			cp "${ESYSROOT}/usr/bin/${CHOST}-cups-config" \
-				"${T}/cups-config/cups-config" || die
+			cp \
+				"${ESYSROOT}/usr/bin/${CHOST}-cups-config" \
+				"${T}/cups-config/cups-config" \
+				|| die
 			export PATH="${PATH}:${T}/cups-config"
 		fi
 
@@ -2150,7 +2158,7 @@ ewarn
 
 	# Create dummy pkg-config file for libsystemd, only dependency of installer
 	mkdir "${T}/libsystemd" || die
-	cat <<- EOF > "${T}/libsystemd/libsystemd.pc"
+	cat <<- EOF > "${T}/libsystemd/libsystemd.pc" || die
 		Name:
 		Description:
 		Version:
@@ -2261,7 +2269,7 @@ ewarn
 
 	)
 	# [C]
-	if ! use system-libstdcxx \
+	if use bundled-libcxx \
 		|| use cfi \
 		|| use official ; then
 	# Unbundling breaks cfi-icall and cfi-cast.
@@ -2331,7 +2339,7 @@ ewarn
 	myconf_gn+=" blink_enable_generated_code_formatting=false"
 
 	# See https://github.com/chromium/chromium/blob/113.0.5672.63/media/media_options.gni#L19
-	ffmpeg_branding="$(usex proprietary-codecs Chrome Chromium)"
+	local ffmpeg_branding="$(usex proprietary-codecs Chrome Chromium)"
 	myconf_gn+=" proprietary_codecs=$(usex proprietary-codecs true false)"
 	myconf_gn+=" ffmpeg_branding=\"${ffmpeg_branding}\""
 	myconf_gn+=" enable_av1_decoder=$(usex dav1d true false)"
@@ -2408,19 +2416,20 @@ ewarn
 		append_all $(test-flags -fno-allow-store-data-races)
 	fi
 
+	local ffmpeg_target_arch
+	local target_cpu
 	if [[ "${myarch}" == "amd64" ]] ; then
 		target_cpu="x64"
 		ffmpeg_target_arch="x64"
 	elif [[ "${myarch}" == "x86" ]] ; then
 		target_cpu="x86"
 		ffmpeg_target_arch="ia32"
-
 	# This is normally defined by compiler_cpu_abi in
 	# build/config/compiler/BUILD.gn, but we patch that part out.
 		append-flags -msse2 -mfpmath=sse -mmmx
 	elif [[ "${myarch}" == "arm64" ]] ; then
 		target_cpu="arm64"
-		ffmpeg_target_arch=arm64
+		ffmpeg_target_arch="arm64"
 	elif [[ "${myarch}" == "arm" ]] ; then
 		target_cpu="arm"
 		ffmpeg_target_arch=$(usex cpu_flags_arm_neon arm-neon arm)
@@ -2435,7 +2444,6 @@ ewarn
 	myconf_gn+=" host_cpu=\"${target_cpu}\""
 	myconf_gn+=" target_cpu=\"${target_cpu}\""
 	myconf_gn+=" v8_current_cpu=\"${target_cpu}\""
-	myconf_gyp+=" -Dtarget_arch=${target_arch}"
 
 	if ! use cpu_flags_x86_sse2 ; then
 		myconf_gn+=" use_sse2=false"
@@ -2481,8 +2489,7 @@ ewarn
 	# https://bugs.gentoo.org/654216
 	addpredict /dev/dri/ #nowarn
 
-	#if ! use system-ffmpeg ; then
-	if false ; then
+	if use system-ffmpeg ; then
 		local build_ffmpeg_args=""
 		if use pic && [[ "${ffmpeg_target_arch}" == "ia32" ]] ; then
 			build_ffmpeg_args+=" --disable-asm"

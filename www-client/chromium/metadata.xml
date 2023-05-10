@@ -403,6 +403,8 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
     </flag>
     <flag name="system-libdrm">
       Use system libdrm instead of the bundled one
+
+      No modifications in source.
     </flag>
     <flag name="system-libjpeg-turbo">
       Use system libjpeg-turbo instead of the bundled one
