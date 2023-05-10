@@ -562,9 +562,6 @@ REQUIRED_USE+="
 	system-libstdcxx? (
 		!cfi
 	)
-	system-ffmpeg? (
-		!component-build
-	)
 	vaapi-hevc? (
 		vaapi
 	)
@@ -2324,7 +2321,8 @@ ewarn
 	# Never use bundled gold binary. Disable gold linker flags for now.
 	# Do not use bundled clang.
 	# Trying to use gold results in linker crash.
-	myconf_gn+=" use_gold=false use_sysroot=false"
+	myconf_gn+=" use_gold=false"
+	myconf_gn+=" use_sysroot=false"
 	if use official && use cfi || use bundled-libcxx ; then
 		# If you didn't do systemwide CFI Cross-DSO, it must be static.
 		myconf_gn+=" use_custom_libcxx=true"
