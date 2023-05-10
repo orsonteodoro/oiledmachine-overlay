@@ -84,7 +84,7 @@ nvenc nvvfx oss +pipewire +pulseaudio +python qt5 qt6 +rtmps +speexdsp -test
 kernel_FreeBSD
 kernel_OpenBSD
 
-r2
+r3
 "
 REQUIRED_USE+="
 	!kernel_Darwin? (
@@ -820,7 +820,7 @@ src_unpack() {
 		if use amf ; then
 			EGIT_SUBMODULES=( '*' )
 			EGIT_CHECKOUT_DIR="${S}/plugins/enc-amf"
-			EGIT_COMMIT="5a1dafeddb4b37ca2ba2415cf88b40bff8aee428"
+			EGIT_COMMIT="8823c236b4731c235e650d3bafa14d1d339d98a8"
 			git-r3_fetch
 			git-r3_checkout
 		fi
@@ -828,7 +828,7 @@ src_unpack() {
 		if use win-dshow ; then
 			EGIT_SUBMODULES=( '*' )
 			EGIT_CHECKOUT_DIR="${S}/plugins/win-dshow/libdshowcapture"
-			EGIT_COMMIT="a93f1a34c14e91b5c540f264fb965f32caf77336"
+			EGIT_COMMIT="bac23f2ca01b712b9740c6a3822d32c134ab6325"
 			git-r3_fetch
 			git-r3_checkout
 		fi
