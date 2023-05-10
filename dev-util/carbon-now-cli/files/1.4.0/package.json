@@ -55,7 +55,7 @@
 		"update-notifier": "^2.5.0"
 	},
 	"devDependencies": {
-		"ava": "^0.25.0",
+		"ava": "^5.2.0",
 		"child-process-promise": "^2.2.1",
 		"execa": "^1.0.0",
 		"husky": "^1.0.0-rc.14",
