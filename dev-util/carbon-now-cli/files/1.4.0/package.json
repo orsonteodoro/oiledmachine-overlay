@@ -59,7 +59,7 @@
 		"child-process-promise": "^2.2.1",
 		"execa": "^1.0.0",
 		"husky": "^1.0.0-rc.14",
-		"xo": "^0.21.1"
+		"xo": "^0.54.2"
 	},
 	"xo": {
 		"ignores": [
