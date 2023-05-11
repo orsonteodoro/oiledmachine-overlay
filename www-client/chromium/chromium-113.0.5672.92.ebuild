@@ -1275,6 +1275,24 @@ eerror "${CATEGORY}/${PN} clang-${CR_CLANG_SLOT_OFFICIAL}.conf"
 eerror
 }
 
+print_use_flags_using_clang() {
+	local U=(
+		"bundled-libcxx"
+		"cfi"
+		"official"
+		"pgo"
+		"thinlto-opt"
+	)
+
+	local u
+	for u in ${U} ; do
+		if use "${u}" ; then
+einfo "Using ${u} USE flag which is forcing clang."
+		fi
+	done
+	return 1
+}
+
 is_using_clang() {
 	local U=(
 		"bundled-libcxx"
@@ -1286,7 +1304,6 @@ is_using_clang() {
 
 	local u
 	for u in ${U} ; do
-einfo "Using ${u} USE flag which is forcing clang."
 		use "${u}" && return 0
 	done
 	return 1
@@ -1334,6 +1351,7 @@ ewarn
 	export CXX=$(tc-getCXX)
 	export CPP="$(tc-getCXX) -E"
 
+	print_use_flags_using_clang
 	if is_using_clang && ! tc-is-clang ; then
 		export CC="clang"
 		export CXX="clang++"
