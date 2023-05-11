@@ -1286,6 +1286,7 @@ is_using_clang() {
 
 	local u
 	for u in ${U} ; do
+einfo "Using ${u} USE flag which is forcing clang."
 		use "${u}" && return 0
 	done
 	return 1
