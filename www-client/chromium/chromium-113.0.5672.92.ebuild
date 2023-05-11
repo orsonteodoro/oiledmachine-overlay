@@ -746,7 +746,7 @@ COMMON_DEPEND="
 		)
 		qt5? (
 			dev-qt/qtcore:5
-			dev-qt/qtwidgets:5
+			dev-qt/qtwidgets:5[X?]
 		)
 		X? (
 			${COMMON_X_DEPEND}
@@ -1413,14 +1413,6 @@ is_generating_credits() {
 }
 
 apply_distro_patchset() {
-	# Some web pages are crashing.
-	if use system-icu; then
-		sed -i -e \
-			"/\"TextCodecCJKEnabled\",/{n;s/ENABLED/DISABLED/;}" \
-			"third_party/blink/common/features.cc" \
-			|| die
-	fi
-
 	# Disable global media controls.  It crashes with libstdc++.
 	sed -i -e \
 		"/\"GlobalMediaControlsCastStartStop\",/{n;s/ENABLED/DISABLED/;}" \
@@ -1891,8 +1883,8 @@ einfo
 	# binaries.
 		mkdir -p buildtools/third_party/eu-strip/bin || die
 		ln -s \
-			"${BROOT}"/bin/true \
-			buildtools/third_party/eu-strip/bin/eu-strip \
+			"${BROOT}/bin/true" \
+			"buildtools/third_party/eu-strip/bin/eu-strip" \
 			|| die
 	fi
 
@@ -2011,23 +2003,23 @@ einfo
 		if tc-is-cross-compiler ; then
 			export CC="${CBUILD}-clang-${LLVM_SLOT} -target ${CHOST} --sysroot ${ESYSROOT} $(get_abi_CFLAGS ${ABI})"
 			export CXX="${CBUILD}-clang++-${LLVM_SLOT} -target ${CHOST} --sysroot ${ESYSROOT} $(get_abi_CFLAGS ${ABI})"
-			export BUILD_CC=${CBUILD}-clang-${LLVM_SLOT}
-			export BUILD_CXX=${CBUILD}-clang++-${LLVM_SLOT}
+			export BUILD_CC="${CBUILD}-clang-${LLVM_SLOT}"
+			export BUILD_CXX="${CBUILD}-clang++-${LLVM_SLOT}"
 		else
 			export CC="${CHOST}-clang-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
 			export CXX="${CHOST}-clang++-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
 		fi
 
-		export AR=llvm-ar # Required for LTO
-		export NM=llvm-nm
-		export READELF=llvm-readelf
-		export STRIP=llvm-strip
+		export AR="llvm-ar" # Required for LTO
+		export NM="llvm-nm"
+		export READELF="llvm-readelf"
+		export STRIP="llvm-strip"
 		if ! which llvm-ar 2>/dev/null 1>/dev/null ; then
 			die "llvm-ar is unreachable"
 		fi
 		local pv=$(best_version "sys-devel/llvm:${LLVM_SLOT}" \
 			| sed -e "s|sys-devel/llvm-||g")
-		if [[ ${pv} =~ 9999 || ${pv} =~ pre ]] ; then
+		if [[ "${pv}" =~ 9999 || "${pv}" =~ pre ]] ; then
 			local ts=$(date -d "@${CR_CLANG_USED_UNIX_TIMESTAMP}")
 ewarn
 ewarn "Only the commit below or newer for the latest live ebuilds having the"
@@ -2054,17 +2046,17 @@ einfo
 		if tc-is-cross-compiler ; then
 			export CC="${CBUILD}-gcc-${GCC_SLOT} $(get_abi_CFLAGS ${ABI})"
 			export CXX="${CBUILD}-g++-${GCC_SLOT} $(get_abi_CFLAGS ${ABI})"
-			export BUILD_CC=${CBUILD}-gcc-${GCC_SLOT}
-			export BUILD_CXX=${CBUILD}-g++-${GCC_SLOT}
+			export BUILD_CC="${CBUILD}-gcc-${GCC_SLOT}"
+			export BUILD_CXX="${CBUILD}-g++-${GCC_SLOT}"
 		else
 			export CC="${CHOST}-gcc-${GCC_SLOT} $(get_abi_CFLAGS ${ABI})"
 			export CXX="${CHOST}-g++-${GCC_SLOT} $(get_abi_CFLAGS ${ABI})"
 		fi
-		export AR=ar
-		export NM=nm
-		export READELF=readelf
-		export STRIP=strip
-		export LD=ld.bfd
+		export AR="ar"
+		export NM="nm"
+		export READELF="readelf"
+		export STRIP="strip"
+		export LD="ld.bfd"
 
 		if ! use system-libstdcxx ; then
 eerror
@@ -2097,7 +2089,8 @@ ewarn
 		'-f*visibility*'
 
 	if tc-is-clang ; then
-		myconf_gn+=" is_clang=true clang_use_chrome_plugins=false"
+		myconf_gn+=" is_clang=true"
+		myconf_gn+=" clang_use_chrome_plugins=false"
 	else
 		myconf_gn+=" is_clang=false"
 	fi
@@ -2928,17 +2921,24 @@ _src_compile() {
 	rm -f out/Release/locales/*.pak.info || die
 
 	# Build manpage; bug #684550
-	sed -e 's|@@PACKAGE@@|chromium-browser|g;
-		s|@@MENUNAME@@|Chromium|g;' \
+	sed -e  '
+		s|@@PACKAGE@@|chromium-browser|g;
+		s|@@MENUNAME@@|Chromium|g;
+		' \
 		chrome/app/resources/manpage.1.in \
 		> out/Release/chromium-browser.1 \
 		|| die
 
 	# Build desktop file; bug #706786
-	# Moved down
-	# Moved down
-	sed -e 's|@@PACKAGE@@|chromium-browser|g;
-		s|\(^Exec=\)/usr/bin/|\1|g;' \
+	local suffix
+	(( ${NABIS} > 1 )) && suffix=" (${ABI})"
+	sed -e  "
+		s|@@MENUNAME@@|Chromium${suffix}|g;
+		s|@@USR_BIN_SYMLINK_NAME@@|chromium-browser-${ABI}|g;
+		"'
+		s|@@PACKAGE@@|chromium-browser|g;
+		s|\(^Exec=\)/usr/bin/|\1|g;
+		' \
 		chrome/installer/linux/common/desktop.template \
 		> out/Release/chromium-browser-chromium.desktop \
 		|| die
@@ -2947,14 +2947,6 @@ _src_compile() {
 	sed -e 's|${ICD_LIBRARY_PATH}|./libvk_swiftshader.so|g' \
 		third_party/swiftshader/src/Vulkan/vk_swiftshader_icd.json.tmpl \
 		> out/Release/vk_swiftshader_icd.json \
-		|| die
-
-	local suffix
-	(( ${NABIS} > 1 )) && suffix=" (${ABI})"
-	sed -i -e \
-		"s|@@MENUNAME@@|Chromium${suffix}|g;" \
-		"s|@@USR_BIN_SYMLINK_NAME@@|chromium-browser-${ABI}|g;" \
-		out/Release/chromium-browser-chromium.desktop \
 		|| die
 }
 
@@ -2977,12 +2969,14 @@ _src_install() {
 		&& use X \
 		&& echo "true" \
 		|| echo "false")
-	sed -e \
-		"s:/usr/lib/:/usr/$(get_libdir)/:g;" \
-		"s:chromium-browser-chromium.desktop:chromium-browser-chromium-${ABI}.desktop:g;" \
-		"s:@@OZONE_AUTO_SESSION@@:${ozone_auto_session}:g;" \
+	sed -e  "
+		s:/usr/lib/:/usr/$(get_libdir)/:g;
+		s:chromium-browser-chromium.desktop:chromium-browser-chromium-${ABI}.desktop:g;
+		s:@@OZONE_AUTO_SESSION@@:${ozone_auto_session}:g;
+		" \
 		"${FILESDIR}/chromium-launcher-r7.sh" \
-		> chromium-launcher.sh || die
+		> chromium-launcher.sh \
+		|| die
 	newexe chromium-launcher.sh chromium-launcher-${ABI}.sh
 
 	# It is important that we name the target "chromium-browser",
@@ -3022,7 +3016,8 @@ _src_install() {
 		[[ ${#files[@]} -gt 0 ]] && doins "${files[@]}"
 	)
 
-	# Install bundled xdg-utils, avoids installing X11 libraries with USE="-X wayland"
+	# Install bundled xdg-utils, avoids installing X11 libraries with
+	# USE="-X wayland"
 	doins out/Release/xdg-{settings,mime}
 
 	if ! use system-icu && ! use headless; then
