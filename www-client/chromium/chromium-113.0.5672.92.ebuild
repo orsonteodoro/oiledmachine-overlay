@@ -1991,9 +1991,10 @@ _src_configure() {
 	# Final CC selected
 	LLVM_SLOT=""
 	if tc-is-clang || is_using_clang ; then
-einfo
-einfo "Switching to clang"
-einfo
+# FIXME:  boringssl with atomic_load
+ewarn
+ewarn "(WIP) Switching to clang.  Currently broken for ${PV}."
+ewarn
 	# See build/toolchain/linux/unbundle/BUILD.gn for allowed overridable envvars.
 	# See build/toolchain/gcc_toolchain.gni#L657 for consistency.
 
