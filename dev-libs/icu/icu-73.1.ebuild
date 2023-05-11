@@ -16,7 +16,7 @@ MY_PV="${MY_PV//./_}"
 DESCRIPTION="International Components for Unicode"
 HOMEPAGE="https://icu.unicode.org/"
 LICENSE="
-	icu-71.1
+	icu-73.1
 	BSD
 	HPND
 	GPL-2+
@@ -30,6 +30,8 @@ KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
 ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
 ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt
+
+r1
 "
 IUSE="debug doc examples static-libs test"
 RESTRICT="
