@@ -1290,7 +1290,6 @@ print_use_flags_using_clang() {
 einfo "Using ${u} USE flag which is forcing clang."
 		fi
 	done
-	return 1
 }
 
 is_using_clang() {
