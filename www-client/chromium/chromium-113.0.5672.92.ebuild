@@ -559,6 +559,9 @@ REQUIRED_USE+="
 	system-libstdcxx? (
 		!cfi
 	)
+	system-re2? (
+		system-libstdcxx
+	)
 	vaapi-hevc? (
 		vaapi
 	)
