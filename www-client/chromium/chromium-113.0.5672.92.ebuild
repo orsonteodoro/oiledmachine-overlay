@@ -1799,7 +1799,7 @@ ewarn
 		third_party/xdg-utils
 
 	# Required in both cases
-			third_party/ffmpeg
+		third_party/ffmpeg
 
 		$(use !system-dav1d && echo "
 			third_party/dav1d
@@ -1866,7 +1866,7 @@ ewarn
 		$(use !system-zlib && echo "
 			third_party/zlib
 		")
-		$((use arm64 || use ppc64) || echo "
+		$((use arm64 || use ppc64) && echo "
 			third_party/swiftshader/third_party/llvm-10.0
 		")
 	)
