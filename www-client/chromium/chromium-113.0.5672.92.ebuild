@@ -1984,8 +1984,9 @@ eerror
 }
 
 show_clang_header_warning() {
+	local clang_slot="${1}"
 ewarn
-ewarn "${EROOT}/usr/lib/clang/${CLANG_SLOT}/include/stdatomic.h requires header modifications"
+ewarn "${EROOT}/usr/lib/clang/${clang_slot}/include/stdatomic.h requires header modifications"
 ewarn "See ebuild for details with keyword search atomic_load."
 ewarn
 #
@@ -2087,16 +2088,17 @@ ewarn
 		fi
 
 		# Get the stdatomic.h from clang not from gcc.
-		show_clang_header_warning
 		append-cflags -stdlib=libc++
 		append-ldflags -stdlib=libc++
 		if ver_test ${LLVM_SLOT} -ge 16 ; then
 			append-cppflags "-isystem/usr/lib/clang/${LLVM_SLOT}/include"
+			show_clang_header_warning "${LLVM_SLOT}"
 		else
 			local clang_pv=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
 				| sed -e "s|sys-devel/clang-||")
 			clang_pv=$(ver_cut 1-3 "${clang_pv}")
 			append-cppflags "-isystem/usr/lib/clang/${clang_pv}/include"
+			show_clang_header_warning "${clang_pv}"
 		fi
 		append-cppflags -DFORCE_CLANG_STDATOMIC_H
 	else
