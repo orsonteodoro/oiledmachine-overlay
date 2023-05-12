@@ -28,7 +28,7 @@ IUSE="
 default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4
 default-stack-clash-protection cet hardened hardened-compat ssp
-r7
+r8
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
