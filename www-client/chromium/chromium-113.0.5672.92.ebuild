@@ -1408,12 +1408,6 @@ einfo
 	( use system-dav1d || use system-libaom ) && cflags-depends_check
 }
 
-USED_EAPPLY=0
-ceapply() {
-	USED_EAPPLY=1
-	eapply "${@}"
-}
-
 src_unpack() {
 	local a
 	for a in ${A} ; do
@@ -1463,11 +1457,15 @@ apply_distro_patchset() {
 		for p in $(grep -v "^#" "${WORKDIR}/debian/patches/series" \
 				| grep "^ppc64le" \
 				|| die); do
-			if [[ ! $p =~ "fix-breakpad-compile.patch" ]]; then
-				ceapply "${WORKDIR}/debian/patches/${p}"
+			if [[ ! ${p} =~ "fix-breakpad-compile.patch" ]]; then
+				PATCHES+=(
+					"${WORKDIR}/debian/patches/${p}"
+				)
 			fi
 		done
-		PATCHES+=( "${WORKDIR}/ppc64le" )
+		PATCHES+=(
+			"${WORKDIR}/ppc64le"
+		)
 	fi
 }
 
@@ -1493,22 +1491,30 @@ ewarn "Disabling the distro patchset."
 	fi
 
 	if use epgo ; then
-		ceapply "${FILESDIR}/extra-patches/chromium-104.0.5112.79-gcc-pgo-link-gcov.patch"
+		PATCHES+=(
+			"${FILESDIR}/extra-patches/chromium-104.0.5112.79-gcc-pgo-link-gcov.patch"
+		)
 	fi
 
 	if tc-is-clang ; then
 	# Using gcc with these patches results in this error:
 	# Two or more targets generate the same output:
 	#   lib.unstripped/libEGL.so
-		ceapply "${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-1.patch"
-		ceapply "${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-2.patch"
+		PATCHES+=(
+			"${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-1.patch"
+			"${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-2.patch"
+		)
 	fi
 
 	if use arm64 && has_sanitizer_option "shadow-call-stack" ; then
-		ceapply "${FILESDIR}/extra-patches/chromium-94-arm64-shadow-call-stack.patch"
+		PATCHES+=(
+			"${FILESDIR}/extra-patches/chromium-94-arm64-shadow-call-stack.patch"
+		)
 	fi
 
-	ceapply "${FILESDIR}/extra-patches/chromium-111.0.5563.64-zlib-selective-simd.patch"
+	PATCHES+=(
+		"${FILESDIR}/extra-patches/chromium-111.0.5563.64-zlib-selective-simd.patch"
+	)
 
 	# Slot 16 selected but spits out 17
 #
@@ -1526,7 +1532,7 @@ ewarn "Disabling the distro patchset."
 
 	default
 
-	if (( ${#PATCHES[@]} > 0 || ${USED_EAPPLY} == 1 )) \
+	if (( ${#PATCHES[@]} > 0 )) \
 		|| [[ -f "${T}/epatch_user.log" ]] ; then
 		if use official ; then
 ewarn
@@ -1975,6 +1981,33 @@ eerror
 	fi
 }
 
+show_clang_header_warning() {
+ewarn
+ewarn "${EROOT}/usr/lib/clang/${CLANG_SLOT}/include/stdatomic.h requires header modifications"
+ewarn "See ebuild for details with keyword search atomic_load."
+ewarn
+#
+# The problem:
+#../../third_party/boringssl/src/crypto/refcount_c11.c:37:23: error: address argument to atomic operation must be a pointer to a trivially-copyable type ('_Atomic(CRYPTO_refcount_t) *' invalid)
+#  uint32_t expected = atomic_load(count);
+#                      ^~~~~~~~~~~~~~~~~~
+#/usr/lib/gcc/xxx-pc-linux-gnu/12/include/stdatomic.h:142:27: note: expanded from macro 'atomic_load'
+##define atomic_load(PTR)  atomic_load_explicit (PTR, __ATOMIC_SEQ_CST)
+#                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#/usr/lib/gcc/xxx-pc-linux-gnu/12/include/stdatomic.h:138:5: note: expanded from macro 'atomic_load_explicit'
+#    __atomic_load (__atomic_load_ptr, &__atomic_load_tmp, (MO));        \
+#    ^              ~~~~~~~~~~~~~~~~~
+#
+# The solution:
+#
+# Change /usr/lib/clang/17/include/stdatomic.h as follows:
+#
+##if 0 && __STDC_HOSTED__ &&                                                    \
+#    __has_include_next(<stdatomic.h>) &&                                       \
+#    (!defined(_MSC_VER) || (defined(__cplusplus) && __cplusplus >= 202002L))
+#
+}
+
 LLVM_SLOT=""
 GCC_SLOT=""
 LTO_TYPE=""
@@ -1991,10 +2024,9 @@ _src_configure() {
 	# Final CC selected
 	LLVM_SLOT=""
 	if tc-is-clang || is_using_clang ; then
-# FIXME:  boringssl with atomic_load
-ewarn
-ewarn "(WIP) Switching to clang.  Currently broken for ${PV}."
-ewarn
+einfo
+einfo "Switching to clang."
+einfo
 	# See build/toolchain/linux/unbundle/BUILD.gn for allowed overridable envvars.
 	# See build/toolchain/gcc_toolchain.gni#L657 for consistency.
 
@@ -2048,6 +2080,19 @@ ewarn "LLVM slot:         ${CR_CLANG_SLOT_OFFICIAL}"
 ewarn "Commit:            ${CR_CLANG_USED}"
 ewarn "Commit timestamp:  >= ${ts}"
 ewarn
+		fi
+
+		# Get the stdatomic.h from clang not from gcc.
+		show_clang_header_warning
+		append-cflags -stdlib=libc++
+		append-ldflags -stdlib=libc++
+		if ver_test ${LLVM_SLOT} -ge 16 ; then
+			append-cppflags "-isystem/usr/lib/clang/${LLVM_SLOT}/include"
+		else
+			local clang_pv=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
+				| sed -e "s|sys-devel/clang-||")
+			clang_pv=$(ver_cut 1-3 "${clang_pv}")
+			append-cppflags "-isystem/usr/lib/clang/${clang_pv}/include"
 		fi
 	else
 einfo
