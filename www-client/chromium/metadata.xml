@@ -152,7 +152,6 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       --lto-O2 is too large - https://github.com/chromium/chromium/commit/da072d13b2a1cc8459c29aa4e52584a4491a4ad6
       CFI - https://www.chromium.org/developers/testing/control-flow-integrity
       CFI ldflags - https://clang.llvm.org/docs/ControlFlowIntegrity.html
-      PartitionAlloc - https://chromium.googlesource.com/chromium/src/+/refs/heads/main/base/allocator/partition_allocator/PartitionAlloc.md
       PGO - https://blog.chromium.org/2020/08/chrome-just-got-faster-with-profile.html
       https://github.com/chromium/chromium/blob/master/build/config/sanitizers/BUILD.gn#L204
       [1] https://github.com/chromium/chromium/tree/master/tools/perf/benchmarks
@@ -242,12 +241,6 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       Enable JavaScript type-checking for Chrome's web technology-based UI.
       Requires Java.
     </flag>
-    <flag name="libcmalloc">
-      Use the allocator provided by the libc implementation.  With glibc malloc
-      (ptmalloc2 based) memory reuse is wastefully duplicated between threaded
-      arenas especially for large data. However, the glibc allocator is widely
-      used and tested.
-    </flag>
     <flag name="official">
       Enable the use of official build settings [similar to the official bin but
       without branding] instead of the developer build settings.  Enables
@@ -258,12 +251,6 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       CFI and PGO) and uses the internal bundled hardened and PGOed version of
       those libraries with static linkage.  Implies default features and
       proprietary-codecs.
-    </flag>
-    <flag name="partitionalloc">
-      Use PartitionAlloc as the default allocator.  It's designed for security
-      and lower latency, and benefits the most from memory use effiency.  It is
-      actively being improved which may present newer bugs.  It's the default
-      in 92 and later.
     </flag>
     <flag name="pic">
       Disable optimized assembly code that is not PIC friendly

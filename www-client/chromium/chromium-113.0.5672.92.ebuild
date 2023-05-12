@@ -357,15 +357,14 @@ ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS}
 ${IUSE_LIBCXX[@]}
 bluetooth +bundled-libcxx branch-protection +cfi component-build +cups -debug
-+encode -gtk4 -hangouts -headless +js-type-check +kerberos -libcmalloc +official
-+partitionalloc pax-kernel pic +pgo +pre-check-vaapi +proprietary-codecs
-proprietary-codecs-disable proprietary-codecs-disable-nc-developer
-proprietary-codecs-disable-nc-user +pulseaudio qt5 +screencast selinux +suid
--system-dav1d +system-ffmpeg -system-flac -system-fontconfig -system-freetype
--system-harfbuzz -system-icu -system-libaom -system-libdrm -system-libjpeg-turbo
--system-libpng -system-libwebp -system-libxml -system-libxslt -system-openh264
--system-opus -system-re2 -system-zlib +thinlto-opt +vaapi +wayland -widevine
-+X
++encode -gtk4 -hangouts -headless +js-type-check +kerberos +official pax-kernel
+pic +pgo +pre-check-vaapi +proprietary-codecs proprietary-codecs-disable
+proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
++pulseaudio qt5 +screencast selinux +suid -system-dav1d +system-ffmpeg
+-system-flac -system-fontconfig -system-freetype -system-harfbuzz -system-icu
+-system-libaom -system-libdrm -system-libjpeg-turbo -system-libpng
+-system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
+-system-re2 -system-zlib +thinlto-opt +vaapi +wayland -widevine +X
 
 r1
 "
@@ -466,10 +465,6 @@ REQUIRED_USE+="
 	^^ (
 		${IUSE_LIBCXX[@]}
 	)
-	^^ (
-		partitionalloc
-		libcmalloc
-	)
 	branch-protection? (
 		arm64
 	)
@@ -534,7 +529,6 @@ REQUIRED_USE+="
 		libaom
 		openh264
 		opus
-		partitionalloc
 		pgo
 		proprietary-codecs
 		screencast
@@ -552,9 +546,6 @@ REQUIRED_USE+="
 		arm64? (
 			branch-protection
 		)
-	)
-	partitionalloc? (
-		!component-build
 	)
 	pgo? (
 		!epgo
@@ -2259,12 +2250,6 @@ ewarn
 
 	# Disable nacl, we can't build without pnacl (http://crbug.com/269560).
 	myconf_gn+=" enable_nacl=false"
-
-	if use partitionalloc ; then
-		myconf_gn+=" use_partition_alloc=true"
-	else
-		myconf_gn+=" use_partition_alloc=false"
-	fi
 
 	# Use system-provided libraries.
 	# TODO: freetype -- remove sources
