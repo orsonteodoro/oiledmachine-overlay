@@ -2009,7 +2009,7 @@ ewarn
 ##if __STDC_HOSTED__ &&                                                          \
 #    __has_include_next(<stdatomic.h>) &&                                        \
 #    (!defined(_MSC_VER) || (defined(__cplusplus) && __cplusplus >= 202002L)) && \
-#    (!defined(FORCE_CLANG_STDATOMIC_H)
+#    (!defined(FORCE_CLANG_STDATOMIC_H))
 #
 }
 

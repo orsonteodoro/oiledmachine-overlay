@@ -6,7 +6,7 @@
      __has_include_next(<stdatomic.h>) &&                                       \
 -    (!defined(_MSC_VER) || (defined(__cplusplus) && __cplusplus >= 202002L))
 +    (!defined(_MSC_VER) || (defined(__cplusplus) && __cplusplus >= 202002L)) && \
-+    (!defined(FORCE_CLANG_STDATOMIC_H)                                              // oteodoro:  allow to force clang's version of stdatomic.h
++    (!defined(FORCE_CLANG_STDATOMIC_H))                                              // oteodoro:  allow to force clang's version of stdatomic.h
  # include_next <stdatomic.h>
  #else
  

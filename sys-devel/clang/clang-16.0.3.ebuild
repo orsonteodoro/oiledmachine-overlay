@@ -28,7 +28,7 @@ debug doc +extra ieee-long-double +pie +static-analyzer test xml
 default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4
 default-stack-clash-protection cet hardened hardened-compat ssp
-r8
+r9
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
