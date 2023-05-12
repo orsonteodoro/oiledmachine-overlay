@@ -1,0 +1,12 @@
+--- a/clang/lib/Headers/stdatomic.h.orig	2023-05-11 21:14:30.661635355 -0700
++++ b/clang/lib/Headers/stdatomic.h	2023-05-11 21:16:21.453637613 -0700
+@@ -20,7 +20,8 @@
+  */
+ #if __STDC_HOSTED__ &&                                                         \
+     __has_include_next(<stdatomic.h>) &&                                       \
+-    (!defined(_MSC_VER) || (defined(__cplusplus) && __cplusplus >= 202002L))
++    (!defined(_MSC_VER) || (defined(__cplusplus) && __cplusplus >= 202002L)) && \
++    (!defined(FORCE_CLANG_STDATOMIC_H))                                              // oteodoro:  allow to force clang's version of stdatomic.h
+ # include_next <stdatomic.h>
+ #else
+ 
