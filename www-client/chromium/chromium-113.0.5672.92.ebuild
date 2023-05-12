@@ -5,7 +5,7 @@
 # Monitor
 #   https://chromereleases.googleblog.com/search/label/Dev%20updates
 # for security updates.  They are announced faster than NVD.
-# See https://omahaproxy.appspot.com/ for the latest linux version
+# See https://chromiumdash.appspot.com/releases?platform=Linux for the latest linux version
 
 EAPI=8
 PYTHON_COMPAT=( python3_{9..11} )
@@ -356,8 +356,8 @@ ${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_}
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS}
 ${IUSE_LIBCXX[@]}
-+bundled-libcxx branch-protection +cfi component-build +cups -debug +encode
--gtk4 -hangouts -headless +js-type-check +kerberos -libcmalloc +official
+bluetooth +bundled-libcxx branch-protection +cfi component-build +cups -debug
++encode -gtk4 -hangouts -headless +js-type-check +kerberos -libcmalloc +official
 +partitionalloc pax-kernel pic +pgo +pre-check-vaapi +proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +pulseaudio qt5 +screencast selinux +suid
@@ -762,11 +762,14 @@ COMMON_DEPEND="
 		)
 	)
 	${COMMON_SNAPSHOT_DEPEND}
-	app-arch/bzip2:=[${MULTILIB_USEDEP}]
 	>=dev-libs/expat-2.2.10:=[${MULTILIB_USEDEP}]
 	>=net-misc/curl-7.85.0[${MULTILIB_USEDEP},ssl]
 	>=sys-apps/dbus-1.12.20:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP},minizip]
+	app-arch/bzip2:=[${MULTILIB_USEDEP}]
+	bluetooth? (
+		>=net-wireless/bluez-5.55[${MULTILIB_USEDEP}]
+	)
 	system-ffmpeg? (
 		system-opus? (
 			>=media-libs/opus-1.3.1:=[${MULTILIB_USEDEP}]

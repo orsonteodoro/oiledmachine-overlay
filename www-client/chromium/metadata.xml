@@ -162,6 +162,10 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
     <bugs-to>https://www.chromium.org/for-testers/bug-reporting-guidelines</bugs-to>
   </upstream>
   <use>
+    <flag name="bluetooth">
+      Adds support for GATT (Generic Attribute Profile) for the Web Bluetooth
+      API.
+    </flag>
     <flag name="branch-protection">
       Enables branch protection features (available on armv8.5 [arm64] and above
       only) which are enabled by default.  If you disable the official USE flag,
