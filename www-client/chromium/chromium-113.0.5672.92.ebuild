@@ -1988,6 +1988,7 @@ ewarn "See ebuild for details with keyword search atomic_load."
 ewarn
 #
 # The problem:
+#
 #../../third_party/boringssl/src/crypto/refcount_c11.c:37:23: error: address argument to atomic operation must be a pointer to a trivially-copyable type ('_Atomic(CRYPTO_refcount_t) *' invalid)
 #  uint32_t expected = atomic_load(count);
 #                      ^~~~~~~~~~~~~~~~~~
@@ -2002,9 +2003,10 @@ ewarn
 #
 # Change /usr/lib/clang/17/include/stdatomic.h as follows:
 #
-##if 0 && __STDC_HOSTED__ &&                                                    \
-#    __has_include_next(<stdatomic.h>) &&                                       \
-#    (!defined(_MSC_VER) || (defined(__cplusplus) && __cplusplus >= 202002L))
+##if __STDC_HOSTED__ &&                                                          \
+#    __has_include_next(<stdatomic.h>) &&                                        \
+#    (!defined(_MSC_VER) || (defined(__cplusplus) && __cplusplus >= 202002L)) && \
+#    (!defined(FORCE_CLANG_STDATOMIC_H))
 #
 }
 
@@ -2094,6 +2096,7 @@ ewarn
 			clang_pv=$(ver_cut 1-3 "${clang_pv}")
 			append-cppflags "-isystem/usr/lib/clang/${clang_pv}/include"
 		fi
+		append-cppflags -DFORCE_CLANG_STDATOMIC_H
 	else
 einfo
 einfo "Switching to GCC"
