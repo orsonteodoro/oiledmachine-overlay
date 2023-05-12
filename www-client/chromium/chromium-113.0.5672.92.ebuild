@@ -1986,9 +1986,24 @@ eerror
 
 show_clang_header_warning() {
 	local clang_slot="${1}"
+	grep -q -r \
+		-e "FORCE_CLANG_STDATOMIC_H" \
+		"${ESYSROOT}/usr/lib/clang/${clang_slot}/include/stdatomic.h" \
+		&& return
 ewarn
-ewarn "${EROOT}/usr/lib/clang/${clang_slot}/include/stdatomic.h requires header modifications"
-ewarn "See ebuild for details with keyword search atomic_load."
+ewarn "${EROOT}/usr/lib/clang/${clang_slot}/include/stdatomic.h requires header"
+ewarn "modifications.  Solutions..."
+ewarn
+ewarn "Solution 1 - Manual edit:"
+ewarn
+ewarn "  See ebuild for details with keyword search atomic_load."
+ewarn
+ewarn "Solution 2 - Emerge either:"
+ewarn
+ewarn "  sys-devel/clang:16::oiledmachine-overlay"
+ewarn "  sys-devel/clang:17::oiledmachine-overlay"
+ewarn
+ewarn "Solution 3 - Emerge this package gcc."
 ewarn
 #
 # The problem:
@@ -2011,6 +2026,8 @@ ewarn
 #    __has_include_next(<stdatomic.h>) &&                                        \
 #    (!defined(_MSC_VER) || (defined(__cplusplus) && __cplusplus >= 202002L)) && \
 #    (!defined(FORCE_CLANG_STDATOMIC_H))
+#
+# "and emerge with clang:17."
 #
 }
 
