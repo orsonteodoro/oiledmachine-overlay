@@ -31,6 +31,8 @@ te th tr uk ur vi zh-CN zh-TW
 
 GCC_MIN="10.4"
 UOPTS_PGO_PV=$(ver_cut 1-3 ${PV})
+# LLVM compatibility is based on libcxx which is
+# 1 +- CR_CLANG_SLOT_OFFICIAL
 LLVM_MAX_SLOT=17 # Same slot listed in https://github.com/chromium/chromium/blob/113.0.5672.63/tools/clang/scripts/update.py#L42
 LLVM_MIN_SLOT=16 # The pregenerated PGO profile needs profdata index version 9.
 CR_CLANG_SLOT_OFFICIAL=${LLVM_MAX_SLOT}
