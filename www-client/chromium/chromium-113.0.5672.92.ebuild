@@ -29,7 +29,11 @@ hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr sv sw ta
 te th tr uk ur vi zh-CN zh-TW
 "
 
-GCC_MIN="10.4"
+# For depends see:
+# https://github.com/chromium/chromium/tree/113.0.5672.92/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/113.0.5672.92/build/install-build-deps.sh#L237
+
+GCC_MIN="10.2.1"
 UOPTS_PGO_PV=$(ver_cut 1-3 ${PV})
 # LLVM compatibility is based on libcxx which is
 # 1 +- CR_CLANG_SLOT_OFFICIAL
@@ -573,6 +577,9 @@ REQUIRED_USE+="
 	)
 "
 
+QT5_PV="5.15.2"
+GTK3_PV="3.24.24"
+GTK4_PV="4.8.1"
 LIBVA_PV="2.7"
 FFMPEG_LIBAVUTIL_SOVER="57.44.100" # third_party/ffmpeg/libavutil/version.h
 FFMPEG_LIBAVCODEC_SOVER="59.61.100" # third_party/ffmpeg/libavcodec/version.h
@@ -634,49 +641,49 @@ gen_depend_llvm() {
 }
 
 COMMON_X_DEPEND="
-	>=x11-libs/libXi-1.6.0:=[${MULTILIB_USEDEP}]
-	x11-libs/libXcomposite:=[${MULTILIB_USEDEP}]
-	x11-libs/libXcursor:=[${MULTILIB_USEDEP}]
-	x11-libs/libXdamage:=[${MULTILIB_USEDEP}]
-	x11-libs/libXfixes:=[${MULTILIB_USEDEP}]
-	x11-libs/libXrandr:=[${MULTILIB_USEDEP}]
-	x11-libs/libXrender:=[${MULTILIB_USEDEP}]
-	x11-libs/libxshmfence:=[${MULTILIB_USEDEP}]
-	x11-libs/libXtst:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXi-1.7.10:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXcomposite-0.4.5:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXcursor-1.2.0:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXdamage-1.1.5:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXfixes-5.0.3:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXrandr-1.5.1:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXrender-0.9.10:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libxshmfence-1.3:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXtst-1.2.3:=[${MULTILIB_USEDEP}]
 "
 
 COMMON_SNAPSHOT_DEPEND="
 	!headless? (
 		${LIBVA_DEPEND}
-		>=media-libs/alsa-lib-1.0.19:=[${MULTILIB_USEDEP}]
-		dev-libs/glib:2[${MULTILIB_USEDEP}]
-		sys-apps/pciutils:=[${MULTILIB_USEDEP}]
-		x11-libs/libxkbcommon:=[${MULTILIB_USEDEP}]
+		>=media-libs/alsa-lib-1.2.4:=[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-2.66.8:2[${MULTILIB_USEDEP}]
+		>=sys-apps/pciutils-3.7.0:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libxkbcommon-1.0.3:=[${MULTILIB_USEDEP}]
 		kerberos? (
 			virtual/krb5[${MULTILIB_USEDEP}]
 		)
 		pulseaudio? (
-			media-sound/pulseaudio:=[${MULTILIB_USEDEP}]
+			>=media-sound/pulseaudio-14.2:=[${MULTILIB_USEDEP}]
 		)
 		vaapi? (
-			>=media-libs/libva-2.7:=[${MULTILIB_USEDEP},wayland?,X?]
+			>=media-libs/libva-2.14.0:=[${MULTILIB_USEDEP},wayland?,X?]
 		)
 		wayland? (
-			dev-libs/libffi:=[${MULTILIB_USEDEP}]
-			dev-libs/wayland[${MULTILIB_USEDEP}]
+			>=dev-libs/libffi-3.3:=[${MULTILIB_USEDEP}]
+			>=dev-libs/wayland-1.18.0[${MULTILIB_USEDEP}]
 			screencast? (
-				media-video/pipewire:=[${MULTILIB_USEDEP}]
+				>=media-video/pipewire-0.3.58:=[${MULTILIB_USEDEP}]
 			)
 		)
 		X? (
-			x11-libs/libX11:=[${MULTILIB_USEDEP}]
-			x11-libs/libxcb:=[${MULTILIB_USEDEP}]
+			>=x11-libs/libX11-1.7.2:=[${MULTILIB_USEDEP}]
+			>=x11-libs/libxcb-1.14:=[${MULTILIB_USEDEP}]
 			x11-libs/libXext:=[${MULTILIB_USEDEP}]
 		)
 	)
-	>=dev-libs/nss-3.26:=[${MULTILIB_USEDEP}]
-	dev-libs/nspr:=[${MULTILIB_USEDEP}]
-	media-libs/mesa:=[gbm(+),${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.61:=[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.29:=[${MULTILIB_USEDEP}]
+	>=media-libs/mesa-20.3.5:=[gbm(+),${MULTILIB_USEDEP}]
 	proprietary-codecs? (
 		system-openh264? (
 			>=media-libs/openh264-1.6.0:=[${MULTILIB_USEDEP}]
@@ -689,48 +696,48 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/fontconfig:=[${MULTILIB_USEDEP}]
 	)
 	system-freetype? (
-		>=media-libs/freetype-2.11.0-r1:=[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-2.10.4:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-3:0=[${MULTILIB_USEDEP},icu(-)]
+		>=media-libs/harfbuzz-2.7.4:0=[${MULTILIB_USEDEP},icu(-)]
 	)
 	system-icu? (
-		>=dev-libs/icu-71.1:=[${MULTILIB_USEDEP}]
-	)
-	system-libstdcxx? (
-		>=dev-libs/re2-0.2019.08.01:=[${MULTILIB_USEDEP}]
+		>=dev-libs/icu-67.1:=[${MULTILIB_USEDEP}]
 	)
 	system-libaom? (
 		>=media-libs/libaom-3.4.0:=[${MULTILIB_USEDEP}]
 	)
 	system-libdrm? (
-		x11-libs/libdrm:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libdrm-2.4.104:=[${MULTILIB_USEDEP}]
 	)
 	system-libjpeg-turbo? (
-		media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-2.0.6:=[${MULTILIB_USEDEP}]
 	)
 	system-libpng? (
-		media-libs/libpng:=[-apng,${MULTILIB_USEDEP}]
+		>=media-libs/libpng-1.6.37:=[-apng,${MULTILIB_USEDEP}]
 	)
 	system-libwebp? (
-		>=media-libs/libwebp-0.4.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	)
 	system-libxml? (
-		>=dev-libs/libxml2-2.9.4-r3:=[${MULTILIB_USEDEP},icu]
+		>=dev-libs/libxml2-2.9.10:=[${MULTILIB_USEDEP},icu]
 	)
 	system-libxslt? (
-		dev-libs/libxslt:=[${MULTILIB_USEDEP}]
+		>=dev-libs/libxslt-1.1.34:=[${MULTILIB_USEDEP}]
+	)
+	system-re2? (
+		>=dev-libs/re2-0.2021.02.01:=[${MULTILIB_USEDEP}]
 	)
 	system-zlib? (
-		sys-libs/zlib:=[${MULTILIB_USEDEP}]
+		>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP}]
 	)
 "
 
 # No multilib for this virtual/udev when it should be.
 VIRTUAL_UDEV="
 	|| (
-		>=sys-apps/systemd-217[${MULTILIB_USEDEP}]
-		>=sys-fs/udev-217[${MULTILIB_USEDEP}]
+		>=sys-apps/systemd-251.3[${MULTILIB_USEDEP}]
+		>=sys-fs/udev-251.3[${MULTILIB_USEDEP}]
 		>=sys-fs/eudev-2.1.1[${MULTILIB_USEDEP}]
 	)
 "
@@ -738,17 +745,17 @@ VIRTUAL_UDEV="
 COMMON_DEPEND="
 	!headless? (
 		${VIRTUAL_UDEV}
-		>=app-accessibility/at-spi2-core-2.46.0:2
-		media-libs/mesa:=[${MULTILIB_USEDEP},wayland?,X?]
-		x11-libs/cairo:=[${MULTILIB_USEDEP}]
-		x11-libs/gdk-pixbuf:2[${MULTILIB_USEDEP}]
-		x11-libs/pango:=[${MULTILIB_USEDEP}]
+		>=app-accessibility/at-spi2-core-2.44.1:2
+		>=media-libs/mesa-20.3.5:=[${MULTILIB_USEDEP},wayland?,X?]
+		>=x11-libs/cairo-1.16.0:=[${MULTILIB_USEDEP}]
+		>=x11-libs/gdk-pixbuf-2.42.2:2[${MULTILIB_USEDEP}]
+		>=x11-libs/pango-1.46.2:=[${MULTILIB_USEDEP}]
 		cups? (
-			>=net-print/cups-1.3.11:=[${MULTILIB_USEDEP}]
+			>=net-print/cups-2.3.3:=[${MULTILIB_USEDEP}]
 		)
 		qt5? (
-			dev-qt/qtcore:5
-			dev-qt/qtwidgets:5[X?]
+			>=dev-qt/qtcore-${QT5_PV}:5
+			>=dev-qt/qtwidgets-${QT5_PV}:5[X?]
 		)
 		X? (
 			${COMMON_X_DEPEND}
@@ -756,10 +763,10 @@ COMMON_DEPEND="
 	)
 	${COMMON_SNAPSHOT_DEPEND}
 	app-arch/bzip2:=[${MULTILIB_USEDEP}]
-	dev-libs/expat:=[${MULTILIB_USEDEP}]
-	net-misc/curl[${MULTILIB_USEDEP},ssl]
-	sys-apps/dbus:=[${MULTILIB_USEDEP}]
-	sys-libs/zlib:=[${MULTILIB_USEDEP},minizip]
+	>=dev-libs/expat-2.2.10:=[${MULTILIB_USEDEP}]
+	>=net-misc/curl-7.85.0[${MULTILIB_USEDEP},ssl]
+	>=sys-apps/dbus-1.12.20:=[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP},minizip]
 	system-ffmpeg? (
 		system-opus? (
 			>=media-libs/opus-1.3.1:=[${MULTILIB_USEDEP}]
@@ -782,7 +789,7 @@ COMMON_DEPEND="
 		)
 	)
 	system-flac? (
-		media-libs/flac:=[${MULTILIB_USEDEP}]
+		>=media-libs/flac-1.3.3:=[${MULTILIB_USEDEP}]
 	)
 "
 CLANG_RDEPEND="
@@ -801,11 +808,11 @@ RDEPEND+="
 	${CLANG_RDEPEND}
 	!headless? (
 		qt5? (
-			dev-qt/qtgui:5[wayland?,X?]
+			>=dev-qt/qtgui-${QT5_PV}:5[wayland?,X?]
 		)
 		|| (
-			gui-libs/gtk:4[wayland?,X?]
-			x11-libs/gtk+:3[${MULTILIB_USEDEP},wayland?,X?]
+			>=gui-libs/gtk-${GTK4_PV}:4[wayland?,X?]
+			>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland?,X?]
 		)
 	)
 	virtual/ttf-fonts
@@ -817,10 +824,10 @@ DEPEND+="
 	${COMMON_DEPEND}
 	!headless? (
 		!gtk4? (
-			x11-libs/gtk+:3[${MULTILIB_USEDEP},wayland?,X?]
+			>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland?,X?]
 		)
 		gtk4? (
-			gui-libs/gtk:4[wayland?,X?]
+			>=gui-libs/gtk-${GTK4_PV}:4[wayland?,X?]
 		)
 	)
 "
