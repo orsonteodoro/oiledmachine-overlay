@@ -2003,7 +2003,7 @@ ewarn
 ewarn "  sys-devel/clang:16::oiledmachine-overlay"
 ewarn "  sys-devel/clang:17::oiledmachine-overlay"
 ewarn
-ewarn "Solution 3 - Emerge this package gcc."
+ewarn "Solution 3 - Emerge this package with gcc."
 ewarn
 #
 # The problem:
