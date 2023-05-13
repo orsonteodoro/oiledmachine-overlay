@@ -672,7 +672,7 @@ COMMON_SNAPSHOT_DEPEND="
 		X? (
 			>=x11-libs/libX11-1.7.2:=[${MULTILIB_USEDEP}]
 			>=x11-libs/libxcb-1.14:=[${MULTILIB_USEDEP}]
-			x11-libs/libXext:=[${MULTILIB_USEDEP}]
+			>=x11-libs/libXext-1.3.3:=[${MULTILIB_USEDEP}]
 		)
 	)
 	>=dev-libs/nss-3.61:=[${MULTILIB_USEDEP}]
@@ -757,7 +757,7 @@ VIRTUAL_UDEV="
 COMMON_DEPEND="
 	!headless? (
 		${VIRTUAL_UDEV}
-		>=app-accessibility/at-spi2-core-2.44.1:2
+		>=app-accessibility/at-spi2-core-2.44.1:2[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-20.3.5:=[${MULTILIB_USEDEP},wayland?,X?]
 		>=x11-libs/cairo-1.16.0:=[${MULTILIB_USEDEP}]
 		>=x11-libs/gdk-pixbuf-2.42.2:2[${MULTILIB_USEDEP}]
@@ -777,8 +777,10 @@ COMMON_DEPEND="
 	>=dev-libs/expat-2.2.10:=[${MULTILIB_USEDEP}]
 	>=net-misc/curl-7.85.0[${MULTILIB_USEDEP},ssl]
 	>=sys-apps/dbus-1.12.20:=[${MULTILIB_USEDEP}]
+	>=sys-devel/gcc-${GCC_MIN}
 	>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP},minizip]
 	app-arch/bzip2:=[${MULTILIB_USEDEP}]
+	virtual/libc
 	bluetooth? (
 		>=net-wireless/bluez-5.55[${MULTILIB_USEDEP}]
 	)
