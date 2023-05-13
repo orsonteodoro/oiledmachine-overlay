@@ -50,12 +50,5 @@ x11-libs/cairo bolt ebolt
 # Force >= -O2 for dav1d
 www-client/firefox debug
 
-# Not feasible for most individuals
-# It needs a lot of computing resources.
-sys-apps/orca build-models
-
-# tensorflow is being removed from this overlay
-media-video/ffmpeg tensorflow
-
 # Block for security
 www-client/firefox telemetry
