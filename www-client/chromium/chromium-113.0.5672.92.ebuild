@@ -3274,4 +3274,23 @@ einfo
 # *Sync update means to keep it updated with the distro ebuild.
 #
 
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 113.0.5672.92 (20230513)
+# Test performed:  video streaming, browsing
+# Test comments:  Some streaming may not work with all free codecs or using them
+# may be flakey.
+# USE="X bundled-libcxx custom-cflags dav1d opus pgo (pic)
+# proprietary-codecs-disable-nc-user pulseaudio system-ffmpeg wayland -bluetooth
+# -branch-protection -cfi (-component-build) -cups (-debug) -ebolt -encode -epgo
+# -gtk4 -hangouts (-headless) -js-type-check -kerberos -libaom -official
+# -openh264 -pax-kernel -pre-check-vaapi -proprietary-codecs
+# -proprietary-codecs-disable -proprietary-codecs-disable-nc-developer -qt5 -r1
+# -screencast (-selinux) (-suid) -system-dav1d -system-flac -system-fontconfig
+# -system-freetype -system-harfbuzz -system-icu -system-libaom -system-libdrm
+# -system-libjpeg-turbo -system-libpng -system-libstdcxx -system-libwebp
+# -system-libxml -system-libxslt -system-openh264 -system-opus -system-re2
+# -system-zlib -thinlto-opt -vaapi -vaapi-hevc -vorbis -vpx -widevine"
+# L10N="-af -am -ar -bg -bn -ca -cs -da -de -el -en-GB -en-US -es -es-419 -et
+# -fa -fi -fil -fr -gu -he -hi -hr -hu -id -it -ja -kn -ko -lt -lv -ml -mr -ms
+# -nb -nl -pl -pt-BR -pt-PT -ro -ru -sk -sl -sr -sv -sw -ta -te -th -tr -uk -ur
+# -vi -zh-CN -zh-TW"
