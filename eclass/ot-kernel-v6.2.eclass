@@ -53,12 +53,6 @@ PATCH_TRESOR_V="3.18.5"
 # When using that commit list generator, it may miss some commits, so verify all
 # the commits in order.
 
-#C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
-C2TCP_VER="2.2"
-C2TCP_EXTRA="0521"
-C2TCP_KV="4.13.1"
-C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
-
 ZEN_KV="6.2.0"
 PATCH_ZENSAUCE_COMMITS=(
 f040d83e3cc0d2662d8e90bd7b142ab524146017
@@ -193,9 +187,9 @@ a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 ) # newest
 
 IUSE+="
-bbrv2 build c2tcp cfi +cfs clang clang-pgo deepcc disable_debug -exfat
-+genpatches -genpatches_1510 kcfi lto multigen_lru orca prjc rt shadowcallstack
-symlink tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
+bbrv2 build cfi +cfs clang clang-pgo disable_debug -exfat +genpatches
+-genpatches_1510 kcfi lto multigen_lru prjc rt shadowcallstack symlink tresor
+tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-multigen_lru zen-sauce zen-sauce-all
 -zen-tune
 "
@@ -298,14 +292,11 @@ K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 DESCRIPTION="\
 A customizable kernel package with \
 BBRv2, \
-C2TCP, \
 CFI, \
 CVE fixes, \
-DeepCC, \
 genpatches, \
 kernel_compiler_patch, \
 multigen_lru, \
-Orca, \
 Project C (BMQ, PDS-mq), \
 RT_PREEMPT (-rt), \
 zen-multigen_lru, \
@@ -322,20 +313,17 @@ LICENSE+=" GPL-2" # kernel_compiler_patch
 LICENSE+=" GPL-2" # -O3 patch
 LICENSE+=" HPND" # See drivers/gpu/drm/drm_encoder.c
 LICENSE+=" bbrv2? ( || ( GPL-2 BSD ) )" # https://github.com/google/bbr/tree/v2alpha#license
-LICENSE+=" c2tcp? ( MIT )"
 LICENSE+=" clang-pgo? ( GPL-2 )"
 # A gcc pgo patch in 2014 exists but not listed for license reasons.
 LICENSE+=" cfi? ( GPL-2 )"
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
 	# third-party CPU scheduler but the stock CPU scheduler.
-LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 LICENSE+=" kcfi? ( GPL-2 )"
 LICENSE+=" prjc? ( GPL-3 )" # see \
 	# https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" multigen_lru? ( GPL-2 )"
-LICENSE+=" orca? ( MIT )"
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
@@ -537,7 +525,6 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 	"
 	SRC_URI+="
 		${BBRV2_SRC_URIS}
-		${C2TCP_URIS}
 		${CFI_SRC_URIS}
 		${CLANG_PGO_URI}
 		${GENPATCHES_URI}
@@ -576,23 +563,14 @@ else
 				${CFI_SRC_URIS}
 			)
 		)
-		c2tcp? (
-			${C2TCP_URIS}
-		)
 		clang-pgo? (
 			${CLANG_PGO_URI}
-		)
-		deepcc? (
-			${C2TCP_URIS}
 		)
 		genpatches? (
 			${GENPATCHES_URI}
 		)
 		prjc? (
 			${PRJC_SRC_URI}
-		)
-		orca? (
-			${C2TCP_URIS}
 		)
 		rt? (
 			${RT_SRC_ALT_URI}
@@ -874,10 +852,6 @@ eerror
 
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-cf9b1da.patch" ]] ; then
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-6.3.patch"
-	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
-einfo "See ${path}"
-		die
-		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi
