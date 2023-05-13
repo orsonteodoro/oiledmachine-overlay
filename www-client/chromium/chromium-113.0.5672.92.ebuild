@@ -677,7 +677,7 @@ COMMON_SNAPSHOT_DEPEND="
 	)
 	>=dev-libs/nss-3.61:=[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.29:=[${MULTILIB_USEDEP}]
-	>=media-libs/mesa-20.3.5:=[gbm(+),${MULTILIB_USEDEP}]
+	>=media-libs/mesa-20.3.5:=[${MULTILIB_USEDEP},gbm(+)]
 	proprietary-codecs? (
 		system-openh264? (
 			>=media-libs/openh264-2.3.0:=[${MULTILIB_USEDEP}]
@@ -708,7 +708,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=media-libs/libjpeg-turbo-2.1.5.1:=[${MULTILIB_USEDEP}]
 	)
 	system-libpng? (
-		>=media-libs/libpng-1.6.37:=[-apng,${MULTILIB_USEDEP}]
+		>=media-libs/libpng-1.6.37:=[${MULTILIB_USEDEP},-apng]
 	)
 	system-libwebp? (
 		>=media-libs/libwebp-1.3.0:=[${MULTILIB_USEDEP}]
@@ -819,8 +819,6 @@ CLANG_RDEPEND="
 	)
 "
 RDEPEND+="
-	${COMMON_DEPEND}
-	${CLANG_RDEPEND}
 	!headless? (
 		qt5? (
 			>=dev-qt/qtgui-${QT5_PV}:5[wayland?,X?]
@@ -830,13 +828,14 @@ RDEPEND+="
 			>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland?,X?]
 		)
 	)
+	${COMMON_DEPEND}
+	${CLANG_RDEPEND}
 	virtual/ttf-fonts
 	selinux? (
 		sec-policy/selinux-chromium
 	)
 "
 DEPEND+="
-	${COMMON_DEPEND}
 	!headless? (
 		!gtk4? (
 			>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland?,X?]
@@ -845,6 +844,7 @@ DEPEND+="
 			>=gui-libs/gtk-${GTK4_PV}:4[wayland?,X?]
 		)
 	)
+	${COMMON_DEPEND}
 "
 CLANG_BDEPEND="
 	bundled-libcxx? (
