@@ -680,52 +680,67 @@ COMMON_SNAPSHOT_DEPEND="
 	>=media-libs/mesa-20.3.5:=[gbm(+),${MULTILIB_USEDEP}]
 	proprietary-codecs? (
 		system-openh264? (
-			>=media-libs/openh264-1.6.0:=[${MULTILIB_USEDEP}]
+			>=media-libs/openh264-2.3.0:=[${MULTILIB_USEDEP}]
 		)
 	)
 	system-dav1d? (
-		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP},8bit]
+		>=media-libs/dav1d-1.1.0:=[${MULTILIB_USEDEP},8bit]
 	)
 	system-fontconfig? (
-		media-libs/fontconfig:=[${MULTILIB_USEDEP}]
+		>=media-libs/fontconfig-2.14.2:=[${MULTILIB_USEDEP}]
 	)
 	system-freetype? (
-		>=media-libs/freetype-2.10.4:=[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-2.13:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-2.7.4:0=[${MULTILIB_USEDEP},icu(-)]
+		>=media-libs/harfbuzz-5.3.1:0=[${MULTILIB_USEDEP},icu(-)]
 	)
 	system-icu? (
 		>=dev-libs/icu-67.1:=[${MULTILIB_USEDEP}]
 	)
 	system-libaom? (
-		>=media-libs/libaom-3.4.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/libaom-3.6.0:=[${MULTILIB_USEDEP}]
 	)
 	system-libdrm? (
-		>=x11-libs/libdrm-2.4.104:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libdrm-2.4.114:=[${MULTILIB_USEDEP}]
 	)
 	system-libjpeg-turbo? (
-		>=media-libs/libjpeg-turbo-2.0.6:=[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-2.1.5.1:=[${MULTILIB_USEDEP}]
 	)
 	system-libpng? (
 		>=media-libs/libpng-1.6.37:=[-apng,${MULTILIB_USEDEP}]
 	)
 	system-libwebp? (
-		>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-1.3.0:=[${MULTILIB_USEDEP}]
 	)
 	system-libxml? (
-		>=dev-libs/libxml2-2.9.10:=[${MULTILIB_USEDEP},icu]
+		>=dev-libs/libxml2-2.11.0:=[${MULTILIB_USEDEP},icu]
 	)
 	system-libxslt? (
-		>=dev-libs/libxslt-1.1.34:=[${MULTILIB_USEDEP}]
+		>=dev-libs/libxslt-1.1.37:=[${MULTILIB_USEDEP}]
 	)
 	system-re2? (
-		>=dev-libs/re2-0.2021.02.01:=[${MULTILIB_USEDEP}]
+		>=dev-libs/re2-0.2019.19.13:=[${MULTILIB_USEDEP}]
 	)
 	system-zlib? (
-		>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP}]
+		>=sys-libs/zlib-1.2.13:=[${MULTILIB_USEDEP}]
 	)
 "
+# https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/fontconfig/include/config.h#L290
+# https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/libpng/pnglibconf.h
+# https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/libxml/linux/config.h#L160					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/re2/README.chromium#L4						; older than generated_package_lists
+# https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/zlib/zlib.h#L40
+# /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/icu/source/configure		L585	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/openh264/src/meson.build		L2
+# /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/libjpeg_turbo/jconfig.h		L7	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/libwebp/src/configure.ac		L1	; newer than generated_package_lists
 
 # No multilib for this virtual/udev when it should be.
 VIRTUAL_UDEV="
