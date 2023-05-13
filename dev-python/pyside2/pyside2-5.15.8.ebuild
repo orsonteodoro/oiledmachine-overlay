@@ -157,7 +157,7 @@ gen_llvm_rdepend() {
 		echo "
 			llvm-${s}? (
 				=sys-devel/clang-runtime-${s}*:=
-				>=dev-python/shiboken2-${PV}[llvm-${s},${PYTHON_USEDEP}]
+				>=dev-python/shiboken2-${PV}[${PYTHON_USEDEP},llvm-${s}]
 				sys-devel/clang:${s}=
 			)
 		"
@@ -170,7 +170,7 @@ RDEPEND="
 	=dev-qt/qtopengl-${QT_PV}[gles2-only=]
 	=dev-qt/qtserialport-${QT_PV}
 	3d? (
-		=dev-qt/qt3d-${QT_PV}[qml?,gles2-only=]
+		=dev-qt/qt3d-${QT_PV}[gles2-only=,qml?]
 	)
 	charts? (
 		=dev-qt/qtcharts-${QT_PV}[qml?]
@@ -179,13 +179,13 @@ RDEPEND="
 		=dev-qt/qtconcurrent-${QT_PV}
 	)
 	datavis? (
-		=dev-qt/qtdatavis3d-${QT_PV}[qml?,gles2-only=]
+		=dev-qt/qtdatavis3d-${QT_PV}[gles2-only=,qml?]
 	)
 	designer? (
 		=dev-qt/designer-${QT_PV}
 	)
 	gui? (
-		=dev-qt/qtgui-${QT_PV}[jpeg,gles2-only=]
+		=dev-qt/qtgui-${QT_PV}[gles2-only=,jpeg]
 	)
 	help? (
 		=dev-qt/qthelp-${QT_PV}
@@ -261,7 +261,9 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	test? ( x11-misc/xvfb-run )
+	test? (
+		x11-misc/xvfb-run
+	)
 "
 BDEPEND="
 	test? (
