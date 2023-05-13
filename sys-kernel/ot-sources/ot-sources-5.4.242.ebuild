@@ -5,8 +5,8 @@ EAPI=8
 
 PATCH_BMQ_VER="5.4-r2"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
-GENPATCHES_VER="248"
-PATCH_RT_VER="5.4.230-rt80"
+GENPATCHES_VER="249"
+PATCH_RT_VER="5.4.242-rt81"
 
 inherit ot-kernel-v5.4
 
