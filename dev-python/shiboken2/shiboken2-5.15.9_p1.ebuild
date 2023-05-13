@@ -24,7 +24,7 @@ QT_PV="$(ver_cut 1-2)*:5"
 
 DESCRIPTION="Python binding generator for C++ libraries"
 HOMEPAGE="https://wiki.qt.io/PySide2"
-SRC_URI="https://download.qt.io/official_releases/QtForPython/pyside2/PySide2-${PV}-src/${MY_P}.tar.xz"
+SRC_URI="https://download.qt.io/official_releases/QtForPython/pyside2/PySide2-${PV%_*}-src/${MY_P/_p/-}.tar.xz"
 # The "sources/shiboken2/libshiboken" directory is triple-licensed under the
 # GPL v2, v3+, and LGPL v3. All remaining files are licensed under the GPL v3
 # with version 1.0 of a Qt-specific exception enabling shiboken2 output to be
@@ -38,7 +38,7 @@ LICENSE="
 	)
 "
 SLOT="0"
-KEYWORDS="amd64 ~arm arm64 ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="
 +docstrings numpy test vulkan
 ${LLVM_SLOTS[@]/#/llvm-}
@@ -91,14 +91,12 @@ DEPEND="
 BDEPEND="
 	dev-util/patchelf
 "
-S="${WORKDIR}/${MY_P}/sources/shiboken2"
+S="${WORKDIR}/pyside-setup-opensource-src-${PV%_*}/sources/shiboken2"
 RESTRICT="test mirror"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.15.5-python311-1.patch"
 	"${FILESDIR}/${PN}-5.15.5-python311-2.patch"
 	"${FILESDIR}/${PN}-5.15.5-python311-3.patch"
-	"${FILESDIR}/${PN}-5.15.6-fix-pyside2-compile.patch"
-	"${FILESDIR}/${PN}-5.15.8-py-limited-api.patch"
 	"${FILESDIR}/${PN}-5.15.5-add-numpy-1.23-compatibility.patch"
 	"${FILESDIR}/${PN}-5.12.2.1-oflag.patch"
 )
@@ -275,7 +273,7 @@ src_install() {
 	sed -i \
 		-e 's~shiboken2-python[[:digit:]]\+\.[[:digit:]]\+~shiboken2${PYTHON_CONFIG_SUFFIX}~g' \
 		-e 's~/bin/shiboken2~/bin/shiboken2${PYTHON_CONFIG_SUFFIX}~g' \
-		"${ED}/usr/$(get_libdir)"/cmake/Shiboken2-${PV}/Shiboken2Targets-${CMAKE_BUILD_TYPE,,}.cmake || die
+		"${ED}/usr/$(get_libdir)"/cmake/Shiboken2*/Shiboken2Targets-${CMAKE_BUILD_TYPE,,}.cmake || die
 
 	# Remove the broken "shiboken_tool.py" script. By inspection, this script
 	# reduces to a noop. Moreover, this script raises the following exception:
