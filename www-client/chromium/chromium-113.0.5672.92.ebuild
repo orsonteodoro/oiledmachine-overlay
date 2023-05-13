@@ -3285,7 +3285,7 @@ einfo
 #   WebGL Aquarium - pass, ~60 fps
 #   CanvasMark 2013 (html5 canvas tests) - pass
 #   GPU Shader Experiments (https://www.kevs3d.co.uk/dev/shaders/) - pass, randomly selected
-# Test comments:  Built with clang 17.0.0, Python 3.11.
+# Test comments:  Built with clang 17.0.0, Python 3.11.  64-bit ABI only
 # USE="X bundled-libcxx custom-cflags dav1d opus pgo (pic)
 # proprietary-codecs-disable-nc-user pulseaudio system-ffmpeg vpx wayland
 # -bluetooth -branch-protection -cfi (-component-build) -cups (-debug) -ebolt
