@@ -720,7 +720,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=dev-libs/libxslt-1.1.37:=[${MULTILIB_USEDEP}]
 	)
 	system-re2? (
-		>=dev-libs/re2-0.2019.19.13:=[${MULTILIB_USEDEP}]
+		>=dev-libs/re2-0.2019.10.13:=[${MULTILIB_USEDEP}]
 	)
 	system-zlib? (
 		>=sys-libs/zlib-1.2.13:=[${MULTILIB_USEDEP}]
@@ -732,15 +732,17 @@ COMMON_SNAPSHOT_DEPEND="
 # https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/libpng/pnglibconf.h
 # https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/libxml/linux/config.h#L160					; newer than generated_package_lists
 # https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/re2/README.chromium#L4						; older than generated_package_lists
+# https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/re2/README.chromium#L4						; older than generated_package_lists, (live)
 # https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/zlib/zlib.h#L40
+# /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/icu/source/configure		L585	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/openh264/src/meson.build		L2
 # /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/libjpeg_turbo/jconfig.h		L7	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/libwebp/src/configure.ac		L1	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/openh264/src/meson.build		L2
+# /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/opus/README.chromium		L3	; newer than generated_package_lists, live
 
 # No multilib for this virtual/udev when it should be.
 VIRTUAL_UDEV="
@@ -801,7 +803,7 @@ COMMON_DEPEND="
 		)
 	)
 	system-flac? (
-		>=media-libs/flac-1.3.3:=[${MULTILIB_USEDEP}]
+		>=media-libs/flac-1.4.2:=[${MULTILIB_USEDEP}]
 	)
 "
 CLANG_RDEPEND="
