@@ -104,7 +104,7 @@ FFMPEG_FLAG_MAP=(
 	bs2b:libbs2b chromaprint cuda:cuda-llvm flite:libflite frei0r vmaf:libvmaf
 	fribidi:libfribidi fontconfig ladspa lcms:lcms2 libass libplacebo libtesseract lv2
 	truetype:libfreetype vidstab:libvidstab
-	rubberband:librubberband tensorflow:libtensorflow zeromq:libzmq zimg:libzimg
+	rubberband:librubberband zeromq:libzmq zimg:libzimg
 	# libswresample options
 	libsoxr
 	# Threads; we only support pthread for now but ffmpeg supports more
@@ -572,9 +572,6 @@ LICENSE_REQUIRED_USE="
 	svg? (
 		$(gen_relicense lgpl2x)
 	)
-	tensorflow? (
-		apache2_0
-	)
 	truetype? (
 		$(gen_relicense gpl2x)
 	)
@@ -998,9 +995,6 @@ RDEPEND+="
 	)
 	svt-av1? (
 		>=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}]
-	)
-	tensorflow? (
-		sci-libs/tensorflow
 	)
 	truetype? (
 		>=media-libs/freetype-2.5.0.1:2[${MULTILIB_USEDEP}]
