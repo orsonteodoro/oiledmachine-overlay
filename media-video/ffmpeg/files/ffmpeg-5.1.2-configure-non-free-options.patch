@@ -618,7 +618,7 @@ Resulting benefits:
 +    disable2 lvf_demuxer # May use h264.  See also trac ticket 18
 +    disable2 metasound_decoder # Uses twinvq.o
 +    disable2 mov_demuxer
-+    disable2 mov_muxer
++    disable2 mov_muxer # Builds hvec.o
 +    disable2 mp3on4_decoder
 +    disable2 mp3on4float_decoder
 +    disable2 mp4_muxer # Requires mov_muxer
