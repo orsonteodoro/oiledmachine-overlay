@@ -18,7 +18,7 @@ inherit blender-v3.5
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  turned-into-split-eclasses
 
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 3.5.1
 # USE="X abi10-compat alembic boost build_creator bullet collada \
 # color-management cycles cycles-path-guiding dds draco elbeem embree ffmpeg \
 # fftw gmp jack jemalloc jpeg2k llvm llvm-13 man materialx nanovdb ndof nls \
