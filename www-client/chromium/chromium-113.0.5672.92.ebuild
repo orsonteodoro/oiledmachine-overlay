@@ -3278,7 +3278,7 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 113.0.5672.92 (20230513)
 # Test performed:  video streaming, browsing
 # Test comments:  Some streaming may not work with all free codecs or using them
-# may be flakey.
+# may be flakey.  Built with clang 17.0.0.
 # USE="X bundled-libcxx custom-cflags dav1d opus pgo (pic)
 # proprietary-codecs-disable-nc-user pulseaudio system-ffmpeg wayland -bluetooth
 # -branch-protection -cfi (-component-build) -cups (-debug) -ebolt -encode -epgo
