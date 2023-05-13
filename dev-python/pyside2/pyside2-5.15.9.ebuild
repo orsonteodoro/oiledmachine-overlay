@@ -415,7 +415,7 @@ src_install() {
 	#     https://bugreports.qt.io/browse/PYSIDE-1053
 	#     https://github.com/leycec/raiagent/issues/74
 	sed -i -e 's~pyside2-python[[:digit:]]\+\.[[:digit:]]\+~pyside2${PYTHON_CONFIG_SUFFIX}~g' \
-		"${ED}/usr/$(get_libdir)/cmake/PySide2-${PV}/PySide2Targets-${CMAKE_BUILD_TYPE,,}.cmake" || die
+		"${ED}/usr/$(get_libdir)/cmake/PySide2*/PySide2Targets-${CMAKE_BUILD_TYPE,,}.cmake" || die
 }
 
 # OILEDMACHINE-OVERLAY-META-REVDEP:  shiboken2

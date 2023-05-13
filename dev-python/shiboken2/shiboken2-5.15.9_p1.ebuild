@@ -13,8 +13,8 @@ EAPI=8
 # TODO: Add PyPy once officially supported. See also:
 #     https://bugreports.qt.io/browse/PYSIDE-535
 PYTHON_COMPAT=( python3_{8..11} )
-LLVM_MAX_SLOT=15
-LLVM_SLOTS=( 15 14 13 12 11 )
+LLVM_MAX_SLOT=16
+LLVM_SLOTS=( 16 15 14 13 12 11 )
 
 inherit cmake flag-o-matic llvm python-r1 toolchain-funcs
 
@@ -42,7 +42,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="
 +docstrings numpy test vulkan
 ${LLVM_SLOTS[@]/#/llvm-}
-+llvm-15
++llvm-16
 "
 # llvm-n should be the latest stable
 REQUIRED_USE="
