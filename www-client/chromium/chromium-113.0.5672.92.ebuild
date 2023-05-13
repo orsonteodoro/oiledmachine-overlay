@@ -732,6 +732,7 @@ COMMON_SNAPSHOT_DEPEND="
 # https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/libpng/pnglibconf.h
 # https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/libxml/linux/config.h#L160					; newer than generated_package_lists
 # https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/node/update_node_binaries#L18
 # https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/re2/README.chromium#L4						; older than generated_package_lists, (live)
 # https://github.com/chromium/chromium/blob/113.0.5672.92/third_party/zlib/zlib.h#L40
 # /var/tmp/portage/www-client/chromium-113.0.5672.92/work/chromium-113.0.5672.92/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
@@ -874,7 +875,7 @@ BDEPEND+="
 	>=dev-util/gperf-3.0.3
 	>=dev-util/ninja-1.7.2
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=net-libs/nodejs-7.6.0[inspector]
+	>=net-libs/nodejs-16.13.0[inspector]
 	>=sys-devel/bison-2.4.3
 	dev-lang/perl
 	dev-vcs/git
