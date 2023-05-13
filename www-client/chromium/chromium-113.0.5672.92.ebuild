@@ -60,7 +60,7 @@ inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils
 inherit python-any-r1 qmake-utils readme.gentoo-r1 toolchain-funcs xdg-utils
 
 # Added by the oiledmachine-overlay
-inherit check-linker flag-o-matic-om llvm multilib multilib-minimal uopts
+inherit check-linker flag-o-matic-om lcnr llvm multilib multilib-minimal uopts
 inherit cflags-depends
 
 DESCRIPTION="The open-source version of the Chrome web browser"
@@ -3276,7 +3276,12 @@ einfo
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 113.0.5672.92 (20230513)
-# Test performed:  video streaming, browsing
+# Test performed:
+#   video streaming - pass
+#   browsing - pass
+#   WebGL Aquarium - pass, ~60 fps
+#   CanvasMark 2013 (html5 canvas tests) - pass
+#   GPU Shader Experiments (https://www.kevs3d.co.uk/dev/shaders/) - pass, randomly selected
 # Test comments:  Some streaming may not work with all free codecs or using them
 # may be flakey.  Built with clang 17.0.0.
 # USE="X bundled-libcxx custom-cflags dav1d opus pgo (pic)
