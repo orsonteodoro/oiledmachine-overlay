@@ -2,4 +2,4 @@ dev-rust
 liri-base
 liri-extra
 blender-libs
-dev-node
+dev-nodejs
