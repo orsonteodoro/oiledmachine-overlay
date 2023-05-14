@@ -24,16 +24,14 @@ EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test src_install
 
 BDEPEND+="
 	app-misc/jq
-	sys-apps/npm:3
 "
-if [[ "${NPM_SLOT}" == "2" ]] ; then
+if [[ -n "${NPM_SLOT}" ]] ; then
 	BDEPEND+="
-		sys-apps/npm:2
+		sys-apps/npm:${NPM_SLOT}
 	"
-fi
-if [[ "${NPM_SLOT}" == "1" ]] ; then
+else
 	BDEPEND+="
-		sys-apps/npm:1
+		sys-apps/npm:3
 	"
 fi
 

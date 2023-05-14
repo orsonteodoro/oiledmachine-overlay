@@ -43,11 +43,14 @@ EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test src_install
 
 BDEPEND+="
 	app-misc/jq
-	sys-apps/yarn:1
 "
-if [[ "${YARN_SLOT}" == "3" ]] ; then
+if [[ -n "${YARN_SLOT}" ]] ; then
 	BDEPEND+="
-		sys-apps/yarn:3
+		sys-apps/yarn:${YARN_SLOT}
+	"
+else
+	BDEPEND+="
+		sys-apps/yarn:1
 	"
 fi
 # Eclass requires yarn >= 2.x
