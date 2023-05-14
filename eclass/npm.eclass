@@ -26,12 +26,12 @@ BDEPEND+="
 	app-misc/jq
 	sys-apps/npm:3
 "
-if [[ "${NODE_SLOT}" == "2" ]] ; then
+if [[ "${NPM_SLOT}" == "2" ]] ; then
 	BDEPEND+="
 		sys-apps/npm:3
 	"
 fi
-if [[ "${NODE_SLOT}" == "1" ]] ; then
+if [[ "${NPM_SLOT}" == "1" ]] ; then
 	BDEPEND+="
 		sys-apps/npm:1
 	"
