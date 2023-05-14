@@ -452,6 +452,7 @@ DBUS_PV="0.60"
 DBUS_GLIB_PV="0.60"
 GTK3_PV="3.14.0"
 NASM_PV="2.14.02"
+SPEECH_DISPATCHER_PV="0.11.4-r1"
 XKBCOMMON_PV="0.4.1"
 
 gen_llvm_bdepends() {
@@ -687,17 +688,17 @@ RDEPEND+="
 		!pulseaudio? (
 			alsa? (
 				|| (
-					>=app-accessibility/speech-dispatcher-0.11.4[alsa,espeak-ng]
-					>=app-accessibility/speech-dispatcher-0.11.4[alsa,espeak]
-					>=app-accessibility/speech-dispatcher-0.11.4[alsa,flite]
+					>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[alsa,espeak]
+					>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[alsa,espeak]
+					>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[alsa,flite]
 				)
 			)
 		)
 		pulseaudio? (
 			|| (
-				>=app-accessibility/speech-dispatcher-0.11.4[espeak-ng,pulseaudio]
-				>=app-accessibility/speech-dispatcher-0.11.4[espeak,pulseaudio]
-				>=app-accessibility/speech-dispatcher-0.11.4[flite,pulseaudio]
+				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[espeak,pulseaudio]
+				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[espeak,pulseaudio]
+				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[flite,pulseaudio]
 			)
 		)
 	)
@@ -1565,7 +1566,7 @@ eerror
 				die
 			fi
 		fi
-		if has_version "app-accessibility/speech-dispatcher[espeak-ng]" ; then
+		if has_version "app-accessibility/speech-dispatcher[espeak]" ; then
 			if ! grep -q -e "^AddModule.*\"espeak-ng\"" \
 				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
 eerror
