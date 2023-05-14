@@ -29,9 +29,9 @@ unset __
 # https://wiki.mozilla.org/Release_Management/Calendar
 
 
-FIREFOX_PATCHSET="firefox-112-patches-06.tar.xz"
+FIREFOX_PATCHSET="firefox-113-patches-01.tar.xz"
 
-LLVM_SLOTS=(15 14)
+LLVM_SLOTS=( 15 14 )
 LLVM_MAX_SLOT=15
 
 PYTHON_COMPAT=( python3_{9..11} )
@@ -96,8 +96,8 @@ SLOT="rapid"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
 LICENSE_FINGERPRINT="\
-d11fc563df1ceb867285979ab63a2832e9bb4fa07e15ecd8435270734a11073d\
-1d59c26ba640ab023029181f6d660491186b63555c08568f4fa1d9e5082b1c1c\
+ed7ef4de89840f20482d43f47149d993b5280de787a017114730e0d296ee5035\
+e6ce73d176e405d1dab64151a7787bc3190692df5ba72f552039a61883d0e273\
 " # SHA512
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
@@ -1327,7 +1327,7 @@ src_prepare() {
 
 	# Allow to use system-ffmpeg completely.
 	eapply "${FILESDIR}/extra-patches/${PN}-110-allow-ffmpeg-decode-av1.patch"
-	eapply "${FILESDIR}/extra-patches/${PN}-110-disable-ffvpx.patch"
+	eapply "${FILESDIR}/extra-patches/${PN}-113-disable-ffvpx.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user

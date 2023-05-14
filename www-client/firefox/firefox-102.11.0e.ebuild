@@ -29,7 +29,7 @@ unset __
 
 FIREFOX_PATCHSET="firefox-102esr-patches-10j.tar.xz"
 
-LLVM_SLOTS=(14)
+LLVM_SLOTS=( 14 )
 LLVM_MAX_SLOT=14
 
 PYTHON_COMPAT=( python3_{8..11} )
