@@ -407,7 +407,8 @@ npm_hydrate() {
 		COREPACK_ENABLE_NETWORK="${COREPACK_ENABLE_NETWORK:-0}"
 	fi
 einfo "Hydrating..."
-	corepack hydrate --activate "${EROOT}/usr/share/nodejs/corepack.tgz" || die
+	local npm_slot="${NPM_SLOT:-3}"
+	corepack hydrate --activate "${EROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
 }
 
 # @FUNCTION: _npm_src_unpack

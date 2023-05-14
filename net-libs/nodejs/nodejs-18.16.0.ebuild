@@ -79,7 +79,7 @@ acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
 npm mold pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
-man pgo r6
+man pgo r7
 "
 
 gen_required_use_pgo() {
@@ -116,7 +116,6 @@ ACORN_PV="8.8.2"
 NGHTTP2_PV="1.52.0"
 RDEPEND+="
 	!net-libs/nodejs:0
-	!sys-apps/yarn
 	>=app-arch/brotli-1.0.9
 	>=dev-libs/libuv-1.44.2:=
 	>=net-dns/c-ares-1.19.0
@@ -156,6 +155,12 @@ BDEPEND+="
 		net-misc/curl
 	)
 "
+PDEPEND+="
+	sys-apps/npm:3
+	acorn? (
+		=dev-nodejs/acorn-$(ver_cut 1-2 ${ACORN_PV})*
+	)
+"
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 PATCHES=(
 	"${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
@@ -166,7 +171,6 @@ PATCHES=(
 )
 S="${WORKDIR}/node-v${PV}"
 NPM_PV="9.5.1" # See https://github.com/nodejs/node/blob/v18.16.0/deps/npm/package.json
-YARN1_PV="1.22.19"
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_PV="7.4.0"
@@ -207,26 +211,6 @@ einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2025-04-30."
 einfo
 
 	# Prevent merge conflicts
-	if use corepack && (( $(_count_useflag_slots "corepack") > 1 ))
-	then
-eerror
-eerror "You need to disable corepack on all except one of the following:"
-eerror
-		_print_merge_useflag_conflicts "corepack"
-eerror
-		die
-	fi
-	if use npm && (( $(_count_useflag_slots "npm") > 1 ))
-	then
-eerror
-eerror "You need to disable npm on all except one of the following:"
-eerror
-		_print_merge_useflag_conflicts "npm"
-eerror
-eerror "Only enable the npm USE flag in the highest slot installed."
-eerror
-		die
-	fi
 	if use man && (( $(_count_useflag_slots "man") > 1 ))
 	then
 eerror
@@ -771,21 +755,6 @@ ewarn
 install_corepack() {
 	corepack disable 2>/dev/null
 	corepack enable
-	mkdir -p "${EROOT}/usr/share/nodejs"
-
-	# Install npm, pnpm, yarn 3.x
-	corepack prepare "npm@${NPM_PV}" "pnpm@latest" "yarn@stable" -o="${EROOT}/usr/share/nodejs/corepack.tgz"
-
-	corepack prepare "yarn@${YARN1_PV}" -o="${EROOT}/usr/share/nodejs/yarn1.tgz"
-
-einfo
-einfo "Use \`corepack hydrate --activate ${EPREFIX}/usr/share/nodejs/corepack.tgz\` to load npm, pnpm, and yarn 3.x."
-einfo "Use \`corepack hydrate --activate ${EPREFIX}/usr/share/nodejs/yarn1.tgz\` to load yarn 1.x."
-einfo
-}
-
-install_acorn() {
-	npm install "acorn@${ACORN_PV}" -g
 }
 
 pkg_postinst() {
@@ -809,13 +778,11 @@ einfo "SLOTS simultaneously."
 einfo
 	uopts_pkg_postinst
 	use corepack && install_corepack
-	use acorn && install_acorn
 }
 
 pkg_prerm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
 		corepack disable
-		npm remove acorn -g
 	fi
 }
 
