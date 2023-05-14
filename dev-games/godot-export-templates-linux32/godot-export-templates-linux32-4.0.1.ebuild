@@ -363,7 +363,7 @@ DEPEND+="
 		!pulseaudio? (
 			alsa? (
 				|| (
-					>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[alsa,espeak-ng]
+					>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[alsa,espeak]
 					>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[alsa,espeak]
 					>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[alsa,flite]
 				)
@@ -371,7 +371,7 @@ DEPEND+="
 		)
 		pulseaudio? (
 			|| (
-				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[espeak-ng,pulseaudio]
+				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[espeak,pulseaudio]
 				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[espeak,pulseaudio]
 				>=app-accessibility/speech-dispatcher-${SPEECH_DISPATCHER_PV}[flite,pulseaudio]
 			)
@@ -512,7 +512,7 @@ eerror
 				die
 			fi
 		fi
-		if has_version "app-accessibility/speech-dispatcher[espeak-ng]" ; then
+		if has_version "app-accessibility/speech-dispatcher[espeak]" ; then
 			if ! grep -q -e "^AddModule.*\"espeak-ng\"" \
 				"${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ; then
 eerror
