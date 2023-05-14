@@ -450,19 +450,6 @@
   for x in $(cat t | tr " " "\n" | sort | uniq) ; do echo "-${x}_filter" ; done
 
 
-  sr (super resolution) algorithm compatibility:
-
-    SCRNN:  y (officially supported by FFmpeg)
-    ESPCN:  y (officially supported by FFmpeg)
-    VESPCN:  n
-    VESPCN (mc):  n
-    VSRNet: n
-
-    VESPCN/VSRNet known issue
-
-      https://github.com/HighVoltageRocknRoll/sr/issues/7
-
-
   Additional notes
 
    * The pic USE flag may be required for LTO builds.
