@@ -366,21 +366,44 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
     </flag>
     <flag name="system-dav1d">
       Use system dav1d instead of the bundled one
+
+      No modifications or no patch files in vendored package.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-ffmpeg">
       Use system ffmpeg instead of the bundled one
 
-      The internal vendered version has additional codecs that are not removeable,
-      but the system one may be able to remove them.
+      The internal vendered version has additional codecs that are not
+      removeable, but the system one may be able to remove them.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-flac">
       Use system flac instead of the bundled one
+
+      No modifications or no patch files in vendored package.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-fontconfig">
       Use system fontconfig instead of the bundled one
+
+      No modifications or no patch files in vendored package.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-harfbuzz">
       Use system harfbuzz instead of the bundled one
+
+      No modifications or no patch files in vendored package.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-icu">
       Use system icu instead of the bundled one
@@ -388,20 +411,42 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       The internal vendored version has bug fixes, size reduced, adds spell check
       support few languages, locale style changes related to
       time/currency/regions/number-represenation.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-libaom">
       Use system libaom instead of the bundled one
+
+      No modifications or no patch files in vendored package.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-libdrm">
       Use system libdrm instead of the bundled one
 
-      No modifications in source.
+      No modifications or no patch files in vendored package.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-libjpeg-turbo">
       Use system libjpeg-turbo instead of the bundled one
+
+      Vendored applies data de-duplication change and removes non-performant
+      ARM neon assembly.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-libpng">
       Use system libpng instead of the bundled one
+
+      Vendored applies a patch to potentially prevent slow down or abuse.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-libstdcxx">
       Build against the system's libstdc++ for compatibility reasons which
@@ -412,30 +457,64 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       preference.  This setting is only allowed for systemwide GCC LTO due
       to IR (Intermediate Representation) compatibility or disabled LTO
       systemwide.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-libwebp">
       Use system libwebp instead of the bundled one
+
+      No modifications or no patch files in vendored package.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-libxml">
       Use system libxml instead of the bundled one
+
+      Applies a vulnerabilty fix.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-libxslt">
       Use system libxslt instead of the bundled one
+
+      Applies fixes for testing or built time failures.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-openh264">
       Use system openh264 instead of the bundled one
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-opus">
       Use system opus instead of the bundled one
+
+      Applies disablement to assertions or int overflow checks.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-re2">
       Use system re2 instead of the bundled one
+
+      No modifications announced.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="system-zlib">
       Use system zlib instead of the bundled one
 
       The internal vendored version is SIMD optimized but the vanilla zlib provided
       by the system is not.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
     </flag>
     <flag name="thinlto-opt">
       Enables selective ThinLTO -O2 optimizations for the browser binary and
