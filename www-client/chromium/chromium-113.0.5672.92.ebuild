@@ -3283,6 +3283,8 @@ einfo
 #     opus - pass
 #     av1 - pass
 #     vpx - pass
+#   audio streaming - pass
+#     UK websites - expected fail
 #   browsing - pass
 #   WebGL Aquarium - pass, ~60 fps
 #   CanvasMark 2013 (html5 canvas tests) - pass
@@ -3303,3 +3305,14 @@ einfo
 # -fa -fi -fil -fr -gu -he -hi -hr -hu -id -it -ja -kn -ko -lt -lv -ml -mr -ms
 # -nb -nl -pl -pt-BR -pt-PT -ro -ru -sk -sl -sr -sv -sw -ta -te -th -tr -uk -ur
 # -vi -zh-CN -zh-TW"
+
+# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 113.0.5672.92 (20230514)
+# USE+=" proprietary-codecs"
+# Test performed:
+#   audio streaming - fail
+#     UK websites - pass
+#     aac streams - pass
+#     mp3 streams - fail ; FIXME
+#   audio on demand - pass
+#     mp3 - pass
+#     aac - pass
