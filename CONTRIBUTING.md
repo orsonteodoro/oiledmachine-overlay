@@ -189,6 +189,10 @@ based on an outdated style guide.
   - List officially supported versions (listed in setup.py, CI, etc) + python
     versions that you have tested through the test suite.  Do not put versions
     that were not tested by either you or by upstream.
+  - Only the latest of the two minor versions of python are supported in this
+    overlay even.
+  - If the test suite cannot support one of the latest two minor versions,
+    the ebuild will be deleted along with the dependencies.
 
 * JS packages:
   - Use the npm_updater_update_locks.sh to update dependencies and produce a
