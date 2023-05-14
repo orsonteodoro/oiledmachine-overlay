@@ -47,6 +47,18 @@ SLOT="0/${FFMPEG_SUBSLOT}"
 # BSD - libavcodec/ilbcdec.c
 LICENSE="
 	BSD
+	gpl2? (
+		GPL-2
+	)
+	gpl2x? (
+		GPL-2+
+	)
+	gpl3? (
+		GPL-3
+	)
+	gpl3x? (
+		GPL-3+
+	)
 	lgpl2? (
 		LGPL-2
 	)
@@ -67,18 +79,6 @@ LICENSE="
 	)
 	lgpl3x? (
 		LGPL-3+
-	)
-	gpl2? (
-		GPL-2
-	)
-	gpl2x? (
-		GPL-2+
-	)
-	gpl3? (
-		GPL-3
-	)
-	gpl3x? (
-		GPL-3+
 	)
 	static-libs? (
 		BSD
