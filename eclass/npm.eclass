@@ -24,6 +24,7 @@ EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test src_install
 
 BDEPEND+="
 	app-misc/jq
+	sys-apps/npm:3
 "
 
 _npm_set_globals() {
