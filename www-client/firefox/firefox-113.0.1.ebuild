@@ -109,17 +109,36 @@ LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES"
 LICENSE+="
 	${LICENSE_FILE_NAME}
 	(
-		( all-rights-reserved || ( AFL-2.1 MIT ) )
-		( all-rights-reserved || ( AFL-2.1 BSD ) )
-		( MIT GPL-2 )
+		(
+			all-rights-reserved
+			|| (
+				AFL-2.1
+				MIT
+			)
+		)
+		(
+			all-rights-reserved
+			|| (
+				AFL-2.1
+				BSD
+			)
+		)
+		(
+			MIT
+			GPL-2
+		)
 		BSD-2
 		BSD
 		LGPL-2.1
-		|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
+		|| (
+			MPL-1.1
+			GPL-2+
+			LGPL-2.1+
+		)
 	)
+	all-rights-reserved
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
-	all-rights-reserved
 	Boost-1.0
 	BSD
 	BSD-2
@@ -147,10 +166,19 @@ LICENSE+="
 	ZLIB
 	pgo? (
 		(
-			BSD-2
-			( all-rights-reserved || ( MIT AFL-2.1 ) )
-			( MIT GPL-2 )
+			(
+				all-rights-reserved
+				|| (
+					MIT
+					AFL-2.1
+				)
+			)
+			(
+				MIT
+				GPL-2
+			)
 			BSD
+			BSD-2
 			MIT
 		)
 		BSD
@@ -159,8 +187,15 @@ LICENSE+="
 		LGPL-2.1+
 		MPL-2.0
 	)
-	|| ( BSD W3C-Document-License-2002 )
-	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
+	|| (
+		BSD
+		W3C-Document-License-2002
+	)
+	|| (
+		MPL-1.1
+		GPL-2+
+		LGPL-2.1+
+	)
 " # \
 # emerge does not recognize ^^ for the LICENSE variable.  You must choose
 # at most one for some packages when || is present.
@@ -364,19 +399,35 @@ REQUIRED_USE="
 	)
 "
 
+#
+# For dependencies versioning from the media and third_party folders have higher
+# weight than the moz.configure file.
+#
 # For dependencies, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/110.0/system-requirements/
-# /var/tmp/portage/www-client/firefox-110.0/work/firefox-110.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp
-# /var/tmp/portage/www-client/firefox-110.0/work/firefox-110.0/taskcluster/ci/fetch/toolchains.yml
-# /var/tmp/portage/www-client/firefox-110.0/work/firefox-110.0/taskcluster/ci/packages/
-# /var/tmp/portage/www-client/firefox-110.0/work/firefox-110.0/taskcluster/ci/toolchain/
+# https://www.mozilla.org/en-US/firefox/113.0.1/system-requirements/
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/build/moz.configure/nss.configure L12
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/gfx/harfbuzz/configure.ac L3
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/media/libaom/config/aom_version.h L7
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/media/libwebp/moz.yaml L16
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/taskcluster/ci/fetch/toolchains.yml
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/taskcluster/ci/packages/
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/taskcluster/ci/toolchain/
 __='
 # Scan with also:
-SRC="${S}"
-grep -F \
-	-e ">=" \
-	-e "dependency(" \
+SRC="/var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1"
+grep -E \
+	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
+	-e "dependency" \
 	-e "find_library" \
 	-e "find_package" \
 	-e "find_program" \
@@ -385,19 +436,24 @@ grep -F \
 	-e "pkg_check_modules"  \
 	-e "REQUIRED" \
 	$(find "${SRC}" \
-		-name "*.cmake" \
-		-o -name "*.mozbuild" \
-		-o -name "*configure*" \
-		-o -name "*meson*" \
+		-name "*.mozbuild" \
 		-o -name "moz.build" \
 		-o -name "moz.configure" \
-		-o -name "CMakeLists.txt" \
-	)
+	) \
+	| grep -v "MPL" \
+	| grep -i -v "license" \
+	| grep -F -v "/zero/"
 '
 unset __
 
+DBUS_PV="0.60"
+DBUS_GLIB_PV="0.60"
+GTK3_PV="3.14.0"
+NASM_PV="2.14.02"
+XKBCOMMON_PV="0.4.1"
+
 gen_llvm_bdepends() {
-	local o=""
+	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
 		(
@@ -415,7 +471,7 @@ FF_ONLY_DEPEND="
 	!www-client/firefox:0
 	!www-client/firefox:esr
 	screencast? (
-		media-video/pipewire:=[${MULTILIB_USEDEP}]
+		>=media-video/pipewire-0.3.52:=[${MULTILIB_USEDEP}]
 	)
 	selinux? (
 		sec-policy/selinux-mozilla
@@ -497,24 +553,24 @@ NON_FREE_CDEPENDS="
 CDEPEND="
 	${FF_ONLY_DEPEND}
 	${NON_FREE_CDEPENDS}
-	>=app-accessibility/at-spi2-core-2.46.0:2
+	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.89[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
+	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-9.10.3[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
+	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
+	>=x11-libs/pixman-0.36.0[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
-	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=[${MULTILIB_USEDEP}]
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
-	media-libs/fontconfig[${MULTILIB_USEDEP}]
-	media-libs/freetype[${MULTILIB_USEDEP}]
-	sys-libs/zlib[${MULTILIB_USEDEP}]
 	virtual/freedesktop-icon-theme
 	x11-libs/cairo[${MULTILIB_USEDEP}]
 	x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
-	x11-libs/pango[${MULTILIB_USEDEP}]
-	x11-libs/pixman[${MULTILIB_USEDEP}]
 	dbus? (
-		dev-libs/dbus-glib[${MULTILIB_USEDEP}]
-		sys-apps/dbus[${MULTILIB_USEDEP}]
+		>=dev-libs/dbus-glib-${DBUS_GLIB_PV}[${MULTILIB_USEDEP}]
+		>=sys-apps/dbus-${DBUS_PV}[${MULTILIB_USEDEP}]
 	)
 	jack? (
 		virtual/jack[${MULTILIB_USEDEP}]
@@ -538,56 +594,56 @@ CDEPEND="
 		media-video/pipewire:=
 	)
 	system-av1? (
-		>=media-libs/dav1d-1.0.0:=[${MULTILIB_USEDEP},8bit]
+		>=media-libs/dav1d-1.1.0:=[${MULTILIB_USEDEP},8bit]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
-		>=media-gfx/graphite2-1.3.13[${MULTILIB_USEDEP}]
-		>=media-libs/harfbuzz-2.8.1:0=[${MULTILIB_USEDEP}]
+		>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-7.1.0:0=[${MULTILIB_USEDEP}]
 	)
 	system-icu? (
 		>=dev-libs/icu-72.1:=[${MULTILIB_USEDEP}]
 	)
 	system-jpeg? (
-		>=media-libs/libjpeg-turbo-1.2.1[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-2.1.5.1[${MULTILIB_USEDEP}]
 	)
 	system-libevent? (
 		>=dev-libs/libevent-2.1.12:0=[${MULTILIB_USEDEP},threads(+)]
 	)
 	system-libvpx? (
-		>=media-libs/libvpx-1.8.2:0=[${MULTILIB_USEDEP},postproc]
+		>=media-libs/libvpx-1.13.0:0=[${MULTILIB_USEDEP},postproc]
 	)
 	system-png? (
-		>=media-libs/libpng-1.6.35:0=[${MULTILIB_USEDEP},apng]
+		>=media-libs/libpng-1.6.39:0=[${MULTILIB_USEDEP},apng]
 	)
 	system-webp? (
-		>=media-libs/libwebp-1.1.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-1.3.0:0=[${MULTILIB_USEDEP}]
 	)
 	wayland? (
 		>=media-libs/libepoxy-1.5.10-r1[${MULTILIB_USEDEP}]
-		x11-libs/gtk+:3[${MULTILIB_USEDEP},wayland]
-		x11-libs/libdrm[${MULTILIB_USEDEP}]
-		x11-libs/libxkbcommon[${MULTILIB_USEDEP},wayland]
+		>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland]
+		>=x11-libs/libdrm-2.4[${MULTILIB_USEDEP}]
+		>=x11-libs/libxkbcommon-${XKBCOMMON_PV}[${MULTILIB_USEDEP},wayland]
 	)
 	wifi? (
 		kernel_linux? (
-			dev-libs/dbus-glib[${MULTILIB_USEDEP}]
-			net-misc/networkmanager[${MULTILIB_USEDEP}]
-			sys-apps/dbus[${MULTILIB_USEDEP}]
+			>=dev-libs/dbus-glib-${DBUS_GLIB_PV}[${MULTILIB_USEDEP}]
+			>=net-misc/networkmanager-0.7[${MULTILIB_USEDEP}]
+			>=sys-apps/dbus-${DBUS_PV}[${MULTILIB_USEDEP}]
 		)
 	)
 	X? (
+		>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},X]
+		>=x11-libs/libxkbcommon-${XKBCOMMON_PV}[${MULTILIB_USEDEP},X]
+		>=x11-libs/libXrandr-1.4.0[${MULTILIB_USEDEP}]
+		>=x11-libs/libXtst-1.2.3[${MULTILIB_USEDEP}]
 		virtual/opengl[${MULTILIB_USEDEP}]
 		x11-libs/cairo[${MULTILIB_USEDEP},X]
-		x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
 		x11-libs/libX11[${MULTILIB_USEDEP}]
 		x11-libs/libXcomposite[${MULTILIB_USEDEP}]
 		x11-libs/libXdamage[${MULTILIB_USEDEP}]
 		x11-libs/libXext[${MULTILIB_USEDEP}]
 		x11-libs/libXfixes[${MULTILIB_USEDEP}]
-		x11-libs/libxkbcommon[${MULTILIB_USEDEP},X]
-		x11-libs/libXrandr[${MULTILIB_USEDEP}]
-		x11-libs/libXtst[${MULTILIB_USEDEP}]
 		x11-libs/libxcb:=[${MULTILIB_USEDEP}]
 	)
 "
@@ -660,15 +716,16 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	${GAMEPAD_BDEPEND}
-	>=dev-util/cbindgen-0.24.3
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=virtual/rust-1.65.0[${MULTILIB_USEDEP}]
+	>=dev-lang/perl-5.006
+	>=dev-util/cbindgen-0.23.0
+	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
+	>=net-libs/nodejs-10
+	>=virtual/rust-1.68.0[${MULTILIB_USEDEP}]
 	app-alternatives/awk
 	app-arch/unzip
 	app-arch/zip
-	net-libs/nodejs
 	amd64? (
-		>=dev-lang/nasm-2.14
+		>=dev-lang/nasm-${NASM_PV}
 	)
 	mold? (
 		sys-devel/mold
@@ -685,7 +742,7 @@ BDEPEND+="
 		)
 	)
 	x86? (
-		>=dev-lang/nasm-2.14
+		>=dev-lang/nasm-${NASM_PV}
 	)
 	|| (
 		$(gen_llvm_bdepends)
