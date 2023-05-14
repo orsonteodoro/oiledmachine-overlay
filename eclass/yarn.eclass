@@ -45,6 +45,11 @@ BDEPEND+="
 	app-misc/jq
 	sys-apps/yarn:1
 "
+if [[ "${YARN_SLOT}" == "3" ]] ; then
+	BDEPEND+="
+		sys-apps/yarn:3
+	"
+fi
 # Eclass requires yarn >= 2.x
 
 _yarn_set_globals() {
