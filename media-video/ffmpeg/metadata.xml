@@ -737,9 +737,6 @@
   <flag name="sndio">
     Enable support for the <pkg>media-sound/sndio</pkg> backend
   </flag>
-  <flag name="sr">
-    Generate sr (super-resolution) training models.
-  </flag>
   <flag name="srt">
     Enable support for Secure Reliable Transport (SRT) via <pkg>net-libs/srt</pkg>
   </flag>
