@@ -148,10 +148,18 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
 ## DONE
 
 
+    PartitionAlloc - a secure allocator
+
+      Chromium uses PartitionAlloc as the default allocator.  It's designed for
+      security to avoid type confusion attacks and lower latency, and benefits
+      the most from memory use effiency.  It's the default in 92 and later.
+      There is no current way to switch back to the OS allocator.
+
     References:
       --lto-O2 is too large - https://github.com/chromium/chromium/commit/da072d13b2a1cc8459c29aa4e52584a4491a4ad6
       CFI - https://www.chromium.org/developers/testing/control-flow-integrity
       CFI ldflags - https://clang.llvm.org/docs/ControlFlowIntegrity.html
+      PartitionAlloc - https://chromium.googlesource.com/chromium/src/+/refs/heads/main/base/allocator/partition_allocator/PartitionAlloc.md
       PGO - https://blog.chromium.org/2020/08/chrome-just-got-faster-with-profile.html
       https://github.com/chromium/chromium/blob/master/build/config/sanitizers/BUILD.gn#L204
       [1] https://github.com/chromium/chromium/tree/master/tools/perf/benchmarks
