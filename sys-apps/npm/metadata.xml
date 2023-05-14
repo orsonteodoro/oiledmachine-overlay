@@ -10,4 +10,21 @@
     <remote-id type="github">npm/cli</remote-id>
     <bugs-to>https://github.com/npm/cli/issues</bugs-to>
   </upstream>
+  <slots>
+    <slot name="0">
+      Older ebuilds (not-supported)
+    </slot>
+    <slot name="1">
+      For lockfile v1 support.
+    </slot>
+    <slot name="2">
+      For lockfile v1-v2 (inclusive-inclusive) support.
+    </slot>
+    <slot name="3">
+      For lockfile v2-v3 (inclusive-inclusive) support.
+    </slot>
+    <subslots>
+      The semver major.minor
+    </subslot>
+  </slots>
 </pkgmetadata>
