@@ -3306,13 +3306,13 @@ einfo
 # -nb -nl -pl -pt-BR -pt-PT -ro -ru -sk -sl -sr -sv -sw -ta -te -th -tr -uk -ur
 # -vi -zh-CN -zh-TW"
 
-# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 113.0.5672.92 (20230514)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 113.0.5672.92 (20230514)
 # USE+=" proprietary-codecs"
 # Test performed:
-#   audio streaming - fail
+#   audio streaming - pass
 #     UK websites - pass
 #     aac streams - pass
-#     mp3 streams - fail ; FIXME
+#     mp3 streams (shoutcast v1 / HTTP 0.9) - expected fail, some links will work with v2
 #   audio on demand - pass
 #     mp3 - pass
 #     aac - pass
