@@ -28,7 +28,7 @@ BDEPEND+="
 "
 if [[ "${NPM_SLOT}" == "2" ]] ; then
 	BDEPEND+="
-		sys-apps/npm:3
+		sys-apps/npm:2
 	"
 fi
 if [[ "${NPM_SLOT}" == "1" ]] ; then
