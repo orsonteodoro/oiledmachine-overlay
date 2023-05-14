@@ -406,6 +406,7 @@ REQUIRED_USE="
 # For dependencies, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
 # https://www.mozilla.org/en-US/firefox/113.0.1/system-requirements/
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/moz.configure
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/build/moz.configure/nss.configure L12
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/gfx/graphite2/include/graphite2/Font.h L31
@@ -417,6 +418,7 @@ REQUIRED_USE="
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/media/libpng/png.h L281
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/media/libvpx/config/vpx_version.h L8
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/media/libwebp/moz.yaml L16
+# /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/modules/freetype2/include/freetype/freetype.h L4943
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/third_party/dav1d/meson.build L26
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/third_party/pipewire/pipewire/version.h L49
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/taskcluster/ci/fetch/toolchains.yml
@@ -558,7 +560,7 @@ CDEPEND="
 	>=dev-libs/nss-3.89[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-9.10.3[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.13.0[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
 	>=x11-libs/pixman-0.36.0[${MULTILIB_USEDEP}]
