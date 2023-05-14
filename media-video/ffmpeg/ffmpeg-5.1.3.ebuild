@@ -1,5 +1,5 @@
 # Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -13,7 +13,7 @@ EAPI=8
 # changes its ABI then this package will be rebuilt needlessly. Hence, such a
 # package is free _not_ to := depend on FFmpeg but I would strongly encourage
 # doing so since such a case is unlikely.
-FFMPEG_SUBSLOT=56.58.58
+FFMPEG_SUBSLOT=57.59.59
 
 SCM=""
 if [ "${PV#9999}" != "${PV}" ] ; then
@@ -47,21 +47,43 @@ SLOT="0/${FFMPEG_SUBSLOT}"
 # BSD - libavcodec/ilbcdec.c
 LICENSE="
 	BSD
-	lgpl2_1? ( LGPL-2.1 )
-	lgpl2? ( LGPL-2 )
-	lgpl2x? ( LGPL-2+ )
-	lgpl2_1? ( LGPL-2.1 )
-	lgpl2_1x? ( LGPL-2.1+ )
-	lgpl3? ( LGPL-3 )
-	lgpl3x? ( LGPL-3+ )
-	gpl2? ( GPL-2 )
-	gpl2x? ( GPL-2+ )
-	gpl3? ( GPL-3 )
-	gpl3x? ( GPL-3+ )
+	lgpl2? (
+		LGPL-2
+	)
+	lgpl2_1? (
+		LGPL-2.1
+	)
+	lgpl2_1? (
+		LGPL-2.1
+	)
+	lgpl2_1x? (
+		LGPL-2.1+
+	)
+	lgpl2x? (
+		LGPL-2+
+	)
+	lgpl3? (
+		LGPL-3
+	)
+	lgpl3x? (
+		LGPL-3+
+	)
+	gpl2? (
+		GPL-2
+	)
+	gpl2x? (
+		GPL-2+
+	)
+	gpl3? (
+		GPL-3
+	)
+	gpl3x? (
+		GPL-3+
+	)
 	static-libs? (
-		MIT
 		BSD
 		BSD-2
+		MIT
 		ZLIB
 		libcaca? (
 			GPL-2
@@ -76,7 +98,10 @@ LICENSE="
 " # This package is actually LGPL-2.1+, but certain dependencies are LGPL-2.1
 # The extra licenses are for static-libs.
 if [ "${PV#9999}" = "${PV}" ] ; then
-	KEYWORDS="~alpha ~amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ppc ppc64 ~riscv sparc ~x86 ~amd64-linux ~x86-linux ~x64-macos"
+	KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
+~x86 ~amd64-linux ~x86-linux ~x64-macos
+	"
 fi
 
 # Options to use as use_enable in the foo[:bar] form.
@@ -84,38 +109,120 @@ fi
 # or $(use_enable foo foo) if no :bar is set.
 # foo is added to IUSE.
 FFMPEG_FLAG_MAP=(
-	+bzip2:bzlib cpudetection:runtime-cpudetect debug gcrypt +gnutls gmp
-	hardcoded-tables +iconv libxml2 lzma +network opencl
-	openssl +postproc samba:libsmbclient sdl:ffplay sdl:sdl2 vaapi vdpau vulkan
-	X:xlib X:libxcb X:libxcb-shm X:libxcb-xfixes +zlib
+	+bzip2:bzlib
+	cpudetection:runtime-cpudetect
+	debug
+	gcrypt
+	+gnutls
+	gmp
+	hardcoded-tables
+	+iconv
+	libxml2
+	lzma
+	+network opencl
+	openssl
+	+postproc
+	samba:libsmbclient
+	sdl:ffplay
+	sdl:sdl2
+	vaapi
+	vdpau
+	vulkan
+	X:xlib
+	X:libxcb
+	X:libxcb-shm
+	X:libxcb-xfixes
+	+zlib
+
 	# libavdevice options
-	cdio:libcdio iec61883:libiec61883 ieee1394:libdc1394 libcaca openal
+	cdio:libcdio
+	iec61883:libiec61883
+	ieee1394:libdc1394
+	libcaca
+	openal
 	opengl
-	# indevs
-	libv4l:libv4l2 pulseaudio:libpulse libdrm jack:libjack
-	# decoders
-	amr:libopencore-amrwb amr:libopencore-amrnb codec2:libcodec2 +dav1d:libdav1d fdk:libfdk-aac
-	jpeg2k:libopenjpeg bluray:libbluray gme:libgme gsm:libgsm
-	libaribb24 mmal modplug:libmodplug opus:libopus libilbc librtmp ssh:libssh
-	speex:libspeex srt:libsrt svg:librsvg nvdec nvenc
-	vorbis:libvorbis vpx:libvpx zvbi:libzvbi
+
+	# Indevs
+	libv4l:libv4l2
+	pulseaudio:libpulse
+	libdrm
+	jack:libjack
+
+	# Decoders
+	amr:libopencore-amrwb
+	amr:libopencore-amrnb
+	codec2:libcodec2
+	+dav1d:libdav1d
+	fdk:libfdk-aac
+	jpeg2k:libopenjpeg
+	jpegxl:libjxl
+	bluray:libbluray
+	gme:libgme
+	gsm:libgsm
+	libaribb24
+	mmal
+	modplug:libmodplug
+	opus:libopus
+	qsv:libmfx
+	libilbc
+	librtmp
+	ssh:libssh
+	speex:libspeex
+	srt:libsrt
+	svg:librsvg
+	nvdec
+	nvenc
+	vorbis:libvorbis
+	vpx:libvpx
+	zvbi:libzvbi
+
 	# libavfilter options
 	appkit
-	bs2b:libbs2b chromaprint cuda:cuda-llvm flite:libflite frei0r vmaf:libvmaf
-	fribidi:libfribidi fontconfig ladspa libass libtesseract lv2 truetype:libfreetype vidstab:libvidstab
-	rubberband:librubberband zeromq:libzmq zimg:libzimg
+	bs2b:libbs2b
+	chromaprint
+	cuda:cuda-llvm
+	flite:libflite
+	frei0r
+	vmaf:libvmaf
+	fribidi:libfribidi
+	fontconfig
+	ladspa
+	lcms:lcms2
+	libass
+	libplacebo
+	libtesseract
+	lv2
+	truetype:libfreetype
+	vidstab:libvidstab
+	rubberband:librubberband
+	zeromq:libzmq
+	zimg:libzimg
+
 	# libswresample options
 	libsoxr
-	# Threads; we only support pthread for now but ffmpeg supports more
+
+	# Threads.
+	# We only support pthread for now but FFmpeg supports more.
 	+threads:pthreads
 )
 
 # Same as above but for encoders, i.e. they do something only with USE=encode.
 FFMPEG_ENCODER_FLAG_MAP=(
-	amf amrenc:libvo-amrwbenc kvazaar:libkvazaar libaom mp3:libmp3lame
-	openh264:libopenh264 rav1e:librav1e snappy:libsnappy svt-av1:libsvtav1
-	theora:libtheora twolame:libtwolame webp:libwebp x264:libx264
-	x265:libx265 xvid:libxvid
+	amf
+	amrenc:libvo-amrwbenc
+	kvazaar:libkvazaar
+	libaom
+	mp3:libmp3lame
+	openh264:libopenh264
+	rav1e:librav1e
+	snappy:libsnappy
+	svt-av1:libsvtav1
+	theora:libtheora
+	twolame:libtwolame
+	webp:libwebp
+	x264:libx264
+	x265:libx265
+	xvid:libxvid
 )
 
 # Strings for CPU features in the useflag[:configure_option] form
@@ -162,8 +269,12 @@ PPC_CPU_FEATURES=(
 	cpu_flags_ppc_vsx2:power8
 )
 PPC_CPU_REQUIRED_USE="
-	cpu_flags_ppc_vsx? ( cpu_flags_ppc_altivec )
-	cpu_flags_ppc_vsx2? ( cpu_flags_ppc_vsx )
+	cpu_flags_ppc_vsx? (
+		cpu_flags_ppc_altivec
+	)
+	cpu_flags_ppc_vsx2? (
+		cpu_flags_ppc_vsx
+	)
 "
 X86_CPU_FEATURES_RAW=(
 	3dnow:amd3dnow
@@ -183,23 +294,55 @@ X86_CPU_FEATURES_RAW=(
 	sse4_2:sse42
 	xop:xop
 )
-X86_CPU_FEATURES=( ${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_} )
+X86_CPU_FEATURES=(
+	${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_}
+)
 X86_CPU_REQUIRED_USE="
-	cpu_flags_x86_avx2? ( cpu_flags_x86_avx )
-	cpu_flags_x86_fma4? ( cpu_flags_x86_avx )
-	cpu_flags_x86_fma3? ( cpu_flags_x86_avx )
-	cpu_flags_x86_xop?  ( cpu_flags_x86_avx )
-	cpu_flags_x86_avx?  ( cpu_flags_x86_sse4_2 )
-	cpu_flags_x86_aes? ( cpu_flags_x86_sse4_2 )
-	cpu_flags_x86_sse4_2?  ( cpu_flags_x86_sse4_1 )
-	cpu_flags_x86_sse4_1?  ( cpu_flags_x86_ssse3 )
-	cpu_flags_x86_ssse3?  ( cpu_flags_x86_sse3 )
-	cpu_flags_x86_sse3?  ( cpu_flags_x86_sse2 )
-	cpu_flags_x86_sse2?  ( cpu_flags_x86_sse )
-	cpu_flags_x86_sse?  ( cpu_flags_x86_mmxext )
-	cpu_flags_x86_mmxext?  ( cpu_flags_x86_mmx )
-	cpu_flags_x86_3dnowext?  ( cpu_flags_x86_3dnow )
-	cpu_flags_x86_3dnow?  ( cpu_flags_x86_mmx )
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_avx
+	)
+	cpu_flags_x86_fma4? (
+		cpu_flags_x86_avx
+	)
+	cpu_flags_x86_fma3? (
+		cpu_flags_x86_avx
+	)
+	cpu_flags_x86_xop?  (
+		cpu_flags_x86_avx
+	)
+	cpu_flags_x86_avx?  (
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_aes? (
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_sse4_2?  (
+		cpu_flags_x86_sse4_1
+	)
+	cpu_flags_x86_sse4_1?  (
+		cpu_flags_x86_ssse3
+	)
+	cpu_flags_x86_ssse3?  (
+		cpu_flags_x86_sse3
+	)
+	cpu_flags_x86_sse3?  (
+		cpu_flags_x86_sse2
+	)
+	cpu_flags_x86_sse2?  (
+		cpu_flags_x86_sse
+	)
+	cpu_flags_x86_sse?  (
+		cpu_flags_x86_mmxext
+	)
+	cpu_flags_x86_mmxext?  (
+		cpu_flags_x86_mmx
+	)
+	cpu_flags_x86_3dnowext?  (
+		cpu_flags_x86_3dnow
+	)
+	cpu_flags_x86_3dnow?  (
+		cpu_flags_x86_mmx
+	)
 "
 
 CPU_FEATURES_MAP=(
@@ -292,66 +435,104 @@ nonfree
 gen_relicense() {
 	local in_license="${1}"
 	case ${in_license} in
+		gpl2x)
+			echo "
+				!gpl2x_to_gpl3? (
+					gpl2x
+				)
+				gpl2x_to_gpl3? (
+					gpl3
+				)
+			"
+			;;
 		lgpl2x)
 			echo "
-				lgpl2x_to_gpl2? ( gpl2 )
-				lgpl2x_to_gpl3? ( gpl3 )
-				lgpl2x_to_lgpl3x? ( lgpl3x )
 				!lgpl2x_to_gpl2? (
 					!lgpl2x_to_gpl3? (
-						!lgpl2x_to_lgpl3x? ( lgpl2x )
+						!lgpl2x_to_lgpl3x? (
+							lgpl2x
+						)
 					)
+				)
+				lgpl2x_to_gpl2? (
+					gpl2
+				)
+				lgpl2x_to_gpl3? (
+					gpl3
+				)
+				lgpl2x_to_lgpl3x? (
+					lgpl3x
 				)
 			"
 			;;
 		lgpl2_1)
 			echo "
-				lgpl2_1_to_gpl2? ( gpl2 )
-				lgpl2_1_to_gpl2x? ( gpl2x )
-				lgpl2_1_to_gpl3? ( gpl3 )
 				!lgpl2_1_to_gpl2? (
 					!lgpl2_1_to_gpl2x (
-						!lgpl2_1_to_gpl3? ( lgpl2_1 )
+						!lgpl2_1_to_gpl3? (
+							lgpl2_1
+						)
 					)
+				)
+				lgpl2_1_to_gpl2? (
+					gpl2
+				)
+				lgpl2_1_to_gpl2x? (
+					gpl2x
+				)
+				lgpl2_1_to_gpl3? (
+					gpl3
 				)
 			"
 			;;
 		lgpl2_1x)
 			echo "
-				lgpl2_1x_to_gpl2? ( gpl2 )
-				lgpl2_1x_to_gpl2x? ( gpl2x )
-				lgpl2_1x_to_gpl3? ( gpl3 )
-				lgpl2_1x_to_lgpl3? ( lgpl3 )
-				lgpl2_1x_to_lgpl3x? ( lgpl3x )
 				lgpl2_1x_to_gpl2? (
 					!lgpl2_1x_to_gpl2x? (
 						!lgpl2_1x_to_gpl3? (
 							!lgpl2_1x_to_lgpl3? (
-								!lgpl2_1x_to_lgpl3x? ( lgpl2_1x )
+								!lgpl2_1x_to_lgpl3x? (
+									lgpl2_1x
+								)
 							)
 						)
 					)
+					gpl2
+				)
+				lgpl2_1x_to_gpl2x? (
+					gpl2x
+				)
+				lgpl2_1x_to_gpl3? (
+					gpl3
+				)
+				lgpl2_1x_to_lgpl3? (
+					lgpl3
+				)
+				lgpl2_1x_to_lgpl3x? (
+					lgpl3x
 				)
 			"
 			;;
 		lgpl3)
 			echo "
 				!gpl2
-				lgpl3_to_gpl3? ( gpl3 )
-				!lgpl3_to_gpl3? ( lgpl3 )
+				!lgpl3_to_gpl3? (
+					lgpl3
+				)
+				lgpl3_to_gpl3? (
+					gpl3
+				)
 			"
 			;;
 		lgpl3x)
 			echo "
 				!gpl2
-				lgpl3x_to_gpl3? ( gpl3 )
-				!lgpl3x_to_gpl3? ( lgpl3x )
-			"
-			;;
-		gpl2x)
-			echo "
-				gpl2x_to_gpl3? ( gpl3 )
-				!gpl2x_to_gpl3? ( gpl2x )
+				!lgpl3x_to_gpl3? (
+					lgpl3x
+				)
+				lgpl3x_to_gpl3? (
+					gpl3
+				)
 			"
 			;;
 	esac
@@ -368,7 +549,14 @@ gen_relicense() {
 # dav1d is BSD-2
 # MPL-2.0 is indirect compatible with the GPL-2, LGPL-2.1 -- with exceptions.  \
 #   For details see: https://www.gnu.org/licenses/license-list.html#MPL-2.0
-REQUIRED_USE_VERSION3="^^ ( gpl3 gpl3x lgpl3 lgpl3x )"
+REQUIRED_USE_VERSION3="
+	^^ (
+		gpl3
+		gpl3x
+		lgpl3
+		lgpl3x
+	)
+"
 LICENSE_REQUIRED_USE="
 	apache2_0? (
 		$(gen_relicense lgpl2_1x)
@@ -654,6 +842,9 @@ REQUIRED_USE+="
 			trainer-video-lossless-quick
 		)
 	)
+	proprietary-codecs? (
+		re-codecs
+	)
 	proprietary-codecs-disable? (
 		!amr
 		!fdk
@@ -695,10 +886,10 @@ REQUIRED_USE+="
 	trainer-audio-cbr? (
 		pgo
 	)
-	trainer-audio-vbr? (
+	trainer-audio-lossless? (
 		pgo
 	)
-	trainer-audio-lossless? (
+	trainer-audio-vbr? (
 		pgo
 	)
 	trainer-av-streaming? (
@@ -875,6 +1066,12 @@ RDEPEND+="
 	jpeg2k? (
 		>=media-libs/openjpeg-2:2[${MULTILIB_USEDEP}]
 	)
+	jpegxl? (
+		>=media-libs/libjxl-0.7.0[$MULTILIB_USEDEP]
+	)
+	lcms? (
+		>=media-libs/lcms-2.13:2[$MULTILIB_USEDEP]
+	)
 	libaom? (
 		>=media-libs/libaom-1.0.0-r1:=[${MULTILIB_USEDEP}]
 	)
@@ -882,7 +1079,7 @@ RDEPEND+="
 		>=media-libs/aribb24-1.0.3-r2[${MULTILIB_USEDEP}]
 	)
 	libass? (
-		>=media-libs/libass-0.10.2:=[${MULTILIB_USEDEP}]
+		>=media-libs/libass-0.11.0:=[${MULTILIB_USEDEP}]
 	)
 	libcaca? (
 		>=media-libs/libcaca-0.99_beta18-r1[${MULTILIB_USEDEP}]
@@ -892,6 +1089,9 @@ RDEPEND+="
 	)
 	libilbc? (
 		>=media-libs/libilbc-2[${MULTILIB_USEDEP}]
+	)
+	libplacebo? (
+		>=media-libs/libplacebo-4.192.0[$MULTILIB_USEDEP]
 	)
 	librtmp? (
 		>=media-video/rtmpdump-2.4_p20131018[${MULTILIB_USEDEP}]
@@ -932,8 +1132,8 @@ RDEPEND+="
 	)
 	openssl? (
 		!apache2_0? (
-			<dev-libs/openssl-3:=[${MULTILIB_USEDEP}]
 			>=dev-libs/openssl-1.0.1h-r2:0=[${MULTILIB_USEDEP}]
+			<dev-libs/openssl-3:=[${MULTILIB_USEDEP}]
 		)
 		apache2_0? (
 			>=dev-libs/openssl-3.0.0_beta2:0=[${MULTILIB_USEDEP}]
@@ -945,11 +1145,14 @@ RDEPEND+="
 	pulseaudio? (
 		>=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP},gdbm?]
 	)
+	qsv? (
+		media-libs/intel-mediasdk
+	)
 	rubberband? (
 		>=media-libs/rubberband-1.8.1-r1[${MULTILIB_USEDEP}]
 	)
 	samba? (
-		>=net-fs/samba-3.6.23-r1[${MULTILIB_USEDEP},client]
+		>=net-fs/samba-3.6.23-r1[client,${MULTILIB_USEDEP}]
 	)
 	sdl? (
 		<media-libs/libsdl2-3[${MULTILIB_USEDEP},sound,threads,video,wayland?,X?]
@@ -977,7 +1180,7 @@ RDEPEND+="
 		>=media-libs/nv-codec-headers-9.1.23.1
 	)
 	svt-av1? (
-		>=media-libs/svt-av1-0.8.4[${MULTILIB_USEDEP}]
+		>=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}]
 	)
 	truetype? (
 		>=media-libs/freetype-2.5.0.1:2[${MULTILIB_USEDEP}]
@@ -993,7 +1196,7 @@ RDEPEND+="
 		>=media-libs/vidstab-1.1.0[${MULTILIB_USEDEP}]
 	)
 	vmaf? (
-		media-libs/libvmaf[${MULTILIB_USEDEP}]
+		>=media-libs/libvmaf-2.0.0[${MULTILIB_USEDEP}]
 	)
 	vorbis? (
 		>=media-libs/libvorbis-1.3.3-r1[${MULTILIB_USEDEP}]
@@ -1003,13 +1206,16 @@ RDEPEND+="
 		>=media-libs/libvpx-1.4.0:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
-		>=media-libs/vulkan-loader-1.1.97:=[${MULTILIB_USEDEP}]
+		>=media-libs/vulkan-loader-1.2.189:=[${MULTILIB_USEDEP}]
 	)
 	X? (
 		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libxcb-1.4:=[${MULTILIB_USEDEP}]
 		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libXv-1.0.10[${MULTILIB_USEDEP}]
+	)
+	postproc? (
+		!media-libs/libpostproc
 	)
 	zeromq? (
 		>=net-libs/zeromq-4.1.6
@@ -1057,12 +1263,11 @@ BDEPEND+="
 		sys-devel/mold
 	)
 	test? (
-		net-misc/wget
-		sys-devel/bc
+		net-misc/wget sys-devel/bc
 	)
 	trainer-av-streaming? (
 		vaapi? (
-			>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},X,drm(+)]
+			>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},drm(+),X]
 			media-video/libva-utils[vainfo]
 			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		)
@@ -1091,20 +1296,9 @@ S="${WORKDIR}/${P/_/-}"
 S_orig="${WORKDIR}/${P/_/-}"
 N_SAMPLES=1
 
-SRC_URI+="
-https://github.com/FFmpeg/FFmpeg/commit/c6fdbe26ef30fff817581e5ed6e078d96111248a.patch
-	-> ${PN}-c6fdbe2.patch
-"
-
-# c6fdbe2 - configure: fix SDL2 version check for pkg_config fallback
-# e5163b1 - configure: extend SDL check to accept all 2.x versions
-
 PATCHES=(
 	"${FILESDIR}/chromium-r1.patch"
-	"${FILESDIR}/${PN}-5.0-backport-ranlib-build-fix.patch"
-	"${DISTDIR}/${PN}-c6fdbe2.patch"
 	"${FILESDIR}/${PN}-5.1.2-allow-7regs.patch"
-	"${FILESDIR}/${P}-clang-14-ff_seek_frame_binary-crash.patch"
 	"${FILESDIR}/${PN}-5.1.2-configure-non-free-options.patch"
 )
 
@@ -1400,13 +1594,12 @@ ewarn
 		sleep 15
 	fi
 
-	# The GLFW does not allow for software rendering.
-	# This is why hardware rendering is required.
 	if use trainer-av-streaming \
 		&& ( has pid-sandbox ${FEATURES} || has ipc-sandbox ${FEATURES} ) ; then
 eerror
-eerror "You must disable the pid-sandbox for USE=trainer-av-streaming"
-eerror "for screencast PGO/BOLT training."
+eerror "You must disable the pid-sandbox and ipc-sandbox on a per-package"
+eerror "level for the USE=trainer-av-streaming for screencast PGO/BOLT"
+eerror "training."
 eerror
 eerror "pid-sandbox is required for checking if X11 is being used."
 eerror "ipc-sandbox is required for x11grab."
@@ -1451,6 +1644,20 @@ eerror
 		die
 	fi
 
+	# ffmpeg[chromaprint] depends on chromaprint, and chromaprint[tools] depends on ffmpeg.
+	# May cause breakage while updating, #862996, #625210, #833821.
+	if has_version media-libs/chromaprint[tools] && use chromaprint ; then
+ewarn
+ewarn "You have media-libs/chromaprint installed with 'tools' USE flag, which "
+ewarn "links to ffmpeg, and you have enabled 'chromaprint' USE flag for ffmpeg, "
+ewarn "which links to chromaprint. This may cause issues while rebuilding ffmpeg."
+ewarn
+ewarn "If your build fails to 'ERROR: chromaprint not found', rebuild chromaprint "
+ewarn "without the 'tools' use flag first, then rebuild ffmpeg, and then finally enable "
+ewarn "'tools' USE flag for chromaprint. See #862996."
+ewarn
+	fi
+
 	if ! use pic && is-flagq '-flto*' ; then
 ewarn
 ewarn "USE=pic may required for LTO"
@@ -1484,10 +1691,10 @@ verify_subslot() {
 	local c0=$(grep -e "LIBAVUTIL_VERSION_MAJOR" "${S}/libavutil/version.h" \
 		| head -n 1 \
 		| awk '{print $3}')
-	local c1=$(grep -r -e "LIBAVCODEC_VERSION_MAJOR" "${S}/libavcodec/version.h" \
+	local c1=$(grep -r -e "LIBAVCODEC_VERSION_MAJOR" "${S}/libavcodec/version_major.h" \
 		| head -n 1 \
 		| awk '{print $3}')
-	local c2=$(grep -r -e "LIBAVFORMAT_VERSION_MAJOR" "${S}/libavformat/version.h" \
+	local c2=$(grep -r -e "LIBAVFORMAT_VERSION_MAJOR" "${S}/libavformat/version_major.h" \
 		| head -n 1 \
 		| awk '{print $3}')
 	local actual_subslot="${c0}.${c1}.${c2}"
@@ -1507,8 +1714,6 @@ src_prepare() {
 	if [[ "${PV%_p*}" != "${PV}" ]] ; then # Snapshot
 		export revision=git-N-${FFMPEG_REVISION}
 	fi
-
-	eapply "${FILESDIR}/vmaf-models-default-path.patch"
 
 	default
 
@@ -1844,7 +2049,7 @@ eerror
 
 	# (temporarily) disable non-multilib deps
 	if ! multilib_is_native_abi; then
-		for i in librav1e libzmq ; do
+		for i in librav1e libmfx libzmq ; do
 			myconf+=( --disable-${i} )
 		done
 	fi
@@ -1878,7 +2083,6 @@ eerror
 	# Mandatory configuration
 	myconf=(
 		--enable-avfilter
-		--enable-avresample
 		--disable-stripping
 		# This is only for hardcoded cflags; those are used in configure checks that may
 		# interfere with proper detections, bug #671746 and bug #645778
@@ -1915,6 +2119,13 @@ eerror
 		$(multilib_native_use_enable doc htmlpages)
 		$(multilib_native_enable manpages)
 	)
+
+	# Fixed in 5.0.1? Waiting for verification from someone who hit the issue.
+	if use arm || use ppc || use mips || [[ ${CHOST} == *i486* ]] ; then
+		# bug #782811
+		# bug #790590
+		extra_libs+=( --extra-libs="$(test-flags-CCLD -latomic)" )
+	fi
 
 	local static_args=()
 	if [[ "${lib_type}" == "static" ]] ; then
@@ -3425,6 +3636,7 @@ ewarn "Skipping ${id}"
 			2>/dev/null \
 			1>/dev/null \
 		; then
+ewarn "Skipping ${id} with path ${audio_sample_path}.  Decoding not possible or bad file."
 			continue
 		fi
 
@@ -3517,6 +3729,7 @@ ewarn "Skipping ${id}"
 			2>/dev/null \
 			1>/dev/null \
 		; then
+ewarn "Skipping ${id} with path ${audio_sample_path}.  Decoding not possible or bad file."
 			continue
 		fi
 
