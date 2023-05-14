@@ -2014,7 +2014,7 @@ show_clang_header_warning() {
 		"${ESYSROOT}/usr/lib/clang/${clang_slot}/include/stdatomic.h" \
 		&& return
 ewarn
-ewarn "${EROOT}/usr/lib/clang/${clang_slot}/include/stdatomic.h requires header"
+ewarn "${ESYSROOT}/usr/lib/clang/${clang_slot}/include/stdatomic.h requires header"
 ewarn "modifications.  Solutions..."
 ewarn
 ewarn "Solution 1 - Manual edit:"
@@ -2351,7 +2351,7 @@ ewarn
 		$(use system-opus && echo "
 			opus
 		")
-		# The re2 library interface relies on std::string and std::vector
+	# The re2 library interface relies on std::string and std::vector
 		$(use system-re2 && echo "
 			re2
 		")
@@ -2449,7 +2449,7 @@ ewarn
 	myconf_gn+=" rtc_include_opus=$(usex opus true false)"
 	myconf_gn+=" rtc_use_h264=$(usex proprietary-codecs true false)"
 	if ! use system-ffmpeg ; then
-		# The internal/vendored ffmpeg enables non-free codecs.
+	# The internal/vendored ffmpeg enables non-free codecs.
 		local _media_use_ffmpeg="true"
 		if \
 			   use proprietary-codecs-disable-nc-developer \
