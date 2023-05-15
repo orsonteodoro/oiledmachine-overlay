@@ -109,60 +109,59 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
-	fi
-
-	pushd "nanogui-${EGIT_NANOGUI_COMMIT}" || die
-		rm -rf \
-			source/MaterialXView/NanoGUI/ext/nanovg \
-			source/MaterialXView/NanoGUI/ext/nanovg_metal \
-			source/MaterialXView/NanoGUI/ext/glfw \
-			source/MaterialXView/NanoGUI/ext/nanobind \
-			|| die
-		mv \
-			"${WORKDIR}/nanovg-${EGIT_NANOVG_COMMIT}" \
-			"ext/nanovg" \
-			|| die
-		mv \
-			"${WORKDIR}/nanovg_metal-${EGIT_NANOVG_METAL_COMMIT}" \
-			"ext/nanovg_metal" \
-			|| die
-		mv \
-			"${WORKDIR}/glfw-${EGIT_GLFW_COMMIT}" \
-			"ext/glfw" \
-			|| die
-		pushd "${WORKDIR}/nanobind-${EGIT_NANOBIND_COMMIT}" || die
+		pushd "nanogui-${EGIT_NANOGUI_COMMIT}" || die
 			rm -rf \
-				"ext/robin_map" \
+				source/MaterialXView/NanoGUI/ext/nanovg \
+				source/MaterialXView/NanoGUI/ext/nanovg_metal \
+				source/MaterialXView/NanoGUI/ext/glfw \
+				source/MaterialXView/NanoGUI/ext/nanobind \
 				|| die
-			mv "${WORKDIR}/robin-map-${EGIT_ROBIN_MAP_COMMIT}" \
-				ext/robin_map \
+			mv \
+				"${WORKDIR}/nanovg-${EGIT_NANOVG_COMMIT}" \
+				"ext/nanovg" \
 				|| die
-		popd
-		mv \
-			"${WORKDIR}/nanobind-${EGIT_NANOBIND_COMMIT}" \
-			"ext/nanobind" \
-			|| die
-	popd || die
+			mv \
+				"${WORKDIR}/nanovg_metal-${EGIT_NANOVG_METAL_COMMIT}" \
+				"ext/nanovg_metal" \
+				|| die
+			mv \
+				"${WORKDIR}/glfw-${EGIT_GLFW_COMMIT}" \
+				"ext/glfw" \
+				|| die
+			pushd "${WORKDIR}/nanobind-${EGIT_NANOBIND_COMMIT}" || die
+				rm -rf \
+					"ext/robin_map" \
+					|| die
+				mv "${WORKDIR}/robin-map-${EGIT_ROBIN_MAP_COMMIT}" \
+					ext/robin_map \
+					|| die
+			popd
+			mv \
+				"${WORKDIR}/nanobind-${EGIT_NANOBIND_COMMIT}" \
+				"ext/nanobind" \
+				|| die
+		popd || die
 
-	pushd "${MY_P}" || die
-		rm -rf \
-			source/MaterialXView/NanoGUI \
-			source/MaterialXGraphEditor/External/ImGui \
-			source/MaterialXGraphEditor/External/ImGuiNodeEditor \
-			|| die
-		mv \
-			"${WORKDIR}/nanogui-${EGIT_NANOGUI_COMMIT}" \
-			source/MaterialXView/NanoGUI \
-			|| die
-		mv \
-			"${WORKDIR}/imgui-${EGIT_IMGUI_COMMIT}" \
-			source/MaterialXGraphEditor/External/ImGui \
-			|| die
-		mv \
-			"${WORKDIR}/imgui-node-editor-${EGIT_IMGUI_NODE_EDITOR_COMMIT}" \
-			source/MaterialXGraphEditor/External/ImGuiNodeEditor \
-			|| die
-	popd || die
+		pushd "${MY_P}" || die
+			rm -rf \
+				source/MaterialXView/NanoGUI \
+				source/MaterialXGraphEditor/External/ImGui \
+				source/MaterialXGraphEditor/External/ImGuiNodeEditor \
+				|| die
+			mv \
+				"${WORKDIR}/nanogui-${EGIT_NANOGUI_COMMIT}" \
+				source/MaterialXView/NanoGUI \
+				|| die
+			mv \
+				"${WORKDIR}/imgui-${EGIT_IMGUI_COMMIT}" \
+				source/MaterialXGraphEditor/External/ImGui \
+				|| die
+			mv \
+				"${WORKDIR}/imgui-node-editor-${EGIT_IMGUI_NODE_EDITOR_COMMIT}" \
+				source/MaterialXGraphEditor/External/ImGuiNodeEditor \
+				|| die
+		popd || die
+	fi
 }
 
 src_configure() {
