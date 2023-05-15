@@ -1277,10 +1277,8 @@ eerror
 
 	if [[ "${RUSTC_WRAPPER}" =~ "sccache" ]] ; then
 ewarn
-ewarn "Using sccache may randomly fail.  Retry or try MAKEOPTS=-j1"
+ewarn "Using sccache may randomly fail.  Retry if it fails."
 ewarn
-		# > -j1 breaks when building memchr with sccache
-		#export MAKEOPTS="-j1"
 	fi
 
 	if ! use wayland ; then
