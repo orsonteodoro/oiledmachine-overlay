@@ -2753,6 +2753,12 @@ ewarn
 # -it -ja -ka -kab -kk -km -kn -ko -lij -lt -lv -mk -mr -ms -my -nb -ne -nl -nn
 # -oc -pa -pl -pt-BR -pt-PT -rm -ro -ru -sc -sco -si -sk -sl -son -sq -sr -sv
 # -szl -ta -te -th -tl -tr -trs -uk -ur -uz -vi -xh -zh-CN -zh-TW"
+# Last build timestamp - 116:59.03
+# OILEDMACHINE-OVERLAY-TEST-TOOLCHAIN:
+#   rust 1.69.0
+#   gcc 12.2.1_p20230428-r1
+#   sccache 0.3.0
+#   gold/binutils - 2.39-r5
 # OILEDMACHINE-OVERLAY-TEST-RESULTS:
 #   browsing - pass
 #   video streaming - fail
