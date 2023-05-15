@@ -400,8 +400,8 @@ REQUIRED_USE="
 "
 
 #
-# For dependencies versioning from the media and third_party folders have higher
-# weight than the moz.configure file.
+# For dependencies versioning, files listed other than moz.configure have a
+# higher weight than the moz.configure file.
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
