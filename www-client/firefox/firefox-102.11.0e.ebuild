@@ -413,6 +413,7 @@ REQUIRED_USE="
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
 # https://www.mozilla.org/en-US/firefox/102.11.0/system-requirements/
 # /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/moz.configure
+#   perl L589
 # /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41
 # /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/build/moz.configure/nss.configure L12
 # /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/gfx/graphite2/include/graphite2/Font.h L31
@@ -428,7 +429,7 @@ REQUIRED_USE="
 # /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/third_party/dav1d/meson.build L26
 # /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/third_party/pipewire/pipewire/version.h L49
 # /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/taskcluster/ci/fetch/toolchains.yml
-#   Keyword searches: llvm-, pkgconf-, rust-
+#   Keyword searches:  cbindgen-, llvm-, pkgconf-, rust-
 # /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/taskcluster/ci/packages/
 # /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/taskcluster/ci/toolchain/
 __='

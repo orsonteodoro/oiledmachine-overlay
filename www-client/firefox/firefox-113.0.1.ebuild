@@ -407,6 +407,7 @@ REQUIRED_USE="
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
 # https://www.mozilla.org/en-US/firefox/113.0.1/system-requirements/
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/moz.configure
+#   perl L589
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/build/moz.configure/nss.configure L12
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/gfx/graphite2/include/graphite2/Font.h L31
@@ -422,7 +423,7 @@ REQUIRED_USE="
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/third_party/dav1d/meson.build L26
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/third_party/pipewire/pipewire/version.h L49
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/taskcluster/ci/fetch/toolchains.yml
-#   Keyword searches: llvm-, pkgconf-, rust-
+#   Keyword searches: cbindgen-, llvm-, pkgconf-, rust-
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/taskcluster/ci/packages/
 # /var/tmp/portage/www-client/firefox-113.0.1/work/firefox-113.0.1/taskcluster/ci/toolchain/
 __='
