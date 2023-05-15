@@ -2768,7 +2768,7 @@ ewarn
 #     aac - fail
 #   audio on demand
 #     mp3 - fail
-#     aac - fail
+#     aac - expected fail
 #     wav - pass/fail - only one sample played
 #  WebGL Aquarium - pass, ~62 FPS
 #  CanvasMark 2013 - passed
