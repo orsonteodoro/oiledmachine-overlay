@@ -2762,7 +2762,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST-RESULTS:
 #   browsing - pass
 #   video streaming - fail
-#     aom - fail
+#     aom - fail, crashes tab
 #   audio streaming
 #     mp3 (shoutcast v1) - expected fail
 #     aac - expected fail
