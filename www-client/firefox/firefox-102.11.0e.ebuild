@@ -409,7 +409,7 @@ REQUIRED_USE="
 # For dependencies versioning from the media and third_party folders have higher
 # weight than the moz.configure file.
 #
-# For dependencies, see also
+# For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
 # https://www.mozilla.org/en-US/firefox/102.11.0/system-requirements/
 # /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/moz.configure
@@ -428,6 +428,7 @@ REQUIRED_USE="
 # /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/third_party/dav1d/meson.build L26
 # /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/third_party/pipewire/pipewire/version.h L49
 # /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/taskcluster/ci/fetch/toolchains.yml
+#   Keyword searches: llvm-, pkgconf-, rust-
 # /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/taskcluster/ci/packages/
 # /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/taskcluster/ci/toolchain/
 __='
