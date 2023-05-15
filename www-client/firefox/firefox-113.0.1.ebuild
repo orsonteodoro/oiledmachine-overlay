@@ -2765,7 +2765,7 @@ ewarn
 #     aom - fail
 #   audio streaming
 #     mp3 (shoutcast v1) - expected fail
-#     aac - fail
+#     aac - expected fail
 #   audio on demand
 #     mp3 - fail
 #     aac - expected fail
@@ -2773,6 +2773,7 @@ ewarn
 #  WebGL Aquarium - pass, ~62 FPS
 #  CanvasMark 2013 - passed
 #  GPU Shader Experiments (https://www.kevs3d.co.uk/dev/shaders) - passed, randomly selected
+# TODO: retest with aac USE flag on
 
 # = Ebuild fork checklist =
 # Bump to latest release every week
