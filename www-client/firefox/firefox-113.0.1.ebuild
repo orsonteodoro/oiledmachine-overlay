@@ -28,7 +28,7 @@ unset __
 # Version announcements can be found here also:
 # https://wiki.mozilla.org/Release_Management/Calendar
 
-
+#EBUILD_MAINTAINER_MODE=1
 FIREFOX_PATCHSET="firefox-113-patches-01.tar.xz"
 
 LLVM_SLOTS=( 15 14 )
@@ -504,7 +504,7 @@ UDEV_RDEPEND="
 # x86_64 will use ffvpx and system-ffmpeg but others will use system-ffmpeg
 NON_FREE_CDEPENDS="
 	proprietary-codecs? (
-		media-libs/mesa[${MULTILIB_USEDEP},dav1d?,opus?,vaapi?,vpx?]
+		media-libs/mesa[${MULTILIB_USEDEP},proprietary-codecs]
 		system-ffmpeg? (
 			media-video/ffmpeg[${MULTILIB_USEDEP},dav1d?,opus?,vaapi?,vpx?]
 		)
@@ -1256,12 +1256,13 @@ ewarn "Microphone support may be disabled when USE=-pulseaudio."
 ewarn
 	fi
 
-	if [[ -n "${FF_EBUILD_MAINTAINER}" ]] ; then
-		if [[ -z "${MY_OVERLAY_DIR}" ]] ; then
+	if [[ "${EBUILD_MAINTAINER_MODE}" == "1" ]] ; then
+		local overlay_path=${MY_OVERLAY_DIR:-"${ESYSROOT}/usr/local/oiledmachine-overlay"}
+		if [[ ! -e "${overlay_path}" ]] ; then
 eerror
-eerror "You need to set MY_OVERLAY_DIR as a per-package envvar to the base path"
-eerror "of your overlay or local repo.  The base path should contain all the"
-eerror "overlay's categories."
+eerror "You need to change MY_OVERLAY_DIR as a per-package envvar to the base"
+eerror "path of your overlay or local repo.  The base path should contain all"
+eerror "the overlay's categories."
 eerror
 			die
 		fi
@@ -1328,7 +1329,7 @@ einfo
 	local actual_fp=$(sha512sum "${S}/toolkit/content/license.html" \
 		| cut -f 1 -d " ")
 	# Check patched versions and/or new features for differences.
-	if [[ -n "${FF_EBUILD_MAINTAINER}" ]] ; then
+	if [[ "${EBUILD_MAINTAINER_MODE}" == "1" ]] ; then
 	# For ebuild maintainers
 		if [[ \
 			   ! ( "${LICENSE}" =~ "${LICENSE_FILE_NAME}" ) \
@@ -1348,8 +1349,8 @@ eerror
 	# For users
 		if [[ "${actual_fp}" != "${LICENSE_FINGERPRINT}" ]] ; then
 eerror
-eerror "Expected license fingerprint:  ${LICENSE_FINGERPRINT}"
-eerror "Actual license fingerprint:  ${actual_fp}"
+eerror "Expected license fingerprint:\t${LICENSE_FINGERPRINT}"
+eerror "Actual license fingerprint:\t${actual_fp}"
 eerror
 eerror "A change in the license was detected.  Please notify the ebuild"
 eerror "maintainer."
@@ -1384,11 +1385,11 @@ src_prepare() {
 	# Prevent audio perma mute with gcc with -Ofast.
 	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-js.patch"
 
-	# Only partial patching was done because Gentoo doesn't support multilib
-	# Python.  Only native ABI is supported.  This means cbindgen cannot
-	# load the 32-bit clang.  It will build the cargo parts.  When it links
-	# it, it fails because of cbindings is 64-bit and the dependencies use
-	# the build information for 64-bit linking, which should be 32-bit.
+	# Only partial patching was done because the distro doesn't support
+	# multilib Python.  Only native ABI is supported.  This means cbindgen
+	# cannot load the 32-bit clang.  It will build the cargo parts.  When it
+	# links it, it fails because of cbindings is 64-bit and the dependencies
+	# use the build information for 64-bit linking, which should be 32-bit.
 
 	# Allow to use system-ffmpeg completely.
 	eapply "${FILESDIR}/extra-patches/${PN}-110-allow-ffmpeg-decode-av1.patch"
@@ -2054,8 +2055,14 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 			'Gentoo default' \
 			--disable-debug-symbols
 
+	# FIXME:  disable -Ofast in subtree/module causing crash
 	# Fork ebuild, or use distro ebuild, or set USE=debug if you want -Og
-		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
+		if true ; then
+			OFLAG="-O2"
+			mozconfig_add_options_ac \
+				"from CFLAGS" \
+				--enable-optimize=-O2
+		elif is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
 einfo "Using Ofast"
 			OFLAG="-Ofast"
 			mozconfig_add_options_ac \
@@ -2295,6 +2302,7 @@ src_compile() {
 # Installs licenses and copyright notices from third party rust cargo
 # packages and other internal packages.
 _install_licenses() {
+	[[ "${EBUILD_MAINTAINER_MODE}" == "1" ]] && return
 	lcnr_install_files
 
 	lcnr_install_header \
@@ -2737,7 +2745,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild, new-patches
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, license-completness, license-transparency
-# OILEDMACHINE-OVERLAY-TEST:  FAILED (INTERACTIVE) 113.0.1 (May 14, 2023)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 113.0.1 (May 15, 2023)
 # USE="X dav1d dbus eme-free jemalloc jumbo-build libcanberra opus
 # proprietary-codecs-disable-nc-user pulseaudio speech system-ffmpeg vaapi vpx
 # wayland webspeech -aac -alsa -cups (-debug) -ebolt -ffvpx -geckodriver
@@ -2753,7 +2761,8 @@ ewarn
 # -it -ja -ka -kab -kk -km -kn -ko -lij -lt -lv -mk -mr -ms -my -nb -ne -nl -nn
 # -oc -pa -pl -pt-BR -pt-PT -rm -ro -ru -sc -sco -si -sk -sl -son -sq -sr -sv
 # -szl -ta -te -th -tl -tr -trs -uk -ur -uz -vi -xh -zh-CN -zh-TW"
-# Last build timestamp - 116:59.03
+# Last build timestamp - 116:59.03 (first run)
+# CFLAGS: -O2 -pipe
 # OILEDMACHINE-OVERLAY-TEST-TOOLCHAIN:
 #   rust 1.69.0
 #   gcc 12.2.1_p20230428-r1
@@ -2761,13 +2770,13 @@ ewarn
 #   gold/binutils - 2.39-r5
 # OILEDMACHINE-OVERLAY-TEST-RESULTS:
 #   browsing - pass
-#   video streaming - fail
-#     aom - fail, crashes tab
+#   video streaming - pass
+#     dav1d/aom - pass
 #   audio streaming
-#     mp3 (shoutcast v1) - expected fail
+#     mp3 (shoutcast v1) - pass with random fails
 #     aac - expected fail
 #   audio on demand
-#     mp3 - fail
+#     mp3 - pass
 #     aac - expected fail
 #     wav - pass/fail - only one sample played
 #  WebGL Aquarium - pass, ~62 FPS

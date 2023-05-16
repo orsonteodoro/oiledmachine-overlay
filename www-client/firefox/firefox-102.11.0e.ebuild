@@ -27,6 +27,7 @@ unset __
 # Version announcements can be found here also:
 # https://wiki.mozilla.org/Release_Management/Calendar
 
+#EBUILD_MAINTAINER_MODE=1
 FIREFOX_PATCHSET="firefox-102esr-patches-10j.tar.xz"
 
 LLVM_SLOTS=( 14 )
@@ -510,7 +511,7 @@ UDEV_RDEPEND="
 # x86_64 will use ffvpx and system-ffmpeg but others will use system-ffmpeg
 NON_FREE_CDEPENDS="
 	proprietary-codecs? (
-		media-libs/mesa[${MULTILIB_USEDEP},dav1d?,opus?,vaapi?,vpx?]
+		media-libs/mesa[${MULTILIB_USEDEP},proprietary-codecs]
 		system-ffmpeg? (
 			media-video/ffmpeg[${MULTILIB_USEDEP},dav1d?,opus?,vaapi?,vpx?]
 		)
@@ -1213,12 +1214,13 @@ ewarn "Microphone support may be disabled when USE=-pulseaudio."
 ewarn
 	fi
 
-	if [[ -n "${FF_EBUILD_MAINTAINER}" ]] ; then
-		if [[ -z "${MY_OVERLAY_DIR}" ]] ; then
+	if [[ "${EBUILD_MAINTAINER_MODE}" == "1" ]] ; then
+		local overlay_path=${MY_OVERLAY_DIR:-"${ESYSROOT}/usr/local/oiledmachine-overlay"}
+		if [[ ! -e "${overlay_path}" ]] ; then
 eerror
-eerror "You need to set MY_OVERLAY_DIR as a per-package envvar to the base path"
-eerror "of your overlay or local repo.  The base path should contain all the"
-eerror "overlay's categories."
+eerror "You need to change MY_OVERLAY_DIR as a per-package envvar to the base"
+eerror "path of your overlay or local repo.  The base path should contain all"
+eerror "the overlay's categories."
 eerror
 			die
 		fi
@@ -1285,7 +1287,7 @@ einfo
 	local actual_fp=$(sha512sum "${S}/toolkit/content/license.html" \
 		| cut -f 1 -d " ")
 	# Check patched versions and/or new features for differences.
-	if [[ -n "${FF_EBUILD_MAINTAINER}" ]] ; then
+	if [[ "${EBUILD_MAINTAINER_MODE}" == "1" ]] ; then
 	# For ebuild maintainers
 		if [[ \
 			   ! ( "${LICENSE}" =~ "${LICENSE_FILE_NAME}" ) \
@@ -1305,8 +1307,8 @@ eerror
 	# For users
 		if [[ "${actual_fp}" != "${LICENSE_FINGERPRINT}" ]] ; then
 eerror
-eerror "Expected license fingerprint:  ${LICENSE_FINGERPRINT}"
-eerror "Actual license fingerprint:  ${actual_fp}"
+eerror "Expected license fingerprint:\t${LICENSE_FINGERPRINT}"
+eerror "Actual license fingerprint:\t${actual_fp}"
 eerror
 eerror "A change in the license was detected.  Please notify the ebuild"
 eerror "maintainer."
@@ -1338,11 +1340,11 @@ src_prepare() {
 	# Prevent audio perma mute with gcc with -Ofast.
 	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-js.patch"
 
-	# Only partial patching was done because Gentoo doesn't support multilib
-	# Python.  Only native ABI is supported.  This means cbindgen cannot
-	# load the 32-bit clang.  It will build the cargo parts.  When it links
-	# it, it fails because of cbindings is 64-bit and the dependencies use
-	# the build information for 64-bit linking, which should be 32-bit.
+	# Only partial patching was done because the distro doesn't support
+	# multilib Python.  Only native ABI is supported.  This means cbindgen
+	# cannot load the 32-bit clang.  It will build the cargo parts.  When it
+	# links it, it fails because of cbindings is 64-bit and the dependencies
+	# use the build information for 64-bit linking, which should be 32-bit.
 
 	eapply "${DISTDIR}/${PN}-d4f5769.patch"
 
@@ -1974,8 +1976,14 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 			'Gentoo default' \
 			--disable-debug-symbols
 
+	# FIXME:  Retest -Ofast
 	# Fork ebuild or set USE=debug if you want -Og
-		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
+		if true ; then
+			OFLAG="-O2"
+			mozconfig_add_options_ac \
+				"from CFLAGS" \
+				--enable-optimize=-O2
+		elif is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
 einfo "Using Ofast"
 			OFLAG="-Ofast"
 			mozconfig_add_options_ac \
@@ -2200,6 +2208,7 @@ src_compile() {
 # Installs licenses and copyright notices from third party rust cargo
 # packages and other internal packages.
 _install_licenses() {
+	[[ "${EBUILD_MAINTAINER_MODE}" == "1" ]] && return
 	lcnr_install_files
 
 	lcnr_install_header \
