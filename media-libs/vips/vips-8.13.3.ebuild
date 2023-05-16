@@ -14,7 +14,7 @@ inherit linux-info
 
 # Should not be set
 CONFIG_CHECK="!MTRR" # Example of fatal ; required
-CONFIG_CHECK="~!MTRR" # Example of non fatal error ; optional ; 
+CONFIG_CHECK="~!MTRR" # Example of non fatal error ; optional
 
 DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
@@ -160,7 +160,7 @@ RDEPEND+="
 "
 
 TEST_LLVM_SLOT=14 # For asan/ubsan tests
-LLVM_SLOTS=(14) # CI uses 14
+LLVM_SLOTS=( 14 ) # CI uses 14
 
 get_configurations() {
 	use test && echo "test"

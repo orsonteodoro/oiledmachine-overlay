@@ -95,10 +95,7 @@ RDEPEND+="
 		>=media-gfx/libimagequant-2.17.0
 	)
 	jpeg? (
-		|| (
-			virtual/jpeg:0=[${MULTILIB_USEDEP}]
-			>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_V}[${MULTILIB_USEDEP}]
-		)
+		virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
 		>=media-libs/openjpeg-2.4.0[${MULTILIB_USEDEP}]
@@ -151,7 +148,7 @@ RDEPEND+="
 "
 
 TEST_LLVM_SLOT=14 # For asan/ubsan tests
-LLVM_SLOTS=(14) # CI uses 14
+LLVM_SLOTS=( 14 ) # CI uses 14
 
 get_configurations() {
 	use test && echo "test"
