@@ -443,10 +443,10 @@ Your pull request may be rejected for reasons below:
    - Project owners have a questionable background.
    - The project credibility is in question.
 3. Exceeded time limits.
-   - Submissions are to be evaluated merged no more than a week.
+   - Submissions are to be evaluated and merged no more than a week.
    (The reason is that I may edit the whole thing or whole category).
-   - For scheduled submissions like ot-kernel eclass, you are only allowed
-     8 hours.
+   - For submissions that edit scheduled updates like ot-kernel eclass, you are
+     only allowed 8 hours.
 4. Licensing rejections.
    - The license has overtones of non free is rejected.
    - No code repository and with explicit UNKNOWN is rejected.
