@@ -99,9 +99,6 @@ ${CK_COMMITS_BL_RQSHARE_SPLIT[@]}
 # 811cb39 -> a79d648 is about the same as 24da54e
 # a17a37f, 8faec5c -> 721f586 is about the same as 78f8617
 
-# Obtained from:  date -d "2017-11-12 10:46:13 -0800" +%s
-LINUX_TIMESTAMP=1510512373
-
 IUSE+="
 bfq-mq build +cfs disable_debug +genpatches -genpatches_1510 muqss pds rt
 symlink tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64

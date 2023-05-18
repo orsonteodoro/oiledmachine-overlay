@@ -46,6 +46,7 @@
 #	https://github.com/graysky2/kernel_compiler_patch
 # MUQSS CPU Scheduler (official, EOL 5.12):
 #	https://github.com/torvalds/linux/compare/v4.14...ckolivas:4.14-ck
+#	https://github.com/torvalds/linux/compare/v4.19...ckolivas:4.19-ck
 #	https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
 #	https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
 # Multigenerational LRU:
@@ -80,6 +81,8 @@
 # UKSM:
 #	https://github.com/dolohow/uksm
 # zen-sauce, zen-tune:
+#	https://github.com/torvalds/linux/compare/v4.19...zen-kernel:zen-kernel:4.19/zen-tune	# aka part 1 of zen-sauce
+#	https://github.com/torvalds/linux/compare/v4.19...zen-kernel:zen-kernel:4.19/misc	# aka part 2 of zen-sauce
 #	https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 #	https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 #	https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
