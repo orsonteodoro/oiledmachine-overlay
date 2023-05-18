@@ -1,0 +1,11 @@
+--- a/deps/npm/node_modules/@npmcli/config/lib/index.js.orig	2023-05-15 23:58:19.000000000 -0700
++++ b/deps/npm/node_modules/@npmcli/config/lib/index.js	2023-05-17 21:50:54.028248701 -0700
+@@ -320,7 +320,7 @@ class Config {
+     // default the globalconfig file to that location, instead of the default
+     // global prefix.  It's weird that `npm get globalconfig --prefix=/foo`
+     // returns `/foo/etc/npmrc`, but better to not change it at this point.
+-    settableGetter(data, 'globalconfig', () => resolve(this.#get('prefix'), 'etc/npmrc'))
++    settableGetter(data, 'globalconfig', () => resolve('/etc', 'npmrc'))
+   }
+ 
+   loadHome () {

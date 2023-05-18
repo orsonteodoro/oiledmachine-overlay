@@ -80,7 +80,7 @@ acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
 +npm mold pax-kernel +snapshot +ssl system-icu +system-ssl test
 
 $(gen_iuse_pgo)
-man pgo r7
+man pgo r1
 "
 
 gen_required_use_pgo() {
@@ -112,7 +112,7 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Apr 13, 2023
+# Last deps commit date:  May 15, 2023
 ACORN_PV="8.8.2"
 NGHTTP2_PV="1.52.0"
 RDEPEND+="
@@ -124,7 +124,7 @@ RDEPEND+="
 	>=sys-libs/zlib-1.2.13
 	app-eselect/eselect-nodejs
 	system-icu? (
-		>=dev-libs/icu-72.1:=
+		>=dev-libs/icu-73.1:=
 	)
 	system-ssl? (
 		>=dev-libs/openssl-3.0.8:0=
@@ -162,13 +162,13 @@ PDEPEND+="
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 PATCHES=(
 	"${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
-	"${FILESDIR}"/${PN}-19.5.0-global-npm-config.patch
+	"${FILESDIR}"/${PN}-20.2.0-global-npm-config.patch
 	"${FILESDIR}"/${PN}-16.13.2-lto-update.patch
-	"${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch
+	"${FILESDIR}"/${PN}-20.1.0-support-clang-pgo.patch
 	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_PV="9.6.4" # See https://github.com/nodejs/node/blob/v20.0.0/deps/npm/package.json
+NPM_PV="9.6.6" # See https://github.com/nodejs/node/blob/v20.2.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_PV="7.4.0"
