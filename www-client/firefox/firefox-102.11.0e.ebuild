@@ -2686,7 +2686,8 @@ ewarn
 	if [[ "${OFLAG}" =~ "-Ofast" ]] ; then
 ewarn
 ewarn "Not all use cases for -Ofast have been tested.  Please send an issue"
-ewarn "request to the oiledmachine-overlay describing the bug and website."
+ewarn "request to the oiledmachine-overlay describing the bug, steps to"
+ewarn "reproduce bug, and the website."
 ewarn
 ewarn "If a bug has been observed with -Ofast, you may also downgrade to -O3."
 ewarn
