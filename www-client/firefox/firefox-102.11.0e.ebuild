@@ -1995,7 +1995,6 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 			'Gentoo default' \
 			--disable-debug-symbols
 
-	# FIXME:  Retest -Ofast
 	# Fork ebuild or set USE=debug if you want -Og
 		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
 einfo "Using -Ofast"

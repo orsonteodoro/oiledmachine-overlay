@@ -2076,7 +2076,6 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 			'Gentoo default' \
 			--disable-debug-symbols
 
-	# FIXME:  disable -Ofast in subtree/module causing crash
 	# Fork ebuild, or use distro ebuild, or set USE=debug if you want -Og
 		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
 einfo "Using -Ofast"
@@ -2802,7 +2801,8 @@ ewarn
 # -oc -pa -pl -pt-BR -pt-PT -rm -ro -ru -sc -sco -si -sk -sl -son -sq -sr -sv
 # -szl -ta -te -th -tl -tr -trs -uk -ur -uz -vi -xh -zh-CN -zh-TW"
 # Last build timestamp - 116:59.03 (first run)
-# CFLAGS: -O2 -pipe
+# CFLAGS: -O2 -pipe (PASS [interactive testing])
+# CFLAGS: -Ofast -pipe (PASS [interactive testing])
 # OILEDMACHINE-OVERLAY-TEST-TOOLCHAIN:
 #   rust 1.69.0
 #   gcc 12.2.1_p20230428-r1
