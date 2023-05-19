@@ -1394,9 +1394,12 @@ src_prepare() {
 	# Allow to use system-ffmpeg completely.
 	eapply "${FILESDIR}/extra-patches/${PN}-110-allow-ffmpeg-decode-av1.patch"
 	eapply "${FILESDIR}/extra-patches/${PN}-113-disable-ffvpx.patch"
-	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-dom-bindings.patch"
-	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-ipc-chromium-chromium-config.patch"
 
+	# Prevent tab crash
+	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-dom-bindings.patch"
+
+	# Prevent video seek bug
+	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-ipc-chromium-chromium-config.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user

@@ -1352,6 +1352,12 @@ src_prepare() {
 	eapply "${FILESDIR}/extra-patches/${PN}-102-allow-ffmpeg-decode-av1.patch"
 	eapply "${FILESDIR}/extra-patches/${PN}-102-disable-ffvpx.patch"
 
+	# Prevent tab crash
+	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-dom-bindings.patch"
+
+	# Prevent video seek bug
+	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-ipc-chromium-chromium-config.patch"
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
 
