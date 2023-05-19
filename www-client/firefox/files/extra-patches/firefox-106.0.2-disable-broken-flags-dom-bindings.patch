@@ -1,0 +1,20 @@
+--- a/dom/bindings/moz.build.orig	2023-05-11 14:42:34.000000000 -0700
++++ b/dom/bindings/moz.build	2023-05-16 10:52:54.577682345 -0700
+@@ -202,3 +202,17 @@ if CONFIG["COMPILE_ENVIRONMENT"]:
+             "!/layout/style/ServoCSSPropList.py",
+         ],
+     )
++
++if CONFIG["CC_TYPE"] in ("clang"):
++    # Prevent tab crash
++    CXXFLAGS += [
++        "__OFLAG_SAFE__",
++        "-fno-fast-math",
++    ]
++
++if CONFIG["CC_TYPE"] in ("gcc"):
++    # Prevent tab crash
++    CXXFLAGS += [
++        "__OFLAG_SAFE__",
++        "-fno-fast-math",
++    ]

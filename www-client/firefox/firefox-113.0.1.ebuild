@@ -28,7 +28,7 @@ unset __
 # Version announcements can be found here also:
 # https://wiki.mozilla.org/Release_Management/Calendar
 
-#EBUILD_MAINTAINER_MODE=1
+EBUILD_MAINTAINER_MODE=1
 FIREFOX_PATCHSET="firefox-113-patches-01.tar.xz"
 
 LLVM_SLOTS=( 15 14 )
@@ -1055,7 +1055,7 @@ eerror
 		&& has_version "<media-video/ffmpeg-5[openssl]" ; then
 eerror
 eerror "Using <media-video/ffmpeg-3 is disallowed with the"
-eerror "proprietary-codecs-disable* USE flags.  This may add nonfree code paths"
+eerror "proprietary-codecs-disable* USE flags.  This may add non-free code paths"
 eerror "in FFmpeg."
 eerror
 		die
@@ -1063,7 +1063,7 @@ eerror
 	if has_version "media-video/ffmpeg" ; then
 ewarn
 ewarn "Use a corrected local copy or the FFmpeg ebuild from the"
-ewarn "oiledmachine-overlay to eliminate the possiblity of nonfree codepaths"
+ewarn "oiledmachine-overlay to eliminate the possiblity of non-free code paths"
 ewarn "and to ensure the package is LGPL/GPL."
 ewarn
 	fi
@@ -1394,6 +1394,9 @@ src_prepare() {
 	# Allow to use system-ffmpeg completely.
 	eapply "${FILESDIR}/extra-patches/${PN}-110-allow-ffmpeg-decode-av1.patch"
 	eapply "${FILESDIR}/extra-patches/${PN}-113-disable-ffvpx.patch"
+	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-dom-bindings.patch"
+	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-ipc-chromium-chromium-config.patch"
+
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -1533,6 +1536,19 @@ einfo "CFLAGS:\t${CFLAGS}"
 einfo "olast:\t${olast}"
 	[[ "${flag}" == "${olast}" ]] && return 0
 	return 1
+}
+
+get_olast() {
+	local olast=$(echo "${CFLAGS}" \
+		| grep -o -E -e "-O(0|g|1|z|s|2|3|4|fast)" \
+		| tr " " "\n" \
+		| tail -n 1)
+	if [[ -n "${olast}" ]] ; then
+		echo "${olast}"
+	else
+		# Upstream default
+		echo "-O3"
+	fi
 }
 
 check_speech_dispatcher() {
@@ -1808,7 +1824,9 @@ einfo
 			--disable-ffmpeg
 	fi
 
-	if use ffvpx ; then
+	if true ; then
+		:;
+	elif use ffvpx ; then
 		mozconfig_add_options_ac \
 			'ffvpx=default' \
 			--with-ffvpx=default
@@ -2057,13 +2075,8 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 
 	# FIXME:  disable -Ofast in subtree/module causing crash
 	# Fork ebuild, or use distro ebuild, or set USE=debug if you want -Og
-		if true ; then
-			OFLAG="-O2"
-			mozconfig_add_options_ac \
-				"from CFLAGS" \
-				--enable-optimize=-O2
-		elif is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
-einfo "Using Ofast"
+		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
+einfo "Using -Ofast"
 			OFLAG="-Ofast"
 			mozconfig_add_options_ac \
 				"from CFLAGS" \
@@ -2092,6 +2105,30 @@ einfo "Using Ofast"
 				--enable-optimize=-O3
 		fi
 	fi
+
+	local oflag_safe
+	if [[ -z "${OFLAG}" ]] ; then
+		oflag_safe=$(get_olast)
+	else
+		oflag_safe="${OFLAG}"
+	fi
+	[[ "${oflag_safe}" == "-Ofast" ]] && oflag_safe="-O3"
+einfo "oflag_safe:\t${oflag_safe}"
+
+	local L=(
+		"dom/bindings/moz.build"
+		"ipc/chromium/chromium-config.mozbuild"
+		"gfx/layers/moz.build"
+		"js/src/js-cxxflags.mozbuild"
+	)
+
+	local f
+	for f in ${L[@]} ; do
+einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${oflag_safe}"
+		sed -i -e "s|__OFLAG_SAFE__|${oflag_safe}|g" \
+			"${f}" \
+			|| die
+	done
 
 	# Debug flag was handled via configure
 	filter-flags '-g*'

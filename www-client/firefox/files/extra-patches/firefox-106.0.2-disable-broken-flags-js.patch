@@ -6,15 +6,15 @@
      CXXFLAGS += ['-Wno-attributes']
 +
 +if CONFIG["CC_TYPE"] in ("clang"):
-+    # Freezes before loading video
++    # Prevent audio from muting always.  Breaks with -Ofast.
 +    CXXFLAGS += [
-+        "-O3", # -O3 works fine, -Ofast causes the freeze
++        "__OFLAG_SAFE__",
 +        "-fno-fast-math",
 +    ]
 +
 +if CONFIG["CC_TYPE"] in ("gcc"):
++    # Prevent audio from muting always.  Breaks with -Ofast.
 +    CXXFLAGS += [
-+        # Prevent audio from muting always.  Breaks at -Ofast.
-+        "-O3",
++        "__OFLAG_SAFE__",
 +        "-fno-fast-math",
 +    ]

@@ -1,0 +1,20 @@
+--- a/ipc/chromium/chromium-config.mozbuild.orig	2023-05-11 14:42:36.000000000 -0700
++++ b/ipc/chromium/chromium-config.mozbuild	2023-05-19 00:18:20.630190533 -0700
+@@ -58,3 +58,17 @@ else:
+ 
+     else:
+         DEFINES['OS_LINUX'] = 1
++
++if CONFIG["CC_TYPE"] in ("clang"):
++    # Prevent stuck on current position video seek bug
++    CXXFLAGS += [
++        "__OFLAG_SAFE__",
++        "-fno-fast-math",
++    ]
++
++if CONFIG["CC_TYPE"] in ("gcc"):
++    # Prevent stuck on current position video seek bug
++    CXXFLAGS += [
++        "__OFLAG_SAFE__",
++        "-fno-fast-math",
++    ]
