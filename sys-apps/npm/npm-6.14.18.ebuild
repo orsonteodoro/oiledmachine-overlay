@@ -44,6 +44,7 @@ pkg_postinst() {
 
 pkg_prerm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
+einfo "Removing ${PN}-${LOCKFILE_VER}.tgz"
 		rm -rf "${EROOT}/usr/share/${PN}/${PN}-${LOCKFILE_VER}.tgz"
 	fi
 }

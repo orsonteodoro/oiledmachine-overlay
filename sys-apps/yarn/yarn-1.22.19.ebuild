@@ -41,6 +41,7 @@ pkg_postinst() {
 
 pkg_prerm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
+einfo "Removing ${PN}-${SLOT_MAJOR}.tgz"
 		rm -rf "${EROOT}/usr/share/${PN}/${PN}-${SLOT_MAJOR}.tgz"
 	fi
 }
