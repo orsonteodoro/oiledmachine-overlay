@@ -4,6 +4,7 @@
 # The following need to be manually checked
 
 # asmlib
+# bazel
 # bitlbee-facebook # needs update and fix versioning
 # cef
 # cef-bin
