@@ -509,6 +509,24 @@ yarn_hydrate() {
 		COREPACK_ENABLE_NETWORK="${COREPACK_ENABLE_NETWORK:-0}"
 	fi
 einfo "Hydrating..."
+	if [[ ! -f "${EROOT}/usr/share/npm/npm-${npm_slot}.tgz" ]] ; then
+eerror
+eerror "Missing ${EROOT}/usr/share/npm/npm-${npm_slot}.tgz"
+eerror
+eerror "You must install sys-apps/npm:${npm_slot}::oiledmachine-overlay to"
+eerror "continue."
+eerror
+		die
+	fi
+	if [[ ! -f "${EROOT}/usr/share/yarn/yarn-${yarn_slot}.tgz" ]] ; then
+eerror
+eerror "Missing ${EROOT}/usr/share/yarn/yarn-${yarn_slot}.tgz"
+eerror
+eerror "You must install sys-apps/yarn:${yarn_slot}::oiledmachine-overlay to"
+eerror "continue."
+eerror
+		die
+	fi
 	local npm_slot=${NPM_SLOT:-3}
 	corepack hydrate --activate "${EROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
 	local yarn_slot=${YARN_SLOT:-1}
