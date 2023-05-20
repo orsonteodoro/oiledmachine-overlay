@@ -416,6 +416,7 @@ npm_hydrate() {
 		COREPACK_ENABLE_NETWORK="${COREPACK_ENABLE_NETWORK:-0}"
 	fi
 einfo "Hydrating..."
+	local npm_slot="${NPM_SLOT:-3}"
 	if [[ ! -f "${EROOT}/usr/share/npm/npm-${npm_slot}.tgz" ]] ; then
 eerror
 eerror "Missing ${EROOT}/usr/share/npm/npm-${npm_slot}.tgz"
@@ -425,7 +426,6 @@ eerror "continue."
 eerror
 		die
 	fi
-	local npm_slot="${NPM_SLOT:-3}"
 	corepack hydrate --activate "${EROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
 }
 
