@@ -6258,3 +6258,6 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.1.162 (20230520)
+# command-line wrapper:    passed
+# platformer-prototyping:  passed
