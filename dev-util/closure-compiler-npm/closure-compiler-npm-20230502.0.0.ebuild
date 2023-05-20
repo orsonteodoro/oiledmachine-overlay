@@ -9,7 +9,7 @@ EAPI=8
 
 BAZEL_PV="5.3.0"
 GRAALVM_JAVA_PV=17
-GRAALVM_PV="22.3.0"
+GRAALVM_PV="22.3.2"
 NODE_ENV="development"
 NODE_VERSION=14 # Upstream uses 14 on linux but others 16, 18
 inherit bazel check-reqs java-utils-2 graalvm npm
@@ -30,13 +30,14 @@ LICENSE="
 	MIT
 	MPL-2.0
 	NPL-1.1
-	closure_compiler_native? ( ${GRAAL_VM_CE_LICENSES} )
+	closure_compiler_native? (
+		${GRAAL_VM_CE_LICENSES}
+	)
 "
 KEYWORDS="~amd64 ~arm64"
 CC_PV=$(ver_cut 1 ${PV})
 SLOT="0/$(ver_cut 1-2 ${PV})"
 JAVA_SLOT="11"
-NODE_SLOT="0"
 MY_PN="closure-compiler"
 IUSE+="
 	closure_compiler_java
@@ -56,9 +57,9 @@ REQUIRED_USE+="
 	)
 "
 # For the node version, see
-# https://github.com/google/closure-compiler-npm/blob/v20230228.0.0/packages/google-closure-compiler/package.json
+# https://github.com/google/closure-compiler-npm/blob/v20230502.0.0/packages/google-closure-compiler/package.json#L67
 # For dependencies, see
-# https://github.com/google/closure-compiler-npm/blob/v20230228.0.0/.github/workflows/build.yml
+# https://github.com/google/closure-compiler-npm/blob/v20230502.0.0/.github/workflows/build.yml
 JDK_DEPEND="
 	|| (
 		dev-java/openjdk-bin:${JAVA_SLOT}
@@ -103,7 +104,7 @@ BDEPEND+="
 
 FN_DEST="${PN}-${PV}.tar.gz"
 FN_DEST2="${PN%-*}-${PV}.tar.gz"
-BAZELISK_PV="1.16.0" # From CI (Build Compiler)
+BAZELISK_PV="1.17.0" # From CI (Build Compiler)
 BAZELISK_ABIS="
 	amd64
 	arm64
@@ -121,7 +122,7 @@ https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_PV}/bazelis
 }
 
 # Initially generated from:
-#   grep "resolved" /var/tmp/portage/dev-util/closure-compiler-npm-20230228.0.0/work/closure-compiler-npm-20230228.0.0/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
+#   grep "resolved" /var/tmp/portage/dev-util/closure-compiler-npm-20230502.0.0/work/closure-compiler-npm-20230502.0.0/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
 https://registry.npmjs.org/@gulp-sourcemaps/identity-map/-/identity-map-1.0.2.tgz -> npmpkg-@gulp-sourcemaps-identity-map-1.0.2.tgz
@@ -168,6 +169,7 @@ https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz -> npmpkg-b
 https://registry.npmjs.org/base/-/base-0.11.2.tgz -> npmpkg-base-0.11.2.tgz
 https://registry.npmjs.org/define-property/-/define-property-1.0.0.tgz -> npmpkg-define-property-1.0.0.tgz
 https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.2.0.tgz -> npmpkg-binary-extensions-2.2.0.tgz
+https://registry.npmjs.org/bindings/-/bindings-1.5.0.tgz -> npmpkg-bindings-1.5.0.tgz
 https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.11.tgz -> npmpkg-brace-expansion-1.1.11.tgz
 https://registry.npmjs.org/braces/-/braces-3.0.2.tgz -> npmpkg-braces-3.0.2.tgz
 https://registry.npmjs.org/browser-stdout/-/browser-stdout-1.3.1.tgz -> npmpkg-browser-stdout-1.3.1.tgz
@@ -257,6 +259,7 @@ https://registry.npmjs.org/define-property/-/define-property-1.0.0.tgz -> npmpkg
 https://registry.npmjs.org/extend-shallow/-/extend-shallow-2.0.1.tgz -> npmpkg-extend-shallow-2.0.1.tgz
 https://registry.npmjs.org/is-extendable/-/is-extendable-0.1.1.tgz -> npmpkg-is-extendable-0.1.1.tgz
 https://registry.npmjs.org/fancy-log/-/fancy-log-1.3.3.tgz -> npmpkg-fancy-log-1.3.3.tgz
+https://registry.npmjs.org/file-uri-to-path/-/file-uri-to-path-1.0.0.tgz -> npmpkg-file-uri-to-path-1.0.0.tgz
 https://registry.npmjs.org/fill-range/-/fill-range-7.0.1.tgz -> npmpkg-fill-range-7.0.1.tgz
 https://registry.npmjs.org/find-up/-/find-up-5.0.0.tgz -> npmpkg-find-up-5.0.0.tgz
 https://registry.npmjs.org/findup-sync/-/findup-sync-3.0.0.tgz -> npmpkg-findup-sync-3.0.0.tgz
@@ -288,7 +291,9 @@ https://registry.npmjs.org/braces/-/braces-2.3.2.tgz -> npmpkg-braces-2.3.2.tgz
 https://registry.npmjs.org/chokidar/-/chokidar-2.1.8.tgz -> npmpkg-chokidar-2.1.8.tgz
 https://registry.npmjs.org/extend-shallow/-/extend-shallow-2.0.1.tgz -> npmpkg-extend-shallow-2.0.1.tgz
 https://registry.npmjs.org/fill-range/-/fill-range-4.0.0.tgz -> npmpkg-fill-range-4.0.0.tgz
-https://registry.npmjs.org/fsevents/-/fsevents-1.2.9.tgz -> npmpkg-fsevents-1.2.9.tgz
+https://registry.npmjs.org/fsevents/-/fsevents-1.2.13.tgz -> npmpkg-fsevents-1.2.13.tgz
+https://registry.npmjs.org/glob-parent/-/glob-parent-3.1.0.tgz -> npmpkg-glob-parent-3.1.0.tgz
+https://registry.npmjs.org/is-glob/-/is-glob-3.1.0.tgz -> npmpkg-is-glob-3.1.0.tgz
 https://registry.npmjs.org/is-binary-path/-/is-binary-path-1.0.1.tgz -> npmpkg-is-binary-path-1.0.1.tgz
 https://registry.npmjs.org/is-extendable/-/is-extendable-0.1.1.tgz -> npmpkg-is-extendable-0.1.1.tgz
 https://registry.npmjs.org/is-number/-/is-number-3.0.0.tgz -> npmpkg-is-number-3.0.0.tgz
@@ -451,6 +456,7 @@ https://registry.npmjs.org/parse-json/-/parse-json-2.2.0.tgz -> npmpkg-parse-jso
 https://registry.npmjs.org/parse-node-version/-/parse-node-version-1.0.1.tgz -> npmpkg-parse-node-version-1.0.1.tgz
 https://registry.npmjs.org/parse-passwd/-/parse-passwd-1.0.0.tgz -> npmpkg-parse-passwd-1.0.0.tgz
 https://registry.npmjs.org/pascalcase/-/pascalcase-0.1.1.tgz -> npmpkg-pascalcase-0.1.1.tgz
+https://registry.npmjs.org/path-dirname/-/path-dirname-1.0.2.tgz -> npmpkg-path-dirname-1.0.2.tgz
 https://registry.npmjs.org/path-exists/-/path-exists-4.0.0.tgz -> npmpkg-path-exists-4.0.0.tgz
 https://registry.npmjs.org/path-is-absolute/-/path-is-absolute-1.0.1.tgz -> npmpkg-path-is-absolute-1.0.1.tgz
 https://registry.npmjs.org/path-key/-/path-key-3.1.1.tgz -> npmpkg-path-key-3.1.1.tgz
@@ -808,7 +814,7 @@ eerror
 		die
 	fi
 
-	if has network-sandbox $FEATURES ; then
+	if false && has network-sandbox $FEATURES ; then
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
 eerror "env to be able to download micropackages."
@@ -994,7 +1000,7 @@ ewarn
 	echo 'build --subcommands' >> "${T}/bazelrc" || die # Increase verbosity
 
 	# There is a bug that keeps popping up when building java packages:
-	# /var/lib/portage/home/ should be /var/tmp/portage/dev-util/closure-compiler-npm-20230228.0.0/homedir/
+	# /var/lib/portage/home/ should be /var/tmp/portage/dev-util/closure-compiler-npm-20230502.0.0/homedir/
 	#echo "bazel run --define \"maven_repo=file://$HOME/.m2/repository\"" >> "${T}/bazelrc" || die # Does not fix
 
 	cat "${T}/bazelrc" >> "${S}/compiler/.bazelrc" || die
@@ -1056,6 +1062,12 @@ src_configure() {
 src_compile() {
 	# Do not make conditional.
 	npm_src_compile
+	if grep -F -e "Error while fetching artifact" "${T}/build.log" ; then
+eerror
+eerror "Detected a failure.  Re-emerge."
+eerror
+		die
+	fi
 }
 
 src_install() {
@@ -1095,7 +1107,6 @@ src_install() {
 			|| die
 		sed -i \
 			-e "s|\$(get_libdir)|$(get_libdir)|g" \
-			-e "s|\${NODE_SLOT}|${NODE_SLOT}|g" \
 			-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
 			"${T}/${MY_PN}-node" \
 			|| die
