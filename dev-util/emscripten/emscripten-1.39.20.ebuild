@@ -11,14 +11,31 @@ BINARYEN_PV=93 # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compat
 JAVA_PV=8
 LLVM_SLOT=14 # Upstream requires 12 for wasm and 6 for asmjs.
 LLVM_MAX_SLOT=${LLVM_SLOT}
-PYTHON_COMPAT=( python3_{8..11} )
+
+PYTHON_COMPAT=( python3_{8..11} ) # emsdk lists 3.
+# See also
+# https://github.com/emscripten-core/emsdk/blob/1.39.20/emsdk#L11
+# https://github.com/emscripten-core/emsdk/blob/1.39.20/.circleci/config.yml#L24
+# https://github.com/emscripten-core/emscripten/blob/1.39.20/third_party/websockify/setup.py
+# flake8 (3.7.8) - <= 3.7
+# websockify (0.8.0) - <= 3.4
+
 inherit flag-o-matic java-utils-2 llvm python-single-r1 toolchain-funcs
 
 DESCRIPTION="LLVM-to-JavaScript Compiler"
 HOMEPAGE="http://emscripten.org/"
 LICENSE="
-	( all-rights-reserved || ( MIT UoI-NCSA ) )
-	( MIT all-rights-reserved )
+	(
+		all-rights-reserved
+		|| (
+			MIT
+			UoI-NCSA
+		)
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
 	all-rights-reserved
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -433,3 +450,5 @@ ewarn "closure-compiler for Java."
 ewarn
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (in production use) 1.39.20 (20230520)

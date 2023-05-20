@@ -11,14 +11,31 @@ BINARYEN_PV=112 # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compa
 JAVA_PV=11
 LLVM_SLOT=17
 LLVM_MAX_SLOT=${LLVM_SLOT}
-PYTHON_COMPAT=( python3_{8..11} )
+
+PYTHON_COMPAT=( python3_{8..11} ) # emsdk lists 3.9, 3.7.
+# See also
+# https://github.com/emscripten-core/emsdk/blob/3.1.38/emsdk#L11
+# https://github.com/emscripten-core/emsdk/blob/3.1.38/.circleci/config.yml#L24
+# https://github.com/emscripten-core/emscripten/blob/3.1.38/requirements-dev.txt
+# flake8 (3.7.8) - <= 3.7
+# websockify (0.10.0) - <= 3.9
+
 inherit flag-o-matic java-utils-2 llvm python-single-r1 toolchain-funcs
 
 DESCRIPTION="LLVM-to-JavaScript Compiler"
 HOMEPAGE="http://emscripten.org/"
 LICENSE="
-	( all-rights-reserved || ( MIT UoI-NCSA ) )
-	( MIT all-rights-reserved )
+	(
+		all-rights-reserved
+		|| (
+			MIT
+			UoI-NCSA
+		)
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
 	all-rights-reserved
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions

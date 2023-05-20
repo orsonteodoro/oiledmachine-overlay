@@ -4,21 +4,21 @@
 EAPI=8
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/1.40.1/tools/settings_template.py
+# https://github.com/emscripten-core/emscripten/blob/3.1.39/tools/config_template.py
 
 # TC = toolchain
-BINARYEN_PV=94 # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
-JAVA_PV=8
-LLVM_SLOT=14 # Upstream requires 12 for wasm and 6 for asmjs.
+BINARYEN_PV=113 # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
+JAVA_PV=11
+LLVM_SLOT=17
 LLVM_MAX_SLOT=${LLVM_SLOT}
 
-PYTHON_COMPAT=( python3_{8..11} ) # emsdk lists 3.
+PYTHON_COMPAT=( python3_{8..11} ) # emsdk lists 3.9, 3.7.
 # See also
-# https://github.com/emscripten-core/emsdk/blob/1.40.1/emsdk#L11
-# https://github.com/emscripten-core/emsdk/blob/1.40.1/.circleci/config.yml#L24
-# https://github.com/emscripten-core/emscripten/blob/1.40.1/third_party/websockify/setup.py
+# https://github.com/emscripten-core/emsdk/blob/3.1.39/emsdk#L11
+# https://github.com/emscripten-core/emsdk/blob/3.1.39/.circleci/config.yml#L24
+# https://github.com/emscripten-core/emscripten/blob/3.1.39/requirements-dev.txt
 # flake8 (3.7.8) - <= 3.7
-# websockify (0.8.0) - <= 3.4
+# websockify (0.10.0) - <= 3.9
 
 inherit flag-o-matic java-utils-2 llvm python-single-r1 toolchain-funcs
 
@@ -121,14 +121,14 @@ LICENSE="
 #   system/include/GL/gl.h -- all-rights-reserved MIT
 #   system/lib/libcxx/src/ryu/f2s.cpp -- Apache-2.0-with-LLVM-exceptions, Boost-1.0
 #
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~x86" # See tests/clang_native.py for supported arches
 SLOT="${LLVM_SLOT}-$(ver_cut 1-2 ${PV})"
 CLOSURE_COMPILER_SLOT="0"
 IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs test
 
-r31
+r1
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -151,13 +151,13 @@ REQUIRED_USE+="
 "
 # For DEPENDs:
 # See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/1.40.1/site/source/docs/building_from_source/toolchain_what_is_needed.rst
-# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/1.40.1/tools/shared.py#L44
-# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/1.40.1/package.json
-# For the required closure-compiler-nodejs node version, see https://github.com/google/closure-compiler-npm/blob/v20200224.0.0/packages/google-closure-compiler/package.json
-# For the required Java, See https://github.com/google/closure-compiler/blob/v20200224/.travis.yml#L7
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/1.40.1/tools/shared.py#L431
-# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/1.40.1/tools/shared.py#L43
+# See also https://github.com/emscripten-core/emscripten/blob/3.1.39/site/source/docs/building_from_source/toolchain_what_is_needed.rst
+# For the required Binaryen, see also https://github.com/emscripten-core/emscripten/blob/3.1.39/tools/building.py#L41 EXPECTED_BINARYEN_VERSION
+# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.39/package.json
+# For the required closure-compiler-nodejs node version, see https://github.com/google/closure-compiler-npm/blob/v20220502.0.0/packages/google-closure-compiler/package.json
+# For the required Java, See https://github.com/google/closure-compiler/blob/v20220502/.github/workflows/ci.yaml#L43
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.39/tools/shared.py#L50
+# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.39/tools/shared.py#L43
 JDK_DEPEND="
 	|| (
 		dev-java/openjdk-bin:${JAVA_PV}
@@ -176,7 +176,7 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	closure-compiler? (
-		>=dev-util/closure-compiler-npm-20200224.0.0:\
+		>=dev-util/closure-compiler-npm-20220502.0.0:\
 ${CLOSURE_COMPILER_SLOT}\
 [closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?]
 		closure_compiler_java? (
@@ -187,7 +187,7 @@ ${CLOSURE_COMPILER_SLOT}\
 		)
 	)
 	dev-util/binaryen:${BINARYEN_PV}
-	>=net-libs/nodejs-4.1.1
+	>=net-libs/nodejs-10.19
 	(
 		>=sys-devel/clang-${LLVM_SLOT}:${LLVM_SLOT}=[llvm_targets_WebAssembly]
 		>=sys-devel/lld-${LLVM_SLOT}:${LLVM_SLOT}
@@ -215,8 +215,9 @@ RESTRICT="mirror"
 DEST="/usr/share/"
 TEST="${WORKDIR}/test/"
 _PATCHES=(
-	"${FILESDIR}/${PN}-1.39.20-set-wrappers-path.patch"
-	"${FILESDIR}/${PN}-1.40.1-78a5618.patch"
+	"${FILESDIR}/${PN}-3.1.20-set-wrappers-path.patch"
+	"${FILESDIR}/${PN}-3.1.28-includes.patch"
+	"${FILESDIR}/${PN}-3.1.28-libcxxabi_no_exceptions-already-defined.patch"
 )
 EMSCRIPTEN_CONFIG_V="2.0.26"
 
@@ -303,7 +304,7 @@ einfo "CXX:\t${CXX}"
 
 # The activated_cfg goes in emscripten.config from the json file.
 # The activated_env goes in 99emscripten from the json file.
-# https://github.com/emscripten-core/emsdk/blob/1.40.1/emsdk_manifest.json
+# https://github.com/emscripten-core/emsdk/blob/1.39.20/emsdk_manifest.json
 # For examples of environmental variables and paths used in this package, see
 # https://github.com/emscripten-core/emsdk/issues/167#issuecomment-414935332
 prepare_file() {
@@ -347,6 +348,10 @@ src_prepare() {
 	export PYTHON_EXE_ABSPATH=$(which ${PYTHON})
 	einfo "PYTHON_EXE_ABSPATH=${PYTHON_EXE_ABSPATH}"
 	eapply ${_PATCHES[@]}
+
+	#eapply -R "${FILESDIR}/emscripten-3.1.3-30e3c87.patch" # reverted - reason: Breaks 'Running sanity checks'. # \
+	# emcc: error: unexpected metadata key received from wasm-emscripten-finalize: tableSize
+
 	eapply_user
 }
 
@@ -417,7 +422,7 @@ src_install() {
 	# See tools/install.py
 	find "${S}" \
 	\( \
-		-path "*/tests/third_party/*" \
+		-path "*/test/third_party/*" \
 		-o -name "site" \
 		-o -name "Makefile" \
 		-o -name ".git" \
@@ -433,13 +438,7 @@ src_install() {
 }
 
 pkg_postinst() {
-# Breaks inherit
-#	eselect emscripten set "emscripten-${PV},llvm-${LLVM_SLOT}"
-einfo
-einfo "You must manually do:"
-einfo
-einfo "  eselect emscripten set \"emscripten-${PV},llvm-${LLVM_SLOT}\""
-einfo
+	eselect emscripten set "emscripten-${PV},llvm-${LLVM_SLOT}"
 einfo
 einfo "Set to wasm (llvm) output via app-eselect/eselect-emscripten."
 einfo
