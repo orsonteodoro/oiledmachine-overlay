@@ -21,7 +21,7 @@
     "electron-updater": "4.2.0",
     "fs-extra": "^3.0.1",
     "jimp": "^0.2.28",
-    "live-server": "^1.2.0",
+    "live-server": "^1.2.2",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
     "minimist": "^1.2.3",
