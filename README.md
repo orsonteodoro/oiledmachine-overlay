@@ -152,13 +152,16 @@ as a result of running test suites.  These test suites are also inspected
 for usefulness (e.g. a benchmark, demos, or similar real world tasks) in
 PGO optimization on the ebuild level which some ebuilds exploit.
 
-### Markings for test-suite testing
+### Markings for test-suite testing or interactive testing
 
 Test-suite testing is done randomly.  Tentative details can be found at the
 footer of the ebuild:
 
+For interactive testing, some most used functionality will be tested.
+
 ```
 # OILEDMACHINE-OVERLAY-EBUILD-TESTED-VERSIONS:  1.2.1 1.2.1[python_targets_python3_10] commit-id
+# OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 113.0.1 (May 15, 2023)
 ```
 
 ## Security policy
