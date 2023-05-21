@@ -353,17 +353,6 @@ multilib_src_configure() {
 		$(use_enable X video-x11-xshape)
 		$(use_enable xscreensaver video-x11-scrnsaver)
 		$(use_with X x)
-		--enable-assembly
-		--enable-atomic
-		--enable-cpuinfo
-		--enable-events
-		--enable-file
-		--enable-filesystem
-		--enable-loadso
-		--enable-power
-		--enable-render
-		--enable-system-iconv
-		--enable-timers
 		--disable-alsa-shared
 		--disable-arts
 		--disable-directx
@@ -382,6 +371,17 @@ multilib_src_configure() {
 		--disable-wayland-shared
 		--disable-werror
 		--disable-x11-shared
+		--enable-assembly
+		--enable-atomic
+		--enable-cpuinfo
+		--enable-events
+		--enable-file
+		--enable-filesystem
+		--enable-loadso
+		--enable-power
+		--enable-render
+		--enable-system-iconv
+		--enable-timers
 	)
 
 	if use armv6-simd && use cpu_flags_arm_v6 ; then
