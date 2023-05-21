@@ -2820,8 +2820,9 @@ ewarn
 #   gold/binutils - 2.39-r5
 # OILEDMACHINE-OVERLAY-TEST-RESULTS:
 #   browsing - pass
-#   video streaming - pass
-#     dav1d/aom - pass
+#   video on demand - pass
+#     dav1d - pass
+#     video/avc (H.264) - expected fail
 #   audio streaming
 #     mp3 (shoutcast v1) - pass with random fails
 #     aac - expected fail
