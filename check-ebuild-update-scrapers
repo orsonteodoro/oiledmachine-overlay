@@ -1,13 +1,12 @@
 #!/bin/bash
 
-# TODO
-# The following need to be manually checked
-
+# The following need to be manually checked or need handlers:
 # asmlib
 # bazel
 # bitlbee-facebook # needs update and fix versioning
 # cef
 # cef-bin
+# clamav
 # dev-dotnet/libfreenect # fix versioning
 # dream
 # e2fsprogs
