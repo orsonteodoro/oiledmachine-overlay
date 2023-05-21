@@ -78,15 +78,29 @@ LICENSE="
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
+ARM_CPU_FLAGS=(
+	-armv6-simd
+	cpu_flags_arm_v6
+	cpu_flags_arm_v7
+	-cpu_flags_arm_neon
+)
+PPC_CPU_FLAGS=(
+	cpu_flags_ppc_altivec
+)
+X86_CPU_FLAGS=(
+	cpu_flags_x86_3dnow
+	cpu_flags_x86_mmx
+	cpu_flags_x86_sse
+	cpu_flags_x86_sse2
+)
 IUSE="
-alsa aqua -armv6-simd cpu_flags_arm_v6 cpu_flags_arm_v7 -cpu_flags_arm_neon
-cpu_flags_ppc_altivec cpu_flags_x86_3dnow cpu_flags_x86_mmx cpu_flags_x86_sse
-cpu_flags_x86_sse2 custom-cflags dbus doc fcitx4 gles1 gles2 haptic
-+hidapi-hidraw -hidapi-libusb ibus jack +joystick kms libsamplerate nas opengl
-oss pipewire pulseaudio sndio +sound static-libs +threads udev +video
+${ARM_CPU_FLAGS[@]}
+${PPC_CPU_FLAGS[@]}
+${X86_CPU_FLAGS[@]}
+alsa aqua custom-cflags dbus doc fcitx4 gles1 gles2 haptic +hidapi-hidraw
+-hidapi-libusb ibus jack +joystick kms -libdecor libsamplerate nas +nls opengl
++openurl oss pipewire pulseaudio sndio +sound static-libs +threads udev +video
 video_cards_vc4 vulkan wayland X xscreensaver
-
--libdecor +openurl +nls
 "
 # libdecor is not in main repo but in community repos
 REQUIRED_USE="
