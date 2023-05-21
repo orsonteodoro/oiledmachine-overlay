@@ -8,7 +8,13 @@ inherit autotools flag-o-matic linux-info toolchain-funcs multilib-minimal
 MY_P="SDL2-${PV}"
 DESCRIPTION="Simple Direct Media Layer"
 HOMEPAGE="https://www.libsdl.org/"
-LICENSE_HIDAPI="|| ( BSD GPL-3 HIDAPI )"
+LICENSE_HIDAPI="
+	|| (
+		BSD
+		GPL-3
+		HIDAPI
+	)
+"
 LICENSE="
 	ZLIB
 	all-rights-reserved
@@ -19,11 +25,27 @@ LICENSE="
 	MIT
 	RSA_Data_Security
 	SunPro
-	armv6-simd? ( ZLIB pixman-arm-asm.h )
-	cpu_flags_arm_neon? ( MIT ZLIB pixman-arm-asm.h )
-	hidapi-hidraw? ( ${LICENSE_HIDAPI} )
-	hidapi-libusb? ( ${LICENSE_HIDAPI} )
-	video? ( X? ( MIT all-rights-reserved ) )
+	armv6-simd? (
+		pixman-arm-asm.h
+		ZLIB
+	)
+	cpu_flags_arm_neon? (
+		MIT
+		pixman-arm-asm.h
+		ZLIB
+	)
+	hidapi-hidraw? (
+		${LICENSE_HIDAPI}
+	)
+	hidapi-libusb? (
+		${LICENSE_HIDAPI}
+	)
+	video? (
+		X? (
+			all-rights-reserved
+			MIT
+		)
+	)
 "
 # project default license is ZLIB
 
@@ -56,51 +78,110 @@ LICENSE="
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="alsa aqua -armv6-simd cpu_flags_arm_v6 cpu_flags_arm_v7
--cpu_flags_arm_neon cpu_flags_ppc_altivec cpu_flags_x86_3dnow
-cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 custom-cflags dbus doc
-fcitx4 gles1 gles2 haptic +hidapi-hidraw -hidapi-libusb ibus jack +joystick
-kms libsamplerate nas opengl oss pipewire pulseaudio sndio +sound static-libs
-+threads udev +video video_cards_vc4 vulkan wayland X xscreensaver"
-IUSE+=" -libdecor +openurl +nls"
+IUSE="
+alsa aqua -armv6-simd cpu_flags_arm_v6 cpu_flags_arm_v7 -cpu_flags_arm_neon
+cpu_flags_ppc_altivec cpu_flags_x86_3dnow cpu_flags_x86_mmx cpu_flags_x86_sse
+cpu_flags_x86_sse2 custom-cflags dbus doc fcitx4 gles1 gles2 haptic
++hidapi-hidraw -hidapi-libusb ibus jack +joystick kms libsamplerate nas opengl
+oss pipewire pulseaudio sndio +sound static-libs +threads udev +video
+video_cards_vc4 vulkan wayland X xscreensaver
+
+-libdecor +openurl +nls
+"
 # libdecor is not in main repo but in community repos
 REQUIRED_USE="
-	|| ( joystick udev )
-	alsa? ( sound )
-	fcitx4? ( dbus )
-	gles1? ( video )
-	gles2? ( video )
-	hidapi-hidraw? ( joystick udev )
-	hidapi-libusb? ( joystick )
-	haptic? ( joystick )
-	ibus? ( dbus )
-	jack? ( sound )
-	nas? ( sound )
-	opengl? ( video )
-	pulseaudio? ( sound )
-	sndio? ( sound )
-	vulkan? ( video )
-	wayland? ( gles2 )
-	xscreensaver? ( X )
+	|| (
+		joystick
+		udev
+	)
+	alsa? (
+		sound
+	)
+	fcitx4? (
+		dbus
+	)
+	gles1? (
+		video
+	)
+	gles2? (
+		video
+	)
+	hidapi-hidraw? (
+		joystick
+		udev
+	)
+	hidapi-libusb? (
+		joystick
+	)
+	haptic? (
+		joystick
+	)
+	ibus? (
+		dbus
+	)
+	jack? (
+		sound
+	)
+	nas? (
+		sound
+	)
+	opengl? (
+		video
+	)
+	pulseaudio? (
+		sound
+	)
+	sndio? (
+		sound
+	)
+	vulkan? (
+		video
+	)
+	wayland? (
+		gles2
+	)
+	xscreensaver? (
+		X
+	)
 "
 # See https://github.com/libsdl-org/SDL/blob/release-2.0.22/.github/workflows/main.yml#L38
 # https://github.com/libsdl-org/SDL/blob/release-2.0.22/docs/README-linux.md
 # U 20.04
 CDEPEND="
-	alsa? ( >=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}] )
-	dbus? ( >=sys-apps/dbus-1.6.18-r1[${MULTILIB_USEDEP}] )
-	fcitx4? ( app-i18n/fcitx:4 )
-	gles1? ( media-libs/mesa[${MULTILIB_USEDEP},gles1] )
-	gles2? ( >=media-libs/mesa-9.1.6[${MULTILIB_USEDEP},gles2] )
-	hidapi-libusb? ( >=dev-libs/libusb-1.0.9 )
-	ibus? ( >=app-i18n/ibus-1.5.22 )
-	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
+	alsa? (
+		>=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}]
+	)
+	dbus? (
+		>=sys-apps/dbus-1.6.18-r1[${MULTILIB_USEDEP}]
+	)
+	fcitx4? (
+		app-i18n/fcitx:4
+	)
+	gles1? (
+		media-libs/mesa[${MULTILIB_USEDEP},gles1]
+	)
+	gles2? (
+		>=media-libs/mesa-9.1.6[${MULTILIB_USEDEP},gles2]
+	)
+	hidapi-libusb? (
+		>=dev-libs/libusb-1.0.9
+	)
+	ibus? (
+		>=app-i18n/ibus-1.5.22
+	)
+	jack? (
+		virtual/jack[${MULTILIB_USEDEP}]
+	)
 	kms? (
 		>=x11-libs/libdrm-2.4.82[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-9.0.0[${MULTILIB_USEDEP},gbm(+)]
 	)
-	libdecor? ( >=gui-libs/libdecor-0.1.0 )
-	libsamplerate? ( media-libs/libsamplerate[${MULTILIB_USEDEP}] )
+	libdecor? (
+		>=gui-libs/libdecor-0.1.0
+	)
+	libsamplerate? (
+		media-libs/libsamplerate[${MULTILIB_USEDEP}]
+	)
 	nas? (
 		>=media-libs/nas-1.9.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXt-1.1.4[${MULTILIB_USEDEP}]
@@ -109,11 +190,21 @@ CDEPEND="
 		>=virtual/opengl-7.0-r1[${MULTILIB_USEDEP}]
 		>=virtual/glu-9.0-r1[${MULTILIB_USEDEP}]
 	)
-	openurl? ( x11-misc/xdg-utils )
-	pipewire? ( media-video/pipewire:=[${MULTILIB_USEDEP}] )
-	pulseaudio? ( >=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP}] )
-	sndio? ( media-sound/sndio:=[${MULTILIB_USEDEP}] )
-	udev? ( >=virtual/libudev-208:=[${MULTILIB_USEDEP}] )
+	openurl? (
+		x11-misc/xdg-utils
+	)
+	pipewire? (
+		media-video/pipewire:=[${MULTILIB_USEDEP}]
+	)
+	pulseaudio? (
+		>=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP}]
+	)
+	sndio? (
+		media-sound/sndio:=[${MULTILIB_USEDEP}]
+	)
+	udev? (
+		>=virtual/libudev-208:=[${MULTILIB_USEDEP}]
+	)
 	wayland? (
 		>=dev-libs/wayland-1.18[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-9.1.6[${MULTILIB_USEDEP},egl(+),gles2,wayland]
@@ -126,17 +217,28 @@ CDEPEND="
 		>=x11-libs/libXfixes-6.0.0[${MULTILIB_USEDEP}]
 		>=x11-libs/libXi-1.7.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libXrandr-1.4.2[${MULTILIB_USEDEP}]
-		xscreensaver? ( >=x11-libs/libXScrnSaver-1.2.2-r1[${MULTILIB_USEDEP}] )
+		xscreensaver? (
+			>=x11-libs/libXScrnSaver-1.2.2-r1[${MULTILIB_USEDEP}]
+		)
 	)
 "
 RDEPEND="
 	${CDEPEND}
-	vulkan? ( media-libs/vulkan-loader )"
+	vulkan? (
+		media-libs/vulkan-loader
+	)
+"
 DEPEND="
 	${CDEPEND}
-	ibus? ( dev-libs/glib:2[${MULTILIB_USEDEP}] )
-	vulkan? ( dev-util/vulkan-headers )
-	X? ( x11-base/xorg-proto )
+	ibus? (
+		dev-libs/glib:2[${MULTILIB_USEDEP}]
+	)
+	vulkan? (
+		dev-util/vulkan-headers
+	)
+	X? (
+		x11-base/xorg-proto
+	)
 "
 BDEPEND="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -144,7 +246,9 @@ BDEPEND="
 		app-doc/doxygen
 		media-gfx/graphviz
 	)
-	wayland? ( >=dev-util/wayland-scanner-1.20 )
+	wayland? (
+		>=dev-util/wayland-scanner-1.20
+	)
 "
 MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/SDL2/SDL_config.h
@@ -201,103 +305,112 @@ multilib_src_configure() {
 -I${ESYSROOT}/usr/$(get_libdir)/glib-2.0/include"
 	fi
 
-	# sorted by `./configure --help`
 	local myeconfargs=(
-		$(use_enable static-libs static)
-		--enable-atomic
-		$(use_enable sound audio)
-		$(use_enable video)
-		--enable-render
-		--enable-events
-		$(use_enable joystick)
-		$(use_enable haptic)
-		--enable-power
-		--enable-filesystem
-		$(use_enable threads pthreads)
-		--enable-timers
-		--enable-file
-		--enable-loadso
-		--enable-cpuinfo
-		--enable-assembly
+		$(use_enable alsa)
+		$(use_enable aqua video-cocoa)
 		$(use_enable cpu_flags_ppc_altivec altivec)
-		$(use_enable cpu_flags_x86_sse ssemath)
-		$(use_enable cpu_flags_x86_mmx mmx)
 		$(use_enable cpu_flags_x86_3dnow 3dnow)
+		$(use_enable cpu_flags_x86_mmx mmx)
+		$(use_enable cpu_flags_x86_sse ssemath)
 		$(use_enable cpu_flags_x86_sse sse)
 		$(use_enable cpu_flags_x86_sse2 sse2)
-		$(use_enable oss)
-		$(use_enable alsa)
-		--disable-alsa-shared
+		$(use_enable dbus)
+		$(use_enable fcitx4 fcitx)
+		$(use_enable gles1 video-opengles1)
+		$(use_enable gles2 video-opengles2)
+		$(use_enable haptic)
+		$(use_enable ibus)
 		$(use_enable jack)
-		--disable-jack-shared
-		--disable-esd
+		$(use_enable joystick)
+		$(use_enable kms video-kmsdrm)
 		$(use_enable libdecor)
-		$(use_enable pipewire)
-		--disable-pipewire-shared
-		$(use_enable pulseaudio)
-		--disable-pulseaudio-shared
-		--disable-arts
 		$(use_enable libsamplerate)
 		$(use_enable nas)
-		--disable-nas-shared
 		$(use_enable nls locale)
+		$(use_enable opengl video-opengl)
 		$(use_enable openurl misc)
+		$(use_enable oss)
+		$(use_enable pipewire)
+		$(use_enable pulseaudio)
 		$(use_enable sndio)
-		--disable-sndio-shared
+		$(use_enable sound audio)
 		$(use_enable sound diskaudio)
 		$(use_enable sound dummyaudio)
-		$(use_enable wayland video-wayland)
-		--disable-wayland-shared
+		$(use_enable static-libs static)
+		$(use_enable threads pthreads)
+		$(use_enable udev libudev)
+		$(use_enable video)
+		$(use_enable video video-dummy)
 		$(use_enable video_cards_vc4 video-rpi)
+		$(use_enable vulkan video-vulkan)
+		$(use_enable wayland video-wayland)
 		$(use_enable X video-x11)
-		--disable-x11-shared
 		$(use_enable X video-x11-xcursor)
 		$(use_enable X video-x11-xdbe)
 		$(use_enable X video-x11-xfixes)
 		$(use_enable X video-x11-xinput)
 		$(use_enable X video-x11-xrandr)
-		$(use_enable xscreensaver video-x11-scrnsaver)
 		$(use_enable X video-x11-xshape)
-		$(use_enable aqua video-cocoa)
-		--disable-video-directfb
+		$(use_enable xscreensaver video-x11-scrnsaver)
+		$(use_with X x)
+		--enable-assembly
+		--enable-atomic
+		--enable-cpuinfo
+		--enable-events
+		--enable-file
+		--enable-filesystem
+		--enable-loadso
+		--enable-power
+		--enable-render
+		--enable-timers
+		--disable-alsa-shared
+		--disable-arts
+		--disable-esd
 		--disable-fusionsound
 		--disable-fusionsound-shared
-		$(use_enable kms video-kmsdrm)
-		--disable-kmsdrm-shared
-		$(use_enable video video-dummy)
-		$(use_enable opengl video-opengl)
-		$(use_enable gles1 video-opengles1)
-		$(use_enable gles2 video-opengles2)
-		$(use_enable vulkan video-vulkan)
-		$(use_enable udev libudev)
-		$(use_enable dbus)
-		$(use_enable fcitx4 fcitx)
-		$(use_enable ibus)
 		--disable-directx
-		--disable-rpath
+		--disable-jack-shared
+		--disable-kmsdrm-shared
+		--disable-nas-shared
+		--disable-pipewire-shared
+		--disable-pulseaudio-shared
 		--disable-render-d3d
-		$(use_with X x)
+		--disable-rpath
+		--disable-sndio-shared
+		--disable-video-directfb
+		--disable-wayland-shared
+		--disable-x11-shared
 	)
 
-	if use cpu_flags_arm_v6 && use armv6-simd ; then
-		myeconfargs+=( --enable-arm-simd )
+	if use armv6-simd && use cpu_flags_arm_v6 ; then
+		myeconfargs+=(
+			--enable-arm-simd
+		)
 	else
-		myeconfargs+=( --disable-arm-simd )
+		myeconfargs+=(
+			--disable-arm-simd
+		)
 	fi
 
 	if use cpu_flags_arm_v7 && use cpu_flags_arm_neon ; then
-		myeconfargs+=( --enable-arm-neon )
+		myeconfargs+=(
+			--enable-arm-neon
+		)
 	else
-		myeconfargs+=( --disable-arm-neon )
+		myeconfargs+=(
+			--disable-arm-neon
+		)
 	fi
 
 	if use hidapi-hidraw || use hidapi-libusb ; then
 		myeconfargs+=(
-			--enable-hidapi
 			$(use_enable hidapi-libusb)
+			--enable-hidapi
 		)
 	else
-		myeconfargs+=( --disable-hidapi )
+		myeconfargs+=(
+			--disable-hidapi
+		)
 	fi
 
 	ECONF_SOURCE="${S}" \
@@ -326,36 +439,51 @@ multilib_src_install_all() {
 	# mandatory. They may be needed even when linking dynamically.
 	find "${ED}" -type f -name "*.la" -delete || die
 
-	dodoc {BUGS,CREDITS,README-SDL,TODO,WhatsNew}.txt README.md docs/README*.md
+	dodoc \
+		{BUGS,CREDITS,README-SDL,TODO,WhatsNew}.txt \
+		README.md \
+		docs/README*.md
 	use doc && dodoc -r docs/output/html/
 
 	docinto licenses
 	dodoc LICENSE.txt
 
-	head -n 10 src/libm/e_atan2.c > \
-		"${T}/libm.LICENSE" || die
+	head -n 10 \
+		src/libm/e_atan2.c \
+		> \
+		"${T}/libm.LICENSE" \
+		|| die
 	docinto licenses/src/libm
 	dodoc "${T}/libm.LICENSE"
 
 	if use video ; then
 		if ( use cpu_flags_arm_v6 && use armv6-simd ) \
 			|| ( use cpu_flags_arm_v7 && use cpu_flags_arm_neon ) ; then
-			head -n 25 src/video/arm/pixman-arm-asm.h > \
-				"${T}/pixman-arm-asm.LICENSE" || die
+			head -n 25 \
+				src/video/arm/pixman-arm-asm.h \
+				> \
+				"${T}/pixman-arm-asm.LICENSE" \
+				|| die
 			docinto licenses/src/video/arm/pixman-arm
 			dodoc "${T}/pixman-arm-asm.LICENSE"
 		fi
 
 		if use cpu_flags_arm_v6 && use armv6-simd ; then
-			head -n 19 src/video/arm/pixman-arm-simd-asm.S > \
-				"${T}/pixman-arm-simd-asm.LICENSE" || die
+			head -n 19 \
+				src/video/arm/pixman-arm-simd-asm.S \
+				> \
+				"${T}/pixman-arm-simd-asm.LICENSE" \
+				|| die
 			docinto licenses/src/video/arm/pixman-arm
 			dodoc "${T}/pixman-arm-simd-asm.LICENSE"
 		fi
 
 		if use cpu_flags_arm_v7 && use cpu_flags_arm_neon ; then
-			head -n 44 src/video/arm/pixman-arm-neon-asm.S > \
-				"${T}/pixman-arm-neon-asm.LICENSE" || die
+			head -n 44 \
+				src/video/arm/pixman-arm-neon-asm.S \
+				> \
+				"${T}/pixman-arm-neon-asm.LICENSE" \
+				|| die
 			docinto licenses/src/video/arm/pixman-arm
 			dodoc "${T}/pixman-arm-neon-asm.LICENSE"
 		fi
@@ -363,18 +491,26 @@ multilib_src_install_all() {
 		docinto licenses/src/video/yuv2rgb
 		dodoc src/video/yuv2rgb/LICENSE
 
-		tail -n 142 debian/copyright | head -n 58 > \
-			"${T}/SDL_yuv_sw.c.LICENSE" || die
+		tail -n 142 debian/copyright \
+			| head -n 58 \
+			> "${T}/SDL_yuv_sw.c.LICENSE" \
+			|| die
 		docinto licenses/src/render
 		dodoc "${T}/SDL_yuv_sw.c.LICENSE"
 
 		if use X ; then
-			head -n 25 src/events/imKStoUCS.c > \
-				"${T}/imKStoUCS.c.LICENSE" || die
+			head -n 25 \
+				src/events/imKStoUCS.c \
+				> \
+				"${T}/imKStoUCS.c.LICENSE" \
+				|| die
 			docinto licenses/src/video/x11
 			dodoc "${T}/imKStoUCS.c.LICENSE"
-			head -n 28 src/events/imKStoUCS.h > \
-				"${T}/imKStoUCS.h.LICENSE" || die
+			head -n 28 \
+				src/events/imKStoUCS.h \
+				> \
+				"${T}/imKStoUCS.h.LICENSE" \
+				|| die
 			docinto licenses/src/video/x11
 			dodoc "${T}/imKStoUCS.h.LICENSE"
 		fi
@@ -383,9 +519,12 @@ multilib_src_install_all() {
 		# default for this module.  Copied again for containers or
 		# redist.
 		docinto licenses/include
-		head -n 65 include/SDL_opengl.h \
-			| tail -n 24 > \
-			"${T}/SDL_opengl.h.LICENSE" || die
+		head -n 65 \
+			include/SDL_opengl.h \
+			| tail -n 24 \
+			> \
+			"${T}/SDL_opengl.h.LICENSE" \
+			|| die
 		dodoc "${T}/SDL_opengl.h.LICENSE"
 	fi
 
@@ -398,8 +537,11 @@ multilib_src_install_all() {
 	fi
 
 	#if use test ; then
-		head -n 52 src/test/SDL_test_md5.c > \
-			"${T}/SDL_test_md5.c.LICENSE" || die
+		head -n 52 \
+			src/test/SDL_test_md5.c \
+			> \
+			"${T}/SDL_test_md5.c.LICENSE" \
+			|| die
 		docinto licenses/src/test
 		dodoc "${T}/SDL_test_md5.c.LICENSE"
 	#fi
