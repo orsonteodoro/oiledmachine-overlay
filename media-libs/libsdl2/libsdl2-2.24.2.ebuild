@@ -314,9 +314,10 @@ multilib_src_configure() {
 
 	if use ibus; then
 		local -x IBUS_CFLAGS="\
--I${ESYSROOT}/usr/include/ibus-1.0 \
 -I${ESYSROOT}/usr/include/glib-2.0 \
--I${ESYSROOT}/usr/$(get_libdir)/glib-2.0/include"
+-I${ESYSROOT}/usr/include/ibus-1.0 \
+-I${ESYSROOT}/usr/$(get_libdir)/glib-2.0/include \
+"
 	fi
 
 	local myeconfargs=(
