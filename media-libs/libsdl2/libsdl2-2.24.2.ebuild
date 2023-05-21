@@ -449,7 +449,7 @@ multilib_src_install_all() {
 	dodoc LICENSE.txt
 
 	head -n 10 \
-		src/libm/e_atan2.c \
+		"src/libm/e_atan2.c" \
 		> \
 		"${T}/libm.LICENSE" \
 		|| die
@@ -460,7 +460,7 @@ multilib_src_install_all() {
 		if ( use cpu_flags_arm_v6 && use armv6-simd ) \
 			|| ( use cpu_flags_arm_v7 && use cpu_flags_arm_neon ) ; then
 			head -n 25 \
-				src/video/arm/pixman-arm-asm.h \
+				"src/video/arm/pixman-arm-asm.h" \
 				> \
 				"${T}/pixman-arm-asm.LICENSE" \
 				|| die
@@ -470,7 +470,7 @@ multilib_src_install_all() {
 
 		if use cpu_flags_arm_v6 && use armv6-simd ; then
 			head -n 19 \
-				src/video/arm/pixman-arm-simd-asm.S \
+				"src/video/arm/pixman-arm-simd-asm.S" \
 				> \
 				"${T}/pixman-arm-simd-asm.LICENSE" \
 				|| die
@@ -480,7 +480,7 @@ multilib_src_install_all() {
 
 		if use cpu_flags_arm_v7 && use cpu_flags_arm_neon ; then
 			head -n 44 \
-				src/video/arm/pixman-arm-neon-asm.S \
+				"src/video/arm/pixman-arm-neon-asm.S" \
 				> \
 				"${T}/pixman-arm-neon-asm.LICENSE" \
 				|| die
@@ -491,7 +491,8 @@ multilib_src_install_all() {
 		docinto licenses/src/video/yuv2rgb
 		dodoc src/video/yuv2rgb/LICENSE
 
-		tail -n 142 debian/copyright \
+		tail -n 142 \
+			"debian/copyright" \
 			| head -n 58 \
 			> "${T}/SDL_yuv_sw.c.LICENSE" \
 			|| die
@@ -500,14 +501,14 @@ multilib_src_install_all() {
 
 		if use X ; then
 			head -n 25 \
-				src/events/imKStoUCS.c \
+				"src/events/imKStoUCS.c" \
 				> \
 				"${T}/imKStoUCS.c.LICENSE" \
 				|| die
 			docinto licenses/src/video/x11
 			dodoc "${T}/imKStoUCS.c.LICENSE"
 			head -n 28 \
-				src/events/imKStoUCS.h \
+				"src/events/imKStoUCS.h" \
 				> \
 				"${T}/imKStoUCS.h.LICENSE" \
 				|| die
@@ -520,7 +521,7 @@ multilib_src_install_all() {
 		# redist.
 		docinto licenses/include
 		head -n 65 \
-			include/SDL_opengl.h \
+			"include/SDL_opengl.h" \
 			| tail -n 24 \
 			> \
 			"${T}/SDL_opengl.h.LICENSE" \
@@ -538,7 +539,7 @@ multilib_src_install_all() {
 
 	#if use test ; then
 		head -n 52 \
-			src/test/SDL_test_md5.c \
+			"src/test/SDL_test_md5.c" \
 			> \
 			"${T}/SDL_test_md5.c.LICENSE" \
 			|| die
