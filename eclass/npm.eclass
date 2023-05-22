@@ -427,6 +427,7 @@ eerror
 		die
 	fi
 	corepack hydrate --activate "${EROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
+	export PATH=$(realpath "${HOME}/.cache/node/corepack/npm/"*"/bin/")":${PATH}"
 }
 
 # @FUNCTION: _npm_src_unpack

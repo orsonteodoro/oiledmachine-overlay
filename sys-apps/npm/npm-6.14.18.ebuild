@@ -16,7 +16,7 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="${LOCKFILE_VER}/$(ver_cut 1-2 ${PV})"
-IUSE+=" r1"
+IUSE+=" r2"
 CDEPEND+="
 	!sys-apps/npm:0
 	|| (

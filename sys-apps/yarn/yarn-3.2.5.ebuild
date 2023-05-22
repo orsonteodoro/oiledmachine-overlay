@@ -15,7 +15,7 @@ LICENSE="
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT_MAJOR="${PV%%.*}"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
-IUSE+=" r1"
+IUSE+=" r2"
 CDEPEND+="
 	!sys-apps/yarn:0
 	>=net-libs/nodejs-14[corepack,ssl]
