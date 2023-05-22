@@ -102,10 +102,22 @@ LICENSE="
 	BSD
 	chromium-$(ver_cut 1-3 ${PV}).x
 	custom
-	( all-rights-reserved MIT )
-	( ISC CC-BY-SA-4.0 )
-	( MIT CC0-1.0 )
-	( HPND all-rights-reserved )
+	(
+		all-rights-reserved
+		MIT
+	)
+	(
+		CC-BY-SA-4.0
+		ISC
+	)
+	(
+		CC0-1.0
+		MIT
+	)
+	(
+		all-rights-reserved
+		HPND
+	)
 	APSL-2
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -158,15 +170,23 @@ LICENSE="
 	WTFPL-2
 	x11proto
 	ZLIB
-	widevine? ( widevine )
+	widevine? (
+		widevine
+	)
 	|| (
 		MPL-1.1
 		GPL-2
 		LGPL-2.1
 	)
 	|| (
-		( MPL-2.0 GPL-2+ )
-		( MPL-2.0 LGPL-2.1+ )
+		(
+			MPL-2.0
+			GPL-2+
+		)
+		(
+			MPL-2.0
+			LGPL-2.1+
+		)
 		MPL-2.0
 		GPL-2.0+
 	)
