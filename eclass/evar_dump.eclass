@@ -7,7 +7,7 @@
 # @SUPPORTED_EAPIS: 7 8
 # @BLURB: Print variables
 # @DESCRIPTION:
-# Print variables with pretty
+# Print variables with pretty formatting.
 
 # @ECLASS_VARIABLE: EVAR_DUMP_VAR_LENGTH
 # @DESCRIPTION:
@@ -22,14 +22,19 @@ if [[ -z ${_EVAR_DUMP_ECLASS} ]]; then
 _EVAR_DUMP_ECLASS=1
 
 _evar_dump_set_globals() {
-	EVAR_DUMP_VAR_LENGTH="${EVAR_DUMP_VAR_LENGTH:-35}"
+	EVAR_DUMP_VAR_LENGTH="${EVAR_DUMP_VAR_LENGTH:-30}"
 }
 _evar_dump_set_globals
 unset -f _evar_dump_set_globals
 
 # @FUNCTION: evar_dump
 # @DESCRIPTION:
-# Print the name and the variable contents
+# Print the name and the variable contents in the same column.
+#
+# Example:
+#
+#   evar_dump "S" "${S}"
+#
 evar_dump() {
 	local k="${1}"
 	local v="${2}"
@@ -38,7 +43,12 @@ evar_dump() {
 
 # @FUNCTION: evar_dump_raw
 # @DESCRIPTION:
-# Print the name and the assocative array contents
+# Print the name and the assocative array contents.
+#
+# Example:
+#
+#   evar_dump_raw "S"
+#
 evar_dump_raw() {
 	local k="${1}"
 	local v=$(declare -p "${k}")
