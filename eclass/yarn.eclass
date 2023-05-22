@@ -533,6 +533,7 @@ eerror
 	corepack hydrate --activate "${EROOT}/usr/share/yarn/yarn-${yarn_slot}.tgz" || die
 	export PATH=$(realpath "${HOME}/.cache/node/corepack/npm/"*"/bin/")":${PATH}"
 	export PATH=$(realpath "${HOME}/.cache/node/corepack/yarn/"*"/bin/")":${PATH}"
+	export NODE_PATH=$(realpath "${HOME}/.cache/node/corepack/npm/"*"/node_modules")":${NODE_PATH}"
 }
 
 # @FUNCTION: _yarn_src_unpack
