@@ -5830,6 +5830,12 @@ CHECKREQS_DISK_USR="2736M"
 CMAKE_BUILD_TYPE=Release
 EMBUILD_DIR="${WORKDIR}/build"
 
+evar_dump() {
+	local k="${1}"
+	local v="${2}"
+	printf " \e[32m*\e[0m %30s : %s\n" "${k}" "${v}"
+}
+
 pkg_pretend() {
 	check-reqs_pkg_setup
 }
@@ -5885,7 +5891,7 @@ pkg_setup() {
 # @DESCRIPTION:
 # Unpacks a npm application.
 __npm_src_unpack_default() {
-einfo "NPM_PROJECT_ROOT:\t${NPM_PROJECT_ROOT}"
+evar_dump "NPM_PROJECT_ROOT" "${NPM_PROJECT_ROOT}"
 	if [[ "${NPM_OFFLINE:-1}" == "0" ]] ; then
 		:;
 	elif declare -f npm_transform_uris > /dev/null ; then
@@ -6044,22 +6050,22 @@ eerror
 	export NODE_PATH="/usr/$(get_libdir)/node_modules:${NODE_PATH}"
 
 einfo
-einfo "CC:\t${CC}"
-einfo "CXX:\t${CXX}"
-einfo "CFLAGS:\t${CFLAGS}"
-einfo "CXXFLAGS:\t${CXXFLAGS}"
-einfo "LDFLAGS:\t${LDFLAGS}"
-einfo "BINARYEN:\t${EMSDK_BINARYEN_BASE_PATH}"
-einfo "CLOSURE_COMPILER:\t${EMSDK_CLOSURE_COMPILER}"
-einfo "em_pv:\t${em_pv}"
-einfo "EM_BINARYEN_ROOT:\t${EM_BINARYEN_ROOT}"
-einfo "EM_CONFIG:\t${EM_CONFIG}"
-einfo "EM_NODE_JS:\t${EM_NODE_JS}"
-einfo "EMCC_CFLAGS:\t${EMCC_CFLAGS}"
-einfo "LLVM_ROOT:\t${EMSDK_LLVM_ROOT}"
-einfo "NODE_VERSION:\t${NODE_VERSION}"
-einfo "NODE_PATH:\t${NODE_PATH}"
-einfo "PATH:\t${PATH}"
+evar_dump "CC" "${CC}"
+evar_dump "CXX" "${CXX}"
+evar_dump "CFLAGS" "${CFLAGS}"
+evar_dump "CXXFLAGS" "${CXXFLAGS}"
+evar_dump "LDFLAGS" "${LDFLAGS}"
+evar_dump "BINARYEN" "${EMSDK_BINARYEN_BASE_PATH}"
+evar_dump "CLOSURE_COMPILER" "${EMSDK_CLOSURE_COMPILER}"
+evar_dump "em_pv" "${em_pv}"
+evar_dump "EM_BINARYEN_ROOT" "${EM_BINARYEN_ROOT}"
+evar_dump "EM_CONFIG" "${EM_CONFIG}"
+evar_dump "EM_NODE_JS" "${EM_NODE_JS}"
+evar_dump "EMCC_CFLAGS" "${EMCC_CFLAGS}"
+evar_dump "LLVM_ROOT" "${EMSDK_LLVM_ROOT}"
+evar_dump "NODE_VERSION" "${NODE_VERSION}"
+evar_dump "NODE_PATH" "${NODE_PATH}"
+evar_dump "PATH" "${PATH}"
 einfo
 einfo "Building ${MY_PN}.js"
 einfo
