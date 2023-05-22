@@ -86,6 +86,14 @@ unset -f _npm_set_globals
 # @DESCRIPTION:
 # The project root containing the package-lock.json file.
 
+# @ECLASS_VARIABLE: NPM_SLOT
+# @DESCRIPTION:
+# The version of the lockfile.  (Default:  3)
+# Valid values:  1, 2, 3
+# Using 3 is backwards compatible with 2.
+# Using 2 is backwards compatible with 1.
+# To simplify things, use the same lockfile version.
+
 # @ECLASS_VARIABLE: NPM_TARBALL
 # @DESCRIPTION:
 # The main package tarball.

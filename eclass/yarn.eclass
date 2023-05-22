@@ -114,12 +114,21 @@ unset -f _yarn_set_globals
 
 # @ECLASS_VARIABLE: YARN_SLOT
 # @DESCRIPTION:
+# The version of the Yarn lockfile. (Default:  1)
 # Use 1.x or 3.x.
 # Valid values:  1, 3
 
 # @ECLASS_VARIABLE: NPM_AUDIT_FIX
 # @DESCRIPTION:
 # Allow audit fix
+
+# @ECLASS_VARIABLE: NPM_SLOT
+# @DESCRIPTION:
+# The version of the NPM lockfile.  (Default:  3)
+# Valid values:  1, 2, 3
+# Using 3 is backwards compatible with 2.
+# Using 2 is backwards compatible with 1.
+# To simplify things, use the same lockfile version.
 
 # @ECLASS_VARIABLE: NPM_TRIES
 # @DESCRIPTION:
