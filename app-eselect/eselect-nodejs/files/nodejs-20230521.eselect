@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manages the nodejs include symlink"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20210319"
+VERSION="20230521"
 PN="nodejs"
 
 # find a list of Node.js symlink targets
@@ -29,9 +29,20 @@ set_symlink() {
         local targets=( $(find_targets) )
         target=${targets[target-1]}
         ln -s "/usr/include/${target}" "/usr/include/node"
+
+	corepack disable 2>/dev/null || true
+	mkdir -p "/usr/$(get_libdir)/node_modules"
+	ln -sf "/usr/$(get_libdir)/corepack/${target}" "/usr/$(get_libdir)/node_modules/corepack"
+	ln -sf "/usr/$(get_libdir)/node_modules/corepack/${target}/dist/corepack.js" "/usr/bin/corepack"
+	corepack enable
     elif [[ -d "/usr/include/${target}" && "${target}" =~ ^node[0-9]* ]] ; then
-        target=$(echo "${target}" | sed -e "s|node||g")
-        ln -s "/usr/include/node${target}" "/usr/include/node"
+        ln -s "/usr/include/${target}" "/usr/include/node"
+
+	corepack disable 2>/dev/null || true
+	mkdir -p "/usr/$(get_libdir)/node_modules"
+	ln -sf "/usr/$(get_libdir)/corepack/${target}" "/usr/$(get_libdir)/node_modules/corepack"
+	ln -sf "/usr/$(get_libdir)/node_modules/corepack/${target}/dist/corepack.js" "/usr/bin/corepack"
+	corepack enable
     else
         echo "Failed to set symlink and is now gone."
         return
@@ -45,12 +56,20 @@ describe_show() {
     echo "Show the current Node.js symlink"
 }
 
+get_libdir() {
+	realpath /usr/lib*/corepack | cut -f 3 -d "/"
+}
+
 do_show() {
     write_list_start "Current Node.js symlinks:"
     if [[ -L /usr/include/node ]]; then
         local k_node_src="/usr/include/node"
         local k_node_dest=$(canonicalise "/usr/include/node")
         write_kv_list_entry "${k_node_src%/} ->" "${k_node_dest%/}"
+
+	local k_corepack_src="/usr/bin/corepack"
+	local k_corepack_dest=$(canonicalise "/usr/bin/corepack")
+        write_kv_list_entry "${k_corepack_src%/} ->" "${k_corepack_dest%/}"
     else
         write_kv_list_entry "(unset)" ""
     fi

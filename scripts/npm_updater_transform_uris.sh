@@ -18,6 +18,7 @@ npm_updater_gen_npm_uris() {
 		[[ "${row}" =~ "http" ]] || continue
 		local uri=$(echo "${row}" \
 			| cut -f 1 -d "#")
+		uri=$(echo "${uri}" | sed -e "s|[?].*||")
 		if [[ "${row}" =~ ".git" && "${row}" =~ "github" ]] ; then
 			local commit_id=$(echo "${row}" \
 				| cut -f 2 -d "#")
@@ -32,7 +33,9 @@ npm_updater_gen_npm_uris() {
 			echo "${uri}"
 		elif [[ "${row}" =~ "@" ]] ; then
 			local ns=$(echo "${uri}" \
-				| grep -E -o -e "@[a-zA-Z0-9._-]+")
+				| grep -E -o -e "@[a-zA-Z0-9._-]+" \
+				| tr " " "\n" \
+		                | head -n 1)
 			local bn="${uri##*/}"
 			echo "${uri} -> npmpkg-${ns}-${bn}"
 		else

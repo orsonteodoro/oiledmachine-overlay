@@ -74,11 +74,11 @@ gen_iuse_pgo() {
 }
 
 IUSE+="
-acorn corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
+acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
 npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
-man pgo r7
+man pgo r8
 "
 
 gen_required_use_pgo() {
@@ -92,9 +92,7 @@ REQUIRED_USE+="
 	${PN}_pgo_trainers_module? (
 		inspector
 	)
-	corepack? (
-		npm
-	)
+	corepack
 	inspector? (
 		icu
 		ssl
@@ -115,15 +113,16 @@ RESTRICT="!test? ( test )"
 # nodejs uses Chromium's zlib not vanilla zlib
 # Last deps commit date:  Feb 13, 2022
 ACORN_PV="8.4.1"
+COREPACK_PV="0.15.1"
 NGHTTP2_PV="1.42.0"
 RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.0.9
+	>=app-eselect/eselect-nodejs-20230521
 	>=dev-libs/libuv-1.44.0:=
 	>=net-dns/c-ares-1.18.1
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.2.11
-	app-eselect/eselect-nodejs
 	system-icu? (
 		>=dev-libs/icu-70.1:=
 	)
@@ -475,10 +474,6 @@ _src_configure() {
 		sed -i -e "s|-fsanitize-cfi-cross-dso||g" \
 			"${S}/out/Debug/obj/test_crypto_engine.ninja" || die
 	fi
-
-	if use acorn && ! which npm ; then
-ewarn "Auto installing acorn requires npm."
-	fi
 }
 
 _src_compile() {
@@ -663,53 +658,10 @@ src_install() {
 		rm -rf "${ED}//usr/share/man/man1/node.1"* || die
 	fi
 
-	if use npm; then
-		dodir /etc/npm
-
-		# Install bash completion for `npm`
-		# We need to temporarily replace default config path since
-		# npm otherwise tries to write outside of the sandbox
-		local npm_config="${REL_D_BASE}/node_modules/npm/lib/config/core.js"
-		sed -i -e "s|'/etc'|'${ED}/etc'|g" "${ED}/${npm_config}" || die
-		local tmp_npm_completion_file="$(TMPDIR="${T}" mktemp -t npm.XXXXXXXXXX)"
-		"${ED}/usr/bin/npm" completion > "${tmp_npm_completion_file}"
-		newbashcomp "${tmp_npm_completion_file}" npm
-		sed -i -e "s|'${ED}/etc'|'/etc'|g" "${ED}/${npm_config}" || die
-
-		if use man ; then
-			# Move man pages
-			doman "${D_BASE}"/node_modules/npm/man/man{1,5,7}/*
-		fi
-
-		# Clean up
-		local f
-		for f in \
-			"${ED_BASE}"/node_modules/npm/{.mailmap,.npmignore,Makefile} \
-			"${ED_BASE}"/node_modules/npm/{doc,html,man} ; do
-			if [[ -e "${f}" ]] ; then
-				rm -vrf "${f}" || die
-			fi
-		done
-
-		# Copyright notices already copied by lcnr_install_files
-
-		local find_exp="-or -name"
-		local find_name=()
-		local match
-		for match in "AUTHORS*" "CHANGELOG*" "CONTRIBUT*" "README*" \
-			".travis.yml" ".eslint*" ".wercker.yml" ".npmignore" \
-			"*.md" "*.markdown" "*.bat" "*.cmd"; do
-			find_name+=( ${find_exp} "${match}" )
-		done
-
-		# Remove various development and/or inappropriate files and
-		# useless docs of dependend packages.
-		find "${ED_BASE}"/node_modules \
-			\( -type d -name examples \) -or \( -type f \( \
-				-iname "LICEN?E*" \
-				"${find_name[@]}" \
-			\) \) -exec rm -rf "{}" \;
-	fi
+	# Use tarball instead.
+	rm -rf "${ED}/usr/$(get_libdir)/node_modules/npm"
+	rm -rf "${ED}/usr/bin/npm"
+	rm -rf "${ED}/usr/bin/npx"
 
 	mv "${ED}"/usr/share/doc/node "${ED}"/usr/share/doc/${PF} || die
 
@@ -720,11 +672,14 @@ src_install() {
 		rm "${ED}/usr/share/systemtap/tapset/node.stp" || die
 	fi
 
-	if ! use corepack ; then
-		# Prevent collisions
-		rm -rf "${ED}/usr/$(get_libdir)/node_modules/corepack" || die
-		rm -rf "${ED}/usr/bin/corepack" || die
-	fi
+	# Let eselect-nodejs handle switching corepack
+	dodir /usr/$(get_libdir)/corepack
+	mv \
+		"${ED}/usr/$(get_libdir)/node_modules/corepack" \
+		"${ED}/usr/$(get_libdir)/corepack/node${SLOT_MAJOR}" \
+		|| die
+	rm -rf "${ED}/usr/bin/corepack"
+
 	uopts_src_install
 }
 
@@ -750,11 +705,6 @@ ewarn
 		|| die
 }
 
-install_corepack() {
-	npm remove corepack -g
-	npm install corepack -g
-}
-
 pkg_postinst() {
 	if has_version ">=net-libs/nodejs-${PV}" ; then
 einfo
@@ -775,13 +725,6 @@ einfo "corresponding SLOT.  This means that you cannot compile with different"
 einfo "SLOTS simultaneously."
 einfo
 	uopts_pkg_postinst
-	use corepack && install_corepack
-}
-
-pkg_prerm() {
-	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
-		corepack disable
-	fi
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multislot, pgo
