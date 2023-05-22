@@ -24,8 +24,8 @@ NPM_MULTI_LOCKFILE=1
 NPM_OFFLINE=0 # Offline is broken.  It says that tarballs are corrupt.
 NPM_AUDIT_FIX=0
 
-inherit check-reqs desktop electron-app eutils flag-o-matic npm toolchain-funcs
-inherit xdg
+inherit check-reqs desktop electron-app eutils evar_dump flag-o-matic npm
+inherit toolchain-funcs xdg
 
 DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed \
 to be used by everyone."
@@ -5829,12 +5829,6 @@ CHECKREQS_DISK_BUILD="2752M"
 CHECKREQS_DISK_USR="2736M"
 CMAKE_BUILD_TYPE=Release
 EMBUILD_DIR="${WORKDIR}/build"
-
-evar_dump() {
-	local k="${1}"
-	local v="${2}"
-	printf " \e[32m*\e[0m %30s : %s\n" "${k}" "${v}"
-}
 
 pkg_pretend() {
 	check-reqs_pkg_setup
