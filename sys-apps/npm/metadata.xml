@@ -10,6 +10,11 @@
     <remote-id type="github">npm/cli</remote-id>
     <bugs-to>https://github.com/npm/cli/issues</bugs-to>
   </upstream>
+  <use>
+    <flag name="ssl">
+      Required for remote downloads.  Otherwise, offline install is assumed.
+    </flag>
+  </use>
   <slots>
     <slot name="0">
       Older ebuilds (not-supported)

@@ -79,7 +79,7 @@ acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
 npm mold pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
-man pgo r8
+man pgo r9
 "
 
 gen_required_use_pgo() {
@@ -100,7 +100,6 @@ REQUIRED_USE+="
 	)
 	npm? (
 		corepack
-		ssl
 	)
 	system-icu? (
 		icu
@@ -442,7 +441,7 @@ ewarn "If moldlto fails for gcc, try clang."
 		myconf+=( --with-intl=none )
 	fi
 	use inspector || myconf+=( --without-inspector )
-	use npm || myconf+=( --without-npm )
+	myconf+=( --without-npm )
 	use pgo && __pgo_configure
 
 	autofix_flags

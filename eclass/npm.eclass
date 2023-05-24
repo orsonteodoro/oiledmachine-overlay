@@ -394,18 +394,18 @@ einfo "Skipping audit fix."
 einfo "Tries:\t${tries}"
 einfo "Running:\tnpm ${cmd[@]}"
 		npm "${cmd[@]}" || die
-		if ! grep -q -E -r -e "(ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
+		if ! grep -q -E -r -e "(EAI_AGAIN|ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
 			break
 		fi
 		_npm_auto_remove_node_modules
-		if grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
+		if grep -q -E -r -e "(EAI_AGAIN|ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
 			tries=$((${tries} + 1))
 		fi
 		rm -rf "${HOME}/.npm/_logs"
 	done
 	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
 	if [[ "${cmd[@]}" =~ "build" ]] ; then
-		grep -q -e "ENOENT" "${T}/build.log" && die
+		grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
 	fi
 	if [[ "${cmd[@]}" =~ ("audit fix"|"install") ]] ; then
 		# Indeterministic or random failure bug
@@ -434,9 +434,10 @@ eerror "continue."
 eerror
 		die
 	fi
-	corepack hydrate --activate "${EROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
-	export PATH=$(realpath "${HOME}/.cache/node/corepack/npm/"*"/bin/")":${PATH}"
-	export NODE_PATH=$(realpath "${HOME}/.cache/node/corepack/npm/"*"/node_modules")":${NODE_PATH}"
+	corepack hydrate --activate "${ESYSROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
+	local npm_pv=$(basename $(find "${HOME}/.cache/node/corepack/npm/"* -maxdepth 0))
+	export PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
+	export NODE_PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/node_modules:${NODE_PATH}"
 }
 
 # @FUNCTION: _npm_src_unpack
@@ -494,6 +495,7 @@ npm_src_unpack() {
 # @DESCRIPTION:
 # Builds a npm application.
 npm_src_compile() {
+	npm_hydrate
 	[[ "${NPM_BUILD_SCRIPT}" == "none" ]] && return
 	[[ "${NPM_BUILD_SCRIPT}" == "null" ]] && return
 	[[ "${NPM_BUILD_SCRIPT}" == "skip" ]] && return
@@ -506,8 +508,9 @@ npm_src_compile() {
 	npm run ${cmd} \
 		${extra_args[@]} \
 		|| die
-	grep -q -e "ENOENT" "${T}/build.log" && die
+	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
 	grep -q -e "npm ERR! Exit handler never called!" && die "Possible indeterministic behavior"
+	grep -q -e "throw err" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: npm_src_test

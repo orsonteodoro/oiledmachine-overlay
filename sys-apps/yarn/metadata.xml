@@ -13,4 +13,9 @@
       https://github.com/yarnpkg/berry/issues
     </bugs-to>
   </upstream>
+  <use>
+    <flag name="ssl">
+      Required for remote downloads.  Otherwise, offline install is assumed.
+    </flag>
+  </use>
 </pkgmetadata>

@@ -417,18 +417,18 @@ einfo "Skipping audit fix."
 einfo "Tries:\t${tries}"
 einfo "Running:\tnpm ${cmd[@]}"
 		npm "${cmd[@]}" || die
-		if ! grep -q -E -r -e "(ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
+		if ! grep -q -E -r -e "(EAI_AGAIN|ENOTEMPTY|ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
 			break
 		fi
 		_npm_auto_remove_node_modules
-		if grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
+		if grep -q -E -r -e "(EAI_AGAIN|ERR_SOCKET_TIMEOUT|ETIMEDOUT|ECONNRESET)" "${HOME}/.npm/_logs" ; then
 			tries=$((${tries} + 1))
 		fi
 		rm -rf "${HOME}/.npm/_logs"
 	done
 	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
 	if [[ "${cmd[@]}" =~ "build" ]] ; then
-		grep -q -e "ENOENT" "${T}/build.log" && die
+		grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
 	fi
 	if [[ "${cmd[@]}" =~ ("audit fix"|"install") ]] ; then
 		# Indeterministic or random failure bug
@@ -538,11 +538,13 @@ eerror "continue."
 eerror
 		die
 	fi
-	corepack hydrate --activate "${EROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
-	corepack hydrate --activate "${EROOT}/usr/share/yarn/yarn-${yarn_slot}.tgz" || die
-	export PATH=$(realpath "${HOME}/.cache/node/corepack/npm/"*"/bin/")":${PATH}"
-	export PATH=$(realpath "${HOME}/.cache/node/corepack/yarn/"*"/bin/")":${PATH}"
-	export NODE_PATH=$(realpath "${HOME}/.cache/node/corepack/npm/"*"/node_modules")":${NODE_PATH}"
+	corepack hydrate --activate "${ESYSROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
+	corepack hydrate --activate "${ESYSROOT}/usr/share/yarn/yarn-${yarn_slot}.tgz" || die
+	local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
+	local yarn_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/yarn/"*))
+	export PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
+	export PATH="${HOME}/.cache/node/corepack/yarn/${yarn_pv}/bin:${PATH}"
+#	export NODE_PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/node_modules:${NODE_PATH}"
 }
 
 # @FUNCTION: _yarn_src_unpack
@@ -576,6 +578,7 @@ einfo "Called yarn_src_unpack"
 # Builds a yarn application.
 yarn_src_compile() {
 	yarn_check
+	yarn_hydrate
 	[[ "${YARN_BUILD_SCRIPT}" == "none" ]] && return
 	[[ "${YARN_BUILD_SCRIPT}" == "null" ]] && return
 	[[ "${YARN_BUILD_SCRIPT}" == "skip" ]] && return
@@ -587,6 +590,9 @@ yarn_src_compile() {
 		--pure-lockfile \
 		--verbose \
 		|| die
+	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
+	grep -q -e "npm ERR! Exit handler never called!" && die "Possible indeterministic behavior"
+	grep -q -e "throw err" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: yarn_src_test
