@@ -689,6 +689,7 @@ eerror "Skipping fperms 0755 ${path}.  Missing file."
 		fi
 	done
 	IFS=$' \t\n'
+	rm -rf "${ED}/opt/npm-packages-offline-cache"
 }
 
 fi
