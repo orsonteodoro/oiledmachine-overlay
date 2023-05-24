@@ -544,7 +544,7 @@ eerror
 	local yarn_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/yarn/"*))
 	export PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
 	export PATH="${HOME}/.cache/node/corepack/yarn/${yarn_pv}/bin:${PATH}"
-#	export NODE_PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/node_modules:${NODE_PATH}"
+	export NODE_PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/node_modules:${NODE_PATH}"
 }
 
 # @FUNCTION: _yarn_src_unpack
