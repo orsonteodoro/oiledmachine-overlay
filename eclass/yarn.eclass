@@ -39,8 +39,6 @@ esac
 if [[ -z ${_YARN_ECLASS} ]]; then
 _YARN_ECLASS=1
 
-inherit evar_dump
-
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test src_install
 
 BDEPEND+="
@@ -573,9 +571,6 @@ eerror
 	local yarn_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/yarn/"*))
 	export PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
 	export PATH="${HOME}/.cache/node/corepack/yarn/${yarn_pv}/bin:${PATH}"
-	export NODE_PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/node_modules:${NODE_PATH}"
-evar_dump "PATH" "${PATH}"
-evar_dump "NODE_PATH" "${NODE_PATH}"
 }
 
 # @FUNCTION: _yarn_src_unpack

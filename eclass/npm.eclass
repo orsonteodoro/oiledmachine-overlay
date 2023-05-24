@@ -20,8 +20,6 @@ esac
 if [[ -z ${_NPM_ECLASS} ]]; then
 _NPM_ECLASS=1
 
-inherit evar_dump
-
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test src_install
 
 BDEPEND+="
@@ -467,12 +465,6 @@ eerror
 	export NODEJS_HOME="${HOME}"
 	local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
 	export PATH=".:${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
-#	export NODE_PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/node_modules:${NODE_PATH}"
-#	npm config
-#	npm config get
-#	die
-evar_dump "PATH" "${PATH}"
-evar_dump "NODE_PATH" "${NODE_PATH}"
 }
 
 # @FUNCTION: _npm_src_unpack
