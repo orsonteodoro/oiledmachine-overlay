@@ -418,8 +418,8 @@ einfo "Running:\tnpm ${cmd[@]}"
 # @DESCRIPTION:
 # Fix npm, npx wrappers
 __npm_patch() {
-einfo "Running __npm_patch() for NPM_SLOT=${NPM_SLOT}"
 	local npm_slot="${NPM_SLOT:-3}"
+einfo "Running __npm_patch() for NPM_SLOT=${npm_slot}"
 	local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
 	if [[ "${npm_slot}" == "1" ]] ; then
 		sed -i \
