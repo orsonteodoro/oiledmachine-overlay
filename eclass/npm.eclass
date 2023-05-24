@@ -20,6 +20,8 @@ esac
 if [[ -z ${_NPM_ECLASS} ]]; then
 _NPM_ECLASS=1
 
+inherit evar_dump
+
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test src_install
 
 BDEPEND+="
@@ -414,6 +416,32 @@ einfo "Running:\tnpm ${cmd[@]}"
 	grep -q -e "npm ERR! Exit handler never called!" && die "Possible indeterministic behavior"
 }
 
+# @FUNCTION: __npm_patch
+# @DESCRIPTION:
+# Fix npm, npx wrappers
+__npm_patch() {
+einfo "Running __npm_patch() for NPM_SLOT=${NPM_SLOT}"
+	local npm_slot="${NPM_SLOT:-3}"
+	local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
+	if [[ "${npm_slot}" == "1" ]] ; then
+		sed -i \
+			-e "s|\$basedir/node_modules/npm/bin|${HOME}/.cache/node/corepack/npm/${npm_pv}/bin|g" \
+			"${HOME}/.cache/node/corepack/npm/${npm_pv}/bin/npm" || die
+		sed -i \
+			-e "s|\$basedir/node_modules/npm/bin|${HOME}/.cache/node/corepack/npm/${npm_pv}/bin|g" \
+			"${HOME}/.cache/node/corepack/npm/${npm_pv}/bin/npx" || die
+	fi
+	if [[ "${npm_slot}" == "2"  || "${npm_slot}" == "3" ]] ; then
+		sed -i \
+			-e "s|\$CLI_BASEDIR/node_modules/npm/bin|${HOME}/.cache/node/corepack/npm/${npm_pv}/bin|g" \
+			-e "s|\$NPM_PREFIX/node_modules/npm/bin|${HOME}/.cache/node/corepack/npm/${npm_pv}/bin|g" \
+			"${HOME}/.cache/node/corepack/npm/${npm_pv}/bin/npm" || die
+		sed -i \
+			-e "s|\$CLI_BASEDIR/node_modules/npm/bin|${HOME}/.cache/node/corepack/npm/${npm_pv}/bin|g" \
+			"${HOME}/.cache/node/corepack/npm/${npm_pv}/bin/npx" || die
+	fi
+}
+
 # @FUNCTION: npm_hydrate
 # @DESCRIPTION:
 # Load the package manager in the sandbox.
@@ -434,10 +462,17 @@ eerror "continue."
 eerror
 		die
 	fi
-	corepack hydrate --activate "${ESYSROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
-	local npm_pv=$(basename $(find "${HOME}/.cache/node/corepack/npm/"* -maxdepth 0))
-	export PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
-	export NODE_PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/node_modules:${NODE_PATH}"
+	corepack hydrate "${ESYSROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
+	__npm_patch
+	export NODEJS_HOME="${HOME}"
+	local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
+	export PATH=".:${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
+#	export NODE_PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/node_modules:${NODE_PATH}"
+#	npm config
+#	npm config get
+#	die
+evar_dump "PATH" "${PATH}"
+evar_dump "NODE_PATH" "${NODE_PATH}"
 }
 
 # @FUNCTION: _npm_src_unpack

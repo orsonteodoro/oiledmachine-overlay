@@ -39,6 +39,8 @@ esac
 if [[ -z ${_YARN_ECLASS} ]]; then
 _YARN_ECLASS=1
 
+inherit evar_dump
+
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test src_install
 
 BDEPEND+="
@@ -508,6 +510,32 @@ einfo "Updating lockfile"
 		cd "${S}" || die
 }
 
+# @FUNCTION: __npm_patch
+# @DESCRIPTION:
+# Fix npm, npx wrappers
+__npm_patch() {
+einfo "Running __npm_patch() for NPM_SLOT=${NPM_SLOT}"
+	local npm_slot="${NPM_SLOT:-3}"
+	local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
+	if [[ "${npm_slot}" == "1" ]] ; then
+		sed -i \
+			-e "s|\$basedir/node_modules/npm/bin|${HOME}/.cache/node/corepack/npm/${npm_pv}/bin|g" \
+			"${HOME}/.cache/node/corepack/npm/${npm_pv}/bin/npm" || die
+		sed -i \
+			-e "s|\$basedir/node_modules/npm/bin|${HOME}/.cache/node/corepack/npm/${npm_pv}/bin|g" \
+			"${HOME}/.cache/node/corepack/npm/${npm_pv}/bin/npx" || die
+	fi
+	if [[ "${npm_slot}" == "2"  || "${npm_slot}" == "3" ]] ; then
+		sed -i \
+			-e "s|\$CLI_BASEDIR/node_modules/npm/bin|${HOME}/.cache/node/corepack/npm/${npm_pv}/bin|g" \
+			-e "s|\$NPM_PREFIX/node_modules/npm/bin|${HOME}/.cache/node/corepack/npm/${npm_pv}/bin|g" \
+			"${HOME}/.cache/node/corepack/npm/${npm_pv}/bin/npm" || die
+		sed -i \
+			-e "s|\$CLI_BASEDIR/node_modules/npm/bin|${HOME}/.cache/node/corepack/npm/${npm_pv}/bin|g" \
+			"${HOME}/.cache/node/corepack/npm/${npm_pv}/bin/npx" || die
+	fi
+}
+
 # @FUNCTION: yarn_hydrate
 # @DESCRIPTION:
 # Load the package manager in the sandbox.
@@ -540,11 +568,14 @@ eerror
 	fi
 	corepack hydrate --activate "${ESYSROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
 	corepack hydrate --activate "${ESYSROOT}/usr/share/yarn/yarn-${yarn_slot}.tgz" || die
+	__npm_patch
 	local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
 	local yarn_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/yarn/"*))
 	export PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
 	export PATH="${HOME}/.cache/node/corepack/yarn/${yarn_pv}/bin:${PATH}"
 	export NODE_PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/node_modules:${NODE_PATH}"
+evar_dump "PATH" "${PATH}"
+evar_dump "NODE_PATH" "${NODE_PATH}"
 }
 
 # @FUNCTION: _yarn_src_unpack
