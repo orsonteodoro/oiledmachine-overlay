@@ -489,6 +489,7 @@ npm_src_unpack() {
 		fi
 		_npm_src_unpack_default
 	fi
+	grep -q -e "MODULE_NOT_FOUND" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: npm_src_compile
@@ -510,7 +511,7 @@ npm_src_compile() {
 		|| die
 	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
 	grep -q -e "npm ERR! Exit handler never called!" && die "Possible indeterministic behavior"
-	grep -q -e "throw err" "${T}/build.log" && die "Detected error"
+	grep -q -e "MODULE_NOT_FOUND" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: npm_src_test
