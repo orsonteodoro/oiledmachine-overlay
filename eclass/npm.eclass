@@ -462,7 +462,6 @@ eerror
 	fi
 	corepack hydrate "${ESYSROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
 	__npm_patch
-	export NODEJS_HOME="${HOME}"
 	local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
 	export PATH=".:${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
 }
