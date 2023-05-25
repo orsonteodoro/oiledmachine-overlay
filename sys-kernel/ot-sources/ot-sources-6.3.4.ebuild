@@ -3,15 +3,15 @@
 
 EAPI=8
 
-GENPATCHES_VER="118"
-PATCH_PROJC_VER="5.15-r1"
-PATCH_RT_VER="5.15.111-rt63"
+GENPATCHES_VER="6"
+PATCH_PROJC_VER="6.3-r1"
+PATCH_RT_VER="6.3.3-rt15"
 
-inherit ot-kernel-v5.15
+inherit ot-kernel-v6.3
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v5.15.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.3.eclass
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
