@@ -7,7 +7,7 @@ LLVM_SLOTS=(15 14 13) # See https://github.com/godotengine/godot/blob/4.0-stable
 PYTHON_COMPAT=( python3_{8..11} )
 
 BULLET_PV="3.17"
-CA_CERTIFICATES_PV="20221021"
+CA_CERTIFICATES_PV="20230323"
 ENET_PV="1.3.17"
 EMBREE_PV="3.13.5"
 FREETYPE_PV="2.12.1"

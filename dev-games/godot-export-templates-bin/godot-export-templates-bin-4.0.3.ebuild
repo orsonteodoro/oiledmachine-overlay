@@ -7,7 +7,7 @@ EAPI=8
 STATUS="stable"
 
 ANDROID_MIN_API="21"
-ANDROID_SDK_VER="32"
+ANDROID_SDK_VER="33"
 IOS_MIN="10.0"
 MONO_PV="6.12.0.182"
 EMSCRIPTEN_PV="1.39.9" # emsdk_pv == emscripten-core_pv
