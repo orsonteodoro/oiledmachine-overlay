@@ -674,9 +674,9 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=net-libs/nodejs-14.18.0:${NODE_VERSION}
-	>=net-libs/nodejs-${NODE_VERSION}[yarn]
 	>=sys-devel/gcc-11.2.0
 	>=sys-devel/make-4.3
+	sys-apps/yarn:1
 	virtual/pkgconfig
 "
 if [[ "${SLOT}" =~ "community" ]] ; then
@@ -2316,3 +2316,5 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.37.1 (20230525)
+# launch-test:  passed
