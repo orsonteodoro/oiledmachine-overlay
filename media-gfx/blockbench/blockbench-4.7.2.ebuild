@@ -249,3 +249,5 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.7.2 (20230525)
+# preview (saved screenshot):  passed (vertically stacked rotated cubes)
