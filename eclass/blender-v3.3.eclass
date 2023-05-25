@@ -694,7 +694,7 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-3.0.0-intern-ghost-fix-typo-in-finding-XF86VMODE.patch"
 	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
-	"${FILESDIR}/${PN}-3.3.6-tbb-rpath.patch"
+	"${FILESDIR}/${PN}-3.3.7-tbb-rpath.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
