@@ -24,7 +24,7 @@
     "live-server": "^1.2.0",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
-    "minimist": "^1.2.3",
+    "minimist": "^1.2.6",
     "ws": "^5.1.1"
   }
 }
