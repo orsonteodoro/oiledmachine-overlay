@@ -287,7 +287,7 @@ _yarn_src_unpack_default_ebuild() {
 	cd "${S}" || die
 	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
 		_yarn_cp_tarballs
-		rm -rf "package-lock.json" || true
+		rm -f "package-lock.json" || true
 		if [[ -n "${YARN_ROOT}" ]] ; then
 			rm -rf "${YARN_ROOT}/.yarnrc" || die
 		fi

@@ -269,7 +269,7 @@ _npm_src_unpack_default_ebuild() {
 	cd "${S}" || die
 	if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
 		_npm_cp_tarballs
-		rm -rf "package-lock.json" || true
+		rm -f "package-lock.json" || true
 		if [[ -e "${FILESDIR}/${PV}" && "${NPM_MULTI_LOCKFILE}" == "1" && -n "${NPM_ROOT}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${NPM_ROOT}" || die
 		elif [[ -e "${FILESDIR}/${PV}" && "${NPM_MULTI_LOCKFILE}" == "1" ]] ; then
