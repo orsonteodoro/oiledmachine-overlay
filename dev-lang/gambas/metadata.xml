@@ -158,9 +158,9 @@
     <flag name="v4l">
       Adds webcam and video capture support (deprecated)
     </flag>
-    <flag name="webkit">
-      Adds support for adding a WebKit widget to gambas projects to view HTML
-      files
+    <flag name="webview">
+      Adds support for adding a WebView widget (based on QtWebEngine) to gambas
+      projects to view HTML files
     </flag>
     <flag name="X">
       Adds support for X
