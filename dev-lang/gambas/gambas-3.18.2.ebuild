@@ -520,10 +520,13 @@ src_configure() {
 		$(use_enable postgresql) \
 		$(use_enable qt5) \
 		$(usex qt5 \
-			$(use_enable opengl qt5opengl) \
-		) \
-		$(usex qt5 \
-			$(use_enable webview qt5webview) \
+			$(echo \
+				" \
+				$(use_enable opengl qt5opengl) \
+				$(use_enable webview qt5webview) \
+				" \
+			) \
+			\
 		) \
 		$(use_enable sdl) \
 		$(usex sdl \
@@ -550,6 +553,7 @@ src_configure() {
 				) \
 				\
 			) \
+			\
 		) \
 		$(use_enable zlib) \
 		$(use_enable zstd) \
