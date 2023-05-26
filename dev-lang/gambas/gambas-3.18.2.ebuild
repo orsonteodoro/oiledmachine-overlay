@@ -232,7 +232,7 @@ DEPEND+="
 		)
 		webview? (
 			>=dev-qt/qtnetwork-${QT_MIN_PV}:5=
-			>=dev-qt/qtwebengine-5:5=
+			>=dev-qt/qtwebengine-5:5=[widgets]
 			>=dev-qt/qtxml-${QT_MIN_PV}:5=
 		)
 	)
