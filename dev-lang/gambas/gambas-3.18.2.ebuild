@@ -35,7 +35,7 @@ GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+sdl2/-sdl2})
 # The USE flags below have no config options but are removed manually.
 IUSE+="
 ${GAMBAS_MODULES_DEFAULTS[@]}
-debug doc +glsl +glu +ide +jit +glsl +sge smtp +webkit
+debug doc +glsl +glu +ide +jit +glsl +sge smtp +webview
 
 remove_deprecated +remove_not_finished remove_stable_not_finished
 +remove_unstable
@@ -52,11 +52,16 @@ REQUIRED_USE+="
 		curl
 		network
 		gsl
-		webkit
+		webview
 		X
+		xml
 		|| (
 			gtk3
 			qt5
+		)
+		|| (
+			pixbuf
+			imlib2
 		)
 	)
 	mixer? (
@@ -149,9 +154,11 @@ DEPEND+="
 		>=x11-libs/gtk+-3.4:3[X,wayland]
 		x11-libs/libICE
 		x11-libs/libSM
-		|| (
-			>=net-libs/webkit-gtk-2.20:4
-			>=net-libs/webkit-gtk-2.20:4.1
+		webview? (
+			|| (
+				>=net-libs/webkit-gtk-2.20:4
+				>=net-libs/webkit-gtk-2.20:4.1
+			)
 		)
 	)
 	httpd? (
@@ -223,9 +230,9 @@ DEPEND+="
 		opengl? (
 			>=dev-qt/qtopengl-${QT_MIN_PV}:5=
 		)
-		webkit? (
+		webview? (
 			>=dev-qt/qtnetwork-${QT_MIN_PV}:5=
-			>=dev-qt/qtwebkit-5:5=
+			>=dev-qt/qtwebengine-5:5=
 			>=dev-qt/qtxml-${QT_MIN_PV}:5=
 		)
 	)
@@ -366,14 +373,14 @@ ewarn
 
 		QTCORE_PV=$(pkg-config --modversion Qt5Core)
 		QTGUI_PV=$(pkg-config --modversion Qt5Gui)
-		use webkit && \
+		use webview && \
 		QTNETWORK_PV=$(pkg-config --modversion Qt5Network)
 		use opengl && \
 		QTOPENGL_PV=$(pkg-config --modversion Qt5OpenGL)
 		QTPRINTSUPPORT_PV=$(pkg-config --modversion Qt5PrintSupport)
 		QTSVG_PV=$(pkg-config --modversion Qt5Svg)
-		#use webkit && \
-		#QTWEBKIT_PV=$(pkg-config --modversion Qt5WebKit)
+		#use webview && \
+		#QTWEBENGINE_PV=$(pkg-config --modversion Qt5WebEngine)
 		QTWIDGETS_PV=$(pkg-config --modversion Qt5Widgets)
 		QTX11EXTRAS_PV=$(pkg-config --modversion Qt5X11Extras)
 		use webkit && \
@@ -385,7 +392,7 @@ ewarn
 		if ver_test ${QT_VERSION} -ne ${QTGUI_PV} ; then
 			die "QT_VERSION is not the same version as Qt5Gui"
 		fi
-		if use webkit && ( ver_test ${QT_VERSION} -ne ${QTNETWORK_PV} ) ; then
+		if use webview && ( ver_test ${QT_VERSION} -ne ${QTNETWORK_PV} ) ; then
 			die "QT_VERSION is not the same version as Qt5Network"
 		fi
 		if use opengl ; then
@@ -399,25 +406,25 @@ ewarn
 		if ver_test ${QT_VERSION} -ne ${QTSVG_PV} ; then
 			die "QT_VERSION is not the same version as Qt5Svg"
 		fi
-		strings "${EROOT}/usr/$(get_libdir)/libQt5WebKit.so" \
-			| grep -q -F -e "Qt_"$(ver_cut 1-2 ${QT_VERSION})
-		if [[ "${?}" != "0" ]] ; then
-			QT5WEBKIT_HIGHEST=$(strings \
-				"${EROOT}/usr/$(get_libdir)/libQt5WebKit.so" \
-				| grep -F -e "Qt_5." \
-				| tail -n 1 \
-				| cut -f 2 -d "_")
-			die \
-"Qt5WebKit is not compatible.  Highest supported by this library is \
-${QT5WEBKIT_HIGHEST}.  You have ${QT_VERSION}."
-		fi
+#		strings "${EROOT}/usr/$(get_libdir)/libQt5WebEngine.so" \
+#			| grep -q -F -e "Qt_"$(ver_cut 1-2 ${QT_VERSION})
+#		if [[ "${?}" != "0" ]] ; then
+#			QT5WEBENGINE_HIGHEST=$(strings \
+#				"${EROOT}/usr/$(get_libdir)/libQt5WebEngine.so" \
+#				| grep -F -e "Qt_5." \
+#				| tail -n 1 \
+#				| cut -f 2 -d "_")
+#			die \
+#"Qt5WebEngine is not compatible.  Highest supported by this library is \
+#${QT5WEBENGINE_HIGHEST}.  You have ${QT_VERSION}."
+#		fi
 		if ver_test ${QT_VERSION} -ne ${QTWIDGETS_PV} ; then
 			die "QT_VERSION is not the same version as Qt5Widgets"
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTX11EXTRAS_PV} ; then
 			die "QT_VERSION is not the same version as Qt5X11Extras"
 		fi
-		if use webkit && ( ver_test ${QT_VERSION} -ne ${QTXML_PV} ) ; then
+		if use webview && ( ver_test ${QT_VERSION} -ne ${QTXML_PV} ) ; then
 			die "QT_VERSION is not the same version as Qt5Xml"
 		fi
 	fi
@@ -445,6 +452,7 @@ src_prepare() {
 	mod_off sqlite2
 	# prevent duplicate install failure
 	sed -i -e "/dist_gblib_DATA/d" component.am || die
+
 	L=$(find . -name "configure.ac")
 	for c in ${L} ; do
 		[[ "${c}" =~ TEMPLATE ]] && continue
@@ -470,6 +478,7 @@ src_configure() {
 		--disable-qt4 \
 		--disable-gtk2 \
 		--disable-gtkopengl \
+		--disable-qt5webkit \
 		--disable-sqlite2 \
 		$(_use_enable_lto) \
 		$(use_enable bzip2) \
@@ -508,7 +517,7 @@ src_configure() {
 		$(usex qt5 \
 			$(use_enable opengl qt5opengl) ) \
 		$(usex qt5 \
-			$(use_enable webkit qt5webkit) ) \
+			$(use_enable webview qt5webview) ) \
 		$(use_enable sdl) \
 		$(usex sdl \
 			$(use_enable mixer sdlsound) ) \
@@ -648,6 +657,7 @@ src_install() {
 		find_remove_module "gb.dbus.trayicon"
 		find_remove_module "gb.term.form"
 	fi
+
 	find "${D}" -name '*.la' -delete || die
 
 	use doc && einstalldocs
