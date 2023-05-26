@@ -442,6 +442,7 @@ GB_CONFIG_SUBDIRS\(${module_name}, gb[.a-z]*.${module_name}\)||" \
 src_prepare() {
 	default
 	cd "${S}" || die
+	local m
 	for m in ${GAMBAS_MODULES[@]} ; do
 		[[ "${m}" == "jit" ]] && continue
 		echo "$USE" | grep -F -q -o "${m}" \
@@ -450,10 +451,11 @@ src_prepare() {
 	mod_off gtk
 	mod_off qt4
 	mod_off sqlite2
-	# prevent duplicate install failure
+	# Prevent duplicate install failure.
 	sed -i -e "/dist_gblib_DATA/d" component.am || die
 
 	L=$(find . -name "configure.ac")
+	local c
 	for c in ${L} ; do
 		[[ "${c}" =~ TEMPLATE ]] && continue
 		pushd $(dirname "${c}") || die
@@ -487,7 +489,10 @@ src_configure() {
 		$(use_enable crypt) \
 		$(use_enable curl) \
 		$(use_enable debug) \
-		$(usex debug --disable-optimization --enable-optimization) \
+		$(usex debug \
+			--disable-optimization \
+			--enable-optimization \
+		) \
 		$(use_enable dbus) \
 		$(use_enable gmp) \
 		$(use_enable gnome-keyring keyring) \
@@ -503,9 +508,18 @@ src_configure() {
 		$(use_enable odbc) \
 		$(use_enable openal) \
 		$(use_enable opengl) \
-		$(usex opengl $(use_enable glsl)) \
-		$(usex opengl $(use_enable glu)) \
-		$(usex opengl $(use_enable sge)) \
+		$(usex opengl \
+			$(use_enable glsl) \
+			\
+		) \
+		$(usex opengl \
+			$(use_enable glu) \
+			\
+		) \
+		$(usex opengl \
+			$(use_enable sge) \
+			\
+		) \
 		$(use_enable openssl) \
 		$(use_enable pcre) \
 		$(use_enable pdf) \
@@ -515,15 +529,19 @@ src_configure() {
 		$(use_enable postgresql) \
 		$(use_enable qt5) \
 		$(usex qt5 \
-			$(use_enable opengl qt5opengl) ) \
+			$(use_enable opengl qt5opengl) \
+		) \
 		$(usex qt5 \
-			$(use_enable webview qt5webview) ) \
+			$(use_enable webview qt5webview) \
+		) \
 		$(use_enable sdl) \
 		$(usex sdl \
-			$(use_enable mixer sdlsound) ) \
+			$(use_enable mixer sdlsound) \
+		) \
 		$(use_enable sdl2) \
 		$(usex sdl2 \
-			$(use_enable mixer sdl2audio) ) \
+			$(use_enable mixer sdl2audio) \
+		) \
 		$(use_enable sqlite sqlite3) \
 		$(use_enable v4l) \
 		$(use_enable v4l v4lconvert) \
@@ -531,14 +549,21 @@ src_configure() {
 		$(use_enable X x) \
 		$(use_enable X x11) \
 		$(use_enable xml) \
-		$(usex xml $(usex xslt $(echo $(use_enable xslt xmlxslt) \
-				--enable-xmlhtml) ) ) \
+		$(usex xml \
+			$(usex xslt \
+				$(echo \
+					$(use_enable xslt xmlxslt) \
+					--enable-xmlhtml \
+				) \
+			) \
+		) \
 		$(use_enable zlib) \
 		$(use_enable zstd)
 
 	# Upstream will supply -O flags.
 	filter-flags '-O*' '-flto*'
 
+	local p
 	for p in $(grep -l -F -e "State" $(find . -name "*.component")) ; do
 		if echo "${p}" | grep -q -E -e "gb.xml/.component$" ; then
 			# Makefile traversal doesn't go in this folder
