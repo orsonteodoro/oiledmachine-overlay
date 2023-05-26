@@ -476,13 +476,6 @@ _use_enable_lto() {
 
 src_configure() {
 	econf \
-		--disable-jitllvm \
-		--disable-qt4 \
-		--disable-gtk2 \
-		--disable-gtkopengl \
-		--disable-qt5webkit \
-		--disable-sqlite2 \
-		$(_use_enable_lto) \
 		$(use_enable bzip2) \
 		$(use_enable bzip2 bzlib2) \
 		$(use_enable cairo) \
@@ -509,15 +502,13 @@ src_configure() {
 		$(use_enable openal) \
 		$(use_enable opengl) \
 		$(usex opengl \
-			$(use_enable glsl) \
-			\
-		) \
-		$(usex opengl \
-			$(use_enable glu) \
-			\
-		) \
-		$(usex opengl \
-			$(use_enable sge) \
+			$(echo \
+				" \
+				$(use_enable glsl) \
+				$(use_enable glu) \
+				$(use_enable sge) \
+				" \
+			) \
 			\
 		) \
 		$(use_enable openssl) \
@@ -552,13 +543,23 @@ src_configure() {
 		$(usex xml \
 			$(usex xslt \
 				$(echo \
+					" \
 					$(use_enable xslt xmlxslt) \
 					--enable-xmlhtml \
+					" \
 				) \
+				\
 			) \
 		) \
 		$(use_enable zlib) \
-		$(use_enable zstd)
+		$(use_enable zstd) \
+		$(_use_enable_lto) \
+		--disable-jitllvm \
+		--disable-gtk2 \
+		--disable-gtkopengl \
+		--disable-qt4 \
+		--disable-qt5webkit \
+		--disable-sqlite2
 
 	# Upstream will supply -O flags.
 	filter-flags '-O*' '-flto*'
