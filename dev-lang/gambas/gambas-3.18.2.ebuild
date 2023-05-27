@@ -380,6 +380,64 @@ einfo
 	fi
 }
 
+check_qt() {
+	einfo "Checking Qt versions"
+	local QT_VERSION=$("${EROOT}/usr/$(get_libdir)/libQt5Core.so.5" \
+		| head -n 1 \
+		| cut -f 8 -d " ")
+	if ver_test ${QT_VERSION} -lt ${QT_MIN_PV} ; then
+		die "You need >=${QT_MIN_PV} for the Qt system libraries."
+	fi
+
+	QTCORE_PV=$(pkg-config --modversion Qt5Core)
+	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
+	use opengl && \
+	QTOPENGL_PV=$(pkg-config --modversion Qt5OpenGL)
+	QTPRINTSUPPORT_PV=$(pkg-config --modversion Qt5PrintSupport)
+	QTSVG_PV=$(pkg-config --modversion Qt5Svg)
+	use webview && \
+	QTWEBENGINE_PV=$(pkg-config --modversion Qt5WebEngine)
+	QTWIDGETS_PV=$(pkg-config --modversion Qt5Widgets)
+	use X && \
+	QTX11EXTRAS_PV=$(pkg-config --modversion Qt5X11Extras)
+
+	if ver_test ${QT_VERSION} -ne ${QTCORE_PV} ; then
+		die "QT_VERSION is not the same version as Qt5Core"
+	fi
+	if ver_test ${QT_VERSION} -ne ${QTGUI_PV} ; then
+		die "QT_VERSION is not the same version as Qt5Gui"
+	fi
+	if use opengl && ver_test ${QT_VERSION} -ne ${QTOPENGL_PV} ; then
+		die "QT_VERSION is not the same version as Qt5OpenGL"
+	fi
+	if ver_test ${QT_VERSION} -ne ${QTPRINTSUPPORT_PV} ; then
+		die "QT_VERSION is not the same version as Qt5PrintSupport"
+	fi
+	if ver_test ${QT_VERSION} -ne ${QTSVG_PV} ; then
+		die "QT_VERSION is not the same version as Qt5Svg"
+	fi
+	if use webview ; then
+		strings "${EROOT}/usr/$(get_libdir)/libQt5WebEngine.so" \
+			| grep -q -F -e "Qt_"$(ver_cut 1-2 ${QT_VERSION})
+		if [[ "${?}" != "0" ]] ; then
+			QT5WEBENGINE_HIGHEST=$(strings \
+				"${EROOT}/usr/$(get_libdir)/libQt5WebEngine.so" \
+				| grep -F -e "Qt_5." \
+				| tail -n 1 \
+				| cut -f 2 -d "_")
+			die \
+"Qt5WebEngine is not compatible.  Highest supported by this library is \
+${QT5WEBENGINE_HIGHEST}.  You have ${QT_VERSION}."
+		fi
+	fi
+	if ver_test ${QT_VERSION} -ne ${QTWIDGETS_PV} ; then
+		die "QT_VERSION is not the same version as Qt5Widgets"
+	fi
+	if use X && ver_test ${QT_VERSION} -ne ${QTX11EXTRAS_PV} ; then
+		die "QT_VERSION is not the same version as Qt5X11Extras"
+	fi
+}
+
 pkg_setup() {
 	if [[ "$(tc-getCC)" == "clang" || "$(tc-getCXX)" == "clang++" ]]; then
 ewarn
@@ -392,65 +450,7 @@ ewarn
 	fi
 
 	check_cxx
-
-	if use qt5 ; then
-		einfo "Checking Qt versions"
-		local QT_VERSION=$("${EROOT}/usr/$(get_libdir)/libQt5Core.so.5" \
-			| head -n 1 \
-			| cut -f 8 -d " ")
-		if ver_test ${QT_VERSION} -lt ${QT_MIN_PV} ; then
-			die "You need >=${QT_MIN_PV} for the Qt system libraries."
-		fi
-
-		QTCORE_PV=$(pkg-config --modversion Qt5Core)
-		QTGUI_PV=$(pkg-config --modversion Qt5Gui)
-		use opengl && \
-		QTOPENGL_PV=$(pkg-config --modversion Qt5OpenGL)
-		QTPRINTSUPPORT_PV=$(pkg-config --modversion Qt5PrintSupport)
-		QTSVG_PV=$(pkg-config --modversion Qt5Svg)
-		use webview && \
-		QTWEBENGINE_PV=$(pkg-config --modversion Qt5WebEngine)
-		QTWIDGETS_PV=$(pkg-config --modversion Qt5Widgets)
-		QTX11EXTRAS_PV=$(pkg-config --modversion Qt5X11Extras)
-
-		if ver_test ${QT_VERSION} -ne ${QTCORE_PV} ; then
-			die "QT_VERSION is not the same version as Qt5Core"
-		fi
-		if ver_test ${QT_VERSION} -ne ${QTGUI_PV} ; then
-			die "QT_VERSION is not the same version as Qt5Gui"
-		fi
-		if use opengl ; then
-			if ver_test ${QT_VERSION} -ne ${QTOPENGL_PV} ; then
-				die "QT_VERSION is not the same version as Qt5OpenGL"
-			fi
-		fi
-		if ver_test ${QT_VERSION} -ne ${QTPRINTSUPPORT_PV} ; then
-			die "QT_VERSION is not the same version as Qt5PrintSupport"
-		fi
-		if ver_test ${QT_VERSION} -ne ${QTSVG_PV} ; then
-			die "QT_VERSION is not the same version as Qt5Svg"
-		fi
-		if use webview ; then
-			strings "${EROOT}/usr/$(get_libdir)/libQt5WebEngine.so" \
-				| grep -q -F -e "Qt_"$(ver_cut 1-2 ${QT_VERSION})
-			if [[ "${?}" != "0" ]] ; then
-				QT5WEBENGINE_HIGHEST=$(strings \
-					"${EROOT}/usr/$(get_libdir)/libQt5WebEngine.so" \
-					| grep -F -e "Qt_5." \
-					| tail -n 1 \
-					| cut -f 2 -d "_")
-				die \
-"Qt5WebEngine is not compatible.  Highest supported by this library is \
-${QT5WEBENGINE_HIGHEST}.  You have ${QT_VERSION}."
-			fi
-		fi
-		if ver_test ${QT_VERSION} -ne ${QTWIDGETS_PV} ; then
-			die "QT_VERSION is not the same version as Qt5Widgets"
-		fi
-		if ver_test ${QT_VERSION} -ne ${QTX11EXTRAS_PV} ; then
-			die "QT_VERSION is not the same version as Qt5X11Extras"
-		fi
-	fi
+	use qt5 && check_qt
 }
 
 mod_off() {
