@@ -57,6 +57,7 @@ REQUIRED_USE+="
 		gtk3
 		htmlview
 		network
+		pcre
 		X
 	)
 	mixer? (
