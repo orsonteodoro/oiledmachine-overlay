@@ -17,6 +17,8 @@ bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer gtk3 httpd imlib2
 jit mime mixer mysql ncurses network odbc openal opengl openssl pcre pdf pixbuf
 poppler postgresql qt5 sdl sdl2 sqlite v4l wayland X xml xslt zlib zstd
 )
+LIBSDL_PV="1.2.8"
+LIBSDL2_PV="2.0.2"
 QT_MIN_PV="5.3"
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES[@]/#/+})
 # On each minor release, re-inspect the code quality.
@@ -71,6 +73,10 @@ REQUIRED_USE+="
 		)
 	)
 	opengl? (
+		gtk3? (
+			opengl
+			X
+		)
 		qt5? (
 			X
 		)
@@ -103,6 +109,7 @@ REQUIRED_USE+="
 		!pdf
 	)
 	sdl? (
+		opengl
 		X
 	)
 	sdl2? (
@@ -212,6 +219,7 @@ DEPEND+="
 	)
 	openal? (
 		>=media-libs/openal-1.13
+		media-libs/alure
 	)
 	opengl? (
 		media-libs/glew
@@ -257,13 +265,19 @@ DEPEND+="
 		)
 	)
 	sdl? (
-		>=media-libs/libsdl-1.2.8[X?]
+		>=media-libs/libsdl-${LIBSDL_PV}[opengl?,X?]
 		media-libs/sdl-ttf
+		mixer? (
+			>=media-libs/libsdl-${LIBSDL_PV}[opengl?,sound,X?]
+		)
 	)
 	sdl2? (
-		>=media-libs/libsdl2-2.0.2[wayland?,X?]
+		>=media-libs/libsdl2-${LIBSDL2_PV}[wayland?,X?]
 		>=media-libs/sdl2-image-2.0
 		>=media-libs/sdl2-ttf-2.0.12
+		mixer? (
+			>=media-libs/libsdl2-${LIBSDL2_PV}[wayland?,sound,X?]
+		)
 	)
 	smtp? (
 		dev-libs/glib
