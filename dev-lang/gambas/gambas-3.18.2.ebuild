@@ -758,13 +758,13 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  jit, code-quality-selection
-# OILEDMACHINE-OVERLAY-TEST:  passed (INTERACTIVE) 3.18.2 (20230526)
-# USE="X cairo curl glsl glu gsl gtk3 ide network opengl pcre qt5 sge webview
-# xml xslt -bzip2 -crypt -dbus (-debug) -doc -gmp -gnome-keyring -gstreamer
-# -httpd -imlib2 -jit -mime -mixer -mysql -ncurses -odbc -openal -openssl -pdf
+# OILEDMACHINE-OVERLAY-TEST:  passed (INTERACTIVE) 3.18.2 (20230527)
+# USE="X cairo curl gtk3 htmlview ide network pcre qt5 wayland -bzip2 -crypt
+# -dbus (-debug) -doc -glsl -glu -gmp -gnome-keyring -gsl -gstreamer -httpd
+# -imlib2 -jit -mime -mixer -mysql -ncurses -odbc -openal -opengl -openssl -pdf
 # -pixbuf -poppler -postgresql -remove_deprecated -remove_not_finished
-# -remove_stable_not_finished -remove_unstable -sdl -sdl2 -smtp -sqlite -v4l
-# wayland -zlib -zstd"
+# -remove_stable_not_finished -remove_unstable -sdl -sdl2 -sge -smtp -sqlite
+# -v4l -webview -xml -xslt -zlib -zstd"
 # tests under X:
 #   designer:  passed
 #   hello world (multiform):  passed
