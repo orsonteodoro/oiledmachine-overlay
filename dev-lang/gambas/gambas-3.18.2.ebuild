@@ -15,7 +15,7 @@ SLOT="0"
 GAMBAS_MODULES=(
 bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer gtk3 httpd imlib2
 jit mime mixer mysql ncurses network odbc openal opengl openssl pcre pdf pixbuf
-poppler postgresql qt5 sdl sdl2 sqlite v4l X xml xslt zlib zstd
+poppler postgresql qt5 sdl sdl2 sqlite v4l wayland X xml xslt zlib zstd
 )
 QT_MIN_PV="5.3"
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES[@]/#/+})
@@ -46,22 +46,22 @@ REQUIRED_USE+="
 	)
 	gtk3? (
 		cairo
-		X
+		|| (
+			wayland
+			X
+		)
 	)
 	ide (
 		curl
-		network
 		gsl
+		network
+		pcre
 		webview
 		X
 		xml
 		|| (
 			gtk3
 			qt5
-		)
-		|| (
-			pixbuf
-			imlib2
 		)
 	)
 	mixer? (
@@ -71,7 +71,11 @@ REQUIRED_USE+="
 		)
 	)
 	opengl? (
+		qt5? (
+			X
+		)
 		|| (
+			gtk3
 			qt5
 		)
 	)
@@ -99,7 +103,10 @@ REQUIRED_USE+="
 		!pdf
 	)
 	qt5? (
-		X
+		|| (
+			wayland
+			X
+		)
 	)
 	sge? (
 		opengl
@@ -151,7 +158,7 @@ DEPEND+="
 	)
 	gtk3? (
 		>=gnome-base/librsvg-2.14.3
-		>=x11-libs/gtk+-3.4:3[X,wayland]
+		>=x11-libs/gtk+-3.4:3[wayland?,X?]
 		x11-libs/libICE
 		x11-libs/libSM
 		webview? (
@@ -200,6 +207,9 @@ DEPEND+="
 	opengl? (
 		media-libs/glew
 		media-libs/mesa
+		gtk3? (
+			x11-libs/gtkglext
+		)
 	)
 	openssl? (
 		>=dev-libs/openssl-1
@@ -222,18 +232,19 @@ DEPEND+="
 	)
 	qt5? (
 		>=dev-qt/qtcore-${QT_MIN_PV}:5=
-		>=dev-qt/qtgui-${QT_MIN_PV}:5=
+		>=dev-qt/qtgui-${QT_MIN_PV}:5=[wayland?,X?]
 		>=dev-qt/qtprintsupport-${QT_MIN_PV}:5=
 		>=dev-qt/qtsvg-${QT_MIN_PV}:5=
-		>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
-		>=dev-qt/qtx11extras-${QT_MIN_PV}:5=
+		>=dev-qt/qtwidgets-${QT_MIN_PV}:5=[X?]
 		opengl? (
 			>=dev-qt/qtopengl-${QT_MIN_PV}:5=
 		)
 		webview? (
-			>=dev-qt/qtnetwork-${QT_MIN_PV}:5=
 			>=dev-qt/qtwebengine-5:5=[widgets]
-			>=dev-qt/qtxml-${QT_MIN_PV}:5=
+		)
+		X? (
+			>=dev-qt/qtx11extras-${QT_MIN_PV}:5=
+			x11-libs/libX11
 		)
 	)
 	sdl? (
@@ -373,27 +384,20 @@ ewarn
 
 		QTCORE_PV=$(pkg-config --modversion Qt5Core)
 		QTGUI_PV=$(pkg-config --modversion Qt5Gui)
-		use webview && \
-		QTNETWORK_PV=$(pkg-config --modversion Qt5Network)
 		use opengl && \
 		QTOPENGL_PV=$(pkg-config --modversion Qt5OpenGL)
 		QTPRINTSUPPORT_PV=$(pkg-config --modversion Qt5PrintSupport)
 		QTSVG_PV=$(pkg-config --modversion Qt5Svg)
-		#use webview && \
-		#QTWEBENGINE_PV=$(pkg-config --modversion Qt5WebEngine)
+		use webview && \
+		QTWEBENGINE_PV=$(pkg-config --modversion Qt5WebEngine)
 		QTWIDGETS_PV=$(pkg-config --modversion Qt5Widgets)
 		QTX11EXTRAS_PV=$(pkg-config --modversion Qt5X11Extras)
-		use webkit && \
-		QTXML_PV=$(pkg-config --modversion Qt5Xml)
 
 		if ver_test ${QT_VERSION} -ne ${QTCORE_PV} ; then
 			die "QT_VERSION is not the same version as Qt5Core"
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTGUI_PV} ; then
 			die "QT_VERSION is not the same version as Qt5Gui"
-		fi
-		if use webview && ( ver_test ${QT_VERSION} -ne ${QTNETWORK_PV} ) ; then
-			die "QT_VERSION is not the same version as Qt5Network"
 		fi
 		if use opengl ; then
 			if ver_test ${QT_VERSION} -ne ${QTOPENGL_PV} ; then
@@ -406,26 +410,23 @@ ewarn
 		if ver_test ${QT_VERSION} -ne ${QTSVG_PV} ; then
 			die "QT_VERSION is not the same version as Qt5Svg"
 		fi
-#		strings "${EROOT}/usr/$(get_libdir)/libQt5WebEngine.so" \
-#			| grep -q -F -e "Qt_"$(ver_cut 1-2 ${QT_VERSION})
-#		if [[ "${?}" != "0" ]] ; then
-#			QT5WEBENGINE_HIGHEST=$(strings \
-#				"${EROOT}/usr/$(get_libdir)/libQt5WebEngine.so" \
-#				| grep -F -e "Qt_5." \
-#				| tail -n 1 \
-#				| cut -f 2 -d "_")
-#			die \
-#"Qt5WebEngine is not compatible.  Highest supported by this library is \
-#${QT5WEBENGINE_HIGHEST}.  You have ${QT_VERSION}."
-#		fi
+		strings "${EROOT}/usr/$(get_libdir)/libQt5WebEngine.so" \
+			| grep -q -F -e "Qt_"$(ver_cut 1-2 ${QT_VERSION})
+		if [[ "${?}" != "0" ]] ; then
+			QT5WEBENGINE_HIGHEST=$(strings \
+				"${EROOT}/usr/$(get_libdir)/libQt5WebEngine.so" \
+				| grep -F -e "Qt_5." \
+				| tail -n 1 \
+				| cut -f 2 -d "_")
+			die \
+"Qt5WebEngine is not compatible.  Highest supported by this library is \
+${QT5WEBENGINE_HIGHEST}.  You have ${QT_VERSION}."
+		fi
 		if ver_test ${QT_VERSION} -ne ${QTWIDGETS_PV} ; then
 			die "QT_VERSION is not the same version as Qt5Widgets"
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTX11EXTRAS_PV} ; then
 			die "QT_VERSION is not the same version as Qt5X11Extras"
-		fi
-		if use webview && ( ver_test ${QT_VERSION} -ne ${QTXML_PV} ) ; then
-			die "QT_VERSION is not the same version as Qt5Xml"
 		fi
 	fi
 }
@@ -442,26 +443,27 @@ GB_CONFIG_SUBDIRS\(${module_name}, gb[.a-z]*.${module_name}\)||" \
 src_prepare() {
 	default
 	cd "${S}" || die
-	local m
-	for m in ${GAMBAS_MODULES[@]} ; do
-		[[ "${m}" == "jit" ]] && continue
-		echo "$USE" | grep -F -q -o "${m}" \
-			|| mod_off ${USE_FLAG_TO_MODULE_NAME[${m}]}
-	done
-	mod_off gtk
-	mod_off qt4
-	mod_off sqlite2
+#	local m
+#	for m in ${GAMBAS_MODULES[@]} ; do
+#		[[ "${m}" == "jit" ]] && continue
+#		echo "$USE" | grep -F -q -o "${m}" \
+#			|| mod_off ${USE_FLAG_TO_MODULE_NAME[${m}]}
+#	done
+#	mod_off gtk
+#	mod_off qt4
+#	mod_off sqlite2
 	# Prevent duplicate install failure.
-	sed -i -e "/dist_gblib_DATA/d" component.am || die
+#	sed -i -e "/dist_gblib_DATA/d" component.am || die
 
-	L=$(find . -name "configure.ac")
-	local c
-	for c in ${L} ; do
-		[[ "${c}" =~ TEMPLATE ]] && continue
-		pushd $(dirname "${c}") || die
-			eautoreconf
-		popd
-	done
+	./reconf-all || die
+#	L=$(find . -name "configure.ac")
+#	local c
+#	for c in ${L} ; do
+#		[[ "${c}" =~ TEMPLATE ]] && continue
+#		pushd $(dirname "${c}") || die
+#			eautoreconf
+#		popd
+#	done
 }
 
 CODE_QUALITY_REPORT=
@@ -491,7 +493,16 @@ src_configure() {
 		$(use_enable gnome-keyring keyring) \
 		$(use_enable gnome-keyring gb_desktop_gnome_keyring) \
 		$(use_enable gstreamer media) \
-		$(use_enable gtk3) \
+		$(use_enable gtk3 \
+			$(echo \
+				" \
+				$(use_enable opengl gtk3opengl) \
+				$(use_enable wayland gtk3wayland) \
+				$(use_enable webview gtk3webview) \
+				$(use_enable X gtk3x11) \
+				" \
+			) \
+		) \
 		$(use_enable httpd) \
 		$(use_enable imlib2 image_imlib) \
 		$(use_enable imlib2 imageimlib) \
@@ -523,7 +534,10 @@ src_configure() {
 			$(echo \
 				" \
 				$(use_enable opengl qt5opengl) \
+				$(use_enable wayland qt5wayland) \
 				$(use_enable webview qt5webview) \
+				$(use_enable X qt5ext) \
+				$(use_enable X qt5x11) \
 				" \
 			) \
 			\
