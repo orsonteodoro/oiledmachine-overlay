@@ -13,9 +13,9 @@ LICENSE="GPL-2"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 SLOT="0"
 GAMBAS_MODULES=(
-bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer gtk3 httpd imlib2
-jit mime mixer mysql ncurses network odbc openal opengl openssl pcre pdf pixbuf
-poppler postgresql qt5 sdl sdl2 sqlite v4l wayland X xml xslt zlib zstd
+bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer gtk3 htmlview httpd
+imlib2 jit mime mixer mysql ncurses network odbc openal opengl openssl pcre pdf
+pixbuf poppler postgresql qt5 sdl sdl2 sqlite v4l wayland X xml xslt zlib zstd
 )
 LIBSDL_PV="1.2.8"
 LIBSDL2_PV="2.0.2"
@@ -48,23 +48,15 @@ REQUIRED_USE+="
 	)
 	gtk3? (
 		cairo
-		|| (
-			wayland
-			X
-		)
+		X
 	)
 	ide (
 		curl
-		gsl
+		gtk3
+		htmlview
 		network
 		pcre
-		webview
 		X
-		xml
-		|| (
-			gtk3
-			qt5
-		)
 	)
 	mixer? (
 		|| (
@@ -270,6 +262,9 @@ DEPEND+="
 		mixer? (
 			>=media-libs/libsdl-${LIBSDL_PV}[opengl?,sound,X?]
 		)
+		X? (
+			x11-libs/libXcursor
+		)
 	)
 	sdl2? (
 		>=media-libs/libsdl2-${LIBSDL2_PV}[wayland?,X?]
@@ -466,27 +461,24 @@ GB_CONFIG_SUBDIRS\(${module_name}, gb[.a-z]*.${module_name}\)||" \
 src_prepare() {
 	default
 	cd "${S}" || die
-#	local m
-#	for m in ${GAMBAS_MODULES[@]} ; do
-#		[[ "${m}" == "jit" ]] && continue
-#		echo "$USE" | grep -F -q -o "${m}" \
-#			|| mod_off ${USE_FLAG_TO_MODULE_NAME[${m}]}
-#	done
-#	mod_off gtk
-#	mod_off qt4
-#	mod_off sqlite2
-	# Prevent duplicate install failure.
-#	sed -i -e "/dist_gblib_DATA/d" component.am || die
+	local m
+	for m in ${GAMBAS_MODULES[@]} ; do
+		[[ "${m}" == "jit" ]] && continue
+		echo "$USE" | grep -F -q -o "${m}" \
+			|| mod_off ${USE_FLAG_TO_MODULE_NAME[${m}]}
+	done
+	mod_off gtk
+	mod_off qt4
+	mod_off sqlite2
 
-	./reconf-all || die
-#	L=$(find . -name "configure.ac")
-#	local c
-#	for c in ${L} ; do
-#		[[ "${c}" =~ TEMPLATE ]] && continue
-#		pushd $(dirname "${c}") || die
-#			eautoreconf
-#		popd
-#	done
+	local L=$(find . -name "configure.ac")
+	local c
+	for c in ${L} ; do
+		[[ "${c}" =~ TEMPLATE ]] && continue
+		pushd $(dirname "${c}") || die
+			eautoreconf
+		popd
+	done
 }
 
 CODE_QUALITY_REPORT=
@@ -526,6 +518,7 @@ src_configure() {
 				" \
 			) \
 		) \
+		$(use_enable htmlview) \
 		$(use_enable httpd) \
 		$(use_enable imlib2 image_imlib) \
 		$(use_enable imlib2 imageimlib) \
@@ -597,7 +590,6 @@ src_configure() {
 		$(_use_enable_lto) \
 		--disable-jitllvm \
 		--disable-gtk2 \
-		--disable-gtkopengl \
 		--disable-qt4 \
 		--disable-qt5webkit \
 		--disable-sqlite2
