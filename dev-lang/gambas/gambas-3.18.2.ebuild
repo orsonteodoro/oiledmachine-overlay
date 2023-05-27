@@ -57,7 +57,6 @@ REQUIRED_USE+="
 		gtk3
 		htmlview
 		network
-		pcre
 		X
 	)
 	mixer? (
@@ -455,8 +454,8 @@ ewarn
 
 mod_off() {
 	local module_name="${1}"
-	sed -i -e "s|\
-GB_CONFIG_SUBDIRS\(${module_name}, gb[.a-z]*.${module_name}\)||" \
+	sed -i \
+-e "s|GB_CONFIG_SUBDIRS\(${module_name}, gb[.a-z]*.${module_name}\)||" \
 		configure.ac || die
 	sed -i -r -e ":a;N;\$!ba s| @${module_name}_dir@ [\]\n||g" \
 		Makefile.am || die
@@ -475,14 +474,8 @@ src_prepare() {
 	mod_off qt4
 	mod_off sqlite2
 
-	local L=$(find . -name "configure.ac")
-	local c
-	for c in ${L} ; do
-		[[ "${c}" =~ TEMPLATE ]] && continue
-		pushd $(dirname "${c}") || die
-			eautoreconf
-		popd
-	done
+	# eautoreconf is slower
+	./reconf-all
 }
 
 CODE_QUALITY_REPORT=
@@ -763,10 +756,10 @@ pkg_postinst() {
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  jit, code-quality-selection
 # OILEDMACHINE-OVERLAY-TEST:  passed (INTERACTIVE) 3.18.2 (20230527)
-# USE="X cairo curl gtk3 htmlview ide network pcre qt5 wayland -bzip2 -crypt
-# -dbus (-debug) -doc -glsl -glu -gmp -gnome-keyring -gsl -gstreamer -httpd
-# -imlib2 -jit -mime -mixer -mysql -ncurses -odbc -openal -opengl -openssl -pdf
-# -pixbuf -poppler -postgresql -remove_deprecated -remove_not_finished
+# USE="X cairo curl gtk3 htmlview ide network pcre wayland -bzip2 -crypt -dbus
+# (-debug) -doc -glsl -glu -gmp -gnome-keyring -gsl -gstreamer -httpd -imlib2
+# -jit -mime -mixer -mysql -ncurses -odbc -openal -opengl -openssl -pdf -pixbuf
+# -poppler -postgresql -qt5 -remove_deprecated -remove_not_finished
 # -remove_stable_not_finished -remove_unstable -sdl -sdl2 -sge -smtp -sqlite
 # -v4l -webview -xml -xslt -zlib -zstd"
 # tests under X:
