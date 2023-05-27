@@ -102,6 +102,15 @@ REQUIRED_USE+="
 		!mysql
 		!pdf
 	)
+	sdl? (
+		X
+	)
+	sdl2? (
+		|| (
+			wayland
+			X
+		)
+	)
 	qt5? (
 		|| (
 			wayland
@@ -248,11 +257,11 @@ DEPEND+="
 		)
 	)
 	sdl? (
-		>=media-libs/libsdl-1.2.8
+		>=media-libs/libsdl-1.2.8[X?]
 		media-libs/sdl-ttf
 	)
 	sdl2? (
-		>=media-libs/libsdl2-2.0.2
+		>=media-libs/libsdl2-2.0.2[wayland?,X?]
 		>=media-libs/sdl2-image-2.0
 		>=media-libs/sdl2-ttf-2.0.12
 	)
