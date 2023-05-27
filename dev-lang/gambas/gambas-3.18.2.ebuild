@@ -330,6 +330,7 @@ declare -Ax USE_FLAG_TO_MODULE_NAME=(
 	[gsl]="gsl"
 	[gstreamer]="media"
 	[gtk3]="gtk3"
+	[htmlview]="htmlview"
 	[httpd]="httpd"
 	[imlib2]="imageimlib"
 	[mime]="mime"
@@ -344,6 +345,7 @@ declare -Ax USE_FLAG_TO_MODULE_NAME=(
 	[pcre]="pcre"
 	[pdf]="pdf"
 	[pixbuf]="imageio"
+	[poppler]="poppler"
 	[postgresql]="postgresql"
 	[qt5]="qt5"
 	[sdl]="sdl"
@@ -455,8 +457,9 @@ ewarn
 
 mod_off() {
 	local module_name="${1}"
+einfo "Disabling ${module_name}"
 	sed -i \
--e "s|GB_CONFIG_SUBDIRS\(${module_name}, gb[.a-z]*.${module_name}\)||" \
+-e "/GB_CONFIG_SUBDIRS[(]${module_name},/d" \
 		configure.ac || die
 	sed -i -r -e ":a;N;\$!ba s| @${module_name}_dir@ [\]\n||g" \
 		Makefile.am || die
@@ -465,11 +468,15 @@ mod_off() {
 src_prepare() {
 	default
 	cd "${S}" || die
+einfo "${GAMBAS_MODULES[@]}"
 	local m
 	for m in ${GAMBAS_MODULES[@]} ; do
 		[[ "${m}" == "jit" ]] && continue
-		echo "$USE" | grep -F -q -o "${m}" \
-			|| mod_off ${USE_FLAG_TO_MODULE_NAME[${m}]}
+		if [[ -z "${USE_FLAG_TO_MODULE_NAME[${m}]}" ]] ; then
+ewarn "QA:  Missing ${m} in USE_FLAG_TO_MODULE_NAME."
+		fi
+		use "${m}" || mod_off ${USE_FLAG_TO_MODULE_NAME[${m}]}
+		use "${m}" && einfo "Enabling ${m}"
 	done
 	mod_off gtk
 	mod_off qt4
