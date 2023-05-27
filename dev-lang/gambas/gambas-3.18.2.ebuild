@@ -750,6 +750,7 @@ pkg_postinst() {
 # -pixbuf -poppler -postgresql -remove_deprecated -remove_not_finished
 # -remove_stable_not_finished -remove_unstable -sdl -sdl2 -smtp -sqlite -v4l
 # wayland -zlib -zstd"
-# designer:  passed
-# hello world (multiform):  passed
-# hello world (message box):  passed
+# tests under X:
+#   designer:  passed
+#   hello world (multiform):  passed
+#   hello world (message box):  passed
