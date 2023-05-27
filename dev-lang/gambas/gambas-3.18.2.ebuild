@@ -393,7 +393,7 @@ ewarn
 
 	check_cxx
 
-	if false && use qt5 ; then
+	if use qt5 ; then
 		einfo "Checking Qt versions"
 		local QT_VERSION=$("${EROOT}/usr/$(get_libdir)/libQt5Core.so.5" \
 			| head -n 1 \
@@ -430,17 +430,19 @@ ewarn
 		if ver_test ${QT_VERSION} -ne ${QTSVG_PV} ; then
 			die "QT_VERSION is not the same version as Qt5Svg"
 		fi
-		strings "${EROOT}/usr/$(get_libdir)/libQt5WebEngine.so" \
-			| grep -q -F -e "Qt_"$(ver_cut 1-2 ${QT_VERSION})
-		if [[ "${?}" != "0" ]] ; then
-			QT5WEBENGINE_HIGHEST=$(strings \
-				"${EROOT}/usr/$(get_libdir)/libQt5WebEngine.so" \
-				| grep -F -e "Qt_5." \
-				| tail -n 1 \
-				| cut -f 2 -d "_")
-			die \
+		if use webview ; then
+			strings "${EROOT}/usr/$(get_libdir)/libQt5WebEngine.so" \
+				| grep -q -F -e "Qt_"$(ver_cut 1-2 ${QT_VERSION})
+			if [[ "${?}" != "0" ]] ; then
+				QT5WEBENGINE_HIGHEST=$(strings \
+					"${EROOT}/usr/$(get_libdir)/libQt5WebEngine.so" \
+					| grep -F -e "Qt_5." \
+					| tail -n 1 \
+					| cut -f 2 -d "_")
+				die \
 "Qt5WebEngine is not compatible.  Highest supported by this library is \
 ${QT5WEBENGINE_HIGHEST}.  You have ${QT_VERSION}."
+			fi
 		fi
 		if ver_test ${QT_VERSION} -ne ${QTWIDGETS_PV} ; then
 			die "QT_VERSION is not the same version as Qt5Widgets"
