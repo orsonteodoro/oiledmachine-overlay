@@ -20,18 +20,20 @@ pixbuf poppler postgresql qt5 sdl sdl2 sqlite v4l wayland X xml xslt zlib zstd
 LIBSDL_PV="1.2.8"
 LIBSDL2_PV="2.0.2"
 QT_MIN_PV="5.3"
-GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES[@]/#/+})
 # On each minor release, re-inspect the code quality.
 # Disabled unstable and unfinished code for security and productivity reasons.
-# Deprecated is enabled until component deleted
-GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+dbus/-dbus})
-GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+gsl/-gsl})
-GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+gtk3/-gtk3})
-GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+imlib2/-imlib2})
-GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+ncurses/-ncurses})
-GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+mysql/-mysql})
-GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+pdf/-pdf})
-GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+sdl2/-sdl2})
+# Deprecated is enabled until the component is deleted.
+GAMBAS_MODULES_DEFAULTS=(
+	${GAMBAS_MODULES[@]/#/+}
+	${GAMBAS_MODULES_DEFAULTS[@]/+dbus/-dbus}
+	${GAMBAS_MODULES_DEFAULTS[@]/+gsl/-gsl}
+	${GAMBAS_MODULES_DEFAULTS[@]/+gtk3/-gtk3}
+	${GAMBAS_MODULES_DEFAULTS[@]/+imlib2/-imlib2}
+	${GAMBAS_MODULES_DEFAULTS[@]/+ncurses/-ncurses}
+	${GAMBAS_MODULES_DEFAULTS[@]/+mysql/-mysql}
+	${GAMBAS_MODULES_DEFAULTS[@]/+pdf/-pdf}
+	${GAMBAS_MODULES_DEFAULTS[@]/+sdl2/-sdl2}
+)
 # The remove_stable_not_finished is intentionally kept disabled.
 # The remove_deprecated is intentionally kept disabled until upstream removes it.
 # The USE flags below have no config options but are removed manually.
