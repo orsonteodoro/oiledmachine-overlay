@@ -11,11 +11,11 @@ export NPM_INSTALL_PATH="/opt/${PN}/${SLOT_MAJOR}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV%%.*}-${PV}.AppImage"
 ELECTRON_APP_ELECTRON_PV="18.2.2" # See \
-# https://raw.githubusercontent.com/4ian/GDevelop/v5.1.163/newIDE/electron-app/package-lock.json \
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.1.164/newIDE/electron-app/package-lock.json \
 # and \
-# strings /var/tmp/portage/dev-games/gdevelop-5.1.163/work/GDevelop-5.1.163/newIDE/electron-app/dist/linux-unpacked/* | grep -E "Chrome/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
+# strings /var/tmp/portage/dev-games/gdevelop-5.1.164/work/GDevelop-5.1.164/newIDE/electron-app/dist/linux-unpacked/* | grep -E "Chrome/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
 ELECTRON_APP_REACT_PV="16.14.0" # See \
-# https://raw.githubusercontent.com/4ian/GDevelop/v5.1.163/newIDE/app/package-lock.json
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.1.164/newIDE/app/package-lock.json
 NODE_ENV="development"
 NODE_VERSION=14
 NPM_MULTI_LOCKFILE=1
@@ -90,9 +90,9 @@ SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+=" r3"
 # Dependency lists:
-# https://github.com/4ian/GDevelop/blob/v5.1.163/.circleci/config.yml#L85
-# https://github.com/4ian/GDevelop/blob/v5.1.163/.travis.yml
-# https://github.com/4ian/GDevelop/blob/v5.1.163/ExtLibs/installDeps.sh
+# https://github.com/4ian/GDevelop/blob/v5.1.164/.circleci/config.yml#L85
+# https://github.com/4ian/GDevelop/blob/v5.1.164/.travis.yml
+# https://github.com/4ian/GDevelop/blob/v5.1.164/ExtLibs/installDeps.sh
 # https://app.travis-ci.com/github/4ian/GDevelop (raw log)
 # U 16.04
 # Dependencies for the native build are not installed in CI
@@ -799,7 +799,7 @@ https://registry.npmjs.org/npmlog/-/npmlog-4.1.2.tgz -> npmpkg-npmlog-4.1.2.tgz
 https://registry.npmjs.org/nth-check/-/nth-check-1.0.2.tgz -> npmpkg-nth-check-1.0.2.tgz
 https://registry.npmjs.org/number-is-nan/-/number-is-nan-1.0.1.tgz -> npmpkg-number-is-nan-1.0.1.tgz
 https://registry.npmjs.org/nwmatcher/-/nwmatcher-1.4.4.tgz -> npmpkg-nwmatcher-1.4.4.tgz
-https://registry.npmjs.org/nwsapi/-/nwsapi-2.2.4.tgz -> npmpkg-nwsapi-2.2.4.tgz
+https://registry.npmjs.org/nwsapi/-/nwsapi-2.2.5.tgz -> npmpkg-nwsapi-2.2.5.tgz
 https://registry.npmjs.org/oauth-sign/-/oauth-sign-0.9.0.tgz -> npmpkg-oauth-sign-0.9.0.tgz
 https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz -> npmpkg-object-assign-4.1.1.tgz
 https://registry.npmjs.org/object-copy/-/object-copy-0.1.0.tgz -> npmpkg-object-copy-0.1.0.tgz
@@ -1587,7 +1587,7 @@ https://registry.npmjs.org/yauzl/-/yauzl-2.10.0.tgz -> npmpkg-yauzl-2.10.0.tgz
 https://registry.npmjs.org/zip-stream/-/zip-stream-1.2.0.tgz -> npmpkg-zip-stream-1.2.0.tgz
 https://registry.npmjs.org/@develar/schema-utils/-/schema-utils-2.6.5.tgz -> npmpkg-@develar-schema-utils-2.6.5.tgz
 https://registry.npmjs.org/@electron/get/-/get-1.14.1.tgz -> npmpkg-@electron-get-1.14.1.tgz
-https://registry.npmjs.org/@electron/remote/-/remote-2.0.9.tgz -> npmpkg-@electron-remote-2.0.9.tgz
+https://registry.npmjs.org/@electron/remote/-/remote-2.0.8.tgz -> npmpkg-@electron-remote-2.0.8.tgz
 https://registry.npmjs.org/@electron/universal/-/universal-1.0.5.tgz -> npmpkg-@electron-universal-1.0.5.tgz
 https://registry.npmjs.org/fs-extra/-/fs-extra-9.1.0.tgz -> npmpkg-fs-extra-9.1.0.tgz
 https://registry.npmjs.org/jsonfile/-/jsonfile-6.1.0.tgz -> npmpkg-jsonfile-6.1.0.tgz
@@ -1600,15 +1600,15 @@ https://registry.npmjs.org/universalify/-/universalify-2.0.0.tgz -> npmpkg-unive
 https://registry.npmjs.org/@sindresorhus/is/-/is-0.14.0.tgz -> npmpkg-@sindresorhus-is-0.14.0.tgz
 https://registry.npmjs.org/@szmarczak/http-timer/-/http-timer-1.1.2.tgz -> npmpkg-@szmarczak-http-timer-1.1.2.tgz
 https://registry.npmjs.org/@tootallnate/once/-/once-2.0.0.tgz -> npmpkg-@tootallnate-once-2.0.0.tgz
-https://registry.npmjs.org/@types/debug/-/debug-4.1.8.tgz -> npmpkg-@types-debug-4.1.8.tgz
+https://registry.npmjs.org/@types/debug/-/debug-4.1.7.tgz -> npmpkg-@types-debug-4.1.7.tgz
 https://registry.npmjs.org/@types/fs-extra/-/fs-extra-9.0.13.tgz -> npmpkg-@types-fs-extra-9.0.13.tgz
 https://registry.npmjs.org/@types/glob/-/glob-7.2.0.tgz -> npmpkg-@types-glob-7.2.0.tgz
 https://registry.npmjs.org/@types/minimatch/-/minimatch-5.1.2.tgz -> npmpkg-@types-minimatch-5.1.2.tgz
 https://registry.npmjs.org/@types/ms/-/ms-0.7.31.tgz -> npmpkg-@types-ms-0.7.31.tgz
-https://registry.npmjs.org/@types/node/-/node-16.18.32.tgz -> npmpkg-@types-node-16.18.32.tgz
+https://registry.npmjs.org/@types/node/-/node-16.11.33.tgz -> npmpkg-@types-node-16.11.33.tgz
 https://registry.npmjs.org/@types/plist/-/plist-3.0.2.tgz -> npmpkg-@types-plist-3.0.2.tgz
 https://registry.npmjs.org/@types/verror/-/verror-1.10.6.tgz -> npmpkg-@types-verror-1.10.6.tgz
-https://registry.npmjs.org/@types/yargs/-/yargs-17.0.24.tgz -> npmpkg-@types-yargs-17.0.24.tgz
+https://registry.npmjs.org/@types/yargs/-/yargs-17.0.10.tgz -> npmpkg-@types-yargs-17.0.10.tgz
 https://registry.npmjs.org/@types/yargs-parser/-/yargs-parser-21.0.0.tgz -> npmpkg-@types-yargs-parser-21.0.0.tgz
 https://registry.npmjs.org/7zip-bin/-/7zip-bin-5.1.1.tgz -> npmpkg-7zip-bin-5.1.1.tgz
 https://registry.npmjs.org/agent-base/-/agent-base-6.0.2.tgz -> npmpkg-agent-base-6.0.2.tgz
@@ -1621,7 +1621,7 @@ https://registry.npmjs.org/app-builder-bin/-/app-builder-bin-3.7.1.tgz -> npmpkg
 https://registry.npmjs.org/app-builder-lib/-/app-builder-lib-22.14.13.tgz -> npmpkg-app-builder-lib-22.14.13.tgz
 https://registry.npmjs.org/fs-extra/-/fs-extra-10.1.0.tgz -> npmpkg-fs-extra-10.1.0.tgz
 https://registry.npmjs.org/jsonfile/-/jsonfile-6.1.0.tgz -> npmpkg-jsonfile-6.1.0.tgz
-https://registry.npmjs.org/semver/-/semver-7.5.1.tgz -> npmpkg-semver-7.5.1.tgz
+https://registry.npmjs.org/semver/-/semver-7.3.8.tgz -> npmpkg-semver-7.3.8.tgz
 https://registry.npmjs.org/universalify/-/universalify-2.0.0.tgz -> npmpkg-universalify-2.0.0.tgz
 https://registry.npmjs.org/argparse/-/argparse-2.0.1.tgz -> npmpkg-argparse-2.0.1.tgz
 https://registry.npmjs.org/asar/-/asar-3.2.0.tgz -> npmpkg-asar-3.2.0.tgz
@@ -1631,9 +1631,9 @@ https://registry.npmjs.org/async/-/async-3.2.4.tgz -> npmpkg-async-3.2.4.tgz
 https://registry.npmjs.org/async-exit-hook/-/async-exit-hook-2.0.1.tgz -> npmpkg-async-exit-hook-2.0.1.tgz
 https://registry.npmjs.org/asynckit/-/asynckit-0.4.0.tgz -> npmpkg-asynckit-0.4.0.tgz
 https://registry.npmjs.org/at-least-node/-/at-least-node-1.0.0.tgz -> npmpkg-at-least-node-1.0.0.tgz
-https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz -> npmpkg-balanced-match-1.0.2.tgz
+https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.0.tgz -> npmpkg-balanced-match-1.0.0.tgz
 https://registry.npmjs.org/base64-js/-/base64-js-1.5.1.tgz -> npmpkg-base64-js-1.5.1.tgz
-https://registry.npmjs.org/big-integer/-/big-integer-1.6.51.tgz -> npmpkg-big-integer-1.6.51.tgz
+https://registry.npmjs.org/big-integer/-/big-integer-1.6.48.tgz -> npmpkg-big-integer-1.6.48.tgz
 https://registry.npmjs.org/binary/-/binary-0.3.0.tgz -> npmpkg-binary-0.3.0.tgz
 https://registry.npmjs.org/bluebird/-/bluebird-3.7.2.tgz -> npmpkg-bluebird-3.7.2.tgz
 https://registry.npmjs.org/bluebird-lst/-/bluebird-lst-1.0.9.tgz -> npmpkg-bluebird-lst-1.0.9.tgz
@@ -1648,7 +1648,7 @@ https://registry.npmjs.org/buffer-crc32/-/buffer-crc32-0.2.13.tgz -> npmpkg-buff
 https://registry.npmjs.org/buffer-equal/-/buffer-equal-1.0.0.tgz -> npmpkg-buffer-equal-1.0.0.tgz
 https://registry.npmjs.org/buffer-fill/-/buffer-fill-1.0.0.tgz -> npmpkg-buffer-fill-1.0.0.tgz
 https://registry.npmjs.org/buffer-from/-/buffer-from-1.1.2.tgz -> npmpkg-buffer-from-1.1.2.tgz
-https://registry.npmjs.org/buffer-indexof-polyfill/-/buffer-indexof-polyfill-1.0.2.tgz -> npmpkg-buffer-indexof-polyfill-1.0.2.tgz
+https://registry.npmjs.org/buffer-indexof-polyfill/-/buffer-indexof-polyfill-1.0.1.tgz -> npmpkg-buffer-indexof-polyfill-1.0.1.tgz
 https://registry.npmjs.org/buffers/-/buffers-0.1.1.tgz -> npmpkg-buffers-0.1.1.tgz
 https://registry.npmjs.org/builder-util/-/builder-util-22.14.13.tgz -> npmpkg-builder-util-22.14.13.tgz
 https://registry.npmjs.org/builder-util-runtime/-/builder-util-runtime-8.9.2.tgz -> npmpkg-builder-util-runtime-8.9.2.tgz
@@ -1662,11 +1662,11 @@ https://registry.npmjs.org/camelcase/-/camelcase-6.3.0.tgz -> npmpkg-camelcase-6
 https://registry.npmjs.org/chainsaw/-/chainsaw-0.1.0.tgz -> npmpkg-chainsaw-0.1.0.tgz
 https://registry.npmjs.org/chalk/-/chalk-4.1.2.tgz -> npmpkg-chalk-4.1.2.tgz
 https://registry.npmjs.org/chromium-pickle-js/-/chromium-pickle-js-0.2.0.tgz -> npmpkg-chromium-pickle-js-0.2.0.tgz
-https://registry.npmjs.org/ci-info/-/ci-info-3.8.0.tgz -> npmpkg-ci-info-3.8.0.tgz
+https://registry.npmjs.org/ci-info/-/ci-info-3.7.1.tgz -> npmpkg-ci-info-3.7.1.tgz
 https://registry.npmjs.org/cli-boxes/-/cli-boxes-2.2.1.tgz -> npmpkg-cli-boxes-2.2.1.tgz
 https://registry.npmjs.org/cli-truncate/-/cli-truncate-2.1.0.tgz -> npmpkg-cli-truncate-2.1.0.tgz
-https://registry.npmjs.org/cliui/-/cliui-8.0.1.tgz -> npmpkg-cliui-8.0.1.tgz
-https://registry.npmjs.org/clone-response/-/clone-response-1.0.3.tgz -> npmpkg-clone-response-1.0.3.tgz
+https://registry.npmjs.org/cliui/-/cliui-7.0.4.tgz -> npmpkg-cliui-7.0.4.tgz
+https://registry.npmjs.org/clone-response/-/clone-response-1.0.2.tgz -> npmpkg-clone-response-1.0.2.tgz
 https://registry.npmjs.org/color-convert/-/color-convert-2.0.1.tgz -> npmpkg-color-convert-2.0.1.tgz
 https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz -> npmpkg-color-name-1.1.4.tgz
 https://registry.npmjs.org/colors/-/colors-1.0.3.tgz -> npmpkg-colors-1.0.3.tgz
@@ -1677,7 +1677,7 @@ https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz -> npmpkg-concat-ma
 https://registry.npmjs.org/concat-stream/-/concat-stream-1.6.2.tgz -> npmpkg-concat-stream-1.6.2.tgz
 https://registry.npmjs.org/config-chain/-/config-chain-1.1.13.tgz -> npmpkg-config-chain-1.1.13.tgz
 https://registry.npmjs.org/configstore/-/configstore-5.0.1.tgz -> npmpkg-configstore-5.0.1.tgz
-https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.3.tgz -> npmpkg-core-util-is-1.0.3.tgz
+https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.2.tgz -> npmpkg-core-util-is-1.0.2.tgz
 https://registry.npmjs.org/crc/-/crc-3.8.0.tgz -> npmpkg-crc-3.8.0.tgz
 https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.3.tgz -> npmpkg-cross-spawn-7.0.3.tgz
 https://registry.npmjs.org/crypto-random-string/-/crypto-random-string-2.0.0.tgz -> npmpkg-crypto-random-string-2.0.0.tgz
@@ -1685,23 +1685,22 @@ https://registry.npmjs.org/debug/-/debug-4.3.4.tgz -> npmpkg-debug-4.3.4.tgz
 https://registry.npmjs.org/decompress-response/-/decompress-response-3.3.0.tgz -> npmpkg-decompress-response-3.3.0.tgz
 https://registry.npmjs.org/deep-extend/-/deep-extend-0.6.0.tgz -> npmpkg-deep-extend-0.6.0.tgz
 https://registry.npmjs.org/defer-to-connect/-/defer-to-connect-1.1.3.tgz -> npmpkg-defer-to-connect-1.1.3.tgz
-https://registry.npmjs.org/define-properties/-/define-properties-1.2.0.tgz -> npmpkg-define-properties-1.2.0.tgz
+https://registry.npmjs.org/define-properties/-/define-properties-1.1.4.tgz -> npmpkg-define-properties-1.1.4.tgz
 https://registry.npmjs.org/delayed-stream/-/delayed-stream-1.0.0.tgz -> npmpkg-delayed-stream-1.0.0.tgz
 https://registry.npmjs.org/detect-node/-/detect-node-2.1.0.tgz -> npmpkg-detect-node-2.1.0.tgz
 https://registry.npmjs.org/dir-compare/-/dir-compare-2.4.0.tgz -> npmpkg-dir-compare-2.4.0.tgz
 https://registry.npmjs.org/commander/-/commander-2.9.0.tgz -> npmpkg-commander-2.9.0.tgz
-https://registry.npmjs.org/minimatch/-/minimatch-3.0.4.tgz -> npmpkg-minimatch-3.0.4.tgz
 https://registry.npmjs.org/dmg-builder/-/dmg-builder-22.14.13.tgz -> npmpkg-dmg-builder-22.14.13.tgz
 https://registry.npmjs.org/fs-extra/-/fs-extra-10.1.0.tgz -> npmpkg-fs-extra-10.1.0.tgz
 https://registry.npmjs.org/jsonfile/-/jsonfile-6.1.0.tgz -> npmpkg-jsonfile-6.1.0.tgz
 https://registry.npmjs.org/universalify/-/universalify-2.0.0.tgz -> npmpkg-universalify-2.0.0.tgz
 https://registry.npmjs.org/dmg-license/-/dmg-license-1.0.11.tgz -> npmpkg-dmg-license-1.0.11.tgz
 https://registry.npmjs.org/dot-prop/-/dot-prop-5.3.0.tgz -> npmpkg-dot-prop-5.3.0.tgz
-https://registry.npmjs.org/dotenv/-/dotenv-8.6.0.tgz -> npmpkg-dotenv-8.6.0.tgz
+https://registry.npmjs.org/dotenv/-/dotenv-8.2.0.tgz -> npmpkg-dotenv-8.2.0.tgz
 https://registry.npmjs.org/dotenv-expand/-/dotenv-expand-5.1.0.tgz -> npmpkg-dotenv-expand-5.1.0.tgz
 https://registry.npmjs.org/duplexer2/-/duplexer2-0.1.4.tgz -> npmpkg-duplexer2-0.1.4.tgz
-https://registry.npmjs.org/duplexer3/-/duplexer3-0.1.5.tgz -> npmpkg-duplexer3-0.1.5.tgz
-https://registry.npmjs.org/ejs/-/ejs-3.1.9.tgz -> npmpkg-ejs-3.1.9.tgz
+https://registry.npmjs.org/duplexer3/-/duplexer3-0.1.4.tgz -> npmpkg-duplexer3-0.1.4.tgz
+https://registry.npmjs.org/ejs/-/ejs-3.1.8.tgz -> npmpkg-ejs-3.1.8.tgz
 https://registry.npmjs.org/electron/-/electron-18.2.2.tgz -> npmpkg-electron-18.2.2.tgz
 https://registry.npmjs.org/electron-builder/-/electron-builder-22.14.13.tgz -> npmpkg-electron-builder-22.14.13.tgz
 https://registry.npmjs.org/fs-extra/-/fs-extra-10.1.0.tgz -> npmpkg-fs-extra-10.1.0.tgz
@@ -1744,26 +1743,25 @@ https://registry.npmjs.org/fstream/-/fstream-1.0.12.tgz -> npmpkg-fstream-1.0.12
 https://registry.npmjs.org/rimraf/-/rimraf-2.7.1.tgz -> npmpkg-rimraf-2.7.1.tgz
 https://registry.npmjs.org/function-bind/-/function-bind-1.1.1.tgz -> npmpkg-function-bind-1.1.1.tgz
 https://registry.npmjs.org/get-caller-file/-/get-caller-file-2.0.5.tgz -> npmpkg-get-caller-file-2.0.5.tgz
-https://registry.npmjs.org/get-intrinsic/-/get-intrinsic-1.2.1.tgz -> npmpkg-get-intrinsic-1.2.1.tgz
+https://registry.npmjs.org/get-intrinsic/-/get-intrinsic-1.1.1.tgz -> npmpkg-get-intrinsic-1.1.1.tgz
 https://registry.npmjs.org/get-stream/-/get-stream-4.1.0.tgz -> npmpkg-get-stream-4.1.0.tgz
-https://registry.npmjs.org/glob/-/glob-7.2.3.tgz -> npmpkg-glob-7.2.3.tgz
+https://registry.npmjs.org/glob/-/glob-7.1.6.tgz -> npmpkg-glob-7.1.6.tgz
 https://registry.npmjs.org/global-agent/-/global-agent-3.0.0.tgz -> npmpkg-global-agent-3.0.0.tgz
-https://registry.npmjs.org/semver/-/semver-7.5.1.tgz -> npmpkg-semver-7.5.1.tgz
-https://registry.npmjs.org/global-dirs/-/global-dirs-3.0.1.tgz -> npmpkg-global-dirs-3.0.1.tgz
+https://registry.npmjs.org/semver/-/semver-7.3.7.tgz -> npmpkg-semver-7.3.7.tgz
+https://registry.npmjs.org/global-dirs/-/global-dirs-3.0.0.tgz -> npmpkg-global-dirs-3.0.0.tgz
 https://registry.npmjs.org/ini/-/ini-2.0.0.tgz -> npmpkg-ini-2.0.0.tgz
 https://registry.npmjs.org/global-tunnel-ng/-/global-tunnel-ng-2.7.1.tgz -> npmpkg-global-tunnel-ng-2.7.1.tgz
-https://registry.npmjs.org/globalthis/-/globalthis-1.0.3.tgz -> npmpkg-globalthis-1.0.3.tgz
+https://registry.npmjs.org/globalthis/-/globalthis-1.0.2.tgz -> npmpkg-globalthis-1.0.2.tgz
 https://registry.npmjs.org/got/-/got-9.6.0.tgz -> npmpkg-got-9.6.0.tgz
-https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.11.tgz -> npmpkg-graceful-fs-4.2.11.tgz
+https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.4.tgz -> npmpkg-graceful-fs-4.2.4.tgz
 https://registry.npmjs.org/graceful-readlink/-/graceful-readlink-1.0.1.tgz -> npmpkg-graceful-readlink-1.0.1.tgz
 https://registry.npmjs.org/has/-/has-1.0.3.tgz -> npmpkg-has-1.0.3.tgz
 https://registry.npmjs.org/has-flag/-/has-flag-4.0.0.tgz -> npmpkg-has-flag-4.0.0.tgz
 https://registry.npmjs.org/has-property-descriptors/-/has-property-descriptors-1.0.0.tgz -> npmpkg-has-property-descriptors-1.0.0.tgz
-https://registry.npmjs.org/has-proto/-/has-proto-1.0.1.tgz -> npmpkg-has-proto-1.0.1.tgz
 https://registry.npmjs.org/has-symbols/-/has-symbols-1.0.3.tgz -> npmpkg-has-symbols-1.0.3.tgz
 https://registry.npmjs.org/has-yarn/-/has-yarn-2.1.0.tgz -> npmpkg-has-yarn-2.1.0.tgz
 https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-4.1.0.tgz -> npmpkg-hosted-git-info-4.1.0.tgz
-https://registry.npmjs.org/http-cache-semantics/-/http-cache-semantics-4.1.1.tgz -> npmpkg-http-cache-semantics-4.1.1.tgz
+https://registry.npmjs.org/http-cache-semantics/-/http-cache-semantics-4.1.0.tgz -> npmpkg-http-cache-semantics-4.1.0.tgz
 https://registry.npmjs.org/http-proxy-agent/-/http-proxy-agent-5.0.0.tgz -> npmpkg-http-proxy-agent-5.0.0.tgz
 https://registry.npmjs.org/https-proxy-agent/-/https-proxy-agent-5.0.1.tgz -> npmpkg-https-proxy-agent-5.0.1.tgz
 https://registry.npmjs.org/iconv-corefoundation/-/iconv-corefoundation-1.1.7.tgz -> npmpkg-iconv-corefoundation-1.1.7.tgz
@@ -1776,7 +1774,6 @@ https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz -> npmpkg-inherits-2.0.
 https://registry.npmjs.org/ini/-/ini-1.3.8.tgz -> npmpkg-ini-1.3.8.tgz
 https://registry.npmjs.org/interpret/-/interpret-1.4.0.tgz -> npmpkg-interpret-1.4.0.tgz
 https://registry.npmjs.org/is-ci/-/is-ci-3.0.1.tgz -> npmpkg-is-ci-3.0.1.tgz
-https://registry.npmjs.org/is-core-module/-/is-core-module-2.12.1.tgz -> npmpkg-is-core-module-2.12.1.tgz
 https://registry.npmjs.org/is-fullwidth-code-point/-/is-fullwidth-code-point-3.0.0.tgz -> npmpkg-is-fullwidth-code-point-3.0.0.tgz
 https://registry.npmjs.org/is-installed-globally/-/is-installed-globally-0.4.0.tgz -> npmpkg-is-installed-globally-0.4.0.tgz
 https://registry.npmjs.org/is-npm/-/is-npm-5.0.0.tgz -> npmpkg-is-npm-5.0.0.tgz
@@ -1787,7 +1784,7 @@ https://registry.npmjs.org/is-yarn-global/-/is-yarn-global-0.3.0.tgz -> npmpkg-i
 https://registry.npmjs.org/isarray/-/isarray-1.0.0.tgz -> npmpkg-isarray-1.0.0.tgz
 https://registry.npmjs.org/isbinaryfile/-/isbinaryfile-4.0.10.tgz -> npmpkg-isbinaryfile-4.0.10.tgz
 https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz -> npmpkg-isexe-2.0.0.tgz
-https://registry.npmjs.org/jake/-/jake-10.8.6.tgz -> npmpkg-jake-10.8.6.tgz
+https://registry.npmjs.org/jake/-/jake-10.8.5.tgz -> npmpkg-jake-10.8.5.tgz
 https://registry.npmjs.org/js-yaml/-/js-yaml-4.1.0.tgz -> npmpkg-js-yaml-4.1.0.tgz
 https://registry.npmjs.org/json-buffer/-/json-buffer-3.0.0.tgz -> npmpkg-json-buffer-3.0.0.tgz
 https://registry.npmjs.org/json-schema-traverse/-/json-schema-traverse-0.4.1.tgz -> npmpkg-json-schema-traverse-0.4.1.tgz
@@ -1807,9 +1804,9 @@ https://registry.npmjs.org/mime/-/mime-2.6.0.tgz -> npmpkg-mime-2.6.0.tgz
 https://registry.npmjs.org/mime-db/-/mime-db-1.52.0.tgz -> npmpkg-mime-db-1.52.0.tgz
 https://registry.npmjs.org/mime-types/-/mime-types-2.1.35.tgz -> npmpkg-mime-types-2.1.35.tgz
 https://registry.npmjs.org/mimic-response/-/mimic-response-1.0.1.tgz -> npmpkg-mimic-response-1.0.1.tgz
-https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz -> npmpkg-minimatch-3.1.2.tgz
-https://registry.npmjs.org/minimist/-/minimist-1.2.8.tgz -> npmpkg-minimist-1.2.8.tgz
-https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.6.tgz -> npmpkg-mkdirp-0.5.6.tgz
+https://registry.npmjs.org/minimatch/-/minimatch-3.0.4.tgz -> npmpkg-minimatch-3.0.4.tgz
+https://registry.npmjs.org/minimist/-/minimist-1.2.5.tgz -> npmpkg-minimist-1.2.5.tgz
+https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.5.tgz -> npmpkg-mkdirp-0.5.5.tgz
 https://registry.npmjs.org/ms/-/ms-2.1.2.tgz -> npmpkg-ms-2.1.2.tgz
 https://registry.npmjs.org/node-addon-api/-/node-addon-api-1.7.2.tgz -> npmpkg-node-addon-api-1.7.2.tgz
 https://registry.npmjs.org/normalize-url/-/normalize-url-4.5.1.tgz -> npmpkg-normalize-url-4.5.1.tgz
@@ -1820,7 +1817,7 @@ https://registry.npmjs.org/p-cancelable/-/p-cancelable-1.1.0.tgz -> npmpkg-p-can
 https://registry.npmjs.org/package-json/-/package-json-6.5.0.tgz -> npmpkg-package-json-6.5.0.tgz
 https://registry.npmjs.org/path-is-absolute/-/path-is-absolute-1.0.1.tgz -> npmpkg-path-is-absolute-1.0.1.tgz
 https://registry.npmjs.org/path-key/-/path-key-3.1.1.tgz -> npmpkg-path-key-3.1.1.tgz
-https://registry.npmjs.org/path-parse/-/path-parse-1.0.7.tgz -> npmpkg-path-parse-1.0.7.tgz
+https://registry.npmjs.org/path-parse/-/path-parse-1.0.6.tgz -> npmpkg-path-parse-1.0.6.tgz
 https://registry.npmjs.org/pend/-/pend-1.2.0.tgz -> npmpkg-pend-1.2.0.tgz
 https://registry.npmjs.org/pify/-/pify-3.0.0.tgz -> npmpkg-pify-3.0.0.tgz
 https://registry.npmjs.org/plist/-/plist-3.0.6.tgz -> npmpkg-plist-3.0.6.tgz
@@ -1835,12 +1832,12 @@ https://registry.npmjs.org/pupa/-/pupa-2.1.1.tgz -> npmpkg-pupa-2.1.1.tgz
 https://registry.npmjs.org/rc/-/rc-1.2.8.tgz -> npmpkg-rc-1.2.8.tgz
 https://registry.npmjs.org/read-config-file/-/read-config-file-6.2.0.tgz -> npmpkg-read-config-file-6.2.0.tgz
 https://registry.npmjs.org/dotenv/-/dotenv-9.0.2.tgz -> npmpkg-dotenv-9.0.2.tgz
-https://registry.npmjs.org/readable-stream/-/readable-stream-2.3.8.tgz -> npmpkg-readable-stream-2.3.8.tgz
+https://registry.npmjs.org/readable-stream/-/readable-stream-2.3.7.tgz -> npmpkg-readable-stream-2.3.7.tgz
 https://registry.npmjs.org/rechoir/-/rechoir-0.6.2.tgz -> npmpkg-rechoir-0.6.2.tgz
-https://registry.npmjs.org/registry-auth-token/-/registry-auth-token-4.2.2.tgz -> npmpkg-registry-auth-token-4.2.2.tgz
+https://registry.npmjs.org/registry-auth-token/-/registry-auth-token-4.2.1.tgz -> npmpkg-registry-auth-token-4.2.1.tgz
 https://registry.npmjs.org/registry-url/-/registry-url-5.1.0.tgz -> npmpkg-registry-url-5.1.0.tgz
 https://registry.npmjs.org/require-directory/-/require-directory-2.1.1.tgz -> npmpkg-require-directory-2.1.1.tgz
-https://registry.npmjs.org/resolve/-/resolve-1.22.2.tgz -> npmpkg-resolve-1.22.2.tgz
+https://registry.npmjs.org/resolve/-/resolve-1.17.0.tgz -> npmpkg-resolve-1.17.0.tgz
 https://registry.npmjs.org/responselike/-/responselike-1.0.2.tgz -> npmpkg-responselike-1.0.2.tgz
 https://registry.npmjs.org/rimraf/-/rimraf-3.0.2.tgz -> npmpkg-rimraf-3.0.2.tgz
 https://registry.npmjs.org/roarr/-/roarr-2.15.4.tgz -> npmpkg-roarr-2.15.4.tgz
@@ -1869,7 +1866,6 @@ https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz -> npmpkg-strip-ans
 https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-2.0.1.tgz -> npmpkg-strip-json-comments-2.0.1.tgz
 https://registry.npmjs.org/sumchecker/-/sumchecker-3.0.1.tgz -> npmpkg-sumchecker-3.0.1.tgz
 https://registry.npmjs.org/supports-color/-/supports-color-7.2.0.tgz -> npmpkg-supports-color-7.2.0.tgz
-https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz -> npmpkg-supports-preserve-symlinks-flag-1.0.0.tgz
 https://registry.npmjs.org/temp-file/-/temp-file-3.4.0.tgz -> npmpkg-temp-file-3.4.0.tgz
 https://registry.npmjs.org/fs-extra/-/fs-extra-10.1.0.tgz -> npmpkg-fs-extra-10.1.0.tgz
 https://registry.npmjs.org/jsonfile/-/jsonfile-6.1.0.tgz -> npmpkg-jsonfile-6.1.0.tgz
@@ -1890,13 +1886,12 @@ https://registry.npmjs.org/bluebird/-/bluebird-3.4.7.tgz -> npmpkg-bluebird-3.4.
 https://registry.npmjs.org/update-notifier/-/update-notifier-5.1.0.tgz -> npmpkg-update-notifier-5.1.0.tgz
 https://registry.npmjs.org/ci-info/-/ci-info-2.0.0.tgz -> npmpkg-ci-info-2.0.0.tgz
 https://registry.npmjs.org/is-ci/-/is-ci-2.0.0.tgz -> npmpkg-is-ci-2.0.0.tgz
-https://registry.npmjs.org/semver/-/semver-7.5.1.tgz -> npmpkg-semver-7.5.1.tgz
+https://registry.npmjs.org/semver/-/semver-7.3.7.tgz -> npmpkg-semver-7.3.7.tgz
 https://registry.npmjs.org/uri-js/-/uri-js-4.4.1.tgz -> npmpkg-uri-js-4.4.1.tgz
 https://registry.npmjs.org/url-parse-lax/-/url-parse-lax-3.0.0.tgz -> npmpkg-url-parse-lax-3.0.0.tgz
 https://registry.npmjs.org/utf8-byte-length/-/utf8-byte-length-1.0.4.tgz -> npmpkg-utf8-byte-length-1.0.4.tgz
 https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz -> npmpkg-util-deprecate-1.0.2.tgz
 https://registry.npmjs.org/verror/-/verror-1.10.1.tgz -> npmpkg-verror-1.10.1.tgz
-https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.2.tgz -> npmpkg-core-util-is-1.0.2.tgz
 https://registry.npmjs.org/which/-/which-2.0.2.tgz -> npmpkg-which-2.0.2.tgz
 https://registry.npmjs.org/widest-line/-/widest-line-3.1.0.tgz -> npmpkg-widest-line-3.1.0.tgz
 https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-7.0.0.tgz -> npmpkg-wrap-ansi-7.0.0.tgz
@@ -1906,11 +1901,18 @@ https://registry.npmjs.org/xdg-basedir/-/xdg-basedir-4.0.0.tgz -> npmpkg-xdg-bas
 https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-15.1.1.tgz -> npmpkg-xmlbuilder-15.1.1.tgz
 https://registry.npmjs.org/y18n/-/y18n-5.0.8.tgz -> npmpkg-y18n-5.0.8.tgz
 https://registry.npmjs.org/yallist/-/yallist-4.0.0.tgz -> npmpkg-yallist-4.0.0.tgz
-https://registry.npmjs.org/yargs/-/yargs-17.7.2.tgz -> npmpkg-yargs-17.7.2.tgz
-https://registry.npmjs.org/yargs-parser/-/yargs-parser-21.1.1.tgz -> npmpkg-yargs-parser-21.1.1.tgz
+https://registry.npmjs.org/yargs/-/yargs-17.4.1.tgz -> npmpkg-yargs-17.4.1.tgz
+https://registry.npmjs.org/yargs-parser/-/yargs-parser-21.0.1.tgz -> npmpkg-yargs-parser-21.0.1.tgz
 https://registry.npmjs.org/yauzl/-/yauzl-2.10.0.tgz -> npmpkg-yauzl-2.10.0.tgz
-https://registry.npmjs.org/selenium-webdriver/-/selenium-webdriver-4.9.2.tgz -> npmpkg-selenium-webdriver-4.9.2.tgz
+https://registry.npmjs.org/@firebase/firestore/-/firestore-0.0.900-exp.d92a36260.tgz -> npmpkg-@firebase-firestore-0.0.900-exp.d92a36260.tgz
+https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.1.tgz -> npmpkg-node-fetch-2.6.1.tgz
+https://registry.npmjs.org/@material-ui/icons/-/icons-4.9.1.tgz -> npmpkg-@material-ui-icons-4.9.1.tgz
+https://registry.npmjs.org/prettier/-/prettier-2.2.1.tgz -> npmpkg-prettier-2.2.1.tgz
+https://registry.npmjs.org/prettier/-/prettier-2.2.1.tgz -> npmpkg-prettier-2.2.1.tgz
+https://registry.npmjs.org/prettier/-/prettier-2.3.0.tgz -> npmpkg-prettier-2.3.0.tgz
+https://registry.npmjs.org/prettier/-/prettier-2.2.1.tgz -> npmpkg-prettier-2.2.1.tgz
 https://registry.npmjs.org/fsevents/-/fsevents-2.3.2.tgz -> npmpkg-fsevents-2.3.2.tgz
+https://registry.npmjs.org/firebase/-/firebase-9.0.0-beta.2.tgz -> npmpkg-firebase-9.0.0-beta.2.tgz
 https://registry.npmjs.org/flow-bin/-/flow-bin-0.131.0.tgz -> npmpkg-flow-bin-0.131.0.tgz
 https://registry.npmjs.org/fsevents/-/fsevents-2.3.2.tgz -> npmpkg-fsevents-2.3.2.tgz
 https://registry.npmjs.org/fsevents/-/fsevents-2.3.2.tgz -> npmpkg-fsevents-2.3.2.tgz
@@ -2536,7 +2538,7 @@ build_gdevelop_js() {
 einfo
 einfo "Compiling ${MY_PN}.js"
 einfo
-# In https://github.com/4ian/GDevelop/blob/v5.1.163/GDevelop.js/Gruntfile.js#L88
+# In https://github.com/4ian/GDevelop/blob/v5.1.164/GDevelop.js/Gruntfile.js#L88
 	pushd "${WORKDIR}/${MY_PN}-${MY_PV}/${MY_PN}.js"
 		npm run build -- --force --dev || die
 	popd
