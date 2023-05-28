@@ -427,9 +427,11 @@ check_qt() {
 				| grep -F -e "Qt_5." \
 				| tail -n 1 \
 				| cut -f 2 -d "_")
-			die \
-"Qt5WebEngine is not compatible.  Highest supported by this library is \
-${QT5WEBENGINE_HIGHEST}.  You have ${QT_VERSION}."
+eerror
+eerror "Qt5WebEngine is not compatible.  Highest supported by this library is"
+eerror "${QT5WEBENGINE_HIGHEST}.  You have ${QT_VERSION}."
+eerror
+			die
 		fi
 	fi
 	if ver_test ${QT_VERSION} -ne ${QTWIDGETS_PV} ; then
@@ -458,8 +460,7 @@ ewarn
 mod_off() {
 	local module_name="${1}"
 einfo "Disabling ${module_name}"
-	sed -i \
--e "/GB_CONFIG_SUBDIRS[(]${module_name},/d" \
+	sed -i -e "/GB_CONFIG_SUBDIRS[(]${module_name},/d" \
 		configure.ac || die
 	sed -i -r -e ":a;N;\$!ba s| @${module_name}_dir@ [\]\n||g" \
 		Makefile.am || die
@@ -638,7 +639,7 @@ src_configure() {
 		CODE_QUALITY_REPORT+="${m}\n"
 	done
 	CODE_QUALITY_REPORT=$(echo -e "${CODE_QUALITY_REPORT}" | sort)
-	einfo "Code quality:"
+einfo "Code quality:"
 	echo -e "${CODE_QUALITY_REPORT}"
 }
 
@@ -648,20 +649,16 @@ src_compile() {
 
 find_remove_module() {
 	local name="${1}"
-	if find "${ED}" -name "${name}" -type d 2>/dev/null 1>/dev/null ; then
-		find "${ED}" -name "${name}" -type d -delete
-	fi
-	if find "${ED}" \
+	find "${ED}" \
+		-name "${name}" \
+		-type d \
+		-print0 \
+		-exec rm -rf {} +
+	find "${ED}" \
 		-regextype 'posix-egrep' \
 		-regex ".*/${name}.(gambas|component|info|list|so|so.0|so\.0\.0\.0)" \
-		2>/dev/null \
-		1>/dev/null \
-	; then
-		find "${ED}" \
-			-regextype 'posix-egrep' \
-			-regex ".*/${name}.(gambas|component|info|list|so|so.0|so\.0\.0\.0)" \
-			-delete
-	fi
+		-print0 \
+		-exec rm -rf {} +
 }
 
 gen_env() {
@@ -701,17 +698,21 @@ src_install() {
 	fi
 
 	if use remove_stable_not_finished ; then
-		find_remove_module "gb.desktop"
+		if ! use ide ; then
+			find_remove_module "gb.desktop"
+			find_remove_module "gb.form.htmlview"
+			find_remove_module "gb.form.terminal"
+			find_remove_module "gb.util"
+			find_remove_module "gb.util.web"
+
+	# Causes runtime failure
+			find_remove_module "gb.test"
+		fi
 		find_remove_module "gb.desktop.x11"
-		find_remove_module "gb.form.htmlview"
-		find_remove_module "gb.form.terminal"
 		find_remove_module "gb.map"
 		find_remove_module "gb.memcached"
 		find_remove_module "gb.poppler"
-		find_remove_module "gb.test"
 		find_remove_module "gb.test.component"
-		find_remove_module "gb.util"
-		find_remove_module "gb.util.web"
 		find_remove_module "gb.web.feed"
 		find_remove_module "gb.web.gui"
 	fi
@@ -731,16 +732,19 @@ src_install() {
 
 	if use ide ; then
 		if [[ ! -f "${ED}/usr/bin/gambas3.gambas" ]] ; then
-			die "The IDE was not built.  Fix the USE flags."
+eerror
+eerror "The IDE was not built.  Fix the USE flags."
+eerror
+			die
 		fi
 	fi
 
 	if use jit ; then
 		gen_env
-		einfo "Systemwide JIT settings:"
+einfo "Systemwide JIT settings:"
 		cat "${T}"/50${PN}-jit || die
 		doenvd "${T}"/50${PN}-jit
-		einfo "To change them see \`epkginfo -x gambas\` or metadata.xml"
+einfo "To change them see \`epkginfo -x gambas\` or metadata.xml"
 	fi
 }
 
@@ -750,15 +754,15 @@ pkg_postinst() {
 	xdg_pkg_postinst
 
 	if use ide && use gtk3 ; then
-		einfo "To run the IDE with gtk3 from command line do \`GB_GUI=gb.gtk3 gambas3\`"
+einfo "To run the IDE with gtk3 from command line do \`GB_GUI=gb.gtk3 gambas3\`"
 	fi
 
 	if use ide && use qt5 ; then
-		einfo "To run the IDE with Qt5 from command line do \`GB_GUI=gb.qt5 gambas3\`"
+einfo "To run the IDE with Qt5 from command line do \`GB_GUI=gb.qt5 gambas3\`"
 	fi
 
 	if use jit ; then
-		einfo "Relog or do \`source /etc/profile\` for changes to take affect."
+einfo "Relog or do \`source /etc/profile\` for changes to take affect."
 	fi
 }
 
@@ -774,3 +778,5 @@ pkg_postinst() {
 #   designer:  passed
 #   hello world (multiform):  passed
 #   hello world (message box):  passed
+#
+# USE+=" remove_deprecated remove_stable_not_finished remove_unstable" (PASSED)
