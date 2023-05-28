@@ -29,8 +29,8 @@ GAMBAS_MODULES_DEFAULTS=(
 	${GAMBAS_MODULES_DEFAULTS[@]/+gsl/-gsl}
 	${GAMBAS_MODULES_DEFAULTS[@]/+gtk3/-gtk3}
 	${GAMBAS_MODULES_DEFAULTS[@]/+imlib2/-imlib2}
-	${GAMBAS_MODULES_DEFAULTS[@]/+ncurses/-ncurses}
 	${GAMBAS_MODULES_DEFAULTS[@]/+mysql/-mysql}
+	${GAMBAS_MODULES_DEFAULTS[@]/+ncurses/-ncurses}
 	${GAMBAS_MODULES_DEFAULTS[@]/+pdf/-pdf}
 	${GAMBAS_MODULES_DEFAULTS[@]/+sdl2/-sdl2}
 )
@@ -39,10 +39,8 @@ GAMBAS_MODULES_DEFAULTS=(
 # The USE flags below have no config options but are removed manually.
 IUSE+="
 ${GAMBAS_MODULES_DEFAULTS[@]}
-debug doc +glsl +glu +ide +jit +glsl +sge smtp +webview
-
-remove_deprecated +remove_not_finished remove_stable_not_finished
-+remove_unstable
+debug doc +glsl +glu +ide +jit +glsl +sge remove_deprecated +remove_not_finished
+remove_stable_not_finished +remove_unstable smtp +webview
 "
 REQUIRED_USE+="
 	glsl? (
