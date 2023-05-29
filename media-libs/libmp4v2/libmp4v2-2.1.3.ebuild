@@ -24,6 +24,7 @@ REQUIRED_USE="
 BDEPEND="
 	sys-apps/sed
 	doc? (
+		${PYTHON_DEPS}
 		app-doc/doxygen
 		sys-apps/help2man
 		sys-apps/texinfo
