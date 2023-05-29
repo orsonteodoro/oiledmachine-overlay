@@ -15,7 +15,16 @@ inherit pax-utils python-any-r1 check-linker lcnr toolchain-funcs uopts
 inherit xdg-utils
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
 LICENSE="
-	Apache-1.1 Apache-2.0 Artistic-2 BSD BSD-2 icu-70.1 ISC MIT Unicode-DFS-2016 ZLIB
+	Apache-1.1
+	Apache-2.0
+	Artistic-2
+	BSD
+	BSD-2
+	icu-70.1
+	ISC
+	MIT
+	Unicode-DFS-2016
+	ZLIB
 	ssl? (
 		openssl
 	)
@@ -111,7 +120,7 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Feb 15, 2022
+# Last deps commit date:  Feb 15, 2023
 ACORN_PV="8.8.0"
 COREPACK_PV="0.15.1"
 NGHTTP2_PV="1.47.0"
@@ -130,7 +139,9 @@ RDEPEND+="
 		>=dev-libs/openssl-1.1.1t:0=
 	)
 "
-DEPEND+=" ${RDEPEND}"
+DEPEND+="
+	${RDEPEND}
+"
 BDEPEND+="
 	${PYTHON_DEPS}
 	dev-util/ninja
