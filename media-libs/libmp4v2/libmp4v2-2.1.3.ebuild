@@ -107,3 +107,7 @@ multilib_src_install() {
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, enable tests
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.1.3 (20230529)
+# Both for 32/64 bit:
+#		=== main Summary ===
+#
+## of expected passes		88
