@@ -12,11 +12,6 @@ HOMEPAGE="
 https://mp4v2.org/
 https://github.com/enzo1982/mp4v2
 "
-SRC_URI="
-https://github.com/enzo1982/mp4v2/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-
 LICENSE="MPL-1.1"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~alpha amd64 arm ~arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris"
@@ -26,7 +21,6 @@ REQUIRED_USE="
 		utils
 	)
 "
-
 BDEPEND="
 	sys-apps/sed
 	doc? (
@@ -41,14 +35,15 @@ BDEPEND="
 		sys-apps/help2man
 	)
 "
-
-DOCS=( README )
-
-S=${WORKDIR}/${MY_P}
-
+SRC_URI="
+https://github.com/enzo1982/mp4v2/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${MY_P}"
 PATCHES=(
 	"${FILESDIR}/${PN}-2.0.0-unsigned-int-cast.patch"
 )
+DOCS=( README )
 
 MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/mp4v2/project.h
