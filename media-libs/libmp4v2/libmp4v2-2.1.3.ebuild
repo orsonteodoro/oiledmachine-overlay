@@ -76,7 +76,11 @@ multilib_src_compile() {
 }
 
 multilib_src_test() {
+	local expected_passes=88
 	make check || die
+	grep -q -e "unexpected" testlog/main.sum && die "Test failed"
+	grep -E -q -e " expected passes["$'\t'"]+${expected_passes}$" testlog/main.sum || die "Test failed"
+	grep -E -q -e " expected passes["$'\t'"]+${expected_passes}$" testlog/main.sum && einfo "Test passed"
 }
 
 multilib_src_install() {
@@ -102,3 +106,4 @@ multilib_src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, enable tests
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.1.3 (20230529)
