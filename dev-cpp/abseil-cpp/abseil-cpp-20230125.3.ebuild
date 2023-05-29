@@ -16,7 +16,7 @@ LICENSE="
 HOMEPAGE="https://abseil.io"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="0/${PV%%.*}"
-IUSE+=" +cxx17 test r1"
+IUSE+=" +cxx17 test -test-helpers r2"
 BDEPEND+="
 	${PYTHON_DEPS}
 	test? (
@@ -29,6 +29,8 @@ https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 RESTRICT="!test? ( test ) mirror"
+PATCHES=(
+)
 
 src_prepare() {
 	cmake_src_prepare
@@ -47,6 +49,7 @@ src_prepare() {
 src_configure() {
 	local mycmakeargs=(
 		-DABSL_BUILD_TESTING=$(usex test ON OFF)
+		-DABSL_BUILD_TEST_HELPERS=$(usex test-helpers ON OFF)
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_PROPAGATE_CXX_STD=TRUE
 		-DABSL_USE_EXTERNAL_GOOGLETEST=TRUE
@@ -56,3 +59,13 @@ src_configure() {
 	cmake-multilib_src_configure
 }
 
+# OILEDMACHINE-OVERLAY-TEST:  PASSED x86 and amd64
+# USE="cxx17 test test-helpers -r1" ABI_X86="32 (64) (-x32)"
+
+# x86 ABI:
+# 100% tests passed, 0 tests failed out of 207
+# Total Test time (real) = 267.15 sec
+
+# amd64 ABI:
+# 100% tests passed, 0 tests failed out of 207
+# Total Test time (real) = 204.20 sec

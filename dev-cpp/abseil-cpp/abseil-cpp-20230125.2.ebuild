@@ -9,7 +9,9 @@ inherit cmake-multilib python-any-r1
 DESCRIPTION="Abseil Common Libraries (C++), LTS Branch"
 LICENSE="
 	Apache-2.0
-	test? ( BSD )
+	test? (
+		BSD
+	)
 "
 HOMEPAGE="https://abseil.io"
 KEYWORDS="~amd64 ~ppc64 ~x86"
