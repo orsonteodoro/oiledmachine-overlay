@@ -2540,7 +2540,7 @@ einfo "Compiling ${MY_PN}.js"
 einfo
 # In https://github.com/4ian/GDevelop/blob/v5.1.164/GDevelop.js/Gruntfile.js#L88
 	pushd "${WORKDIR}/${MY_PN}-${MY_PV}/${MY_PN}.js"
-		npm run build -- --force --dev || die
+		enpm run build -- --force --dev
 	popd
 	if [[ ! -f "${S_BAK}/Binaries/embuild/${MY_PN}.js/libGD.wasm" ]]
 	then
@@ -2564,7 +2564,7 @@ einfo
 einfo "Building ${MY_PN} IDE"
 einfo
 	pushd "${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/app"
-		npm run build || die
+		enpm run build
 	popd
 }
 
@@ -2576,7 +2576,7 @@ einfo
 		if [[ "${NPM_OFFLINE:-1}" == "1" ]] ; then
 			electron-app_cp_electron
 		fi
-		npm run build || die
+		enpm run build
 	popd
 }
 
