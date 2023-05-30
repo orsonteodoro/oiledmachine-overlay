@@ -25,9 +25,20 @@ inherit desktop electron-app lcnr npm
 DESCRIPTION="Democratizing Snippet Management (macOS/Win/Linux)"
 HOMEPAGE="http://hackjutsu.com/Lepton"
 THIRD_PARTY_LICENSES="
-	( custom MIT all-rights-reserved keep-copyright-notice )
-	( MIT all-rights-reserved )
-	( WTFPL-2 ISC )
+	(
+		custom
+		all-rights-reserved
+		keep-copyright-notice
+		MIT
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
+	(
+		WTFPL-2
+		ISC
+	)
 	0BSD
 	Apache-2.0
 	BSD
@@ -38,12 +49,15 @@ THIRD_PARTY_LICENSES="
 	MIT CC0-1.0
 	PSF-2.4
 	Unlicense
-	|| ( Apache-2.0 MPL-2.0 )
+	|| (
+		Apache-2.0
+		MPL-2.0
+	)
 "
 LICENSE="
-	MIT
 	${ELECTRON_APP_LICENSES}
 	${THIRD_PARTY_LICENSES}
+	MIT
 "
 
 # For ELECTRON_APP_LICENSES, see
@@ -66,7 +80,7 @@ LICENSE="
 
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE=" r5"
+IUSE=" r6"
 REQUIRED_USE="
 !wayland X
 "
@@ -1503,6 +1517,7 @@ src_prepare() {
 src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
+	npm_hydrate
 	electron-app_cp_electron
 	enpm run build
 	electron-builder -l --dir
