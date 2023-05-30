@@ -16,15 +16,24 @@ HOMEPAGE="
 	https://github.com/Chatterino/chatterino2
 "
 THIRD_PARTY_LICENSES="
-	( all-rights-reserved MIT BSD JSON )
-	( BSD MIT ZLIB )
+	(
+		all-rights-reserved
+		BSD
+		MIT
+		JSON
+	)
+	(
+		BSD
+		MIT
+		ZLIB
+	)
 	Apache-2.0
 	BSD
 	Boost-1.0
 	MIT
 	|| (
-		Unlicense
 		MIT-0
+		Unlicense
 	)
 "
 LICENSE="
@@ -42,7 +51,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 # -system-pajlada-settings is not packaged on this distro
 IUSE+="
--benchmarks -coverage -crashpad -lto -system-libcommuni
+-benchmarks -coverage -crashpad -lto -plugins -system-libcommuni
 -system-qtkeychain -test +qt5 -qt6 +qtkeychain wayland X
 
 r3
@@ -258,6 +267,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DCHATTERINO_LTO=$(usex lto "ON" "OFF")
 		-DCHATTERINO_GENERATE_COVERAGE=$(usex coverage "ON" "OFF")
+		-DCHATTERINO_PLUGINS=$(usex plugins "ON" "OFF")
 		-DBUILD_BENCHMARKS=$(usex benchmarks "ON" "OFF")
 		-DBUILD_TESTS=$(usex test "ON" "OFF")
 		-DBUILD_TRANSLATIONS=OFF # A design choice by project to always turn it off for qtkeychain.
@@ -287,3 +297,11 @@ pkg_postinst() {
 pkg_postrm() {
 	xdg_icon_cache_update
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) (20230529)
+# USE="X qt5 wayland -benchmarks -coverage (-crashpad) -lto -plugins (-qt6)
+# -qtkeychain -r3 -system-libcommuni -system-qtkeychain -test"
+# X tests:
+#   view about screen:  passed
+# wayland tests:
+#   view about screen:  passed

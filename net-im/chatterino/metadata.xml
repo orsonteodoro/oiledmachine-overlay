@@ -24,6 +24,7 @@
     specifically for https://twitch.tv used among popular and verified users.
   </longdescription>
   <upstream>
+    <changelog>https://www.chatterino.com/changelog</changelog>
     <doc>https://wiki.chatterino.com/</doc>
     <bugs-to>https://github.com/Chatterino/chatterino2/issues</bugs-to>
     <remote-id type="github">Chatterino/chatterino2</remote-id>
@@ -33,7 +34,12 @@
       Build benchmarking program.  (For developers)
     </flag>
     <flag name="crashpad">
-      Build with crash reporting support
+      Build with crash reporting support.
+
+      (This may expose sensitive data in the minidump.)
+    </flag>
+    <flag name="plugins">
+      Build with experimental plugin support.
     </flag>
     <flag name="coverage">
       Generate code coverage files.  (For developers)
