@@ -13,15 +13,20 @@
 # e2fsprogs
 # filmic-blender
 # gspca_ep800
+# gst-plugins-fluidsynth
+# gst-plugins-musepack
 # gst-plugins-v4l2
 # libtool
 # luaxml # no official repo
+# npm
 # pam-python
 # pdfchain
+# pnpm
 # pvrtexlibnet # fix versioning
 # pyside2
 # recastnavigation # fix versioning
 # shiboken2
+# yarn
 
 # prune list:
 # farseer-physics-engine needs to be pruned?

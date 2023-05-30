@@ -408,10 +408,12 @@ einfo "Running:\tnpm ${cmd[@]}"
 		grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
 	fi
 	if [[ "${cmd[@]}" =~ ("audit fix"|"install") ]] ; then
+		# FIXME: Does not work as expected.
+		# FIXME: Catch error or move/remove conditional.
 		# Indeterministic or random failure bug
-		grep -q -e "npm ERR! Invalid Version" "${T}/build.log" && die "Detected error"
+		grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
 	fi
-	grep -q -e "npm ERR! Exit handler never called!" && die "Possible indeterministic behavior"
+	grep -q -e " ERR! Exit handler never called!" && die "Possible indeterministic behavior"
 }
 
 # @FUNCTION: __npm_patch
@@ -536,7 +538,7 @@ npm_src_compile() {
 		${extra_args[@]} \
 		|| die
 	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
-	grep -q -e "npm ERR! Exit handler never called!" && die "Possible indeterministic behavior"
+	grep -q -e " ERR! Exit handler never called!" && die "Possible indeterministic behavior"
 	grep -q -e "MODULE_NOT_FOUND" "${T}/build.log" && die "Detected error"
 }
 
