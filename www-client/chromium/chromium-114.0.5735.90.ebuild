@@ -2887,7 +2887,7 @@ ewarn
 		if ! [[ "${LTO_TYPE}" =~ ("thinlto") ]] ; then
 		# Build scripts can only use ThinLTO for CFI.
 eerror
-eerror "CFI requires ThinLTO or Gold LTO."
+eerror "CFI requires ThinLTO."
 eerror
 eerror "Contents of ${ESYSROOT}/etc/portage/env/thinlto.conf:"
 eerror
@@ -2896,11 +2896,7 @@ eerror "CXXFLAGS=\"\${CXXFLAGS} -flto=thin\""
 eerror "LDFLAGS=\"\${LDFLAGS} -fuse-ld=lld\""
 eerror
 eerror
-eerror "Contents of ${ESYSROOT}/etc/portage/env/goldlto.conf:"
-eerror "LDFLAGS=\"\${LDFLAGS} -fuse-ld=gold\""
-eerror
-eerror
-eerror "You must explicitly apply one of the above linkers to the following file:"
+eerror "You must apply one of the above linkers to the following file:"
 eerror
 eerror "Contents of ${ESYSROOT}/etc/portage/package.env"
 eerror "www-client/chromium thinlto.conf"
