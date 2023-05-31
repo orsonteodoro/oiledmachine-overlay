@@ -1313,7 +1313,7 @@ eerror
 eerror "To switch add a per-profile config file create the following files:"
 eerror
 eerror
-eerror "Contents of ${EROOT}/etc/portage/env/clang-${CR_CLANG_SLOT_OFFICIAL}.conf:"
+eerror "Contents of ${ESYSROOT}/etc/portage/env/clang-${CR_CLANG_SLOT_OFFICIAL}.conf:"
 eerror
 eerror "CC=clang-${CR_CLANG_SLOT_OFFICIAL}"
 eerror "CXX=clang++-${CR_CLANG_SLOT_OFFICIAL}"
@@ -1325,7 +1325,7 @@ eerror "READELF=\"llvm-readelf\""
 eerror "STRIP=\"llvm-strip\""
 eerror
 eerror
-eerror "Contents of ${EROOT}/etc/portage/package.env"
+eerror "Contents of ${ESYSROOT}/etc/portage/package.env"
 eerror
 eerror "${CATEGORY}/${PN} clang-${CR_CLANG_SLOT_OFFICIAL}.conf"
 eerror
@@ -2829,6 +2829,22 @@ ewarn
 		# Build scripts can only use ThinLTO for CFI.
 eerror
 eerror "CFI requires ThinLTO or Gold LTO."
+eerror
+eerror "Contents of ${ESYSROOT}/etc/portage/env/thinlto.conf:"
+eerror
+eerror "CFLAGS=\"\${CFLAGS} -flto=thin\""
+eerror "CXXFLAGS=\"\${CXXFLAGS} -flto=thin\""
+eerror "LDFLAGS=\"\${LDFLAGS} -fuse-ld=lld\""
+eerror
+eerror
+eerror "Contents of ${ESYSROOT}/etc/portage/env/goldlto.conf:"
+eerror "LDFLAGS=\"\${LDFLAGS} -fuse-ld=gold\""
+eerror
+eerror
+eerror "You must explicitly apply one of the above linkers to the following file:"
+eerror
+eerror "Contents of ${ESYSROOT}/etc/portage/package.env"
+eerror "www-client/chromium thinlto.conf"
 eerror
 			die
 		fi
