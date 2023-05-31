@@ -33,17 +33,77 @@ te th tr uk ur vi zh-CN zh-TW
 # https://github.com/chromium/chromium/tree/114.0.5735.90/build/linux/sysroot_scripts/generated_package_lists
 # https://github.com/chromium/chromium/blob/114.0.5735.90/build/install-build-deps.sh#L237
 
+#
+# Additional DEPENDS versioning info:
+#
+# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/fontconfig/include/config.h#L290
+# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/libpng/pnglibconf.h
+# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/libxml/linux/config.h#L160					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/node/update_node_binaries#L18
+# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/re2/README.chromium#L4						; older than generated_package_lists, (live)
+# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/114.0.5735.90/tools/rust/update_rust.py#L35							; commit
+#   https://github.com/rust-lang/rust/blob/17c11672167827b0dd92c88ef69f24346d1286dd/src/version						; live version
+# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/icu/source/configure		L585	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/libjpeg_turbo/jconfig.h		L7	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/libwebp/src/configure.ac		L1	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/openh264/src/meson.build		L2
+# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/opus/README.chromium		L3	; newer than generated_package_lists, live
+#
+
+# About PGO version compatibility
+#
+# The answer to the profdata compatibility is answered in
+# https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#format-compatibility-guarantees
+#
+# The profdata (aka indexed profile) version is 9 corresponding from LLVM 16+
+# and is after the magic (lprofi - i for index) in the profdata file located in
+# chrome/build/pgo_profiles/*.profdata.
+#
+# Profdata versioning:
+# https://github.com/llvm/llvm-project/blob/27f27d15/llvm/include/llvm/ProfileData/InstrProf.h#L1024
+# LLVM version:
+# https://github.com/llvm/llvm-project/blob/27f27d15/llvm/CMakeLists.txt#L14
+
+# LLVM 17
+CR_CLANG_USED="27f27d15" # Obtained from \
+# https://github.com/chromium/chromium/blob/114.0.5735.90/tools/clang/scripts/update.py#L42 \
+# https://github.com/llvm/llvm-project/commit/27f27d15
+CR_CLANG_USED_UNIX_TIMESTAMP="1681428473" # Cached.  Use below to obtain this. \
+# TIMESTAMP=$(wget -q -O - https://github.com/llvm/llvm-project/commit/${CR_CLANG_USED}.patch \
+#	| grep -F -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
+# Change also CR_CLANG_SLOT_OFFICIAL
+
+FFMPEG_LIBAVUTIL_SOVER="58.5.100" # third_party/ffmpeg/libavutil/version.h
+FFMPEG_LIBAVCODEC_SOVER="60.7.100" # third_party/ffmpeg/libavcodec/version.h
+FFMPEG_LIBAVFORMAT_SOVER="60.4.100" # third_party/ffmpeg/libavformat/version.h
+FFMPEG_PV="6.0" # It should be 9999 but relaxed.  ; They don't use a tagged version.
+FFMPEG_SUBSLOT="$(ver_cut 1 ${FFMPEG_LIBAVUTIL_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVCODEC_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVFORMAT_SOVER})"
 GCC_MIN="10.2.1"
-UOPTS_PGO_PV=$(ver_cut 1-3 ${PV})
-# LLVM compatibility is based on libcxx which is
-# 1 +- CR_CLANG_SLOT_OFFICIAL
+GCC_SLOTS=( 14 13 12 11 10 )
+GTK3_PV="3.24.24"
+GTK4_PV="4.8.3"
+LIBVA_PV="2.17"
 LLVM_MAX_SLOT=17 # Same slot listed in https://github.com/chromium/chromium/blob/114.0.5735.90/tools/clang/scripts/update.py#L42
 LLVM_MIN_SLOT=16 # The pregenerated PGO profile needs profdata index version 9.
-CR_CLANG_SLOT_OFFICIAL=${LLVM_MAX_SLOT}
 LLVM_SLOTS=( ${LLVM_MAX_SLOT} ${LLVM_MIN_SLOT} ) # [inclusive, inclusive] high to low
-GCC_SLOTS=( 14 13 12 11 10 )
-UOPTS_SUPPORT_TPGO=0
+MESA_PV="20.3.5"
+QT5_PV="5.15.2"
+QT6_PV="6.4.2"
+UOPTS_PGO_PV=$(ver_cut 1-3 ${PV})
 UOPTS_SUPPORT_TBOLT=0
+UOPTS_SUPPORT_TPGO=0
+
+# LLVM compatibility is based on libcxx which is
+# 1 +- CR_CLANG_SLOT_OFFICIAL
+CR_CLANG_SLOT_OFFICIAL=${LLVM_MAX_SLOT}
 
 # For PGO
 PGO_LLVM_SUPPORTED_VERSIONS=(
@@ -594,18 +654,6 @@ REQUIRED_USE+="
 	)
 "
 
-QT5_PV="5.15.2"
-QT6_PV="6.4.2"
-GTK3_PV="3.24.24"
-GTK4_PV="4.8.3"
-LIBVA_PV="2.17"
-MESA_PV="20.3.5"
-FFMPEG_LIBAVUTIL_SOVER="58.5.100" # third_party/ffmpeg/libavutil/version.h
-FFMPEG_LIBAVCODEC_SOVER="60.7.100" # third_party/ffmpeg/libavcodec/version.h
-FFMPEG_LIBAVFORMAT_SOVER="60.4.100" # third_party/ffmpeg/libavformat/version.h
-FFMPEG_PV="6.0" # It should be 9999 but relaxed.  ; They don't use a tagged version.
-FFMPEG_SUBSLOT="$(ver_cut 1 ${FFMPEG_LIBAVUTIL_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVCODEC_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVFORMAT_SOVER})"
-
 LIBVA_DEPEND="
 	vaapi? (
 		>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},drm(+),wayland?,X?]
@@ -751,30 +799,6 @@ COMMON_SNAPSHOT_DEPEND="
 		>=sys-libs/zlib-1.2.13:=[${MULTILIB_USEDEP}]
 	)
 "
-#
-# Additional DEPENDS versioning info:
-#
-# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/fontconfig/include/config.h#L290
-# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/libpng/pnglibconf.h
-# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/libxml/linux/config.h#L160					; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/node/update_node_binaries#L18
-# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/re2/README.chromium#L4						; older than generated_package_lists, (live)
-# https://github.com/chromium/chromium/blob/114.0.5735.90/third_party/zlib/zlib.h#L40
-# https://github.com/chromium/chromium/blob/114.0.5735.90/tools/rust/update_rust.py#L35							; commit
-#   https://github.com/rust-lang/rust/blob/17c11672167827b0dd92c88ef69f24346d1286dd/src/version						; live version
-# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/icu/source/configure		L585	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/libjpeg_turbo/jconfig.h		L7	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/libwebp/src/configure.ac		L1	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/openh264/src/meson.build		L2
-# /var/tmp/portage/www-client/chromium-114.0.5735.90/work/chromium-114.0.5735.90/third_party/opus/README.chromium		L3	; newer than generated_package_lists, live
-#
 
 # No multilib for this virtual/udev when it should be.
 VIRTUAL_UDEV="
@@ -1109,29 +1133,6 @@ ewarn
 		done
 	fi
 }
-
-# About PGO version compatibility
-#
-# The answer to the profdata compatibility is answered in
-# https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#format-compatibility-guarantees
-#
-# The profdata (aka indexed profile) version is 9 corresponding from LLVM 16+
-# and is after the magic (lprofi - i for index) in the profdata file located in
-# chrome/build/pgo_profiles/*.profdata.
-#
-# Profdata versioning:
-# https://github.com/llvm/llvm-project/blob/27f27d15/llvm/include/llvm/ProfileData/InstrProf.h#L1024
-# LLVM version:
-# https://github.com/llvm/llvm-project/blob/27f27d15/llvm/CMakeLists.txt#L14
-
-# LLVM 17
-CR_CLANG_USED="27f27d15" # Obtained from \
-# https://github.com/chromium/chromium/blob/114.0.5735.90/tools/clang/scripts/update.py#L42 \
-# https://github.com/llvm/llvm-project/commit/27f27d15
-CR_CLANG_USED_UNIX_TIMESTAMP="1681428473" # Cached.  Use below to obtain this. \
-# TIMESTAMP=$(wget -q -O - https://github.com/llvm/llvm-project/commit/${CR_CLANG_USED}.patch \
-#	| grep -F -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
-# Change also CR_CLANG_SLOT_OFFICIAL
 
 get_pregenerated_profdata_index_version()
 {
