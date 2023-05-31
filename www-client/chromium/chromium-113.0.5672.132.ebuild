@@ -48,8 +48,12 @@ UOPTS_SUPPORT_TBOLT=0
 # For PGO
 PGO_LLVM_SUPPORTED_VERSIONS=(
 	"${CR_CLANG_SLOT_OFFICIAL}.0.0.9999"
-	"17.0.0_pre20230502"
-	"16.0.4.9999"
+	"${CR_CLANG_SLOT_OFFICIAL}.0.0"
+	"17.0.0_pre20230526"
+	"17.0.0_pre20230520"
+	"16.0.5.9999"
+	"16.0.5"
+	"16.0.4"
 	"16.0.3"
 	"16.0.2"
 	"16.0.1"
@@ -68,14 +72,14 @@ HOMEPAGE="https://chromium.org/"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
 
 # Patch is missing
-#PATCHSET_URI_PPC64="https://quickbuild.io/~raptor-engineering-public"
-#PATCHSET_NAME_PPC64="chromium_112.0.5615.49-2raptor0~deb11u1.debian"
-#		${PATCHSET_URI_PPC64}/+archive/ubuntu/chromium/+files/${PATCHSET_NAME_PPC64}.tar.xz
+PATCHSET_URI_PPC64="https://quickbuild.io/~raptor-engineering-public"
+PATCHSET_NAME_PPC64="chromium_113.0.5672.63-2raptor0~deb11u1.debian"
 
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://dev.gentoo.org/~sam/distfiles/www-client/chromium/chromium-112-gcc-13-patches.tar.xz
 	ppc64? (
+		${PATCHSET_URI_PPC64}/+archive/ubuntu/chromium/+files/${PATCHSET_NAME_PPC64}.tar.xz
 		https://dev.gentoo.org/~sultan/distfiles/www-client/chromium/chromium-ppc64le-gentoo-patches-1.tar.xz
 	)
 "
@@ -333,7 +337,7 @@ LICENSE="
 #   domain.
 #
 SLOT="0/stable"
-KEYWORDS="~amd64 ~arm64"
+KEYWORDS="~amd64 ~arm64 ~ppc64"
 #
 # vaapi is enabled by default upstream for some arches \
 # See https://github.com/chromium/chromium/blob/113.0.5672.63/media/gpu/args.gni#L24
@@ -594,7 +598,7 @@ REQUIRED_USE+="
 QT5_PV="5.15.2"
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.1"
-LIBVA_PV="2.7"
+LIBVA_PV="2.14"
 FFMPEG_LIBAVUTIL_SOVER="57.44.100" # third_party/ffmpeg/libavutil/version.h
 FFMPEG_LIBAVCODEC_SOVER="59.61.100" # third_party/ffmpeg/libavcodec/version.h
 FFMPEG_LIBAVFORMAT_SOVER="59.37.100" # third_party/ffmpeg/libavformat/version.h
@@ -680,7 +684,7 @@ COMMON_SNAPSHOT_DEPEND="
 			>=media-sound/pulseaudio-14.2:=[${MULTILIB_USEDEP}]
 		)
 		vaapi? (
-			>=media-libs/libva-2.14.0:=[${MULTILIB_USEDEP},wayland?,X?]
+			>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},wayland?,X?]
 		)
 		wayland? (
 			>=dev-libs/libffi-3.3:=[${MULTILIB_USEDEP}]

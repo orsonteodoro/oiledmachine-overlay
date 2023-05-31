@@ -365,6 +365,12 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
         non-free developer license in a case-by-case basis.
 
     </flag>
+    <flag name="qt5">
+      Enable qt5 support
+    </flag>
+    <flag name="qt6">
+      Enable qt6 support
+    </flag>
     <flag name="screencast">
       Enable support for remote desktop and screen cast using
       <pkg>media-video/pipewire</pkg>
