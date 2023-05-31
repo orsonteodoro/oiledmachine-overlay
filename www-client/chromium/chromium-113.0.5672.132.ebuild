@@ -2822,10 +2822,11 @@ ewarn
 	strip-flag-value "cfi-derived-cast"
 	strip-flag-value "cfi-unrelated-cast"
 
+	local expected_lto_type="thinlto"
 	if [[ "${myconf_gn}" =~ "is_cfi=true" ]] \
 		|| has_sanitizer_option "cfi" \
 		|| (( ${is_cfi_custom} == 1 )) ; then
-		if ! [[ "${LTO_TYPE}" =~ ("thinlto") ]] ; then
+		if ! [[ "${LTO_TYPE}" =~ ("${expected_lto_type}") ]] ; then
 		# Build scripts can only use ThinLTO for CFI.
 eerror
 eerror "CFI requires ThinLTO."
@@ -2841,6 +2842,9 @@ eerror "You must apply one of the above linkers to the following file:"
 eerror
 eerror "Contents of ${ESYSROOT}/etc/portage/package.env"
 eerror "www-client/chromium thinlto.conf"
+eerror
+eerror "Expected LTO type:  ${expected_lto_type}"
+eerror "Actual LTO type:    ${LTO_TYPE}"
 eerror
 			die
 		fi

@@ -37,31 +37,31 @@ check-linker_get_lto_type() {
 		echo "none"
 	elif ( tc-is-clang || tc-is-gcc ) \
 		&& is-flagq '-flto' \
-		&& test-flag '-flto' \
+		&& test-flags '-flto' \
 		&& test-flag-CCLD '-fuse-ld=mold' ; then
 		echo "moldlto"
 	elif tc-is-clang \
 		&& _is_lld \
 		&& is-flagq '-flto=thin' \
-		&& test-flag '-flto=thin' \
+		&& test-flags '-flto=thin' \
 		&& test-flag-CCLD '-fuse-ld=lld' ; then
 		echo "thinlto"
 	elif tc-is-clang \
 		&& is-flagq '-fuse-ld=gold' \
 		&& is-flagq '-flto=full' \
-		&& test-flag '-flto=full' \
+		&& test-flags '-flto=full' \
 		&& test-flag-CCLD '-fuse-ld=gold' ; then
 		echo "goldlto"
 	elif tc-is-gcc \
 		&& is-flagq '-fuse-ld=gold' \
 		&& is-flagq '-flto' \
-		&& test-flag '-flto' \
+		&& test-flags '-flto' \
 		&& test-flag-CCLD '-fuse-ld=gold' ; then
 		echo "goldlto"
 	elif tc-is-clang \
 		&& is-flagq '-fuse-ld=bfd' \
 		&& is-flagq '-flto=full' \
-		&& test-flag '-flto=full' ; then
+		&& test-flags '-flto=full' ; then
 		echo "bfdlto"
 	elif tc-is-gcc \
 		&& is-flagq '-fuse-ld=bfd' \
@@ -70,25 +70,25 @@ check-linker_get_lto_type() {
 	elif tc-is-clang \
 		&& has_version "sys-devel/lld" \
 		&& has_version "sys-devel/clang-common[default-lld]" \
-		&& test-flag '-flto=thin' ; then
+		&& test-flags '-flto=thin' ; then
 		echo "thinlto"
 	elif tc-is-clang \
 		&& has_version "sys-devel/lld" \
-		&& test-flag '-flto=thin' \
+		&& test-flags '-flto=thin' \
 		&& test-flag-CCLD '-fuse-ld=lld' ; then
 		echo "thinlto"
 	elif tc-is-clang \
 		&& has_version "sys-devel/binutils[gold,plugins]" \
 		&& has_version "sys-devel/llvm:${s}[binutils-plugin]" \
 		&& has_version ">=sys-devel/llvmgold-${s}" \
-		&& test-flag '-flto=full' \
+		&& test-flags '-flto=full' \
 		&& test-flag-CCLD '-fuse-ld=gold' ; then
 		echo "goldlto"
 	elif tc-is-clang \
 		&& has_version "sys-devel/binutils[gold,plugins]" \
 		&& has_version "sys-devel/llvm:${s}[gold]" \
 		&& has_version ">=sys-devel/llvmgold-${s}" \
-		&& test-flag '-flto=full' \
+		&& test-flags '-flto=full' \
 		&& test-flag-CCLD '-fuse-ld=gold' ; then
 		echo "goldlto"
 	else
