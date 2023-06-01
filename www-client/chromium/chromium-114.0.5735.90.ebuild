@@ -3381,6 +3381,8 @@ einfo
 #   GPU Shader Experiments (https://www.kevs3d.co.uk/dev/shaders/) - pass, randomly selected
 # Test comments:  Built with clang 17.0.0, Python 3.11.  64-bit ABI only
 # USE="X bundled-libcxx cfi custom-cflags dav1d openh264 opus pgo (pic)
+# CFLAGS:  -O2 -pipe (after conversion)
+# TODO:  Retest -Ofast in 115
 # proprietary-codecs pulseaudio vpx wayland -bluetooth -branch-protection
 # (-component-build) -cups (-debug) -ebolt -encode -epgo -gtk4 -hangouts
 # (-headless) -js-type-check -kerberos -libaom -official -pax-kernel
