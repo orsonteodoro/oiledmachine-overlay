@@ -1198,68 +1198,43 @@ is_profdata_compatible() {
 	fi
 }
 
+# Generated from:
+# for x in $(equery f chromium) ; do \
+#	objdump -p ${x} 2>/dev/null | grep NEEDED ; \
+# done \
+# | sort \
+# | uniq
 PKG_LIBS=(
-	libX11.so.6
-	libXau.so.6
-	libXcomposite.so.1
-	libXdamage.so.1
-	libXdmcp.so.6
-	libXext.so.6
-	libXfixes.so.3
-	libXrandr.so.2
-	libXrender.so.1
-	libasound.so.2
-	libatk-1.0.so.0
-	libatk-bridge-2.0.so.0
-	libatspi.so.0
-	libblkid.so.1
-	libbsd.so.0
-	libc.so.6
-	libcairo.so.2
-	libcups.so.2
-	libdbus-1.so.3
-	libdl.so.2
-	libdrm.so.2
-	libexpat.so.1
-	libffi.so.8
-	libfontconfig.so.1
-	libfreetype.so.6
-	libfribidi.so.0
-	libgbm.so.1
-	libgcc_s.so.1
-	libgio-2.0.so.0
-	libglib-2.0.so.0
-	libgmodule-2.0.so.0
-	libgmp.so.10
-	libgnutls.so.30
-	libgobject-2.0.so.0
-	libharfbuzz.so.0
-	libhogweed.so.6
-	libm.so.6
-	libmd.so.0
-	libmount.so.1
-	libnettle.so.8
-	libnspr4.so
-	libnss3.so
-	libnssutil3.so
-	libpango-1.0.so.0
-	libpcre.so.1
-	libpixman-1.so.0
-	libplc4.so
-	libplds4.so
-	libpng16.so.16
-	libpthread.so.0
-	librt.so.1
-	libsmime3.so
-	libstdc++.so.6
-	libtasn1.so.6
-	libunistring.so.2
-	libuuid.so.1
-	libxcb-render.so.0
-	libxcb-shm.so.0
-	libxcb.so.1
-	libxkbcommon.so.0
-	libz.so.1
+#ld-linux-x86-64.so.2
+libX11.so.6
+libXcomposite.so.1
+libXdamage.so.1
+libXext.so.6
+libXfixes.so.3
+libXrandr.so.2
+libasound.so.2
+libatk-1.0.so.0
+libatk-bridge-2.0.so.0
+libatspi.so.0
+#libc.so.6
+libcairo.so.2
+libdbus-1.so.3
+libdrm.so.2
+libexpat.so.1
+libffi.so.8
+libgbm.so.1
+#libgcc_s.so.1
+libgio-2.0.so.0
+libglib-2.0.so.0
+libgobject-2.0.so.0
+libm.so.6
+libnspr4.so
+libnss3.so
+libnssutil3.so
+libpango-1.0.so.0
+libsmime3.so
+libxcb.so.1
+libxkbcommon.so.0
 )
 
 # Check the system for security weaknesses.
@@ -3382,42 +3357,38 @@ einfo
 #
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 113.0.5672.92 (20230513)
-# Test performed:
-#   video streaming - pass
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 114.0.5735.90 (20230601)
+# Tests performed (on wayland):
+#   video on demand - pass
 #     opus - pass
 #     av1 - pass
 #     vpx - pass
+#     h264 - pass
 #   audio streaming - pass
-#     UK websites - expected fail
+#     US radio website(s) - pass
+#     MX radio website(s) - pass
+#     UK websites - pass
+#     aac streams (shoutcast v1 / HTTP 0.9) - expected fail, some links will work with v2
+#     mp3 streams (shoutcast v1 / HTTP 0.9) - expected fail, some links will work with v2
+#   audio on demand - pass
+#     aac - pass
+#     mp3 - pass
+#     vorbis - pass
+#     wav - pass
 #   browsing - pass
-#   WebGL Aquarium - pass, ~60 fps
+#   WebGL Aquarium - pass, ~60 fps with default settings
 #   CanvasMark 2013 (html5 canvas tests) - pass
 #   GPU Shader Experiments (https://www.kevs3d.co.uk/dev/shaders/) - pass, randomly selected
 # Test comments:  Built with clang 17.0.0, Python 3.11.  64-bit ABI only
-# USE="X bundled-libcxx custom-cflags dav1d opus pgo (pic)
-# proprietary-codecs-disable-nc-user pulseaudio system-ffmpeg vpx wayland
-# -bluetooth -branch-protection -cfi (-component-build) -cups (-debug) -ebolt
-# -encode -epgo -gtk4 -hangouts (-headless) -js-type-check -kerberos -libaom
-# -official -openh264 -pax-kernel -pre-check-vaapi -proprietary-codecs
-# -proprietary-codecs-disable -proprietary-codecs-disable-nc-developer -qt5 -r1
-# -screencast (-selinux) (-suid) -system-dav1d -system-flac -system-fontconfig
-# -system-freetype -system-harfbuzz -system-icu -system-libaom -system-libdrm
-# -system-libjpeg-turbo -system-libpng -system-libstdcxx -system-libwebp
-# -system-libxml -system-libxslt -system-openh264 -system-opus -system-re2
-# -system-zlib -thinlto-opt -vaapi -vaapi-hevc -vorbis -widevine"
-# L10N="-af -am -ar -bg -bn -ca -cs -da -de -el -en-GB -en-US -es -es-419 -et
-# -fa -fi -fil -fr -gu -he -hi -hr -hu -id -it -ja -kn -ko -lt -lv -ml -mr -ms
-# -nb -nl -pl -pt-BR -pt-PT -ro -ru -sk -sl -sr -sv -sw -ta -te -th -tr -uk -ur
-# -vi -zh-CN -zh-TW"
-
-# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 113.0.5672.92 (20230514)
-# USE+=" proprietary-codecs"
-# Test performed:
-#   audio streaming - pass
-#     UK websites - pass
-#     aac streams - pass
-#     mp3 streams (shoutcast v1 / HTTP 0.9) - expected fail, some links will work with v2
-#   audio on demand - pass
-#     mp3 - pass
-#     aac - pass
+# USE="X bundled-libcxx cfi custom-cflags dav1d openh264 opus pgo (pic)
+# proprietary-codecs pulseaudio vpx wayland -bluetooth -branch-protection
+# (-component-build) -cups (-debug) -ebolt -encode -epgo -gtk4 -hangouts
+# (-headless) -js-type-check -kerberos -libaom -official -pax-kernel
+# -pre-check-vaapi -proprietary-codecs-disable
+# -proprietary-codecs-disable-nc-developer -proprietary-codecs-disable-nc-user
+# -qt5 (-qt6) -r1 -screencast (-selinux) (-suid) -system-dav1d -system-ffmpeg
+# -system-flac -system-fontconfig -system-freetype -system-harfbuzz -system-icu
+# -system-libaom -system-libdrm -system-libjpeg-turbo -system-libpng
+# -system-libstdcxx -system-libwebp -system-libxml -system-libxslt
+# -system-openh264 -system-opus -system-re2 -system-zlib -thinlto-opt -vaapi
+# -vaapi-hevc -vorbis -widevine"
