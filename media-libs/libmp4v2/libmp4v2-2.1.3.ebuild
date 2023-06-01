@@ -5,7 +5,7 @@ EAPI=8
 
 MY_P="${P/lib}"
 PYTHON_COMPAT=( python3_{10..11} )
-inherit autotools libtool multilib-minimal python-any-r1
+inherit autotools libtool flag-o-matic multilib-minimal python-any-r1
 
 DESCRIPTION="A C/C++ library to create, modify and read MP4 files"
 HOMEPAGE="
@@ -64,6 +64,10 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	if is-flagq '-fuse-ld=mold' ; then
+ewarn "Stripping -fuse-ld=mold"
+		filter-flags '-fuse-ld=mold'
+	fi
 	econf \
 		--disable-gch \
 		$(use_enable utils util) \
