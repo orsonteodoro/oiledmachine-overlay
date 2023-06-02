@@ -93,6 +93,10 @@ multilib_src_install() {
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib-support
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.7.2 (20230602)
+# USE="test -ncurses -nls -readline -static-libs"
+# L10N="-af -bg -ca -cs -cy -da -de -de-1901 -el -en -eo -es -et -fo -fr -ga -gl
+# -he -hr -hu -ia -id -is -it -kk -km -ku -lt -lv -mi -mk -ms -nb -nl -nn -pl
+# -pt -pt-BR -ro -ru -sk -sl -sq -sv -sw -tn -uk -zu"
 # 32-bit and 64-bit tested:
 # ============================================================================
 # Testsuite summary for hunspell 1.7.2
