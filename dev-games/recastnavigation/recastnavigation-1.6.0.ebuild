@@ -3,9 +3,6 @@
 
 EAPI=8
 
-EGIT_BRANCH="main"
-EGIT_REPO_URI="https://github.com/recastnavigation/recastnavigation.git"
-
 inherit cmake flag-o-matic git-r3 multilib-minimal toolchain-funcs
 
 EXPECTED="\
@@ -16,31 +13,42 @@ fc8fd1891a1255b4347c0fbabbd5fc841dc0d3c622137e494a454a312ba5e483\
 DESCRIPTION="Navigation-mesh Toolset for Games"
 LICENSE="ZLIB"
 HOMEPAGE="https://github.com/memononen/recastnavigation"
-#KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86" # live ebuilds do not get keywords
 SLOT="0/$(ver_cut 1-2 ${PV})"
+# Upstream has test ON by default.
 IUSE="
-debug demo examples static-libs test
-
-fallback-commit
+debug +demo -dt-polyref64 -dt-virtual-queryfilter +examples static-libs test
 "
-CDEPEND="
-	>=sys-devel/gcc-8.0
+# CI uses U22.04.2
+CDEPEND+="
+	>=sys-devel/gcc-11.2.0
 "
-RDEPEND="
+RDEPEND+="
 	virtual/libc
 	demo? (
-		media-libs/libsdl2[${MULTILIB_USEDEP}]
+		>=media-libs/libsdl2-2.0.20[${MULTILIB_USEDEP},haptic,opengl]
 		virtual/opengl[${MULTILIB_USEDEP}]
 	)
 "
-DEPEND="
+DEPEND+="
 	${RDEPEND}
 	|| (
-		>=sys-devel/gcc-8.0
-		sys-devel/clang
+		>=sys-devel/gcc-11.2.0
+		>=sys-devel/clang-14.0
 	)
 "
-SRC_URI=""
+BDEPEND+="
+	>=dev-util/cmake-3.22.1
+"
+if [[ ${PV} =~ 99999999 ]] ; then
+	SRC_URI=""
+	IUSE+=" fallback-commit"
+else
+	SRC_URI="
+https://github.com/recastnavigation/recastnavigation/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
+	KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+fi
 S="${WORKDIR}/${P}"
 
 pkg_setup() {
@@ -62,7 +70,9 @@ get_lib_type() {
 	echo "shared"
 }
 
-src_unpack() {
+_unpack_live() {
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://github.com/recastnavigation/recastnavigation.git"
 	if use fallback-commit ; then
 		export EGIT_COMMIT="b51925bb8720e78a65c77339a532459b96ddfc7e" # Dec 22, 2022
 	fi
@@ -82,6 +92,14 @@ eerror
 eerror "Notify the ebuild maintainer to update this ebuild."
 eerror
 		die
+	fi
+}
+
+src_unpack() {
+	if [[ ${PV} =~ 99999999 ]] ; then
+		_unpack_live
+	else
+		unpack ${A}
 	fi
 }
 
@@ -109,6 +127,8 @@ src_configure() {
 			cd "${CMAKE_USE_DIR}" || die
 			mycmakeargs=(
 				-DRECASTNAVIGATION_DEMO=$(usex demo)
+				-DRECASTNAVIGATION_DT_POLYREF64=$(usex dt-polyref64)
+				-DRECASTNAVIGATION_DT_VIRTUAL_QUERYFILTER=$(usex dt-virtual-queryfilter)
 				-DRECASTNAVIGATION_TESTS=$(usex test)
 				-DRECASTNAVIGATION_EXAMPLES=$(usex examples)
 			)
@@ -140,6 +160,19 @@ src_compile() {
 	multilib_foreach_abi compile_abi
 }
 
+src_test() {
+	test_abi() {
+		local lib_type
+		for lib_type in $(get_lib_type) ; do
+			CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			cd "${BUILD_DIR}" || die
+			cmake_src_test
+		done
+	}
+	multilib_foreach_abi test_abi
+}
+
 src_install() {
 	install_abi() {
 		local lib_type
@@ -159,6 +192,19 @@ multilib_src_install_all() {
 	cd "${S}" || die
 	docinto licenses
 	dodoc License.txt
+	if use demo ; then
+einfo
+einfo "To run the demo:"
+einfo
+einfo "  cd /usr/bin && RecastDemo"
+einfo
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, static-libs
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (20230601)
+# demo:  passed, but crashes when build not clicked first
+# test suite:  passed
+# 32-bit and 64-bit test suite:
+# 100% tests passed, 0 tests failed out of 1
