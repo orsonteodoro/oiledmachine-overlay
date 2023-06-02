@@ -15,8 +15,17 @@ LICENSE="ZLIB"
 HOMEPAGE="https://github.com/memononen/recastnavigation"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # Upstream has test ON by default.
-IUSE="
+IUSE+="
 debug +demo -dt-polyref64 -dt-virtual-queryfilter +examples static-libs test
+wayland X
+"
+REQUIRED_USE+="
+	demo? (
+		|| (
+			wayland
+			X
+		)
+	)
 "
 # CI uses U22.04.2
 CDEPEND+="
@@ -25,7 +34,7 @@ CDEPEND+="
 RDEPEND+="
 	virtual/libc
 	demo? (
-		>=media-libs/libsdl2-2.0.20[${MULTILIB_USEDEP},haptic,opengl]
+		>=media-libs/libsdl2-2.0.20[${MULTILIB_USEDEP},haptic,opengl,wayland?,X?]
 		virtual/opengl[${MULTILIB_USEDEP}]
 	)
 "
@@ -129,8 +138,8 @@ src_configure() {
 				-DRECASTNAVIGATION_DEMO=$(usex demo)
 				-DRECASTNAVIGATION_DT_POLYREF64=$(usex dt-polyref64)
 				-DRECASTNAVIGATION_DT_VIRTUAL_QUERYFILTER=$(usex dt-virtual-queryfilter)
-				-DRECASTNAVIGATION_TESTS=$(usex test)
 				-DRECASTNAVIGATION_EXAMPLES=$(usex examples)
+				-DRECASTNAVIGATION_TESTS=$(usex test)
 			)
 			if [[ "${lib_type}" == "static" ]] ; then
 				local libs=(DetourTileCache Detour DetourCrowd DebugUtils Recast)
@@ -204,7 +213,7 @@ einfo
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, static-libs
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (20230601)
-# demo:  passed, but crashes when build not clicked first
+# demo:  passed (both wayland and X), but crashes when build not clicked first
 # test suite:  passed
 # 32-bit and 64-bit test suite:
 # 100% tests passed, 0 tests failed out of 1
