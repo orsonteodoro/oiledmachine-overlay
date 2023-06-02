@@ -13,6 +13,7 @@
     <name>Harald Weiner</name>
   </maintainer>
   <!--
+
     oiledmachine-overlay notes:
 
     This ebuild package tracks releases corresponding to both the LLVM version
@@ -20,8 +21,8 @@
 
     The project is rolling release.  No LTS versions.
 
-    LLVM 17 (dev) - 3.1.39 (Upstream supported 3.1.x)
-    LLVM 16 (dev) - 3.1.30 (Upstream supported 3.1.x)
+    LLVM 17 (dev) - 3.1.40 (Upstream supports live)
+    LLVM 16 (dev) - 3.1.30 (EOL)
     LLVM 15 (stable) - 3.1.17 (EOL)
     LLVM 14 (stable) - 3.1.3 (EOL)
     LLVM 14 (stable) - 3.0.3 (EOL)
@@ -31,6 +32,7 @@
 
     These ebuilds only version by tags and release notes for a particular point
     release may be found in the next version bump.
+
   -->
   <upstream>
     <bugs-to>
