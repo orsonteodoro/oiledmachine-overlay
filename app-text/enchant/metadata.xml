@@ -12,8 +12,17 @@
     <name>Gentoo GNOME Desktop</name>
   </maintainer>
   <!--
-    This ebuild fork is for compatibility for multiabi build of webkit-gtk.
+
+    oiledmachine-overlay changes:
+
+    - Multilib support (for webkit-gtk)
+    - Enabled tests
+
   -->
+  <upstream>
+    <bugs-to>https://github.com/AbiWord/enchant/issues/</bugs-to>
+    <remote-id type="github">AbiWord/enchant</remote-id>
+  </upstream>
   <use>
     <flag name="aspell">
       Adds support for <pkg>app-text/aspell</pkg> spell checker
