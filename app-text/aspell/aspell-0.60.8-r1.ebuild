@@ -227,6 +227,7 @@ src_install() {
 			# all .la files can be deleted unconditionally.
 			find "${ED}" -type f -name '*.la' -delete || die
 		done
+		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
 	multilib_src_install_all
