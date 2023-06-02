@@ -7,7 +7,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    Recast is state of the art navigation mesh construction toolset for games.
+    Recast is a navigation mesh construction toolset for games.
 
     Detour is a path-finding and spatial reasoning toolkit.
   </longdescription>
@@ -20,6 +20,12 @@
   <use>
     <flag name="demo">
       Builds the demo
+    </flag>
+    <flag name="dt-polyref64">
+      Make Detor use 64-bit polyrefs
+    </flag>
+    <flag name="dt-virtual-queryfilter">
+      Use dynamic dispatch in Detor's dtQueryFilter for custom filters
     </flag>
     <flag name="examples">
       Builds examples
