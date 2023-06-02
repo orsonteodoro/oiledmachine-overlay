@@ -213,6 +213,8 @@ einfo
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, static-libs
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (20230601)
+# USE="X demo examples static-libs test wayland (-debug) -dt-polyref64
+# -dt-virtual-queryfilter"
 # demo:  passed (both wayland and X), but crashes when build not clicked first
 # test suite:  passed
 # 32-bit and 64-bit test suite:
