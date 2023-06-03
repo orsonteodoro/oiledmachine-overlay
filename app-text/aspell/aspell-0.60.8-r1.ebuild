@@ -96,7 +96,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.60.6-darwin-bundles.patch"
 	"${FILESDIR}/${PN}-0.60.6.1-clang.patch"
 	"${FILESDIR}/${PN}-0.60.6.1-unicode.patch"
-	"${FILESDIR}/${PN}-0.60.8-gcc.patch" # for test USE flag
+	"${FILESDIR}/${PN}-0.60.8-gcc.patch" # For the test USE flag, oiledmachine-overlay added
 )
 S="${WORKDIR}/${MY_P}"
 
