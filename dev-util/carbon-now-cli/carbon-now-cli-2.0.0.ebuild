@@ -72,7 +72,7 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="0"
-IUSE+="clipboard r1"
+IUSE+="clipboard r2"
 REQUIRED_USE+="
 	^^ (
 		${PLAYWRIGHT_BROWSERS[@]}
@@ -1208,3 +1208,4 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.0.0 (20230604)
