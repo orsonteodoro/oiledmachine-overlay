@@ -112,4 +112,4 @@ dev-dotnet/monodevelop
 >=dev-python/grpcio-tools-1.53
 
 # End of Life (EOL)
-net-libs/nodejs:14
+<net-libs/nodejs-15
