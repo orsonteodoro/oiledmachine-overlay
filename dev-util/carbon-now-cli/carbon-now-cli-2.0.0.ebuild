@@ -1178,7 +1178,7 @@ src_install() {
 	doins -r *
 
 	local path
-	for path in ${NPM_EXE_LIST} ; do
+	for path in ${NPM_EXE_LIST[@]} ; do
 		fperms 0755 "${path}"
 	done
 
