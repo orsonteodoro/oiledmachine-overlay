@@ -1204,6 +1204,7 @@ src_install() {
 ewarn
 ewarn "This package should be re-installed every week since it uses an old browser."
 ewarn
+	fperms 0755 "${NPM_INSTALL_PATH}/dist/cli.js"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
