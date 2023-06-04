@@ -110,3 +110,6 @@ dev-dotnet/monodevelop
 >=dev-python/grpcio-1.53
 >=dev-python/grpcio-testing-1.53
 >=dev-python/grpcio-tools-1.53
+
+# End of Life (EOL)
+net-libs/nodejs:14
