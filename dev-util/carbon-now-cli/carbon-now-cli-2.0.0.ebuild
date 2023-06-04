@@ -5,7 +5,7 @@
 EAPI=8
 
 NODE_ENV="development"
-NODE_VERSION=16 # Using nodejs muxer variable name.
+NODE_VERSION=18 # Using nodejs muxer variable name.
 NPM_INSTALL_PATH="/opt/${PN}"
 
 EPLAYRIGHT_ALLOW_BROWSERS=(
@@ -72,13 +72,13 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="0"
-IUSE+="clipboard r2"
+IUSE+="clipboard r4"
 REQUIRED_USE+="
 	^^ (
 		${PLAYWRIGHT_BROWSERS[@]}
 	)
 "
-NODEJS_PV="8.3" # Upstream uses 10 on CI
+NODEJS_PV="18"
 RDEPEND="
 	>=net-libs/nodejs-${NODEJS_PV}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
@@ -225,7 +225,7 @@ https://registry.npmjs.org/execa/-/execa-2.1.0.tgz -> npmpkg-execa-2.1.0.tgz
 https://registry.npmjs.org/get-stream/-/get-stream-5.2.0.tgz -> npmpkg-get-stream-5.2.0.tgz
 https://registry.npmjs.org/npm-run-path/-/npm-run-path-3.1.0.tgz -> npmpkg-npm-run-path-3.1.0.tgz
 https://registry.npmjs.org/which/-/which-2.0.2.tgz -> npmpkg-which-2.0.2.tgz
-https://registry.npmjs.org/@sindresorhus/is/-/is-5.4.0.tgz -> npmpkg-@sindresorhus-is-5.4.0.tgz
+https://registry.npmjs.org/@sindresorhus/is/-/is-5.4.1.tgz -> npmpkg-@sindresorhus-is-5.4.1.tgz
 https://registry.npmjs.org/@sinonjs/commons/-/commons-3.0.0.tgz -> npmpkg-@sinonjs-commons-3.0.0.tgz
 https://registry.npmjs.org/@sinonjs/fake-timers/-/fake-timers-10.2.0.tgz -> npmpkg-@sinonjs-fake-timers-10.2.0.tgz
 https://registry.npmjs.org/@stroncium/procfs/-/procfs-1.2.1.tgz -> npmpkg-@stroncium-procfs-1.2.1.tgz
@@ -326,7 +326,7 @@ https://registry.npmjs.org/callsites/-/callsites-3.1.0.tgz -> npmpkg-callsites-3
 https://registry.npmjs.org/camelcase/-/camelcase-7.0.1.tgz -> npmpkg-camelcase-7.0.1.tgz
 https://registry.npmjs.org/camelcase-keys/-/camelcase-keys-6.2.2.tgz -> npmpkg-camelcase-keys-6.2.2.tgz
 https://registry.npmjs.org/camelcase/-/camelcase-5.3.1.tgz -> npmpkg-camelcase-5.3.1.tgz
-https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001492.tgz -> npmpkg-caniuse-lite-1.0.30001492.tgz
+https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001494.tgz -> npmpkg-caniuse-lite-1.0.30001494.tgz
 https://registry.npmjs.org/chalk/-/chalk-4.1.2.tgz -> npmpkg-chalk-4.1.2.tgz
 https://registry.npmjs.org/char-regex/-/char-regex-1.0.2.tgz -> npmpkg-char-regex-1.0.2.tgz
 https://registry.npmjs.org/chardet/-/chardet-0.7.0.tgz -> npmpkg-chardet-0.7.0.tgz
