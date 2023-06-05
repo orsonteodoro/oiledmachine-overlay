@@ -11,7 +11,7 @@ BAZEL_PV="5.3.0"
 GRAALVM_JAVA_PV=17
 GRAALVM_PV="22.3.2"
 NODE_ENV="development"
-NODE_VERSION=14 # Upstream uses 14 on linux but others 16, 18
+NODE_VERSION=16 # Upstream uses 14 on linux but others 16, 18
 inherit bazel check-reqs java-utils-2 graalvm npm
 
 DESCRIPTION="Check, compile, optimize and compress Javascript with \
@@ -45,6 +45,7 @@ IUSE+="
 	closure_compiler_nodejs
 	doc
 	test
+	r1
 "
 REQUIRED_USE+="
 	closure_compiler_nodejs? (
