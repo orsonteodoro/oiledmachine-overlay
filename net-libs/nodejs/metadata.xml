@@ -19,7 +19,6 @@
     More info about LTS versions see:
     https://nodejs.org/en/about/releases/
 
-    v14 EOL is 2023-04-30
     v16 EOL is 2024-09-11
     v18 EOL is 2025-04-30
     v19 EOL is 2023-06-01
@@ -49,8 +48,6 @@
     /usr/lib64/node_modules which is symlinked to one of the directories above.
 
     It's recommended to install a package to the slot based on lowest required.
-    It's also recommended to use node_multislot_10, node_multislot_12, 
-    node_multislot_14 USE flags to pull the correct node version.
 
     Referencing /usr/includes/node is not multi-emerge or multi-compilation
     safe when packages with differing node_multislot_*  and requires a mutex in
@@ -66,10 +63,10 @@
     will default to node the selected active from eselect nodejs (or the major
     version contained in node_version.h from the active symlink.
 
-    The NODE_VERSION valid values are 14, 16, 18, 19 which are the Long Term
-    Support (LTS) versions.
+    The NODE_VERSION valid values are 16, 18 which are the Long Term Support
+    (LTS) versions.
 
-    Running NODE_VERSION=14 /usr/bin/node --version will show you node14's version.
+    Running NODE_VERSION=16 /usr/bin/node --version will show you node16's version.
 
     The PGO trainer can be extended with your own customized benchmark to
     optimize for typical use cases.  You must create a folder located at
