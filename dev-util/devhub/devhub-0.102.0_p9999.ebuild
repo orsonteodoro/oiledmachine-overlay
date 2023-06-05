@@ -2998,6 +2998,7 @@ REQUIRED_USE+="
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
+	sys-apps/yarn:1
 "
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
@@ -3015,6 +3016,31 @@ eerror
 pkg_setup() {
 	check_network_sandbox
 	npm_pkg_setup
+}
+
+# @FUNCTION: yarn_hydrate
+# @DESCRIPTION:
+# Load the package manager in the sandbox.
+yarn_hydrate() {
+	if [[ "${YARN_OFFLINE:-1}" == "0" ]] ; then
+		COREPACK_ENABLE_NETWORK="1"
+	else
+		COREPACK_ENABLE_NETWORK="${COREPACK_ENABLE_NETWORK:-0}"
+	fi
+	local yarn_slot=${YARN_SLOT:-1}
+	if [[ ! -f "${EROOT}/usr/share/yarn/yarn-${yarn_slot}.tgz" ]] ; then
+eerror
+eerror "Missing ${EROOT}/usr/share/yarn/yarn-${yarn_slot}.tgz"
+eerror
+eerror "You must install sys-apps/yarn:${yarn_slot}::oiledmachine-overlay to"
+eerror "continue."
+eerror
+		die
+	fi
+einfo "Hydrating yarn..."
+	corepack hydrate --activate "${ESYSROOT}/usr/share/yarn/yarn-${yarn_slot}.tgz" || die
+	local yarn_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/yarn/"*))
+	export PATH="${HOME}/.cache/node/corepack/yarn/${yarn_pv}/bin:${PATH}"
 }
 
 gen_npm_lock() {
@@ -3058,6 +3084,7 @@ eerror
 }
 
 src_unpack() {
+	yarn_hydrate
 	if [[ ${PV} =~ 9999 ]] ; then
 		use fallback-commit && EGIT_COMMIT="6e31725a63f42986eb040153aec7eb11723b8289"
 		EGIT_REPO_URI="https://github.com/devhubapp/devhub.git"
@@ -3103,6 +3130,7 @@ src_compile() {
 	__run_yarn workspace @devhub/desktop build:base
 	__run_yarn workspace @devhub/desktop build:web:post
 	__run_yarn workspace @devhub/desktop build:electron --linux dir
+	grep -q -e " An unexpected error occurred" "${T}/build.log" && die "Detected error"
 }
 
 src_install() {

@@ -404,15 +404,8 @@ einfo "Running:\tnpm ${cmd[@]}"
 		rm -rf "${HOME}/.npm/_logs"
 	done
 	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
-	if [[ "${cmd[@]}" =~ "build" ]] ; then
-		grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
-	fi
-	if [[ "${cmd[@]}" =~ ("audit fix"|"install") ]] ; then
-		# FIXME: Does not work as expected.
-		# FIXME: Catch error or move/remove conditional.
-		# Indeterministic or random failure bug
-		grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
-	fi
+	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
+	grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
 	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
 }
 
@@ -451,7 +444,6 @@ npm_hydrate() {
 	else
 		COREPACK_ENABLE_NETWORK="${COREPACK_ENABLE_NETWORK:-0}"
 	fi
-einfo "Hydrating..."
 	local npm_slot="${NPM_SLOT:-3}"
 	if [[ ! -f "${EROOT}/usr/share/npm/npm-${npm_slot}.tgz" ]] ; then
 eerror
@@ -462,6 +454,7 @@ eerror "continue."
 eerror
 		die
 	fi
+einfo "Hydrating npm..."
 	corepack hydrate "${ESYSROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
 	__npm_patch
 	local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
@@ -517,6 +510,9 @@ npm_src_unpack() {
 		fi
 		_npm_src_unpack_default
 	fi
+	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
+	grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
+	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
 	grep -q -e "MODULE_NOT_FOUND" "${T}/build.log" && die "Detected error"
 }
 

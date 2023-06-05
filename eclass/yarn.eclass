@@ -56,6 +56,7 @@ fi
 # Eclass requires yarn >= 2.x
 
 _yarn_set_globals() {
+	NPM_SLOT="${NPM_SLOT:-3}" # v2 may be possibly used to unbreak "yarn import"
 	NPM_TRIES="${NPM_TRIES:-10}"
 	YARN_TRIES="${YARN_TRIES:-10}"
 	YARN_SLOT="${YARN_SLOT:-1}"
@@ -427,15 +428,8 @@ einfo "Running:\tnpm ${cmd[@]}"
 		rm -rf "${HOME}/.npm/_logs"
 	done
 	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
-	if [[ "${cmd[@]}" =~ "build" ]] ; then
-		grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
-	fi
-	if [[ "${cmd[@]}" =~ ("audit fix"|"install") ]] ; then
-		# FIXME: Does not work as expected.
-		# FIXME: Catch error or move/remove conditional.
-		# Indeterministic or random failure bug
-		grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
-	fi
+	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
+	grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
 	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
 }
 
@@ -545,7 +539,6 @@ yarn_hydrate() {
 	else
 		COREPACK_ENABLE_NETWORK="${COREPACK_ENABLE_NETWORK:-0}"
 	fi
-einfo "Hydrating..."
 	local npm_slot=${NPM_SLOT:-3}
 	local yarn_slot=${YARN_SLOT:-1}
 	if [[ ! -f "${EROOT}/usr/share/npm/npm-${npm_slot}.tgz" ]] ; then
@@ -566,7 +559,9 @@ eerror "continue."
 eerror
 		die
 	fi
+einfo "Hydrating npm..."
 	corepack hydrate --activate "${ESYSROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
+einfo "Hydrating yarn..."
 	corepack hydrate --activate "${ESYSROOT}/usr/share/yarn/yarn-${yarn_slot}.tgz" || die
 	__npm_patch
 	local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
@@ -599,7 +594,11 @@ einfo "Called yarn_src_unpack"
 		fi
 		_yarn_src_unpack_default
 	fi
+	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
+	grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
+	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
 	grep -q -e "MODULE_NOT_FOUND" "${T}/build.log" && die "Detected error"
+	grep -q -e " An unexpected error occurred" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: yarn_src_compile
