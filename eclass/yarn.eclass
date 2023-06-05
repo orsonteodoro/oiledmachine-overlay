@@ -436,7 +436,7 @@ einfo "Running:\tnpm ${cmd[@]}"
 		# Indeterministic or random failure bug
 		grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
 	fi
-	grep -q -e " ERR! Exit handler never called!" && die "Possible indeterministic behavior"
+	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
 }
 
 # @FUNCTION: eyarn
@@ -620,7 +620,7 @@ yarn_src_compile() {
 		--verbose \
 		|| die
 	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
-	grep -q -e " ERR! Exit handler never called!" && die "Possible indeterministic behavior"
+	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
 	grep -q -e "MODULE_NOT_FOUND" "${T}/build.log" && die "Detected error"
 }
 

@@ -14,7 +14,7 @@ ELECTRON_APP_ELECTRON_PV="11.0.3"
 ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY=1
 ELECTRON_APP_REACT_NATIVE_PV="0.64.0_rc1"
 NODE_ENV="development"
-NODE_VERSION="14" # Upstream uses 12
+NODE_VERSION="16" # Upstream uses 12
 NPM_INSTALL_UNPACK_ARGS="--legacy-peer-deps"
 NPM_INSTALL_UNPACK_AUDIT_FIX_ARGS="--legacy-peer-deps"
 
@@ -671,8 +671,8 @@ https://registry.npmjs.org/browserify-sign/-/browserify-sign-4.2.1.tgz -> npmpkg
 https://registry.npmjs.org/readable-stream/-/readable-stream-3.6.0.tgz -> npmpkg-readable-stream-3.6.0.tgz
 https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz -> npmpkg-safe-buffer-5.2.1.tgz
 https://registry.npmjs.org/browserify-zlib/-/browserify-zlib-0.2.0.tgz -> npmpkg-browserify-zlib-0.2.0.tgz
-https://registry.npmjs.org/browserslist/-/browserslist-4.21.5.tgz -> npmpkg-browserslist-4.21.5.tgz
-https://registry.npmjs.org/node-releases/-/node-releases-2.0.10.tgz -> npmpkg-node-releases-2.0.10.tgz
+https://registry.npmjs.org/browserslist/-/browserslist-4.21.7.tgz -> npmpkg-browserslist-4.21.7.tgz
+https://registry.npmjs.org/node-releases/-/node-releases-2.0.12.tgz -> npmpkg-node-releases-2.0.12.tgz
 https://registry.npmjs.org/bs-logger/-/bs-logger-0.2.6.tgz -> npmpkg-bs-logger-0.2.6.tgz
 https://registry.npmjs.org/bser/-/bser-2.1.1.tgz -> npmpkg-bser-2.1.1.tgz
 https://registry.npmjs.org/btoa-lite/-/btoa-lite-1.0.0.tgz -> npmpkg-btoa-lite-1.0.0.tgz
@@ -711,7 +711,7 @@ https://registry.npmjs.org/camel-case/-/camel-case-4.1.2.tgz -> npmpkg-camel-cas
 https://registry.npmjs.org/tslib/-/tslib-2.0.3.tgz -> npmpkg-tslib-2.0.3.tgz
 https://registry.npmjs.org/camelcase/-/camelcase-5.3.1.tgz -> npmpkg-camelcase-5.3.1.tgz
 https://registry.npmjs.org/caniuse-api/-/caniuse-api-3.0.0.tgz -> npmpkg-caniuse-api-3.0.0.tgz
-https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001478.tgz -> npmpkg-caniuse-lite-1.0.30001478.tgz
+https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001494.tgz -> npmpkg-caniuse-lite-1.0.30001494.tgz
 https://registry.npmjs.org/capture-exit/-/capture-exit-2.0.0.tgz -> npmpkg-capture-exit-2.0.0.tgz
 https://registry.npmjs.org/case-sensitive-paths-webpack-plugin/-/case-sensitive-paths-webpack-plugin-2.3.0.tgz -> npmpkg-case-sensitive-paths-webpack-plugin-2.3.0.tgz
 https://registry.npmjs.org/chalk/-/chalk-2.4.2.tgz -> npmpkg-chalk-2.4.2.tgz
@@ -822,7 +822,7 @@ https://registry.npmjs.org/create-hash/-/create-hash-1.2.0.tgz -> npmpkg-create-
 https://registry.npmjs.org/create-hmac/-/create-hmac-1.1.7.tgz -> npmpkg-create-hmac-1.1.7.tgz
 https://registry.npmjs.org/create-react-class/-/create-react-class-15.7.0.tgz -> npmpkg-create-react-class-15.7.0.tgz
 https://registry.npmjs.org/cross-env/-/cross-env-7.0.3.tgz -> npmpkg-cross-env-7.0.3.tgz
-https://registry.npmjs.org/cross-fetch/-/cross-fetch-3.1.5.tgz -> npmpkg-cross-fetch-3.1.5.tgz
+https://registry.npmjs.org/cross-fetch/-/cross-fetch-3.1.6.tgz -> npmpkg-cross-fetch-3.1.6.tgz
 https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.3.tgz -> npmpkg-cross-spawn-7.0.3.tgz
 https://registry.npmjs.org/crypto-browserify/-/crypto-browserify-3.12.0.tgz -> npmpkg-crypto-browserify-3.12.0.tgz
 https://registry.npmjs.org/crypto-random-string/-/crypto-random-string-2.0.0.tgz -> npmpkg-crypto-random-string-2.0.0.tgz
@@ -978,7 +978,7 @@ https://registry.npmjs.org/supports-color/-/supports-color-7.2.0.tgz -> npmpkg-s
 https://registry.npmjs.org/universalify/-/universalify-1.0.0.tgz -> npmpkg-universalify-1.0.0.tgz
 https://registry.npmjs.org/electron-store/-/electron-store-6.0.1.tgz -> npmpkg-electron-store-6.0.1.tgz
 https://registry.npmjs.org/electron-timber/-/electron-timber-0.5.1.tgz -> npmpkg-electron-timber-0.5.1.tgz
-https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.4.361.tgz -> npmpkg-electron-to-chromium-1.4.361.tgz
+https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.4.419.tgz -> npmpkg-electron-to-chromium-1.4.419.tgz
 https://registry.npmjs.org/electron-updater/-/electron-updater-4.3.5.tgz -> npmpkg-electron-updater-4.3.5.tgz
 https://registry.npmjs.org/fs-extra/-/fs-extra-9.0.1.tgz -> npmpkg-fs-extra-9.0.1.tgz
 https://registry.npmjs.org/universalify/-/universalify-1.0.0.tgz -> npmpkg-universalify-1.0.0.tgz
@@ -1447,12 +1447,13 @@ https://registry.npmjs.org/has-flag/-/has-flag-4.0.0.tgz -> npmpkg-has-flag-4.0.
 https://registry.npmjs.org/supports-color/-/supports-color-7.2.0.tgz -> npmpkg-supports-color-7.2.0.tgz
 https://registry.npmjs.org/istanbul-lib-source-maps/-/istanbul-lib-source-maps-4.0.0.tgz -> npmpkg-istanbul-lib-source-maps-4.0.0.tgz
 https://registry.npmjs.org/istanbul-reports/-/istanbul-reports-3.0.2.tgz -> npmpkg-istanbul-reports-3.0.2.tgz
-https://registry.npmjs.org/jake/-/jake-10.8.5.tgz -> npmpkg-jake-10.8.5.tgz
+https://registry.npmjs.org/jake/-/jake-10.8.7.tgz -> npmpkg-jake-10.8.7.tgz
 https://registry.npmjs.org/ansi-styles/-/ansi-styles-4.3.0.tgz -> npmpkg-ansi-styles-4.3.0.tgz
 https://registry.npmjs.org/chalk/-/chalk-4.1.2.tgz -> npmpkg-chalk-4.1.2.tgz
 https://registry.npmjs.org/color-convert/-/color-convert-2.0.1.tgz -> npmpkg-color-convert-2.0.1.tgz
 https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz -> npmpkg-color-name-1.1.4.tgz
 https://registry.npmjs.org/has-flag/-/has-flag-4.0.0.tgz -> npmpkg-has-flag-4.0.0.tgz
+https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz -> npmpkg-minimatch-3.1.2.tgz
 https://registry.npmjs.org/supports-color/-/supports-color-7.2.0.tgz -> npmpkg-supports-color-7.2.0.tgz
 https://registry.npmjs.org/jest/-/jest-26.6.3.tgz -> npmpkg-jest-26.6.3.tgz
 https://registry.npmjs.org/jest-changed-files/-/jest-changed-files-26.6.2.tgz -> npmpkg-jest-changed-files-26.6.2.tgz
@@ -1832,7 +1833,7 @@ https://registry.npmjs.org/no-case/-/no-case-3.0.4.tgz -> npmpkg-no-case-3.0.4.t
 https://registry.npmjs.org/tslib/-/tslib-2.0.3.tgz -> npmpkg-tslib-2.0.3.tgz
 https://registry.npmjs.org/nocache/-/nocache-2.1.0.tgz -> npmpkg-nocache-2.1.0.tgz
 https://registry.npmjs.org/node-dir/-/node-dir-0.1.17.tgz -> npmpkg-node-dir-0.1.17.tgz
-https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.7.tgz -> npmpkg-node-fetch-2.6.7.tgz
+https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.11.tgz -> npmpkg-node-fetch-2.6.11.tgz
 https://registry.npmjs.org/tr46/-/tr46-0.0.3.tgz -> npmpkg-tr46-0.0.3.tgz
 https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-3.0.1.tgz -> npmpkg-webidl-conversions-3.0.1.tgz
 https://registry.npmjs.org/whatwg-url/-/whatwg-url-5.0.0.tgz -> npmpkg-whatwg-url-5.0.0.tgz
@@ -2107,7 +2108,7 @@ https://registry.npmjs.org/postcss-value-parser/-/postcss-value-parser-3.3.1.tgz
 https://registry.npmjs.org/postcss-replace-overflow-wrap/-/postcss-replace-overflow-wrap-3.0.0.tgz -> npmpkg-postcss-replace-overflow-wrap-3.0.0.tgz
 https://registry.npmjs.org/postcss-safe-parser/-/postcss-safe-parser-5.0.2.tgz -> npmpkg-postcss-safe-parser-5.0.2.tgz
 https://registry.npmjs.org/picocolors/-/picocolors-1.0.0.tgz -> npmpkg-picocolors-1.0.0.tgz
-https://registry.npmjs.org/postcss/-/postcss-8.4.21.tgz -> npmpkg-postcss-8.4.21.tgz
+https://registry.npmjs.org/postcss/-/postcss-8.4.24.tgz -> npmpkg-postcss-8.4.24.tgz
 https://registry.npmjs.org/postcss-selector-matches/-/postcss-selector-matches-4.0.0.tgz -> npmpkg-postcss-selector-matches-4.0.0.tgz
 https://registry.npmjs.org/postcss-selector-not/-/postcss-selector-not-4.0.0.tgz -> npmpkg-postcss-selector-not-4.0.0.tgz
 https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-6.0.4.tgz -> npmpkg-postcss-selector-parser-6.0.4.tgz
@@ -2554,8 +2555,8 @@ https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz -> npmpkg-color-nam
 https://registry.npmjs.org/json-schema-traverse/-/json-schema-traverse-1.0.0.tgz -> npmpkg-json-schema-traverse-1.0.0.tgz
 https://registry.npmjs.org/slice-ansi/-/slice-ansi-4.0.0.tgz -> npmpkg-slice-ansi-4.0.0.tgz
 https://registry.npmjs.org/tapable/-/tapable-1.1.3.tgz -> npmpkg-tapable-1.1.3.tgz
-https://registry.npmjs.org/tar/-/tar-6.1.13.tgz -> npmpkg-tar-6.1.13.tgz
-https://registry.npmjs.org/minipass/-/minipass-4.2.8.tgz -> npmpkg-minipass-4.2.8.tgz
+https://registry.npmjs.org/tar/-/tar-6.1.15.tgz -> npmpkg-tar-6.1.15.tgz
+https://registry.npmjs.org/minipass/-/minipass-5.0.0.tgz -> npmpkg-minipass-5.0.0.tgz
 https://registry.npmjs.org/temp/-/temp-0.8.3.tgz -> npmpkg-temp-0.8.3.tgz
 https://registry.npmjs.org/temp-dir/-/temp-dir-1.0.0.tgz -> npmpkg-temp-dir-1.0.0.tgz
 https://registry.npmjs.org/temp-file/-/temp-file-3.3.7.tgz -> npmpkg-temp-file-3.3.7.tgz
@@ -2584,7 +2585,7 @@ https://registry.npmjs.org/commander/-/commander-2.20.3.tgz -> npmpkg-commander-
 https://registry.npmjs.org/find-cache-dir/-/find-cache-dir-3.3.1.tgz -> npmpkg-find-cache-dir-3.3.1.tgz
 https://registry.npmjs.org/p-limit/-/p-limit-3.1.0.tgz -> npmpkg-p-limit-3.1.0.tgz
 https://registry.npmjs.org/schema-utils/-/schema-utils-3.0.0.tgz -> npmpkg-schema-utils-3.0.0.tgz
-https://registry.npmjs.org/terser/-/terser-5.16.9.tgz -> npmpkg-terser-5.16.9.tgz
+https://registry.npmjs.org/terser/-/terser-5.17.7.tgz -> npmpkg-terser-5.17.7.tgz
 https://registry.npmjs.org/commander/-/commander-2.20.3.tgz -> npmpkg-commander-2.20.3.tgz
 https://registry.npmjs.org/test-exclude/-/test-exclude-6.0.0.tgz -> npmpkg-test-exclude-6.0.0.tgz
 https://registry.npmjs.org/text-table/-/text-table-0.2.0.tgz -> npmpkg-text-table-0.2.0.tgz
@@ -2670,7 +2671,7 @@ https://registry.npmjs.org/isarray/-/isarray-1.0.0.tgz -> npmpkg-isarray-1.0.0.t
 https://registry.npmjs.org/unzip-crx-3/-/unzip-crx-3-0.2.0.tgz -> npmpkg-unzip-crx-3-0.2.0.tgz
 https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.5.tgz -> npmpkg-mkdirp-0.5.5.tgz
 https://registry.npmjs.org/upath/-/upath-1.2.0.tgz -> npmpkg-upath-1.2.0.tgz
-https://registry.npmjs.org/update-browserslist-db/-/update-browserslist-db-1.0.10.tgz -> npmpkg-update-browserslist-db-1.0.10.tgz
+https://registry.npmjs.org/update-browserslist-db/-/update-browserslist-db-1.0.11.tgz -> npmpkg-update-browserslist-db-1.0.11.tgz
 https://registry.npmjs.org/picocolors/-/picocolors-1.0.0.tgz -> npmpkg-picocolors-1.0.0.tgz
 https://registry.npmjs.org/update-check/-/update-check-1.5.2.tgz -> npmpkg-update-check-1.5.2.tgz
 https://registry.npmjs.org/update-notifier/-/update-notifier-4.1.3.tgz -> npmpkg-update-notifier-4.1.3.tgz
@@ -2989,7 +2990,11 @@ LICENSE="
 
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE+=" r1"
+IUSE+=" r2"
+REQUIRED_USE+="
+	!wayland
+	X
+"
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
@@ -3123,3 +3128,14 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) commit = 6e31725a63f42986eb040153aec7eb11723b8289 (20230604)
+# X:  passed
+# wayland:  failed
+# login:  passed
+# activity:  passed
+# dashboard:  passed
+# issues prs:  passed
+# issues prs (involved):  passed
+# notifications all:  passed
+# close button:  failed
+# theme switch:  passed
