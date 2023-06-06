@@ -1146,13 +1146,13 @@ RDEPEND+="
 		>=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP},gdbm?]
 	)
 	qsv? (
-		media-libs/intel-mediasdk
+		media-libs/intel-mediasdk[${MULTILIB_USEDEP}]
 	)
 	rubberband? (
 		>=media-libs/rubberband-1.8.1-r1[${MULTILIB_USEDEP}]
 	)
 	samba? (
-		>=net-fs/samba-3.6.23-r1[client,${MULTILIB_USEDEP}]
+		>=net-fs/samba-3.6.23-r1[${MULTILIB_USEDEP},client]
 	)
 	sdl? (
 		<media-libs/libsdl2-3[${MULTILIB_USEDEP},sound,threads,video,wayland?,X?]

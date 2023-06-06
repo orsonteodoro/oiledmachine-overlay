@@ -1145,7 +1145,7 @@ eerror
 	if has_version ">=dev-libs/openssl-3" \
 		&& has_version "<media-video/ffmpeg-5[openssl]" ; then
 eerror
-eerror "Using <media-video/ffmpeg-3 is disallowed with the"
+eerror "Using <media-video/ffmpeg-5 is disallowed with the"
 eerror "proprietary-codecs-disable* USE flags.  This may add nonfree code"
 eerror "paths in FFmpeg."
 eerror

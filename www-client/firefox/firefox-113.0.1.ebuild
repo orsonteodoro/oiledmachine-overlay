@@ -29,7 +29,7 @@ unset __
 # https://wiki.mozilla.org/Release_Management/Calendar
 
 EBUILD_MAINTAINER_MODE=1
-FIREFOX_PATCHSET="firefox-113-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
 
 LLVM_SLOTS=( 15 14 )
 LLVM_MAX_SLOT=15
@@ -1054,7 +1054,7 @@ eerror
 	if has_version ">=dev-libs/openssl-3" \
 		&& has_version "<media-video/ffmpeg-5[openssl]" ; then
 eerror
-eerror "Using <media-video/ffmpeg-3 is disallowed with the"
+eerror "Using <media-video/ffmpeg-5 is disallowed with the"
 eerror "proprietary-codecs-disable* USE flags.  This may add non-free code paths"
 eerror "in FFmpeg."
 eerror

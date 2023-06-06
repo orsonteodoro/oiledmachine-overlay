@@ -97,7 +97,7 @@ https://github.com/mozilla/gecko-dev/commit/d4f5769a01531070eb401fd0b78bbd0ce22c
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+#KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86" # Waiting for distro patchset.
 
 SLOT="esr"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -412,30 +412,30 @@ REQUIRED_USE="
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/102.11.0/system-requirements/
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/moz.configure
+# https://www.mozilla.org/en-US/firefox/102.12.0/system-requirements/
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/moz.configure
 #   perl L589
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/build/moz.configure/nss.configure L12
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/gfx/harfbuzz/configure.ac L3
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/media/libaom/config/aom_version.h L7
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/media/libwebp/moz.yaml L16
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/modules/freetype2/include/freetype/freetype.h L4943
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/taskcluster/ci/fetch/toolchains.yml
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot]
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/build/moz.configure/nss.configure L12
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/gfx/harfbuzz/configure.ac L3
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/media/libaom/config/aom_version.h L7
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/media/libwebp/moz.yaml L16
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/modules/freetype2/include/freetype/freetype.h L4943
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/taskcluster/ci/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, pkgconf-, rust-
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/taskcluster/ci/packages/
-# /var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0/taskcluster/ci/toolchain/
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/taskcluster/ci/packages/
+# /var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0/taskcluster/ci/toolchain/
 __='
 # Scan with also:
-SRC="/var/tmp/portage/www-client/firefox-102.11.0e/work/firefox-102.11.0"
+SRC="/var/tmp/portage/www-client/firefox-102.12.0e/work/firefox-102.12.0"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -459,6 +459,7 @@ unset __
 
 DBUS_PV="0.60"
 DBUS_GLIB_PV="0.60"
+FFMPEG_PV="5.1" # This corresponds to y in x.y.z from the subslot.
 GTK3_PV="3.14.0"
 NASM_PV="2.14.02"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
@@ -525,10 +526,10 @@ NON_FREE_CDEPENDS="
 			|| (
 				(
 					!<dev-libs/openssl-3
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable,vaapi?,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable,vaapi?,vpx?,-x264,-x265,-xvid]
 				)
 				(
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable,vaapi?,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable,vaapi?,vpx?,-x264,-x265,-xvid]
 				)
 			)
 		)
@@ -539,10 +540,10 @@ NON_FREE_CDEPENDS="
 			|| (
 				(
 					!<dev-libs/openssl-3
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vpx?,-x264,-x265,-xvid]
 				)
 				(
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vpx?,-x264,-x265,-xvid]
 				)
 			)
 		)
@@ -553,10 +554,10 @@ NON_FREE_CDEPENDS="
 			|| (
 				(
 					!<dev-libs/openssl-3
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-user,vaapi?,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-user,vaapi?,vpx?,-x264,-x265,-xvid]
 				)
 				(
-					>=media-video/ffmpeg-5[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-user,vaapi?,vpx?,-x264,-x265,-xvid]
+					>=media-video/ffmpeg-${FFMPEG_PV}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-user,vaapi?,vpx?,-x264,-x265,-xvid]
 				)
 			)
 		)
@@ -587,7 +588,7 @@ CDEPEND="
 		virtual/jack[${MULTILIB_USEDEP}]
 	)
 	libproxy? (
-		net-libs/libproxy[${MULTILIB_USEDEP}]
+		>=net-libs/libproxy-1[${MULTILIB_USEDEP}]
 	)
 	pulseaudio? (
 		|| (
@@ -727,7 +728,7 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	${GAMEPAD_BDEPEND}
 	>=dev-lang/perl-5.006
-	>=dev-util/cbindgen-0.24.3
+	>=dev-util/cbindgen-0.23.0
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
 	>=net-libs/nodejs-10
 	>=virtual/rust-1.61.0[${MULTILIB_USEDEP}]

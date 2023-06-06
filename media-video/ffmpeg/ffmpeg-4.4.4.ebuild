@@ -1118,8 +1118,8 @@ RDEPEND+="
 	)
 	openssl? (
 		!apache2_0? (
-			<dev-libs/openssl-3:=[${MULTILIB_USEDEP}]
 			>=dev-libs/openssl-1.0.1h-r2:0=[${MULTILIB_USEDEP}]
+			<dev-libs/openssl-3:=[${MULTILIB_USEDEP}]
 		)
 		apache2_0? (
 			>=dev-libs/openssl-3.0.0_beta2:0=[${MULTILIB_USEDEP}]
