@@ -90,7 +90,7 @@ SRC_URI="
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-#KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86" # Waiting for distro patchset.
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
 SLOT="rapid"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -295,7 +295,7 @@ alsa cpu_flags_arm_neon cups +dbus debug eme-free +ffvpx +hardened -hwaccel jack
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user sndio
 selinux speech +system-av1 +system-ffmpeg +system-harfbuzz +system-icu
 +system-jpeg +system-libevent +system-libvpx system-png system-python-libs
-+system-webp -telemetry +vaapi +wayland +webrtc wifi webspeech
++system-webp -telemetry +vaapi -valgrind +wayland +webrtc wifi webspeech
 "
 # telemetry disabled for crypto/security reasons
 
@@ -624,6 +624,9 @@ CDEPEND="
 	)
 	system-webp? (
 		>=media-libs/libwebp-1.3.0:0=[${MULTILIB_USEDEP}]
+	)
+	valgrind? (
+		dev-util/valgrind
 	)
 	wayland? (
 		>=media-libs/libepoxy-1.5.10-r1[${MULTILIB_USEDEP}]
@@ -1866,6 +1869,8 @@ einfo
 	# arches.
 	if use ppc64; then
 		mozconfig_add_options_ac '' --disable-sandbox
+	elif use valgrind; then
+		mozconfig_add_options_ac 'valgrind requirement' --disable-sandbox
 	else
 		mozconfig_add_options_ac '' --enable-sandbox
 	fi
@@ -1933,6 +1938,7 @@ einfo "Building without Mozilla API key ..."
 
 	mozconfig_use_enable dbus
 	mozconfig_use_enable libproxy
+	mozconfig_use_enable valgrind
 	mozconfig_use_enable cups printing
 	multilib_is_native_abi && mozconfig_use_enable speech synth-speechd
 	mozconfig_use_enable webrtc
@@ -2216,6 +2222,10 @@ ewarn
 		mozconfig_add_options_ac '+jemalloc' --enable-jemalloc
 	fi
 
+	if use valgrind ; then
+		mozconfig_add_options_ac 'valgrind requirement' --disable-jemalloc
+	fi
+
 	# Allow elfhack to work in combination with unstripped binaries
 	# when they would normally be larger than 2GiB.
 	append-ldflags "-Wl,--compress-debug-sections=zlib"
@@ -2296,6 +2306,10 @@ einfo "Build RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 	done
 	echo "=========================================================="
 	echo
+
+	if use valgrind; then
+		sed -i -e 's/--enable-optimize=-O[0-9s]/--enable-optimize="-g -O2"/' .mozconfig || die
+	fi
 
 	./mach configure || die
 }
