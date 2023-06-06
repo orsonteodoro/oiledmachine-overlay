@@ -528,15 +528,11 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.1.3-change-init-config-path.patch"
 	"${FILESDIR}/${PN}-4.2-udev-path.patch"
 	"${FILESDIR}/${PN}-4.4.3-translate-flags.patch"
-	"${DISTDIR}/${PN}-d4ff2b0.patch"
 )
 SRC_URI="
 https://github.com/Xpra-org/xpra/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/Xpra-org/xpra/commit/d4ff2b0a6a966dffdc1856ea5d3cc5a57f2239bf.patch
-	-> ${PN}-d4ff2b0.patch
 "
-# d4ff2b0 : #3693 fixup 23b2c55 for builds without nvidia bits
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
