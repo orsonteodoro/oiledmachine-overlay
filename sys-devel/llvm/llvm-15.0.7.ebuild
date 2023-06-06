@@ -85,7 +85,9 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	binutils-plugin? ( sys-libs/binutils-libs )
+	binutils-plugin? (
+		sys-libs/binutils-libs
+	)
 "
 BDEPEND="
 	${PYTHON_DEPS}

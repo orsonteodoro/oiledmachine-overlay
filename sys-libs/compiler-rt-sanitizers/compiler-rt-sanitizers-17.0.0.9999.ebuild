@@ -16,7 +16,7 @@ SLOT="${LLVM_MAJOR}"
 KEYWORDS=""
 # base targets
 IUSE="
-+abi_x86_32 abi_x86_64 +clang debug hexagon test
++abi_x86_32 abi_x86_64 +clang +debug hexagon test
 
 +libfuzzer +memprof +orc +profile +xray r3
 "
@@ -165,8 +165,8 @@ SANITIZER_REQUIRED_USE="
 		)
 	)
 	orc? (
-		!elibc_Winnt
-		!elibc_Winnt? (
+		!kernel_Winnt
+		!kernel_Winnt? (
 			|| (
 				amd64
 				arm

@@ -160,8 +160,8 @@ SANITIZER_REQUIRED_USE="
 		)
 	)
 	orc? (
-		!elibc_Winnt
-		!elibc_Winnt? (
+		!kernel_Winnt
+		!kernel_Winnt? (
 			|| (
 				amd64
 			)

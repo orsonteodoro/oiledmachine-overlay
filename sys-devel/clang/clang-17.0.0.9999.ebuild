@@ -656,7 +656,7 @@ einfo
 
 		-DLLVM_TARGETS_TO_BUILD="${LLVM_TARGETS// /;}"
 
-		# these are not propagated reliably, so redefine them
+		# These are not propagated reliably, so redefine them.
 		-DLLVM_ENABLE_EH=ON
 		-DLLVM_ENABLE_RTTI=ON
 

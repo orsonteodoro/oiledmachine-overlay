@@ -25,7 +25,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS=""
 IUSE="
-+binutils-plugin debug debuginfod doc exegesis libedit +libffi ncurses test xar
++binutils-plugin +debug debuginfod doc exegesis libedit +libffi ncurses test xar
 xml z3 zstd
 
 bolt bolt-heatmap -dump jemalloc tcmalloc r6
@@ -357,7 +357,7 @@ src_prepare() {
 	llvm.org_src_prepare
 	if use bolt ; then
 		pushd "${WORKDIR}" || die
-			eapply "${FILESDIR}/llvm-14.0.6-bolt-set-cmake-libdir.patch"
+			eapply "${FILESDIR}/llvm-16.0.5-bolt-set-cmake-libdir.patch"
 			eapply "${FILESDIR}/llvm-16.0.0.9999-bolt_rt-RuntimeLibrary.cpp-path.patch"
 		popd
 	fi
@@ -519,6 +519,10 @@ get_distribution_components() {
 
 		use binutils-plugin && out+=(
 			LLVMgold
+		)
+
+		use debuginfod && out+=(
+			llvm-debuginfod
 		)
 	fi
 

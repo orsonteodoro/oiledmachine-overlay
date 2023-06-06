@@ -351,7 +351,7 @@ src_prepare() {
 	llvm.org_src_prepare
 	if use bolt ; then
 		pushd "${WORKDIR}" || die
-			eapply "${FILESDIR}/llvm-14.0.6-bolt-set-cmake-libdir.patch"
+			eapply "${FILESDIR}/llvm-16.0.5-bolt-set-cmake-libdir.patch"
 			eapply "${FILESDIR}/llvm-16.0.0.9999-bolt_rt-RuntimeLibrary.cpp-path.patch"
 		popd
 	fi

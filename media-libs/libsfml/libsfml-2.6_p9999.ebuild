@@ -119,7 +119,7 @@ RDEPEND+="
 			)
 		)
 	)
-	elibc_Winnt? (
+	kernel_Winnt? (
 		dev-util/mingw64-runtime
 	)
 "

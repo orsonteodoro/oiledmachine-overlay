@@ -156,9 +156,9 @@ get_xrid() {
 		echo "macos64"
 	elif ( use elibc_Darwin || use elibc_Cygwin ) && [[ "${ABI}" == "arm64" ]] ; then
 		echo "macosarm64"
-	elif ( use elibc_Winnt || use elibc_Cygwin ) && [[ "${ABI}" == "amd64" ]] ; then
+	elif ( use kernel_Winnt || use elibc_Cygwin ) && [[ "${ABI}" == "amd64" ]] ; then
 		echo "windows64"
-	elif ( use elibc_Winnt || use elibc_Cygwin ) && [[ "${ABI}" == "arm64" ]] ; then
+	elif ( use kernel_Winnt || use elibc_Cygwin ) && [[ "${ABI}" == "arm64" ]] ; then
 		echo "windowsarm64"
 	else
 eerror

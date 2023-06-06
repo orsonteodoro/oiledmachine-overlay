@@ -29,7 +29,7 @@ REQUIRED_USE="
 	sharpdx? (
 		|| (
 			elibc_mingw
-			elibc_Winnt
+			kernel_Winnt
 		)
 	)
 "

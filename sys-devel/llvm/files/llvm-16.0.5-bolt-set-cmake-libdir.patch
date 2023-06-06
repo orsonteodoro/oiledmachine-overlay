@@ -1,0 +1,11 @@
+--- a/bolt/CMakeLists.txt.orig	2023-06-01 16:59:18.000000000 -0700
++++ b/bolt/CMakeLists.txt	2023-06-06 11:23:44.800893455 -0700
+@@ -64,7 +64,7 @@ if (BOLT_ENABLE_RUNTIME)
+     INSTALL_COMMAND ""
+     BUILD_ALWAYS True
+     )
+-  install(CODE "execute_process\(COMMAND \${CMAKE_COMMAND} -DCMAKE_INSTALL_PREFIX=\${CMAKE_INSTALL_PREFIX} -P ${CMAKE_CURRENT_BINARY_DIR}/bolt_rt-bins/cmake_install.cmake \)"
++  install(CODE "execute_process\(COMMAND \${CMAKE_COMMAND} -DCMAKE_INSTALL_LIBDIR=lib\${LLVM_LIBDIR_SUFFIX} -DCMAKE_INSTALL_PREFIX=\${CMAKE_INSTALL_PREFIX} -P ${CMAKE_CURRENT_BINARY_DIR}/bolt_rt-bins/cmake_install.cmake \)" # oteodoro:  Added CMAKE_INSTALL_LIBDIR arg
+     COMPONENT bolt)
+   add_llvm_install_targets(install-bolt_rt
+     DEPENDS bolt_rt bolt
