@@ -2058,6 +2058,20 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 		fi
 	fi
 
+	if tc-ld-is-mold ; then
+		# Increase ulimit with mold+lto, bugs #892641, #907485
+		if ! ulimit -n 16384 1>/dev/null 2>&1 ; then
+ewarn
+ewarn "Unable to modify ulimits - building with mold+lto might fail due to low"
+ewarn "ulimit -n resources."
+ewarn
+ewarn "Please see bugs #892641 & #907485."
+ewarn
+		else
+			ulimit -n 16384
+		fi
+	fi
+
 	# Set above
 	filter-flags '-fuse-ld=*'
 
