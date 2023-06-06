@@ -1399,7 +1399,7 @@ ewarn
 		export CPP="clang++ -E"
 	fi
 
-	if ver_test ${PV##*.} -lt 100 ; then
+	if ver_test ${PV##*.} -lt 120 ; then
 		if tc-is-gcc ; then
 eerror
 eerror "GCC is disallowed.  Still waiting for the GCC patchset."
@@ -1411,7 +1411,7 @@ eerror "Using GCC will be allowed for this build when minor version is"
 eerror ">= expected."
 eerror
 eerror "Current minor version:   ${PV##*.}"
-eerror "Expected minor version:  >= 100"
+eerror "Expected minor version:  >= 120"
 eerror
 			die
 		fi
@@ -1425,7 +1425,7 @@ eerror "Using PPC64 will be allowed for this build when minor version is"
 eerror ">= expected."
 eerror
 eerror "Current minor version:   ${PV##*.}"
-eerror "Expected minor version:  >= 100"
+eerror "Expected minor version:  >= 120"
 eerror
 		fi
 	fi
