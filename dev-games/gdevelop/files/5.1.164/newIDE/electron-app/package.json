@@ -110,7 +110,7 @@
     "electron": "18.2.2",
     "electron-builder": "^22.14.13",
     "electron-notarize": "^0.2.1",
-    "minimist": "^1.2.3",
+    "minimist": "^1.2.6",
     "prettier": "1.15.3",
     "shelljs": "0.8.4",
     "unzipper": "^0.9.11"
