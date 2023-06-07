@@ -5,7 +5,7 @@
 EAPI=8
 
 MY_PN="TypeScript"
-NPM_SECAUDIT_AT_TYPES_NODE_PV="18.14.1"
+NPM_SECAUDIT_AT_TYPES_NODE_PV="20.2.5"
 # Same as package-lock but uses latest always latest.
 # See https://www.npmjs.com/package/@types/node
 NODE_VERSION="${NPM_SECAUDIT_AT_TYPES_NODE_PV%%.*}" # Using nodejs muxer variable name.
@@ -117,7 +117,7 @@ https://registry.npmjs.org/@types/minimatch/-/minimatch-5.1.2.tgz -> npmpkg-@typ
 https://registry.npmjs.org/@types/minimist/-/minimist-1.2.2.tgz -> npmpkg-@types-minimist-1.2.2.tgz
 https://registry.npmjs.org/@types/mocha/-/mocha-10.0.1.tgz -> npmpkg-@types-mocha-10.0.1.tgz
 https://registry.npmjs.org/@types/ms/-/ms-0.7.31.tgz -> npmpkg-@types-ms-0.7.31.tgz
-https://registry.npmjs.org/@types/node/-/node-18.14.1.tgz -> npmpkg-@types-node-18.14.1.tgz
+https://registry.npmjs.org/@types/node/-/node-20.2.5.tgz -> npmpkg-@types-node-20.2.5.tgz
 https://registry.npmjs.org/@types/semver/-/semver-7.5.0.tgz -> npmpkg-@types-semver-7.5.0.tgz
 https://registry.npmjs.org/@types/source-map-support/-/source-map-support-0.5.6.tgz -> npmpkg-@types-source-map-support-0.5.6.tgz
 https://registry.npmjs.org/@types/which/-/which-2.0.2.tgz -> npmpkg-@types-which-2.0.2.tgz
@@ -147,7 +147,7 @@ https://registry.npmjs.org/array.prototype.flatmap/-/array.prototype.flatmap-1.3
 https://registry.npmjs.org/assertion-error/-/assertion-error-1.1.0.tgz -> npmpkg-assertion-error-1.1.0.tgz
 https://registry.npmjs.org/at-least-node/-/at-least-node-1.0.0.tgz -> npmpkg-at-least-node-1.0.0.tgz
 https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz -> npmpkg-available-typed-arrays-1.0.5.tgz
-https://registry.npmjs.org/azure-devops-node-api/-/azure-devops-node-api-11.2.0.tgz -> npmpkg-azure-devops-node-api-11.2.0.tgz
+https://registry.npmjs.org/azure-devops-node-api/-/azure-devops-node-api-12.0.0.tgz -> npmpkg-azure-devops-node-api-12.0.0.tgz
 https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz -> npmpkg-balanced-match-1.0.2.tgz
 https://registry.npmjs.org/before-after-hook/-/before-after-hook-2.2.3.tgz -> npmpkg-before-after-hook-2.2.3.tgz
 https://registry.npmjs.org/binary-extensions/-/binary-extensions-2.2.0.tgz -> npmpkg-binary-extensions-2.2.0.tgz
@@ -403,7 +403,7 @@ https://registry.npmjs.org/type-detect/-/type-detect-4.0.8.tgz -> npmpkg-type-de
 https://registry.npmjs.org/type-fest/-/type-fest-0.20.2.tgz -> npmpkg-type-fest-0.20.2.tgz
 https://registry.npmjs.org/typed-array-length/-/typed-array-length-1.0.4.tgz -> npmpkg-typed-array-length-1.0.4.tgz
 https://registry.npmjs.org/typed-rest-client/-/typed-rest-client-1.8.9.tgz -> npmpkg-typed-rest-client-1.8.9.tgz
-https://registry.npmjs.org/typescript/-/typescript-5.0.0-dev.20230112.tgz -> npmpkg-typescript-5.0.0-dev.20230112.tgz
+https://registry.npmjs.org/typescript/-/typescript-5.1.3.tgz -> npmpkg-typescript-5.1.3.tgz
 https://registry.npmjs.org/typical/-/typical-5.2.0.tgz -> npmpkg-typical-5.2.0.tgz
 https://registry.npmjs.org/unbox-primitive/-/unbox-primitive-1.0.2.tgz -> npmpkg-unbox-primitive-1.0.2.tgz
 https://registry.npmjs.org/underscore/-/underscore-1.13.6.tgz -> npmpkg-underscore-1.13.6.tgz
@@ -458,5 +458,5 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (test suite) 5.0.4 (20230607)
-# 86474 passing (17m)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (test suite) 5.1.3 (20230607)
+# 87465 passing (17m)
