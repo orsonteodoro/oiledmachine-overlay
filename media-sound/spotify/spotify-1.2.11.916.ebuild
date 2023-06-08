@@ -83,7 +83,7 @@ CAIRO_PV="1.16.0"
 CLANG_PV="17"
 FFMPEG_SLOT="0/57.59.59" # Same as 5.1.x
 FONTCONFIG_PV="2.14.2"
-FREETYPE_PV="2.10.4"
+FREETYPE_PV="2.13.0"
 GCC_PV="10.2.1"
 GLIB_PV="2.66.8"
 GLIBC_PV="2.31"
@@ -1124,3 +1124,6 @@ pkg_postrm() {
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 1.2.11.916 (20230608)
+# UK podcast(s):  fail with ffmpeg 4.4.x and 5.1.x
+# typical podcasts:  pass
+# typical songs:  pass
