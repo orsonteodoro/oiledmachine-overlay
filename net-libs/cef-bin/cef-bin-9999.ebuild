@@ -74,12 +74,12 @@ DEPENDS_VERSION="114.0.5735.110"
 # Chromium runtime:  https://github.com/chromium/chromium/blob/114.0.5735.110/build/install-build-deps.sh#L237
 # Chromium buildtime:  https://github.com/chromium/chromium/blob/114.0.5735.110/build/install-build-deps.sh#L151
 CLANG_PV="17"
+FFMPEG_SLOT="0/58.60.60" # Same as 6.0
 GLIB_PV="2.66.8"
 GCC_PV="10.2.1"
 GTK3_PV="3.24.24"
 LIBXI_PV="1.7.10"
 MESA_PV="20.3.5"
-FFMPEG_SLOT="0/58.60.60" # Same as 6.0
 CHROMIUM_CDEPEND="
 	>=app-accessibility/at-spi2-atk-2.38.0
 	>=app-accessibility/speech-dispatcher-0.11.4
