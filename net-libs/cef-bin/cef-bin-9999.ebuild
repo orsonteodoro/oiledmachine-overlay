@@ -574,3 +574,6 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# USE="minimal -beta -cefclient -cefsimple (-debug) -test"
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) (20230608)
+# Build version:  114.2.10+g398e3c3+chromium-114.0.5735.110_linux64_minimal
