@@ -23,120 +23,150 @@ KEYWORDS="~arm ~arm64 ~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" beta cefclient cefsimple debug minimal test"
 REQUIRED_USE+="
-	cefclient? ( !minimal )
-	cefsimple? ( !minimal )
-	test? ( !minimal )
+	cefclient? (
+		!minimal
+	)
+	cefsimple? (
+		!minimal
+	)
+	test? (
+		!minimal
+	)
 "
+
+# For depends see:
+# https://github.com/chromium/chromium/tree/114.0.5735.110/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/114.0.5735.110/build/install-build-deps.sh#L237
+
+#
+# Additional DEPENDS versioning info:
+#
+# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/fontconfig/include/config.h#L290
+# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/libpng/pnglibconf.h
+# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/libxml/linux/config.h#L160					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/node/update_node_binaries#L18
+# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/re2/README.chromium#L4						; older than generated_package_lists, (live)
+# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/114.0.5735.110/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/blob/114.0.5735.110/tools/rust/update_rust.py#L35						; commit
+#   https://github.com/rust-lang/rust/blob/17c11672167827b0dd92c88ef69f24346d1286dd/src/version						; live version
+#
+
 # *DEPENDs based on install-build-deps.sh
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
 # For details see:
-# Chromium runtime:  https://github.com/chromium/chromium/blob/108.0.5359.71/build/install-build-deps.sh#L237
-# Chromium buildtime:  https://github.com/chromium/chromium/blob/108.0.5359.71/build/install-build-deps.sh#L151
-GLIB_V="2.48"
-XI_V="1.7.6"
+# Chromium runtime:  https://github.com/chromium/chromium/blob/114.0.5735.110/build/install-build-deps.sh#L237
+# Chromium buildtime:  https://github.com/chromium/chromium/blob/114.0.5735.110/build/install-build-deps.sh#L151
+CLANG_PV="17"
+GLIB_PV="2.66.8"
+GCC_PV="10.2.1"
+GTK3_PV="3.24.24"
+LIBXI_PV="1.7.10"
+MESA_PV="20.3.5"
 CHROMIUM_CDEPEND="
-	>=app-accessibility/at-spi2-atk-2.18.3
-	>=app-accessibility/speech-dispatcher-0.8.3
-	>=dev-db/sqlite-3.11
-	>=dev-libs/glib-${GLIB_V}:2
+	>=app-accessibility/at-spi2-atk-2.38.0
+	>=app-accessibility/speech-dispatcher-0.11.4
+	>=dev-db/sqlite-3.34.1
+	>=dev-libs/glib-${GLIB_PV}:2
 	>=dev-libs/libappindicator-12.10
-	>=dev-libs/libevdev-1.4.6
-	>=dev-libs/libffi-3.2.1
-	>=media-libs/alsa-lib-1.1.0
-	>=media-libs/mesa-11.2.0[gbm(+)]
-	>=net-print/cups-2.1.3
-	>=sys-apps/pciutils-3.3.1
-	>=sys-libs/libcap-2.24
-	>=sys-libs/pam-1.1.8
-	>=sys-apps/util-linux-2.27.1
-	>=sys-libs/glibc-2.23
-	>=x11-libs/cairo-1.14.6
-	>=x11-libs/gtk+-3.18.9:3
-	>=x11-libs/libXtst-1.2.2
-	>=x11-libs/libdrm-2.4.67
+	>=dev-libs/libevdev-1.11.0
+	>=dev-libs/libffi-3.3
+	>=media-libs/alsa-lib-1.2.4
+	>=media-libs/mesa-${MESA_PV}[gbm(+)]
+	>=net-print/cups-2.3.3
+	>=sys-apps/pciutils-3.7.0
+	>=sys-libs/libcap-2.44
+	>=sys-libs/pam-1.4.0
+	>=sys-apps/util-linux-2.36.1
+	>=sys-libs/glibc-2.31
+	>=x11-libs/cairo-1.16.0
+	>=x11-libs/gtk+-${GTK3_PV}:3
+	>=x11-libs/libXtst-1.2.3
+	>=x11-libs/libdrm-2.4.104
 "
 # Unlisted based on ldd inspection not found in common_lib_list
 UNLISTED_RDEPEND="
-	>=dev-libs/nss-3.21
-	>=media-libs/mesa-11.2.0[egl(+)]
-	>=x11-libs/libxkbcommon-0.5.0
-	dev-libs/fribidi
-	dev-libs/gmp
-	dev-libs/libbsd
-	dev-libs/libtasn1
-	dev-libs/libunistring
-	dev-libs/nettle
-	media-gfx/graphite2
-	media-libs/harfbuzz
-	media-libs/libglvnd
-	net-dns/libidn
+	>=dev-libs/nss-3.61
+	>=media-libs/mesa-${MESA_PV}[egl(+)]
+	>=x11-libs/libxkbcommon-1.0.3
+	>=dev-libs/fribidi-1.0.8
+	>=dev-libs/gmp-6.2.1
+	>=dev-libs/libbsd-0.11.3
+	>=dev-libs/libtasn1-4.16.0
+	>=dev-libs/libunistring-0.9.10
+	>=dev-libs/nettle-3.7.3
+	>=media-gfx/graphite2-1.3.14
+	>=media-libs/harfbuzz-2.7.4
+	>=media-libs/libglvnd-1.3.2
+	>=net-dns/libidn-1.33
 "
 OPTIONAL_RDEPEND="
-	>=gnome-base/gnome-keyring-3.36[pam]
-	>=media-libs/vulkan-loader-1.0.8.0
+	>=gnome-base/gnome-keyring-3.12.0[pam]
+	>=media-libs/vulkan-loader-1.3.224.0
 "
 CHROMIUM_RDEPEND="
 	${CHROMIUM_CDEPEND}
 	${UNLISTED_RDEPEND}
 	${OPTIONAL_RDEPEND}
-	>=dev-libs/atk-2.18.0
-	>=dev-libs/expat-2.1.0
-	>=dev-libs/libpcre-8.38
-	>=dev-libs/nspr-4.11
-	>=media-libs/fontconfig-2.11.94
-	>=media-libs/freetype-2.6.1
-	>=media-libs/libpng-1.6.20
-	>=sys-devel/gcc-5.4.0[cxx(+)]
-	>=x11-libs/libX11-1.6.3
-	>=x11-libs/libXau-1.0.8
-	>=x11-libs/libxcb-1.6.3
-	>=x11-libs/libXcomposite-0.4.4
-	>=x11-libs/libXcursor-1.1.14
-	>=x11-libs/libXdamage-1.1.4
+	>=dev-libs/atk-2.38.0
+	>=dev-libs/expat-2.2.10
+	>=dev-libs/libpcre-8.39
+	>=dev-libs/nspr-4.29
+	>=dev-libs/wayland-2.17.0
+	>=media-libs/fontconfig-2.14.2
+	>=media-libs/freetype-2.10.4
+	>=media-libs/libpng-1.6.37
+	>=sys-devel/gcc-10.2.1[cxx(+)]
+	>=x11-libs/libX11-1.7.2
+	>=x11-libs/libXau-1.0.9
+	>=x11-libs/libxcb-1.14
+	>=x11-libs/libXcomposite-0.4.5
+	>=x11-libs/libXcursor-1.2.0
+	>=x11-libs/libXdamage-1.1.5
 	>=x11-libs/libXdmcp-1.1.2
 	>=x11-libs/libXext-1.3.3
-	>=x11-libs/libXfixes-5.0.1
-	>=x11-libs/libXi-${XI_V}
-	>=x11-libs/libXinerama-1.1.3
-	>=x11-libs/libXrandr-1.5.0
-	>=x11-libs/libXrender-0.9.9
-	>=x11-libs/pango-1.38.1
-	>=x11-libs/pixman-0.33.6
-	>=sys-libs/zlib-1.2.8
-	dev-libs/wayland
+	>=x11-libs/libXfixes-5.0.3
+	>=x11-libs/libXi-${LIBXI_PV}
+	>=x11-libs/libXinerama-1.1.4
+	>=x11-libs/libXrandr-1.5.1
+	>=x11-libs/libXrender-0.9.10
+	>=x11-libs/pango-1.46.2
+	>=x11-libs/pixman-0.40.0
+	>=sys-libs/zlib-1.2.13
 "
 # libcef alone uses aura not gtk
 RDEPEND+="
 	${CHROMIUM_RDEPEND}
 	cefclient? (
-		>=dev-libs/glib-${GLIB_V}:2
-		>=x11-libs/gtk+-3:3
+		>=dev-libs/glib-${GLIB_PV}:2
+		>=x11-libs/gtk+-${GTK3_PV}:3
 		>=x11-libs/gtkglext-1.2.0
-		>=x11-libs/libXi-${XI_V}
+		>=x11-libs/libXi-${LIBXI_PV}
 	)
 "
 DEPEND+="
 	test? (
-		>=dev-libs/glib-${GLIB_V}:2
+		>=dev-libs/glib-${GLIB_PV}:2
 	)
 "
-GCC_PV_MIN="7.5"
-CLANG_PV_MIN="12"
 INTEGRITY_CHECK_BDEPEND="
 	app-crypt/rhash
 	app-misc/jq
 " # From ebuild dev
 BDEPEND+="
 	${INTEGRITY_CHECK_BDEPEND}
-	>=dev-util/cmake-3.10.2
+	>=dev-util/cmake-3.18.4
 	test? (
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
 	)
 	|| (
-		>=sys-devel/gcc-${GCC_PV_MIN}
-		>=sys-devel/clang-${CLANG_PV_MIN}
+		>=sys-devel/gcc-${GCC_PV}
+		>=sys-devel/clang-${CLANG_PV}
 	)
 "
 RESTRICT="mirror"
@@ -195,16 +225,16 @@ eerror
 		die
 	fi
 	if tc-is-gcc ; then
-		if ver_test $(gcc-major-version) -lt ${GCC_PV_MIN} ; then
+		if ver_test $(gcc-major-version) -lt ${GCC_PV} ; then
 eerror
-eerror "${PN} requires GCC >=${GCC_PV_MIN} for c++${CXX_VER} support"
+eerror "${PN} requires GCC >=${GCC_PV} for c++${CXX_VER} support"
 eerror
 			die
 		fi
 	elif tc-is-clang ; then
-		if ver_test $(clang-version) -lt ${CLANG_PV_MIN} ; then
+		if ver_test $(clang-version) -lt ${CLANG_PV} ; then
 eerror
-eerror "${PN} requires Clang >=${CLANG_PV_MIN} for c++${CXX_VER} support"
+eerror "${PN} requires Clang >=${CLANG_PV} for c++${CXX_VER} support"
 eerror
 			die
 		fi
