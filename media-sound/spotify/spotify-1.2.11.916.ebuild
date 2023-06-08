@@ -1127,6 +1127,7 @@ pkg_postrm() {
 # X:  pass
 # wayland:  pass
 # audio podcasts:  pass
+# emoji render:  pass
 # UK audio podcast(s):  fail with ffmpeg 4.4.x and 5.1.x
 # video podcasts:  pass
 # typical songs:  pass
