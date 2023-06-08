@@ -384,7 +384,7 @@ alsa chromium -clear-config-first doc +encode gdbm jack-audio-connection-kit
 jack2 mold opencl-icd-loader oss pgo pic pipewire proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user +re-codecs sndio static-libs test v4l
-wayland r13
+wayland r14
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -1298,8 +1298,11 @@ N_SAMPLES=1
 
 PATCHES=(
 	"${FILESDIR}/chromium-r1.patch"
-	"${FILESDIR}/${PN}-5.1.2-allow-7regs.patch"
-	"${FILESDIR}/${PN}-5.1.2-configure-non-free-options.patch"
+	"${FILESDIR}/${PN}-5.1.2-get_cabac_inline_x86-32-bit.patch"
+	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"			# Added by oiledmachine-overlay
+	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
+	"${FILESDIR}/${PN}-5.1.3-fix-build-svt-av1-1.5.0.patch"
+	"${FILESDIR}/${PN}-5.1.3-svt-av1.patch"
 )
 
 MULTILIB_WRAPPED_HEADERS=(
