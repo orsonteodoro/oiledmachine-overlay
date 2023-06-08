@@ -23,6 +23,17 @@ EAPI=8
 # http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
 #
 
+# For depends see:
+# https://github.com/chromium/chromium/tree/112.0.5615.165/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/112.0.5615.165/build/install-build-deps.sh#L237
+
+#
+# Additional DEPENDS versioning info:
+#
+# https://github.com/chromium/chromium/blob/112.0.5615.165/third_party/fontconfig/include/config.h#L290
+# https://github.com/chromium/chromium/blob/112.0.5615.165/third_party/zlib/zlib.h#L40
+#
+
 inherit desktop flag-o-matic gnome2-utils toolchain-funcs unpacker xdg
 
 DESCRIPTION="A social music platform"
@@ -65,6 +76,21 @@ RESTRICT="mirror strip"
 # Found in Recommends: section of stable requirements.
 # If >=ffmpeg-5.0 is installed only, then audio podcast playback doesn't work.
 # A few of these audio podcasts require <ffmpeg-5.0.
+# For ffmpeg:0/x.y.z, y must be <= 58.
+ALSA_LIB="1.2.4"
+ATK_PV="2.38.0"
+CAIRO_PV="1.16.0"
+CLANG_PV="17"
+FONTCONFIG_PV="2.14.2"
+FREETYPE_PV="2.10.4"
+GCC_PV="10.2.1"
+GLIB_PV="2.66.8"
+GLIBC_PV="2.31"
+GTK3_PV="3.24.24"
+LIBXI_PV="1.7.10"
+NSS_PV="3.61"
+MESA_PV="20.3.5"
+
 OPTIONAL_RDEPENDS_LISTED="
 	ffmpeg? (
 		>=media-video/ffmpeg-4.2.2
@@ -78,9 +104,9 @@ OPTIONAL_RDEPENDS_LISTED="
 # Not listed in URLs
 OPTIONAL_RDEPENDS_UNLISTED="
 	emoji? (
-		>=media-libs/fontconfig-2.11.91
-		>=x11-libs/cairo-1.16.0
-		media-libs/freetype[png]
+		>=media-libs/fontconfig-${FONTCONFIG_PV}
+		>=x11-libs/cairo-${CAIRO_PV}
+		>=media-libs/freetype-${FREETYPE_PV}[png]
 		|| (
 			media-fonts/noto-color-emoji
 			media-fonts/noto-color-emoji-bin
@@ -89,14 +115,14 @@ OPTIONAL_RDEPENDS_UNLISTED="
 		)
 	)
 	pulseaudio? (
-		media-sound/pulseaudio
+		>=media-sound/pulseaudio-14.2
 	)
 	vaapi? (
-		>=media-libs/libva-2.1[drm(+),wayland?,X?]
+		>=media-libs/libva-2.14.0[drm(+),wayland?,X?]
 		media-libs/vaapi-drivers
 	)
 	zenity? (
-		>=gnome-extra/zenity-3.28.1
+		>=gnome-extra/zenity-3.32.0
 	)
 "
 
@@ -107,59 +133,57 @@ OPTIONAL_RDEPENDS_UNLISTED="
 # U >=16.04 LTS assumed, supported only in CEF
 
 # For details see:
-# https://github.com/chromium/chromium/blob/99.0.4844.84/build/install-build-deps.sh#L237
+# https://github.com/chromium/chromium/blob/112.0.5615.165/build/install-build-deps.sh#L237
 
 # The version is obtained in src_prepare
 
 # libxss1 is x11-libs/libXScrnSaver
 
-GLIB_V="2.48"
-XI_V="1.7.6"
 CHROMIUM_CDEPEND="
-	>=app-accessibility/at-spi2-atk-2.18.3
-	>=dev-libs/glib-${GLIB_V}:2
-	>=dev-libs/libevdev-1.4.6
-	>=dev-libs/libffi-3.2.1
-	>=dev-libs/nss-3.21
-	>=media-libs/alsa-lib-1.1.0
-	>=media-libs/mesa-11.2.0[gbm(+),wayland?,X?]
-	>=sys-apps/pciutils-3.3.1
-	>=sys-apps/util-linux-2.27.1
-	>=sys-libs/glibc-2.23
-	>=sys-libs/libcap-2.24
-	>=sys-libs/pam-1.1.8
-	>=x11-libs/cairo-1.14.6
-	>=x11-libs/gtk+-3.18.9:3[wayland?,X?]
-	>=x11-libs/libdrm-2.4.67
+	>=app-accessibility/at-spi2-atk-2.38.0
+	>=dev-libs/glib-${GLIB_PV}:2
+	>=dev-libs/libevdev-1.11.0
+	>=dev-libs/libffi-3.3
+	>=dev-libs/nss-${NSS_PV}
+	>=media-libs/alsa-lib-${ALSA_LIB}
+	>=media-libs/mesa-${MESA_PV}[gbm(+),wayland?,X?]
+	>=sys-apps/pciutils-3.7.0
+	>=sys-apps/util-linux-2.36.1
+	>=sys-libs/glibc-${GLIBC_PV}
+	>=sys-libs/libcap-2.44
+	>=sys-libs/pam-1.4.0
+	>=x11-libs/cairo-${CAIRO_PV}
+	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
+	>=x11-libs/libdrm-2.4.104
 	wayland? (
-		>=dev-libs/wayland-1.13:=
+		>=dev-libs/wayland-1.18.0:=
 	)
 	X? (
-		>=x11-libs/libXtst-1.2.2
+		>=x11-libs/libXtst-1.2.3
 	)
 "
 
 # Possibly Nth level dependencies, but not direct.
 UNLISTED_RDEPEND="
-	>=media-libs/mesa-11.2.0[egl(+),wayland?,X?]
-	>=x11-libs/libxkbcommon-0.5.0
-	dev-libs/fribidi
-	dev-libs/gmp
-	dev-libs/libbsd
-	dev-libs/libtasn1
-	dev-libs/libunistring
-	dev-libs/nettle
-	media-libs/harfbuzz
-	media-libs/libglvnd
+	>=media-libs/mesa-${MESA_PV}[egl(+),wayland?,X?]
+	>=x11-libs/libxkbcommon-1.0.3
+	>=dev-libs/fribidi-1.0.8
+	>=dev-libs/gmp-6.2.1
+	>=dev-libs/libbsd-0.11.3
+	>=dev-libs/libtasn1-4.16.0
+	>=dev-libs/libunistring-0.9.10
+	>=dev-libs/nettle-3.7.3
+	>=media-libs/harfbuzz-2.7.4
+	>=media-libs/libglvnd-1.3.2
 "
 
 # Not listed as either direct or Nth level library
 # Also the feature may not be present or reachable.
 #UNLISTED_CR_RDEPEND_DROPPED="
-#	>=app-accessibility/speech-dispatcher-0.8.3
-#	>=dev-db/sqlite-3.11
+#	>=app-accessibility/speech-dispatcher-0.11.4
+#	>=dev-db/sqlite-3.34.1
 #	>=dev-libs/libappindicator-12.10
-#	gnome-keyring? ( >=gnome-base/gnome-keyring-3.12 )
+#	gnome-keyring? ( >=gnome-base/gnome-keyring-3.12.0 )
 #"
 
 #UNLISTED_SP_RDEPEND_DROPPED="
@@ -167,7 +191,7 @@ UNLISTED_RDEPEND="
 #
 
 OPTIONAL_RDEPEND="
-	>=media-libs/vulkan-loader-1.0.8.0
+	>=media-libs/vulkan-loader-1.3.224.0
 "
 
 # cups is required or it will segfault.
@@ -175,46 +199,46 @@ CHROMIUM_RDEPEND="
 	${CHROMIUM_CDEPEND}
 	${OPTIONAL_RDEPEND}
 	${UNLISTED_RDEPEND}
-	>=dev-libs/atk-2.18.0
-	>=dev-libs/expat-2.1.0
-	>=dev-libs/libpcre-8.38
-	>=dev-libs/nspr-4.11
-	>=media-libs/fontconfig-2.11.94
-	>=media-libs/freetype-2.6.1
-	>=media-libs/libpng-1.6.20
-	>=net-print/cups-2.1.3
-	>=sys-devel/gcc-5.4.0[cxx(+)]
-	>=x11-libs/pango-1.38.1
-	>=x11-libs/pixman-0.33.6
-	>=sys-libs/zlib-1.2.8
+	>=dev-libs/atk-${ATK_PV}
+	>=dev-libs/expat-2.2.10
+	>=dev-libs/libpcre-8.39
+	>=dev-libs/nspr-4.29
+	>=media-libs/fontconfig-${FONTCONFIG_PV}
+	>=media-libs/freetype-${FREETYPE_PV}
+	>=media-libs/libpng-1.6.37
+	>=net-print/cups-2.3.3
+	>=sys-devel/gcc-${GCC_PV}[cxx(+)]
+	>=x11-libs/pango-1.46.2
+	>=x11-libs/pixman-0.40.0
+	>=sys-libs/zlib-1.2.13
 	X? (
-		>=x11-libs/libX11-1.6.3
-		>=x11-libs/libXau-1.0.8
-		>=x11-libs/libXcomposite-0.4.4
-		>=x11-libs/libXcursor-1.1.14
-		>=x11-libs/libXdamage-1.1.4
+		>=x11-libs/libX11-1.7.2
+		>=x11-libs/libXau-1.0.9
+		>=x11-libs/libXcomposite-0.4.5
+		>=x11-libs/libXcursor-1.2.0
+		>=x11-libs/libXdamage-1.1.5
 		>=x11-libs/libXdmcp-1.1.2
 		>=x11-libs/libXext-1.3.3
-		>=x11-libs/libXfixes-5.0.1
-		>=x11-libs/libXi-${XI_V}
-		>=x11-libs/libXinerama-1.1.3
-		>=x11-libs/libXrandr-1.5.0
-		>=x11-libs/libXrender-0.9.9
-		>=x11-libs/libxcb-1.6.3
+		>=x11-libs/libXfixes-5.0.3
+		>=x11-libs/libXi-${LIBXI_PV}
+		>=x11-libs/libXinerama-1.1.4
+		>=x11-libs/libXrandr-1.5.1
+		>=x11-libs/libXrender-0.9.10
+		>=x11-libs/libxcb-1.14
 	)
 "
 
-CEFCLIENT_RDEPENDS_NOT_LISTED="
-	>=x11-libs/gtk+:3[wayland?,X?]
+CEFCLIENT_RDEPEND_NOT_LISTED="
+	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
 "
 
-CEFCLIENT_RDEPENDS="
-	>=dev-libs/glib-${GLIB_V}:2
-	>=x11-libs/libXi-${XI_V}
+CEFCLIENT_RDEPEND="
+	>=dev-libs/glib-${GLIB_PV}:2
+	>=x11-libs/libXi-${LIBXI_PV}
 "
 
 RDEPEND+="
-	${CEFCLIENT_RDEPENDS}
+	${CEFCLIENT_RDEPEND}
 	${CHROMIUM_RDEPEND}
 "
 
@@ -227,27 +251,24 @@ RDEPEND+="
 RDEPEND+="
 	${OPTIONAL_RDEPENDS_LISTED}
 	${OPTIONAL_RDEPENDS_UNLISTED}
-	>=dev-libs/atk-2.34.1
-	>=dev-libs/glib-2.64.6
-	>=dev-libs/nss-3.49.1
+	>=dev-libs/atk-${ATK_PV}
+	>=dev-libs/glib-${GLIB_PV}:2
+	>=dev-libs/nss-${NSS_PV}
 	>=gnome-base/gconf-3.2.6
-	>=media-libs/alsa-lib-1.2.2
-	>=media-libs/mesa-20.0.4[wayland?,X?]
-	>=net-misc/curl-7.68[ssl,gnutls]
-	>=x11-libs/gtk+-3.22.30:3[wayland?,X?]
+	>=media-libs/alsa-lib-${ALSA_LIB}
+	>=media-libs/mesa-${MESA_PV}[wayland?,X?]
+	>=net-misc/curl-7.85.0[ssl,gnutls]
+	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
 	>=x11-misc/xdg-utils-1.1.3
-	sys-devel/gcc
-	sys-libs/glibc
+	>=sys-devel/gcc-${GCC_PV}
+	>=sys-libs/glibc-${GLIBC_PV}
 	X? (
 		>=x11-libs/libXScrnSaver-1.2.3
 		>=x11-libs/libXtst-1.2.3
 	)
 	|| (
-		=dev-libs/openssl-3*:0
-		=dev-libs/openssl-1.1*:0
-		=dev-libs/openssl-1.0.2*:0
-		=dev-libs/openssl-1.0.1*:0
-		=dev-libs/openssl-1.0.0*:0
+		=dev-libs/openssl-3*:0/3
+		>=dev-libs/openssl-1.1.1n:0/1.1
 	)
 "
 
@@ -263,8 +284,8 @@ BDEPEND+="
 	sys-apps/coreutils
 	wayland? (
 		|| (
-			sys-devel/gcc
-			sys-devel/clang
+			>=sys-devel/gcc-${GCC_PV}
+			>=sys-devel/clang-${CLANG_PV}
 		)
 	)
 "
@@ -306,13 +327,13 @@ SRC_URI+="
 if ! [[ ${PV} =~ 9999 ]] ; then
 	MY_PV=$(ver_cut 1-4 ${PV})
 	MY_REV=$(ver_cut 6 ${PV})
-	BUILD_ID_AMD64="g4f94bf0d"
+	BUILD_ID_AMD64="geb595a67"
 	if [[ -z "${MY_REV}" ]] ; then
 		_BUILD_ID_AMD64="${BUILD_ID_AMD64}"
 	else
 		_BUILD_ID_AMD64="${BUILD_ID_AMD64}-${MY_REV}"
 	fi
-	CONFIGURATION="stable"
+	CONFIGURATION="testing" # stable or testing
 	FN_CLIENT="${PN}-client_${MY_PV}.${_BUILD_ID_AMD64}_amd64.deb"
 	FN_INRELEASE="${PN}-${PV}-${CONFIGURATION}-InRelease-${PUBLIC_KEY_ID}"
 	FN_PACKAGES="${PN}-${PV}-${CONFIGURATION}-Packages"
@@ -1099,3 +1120,5 @@ pkg_postrm() {
 	xdg_icon_cache_update
 	xdg_pkg_postrm
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 1.2.11.916 (20230608)
