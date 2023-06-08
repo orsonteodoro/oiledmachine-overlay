@@ -1123,7 +1123,10 @@ pkg_postrm() {
 	xdg_pkg_postrm
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 1.2.11.916 (20230608)
-# UK podcast(s):  fail with ffmpeg 4.4.x and 5.1.x
-# typical podcasts:  pass
+# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / FAIL [UK] (interactive) 1.2.11.916 (20230608)
+# X:  pass
+# wayland:  pass
+# audio podcasts:  pass
+# UK audio podcast(s):  fail with ffmpeg 4.4.x and 5.1.x
+# video podcasts:  pass
 # typical songs:  pass
