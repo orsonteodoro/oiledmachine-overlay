@@ -92,9 +92,11 @@ LIBXI_PV="1.7.10"
 NSS_PV="3.61"
 MESA_PV="20.3.5"
 
+# media-video/ffmpeg:${FFMPEG_SLOT} # From chromium tarball
+# <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
 OPTIONAL_RDEPENDS_LISTED="
 	ffmpeg? (
-		media-video/ffmpeg:${FFMPEG_SLOT}
+		<media-video/ffmpeg-5
 	)
 	libnotify? (
 		>=x11-libs/libnotify-0.7.9
@@ -105,8 +107,8 @@ OPTIONAL_RDEPENDS_LISTED="
 OPTIONAL_RDEPENDS_UNLISTED="
 	emoji? (
 		>=media-libs/fontconfig-${FONTCONFIG_PV}
-		>=x11-libs/cairo-${CAIRO_PV}
 		>=media-libs/freetype-${FREETYPE_PV}[png]
+		>=x11-libs/cairo-${CAIRO_PV}
 		|| (
 			media-fonts/noto-color-emoji
 			media-fonts/noto-color-emoji-bin
