@@ -40,7 +40,7 @@ LICENSE="
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="$(ver_cut 1-2 ${PV})/${PV}"
 IUSE+="
-test r2
+test r3
 "
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
@@ -445,10 +445,12 @@ src_install() {
 	npm_src_install
 
 	# Move wrappers
-	mv "${D}/usr/bin/tsc" \
-		"${D}/opt/${PN}/${PV}" || die
-	mv "${D}/usr/bin/tsserver" \
-		"${D}/opt/${PN}/${PV}" || die
+	mv "${ED}/usr/bin/tsc" \
+		"${ED}/opt/${PN}/${PV}" || die
+	mv "${ED}/usr/bin/tsserver" \
+		"${ED}/opt/${PN}/${PV}" || die
+einfo "Removing npm-packages-offline-cache"
+        rm -rf "${ED}/opt/${PN}/npm-packages-offline-cache"
 }
 
 pkg_postinst() {

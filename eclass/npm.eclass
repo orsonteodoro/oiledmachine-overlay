@@ -588,11 +588,11 @@ npm_src_install() {
 cat <<EOF > "${ED}/usr/bin/${name}"
 #!/bin/bash
 NODE_VERSION=${NODE_VERSION}
-"${NPM_INSTALL_PATH}/${cmd}" "\$@"
+"${install_path}/${cmd}" "\$@"
 EOF
 			fperms 0755 "/usr/bin/${name}"
 		else
-			dosym "${NPM_INSTALL_PATH}/${cmd}" "/usr/bin/${name}"
+			dosym "${install_path}/${cmd}" "/usr/bin/${name}"
 		fi
 	done
 	local path
@@ -604,7 +604,8 @@ eerror "Skipping fperms 0755 ${path}.  Missing file."
 		fi
 	done
 	IFS=$' \t\n'
-	rm -rf "${ED}/${install_path}/npm-packages-offline-cache"
+einfo "Removing npm-packages-offline-cache"
+	rm -rf "${ED}${install_path}/npm-packages-offline-cache"
 	rm -rf "${ED}/opt/npm-packages-offline-cache"
 }
 
