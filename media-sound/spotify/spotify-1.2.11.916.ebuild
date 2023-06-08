@@ -81,6 +81,7 @@ ALSA_LIB="1.2.4"
 ATK_PV="2.38.0"
 CAIRO_PV="1.16.0"
 CLANG_PV="17"
+FFMPEG_SLOT="0/57.59.59" # Same as 5.1.x
 FONTCONFIG_PV="2.14.2"
 FREETYPE_PV="2.10.4"
 GCC_PV="10.2.1"
@@ -93,8 +94,7 @@ MESA_PV="20.3.5"
 
 OPTIONAL_RDEPENDS_LISTED="
 	ffmpeg? (
-		>=media-video/ffmpeg-4.2.2
-		<media-video/ffmpeg-5
+		media-video/ffmpeg:${FFMPEG_SLOT}
 	)
 	libnotify? (
 		>=x11-libs/libnotify-0.7.9
@@ -154,7 +154,7 @@ CHROMIUM_CDEPEND="
 	>=sys-libs/pam-1.4.0
 	>=x11-libs/cairo-${CAIRO_PV}
 	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
-	>=x11-libs/libdrm-2.4.104
+	>=x11-libs/libdrm-2.4.114
 	wayland? (
 		>=dev-libs/wayland-1.18.0:=
 	)
@@ -173,7 +173,7 @@ UNLISTED_RDEPEND="
 	>=dev-libs/libtasn1-4.16.0
 	>=dev-libs/libunistring-0.9.10
 	>=dev-libs/nettle-3.7.3
-	>=media-libs/harfbuzz-2.7.4
+	>=media-libs/harfbuzz-5.3.1
 	>=media-libs/libglvnd-1.3.2
 "
 
