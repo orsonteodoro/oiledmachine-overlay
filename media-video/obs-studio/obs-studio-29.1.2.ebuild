@@ -1110,3 +1110,14 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  proper-hardware-accelerated-h264-support, build-with-social-media-info
 # OILEDMACHINE-OVERLAY-META-TAGS:  link-to-unvulnerable-blink-derivative
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 29.1.2 (20230608)
+# USE="browser qt5 v4l2 vaapi -aja -alsa -amf -browser-panels -coreaudio-encoder
+# -decklink -fdk -freetype -ftl -hevc -ipv6 -jack -libaom -lua -mac-syphon
+# -new-mpegts-output -nvafx -nvenc -nvvfx -oss -pipewire -pulseaudio -python
+# -qsv (-qt6) -r3 -rnnoise -rtmps -service-updates -sndio -speexdsp -svt-av1
+# -test -virtualcam -vlc -vst -wayland -websocket -whatsnew -win-dshow -win-mf
+# -x264"
+# LUA_SINGLE_TARGET="-luajit"
+# PYTHON_SINGLE_TARGET="python3_10"
+# browser test:  passed with 114.2.10+g398e3c3+chromium-114.0.5735.110_linux64_minimal
+# v4l2 test:  passed
