@@ -26,6 +26,7 @@ EAPI=8
 # For *DEPENDs see:
 # https://github.com/chromium/chromium/tree/111.0.5563.65/build/linux/sysroot_scripts/generated_package_lists
 # https://github.com/chromium/chromium/blob/111.0.5563.65/build/install-build-deps.sh#L237
+# https://github.com/chromium/chromium/blob/111.0.5563.65/tools/clang/scripts/update.py#L42
 
 #
 # Additional DEPENDS versioning info:
@@ -75,7 +76,7 @@ RESTRICT="mirror strip"
 ALSA_LIB="1.2.4"
 ATK_PV="2.38.0"
 CAIRO_PV="1.16.0"
-CLANG_PV="17"
+CLANG_PV="16"
 FFMPEG_SLOT="0/56.58.58" # Same as 4.x
 FONTCONFIG_PV="2.13.91"
 FREETYPE_PV="2.10.4"

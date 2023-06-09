@@ -26,6 +26,7 @@ EAPI=8
 # For *DEPENDs see:
 # https://github.com/chromium/chromium/tree/112.0.5615.165/build/linux/sysroot_scripts/generated_package_lists
 # https://github.com/chromium/chromium/blob/112.0.5615.165/build/install-build-deps.sh#L237
+# https://github.com/chromium/chromium/blob/112.0.5615.165/tools/clang/scripts/update.py#L42
 
 #
 # Additional DEPENDS versioning info:
