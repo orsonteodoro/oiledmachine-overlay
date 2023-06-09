@@ -15,12 +15,14 @@ KEYWORDS="amd64 ~arm ~arm64 ~ppc64 ~riscv x86"
 IUSE+=" doc r1"
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
+# See https://github.com/grpc/grpc/blob/v1.49.3/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.49.3/third_party
 PROTOBUF_SLOT="0/32"
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-20220623.0:0/20220623[cxx17(+)]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-)]
 	>=dev-libs/re2-0.2021.09.01:=
-	>=dev-python/six-1.10[${PYTHON_USEDEP}]
+	>=dev-python/six-1.16[${PYTHON_USEDEP}]
 	>=net-dns/c-ares-1.17.2:=
 	>=sys-libs/zlib-1.2.13:=
 	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
@@ -31,7 +33,7 @@ DEPEND+="
 # TODO: doc: requirements.bazel.txt
 BDEPEND+="
 	>=dev-python/coverage-4[${PYTHON_USEDEP}]
-	>=dev-python/cython-0.29.8[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29.26[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/six-1.10[${PYTHON_USEDEP}]
