@@ -51,9 +51,10 @@ x11-libs/cairo bolt ebolt
 www-client/firefox debug
 
 # Block for security
-www-client/firefox telemetry
-net-im/chatterino crashpad
 media-sound/spotify beta
+net-im/chatterino crashpad
+net-libs/cef-bin beta
+www-client/firefox telemetry
 
 # Untested
 www-client/chromium qt6
