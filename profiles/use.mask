@@ -12,3 +12,9 @@ debug
 
 # Avoid running programs as root which certain exploits (e.g. stack clash exploit) depend on
 suid
+
+# Avoid phoning home sensitive info
+beta
+crashpad
+breakpad
+telemetry
