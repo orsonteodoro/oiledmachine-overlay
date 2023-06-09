@@ -7,8 +7,17 @@
     <name>Matthew Thode</name>
   </maintainer>
   <longdescription>
-    Ebuild fork for improved compatibility.
   </longdescription>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Ebuild fork for improved compatibility.
+
+  9999s: live stable
+  9999t: live testing
+
+  -->
   <use>
     <flag name="beta">
       Downloads and installs the latest beta version.
@@ -52,6 +61,9 @@
     </flag>
     <flag name="zenity">
       Add support for the file picker used for locating local files.
+    </flag>
+    <flag name="rN">
+      The ebuild's internal revision.
     </flag>
   </use>
 </pkgmetadata>

@@ -23,15 +23,15 @@ EAPI=8
 # http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
 #
 
-# For depends see:
-# https://github.com/chromium/chromium/tree/112.0.5615.165/build/linux/sysroot_scripts/generated_package_lists
-# https://github.com/chromium/chromium/blob/112.0.5615.165/build/install-build-deps.sh#L237
+# For *DEPENDs see:
+# https://github.com/chromium/chromium/tree/111.0.5563.65/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/111.0.5563.65/build/install-build-deps.sh#L237
 
 #
 # Additional DEPENDS versioning info:
 #
-# https://github.com/chromium/chromium/blob/112.0.5615.165/third_party/fontconfig/include/config.h#L290
-# https://github.com/chromium/chromium/blob/112.0.5615.165/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/111.0.5563.65/third_party/fontconfig/include/config.h#L290
+# https://github.com/chromium/chromium/blob/111.0.5563.65/third_party/zlib/zlib.h#L40
 #
 
 inherit desktop flag-o-matic gnome2-utils toolchain-funcs unpacker xdg
@@ -48,11 +48,11 @@ SLOT="0/stable"
 # Dropped systray USE flag because of license.
 
 IUSE+="
-emoji ffmpeg libnotify pulseaudio vaapi wayland zenity +X
+emoji ffmpeg libnotify pulseaudio vaapi wayland zenity +X r1
 "
 if [[ ${PV} =~ 9999 ]] ; then
 	IUSE+="
-		-extra-dep-checks +stable beta
+		-extra-dep-checks
 	"
 	# verify-gpg-key implied enabled
 else
@@ -64,11 +64,6 @@ fi
 REQUIRED_USE+="
 	|| ( wayland X )
 "
-if [[ ${PV} =~ 9999 ]] ; then
-	REQUIRED_USE+="
-		^^ ( stable beta )
-	"
-fi
 RESTRICT="mirror strip"
 
 # Support based on (20.04) LTS mainly but older LTSs may be supported.
@@ -81,9 +76,9 @@ ALSA_LIB="1.2.4"
 ATK_PV="2.38.0"
 CAIRO_PV="1.16.0"
 CLANG_PV="17"
-FFMPEG_SLOT="0/57.59.59" # Same as 5.1.x
-FONTCONFIG_PV="2.14.2"
-FREETYPE_PV="2.13.0"
+FFMPEG_SLOT="0/56.58.58" # Same as 4.x
+FONTCONFIG_PV="2.13.91"
+FREETYPE_PV="2.10.4"
 GCC_PV="10.2.1"
 GLIB_PV="2.66.8"
 GLIBC_PV="2.31"
@@ -96,7 +91,7 @@ MESA_PV="20.3.5"
 # <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
 OPTIONAL_RDEPENDS_LISTED="
 	ffmpeg? (
-		<media-video/ffmpeg-6
+		<media-video/ffmpeg-5
 	)
 	libnotify? (
 		>=x11-libs/libnotify-0.7.9
@@ -135,7 +130,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 # U >=16.04 LTS assumed, supported only in CEF
 
 # For details see:
-# https://github.com/chromium/chromium/blob/112.0.5615.165/build/install-build-deps.sh#L237
+# https://github.com/chromium/chromium/blob/111.0.5563.65/build/install-build-deps.sh#L237
 
 # The version is obtained in src_prepare
 
@@ -156,7 +151,7 @@ CHROMIUM_CDEPEND="
 	>=sys-libs/pam-1.4.0
 	>=x11-libs/cairo-${CAIRO_PV}
 	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
-	>=x11-libs/libdrm-2.4.114
+	>=x11-libs/libdrm-2.4.104
 	wayland? (
 		>=dev-libs/wayland-1.18.0:=
 	)
@@ -175,7 +170,7 @@ UNLISTED_RDEPEND="
 	>=dev-libs/libtasn1-4.16.0
 	>=dev-libs/libunistring-0.9.10
 	>=dev-libs/nettle-3.7.3
-	>=media-libs/harfbuzz-5.3.1
+	>=media-libs/harfbuzz-2.7.4
 	>=media-libs/libglvnd-1.3.2
 "
 
@@ -402,8 +397,7 @@ declare -A atabs=(
 pkg_setup() {
 	local configuration_desc
 	if [[ ${PV} =~ 9999 ]] ; then
-		use stable && CONFIGURATION="stable"
-		use beta && CONFIGURATION="testing"
+		CONFIGURATION="stable"
 		export FN_INRELEASE="${PN}-${PV}-${CONFIGURATION}-InRelease"
 		export FN_PACKAGES="${PN}-${PV}-${CONFIGURATION}-Packages"
 	fi
@@ -1123,11 +1117,11 @@ pkg_postrm() {
 	xdg_pkg_postrm
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / FAIL [UK] (interactive) 1.2.11.916 (20230608)
+# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.11.916 (20230608)
 # X:  pass
 # wayland:  pass
 # audio podcasts:  pass
 # emoji render:  pass
-# UK audio podcast(s):  fail with ffmpeg 4.4.x and 5.1.x, but works with ${PN}-1.1.84.716 with ffmpeg 4.4.x
+# UK audio podcast(s):  pass with ffmpeg 4.4.x
 # video podcasts:  pass
 # typical songs:  pass

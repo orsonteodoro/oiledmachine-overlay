@@ -114,3 +114,4 @@ dev-dotnet/monodevelop
 
 # Security precaution with debug.
 ~media-sound/spotify-1.2.11.916
+~media-sound/spotify-9999t
