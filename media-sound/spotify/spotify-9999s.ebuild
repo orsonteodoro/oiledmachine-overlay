@@ -1117,7 +1117,7 @@ pkg_postrm() {
 	xdg_pkg_postrm
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.11.916 (20230608)
+# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.8.923 (20230608)
 # X:  pass
 # wayland:  pass
 # audio podcasts:  pass
