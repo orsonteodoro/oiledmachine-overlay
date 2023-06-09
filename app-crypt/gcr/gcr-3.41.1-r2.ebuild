@@ -47,8 +47,8 @@ RDEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=sys-devel/gettext-0.19.8[${MULTILIB_USEDEP}]
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	>=sys-devel/gettext-0.19.8[${MULTILIB_USEDEP}]
 	dev-util/gdbus-codegen
 	dev-util/glib-utils
 	gtk? (
