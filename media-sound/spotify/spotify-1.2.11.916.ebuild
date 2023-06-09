@@ -49,7 +49,7 @@ SLOT="0/testing"
 # Dropped systray USE flag because of license.
 
 IUSE+="
-emoji ffmpeg libnotify pulseaudio vaapi wayland zenity +X
+emoji ffmpeg libnotify pulseaudio vaapi wayland zenity +X r1
 "
 if [[ ${PV} =~ 9999 ]] ; then
 	IUSE+="
@@ -77,7 +77,7 @@ ALSA_LIB="1.2.4"
 ATK_PV="2.38.0"
 CAIRO_PV="1.16.0"
 CLANG_PV="17"
-FFMPEG_SLOT="0/57.59.59" # Same as 5.1.x
+FFMPEG_SLOT="0/57.59.59" # Same as 5.1
 FONTCONFIG_PV="2.14.2"
 FREETYPE_PV="2.13.0"
 GCC_PV="10.2.1"
@@ -89,7 +89,7 @@ NSS_PV="3.61"
 MESA_PV="20.3.5"
 
 # media-video/ffmpeg:${FFMPEG_SLOT} # From chromium tarball
-# <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
+# <media-video/ffmpeg-6 is from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
 OPTIONAL_RDEPENDS_LISTED="
 	ffmpeg? (
 		<media-video/ffmpeg-6
