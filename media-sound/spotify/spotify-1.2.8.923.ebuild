@@ -40,7 +40,7 @@ DESCRIPTION="A social music platform"
 HOMEPAGE="https://www.spotify.com"
 LICENSE="Spotify BSD"
 KEYWORDS="~amd64"
-SLOT="0/testing"
+SLOT="0/stable"
 
 # Dropped pax-kernel USE flag because of the license plus the CEF version used
 # is already EOL.  Use the web version instead for the secure version.
@@ -329,13 +329,13 @@ SRC_URI+="
 if ! [[ ${PV} =~ 9999 ]] ; then
 	MY_PV=$(ver_cut 1-4 ${PV})
 	MY_REV=$(ver_cut 6 ${PV})
-	BUILD_ID_AMD64="geb595a67"
+	BUILD_ID_AMD64="g4f94bf0d"
 	if [[ -z "${MY_REV}" ]] ; then
 		_BUILD_ID_AMD64="${BUILD_ID_AMD64}"
 	else
 		_BUILD_ID_AMD64="${BUILD_ID_AMD64}-${MY_REV}"
 	fi
-	CONFIGURATION="testing" # stable or testing
+	CONFIGURATION="stable" # stable or testing
 	FN_CLIENT="${PN}-client_${MY_PV}.${_BUILD_ID_AMD64}_amd64.deb"
 	FN_INRELEASE="${PN}-${PV}-${CONFIGURATION}-InRelease-${PUBLIC_KEY_ID}"
 	FN_PACKAGES="${PN}-${PV}-${CONFIGURATION}-Packages"

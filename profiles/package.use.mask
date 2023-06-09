@@ -53,6 +53,7 @@ www-client/firefox debug
 # Block for security
 www-client/firefox telemetry
 net-im/chatterino crashpad
+media-sound/spotify beta
 
 # Untested
 www-client/chromium qt6

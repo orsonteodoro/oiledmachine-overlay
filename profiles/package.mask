@@ -111,3 +111,6 @@ dev-dotnet/monodevelop
 
 # End of Life (EOL)
 <net-libs/nodejs-15
+
+# Security precaution with debug.
+~media-sound/spotify-1.2.11.916
