@@ -63,15 +63,16 @@ else
 fi
 
 REQUIRED_USE+="
-	|| ( wayland X )
+	|| (
+		wayland
+		X
+	)
 "
 RESTRICT="mirror strip"
 
 # Support based on (20.04) LTS mainly but older LTSs may be supported.
 
 # Found in Recommends: section of stable requirements.
-# If >=ffmpeg-5.0 is installed only, then audio podcast playback doesn't work.
-# A few of these audio podcasts require <ffmpeg-5.0.
 # For ffmpeg:0/x.y.z, y must be <= 58.
 ALSA_LIB="1.2.4"
 ATK_PV="2.38.0"
@@ -89,7 +90,7 @@ NSS_PV="3.61"
 MESA_PV="20.3.5"
 
 # media-video/ffmpeg:${FFMPEG_SLOT} # From chromium tarball
-# <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
+# <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/stable/non-free/binary-amd64/Packages
 OPTIONAL_RDEPENDS_LISTED="
 	ffmpeg? (
 		<media-video/ffmpeg-5
