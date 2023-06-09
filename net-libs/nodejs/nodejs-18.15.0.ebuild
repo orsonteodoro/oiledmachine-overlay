@@ -346,11 +346,14 @@ src_prepare() {
 		-e "s|__OFLAGS_R1__|${r1}|g" \
 		-e "s|__OFLAGS_A2__|${a2}|g" \
 		-e "s|__OFLAGS_R2__|${r2}|g" \
-		tools/v8_gypfiles/toolchain.gypi || die
+		tools/v8_gypfiles/toolchain.gypi \
+		|| die
 
 	# debug builds. change install path, remove optimisations and override buildtype
 	if use debug; then
-		sed -i -e "s|out/Release/|out/Debug/|g" tools/install.py || die
+		sed -i -e "s|out/Release/|out/Debug/|g" \
+			tools/install.py \
+			|| die
 		BUILDTYPE=Debug
 	fi
 
@@ -369,9 +372,11 @@ src_prepare() {
 		# bsd, posix, sysv, darwin, just-symbols
 		einfo "Detected llvm-nm: -f p -> -f posix"
 		sed -i -e "s|nm -gD -f p |nm -gD -f posix |g" \
-			"deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja.py" || die
+			"deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja.py" \
+			|| die
 		sed -i -e "s|nm -gD -f p |nm -gD -f posix |g" \
-			"tools/gyp/pylib/gyp/generator/ninja.py" || die
+			"tools/gyp/pylib/gyp/generator/ninja.py" \
+			|| die
 	fi
 
 	# Save before using filter-flag

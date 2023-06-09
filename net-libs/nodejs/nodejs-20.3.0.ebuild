@@ -121,16 +121,16 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  May 2, 2023
+# Last deps commit date:  Jun 4, 2023
 ACORN_PV="8.8.2"
-COREPACK_PV="0.17.2"
-NGHTTP2_PV="1.52.0"
+COREPACK_PV="0.18.0"
+NGHTTP2_PV="1.53.0"
 RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.0.9
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.44.2:=
-	>=net-dns/c-ares-1.19.0
+	>=dev-libs/libuv-1.45.0:=
+	>=net-dns/c-ares-1.19.1
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.2.13
 	system-icu? (
@@ -172,13 +172,13 @@ PDEPEND+="
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 PATCHES=(
 	"${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
-	"${FILESDIR}"/${PN}-19.5.0-global-npm-config.patch
+	"${FILESDIR}"/${PN}-20.2.0-global-npm-config.patch
 	"${FILESDIR}"/${PN}-16.13.2-lto-update.patch
 	"${FILESDIR}"/${PN}-20.1.0-support-clang-pgo.patch
 	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_PV="9.6.4" # See https://github.com/nodejs/node/blob/v20.1.0/deps/npm/package.json
+NPM_PV="9.6.7" # See https://github.com/nodejs/node/blob/v20.3.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_PV="7.4.0"
@@ -344,11 +344,14 @@ src_prepare() {
 		-e "s|__OFLAGS_R1__|${r1}|g" \
 		-e "s|__OFLAGS_A2__|${a2}|g" \
 		-e "s|__OFLAGS_R2__|${r2}|g" \
-		tools/v8_gypfiles/toolchain.gypi || die
+		tools/v8_gypfiles/toolchain.gypi \
+		|| die
 
 	# debug builds. change install path, remove optimisations and override buildtype
 	if use debug; then
-		sed -i -e "s|out/Release/|out/Debug/|g" tools/install.py || die
+		sed -i -e "s|out/Release/|out/Debug/|g" \
+			tools/install.py \
+			|| die
 		BUILDTYPE=Debug
 	fi
 
@@ -367,9 +370,11 @@ src_prepare() {
 		# bsd, posix, sysv, darwin, just-symbols
 		einfo "Detected llvm-nm: -f p -> -f posix"
 		sed -i -e "s|nm -gD -f p |nm -gD -f posix |g" \
-			"deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja.py" || die
+			"deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja.py" \
+			|| die
 		sed -i -e "s|nm -gD -f p |nm -gD -f posix |g" \
-			"tools/gyp/pylib/gyp/generator/ninja.py" || die
+			"tools/gyp/pylib/gyp/generator/ninja.py" \
+			|| die
 	fi
 
 	# Save before using filter-flag
