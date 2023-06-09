@@ -10,40 +10,58 @@ inherit multilib-minimal
 
 DESCRIPTION="Libraries for cryptographic UIs and accessing PKCS#11 modules"
 LICENSE="GPL-2+ LGPL-2+"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~sparc-solaris ~x86-solaris"
+KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86
+~amd64-linux ~x86-linux ~sparc-solaris ~x86-solaris
+"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/gcr"
-SLOT="4/gcr4.4-gck2.2" # subslot = soname and soversion of libgcr and libgck
+SLOT="4/gcr-4.4-gck-2.2" # subslot = soname and soversion of libgcr and libgck
 IUSE+=" gtk gtk-doc +introspection systemd +vala"
-REQUIRED_USE+=" vala? ( introspection )"
+REQUIRED_USE+="
+	vala? (
+		introspection
+	)
+"
 # For dependencies see: gcr-3.40.0/meson.build
 # Upstream says GPG is optional to avoid circular dependency
 DEPEND+="
+	!<app-crypt/gcr-3.41.1-r1
 	>=app-crypt/gnupg-2.3.6
 	>=app-crypt/libsecret-0.20[${MULTILIB_USEDEP}]
 	>=app-crypt/p11-kit-0.19.0[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.68.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libgcrypt-1.2.2:0=[${MULTILIB_USEDEP}]
 	>=sys-apps/dbus-1[${MULTILIB_USEDEP}]
-	gtk? ( gui-libs/gtk:4[introspection?] )
-	introspection? ( >=dev-libs/gobject-introspection-1.58:= )
-	systemd? ( sys-apps/systemd:=[${MULTILIB_USEDEP}] )
-	!<app-crypt/gcr-3.41.1-r1
+	gtk? (
+		gui-libs/gtk:4[introspection?]
+	)
+	introspection? (
+		>=dev-libs/gobject-introspection-1.58:=
+	)
+	systemd? (
+		sys-apps/systemd:=[${MULTILIB_USEDEP}]
+	)
 "
-RDEPEND+=" ${DEPEND}
+RDEPEND+="
+	${DEPEND}
 	app-crypt/gnupg
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	dev-util/gdbus-codegen
-	dev-util/glib-utils
-	gtk? ( dev-libs/libxml2:2[${MULTILIB_USEDEP}] )
-	gtk-doc? (
-		>=dev-util/gtk-doc-1.9
-		>=dev-util/gi-docgen-2022.1
-	)
 	>=sys-devel/gettext-0.19.8[${MULTILIB_USEDEP}]
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	vala? ( $(vala_depend) )
+	dev-util/gdbus-codegen
+	dev-util/glib-utils
+	gtk? (
+		dev-libs/libxml2:2[${MULTILIB_USEDEP}]
+	)
+	gtk-doc? (
+		>=dev-util/gi-docgen-2022.1
+		>=dev-util/gtk-doc-1.9
+	)
+	vala? (
+		$(vala_depend)
+	)
 "
 
 pkg_setup() {
@@ -58,13 +76,19 @@ src_prepare() {
 
 src_configure() {
 	configure_abi() {
-		cd "${BUILD_DIR}"
+		cd "${BUILD_DIR}" || die
 		local emesonargs=(
-			$(multilib_native_usex introspection -Dintrospection=true -Dintrospection=false)
 			$(meson_use gtk gtk4)
 			$(meson_use gtk-doc gtk_doc)
+			$(multilib_native_usex \
+				introspection \
+				-Dintrospection=true \
+				-Dintrospection=false)
+			$(multilib_native_usex \
+				vala \
+				-Dvapi=true \
+				-Dvapi=false)
 			-Dgpg_path=/usr/bin/gpg
-			$(multilib_native_usex vala -Dvapi=true -Dvapi=false)
 		)
 		EMESON_SOURCE="${BUILD_DIR}" \
 		BUILD_DIR="${WORKDIR}/${P}-build-${ABI}" \
@@ -84,8 +108,9 @@ src_compile() {
 
 src_test() {
 	test_abi() {
-		cd "${BUILD_DIR}"
-		dbus-run-session meson test -C "${BUILD_DIR}" || die 'tests failed'
+		cd "${BUILD_DIR}" || die
+		dbus-run-session meson test -C "${BUILD_DIR}" \
+			|| die 'tests failed'
 	}
 	multilib_foreach_abi test_abi
 }
@@ -103,8 +128,11 @@ src_install() {
 
 multilib_src_install_all() {
 	if use gtk-doc; then
-		mkdir -p "${ED}"/usr/share/gtk-doc/html/ || die
-		mv "${ED}"/usr/share/doc/{gck-2,gcr-4} "${ED}"/usr/share/gtk-doc/html/ || die
+		mkdir -p "${ED}/usr/share/gtk-doc/html/" \
+			|| die
+		mv "${ED}/usr/share/doc/"{gck-2,gcr-4} \
+			"${ED}/usr/share/gtk-doc/html/" \
+			|| die
 	fi
 }
 
