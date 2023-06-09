@@ -126,3 +126,5 @@ pkg_prerm() {
 		rm "${EROOT}/usr/bin/bazel"
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (bootstrap/build-self) 6.2.1 (20230608)
