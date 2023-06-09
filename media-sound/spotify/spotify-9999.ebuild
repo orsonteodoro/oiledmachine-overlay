@@ -96,7 +96,7 @@ MESA_PV="20.3.5"
 # <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
 OPTIONAL_RDEPENDS_LISTED="
 	ffmpeg? (
-		<media-video/ffmpeg-5
+		<media-video/ffmpeg-6
 	)
 	libnotify? (
 		>=x11-libs/libnotify-0.7.9

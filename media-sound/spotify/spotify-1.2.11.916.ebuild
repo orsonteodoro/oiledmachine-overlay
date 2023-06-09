@@ -96,7 +96,7 @@ MESA_PV="20.3.5"
 # <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
 OPTIONAL_RDEPENDS_LISTED="
 	ffmpeg? (
-		<media-video/ffmpeg-5
+		<media-video/ffmpeg-6
 	)
 	libnotify? (
 		>=x11-libs/libnotify-0.7.9
@@ -1128,6 +1128,6 @@ pkg_postrm() {
 # wayland:  pass
 # audio podcasts:  pass
 # emoji render:  pass
-# UK audio podcast(s):  fail with ffmpeg 4.4.x and 5.1.x
+# UK audio podcast(s):  fail with ffmpeg 4.4.x and 5.1.x, but works with ${PN}-1.1.84.716 with ffmpeg 4.4.x
 # video podcasts:  pass
 # typical songs:  pass
