@@ -4,8 +4,9 @@
 
 EAPI=8
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_SETUPTOOLS="bdepend"
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
 DESCRIPTION="The Levenshtein Python C extension module contains functions for \
@@ -38,7 +39,10 @@ BDEPEND+="
 		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
 	)
 "
-SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${PN}-${PV}.tar.gz"
+SRC_URI="
+https://github.com/maxbachmann/Levenshtein/archive/refs/tags/v${PV}.tar.gz
+	-> ${PN}-${PV}.tar.gz
+"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 
@@ -47,7 +51,7 @@ src_configure() {
 		| cut -f 3 -d " " \
 		| sed -e "s|a|_alpha|g" \
 		| sed -e "s|b|_beta|g")
-	local expected_cython_pv="3.0.0_alpha10"
+	local expected_cython_pv="3.0.0_alpha11"
 	local required_cython_major=$(ver_cut 1 ${expected_cython_pv})
 	if ver_test ${actual_cython_pv} -lt ${required_cython_major} ; then
 eerror
