@@ -2,6 +2,8 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# The lockfile should be updated once a week for security reasons.
+
 EAPI=8
 
 if [[ "${PV}" =~ 9999 ]] ; then
@@ -734,6 +736,9 @@ eerror
 }
 
 pkg_setup() {
+	if [[ "${GENERATE_LOCKFILE}" =~ "1" ]] ; then
+		check_network_sandbox
+	fi
 	if has fallback-commit ${IUSE} && ! use fallback-commit ; then
 ewarn
 ewarn "It is strongly recommended to use the fallback-commit USE flag for"
