@@ -5,8 +5,8 @@
 
 CATEGORY="media-plugins"
 PN="gst-plugins-rs"
-PV="0.10.8"
-MY_PV="0.10.8"
+PV="${1}"
+MY_PV="${1}"
 
 # - has ambiguous means
 declare -A CARGO_PATHS=(
@@ -97,11 +97,18 @@ main() {
 	# live
 	local L=$(grep -l -F "git+" gst-plugins-rs-config*.txt)
 	for l in ${L[@]} ; do
-		local name=$(grep "name = " ${l} | cut -f 2 -d '"')
-		local version=$(grep "version = " ${l} | cut -f 2 -d '"')
-# ?rev=2afb025a327173ce891954c052e804d0f880368a
-		local source=$(grep "source = " ${l} | cut -f 2 -d '"' | sed -r -e "s|git[+]||g" -e "s|[?]branch=[a-zA-Z0-9.]+||" -e "s|#|;|g" -e "s|[?]rev=[a-zA-Z0-9]{0,40}||" -e "s|\.git||")
-#source = "git+https://github.com/gtk-rs/gtk-rs-core?branch=0.17#6b109fb807237b5d07aff9a541ca68e9c2191abd"
+		local name=$(grep "name = " ${l} \
+			| cut -f 2 -d '"')
+		local version=$(grep "version = " ${l} \
+			| cut -f 2 -d '"')
+		local source=$(grep "source = " ${l} \
+			| cut -f 2 -d '"' \
+			| sed -r \
+				-e "s|git[+]||g" \
+				-e "s|[?]branch=[a-zA-Z0-9.]+||" \
+				-e "s|#|;|g" \
+				-e "s|[?]rev=[a-zA-Z0-9]{0,40}||" \
+				-e "s|\.git||")
 		[[ -z "${version}" ]] && continue
 		cargo_path="${CARGO_PATHS[${name}]}"
 		s_live+="[${name}]=\"${source};${cargo_path}\" # ${version}\n"
