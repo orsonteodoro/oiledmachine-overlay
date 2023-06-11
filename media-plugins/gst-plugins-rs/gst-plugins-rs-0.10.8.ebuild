@@ -560,7 +560,6 @@ zune-inflate-0.2.54
 
 		inherit cargo
 		SRC_URI+="$(cargo_crate_uris)"
-		:;
 	fi
 fi
 
@@ -633,7 +632,7 @@ MODULES=(
 	webrtchttp
 )
 IUSE+="
-${MODULES[@]} doc system-libsodium
+${MODULES[@]} doc system-libsodium r1
 "
 REQUIRED_USE+="
 	|| (
@@ -829,17 +828,18 @@ eerror
 			die
 		fi
 	else
-		unpack ${A}
+		unpack "gst-plugins-rs-${PV}.tar.bz2"
+		cp -a "${FILESDIR}/${PV}/Cargo.lock" "${S}" || die
 		cargo_src_unpack
 	fi
 }
 
 _lockfile_gen_unpack() {
-	unpack ${A}
+	unpack "gst-plugins-rs-${PV}.tar.bz2"
 	cd "${S}" || die
 einfo "Generating lockfile"
-#	rm Cargo.lock
-	cargo generate-lockfile
+	rm Cargo.lock
+	cargo generate-lockfile || die "Failed to update Cargo.lock"
 	die
 }
 
@@ -866,13 +866,43 @@ multilib_src_compile() {
 multilib_src_install() {
 	meson_src_install
 
-	LCNR_SOURCE="${HOME}/.cargo"
-	LCNR_TAG="third_party_cargo"
-	lcnr_install_files
+	if [[ "${PV}" =~ 9999 ]] ; then
+		LCNR_SOURCE="${HOME}/.cargo"
+		LCNR_TAG="third_party_cargo"
+		lcnr_install_files
 
-	LCNR_SOURCE="${S}"
-	LCNR_TAG="sources"
-	lcnr_install_files
+		LCNR_SOURCE="${S}"
+		LCNR_TAG="sources"
+		lcnr_install_files
+	else
+		LCNR_SOURCE="${WORKDIR}/cargo_home"
+		LCNR_TAG="third_party_cargo"
+		lcnr_install_files
+
+		LCNR_SOURCE=$(realpath "${WORKDIR}/ffv1-"*)
+		LCNR_TAG="third_party_cargo_ffv1"
+		lcnr_install_files
+
+		LCNR_SOURCE=$(realpath "${WORKDIR}/flavors-"*)
+		LCNR_TAG="third_party_cargo_flavors"
+		lcnr_install_files
+
+		LCNR_SOURCE=$(realpath "${WORKDIR}/gstreamer-rs-"*)
+		LCNR_TAG="third_party_cargo_gstreamer-rs"
+		lcnr_install_files
+
+		LCNR_SOURCE=$(realpath "${WORKDIR}/gtk-rs-core-"*)
+		LCNR_TAG="third_party_cargo_gtk-rs-core"
+		lcnr_install_files
+
+		LCNR_SOURCE=$(realpath "${WORKDIR}/gtk4-rs-"*)
+		LCNR_TAG="third_party_cargo_gtk4-rs"
+		lcnr_install_files
+
+		LCNR_SOURCE="${S}"
+		LCNR_TAG="sources"
+		lcnr_install_files
+	fi
 }
 
 multilib_src_test() {
