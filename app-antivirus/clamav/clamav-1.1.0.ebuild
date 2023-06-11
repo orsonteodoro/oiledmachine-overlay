@@ -2,6 +2,8 @@
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# The lockfile should be updated once a week for security reasons.
+
 EAPI=8
 
 LLVM_MAX_SLOT=14
@@ -11,170 +13,160 @@ PYTHON_COMPAT=( python3_{9..11} ) # CI uses 3.8
 # LLVM 15 support is a Work In Progress (WIP)
 # LLVM 16 support is a Work In Progress (WIP)
 
-# From original ebuild.
+# From "convert-cargo-lock.sh 1.1.0"
 CRATES="
-	adler-1.0.2
-	aho-corasick-0.7.20
-	ansi_term-0.12.1
-	atty-0.2.14
-	autocfg-1.1.0
-	base64-0.21.0
-	bindgen-0.59.2
-	bit_field-0.10.2
-	bitflags-1.3.2
-	block-buffer-0.10.4
-	bumpalo-3.12.0
-	bytemuck-1.13.1
-	byteorder-1.4.3
-	cbindgen-0.24.3
-	cc-1.0.79
-	cexpr-0.6.0
-	cfg-if-1.0.0
-	clang-sys-1.6.1
-	clap-2.34.0
-	clap-3.2.23
-	clap_lex-0.2.4
-	color_quant-1.1.0
-	cpufeatures-0.2.6
-	crc32fast-1.3.2
-	crossbeam-channel-0.5.8
-	crossbeam-deque-0.8.3
-	crossbeam-epoch-0.9.14
-	crossbeam-utils-0.8.15
-	crunchy-0.2.2
-	crypto-common-0.1.6
-	digest-0.10.6
-	either-1.8.1
-	env_logger-0.9.3
-	errno-0.3.1
-	errno-dragonfly-0.1.2
-	exr-1.6.3
-	fastrand-1.9.0
-	fdeflate-0.3.0
-	flate2-1.0.25
-	flume-0.10.14
-	futures-core-0.3.28
-	futures-sink-0.3.28
-	generic-array-0.14.7
-	getrandom-0.2.9
-	gif-0.12.0
-	glob-0.3.1
-	half-2.2.1
-	hashbrown-0.12.3
-	heck-0.4.1
-	hermit-abi-0.1.19
-	hermit-abi-0.2.6
-	hermit-abi-0.3.1
-	hex-0.4.3
-	humantime-2.1.0
-	image-0.24.6
-	indexmap-1.9.3
-	instant-0.1.12
-	io-lifetimes-1.0.10
-	itoa-1.0.6
-	jpeg-decoder-0.3.0
-	js-sys-0.3.61
-	lazy_static-1.4.0
-	lazycell-1.3.0
-	lebe-0.5.2
-	libc-0.2.141
-	libloading-0.7.4
-	linux-raw-sys-0.3.1
-	lock_api-0.4.9
-	log-0.4.17
-	memchr-2.5.0
-	memoffset-0.8.0
-	minimal-lexical-0.2.1
-	miniz_oxide-0.6.2
-	miniz_oxide-0.7.1
-	nanorand-0.7.0
-	nom-7.1.3
-	num-complex-0.4.3
-	num-integer-0.1.45
-	num-rational-0.4.1
-	num-traits-0.2.15
-	num_cpus-1.15.0
-	once_cell-1.17.1
-	os_str_bytes-6.5.0
-	peeking_take_while-0.1.2
-	pin-project-1.0.12
-	pin-project-internal-1.0.12
-	png-0.17.8
-	primal-check-0.3.3
-	proc-macro2-1.0.56
-	qoi-0.4.1
-	quote-1.0.26
-	rayon-1.7.0
-	rayon-core-1.11.0
-	redox_syscall-0.3.5
-	regex-1.7.3
-	regex-syntax-0.6.29
-	rustc-hash-1.1.0
-	rustdct-0.7.1
-	rustfft-6.1.0
-	rustix-0.37.11
-	ryu-1.0.13
-	scopeguard-1.1.0
-	serde-1.0.160
-	serde_derive-1.0.160
-	serde_json-1.0.96
-	sha1-0.10.5
-	sha2-0.10.6
-	shlex-1.1.0
-	simd-adler32-0.3.5
-	smallvec-1.10.0
-	spin-0.9.8
-	strength_reduce-0.2.4
-	strsim-0.8.0
-	strsim-0.10.0
-	syn-1.0.109
-	syn-2.0.15
-	tempfile-3.5.0
-	termcolor-1.2.0
-	textwrap-0.11.0
-	textwrap-0.16.0
-	thiserror-1.0.40
-	thiserror-impl-1.0.40
-	tiff-0.8.1
-	toml-0.5.11
-	transpose-0.2.2
-	typenum-1.16.0
-	unicode-ident-1.0.8
-	unicode-segmentation-1.10.1
-	unicode-width-0.1.10
-	vec_map-0.8.2
-	version_check-0.9.4
-	wasi-0.11.0+wasi-snapshot-preview1
-	wasm-bindgen-0.2.84
-	wasm-bindgen-backend-0.2.84
-	wasm-bindgen-macro-0.2.84
-	wasm-bindgen-macro-support-0.2.84
-	wasm-bindgen-shared-0.2.84
-	weezl-0.1.7
-	which-4.4.0
-	winapi-0.3.9
-	winapi-i686-pc-windows-gnu-0.4.0
-	winapi-util-0.1.5
-	winapi-x86_64-pc-windows-gnu-0.4.0
-	windows-sys-0.45.0
-	windows-sys-0.48.0
-	windows-targets-0.42.2
-	windows-targets-0.48.0
-	windows_aarch64_gnullvm-0.42.2
-	windows_aarch64_gnullvm-0.48.0
-	windows_aarch64_msvc-0.42.2
-	windows_aarch64_msvc-0.48.0
-	windows_i686_gnu-0.42.2
-	windows_i686_gnu-0.48.0
-	windows_i686_msvc-0.42.2
-	windows_i686_msvc-0.48.0
-	windows_x86_64_gnu-0.42.2
-	windows_x86_64_gnu-0.48.0
-	windows_x86_64_gnullvm-0.42.2
-	windows_x86_64_gnullvm-0.48.0
-	windows_x86_64_msvc-0.42.2
-	windows_x86_64_msvc-0.48.0
-	zune-inflate-0.2.53
+adler-1.0.2
+aho-corasick-1.0.2
+ansi_term-0.12.1
+atty-0.2.14
+autocfg-1.1.0
+base64-0.21.2
+bindgen-0.59.2
+bit_field-0.10.2
+bitflags-1.3.2
+block-buffer-0.10.4
+bumpalo-3.13.0
+bytemuck-1.13.1
+byteorder-1.4.3
+cbindgen-0.24.5
+cc-1.0.79
+cexpr-0.6.0
+cfg-if-1.0.0
+clang-sys-1.6.1
+clap-2.34.0
+clap-3.2.25
+clap_lex-0.2.4
+color_quant-1.1.0
+cpufeatures-0.2.7
+crc32fast-1.3.2
+crossbeam-channel-0.5.8
+crossbeam-deque-0.8.3
+crossbeam-epoch-0.9.14
+crossbeam-utils-0.8.15
+crunchy-0.2.2
+crypto-common-0.1.6
+digest-0.10.7
+either-1.8.1
+env_logger-0.9.3
+errno-0.3.1
+errno-dragonfly-0.1.2
+exr-1.6.4
+fastrand-1.9.0
+fdeflate-0.3.0
+flate2-1.0.26
+flume-0.10.14
+futures-core-0.3.28
+futures-sink-0.3.28
+generic-array-0.14.7
+getrandom-0.2.10
+gif-0.12.0
+glob-0.3.1
+half-2.2.1
+hashbrown-0.12.3
+heck-0.4.1
+hermit-abi-0.1.19
+hermit-abi-0.2.6
+hermit-abi-0.3.1
+hex-0.4.3
+humantime-2.1.0
+image-0.24.6
+indexmap-1.9.3
+instant-0.1.12
+io-lifetimes-1.0.11
+itoa-1.0.6
+jpeg-decoder-0.3.0
+js-sys-0.3.63
+lazy_static-1.4.0
+lazycell-1.3.0
+lebe-0.5.2
+libc-0.2.146
+libloading-0.7.4
+linux-raw-sys-0.3.8
+lock_api-0.4.10
+log-0.4.19
+memchr-2.5.0
+memoffset-0.8.0
+minimal-lexical-0.2.1
+miniz_oxide-0.7.1
+nanorand-0.7.0
+nom-7.1.3
+num-complex-0.4.3
+num-integer-0.1.45
+num-rational-0.4.1
+num-traits-0.2.15
+num_cpus-1.15.0
+once_cell-1.18.0
+os_str_bytes-6.5.1
+peeking_take_while-0.1.2
+pin-project-1.1.0
+pin-project-internal-1.1.0
+png-0.17.9
+primal-check-0.3.3
+proc-macro2-1.0.60
+qoi-0.4.1
+quote-1.0.28
+rayon-1.7.0
+rayon-core-1.11.0
+redox_syscall-0.3.5
+regex-1.8.4
+regex-syntax-0.7.2
+rustc-hash-1.1.0
+rustdct-0.7.1
+rustfft-6.1.0
+rustix-0.37.19
+ryu-1.0.13
+scopeguard-1.1.0
+serde-1.0.164
+serde_derive-1.0.164
+serde_json-1.0.96
+sha1-0.10.5
+sha2-0.10.6
+shlex-1.1.0
+simd-adler32-0.3.5
+smallvec-1.10.0
+spin-0.9.8
+strength_reduce-0.2.4
+strsim-0.10.0
+strsim-0.8.0
+syn-1.0.109
+syn-2.0.18
+tempfile-3.6.0
+termcolor-1.2.0
+textwrap-0.11.0
+textwrap-0.16.0
+thiserror-1.0.40
+thiserror-impl-1.0.40
+tiff-0.8.1
+toml-0.5.11
+transpose-0.2.2
+typenum-1.16.0
+unicode-ident-1.0.9
+unicode-segmentation-1.10.1
+unicode-width-0.1.10
+vec_map-0.8.2
+version_check-0.9.4
+wasi-0.11.0+wasi-snapshot-preview1
+wasm-bindgen-0.2.86
+wasm-bindgen-backend-0.2.86
+wasm-bindgen-macro-0.2.86
+wasm-bindgen-macro-support-0.2.86
+wasm-bindgen-shared-0.2.86
+weezl-0.1.7
+which-4.4.0
+winapi-0.3.9
+winapi-i686-pc-windows-gnu-0.4.0
+winapi-util-0.1.5
+winapi-x86_64-pc-windows-gnu-0.4.0
+windows-sys-0.48.0
+windows-targets-0.48.0
+windows_aarch64_gnullvm-0.48.0
+windows_aarch64_msvc-0.48.0
+windows_i686_gnu-0.48.0
+windows_i686_msvc-0.48.0
+windows_x86_64_gnu-0.48.0
+windows_x86_64_gnullvm-0.48.0
+windows_x86_64_msvc-0.48.0
+zune-inflate-0.2.54
 "
 
 inherit cargo cmake flag-o-matic lcnr llvm python-any-r1 systemd tmpfiles
@@ -250,7 +242,7 @@ if [[ ${PV} != *_rc* ]] ; then
 fi
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
-selinux systemd test valgrind
+selinux systemd test valgrind r1
 "
 
 REQUIRED_USE="
@@ -355,7 +347,20 @@ python_check_deps() {
 	python_has_version -b ">=dev-python/pytest-${PYTEST_PV}[${PYTHON_USEDEP}]"
 }
 
+check_network_sandbox() {
+	if has network-sandbox $FEATURES ; then
+eerror
+eerror "FEATURES=\"-network-sandbox\" must be added per-package env to be able"
+eerror "to update lockfile."
+eerror
+		die
+	fi
+}
+
 pkg_setup() {
+	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
+		check_network_sandbox
+	fi
 	use jit && llvm_pkg_setup
 	use test && python-any-r1_pkg_setup
 einfo
@@ -374,6 +379,33 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.0-llvm15.patch"
 )
 
+_lockfile_gen_unpack() {
+	unpack "${MY_P}.tar.gz"
+	cd "${S}" || die
+einfo "Generating lockfile"
+	rm Cargo.lock
+	cargo generate-lockfile || die "Failed to update Cargo.lock"
+	die
+}
+
+_production_unpack() {
+	unpack "${MY_P}.tar.gz"
+	if [[ -e "${FILESDIR}/${PV}/Cargo.lock" ]] ; then
+einfo "Replacing with updated Cargo.lock"
+		cp -a "${FILESDIR}/${PV}/Cargo.lock" "${S}" || die
+	fi
+	cargo_src_unpack
+}
+
+src_unpack() {
+	default
+	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
+		_lockfile_gen_unpack
+	else
+		_production_unpack
+	fi
+}
+
 src_prepare() {
 	cmake_src_prepare
 	if ver_test ${LLVM_SLOT} -ge 16 ; then
@@ -385,6 +417,10 @@ einfo "LLVM_SLOT:\t${LLVM_SLOT}"
 einfo "LLVM_SLOT:\t${LLVM_SLOT}"
 		ewarn "JIT is still broken for LLVM 15"
 	fi
+
+	sed -i -e 's|base64 = "0.21.0"|base64 = "0.21.2"|g' \
+		"libclamav_rust/Cargo.toml" \
+		|| die
 }
 
 print_glibc_required_flags() {
@@ -641,3 +677,22 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  LICENSE-variable-changes, update-jit-for-llvm-14-to-15
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.1.0 (20230610)
+# USE="clamapp jit test -clamonacc -custom-cflags (-debug) -doc -experimental
+# -libclamav-only -man -milter -r1 -rar (-selinux) -systemd -valgrind"
+#    Start 1: libclamav
+#    Start 2: libclamav_rust
+#    Start 3: clamscan
+#    Start 4: clamd
+#1/6 Test #3: clamscan .........................   Passed   28.09 sec
+#    Start 5: freshclam
+#2/6 Test #4: clamd ............................   Passed   30.49 sec
+#    Start 6: sigtool
+#3/6 Test #6: sigtool ..........................   Passed    4.70 sec
+#4/6 Test #1: libclamav ........................   Passed   38.91 sec
+#5/6 Test #2: libclamav_rust ...................   Passed   48.10 sec
+#6/6 Test #5: freshclam ........................   Passed   37.72 sec
+#
+#100% tests passed, 0 tests failed out of 6
+#
+#Total Test time (real) =  65.85 sec
