@@ -875,7 +875,7 @@ multilib_src_install() {
 		LCNR_TAG="sources"
 		lcnr_install_files
 	else
-		LCNR_SOURCE="${WORKDIR}/cargo_home"
+		LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 		LCNR_TAG="third_party_cargo"
 		lcnr_install_files
 
