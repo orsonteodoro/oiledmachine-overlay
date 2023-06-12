@@ -162,11 +162,26 @@ eerror
 	fi
 }
 
-pkg_setup() {
-	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
-		check_network_sandbox
+check_usersandbox() {
+#
+# The error message:
+#
+# * /var/tmp/portage/sys-apps/sandbox-2.29/work/sandbox-2.29/libsandbox/libsandbox.c:resolve_path():240: failure (Cannot allocate memory):
+# * malloc(8192)
+#
+	if has usersandbox $FEATURES ; then
+eerror
+eerror "FEATURES=\"-usersandbox\" must be added per-package env to be able"
+eerror "to run tests."
+eerror
+		die
 	fi
+}
+
+pkg_setup() {
+	[[ "${GENERATE_LOCKFILE}" == "1" ]] && check_network_sandbox
 	python_setup
+	use test && check_usersandbox
 }
 
 _lockfile_gen_unpack() {
@@ -197,8 +212,9 @@ src_unpack() {
 }
 
 src_test() {
-	export PYTHONPATH="${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install/usr/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
-	cd "${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install/usr/bin" || die
+	local d="${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}"
+	cd "${d}/install/usr/bin" || die
+	PYTHONPATH="${d}/install/usr/lib/${EPYTHON}/site-packages:${PYTHONPATH}" \
 	./brz selftest || die
 }
 
