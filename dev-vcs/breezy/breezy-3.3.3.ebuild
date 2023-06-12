@@ -197,7 +197,7 @@ src_unpack() {
 }
 
 src_test() {
-	export PYTHONPATH="${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install/usr/lib/python3.10/site-packages:${PYTHONPATH}"
+	export PYTHONPATH="${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install/usr/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 	cd "${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}/install/usr/bin" || die
 	./brz selftest || die
 }
