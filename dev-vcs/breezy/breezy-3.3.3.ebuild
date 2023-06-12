@@ -211,7 +211,7 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  FAILED (test suite) 3.3.3
+# OILEDMACHINE-OVERLAY-TEST:  FAILED (test suite) 3.3.3 (20230611)
 # Ran 33248 tests in 2344.151s
 
 # FAILED (failures=5, errors=26, known_failure_count=45)
