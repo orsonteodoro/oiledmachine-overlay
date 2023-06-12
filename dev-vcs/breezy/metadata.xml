@@ -9,4 +9,31 @@
   <upstream>
     <remote-id type="launchpad">brz</remote-id>
   </upstream>
+  <use>
+    <flag name="cext">
+      Builds parts of Breezy as a C extension for performance benefits.
+    </flag>
+    <flag name="fastimport">
+      Adds support for git fastimport
+    </flag>
+    <flag name="git">
+      Adds git support
+    </flag>
+    <flag name="github">
+      Adds GitHub support
+    </flag>
+    <flag name="gpg">
+      Adds gpg support
+    </flag>
+    <flag name="sftp">
+      Adds support for branch access over sftp
+    </flag>
+    <flag name="workspace">
+      Use pynotify to track changes for performance benefits when dealing with
+      large trees with small changes
+    </flag>
+    <flag name="rN">
+      Ebuild internal revision
+    </flag>
+  </use>
 </pkgmetadata>
