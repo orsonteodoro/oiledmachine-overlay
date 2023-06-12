@@ -214,8 +214,10 @@ src_unpack() {
 src_test() {
 	local d="${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}"
 	cd "${d}/install/usr/bin" || die
+	PYTHONHASHSEED=random \
+	BRZ_PLUGIN_PATH="-site:-user" \
 	PYTHONPATH="${d}/install/usr/lib/${EPYTHON}/site-packages:${PYTHONPATH}" \
-	./brz selftest || die
+	"${d}/install/usr/bin/brz" selftest || die
 }
 
 src_install() {
@@ -227,8 +229,10 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  FAILED (test suite) 3.3.3 (20230611)
-# Ran 33248 tests in 2344.151s
-
-# FAILED (failures=5, errors=26, known_failure_count=45)
+# OILEDMACHINE-OVERLAY-TEST:  FAILED (test suite) 3.3.3 (20230612)
+#
+# Ran 33248 tests in 2315.632s
+#
+# FAILED (failures=1, errors=1, known_failure_count=46)
 # 2121 tests skipped
+#
