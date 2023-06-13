@@ -4,12 +4,9 @@
 
 EAPI=8
 
-MY_PN="${PN,,}"
-MY_PN="${MY_PN/-/_}"
-
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
-inherit distutils-r1
+inherit distutils-r1 pypi
 
 DESCRIPTION="C-API of RapidFuzz, which can be used to extend RapidFuzz from \
 separate packages"
@@ -27,8 +24,6 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/setuptools-58.1.0[${PYTHON_USEDEP}]
 "
-SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_PN}-${PV}.tar.gz"
-S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
