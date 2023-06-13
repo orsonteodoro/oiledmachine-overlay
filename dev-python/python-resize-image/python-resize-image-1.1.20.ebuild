@@ -6,7 +6,7 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
-inherit distutils-r1
+inherit distutils-r1 pypi
 
 DESCRIPTION="A Small python package to easily resize images"
 HOMEPAGE="https://github.com/VingtCinq/python-resize-image"
@@ -28,13 +28,11 @@ BDEPEND+="
 "
 ASSET_COMMIT="fb3e82d0da2c108e05499f57cdf5c02210b482f7" # In the repo but not in the pypi tarball.
 SRC_URI="
-mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz
 	test? (
 https://github.com/VingtCinq/python-resize-image/raw/${ASSET_COMMIT}/tests/test-image.jpeg
 	-> ${PN}-test-image.jpeg.${ASSET_COMMIT:0:7}
 	)
 "
-S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/${PN}-1.1.20-use-rgb-convert.patch"
