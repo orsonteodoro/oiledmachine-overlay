@@ -4,8 +4,10 @@
 
 EAPI=8
 
+PYPI_NO_NORMALIZE=1
+PYPI_PN="nvidia-ml-py"
 PYTHON_COMPAT=( python3_{8..11} )
-inherit distutils-r1
+inherit distutils-r1 pypi
 
 MY_PN="nvidia-ml-py"
 
@@ -31,8 +33,6 @@ DEPEND+="
 	${RDEPEND}
 "
 # See https://pypi.org/project/nvidia-ml-py/#history
-SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_PN}-${PV}.tar.gz"
-S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
