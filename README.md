@@ -553,8 +553,6 @@ should be a bash script.
 | media-libs/theorafile | This is a system library for the dotnet package. |
 | media-libs/theoraplay | This needs testing. |
 | media-libs/vips | Kept for TypeScript. |
-| media-plugins/bitlbee-facebook | TBA |
-| media-plugins/gst-plugins-omx | TBA |
 | media-plugins/RadeonProRenderBlenderAddon | You still need to manually enable the plugin. |
 | media-plugins/RadeonProRenderMaterialLibrary | Assets for the addon |
 | media-radio/openwebrx | This is a multiuser Software-Defined Radio (SDR) receiver software with web interface for shortwave, AM, FM radio |
