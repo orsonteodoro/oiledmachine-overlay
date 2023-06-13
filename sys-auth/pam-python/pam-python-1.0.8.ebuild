@@ -4,9 +4,10 @@
 
 EAPI=8
 
+# Verified working with Python 3.10
 # Verified working with Python 3.11
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..11} ) # Originally for 2.7
 inherit flag-o-matic python-single-r1 toolchain-funcs
 
 DESCRIPTION="Enables PAM modules to be written in Python"
