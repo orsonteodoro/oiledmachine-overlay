@@ -4,6 +4,7 @@
 
 EAPI=8
 
+PYPI_NO_NORMALIZE=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1 pypi
@@ -34,6 +35,8 @@ https://github.com/VingtCinq/python-resize-image/raw/${ASSET_COMMIT}/tests/test-
 	)
 "
 RESTRICT="mirror"
+SRC_URI="$(pypi_sdist_url --no-normalize)"
+S="${WORKDIR}/${PYPI_PN}-$(pypi_translate_version "${PV}")"
 PATCHES=(
 	"${FILESDIR}/${PN}-1.1.20-use-rgb-convert.patch"
 )
