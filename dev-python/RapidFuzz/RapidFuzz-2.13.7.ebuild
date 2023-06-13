@@ -8,7 +8,7 @@ MY_PN="${PN,,}"
 
 DISTUTILS_USE_SETUPTOOLS="bdepend"
 PYTHON_COMPAT=( python3_{8..10} )
-inherit distutils-r1
+inherit distutils-r1 pypi
 
 DESCRIPTION="Rapid fuzzy string matching in Python using various string metrics"
 LICENSE="MIT"
@@ -51,8 +51,6 @@ BDEPEND+="
 		dev-python/pytest[${PYTHON_USEDEP}]
 	)
 "
-SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_PN}-${PV}.tar.gz"
-S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
 
 src_configure() {
