@@ -82,8 +82,16 @@ SLOT="0"
 IUSE+=" cext doc fastimport git github gpg launchpad sftp test workspace r1"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
+	test? (
+		sftp
+	)
 "
 # See also:  https://github.com/breezy-team/breezy/blob/upstream-3.3.3/setup.py#L60
+# TODO package:
+# launchpadlib
+# setuptools-gettext
+FLAKE8_PV="6.0.0"
+PARAMIKO_PV="3.1.0"
 DEPEND="
 	${PYTHON_DEPS}
 	>=dev-python/configobj-5.0.8[${PYTHON_USEDEP}]
@@ -107,8 +115,7 @@ DEPEND="
 		>=dev-python/launchpadlib-1.11.0[${PYTHON_USEDEP}]
 	)
 	sftp? (
-		>=dev-python/paramiko-3.1.0[${PYTHON_USEDEP}]
-		dev-python/pycrypto[${PYTHON_USEDEP}]
+		>=dev-python/paramiko-${PARAMIKO_PV}[${PYTHON_USEDEP}]
 	)
 	workspace? (
 		>=dev-python/pyinotify-0.9.6[${PYTHON_USEDEP}]
@@ -117,10 +124,6 @@ DEPEND="
 RDEPEND+="
 	${DEPEND}
 "
-# TODO package:
-# launchpadlib
-# setuptools-gettext
-FLAKE8_PV="6.0.0"
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/setuptools-60[${PYTHON_USEDEP}]
@@ -143,6 +146,9 @@ BDEPEND+="
 		>=dev-python/testscenarios-0.5.0[${PYTHON_USEDEP}]
 		>=dev-python/testtools-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/subunit-1.4.2[${PYTHON_USEDEP}]
+		sftp? (
+			>=dev-python/paramiko-${PARAMIKO_PV}[${PYTHON_USEDEP},server]
+		)
 	)
 "
 SRC_URI="
@@ -151,6 +157,8 @@ https://launchpad.net/brz/$(ver_cut 1-2 ${PV})/${PV}/+download/${PN}-${PV}.tar.g
 "
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
+PATCHES=(
+)
 
 check_network_sandbox() {
 	if has network-sandbox $FEATURES ; then
@@ -181,7 +189,10 @@ eerror
 pkg_setup() {
 	[[ "${GENERATE_LOCKFILE}" == "1" ]] && check_network_sandbox
 	python_setup
-	use test && check_usersandbox
+	if use test ; then
+		check_usersandbox
+		use sftp && check_network_sandbox
+	fi
 }
 
 _lockfile_gen_unpack() {
