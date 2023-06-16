@@ -5,7 +5,7 @@ EAPI=8
 
 # Please bump with dev-libs/icu-layoutex
 
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{10..11} )
 VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}/usr/share/openpgp-keys/icu.asc"
 inherit autotools flag-o-matic flag-o-matic-om llvm multilib-minimal
 inherit python-any-r1 toolchain-funcs verify-sig
@@ -25,15 +25,14 @@ LICENSE="
 "
 # GPL-2+ - icu/source/aclocal.m4
 # GPL-3+ - icu/source/config.guess
-SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="
+SLOT="0/${PV%.*}.1"
+if [[ ${PV} != *_rc* ]] ; then
+	KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
-~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
-~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt
-
-r1
-"
-IUSE="debug doc examples static-libs test"
+~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x64-solaris
+	"
+fi
+IUSE="debug doc examples static-libs test r1"
 RESTRICT="
 	!test? (
 		test
@@ -67,7 +66,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-64.2-darwin.patch"
 	"${FILESDIR}/${PN}-68.1-nonunicode.patch"
 	"${FILESDIR}/extra/${PN}-69.1-extra-so-flags.patch" # oiledmachine-overlay added
-	"${FILESDIR}/${PN}-73.1-fix-UChar-api.patch"
 )
 
 get_lib_types() {
@@ -165,7 +163,7 @@ _configure_abi() {
 			strip-flag-value "${value}"
 		fi
 	done
-	filter-flag -fsanitize-cfi-cross-dso
+	filter-flags -fsanitize-cfi-cross-dso
 
 	export ESHAREDLIBCFLAGS=""
 	export ESHAREDLIBCXXFLAGS=""
@@ -174,6 +172,9 @@ _configure_abi() {
 	local myeconfargs=(
 		--disable-renaming
 		--disable-samples
+		# TODO: Merge with dev-libs/icu-layoutex
+		# Planned to do this w/ 73.2 but seem to get test failures
+		# only with --enable-layoutex.
 		--disable-layoutex
 		$(use_enable debug)
 		$(use_enable test tests)
@@ -193,16 +194,16 @@ _configure_abi() {
 		)
 	fi
 
-	myeconfargs+=(
-		--enable-extras
-		--enable-tools
-	)
+#	myeconfargs+=(
+#		--enable-extras
+#		--enable-tools
+#	)
 
 	tc-is-cross-compiler && myeconfargs+=(
 		--with-cross-build="${WORKDIR}"/host
 	)
 
-	# Work around cross-endian testing failures with LTO #757681
+	# Work around cross-endian testing failures with LTO, bug #757681
 	if tc-is-cross-compiler && is-flagq '-flto*' ; then
 		myeconfargs+=( --disable-strict )
 	fi
@@ -256,7 +257,7 @@ src_test() {
 			# CINTLTST_OPTS: cintltst options
 			#   -e: Exhaustive testing
 			#   -v: Increased verbosity
-			emake -j1 VERBOSE="1" check
+			emake VERBOSE="1" check
 		done
 	}
 	multilib_foreach_abi test_abi
