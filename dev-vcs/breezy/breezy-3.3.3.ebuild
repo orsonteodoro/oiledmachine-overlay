@@ -51,6 +51,29 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit autotools cargo distutils-r1 lcnr
 
+IUSE+=" doc developer-docs user-docs"
+REQUIRED_USE+="
+	doc? (
+		^^ (
+			developer-docs
+			user-docs
+		)
+	)
+"
+
+_breezy_ebuild_set_globals() {
+einfo "Called _breezy_ebuild_set_globals"
+	if [[ "${USE}" =~ "developer-docs" ]] ; then
+einfo "Building with developer-docs"
+		distutils_enable_sphinx "doc/developers"
+	elif [[ "${USE}" =~ "user-docs" ]] ; then
+einfo "Building with user-docs"
+		distutils_enable_sphinx "doc/en"
+	fi
+}
+_breezy_ebuild_set_globals
+unset -f _breezy_ebuild_set_globals
+
 DESCRIPTION="Breezy is a friendly powerful distributed version control system."
 HOMEPAGE="https://launchpad.net/brz"
 LICENSE="
@@ -79,7 +102,7 @@ LICENSE+="
 # homedir/.cargo/registry/src/github.com-1ecc6299db9ec823/unicode-ident-1.0.5/LICENSE-UNICODE - Unicode-DFS-2016
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-IUSE+=" cext doc fastimport git github gpg launchpad sftp test workspace r1"
+IUSE+=" cext fastimport git github gpg launchpad sftp test workspace r1"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	test? (
@@ -90,13 +113,14 @@ REQUIRED_USE+="
 # TODO package:
 # launchpadlib
 # setuptools-gettext
+DULWICH_PV="0.21.5"
 FLAKE8_PV="6.0.0"
 PARAMIKO_PV="3.1.0"
 DEPEND="
 	${PYTHON_DEPS}
 	>=dev-python/configobj-5.0.8[${PYTHON_USEDEP}]
 	>=dev-python/cryptography-40.0.2[${PYTHON_USEDEP}]
-	>=dev-python/dulwich-0.21.3[${PYTHON_USEDEP}]
+	>=dev-python/dulwich-${DULWICH_PV}[${PYTHON_USEDEP}]
 	>=dev-python/fastbencode-0.2[${PYTHON_USEDEP}]
 	>=dev-python/urllib3-2.0.2[${PYTHON_USEDEP}]
 	>=dev-python/merge3-0.0.13[${PYTHON_USEDEP}]
@@ -126,7 +150,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/setuptools-60[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-67.8.0[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-rust-1.6.0[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-gettext-0.1.3[${PYTHON_USEDEP}]
 	>=dev-python/flake8-${FLAKE8_PV}[${PYTHON_USEDEP}]
@@ -141,7 +165,7 @@ BDEPEND+="
 		>=dev-python/sphinx-epytext-0.0.4[${PYTHON_USEDEP}]
 	)
 	test? (
-		>=dev-python/dulwich-0.21.3[${PYTHON_USEDEP}]
+		>=dev-python/dulwich-${DULWICH_PV}[${PYTHON_USEDEP}]
 		>=dev-python/flake8-${FLAKE8_PV}[${PYTHON_USEDEP}]
 		>=dev-python/testscenarios-0.5.0[${PYTHON_USEDEP}]
 		>=dev-python/testtools-2.6.0[${PYTHON_USEDEP}]
