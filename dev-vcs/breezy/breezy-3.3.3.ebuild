@@ -59,6 +59,12 @@ REQUIRED_USE+="
 			user-docs
 		)
 	)
+	developer-docs? (
+		doc
+	)
+	user-docs? (
+		doc
+	)
 "
 
 _breezy_ebuild_set_globals() {
