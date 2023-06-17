@@ -1,0 +1,35 @@
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+
+Python in this distro does not automatically create a .pyc file, so create it
+manually.
+
+The distro can only compile .py -> pyc before merging the package into the live
+system.  A non root user cannot create plugin pyc files in the system's Python
+sitedir.
+
+--- a/breezy/tests/test_plugins.py.orig	2023-04-01 05:10:10.000000000 -0700
++++ b/breezy/tests/test_plugins.py	2023-06-17 13:10:53.524633118 -0700
+@@ -28,6 +28,7 @@ from typing import Any, Dict, List
+ import breezy
+ 
+ from .. import osutils, plugin, tests
++import py_compile
+ 
+ # TODO: Write a test for plugin decoration of commands.
+ 
+@@ -383,6 +384,7 @@ class TestPlugins(BaseTestPlugins):
+     def test_plugin_get_path_pyc_only(self):
+         # first import creates plugin.pyc (or plugin.pyo depending on __debug__)
+         self.setup_plugin()
++        py_compile.compile(self.test_dir + '/plugin.py')
+         os.unlink(self.test_dir + '/plugin.py')
+         self.promote_cache(self.test_dir)
+         self.reset()
+@@ -830,6 +832,7 @@ class TestLoadPluginAt(BaseTestPlugins):
+                                   self.module.test_foo.__file__)
+ 
+         # Try importing again now that the source has been compiled
++        py_compile.compile('non-standard-dir/__init__.py')
+         os.remove('non-standard-dir/__init__.py')
+         self.promote_cache('non-standard-dir')
+         self.reset()

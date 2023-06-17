@@ -188,6 +188,7 @@ https://launchpad.net/brz/$(ver_cut 1-2 ${PV})/${PV}/+download/${PN}-${PV}.tar.g
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 PATCHES=(
+	"${FILESDIR}/breezy-3.3.3-fix-compile-test.patch" # Added by oiledmachine-overlay
 )
 
 check_network_sandbox() {
@@ -254,7 +255,7 @@ src_unpack() {
 
 src_test() {
 	local d="${WORKDIR}/${PN}-${PV}-${EPYTHON/./_}"
-	cd "${d}/install/usr/bin" || die
+	cd "${S}" || die
 	PYTHONHASHSEED=random \
 	BRZ_PLUGIN_PATH="-site:-user" \
 	PYTHONPATH="${d}/install/usr/lib/${EPYTHON}/site-packages:${PYTHONPATH}" \
@@ -270,10 +271,13 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  FAILED (test suite) 3.3.3 (20230612)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (test suite) 3.3.3 (20230617)
+# USE="sftp test -cext (-debug) -developer-docs -doc -fastimport -git -github
+# -gpg -launchpad -r1 -user-docs -workspace" PYTHON_TARGETS="python3_10
+# -python3_11"
 #
-# Ran 33248 tests in 2315.632s
+# Ran 33728 tests in 2411.236s
 #
-# FAILED (failures=1, errors=1, known_failure_count=46)
-# 2121 tests skipped
+# OK (known_failures=46)
+# 2136 tests skipped
 #
