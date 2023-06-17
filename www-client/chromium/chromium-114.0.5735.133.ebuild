@@ -731,7 +731,7 @@ COMMON_SNAPSHOT_DEPEND="
 			virtual/krb5[${MULTILIB_USEDEP}]
 		)
 		pulseaudio? (
-			>=media-sound/pulseaudio-14.2:=[${MULTILIB_USEDEP}]
+			>=media-libs/libpulse-14.2:=[${MULTILIB_USEDEP}]
 		)
 		vaapi? (
 			>=media-libs/libva-${LIBVA_PV}:=[${MULTILIB_USEDEP},wayland?,X?]
