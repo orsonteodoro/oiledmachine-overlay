@@ -1362,18 +1362,6 @@ einfo
 
 	chromium_suid_sandbox_check_kernel_config
 
-	# The package below does not work correctly with Wayland due to
-	# unsupported EGLStreams.
-	if use wayland \
-		&& ! use headless \
-		&& has_version "x11-drivers/nvidia-drivers" ; then
-ewarn
-ewarn "The x11-drivers/nvidia-drivers package does not work with Wayland.  You"
-ewarn "can disable Wayland by setting DISABLE_OZONE_PLATFORM=true in"
-ewarn "/etc/chromium/default."
-ewarn
-	fi
-
 	if ! use amd64 && [[ "${USE}" =~ "cfi" ]] ; then
 ewarn
 ewarn "All variations of the cfi USE flags are not defaults for this platform."
@@ -2344,14 +2332,8 @@ ewarn
 		myconf_gn+=" host_toolchain=\"//build/toolchain/linux/unbundle:default\""
 	fi
 
-	# Create dummy pkg-config file for libsystemd, only dependency of installer
-	mkdir "${T}/libsystemd" || die
-	cat <<- EOF > "${T}/libsystemd/libsystemd.pc" || die
-		Name:
-		Description:
-		Version:
-	EOF
-	local -x PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+"${PKG_CONFIG_PATH}:"}${T}/libsystemd"
+	# Disable rust for now; it's only used for testing and we don't need the additional bdep
+	#myconf_gn+=" enable_rust=false" # TODO: retest uncommented.  It works as default.
 
 	# Debug symbols level 2 is still on when official is on even though
 	# is_debug=false.
