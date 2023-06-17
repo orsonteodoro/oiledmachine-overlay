@@ -15,8 +15,8 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
 IUSE+=" doc r1"
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
-# See https://github.com/grpc/grpc/blob/v1.52.1/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.52.1/third_party
+# See https://github.com/grpc/grpc/blob/v1.52.2/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.52.2/third_party
 PROTOBUF_SLOT="0/32"
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-20220623.0:0/20220623[cxx17(+)]

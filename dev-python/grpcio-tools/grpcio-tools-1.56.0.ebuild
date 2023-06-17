@@ -13,10 +13,10 @@ LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 PROTOBUF_SLOT="0/32"
-# See https://github.com/grpc/grpc/blob/v1.52.1/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.52.1/third_party
+# See https://github.com/grpc/grpc/blob/v1.56.0/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.56.0/third_party
 RDEPEND="
-	>=dev-python/cython-0.29.26[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29.35[${PYTHON_USEDEP}]
 	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
 "
@@ -26,7 +26,7 @@ DEPEND="
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 "${PV}")
-PROTOBUF_PV="21.6"
+PROTOBUF_PV="23.1"
 SRC_URI+="
 https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
 	-> ${GRPC_P}.tar.gz
