@@ -14,6 +14,45 @@ HOMEPAGE="https://ycm-core.github.io/ycmd/"
 LICENSE="
 	GPL-3+
 	BSD
+	!system-bottle? (
+		MIT
+	)
+	!system-libclang? (
+		Apache-2.0-with-LLVM-exceptions
+		MIT
+		UoI-NCSA
+	)
+	!system-mono? (
+		all-rights-reserved
+		BSD
+		DOTNET-libraries-and-runtime-components-patents
+		MIT
+		Mono-patents
+	)
+	!system-mrab-regex? (
+		all-rights-reserved
+		CNRI
+		PSF-2
+	)
+	!system-pathtools? (
+		BSD
+		MIT
+	)
+	!system-requests? (
+		Apache-2.0
+		BSD
+		LGPL-2.1+
+		MIT
+		MPL-2.0
+		PSF-2
+		unicode
+	)
+	!system-waitress? (
+		ZPL
+	)
+	!system-watchdog? (
+		Apache-2.0
+	)
 	clangd? (
 		!system-clangd? (
 			Apache-2.0-with-LLVM-exceptions
@@ -81,11 +120,6 @@ LICENSE="
 			PSF-2
 		)
 	)
-	!system-mrab-regex? (
-		all-rights-reserved
-		CNRI
-		PSF-2
-	)
 	rust? (
 		!system-rust? (
 			all-rights-reserved
@@ -110,39 +144,9 @@ LICENSE="
 			)
 		)
 	)
-	!system-bottle? (
-		MIT
-	)
-	!system-libclang? (
-		Apache-2.0-with-LLVM-exceptions
-		MIT
-		UoI-NCSA
-	)
-	!system-mono? (
-		all-rights-reserved
+	test? (
 		BSD
-		DOTNET-libraries-and-runtime-components-patents
-		MIT
-		Mono-patents
-	)
-	!system-pathtools? (
-		BSD
-		MIT
-	)
-	!system-requests? (
-		Apache-2.0
-		BSD
-		LGPL-2.1+
-		MIT
-		MPL-2.0
-		PSF-2
-		unicode
-	)
-	!system-waitress? (
-		ZPL
-	)
-	!system-watchdog? (
-		Apache-2.0
+		GPL-3+
 	)
 	typescript? (
 		!system-typescript? (
@@ -159,10 +163,6 @@ LICENSE="
 	)
 	typescriptreact? (
 		typescript
-	)
-	test? (
-		BSD
-		GPL-3+
 	)
 "
 

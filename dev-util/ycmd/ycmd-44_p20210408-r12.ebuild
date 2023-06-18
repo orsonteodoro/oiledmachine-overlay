@@ -14,6 +14,29 @@ HOMEPAGE="https://ycm-core.github.io/ycmd/"
 LICENSE="
 	GPL-3+
 	BSD
+	!system-bottle? (
+		MIT
+	)
+	!system-libclang? (
+		Apache-2.0-with-LLVM-exceptions
+		MIT
+		UoI-NCSA
+	)
+	!system-mono? (
+		all-rights-reserved
+		BSD
+		DOTNET-libraries-and-runtime-components-patents
+		MIT
+		Mono-patents
+	)
+	!system-mrab-regex? (
+		all-rights-reserved
+		Apache-2.0
+		CNRI
+	)
+	!system-watchdog? (
+		Apache-2.0
+	)
 	clangd? (
 		!system-clangd? (
 			Apache-2.0-with-LLVM-exceptions
@@ -77,11 +100,6 @@ LICENSE="
 			PSF-2
 		)
 	)
-	!system-mrab-regex? (
-		all-rights-reserved
-		Apache-2.0
-		CNRI
-	)
 	rust? (
 		!system-rust? (
 			all-rights-reserved
@@ -107,23 +125,9 @@ LICENSE="
 			)
 		)
 	)
-	!system-bottle? (
-		MIT
-	)
-	!system-libclang? (
-		Apache-2.0-with-LLVM-exceptions
-		MIT
-		UoI-NCSA
-	)
-	!system-mono? (
-		all-rights-reserved
+	test? (
 		BSD
-		DOTNET-libraries-and-runtime-components-patents
-		MIT
-		Mono-patents
-	)
-	!system-watchdog? (
-		Apache-2.0
+		GPL-3+
 	)
 	typescript? (
 		!system-typescript? (
@@ -137,10 +141,6 @@ LICENSE="
 			W3C-Community-Final-Specification-Agreement
 			W3C-Software-and-Document-Notice-and-License-2015
 		)
-	)
-	test? (
-		BSD
-		GPL-3+
 	)
 "
 
@@ -237,8 +237,8 @@ PV_MAJ=$(ver_cut 1 ${PV})
 # Missing rust-analyzer (aka rust-analyzer-preview) from rust packages because
 # it is only available on nightly.  Forced nightly.
 REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
 	!system-rust
+	${PYTHON_REQUIRED_USE}
 	c? (
 		cxx
 		|| (
