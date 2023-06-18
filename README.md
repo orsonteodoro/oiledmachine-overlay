@@ -507,7 +507,6 @@ should be a bash script.
 | dev-lang/lua | This is scripting library and interpreter |
 | dev-lang/luajit | TBA |
 | dev-lang/typescript | This package is kept as a dependency and a backend for YCMD code completion. |
-| dev-libs/asmlib | TBA |
 | dev-libs/hyphen | TBA |
 | dev-libs/leveldb | TBA |
 | dev-libs/libfreenect | TBA |

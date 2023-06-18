@@ -52,7 +52,6 @@ www-misc/instatron # Electron 18.3.15 with Chromium 100.0.4896.160 parts
 # untested completely
 app-crypt/gcr
 dev-db/nanodbc
-dev-libs/asmlib
 dev-libs/hyphen
 dev-libs/leveldb
 dev-libs/libev
