@@ -29,14 +29,15 @@ LICENSE="
 	)
 	go? (
 		!system-go-tools? (
-			BSD
-			MIT
 			all-rights-reserved
 			Apache-2.0
+			BSD
+			MIT
 		)
 	)
 	java? (
 		!system-jdtls? (
+			all-rights-reserved
 			Apache-1.1
 			Apache-2.0
 			BSD
@@ -47,7 +48,6 @@ LICENSE="
 			JDOM
 			LGPL-2.1
 			MIT
-			all-rights-reserved
 			MPL-1.1
 			W3C
 			W3C-Document-License
@@ -55,10 +55,10 @@ LICENSE="
 	)
 	javascript? (
 		!system-tern? (
-			MIT
 			all-rights-reserved
 			CC-BY-SA-4.0
 			ISC
+			MIT
 		)
 	)
 	libclang? (
@@ -84,6 +84,7 @@ LICENSE="
 	)
 	rust? (
 		!system-rust? (
+			all-rights-reserved
 			Apache-2.0
 			Apache-2.0-with-LLVM-exceptions
 			BSD
@@ -96,14 +97,13 @@ LICENSE="
 			libcurl
 			MIT
 			OFL-1.1
-			all-rights-reserved
 			openssl
 			Unlicense
 			UoI-NCSA
 			ZLIB
 			|| (
-				MIT
 				Apache-2.0
+				MIT
 			)
 		)
 	)
@@ -117,9 +117,9 @@ LICENSE="
 	)
 	!system-mono? (
 		all-rights-reserved
-		MIT
 		BSD
 		DOTNET-libraries-and-runtime-components-patents
+		MIT
 		Mono-patents
 	)
 	!system-watchdog? (
@@ -127,7 +127,10 @@ LICENSE="
 	)
 	typescript? (
 		!system-typescript? (
-			( Apache-2.0 all-rights-reserved )
+			(
+				all-rights-reserved
+				Apache-2.0
+			)
 			CC-BY-4.0
 			MIT
 			Unicode-DFS-2016
@@ -445,16 +448,16 @@ BDEPEND+="
 		>=dev-python/codecov-2.0.5[${PYTHON_USEDEP}]
 		>=dev-python/coverage-4.2[${PYTHON_USEDEP}]
 		>=dev-python/flake8-3.0[${PYTHON_USEDEP}]
-		dev-python/flake8-comprehensions[${PYTHON_USEDEP}]
 		>=dev-python/flake8-ycm-0.1.0[${PYTHON_USEDEP}]
 		>=dev-python/psutil-5.6.6[${PYTHON_USEDEP}]
 		>=dev-python/pyhamcrest-1.10.1[${PYTHON_USEDEP}]
+		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}]
+		dev-python/flake8-comprehensions[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 		dev-python/pytest-rerunfailures[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
-		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}]
 	)
 	typescript? (
 		${BDEPEND_NODEJS}
