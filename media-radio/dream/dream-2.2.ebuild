@@ -86,7 +86,7 @@ DEPEND+="
 		media-libs/speexdsp
 	)
 	webengine? (
-		dev-qt/qtwebengine
+		dev-qt/qtwebengine:${QT_PV}
 	)
 "
 RDEPEND+="
@@ -99,7 +99,13 @@ BDEPEND+="
 SRC_URI="mirror://sourceforge/drm/${PN}_${PV}.orig.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
-DOCS=( COPYING AUTHORS ChangeLog NEWS README )
+DOCS=(
+	AUTHORS
+	ChangeLog
+	COPYING
+	NEWS
+	README
+)
 PATCHES=(
 	"${FILESDIR}/dream-2.2-compat-with-gspd-3.23.1.patch"
 )
@@ -110,9 +116,13 @@ src_configure() {
 	use faad && append-cppflags -DUSE_FAAD2_LIBRARY
 	use jack && append-cppflags -DUSE_JACK
 	use qtmultimedia && append-cppflags -DQT_MULTIMEDIA_LIB
-	tc-is-cross-compiler && myqmakeargs+=( CONFIG+=cross_compile )
+	tc-is-cross-compiler && myqmakeargs+=(
+		CONFIG+=cross_compile
+	)
 	if use portaudio || use pulseaudio || use qtmultimedia ; then
-		myqmakeargs+=( CONFIG+=sound )
+		myqmakeargs+=(
+			CONFIG+=sound
+		)
 	fi
 	myqmakeargs+=(
 		$(usex alsa CONFIG+=alsa '')
