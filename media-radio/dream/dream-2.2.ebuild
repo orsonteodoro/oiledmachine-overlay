@@ -12,26 +12,43 @@ LICENSE="GPL-2+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 QT_PV="5"
-IUSE+=" alsa -faad -faac -fdk gps gui hamlib jack +opus portaudio pulseaudio qt${QT_PV} qtmultimedia sound sndfile speexdsp webengine"
+IUSE+="
+alsa -faad -faac -fdk gps gui hamlib jack +opus portaudio pulseaudio qt${QT_PV}
+qtmultimedia sound sndfile speexdsp webengine
+"
 REQUIRED_USE="
+	gui? (
+		qt${QT_PV}
+	)
+	qtmultimedia? (
+		qt${QT_PV}
+	)
 	sound? (
 		|| (
 			pulseaudio
 			portaudio
 		)
 	)
-	qtmultimedia? ( qt${QT_PV} )
-	gui? ( qt${QT_PV} )
 "
 DEPEND+="
 	net-libs/libpcap
 	sci-libs/fftw
 	sys-libs/zlib
-	alsa? ( media-libs/alsa-lib )
-	faac? ( media-libs/faac )
-	faad? ( media-libs/faad2 )
-	fdk? ( media-libs/fdk-aac )
-	gps? ( sci-geosciences/gpsd )
+	alsa? (
+		media-libs/alsa-lib
+	)
+	faac? (
+		media-libs/faac
+	)
+	faad? (
+		media-libs/faad2
+	)
+	fdk? (
+		media-libs/fdk-aac
+	)
+	gps? (
+		sci-geosciences/gpsd
+	)
 	gui? (
 		dev-qt/qtconcurrent:${QT_PV}
 		dev-qt/qtnetwork:${QT_PV}
@@ -39,33 +56,53 @@ DEPEND+="
 		dev-qt/qtwidgets:${QT_PV}
 		x11-libs/qwt:${QT_PV}
 	)
-	hamlib? ( media-libs/hamlib )
-	jack? ( virtual/jack )
-	opus? ( media-libs/opus )
-	portaudio? ( media-libs/portaudio )
-	pulseaudio? ( media-sound/pulseaudio )
+	hamlib? (
+		media-libs/hamlib
+	)
+	jack? (
+		virtual/jack
+	)
+	opus? (
+		media-libs/opus
+	)
+	portaudio? (
+		media-libs/portaudio
+	)
+	pulseaudio? (
+		media-sound/pulseaudio
+	)
 	qt5? (
 		dev-qt/qtcore:${QT_PV}
 		dev-qt/qtxml:${QT_PV}
 	)
-	qtmultimedia? ( dev-qt/qtmultimedia )
+	qtmultimedia? (
+		dev-qt/qtmultimedia
+	)
+	sndfile? (
+		media-libs/libsndfile
+	)
 	speexdsp? (
 		media-libs/speex
 		media-libs/speexdsp
 	)
-	sndfile? ( media-libs/libsndfile )
-	webengine? ( dev-qt/qtwebengine )
+	webengine? (
+		dev-qt/qtwebengine
+	)
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	sys-devel/gcc
 	sys-devel/make
 "
-SRC_URI="mirror://sourceforge/${PN}/${PN}_${PV}.orig.tar.gz"
+SRC_URI="mirror://sourceforge/drm/${PN}_${PV}.orig.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 DOCS=( COPYING AUTHORS ChangeLog NEWS README )
-PATCHES=( "${FILESDIR}/dream-2.2-compat-with-gspd-3.23.1.patch" )
+PATCHES=(
+	"${FILESDIR}/dream-2.2-compat-with-gspd-3.23.1.patch"
+)
 
 src_configure() {
 	local myqmakeargs=()
