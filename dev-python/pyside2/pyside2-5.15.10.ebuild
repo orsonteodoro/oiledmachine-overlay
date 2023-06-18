@@ -170,7 +170,7 @@ RDEPEND="
 	=dev-qt/qtopengl-${QT_PV}[gles2-only=]
 	=dev-qt/qtserialport-${QT_PV}
 	3d? (
-		=dev-qt/qt3d-${QT_PV}[gles2-only=,qml?]
+		=dev-qt/qt3d-${QT_PV}[qml?,gles2-only=]
 	)
 	charts? (
 		=dev-qt/qtcharts-${QT_PV}[qml?]
@@ -194,7 +194,7 @@ RDEPEND="
 		=dev-qt/qtlocation-${QT_PV}
 	)
 	multimedia? (
-		=dev-qt/qtmultimedia-${QT_PV}[qml?,gles2-only=,widgets?]
+		=dev-qt/qtmultimedia-${QT_PV}[gles2-only=,qml?,widgets?]
 	)
 	network? (
 		=dev-qt/qtnetwork-${QT_PV}
@@ -417,7 +417,7 @@ src_install() {
 	#     https://bugreports.qt.io/browse/PYSIDE-1053
 	#     https://github.com/leycec/raiagent/issues/74
 	sed -i -e 's~pyside2-python[[:digit:]]\+\.[[:digit:]]\+~pyside2${PYTHON_CONFIG_SUFFIX}~g' \
-		"${ED}/usr/$(get_libdir)/cmake/PySide2-${PV}/PySide2Targets-${CMAKE_BUILD_TYPE,,}.cmake" || die
+		"${ED}/usr/$(get_libdir)/cmake/PySide2*/PySide2Targets-${CMAKE_BUILD_TYPE,,}.cmake" || die
 }
 
 # OILEDMACHINE-OVERLAY-META-REVDEP:  shiboken2
