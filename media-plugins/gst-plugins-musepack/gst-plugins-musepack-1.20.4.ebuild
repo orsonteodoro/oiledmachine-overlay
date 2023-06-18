@@ -9,15 +9,17 @@ inherit gstreamer-meson
 DESCRIPTION="Musepack plugin for GStreamer"
 KEYWORDS="~amd64 ~x86"
 
+# See ext/musepack/meson.build
 RDEPEND="
 	media-sound/musepack-tools:=[${MULTILIB_USEDEP}]
 "
-DEPEND="${RDEPEND}"
+DEPEND="
+	${RDEPEND}
+"
 
 multilib_src_configure() {
 	local emesonargs=(
 		-Dgpl=enabled
 	)
-
 	gstreamer_multilib_src_configure
 }

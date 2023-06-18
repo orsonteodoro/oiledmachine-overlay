@@ -9,15 +9,17 @@ inherit gstreamer-meson
 DESCRIPTION="FluidSynth plugin for GStreamer"
 KEYWORDS="~amd64 ~x86"
 
+# See ext/fluidsynth/meson.build
 RDEPEND="
 	>=media-sound/fluidsynth-1.0:=[${MULTILIB_USEDEP}]
 "
-DEPEND="${RDEPEND}"
+DEPEND="
+	${RDEPEND}
+"
 
 multilib_src_configure() {
 	local emesonargs=(
 		-Dgpl=enabled
 	)
-
 	gstreamer_multilib_src_configure
 }
