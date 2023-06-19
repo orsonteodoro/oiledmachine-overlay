@@ -8,7 +8,7 @@ EAPI=8
 
 # TC = toolchain
 BINARYEN_PV=94 # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
-JAVA_PV=8
+JAVA_SLOT=8
 LLVM_SLOT=14 # Upstream requires 12 for wasm and 6 for asmjs.
 LLVM_MAX_SLOT=${LLVM_SLOT}
 
@@ -20,7 +20,7 @@ PYTHON_COMPAT=( python3_{8..11} ) # emsdk lists 3.
 # flake8 (3.7.8) - <= 3.7
 # websockify (0.8.0) - <= 3.4
 
-inherit flag-o-matic java-utils-2 llvm python-single-r1 toolchain-funcs
+inherit flag-o-matic java-pkg-opt-2 llvm python-single-r1 toolchain-funcs
 
 DESCRIPTION="LLVM-to-JavaScript Compiler"
 HOMEPAGE="http://emscripten.org/"
@@ -126,7 +126,7 @@ SLOT="${LLVM_SLOT}-$(ver_cut 1-2 ${PV})"
 CLOSURE_COMPILER_SLOT="0"
 IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
-closure_compiler_nodejs test
+closure_compiler_nodejs java test
 
 r31
 "
@@ -134,12 +134,14 @@ REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	closure_compiler_java? (
 		closure-compiler
+		java
 	)
 	closure_compiler_native? (
 		closure-compiler
 	)
 	closure_compiler_nodejs? (
 		closure-compiler
+		java
 	)
 	closure-compiler? (
 		^^ (
@@ -158,20 +160,6 @@ REQUIRED_USE+="
 # For the required Java, See https://github.com/google/closure-compiler/blob/v20200224/.travis.yml#L7
 # For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/1.40.1/tools/shared.py#L431
 # For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/1.40.1/tools/shared.py#L43
-JDK_DEPEND="
-	|| (
-		dev-java/openjdk-bin:${JAVA_PV}
-		dev-java/openjdk:${JAVA_PV}
-	)
-"
-JRE_DEPEND="
-	|| (
-		${JDK_DEPEND}
-		dev-java/openjdk-jre-bin:${JAVA_PV}
-	)
-"
-#JDK_DEPEND="virtual/jdk:${JAVA_PV}"
-#JRE_DEPEND=">=virtual/jre-${JAVA_PV}"
 RDEPEND+="
 	${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
@@ -180,10 +168,10 @@ RDEPEND+="
 ${CLOSURE_COMPILER_SLOT}\
 [closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?]
 		closure_compiler_java? (
-			${JRE_DEPEND}
+			virtual/jre:${JAVA_SLOT}
 		)
 		closure_compiler_nodejs? (
-			${JRE_DEPEND}
+			virtual/jre:${JAVA_SLOT}
 		)
 	)
 	dev-util/binaryen:${BINARYEN_PV}
@@ -198,15 +186,15 @@ DEPEND+="
 	${RDEPEND}
 	closure-compiler? (
 		closure_compiler_java? (
-			${JRE_DEPEND}
+			virtual/jdk:${JAVA_SLOT}
 		)
 		closure_compiler_nodejs? (
-			${JRE_DEPEND}
+			virtual/jdk:${JAVA_SLOT}
 		)
 	)
 "
 BDEPEND+="
-	${JDK_DEPEND}
+	virtual/jdk:${JAVA_SLOT}
 	>=dev-util/cmake-3.4.3
 "
 FN_DEST="${P}.tar.gz"
@@ -220,49 +208,10 @@ _PATCHES=(
 )
 EMSCRIPTEN_CONFIG_V="2.0.26"
 
-setup_openjdk() {
-	local jdk_bin_basepath
-	local jdk_basepath
-
-	if find \
-		/usr/$(get_libdir)/openjdk-${JAVA_PV}*/ \
-		-maxdepth 1 \
-		-type d \
-		2>/dev/null 1>/dev/null
-	then
-		export JAVA_HOME=$(find \
-				/usr/$(get_libdir)/openjdk-${JAVA_PV}*/ \
-				-maxdepth 1 \
-				-type d \
-			| sort -V \
-			| head -n 1)
-		export PATH="${JAVA_HOME}/bin:${PATH}"
-	elif find \
-		/opt/openjdk-bin-${JAVA_PV}*/ \
-		-maxdepth 1 \
-		-type d \
-		2>/dev/null 1>/dev/null
-	then
-		export JAVA_HOME=$(find \
-				/opt/openjdk-bin-${JAVA_PV}*/ \
-				-maxdepth 1 \
-				-type d \
-			| sort -V \
-			| head -n 1)
-		export PATH="${JAVA_HOME}/bin:${PATH}"
-	else
-eerror
-eerror "dev-java/openjdk:${JDK_V} or dev-java/openjdk-bin:${JDK_V} is required"
-eerror "to be installed"
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
+	java-pkg-opt-2_pkg_setup
 	if use closure-compiler ; then
 		if ! use closure_compiler_native ; then
-			setup_openjdk
 			einfo "JAVA_HOME=${JAVA_HOME}"
 			einfo "PATH=${PATH}"
 
@@ -282,7 +231,7 @@ eerror "JAVA_HOME is set to ${JAVA_HOME} but cannot locate ${JAVA_HOME}/bin/java
 eerror
 				die
 			fi
-			# java-pkg_ensure-vm-version-ge ${JAVA_PV}
+			# java-pkg_ensure-vm-version-ge ${JAVA_SLOT}
 		fi
 	fi
 	if use test ; then
@@ -294,6 +243,7 @@ eerror
 			die
 		fi
 	fi
+	use java && java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 	python-single-r1_pkg_setup
 	llvm_pkg_setup
 	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
@@ -348,6 +298,7 @@ src_prepare() {
 	einfo "PYTHON_EXE_ABSPATH=${PYTHON_EXE_ABSPATH}"
 	eapply ${_PATCHES[@]}
 	eapply_user
+	java-pkg-opt-2_src_prepare
 }
 
 src_configure() {
