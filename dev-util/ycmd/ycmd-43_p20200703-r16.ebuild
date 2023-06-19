@@ -7,7 +7,7 @@ EAPI=8
 PYTHON_COMPAT=( python3_{8..11} )
 CMAKE_IN_SOURCE_BUILD=1
 
-inherit cmake flag-o-matic python-r1
+inherit cmake flag-o-matic java-pkg-opt-2 python-r1
 
 DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE="https://ycm-core.github.io/ycmd/"
@@ -380,6 +380,7 @@ CHARDET_PV="3.0.4"
 CMAKE_PV="3.14"
 GOPLS_PV="0.4.2"
 IDNA_PV="2.8"
+JAVA_SLOT="1.8"
 JDTLS_PV="0.54.0-202004152304" # MILESTONE-TIMESTAMP in build.py
 JEDI_PV="0.17.0"
 OMNISHARP_PV="1.35.3"
@@ -408,7 +409,7 @@ DEPEND+="
 		)
 	)
 	java? (
-		virtual/jre:1.8
+		virtual/jre:${JAVA_SLOT}
 	)
 	javascript? (
 		${RDEPEND_NODEJS}
@@ -768,6 +769,8 @@ eerror
 		fi
 	fi
 
+	java-pkg-opt-2_pkg_setup
+	use java && java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 	python_setup
 
 	if use javascript ; then
@@ -1190,6 +1193,8 @@ ewarn
 
 	sed -i -e "s|___GLOBAL_YCMD_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|" \
 		ycmd/default_settings.json || die
+
+	java-pkg-opt-2_src_prepare
 
 	S="${S_BAK}" \
 	BUILD_DIR="${S_BAK}" \

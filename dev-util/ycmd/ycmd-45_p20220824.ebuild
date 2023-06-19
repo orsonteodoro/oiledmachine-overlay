@@ -7,7 +7,7 @@ EAPI=8
 PYTHON_COMPAT=( python3_{8..11} )
 CMAKE_IN_SOURCE_BUILD=1
 
-inherit cmake flag-o-matic python-r1
+inherit cmake flag-o-matic java-pkg-opt-2 python-r1
 if [[ ${PV} =~ 9999 ]] ; then
 	inherit git-r3
 fi
@@ -363,6 +363,7 @@ CLANGD_PV="${CLANG_PV_MAJ}.0.0"
 CMAKE_PV="3.14"
 DJANGO_STUBS_PV="jedi-v1"
 GOPLS_PV="0.9.4"
+JAVA_SLOT="11"
 JDTLS_PV="1.6.0-202110200520" # MILESTONE-TIMESTAMP in build.py
 JEDI_PV="0.18.0"
 OMNISHARP_PV="1.37.11"
@@ -388,7 +389,7 @@ DEPEND+="
 		)
 	)
 	java? (
-		virtual/jre:11
+		virtual/jre:${JAVA_SLOT}
 	)
 	javascript? (
 		${RDEPEND_NODEJS}
@@ -738,6 +739,8 @@ eerror
 		fi
 	fi
 
+	java-pkg-opt-2_pkg_setup
+	use java && java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 	python_setup
 
 	if use javascript ; then
@@ -1254,6 +1257,8 @@ ewarn
 
 	sed -i -e "s|___GLOBAL_YCMD_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|" \
 		ycmd/default_settings.json || die
+
+	java-pkg-opt-2_src_prepare
 
 	S="${S_BAK}" \
 	BUILD_DIR="${S_BAK}" \
