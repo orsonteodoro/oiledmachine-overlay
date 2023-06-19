@@ -1227,16 +1227,17 @@ src_configure() {
 		fi
 
 		local jp=""
-		  if [[ -L "${EPREFIX}/usr/lib/jvm/icedtea-bin-11" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/icedtea-bin-11"
-		elif [[ -L "${EPREFIX}/usr/lib/jvm/icedtea-11" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/icedtea-11"
-		elif [[ -L "${EPREFIX}/usr/lib/jvm/openjdk-11" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/openjdk-11"
-		elif [[ -L "${EPREFIX}/usr/lib/jvm/openjdk-bin-11" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/openjdk-bin-11"
+
+		if use java ; then
+			local java_vendor=$(java-pkg_get-vm-vendor)
+			  if [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${JAVA_SLOT}" ]] ; then
+				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${JAVA_SLOT}"
+			elif [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-${JAVA_SLOT}" ]] ; then
+				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-${JAVA_SLOT}"
+			fi
+			[[ -n "${jp}" ]] && jp="${jp}/bin/java"
 		fi
-		[[ -n "${jp}" ]] && jp="${bp}/bin/java"
+
 		sed -i -e "s|___JAVA_PATH___|${jp}|g" \
 			ycmd/default_settings.json || die
 
