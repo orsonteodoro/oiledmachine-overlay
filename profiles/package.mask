@@ -63,7 +63,6 @@ dev-python/py-stackexchange
 dev-python/python-plexapi
 dev-python/soundcloud-python
 media-libs/glfw
-media-libs/libcaca
 media-libs/libfishsound
 media-libs/liboggz
 media-libs/nestegg
@@ -71,7 +70,6 @@ media-libs/openimageio
 media-libs/opusfile
 media-libs/theorafile
 media-libs/theoraplay
-media-libs/vips
 media-libs/woff2
 
 # worked in the past but untested today
