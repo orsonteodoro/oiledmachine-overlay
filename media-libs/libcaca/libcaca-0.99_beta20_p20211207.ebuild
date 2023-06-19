@@ -1,0 +1,328 @@
+# Copyright 1999-2022 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=7
+
+PYTHON_COMPAT=( python3_{8..11} )
+RUBY_OPTIONAL="yes"
+USE_RUBY="ruby30 ruby31"
+inherit autotools eutils flag-o-matic mono-env java-pkg-opt-2 multilib-minimal
+inherit python-single-r1 ruby-ng
+
+DESCRIPTION="A library that creates colored ASCII-art graphics"
+HOMEPAGE="http://libcaca.zoy.org/"
+LICENSE="
+	ISC
+	GPL-2
+	LGPL-2.1
+	WTFPL-2
+"
+
+# Live/snapshots ebuilds do not get KEYWORDed
+
+IUSE="
+256-colors-ncurses cxx doc imlib java mono ncurses network opengl python ruby
+slang static-libs test truetype X
+"
+JAVA_SLOT="1.8"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+REQUIRED_USE+="
+	256-colors-ncurses? (
+		ncurses
+	)
+	python? (
+		^^ ( ${PYTHON_REQUIRED_USE} )
+	)
+	ruby? (
+		^^ (
+			$(ruby_get_use_targets)
+		)
+	)
+	truetype? (
+		opengl
+	)
+"
+RDEPEND+="
+	imlib? (
+		>=media-libs/imlib2-1.4.6-r2[${MULTILIB_USEDEP}]
+	)
+	java? (
+		virtual/jre:${JAVA_SLOT}
+	)
+	mono? (
+		dev-lang/mono
+	)
+	ncurses? (
+		>=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}]
+	)
+	opengl? (
+		>=media-libs/freeglut-2.8.1[${MULTILIB_USEDEP}]
+		>=virtual/glu-9.0-r1[${MULTILIB_USEDEP}]
+		>=virtual/opengl-7.0-r1[${MULTILIB_USEDEP}]
+		truetype? (
+			>=media-libs/ftgl-2.1.3_rc5
+		)
+	)
+	python? (
+		${PYTHON_DEPS}
+	)
+	slang? (
+		>=sys-libs/slang-2.2.4-r1[${MULTILIB_USEDEP}]
+	)
+	X? (
+		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
+		>=x11-libs/libXt-1.1.4[${MULTILIB_USEDEP}]
+	)
+"
+DEPEND+="
+	${RDEPEND}
+	java? (
+		virtual/jdk:${JAVA_SLOT}
+	)
+"
+BDEPEND+="
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	doc? (
+		>=dev-texlive/texlive-fontsrecommended-2012
+		>=dev-texlive/texlive-latexextra-2012
+		app-doc/doxygen
+		dev-texlive/texlive-latexrecommended
+		dev-texlive/texlive-plaingeneric
+		virtual/latex-base
+	)
+	test? (
+		dev-util/cppunit[${MULTILIB_USEDEP}]
+		app-forensics/zzuf[${MULTILIB_USEDEP}]
+		python? (
+			${PYTHON_DEPS}
+		)
+	)
+"
+EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
+SRC_URI="
+https://github.com/cacalabs/libcaca/archive/${EGIT_COMMIT}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/cacalabs/libcaca/commit/afacac2cf7dfad8015c059a96046d9c2fa34632f.patch
+	-> libcaca-pr70-afacac2.patch
+https://github.com/cacalabs/libcaca/commit/f57b0d65cfaac5f1fbdc75458170e102f57a8dfa.patch
+	-> libcaca-pr70-f57b0d6.patch
+https://github.com/cacalabs/libcaca/commit/9683d1f7efe316b1e6113b65c6fff40671d35632.patch
+	-> libcaca-pr70-9683d1f.patch
+"
+# Fix undefined reference to _caca_alloc2d #70
+# From https://github.com/cacalabs/libcaca/pull/70/commits
+# afacac2 - common-image: avoid implicit function declaration
+# f57b0d6 - caca: avoid nested externs
+# 9683d1f - caca_internals: export _caca_alloc2d
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+RESTRICT="
+	mirror
+	!test? (
+		test
+	)
+"
+DOCS=( AUTHORS NEWS NOTES README THANKS )
+PATCHES=(
+	"${DISTDIR}/libcaca-pr70-afacac2.patch"
+	"${DISTDIR}/libcaca-pr70-f57b0d6.patch"
+	"${DISTDIR}/libcaca-pr70-9683d1f.patch"
+)
+# Applied already upstream:
+# 84bd155 : CVE-2018-20544.patch
+# 3e52dab : CVE-2018-20545+20547+20549.patch
+# 1022d97 : CVE-2018-20546+20547.patch
+# 46b4ea7 : canvas-fix-an-integer-overflow-in-caca_resize.patch
+# e4968ba : Fix-a-problem-in-the-caca_resize-overflow-detection-.patch
+
+pkg_setup() {
+	use python && python-single-r1_pkg_setup
+	java-pkg-opt-2_pkg_setup
+	use java && java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
+	use mono && mono-env_pkg_setup
+	use ruby && ruby-ng_pkg_setup
+
+#  1) Error:
+#TC_Canvas#test_char:
+#NameError: uninitialized constant Caca::Canvas
+#Did you mean?  TC_Canvas
+#    ruby/t/tc_canvas.rb:5:in `setup'
+	use ruby && ewarn "Ruby bindings for 3.x is broken.  Researching fix."
+}
+
+src_unpack() {
+	default
+}
+
+src_prepare() {
+	default
+	sed -i \
+		-e '/doxygen_tests = check-doxygen/d' \
+		caca/t/Makefile.am \
+		|| die #339962
+	sed -i \
+		-e 's:-g -O2 -fno-strength-reduce -fomit-frame-pointer::' \
+		-e 's:AM_CONFIG_HEADER:AC_CONFIG_HEADERS:' \
+		configure.ac \
+		|| die
+	sed -i \
+		-e 's:$(JAVAC):$(JAVAC) $(JAVACFLAGS):' \
+		-e 's:libcaca_java_la_CPPFLAGS =:libcaca_java_la_CPPFLAGS = -I$(top_srcdir)/caca:' \
+		java/Makefile.am \
+		|| die
+	if ! use truetype; then
+		sed -i -e '/PKG_CHECK_MODULES/s:ftgl:dIsAbLe&:' \
+			configure.ac \
+			|| die
+	fi
+	if use imlib && ! use X; then
+		append-cflags -DX_DISPLAY_MISSING
+	fi
+	append-cxxflags -std=c++11 # Bug 653400
+	if use 256-colors-ncurses ; then
+		eapply "${FILESDIR}/${PN}-0.99.beta20-256-colors-ncurses.patch"
+	fi
+	eautoreconf
+	use java && java-pkg-opt-2_src_prepare
+	multilib_copy_sources
+}
+
+multilib_src_configure() {
+	if use 256-colors-ncurses ; then
+		append-cppflags -DUSE_NCURSES_256_COLORS=1
+	fi
+	if multilib_is_native_abi; then
+		if use java; then
+			export JAVACFLAGS="$(java-pkg_javac-args)"
+			export JAVA_CFLAGS="$(java-pkg_get-jni-cflags)"
+einfo "JAVACFLAGS=${JAVACFLAGS}"
+einfo "JAVA_CFLAGS=${JAVA_CFLAGS}"
+		fi
+		if use mono ; then
+			export CSC="$(type -P gmcs)" #329651
+		fi
+		export VARTEXFONTS="${T}/fonts" #44128
+		if use ruby && use ruby_targets_${USE_RUBY} ; then
+			export RUBY=$(ruby_implementation_command ${USE_RUBY})
+		fi
+	fi
+	local myeconfargs=(
+		$(multilib_native_use_enable doc)
+		$(multilib_native_use_enable java)
+		$(multilib_native_use_enable mono csharp)
+		$(multilib_native_use_enable python)
+		$(multilib_native_use_enable ruby)
+		$(use_enable slang)
+		$(use_enable static-libs static)
+		$(use_enable ncurses)
+		$(use_enable network)
+		$(use_enable cxx)
+		$(use_enable imlib imlib2)
+		$(use_enable opengl gl)
+		$(use_enable test cppunit)
+		$(use_enable test zzuf)
+		$(use_enable X x11)
+		$(use_with X x)
+		--x-libraries="/usr/$(get_libdir)"
+	)
+	ECONF_SOURCE="${S}" \
+	econf "${myeconfargs[@]}"
+}
+
+check_ruby() {
+	einfo "RUBY_VERSION="$(ruby_get_version)
+	if ver_test $(ruby_get_version) -lt 3 ; then
+eerror
+eerror "<dev-lang/ruby-3 must be uninstalled."
+eerror
+	fi
+	if has_version "<dev-lang/ruby-3" ; then
+eerror
+eerror "<dev-lang/ruby-3 must be uninstalled."
+eerror
+		die
+	fi
+}
+
+src_configure() {
+	use ruby && check_ruby
+	# Broken inherit, do not remove.
+	multilib-minimal_src_configure
+}
+
+multilib_src_compile() {
+	local _java_makeopts
+	use java && _java_makeopts="-j1" #480864
+	emake V=1 ${_java_makeopts}
+}
+
+src_compile() {
+	# Broken inherit, do not remove.
+	multilib-minimal_src_compile
+}
+
+multilib_src_test() {
+	emake V=1 -j1 check
+}
+
+src_test() {
+	# Broken inherit, do not remove.
+	multilib-minimal_src_test
+}
+
+multilib_src_install() {
+	emake V=1 DESTDIR="${D}" install
+	if multilib_is_native_abi && use java; then
+		java-pkg_newjar java/libjava.jar
+	fi
+}
+
+src_install() {
+	# Broken inherit, do not remove.
+	multilib-minimal_src_install
+}
+
+multilib_src_install_all() {
+	use doc && einstalldocs
+	rm -rf "${D}"/usr/share/java
+	find "${D}" -name '*.la' -type f -delete || die
+}
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  256-color-patch
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 0.99_beta20_p20211207 (f42aa68) (20230618)
+# USE="256-colors-ncurses X cxx doc imlib java ncurses opengl python -ruby
+# static-libs test truetype -mono -network -slang"
+# PYTHON_SINGLE_TARGET="python3_10 -python3_11"
+# RUBY_TARGETS="ruby30 -ruby31"
+
+# comment on test:  Both 32-bit and 64-bit tested with same results below
+
+# libcaca (C lang):
+# PASS: simple
+# PASS: check-copyright
+# PASS: check-source
+# PASS: check-win32
+# PASS: caca-test
+# ============================================================================
+# Testsuite summary for libcaca 0.99.beta20
+# ============================================================================
+# # TOTAL: 5
+# # PASS:  5
+# # SKIP:  0
+# # # XFAIL: 0
+# # FAIL:  0
+# # XPASS: 0
+# # ERROR: 0
+# ============================================================================
+
+# Ruby bindings:
+# ============================================================================
+# Testsuite summary for libcaca 0.99.beta20
+# ============================================================================
+# # TOTAL: 0
+# # PASS:  0
+# # SKIP:  0
+# # XFAIL: 0
+# # FAIL:  0
+# # XPASS: 0
+# # ERROR: 0
+# ============================================================================
