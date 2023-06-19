@@ -218,28 +218,25 @@ ${BD_ABS}/third_party/godef/godef|g" \
 	fi
 
 	local jp=""
-	if use ycmd-44 || use ycmd-45 ; then
-		  if [[ -L "${EPREFIX}/usr/lib/jvm/icedtea-11" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/icedtea-11"
-		elif [[ -L "${EPREFIX}/usr/lib/jvm/icedtea-bin-11" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/icedtea-bin-11"
-		elif [[ -L "${EPREFIX}/usr/lib/jvm/openjdk-11" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/openjdk-11"
-		elif [[ -L "${EPREFIX}/usr/lib/jvm/openjdk-bin-11" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/openjdk-bin-11"
+
+	if use java ; then
+		java-pkg-opt-2_pkg_setup
+		local java_vendor=$(java-pkg_get-vm-vendor)
+		if use ycmd-44 || use ycmd-45 ; then
+			  if [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-11" ]] ; then
+				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-11"
+			elif [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-11" ]] ; then
+				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-11"
+			fi
+		else
+			  if [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-8" ]] ; then
+				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-8"
+			elif [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-8" ]] ; then
+				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-8"
+			fi
 		fi
-	else
-		  if [[ -L "${EPREFIX}/usr/lib/jvm/icedtea-8" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/icedtea-8"
-		elif [[ -L "${EPREFIX}/usr/lib/jvm/icedtea-bin-8" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/icedtea-bin-8"
-		elif [[ -L "${EPREFIX}/usr/lib/jvm/openjdk-8" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/openjdk-8"
-		elif [[ -L "${EPREFIX}/usr/lib/jvm/openjdk-bin-8" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/openjdk-bin-8"
-		fi
+		[[ -n "${jp}" ]] && jp="${jp}/bin/java"
 	fi
-	[[ -n "${jp}" ]] && jp="${jp}/bin/java"
 	sed -i -e "s|___YCMD-EMACS_JAVA_ABSPATH___|${jp}|g" \
 		"${sitefile_path}" || die
 
