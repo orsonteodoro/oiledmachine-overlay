@@ -44,10 +44,12 @@ IUSE+="
 	closure_compiler_native
 	closure_compiler_nodejs
 	doc
+	java
 	test
 	r1
 "
 REQUIRED_USE+="
+	java
 	closure_compiler_nodejs? (
 		closure_compiler_java
 	)
