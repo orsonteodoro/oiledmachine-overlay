@@ -4,7 +4,7 @@
 
 EAPI=8
 
-inherit desktop java-utils-2
+inherit desktop java-pkg-2
 
 DESCRIPTION="A free game maker source file editor"
 LICENSE="
@@ -17,22 +17,22 @@ HOMEPAGE="http://lateralgm.org/"
 SLOT="0"
 IUSE+=" libmaker"
 
+JAVA_SLOT="1.8"
 JAVA_SRC_VER="1.7"
-JAVA_VER="1.8"
 JVM_VER="1.8"
 
 # Merged libmaker and lgmplugin to let others find them easier.
 
 JNA_SLOT="4"
 DEPEND_LATERALGM="
-	virtual/jre:${JAVA_VER}
+	virtual/jre:${JAVA_SLOT}
 "
 DEPEND_LGMPLUGIN="
 	>=dev-java/jna-5.8:4=[nio-buffers(+)]
-	virtual/jre:${JAVA_VER}
+	virtual/jre:${JAVA_SLOT}
 "
 DEPEND_LIBMAKER="
-	virtual/jre:${JAVA_VER}
+	virtual/jre:${JAVA_SLOT}
 "
 CDEPEND="
 	${DEPEND_LATERALGM}
@@ -43,21 +43,21 @@ CDEPEND="
 "
 DEPEND+="
 	${CDEPEND}
-	virtual/jdk:${JAVA_VER}
+	virtual/jdk:${JAVA_SLOT}
 "
 RDEPEND+="
 	${CDEPEND}
 	dev-games/enigma
 "
 BDEPEND_LATERALGM="
-	virtual/jdk:${JAVA_VER}
+	virtual/jdk:${JAVA_SLOT}
 	dev-java/maven-bin
 "
 BDEPEND_LGMPLUGIN="
-	virtual/jdk:${JAVA_VER}
+	virtual/jdk:${JAVA_SLOT}
 "
 BDEPEND_LIBMAKER="
-	virtual/jdk:${JAVA_VER}
+	virtual/jdk:${JAVA_SLOT}
 "
 BDEPEND+="
 	${BDEPEND_LATERALGM}
@@ -122,23 +122,8 @@ JNA_PATH="/usr/share/jna-${JNA_SLOT}/lib/jna.jar"
 
 pkg_setup()
 {
-	java-pkg_init
-	if [[	-n "${JAVA_HOME}" && \
-		-f "${JAVA_HOME}/bin/java" ]] ; then
-		export JAVA="${JAVA_HOME}/bin/java"
-	elif [[ -z "${JAVA_HOME}" ]] ; then
-eerror
-eerror "JAVA_HOME is not set.  Use \`eselect java-vm\` to set this up."
-eerror
-		die
-	else
-eerror
-eerror "JAVA_HOME is set to ${JAVA_HOME} but cannot locate"
-eerror "${JAVA_HOME}/bin/java.  Use \`eselect java-vm\` to set this up."
-eerror
-		die
-	fi
-	java-pkg_ensure-vm-version-eq ${JAVA_VER}
+	java-pkg-2_pkg_setup
+	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 	export JVM_VER=$(java-pkg_get-target)
 
 	# Fixes:
@@ -269,6 +254,7 @@ src_prepare() {
 	src_prepare_lateralgm
 	use libmaker && src_prepare_libmaker
 	src_prepare_lgmplugin
+	java-pkg-2_src_prepare
 }
 
 src_compile_joshedit_for_lateralgm() {
