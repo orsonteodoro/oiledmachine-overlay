@@ -13,7 +13,8 @@ MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 
 inherit godot-3.5
-inherit desktop eutils flag-o-matic multilib-build python-any-r1 scons-utils
+inherit desktop eutils flag-o-matic java-pkg-2 multilib-build python-any-r1
+inherit scons-utils
 
 DESCRIPTION="Godot export template for Android"
 HOMEPAGE="http://godotengine.org"
@@ -153,26 +154,10 @@ REQUIRED_USE+="
 	)
 "
 EXPECTED_MIN_ANDROID_API_LEVEL="29"
-JAVA_PV="11" # See https://github.com/godotengine/godot/blob/3.4-stable/.github/workflows/android_builds.yml#L32
+JAVA_SLOT="11" # See https://github.com/godotengine/godot/blob/3.4-stable/.github/workflows/android_builds.yml#L32
 NDK_PV="21"
 
-JDK_DEPEND="
-	|| (
-		dev-java/openjdk-bin:${JAVA_PV}
-		dev-java/openjdk:${JAVA_PV}
-	)
-"
-JRE_DEPEND="
-	|| (
-		${JDK_DEPEND}
-		dev-java/openjdk-jre-bin:${JAVA_PV}
-	)
-"
-#JDK_DEPEND=" virtual/jdk:${JAVA_PV}"
-#JRE_DEPEND=" virtual/jre:${JAVA_PV}"
-
 CDEPEND+="
-	${JDK_DEPEND}
 	>=dev-java/gradle-bin-7.2
 	dev-util/android-sdk-update-manager
 	godot_android_x86_64? (
@@ -185,9 +170,11 @@ CDEPEND+="
 RDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
+	virtual/jre:${JAVA_SLOT}
 "
 DEPEND+="
 	${RDEPEND}
+	virtual/jdk:${JAVA_SLOT}
 	mono? (
 		=dev-games/godot-mono-runtime-monodroid-$(ver_cut 1-2 ${MONO_PV})*
 		dev-games/godot-editor:${SLOT}[mono]
@@ -242,45 +229,6 @@ eerror
 	fi
 }
 
-setup_openjdk() {
-	local jdk_bin_basepath
-	local jdk_basepath
-
-	if find \
-		/usr/$(get_libdir)/openjdk-${JAVA_PV}*/ \
-		-maxdepth 1 \
-		-type d \
-		2>/dev/null 1>/dev/null
-	then
-		export JAVA_HOME=$(find\
-			 /usr/$(get_libdir)/openjdk-${JAVA_PV}*/ \
-			-maxdepth 1 \
-			-type d \
-			| sort -V \
-			| head -n 1)
-		export PATH="${JAVA_HOME}/bin:${PATH}"
-	elif find \
-		/opt/openjdk-bin-${JAVA_PV}*/ \
-		-maxdepth 1 \
-		-type d \
-		2>/dev/null 1>/dev/null
-	then
-		export JAVA_HOME=$(find \
-			/opt/openjdk-bin-${JAVA_PV}*/ \
-			-maxdepth 1 \
-			-type d \
-			| sort -V \
-			| head -n 1)
-		export PATH="${JAVA_HOME}/bin:${PATH}"
-	else
-eerror
-eerror "dev-java/openjdk:${JAVA_PV} or dev-java/openjdk-bin:${JAVA_PV} must be"
-eerror "installed."
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
 ewarn
 ewarn "Do not emerge this directly use dev-games/godot-meta instead."
@@ -296,7 +244,8 @@ ewarn
 	check_android_native
 	check_android_sandbox
 
-	setup_openjdk
+	java-pkg-2_pkg_setup
+	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 
 	einfo "JAVA_HOME=${JAVA_HOME}"
 	einfo "PATH=${PATH}"
@@ -330,6 +279,7 @@ src_prepare() {
 		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
 			modules/mono/glue || die
 	fi
+	java-pkg-2_src_prepare
 }
 
 src_configure() {
