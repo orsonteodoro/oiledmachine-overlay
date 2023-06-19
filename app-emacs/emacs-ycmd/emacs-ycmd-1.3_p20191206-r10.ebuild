@@ -220,7 +220,6 @@ ${BD_ABS}/third_party/godef/godef|g" \
 	local jp=""
 
 	if use java ; then
-		java-pkg-opt-2_pkg_setup
 		local java_vendor=$(java-pkg_get-vm-vendor)
 		if use ycmd-44 || use ycmd-45 ; then
 			  if [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-11" ]] ; then
