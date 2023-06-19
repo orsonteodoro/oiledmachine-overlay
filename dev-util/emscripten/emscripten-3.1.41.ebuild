@@ -211,30 +211,6 @@ EMSCRIPTEN_CONFIG_V="2.0.26"
 
 pkg_setup() {
 	java-pkg-opt-2_pkg_setup
-	if use closure-compiler ; then
-		if ! use closure_compiler_native ; then
-			einfo "JAVA_HOME=${JAVA_HOME}"
-			einfo "PATH=${PATH}"
-
-			# java-pkg_init # unsets JAVA_HOME
-
-			if [[ -n "${JAVA_HOME}" \
-				&& -e "${JAVA_HOME}/bin/java" ]] ; then
-				export JAVA="${JAVA_HOME}/bin/java"
-			elif [[ -z "${JAVA_HOME}" ]] ; then
-eerror
-eerror "JAVA_HOME is not set.  Use \`eselect java-vm\` to set this up."
-eerror
-				die
-			else
-eerror
-eerror "JAVA_HOME is set to ${JAVA_HOME} but cannot locate ${JAVA_HOME}/bin/java."
-eerror
-				die
-			fi
-			# java-pkg_ensure-vm-version-ge ${JAVA_SLOT}
-		fi
-	fi
 	if use test ; then
 		if [[ ! "${FEATURES}" =~ test ]] ; then
 eerror
