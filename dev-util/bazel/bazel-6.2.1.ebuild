@@ -14,16 +14,17 @@ LICENSE="Apache-2.0"
 SLOT="${PV%%.*}/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
 IUSE="bash-completion examples tools r4 zsh-completion"
+JAVA_SLOT=11
 RDEPEND="
 	!dev-util/bazel:0
-	>=virtual/jre-11:*
+	>=virtual/jre-${JAVA_SLOT}:${JAVA_SLOT}
 	sys-devel/gcc[cxx]
 	sys-libs/glibc
 "
 DEPEND="
-	virtual/jdk:11
 	app-arch/unzip
 	app-arch/zip
+	virtual/jdk:${JAVA_SLOT}
 "
 BDEPEND="
 	!dev-util/bazel:0
@@ -39,6 +40,7 @@ pkg_setup() {
 		ewarn "${PN} usually fails to compile with ccache, you have been warned"
 	fi
 	java-pkg-2_pkg_setup
+	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 }
 
 src_unpack() {
@@ -56,6 +58,7 @@ src_prepare() {
 	# R: /proc/24939/setgroups
 	# C: /usr/lib/systemd/systemd
 	addpredict /proc
+	java-pkg-2_src_prepare
 }
 
 src_compile() {
