@@ -9,37 +9,74 @@ inherit elisp java-pkg-opt-2 python-single-r1
 
 DESCRIPTION="Emacs client for ycmd, the code completion system"
 HOMEPAGE="https://github.com/abingham/emacs-ycmd"
-LICENSE="MIT GPL-3+
-	company-mode? ( GPL-3+ )
-	flycheck? ( GPL-3+ )
-	go-mode? ( BSD )
-	rust-mode? ( MIT Apache-2.0 )
-	typescript-mode? ( GPL-3+ )"
+LICENSE="
+	MIT
+	GPL-3+
+	company-mode? (
+		GPL-3+
+	)
+	flycheck? (
+		GPL-3+
+	)
+	go-mode? (
+		BSD
+	)
+	rust-mode? (
+		Apache-2.0
+		MIT
+	)
+	typescript-mode? (
+		GPL-3+
+	)
+"
 # The required dependencies are GPL-3+ but scripts or package alone itself is MIT.
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-IUSE+=" builtin-completion +company-mode debug eldoc +flycheck +go-mode
-next-error +rust-mode system-gocode system-godef system-gopls system-jdtls
-system-mono system-omnisharp system-racerd system-rust system-typescript
-+typescript-mode +ycmd-43 ycmd-44 ycmd-45"
-REQUIRED_USE+="  ${PYTHON_REQUIRED_USE}
-	^^ ( ycmd-43 ycmd-44 ycmd-45 )"
-DEPEND+=" ${PYTHON_DEPS}
-	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]') )
-	ycmd-44? ( $(python_gen_cond_dep 'dev-util/ycmd:44[${PYTHON_USEDEP}]') )
-	ycmd-45? ( $(python_gen_cond_dep 'dev-util/ycmd:45[${PYTHON_USEDEP}]') )"
-RDEPEND+=" ${DEPEND}"
-BDEPEND+=" net-misc/curl"
+IUSE+="
+builtin-completion +company-mode debug eldoc +flycheck +go-mode next-error
++rust-mode system-gocode system-godef system-gopls system-jdtls system-mono
+system-omnisharp system-racerd system-rust system-typescript +typescript-mode
++ycmd-43 ycmd-44 ycmd-45
+"
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+	^^ (
+		ycmd-43
+		ycmd-44
+		ycmd-45
+	)
+"
+DEPEND+="
+	${PYTHON_DEPS}
+	ycmd-43? (
+		$(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]')
+	)
+	ycmd-44? (
+		$(python_gen_cond_dep 'dev-util/ycmd:44[${PYTHON_USEDEP}]')
+	)
+	ycmd-45? (
+		$(python_gen_cond_dep 'dev-util/ycmd:45[${PYTHON_USEDEP}]')
+	)
+"
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
+	net-misc/curl
+"
 EGIT_COMMIT="bc81b992f79100c98f56b7b83caf64cb8ea60477"
 SRC_URI="
 https://github.com/abingham/emacs-ycmd/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 SITEFILE="50emacs-ycmd-gentoo.el"
 BD_REL="ycmd/${SLOT}"
 BD_ABS=""
-PATCHES=( "${FILESDIR}/${PN}-1.3_p20191206-support-core-version-44.patch" )
+PATCHES=(
+	"${FILESDIR}/${PN}-1.3_p20191206-support-core-version-44.patch"
+)
 
 pkg_setup() {
 	if has network-sandbox $FEATURES ; then
@@ -79,8 +116,10 @@ ewarn
 }
 
 install_deps() {
-	curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go \
-		| python || die
+	curl -fsSL \
+		https://raw.githubusercontent.com/cask/cask/master/go \
+		| python \
+		|| die
 	export PATH="${HOME}/.cask/bin:$PATH"
 	if ! use flycheck ; then
 		sed -i -e 's|(depends-on "flycheck")||g' Cask || die
@@ -134,10 +173,14 @@ src_configure() {
 		"${sitefile_path}"  || die
 
 	if use debug ; then
-		sed -i -e "s|___YCMD-EMACS_DEBUG___|(setq debug-on-error t)|g" \
+		sed -i -e "s|\
+___YCMD-EMACS_DEBUG___|\
+(setq debug-on-error t)|g" \
 			"${sitefile_path}"  || die
 	else
-		sed -i -e "s|___YCMD-EMACS_DEBUG___||g" \
+		sed -i -e "s|\
+___YCMD-EMACS_DEBUG___|\
+|g" \
 			"${sitefile_path}"  || die
 	fi
 
@@ -183,12 +226,16 @@ ___YCMD-EMACS_ELDOC___#\
 $(cat ${FILESDIR}/eldoc.frag | sed ':a;N;$!ba;s/\n/\\n/g')#g" \
 			"${sitefile_path}" || die
 	else
-		sed -i -e "s|___YCMD-EMACS_ELDOC___||g" \
+		sed -i -e "s|\
+___YCMD-EMACS_ELDOC___|\
+|g" \
 			"${sitefile_path}" || die
 	fi
 
 	if use system-gopls ; then
-		sed -i -e "s|___YCMD-EMACS_GOPLS_ABSPATH___|${EPREFIX}/usr/bin/gopls|g" \
+		sed -i -e "s|\
+___YCMD-EMACS_GOPLS_ABSPATH___|\
+${EPREFIX}/usr/bin/gopls|g" \
 			"${sitefile_path}" || die
 	else
 		sed -i -e "s|\
@@ -198,7 +245,9 @@ ${BD_ABS}/third_party/go/bin/gopls|g" \
 	fi
 
 	if use system-gocode ; then
-		sed -i -e "s|___YCMD-EMACS_GOCODE_ABSPATH___|${EPREFIX}/usr/bin/gocode|g" \
+		sed -i -e "s|\
+___YCMD-EMACS_GOCODE_ABSPATH___|\
+${EPREFIX}/usr/bin/gocode|g" \
 			"${sitefile_path}" || die
 	else
 		sed -i -e "s|\
@@ -208,7 +257,9 @@ ${BD_ABS}/third_party/gocode/gocode|g" \
 	fi
 
 	if use system-godef ; then
-		sed -i -e "s|___YCMD-EMACS_GODEF_ABSPATH___|${EPREFIX}/usr/bin/godef|g" \
+		sed -i -e "s|\
+___YCMD-EMACS_GODEF_ABSPATH___|\
+${EPREFIX}/usr/bin/godef|g" \
 			"${sitefile_path}" || die
 	else
 		sed -i -e "s|\
@@ -222,62 +273,97 @@ ${BD_ABS}/third_party/godef/godef|g" \
 	if use java ; then
 		local java_vendor=$(java-pkg_get-vm-vendor)
 		if use ycmd-44 || use ycmd-45 ; then
-			  if [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-11" ]] ; then
-				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-11"
-			elif [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-11" ]] ; then
-				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-11"
+			local java_slot=11
+			  if [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}" ]] ; then
+				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}"
+			elif [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}" ]] ; then
+				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}"
 			fi
 		else
-			  if [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-8" ]] ; then
-				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-8"
-			elif [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-8" ]] ; then
-				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-8"
+			local java_slot=8
+			  if [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}" ]] ; then
+				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}"
+			elif [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}" ]] ; then
+				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}"
 			fi
 		fi
 		[[ -n "${jp}" ]] && jp="${jp}/bin/java"
 	fi
-	sed -i -e "s|___YCMD-EMACS_JAVA_ABSPATH___|${jp}|g" \
-		"${sitefile_path}" || die
+	sed -i \
+		-e "s|\
+___YCMD-EMACS_JAVA_ABSPATH___|\
+${jp}|g" \
+		"${sitefile_path}" \
+		|| die
 
 	if use system-jdtls ; then
-		sed -i -e "s|___YCMD-EMACS_JDTLS_WORKSPACE_ROOT_ABSPATH___|${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}|g" \
-			"${sitefile_path}" || die
-		sed -i -e "s|___YCMD-EMACS_JDTLS_EXTENSION_ABSPATH___|${EYCMD_JDTLS_EXTENSION_PATH}|g" \
-			"${sitefile_path}" || die
+		sed -i \
+			-e "s|\
+___YCMD-EMACS_JDTLS_WORKSPACE_ROOT_ABSPATH___|\
+${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}|g" \
+			"${sitefile_path}" \
+			|| die
+		sed -i \
+			-e "s|\
+___YCMD-EMACS_JDTLS_EXTENSION_ABSPATH___|\
+${EYCMD_JDTLS_EXTENSION_PATH}|g" \
+			"${sitefile_path}" \
+			|| die
 	else
-		sed -i -e "s|___YCMD-EMACS_JDTLS_WORKSPACE_ROOT_ABSPATH___|${BD_ABS}/third_party/eclipse.jdt.ls/workspace|g" \
-			"${sitefile_path}" || die
-		sed -i -e "s|___YCMD-EMACS_JDTLS_EXTENSION_ABSPATH___|\"${BD_ABS}/third_party/eclipse.jdt.ls/extensions\"|g" \
-			"${sitefile_path}" || die
+		sed -i \
+			-e "s|\
+___YCMD-EMACS_JDTLS_WORKSPACE_ROOT_ABSPATH___|\
+${BD_ABS}/third_party/eclipse.jdt.ls/workspace|g" \
+			"${sitefile_path}" \
+			|| die
+		sed -i \
+			-e "s|\
+___YCMD-EMACS_JDTLS_EXTENSION_ABSPATH___|\
+\"${BD_ABS}/third_party/eclipse.jdt.ls/extensions\"|g" \
+			"${sitefile_path}" \
+			|| die
 	fi
 
 	if use system-mono ; then
-		sed -i -e "s|___YCMD-EMACS_MONO_ABSPATH___|${EPREFIX}/usr/bin/mono|g" \
-			"${sitefile_path}" || die
+		sed -i \
+			-e "s|\
+___YCMD-EMACS_MONO_ABSPATH___|\
+${EPREFIX}/usr/bin/mono|g" \
+			"${sitefile_path}" \
+			|| die
 	else
-		sed -i -e "s|___YCMD-EMACS_MONO_ABSPATH___|${BD_ABS}/third_party/omnisharp-roslyn/bin/mono|g" \
-			"${sitefile_path}" || die
+		sed -i \
+			-e "s|\
+___YCMD-EMACS_MONO_ABSPATH___|\
+${BD_ABS}/third_party/omnisharp-roslyn/bin/mono|g" \
+			"${sitefile_path}" \
+			|| die
 	fi
 
 	if use system-omnisharp ; then
 		sed -i -e "s|\
 ___YCMD-EMACS_ROSLYN_ABSPATH___|\
 ${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
-			"${sitefile_path}" || die
+			"${sitefile_path}" \
+			|| die
 	else
 		if use ycmd-43 || use ycmd-44 || use ycmd-45 ; then
 			sed -i -e "s|\
 ___YCMD-EMACS_ROSLYN_ABSPATH___|\
 ${BD_ABS}/third_party/omnisharp-roslyn/run|g" \
-			"${sitefile_path}" || die
+				"${sitefile_path}" \
+				|| die
 		else
 			die "ycmd-slot- not supported."
 		fi
 	fi
 
 	if use system-racerd ; then
-		sed -i -e "s|___YCMD-EMACS_RACERD_ABSPATH___|${EPREFIX}/usr/bin/racerd|g" \
-			"${sitefile_path}" || die
+		sed -i -e "s|\
+___YCMD-EMACS_RACERD_ABSPATH___|\
+${EPREFIX}/usr/bin/racerd|g" \
+			"${sitefile_path}" \
+			|| die
 	else
 		sed -i -e "s|\
 ___YCMD-EMACS_RACERD_ABSPATH___|\
@@ -286,7 +372,9 @@ ${BD_ABS}/third_party/racerd/racerd|g" \
 	fi
 
 	if use system-rust ; then
-		sed -i -e "s|___YCMD-EMACS_RLS_ABSPATH___|${EPREFIX}/usr/bin/rls|g" \
+		sed -i -e "s|\
+___YCMD-EMACS_RLS_ABSPATH___|\
+${EPREFIX}/usr/bin/rls|g" \
 			"${sitefile_path}" || die
 	else
 		sed -i -e "s|\
@@ -296,7 +384,9 @@ ${BD_ABS}/third_party/rls/bin/rls|g" \
 	fi
 
 	if use system-rust ; then
-		sed -i -e "s|___YCMD-EMACS_RUSTC_ABSPATH___|${EPREFIX}/usr/bin/rustc|g" \
+		sed -i -e "s|\
+___YCMD-EMACS_RUSTC_ABSPATH___|\
+${EPREFIX}/usr/bin/rustc|g" \
 			"${sitefile_path}" || die
 	else
 		sed -i -e "s|\
@@ -306,7 +396,9 @@ ${BD_ABS}/third_party/rls/bin/rustc|g" \
 	fi
 
 	if use system-typescript ; then
-		sed -i -e "s|___YCMD-EMACS_TSSERVER_ABSPATH___|${EPREFIX}/usr/bin/tsserver|g" \
+		sed -i -e "s|\
+___YCMD-EMACS_TSSERVER_ABSPATH___|\
+${EPREFIX}/usr/bin/tsserver|g" \
 			"${sitefile_path}" || die
 	else
 		sed -i -e "s|\
@@ -315,27 +407,41 @@ ${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserve
 			"${sitefile_path}" || die
 	fi
 
-	sed -i -e "s|___YCMD-EMACS_RUST_ABSPATH___|${EPREFIX}/usr/share/rust/src|g" \
+	sed -i -e "s|\
+___YCMD-EMACS_RUST_ABSPATH___|\
+${EPREFIX}/usr/share/rust/src|g" \
 		"${sitefile_path}" || die
 
-	sed -i -e "s|___YCMD-EMACS-YCMD-DIR___|${BD_ABS}/ycmd|g" \
+	sed -i -e "s|\
+___YCMD-EMACS-YCMD-DIR___|\
+${BD_ABS}/ycmd|g" \
 		"${sitefile_path}" || die
 
-	sed -i -e "s|___YCMD-EMACS_PYTHON_ABSPATH___|${EPREFIX}/usr/bin/${EPYTHON}|g" \
+	sed -i -e "s|\
+___YCMD-EMACS_PYTHON_ABSPATH___|\
+${EPREFIX}/usr/bin/${EPYTHON}|g" \
 		"${sitefile_path}" || die
 
-	sed -i -e "s|___YCMD-EMACS_GLOBAL_CONFIG_ABSPATH___|/tmp/.ycm_extra_conf.py|g" \
+	sed -i -e "s|\
+___YCMD-EMACS_GLOBAL_CONFIG_ABSPATH___|\
+/tmp/.ycm_extra_conf.py|g" \
 		"${sitefile_path}" || die
 
 	if use system-rust ; then
-		sed -i -e "s|___YCMD-EMACS_RUST_TC_DIR___|/usr|g" \
+		sed -i -e "s|\
+___YCMD-EMACS_RUST_TC_DIR___|\
+/usr|g" \
 			"${sitefile_path}" || die
 	else
-		sed -i -e "s|___YCMD-EMACS_RUST_TC_DIR___|${BD_ABS}/third_party/rust-analyzer|g" \
+		sed -i -e "s|\
+___YCMD-EMACS_RUST_TC_DIR___|\
+${BD_ABS}/third_party/rust-analyzer|g" \
 			"${sitefile_path}" || die
 	fi
 
-	sed -i -e "s|___YCMD-EMACS_CORE_VERSION___|${YCMD_SLOT}|g" \
+	sed -i -e "s|\
+___YCMD-EMACS_CORE_VERSION___|\
+${YCMD_SLOT}|g" \
 		"${sitefile_path}" || die
 }
 
