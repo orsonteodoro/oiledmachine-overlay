@@ -4,7 +4,7 @@
 
 EAPI=7
 
-inherit flag-o-matic java-utils-2
+inherit flag-o-matic java-pkg-2
 
 # GEN_EBUILD=1 # For generating download links and unpacking lists.
 
@@ -72,28 +72,16 @@ IUSE+=" android doc source test"
 #REQUIRED_USE+=" !android" # Cannot fix at the moment ANDROID_HOME="/var/lib/portage/home/.android" sandbox violation
 RESTRICT="mirror"
 GRADLE_PV="7.3.3" # https://github.com/grpc/grpc-java/blob/v1.52.1/gradle/wrapper/gradle-wrapper.properties
-JAVA_PV="11" # https://github.com/grpc/grpc-java/blob/v1.52.1/.github/workflows/testing.yml#L20
-JDK_DEPEND="
-	|| (
-		dev-java/openjdk-bin:${JAVA_PV}
-		dev-java/openjdk:${JAVA_PV}
-	)
-"
-JRE_DEPEND="
-	|| (
-		${JDK_DEPEND}
-		dev-java/openjdk-jre-bin:${JAVA_PV}
-	)
-"
+JAVA_SLOT="11" # https://github.com/grpc/grpc-java/blob/v1.52.1/.github/workflows/testing.yml#L20
 RDEPEND+="
-	${JRE_DEPEND}
 	dev-libs/protobuf:0/32[static-libs]
+	virtual/jre:${JAVA_SLOT}
 "
 DEPEND+=" ${RDEPEND}"
 # SDK ver: https://github.com/grpc/grpc-java/blob/v1.52.1/android/build.gradle#L10
 BDEPEND+="
-	${JDK_DEPEND}
 	dev-java/gradle-bin:${GRADLE_PV}
+	virtual/jdk:${JAVA_SLOT}
 	android? (
 		dev-util/android-sdk-update-manager
 		dev-util/android-sdk-platform:29
@@ -1798,8 +1786,8 @@ https://plugins.gradle.org/m2/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01.pom
 https://plugins.gradle.org/m2/xml-resolver/xml-resolver/1.2/xml-resolver-1.2.jar
 https://plugins.gradle.org/m2/xml-resolver/xml-resolver/1.2/xml-resolver-1.2.pom
 "
-JAVA_PKG_WANT_TARGET="${JAVA_PV}"
-JAVA_PKG_WANT_SOURCE="${JAVA_PV}"
+JAVA_PKG_WANT_TARGET="${JAVA_SLOT}"
+JAVA_PKG_WANT_SOURCE="${JAVA_SLOT}"
 
 gen_uris() {
 	local URIS=""
@@ -1842,46 +1830,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.51.1-allow-sandbox-in-artifact-check.patch"
 )
 
-setup_openjdk() {
-	local jdk_bin_basepath
-	local jdk_basepath
-
-	if find \
-		/usr/$(get_libdir)/openjdk-${JAVA_PV}*/ \
-		-maxdepth 1 \
-		-type d \
-		2>/dev/null 1>/dev/null
-	then
-		export JAVA_HOME=$(find \
-				/usr/$(get_libdir)/openjdk-${JAVA_PV}*/ \
-				-maxdepth 1 \
-				-type d \
-			| sort -V \
-			| head -n 1)
-		export PATH="${JAVA_HOME}/bin:${PATH}"
-	elif find \
-		/opt/openjdk-bin-${JAVA_PV}*/ \
-		-maxdepth 1 \
-		-type d \
-		2>/dev/null 1>/dev/null
-	then
-		export JAVA_HOME=$(find \
-				/opt/openjdk-bin-${JAVA_PV}*/ \
-				-maxdepth 1 \
-				-type d \
-			| sort -V \
-			| head -n 1)
-		export PATH="${JAVA_HOME}/bin:${PATH}"
-	else
-eerror
-eerror "dev-java/openjdk:${JDK_V} or dev-java/openjdk-bin:${JDK_V} is required"
-eerror "to be installed"
-eerror
-		die
-	fi
-	export JAVA_PKG_WANT_BUILD_VM="openjdk-${JAVA_PV} openjdk-bin-${JAVA_PV}"
-}
-
 pkg_setup() {
 	if ( [[ "${GEN_EBUILD}" == "1" ]] || use android || use doc ) \
 		&& has network-sandbox ${FEATURES} ; then
@@ -1891,7 +1839,8 @@ eerror "per-package level."
 eerror
 		die
 	fi
-	setup_openjdk
+	java-pkg-2_pkg_setup
+	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 	use android && ewarn "The android USE flag is still in development"
 }
 
