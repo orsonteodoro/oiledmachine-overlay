@@ -770,7 +770,19 @@ eerror
 	fi
 
 	java-pkg-opt-2_pkg_setup
-	use java && java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
+	if use java ; then
+		local java_vendor=$(java-pkg_get-vm-vendor)
+		if ! [[ "${java_vendor}" =~ "openjdk" ]] ; then
+ewarn
+ewarn "Java vendor mismatch.  Runtime failure or quirks may show."
+ewarn
+ewarn "Actual Java vendor:  ${java_vendor}"
+ewarn "Expected java vendor:  openjdk"
+ewarn
+		fi
+		java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
+	fi
+
 	python_setup
 
 	if use javascript ; then

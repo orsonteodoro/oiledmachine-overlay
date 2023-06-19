@@ -5,7 +5,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit elisp python-single-r1
+inherit elisp java-pkg-opt-2 python-single-r1
 
 DESCRIPTION="Emacs client for ycmd, the code completion system"
 HOMEPAGE="https://github.com/abingham/emacs-ycmd"
@@ -58,6 +58,19 @@ eerror "You need to define EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH as a"
 eerror "per-package envvar."
 eerror
 			die
+		fi
+	fi
+
+	if use java ; then
+		java-pkg-opt-2_pkg_setup
+		local java_vendor=$(java-pkg_get-vm-vendor)
+		if ! [[ "${java_vendor}" =~ "openjdk" ]] ; then
+ewarn
+ewarn "Java vendor mismatch.  Runtime failure or quirks may show."
+ewarn
+ewarn "Actual Java vendor:  ${java_vendor}"
+ewarn "Expected java vendor:  openjdk"
+ewarn
 		fi
 	fi
 

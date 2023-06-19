@@ -1841,6 +1841,15 @@ eerror
 	fi
 	java-pkg-2_pkg_setup
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
+	local java_vendor=$(java-pkg_get-vm-vendor)
+	if ! [[ "${java_vendor}" =~ "openjdk" ]] ; then
+ewarn
+ewarn "Java vendor mismatch.  Runtime failure or quirks may show."
+ewarn
+ewarn "Actual Java vendor:  ${java_vendor}"
+ewarn "Expected java vendor:  openjdk"
+ewarn
+	fi
 	use android && ewarn "The android USE flag is still in development"
 }
 
