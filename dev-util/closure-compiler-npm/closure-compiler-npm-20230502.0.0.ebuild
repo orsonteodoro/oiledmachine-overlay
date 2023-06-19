@@ -12,7 +12,7 @@ GRAALVM_JAVA_PV=17
 GRAALVM_PV="22.3.2"
 NODE_ENV="development"
 NODE_VERSION=16 # Upstream uses 14 on linux but others 16, 18
-inherit bazel check-reqs java-utils-2 graalvm npm
+inherit bazel check-reqs java-pkg-opt-2 graalvm npm
 
 DESCRIPTION="Check, compile, optimize and compress Javascript with \
 Closure-Compiler"
@@ -61,43 +61,29 @@ REQUIRED_USE+="
 # https://github.com/google/closure-compiler-npm/blob/v20230502.0.0/packages/google-closure-compiler/package.json#L67
 # For dependencies, see
 # https://github.com/google/closure-compiler-npm/blob/v20230502.0.0/.github/workflows/build.yml
-JDK_DEPEND="
-	|| (
-		dev-java/openjdk-bin:${JAVA_SLOT}
-		dev-java/openjdk:${JAVA_SLOT}
-	)
-"
-JRE_DEPEND="
-	|| (
-		${JDK_DEPEND}
-		dev-java/openjdk-jre-bin:${JAVA_SLOT}
-	)
-"
-#JDK_DEPEND=" virtual/jdk:${JAVA_SLOT}"
-#JRE_DEPEND=" virtual/jre:${JAVA_SLOT}"
 # The virtual/jdk not virtual/jre must be in DEPENDs for the eclass not to be stupid.
 RDEPEND+="
 	!dev-lang/closure-compiler-bin
 	closure_compiler_java? (
-		${JRE_DEPEND}
+		virtual/jre:${JAVA_SLOT}
 	)
 	closure_compiler_nodejs? (
-		${JRE_DEPEND}
+		virtual/jre:${JAVA_SLOT}
 		>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 		>=net-libs/nodejs-${NODE_VERSION}[npm]
 	)
 "
 DEPEND+="
 	${RDEPEND}
-	${JDK_DEPEND}
+	virtual/jdk:${JAVA_SLOT}
 "
 BDEPEND+="
-	${JDK_DEPEND}
-	=dev-util/bazel-$(ver_cut 1 ${BAZEL_PV})*
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
+	=dev-util/bazel-$(ver_cut 1 ${BAZEL_PV})*
 	dev-java/maven-bin
 	dev-vcs/git
+	virtual/jdk:${JAVA_SLOT}
 	closure_compiler_native? (
 		${GRAALVM_CE_DEPENDS}
 	)
@@ -716,46 +702,6 @@ pkg_pretend() {
 	check-reqs_pkg_setup
 }
 
-setup_openjdk() {
-	local jdk_bin_basepath
-	local jdk_basepath
-
-	if find \
-		/usr/$(get_libdir)/openjdk-${JAVA_SLOT}*/ \
-		-maxdepth 1 \
-		-type d \
-		2>/dev/null \
-		1>/dev/null
-	then
-		export JAVA_HOME=$(find \
-			/usr/$(get_libdir)/openjdk-${JAVA_SLOT}*/ \
-			-maxdepth 1 \
-			-type d \
-			| sort -V \
-			| head -n 1)
-		export PATH="${JAVA_HOME}/bin:${PATH}"
-	elif find \
-		/opt/openjdk-bin-${JAVA_SLOT}*/ \
-		-maxdepth 1 \
-		-type d \
-		2>/dev/null \
-		1>/dev/null
-	then
-		export JAVA_HOME=$(find \
-			/opt/openjdk-bin-${JAVA_SLOT}*/ \
-			-maxdepth 1 \
-			-type d \
-			| sort -V \
-			| head -n 1)
-		export PATH="${JAVA_HOME}/bin:${PATH}"
-	else
-eerror
-eerror "dev-java/openjdk:${JAVA_SLOT} or dev-java/openjdk-bin:${JAVA_SLOT} must be installed"
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
 	if ! [[ "${BAZEL_LD_PRELOAD_IGNORED_RISKS}" =~ ("allow"|"accept") ]] ; then
 # A reaction to "WARNING: ignoring LD_PRELOAD in environment" maybe reported by Bazel.
@@ -772,7 +718,8 @@ eerror
 		die
 	fi
 
-	setup_openjdk
+	java-pkg-opt-2_pkg_setup
+	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 
 	# Bug
 	unset ANDROID_HOME
@@ -781,25 +728,6 @@ eerror
 
 einfo "JAVA_HOME:\t${JAVA_HOME}"
 einfo "PATH:\t${PATH}"
-
-	# java-pkg_init
-
-	# the eclass/eselect system is broken
-	X_JAVA_SLOT=$(best_version "dev-java/openjdk-bin:${JAVA_SLOT}" \
-		| sed \
-			-e "s|dev-java/openjdk-bin-||g" \
-			-e "s|-r[0-9]$||g")
-	export JAVA_HOME="/opt/openjdk-bin-${X_JAVA_SLOT}" # basedir
-
-einfo "JAVA_HOME:\t${JAVA_HOME}"
-	if [[ -n "${JAVA_HOME}" && -f "${JAVA_HOME}/bin/java" ]] ; then
-		export JAVA="${JAVA_HOME}/bin/java"
-	else
-eerror
-eerror "JAVA_HOME is set to ${JAVA_HOME} but cannot locate ${JAVA_HOME}/bin/java."
-eerror
-		die
-	fi
 
 	if ver_test ${X_JAVA_SLOT} -lt ${JAVA_SLOT} ; then
 eerror
@@ -971,6 +899,7 @@ src_prepare() {
 	if use closure_compiler_native || use closure_compiler_java ; then
 		bazel_setup_bazelrc
 	fi
+	java-pkg-opt-2_src_prepare
 }
 
 setup_bazel_slot() {
