@@ -31,7 +31,9 @@ REQUIRED_USE+="
 		ncurses
 	)
 	python? (
-		^^ ( ${PYTHON_REQUIRED_USE} )
+		^^ (
+			${PYTHON_REQUIRED_USE}
+		)
 	)
 	ruby? (
 		^^ (
@@ -91,8 +93,8 @@ BDEPEND+="
 		virtual/latex-base
 	)
 	test? (
-		dev-util/cppunit[${MULTILIB_USEDEP}]
 		app-forensics/zzuf[${MULTILIB_USEDEP}]
+		dev-util/cppunit[${MULTILIB_USEDEP}]
 		python? (
 			${PYTHON_DEPS}
 		)
