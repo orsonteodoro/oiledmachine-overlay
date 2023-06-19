@@ -104,7 +104,6 @@ BDEPEND+="
 	amd64-linux? ( ${ASM_DEPEND} )
 	x86? ( ${ASM_DEPEND} )
 	x86-linux? ( ${ASM_DEPEND} )
-	x64-cygwin? ( ${ASM_DEPEND} )
 	x64-macos? ( ${ASM_DEPEND} )
 "
 
@@ -142,9 +141,7 @@ pkg_setup() {
 		ewarn "and relatively the same dimension and quality that you typically USE."
 		ewarn
 	fi
-	if use java ; then
-		java-pkg-opt-2_pkg_setup
-	fi
+	java-pkg-opt-2_pkg_setup
 	ewarn "Install may fail.  \`emerge -C ${PN}\` then \`emerge -1 =${P}\`."
 	ewarn "PGO may randomly fail with CFI.  Disable the pgo USE flag to fix it."
 	uopts_setup
