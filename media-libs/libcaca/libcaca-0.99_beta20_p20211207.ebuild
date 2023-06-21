@@ -1,6 +1,10 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# SECURITY NOTE(S):
+# dev-perl/Alien-caca needs to be patched/bump if vulnerabilities are fixed for
+# same version as this one.
+
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..11} )
