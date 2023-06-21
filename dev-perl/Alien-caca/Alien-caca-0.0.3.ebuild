@@ -60,6 +60,7 @@ pkg_setup() {
 
 # OILEDMACHINE-OVERLAY-META:  created-ebuild
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 0.0.3 (20230620)
+# USE="test"
 # All tests successful.
 # Files=2, Tests=2,  1 wallclock secs ( 0.03 usr  0.01 sys +  0.51 cusr  0.05 csys =  0.60 CPU)
 # Result: PASS
