@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/Grinnz/Mojo-DOM58/issues</bugs-to>
+    <remote-id type="cpan">Mojo-DOM58</remote-id>
+    <remote-id type="cpan-module">Mojo::DOM58</remote-id>
+    <remote-id type="cpan-module">Mojo::DOM58::Entities</remote-id>
+  </upstream>
+</pkgmetadata>

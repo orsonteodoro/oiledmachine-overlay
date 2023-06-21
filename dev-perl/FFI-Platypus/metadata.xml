@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/PerlFFI/FFI-Platypus/issues</bugs-to>
+    <remote-id type="cpan">FFI-Platypus</remote-id>
+    <remote-id type="cpan-module">FFI::Build</remote-id>
+    <remote-id type="cpan-module">FFI::Build::File::Base</remote-id>
+    <remote-id type="cpan-module">FFI::Build::File::C</remote-id>
+    <remote-id type="cpan-module">FFI::Build::File::CXX</remote-id>
+    <remote-id type="cpan-module">FFI::Build::File::Library</remote-id>
+    <remote-id type="cpan-module">FFI::Build::File::Object</remote-id>
+    <remote-id type="cpan-module">FFI::Build::MM</remote-id>
+    <remote-id type="cpan-module">FFI::Build::Platform</remote-id>
+    <remote-id type="cpan-module">FFI::Build::Plugin</remote-id>
+    <remote-id type="cpan-module">FFI::Build::PluginData</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::API</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Buffer</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Bundle</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Closure</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Constant</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::DL</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Function</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Internal</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Lang</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Lang::ASM</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Lang::C</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Lang::Win32</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Legacy</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Memory</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Record</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Record::Meta</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Record::TieArray</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::ShareConfig</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Type</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Type::PointerSizeBuffer</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Type::StringArray</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Type::StringPointer</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Type::WideString</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::TypeParser</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::TypeParser::Version0</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::TypeParser::Version1</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::TypeParser::Version2</remote-id>
+    <remote-id type="cpan-module">FFI::Probe</remote-id>
+    <remote-id type="cpan-module">FFI::Probe::Runner</remote-id>
+    <remote-id type="cpan-module">FFI::Probe::Runner::Builder</remote-id>
+    <remote-id type="cpan-module">FFI::Probe::Runner::Result</remote-id>
+    <remote-id type="cpan-module">FFI::Temp</remote-id>
+    <remote-id type="cpan-module">FFI::Build::MM::FBX</remote-id>
+    <remote-id type="cpan-module">FFI::Build::Plugin::Foo1</remote-id>
+    <remote-id type="cpan-module">FFI::Build::Plugin::Foo2</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::ClosureData</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Function::Function</remote-id>
+    <remote-id type="cpan-module">FFI::Platypus::Function::Wrapper</remote-id>
+    <remote-id type="cpan-module"></remote-id>
+  </upstream>
+</pkgmetadata>

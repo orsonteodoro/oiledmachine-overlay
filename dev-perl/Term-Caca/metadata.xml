@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/yanick/Term-Caca/issues</bugs-to>
+    <remote-id type="github">yanick/Term-Caca</remote-id>
+    <remote-id type="cpan">Term-Caca</remote-id>
+    <remote-id type="cpan-module">Term::Caca</remote-id>
+    <remote-id type="cpan-module">Term::Caca::Bitmap</remote-id>
+    <remote-id type="cpan-module">Term::Caca::Constants</remote-id>
+    <remote-id type="cpan-module">Term::Caca::Event</remote-id>
+    <remote-id type="cpan-module">Term::Caca::Event::Key</remote-id>
+    <remote-id type="cpan-module">Term::Caca::Event::Key::Press</remote-id>
+    <remote-id type="cpan-module">Term::Caca::Event::Key::Release</remote-id>
+    <remote-id type="cpan-module">Term::Caca::Event::Mouse::Button</remote-id>
+    <remote-id type="cpan-module">Term::Caca::Event::Mouse::Button::Press</remote-id>
+    <remote-id type="cpan-module">Term::Caca::Event::Mouse::Button::Release</remote-id>
+    <remote-id type="cpan-module">Term::Caca::Event::Mouse::Motion</remote-id>
+    <remote-id type="cpan-module">Term::Caca::Event::Quit</remote-id>
+    <remote-id type="cpan-module">Term::Caca::Event::Resize</remote-id>
+    <remote-id type="cpan-module">Term::Caca::FFI</remote-id>
+    <remote-id type="cpan-module">Term::Caca::Sprite</remote-id>
+  </upstream>
+</pkgmetadata>

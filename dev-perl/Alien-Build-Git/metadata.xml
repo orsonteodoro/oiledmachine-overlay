@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/PerlAlien/Alien-Build-Git/issues</bugs-to>
+    <remote-id type="cpan">Alien-Build-Git</remote-id>
+    <remote-id type="cpan-module">Alien::Build::Git</remote-id>
+    <remote-id type="cpan-module">Alien::Build::Plugin::Download::Git</remote-id>
+    <remote-id type="cpan-module">Alien::Build::Plugin::Fetch::Git</remote-id>
+    <remote-id type="cpan-module">Alien::git</remote-id>
+  </upstream>
+</pkgmetadata>

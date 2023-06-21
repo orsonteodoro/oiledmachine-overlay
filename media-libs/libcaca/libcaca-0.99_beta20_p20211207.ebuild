@@ -7,7 +7,7 @@ PYTHON_COMPAT=( python3_{8..11} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby30 ruby31"
 inherit autotools eutils flag-o-matic mono-env java-pkg-opt-2 multilib-minimal
-inherit python-single-r1 ruby-ng
+inherit php-pear-r2 python-single-r1 ruby-ng
 
 DESCRIPTION="A library that creates colored ASCII-art graphics"
 HOMEPAGE="http://libcaca.zoy.org/"
@@ -21,8 +21,8 @@ LICENSE="
 # Live/snapshots ebuilds do not get KEYWORDed
 
 IUSE="
-256-colors-ncurses cxx doc imlib java mono ncurses network opengl python ruby
-slang static-libs test truetype X
+256-colors-ncurses cxx doc imlib java mono ncurses network opengl perl php
+python ruby slang static-libs test truetype X
 "
 JAVA_SLOT="1.8"
 SLOT="0/$(ver_cut 1-2 ${PV})"
@@ -65,6 +65,9 @@ RDEPEND+="
 			>=media-libs/ftgl-2.1.3_rc5
 		)
 	)
+	php? (
+		dev-lang/php
+	)
 	python? (
 		${PYTHON_DEPS}
 	)
@@ -82,6 +85,7 @@ DEPEND+="
 		virtual/jdk:${JAVA_SLOT}
 	)
 "
+# The internal term caca is 0.91 and incomplete but the latest is 3.1.0.
 BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	doc? (
@@ -92,12 +96,31 @@ BDEPEND+="
 		dev-texlive/texlive-plaingeneric
 		virtual/latex-base
 	)
+	php? (
+		media-libs/gd[${MULTILIB_USEDEP}]
+	)
+	python? (
+		$(python_gen_cond_dep '
+			dev-python/setuptools[${PYTHON_USEDEP}]
+		')
+	)
 	test? (
 		app-forensics/zzuf[${MULTILIB_USEDEP}]
 		dev-util/cppunit[${MULTILIB_USEDEP}]
 		python? (
 			${PYTHON_DEPS}
 		)
+	)
+"
+# The Term-Caca in this project seems to be not finished compared to Term-Caca-3.1.0.
+PDEPEND+="
+	perl? (
+		dev-perl/Term-Caca
+	)
+"
+ruby_add_bdepend "
+	test? (
+		dev-ruby/minitest
 	)
 "
 EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
@@ -128,7 +151,9 @@ PATCHES=(
 	"${DISTDIR}/libcaca-pr70-afacac2.patch"
 	"${DISTDIR}/libcaca-pr70-f57b0d6.patch"
 	"${DISTDIR}/libcaca-pr70-9683d1f.patch"
+	"${FILESDIR}/libcaca-0.99_beta20_p20211207-ruby-3.0-compat.patch"
 )
+#	"A${FILESDIR}/test.patch"
 # Applied already upstream:
 # 84bd155 : CVE-2018-20544.patch
 # 3e52dab : CVE-2018-20545+20547+20549.patch
@@ -162,6 +187,7 @@ src_prepare() {
 		caca/t/Makefile.am \
 		|| die #339962
 	sed -i \
+		-e 's:-O0::' \
 		-e 's:-g -O2 -fno-strength-reduce -fomit-frame-pointer::' \
 		-e 's:AM_CONFIG_HEADER:AC_CONFIG_HEADERS:' \
 		configure.ac \
@@ -170,6 +196,10 @@ src_prepare() {
 		-e 's:$(JAVAC):$(JAVAC) $(JAVACFLAGS):' \
 		-e 's:libcaca_java_la_CPPFLAGS =:libcaca_java_la_CPPFLAGS = -I$(top_srcdir)/caca:' \
 		java/Makefile.am \
+		|| die
+	sed -i \
+		-e 's:-O0::' \
+			"build/build-kernel" \
 		|| die
 	if ! use truetype; then
 		sed -i -e '/PKG_CHECK_MODULES/s:ftgl:dIsAbLe&:' \
@@ -184,11 +214,19 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-0.99.beta20-256-colors-ncurses.patch"
 	fi
 	eautoreconf
-	use java && java-pkg-opt-2_src_prepare
 	multilib_copy_sources
+	prepare_abi() {
+		if multilib_is_native_abi ; then
+			if use java ; then
+				java-pkg-opt-2_src_prepare
+			fi
+		fi
+	}
+	multilib_foreach_abi prepare_abi
 }
 
 multilib_src_configure() {
+	replace-flags '-O*' '-O2'
 	if use 256-colors-ncurses ; then
 		append-cppflags -DUSE_NCURSES_256_COLORS=1
 	fi
@@ -275,6 +313,13 @@ multilib_src_install() {
 	emake V=1 DESTDIR="${D}" install
 	if multilib_is_native_abi && use java; then
 		java-pkg_newjar java/libjava.jar
+	fi
+	if multilib_is_native_abi ; then
+		if use php ; then
+			pushd "caca-php" || die
+				php-pear-r2_src_install
+			popd || die
+		fi
 	fi
 }
 
