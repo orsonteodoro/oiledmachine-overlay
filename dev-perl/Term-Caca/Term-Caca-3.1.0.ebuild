@@ -41,3 +41,7 @@ BDEPEND+="
 "
 
 # OILEDMACHINE-OVERLAY-META:  created-ebuild
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 3.1.0 (20230621)
+# All tests successful.
+# Files=5, Tests=33,  8 wallclock secs ( 0.04 usr  0.00 sys +  3.02 cusr  0.30 csys =  3.36 CPU)
+# Result: PASS

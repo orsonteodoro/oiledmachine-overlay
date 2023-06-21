@@ -4,6 +4,7 @@
 
 EAPI=8
 
+LIBCACA_PV="0.99.beta20"
 DIST_AUTHOR="YANICK"
 inherit perl-module
 
@@ -19,6 +20,7 @@ LICENSE="
 "
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
+IUSE+=" r1"
 RESTRICT="mirror"
 PERL_PV="5.6"
 FILE_SHAREDIR_PV="1.3"
@@ -58,8 +60,16 @@ pkg_setup() {
 	perl-module_pkg_setup
 }
 
+src_prepare() {
+	# Fix vulnerabilities
+	sed -i -e "s|v0.99.beta19.tar.gz|v${LIBCACA_PV}.tar.gz|" \
+		"Build.PL" \
+		|| die
+	perl-module_src_prepare
+}
+
 # OILEDMACHINE-OVERLAY-META:  created-ebuild
-# OILEDMACHINE-OVERLAY-TEST:  PASSED 0.0.3 (20230620)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 0.0.3 (20230621)
 # USE="test"
 # All tests successful.
 # Files=2, Tests=2,  1 wallclock secs ( 0.03 usr  0.01 sys +  0.51 cusr  0.05 csys =  0.60 CPU)

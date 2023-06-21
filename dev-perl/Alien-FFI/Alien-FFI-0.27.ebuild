@@ -31,10 +31,11 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+# Alien-Build-Git-0.10 is override by ebuild for sed patch below
 BDEPEND+="
 	>=dev-lang/perl-${PERL_PV}
 	>=dev-perl/Alien-Build-${ALIEN_BUILD_PV}
-	>=dev-perl/Alien-Build-Git-0.9
+	>=dev-perl/Alien-Build-Git-0.10
 	>=dev-perl/Capture-Tiny-0
 	>=dev-perl/IO-Socket-SSL-1.56
 	>=dev-perl/Mojo-DOM58-1.0
@@ -47,5 +48,23 @@ BDEPEND+="
 	virtual/perl-CPAN
 "
 
+src_prepare() {
+	local f
+	for f in $(grep -F -r -l -e "Alien::Build::Plugin::Download::GitHub" ./) ; do
+einfo "Editing ${f}"
+		sed -i -e "s|Alien::Build::Plugin::Download::GitHub|Alien::Build::Plugin::Download::Git|g" \
+			"${f}" \
+			|| die
+	done
+einfo "Editing alienfile"
+	sed -i -e "s|Download::GitHub|Download::Git|g" \
+		"alienfile" \
+		|| die
+	perl-module_src_prepare
+}
+
 # OILEDMACHINE-OVERLAY-META:  created-ebuild
-# OILEDMACHINE-OVERLAY-TEST:  (20230620)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 0.27 (20230621)
+# All tests successful.
+# Files=2, Tests=4,  4 wallclock secs ( 0.04 usr  0.01 sys +  1.34 cusr  0.21 csys =  1.60 CPU)
+# Result: PASS
