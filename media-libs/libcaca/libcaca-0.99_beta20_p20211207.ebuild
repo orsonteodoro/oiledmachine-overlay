@@ -222,7 +222,7 @@ ewarn
 #Did you mean?  TC_Canvas
 #    ruby/t/tc_canvas.rb:5:in `setup'
 ewarn "The Ruby bindings for 3.x are broken.  Researching fixes."
-ewarn "The PHP bindings for 3.x are broken.  Researching fixes."
+ewarn "The PHP bindings for 3.x are functional but buggy."
 }
 
 src_unpack() {
@@ -503,7 +503,28 @@ multilib_src_install_all() {
 # Testing php bindings:  fail (interactive).  The tester segfaults during Render()
 # USE="-* X imlib php opengl test"
 # cd ${BUILD_DIR}/caca-php/examples
-# /usr/bin/php7.4 test.php
+# /usr/bin/php7.4 cacainfo.php : pass
+# /usr/bin/php7.4 cacapig.php : pass
+# /usr/bin/php7.4 colors.php : pass
+# /usr/bin/php7.4 demo.php : pass
+# /usr/bin/php7.4 dithering.php : pass
+# /usr/bin/php7.4 export.php : fail, scrambled output
+# /usr/bin/php7.4 fullwidth.php : maybe, tiny render
+# /usr/bin/php7.4 img2txt.php : fail, segfault
+# /usr/bin/php7.4 import.php : fail, scrambled output
+# /usr/bin/php7.4 polyline.php : pass
+# /usr/bin/php7.4 render.php : ? shows only source code
+# /usr/bin/php7.4 test.php : pass
+# /usr/bin/php7.4 text.php : pass
+# /usr/bin/php7.4 transform.php : pass
+# /usr/bin/php7.4 truecolor.php : pass
+# /usr/bin/php7.4 unicode : pass
+# /usr/bin/php7.4 figfont.php : fail
+# PHP Fatal error:  Uncaught Error: Call to undefined function mb_convert_encoding() in /var/tmp/portage/media-libs/libcaca-0.99_beta20_p20211207/work/php7.4/caca-php/examples/figfont.php:15
+# Stack trace:
+# #0 /var/tmp/portage/media-libs/libcaca-0.99_beta20_p20211207/work/php7.4/caca-php/examples/figfont.php(40): unistr_to_ords()
+# #1 {main}
+#   thrown in /var/tmp/portage/media-libs/libcaca-0.99_beta20_p20211207/work/php7.4/caca-php/examples/figfont.php on line 15
 
 # Testing python bindings:  passed (test suite) 0.99_beta20_p20211207 (f42aa68) (20230621)
 # USE="-* X imlib python opengl test"
