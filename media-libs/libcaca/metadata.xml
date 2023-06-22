@@ -28,6 +28,9 @@
     <flag name="doc">
       Builds documentation
     </flag>
+    <flag name="examples">
+      Ensures dependencies met for examples
+    </flag>
     <flag name="imlib">
       Imlib2 graphics support for access to additional API calls
     </flag>
@@ -50,7 +53,7 @@
       Adds bindings to code/build with Perl
     </flag>
     <flag name="php">
-      Adds bindings to code/build with PHP (EXPERIMENTAL/TESTING)
+      Adds bindings to code/build with PHP (BUGGED)
     </flag>
     <flag name="python">
       Adds bindings to code/build with Python

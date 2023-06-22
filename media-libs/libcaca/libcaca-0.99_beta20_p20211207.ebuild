@@ -9,6 +9,7 @@ EAPI=7
 
 EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
 PHP_EXT_NAME="caca"
+PHP_EXT_NEEDED_USE="cli,gd"
 PHP_EXT_OPTIONAL_USE="php"
 PHP_EXT_SKIP_PATCHES="yes"
 PYTHON_COMPAT=( python3_{8..11} )
@@ -31,14 +32,28 @@ LICENSE="
 # Live/snapshots ebuilds do not get KEYWORDed
 
 IUSE="
-256-colors-ncurses cxx doc imlib java mono ncurses network opengl perl php
-python ruby slang static-libs test truetype X
+256-colors-ncurses cxx doc examples imlib java mono ncurses network opengl perl
+php python ruby slang static-libs test truetype X
 "
 JAVA_SLOT="1.8"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 REQUIRED_USE+="
 	256-colors-ncurses? (
 		ncurses
+	)
+	examples? (
+		java? (
+			|| (
+				X
+				opengl
+			)
+		)
+		mono? (
+			|| (
+				X
+				opengl
+			)
+		)
 	)
 	python? (
 		^^ (
@@ -188,8 +203,8 @@ ewarn
 #NameError: uninitialized constant Caca::Canvas
 #Did you mean?  TC_Canvas
 #    ruby/t/tc_canvas.rb:5:in `setup'
-ewarn "The Ruby bindings for 3.x is broken.  Researching fix."
-ewarn "The php USE flag has not been tested."
+ewarn "The Ruby bindings for 3.x are broken.  Researching fixes."
+ewarn "The PHP bindings for 3.x are broken.  Researching fixes."
 }
 
 src_unpack() {
@@ -410,9 +425,17 @@ multilib_src_install_all() {
 # ============================================================================
 
 # Testing mono:  passed (interactive) 0.99_beta20_p20211207 (f42aa68) (20230621)
+# USE="-* X imlib mono test"
 # cd ${BUILD_DIR}/caca-sharp
 # LD_LIBRARY_PATH="$(pwd)/../caca/.libs/" mono test.exe
 
 # Testing java:  passed (interactive) 0.99_beta20_p20211207 (f42aa68) (20230621)
+# USE="-* X imlib java test"
 # cd ${BUILD_DIR}/java/examples
 # ./TrueColor
+
+# Testing php:  fail (interactive).  The tester segfaults during Render()
+# cd ${BUILD_DIR}/caca-php
+# /usr/bin/php7.4 test.php
+
+# Testing ruby:  fail (interactive).  It does not load (Canvas, ...) classes except Event and Display.
