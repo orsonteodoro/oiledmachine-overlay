@@ -7,11 +7,16 @@
 
 EAPI=7
 
+EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
+PHP_EXT_NAME="caca"
+PHP_EXT_SKIP_PATCHES="yes"
 PYTHON_COMPAT=( python3_{8..11} )
 RUBY_OPTIONAL="yes"
+PHP_EXT_S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 USE_RUBY="ruby30 ruby31"
+USE_PHP="php7-4 php8-0 php8-1 php8-2"
 inherit autotools eutils flag-o-matic mono-env java-pkg-opt-2 multilib-minimal
-inherit php-pear-r2 python-single-r1 ruby-ng
+inherit php-ext-source-r3-caca python-single-r1 ruby-ng
 
 DESCRIPTION="A library that creates colored ASCII-art graphics"
 HOMEPAGE="http://libcaca.zoy.org/"
@@ -70,7 +75,7 @@ RDEPEND+="
 		)
 	)
 	php? (
-		dev-lang/php
+		>=dev-lang/php-5
 	)
 	python? (
 		${PYTHON_DEPS}
@@ -127,7 +132,6 @@ ruby_add_bdepend "
 		dev-ruby/minitest
 	)
 "
-EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
 SRC_URI="
 https://github.com/cacalabs/libcaca/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz
@@ -150,12 +154,13 @@ RESTRICT="
 		test
 	)
 "
-DOCS=( AUTHORS NEWS NOTES README THANKS )
 PATCHES=(
 	"${DISTDIR}/libcaca-pr70-afacac2.patch"
 	"${DISTDIR}/libcaca-pr70-f57b0d6.patch"
 	"${DISTDIR}/libcaca-pr70-9683d1f.patch"
 	"${FILESDIR}/libcaca-0.99_beta20_p20211207-ruby-3.0-compat.patch"
+	"${FILESDIR}/libcaca-0.99_beta20_p20211207-php7-fixes.patch"
+	"${FILESDIR}/libcaca-0.99_beta20_p20211207-php8-fixes.patch"
 )
 #	"A${FILESDIR}/test.patch"
 # Applied already upstream:
@@ -178,6 +183,10 @@ pkg_setup() {
 #Did you mean?  TC_Canvas
 #    ruby/t/tc_canvas.rb:5:in `setup'
 	use ruby && ewarn "Ruby bindings for 3.x is broken.  Researching fix."
+ewarn
+ewarn "You need to install libcaca first before using the"
+ewarn "${CATEGORY}/${PN}[php] USE flag."
+ewarn
 }
 
 src_unpack() {
@@ -223,6 +232,9 @@ src_prepare() {
 		if multilib_is_native_abi ; then
 			if use java ; then
 				java-pkg-opt-2_src_prepare
+			fi
+			if use php ; then
+				php-ext-source-r3-caca_src_prepare
 			fi
 		fi
 	}
@@ -270,6 +282,11 @@ einfo "JAVA_CFLAGS=${JAVA_CFLAGS}"
 	)
 	ECONF_SOURCE="${S}" \
 	econf "${myeconfargs[@]}"
+	if multilib_is_native_abi ; then
+		if use php ; then
+			php-ext-source-r3-caca_src_configure
+		fi
+	fi
 }
 
 check_ruby() {
@@ -297,6 +314,12 @@ multilib_src_compile() {
 	local _java_makeopts
 	use java && _java_makeopts="-j1" #480864
 	emake V=1 ${_java_makeopts}
+	if multilib_is_native_abi ; then
+		if use php ; then
+einfo "Calling php-ext-source-r3-caca_src_compile"
+			php-ext-source-r3-caca_src_compile
+		fi
+	fi
 }
 
 src_compile() {
@@ -306,6 +329,11 @@ src_compile() {
 
 multilib_src_test() {
 	emake V=1 -j1 check
+	if multilib_is_native_abi ; then
+		if use php ; then
+			php-ext-source-r3-caca_src_test
+		fi
+	fi
 }
 
 src_test() {
@@ -315,14 +343,13 @@ src_test() {
 
 multilib_src_install() {
 	emake V=1 DESTDIR="${D}" install
-	if multilib_is_native_abi && use java; then
-		java-pkg_newjar java/libjava.jar
-	fi
 	if multilib_is_native_abi ; then
+		if use java; then
+			java-pkg_newjar java/libjava.jar
+		fi
 		if use php ; then
-			pushd "caca-php" || die
-				php-pear-r2_src_install
-			popd || die
+			DOCS=() # Avoid calling dodoc unconditionally without doc USE.
+			php-ext-source-r3-caca_src_install
 		fi
 	fi
 }
@@ -333,6 +360,7 @@ src_install() {
 }
 
 multilib_src_install_all() {
+	DOCS=( AUTHORS NEWS NOTES README THANKS )
 	use doc && einstalldocs
 	rm -rf "${D}"/usr/share/java
 	find "${D}" -name '*.la' -type f -delete || die
