@@ -177,16 +177,20 @@ pkg_setup() {
 	use mono && mono-env_pkg_setup
 	use ruby && ruby-ng_pkg_setup
 
+ewarn
+ewarn "You need to install libcaca first without php USE flag before using the"
+ewarn "${CATEGORY}/${PN}[php] USE flag."
+ewarn
+
 #  1) Error:
 #TC_Canvas#test_char:
 #NameError: uninitialized constant Caca::Canvas
 #Did you mean?  TC_Canvas
 #    ruby/t/tc_canvas.rb:5:in `setup'
-	use ruby && ewarn "Ruby bindings for 3.x is broken.  Researching fix."
-ewarn
-ewarn "You need to install libcaca first without php USE flag before using the"
-ewarn "${CATEGORY}/${PN}[php] USE flag."
-ewarn
+ewarn "The Ruby bindings for 3.x is broken.  Researching fix."
+ewarn "The java USE flag has not been tested."
+ewarn "The mono USE flag has not been tested."
+ewarn "The php USE flag has not been tested."
 }
 
 src_unpack() {
