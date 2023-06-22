@@ -1,6 +1,72 @@
+diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/python/caca/dither.py libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/python/caca/dither.py
+--- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/python/caca/dither.py	2021-12-07 01:03:53.000000000 -0800
++++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/python/caca/dither.py	2023-06-22 01:04:19.706269777 -0700
+@@ -15,11 +15,17 @@
+ """ Libcaca Python bindings """
+ 
+ import ctypes
++import locale
+ 
+ from caca import _lib
+ from caca.canvas import _Canvas
+ 
+ 
++def _str_to_bytes(the_string):
++    """ Translate string to bytes type for python 3.
++    """
++    return bytes(the_string, locale.getlocale()[1])
++
+ class _DitherStruct(ctypes.Structure):
+     pass
+ 
+@@ -165,7 +172,7 @@ class Dither(_Dither):
+         _lib.caca_set_dither_antialias.argtypes = [_Dither, ctypes.c_char_p]
+         _lib.caca_set_dither_antialias.restype  = ctypes.c_int
+ 
+-        return _lib.caca_set_dither_antialias(self, value)
++        return _lib.caca_set_dither_antialias(self, _str_to_bytes(value))
+ 
+     def get_antialias(self):
+         """ Return the dither's current antialiasing method.
+@@ -212,7 +219,7 @@ class Dither(_Dither):
+         _lib.caca_set_dither_color.argtypes = [_Dither, ctypes.c_char_p]
+         _lib.caca_set_dither_color.restype  = ctypes.c_int
+ 
+-        return _lib.caca_set_dither_color(self, value)
++        return _lib.caca_set_dither_color(self, _str_to_bytes(value))
+ 
+     def get_color(self):
+         """ Get current colour mode.
+@@ -255,7 +262,7 @@ class Dither(_Dither):
+         _lib.caca_set_dither_charset.argtypes = [_Dither, ctypes.c_char_p]
+         _lib.caca_set_dither_charset.restype  = ctypes.c_int
+ 
+-        return _lib.caca_set_dither_charset(self, value)
++        return _lib.caca_set_dither_charset(self, _str_to_bytes(value))
+ 
+     def get_charset(self):
+         """ Get current character set.
+@@ -298,7 +305,7 @@ class Dither(_Dither):
+         _lib.caca_set_dither_algorithm.argtypes = [_Dither, ctypes.c_char_p]
+         _lib.caca_set_dither_algorithm.restype  = ctypes.c_int
+ 
+-        return _lib.caca_set_dither_algorithm(self, value)
++        return _lib.caca_set_dither_algorithm(self, _str_to_bytes(value))
+ 
+     def get_algorithm(self):
+         """ Get dithering algorithms.
+@@ -338,7 +345,7 @@ class Dither(_Dither):
+         _lib.caca_dither_bitmap.argtypes = [
+             _Canvas, ctypes.c_int, ctypes.c_int,
+             ctypes.c_int, ctypes.c_int, _Dither,
+-            ctypes.c_char_p
++            ctypes.c_void_p
+         ]
+         _lib.caca_dither_bitmap.restype  = ctypes.c_int
+ 
 diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/python/examples/img2txt.py libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/python/examples/img2txt.py
 --- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/python/examples/img2txt.py	2021-12-07 01:03:53.000000000 -0800
-+++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/python/examples/img2txt.py	2023-06-21 21:25:49.989944514 -0700
++++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/python/examples/img2txt.py	2023-06-22 01:01:08.126265023 -0700
 @@ -17,6 +17,9 @@
  # http://www.wtfpl.net/ for more details.
  #
@@ -57,6 +123,15 @@ diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/python/examples/
          sys.stderr.write("%s\n" % err)
          sys.exit(127)
  
+@@ -224,7 +227,7 @@ def main():
+         dit.set_charset(charset)
+ 
+     #create dither
+-    dit.bitmap(cv, 0, 0, width, height, str(img.tobytes()))
++    dit.bitmap(cv, 0, 0, width, height, img.tobytes())
+ 
+     #print export to screen
+     sys.stdout.write("%s" % cv.export_to_memory(exformat))
 @@ -233,7 +236,7 @@ if __name__ == "__main__":
      #Import PIL package
      try:
