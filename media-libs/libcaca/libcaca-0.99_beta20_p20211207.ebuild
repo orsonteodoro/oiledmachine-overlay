@@ -184,7 +184,7 @@ pkg_setup() {
 #    ruby/t/tc_canvas.rb:5:in `setup'
 	use ruby && ewarn "Ruby bindings for 3.x is broken.  Researching fix."
 ewarn
-ewarn "You need to install libcaca first before using the"
+ewarn "You need to install libcaca first without php USE flag before using the"
 ewarn "${CATEGORY}/${PN}[php] USE flag."
 ewarn
 }
