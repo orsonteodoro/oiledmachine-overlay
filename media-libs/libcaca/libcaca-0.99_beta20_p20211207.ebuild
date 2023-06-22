@@ -9,6 +9,7 @@ EAPI=7
 
 EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
 PHP_EXT_NAME="caca"
+PHP_EXT_OPTIONAL_USE="php"
 PHP_EXT_SKIP_PATCHES="yes"
 PYTHON_COMPAT=( python3_{8..11} )
 RUBY_OPTIONAL="yes"
@@ -188,8 +189,6 @@ ewarn
 #Did you mean?  TC_Canvas
 #    ruby/t/tc_canvas.rb:5:in `setup'
 ewarn "The Ruby bindings for 3.x is broken.  Researching fix."
-ewarn "The java USE flag has not been tested."
-ewarn "The mono USE flag has not been tested."
 ewarn "The php USE flag has not been tested."
 }
 
@@ -409,3 +408,11 @@ multilib_src_install_all() {
 # # XPASS: 0
 # # ERROR: 0
 # ============================================================================
+
+# Testing mono:  passed (interactive) 0.99_beta20_p20211207 (f42aa68) (20230621)
+# cd ${BUILD_DIR}/caca-sharp
+# LD_LIBRARY_PATH="$(pwd)/../caca/.libs/" mono test.exe
+
+# Testing java:  passed (interactive) 0.99_beta20_p20211207 (f42aa68) (20230621)
+# cd ${BUILD_DIR}/java/examples
+# ./TrueColor

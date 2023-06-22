@@ -32,10 +32,10 @@
       Imlib2 graphics support for access to additional API calls
     </flag>
     <flag name="java">
-      Generates Java bindings to code with Java
+      Builds Java bindings to code with Java
     </flag>
     <flag name="mono">
-      Generates C# bindings to code with C#
+      Builds C# bindings to code with C#
     </flag>
     <flag name="ncurses">
       ncurses support
@@ -46,11 +46,14 @@
     <flag name="opengl">
       OpenGL support for video display
     </flag>
+    <flag name="php">
+      Builds PHP bindings to code with PHP (EXPERIMENTAL/TESTING)
+    </flag>
     <flag name="python">
-      Generates Python bindings to code with Python
+      Builds Python bindings to code with Python
     </flag>
     <flag name="ruby">
-      Generates Ruby bindings to code with Ruby
+      Builds Ruby bindings to code with Ruby (BUGGED)
     </flag>
     <flag name="slang">
       Slang graphics support
