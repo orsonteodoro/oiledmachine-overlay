@@ -46,7 +46,7 @@
     <flag name="opengl">
       OpenGL support for video display
     </flag>
-    <flag name="php">
+    <flag name="perl">
       Adds bindings to code/build with Perl
     </flag>
     <flag name="php">
