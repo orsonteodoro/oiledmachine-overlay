@@ -18,7 +18,7 @@ PHP_EXT_S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 USE_RUBY="ruby30 ruby31"
 USE_PHP="php7-4 php8-0 php8-1 php8-2"
 inherit autotools eutils flag-o-matic mono-env java-pkg-opt-2 multilib-minimal
-inherit php-ext-source-r3-caca python-r1 ruby-ng
+inherit php-ext-source-r3-caca python-r1 ruby-ng virtualx
 
 DESCRIPTION="A library that creates colored ASCII-art graphics"
 HOMEPAGE="http://libcaca.zoy.org/"
@@ -73,6 +73,7 @@ REQUIRED_USE+="
 		)
 	)
 	ruby? (
+		X
 		^^ (
 			$(ruby_get_use_targets)
 		)
@@ -196,7 +197,6 @@ PATCHES=(
 	"${FILESDIR}/libcaca-0.99_beta20_p20211207-php8-fixes.patch"
 	"${FILESDIR}/libcaca-0.99_beta20_p20211207-img2txt-python3-compat.patch"
 )
-#	"A${FILESDIR}/test.patch"
 # Applied already upstream:
 # 84bd155 : CVE-2018-20544.patch
 # 3e52dab : CVE-2018-20545+20547+20549.patch
@@ -212,17 +212,14 @@ pkg_setup() {
 	use ruby && ruby-ng_pkg_setup
 
 ewarn
-ewarn "You need to install libcaca first without php USE flag before using the"
-ewarn "${CATEGORY}/${PN}[php] USE flag."
+ewarn "You need to install libcaca first without the php USE flag before using"
+ewarn "the ${CATEGORY}/${PN}[php] USE flag."
 ewarn
-
-#  1) Error:
-#TC_Canvas#test_char:
-#NameError: uninitialized constant Caca::Canvas
-#Did you mean?  TC_Canvas
-#    ruby/t/tc_canvas.rb:5:in `setup'
-ewarn "The Ruby bindings for 3.x are broken.  Researching fixes."
+ewarn "You need to install libcaca first with the X USE flag before using the"
+ewarn "${CATEGORY}/${PN}[ruby] USE flag."
+ewarn
 ewarn "The PHP bindings for 3.x are functional but buggy."
+ewarn
 }
 
 src_unpack() {
@@ -363,8 +360,18 @@ src_compile() {
 	multilib-minimal_src_compile
 }
 
+_test_native_lib() {
+	make V=1 -j1 check
+	return $?
+}
+
+_test_ruby() {
+	./test
+	return $?
+}
+
 multilib_src_test() {
-	emake V=1 -j1 check
+	virtx _test_native_lib
 	if multilib_is_native_abi ; then
 		if use python ; then
 			pushd python || die
@@ -373,6 +380,11 @@ multilib_src_test() {
 		fi
 		if use php ; then
 			php-ext-source-r3-caca_src_test
+		fi
+		if use ruby ; then
+			pushd ruby || die
+				virtx _test_ruby
+			popd
 		fi
 	fi
 }
@@ -549,15 +561,16 @@ multilib_src_install_all() {
 # LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/img2txt.py : pass, but bugs out with --charset=shades
 # LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/text.py : pass
 
-# Testing ruby bindings:  fail (interactive).  It does not load (Canvas, ...) classes except Event and Display.
-# USE="-* X imlib python ruby test"
+# Testing ruby bindings:  passed (test suite) 0.99_beta20_p20211207 (f42aa68) (20230622)
+# USE="-* X imlib ruby test" : pass
+# USE="-* -X imlib opengl ruby test" : fail
 # RUBY_TARGETS="ruby30 -ruby31"
-# Ruby bindings:
+# PASS: test
 # ============================================================================
 # Testsuite summary for libcaca 0.99.beta20
 # ============================================================================
-# # TOTAL: 0
-# # PASS:  0
+# # TOTAL: 1
+# # PASS:  1
 # # SKIP:  0
 # # XFAIL: 0
 # # FAIL:  0
@@ -565,3 +578,7 @@ multilib_src_install_all() {
 # # ERROR: 0
 # ============================================================================
 
+# Testing ruby bindings via ${BUILD_DIR}/test:  passed [${BUILD_DIR}/test is the same as above.]
+# Finished in 0.999457s, 29.0158 runs/s, 39.0212 assertions/s.
+#
+# 29 runs, 39 assertions, 0 failures, 0 errors, 0 skips

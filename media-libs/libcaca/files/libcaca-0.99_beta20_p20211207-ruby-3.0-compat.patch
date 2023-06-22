@@ -1,6 +1,18 @@
+diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/Makefile.am libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/Makefile.am
+--- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/Makefile.am	2021-12-07 01:03:53.000000000 -0800
++++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/Makefile.am	2023-06-22 15:24:05.047549649 -0700
+@@ -12,7 +12,7 @@ TESTS = test
+ endif
+ endif
+ 
+-CFLAGS += -Wno-strict-prototypes -Wno-missing-prototypes
++CFLAGS += -Wno-strict-prototypes -Wno-missing-prototypes -fvisibility=default
+ 
+ caca_la_CPPFLAGS = -I$(top_srcdir)/caca -I../caca $(RUBY_CFLAGS)
+ caca_la_SOURCES = caca.c \
 diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/caca-canvas.c libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/caca-canvas.c
 --- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/caca-canvas.c	2021-12-07 01:03:53.000000000 -0800
-+++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/caca-canvas.c	2023-06-19 20:22:21.989562733 -0700
++++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/caca-canvas.c	2023-06-22 15:24:05.047549649 -0700
 @@ -18,6 +18,8 @@
  #include "caca-font.h"
  #include "common.h"
@@ -39,7 +51,7 @@ diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/caca-canvas
      rb_define_method(cCanvas, "frame_count", get_frame_count, 0);
 diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/caca-display.c libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/caca-display.c
 --- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/caca-display.c	2021-12-07 01:03:53.000000000 -0800
-+++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/caca-display.c	2023-06-19 20:22:21.989562733 -0700
++++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/caca-display.c	2023-06-22 15:24:39.895550513 -0700
 @@ -226,7 +226,7 @@ static VALUE get_event(VALUE self, VALUE
      return e;
  }
@@ -49,9 +61,29 @@ diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/caca-displa
  {
      VALUE ary;
      char const* const* list;
+@@ -278,6 +278,13 @@ static VALUE set_cursor2(VALUE self, VAL
+     return self;
+ }
+ 
++static VALUE get_canvas(VALUE self)
++{
++    VALUE cv = Qnil;
++    cv = rb_iv_get(self, "@canvas");
++    return cv;
++}
++
+ void Init_caca_display(VALUE mCaca)
+ {
+     cDisplay = rb_define_class_under(mCaca, "Display", rb_cObject);
+@@ -304,4 +311,5 @@ void Init_caca_display(VALUE mCaca)
+     rb_define_method(cDisplay, "get_event", get_event, 2);
+     rb_define_method(cDisplay, "cursor=", set_cursor, 1);
+     rb_define_method(cDisplay, "set_cursor", set_cursor2, 1);
++    rb_define_method(cDisplay, "canvas", get_canvas, 0);
+ }
 diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/caca-font.c libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/caca-font.c
 --- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/caca-font.c	2021-12-07 01:03:53.000000000 -0800
-+++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/caca-font.c	2023-06-19 20:22:21.989562733 -0700
++++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/caca-font.c	2023-06-22 15:24:05.047549649 -0700
 @@ -41,7 +41,7 @@ static VALUE font_initialize(VALUE self,
      return self;
  }
@@ -63,7 +95,7 @@ diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/caca-font.c
      char const* const* list;
 diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/common.h libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/common.h
 --- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/common.h	2021-12-07 01:03:53.000000000 -0800
-+++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/common.h	2023-06-19 20:22:21.989562733 -0700
++++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/common.h	2023-06-22 15:24:05.047549649 -0700
 @@ -16,7 +16,7 @@
  #define _SELF  (DATA_PTR(self))
  
@@ -75,14 +107,49 @@ diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/common.h li
      char const* const* list;                    \
 diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/t/tc_display.rb libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/t/tc_display.rb
 --- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/t/tc_display.rb	2021-12-07 01:03:53.000000000 -0800
-+++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/t/tc_display.rb	2023-06-19 20:22:44.933563302 -0700
-@@ -28,7 +28,8 @@ class TC_Canvas < MiniTest::Test
-         d.title = "Test !"
++++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/t/tc_display.rb	2023-06-22 15:26:05.095552627 -0700
+@@ -1,6 +1,6 @@
+ require 'caca'
+ 
+-class TC_Canvas < MiniTest::Test
++class TC_Canvas < MiniTest::Test
+     def test_create
+         d = Caca::Display.new()
+         refute_nil(d, 'Display creation failed')
+diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/t/tc_dither.rb libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/t/tc_dither.rb
+--- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/t/tc_dither.rb	2021-12-07 01:03:53.000000000 -0800
++++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/t/tc_dither.rb	2023-06-22 15:25:54.951552376 -0700
+@@ -1,6 +1,6 @@
+ require 'caca'
+ 
+-class TC_Canvas < MiniTest::Test
++class TC_Canvas < MiniTest::Test
+     def test_create
+         d = Caca::Dither.new(8, 32, 32, 32, 0, 0, 0, 0)
      end
-     def test_set_cursor
--        d = Caca::Display.new()
-+        c = Caca::Canvas.new(3, 3)
-+        d = Caca::Display.new(c)
-         d.cursor = 1
+diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/t/tc_font.rb libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/t/tc_font.rb
+--- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/t/tc_font.rb	2021-12-07 01:03:53.000000000 -0800
++++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/t/tc_font.rb	2023-06-22 15:26:00.391552511 -0700
+@@ -1,6 +1,6 @@
+ require 'caca'
+ 
+-class TC_Canvas < MiniTest::Test
++class TC_Canvas < MiniTest::Test
+     def test_list
+         refute_nil(Caca::Font.list)
      end
- end
+diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/test libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/test
+--- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/ruby/test	2021-12-07 01:03:53.000000000 -0800
++++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/ruby/test	2023-06-22 15:24:05.047549649 -0700
+@@ -2,9 +2,9 @@
+ 
+ require 'minitest/autorun'
+ 
+-$LOAD_PATH.unshift(".libs").unshift("lib")
++$LOAD_PATH.unshift(Dir.pwd + "/.libs")
+ 
+-Dir.glob("./t/tc*.rb").each{ |t|
++Dir.glob(Dir.pwd + "/t/tc*.rb").each{ |t|
+ 	require t
+ }
+ 

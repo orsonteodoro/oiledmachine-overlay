@@ -54,13 +54,13 @@
       Adds bindings to code/build with Perl
     </flag>
     <flag name="php">
-      Adds bindings to code/build with PHP (BUGGED)
+      Adds bindings to code/build with PHP (BUGGY)
     </flag>
     <flag name="python">
       Adds bindings to code/build with Python
     </flag>
     <flag name="ruby">
-      Adds bindings to code/build with Ruby (BUGGED)
+      Adds bindings to code/build with Ruby
     </flag>
     <flag name="slang">
       Slang graphics support
