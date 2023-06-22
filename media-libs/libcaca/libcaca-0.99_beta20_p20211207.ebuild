@@ -525,17 +525,8 @@ multilib_src_install_all() {
 # LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/font.py : pass
 # LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/frames.py : pass
 # LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/gol.py : pass
-# LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/img2txt.py : fail
+# LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/img2txt.py : fail with no image appearing in cli
 # LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/text.py : pass
-# Error:
-#  File "python/examples/img2txt.py", line 130
-#    except getopt.GetoptError, err:
-#           ^^^^^^^^^^^^^^^^^^^^^^^
-# SyntaxError: multiple exception types must be parenthesized
-
-
-
-
 
 # Testing ruby bindings:  fail (interactive).  It does not load (Canvas, ...) classes except Event and Display.
 # USE="-* X imlib python ruby test"
