@@ -18,7 +18,7 @@ PHP_EXT_S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 USE_RUBY="ruby30 ruby31"
 USE_PHP="php7-4 php8-0 php8-1 php8-2"
 inherit autotools eutils flag-o-matic mono-env java-pkg-opt-2 multilib-minimal
-inherit php-ext-source-r3-caca python-single-r1 ruby-ng
+inherit php-ext-source-r3-caca python-r1 ruby-ng
 
 DESCRIPTION="A library that creates colored ASCII-art graphics"
 HOMEPAGE="http://libcaca.zoy.org/"
@@ -42,6 +42,12 @@ REQUIRED_USE+="
 		ncurses
 	)
 	examples? (
+		cxx? (
+			|| (
+				X
+				opengl
+			)
+		)
 		java? (
 			|| (
 				X
@@ -54,9 +60,15 @@ REQUIRED_USE+="
 				opengl
 			)
 		)
+		python? (
+			|| (
+				X
+				opengl
+			)
+		)
 	)
 	python? (
-		^^ (
+		|| (
 			${PYTHON_REQUIRED_USE}
 		)
 	)
@@ -95,6 +107,11 @@ RDEPEND+="
 	)
 	python? (
 		${PYTHON_DEPS}
+		examples? (
+			$(python_gen_cond_dep '
+				dev-python/pillow[${PYTHON_USEDEP}]
+			')
+		)
 	)
 	slang? (
 		>=sys-libs/slang-2.2.4-r1[${MULTILIB_USEDEP}]
@@ -177,6 +194,7 @@ PATCHES=(
 	"${FILESDIR}/libcaca-0.99_beta20_p20211207-ruby-3.0-compat.patch"
 	"${FILESDIR}/libcaca-0.99_beta20_p20211207-php7-fixes.patch"
 	"${FILESDIR}/libcaca-0.99_beta20_p20211207-php8-fixes.patch"
+	"${FILESDIR}/libcaca-0.99_beta20_p20211207-img2txt-python3-compat.patch"
 )
 #	"A${FILESDIR}/test.patch"
 # Applied already upstream:
@@ -187,7 +205,7 @@ PATCHES=(
 # e4968ba : Fix-a-problem-in-the-caca_resize-overflow-detection-.patch
 
 pkg_setup() {
-	use python && python-single-r1_pkg_setup
+	use python && python_setup
 	java-pkg-opt-2_pkg_setup
 	use java && java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 	use mono && mono-env_pkg_setup
@@ -348,6 +366,11 @@ src_compile() {
 multilib_src_test() {
 	emake V=1 -j1 check
 	if multilib_is_native_abi ; then
+		if use python ; then
+			pushd python || die
+				${EPYTHON} -m unittest test/canvas.py || die
+			popd
+		fi
 		if use php ; then
 			php-ext-source-r3-caca_src_test
 		fi
@@ -365,14 +388,65 @@ multilib_src_install() {
 		if use java; then
 			java-pkg_newjar java/libjava.jar
 		fi
+		if use python ; then
+			_python_install() {
+				python_domodule python/caca
+				python_optimize
+			}
+			python_foreach_impl _python_install
+		fi
+
+		if use examples ; then
+			# if use c ; then
+				insinto "/usr/share/${PN}/examples/c"
+				doins -r examples/*
+				rm -rf "${ED}/usr/share/${PN}/examples/c/"*.o
+			# fi
+			if use cxx ; then
+				insinto "/usr/share/${PN}/examples/cxx"
+				doins cxx/cxxtest.cpp
+			fi
+			if use java ; then
+				insinto "/usr/share/${PN}/examples/java"
+				doins -r java/examples/*
+			fi
+			if use php ; then
+				insinto "/usr/share/${PN}/examples/php"
+				doins -r caca-php/examples/*
+			fi
+			if use python ; then
+				local L=(
+					blit.py
+					cacainfo.py
+					colors.py
+					drawing.py
+					driver.py
+					event.py
+					figfont.py
+					font.py
+					frames.py
+					gol.py
+					img2txt.py
+					text.py
+				)
+				exeinto "/usr/share/${PN}/examples/python"
+				local f
+				for f in ${L[@]} ; do
+					doexe python/examples/${f}
+				done
+			fi
+		fi
+
 		if use php ; then
 			DOCS=() # Avoid calling dodoc unconditionally without doc USE.
-			php-ext-source-r3-caca_src_install
+			php-ext-source-r3-caca_src_install # implied cd ${WORKDIR}/php7.4
 		fi
 	fi
 }
 
 src_install() {
+einfo "PYTHON_SITEDIR=${PYTHON_SITEDIR}"
+	rm -rf "${ED}/${PYTHON_SITEDIR}" || die
 	# Broken inherit, do not remove.
 	multilib-minimal_src_install
 }
@@ -393,7 +467,7 @@ multilib_src_install_all() {
 
 # comment on test:  Both 32-bit and 64-bit tested with same results below
 
-# libcaca (C lang):
+# Testing the native libcaca C library:
 # PASS: simple
 # PASS: check-copyright
 # PASS: check-source
@@ -411,6 +485,61 @@ multilib_src_install_all() {
 # # ERROR: 0
 # ============================================================================
 
+# Testing the C++ bindings:  passed (interactive) 0.99_beta20_p20211207 (f42aa68) (20230621)
+# USE="-* X imlib cxx opengl test"
+# cd ${BUILD_DIR}/cxx
+# ./cxxtest
+
+# Testing java bindings:  passed (interactive) 0.99_beta20_p20211207 (f42aa68) (20230621)
+# USE="-* X imlib java test"
+# cd ${BUILD_DIR}/java/examples
+# ./TrueColor
+
+# Testing mono bindings:  passed (interactive) 0.99_beta20_p20211207 (f42aa68) (20230621)
+# USE="-* X imlib mono test"
+# cd ${BUILD_DIR}/caca-sharp
+# LD_LIBRARY_PATH="$(pwd)/../caca/.libs/" mono test.exe
+
+# Testing php bindings:  fail (interactive).  The tester segfaults during Render()
+# USE="-* X imlib php opengl test"
+# cd ${BUILD_DIR}/caca-php/examples
+# /usr/bin/php7.4 test.php
+
+# Testing python bindings:  passed (test suite) 0.99_beta20_p20211207 (f42aa68) (20230621)
+# USE="-* X imlib python opengl test"
+# PYTHON_SINGLE_TARGET="python3_10 -python3_11"
+# Ran 36 tests in 0.012s
+#
+# OK
+
+# Testing python bindings:  passed (examples) 0.99_beta20_p20211207 (f42aa68) (20230621)
+# cd ${BUILD_DIR}/python
+# EPYTHON="python3.10"
+# LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/blit.py : pass
+# LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/cacainfo.py : pass
+# LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/colors.py : pass
+# LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/drawing.py : pass
+# LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/driver.py : pass, but stuck on gl after 5 secs
+# LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/event.py : pass
+# LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/figfont.py : skip (missing asset)
+# LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/font.py : pass
+# LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/frames.py : pass
+# LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/gol.py : pass
+# LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/img2txt.py : fail
+# LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/text.py : pass
+# Error:
+#  File "python/examples/img2txt.py", line 130
+#    except getopt.GetoptError, err:
+#           ^^^^^^^^^^^^^^^^^^^^^^^
+# SyntaxError: multiple exception types must be parenthesized
+
+
+
+
+
+# Testing ruby bindings:  fail (interactive).  It does not load (Canvas, ...) classes except Event and Display.
+# USE="-* X imlib python ruby test"
+# RUBY_TARGETS="ruby30 -ruby31"
 # Ruby bindings:
 # ============================================================================
 # Testsuite summary for libcaca 0.99.beta20
@@ -424,18 +553,3 @@ multilib_src_install_all() {
 # # ERROR: 0
 # ============================================================================
 
-# Testing mono:  passed (interactive) 0.99_beta20_p20211207 (f42aa68) (20230621)
-# USE="-* X imlib mono test"
-# cd ${BUILD_DIR}/caca-sharp
-# LD_LIBRARY_PATH="$(pwd)/../caca/.libs/" mono test.exe
-
-# Testing java:  passed (interactive) 0.99_beta20_p20211207 (f42aa68) (20230621)
-# USE="-* X imlib java test"
-# cd ${BUILD_DIR}/java/examples
-# ./TrueColor
-
-# Testing php:  fail (interactive).  The tester segfaults during Render()
-# cd ${BUILD_DIR}/caca-php
-# /usr/bin/php7.4 test.php
-
-# Testing ruby:  fail (interactive).  It does not load (Canvas, ...) classes except Event and Display.

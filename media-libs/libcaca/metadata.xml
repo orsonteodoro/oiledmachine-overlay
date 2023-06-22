@@ -47,7 +47,8 @@
       Network support
     </flag>
     <flag name="opengl">
-      OpenGL support for video display
+      OpenGL support for video display.
+      (The OpenGL driver can be actually slower compared to the X driver.)
     </flag>
     <flag name="perl">
       Adds bindings to code/build with Perl
