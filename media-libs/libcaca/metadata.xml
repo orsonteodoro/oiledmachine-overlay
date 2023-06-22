@@ -20,7 +20,7 @@
   </upstream>
   <use>
     <flag name="256-colors-ncurses">
-      ncurses 256 colors support (experimental)
+      Adds ncurses 256 colors support (experimental)
     </flag>
     <flag name="cxx">
       Generates C++ bindings
@@ -32,10 +32,10 @@
       Imlib2 graphics support for access to additional API calls
     </flag>
     <flag name="java">
-      Builds Java bindings to code with Java
+      Adds bindings to code/build with Java
     </flag>
     <flag name="mono">
-      Builds C# bindings to code with C#
+      Adds bindings to code/build with C#/mono
     </flag>
     <flag name="ncurses">
       ncurses support
@@ -47,13 +47,16 @@
       OpenGL support for video display
     </flag>
     <flag name="php">
-      Builds PHP bindings to code with PHP (EXPERIMENTAL/TESTING)
+      Adds bindings to code/build with Perl
+    </flag>
+    <flag name="php">
+      Adds bindings to code/build with PHP (EXPERIMENTAL/TESTING)
     </flag>
     <flag name="python">
-      Builds Python bindings to code with Python
+      Adds bindings to code/build with Python
     </flag>
     <flag name="ruby">
-      Builds Ruby bindings to code with Ruby (BUGGED)
+      Adds bindings to code/build with Ruby (BUGGED)
     </flag>
     <flag name="slang">
       Slang graphics support
