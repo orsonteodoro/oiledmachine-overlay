@@ -23,7 +23,7 @@ LICENSE="
 "
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
-IUSE+=" system-libcaca r4"
+IUSE+=" system-libcaca r5"
 RESTRICT="mirror"
 PERL_PV="5.6"
 FILE_SHAREDIR_PV="1.3"
@@ -59,8 +59,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND_LIBCACA+="
+	dev-util/pkgconf
 	sys-devel/gcc
-	virtual/pkgconfig
 "
 BDEPEND+="
 	!system-libcaca? (
