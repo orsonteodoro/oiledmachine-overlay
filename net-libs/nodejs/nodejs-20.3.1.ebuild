@@ -89,7 +89,7 @@ acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
 +npm mold pax-kernel +snapshot +ssl system-icu +system-ssl test
 
 $(gen_iuse_pgo)
-man pgo r9
+man pgo r3
 "
 
 gen_required_use_pgo() {
@@ -121,23 +121,23 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Apr 8, 2023
+# Last deps commit date:  Jun 19, 2023
 ACORN_PV="8.8.2"
-COREPACK_PV="0.17.1"
-NGHTTP2_PV="1.52.0"
+COREPACK_PV="0.18.0"
+NGHTTP2_PV="1.53.0"
 RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.0.9
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.44.2:=
-	>=net-dns/c-ares-1.19.0
+	>=dev-libs/libuv-1.45.0:=
+	>=net-dns/c-ares-1.19.1
 	>=net-libs/nghttp2-${NGHTTP2_PV}
-	>=sys-libs/zlib-1.2.12
+	>=sys-libs/zlib-1.2.13
 	system-icu? (
-		>=dev-libs/icu-72.1:=
+		>=dev-libs/icu-73.1:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.8:0=
+		>=dev-libs/openssl-3.0.9:0=
 	)
 "
 DEPEND+="
@@ -172,13 +172,13 @@ PDEPEND+="
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 PATCHES=(
 	"${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
-	"${FILESDIR}"/${PN}-19.5.0-global-npm-config.patch
+	"${FILESDIR}"/${PN}-20.2.0-global-npm-config.patch
 	"${FILESDIR}"/${PN}-16.13.2-lto-update.patch
-	"${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch
+	"${FILESDIR}"/${PN}-20.1.0-support-clang-pgo.patch
 	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_PV="9.6.2" # See https://github.com/nodejs/node/blob/v19.9.0/deps/npm/package.json
+NPM_PV="9.6.7" # See https://github.com/nodejs/node/blob/v20.3.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_PV="7.4.0"
@@ -215,7 +215,7 @@ pkg_setup() {
 	linux-info_pkg_setup
 
 einfo
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2023-06-01."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2026-04-30."
 einfo
 
 	# Prevent merge conflicts
