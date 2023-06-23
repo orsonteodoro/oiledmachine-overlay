@@ -297,7 +297,7 @@ src_install() {
 # /usr/bin/php7.4 dithering.php : pass
 # /usr/bin/php7.4 export.php : fail, scrambled output
 # /usr/bin/php7.4 fullwidth.php : maybe, tiny render
-# /usr/bin/php7.4 img2txt.php : fail, segfault
+# /usr/bin/php7.4 img2txt.php : fail, segfault with caca_set_dither_algorithm
 # /usr/bin/php7.4 import.php : fail, scrambled output
 # /usr/bin/php7.4 polyline.php : pass
 # /usr/bin/php7.4 render.php : ? shows only source code
@@ -306,9 +306,4 @@ src_install() {
 # /usr/bin/php7.4 transform.php : pass
 # /usr/bin/php7.4 truecolor.php : pass
 # /usr/bin/php7.4 unicode : pass
-# /usr/bin/php7.4 figfont.php : fail
-# PHP Fatal error:  Uncaught Error: Call to undefined function mb_convert_encoding() in /var/tmp/portage/media-libs/libcaca-0.99_beta20_p20211207/work/php7.4/caca-php/examples/figfont.php:15
-# Stack trace:
-# #0 /var/tmp/portage/media-libs/libcaca-0.99_beta20_p20211207/work/php7.4/caca-php/examples/figfont.php(40): unistr_to_ords()
-# #1 {main}
-#   thrown in /var/tmp/portage/media-libs/libcaca-0.99_beta20_p20211207/work/php7.4/caca-php/examples/figfont.php on line 15
+# /usr/bin/php7.4 figfont.php : pass
