@@ -13,6 +13,9 @@ HOMEPAGE="
 https://github.com/yanick/Alien-caca
 "
 LICENSE="
+	!system-libcaca? (
+		WTFPL-2
+	)
 	|| (
 		GPL-1+
 		Artistic
