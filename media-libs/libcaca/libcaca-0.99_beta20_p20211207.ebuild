@@ -33,7 +33,7 @@ LICENSE="
 
 IUSE="
 256-colors-ncurses cxx doc examples imlib java mono ncurses network opengl perl
-php python ruby slang static-libs test truetype X
+php python ruby slang static-libs test truetype X r1
 "
 JAVA_SLOT="1.8"
 SLOT="0/$(ver_cut 1-2 ${PV})"
@@ -175,12 +175,15 @@ https://github.com/cacalabs/libcaca/commit/f57b0d65cfaac5f1fbdc75458170e102f57a8
 	-> libcaca-pr70-f57b0d6.patch
 https://github.com/cacalabs/libcaca/commit/9683d1f7efe316b1e6113b65c6fff40671d35632.patch
 	-> libcaca-pr70-9683d1f.patch
+https://github.com/cacalabs/libcaca/commit/d33a9ca2b7e9f32483c1aee4c3944c56206d456b.patch
+	-> libcaca-pr66-d33a9ca.patch
 "
 # Fix undefined reference to _caca_alloc2d #70
 # From https://github.com/cacalabs/libcaca/pull/70/commits
 # afacac2 - common-image: avoid implicit function declaration
 # f57b0d6 - caca: avoid nested externs
 # 9683d1f - caca_internals: export _caca_alloc2d
+# d33a9ca - Prevent a divide-by-zero by checking for a zero width or height.
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="
 	mirror
@@ -196,6 +199,7 @@ PATCHES=(
 	"${FILESDIR}/libcaca-0.99_beta20_p20211207-php7-fixes.patch"
 	"${FILESDIR}/libcaca-0.99_beta20_p20211207-php8-fixes.patch"
 	"${FILESDIR}/libcaca-0.99_beta20_p20211207-img2txt-python3-compat.patch"
+	"${DISTDIR}/libcaca-pr66-d33a9ca.patch"
 )
 # Applied already upstream:
 # 84bd155 : CVE-2018-20544.patch
@@ -215,8 +219,10 @@ ewarn
 ewarn "You need to install libcaca first without the php USE flag before using"
 ewarn "the ${CATEGORY}/${PN}[php] USE flag."
 ewarn
-ewarn "You need to install libcaca first with the X USE flag before using the"
-ewarn "${CATEGORY}/${PN}[ruby] USE flag."
+# Ruby tests randomly crash or just need stricter requirements for ABI/bindings
+# compatibility.
+ewarn "You need to re-emerge libcaca first with the exact version, commit, and"
+ewarn "flags before using the ${CATEGORY}/${PN}[ruby] USE flag."
 ewarn
 ewarn "The PHP bindings for 3.x are functional but buggy."
 ewarn
