@@ -20,11 +20,28 @@ LICENSE="
 "
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
-IUSE+=" system-libcaca r2"
+IUSE+=" system-libcaca r4"
 RESTRICT="mirror"
 PERL_PV="5.6"
 FILE_SHAREDIR_PV="1.3"
+RDEPEND_LIBCACA+="
+	dev-libs/glib:2
+	media-libs/freeglut
+	media-libs/glu
+	media-libs/imlib2
+	media-libs/libglvnd
+	sys-devel/gcc
+	sys-libs/ncurses
+	sys-libs/slang
+	sys-libs/zlib
+	x11-libs/libX11
+	x11-libs/pango
+	virtual/libc
+"
 RDEPEND+="
+	!system-libcaca? (
+		${RDEPEND_LIBCACA}
+	)
 	>=dev-lang/perl-${PERL_PV}
 	>=dev-perl/Alien-Build-0.5
 	>=dev-perl/File-ShareDir-${FILE_SHAREDIR_PV}
@@ -38,7 +55,14 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+BDEPEND_LIBCACA+="
+	sys-devel/gcc
+	virtual/pkgconfig
+"
 BDEPEND+="
+	!system-libcaca? (
+		${BDEPEND_LIBCACA}
+	)
 	>=dev-lang/perl-${PERL_PV}
 	>=dev-perl/Alien-Base-ModuleBuild-0.5
 	>=dev-perl/File-ShareDir-${FILE_SHAREDIR_PV}
@@ -74,6 +98,9 @@ pkg_setup() {
 src_prepare() {
 	# Fix vulnerabilities
 	sed -i -e "s|v0.99.beta19.tar.gz|v${LIBCACA_PV}.tar.gz|" \
+		"Build.PL" \
+		|| die
+	sed -i -e "s|\"make\"|\"make V=1\"|g" \
 		"Build.PL" \
 		|| die
 	perl-module_src_prepare
