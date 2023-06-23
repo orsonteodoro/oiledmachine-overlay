@@ -431,6 +431,7 @@ einfo "Running:\tnpm ${cmd[@]}"
 	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
 	grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
 	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
+	grep -q -e "git dep preparation failed" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: eyarn

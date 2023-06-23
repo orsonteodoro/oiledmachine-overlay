@@ -514,6 +514,7 @@ npm_src_unpack() {
 	grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
 	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
 	grep -q -e "MODULE_NOT_FOUND" "${T}/build.log" && die "Detected error"
+	grep -q -e "git dep preparation failed" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: npm_src_compile
@@ -536,6 +537,7 @@ npm_src_compile() {
 	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
 	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
 	grep -q -e "MODULE_NOT_FOUND" "${T}/build.log" && die "Detected error"
+	grep -q -e "git dep preparation failed" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: npm_src_test
