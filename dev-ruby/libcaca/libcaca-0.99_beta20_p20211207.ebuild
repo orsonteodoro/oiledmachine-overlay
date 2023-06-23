@@ -36,7 +36,7 @@ REQUIRED_USE+="
 	truetype? (
 		opengl
 	)
-	^^ (
+	|| (
 		$(ruby_get_use_targets)
 	)
 "
