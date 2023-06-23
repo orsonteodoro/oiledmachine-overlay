@@ -20,7 +20,7 @@ LICENSE="
 "
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
-IUSE+=" r1"
+IUSE+=" system-libcaca r2"
 RESTRICT="mirror"
 PERL_PV="5.6"
 FILE_SHAREDIR_PV="1.3"
@@ -28,6 +28,12 @@ RDEPEND+="
 	>=dev-lang/perl-${PERL_PV}
 	>=dev-perl/Alien-Build-0.5
 	>=dev-perl/File-ShareDir-${FILE_SHAREDIR_PV}
+	system-libcaca? (
+		|| (
+			~media-libs/libcaca-0.99_beta20_p20211207
+			~media-libs/libcaca-0.99_beta20
+		)
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -41,9 +47,13 @@ BDEPEND+="
 	dev-perl/Module-Build
 	virtual/perl-CPAN
 "
-
-# OILEDMACHINE-OVERLAY-META:  created-ebuild
-# OILEDMACHINE-OVERLAY-TEST:  (20230620)
+SRC_URI+="
+https://github.com/cacalabs/libcaca/commit/d33a9ca2b7e9f32483c1aee4c3944c56206d456b.patch
+	-> libcaca-pr66-d33a9ca.patch
+"
+PATCHES+=(
+	"${FILESDIR}/Alien-caca-0.0.3-fix-CVE-2022-0856.patch"
+)
 
 check_network_sandbox() {
 	if has network-sandbox $FEATURES ; then
@@ -56,8 +66,9 @@ eerror
 }
 
 pkg_setup() {
-	check_network_sandbox
-	perl-module_pkg_setup
+	if ! use system-libcaca ; then
+		check_network_sandbox
+	fi
 }
 
 src_prepare() {

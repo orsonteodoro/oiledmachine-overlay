@@ -11,4 +11,15 @@
     <remote-id type="cpan">Alien-caca</remote-id>
     <remote-id type="cpan-module">Alien::caca</remote-id>
   </upstream>
+  <use>
+    <flag name="system-libcaca">
+      Use the already built system's libcaca instead.  Otherwise,
+      fallback to a copy from the libcaca project.
+
+      Disabling this flag requires FEATURES=-network-sandbox.
+    </flag>
+    <flag name="rN">
+      The internal ebuild revision.
+    </flag>
+  </use>
 </pkgmetadata>
