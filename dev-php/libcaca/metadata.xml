@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild fork on the oiledmachine overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- Original ebuild -->
+    <email>media-video@gentoo.org</email>
+  </maintainer>
+  <longdescription>
+    libyuv performs YUV scaling and conversion.
+  </longdescription>
+  <upstream>
+    <maintainer status="active">
+      <name>Sam Hocevar</name>
+    </maintainer>
+  </upstream>
+  <use>
+    <flag name="256-colors-ncurses">
+      Adds ncurses 256 colors support (experimental)
+    </flag>
+    <flag name="cxx">
+      Generates C++ bindings
+    </flag>
+    <flag name="doc">
+      Builds documentation
+    </flag>
+    <flag name="examples">
+      Ensures dependencies met for examples
+    </flag>
+    <flag name="imlib">
+      Imlib2 graphics support for access to additional API calls
+    </flag>
+    <flag name="java">
+      Adds bindings to code/build with Java
+    </flag>
+    <flag name="mono">
+      Adds bindings to code/build with C#/mono
+    </flag>
+    <flag name="ncurses">
+      ncurses support
+    </flag>
+    <flag name="network">
+      Network support
+    </flag>
+    <flag name="opengl">
+      OpenGL support for video display.
+      (The OpenGL driver may studder compared to the X driver.)
+    </flag>
+    <flag name="perl">
+      Adds bindings to code/build with Perl
+    </flag>
+    <flag name="php">
+      Adds bindings to code/build with PHP (BUGGY)
+    </flag>
+    <flag name="python">
+      Adds bindings to code/build with Python
+    </flag>
+    <flag name="ruby">
+      Adds bindings to code/build with Ruby
+    </flag>
+    <flag name="slang">
+      Slang graphics support
+    </flag>
+    <flag name="static-libs">
+      Generates static libraries
+    </flag>
+    <flag name="test">
+      Performs testing
+    </flag>
+    <flag name="truetype">
+      Adds gftl that might be required by the opengl USE flag
+    </flag>
+    <flag name="X">
+      X11 support
+    </flag>
+  </use>
+</pkgmetadata>

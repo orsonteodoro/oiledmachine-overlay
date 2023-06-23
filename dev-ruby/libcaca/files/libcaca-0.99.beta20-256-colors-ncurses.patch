@@ -1,0 +1,573 @@
+Ben Wiley Sittler <bsittler@gmail.com>
+
+I've made an experimental patch to the ncurses driver to:
+
+(a) use dynamic color changes ["xterm-256color", "linux", and similar
+terminals]/palette simulation["screen-256color" and similar] to
+approximate the cucul palette more accurately (which improves the
+performance of dithers and other "truecolor" operations, although it
+does not provide actual truecolor support due to 256-color-pair
+limitation in ncurses), and
+
+(b) support some non-UTF-8 locales under glibc by using wchar_t output
+routines (ncursesw only)
+
+http://zoehep.xent.com/~bsittler/caca-256color.diff.txt
+
+future: find some way to work around bugs in experimental ncurses "ABI
+6" which is supposed to provide >256 color pair support, but i have
+not made it work yet.
+
+Also, with some kind of palette optimisation (I haven't read the
+S/Lang driver code yet) this could be changed to dynamically change
+the palette/color pair allocation to always keep the "best" 256 color
+pairs visible for the canvas being rendered. Maybe sam's study will
+help with that?
+
+Anyhow, I would love to hear your feedback.
+
+-ben
+
+p.s. I updated the a few minutes ago at the same URL. if you fetched
+it before, re-fetch for a less buggy version.
+
+Adapted by Orson Teodoro for libcaca 0.99 beta 19.
+
+----
+diff -urp libcaca-0.99.beta19.orig/caca/driver/ncurses.c libcaca-0.99.beta19/caca/driver/ncurses.c
+--- libcaca-0.99.beta19.orig/caca/driver/ncurses.c	2014-05-16 09:43:21.000000000 -0700
++++ libcaca-0.99.beta19/caca/driver/ncurses.c	2016-12-24 16:39:14.904267864 -0800
+@@ -196,14 +196,72 @@ static void ncurses_install_terminal(cac
+ static void ncurses_uninstall_terminal(caca_display_t *);
+ #endif
+ static void ncurses_write_utf32(uint32_t);
++#if defined USE_NCURSES_256_COLORS
++static short ncurses_mille_to_scale(short n, short scale);
++#endif
+ 
+ struct driver_private
+ {
++#if defined USE_NCURSES_256_COLORS
++    int attr[256*256];
++    attr_t wattr[256*256];
++    short pair[256*256];
++    int npairs;
++    unsigned char rgb12_to_xterm[0x1000];
++    unsigned char xterm_to_ansi[256];
++    unsigned char ansi_to_xterm[16];
++#else
+     int attr[16*16];
++#endif
+     mmask_t oldmask;
+     char *term;
+ };
+ 
++#if defined USE_NCURSES_256_COLORS
++#define _XTERM_LINEARSCALE \
++    "\x0\x0\x1\x1\x2\x2\x3\x3\x4\x4\x5\x5\x6\x6\x7\x7" \
++    "\x8\x8\x9\x9\xa\xa\xb\xb\xc\xc\xd\xd\xe\xe\xf\xf" \
++    "\x10\x10\x11\x11\x12\x12\x13\x13\x14\x14\x15\x15\x16\x16\x17\x17" \
++    "\x18\x18\x19\x19\x1a\x1a\x1b\x1b\x1c\x1c\x1d\x1d\x1e\x1e\x1f\x1f" \
++    "\x20\x20\x21\x21\x22\x22\x23\x23\x24\x24\x25\x25\x26\x26\x27\x27" \
++    "\x28\x28\x29\x29\x2a\x2a\x2b\x2b\x2c\x2c\x2d\x2d\x2e\x2e\x2f\x2f" \
++    "\x30\x30\x31\x31\x32\x32\x33\x33\x34\x34\x35\x35\x36\x36\x37\x37" \
++    "\x38\x38\x39\x39\x3a\x3a\x3b\x3b\x3c\x3c\x3d\x3d\x3e\x3e\x3f\x3f" \
++    "\x40\x40\x41\x41\x42\x42\x43\x43\x44\x44\x45\x45\x46\x46\x47\x47" \
++    "\x48\x48\x49\x49\x4a\x4a\x4b\x4b\x4c\x4c\x4d\x4d\x4e\x4e\x4f\x4f" \
++    "\x50\x50\x51\x51\x52\x52\x53\x53\x54\x54\x55\x55\x56\x56\x57\x57" \
++    "\x58\x58\x59\x59\x5a\x5a\x5b\x5b\x5c\x5c\x5d\x5d\x5e\x5e\x5f\x5f" \
++    "\x60\x60\x61\x61\x62\x62\x63\x63\x64\x64\x65\x65\x66\x66\x67\x67" \
++    "\x68\x68\x69\x69\x6a\x6a\x6b\x6b\x6c\x6c\x6d\x6d\x6e\x6e\x6f\x6f" \
++    "\x70\x70\x71\x71\x72\x72\x73\x73\x74\x74\x75\x75\x76\x76\x77\x77" \
++    "\x78\x78\x79\x79\x7a\x7a\x7b\x7b\x7c\x7c\x7d\x7d\x7e\x7e\x7f\x7f" \
++    "\x80\x80\x81\x81\x82\x82\x83\x83\x84\x84\x85\x85\x86\x86\x87\x87" \
++    "\x88\x88\x89\x89\x8a\x8a\x8b\x8b\x8c\x8c\x8d\x8d\x8e\x8e\x8f\x8f" \
++    "\x90\x90\x91\x91\x92\x92\x93\x93\x94\x94\x95\x95\x96\x96\x97\x97" \
++    "\x98\x98\x99\x99\x9a\x9a\x9b\x9b\x9c\x9c\x9d\x9d\x9e\x9e\x9f\x9f" \
++    "\xa0\xa0\xa1\xa1\xa2\xa2\xa3\xa3\xa4\xa4\xa5\xa5\xa6\xa6\xa7\xa7" \
++    "\xa8\xa8\xa9\xa9\xaa\xaa\xab\xab\xac\xac\xad\xad\xae\xae\xaf\xaf" \
++    "\xb0\xb0\xb1\xb1\xb2\xb2\xb3\xb3\xb4\xb4\xb5\xb5\xb6\xb6\xb7\xb7" \
++    "\xb8\xb8\xb9\xb9\xba\xba\xbb\xbb\xbc\xbc\xbd\xbd\xbe\xbe\xbf\xbf" \
++    "\xc0\xc0\xc1\xc1\xc2\xc2\xc3\xc3\xc4\xc4\xc5\xc5\xc6\xc6\xc7\xc7" \
++    "\xc8\xc8\xc9\xc9\xca\xca\xcb\xcb\xcc\xcc\xcd\xcd\xce\xce\xcf\xcf" \
++    "\xd0\xd0\xd1\xd1\xd2\xd2\xd3\xd3\xd4\xd4\xd5\xd5\xd6\xd6\xd7\xd7" \
++    "\xd8\xd8\xd9\xd9\xda\xda\xdb\xdb\xdc\xdc\xdd\xdd\xde\xde\xdf\xdf" \
++    "\xe0\xe0\xe1\xe1\xe2\xe2\xe3\xe3\xe4\xe4\xe5\xe5\xe6\xe6\xe7\xe7" \
++    "\xe8\xe8\xe9\xe9\xea\xea\xeb\xeb\xec\xec\xed\xed\xee\xee\xef\xef" \
++    "\xf0\xf0\xf1\xf1\xf2\xf2\xf3\xf3\xf4\xf4\xf5\xf5\xf6\xf6\xf7\xf7" \
++    "\xf8\xf8\xf9\xf9\xfa\xfa\xfb\xfb\xfc\xfc\xfd\xfd\xfe\xfe\xff\xff" \
++    ""
++
++/* convert linear pixel value in the range [0, 1000] to linear-scale
++ * intensity in the range [0, scale - 1] for the XTerm-style 256-color
++ * and 88-color cube palettes. */
++static short ncurses_mille_to_scale(short n, short scale)
++{
++    return (short) (((long) (scale - 1)) * ((long) (unsigned char) _XTERM_LINEARSCALE[n * 511L / 1000]) / 255);
++}
++#endif
++
+ static int ncurses_init_graphics(caca_display_t *dp)
+ {
+     static int curses_colors[] =
+@@ -277,6 +335,13 @@ static int ncurses_init_graphics(caca_di
+      * If COLORS == 8, it means the terminal does not know about bright
+      * colours and we need to get them through A_BOLD and A_BLINK (\e[1m
+      * and \e[5m). We can only build 8*8 colour pairs. */
++#if defined USE_NCURSES_256_COLORS
++    /* If COLORS == 88 or COLORS == 256 it means the terminal has, in
++     * addition to the regular and bright colours, a grey-ramp and a
++     * colour cube.
++     */
++#endif
++
+     max = COLORS >= 16 ? 16 : 8;
+ 
+     for(bg = 0; bg < max; bg++)
+@@ -287,21 +352,177 @@ static int ncurses_init_graphics(caca_di
+              * colour pair to be redefined. */
+             int col = ((max + 7 - fg) % max) + max * bg;
+             init_pair(col, curses_colors[fg], curses_colors[bg]);
++#if defined USE_NCURSES_256_COLORS
++            dp->drv.p->attr[fg + 256 * bg] = COLOR_PAIR(col);
++            dp->drv.p->wattr[fg + 256 * bg] = 0;
++            dp->drv.p->pair[fg + 256 * bg] = 0;
++#else
+             dp->drv.p->attr[fg + 16 * bg] = COLOR_PAIR(col);
++#endif
+ 
+             if(max == 8)
+             {
+                 /* Bright fg on simple bg */
++#if defined USE_NCURSES_256_COLORS
++                dp->drv.p->attr[fg + 8 + 256 * bg] = COLOR_PAIR(col) | A_BOLD;
++                dp->drv.p->wattr[fg + 8 + 256 * bg] = 0;
++                dp->drv.p->pair[fg + 8 + 256 * bg] = 0;
++#else
+                 dp->drv.p->attr[fg + 8 + 16 * bg] = A_BOLD | COLOR_PAIR(col);
++#endif
+                 /* Simple fg on bright bg */
++#if defined USE_NCURSES_256_COLORS
++                dp->drv.p->attr[fg + 256 * (bg + 8)] = COLOR_PAIR(col) | A_BLINK;
++                dp->drv.p->wattr[fg + 256 * (bg + 8)] = 0;
++                dp->drv.p->pair[fg + 256 * (bg + 8)] = 0;
++#else
+                 dp->drv.p->attr[fg + 16 * (bg + 8)] = A_BLINK
+                                                     | COLOR_PAIR(col);
++#endif
+                 /* Bright fg on bright bg */
++#if defined USE_NCURSES_256_COLORS
++                dp->drv.p->attr[fg + 8 + 256 * (bg + 8)] = COLOR_PAIR(col) | A_BLINK | A_BOLD;
++                dp->drv.p->wattr[fg + 8 + 256 * (bg + 8)] = 0;
++                dp->drv.p->pair[fg + 8 + 256 * (bg + 8)] = 0;
++#else
+                 dp->drv.p->attr[fg + 8 + 16 * (bg + 8)] = A_BLINK | A_BOLD
+                                                         | COLOR_PAIR(col);
++#endif
+             }
+         }
+ 
++#if defined USE_NCURSES_256_COLORS
++    if (can_change_color() && (max == 16))
++    {
++        uint32_t oldattr;
++
++        oldattr = caca_get_attr(dp->cv, -1, -1);
++        for (fg = 0; fg < 16; fg ++)
++        {
++            uint32_t rgb_mille[3];
++            uint32_t rgb12;
++
++            caca_set_color_ansi(dp->cv, fg, 0);
++            rgb12 = caca_attr_to_rgb12_fg(caca_get_attr(dp->cv, -1, -1)) & 0xfffUL;
++            rgb_mille[0] = ((rgb12 & 0xf00UL) >> 8) * 1000 / 15;
++            rgb_mille[1] = ((rgb12 & 0xf0UL) >> 4) * 1000 / 15;
++            rgb_mille[2] = (rgb12 & 0xfUL) * 1000 / 15;
++            init_color(curses_colors[fg], rgb_mille[0], rgb_mille[1], rgb_mille[2]);
++        }
++        caca_set_attr(dp->cv, oldattr);
++    }
++
++    if ((COLORS == 88) || (COLORS == 256))
++    {
++        long col;
++        uint32_t rgb12;
++        uint32_t oldattr;
++
++        oldattr = caca_get_attr(dp->cv, -1, -1);
++        for (rgb12 = 0;
++             rgb12 < (sizeof(dp->drv.p->rgb12_to_xterm))/sizeof(dp->drv.p->rgb12_to_xterm[0]);
++             rgb12 ++)
++        {
++            uint32_t rgbscale, grayscale;
++            uint32_t rgb_scaled[3], rgb_mille[3];
++
++            rgbscale = (COLORS == 256) ? 6 : 4;
++            grayscale = (COLORS == 256) ? 26 : 10;
++            rgb_mille[0] = ((rgb12 & 0xf00UL) >> 8) * 1000 / 15;
++            rgb_mille[1] = ((rgb12 & 0xf0UL) >> 4) * 1000 / 15;
++            rgb_mille[2] = (rgb12 & 0xfUL) * 1000 / 15;
++            rgb_scaled[0] = ncurses_mille_to_scale(rgb_mille[0], rgbscale);
++            rgb_scaled[1] = ncurses_mille_to_scale(rgb_mille[1], rgbscale);
++            rgb_scaled[2] = ncurses_mille_to_scale(rgb_mille[2], rgbscale);
++            if (rgb_scaled[0]
++                &&
++                (rgb_scaled[0] < (rgbscale - 1))
++                &&
++                (rgb_scaled[0]
++                 ==
++                 rgb_scaled[1])
++                &&
++                (rgb_scaled[0]
++                 ==
++                 rgb_scaled[2])
++                &&
++                ((rgb_scaled[0] * (grayscale - 1) / (rgbscale - 1)) != (uint32_t) ncurses_mille_to_scale(rgb_mille[0], grayscale)))
++            {
++                fg = 16 + rgbscale * rgbscale * rgbscale + ncurses_mille_to_scale(299L * rgb_mille[0] / 1000 + 587L * rgb_mille[1] / 1000 + 114L * rgb_mille[2] / 1000, grayscale) - 1;
++            }
++            else
++            {
++                fg = 16 + rgbscale * (rgbscale * rgb_scaled[0] + rgb_scaled[1]) + rgb_scaled[2];
++            }
++            dp->drv.p->rgb12_to_xterm[rgb12] = fg;
++            caca_set_color_argb(dp->cv, 0xf000u | rgb12, 0xf000u);
++            dp->drv.p->xterm_to_ansi[fg] = caca_attr_to_ansi(caca_get_attr(dp->cv, -1, -1)) & 0xf;
++        }
++        for (fg = 0; fg < 16; fg ++)
++        {
++            caca_set_color_ansi(dp->cv, fg, 0);
++            dp->drv.p->ansi_to_xterm[fg] = dp->drv.p->rgb12_to_xterm[caca_attr_to_rgb12_fg(caca_get_attr(dp->cv, -1, -1)) & 0xfffUL];
++        }
++        caca_set_attr(dp->cv, oldattr);
++        col = 256;
++        dp->drv.p->npairs = COLOR_PAIRS;
++        for (bg = 16; bg < COLORS; bg ++)
++            for (fg = 16; fg < COLORS; fg ++)
++            {
++                uint32_t fgansi, bgansi;
++
++                fgansi = dp->drv.p->xterm_to_ansi[fg];
++                bgansi = dp->drv.p->xterm_to_ansi[bg];
++                dp->drv.p->attr[fg + 256 * bg] = dp->drv.p->attr[fgansi + 256 * bgansi];
++                dp->drv.p->wattr[fg + 256 * bg] = dp->drv.p->wattr[fgansi + 256 * bgansi];
++                dp->drv.p->pair[fg + 256 * bg] = dp->drv.p->pair[fgansi + 256 * bgansi];
++                if ((dp->drv.p->ansi_to_xterm[fgansi] == fg)
++                    &&
++                    (dp->drv.p->ansi_to_xterm[bgansi] == bg)
++                    &&
++                    (can_change_color()
++                     ||
++                     (init_pair(PAIR_NUMBER(dp->drv.p->attr[fgansi + 256 * bgansi]), fg, bg) != ERR)))
++                {
++                    /* we rewrite the ANSI colors to the matching
++                     * parts of the extended palette so that color
++                     * approximations work better */
++                }
++                else if ((col < dp->drv.p->npairs) && (init_pair(col, fg, bg) != ERR))
++                {
++                    attr_t oldattr_ncurses, newattr_ncurses;
++                    short oldpair_ncurses, newpair_ncurses;
++
++                    /* This convoluted mess is needed because ncurses
++                     * sets COLOR_PAIRS to a number higher than it
++                     * actually supports in some build configurations
++                     * and then truncates the pair number to 8
++                     * bits. */
++                    attr_get(&oldattr_ncurses, &oldpair_ncurses, NULL);
++                    attr_set(WA_NORMAL, col, NULL);
++                    attr_get(&newattr_ncurses, &newpair_ncurses, NULL);
++                    attr_set(oldattr_ncurses, oldpair_ncurses, NULL);
++                    if (newpair_ncurses == col)
++                    {
++                        dp->drv.p->attr[fg + 256 * bg] = A_NORMAL | COLOR_PAIR(col);
++                        dp->drv.p->wattr[fg + 256 * bg] = 0;
++                        dp->drv.p->pair[fg + 256 * bg] = 0;
++                        if (PAIR_NUMBER(COLOR_PAIR(col)) != col)
++                        {
++                            dp->drv.p->wattr[fg + 256 * bg] = WA_NORMAL;
++                            dp->drv.p->pair[fg + 256 * bg] = col;
++                        }
++                        col ++;
++                    }
++                    else
++                    {
++                        dp->drv.p->npairs = col;
++                    }
++                }
++            }
++    }
++#endif
++
+     caca_add_dirty_rect(dp->cv, 0, 0, dp->cv->width, dp->cv->height);
+     dp->resize.allow = 1;
+     caca_set_canvas_size(dp->cv, COLS, LINES);
+@@ -365,6 +586,24 @@ static void ncurses_display(caca_display
+             move(y, dx);
+             for(x = dx; x < dx + dw; x++)
+             {
++#if defined USE_NCURSES_256_COLORS
++                uint32_t attr, ansipair, fg, bg;
++
++                attr = *cvattrs ++;
++                ansipair = caca_attr_to_ansi(attr);
++                fg = ansipair & 0xf;
++                bg = ansipair >> 4;
++                if ((COLORS == 88) || (COLORS == 256))
++                {
++                    fg = dp->drv.p->rgb12_to_xterm[caca_attr_to_rgb12_fg(attr) & 0xfffUL];
++                    bg = dp->drv.p->rgb12_to_xterm[caca_attr_to_rgb12_bg(attr) & 0xfffUL];
++                }
++                attrset(dp->drv.p->attr[fg + 256 * bg]);
++                if (dp->drv.p->pair[fg + 256 * bg])
++                {
++                    attr_set(dp->drv.p->wattr[fg + 256 * bg], dp->drv.p->pair[fg + 256 * bg], NULL);
++                }
++#else
+                 uint32_t attr = *cvattrs++;
+ 
+                 (void)attrset(dp->drv.p->attr[caca_attr_to_ansi(attr)]);
+@@ -374,6 +613,7 @@ static void ncurses_display(caca_display
+                     attron(A_BLINK);
+                 if(attr & CACA_UNDERLINE)
+                     attron(A_UNDERLINE);
++#endif
+ 
+                 ncurses_write_utf32(*cvchars++);
+             }
+@@ -643,13 +883,227 @@ static void ncurses_uninstall_terminal(c
+ static void ncurses_write_utf32(uint32_t ch)
+ {
+ #if defined HAVE_NCURSESW_NCURSES_H
++#if defined USE_NCURSES_256_COLORS
++    wchar_t wch[3];
++#else
+     char buf[10];
+     int bytes;
+ #endif
++#endif
+ 
+     if(ch == CACA_MAGIC_FULLWIDTH)
+         return;
+ 
++#if defined USE_NCURSES_256_COLORS
++#if defined HAVE_NCURSESW_NCURSES_H
++    if (ch > 0x10fffdUL) ch = 0xfffdUL;
++    wch[0] = ((ch > 0xffffUL) && (sizeof(wchar_t) == 2)) ? (((ch - 0x10000UL) >> 10) | 0xd800UL) : ch;
++    wch[1] = ((ch > 0xffffUL) && (sizeof(wchar_t) == 2)) ? (((ch - 0x10000UL) & 0x3ffUL) | 0xdc00UL) : L'\0';
++    wch[2] = L'\0';
++    if (addnwstr(wch, (ch > 0x10fffdUL) ? 2 : 1) != ERR)
++    {
++        return;
++    }
++#endif
++    if(ch < 0x80)
++    {
++        addch(ch);
++    }
++    else
++    {
++        chtype cch;
++        chtype cch2;
++
++        cch = '?';
++        cch2 = ' ';
++        if ((ch > 0x0000ff00) && (ch < 0x0000ff5f))
++        {
++            cch = ch - 0x0000ff00 + ' ';
++        }
++        switch (ch)
++        {
++        case 0x000000a0: /* <nbsp> */
++        case 0x00003000: /* 　 */
++            cch = ' ';
++            break;
++        case 0x000000a3: /* £ */
++            cch = ACS_STERLING;
++            break;
++        case 0x000000b0: /* ° */
++            cch = ACS_DEGREE;
++            break;
++        case 0x000000b1: /* ± */
++            cch = ACS_PLMINUS;
++            break;
++        case 0x000000b7: /* · */
++        case 0x00002219: /* ∙ */
++        case 0x000030fb: /* ・ */
++            cch = ACS_BULLET;
++            break;
++        case 0x000003c0: /* π */
++            cch = ACS_PI;
++            break;
++        case 0x00002018: /* ‘ */
++        case 0x00002019: /* ’ */
++            cch = '\'';
++            break;
++        case 0x0000201c: /* “ */
++        case 0x0000201d: /* ” */
++            cch = '"';
++            break;
++        case 0x00002190: /* ← */
++            cch = ACS_LARROW;
++            break;
++        case 0x00002191: /* ↑ */
++            cch = ACS_UARROW;
++            break;
++        case 0x00002192: /* → */
++            cch = ACS_RARROW;
++            break;
++        case 0x00002193: /* ↓ */
++            cch = ACS_DARROW;
++            break;
++        case 0x00002260: /* ≠ */
++            cch = ACS_NEQUAL;
++            break;
++        case 0x00002261: /* ≡ */
++            cch = '=';
++            break;
++        case 0x00002264: /* ≤ */
++            cch = ACS_LEQUAL;
++            break;
++        case 0x00002265: /* ≥ */
++            cch = ACS_GEQUAL;
++            break;
++        case 0x000023ba: /* ⎺ */
++            cch = ACS_S1;
++            cch2 = cch;
++            break;
++        case 0x000023bb: /* ⎻ */
++            cch = ACS_S3;
++            cch2 = cch;
++            break;
++        case 0x000023bc: /* ⎼ */
++            cch = ACS_S7;
++            cch2 = cch;
++            break;
++        case 0x000023bd: /* ⎽ */
++            cch = ACS_S9;
++            cch2 = cch;
++            break;
++        case 0x00002500: /* ─ */
++        case 0x00002550: /* ═ */
++            cch = ACS_HLINE;
++            cch2 = cch;
++            break;
++        case 0x00002502: /* │ */
++        case 0x00002551: /* ║ */
++            cch = ACS_VLINE;
++            break;
++        case 0x0000250c: /* ┌ */
++        case 0x00002552: /* ╒ */
++        case 0x00002553: /* ╓ */
++        case 0x00002554: /* ╔ */
++            cch = ACS_ULCORNER;
++            cch2 = ACS_HLINE;
++            break;
++        case 0x00002510: /* ┐ */
++        case 0x00002555: /* ╕ */
++        case 0x00002556: /* ╖ */
++        case 0x00002557: /* ╗ */
++            cch = ACS_URCORNER;
++            break;
++        case 0x00002514: /* └ */
++        case 0x00002558: /* ╘ */
++        case 0x00002559: /* ╙ */
++        case 0x0000255a: /* ╚ */
++            cch = ACS_LLCORNER;
++            cch2 = ACS_HLINE;
++            break;
++        case 0x00002518: /* ┘ */
++        case 0x0000255b: /* ╛ */
++        case 0x0000255c: /* ╜ */
++        case 0x0000255d: /* ╝ */
++            cch = ACS_LRCORNER;
++            break;
++        case 0x0000251c: /* ├ */
++        case 0x0000255e: /* ╞ */
++        case 0x0000255f: /* ╟ */
++        case 0x00002560: /* ╠ */
++            cch = ACS_LTEE;
++            cch2 = ACS_HLINE;
++            break;
++        case 0x00002524: /* ┤ */
++        case 0x00002561: /* ╡ */
++        case 0x00002562: /* ╢ */
++        case 0x00002563: /* ╣ */
++            cch = ACS_RTEE;
++            break;
++        case 0x0000252c: /* ┬ */
++        case 0x00002564: /* ╤ */
++        case 0x00002565: /* ╥ */
++        case 0x00002566: /* ╦ */
++            cch = ACS_TTEE;
++            cch2 = ACS_HLINE;
++            break;
++        case 0x00002534: /* ┴ */
++        case 0x00002567: /* ╧ */
++        case 0x00002568: /* ╨ */
++        case 0x00002569: /* ╩ */
++            cch = ACS_BTEE;
++            cch2 = ACS_HLINE;
++            break;
++        case 0x0000253c: /* ┼ */
++        case 0x0000256a: /* ╪ */
++        case 0x0000256b: /* ╫ */
++        case 0x0000256c: /* ╬ */
++            cch = ACS_PLUS;
++            cch2 = ACS_HLINE;
++            break;
++        case 0x00002591: /* ░ */
++            cch = ACS_BOARD;
++            cch2 = cch;
++            break;
++        case 0x00002592: /* ▒ */
++        case 0x00002593: /* ▓ */
++            cch = ACS_CKBOARD;
++            cch2 = cch;
++            break;
++        case 0x00002580: /* ▀ */
++        case 0x00002584: /* ▄ */
++        case 0x00002588: /* █ */
++        case 0x0000258c: /* ▌ */
++        case 0x00002590: /* ▐ */
++        case 0x000025a0: /* ■ */
++        case 0x000025ac: /* ▬ */
++        case 0x000025ae: /* ▮ */
++            cch = ACS_BLOCK;
++            cch2 = cch;
++            break;
++        case 0x000025c6: /* ◆ */
++        case 0x00002666: /* ♦ */
++            cch = ACS_DIAMOND;
++            break;
++        case 0x00002022: /* • */
++        case 0x000025cb: /* ○ */
++        case 0x000025cf: /* ● */
++        case 0x00002603: /* ☃ */
++        case 0x0000263c: /* ☼ */
++            cch = ACS_LANTERN;
++            break;
++        case 0x0000301c: /* 〜 */
++            cch = '~';
++            break;
++        }
++        addch(cch);
++        if(caca_utf32_is_fullwidth(ch))
++        {
++            addch(cch2);
++        }
++    }
++#endif
++
++#if ! defined USE_NCURSES_256_COLORS
+ #if defined HAVE_NCURSESW_NCURSES_H
+     bytes = caca_utf32_to_utf8(buf, ch);
+     buf[bytes] = '\0';
+@@ -852,6 +1306,7 @@ static void ncurses_write_utf32(uint32_t
+         }
+     }
+ #endif
++#endif
+ }
+ 
+ /*

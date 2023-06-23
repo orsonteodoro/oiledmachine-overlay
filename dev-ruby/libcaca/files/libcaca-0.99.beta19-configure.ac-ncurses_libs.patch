@@ -1,0 +1,30 @@
+diff -urp libcaca-0.99.beta19.orig/configure.ac libcaca-0.99.beta19/configure.ac
+--- libcaca-0.99.beta19.orig/configure.ac	2017-10-07 01:22:25.265554632 -0700
++++ libcaca-0.99.beta19/configure.ac	2017-10-07 01:29:36.417057931 -0700
+@@ -301,6 +301,8 @@ fi
+ AM_CONDITIONAL(USE_COCOA, test "${ac_cv_my_have_cocoa}" = "yes")
+ 
+ CACA2_LIBS="${CACA_LIBS} "
++NCURSES_LIBS=""
++NCURSES2_LIBS=""
+ if test "${enable_ncurses}" != "no"; then
+   ac_cv_my_have_ncurses="no"
+   AC_CHECK_HEADERS(ncursesw/ncurses.h ncurses/ncurses.h ncurses.h curses.h,
+@@ -317,6 +318,8 @@ if test "${enable_ncurses}" != "no"; the
+     CACA2_LIBS="${CACA_LIBS} "
+     CACA_LIBS="${CACA_LIBS}"
+     CACA_DRIVERS="${CACA_DRIVERS} ncurses"
++    NCURSES_LIBS="${ncurses}"
++    NCURSES2_LIBS="-lncurses"
+     dnl  Check for resizeterm or resize_term
+     SAVED_LIBS="${LIBS}"
+     LIBS="${LIBS} ${ncurses}"
+@@ -376,6 +378,8 @@ AC_SUBST(CACA_LIBS)
+ AC_SUBST(CACA2_LIBS)
+ AC_SUBST(X11_CFLAGS)
+ AC_SUBST(X11_LIBS)
++AC_SUBST(NCURSES_LIBS)
++AC_SUBST(NCURSES2_LIBS)
+ AC_SUBST(GL_CFLAGS)
+ AC_SUBST(GL_LIBS)
+ 

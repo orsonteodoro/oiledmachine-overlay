@@ -12,7 +12,7 @@
 
 # oiledmachine-changes:  Changes to cd path
 
-inherit autotools
+inherit autotools virtualx
 
 case ${EAPI} in
 	7|8) ;;
@@ -172,7 +172,11 @@ php-ext-source-r3-caca_src_prepare() {
 		cp --recursive --preserve "${orig_s}" "${WORKDIR}/${slot}" || \
 			die "failed to copy sources from ${orig_s} to ${WORKDIR}/${slot}"
 		php_init_slot_env "${slot}"
-		php-ext-source-r3-caca_phpize
+		if declare -f _php-ext-source-r3-caca_src_prepare >/dev/null ; then
+			_php-ext-source-r3-caca_src_prepare
+		else
+			php-ext-source-r3-caca_phpize
+		fi
 	done
 }
 
@@ -229,7 +233,11 @@ php-ext-source-r3-caca_src_configure() {
 	local slot
 	for slot in $(php_get_slots); do
 		php_init_slot_env "${slot}"
-		econf --with-php-config="${PHPCONFIG}" "${econf_args[@]}"
+		if declare -f _php-ext-source-r3-caca_src_configure >/dev/null ; then
+			_php-ext-source-r3-caca_src_configure
+		else
+			econf --with-php-config="${PHPCONFIG}" "${econf_args[@]}"
+		fi
 	done
 }
 
@@ -241,12 +249,17 @@ php-ext-source-r3-caca_src_compile() {
 	addpredict /usr/share/snmp/mibs/.index
 	addpredict /var/lib/net-snmp/mib_indexes
 
+
 	# shm extension creates a semaphore file, bug #173574.
 	addpredict /session_mm_cli0.sem
 	local slot
 	for slot in $(php_get_slots); do
 		php_init_slot_env "${slot}"
-		emake
+		if declare -f _php-ext-source-r3-caca_src_compile >/dev/null ; then
+			_php-ext-source-r3-caca_src_compile
+		else
+			emake
+		fi
 	done
 }
 
@@ -259,16 +272,24 @@ php-ext-source-r3-caca_src_install() {
 	for slot in $(php_get_slots); do
 		php_init_slot_env "${slot}"
 
-		# Strip $EPREFIX from $EXT_DIR before calling doexe (which
-		# handles EPREFIX itself). Shared libs are +x by convention,
-		# although nothing seems to depend on that.
-		exeinto "${EXT_DIR#$EPREFIX}"
-		doexe "modules/${PHP_EXT_NAME}.so"
+		if declare -f _php-ext-source-r3-caca_src_install >/dev/null ; then
+			_php-ext-source-r3-caca_src_install
+		else
+			# Strip $EPREFIX from $EXT_DIR before calling doexe (which
+			# handles EPREFIX itself). Shared libs are +x by convention,
+			# although nothing seems to depend on that.
+			exeinto "${EXT_DIR#$EPREFIX}"
+			doexe "modules/${PHP_EXT_NAME}.so"
 
-		INSTALL_ROOT="${D}" emake install-headers
+			INSTALL_ROOT="${D}" emake install-headers
+		fi
 	done
-	einstalldocs
-	php-ext-source-r3-caca_createinifiles
+	if declare -f _php-ext-source-r3-caca_src_install_all >/dev/null ; then
+		_php-ext-source-r3-caca_src_install_all
+	else
+		einstalldocs
+		php-ext-source-r3-caca_createinifiles
+	fi
 }
 
 # @FUNCTION: php-ext-source-r3-caca_src_test
@@ -280,7 +301,11 @@ php-ext-source-r3-caca_src_test() {
 	local slot
 	for slot in $(php_get_slots); do
 		php_init_slot_env "${slot}"
-		NO_INTERACTION="yes" emake test
+		if declare -f _php-ext-source-r3-caca_src_test >/dev/null ; then
+			_php-ext-source-r3-caca_src_test
+		else
+			NO_INTERACTION="yes" emake test
+		fi
 	done
 }
 

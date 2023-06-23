@@ -8,17 +8,9 @@
 EAPI=7
 
 EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
-PHP_EXT_NAME="caca"
-PHP_EXT_NEEDED_USE="cli,gd"
-PHP_EXT_OPTIONAL_USE="php"
-PHP_EXT_SKIP_PATCHES="yes"
 PYTHON_COMPAT=( python3_{8..11} )
-RUBY_OPTIONAL="yes"
-PHP_EXT_S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
-USE_RUBY="ruby30 ruby31"
-USE_PHP="php7-4 php8-0 php8-1 php8-2"
 inherit autotools eutils flag-o-matic mono-env java-pkg-opt-2 multilib-minimal
-inherit php-ext-source-r3-caca python-r1 ruby-ng virtualx
+inherit python-r1 virtualx
 
 DESCRIPTION="A library that creates colored ASCII-art graphics"
 HOMEPAGE="http://libcaca.zoy.org/"
@@ -33,7 +25,7 @@ LICENSE="
 
 IUSE="
 256-colors-ncurses cxx doc examples imlib java mono ncurses network opengl perl
-php python ruby slang static-libs test truetype X r1
+php python ruby slang static-libs test truetype X r3
 "
 JAVA_SLOT="1.8"
 SLOT="0/$(ver_cut 1-2 ${PV})"
@@ -72,12 +64,6 @@ REQUIRED_USE+="
 			${PYTHON_REQUIRED_USE}
 		)
 	)
-	ruby? (
-		X
-		^^ (
-			$(ruby_get_use_targets)
-		)
-	)
 	truetype? (
 		opengl
 	)
@@ -102,9 +88,6 @@ RDEPEND+="
 		truetype? (
 			>=media-libs/ftgl-2.1.3_rc5
 		)
-	)
-	php? (
-		>=dev-lang/php-5
 	)
 	python? (
 		${PYTHON_DEPS}
@@ -139,9 +122,6 @@ BDEPEND+="
 		dev-texlive/texlive-plaingeneric
 		virtual/latex-base
 	)
-	php? (
-		media-libs/gd[${MULTILIB_USEDEP}]
-	)
 	python? (
 		$(python_gen_cond_dep '
 			dev-python/setuptools[${PYTHON_USEDEP}]
@@ -160,10 +140,17 @@ PDEPEND+="
 	perl? (
 		dev-perl/Term-Caca
 	)
-"
-ruby_add_bdepend "
-	test? (
-		dev-ruby/minitest
+	php? (
+		|| (
+			~dev-php/libcaca-${PV}[256-colors-ncurses=,examples=,imlib=,ncurses=,network=,opengl=,slang=,static-libs=,test=,truetype=,X=]
+			~dev-php/libcaca-$(ver_cut 1-4 ${PV})[256-colors-ncurses=,examples=,imlib=,ncurses=,network=,opengl=,slang=,static-libs=,test=,truetype=,X=]
+		)
+	)
+	ruby? (
+		|| (
+			~dev-ruby/libcaca-${PV}[256-colors-ncurses=,examples=,imlib=,ncurses=,network=,opengl=,slang=,static-libs=,test=,truetype=,X=]
+			~dev-ruby/libcaca-$(ver_cut 1-4 ${PV})[256-colors-ncurses=,examples=,imlib=,ncurses=,network=,opengl=,slang=,static-libs=,test=,truetype=,X=]
+		)
 	)
 "
 SRC_URI="
@@ -195,9 +182,6 @@ PATCHES=(
 	"${DISTDIR}/libcaca-pr70-afacac2.patch"
 	"${DISTDIR}/libcaca-pr70-f57b0d6.patch"
 	"${DISTDIR}/libcaca-pr70-9683d1f.patch"
-	"${FILESDIR}/libcaca-0.99_beta20_p20211207-ruby-3.0-compat.patch"
-	"${FILESDIR}/libcaca-0.99_beta20_p20211207-php7-fixes.patch"
-	"${FILESDIR}/libcaca-0.99_beta20_p20211207-php8-fixes.patch"
 	"${FILESDIR}/libcaca-0.99_beta20_p20211207-img2txt-python3-compat.patch"
 	"${DISTDIR}/libcaca-pr66-d33a9ca.patch"
 )
@@ -213,19 +197,6 @@ pkg_setup() {
 	java-pkg-opt-2_pkg_setup
 	use java && java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 	use mono && mono-env_pkg_setup
-	use ruby && ruby-ng_pkg_setup
-
-ewarn
-ewarn "You need to install libcaca first without the php USE flag before using"
-ewarn "the ${CATEGORY}/${PN}[php] USE flag."
-ewarn
-# Ruby tests randomly crash or just need stricter requirements for ABI/bindings
-# compatibility.
-ewarn "You need to re-emerge libcaca first with the exact version, commit, and"
-ewarn "flags before using the ${CATEGORY}/${PN}[ruby] USE flag."
-ewarn
-ewarn "The PHP bindings for 3.x are functional but buggy."
-ewarn
 }
 
 src_unpack() {
@@ -234,6 +205,12 @@ src_unpack() {
 
 src_prepare() {
 	default
+	# Fixes:
+	# FAIL: check-source \
+	sed -i \
+		-e "s|\t|    |g" \
+		"src/img2txt.c" \
+		|| die
 	sed -i \
 		-e '/doxygen_tests = check-doxygen/d' \
 		caca/t/Makefile.am \
@@ -272,9 +249,6 @@ src_prepare() {
 			if use java ; then
 				java-pkg-opt-2_src_prepare
 			fi
-			if use php ; then
-				php-ext-source-r3-caca_src_prepare
-			fi
 		fi
 	}
 	multilib_foreach_abi prepare_abi
@@ -296,16 +270,12 @@ einfo "JAVA_CFLAGS=${JAVA_CFLAGS}"
 			export CSC="$(type -P gmcs)" #329651
 		fi
 		export VARTEXFONTS="${T}/fonts" #44128
-		if use ruby && use ruby_targets_${USE_RUBY} ; then
-			export RUBY=$(ruby_implementation_command ${USE_RUBY})
-		fi
 	fi
 	local myeconfargs=(
 		$(multilib_native_use_enable doc)
 		$(multilib_native_use_enable java)
 		$(multilib_native_use_enable mono csharp)
 		$(multilib_native_use_enable python)
-		$(multilib_native_use_enable ruby)
 		$(use_enable slang)
 		$(use_enable static-libs static)
 		$(use_enable ncurses)
@@ -317,34 +287,14 @@ einfo "JAVA_CFLAGS=${JAVA_CFLAGS}"
 		$(use_enable test zzuf)
 		$(use_enable X x11)
 		$(use_with X x)
+		--disable-ruby
 		--x-libraries="/usr/$(get_libdir)"
 	)
 	ECONF_SOURCE="${S}" \
 	econf "${myeconfargs[@]}"
-	if multilib_is_native_abi ; then
-		if use php ; then
-			php-ext-source-r3-caca_src_configure
-		fi
-	fi
-}
-
-check_ruby() {
-	einfo "RUBY_VERSION="$(ruby_get_version)
-	if ver_test $(ruby_get_version) -lt 3 ; then
-eerror
-eerror "<dev-lang/ruby-3 must be uninstalled."
-eerror
-	fi
-	if has_version "<dev-lang/ruby-3" ; then
-eerror
-eerror "<dev-lang/ruby-3 must be uninstalled."
-eerror
-		die
-	fi
 }
 
 src_configure() {
-	use ruby && check_ruby
 	# Broken inherit, do not remove.
 	multilib-minimal_src_configure
 }
@@ -353,12 +303,6 @@ multilib_src_compile() {
 	local _java_makeopts
 	use java && _java_makeopts="-j1" #480864
 	emake V=1 ${_java_makeopts}
-	if multilib_is_native_abi ; then
-		if use php ; then
-einfo "Calling php-ext-source-r3-caca_src_compile"
-			php-ext-source-r3-caca_src_compile
-		fi
-	fi
 }
 
 src_compile() {
@@ -371,25 +315,12 @@ _test_native_lib() {
 	return $?
 }
 
-_test_ruby() {
-	./test
-	return $?
-}
-
 multilib_src_test() {
 	virtx _test_native_lib
 	if multilib_is_native_abi ; then
 		if use python ; then
 			pushd python || die
 				${EPYTHON} -m unittest test/canvas.py || die
-			popd
-		fi
-		if use php ; then
-			php-ext-source-r3-caca_src_test
-		fi
-		if use ruby ; then
-			pushd ruby || die
-				virtx _test_ruby
 			popd
 		fi
 	fi
@@ -428,10 +359,6 @@ multilib_src_install() {
 				insinto "/usr/share/${PN}/examples/java"
 				doins -r java/examples/*
 			fi
-			if use php ; then
-				insinto "/usr/share/${PN}/examples/php"
-				doins -r caca-php/examples/*
-			fi
 			if use python ; then
 				local L=(
 					blit.py
@@ -454,11 +381,6 @@ multilib_src_install() {
 				done
 			fi
 		fi
-
-		if use php ; then
-			DOCS=() # Avoid calling dodoc unconditionally without doc USE.
-			php-ext-source-r3-caca_src_install # implied cd ${WORKDIR}/php7.4
-		fi
 	fi
 }
 
@@ -472,7 +394,6 @@ einfo "PYTHON_SITEDIR=${PYTHON_SITEDIR}"
 multilib_src_install_all() {
 	DOCS=( AUTHORS NEWS NOTES README THANKS )
 	use doc && einstalldocs
-	rm -rf "${D}"/usr/share/java
 	find "${D}" -name '*.la' -type f -delete || die
 }
 
@@ -518,32 +439,6 @@ multilib_src_install_all() {
 # cd ${BUILD_DIR}/caca-sharp
 # LD_LIBRARY_PATH="$(pwd)/../caca/.libs/" mono test.exe
 
-# Testing php bindings:  fail (interactive).  The tester segfaults during Render()
-# USE="-* X imlib php opengl test"
-# cd ${BUILD_DIR}/caca-php/examples
-# /usr/bin/php7.4 cacainfo.php : pass
-# /usr/bin/php7.4 cacapig.php : pass
-# /usr/bin/php7.4 colors.php : pass
-# /usr/bin/php7.4 demo.php : pass
-# /usr/bin/php7.4 dithering.php : pass
-# /usr/bin/php7.4 export.php : fail, scrambled output
-# /usr/bin/php7.4 fullwidth.php : maybe, tiny render
-# /usr/bin/php7.4 img2txt.php : fail, segfault
-# /usr/bin/php7.4 import.php : fail, scrambled output
-# /usr/bin/php7.4 polyline.php : pass
-# /usr/bin/php7.4 render.php : ? shows only source code
-# /usr/bin/php7.4 test.php : pass
-# /usr/bin/php7.4 text.php : pass
-# /usr/bin/php7.4 transform.php : pass
-# /usr/bin/php7.4 truecolor.php : pass
-# /usr/bin/php7.4 unicode : pass
-# /usr/bin/php7.4 figfont.php : fail
-# PHP Fatal error:  Uncaught Error: Call to undefined function mb_convert_encoding() in /var/tmp/portage/media-libs/libcaca-0.99_beta20_p20211207/work/php7.4/caca-php/examples/figfont.php:15
-# Stack trace:
-# #0 /var/tmp/portage/media-libs/libcaca-0.99_beta20_p20211207/work/php7.4/caca-php/examples/figfont.php(40): unistr_to_ords()
-# #1 {main}
-#   thrown in /var/tmp/portage/media-libs/libcaca-0.99_beta20_p20211207/work/php7.4/caca-php/examples/figfont.php on line 15
-
 # Testing python bindings:  passed (test suite) 0.99_beta20_p20211207 (f42aa68) (20230621)
 # USE="-* X imlib python opengl test"
 # PYTHON_SINGLE_TARGET="python3_10 -python3_11"
@@ -566,25 +461,3 @@ multilib_src_install_all() {
 # LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/gol.py : pass
 # LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/img2txt.py : pass, but bugs out with --charset=shades
 # LD_LIBRARY_PATH="$(pwd)/../caca/.libs" PYTHONPATH="$(pwd)/caca:${PYTHONPATH}" ${EPYTHON} examples/text.py : pass
-
-# Testing ruby bindings:  passed (test suite) 0.99_beta20_p20211207 (f42aa68) (20230622)
-# USE="-* X imlib ruby test" : pass
-# USE="-* -X imlib opengl ruby test" : fail
-# RUBY_TARGETS="ruby30 -ruby31"
-# PASS: test
-# ============================================================================
-# Testsuite summary for libcaca 0.99.beta20
-# ============================================================================
-# # TOTAL: 1
-# # PASS:  1
-# # SKIP:  0
-# # XFAIL: 0
-# # FAIL:  0
-# # XPASS: 0
-# # ERROR: 0
-# ============================================================================
-
-# Testing ruby bindings via ${BUILD_DIR}/test:  passed [${BUILD_DIR}/test is the same as above.]
-# Finished in 0.999457s, 29.0158 runs/s, 39.0212 assertions/s.
-#
-# 29 runs, 39 assertions, 0 failures, 0 errors, 0 skips
