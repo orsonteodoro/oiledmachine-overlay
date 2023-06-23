@@ -675,7 +675,6 @@ BDEPEND+="
 		>=dev-python/cython-0.29.30[${PYTHON_USEDEP}]
 		>=dev-python/autopep8-1.6.0[${PYTHON_USEDEP}]
 		>=dev-python/pycodestyle-2.8.0[${PYTHON_USEDEP}]
-		>=dev-python/toml-0.10.2[${PYTHON_USEDEP}]
 	')
 	>=dev-cpp/yaml-cpp-0.7.0
 	>=dev-util/cmake-3.10
