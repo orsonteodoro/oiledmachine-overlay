@@ -11,7 +11,7 @@ MY_PN="libcaca"
 MY_P="libcaca-${PV}"
 EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
 PHP_EXT_NAME="caca"
-PHP_EXT_NEEDED_USE="cli,gd"
+PHP_EXT_NEEDED_USE="cli,gd,unicode"
 PHP_EXT_SKIP_PATCHES="yes"
 PHP_EXT_S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
 USE_PHP="php7-4 php8-0 php8-1 php8-2"
@@ -30,7 +30,7 @@ LICENSE="
 
 IUSE="
 256-colors-ncurses doc examples imlib ncurses network opengl perl php slang
-static-libs test truetype X r1
+static-libs test truetype X r2
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 REQUIRED_USE+="
@@ -42,8 +42,8 @@ REQUIRED_USE+="
 		opengl
 	)
 "
+# dev-lang/php[unicode] is for examples/figfont.php
 RDEPEND+="
-	>=dev-lang/php-5
 	imlib? (
 		>=media-libs/imlib2-1.4.6-r2
 	)
