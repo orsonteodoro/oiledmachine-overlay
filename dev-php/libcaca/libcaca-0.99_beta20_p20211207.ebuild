@@ -310,7 +310,7 @@ src_install() {
 # /usr/bin/php7.4 img2txt.php : pass
 # /usr/bin/php7.4 import.php t.out : pass, use results of "/usr/bin/php7.4 export.php caca > t.out"
 # /usr/bin/php7.4 polyline.php : pass
-# /usr/bin/php7.4 render.php : ? shows only source code
+# /usr/bin/php7.4 render.php : pass
 # /usr/bin/php7.4 test.php : pass
 # /usr/bin/php7.4 text.php : pass
 # /usr/bin/php7.4 transform.php : pass
