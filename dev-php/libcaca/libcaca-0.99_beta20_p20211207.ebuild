@@ -138,7 +138,11 @@ PATCHES=(
 
 pkg_setup() {
 ewarn
-ewarn "The PHP bindings for 3.x are functional but buggy."
+ewarn "A random configure time failure may be encountered.  Try:"
+ewarn
+ewarn "  emerge -C dev-php/libcaca media-libs/libcaca"
+ewarn "  emerge -1vuDN media-libs/libcaca"
+ewarn "  emerge -1vuDN dev-php/libcaca"
 ewarn
 }
 

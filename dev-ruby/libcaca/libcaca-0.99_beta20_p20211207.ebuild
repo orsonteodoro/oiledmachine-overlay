@@ -124,6 +124,15 @@ PATCHES=(
 # 46b4ea7 : canvas-fix-an-integer-overflow-in-caca_resize.patch
 # e4968ba : Fix-a-problem-in-the-caca_resize-overflow-detection-.patch
 
+pkg_setup() {
+# Some indeterministic or random failures may still exist, but
+# the below may fix it.
+ewarn
+ewarn "Reinstall media-libs/libcaca if the test USE flag fails."
+ewarn
+	ruby-ng_pkg_setup
+}
+
 each_ruby_prepare() {
 	# Fixes:
 	# FAIL: check-source \
