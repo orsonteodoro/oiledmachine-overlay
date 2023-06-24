@@ -30,7 +30,7 @@ LICENSE="
 
 IUSE="
 256-colors-ncurses doc examples imlib ncurses network opengl perl php slang
-static-libs test truetype X r2
+static-libs test truetype X r4
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 REQUIRED_USE+="
@@ -222,6 +222,12 @@ src_configure() {
 }
 
 _php-ext-source-r3-caca_src_compile() {
+	pushd .. || die
+		emake V=1 # Generate libs for tools/*
+	popd
+	pushd ../tools || die
+		emake V=1
+	popd
 	emake V=1
 }
 
@@ -295,15 +301,15 @@ src_install() {
 # /usr/bin/php7.4 colors.php : pass
 # /usr/bin/php7.4 demo.php : pass
 # /usr/bin/php7.4 dithering.php : pass
-# /usr/bin/php7.4 export.php : fail, scrambled output
+# /usr/bin/php7.4 export.php : pass with html, ansi works decent outside x11
 # /usr/bin/php7.4 fullwidth.php : maybe, tiny render
-# /usr/bin/php7.4 img2txt.php : fail, segfault with caca_set_dither_algorithm
-# /usr/bin/php7.4 import.php : fail, scrambled output
+# /usr/bin/php7.4 img2txt.php : pass
+# /usr/bin/php7.4 import.php t.out : pass, use results of "/usr/bin/php7.4 export.php caca > t.out"
 # /usr/bin/php7.4 polyline.php : pass
 # /usr/bin/php7.4 render.php : ? shows only source code
 # /usr/bin/php7.4 test.php : pass
 # /usr/bin/php7.4 text.php : pass
 # /usr/bin/php7.4 transform.php : pass
 # /usr/bin/php7.4 truecolor.php : pass
-# /usr/bin/php7.4 unicode : pass
+# /usr/bin/php7.4 unicode : pass, but the unicode output is messed up
 # /usr/bin/php7.4 figfont.php : pass

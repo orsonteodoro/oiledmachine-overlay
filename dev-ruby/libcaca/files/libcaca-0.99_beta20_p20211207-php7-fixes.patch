@@ -1,10 +1,24 @@
 Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
-Subject:  Update php bindings from php5 to php7.4
-Patch status:  Testing
+Subject:  Fix compatibility with php7.4 plus other fixes.
+Patch status:  Complete/tested
 
+Fixes:
+Render.php now runs code
+Fixed str_len size error by changing int to long.
+
+diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/caca-php/examples/render.php libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/caca-php/examples/render.php
+--- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/caca-php/examples/render.php	2021-12-07 01:03:53.000000000 -0800
++++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/caca-php/examples/render.php	2023-06-23 22:15:40.282306008 -0700
+@@ -1,5 +1,5 @@
+ #!/usr/bin/php5
+-<?
++<?php
+ 
+ if (php_sapi_name() != "cli") {
+     die("You have to run this program with php-cli!\n");
 diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/caca-php/php_caca.c libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/caca-php/php_caca.c
 --- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/caca-php/php_caca.c	2021-12-07 01:03:53.000000000 -0800
-+++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/caca-php/php_caca.c	2023-06-21 16:16:19.429483764 -0700
++++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/caca-php/php_caca.c	2023-06-23 22:15:15.454305392 -0700
 @@ -21,7 +21,10 @@
  #include <gd.h>
  #endif
@@ -672,7 +686,7 @@ diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/caca-php/php_cac
  }
  
  PHP_FUNCTION(caca_get_dither_color) {
-@@ -1233,8 +1247,8 @@ PHP_FUNCTION(caca_get_dither_color) {
+@@ -1233,19 +1247,19 @@ PHP_FUNCTION(caca_get_dither_color) {
          RETURN_FALSE;
      }
      caca_dither_t *dither;
@@ -683,7 +697,11 @@ diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/caca-php/php_cac
  }
  
  PHP_FUNCTION(caca_set_dither_charset) {
-@@ -1245,7 +1259,7 @@ PHP_FUNCTION(caca_set_dither_charset) {
+     zval *_zval;
+-    int str_len;
++    long str_len;
+     char *str;
+     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rs", &_zval, &str, &str_len) == FAILURE) {
          RETURN_FALSE;
      }
      caca_dither_t *dither;
@@ -708,7 +726,7 @@ diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/caca-php/php_cac
  }
  
  PHP_FUNCTION(caca_get_dither_charset) {
-@@ -1270,8 +1284,8 @@ PHP_FUNCTION(caca_get_dither_charset) {
+@@ -1270,19 +1284,19 @@ PHP_FUNCTION(caca_get_dither_charset) {
          RETURN_FALSE;
      }
      caca_dither_t *dither;
@@ -719,7 +737,11 @@ diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/caca-php/php_cac
  }
  
  PHP_FUNCTION(caca_set_dither_algorithm) {
-@@ -1282,7 +1296,7 @@ PHP_FUNCTION(caca_set_dither_algorithm)
+     zval *_zval;
+-    int str_len;
++    long str_len;
+     char *str;
+     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "rs", &_zval, &str, &str_len) == FAILURE) {
          RETURN_FALSE;
      }
      caca_dither_t *dither;

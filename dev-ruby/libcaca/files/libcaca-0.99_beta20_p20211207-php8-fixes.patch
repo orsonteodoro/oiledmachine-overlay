@@ -1,6 +1,10 @@
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Subject:  Fix compatibility with php8
+Patch status:  Complete/tested
+
 diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/caca-php/php_caca.c libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/caca-php/php_caca.c
---- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/caca-php/php_caca.c	2023-06-21 16:57:25.149544941 -0700
-+++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/caca-php/php_caca.c	2023-06-21 16:59:54.153548638 -0700
+--- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/caca-php/php_caca.c	2023-06-23 20:19:04.490132437 -0700
++++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/caca-php/php_caca.c	2023-06-23 20:20:01.174133843 -0700
 @@ -196,27 +196,27 @@ PHP_MINFO_FUNCTION(caca) {
  
  //-------- Caca's ressources destructors -----------//
@@ -823,3 +827,5 @@ diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/caca-php/php_cac
          RETURN_FALSE;
      }
      caca_display_t *display;
+Only in libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/caca-php: php_caca.c.orig
+Only in libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/caca-php: php_caca.c.rej
