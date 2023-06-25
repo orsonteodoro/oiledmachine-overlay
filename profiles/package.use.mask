@@ -58,6 +58,3 @@ www-client/firefox telemetry
 
 # Untested
 www-client/chromium qt6
-
-# Random failure with examples
-dev-php/libcaca php_targets_php8-0 php_targets_php8-1 php_targets_php8-2

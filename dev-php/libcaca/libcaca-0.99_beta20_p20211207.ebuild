@@ -30,7 +30,7 @@ LICENSE="
 
 IUSE="
 256-colors-ncurses doc examples imlib ncurses network opengl perl php slang
-static-libs test truetype X r4
+static-libs test truetype X r5
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 REQUIRED_USE+="
@@ -182,6 +182,16 @@ src_prepare() {
 	fi
 	eautoreconf
 	php-ext-source-r3-caca_src_prepare
+	local slot
+	for slot in $(php_get_slots); do
+		if [[ "${slot}" =~ ("php8."[0-9]) ]] ; then
+			einfo "Patching for ${slot}"
+			php_init_slot_env "${slot}"
+			pushd .. || die
+				eapply "${FILESDIR}/libcaca-0.99_beta20_p20211207-php8-gdimage-fixes.patch"
+			popd
+		fi
+	done
 }
 
 _php-ext-source-r3-caca_src_configure() {
@@ -293,7 +303,7 @@ src_install() {
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  256-color-patch
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 0.99_beta20_p20211207 (f42aa68) (20230618)
 
-# comment on test:  Both 32-bit and 64-bit tested with same results below
+# comment on test:  Only 64-bit tested with same results below.  Both php 7.4 and 8.2 have the same results.
 
 # Testing php bindings:  fail (interactive).  The tester segfaults during Render()
 # USE="-* X imlib php opengl test"

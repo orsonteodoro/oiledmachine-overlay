@@ -1,0 +1,75 @@
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Subject:  Fixes for php8.2 related to gdImage*
+Patch status:  Complete/tested
+
+diff -urp libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/caca-php/php_caca.c libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/caca-php/php_caca.c
+--- libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752.orig/caca-php/php_caca.c	2023-06-24 17:24:09.888015709 -0700
++++ libcaca-f42aa68fc798db63b7b2a789ae8cf5b90b57b752/caca-php/php_caca.c	2023-06-24 17:25:19.868017445 -0700
+@@ -23,6 +23,7 @@
+ 
+ #include <ext/standard/info.h>
+ #include <zend_exceptions.h>
++#include <ext/gd/php_gd.h>
+ 
+ static zend_function_entry caca_functions[] = {
+     PHP_FE(caca_create_canvas, NULL)
+@@ -1059,12 +1060,12 @@ PHP_FUNCTION(caca_free_frame) {
+ }
+ 
+ PHP_FUNCTION(caca_create_dither) {
++#ifdef HAVE_GD
+     zval *_zval;
+-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "r", &_zval) == FAILURE) {
++    if (zend_parse_parameters(ZEND_NUM_ARGS(), "o", &_zval) == FAILURE) {
+         RETURN_FALSE;
+     }
+-#ifdef HAVE_GD
+-    gdImage *img = fetch_external_resource(_zval, "gd");
++    gdImagePtr img = php_gd_libgdimageptr_from_zval_p(_zval);
+     if (!img) {
+         RETURN_FALSE;
+     }
+@@ -1326,10 +1327,11 @@ PHP_FUNCTION(caca_get_dither_algorithm)
+ }
+ 
+ PHP_FUNCTION(caca_dither_bitmap) {
++#ifdef HAVE_GD
+     zval *_zval1, *_zval2, *_zval3;
+     long x, y, w, h = 0;
+     zend_bool load_palette = 1;
+-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "rllllrr|b", &_zval1, &x, &y, &w, &h, &_zval2, &_zval3, &load_palette) == FAILURE) {
++    if (zend_parse_parameters(ZEND_NUM_ARGS(), "rllllro|b", &_zval1, &x, &y, &w, &h, &_zval2, &_zval3, &load_palette) == FAILURE) {
+         RETURN_FALSE;
+     }
+ 
+@@ -1338,8 +1340,7 @@ PHP_FUNCTION(caca_dither_bitmap) {
+     caca_dither_t *dither;
+     ZEND_FETCH_RESOURCE_WRAPPER(dither, caca_dither_t*, _zval2, -1, PHP_CACA_DITHER_RES_NAME, le_caca_dither);
+ 
+-#ifdef HAVE_GD
+-    gdImage *img = fetch_external_resource(_zval3, "gd");
++    gdImagePtr img = php_gd_libgdimageptr_from_zval_p(_zval3);
+     if (!img) {
+         RETURN_FALSE;
+     }
+@@ -1437,8 +1438,9 @@ PHP_FUNCTION(caca_get_font_blocks) {
+ }
+ 
+ PHP_FUNCTION(caca_render_canvas) {
++#ifdef HAVE_GD
+     zval *_zval1, *_zval2, *_zval3;
+-    if (zend_parse_parameters(ZEND_NUM_ARGS(), "rrr", &_zval1, &_zval2, &_zval3) == FAILURE) {
++    if (zend_parse_parameters(ZEND_NUM_ARGS(), "rro", &_zval1, &_zval2, &_zval3) == FAILURE) {
+         RETURN_FALSE;
+     }
+     caca_canvas_t *canvas;
+@@ -1446,8 +1448,7 @@ PHP_FUNCTION(caca_render_canvas) {
+     caca_font_t *font;
+     ZEND_FETCH_RESOURCE_WRAPPER(font, caca_font_t*, _zval2, -1, PHP_CACA_FONT_RES_NAME, le_caca_font);
+ 
+-#ifdef HAVE_GD
+-    gdImage *img = fetch_external_resource(_zval3, "gd");
++    gdImagePtr img = php_gd_libgdimageptr_from_zval_p(_zval3);
+     if (!img || !img->trueColor) {
+         RETURN_FALSE;
+     }
