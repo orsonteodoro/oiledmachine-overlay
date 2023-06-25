@@ -9,7 +9,6 @@ EAPI=7
 
 EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
 USE_RUBY="ruby30 ruby31"
-USE_PHP="php7-4 php8-0 php8-1 php8-2"
 inherit autotools eutils flag-o-matic ruby-ng virtualx
 
 DESCRIPTION="A library that creates colored ASCII-art graphics"
