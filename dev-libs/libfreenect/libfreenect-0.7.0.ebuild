@@ -12,17 +12,27 @@ HOMEPAGE="https://github.com/OpenKinect/${PN}"
 LICENSE="
 	Apache-2.0
 	GPL-2
-	!audio-firmware? ( all-rights-reserved )
+	!audio-firmware? (
+		all-rights-reserved
+	)
 "
 # The all-rights-reserved applies to the firmware.
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" audio-firmware +bindist -csharp +c-sync +cxx doc +examples fakenect"
-IUSE+=" +opencv openni2 python"
+IUSE+="
+audio-firmware +bindist -csharp +c-sync +cxx doc +examples fakenect +opencv
+openni2 python
+"
 REQUIRED_USE+="
-	!bindist? ( audio-firmware )
-	audio-firmware? ( !bindist )
-	python? ( ${PYTHON_REQUIRED_USE} )
+	!bindist? (
+		audio-firmware
+	)
+	audio-firmware? (
+		!bindist
+	)
+	python? (
+		${PYTHON_REQUIRED_USE}
+	)
 "
 DEPEND+="
 	virtual/libusb:1[${MULTILIB_USEDEP}]
@@ -40,15 +50,23 @@ DEPEND+="
 		$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]')
 	)
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	>=dev-util/cmake-3.12.4
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	doc? ( app-doc/doxygen )
-	python? ( ${PYTHON_DEPS} )
+	doc? (
+		app-doc/doxygen
+	)
+	python? (
+		${PYTHON_DEPS}
+	)
 "
 PDEPEND+="
-	csharp? ( dev-dotnet/libfreenect )
+	csharp? (
+		dev-dotnet/libfreenect
+	)
 "
 SRC_URI="
 https://github.com/OpenKinect/libfreenect/archive/refs/tags/v${PV}.tar.gz
