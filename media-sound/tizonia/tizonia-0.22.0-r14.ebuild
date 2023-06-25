@@ -27,6 +27,17 @@ IUSE+="
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	!doc
+	!python? (
+		!chromecast
+		!google-music
+		!iheart
+		!plex
+		!player
+		!soundcloud
+		!spotify
+		!tunein
+		!youtube
+	)
 	chromecast? (
 		boost
 		curl
@@ -86,17 +97,6 @@ REQUIRED_USE+="
 			tunein
 			youtube
 		)
-	)
-	!python? (
-		!chromecast
-		!google-music
-		!iheart
-		!plex
-		!player
-		!soundcloud
-		!spotify
-		!tunein
-		!youtube
 	)
 	soundcloud? (
 		boost
