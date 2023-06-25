@@ -18,6 +18,7 @@ PYTHON_COMPAT=( python3_{8..11} ) # emsdk lists 3.9, 3.7.
 # https://github.com/emscripten-core/emsdk/blob/3.1.30/.circleci/config.yml#L24
 # https://github.com/emscripten-core/emscripten/blob/3.1.30/requirements-dev.txt
 # flake8 (3.7.8) - <= 3.7
+# flake8 (5.0.4) - <= 3.10
 # websockify (0.10.0) - <= 3.9
 
 inherit flag-o-matic java-pkg-opt-2 llvm python-single-r1 toolchain-funcs
