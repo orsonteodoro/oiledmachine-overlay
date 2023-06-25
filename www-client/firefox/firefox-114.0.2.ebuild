@@ -405,30 +405,30 @@ REQUIRED_USE="
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/114.0.1/system-requirements/
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/moz.configure
+# https://www.mozilla.org/en-US/firefox/114.0.2/system-requirements/
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/moz.configure
 #   perl L589
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot]
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/build/moz.configure/nss.configure L12
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/gfx/harfbuzz/configure.ac L3
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/media/libaom/config/aom_version.h L7
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/media/libwebp/moz.yaml L16
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/modules/freetype2/include/freetype/freetype.h L4943
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/taskcluster/ci/fetch/toolchains.yml
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot]
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/build/moz.configure/nss.configure L12
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/gfx/harfbuzz/configure.ac L3
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/media/libaom/config/aom_version.h L7
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/media/libwebp/moz.yaml L16
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/modules/freetype2/include/freetype/freetype.h L4943
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/taskcluster/ci/fetch/toolchains.yml
 #   Keyword searches: cbindgen-, llvm-, pkgconf-, rust-
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/taskcluster/ci/packages/
-# /var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1/taskcluster/ci/toolchain/
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/taskcluster/ci/packages/
+# /var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2/taskcluster/ci/toolchain/
 __='
 # Scan with also:
-SRC="/var/tmp/portage/www-client/firefox-114.0.1/work/firefox-114.0.1"
+SRC="/var/tmp/portage/www-client/firefox-114.0.2/work/firefox-114.0.2"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
