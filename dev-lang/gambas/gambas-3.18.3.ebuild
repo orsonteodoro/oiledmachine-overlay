@@ -766,6 +766,7 @@ einfo "Relog or do \`source /etc/profile\` for changes to take affect."
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  jit, code-quality-selection
 # OILEDMACHINE-OVERLAY-TEST:  passed (INTERACTIVE) 3.18.2 (20230527)
+# OILEDMACHINE-OVERLAY-TEST:  passed (INTERACTIVE) 3.18.3 (20230625)
 # USE="X cairo curl gtk3 htmlview ide network pcre wayland -bzip2 -crypt -dbus
 # (-debug) -doc -glsl -glu -gmp -gnome-keyring -gsl -gstreamer -httpd -imlib2
 # -jit -mime -mixer -mysql -ncurses -odbc -openal -opengl -openssl -pdf -pixbuf
