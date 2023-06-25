@@ -80,9 +80,9 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~sparc
 SLOT="0/$(ver_cut 1-2 ${PV})"
 ARM_CPU_FLAGS=(
 	-armv6-simd
+	-cpu_flags_arm_neon
 	cpu_flags_arm_v6
 	cpu_flags_arm_v7
-	-cpu_flags_arm_neon
 )
 PPC_CPU_FLAGS=(
 	cpu_flags_ppc_altivec
@@ -98,9 +98,9 @@ ${ARM_CPU_FLAGS[@]}
 ${PPC_CPU_FLAGS[@]}
 ${X86_CPU_FLAGS[@]}
 alsa aqua custom-cflags dbus doc fcitx4 gles1 gles2 haptic +hidapi-hidraw
--hidapi-libusb ibus jack +joystick kms -libdecor libsamplerate nas +nls opengl
-+openurl oss pipewire pulseaudio sndio +sound static-libs +threads udev +video
-video_cards_vc4 vulkan wayland X xscreensaver
+-hidapi-libusb ibus jack +joystick kms -libdecor libsamplerate +lsx nas +nls
+opengl +openurl oss pipewire pulseaudio sndio +sound static-libs test +threads
+udev +video video_cards_vc4 vulkan wayland X xscreensaver
 "
 # libdecor is not in main repo but in community repos
 REQUIRED_USE="
@@ -158,81 +158,84 @@ REQUIRED_USE="
 		X
 	)
 "
-# See https://github.com/libsdl-org/SDL/blob/release-2.0.22/.github/workflows/main.yml#L38
-# https://github.com/libsdl-org/SDL/blob/release-2.0.22/docs/README-linux.md
-# U 20.04
+# See https://github.com/libsdl-org/SDL/blob/release-2.28.0/.github/workflows/main.yml#L38
+# https://github.com/libsdl-org/SDL/blob/release-2.28.0/docs/README-linux.md
+# U 22.04 ; CI tag release-2.28.x
+# libudev version relaxed
+MESA_PV="22.2.5"
 CDEPEND="
+	virtual/libiconv[${MULTILIB_USEDEP}]
 	alsa? (
-		>=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}]
+		>=media-libs/alsa-lib-1.2.6.1[${MULTILIB_USEDEP}]
 	)
 	dbus? (
-		>=sys-apps/dbus-1.6.18-r1[${MULTILIB_USEDEP}]
+		>=sys-apps/dbus-1.12.20[${MULTILIB_USEDEP}]
 	)
 	fcitx4? (
-		app-i18n/fcitx:4
+		>=app-i18n/fcitx-4.2.9.8:4
 	)
 	gles1? (
-		media-libs/mesa[${MULTILIB_USEDEP},gles1]
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles1]
 	)
 	gles2? (
-		>=media-libs/mesa-9.1.6[${MULTILIB_USEDEP},gles2]
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles2]
 	)
 	hidapi-libusb? (
-		>=dev-libs/libusb-1.0.9
+		>=dev-libs/libusb-1.0.25
 	)
 	ibus? (
-		>=app-i18n/ibus-1.5.22
+		>=app-i18n/ibus-1.5.26
 	)
 	jack? (
 		virtual/jack[${MULTILIB_USEDEP}]
 	)
 	kms? (
-		>=x11-libs/libdrm-2.4.82[${MULTILIB_USEDEP}]
-		>=media-libs/mesa-9.0.0[${MULTILIB_USEDEP},gbm(+)]
+		>=x11-libs/libdrm-2.4.113[${MULTILIB_USEDEP}]
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gbm(+)]
 	)
 	libdecor? (
 		>=gui-libs/libdecor-0.1.0
 	)
 	libsamplerate? (
-		media-libs/libsamplerate[${MULTILIB_USEDEP}]
+		>=media-libs/libsamplerate-0.2.2[${MULTILIB_USEDEP}]
 	)
 	nas? (
 		>=media-libs/nas-1.9.4[${MULTILIB_USEDEP}]
-		>=x11-libs/libXt-1.1.4[${MULTILIB_USEDEP}]
+		>=x11-libs/libXt-1.2.1[${MULTILIB_USEDEP}]
 	)
 	opengl? (
-		>=virtual/opengl-7.0-r1[${MULTILIB_USEDEP}]
 		>=virtual/glu-9.0-r1[${MULTILIB_USEDEP}]
+		>=virtual/opengl-7.0-r1[${MULTILIB_USEDEP}]
 	)
 	openurl? (
-		x11-misc/xdg-utils
+		>=x11-misc/xdg-utils-1.1.3
 	)
 	pipewire? (
-		media-video/pipewire:=[${MULTILIB_USEDEP}]
+		>=media-video/pipewire-0.3.48:=[${MULTILIB_USEDEP}]
 	)
 	pulseaudio? (
-		>=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP}]
+		>=media-libs/libpulse-15.99.1[${MULTILIB_USEDEP}]
 	)
 	sndio? (
-		media-sound/sndio:=[${MULTILIB_USEDEP}]
+		>=media-sound/sndio-1.8.1:=[${MULTILIB_USEDEP}]
 	)
 	udev? (
-		>=virtual/libudev-208:=[${MULTILIB_USEDEP}]
+		>=virtual/libudev-232-r8:=[${MULTILIB_USEDEP}]
 	)
 	wayland? (
-		>=dev-libs/wayland-1.18[${MULTILIB_USEDEP}]
-		>=media-libs/mesa-9.1.6[${MULTILIB_USEDEP},egl(+),gles2,wayland]
-		>=x11-libs/libxkbcommon-0.5.0[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-1.20.0[${MULTILIB_USEDEP}]
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+),gles2,wayland]
+		>=x11-libs/libxkbcommon-1.4.0[${MULTILIB_USEDEP}]
 	)
 	X? (
-		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libXcursor-1.1.14[${MULTILIB_USEDEP}]
-		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-1.7.5[${MULTILIB_USEDEP}]
+		>=x11-libs/libXcursor-1.2.0[${MULTILIB_USEDEP}]
+		>=x11-libs/libXext-1.3.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXfixes-6.0.0[${MULTILIB_USEDEP}]
-		>=x11-libs/libXi-1.7.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libXrandr-1.4.2[${MULTILIB_USEDEP}]
+		>=x11-libs/libXi-1.8[${MULTILIB_USEDEP}]
+		>=x11-libs/libXrandr-1.5.2[${MULTILIB_USEDEP}]
 		xscreensaver? (
-			>=x11-libs/libXScrnSaver-1.2.2-r1[${MULTILIB_USEDEP}]
+			>=x11-libs/libXScrnSaver-1.2.3[${MULTILIB_USEDEP}]
 		)
 	)
 "
@@ -245,7 +248,7 @@ RDEPEND="
 DEPEND="
 	${CDEPEND}
 	ibus? (
-		dev-libs/glib:2[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-2.72.1:2[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
 		dev-util/vulkan-headers
@@ -256,24 +259,24 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	>=sys-devel/autoconf-2.71
 	doc? (
-		app-doc/doxygen
-		media-gfx/graphviz
+		>=app-doc/doxygen-1.9.1
+		>=media-gfx/graphviz-2.42.2
 	)
 	wayland? (
 		>=dev-util/wayland-scanner-1.20
 	)
 "
 MULTILIB_WRAPPED_HEADERS=(
-	/usr/include/SDL2/SDL_config.h
-	/usr/include/SDL2/SDL_platform.h
 	/usr/include/SDL2/begin_code.h
 	/usr/include/SDL2/close_code.h
+	/usr/include/SDL2/SDL_config.h
+	/usr/include/SDL2/SDL_platform.h
 )
 SRC_URI="https://www.libsdl.org/release/${MY_P}.tar.gz"
 PATCHES=(
-	"${FILESDIR}"/${PN}-2.0.16-static-libs.patch
-	"${FILESDIR}"/${PN}-2.24.0-fix-build-without-joystick.patch
+	"${FILESDIR}/${PN}-2.0.16-static-libs.patch"
 )
 
 S="${WORKDIR}/${MY_P}"
@@ -307,6 +310,15 @@ src_prepare() {
 	# https://bugs.gentoo.org/764959
 	AT_NOEAUTOHEADER="yes" AT_M4DIR="/usr/share/aclocal acinclude" \
 		eautoreconf
+	if use test ; then
+		pushd test || die
+			eautoreconf
+		popd
+	fi
+	prepare_abi() {
+		cp -a "${S}" "${S}-${MULTIBUILD_VARIANT}" || die
+	}
+	multilib_foreach_abi prepare_abi
 }
 
 multilib_src_configure() {
@@ -370,10 +382,10 @@ multilib_src_configure() {
 		$(use_with X x)
 		--disable-alsa-shared
 		--disable-arts
+		--disable-directx
 		--disable-esd
 		--disable-fusionsound
 		--disable-fusionsound-shared
-		--disable-directx
 		--disable-jack-shared
 		--disable-kmsdrm-shared
 		--disable-nas-shared
@@ -384,6 +396,7 @@ multilib_src_configure() {
 		--disable-sndio-shared
 		--disable-video-directfb
 		--disable-wayland-shared
+		--disable-werror
 		--disable-x11-shared
 		--enable-assembly
 		--enable-atomic
@@ -394,6 +407,7 @@ multilib_src_configure() {
 		--enable-loadso
 		--enable-power
 		--enable-render
+		--enable-system-iconv
 		--enable-timers
 	)
 
@@ -428,12 +442,32 @@ multilib_src_configure() {
 		)
 	fi
 
+	if use loong ; then
+		myeconfargs+=(
+			$(use_enable lsx)
+		)
+	else
+		myeconfargs+=(
+			--disable-lsx
+		)
+	fi
+
 	ECONF_SOURCE="${S}" \
 	econf "${myeconfargs[@]}"
+	if use test ; then
+		pushd test || die
+			econf
+		popd
+	fi
 }
 
 multilib_src_compile() {
 	emake V=1
+	if use test ; then
+		pushd test || die
+			emake
+		popd
+	fi
 }
 
 src_compile() {
@@ -442,6 +476,14 @@ src_compile() {
 	if use doc; then
 		cd docs || die
 		doxygen || die
+	fi
+}
+
+multilib_src_test() {
+	if use test ; then
+		pushd test || die
+			emake check
+		popd
 	fi
 }
 
@@ -562,3 +604,9 @@ multilib_src_install_all() {
 		dodoc "${T}/SDL_test_md5.c.LICENSE"
 	#fi
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.28.0 (test-suite) (20230625)
+# USE="X alsa gles2 haptic joystick opengl sound test%* threads video wayland
+# (-aqua) -armv6-simd (-custom-cflags) -dbus -doc -fcitx4 -gles1 -hidapi-hidraw
+# -hidapi-libusb -ibus -jack -kms -libdecor -libsamplerate -nas -nls -openurl
+# -oss -pipewire -pulseaudio -sndio -static-libs -udev -vulkan -xscreensaver"
