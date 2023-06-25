@@ -5,7 +5,7 @@ EAPI=8
 
 CMAKE_BUILD_TYPE=Release
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake-multilib multilib-minimal python-single-r1
+inherit cmake-multilib flag-o-matic multilib-minimal python-single-r1
 
 DESCRIPTION="Drivers and libraries for the Xbox Kinect device"
 HOMEPAGE="https://github.com/OpenKinect/${PN}"
@@ -20,8 +20,8 @@ LICENSE="
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-audio-firmware +bindist -csharp +c-sync +cxx doc +examples fakenect +opencv
-openni2 python
+-audio-firmware +bindist -csharp +c-sync +cxx doc +examples +fakenect -opencv
+-openni2 -python r1
 "
 REQUIRED_USE+="
 	!bindist? (
@@ -32,6 +32,7 @@ REQUIRED_USE+="
 	)
 	python? (
 		${PYTHON_REQUIRED_USE}
+		c-sync
 	)
 "
 DEPEND+="
@@ -76,6 +77,7 @@ S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/libfreenect-0.6.0-custom-cmake-lib-path.patch"
+	"${FILESDIR}/libfreenect-0.7.0-fix-freenect.pyx-headers.patch"
 )
 DOCS=( README.md )
 
@@ -94,6 +96,10 @@ eerror
 }
 
 src_configure() {
+	export MAKEOPTS="-j1"
+	if use python ; then
+		append-cppflags -DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION
+	fi
 	local mycmakeargs=(
 		-DBUILD_C_SYNC=$(usex c-sync)
 		-DBUILD_CPP=$(usex cxx)
@@ -101,13 +107,23 @@ src_configure() {
 		-DBUILD_EXAMPLES=$(usex examples)
 		-DBUILD_FAKENECT=$(usex fakenect)
 		-DBUILD_OPENNI2_DRIVER=$(usex openni2)
+		-DBUILD_PYTHON=OFF # It actually turns both BUILD_PYTHON2=ON BUILD_PYTHON3=ON on.
 		-DBUILD_PYTHON2=OFF
-		-DBUILD_PYTHON=$(usex python)
 		-DBUILD_PYTHON3=$(usex python)
 		-DBUILD_REDIST_PACKAGE=$(usex !audio-firmware REDIST_PACKAGE)
 		-DCMAKE_INSTALL_LIBDIR="${EPREFIX}/usr/$(get_libdir)"
 	)
 	cmake-multilib_src_configure
+}
+
+src_compile() {
+	if use audio-firmware ; then
+ewarn
+ewarn "The build scripts will be downloading firmware from the background."
+ewarn "Please wait."
+ewarn
+	fi
+	cmake-multilib_src_compile
 }
 
 src_install() {
@@ -131,7 +147,7 @@ src_install() {
 pkg_postinst() {
 	if ! use audio-firmware ; then
 ewarn
-ewarn "The audio-firmware USE flag is enabled.  The resulting binaries may not"
+ewarn "The audio-firmware USE flag is enabled.  The resulting binaries may NOT"
 ewarn "be legal to re-distribute."
 ewarn
 	fi

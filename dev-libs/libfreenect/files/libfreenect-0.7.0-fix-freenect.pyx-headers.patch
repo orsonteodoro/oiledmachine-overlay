@@ -1,0 +1,43 @@
+diff -urp libfreenect-0.7.0.orig/wrappers/python/CMakeLists.txt libfreenect-0.7.0/wrappers/python/CMakeLists.txt
+--- libfreenect-0.7.0.orig/wrappers/python/CMakeLists.txt	2023-04-03 14:59:43.000000000 -0700
++++ libfreenect-0.7.0/wrappers/python/CMakeLists.txt	2023-06-25 16:19:09.746062594 -0700
+@@ -20,14 +20,14 @@ find_program(CYTHON_EXECUTABLE cython)
+ # Figure out installation path
+ # CMake populates this var automatically but we need to specify prefix
+ execute_process(COMMAND
+-  ${Python${Python_BUILD_VERSION}_EXECUTABLE}
++  $ENV{EPYTHON}
+     -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(plat_specific=False, standard_lib=False, prefix='${CMAKE_INSTALL_PREFIX}'))"
+   OUTPUT_VARIABLE Python${Python_BUILD_VERSION}_SITELIB OUTPUT_STRIP_TRAILING_WHITESPACE)
+ 
+ # Figure out numpy include path
+ # todo: CMake >= 3.14 populates this var automatically when using COMPONENTS NumPy
+ execute_process(COMMAND
+-  ${Python${Python_BUILD_VERSION}_EXECUTABLE}
++  $ENV{EPYTHON}
+     -c "import numpy; print(numpy.get_include())"
+   OUTPUT_VARIABLE Python${Python_BUILD_VERSION}_NumPy_INCLUDE_DIRS OUTPUT_STRIP_TRAILING_WHITESPACE)
+ 
+@@ -37,7 +37,9 @@ add_custom_command(OUTPUT freenect${Pyth
+     ${CYTHON_EXECUTABLE}
+       -${Python_BUILD_VERSION}
+       -o freenect${Python_BUILD_VERSION}.c
+-      "${CMAKE_CURRENT_SOURCE_DIR}/freenect.pyx")
++      "${CMAKE_CURRENT_SOURCE_DIR}/freenect.pyx"
++  COMMAND
++    sed -i -e \'s|include \"numpy/arrayobject.h\"|include <numpy/arrayobject.h>|g\' "${CMAKE_CURRENT_BINARY_DIR}/freenect${Python_BUILD_VERSION}.c")
+ list(APPEND ADDITIONAL_MAKE_CLEAN_FILES freenect${Python_BUILD_VERSION}.c)
+ 
+ # Compile the extension
+diff -urp libfreenect-0.7.0.orig/wrappers/python/freenect.pyx libfreenect-0.7.0/wrappers/python/freenect.pyx
+--- libfreenect-0.7.0.orig/wrappers/python/freenect.pyx	2023-04-03 14:59:43.000000000 -0700
++++ libfreenect-0.7.0/wrappers/python/freenect.pyx	2023-06-25 15:13:31.701964888 -0700
+@@ -26,7 +26,7 @@ from libc.stdint cimport *
+ import numpy as np
+ cimport numpy as npc
+ 
+-cdef extern from "numpy/arrayobject.h":
++cdef extern from "<numpy/arrayobject.h>":
+     void import_array()
+     cdef object PyArray_SimpleNewFromData(int nd, npc.npy_intp *dims,
+                                            int typenum, void *data)
