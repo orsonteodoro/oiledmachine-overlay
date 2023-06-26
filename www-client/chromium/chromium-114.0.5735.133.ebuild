@@ -444,7 +444,7 @@ bluetooth +bundled-libcxx branch-protection +cfi component-build +cups -debug
 +encode -gtk4 -hangouts -headless +js-type-check +kerberos +official pax-kernel
 pic +pgo +pre-check-vaapi +proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+pulseaudio qt5 qt6 +screencast selinux +suid -system-dav1d +system-ffmpeg
++pulseaudio qt5 +screencast selinux +suid -system-dav1d +system-ffmpeg
 -system-flac -system-fontconfig -system-freetype -system-harfbuzz -system-icu
 -system-libaom -system-libdrm -system-libjpeg-turbo -system-libpng
 -system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
@@ -723,8 +723,8 @@ COMMON_X_DEPEND="
 COMMON_SNAPSHOT_DEPEND="
 	!headless? (
 		${LIBVA_DEPEND}
-		>=media-libs/alsa-lib-1.2.4:=[${MULTILIB_USEDEP}]
 		>=dev-libs/glib-2.66.8:2[${MULTILIB_USEDEP}]
+		>=media-libs/alsa-lib-1.2.4:=[${MULTILIB_USEDEP}]
 		>=sys-apps/pciutils-3.7.0:=[${MULTILIB_USEDEP}]
 		>=x11-libs/libxkbcommon-1.0.3:=[${MULTILIB_USEDEP}]
 		kerberos? (
@@ -825,9 +825,6 @@ COMMON_DEPEND="
 			>=dev-qt/qtcore-${QT5_PV}:5
 			>=dev-qt/qtwidgets-${QT5_PV}:5[X?]
 		)
-		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:6[widgets,X?]
-		)
 		X? (
 			${COMMON_X_DEPEND}
 		)
@@ -883,9 +880,6 @@ RDEPEND+="
 	!headless? (
 		qt5? (
 			>=dev-qt/qtgui-${QT5_PV}:5[wayland?,X?]
-		)
-		qt6? (
-			>=dev-qt/qtbase-${QT6_PV}:6[gui,wayland?,X?]
 		)
 		|| (
 			>=gui-libs/gtk-${GTK4_PV}:4[wayland?,X?]
@@ -1121,7 +1115,6 @@ pkg_pretend() {
 			"kerberos"
 			"pulseaudio"
 			"qt5"
-			"qt6"
 			"vaapi"
 			"wayland"
 		)
@@ -2722,12 +2715,7 @@ einfo
 			fi
 			export PATH="${PATH}:${moc_dir}"
 		fi
-		if use qt6 ; then
-eerror "qt6 ebuild support is WIP"
-			die
-		fi
 		myconf_gn+=" use_qt=$(usex qt5 true false)"
-		myconf_gn+=" use_qt6=$(usex qt6 true false)"
 		myconf_gn+=" ozone_platform_x11=$(usex X true false)"
 		myconf_gn+=" ozone_platform_wayland=$(usex wayland true false)"
 		myconf_gn+=" ozone_platform=$(usex wayland \"wayland\" \"x11\")"
