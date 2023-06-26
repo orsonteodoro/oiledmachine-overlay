@@ -115,6 +115,7 @@ RDEPEND="
 		>=dev-qt/qtsvg-${QT6_PV}:6
 		wayland? (
 			>=dev-qt/qtwayland-${QT6_PV}:6
+			>=dev-qt/qtdeclarative-${QT6_PV}:6[opengl]
 		)
 	)
 "
@@ -225,13 +226,7 @@ einfo
 pkg_setup() {
 	check-reqs_pkg_setup
 	use qt5 && verify_qt_consistency 5
-	if use qt6 ; then
-ewarn
-ewarn "verify_qt_consistency is not implemented for Qt6.  You are responsible"
-ewarn "for ensuring version consistency."
-ewarn
-		#verify_qt_consistency 6
-	fi
+	use qt5 && verify_qt_consistency 6
 	verify_cxx20
 }
 
