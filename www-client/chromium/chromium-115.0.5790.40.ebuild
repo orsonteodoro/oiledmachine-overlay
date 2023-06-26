@@ -2707,14 +2707,17 @@ einfo
 				fi
 			fi
 			export PATH="${PATH}:${moc_dir}"
+			myconf_gn+=" use_qt=true"
+			myconf_gn+=" use_qt6=$(usex qt6 true false)"
+		else
+			myconf_gn+=" use_qt=false"
+			myconf_gn+=" use_qt6=false"
 		fi
 		if use qt6 ; then
 ewarn
 ewarn "qt6 ebuild support is WIP"
 ewarn
 		fi
-		myconf_gn+=" use_qt=$(usex qt5 true false)"
-		myconf_gn+=" use_qt6=$(usex qt6 true false)"
 		myconf_gn+=" ozone_platform_x11=$(usex X true false)"
 		myconf_gn+=" ozone_platform_wayland=$(usex wayland true false)"
 		myconf_gn+=" ozone_platform=$(usex wayland \"wayland\" \"x11\")"
