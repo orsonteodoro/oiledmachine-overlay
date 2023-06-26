@@ -1579,6 +1579,12 @@ ewarn "Disabling the distro patchset."
 		"${FILESDIR}/extra-patches/chromium-115.0.5790.40-qt6-split.patch"
 	)
 
+	if is-flagq '-Ofast' || is-flagq '-ffast-math' ; then
+		PATCHES+=(
+			"${FILESDIR}/extra-patches/chromium-114.0.5735.133-fast-math.patch"
+		)
+	fi
+
 	# Slot 16 selected but spits out 17
 #
 # Fixes:
