@@ -294,7 +294,8 @@ pkg_postrm() {
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) (20230529)
-# USE="X qt5 wayland -benchmarks -coverage (-crashpad) -lto -plugins (-qt6)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) (20230625)
+# USE="X qt6 wayland -benchmarks -coverage (-crashpad) -lto -plugins (-qt5)
 # -qtkeychain -r3 -system-libcommuni -system-qtkeychain -test"
 # X tests:
 #   view about screen:  passed
