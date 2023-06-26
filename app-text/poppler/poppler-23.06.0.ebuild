@@ -13,14 +13,24 @@ else
 	VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}"/usr/share/openpgp-keys/aacid.asc
 	inherit verify-sig
 
-	SRC_URI="https://poppler.freedesktop.org/${P}.tar.xz"
-	SRC_URI+=" verify-sig? ( https://poppler.freedesktop.org/${P}.tar.xz.sig )"
+	TEST_COMMIT="eea2a4a355eb49ca70d944afd5245b24578af287"
+	SRC_URI="
+https://poppler.freedesktop.org/${P}.tar.xz
+		test? (
+https://gitlab.freedesktop.org/poppler/test/-/archive/${TEST_COMMIT}/test-${TEST_COMMIT}.tar.bz2
+	->
+${PN}-test-${TEST_COMMIT}.tar.bz2
+		)
+		verify-sig? (
+https://poppler.freedesktop.org/${P}.tar.xz.sig
+		)
+	"
 	KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
-~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris
-~sparc64-solaris ~x64-solaris ~x86-solaris
+~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
+~x64-solaris
 	"
-	SLOT="0/128"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
+	SLOT="0/129"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
 fi
 
 DESCRIPTION="PDF rendering library based on the xpdf-3.0 code base"
@@ -28,64 +38,100 @@ HOMEPAGE="https://poppler.freedesktop.org/"
 
 LICENSE="GPL-2"
 IUSE="
-boost cairo cjk curl +cxx debug doc +introspection +jpeg +jpeg2k +lcms nss png
-qt5 tiff +utils
++boost cairo cjk gtk +curl +cxx debug -doc gpgme +introspection +jpeg +jpeg2k
++lcms nss png +qt5 +qt6 test tiff +utils
+"
+REQUIRED_USE+="
+	gtk? (
+		cairo
+	)
+	introspection? (
+		cairo
+	)
+	test? (
+		|| (
+			qt5
+			qt6
+		)
+	)
 "
 
 # No test data provided
-RESTRICT="test"
+#RESTRICT="test"
 
+# CI uses U 20.04
+QT5_PV="5.12.8"
+QT6_PV="6.2.0"
 COMMON_DEPEND="
-	>=media-libs/fontconfig-2.13[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.10[${MULTILIB_USEDEP}]
-	sys-libs/zlib[${MULTILIB_USEDEP}]
+	>=media-libs/fontconfig-2.13.1[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.10.1[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
 	cairo? (
-		>=dev-libs/glib-2.64:2[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-2.64.6:2[${MULTILIB_USEDEP}]
 		>=x11-libs/cairo-1.16[${MULTILIB_USEDEP}]
+		gtk? (
+			>=x11-libs/gtk+-3.24.20:3
+		)
 		introspection? (
-			>=dev-libs/gobject-introspection-1.64:=
+			>=dev-libs/gobject-introspection-1.64.1:=
 		)
 	)
 	curl? (
-		net-misc/curl[${MULTILIB_USEDEP}]
+		>=net-misc/curl-7.68.0[${MULTILIB_USEDEP}]
+	)
+	cxx? (
+		virtual/libc
+	)
+	gpgme? (
+		>=app-crypt/gpgme-1.19.0:=[cxx]
 	)
 	jpeg? (
-		>=media-libs/libjpeg-turbo-1.1.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-2.0.3:=[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
-		>=media-libs/openjpeg-2.3.0-r1:2=[${MULTILIB_USEDEP}]
+		>=media-libs/openjpeg-2.3.1:2=[${MULTILIB_USEDEP}]
 	)
 	lcms? (
-		media-libs/lcms:2[${MULTILIB_USEDEP}]
+		>=media-libs/lcms-2.9:2[${MULTILIB_USEDEP}]
 	)
 	nss? (
-		>=dev-libs/nss-3.49[${MULTILIB_USEDEP}]
+		>=dev-libs/nss-3.49.1[${MULTILIB_USEDEP}]
 	)
 	png? (
-		media-libs/libpng:0=[${MULTILIB_USEDEP}]
+		>=media-libs/libpng-1.6.37:0=[${MULTILIB_USEDEP}]
 	)
 	qt5? (
-		dev-qt/qtcore:5[${MULTILIB_USEDEP}]
-		dev-qt/qtgui:5[${MULTILIB_USEDEP}]
-		dev-qt/qtxml:5[${MULTILIB_USEDEP}]
+		>=dev-qt/qtcore-${QT5_PV}:5[${MULTILIB_USEDEP}]
+		>=dev-qt/qtgui-${QT5_PV}:5[${MULTILIB_USEDEP}]
+		>=dev-qt/qtxml-${QT5_PV}:5[${MULTILIB_USEDEP}]
+		>=dev-qt/qtwidgets-${QT5_PV}:5[${MULTILIB_USEDEP}]
+	)
+	qt6? (
+		>=dev-qt/qtbase-${QT5_PV}:6[${MULTILIB_USEDEP},gui,widgets]
 	)
 	tiff? (
-		media-libs/tiff:=[${MULTILIB_USEDEP}]
+		>=media-libs/tiff-4.1.0:=[${MULTILIB_USEDEP}]
 	)
 "
 RDEPEND="${COMMON_DEPEND}
 	cjk? (
-		app-text/poppler-data
+		>=app-text/poppler-data-0.4.9
 	)
 "
 DEPEND="${COMMON_DEPEND}
 	boost? (
-		>=dev-libs/boost-1.71[${MULTILIB_USEDEP}]
+		>=dev-libs/boost-1.71.0[${MULTILIB_USEDEP}]
 	)
 "
 BDEPEND="
-	>=dev-util/glib-utils-2.64
+	>=dev-util/glib-utils-2.64.6
 	virtual/pkgconfig
+	doc? (
+		dev-util/gtk-doc
+	)
+	qt5? (
+		>=dev-qt/qttest-${QT5_PV}:5
+	)
 "
 
 if [[ ${PV} != *9999* ]] ; then
@@ -102,7 +148,16 @@ PATCHES=(
 	"${FILESDIR}/${PN}-20.12.1-qt5-deps.patch"
 	"${FILESDIR}/${PN}-21.09.0-respect-cflags.patch"
 	"${FILESDIR}/${PN}-0.57.0-disable-internal-jpx.patch"
+	"${FILESDIR}/${P}-fix-tests.patch" # git master, 23.07.0
 )
+
+src_unpack() {
+	unpack ${A}
+	mv \
+		"${WORKDIR}/test-${TEST_COMMIT}" \
+		"${WORKDIR}/test-data" \
+		|| die
+}
 
 src_prepare() {
 	cmake_src_prepare
@@ -129,29 +184,34 @@ src_configure() {
 		$(use cairo && "
 			-DWITH_GObjectIntrospection=$(usex introspection)
 		")
-		-DBUILD_CPP_TESTS=OFF
+		-DBUILD_CPP_TESTS=$(usex test)
 		-DBUILD_GTK_TESTS=OFF
-		-DBUILD_MANUAL_TESTS=OFF
-		-DBUILD_QT5_TESTS=OFF
+		-DBUILD_MANUAL_TESTS=$(usex test)
+		-DBUILD_QT5_TESTS=$(usex test $(usex qt5))
+		-DBUILD_QT6_TESTS=$(usex test $(usex qt6))
 		-DENABLE_BOOST="$(usex boost)"
 		-DENABLE_CMS=$(usex lcms lcms2 none)
 		-DENABLE_CPP=$(usex cxx)
 		-DENABLE_DCTDECODER=$(usex jpeg libjpeg none)
 		-DENABLE_LIBCURL=$(usex curl)
 		-DENABLE_LIBOPENJPEG=$(usex jpeg2k openjpeg2 none)
-		-DENABLE_QT6=OFF
+		-DENABLE_QT5=$(usex qt5)
+		-DENABLE_QT6=$(usex qt6)
 		-DENABLE_UNSTABLE_API_ABI_HEADERS=ON
 		-DENABLE_UTILS=$(usex utils)
 		-DENABLE_ZLIB=ON
 		-DENABLE_ZLIB_UNCOMPRESS=OFF
 		-DRUN_GPERF_IF_PRESENT=OFF
+		-DTESTDATADIR="${WORKDIR}/test-data"
 		-DUSE_FLOAT=OFF
 		-DWITH_Cairo=$(usex cairo)
+		-DWITH_Gpgmepp=$(usex gpgme)
 		-DWITH_JPEG=$(usex jpeg)
 		-DWITH_NSS3=$(usex nss)
 		-DWITH_PNG=$(usex png)
 		-DWITH_TIFF=$(usex tiff)
 	)
+
 	cmake-multilib_src_configure
 }
 
@@ -164,3 +224,12 @@ src_install() {
 		doins -r "${S}"/glib/reference/html/*
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 23.06.0 (20230626)
+# USE="cairo cxx lcms qt6* test utils -boost -cjk -curl (-debug) -doc -gpgme
+# -gtk -introspection -jpeg -jpeg2k -nss -png (-qt5) -tiff -verify-sig"
+#
+# 100% tests passed, 0 tests failed out of 26
+#
+# Total Test time (real) =   1.20 sec
+#
