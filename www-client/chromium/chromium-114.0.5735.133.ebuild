@@ -82,8 +82,8 @@ CR_CLANG_USED_UNIX_TIMESTAMP="1681428473" # Cached.  Use below to obtain this. \
 # Change also CR_CLANG_SLOT_OFFICIAL
 
 FFMPEG_LIBAVUTIL_SOVER="58.5.100" # third_party/ffmpeg/libavutil/version.h
-FFMPEG_LIBAVCODEC_SOVER="60.7.100" # third_party/ffmpeg/libavcodec/version.h
-FFMPEG_LIBAVFORMAT_SOVER="60.4.100" # third_party/ffmpeg/libavformat/version.h
+FFMPEG_LIBAVCODEC_SOVER="60.7.100" # third_party/ffmpeg/libavcodec/version*.h
+FFMPEG_LIBAVFORMAT_SOVER="60.4.100" # third_party/ffmpeg/libavformat/version*.h
 FFMPEG_PV="6.0" # It should be 9999 but relaxed.  ; They don't use a tagged version.
 FFMPEG_SUBSLOT="$(ver_cut 1 ${FFMPEG_LIBAVUTIL_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVCODEC_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVFORMAT_SOVER})"
 GCC_MIN="10.2.1"

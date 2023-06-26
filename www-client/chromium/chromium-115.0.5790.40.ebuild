@@ -82,8 +82,8 @@ CR_CLANG_USED_UNIX_TIMESTAMP="1683163253" # Cached.  Use below to obtain this. \
 # Change also CR_CLANG_SLOT_OFFICIAL
 
 FFMPEG_LIBAVUTIL_SOVER="58.5.100" # third_party/ffmpeg/libavutil/version.h
-FFMPEG_LIBAVCODEC_SOVER="60.7.100" # third_party/ffmpeg/libavcodec/version.h
-FFMPEG_LIBAVFORMAT_SOVER="60.4.100" # third_party/ffmpeg/libavformat/version.h
+FFMPEG_LIBAVCODEC_SOVER="60.7.100" # third_party/ffmpeg/libavcodec/version*.h
+FFMPEG_LIBAVFORMAT_SOVER="60.4.100" # third_party/ffmpeg/libavformat/version*.h
 FFMPEG_PV="6.0" # It should be 9999 but relaxed.  ; They don't use a tagged version.
 FFMPEG_SUBSLOT="$(ver_cut 1 ${FFMPEG_LIBAVUTIL_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVCODEC_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVFORMAT_SOVER})"
 GCC_MIN="10.2.1"
@@ -769,7 +769,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=media-libs/freetype-2.13:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-7.1.0:0=[${MULTILIB_USEDEP},icu(-)]
+		>=media-libs/harfbuzz-7.2.0:0=[${MULTILIB_USEDEP},icu(-)]
 	)
 	system-icu? (
 		>=dev-libs/icu-72.1:=[${MULTILIB_USEDEP}]
@@ -1576,6 +1576,7 @@ ewarn "Disabling the distro patchset."
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/chromium-111.0.5563.64-zlib-selective-simd.patch"
+		"${FILESDIR}/extra-patches/chromium-115.0.5790.40-qt6-split.patch"
 	)
 
 	# Slot 16 selected but spits out 17
@@ -2707,17 +2708,9 @@ einfo
 				fi
 			fi
 			export PATH="${PATH}:${moc_dir}"
-			myconf_gn+=" use_qt=true"
-			myconf_gn+=" use_qt6=$(usex qt6 true false)"
-		else
-			myconf_gn+=" use_qt=false"
-			myconf_gn+=" use_qt6=false"
 		fi
-		if use qt6 ; then
-ewarn
-ewarn "qt6 ebuild support is WIP"
-ewarn
-		fi
+		myconf_gn+=" use_qt=$(usex qt5 true false)"
+		myconf_gn+=" use_qt6=$(usex qt6 true false)"
 		myconf_gn+=" ozone_platform_x11=$(usex X true false)"
 		myconf_gn+=" ozone_platform_wayland=$(usex wayland true false)"
 		myconf_gn+=" ozone_platform=$(usex wayland \"wayland\" \"x11\")"
