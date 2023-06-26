@@ -50,9 +50,9 @@ REQUIRED_USE+="
 		)
 	)
 "
-# See https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.6.2/INSTALL.md
+# See https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.12.0/INSTALL.md
 # For optix requirements, see
-#   https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.6.2/src/cmake/externalpackages.cmake
+#   https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.12.0/src/cmake/externalpackages.cmake
 QT5_MIN="5.6"
 QT6_MIN="6"
 PATCHES=(
