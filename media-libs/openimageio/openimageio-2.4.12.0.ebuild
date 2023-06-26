@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STD_MIN="14"
 LLVM_MAX_SLOT=16
-LLVM_SLOTS=(16 15 14 13)
+LLVM_SLOTS=( 16 15 14 13 )
 FONT_PN=OpenImageIO
 PYTHON_COMPAT=( python3_{9..10} )
 inherit cmake font llvm python-single-r1
@@ -19,15 +19,15 @@ LICENSE="BSD"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 X86_CPU_FEATURES=(
-	sse2:sse2
-	sse3:sse3
-	ssse3:ssse3
-	sse4_1:sse4.1
-	sse4_2:sse4.2
 	avx:avx
 	avx2:avx2
 	avx512f:avx512f
 	f16c:f16c
+	sse2:sse2
+	sse3:sse3
+	sse4_1:sse4.1
+	sse4_2:sse4.2
+	ssse3:ssse3
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
 OPENVDB_APIS=( 10 9 8 7 6 5 )
@@ -39,7 +39,7 @@ IUSE+="
 ${CPU_FEATURES[@]%:*}
 ${OPENVDB_APIS_[@]}
 aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc
-jpeg2k opencv opengl openvdb png ptex +python +qt5 qt6 raw rav1e tbb +truetype
+jpeg2k opencv opengl openvdb png ptex +python qt5 +qt6 raw rav1e tbb +truetype
 wayland webp X
 
 r2
@@ -83,7 +83,7 @@ REQUIRED_USE="
 		openvdb
 	)
 "
-# See https://github.com/OpenImageIO/oiio/blob/v2.4.10.0/INSTALL.md
+# See https://github.com/OpenImageIO/oiio/blob/v2.4.12.0/INSTALL.md
 QT5_PV="5.6"
 QT6_PV="6"
 ONETBB_SLOT="0"
@@ -215,6 +215,7 @@ RDEPEND+="
 	qt6? (
 		>=dev-qt/qtbase-${QT6_PV}:6[gui,opengl?,widgets,X?]
 		wayland? (
+			>=dev-qt/qtdeclarative-${QT6_PV}:6[opengl]
 			>=dev-qt/qtwayland-${QT6_PV}:6
 		)
 	)

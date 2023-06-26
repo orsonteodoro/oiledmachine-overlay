@@ -5,7 +5,7 @@ EAPI=8
 
 CXX_STD_MIN="14"
 LLVM_MAX_SLOT=15
-LLVM_SLOTS=(15 14 13)
+LLVM_SLOTS=( 15 14 13 )
 FONT_PN=OpenImageIO
 PYTHON_COMPAT=( python3_{9..10} )
 inherit cmake font llvm python-single-r1
@@ -19,15 +19,15 @@ LICENSE="BSD"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 X86_CPU_FEATURES=(
-	sse2:sse2
-	sse3:sse3
-	ssse3:ssse3
-	sse4_1:sse4.1
-	sse4_2:sse4.2
 	avx:avx
 	avx2:avx2
 	avx512f:avx512f
 	f16c:f16c
+	sse2:sse2
+	sse3:sse3
+	sse4_1:sse4.1
+	sse4_2:sse4.2
+	ssse3:ssse3
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
 OPENVDB_APIS=( 9 8 7 6 5 )

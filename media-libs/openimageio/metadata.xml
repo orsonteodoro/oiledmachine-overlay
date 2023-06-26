@@ -1,34 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="person" proxied="yes">
-		<!-- only for this ebuild fork on the oiledmachine-overlay -->
-		<email>orsonteodoro@hotmail.com</email>
-		<name>Orson Teodoro</name>
-	</maintainer>
-	<maintainer type="person" proxied="yes">
-		<!-- ebuild originators -->
-		<email>gentoo@aisha.cc</email>
-		<name>Aisha Tammy</name>
-	</maintainer>
-	<maintainer type="project">
-		<!-- ebuild originators -->
-		<email>sci@gentoo.org</email>
-		<name>Gentoo Science Project</name>
-	</maintainer>
-	<use>
-		<flag name="color-management">Enable color management via <pkg>media-libs/opencolorio</pkg></flag>
-		<flag name="dicom">Enable DICOM medical image file support via <pkg>sci-libs/dcmtk</pkg></flag>
-		<flag name="field3d">Enable f3d file (write) support via <pkg>media-libs/Field3D</pkg></flag>
-		<flag name="opencv">Enable OpenCV support via <pkg>media-libs/opencv</pkg></flag>
-		<flag name="ptex">Enable Ptex texture mapping system file support via <pkg>media-libs/ptex</pkg></flag>
-	</use>
-	<longdescription>
-		The purpose of this ebuild fork is to ensure consistency
-		between Blender or its dependencies, or meet the minimum
-		requirements of Blender.
-	</longdescription>
-	<upstream>
-		<remote-id type="github">OpenImageIO/oiio</remote-id>
-	</upstream>
+  <maintainer type="person" proxied="yes">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person" proxied="yes">
+    <!-- Ebuild originators -->
+    <email>gentoo@aisha.cc</email>
+    <name>Aisha Tammy</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- Ebuild originators -->
+    <email>sci@gentoo.org</email>
+    <name>Gentoo Science Project</name>
+  </maintainer>
+  <use>
+    <flag name="color-management">
+      Enable color management via <pkg>media-libs/opencolorio</pkg>
+    </flag>
+    <flag name="dicom">
+      Enable DICOM medical image file support via <pkg>sci-libs/dcmtk</pkg>
+    </flag>
+    <flag name="field3d">
+      Enable f3d file (write) support via <pkg>media-libs/Field3D</pkg>
+    </flag>
+    <flag name="opencv">
+      Enable OpenCV support via <pkg>media-libs/opencv</pkg>
+    </flag>
+    <flag name="ptex">
+      Enable Ptex texture mapping system file support via
+      <pkg>media-libs/ptex</pkg>
+    </flag>
+  </use>
+  <!--
+
+    oiledmachine-overlay notes:
+
+    The purpose of this ebuild fork is to ensure consistency between Blender or
+    its dependencies, or meet the minimum requirements of Blender.
+
+  -->
+  <upstream>
+    <remote-id type="github">OpenImageIO/oiio</remote-id>
+  </upstream>
 </pkgmetadata>
