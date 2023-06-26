@@ -213,7 +213,7 @@ RDEPEND+="
 		)
 	)
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:6[gui,opengl?,widgets,X?]
+		>=dev-qt/qtbase-${QT6_PV}:6[gui,opengl?,wayland?,widgets,X?]
 		wayland? (
 			>=dev-qt/qtdeclarative-${QT6_PV}:6[opengl]
 			>=dev-qt/qtwayland-${QT6_PV}:6

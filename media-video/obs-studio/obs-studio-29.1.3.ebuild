@@ -541,9 +541,10 @@ DEPEND_UI="
 		)
 	)
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui,network,widgets,X,xml]
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui,network,wayland?,widgets,X,xml]
 		>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=
 		wayland? (
+			>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}=[opengl]
 			>=dev-qt/qtwayland-${QT6_PV}:${QT6_SLOT}=
 		)
 	)

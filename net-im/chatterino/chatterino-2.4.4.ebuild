@@ -109,7 +109,7 @@ RDEPEND="
 	)
 	qt6? (
 		>=dev-qt/qt5compat-${QT6_PV}:6
-		>=dev-qt/qtbase-${QT6_PV}:6[concurrent,dbus,gui,network,widgets,X?]
+		>=dev-qt/qtbase-${QT6_PV}:6[concurrent,dbus,gui,network,wayland?,widgets,X?]
 		>=dev-qt/qtimageformats-${QT6_PV}:6
 		>=dev-qt/qtmultimedia-${QT6_PV}:6
 		>=dev-qt/qtsvg-${QT6_PV}:6

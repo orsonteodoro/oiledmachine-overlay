@@ -158,10 +158,10 @@ RDEPEND+="
 		>=dev-qt/qtwidgets-${QT5_MIN}:5[X?]
 	)
 	qt6? (
-		>=dev-qt/qtbase-${QT6_MIN}:6[gui,widgets,X?]
+		>=dev-qt/qtbase-${QT6_MIN}:6[gui,wayland?,widgets,X?]
 		wayland? (
-			>=dev-qt/qtwayland-${QT6_MIN}:6
 			>=dev-qt/qtdeclarative-${QT6_MIN}:6[opengl]
+			>=dev-qt/qtwayland-${QT6_MIN}:6
 		)
 	)
 	|| (
