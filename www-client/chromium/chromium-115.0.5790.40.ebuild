@@ -888,6 +888,10 @@ RDEPEND+="
 		)
 		qt6? (
 			>=dev-qt/qtbase-${QT6_PV}:6[gui,wayland?,X?]
+			wayland? (
+				>=dev-qt/qtdeclarative-${QT6_PV}:6[opengl]
+				>=dev-qt/qtwayland-${QT6_PV}:6
+			)
 		)
 		|| (
 			>=gui-libs/gtk-${GTK4_PV}:4[wayland?,X?]
