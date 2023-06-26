@@ -123,7 +123,7 @@ gen_openexr_pairs() {
 	done
 }
 
-# Depends Oct 23, 2022
+# Depends May 15, 2023
 RDEPEND+="
 	>=dev-cpp/robin-map-0.6.2
 	>=dev-libs/boost-1.53:=
