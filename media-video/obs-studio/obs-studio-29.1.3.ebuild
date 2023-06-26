@@ -1,5 +1,5 @@
-# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -84,7 +84,7 @@ nvenc nvvfx oss +pipewire +pulseaudio +python qt5 qt6 +rtmps +speexdsp -test
 kernel_FreeBSD
 kernel_OpenBSD
 
-r3
+r4
 "
 REQUIRED_USE+="
 	!kernel_Darwin? (
@@ -128,10 +128,6 @@ REQUIRED_USE+="
 			)
 		)
 	)
-	^^ (
-		qt5
-		qt6
-	)
 	ftl? (
 		|| (
 			amf
@@ -170,6 +166,10 @@ REQUIRED_USE+="
 	)
 	kernel_OpenBSD? (
 		!vst
+	)
+	^^ (
+		qt5
+		qt6
 	)
 "
 
@@ -715,12 +715,7 @@ sanitize_login_tokens() {
 
 pkg_setup() {
 	use qt5 && qt_check 5
-	if use qt6 ; then
-ewarn
-ewarn "qt_check for Qt6 is not implemented.  You are responsible for ensuring"
-ewarn "version compatibility/consistency."
-ewarn
-	fi
+	use qt6 && qt_check 6
 	use lua && lua-single_pkg_setup
 	use python && python-single-r1_pkg_setup
 
@@ -905,9 +900,15 @@ einfo
 	# obs-browser-source.cpp:25:10: fatal error: QApplication: No such file or directory
 	# browser-client.cpp:27:10: fatal error: QThread: No such file or directory
 	if use browser ; then
-		append-cppflags -I"${ESYSROOT}/usr/include/qt5"
-		append-cppflags -I"${ESYSROOT}/usr/include/qt5/QtWidgets"
-		append-cppflags -I"${ESYSROOT}/usr/include/qt5/QtCore"
+		if use qt5 ; then
+			append-cppflags -I"${ESYSROOT}/usr/include/qt5"
+			append-cppflags -I"${ESYSROOT}/usr/include/qt5/QtWidgets"
+			append-cppflags -I"${ESYSROOT}/usr/include/qt5/QtCore"
+		elif use qt6 ; then
+			append-cppflags -I"${ESYSROOT}/usr/include/qt6"
+			append-cppflags -I"${ESYSROOT}/usr/include/qt6/QtWidgets"
+			append-cppflags -I"${ESYSROOT}/usr/include/qt6/QtCore"
+		fi
 	fi
 
 	local libdir=$(get_libdir)
@@ -989,7 +990,9 @@ einfo
 			-DENABLE_SCRIPTING=yes
 		)
 	else
-		mycmakeargs+=( -DENABLE_SCRIPTING=no )
+		mycmakeargs+=(
+			-DENABLE_SCRIPTING=no
+		)
 	fi
 
 	if use vaapi ; then
@@ -1110,11 +1113,12 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  proper-hardware-accelerated-h264-support, build-with-social-media-info
 # OILEDMACHINE-OVERLAY-META-TAGS:  link-to-unvulnerable-blink-derivative
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 29.1.2 (20230608)
-# USE="browser qt5 v4l2 vaapi -aja -alsa -amf -browser-panels -coreaudio-encoder
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 29.1.2 (20230608) with qt5 only
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 29.1.3 (20230625) with qt6 only
+# USE="browser qt6 v4l2 vaapi -aja -alsa -amf -browser-panels -coreaudio-encoder
 # -decklink -fdk -freetype -ftl -hevc -ipv6 -jack -libaom -lua -mac-syphon
 # -new-mpegts-output -nvafx -nvenc -nvvfx -oss -pipewire -pulseaudio -python
-# -qsv (-qt6) -r3 -rnnoise -rtmps -service-updates -sndio -speexdsp -svt-av1
+# -qsv (-qt5) -r3 -rnnoise -rtmps -service-updates -sndio -speexdsp -svt-av1
 # -test -virtualcam -vlc -vst -wayland -websocket -whatsnew -win-dshow -win-mf
 # -x264"
 # LUA_SINGLE_TARGET="-luajit"
