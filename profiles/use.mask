@@ -20,6 +20,6 @@ breakpad
 telemetry
 
 # End of Life (EOL) in this overlay.
-# To see QT EOL dates see:  https://www.qt.io/blog/qt-5.15-extended-support-for-subscription-license-holders#:~:text=Legacy%20license%20types%20include%20all,is%2026th%20May%202023.
-# To unmask see:  https://wiki.gentoo.org/wiki//etc/portage/profile/use.mask
+# For QT EOL dates, see https://en.wikipedia.org/wiki/Qt_version_history
+# To unmask the USE flag block, see https://wiki.gentoo.org/wiki//etc/portage/profile/use.mask
 qt5
