@@ -24,7 +24,7 @@ esac
 CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v2.93.17/build_files/build_environment/install_deps.sh#L488
+# https://github.com/blender/blender/blob/v2.93.18/build_files/build_environment/install_deps.sh#L488
 FFMPEG_IUSE+="
 	+jpeg2k +mp3 +opus +theora +vorbis +vpx webm +x264 +xvid
 "
@@ -35,7 +35,7 @@ LLVM_MAX_UPSTREAM=11 # (inclusive)
 LLVM_SLOTS=( 14 13 12 11 )
 
 # For the max exclusive Python supported (and others), see \
-# https://github.com/blender/blender/blob/v2.93.17/build_files/build_environment/install_deps.sh#L382
+# https://github.com/blender/blender/blob/v2.93.18/build_files/build_environment/install_deps.sh#L382
 PYTHON_COMPAT=( python3_{9,10} )
 
 # Platform defaults based on CMakeList.txt
@@ -252,11 +252,11 @@ REQUIRED_USE+="
 # no need to look past those dates.
 
 # Last change was May 26, 2021 for:
-# https://github.com/blender/blender/commits/v2.93.17/build_files/cmake/config/blender_release.cmake
+# https://github.com/blender/blender/commits/v2.93.18/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
 # Last change was Mar 16, 2021 for:
-# https://github.com/blender/blender/commits/v2.93.17/build_files/build_environment/cmake/versions.cmake
+# https://github.com/blender/blender/commits/v2.93.18/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
 # dependency version requirements see
@@ -339,7 +339,7 @@ gen_osl_depends()
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
 			llvm-${s}? (
-				<media-libs/osl-1.13.2.0:=[llvm-${s},static-libs]
+				<media-libs/osl-2:=[llvm-${s},static-libs]
 				>=media-libs/osl-${OSL_PV}:=[llvm-${s},static-libs]
 			)
 		"
@@ -904,7 +904,7 @@ _src_configure() {
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.93.17/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.93.18/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(

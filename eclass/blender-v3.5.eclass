@@ -384,7 +384,7 @@ gen_osl_depends()
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
 			llvm-${s}? (
-				<media-libs/osl-1.13.2.0:=[llvm-${s},static-libs]
+				<media-libs/osl-2:=[llvm-${s},static-libs]
 				>=media-libs/osl-${OSL_PV}:=[llvm-${s},static-libs]
 			)
 		"
