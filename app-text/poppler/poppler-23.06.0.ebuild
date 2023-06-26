@@ -56,9 +56,6 @@ REQUIRED_USE+="
 	)
 "
 
-# No test data provided
-#RESTRICT="test"
-
 # CI uses U 20.04
 QT5_PV="5.12.8"
 QT6_PV="6.2.0"
