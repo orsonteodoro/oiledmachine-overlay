@@ -12,15 +12,15 @@ LICENSE="BSD"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="amd64 ~x86"
 X86_CPU_FEATURES=(
-	sse2:sse2
-	sse3:sse3
-	ssse3:ssse3
-	sse4_1:sse4.1
-	sse4_2:sse4.2
 	avx:avx
 	avx2:avx2
 	avx512f:avx512f
 	f16c:f16c
+	sse2:sse2
+	sse3:sse3
+	sse4_1:sse4.1
+	sse4_2:sse4.2
+	ssse3:ssse3
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
 LLVM_SLOTS=( 16 15 14 13 )
@@ -161,6 +161,7 @@ RDEPEND+="
 		>=dev-qt/qtbase-${QT6_MIN}:6[gui,widgets,X?]
 		wayland? (
 			>=dev-qt/qtwayland-${QT6_MIN}:6
+			>=dev-qt/qtdeclarative-${QT6_MIN}:6[opengl]
 		)
 	)
 	|| (
