@@ -2696,6 +2696,7 @@ einfo
 			local moc_dir
 			if use qt6 ; then
 				moc_dir="$(qt6_get_bindir)"
+				export PATH="${ESYSROOT}/usr/$(get_libdir)/qt6/libexec/:${PATH}"
 			elif use qt5 ; then
 				moc_dir="$(qt5_get_bindir)"
 			fi
