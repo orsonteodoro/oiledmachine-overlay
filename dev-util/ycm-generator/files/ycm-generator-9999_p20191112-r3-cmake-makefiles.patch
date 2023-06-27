@@ -1,0 +1,21 @@
+diff -urp YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/config_gen.py YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/config_gen.py
+--- YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/config_gen.py	2023-06-27 12:24:51.598001102 -0700
++++ YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/config_gen.py	2023-06-27 12:51:44.222041113 -0700
+@@ -250,9 +250,14 @@ def fake_build(project_dir, c_build_log_
+         sys.stdout.flush()
+         run(["cmake", project_dir] + configure_opts, env=env_config, **proc_opts)
+ 
+-        print("\nRunning make...")
+-        sys.stdout.flush()
+-        run(make_args, env=env, **proc_opts)
++        if "Ninja" in configure_opts:
++            print("\nRunning ninja...")
++            sys.stdout.flush()
++            run(ninja_args, env=env, **proc_opts)
++        else:
++            print("\nRunning make...")
++            sys.stdout.flush()
++            run(make_args, env=env, **proc_opts)
+ 
+         print("\nCleaning up...")
+         print("")

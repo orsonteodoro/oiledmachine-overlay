@@ -30,7 +30,6 @@
     </flag>
     <flag name="meson">
       Add support for the meson build system. (EXPERIMENTAL)
-      (Works only with meson+ninja)
     </flag>
     <flag name="wmake">
       Run tests for the wmake build system.

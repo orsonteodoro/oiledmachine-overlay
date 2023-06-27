@@ -246,6 +246,7 @@ src_prepare() {
 	eapply "${DISTDIR}/ycm-generator-b501516-fix-str-lt-comparison.patch"
 	eapply "${DISTDIR}/ycm-generator-pr103-meson-ninja-support.patch"
 	eapply "${FILESDIR}/ycm-generator-9999_p20191112-r3-meson-configure-opts.patch"
+	eapply "${FILESDIR}/ycm-generator-9999_p20191112-r3-cmake-makefiles.patch"
 	python_copy_sources
 }
 
@@ -279,24 +280,29 @@ eerror
 
 test_cmake() {
 	use cmake || return
-	einfo "Testing cmake"
-	local mycmakeargs=()
+	local qtarg=""
 	if use qt6 ; then
-		mycmakeargs=(
-			-DUSE_QT6=ON
-		)
+		qtarg="-DUSE_QT6=ON"
 	elif use qt5 ; then
-		mycmakeargs=(
-			-DUSE_QT6=OFF
-		)
+		qtarg="-DUSE_QT6=OFF"
 	else
 einfo "Skipping cmake test"
 		return
 	fi
+	cmake --help
+	einfo "Testing cmake with make"
 	config_gen.py \
 		"${WORKDIR}/LibreMines-${LIBREMINES_PV}" \
 		--verbose \
-		--configure_opts=\"${mycmakeargs[@]}\" \
+		--configure_opts=" -G \"Unix Makefiles\" ${qtarg}" \
+		-o .ycm_extra_conf-cmake.py \
+		|| die
+	einfo "Testing cmake with ninja"
+	rm -f .ycm_extra_conf-cmake.py
+	config_gen.py \
+		"${WORKDIR}/LibreMines-${LIBREMINES_PV}" \
+		--verbose \
+		--configure_opts="${qtarg}" \
 		-o .ycm_extra_conf-cmake.py \
 		|| die
 }
@@ -366,7 +372,7 @@ test_meson() {
 	config_gen.py \
 		"${WORKDIR}/nautilus-${NAUTILUS_PV}" \
 		--verbose \
-		--configure_opts=\"-Dtests=none\" \
+		--configure_opts="-Dtests=none" \
 		-e \
 		-o .ycm_extra_conf-meson.py \
 		|| die
@@ -429,24 +435,28 @@ test_wmake() {
 	einfo "Testing wmake"
 	export PATH="${WORKDIR}/OpenFOAM-$(ver_cut 1-2 ${OPENFOAM_PV}).x-version-${OPENFOAM_PV}/wmake:${PATH}"
 
-	if use amd64 ; then
-		export WM_ARCH="linux64"
-	elif use x86 ; then
-		export WM_ARCH="linux"
-	fi
-	export WM_CC="gcc"
-	export WM_COMPILE_OPTION="Opt"
-	export WM_COMPILER="Gcc"
-	export WM_CXX="g++"
-	export WM_LABEL_SIZE="32"
-	export WM_LABEL_OPTION="Int${WM_LABEL_SIZE}"
-	export WM_LINK_LANGUAGE="c++"
-	export WM_PRECISION_OPTION="DP"
+#	if use amd64 ; then
+#		export WM_ARCH="linux64"
+#	elif use x86 ; then
+#		export WM_ARCH="linux"
+#	fi
+#	export WM_CC="gcc"
+#	export WM_COMPILE_OPTION="Opt"
+#	export WM_COMPILER="Gcc"
+#	export WM_CXX="g++"
+#	export WM_LABEL_SIZE="32"
+#	export WM_LABEL_OPTION="Int${WM_LABEL_SIZE}"
+#	export WM_LINK_LANGUAGE="c++"
+#	export WM_PRECISION_OPTION="DP"
 
 	export WM_DIR="${WORKDIR}/OpenFOAM-$(ver_cut 1-2 ${OPENFOAM_PV}).x-version-${OPENFOAM_PV}/wmake"
-	export WM_OPTIONS="${WM_ARCH}${WM_COMPILER}${WM_PRECISION_OPTION}${WM_LABEL_OPTION}${WM_COMPILE_OPTION}"
-	export WM_PROJECT="OpenFOAM"
-	export WM_PROJECT_DIR="${WORKDIR}/OpenFOAM-$(ver_cut 1-2 ${OPENFOAM_PV}).x-version-${OPENFOAM_PV}"
+#	export WM_OPTIONS="${WM_ARCH}${WM_COMPILER}${WM_PRECISION_OPTION}${WM_LABEL_OPTION}${WM_COMPILE_OPTION}"
+#	export WM_PROJECT="OpenFOAM"
+#	export WM_PROJECT_DIR="${WORKDIR}/OpenFOAM-$(ver_cut 1-2 ${OPENFOAM_PV}).x-version-${OPENFOAM_PV}"
+#	mkdir -p "${WM_PROJECT_DIR}" || die
+
+	"${WM_DIR}/etc/config/settings.sh"
+
 	IFS=$'\n'
 	local p
 	for p in $(find "${WORKDIR}" -path "*/Make/options") ; do
@@ -476,7 +486,7 @@ src_test() {
 	PATH="${S}:${PATH}"
 
 	test_qmake
-#	test_wmake # Broken
+	test_wmake # Broken
 #	test_autotools # Infinite loop during configure
 #	test_kbuild # Broken for 6.1 kernel
 	test_meson
