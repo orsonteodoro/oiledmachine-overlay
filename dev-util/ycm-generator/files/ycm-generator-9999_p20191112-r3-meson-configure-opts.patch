@@ -1,0 +1,12 @@
+diff -urp YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/config_gen.py YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/config_gen.py
+--- YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/config_gen.py	2023-06-27 10:47:14.557855785 -0700
++++ YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/config_gen.py	2023-06-27 10:47:56.881856835 -0700
+@@ -327,7 +327,7 @@ def fake_build(project_dir, c_build_log_
+         print("Configuring meson in '{}'...".format(build_dir))
+         
+         print("\nRunning meson...",project_dir)
+-        run(["meson", project_dir], env=env_config, **proc_opts)
++        run(["meson", project_dir] + configure_opts, env=env_config, **proc_opts)
+ 
+         print("\nRunning ninja...")
+         print(project_dir)

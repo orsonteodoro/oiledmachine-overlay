@@ -1,0 +1,12 @@
+diff -urp YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/config_gen.py YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/config_gen.py
+--- YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/config_gen.py	2023-06-26 22:48:24.340785691 -0700
++++ YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/config_gen.py	2023-06-26 23:16:26.868827435 -0700
+@@ -44,7 +44,7 @@ def main():
+     parser.add_argument("-o", "--output", help="Save the config file as OUTPUT. Default: .ycm_extra_conf.py, or .color_coded if --format=cc.")
+     parser.add_argument("-x", "--language", choices=["c", "c++"], help="Only output flags for the given language. This defaults to whichever language has its compiler invoked the most.")
+     parser.add_argument("--out-of-tree", action="store_true", help="Build autotools projects out-of-tree. This is a no-op for other project types.")
+-    parser.add_argument("--qt-version", choices=["4", "5"], default="5", help="Use the given Qt version for qmake. (Default: 5)")
++    parser.add_argument("--qt-version", choices=["4", "5", "6"], default="6", help="Use the given Qt version for qmake. (Default: 6)")
+     parser.add_argument("-e", "--preserve-environment", action="store_true", help="Pass environment variables to build processes.")
+     parser.add_argument("PROJECT_DIR", help="The root directory of the project.")
+     args = vars(parser.parse_args())
