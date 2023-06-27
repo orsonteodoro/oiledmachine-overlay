@@ -13,6 +13,7 @@ HOMEPAGE="https://github.com/rdnetto/YCM-Generator"
 
 LICENSE="
 	GPL-3
+	Unlicense
 	test? (
 		GPL-2+
 		make? (
