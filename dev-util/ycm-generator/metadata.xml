@@ -35,5 +35,8 @@
     <flag name="wmake">
       Run tests for the wmake build system.
     </flag>
+    <flag name="rN">
+      Internal ebuild revision.
+    </flag>
   </use>
 </pkgmetadata>
