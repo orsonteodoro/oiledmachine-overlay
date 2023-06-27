@@ -17,20 +17,23 @@
   </upstream>
   <use>
     <flag name="cmake">
-      Checks for support for the CMake build system.
+      Add support for the CMake build system.
+    </flag>
+    <flag name="kbuild">
+      Run tests for the kernel kbuild system.
     </flag>
     <flag name="make">
-      Checks for support for the autotools' make and the kernel kbuild systems.
+      Add support for the autotools' make.
     </flag>
     <flag name="qmake">
-      Checks for support for the qt5/qt6 qmake build system.
+      Add support for the qt5/qt6 qmake build system.
     </flag>
     <flag name="meson">
-      Checks for support for the meson build system. (EXPERIMENTAL)
+      Add support for the meson build system. (EXPERIMENTAL)
       (Works only with meson+ninja)
     </flag>
     <flag name="wmake">
-      Checks for support for the wmake build system.
+      Run tests for the wmake build system.
     </flag>
   </use>
 </pkgmetadata>

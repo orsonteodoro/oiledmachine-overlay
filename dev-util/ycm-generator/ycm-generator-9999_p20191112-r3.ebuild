@@ -15,15 +15,81 @@ LICENSE="
 	GPL-3
 	test? (
 		GPL-2+
-		GPL-3+
+		make? (
+			GPL-2+
+			kbuild? (
+				GPL-2
+				(
+					Linux-syscall-note
+					LGPL-2+
+				)
+				(
+					all-rights-reserved
+					BSD
+					|| (
+						GPL-2
+						BSD
+					)
+				)
+				(
+					all-rights-reserved
+					MIT
+					|| (
+						GPL-2
+						MIT
+					)
+				)
+				(
+					custom
+					GPL-2+
+				)
+				0BSD
+				Apache-2.0
+				all-rights-reserved
+				BSD
+				BSD-2
+				Clear-BSD
+				ISC
+				LGPL-2.1
+				MIT
+				Prior-BSD-License
+				unicode
+				Unlicense
+				ZLIB
+				|| (
+					BSD
+					GPL-2
+				)
+				|| (
+					GPL-2
+					MIT
+				)
+				|| (
+					GPL-2
+					BSD-2
+				)
+			)
+		)
+		meson? (
+			GPL-3+
+			LGPL-2.1+
+		)
+		qmake? (
+			GPL-3
+		)
+		wmake? (
+			GPL-3+
+		)
 	)
 "
-#
 # GPL-2+ - vim-qt
+# GPL-2 BSD MIT ... - kernel, see also https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass#L117
+# GPL-3 - ExtPlane
 # GPL-3+ - openfoam
+# GPL-3+ LGPL-2.1+ - nautilus
 SLOT="0"
 IUSE+="
-+cmake +make +meson +qmake +wmake test
++cmake +make kbuild +meson +qmake +wmake test
 
 qt5 qt6
 "
@@ -120,7 +186,9 @@ https://github.com/rdnetto/YCM-Generator/pull/103.patch
 	-> ycm-generator-pr103-meson-ninja-support.patch
 test? (
 	make? (
+		kbuild? (
 https://cdn.kernel.org/pub/linux/kernel/v$(ver_cut 1 ${LINUX_PV}).x/linux-${LINUX_PV}.tar.xz
+		)
 https://github.com/equalsraf/vim-qt/archive/${VIM_QT_PV}.tar.gz
 	-> vim-qt-${VIM_QT_PV}.tar.gz
 	)
@@ -263,6 +331,7 @@ get_karch() {
 
 test_kbuild() {
 	use make || return
+	use kbuild || return
 	einfo "Testing kbuild"
 	pushd "${WORKDIR}/linux-${LINUX_PV}" || die
 		ARCH="$(get_karch)" \
