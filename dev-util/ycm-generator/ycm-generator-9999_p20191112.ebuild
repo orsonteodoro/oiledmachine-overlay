@@ -223,7 +223,7 @@ src_unpack() {
 			unpack extplane-${EXTPLANE_DIGEST}.tar.gz
 		fi
 		if use make ; then
-			unpack linux-${LINUX_PV}.tar.xz
+			use kbuild && unpack linux-${LINUX_PV}.tar.xz
 			unpack vim-qt-${VIM_QT_PV}.tar.gz
 		fi
 		if use meson ; then
