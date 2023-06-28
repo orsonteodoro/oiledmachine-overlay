@@ -820,10 +820,6 @@ electron-app_get_electron_platarch() {
 		echo "linux-armv7l"
 	elif use kernel_linux && use amd64 ; then
 		echo "linux-x64"
-	elif use kernel_Winnt && use x86-winnt ; then
-		echo "win32-ia32"
-	elif use kernel_Winnt && ( use x64-winnt || use x64-cygwin ) ; then
-		echo "win32-x64"
 	elif use kernel_Darwin && use arm64-macos ; then
 		echo "darwin-arm64"
 	elif use kernel_Darwin && use x64-macos ; then
@@ -845,17 +841,6 @@ _electron-app_gen_electron_uris_prod() {
 			)
 			arm? (
 				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-linux-armv7l.zip
-			)
-		)
-		kernel_Winnt? (
-			x64-winnt? (
-				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-win32-x64.zip
-			)
-			x64-cygwin? (
-				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-win32-x64.zip
-			)
-			x86-winnt? (
-				https://github.com/electron/electron/releases/download/v${ELECTRON_APP_ELECTRON_PV}/electron-v${ELECTRON_APP_ELECTRON_PV}-win32-ia32.zip
 			)
 		)
 		kernel_Darwin? (
@@ -929,10 +914,6 @@ electron-app_get_electron_platarch_args() {
 		args+=(
 			--linux
 		)
-	elif use kernel_linux ; then
-		args+=(
-			--win
-		)
 	fi
 	if use kernel_linux && use arm64 ; then
 		args+=(
@@ -945,14 +926,6 @@ electron-app_get_electron_platarch_args() {
 	elif use kernel_linux && use amd64 ; then
 		args+=(
 			--arm64
-		)
-	elif use kernel_Winnt && use x86-winnt ; then
-		args+=(
-			--ia32
-		)
-	elif use kernel_Winnt && ( use x64-winnt || use x64-cygwin ) ; then
-		args+=(
-			--x64
 		)
 	elif use kernel_Darwin && use arm64-macos ; then
 		args+=(

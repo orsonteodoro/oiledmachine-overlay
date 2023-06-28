@@ -13,7 +13,7 @@ LICENSE="ZLIB"
 KEYWORDS="~amd64 ~x86"
 IUSE+=" hlsl"
 REQUIRED_USE="
-	hlsl? ( || ( elibc_mingw kernel_Winnt ) )
+	hlsl? ( || ( elibc_mingw ) )
 "
 RDEPEND="
 	~media-libs/mojoshader-9999:=[depth-clipping,effect-support,flip-viewport,profile_glsl,profile_spirv,sdl2-stdlib,xna-vertextexture]

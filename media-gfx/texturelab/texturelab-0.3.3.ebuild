@@ -1228,13 +1228,10 @@ cp_sentry_cli() {
 		plat="Linux"
 	elif use kernel_Darwin ; then
 		plat="Darwin"
-	elif use kernel_Winnt ; then
-		plat="Windows"
-		suffix=".exe"
 	fi
 	if use amd64 || use x64-macos ; then
 		arch="x86_64"
-	elif use x86 || use x86-winnt ; then
+	elif use x86 ; then
 		arch="i686"
 	fi
 	export SENTRYCLI_USE_LOCAL=1
@@ -1259,19 +1256,13 @@ cp_phantomjs() {
 		plat="linux"
 	elif use kernel_Darwin ; then
 		plat="macosx"
-	elif use kernel_Winnt ; then
-		plat="windows"
 	fi
 	if use kernel_linux && use amd64 ; then
 		arch="-x86_64"
 	elif use kernel_linux && use x86 ; then
 		arch="-i686"
 	fi
-	if use kernel_Winnt ; then
-		zip_format="zip"
-	else
-		zip_format="tar.bz2"
-	fi
+	zip_format="tar.bz2"
 	mkdir -p "${dest}" || die
 	cp -a \
 		"${DISTDIR}/phantomjs-${PHANTOMJS_PV}-${plat}${arch}.${zip_format}" \

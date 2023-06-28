@@ -253,8 +253,6 @@ src_compile() {
 		npm run "package:linux" || die
 	elif use kernel_Darwin ; then
 		npm run "package:osx" || die
-	elif use kernel_Winnt ; then
-		npm run "package:win" || die
 	fi
 }
 

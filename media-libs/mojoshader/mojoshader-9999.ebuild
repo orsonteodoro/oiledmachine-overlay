@@ -25,7 +25,7 @@ IUSE+=" +compiler-support debug -depth-clipping +profile-glspirv"
 IUSE+=" +effect-support -flip-viewport static-libs sdl2-stdlib"
 IUSE+=" -xna-vertextexture"
 REQUIRED_USE=" || ( ${_PROFILES} )
-	profile_hlsl? ( || ( elibc_mingw kernel_Winnt ) )
+	profile_hlsl? ( || ( elibc_mingw ) )
 	profile_metal? ( kernel_Darwin )
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"

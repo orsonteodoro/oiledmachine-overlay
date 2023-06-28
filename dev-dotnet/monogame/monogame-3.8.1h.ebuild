@@ -67,7 +67,7 @@ LICENSE="
 # ZLIB - ThirdParty/SDL_GameControllerDB/LICENSE
 # ZLIB - ThirdParty/Dependencies/Tests/nunit_LICENSE.txt
 
-KEYWORDS=" ~amd64 ~x64-cygwin ~arm64-macos"
+KEYWORDS=" ~amd64 ~arm64-macos"
 
 # Some arches are disabled because of internal assemblies are prebuilt.
 
@@ -128,12 +128,6 @@ REQUIRED_USE+="
 	^^ (
 		${ERIDS[@]}
 	)
-	elibc_Cygwin? (
-		|| (
-			${UWP_ERIDS[@]}
-			${WIN_ERIDS[@]}
-		)
-	)
 	elibc_glibc? (
 		|| (
 			${LINUX_ERIDS[@]}
@@ -153,31 +147,6 @@ gen_linux_required_use() {
 	done
 }
 REQUIRED_USE+=" "$(gen_linux_required_use)
-
-gen_win_required_use() {
-	local erid
-	for erid in ${WIN_ERIDS[@]} ; do
-		echo "
-			${erid}? (
-				elibc_Cygwin
-			)
-		"
-	done
-}
-REQUIRED_USE+=" "$(gen_win_required_use)
-
-gen_uwp_required_use() {
-	local erid
-	for erid in ${UWP_ERIDS[@]} ; do
-		echo "
-			${erid}? (
-				elibc_Cygwin
-			)
-		"
-	done
-}
-REQUIRED_USE+=" "$(gen_uwp_required_use)
-
 
 # The dev-dotnet/dotnet-sdk-bin ebuild supports only one march
 RDEPEND+="
@@ -439,7 +408,7 @@ get_native_hrid() {
 		echo "linux-${arch}"
 	elif [[ "${CBUILD}" =~ ("apple"|"darwin") ]] ; then
 		echo "osx-${arch}"
-	elif [[ "${CBUILD}" =~ ("cygwin"|"mingw") ]] ; then
+	elif [[ "${CBUILD}" =~ ("mingw") ]] ; then
 		echo "win-${arch}"
 	else
 		echo "unknown-unknown"

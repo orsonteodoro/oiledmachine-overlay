@@ -13,15 +13,12 @@ HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
 LICENSE="OFL-1.1"
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
-~s390 ~sparc ~x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
-~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt
+~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
+~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="+cbdt cbdt-win"
 REQUIRED_USE="
-	kernel_Winnt? (
-		cbdt
-	)
 	|| (
 		cbdt
 		cbdt-win

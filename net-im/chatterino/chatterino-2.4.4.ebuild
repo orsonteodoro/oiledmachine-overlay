@@ -237,9 +237,7 @@ src_unpack() {
 	EGIT_BRANCH="master"
 	EGIT_COMMIT="v${PV}"
 	EGIT_SUBMODULES=( '*' )
-	if ! use kernel_Winnt ; then
-		EGIT_SUBMODULES+=( '-*WinToast*' )
-	fi
+	EGIT_SUBMODULES+=( '-*WinToast*' )
 	if ! use crashpad ; then
 		EGIT_SUBMODULES+=( '-*crashpad*' )
 	fi

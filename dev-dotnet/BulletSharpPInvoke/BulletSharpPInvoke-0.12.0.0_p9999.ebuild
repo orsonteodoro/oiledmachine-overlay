@@ -66,12 +66,6 @@ REQUIRED_USE+="
 	^^ (
 		${ERIDS[@]}
 	)
-	elibc_Cygwin? (
-		|| (
-			${UWP_ERIDS[@]}
-			${WIN_ERIDS[@]}
-		)
-	)
 	elibc_glibc? (
 		|| (
 			${LINUX_ERIDS[@]}
@@ -107,30 +101,6 @@ gen_linux_musl_required_use() {
 	done
 }
 REQUIRED_USE+=" "$(gen_linux_musl_required_use)
-
-gen_win_required_use() {
-	local erid
-	for erid in ${WIN_ERIDS[@]} ; do
-		echo "
-			${erid}? (
-				elibc_Cygwin
-			)
-		"
-	done
-}
-REQUIRED_USE+=" "$(gen_win_required_use)
-
-gen_uwp_required_use() {
-	local erid
-	for erid in ${UWP_ERIDS[@]} ; do
-		echo "
-			${erid}? (
-				elibc_Cygwin
-			)
-		"
-	done
-}
-REQUIRED_USE+=" "$(gen_uwp_required_use)
 
 RDEPEND="
 	mono? ( >=dev-lang/mono-6.4 )

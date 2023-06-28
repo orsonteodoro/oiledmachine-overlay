@@ -10,11 +10,6 @@ VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}"/usr/share/openpgp-keys/madler.asc
 inherit autotools flag-o-matic flag-o-matic-om multilib-minimal toolchain-funcs
 inherit uopts usr-ldscript verify-sig
 
-CYGWINPATCHES=(
-	"https://github.com/cygwinports/zlib/raw/22a3462cae33a82ad966ea0a7d6cbe8fc1368fec/1.2.11-gzopen_w.patch -> ${PN}-1.2.11-cygwin-gzopen_w.patch"
-	"https://github.com/cygwinports/zlib/raw/22a3462cae33a82ad966ea0a7d6cbe8fc1368fec/1.2.7-minizip-cygwin.patch -> ${PN}-1.2.7-cygwin-minizip.patch"
-)
-
 DESCRIPTION="Standard (de)compression library"
 HOMEPAGE="https://zlib.net/"
 SRC_URI="
@@ -22,7 +17,6 @@ SRC_URI="
 	https://zlib.net/fossils/${P}.tar.xz
 	https://zlib.net/current/beta/${P}.tar.xz
 	verify-sig? ( https://zlib.net/${P}.tar.xz.asc )
-	elibc_Cygwin? ( ${CYGWINPATCHES[*]} )
 "
 
 LICENSE="ZLIB"
@@ -30,7 +24,7 @@ LICENSE="ZLIB"
 # The FAQ does mention GPL-2 but the file is not there but a file with a
 # similar name exist but under different licensing.
 SLOT="0/1" # subslot = SONAME
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
 IUSE="minizip minizip-utils static-libs backup-copy"
 IUSE+="
 	pgo
@@ -256,28 +250,10 @@ sleep 15
 src_prepare() {
 	default
 
-	if use elibc_Cygwin ; then
-		local p
-		for p in "${CYGWINPATCHES[@]}" ; do
-			# Strip out the "... -> " from the array
-			eapply -p2 "${DISTDIR}/${p#*> }"
-		done
-	fi
-
 	if use minizip ; then
 		cd contrib/minizip || die
 		eautoreconf
 	fi
-
-	case ${CHOST} in
-	*-cygwin*)
-		# do not use _wopen, is a mingw symbol only
-		sed -i -e '/define WIDECHAR/d' "${S}"/gzguts.h || die
-		# zlib1.dll is the mingw name, need cygz.dll
-		# cygz.dll is loaded by toolchain, put into subdir
-		sed -i -e 's|zlib1.dll|win32/cygz.dll|' win32/Makefile.gcc || die
-		;;
-	esac
 
 	prepare_abi() {
 		local lib_type
@@ -347,7 +323,7 @@ eerror
 	fi
 
 	case ${CHOST} in
-	*-mingw*|mingw*|*-cygwin*)
+	*-mingw*|mingw*)
 		;;
 	*)
 		local uname=$("${EPREFIX}"/usr/share/gnuconfig/config.sub "${CHOST}" | cut -d- -f3) #347167
@@ -404,7 +380,7 @@ _src_compile() {
 	cd "${BUILD_DIR}" || die
 	einfo "Building zlib ${lib_type} for ${ABI}"
 	case ${CHOST} in
-	*-mingw*|mingw*|*-cygwin*)
+	*-mingw*|mingw*)
 		emake -f win32/Makefile.gcc STRIP=true PREFIX=${CHOST}- ${lib_type}
 		sed \
 			-e 's|@prefix@|'"${EPREFIX}"'/usr|g' \
@@ -1051,7 +1027,7 @@ _src_post_pgo() {
 
 _install() {
 	case ${CHOST} in
-	*-mingw*|mingw*|*-cygwin*)
+	*-mingw*|mingw*)
 		emake -f win32/Makefile.gcc install \
 			BINARY_PATH="${ED}/usr/bin" \
 			LIBRARY_PATH="${ED}/usr/$(get_libdir)" \

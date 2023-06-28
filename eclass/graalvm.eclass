@@ -109,14 +109,6 @@ https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${GRAALVM_PV}/
 				)
 			)
 		)
-		kernel_Winnt? (
-			x64-winnt? (
-https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${GRAALVM_PV}/graalvm-ce-java${GRAALVM_JAVA_PV}-windows-amd64-${GRAALVM_PV}.zip
-			)
-			x64-cygwin? (
-https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${GRAALVM_PV}/graalvm-ce-java${GRAALVM_JAVA_PV}-windows-amd64-${GRAALVM_PV}.zip
-			)
-		)
 	"
 }
 
@@ -142,14 +134,6 @@ graalvm-ee-java${GRAALVM_JAVA_PV}-linux-amd64-${GRAALVM_PV}.tar.gz
 				arm64? (
 graalvm-ee-java${GRAALVM_JAVA_PV}-linux-aarch64-${GRAALVM_PV}.tar.gz
 				)
-			)
-		)
-		kernel_Winnt? (
-			x64-winnt? (
-graalvm-ee-java${GRAALVM_JAVA_PV}-windows-amd64-${GRAALVM_PV}.zip
-			)
-			x64-cygwin? (
-graalvm-ee-java${GRAALVM_JAVA_PV}-windows-amd64-${GRAALVM_PV}.zip
 			)
 		)
 	"
@@ -195,16 +179,6 @@ https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${GRAALVM_PV}/
 				)
 			)
 		)
-		kernel_Winnt? (
-			x64-winnt? (
-https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${GRAALVM_PV}/native-image-installable-svm-java${GRAALVM_JAVA_PV}-windows-amd64-${GRAALVM_PV}.jar
-	-> native-image-ce-installable-svm-java${GRAALVM_JAVA_PV}-windows-amd64-${GRAALVM_PV}.jar
-			)
-			x64-cygwin? (
-https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-${GRAALVM_PV}/native-image-installable-svm-java${GRAALVM_JAVA_PV}-windows-amd64-${GRAALVM_PV}.jar
-	-> native-image-ce-installable-svm-java${GRAALVM_JAVA_PV}-windows-amd64-${GRAALVM_PV}.jar
-			)
-		)
 	"
 }
 
@@ -229,14 +203,6 @@ native-image-ee-installable-svm-java${GRAALVM_JAVA_PV}-linux-amd64-${GRAALVM_PV}
 				arm64? (
 native-image-ee-installable-svm-java${GRAALVM_JAVA_PV}-linux-aarch64-${GRAALVM_PV}.jar
 				)
-			)
-		)
-		kernel_Winnt? (
-			x64-winnt? (
-native-image-ee-installable-svm-java${GRAALVM_JAVA_PV}-windows-amd64-${GRAALVM_PV}.jar
-			)
-			x64-cygwin? (
-native-image-ee-installable-svm-java${GRAALVM_JAVA_PV}-windows-amd64-${GRAALVM_PV}.jar
 			)
 		)
 	"
@@ -299,10 +265,6 @@ graalvm_get_platarch() {
 		echo "linux-amd64"
 	elif use kernel_linux && use arm64 && use elibc_glibc ; then
 		echo "linux-arm64"
-	elif use kernel_Winnt && use x64-winnt ; then
-		echo "windows-amd64"
-	elif use kernel_Winnt && use x64-cygwin ; then
-		echo "windows-amd64"
 	fi
 }
 
@@ -318,10 +280,6 @@ graalvm_get_base_tarball_name() {
 		echo "graalvm-${GRAALVM_EDITION}-java${GRAALVM_JAVA_PV}-linux-amd64-${GRAALVM_PV}.tar.gz"
 	elif use kernel_linux && use arm64 ; then
 		echo "graalvm-${GRAALVM_EDITION}-java${GRAALVM_JAVA_PV}-linux-arm64-${GRAALVM_PV}.tar.gz"
-	elif use kernel_Winnt && use x64-winnt ; then
-		echo "graalvm-${GRAALVM_EDITION}-java${GRAALVM_JAVA_PV}-windows-amd64-${GRAALVM_PV}.zip"
-	elif use kernel_Winnt && use x64-cygwin ; then
-		echo "graalvm-${GRAALVM_EDITION}-java${GRAALVM_JAVA_PV}-windows-amd64-${GRAALVM_PV}.zip"
 	fi
 }
 
@@ -337,10 +295,6 @@ graalvm_get_native_image_tarball_name() {
 		echo "native-image-${GRAALVM_EDITION}-installable-svm-java${GRAALVM_JAVA_PV}-linux-amd64-${GRAALVM_PV}.jar"
 	elif use kernel_linux && use arm64 ; then
 		echo "native-image-${GRAALVM_EDITION}-installable-svm-java${GRAALVM_JAVA_PV}-linux-arm64-${GRAALVM_PV}.jar"
-	elif use kernel_Winnt && use x64-winnt ; then
-		echo "native-image-${GRAALVM_EDITION}-installable-svm-java${GRAALVM_JAVA_PV}-windows-amd64-${GRAALVM_PV}.jar"
-	elif use kernel_Winnt && use x64-cygwin ; then
-		echo "native-image-${GRAALVM_EDITION}-installable-svm-java${GRAALVM_JAVA_PV}-windows-amd64-${GRAALVM_PV}.jar"
 	fi
 }
 

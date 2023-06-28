@@ -119,7 +119,7 @@ RDEPEND+="
 			)
 		)
 	)
-	kernel_Winnt? (
+	elibc_mingw? (
 		dev-util/mingw64-runtime
 	)
 "
@@ -156,18 +156,6 @@ eerror "The package needs a version bump"
 eerror
 eerror "Expected version:\t${expected_version}"
 eerror "Actual version:\t${actual_version}"
-eerror
-		die
-	fi
-}
-
-pkg_setup() {
-	if use elibc_Cygwin ; then
-eerror
-eerror "Cygwin is Unsupported.  You must use outside of Cygwin with a MinGW-w64"
-eerror "toolchain."
-eerror
-eerror "See https://github.com/SFML/SFML/blob/master/cmake/Config.cmake#L70"
 eerror
 		die
 	fi

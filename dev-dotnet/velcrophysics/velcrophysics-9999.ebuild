@@ -232,10 +232,8 @@ _get_mgplatform() {
 	# Corresponds to MonoGamePlatform
 	if use elibc_bionic ; then
 		echo "Android"
-	elif use elibc_mingw || use kernel_Winnt ; then
+	elif use elibc_mingw ; then
 		echo "Windows"
-#	elif use kernel_Winnt ; then
-#		echo "WindowsStoreApp"
 #	elif use elibc_Darwin ; then
 #		echo "iOS"
 	else

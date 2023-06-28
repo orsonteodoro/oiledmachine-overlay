@@ -862,9 +862,7 @@ RDEPEND+="
 		media-libs/openh264[${MULTILIB_USEDEP}]
 	)
 	opengl? (
-		!kernel_Winnt? (
-			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+)]
-		)
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+)]
 		virtual/opengl[${MULTILIB_USEDEP}]
 	)
 	openmp? (
@@ -1429,7 +1427,7 @@ eerror
 		$(cmake_use_find_package opengl OpenGL)
 	)
 
-	if ! use kernel_Winnt && ( use gles2 || use opengl || use wayland ) ; then
+	if ( use gles2 || use opengl || use wayland ) ; then
 		mycmakeargs+=(
 			-DCMAKE_DISABLE_FIND_PACKAGE_EGL=OFF
 		)

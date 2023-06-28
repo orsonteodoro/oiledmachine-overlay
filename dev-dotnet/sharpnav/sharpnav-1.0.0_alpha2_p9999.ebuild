@@ -29,7 +29,6 @@ REQUIRED_USE="
 	sharpdx? (
 		|| (
 			elibc_mingw
-			kernel_Winnt
 		)
 	)
 "

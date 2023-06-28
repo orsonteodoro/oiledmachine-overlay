@@ -77,9 +77,6 @@ https://dl.google.com/android/repository/commandlinetools-mac-${MY_PV}_latest.zi
 kernel_linux? (
 https://dl.google.com/android/repository/commandlinetools-linux-${MY_PV}_latest.zip
 )
-kernel_Winnt? (
-https://dl.google.com/android/repository/commandlinetools-win-${MY_PV}_latest.zip
-)
 "
 S="${WORKDIR}/${MY_PN}"
 RESTRICT="mirror"

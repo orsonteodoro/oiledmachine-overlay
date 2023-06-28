@@ -81,52 +81,31 @@ nvenc nvvfx oss +pipewire +pulseaudio +python qt5 qt6 +rtmps +speexdsp -test
 +v4l2 vaapi +vlc +virtualcam +vst +wayland win-dshow +websocket -win-mf
 +whatsnew x264
 
-kernel_FreeBSD
-kernel_OpenBSD
-
 r4
 "
 REQUIRED_USE+="
+	!nvafx
+	!nvvfx
+	!oss
+	!qsv
+	!win-dshow
+	!win-mf
 	!kernel_Darwin? (
+		!coreaudio-encoder
 		!mac-syphon
 		!kernel_linux? (
-			!kernel_FreeBSD? (
-				!jack
-			)
+			!decklink
+			!jack
+			!vlc
 		)
-		!kernel_Winnt? (
-			!coreaudio-encoder
-		)
-	)
-	!kernel_FreeBSD? (
-		!oss
 	)
 	!kernel_linux? (
-		!kernel_FreeBSD? (
-			!alsa
-			!pulseaudio
-			!v4l2
-			!vaapi
-			!kernel_OpenBSD? (
-				!sndio
-				!wayland
-			)
-		)
-	)
-	!kernel_Winnt? (
-		!nvafx
-		!nvvfx
-		!qsv
-		!win-dshow
-		!win-mf
-		!kernel_Darwin? (
-			!kernel_linux? (
-				!decklink
-				!kernel_FreeBSD? (
-					!vlc
-				)
-			)
-		)
+		!alsa
+		!pulseaudio
+		!sndio
+		!v4l2
+		!vaapi
+		!wayland
 	)
 	ftl? (
 		|| (
@@ -137,17 +116,8 @@ REQUIRED_USE+="
 			x264
 		)
 	)
-	kernel_FreeBSD? (
-		vaapi
-	)
 	kernel_linux? (
 		vaapi
-	)
-	kernel_Winnt? (
-		amf
-		kernel_Darwin? (
-			!virtualcam
-		)
 	)
 	lua? (
 		${LUA_REQUIRED_USE}
@@ -160,12 +130,6 @@ REQUIRED_USE+="
 	)
 	python? (
 		${PYTHON_REQUIRED_USE}
-	)
-	kernel_FreeBSD? (
-		!vst
-	)
-	kernel_OpenBSD? (
-		!vst
 	)
 	^^ (
 		qt5
@@ -235,13 +199,7 @@ DEPEND_FFMPEG="
 "
 
 DEPEND_LIBX11="
-	kernel_FreeBSD? (
-	        >=x11-libs/libX11-${LIBX11_PV}
-	)
 	kernel_linux? (
-	        >=x11-libs/libX11-${LIBX11_PV}
-	)
-	kernel_OpenBSD? (
 	        >=x11-libs/libX11-${LIBX11_PV}
 	)
 "
@@ -812,24 +770,6 @@ einfo
 src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
-	if use kernel_Winnt ; then
-		if use amf ; then
-			EGIT_SUBMODULES=( '*' )
-			EGIT_CHECKOUT_DIR="${S}/plugins/enc-amf"
-			EGIT_COMMIT="8823c236b4731c235e650d3bafa14d1d339d98a8"
-			git-r3_fetch
-			git-r3_checkout
-		fi
-
-		if use win-dshow ; then
-			EGIT_SUBMODULES=( '*' )
-			EGIT_CHECKOUT_DIR="${S}/plugins/win-dshow/libdshowcapture"
-			EGIT_COMMIT="bac23f2ca01b712b9740c6a3822d32c134ab6325"
-			git-r3_fetch
-			git-r3_checkout
-		fi
-	fi
-
 	if use kernel_Darwin ; then
 		if use mac-syphon ; then
 			EGIT_SUBMODULES=( '*' )
@@ -955,18 +895,9 @@ einfo
 		)
 	fi
 
-	if use kernel_Winnt || use kernel_Darwin ; then
+	if use kernel_Darwin ; then
 		mycmakeargs+=(
 			-DBUILD_VIRTUALCAM=$(usex virtualcam)
-		)
-	fi
-
-	if use kernel_Winnt ; then
-		mycmakeargs+=(
-			-DBUILD_AMD_ENCODER=$(usex amf)
-			-DENABLE_NVAFX=$(usex nvafx)
-			-DENABLE_NVVFX=$(usex nvvfx)
-			-DENABLE_QSV11=$(usex qsv)
 		)
 	fi
 

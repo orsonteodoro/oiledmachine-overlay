@@ -110,7 +110,7 @@ RDEPEND+="
 			)
 		)
 	)
-	kernel_Winnt? (
+	elibc_mingw? (
 		dev-util/mingw64-runtime
 	)
 "
@@ -131,18 +131,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.5.1-musl-1.2.3-nullptr.patch"
 	"${FILESDIR}/${PN}-2.5.1-header-xvisualinfo.patch"
 )
-
-pkg_setup() {
-	if use elibc_Cygwin ; then
-eerror
-eerror "Cygwin is Unsupported.  You must use outside of Cygwin with a MinGW-w64"
-eerror "toolchain."
-eerror
-eerror "See https://github.com/SFML/SFML/blob/master/cmake/Config.cmake#L70"
-eerror
-		die
-	fi
-}
 
 src_prepare() {
 	sed -i "s:DESTINATION .*:DESTINATION ${EPREFIX}/usr/share/doc/${PF}:" \

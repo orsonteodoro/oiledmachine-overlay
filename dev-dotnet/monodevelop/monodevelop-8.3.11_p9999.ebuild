@@ -95,7 +95,6 @@ ewarn
 ewarn "This ebuild is unbuildable and incomplete."
 ewarn
 	use kernel_Darwin && die "This ebuild does not support this Prefix or CHOST currently."
-	use kernel_Winnt && die "This ebuild does not support this Prefix or CHOST currently."
 	use elibc_mingw && die "This ebuild does not support this Prefix or CHOST currently."
 eerror
 eerror "This product is no longer maintained upstream."
