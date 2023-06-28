@@ -2560,6 +2560,7 @@ ewarn
 	# Prevent crash for now
 	# TODO:  fix crashes for -Ofast
 	replace-flags "-Ofast" "-O3"
+	filter-flags "-ffast-math"
 
 	if is-flagq "-Ofast" ; then
 	# Precaution
@@ -3396,4 +3397,6 @@ einfo
 # -vaapi-hevc -vorbis -widevine"
 
 # OILEDMACHINE-OVERLAY-TEST:  FAILED (interactive) 115.0.5790.40 (20230601)
-# CFLAGS:  -Ofast ; TODO:  Fix -Ofast crashes
+# C{,XX}FLAGS:  -Ofast -pipe ; TODO:  Fix -Ofast crashes
+# gl-aquarium test - stuck non-moving fishes
+# tab crash when watching music videos

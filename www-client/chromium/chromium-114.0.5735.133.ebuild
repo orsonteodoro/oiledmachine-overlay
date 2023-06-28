@@ -2569,6 +2569,7 @@ ewarn
 	# Prevent crash for now
 	# TODO:  fix crashes for -Ofast
 	replace-flags "-Ofast" "-O3"
+	filter-flags "-ffast-math"
 
 	if is-flagq "-Ofast" ; then
 	# Precaution
