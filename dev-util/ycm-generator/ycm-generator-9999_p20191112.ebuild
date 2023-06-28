@@ -265,6 +265,10 @@ ewarn "The autotools test will infinite loop.  Do not use at this time."
 	einfo "Testing autotools"
 	#tinfo ncurses termlib termcap curses
 #		--configure_opts="--with-tlib=termcap" \
+	pushd "${WORKDIR}/vim-qt-package-${VIM_QT_PV}" || die
+# Generate first before bugging out
+		./configure || die
+	popd || die
 	config_gen.py \
 		"${WORKDIR}/vim-qt-package-${VIM_QT_PV}" \
 		--verbose \
@@ -459,10 +463,10 @@ src_test() {
 	fi
 	PATH="${S}:${PATH}"
 
-#	test_autotools # Still infinite loop during configure
+	test_autotools # Still infinite loop during configure
 	test_cmake
 	test_qmake
-	test_kbuild # Broken for 6.1 kernel
+	test_kbuild
 	test_meson
 	test_wmake
 }
@@ -483,10 +487,18 @@ src_install() {
 		"/usr/bin/config_gen.py"
 }
 
+pkg_postinst() {
+ewarn
+ewarn "If the build system is using autotools, you must manually invoke"
+ewarn "./configure before calling config_gen.py to avoid causing an infinite"
+ewarn "loop during configure."
+ewarn
+}
+
 # OILEDMACHINE-OVERLAY-TEST:  FAIL (custom tests) (20230627)
 # cmake + ninja - passed
 # cmake + make - passed
-# make + autotools - failed
+# make + autotools - pass with workaround
 # make + kbuild - passed
 # meson - maybe no.  failed to finish project to the end.  passed generating a .ycm_extra_conf-meson.py
 # qmake - passed
