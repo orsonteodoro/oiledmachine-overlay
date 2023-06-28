@@ -148,6 +148,18 @@ PATCHES=(
 	"${FILESDIR}/${P}-fix-tests.patch" # git master, 23.07.0
 )
 
+MULTILIB_WRAPPED_HEADERS=(
+	"/usr/include/poppler/qt6/poppler-annotation.h"
+	"/usr/include/poppler/qt6/poppler-export.h"
+	"/usr/include/poppler/qt6/poppler-form.h"
+	"/usr/include/poppler/qt6/poppler-link.h"
+	"/usr/include/poppler/qt6/poppler-media.h"
+	"/usr/include/poppler/qt6/poppler-optcontent.h"
+	"/usr/include/poppler/qt6/poppler-page-transition.h"
+	"/usr/include/poppler/qt6/poppler-qt6.h"
+	"/usr/include/poppler/qt6/poppler-version.h"
+)
+
 src_unpack() {
 	unpack ${A}
 	mv \
@@ -177,7 +189,7 @@ src_configure() {
 	append-lfs-flags # bug #898506
 	xdg_environment_reset
 	local mycmakeargs=(
-		$(!multilib_is_native_abi && echo "
+		$(multilib_is_native_abi || echo "
 			-DBUILD_QT5_TESTS=OFF
 			-DBUILD_QT6_TESTS=OFF
 			-DENABLE_QT5=OFF
@@ -191,7 +203,7 @@ src_configure() {
 			-DENABLE_QT5=$(usex qt5)
 			-DENABLE_QT6=$(usex qt6)
 		")
-		$(use cairo && "
+		$(use cairo && echo "
 			-DWITH_GObjectIntrospection=$(usex introspection)
 		")
 		-DBUILD_CPP_TESTS=$(usex test)
