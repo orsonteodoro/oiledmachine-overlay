@@ -251,6 +251,7 @@ src_prepare() {
 	eapply "${DISTDIR}/ycm-generator-pr103-meson-ninja-support.patch"
 	eapply "${FILESDIR}/ycm-generator-9999_p20191112-r3-meson-configure-opts.patch"
 	eapply "${FILESDIR}/ycm-generator-9999_p20191112-r3-cmake-makefiles.patch"
+	eapply "${FILESDIR}/ycm-generator-9999_p20191112-fix-kbuild-version-check.patch"
 	python_copy_sources
 }
 
@@ -486,7 +487,7 @@ src_install() {
 # cmake + ninja - passed
 # cmake + make - passed
 # make + autotools - failed
-# make + kbuild - failed
+# make + kbuild - passed
 # meson - maybe no.  failed to finish project to the end.  passed generating a .ycm_extra_conf-meson.py
 # qmake - passed
 # wmake - passed

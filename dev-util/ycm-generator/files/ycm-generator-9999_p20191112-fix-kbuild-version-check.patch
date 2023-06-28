@@ -1,0 +1,16 @@
+diff -urp YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/fake-toolchain/Unix/cc YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/fake-toolchain/Unix/cc
+--- YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/fake-toolchain/Unix/cc	2019-11-12 00:45:59.000000000 -0800
++++ YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/fake-toolchain/Unix/cc	2023-06-28 00:47:19.215106363 -0700
+@@ -1,6 +1,11 @@
+ #!/bin/sh
+ 
+-if [ ! -z "$YCM_CONFIG_GEN_CC_PASSTHROUGH" ]; then
++#    echo "$@" >> ycm-generator.log
++if echo "$@" | grep -q -e "--version" ; then
++    # Fix kernel build
++    /usr/bin/${CC} $@
++
++elif [ ! -z "$YCM_CONFIG_GEN_CC_PASSTHROUGH" ]; then
+     # Cmake determines compiler properties by compiling a test file, so call clang for this case
+     $YCM_CONFIG_GEN_CC_PASSTHROUGH $@
+ 
