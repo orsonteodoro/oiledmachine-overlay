@@ -1,16 +1,46 @@
+diff -urp YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/config_gen.py YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/config_gen.py
+--- YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/config_gen.py	2023-06-28 02:03:45.643220156 -0700
++++ YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/config_gen.py	2023-06-28 02:15:34.671237748 -0700
+@@ -188,6 +188,8 @@ def fake_build(project_dir, c_build_log_
+         # normally there anyway. See #26.
+         env = dict([(x, os.environ[x]) for x in ["HOME"]])
+ 
++    env["PATH_NOFAKEPATH"]  = os.environ["PATH"]
++    env["PATH_FAKEPATH"]  = "{}:{}".format(fake_path, os.environ["PATH"])
+     env["PATH"]  = "{}:{}".format(fake_path, os.environ["PATH"])
+     env["CC"] = "clang"
+     env["CXX"] = "clang++"
 diff -urp YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/fake-toolchain/Unix/cc YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/fake-toolchain/Unix/cc
 --- YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/fake-toolchain/Unix/cc	2019-11-12 00:45:59.000000000 -0800
-+++ YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/fake-toolchain/Unix/cc	2023-06-28 00:47:19.215106363 -0700
-@@ -1,6 +1,11 @@
++++ YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/fake-toolchain/Unix/cc	2023-06-28 02:17:06.527240027 -0700
+@@ -1,6 +1,12 @@
  #!/bin/sh
  
 -if [ ! -z "$YCM_CONFIG_GEN_CC_PASSTHROUGH" ]; then
-+#    echo "$@" >> ycm-generator.log
++    echo "$@" >> ycm-generator.log
 +if echo "$@" | grep -q -e "--version" ; then
 +    # Fix kernel build
-+    /usr/bin/${CC} $@
++    PATH="${PATH_NOFAKEPATH}"
++    ${CC} $@
 +
 +elif [ ! -z "$YCM_CONFIG_GEN_CC_PASSTHROUGH" ]; then
      # Cmake determines compiler properties by compiling a test file, so call clang for this case
      $YCM_CONFIG_GEN_CC_PASSTHROUGH $@
+ 
+diff -urp YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/fake-toolchain/Unix/cxx YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/fake-toolchain/Unix/cxx
+--- YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/fake-toolchain/Unix/cxx	2019-11-12 00:45:59.000000000 -0800
++++ YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/fake-toolchain/Unix/cxx	2023-06-28 02:17:05.279239996 -0700
+@@ -1,6 +1,12 @@
+ #!/bin/sh
+ 
+-if [ ! -z "$YCM_CONFIG_GEN_CC_PASSTHROUGH" ]; then
++    echo "$@" >> ycm-generator.log
++if echo "$@" | grep -q -e "--version" ; then
++    # Fix kernel build
++    PATH="${PATH_NOFAKEPATH}"
++    ${CXX} $@
++
++elif [ ! -z "$YCM_CONFIG_GEN_CC_PASSTHROUGH" ]; then
+     # Cmake determines compiler properties by compiling a test file, so call clang for this case
+     $YCM_CONFIG_GEN_CXX_PASSTHROUGH $@
  

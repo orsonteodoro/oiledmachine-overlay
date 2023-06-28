@@ -263,8 +263,6 @@ test_autotools() {
 ewarn "The autotools test will infinite loop.  Do not use at this time."
 	use make || return
 	einfo "Testing autotools"
-	#tinfo ncurses termlib termcap curses
-#		--configure_opts="--with-tlib=termcap" \
 	pushd "${WORKDIR}/vim-qt-package-${VIM_QT_PV}" || die
 # Generate first before bugging out
 		./configure || die
@@ -488,6 +486,7 @@ src_install() {
 }
 
 pkg_postinst() {
+# Even if you restore the PATH with PATH_NOFAKEPATH, it is still broken.
 ewarn
 ewarn "If the build system is using autotools, you must manually invoke"
 ewarn "./configure before calling config_gen.py to avoid causing an infinite"
@@ -495,7 +494,7 @@ ewarn "loop during configure."
 ewarn
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  FAIL (custom tests) (20230627)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (custom tests) (20230628)
 # cmake + ninja - passed
 # cmake + make - passed
 # make + autotools - pass with workaround
