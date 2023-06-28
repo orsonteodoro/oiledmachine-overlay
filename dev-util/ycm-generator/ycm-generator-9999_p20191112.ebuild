@@ -256,6 +256,7 @@ src_compile() {
 }
 
 test_autotools() {
+ewarn "The autotools test will infinite loop.  Do not use at this time."
 	use make || return
 	einfo "Testing autotools"
 	#tinfo ncurses termlib termcap curses
@@ -454,7 +455,7 @@ src_test() {
 	fi
 	PATH="${S}:${PATH}"
 
-	test_autotools
+	test_autotools # Still infinite loop during configure
 	test_cmake
 	test_qmake
 #	test_kbuild # Broken for 6.1 kernel
