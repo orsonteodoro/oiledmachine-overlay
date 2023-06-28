@@ -3398,5 +3398,6 @@ einfo
 
 # OILEDMACHINE-OVERLAY-TEST:  FAILED (interactive) 115.0.5790.40 (20230601)
 # C{,XX}FLAGS:  -Ofast -pipe ; TODO:  Fix -Ofast crashes
+# LDFLAGS:  -fuse-ld=thin
 # gl-aquarium test - stuck non-moving fishes
 # tab crash when watching music videos
