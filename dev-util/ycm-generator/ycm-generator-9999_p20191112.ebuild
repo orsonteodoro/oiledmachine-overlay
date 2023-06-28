@@ -157,11 +157,14 @@ BDEPEND+="
 		)
 		meson? (
 			>=app-arch/gnome-autoar-0.4.4
+			>=app-misc/tracker-3.0
 			>=dev-libs/glib-2.72.0:2
+			>=dev-libs/libportal-0.5[gtk]
 			>=dev-libs/libxml2-2.7.8
 			>=gnome-base/gnome-desktop-43
 			>=gui-libs/libadwaita-1.3.0
 			>=media-libs/gexiv2-0.14.0
+			>=net-libs/libcloudproviders-0.3.1
 			>=x11-libs/gdk-pixbuf-2.30.0
 			dev-util/cmake
 			gui-libs/gtk:4
@@ -455,10 +458,10 @@ src_test() {
 	fi
 	PATH="${S}:${PATH}"
 
-	test_autotools # Still infinite loop during configure
+#	test_autotools # Still infinite loop during configure
 	test_cmake
 	test_qmake
-#	test_kbuild # Broken for 6.1 kernel
+	test_kbuild # Broken for 6.1 kernel
 	test_meson
 	test_wmake
 }
@@ -484,6 +487,6 @@ src_install() {
 # cmake + make - passed
 # make + autotools - failed
 # make + kbuild - failed
-# meson - ?
+# meson - maybe no.  failed to finish project to the end.  passed generating a .ycm_extra_conf-meson.py
 # qmake - passed
 # wmake - passed
