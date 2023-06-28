@@ -371,8 +371,7 @@ test_meson() {
 	config_gen.py \
 		"${WORKDIR}/nautilus-${NAUTILUS_PV}" \
 		--verbose \
-		--configure_opts="-Dtests=none" \
-		-e \
+		--configure_opts="-Dtests=none -Ddefault_library=shared" \
 		-o .ycm_extra_conf-meson.py \
 		|| die
 	grep -q \
@@ -491,6 +490,10 @@ ewarn
 ewarn "If the build system is using autotools, you must manually invoke"
 ewarn "./configure before calling config_gen.py to avoid causing an infinite"
 ewarn "loop during configure."
+ewarn
+# https://github.com/rdnetto/YCM-Generator/issues/117
+ewarn "Include paths in .ycm_extra_conf.py may be incorrect.  Manual edits may"
+ewarn "be required."
 ewarn
 }
 
