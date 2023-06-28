@@ -67,7 +67,7 @@ COMMON_DEPEND="
 		>=dev-libs/glib-2.64.6:2[${MULTILIB_USEDEP}]
 		>=x11-libs/cairo-1.16[${MULTILIB_USEDEP}]
 		gtk? (
-			>=x11-libs/gtk+-3.24.20:3
+			>=x11-libs/gtk+-3.24.20:3[${MULTILIB_USEDEP}]
 		)
 		introspection? (
 			>=dev-libs/gobject-introspection-1.64.1:=
@@ -98,13 +98,13 @@ COMMON_DEPEND="
 		>=media-libs/libpng-1.6.37:0=[${MULTILIB_USEDEP}]
 	)
 	qt5? (
-		>=dev-qt/qtcore-${QT5_PV}:5[${MULTILIB_USEDEP}]
-		>=dev-qt/qtgui-${QT5_PV}:5[${MULTILIB_USEDEP}]
-		>=dev-qt/qtxml-${QT5_PV}:5[${MULTILIB_USEDEP}]
-		>=dev-qt/qtwidgets-${QT5_PV}:5[${MULTILIB_USEDEP}]
+		>=dev-qt/qtcore-${QT5_PV}:5
+		>=dev-qt/qtgui-${QT5_PV}:5
+		>=dev-qt/qtxml-${QT5_PV}:5
+		>=dev-qt/qtwidgets-${QT5_PV}:5
 	)
 	qt6? (
-		>=dev-qt/qtbase-${QT5_PV}:6[${MULTILIB_USEDEP},gui,widgets]
+		>=dev-qt/qtbase-${QT5_PV}:6[gui,widgets]
 	)
 	tiff? (
 		>=media-libs/tiff-4.1.0:=[${MULTILIB_USEDEP}]
@@ -177,23 +177,32 @@ src_configure() {
 	append-lfs-flags # bug #898506
 	xdg_environment_reset
 	local mycmakeargs=(
-		$(cmake_use_find_package qt5 Qt5Core)
+		$(!multilib_is_native_abi && echo "
+			-DBUILD_QT5_TESTS=OFF
+			-DBUILD_QT6_TESTS=OFF
+			-DENABLE_QT5=OFF
+			-DENABLE_QT6=OFF
+		")
+		$(multilib_is_native_abi && echo "
+			$(cmake_use_find_package qt5 Qt5Core)
+			$(cmake_use_find_package qt6 Qt6Core)
+			-DBUILD_QT5_TESTS=$(usex test $(usex qt5))
+			-DBUILD_QT6_TESTS=$(usex test $(usex qt6))
+			-DENABLE_QT5=$(usex qt5)
+			-DENABLE_QT6=$(usex qt6)
+		")
 		$(use cairo && "
 			-DWITH_GObjectIntrospection=$(usex introspection)
 		")
 		-DBUILD_CPP_TESTS=$(usex test)
 		-DBUILD_GTK_TESTS=OFF
 		-DBUILD_MANUAL_TESTS=$(usex test)
-		-DBUILD_QT5_TESTS=$(usex test $(usex qt5))
-		-DBUILD_QT6_TESTS=$(usex test $(usex qt6))
 		-DENABLE_BOOST="$(usex boost)"
 		-DENABLE_CMS=$(usex lcms lcms2 none)
 		-DENABLE_CPP=$(usex cxx)
 		-DENABLE_DCTDECODER=$(usex jpeg libjpeg none)
 		-DENABLE_LIBCURL=$(usex curl)
 		-DENABLE_LIBOPENJPEG=$(usex jpeg2k openjpeg2 none)
-		-DENABLE_QT5=$(usex qt5)
-		-DENABLE_QT6=$(usex qt6)
 		-DENABLE_UNSTABLE_API_ABI_HEADERS=ON
 		-DENABLE_UTILS=$(usex utils)
 		-DENABLE_ZLIB=ON
