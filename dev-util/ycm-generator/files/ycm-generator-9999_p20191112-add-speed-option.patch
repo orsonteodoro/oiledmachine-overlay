@@ -1,0 +1,84 @@
+diff -urp YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/config_gen.py YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/config_gen.py
+--- YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/config_gen.py	2023-06-28 04:27:36.755434301 -0700
++++ YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/config_gen.py	2023-06-28 04:28:17.539435313 -0700
+@@ -47,6 +47,7 @@ def main():
+     parser.add_argument("-N", "--ninja-flags", help="Flags to pass to ninja when fake-building. Default: -N=\"{}\"".format(" ".join (default_ninja_flags)))
+     parser.add_argument("-o", "--output", help="Save the config file as OUTPUT. Default: .ycm_extra_conf.py, or .color_coded if --format=cc.")
+     parser.add_argument("-x", "--language", choices=["c", "c++"], help="Only output flags for the given language. This defaults to whichever language has its compiler invoked the most.")
++    parser.add_argument("-s", "--speed", choices=["fast", "slow"], default="fast", help="Select the speed/accuracy tradeoff.")
+     parser.add_argument("--out-of-tree", action="store_true", help="Build autotools projects out-of-tree. This is a no-op for other project types.")
+     parser.add_argument("--qt-version", choices=["4", "5", "6"], default="6", help="Use the given Qt version for qmake. (Default: 6)")
+     parser.add_argument("-e", "--preserve-environment", action="store_true", help="Pass environment variables to build processes.")
+@@ -99,6 +100,7 @@ def main():
+     args["configure_opts"] = shlex.split(args["configure_opts"])
+     args["make_flags"] = default_make_flags if args["make_flags"] is None else shlex.split(args["make_flags"])
+     args["ninja_flags"] = default_ninja_flags if args["ninja_flags"] is None else shlex.split(args["ninja_flags"])
++    args["force_build"] = args.pop("speed")
+     force_lang = args.pop("language")
+     output_format = args.pop("format")
+     del args["compiler"]
+@@ -150,7 +152,7 @@ def main():
+             print("Created {} config file with {} {} flags".format(output_format.upper(), len(flags), lang.upper()))
+ 
+ 
+-def fake_build(project_dir, c_build_log_path, cxx_build_log_path, verbose, make_cmd, ninja_cmd, build_system, cc, cxx, out_of_tree, configure_opts, make_flags, ninja_flags, preserve_environment, qt_version):
++def fake_build(project_dir, c_build_log_path, cxx_build_log_path, verbose, make_cmd, ninja_cmd, build_system, cc, cxx, out_of_tree, configure_opts, make_flags, ninja_flags, force_build, preserve_environment, qt_version):
+     '''Builds the project using the fake toolchain, to collect the compiler flags.
+ 
+     project_dir: the directory containing the source files
+@@ -195,6 +197,7 @@ def fake_build(project_dir, c_build_log_
+     env["CXX"] = "clang++"
+     env["YCM_CONFIG_GEN_CC_LOG"] = c_build_log_path
+     env["YCM_CONFIG_GEN_CXX_LOG"] = cxx_build_log_path
++    env["YCM_FORCE_BUILD"] = force_build
+ 
+     # used during configuration stage, so that cmake, etc. can verify what the compiler supports
+     env_config = env.copy()
+diff -urp YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/fake-toolchain/Unix/cc YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/fake-toolchain/Unix/cc
+--- YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/fake-toolchain/Unix/cc	2023-06-28 04:27:36.755434301 -0700
++++ YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/fake-toolchain/Unix/cc	2023-06-28 04:27:59.939434876 -0700
+@@ -1,10 +1,19 @@
+ #!/bin/sh
+ 
++already_ran=0
++if test "${YCM_FORCE_BUILD}" = "slow" ; then
++    PATH="${PATH_NOFAKEPATH}"
++    ${CC} $@
++    already_ran=1
++fi
++
+ #   echo "$@" >> "${HOME}/ycm-generator.log"
+ if echo "$@" | grep -q -e "--version" ; then
+     # Fix kernel build
+     PATH="${PATH_NOFAKEPATH}"
+-    ${CC} $@
++    if [ $already_ran == 0 ] ; then
++        ${CC} $@
++    fi
+ 
+ elif [ ! -z "$YCM_CONFIG_GEN_CC_PASSTHROUGH" ]; then
+     # Cmake determines compiler properties by compiling a test file, so call clang for this case
+diff -urp YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/fake-toolchain/Unix/cxx YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/fake-toolchain/Unix/cxx
+--- YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/fake-toolchain/Unix/cxx	2023-06-28 04:27:36.755434301 -0700
++++ YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1/fake-toolchain/Unix/cxx	2023-06-28 04:27:59.939434876 -0700
+@@ -1,10 +1,19 @@
+ #!/bin/sh
+ 
++already_ran=0
++if test "${YCM_FORCE_BUILD}" = "slow" ; then
++    PATH="${PATH_NOFAKEPATH}"
++    ${CXX} $@
++    already_ran=1
++fi
++
+ #   echo "$@" >> "${HOME}/ycm-generator.log"
+ if echo "$@" | grep -q -e "--version" ; then
+     # Fix kernel build
+     PATH="${PATH_NOFAKEPATH}"
+-    ${CXX} $@
++    if [ $already_ran == 0 ] ; then
++        ${CXX} $@
++    fi
+ 
+ elif [ ! -z "$YCM_CONFIG_GEN_CC_PASSTHROUGH" ]; then
+     # Cmake determines compiler properties by compiling a test file, so call clang for this case

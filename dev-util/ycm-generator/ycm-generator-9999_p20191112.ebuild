@@ -252,6 +252,7 @@ src_prepare() {
 	eapply "${FILESDIR}/ycm-generator-9999_p20191112-r3-meson-configure-opts.patch"
 	eapply "${FILESDIR}/ycm-generator-9999_p20191112-r3-cmake-makefiles.patch"
 	eapply "${FILESDIR}/ycm-generator-9999_p20191112-fix-kbuild-version-check.patch"
+	eapply "${FILESDIR}/ycm-generator-9999_p20191112-add-speed-option.patch"
 	python_copy_sources
 }
 
@@ -372,6 +373,8 @@ test_meson() {
 		"${WORKDIR}/nautilus-${NAUTILUS_PV}" \
 		--verbose \
 		--configure_opts="-Dtests=none" \
+		-N="-v" \
+		--speed="slow" \
 		-o .ycm_extra_conf-meson.py \
 		|| die
 	grep -q \
@@ -497,12 +500,11 @@ ewarn "be required."
 ewarn
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  ACCEPTABLE (custom tests) (20230628)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (custom tests) (20230628)
 # cmake + ninja - passed
 # cmake + make - passed
 # make + autotools - pass with workaround
 # make + kbuild - passed
-# meson - maybe no.  failed to finish project to the end.  passed generating a .ycm_extra_conf-meson.py
-#   The meson patch is from the develop branch.
+# meson - passed with --speed=slow workaround
 # qmake - passed
 # wmake - passed
