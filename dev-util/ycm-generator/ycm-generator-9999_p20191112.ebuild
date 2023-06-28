@@ -28,8 +28,8 @@ LICENSE="
 					all-rights-reserved
 					BSD
 					|| (
-						GPL-2
 						BSD
+						GPL-2
 					)
 				)
 				(
@@ -66,8 +66,8 @@ LICENSE="
 					MIT
 				)
 				|| (
-					GPL-2
 					BSD-2
+					GPL-2
 				)
 			)
 		)
@@ -171,9 +171,9 @@ BDEPEND+="
 		)
 	)
 "
-LIBREMINES_PV="1.10.0"
 EGIT_COMMIT="7c0f5701130f4178cb63d10da88578b9b705fbb1"
 EXTPLANE_DIGEST="a1428feb9916d6acad8d"
+LIBREMINES_PV="1.10.0"
 LINUX_PV="6.1"
 NAUTILUS_PV="44.2.1"
 OPENFOAM_PV="3.0.1"
