@@ -448,9 +448,9 @@ einfo "Processing ${subproject_path}"
 }
 
 src_test() {
-	if has_version "dev-qt/qtbase" ; then
+	if use qt6 ; then
 		PATH="/usr/lib64/qt6/bin:${PATH}"
-	elif has_version "dev-qt/qtcore:5" ; then
+	elif use qt5 ; then
 		PATH="/usr/lib64/qt5/bin:${PATH}"
 	fi
 	PATH="${S}:${PATH}"
