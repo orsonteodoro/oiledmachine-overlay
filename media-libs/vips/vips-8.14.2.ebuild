@@ -128,7 +128,7 @@ RDEPEND+="
 		>=x11-libs/pango-1.50.6[${MULTILIB_USEDEP}]
 	)
 	poppler? (
-		>=app-text/poppler-22.02.0[cairo,introspection]
+		>=app-text/poppler-22.02.0[${MULTILIB_USEDEP},cairo,introspection]
 	)
 	svg? (
 		>=gnome-base/librsvg-2.52.5[${MULTILIB_USEDEP}]
