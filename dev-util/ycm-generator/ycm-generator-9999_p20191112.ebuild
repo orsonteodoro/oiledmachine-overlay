@@ -461,7 +461,7 @@ src_test() {
 	fi
 	PATH="${S}:${PATH}"
 
-	test_autotools # Still infinite loop during configure
+	test_autotools
 	test_cmake
 	test_qmake
 	test_kbuild
@@ -494,11 +494,12 @@ ewarn "loop during configure."
 ewarn
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (custom tests) (20230628)
+# OILEDMACHINE-OVERLAY-TEST:  ACCEPTABLE (custom tests) (20230628)
 # cmake + ninja - passed
 # cmake + make - passed
 # make + autotools - pass with workaround
 # make + kbuild - passed
 # meson - maybe no.  failed to finish project to the end.  passed generating a .ycm_extra_conf-meson.py
+#   The meson patch is from the develop branch.
 # qmake - passed
 # wmake - passed
