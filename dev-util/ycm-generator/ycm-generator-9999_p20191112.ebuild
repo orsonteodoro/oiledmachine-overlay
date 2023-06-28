@@ -92,7 +92,7 @@ SLOT="0"
 IUSE+="
 +cmake +make kbuild +meson +qmake +wmake test
 
-qt5 qt6 r4
+qt5 qt6 r5
 "
 REQUIRED_USE+="
 	cmake? (
