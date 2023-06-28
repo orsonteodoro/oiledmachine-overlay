@@ -204,7 +204,7 @@ src_configure() {
 			-DENABLE_QT6=$(usex qt6)
 		")
 		$(use cairo && echo "
-			-DWITH_GObjectIntrospection=$(usex introspection)
+			-DWITH_GObjectIntrospection=$(multilib_native_usex introspection)
 		")
 		-DBUILD_CPP_TESTS=$(usex test)
 		-DBUILD_GTK_TESTS=OFF
@@ -223,7 +223,7 @@ src_configure() {
 		-DTESTDATADIR="${WORKDIR}/test-data"
 		-DUSE_FLOAT=OFF
 		-DWITH_Cairo=$(usex cairo)
-		-DWITH_Gpgmepp=$(usex gpgme)
+		-DWITH_Gpgmepp=$(multilib_native_usex gpgme)
 		-DWITH_JPEG=$(usex jpeg)
 		-DWITH_NSS3=$(usex nss)
 		-DWITH_PNG=$(usex png)
