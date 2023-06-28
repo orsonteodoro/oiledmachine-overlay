@@ -6,11 +6,12 @@ EAPI=8
 
 CMAKE_ECLASS=cmake
 PYTHON_COMPAT=( python3_{10..12} )
-inherit cmake-multilib llvm llvm.org python-any-r1 toolchain-funcs
+inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 
-DESCRIPTION="Low level support for a standard C++ library"
-HOMEPAGE="https://libcxxabi.llvm.org/"
+DESCRIPTION="New implementation of the C++ standard library, targeting C++11"
+HOMEPAGE="https://libcxx.llvm.org/"
+
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
@@ -19,50 +20,49 @@ LICENSE="
 	)
 "
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~x64-macos"
 IUSE="
-static-libs test
++libcxxabi static-libs test
 
-hardened r9
+hardened r12
 "
-# in 15.x, cxxabi.h is moving from libcxx to libcxxabi
-RDEPEND="
-	!<sys-libs/libcxx-15
-"
-DEPEND+="
-	${RDEPEND}
-	sys-devel/llvm:${LLVM_MAJOR}
-"
-BDEPEND+="
-	!test? (
-		${PYTHON_DEPS}
-	)
-	test? (
-		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
-	)
-"
-PATCHES=(
-	"${FILESDIR}/libcxxabi-15.0.0.9999-hardened.patch"
-	"${FILESDIR}/libcxx-15.0.0.9999-hardened.patch"
-)
-# Don't strip CFI from .so files
+REQUIRED_USE=""
 RESTRICT="
 	!test? (
 		test
 	)
-	strip
 "
-S="${WORKDIR}"
+RDEPEND="
+	!libcxxabi? (
+		>=sys-devel/gcc-4.7:=[cxx]
+	)
+	libcxxabi? (
+		~sys-libs/libcxxabi-${PV}:=[${MULTILIB_USEDEP},hardened?,static-libs?]
+	)
+"
+DEPEND="
+	${RDEPEND}
+	sys-devel/llvm:${LLVM_MAJOR}
+"
+BDEPEND+="
+	dev-util/patchutils
+	test? (
+		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
+		>=dev-util/cmake-3.16
+		>=sys-devel/clang-3.9.0
+		sys-devel/gdb[python]
+	)
+"
+SRC_URI+="
+https://github.com/llvm/llvm-project/commit/ef843c8271027b89419d07ffc2aaa3abf91438ef.patch
+	-> libcxx-commit-ef843c8.patch
+"
+PATCHES=(
+	"${FILESDIR}/libcxx-15.0.0.9999-hardened.patch"
+)
 
-LLVM_COMPONENTS=(
-	runtimes
-	libcxx{abi,}
-	llvm/cmake
-	cmake
-)
-LLVM_TEST_COMPONENTS=(
-	llvm/utils/llvm-lit
-)
+LLVM_COMPONENTS=( runtimes libcxx{,abi} llvm/{cmake,utils/llvm-lit} cmake )
+LLVM_PATCHSET=${PV}
 llvm.org_set_globals
 
 python_check_deps() {
@@ -71,63 +71,30 @@ python_check_deps() {
 }
 
 pkg_setup() {
-	# darwin prefix builds do not have llvm installed yet, so rely on bootstrap-prefix
-	# to set the appropriate path vars to LLVM instead of using llvm_pkg_setup.
-	if [[ ${CHOST} != *-darwin* ]] || has_version sys-devel/llvm; then
+	# Darwin Prefix builds do not have llvm installed yet, so rely on
+	# bootstrap-prefix to set the appropriate path vars to LLVM instead
+	# of using llvm_pkg_setup.
+	if [[ ${CHOST} != *-darwin* ]] || has_version sys-devel/llvm ; then
 		LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
 	fi
 	python-any-r1_pkg_setup
+
+	if ! use libcxxabi && ! tc-is-gcc ; then
+		eerror "To build ${PN} against libsupc++, you have to use gcc. Other"
+		eerror "compilers are not supported. Please set CC=gcc and CXX=g++"
+		eerror "and try again."
+		die
+	fi
+}
+
+test_compiler() {
+	$(tc-getCXX) ${CXXFLAGS} ${LDFLAGS} "${@}" -o /dev/null -x c++ - \
+		<<<'int main() { return 0; }' &>/dev/null
 }
 
 get_lib_types() {
 	echo "shared"
 	use static-libs && echo "static"
-}
-
-is_hardened_clang() {
-	if tc-is-clang && clang --version 2>/dev/null | grep -q -e "Hardened:" ; then
-		return 0
-	fi
-	return 1
-}
-
-is_hardened_gcc() {
-	if tc-is-gcc && gcc --version 2>/dev/null | grep -q -e "Hardened" ; then
-		return 0
-	fi
-	return 1
-}
-
-src_configure() {
-	is-flagq '-flto*' && HAVE_FLAG_LTO="1"
-	has_sanitizer_option "cfi-icall" && HAVE_FLAG_CFI_ICALL="1"
-	has_sanitizer_option "cfi-vcall" && HAVE_FLAG_CFI_VCALL="1"
-	has_sanitizer_option "shadow-call-stack" && HAVE_FLAG_SHADOW_CALL_STACK="1"
-	is-flagq '-fsanitize-cfi-cross-dso' && HAVE_FLAG_CFI_CROSS_DSO="1"
-	( \
-		   has_sanitizer_option "cfi-derived-cast" \
-		|| has_sanitizer_option "cfi-unrelated-cast" \
-	) \
-		&& HAVE_FLAG_CFI_CAST="1"
-
-	configure_abi() {
-		local lib_type
-		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-			_configure_abi
-		done
-	}
-	multilib_foreach_abi configure_abi
-}
-
-is_cfi_supported() {
-	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${lib_type}" == "static" ]] ; then
-		return 0
-	elif is-flagq '-fsanitize-cfi-cross-dso' && [[ "${lib_type}" == "shared" ]] ; then
-		return 0
-	fi
-	return 1
 }
 
 has_sanitizer_option() {
@@ -230,6 +197,85 @@ _usex_lto() {
 	fi
 }
 
+src_prepare() {
+	pushd "${WORKDIR}" || die
+		# Retesting
+		# Still bugged since Sept 30, 2022
+		# Fixes build time failure:
+#
+# include/c++/v1/system_error: In instantiation of 'std::__1::error_code::error_code(_Ep, typename std::__1::enable_if<std::__1::is_error_code_enum<_Ep>::value>::type*) [with _Ep = st>
+# include/c++/v1/ios:452:34:   required from here
+# include/c++/v1/system_error:355:40: error: use of deleted function 'void std::__1::__adl_only::make_error_code()'
+#   355 |                 *this = make_error_code(__e);
+#       |                         ~~~~~~~~~~~~~~~^~~~~
+# include/c++/v1/system_error:263:10: note: declared here
+#   263 |     void make_error_code() = delete;
+#
+#		filterdiff -x "*/Cxx2bIssues.csv" "${DISTDIR}/libcxx-commit-ef843c8.patch" \
+#			> "${T}/libcxx-commit-ef843c8.patch" || die
+#		eapply -R "${T}/libcxx-commit-ef843c8.patch"
+	popd
+	llvm.org_src_prepare
+}
+
+src_configure() {
+	# note: we need to do this before multilib kicks in since it will
+	# alter the CHOST
+	local cxxabi cxxabi_incs
+	if use libcxxabi; then
+		cxxabi=system-libcxxabi
+		cxxabi_incs="${EPREFIX}/usr/include/c++/v1"
+	else
+		local gcc_inc="${EPREFIX}/usr/lib/gcc/${CHOST}/$(gcc-fullversion)/include/g++-v$(gcc-major-version)"
+		cxxabi=libsupc++
+		cxxabi_incs="${gcc_inc};${gcc_inc}/${CHOST}"
+	fi
+
+	is-flagq '-flto*' && HAVE_FLAG_LTO="1"
+	has_sanitizer_option "cfi-icall" && HAVE_FLAG_CFI_ICALL="1"
+	has_sanitizer_option "cfi-vcall" && HAVE_FLAG_CFI_VCALL="1"
+	has_sanitizer_option "shadow-call-stack" && HAVE_FLAG_SHADOW_CALL_STACK="1"
+	is-flagq '-fsanitize-cfi-cross-dso' && HAVE_FLAG_CFI_CROSS_DSO="1"
+	( \
+		   has_sanitizer_option "cfi-derived-cast" \
+		|| has_sanitizer_option "cfi-unrelated-cast" \
+	) \
+		&& HAVE_FLAG_CFI_CAST="1"
+
+	configure_abi() {
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			_configure_abi
+		done
+	}
+	multilib_foreach_abi configure_abi
+}
+
+is_hardened_clang() {
+	if tc-is-clang && clang --version 2>/dev/null | grep -q -e "Hardened:" ; then
+		return 0
+	fi
+	return 1
+}
+
+is_hardened_gcc() {
+	if tc-is-gcc && gcc --version 2>/dev/null | grep -q -e "Hardened" ; then
+		return 0
+	fi
+	return 1
+}
+
+is_cfi_supported() {
+	[[ "${USE}" =~ "cfi" ]] || return 1
+	if [[ "${lib_type}" == "static" ]] ; then
+		return 0
+	elif is-flagq '-fsanitize-cfi-cross-dso' && [[ "${lib_type}" == "shared" ]] ; then
+		return 0
+	fi
+	return 1
+}
+
 _configure_abi() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
@@ -276,42 +322,49 @@ einfo
 	local use_compiler_rt=OFF
 	[[ $(tc-get-c-rtlib) == compiler-rt ]] && use_compiler_rt=ON
 
+	# bootstrap: cmake is unhappy if compiler can't link to stdlib
+	local nolib_flags=( -nodefaultlibs -lc )
+	if ! test_compiler; then
+		if test_compiler "${nolib_flags[@]}"; then
+			local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
+			ewarn "${CXX} seems to lack runtime, trying with ${nolib_flags[*]}"
+		fi
+	fi
+
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
 		-DCMAKE_CXX_COMPILER_TARGET="${CHOST}"
 		-DPython3_EXECUTABLE="${PYTHON}"
-		-DLLVM_ENABLE_RUNTIMES="libcxxabi;libcxx"
+		-DLLVM_ENABLE_RUNTIMES=libcxx
 		-DLLVM_INCLUDE_TESTS=OFF
 		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
-		#
-		#
-		-DLIBCXXABI_INCLUDE_TESTS=$(usex test)
-		-DLIBCXXABI_USE_COMPILER_RT=${use_compiler_rt}
 
-		# upstream is omitting standard search path for this
-		# probably because gcc & clang are bundling their own unwind.h
-		-DLIBCXXABI_LIBUNWIND_INCLUDES="${EPREFIX}"/usr/include
-
-		-DLIBCXX_LIBDIR_SUFFIX=
 		#
 		#
-		-DLIBCXX_CXX_ABI=libcxxabi
+		-DLIBCXX_CXX_ABI=${cxxabi}
+		-DLIBCXX_CXX_ABI_INCLUDE_PATHS=${cxxabi_incs}
+		# we're using our own mechanism for generating linker scripts
 		-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF
 		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
-		-DLIBCXX_HAS_GCC_S_LIB=OFF
 		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
-		-DLIBCXX_INCLUDE_TESTS=OFF
+		-DLIBCXX_INCLUDE_TESTS=$(usex test)
+		-DLIBCXX_USE_COMPILER_RT=${use_compiler_rt}
+		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
 
 		-DLTO=${_lto}
 		-DNOEXECSTACK=$(usex hardened)
 	)
 
 	set_cfi() {
+		# The cfi enables all cfi schemes, but the selective tries to balance
+		# performance and security while maintaining a performance limit.
+		# cfi-icall breaks icu/genrb
 		if tc-is-clang && is_cfi_supported ; then
 			mycmakeargs+=(
 				-DCFI=${_cfi}
 				-DCFI_CAST=${_cfi_cast}
-				-DCFI_ICALL=${_cfi_icall}
+				-DCFI_EXCEPTIONS="-fno-sanitize=cfi-icall"
+				-DCFI_ICALL=OFF
 				-DCFI_VCALL=${_cfi_vcall}
 				-DCROSS_DSO_CFI=${_cfi_cross_dso}
 			)
@@ -349,21 +402,20 @@ einfo
 
 	if [[ "${lib_type}" == "static" ]] ; then
 		mycmakeargs+=(
-			-DLIBCXXABI_ENABLE_SHARED=OFF
-			-DLIBCXXABI_ENABLE_STATIC=ON
 			-DLIBCXX_ENABLE_SHARED=OFF
 			-DLIBCXX_ENABLE_STATIC=ON
 		)
 	else
 		mycmakeargs+=(
-			-DLIBCXXABI_ENABLE_SHARED=ON
-			-DLIBCXXABI_ENABLE_STATIC=OFF
 			-DLIBCXX_ENABLE_SHARED=ON
 			-DLIBCXX_ENABLE_STATIC=OFF
 		)
 	fi
 
 	if use test; then
+		local clang_path=$(type -P "${CHOST:+${CHOST}-}clang" 2>/dev/null)
+		[[ -n ${clang_path} ]] || die "Unable to find ${CHOST}-clang for tests"
+
 		mycmakeargs+=(
 			-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
 			-DLLVM_LIT_ARGS="$(get_lit_flags)"
@@ -379,7 +431,11 @@ src_compile() {
 		for lib_type in $(get_lib_types) ; do
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
-			cmake_build cxxabi
+			cmake_src_compile
+			if [[ ${CHOST} != *-darwin* ]] ; then
+				gen_shared_ldscript
+				use static-libs && gen_static_ldscript
+			fi
 		done
 	}
 	multilib_foreach_abi compile_abi
@@ -392,10 +448,53 @@ src_test() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			local -x LIT_PRESERVES_TMP=1
-			cmake_build check-cxxabi
+			cmake_build check-cxx
 		done
 	}
 	multilib_foreach_abi test_abi
+}
+
+# Usage: deps
+gen_ldscript() {
+	local output_format
+	output_format=$($(tc-getCC) ${CFLAGS} ${LDFLAGS} -Wl,--verbose 2>&1 | sed -n 's/^OUTPUT_FORMAT("\([^"]*\)",.*/\1/p')
+	[[ -n ${output_format} ]] && output_format="OUTPUT_FORMAT ( ${output_format} )"
+
+	cat <<-END_LDSCRIPT
+/* GNU ld script
+   Include missing dependencies
+*/
+${output_format}
+GROUP ( $@ )
+END_LDSCRIPT
+}
+
+gen_static_ldscript() {
+	# Move it first.
+	mv lib/libc++{,_static}.a || die
+	# Generate libc++.a ldscript for inclusion of its dependencies so that
+	# clang++ -stdlib=libc++ -static works out of the box.
+	local deps=(
+		libc++_static.a
+		$(usex libcxxabi libc++abi.a libsupc++.a)
+	)
+	# On Linux/glibc it does not link without libpthread or libdl. It is
+	# fine on FreeBSD.
+	use elibc_glibc && deps+=( libpthread.a libdl.a )
+
+	gen_ldscript "${deps[*]}" > lib/libc++.a || die
+}
+
+gen_shared_ldscript() {
+	# Move it first.
+	mv lib/libc++{,_shared}.so || die
+	local deps=(
+		libc++_shared.so
+		# libsupc++ doesn't have a shared version
+		$(usex libcxxabi libc++abi.so libsupc++.a)
+	)
+
+	gen_ldscript "${deps[*]}" > lib/libc++.so || die
 }
 
 src_install() {
@@ -404,21 +503,28 @@ src_install() {
 		for lib_type in $(get_lib_types) ; do
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
-			DESTDIR="${D}" cmake_build install-cxxabi
+			cmake_src_install
+			# since we've replaced libc++.{a,so} with ldscripts, now we have to
+			# install the extra symlinks
+			if [[ ${CHOST} != *-darwin* ]] ; then
+				dolib.so lib/libc++_shared.so
+				use static-libs && dolib.a lib/libc++_static.a
+			fi
 		done
 		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
-	multilib_src_install_all
-}
-
-multilib_src_install_all() {
-	cd "${S}" || die
-	insinto /usr/include/libcxxabi
-	doins -r "${WORKDIR}"/libcxxabi/include/.
 }
 
 pkg_postinst() {
+einfo
+einfo "This package (${PN}) is mainly intended as a replacement for the C++"
+einfo "standard library when using clang."
+einfo "To use it, instead of libstdc++, use:"
+einfo "    clang++ -stdlib=libc++"
+einfo "to compile your C++ programs."
+einfo
+
 	if (( ${WANTS_CFI_CROSS_DSO} == 1 )) ; then
 ewarn
 ewarn "Using cfi-cross-dso requires a rebuild of the app with only the clang"

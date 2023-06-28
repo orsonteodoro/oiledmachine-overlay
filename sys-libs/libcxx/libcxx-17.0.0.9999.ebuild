@@ -5,7 +5,7 @@
 EAPI=8
 
 CMAKE_ECLASS=cmake
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{10..12} )
 inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 

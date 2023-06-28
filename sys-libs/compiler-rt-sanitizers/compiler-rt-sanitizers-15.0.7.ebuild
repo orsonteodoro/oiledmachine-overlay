@@ -110,19 +110,11 @@ SANITIZER_REQUIRED_USE="
 				x86
 			)
 		)
-		kernel_Winnt? (
-			|| (
-				amd64
-				x86
-			)
-		)
 		!elibc_bionic? (
 			!kernel_linux? (
-				!kernel_Winnt? (
-					|| (
-						amd64
-						arm64
-					)
+				|| (
+					amd64
+					arm64
 				)
 			)
 		)
@@ -165,13 +157,10 @@ SANITIZER_REQUIRED_USE="
 		)
 	)
 	orc? (
-		!kernel_Winnt
-		!kernel_Winnt? (
-			|| (
-				amd64
-				arm
-				arm64
-			)
+		|| (
+			amd64
+			arm
+			arm64
 		)
 	)
 	profile? (

@@ -19,7 +19,7 @@ LICENSE="
 	)
 "
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~x64-macos"
 IUSE="
 static-libs test
 
@@ -57,8 +57,7 @@ S="${WORKDIR}"
 LLVM_COMPONENTS=(
 	runtimes
 	libcxx{abi,}
-	llvm/cmake
-	cmake
+	llvm/cmake cmake
 )
 LLVM_TEST_COMPONENTS=(
 	llvm/utils/llvm-lit

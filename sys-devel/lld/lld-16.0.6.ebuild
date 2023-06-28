@@ -4,7 +4,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( python3_{9..12} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
@@ -16,9 +16,9 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
 IUSE="
-+debug test zstd
+debug test zstd
 
 default-full-relro +default-partial-relro default-no-relro
 hardened hardened-compat r1
@@ -40,7 +40,7 @@ RDEPEND="
 	zstd? (
 		app-arch/zstd:=
 	)
-	~sys-devel/llvm-${PV}[debug=,zstd=]
+	~sys-devel/llvm-${PV}[zstd=]
 "
 DEPEND="
 	${RDEPEND}
@@ -63,7 +63,12 @@ LLVM_COMPONENTS=(
 	cmake
 	libunwind/include/mach-o
 )
+LLVM_TEST_COMPONENTS=(
+	llvm/utils
+	third-party
+)
 LLVM_USE_TARGETS=llvm
+LLVM_PATCHSET=${PV}-r1
 llvm.org_set_globals
 
 REQUIRED_USE+="

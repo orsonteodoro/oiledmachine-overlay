@@ -23,10 +23,9 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="
-+binutils-plugin +debug debuginfod doc exegesis libedit +libffi ncurses test xar
-xml z3 zstd
++binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3 zstd
 
 bolt bolt-heatmap -dump jemalloc tcmalloc r6
 "
@@ -56,10 +55,6 @@ RDEPEND="
 	sys-libs/zlib:0=[${MULTILIB_USEDEP}]
 	binutils-plugin? (
 		>=sys-devel/binutils-2.31.1-r4:*[plugins]
-	)
-	debuginfod? (
-		dev-cpp/cpp-httplib:=
-		net-misc/curl:=
 	)
 	exegesis? (
 		dev-libs/libpfm:=
@@ -138,9 +133,12 @@ LLVM_COMPONENTS=(
 	llvm
 	bolt
 	cmake
+)
+LLVM_TEST_COMPONENTS=(
 	third-party
 )
 LLVM_MANPAGES=1
+LLVM_PATCHSET=${PV}
 LLVM_USE_TARGETS=provide
 llvm.org_set_globals
 
@@ -284,9 +282,6 @@ check_distribution_components() {
 					# TableGen lib + deps
 					LLVMDemangle|LLVMSupport|LLVMTableGen)
 						;;
-					# testing libraries
-					LLVMTestingAnnotations|LLVMTestingSupport)
-						;;
 					# BOLT static libs
 					LLVMBOLT*)
 						( ( use amd64 || use arm64 ) && use bolt ) || continue
@@ -388,12 +383,6 @@ get_distribution_components() {
 		LLVMDemangle
 		LLVMSupport
 		LLVMTableGen
-
-		# testing libraries
-		llvm_gtest
-		llvm_gtest_main
-		LLVMTestingAnnotations
-		LLVMTestingSupport
 	)
 
 	if multilib_is_native_abi; then
@@ -428,6 +417,7 @@ get_distribution_components() {
 			llvm-cxxfilt
 			llvm-cxxmap
 			llvm-debuginfo-analyzer
+			llvm-debuginfod
 			llvm-debuginfod-find
 			llvm-diff
 			llvm-dis
@@ -520,10 +510,6 @@ get_distribution_components() {
 		use binutils-plugin && out+=(
 			LLVMgold
 		)
-
-		use debuginfod && out+=(
-			llvm-debuginfod
-		)
 	fi
 
 	printf "%s${sep}" "${out[@]}"
@@ -590,9 +576,8 @@ einfo
 		-DLLVM_TARGETS_TO_BUILD=""
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${LLVM_TARGETS// /;}"
 		-DLLVM_INCLUDE_BENCHMARKS=OFF
-		-DLLVM_INCLUDE_TESTS=ON
+		-DLLVM_INCLUDE_TESTS=$(usex test)
 		-DLLVM_BUILD_TESTS=$(usex test)
-		-DLLVM_INSTALL_GTEST=ON
 
 		-DLLVM_ENABLE_DUMP=$(usex dump)
 		-DLLVM_ENABLE_FFI=$(usex libffi)
@@ -605,8 +590,6 @@ einfo
 		-DLLVM_ENABLE_RTTI=ON
 		-DLLVM_ENABLE_Z3_SOLVER=$(usex z3)
 		-DLLVM_ENABLE_ZSTD=$(usex zstd)
-		-DLLVM_ENABLE_CURL=$(usex debuginfod)
-		-DLLVM_ENABLE_HTTPLIB=$(usex debuginfod)
 
 		-DLLVM_HOST_TRIPLE="${CHOST}"
 

@@ -21,9 +21,9 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x64-macos"
 IUSE="
-+debug doc +extra ieee-long-double +pie +static-analyzer test xml
+debug doc +extra ieee-long-double +pie +static-analyzer test xml
 
 default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4
@@ -115,8 +115,11 @@ LLVM_COMPONENTS=(
 )
 LLVM_MANPAGES=1
 LLVM_TEST_COMPONENTS=(
+	llvm/lib/Testing
 	llvm/utils
+	third-party
 )
+LLVM_PATCHSET=${PV}
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 
@@ -660,12 +663,14 @@ einfo
 		-DLLVM_ENABLE_EH=ON
 		-DLLVM_ENABLE_RTTI=ON
 
+		-DCMAKE_DISABLE_FIND_PACKAGE_LibXml2=$(usex !xml)
+
 		# libgomp support fails to find headers without explicit -I
 		# furthermore, it provides only syntax checking
 		-DCLANG_DEFAULT_OPENMP_RUNTIME=libomp
 
 		# Disable CUDA to autodetect GPU, so build for all.
-		-DCMAKE_DISABLE_FIND_PACKAGE_CUDAToolkit=ON
+		-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
 
 		# Disable linking to HSA to avoid automagic dep.
 		# Load it dynamically instead.
@@ -673,10 +678,8 @@ einfo
 
 		-DCLANG_DEFAULT_PIE_ON_LINUX=$(usex pie)
 
-		-DCLANG_ENABLE_LIBXML2=$(usex xml)
 		-DCLANG_ENABLE_ARCMT=$(usex static-analyzer)
 		-DCLANG_ENABLE_STATIC_ANALYZER=$(usex static-analyzer)
-		# TODO: CLANG_ENABLE_HLSL?
 
 		-DPython3_EXECUTABLE="${PYTHON}"
 	)
@@ -760,6 +763,15 @@ _src_compile() {
 
 	# Includes pgt_build_self
 	cmake_build distribution
+
+	# Provide a symlink for tests.
+	if [[ ! -L ${WORKDIR}/lib/clang ]]; then
+		mkdir -p "${WORKDIR}"/lib || die
+		ln -s \
+			"${BUILD_DIR}/$(get_libdir)/clang" \
+			"${WORKDIR}"/lib/clang \
+			|| die
+	fi
 }
 
 src_compile() {

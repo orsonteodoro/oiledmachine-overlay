@@ -13,10 +13,10 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="${LLVM_MAJOR}"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 # base targets
 IUSE="
-+abi_x86_32 abi_x86_64 +clang +debug hexagon test
++abi_x86_32 abi_x86_64 +clang debug hexagon test
 
 +libfuzzer +memprof +orc +profile +xray r3
 "
@@ -310,15 +310,8 @@ BDEPEND="
 	)
 "
 
-LLVM_COMPONENTS=(
-	compiler-rt
-	cmake
-	llvm/cmake
-)
-LLVM_TEST_COMPONENTS=(
-	llvm/lib/Testing/Support
-	third-party
-)
+LLVM_COMPONENTS=( compiler-rt cmake llvm/cmake )
+LLVM_TEST_COMPONENTS=( llvm/lib/Testing/Support third-party )
 llvm.org_set_globals
 
 python_check_deps() {
@@ -361,6 +354,13 @@ src_prepare() {
 	fi
 	if use ubsan && ! use cfi; then
 		> test/cfi/CMakeLists.txt || die
+	fi
+
+	if has_version -b ">=sys-libs/glibc-2.37"; then
+		# known failures with glibc-2.37
+		# https://github.com/llvm/llvm-project/issues/60678
+		rm test/dfsan/custom.cpp || die
+		rm test/dfsan/release_shadow_space.c || die
 	fi
 
 	llvm.org_src_prepare
