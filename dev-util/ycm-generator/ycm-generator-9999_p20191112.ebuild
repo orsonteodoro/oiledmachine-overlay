@@ -371,7 +371,7 @@ test_meson() {
 	config_gen.py \
 		"${WORKDIR}/nautilus-${NAUTILUS_PV}" \
 		--verbose \
-		--configure_opts="-Dtests=none -Ddefault_library=shared" \
+		--configure_opts="-Dtests=none" \
 		-o .ycm_extra_conf-meson.py \
 		|| die
 	grep -q \
