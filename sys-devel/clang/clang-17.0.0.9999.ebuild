@@ -4,6 +4,23 @@
 
 EAPI=8
 
+if [[ ${PV} =~ 9999 ]] ; then
+IUSE+="
+	fallback-commit
+"
+fi
+
+inherit llvm-ebuilds
+
+_llvm_set_globals() {
+	if [[ "${USE}" =~ "fallback-commit" && ${PV} =~ 9999 ]] ; then
+einfo "Using fallback commit"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM17_COMMIT}"
+	fi
+}
+_llvm_set_globals
+unset -f _llvm_set_globals
+
 PYTHON_COMPAT=( python3_{10..12} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
@@ -11,7 +28,6 @@ UOPTS_SUPPORT_TPGO=0
 inherit cmake llvm llvm.org multilib multilib-minimal prefix python-single-r1
 inherit toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils uopts
-inherit llvm-ebuilds
 
 DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="https://llvm.org/"
@@ -22,7 +38,7 @@ HOMEPAGE="https://llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS=""
-IUSE="
+IUSE+="
 +debug doc +extra ieee-long-double +pie +static-analyzer test xml
 
 default-fortify-source-2 default-fortify-source-3 default-full-relro

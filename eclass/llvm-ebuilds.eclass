@@ -14,6 +14,9 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+# For deterministic builds and working patches
+FALLBACK_LLVM17_COMMIT="742fb8b5c7036409f08ab0706f00057ac29ac773"
+
 _LLVM_EBUILDS_ECLASS=1
 inherit flag-o-matic toolchain-funcs
 
