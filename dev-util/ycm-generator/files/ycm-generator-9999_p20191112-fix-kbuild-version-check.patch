@@ -17,7 +17,7 @@ diff -urp YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/fake-toolc
  #!/bin/sh
  
 -if [ ! -z "$YCM_CONFIG_GEN_CC_PASSTHROUGH" ]; then
-+    echo "$@" >> ycm-generator.log
++#    echo "$@" >> ycm-generator.log
 +if echo "$@" | grep -q -e "--version" ; then
 +    # Fix kernel build
 +    PATH="${PATH_NOFAKEPATH}"
@@ -34,7 +34,7 @@ diff -urp YCM-Generator-7c0f5701130f4178cb63d10da88578b9b705fbb1.orig/fake-toolc
  #!/bin/sh
  
 -if [ ! -z "$YCM_CONFIG_GEN_CC_PASSTHROUGH" ]; then
-+    echo "$@" >> ycm-generator.log
++#    echo "$@" >> ycm-generator.log
 +if echo "$@" | grep -q -e "--version" ; then
 +    # Fix kernel build
 +    PATH="${PATH_NOFAKEPATH}"
