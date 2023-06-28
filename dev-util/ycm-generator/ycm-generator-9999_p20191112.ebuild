@@ -454,12 +454,12 @@ src_test() {
 	fi
 	PATH="${S}:${PATH}"
 
-	test_qmake
-	test_wmake # Broken
 	test_autotools
+	test_cmake
+	test_qmake
 #	test_kbuild # Broken for 6.1 kernel
 	test_meson
-	test_cmake
+	test_wmake
 }
 
 src_install() {
@@ -478,10 +478,10 @@ src_install() {
 		"/usr/bin/config_gen.py"
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  FAIL
+# OILEDMACHINE-OVERLAY-TEST:  FAIL (custom tests) (20230627)
 # cmake + ninja - passed
 # cmake + make - passed
-# make + autotools - passed
+# make + autotools - failed
 # make + kbuild - failed
 # meson - ?
 # qmake - passed
