@@ -2557,6 +2557,10 @@ ewarn
 	replace-flags "-Og" "-O2" # Fork ebuild if you want -Og ; Similar to -O1
 	replace-flags "-O0" "-O2"
 
+	# Prevent crash for now
+	# TODO:  fix crashes for -Ofast
+	replace-flags "-Ofast" "-O3"
+
 	if is-flagq "-Ofast" ; then
 	# Precaution
 		append_all $(test-flags -fno-allow-store-data-races)
@@ -3390,3 +3394,6 @@ einfo
 # -system-libstdcxx -system-libwebp -system-libxml -system-libxslt
 # -system-openh264 -system-opus -system-re2 -system-zlib -thinlto-opt -vaapi
 # -vaapi-hevc -vorbis -widevine"
+
+# OILEDMACHINE-OVERLAY-TEST:  FAILED (interactive) 115.0.5790.40 (20230601)
+# CFLAGS:  -Ofast ; TODO:  Fix -Ofast crashes

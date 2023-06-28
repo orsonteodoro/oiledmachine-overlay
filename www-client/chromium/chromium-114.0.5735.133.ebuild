@@ -2566,6 +2566,10 @@ ewarn
 	replace-flags "-Og" "-O2" # Fork ebuild if you want -Og ; Similar to -O1
 	replace-flags "-O0" "-O2"
 
+	# Prevent crash for now
+	# TODO:  fix crashes for -Ofast
+	replace-flags "-Ofast" "-O3"
+
 	if is-flagq "-Ofast" ; then
 	# Precaution
 		append_all $(test-flags -fno-allow-store-data-races)
