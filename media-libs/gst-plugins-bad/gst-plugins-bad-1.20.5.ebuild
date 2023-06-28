@@ -1,9 +1,9 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 GST_ORG_MODULE="gst-plugins-bad"
-PYTHON_COMPAT=( python3_{8,9,10} )
+PYTHON_COMPAT=( python3_{8,9,10,11} )
 inherit gstreamer-meson python-any-r1
 
 DESCRIPTION="Less plugins for GStreamer"
@@ -13,7 +13,7 @@ LICENSE="LGPL-2"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86"
 
 # TODO: egl and gtk IUSE only for transition
-IUSE="X bzip2 +egl gles2 gtk +introspection +opengl +orc vnc wayland" # Keep default IUSE mirrored with gst-plugins-base where relevant
+IUSE="X bzip2 +egl gles2 gtk +introspection +opengl +orc vnc wayland qsv" # Keep default IUSE mirrored with gst-plugins-base where relevant
 
 # Using vaapi stateless support via gst-plugins-bad.
 # The gst-plugins-vaapi (or stateful version) is discontinued (EOL).
@@ -28,27 +28,39 @@ RDEPEND="
 	!media-plugins/gst-transcoder
 	>=media-libs/gstreamer-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
 	>=media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP},egl?,introspection?,gles2=,opengl=]
-	introspection? ( >=dev-libs/gobject-introspection-1.31.1:= )
-
-	bzip2? ( >=app-arch/bzip2-1.0.6-r4[${MULTILIB_USEDEP}] )
+	bzip2? (
+		>=app-arch/bzip2-1.0.6-r4[${MULTILIB_USEDEP}]
+	)
+	introspection? (
+		>=dev-libs/gobject-introspection-1.31.1:=
+	)
+	orc? (
+		>=dev-lang/orc-0.4.17[${MULTILIB_USEDEP}]
+	)
+	qsv? (
+		media-libs/oneVPL[wayland?,X?,${MULTILIB_USEDEP}]
+	)
 	vaapi? (
 		${LIBVA_DEPEND}
 		>=media-libs/libva-1.8:=[${MULTILIB_USEDEP}]
 		dev-libs/libgudev[${MULTILIB_USEDEP}]
 		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 	)
-	vnc? ( X? ( x11-libs/libX11[${MULTILIB_USEDEP}] ) )
+	vnc? (
+		X? (
+			x11-libs/libX11[${MULTILIB_USEDEP}]
+		)
+	)
 	wayland? (
 		>=dev-libs/wayland-1.4.0[${MULTILIB_USEDEP}]
 		>=x11-libs/libdrm-2.4.55[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.15
 	)
 
-	orc? ( >=dev-lang/orc-0.4.17[${MULTILIB_USEDEP}] )
 "
-
-DEPEND="${RDEPEND}"
-
+DEPEND="
+	${RDEPEND}
+"
 BDEPEND="
 	${PYTHON_DEPS}
 	dev-util/glib-utils
@@ -69,26 +81,30 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	GST_PLUGINS_NOAUTO="shm ipcpipeline librfb hls va"
-
+	GST_PLUGINS_EXT_DEPS="${GST_PLUGINS_EXT_DEPS} va"
+	GST_PLUGINS_NOAUTO="shm ipcpipeline librfb msdk hls va"
 	local emesonargs=(
+		$(meson_feature vaapi va)
+		$(meson_feature vnc librfb)
+		$(meson_feature wayland)
+		$(use qsv && echo "
+			-Dmsdk=enabled
+			-Dmfx_api=oneVPL
+		")
+		$(use qsv || echo "
+			-Dmsdk=disabled
+
+		")
+		$((use opengl || use gles2) && echo "
+			-Dgl=enabled
+		")
+		$((use opengl || use gles2) || echo "
+			-Dgl=disabled
+		")
 		-Dshm=enabled
 		-Dipcpipeline=enabled
 		-Dhls=disabled
-		$(meson_feature vaapi va)
-		$(meson_feature vnc librfb)
-
-		$(meson_feature wayland)
 	)
-
-	if use opengl || use gles2; then
-		myconf+=( -Dgl=enabled )
-	else
-		myconf+=( -Dgl=disabled )
-	fi
-
-	GST_PLUGINS_EXT_DEPS="${GST_PLUGINS_EXT_DEPS} va"
-
 	gstreamer_multilib_src_configure
 }
 
