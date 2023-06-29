@@ -14,14 +14,18 @@ inherit llvm-ebuilds
 
 DESCRIPTION="Low Level Virtual Machine"
 HOMEPAGE="https://llvm.org/"
-
+LICENSE="
+	Apache-2.0-with-LLVM-exceptions
+	BSD
+	public-domain
+	rc
+	UoI-NCSA
+"
 # Additional licenses:
 # 1. OpenBSD regex: Henry Spencer's license ('rc' in Gentoo) + BSD.
 # 2. xxhash: BSD.
 # 3. MD5 code: public-domain.
 # 4. ConvertUTF.h: TODO.
-
-LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="
@@ -29,11 +33,20 @@ IUSE="
 
 bolt bolt-heatmap -dump jemalloc tcmalloc r6
 "
-REQUIRED_USE="
+REQUIRED_USE+="
 	!amd64? (
 		!arm64? (
 			!bolt
 		)
+	)
+	amd64? (
+		llvm_targets_X86
+	)
+	arm? (
+		llvm_targets_ARM
+	)
+	arm64? (
+		llvm_targets_AArch64
 	)
 	bolt-heatmap? (
 		bolt
@@ -41,16 +54,34 @@ REQUIRED_USE="
 	jemalloc? (
 		bolt
 	)
+	loong? (
+		llvm_targets_LoongArch
+	)
+	m68k? (
+		llvm_targets_M68k
+	)
+	mips? (
+		llvm_targets_Mips
+	)
+	ppc? (
+		llvm_targets_PowerPC
+	)
+	ppc64? (
+		llvm_targets_PowerPC
+	)
+	riscv? (
+		llvm_targets_RISCV
+	)
+	sparc? (
+		llvm_targets_Sparc
+	)
 	tcmalloc? (
 		bolt
 	)
-"
-RESTRICT="
-	!test? (
-		test
+	x86? (
+		llvm_targets_X86
 	)
 "
-
 RDEPEND="
 	sys-libs/zlib:0=[${MULTILIB_USEDEP}]
 	binutils-plugin? (
@@ -125,57 +156,27 @@ PDEPEND="
 		>=sys-devel/llvmgold-${LLVM_MAJOR}
 	)
 "
+RESTRICT="
+	!test? (
+		test
+	)
+"
 PATCHES=(
 	"${FILESDIR}/llvm-14.0.0.9999-stop-triple-spam.patch"
 )
 
 LLVM_COMPONENTS=(
-	llvm
-	bolt
-	cmake
+	"llvm"
+	"bolt"
+	"cmake"
 )
 LLVM_TEST_COMPONENTS=(
-	third-party
+	"third-party"
 )
 LLVM_MANPAGES=1
-LLVM_USE_TARGETS=provide
+LLVM_USE_TARGETS="provide"
 llvm.org_set_globals
 
-REQUIRED_USE+="
-	amd64? (
-		llvm_targets_X86
-	)
-	arm? (
-		llvm_targets_ARM
-	)
-	arm64? (
-		llvm_targets_AArch64
-	)
-	loong? (
-		llvm_targets_LoongArch
-	)
-	m68k? (
-		llvm_targets_M68k
-	)
-	mips? (
-		llvm_targets_Mips
-	)
-	ppc? (
-		llvm_targets_PowerPC
-	)
-	ppc64? (
-		llvm_targets_PowerPC
-	)
-	riscv? (
-		llvm_targets_RISCV
-	)
-	sparc? (
-		llvm_targets_Sparc
-	)
-	x86? (
-		llvm_targets_X86
-	)
-"
 
 pkg_setup() {
 	python_setup

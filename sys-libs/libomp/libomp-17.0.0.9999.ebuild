@@ -26,29 +26,37 @@ inherit python-single-r1 toolchain-funcs
 
 DESCRIPTION="OpenMP runtime library for LLVM/clang compiler"
 HOMEPAGE="https://openmp.llvm.org"
-
-LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
+LICENSE="
+	Apache-2.0-with-LLVM-exceptions
+	|| (
+		UoI-NCSA
+		MIT
+	)
+"
 SLOT="0/${LLVM_SOABI}"
 KEYWORDS=""
 IUSE+="
-	+debug gdb-plugin hwloc offload ompt test
-	llvm_targets_AMDGPU llvm_targets_NVPTX
++debug gdb-plugin hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
 "
 REQUIRED_USE="
-	gdb-plugin? ( ${PYTHON_REQUIRED_USE} )
+	gdb-plugin? (
+		${PYTHON_REQUIRED_USE}
+	)
 "
-RESTRICT="!test? ( test )"
-
 RDEPEND="
-	gdb-plugin? ( ${PYTHON_DEPS} )
-	hwloc? ( >=sys-apps/hwloc-2.5:0=[${MULTILIB_USEDEP}] )
+	gdb-plugin? (
+		${PYTHON_DEPS}
+	)
+	hwloc? (
+		>=sys-apps/hwloc-2.5:0=[${MULTILIB_USEDEP}]
+	)
 	offload? (
 		dev-libs/libffi:=[${MULTILIB_USEDEP}]
 		~sys-devel/llvm-${PV}[${MULTILIB_USEDEP}]
 		llvm_targets_AMDGPU? ( dev-libs/rocr-runtime:= )
 	)
 "
-# tests:
+# Tests:
 # - dev-python/lit provides the test runner
 # - sys-devel/llvm provide test utils (e.g. FileCheck)
 # - sys-devel/clang provides the compiler to run tests
@@ -58,8 +66,12 @@ DEPEND="
 BDEPEND="
 	dev-lang/perl
 	offload? (
-		llvm_targets_AMDGPU? ( sys-devel/clang )
-		llvm_targets_NVPTX? ( sys-devel/clang )
+		llvm_targets_AMDGPU? (
+			sys-devel/clang
+		)
+		llvm_targets_NVPTX? (
+			sys-devel/clang
+		)
 		virtual/pkgconfig
 	)
 	test? (
@@ -70,8 +82,16 @@ BDEPEND="
 		sys-devel/clang
 	)
 "
-
-LLVM_COMPONENTS=( openmp cmake llvm/include )
+RESTRICT="
+	!test? (
+		test
+	)
+"
+LLVM_COMPONENTS=(
+	"openmp"
+	"cmake"
+	"llvm/include"
+)
 llvm.org_set_globals
 
 kernel_pds_check() {

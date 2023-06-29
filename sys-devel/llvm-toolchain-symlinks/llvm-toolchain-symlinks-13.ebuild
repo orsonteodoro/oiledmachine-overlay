@@ -7,17 +7,15 @@ inherit multilib
 
 DESCRIPTION="Symlinks to use LLVM on binutils-free system"
 HOMEPAGE="https://wiki.gentoo.org/wiki/Project:LLVM"
-SRC_URI=""
-S=${WORKDIR}
-
 LICENSE="public-domain"
 SLOT="${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="multilib-symlinks +native-symlinks"
-
 RDEPEND="
 	sys-devel/llvm:${SLOT}
 "
+SRC_URI=""
+S="${WORKDIR}"
 
 src_install() {
 	use native-symlinks || return

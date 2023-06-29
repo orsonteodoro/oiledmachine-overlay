@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <maintainer type="project">
+  <maintainer type="person">
     <!-- Ebuild fork on the oiledmachine-overlay -->
-    <email>llvm@gentoo.org</email>
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
   </maintainer>
   <maintainer type="project">
     <!-- Ebuild originator -->

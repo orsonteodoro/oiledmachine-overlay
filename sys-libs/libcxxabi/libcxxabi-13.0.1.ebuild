@@ -4,7 +4,7 @@
 
 EAPI=8
 
-CMAKE_ECLASS=cmake
+CMAKE_ECLASS="cmake"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake-multilib llvm llvm.org python-any-r1 toolchain-funcs
 # llvm-6 for new lit options
@@ -56,10 +56,9 @@ PATCHES=(
 	"${FILESDIR}/libcxxabi-13.0.0.9999-hardened.patch"
 	"${FILESDIR}/libcxx-13.0.0.9999-hardened.patch"
 )
-
 LLVM_COMPONENTS=(
-	libcxx{abi,}
-	llvm/cmake
+	"libcxx"{"abi",}
+	"llvm/cmake"
 )
 llvm.org_set_globals
 

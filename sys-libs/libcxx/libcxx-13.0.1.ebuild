@@ -4,14 +4,13 @@
 
 EAPI=8
 
-CMAKE_ECLASS=cmake
+CMAKE_ECLASS="cmake"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 
 DESCRIPTION="New implementation of the C++ standard library, targeting C++11"
 HOMEPAGE="https://libcxx.llvm.org/"
-
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
@@ -29,11 +28,6 @@ hardened r11
 REQUIRED_USE="
 	libunwind? (
 		libcxxabi
-	)
-"
-RESTRICT="
-	!test? (
-		test
 	)
 "
 RDEPEND="
@@ -56,16 +50,20 @@ BDEPEND+="
 		sys-devel/gdb[python]
 	)
 "
+RESTRICT="
+	!test? (
+		test
+	)
+"
 PATCHES=(
 	"${FILESDIR}/libcxx-13.0.0.9999-hardened.patch"
 )
 DOCS=( CREDITS.TXT )
-
 LLVM_COMPONENTS=(
-	libcxx{,abi}
-	llvm/{cmake,utils/llvm-lit}
+	"libcxx"{,"abi"}
+	"llvm/"{"cmake","utils/llvm-lit"}
 )
-LLVM_PATCHSET=${PV/_/-}
+LLVM_PATCHSET="${PV/_/-}"
 llvm.org_set_globals
 
 python_check_deps() {

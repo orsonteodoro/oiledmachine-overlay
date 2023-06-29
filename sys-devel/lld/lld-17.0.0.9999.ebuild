@@ -29,8 +29,10 @@ inherit cmake flag-o-matic llvm llvm.org python-any-r1 uopts
 
 DESCRIPTION="The LLVM linker (link editor)"
 HOMEPAGE="https://llvm.org/"
-
-LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA"
+LICENSE="
+	Apache-2.0-with-LLVM-exceptions
+	UoI-NCSA
+"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS=""
 IUSE+="
@@ -39,49 +41,6 @@ IUSE+="
 default-full-relro +default-partial-relro default-no-relro
 hardened hardened-compat r1
 "
-REQUIRED_USE+="
-	hardened? (
-		!test
-	)
-"
-RESTRICT="
-	!test? (
-		test
-	)
-"
-
-RDEPEND="
-	!sys-devel/lld:0
-	sys-libs/zlib:=
-	zstd? (
-		app-arch/zstd:=
-	)
-	~sys-devel/llvm-${PV}[debug=,zstd=]
-"
-DEPEND="
-	${RDEPEND}
-"
-BDEPEND="
-	ebolt? (
-		>=sys-devel/llvm-14[bolt]
-	)
-	test? (
-		>=dev-util/cmake-3.16
-		$(python_gen_any_dep ">=dev-python/lit-${PV}[\${PYTHON_USEDEP}]")
-	)
-"
-PDEPEND="
-	>=sys-devel/lld-toolchain-symlinks-16-r2:${LLVM_MAJOR}
-"
-
-LLVM_COMPONENTS=(
-	lld
-	cmake
-	libunwind/include/mach-o
-)
-LLVM_USE_TARGETS=llvm
-llvm.org_set_globals
-
 REQUIRED_USE+="
 	^^ (
 		default-full-relro
@@ -134,6 +93,41 @@ REQUIRED_USE+="
 		default-full-relro
 	)
 "
+RDEPEND="
+	!sys-devel/lld:0
+	sys-libs/zlib:=
+	zstd? (
+		app-arch/zstd:=
+	)
+	~sys-devel/llvm-${PV}[debug=,zstd=]
+"
+DEPEND="
+	${RDEPEND}
+"
+BDEPEND="
+	ebolt? (
+		>=sys-devel/llvm-14[bolt]
+	)
+	test? (
+		>=dev-util/cmake-3.16
+		$(python_gen_any_dep ">=dev-python/lit-${PV}[\${PYTHON_USEDEP}]")
+	)
+"
+PDEPEND="
+	>=sys-devel/lld-toolchain-symlinks-16-r2:${LLVM_MAJOR}
+"
+RESTRICT="
+	!test? (
+		test
+	)
+"
+LLVM_COMPONENTS=(
+	"lld"
+	"cmake"
+	"libunwind/include/mach-o"
+)
+LLVM_USE_TARGETS="llvm"
+llvm.org_set_globals
 
 gen_rdepend() {
 	local f

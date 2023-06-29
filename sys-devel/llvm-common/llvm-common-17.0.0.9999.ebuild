@@ -1,7 +1,24 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
+
+if [[ ${PV} =~ 9999 ]] ; then
+IUSE+="
+	fallback-commit
+"
+fi
+
+inherit llvm-ebuilds
+
+_llvm_set_globals() {
+	if [[ "${USE}" =~ "fallback-commit" && ${PV} =~ 9999 ]] ; then
+einfo "Using fallback commit"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM17_COMMIT}"
+	fi
+}
+_llvm_set_globals
+unset -f _llvm_set_globals
 
 inherit llvm.org
 
@@ -12,8 +29,7 @@ LICENSE="
 	UoI-NCSA
 "
 SLOT="0"
-KEYWORDS="amd64 arm arm64 ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~ppc-macos ~x64-macos"
-IUSE=""
+KEYWORDS=""
 RDEPEND="
 	!sys-devel/llvm:0
 "

@@ -4,7 +4,7 @@
 
 EAPI=8
 
-CMAKE_ECLASS=cmake
+CMAKE_ECLASS="cmake"
 PYTHON_COMPAT=( python3_{9..11} )
 inherit cmake-multilib llvm llvm.org python-any-r1 toolchain-funcs
 LLVM_MAX_SLOT=${LLVM_MAJOR}
@@ -41,10 +41,6 @@ BDEPEND+="
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)
 "
-PATCHES=(
-	"${FILESDIR}/libcxxabi-15.0.0.9999-hardened.patch"
-	"${FILESDIR}/libcxx-15.0.0.9999-hardened.patch"
-)
 # Don't strip CFI from .so files
 RESTRICT="
 	!test? (
@@ -53,14 +49,18 @@ RESTRICT="
 	strip
 "
 S="${WORKDIR}"
-
+PATCHES=(
+	"${FILESDIR}/libcxxabi-15.0.0.9999-hardened.patch"
+	"${FILESDIR}/libcxx-15.0.0.9999-hardened.patch"
+)
 LLVM_COMPONENTS=(
-	runtimes
-	libcxx{abi,}
-	llvm/cmake cmake
+	"runtimes"
+	"libcxx"{"abi",}
+	"llvm/cmake"
+	"cmake"
 )
 LLVM_TEST_COMPONENTS=(
-	llvm/utils/llvm-lit
+	"llvm/utils/llvm-lit"
 )
 llvm.org_set_globals
 

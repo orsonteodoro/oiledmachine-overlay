@@ -8,44 +8,74 @@ inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-any-r1
 
 DESCRIPTION="OpenMP runtime library for LLVM/clang compiler"
 HOMEPAGE="https://openmp.llvm.org"
-
-LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
+LICENSE="
+	Apache-2.0-with-LLVM-exceptions
+	|| (
+		UoI-NCSA
+		MIT
+	)
+"
 SLOT="0"
-KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv x86 ~amd64-linux ~x64-macos"
-IUSE="cuda debug hwloc offload ompt test
-	llvm_targets_AMDGPU llvm_targets_NVPTX"
+KEYWORDS="
+amd64 arm arm64 ~ppc ppc64 ~riscv x86 ~amd64-linux ~x64-macos
+"
+IUSE="
+cuda debug hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
+"
 # CUDA works only with the x86_64 ABI
 REQUIRED_USE="
-	cuda? ( llvm_targets_NVPTX )
-	offload? ( cuda? ( abi_x86_64 ) )"
+	cuda? (
+		llvm_targets_NVPTX
+	)
+	offload? (
+		cuda? (
+			abi_x86_64
+		)
+	)
+"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	hwloc? ( >=sys-apps/hwloc-2.5:0=[${MULTILIB_USEDEP}] )
+	hwloc? (
+		>=sys-apps/hwloc-2.5:0=[${MULTILIB_USEDEP}]
+	)
 	offload? (
 		virtual/libelf:=[${MULTILIB_USEDEP}]
 		dev-libs/libffi:=[${MULTILIB_USEDEP}]
 		~sys-devel/llvm-${PV}[${MULTILIB_USEDEP}]
-		cuda? ( dev-util/nvidia-cuda-toolkit:= )
-	)"
-# tests:
+		cuda? (
+			dev-util/nvidia-cuda-toolkit:=
+		)
+	)
+"
+# Tests:
 # - dev-python/lit provides the test runner
 # - sys-devel/llvm provide test utils (e.g. FileCheck)
 # - sys-devel/clang provides the compiler to run tests
-DEPEND="${RDEPEND}"
-BDEPEND="dev-lang/perl
+DEPEND="
+	${RDEPEND}
+"
+BDEPEND="
+	dev-lang/perl
 	offload? (
-		llvm_targets_AMDGPU? ( sys-devel/clang )
-		llvm_targets_NVPTX? ( sys-devel/clang )
+		llvm_targets_AMDGPU? (
+			sys-devel/clang
+		)
+		llvm_targets_NVPTX? (
+			sys-devel/clang
+		)
 		virtual/pkgconfig
 	)
 	test? (
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 		sys-devel/clang
-	)"
-
-LLVM_COMPONENTS=( openmp llvm/include )
-LLVM_PATCHSET=${PV/_/-}
+	)
+"
+LLVM_COMPONENTS=(
+	"openmp"
+	"llvm/include"
+)
+LLVM_PATCHSET="${PV/_/-}"
 llvm.org_set_globals
 
 python_check_deps() {

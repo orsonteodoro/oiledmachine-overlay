@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <maintainer type="project">
-    <!-- ebuild fork only on the oiledmachine overlay -->
+  <maintainer type="person">
+    <!-- Ebuild fork on the oiledmachine overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <maintainer type="project">
-    <!-- ebuild originator -->
+    <!-- Ebuild originators -->
     <email>llvm@gentoo.org</email>
   </maintainer>
-  <longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
+
     This ebuild fork enables Full RELRO ON by default.  This is to match the
     same RELRO level of the binutils counterpart.
 
@@ -84,36 +87,7 @@ main
 
 #DONE
 
-    Deterministic reliable builds
-
-    Due to the problematic design of the live ebuild system, it
-    is recommened to use a commit snapshot on the same slot for all
-    LLVM live packages.  To have deterministic builds, per-package
-    environmental variable must be set by adding the following once a
-    successful build of LLVM has been discovered:
-
-Contents of /etc/portage/env/llvm-16-commit.conf:
-EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="ADD_40_DIGIT_COMMIT_HERE"
-
-Contents of /etc/portage/package.env:
-sys-devel/llvm:16 llvm-16-commit.conf
-sys-devel/clang:16 llvm-16-commit.conf
-=sys-libs/compiler-rt-16* llvm-16-commit.conf
-=sys-libs/compiler-rt-sanitizers-16* llvm-16-commit.conf
-=sys-libs/libcxx-16* llvm-16-commit.conf
-=sys-libs/libcxxabi-16* llvm-16-commit.conf
-=sys-libs/libomp-16* llvm-16-commit.conf
-=sys-devel/lld-16* llvm-16-commit.conf
-
-  Then, emerge -1vuDN all of the above ebuilds.
-
-  Replace 16 with the particular slots of the live ebuilds that you are
-  interested.  When you need to update, just add and remove a # in front
-  of EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT to switch on and off when
-  updating the 40 digit hash code again.  For the best success only pick
-  the commits with a green checkmark in the commit history:
-  https://github.com/llvm/llvm-project/commits/main
-  </longdescription>
+  -->
   <use>
     <flag name="default-full-relro">
       Enables Full RELRO by default when linking other packages.
@@ -123,6 +97,10 @@ sys-devel/clang:16 llvm-16-commit.conf
     </flag>
     <flag name="default-partial-relro">
       Enables Partial RELRO by default when linking other packages.
+    </flag>
+    <flag name="fallback-commit">
+      Rollback commit for reliable working patches and for missing symbols
+      avoidance.
     </flag>
     <flag name="hardened">
       Adds changes to --version, for use for packages that may use it

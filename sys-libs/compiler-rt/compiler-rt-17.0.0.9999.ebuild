@@ -25,13 +25,16 @@ inherit cmake flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 
 DESCRIPTION="Compiler runtime library for clang (built-in part)"
 HOMEPAGE="https://llvm.org/"
-
-LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
+LICENSE="
+	Apache-2.0-with-LLVM-exceptions
+	|| (
+		UoI-NCSA
+		MIT
+	)
+"
 SLOT="${LLVM_MAJOR}"
 KEYWORDS=""
 IUSE+=" +abi_x86_32 abi_x86_64 +clang +debug test"
-RESTRICT="!test? ( test ) !clang? ( test )"
-
 DEPEND="
 	sys-devel/llvm:${LLVM_MAJOR}
 "
@@ -46,8 +49,19 @@ BDEPEND="
 		${PYTHON_DEPS}
 	)
 "
-
-LLVM_COMPONENTS=( compiler-rt cmake llvm/cmake )
+RESTRICT="
+	!clang? (
+		test
+	)
+	!test? (
+		test
+	)
+"
+LLVM_COMPONENTS=(
+	"compiler-rt"
+	"cmake"
+	"llvm/cmake"
+)
 llvm.org_set_globals
 
 python_check_deps() {

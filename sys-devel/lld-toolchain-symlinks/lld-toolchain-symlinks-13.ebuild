@@ -8,16 +8,16 @@ inherit multilib
 DESCRIPTION="Symlinks to use LLD on binutils-free system"
 HOMEPAGE="https://wiki.gentoo.org/wiki/Project:LLVM"
 SRC_URI=""
-S=${WORKDIR}
-
 LICENSE="public-domain"
 SLOT="${PV}"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
+KEYWORDS="
+~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86
+"
 IUSE="multilib-symlinks +native-symlinks"
-
 RDEPEND="
 	sys-devel/lld:${SLOT}
 "
+S="${WORKDIR}"
 
 src_install() {
 	use native-symlinks || return

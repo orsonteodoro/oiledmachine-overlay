@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
   <maintainer type="project">
     <!-- Ebuild originator -->
     <email>llvm@gentoo.org</email>
   </maintainer>
+  <upstream>
+    <remote-id type="github">llvm/llvm-project</remote-id>
+  </upstream>
   <use>
     <flag name="clang">
       Force building using installed clang (rather than the default CC/CXX).
     </flag>
+    <flag name="fallback-commit">
+      Rollback commit for reliable working patches and for missing symbols
+      avoidance.
+    </flag>
   </use>
-  <upstream>
-    <remote-id type="github">llvm/llvm-project</remote-id>
-  </upstream>
 </pkgmetadata>

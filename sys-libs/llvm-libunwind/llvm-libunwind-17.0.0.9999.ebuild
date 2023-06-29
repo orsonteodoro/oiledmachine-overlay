@@ -21,19 +21,25 @@ _llvm_set_globals
 unset -f _llvm_set_globals
 
 PYTHON_COMPAT=( python3_{10..12} )
-inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 \
-	toolchain-funcs
+inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 
 DESCRIPTION="C++ runtime stack unwinder from LLVM"
 HOMEPAGE="https://llvm.org/docs/ExceptionHandling.html"
-
-LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
+LICENSE="
+	Apache-2.0-with-LLVM-exceptions
+	|| (
+		UoI-NCSA
+		MIT
+	)
+"
 SLOT="0"
 KEYWORDS=""
 IUSE+=" +clang +debug static-libs test"
-REQUIRED_USE="test? ( clang )"
-RESTRICT="!test? ( test )"
-
+REQUIRED_USE="
+	test? (
+		clang
+	)
+"
 RDEPEND="
 	!sys-libs/libunwind
 "
@@ -41,19 +47,32 @@ DEPEND="
 	sys-devel/llvm:${LLVM_MAJOR}
 "
 BDEPEND="
-	clang? (
-		sys-devel/clang:${LLVM_MAJOR}
-	)
 	!test? (
 		${PYTHON_DEPS}
+	)
+	clang? (
+		sys-devel/clang:${LLVM_MAJOR}
 	)
 	test? (
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)
 "
-
-LLVM_COMPONENTS=( runtimes libunwind libcxx llvm/cmake cmake )
-LLVM_TEST_COMPONENTS=( libcxxabi llvm/utils/llvm-lit )
+RESTRICT="
+	!test? (
+		test
+	)
+"
+LLVM_COMPONENTS=(
+	"runtimes"
+	"libunwind"
+	"libcxx"
+	"llvm/cmake"
+	"cmake"
+)
+LLVM_TEST_COMPONENTS=(
+	"libcxxabi"
+	"llvm/utils/llvm-lit"
+)
 llvm.org_set_globals
 
 python_check_deps() {

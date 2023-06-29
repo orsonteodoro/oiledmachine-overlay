@@ -7,12 +7,11 @@ inherit multilib
 
 DESCRIPTION="Symlinks to use Clang on GCC-free system"
 HOMEPAGE="https://wiki.gentoo.org/wiki/Project:LLVM"
-SRC_URI=""
-S=${WORKDIR}
-
 LICENSE="public-domain"
 SLOT="${PV}"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x64-macos"
+KEYWORDS="
+~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x64-macos
+"
 IUSE="gcc-symlinks multilib-symlinks +native-symlinks"
 
 # Blocker for bug #872416
@@ -20,6 +19,9 @@ RDEPEND="
 	!<sys-devel/gcc-config-2.6
 	sys-devel/clang:${SLOT}
 "
+
+SRC_URI=""
+S="${WORKDIR}"
 
 src_install() {
 	local tools=()

@@ -7,11 +7,17 @@ EAPI=8
 PYTHON_COMPAT=( python3_{9..11} )
 inherit check-reqs cmake flag-o-matic llvm llvm.org python-any-r1
 inherit llvm-ebuilds
+LLVM_MAX_SLOT=${LLVM_MAJOR}
 
 DESCRIPTION="Compiler runtime libraries for clang (sanitizers & xray)"
 HOMEPAGE="https://llvm.org/"
-
-LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
+LICENSE="
+	Apache-2.0-with-LLVM-exceptions
+	|| (
+		UoI-NCSA
+		MIT
+	)
+"
 SLOT="${LLVM_MAJOR}"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 # base targets
@@ -274,19 +280,6 @@ REQUIRED_USE="
 		xray
 	)
 "
-RESTRICT="
-	!clang? (
-		test
-	)
-	!test? (
-		test
-	)
-"
-PATCHES=(
-	"${FILESDIR}/compiler-rt-sanitizers-13.0.0-disable-cfi-assert-for-autoconf.patch"
-)
-
-LLVM_MAX_SLOT=${LLVM_MAJOR}
 DEPEND="
 	sys-devel/llvm:${LLVM_MAJOR}
 	virtual/libcrypt[abi_x86_32(-)?,abi_x86_64(-)?]
@@ -309,9 +302,26 @@ BDEPEND="
 		${PYTHON_DEPS}
 	)
 "
-
-LLVM_COMPONENTS=( compiler-rt cmake llvm/cmake )
-LLVM_TEST_COMPONENTS=( llvm/lib/Testing/Support third-party )
+RESTRICT="
+	!clang? (
+		test
+	)
+	!test? (
+		test
+	)
+"
+PATCHES=(
+	"${FILESDIR}/compiler-rt-sanitizers-13.0.0-disable-cfi-assert-for-autoconf.patch"
+)
+LLVM_COMPONENTS=(
+	"compiler-rt"
+	"cmake"
+	"llvm/cmake"
+)
+LLVM_TEST_COMPONENTS=(
+	"llvm/lib/Testing/Support"
+	"third-party"
+)
 llvm.org_set_globals
 
 python_check_deps() {

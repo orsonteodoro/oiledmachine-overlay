@@ -15,13 +15,17 @@ inherit llvm-ebuilds
 
 DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="https://llvm.org/"
-
+LICENSE="
+	Apache-2.0-with-LLVM-exceptions
+	MIT
+	UoI-NCSA
+"
 # MSVCSetupApi.h: MIT
 # sorttable.js: MIT
-
-LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x64-macos"
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x64-macos
+"
 IUSE="
 debug doc +extra ieee-long-double +pie +static-analyzer test xml
 
@@ -32,6 +36,40 @@ r9
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
+
+	amd64? (
+		llvm_targets_X86
+	)
+	arm? (
+		llvm_targets_ARM
+	)
+	arm64? (
+		llvm_targets_AArch64
+	)
+	loong? (
+		llvm_targets_LoongArch
+	)
+	m68k? (
+		llvm_targets_M68k
+	)
+	mips? (
+		llvm_targets_Mips
+	)
+	ppc? (
+		llvm_targets_PowerPC
+	)
+	ppc64? (
+		llvm_targets_PowerPC
+	)
+	riscv? (
+		llvm_targets_RISCV
+	)
+	sparc? (
+		llvm_targets_Sparc
+	)
+	x86? (
+		llvm_targets_X86
+	)
 
 	default-fortify-source-2? (
 		!default-fortify-source-3
@@ -65,12 +103,6 @@ REQUIRED_USE="
 		!test
 	)
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
-
 RDEPEND+="
 	${PYTHON_DEPS}
 	>=sys-devel/clang-common-${PV}
@@ -106,39 +138,28 @@ PDEPEND+="
 	sys-devel/clang-toolchain-symlinks:${LLVM_MAJOR}
 	~sys-devel/clang-runtime-${PV}
 "
-
+RESTRICT="
+	!test? (
+		test
+	)
+"
 LLVM_COMPONENTS=(
-	clang
-	clang-tools-extra
-	cmake
-	llvm/lib/Transforms/Hello
+	"clang"
+	"clang-tools-extra"
+	"cmake"
+	"llvm/lib/Transforms/Hello"
 )
 LLVM_MANPAGES=1
 LLVM_TEST_COMPONENTS=(
-	llvm/lib/Testing
-	llvm/utils
-	third-party
+	"llvm/lib/Testing"
+	"llvm/utils"
+	"third-party"
 )
-LLVM_USE_TARGETS=llvm
+LLVM_USE_TARGETS="llvm"
 llvm.org_set_globals
-
 SRC_URI+="
 https://github.com/llvm/llvm-project/commit/71a9b8833231a285b4d8d5587c699ed45881624b.patch
 	-> ${PN}-71a9b88.patch
-"
-
-REQUIRED_USE+="
-	amd64? ( llvm_targets_X86 )
-	arm? ( llvm_targets_ARM )
-	arm64? ( llvm_targets_AArch64 )
-	loong? ( llvm_targets_LoongArch )
-	m68k? ( llvm_targets_M68k )
-	mips? ( llvm_targets_Mips )
-	ppc? ( llvm_targets_PowerPC )
-	ppc64? ( llvm_targets_PowerPC )
-	riscv? ( llvm_targets_RISCV )
-	sparc? ( llvm_targets_Sparc )
-	x86? ( llvm_targets_X86 )
 "
 
 gen_rdepend() {

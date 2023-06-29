@@ -17,6 +17,10 @@
     <name>LLVM Project</name>
   </maintainer>
   <use>
+    <flag name="fallback-commit">
+      Rollback commit for reliable working patches and for missing symbols
+      avoidance.
+    </flag>
     <flag name="hardened">
       Build with Full RELRO, noexecstack, SSP.  For the non-hardened profile,
       set USE_HARDENED_PROFILE_DEFAULTS=1 in make.conf to use the hardened

@@ -21,14 +21,13 @@ einfo "Using fallback commit"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-CMAKE_ECLASS=cmake
+CMAKE_ECLASS="cmake"
 PYTHON_COMPAT=( python3_{10..12} )
 inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 
 DESCRIPTION="New implementation of the C++ standard library, targeting C++11"
 HOMEPAGE="https://libcxx.llvm.org/"
-
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	|| (
@@ -42,12 +41,6 @@ IUSE+="
 +libcxxabi static-libs test
 
 hardened r12
-"
-REQUIRED_USE=""
-RESTRICT="
-	!test? (
-		test
-	)
 "
 RDEPEND="
 	!libcxxabi? (
@@ -74,11 +67,20 @@ SRC_URI+="
 https://github.com/llvm/llvm-project/commit/ef843c8271027b89419d07ffc2aaa3abf91438ef.patch
 	-> libcxx-commit-ef843c8.patch
 "
+RESTRICT="
+	!test? (
+		test
+	)
+"
 PATCHES=(
 	"${FILESDIR}/libcxx-15.0.0.9999-hardened.patch"
 )
-
-LLVM_COMPONENTS=( runtimes libcxx{,abi} llvm/{cmake,utils/llvm-lit} cmake )
+LLVM_COMPONENTS=(
+	"runtimes"
+	"libcxx"{,"abi"}
+	"llvm/"{"cmake","utils/llvm-lit"}
+	"cmake"
+)
 llvm.org_set_globals
 
 python_check_deps() {
