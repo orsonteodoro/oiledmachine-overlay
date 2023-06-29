@@ -234,9 +234,9 @@ system-bottle system-clangd system-go-tools system-jdtls system-jedi
 system-libclang system-mono system-mrab-regex system-requests system-rust
 system-rust system-tern system-typescript system-watchdog test typescript vim
 
-fallback-commit
+fallback-commit r1
 "
-CLANG_PV="15.0.1"
+CLANG_PV="16.0.1"
 CLANG_PV_MAJ=$(ver_cut 1 ${CLANG_PV})
 PV_MAJ=$(ver_cut 1 ${PV})
 # Missing rust-analyzer (aka rust-analyzer-preview) from rust packages because
@@ -370,8 +370,8 @@ CMAKE_PV="3.14"
 DJANGO_STUBS_PV="jedi-v1"
 GOPLS_PV="0.9.4"
 JAVA_SLOT="17"
-JDTLS_PV="1.14.0-202207211651" # MILESTONE-TIMESTAMP in build.py
-JEDI_PV="0.18.1"
+JDTLS_PV="1.23.0-202304271346" # MILESTONE-TIMESTAMP in build.py
+JEDI_PV="0.18.2"
 OMNISHARP_PV="1.37.11"
 LIBCLANG_PV="${CLANG_PV_MAJ}.0.0"
 MRAB_REGEX_PV="2021.10.23" # bf5e239
@@ -420,7 +420,7 @@ DEPEND+="
 	)
 	system-jedi? (
 		>=dev-python/jedi-${JEDI_PV}[${PYTHON_USEDEP}]
-		>=dev-python/numpydoc-1.5_p20220916[${PYTHON_USEDEP}]
+		>=dev-python/numpydoc-1.5.0[${PYTHON_USEDEP}]
 		>=dev-python/parso-${PARSO_PV}[${PYTHON_USEDEP}]
 	)
 	system-libclang? (
@@ -896,7 +896,7 @@ src_unpack() {
 	if [[ ${PV} =~ 9999 ]] ; then
 		EGIT_BRANCH="master"
 		EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
-		use fallback-commit && export EGIT_COMMIT="c65849af00afd15953b36e4bae6d60148ae20455" # Dec 22, 2022
+		use fallback-commit && export EGIT_COMMIT="33922510b354bae0561b5de886d0d0767ed8822a" # Jun 11, 2023
 		git-r3_fetch
 		git-r3_checkout
 
