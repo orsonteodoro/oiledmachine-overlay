@@ -1,42 +1,58 @@
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{9..10} )
+if [[ ${PV} =~ 9999 ]] ; then
+IUSE+="
+	fallback-commit
+"
+fi
+
+inherit llvm-ebuilds
+
+_llvm_set_globals() {
+	if [[ "${USE}" =~ "fallback-commit" && ${PV} =~ 9999 ]] ; then
+einfo "Using fallback commit"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM17_COMMIT}"
+	fi
+}
+_llvm_set_globals
+unset -f _llvm_set_globals
+
+PYTHON_COMPAT=( python3_{10..12} )
 inherit cmake flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 
 DESCRIPTION="Compiler runtime library for clang (built-in part)"
 HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
-SLOT="$(ver_cut 1-3)"
-KEYWORDS="amd64 arm arm64 ppc64 ~riscv x86 ~amd64-linux ~ppc-macos ~x64-macos"
-IUSE+=" +abi_x86_32 abi_x86_64 +clang debug test"
+SLOT="${LLVM_MAJOR}"
+KEYWORDS=""
+IUSE+=" +abi_x86_32 abi_x86_64 +clang +debug test"
 RESTRICT="!test? ( test ) !clang? ( test )"
 
-LLVM_MAX_SLOT=${SLOT%%.*}
 DEPEND="
-	sys-devel/llvm:${LLVM_MAX_SLOT}
+	sys-devel/llvm:${LLVM_MAJOR}
 "
 BDEPEND="
 	>=dev-util/cmake-3.16
 	clang? ( sys-devel/clang )
 	test? (
-		$(python_gen_any_dep ">=dev-python/lit-9.0.1[\${PYTHON_USEDEP}]")
-		=sys-devel/clang-${PV%_*}*:${LLVM_MAX_SLOT}
+		$(python_gen_any_dep ">=dev-python/lit-15[\${PYTHON_USEDEP}]")
+		=sys-devel/clang-${LLVM_VERSION}*:${LLVM_MAJOR}
 	)
 	!test? (
 		${PYTHON_DEPS}
-	)"
+	)
+"
 
-LLVM_COMPONENTS=( compiler-rt )
-LLVM_PATCHSET=${PV/_/-}
+LLVM_COMPONENTS=( compiler-rt cmake llvm/cmake )
 llvm.org_set_globals
 
 python_check_deps() {
 	use test || return 0
-	python_has_version ">=dev-python/lit-9.0.1[${PYTHON_USEDEP}]"
+	python_has_version ">=dev-python/lit-15[${PYTHON_USEDEP}]"
 }
 
 pkg_pretend() {
@@ -50,8 +66,8 @@ pkg_setup() {
 	# Darwin Prefix builds do not have llvm installed yet, so rely on
 	# bootstrap-prefix to set the appropriate path vars to LLVM instead
 	# of using llvm_pkg_setup.
-	if [[ ${CHOST} != *-darwin* ]] || has_version dev-lang/llvm; then
-		llvm_pkg_setup
+	if [[ ${CHOST} != *-darwin* ]] || has_version sys-devel/llvm; then
+		LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
 	fi
 	python-any-r1_pkg_setup
 }
@@ -68,22 +84,35 @@ src_configure() {
 	# pre-set since we need to pass it to cmake
 	BUILD_DIR=${WORKDIR}/${P}_build
 
-	local nolib_flags=( -nodefaultlibs -lc )
 	if use clang; then
-		local -x CC=${CHOST}-clang
-		local -x CXX=${CHOST}-clang++
+		# Only do this conditionally to allow overriding with
+		# e.g. CC=clang-13 in case of breakage
+		if ! tc-is-clang ; then
+			local -x CC=${CHOST}-clang
+			local -x CXX=${CHOST}-clang++
+		fi
+
 		strip-unsupported-flags
-		# ensure we can use clang before installing compiler-rt
-		local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
-	elif ! test_compiler; then
+	fi
+
+	if ! test_compiler; then
+		local nolib_flags=( -nodefaultlibs -lc )
+
 		if test_compiler "${nolib_flags[@]}"; then
+			local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
+			ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
+		elif test_compiler "${nolib_flags[@]}" -nostartfiles; then
+			# Avoiding -nostartfiles earlier on for bug #862540,
+			# and set available entry symbol for bug #862798.
+			nolib_flags+=( -nostartfiles -emain )
+
 			local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
 			ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
 		fi
 	fi
 
 	local mycmakeargs=(
-		-DCOMPILER_RT_INSTALL_PATH="${EPREFIX}/usr/lib/clang/${SLOT}"
+		-DCOMPILER_RT_INSTALL_PATH="${EPREFIX}/usr/lib/clang/${LLVM_MAJOR}"
 
 		-DCOMPILER_RT_INCLUDE_TESTS=$(usex test)
 		-DCOMPILER_RT_BUILD_LIBFUZZER=OFF
@@ -121,8 +150,8 @@ src_configure() {
 			-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
 			-DLLVM_LIT_ARGS="$(get_lit_flags)"
 
-			-DCOMPILER_RT_TEST_COMPILER="${EPREFIX}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang"
-			-DCOMPILER_RT_TEST_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang++"
+			-DCOMPILER_RT_TEST_COMPILER="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang"
+			-DCOMPILER_RT_TEST_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang++"
 		)
 	fi
 
