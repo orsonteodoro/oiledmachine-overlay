@@ -883,13 +883,13 @@ multilib_src_install() {
 			"${ED}"/usr/include \
 			|| die
 	fi
-	if [[ -e "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/clang ]] ; then
+	if [[ -e "${ED}"/usr/lib/clang ]] ; then
 		mv \
-			"${ED}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/clang \
+			"${ED}"/usr/lib/clang \
 			"${ED}"/usr/include/clangrt \
 			|| die
 	fi
-	if multilib_is_native_abi && [[ -e "${ED}"/usr/include/clang-tidy ]] ; then
+	if multilib_native_use extra && [[ -e "${ED}"/usr/include/clang-tidy ]] ; then
 		# Don't wrap clang-tidy headers; the list is too long.
 		# (They're fine for non-native ABI but enabling the targets is problematic.)
 		mkdir -p "${T}/clang-tidy" || die

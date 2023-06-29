@@ -15,7 +15,7 @@ case ${EAPI:-0} in
 esac
 
 # For deterministic builds and working patches
-FALLBACK_LLVM17_COMMIT="742fb8b5c7036409f08ab0706f00057ac29ac773"
+FALLBACK_LLVM17_COMMIT="d36324866ee1fb4d1c26552b6b686a463d2b448f" # Jun 28, 2023
 
 _LLVM_EBUILDS_ECLASS=1
 inherit flag-o-matic toolchain-funcs
