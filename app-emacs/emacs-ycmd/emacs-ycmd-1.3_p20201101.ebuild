@@ -476,6 +476,7 @@ src_install() {
 	local sitefile_path="${WORKDIR}/${SITEFILE}"
 	elisp-install ${PN} -r *.el *elc .cask contrib || die
 	elisp-site-file-install "${sitefile_path}" || die
+	dosym /usr/bin/emacs-${EMACS_SLOT} /usr/bin/${PN}
 }
 
 pkg_postinst() {
@@ -491,7 +492,8 @@ einfo
 einfo "  https://github.com/abingham/emacs-ycmd/blob/master/ycmd.el#L610"
 einfo
 ewarn
-ewarn "You must use /usr/bin/emacs-${EMACS_SLOT} in order for ${PN} to work."
+ewarn "You must use /usr/bin/emacs-${EMACS_SLOT} or /usr/bin/${PN} in order for"
+ewarn "${PN} to work."
 ewarn
 }
 
