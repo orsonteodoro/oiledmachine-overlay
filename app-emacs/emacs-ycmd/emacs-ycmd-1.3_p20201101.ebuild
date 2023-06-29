@@ -4,6 +4,8 @@
 
 EAPI=8
 
+NEED_EMACS="27.2"
+EMACS_SLOT="${NEED_EMACS%%.*}"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit elisp java-pkg-opt-2 python-single-r1
 
@@ -36,18 +38,21 @@ IUSE+="
 builtin-completion +company-mode debug eldoc +flycheck +go-mode next-error
 +rust-mode system-gocode system-godef system-gopls system-jdtls system-mono
 system-omnisharp system-racerd system-rust system-typescript +typescript-mode
-+ycmd-43 ycmd-44 ycmd-45
+ycmd-43 ycmd-44 ycmd-45 ycmd-46 +ycmd-47
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
+	company-mode
 	^^ (
 		ycmd-43
 		ycmd-44
 		ycmd-45
+		ycmd-47
 	)
 "
-DEPEND+="
+RDEPEND+="
 	${PYTHON_DEPS}
+	>=app-editors/emacs-${NEED_EMACS}:${EMACS_SLOT}
 	ycmd-43? (
 		$(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]')
 	)
@@ -57,14 +62,21 @@ DEPEND+="
 	ycmd-45? (
 		$(python_gen_cond_dep 'dev-util/ycmd:45[${PYTHON_USEDEP}]')
 	)
+	ycmd-46? (
+		$(python_gen_cond_dep 'dev-util/ycmd:46[${PYTHON_USEDEP}]')
+	)
+	ycmd-47? (
+		$(python_gen_cond_dep 'dev-util/ycmd:47[${PYTHON_USEDEP}]')
+	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
-	net-misc/curl
+	dev-vcs/git
+	net-libs/gnutls[tools]
 "
-EGIT_COMMIT="bc81b992f79100c98f56b7b83caf64cb8ea60477"
+EGIT_COMMIT="c17ff9e0250a9b39d23af37015a2b300e2f36fed"
 SRC_URI="
 https://github.com/abingham/emacs-ycmd/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz
@@ -113,13 +125,21 @@ ewarn
 
 	python-single-r1_pkg_setup
 	elisp_pkg_setup
+	local actual_emacs_slot=$(ver_cut 1 $(elisp-emacs-version))
+	local expected_emacs_slot="${EMACS_SLOT}"
+	if ver_test ${actual_emacs_slot} -ne ${expected_emacs_slot} ; then
+eerror
+eerror "Change emacs slot via eselect emacs"
+eerror
+eerror "Actual slot:    ${actual_emacs_slot}"
+eerror "Expected slot:  ${expected_emacs_slot}"
+eerror
+		die
+	fi
 }
 
 install_deps() {
-	curl -fsSL \
-		https://raw.githubusercontent.com/cask/cask/master/go \
-		| python \
-		|| die
+	git clone https://github.com/cask/cask ~/.cask
 	export PATH="${HOME}/.cask/bin:$PATH"
 	if ! use flycheck ; then
 		sed -i -e 's|(depends-on "flycheck")||g' Cask || die
@@ -153,6 +173,10 @@ install_deps() {
 		export YCMD_SLOT=44
 	elif use ycmd-45 ; then
 		export YCMD_SLOT=45
+	elif use ycmd-46 ; then
+		export YCMD_SLOT=46
+	elif use ycmd-47 ; then
+		export YCMD_SLOT=47
 	fi
 	BD_REL="ycmd/${YCMD_SLOT}"
 	BD_ABS="$(python_get_sitedir)/${BD_REL}"
@@ -272,20 +296,18 @@ ${BD_ABS}/third_party/godef/godef|g" \
 
 	if use java ; then
 		local java_vendor=$(java-pkg_get-vm-vendor)
-		if use ycmd-44 || use ycmd-45 ; then
-			local java_slot=11
-			  if [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}" ]] ; then
-				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}"
-			elif [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}" ]] ; then
-				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}"
-			fi
+		local java_slot
+		if use ycmd-46 || use ycmd-47 ; then
+			java_slot=17
+		elif use ycmd-44 || use ycmd-45 ; then
+			java_slot=11
 		else
-			local java_slot=8
-			  if [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}" ]] ; then
-				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}"
-			elif [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}" ]] ; then
-				jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}"
-			fi
+			java_slot=8
+		fi
+		  if [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}"
+		elif [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}"
 		fi
 		[[ -n "${jp}" ]] && jp="${jp}/bin/java"
 	fi
@@ -347,7 +369,7 @@ ${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
 			"${sitefile_path}" \
 			|| die
 	else
-		if use ycmd-43 || use ycmd-44 || use ycmd-45 ; then
+		if use ycmd-43 || use ycmd-44 || use ycmd-45 || use ycmd-46 || use ycmd-47 ; then
 			sed -i -e "s|\
 ___YCMD-EMACS_ROSLYN_ABSPATH___|\
 ${BD_ABS}/third_party/omnisharp-roslyn/run|g" \
@@ -459,8 +481,18 @@ src_install() {
 pkg_postinst() {
         elisp-site-regen
 	if ! use company-mode ; then
-		ewarn "company-mode is strongly recommended for popup suggestions."
+ewarn
+ewarn "company-mode is strongly recommended for popup suggestions."
+ewarn
 	fi
+einfo
+einfo "Keybindings can be found in"
+einfo
+einfo "  https://github.com/abingham/emacs-ycmd/blob/master/ycmd.el#L610"
+einfo
+ewarn
+ewarn "You must use /usr/bin/emacs-${EMACS_SLOT} in order for ${PN} to work."
+ewarn
 }
 
 pkg_postrm() {
@@ -468,3 +500,15 @@ pkg_postrm() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.3_p20201101 c17ff9e (20230629) with emacs 27.2
+# USE="company-mode ycmd-47 -builtin-completion (-debug) -eldoc -flycheck
+# -go-mode -java -next-error -rust-mode -system-gocode -system-godef
+# -system-gopls -system-jdtls -system-mono -system-omnisharp -system-racerd
+# -system-rust -system-typescript -typescript-mode -ycmd-43 -ycmd-44 -ycmd-45
+# -ycmd-46"
+# PYTHON_SINGLE_TARGET="python3_10 -python3_11"
+# popup - passed
+# python completion - passed
+# python arg documentation - passed
+# GoToDefinition - passed			# Use C-c Y gD
+# GetDoc - passed				# Use C-c Y x GetDoc /usr/bin/python3.10

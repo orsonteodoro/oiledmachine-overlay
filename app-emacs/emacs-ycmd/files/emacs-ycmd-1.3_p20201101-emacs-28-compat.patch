@@ -1,0 +1,12 @@
+diff -urp emacs-ycmd-c17ff9e0250a9b39d23af37015a2b300e2f36fed.orig/ycmd.el emacs-ycmd-c17ff9e0250a9b39d23af37015a2b300e2f36fed/ycmd.el
+--- emacs-ycmd-c17ff9e0250a9b39d23af37015a2b300e2f36fed.orig/ycmd.el	2020-11-01 02:45:46.000000000 -0800
++++ emacs-ycmd-c17ff9e0250a9b39d23af37015a2b300e2f36fed/ycmd.el	2023-06-29 10:33:43.142122955 -0700
+@@ -2264,7 +2264,7 @@ The timeout can be set with the variable
+ (eval-and-compile
+   (if (version-list-< (version-to-list emacs-version) '(25))
+       (defun ycmd--encode-string (s) s)
+-    (defun ycmd--encode-string (s) (encode-coding-string s 'utf-8 t))))
++    (defun ycmd--encode-string (s) (encode-coding-string s 'utf-8))))
+ 
+ (defun ycmd--get-basic-request-data ()
+   "Build the basic request data alist for a server request."

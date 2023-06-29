@@ -8,6 +8,7 @@ M = alt
 A YCMd on the top status bar indicates the buffer is in ycmd major mode.
 
 C-x customize-themes		-- choose color theme
+C-x C-s				-- save editor settings
 C-x C-c				-- exit emacs
 C-c Y v				-- show debug info
 C-c Y V				-- show version
@@ -17,6 +18,11 @@ C-x <left>			-- switch buffer, keep pressing left until you see the ycmd traceba
 C-x <right>			-- switch buffer, keep pressing right until you see the ycmd traceback errors
 C-x C-s				-- save
 C-x k				-- kill buffer in same window
+C-g				-- close annoying minibuffer (resulting from M-)
+C-x 1				-- unsplit window
+M-x ycmd-mode			-- enters ycmd mode
 
 Using C-x C-v should report:
 Server is running
+
+

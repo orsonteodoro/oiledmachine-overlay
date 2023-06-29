@@ -24,25 +24,27 @@
       Adds basic support for in-place completion.
     </flag>
     <flag name="company-mode">
-      Adds support for company-mode.
+      Adds support for company-mode for text completion.
     </flag>
     <flag name="debug">
       Enables enhanced debug reporting.
     </flag>
     <flag name="eldoc">
-      Adds eldoc support.
+      Adds eldoc support for displaying function args and a variable purpose.
     </flag>
     <flag name="flycheck">
       Integrates flycheck syntax checking.
     </flag>
     <flag name="go-mode">
-      Adds support for go-mode.
+      Adds support for the Go programming language via go-mode.
     </flag>
     <flag name="next-error">
-      Adds next-error integration.
+      Adds next-error integration for inspecting errors in sequential forward or
+      reverse order.
     </flag>
     <flag name="rust-mode">
-      Adds support for rust-mode.
+      Adds support for the Rust programming language via rust-mode for syntax
+      highlighting, indentation, cargo integration.
     </flag>
     <flag name="system-gocode">
       Configures emacs-ycmd to use the system gocode.  Otherwise, fallback
@@ -78,7 +80,7 @@
       to the internal ycmd rust.
     </flag>
     <flag name="typescript-mode">
-      Adds support for typescript-mode.
+      Adds support for the TypeScript programming language via typescript-mode.
     </flag>
     <flag name="ycmd-43">
       Set up ycmd for compatibility with core version 43
