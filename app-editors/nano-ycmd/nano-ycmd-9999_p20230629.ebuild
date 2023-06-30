@@ -18,7 +18,7 @@ HOMEPAGE="
 LICENSE="GPL-3+ LGPL-2+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-YCMD_SLOTS=(47 46 45 44 43)
+YCMD_SLOTS=( 47 46 45 44 43 )
 IUSE+="
 bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls slang
 +spell static openmp openssl system-clangd system-gnulib system-gocode
@@ -131,7 +131,6 @@ http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=snapshot;h=${GNULIB_COMMIT};s
 	-> gnulib-${GNULIB_COMMIT_SHORT}.tar.gz
 "
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
-BD_REL="ycmd/${SLOT}"
 BD_ABS=""
 PATCHES=(
 )
@@ -265,8 +264,7 @@ src_configure() {
 	for s in ${YCMD_SLOTS[@]} ; do
 		use ycmd-${s} && ycmd_slot=${s}
 	done
-	BD_REL="ycmd/${ycmd_slot}"
-	BD_ABS="$(python_get_sitedir)/${BD_REL}"
+	BD_ABS="$(python_get_sitedir)/ycmd/${ycmd_slot}"
 	use static && append-ldflags -static
 	local myconf=()
 	case ${CHOST} in
