@@ -84,7 +84,6 @@ https://github.com/abingham/emacs-ycmd/archive/${EGIT_COMMIT}.tar.gz
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 SITEFILE="50emacs-ycmd-gentoo.el"
-BD_REL="ycmd/${SLOT}"
 BD_ABS=""
 PATCHES=(
 	"${FILESDIR}/${PN}-1.3_p20191206-support-core-version-44.patch"
@@ -178,8 +177,7 @@ install_deps() {
 	elif use ycmd-47 ; then
 		export YCMD_SLOT=47
 	fi
-	BD_REL="ycmd/${YCMD_SLOT}"
-	BD_ABS="$(python_get_sitedir)/${BD_REL}"
+	BD_ABS="${PYTHON_SITEDIR}/ycmd/${YCMD_SLOT}"
 }
 
 src_unpack() {
@@ -193,107 +191,113 @@ src_configure() {
 	cp "${FILESDIR}/${SITEFILE}" "${WORKDIR}"
 	local sitefile_path="${WORKDIR}/${SITEFILE}"
 
-	sed -i -e "s|__EPYTHON__|${EPYTHON}|g" \
-		"${sitefile_path}"  || die
+	sed -i \
+		-e "s|__EPYTHON__|${EPYTHON}|g" \
+		"${sitefile_path}" \
+		|| die
 
+	local debug_str=""
 	if use debug ; then
-		sed -i -e "s|\
-___YCMD-EMACS_DEBUG___|\
-(setq debug-on-error t)|g" \
-			"${sitefile_path}"  || die
+		debug_str="(setq debug-on-error t)"
 	else
-		sed -i -e "s|\
-___YCMD-EMACS_DEBUG___|\
-|g" \
-			"${sitefile_path}"  || die
+		debug_str=""
 	fi
+	sed -i \
+		-e "s|___YCMD-EMACS_DEBUG___|${debug_str}|g" \
+		"${sitefile_path}" \
+		|| die
 
+	local next_error_str=""
 	if use next-error; then
-		sed -i -e "s#\
-___YCMD-EMACS_NEXT_ERROR___#\
-$(cat ${FILESDIR}/next-error.frag | sed ':a;N;$!ba;s/\n/\\n/g')#g" \
-			"${sitefile_path}"  || die
+		next_error_str=$(cat ${FILESDIR}/next-error.frag \
+			| sed ':a;N;$!ba;s/\n/\\n/g')
 	else
-		sed -i -e "s|___YCMD-EMACS_NEXT_ERROR___||g" \
-			"${sitefile_path}" || die
+		next_error_str=""
 	fi
+	sed -i \
+		-e "s#___YCMD-EMACS_NEXT_ERROR___#${next_error_str}#g" \
+		"${sitefile_path}" \
+		|| die
+
+	local builtin_completion_str=""
 	if use builtin-completion ; then
-		sed -i -e "s#\
-___YCMD-EMACS_BUILTIN_COMPLETION___#\
-$(cat ${FILESDIR}/builtin-completion.frag | sed ':a;N;$!ba;s/\n/\\n/g')#g" \
-			"${sitefile_path}" || die
+		builtin_completion_str=$(cat ${FILESDIR}/builtin-completion.frag \
+			| sed ':a;N;$!ba;s/\n/\\n/g')
 	else
-		sed -i -e "s|___YCMD-EMACS_BUILTIN_COMPLETION___||g" \
-			"${sitefile_path}" || die
+		builtin_completion_str=""
 	fi
+	sed -i \
+		-e "s#___YCMD-EMACS_BUILTIN_COMPLETION___#${builtin_completion_str}#g" \
+		"${sitefile_path}" \
+		|| die
+
+	local company_mode_str=""
 	if use company-mode ; then
-		sed -i -e "s#\
-___YCMD-EMACS_COMPANY_MODE___#\
-$(cat ${FILESDIR}/company-mode.frag | sed ':a;N;$!ba;s/\n/\\n/g')#g" \
-			"${sitefile_path}" || die
+		company_mode_str=$(cat ${FILESDIR}/company-mode.frag \
+			| sed ':a;N;$!ba;s/\n/\\n/g')
 	else
-		sed -i -e "s|___YCMD-EMACS_COMPANY_MODE___||g" \
-			"${sitefile_path}" || die
+		company_mode_str=""
 	fi
+	sed -i -e "s#___YCMD-EMACS_COMPANY_MODE___#${company_mode_str}#g" \
+		"${sitefile_path}" \
+		|| die
+
+	local flycheck_str=""
 	if use flycheck ; then
-		sed -i -e "s#\
-___YCMD-EMACS_FLYCHECK___#\
-$(cat ${FILESDIR}/flycheck.frag | sed ':a;N;$!ba;s/\n/\\n/g')#g" \
-			"${sitefile_path}" || die
+		flycheck_str=$(cat ${FILESDIR}/flycheck.frag \
+			| sed ':a;N;$!ba;s/\n/\\n/g')
 	else
-		sed -i -e "s|___YCMD-EMACS_FLYCHECK___||g" \
-			"${sitefile_path}" || die
+		flycheck_str=""
 	fi
+	sed -i -e "s#___YCMD-EMACS_FLYCHECK___#${flycheck_str}#g" \
+		"${sitefile_path}" || die
+
+	local eldoc_str=""
 	if use eldoc ; then
-		sed -i -e "s#\
-___YCMD-EMACS_ELDOC___#\
-$(cat ${FILESDIR}/eldoc.frag | sed ':a;N;$!ba;s/\n/\\n/g')#g" \
-			"${sitefile_path}" || die
+		eldoc_str=$(cat ${FILESDIR}/eldoc.frag \
+			| sed ':a;N;$!ba;s/\n/\\n/g')
 	else
-		sed -i -e "s|\
-___YCMD-EMACS_ELDOC___|\
-|g" \
-			"${sitefile_path}" || die
+		eldoc_str=""
 	fi
+	sed -i \
+		-e "s#___YCMD-EMACS_ELDOC___#${eldoc_str}#g" \
+		"${sitefile_path}" \
+		|| die
 
+	local gopls_str=""
 	if use system-gopls ; then
-		sed -i -e "s|\
-___YCMD-EMACS_GOPLS_ABSPATH___|\
-${EPREFIX}/usr/bin/gopls|g" \
-			"${sitefile_path}" || die
+		gopls_str="${EPREFIX}/usr/bin/gopls"
 	else
-		sed -i -e "s|\
-___YCMD-EMACS_GOPLS_ABSPATH___|\
-${BD_ABS}/third_party/go/bin/gopls|g" \
-			"${sitefile_path}" || die
+		gopls_str="${BD_ABS}/third_party/go/bin/gopls"
 	fi
+	sed -i \
+		-e "s|___YCMD-EMACS_GOPLS_ABSPATH___|${gopls_str}|g" \
+		"${sitefile_path}" \
+		|| die
 
+	local gocode_str=""
 	if use system-gocode ; then
-		sed -i -e "s|\
-___YCMD-EMACS_GOCODE_ABSPATH___|\
-${EPREFIX}/usr/bin/gocode|g" \
-			"${sitefile_path}" || die
+		gocode_str="${EPREFIX}/usr/bin/gocode"
 	else
-		sed -i -e "s|\
-___YCMD-EMACS_GOCODE_ABSPATH___|\
-${BD_ABS}/third_party/gocode/gocode|g" \
-			"${sitefile_path}" || die
+		gocode_str="${BD_ABS}/third_party/gocode/gocode"
 	fi
+	sed -i \
+		-e "s|___YCMD-EMACS_GOCODE_ABSPATH___|${gocode_str}|g" \
+		"${sitefile_path}" \
+		|| die
 
+	local godef_str=""
 	if use system-godef ; then
-		sed -i -e "s|\
-___YCMD-EMACS_GODEF_ABSPATH___|\
-${EPREFIX}/usr/bin/godef|g" \
-			"${sitefile_path}" || die
+		godef_str="${EPREFIX}/usr/bin/godef"
 	else
-		sed -i -e "s|\
-___YCMD-EMACS_GODEF_ABSPATH___|\
-${BD_ABS}/third_party/godef/godef|g" \
-			"${sitefile_path}" || die
+		godef_str="${BD_ABS}/third_party/godef/godef"
 	fi
+	sed -i \
+		-e "s|___YCMD-EMACS_GODEF_ABSPATH___|${godef_str}|g" \
+		"${sitefile_path}" \
+		|| die
 
 	local jp=""
-
 	if use java ; then
 		local java_vendor=$(java-pkg_get-vm-vendor)
 		local java_slot
@@ -312,159 +316,139 @@ ${BD_ABS}/third_party/godef/godef|g" \
 		[[ -n "${jp}" ]] && jp="${jp}/bin/java"
 	fi
 	sed -i \
-		-e "s|\
-___YCMD-EMACS_JAVA_ABSPATH___|\
-${jp}|g" \
+		-e "s|___YCMD-EMACS_JAVA_ABSPATH___|${jp}|g" \
 		"${sitefile_path}" \
 		|| die
 
+	local jdtls_workspace_root_abspath_str=""
+	local jdtls_extension_abspath_str=""
 	if use system-jdtls ; then
-		sed -i \
-			-e "s|\
-___YCMD-EMACS_JDTLS_WORKSPACE_ROOT_ABSPATH___|\
-${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}|g" \
-			"${sitefile_path}" \
-			|| die
-		sed -i \
-			-e "s|\
-___YCMD-EMACS_JDTLS_EXTENSION_ABSPATH___|\
-${EYCMD_JDTLS_EXTENSION_PATH}|g" \
-			"${sitefile_path}" \
-			|| die
+		jdtls_workspace_root_abspath_str="${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}"
+		jdtls_extension_abspath_str="${EYCMD_JDTLS_EXTENSION_PATH}"
 	else
-		sed -i \
-			-e "s|\
-___YCMD-EMACS_JDTLS_WORKSPACE_ROOT_ABSPATH___|\
-${BD_ABS}/third_party/eclipse.jdt.ls/workspace|g" \
-			"${sitefile_path}" \
-			|| die
-		sed -i \
-			-e "s|\
-___YCMD-EMACS_JDTLS_EXTENSION_ABSPATH___|\
-\"${BD_ABS}/third_party/eclipse.jdt.ls/extensions\"|g" \
-			"${sitefile_path}" \
-			|| die
+		jdtls_workspace_root_abspath_str="${BD_ABS}/third_party/eclipse.jdt.ls/workspace"
+		jdtls_extension_abspath_str="${BD_ABS}/third_party/eclipse.jdt.ls/extensions"
 	fi
+	sed -i \
+		-e "s|___YCMD-EMACS_JDTLS_WORKSPACE_ROOT_ABSPATH___|${jdtls_workspace_root_abspath_str}|g" \
+		"${sitefile_path}" \
+		|| die
+	sed -i \
+		-e "s|___YCMD-EMACS_JDTLS_EXTENSION_ABSPATH___|\"${jdtls_extension_abspath_str}\"|g" \
+		"${sitefile_path}" \
+		|| die
 
+	local system_mono_str=""
 	if use system-mono ; then
-		sed -i \
-			-e "s|\
-___YCMD-EMACS_MONO_ABSPATH___|\
-${EPREFIX}/usr/bin/mono|g" \
-			"${sitefile_path}" \
-			|| die
+		system_mono_str="${EPREFIX}/usr/bin/mono"
 	else
-		sed -i \
-			-e "s|\
-___YCMD-EMACS_MONO_ABSPATH___|\
-${BD_ABS}/third_party/omnisharp-roslyn/bin/mono|g" \
-			"${sitefile_path}" \
-			|| die
+		system_mono_str="${BD_ABS}/third_party/omnisharp-roslyn/bin/mono"
 	fi
+	sed -i \
+		-e "s|___YCMD-EMACS_MONO_ABSPATH___|${system_mono_str}|g" \
+		"${sitefile_path}" \
+		|| die
 
+	local rosyln_abspath_str=""
 	if use system-omnisharp ; then
-		sed -i -e "s|\
-___YCMD-EMACS_ROSLYN_ABSPATH___|\
-${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
-			"${sitefile_path}" \
-			|| die
+		rosyln_abspath_str="${BD_ABS}/ycmd/completers/cs/omnisharp.sh"
 	else
 		if use ycmd-43 || use ycmd-44 || use ycmd-45 || use ycmd-46 || use ycmd-47 ; then
-			sed -i -e "s|\
-___YCMD-EMACS_ROSLYN_ABSPATH___|\
-${BD_ABS}/third_party/omnisharp-roslyn/run|g" \
-				"${sitefile_path}" \
-				|| die
+			rosyln_abspath_str="${BD_ABS}/third_party/omnisharp-roslyn/run"
 		else
-			die "ycmd-slot- not supported."
+			rosyln_abspath_str=""
 		fi
 	fi
+	sed -i \
+		-e "s|___YCMD-EMACS_ROSLYN_ABSPATH___|${rosyln_abspath_str}|g" \
+		"${sitefile_path}" \
+		|| die
 
+	local racerd_abspath_str=""
 	if use system-racerd ; then
-		sed -i -e "s|\
-___YCMD-EMACS_RACERD_ABSPATH___|\
-${EPREFIX}/usr/bin/racerd|g" \
-			"${sitefile_path}" \
-			|| die
+		racerd_abspath_str="${EPREFIX}/usr/bin/racerd"
 	else
-		sed -i -e "s|\
-___YCMD-EMACS_RACERD_ABSPATH___|\
-${BD_ABS}/third_party/racerd/racerd|g" \
-			"${sitefile_path}" || die
+		racerd_abspath_str="${BD_ABS}/third_party/racerd/racerd"
 	fi
+	sed -i \
+		-e "s|___YCMD-EMACS_RACERD_ABSPATH___|${racerd_abspath_str}|g" \
+		"${sitefile_path}" \
+		|| die
 
+	local rls_abspath_str=""
 	if use system-rust ; then
-		sed -i -e "s|\
-___YCMD-EMACS_RLS_ABSPATH___|\
-${EPREFIX}/usr/bin/rls|g" \
-			"${sitefile_path}" || die
+		rls_abspath_str="${EPREFIX}/usr/bin/rls"
 	else
-		sed -i -e "s|\
-___YCMD-EMACS_RLS_ABSPATH___|\
-${BD_ABS}/third_party/rls/bin/rls|g" \
-			"${sitefile_path}" || die
+		rls_abspath_str="${BD_ABS}/third_party/rls/bin/rls"
 	fi
+	sed -i \
+		-e "s|___YCMD-EMACS_RLS_ABSPATH___|${rls_abspath_str}|g" \
+		"${sitefile_path}" \
+		|| die
 
+	local rustc_abspath_str=""
 	if use system-rust ; then
-		sed -i -e "s|\
-___YCMD-EMACS_RUSTC_ABSPATH___|\
-${EPREFIX}/usr/bin/rustc|g" \
-			"${sitefile_path}" || die
+		rustc_abspath_str="${EPREFIX}/usr/bin/rustc"
 	else
-		sed -i -e "s|\
-___YCMD-EMACS_RUSTC_ABSPATH___|\
-${BD_ABS}/third_party/rls/bin/rustc|g" \
-			"${sitefile_path}" || die
+		rustc_abspath_str="${BD_ABS}/third_party/rls/bin/rustc"
 	fi
+	sed -i \
+		-e "s|___YCMD-EMACS_RUSTC_ABSPATH___|${rustc_abspath_str}|g" \
+		"${sitefile_path}" \
+		|| die
 
+	local tsserver_abspath_str=""
 	if use system-typescript ; then
-		sed -i -e "s|\
-___YCMD-EMACS_TSSERVER_ABSPATH___|\
-${EPREFIX}/usr/bin/tsserver|g" \
-			"${sitefile_path}" || die
+		tsserver_abspath_str="${EPREFIX}/usr/bin/tsserver"
 	else
-		sed -i -e "s|\
-___YCMD-EMACS_TSSERVER_ABSPATH___|\
-${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver|g" \
-			"${sitefile_path}" || die
+		tsserver_abspath_str="${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
 	fi
+	sed -i \
+		-e "s|___YCMD-EMACS_TSSERVER_ABSPATH___|${tsserver_abspath_str}|g" \
+		"${sitefile_path}" \
+		|| die
 
-	sed -i -e "s|\
-___YCMD-EMACS_RUST_ABSPATH___|\
-${EPREFIX}/usr/share/rust/src|g" \
-		"${sitefile_path}" || die
+	local rust_abspath_str="${EPREFIX}/usr/share/rust/src"
+	sed -i \
+		-e "s|___YCMD-EMACS_RUST_ABSPATH___|${rust_abspath_str}|g" \
+		"${sitefile_path}" \
+		|| die
 
-	sed -i -e "s|\
-___YCMD-EMACS-YCMD-DIR___|\
-${BD_ABS}/ycmd|g" \
-		"${sitefile_path}" || die
 
-	sed -i -e "s|\
-___YCMD-EMACS_PYTHON_ABSPATH___|\
-${EPREFIX}/usr/bin/${EPYTHON}|g" \
-		"${sitefile_path}" || die
+	local ycmd_dir_str="${BD_ABS}/ycmd"
+	sed -i \
+		-e "s|___YCMD-EMACS-YCMD-DIR___|${ycmd_dir_str}|g" \
+		"${sitefile_path}" \
+		|| die
 
-	sed -i -e "s|\
-___YCMD-EMACS_GLOBAL_CONFIG_ABSPATH___|\
-/tmp/.ycm_extra_conf.py|g" \
-		"${sitefile_path}" || die
+	local python_abspath_str="${EPREFIX}/usr/bin/${EPYTHON}"
+	sed -i \
+		-e "s|___YCMD-EMACS_PYTHON_ABSPATH___|${python_abspath_str}|g" \
+		"${sitefile_path}" \
+		|| die
 
+	local ycm_extra_conf_abspath_str="/tmp/.ycm_extra_conf.py"
+	sed -i \
+		-e "s|___YCMD-EMACS_GLOBAL_CONFIG_ABSPATH___|${ycm_extra_conf_abspath_str}|g" \
+		"${sitefile_path}" \
+		|| die
+
+	local rust_tc_dir_str=""
 	if use system-rust ; then
-		sed -i -e "s|\
-___YCMD-EMACS_RUST_TC_DIR___|\
-/usr|g" \
-			"${sitefile_path}" || die
+		rust_tc_dir_str="/usr"
 	else
-		sed -i -e "s|\
-___YCMD-EMACS_RUST_TC_DIR___|\
-${BD_ABS}/third_party/rust-analyzer|g" \
-			"${sitefile_path}" || die
+		rust_tc_dir_str="${BD_ABS}/third_party/rust-analyzer"
 	fi
+	sed -i \
+		-e "s|___YCMD-EMACS_RUST_TC_DIR___|${rust_tc_dir_str}|g" \
+		"${sitefile_path}" \
+		|| die
 
-	sed -i -e "s|\
-___YCMD-EMACS_CORE_VERSION___|\
-${YCMD_SLOT}|g" \
-		"${sitefile_path}" || die
+	local ycmd_slot_str="${YCMD_SLOT}"
+	sed -i \
+		-e "s|___YCMD-EMACS_CORE_VERSION___|${ycmd_slot_str}|g" \
+		"${sitefile_path}" \
+		|| die
 }
 
 
