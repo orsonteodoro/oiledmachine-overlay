@@ -81,10 +81,12 @@ LICENSE="
 	)
 	javascript? (
 		!system-tern? (
-			all-rights-reserved
+			(
+				all-rights-reserved
+				MIT
+			)
 			CC-BY-SA-4.0
 			ISC
-			MIT
 		)
 	)
 	libclang? (
