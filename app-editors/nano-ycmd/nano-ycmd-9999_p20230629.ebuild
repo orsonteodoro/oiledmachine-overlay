@@ -7,7 +7,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit autotools flag-o-matic python-single-r1
+inherit autotools flag-o-matic java-pkg-opt-2 python-single-r1
 
 DESCRIPTION="GNU GPL'd Pico clone with more functionality with ycmd support"
 HOMEPAGE="
@@ -18,13 +18,14 @@ HOMEPAGE="
 LICENSE="GPL-3+ LGPL-2+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-YCMD_SLOTS=(45 44 43)
+YCMD_SLOTS=(47 46 45 44 43)
 IUSE+="
-${YCMD_SLOTS[@]/#/ycmd-}
 bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls slang
 +spell static openmp openssl system-clangd system-gnulib system-gocode
 system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
-system-rustc system-tsserver unicode ycm-generator
+system-rustc system-tsserver unicode ycm-generator ycmd-43 ycmd-44 ycmd-45
+ycmd-46 +ycmd-47
+r6
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -113,10 +114,14 @@ DEPEND+="
 "
 BDEPEND+="
 	virtual/pkgconfig
-	nls? ( sys-devel/gettext )
-	static? ( ${LIB_DEPEND} )
+	nls? (
+		sys-devel/gettext
+	)
+	static? (
+		${LIB_DEPEND}
+	)
 "
-EGIT_COMMIT="7497cc6cee14d4a2d406975d478facb20d19e62a"
+EGIT_COMMIT="af35e63feb585e19a8e84f15093cb0a92e353f01"
 GNULIB_COMMIT="c9b44f214c7c798c7701c7a281584e262b263655" # listed in ./autogen.sh
 GNULIB_COMMIT_SHORT="${GNULIB_COMMIT:0:7}"
 SRC_URI="
@@ -128,6 +133,24 @@ http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=snapshot;h=${GNULIB_COMMIT};s
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 BD_REL="ycmd/${SLOT}"
 BD_ABS=""
+PATCHES=(
+)
+
+pkg_setup() {
+	if use java ; then
+		java-pkg-opt-2_pkg_setup
+		local java_vendor=$(java-pkg_get-vm-vendor)
+		if ! [[ "${java_vendor}" =~ "openjdk" ]] ; then
+ewarn
+ewarn "Java vendor mismatch.  Runtime failure or quirks may show."
+ewarn
+ewarn "Actual Java vendor:  ${java_vendor}"
+ewarn "Expected java vendor:  openjdk"
+ewarn
+		fi
+	fi
+	python-single-r1_pkg_setup
+}
 
 src_unpack() {
 	unpack ${A}
@@ -196,6 +219,7 @@ econf_ycmd_slot_44() {
 	local envars=(
 		RUST_TOOLCHAIN_PATH=""
 		GOPLS_PATH="${gopls_path}"
+		JAVA_PATH="${java_path}"
 		MONO_PATH="${mono_path}"
 		NINJA_PATH="/usr/bin/ninja"
 		RUST_TOOLCHAIN_PATH="${rust_toolchain_path}"
@@ -255,6 +279,7 @@ src_configure() {
 	local gocode_path=""
 	local godef_path=""
 	local gopls_path=""
+	local java_path=""
 	local mono_path=""
 	local racerd_path=""
 	local rls_path=""
@@ -262,6 +287,24 @@ src_configure() {
 	local rustc_path=""
 	local omnisharp_path=""
 	local tsserver_path=""
+	if use java ; then
+		local java_vendor=$(java-pkg_get-vm-vendor)
+		local java_slot
+		if use ycmd-46 || use ycmd-47 ; then
+			java_slot=17
+		elif use ycmd-44 || use ycmd-45 ; then
+			java_slot=11
+		else
+			java_slot=8
+		fi
+		  if [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}"
+		elif [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}"
+		fi
+		[[ -n "${jp}" ]] && jp="${jp}/bin/java"
+		java_path="${jp}"
+	fi
 	if use system-clangd ; then
 		gocode_path="/usr/bin/clangd"
 	else
@@ -305,7 +348,7 @@ src_configure() {
 				rv=$(ver_cut 1-3 ${rv})
 				rls_path="/usr/lib/rust/${rv}/bin/rls"
 			fi
-		elif use ycmd-44 || use ycmd-45 ; then
+		elif use ycmd-44 || use ycmd-45 || use ycmd-46 || use ycmd-47 ; then
 			if has_version 'dev-lang/rust-bin' ; then
 				local rv=$(best_version 'dev-lang/rust-bin' \
 					| sed -e "s|dev-lang/rust-bin-||")
@@ -326,7 +369,7 @@ eerror
 	else
 		if use ycmd-43 ; then
 			rls_path="${BD_ABS}/third_party/rls/bin/rls"
-		elif use ycmd-44 || use ycmd-45 ; then
+		elif use ycmd-44 || use ycmd-45 || use ycmd-46 || use ycmd-47 ; then
 			rust_toolchain_path="${BD_ABS}/third_party/rust-analyzer"
 		fi
 	fi
@@ -345,14 +388,14 @@ eerror
 	else
 		if use ycmd-43 ; then
 			tsserver_path="${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
-		elif use ycmd-44 || use ycmd-45 ; then
+		elif use ycmd-44 || use ycmd-45 || use ycmd-46 || use ycmd-47 ; then
 			tsserver_path="${BD_ABS}/third_party/tsserver/node_modules/typescript/bin/tsserver"
 		fi
 	fi
 
 	if use ycmd-43 ; then
 		econf_ycmd_slot_43
-	elif use ycmd-44 || use ycmd-45 ; then
+	elif use ycmd-44 || use ycmd-45 || use ycmd-46 || use ycmd-47 ; then
 		econf_ycmd_slot_44
 	else
 eerror
@@ -386,3 +429,13 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  FAIL 7497cc6 9999_p20210419 (20230629) with ycmd-45
+# connecting to ycmd:  passed
+# python completion:  passed
+
+# OILEDMACHINE-OVERLAY-TEST:  FAIL 7497cc6 9999_p20210419 (20230629) with ycmd-47
+# connecting to ycmd:  passed
+# python completion:  passed
+# GetDoc (python):  bugged, does not open up definition in another window but same window
+# GoToDefinition (python):  fail
+# TODO:  Fix GetDoc, GoToDefinition

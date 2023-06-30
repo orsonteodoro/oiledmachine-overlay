@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <!-- for this fork on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
   <maintainer type="person">
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <!-- originator -->
   <maintainer type="person">
+    <!-- Ebuild originator for nano ebuild -->
     <email>polynomial-c@gentoo.org</email>
     <name>Lars Wendler</name>
   </maintainer>
   <longdescription>
+
     nano-ycmd is the nano text editor with YCMD support, providing IDE
     enhancements.
 
@@ -27,8 +32,9 @@
     alongside with the vanilla nano.
 
     For hotkeys see,
-https://github.com/orsonteodoro/nano-ycmd/blob/ymcd-code-completion/src/global.c#L1389
 
+      https://github.com/orsonteodoro/nano-ycmd/blob/ymcd-code-completion/src/global.c#L1389
+  
     ----
 
     GNU nano - an enhanced clone of the Pico text editor.
@@ -46,74 +52,151 @@ https://github.com/orsonteodoro/nano-ycmd/blob/ymcd-code-completion/src/global.c
     nano aims to solve these problems by emulating the functionality of
     Pico as closely as possible while addressing the problems above and
     perhaps providing other extra functionality.
+
   </longdescription>
+  <!--
+
+    oiledmachine overlay notes:
+
+    Hotkey examples:
+
+    M- Alt
+    C- Ctrl
+
+    C-`             -- Open up YCMD command menu
+    C-` C-o         -- Open up definition in a new indow
+    C-` C-d         -- Goes to the function definition
+    C-` C-c         -- Goes to declaration
+    C-` C-space     -- Closes the YCMD command menu
+    C-` C-i         -- Goes to the include
+    C-` C-x         -- Reloads .ycm_extra_conf.py for C projects
+    C-` C-f         -- Fixes easy trivial errors
+    C-` M-f         -- Displays all FixIts
+    C-` C-t         -- Gets type
+
+  -->
   <upstream>
-    <!-- for ycmd support -->
     <maintainer type="person">
+      <!-- For ycmd integration in nano -->
       <name>Orson Teodoro</name>
       <email>orsonteodoro@hotmail.com</email>
-    </maintainer>
-    <!-- for nano -->
-    <maintainer type="person">
-      <name>Benno Schulenberg</name>
     </maintainer>
     <remote-id type="github">orsonteodoro/nano-ycmd</remote-id>
     <bugs-to>https://github.com/orsonteodoro/nano-ycmd/issues</bugs-to>
   </upstream>
   <use>
-    <flag name="bear">Adds GNU make, qmake, cmake project support for
-      the clang completer.</flag>
-    <flag name="debug">Enable debug messages and assert warnings.  Note that
-      these will all be sent straight to stderr rather than some logging
-      facility.
+    <flag name="bear">
+      Adds GNU make, qmake, cmake project support for the clang completer.
     </flag>
-    <flag name="justify">Enable justify/unjustify functions for text
-      formatting.</flag>
-    <flag name="libgcrypt">Uses Libgcrypt for HMAC computation.</flag>
-    <flag name="magic">Add magic file support (sys-apps/file) to automatically
-      detect appropriate syntax highlighting
+    <flag name="debug">
+      Enable debug messages and assert warnings.  Note that these will all be
+      sent straight to stderr rather than some logging facility.
     </flag>
-    <flag name="minimal">Disable all fancy features, including ones that
-      otherwise have a dedicated USE flag (such as spelling).
+    <flag name="justify">
+      Enable justify/unjustify functions for text formatting.
     </flag>
-    <flag name="ninja">Adds ninja build system support for the
-      clang completer.</flag>
-    <flag name="ncurses">Uses ncurses for better key combo support.</flag>
-    <flag name="nettle">Uses Nettle for HMAC computation.</flag>
-    <flag name="nls">Enable command language translations.</flag>
-    <flag name="slang">Uses slang for better key combo support.</flag>
-    <flag name="spell">Enables spell checking.</flag>
-    <flag name="static">Builds as a monolithic binary with little to no
-      shared library dependencies.</flag>
-    <flag name="openmp">Enables multicore support.</flag>
-    <flag name="openssl">Uses OpenSSL for HMAC computation.</flag>
-    <flag name="system-gnulib">Uses the system's Gnulib to compile
-      nano-ycmd</flag>
-    <flag name="system-clangd">Configures ycmd to use the system's clangd
-      instead of ycmd internal dependency.</flag>
-    <flag name="system-gocode">Configures ycmd to use the system's gocode
-      instead of ycmd internal dependency.</flag>
-    <flag name="system-godef">Configures ycmd to use the system's godef
-      instead of ycmd internal dependency.</flag>
-    <flag name="system-gopls">Configures ycmd to use the system's gopls
-      instead of ycmd internal dependency.</flag>
-    <flag name="system-mono">Configures ycmd to use the system's mono
-      instead of ycmd internal dependency.</flag>
-    <flag name="system-racerd">Configures ycmd to use the system's racerd
-      instead of ycmd internal dependency.</flag>
-    <flag name="system-rust">Configures ycmd to use the system's rust
-      instead of ycmd internal dependency.</flag>
-    <flag name="system-rustc">Configures ycmd to use the system's rustc
-      instead of ycmd internal dependency.</flag>
-    <flag name="system-omnisharp">Configures ycmd to use the system's omnisharp
-      instead of ycmd internal dependency.</flag>
-    <flag name="system-tsserver">Configures ycmd to use the system's tsserver
-      instead of ycmd internal dependency.</flag>
-    <flag name="unicode">Enables UTF-8 support.</flag>
-    <flag name="ycmd-43">Use ycmd core version 43.</flag>
-    <flag name="ycmd-44">Use ycmd core version 44.</flag>
-    <flag name="ycmd-45">Use ycmd core version 45.</flag>
-    <flag name="ycm-generator">Add C / C++ / ObjC / ObjC++ support for the
-      clang completer.</flag>
+    <flag name="libgcrypt">
+      Uses Libgcrypt for HMAC computation.
+    </flag>
+    <flag name="magic">
+      Add magic file support (sys-apps/file) to automatically detect appropriate
+      syntax highlighting
+    </flag>
+    <flag name="minimal">
+      Disable all fancy features, including ones that otherwise have a dedicated
+      USE flag (such as spelling).
+    </flag>
+    <flag name="ninja">
+      Adds ninja build system support for the clang completer.
+    </flag>
+    <flag name="ncurses">
+      Uses ncurses for better key combo support.
+    </flag>
+    <flag name="nettle">
+      Uses Nettle for HMAC computation.
+    </flag>
+    <flag name="nls">
+      Enable command language translations.
+    </flag>
+    <flag name="slang">
+      Uses slang for better key combo support.
+    </flag>
+    <flag name="spell">
+      Enables spell checking.
+    </flag>
+    <flag name="static">
+      Builds as a monolithic binary with little to no shared library
+      dependencies.
+    </flag>
+    <flag name="openmp">
+      Enables multicore support.
+    </flag>
+    <flag name="openssl">
+      Uses OpenSSL for HMAC computation.
+    </flag>
+    <flag name="system-gnulib">
+      Uses the system's Gnulib to compile nano-ycmd
+    </flag>
+    <flag name="system-clangd">
+      Configures ycmd to use the system's clangd instead of ycmd internal
+      dependency.
+    </flag>
+    <flag name="system-gocode">
+      Configures ycmd to use the system's gocode instead of ycmd internal
+      dependency.
+    </flag>
+    <flag name="system-godef">
+      Configures ycmd to use the system's godef instead of ycmd internal
+      dependency.
+    </flag>
+    <flag name="system-gopls">
+      Configures ycmd to use the system's gopls instead of ycmd internal
+      dependency.
+    </flag>
+    <flag name="system-mono">
+      Configures ycmd to use the system's mono instead of ycmd internal
+      dependency.
+    </flag>
+    <flag name="system-racerd">
+      Configures ycmd to use the system's racerd instead of ycmd internal
+      dependency.
+    </flag>
+    <flag name="system-rust">
+      Configures ycmd to use the system's rust instead of ycmd internal
+      dependency.
+    </flag>
+    <flag name="system-rustc">
+      Configures ycmd to use the system's rustc instead of ycmd internal
+      dependency.
+    </flag>
+    <flag name="system-omnisharp">
+      Configures ycmd to use the system's omnisharp instead of ycmd internal
+      dependency.
+    </flag>
+    <flag name="system-tsserver">
+      Configures ycmd to use the system's tsserver instead of ycmd internal
+      dependency.
+    </flag>
+    <flag name="unicode">
+      Enables UTF-8 support.
+    </flag>
+    <flag name="ycmd-43">
+      Use ycmd core version 43.
+    </flag>
+    <flag name="ycmd-44">
+      Use ycmd core version 44.
+    </flag>
+    <flag name="ycmd-45">
+      Use ycmd core version 45.
+    </flag>
+    <flag name="ycmd-46">
+      Use ycmd core version 46.
+    </flag>
+    <flag name="ycmd-47">
+      Use ycmd core version 47.
+    </flag>
+    <flag name="ycm-generator">
+      Add C / C++ / ObjC / ObjC++ support for the clang completer.
+    </flag>
   </use>
 </pkgmetadata>
