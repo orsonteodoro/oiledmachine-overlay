@@ -1841,10 +1841,6 @@ src_install() {
 }
 
 pkg_postinst() {
-einfo "Examples of the .json files can be found at:"
-einfo
-einfo "/usr/$(get_libdir)/python*/site-packages/${BD_REL}/ycmd/default_settings.json"
-einfo
 	if use c || use cxx || use objc || use objcxx ; then
 einfo
 einfo "Consider emerging ycm-generator to properly generate a"
@@ -1864,13 +1860,6 @@ einfo
 	if use javascript ; then
 einfo
 einfo "You need a .tern-project in your project for javascript support."
-einfo
-	fi
-
-	if use system-rust ; then
-einfo
-einfo "You need to download the rust source code manually and tell ${PN^^} to"
-einfo "locate it in the default_settings.json file."
 einfo
 	fi
 }

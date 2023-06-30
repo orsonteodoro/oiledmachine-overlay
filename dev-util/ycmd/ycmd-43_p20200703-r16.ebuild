@@ -1929,10 +1929,6 @@ src_install() {
 }
 
 pkg_postinst() {
-einfo "Examples of the .json files can be found at:"
-einfo
-einfo "/usr/$(get_libdir)/python*/site-packages/${BD_REL}/ycmd/default_settings.json"
-einfo
 	if use c || use cxx || use objc || use objcxx ; then
 einfo
 einfo "Consider emerging ycm-generator to properly generate a"
