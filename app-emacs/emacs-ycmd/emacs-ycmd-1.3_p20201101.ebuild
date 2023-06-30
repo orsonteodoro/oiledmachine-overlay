@@ -100,9 +100,9 @@ eerror
 
 	# No standard ebuild yet.
 	if use system-jdtls ; then
-		if [[ -z "${EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH}" ]] ; then
+		if [[ -z "${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}" ]] ; then
 eerror
-eerror "You need to define EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH as a"
+eerror "You need to define EYCMD_JDTLS_WORKSPACE_ROOT_PATH as a"
 eerror "per-package envvar."
 eerror
 			die
@@ -427,7 +427,12 @@ src_configure() {
 		"${sitefile_path}" \
 		|| die
 
-	local ycm_extra_conf_abspath_str="/tmp/.ycm_extra_conf.py"
+	local ycm_extra_conf_abspath_str=""
+	if [[ -n "${EYCMD_GLOBAL_YCM_EXTRA_CONF_PATH}" ]] ; then
+		ycm_extra_conf_abspath_str="${EYCMD_GLOBAL_YCM_EXTRA_CONF_PATH}"
+	else
+		ycm_extra_conf_abspath_str="~/.ycm_extra_conf.py"
+	fi
 	sed -i \
 		-e "s|___YCMD-EMACS_GLOBAL_CONFIG_ABSPATH___|${ycm_extra_conf_abspath_str}|g" \
 		"${sitefile_path}" \
@@ -479,6 +484,13 @@ ewarn
 ewarn "You must use /usr/bin/emacs-${EMACS_SLOT} or /usr/bin/${PN} in order for"
 ewarn "${PN} to work."
 ewarn
+	if [[ -z "${EYCMD_GLOBAL_YCM_EXTRA_CONF_PATH}" ]] ; then
+einfo
+einfo "The global .ycm_extra_conf.py is now referenced at ~/.ycm_extra_conf.py."
+einfo "This can be changed by setting EYCMD_GLOBAL_YCM_EXTRA_CONF_PATH as a"
+einfo "per-package environment variable."
+einfo
+	fi
 }
 
 pkg_postrm() {

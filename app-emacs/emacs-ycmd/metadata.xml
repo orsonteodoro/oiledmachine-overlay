@@ -12,10 +12,19 @@
     For (C-c Y &lt;cmd&gt;) key bindings see,
     https://github.com/abingham/emacs-ycmd/blob/master/ycmd.el#L610
   </longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
+
+    Per-package environment variables:
+
+    EYCMD_GLOBAL_YCM_EXTRA_CONF_PATH - The global .ycm.extra.conf.py path.
+    EYCMD_JDTLS_EXTENSION_PATH - The path to the jdtls extension.
+    EYCMD_JDTLS_WORKSPACE_ROOT_PATH - The path to the jdtls workspace root path.
+
+  -->
   <upstream>
-    <maintainer type="person">
-      <name>Austin Bingham</name>
-    </maintainer>
+    <!-- Upstream requests new project maintainer -->
     <remote-id type="github">abingham/emacs-ycmd</remote-id>
     <bugs-to>https://github.com/abingham/emacs-ycmd/issues</bugs-to>
   </upstream>
