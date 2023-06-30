@@ -34,7 +34,7 @@ system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
 system-rustc system-tsserver unicode ycm-generator ycmd-43 ycmd-44 ycmd-45
 ycmd-46 +ycmd-47
 
-r7
+r8
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -167,7 +167,7 @@ src_unpack() {
 	if [[ ${PV} =~ 9999 && "${LIVE_TYPE}" == "git" ]] ; then
 		EGIT_REPO_URI="https://github.com/orsonteodoro/nano-ycmd.git"
 		use fallback-commit && EGIT_COMMIT="6fd7e05265c543d28e28aebe4829b09e4b273d0a"
-		EGIT_BRANCH=""
+		EGIT_BRANCH="ymcd-code-completion"
 		git-r3_fetch
 		git-r3_checkout
 	fi
