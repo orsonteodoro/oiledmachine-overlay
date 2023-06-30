@@ -6,8 +6,16 @@
 
 EAPI=8
 
+LIVE_TYPE="git"
 PYTHON_COMPAT=( python3_{8..11} )
-inherit autotools flag-o-matic java-pkg-opt-2 python-single-r1
+inherit autotools flag-o-matic git-r3 java-pkg-opt-2 python-single-r1
+
+if [[ "${LIVE_TYPE}" == "git" ]] ; then
+	IUSE+=" +fallback-commit"
+	inherit git-r3
+elif [[ "${LIVE_TYPE}" == "snapshot" ]] ; then
+	EGIT_COMMIT="6fd7e05265c543d28e28aebe4829b09e4b273d0a"
+fi
 
 DESCRIPTION="GNU GPL'd Pico clone with more functionality with ycmd support"
 HOMEPAGE="
@@ -25,7 +33,8 @@ bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls slang
 system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
 system-rustc system-tsserver unicode ycm-generator ycmd-43 ycmd-44 ycmd-45
 ycmd-46 +ycmd-47
-r6
+
+r7
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -121,12 +130,15 @@ BDEPEND+="
 		${LIB_DEPEND}
 	)
 "
-EGIT_COMMIT="af35e63feb585e19a8e84f15093cb0a92e353f01"
 GNULIB_COMMIT="c9b44f214c7c798c7701c7a281584e262b263655" # listed in ./autogen.sh
 GNULIB_COMMIT_SHORT="${GNULIB_COMMIT:0:7}"
-SRC_URI="
+if [[ "${LIVE_TYPE}" == "snapshot" ]] ; then
+	SRC_URI+="
 https://github.com/orsonteodoro/nano-ycmd/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz
+	"
+fi
+SRC_URI+="
 http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=snapshot;h=${GNULIB_COMMIT};sf=tgz
 	-> gnulib-${GNULIB_COMMIT_SHORT}.tar.gz
 "
@@ -152,6 +164,13 @@ ewarn
 }
 
 src_unpack() {
+	if [[ ${PV} =~ 9999 && "${LIVE_TYPE}" == "git" ]] ; then
+		EGIT_REPO_URI="https://github.com/orsonteodoro/nano-ycmd.git"
+		use fallback-commit && EGIT_COMMIT="6fd7e05265c543d28e28aebe4829b09e4b273d0a"
+		EGIT_BRANCH=""
+		git-r3_fetch
+		git-r3_checkout
+	fi
 	unpack ${A}
 	mv gnulib-${GNULIB_COMMIT_SHORT} "${S}/gnulib" || die
 }
@@ -427,13 +446,13 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  FAIL 7497cc6 9999_p20210419 (20230629) with ycmd-45
+# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 7497cc6 9999_p20210419 (20230629) with ycmd-45
 # connecting to ycmd:  passed
 # python completion:  passed
 
-# OILEDMACHINE-OVERLAY-TEST:  FAIL 7497cc6 9999_p20210419 (20230629) with ycmd-47
+# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 7497cc6 9999_p20210419 (20230629) with ycmd-47
 # connecting to ycmd:  passed
 # python completion:  passed
-# GetDoc (python):  bugged, does not open up definition in another window but same window
+# GetDoc (python):  passed
 # GoToDefinition (python):  fail
-# TODO:  Fix GetDoc, GoToDefinition
+# TODO:  Fix GoToDefinition

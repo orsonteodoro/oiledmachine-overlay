@@ -92,6 +92,9 @@
       Enable debug messages and assert warnings.  Note that these will all be
       sent straight to stderr rather than some logging facility.
     </flag>
+    <flag name="fallback-commit">
+      Rewind the commit for live ebuilds to when patches are working.
+    </flag>
     <flag name="justify">
       Enable justify/unjustify functions for text formatting.
     </flag>
