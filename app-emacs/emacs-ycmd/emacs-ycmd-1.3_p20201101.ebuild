@@ -502,7 +502,7 @@ pkg_postrm() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.3_p20201101 c17ff9e (20230629) with emacs 27.2
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.3_p20201101 c17ff9e (20230629) with emacs 27.2, ycmd-47
 # USE="company-mode ycmd-47 -builtin-completion (-debug) -eldoc -flycheck
 # -go-mode -java -next-error -rust-mode -system-gocode -system-godef
 # -system-gopls -system-jdtls -system-mono -system-omnisharp -system-racerd
