@@ -8,25 +8,51 @@
   <longdescription>
     A Geany plugin to support the ycmd code completion server.
   </longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
+
+    GYCM_JDTLS_WORKSPACE_ROOT_PATH - A path to the JDTLS workspace root.
+    GYCM_GLOBAL_YCMD_EXTRA_CONF - A path to the global .ycm_extra_conf.py file.
+
+  -->
   <upstream>
-    <maintainer type="person">
-      <name>Jake Bott</name>
-      <email>jake.anq\100gmail.com</email>
-    </maintainer>
     <remote-id type="github">jakeanq/gycm</remote-id>
     <bugs-to>https://github.com/jakeanq/gycm/issues</bugs-to>
   </upstream>
   <use>
-    <flag name="system-clangd">Configure the plugin to use the system's
-      clangd instead of ycmd internal clangd.</flag>
-    <flag name="system-libclang">Configure the plugin to use the system's
-      libclang instead of ycmd internal libclang.</flag>
-    <flag name="system-gocode">Configure the plugin to use the system's gocode
-      instead of ycmd internal gocode.</flag>
-    <flag name="system-godef">Configure the plugin to use the system's godef
-      instead of ycmd internal godef.</flag>
-    <flag name="system-racerd">Configure the plugin to use the system's racerd
-      instead of ycmd internal racerd.</flag>
-    <flag name="ycmd-43">Make it compatible ycmd core version 43.</flag>
+    <flag name="java">
+      Adds Java support
+    </flag>
+    <flag name="system-clangd">
+      Configure the plugin to use the system's clangd instead of ycmd internal
+      clangd.
+    </flag>
+    <flag name="system-gopls">
+      Configure the plugin to use the system's gopls instead of ycmd internal
+      gopls.
+    </flag>
+    <flag name="system-mono">
+      Configure the plugin to use the system's Mono instead of ycmd internal
+      Mono.
+    </flag>
+    <flag name="system-omnisharp">
+      Configure the plugin to use the system's OmniSharp instead of ycmd internal
+      OmniSharp.
+    </flag>
+    <flag name="system-rust">
+      Configure the plugin to use the system's Rust instead of ycmd internal
+      rust.
+    </flag>
+    <flag name="system-typescript">
+      Configure the plugin to use the system's TypeScript instead of ycmd
+      internal TypeScript.
+    </flag>
+    <flag name="ycmd-47">
+      Make it compatible ycmd core version 47.
+    </flag>
+    <flag name="rN">
+      The internal ebuild revision
+    </flag>
   </use>
 </pkgmetadata>
