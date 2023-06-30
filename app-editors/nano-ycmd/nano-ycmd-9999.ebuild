@@ -13,8 +13,10 @@ inherit autotools flag-o-matic git-r3 java-pkg-opt-2 python-single-r1
 if [[ "${LIVE_TYPE}" == "git" ]] ; then
 	IUSE+=" +fallback-commit"
 	inherit git-r3
+	S="${WORKDIR}/${PN}-${PV}"
 elif [[ "${LIVE_TYPE}" == "snapshot" ]] ; then
 	EGIT_COMMIT="6fd7e05265c543d28e28aebe4829b09e4b273d0a"
+	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 fi
 
 DESCRIPTION="GNU GPL'd Pico clone with more functionality with ycmd support"
@@ -142,7 +144,6 @@ SRC_URI+="
 http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=snapshot;h=${GNULIB_COMMIT};sf=tgz
 	-> gnulib-${GNULIB_COMMIT_SHORT}.tar.gz
 "
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 BD_ABS=""
 PATCHES=(
 )
@@ -170,6 +171,7 @@ src_unpack() {
 		EGIT_BRANCH="ymcd-code-completion"
 		git-r3_fetch
 		git-r3_checkout
+		S="${WORKDIR}/${PN}-${PV}"
 	fi
 	unpack ${A}
 	mv gnulib-${GNULIB_COMMIT_SHORT} "${S}/gnulib" || die
