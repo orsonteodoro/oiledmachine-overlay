@@ -1,3 +1,4 @@
+# Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -23,7 +24,7 @@ LICENSE="
 	HPND
 "
 SLOT="0"
-IUSE=" +autocomplete +vte"
+IUSE="+vte"
 BDEPEND="virtual/pkgconfig"
 RDEPEND="
 	>=dev-libs/glib-2.32:2
@@ -37,6 +38,9 @@ DEPEND="
 	dev-util/intltool
 	sys-devel/gettext
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-1.38-autocomplete-engine-prefs.patch"	# Added by oiledmachine-overlay
+)
 
 pkg_setup() {
 	strip-linguas ${LANGS}
@@ -49,10 +53,6 @@ src_prepare() {
 	# Syntax highlighting for Portage
 	sed -i -e "s:*.sh;:*.sh;*.ebuild;*.eclass;:" \
 		data/filetype_extensions.conf || die
-
-	if ! use autocomplete ; then
-		eapply "${FILESDIR}/geany-1.38-disable-autocomplete.patch"
-	fi
 
 	if [[ ${PV} = *_pre* ]] || [[ ${PV} = 9999* ]] ; then
 		eautoreconf
@@ -72,9 +72,6 @@ src_configure() {
 src_install() {
 	emake DESTDIR="${D}" install
 	find "${ED}" -type f \( -name '*.a' -o -name '*.la' \) -delete || die
-	if ! use autocomplete ; then
-		rm -rf "${ED}/usr/share/geany/tags" || die
-	fi
 }
 
 pkg_preinst() {

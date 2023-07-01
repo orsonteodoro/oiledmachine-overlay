@@ -12,6 +12,8 @@
     oiledmachine-overlay notes:
 
     This ebuild fork is to allow to disable autocomplete for gycm testing.
+    It adds a preference patch to allow to toggle off/on the internal
+    autocompletion engine.
 
   -->
   <longdescription lang="en">
@@ -42,9 +44,6 @@
     Java, PHP, HTML, Python, Perl, Pascal; liste des symboles.
   </longdescription>
   <use>
-    <flag name="autocomplete">
-      Enable the built in autocomplete.
-    </flag>
     <flag name="vte">
       Enable Terminal support (<pkg>x11-libs/vte</pkg>)
     </flag>

@@ -1,0 +1,124 @@
+diff -urp geany-1.38.orig/data/geany.glade geany-1.38/data/geany.glade
+--- geany-1.38.orig/data/geany.glade	2021-10-09 08:02:14.000000000 -0700
++++ geany-1.38/data/geany.glade	2023-06-30 23:05:27.003070781 -0700
+@@ -3369,6 +3369,22 @@
+                                 <property name="visible">True</property>
+                                 <property name="can_focus">False</property>
+                                 <child>
++                                  <object class="GtkCheckButton" id="check_autocomplete_engine">
++                                    <property name="label" translatable="no">Auto-completion engine</property>
++                                    <property name="visible">True</property>
++                                    <property name="can_focus">True</property>
++                                    <property name="receives_default">False</property>
++                                    <property name="tooltip_text" translatable="no">Toggle the editor's completion engine</property>
++                                    <property name="use_underline">True</property>
++                                    <property name="draw_indicator">True</property>
++                                  </object>
++                                  <packing>
++                                    <property name="expand">False</property>
++                                    <property name="fill">False</property>
++                                    <property name="position">0</property>
++                                  </packing>
++                                </child>
++                                <child>
+                                   <object class="GtkCheckButton" id="check_complete_snippets">
+                                     <property name="label" translatable="yes">Snippet completion</property>
+                                     <property name="visible">True</property>
+@@ -3381,7 +3397,7 @@
+                                   <packing>
+                                     <property name="expand">False</property>
+                                     <property name="fill">False</property>
+-                                    <property name="position">0</property>
++                                    <property name="position">1</property>
+                                   </packing>
+                                 </child>
+                                 <child>
+@@ -3397,7 +3413,7 @@
+                                   <packing>
+                                     <property name="expand">False</property>
+                                     <property name="fill">False</property>
+-                                    <property name="position">1</property>
++                                    <property name="position">2</property>
+                                   </packing>
+                                 </child>
+                                 <child>
+@@ -3413,7 +3429,7 @@
+                                   <packing>
+                                     <property name="expand">False</property>
+                                     <property name="fill">False</property>
+-                                    <property name="position">2</property>
++                                    <property name="position">3</property>
+                                   </packing>
+                                 </child>
+                                 <child>
+@@ -3429,7 +3445,7 @@
+                                   <packing>
+                                     <property name="expand">False</property>
+                                     <property name="fill">False</property>
+-                                    <property name="position">3</property>
++                                    <property name="position">4</property>
+                                   </packing>
+                                 </child>
+                                 <child>
+@@ -3444,7 +3460,7 @@
+                                   <packing>
+                                     <property name="expand">False</property>
+                                     <property name="fill">False</property>
+-                                    <property name="position">4</property>
++                                    <property name="position">5</property>
+                                   </packing>
+                                 </child>
+                                 <child>
+@@ -3459,7 +3475,7 @@
+                                   <packing>
+                                     <property name="expand">False</property>
+                                     <property name="fill">False</property>
+-                                    <property name="position">5</property>
++                                    <property name="position">6</property>
+                                   </packing>
+                                 </child>
+                                 <child>
+diff -urp geany-1.38.orig/src/editor.c geany-1.38/src/editor.c
+--- geany-1.38.orig/src/editor.c	2021-10-09 08:02:14.000000000 -0700
++++ geany-1.38/src/editor.c	2023-06-30 23:05:16.823070528 -0700
+@@ -2228,6 +2228,9 @@ gboolean editor_start_auto_complete(Gean
+ 	const gchar *wordchars;
+ 	GeanyFiletype *ft;
+ 
++	if (!editor_prefs.autocomplete_engine)
++		return FALSE;
++
+ 	g_return_val_if_fail(editor != NULL, FALSE);
+ 
+ 	if (! editor_prefs.auto_complete_symbols && ! force)
+diff -urp geany-1.38.orig/src/editor.h geany-1.38/src/editor.h
+--- geany-1.38.orig/src/editor.h	2021-10-09 08:02:14.000000000 -0700
++++ geany-1.38/src/editor.h	2023-06-30 23:04:23.783069212 -0700
+@@ -130,6 +130,7 @@ typedef struct GeanyEditorPrefs
+ 	gchar		*comment_toggle_mark;
+ 	guint		autocompletion_max_entries;
+ 	guint		autoclose_chars;
++	gboolean	autocomplete_engine;
+ 	gboolean	autocomplete_doc_words;
+ 	gboolean	completion_drops_rest_of_word;
+ 	gchar		*color_scheme;
+diff -urp geany-1.38.orig/src/keyfile.c geany-1.38/src/keyfile.c
+--- geany-1.38.orig/src/keyfile.c	2021-10-09 08:02:14.000000000 -0700
++++ geany-1.38/src/keyfile.c	2023-06-30 23:04:35.655069507 -0700
+@@ -207,6 +207,8 @@ static void init_pref_groups(void)
+ 		"radio_virtualspace_selection", GEANY_VIRTUAL_SPACE_SELECTION,
+ 		"radio_virtualspace_always", GEANY_VIRTUAL_SPACE_ALWAYS,
+ 		NULL);
++	stash_group_add_toggle_button(group, &editor_prefs.autocomplete_engine,
++		"autocomplete_engine", TRUE, "check_autocomplete_engine");
+ 	stash_group_add_toggle_button(group, &editor_prefs.autocomplete_doc_words,
+ 		"autocomplete_doc_words", FALSE, "check_autocomplete_doc_words");
+ 	stash_group_add_toggle_button(group, &editor_prefs.completion_drops_rest_of_word,
+@@ -482,6 +484,7 @@ static void save_dialog_prefs(GKeyFile *
+ 	/* editor */
+ 	g_key_file_set_integer(config, PACKAGE, "symbolcompletion_max_height", editor_prefs.symbolcompletion_max_height);
+ 	g_key_file_set_integer(config, PACKAGE, "symbolcompletion_min_chars", editor_prefs.symbolcompletion_min_chars);
++	g_key_file_set_boolean(config, PACKAGE, "autocomplete_engine", editor_prefs.autocomplete_engine);
+ 	g_key_file_set_boolean(config, PACKAGE, "use_folding", editor_prefs.folding);
+ 	g_key_file_set_boolean(config, PACKAGE, "unfold_all_children", editor_prefs.unfold_all_children);
+ 	g_key_file_set_boolean(config, PACKAGE, "use_indicators", editor_prefs.use_indicators);
