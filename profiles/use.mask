@@ -23,3 +23,7 @@ telemetry
 # For QT EOL dates, see https://en.wikipedia.org/wiki/Qt_version_history
 # To unmask the USE flag block, see https://wiki.gentoo.org/wiki//etc/portage/profile/use.mask
 qt5
+
+# Old packages
+ycmd-43
+ycmd-44
