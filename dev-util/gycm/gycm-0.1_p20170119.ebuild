@@ -274,14 +274,10 @@ einfo "~/.ycm_extra_conf.py.  This can be changed with the"
 einfo "GYCM_GLOBAL_YCMD_EXTRA_CONF provided via package.env."
 einfo
 	fi
-einfo
-einfo "This plugin is not required in it's current form because Geany already"
-einfo "has autocompletion.  It is provided for modders to expand or add ymcd"
-einfo "features like GetDoc."
-einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  TESTING 0.1_p20170119 3abe141 with ycmd-47
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 0.1_p20170119 3abe141 with ycmd-47
 # Note:  There is duplicate functionality so it is difficult to say if it is working.
 # connect to ycmd - passed
+# autocompletion (python) - passed

@@ -6,7 +6,16 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    A Geany plugin to support the ycmd code completion server.
+
+    A Geany plugin to support the ycmd code completion server limited to
+    ycmd completion.
+
+    Features:
+
+    - Smarter completion with library methods
+    - Improved relevant matching
+    - Keyword completion
+
   </longdescription>
   <!--
 
