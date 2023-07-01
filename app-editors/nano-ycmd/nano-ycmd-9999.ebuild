@@ -451,10 +451,11 @@ src_install() {
 # OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 7497cc6 9999_p20210419 (20230629) with ycmd-45
 # connecting to ycmd:  passed
 # python completion:  passed
+# GetDoc (python):  fail on non-root user
 
 # OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 7497cc6 9999_p20210419 (20230629) with ycmd-47
 # connecting to ycmd:  passed
 # python completion:  passed
-# GetDoc (python):  passed
+# GetDoc (python):  fail on non-root user
 # GoToDefinition (python):  fail
-# TODO:  Fix GoToDefinition
+# TODO:  Fix GetDoc, GoToDefinition
