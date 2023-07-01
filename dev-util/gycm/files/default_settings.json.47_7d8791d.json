@@ -13,7 +13,7 @@
   "max_num_candidates_to_detail": -1,
   "extra_conf_globlist": [],
   "global_ycm_extra_conf": "___GLOBAL_YCMD_EXTRA_CONF___",
-  "confirm_extra_conf": 1,
+  "confirm_extra_conf": 0,
   "max_diagnostics_to_display": 30,
   "filepath_blacklist": {
     "html": 1,

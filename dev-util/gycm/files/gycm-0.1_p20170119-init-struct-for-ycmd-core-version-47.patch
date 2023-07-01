@@ -32,7 +32,7 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/config.cpp gycm-3ab
 -	v["confirm_extra_conf"] = true;
 -	v["complete_in_comments"] = false;
 -	v["complete_in_strings"] = true;
-+	v["confirm_extra_conf"] = 1;
++	v["confirm_extra_conf"] = 0;
  	v["max_diagnostics_to_display"] = 30;
  
 -	Json::Value ft_w(Json::objectValue);
