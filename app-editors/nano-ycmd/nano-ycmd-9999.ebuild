@@ -15,7 +15,7 @@ if [[ "${LIVE_TYPE}" == "git" ]] ; then
 	inherit git-r3
 	S="${WORKDIR}/${PN}-${PV}"
 elif [[ "${LIVE_TYPE}" == "snapshot" ]] ; then
-	EGIT_COMMIT="6fd7e05265c543d28e28aebe4829b09e4b273d0a"
+	EGIT_COMMIT="8b35ad5481a02ce92bc0b9bd23140aed26cd9652"
 	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 fi
 
@@ -36,7 +36,7 @@ system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
 system-rustc system-tsserver unicode ycm-generator ycmd-43 ycmd-44 ycmd-45
 ycmd-46 +ycmd-47
 
-r8
+r9
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -167,7 +167,7 @@ ewarn
 src_unpack() {
 	if [[ ${PV} =~ 9999 && "${LIVE_TYPE}" == "git" ]] ; then
 		EGIT_REPO_URI="https://github.com/orsonteodoro/nano-ycmd.git"
-		use fallback-commit && EGIT_COMMIT="6fd7e05265c543d28e28aebe4829b09e4b273d0a"
+		use fallback-commit && EGIT_COMMIT="8b35ad5481a02ce92bc0b9bd23140aed26cd9652"
 		EGIT_BRANCH="ymcd-code-completion"
 		git-r3_fetch
 		git-r3_checkout
@@ -448,14 +448,14 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 7497cc6 9999_p20210419 (20230629) with ycmd-45
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 7497cc6 9999_p20210419 (20230630) with ycmd-45
 # connecting to ycmd:  passed
 # python completion:  passed
-# GetDoc (python):  fail on non-root user
+# GetDoc (python):  passed with workaround ; requires removal of invalid .ycm_extra_conf.py, or setting confirm_extra_conf=0 in ycmd.c, or source code change to handle this.
+# GoToDefinition (python):  passed
 
-# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 7497cc6 9999_p20210419 (20230629) with ycmd-47
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 7497cc6 9999_p20210419 (20230630) with ycmd-47
 # connecting to ycmd:  passed
 # python completion:  passed
-# GetDoc (python):  fail on non-root user
-# GoToDefinition (python):  fail
-# TODO:  Fix GetDoc, GoToDefinition
+# GetDoc (python):  passed with workaround ; requires removal of invalid .ycm_extra_conf.py, or setting confirm_extra_conf=0 in ycmd.c, or source code change to handle this.
+# GoToDefinition (python):  passed
