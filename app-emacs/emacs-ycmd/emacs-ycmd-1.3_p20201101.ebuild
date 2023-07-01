@@ -209,7 +209,7 @@ src_configure() {
 
 	local next_error_str=""
 	if use next-error; then
-		next_error_str=$(cat ${FILESDIR}/next-error.frag \
+		next_error_str=$(cat "${FILESDIR}/next-error.frag" \
 			| sed ':a;N;$!ba;s/\n/\\n/g')
 	else
 		next_error_str=""
@@ -221,7 +221,7 @@ src_configure() {
 
 	local builtin_completion_str=""
 	if use builtin-completion ; then
-		builtin_completion_str=$(cat ${FILESDIR}/builtin-completion.frag \
+		builtin_completion_str=$(cat "${FILESDIR}/builtin-completion.frag" \
 			| sed ':a;N;$!ba;s/\n/\\n/g')
 	else
 		builtin_completion_str=""
@@ -233,7 +233,7 @@ src_configure() {
 
 	local company_mode_str=""
 	if use company-mode ; then
-		company_mode_str=$(cat ${FILESDIR}/company-mode.frag \
+		company_mode_str=$(cat "${FILESDIR}/company-mode.frag" \
 			| sed ':a;N;$!ba;s/\n/\\n/g')
 	else
 		company_mode_str=""
@@ -244,7 +244,7 @@ src_configure() {
 
 	local flycheck_str=""
 	if use flycheck ; then
-		flycheck_str=$(cat ${FILESDIR}/flycheck.frag \
+		flycheck_str=$(cat "${FILESDIR}/flycheck.frag" \
 			| sed ':a;N;$!ba;s/\n/\\n/g')
 	else
 		flycheck_str=""
@@ -254,7 +254,7 @@ src_configure() {
 
 	local eldoc_str=""
 	if use eldoc ; then
-		eldoc_str=$(cat ${FILESDIR}/eldoc.frag \
+		eldoc_str=$(cat "${FILESDIR}/eldoc.frag" \
 			| sed ':a;N;$!ba;s/\n/\\n/g')
 	else
 		eldoc_str=""
