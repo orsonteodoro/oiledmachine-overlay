@@ -3142,6 +3142,7 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_ADDRTYPE"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_CONNTRACK"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_IPVS"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MARK"
 		ot-kernel_y_configopt "CONFIG_IP_VS"
 		ot-kernel_y_configopt "CONFIG_IP_VS_PROTO_TCP"
 		ot-kernel_y_configopt "CONFIG_IP_VS_PROTO_UDP"
@@ -3150,6 +3151,7 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_IP_NF_IPTABLES"
 		ot-kernel_y_configopt "CONFIG_IP_NF_FILTER"
 		ot-kernel_y_configopt "CONFIG_IP_NF_NAT"
+		ot-kernel_y_configopt "CONFIG_NF_NAT"
 		if ver_test ${KV_MAJOR_MINOR} -le 5.0 ; then
 			ot-kernel_y_configopt "CONFIG_NF_NAT_IPV4"
 		fi
@@ -3195,11 +3197,92 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_y_configopt "CONFIG_IO_URING"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
-#		ot-kernel_y_configopt "CONFIG_SECCOMP" # Referenced in file path but not in code
+
+		if has_version "app-containers/docker[seccomp]" ; then
+			ot-kernel_y_configopt "CONFIG_SECCOMP" # Referenced in file path but not in code ; requested by ebuild
+			ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
+		fi
+
 		ot-kernel_y_configopt "CONFIG_SHMEM"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 #		# ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # References it but no madvise/fadvise
 		# LDT referenced
+
+		if ver_test ${KV_MAJOR_MINOR} -le 4.8 ; then
+			ot-kernel_y_configopt "CONFIG_DEVPTS_MULTIPLE_INSTANCES"
+			ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
+		fi
+
+		if ver_test ${KV_MAJOR_MINOR} -le 5.2 ; then
+			ot-kernel_y_configopt "CONFIG_NF_NAT_NEEDED"
+		fi
+
+		if ver_test ${KV_MAJOR_MINOR} -ge 4.15 ; then
+			ot-kernel_y_configopt "CONFIG_CGROUP_BPF"
+			ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+		fi
+
+		if ver_test ${KV_MAJOR_MINOR} -lt 6.1 ; then
+			ot-kernel_y_configopt "CONFIG_MEMCG_SWAP"
+			ot-kernel_y_configopt "CONFIG_MEMCG"
+			ot-kernel_y_configopt "CONFIG_SWAP"
+		fi
+
+		if ver_test ${KV_MAJOR_MINOR} -le 5.8 ; then
+			ot-kernel_y_configopt "CONFIG_MEMCG_SWAP_ENABLED"
+		fi
+
+		ot-kernel_unset_configopt "CONFIG_LEGACY_VSYSCALL_NATIVE"
+
+		if ver_test ${KV_MAJOR_MINOR} -lt 5.19 ; then
+			ot-kernel_y_configopt "CONFIG_LEGACY_VSYSCALL_EMULATE"
+		fi
+
+		ot-kernel_unset_configopt "CONFIG_LEGACY_VSYSCALL_NONE"
+
+		if ver_test ${KV_MAJOR_MINOR} -le 4.5 ; then
+			ot-kernel_y_configopt "CONFIG_MEMCG_KMEM"
+			ot-kernel_y_configopt "CONFIG_MEMCG"
+		fi
+
+		if has_version "app-containers/docker[selinux]" ; then
+			ot-kernel_y_configopt "CONFIG_SECURITY_SELINUX"
+			ot-kernel_y_configopt "CONFIG_SYSFS"
+			ot-kernel_y_configopt "CONFIG_MULTIUSER"
+			ot-kernel_y_configopt "CONFIG_SECURITY"
+			ot-kernel_y_configopt "CONFIG_SECURITY_NETWORK"
+			ot-kernel_y_configopt "CONFIG_AUDIT"
+			ot-kernel_y_configopt "CONFIG_NET"
+			ot-kernel_y_configopt "CONFIG_INET"
+		fi
+
+		if has_version "app-containers/docker[apparmor]" ; then
+			ot-kernel_y_configopt "CONFIG_SECURITY_APPARMOR"
+			ot-kernel_y_configopt "CONFIG_SYSFS"
+			ot-kernel_y_configopt "CONFIG_MULTIUSER"
+			ot-kernel_y_configopt "CONFIG_SECURITY"
+			ot-kernel_y_configopt "CONFIG_NET"
+		fi
+
+		ot-kernel_y_configopt "CONFIG_EXT4_FS"
+		ot-kernel_y_configopt "CONFIG_EXT4_FS_POSIX_ACL"
+		ot-kernel_y_configopt "CONFIG_EXT4_FS_SECURITY"
+
+		ot-kernel_y_configopt "CONFIG_NF_NAT_FTP"
+		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_FTP"
+		ot-kernel_y_configopt "CONFIG_NF_NAT_TFTP"
+		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_TFTP"
+
+		#if has_version "app-containers/docker[aufs]" ; then
+		#	ot-kernel_y_configopt "CONFIG_AUFS_FS"
+		#fi
+
+		if has_version "app-containers/docker[btrfs]" ; then
+			ot-kernel_y_configopt "CONFIG_BTRFS_FS"
+			ot-kernel_y_configopt "CONFIG_BTRFS_FS_POSIX_ACL"
+		fi
+
+		ot-kernel_y_configopt "CONFIG_OVERLAY_FS"
 	fi
 }
 
