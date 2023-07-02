@@ -10,12 +10,13 @@ LIVE_TYPE="git"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit autotools flag-o-matic git-r3 java-pkg-opt-2 python-single-r1
 
+NANO_YCMD_COMMIT="1d09284f44edac2803af43eba3884bddf257752a"
 if [[ "${LIVE_TYPE}" == "git" ]] ; then
 	IUSE+=" +fallback-commit"
 	inherit git-r3
 	S="${WORKDIR}/${PN}-${PV}"
 elif [[ "${LIVE_TYPE}" == "snapshot" ]] ; then
-	EGIT_COMMIT="8b35ad5481a02ce92bc0b9bd23140aed26cd9652"
+	EGIT_COMMIT="${NANO_YCMD_COMMIT}"
 	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 fi
 
@@ -31,13 +32,14 @@ SLOT="0"
 YCMD_SLOTS=( 47 46 45 44 43 )
 IUSE+="
 bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls slang
-+spell static openmp openssl system-clangd system-gnulib system-gocode
++spell static openmp openssl system-clangd -system-gnulib system-gocode
 system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
 system-rustc system-tsserver unicode ycm-generator ycmd-43 ycmd-44 ycmd-45
 ycmd-46 +ycmd-47
 
-r9
+r10
 "
+GNULIB_PV="2023.01.16.09.58.30"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	!minimal
@@ -121,7 +123,9 @@ RDEPEND+="
 "
 DEPEND+="
 	${RDEPEND}
-	system-gnulib? ( >=dev-libs/gnulib-2018.01.23.08.42.00 )
+	system-gnulib? (
+		>=dev-libs/gnulib-${GNULIB_PV}
+	)
 "
 BDEPEND+="
 	virtual/pkgconfig
@@ -132,7 +136,7 @@ BDEPEND+="
 		${LIB_DEPEND}
 	)
 "
-GNULIB_COMMIT="c9b44f214c7c798c7701c7a281584e262b263655" # listed in ./autogen.sh
+GNULIB_COMMIT="2cf7f442f52f70b3df6eb396eb93ea08e54883c5" # listed in ./autogen.sh
 GNULIB_COMMIT_SHORT="${GNULIB_COMMIT:0:7}"
 if [[ "${LIVE_TYPE}" == "snapshot" ]] ; then
 	SRC_URI+="
@@ -146,6 +150,7 @@ http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=snapshot;h=${GNULIB_COMMIT};s
 "
 BD_ABS=""
 PATCHES=(
+	"${FILESDIR}/nano-ycmd-9999-use-external-gnulib.patch"
 )
 
 pkg_setup() {
@@ -167,13 +172,26 @@ ewarn
 src_unpack() {
 	if [[ ${PV} =~ 9999 && "${LIVE_TYPE}" == "git" ]] ; then
 		EGIT_REPO_URI="https://github.com/orsonteodoro/nano-ycmd.git"
-		use fallback-commit && EGIT_COMMIT="8b35ad5481a02ce92bc0b9bd23140aed26cd9652"
+		use fallback-commit && EGIT_COMMIT="${NANO_YCMD_COMMIT}"
 		EGIT_BRANCH="ymcd-code-completion"
 		git-r3_fetch
 		git-r3_checkout
 		S="${WORKDIR}/${PN}-${PV}"
 	fi
 	unpack ${A}
+	local actual_gnulib_commit=$(grep "gnulib_hash" "${S}/autogen.sh" \
+		| head -n 1 \
+		| cut -f 2 -d "\"")
+	local expected_gnulib_commit="${GNULIB_COMMIT}"
+	if ! grep -q "${expected_gnulib_commit}" "${S}/autogen.sh" ; then
+eerror
+eerror "The gnulib snapshot needs to be updated:"
+eerror
+eerror "Expected commit:\t${GNULIB_COMMIT}"
+eerror "Actual commit:\t${actual_gnulib_commit}"
+eerror
+		die
+	fi
 	mv gnulib-${GNULIB_COMMIT_SHORT} "${S}/gnulib" || die
 }
 
@@ -181,13 +199,13 @@ src_prepare() {
 	ewarn "This ebuild is a Work In Progress (WIP)"
 	default
 	eapply "${FILESDIR}/${PN}-9999_p20210417-rename-as-ynano.patch"
+	export GNULIB_USE_TARBALL=1
 	if use system-gnulib ; then
-		eapply "${FILESDIR}/${PN}-9999.20180201-autogen-use-system-gnulib.patch"
-		./autogen.sh
+		export GNULIB_USE_SYSTEM=1
 	else
-		eapply "${FILESDIR}/${PN}-9999_p20210417-autogen-no-git.patch"
-		./autogen.sh
+		export GNULIB_USE_SYSTEM=0
 	fi
+	./autogen.sh
 }
 
 econf_ycmd_slot_43() {
