@@ -37,7 +37,7 @@ system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
 system-rustc system-tsserver unicode ycm-generator ycmd-43 ycmd-44 ycmd-45
 ycmd-46 +ycmd-47
 
-r10
+r11
 "
 GNULIB_PV="2023.01.16.09.58.30"
 REQUIRED_USE+="
@@ -102,6 +102,7 @@ RDEPEND+="
 		dev-util/bear[${PYTHON_SINGLE_USEDEP}]
 	)
 	libgcrypt? (
+		dev-libs/glib
 		dev-libs/libgcrypt
 	)
 	ninja? (
@@ -115,7 +116,6 @@ RDEPEND+="
 	)
 	openssl? (
 		dev-libs/openssl
-		dev-libs/glib
 	)
 	ycm-generator? (
 		$(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]')
