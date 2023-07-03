@@ -1924,7 +1924,7 @@ src_install() {
 		if ! use system-libclang \
 			&& ( use c || use cxx || use objc || use objcxx ) \
 			&& use libclang ; then
-			python_domodule lib
+			[[ -d "lib" ]] && python_domodule lib
 			python_moduleinto "${BD_REL}/third_party"
 			python_domodule third_party/clang
 		fi
