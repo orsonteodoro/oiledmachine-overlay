@@ -7697,7 +7697,7 @@ ot-kernel-pkgflags_rust() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf89b140]}" == "1" ]] && return
 	if ot-kernel_has_version "dev-lang/rust" \
 		|| ot-kernel_has_version "dev-lang/rust-bin" ; then
-		einfo "Applying kernel config flags for the runc package (id: f89b140)"
+		einfo "Applying kernel config flags for the rust package (id: f89b140)"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 		ot-kernel_y_configopt "CONFIG_AIO"

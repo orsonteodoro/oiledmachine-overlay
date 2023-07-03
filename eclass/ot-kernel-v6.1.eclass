@@ -18,8 +18,11 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+# For *DEPENDs, see
+# https://github.com/torvalds/linux/blob/v6.1/Documentation/process/changes.rst
 # For compiler versions, see
 # https://github.com/torvalds/linux/blob/v6.1/scripts/min-tool-version.sh#L26
+
 CXX_STD="-std=gnu++11"
 GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
@@ -187,11 +190,12 @@ d29d596279f9ce7a33c7cc68277886e49381ea05
 cf9b1dacabb1ef62481a452f7f169e1679e2da49
 a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 ) # newest
+RUST_PV="1.62.0"
 
 IUSE+="
 bbrv2 build cfi +cfs clang clang-pgo disable_debug -exfat +genpatches
--genpatches_1510 kcfi lto multigen_lru prjc rt shadowcallstack symlink tresor
-tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
+-genpatches_1510 kcfi lto multigen_lru prjc rt -rust shadowcallstack symlink
+tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-multigen_lru zen-sauce zen-sauce-all
 -zen-tune
 "
@@ -451,6 +455,79 @@ KCP_RDEPEND="
 			>=sys-devel/gcc-11.1
 		)
 		$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
+	)
+"
+
+CDEPEND+="
+	>=app-shells/bash-4.2
+	>=dev-lang/perl-5
+	>=dev-util/pahole-1.16
+	>=sys-apps/util-linux-2.10o
+	>=sys-devel/bc-1.06.95
+	>=sys-devel/binutils-2.23
+	>=sys-devel/bison-2.0
+	>=sys-devel/flex-2.5.35
+	>=sys-devel/make-3.82
+	app-arch/cpio
+	dev-util/pkgconf
+	sys-apps/grep[pcre]
+	virtual/libelf
+	virtual/pkgconfig
+	bzip2? (
+		app-arch/bzip2
+	)
+	gtk? (
+		dev-libs/glib:2
+		gnome-base/libglade:2.0
+		x11-libs/gtk+:2
+	)
+	gzip? (
+		>=sys-apps/kmod-13[zlib]
+		app-arch/gzip
+	)
+	lz4? (
+		app-arch/lz4
+	)
+	lzma? (
+		app-arch/xz-utils
+	)
+	lzo? (
+		app-arch/lzop
+	)
+	ncurses? (
+		sys-libs/ncurses
+	)
+	openssl? (
+		>=dev-libs/openssl-1.0.0
+	)
+	qt5? (
+		dev-qt/qtcore:5
+		dev-qt/qtgui:5
+		dev-qt/qtwidgets:5
+	)
+	rust? (
+		>=dev-util/cbindgen-0.56.0
+		~virtual/rust-${RUST_PV}
+	)
+	xz? (
+		app-arch/xz-utils
+		sys-apps/kmod[lzma]
+	)
+	zstd? (
+		app-arch/zstd
+		sys-apps/kmod[zstd]
+	)
+"
+
+RDEPEND+="
+	!build? (
+		${CDEPEND}
+	)
+"
+
+BDEPEND+="
+	build? (
+		${CDEPEND}
 	)
 "
 
@@ -866,4 +943,25 @@ ot-kernel_filter_clang_pgo_patch_cb() {
 	local path="${1}"
 	_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
 	_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-3bc6889-a15058e-fixes-for-5.17.patch"
+}
+
+# @FUNCTION: ot-kernel_check_versions
+# @DESCRIPTION:
+# Check optional version requirements
+ot-kernel_check_versions() {
+	_ot-kernel_check_versions "app-admin/mcelog" "0.6" ""
+	_ot-kernel_check_versions "net-dialup/ppp" "2.4.0" "CONFIG_PPP"
+	_ot-kernel_check_versions "net-firewall/iptables" "1.4.2" "CONFIG_NETFILTER"
+	_ot-kernel_check_versions "net-fs/nfs-utils" "1.0.5" "NFS_FS"
+	_ot-kernel_check_versions "sys-apps/pcmciautils" "004" "CONFIG_PCMCIA"
+	_ot-kernel_check_versions "sys-boot/grub" "0.93" ""
+	_ot-kernel_check_versions "sys-fs/btrfs-progs" "0.18" "CONFIG_BTRFS_FS"
+	_ot-kernel_check_versions "sys-fs/e2fsprogs" "1.41.4" "CONFIG_EXT2_FS"
+	_ot-kernel_check_versions "sys-fs/jfsutils" "1.1.3" "CONFIG_JFS_FS"
+	_ot-kernel_check_versions "sys-fs/reiserfsprogs" "3.6.3" "CONFIG_REISERFS_FS"
+	_ot-kernel_check_versions "sys-fs/squashfs-tools" "4.0" "CONFIG_SQUASHFS"
+	_ot-kernel_check_versions "sys-fs/quota" "3.09" "CONFIG_QUOTA"
+	_ot-kernel_check_versions "sys-fs/xfsprogs" "2.6.0" "CONFIG_XFS_FS"
+	_ot-kernel_check_versions "sys-process/procps" "3.2.0" ""
+	_ot-kernel_check_versions "virtual/udev" "081" ""
 }

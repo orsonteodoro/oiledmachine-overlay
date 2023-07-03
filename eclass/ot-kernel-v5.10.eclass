@@ -18,6 +18,9 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+# For *DEPENDs, see
+# https://github.com/torvalds/linux/blob/v5.10/Documentation/process/changes.rst
+
 CXX_STD="-std=gnu++98"
 GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
@@ -335,6 +338,75 @@ KCP_RDEPEND="
 		$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
 	)
 "
+
+CDEPEND+="
+	>=dev-lang/perl-5
+	>=sys-apps/util-linux-2.10o
+	>=sys-devel/bc-1.06.95
+	>=sys-devel/binutils-2.23
+	>=sys-devel/bison-2.0
+	>=sys-devel/flex-2.5.35
+	>=sys-devel/make-3.81
+	app-arch/cpio
+	app-shells/bash
+	dev-util/pkgconf
+	sys-apps/grep[pcre]
+	virtual/libelf
+	virtual/pkgconfig
+	bzip2? (
+		app-arch/bzip2
+	)
+	gtk? (
+		dev-libs/glib:2
+		gnome-base/libglade:2.0
+		x11-libs/gtk+:2
+	)
+	gzip? (
+		>=sys-apps/kmod-13[zlib]
+		app-arch/gzip
+	)
+	lz4? (
+		app-arch/lz4
+	)
+	lzma? (
+		app-arch/xz-utils
+	)
+	lzo? (
+		app-arch/lzop
+	)
+	ncurses? (
+		sys-libs/ncurses
+	)
+	openssl? (
+		>=dev-libs/openssl-1.0.0
+	)
+	qt5? (
+		dev-qt/qtcore:5
+		dev-qt/qtgui:5
+		dev-qt/qtwidgets:5
+	)
+	xz? (
+		app-arch/xz-utils
+		sys-apps/kmod[lzma]
+	)
+	zstd? (
+		app-arch/zstd
+		sys-apps/kmod[zstd]
+	)
+"
+
+RDEPEND+="
+	!build? (
+		${CDEPEND}
+	)
+"
+
+BDEPEND+="
+	build? (
+		${CDEPEND}
+	)
+"
+
 RDEPEND+="
 	${KCP_RDEPEND}
 "
@@ -613,3 +685,24 @@ einfo "Already applied ${path} upstream"
 	fi
 }
 
+# @FUNCTION: ot-kernel_check_versions
+# @DESCRIPTION:
+# Check optional version requirements
+ot-kernel_check_versions() {
+	_ot-kernel_check_versions "app-admin/mcelog" "0.6" ""
+	_ot-kernel_check_versions "dev-util/oprofile" "0.9" "CONFIG_OPROFILE"
+	_ot-kernel_check_versions "net-dialup/ppp" "2.4.0" "CONFIG_PPP"
+	_ot-kernel_check_versions "net-firewall/iptables" "1.4.2" "CONFIG_NETFILTER"
+	_ot-kernel_check_versions "net-fs/nfs-utils" "1.0.5" "NFS_FS"
+	_ot-kernel_check_versions "sys-apps/pcmciautils" "004" "CONFIG_PCMCIA"
+	_ot-kernel_check_versions "sys-boot/grub" "0.93" ""
+	_ot-kernel_check_versions "sys-fs/btrfs-progs" "0.18" "CONFIG_BTRFS_FS"
+	_ot-kernel_check_versions "sys-fs/e2fsprogs" "1.41.4" "CONFIG_EXT2_FS"
+	_ot-kernel_check_versions "sys-fs/jfsutils" "1.1.3" "CONFIG_JFS_FS"
+	_ot-kernel_check_versions "sys-fs/reiserfsprogs" "3.6.3" "CONFIG_REISERFS_FS"
+	_ot-kernel_check_versions "sys-fs/squashfs-tools" "4.0" "CONFIG_SQUASHFS"
+	_ot-kernel_check_versions "sys-fs/quota" "3.09" "CONFIG_QUOTA"
+	_ot-kernel_check_versions "sys-fs/xfsprogs" "2.6.0" "CONFIG_XFS_FS"
+	_ot-kernel_check_versions "sys-process/procps" "3.2.0" ""
+	_ot-kernel_check_versions "virtual/udev" "081" ""
+}

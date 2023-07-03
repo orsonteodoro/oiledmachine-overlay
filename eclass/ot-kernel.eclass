@@ -40,8 +40,8 @@
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.10
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.1
-#	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.2
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.3
+#	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.4
 # kernel_compiler_patch:
 #	https://github.com/graysky2/kernel_compiler_patch
 # MUQSS CPU Scheduler (official, EOL 5.12):
@@ -71,8 +71,8 @@
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
-#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.2/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.3/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.4/
 # Project C CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/Project%20C
 #	https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -87,8 +87,8 @@
 #	https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 #	https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
-#	https://github.com/torvalds/linux/compare/v6.2...zen-kernel:6.2/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.3...zen-kernel:6.3/zen-sauce
+#	https://github.com/torvalds/linux/compare/v6.4...zen-kernel:6.4/zen-sauce
 
 case ${EAPI:-0} in
 	[78]) ;;
@@ -176,70 +176,10 @@ NEEDS_DEBUGFS=0
 PYTHON_COMPAT=( python3_{8..10} )
 inherit check-reqs flag-o-matic python-r1 ot-kernel-cve ot-kernel-pkgflags
 inherit ot-kernel-kutils security-scan toolchain-funcs
-CDEPEND="
-	app-arch/cpio
-	app-shells/bash
-	dev-lang/perl
-	dev-util/pkgconf
-	sys-apps/grep[pcre]
-	sys-devel/bison
-	sys-devel/flex
-	sys-devel/make
-	virtual/libelf
-	virtual/pkgconfig
-	bzip2? (
-		app-arch/bzip2
-	)
-	gtk? (
-		dev-libs/glib:2
-		gnome-base/libglade:2.0
-		x11-libs/gtk+:2
-	)
-	gzip? (
-		app-arch/gzip
-		sys-apps/kmod[zlib]
-	)
-	lz4? (
-		app-arch/lz4
-	)
-	lzma? (
-		app-arch/xz-utils
-	)
-	lzo? (
-		app-arch/lzop
-	)
-	ncurses? (
-		sys-libs/ncurses
-	)
-	openssl? (
-		dev-libs/openssl
-	)
-	qt5? (
-		dev-qt/qtcore:5
-		dev-qt/qtgui:5
-		dev-qt/qtwidgets:5
-	)
-	xz? (
-		app-arch/xz-utils
-		sys-apps/kmod[lzma]
-	)
-	zstd? (
-		app-arch/zstd
-		sys-apps/kmod[zstd]
-	)
-"
 
-RDEPEND+="
-	!build? (
-		${CDEPEND}
-	)
-"
 BDEPEND+="
 	dev-util/patchutils
 	sys-apps/findutils
-	build? (
-		${CDEPEND}
-	)
 	imagemagick? (
 		media-gfx/imagemagick
 		app-crypt/rhash
@@ -7217,6 +7157,27 @@ einfo "Changed to ${sym}=${OT_KERNEL_KCONFIG[${sym}]} in .config"
 	done
 }
 
+# @FUNCTION: ot-kernel_set_rust
+# @DESCRIPTION:
+# Sets config for support for drivers programmed in Rust and Rust related kernel
+# options.
+#
+# CONFIG_RUST is not supported on distro because it is an old version.
+#
+# Kernel docs say it requires a specific version and no forward compatible
+# guarantees
+#
+ot-kernel_set_rust() {
+	ot-kernel_use rust || return
+	if has_version "~virtual/rust-${RUST_PV}" ; then
+		ot-kernel_y_configopt "CONFIG_RUST"
+		ot-kernel_unset_configopt "CONFIG_MODVERSIONS"
+		ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
+		ot-kernel_unset_configopt "CONFIG_RANDSTRUCT"
+		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_BTF"
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -7337,6 +7298,8 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_set_kconfig_module_signing
 	ot-kernel_set_message
 
+	ot-kernel_set_rust
+
 	ot-kernel_set_kconfig_from_envvar_array
 
 	if [[ -e "${BUILD_DIR}/.config" ]] ; then
@@ -7376,6 +7339,31 @@ ewarn "Missing ${path_config} so generating a new default config."
 	ot-kernel_set_kconfig_compiler_toolchain # Inits llvm_slot, gcc_slot
 	ot-kernel_menuconfig "pre" # Uses llvm_slot
 	ot-kernel_menuconfig "post" # Uses llvm_slot
+}
+
+# @FUNCTION: _ot-kernel_check_versions
+# @DESCRIPTION:
+# A wrapper for version checks.
+_ot-kernel_check_versions() {
+	local _catpn="${1}"
+	local _pv="${2}"
+	local _kconfig_symbol="${3}"
+	local _p="${_catpn}-${_pv}"
+	local path_config="${BUILD_DIR}/.config"
+	if has_version ">=${_p}" ; then
+		:;
+	elif has_version "<${_p}" && [[ -n "${_kconfig_symbol}" ]] ; then
+ewarn ">=${_p} is required for ${_kconfig_symbol} support."
+	elif has_version "<${_p}" && [[ -z "${_kconfig_symbol}" ]] ; then
+ewarn ">=${_p} is required by the kernel."
+	elif ! has_version "${_catpn}" \
+		&& [[ -n "${_kconfig_symbol}" ]] \
+		&& grep -q -E -e "^${_kconfig_symbol}=(y|m)" "${path_config}" ; then
+ewarn ">=${_p} is maybe required for ${_kconfig_symbol} support."
+	elif ! has_version "${_catpn}" \
+		&& [[ -z "${_kconfig_symbol}" ]] ; then
+ewarn ">=${_p} is maybe required by the kernel."
+	fi
 }
 
 # @FUNCTION: ot-kernel_src_configure
@@ -7440,6 +7428,10 @@ eerror
 			ot-kernel_src_configure_assisted
 		else
 			ot-kernel_src_configure_custom
+		fi
+
+		if declare -f ot-kernel_check_versions >/dev/null ; then
+			ot-kernel_check_versions
 		fi
 	done
 }

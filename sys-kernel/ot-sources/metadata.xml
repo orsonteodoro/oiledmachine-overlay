@@ -3503,6 +3503,10 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       realtime access.  The rt patchset is used by music producers that require
       low latency audio.
     </flag>
+    <flag name="rust">
+      Add support for drivers written in Rust and kernel config options related
+      to Rust.
+    </flag>
     <flag name="shadowcallstack">
       Ensures that shadow call stack dependencies are installed.  Protects from
       ROP back edge attacks from arbitary code execution.
