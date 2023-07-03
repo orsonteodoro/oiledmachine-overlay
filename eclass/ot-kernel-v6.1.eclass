@@ -461,7 +461,6 @@ KCP_RDEPEND="
 CDEPEND+="
 	>=app-shells/bash-4.2
 	>=dev-lang/perl-5
-	>=dev-util/pahole-1.16
 	>=sys-apps/util-linux-2.10o
 	>=sys-devel/bc-1.06.95
 	>=sys-devel/binutils-2.23
@@ -950,6 +949,7 @@ ot-kernel_filter_clang_pgo_patch_cb() {
 # Check optional version requirements
 ot-kernel_check_versions() {
 	_ot-kernel_check_versions "app-admin/mcelog" "0.6" ""
+	_ot-kernel_check_versions "dev-util/pahole" "1.16" "CONFIG_DEBUG_INFO_BTF"
 	_ot-kernel_check_versions "net-dialup/ppp" "2.4.0" "CONFIG_PPP"
 	_ot-kernel_check_versions "net-firewall/iptables" "1.4.2" "CONFIG_NETFILTER"
 	_ot-kernel_check_versions "net-fs/nfs-utils" "1.0.5" "NFS_FS"
