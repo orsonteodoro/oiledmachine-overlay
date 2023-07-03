@@ -1251,7 +1251,7 @@ ot-kernel-pkgflags_bubblewrap() { # DONE
 ot-kernel-pkgflags_c2tcp() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sedcf537]}" == "1" ]] && return
 	if ot-kernel_has_version "sys-apps/c2tcp" ; then
-		einfo "Applying kernel config flags for the deepcc package (id: edcf537)"
+		einfo "Applying kernel config flags for the c2tcp package (id: edcf537)"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
