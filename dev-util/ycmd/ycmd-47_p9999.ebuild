@@ -367,7 +367,7 @@ EGIT_COMMIT_NUMPYDOC="c8513c5db6088a305711851519f944b33f7e1b25"
 EGIT_COMMIT_SCIPY_SPHINX_THEME="bc3b4b8383d4cd676fe75b7ca8c3e11d6afa8d97"
 EGIT_COMMIT_TYPESHED="d38645247816f862cafeed21a8f4466d306aacf3"
 BOTTLE_PV="0.12.23"
-CLANGD_PV="${CLANG_PV_MAJ}.0.1"
+CLANGD_PV="${CLANG_PV}"
 CMAKE_PV="3.14"
 DJANGO_STUBS_PV="jedi-v1"
 GOPLS_PV="0.9.4"
@@ -375,7 +375,7 @@ JAVA_SLOT="17"
 JDTLS_PV="1.23.0-202304271346" # MILESTONE-TIMESTAMP in build.py
 JEDI_PV="0.18.2"
 OMNISHARP_PV="1.37.11"
-LIBCLANG_PV="${CLANG_PV_MAJ}.0.0"
+LIBCLANG_PV="${CLANG_PV}"
 MRAB_REGEX_PV="2021.10.23" # bf5e239
 PARSO_PV="0.8.3"
 RUST_PV="nightly-2022-08-17"
@@ -726,9 +726,7 @@ BD_ABS=""
 
 pkg_setup() {
 	if \
-		   ( ! use system-clangd     && ( use c || use cxx || use objc || use objcxx ) ) \
-		|| ( ! use system-libclang   && ( use c || use cxx || use objc || use objcxx ) ) \
-		|| ( ! use system-tern       && use javascript ) \
+		   ( ! use system-tern       && use javascript ) \
 		|| ( ! use system-typescript && use typescript ) \
 	; then
 		if has network-sandbox $FEATURES ; then

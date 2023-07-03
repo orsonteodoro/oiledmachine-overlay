@@ -699,9 +699,7 @@ BD_ABS=""
 
 pkg_setup() {
 	if \
-		   ( ! use system-clangd     && ( use c || use cxx || use objc || use objcxx ) ) \
-		|| ( ! use system-libclang   && ( use c || use cxx || use objc || use objcxx ) ) \
-		|| ( ! use system-tern       && use javascript ) \
+		   ( ! use system-tern       && use javascript ) \
 		|| ( ! use system-typescript && use typescript ) \
 	; then
 		if has network-sandbox $FEATURES ; then
