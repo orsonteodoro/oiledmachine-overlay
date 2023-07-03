@@ -1857,6 +1857,43 @@ einfo
 	find . -empty -type d -delete
 }
 
+# From python-utils-r1.eclass
+# Forked because it tries to optimize test cases which results in error.
+python_domodule_no_optimize() {
+	debug-print-function ${FUNCNAME} "${@}"
+
+	[[ ${EPYTHON} ]] || die 'No Python implementation set (EPYTHON is null).'
+
+	local d
+	if [[ ${_PYTHON_MODULEROOT} == /* ]]; then
+		# absolute path
+		d=${_PYTHON_MODULEROOT}
+	else
+		# relative to site-packages
+		local sitedir=$(python_get_sitedir)
+		d=${sitedir#${EPREFIX}}/${_PYTHON_MODULEROOT//.//}
+	fi
+
+	if [[ ${EBUILD_PHASE} == install ]]; then
+		(
+			insopts -m 0644
+			insinto "${d}"
+			doins -r "${@}" || return ${?}
+		)
+		#python_optimize "${ED%/}/${d}"
+	elif [[ -n ${BUILD_DIR} ]]; then
+		local dest=${BUILD_DIR}/install${EPREFIX}/${d}
+		mkdir -p "${dest}" || die
+		cp -pR "${@}" "${dest}/" || die
+		(
+			cd "${dest}" &&
+			chmod -R a+rX "${@##*/}"
+		) || die
+	else
+		die "${FUNCNAME} can only be used in src_install or with BUILD_DIR set"
+	fi
+}
+
 src_install() {
 	if use developer ; then
 		DOCS+=( CODE_OF_CONDUCT.md CONTRIBUTING.md )
@@ -1874,7 +1911,7 @@ src_install() {
 		if use minimal ; then
 			_shrink_install
 		fi
-		python_domodule ycmd
+		python_domodule_no_optimize ycmd
 		insinto "/usr/share/${PN}-${PV_MAJ}"
 		if use examples ; then
 			doins -r examples

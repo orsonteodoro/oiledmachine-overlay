@@ -546,7 +546,7 @@ diff -urpN -x '*.orig' -x '*.rej' ycmd-47_p9999.orig/ycmd/completers/typescript/
 -  for executable in [ os.path.join( TSSERVER_DIR,
 +  if ycmd.USE_SYSTEM_TYPESCRIPT:
 +    tspaths = [ ycmd.SYSTEM_TSSERVER_PATH ]
-+  else
++  else:
 +    tpaths = [ os.path.join( TSSERVER_DIR,
                                      'node_modules',
                                      '.bin',
