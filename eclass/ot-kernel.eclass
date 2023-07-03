@@ -173,7 +173,7 @@ bzip2 cpu_flags_arm_thumb graphicsmagick gtk gzip imagemagick lz4 lzma lzo
 +ncurses openssl pcc +reiserfs qt5 xz zstd
 "
 NEEDS_DEBUGFS=0
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{10..11} ) # Slots based on dev-python/selenium
 inherit check-reqs flag-o-matic python-r1 ot-kernel-cve ot-kernel-pkgflags
 inherit ot-kernel-kutils security-scan toolchain-funcs
 
