@@ -17,11 +17,6 @@ HOMEPAGE="https://ycm-core.github.io/ycmd/"
 LICENSE="
 	GPL-3+
 	BSD
-	!system-mrab-regex? (
-		all-rights-reserved
-		Apache-2.0
-		CNRI
-	)
 	!system-bottle? (
 		MIT
 	)
@@ -36,6 +31,11 @@ LICENSE="
 		DOTNET-libraries-and-runtime-components-patents
 		MIT
 		Mono-patents
+	)
+	!system-mrab-regex? (
+		all-rights-reserved
+		Apache-2.0
+		CNRI
 	)
 	!system-watchdog? (
 		Apache-2.0
@@ -719,8 +719,12 @@ BD_REL="ycmd/${SLOT_MAJ}"
 BD_ABS=""
 
 pkg_setup() {
-	if ( ! use system-tern && use javascript ) \
-	|| ( ! use system-typescript && use typescript ) ; then
+	if \
+		   ( ! use system-clangd     && ( use c || use cxx || use objc || use objcxx ) ) \
+		|| ( ! use system-libclang   && ( use c || use cxx || use objc || use objcxx ) ) \
+		|| ( ! use system-tern       && use javascript ) \
+		|| ( ! use system-typescript && use typescript ) \
+	; then
 		if has network-sandbox $FEATURES ; then
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
