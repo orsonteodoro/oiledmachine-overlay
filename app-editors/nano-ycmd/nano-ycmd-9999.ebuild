@@ -10,7 +10,7 @@ LIVE_TYPE="git"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit autotools flag-o-matic git-r3 java-pkg-opt-2 python-single-r1
 
-NANO_YCMD_COMMIT="a4e39ed0831d6c661e21055f29ed0189c7dff37a"
+NANO_YCMD_COMMIT="66329e00bde7a080b69964ae68d1f6411a37eb83"
 if [[ "${LIVE_TYPE}" == "git" ]] ; then
 	IUSE+=" +fallback-commit"
 	inherit git-r3
@@ -198,7 +198,7 @@ eerror
 src_prepare() {
 	ewarn "This ebuild is a Work In Progress (WIP)"
 	default
-	eapply "${FILESDIR}/${PN}-9999_p20210417-rename-as-ynano.patch"
+	eapply "${FILESDIR}/${PN}-9999-rename-as-ynano.patch"
 	export GNULIB_USE_TARBALL=1
 	if use system-gnulib ; then
 		export GNULIB_USE_SYSTEM=1
