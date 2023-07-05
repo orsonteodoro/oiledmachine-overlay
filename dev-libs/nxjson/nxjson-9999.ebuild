@@ -19,7 +19,7 @@ EXPECTED="\
 cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce\
 47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
 SLOT="0/${EXPECTED}"
-IUSE="debug static-libs test"
+IUSE="debug fallback-commit static-libs test"
 RDEPEND+="
 	virtual/libc
 "
@@ -40,6 +40,7 @@ get_lib_types() {
 }
 
 src_unpack() {
+	use fallback-commit && export EGIT_COMMIT="d2c6fba9d5b0d445722105dd2a64062c1309ac86"
 	git-r3_fetch
 	git-r3_checkout
 
