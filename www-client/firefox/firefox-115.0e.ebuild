@@ -27,7 +27,7 @@ unset __
 # Version announcements can be found here also:
 # https://wiki.mozilla.org/Release_Management/Calendar
 
-EBUILD_MAINTAINER_MODE=1
+EBUILD_MAINTAINER_MODE=0
 #FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-10j.tar.xz"
 FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-03.tar.xz" # Placeholder
 
