@@ -1,0 +1,55 @@
+--- a/toolkit/moz.configure.orig	2023-07-05 23:01:27.342717014 -0700
++++ b/toolkit/moz.configure	2023-07-05 23:03:51.442719951 -0700
+@@ -2229,13 +2229,25 @@ with only_when(compile_environment):
+ 
+ # FFmpeg's ffvpx configuration
+ # ==============================================================
++
++option("--with-ffvpx",
++    help="{Enable,Disable} the vendored ffmpeg 5.x fork called ffvpx.  Enables decode only for dav1d, flac, mp3, opus, vpx{8,9} on 64-bit; decode only for flac on 32-bit.",
++    nargs=1,
++    choices=("yes", "no", "default"),
++    default="default",
++)
++
+ with only_when(compile_environment):
+ 
+-    @depends(target)
+-    def libav_fft(target):
++    @depends("--with-ffvpx", target)
++    def libav_fft(values, target):
++        # Do not set MOZ_LIBAV_FFT preprocessor codepaths
+         if target.os == "Android" and target.cpu != "arm":
+             return True
+-        return target.kernel in ("WINNT", "Darwin") or target.cpu == "x86_64"
++        if any("default" in value for value in values) or any("yes" in value for value in values):
++            return target.kernel in ("WINNT", "Darwin") or target.cpu == "x86_64"
++        else:
++            return False
+ 
+     set_config("MOZ_LIBAV_FFT", depends(when=libav_fft)(lambda: True))
+     set_define("MOZ_LIBAV_FFT", depends(when=libav_fft)(lambda: True))
+@@ -2244,13 +2256,19 @@ with only_when(compile_environment):
+ # Artifact builds need MOZ_FFVPX defined as if compilation happened.
+ with only_when(compile_environment | artifact_builds):
+ 
+-    @depends(target)
+-    def ffvpx(target):
+-        enable = use_nasm = True
++    @depends("--with-ffvpx", target)
++    def ffvpx(values, target):
++        if any("default" in value for value in values) or any("yes" in value for value in values):
++            enable = use_nasm = True
++        else:
++            enable = use_nasm = False
+         flac_only = False
+         flags = []
+ 
+-        if target.kernel == "WINNT":
++        if any("no" in value for value in values):
++            # Do not set MOZ_FFVPX_AUDIOONLY preprocessor codepaths
++            pass
++        elif target.kernel == "WINNT":
+             if target.cpu == "x86":
+                 # 32-bit windows need to prefix symbols with an underscore.
+                 flags = ["-DPIC", "-DWIN32", "-DPREFIX", "-Pconfig_win32.asm"]

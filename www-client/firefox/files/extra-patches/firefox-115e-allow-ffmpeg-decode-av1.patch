@@ -1,0 +1,27 @@
+--- a/dom/media/platforms/ffmpeg/FFmpegVideoDecoder.cpp.orig	2023-06-29 08:58:51.000000000 -0700
++++ b/dom/media/platforms/ffmpeg/FFmpegVideoDecoder.cpp	2023-07-05 22:50:01.030703021 -0700
+@@ -1239,7 +1239,13 @@ MediaResult FFmpegVideoDecoder<LIBAV_VER
+   b.mPlanes[0].mHeight = mFrame->height;
+   if (mCodecContext->pix_fmt == AV_PIX_FMT_YUV444P ||
+       mCodecContext->pix_fmt == AV_PIX_FMT_YUV444P10LE ||
++#if defined(FFMPEG_AV1_DECODE) \
++    || ( LIBAVCODEC_VERSION_MAJOR == 58 && LIBAVCODEC_VERSION_MINOR >= 91 ) \
++    || ( LIBAVCODEC_VERSION_MAJOR >= 59 )
+       mCodecContext->pix_fmt == AV_PIX_FMT_GBRP
++#else
++      0
++#endif
+ #if LIBAVCODEC_VERSION_MAJOR >= 57
+       || mCodecContext->pix_fmt == AV_PIX_FMT_YUV444P12LE
+ #endif
+@@ -1421,7 +1427,9 @@ AVCodecID FFmpegVideoDecoder<LIBAV_VER>:
+   }
+ #endif
+ 
+-#if defined(FFMPEG_AV1_DECODE)
++#if defined(FFMPEG_AV1_DECODE) \
++  || ( LIBAVCODEC_VERSION_MAJOR == 58 && LIBAVCODEC_VERSION_MINOR >= 91 ) \
++  || ( LIBAVCODEC_VERSION_MAJOR >= 59 )
+   if (AOMDecoder::IsAV1(aMimeType)) {
+     return AV_CODEC_ID_AV1;
+   }
