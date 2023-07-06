@@ -14,13 +14,17 @@ SRC_URI="
 	mirror://gentoo/libjpeg8_8d-2.debian.tar.gz
 "
 
-LICENSE="BSD IJG ZLIB"
+LICENSE="
+	BSD
+	IJG
+	ZLIB
+"
 SLOT="0/0.2"
 if [[ "$(ver_cut 3)" -lt 90 ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris ~x86-solaris"
 fi
-IUSE="+asm cpu_flags_arm_neon java static-libs"
-IUSE+="
+IUSE="
+	+asm cpu_flags_arm_neon java static-libs
 	pgo
 	trainer-70-pct-quality-baseline
 	trainer-75-pct-quality-baseline
@@ -69,29 +73,74 @@ REQUIRED_USE="
 			trainer-transformations
 		)
 	)
-	trainer-70-pct-quality-baseline? ( pgo )
-	trainer-75-pct-quality-baseline? ( pgo )
-	trainer-80-pct-quality-baseline? ( pgo )
-	trainer-90-pct-quality-baseline? ( pgo )
-	trainer-95-pct-quality-baseline? ( pgo )
-	trainer-98-pct-quality-baseline? ( pgo )
-	trainer-99-pct-quality-baseline? ( pgo )
-	trainer-100-pct-quality-baseline? ( pgo )
-	trainer-70-pct-quality-progressive? ( pgo )
-	trainer-75-pct-quality-progressive? ( pgo )
-	trainer-80-pct-quality-progressive? ( pgo )
-	trainer-90-pct-quality-progressive? ( pgo )
-	trainer-95-pct-quality-progressive? ( pgo )
-	trainer-98-pct-quality-progressive? ( pgo )
-	trainer-99-pct-quality-progressive? ( pgo )
-	trainer-100-pct-quality-progressive? ( pgo )
-	trainer-crop? ( pgo )
-	trainer-decode? ( pgo )
-	trainer-grayscale? ( pgo )
-	trainer-transformations? ( pgo )
+	trainer-70-pct-quality-baseline? (
+		pgo
+	)
+	trainer-75-pct-quality-baseline? (
+		pgo
+	)
+	trainer-80-pct-quality-baseline? (
+		pgo
+	)
+	trainer-90-pct-quality-baseline? (
+		pgo
+	)
+	trainer-95-pct-quality-baseline? (
+		pgo
+	)
+	trainer-98-pct-quality-baseline? (
+		pgo
+	)
+	trainer-99-pct-quality-baseline? (
+		pgo
+	)
+	trainer-100-pct-quality-baseline? (
+		pgo
+	)
+	trainer-70-pct-quality-progressive? (
+		pgo
+	)
+	trainer-75-pct-quality-progressive? (
+		pgo
+	)
+	trainer-80-pct-quality-progressive? (
+		pgo
+	)
+	trainer-90-pct-quality-progressive? (
+		pgo
+	)
+	trainer-95-pct-quality-progressive? (
+		pgo
+	)
+	trainer-98-pct-quality-progressive? (
+		pgo
+	)
+	trainer-99-pct-quality-progressive? (
+		pgo
+	)
+	trainer-100-pct-quality-progressive? (
+		pgo
+	)
+	trainer-crop? (
+		pgo
+	)
+	trainer-decode? (
+		pgo
+	)
+	trainer-grayscale? (
+		pgo
+	)
+	trainer-transformations? (
+		pgo
+	)
 "
 
-ASM_DEPEND="|| ( dev-lang/nasm dev-lang/yasm )"
+ASM_DEPEND="
+	|| (
+		dev-lang/nasm
+		dev-lang/yasm
+	)
+"
 
 COMMON_DEPEND="
 	!media-libs/jpeg:0
@@ -100,11 +149,21 @@ COMMON_DEPEND="
 
 BDEPEND+="
 	>=dev-util/cmake-3.16.5
-	amd64? ( ${ASM_DEPEND} )
-	amd64-linux? ( ${ASM_DEPEND} )
-	x86? ( ${ASM_DEPEND} )
-	x86-linux? ( ${ASM_DEPEND} )
-	x64-macos? ( ${ASM_DEPEND} )
+	amd64? (
+		${ASM_DEPEND}
+	)
+	amd64-linux? (
+		${ASM_DEPEND}
+	)
+	x86? (
+		${ASM_DEPEND}
+	)
+	x86-linux? (
+		${ASM_DEPEND}
+	)
+	x64-macos? (
+		${ASM_DEPEND}
+	)
 "
 
 DEPEND="
@@ -159,7 +218,7 @@ src_prepare() {
 
 	for FILE in ../debian/extra/*.c; do
 		FILE=${FILE##*/}
-		cat >> CMakeLists.txt <<EOF || die
+cat >> CMakeLists.txt <<EOF || die
 add_executable(${FILE%.c} ${FILE})
 install(TARGETS ${FILE%.c})
 EOF

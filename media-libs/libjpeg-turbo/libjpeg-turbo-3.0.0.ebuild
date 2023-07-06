@@ -1,4 +1,4 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -20,9 +20,10 @@ LICENSE="
 	ZLIB
 "
 SLOT="0/0.2"
-if [[ "$(ver_cut 3)" -lt 90 ]] ; then
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris ~x86-solaris"
-fi
+# Unkeyworded for test failures: https://github.com/libjpeg-turbo/libjpeg-turbo/issues/705
+#if [[ $(ver_cut 3) -lt 90 ]] ; then
+#       KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~x64-macos ~x64-solaris"
+#fi
 IUSE="
 	+asm cpu_flags_arm_neon java static-libs
 	pgo
@@ -218,7 +219,7 @@ src_prepare() {
 
 	for FILE in ../debian/extra/*.c; do
 		FILE=${FILE##*/}
-cat >> CMakeLists.txt <<EOF || die
+cat >> CMakeLists.txt <<-EOF || die
 add_executable(${FILE%.c} ${FILE})
 install(TARGETS ${FILE%.c})
 EOF
@@ -285,7 +286,6 @@ _src_configure() {
 	mycmakeargs+=(
 		-DCMAKE_INSTALL_DEFAULT_DOCDIR="${EPREFIX}/usr/share/doc/${PF}"
 		-DWITH_JAVA="$(multilib_native_usex java)"
-		-DWITH_MEM_SRCDST=ON
 	)
 
 	if ! use asm ; then
@@ -308,7 +308,7 @@ _src_configure() {
 		)
 	fi
 
-	# mostly for Prefix, ensure that we use our yasm if installed and
+	# Mostly for Prefix, ensure that we use our yasm if installed and
 	# not pick up host-provided nasm
 	if has_version -b dev-lang/yasm && ! has_version -b dev-lang/nasm; then
 		mycmakeargs+=(
