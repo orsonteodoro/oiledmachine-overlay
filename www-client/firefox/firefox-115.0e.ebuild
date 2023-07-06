@@ -29,7 +29,7 @@ unset __
 
 EBUILD_MAINTAINER_MODE=1
 #FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-10j.tar.xz"
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-03.tar.xz" # Placeholder
 
 LLVM_SLOTS=( 16 14 )
 LLVM_MAX_SLOT=16
@@ -98,8 +98,7 @@ https://github.com/mozilla/gecko-dev/commit/d4f5769a01531070eb401fd0b78bbd0ce22c
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-#KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
-KEYWORDS="~amd64 ~ppc64 ~x86"
+#KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86" # Waiting for distro patchset.
 
 SLOT="esr"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -429,6 +428,7 @@ REQUIRED_USE="
 # /var/tmp/portage/www-client/firefox-115.0e/work/firefox-115.0/media/libvpx/config/vpx_version.h L8
 # /var/tmp/portage/www-client/firefox-115.0e/work/firefox-115.0/media/libwebp/moz.yaml L16
 # /var/tmp/portage/www-client/firefox-115.0e/work/firefox-115.0/modules/freetype2/include/freetype/freetype.h L4943
+# /var/tmp/portage/www-client/firefox-115.0e/work/firefox-115.0/nsprpub/pr/include/prinit.h L35
 # /var/tmp/portage/www-client/firefox-115.0e/work/firefox-115.0/third_party/dav1d/meson.build L26
 # /var/tmp/portage/www-client/firefox-115.0e/work/firefox-115.0/third_party/pipewire/pipewire/version.h L49
 # /var/tmp/portage/www-client/firefox-115.0e/work/firefox-115.0/taskcluster/ci/fetch/toolchains.yml
@@ -571,7 +571,7 @@ CDEPEND="
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.90.0[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.34[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.0[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
@@ -804,27 +804,27 @@ einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 
 # Check every minor version
 __='
-PV="102.10.0"
+PV="115.0"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}esr/linux-x86_64/xpi/" \
-        | grep "href.*linux-x86_64"  \
-        | cut -f 3 -d ">" \
-        | cut -f 1 -d "<" \
-        | sed -e "s|/||g" \
-        | sed -e "s|.xpi$||g" \
-        | sed -e "s|^\.\.$||g" \
-        | tr "\n" " " \
-        | fold -w 80 -s \
-        | sed -e "s|^ ||g" \
-        | sed -e "s| $||g"
+	| grep "href.*linux-x86_64"  \
+	| cut -f 3 -d ">" \
+	| cut -f 1 -d "<" \
+	| sed -e "s|/||g" \
+	| sed -e "s|.xpi$||g" \
+	| sed -e "s|^\.\.$||g" \
+	| tr "\n" " " \
+	| fold -w 80 -s \
+	| sed -e "s|^ ||g" \
+	| sed -e "s| $||g"
 '
 unset __
 
 MOZ_LANGS=(
 ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
-en-GB en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fy-NL ga-IE gd gl gn
-gu-IN he hi-IN hr hsb hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv mk
-mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sco si sk sl son
-sq sr sv-SE szl ta te th tl tr trs uk ur uz vi xh zh-CN zh-TW
+en-GB en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fur fy-NL ga-IE gd gl
+gn gu-IN he hi-IN hr hsb hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv
+mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sc sco si sk
+sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
 )
 
 mozilla_set_globals() {

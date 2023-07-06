@@ -90,7 +90,7 @@ SRC_URI="
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
 
-#KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86" # Depends needs to be updated
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
 SLOT="rapid"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
@@ -420,6 +420,7 @@ REQUIRED_USE="
 # /var/tmp/portage/www-client/firefox-115.0/work/firefox-115.0/media/libvpx/config/vpx_version.h L8
 # /var/tmp/portage/www-client/firefox-115.0/work/firefox-115.0/media/libwebp/moz.yaml L16
 # /var/tmp/portage/www-client/firefox-115.0/work/firefox-115.0/modules/freetype2/include/freetype/freetype.h L4943
+# /var/tmp/portage/www-client/firefox-115.0/work/firefox-115.0/nsprpub/pr/include/prinit.h L35
 # /var/tmp/portage/www-client/firefox-115.0/work/firefox-115.0/third_party/dav1d/meson.build L26
 # /var/tmp/portage/www-client/firefox-115.0/work/firefox-115.0/third_party/pipewire/pipewire/version.h L49
 # /var/tmp/portage/www-client/firefox-115.0/work/firefox-115.0/taskcluster/ci/fetch/toolchains.yml
@@ -452,8 +453,8 @@ unset __
 
 DBUS_PV="0.60"
 DBUS_GLIB_PV="0.60"
-FFMPEG_PV="6.0" # This corresponds to y in x.y.z from the subslot.
-GTK3_PV="3.14.0"
+FFMPEG_PV="4.4.1" # This corresponds to y in x.y.z from the subslot.
+GTK3_PV="3.14.5"
 NASM_PV="2.14.02"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
 XKBCOMMON_PV="0.4.1"
@@ -561,7 +562,7 @@ CDEPEND="
 	${NON_FREE_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.90[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.90.0[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.0[${MULTILIB_USEDEP}]
@@ -605,10 +606,10 @@ CDEPEND="
 	)
 	system-harfbuzz? (
 		>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
-		>=media-libs/harfbuzz-7.1.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-7.3.0:0=[${MULTILIB_USEDEP}]
 	)
 	system-icu? (
-		>=dev-libs/icu-72.1:=[${MULTILIB_USEDEP}]
+		>=dev-libs/icu-73.1:=[${MULTILIB_USEDEP}]
 	)
 	system-jpeg? (
 		>=media-libs/libjpeg-turbo-2.1.5.1[${MULTILIB_USEDEP}]
@@ -728,7 +729,7 @@ BDEPEND+="
 	>=dev-lang/perl-5.006
 	>=dev-util/cbindgen-0.24.3
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
-	>=net-libs/nodejs-10
+	>=net-libs/nodejs-12
 	>=virtual/rust-1.69.0[${MULTILIB_USEDEP}]
 	app-alternatives/awk
 	app-arch/unzip
@@ -807,15 +808,15 @@ einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 
 # Check every minor version
 __='
-PV="112.0.2"
+PV="115.0"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}/linux-x86_64/xpi/" \
-        | grep "href.*linux-x86_64"  \
-        | cut -f 3 -d ">" \
-        | cut -f 1 -d "<" \
-        | sed -e "s|/||g" \
+	| grep "href.*linux-x86_64"  \
+	| cut -f 3 -d ">" \
+	| cut -f 1 -d "<" \
+	| sed -e "s|/||g" \
 	| sed -e "s|.xpi$||g" \
 	| sed -e "s|^\.\.$||g" \
-        | tr "\n" " " \
+	| tr "\n" " " \
 	| fold -w 80 -s \
 	| sed -e "s|^ ||g" \
 	| sed -e "s| $||g"
@@ -827,7 +828,7 @@ ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
 en-GB en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fur fy-NL ga-IE gd gl
 gn gu-IN he hi-IN hr hsb hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv
 mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sc sco si sk
-sl son sq sr sv-SE szl ta te th tl tr trs uk ur uz vi xh zh-CN zh-TW
+sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
 )
 
 mozilla_set_globals() {
