@@ -1283,8 +1283,8 @@ src_prepare() {
 #	use webrtc && eapply "${FILESDIR}/2.33.2-add-openh264-headers.patch"
 
 	# Precautions
-	eapply "${FILESDIR}/webkit-gtk-2.39.1-jsc-disable-fast-math.patch"
-	eapply "${FILESDIR}/webkit-gtk-2.39.1-webcore-honor-finite-math-and-nan.patch"
+	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.39.1-jsc-disable-fast-math.patch"
+	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.39.1-webcore-honor-finite-math-and-nan.patch"
 
 ewarn
 ewarn "Try adding -Wl,--no-keep-memory to per-package LDFLAGS if out of memory (OOM)"
@@ -1292,7 +1292,7 @@ ewarn "or adding additional swap space.  The latter is more efficient."
 ewarn
 	# You still can have swapping + O(n^2) or swapping + O(1).
 
-	eapply "${FILESDIR}/webkit-gtk-2.39.90-linkers.patch"
+	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.39.90-linkers.patch"
 
 	cmake_src_prepare
 	gnome2_src_prepare

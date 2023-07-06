@@ -1,0 +1,14 @@
+# Precaution to avoid crashes or glitches because of Inf and NaN mentioned in comments and code.
+--- a/Source/JavaScriptCore/CMakeLists.txt.orig	2022-11-10 00:32:07.849860000 -0800
++++ b/Source/JavaScriptCore/CMakeLists.txt	2022-11-14 09:20:37.274672995 -0800
+@@ -1450,6 +1450,10 @@ WEBKIT_FRAMEWORK_DECLARE(JavaScriptCore)
+ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+ 
+ if (COMPILER_IS_GCC_OR_CLANG)
++    # Prevent segfaults with -Ofast
++    WEBKIT_ADD_TARGET_CXX_FLAGS(LowLevelInterpreterLib -O3 -fno-strict-aliasing -fno-fast-math)
++    WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -O3 -fno-strict-aliasing -fno-fast-math)
++
+     # Avoid using fused multiply-add instructions since this could give different results
+     # for e.g. parseInt depending on the platform and compilation flags.
+     if (WTF_CPU_LOONGARCH64)
