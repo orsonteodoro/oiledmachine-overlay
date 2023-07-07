@@ -10,7 +10,7 @@ LIVE_TYPE="git"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit autotools flag-o-matic git-r3 java-pkg-opt-2 python-single-r1
 
-NANO_YCMD_COMMIT="eee463f5cda82047aac78f7c11eec10faec24df9"
+NANO_YCMD_COMMIT="c7951461e8e509236103de12609e53c39647436f"
 if [[ "${LIVE_TYPE}" == "git" ]] ; then
 	IUSE+=" +fallback-commit"
 	inherit git-r3
@@ -37,7 +37,7 @@ system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
 system-rustc system-tsserver unicode ycm-generator ycmd-43 ycmd-44 ycmd-45
 ycmd-46 +ycmd-47
 
-r15
+r16
 "
 GNULIB_PV="2023.01.16.09.58.30"
 REQUIRED_USE+="
@@ -463,6 +463,7 @@ src_install() {
 	fi
 	dodir /usr/bin
 	dosym /bin/ynano /usr/bin/ynano
+	newdoc README.md README.nano-ycmd.md
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
