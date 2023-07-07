@@ -18,7 +18,7 @@ SLOT="0"
 IUSE+="
 debug system-clangd system-gopls system-mono system-rust system-typescript
 system-omnisharp +ycmd-47
-r8
+r9
 "
 YCMD_SLOT_47_LLVM_PV=16.0.1
 YCMD_SLOT_47_LLVM_PV_MAJ=$(ver_cut 1 ${YCMD_SLOT_47_LLVM_PV})
@@ -30,11 +30,11 @@ REQUIRED_USE+="
 "
 DEPEND+="
 	${PYTHON_DEPS}
-        dev-libs/jsoncpp
-        dev-libs/openssl
+	>=dev-libs/openssl-3
+	dev-libs/jsoncpp
 	dev-util/geany
-        net-libs/libssh
-        net-libs/neon
+	net-libs/libssh
+	net-libs/neon
 	system-clangd? (
 		sys-devel/clang:${YCMD_SLOT_47_LLVM_PV_MAJ}
 		sys-devel/llvm:${YCMD_SLOT_47_LLVM_PV_MAJ}
