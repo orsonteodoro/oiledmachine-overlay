@@ -274,6 +274,14 @@ einfo "~/.ycm_extra_conf.py.  This can be changed with the"
 einfo "GYCM_GLOBAL_YCMD_EXTRA_CONF provided via package.env."
 einfo
 	fi
+
+# No confirm modal dialog for verifying a clean .ycm_extra_conf.py yet.
+ewarn
+ewarn "SECURITY:"
+ewarn
+ewarn "Please manually check .ycm_extra_conf.py every time before running geany"
+ewarn "to avoid auto-running malicious code."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
