@@ -10,7 +10,7 @@ LIVE_TYPE="git"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit autotools flag-o-matic git-r3 java-pkg-opt-2 python-single-r1
 
-NANO_YCMD_COMMIT="c7951461e8e509236103de12609e53c39647436f"
+NANO_YCMD_COMMIT="0a0e86306df37afe9c03e0b4ba50bf9d30d9f537"
 if [[ "${LIVE_TYPE}" == "git" ]] ; then
 	IUSE+=" +fallback-commit"
 	inherit git-r3
@@ -37,7 +37,7 @@ system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
 system-rustc system-tsserver unicode ycm-generator ycmd-43 ycmd-44 ycmd-45
 ycmd-46 +ycmd-47
 
-r16
+r17
 "
 GNULIB_PV="2023.01.16.09.58.30"
 REQUIRED_USE+="
