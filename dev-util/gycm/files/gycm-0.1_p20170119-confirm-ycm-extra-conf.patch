@@ -111,10 +111,10 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1
 +	jsonRequestBuild(doc,json);
 +
 +	if (answer) {
-+		msgwin_status_add("[ycmd] Accepted .ycm_extra_conf.py");
++		msgwin_status_add("[ycmd] Accepted %s", conf_path);
 +		send(json, LOAD_EXTRA_CONF_HANDLER);
 +	} else {
-+		msgwin_status_add("[ycmd] Rejected .ycm_extra_conf.py");
++		msgwin_status_add("[ycmd] Rejected %s", conf_path);
 +		send(json, IGNORE_EXTRA_CONF_HANDLER);
 +	}
 +	//std::cout << "Built request: " << Json::StyledWriter().write(json);
