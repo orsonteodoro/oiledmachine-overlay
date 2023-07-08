@@ -38,7 +38,7 @@ IUSE+="
 builtin-completion +company-mode debug eldoc +flycheck +go-mode next-error
 +rust-mode system-gocode system-godef system-gopls system-jdtls system-mono
 system-omnisharp system-racerd system-rust system-typescript +typescript-mode
-ycmd-43 ycmd-44 ycmd-45 ycmd-46 +ycmd-47
+ycmd-43 ycmd-44 ycmd-45 ycmd-46 +ycmd-47 r1
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -495,6 +495,13 @@ einfo
 
 pkg_postrm() {
 	elisp-site-regen
+ewarn
+# Design not implemented correctly.
+# It should show the document before prompting.
+ewarn "SECURITY:  Before answering y for loading .ycm_extra_conf.py, you need to"
+ewarn "manually inspect the contents of that script for malicious code outside"
+ewarn "of emacs before ycmd executes it."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
