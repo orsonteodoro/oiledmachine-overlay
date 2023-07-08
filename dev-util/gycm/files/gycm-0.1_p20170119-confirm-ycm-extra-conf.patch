@@ -1,0 +1,171 @@
+Subject:  Add confirm dialog for .ycm_extra_conf.py
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+
+diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/gycm.cpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/gycm.cpp
+--- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/gycm.cpp	2017-01-19 01:53:14.000000000 -0800
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/gycm.cpp	2023-07-08 05:49:49.958739503 -0700
+@@ -49,4 +49,4 @@ extern "C" void plugin_init(GeanyData*){
+ extern "C" void plugin_cleanup(void) {
+ 	y->shutdown();
+ 	delete y;
+-}
+\ No newline at end of file
++}
+diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.cpp
+--- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp	2023-07-08 05:49:31.690739131 -0700
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.cpp	2023-07-08 06:03:42.114756469 -0700
+@@ -211,6 +211,28 @@ int Ycmd::handler(const char * buf, size
+ 	//printf("\n\n");
+ 	
+ 	//std::cout << "Handling response: " << returned_data;
++
++	if (std::strstr(returned_data.c_str(), "}{}"))
++	{
++		size_t len = returned_data.size();
++		returned_data.resize(len-2, ' ');
++	}
++
++	if (std::strstr(returned_data.c_str(), "}{}{}"))
++	{
++		size_t len = returned_data.size();
++		returned_data.resize(len-4, ' ');
++	}
++
++	if (std::strcmp(returned_data.c_str(), "true") == 0)
++	{ // prevent crash by doc.parse
++		return 0;
++	}
++
++	if (std::strcmp(returned_data.c_str(), "true{}") == 0)
++	{ // prevent crash by doc.parse
++		return 0;
++	}
+ 	
+ 	Json::Value returned;
+ 	if(!doc.parse(returned_data,returned)){
+@@ -225,10 +237,16 @@ int Ycmd::handler(const char * buf, size
+ 		return 0;
+ 	
+ 	if(returned.isMember("exception")){
+-		msgwin_status_add("[ycmd] %s: %s", returned["exception"]["TYPE"].asCString(), returned["message"].asCString());
+-		#ifndef NDEBUG
+-		std::cout << returned.toStyledString();
+-		#endif
++		if (std::strstr(returned["exception"]["TYPE"].asCString(), "UnknownExtraConf"))
++		{
++			const gchar *conf_path = returned["exception"]["extra_conf_file"].asCString();
++			document_open_file(conf_path, TRUE, NULL, NULL);
++		} else {
++			msgwin_status_add("[ycmd] %s: %s", returned["exception"]["TYPE"].asCString(), returned["message"].asCString());
++			#ifndef NDEBUG
++			std::cout << returned.toStyledString();
++			#endif
++		}
+ 		return 0;
+ 	}
+ 	
+@@ -327,7 +345,7 @@ Json::Value Ycmd::getUnsavedBuffers(Gean
+ 	return v;
+ }
+ 
+-void Ycmd::handleDocumentLoad(GObject*, GeanyDocument* doc){
++void Ycmd::handleDocumentLoadSourceCode(GObject* obj, GeanyDocument* doc){
+ 	SSM(doc->editor->sci,SCI_AUTOCSETORDER,SC_ORDER_CUSTOM,0);
+ 	Json::Value json;
+ 	Json::Value extrad;
+@@ -336,7 +354,22 @@ void Ycmd::handleDocumentLoad(GObject*,
+ 	send(json,EVENT_HANDLER);
+ }
+ 
+-void Ycmd::handleDocumentUnload(GObject*, GeanyDocument* doc){
++void Ycmd::handleDocumentLoadYcmExtraConf(GObject* obj, GeanyDocument* doc){
++	const gchar *conf_path = doc->real_path;
++	std::string s;
++	s += std::string("SECURITY:  Please review the contents of ") + std::string(conf_path) + std::string(" for integrity.  When you are done, close that tab to accept or reject it before ycmd runs it.");
++	dialogs_show_msgbox(GTK_MESSAGE_WARNING, s.c_str());
++}
++
++void Ycmd::handleDocumentLoad(GObject* obj, GeanyDocument* doc){
++	if (std::strstr(doc->real_path, ".ycm_extra_conf.py")) {
++		handleDocumentLoadYcmExtraConf(obj, doc);
++	} else {
++		handleDocumentLoadSourceCode(obj, doc);
++	}
++}
++
++void Ycmd::handleDocumentUnloadSourceCode(GObject* obj, GeanyDocument* doc){
+ 	Json::Value json;
+ 	Json::Value extrad;
+ 	extrad["event_name"] = "BufferUnload";
+@@ -346,6 +379,33 @@ void Ycmd::handleDocumentUnload(GObject*
+ 	send(json,EVENT_HANDLER);
+ }
+ 
++void Ycmd::handleDocumentUnloadYcmExtraConf(GObject* obj, GeanyDocument* doc){
++	const gchar *conf_path = utils_get_utf8_from_locale(doc->real_path);
++	std::string s;
++	s += std::string("SECURITY:  Accept and execute ") + std::string(conf_path) + std::string(" for ycmd?");
++	gboolean answer = dialogs_show_question(s.c_str());
++
++	Json::Value json;
++	jsonRequestBuild(doc,json);
++
++	if (answer) {
++		msgwin_status_add("[ycmd] Accepted .ycm_extra_conf.py");
++		send(json, LOAD_EXTRA_CONF_HANDLER);
++	} else {
++		msgwin_status_add("[ycmd] Rejected .ycm_extra_conf.py");
++		send(json, IGNORE_EXTRA_CONF_HANDLER);
++	}
++	//std::cout << "Built request: " << Json::StyledWriter().write(json);
++}
++
++void Ycmd::handleDocumentUnload(GObject* obj, GeanyDocument* doc){
++	if (std::strstr(doc->real_path, ".ycm_extra_conf.py")) {
++		handleDocumentUnloadYcmExtraConf(obj, doc);
++	} else {
++		handleDocumentUnloadSourceCode(obj, doc);
++	}
++}
++
+ void Ycmd::handleDocumentVisit(GObject*, GeanyDocument* doc){
+ 	if(!doc)
+ 		return;
+diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.hpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.hpp
+--- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.hpp	2017-01-19 01:53:14.000000000 -0800
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.hpp	2023-07-08 05:49:49.958739503 -0700
+@@ -13,7 +13,8 @@
+ #define CODE_COMPLETIONS_HANDLER "/completions"
+ #define COMPLETER_COMMANDS_HANDLER "/run_completer_command"
+ #define EVENT_HANDLER "/event_notification"
+-#define EXTRA_CONF_HANDLER "/load_extra_conf_file"
++#define LOAD_EXTRA_CONF_HANDLER "/load_extra_conf_file"
++#define IGNORE_EXTRA_CONF_HANDLER "/ignore_extra_conf_file"
+ 
+ class Ycmd {
+ public:
+@@ -28,11 +29,15 @@ public:
+ 	int handler(const char *, size_t);
+ 	
+ 	// Geany signal handlers
+-	void handleDocumentLoad(GObject*, GeanyDocument*);
+-	void handleDocumentUnload(GObject*, GeanyDocument*);
++	void handleDocumentLoad(GObject* obj, GeanyDocument*);
++	void handleDocumentUnload(GObject* obj, GeanyDocument*);
+ 	void handleDocumentVisit(GObject*, GeanyDocument*);
+ 	void complete(GObject*,GeanyDocument*);
+ private:
++	void handleDocumentUnloadSourceCode(GObject* obj, GeanyDocument* doc);
++	void handleDocumentUnloadYcmExtraConf(GObject* obj, GeanyDocument* doc);
++	void handleDocumentLoadSourceCode(GObject* obj, GeanyDocument* doc);
++	void handleDocumentLoadYcmExtraConf(GObject* obj, GeanyDocument* doc);
+ 	gchar * b64HexHMAC(std::string& data);
+ 	void jsonRequestBuild(GeanyDocument*, Json::Value&, Json::Value&);
+ 	void jsonRequestBuild(GeanyDocument*, Json::Value&);
+@@ -52,4 +57,4 @@ private:
+ 	ScintillaObject * currentEditor;
+ };
+ 
+-#endif
+\ No newline at end of file
++#endif

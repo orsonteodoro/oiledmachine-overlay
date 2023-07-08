@@ -18,7 +18,7 @@ SLOT="0"
 IUSE+="
 debug system-clangd system-gopls system-mono system-rust system-typescript
 system-omnisharp +ycmd-47
-r9
+r10
 "
 YCMD_SLOT_47_LLVM_PV=16.0.1
 YCMD_SLOT_47_LLVM_PV_MAJ=$(ver_cut 1 ${YCMD_SLOT_47_LLVM_PV})
@@ -73,6 +73,7 @@ src_prepare() {
 	cmake_src_prepare
 
 	eapply "${FILESDIR}/${PN}-9999.20141216-missing-iostream.patch"
+	eapply "${FILESDIR}/${PN}-0.1_p20170119-confirm-ycm-extra-conf.patch"
 	local python_bin_path="${EPREFIX}/usr/bin/${EPYTHON}"
 	sed -i \
 		-e "s|\"python\"|\"${python_bin_path}\"|g" \
