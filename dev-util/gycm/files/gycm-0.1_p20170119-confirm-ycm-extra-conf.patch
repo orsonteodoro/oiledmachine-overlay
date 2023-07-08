@@ -2,11 +2,20 @@ Subject:  Add confirm dialog for .ycm_extra_conf.py
 Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Patch status:  Testing
 
-This patch may cause a segfault relating to doc.parse.
-
-diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/gycm.cpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/gycm.cpp
+diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/CMakeLists.txt gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/CMakeLists.txt
+--- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/CMakeLists.txt	2023-07-08 12:24:26.223222201 -0700
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/CMakeLists.txt	2023-07-08 12:24:43.059222544 -0700
+@@ -23,6 +23,7 @@ add_library(gycm SHARED
+ 	gycm.cpp
+ 	ycmd.cpp
+ 	utils.cpp
++	utils2.cpp
+ 	config.cpp
+ )
+ message(${GEANY_LIBRARIES})
+diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/gycm.cpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/gycm.cpp
 --- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/gycm.cpp	2017-01-19 01:53:14.000000000 -0800
-+++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/gycm.cpp	2023-07-08 07:27:52.894859441 -0700
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/gycm.cpp	2023-07-08 12:32:39.471232257 -0700
 @@ -49,4 +49,4 @@ extern "C" void plugin_init(GeanyData*){
  extern "C" void plugin_cleanup(void) {
  	y->shutdown();
@@ -14,33 +23,45 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/gycm.cpp gycm-3abe1
 -}
 \ No newline at end of file
 +}
-diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.cpp
---- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp	2023-07-08 07:27:33.218859040 -0700
-+++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.cpp	2023-07-08 07:35:04.530868241 -0700
-@@ -210,7 +210,29 @@ int Ycmd::handler(const char * buf, size
+diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/utils2.cpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/utils2.cpp
+--- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/utils2.cpp	1969-12-31 16:00:00.000000000 -0800
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/utils2.cpp	2023-07-08 12:24:43.059222544 -0700
+@@ -0,0 +1,10 @@
++#include <string>
++#include <regex>
++
++std::string getResponseSanitized(std::string returned_data) {
++	returned_data = std::regex_replace(returned_data, std::regex("^true([{][}])*[{]"), "{");
++	returned_data = std::regex_replace(returned_data, std::regex("[}]([{][}])*$"), "}");
++	returned_data = std::regex_replace(returned_data, std::regex("^true$"), "{}");
++	returned_data = std::regex_replace(returned_data, std::regex("^true([{][}])+$"), "{}");
++	return returned_data;
++}
+diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/utils2.hpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/utils2.hpp
+--- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/utils2.hpp	1969-12-31 16:00:00.000000000 -0800
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/utils2.hpp	2023-07-08 12:24:43.059222544 -0700
+@@ -0,0 +1,7 @@
++#ifndef UTILS2_HPP
++#define UTILS2_HPP
++
++#include <string>
++std::string getResponseSanitized(std::string returned_data);
++
++#endif
+diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.cpp
+--- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp	2023-07-08 12:24:26.231222201 -0700
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.cpp	2023-07-08 12:32:27.631232015 -0700
+@@ -210,7 +210,16 @@ int Ycmd::handler(const char * buf, size
  	//}
  	//printf("\n\n");
  	
 -	//std::cout << "Handling response: " << returned_data;
-+	if (std::strstr(returned_data.c_str(), "}{}"))
++	// prevent crashes by doc.parse
++	returned_data = getResponseSanitized(returned_data);
++	
++	if(returned_data == "{}")
 +	{
-+		size_t len = returned_data.size();
-+		returned_data.resize(len-2, ' ');
-+	}
-+
-+	if (std::strstr(returned_data.c_str(), "}{}{}"))
-+	{
-+		size_t len = returned_data.size();
-+		returned_data.resize(len-4, ' ');
-+	}
-+
-+	if (std::strcmp(returned_data.c_str(), "true") == 0)
-+	{ // prevent crash by doc.parse
-+		return 0;
-+	}
-+
-+	if (std::strcmp(returned_data.c_str(), "true{}") == 0)
-+	{ // prevent crash by doc.parse
++		//std::cout << "Skipping empty return_data from Ycmd::handler\n";
 +		return 0;
 +	}
 +	
@@ -48,7 +69,7 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1
  	
  	Json::Value returned;
  	if(!doc.parse(returned_data,returned)){
-@@ -225,10 +247,16 @@ int Ycmd::handler(const char * buf, size
+@@ -225,10 +234,16 @@ int Ycmd::handler(const char * buf, size
  		return 0;
  	
  	if(returned.isMember("exception")){
@@ -69,16 +90,36 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1
  		return 0;
  	}
  	
-@@ -327,7 +355,7 @@ Json::Value Ycmd::getUnsavedBuffers(Gean
+@@ -240,7 +255,7 @@ int Ycmd::handler(const char * buf, size
+ 		if(returned.isMember("completions") && (v = &returned["completions"])->isArray() && v->size() >= 1){ // We need to display a list!
+ 			//printf("Got here!\n");
+ 			int lenEntered = currentMessage["column_num"].asInt() - returned["completion_start_column"].asInt(); // Geany uses 0-index for columns
+-			//printf("l: %i, len: %zi\n",lenEntered,v->size());
++			//printf("l: %i, len: %zi\n",lenEntered,v->size());
+ 			std::string s;
+ 			for(size_t i=0; i<(v->size()-1); i++){
+ 				try {
+@@ -251,7 +266,8 @@ int Ycmd::handler(const char * buf, size
+ 				//printf("i: %zu\n",i);
+ 			}
+ 			s += (*v)[v->size()-1]["insertion_text"].asString();
+-			//printf("s: %s\n",s.c_str());
++			//printf("s: %d %s\n",lenEntered, s.c_str());
++			SSM(currentEditor,SCI_AUTOCSETORDER,SC_ORDER_CUSTOM,0);
+ 			SSM(currentEditor,SCI_AUTOCSHOW,lenEntered,(sptr_t) s.c_str());
+ 		} else { // Nothing completable
+ 			SSM(currentEditor,SCI_AUTOCCANCEL,0,0); // Cancel any current completions
+@@ -327,8 +343,7 @@ Json::Value Ycmd::getUnsavedBuffers(Gean
  	return v;
  }
  
 -void Ycmd::handleDocumentLoad(GObject*, GeanyDocument* doc){
+-	SSM(doc->editor->sci,SCI_AUTOCSETORDER,SC_ORDER_CUSTOM,0);
 +void Ycmd::handleDocumentLoadSourceCode(GObject* obj, GeanyDocument* doc){
- 	SSM(doc->editor->sci,SCI_AUTOCSETORDER,SC_ORDER_CUSTOM,0);
  	Json::Value json;
  	Json::Value extrad;
-@@ -336,7 +364,22 @@ void Ycmd::handleDocumentLoad(GObject*,
+ 	extrad["event_name"] = "FileReadyToParse";
+@@ -336,7 +351,32 @@ void Ycmd::handleDocumentLoad(GObject*,
  	send(json,EVENT_HANDLER);
  }
  
@@ -91,7 +132,17 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1
 +}
 +
 +void Ycmd::handleDocumentLoad(GObject* obj, GeanyDocument* doc){
-+	if (std::strstr(doc->real_path, ".ycm_extra_conf.py")) {
++	if(!obj)
++	{
++		//std::cout << "[ycmd] Avoided obj deref segfault from Ycmd::handleDocumentLoad\n";
++		return;
++	}
++	if(!doc)
++	{
++		//std::cout << "[ycmd] Avoided doc deref segfault from Ycmd::handleDocumentLoad\n";
++		return;
++	}
++	if (doc->real_path && std::strstr(doc->real_path, ".ycm_extra_conf.py")) {
 +		handleDocumentLoadYcmExtraConf(obj, doc);
 +	} else {
 +		handleDocumentLoadSourceCode(obj, doc);
@@ -102,11 +153,21 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1
  	Json::Value json;
  	Json::Value extrad;
  	extrad["event_name"] = "BufferUnload";
-@@ -346,6 +389,33 @@ void Ycmd::handleDocumentUnload(GObject*
+@@ -346,9 +386,59 @@ void Ycmd::handleDocumentUnload(GObject*
  	send(json,EVENT_HANDLER);
  }
  
 +void Ycmd::handleDocumentUnloadYcmExtraConf(GObject* obj, GeanyDocument* doc){
++	if(!obj)
++	{
++		//std::cout << "[ycmd] Avoided obj deref segfault from Ycmd::handleDocumentUnloadYcmExtraConf\n";
++		return;
++	}
++	if(!doc)
++	{
++		//std::cout << "[ycmd] Avoided doc deref segfault from Ycmd::handleDocumentUnloadYcmExtraConf\n";
++		return;
++	}
 +	const gchar *conf_path = utils_get_utf8_from_locale(doc->real_path);
 +	std::string s;
 +	s += std::string("SECURITY:  Accept and execute ") + std::string(conf_path) + std::string(" for ycmd?");
@@ -126,7 +187,17 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1
 +}
 +
 +void Ycmd::handleDocumentUnload(GObject* obj, GeanyDocument* doc){
-+	if (std::strstr(doc->real_path, ".ycm_extra_conf.py")) {
++	if(!obj)
++	{
++		//std::cout << "[ycmd] Avoided obj deref segfault from Ycmd::handleDocumentUnload\n";
++		return;
++	}
++	if(!doc)
++	{
++		//std::cout << "[ycmd] Avoided doc deref segfault from Ycmd::handleDocumentUnload\n";
++		return;
++	}
++	if (doc->real_path && std::strstr(doc->real_path, ".ycm_extra_conf.py")) {
 +		handleDocumentUnloadYcmExtraConf(obj, doc);
 +	} else {
 +		handleDocumentUnloadSourceCode(obj, doc);
@@ -135,11 +206,25 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1
 +
  void Ycmd::handleDocumentVisit(GObject*, GeanyDocument* doc){
  	if(!doc)
++	{
++		//std::cout << "[ycmd] Avoided doc deref segfault from Ycmd::handleDocumentVisit\n";
  		return;
-diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.hpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.hpp
++	}
+ 	Json::Value json;
+ 	Json::Value extrad;
+ 	extrad["event_name"] = "BufferVisit";
+diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.hpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.hpp
 --- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.hpp	2017-01-19 01:53:14.000000000 -0800
-+++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.hpp	2023-07-08 07:27:52.894859441 -0700
-@@ -13,7 +13,8 @@
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.hpp	2023-07-08 12:32:30.095232066 -0700
+@@ -5,6 +5,7 @@
+ #include <json/json.h>
+ #include <string>
+ #include "utils.hpp"
++#include "utils2.hpp"
+ #include <neon/ne_session.h>
+ 
+ #define HMAC_SECRET_LENGTH 16
+@@ -13,7 +14,8 @@
  #define CODE_COMPLETIONS_HANDLER "/completions"
  #define COMPLETER_COMMANDS_HANDLER "/run_completer_command"
  #define EVENT_HANDLER "/event_notification"
@@ -149,7 +234,7 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.hpp gycm-3abe1
  
  class Ycmd {
  public:
-@@ -28,11 +29,15 @@ public:
+@@ -28,11 +30,15 @@ public:
  	int handler(const char *, size_t);
  	
  	// Geany signal handlers
@@ -167,7 +252,7 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.hpp gycm-3abe1
  	gchar * b64HexHMAC(std::string& data);
  	void jsonRequestBuild(GeanyDocument*, Json::Value&, Json::Value&);
  	void jsonRequestBuild(GeanyDocument*, Json::Value&);
-@@ -52,4 +57,4 @@ private:
+@@ -52,4 +58,4 @@ private:
  	ScintillaObject * currentEditor;
  };
  

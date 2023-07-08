@@ -18,7 +18,7 @@ SLOT="0"
 IUSE+="
 debug system-clangd system-gopls system-mono system-rust system-typescript
 system-omnisharp +ycmd-47
-r13
+r14
 "
 YCMD_SLOT_47_LLVM_PV=16.0.1
 YCMD_SLOT_47_LLVM_PV_MAJ=$(ver_cut 1 ${YCMD_SLOT_47_LLVM_PV})
@@ -283,7 +283,7 @@ ewarn
 ewarn "Please manually check .ycm_extra_conf.py every time before running geany"
 ewarn "to avoid auto-running malicious code."
 ewarn
-ewarn "Experimental patch fixes may segfault."
+ewarn "Code completion popup may not show inside braces or during function bodies."
 ewarn
 }
 
