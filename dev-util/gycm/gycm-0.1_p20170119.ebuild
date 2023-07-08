@@ -18,7 +18,7 @@ SLOT="0"
 IUSE+="
 debug system-clangd system-gopls system-mono system-rust system-typescript
 system-omnisharp +ycmd-47
-r12
+r13
 "
 YCMD_SLOT_47_LLVM_PV=16.0.1
 YCMD_SLOT_47_LLVM_PV_MAJ=$(ver_cut 1 ${YCMD_SLOT_47_LLVM_PV})
@@ -73,7 +73,7 @@ src_prepare() {
 	cmake_src_prepare
 
 	eapply "${FILESDIR}/${PN}-9999.20141216-missing-iostream.patch"
-#	eapply "${FILESDIR}/${PN}-0.1_p20170119-confirm-ycm-extra-conf.patch"
+	eapply "${FILESDIR}/${PN}-0.1_p20170119-confirm-ycm-extra-conf.patch"
 	local python_bin_path="${EPREFIX}/usr/bin/${EPYTHON}"
 	sed -i \
 		-e "s|\"python\"|\"${python_bin_path}\"|g" \
@@ -282,6 +282,8 @@ ewarn "SECURITY:"
 ewarn
 ewarn "Please manually check .ycm_extra_conf.py every time before running geany"
 ewarn "to avoid auto-running malicious code."
+ewarn
+ewarn "Experimental patch fixes may segfault."
 ewarn
 }
 

@@ -1,9 +1,12 @@
 Subject:  Add confirm dialog for .ycm_extra_conf.py
 Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Patch status:  Testing
+
+This patch may cause a segfault relating to doc.parse.
 
 diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/gycm.cpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/gycm.cpp
 --- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/gycm.cpp	2017-01-19 01:53:14.000000000 -0800
-+++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/gycm.cpp	2023-07-08 05:49:49.958739503 -0700
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/gycm.cpp	2023-07-08 07:27:52.894859441 -0700
 @@ -49,4 +49,4 @@ extern "C" void plugin_init(GeanyData*){
  extern "C" void plugin_cleanup(void) {
  	y->shutdown();
@@ -12,13 +15,13 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/gycm.cpp gycm-3abe1
 \ No newline at end of file
 +}
 diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.cpp
---- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp	2023-07-08 05:49:31.690739131 -0700
-+++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.cpp	2023-07-08 06:03:42.114756469 -0700
-@@ -211,6 +211,28 @@ int Ycmd::handler(const char * buf, size
+--- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp	2023-07-08 07:27:33.218859040 -0700
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.cpp	2023-07-08 07:35:04.530868241 -0700
+@@ -210,7 +210,29 @@ int Ycmd::handler(const char * buf, size
+ 	//}
  	//printf("\n\n");
  	
- 	//std::cout << "Handling response: " << returned_data;
-+
+-	//std::cout << "Handling response: " << returned_data;
 +	if (std::strstr(returned_data.c_str(), "}{}"))
 +	{
 +		size_t len = returned_data.size();
@@ -40,10 +43,12 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1
 +	{ // prevent crash by doc.parse
 +		return 0;
 +	}
++	
++	//std::cout << "Handling response: " << "|" << returned_data << "|" << "\n";
  	
  	Json::Value returned;
  	if(!doc.parse(returned_data,returned)){
-@@ -225,10 +237,16 @@ int Ycmd::handler(const char * buf, size
+@@ -225,10 +247,16 @@ int Ycmd::handler(const char * buf, size
  		return 0;
  	
  	if(returned.isMember("exception")){
@@ -64,7 +69,7 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1
  		return 0;
  	}
  	
-@@ -327,7 +345,7 @@ Json::Value Ycmd::getUnsavedBuffers(Gean
+@@ -327,7 +355,7 @@ Json::Value Ycmd::getUnsavedBuffers(Gean
  	return v;
  }
  
@@ -73,7 +78,7 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1
  	SSM(doc->editor->sci,SCI_AUTOCSETORDER,SC_ORDER_CUSTOM,0);
  	Json::Value json;
  	Json::Value extrad;
-@@ -336,7 +354,22 @@ void Ycmd::handleDocumentLoad(GObject*,
+@@ -336,7 +364,22 @@ void Ycmd::handleDocumentLoad(GObject*,
  	send(json,EVENT_HANDLER);
  }
  
@@ -97,7 +102,7 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1
  	Json::Value json;
  	Json::Value extrad;
  	extrad["event_name"] = "BufferUnload";
-@@ -346,6 +379,33 @@ void Ycmd::handleDocumentUnload(GObject*
+@@ -346,6 +389,33 @@ void Ycmd::handleDocumentUnload(GObject*
  	send(json,EVENT_HANDLER);
  }
  
@@ -133,7 +138,7 @@ diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1
  		return;
 diff -urp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.hpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.hpp
 --- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.hpp	2017-01-19 01:53:14.000000000 -0800
-+++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.hpp	2023-07-08 05:49:49.958739503 -0700
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.hpp	2023-07-08 07:27:52.894859441 -0700
 @@ -13,7 +13,8 @@
  #define CODE_COMPLETIONS_HANDLER "/completions"
  #define COMPLETER_COMMANDS_HANDLER "/run_completer_command"
