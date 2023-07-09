@@ -18,7 +18,7 @@ SLOT="0"
 IUSE+="
 debug system-clangd system-gopls system-mono system-rust system-typescript
 system-omnisharp +ycmd-47
-r14
+r15
 "
 YCMD_SLOT_47_LLVM_PV=16.0.1
 YCMD_SLOT_47_LLVM_PV_MAJ=$(ver_cut 1 ${YCMD_SLOT_47_LLVM_PV})
