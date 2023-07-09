@@ -276,14 +276,15 @@ einfo "GYCM_GLOBAL_YCMD_EXTRA_CONF provided via package.env."
 einfo
 	fi
 
+ewarn
+ewarn "Code completion popup may not show if using tabs for indents."
+ewarn
 # No confirm modal dialog for verifying a clean .ycm_extra_conf.py yet.
 ewarn
 ewarn "SECURITY:"
 ewarn
 ewarn "Please manually check .ycm_extra_conf.py every time before running geany"
 ewarn "to avoid auto-running malicious code."
-ewarn
-ewarn "Code completion popup may not show if using tabs for indents."
 ewarn
 }
 
