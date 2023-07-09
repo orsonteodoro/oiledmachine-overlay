@@ -1,6 +1,6 @@
 diff -urp geany-1.38.orig/data/geany.glade geany-1.38/data/geany.glade
 --- geany-1.38.orig/data/geany.glade	2021-10-09 08:02:14.000000000 -0700
-+++ geany-1.38/data/geany.glade	2023-07-08 18:24:58.711663231 -0700
++++ geany-1.38/data/geany.glade	2023-07-09 12:20:57.524979418 -0700
 @@ -3369,6 +3369,22 @@
                                  <property name="visible">True</property>
                                  <property name="can_focus">False</property>
@@ -80,24 +80,16 @@ diff -urp geany-1.38.orig/data/geany.glade geany-1.38/data/geany.glade
                                  <child>
 diff -urp geany-1.38.orig/src/editor.c geany-1.38/src/editor.c
 --- geany-1.38.orig/src/editor.c	2021-10-09 08:02:14.000000000 -0700
-+++ geany-1.38/src/editor.c	2023-07-08 18:46:11.315689176 -0700
-@@ -594,12 +594,14 @@ static void show_autocomplete(ScintillaO
++++ geany-1.38/src/editor.c	2023-07-09 12:31:25.648992224 -0700
+@@ -590,6 +590,8 @@ static void check_line_breaking(GeanyEdi
+ 
+ static void show_autocomplete(ScintillaObject *sci, gsize rootlen, GString *words)
+ {
++	if(!editor_prefs.autocomplete_engine)
++		return;
+ 	/* hide autocompletion if only option is already typed */
  	if (rootlen >= words->len ||
  		(words->str[rootlen] == '?' && rootlen >= words->len - 2))
- 	{
--		sci_send_command(sci, SCI_AUTOCCANCEL);
-+		if(editor_prefs.autocomplete_engine)
-+			sci_send_command(sci, SCI_AUTOCCANCEL);
- 		return;
- 	}
- 	/* store whether a calltip is showing, so we can reshow it after autocompletion */
- 	calltip.set = (gboolean) SSM(sci, SCI_CALLTIPACTIVE, 0, 0);
--	SSM(sci, SCI_AUTOCSHOW, rootlen, (sptr_t) words->str);
-+	if(editor_prefs.autocomplete_engine)
-+		SSM(sci, SCI_AUTOCSHOW, rootlen, (sptr_t) words->str);
- }
- 
- 
 @@ -2194,7 +2196,8 @@ static gboolean autocomplete_doc_word(Ge
  	words = get_doc_words(sci, root, rootlen);
  	if (!words)
@@ -107,6 +99,35 @@ diff -urp geany-1.38.orig/src/editor.c geany-1.38/src/editor.c
 +			SSM(sci, SCI_AUTOCCANCEL, 0, 0);
  		return FALSE;
  	}
+ 
+@@ -2230,13 +2233,13 @@ gboolean editor_start_auto_complete(Gean
+ 
+ 	g_return_val_if_fail(editor != NULL, FALSE);
+ 
+-	if (! editor_prefs.auto_complete_symbols && ! force)
+-		return FALSE;
++	if (! editor_prefs.auto_complete_symbols && ! force)
++		return FALSE;
+ 
+ 	/* If we are at the beginning of the document, we skip autocompletion as we can't determine the
+ 	 * necessary styling information */
+-	if (G_UNLIKELY(pos < 2))
+-		return FALSE;
++	if (G_UNLIKELY(pos < 2))
++		return FALSE;
+ 
+ 	sci = editor->sci;
+ 	ft = editor->document->file_type;
+@@ -2245,8 +2248,8 @@ gboolean editor_start_auto_complete(Gean
+ 	style = sci_get_style_at(sci, pos - 2);
+ 
+ 	/* don't autocomplete in comments and strings */
+-	if (!force && !highlighting_is_code_style(lexer, style))
+-		return FALSE;
++	if (!force && !highlighting_is_code_style(lexer, style))
++		return FALSE;
+ 
+ 	ret = autocomplete_check_html(editor, style, pos);
  
 @@ -2266,14 +2269,14 @@ gboolean editor_start_auto_complete(Gean
  		if (autocomplete_scope_shown)
@@ -127,7 +148,7 @@ diff -urp geany-1.38.orig/src/editor.c geany-1.38/src/editor.c
  	}
 diff -urp geany-1.38.orig/src/editor.h geany-1.38/src/editor.h
 --- geany-1.38.orig/src/editor.h	2021-10-09 08:02:14.000000000 -0700
-+++ geany-1.38/src/editor.h	2023-07-08 18:24:58.711663231 -0700
++++ geany-1.38/src/editor.h	2023-07-09 12:20:57.528979418 -0700
 @@ -130,6 +130,7 @@ typedef struct GeanyEditorPrefs
  	gchar		*comment_toggle_mark;
  	guint		autocompletion_max_entries;
@@ -138,7 +159,7 @@ diff -urp geany-1.38.orig/src/editor.h geany-1.38/src/editor.h
  	gchar		*color_scheme;
 diff -urp geany-1.38.orig/src/keyfile.c geany-1.38/src/keyfile.c
 --- geany-1.38.orig/src/keyfile.c	2021-10-09 08:02:14.000000000 -0700
-+++ geany-1.38/src/keyfile.c	2023-07-08 18:24:58.711663231 -0700
++++ geany-1.38/src/keyfile.c	2023-07-09 12:20:57.528979418 -0700
 @@ -207,6 +207,8 @@ static void init_pref_groups(void)
  		"radio_virtualspace_selection", GEANY_VIRTUAL_SPACE_SELECTION,
  		"radio_virtualspace_always", GEANY_VIRTUAL_SPACE_ALWAYS,

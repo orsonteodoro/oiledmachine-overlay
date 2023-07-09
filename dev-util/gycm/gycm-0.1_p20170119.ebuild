@@ -18,7 +18,7 @@ SLOT="0"
 IUSE+="
 debug system-clangd system-gopls system-mono system-rust system-typescript
 system-omnisharp +ycmd-47
-r15
+r16
 "
 YCMD_SLOT_47_LLVM_PV=16.0.1
 YCMD_SLOT_47_LLVM_PV_MAJ=$(ver_cut 1 ${YCMD_SLOT_47_LLVM_PV})
@@ -276,10 +276,6 @@ einfo "GYCM_GLOBAL_YCMD_EXTRA_CONF provided via package.env."
 einfo
 	fi
 
-ewarn
-ewarn "Code completion popup may not show if using tabs for indents."
-ewarn
-# No confirm modal dialog for verifying a clean .ycm_extra_conf.py yet.
 ewarn
 ewarn "SECURITY:"
 ewarn

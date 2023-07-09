@@ -24,7 +24,7 @@ LICENSE="
 	HPND
 "
 SLOT="0"
-IUSE="+vte r1"
+IUSE="+vte r2"
 BDEPEND="virtual/pkgconfig"
 RDEPEND="
 	>=dev-libs/glib-2.32:2
