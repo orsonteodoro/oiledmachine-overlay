@@ -283,7 +283,7 @@ ewarn
 ewarn "Please manually check .ycm_extra_conf.py every time before running geany"
 ewarn "to avoid auto-running malicious code."
 ewarn
-ewarn "Code completion popup may not show inside braces or during function bodies."
+ewarn "Code completion popup may not show if using tabs for indents."
 ewarn
 }
 

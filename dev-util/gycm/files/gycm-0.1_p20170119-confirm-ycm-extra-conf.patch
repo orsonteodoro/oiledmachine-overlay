@@ -3,8 +3,8 @@ Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Patch status:  Testing
 
 diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/CMakeLists.txt gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/CMakeLists.txt
---- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/CMakeLists.txt	2023-07-08 12:24:26.223222201 -0700
-+++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/CMakeLists.txt	2023-07-08 12:24:43.059222544 -0700
+--- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/CMakeLists.txt	2023-07-08 19:36:31.879750758 -0700
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/CMakeLists.txt	2023-07-08 19:36:45.803751042 -0700
 @@ -23,6 +23,7 @@ add_library(gycm SHARED
  	gycm.cpp
  	ycmd.cpp
@@ -15,8 +15,27 @@ diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/CMakeLists.txt gyc
  message(${GEANY_LIBRARIES})
 diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/gycm.cpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/gycm.cpp
 --- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/gycm.cpp	2017-01-19 01:53:14.000000000 -0800
-+++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/gycm.cpp	2023-07-08 12:32:39.471232257 -0700
-@@ -49,4 +49,4 @@ extern "C" void plugin_init(GeanyData*){
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/gycm.cpp	2023-07-08 19:36:45.803751042 -0700
+@@ -26,9 +26,9 @@ extern "C" gboolean handle_sci_event(GOb
+ 	switch(nt->nmhdr.code){
+ 		case SCN_CHARADDED:
+ 			((Ycmd*)user_data)->complete(obj,edit->document);
+-			return false;
++			return true;
+ 	}
+-	return false;
++	return  true;
+ }
+ 
+ extern "C" void plugin_init(GeanyData*){
+@@ -43,10 +43,10 @@ extern "C" void plugin_init(GeanyData*){
+ 	plugin_signal_connect(geany_plugin, NULL, "document-reload",   TRUE,  (GCallback) &handle_document_load,   y);
+ 	plugin_signal_connect(geany_plugin, NULL, "document-close",    FALSE, (GCallback) &handle_document_unload, y);
+ 	plugin_signal_connect(geany_plugin, NULL, "document-activate", FALSE, (GCallback) &handle_document_visit,  y);
+-	plugin_signal_connect(geany_plugin, NULL, "editor-notify",     FALSE, (GCallback) &handle_sci_event,       y);
++	plugin_signal_connect(geany_plugin, NULL, "editor-notify",      FALSE, (GCallback) &handle_sci_event,       y);
+ }
+ 
  extern "C" void plugin_cleanup(void) {
  	y->shutdown();
  	delete y;
@@ -25,7 +44,7 @@ diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/gycm.cpp gycm-3abe
 +}
 diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/utils2.cpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/utils2.cpp
 --- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/utils2.cpp	1969-12-31 16:00:00.000000000 -0800
-+++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/utils2.cpp	2023-07-08 12:24:43.059222544 -0700
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/utils2.cpp	2023-07-08 19:36:45.803751042 -0700
 @@ -0,0 +1,10 @@
 +#include <string>
 +#include <regex>
@@ -39,7 +58,7 @@ diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/utils2.cpp gycm-3a
 +}
 diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/utils2.hpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/utils2.hpp
 --- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/utils2.hpp	1969-12-31 16:00:00.000000000 -0800
-+++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/utils2.hpp	2023-07-08 12:24:43.059222544 -0700
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/utils2.hpp	2023-07-08 19:36:45.803751042 -0700
 @@ -0,0 +1,7 @@
 +#ifndef UTILS2_HPP
 +#define UTILS2_HPP
@@ -49,8 +68,8 @@ diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/utils2.hpp gycm-3a
 +
 +#endif
 diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.cpp
---- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp	2023-07-08 12:24:26.231222201 -0700
-+++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.cpp	2023-07-08 12:32:27.631232015 -0700
+--- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp	2023-07-08 19:36:31.887750758 -0700
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.cpp	2023-07-08 19:38:28.075753127 -0700
 @@ -210,7 +210,16 @@ int Ycmd::handler(const char * buf, size
  	//}
  	//printf("\n\n");
@@ -90,16 +109,7 @@ diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe
  		return 0;
  	}
  	
-@@ -240,7 +255,7 @@ int Ycmd::handler(const char * buf, size
- 		if(returned.isMember("completions") && (v = &returned["completions"])->isArray() && v->size() >= 1){ // We need to display a list!
- 			//printf("Got here!\n");
- 			int lenEntered = currentMessage["column_num"].asInt() - returned["completion_start_column"].asInt(); // Geany uses 0-index for columns
--			//printf("l: %i, len: %zi\n",lenEntered,v->size());
-+			//printf("l: %i, len: %zi\n",lenEntered,v->size());
- 			std::string s;
- 			for(size_t i=0; i<(v->size()-1); i++){
- 				try {
-@@ -251,7 +266,8 @@ int Ycmd::handler(const char * buf, size
+@@ -251,9 +266,11 @@ int Ycmd::handler(const char * buf, size
  				//printf("i: %zu\n",i);
  			}
  			s += (*v)[v->size()-1]["insertion_text"].asString();
@@ -108,8 +118,19 @@ diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe
 +			SSM(currentEditor,SCI_AUTOCSETORDER,SC_ORDER_CUSTOM,0);
  			SSM(currentEditor,SCI_AUTOCSHOW,lenEntered,(sptr_t) s.c_str());
  		} else { // Nothing completable
++			//std::cout << "[ycmd] Canceling autocomplete\n";
  			SSM(currentEditor,SCI_AUTOCCANCEL,0,0); // Cancel any current completions
-@@ -327,8 +343,7 @@ Json::Value Ycmd::getUnsavedBuffers(Gean
+ 		}
+ 	}
+@@ -272,6 +289,7 @@ void Ycmd::send(Json::Value& _json, std:
+ 	currentMessage = _json;
+ 	
+ 	std::string json = Json::FastWriter().write(_json);
++	//std::cout << "Built send request: " << json;
+ 	
+         unsigned char join[HMAC_LENGTH*3];
+         HMAC(EVP_sha256(), hmac, HMAC_SECRET_LENGTH,(unsigned char *) method.c_str(),method.length(), join, NULL);
+@@ -327,8 +345,7 @@ Json::Value Ycmd::getUnsavedBuffers(Gean
  	return v;
  }
  
@@ -119,7 +140,7 @@ diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe
  	Json::Value json;
  	Json::Value extrad;
  	extrad["event_name"] = "FileReadyToParse";
-@@ -336,7 +351,32 @@ void Ycmd::handleDocumentLoad(GObject*,
+@@ -336,7 +353,32 @@ void Ycmd::handleDocumentLoad(GObject*,
  	send(json,EVENT_HANDLER);
  }
  
@@ -153,7 +174,7 @@ diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe
  	Json::Value json;
  	Json::Value extrad;
  	extrad["event_name"] = "BufferUnload";
-@@ -346,9 +386,59 @@ void Ycmd::handleDocumentUnload(GObject*
+@@ -346,9 +388,59 @@ void Ycmd::handleDocumentUnload(GObject*
  	send(json,EVENT_HANDLER);
  }
  
@@ -215,7 +236,7 @@ diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.cpp gycm-3abe
  	extrad["event_name"] = "BufferVisit";
 diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.hpp gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.hpp
 --- gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.hpp	2017-01-19 01:53:14.000000000 -0800
-+++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.hpp	2023-07-08 12:32:30.095232066 -0700
++++ gycm-3abe1419d22ad19acbd96f66864ec00a0a256689/ycmd.hpp	2023-07-08 19:36:45.803751042 -0700
 @@ -5,6 +5,7 @@
  #include <json/json.h>
  #include <string>
@@ -252,10 +273,3 @@ diff -urpN gycm-3abe1419d22ad19acbd96f66864ec00a0a256689.orig/ycmd.hpp gycm-3abe
  	gchar * b64HexHMAC(std::string& data);
  	void jsonRequestBuild(GeanyDocument*, Json::Value&, Json::Value&);
  	void jsonRequestBuild(GeanyDocument*, Json::Value&);
-@@ -52,4 +58,4 @@ private:
- 	ScintillaObject * currentEditor;
- };
- 
--#endif
-\ No newline at end of file
-+#endif

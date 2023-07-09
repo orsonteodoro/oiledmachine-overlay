@@ -1,6 +1,6 @@
 diff -urp geany-1.38.orig/data/geany.glade geany-1.38/data/geany.glade
 --- geany-1.38.orig/data/geany.glade	2021-10-09 08:02:14.000000000 -0700
-+++ geany-1.38/data/geany.glade	2023-06-30 23:05:27.003070781 -0700
++++ geany-1.38/data/geany.glade	2023-07-08 18:24:58.711663231 -0700
 @@ -3369,6 +3369,22 @@
                                  <property name="visible">True</property>
                                  <property name="can_focus">False</property>
@@ -80,20 +80,54 @@ diff -urp geany-1.38.orig/data/geany.glade geany-1.38/data/geany.glade
                                  <child>
 diff -urp geany-1.38.orig/src/editor.c geany-1.38/src/editor.c
 --- geany-1.38.orig/src/editor.c	2021-10-09 08:02:14.000000000 -0700
-+++ geany-1.38/src/editor.c	2023-06-30 23:05:16.823070528 -0700
-@@ -2228,6 +2228,9 @@ gboolean editor_start_auto_complete(Gean
- 	const gchar *wordchars;
- 	GeanyFiletype *ft;
++++ geany-1.38/src/editor.c	2023-07-08 18:46:11.315689176 -0700
+@@ -594,12 +594,14 @@ static void show_autocomplete(ScintillaO
+ 	if (rootlen >= words->len ||
+ 		(words->str[rootlen] == '?' && rootlen >= words->len - 2))
+ 	{
+-		sci_send_command(sci, SCI_AUTOCCANCEL);
++		if(editor_prefs.autocomplete_engine)
++			sci_send_command(sci, SCI_AUTOCCANCEL);
+ 		return;
+ 	}
+ 	/* store whether a calltip is showing, so we can reshow it after autocompletion */
+ 	calltip.set = (gboolean) SSM(sci, SCI_CALLTIPACTIVE, 0, 0);
+-	SSM(sci, SCI_AUTOCSHOW, rootlen, (sptr_t) words->str);
++	if(editor_prefs.autocomplete_engine)
++		SSM(sci, SCI_AUTOCSHOW, rootlen, (sptr_t) words->str);
+ }
  
-+	if (!editor_prefs.autocomplete_engine)
-+		return FALSE;
-+
- 	g_return_val_if_fail(editor != NULL, FALSE);
  
- 	if (! editor_prefs.auto_complete_symbols && ! force)
+@@ -2194,7 +2196,8 @@ static gboolean autocomplete_doc_word(Ge
+ 	words = get_doc_words(sci, root, rootlen);
+ 	if (!words)
+ 	{
+-		SSM(sci, SCI_AUTOCCANCEL, 0, 0);
++		if(editor_prefs.autocomplete_engine)
++			SSM(sci, SCI_AUTOCCANCEL, 0, 0);
+ 		return FALSE;
+ 	}
+ 
+@@ -2266,14 +2269,14 @@ gboolean editor_start_auto_complete(Gean
+ 		if (autocomplete_scope_shown)
+ 		{
+ 			autocomplete_scope_shown = FALSE;
+-			if (!ret)
++			if (!ret && editor_prefs.autocomplete_engine)
+ 				sci_send_command(sci, SCI_AUTOCCANCEL);
+ 		}
+ 	}
+ 	else
+ 	{
+ 		ret = autocomplete_scope(editor, root, rootlen);
+-		if (!ret && autocomplete_scope_shown)
++		if (!ret && autocomplete_scope_shown && editor_prefs.autocomplete_engine)
+ 			sci_send_command(sci, SCI_AUTOCCANCEL);
+ 		autocomplete_scope_shown = ret;
+ 	}
 diff -urp geany-1.38.orig/src/editor.h geany-1.38/src/editor.h
 --- geany-1.38.orig/src/editor.h	2021-10-09 08:02:14.000000000 -0700
-+++ geany-1.38/src/editor.h	2023-06-30 23:04:23.783069212 -0700
++++ geany-1.38/src/editor.h	2023-07-08 18:24:58.711663231 -0700
 @@ -130,6 +130,7 @@ typedef struct GeanyEditorPrefs
  	gchar		*comment_toggle_mark;
  	guint		autocompletion_max_entries;
@@ -104,7 +138,7 @@ diff -urp geany-1.38.orig/src/editor.h geany-1.38/src/editor.h
  	gchar		*color_scheme;
 diff -urp geany-1.38.orig/src/keyfile.c geany-1.38/src/keyfile.c
 --- geany-1.38.orig/src/keyfile.c	2021-10-09 08:02:14.000000000 -0700
-+++ geany-1.38/src/keyfile.c	2023-06-30 23:04:35.655069507 -0700
++++ geany-1.38/src/keyfile.c	2023-07-08 18:24:58.711663231 -0700
 @@ -207,6 +207,8 @@ static void init_pref_groups(void)
  		"radio_virtualspace_selection", GEANY_VIRTUAL_SPACE_SELECTION,
  		"radio_virtualspace_always", GEANY_VIRTUAL_SPACE_ALWAYS,
