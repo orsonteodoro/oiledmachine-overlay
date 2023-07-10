@@ -33,7 +33,12 @@ EAPI=8
 #
 # https://github.com/chromium/chromium/blob/112.0.5615.165/third_party/fontconfig/include/config.h#L290
 # https://github.com/chromium/chromium/blob/112.0.5615.165/third_party/zlib/zlib.h#L40
-#
+# /var/tmp/portage/www-client/chromium-112.0.5615.165/work/chromium-112.0.5615.165/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-112.0.5615.165/work/chromium-112.0.5615.165/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-112.0.5615.165/work/chromium-112.0.5615.165/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-112.0.5615.165/work/chromium-112.0.5615.165/third_party/ffmpeg/libavutil/version.h               ; do not use
+# /var/tmp/portage/www-client/chromium-112.0.5615.165/work/chromium-112.0.5615.165/third_party/ffmpeg/libavcodec/version*.h             ; do not use
+# /var/tmp/portage/www-client/chromium-112.0.5615.165/work/chromium-112.0.5615.165/third_party/ffmpeg/libavformat/version*.h            ; do not use
 
 inherit desktop flag-o-matic gnome2-utils toolchain-funcs unpacker xdg
 
@@ -49,7 +54,7 @@ SLOT="0/stable"
 # Dropped systray USE flag because of license.
 
 IUSE+="
-emoji ffmpeg libnotify pulseaudio vaapi wayland zenity +X r1
+emoji ffmpeg libnotify pulseaudio vaapi wayland zenity +X r4
 "
 if [[ ${PV} =~ 9999 ]] ; then
 	IUSE+="
@@ -78,7 +83,7 @@ ALSA_LIB="1.2.4"
 ATK_PV="2.38.0"
 CAIRO_PV="1.16.0"
 CLANG_PV="17"
-FFMPEG_SLOT="0/57.59.59" # Same as 5.1
+FFMPEG_SLOT="0/57.59.59" # Same as 5.1 in chromium tarball [do not use]
 FONTCONFIG_PV="2.14.2"
 FREETYPE_PV="2.13.0"
 GCC_PV="10.2.1"
@@ -92,7 +97,7 @@ NSS_PV="3.61"
 MESA_PV="20.3.5"
 
 # media-video/ffmpeg:${FFMPEG_SLOT} # From chromium tarball
-# <media-video/ffmpeg-6 is from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
+# <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/stable/non-free/binary-amd64/Packages
 OPTIONAL_RDEPENDS_LISTED="
 	ffmpeg? (
 		<media-video/ffmpeg-5
@@ -334,7 +339,7 @@ if ! [[ ${PV} =~ 9999 ]] ; then
 	else
 		_BUILD_ID_AMD64="${BUILD_ID_AMD64}-${MY_REV}"
 	fi
-	CONFIGURATION="testing" # stable or testing
+	CONFIGURATION="${SLOT#*/}" # stable or testing
 	FN_CLIENT="${PN}-client_${MY_PV}.${_BUILD_ID_AMD64}_amd64.deb"
 	FN_INRELEASE="${PN}-${PV}-${CONFIGURATION}-InRelease-${PUBLIC_KEY_ID}"
 	FN_PACKAGES="${PN}-${PV}-${CONFIGURATION}-Packages"
