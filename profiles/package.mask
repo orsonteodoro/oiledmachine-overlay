@@ -110,9 +110,9 @@ dev-dotnet/monodevelop
 <net-libs/nodejs-15
 
 # Security precautions with debug or beta builds.
-~media-sound/spotify-1.2.11.916
+~media-sound/spotify-1.2.13.661
 ~media-sound/spotify-9999t
->www-client/chromium-114.0.5735.133
+>=www-client/chromium-115
 
 # Old dependencies
 <dev-util/ycmd-45
