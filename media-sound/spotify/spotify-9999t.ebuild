@@ -24,15 +24,15 @@ EAPI=8
 #
 
 # For *DEPENDs see:
-# https://github.com/chromium/chromium/tree/112.0.5615.165/build/linux/sysroot_scripts/generated_package_lists
-# https://github.com/chromium/chromium/blob/112.0.5615.165/build/install-build-deps.sh#L237
-# https://github.com/chromium/chromium/blob/112.0.5615.165/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/tree/113.0.5672.128/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/113.0.5672.128/build/install-build-deps.sh#L237
+# https://github.com/chromium/chromium/blob/113.0.5672.128/tools/clang/scripts/update.py#L42
 
 #
 # Additional DEPENDS versioning info:
 #
-# https://github.com/chromium/chromium/blob/112.0.5615.165/third_party/fontconfig/include/config.h#L290
-# https://github.com/chromium/chromium/blob/112.0.5615.165/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/113.0.5672.128/third_party/fontconfig/include/config.h#L290
+# https://github.com/chromium/chromium/blob/113.0.5672.128/third_party/zlib/zlib.h#L40
 #
 
 inherit desktop flag-o-matic gnome2-utils toolchain-funcs unpacker xdg
@@ -73,27 +73,29 @@ RESTRICT="mirror strip"
 # Support based on (20.04) LTS mainly but older LTSs may be supported.
 
 # Found in Recommends: section of stable requirements.
-# For ffmpeg:0/x.y.z, y must be <= 59.
+# For ffmpeg:0/x.y.z, y must be <= 58.
 ALSA_LIB="1.2.4"
 ATK_PV="2.38.0"
 CAIRO_PV="1.16.0"
-CLANG_PV="17"
+CLANG_PV="16"
 FFMPEG_SLOT="0/57.59.59" # Same as 5.1
 FONTCONFIG_PV="2.14.2"
-FREETYPE_PV="2.13.0"
+FREETYPE_PV="2.12.1"
 GCC_PV="10.2.1"
 GLIB_PV="2.66.8"
 GLIBC_PV="2.31"
 GTK3_PV="3.24.24"
 LIBXI_PV="1.7.10"
+LIBXSCRNSAVER_PV="1.2.3"
+LIBXTST_PV="1.2.3"
 NSS_PV="3.61"
 MESA_PV="20.3.5"
 
 # media-video/ffmpeg:${FFMPEG_SLOT} # From chromium tarball
-# <media-video/ffmpeg-6 is from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
+# <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/stable/non-free/binary-amd64/Packages
 OPTIONAL_RDEPENDS_LISTED="
 	ffmpeg? (
-		<media-video/ffmpeg-6
+		<media-video/ffmpeg-5
 	)
 	libnotify? (
 		>=x11-libs/libnotify-0.7.9
@@ -132,7 +134,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 # U >=16.04 LTS assumed, supported only in CEF
 
 # For details see:
-# https://github.com/chromium/chromium/blob/112.0.5615.165/build/install-build-deps.sh#L237
+# https://github.com/chromium/chromium/blob/113.0.5672.128/build/install-build-deps.sh#L237
 
 # The version is obtained in src_prepare
 
@@ -158,7 +160,7 @@ CHROMIUM_CDEPEND="
 		>=dev-libs/wayland-1.18.0:=
 	)
 	X? (
-		>=x11-libs/libXtst-1.2.3
+		>=x11-libs/libXtst-${LIBXTST_PV}
 	)
 "
 
@@ -262,8 +264,8 @@ RDEPEND+="
 	>=sys-devel/gcc-${GCC_PV}
 	>=sys-libs/glibc-${GLIBC_PV}
 	X? (
-		>=x11-libs/libXScrnSaver-1.2.3
-		>=x11-libs/libXtst-1.2.3
+		>=x11-libs/libXScrnSaver-${LIBXSCRNSAVER_PV}
+		>=x11-libs/libXtst-${LIBXTST_PV}
 	)
 	|| (
 		=dev-libs/openssl-3*:0/3
@@ -272,8 +274,8 @@ RDEPEND+="
 "
 
 #RDEPEND_LISTED_BUT_NOT_LINKED="
-#	>=x11-libs/libXScrnSaver-1.2.3
-#	>=x11-libs/libXtst-1.2.3
+#	>=x11-libs/libXScrnSaver-${LIBXSCRNSAVER_PV}
+#	>=x11-libs/libXtst-${LIBXTST_PV}
 #"
 
 BDEPEND+="
@@ -326,13 +328,13 @@ SRC_URI+="
 if ! [[ ${PV} =~ 9999 ]] ; then
 	MY_PV=$(ver_cut 1-4 ${PV})
 	MY_REV=$(ver_cut 6 ${PV})
-	BUILD_ID_AMD64="geb595a67"
+	BUILD_ID_AMD64="ga588f749"
 	if [[ -z "${MY_REV}" ]] ; then
 		_BUILD_ID_AMD64="${BUILD_ID_AMD64}"
 	else
 		_BUILD_ID_AMD64="${BUILD_ID_AMD64}-${MY_REV}"
 	fi
-	CONFIGURATION="testing" # stable or testing
+	CONFIGURATION="stable" # stable or testing
 	FN_CLIENT="${PN}-client_${MY_PV}.${_BUILD_ID_AMD64}_amd64.deb"
 	FN_INRELEASE="${PN}-${PV}-${CONFIGURATION}-InRelease-${PUBLIC_KEY_ID}"
 	FN_PACKAGES="${PN}-${PV}-${CONFIGURATION}-Packages"
@@ -361,8 +363,8 @@ PUBKEY_BLAKE2B="\
 "
 
 EXPECTED_DEPENDS_FINGERPRINT="\
-326cfb97b1990013731281c4ca187f858c7ae3b266af14cddc3c77b05790fcba\
-02235a9e25e94978916e90192ec859eab67e2ec1cbd6785136af831058a09598\
+dc0d6ac2e2135e830a7a013fa4c6c423d99a5099b6ae5d6b574fae1d97a53ea5\
+182c2eb22a18852e34ea245ba3c4719333a17fb78768ebd20ae9732d10bb946f\
 " # Packages fingerprint for client
 EXPECTED_CR_DEPENDS_FINGERPRINT="\
 27ee98a40fe37c9897bb941d98535b999543c44eae9c2460513379387621ce6e\
@@ -399,7 +401,7 @@ declare -A atabs=(
 pkg_setup() {
 	local configuration_desc
 	if [[ ${PV} =~ 9999 ]] ; then
-		CONFIGURATION="testing"
+		CONFIGURATION="stable"
 		export FN_INRELEASE="${PN}-${PV}-${CONFIGURATION}-InRelease"
 		export FN_PACKAGES="${PN}-${PV}-${CONFIGURATION}-Packages"
 	fi
@@ -1119,11 +1121,11 @@ pkg_postrm() {
 	xdg_pkg_postrm
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / FAIL [UK] (interactive) 1.2.11.916 (20230608)
+# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.8.923 (20230608)
 # X:  pass
 # wayland:  pass
 # audio podcasts:  pass
 # emoji render:  pass
-# UK audio podcast(s):  fail with ffmpeg 4.4.x and 5.1.x
+# UK audio podcast(s):  pass with ffmpeg 4.4.x
 # video podcasts:  pass
 # typical songs:  pass
