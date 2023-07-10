@@ -462,3 +462,8 @@ pkg_postinst() {
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (test suite) 5.1.3 (20230607)
 # 87465 passing (17m)
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (test suite) 5.1.6 (20230709)
+#  87478 passing (15m)
+#
+#Finished do-runtests-parallel in 15m 11.9s
