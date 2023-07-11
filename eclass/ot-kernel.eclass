@@ -8054,6 +8054,8 @@ ot-kernel_gen_iosched_openrc() {
 eerror
 eerror "Re-emerge sys-apps/openrc[bash]"
 eerror
+eerror "You may set OT_KERNEL_IOSCHED_OPENRC=0 to disable this requirement/feature."
+eerror
 		die
 	fi
 	mkdir -p "${T}/etc/ot-sources/iosched/conf"

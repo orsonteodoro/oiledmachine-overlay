@@ -1425,7 +1425,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     Acceptable values
 
-      1 - generate
+      1 - generate (default)
       0 - don't generate
       unset - generate
 
