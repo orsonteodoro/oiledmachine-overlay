@@ -15,7 +15,7 @@ KEYWORDS="
 ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris
 "
 IUSE="
-+cbdt cbdt-win +colrv1 colrv1-no-flags r1
++cbdt cbdt-win +colrv1 colrv1-no-flags r2
 "
 REQUIRED_USE="
 	|| (
@@ -32,16 +32,16 @@ RDEPEND="
 	media-libs/freetype[png]
 	colrv1? (
 		|| (
-			>media-fonts/noto-color-emoji-2.034[colrv1?,colrv1-no-flags?]
-			>media-fonts/noto-color-emoji-bin-2.034[colrv1?,colrv1-no-flags?]
+			>=media-fonts/noto-color-emoji-2.038_alpha[colrv1?,colrv1-no-flags?]
+			>=media-fonts/noto-color-emoji-bin-2.038_alpha[colrv1?,colrv1-no-flags?]
 		)
 	)
 	cbdt? (
 		|| (
-			<media-fonts/noto-color-emoji-2.034
-			<media-fonts/noto-color-emoji-bin-2.034
-			>media-fonts/noto-color-emoji-2.028[cbdt?,cbdt-win?]
-			>media-fonts/noto-color-emoji-bin-2.028[cbdt?,cbdt-win?]
+			<media-fonts/noto-color-emoji-2.034_alpha
+			<media-fonts/noto-color-emoji-bin-2.034_alpha
+			>=media-fonts/noto-color-emoji-2.034_alpha[cbdt?,cbdt-win?]
+			>=media-fonts/noto-color-emoji-bin-2.034_alpha[cbdt?,cbdt-win?]
 			media-fonts/noto-emoji
 		)
 	)
@@ -50,8 +50,9 @@ DEPEND="${RDEPEND}"
 SRC_URI=""
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="nofetch"
-
-FONT_CONF=( "${S}/61-noto.conf" )
+FONT_CONF=(
+	"${S}/61-noto.conf"
+)
 
 pkg_setup() {
 	export CBDT_DEFAULT=${NOTO_COLOR_EMOJI_CBDT_DEFAULT:-"Noto Color Emoji"}
