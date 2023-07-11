@@ -8353,16 +8353,6 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 			done
 		fi
 
-		# Fix symlinks
-		rm -rf "${ED}/lib/modules/${PV}-${extraversion}/build" || true
-		rm -rf "${ED}/lib/modules/${PV}-${extraversion}/source" || true
-		dosym \
-			"/usr/src/linux-${PV}-${extraversion}" \
-			"/lib/modules/${PV}-${extraversion}/build"
-		dosym \
-			"/usr/src/linux-${PV}-${extraversion}" \
-			"/lib/modules/${PV}-${extraversion}/source"
-
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
 einfo "Installing OpenRC iosched script settings"
 			insinto "/etc/ot-sources/iosched/conf"
@@ -8593,6 +8583,45 @@ EOF
 			newins "${T}/tcca.conf" "tcca-${PV}-${extraversion}-${arch}.conf"
 			OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=1
 		fi
+	done
+
+	# The make install* screws up the symlinks using ${BUILD_DIR} instead of
+	# /usr/src/linux-${PV}-${EXTRAVERSION}.
+	local env_path
+	for env_path in $(ot-kernel_get_envs) ; do
+		[[ -e "${env_path}" ]] || continue
+		ot-kernel_clear_env
+		declare -A OT_KERNEL_KCONFIG
+		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
+		declare -A OT_KERNEL_PKGFLAGS_REJECT
+		ot-kernel_load_config
+		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
+		local extraversion="${OT_KERNEL_EXTRAVERSION}"
+		local build_flag="${OT_KERNEL_BUILD}" # Can be 0, 1, true, false, yes, no, nobuild, build, unset
+		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
+		local arch="${OT_KERNEL_ARCH}"
+
+		# One of with or without -${arch} can be removed?
+
+		# Fix symlinks
+		rm -rf "${ED}/lib/modules/${PV}-${extraversion}/build" || true
+		rm -rf "${ED}/lib/modules/${PV}-${extraversion}/source" || true
+		dosym \
+			"/usr/src/linux-${PV}-${extraversion}" \
+			"/lib/modules/${PV}-${extraversion}/build"
+		dosym \
+			"/usr/src/linux-${PV}-${extraversion}" \
+			"/lib/modules/${PV}-${extraversion}/source"
+
+		rm -rf "${ED}/lib/modules/${PV}-${extraversion}-${arch}/build" || true
+		rm -rf "${ED}/lib/modules/${PV}-${extraversion}-${arch}/source" || true
+		dosym \
+			"/usr/src/linux-${PV}-${extraversion}" \
+			"/lib/modules/${PV}-${extraversion}-${arch}/build"
+		dosym \
+			"/usr/src/linux-${PV}-${extraversion}" \
+			"/lib/modules/${PV}-${extraversion}-${arch}/source"
+
 	done
 
 	if has clang-pgo ${IUSE} && use clang-pgo ; then
