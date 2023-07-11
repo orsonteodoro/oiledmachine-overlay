@@ -30,11 +30,6 @@ or
 emaint sync --repo oiledmachine-overlay
 ```
 
-<pre>
-cd /usr/local/oiledmachine-overlay
-git pull
-</pre>
-
 ## Important stuff
 
 Many of these packages have special licenses and EULAs attached to them.  I 
