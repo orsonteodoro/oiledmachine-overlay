@@ -12,18 +12,24 @@ should not feel like molasses under high memory pressure or heavy IO
 utilization.  It should run smoothly.
 
 ## Adding the repo
-<pre>
-cd /usr/local
-git clone https://github.com/orsonteodoro/oiledmachine-overlay.git
 
-Edit /etc/portage/repos.conf/layman.conf and add the following:
-[oiledmachine-overlay]
-location = /usr/local/oiledmachine-overlay
-layman-type = git
-auto-sync = No
-</pre>
+```
+emerge app-eselect/eselect-repository
+eselect repository add oiledmachine-overlay git https://github.com/orsonteodoro/oiledmachine-overlay.git
+```
 
 ## Keep in sync by
+
+```
+emaint sync -A
+```
+
+or
+
+```
+emaint sync --repo oiledmachine-overlay
+```
+
 <pre>
 cd /usr/local/oiledmachine-overlay
 git pull
