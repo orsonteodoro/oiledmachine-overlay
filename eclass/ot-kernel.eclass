@@ -8601,17 +8601,18 @@ EOF
 		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
 		local arch="${OT_KERNEL_ARCH}"
 
-		# One of with or without -${arch} can be removed?
+		[[ -e "${ED}/lib/modules/${PV}-${extraversion}-${arch}" ]] || continue
 
-		# Fix symlinks
-		rm -rf "${ED}/lib/modules/${PV}-${extraversion}/build" || true
-		rm -rf "${ED}/lib/modules/${PV}-${extraversion}/source" || true
-		dosym \
-			"/usr/src/linux-${PV}-${extraversion}" \
-			"/lib/modules/${PV}-${extraversion}/build"
-		dosym \
-			"/usr/src/linux-${PV}-${extraversion}" \
-			"/lib/modules/${PV}-${extraversion}/source"
+		if [[ -e "${ED}/lib/modules/${PV}-${extraversion}/kernel" \
+			|| -e "${ED}/lib/modules/${PV}-${extraversion}/modules.alias" ]] ; then
+eerror "Fixing module install for ${extraversion}"
+			mv \
+				"${ED}/lib/modules/${PV}-${extraversion}/"* \
+				"${ED}/lib/modules/${PV}-${extraversion}-${arch}"
+		fi
+
+		# Junk?
+		rm -rf "${ED}/lib/modules/${PV}-${extraversion}" || true
 
 		rm -rf "${ED}/lib/modules/${PV}-${extraversion}-${arch}/build" || true
 		rm -rf "${ED}/lib/modules/${PV}-${extraversion}-${arch}/source" || true
