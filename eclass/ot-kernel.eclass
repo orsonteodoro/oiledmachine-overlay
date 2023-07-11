@@ -40,7 +40,6 @@
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.10
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.1
-#	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.3
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.4
 # kernel_compiler_patch:
 #	https://github.com/graysky2/kernel_compiler_patch
@@ -71,7 +70,6 @@
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
-#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.3/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.4/
 # Project C CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/Project%20C
@@ -87,7 +85,6 @@
 #	https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 #	https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
-#	https://github.com/torvalds/linux/compare/v6.3...zen-kernel:6.3/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.4...zen-kernel:6.4/zen-sauce
 
 case ${EAPI:-0} in
