@@ -15,7 +15,7 @@ KEYWORDS="
 ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris
 "
 IUSE="
-+cbdt cbdt-win +colrv1 colrv1-no-flags
++cbdt cbdt-win +colrv1 colrv1-no-flags r1
 "
 REQUIRED_USE="
 	|| (
@@ -32,16 +32,16 @@ RDEPEND="
 	media-libs/freetype[png]
 	colrv1? (
 		|| (
-			>=media-fonts/noto-color-emoji-2.038_beta[colrv1?,colrv1-no-flags?]
-			>=media-fonts/noto-color-emoji-bin-2.038_beta[colrv1?,colrv1-no-flags?]
+			>media-fonts/noto-color-emoji-2.034[colrv1?,colrv1-no-flags?]
+			>media-fonts/noto-color-emoji-bin-2.034[colrv1?,colrv1-no-flags?]
 		)
 	)
 	cbdt? (
 		|| (
-			<media-fonts/noto-color-emoji-2.038_beta
-			<media-fonts/noto-color-emoji-bin-2.038_beta
-			>=media-fonts/noto-color-emoji-2.038_beta[cbdt?,cbdt-win?]
-			>=media-fonts/noto-color-emoji-bin-2.038_beta[cbdt?,cbdt-win?]
+			<media-fonts/noto-color-emoji-2.034
+			<media-fonts/noto-color-emoji-bin-2.034
+			>media-fonts/noto-color-emoji-2.028[cbdt?,cbdt-win?]
+			>media-fonts/noto-color-emoji-bin-2.028[cbdt?,cbdt-win?]
 			media-fonts/noto-emoji
 		)
 	)
