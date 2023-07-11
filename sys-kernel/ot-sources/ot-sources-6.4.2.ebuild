@@ -19,6 +19,7 @@ inherit ot-kernel-v6.4
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 6.4.1 (20230702)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 6.4.2 (20230702)
 # USE="bbrv2 build cfs disable_debug genpatches ncurses openssl symlink
 # zen-sauce zstd -bzip2 -cfi -clang -clang-pgo -cve_hotfix -exfat
 # -genpatches_1510 -graphicsmagick -gtk -gzip -imagemagick -kcfi -lto -lz4 -lzma

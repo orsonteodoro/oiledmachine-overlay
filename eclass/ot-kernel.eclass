@@ -8357,14 +8357,14 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 		fi
 
 		# Fix symlinks
-		rm -rf "${ED}/lib/modules/${PV}-${extraversion}-${arch}/build" || true
-		rm -rf "${ED}/lib/modules/${PV}-${extraversion}-${arch}/source" || true
+		rm -rf "${ED}/lib/modules/${PV}-${extraversion}/build" || true
+		rm -rf "${ED}/lib/modules/${PV}-${extraversion}/source" || true
 		dosym \
 			"/usr/src/linux-${PV}-${extraversion}" \
-			"/lib/modules/${PV}-${extraversion}-${arch}/build"
+			"/lib/modules/${PV}-${extraversion}/build"
 		dosym \
 			"/usr/src/linux-${PV}-${extraversion}" \
-			"/lib/modules/${PV}-${extraversion}-${arch}/source"
+			"/lib/modules/${PV}-${extraversion}/source"
 
 		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
 einfo "Installing OpenRC iosched script settings"
