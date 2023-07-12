@@ -36,7 +36,7 @@ b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
 ABI_FINGERPRINT="30a62b91f551c71d9e46c839fb3b422acb9d5cd5e58926270e3ab6ff1ae3a177"
-DEPENDS_FINGERPRINT="bd224de79af12838b99539c15491e3300b034c7a53101de3d55f10e939e3a8f9"
+DEPENDS_FINGERPRINT="b91b3b87af85b4b8eaf33ed439f372ab1eb193a72e82c946075cb63d0db9f988"
 SLOT="0/${ABI_FINGERPRINT}"
 IUSE+="
 android box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
@@ -216,7 +216,7 @@ OPENGL_DEPEND="
 	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
 "
 
-LLVM_SLOTS=( 16 15 14 13 12 11 10 )
+LLVM_SLOTS=( 17 16 15 14 13 12 11 10 )
 gen_clang_deps() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
