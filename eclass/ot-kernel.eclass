@@ -8601,17 +8601,11 @@ EOF
 		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
 		local arch="${OT_KERNEL_ARCH}"
 
-		[[ -e "${ED}/lib/modules/${PV}-${extraversion}-${arch}" ]] || continue
+		mkdir -p "${ED}/lib/modules/${PV}-${extraversion}-${arch}"
+		cp -a \
+			"${ED}/lib/modules/${PV}-${extraversion}/"* \
+			"${ED}/lib/modules/${PV}-${extraversion}-${arch}"
 
-		if [[ -e "${ED}/lib/modules/${PV}-${extraversion}/kernel" \
-			|| -e "${ED}/lib/modules/${PV}-${extraversion}/modules.alias" ]] ; then
-eerror "Fixing module install for ${extraversion}"
-			mv \
-				"${ED}/lib/modules/${PV}-${extraversion}/"* \
-				"${ED}/lib/modules/${PV}-${extraversion}-${arch}"
-		fi
-
-		# Junk?
 		rm -rf "${ED}/lib/modules/${PV}-${extraversion}" || true
 
 		rm -rf "${ED}/lib/modules/${PV}-${extraversion}-${arch}/build" || true
