@@ -15,7 +15,10 @@ RESTRICT="fetch"
 src_unpack() {
 	default
 	mkdir -p "${S}" || die
-	cp "${FILESDIR}/emscripten-${PVR}.eselect" "${S}/emscripten.eselect" || die
+	cp \
+		"${FILESDIR}/emscripten-${PVR}.eselect" \
+		"${S}/emscripten.eselect" \
+		|| die
 }
 
 src_install() {
@@ -26,7 +29,14 @@ src_install() {
 }
 
 pkg_postinst() {
-	ewarn "A \`eselect emscripten set <#>\` followed by \`env-update ; source /etc/profile\` in every shell are required in order for fixes to take effect."
+ewarn
+ewarn "The following must be entered in every shell in order for fixes to take"
+ewarn "effect:"
+ewarn
+ewarn "  eselect emscripten set <#>"
+ewarn "  env-update"
+ewarn "  source /etc/profile"
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

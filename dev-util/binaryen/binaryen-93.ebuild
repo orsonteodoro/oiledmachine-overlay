@@ -9,7 +9,10 @@ inherit cmake python-any-r1 toolchain-funcs
 
 DESCRIPTION="Compiler infrastructure and toolchain library for WebAssembly"
 HOMEPAGE="https://github.com/WebAssembly/binaryen"
-LICENSE="Apache-2.0 Apache-2.0-with-LLVM-exceptions"
+LICENSE="
+	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
+"
 # root directory contains Apache-2.0 but third_party/llvm-project
 # contains Apache-2.0-with-LLVM-exceptions
 KEYWORDS="~amd64 ~x86"
