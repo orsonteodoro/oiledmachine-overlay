@@ -1,0 +1,10 @@
+[Unit]
+Description=Sets I/O scheduler of each drive individually.
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ot-kernel-iosched.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

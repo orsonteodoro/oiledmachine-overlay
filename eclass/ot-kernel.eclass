@@ -2679,6 +2679,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_IOSCHED
 	unset OT_KERNEL_IOSCHED_OPENRC
 	unset OT_KERNEL_IOSCHED_OVERRIDE
+	unset OT_KERNEL_IOSCHED_SYSTEMD
 	unset OT_KERNEL_KCONFIG
 	unset OT_KERNEL_KERNEL_DIR
 	unset OT_KERNEL_KEXEC
@@ -5879,7 +5880,7 @@ einfo "${s_first} is set as the default I/O scheduler"
 		ot-kernel_set_configopt "CONFIG_DEFAULT_IOSCHED" "\"${s_first}\""
 	fi
 
-	ot-kernel_gen_iosched_openrc
+	ot-kernel_gen_iosched_config
 }
 
 # @FUNCTION: ot-kernel_iosched_custom
@@ -7109,11 +7110,15 @@ ot-kernel_set_tcca() {
 	ot-kernel_y_configopt "CONFIG_PROC_SYSCTL" # For /proc/sys support
 }
 
-# @FUNCTION: ot-kernel_set_iosched_openrc
+# @FUNCTION: ot-kernel_set_iosched_kconfig
 # @DESCRIPTION:
 # Required for the iosched openrc script
-ot-kernel_set_iosched_openrc() {
-	[[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] || return
+ot-kernel_set_iosched_kconfig() {
+	[[ \
+		   "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" \
+		|| "${OT_KERNEL_IOSCHED_SYSTEMD:-1}" == "1" \
+	]] \
+	|| return
 	ot-kernel_y_configopt "CONFIG_SYSFS"
 }
 
@@ -7256,7 +7261,7 @@ einfo
 	ot-kernel-pkgflags_apply # Placed before security flags
 	ot-kernel_set_at_system
 	ot-kernel_set_tcca
-	ot-kernel_set_iosched_openrc
+	ot-kernel_set_iosched_kconfig
 	ot-kernel_set_kconfig_ep800 # For testing build time breakage
 
 	is_firmware_ready
@@ -8040,14 +8045,19 @@ einfo "Wiping keys securely"
 	sync
 }
 
-# @FUNCTION: ot-kernel_gen_iosched_openrc
+# @FUNCTION: ot-kernel_gen_iosched_config
 # @DESCRIPTION:
-# Generates an OpenRC script for the iosched
-OT_KERNEL_IOSCHED_OPENRC_INSTALL=0
-ot-kernel_gen_iosched_openrc() {
-	[[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] || return
-	OT_KERNEL_IOSCHED_OPENRC_INSTALL=1
-	if ! ot-kernel_has_version "sys-apps/openrc[bash]" ; then
+# Generates an init script config for iosched
+OT_KERNEL_IOSCHED_CONFIG_INSTALL=0
+ot-kernel_gen_iosched_config() {
+	[[ \
+		   "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" \
+		|| "${OT_KERNEL_IOSCHED_SYSTEMD:-1}" == "1" \
+	]] \
+	|| return
+	OT_KERNEL_IOSCHED_CONFIG_INSTALL=1
+	if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] \
+		&& ! ot-kernel_has_version "sys-apps/openrc[bash]" ; then
 eerror
 eerror "Re-emerge sys-apps/openrc[bash]"
 eerror
@@ -8353,8 +8363,11 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 			done
 		fi
 
-		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
-einfo "Installing OpenRC iosched script settings"
+		if [[ \
+			   "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" \
+			|| "${OT_KERNEL_IOSCHED_SYSTEMD:-1}" == "1" \
+		]] ; then
+einfo "Installing iosched script settings"
 			insinto "/etc/ot-sources/iosched/conf"
 			doins "${T}/etc/ot-sources/iosched/conf/${PV}-${extraversion}-${arch}"
 		fi
@@ -9093,11 +9106,33 @@ ewarn "with dmesg disabled."
 ewarn
 	fi
 
-	if (( ${OT_KERNEL_IOSCHED_OPENRC_INSTALL} == 1 )) ; then
-		einfo "Installing ot-kernel-iosched"
+	if [[ "${OT_KERNEL_IOSCHED_SYSTEMD:-1}" == "1" ]] ; then
+		einfo "Installing ot-kernel-iosched (systemd)"
 		# Installed here to avoid merge conflict.
-		cat "${FILESDIR}/ot-kernel-iosched.openrc" \
-			> "${EROOT}/etc/init.d/ot-kernel-iosched"
+		mkdir -p "${EROOT}/lib/systemd/system"
+		cat \
+			"${FILESDIR}/ot-kernel-iosched.service" \
+			> \
+			"${EROOT}/lib/systemd/system/ot-kernel-iosched.service"
+		chmod 0755 "${EROOT}/lib/systemd/system/ot-kernel-iosched.service"
+		chown root:root "${EROOT}/lib/systemd/system/ot-kernel-iosched.service"
+
+ewarn
+ewarn "You need to do the following to make the work profile fully effective:"
+ewarn
+ewarn "  systemctl enable ot-kernel-iosched.service"
+ewarn "  systemctl start ot-kernel-iosched.service"
+ewarn
+	fi
+
+	if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
+		einfo "Installing ot-kernel-iosched (openrc)"
+		# Installed here to avoid merge conflict.
+		mkdir -p "${EROOT}/etc/init.d"
+		cat \
+			"${FILESDIR}/ot-kernel-iosched.openrc" \
+			> \
+			"${EROOT}/etc/init.d/ot-kernel-iosched"
 		chmod 0755 "${EROOT}/etc/init.d/ot-kernel-iosched"
 		chown root:root "${EROOT}/etc/init.d/ot-kernel-iosched"
 
@@ -9108,6 +9143,19 @@ ewarn
 ewarn "  rc-update add ot-kernel-iosched"
 ewarn "  /etc/init.d/ot-kernel-iosched start"
 ewarn
+	fi
+
+	if [[ \
+		   "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" \
+		|| "${OT_KERNEL_IOSCHED_SYSTEMD:-1}" == "1" \
+	]] ; then
+		# Installed here to avoid merge conflict.
+		cat \
+			"${FILESDIR}/ot-kernel-iosched.sh" \
+			> \
+			"${EROOT}/usr/bin/ot-kernel-iosched.sh"
+		chmod 0755 "${EROOT}/usr/bin/ot-kernel-iosched.sh"
+		chown root:root "${EROOT}/usr/bin/ot-kernel-iosched.sh"
 	fi
 
 ewarn
