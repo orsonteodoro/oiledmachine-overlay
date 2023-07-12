@@ -35,14 +35,13 @@ aba553d213834071ba6722e33d2ae67e94c874b5ef4d26be3697c839a6c5f98e\
 b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
-ABI_FINGERPRINT="a11c6d030ef5062747bf04226629464ca8bb0464e3754bbfcbf1b9308803d411"
-DEPENDS_FINGERPRINT="0ec94f2f56757425c83281360d9d1f8266766b589747d553e143a88cb621760b"
+ABI_FINGERPRINT="30a62b91f551c71d9e46c839fb3b422acb9d5cd5e58926270e3ab6ff1ae3a177"
+DEPENDS_FINGERPRINT="bd224de79af12838b99539c15491e3300b034c7a53101de3d55f10e939e3a8f9"
 SLOT="0/${ABI_FINGERPRINT}"
 IUSE+="
-android box2d bullet clang d3d ds doc externalfuncs +freetype
-gles2 gles3 gme gnome gtk2 gtest headless joystick kde macos mingw32 mingw64
-network +openal +opengl +png sdl2 sound test threads widgets wine +X xrandr
-xtest
+android box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
+gnome gtk2 gtest headless joystick kde macos mingw32 mingw64 network +openal
++opengl +png sdl2 sound test threads vulkan widgets wine +X xrandr xtest
 
 fallback-commit
 "
@@ -126,6 +125,9 @@ REQUIRED_USE+="
 			openal
 			sdl2
 		)
+	)
+	vulkan? (
+		sdl2
 	)
 	widgets? (
 		|| (
@@ -214,7 +216,7 @@ OPENGL_DEPEND="
 	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
 "
 
-LLVM_SLOTS=(10 11 12 13 14 15)
+LLVM_SLOTS=( 16 15 14 13 12 11 10 )
 gen_clang_deps() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
@@ -308,7 +310,7 @@ DEPEND+="
 		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 	)
 	sdl2? (
-		>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},joystick?,sound?,threads?]
+		>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},joystick?,sound?,threads?,vulkan?]
 		sound? (
 			>=media-libs/sdl2-mixer-${SDL2_MIXER_PV}[${MULTILIB_USEDEP},flac,mod,mp3,vorbis]
 		)
@@ -723,7 +725,7 @@ eerror
 }
 
 src_unpack() {
-	use fallback-commit && export EGIT_COMMIT="ab1e99c9a9b876bb6519c9d8a6061552931bd820" # Oct 18, 2022
+	use fallback-commit && export EGIT_COMMIT="826b84c599aa3289b4d17533a17de1d14c625335" # Jul 8, 2023
 	git-r3_fetch
 	git-r3_checkout
 	cd "${S}" || die

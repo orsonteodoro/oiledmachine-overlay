@@ -16,8 +16,8 @@ LICENSE="GPL-3+"
 #KEYWORDS="~amd64 ~x86" # Cannot build simple hello world.  Project is likely pre-alpha.
 HOMEPAGE="https://github.com/enigma-dev/RadialGM"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="doc"
-ENIGMA_ABI_FINGERPRINT="3660f4e5cab9d7d7db6fd8b5c4b6f7089b923e283daef5eb7c41094626b90001"
+IUSE="doc fallback-commit"
+ENIGMA_ABI_FINGERPRINT="30a62b91f551c71d9e46c839fb3b422acb9d5cd5e58926270e3ab6ff1ae3a177"
 # See CI for *DEPENDs
 # Upstream uses gcc 12.1.0 but relaxed in this ebuild
 CDEPEND="
@@ -135,6 +135,14 @@ eerror "for ${PN}."
 eerror
 		die
 	fi
+}
+
+src_unpack() {
+	EGIT_REPO_URI="https://github.com/enigma-dev/RadialGM.git"
+	EGIT_BRANCH="master"
+	use fallback-commit && EGIT_COMMIT="5a41a5164759450714f6b859450a6586ccdf1650" # Jul 8, 2023
+	git-r3_fetch
+	git-r3_checkout
 }
 
 src_prepare() {
