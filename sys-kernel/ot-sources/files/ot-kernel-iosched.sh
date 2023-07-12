@@ -72,12 +72,16 @@ get_id() {
 	for x in $(ls "/dev/disk/by-id") ; do
 		for a in ${ALGS[@]} ; do
 			which "${a}" 2>/dev/null 1>/dev/null || continue
-			h=$(echo "${x};${SALT}" | "${a}" | cut -f 1 -d " ")
+			h=$(echo "${x};${SALT}" \
+				| "${a}" \
+				| cut -f 1 -d " ")
 			if [[ "${h}" == "${arg}" ]] ; then
 				echo "${x}"
 				return
 			fi
-			h=$(echo -n "${x};${SALT}" | "${a}" | cut -f 1 -d " ")
+			h=$(echo -n "${x};${SALT}" \
+				| "${a}" \
+				| cut -f 1 -d " ")
 			if [[ "${h}" == "${arg}" ]] ; then
 				echo "${x}"
 				return
@@ -100,7 +104,8 @@ _load_modules() {
 
 	local m
 	for m in ${M[@]} ; do
-		local nmods=$(find "/lib/modules/${kpva}" -name "${m}.ko*" | wc -l)
+		local nmods=$(find "/lib/modules/${kpva}" -name "${m}.ko*" \
+			| wc -l)
 		if (( ${nmods} > 0 )) ; then
 			if declare -f einfo >/dev/null ; then
 				einfo "Loading ${m}"
@@ -114,7 +119,8 @@ _load_modules() {
 
 start()
 {
-	local kpva=$(cat /proc/version | cut -f 3 -d " ") # ${PV}-${extraverson}-${arch}
+	local kpva=$(cat /proc/version \
+		| cut -f 3 -d " ") # ${PV}-${extraverson}-${arch}
 	local kv="${kpva%%-*}"
 	local k_major=${kv%%.*}
 	local extraversion="${kpva%-*}"
@@ -136,7 +142,9 @@ start()
 			# HDD
 			set_iosched "${IOSCHED_HDD}"
 		fi
-		if grep -q -e "0" "/sys/block/${x}/queue/rotational" || realpath "/sys/block/${x}/device" | grep -q "usb" ; then
+		if grep -q -e "0" "/sys/block/${x}/queue/rotational" \
+			|| realpath "/dev/disk/by-id/usb"* \
+				| grep -q -E "/dev/sdb$" ; then
 			# SSD
 			# USB flash reported as rotational.
 			set_iosched "${IOSCHED_SSD}"
