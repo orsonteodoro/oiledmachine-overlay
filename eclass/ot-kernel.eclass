@@ -8602,19 +8602,20 @@ EOF
 		local arch="${OT_KERNEL_ARCH}"
 
 		mkdir -p "${ED}/lib/modules/${PV}-${extraversion}-${arch}"
-		cp -a \
-			"${ED}/lib/modules/${PV}-${extraversion}/"* \
-			"${ED}/lib/modules/${PV}-${extraversion}-${arch}" \
-			2>/dev/null \
-			|| true
+		if [[ -e "${ED}/lib/modules/${PV}-${extraversion}" ]] ; then
+			cp -a \
+				"${ED}/lib/modules/${PV}-${extraversion}/"* \
+				"${ED}/lib/modules/${PV}-${extraversion}-${arch}" \
+				|| die
+		fi
 
 		rm -rf "${ED}/lib/modules/${PV}-${extraversion}" \
 			|| true
-
 		rm -rf "${ED}/lib/modules/${PV}-${extraversion}-${arch}/build" \
 			|| true
 		rm -rf "${ED}/lib/modules/${PV}-${extraversion}-${arch}/source" \
 			|| true
+
 		dosym \
 			"/usr/src/linux-${PV}-${extraversion}" \
 			"/lib/modules/${PV}-${extraversion}-${arch}/build"
