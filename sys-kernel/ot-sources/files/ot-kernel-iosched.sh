@@ -144,7 +144,7 @@ start()
 		fi
 		if grep -q -e "0" "/sys/block/${x}/queue/rotational" \
 			|| realpath "/dev/disk/by-id/usb"* \
-				| grep -q -E "/dev/sdb$" ; then
+				| grep -q -E "/dev/${x}$" ; then
 			# SSD
 			# USB flash reported as rotational.
 			set_iosched "${IOSCHED_SSD}"
