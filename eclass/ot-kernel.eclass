@@ -2942,9 +2942,10 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 # Sets the kernel config for selecting multiple TCP congestion controls for
 # different scenaros.
 ot-kernel_set_kconfig_set_tcp_congestion_controls() {
-	[[ -z "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" ]] && return
-	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
-	[[ -z "${work_profile}" || "${work_profile}" =~ ("custom"|"manual") ]] && return
+	# Design note:
+	# The work profile may alter the tcp_congestion_controls to benefit
+	# certain scenarios but has been dropped.
+	OT_KERNEL_TCP_CONGESTION_CONTROLS=$(_ot-kernel_set_kconfig_get_init_tcp_congestion_controls)
 	local DEFAULT_ALGS=(
 		BIC
 		CUBIC
@@ -2988,7 +2989,6 @@ ot-kernel_set_kconfig_set_tcp_congestion_controls() {
 	done
 
 	# clear is for configurations without network.
-	OT_KERNEL_TCP_CONGESTION_CONTROLS=$(_ot-kernel_set_kconfig_get_init_tcp_congestion_controls)
 	if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" != "clear" ]] ; then
 		for alg in ${OT_KERNEL_TCP_CONGESTION_CONTROLS} ; do
 			if [[ "${alg}" == "bbr2" ]] ; then
