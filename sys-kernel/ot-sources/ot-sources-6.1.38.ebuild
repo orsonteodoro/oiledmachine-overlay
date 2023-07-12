@@ -19,7 +19,7 @@ inherit ot-kernel-v6.1
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 6.1.38 (20230711) with builder profile
-# OILEDMACHINE-OVERLAY-TEST:  FAILED (interactive) 6.1.38 (20230711) with gamer profile ; blank screen on boot
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 6.1.38 (20230711) with gamer profile
 # USE="bbrv2 build cfs disable_debug genpatches ncurses openssl symlink
 # zen-sauce zstd -bzip2 -cfi -clang -clang-pgo -cve_hotfix -exfat
 # -genpatches_1510 -graphicsmagick -gtk -gzip -imagemagick -kcfi -lto -lz4
@@ -47,6 +47,9 @@ inherit ot-kernel-v6.1
 # -clang-pgo -zen-muqss zen-sauce -zen-tune -cfi -kcfi -zen-multigen_lru \
 # -zen-sauce-all -genpatches_1510 build zstd openssl -lto ncurses"
 # OT_KERNEL_USB_AUTOSUSPEND=-1
+# boot: passed
+# show logo:  passed
+# network:  passed
 
 # env file gamer profile sample:
 # OT_KERNEL_EXTRAVERSION="gaming"
@@ -63,3 +66,6 @@ inherit ot-kernel-v6.1
 # -clang-pgo -zen-muqss zen-sauce -zen-tune -cfi -kcfi -zen-multigen_lru \
 # -zen-sauce-all -genpatches_1510 build zstd openssl -lto ncurses"
 # OT_KERNEL_USB_AUTOSUSPEND=-1
+# boot: passed
+# show logo:  passed
+# network:  passed

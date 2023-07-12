@@ -48,6 +48,9 @@ inherit ot-kernel-v6.4
 # -clang-pgo -zen-muqss zen-sauce -zen-tune -cfi -kcfi -zen-multigen_lru \
 # -zen-sauce-all -genpatches_1510 build zstd openssl -lto ncurses"
 # OT_KERNEL_USB_AUTOSUSPEND=-1
+# boot: passed
+# show logo:  passed
+# network:  passed
 
 # env file gamer profile sample:
 # OT_KERNEL_EXTRAVERSION="gaming"
