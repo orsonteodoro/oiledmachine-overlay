@@ -32,6 +32,8 @@ inherit ot-kernel-v6.4
 # -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
 # -emerge2 -filesystem -memory -network -p2p -webcam -yt"
 # PYTHON_TARGETS="python3_10 -python3_11"
+# CFLAGS=-O2
+# Compiler:  GCC 12
 
 # env file builder profile sample:
 # OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1

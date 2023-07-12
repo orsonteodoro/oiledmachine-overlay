@@ -8,6 +8,10 @@
   <longdescription>
     ot-sources is a customizable patchset compilation package that applies
     patches for performance, encryption, and security to the Linux kernel.
+  </longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
 
     The package prefers to unbundle patchsets, in preference for the
     version of the feature that was released directly from original author,
@@ -2647,12 +2651,16 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
     OT_KERNEL_VERBOSITY=N (optional) -- presentation of compiler and build
-    invocation.
+    invocation.  This will print out the compiler flags used during 
+    compilation.  Using 1 will print as if you are compiling a typical ebuild
+    package.
 
     Acceptable values for N:
 
       0 for minimal output, 1 for showing compiler flags, 2 for reasons for
       rebuild.
+
+    Tags:  verbose, console, stderr, compiler output, cflags, command line output
 
 
 
@@ -3225,7 +3233,7 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
 
 
     Please read the metadata.xml comments for more info.
-  </longdescription>
+  -->
   <upstream>
     <!--
 
