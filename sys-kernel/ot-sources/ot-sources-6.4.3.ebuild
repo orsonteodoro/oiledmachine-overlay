@@ -34,36 +34,44 @@ inherit ot-kernel-v6.4
 # PYTHON_TARGETS="python3_10 -python3_11"
 
 # env file builder profile sample:
-# OT_KERNEL_EXTRAVERSION="builder"
-# OT_KERNEL_MODULES_SUPPORT="1"
-# OT_KERNEL_MODULES_COMPRESSOR="zstd"
+# OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
 # OT_KERNEL_CPU_SCHED="cfs-throughput"
+# OT_KERNEL_EXTRAVERSION="builder"
+# OT_KERNEL_LOGO_COUNT=1
+# OT_KERNEL_LOGO_MAGICK_ARGS="-geometry x112 -colors 224"
+# OT_KERNEL_LOGO_URI="<redacted>"
+# OT_KERNEL_MODULES_COMPRESSOR="zstd"
+# OT_KERNEL_MODULES_SUPPORT="1"
+# OT_KERNEL_SLAB_ALLOCATOR="slub"
+# OT_KERNEL_USB_AUTOSUSPEND=-1
+# OT_KERNEL_USE="-c2tcp O3 bbrv2 disable_debug -tresor -tresor_sysfs
+# -tresor_x86_64 -tresor_x86_64-256-bit-key-support -tresor_aesni cfs -prjc
+# kernel_compiler_patch futex futex-proton multigen_lru genpatches -clang
+# -clang-pgo -zen-muqss zen-sauce -zen-tune -cfi -kcfi -zen-multigen_lru
+# -zen-sauce-all -genpatches_1510 build zstd openssl -lto ncurses"
 # OT_KERNEL_WORK_PROFILE="builder-interactive"
 # OT_KERNEL_ZSWAP_ALLOCATOR="zsmalloc"
 # OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
-# OT_KERNEL_SLAB_ALLOCATOR="slub"
-# OT_KERNEL_USE="-c2tcp O3 bbrv2 disable_debug -tresor -tresor_sysfs \
-# -tresor_x86_64 -tresor_x86_64-256-bit-key-support -tresor_aesni cfs -prjc \
-# kernel_compiler_patch futex futex-proton multigen_lru genpatches -clang \
-# -clang-pgo -zen-muqss zen-sauce -zen-tune -cfi -kcfi -zen-multigen_lru \
-# -zen-sauce-all -genpatches_1510 build zstd openssl -lto ncurses"
-# OT_KERNEL_USB_AUTOSUSPEND=-1
-# boot: passed
+# boot:       passed
 # show logo:  passed
-# network:  passed
+# network:    passed
 
 # env file gamer profile sample:
-# OT_KERNEL_EXTRAVERSION="gaming"
-# OT_KERNEL_MODULES_SUPPORT="1"
-# OT_KERNEL_MODULES_COMPRESSOR="zstd"
+# OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
 # OT_KERNEL_CPU_SCHED="cfs-interactive"
+# OT_KERNEL_EXTRAVERSION="gaming"
+# OT_KERNEL_LOGO_COUNT=1
+# OT_KERNEL_LOGO_MAGICK_ARGS="-geometry x112 -colors 224"
+# OT_KERNEL_LOGO_URI="<redacted>"
+# OT_KERNEL_MODULES_COMPRESSOR="zstd"
+# OT_KERNEL_MODULES_SUPPORT="1"
+# OT_KERNEL_SLAB_ALLOCATOR="slab"
+# OT_KERNEL_USB_AUTOSUSPEND=-1
+# OT_KERNEL_USE="-c2tcp O3 bbrv2 disable_debug -tresor -tresor_sysfs
+# -tresor_x86_64 -tresor_x86_64-256-bit-key-support -tresor_aesni cfs -prjc
+# kernel_compiler_patch futex futex-proton multigen_lru genpatches -clang
+# -clang-pgo -zen-muqss zen-sauce -zen-tune -cfi -kcfi -zen-multigen_lru
+# -zen-sauce-all -genpatches_1510 build zstd openssl -lto ncurses"
 # OT_KERNEL_WORK_PROFILE="pro-gaming"
 # OT_KERNEL_ZSWAP_ALLOCATOR="zsmalloc"
 # OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
-# OT_KERNEL_SLAB_ALLOCATOR="slab"
-# OT_KERNEL_USE="-c2tcp O3 bbrv2 disable_debug -tresor -tresor_sysfs \
-# -tresor_x86_64 -tresor_x86_64-256-bit-key-support -tresor_aesni cfs -prjc \
-# kernel_compiler_patch futex futex-proton multigen_lru genpatches -clang \
-# -clang-pgo -zen-muqss zen-sauce -zen-tune -cfi -kcfi -zen-multigen_lru \
-# -zen-sauce-all -genpatches_1510 build zstd openssl -lto ncurses"
-# OT_KERNEL_USB_AUTOSUSPEND=-1
