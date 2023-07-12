@@ -2998,11 +2998,11 @@ ot-kernel_set_kconfig_set_tcp_congestion_controls() {
 					continue
 				fi
 			fi
-einfo "Adding ${alg}"
 			ot-kernel_y_configopt "CONFIG_NET"
 			ot-kernel_y_configopt "CONFIG_INET"
 			[[ "${alg}" == "pcc" ]] && continue
-			if [[ "${ALGS[@]}" =~ "${alg}"( |$) ]] ; then
+			if [[ "${ALGS[@]}" =~ "${alg^^}"( |$) ]] ; then
+einfo "Adding ${alg}"
 				# reno is only a default not advanced option
 				ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
 				ot-kernel_y_configopt "CONFIG_TCP_CONG_${alg^^}"
