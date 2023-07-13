@@ -191,7 +191,7 @@ RDEPEND+="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			dev-libs/boost:=[python,${PYTHON_USEDEP}]
+			dev-libs/boost:=[${PYTHON_USEDEP},python]
 		')
 		$(python_gen_cond_dep '
 			dev-python/numpy[${PYTHON_USEDEP}]
