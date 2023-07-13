@@ -31,7 +31,7 @@ ${CPU_FEATURES[@]%:*}
 ${LLVM_SUPPORT_[@]}
 doc optix partio python qt5 qt6 static-libs test wayland X
 
-r2
+r3
 "
 REQUIRED_USE+="
 	^^ (
