@@ -157,6 +157,10 @@ REQUIRED_USE+="
 	embree? (
 		cycles
 	)
+	materialx? (
+		!python_single_target_python3_10
+		python_single_target_python3_11
+	)
 	mp3? (
 		ffmpeg
 	)
