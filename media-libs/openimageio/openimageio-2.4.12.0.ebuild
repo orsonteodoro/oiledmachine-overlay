@@ -7,7 +7,7 @@ CXX_STD_MIN="14"
 LLVM_MAX_SLOT=16
 LLVM_SLOTS=( 16 15 14 13 )
 FONT_PN=OpenImageIO
-PYTHON_COMPAT=( python3_{9..10} )
+PYTHON_COMPAT=( python3_{10..11} )
 inherit cmake font llvm python-single-r1
 
 DESCRIPTION="A library for reading and writing images"
