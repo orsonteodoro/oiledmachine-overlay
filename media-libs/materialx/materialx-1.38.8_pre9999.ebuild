@@ -4,7 +4,7 @@
 
 EAPI=8
 
-MY_PN="MaterialX"
+MY_PN="${PN}"
 MY_P="${MY_PN}-${PV}"
 
 PYTHON_COMPAT=( python3_11 ) # CI does not list 3.10 for this package.
@@ -100,13 +100,40 @@ pkg_setup() {
 	python_setup
 }
 
+verify_version() {
+	local actual_major_pv=$(grep -r -e "MATERIALX_MAJOR_VERSION" "${S}/CMakeLists.txt" \
+		| head -n 1 \
+		| grep -E -o "[0-9]+")
+	local actual_minor_pv=$(grep -r -e "MATERIALX_MINOR_VERSION" "${S}/CMakeLists.txt" \
+		| head -n 1 \
+		| grep -E -o "[0-9]+")
+	local actual_build_pv=$(grep -r -e "MATERIALX_BUILD_VERSION" "${S}/CMakeLists.txt" \
+		| head -n 1 \
+		| grep -E -o "[0-9]+")
+	local actual_version="${actual_major_pv}.${actual_minor_pv}.${actual_build_pv}"
+	local expected_version=$(ver_cut 1-3 "${PV}")
+	if [[ "${actual_version}" != "${expected_version}" ]] ; then
+eerror
+eerror "QA:  Version bump detected"
+eerror
+eerror "Actual version:    ${actual_version}"
+eerror "Expected version:  ${expected_version}"
+eerror
+eerror "Use the fallback-commit to rewind the commit or send an issue request"
+eerror "to the ebuild maintainer."
+eerror
+		die
+	fi
+}
+
 src_unpack() {
 	if [[ ${PV} =~ 9999 ]] ; then
-		use fallback-commit && EGIT_COMMIT="9ab389573547d0abdb68ca9cc5c1c3f0e6e9b136"
+		use fallback-commit && EGIT_COMMIT="3e838e2f4b4bcc434bd0e99f0e382c8d475b322a"
 		EGIT_BRANCH="main"
 		EGIT_REPO_URI="https://github.com/AcademySoftwareFoundation/MaterialX.git"
 		git-r3_fetch
 		git-r3_checkout
+		verify_version
 	else
 		unpack ${A}
 		pushd "nanogui-${EGIT_NANOGUI_COMMIT}" || die
