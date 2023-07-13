@@ -95,7 +95,6 @@ RDEPEND+="
 	)
 	!python? (
 		>=dev-libs/boost-1.70.0
-		<dev-libs/boost-1.81.0
 	)
 	>=sys-libs/zlib-1.2.11
 	alembic? (
@@ -154,7 +153,6 @@ RDEPEND+="
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
 			>=dev-libs/boost-1.70.0:=[python,${PYTHON_USEDEP}]
-			<dev-libs/boost-1.81.0
 			usdview? (
 				(
 					>=dev-python/pyside2-2.0.0[${PYTHON_USEDEP},quickcontrols2(+),script,scripttools]

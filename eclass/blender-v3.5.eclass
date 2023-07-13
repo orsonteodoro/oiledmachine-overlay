@@ -42,7 +42,7 @@ FFMPEG_IUSE+="
 LLVM_MAX_UPSTREAM=13 # (inclusive)
 
 # FAIL!  Distro only has >= 14.
-LLVM_SLOTS=( 14 13 12 11 )
+LLVM_SLOTS=( 14 13 12 11 ) # Upstream says 13 inclusive is max
 
 # Platform defaults based on CMakeList.txt
 OPENVDB_ABIS_MAJOR_VERS=10
@@ -87,7 +87,7 @@ ${OPENVDB_ABIS[@]}
 +X +abi10-compat +alembic -asan +boost +bullet +collada -cycles-hip
 +color-management -cpudetection +cuda +cycles -cycles-device-oneapi
 +cycles-path-guiding +dds -debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw
-flac +gmp +jack +jemalloc +jpeg2k -llvm -man -materialx +nanovdb +ndof +nls
+flac +gmp +hdr +jack +jemalloc +jpeg2k -llvm -man -materialx +nanovdb +ndof +nls
 +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise +openimageio +openmp
 +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace +pulseaudio release +sdl
 +sndfile +tbb test +tiff +usd -valgrind +wayland r1
@@ -928,6 +928,7 @@ eerror
 		-DWITH_IK_SOLVER=ON
 		-DWITH_INPUT_IME=OFF
 		-DWITH_IMAGE_DDS=$(usex dds)
+		-DWITH_IMAGE_HDR=$(usex hdr)
 		-DWITH_IMAGE_OPENEXR=$(usex openexr)
 		-DWITH_IMAGE_OPENJPEG=$(usex jpeg2k)
 		-DWITH_IMAGE_TIFF=$(usex tiff)

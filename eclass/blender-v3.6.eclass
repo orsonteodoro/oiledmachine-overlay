@@ -41,7 +41,6 @@ FFMPEG_IUSE+="
 
 LLVM_MAX_UPSTREAM=13 # (inclusive)
 
-# FAIL!  Distro only has >= 14.
 LLVM_SLOTS=( 15 14 13 12 )
 
 # Platform defaults based on CMakeList.txt
@@ -59,7 +58,7 @@ PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11.
 
 BOOST_PV="1.80"
 CLANG_MIN="8.0"
-FREETYPE_PV="2.12.1"
+FREETYPE_PV="2.13.0"
 GCC_MIN="9.3"
 LEGACY_TBB_SLOT="2"
 LIBOGG_PV="1.3.5"
@@ -284,14 +283,14 @@ REQUIRED_USE+="
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # no need to look past those dates.
 
-# Last change was Mar 22, 2023 for:
+# Last change was Jun 21, 2023 for:
 # https://github.com/blender/blender/blob/v3.6.0/build_files/build_environment/install_linux_packages.py
 
 # Last change was Feb 20, 2023 for:
 # https://github.com/blender/blender/commits/v3.6.0/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
-# Last change was Mar 22, 2023 for:
+# Last change was Jun 21, 2023 for:
 # https://github.com/blender/blender/commits/v3.6.0/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
@@ -355,7 +354,7 @@ gen_oiio_depends() {
 				<media-libs/openimageio-2.5[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 				>=media-libs/openimageio-2.4.11.0[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 				>=dev-cpp/robin-map-0.6.2
-				>=dev-libs/libfmt-8
+				>=dev-libs/libfmt-9.1.0
 			)
 		"
 	done
@@ -431,6 +430,7 @@ CODECS="
 "
 
 # The distro's llvm 14 for mesa is 22.05.
+# Missing OCLOC
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2021.10.8[${PYTHON_USEDEP}]
@@ -518,7 +518,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		>=sci-libs/fftw-3.3.10:3.0=
 	)
 	flac? (
-		>=media-libs/flac-1.3.4
+		>=media-libs/flac-1.4.2
 	)
 	gmp? (
 		>=dev-libs/gmp-6.2.1
@@ -640,7 +640,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		)
 	)
 	tiff? (
-		>=media-libs/tiff-4.4.0:0[jpeg,zlib]
+		>=media-libs/tiff-4.5.1:0[jpeg,zlib]
 	)
 	usd? (
 		<media-libs/openusd-24[imaging,monolithic,opengl,openvdb,openimageio,python]
@@ -650,8 +650,8 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		dev-util/valgrind
 	)
 	wayland? (
-		>=dev-libs/wayland-1.21.0
-		>=dev-libs/wayland-protocols-1.21
+		>=dev-libs/wayland-1.22.0
+		>=dev-libs/wayland-protocols-1.31
 		>=gui-libs/libdecor-0.1.0
 	)
 	webp? (
@@ -675,6 +675,7 @@ DEPEND+="
 	${RDEPEND}
 	>=dev-cpp/eigen-3.3.7:3=
 "
+# Missing SSE2NEON
 BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/setuptools-63.2.0[${PYTHON_USEDEP}]
@@ -928,10 +929,8 @@ eerror
 		-DWITH_GMP=$(usex gmp)
 		-DWITH_IK_SOLVER=ON
 		-DWITH_INPUT_IME=OFF
-		-DWITH_IMAGE_DDS=$(usex dds)
 		-DWITH_IMAGE_OPENEXR=$(usex openexr)
 		-DWITH_IMAGE_OPENJPEG=$(usex jpeg2k)
-		-DWITH_IMAGE_TIFF=$(usex tiff)
 		-DWITH_INTERNATIONAL=$(usex nls)
 		-DWITH_HARU=$(usex pdf)
 		-DWITH_LLVM=$(usex llvm)
@@ -997,7 +996,6 @@ eerror
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(
 			-DWITH_CYCLES=$(usex cycles)
-			-DWITH_CYCLES_CUBIN_COMPILER=$(usex nvrtc)
 			-DWITH_CYCLES_CUDA_BINARIES=$(usex cuda)
 			-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
 			-DWITH_CYCLES_DEVICE_ONEAPI=$(usex cycles-device-oneapi)
