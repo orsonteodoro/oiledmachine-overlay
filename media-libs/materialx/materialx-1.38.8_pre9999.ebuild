@@ -61,9 +61,11 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" oiio wayland +X"
+IUSE+=" -oiio -python test wayland +X r1"
 REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
+	python? (
+		${PYTHON_REQUIRED_USE}
+	)
 	kernel_linux? (
 		X
 	)
@@ -197,7 +199,18 @@ src_configure() {
 		-DGLFW_USE_OSMESA=OFF
 		-DGLFW_USE_WAYLAND=$(usex wayland "ON" "OFF")
 		-DMATERIALX_BUILD_OIIO=$(usex oiio "ON" "OFF")
+		-DMATERIALX_BUILD_PYTHON=$(usex python "ON" "OFF")
+		-DMATERIALX_BUILD_SHARED_LIBS=ON
+		-DMATERIALX_BUILD_TESTS=$(usex test "ON" "OFF")
+		-DMATERIALX_INSTALL_PYTHON=$(usex python "ON" "OFF")
 	)
+	if use python ; then
+		mycmakeargs+=(
+			-DMATERIALX_PYTHON_EXECUTABLE=${EPYTHON}
+			-DMATERIALX_PYTHON_VERSION=${EPYTHON/python/}
+			-DPython_EXECUTABLE=${EPYTHON}
+		)
+	fi
 	cmake_src_configure
 }
 

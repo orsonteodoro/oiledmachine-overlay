@@ -29,7 +29,7 @@ unset __
 # https://wiki.mozilla.org/Release_Management/Calendar
 
 EBUILD_MAINTAINER_MODE=0
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-04.tar.xz"
 
 LLVM_SLOTS=( 16 14 )
 LLVM_MAX_SLOT=16
