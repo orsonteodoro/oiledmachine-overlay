@@ -8,7 +8,7 @@ MY_PN="${PN}"
 MY_P="${MY_PN}-${PV}"
 
 PYTHON_COMPAT=( python3_11 ) # CI does not list 3.10 for this package.
-inherit cmake python-r1
+inherit cmake python-single-r1
 if [[ ${PV} =~ 9999 ]] ; then
 	inherit git-r3
 	IUSE+=" fallback-commit"
@@ -77,7 +77,9 @@ RDEPEND+="
 		x11-libs/libX11
 	)
 	python? (
-		dev-python/pybind11[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			dev-python/pybind11[${PYTHON_USEDEP}]
+		')
 	)
 	wayland? (
 		dev-libs/wayland
@@ -103,7 +105,7 @@ PATCHES=(
 DOCS=( )
 
 pkg_setup() {
-	python_setup
+	use python && python_setup
 }
 
 verify_version() {
@@ -224,7 +226,7 @@ src_install() {
 	cmake_src_install
 	rm -rf "${ED}/var/tmp" || die
 	if use python ; then
-		python_foreach_impl python_domodule python/MaterialX
+		python_domodule python/MaterialX
 		if use examples ; then
 			insinto /usr/share/${PN}/python
 			doins python/Scripts/*
