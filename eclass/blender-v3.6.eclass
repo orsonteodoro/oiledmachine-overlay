@@ -286,7 +286,7 @@ REQUIRED_USE+="
 # Last change was Jun 21, 2023 for:
 # https://github.com/blender/blender/blob/v3.6.0/build_files/build_environment/install_linux_packages.py
 
-# Last change was Feb 20, 2023 for:
+# Last change was May 15, 2023 for:
 # https://github.com/blender/blender/commits/v3.6.0/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
