@@ -11,6 +11,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~
 SLOT="0"
 SRC_URI=""
 RESTRICT="fetch"
+IUSE+=" r1"
 
 src_unpack() {
 	default

@@ -8,6 +8,14 @@ MAINTAINER="orsonteodoro@hotmail.com"
 VERSION="20230713"
 PN="cython"
 
+find_python_impls() {
+	local L=(
+		$(realpath /usr/lib/python*/site-packages 2>/dev/null | cut -f 4 -d "/")
+		$(realpath /usr/lib/pypy*/site-packages 2>/dev/null | cut -f 4 -d "/")
+	)
+	echo ${L[@]}
+}
+
 # find a list of Cython symlink targets
 find_targets() {
     local f
@@ -41,13 +49,9 @@ remove_symlinks() {
 set_symlink() {
     local target=$1
 
-    local pyimpls=($(find /usr/lib/python-exec \
-        -maxdepth 1 \
-        \(    -name "python2*" -type d \
-           -o -name "python3*" -type d \
-           -o -name "pypy" -type d \
-        \) \
-        | sed -e "s|/usr/lib/python-exec/||g"))
+    local pyimpls=(
+	$(find_python_impls)
+    )
 
     if is_number "${target}"; then
         local targets=( $(find_targets) )
@@ -131,25 +135,24 @@ describe_show() {
 do_show() {
     write_list_start "Current Cython symlinks:"
 
-    local pyimpls=($(find /usr/lib/python-exec \
-        -maxdepth 1 \
-        -name "python2*" -type d \
-        -o -name "python3*" -type d \
-        -o -name "pypy" -type d \
-        | sed -e "s|/usr/lib/python-exec/||g"))
+    local pyimpls=(
+	$(find_python_impls)
+    )
 
     local k_cython_src=""
+
+    local found=0
+    local epython
     for epython in ${pyimpls[@]} ; do
         if [[ -L /usr/lib/python-exec/${epython}/cython ]] ; then
+            found=1
             k_cython_src="/usr/lib/python-exec/${epython}/cython"
-            break
+            local k_cython_dest=$(canonicalise "${k_cython_src}")
+            write_kv_list_entry "${k_cython_src%/} ->" "${k_cython_dest%/}"
         fi
     done
 
-    if [[ -n "${k_cython_src}" ]]; then
-        local k_cython_dest=$(canonicalise "${k_cython_src}")
-        write_kv_list_entry "${k_cython_src%/} ->" "${k_cython_dest%/}"
-    else
+    if (( ${found} == 0 )) ; then
         write_kv_list_entry "(unset)" ""
     fi
 }
@@ -163,12 +166,9 @@ describe_list() {
 do_list() {
     local i targets=( $(find_targets) )
 
-    local pyimpls=($(find /usr/lib/python-exec \
-        -maxdepth 1 \
-           -name "python2*" -type d \
-        -o -name "python3*" -type d \
-        -o -name "pypy" -type d \
-        | sed -e "s|/usr/lib/python-exec/||g"))
+    local pyimpls=(
+	$(find_python_impls)
+    )
 
     write_list_start "Available Cython symlink targets:"
     IFS=$'\n'
