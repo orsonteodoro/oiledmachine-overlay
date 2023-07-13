@@ -455,7 +455,7 @@ einfo "to fix inconsistencies to prevent game build failures."
 einfo
 	if has_version "dev-games/enigma[-openal]" ; then
 ewarn
-ewarn "You need to set Game Settings > ENIGMA > API > Audio > None in order"
+ewarn "You need change to Game Settings > ENIGMA > API > Audio > None in order"
 ewarn "to compile your game successfully."
 ewarn
 	fi
