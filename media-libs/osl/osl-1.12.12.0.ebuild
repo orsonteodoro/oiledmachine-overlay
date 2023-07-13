@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{10..11} )
 inherit cmake flag-o-matic llvm multilib-minimal python-any-r1 toolchain-funcs
 
 DESCRIPTION="Advanced shading language for production GI renderers"
@@ -124,11 +124,13 @@ gen_openexr_pairs() {
 }
 
 # Multilib requires openexr built as multilib.
+# >= python_single_target_python3_11 : openimageio-2.4.12.0
+# >= python_single_target_python3_10 : openimageio-2.3.19.0
 RDEPEND+="
 	$(gen_llvm_depend)
 	$(python_gen_any_dep '
+		>=media-libs/openimageio-2.4.12.0:=[${PYTHON_SINGLE_USEDEP}]
 		<media-libs/openimageio-2.5:=[${PYTHON_SINGLE_USEDEP}]
-		>=media-libs/openimageio-2:=[${PYTHON_SINGLE_USEDEP}]
 	')
 	>=dev-libs/boost-1.55:=[${MULTILIB_USEDEP}]
 	>=dev-libs/pugixml-1.8[${MULTILIB_USEDEP}]
