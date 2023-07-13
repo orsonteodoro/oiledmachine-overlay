@@ -1126,13 +1126,12 @@ pkg_postrm() {
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.8.923 (20230608)
-# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / FAIL [UK] (interactive) 1.2.11.916 (20230608)
-# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.13.661 (20230712)
+# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.11.916 (20230712) with kernel 6.1.38
+# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.13.661 (20230712) with kernel 6.1.38
 # X:  pass
 # wayland:  pass
 # audio podcasts:  pass
 # emoji render:  pass
-# UK audio podcast(s):  fail with ffmpeg 4.4.x and 5.1.x with >= 1.2.11.916
 # UK audio podcast(s):  pass with ffmpeg 4.4.x with 1.2.8.923, 1.2.13.661
 # video podcasts:  pass
 # typical songs:  pass
