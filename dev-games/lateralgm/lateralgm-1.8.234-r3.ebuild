@@ -9,7 +9,9 @@ inherit desktop java-pkg-2
 DESCRIPTION="A free game maker source file editor"
 LICENSE="
 	GPL-3+
-	libmaker? ( GPL-3+ )
+	libmaker? (
+		GPL-3+
+	)
 "
 # lgmplugin is GPL-3+
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
@@ -451,6 +453,12 @@ einfo "You must carefully enable/disable the Game Settings > ENIGMA > API"
 einfo "section and extensions in Settings > ENIGMA > Extensions in LateralGM."
 einfo "to fix inconsistencies to prevent game build failures."
 einfo
+	if has_version "dev-games/enigma[-openal]" ; then
+ewarn
+ewarn "You need to set Game Settings > ENIGMA > API > Audio > None in order"
+ewarn "to compile your game successfully."
+ewarn
+	fi
 einfo
 einfo "If you are using dwm or non-parenting window manager or a non-responsive"
 einfo "title bar menus, you need to:"
@@ -462,3 +470,5 @@ einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 1.8.234 (20230712)
+# player+floor platformer prototype:  passed
