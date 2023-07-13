@@ -60,7 +60,7 @@ GCC_MIN="9.3"
 FREETYPE_PV="2.12.1"
 LEGACY_TBB_SLOT="2"
 ONETBB_SLOT="0"
-OPENEXR_V3_PV="3.1.5 3.1.7"
+OPENEXR_V3_PV="3.1.9 3.1.8 3.1.7 3.1.5"
 LIBOGG_PV="1.3.5"
 LIBSNDFILE_PV="1.1.0"
 OSL_PV="1.11.17.0"
@@ -423,7 +423,7 @@ CODECS="
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2021.10.8[${PYTHON_USEDEP}]
-		>=dev-python/charset_normalizer-2.0.6[${PYTHON_USEDEP}]
+		>=dev-python/charset-normalizer-2.0.6[${PYTHON_USEDEP}]
 		>=dev-python/idna-3.2[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.21.2[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.26.0[${PYTHON_USEDEP}]
@@ -524,6 +524,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		>=sys-libs/libomp-13
 	)
 	llvm-14? (
+		<media-libs/mesa-22.2.0[X?]
 		>=media-libs/mesa-21.1.0[X?]
 		>=sys-libs/libomp-14
 	)

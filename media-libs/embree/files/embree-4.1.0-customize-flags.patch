@@ -1,0 +1,275 @@
+Subject:  Customized default options
+
+License header for
+  common/cmake/clang.cmake:
+  common/cmake/gnu.cmake:
+  common/cmake/ispc.cmake:
+
+## Copyright 2009-2021 Intel Corporation
+## SPDX-License-Identifier: Apache-2.0
+
+diff -urp embree-4.1.0.orig/common/cmake/clang.cmake embree-4.1.0/common/cmake/clang.cmake
+--- embree-4.1.0.orig/common/cmake/clang.cmake	2023-05-11 02:26:18.000000000 -0700
++++ embree-4.1.0/common/cmake/clang.cmake	2023-07-12 21:34:32.262177075 -0700
+@@ -1,6 +1,11 @@
+ ## Copyright 2009-2021 Intel Corporation
+ ## SPDX-License-Identifier: Apache-2.0
+ 
++OPTION(ALLOW_AUTO_VECTORIZATION "Allow auto vectorization (TESTING)" OFF)                                       # oteodoro:  added line
++OPTION(ALLOW_STRICT_ALIASING "Allow strict aliasing (TESTING)" OFF)                                             # oteodoro:  added line
++OPTION(CUSTOM_OPTIMIZATION_LEVEL "Allow to use a custom optimization level other than -O3" OFF)                 # oteodoro:  added line
++OPTION(HARDENED "Build with hardened flags (PIE, SSP, _FORTIFY_SOURCE=2 [Full], Full Relro, No execstack)" ON)  # oteodoro:  added line
++                                                                                                                # oteodoro:  added line
+ MACRO(_SET_IF_EMPTY VAR VALUE)
+   IF(NOT ${VAR})
+     SET(${VAR} "${VALUE}")
+@@ -81,7 +86,7 @@ ELSE()
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")                       # enables most warnings
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wformat -Wformat-security")  # enables string format vulnerability warnings
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsigned-char")               # treat char as signed on all processors, including ARM
+-  IF (NOT APPLE)
++  IF (HARDENED AND NOT APPLE)                                           # oteodoro:  changed conditional
+     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIE")                     # enables support for more secure position independent execution
+   ENDIF()
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")                       # generate position independent code suitable for shared libraries
+@@ -89,17 +94,26 @@ ELSE()
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")                  # enables C++11 features    
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")         # makes all symbols hidden by default
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility-inlines-hidden") # makes all inline symbols hidden by default
+-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-strict-aliasing")        # disables strict aliasing rules
+-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-vectorize")         # disable auto vectorizer
+-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_FORTIFY_SOURCE=2")         # perform extra security checks for some standard library calls
+-  IF (EMBREE_STACK_PROTECTOR)
+-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector")           # protects against return address overrides
+-  ENDIF()
+-  MACRO(DISABLE_STACK_PROTECTOR_FOR_FILE file)
+-    IF (EMBREE_STACK_PROTECTOR)
+-      SET_SOURCE_FILES_PROPERTIES(${file} PROPERTIES COMPILE_FLAGS "-fno-stack-protector")
+-    ENDIF()
+-  ENDMACRO()
++  IF(NOT ALLOW_STRICT_ALIASING)                                         # oteodoro:  added line
++    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-strict-aliasing")      # disables strict aliasing rules  # oteodoro: indent.  Both embree_test and embree_verify report the same numbers with or without strict-aliasing.
++  ELSE()                                                                # oteodoro:  added line
++    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-strict-aliasing")      # oteodoro:  added line
++  ENDIF()                                                               # oteodoro:  added line
++  IF(NOT ALLOW_AUTO_VECTORIZATION)                                      # oteodoro:  added line.  On trial
++    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-vectorize")       # disable auto vectorizer # Why? did not state in comment or code reviewed
++# oteodoro:  added line.  Both embree_test and embree_verify report the same numbers with or without auto-vectorization.
++  ENDIF()                                                               # oteodoro:  added line
++  IF(HARDENED)                                                          # oteodoro:  added line
++    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_FORTIFY_SOURCE=2")       # perform extra security checks for some standard library calls  # oteodoro:  indent
++    IF (EMBREE_STACK_PROTECTOR)                                         # oteodoro:  indent
++      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector")       # protects against return address overrides ; # oteodoro indent
++    ENDIF()                                                                                         # oteodoro:  indent
++    MACRO(DISABLE_STACK_PROTECTOR_FOR_FILE file)                                                    # oteodoro:  indent
++      IF (EMBREE_STACK_PROTECTOR)                                                                   # oteodoro:  indent
++        SET_SOURCE_FILES_PROPERTIES(${file} PROPERTIES COMPILE_FLAGS "-fno-stack-protector")        # oteodoro:  indent
++      ENDIF()                                                                                       # oteodoro:  indent
++    ENDMACRO()                                                                                      # oteodoro:  indent
++  endif()                                                                                           # oteodoro:  added line
+ 
+   IF (EMBREE_ADDRESS_SANITIZER)
+     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize-address-use-after-scope -fno-omit-frame-pointer -fno-optimize-sibling-calls")
+@@ -115,22 +129,42 @@ ELSE()
+   SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")              # generate debug information
+   SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")         # enable assertions
+   SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DTBB_USE_DEBUG") # configure TBB in debug mode
+-  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3")             # enable full optimizations
++  IF(CUSTOM_OPTIMIZATION_LEVEL)                                                                      # oteodoro:  added line
++    SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CUSTOM_OPTIMIZATION_LEVEL}")               # oteodoro:  added line with changes
++  ELSE()                                                                                             # oteodoro:  added line
++    SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3")           # enable full optimizations  # oteodoro:  indent
++  ENDIF()                                                                                            # oteodoro:  added line
+ 
+   SET(CMAKE_CXX_FLAGS_RELEASE "")
+-  SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")     # disable assertions
+-  SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")          # enable full optimizations
++  SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")    # disable assertions         # oteodoro:  indent
++  IF(CUSTOM_OPTIMIZATION_LEVEL)                                                                      # oteodoro:  added line
++    SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CUSTOM_OPTIMIZATION_LEVEL}")           # oteodoro:  added line with changes
++  ELSE()                                                                                             # oteodoro:  added line
++    SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")       # enable full optimizations  # oteodoro:  indent
++  ENDIF()                                                                                            # oteodoro:  added line
+ 
+   SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "")
+   SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -g")              # generate debug information
+   SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -DNDEBUG")        # disable assertions
+-  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O3")             # enable full optimizations
++  IF(CUSTOM_OPTIMIZATION_LEVEL)                                      # oteodoro: added line
++    SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${CUSTOM_OPTIMIZATION_LEVEL}")                 # oteodoro:  added line with changes
++  ELSE()
++    SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O3")             # enable full optimizations  # oteodoro:  indent
++  ENDIF()                                                                # oteodoro: added line
++
++                                                                        # oteodoro: added line
++ IF (PGO_CXX_FLAGS)                                                     # oteodoro: added line
++     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PGO_CXX_FLAGS}")         # oteodoro: added line
++ ENDIF()                                                                # oteodoro: added line
++ IF (PGO_LDFLAGS)                                                       # oteodoro: added line
++    SET(CMAKE_LDFLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PGO_LDFLAGS}")       # oteodoro: added line
++ ENDIF()                                                                # oteodoro: added line
+ 
+   IF (APPLE)
+     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.7")   # makes sure code runs on older MacOSX versions
+     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")             # link against libc++ which supports C++11 features
+   ELSE(APPLE)
+-    IF (NOT EMBREE_ADDRESS_SANITIZER) # for address sanitizer this causes link errors
++    IF (HARDENED AND NOT EMBREE_ADDRESS_SANITIZER) # for address sanitizer this causes link errors   # oteodoro:  changed conditional
+       SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined") # issues link error for undefined symbols in shared library
+       SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")                     # enables position independent execution for executable
+       IF (NOT EMSCRIPTEN)
+Only in embree-4.1.0/common/cmake: clang.cmake.orig
+diff -urp embree-4.1.0.orig/common/cmake/gnu.cmake embree-4.1.0/common/cmake/gnu.cmake
+--- embree-4.1.0.orig/common/cmake/gnu.cmake	2023-05-11 02:26:18.000000000 -0700
++++ embree-4.1.0/common/cmake/gnu.cmake	2023-07-12 21:38:23.702171089 -0700
+@@ -1,6 +1,11 @@
+ ## Copyright 2009-2021 Intel Corporation
+ ## SPDX-License-Identifier: Apache-2.0
+ 
++OPTION(ALLOW_AUTO_VECTORIZATION "Allow auto vectorization (TESTING)" OFF)                                       # oteodoro:  added line
++OPTION(ALLOW_STRICT_ALIASING "Allow strict aliasing (TESTING)" OFF)                                             # oteodoro:  added line
++OPTION(CUSTOM_OPTIMIZATION_LEVEL "Allow to use a custom optimization level other than -O3" OFF)                 # oteodoro:  added line
++OPTION(HARDENED "Build with hardened flags (PIE, SSP, _FORTIFY_SOURCE=2 [Full], Full Relro, No execstack)" ON)  # oteodoro:  added line
++                                                                                                                # oteodoro:  added line
+ MACRO(_SET_IF_EMPTY VAR VALUE)
+   IF(NOT ${VAR})
+     SET(${VAR} "${VALUE}")
+@@ -43,7 +48,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
+ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsigned-char")                   # treat char as signed on all processors, including ARM
+ 
+ IF (NOT WIN32)
+-  IF (NOT APPLE)
++  IF (HARDENED AND NOT APPLE)                                                                                                              # oteodoro:  changed conditonal
+     SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIE")                   # enables support for more secure position independent execution
+   ENDIF()
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")                     # generate position independent code suitable for shared libraries
+@@ -53,12 +58,21 @@ ENDIF ()
+ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")                  # enables C++11 features
+ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")         # makes all symbols hidden by default
+ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility-inlines-hidden") # makes all inline symbols hidden by default
+-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-strict-aliasing")        # disables strict aliasing rules
+-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-vectorize")         # disable auto vectorizer
+-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_FORTIFY_SOURCE=2")         # perform extra security checks for some standard library calls
+-IF (EMBREE_STACK_PROTECTOR)
+-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector")           # protects against return address overrides
+-ENDIF()
++IF(NOT ALLOW_STRICT_ALIASING)                                         # oteodoro:  added line
++  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-strict-aliasing")      # disables strict aliasing rules  # oteodoro: indent.  Both embree_test and embree_verify report the same numbers with or without strict-aliasing.
++ELSE()                                                                # oteodoro:  added line
++  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-strict-aliasing")      # oteodoro:  added line
++ENDIF()                                                               # oteodoro:  added line
++IF(NOT ALLOW_AUTO_VECTORIZATION)                                      # oteodoro:  added line.  On trial
++  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-vectorize")       # disable auto vectorizer # oteodoro:  indent.  why?  no message in commit and no code review.
++# oteodoro:  added line.  Both embree_test and embree_verify report the same numbers with or without auto-vectorization.
++ENDIF()                                                               # oteodoro:  added line.
++IF (HARDENED)                                                                                                                          # oteodoro:  added line
++  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_FORTIFY_SOURCE=2")       # perform extra security checks for some standard library calls  # oteodoro:  indent
++  IF (EMBREE_STACK_PROTECTOR)                                                                                                          # oteodoro:  indent
++    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstack-protector")       # protects against return address overrides                      # oteodoro:  indent
++  ENDIF()                                                                                                                              # oteodoro:  indent
++ENDIF ()                                                                                                                               # oteodoro:  added line
+ MACRO(DISABLE_STACK_PROTECTOR_FOR_FILE file)
+   IF (EMBREE_STACK_PROTECTOR)
+     SET_SOURCE_FILES_PROPERTIES(${file} PROPERTIES COMPILE_FLAGS "-fno-stack-protector")
+@@ -72,14 +86,22 @@ ENDIF (EMBREE_ARM)
+ SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")              # generate debug information
+ SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")         # enable assertions
+ SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DTBB_USE_DEBUG") # configure TBB in debug mode
+-SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3")             # enable full optimizations
++IF(CUSTOM_OPTIMIZATION_LEVEL)                                                                          # oteodoro:  added line
++  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${CUSTOM_OPTIMIZATION_LEVEL}")                   # oteodoro:  added line with changes
++ELSE()                                                                                                 # oteodoro:  added line
++  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O3")           # enable full optimizations      # oteodoro:  indent
++ENDIF()                                                                                                # oteodoro:  indent
+ 
+ SET(CMAKE_CXX_FLAGS_RELEASE "")
+ IF (EMBREE_ARM)
+   SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fsigned-char")             # treat 'char' as 'signed char'
+ ENDIF (EMBREE_ARM)
+ SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")     # disable assertions
+-SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")          # enable full optimizations
++IF(CUSTOM_OPTIMIZATION_LEVEL)                                                                          # oteodoro:  added line
++  SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${CUSTOM_OPTIMIZATION_LEVEL}")               # oteodoro:  added line with changes
++ELSE()                                                                                                 # oteodoro:  added line
++  SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")        # enable full optimizations     # oteodoro:  indent
++ENDIF()                                                                                                # oteodoro:  indent
+ 
+ SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "")
+ IF (EMBREE_ARM)
+@@ -87,19 +109,32 @@ IF (EMBREE_ARM)
+ ENDIF (EMBREE_ARM)
+ SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -g")              # generate debug information
+ SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -DNDEBUG")        # disable assertions
+-SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O3")             # enable full optimizations
++IF(CUSTOM_OPTIMIZATION_LEVEL)                                                                                        # oteodoro:  added line
++  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${CUSTOM_OPTIMIZATION_LEVEL}")               # oteodoro:  added line with changes
++ELSE()                                                                                                               # oteodoro:  added line
++  SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O3")             # enable full optimizations
++ENDIF()                                                                                   # oteodoro: added line
++
++IF (PGO_CXX_FLAGS)                                                                        # oteodoro: added line
++  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PGO_CXX_FLAGS}")                              # oteodoro: added line
++ENDIF(PGO_CXX_FLAGS)                                                                      # oteodoro: added line
++IF (PGO_LDFLAGS)                                                                          # oteodoro: added line
++  SET(CMAKE_LDFLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PGO_LDFLAGS}")                           # oteodoro: added line
++ENDIF(PGO_LDFLAGS)                                                                        # oteodoro: added line
+ 
+ IF (APPLE)
+   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.7")   # makes sure code runs on older MacOSX versions
+   # SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")             # link against libc++ which supports C++11 features
+ ELSE(APPLE)
+-  IF (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+-    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined") # issues link error for undefined symbols in shared library
+-    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -z noexecstack")     # we do not need an executable stack
+-    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -z relro -z now")    # re-arranges data sections to increase security
+-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -z noexecstack")           # we do not need an executable stack
+-    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -z relro -z now")          # re-arranges data sections to increase security
+-  ENDIF ()
+-  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")                       # enables position independent execution for executable
++  IF (HARDENED)                                                                        # oteodoro:  added line
++    IF (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
++      SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined") # issues link error for undefined symbols in shared library
++      SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -z noexecstack")     # we do not need an executable stack
++      SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -z relro -z now")    # re-arranges data sections to increase security
++      SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -z noexecstack")           # we do not need an executable stack
++      SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -z relro -z now")          # re-arranges data sections to increase security
++    ENDIF ()
++    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")                       # enables position independent execution for executable
++  ENDIF(HARDENED)
+ ENDIF(APPLE)
+ 
+Only in embree-4.1.0/common/cmake: gnu.cmake.orig
+Only in embree-4.1.0/common/cmake: gnu.cmake.rej
+diff -urp embree-4.1.0.orig/common/cmake/ispc.cmake embree-4.1.0/common/cmake/ispc.cmake
+--- embree-4.1.0.orig/common/cmake/ispc.cmake	2023-05-11 02:26:18.000000000 -0700
++++ embree-4.1.0/common/cmake/ispc.cmake	2023-07-12 21:34:32.262177075 -0700
+@@ -1,6 +1,8 @@
+ ## Copyright 2009-2021 Intel Corporation
+ ## SPDX-License-Identifier: Apache-2.0
+ 
++OPTION(CUSTOM_OPTIMIZATION_LEVEL "Allow to use a custom optimization level other than -O3 or -O2" OFF)                 # oteodoro:  added line
++
+ # ##################################################################
+ # add macro INCLUDE_DIRECTORIES_ISPC() that allows to specify search
+ # paths for ISPC sources
+@@ -89,11 +91,15 @@ MACRO (ISPC_COMPILE)
+     SET(ISPC_INCLUDE_DIR_PARMS "-I" ${ISPC_INCLUDE_DIR_PARMS})
+   ENDIF()
+ 
+-  IF (WIN32 OR "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+-    SET(ISPC_OPT_FLAGS -O3)
+-  ELSE()
+-    SET(ISPC_OPT_FLAGS -O2)
+-  ENDIF()
++  IF (NOT CUSTOM_OPTIMIZATION_LEVEL)                                  # oteodoro:  added line
++    IF (WIN32 OR "${CMAKE_BUILD_TYPE}" STREQUAL "Release")            # oteodoro:  indent
++      SET(ISPC_OPT_FLAGS -O3)                                         # oteodoro:  indent
++    ELSE()                                                            # oteodoro:  indent
++      SET(ISPC_OPT_FLAGS -O2)                                         # oteodoro:  indent
++    ENDIF()                                                           # oteodoro:  indent
++  ELSE()                                                              # oteodoro:  indent
++    SET(ISPC_OPT_FLAGS ${CUSTOM_OPTIMIZATION_LEVEL})                  # oteodoro:  added line
++  ENDIF()                                                             # oteodoro:  added line
+ 
+   IF (WIN32)
+     SET(ISPC_ADDITIONAL_ARGS ${ISPC_ADDITIONAL_ARGS} --dllexport)

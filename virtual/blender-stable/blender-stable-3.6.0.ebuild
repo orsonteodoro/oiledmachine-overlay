@@ -2,10 +2,10 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# This ebuild will assist in updating blender to the latest LTS automatically.
+# This ebuild will assist in updating blender to the latest stable automatically.
 
 EAPI=8
-DESCRIPTION="Virtual for Blender LTS"
+DESCRIPTION="Virtual for Blender stable"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 RDEPEND="~media-gfx/blender-${PV}"

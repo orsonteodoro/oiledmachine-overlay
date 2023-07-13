@@ -13,7 +13,7 @@ inherit blender-v3.5
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender-v3.5.eclass
 
 # For version bumps see,
-# https://download.blender.org/release/
+# https://download.blender.org/release/Blender3.5/
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  turned-into-split-eclasses

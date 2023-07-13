@@ -24,7 +24,10 @@ X86_CPU_FLAGS=(
 	avx512vl:avx512vl
 
 )
-ARM_CPU_FLAGS=( neon:neon neon2x:neon2x )
+ARM_CPU_FLAGS=(
+	neon:neon
+	neon2x:neon2x
+)
 CPU_FLAGS=(
 	${X86_CPU_FLAGS[@]/#/+cpu_flags_x86_}
 	${ARM_CPU_FLAGS[@]/#/+cpu_flags_arm_}
@@ -95,6 +98,9 @@ src_configure() {
 	then
 		has_sse4="ON"
 	fi
+
+	# Disable asserts
+	append-cppflags $(usex debug '' '-DNDEBUG')
 
 	local mycmakeargs=(
 		-DOPENPGL_BUILD_STATIC=OFF

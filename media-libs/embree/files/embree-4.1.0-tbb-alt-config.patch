@@ -1,0 +1,23 @@
+Fixes:
+CMake Error at common/cmake/installTBB.cmake:5 (INSTALL):
+  INSTALL TARGETS given target "TBB" which does not exist.
+Call Stack (most recent call first):
+  common/tasking/CMakeLists.txt:56 (include)
+
+License header for common/tasking/CMakeLists.txt:
+
+## Copyright 2009-2021 Intel Corporation
+## SPDX-License-Identifier: Apache-2.0
+
+diff -urp embree-4.1.0.orig/common/tasking/CMakeLists.txt embree-4.1.0/common/tasking/CMakeLists.txt
+--- embree-4.1.0.orig/common/tasking/CMakeLists.txt	2023-05-11 02:26:18.000000000 -0700
++++ embree-4.1.0/common/tasking/CMakeLists.txt	2023-07-12 21:30:30.902183318 -0700
+@@ -21,7 +21,7 @@ ELSEIF (TASKING_TBB)
+   else()
+     # Try getting TBB via config first
+     find_package(TBB 2020 COMPONENTS ${EMBREE_TBB_COMPONENT} CONFIG ${TBB_FIND_PACKAGE_OPTION})
+-    if (TBB_FOUND)
++    if (TBB_FOUND AND FALSE)                                                           # oteodoro: changed line
+       TARGET_LINK_LIBRARIES(tasking PUBLIC TBB::${EMBREE_TBB_COMPONENT})
+       message("-- Found TBB: ${TBB_VERSION} at ${TBB_DIR} via TBBConfig.cmake")
+     else()

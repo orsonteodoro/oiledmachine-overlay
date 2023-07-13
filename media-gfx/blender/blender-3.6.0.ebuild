@@ -3,18 +3,19 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-inherit blender-v2.93
+inherit blender-v3.6
 
 # For current version, see https://download.blender.org/source/
 
 # See eclass below for implementation:
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender.eclass
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender-multibuild.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender-v2.93.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender-v3.6.eclass
 
 # For version bumps see,
-# https://download.blender.org/release/Blender2.93/
+# https://download.blender.org/release/Blender3.6/
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  turned-into-split-eclasses
 
+# OILEDMACHINE-OVERLAY-TEST:
