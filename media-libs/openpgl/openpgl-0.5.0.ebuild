@@ -35,7 +35,7 @@ CPU_FLAGS=(
 
 IUSE+="
 ${CPU_FLAGS[@]%:*}
-doc tbb
+debug doc tbb
 "
 REQUIRED_USE+="
 	|| (
