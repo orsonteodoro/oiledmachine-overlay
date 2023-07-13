@@ -550,7 +550,9 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		>=sys-libs/libomp-15
 	)
 	materialx? (
-		media-libs/materialx[${PYTHON_SINGLE_USEDEP},python]
+		$(python_gen_cond_dep '
+			media-libs/materialx[${PYTHON_USEDEP},python]
+		')
 	)
 	ndof? (
 		>=dev-libs/libspnav-1.1
