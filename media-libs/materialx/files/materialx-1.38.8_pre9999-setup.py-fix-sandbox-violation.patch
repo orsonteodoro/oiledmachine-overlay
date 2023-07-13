@@ -1,0 +1,9 @@
+--- materialx-1.38.8_pre9999.orig/python/CMakeLists.txt	2023-07-13 09:07:12.965102122 -0700
++++ materialx-1.38.8_pre9999/python/CMakeLists.txt	2023-07-13 09:09:46.789098143 -0700
+@@ -1,5 +1,5 @@
+ set(SETUP_PY_IN "${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in")
+-set(SETUP_PY "${CMAKE_INSTALL_PREFIX}/python/setup.py")
++set(SETUP_PY "$ENV{ED}/${CMAKE_INSTALL_PREFIX}/python/setup.py")
+ 
+ configure_file(${SETUP_PY_IN} ${SETUP_PY})
+ 

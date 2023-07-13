@@ -61,7 +61,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" -oiio -python test wayland +X r1"
+IUSE+=" -examples -oiio -python test wayland +X r1"
 REQUIRED_USE+="
 	python? (
 		${PYTHON_REQUIRED_USE}
@@ -75,6 +75,9 @@ RDEPEND+="
 	virtual/opengl
 	kernel_linux? (
 		x11-libs/libX11
+	)
+	python? (
+		dev-python/pybind11[${PYTHON_USEDEP}]
 	)
 	wayland? (
 		dev-libs/wayland
@@ -95,6 +98,7 @@ BDEPEND+="
 "
 S="${WORKDIR}/${MY_P}"
 PATCHES=(
+	"${FILESDIR}/materialx-1.38.8_pre9999-setup.py-fix-sandbox-violation.patch"
 )
 DOCS=( )
 
@@ -194,21 +198,23 @@ src_unpack() {
 }
 
 src_configure() {
+	addpredict /usr/lib/materialx
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/${PN}"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/$(get_libdir)/${PN}"
 		-DGLFW_USE_OSMESA=OFF
 		-DGLFW_USE_WAYLAND=$(usex wayland "ON" "OFF")
 		-DMATERIALX_BUILD_OIIO=$(usex oiio "ON" "OFF")
 		-DMATERIALX_BUILD_PYTHON=$(usex python "ON" "OFF")
 		-DMATERIALX_BUILD_SHARED_LIBS=ON
 		-DMATERIALX_BUILD_TESTS=$(usex test "ON" "OFF")
-		-DMATERIALX_INSTALL_PYTHON=$(usex python "ON" "OFF")
+		-DMATERIALX_INSTALL_PYTHON=OFF
 	)
 	if use python ; then
 		mycmakeargs+=(
-			-DMATERIALX_PYTHON_EXECUTABLE=${EPYTHON}
+			-Dpybind11_ROOT="$(python_get_sitedir)/pybind11"
+			-DMATERIALX_PYTHON_EXECUTABLE=${PYTHON}
 			-DMATERIALX_PYTHON_VERSION=${EPYTHON/python/}
-			-DPython_EXECUTABLE=${EPYTHON}
+			-DPYTHON_EXECUTABLE=${PYTHON}
 		)
 	fi
 	cmake_src_configure
@@ -217,6 +223,13 @@ src_configure() {
 src_install() {
 	cmake_src_install
 	rm -rf "${ED}/var/tmp" || die
+	if use python ; then
+		python_foreach_impl python_domodule python/MaterialX
+		if use examples ; then
+			insinto /usr/share/${PN}/python
+			doins python/Scripts/*
+		fi
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  created-ebuild
