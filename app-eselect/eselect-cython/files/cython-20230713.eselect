@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manages the Cython multslot symlinks"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20221228"
+VERSION="20230713"
 PN="cython"
 
 # find a list of Cython symlink targets
@@ -14,7 +14,8 @@ find_targets() {
     L=$(find /usr/lib/python-exec/python*/ \
         -name "cython.*" \
         -exec basename '{}' \; \
-        | sort | uniq)
+        | sort \
+	| uniq)
     for f in ${L}; do
         local bn=$(basename "${f}")
         echo "${bn}"

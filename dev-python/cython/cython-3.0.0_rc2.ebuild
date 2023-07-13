@@ -5,6 +5,7 @@
 EAPI=8
 
 MY_PV="${PV/_beta/b}"
+MY_PV="${PV/_rc/rc}"
 
 DISTUTILS_USE_PEP517=setuptools
 PYTHON_COMPAT=( python3_{10..11} pypy3 )
