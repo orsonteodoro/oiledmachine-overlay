@@ -386,6 +386,7 @@ src_configure() {
 		-DUSE_LIBRAW=$(usex raw)
 		-DUSE_LIBSQUISH=$(usex dds)
 		-DUSE_NUKE=OFF # not in Gentoo
+		-DUSE_OCIO=$(usex color-management)
 		-DUSE_OPENCOLORIO=$(usex color-management)
 		-DUSE_OPENCV=$(usex opencv)
 		-DUSE_OPENGL=$(usex opengl)
