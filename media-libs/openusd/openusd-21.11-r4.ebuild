@@ -217,6 +217,7 @@ BDEPEND+="
 		<sys-devel/clang-12
 	)
 "
+#https://boostorg.jfrog.io/artifactory/main/release/1.78.0/source/boost_1_78_0.tar.gz
 SRC_URI="
 https://github.com/PixarAnimationStudios/USD/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -256,6 +257,11 @@ einfo "Using legacy TBB"
 	else
 einfo "Using legacy TBB"
 	fi
+
+	# Fix for #2351
+	sed -i 's|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD 17|g' \
+		cmake/defaults/CXXDefaults.cmake || die
+
 	cmake_src_prepare
 	# make dummy pyside-uid
 	if use usdview ; then
@@ -296,6 +302,7 @@ ewarn
 		$(usex jemalloc "-DPXR_MALLOC_LIBRARY=${ESYSROOT}/usr/$(get_libdir)/${PN}/$(get_libdir)/libjemalloc.so" "")
 		$(usex usdview "-DPYSIDEUICBINARY:PATH=${S}/pyside2-uic" "")
 		-DBUILD_SHARED_LIBS=ON
+		-DCMAKE_CXX_STANDARD=17
 #		-DCMAKE_DEBUG_POSTFIX=_d
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${USD_PATH}"
 		-DPXR_BUILD_ALEMBIC_PLUGIN=$(usex alembic ON OFF)
