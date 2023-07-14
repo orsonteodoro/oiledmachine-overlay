@@ -217,7 +217,6 @@ BDEPEND+="
 		<sys-devel/clang-12
 	)
 "
-#https://boostorg.jfrog.io/artifactory/main/release/1.78.0/source/boost_1_78_0.tar.gz
 SRC_URI="
 https://github.com/PixarAnimationStudios/USD/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
