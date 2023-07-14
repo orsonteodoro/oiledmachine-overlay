@@ -42,7 +42,7 @@ aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc
 jpeg2k opencv opengl openvdb png ptex +python +qt5 raw rav1e tbb +truetype
 wayland webp X
 
-r3
+r4
 "
 gen_abi_compat_required_use() {
 	local o
