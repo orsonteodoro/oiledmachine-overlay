@@ -16,8 +16,23 @@ LICENSE="
 		custom
 		Apache-2.0
 	)
+	(
+		all-rights-reserved
+		MIT
+	)
+	(
+		public-domain
+		Unlicense
+	)
+	Apache-2.0
+	BSD
+	BSD-2
+	JSON
+	MIT
 "
 # custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/v21.11/pxr/usdImaging/usdImaging/cameraAdapter.cpp#L9
+# custom - search "In consideration of your agreement"
+# MIT - the distro MIT license template does not have all rights reserved.
 SLOT="0"
 KEYWORDS="~amd64"
 # test USE flag is enabled upstream
