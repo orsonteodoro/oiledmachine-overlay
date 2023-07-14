@@ -1,0 +1,24 @@
+--- OpenShadingLanguage-1.12.13.0.orig/src/build-scripts/ci-test.bash	2023-07-01 15:34:49.000000000 -0700
++++ OpenShadingLanguage-1.12.13.0/src/build-scripts/ci-test.bash	2023-07-13 20:29:14.164043709 -0700
+@@ -18,17 +18,17 @@ echo "Default timeout ${CTEST_TEST_TIMEO
+ echo "Test exclusions '${CTEST_EXCLUSIONS}'"
+ echo "CTEST_ARGS '${CTEST_ARGS}'"
+ 
+-pushd build
++#pushd build
+ 
+-ctest -C ${CMAKE_BUILD_TYPE} --force-new-ctest-process --output-on-failure \
++ctest -C $ENV{BUILD_DIR} --force-new-ctest-process --output-on-failure \
+     --timeout ${CTEST_TEST_TIMEOUT} -E "${CTEST_EXCLUSIONS}" ${CTEST_ARGS} \
+   || \
+-ctest -C ${CMAKE_BUILD_TYPE} --force-new-ctest-process \
++ctest -C $ENV{BUILD_DIR} --force-new-ctest-process \
+     --rerun-failed --repeat until-pass:5 -R render --output-on-failure \
+     --timeout ${CTEST_TEST_TIMEOUT} -E "${CTEST_EXCLUSIONS}" ${CTEST_ARGS}
+ # The weird construct above allows the render-* tests to run multiple times
+ 
+-popd
++#popd
+ 
+ 
+ # if [[ "$CODECOV" == 1 ]] ; then

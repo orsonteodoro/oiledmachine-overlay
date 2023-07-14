@@ -56,7 +56,9 @@ REQUIRED_USE+="
 QT5_MIN="5.6"
 QT6_MIN="6"
 PATCHES=(
+	"${FILESDIR}/osl-1.12.13.0-change-ci-test.bash.patch"
 )
+TEST_MODE="distro" # Can be upstream or distro
 
 gen_llvm_depend()
 {
@@ -180,7 +182,7 @@ BDEPEND+="
 BDEPEND+="
 	test? (
 		$(python_gen_any_dep '
-			media-libs/openimageio[color-management,truetype]
+			media-libs/openimageio[truetype]
 		')
 	)
 	>=dev-util/cmake-3.12
@@ -360,7 +362,13 @@ src_test() {
 				local myctestargs=(
 #					-E "(example-deformer|osl-imageio|osl-imageio.opt)"
 				)
-				cmake_src_test
+				export OIIO_LIBRARY_PATH="${BUILD_DIR}/lib:${OIIO_LIBRARY_PATH}" # Fixes failure with osl-imageio, osl-imageio.opt
+				if [[ "${TEST_MODE}" == "upstream" ]] ; then
+					export OSL_ROOT="${BUILD_DIR}"
+					bash "${S}/src/build-scripts/ci-test.bash" || die
+				else
+					cmake_src_test
+				fi
 			fi
 		done
 	}
