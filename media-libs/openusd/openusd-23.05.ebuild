@@ -88,7 +88,7 @@ REQUIRED_USE+="
 LEGACY_TBB_SLOT="2"
 ONETBB_SLOT="0"
 OPENEXR_V2_PV="2.5.8 2.5.7"
-OPENEXR_V3_PV="3.1.7 3.1.5"
+OPENEXR_V3_PV="3.1.9 3.1.8 3.1.7 3.1.5"
 
 gen_openexr_pairs() {
 	local pv
