@@ -359,16 +359,20 @@ src_test() {
 			else
 				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 				cd "${BUILD_DIR}" || die
-				local myctestargs=(
-#					-E "(example-deformer|osl-imageio|osl-imageio.opt)"
-				)
+				local myctestargs=()
+				if ! has_version "~media-libs/${PN}-${PV}" ; then
+ewarn "Skipping example-deformer unit test because ~${CATEGORY}/${PN}-${PV} is not installed."
+					myctestargs+=(
+						-E "(example-deformer)"
+					)
+				fi
 				export OIIO_LIBRARY_PATH="${BUILD_DIR}/lib:${OIIO_LIBRARY_PATH}" # Fixes failure with osl-imageio, osl-imageio.opt
 				if [[ "${TEST_MODE}" == "upstream" ]] ; then
-					export OSL_ROOT="${BUILD_DIR}"
 					bash "${S}/src/build-scripts/ci-test.bash" || die
 				else
 					cmake_src_test
 				fi
+				unset OSL_DIR
 			fi
 		done
 	}
@@ -396,18 +400,13 @@ src_install() {
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, static-libs
 # OILEDMACHINE-OVERLAY-TEST:  FAILED 1.12.12.0 (20230713)
 # USE="llvm-13 static-libs test -X -doc -llvm-14 -llvm-15 -llvm-16 -optix
-# -partio -python (-qt5) (-qt6) -r3 -wayland" ABI_X86="(64) -32 (-x32)"
-#99% tests passed, 3 tests failed out of 406
+# -partio -python (-qt5) (-qt6) -r3 -wayland"
+# 100% tests passed, 0 tests failed out of 406
 #
-#Label Time Summary:
-#batchregression    = 306.13 sec*proc (3 tests)
-#noise              = 277.83 sec*proc (30 tests)
-#render             = 5058.35 sec*proc (21 tests)
-#texture            =  91.23 sec*proc (38 tests)
+# Label Time Summary:
+# batchregression    = 318.77 sec*proc (3 tests)
+# noise              = 282.21 sec*proc (30 tests)
+# render             = 4675.30 sec*proc (21 tests)
+# texture            =  94.14 sec*proc (38 tests)
 #
-#Total Test time (real) = 1534.39 sec
-#
-#The following tests FAILED:
-#	 76 - example-deformer (Failed)
-#	242 - osl-imageio (Failed)
-#	243 - osl-imageio.opt (Failed)
+# Total Test time (real) = 1446.96 sec
