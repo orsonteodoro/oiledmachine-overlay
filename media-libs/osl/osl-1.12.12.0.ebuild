@@ -126,6 +126,7 @@ gen_openexr_pairs() {
 # Multilib requires openexr built as multilib.
 # >= python_single_target_python3_11 : openimageio-2.4.12.0
 # >= python_single_target_python3_10 : openimageio-2.3.19.0
+
 RDEPEND+="
 	$(gen_llvm_depend)
 	$(python_gen_any_dep '
@@ -177,6 +178,11 @@ BDEPEND+="
 	$(gen_llvm_depend)
 "
 BDEPEND+="
+	test? (
+		$(python_gen_any_dep '
+			media-libs/openimageio[color-management,truetype]
+		')
+	)
 	>=dev-util/cmake-3.12
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/bison-2.7
@@ -196,8 +202,8 @@ SRC_URI="
 https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-# Restricting tests as Make file handles them differently
-RESTRICT="mirror test"
+# Restricting tests as Makefile handles them differently
+RESTRICT="mirror"
 S="${WORKDIR}/OpenShadingLanguage-${PV}"
 
 llvm_check_deps() {
@@ -293,7 +299,6 @@ src_configure() {
 				-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 				-DINSTALL_DOCS=$(usex doc)
 				-DLLVM_STATIC=OFF
-				-DOSL_BUILD_TESTS=$(usex test)
 				#-DOSL_SHADER_INSTALL_DIR="include/OSL/shaders"
 				-DSTOP_ON_WARNING=OFF
 				#-DUSE_CCACHE=OFF
@@ -303,6 +308,14 @@ src_configure() {
 				-DUSE_QT=${has_qt}
 				-DUSE_SIMD="$(IFS=","; echo "${mysimd[*]}")"
 			)
+
+			if use test && [[ "${lib_type}" == "static" ]] ; then
+				# testshade.cpp:(.text+0xd8aa): undefined reference to `OSL_v1_12::OSLCompiler::compile_buffer
+				# only built with shared-libs
+				mycmakeargs+=( -DOSL_BUILD_TESTS=OFF )
+			else
+				mycmakeargs+=( -DOSL_BUILD_TESTS=$(usex test) )
+			fi
 
 			if [[ "${lib_type}" == "shared" ]] ; then
 				mycmakeargs+=( -DBUILD_SHARED_LIBS=ON )
@@ -335,6 +348,25 @@ src_compile() {
 	multilib_foreach_abi compile_abi
 }
 
+src_test() {
+	test_abi() {
+		local lib_type
+		for lib_type in $(get_lib_type) ; do
+			if use test && [[ "${lib_type}" == "static" ]] ; then
+				continue
+			else
+				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+				cd "${BUILD_DIR}" || die
+				local myctestargs=(
+#					-E "(example-deformer|osl-imageio|osl-imageio.opt)"
+				)
+				cmake_src_test
+			fi
+		done
+	}
+	multilib_foreach_abi test_abi
+}
+
 src_install() {
 	install_abi() {
 		local lib_type
@@ -354,3 +386,20 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, static-libs
+# OILEDMACHINE-OVERLAY-TEST:  FAILED 1.12.12.0 (20230713)
+# USE="llvm-13 static-libs test -X -doc -llvm-14 -llvm-15 -llvm-16 -optix
+# -partio -python (-qt5) (-qt6) -r3 -wayland" ABI_X86="(64) -32 (-x32)"
+#99% tests passed, 3 tests failed out of 406
+#
+#Label Time Summary:
+#batchregression    = 306.13 sec*proc (3 tests)
+#noise              = 277.83 sec*proc (30 tests)
+#render             = 5058.35 sec*proc (21 tests)
+#texture            =  91.23 sec*proc (38 tests)
+#
+#Total Test time (real) = 1534.39 sec
+#
+#The following tests FAILED:
+#	 76 - example-deformer (Failed)
+#	242 - osl-imageio (Failed)
+#	243 - osl-imageio.opt (Failed)

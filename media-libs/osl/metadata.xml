@@ -1,37 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<!-- for this ebuild for on the oiledmachine-overlay -->
-	<maintainer type="person">
-		<email>orsonteodoro@hotmail.com</email>
-		<name>Orson Teodoro</name>
-	</maintainer>
-	<!-- originators -->
-	<maintainer type="person">
-		<email>agrigo2001@yahoo.com.au</email>
-		<name>Adrian Grigo</name>
-	</maintainer>
-	<maintainer type="project">
-		<email>proxy-maint@gentoo.org</email>
-		<name>Proxy Maintainers</name>
-	</maintainer>
-	<longdescription>
-		A small but rich language for programmable shading in advanced
-		renderers and other applications, ideal for describing materials,
-		lights, displacement, and pattern generation.
+  <maintainer type="person">
+    <!-- Ebuild for on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+    <email>agrigo2001@yahoo.com.au</email>
+    <name>Adrian Grigo</name>
+  </maintainer>
+  <maintainer type="project">
+    <email>proxy-maint@gentoo.org</email>
+    <name>Proxy Maintainers</name>
+  </maintainer>
+  <longdescription>
+    A small but rich language for programmable shading in advanced renderers and
+    other applications, ideal for describing materials, lights, displacement,
+    and pattern generation.
+  </longdescription>
+  <!--
 
-		This ebuild fork builds static libraries of osl.  Static libs
-		is required by Blender's cycles plugin with OSL support.
+    oiledmachine-overlay notes:
 
-		OptiX users may want to set CUDA_TOOLKIT_ROOT_DIR as a per-package
-		environmental variable.
-	</longdescription>
-	<use>
-		<flag name="partio">Use <pkg>media-libs/partio</pkg></flag>
-		<flag name="qt5">Build the osltoy binary</flag>
-		<flag name="optix">Add experimental OptiX support</flag>
-	</use>
-	<upstream>
-		<remote-id type="github">imageworks/OpenShadingLanguage</remote-id>
-	</upstream>
+    This ebuild fork builds static libraries of osl.  Static libs is required by
+    Blender's cycles plugin with OSL support.
+
+    OptiX users may want to set CUDA_TOOLKIT_ROOT_DIR as a per-package
+    environmental variable.
+
+  -->
+  <use>
+    <flag name="partio">
+      Use <pkg>media-libs/partio</pkg>
+    </flag>
+    <flag name="qt5">
+      Build the osltoy binary
+    </flag>
+    <flag name="optix">
+      Add experimental OptiX support
+    </flag>
+  </use>
+  <upstream>
+    <remote-id type="github">imageworks/OpenShadingLanguage</remote-id>
+  </upstream>
 </pkgmetadata>

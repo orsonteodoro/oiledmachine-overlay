@@ -42,7 +42,7 @@ aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc
 jpeg2k opencv opengl openvdb png ptex +python qt5 +qt6 raw rav1e tbb +truetype
 wayland webp X
 
-r2
+r3
 "
 gen_abi_compat_required_use() {
 	local o
@@ -67,6 +67,12 @@ REQUIRED_USE="
 			rav1e
 		)
 	)
+	opengl? (
+		|| (
+			qt5
+			qt6
+		)
+	)
 	openvdb? (
 		^^ (
 			${OPENVDB_APIS_[@]}
@@ -75,6 +81,12 @@ REQUIRED_USE="
 	)
 	python? (
 		${PYTHON_REQUIRED_USE}
+	)
+	qt5? (
+		opengl
+	)
+	qt6? (
+		opengl
 	)
 	rav1e? (
 		avif
@@ -374,9 +386,10 @@ src_configure() {
 		-DUSE_LIBRAW=$(usex raw)
 		-DUSE_LIBSQUISH=$(usex dds)
 		-DUSE_NUKE=OFF # not in Gentoo
-		-DUSE_OPENJPEG=$(usex jpeg2k)
+		-DUSE_OPENCOLORIO=$(usex color-management)
 		-DUSE_OPENCV=$(usex opencv)
 		-DUSE_OPENGL=$(usex opengl)
+		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENVDB=$(usex openvdb)
 		-DUSE_PNG=$(usex png)
 		-DUSE_PTEX=$(usex ptex)

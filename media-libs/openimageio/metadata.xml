@@ -17,21 +17,71 @@
     <name>Gentoo Science Project</name>
   </maintainer>
   <use>
+    <flag name="aom">
+      Enable AV1 support through libaom
+    </flag>
+    <flag name="avif">
+      Enable AV1 Image File format (AVIF) image support
+    </flag>
     <flag name="color-management">
-      Enable color management via <pkg>media-libs/opencolorio</pkg>
+      Enable color transformation support
     </flag>
     <flag name="dicom">
-      Enable DICOM medical image file support via <pkg>sci-libs/dcmtk</pkg>
+      Enable DICOM medical image file support
+    </flag>
+    <flag name="dds">
+      Enable DDS textured image support
+    </flag>
+    <flag name="ffmpeg">
+      Enable support for video formats
     </flag>
     <flag name="field3d">
-      Enable f3d file (write) support via <pkg>media-libs/Field3D</pkg>
+      Enable f3d file (write) support [End of Life (EOL)]
+    </flag>
+    <flag name="field3d">
+      Enable GIF image support
+    </flag>
+    <flag name="heif">
+      Enable support for HEIF image files (H.256 based compressed)
+    </flag>
+    <flag name="icc">
+      Use this compiler instead
     </flag>
     <flag name="opencv">
-      Enable OpenCV support via <pkg>media-libs/opencv</pkg>
+      Enable camera support and OpenCV data
+    </flag>
+    <flag name="openvdb">
+      Enable OpenVDB files support
+    </flag>
+    <flag name="opengl">
+      Enable iv image viewer
+    </flag>
+    <flag name="jpeg2k">
+      Enable JPEG 2000 image support
     </flag>
     <flag name="ptex">
-      Enable Ptex texture mapping system file support via
-      <pkg>media-libs/ptex</pkg>
+      Enable Ptex texture mapping system file support
+    </flag>
+    <flag name="raw">
+      Enable RAW format from hardware capture devices
+    </flag>
+    <flag name="rav1e">
+      Enable av1 encoding
+    </flag>
+    <flag name="qt5">
+      Enable building the iv image viewer using Qt5
+    </flag>
+    <flag name="qt6">
+      Enable building the iv image viewer using Qt6
+    </flag>
+    <flag name="tbb">
+      Enable TBB for threading
+    </flag>
+    <flag name="truetype">
+      Enable for rendering text on images support
+    </flag>
+    <flag name="webp">
+      Enable WebP image support
     </flag>
   </use>
   <!--
