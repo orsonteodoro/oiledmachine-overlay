@@ -9,7 +9,15 @@ inherit cmake python-single-r1 flag-o-matic
 
 DESCRIPTION="Universal Scene Description"
 HOMEPAGE="http://www.openusd.org"
-LICENSE="Apache-2.0"
+LICENSE="
+	OpenUSD-21.11
+	custom
+	(
+		custom
+		Apache-2.0
+	)
+"
+# custom - https://github.com/PixarAnimationStudios/OpenUSD/blob/v21.11/pxr/usdImaging/usdImaging/cameraAdapter.cpp#L9
 SLOT="0"
 KEYWORDS="~amd64"
 # test USE flag is enabled upstream
