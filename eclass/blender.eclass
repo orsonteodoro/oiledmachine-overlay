@@ -436,13 +436,13 @@ ewarn
 			# when distributing games with Blender player.
 			RDEPEND_279=(
 				"dev-libs/boost"
-				"blender-libs/mesa"
-				"blender-libs/openvdb"
-				"blender-libs/osl"
 				"dev-libs/libpcre"
 				"dev-libs/libspnav"
+				"media-gfx/openvdb"  # originally blender-libs/openvdb
+				"media-libs/mesa"    # originally blender-libs/mesa
 				"media-libs/opensubdiv"
 				"media-libs/openjpeg"
+				"media-libs/osl"     # originally blender-libs/osl
 				"sci-libs/fftw"
 				"sys-libs/zlib"
 			)
