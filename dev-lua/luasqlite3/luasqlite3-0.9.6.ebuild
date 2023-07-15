@@ -23,8 +23,9 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
-S="${WORKDIR}/lsqlite3_fsl09y"
-SRC_URI="http://lua.sqlite.org/index.cgi/zip/lsqlite3_fsl09y.zip"
+MY_PN="lsqlite3_v096"
+S="${WORKDIR}/${MY_PN}"
+SRC_URI="http://lua.sqlite.org/index.cgi/zip/${MY_PN}.zip"
 DOCS=( HISTORY README )
 
 get_lib_types() {
