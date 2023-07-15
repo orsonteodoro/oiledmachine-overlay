@@ -27,7 +27,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 LLVM_SLOTS=( 16 15 14 13 12 11 10 )
 IUSE+="
 ${LLVM_SLOTS[@]/#/llvm-}
-+apps +built-in-weights +clang custom-tc doc gcc video_cards_nvidia
++apps +built-in-weights +clang custom-tc doc gcc
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -67,9 +67,6 @@ gen_ispc_depends() {
 RDEPEND+="
 	${PYTHON_DEPS}
 	virtual/libc
-	video_cards_nvidia? (
-		>=x11-drivers/nvidia-drivers-520.61.05
-	)
 	|| (
 		(
 			!<dev-cpp/tbb-2021:0=
