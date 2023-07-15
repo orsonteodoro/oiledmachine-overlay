@@ -34,17 +34,29 @@
     <flag name="clang">
       Builds with the clang compiler.  Recommended upstream.
     </flag>
+    <flag name="cpu">
+      Builds with SSE 4.1 CPU denoising support.
+    </flag>
     <flag name="custom-tc">
       Builds with your custom toolchain.  Both CC and CXX must be set.
     </flag>
     <flag name="gcc">
       Builds with the gcc compiler.  Not recommended.
     </flag>
+    <flag name="hip">
+      Builds with GPU denoising support.
+    </flag>
     <flag name="icc">
       Builds with the Intel compiler.
     </flag>
+    <flag name="cuda">
+      Builds with GPU denoising support.
+    </flag>
     <flag name="openimageio">
       Use OpenImageIO for saving and loading images in examples and tests.
+    </flag>
+    <flag name="sycl">
+      Builds with GPU denoising support.
     </flag>
     <flag name="test">
       Run tests.

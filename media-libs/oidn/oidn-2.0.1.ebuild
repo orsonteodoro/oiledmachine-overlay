@@ -27,21 +27,34 @@ ORG_GH="https://github.com/OpenImageDenoise"
 # SSE4.1 hardware was released in 2008.
 # See scripts/build.py for release versioning.
 # Clang is more smoother multitask-wise.
-# c++11 is the minimum required.
+ROCM_VERSION="5.5.0"
 MIN_CLANG_PV="3.3"
 MIN_GCC_PV="4.8.1"
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 LLVM_SLOTS=( 16 15 14 13 12 11 10 )
+AMD_GPU_TARGETS=(
+	gfx1030
+	gfx1031
+	gfx1100
+	gfx1101
+	gfx1102
+)
 IUSE+="
 ${LLVM_SLOTS[@]/#/llvm-}
+${AMD_GPU_TARGETS[@]/#/amdgpu_targets_}
 +apps +built-in-weights +clang cpu cuda custom-tc doc gcc hip video_cards_nvidia
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	cuda? (
 		video_cards_nvidia
+	)
+	hip? (
+		|| (
+			${AMD_GPU_TARGETS[@]/#/amdgpu_targets_}
+		)
 	)
 	^^ (
 		${LLVM_SLOTS[@]/#/llvm-}
@@ -80,8 +93,7 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	virtual/libc
 	hip? (
-		>=dev-libs/rocr-runtime-5.5.0
-		>=dev-libs/rocm-opencl-runtime-5.5.0
+		>=dev-libs/rocr-runtime-${ROCM_VERSION}
 	)
 	video_cards_nvidia? (
 		>=x11-drivers/nvidia-drivers-520.61.05
@@ -103,6 +115,7 @@ BDEPEND+="
 	>=dev-util/cmake-3.15
 	hip? (
 		>=dev-util/cmake-3.21
+		>=dev-util/hip-${ROCM_VERSION}
 	)
 	video_cards_nvidia? (
 		>=dev-util/nvidia-cuda-toolkit-11.8
@@ -230,6 +243,12 @@ einfo
 		-DOIDN_DEVICE_SYCL=OFF # no packages
 	)
 
+	if use hip ; then
+		mycmakeargs+=(
+#			-DROCM_PATH=""
+		)
+	fi
+
 	if use test || use example ; then
 		mycmakeargs+=(
 			-DOIDN_APPS=ON
@@ -275,7 +294,8 @@ src_install() {
 	fi
 	use doc && einstalldocs
 	docinto licenses
-	dodoc LICENSE.txt \
+	dodoc \
+		LICENSE.txt \
 		third-party-programs.txt \
 		third-party-programs-oneDNN.txt \
 		third-party-programs-oneTBB.txt

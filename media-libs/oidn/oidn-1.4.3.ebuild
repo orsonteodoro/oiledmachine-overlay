@@ -19,7 +19,6 @@ ORG_GH="https://github.com/OpenImageDenoise"
 # SSE4.1 hardware was released in 2008.
 # See scripts/build.py for release versioning.
 # Clang is more smoother multitask-wise.
-# c++11 is the minimum required.
 MIN_CLANG_PV="3.3"
 MIN_GCC_PV="4.8.1"
 ONETBB_SLOT="0"
@@ -226,7 +225,8 @@ src_install() {
 	fi
 	use doc && einstalldocs
 	docinto licenses
-	dodoc LICENSE.txt \
+	dodoc \
+		LICENSE.txt \
 		third-party-programs.txt \
 		third-party-programs-oneDNN.txt \
 		third-party-programs-oneTBB.txt
