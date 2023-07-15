@@ -838,7 +838,7 @@ check_multiple_llvm_versions_in_native_libs() {
 	done
 
 	if ldd "${ESYSROOT}/usr/$(get_libdir)/dri/"*".so" 2>/dev/null 1>/dev/null ; then
-		local llvm_ret=
+		local llvm_ret
 		ldd "${ESYSROOT}/usr/$(get_libdir)/dri/"*".so" \
 			| grep -q -e "LLVM-${llvm_slot}"
 		llvm_ret="$?"
@@ -851,8 +851,11 @@ ewarn "media-libs/mesa ebuilds for compatibility details."
 ewarn
 			if use osl ; then
 eerror
-eerror "Use media-libs/mesa[llvm,llvm-${llvm_slot}]::oiledmachine-overlay"
-eerror "instead."
+eerror "You must pick one of the following:"
+eerror
+eerror "(1) Use media-libs/mesa[llvm,llvm-${llvm_slot}]::oiledmachine-overlay"
+eerror "instead if it exists."
+eerror "(2) Disable the osl USE flag."
 eerror
 				die
 			fi
