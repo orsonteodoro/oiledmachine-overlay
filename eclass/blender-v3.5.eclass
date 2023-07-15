@@ -871,8 +871,10 @@ check_multiple_llvm_versions_in_native_libs() {
 	done
 
 	if ldd "${ESYSROOT}/usr/$(get_libdir)/dri/"*".so" 2>/dev/null 1>/dev/null ; then
-		local llvm_ret=$(ldd "${ESYSROOT}/usr/$(get_libdir)/dri/"*".so" \
-			| grep -q -e "LLVM-${llvm_slot}")
+		local llvm_ret
+		ldd "${ESYSROOT}/usr/$(get_libdir)/dri/"*".so" \
+			| grep -q -e "LLVM-${llvm_slot}"
+		llvm_ret="$?"
 		if [[ "${llvm_ret}" != "0" ]] ; then
 ewarn
 ewarn "Prebuilt binary video card drivers users:"
