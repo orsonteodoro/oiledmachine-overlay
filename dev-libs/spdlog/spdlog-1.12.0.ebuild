@@ -13,13 +13,12 @@ if [[ ${PV} == *9999 ]]; then
 	EGIT_REPO_URI="https://github.com/gabime/${PN}"
 else
 	SRC_URI="https://github.com/gabime/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="amd64 arm arm64 ppc ppc64 ~riscv x86"
+	KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
 fi
 
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="test"
-RESTRICT="!test? ( test )"
 
 BDEPEND="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -31,12 +30,28 @@ RDEPEND="${DEPEND}"
 
 PATCHES=(
 	"${FILESDIR}/${PN}-force_external_fmt.patch"
-	"${FILESDIR}/${PN}-1.9.2-fix-clone-test.patch"
 )
+
+check_network_sandbox() {
+	# We need to download catch2 to make it multilib since the catch ebuild
+	# package is unilib.
+	if has network-sandbox $FEATURES ; then
+eerror
+eerror "FEATURES=\"-network-sandbox\" must be added per-package env to be able"
+eerror "to run test."
+eerror
+		die
+	fi
+}
+
+pkg_setup() {
+	use test && check_network_sandbox
+}
 
 src_prepare() {
 	cmake_src_prepare
 	rm -r include/spdlog/fmt/bundled || die "Failed to delete bundled libfmt"
+	sed -i -e "s|Catch2 3 QUIET|Catch2 3|g" "tests/CMakeLists.txt" || die
 }
 
 src_configure() {
@@ -47,6 +62,14 @@ src_configure() {
 		-DSPDLOG_BUILD_SHARED=yes
 		-DSPDLOG_BUILD_TESTS=$(usex test)
 	)
-
 	cmake-multilib_src_configure
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.12.0 (20230715)
+# Notes:  Both 32-bit and 64-bit tested
+#     Start 1: spdlog-utests
+# 1/1 Test #1: spdlog-utests ....................   Passed    5.08 sec
+#
+# 100% tests passed, 0 tests failed out of 1
+#
+# Total Test time (real) =   5.08 sec
