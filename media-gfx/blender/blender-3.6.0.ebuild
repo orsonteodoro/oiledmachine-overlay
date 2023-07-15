@@ -30,3 +30,5 @@ inherit blender-v3.6
 # PYTHON_SINGLE_TARGET="python3_11 -python3_10"
 # cycles render cube:  passed with workaround
 # eevee render cube:   passed
+# wayland:             passed
+# X:                   passed
