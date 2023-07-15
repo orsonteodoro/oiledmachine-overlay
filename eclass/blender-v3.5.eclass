@@ -521,7 +521,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		>=media-libs/flac-1.3.4
 	)
 	gmp? (
-		>=dev-libs/gmp-6.2.1
+		>=dev-libs/gmp-6.2.1[cxx]
 	)
 	jack? (
 		virtual/jack
