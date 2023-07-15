@@ -357,6 +357,12 @@ eerror
 			die
 		fi
 	elif tc-is-clang ; then
+ewarn
+ewarn "Bugged in certain setups due to a ebuild design flaw.  Use GCC or match"
+ewarn "libomp slot to the same slot as the current clang slot."
+ewarn
+ewarn "See https://bugs.gentoo.org/904140"
+ewarn
 		if ver_test $(clang-version) -lt ${CLANG_MIN} ; then
 eerror
 eerror "${PN} requires Clang >= ${CLANG_MIN}"
