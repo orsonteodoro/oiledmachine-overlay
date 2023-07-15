@@ -963,7 +963,7 @@ eerror
 
 	if use materialx ; then
 		mycmakeargs+=(
-			-DMaterialX_DIR:PATH="${ESYSROOT}/usr/lib/materialx/lib/cmake/MaterialX"
+			-DMaterialX_DIR:PATH="${ESYSROOT}/usr/$(get_libdir)/materialx/lib/cmake/MaterialX"
 		)
 	fi
 
