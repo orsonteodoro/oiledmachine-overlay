@@ -1,0 +1,14 @@
+diff -urp flac-1.4.3.orig/src/libFLAC/Makefile.am flac-1.4.3/src/libFLAC/Makefile.am
+--- flac-1.4.3.orig/src/libFLAC/Makefile.am	2023-06-21 11:37:59.664120568 -0700
++++ flac-1.4.3/src/libFLAC/Makefile.am	2023-07-15 10:02:19.272547192 -0700
+@@ -40,7 +40,7 @@ ASSOCMATHCFLAGS = -fassociative-math -fn
+ endif
+ endif
+ 
+-AM_CFLAGS = $(DEBUGCFLAGS) ${ASSOCMATHCFLAGS} @OGG_CFLAGS@
++AM_CFLAGS = $(DEBUGCFLAGS) ${ASSOCMATHCFLAGS} @OGG_CFLAGS@ -fPIC
+ 
+ libFLAC_la_LIBADD = @OGG_LIBS@ -lm
+ 
+Only in flac-1.4.3/src/libFLAC: Makefile.am.orig
+Only in flac-1.4.3/src/libFLAC: Makefile.am.rej

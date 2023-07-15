@@ -1,4 +1,4 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -11,20 +11,35 @@ HOMEPAGE="https://xiph.org/flac/"
 SRC_URI="https://downloads.xiph.org/releases/${PN}/${P}.tar.xz"
 LICENSE="BSD FDL-1.2 GPL-2 LGPL-2.1"
 SLOT="0"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv sparc"
-KEYWORDS+=" x86 ~amd64-linux ~x86-linux ~ppc-macos ~sparc-solaris ~x64-solaris"
-KEYWORDS+=" ~x86-solaris"
-IUSE="+cxx debug ogg cpu_flags_ppc_altivec cpu_flags_ppc_vsx cpu_flags_x86_sse"
-IUSE+=" static-libs"
-RDEPEND="ogg? ( >=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}] )"
+KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
+~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-solaris
+"
+IUSE="
++cxx debug ogg cpu_flags_x86_avx cpu_flags_x86_avx2 static-libs
+"
+# AVX configure switch is for both AVX & AVX2
+REQUIRED_USE="
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_avx
+	)
+"
+RDEPEND="
+	ogg? (
+		>=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}]
+	)
+"
 BDEPEND+="
-	app-arch/xz-utils
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	app-arch/xz-utils
 	sys-devel/gettext
-	abi_x86_32? ( dev-lang/nasm )
+	virtual/pkgconfig
+	abi_x86_32? (
+		dev-lang/nasm
+	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-1.3.3-fPIC.patch"
+	"${FILESDIR}/${PN}-1.4.3-fPIC.patch"
 )
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
@@ -79,14 +94,11 @@ _src_configure() {
 	local myeconfargs=(
 		--disable-doxygen-docs
 		--disable-examples
-		--disable-xmms-plugin
 		$([[ ${CHOST} == *-darwin* ]] && echo "--disable-asm-optimizations")
-		$(use_enable cpu_flags_ppc_altivec altivec)
-		$(use_enable cpu_flags_ppc_vsx vsx)
-		$(use_enable cpu_flags_x86_sse sse)
+		$(use_enable cpu_flags_x86_avx avx)
 		$(use_enable cxx cpplibs)
-		$(use_enable debug)
 		$(use_enable ogg)
+		$(use_enable debug)
 
 		# cross-compile fix (bug #521446)
 		# no effect if ogg support is disabled
@@ -143,6 +155,8 @@ src_test() {
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			if [[ ${UID} != 0 ]]; then
+	# Parallel tests work for CMake but don't for autotools as of 1.4.3
+	# https://github.com/xiph/flac/commit/aaffdcaa969c19aee9dc89be420eae470b55e405
 				emake -j1 check
 			else
 				ewarn "Tests will fail if ran as root, skipping."
