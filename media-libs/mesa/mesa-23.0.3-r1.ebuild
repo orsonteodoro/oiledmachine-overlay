@@ -334,7 +334,7 @@ multilib_src_configure() {
 	if use llvm ; then
 		local llvm_slot
 		for llvm_slot in ${LLVM_SLOTS[@]} ; do
-			use llvm-${llvm_slot} && LLVM_MAX_SLOT="${llvm_slot}"
+			use llvm-${llvm_slot} && break
 		done
 		export CC="${CHOST}-clang-${llvm_slot}"
 		export CXX="${CHOST}-clang++-${llvm_slot}"
