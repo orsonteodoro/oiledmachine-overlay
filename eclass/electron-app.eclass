@@ -574,7 +574,7 @@ elif [[ -n "${ELECTRON_APP_TYPESCRIPT_PV}" ]] && ( \
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-12.20
 	"
-elif [[ -n "${ELECTRON_APP_TYPESCRIPT_PV}" ]] && ( \
+elif [[ -n "${ELECTRON_APP_TYPESCRIPT_PV}" ]] && \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_PV}") -gt 5.0.4 ; then
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-14.17
