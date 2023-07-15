@@ -1368,7 +1368,7 @@ ewarn
 ewarn "Blender uses python integration. As such, may have some risks with"
 ewarn "running unknown python scripts."
 ewarn
-ewarn "It is recommended to change your blender temp directoryfrom /tmp to"
+ewarn "It is recommended to change your blender temp directory from /tmp to"
 ewarn "/home/user/tmp or another tmp file under your home directory. This can"
 ewarn "be done by starting blender, then dragging the main menu down do"
 ewarn "display all paths."
@@ -1436,6 +1436,12 @@ ewarn
 ewarn "Invoking the blender binary directly may result in a segfault."
 ewarn "Call it indirectly through the wrapper (/usr/bin/blender) instead."
 ewarn
+	if use cycles ; then
+ewarn
+ewarn "You must disable Render > Cycles > Denoise in order to render if the CPU"
+ewarn "does not have SSE4.1 in order to render with cycles."
+ewarn
+	fi
 }
 
 blender_pkg_postrm() {
