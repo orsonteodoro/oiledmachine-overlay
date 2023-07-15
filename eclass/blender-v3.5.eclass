@@ -880,6 +880,31 @@ ewarn
 ewarn "You need link media-libs/mesa with LLVM ${llvm_slot}.  See"
 ewarn "media-libs/mesa ebuilds for compatibility details."
 ewarn
+			if use osl ; then
+eerror
+eerror "media-libs/mesa must be built with llvm-${llvm_slot} to prevent a"
+eerror "segfault.  Use the following so that the driver's llvm version"
+eerror "matches the one built with blender and osl.  You may also"
+eerror "disable the osl USE flag."
+eerror
+eerror "Contents of /etc/portage/env/clang-${llvm_slot}.conf:"
+eerror
+eerror "CC=\"clang-${llvm_slot}\""
+eerror "CXX=\"clang++-${llvm_slot}\""
+eerror "AR=\"llvm-ar\""
+eerror "NM=\"llvm-nm\""
+eerror "OBJCOPY=\"llvm-objcopy\""
+eerror "OBJDUMP=\"llvm-objdump\""
+eerror "READELF=\"llvm-readelf\""
+eerror "STRIP=\"llvm-strip\""
+eerror
+eerror
+eerror "Contents of /etc/portage/package.env:"
+eerror
+eerror "media-libs/mesa clang-${llvm_slot}.conf"
+eerror
+				die
+			fi
 		fi
 	fi
 
