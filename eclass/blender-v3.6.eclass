@@ -39,7 +39,7 @@ FFMPEG_IUSE+="
 	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
 "
 
-LLVM_MAX_UPSTREAM=13 # (inclusive)
+LLVM_MAX_UPSTREAM=15 # (inclusive)
 
 LLVM_SLOTS=( 15 14 13 12 )
 
