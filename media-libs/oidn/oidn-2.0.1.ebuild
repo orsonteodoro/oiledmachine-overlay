@@ -4,17 +4,25 @@
 EAPI=8
 
 CMAKE_BUILD_TYPE=Release
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{10..11} )
 
 inherit cmake flag-o-matic llvm python-single-r1 toolchain-funcs
 
 DESCRIPTION="Intel(R) Open Image Denoise library"
 HOMEPAGE="http://www.openimagedenoise.org/"
 KEYWORDS="~amd64"
-LICENSE="Apache-2.0"
+LICENSE="
+	Apache-2.0
+	BSD
+	MIT
+"
+# MIT - composable_kernel
+# BSD - cutlass
 # MKL_DNN is oneDNN 2.2.4 with additional custom commits.
-MKL_DNN_COMMIT="eb3e9670053192258d5a66f61486e3cfe25618b3"
-OIDN_WEIGHTS_COMMIT="59bad6bb6344f8fb8205772df3f795c2dc72e23b"
+COMPOSABLE_KERNEL_COMMIT="e85178b4ca892a78344271ae64103c9d4d1bfc40"
+CUTLASS_COMMIT="66d9cddc832c1cdc2b30a8755274f7f74640cfe6"
+MKL_DNN_COMMIT="9bea36e6b8e341953f922ce5c6f5dbaca9179a86"
+OIDN_WEIGHTS_COMMIT="4322c25e25a05584f65da1a4be5cef40a4b2e90b"
 ORG_GH="https://github.com/OpenImageDenoise"
 # SSE4.1 hardware was released in 2008.
 # See scripts/build.py for release versioning.
@@ -25,13 +33,16 @@ MIN_GCC_PV="4.8.1"
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-LLVM_SLOTS=(15 14 13 12 11 10)
+LLVM_SLOTS=( 16 15 14 13 12 11 10 )
 IUSE+="
 ${LLVM_SLOTS[@]/#/llvm-}
-+apps +built-in-weights clang custom-tc doc gcc openimageio
++apps +built-in-weights +clang cpu cuda custom-tc doc gcc hip video_cards_nvidia
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
+	cuda? (
+		video_cards_nvidia
+	)
 	^^ (
 		${LLVM_SLOTS[@]/#/llvm-}
 	)
@@ -54,38 +65,48 @@ gen_clang_depends() {
 	done
 }
 
+# See https://github.com/OpenImageDenoise/oidn/blob/v1.4.3/scripts/build.py
 gen_ispc_depends() {
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
 			llvm-${s}? (
-				>=dev-lang/ispc-1.15.0[llvm-${s}]
+				>=dev-lang/ispc-1.17.0[llvm-${s}]
 			)
 		"
 	done
 }
-DEPEND+="
+RDEPEND+="
 	${PYTHON_DEPS}
-	${CDEPEND}
 	virtual/libc
-	openimageio? (
-		media-libs/openimageio
+	hip? (
+		>=dev-libs/rocr-runtime-5.5.0
+		>=dev-libs/rocm-opencl-runtime-5.5.0
+	)
+	video_cards_nvidia? (
+		>=x11-drivers/nvidia-drivers-520.61.05
 	)
 	|| (
 		(
 			!<dev-cpp/tbb-2021:0=
 			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 		)
-		>=dev-cpp/tbb-2021.1.1:${ONETBB_SLOT}=
+		>=dev-cpp/tbb-2021.5:${ONETBB_SLOT}=
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	$(gen_ispc_depends)
 	${PYTHON_DEPS}
-	>=dev-util/cmake-3.1
+	>=dev-util/cmake-3.15
+	hip? (
+		>=dev-util/cmake-3.21
+	)
+	video_cards_nvidia? (
+		>=dev-util/nvidia-cuda-toolkit-11.8
+	)
 	|| (
 		clang? (
 			$(gen_clang_depends)
@@ -109,8 +130,10 @@ ${ORG_GH}/mkl-dnn/archive/${MKL_DNN_COMMIT}.tar.gz
 ${ORG_GH}/oidn-weights/archive/${OIDN_WEIGHTS_COMMIT}.tar.gz
 	-> ${PN}-weights-${OIDN_WEIGHTS_COMMIT:0:7}.tar.gz
 	)
-https://github.com/OpenImageDenoise/oidn/commit/4180502f326dccd5e46ab67176b53cc800e32f7b.patch
-	-> oidn-commit-4180502.patch
+https://github.com/ROCmSoftwarePlatform/composable_kernel/archive/${COMPOSABLE_KERNEL_COMMIT}.tar.gz
+	-> composable_kernel-${COMPOSABLE_KERNEL_COMMIT:0:7}.tar.gz
+https://github.com/NVIDIA/cutlass/archive/${CUTLASS_COMMIT}.tar.gz
+	-> cutlass-${CUTLASS_COMMIT:0:7}.tar.gz
 	"
 fi
 RESTRICT="mirror"
@@ -118,7 +141,6 @@ DOCS=( CHANGELOG.md README.md readme.pdf )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.4.1-findtbb-print-paths.patch"
 	"${FILESDIR}/${PN}-1.4.1-findtbb-alt-lib-path.patch"
-	"${FILESDIR}/${PN}-commit-4180502-backport-for-1.3.0.patch"
 )
 
 pkg_setup() {
@@ -150,8 +172,21 @@ ewarn
 
 src_unpack() {
 	unpack ${A}
-	rm -rf "${S}/mkl-dnn" || die
-	ln -s "${WORKDIR}/mkl-dnn-${MKL_DNN_COMMIT}" "${S}/mkl-dnn" || die
+	rm -rf "${S}/external/composable_kernel" || die
+	rm -rf "${S}/external/cutlass" || die
+	rm -rf "${S}/external/mkl-dnn" || die
+	ln -s \
+		"${WORKDIR}/mkl-dnn-${MKL_DNN_COMMIT}" \
+		"${S}/external/mkl-dnn" \
+		|| die
+	ln -s \
+		"${WORKDIR}/cutlass-${CUTLASS_COMMIT}" \
+		"${S}/external/cutlass" \
+		|| die
+	ln -s \
+		"${WORKDIR}/composable_kernel-${COMPOSABLE_KERNEL_COMMIT}" \
+		"${S}/external/composable_kernel" \
+		|| die
 	if use built-in-weights ; then
 		ln -s "${WORKDIR}/oidn-weights-${OIDN_WEIGHTS_COMMIT}" \
 			"${S}/weights" || die
@@ -177,8 +212,9 @@ src_configure() {
 	fi
 
 	strip-unsupported-flags
-	test-flags-CXX "-std=c++11" 2>/dev/null 1>/dev/null \
-                || die "Switch to a c++11 compatible compiler."
+	test-flags-CXX "-std=c++17" 2>/dev/null 1>/dev/null \
+                || die "Switch to a c++17 compatible compiler."
+
 einfo
 einfo "CC:\t${CC}"
 einfo "CXX:\t${CXX}"
@@ -188,7 +224,21 @@ einfo
 	mycmakeargs+=(
 		-DCMAKE_CXX_COMPILER="${CXX}"
 		-DCMAKE_C_COMPILER="${CC}"
+		-DOIDN_DEVICE_CPU=$(usex cpu)
+		-DOIDN_DEVICE_CUDA=$(usex cuda)
+		-DOIDN_DEVICE_HIP=$(usex hip)
+		-DOIDN_DEVICE_SYCL=OFF # no packages
 	)
+
+	if use test || use example ; then
+		mycmakeargs+=(
+			-DOIDN_APPS=ON
+		)
+	else
+		mycmakeargs+=(
+			-DOIDN_APPS=OFF
+		)
+	fi
 
 	if use openimageio ; then
 		mycmakeargs+=(

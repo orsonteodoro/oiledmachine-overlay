@@ -4,7 +4,7 @@
 EAPI=8
 
 CMAKE_BUILD_TYPE=Release
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{10..11} )
 
 inherit cmake flag-o-matic llvm python-single-r1 toolchain-funcs
 
@@ -25,10 +25,10 @@ MIN_GCC_PV="4.8.1"
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-LLVM_SLOTS=(15 14 13 12 11 10)
+LLVM_SLOTS=( 16 15 14 13 12 11 10 )
 IUSE+="
 ${LLVM_SLOTS[@]/#/llvm-}
-+apps +built-in-weights +clang custom-tc doc gcc openimageio
++apps +built-in-weights +clang custom-tc doc gcc
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -54,32 +54,33 @@ gen_clang_depends() {
 	done
 }
 
+# See https://github.com/OpenImageDenoise/oidn/blob/v2.0.1/scripts/build.py
 gen_ispc_depends() {
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
 			llvm-${s}? (
-				>=dev-lang/ispc-1.17.0[llvm-${s}]
+				>=dev-lang/ispc-1.20.0[llvm-${s}]
 			)
 		"
 	done
 }
-DEPEND+="
+RDEPEND+="
 	${PYTHON_DEPS}
 	virtual/libc
-	openimageio? (
-		media-libs/openimageio
+	video_cards_nvidia? (
+		>=x11-drivers/nvidia-drivers-520.61.05
 	)
 	|| (
 		(
 			!<dev-cpp/tbb-2021:0=
 			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 		)
-		>=dev-cpp/tbb-2021.5:${ONETBB_SLOT}=
+		>=dev-cpp/tbb-2021.9:${ONETBB_SLOT}=
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	$(gen_ispc_depends)
@@ -147,7 +148,10 @@ ewarn
 src_unpack() {
 	unpack ${A}
 	rm -rf "${S}/mkl-dnn" || die
-	ln -s "${WORKDIR}/mkl-dnn-${MKL_DNN_COMMIT}" "${S}/mkl-dnn" || die
+	ln -s \
+		"${WORKDIR}/mkl-dnn-${MKL_DNN_COMMIT}" \
+		"${S}/mkl-dnn" \
+		|| die
 	if use built-in-weights ; then
 		ln -s "${WORKDIR}/oidn-weights-${OIDN_WEIGHTS_COMMIT}" \
 			"${S}/weights" || die
@@ -173,8 +177,8 @@ src_configure() {
 	fi
 
 	strip-unsupported-flags
-	test-flags-CXX "-std=c++11" 2>/dev/null 1>/dev/null \
-                || die "Switch to a c++11 compatible compiler."
+	test-flags-CXX "-std=c++14" 2>/dev/null 1>/dev/null \
+                || die "Switch to a c++14 compatible compiler."
 
 einfo
 einfo "CC:\t${CC}"

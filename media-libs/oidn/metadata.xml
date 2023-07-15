@@ -1,29 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
-<!-- ebuild copied from cg overlay -->
 <pkgmetadata>
-	<maintainer>
-		<!-- only for this ebuild fork on the oiledmachine-overlay -->
-		<email>orsonteodoro@hotmail.com</email>
-		<name>Orson Teodoro</name>
-	</maintainer>
-	<maintainer>
-		<!-- ebuild originator -->
-		<email>brothermechanic@gmail.com</email>
-	</maintainer>
-	<upstream>
-		<bugs-to>https://github.com/OpenImageDenoise/oidn/issues</bugs-to>
-		<doc lang="en">https://www.openimagedenoise.org/documentation.html</doc>
-		<remote-id type="github">OpenImageDenoise/oidn</remote-id>
-	</upstream>
-	<use>
-		<flag name="apps">Builds examples and tests.</flag>
-		<flag name="built-in-weights">Add built-in training models to library.</flag>
-		<flag name="clang">Builds with the clang compiler.  Recommended upstream.</flag>
-		<flag name="custom-tc">Builds with your custom toolchain.  Both CC and CXX must be set.</flag>
-		<flag name="gcc">Builds with the gcc compiler.  Not recommended.</flag>
-		<flag name="icc">Builds with the Intel compiler.</flag>
-		<flag name="openimageio">Use OpenImageIO for saving and loading images in examples and tests.</flag>
-		<flag name="test">Run tests.</flag>
-	</use>
+  <maintainer>
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer>
+    <!-- Ebuild originator -->
+    <email>brothermechanic@gmail.com</email>
+  </maintainer>
+  <!--
+
+    oiledmachine-overlay notes:
+
+    Ebuild copied from cg overlay.
+    Forked ebuild to fix oom issue which could lead to data loss by limiting to
+    -j1 or switching to different compiler.
+
+  -->
+  <upstream>
+    <bugs-to>https://github.com/OpenImageDenoise/oidn/issues</bugs-to>
+    <doc lang="en">https://www.openimagedenoise.org/documentation.html</doc>
+    <remote-id type="github">OpenImageDenoise/oidn</remote-id>
+  </upstream>
+  <use>
+    <flag name="apps">
+      Builds examples and tests.
+    </flag>
+    <flag name="built-in-weights">
+      Add built-in training models to library.
+    </flag>
+    <flag name="clang">
+      Builds with the clang compiler.  Recommended upstream.
+    </flag>
+    <flag name="custom-tc">
+      Builds with your custom toolchain.  Both CC and CXX must be set.
+    </flag>
+    <flag name="gcc">
+      Builds with the gcc compiler.  Not recommended.
+    </flag>
+    <flag name="icc">
+      Builds with the Intel compiler.
+    </flag>
+    <flag name="openimageio">
+      Use OpenImageIO for saving and loading images in examples and tests.
+    </flag>
+    <flag name="test">
+      Run tests.
+    </flag>
+  </use>
 </pkgmetadata>
