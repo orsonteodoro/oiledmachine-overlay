@@ -35,14 +35,14 @@ r1
 "
 REQUIRED_USE+="
 	kernel_Darwin? (
-		|| (
+		^^ (
 			pthread
 			openmp
 			tbb
 		)
 	)
 	kernel_linux? (
-		|| (
+		^^ (
 			openmp
 			pthread
 			tbb
