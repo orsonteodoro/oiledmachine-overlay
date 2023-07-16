@@ -71,6 +71,7 @@ gen_clang_depends() {
 		echo "
 			llvm-${s}? (
 				=sys-devel/clang-runtime-${s}*
+				>=sys-libs/libcxx-${s}
 				sys-devel/clang:${s}
 				sys-devel/llvm:${s}
 				sys-devel/lld:${s}
@@ -94,7 +95,7 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	virtual/libc
 	hip? (
-		>=dev-libs/rocr-runtime-${ROCM_VERSION}
+		>=dev-util/hip-${ROCM_VERSION}
 	)
 	video_cards_nvidia? (
 		>=x11-drivers/nvidia-drivers-520.61.05
