@@ -27,7 +27,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 LLVM_SLOTS=( 16 15 14 13 12 11 10 )
 IUSE+="
 ${LLVM_SLOTS[@]/#/llvm-}
-+apps +built-in-weights +clang custom-tc doc gcc
++apps +built-in-weights +clang custom-tc doc gcc openimageio
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -185,18 +185,9 @@ einfo
 	mycmakeargs+=(
 		-DCMAKE_CXX_COMPILER="${CXX}"
 		-DCMAKE_C_COMPILER="${CC}"
+		-DOIDN_APPS=$(usex apps)
+		-DOIDN_APPS_OPENIMAGEIO=$(usex openimageio)
 	)
-
-	if use openimageio ; then
-		mycmakeargs+=(
-			-DOIDN_APPS_OPENIMAGEIO=$(usex openimageio)
-		)
-	fi
-	if use apps ; then
-		mycmakeargs+=(
-			-DOIDN_APPS=$(usex apps)
-		)
-	fi
 
 	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(

@@ -44,7 +44,8 @@ AMD_GPU_TARGETS=(
 IUSE+="
 ${LLVM_SLOTS[@]/#/llvm-}
 ${AMD_GPU_TARGETS[@]/#/amdgpu_targets_}
-+apps +built-in-weights +clang cpu cuda custom-tc doc gcc hip video_cards_nvidia
++apps +built-in-weights +clang cpu cuda custom-tc doc gcc hip openimageio
+video_cards_nvidia
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -237,6 +238,9 @@ einfo
 	mycmakeargs+=(
 		-DCMAKE_CXX_COMPILER="${CXX}"
 		-DCMAKE_C_COMPILER="${CC}"
+		-DOIDN_APPS=$(usex apps)
+		-DOIDN_APPS=$(usex apps)
+		-DOIDN_APPS_OPENIMAGEIO=$(usex openimageio)
 		-DOIDN_DEVICE_CPU=$(usex cpu)
 		-DOIDN_DEVICE_CUDA=$(usex cuda)
 		-DOIDN_DEVICE_HIP=$(usex hip)
@@ -246,27 +250,6 @@ einfo
 	if use hip ; then
 		mycmakeargs+=(
 #			-DROCM_PATH=""
-		)
-	fi
-
-	if use test || use example ; then
-		mycmakeargs+=(
-			-DOIDN_APPS=ON
-		)
-	else
-		mycmakeargs+=(
-			-DOIDN_APPS=OFF
-		)
-	fi
-
-	if use openimageio ; then
-		mycmakeargs+=(
-			-DOIDN_APPS_OPENIMAGEIO=$(usex openimageio)
-		)
-	fi
-	if use apps ; then
-		mycmakeargs+=(
-			-DOIDN_APPS=$(usex apps)
 		)
 	fi
 
