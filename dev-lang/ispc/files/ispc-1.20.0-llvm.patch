@@ -1,0 +1,56 @@
+diff -urp ispc-1.20.0.orig/CMakeLists.txt ispc-1.20.0/CMakeLists.txt
+--- ispc-1.20.0.orig/CMakeLists.txt	2023-05-05 17:27:46.000000000 -0700
++++ ispc-1.20.0/CMakeLists.txt	2023-07-15 17:11:50.643880624 -0700
+@@ -307,13 +307,7 @@ if (WASM_ENABLED)
+     list(APPEND ISPC_TARGETS wasm-i32x4)
+ endif()
+ 
+-set(CLANG_LIBRARY_LIST clangFrontend clangBasic clangEdit clangLex)
+-if (${LLVM_VERSION_NUMBER} VERSION_GREATER_EQUAL "15.0.0")
+-    list(APPEND CLANG_LIBRARY_LIST clangSupport)
+-endif()
+-if (${LLVM_VERSION_NUMBER} VERSION_GREATER_EQUAL "16.0.0")
+-    list(APPEND CLANG_LIBRARY_LIST clangASTMatchers)
+-endif()
++set(CLANG_LIBRARY_LIST clang clang-cpp)
+ 
+ set(LLVM_COMPONENTS engine ipo bitreader bitwriter instrumentation linker option frontendopenmp)
+ if (XE_ENABLED AND ${LLVM_VERSION_NUMBER} VERSION_GREATER_EQUAL "14.0.0")
+@@ -577,21 +571,8 @@ if (NOT WIN32 AND NOT APPLE)
+ endif()
+ 
+ # Link against Clang libraries
+-foreach(clangLib ${CLANG_LIBRARY_LIST})
+-    # Preferred way to build ISPC is to link it with individual clang static
+-    # libraries. However, when they omitted it can be link with shared library
+-    # libclang-cpp.so. Second approach would be utilized in some controlled
+-    # environments, like in package managers for particular OSes (issue 2418).
+-    find_library(${clangLib}Path
+-                 NAMES
+-                    "${CMAKE_STATIC_LIBRARY_PREFIX}${clangLib}${CMAKE_STATIC_LIBRARY_SUFFIX}"
+-                    clang-cpp
+-                 HINTS ${LLVM_LIBRARY_DIRS})
+-    if (NOT ${${clangLib}Path} IN_LIST CLANG_LIBRARY_FULL_PATH_LIST)
+-        list(APPEND CLANG_LIBRARY_FULL_PATH_LIST ${${clangLib}Path})
+-    endif()
+-endforeach()
+-target_link_libraries(${PROJECT_NAME} ${CLANG_LIBRARY_FULL_PATH_LIST})
++find_package(Clang REQUIRED)
++target_link_libraries(${PROJECT_NAME} ${CLANG_LIBRARY_LIST})
+ 
+ # Link against LLVM libraries
+ target_link_libraries(${PROJECT_NAME} ${LLVM_LIBRARY_LIST} ${CMAKE_DL_LIBS})
+Only in ispc-1.20.0: CMakeLists.txt.orig
+Only in ispc-1.20.0: CMakeLists.txt.rej
+diff -urp ispc-1.20.0.orig/src/llvmutil.cpp ispc-1.20.0/src/llvmutil.cpp
+--- ispc-1.20.0.orig/src/llvmutil.cpp	2023-05-05 17:27:46.000000000 -0700
++++ ispc-1.20.0/src/llvmutil.cpp	2023-07-15 17:06:22.135889121 -0700
+@@ -19,6 +19,7 @@
+ #include <llvm/IR/BasicBlock.h>
+ #include <llvm/IR/Instructions.h>
+ #include <llvm/IR/Module.h>
++#include <llvm/Support/raw_ostream.h>
+ 
+ #ifdef ISPC_XE_ENABLED
+ #include <llvm/GenXIntrinsics/GenXIntrinsics.h>
+Only in ispc-1.20.0/src: llvmutil.cpp.orig

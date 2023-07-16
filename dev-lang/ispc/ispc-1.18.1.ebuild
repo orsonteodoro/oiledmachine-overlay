@@ -4,12 +4,9 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..10} )
-LLVM_MAX_SLOT=15
-LLVM_SLOTS=(15 14 13)
+LLVM_MAX_SLOT=14
+LLVM_SLOTS=( 14 13 ) # See https://github.com/ispc/ispc/blob/v1.18.1/src/ispc_version.h
 inherit cmake python-any-r1 llvm
-
-DESCRIPTION="Intel SPMD Program Compiler"
-HOMEPAGE="https://ispc.github.io/"
 
 if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
@@ -19,12 +16,28 @@ else
 	KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 fi
 
-LICENSE="BSD BSD-2 UoI-NCSA"
+DESCRIPTION="Intel SPMD Program Compiler"
+HOMEPAGE="https://ispc.github.io/"
+LICENSE="
+	BSD
+	BSD-2
+	UoI-NCSA
+"
 SLOT="0"
-IUSE="examples test"
-IUSE+=" ${LLVM_SLOTS[@]/#/llvm-}"
-REQUIRED_USE+=" ^^ ( ${LLVM_SLOTS[@]/#/llvm-} ) "
-RESTRICT="!test? ( test )"
+IUSE+="
+	${LLVM_SLOTS[@]/#/llvm-}
+	examples test
+"
+REQUIRED_USE+="
+	^^ (
+		${LLVM_SLOTS[@]/#/llvm-}
+	)
+"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 
 gen_llvm_depends() {
 	local s
@@ -42,11 +55,13 @@ RDEPEND="
 		$(gen_llvm_depends)
 	)
 "
-DEPEND="${RDEPEND}"
+DEPEND="
+	${RDEPEND}
+"
 BDEPEND="
+	${PYTHON_DEPS}
 	sys-devel/bison
 	sys-devel/flex
-	${PYTHON_DEPS}
 "
 
 PATCHES=(
