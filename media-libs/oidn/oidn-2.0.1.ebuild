@@ -155,6 +155,8 @@ DOCS=( CHANGELOG.md README.md readme.pdf )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.4.1-findtbb-print-paths.patch"
 	"${FILESDIR}/${PN}-1.4.1-findtbb-alt-lib-path.patch"
+	"${FILESDIR}/${PN}-2.0.1-hip-buildfiles-changes.patch"
+	"${FILESDIR}/${PN}-2.0.1-set-rocm-path.patch"
 )
 
 pkg_setup() {
@@ -248,8 +250,15 @@ einfo
 	)
 
 	if use hip ; then
+		local llvm_slot=$(cat "/usr/$(get_libdir)/cmake/hip/hip-config.cmake" \
+			| grep "/usr/lib/llvm" \
+			| grep -E -o -e  "[0-9]+")
+		einfo "${ESYSROOT}/usr/lib/llvm/${llvm_slot}"
+		export CC="${CHOST}-clang-${llvm_slot}"
+		export CXX="${CHOST}-clang++-${llvm_slot}"
+		use llvm-${llvm_slot} || die "llvm-${llvm_slot} required for hip"
 		mycmakeargs+=(
-#			-DROCM_PATH=""
+			-DHIP_COMPILER_PATH="${ESYSROOT}/usr/lib/llvm/${llvm_slot}"
 		)
 	fi
 

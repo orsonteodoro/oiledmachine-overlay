@@ -1,0 +1,26 @@
+diff -urp oidn-2.0.1.orig/devices/CMakeLists.txt oidn-2.0.1/devices/CMakeLists.txt
+--- oidn-2.0.1.orig/devices/CMakeLists.txt	2023-07-15 21:23:48.139489615 -0700
++++ oidn-2.0.1/devices/CMakeLists.txt	2023-07-15 21:29:34.695480652 -0700
+@@ -93,6 +93,7 @@ if(OIDN_DEVICE_HIP)
+       HINTS
+         $ENV{ROCM_PATH}
+       PATHS
++        /usr                         # oteodoro:  Added path for distro packages
+         ${_rocm_search_paths}
+       NO_DEFAULT_PATH
+       DOC
+@@ -113,6 +114,7 @@ if(OIDN_DEVICE_HIP)
+       clang++
+     HINTS
+       ${ROCM_PATH}
++      ${HIP_COMPILER_PATH}        # oteodoro:  Added environment variable for multislot
+     PATH_SUFFIXES
+       bin
+       llvm/bin
+@@ -161,4 +163,4 @@ if(OIDN_DEVICE_HIP)
+     DESTINATION "."
+     USE_SOURCE_PERMISSIONS
+   )
+-endif()
+\ No newline at end of file
++endif()
