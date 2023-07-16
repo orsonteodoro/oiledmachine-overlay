@@ -68,25 +68,30 @@ gen_llvm_depends() {
 		echo "
 		llvm-${s}? (
 			sys-devel/clang:${s}=
+			openmp? (
+				=sys-libs/libomp-${s}*
+			)
 		)
 		"
 	done
 }
 
+# Some versions obtained from CI.
+# U 22.04
 RDEPEND="
-	sys-libs/ncurses
-	sys-libs/zlib
+	>=sys-libs/ncurses-6.3
+	>=sys-libs/zlib-1.2.11
 	gpu? (
 		>=dev-libs/level-zero-1.10.0
 	)
 	openmp? (
 		|| (
-			sys-devel/gcc[openmp]
+			>=sys-devel/gcc-11.3[openmp]
 			sys-libs/libomp
 		)
 	)
 	tbb? (
-		dev-cpp/tbb
+		>=dev-cpp/tbb-2021.5.0:0
 	)
 	|| (
 		$(gen_llvm_depends)
@@ -97,8 +102,8 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=sys-devel/bison-3
-	>=sys-devel/flex-2.6
+	>=sys-devel/bison-3.8.2
+	>=sys-devel/flex-2.6.4
 "
 
 PATCHES=(
