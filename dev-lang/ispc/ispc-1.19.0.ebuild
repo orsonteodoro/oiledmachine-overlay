@@ -172,7 +172,7 @@ src_configure() {
 			if ! has_version "=sys-libs/libomp-$(clang-major-version)" ; then
 eerror
 eerror "You need to either switch to GCC or rebuild as"
-eerror "=sys-libs/libomp-$(clang-major-version)"
+eerror "=sys-libs/libomp-$(clang-major-version)*"
 eerror
 				die
 			fi
