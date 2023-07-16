@@ -91,11 +91,36 @@ gen_ispc_depends() {
 		"
 	done
 }
+
+HIP_VERSIONS=(
+	"5.5.1"
+	"5.5.0"
+) # 5.3.0 fails
+gen_hip_depends() {
+	local hip_version
+	for hip_version in ${HIP_VERSIONS[@]} ; do
+		# Needed because of build failures
+		echo "
+			(
+			~dev-libs/rocm-comgr-${hip_version}
+			~dev-libs/rocm-device-libs-${hip_version}
+			~dev-libs/rocm-comgr-${hip_version}
+			~dev-libs/rocr-runtime-${hip_version}
+			~dev-libs/roct-thunk-interface-${hip_version}
+			~dev-util/hip-${hip_version}
+			~dev-util/rocminfo-${hip_version}
+			)
+		"
+	done
+}
+
 RDEPEND+="
 	${PYTHON_DEPS}
 	virtual/libc
 	hip? (
-		>=dev-util/hip-${ROCM_VERSION}
+		|| (
+			$(gen_hip_depends)
+		)
 	)
 	video_cards_nvidia? (
 		>=x11-drivers/nvidia-drivers-520.61.05
@@ -117,7 +142,9 @@ BDEPEND+="
 	>=dev-util/cmake-3.15
 	hip? (
 		>=dev-util/cmake-3.21
-		>=dev-util/hip-${ROCM_VERSION}
+		|| (
+			$(gen_hip_depends)
+		)
 	)
 	video_cards_nvidia? (
 		>=dev-util/nvidia-cuda-toolkit-11.8
