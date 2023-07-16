@@ -9,7 +9,7 @@ EAPI=8
 PYTHON_COMPAT=( python3_{8..10} )
 LLVM_MAX_SLOT=15
 LLVM_SLOTS=( 15 14 13 ) # See https://github.com/ispc/ispc/blob/v1.20.0/src/ispc_version.h
-inherit cmake python-any-r1 llvm
+inherit cmake flag-o-matic python-any-r1 llvm toolchain-funcs
 
 if [[ ${PV} =~ 9999 ]]; then
 	inherit git-r3
@@ -30,9 +30,23 @@ LICENSE="
 SLOT="0"
 IUSE+="
 	${LLVM_SLOTS[@]/#/llvm-}
-	examples test
+	+cpu +examples -fast-math +gpu +openmp pthread tbb test -xe
 "
 REQUIRED_USE+="
+	kernel_Darwin? (
+		|| (
+			pthread
+			openmp
+			tbb
+		)
+	)
+	kernel_linux? (
+		|| (
+			openmp
+			pthread
+			tbb
+		)
+	)
 	^^ (
 		${LLVM_SLOTS[@]/#/llvm-}
 	)
@@ -55,6 +69,20 @@ gen_llvm_depends() {
 }
 
 RDEPEND="
+	sys-libs/ncurses
+	sys-libs/zlib
+	gpu? (
+		>=dev-libs/level-zero-1.10.0
+	)
+	openmp? (
+		|| (
+			sys-devel/gcc[openmp]
+			sys-libs/libomp
+		)
+	)
+	tbb? (
+		dev-cpp/tbb
+	)
 	|| (
 		$(gen_llvm_depends)
 	)
@@ -64,8 +92,8 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	sys-devel/bison
-	sys-devel/flex
+	>=sys-devel/bison-3
+	>=sys-devel/flex-2.6
 "
 
 PATCHES=(
@@ -128,13 +156,48 @@ src_prepare() {
 }
 
 src_configure() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
 	local mycmakeargs=(
 		-DARM_ENABLED=$(usex arm)
+		-DBUILD_GPU=$(usex gpu)
 		-DCMAKE_SKIP_RPATH=ON
-		-DISPC_NO_DUMPS=ON
 		-DISPC_INCLUDE_EXAMPLES=OFF
+		-DISPC_INCLUDE_RT=ON
 		-DISPC_INCLUDE_TESTS=$(usex test)
+		-DISPC_NO_DUMPS=ON
+		-DISPCRT_BUILD_CPU=$(usex cpu)
+		-DISPCRT_BUILD_GPU=$(usex gpu)
+		-DISPCRT_BUILD_TESTS=$(usex test)
 	)
+	if is-flagq '-ffast-math' || is-flagq '-Ofast' || use fast-math ; then
+		mycmakeargs+=(
+			-DISPC_FAST_MATH=ON
+		)
+	fi
+	if use tbb ; then
+		mycmakeargs+=(
+			-DISPCRT_BUILD_TASK_MODEL="TBB"
+		)
+	elif use openmp ; then
+		if tc-is-clang ; then
+			if ! has_version "=sys-libs/libomp-$(clang-major-version)" ; then
+eerror
+eerror "You need to either switch to GCC or rebuild as"
+eerror "=sys-libs/libomp-$(clang-major-version)"
+eerror
+				die
+			fi
+		fi
+		tc-check-openmp
+		mycmakeargs+=(
+			-DISPCRT_BUILD_TASK_MODEL="OpenMP"
+		)
+	else
+		mycmakeargs+=(
+			-DISPCRT_BUILD_TASK_MODEL="Threads"
+		)
+	fi
 	cmake_src_configure
 }
 

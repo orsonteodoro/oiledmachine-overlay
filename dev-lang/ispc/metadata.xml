@@ -6,8 +6,35 @@
     <remote-id type="github">ispc/ispc</remote-id>
   </upstream>
   <use>
+    <flag name="cpu">
+      Add CPU support
+    </flag>
+    <flag name="examples">
+      Install examples
+    </flag>
     <flag name="fallback-commit">
       Last commit when patches worked.
+    </flag>
+    <flag name="gpu">
+      Add GPU support
+    </flag>
+    <flag name="ispcrt">
+      Install the ISPC runtime
+    </flag>
+    <flag name="fast-math">
+      Enable fast-math optimizations
+    </flag>
+    <flag name="openmp">
+      Use the OpenMP tasking system
+    </flag>
+    <flag name="tbb">
+      Use the TBB tasking system
+    </flag>
+    <flag name="pthread">
+      Use the Threads tasking system
+    </flag>
+    <flag name="xe">
+      Enable XE device support
     </flag>
   </use>
 </pkgmetadata>
