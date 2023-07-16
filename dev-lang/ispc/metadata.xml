@@ -36,5 +36,8 @@
     <flag name="xe">
       Enable XE device support
     </flag>
+    <flag name="rN">
+      Ebuild fork revision
+    </flag>
   </use>
 </pkgmetadata>

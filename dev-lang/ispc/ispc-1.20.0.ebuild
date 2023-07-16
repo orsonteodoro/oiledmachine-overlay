@@ -31,6 +31,7 @@ SLOT="0"
 IUSE+="
 	${LLVM_SLOTS[@]/#/llvm-}
 	+cpu +examples -fast-math +gpu +openmp pthread tbb test -xe
+	r1
 "
 REQUIRED_USE+="
 	kernel_Darwin? (
@@ -50,7 +51,7 @@ REQUIRED_USE+="
 	^^ (
 		${LLVM_SLOTS[@]/#/llvm-}
 	)
-	^^ (
+	|| (
 		cpu
 		gpu
 		xe
