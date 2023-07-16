@@ -50,6 +50,11 @@ REQUIRED_USE+="
 	^^ (
 		${LLVM_SLOTS[@]/#/llvm-}
 	)
+	^^ (
+		cpu
+		gpu
+		xe
+	)
 "
 RESTRICT="
 	!test? (
