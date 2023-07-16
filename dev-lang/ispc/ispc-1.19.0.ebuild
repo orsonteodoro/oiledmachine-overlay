@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -6,7 +6,7 @@ EAPI=8
 # For the version, see
 # https://github.com/ispc/ispc/blob/main/common/version.h
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{10..11} )
 LLVM_MAX_SLOT=15
 LLVM_SLOTS=( 15 14 13 ) # See https://github.com/ispc/ispc/blob/v1.19.0/src/ispc_version.h
 inherit cmake flag-o-matic python-any-r1 llvm toolchain-funcs
@@ -29,9 +29,9 @@ LICENSE="
 "
 SLOT="0"
 IUSE+="
-	${LLVM_SLOTS[@]/#/llvm-}
-	+cpu +examples -fast-math +gpu +openmp pthread tbb test -xe
-	r1
+${LLVM_SLOTS[@]/#/llvm-}
++cpu +examples -fast-math +openmp pthread tbb test +video_cards_intel -xe
+r1
 "
 REQUIRED_USE+="
 	kernel_Darwin? (
@@ -53,7 +53,7 @@ REQUIRED_USE+="
 	)
 	|| (
 		cpu
-		gpu
+		video_cards_intel
 		xe
 	)
 "
@@ -81,17 +81,17 @@ gen_llvm_depends() {
 RDEPEND="
 	>=sys-libs/ncurses-6.3
 	>=sys-libs/zlib-1.2.11
-	gpu? (
-		>=dev-libs/level-zero-1.9.4
-	)
 	openmp? (
 		|| (
-			sys-devel/gcc[openmp]
+			>=sys-devel/gcc-11.2.0[openmp]
 			sys-libs/libomp
 		)
 	)
 	tbb? (
 		>=dev-cpp/tbb-2021.5.0:0
+	)
+	video_cards_intel? (
+		>=dev-libs/level-zero-1.9.4
 	)
 	|| (
 		$(gen_llvm_depends)
@@ -104,6 +104,10 @@ BDEPEND="
 	${PYTHON_DEPS}
 	>=sys-devel/bison-3.8.2
 	>=sys-devel/flex-2.6.4
+	video_cards_intel? (
+		>=dev-util/spirv-llvm-translator-14
+		>=dev-libs/intel-vc-intrinsics-0.13
+	)
 "
 
 PATCHES=(
@@ -128,7 +132,7 @@ pkg_setup() {
 
 src_unpack() {
 	if [[ ${PV} =~ 9999 ]]; then
-		use fallback-commit && export EGIT_COMMIT="09bae5fa6c03cc379c549d52f3660bdaa1b53b8c" # Dec 16, 2022
+		use fallback-commit && export EGIT_COMMIT="ee43967286215a0511c2bc090e604848b4a32bed" # Feb 27, 2023
 		git-r3_fetch
 		git-r3_checkout
 	else
@@ -153,14 +157,14 @@ src_configure() {
 	export CXX=$(tc-getCXX)
 	local mycmakeargs=(
 		-DARM_ENABLED=$(usex arm)
-		-DBUILD_GPU=$(usex gpu)
+		-DBUILD_GPU=$(usex video_cards_intel)
 		-DCMAKE_SKIP_RPATH=ON
 		-DISPC_INCLUDE_EXAMPLES=OFF
 		-DISPC_INCLUDE_RT=ON
 		-DISPC_INCLUDE_TESTS=$(usex test)
 		-DISPC_NO_DUMPS=ON
 		-DISPCRT_BUILD_CPU=$(usex cpu)
-		-DISPCRT_BUILD_GPU=$(usex gpu)
+		-DISPCRT_BUILD_GPU=$(usex video_cards_intel)
 		-DISPCRT_BUILD_TESTS=$(usex test)
 	)
 	if is-flagq '-ffast-math' || is-flagq '-Ofast' || use fast-math ; then

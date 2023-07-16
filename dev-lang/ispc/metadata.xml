@@ -15,9 +15,6 @@
     <flag name="fallback-commit">
       Last commit when patches worked.
     </flag>
-    <flag name="gpu">
-      Add GPU support
-    </flag>
     <flag name="ispcrt">
       Install the ISPC runtime
     </flag>
@@ -32,6 +29,9 @@
     </flag>
     <flag name="pthread">
       Use the Threads tasking system
+    </flag>
+    <flag name="video_cards_intel">
+      Add Gen9 and newer GPU support
     </flag>
     <flag name="xe">
       Enable XE device support
