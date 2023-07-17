@@ -31,15 +31,15 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2)"
 IUSE="debug test"
 RDEPEND="
+	>=media-libs/mesa-22.3.6
 	>=virtual/opencl-3
-	media-libs/mesa
 	~dev-libs/rocm-comgr-${PV}
 	~dev-libs/rocm-device-libs-${PV}
 	~dev-libs/rocr-runtime-${PV}
 "
 DEPEND="
 	${RDEPEND}
-	dev-util/opencl-headers
+	>=dev-util/opencl-headers-2023.02.06
 "
 BDEPEND="
 	~dev-util/rocm-cmake-${PV}

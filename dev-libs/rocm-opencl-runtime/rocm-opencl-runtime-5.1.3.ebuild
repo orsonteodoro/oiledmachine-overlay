@@ -22,18 +22,18 @@ SLOT="0/$(ver_cut 1-2)"
 IUSE="debug test"
 KEYWORDS="~amd64"
 RDEPEND="
+	>=media-libs/mesa-22.3.6
 	>=virtual/opencl-3
-	media-libs/mesa
 	~dev-libs/rocm-comgr-${PV}
 	~dev-libs/rocm-device-libs-${PV}
 	~dev-libs/rocr-runtime-${PV}
 "
 DEPEND="
 	${RDEPEND}
-	dev-util/opencl-headers
+	>=dev-util/opencl-headers-2023.02.06
 "
 BDEPEND="
-	media-libs/glew
+	>=media-libs/glew-2.2.0
 	~dev-util/rocm-cmake-${PV}
 	test? (
 		>=x11-apps/mesa-progs-8.5.0[X]
