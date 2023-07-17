@@ -16,7 +16,7 @@ https://github.com/RadeonOpenCompute/ROCm-Device-Libs/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 	S="${WORKDIR}/ROCm-Device-Libs-rocm-${PV}"
-#	KEYWORDS="~amd64"
+#	KEYWORDS="~amd64" # Compiler bug ; needs retest
 fi
 
 DESCRIPTION="Radeon Open Compute Device Libraries"
@@ -66,3 +66,4 @@ src_configure() {
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-failure
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
