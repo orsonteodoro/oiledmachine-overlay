@@ -333,6 +333,9 @@ src_install() {
 			fi
 		done
 	fi
+
+	# Generated when hip is enabled.
+	rm -rf "${ED}/var"
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-multislot-tbb
