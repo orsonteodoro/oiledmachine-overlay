@@ -1,4 +1,4 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # Some parts synced with opensubdiv-3.4.4-r2.
@@ -13,7 +13,10 @@ inherit cmake cuda flag-o-matic python-utils-r1 toolchain-funcs
 MY_PV="$(ver_rs "1-3" '_')"
 DESCRIPTION="An Open-Source subdivision surface library"
 HOMEPAGE="https://graphics.pixar.com/opensubdiv/docs/intro.html"
-SRC_URI="https://github.com/PixarAnimationStudios/OpenSubdiv/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="
+https://github.com/PixarAnimationStudios/OpenSubdiv/archive/v${MY_PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 # Modfied Apache-2.0 license, where section 6 has been replaced.
 # See for example CMakeLists.txt for details.
@@ -27,11 +30,17 @@ LEGACY_TBB_SLOT="2"
 RDEPEND="
 	${PYTHON_DEPS}
 	media-libs/glew:=
-	media-libs/glfw:=
+	>=media-libs/glfw-3.0.0:=
 	x11-libs/libXinerama
-	cuda? ( dev-util/nvidia-cuda-toolkit:* )
-	opencl? ( virtual/opencl )
-	ptex? ( media-libs/ptex )
+	cuda? (
+		>=dev-util/nvidia-cuda-toolkit-4.0:*
+	)
+	opencl? (
+		virtual/opencl
+	)
+	ptex? (
+		>=media-libs/ptex-2.0
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -44,20 +53,21 @@ DEPEND="
 	)
 "
 BDEPEND="
+	>=dev-util/cmake-3.12
 	doc? (
 		app-doc/doxygen
 		dev-python/docutils
 	)
-	cuda? ( <sys-devel/gcc-12[cxx] )
+	cuda? (
+		<sys-devel/gcc-12[cxx]
+	)
 "
-
 S="${WORKDIR}/OpenSubdiv-${MY_PV}"
 
 PATCHES_=(
 	"${FILESDIR}/${PN}-3.3.0-use-gnuinstalldirs.patch"
-	"${FILESDIR}/${PN}-3.4.4-add-CUDA11-compatibility.patch"
 	"${FILESDIR}/${PN}-3.4.3-install-tutorials-into-bin.patch"
-	"${FILESDIR}/${PN}-3.4.0-0001-documentation-CMakeLists.txt-force-python2.patch"
+	"${FILESDIR}/${PN}-3.4.4-add-CUDA11-compatibility.patch"
 )
 
 RESTRICT="!test? ( test )"
@@ -69,6 +79,7 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-3.4.3-use-task-arena.patch"
 	fi
 	cmake_src_prepare
+	use cuda && cuda_src_prepare
 }
 
 src_configure() {
