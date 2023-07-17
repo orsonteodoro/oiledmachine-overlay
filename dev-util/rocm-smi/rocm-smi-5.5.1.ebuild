@@ -51,8 +51,8 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 		-DCMAKE_DISABLE_FIND_PACKAGE_LATEX=ON
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 	)
 	cmake_src_configure
@@ -67,3 +67,5 @@ src_install() {
 		python_domodule \
 			python_smi_tools/rsmiBindings.py
 }
+
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
