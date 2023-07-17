@@ -466,8 +466,11 @@ RDEPEND+="
 		>=media-libs/opencolorio-2.1.1[cpu_flags_x86_sse2?]
 	)
 	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-10.1:=
-		>=x11-drivers/nvidia-drivers-418.39
+		|| (
+			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-10.2*:=
+			=dev-util/nvidia-cuda-toolkit-10.1*:=
+		)
 	)
 	cycles? (
 		osl? (
@@ -827,6 +830,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
 	"${FILESDIR}/${PN}-3.3.7-tbb-rpath.patch"
+	"${FILESDIR}/${PN}-3.6.0-hip-flags.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -860,7 +864,7 @@ eerror "(2) Disable the osl USE flag."
 eerror "(3) Use >=${CATEGORY}/${PN}-3.6.0 instead with"
 eerror "media-libs/mesa[llvm,llvm-${llvm_slot}]::oiledmachine-overlay."
 eerror
-				die
+#				die
 			fi
 		fi
 	fi
@@ -1058,10 +1062,19 @@ _src_configure() {
 
 	blender_configure_linker_flags
 
-	if use cycles-hip ; then
-		append-flags -stdlib=libc++
+	if use openmp && tc-is-clang && has_version "sys-libs/libomp" ; then
 		mycmakeargs+=(
-			-DHIP_HIPCC_FLAGS="-stdlib=libc++"
+			-DOPENMP_CUSTOM=ON
+			-DOPENMP_FOUND=ON
+			-DOpenMP_C_FLAGS="-isystem /usr/include -fopenmp"
+			-DOpenMP_C_LIB_NAMES="-isystem /usr/include -fopenmp"
+		)
+	fi
+
+	if false && use cycles-hip ; then
+#		append-flags -stdlib=libc++
+		mycmakeargs+=(
+			-DHIP_HIPCC_FLAGS="-std=hip -stdlib=libc++"
 		)
 	fi
 
@@ -1140,8 +1153,6 @@ _src_configure() {
 		:;
 	else
 		if use cuda ; then
-			blender_configure_nvcc
-			blender_configure_nvrtc
 			blender_configure_optix
 		fi
 	fi

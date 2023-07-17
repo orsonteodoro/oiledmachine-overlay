@@ -25,7 +25,7 @@ unset -f _blender_set_globals
 UOPTS_SUPPORT_TPGO=0
 UOPTS_SUPPORT_TBOLT=0
 
-inherit check-reqs cmake flag-o-matic llvm pax-utils python-single-r1
+inherit cuda check-reqs cmake flag-o-matic llvm pax-utils python-single-r1
 inherit toolchain-funcs xdg uopts
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
@@ -274,9 +274,6 @@ einfo "CXX:\t\t${CXX}"
 	# Use /usr/include/omp.h instead of /usr/lib/gcc/${CHOST}/12/include/omp.h
 
 	if use openmp ; then
-		if tc-is-clang && has_version "sys-libs/libomp" ; then
-			append-flags -isystem /usr/include
-		fi
 		tc-check-openmp
 	fi
 
@@ -713,6 +710,11 @@ einfo
 	sed -e "s|GENERATE_HTMLHELP      = YES|GENERATE_HTMLHELP      = NO|" \
 	    -i doc/doxygen/Doxyfile || die
 
+	if use cuda ; then
+		cuda_add_sandbox -w
+		cuda_src_prepare
+	fi
+
 	local impl
 	for impl in $(_get_impls) ; do
 		uopts_src_prepare
@@ -1016,22 +1018,6 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 blender_configure_openusd() {
 	if use usd ; then
 		export USD_ROOT_DIR="${ESYSROOT}/usr/$(get_libdir)/openusd/lib"
-	fi
-}
-
-blender_configure_nvcc() {
-	if use nvcc ; then
-		mycmakeargs+=(
-			-DCUDA_NVCC_EXECUTABLE="${ESYSROOT}/opt/cuda/bin/nvcc"
-		)
-	fi
-}
-
-blender_configure_nvrtc() {
-	if use nvrtc ; then
-		mycmakeargs+=(
-			-DCUDA_TOOLKIT_ROOT_DIR="${ESYSROOT}/opt/cuda"
-		)
 	fi
 }
 

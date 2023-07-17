@@ -88,7 +88,7 @@ ${OPENVDB_ABIS[@]}
 +color-management -cpudetection +cuda +cycles -cycles-device-oneapi
 +cycles-path-guiding +dds -debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw
 flac +gmp +hdr +jack +jemalloc +jpeg2k -llvm -man -materialx +nanovdb +ndof +nls
-+nvcc -nvrtc +openal +opencl +openexr +openimagedenoise +openimageio +openmp
++nvcc +openal +opencl +openexr +openimagedenoise +openimageio +openmp
 +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace +pulseaudio release +sdl
 +sndfile +tbb test +tiff +usd -valgrind +wayland r1
 "
@@ -138,7 +138,6 @@ REQUIRED_USE+="
 	cuda? (
 		^^ (
 			nvcc
-			nvrtc
 		)
 		cycles
 	)
@@ -173,12 +172,6 @@ REQUIRED_USE+="
 		)
 	)
 	nvcc? (
-		|| (
-			cuda
-			optix
-		)
-	)
-	nvrtc? (
 		|| (
 			cuda
 			optix
@@ -480,8 +473,12 @@ RDEPEND+="
 		>=media-libs/opencolorio-2.2.0[cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-10.1:=
-		>=x11-drivers/nvidia-drivers-418.39
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-10.2*:=
+			=dev-util/nvidia-cuda-toolkit-10.1*:=
+		)
 	)
 	cycles? (
 		cycles-path-guiding? (
@@ -864,6 +861,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
 	"${FILESDIR}/${PN}-3.5.1-tbb-rpath.patch"
+	"${FILESDIR}/${PN}-3.6.0-hip-flags.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -1106,10 +1104,19 @@ eerror
 
 	blender_configure_linker_flags
 
-	if use cycles-hip ; then
-		append-flags -stdlib=libc++
+	if use openmp && tc-is-clang && has_version "sys-libs/libomp" ; then
 		mycmakeargs+=(
-			-DHIP_HIPCC_FLAGS="-stdlib=libc++"
+			-DOPENMP_CUSTOM=ON
+			-DOPENMP_FOUND=ON
+			-DOpenMP_C_FLAGS="-isystem /usr/include -fopenmp"
+			-DOpenMP_C_LIB_NAMES="-isystem /usr/include -fopenmp"
+		)
+	fi
+
+	if false && use cycles-hip ; then
+#		append-flags -stdlib=libc++
+		mycmakeargs+=(
+			-DHIP_HIPCC_FLAGS="-std=hip -stdlib=libc++"
 		)
 	fi
 
@@ -1149,7 +1156,6 @@ eerror
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(
 			-DWITH_CYCLES=$(usex cycles)
-			-DWITH_CYCLES_CUBIN_COMPILER=$(usex nvrtc)
 			-DWITH_CYCLES_CUDA_BINARIES=$(usex cuda)
 			-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
 			-DWITH_CYCLES_DEVICE_ONEAPI=$(usex cycles-device-oneapi)
@@ -1194,8 +1200,6 @@ eerror
 		:;
 	else
 		if use cuda ; then
-			blender_configure_nvcc
-			blender_configure_nvrtc
 			blender_configure_optix
 		fi
 	fi
