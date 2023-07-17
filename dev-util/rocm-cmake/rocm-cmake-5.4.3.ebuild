@@ -33,3 +33,5 @@ src_prepare() {
 		|| die
 	cmake_src_prepare
 }
+
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
