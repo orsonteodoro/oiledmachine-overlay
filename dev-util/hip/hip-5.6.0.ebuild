@@ -22,7 +22,7 @@ https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/rocm-${PV}.tar.
 https://github.com/ROCm-Developer-Tools/HIPCC/archive/refs/tags/rocm-${PV}.tar.gz
 	-> rocm-hipcc-${PV}.tar.gz
 "
-#KEYWORDS="~amd64"
+KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="debug"
