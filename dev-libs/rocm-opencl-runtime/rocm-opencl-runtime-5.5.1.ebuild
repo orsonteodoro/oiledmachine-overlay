@@ -5,9 +5,6 @@ EAPI=8
 
 inherit cmake edo flag-o-matic
 
-DESCRIPTION="Radeon Open Compute OpenCL Compatible Runtime"
-HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime"
-
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime"
 	EGIT_CLR_REPO_URI="https://github.com/ROCm-Developer-Tools/ROCclr"
@@ -24,6 +21,8 @@ https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/rocm-${PV}.tar.
 	S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
 fi
 
+DESCRIPTION="Radeon Open Compute OpenCL Compatible Runtime"
+HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime"
 LICENSE="
 	Apache-2.0
 	MIT

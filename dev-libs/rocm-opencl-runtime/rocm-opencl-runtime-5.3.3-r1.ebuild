@@ -5,8 +5,6 @@ EAPI=8
 
 inherit cmake edo flag-o-matic
 
-DESCRIPTION="Radeon Open Compute OpenCL Compatible Runtime"
-HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime"
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
 	-> rocclr-${PV}.tar.gz
@@ -14,6 +12,8 @@ https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/rocm-${PV}.tar.
 	-> rocm-opencl-runtime-${PV}.tar.gz
 "
 
+DESCRIPTION="Radeon Open Compute OpenCL Compatible Runtime"
+HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime"
 LICENSE="
 	Apache-2.0
 	MIT
