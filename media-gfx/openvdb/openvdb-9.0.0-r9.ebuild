@@ -20,9 +20,9 @@ X86_CPU_FLAGS=( avx sse4_2 )
 IUSE+="
 ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 ${OPENVDB_ABIS_[@]} +abi$(ver_cut 1 ${PV})-compat
-ax +blosc doc -imath-half +jemalloc -log4cplus -numpy -python +static-libs
--tbbmalloc -no-concurrent-malloc -openexr test -vdb_lod +vdb_print -vdb_render
--vdb_view
+ax +blosc cuda doc -imath-half +jemalloc -log4cplus -numpy -python +static-libs
+-tbbmalloc nanovdb -no-concurrent-malloc -openexr test -vdb_lod +vdb_print
+-vdb_render -vdb_view
 "
 VDB_UTILS="
 	vdb_lod
@@ -174,6 +174,11 @@ BDEPEND+="
 			>=sys-devel/clang-3.8
 		)
 		>=dev-lang/icc-17
+	)
+"
+PDEPEND="
+	nanovdb? (
+		~media-gfx/nanovdb-32.3.3_p20211029[cuda?,openvdb]
 	)
 "
 SRC_URI="
