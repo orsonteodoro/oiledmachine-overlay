@@ -270,7 +270,15 @@ blender_check_requirements() {
 einfo "CC:\t\t${CC}"
 einfo "CXX:\t\t${CXX}"
 	${CC} --version
-	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
+
+	# Use /usr/include/omp.h instead of /usr/lib/gcc/${CHOST}/12/include/omp.h
+
+	if use openmp ; then
+		if tc-is-clang && has_version "sys-libs/libomp" ; then
+			append-flags -isystem /usr/include
+		fi
+		tc-check-openmp
+	fi
 
 	if use doc; then
 		CHECKREQS_DISK_BUILD="4G" check-reqs_pkg_pretend
@@ -357,12 +365,6 @@ eerror
 			die
 		fi
 	elif tc-is-clang ; then
-ewarn
-ewarn "Bugged in certain setups due to a design flaw.  Use GCC or match"
-ewarn "libomp slot to the same slot as the current clang slot."
-ewarn
-ewarn "See https://bugs.gentoo.org/904140"
-ewarn
 		if ver_test $(clang-version) -lt ${CLANG_MIN} ; then
 eerror
 eerror "${PN} requires Clang >= ${CLANG_MIN}"

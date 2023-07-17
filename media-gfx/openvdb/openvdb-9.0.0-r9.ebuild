@@ -20,7 +20,7 @@ X86_CPU_FLAGS=( avx sse4_2 )
 IUSE+="
 ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 ${OPENVDB_ABIS_[@]} +abi$(ver_cut 1 ${PV})-compat
-+blosc doc -imath-half +jemalloc -log4cplus -numpy -python +static-libs
+ax +blosc doc -imath-half +jemalloc -log4cplus -numpy -python +static-libs
 -tbbmalloc -no-concurrent-malloc -openexr test -vdb_lod +vdb_print -vdb_render
 -vdb_view
 "
@@ -111,6 +111,9 @@ DEPEND+="
 	)
 	>=dev-libs/boost-1.66:=
 	>=sys-libs/zlib-1.2.7:=
+	ax? (
+		<sys-devel/llvm-15:=
+	)
 	blosc? (
 		>=dev-libs/c-blosc-1.17:=
 	)
@@ -196,6 +199,7 @@ pkg_setup() {
 			ewarn "jemalloc may need rebuild if vdb_print -version stalls."
 		fi
 	fi
+	use ax && llvm_pkg_setup
 }
 
 src_prepare() {
@@ -203,8 +207,8 @@ src_prepare() {
 	sed -i -e "s|lib/cmake|$(get_libdir)/cmake|g" \
 		cmake/OpenVDBGLFW3Setup.cmake || die
 #	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		eapply "${FILESDIR}/openvdb-8.1.0-findtbb-more-debug-messages.patch"
-		eapply "${FILESDIR}/openvdb-8.1.0-prioritize-onetbb.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-8.1.0-findtbb-more-debug-messages.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-8.1.0-prioritize-onetbb.patch"
 #	fi
 }
 
@@ -273,6 +277,15 @@ src_configure() {
 		-DUSE_IMATH_HALF=$(usex imath-half)
 		-DUSE_LOG4CPLUS=$(usex log4cplus)
 	)
+
+	if use ax; then
+		mycmakeargs+=(
+			-DOPENVDB_AX_STATIC=$(usex static-libs)
+
+	# FIXME: log4cplus init and other errors
+			-DOPENVDB_BUILD_AX_UNITTESTS=OFF
+		)
+	fi
 
 	if use python; then
 		mycmakeargs+=(

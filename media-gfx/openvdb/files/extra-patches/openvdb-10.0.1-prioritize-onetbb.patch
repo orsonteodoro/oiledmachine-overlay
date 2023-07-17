@@ -1,0 +1,69 @@
+Subject:	Changes to not prioritize legacy TBB over oneTBB
+Patch Author:	Orson Teodoro <orsonteodoro@hotmail.com>
+Date:		Mon Jun 28 10:31:29 PM PDT 2021 (Unix timestamp 1624944689)
+
+Copyright notice for cmake/FindTBB.cmake:
+
+# Copyright Contributors to the OpenVDB Project
+# SPDX-License-Identifier: MPL-2.0
+
+Without the changes below, it was observed that the legacy TBB was favored.
+
+diff -urp openvdb-10.0.1.orig/cmake/FindTBB.cmake openvdb-10.0.1/cmake/FindTBB.cmake
+--- openvdb-10.0.1.orig/cmake/FindTBB.cmake	2023-07-17 12:50:18.947817071 -0700
++++ openvdb-10.0.1/cmake/FindTBB.cmake	2023-07-17 12:51:16.311815587 -0700
+@@ -5,6 +5,8 @@
+ 
+ # oteodoro - more debug messages to observe favored version which could be legacy TBB or oneTBB
+ 
++# oteodoro - added changes to observe prioritization oneTBB over legacy TBB.
++
+ FindTBB
+ -------
+ 
+@@ -92,6 +94,8 @@ may be provided to tell this module wher
+   Only search for static tbb libraries
+ ``DISABLE_CMAKE_SEARCH_PATHS``
+   Disable CMakes default search paths for find_xxx calls in this module
++``TBB_FORCE_ONETBB``								# oteodoro - added line
++  Links and use headers of oneTBB instead of legacy TBB				# oteodoro - added line
+ 
+ #]=======================================================================]
+ 
+@@ -105,7 +109,7 @@ mark_as_advanced(
+ )
+ 
+ set(_FIND_TBB_ADDITIONAL_OPTIONS "")
+-if(DISABLE_CMAKE_SEARCH_PATHS)
++if(DISABLE_CMAKE_SEARCH_PATHS OR TBB_FORCE_ONETBB)				# oteodoro - changed with OR conditional
+   set(_FIND_TBB_ADDITIONAL_OPTIONS NO_DEFAULT_PATH)
+ endif()
+ 
+@@ -143,12 +147,12 @@ elseif(DEFINED ENV{TBB_ROOT})
+ endif()
+ 
+ # Additionally try and use pkconfig to find Tbb
+-if(USE_PKGCONFIG)
++if(USE_PKGCONFIG OR TBB_FORCE_ONETBB)
+   if(NOT DEFINED PKG_CONFIG_FOUND)
+     find_package(PkgConfig)
+   endif()
+   if(PKG_CONFIG_FOUND)
+-    pkg_check_modules(PC_Tbb QUIET tbb)
++    pkg_check_modules(PC_Tbb QUIET tbb${TBB_SLOT})			# oteodoro - changed line tbb -> tbb${TBB_SLOT}
+   endif()
+ endif()
+ 
+@@ -176,6 +180,10 @@ else()
+ endif()
+ message(STATUS "TBB include path: ${Tbb_INCLUDE_DIR}")				# oteodoro - added line
+ 
++if(TBB_FORCE_ONETBB)						# oteodoro - added line
++  unset(_tbb_version_file)					# oteodoro - indented
++endif()								# oteodoro - added line
++
+ # Look for a new tbb header installation
+ # From TBB 2021, tbb_stddef is removed and the directory include/tbb is
+ # simply an alias for include/oneapi/tbb. Try and find the version header
+Only in openvdb-10.0.1/cmake: FindTBB.cmake.orig
+Only in openvdb-10.0.1/cmake: FindTBB.cmake.rej

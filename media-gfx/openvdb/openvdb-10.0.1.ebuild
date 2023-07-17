@@ -1,4 +1,4 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # Based on openvdb-7.1.0-r1.ebuild from the gentoo overlay
@@ -21,7 +21,7 @@ X86_CPU_FLAGS=( avx sse4_2 )
 IUSE+="
 ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 ${OPENVDB_ABIS_[@]} +abi$(ver_cut 1 ${PV})-compat
-+blosc doc -imath-half +jemalloc -log4cplus -numpy -python +static-libs
+ax +blosc doc -imath-half +jemalloc -log4cplus -numpy -python +static-libs
 -tbbmalloc -no-concurrent-malloc -openexr test -vdb_lod +vdb_print -vdb_render
 -vdb_view
 "
@@ -91,9 +91,12 @@ gen_openexr_pairs() {
 	done
 }
 
-DEPEND+="
+RDEPEND+="
 	>=dev-libs/boost-1.66:=
 	>=sys-libs/zlib-1.2.7:=
+	ax? (
+		<sys-devel/llvm-15:=
+	)
 	blosc? (
 		>=dev-libs/c-blosc-1.17:=
 	)
@@ -144,8 +147,8 @@ DEPEND+="
 		)
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-util/cmake-3.16.2-r1
@@ -181,8 +184,9 @@ https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz
 PATCHES=(
 	"${FILESDIR}/${PN}-8.1.0-glfw-libdir.patch"
 	"${FILESDIR}/${PN}-9.0.0-fix-atomic.patch"
-	"${FILESDIR}/${PN}-9.0.0-numpy.patch"
-	"${FILESDIR}/${PN}-9.0.0-unconditionally-search-Python-interpreter.patch"
+	"${FILESDIR}/${PN}-10.0.1-fix-linking-of-vdb_tool-with-OpenEXR.patch"
+	"${FILESDIR}/${PN}-10.0.1-drop-failing-tests.patch"
+	"${FILESDIR}/${PN}-10.0.1-log4cplus-version.patch"
 )
 RESTRICT="!test? ( test )"
 
@@ -197,6 +201,7 @@ pkg_setup() {
 			ewarn "jemalloc may need rebuild if vdb_print -version stalls."
 		fi
 	fi
+	use ax && llvm_pkg_setup
 }
 
 src_prepare() {
@@ -204,8 +209,8 @@ src_prepare() {
 	sed -i -e "s|lib/cmake|$(get_libdir)/cmake|g" \
 		cmake/OpenVDBGLFW3Setup.cmake || die
 #	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		eapply "${FILESDIR}/openvdb-8.1.0-findtbb-more-debug-messages.patch"
-		eapply "${FILESDIR}/openvdb-8.1.0-prioritize-onetbb.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-8.1.0-findtbb-more-debug-messages.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-10.0.1-prioritize-onetbb.patch"
 #	fi
 }
 
@@ -274,6 +279,17 @@ src_configure() {
 		-DUSE_IMATH_HALF=$(usex imath-half)
 		-DUSE_LOG4CPLUS=$(usex log4cplus)
 	)
+
+	if use ax; then
+		mycmakeargs+=(
+			-DOPENVDB_AX_STATIC=$(usex static-libs)
+
+	# FIXME: log4cplus init and other errors
+			-DOPENVDB_BUILD_AX_UNITTESTS=OFF
+
+			-DOPENVDB_BUILD_VDB_AX=$(usex utils)
+		)
+	fi
 
 	if use python; then
 		mycmakeargs+=(

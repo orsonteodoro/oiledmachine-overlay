@@ -66,7 +66,7 @@ LIBSNDFILE_PV="1.1.0"
 ONETBB_SLOT="0"
 OPENEXR_V3_PV="3.1.9 3.1.8 3.1.7"
 OSL_PV="1.11"
-PUGIXML_V="1.10"
+PUGIXML_PV="1.10"
 THEORA_PV="1.1.1"
 
 # gen_llvm_iuse is the same as Mesa and LLVM latest stable keyword.
@@ -294,6 +294,8 @@ REQUIRED_USE+="
 # https://github.com/blender/blender/commits/v3.6.0/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
+# HIP:  https://github.com/blender/blender/blob/v3.6.0/intern/cycles/cmake/external_libs.cmake#L47
+
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
 # doc/python_api/requirements.txt
@@ -329,6 +331,9 @@ gen_llvm_depends()
 		echo "
 			llvm-${s}? (
 				>=sys-devel/llvm-${s}:${s}=
+				cycles-hip? (
+					>=sys-libs/libcxx-${s}
+				)
 			)
 		"
 	done
@@ -486,7 +491,7 @@ RDEPEND+="
 			)
 		)
 		osl? (
-			>=dev-libs/pugixml-${PUGIXML_V}
+			>=dev-libs/pugixml-${PUGIXML_PV}
 		)
 	)
 	cycles-device-oneapi? (
@@ -495,8 +500,8 @@ RDEPEND+="
 	)
 	cycles-hip? (
 		|| (
-			dev-util/hip
-			dev-libs/rocm-bin[hip-devel,hip-runtime-amd]
+			~dev-util/hip-5.5.0
+			~dev-util/hip-5.5.1
 		)
 	)
 	dbus? (
@@ -671,7 +676,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 	)
 	openimageio? (
 		$(gen_oiio_depends)
-		>=dev-libs/pugixml-${PUGIXML_V}
+		>=dev-libs/pugixml-${PUGIXML_PV}
 	)
 	openexr? (
 		!<media-libs/openexr-3
@@ -1025,9 +1030,11 @@ eerror
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
 		-DWITH_CXX11_ABI=ON
 		-DWITH_CYCLES_HIP_BINARIES=$(usex cycles-hip)
+		-DWITH_CYCLES_DEVICE_HIPRT=NO # No package yet
 		-DWITH_CYCLES_PATH_GUIDING=$(usex cycles-path-guiding)
 		-DWITH_DOC_MANPAGE=$(usex man)
 		-DWITH_DRACO=$(usex draco)
+		-DWITH_GHOST_WAYLAND_DBUS=$(usex dbus)
 		-DWITH_GHOST_WAYLAND_DYNLOAD=$(usex wayland)
 		-DWITH_GMP=$(usex gmp)
 		-DWITH_IK_SOLVER=ON
@@ -1057,11 +1064,17 @@ eerror
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
 		-DWITH_USD=$(usex usd)
 		-DWITH_TBB=$(usex tbb)
-		-DWITH_GHOST_WAYLAND_DBUS=$(usex dbus)
 		-DWITH_XR_OPENXR=$(usex openxr)
 	)
 
 	blender_configure_linker_flags
+
+	if use cycles-hip ; then
+		append-flags -stdlib=libc++
+		mycmakeargs+=(
+			-DHIP_HIPCC_FLAGS="-stdlib=libc++"
+		)
+	fi
 
 	if use materialx ; then
 		mycmakeargs+=(

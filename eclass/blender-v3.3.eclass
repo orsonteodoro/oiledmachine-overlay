@@ -283,6 +283,8 @@ REQUIRED_USE+="
 # https://github.com/blender/blender/commits/v3.3.8/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
+# HIP:  https://github.com/blender/blender/blob/v3.3.8/intern/cycles/cmake/external_libs.cmake#L47
+
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
 # doc/python_api/requirements.txt
@@ -318,6 +320,9 @@ gen_llvm_depends()
 		echo "
 			llvm-${s}? (
 				>=sys-devel/llvm-${s}:${s}=
+				cycles-hip? (
+					>=sys-libs/libcxx-${s}
+				)
 			)
 		"
 	done
@@ -475,8 +480,8 @@ RDEPEND+="
 	)
 	cycles-hip? (
 		|| (
-			dev-util/hip
-			dev-libs/rocm-bin[hip-devel,hip-runtime-amd]
+			~dev-util/hip-5.5.0
+			~dev-util/hip-5.5.1
 		)
 	)
 	embree? (
@@ -1052,6 +1057,13 @@ _src_configure() {
 	)
 
 	blender_configure_linker_flags
+
+	if use cycles-hip ; then
+		append-flags -stdlib=libc++
+		mycmakeargs+=(
+			-DHIP_HIPCC_FLAGS="-stdlib=libc++"
+		)
+	fi
 
 	if use usd ; then
 		blender_configure_openusd

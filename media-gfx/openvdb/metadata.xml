@@ -19,13 +19,18 @@
   <longdescription>
     Libraries for the efficient manipulation of volumetric data used in big
     budget movies. 
+  </longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
 
     The oiledmachine-overlay ebuild-fork is primarly to fix
     multilib glfw compatibility and may be removed anytime.  While 
     that is being, fixed the ebuild is reviewed and modified for
     comprehensiveness, DEPEND-USE efficiency, and USE flag
     correctness.
-  </longdescription>
+
+  -->
   <upstream>
     <remote-id type="github">AcademySoftwareFoundation/openvdb</remote-id>
   </upstream>
@@ -47,6 +52,10 @@
     </flag>
     <flag name="abi10-compat">
       Maintain compatibility with ABI10.
+    </flag>
+    <flag name="ax">
+      Build the OpenVDB AX module to perform custom manipulation of OpenVDB data
+      via an expression language: AX
     </flag>
     <flag name="blosc">
       Adds improved disk compression support
