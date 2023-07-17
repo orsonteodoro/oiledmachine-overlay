@@ -1,0 +1,12 @@
+diff -urp comgr.orig/src/comgr-compiler.cpp comgr/src/comgr-compiler.cpp
+--- comgr.orig/src/comgr-compiler.cpp	2023-07-16 11:19:16.382193065 -0700
++++ comgr/src/comgr-compiler.cpp	2023-07-16 11:21:00.414190374 -0700
+@@ -259,7 +259,7 @@ bool AssemblerInvocation::createFromArgs
+     }
+   }
+ 
+-  Opts.RelaxELFRelocations = Args.hasArg(OPT_mrelax_relocations);
++  Opts.RelaxELFRelocations = !Args.hasArg(OPT_mrelax_relocations_no);                // oteodoro:  Update based on 83cec14
+   Opts.DwarfVersion = getLastArgIntValue(Args, OPT_dwarf_version_EQ, 2, Diags);
+   Opts.DwarfDebugFlags =
+       std::string(Args.getLastArgValue(OPT_dwarf_debug_flags));

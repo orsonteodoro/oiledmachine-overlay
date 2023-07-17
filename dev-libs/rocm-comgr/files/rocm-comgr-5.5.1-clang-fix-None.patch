@@ -1,0 +1,11 @@
+diff -urp comgr.orig/src/comgr-env.cpp comgr/src/comgr-env.cpp
+--- comgr.orig/src/comgr-env.cpp	2023-07-16 10:44:05.362247666 -0700
++++ comgr/src/comgr-env.cpp	2023-07-16 10:47:30.742242354 -0700
+@@ -34,6 +34,7 @@
+  ******************************************************************************/
+ 
+ #include "comgr-env.h"
++#include "llvm/ADT/None.h"
+ #include "llvm/ADT/Twine.h"
+ #include "llvm/Support/VirtualFileSystem.h"
+ 

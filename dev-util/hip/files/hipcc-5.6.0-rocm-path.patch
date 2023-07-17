@@ -1,0 +1,13 @@
+diff -urp HIPCC-rocm-5.6.0.orig/bin/hipcc.pl HIPCC-rocm-5.6.0/bin/hipcc.pl
+--- HIPCC-rocm-5.6.0.orig/bin/hipcc.pl	2023-06-01 07:32:59.000000000 -0700
++++ HIPCC-rocm-5.6.0/bin/hipcc.pl	2023-07-16 13:34:28.297983253 -0700
+@@ -574,6 +574,7 @@ if ($HIP_PLATFORM eq "amd") {
+ 
+     if ($hasHIP) {
+         if (defined $DEVICE_LIB_PATH) {
++            $HIPCXXFLAGS .= " --rocm-path=\"$ROCM_PATH\"";
+             $HIPCXXFLAGS .= " --hip-device-lib-path=\"$DEVICE_LIB_PATH\"";
+         }
+     }
+Only in HIPCC-rocm-5.6.0/bin: hipcc.pl.orig
+Only in HIPCC-rocm-5.6.0/bin: hipcc.pl.rej

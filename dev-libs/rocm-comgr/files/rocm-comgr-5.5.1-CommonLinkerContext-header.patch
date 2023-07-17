@@ -1,0 +1,11 @@
+diff -urp comgr.orig/src/comgr-compiler.cpp comgr/src/comgr-compiler.cpp
+--- comgr.orig/src/comgr-compiler.cpp	2023-07-16 10:49:04.058239940 -0700
++++ comgr/src/comgr-compiler.cpp	2023-07-16 10:51:13.606236590 -0700
+@@ -39,6 +39,7 @@
+ #include "comgr-compiler.h"
+ #include "comgr-device-libs.h"
+ #include "comgr-env.h"
++#include "lld/Common/CommonLinkerContext.h"
+ #include "lld/Common/Driver.h"
+ #include "clang/Basic/Version.h"
+ #include "clang/CodeGen/CodeGenAction.h"

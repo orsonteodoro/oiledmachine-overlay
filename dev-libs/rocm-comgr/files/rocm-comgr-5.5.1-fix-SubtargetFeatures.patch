@@ -1,0 +1,13 @@
+diff -urp comgr.orig/src/comgr-objdump.cpp comgr/src/comgr-objdump.cpp
+--- comgr.orig/src/comgr-objdump.cpp	2023-07-16 11:22:28.066188107 -0700
++++ comgr/src/comgr-objdump.cpp	2023-07-16 11:38:02.962163927 -0700
+@@ -1270,7 +1270,8 @@ void llvm::DisassemHelper::DisassembleOb
+   const Target *TheTarget = getTarget(Obj);
+ 
+   // Package up features to be passed to target/subtarget
+-  SubtargetFeatures Features = Obj->getFeatures();
++  Expected<SubtargetFeatures> FeaturesValue = Obj->getFeatures();  // oteodoro:  fix
++  SubtargetFeatures Features = *FeaturesValue;                     // oteodoro:  fix
+   std::vector<std::string> MAttrs = lld::getMAttrs();
+   if (MAttrs.size()) {
+     for (unsigned I = 0; I != MAttrs.size(); ++I) {
