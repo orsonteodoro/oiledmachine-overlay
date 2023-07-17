@@ -9,9 +9,7 @@ inherit cmake cuda flag-o-matic
 
 DESCRIPTION="A lightweight GPU friendly version of VDB initially targeting \
 rendering applications."
-HOMEPAGE="
-https://github.com/AcademySoftwareFoundation/openvdb/tree/feature/nanovdb/nanovdb
-"
+HOMEPAGE="https://github.com/AcademySoftwareFoundation/openvdb/tree/feature/nanovdb/nanovdb"
 LICENSE="MPL-2.0"
 # For versioning, see
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v10.0.1/nanovdb/nanovdb/NanoVDB.h#L104
@@ -65,8 +63,6 @@ OGT_COMMIT="e1743d37cf7a8128568769cf71cf598166c2cd30"
 ONETBB_SLOT="0"
 OPENEXR_V2_PV="2.5.8 2.5.7"
 
-DEPEND_GTEST=" >=dev-cpp/gtest-${GTEST_PV}"
-
 OGT_DFN="ogt-${OGT_COMMIT:0:7}.tar.gz"
 
 gen_openexr_pairs() {
@@ -82,6 +78,10 @@ gen_openexr_pairs() {
 		"
 	done
 }
+
+DEPEND_GTEST="
+	>=dev-cpp/gtest-${GTEST_PV}
+"
 
 DEPEND+="
 	benchmark? (
@@ -123,8 +123,8 @@ DEPEND+="
 		)
 	)
 	tools? (
-		media-libs/mesa[egl(+)]
 		>=media-libs/glfw-3.3
+		media-libs/mesa[egl(+)]
 		interactive-renderer? (
 			system-glfw? (
 				>=media-libs/glfw-3.1
@@ -161,16 +161,16 @@ ${GH_ORG_URI}/openvdb/archive/${EGIT_COMMIT}.tar.gz
 https://github.com/jpaver/opengametools/archive/${OGT_COMMIT}.tar.gz
 	-> ${OGT_DFN}
 "
-S="${WORKDIR}/openvdb-${EGIT_COMMIT}/${PN}/${PN}"
-S_OGT="${WORKDIR}/ogt-${OGT_COMMIT}"
 RESTRICT="mirror"
-CMAKE_BUILD_TYPE=Release
 PATCHES_=(
 	"${FILESDIR}/${PN}-32.3.3_p20211029-cmake-use-tarballs.patch"
 #	"${FILESDIR}/${PN}-25.0.0_pre20200924-opencl-version-120.patch"
 #	"${FILESDIR}/${PN}-25.0.0_pre20200924-change-examples-destdir.patch"
 #	"${FILESDIR}/${PN}-25.0.0_pre20200924-change-header-destdir.patch"
 )
+S="${WORKDIR}/openvdb-${EGIT_COMMIT}/${PN}/${PN}"
+S_OGT="${WORKDIR}/ogt-${OGT_COMMIT}"
+CMAKE_BUILD_TYPE="Release"
 
 is_crosscompile() {
 	[[ ${CHOST} != ${CTARGET} ]]
@@ -180,33 +180,45 @@ pkg_setup()
 {
 	if use cuda ; then
 		if [[ -z "${CUDA_TOOLKIT_ROOT_DIR}" ]] ; then
-			die \
-"CUDA_TOOLKIT_ROOT_DIR should be set as a per-package environmental variable"
+eerror
+eerror "CUDA_TOOLKIT_ROOT_DIR should be set as a per-package environmental variable"
+eerror
+			die
 		else
 			if [[ ! -d "${CUDA_TOOLKIT_ROOT_DIR}/lib64" ]] ; then
-				die \
-"${CUDA_TOOLKIT_ROOT_DIR}/lib64 is unreachable.  Fix CUDA_TOOLKIT_ROOT_DIR"
+eerror
+eerror "${CUDA_TOOLKIT_ROOT_DIR}/lib64 is unreachable.  Fix CUDA_TOOLKIT_ROOT_DIR"
+eerror
+				die
 			fi
 		fi
 	fi
 
 	if use optix ; then
 		if [[ -z "${OptiX_ROOT}" ]] ; then
-			die \
-"OptiX_ROOT should be set as a per-package environmental variable"
+eerror
+eerror "OptiX_ROOT should be set as a per-package environmental variable"
+eerror
+			die
 		else
 			if [[ ! -f "${OptiX_ROOT}/include/optix.h" ]] ; then
-				die \
-"${OptiX_ROOT}/include/optix.h is unreachable.  Fix OptiX_ROOT"
+eerror
+eerror "${OptiX_ROOT}/include/optix.h is unreachable.  Fix OptiX_ROOT"
+eerror
+				die
 			fi
 		fi
 		if [[ -z "${OptiX_INSTALL_DIR}" ]] ; then
-			die \
-"OptiX_INSTALL_DIR should be set as a per-package environmental variable"
+eerror
+eerror "OptiX_INSTALL_DIR should be set as a per-package environmental variable"
+eerror
+			die
 		else
 			if [[ ! -d "${OptiX_INSTALL_DIR}/include" ]] ; then
-				die \
-"${OptiX_INSTALL_DIR}/include is unreachable.  Fix OptiX_INSTALL_DIR"
+eerror
+eerror "${OptiX_INSTALL_DIR}/include is unreachable.  Fix OptiX_INSTALL_DIR"
+eerror
+				die
 			fi
 		fi
 	fi
@@ -214,9 +226,12 @@ pkg_setup()
 	if use test ; then
 		if use opencl ; then
 			if [[ "${FEATURES}" =~ "usersandbox" ]] ; then
-				die 'You must add FEATURES="-usersandbox" to run pass the opencl test'
+eerror
+eerror 'You must add FEATURES="-usersandbox" to run pass the opencl test'
+eerror
+				die
 			else
-				einfo 'Passed: FEATURES="-usersandbox"'
+einfo 'Passed: FEATURES="-usersandbox"'
 			fi
 		fi
 	fi
@@ -253,7 +268,7 @@ src_prepare()
 src_configure()
 {
 	export MAKEOPTS="-j1" # Prevent counterproductive swapping.  Observed a 3 GiB process.
-	ewarn "Switch to clang + lld if it takes more than 1.5 hrs to build."
+ewarn "Switch to clang + lld if it takes more than 1.5 hrs to build."
 	# Completed build in 1 hr and 3 min in 32.x, but noticible stall with gcc.
 	if use opencl ; then
 		append-cppflags -DCL_TARGET_OPENCL_VERSION=120
@@ -283,7 +298,7 @@ src_configure()
 
 	if use magicavoxel ; then
 		mycmakeargs+=(
-	-DEOGT_SOURCE_DIR="${S_OGT}"
+			-DEOGT_SOURCE_DIR="${S_OGT}"
 		)
 	fi
 
@@ -319,12 +334,12 @@ core_tests()
 #[  PASSED  ] 39 tests.
 
 	cd "${BUILD_DIR}" || die
-	einfo "Running core tests"
+einfo "Running core tests"
 	cmake_src_test
-	einfo "Running testOpenVDB"
+einfo "Running testOpenVDB"
 	unittest/testOpenVDB || die
 	echo
-	einfo "Running testNanoVDB"
+einfo "Running testNanoVDB"
 	unittest/testNanoVDB || die
 	echo
 }
@@ -333,44 +348,44 @@ video_card_sandbox_predict()
 {
         local d
         for d in /dev/dri/card*; do
-                [[ -s ${d} ]] && addpredict "${d}"
+                [[ -s "${d}" ]] && addpredict "${d}"
         done
 }
 
 render_tests()
 {
-	einfo "Running render tests"
+einfo "Running render tests"
 	# keep in sync with nanovdb/ci/test_render.sh
 	# make gold image.
-	local OUT_PATH=$(pwd)/out
-	mkdir -p "${OUT_PATH}" || die
-	cmd/nanovdb_viewer -b -o ${OUT_PATH}/gold -p host-mt --count 1 --turntable || die
-	mogrify -format png ${OUT_PATH}/gold.0000.pfm || die
+	local out_path="$(pwd)/out"
+	mkdir -p "${out_path}" || die
+	cmd/nanovdb_viewer -b -o "${out_path}/gold" -p host-mt --count 1 --turntable || die
+	mogrify -format png "${out_path}/gold.0000.pfm" || die
 
 	video_card_sandbox_predict
 	if use cuda ; then
-		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${OUT_PATH}/gold -o ${OUT_PATH}/test-cuda -p cuda -n 1 --turntable"
-		einfo "Running ${cmd}"
+		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${out_path}/gold -o ${out_path}/test-cuda -p cuda -n 1 --turntable"
+einfo "Running ${cmd}"
 		${cmd} || die
 	fi
-	cmd="cmd/nanovdb_viewer -b --gold ${OUT_PATH}/gold -o ${OUT_PATH}/test-c99 -p host-c99 -n 1 --turntable"
-	einfo "Running ${cmd}"
+	cmd="cmd/nanovdb_viewer -b --gold ${out_path}/gold -o ${out_path}/test-c99 -p host-c99 -n 1 --turntable"
+einfo "Running ${cmd}"
 	${cmd} || die
 	if false && use opengl ; then
 		# opengl is not accessible
-		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${OUT_PATH}/gold -o ${OUT_PATH}/test-glsl -p glsl -n 1 --turntable"
-		einfo "Running ${cmd}"
+		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${out_path}/gold -o ${out_path}/test-glsl -p glsl -n 1 --turntable"
+einfo "Running ${cmd}"
 		${cmd} || die
 	fi
 	# No platform TBB for viewer
 	if use opencl ; then
-		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${OUT_PATH}/gold -o ${OUT_PATH}/test-opencl -p opencl -n 1 --turntable"
-		einfo "Running ${cmd}"
+		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${out_path}/gold -o ${out_path}/test-opencl -p opencl -n 1 --turntable"
+einfo "Running ${cmd}"
 		${cmd} || die
 	fi
 	if use optix ; then
-		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${OUT_PATH}/gold -o ${OUT_PATH}/test-optix -p optix -n 1 --turntable"
-		einfo "Running ${cmd}"
+		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${out_path}/gold -o ${out_path}/test-optix -p optix -n 1 --turntable"
+einfo "Running ${cmd}"
 		${cmd} || die
 	fi
 }
@@ -397,9 +412,9 @@ src_install()
 		for f in $(find "${ED}") ; do
 			test -L "${f}" && continue
 			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
-				einfo "Old rpath for ${f}:"
+einfo "Old rpath for ${f}:"
 				patchelf --print-rpath "${f}" || die
-				einfo "Setting rpath for ${f}"
+einfo "Setting rpath for ${f}"
 				patchelf --set-rpath "${EPREFIX}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
 					"${f}" || die
 			fi
