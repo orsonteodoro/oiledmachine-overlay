@@ -16,9 +16,7 @@ https://github.com/RadeonOpenCompute/ROCm-Device-Libs/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 	S="${WORKDIR}/ROCm-Device-Libs-rocm-${PV}"
-#	KEYWORDS="~amd64" # Compiler bug ; needs retest
-# CommandLine Error: Option 'debug-counter' registered more than once!
-# LLVM ERROR: inconsistency in registered CommandLine options
+	KEYWORDS="~amd64" # Compiler bug ; needs retest
 fi
 
 DESCRIPTION="Radeon Open Compute Device Libraries"
@@ -41,8 +39,7 @@ BDEPEND="
 	>=dev-util/cmake-3.13.4
 "
 PATCHES=(
-#	"${FILESDIR}/${PN}-5.1.3-test-bitcode-dir.patch"
-	"${FILESDIR}/${PN}-5.1.3-llvm-link.patch"
+	"${FILESDIR}/${PN}-5.5.1-llvm-link.patch" # https://github.com/RadeonOpenCompute/ROCm-Device-Libs/issues/94
 	"${FILESDIR}/${PN}-5.4.3-Revert-Update-counters-for-gfx11.patch"
 )
 CMAKE_BUILD_TYPE="Release"
@@ -67,5 +64,4 @@ src_configure() {
 	cmake_src_configure
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-failure
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
