@@ -8,7 +8,7 @@ MY_PV="$(ver_cut 1-4)"
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..10} )
-inherit distutils-r1 eutils flag-o-matic linux-info prefix tmpfiles udev
+inherit cuda distutils-r1 eutils flag-o-matic linux-info prefix tmpfiles udev
 inherit user-info xdg
 
 DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based \
@@ -619,6 +619,9 @@ eerror
 
 src_prepare() {
 	distutils-r1_src_prepare
+	if use nvenc || use nvfbc || use nvjpeg ; then
+		cuda_src_prepare
+	fi
 	if use firejail ; then
 		eapply "${FILESDIR}"/${PN}-4.1.3-envar-sound-override-on-start.patch
 	fi
