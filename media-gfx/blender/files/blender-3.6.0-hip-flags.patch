@@ -1,0 +1,19 @@
+--- a/intern/cycles/kernel/CMakeLists.txt.orig	2023-07-17 10:22:01.832047192 -0700
++++ b/intern/cycles/kernel/CMakeLists.txt	2023-07-17 10:29:24.980035730 -0700
+@@ -612,6 +612,8 @@ if(WITH_CYCLES_HIP_BINARIES AND WITH_CYC
+       ${hip_flags}
+       --amdgpu-target=${arch}
+       ${HIP_HIPCC_FLAGS}
++      
++      --stdlib=libc++
+       --genco
+       ${CMAKE_CURRENT_SOURCE_DIR}${hip_kernel_src}
+       ${flags}
+@@ -690,6 +692,7 @@ if(WITH_CYCLES_DEVICE_HIPRT AND WITH_CYC
+     -D HIPCC
+     -D __HIPRT__
+     -std=c++17
++    --stdlib=libc++
+     -fgpu-rdc
+     -c
+     --gpu-bundle-output
