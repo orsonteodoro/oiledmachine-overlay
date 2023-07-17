@@ -41,9 +41,6 @@ RDEPEND="
 BDEPEND="
 	>=dev-util/cmake-3.18.0
 "
-PDEPEND="
-	~dev-util/hipcc-${PV}
-"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-DisableTest.patch"
 	"${FILESDIR}/${PN}-5.0.1-hip_vector_types.patch"
