@@ -41,6 +41,8 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-test-bitcode-dir.patch"
 	"${FILESDIR}/${PN}-5.1.3-llvm-link.patch"
+
+# Fixes mtime.cl:20:12: error: use of undeclared identifier '__builtin_amdgcn_s_sendmsg_rtnl'
 	"${FILESDIR}/${PN}-5.4.3-Revert-Update-counters-for-gfx11.patch"
 )
 CMAKE_BUILD_TYPE="Release"

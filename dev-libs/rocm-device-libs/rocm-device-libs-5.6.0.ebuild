@@ -23,7 +23,7 @@ DESCRIPTION="Radeon Open Compute Device Libraries"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-Device-Libs"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="test"
+IUSE="test r1"
 RESTRICT="
 	!test? (
 		test
@@ -39,8 +39,8 @@ BDEPEND="
 	>=dev-util/cmake-3.13.4
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.5.1-llvm-link.patch" # https://github.com/RadeonOpenCompute/ROCm-Device-Libs/issues/94
-	"${FILESDIR}/${PN}-5.4.3-Revert-Update-counters-for-gfx11.patch"
+# https://github.com/RadeonOpenCompute/ROCm-Device-Libs/issues/94
+	"${FILESDIR}/${PN}-5.5.1-llvm-link.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 
@@ -57,13 +57,10 @@ src_prepare() {
 }
 
 src_configure() {
-	export MAKEOPTS="-j1"
 	local mycmakeargs=(
 		-DLLVM_DIR="$(get_llvm_prefix ${LLVM_MAX_SLOT})"
 	)
 	cmake_src_configure
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-failure
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
-# dm.cl:409:17: error: use of undeclared identifier '__ockl_steadyctr_u64'
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
