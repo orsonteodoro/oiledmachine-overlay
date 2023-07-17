@@ -176,17 +176,21 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.0.1-set-rocm-path.patch"
 )
 
-pkg_setup() {
-	if [[ "${CHOST}" == "${CBUILD}" ]] && use kernel_linux ; then
-		if [[ ! -e "${BROOT}/proc/cpuinfo" ]] ; then
+check_cpu() {
+	if [[ ! -e "${BROOT}/proc/cpuinfo" ]] ; then
 ewarn
 ewarn "Cannot find ${BROOT}/proc/cpuinfo.  Skipping CPU flag check."
 ewarn
-		elif ! grep -F -e "sse4_1" "${BROOT}/proc/cpuinfo" ; then
+	elif ! grep -F -e "sse4_1" "${BROOT}/proc/cpuinfo" ; then
 ewarn
 ewarn "You need SSE4.1 to use this product."
 ewarn
-		fi
+	fi
+}
+
+pkg_setup() {
+	if [[ "${CHOST}" == "${CBUILD}" ]] && use kernel_linux ; then
+		use cpu && check_cpu
 	fi
 
 	if tc-is-clang || use clang ; then
