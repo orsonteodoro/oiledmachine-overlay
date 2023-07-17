@@ -54,16 +54,6 @@ gen_clang_depends() {
 }
 
 # See https://github.com/OpenImageDenoise/oidn/blob/v2.0.1/scripts/build.py
-gen_ispc_depends() {
-	local s
-	for s in ${LLVM_SLOTS[@]} ; do
-		echo "
-			llvm-${s}? (
-				>=dev-lang/ispc-1.20.0[llvm-${s}]
-			)
-		"
-	done
-}
 RDEPEND+="
 	${PYTHON_DEPS}
 	virtual/libc
@@ -79,8 +69,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	$(gen_ispc_depends)
 	${PYTHON_DEPS}
+	>=dev-lang/ispc-1.20.0
 	>=dev-util/cmake-3.1
 	|| (
 		clang? (

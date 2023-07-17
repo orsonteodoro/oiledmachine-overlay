@@ -80,18 +80,6 @@ gen_clang_depends() {
 	done
 }
 
-# See https://github.com/OpenImageDenoise/oidn/blob/v1.4.3/scripts/build.py
-gen_ispc_depends() {
-	local s
-	for s in ${LLVM_SLOTS[@]} ; do
-		echo "
-			llvm-${s}? (
-				>=dev-lang/ispc-1.17.0[llvm-${s}]
-			)
-		"
-	done
-}
-
 HIP_VERSIONS=(
 	"5.5.1"
 	"5.5.0"
@@ -114,6 +102,7 @@ gen_hip_depends() {
 	done
 }
 
+# See https://github.com/OpenImageDenoise/oidn/blob/v1.4.3/scripts/build.py
 RDEPEND+="
 	${PYTHON_DEPS}
 	virtual/libc
@@ -137,8 +126,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	$(gen_ispc_depends)
 	${PYTHON_DEPS}
+	>=dev-lang/ispc-1.17.0
 	>=dev-util/cmake-3.15
 	hip? (
 		>=dev-util/cmake-3.21
