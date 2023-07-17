@@ -68,6 +68,8 @@ src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_DISABLE_FIND_PACKAGE_LATEX=ON
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
+		-D_VERSION_MAJOR=$(ver_cut 1 ${PV})
+		-D_VERSION_MINOR=$(ver_cut 2 ${PV})
 	)
 	cmake_src_configure
 }

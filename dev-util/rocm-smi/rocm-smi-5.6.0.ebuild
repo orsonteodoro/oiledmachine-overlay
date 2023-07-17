@@ -35,9 +35,14 @@ RDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.4.2-detect-builtin-amdgpu.patch"
+	"${FILESDIR}/${PN}-5.6.0-install-destination-fix.patch"
 )
 
 src_prepare() {
+	sed -i \
+		-e "/find_program (GIT/d" \
+		"CMakeLists.txt" \
+		|| die
 	sed \
 		-e "/LICENSE.txt/d" \
 		-i CMakeLists.txt \
@@ -46,6 +51,7 @@ src_prepare() {
 		-e "/^path_librocm = /c\path_librocm = '${EPREFIX}/usr/lib64/librocm_smi64.so'" \
 		-i python_smi_tools/rsmiBindings.py \
 		|| die
+	git
 	cmake_src_prepare
 }
 
@@ -54,6 +60,7 @@ src_configure() {
 		-DCMAKE_DISABLE_FIND_PACKAGE_LATEX=ON
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
+		-DPKG_VERSION_STR="${PV}"
 	)
 	cmake_src_configure
 }
@@ -68,5 +75,4 @@ src_install() {
 			python_smi_tools/rsmiBindings.py
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-failure
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
