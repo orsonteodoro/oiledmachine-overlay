@@ -8,6 +8,8 @@ inherit cmake
 SRC_URI="
 https://github.com/RadeonOpenCompute/${PN}/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/RadeonOpenCompute/rocm_bandwidth_test/commit/a58f9fd4cb5d1120b9ce58c912ca87fa14720f73.patch
+	-> ${PN}-pr90-a58f9fd.patch
 "
 
 DESCRIPTION="Bandwidth test for ROCm"
@@ -22,11 +24,13 @@ RDEPEND="
 	${DEPEND}
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
+PATCHES=(
+	"${DISTDIR}/${PN}-pr90-a58f9fd.patch"
+)
 
 src_install() {
 	cmake_src_install
 	rm -rfv "${ED}/usr/share/doc/rocm-bandwidth-test"
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-failure
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
