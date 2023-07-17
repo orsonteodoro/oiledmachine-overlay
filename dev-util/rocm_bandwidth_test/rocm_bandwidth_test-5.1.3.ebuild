@@ -27,3 +27,5 @@ src_install() {
 	cmake_src_install
 	rm -rfv "${ED}/usr/share/doc/rocm-bandwidth-test"
 }
+
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

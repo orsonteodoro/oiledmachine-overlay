@@ -14,7 +14,7 @@ DESCRIPTION="Bandwidth test for ROCm"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_bandwidth_test"
 LICENSE="NCSA-AMD"
 SLOT="0/$(ver_cut 1-2)"
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64"
 DEPEND="
 	~dev-libs/rocr-runtime-${PV}:=
 "
@@ -27,3 +27,6 @@ src_install() {
 	cmake_src_install
 	rm -rfv "${ED}/usr/share/doc/rocm-bandwidth-test"
 }
+
+# OILEDMACHINE-OVERLAY-STATUS:  build-failure
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
