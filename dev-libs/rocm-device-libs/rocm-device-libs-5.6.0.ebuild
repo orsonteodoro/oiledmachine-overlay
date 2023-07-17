@@ -17,6 +17,8 @@ https://github.com/RadeonOpenCompute/ROCm-Device-Libs/archive/rocm-${PV}.tar.gz
 	"
 	S="${WORKDIR}/ROCm-Device-Libs-rocm-${PV}"
 #	KEYWORDS="~amd64" # Compiler bug ; needs retest
+# CommandLine Error: Option 'debug-counter' registered more than once!
+# LLVM ERROR: inconsistency in registered CommandLine options
 fi
 
 DESCRIPTION="Radeon Open Compute Device Libraries"
