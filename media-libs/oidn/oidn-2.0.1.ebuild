@@ -6,7 +6,7 @@ EAPI=8
 CMAKE_BUILD_TYPE=Release
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit cmake flag-o-matic llvm python-single-r1 toolchain-funcs
+inherit cmake cuda flag-o-matic llvm python-single-r1 toolchain-funcs
 
 DESCRIPTION="Intel(R) Open Image Denoise library"
 HOMEPAGE="http://www.openimagedenoise.org/"
