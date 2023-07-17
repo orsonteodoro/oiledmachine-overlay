@@ -16,7 +16,7 @@ else
 https://github.com/RadeonOpenCompute/rocm_smi_lib/archive/rocm-${PV}.tar.gz
 	-> rocm-smi-${PV}.tar.gz
 	"
-#	KEYWORDS="~amd64"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/rocm_smi_lib-rocm-${PV}"
 fi
 
