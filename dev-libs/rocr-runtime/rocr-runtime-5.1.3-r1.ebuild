@@ -55,8 +55,8 @@ src_prepare() {
 		-i image/blit_src/CMakeLists.txt \
 		|| die
 
-	# Distro installs "*.bc" to "/usr/lib" instead of a "[path]/bitcode"
-	# directory ...
+	# The distro installs "*.bc" to "/usr/lib" instead of a "[path]/bitcode"
+	# directory.
 	sed \
 		-e "s:/opt/rocm/amdgcn/bitcode:${EPREFIX}/usr/lib/amdgcn/bitcode:" \
 		-i image/blit_src/CMakeLists.txt \

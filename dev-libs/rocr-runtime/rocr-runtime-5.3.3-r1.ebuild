@@ -55,8 +55,8 @@ src_prepare() {
 		-i image/blit_src/CMakeLists.txt \
 		|| die
 
-	# Distro installs "*.bc" to "/usr/lib" instead of a "[path]/bitcode"
-	# directory ...
+	# The distro installs "*.bc" to "/usr/lib" instead of a "[path]/bitcode"
+	# directory.
 	sed \
 		-e "s:-O2:--rocm-path=${EPREFIX}/usr/lib/ -O2:" \
 		-i image/blit_src/CMakeLists.txt \
