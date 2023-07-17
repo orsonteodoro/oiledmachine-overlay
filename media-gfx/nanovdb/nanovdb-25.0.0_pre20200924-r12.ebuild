@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit cmake flag-o-matic
+inherit cmake cuda flag-o-matic
 
 DESCRIPTION="A lightweight GPU friendly version of VDB initially targeting \
 rendering applications."
@@ -262,6 +262,10 @@ src_prepare()
 		sed -i -e "s|__NANOVDB_USE_ONETBB__|1|g" "${S}/nanovdb/util/Range.h" || die
 	fi
 	cmake_src_prepare
+	if use cuda ; then
+		cuda_add_sandbox -w
+		cuda_src_prepare
+	fi
 }
 
 src_configure()

@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person" proxied="yes">
-    <!-- only for this ebuild on the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -12,6 +12,14 @@
     support for GPUs (with CPUs support) for use in raytracing rendering
     or collision detection. Benefits include faster read access and less memory.
   </longdescription>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This ebuild still is split from OpenVDB ebuild for testing reasons and for
+  simplification.
+
+  -->
   <upstream>
     <remote-id type="github">AcademySoftwareFoundation/openvdb</remote-id>
   </upstream>
