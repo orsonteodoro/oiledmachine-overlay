@@ -38,7 +38,7 @@ IUSE="${IUSE_VIDEO_CARDS}
 	test unwind vaapi valgrind vdpau vulkan
 	vulkan-overlay wayland +X xa zink +zstd
 
-	${LLVM_SLOTS[@]/#/llvm-}
+	${LLVM_SLOTS[@]/#/llvm-} r1
 "
 
 REQUIRED_USE="
@@ -314,7 +314,10 @@ pkg_setup() {
 	if use llvm; then
 		local llvm_slot
 		for llvm_slot in ${LLVM_SLOTS[@]} ; do
-			use llvm-${llvm_slot} && LLVM_MAX_SLOT="${llvm_slot}"
+			if use llvm-${llvm_slot} ; then
+				LLVM_MAX_SLOT="${llvm_slot}"
+				break
+			fi
 		done
 		llvm_pkg_setup
 		einfo "PATH=${PATH} (before)"

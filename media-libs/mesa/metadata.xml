@@ -64,6 +64,9 @@
     <flag name="zink">
       Enable the Zink OpenGL-over-Vulkan Gallium driver
     </flag>
+    <flag name="rN">
+      Ebuild fork revision
+    </flag>
   </use>
   <upstream>
     <remote-id type="cpe">cpe:/a:mesa3d:mesa</remote-id>
