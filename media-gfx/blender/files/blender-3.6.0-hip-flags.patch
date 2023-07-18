@@ -5,7 +5,7 @@
        --amdgpu-target=${arch}
        ${HIP_HIPCC_FLAGS}
 +      
-+      --stdlib=libc++
++      -D __HIP__
        --genco
        ${CMAKE_CURRENT_SOURCE_DIR}${hip_kernel_src}
        ${flags}
@@ -13,7 +13,7 @@
      -D HIPCC
      -D __HIPRT__
      -std=c++17
-+    --stdlib=libc++
++    -D __HIP__
      -fgpu-rdc
      -c
      --gpu-bundle-output
