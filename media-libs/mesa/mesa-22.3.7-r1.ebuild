@@ -31,7 +31,7 @@ for card in ${VIDEO_CARDS}; do
 	IUSE_VIDEO_CARDS+=" video_cards_${card}"
 done
 
-LLVM_SLOTS=( 16 15 )
+LLVM_SLOTS=( 16 15 14 13 )
 IUSE="${IUSE_VIDEO_CARDS}
 	cpu_flags_x86_sse2 d3d9 debug gles1 +gles2 +llvm
 	lm-sensors opencl osmesa +proprietary-codecs selinux
