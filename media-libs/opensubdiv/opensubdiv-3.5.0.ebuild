@@ -23,14 +23,19 @@ https://github.com/PixarAnimationStudios/OpenSubdiv/archive/v${MY_PV}.tar.gz
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-IUSE="cuda doc examples opencl openmp ptex tbb test tutorials"
+IUSE="cuda doc examples glew opencl openmp ptex tbb test tutorials X"
+REQUIRED_USE="
+	X? (
+		glew
+	)
+"
 
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 RDEPEND="
 	${PYTHON_DEPS}
-	media-libs/glew:=
 	>=media-libs/glfw-3.0.0:=
+	media-libs/glew:=
 	x11-libs/libXinerama
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-4.0:*
@@ -40,6 +45,15 @@ RDEPEND="
 	)
 	ptex? (
 		>=media-libs/ptex-2.0
+		>=sys-libs/zlib-1.2
+	)
+	X? (
+		x11-libs/libX11
+		x11-libs/libXcursor
+		x11-libs/libXinerama
+		x11-libs/libXi
+		x11-libs/libXrandr
+		x11-libs/libXxf86vm
 	)
 "
 DEPEND="
@@ -47,7 +61,7 @@ DEPEND="
 	tbb? (
 		|| (
 			!<dev-cpp/tbb-2021:0=
-			 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
 		)
 	)
@@ -55,8 +69,8 @@ DEPEND="
 BDEPEND="
 	>=dev-util/cmake-3.12
 	doc? (
-		app-doc/doxygen
-		dev-python/docutils
+		>=app-doc/doxygen-1.8.4
+		>=dev-python/docutils-0.9
 	)
 	cuda? (
 		<sys-devel/gcc-12[cxx]
@@ -96,6 +110,8 @@ einfo "CXX:\t\t${CXX}"
 		-DGLEW_LOCATION="${EPREFIX}/usr/$(get_libdir)"
 		-DGLFW_LOCATION="${EPREFIX}/usr/$(get_libdir)"
 		-DNO_CLEW=ON
+		-DNO_GLEW=$(usex !glew)
+		-DNO_GLFW_X11=$(usex X)
 		-DNO_CUDA=$(usex !cuda)
 		-DNO_DOC=$(usex !doc)
 		-DNO_EXAMPLES=$(usex !examples)
