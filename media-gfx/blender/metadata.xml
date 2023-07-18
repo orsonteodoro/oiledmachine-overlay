@@ -258,9 +258,9 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       Adds support for FFMPEG enabling internal FFMPEG codecs support and
       possibly external codec support if added.
     </flag>
-    <flag name="cycles-hip">
-      Adds support for GPU rendering via the HIP render device with the Cycles
-      renderer.
+    <flag name="hip">
+      Adds support for primarily AMD GPUs via the HIP render device with the
+      Cycles renderer.
     </flag>
     <flag name="joystick">
       Adds support for a joystick through SDL used for the Blender Game Engine
@@ -322,14 +322,14 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       surfaces with the use of GPU and CPU.
     </flag>
     <flag name="openvdb">
-      Add GPU preview rendering. Only works with nVidia cards.
+      Add GPU preview rendering.
     </flag>
     <flag name="openxr">
       Add VR features.
     </flag>
     <flag name="optix">
-      Build cycles renderer with NVIDIA® OptiX™ support on GeForce/Quadro RTX GPUs
-      for hardware accelerated rendering and denoising.
+      Build cycles renderer with NVIDIA® OptiX™ support on Quadro®/GeForce RTX™
+      GPUs for hardware accelerated rendering and denoising.
     </flag>
     <flag name="osl">
       Add support for OpenShadingLanguage scripting.

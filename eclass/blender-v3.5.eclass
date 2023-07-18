@@ -84,15 +84,16 @@ $(gen_llvm_iuse)
 ${CPU_FLAGS_3_3[@]%:*}
 ${FFMPEG_IUSE}
 ${OPENVDB_ABIS[@]}
-+X +abi10-compat +alembic -asan +boost +bullet +collada -cycles-hip
-+color-management -cpudetection +cuda +cycles -cycles-device-oneapi
-+cycles-path-guiding +dds -debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw
-flac +gmp +hdr +jack +jemalloc +jpeg2k -llvm -man -materialx +nanovdb +ndof +nls
-+nvcc +openal +opencl +openexr +openimagedenoise +openimageio +openmp
-+opensubdiv +openvdb +openxr -optix +osl +pdf +potrace +pulseaudio release +sdl
-+sndfile +tbb test +tiff +usd -valgrind +wayland r1
++X +abi10-compat +alembic -asan +boost +bullet +collada +color-management
+-cpudetection +cuda +cycles -cycles-device-oneapi +cycles-path-guiding +dds
+-debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp +hdr -hip +jack
++jemalloc +jpeg2k -llvm -man -materialx +nanovdb +ndof +nls +nvcc +openal
++opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb
++openxr -optix +osl +pdf +potrace +pulseaudio release +sdl +sndfile +tbb test
++tiff +usd -valgrind +wayland
+r1
 "
-# cycles-hip is default ON upstream.
+# hip is default ON upstream.
 
 inherit blender
 
@@ -147,14 +148,14 @@ REQUIRED_USE+="
 	cycles-device-oneapi? (
 		cycles
 	)
-	cycles-hip? (
-		!nanovdb
-		cycles
-	)
 	dbus? (
 		wayland
 	)
 	embree? (
+		cycles
+	)
+	hip? (
+		!nanovdb
 		cycles
 	)
 	materialx? (
@@ -326,9 +327,6 @@ gen_llvm_depends()
 		echo "
 			llvm-${s}? (
 				>=sys-devel/llvm-${s}:${s}=
-				cycles-hip? (
-					>=sys-libs/libcxx-${s}
-				)
 			)
 		"
 	done
@@ -496,12 +494,6 @@ RDEPEND+="
 		<dev-libs/level-zero-2
 		>=dev-libs/level-zero-1.8.5
 	)
-	cycles-hip? (
-		|| (
-			~dev-util/hip-5.5.0
-			~dev-util/hip-5.5.1
-		)
-	)
 	dbus? (
 		sys-apps/dbus
 	)
@@ -526,6 +518,12 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 	)
 	gmp? (
 		>=dev-libs/gmp-6.2.1[cxx]
+	)
+	hip? (
+		|| (
+			~dev-util/hip-5.5.0
+			~dev-util/hip-5.5.1
+		)
 	)
 	jack? (
 		virtual/jack
@@ -1066,7 +1064,7 @@ eerror
 		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
 		-DWITH_CXX11_ABI=ON
-		-DWITH_CYCLES_HIP_BINARIES=$(usex cycles-hip)
+		-DWITH_CYCLES_HIP_BINARIES=$(usex hip)
 		-DWITH_CYCLES_PATH_GUIDING=$(usex cycles-path-guiding)
 		-DWITH_DOC_MANPAGE=$(usex man)
 		-DWITH_DRACO=$(usex draco)
@@ -1114,13 +1112,6 @@ eerror
 			-DOPENMP_FOUND=ON
 			-DOpenMP_C_FLAGS="-isystem /usr/include -fopenmp"
 			-DOpenMP_C_LIB_NAMES="-isystem /usr/include -fopenmp"
-		)
-	fi
-
-	if false && use cycles-hip ; then
-#		append-flags -stdlib=libc++
-		mycmakeargs+=(
-			-DHIP_HIPCC_FLAGS="-std=hip -stdlib=libc++"
 		)
 	fi
 

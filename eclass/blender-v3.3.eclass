@@ -81,12 +81,12 @@ $(gen_llvm_iuse)
 ${CPU_FLAGS_3_3[@]%:*}
 ${FFMPEG_IUSE}
 ${OPENVDB_ABIS[@]}
-+X +abi9-compat +alembic -asan +boost +bullet +collada -cycles-hip
-+color-management -cpudetection +cuda +cycles -cycles-device-oneapi +dds -debug
-doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp +hdr +jack +jemalloc +jpeg2k
--llvm -man +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr
-+openimagedenoise +openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl
-+pdf +potrace +pulseaudio release +sdl +sndfile +tbb test +tiff +usd -valgrind
++X +abi9-compat +alembic -asan +boost +bullet +collada +color-management
+-cpudetection +cuda +cycles -cycles-device-oneapi +dds -debug doc +draco
++elbeem +embree +ffmpeg +fftw flac +gmp +hdr -hip +jack +jemalloc +jpeg2k -llvm
+-man +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
++openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace
++pulseaudio release +sdl +sndfile +tbb test +tiff +usd -valgrind
 r1
 "
 
@@ -144,11 +144,11 @@ REQUIRED_USE+="
 	cycles-device-oneapi? (
 		cycles
 	)
-	cycles-hip? (
-		!nanovdb
+	embree? (
 		cycles
 	)
-	embree? (
+	hip? (
+		!nanovdb
 		cycles
 	)
 	mp3? (
@@ -321,9 +321,6 @@ gen_llvm_depends()
 		echo "
 			llvm-${s}? (
 				>=sys-devel/llvm-${s}:${s}=
-				cycles-hip? (
-					>=sys-libs/libcxx-${s}
-				)
 			)
 		"
 	done
@@ -482,12 +479,6 @@ RDEPEND+="
 		<dev-libs/level-zero-2
 		>=dev-libs/level-zero-1.7.15
 	)
-	cycles-hip? (
-		|| (
-			~dev-util/hip-5.5.0
-			~dev-util/hip-5.5.1
-		)
-	)
 	embree? (
 		>=media-libs/embree-3.13.4:=\
 [-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,\
@@ -509,6 +500,12 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 	)
 	gmp? (
 		>=dev-libs/gmp-6.2.1[cxx]
+	)
+	hip? (
+		|| (
+			~dev-util/hip-5.5.0
+			~dev-util/hip-5.5.1
+		)
 	)
 	jack? (
 		virtual/jack
@@ -1027,7 +1024,7 @@ _src_configure() {
 		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
 		-DWITH_CXX11_ABI=ON
-		-DWITH_CYCLES_HIP_BINARIES=$(usex cycles-hip)
+		-DWITH_CYCLES_HIP_BINARIES=$(usex hip)
 		-DWITH_DOC_MANPAGE=$(usex man)
 		-DWITH_DRACO=$(usex draco)
 		-DWITH_GHOST_WAYLAND_DYNLOAD=OFF
@@ -1072,13 +1069,6 @@ _src_configure() {
 			-DOPENMP_FOUND=ON
 			-DOpenMP_C_FLAGS="-isystem /usr/include -fopenmp"
 			-DOpenMP_C_LIB_NAMES="-isystem /usr/include -fopenmp"
-		)
-	fi
-
-	if false && use cycles-hip ; then
-#		append-flags -stdlib=libc++
-		mycmakeargs+=(
-			-DHIP_HIPCC_FLAGS="-std=hip -stdlib=libc++"
 		)
 	fi
 
