@@ -52,7 +52,6 @@ ${CUDA_TARGETS[@]/#/cuda_targets_}
 ${HIP_TARGETS[@]/#/amdgpu_targets_}
 ${LLVM_SLOTS[@]/#/llvm-}
 +apps +built-in-weights +clang cpu cuda custom-tc doc gcc hip openimageio
-video_cards_nvidia
 "
 
 gen_required_use_cuda_targets() {
@@ -82,7 +81,6 @@ REQUIRED_USE+="
 	$(gen_required_use_hip_targets)
 	${PYTHON_REQUIRED_USE}
 	cuda? (
-		video_cards_nvidia
 		|| (
 			${CUDA_TARGETS[@]/#/cuda_targets_}
 		)
@@ -146,8 +144,8 @@ RDEPEND+="
 			$(gen_hip_depends)
 		)
 	)
-	video_cards_nvidia? (
-		>=x11-drivers/nvidia-drivers-520.61.05
+	cuda? (
+		>=dev-util/nvidia-cuda-toolkit-11.8
 	)
 	|| (
 		(
@@ -170,7 +168,7 @@ BDEPEND+="
 			$(gen_hip_depends)
 		)
 	)
-	video_cards_nvidia? (
+	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-11.8
 	)
 	|| (
@@ -267,6 +265,11 @@ src_unpack() {
 	fi
 }
 
+src_prepare() {
+	cmake_src_prepare
+	use cuda && cuda_src_prepare
+}
+
 src_configure() {
 	mycmakeargs=()
 
@@ -337,13 +340,22 @@ einfo "HIP_TARGETS:  ${targets}"
 		for cuda_target in ${CUDA_TARGETS[@]} ; do
 			if use "${cuda_target/#/cuda_targets_}" ; then
 				targets+=";${cuda_target}"
-			else
-				sed -i -e "/${cuda_target}/d" devices/cuda/CMakeLists.txt || die
 			fi
 		done
 		targets=$(echo "${targets}" \
 			| sed -e "s|^;||g")
 einfo "CUDA_TARGETS:  ${targets}"
+		if use cuda_targets_sm_80 || use cuda_targets_sm_90 ; then
+			:;
+		else
+			sed -i -e "/cutlass_conv_sm80.cu/d" devices/cuda/CMakeLists.txt || die
+		fi
+		if use cuda_targets_sm_70 ; then
+			sed -i -e "/cutlass_conv_sm70.cu/d" devices/cuda/CMakeLists.txt || die
+		fi
+		if use cuda_targets_sm_75 ; then
+			sed -i -e "/cutlass_conv_sm75.cu/d" devices/cuda/CMakeLists.txt || die
+		fi
 	fi
 
 	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
