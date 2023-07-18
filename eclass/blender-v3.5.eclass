@@ -895,7 +895,7 @@ eerror
 eerror "(1) Use media-libs/mesa[llvm,llvm-${llvm_slot}]::oiledmachine-overlay"
 eerror "instead if it exists."
 eerror "(2) Disable the osl USE flag."
-eerror "(3) Use >=${CATEGORY}/${PN}-3.6.0 instead with"
+eerror "(3) Use >=${CATEGORY}/${PN}-3.6.0 with"
 eerror "media-libs/mesa[llvm,llvm-${llvm_slot}]::oiledmachine-overlay."
 eerror
 				die
