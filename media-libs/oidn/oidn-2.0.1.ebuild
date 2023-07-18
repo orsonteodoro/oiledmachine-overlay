@@ -309,6 +309,10 @@ einfo
 	)
 
 	if use hip ; then
+ewarn
+ewarn "All APU + GPU HIP targets on the device must be built/installed to avoid"
+ewarn "a crash."
+ewarn
 		local llvm_slot=$(cat "/usr/$(get_libdir)/cmake/hip/hip-config.cmake" \
 			| grep "/usr/lib/llvm" \
 			| grep -E -o -e  "[0-9]+")
@@ -322,6 +326,7 @@ einfo
 
 		# Speed up build time
 		local targets=""
+		local hip_target
 		for hip_target in ${HIP_TARGETS[@]} ; do
 			if use "${hip_target/#/amdgpu_targets_}" ; then
 				targets+=";${hip_target}"
@@ -337,6 +342,7 @@ einfo "HIP_TARGETS:  ${targets}"
 
 	if use cuda ; then
 		local targets=""
+		local cuda_target
 		for cuda_target in ${CUDA_TARGETS[@]} ; do
 			if use "${cuda_target/#/cuda_targets_}" ; then
 				targets+=";${cuda_target}"
@@ -404,6 +410,15 @@ src_install() {
 
 	# Generated when hip is enabled.
 	rm -rf "${ED}/var"
+}
+
+pkg_postinst() {
+	if use hip ; then
+ewarn
+ewarn "All APU + GPU HIP targets on the device must be built/installed to avoid"
+ewarn "a crash."
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-multislot-tbb
