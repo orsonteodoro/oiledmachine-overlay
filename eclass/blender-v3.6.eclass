@@ -147,6 +147,7 @@ REQUIRED_USE+="
 		cycles
 	)
 	cycles-hip? (
+		!nanovdb
 		cycles
 	)
 	dbus? (
