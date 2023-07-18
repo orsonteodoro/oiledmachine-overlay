@@ -23,7 +23,9 @@ https://github.com/PixarAnimationStudios/OpenSubdiv/archive/v${MY_PV}.tar.gz
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-IUSE="cuda doc examples glew opencl openmp ptex tbb test tutorials X"
+# cuda is default on upstream
+# test is default on upstream
+IUSE="cuda +doc +examples -glew +opencl +openmp +opengl +ptex +tbb test +tutorials +X"
 REQUIRED_USE="
 	X? (
 		glew
