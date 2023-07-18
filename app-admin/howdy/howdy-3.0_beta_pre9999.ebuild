@@ -35,9 +35,6 @@ DEPEND+="
 	dev-python/numpy[${PYTHON_USEDEP}]
 	media-libs/opencv[${PYTHON_USEDEP},contribhdf,python,v4l]
 	sys-libs/pam
-	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-7.5
-	)
 	ffmpeg? (
 		dev-python/ffmpeg-python[${PYTHON_USEDEP}]
 		media-video/ffmpeg[v4l]
