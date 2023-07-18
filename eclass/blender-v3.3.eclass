@@ -1167,6 +1167,7 @@ einfo "HIP_TARGETS:  ${targets}"
 			-DOPENMP_FOUND=ON
 			-DOpenMP_C_FLAGS="-isystem /usr/include -fopenmp"
 			-DOpenMP_C_LIB_NAMES="-isystem /usr/include -fopenmp"
+			-DOpenMP_LINKER_FLAGS="-lomp"
 		)
 	fi
 
