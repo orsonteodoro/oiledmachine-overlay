@@ -38,8 +38,8 @@ RDEPEND="
 	${PYTHON_DEPS}
 	cuda? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*
-			=dev-util/nvidia-cuda-toolkit-11*
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
 	glew? (
