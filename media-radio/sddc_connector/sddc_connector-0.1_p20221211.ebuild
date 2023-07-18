@@ -12,15 +12,26 @@ LICENSE="GPL-3"
 # KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Not tagged or live snapshot
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RESTRICT="mirror"
+CUDA_TARGETS=(
+	sm_60
+)
+IUSE="
+	${CUDA_TARGETS[@]/#/+cuda_targets_}
+"
+REQUIRED_USE="
+	${CUDA_TARGETS[@]/#/cuda_targets_}
+"
 RDEPEND+="
 	media-radio/csdr
 	media-radio/owrx_connector
-	|| (
-		=dev-util/nvidia-cuda-toolkit-8*:=
-		=dev-util/nvidia-cuda-toolkit-9*:=
-		=dev-util/nvidia-cuda-toolkit-10*:=
-		=dev-util/nvidia-cuda-toolkit-11*:=
-		=dev-util/nvidia-cuda-toolkit-12*:=
+	cuda_targets_sm_60? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-8*:=
+			=dev-util/nvidia-cuda-toolkit-9*:=
+			=dev-util/nvidia-cuda-toolkit-10*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-12*:=
+		)
 	)
 	|| (
 		media-radio/libsddc
