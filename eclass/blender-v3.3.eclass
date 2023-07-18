@@ -492,6 +492,7 @@ RDEPEND+="
 [-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,\
 cpu_flags_x86_sse4_2?,\
 cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tbb?]
+		<media-libs/embree-4
 	)
 	ffmpeg? (
 		<media-video/ffmpeg-6:=\
@@ -638,6 +639,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 			~media-libs/mesa-22.3.1[X?]
 			~media-libs/mesa-22.3.2[X?]
 			~media-libs/mesa-22.3.3[X?]
+			 ~media-libs/mesa-22.3.7[X?]
 		)
 		>=sys-libs/libomp-13
 	)
@@ -659,6 +661,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 			~media-libs/mesa-22.3.1[X?]
 			~media-libs/mesa-22.3.2[X?]
 			~media-libs/mesa-22.3.3[X?]
+			 ~media-libs/mesa-22.3.7[X?]
 		)
 		>=sys-libs/libomp-14
 	)
