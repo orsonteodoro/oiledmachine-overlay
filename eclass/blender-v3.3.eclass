@@ -695,7 +695,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		)
 	)
 	opensubdiv? (
-		>=media-libs/opensubdiv-3.4.4:=[cuda=,opencl=,tbb?]
+		>=media-libs/opensubdiv-3.4.4:=[cuda=,opencl=,opengl(+),tbb?]
 	)
 	openvdb? (
 		$(gen_openvdb_depends)

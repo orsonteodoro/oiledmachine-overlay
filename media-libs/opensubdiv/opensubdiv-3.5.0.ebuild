@@ -25,10 +25,10 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 # cuda is default on upstream
 # test is default on upstream
-IUSE="cuda +doc +examples -glew +opencl +openmp +opengl +ptex +tbb test +tutorials +X"
+IUSE="cuda +doc +examples -glew +glfw +opencl +openmp +opengl +ptex +tbb test +tutorials +X"
 REQUIRED_USE="
 	X? (
-		glew
+		glfw
 	)
 "
 
@@ -36,11 +36,14 @@ ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 RDEPEND="
 	${PYTHON_DEPS}
-	>=media-libs/glfw-3.0.0:=
-	media-libs/glew:=
-	x11-libs/libXinerama
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-4.0:*
+	)
+	glew? (
+		media-libs/glew:=
+	)
+	glfw? (
+		>=media-libs/glfw-3.0.0:=
 	)
 	opencl? (
 		virtual/opencl
@@ -113,6 +116,7 @@ einfo "CXX:\t\t${CXX}"
 		-DGLFW_LOCATION="${EPREFIX}/usr/$(get_libdir)"
 		-DNO_CLEW=ON
 		-DNO_GLEW=$(usex !glew)
+		-DNO_GLFW=$(usex !glfw)
 		-DNO_GLFW_X11=$(usex X)
 		-DNO_CUDA=$(usex !cuda)
 		-DNO_DOC=$(usex !doc)
