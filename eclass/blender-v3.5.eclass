@@ -861,7 +861,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
 	"${FILESDIR}/${PN}-3.5.1-tbb-rpath.patch"
-	"${FILESDIR}/${PN}-3.6.0-hip-flags.patch"
+	"${FILESDIR}/${PN}-3.3.8-hip-flags.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {

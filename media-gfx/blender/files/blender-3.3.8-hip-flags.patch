@@ -1,0 +1,10 @@
+--- a/intern/cycles/kernel/CMakeLists.txt.orig	2023-05-13 21:03:57.000000000 -0700
++++ b/intern/cycles/kernel/CMakeLists.txt	2023-07-17 21:00:52.407055785 -0700
+@@ -583,6 +583,7 @@ if(WITH_CYCLES_HIP_BINARIES AND WITH_CYC
+       ${hip_flags}
+       --amdgpu-target=${arch}
+       ${HIP_HIPCC_FLAGS}
++      -D __HIP__
+       --genco
+       ${CMAKE_CURRENT_SOURCE_DIR}${hip_kernel_src}
+       ${flags}

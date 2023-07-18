@@ -830,7 +830,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
 	"${FILESDIR}/${PN}-3.3.7-tbb-rpath.patch"
-	"${FILESDIR}/${PN}-3.6.0-hip-flags.patch"
+	"${FILESDIR}/${PN}-3.3.8-hip-flags.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -864,7 +864,7 @@ eerror "(2) Disable the osl USE flag."
 eerror "(3) Use >=${CATEGORY}/${PN}-3.6.0 instead with"
 eerror "media-libs/mesa[llvm,llvm-${llvm_slot}]::oiledmachine-overlay."
 eerror
-#				die
+				die
 			fi
 		fi
 	fi
