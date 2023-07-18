@@ -127,6 +127,47 @@
     Additional Blender assets can be found at
     https://www.blender.org/download/demo-files/
 
+
+    HIP targets:
+
+    You may choose a few needed targets to speed up compile time.
+
+    The mapping of the model codename to *_gfx* symbols can be found in:
+
+      https://packages-cdn-origin.gentoo.org/useflags/amdgpu_targets_gfx906
+      https://llvm.org/docs/AMDGPUUsage.html#processors
+
+    Only GCN GFX9 (aka Vega) and newer are supported by this package.
+
+
+    CUDA targets:
+
+    You may choose a few needed targets to speed up compile time.
+
+    BLENDER_CUDA_TARGETS -  a per-package environment variable containing one
+    of the following separated by spaces:
+
+      3.3.x:  sm_30 sm_35 sm_37 sm_50 sm_52 sm_60 sm_61 sm_70 sm_75 sm_86 compute_75
+      3.5.x:  sm_30 sm_35 sm_37 sm_50 sm_52 sm_60 sm_61 sm_70 sm_75 sm_86 compute_75
+      3.6.x:  sm_30 sm_35 sm_37 sm_50 sm_52 sm_60 sm_61 sm_70 sm_75 sm_86 sm_89 compute_89
+
+    Example:
+
+      Contents of /etc/portage/env/blender.conf:
+
+        BLENDER_CUDA_TARGETS="sm_89 compute_89"
+
+
+      Contents of /etc/portage/package.env:
+
+        media-gfx/blender blender.conf
+
+
+    See also
+    https://en.wikipedia.org/wiki/CUDA#GPUs_supported        # sm_xy corresponds to "Compute capability (version)"
+    
+
+
   -->
   <upstream>
     <doc lang="en">https://docs.blender.org/manual/en/3.3/index.html</doc>

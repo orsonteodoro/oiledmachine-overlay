@@ -69,6 +69,38 @@ OSL_PV="1.11"
 PUGIXML_PV="1.10"
 THEORA_PV="1.1.1"
 
+CUDA_TARGETS=(
+	sm_30
+	sm_35
+	sm_37
+	sm_50
+	sm_52
+	sm_60
+	sm_61
+	sm_70
+	sm_75
+	sm_86
+	sm_89
+	compute_89
+)
+
+HIP_TARGETS=(
+	amdgpu_targets_gfx900
+	amdgpu_targets_gfx90c
+	amdgpu_targets_gfx902
+	amdgpu_targets_gfx1010
+	amdgpu_targets_gfx1011
+	amdgpu_targets_gfx1012
+	amdgpu_targets_gfx1030
+	amdgpu_targets_gfx1031
+	amdgpu_targets_gfx1032
+	amdgpu_targets_gfx1034
+	amdgpu_targets_gfx1035
+	amdgpu_targets_gfx1100
+	amdgpu_targets_gfx1101
+	amdgpu_targets_gfx1102
+)
+
 # gen_llvm_iuse is the same as Mesa and LLVM latest stable keyword.
 gen_llvm_iuse()
 {
@@ -82,6 +114,7 @@ IUSE+="
 $(gen_llvm_iuse)
 ${CPU_FLAGS_3_3[@]%:*}
 ${FFMPEG_IUSE}
+${HIP_TARGETS[@]}
 ${OPENVDB_ABIS[@]}
 +X +abi10-compat +alembic -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles -cycles-device-oneapi +cycles-path-guiding +dds
@@ -156,6 +189,9 @@ REQUIRED_USE+="
 	hip? (
 		!nanovdb
 		cycles
+		|| (
+			${HIP_TARGETS[@]}
+		)
 	)
 	materialx? (
 		!python_single_target_python3_10
@@ -1069,6 +1105,36 @@ eerror
 	)
 
 	blender_configure_linker_flags
+
+	# Speed up build time
+	if use cuda ; then
+		local targets=""
+		for cuda_target in ${CUDA_TARGETS[@]} ; do
+			if [[ "${BLENDER_CUDA_TARGETS}" =~ (^| )"${cuda_target}"($| ) ]] ; then
+				targets+=";${cuda_target}"
+			fi
+		done
+		targets=$(echo "${targets}" \
+			| sed -e "s|^;||g")
+		mycmakeargs+=(
+			-DCYCLES_CUDA_BINARIES_ARCH="${targets}"
+		)
+einfo "CUDA_TARGETS:  ${targets}"
+	fi
+
+	# Speed up build time
+	if use hip ; then
+		local targets=""
+		for hip_target in ${HIP_TARGETS[@]} ; do
+			use "${hip_target}" && targets+=";${hip_target/amdgpu_targets_}"
+		done
+		targets=$(echo "${targets}" \
+			| sed -e "s|^;||g")
+		mycmakeargs+=(
+			-DCYCLES_HIP_BINARIES_ARCH="${targets}"
+		)
+einfo "HIP_TARGETS:  ${targets}"
+	fi
 
 	if use openmp && tc-is-clang && has_version "sys-libs/libomp" ; then
 		mycmakeargs+=(
