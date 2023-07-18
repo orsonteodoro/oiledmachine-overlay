@@ -22,10 +22,14 @@
     <name>Gentoo Graphics Project</name>
   </maintainer>
   <longdescription>
-    Blender, the open source software for 3D modeling, animation,
-    rendering, post-production, interactive creation and playback.
+    Blender is for 3D modeling, animation, rendering, post-production,
+    interactive creation and playback.
+  </longdescription>
+  <!--
 
-    2.93.x, 3.3.x -- LTS (Long Term Support)
+    oiledmachine-overlay notes:
+
+    3.3.x -- LTS (Long Term Support)
     3.4 and later -- Stable
 
     Information about Cycles network rendering can be found at:
@@ -123,49 +127,37 @@
     Additional Blender assets can be found at
     https://www.blender.org/download/demo-files/
 
-  </longdescription>
+  -->
   <upstream>
-    <doc lang="en">https://docs.blender.org/manual/en/2.93/index.html</doc>
-    <doc lang="de">https://docs.blender.org/manual/de/2.93/index.html</doc>
-    <doc lang="es">https://docs.blender.org/manual/es/2.93/index.html</doc>
-    <doc lang="fr">https://docs.blender.org/manual/fr/2.93/index.html</doc>
-    <doc lang="it">https://docs.blender.org/manual/it/2.93/index.html</doc>
-    <doc lang="ja">https://docs.blender.org/manual/ja/2.93/index.html</doc>
-    <doc lang="ko">https://docs.blender.org/manual/ko/2.93/index.html</doc>
-    <doc lang="nb">https://docs.blender.org/manual/nb/2.93/index.html</doc>
-    <doc lang="pt">https://docs.blender.org/manual/pt/2.93/index.html</doc>
-    <doc lang="ru">https://docs.blender.org/manual/ru/2.93/index.html</doc>
-    <doc lang="fi">https://docs.blender.org/manual/fi/2.93/index.html</doc>
-    <doc lang="uk">https://docs.blender.org/manual/uk/2.93/index.html</doc>
-    <doc lang="vi">https://docs.blender.org/manual/vi/2.93/index.html</doc>
+    <doc lang="en">https://docs.blender.org/manual/en/3.3/index.html</doc>
+    <doc lang="de">https://docs.blender.org/manual/de/3.3/index.html</doc>
+    <doc lang="es">https://docs.blender.org/manual/es/3.3/index.html</doc>
+    <doc lang="fr">https://docs.blender.org/manual/fr/3.3/index.html</doc>
+    <doc lang="it">https://docs.blender.org/manual/it/3.3/index.html</doc>
+    <doc lang="ja">https://docs.blender.org/manual/ja/3.3/index.html</doc>
+    <doc lang="ko">https://docs.blender.org/manual/ko/3.3/index.html</doc>
+    <doc lang="nb">https://docs.blender.org/manual/nb/3.3/index.html</doc>
+    <doc lang="pt">https://docs.blender.org/manual/pt/3.3/index.html</doc>
+    <doc lang="ru">https://docs.blender.org/manual/ru/3.3/index.html</doc>
+    <doc lang="fi">https://docs.blender.org/manual/fi/3.3/index.html</doc>
+    <doc lang="uk">https://docs.blender.org/manual/uk/3.3/index.html</doc>
+    <doc lang="vi">https://docs.blender.org/manual/vi/3.3/index.html</doc>
     <doc lang="zh-hans">
-      https://docs.blender.org/manual/zh-hans/2.93/index.html
+      https://docs.blender.org/manual/zh-hans/3.3/index.html
     </doc>
     <doc lang="zh-hant">
-      https://docs.blender.org/manual/zh-hant/2.93/index.html
+      https://docs.blender.org/manual/zh-hant/3.3/index.html
     </doc>
     <bugs-to>
       https://developer.blender.org/
     </bugs-to>
   </upstream>
   <use>
-    <flag name="abi3-compat">
-      Use ABI 3.x compatible OpenVDB.
+    <flag name="abi9-compat">
+      Use ABI 9.x compatible OpenVDB.
     </flag>
-    <flag name="abi4-compat">
-      Use ABI 4.x compatible OpenVDB.
-    </flag>
-    <flag name="abi5-compat">
-      Use ABI 5.x compatible OpenVDB.
-    </flag>
-    <flag name="abi6-compat">
-      Use ABI 6.x compatible OpenVDB.
-    </flag>
-    <flag name="abi7-compat">
-      Use ABI 7.x compatible OpenVDB.
-    </flag>
-    <flag name="abi8-compat">
-      Use ABI 8.x compatible OpenVDB.
+    <flag name="abi10-compat">
+      Use ABI 10.x compatible OpenVDB.
     </flag>
     <flag name="alembic">
       Add support for Alembic through <pkg>media-gfx/alembic</pkg> used as an
@@ -211,10 +203,10 @@
       Detect at build time the SIMD instruction sets for cycles.
     </flag>
     <flag name="cuda">
-      Build cycles renderer with nVidia CUDA support.
+      Build the Cycles renderer with NVIDIA® CUDA® support.
     </flag>
     <flag name="cycles">
-      Build cycles renderer (requires <pkg>media-libs/openimageio</pkg> and
+      Build the Cycles renderer (requires <pkg>media-libs/openimageio</pkg> and
       <pkg>dev-libs/boost</pkg>).
     </flag>
     <flag name="cycles-device-oneapi">
@@ -266,6 +258,10 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       Adds support for FFMPEG enabling internal FFMPEG codecs support and
       possibly external codec support if added.
     </flag>
+    <flag name="cycles-hip">
+      Adds support for GPU rendering via the HIP render device with the Cycles
+      renderer.
+    </flag>
     <flag name="joystick">
       Adds support for a joystick through SDL used for the Blender Game Engine
       (BGE, 2.79.x only).
@@ -273,12 +269,19 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
     <flag name="llvm">
       Enable features depending on llvm.
     </flag>
-    <flag name="llvm-11">
-      Build against llvm:11 to avoid multiple libLLVM.so load bug.  This
+    <flag name="llvm-13">
+      Build against llvm:13 to avoid multiple libLLVM.so load bug.  This
       must correspond to the same LLVM linked to the system's Mesa.
     </flag>
-    <flag name="llvm-12">
-      Build against llvm:12 to avoid multiple libLLVM.so load bug.  This
+    <flag name="llvm-14">
+      Build against llvm:14 to avoid multiple libLLVM.so load bug.  This
+      must correspond to the same LLVM linked to the system's Mesa.
+
+      (Not officially supported upstream, but provided for distro compatibility)
+      [EXPERIMENTAL]
+    </flag>
+    <flag name="llvm-15">
+      Build against llvm:15 to avoid multiple libLLVM.so load bug.  This
       must correspond to the same LLVM linked to the system's Mesa.
     </flag>
     <flag name="man">
@@ -291,10 +294,10 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       Enable NDOF (3D Mouse) input device (SpaceNavigator and friends) support.
     </flag>
     <flag name="nvcc">
-      Use the NVCC compiler for CUDA/Optix support.
+      Use the NVCC compiler for CUDA®/Optix™ support.
     </flag>
     <flag name="nvrtc">
-      Use NVRTC to build the cubin compiler for CUDA support.
+      Use NVRTC to build the cubin compiler for CUDA® support.
     </flag>
     <flag name="openal">
       Adds 3D sound support.
@@ -304,7 +307,7 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       and general use.
     </flag>
     <flag name="opencl">
-      Allow OpenCL Graphics Acceleration. This may require extra graphics card
+      Allow OpenCL™ Graphics Acceleration. This may require extra graphics card
       drivers.
     </flag>
     <flag name="openimagedenoise">
@@ -325,7 +328,7 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       Add VR features.
     </flag>
     <flag name="optix">
-      Build cycles renderer with nVidia OptiX support on GeForce/Quadro RTX GPUs
+      Build cycles renderer with NVIDIA® OptiX™ support on GeForce/Quadro RTX GPUs
       for hardware accelerated rendering and denoising.
     </flag>
     <flag name="osl">
@@ -386,7 +389,8 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       Adds support for the Xvid codec to render and output MPEG-4 video.
     </flag>
     <flag name="rN">
-      FOR INTERNAL USE ONLY.  Bump revision while keeping CCACHE paths for faster rebuilds.
+      Ebuild revision.  FOR INTERNAL USE ONLY.  Bumps the revision while keeping
+      CCACHE paths for faster rebuilds.
     </flag>
   </use>
 </pkgmetadata>
