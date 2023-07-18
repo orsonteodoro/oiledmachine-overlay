@@ -1150,6 +1150,17 @@ eerror
 				targets+=";${cuda_target}"
 			fi
 		done
+		if [[ -z "${targets}" ]] ; then
+	# We don't use the upstream fallback because of bugs or hardware/toolkit
+	# incompatiblity.
+eerror
+eerror "BLENDER_CUDA_TARGETS must be set.  See metadata.xml for details."
+eerror "Add at least one of the following below or disable the cuda USE flag."
+eerror
+eerror "Acceptable values:  ${CUDA_TARGETS[@]}"
+eerror
+			die
+		fi
 		targets=$(echo "${targets}" \
 			| sed -e "s|^;||g")
 		mycmakeargs+=(
