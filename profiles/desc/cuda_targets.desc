@@ -1,0 +1,17 @@
+# This file is part of the blender eclass, oidn ebuild.
+
+# Known from encountered projects.  Not all are listed.
+cuda_targets_sm_30 - Kepler v0
+cuda_targets_sm_35 - Kepler v5
+cuda_targets_sm_37 - Kepler v7
+cuda_targets_sm_50 - Maxwell v0
+cuda_targets_sm_52 - Maxwell v2
+cuda_targets_sm_60 - Pascal v0
+cuda_targets_sm_61 - Pascal v1
+cuda_targets_sm_70 - Volta v0
+cuda_targets_sm_75 - Volta v5
+cuda_targets_sm_86 - Ampere v6
+cuda_targets_sm_89 - Ampere v9
+cuda_targets_sm_90 - Hopper v0
+cuda_targets_compute_75 - Turing virtual architecture
+cuda_targets_compute_89 - Ada Lovelace virtual architecture

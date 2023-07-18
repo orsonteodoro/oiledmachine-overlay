@@ -34,7 +34,13 @@ ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 LLVM_SLOTS=( 16 15 14 13 12 11 10 )
-AMD_GPU_TARGETS=(
+CUDA_TARGETS=(
+	sm_70
+	sm_75
+	sm_80
+	sm_90
+)
+HIP_TARGETS=(
 	gfx1030
 	gfx1031
 	gfx1100
@@ -42,8 +48,9 @@ AMD_GPU_TARGETS=(
 	gfx1102
 )
 IUSE+="
+${CUDA_TARGETS[@]/#/cuda_targets_}
+${HIP_TARGETS[@]/#/amdgpu_targets_}
 ${LLVM_SLOTS[@]/#/llvm-}
-${AMD_GPU_TARGETS[@]/#/amdgpu_targets_}
 +apps +built-in-weights +clang cpu cuda custom-tc doc gcc hip openimageio
 video_cards_nvidia
 "
@@ -51,10 +58,13 @@ REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	cuda? (
 		video_cards_nvidia
+		|| (
+			${CUDA_TARGETS[@]/#/cuda_targets_}
+		)
 	)
 	hip? (
 		|| (
-			${AMD_GPU_TARGETS[@]/#/amdgpu_targets_}
+			${HIP_TARGETS[@]/#/amdgpu_targets_}
 		)
 	)
 	^^ (
@@ -281,6 +291,34 @@ einfo
 		mycmakeargs+=(
 			-DHIP_COMPILER_PATH="${ESYSROOT}/usr/lib/llvm/${llvm_slot}"
 		)
+
+		# Speed up build time
+		local targets=""
+		for hip_target in ${HIP_TARGETS[@]} ; do
+			if use "${hip_target/#/amdgpu_targets_}" ; then
+				targets+=";${hip_target}"
+			fi
+		done
+		targets=$(echo "${targets}" \
+			| sed -e "s|^;||g")
+		mycmakeargs+=(
+			-DGPU_TARGETS="${targets}"
+		)
+einfo "HIP_TARGETS:  ${targets}"
+	fi
+
+	if use cuda ; then
+		local targets=""
+		for cuda_target in ${CUDA_TARGETS[@]} ; do
+			if use "${cuda_target/#/cuda_targets_}" ; then
+				targets+=";${cuda_target}"
+			else
+				sed -i -e "/${cuda_target}/d" devices/cuda/CMakeLists.txt || die
+			fi
+		done
+		targets=$(echo "${targets}" \
+			| sed -e "s|^;||g")
+einfo "CUDA_TARGETS:  ${targets}"
 	fi
 
 	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then

@@ -85,20 +85,20 @@ CUDA_TARGETS=(
 )
 
 HIP_TARGETS=(
-	amdgpu_targets_gfx900
-	amdgpu_targets_gfx90c
-	amdgpu_targets_gfx902
-	amdgpu_targets_gfx1010
-	amdgpu_targets_gfx1011
-	amdgpu_targets_gfx1012
-	amdgpu_targets_gfx1030
-	amdgpu_targets_gfx1031
-	amdgpu_targets_gfx1032
-	amdgpu_targets_gfx1034
-	amdgpu_targets_gfx1035
-	amdgpu_targets_gfx1100
-	amdgpu_targets_gfx1101
-	amdgpu_targets_gfx1102
+	gfx900
+	gfx90c
+	gfx902
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1034
+	gfx1035
+	gfx1100
+	gfx1101
+	gfx1102
 )
 
 # gen_llvm_iuse is the same as Mesa and LLVM latest stable keyword.
@@ -113,8 +113,9 @@ gen_llvm_iuse()
 IUSE+="
 $(gen_llvm_iuse)
 ${CPU_FLAGS_3_3[@]%:*}
+${CUDA_TARGETS[@]/#/cuda_targets_}
 ${FFMPEG_IUSE}
-${HIP_TARGETS[@]}
+${HIP_TARGETS[@]/#/amdgpu_targets_}
 ${OPENVDB_ABIS[@]}
 +X +abi10-compat +alembic -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles -cycles-device-oneapi +cycles-path-guiding +dds
@@ -173,6 +174,9 @@ REQUIRED_USE+="
 			nvcc
 		)
 		cycles
+		|| (
+			${CUDA_TARGETS[@]/#/cuda_targets_}
+		)
 	)
 	cycles? (
 		tbb
@@ -190,7 +194,7 @@ REQUIRED_USE+="
 		!nanovdb
 		cycles
 		|| (
-			${HIP_TARGETS[@]}
+			${HIP_TARGETS[@]/#/amdgpu_targets_}
 		)
 	)
 	materialx? (
@@ -1109,22 +1113,12 @@ eerror
 	# Speed up build time
 	if use cuda ; then
 		local targets=""
+		local cuda_target
 		for cuda_target in ${CUDA_TARGETS[@]} ; do
-			if [[ "${BLENDER_CUDA_TARGETS}" =~ (^| )"${cuda_target}"($| ) ]] ; then
+			if use "${cuda_target/#/cuda_targets_}" ; then
 				targets+=";${cuda_target}"
 			fi
 		done
-		if [[ -z "${targets}" ]] ; then
-	# We don't use the upstream fallback because of bugs or hardware/toolkit
-	# incompatiblity.
-eerror
-eerror "BLENDER_CUDA_TARGETS must be set.  See metadata.xml for details."
-eerror "Add at least one of the following below or disable the cuda USE flag."
-eerror
-eerror "Acceptable values:  ${CUDA_TARGETS[@]}"
-eerror
-			die
-		fi
 		targets=$(echo "${targets}" \
 			| sed -e "s|^;||g")
 		mycmakeargs+=(
@@ -1136,8 +1130,11 @@ einfo "CUDA_TARGETS:  ${targets}"
 	# Speed up build time
 	if use hip ; then
 		local targets=""
+		local hip_target
 		for hip_target in ${HIP_TARGETS[@]} ; do
-			use "${hip_target}" && targets+=";${hip_target/amdgpu_targets_}"
+			if use "${hip_target/#/amdgpu_targets_}" ; then
+				targets+=";${hip_target}"
+			fi
 		done
 		targets=$(echo "${targets}" \
 			| sed -e "s|^;||g")

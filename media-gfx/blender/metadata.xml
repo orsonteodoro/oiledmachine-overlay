@@ -144,28 +144,10 @@
 
     You may choose a few needed targets to speed up compile time.
 
-    BLENDER_CUDA_TARGETS -  a per-package environment variable containing one
-    of the following separated by spaces:
-
-      3.3.x:  sm_30 sm_35 sm_37 sm_50 sm_52 sm_60 sm_61 sm_70 sm_75 sm_86 compute_75
-      3.5.x:  sm_30 sm_35 sm_37 sm_50 sm_52 sm_60 sm_61 sm_70 sm_75 sm_86 compute_75
-      3.6.x:  sm_30 sm_35 sm_37 sm_50 sm_52 sm_60 sm_61 sm_70 sm_75 sm_86 sm_89 compute_89
-
-    Example:
-
-      Contents of /etc/portage/env/blender.conf:
-
-        BLENDER_CUDA_TARGETS="sm_89 compute_89"
-
-
-      Contents of /etc/portage/package.env:
-
-        media-gfx/blender blender.conf
-
-
     See also
-    https://en.wikipedia.org/wiki/CUDA#GPUs_supported        # sm_xy corresponds to "Compute capability (version)"
-    
+
+      https://en.wikipedia.org/wiki/CUDA#GPUs_supported        # sm_xy corresponds to "Compute capability (version)"
+      https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#virtual-architecture-feature-list
 
 
   -->
