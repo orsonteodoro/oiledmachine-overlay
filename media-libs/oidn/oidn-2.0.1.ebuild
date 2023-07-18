@@ -54,7 +54,32 @@ ${LLVM_SLOTS[@]/#/llvm-}
 +apps +built-in-weights +clang cpu cuda custom-tc doc gcc hip openimageio
 video_cards_nvidia
 "
+
+gen_required_use_cuda_targets() {
+	local x
+	for x in ${CUDA_TARGETS[@]} ; do
+		echo "
+			cuda_targets_${x}? (
+				cuda
+			)
+		"
+	done
+}
+
+gen_required_use_hip_targets() {
+	local x
+	for x in ${HIP_TARGETS[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				hip
+			)
+		"
+	done
+}
+
 REQUIRED_USE+="
+	$(gen_required_use_cuda_targets)
+	$(gen_required_use_hip_targets)
 	${PYTHON_REQUIRED_USE}
 	cuda? (
 		video_cards_nvidia

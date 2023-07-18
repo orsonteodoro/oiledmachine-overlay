@@ -134,6 +134,28 @@ inherit blender
 # See the blender.eclass for the LICENSE variable.
 LICENSE+=" CC-BY-4.0" # The splash screen is CC-BY stated in https://www.blender.org/download/demo-files/ )
 
+gen_required_use_cuda_targets() {
+	local x
+	for x in ${CUDA_TARGETS[@]} ; do
+		echo "
+			cuda_targets_${x}? (
+				cuda
+			)
+		"
+	done
+}
+
+gen_required_use_hip_targets() {
+	local x
+	for x in ${HIP_TARGETS[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				hip
+			)
+		"
+	done
+}
+
 # The below are hardcoded enabled in the dependency builder but no explicit option
 IMPLIED_RELEASE_BUILD_REQUIRED_USE="
 	aom
@@ -145,6 +167,8 @@ IMPLIED_RELEASE_BUILD_REQUIRED_USE="
 	xvid
 "
 REQUIRED_USE+="
+	$(gen_required_use_cuda_targets)
+	$(gen_required_use_hip_targets)
 	!boost? (
 		!alembic
 		!color-management
