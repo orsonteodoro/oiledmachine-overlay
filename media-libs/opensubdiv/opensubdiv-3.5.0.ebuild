@@ -37,7 +37,10 @@ LEGACY_TBB_SLOT="2"
 RDEPEND="
 	${PYTHON_DEPS}
 	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-4.0:*
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*
+			=dev-util/nvidia-cuda-toolkit-11*
+		)
 	)
 	glew? (
 		media-libs/glew:=
@@ -130,6 +133,21 @@ einfo "CXX:\t\t${CXX}"
 		-DNO_TESTS=$(usex !test)
 		-DNO_TUTORIALS=$(usex !tutorials)
 	)
+
+	if ! use cuda ; then
+		:;
+	elif [[ -n "${OSD_CUDA_NVCC_FLAGS}" ]] ; then
+		# See
+		# https://github.com/PixarAnimationStudios/OpenSubdiv/issues/1299#issuecomment-1490813096
+		# https://github.com/PixarAnimationStudios/OpenSubdiv/issues/965#issuecomment-380939742
+		mycmakeargs+=(
+			-DOSD_CUDA_NVCC_FLAGS="${OSD_CUDA_NVCC_FLAGS}"
+		)
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
+		mycmakeargs+=(
+			-DOSD_CUDA_NVCC_FLAGS="--gpu-architecture compute_50"
+		)
+	fi
 
 	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(
