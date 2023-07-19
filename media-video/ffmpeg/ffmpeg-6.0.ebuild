@@ -816,8 +816,6 @@ REQUIRED_USE+="
 	cuda? (
 		|| (
 			cuda-filters
-			cuda-llvm
-			cuda-nvcc
 			nvdec
 			nvenc
 		)
