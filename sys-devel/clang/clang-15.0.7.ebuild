@@ -162,9 +162,13 @@ llvm.org_set_globals
 SRC_URI+="
 https://github.com/llvm/llvm-project/commit/71a9b8833231a285b4d8d5587c699ed45881624b.patch
 	-> ${PN}-71a9b88.patch
+https://github.com/llvm/llvm-project/commit/817340569bf98b696329c53508a0d87cc0daec25.patch
+	-> ${PN}-8173405.patch
 "
 # 71a9b88 - [PATCH] [X86] Use unsigned int for return type of __get_cpuid_max.
 #   Fix for compiler-rt-sanitizers[clang,scudo]
+# 8173405 - [CUDA] make use of deprecated texture API conditional on CUDA version.
+#   Fix for CUDA 12.2
 
 gen_rdepend() {
 	local f
@@ -397,6 +401,8 @@ src_prepare() {
 	eapply "${FILESDIR}/clang-14.0.0.9999-add-include-path.patch"
 
 	eapply_hardened
+
+	eapply -p2 "${DISTDIR}/${PN}-8173405.patch"
 
 	# Add Gentoo Portage Prefix for Darwin.  See prefix-dirs.patch.
 	eprefixify \
