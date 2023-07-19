@@ -1,4 +1,4 @@
-# This file is part of the blender eclass, oidn ebuild.
+# This file is part of the blender eclass, oidn, xpra ebuilds.
 
 # Known from encountered projects.  Not all are listed.
 cuda_targets_sm_30 - Support Kepler v0 or later
@@ -6,10 +6,13 @@ cuda_targets_sm_35 - Support Kepler v5 or later
 cuda_targets_sm_37 - Support Kepler v7 or later
 cuda_targets_sm_50 - Support Maxwell v0 or later
 cuda_targets_sm_52 - Support Maxwell v2 or later
+cuda_targets_sm_53 - Support Maxwell v3 or later
 cuda_targets_sm_60 - Support Pascal v0 or later
 cuda_targets_sm_61 - Support Pascal v1 or later
+cuda_targets_sm_62 - Support Pascal v2 or later
 cuda_targets_sm_70 - Support Volta v0 or later
 cuda_targets_sm_75 - Support Turing v5 or later
+cuda_targets_sm_80 - Support Ampere v0 or later
 cuda_targets_sm_86 - Support Ampere v6 or later
 cuda_targets_sm_89 - Support Ada Lovelace v9 or later
 cuda_targets_sm_90 - Support Hopper v0 or later
