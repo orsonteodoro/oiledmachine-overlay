@@ -29,9 +29,7 @@ X86_CPU_FEATURES=(
 # For optix requirements, see
 #   https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.12.0/src/cmake/externalpackages.cmake
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
-LLVM_SLOTS=( 16 15 14 13 )
-LLVM_SUPPORT=( ${LLVM_SLOTS[@]} ) # Upstream supports llvm:9 to llvm:15 but only >=14 available on the distro.
-LLVM_SUPPORT_=( ${LLVM_SUPPORT[@]/#/llvm-} )
+LLVM_SLOTS=( 15 14 13 )
 OPENEXR_V2_PV="2.5.8 2.5.7"
 OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
 QT5_MIN="5.6"
@@ -39,14 +37,14 @@ QT6_MIN="6"
 IUSE+="
 ${CUDA_TARGETS[@]/#/cuda_targets_}
 ${CPU_FEATURES[@]%:*}
-${LLVM_SUPPORT_[@]}
+${LLVM_SLOTS[@]/#/llvm-}
 cuda doc optix partio python qt5 qt6 static-libs test wayland X
 
 r3
 "
 REQUIRED_USE+="
 	^^ (
-		${LLVM_SUPPORT_[@]}
+		${LLVM_SLOTS[@]/#/llvm-}
 	)
 	cuda? (
 		|| (
@@ -77,6 +75,7 @@ REQUIRED_USE+="
 "
 PATCHES=(
 	"${FILESDIR}/osl-1.12.13.0-change-ci-test.bash.patch"
+	"${FILESDIR}/osl-1.12.13.0-cuda-noinline-fix.patch"
 )
 TEST_MODE="distro" # Can be upstream or distro
 
@@ -272,12 +271,6 @@ ewarn
 ewarn "The optix USE flag is untested.  Left for owners of those kinds of GPUs"
 ewarn "to test and fix."
 ewarn
-		if [[ -z "${CUDA_TOOLKIT_ROOT_DIR}" ]] ; then
-ewarn
-ewarn "CUDA_TOOLKIT_ROOT_DIR is not set.  Please add it in your make.conf or as"
-ewarn "a per-package environmental variable."
-ewarn
-		fi
 	fi
 
 	if use python ; then
@@ -299,9 +292,18 @@ src_prepare() {
 
 src_configure() {
 	configure_abi() {
-		export CC="${CHOST}-clang"
-		export CXX="${CHOST}-clang++"
+		local llvm_slot
+		for llvm_slot in ${LLVM_SLOTS[@]} ; do
+			if use llvm-${llvm_slot} ; then
+				einfo "Linking with LLVM-${llvm_slot}"
+				break
+			fi
+		done
+
+		export CC="${CHOST}-clang-${llvm_slot}"
+		export CXX="${CHOST}-clang++-${llvm_slot}"
 		strip-unsupported-flags
+
 		local lib_type
 		for lib_type in $(get_lib_type) ; do
 			export CMAKE_USE_DIR="${S}"
@@ -334,7 +336,7 @@ src_configure() {
 				-DLLVM_STATIC=OFF
 				#-DOSL_SHADER_INSTALL_DIR="include/OSL/shaders"
 				-DSTOP_ON_WARNING=OFF
-				#-DUSE_CCACHE=OFF
+				-DUSE_CCACHE=OFF
 				-DUSE_CUDA=$(usex cuda)
 				-DUSE_OPTIX=$(usex optix)
 				-DUSE_PARTIO=$(usex partio)
@@ -342,6 +344,12 @@ src_configure() {
 				-DUSE_QT=${has_qt}
 				-DUSE_SIMD="$(IFS=","; echo "${mysimd[*]}")"
 			)
+
+			if use cuda ; then
+				mycmakeargs+=(
+					-DCUDA_TOOLKIT_ROOT_DIR="/opt/cuda"
+				)
+			fi
 
 			if [[ -n "${OSL_CUDA_TARGET_ARCH}" ]] ; then
 				# Example:  OSL_CUDA_TARGET_ARCH="sm_60"
