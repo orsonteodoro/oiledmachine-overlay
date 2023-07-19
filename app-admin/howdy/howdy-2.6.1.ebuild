@@ -20,20 +20,36 @@ LICENSE="MIT BSD CC0-1.0"
 # BSD - howdy/src/recorders/v4l2.py
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE+=" cuda ffmpeg pyv4l2"
+CUDA_TARGETS=(
+	sm_50
+)
+IUSE+="
+${CUDA_TARGETS[@]/#/cuda_targets_}
+cuda ffmpeg pyv4l2
+"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
+	cuda? (
+		|| (
+			${CUDA_TARGETS[@]/#/cuda_targets_}
+		)
+	)
+	cuda_targets_sm_50? (
+		cuda
+	)
 "
 DEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_any_dep 'sys-auth/pam-python[${PYTHON_SINGLE_USEDEP}]')
 	>=dev-libs/inih-52
-	>=sci-libs/dlib-19.16[${PYTHON_USEDEP},cuda?,python]
 	app-admin/sudo
 	dev-libs/boost[${PYTHON_USEDEP},python]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	media-libs/opencv[${PYTHON_USEDEP},contribhdf,python,v4l]
 	sys-libs/pam
+	cuda_targets_sm_50? (
+		>=sci-libs/dlib-19.21[${PYTHON_USEDEP},cuda?,python]
+	)
 	ffmpeg? (
 		dev-python/ffmpeg-python[${PYTHON_USEDEP}]
 		media-video/ffmpeg[v4l]

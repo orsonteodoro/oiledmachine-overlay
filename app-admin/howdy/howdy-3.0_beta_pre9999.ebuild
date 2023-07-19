@@ -22,9 +22,23 @@ LICENSE="MIT BSD CC0-1.0"
 # Live ebuilds do not get KEYWORDS.  Distro policy.
 
 SLOT="0"
-IUSE+=" cuda ffmpeg gtk pyv4l2"
+CUDA_TARGETS=(
+	sm_50
+)
+IUSE+="
+${CUDA_TARGETS[@]/#/cuda_targets_}
+cuda ffmpeg gtk pyv4l2
+"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
+	cuda? (
+		|| (
+			${CUDA_TARGETS[@]/#/cuda_targets_}
+		)
+	)
+	cuda_targets_sm_50? (
+		cuda
+	)
 "
 DEPEND+="
 	${PYTHON_DEPS}
@@ -35,6 +49,9 @@ DEPEND+="
 	dev-python/numpy[${PYTHON_USEDEP}]
 	media-libs/opencv[${PYTHON_USEDEP},contribhdf,python,v4l]
 	sys-libs/pam
+	cuda_targets_sm_50? (
+		>=sci-libs/dlib-19.21[${PYTHON_USEDEP},cuda?,python]
+	)
 	ffmpeg? (
 		dev-python/ffmpeg-python[${PYTHON_USEDEP}]
 		media-video/ffmpeg[v4l]
