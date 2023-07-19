@@ -1018,7 +1018,7 @@ RDEPEND+="
 	codec2? (
 		media-libs/codec2[${MULTILIB_USEDEP}]
 	)
-	cuda-filters? (
+	cuda? (
 		>=media-libs/nv-codec-headers-${NV_CODEC_HEADERS_PV}
 	)
 	cuda-nvcc? (
@@ -1222,12 +1222,6 @@ RDEPEND+="
 	svg? (
 		gnome-base/librsvg:2=[${MULTILIB_USEDEP}]
 		x11-libs/cairo[${MULTILIB_USEDEP}]
-	)
-	nvdec? (
-		>=media-libs/nv-codec-headers-${NV_CODEC_HEADERS_PV}
-	)
-	nvenc? (
-		>=media-libs/nv-codec-headers-${NV_CODEC_HEADERS_PV}
 	)
 	svt-av1? (
 		>=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}]
