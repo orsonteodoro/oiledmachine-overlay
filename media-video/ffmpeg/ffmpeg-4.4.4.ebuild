@@ -823,6 +823,8 @@ REQUIRED_USE+="
 			cuda-nvcc
 		)
 		|| (
+			cuda-llvm
+			cuda-nvcc
 			nvdec
 			nvenc
 		)
@@ -846,6 +848,12 @@ REQUIRED_USE+="
 		!nonfree
 		!re-codecs
 		proprietary-codecs-disable
+	)
+	nvdec? (
+		cuda
+	)
+	nvenc? (
+		cuda
 	)
 	openssl? (
 		!gnutls
