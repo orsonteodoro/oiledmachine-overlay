@@ -47,6 +47,7 @@ CUDA_TARGETS=(
 	sm_75
 	sm_80
 	sm_86
+	sm_90 # Added by ebuild
 )
 
 IUSE+="
@@ -216,6 +217,7 @@ REQUIRED_USE+="
 			cuda_targets_sm_61
 			cuda_targets_sm_75
 			cuda_targets_sm_86
+			cuda_targets_sm_90
 		)
 	)
 	nvjpeg? (
@@ -329,6 +331,9 @@ RDEPEND+="
 	)
 	cuda_targets_sm_86? (
 		>=dev-util/nvidia-cuda-toolkit-11.1:=
+	)
+	cuda_targets_sm_90? (
+		>=dev-util/nvidia-cuda-toolkit-11.8:=
 	)
 	cpu-percent? (
 		dev-python/psutil[${PYTHON_USEDEP}]
