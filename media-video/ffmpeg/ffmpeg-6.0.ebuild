@@ -1349,6 +1349,7 @@ PATCHES=(
 	"${FILESDIR}/${P}-DECLARE_ALIGNED.patch"
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"			# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
+	"${FILESDIR}/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
 )
 
 MULTILIB_WRAPPED_HEADERS=(
@@ -2196,6 +2197,10 @@ eerror
 		filter-flags '-fuse-ld=*'
 		append-ldflags '-fuse-ld=mold'
 		strip-unsupported-flags
+	fi
+
+	if use cuda ; then
+		export CUDA_HOME="/opt/cuda"
 	fi
 
 	if use cuda-nvcc && [[ -n "${FFMPEG_NVCCFLAGS}" ]] ; then

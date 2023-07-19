@@ -1,0 +1,13 @@
+--- a/configure.orig	2023-07-18 21:29:46.660776222 -0700
++++ b/configure	2023-07-18 21:31:03.060774246 -0700
+@@ -6283,7 +6283,9 @@ if [ -z "$nvccflags" ]; then
+     nvccflags=$nvccflags_default
+ fi
+ 
+-if enabled x86_64 || enabled ppc64 || enabled aarch64; then
++if enabled cuda_nvcc ; then
++    :;
++elif enabled x86_64 || enabled ppc64 || enabled aarch64; then
+     nvccflags="$nvccflags -m64"
+ else
+     nvccflags="$nvccflags -m32"
