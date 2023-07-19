@@ -450,6 +450,14 @@
   for x in $(cat t | tr " " "\n" | sort | uniq) ; do echo "-${x}_filter" ; done
 
 
+  FFMPEG_NVCCFLAGS
+
+   You can override the defaults to nvcc flags passed to the nvcc compiler.
+
+   Example:
+
+   FFMPEG_NVCCFLAGS="-gencode arch=compute_60,code=sm_61 -O2"
+
   Additional notes
 
    * The pic USE flag may be required for LTO builds.
@@ -501,6 +509,12 @@
   </flag>
   <flag name="cuda">
     Enables CUDA-based acceleration. Mostly used for specific filters.
+  </flag>
+  <flag name="cuda-llvm">
+    Use clang to build CUDA filters.
+  </flag>
+  <flag name="cuda-nvcc">
+    Use nvcc to build CUDA filters.
   </flag>
   <flag name="dav1d">
     Enables AV1 decoding via <pkg>media-libs/dav1d</pkg>.

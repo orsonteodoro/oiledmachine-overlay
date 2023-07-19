@@ -180,7 +180,8 @@ FFMPEG_FLAG_MAP=(
 	appkit
 	bs2b:libbs2b
 	chromaprint
-	cuda:cuda-llvm
+	cuda-llvm
+	cuda-nvcc
 	flite:libflite
 	frei0r
 	vmaf:libvmaf
@@ -375,16 +376,23 @@ FFTOOLS=(
 #   https://github.com/FFmpeg/FFmpeg/blob/master/LICENSE.md#incompatible-libraries
 
 # +re-codecs is based on unpatched behavior to prevent breaking changes.
+
+CUDA_TARGETS=(
+	sm_30
+	sm_60
+)
+
 IUSE+="
 ${CPU_FEATURES_MAP[@]%:*}
+${CUDA_TARGETS[@]/#/cuda_targets_}
 ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
-alsa chromium -clear-config-first doc +encode gdbm jack-audio-connection-kit
-jack2 mold opencl-icd-loader oss pgo pic pipewire proprietary-codecs
-proprietary-codecs-disable proprietary-codecs-disable-nc-developer
-proprietary-codecs-disable-nc-user +re-codecs sndio static-libs test v4l
-wayland r14
+alsa chromium -clear-config-first cuda doc +encode gdbm
+jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo pic pipewire
+proprietary-codecs proprietary-codecs-disable
+proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
++re-codecs sndio static-libs test v4l wayland r14
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -581,7 +589,7 @@ LICENSE_REQUIRED_USE="
 	codec2? (
 		$(gen_relicense lgpl2_1)
 	)
-	cuda? (
+	cuda-nvcc? (
 		nonfree
 	)
 	encode? (
@@ -806,10 +814,26 @@ REQUIRED_USE+="
 		proprietary-codecs-disable-nc-user
 	)
 	cuda? (
+		^^ (
+			cuda-llvm
+			cuda-nvcc
+		)
+		cuda_targets_sm_30? (
+			cuda-llvm
+		)
+		cuda_targets_sm_60? (
+			cuda-nvcc
+		)
 		|| (
 			nvdec
 			nvenc
 		)
+	)
+	cuda_targets_sm_30? (
+		cuda
+	)
+	cuda_targets_sm_60? (
+		cuda
 	)
 	gnutls? (
 		!openssl
@@ -978,6 +1002,14 @@ RDEPEND+="
 	)
 	codec2? (
 		media-libs/codec2[${MULTILIB_USEDEP}]
+	)
+	cuda-nvcc? (
+		cuda_targets_sm_60? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-12*:=
+			)
+		)
 	)
 	dav1d? (
 		>=media-libs/dav1d-0.4.0:0=[${MULTILIB_USEDEP}]
@@ -1253,7 +1285,7 @@ BDEPEND+="
 			>=dev-lang/yasm-1.3
 		)
 	)
-	cuda? (
+	cuda-llvm? (
 		>=sys-devel/clang-7[llvm_targets_NVPTX]
 	)
 	doc? (
@@ -2148,6 +2180,12 @@ eerror
 		filter-flags '-fuse-ld=*'
 		append-ldflags '-fuse-ld=mold'
 		strip-unsupported-flags
+	fi
+
+	if use cuda-nvcc && [[ -n "${FFMPEG_NVCCFLAGS}" ]] ; then
+		myconf+=(
+			--nvccflags="${FFMPEG_NVCCFLAGS}"
+		)
 	fi
 
 einfo
