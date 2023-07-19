@@ -23,7 +23,7 @@ if [ "${PV#9999}" != "${PV}" ] ; then
 fi
 
 TRAIN_SANDBOX_EXCEPTION_VAAPI=1
-inherit flag-o-matic multilib multilib-minimal toolchain-funcs ${SCM}
+inherit cuda flag-o-matic multilib multilib-minimal toolchain-funcs ${SCM}
 inherit flag-o-matic-om llvm uopts
 
 DESCRIPTION="Complete solution to record/convert/stream audio and video. Includes libavcodec"
@@ -831,11 +831,19 @@ REQUIRED_USE+="
 			nvenc
 		)
 	)
+	cuda-llvm? (
+		cuda_targets_sm_30
+	)
+	cuda-nvcc? (
+		cuda_targets_sm_60
+	)
 	cuda_targets_sm_30? (
 		cuda
+		cuda-llvm
 	)
 	cuda_targets_sm_60? (
 		cuda
+		cuda-nvcc
 	)
 	gnutls? (
 		!openssl
@@ -1759,6 +1767,8 @@ src_prepare() {
 	fi
 
 	default
+
+	use cuda && cuda_src_prepare
 
 	# -fdiagnostics-color=auto gets appended after user flags which
 	# will ignore user's preference.
