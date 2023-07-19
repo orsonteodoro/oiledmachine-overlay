@@ -17,7 +17,11 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # Live ebuilds do not get keyworded.
 # cuda, optix, allow-fetchcontent are enabled upstream by default but
 # are disabled
+CUDA_TARGETS=(
+	sm_75
+)
 IUSE+="
+${CUDA_TARGETS[@]/#/cuda_targets_}
 +benchmark +blosc cuda -doc +examples +interactive-renderer -log4cplus
 -magicavoxel +opencl optix +opengl -openexr +openvdb system-glfw +tbb +test
 test-renderer +tools +zlib
@@ -28,6 +32,14 @@ REQUIRED_USE+="
 	)
 	blosc? (
 		openvdb
+	)
+	cuda? (
+		^^ (
+			${CUDA_TARGETS[@]/#/cuda_targets_}
+		)
+	)
+	cuda_targets_sm_75? (
+		cuda
 	)
 	interactive-renderer? (
 		tools
@@ -91,8 +103,10 @@ DEPEND+="
 		>=dev-libs/c-blosc-1.17
 	)
 	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-7.5:=
-		>=x11-drivers/nvidia-drivers-352.31
+		|| (
+			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-12*:=
+		)
 	)
 	opencl? (
 		virtual/opencl
@@ -295,6 +309,13 @@ ewarn "Switch to clang + lld if it takes more than 1.5 hrs to build."
 		-DUSE_EXR=$(usex openexr)
 		-DUSE_LOG4CPLUS=$(usex log4cplus)
 	)
+
+	if use cuda ; then
+		if [[ -n "${NANOVDB_CUDA_ARCHITECTURES}" ]] ; then
+			# Example override, NANOVDB_CUDA_ARCHITECTURES="75" an as environment variable.
+			-DCMAKE_CUDA_ARCHITECTURES="${NANOVDB_CUDA_ARCHITECTURES}"
+		fi
+	fi
 
 	if use magicavoxel ; then
 		mycmakeargs+=(
