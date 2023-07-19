@@ -388,7 +388,7 @@ ${CUDA_TARGETS[@]/#/cuda_targets_}
 ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
-alsa chromium -clear-config-first cuda doc +encode gdbm
+alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
 jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo pic pipewire
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
@@ -814,10 +814,6 @@ REQUIRED_USE+="
 		proprietary-codecs-disable-nc-user
 	)
 	cuda? (
-		^^ (
-			cuda-llvm
-			cuda-nvcc
-		)
 		cuda_targets_sm_30? (
 			cuda-llvm
 		)
@@ -825,11 +821,19 @@ REQUIRED_USE+="
 			cuda-nvcc
 		)
 		|| (
+			cuda-filters
 			cuda-llvm
 			cuda-nvcc
 			nvdec
 			nvenc
 		)
+	)
+	cuda-filters? (
+		^^ (
+			cuda-llvm
+			cuda-nvcc
+		)
+		cuda
 	)
 	cuda-llvm? (
 		cuda_targets_sm_30
@@ -985,6 +989,7 @@ LICENSE_RDEPEND="
 
 # Only vaapi_x11 and vaapi_drm checks.  No vaapi_wayland checks in configure.
 # Update both !openssl and openssl USE flags.
+NV_CODEC_HEADERS_PV="9.1.23.1"
 RDEPEND+="
 	${LICENSE_RDEPEND}
 	!openssl? (
@@ -1018,6 +1023,9 @@ RDEPEND+="
 	)
 	codec2? (
 		media-libs/codec2[${MULTILIB_USEDEP}]
+	)
+	cuda-filters? (
+		>=media-libs/nv-codec-headers-${NV_CODEC_HEADERS_PV}
 	)
 	cuda-nvcc? (
 		cuda_targets_sm_60? (
@@ -1222,10 +1230,10 @@ RDEPEND+="
 		x11-libs/cairo[${MULTILIB_USEDEP}]
 	)
 	nvdec? (
-		>=media-libs/nv-codec-headers-9.1.23.1
+		>=media-libs/nv-codec-headers-${NV_CODEC_HEADERS_PV}
 	)
 	nvenc? (
-		>=media-libs/nv-codec-headers-9.1.23.1
+		>=media-libs/nv-codec-headers-${NV_CODEC_HEADERS_PV}
 	)
 	svt-av1? (
 		>=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}]
@@ -2039,6 +2047,16 @@ eerror
 		-fno-tree-pre \
 		-fno-tree-vrp
 
+	if use cuda-filters || use nvdec || use nvenc ; then
+		myconf+=(
+			--enable-ffnvcodec
+		)
+	else
+		myconf+=(
+			--disable-ffnvcodec
+		)
+	fi
+
 	local ffuse=( "${FFMPEG_FLAG_MAP[@]}" )
 
 	# Encoders
@@ -2063,13 +2081,15 @@ eerror
 		myconf+=( $(use_enable ${i%:*} ${i#*:}) )
 	done
 
-	if use nvdec || use nvenc ; then
+	if use cuda-filters ; then
 		myconf+=(
-			--enable-ffnvcodec
-		)
-	else
-		myconf+=(
-			--disable-ffnvcodec
+			--enable-filter=bilateral_cuda
+			--enable-filter=chromakey_cuda
+			--enable-filter=colorspace_cuda
+			--enable-filter=overlay_cuda
+			--enable-filter=scale_cuda
+			--enable-filter=thumbnail_cuda
+			--enable-filter=yadif_cuda
 		)
 	fi
 
@@ -2199,10 +2219,6 @@ eerror
 		filter-flags '-fuse-ld=*'
 		append-ldflags '-fuse-ld=mold'
 		strip-unsupported-flags
-	fi
-
-	if use cuda ; then
-		export CUDA_HOME="/opt/cuda"
 	fi
 
 	if use cuda-nvcc && [[ -n "${FFMPEG_NVCCFLAGS}" ]] ; then

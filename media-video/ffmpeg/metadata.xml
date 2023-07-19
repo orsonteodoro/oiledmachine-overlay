@@ -510,6 +510,9 @@
   <flag name="cuda">
     Enables CUDA-based acceleration. Mostly used for specific filters.
   </flag>
+  <flag name="cuda-filters">
+    Enables CUDA-based filters.
+  </flag>
   <flag name="cuda-llvm">
     Use clang to build CUDA filters.
   </flag>
