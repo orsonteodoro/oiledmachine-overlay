@@ -11,6 +11,9 @@ HOMEPAGE="http://opensource.imageworks.com/?p=osl"
 LICENSE="BSD"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="amd64 ~x86"
+CUDA_TARGETS=(
+	sm_60
+)
 X86_CPU_FEATURES=(
 	avx:avx
 	avx2:avx2
@@ -22,20 +25,42 @@ X86_CPU_FEATURES=(
 	sse4_2:sse4.2
 	ssse3:ssse3
 )
+# See https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.12.0/INSTALL.md
+# For optix requirements, see
+#   https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.12.0/src/cmake/externalpackages.cmake
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
 LLVM_SLOTS=( 16 15 14 13 )
 LLVM_SUPPORT=( ${LLVM_SLOTS[@]} ) # Upstream supports llvm:9 to llvm:15 but only >=14 available on the distro.
 LLVM_SUPPORT_=( ${LLVM_SUPPORT[@]/#/llvm-} )
+OPENEXR_V2_PV="2.5.8 2.5.7"
+OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
+QT5_MIN="5.6"
+QT6_MIN="6"
 IUSE+="
+${CUDA_TARGETS[@]/#/cuda_targets_}
 ${CPU_FEATURES[@]%:*}
 ${LLVM_SUPPORT_[@]}
-doc optix partio python qt5 qt6 static-libs test wayland X
+cuda doc optix partio python qt5 qt6 static-libs test wayland X
 
 r3
 "
 REQUIRED_USE+="
 	^^ (
 		${LLVM_SUPPORT_[@]}
+	)
+	cuda? (
+		|| (
+			${CUDA_TARGETS[@]/#/cuda_targets_}
+		)
+	)
+	cuda_targets_sm_60? (
+		cuda
+	)
+	optix? (
+		cuda
+		|| (
+			cuda_targets_sm_60
+		)
 	)
 	qt5? (
 		|| (
@@ -50,11 +75,6 @@ REQUIRED_USE+="
 		)
 	)
 "
-# See https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.12.0/INSTALL.md
-# For optix requirements, see
-#   https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.12.0/src/cmake/externalpackages.cmake
-QT5_MIN="5.6"
-QT6_MIN="6"
 PATCHES=(
 	"${FILESDIR}/osl-1.12.13.0-change-ci-test.bash.patch"
 )
@@ -63,11 +83,17 @@ TEST_MODE="distro" # Can be upstream or distro
 gen_llvm_depend()
 {
 	local s
-	for s in ${LLVM_SUPPORT[@]} ; do
+	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
 		llvm-${s}? (
-			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+			!cuda? (
+				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+			)
+			cuda? (
+				sys-devel/clang:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
+				sys-devel/llvm:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
+			)
 		)
 		"
 	done
@@ -75,13 +101,13 @@ gen_llvm_depend()
 
 gen_opx_llvm_rdepend() {
 	local s
-	for s in ${LLVM_SUPPORT[@]} ; do
+	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
 		llvm-${s}? (
 			(
-				sys-devel/clang:${s}[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
+				sys-devel/clang:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
 				sys-devel/lld:${s}
-				sys-devel/llvm:${s}[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
+				sys-devel/llvm:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
 			)
 		)
 		"
@@ -90,7 +116,7 @@ gen_opx_llvm_rdepend() {
 
 gen_llvm_bdepend() {
 	local s
-	for s in ${LLVM_SUPPORT[@]} ; do
+	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
 		llvm-${s}? (
 			(
@@ -103,8 +129,6 @@ gen_llvm_bdepend() {
 	done
 }
 
-OPENEXR_V2_PV="2.5.8 2.5.7"
-OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
 gen_openexr_pairs() {
 	local pv
 	for pv in ${OPENEXR_V3_PV} ; do
@@ -139,10 +163,14 @@ RDEPEND+="
 	>=dev-libs/pugixml-1.8[${MULTILIB_USEDEP}]
 	dev-libs/libfmt[${MULTILIB_USEDEP}]
 	sys-libs/zlib:=[${MULTILIB_USEDEP}]
+	cuda? (
+		>=dev-util/nvidia-cuda-toolkit-8:=
+	)
 	optix? (
-		$(python_gen_any_dep '>=media-libs/openimageio-1.8:=[${PYTHON_SINGLE_USEDEP}]')
+		$(python_gen_any_dep '
+			>=media-libs/openimageio-1.8:=[${PYTHON_SINGLE_USEDEP}]
+		')
 		>=dev-libs/optix-5.1
-		>=dev-util/nvidia-cuda-toolkit-8
 		|| (
 			$(gen_opx_llvm_rdepend)
 		)
@@ -184,6 +212,9 @@ BDEPEND+="
 		$(python_gen_any_dep '
 			media-libs/openimageio[truetype]
 		')
+		cuda? (
+			>=dev-util/nvidia-cuda-toolkit-10:=
+		)
 	)
 	>=dev-util/cmake-3.12
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -221,7 +252,7 @@ pkg_setup() {
 	# See https://github.com/imageworks/OpenShadingLanguage/blob/master/INSTALL.md
 	# Supports LLVM-{7..13} but should be the same throughout the system.
 	local s
-	for s in ${LLVM_SUPPORT[@]} ; do
+	for s in ${LLVM_SLOTS[@]} ; do
 		if use llvm-${s} ; then
 			einfo "Linking with LLVM-${s}"
 			export LLVM_MAX_SLOT=${s}
@@ -304,12 +335,20 @@ src_configure() {
 				#-DOSL_SHADER_INSTALL_DIR="include/OSL/shaders"
 				-DSTOP_ON_WARNING=OFF
 				#-DUSE_CCACHE=OFF
+				-DUSE_CUDA=$(usex cuda)
 				-DUSE_OPTIX=$(usex optix)
 				-DUSE_PARTIO=$(usex partio)
 				-DUSE_PYTHON=$(usex python)
 				-DUSE_QT=${has_qt}
 				-DUSE_SIMD="$(IFS=","; echo "${mysimd[*]}")"
 			)
+
+			if [[ -n "${OSL_CUDA_TARGET_ARCH}" ]] ; then
+				# Example:  OSL_CUDA_TARGET_ARCH="sm_60"
+				mycmakeargs+=(
+					-DCUDA_TARGET_ARCH="${OSL_CUDA_TARGET_ARCH}"
+				)
+			fi
 
 			if use test && [[ "${lib_type}" == "static" ]] ; then
 				# testshade.cpp:(.text+0xd8aa): undefined reference to `OSL_v1_12::OSLCompiler::compile_buffer
