@@ -25,8 +25,34 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 # cuda is default on upstream
 # test is default on upstream
-IUSE="cuda +doc +examples -glew +glfw +opencl +openmp +opengl +ptex +tbb test +tutorials +X"
+CUDA_TARGETS=(
+	sm_35
+	sm_50
+)
+IUSE="
+${CUDA_TARGETS[@]/#/cuda_targets_}
+cuda +doc +examples -glew +glfw +opencl +openmp +opengl +ptex +tbb test
++tutorials +X
+"
+
+gen_required_use_cuda_targets() {
+	local x
+	for x in ${CUDA_TARGETS[@]} ; do
+		echo  "
+			cuda_targets_${x}? (
+				cuda
+			)
+		"
+	done
+}
+
 REQUIRED_USE="
+	$(gen_required_use_cuda_targets)
+	cuda? (
+		|| (
+			${CUDA_TARGETS[@]/#/cuda_targets_}
+		)
+	)
 	X? (
 		glfw
 	)
@@ -36,10 +62,13 @@ ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 RDEPEND="
 	${PYTHON_DEPS}
-	cuda? (
+	cuda_targets_sm_35? (
+		=dev-util/nvidia-cuda-toolkit-11*:=
+	)
+	cuda_targets_sm_50? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-12*:=
 		)
 	)
 	glew? (
