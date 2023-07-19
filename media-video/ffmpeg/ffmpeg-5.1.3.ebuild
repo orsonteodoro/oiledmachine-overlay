@@ -814,12 +814,6 @@ REQUIRED_USE+="
 		proprietary-codecs-disable-nc-user
 	)
 	cuda? (
-		cuda_targets_sm_30? (
-			cuda-llvm
-		)
-		cuda_targets_sm_60? (
-			cuda-nvcc
-		)
 		|| (
 			cuda-filters
 			cuda-llvm
@@ -836,9 +830,11 @@ REQUIRED_USE+="
 		cuda
 	)
 	cuda-llvm? (
+		cuda-filters
 		cuda_targets_sm_30
 	)
 	cuda-nvcc? (
+		cuda-filters
 		cuda_targets_sm_60
 	)
 	cuda_targets_sm_30? (
