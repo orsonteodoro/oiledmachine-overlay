@@ -36,19 +36,33 @@ GSTREAMER_IUSE+="
 aac alsa flac jack lame matroska ogg opus oss pulseaudio speex twolame vorbis
 wavpack
 "
+
+CUDA_TARGETS=(
+	sm_52
+	sm_53
+	sm_60
+	sm_61
+	sm_62
+	sm_70
+	sm_75
+	sm_80
+	sm_86
+)
+
 IUSE+="
+${CUDA_TARGETS[@]/#/cuda_targets_}
 ${GSTREAMER_IUSE}
 
 aes appindicator +avahi avif brotli +client +clipboard cpu-percent +csc_cython
-csc_libyuv +cuda_rebuild +cups cups-forwarding +cython +dbus +doc -drm ffmpeg
-evdi firejail gnome-shell +gtk3 gssapi html5-client html5_gzip html5_brotli
-ibus jpeg kerberos +keyboard-layout keycloak ldap ldap3 +lz4 lzo +mdns mysql
-+netdev +notifications nvenc nvfbc nvjpeg +opengl openrc osmesa +pam pinentry
-png proc +proxy pyinotify qrencode -rencode +rencodeplus +rfb sd_listen selinux
-+server +socks +sound sound-forwarding spng sqlite ssh sshpass +ssl systemd
-+tcp-wrappers test tiff u2f -uinput +v4l2 vaapi vpx vsock -wayland +webcam
-webcam-forwarding webp +websockets +X x264 -x265 +xdg +xinput yaml zeroconf
-zlib
+csc_libyuv cuda +cuda_rebuild +cups cups-forwarding +cython +dbus +doc -drm
+ffmpeg evdi firejail gnome-shell +gtk3 gssapi html5-client html5_gzip
+html5_brotli ibus jpeg kerberos +keyboard-layout keycloak ldap ldap3 +lz4 lzo
++mdns mysql +netdev +notifications nvenc nvfbc nvjpeg +opengl openrc osmesa +pam
+pinentry png proc +proxy pyinotify qrencode -rencode +rencodeplus +rfb sd_listen
+selinux +server +socks +sound sound-forwarding spng sqlite ssh sshpass +ssl
+systemd +tcp-wrappers test tiff u2f -uinput +v4l2 vaapi vpx vsock -wayland
++webcam webcam-forwarding webp +websockets +X x264 -x265 +xdg +xinput yaml
+zeroconf zlib
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
@@ -108,9 +122,21 @@ SERVER_OPTIONS="
 	)
 "
 
+gen_required_use_cuda_targets() {
+	local x
+	for x in ${CUDA_TARGETS[@]} ; do
+		echo "
+			cuda_targets_${x}? (
+				cuda
+			)
+		"
+	done
+}
+
 # LIMD # ATM, GEN 5-12
 # LID # C2M, GEN 5-9
 REQUIRED_USE+="
+	$(gen_required_use_cuda_targets)
 	${CLIENT_OPTIONS}
 	${SERVER_OPTIONS}
 	gtk3
@@ -123,6 +149,16 @@ REQUIRED_USE+="
 		|| (
 			client
 			server
+		)
+	)
+	cuda? (
+		^^ (
+			${CUDA_TARGETS[@]/#/cuda_targets_}
+		)
+		|| (
+			nvenc
+			nvfbc
+			nvjpeg
 		)
 	)
 	cups? (
@@ -161,6 +197,31 @@ REQUIRED_USE+="
 	)
 	notifications? (
 		dbus
+	)
+	nvenc? (
+		|| (
+			cuda_targets_sm_52
+			cuda_targets_sm_53
+			cuda_targets_sm_60
+			cuda_targets_sm_61
+			cuda_targets_sm_62
+			cuda_targets_sm_70
+			cuda_targets_sm_75
+			cuda_targets_sm_86
+		)
+	)
+	nvfbc? (
+		|| (
+			cuda_targets_sm_52
+			cuda_targets_sm_61
+			cuda_targets_sm_75
+			cuda_targets_sm_86
+		)
+	)
+	nvjpeg? (
+		|| (
+			cuda_targets_sm_80
+		)
 	)
 	opengl? (
 		client
@@ -208,9 +269,6 @@ REQUIRED_USE+="
 	)
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-CUDA_7_5_DRV_V="352.31"
-NVFBC_MIN_DRV_V="410.66"
-NVJPEG_MIN_DRV_V="450.36.06"
 PYCUDA_PV="2022.1"
 RENCODE_PV="1.0.6"
 # From my experience, firejail doesn't need pillow with webp or with jpeg.
@@ -221,7 +279,7 @@ PILLOW_DEPEND="
 	dev-python/pillow[${PYTHON_USEDEP},jpeg?,tiff?,webp?,zlib?]
 "
 
-DEPEND+="
+RDEPEND+="
 	acct-group/xpra
 	app-admin/sudo
 	dev-lang/python[sqlite?,ssl?]
@@ -244,6 +302,33 @@ DEPEND+="
 	)
 	brotli? (
 		app-arch/brotli[${PYTHON_USEDEP}]
+	)
+	cuda_targets_sm_52? (
+		>=dev-util/nvidia-cuda-toolkit-6.5:=
+	)
+	cuda_targets_sm_53? (
+		>=dev-util/nvidia-cuda-toolkit-6.5:=
+	)
+	cuda_targets_sm_60? (
+		>=dev-util/nvidia-cuda-toolkit-8:=
+	)
+	cuda_targets_sm_61? (
+		>=dev-util/nvidia-cuda-toolkit-8:=
+	)
+	cuda_targets_sm_62? (
+		>=dev-util/nvidia-cuda-toolkit-8:=
+	)
+	cuda_targets_sm_70? (
+		>=dev-util/nvidia-cuda-toolkit-9:=
+	)
+	cuda_targets_sm_75? (
+		>=dev-util/nvidia-cuda-toolkit-10:=
+	)
+	cuda_targets_sm_80? (
+		>=dev-util/nvidia-cuda-toolkit-10:=
+	)
+	cuda_targets_sm_86? (
+		>=dev-util/nvidia-cuda-toolkit-11.1:=
 	)
 	cpu-percent? (
 		dev-python/psutil[${PYTHON_USEDEP}]
@@ -319,22 +404,19 @@ DEPEND+="
 	)
 	nvenc? (
 		>=dev-python/pycuda-${PYCUDA_PV}[${PYTHON_USEDEP}]
-		>=dev-python/pynvml-11.515.75[${PYTHON_USEDEP}]
-		>=dev-util/nvidia-cuda-toolkit-7.5:=
-		>=x11-drivers/nvidia-drivers-${CUDA_7_5_DRV_V}
+		>=dev-util/nvidia-cuda-toolkit-5:=
+		dev-python/pynvml[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
 		media-video/nvidia-video-codec
 	)
 	nvfbc? (
 		>=dev-python/pycuda-${PYCUDA_PV}[${PYTHON_USEDEP}]
-		>=dev-util/nvidia-cuda-toolkit-10.0:=
-		>=x11-drivers/nvidia-drivers-${NVFBC_MIN_DRV_V}
+		>=dev-util/nvidia-cuda-toolkit-11:=
 		dev-python/numpy[${PYTHON_USEDEP}]
 	)
 	nvjpeg? (
 		>=dev-python/pycuda-${PYCUDA_PV}[${PYTHON_USEDEP}]
-	        >=dev-util/nvidia-cuda-toolkit-11.1.1:=
-	        >=x11-drivers/nvidia-drivers-${NVJPEG_MIN_DRV_V}
+	        >=dev-util/nvidia-cuda-toolkit-10:=
 		dev-python/numpy[${PYTHON_USEDEP}]
 	)
 	opengl? (
@@ -495,8 +577,8 @@ DEPEND+="
 		dev-python/zeroconf[${PYTHON_USEDEP}]
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	virtual/pkgconfig
