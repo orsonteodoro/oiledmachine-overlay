@@ -184,9 +184,6 @@ src_prepare() {
 		-e "/HIP_CLANG_INCLUDE_SEARCH_PATHS/s,\${HIP_CLANG_ROOT}.*/include,${CLANG_RESOURCE_DIR}/include," \
 		-i hip-config.cmake.in \
 		|| die
-
-	cd "${CLR_S}" || die
-	eapply "${FILESDIR}/rocclr-5.3.3-fix-include.patch"
 }
 
 src_configure() {
@@ -233,5 +230,4 @@ src_install() {
 	rm "${ED}/usr/lib/.hipInfo" "${ED}/usr/bin/.hipVersion" || die
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-failure
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without problems
