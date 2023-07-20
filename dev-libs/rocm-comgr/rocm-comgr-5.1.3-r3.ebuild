@@ -49,6 +49,13 @@ PATCHES=(
 CMAKE_BUILD_TYPE="Release"
 
 src_prepare() {
+	if has_version "dev-util/hip" ; then
+eerror
+eerror "You must uninstall dev-util/hip first before emerging this version of"
+eerror "the package."
+eerror
+		die
+	fi
 	sed \
 		-e '/sys::path::append(HIPPath/s,"hip","",' \
 		-i src/comgr-env.cpp \
