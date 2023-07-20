@@ -55,7 +55,7 @@ src_prepare() {
 		-e "s,\@LLVM_PATH\@,$(get_llvm_prefix ${LLVM_MAX_SLOT}),g" \
 		"${FILESDIR}/${PN}-5.4.2-gentoopath.patch" \
 		> \
-		"${S}"/gentoopath.patch \
+		"${S}/gentoopath.patch" \
 		|| die
 
 	eapply $(prefixify_ro "${S}/gentoopath.patch")
@@ -97,7 +97,7 @@ src_prepare() {
 	sed \
 		-e "s,os.path.dirname(os.path.realpath(__file__)),${Tensile_share_dir},g" \
 		-i \
-		"ReplacementKernels.py"
+		"ReplacementKernels.py" \
 		"Common.py" \
 		"${PN}.py" \
 		|| die
