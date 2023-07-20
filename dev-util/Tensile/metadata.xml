@@ -2,6 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="project">
+    <!-- Ebuild originator(s) -->
     <email>sci@gentoo.org</email>
     <name>Science Project</name>
   </maintainer>
@@ -9,6 +10,8 @@
     <remote-id type="github">ROCmSoftwarePlatform/Tensile</remote-id>
   </upstream>
   <use>
-    <flag name="client">Build and install tensile_client executable to run benchmarks and tune GPU GEMM</flag>
+    <flag name="client">
+      Build and install tensile_client executable to run benchmarks and tune GPU GEMM
+    </flag>
   </use>
 </pkgmetadata>
