@@ -55,12 +55,14 @@ CMAKE_BUILD_TYPE="Release"
 src_prepare() {
 	sed \
 		-e '/sys::path::append(HIPPath/s,"hip","",' \
-		-i src/comgr-env.cpp \
+		-i \
+		"src/comgr-env.cpp" \
 		|| die
 	local llvm_prefix=$(get_llvm_prefix ${LLVM_MAX_SLOT})
 	sed \
 		-e "/return LLVMPath;/s,LLVMPath,llvm::SmallString<128>(\"${llvm_prefix}\")," \
-		-i src/comgr-env.cpp \
+		-i \
+		"src/comgr-env.cpp" \
 		|| die
 	eapply $(prefixify_ro "${FILESDIR}/${PN}-5.0-rocm_path.patch")
 	cmake_src_prepare

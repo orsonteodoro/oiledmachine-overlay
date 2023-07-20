@@ -45,11 +45,13 @@ src_prepare() {
 		|| die
 	sed \
 		-e "/LICENSE.txt/d" \
-		-i CMakeLists.txt \
+		-i \
+		CMakeLists.txt \
 		|| die
 	sed \
 		-e "/^path_librocm = /c\path_librocm = '${EPREFIX}/usr/lib64/librocm_smi64.so'" \
-		-i python_smi_tools/rsmiBindings.py \
+		-i \
+		python_smi_tools/rsmiBindings.py \
 		|| die
 	git
 	cmake_src_prepare

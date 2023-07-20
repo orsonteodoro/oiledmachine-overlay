@@ -96,9 +96,9 @@ src_install() {
 # check_amdgpu function in src_test. Rename it to check-amdgpu to avoid
 # pkgcheck warning.
 check-amdgpu() {
-	for device in /dev/kfd /dev/dri/render*; do
-		addwrite ${device}
-		if [[ ! -r ${device} || ! -w ${device} ]]; then
+	for device in "/dev/kfd" "/dev/dri/render"*; do
+		addwrite "${device}"
+		if [[ ! -r "${device}" || ! -w "${device}" ]]; then
 eerror
 eerror "${device} is inaccessible and cannot read or write ${device}!"
 eerror
@@ -118,11 +118,11 @@ eerror "before reruning the test."
 
 src_test() {
 	check-amdgpu
-	cd "${BUILD_DIR}"/tests/ocltst || die
-	export OCL_ICD_FILENAMES="${BUILD_DIR}"/amdocl/libamdocl64.so
-	if [[ -n ${OCLGL_DISPLAY+x} ]]; then
-		export DISPLAY=${OCLGL_DISPLAY}
-		export XAUTHORITY=${OCLGL_XAUTHORITY}
+	cd "${BUILD_DIR}/tests/ocltst" || die
+	export OCL_ICD_FILENAMES="${BUILD_DIR}/amdocl/libamdocl64.so"
+	if [[ -n "${OCLGL_DISPLAY+x}" ]]; then
+		export DISPLAY="${OCLGL_DISPLAY}"
+		export XAUTHORITY="${OCLGL_XAUTHORITY}"
 		ebegin "Running oclgl test under DISPLAY ${OCLGL_DISPLAY}"
 		if ! glxinfo | grep "OpenGL vendor string: AMD" ; then
 eerror
@@ -132,7 +132,7 @@ eerror "This display does not have AMD OpenGL vendor!"
 eerror
 			die
 		fi
-		./ocltst -m liboclgl.so -A ogl.exclude
+		./ocltst -m $(realpath liboclgl.so) -A ogl.exclude
 		eend $? || die "oclgl test failed"
 	else
 eerror
@@ -142,6 +142,6 @@ eerror "\${OCLGL_DISPLAY} is not set."
 eerror
 		die
 	fi
-	edob ./ocltst -m liboclruntime.so -A oclruntime.exclude
-	edob ./ocltst -m liboclperf.so -A oclperf.exclude
+	edob ./ocltst -m $(realpath liboclruntime.so) -A oclruntime.exclude
+	edob ./ocltst -m $(realpath liboclperf.so) -A oclperf.exclude
 }

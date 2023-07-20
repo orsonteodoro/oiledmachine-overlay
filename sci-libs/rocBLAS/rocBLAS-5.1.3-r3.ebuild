@@ -41,9 +41,9 @@ DEPEND="
 	)
 "
 BDEPEND="
-	dev-util/Tensile:${SLOT}
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/Tensile-${PV}:${SLOT}
 "
 RESTRICT="
 	!test? (
@@ -72,12 +72,14 @@ src_prepare() {
 		-e "s:\\\\\${CPACK_PACKAGING_INSTALL_PREFIX}rocblas/lib:${EPREFIX}/usr/$(get_libdir)/rocblas:" \
 		-e "s:share/doc/rocBLAS:share/doc/${P}:" \
 		-e "/rocm_install_symlink_subdir( rocblas )/d" \
-		-i library/src/CMakeLists.txt \
+		-i \
+		library/src/CMakeLists.txt \
 		|| die
 
 	sed \
 		-e "s:,-rpath=.*\":\":" \
-		-i clients/CMakeLists.txt \
+		-i \
+		clients/CMakeLists.txt \
 		|| die
 
 	eprefixify library/src/tensile_host.cpp
@@ -90,20 +92,20 @@ src_configure() {
 
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
-		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_TESTING=OFF
 		-DBUILD_WITH_TENSILE=ON
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocblas"
 		-DCMAKE_SKIP_RPATH=On
 		-DTensile_CPU_THREADS=$(makeopts_jobs)
-		-DTensile_LOGIC="asm_full"
+		-DTensile_CODE_OBJECT_VERSION="V3"
 		-DTensile_COMPILER="hipcc"
 		-DTensile_LIBRARY_FORMAT="msgpack"
-		-DTensile_CODE_OBJECT_VERSION="V3"
-		-DTensile_TEST_LOCAL_PATH="${EPREFIX}/usr/share/Tensile"
+		-DTensile_LOGIC="asm_full"
 		-DTensile_ROOT="${EPREFIX}/usr/share/Tensile"
+		-DTensile_TEST_LOCAL_PATH="${EPREFIX}/usr/share/Tensile"
 	)
 
 	CXX="hipcc" \

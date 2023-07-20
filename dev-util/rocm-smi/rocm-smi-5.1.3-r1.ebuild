@@ -42,7 +42,8 @@ src_prepare() {
 	sed \
 		-e "/DESTINATION/s,\${OAM_NAME}/lib,$(get_libdir)," \
 		-e "/DESTINATION/s,oam/include/oam,include/oam," \
-		-i oam/CMakeLists.txt \
+		-i \
+		oam/CMakeLists.txt \
 		|| die
 	sed \
 		-e "/link DESTINATION/,+1d" \
@@ -50,16 +51,19 @@ src_prepare() {
 		-e "/bindings_link/,+3d" \
 		-e "/rsmiBindings.py/,+1d" \
 		-e "/DESTINATION/s,rocm_smi/include/rocm_smi,include/rocm_smi," \
-		-i rocm_smi/CMakeLists.txt \
+		-i \
+		rocm_smi/CMakeLists.txt \
 		|| die
 	sed \
 		-e "/LICENSE.txt/d" \
 		-e "s,\${ROCM_SMI}/lib/cmake,$(get_libdir)/cmake,g" \
-		-i CMakeLists.txt \
+		-i \
+		CMakeLists.txt \
 		|| die
 	sed \
 		-e "/^path_librocm = /c\path_librocm = '${EPREFIX}/usr/lib64/librocm_smi64.so'" \
-		-i python_smi_tools/rsmiBindings.py \
+		-i \
+		python_smi_tools/rsmiBindings.py \
 		|| die
 	cmake_src_prepare
 }

@@ -47,11 +47,13 @@ CMAKE_BUILD_TYPE="Release"
 src_prepare() {
 	sed \
 		-e "s:amdgcn/bitcode:lib/amdgcn/bitcode:" \
-		-i "${S}/cmake/OCL.cmake" \
+		-i \
+		"${S}/cmake/OCL.cmake" \
 		|| die
 	sed \
 		-e "s:amdgcn/bitcode:lib/amdgcn/bitcode:" \
-		-i "${S}/cmake/Packages.cmake" \
+		-i \
+		"${S}/cmake/Packages.cmake" \
 		|| die
 	cmake_src_prepare
 }

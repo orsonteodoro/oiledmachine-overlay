@@ -36,11 +36,13 @@ PATCHES=(
 src_prepare() {
 	sed \
 		-e "/CPACK_RESOURCE_FILE_LICENSE/d" \
-		-i CMakeLists.txt \
+		-i \
+		CMakeLists.txt \
 		|| die
 	sed \
 		-e "/num_change_since_prev_pkg(/cset(NUM_COMMITS 0)" \
-		-i cmake_modules/utils.cmake \
+		-i \
+		cmake_modules/utils.cmake \
 		|| die # Fix QA issue on "git not found"
 	cmake_src_prepare
 }

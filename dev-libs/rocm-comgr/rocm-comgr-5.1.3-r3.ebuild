@@ -58,23 +58,27 @@ eerror
 	fi
 	sed \
 		-e '/sys::path::append(HIPPath/s,"hip","",' \
-		-i src/comgr-env.cpp \
+		-i \
+		"src/comgr-env.cpp" \
 		|| die
 	local llvm_prefix=$(get_llvm_prefix ${LLVM_MAX_SLOT})
 	sed \
 		-e "/return LLVMPath;/s,LLVMPath,llvm::SmallString<128>(\"${llvm_prefix}\")," \
-		-i src/comgr-env.cpp \
+		-i \
+		"src/comgr-env.cpp" \
 		|| die
 	sed \
 		-e '/Args.push_back(HIPIncludePath/,+1d' \
-		-i src/comgr-compiler.cpp \
+		-i \
+		"src/comgr-compiler.cpp" \
 		|| die
 
 	# ROCM and HIPIncludePath is now in /usr, which disturbs the include
 	# order.
 	sed \
 		-e '/Args.push_back(ROCMIncludePath/,+1d' \
-		-i src/comgr-compiler.cpp \
+		-i \
+		"src/comgr-compiler.cpp" \
 		|| die
 
 	eapply $(prefixify_ro "${FILESDIR}/${PN}-5.0-rocm_path.patch")

@@ -29,7 +29,8 @@ PATCHES=(
 src_prepare() {
 	sed \
 		-e "/ROCM_INSTALL_LIBDIR/s:lib:$(get_libdir):" \
-		-i "${S}/share/rocm/cmake/ROCMInstallTargets.cmake" \
+		-i \
+		"${S}/share/rocm/cmake/ROCMInstallTargets.cmake" \
 		|| die
 	cmake_src_prepare
 }
