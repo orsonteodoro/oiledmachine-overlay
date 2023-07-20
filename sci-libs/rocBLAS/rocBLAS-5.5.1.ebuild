@@ -87,7 +87,7 @@ src_configure() {
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocblas"
 		-DCMAKE_SKIP_RPATH=On
 		-DROCM_SYMLINK_LIBS=OFF
-		-DTensile_CODE_OBJECT_VERSION="V3"
+		-DTensile_CODE_OBJECT_VERSION="default"
 		-DTensile_COMPILER="hipcc"
 		-DTensile_CPU_THREADS=$(makeopts_jobs)
 		-DTensile_LIBRARY_FORMAT="msgpack"
