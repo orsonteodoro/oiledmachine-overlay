@@ -33,15 +33,13 @@ REQUIRED_USE="
 		)
 	)
 "
-RESTRICT="!test? ( test )"
-
 RDEPEND="
 	hwloc? (
 		>=sys-apps/hwloc-2.5:0=[${MULTILIB_USEDEP}]
 	)
 	offload? (
-		virtual/libelf:=[${MULTILIB_USEDEP}]
 		dev-libs/libffi:=[${MULTILIB_USEDEP}]
+		virtual/libelf:=[${MULTILIB_USEDEP}]
 		~sys-devel/llvm-${PV}[${MULTILIB_USEDEP}]
 		cuda? (
 			dev-util/nvidia-cuda-toolkit:=
@@ -67,8 +65,15 @@ BDEPEND="
 		virtual/pkgconfig
 	)
 	test? (
-		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '
+			dev-python/lit[${PYTHON_USEDEP}]
+		')
 		sys-devel/clang
+	)
+"
+RESTRICT="
+	!test? (
+		test
 	)
 "
 LLVM_COMPONENTS=(
@@ -83,7 +88,9 @@ python_check_deps() {
 }
 
 kernel_pds_check() {
-	if use kernel_linux && kernel_is -lt 4 15 && kernel_is -ge 4 13; then
+	if use kernel_linux \
+		&& kernel_is -lt 4 15 \
+		&& kernel_is -ge 4 13 ; then
 		local CONFIG_CHECK="~!SCHED_PDS"
 		local ERROR_SCHED_PDS="\
 PDS scheduler versions >= 0.98c < 0.98i (e.g. used in kernels >= 4.13-pf11

@@ -3,23 +3,6 @@
 
 EAPI=8
 
-if [[ ${PV} =~ 9999 ]] ; then
-IUSE+="
-	fallback-commit
-"
-fi
-
-inherit llvm-ebuilds
-
-_llvm_set_globals() {
-	if [[ "${USE}" =~ "fallback-commit" && ${PV} =~ 9999 ]] ; then
-einfo "Using fallback commit"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM17_COMMIT}"
-	fi
-}
-_llvm_set_globals
-unset -f _llvm_set_globals
-
 PYTHON_COMPAT=( python3_{10..12} )
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org
 inherit python-single-r1 toolchain-funcs
@@ -34,9 +17,11 @@ LICENSE="
 	)
 "
 SLOT="0/${LLVM_SOABI}"
-KEYWORDS=""
-IUSE+="
-+debug gdb-plugin hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
+KEYWORDS="
+amd64 ~arm arm64 ~loong ~ppc ppc64 ~riscv x86 ~amd64-linux ~x64-macos
+"
+IUSE="
+debug gdb-plugin hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
 "
 REQUIRED_USE="
 	gdb-plugin? (
@@ -54,11 +39,11 @@ RDEPEND="
 		dev-libs/libffi:=[${MULTILIB_USEDEP}]
 		~sys-devel/llvm-${PV}[${MULTILIB_USEDEP}]
 		llvm_targets_AMDGPU? (
-			mdev-libs/rocr-runtime:=
+			dev-libs/rocr-runtime:=
 		)
 	)
 "
-# Tests:
+# tests:
 # - dev-python/lit provides the test runner
 # - sys-devel/llvm provide test utils (e.g. FileCheck)
 # - sys-devel/clang provides the compiler to run tests
