@@ -139,14 +139,15 @@ _rocm_set_globals() {
 	# https://github.com/ROCmSoftwarePlatform/Tensile/blob/rocm-5.6.0/Tensile/Common.py#L274
 	local amdgpu_targets
 
-	if ver_test ${ROCM_VERSION} -lt 4.5 ; then
+# Allowed via ROC_ENABLE_PRE_VEGA=true in ROCclr
+#	if ver_test ${ROCM_VERSION} -lt 4.5 ; then
 		# See https://github.com/ROCm-Developer-Tools/ROCclr/blob/rocm-5.6.0/utils/flags.hpp#L248
 		# See https://github.com/ROCm-Developer-Tools/ROCclr/blob/rocm-5.6.0/device/device.hpp
 		amdgpu_targets+=(
 			gfx701 # Since 2.6
 			gfx803 # offered in in 2.10 but dropped since 4.0
 		)
-	fi
+#	fi
 
 	# 2.10
 	amdgpu_targets+=(
