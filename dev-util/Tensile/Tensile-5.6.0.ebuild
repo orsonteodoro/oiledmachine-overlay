@@ -152,7 +152,6 @@ src_install() {
 	doins -r \
 		"Configs" \
 		"Perf" \
-		"ReplacementKernels" \
 		"ReplacementKernels-cov3" \
 		"Source" \
 		"CustomKernels"
