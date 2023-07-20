@@ -4,7 +4,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{10..11} )
-inherit cmake flag-o-matic llvm multilib-minimal python-any-r1 toolchain-funcs
+inherit cmake flag-o-matic llvm multilib-minimal python-single-r1 toolchain-funcs
 
 DESCRIPTION="Advanced shading language for production GI renderers"
 HOMEPAGE="http://opensource.imageworks.com/?p=osl"
@@ -154,7 +154,7 @@ gen_openexr_pairs() {
 
 RDEPEND+="
 	$(gen_llvm_depend)
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		>=media-libs/openimageio-2.4.12.0:=[${PYTHON_SINGLE_USEDEP}]
 		<media-libs/openimageio-2.5:=[${PYTHON_SINGLE_USEDEP}]
 	')
@@ -166,7 +166,7 @@ RDEPEND+="
 		>=dev-util/nvidia-cuda-toolkit-8:=
 	)
 	optix? (
-		$(python_gen_any_dep '
+		$(python_gen_cond_dep '
 			>=media-libs/openimageio-1.8:=[${PYTHON_SINGLE_USEDEP}]
 		')
 		>=dev-libs/optix-5.1
@@ -179,7 +179,7 @@ RDEPEND+="
 	)
 	python? (
 		${PYTHON_DEPS}
-		$(python_gen_any_dep '
+		$(python_gen_cond_dep '
 			>=dev-python/pybind11-2.4.2[${PYTHON_USEDEP}]
 			dev-python/numpy[${PYTHON_USEDEP}]
 		')
@@ -208,7 +208,7 @@ BDEPEND+="
 "
 BDEPEND+="
 	test? (
-		$(python_gen_any_dep '
+		$(python_gen_cond_dep '
 			media-libs/openimageio[truetype]
 		')
 		cuda? (
@@ -274,7 +274,7 @@ ewarn
 	fi
 
 	if use python ; then
-		python-any-r1_pkg_setup
+		python-single-r1_pkg_setup
 	fi
 
 	llvm_pkg_setup
