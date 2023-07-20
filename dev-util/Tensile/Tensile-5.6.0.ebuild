@@ -42,7 +42,6 @@ S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-change-cmake-name-for-msgpack-cxx-6-release.patch"
 	"${FILESDIR}/${PN}-4.3.0-output-commands.patch"
-	"${FILESDIR}/${PN}-5.4.2-gfx1031.patch"
 	"${FILESDIR}/${PN}-5.4.2-fix-arch-parse.patch"
 	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"
 )
@@ -53,7 +52,7 @@ src_prepare() {
 	distutils-r1_src_prepare
 	sed \
 		-e "s,\@LLVM_PATH\@,$(get_llvm_prefix ${LLVM_MAX_SLOT}),g" \
-		"${FILESDIR}/${PN}-5.4.2-gentoopath.patch" \
+		"${FILESDIR}/${PN}-5.6.0-gentoopath.patch" \
 		> \
 		"${S}/gentoopath.patch" \
 		|| die
@@ -73,19 +72,19 @@ src_prepare() {
 		-i \
 		"Source/CMakeLists.txt" \
 		|| die
-	sed \
-		-e "/chmod 755/d" \
-		-i \
-		"Source/TensileCreateLibrary.cmake" \
-		|| die # remove chmod 755 on
+#	sed \
+#		-e "/chmod 755/d" \
+#		-i \
+#		"Source/TensileCreateLibrary.cmake" \
+#		|| die # remove chmod 755 on
 
 	# ${Tensile_ROOT}/bin does not exists; call command directly
-	sed \
-		-e "s,\${Tensile_ROOT}/bin/,,g" \
-		-i \
-		"Source/TensileCreateLibrary.cmake" \
-		"cmake/TensileConfig.cmake" \
-		|| die
+#	sed \
+#		-e "s,\${Tensile_ROOT}/bin/,,g" \
+#		-i \
+#		"Source/TensileCreateLibrary.cmake" \
+#		"cmake/TensileConfig.cmake" \
+#		|| die
 
 	local Tensile_share_dir="\"${EPREFIX}/usr/share/${PN}\""
 	sed \
