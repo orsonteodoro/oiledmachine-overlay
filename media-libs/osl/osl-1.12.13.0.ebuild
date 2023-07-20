@@ -175,7 +175,7 @@ RDEPEND+="
 		)
 	)
 	partio? (
-		media-libs/partio
+		>=media-libs/partio-1.13.2
 	)
 	python? (
 		${PYTHON_DEPS}
@@ -348,6 +348,12 @@ src_configure() {
 			if use cuda ; then
 				mycmakeargs+=(
 					-DCUDA_TOOLKIT_ROOT_DIR="/opt/cuda"
+				)
+			fi
+
+			if use partio ; then
+				mycmakeargs+=(
+					-Dpartio_DIR="/usr"
 				)
 			fi
 
