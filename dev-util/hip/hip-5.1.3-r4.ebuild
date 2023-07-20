@@ -233,4 +233,5 @@ src_install() {
 	rm "${ED}/usr/lib/.hipInfo" "${ED}/usr/bin/.hipVersion" || die
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  build-failure
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
