@@ -130,3 +130,5 @@ src_install() {
 	insinto "/usr/$(get_libdir)/cmake/${PN}"
 	doins "cmake/"*".cmake"
 }
+
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

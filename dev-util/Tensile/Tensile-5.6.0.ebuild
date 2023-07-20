@@ -156,3 +156,5 @@ src_install() {
 		dobin "client/tensile_client"
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-STATUS:  needs-build-test

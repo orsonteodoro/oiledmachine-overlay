@@ -135,3 +135,5 @@ src_install() {
 		dobin clients/staging/rocblas-bench
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
