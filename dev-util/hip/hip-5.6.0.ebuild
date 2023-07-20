@@ -25,7 +25,7 @@ https://github.com/ROCm-Developer-Tools/HIPCC/archive/refs/tags/rocm-${PV}.tar.g
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="debug"
+IUSE="debug r1"
 DEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	virtual/opengl
@@ -177,11 +177,23 @@ src_configure() {
 	)
 
 	cmake_src_configure
+
+	pushd "${HIPCC_S}" || die
+		CMAKE_USE_DIR="${HIPCC_S}" \
+		BUILD_DIR="${HIPCC_S}_build" \
+		cmake_src_configure
+	popd
 }
 
 src_compile() {
 	HIP_PATH="${HIP_S}" docs_compile
 	cmake_src_compile
+
+	pushd "${HIPCC_S}_build" || die
+		CMAKE_USE_DIR="${HIPCC_S}" \
+		BUILD_DIR="${HIPCC_S}_build" \
+		cmake_src_compile
+	popd
 }
 
 src_install() {
@@ -189,6 +201,12 @@ src_install() {
 	mkdir -p "${HIP_S}/samples" || die
 
 	cmake_src_install
+
+	pushd "${HIPCC_S}_build" || die
+		CMAKE_USE_DIR="${HIPCC_S}" \
+		BUILD_DIR="${HIPCC_S}_build" \
+		cmake_src_install
+	popd
 
 	rm "${ED}/usr/include/hip/hcc_detail" || die
 
