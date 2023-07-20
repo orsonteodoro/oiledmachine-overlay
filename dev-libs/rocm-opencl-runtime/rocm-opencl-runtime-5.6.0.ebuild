@@ -57,7 +57,7 @@ PATCHES=(
 CLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
 
 src_unpack () {
-if [[ ${PV} == "9999" ]]; then
+	if [[ ${PV} == "9999" ]]; then
 		git-r3_fetch
 		git-r3_checkout
 		git-r3_fetch "${EGIT_CLR_REPO_URI}"
