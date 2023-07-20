@@ -37,6 +37,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.13.4
+	~dev-util/rocm-cmake-${PV}
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-test-bitcode-dir.patch"

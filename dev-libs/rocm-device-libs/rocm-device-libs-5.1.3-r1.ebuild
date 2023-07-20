@@ -33,6 +33,7 @@ DEPEND="
 BDEPEND="
 	>=dev-util/cmake-3.13.4
 	sys-devel/clang:${LLVM_MAX_SLOT}
+	~dev-util/rocm-cmake-${PV}
 "
 RESTRICT="
 	!test? (

@@ -37,6 +37,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.13.4
+	~dev-util/rocm-cmake-${PV}
 "
 PATCHES=(
 # https://github.com/RadeonOpenCompute/ROCm-Device-Libs/issues/94

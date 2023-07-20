@@ -29,7 +29,7 @@ DEPEND="
 "
 BDEPEND="
 	dev-libs/half:0/1
-	dev-util/rocm-cmake
+	~dev-util/rocm-cmake-${PV}
 "
 RESTRICT="
 	!test? (

@@ -79,6 +79,7 @@ src_prepare() {
 		|| die # ${Tensile_ROOT}/bin does not exists; call command directly
 
 	local Tensile_share_dir="\"${EPREFIX}/usr/share/${PN}\""
+	hipconfig --help >/dev/null || die
 	sed \
 		-e "/HipClangVersion/s/0,0,0/$(hipconfig -v)/" \
 		-i \

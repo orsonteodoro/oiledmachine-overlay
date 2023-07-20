@@ -34,6 +34,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.13.4
+	~dev-util/rocm-cmake-${PV}
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-4.5.2-dependencies.patch"
