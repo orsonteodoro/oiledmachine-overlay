@@ -347,13 +347,13 @@ src_configure() {
 
 			if use cuda ; then
 				mycmakeargs+=(
-					-DCUDA_TOOLKIT_ROOT_DIR="/opt/cuda"
+					-DCUDA_TOOLKIT_ROOT_DIR="${ESYSROOT}/opt/cuda"
 				)
 			fi
 
 			if use partio ; then
 				mycmakeargs+=(
-					-Dpartio_DIR="/usr"
+					-Dpartio_DIR="${ESYSROOT}/usr"
 				)
 			fi
 
@@ -452,8 +452,12 @@ src_install() {
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, static-libs
 # OILEDMACHINE-OVERLAY-TEST:  FAILED 1.12.12.0 (20230713)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.13.13.0 (~20230714)
+# OILEDMACHINE-OVERLAY-TEST:  FAILED 1.13.13.0 (~20230719) ; fails on python-oslquery
 # USE="llvm-13 static-libs test -X -doc -llvm-14 -llvm-15 -llvm-16 -optix
 # -partio -python (-qt5) (-qt6) -r3 -wayland"
+
+# Test results corresponding to PASSED 1.13.13.0 (~20230714)
 # 100% tests passed, 0 tests failed out of 406
 #
 # Label Time Summary:
