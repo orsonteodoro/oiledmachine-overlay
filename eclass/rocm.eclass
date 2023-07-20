@@ -137,6 +137,7 @@ _rocm_set_globals() {
 	# https://github.com/RadeonOpenCompute/ROCm/blob/rocm-4.0.0/README.md#supported-gpus
 	# https://github.com/ROCmSoftwarePlatform/Tensile/blob/rocm-5.6.0/Tensile/Source/lib/include/Tensile/AMDGPU.hpp
 	# https://github.com/ROCmSoftwarePlatform/Tensile/blob/rocm-5.6.0/Tensile/Common.py#L274
+	# https://llvm.org/docs/AMDGPUUsage.html#processors
 	local amdgpu_targets
 
 # Allowed via ROC_ENABLE_PRE_VEGA=true in ROCclr
