@@ -3,10 +3,22 @@
 
 EAPI=8
 
+AMDGPU_TARGETS_OVERRIDE=(
+	gfx1030
+	gfx1031
+	gfx1032
+#	gfx1033
+	gfx1034
+	gfx1035
+#	gfx1036
+	gfx1100
+	gfx1101
+	gfx1102
+#	gfx1103
+)
 CMAKE_BUILD_TYPE=Release
 PYTHON_COMPAT=( python3_{10..11} )
-
-inherit cmake cuda flag-o-matic llvm python-single-r1 toolchain-funcs
+inherit cmake cuda flag-o-matic llvm python-single-r1 rocm toolchain-funcs
 
 DESCRIPTION="Intel(R) Open Image Denoise library"
 HOMEPAGE="http://www.openimagedenoise.org/"
@@ -40,16 +52,8 @@ CUDA_TARGETS=(
 	sm_80
 	sm_90
 )
-HIP_TARGETS=(
-	gfx1030
-	gfx1031
-	gfx1100
-	gfx1101
-	gfx1102
-)
 IUSE+="
 ${CUDA_TARGETS[@]/#/cuda_targets_}
-${HIP_TARGETS[@]/#/amdgpu_targets_}
 ${LLVM_SLOTS[@]/#/llvm-}
 +apps +built-in-weights +clang cpu cuda custom-tc doc gcc hip openimageio
 "
@@ -65,29 +69,12 @@ gen_required_use_cuda_targets() {
 	done
 }
 
-gen_required_use_hip_targets() {
-	local x
-	for x in ${HIP_TARGETS[@]} ; do
-		echo "
-			amdgpu_targets_${x}? (
-				hip
-			)
-		"
-	done
-}
-
 REQUIRED_USE+="
 	$(gen_required_use_cuda_targets)
-	$(gen_required_use_hip_targets)
 	${PYTHON_REQUIRED_USE}
 	cuda? (
 		|| (
 			${CUDA_TARGETS[@]/#/cuda_targets_}
-		)
-	)
-	hip? (
-		|| (
-			${HIP_TARGETS[@]/#/amdgpu_targets_}
 		)
 	)
 	^^ (
@@ -267,6 +254,9 @@ src_unpack() {
 
 src_prepare() {
 	cmake_src_prepare
+	pushd "${S}/external/composable_kernel" || die
+		eapply "${FILESDIR}/composable_kernel-1.0.0_p9999-fix-missing-libstdcxx-expf.patch"
+	popd
 	use cuda && cuda_src_prepare
 }
 
@@ -313,8 +303,8 @@ ewarn
 ewarn "All APU + GPU HIP targets on the device must be built/installed to avoid"
 ewarn "a crash."
 ewarn
-		local llvm_slot=$(cat "/usr/$(get_libdir)/cmake/hip/hip-config.cmake" \
-			| grep "/usr/lib/llvm" \
+		local llvm_slot=$(grep -e "HIP_CLANG_ROOT.*/usr/lib/llvm" \
+				"/usr/$(get_libdir)/cmake/hip/hip-config.cmake" \
 			| grep -E -o -e  "[0-9]+")
 		einfo "${ESYSROOT}/usr/lib/llvm/${llvm_slot}"
 		export CC="${CHOST}-clang-${llvm_slot}"
@@ -324,18 +314,8 @@ ewarn
 			-DHIP_COMPILER_PATH="${ESYSROOT}/usr/lib/llvm/${llvm_slot}"
 		)
 
-		# Speed up build time
-		local targets=""
-		local hip_target
-		for hip_target in ${HIP_TARGETS[@]} ; do
-			if use "${hip_target/#/amdgpu_targets_}" ; then
-				targets+=";${hip_target}"
-			fi
-		done
-		targets=$(echo "${targets}" \
-			| sed -e "s|^;||g")
 		mycmakeargs+=(
-			-DGPU_TARGETS="${targets}"
+			-DGPU_TARGETS="$(get_amdgpu_flags)"
 		)
 einfo "HIP_TARGETS:  ${targets}"
 	fi

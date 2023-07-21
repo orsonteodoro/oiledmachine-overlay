@@ -7,7 +7,7 @@ diff -urp oidn-2.0.1.orig/devices/hip/CMakeLists.txt oidn-2.0.1/devices/hip/CMak
  endif()
 +
 +# oteodoro:  Fixes devices/hip/../../external/composable_kernel/include/ck/utility/math.hpp:171:52: error: no member named 'expf' in namespace 'std'; did you mean simply 'expf'?
-+target_compile_options(OpenImageDenoise_device_hip PRIVATE --rocm-path=/usr -stdlib=libc++)    # oteodoro:  set path and use libc++ for distro.
++target_compile_options(OpenImageDenoise_device_hip PRIVATE --rocm-path=/usr)    # oteodoro:  set path and use libc++ for distro. # -stdlib=libc++
  
  target_link_libraries(OpenImageDenoise_device_hip PRIVATE OpenImageDenoise_core hip::device)
  oidn_strip_symbols(OpenImageDenoise_device_hip)

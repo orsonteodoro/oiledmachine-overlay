@@ -3,10 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..11} )
-DISTUTILS_USE_PEP517="setuptools"
-LLVM_MAX_SLOT=15
-OVERRIDE_AMDGPU_TARGETS=(
+AMDGPU_TARGETS_OVERRIDE=(
 	gfx803
 	gfx900
 	gfx906
@@ -24,6 +21,9 @@ OVERRIDE_AMDGPU_TARGETS=(
 	gfx1101
 	gfx1102
 )
+PYTHON_COMPAT=( python3_{10..11} )
+DISTUTILS_USE_PEP517="setuptools"
+LLVM_MAX_SLOT=15
 ROCM_VERSION="${PV}"
 inherit cmake distutils-r1 llvm prefix rocm
 

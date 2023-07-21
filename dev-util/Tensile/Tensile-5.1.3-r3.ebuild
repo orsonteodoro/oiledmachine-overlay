@@ -3,10 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..11} )
-DISTUTILS_USE_PEP517="setuptools"
-LLVM_MAX_SLOT=15
-OVERRIDE_AMDGPU_TARGETS=(
+AMDGPU_TARGETS_OVERRIDE=(
 	gfx803
 	gfx900
 	gfx906
@@ -20,6 +17,9 @@ OVERRIDE_AMDGPU_TARGETS=(
 	gfx1101
 	gfx1102
 )
+PYTHON_COMPAT=( python3_{9..11} )
+DISTUTILS_USE_PEP517="setuptools"
+LLVM_MAX_SLOT=15
 inherit distutils-r1 llvm prefix
 
 DESCRIPTION="Stretching GPU performance for GEMMs and tensor contractions"
