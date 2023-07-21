@@ -25,7 +25,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocBLAS"
 LICENSE="BSD"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="benchmark test"
+IUSE="benchmark test r1"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -72,6 +72,11 @@ PATCHES=(
 )
 QA_FLAGS_IGNORED="/usr/lib64/rocblas/library/.*"
 
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	python-any-r1_pkg_setup
+}
+
 src_prepare() {
 	cmake_src_prepare
 	cp -a \
@@ -92,6 +97,16 @@ src_configure() {
 
 	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
+
+	# Disallow newer clangs versions when producing .o files.
+	einfo "LLVM_SLOT=${LLVM_SLOT}"
+	einfo "PATH=${PATH} (before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+	einfo "PATH=${PATH} (after)"
 
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
