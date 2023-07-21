@@ -21,6 +21,9 @@ IUSE="debug test"
 RDEPEND="
 	>=dev-db/sqlite-3.17
 	>=dev-libs/boost-1.72
+	>=sci-libs/composable_kernel-1.0.0
+	app-arch/bzip2
+	~dev-libs/rocm-comgr-${PV}
 	~dev-util/hip-${PV}
 	~sci-libs/rocBLAS-${PV}:${SLOT}[${ROCM_USEDEP}]
 "
@@ -28,7 +31,9 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	>=dev-cpp/nlohmann_json-3.10.4
 	dev-libs/half:0/1
+	virtual/pkgconfig
 	~dev-util/rocm-cmake-${PV}
 "
 RESTRICT="
