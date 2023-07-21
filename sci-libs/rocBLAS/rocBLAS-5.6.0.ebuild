@@ -3,6 +3,8 @@
 
 EAPI=8
 
+PYTHON_COMPAT=( python3_{10..11} )
+
 DOCS_BUILDER="doxygen"
 DOCS_DIR="docs"
 DOCS_DEPEND="
@@ -10,7 +12,7 @@ DOCS_DEPEND="
 "
 LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.6.0/llvm/CMakeLists.txt
 ROCM_VERSION="${PV}"
-inherit cmake docs edo multiprocessing llvm rocm
+inherit cmake docs edo multiprocessing llvm python-any-r1 rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocBLAS/archive/rocm-${PV}.tar.gz
@@ -28,6 +30,9 @@ REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 DEPEND="
+	$(python_gen_any_dep '
+		dev-python/pyyaml[${PYTHON_USEDEP}]
+	')
 	>=dev-cpp/msgpack-cxx-6.0.0
 	~dev-util/hip-${PV}
 	test? (
@@ -41,6 +46,14 @@ DEPEND="
 	)
 "
 BDEPEND="
+	$(python_gen_any_dep '
+		dev-python/joblib[${PYTHON_USEDEP}]
+		dev-python/msgpack[${PYTHON_USEDEP}]
+		dev-python/six[${PYTHON_USEDEP}]
+		dev-python/virtualenv[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+	')
+	${PYTHON_DEPS}
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	~dev-util/rocm-cmake-${PV}
 	~dev-util/Tensile-${PV}:${SLOT}
@@ -76,6 +89,9 @@ src_configure() {
 	addpredict /dev/random
 	addpredict /dev/kfd
 	addpredict /dev/dri/
+
+	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
 
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
