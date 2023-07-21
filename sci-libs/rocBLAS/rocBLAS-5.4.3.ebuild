@@ -3,6 +3,20 @@
 
 EAPI=8
 
+OVERRIDE_AMDGPU_TARGETS=(
+	gfx803
+	gfx900
+	gfx906
+	gfx908
+	gfx90a
+	gfx1010
+	gfx1012
+	gfx1030
+	 gfx1031
+	gfx1100
+	gfx1101
+	gfx1102
+)
 DOCS_BUILDER="doxygen"
 DOCS_DIR="docs"
 DOCS_DEPEND="

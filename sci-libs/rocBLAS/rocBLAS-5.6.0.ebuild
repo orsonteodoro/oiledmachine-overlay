@@ -3,8 +3,20 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..11} )
-
+OVERRIDE_AMDGPU_TARGETS=(
+	gfx803
+	gfx900
+	gfx906
+	gfx908
+	gfx90a
+	gfx1010
+	gfx1012
+	gfx1030
+	 gfx1031
+	gfx1100
+	gfx1101
+	gfx1102
+)
 DOCS_BUILDER="doxygen"
 DOCS_DIR="docs"
 DOCS_DEPEND="
@@ -12,6 +24,7 @@ DOCS_DEPEND="
 "
 LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.6.0/llvm/CMakeLists.txt
 ROCM_VERSION="${PV}"
+PYTHON_COMPAT=( python3_{10..11} )
 inherit cmake docs edo multiprocessing llvm python-any-r1 rocm
 
 SRC_URI="

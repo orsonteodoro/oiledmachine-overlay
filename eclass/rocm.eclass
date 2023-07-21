@@ -128,17 +128,17 @@ _ROCM_ECLASS=1
 # DEPEND="sci-libs/rocBLAS[${ROCM_USEDEP}]"
 # @CODE
 
-# @FUNCTION: _rocm_set_globals
+# @FUNCTION: _rocm_set_globals_default
 # @DESCRIPTION:
 # Set global variables useful to ebuilds: IUSE, ROCM_REQUIRED_USE, and
 # ROCM_USEDEP
-_rocm_set_globals() {
+_rocm_set_globals_default() {
 	# See
 	# https://github.com/RadeonOpenCompute/ROCm/blob/rocm-4.0.0/README.md#supported-gpus
 	# https://github.com/ROCmSoftwarePlatform/Tensile/blob/rocm-5.6.0/Tensile/Source/lib/include/Tensile/AMDGPU.hpp
 	# https://github.com/ROCmSoftwarePlatform/Tensile/blob/rocm-5.6.0/Tensile/Common.py#L274
 	# https://llvm.org/docs/AMDGPUUsage.html#processors
-	local amdgpu_targets
+	local amdgpu_targets=()
 
 # Allowed via ROC_ENABLE_PRE_VEGA=true in ROCclr
 #	if ver_test ${ROCM_VERSION} -lt 4.5 ; then
@@ -161,6 +161,7 @@ _rocm_set_globals() {
 
 	if ver_test ${ROCM_VERSION} -ge 3.3.0 ; then
 		amdgpu_targets+=(
+			${amdgpu_targets}
 			gfx1010
 		)
 	fi
@@ -192,6 +193,26 @@ _rocm_set_globals() {
 		)
 	fi
 
+	local _list=()
+	if [[ -n "${AMDGPU_TARGETS_BLACKLIST[@]}" ]] ; then
+		local x
+		local y
+		for x in ${amdgpu_targets[@]} ; do
+			local bl=0
+			for y in ${AMDGPU_TARGETS_BLACKLIST[@]} ; do
+				if [[ "${x}" == "${y}" ]] ; then
+					bl=1
+				fi
+			done
+			if (( ${bl} == 0 )) ; then
+				_list+=( "${x}" )
+			fi
+		done
+		amdgpu_targets=(
+			${_list[@]}
+		)
+	fi
+
 	if [[ -z "${amdgpu_targets[@]}" ]] ; then
 		die "Unknown ROCm major version! Please update rocm.eclass before bumping to new ebuilds"
 	fi
@@ -210,7 +231,41 @@ _rocm_set_globals() {
 	local optflags=${allflags[@]/%/(-)?}
 	ROCM_USEDEP=${optflags// /,}
 }
+
+# @FUNCTION: _rocm_set_globals_override
+# @DESCRIPTION:
+# Allow ebuilds to define IUSE, ROCM_REQUIRED_USE
+_rocm_set_globals_override() {
+	local iuse_flags=(
+		"${AMDGPU_TARGETS_OVERRIDE[@]/#/+amdgpu_targets_}"
+	)
+	IUSE="${iuse_flags[*]}"
+
+	local allflags=(
+		"${AMDGPU_TARGETS_OVERRIDE[@]/#/amdgpu_targets_}"
+	)
+	ROCM_REQUIRED_USE=" || ( ${allflags[*]} )"
+
+	local optflags=${allflags[@]/%/(-)?}
+	ROCM_USEDEP=${optflags// /,}
+}
+
+
+# @FUNCTION: _rocm_set_globals
+# @DESCRIPTION:
+# Set global variables useful to ebuilds: IUSE, ROCM_REQUIRED_USE, and
+# ROCM_USEDEP
+_rocm_set_globals() {
+	if [[ -n "${AMDGPU_TARGETS_OVERRIDE[@]}" ]] ; then
+		_rocm_set_globals_override
+	else
+		_rocm_set_globals_default
+	fi
+}
+
 _rocm_set_globals
+unset -f _rocm_set_globals_override
+unset -f _rocm_set_globals_default
 unset -f _rocm_set_globals
 
 

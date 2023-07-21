@@ -16,10 +16,6 @@ OVERRIDE_AMDGPU_TARGETS=(
 	gfx1011
 	gfx1012
 	gfx1030
-	gfx1031
-	gfx1032
-	gfx1034
-	gfx1035
 	gfx1100
 	gfx1101
 	gfx1102
@@ -60,8 +56,9 @@ S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-change-cmake-name-for-msgpack-cxx-6-release.patch"
 	"${FILESDIR}/${PN}-4.3.0-output-commands.patch"
+	"${FILESDIR}/${PN}-5.4.2-gfx1031.patch"
 	"${FILESDIR}/${PN}-5.4.2-fix-arch-parse.patch"
-	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"
+	"${FILESDIR}/${PN}-5.0.2-use-ninja.patch"
 )
 
 CMAKE_USE_DIR="${S}/${PN}/Source"
@@ -70,7 +67,7 @@ src_prepare() {
 	distutils-r1_src_prepare
 	sed \
 		-e "s,\@LLVM_PATH\@,$(get_llvm_prefix ${LLVM_MAX_SLOT}),g" \
-		"${FILESDIR}/${PN}-5.5.1-gentoopath.patch" \
+		"${FILESDIR}/${PN}-5.3.3-gentoopath.patch" \
 		> \
 		"${S}/gentoopath.patch" \
 		|| die
@@ -90,11 +87,17 @@ src_prepare() {
 		-i \
 		"Source/CMakeLists.txt" \
 		|| die
+	sed \
+		-e "/chmod 755/d" \
+		-i \
+		"Source/TensileCreateLibrary.cmake" \
+		|| die # remove chmod 755 on
 
 	# ${Tensile_ROOT}/bin does not exists; call command directly
 	sed \
 		-e "s,\${Tensile_ROOT}/bin/,,g" \
 		-i \
+		"Source/TensileCreateLibrary.cmake" \
 		"cmake/TensileConfig.cmake" \
 		|| die
 
@@ -165,6 +168,7 @@ src_install() {
 	doins -r \
 		"Configs" \
 		"Perf" \
+		"ReplacementKernels" \
 		"ReplacementKernels-cov3" \
 		"Source" \
 		"CustomKernels"
@@ -176,4 +180,4 @@ src_install() {
 	fi
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  builds-needs-test

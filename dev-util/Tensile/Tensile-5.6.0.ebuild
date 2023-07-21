@@ -6,6 +6,24 @@ EAPI=8
 PYTHON_COMPAT=( python3_{10..11} )
 DISTUTILS_USE_PEP517="setuptools"
 LLVM_MAX_SLOT=15
+OVERRIDE_AMDGPU_TARGETS=(
+	gfx803
+	gfx900
+	gfx906
+	gfx908
+	gfx90a
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1034
+	gfx1035
+	gfx1100
+	gfx1101
+	gfx1102
+)
 ROCM_VERSION="${PV}"
 inherit cmake distutils-r1 llvm prefix rocm
 
@@ -158,4 +176,4 @@ src_install() {
 	fi
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  needs-build-test
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

@@ -13,16 +13,13 @@ OVERRIDE_AMDGPU_TARGETS=(
 	gfx1012
 	gfx1030
 	 gfx1031
-	gfx1100
-	gfx1101
-	gfx1102
 )
 DOCS_BUILDER="doxygen"
 DOCS_DIR="docs"
 DOCS_DEPEND="
 	media-gfx/graphviz
 "
-LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
+LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.4.2/llvm/CMakeLists.txt
 ROCM_VERSION="${PV}"
 inherit cmake docs edo multiprocessing llvm rocm
 
@@ -101,7 +98,7 @@ src_configure() {
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocblas"
 		-DCMAKE_SKIP_RPATH=On
 		-DROCM_SYMLINK_LIBS=OFF
-		-DTensile_CODE_OBJECT_VERSION="default"
+		-DTensile_CODE_OBJECT_VERSION="V3"
 		-DTensile_COMPILER="hipcc"
 		-DTensile_CPU_THREADS=$(makeopts_jobs)
 		-DTensile_LIBRARY_FORMAT="msgpack"
@@ -138,4 +135,4 @@ src_install() {
 	fi
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

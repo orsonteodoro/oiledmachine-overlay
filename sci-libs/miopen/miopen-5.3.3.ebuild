@@ -3,6 +3,21 @@
 
 EAPI=8
 
+AMDGPU_TARGETS_OVERRIDE=(
+#	 gfx800
+#	 gfx802
+	gfx803
+#	 gfx804
+	gfx900
+#	 gfx904
+	gfx906
+	gfx908
+	gfx90a
+	gfx1011
+	gfx1012
+	gfx1030
+	gfx1031
+)
 ROCM_VERSION="${PV}"
 LLVM_MAX_SLOT=15
 inherit cmake flag-o-matic llvm rocm
@@ -91,6 +106,14 @@ src_prepare() {
 			|| die
 }
 
+filter_test_gpus() {
+	if use "${gpu_target}" && [[ "${gputarget}" =~ "gfx103" ]] ; then
+		echo "-DMIOPEN_TEST_GFX103X=ON"
+	elif [[ "${gpu_target}" =~ ("gfx900"|"gfx906"|"gfx908"|"gfx90a") ]] ; then
+		echo "-DMIOPEN_TEST_${gpu_target^^}=ON"
+	fi
+}
+
 src_configure() {
 	if ! use debug ; then
 		append-cflags "-DNDEBUG"
@@ -114,7 +137,7 @@ src_configure() {
 	if use test; then
 		for gpu_target in ${AMDGPU_TARGETS} ; do
 			mycmakeargs+=(
-				-DMIOPEN_TEST_${gpu_target^^}=ON
+				$(filter_test_gpus)
 			)
 		done
 	fi
@@ -123,6 +146,10 @@ src_configure() {
 	addpredict /dev/dri/
 	append-cxxflags "--rocm-path=$(hipconfig -R)"
 	append-cxxflags "--hip-device-lib-path=${EPREFIX}/usr/lib/amdgcn/bitcode"
+
+	# Fix for
+	# lld: error: undefined symbol: __stack_chk_fail
+	append-flags "-fno-stack-protector"
 
 	CXX="$(get_llvm_prefix ${LLVM_MAX_SLOT})/bin/clang++" \
 	cmake_src_configure
