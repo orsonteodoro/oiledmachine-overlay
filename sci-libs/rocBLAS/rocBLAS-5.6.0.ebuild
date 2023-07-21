@@ -155,4 +155,4 @@ src_install() {
 	fi
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  needs-build-test
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
