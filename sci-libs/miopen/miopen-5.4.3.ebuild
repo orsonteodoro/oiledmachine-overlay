@@ -40,19 +40,19 @@ S="${WORKDIR}/MIOpen-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.2.0-disable-no-inline-boost.patch"
 	"${FILESDIR}/${PN}-4.2.0-gcc11-numeric_limits.patch"
-	"${FILESDIR}/${PN}-5.0.2-strip-xnack-in-flags.patch"
+	"${FILESDIR}/${PN}-5.6.0-strip-xnack-in-flags.patch"
 	"${FILESDIR}/${PN}-4.3.0-fix-interface-include-in-HIP_COMPILER_FLAGS.patch"
-	"${FILESDIR}/${PN}-4.3.0-enable-test.patch"
-	"${FILESDIR}/${PN}-5.1.3-gfx1031.patch"
-	"${FILESDIR}/${PN}-5.1.3-deprecate-clang-ocl.patch"
+	"${FILESDIR}/${PN}-5.3.3-enable-test.patch"
+#	"${FILESDIR}/${PN}-5.1.3-gfx1031.patch" # Already added upstream but some parts missing
 	"${FILESDIR}/${PN}-5.1.3-no-strip.patch"
 	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
-	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch"
+	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # See also pr #1830
 )
 
 src_prepare() {
 	cmake_src_prepare
 
+	hipconfig --help >/dev/null || die
 	sed \
 		-e "s:/opt/rocm/llvm:$(get_llvm_prefix ${LLVM_MAX_SLOT}) NO_DEFAULT_PATH:" \
 		-e "s:/opt/rocm/hip:$(hipconfig -p) NO_DEFAULT_PATH:" \

@@ -47,12 +47,13 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-deprecate-clang-ocl.patch"
 	"${FILESDIR}/${PN}-5.1.3-no-strip.patch"
 	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
-	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch"
+	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # See also pr #1830
 )
 
 src_prepare() {
 	cmake_src_prepare
 
+	hipconfig --help >/dev/null || die
 	sed \
 		-e "s:/opt/rocm/llvm:$(get_llvm_prefix ${LLVM_MAX_SLOT}) NO_DEFAULT_PATH:" \
 		-e "s:/opt/rocm/hip:$(hipconfig -p) NO_DEFAULT_PATH:" \

@@ -1,0 +1,11 @@
+--- a/CMakeLists.txt.orig	2023-07-20 19:49:05.448463062 -0700
++++ b/CMakeLists.txt	2023-07-20 19:50:39.204460637 -0700
+@@ -201,7 +201,7 @@ find_package(hip REQUIRED PATHS /opt/roc
+ message(STATUS "Build with HIP ${hip_VERSION}")
+ target_flags(HIP_COMPILER_FLAGS hip::device)
+ # Remove cuda arch flags
+-string(REGEX REPLACE --cuda-gpu-arch=[a-z0-9]+ "" HIP_COMPILER_FLAGS "${HIP_COMPILER_FLAGS}")
++string(REGEX REPLACE --cuda-gpu-arch=[a-z0-9:+-]+ "" HIP_COMPILER_FLAGS "${HIP_COMPILER_FLAGS}")
+ string(REGEX REPLACE --offload-arch=[a-z0-9:+-]+ "" HIP_COMPILER_FLAGS "${HIP_COMPILER_FLAGS}")
+ # Skip library paths since hip will incorrectly treat it as a source file
+ string(APPEND HIP_COMPILER_FLAGS " ")

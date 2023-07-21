@@ -1,0 +1,27 @@
+diff -urp MIOpen-rocm-5.3.3.orig/CMakeLists.txt MIOpen-rocm-5.3.3/CMakeLists.txt
+--- MIOpen-rocm-5.3.3.orig/CMakeLists.txt	2023-07-20 20:32:05.735499193 -0700
++++ MIOpen-rocm-5.3.3/CMakeLists.txt	2023-07-20 20:34:54.187503580 -0700
+@@ -690,7 +690,10 @@ add_subdirectory(src)
+ if(MIOPEN_BUILD_DRIVER)
+     add_subdirectory(driver)
+ endif()
+-add_subdirectory(test)
++option(BUILD_TESTS "Build binaries for tests" OFF)
++if(BUILD_TESTS)
++	add_subdirectory(test)
++endif()
+ add_subdirectory(speedtests)
+ add_subdirectory(utils)
+ if(MIOPEN_ENABLE_FIN)
+diff -urp MIOpen-rocm-5.3.3.orig/test/CMakeLists.txt MIOpen-rocm-5.3.3/test/CMakeLists.txt
+--- MIOpen-rocm-5.3.3.orig/test/CMakeLists.txt	2022-09-23 08:20:14.000000000 -0700
++++ MIOpen-rocm-5.3.3/test/CMakeLists.txt	2023-07-20 20:35:51.663505077 -0700
+@@ -301,7 +301,7 @@ endfunction()
+ separate_arguments(MIOPEN_TEST_FLAGS_ARGS UNIX_COMMAND ${MIOPEN_TEST_FLAGS})
+ 
+ function(add_test_executable TEST_NAME)
+-    add_executable (${TEST_NAME} EXCLUDE_FROM_ALL ${ARGN})
++    add_executable (${TEST_NAME} ${ARGN})
+     clang_tidy_check(${TEST_NAME})
+     target_link_libraries(${TEST_NAME} ${CMAKE_THREAD_LIBS_INIT})
+     # Cmake does not add flags correctly for gcc
