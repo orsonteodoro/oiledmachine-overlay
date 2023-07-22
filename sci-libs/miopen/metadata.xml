@@ -15,4 +15,10 @@
     <email>xgreenlandforwyy@gmail.com</email>
     <name>Yiyang Wu</name>
   </maintainer>
+  <use>
+    <flag name="kernels">
+      Install the prebuilt kernels to reduce the startup latency of first
+      neural net execution.
+    </flag>
+  </use>
 </pkgmetadata>
