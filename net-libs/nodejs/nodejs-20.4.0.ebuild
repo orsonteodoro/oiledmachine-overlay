@@ -173,11 +173,11 @@ SRC_URI="
 https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz
 "
 PATCHES=(
-	"${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
-	"${FILESDIR}"/${PN}-20.2.0-global-npm-config.patch
-	"${FILESDIR}"/${PN}-16.13.2-lto-update.patch
-	"${FILESDIR}"/${PN}-20.1.0-support-clang-pgo.patch
-	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
+	"${FILESDIR}/${PN}-12.22.5-shared_c-ares_nameser_h.patch"
+	"${FILESDIR}/${PN}-20.2.0-global-npm-config.patch"
+	"${FILESDIR}/${PN}-16.13.2-lto-update.patch"
+	"${FILESDIR}/${PN}-20.1.0-support-clang-pgo.patch"
+	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
 )
 S="${WORKDIR}/node-v${PV}"
 NPM_PV="9.7.2" # See https://github.com/nodejs/node/blob/v20.3.0/deps/npm/package.json

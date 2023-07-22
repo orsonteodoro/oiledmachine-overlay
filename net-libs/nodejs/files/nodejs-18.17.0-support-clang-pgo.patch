@@ -1,0 +1,84 @@
+diff -urp node-v18.17.0.orig/common.gypi node-v18.17.0/common.gypi
+--- node-v18.17.0.orig/common.gypi	2023-07-21 21:56:58.977882187 -0700
++++ node-v18.17.0/common.gypi	2023-07-21 21:57:15.765882624 -0700
+@@ -165,8 +165,12 @@
+       'Release': {
+         'variables': {
+           'v8_enable_handle_zapping': 0,
+-          'pgo_generate': ' -fprofile-generate ',
+-          'pgo_use': ' -fprofile-use -fprofile-correction ',
++          'pgo_generate_gcc': ' -fprofile-generate ',
++          'pgo_use_gcc': ' -fprofile-use -fprofile-correction ',
++          'pgo_generate_clang': ' -fprofile-generate=<(pgo_profile_dir) -mllvm -vp-counters-per-site=3 ',
++          'pgo_generate_clang_ldflags': ' -fprofile-generate=<(pgo_profile_dir) ',
++          'pgo_use_clang': ' -fprofile-use=<(pgo_profile_profdata) -mllvm -vp-counters-per-site=3 ',
++          'pgo_use_clang_ldflags': ' -fprofile-use=<(pgo_profile_profdata) ',
+           'conditions': [
+             ['node_shared != "true"', {
+               'MSVC_runtimeType': 0    # MultiThreaded (/MT)
+@@ -241,15 +245,27 @@
+             # frames otherwise, even with --call-graph dwarf.
+             'cflags': [ '-fno-omit-frame-pointer' ],
+           }],
+-          ['OS=="linux"', {
++          ['OS=="linux" and llvm_version=="0.0"', {
++            'conditions': [
++              ['enable_pgo_generate=="true"', {
++                'cflags': ['<(pgo_generate_gcc)'],
++                'ldflags': ['<(pgo_generate_gcc)'],
++              },],
++              ['enable_pgo_use=="true"', {
++                'cflags': ['<(pgo_use_gcc)'],
++                'ldflags': ['<(pgo_use_gcc)'],
++              },],
++            ],
++          },],
++          ['OS=="linux" and llvm_version!="0.0"', {
+             'conditions': [
+               ['enable_pgo_generate=="true"', {
+-                'cflags': ['<(pgo_generate)'],
+-                'ldflags': ['<(pgo_generate)'],
++                'cflags': ['<(pgo_generate_clang)'],
++                'ldflags': ['<(pgo_generate_clang_ldflags)'],
+               },],
+               ['enable_pgo_use=="true"', {
+-                'cflags': ['<(pgo_use)'],
+-                'ldflags': ['<(pgo_use)'],
++                'cflags': ['<(pgo_use_clang)'],
++                'ldflags': ['<(pgo_use_clang_ldflags)'],
+               },],
+             ],
+           },],
+Only in node-v18.17.0: common.gypi.orig
+diff -urp node-v18.17.0.orig/configure.py node-v18.17.0/configure.py
+--- node-v18.17.0.orig/configure.py	2023-07-21 21:56:58.981882187 -0700
++++ node-v18.17.0/configure.py	2023-07-21 22:02:11.125890317 -0700
+@@ -1360,14 +1360,22 @@ def configure_node(o):
+     raise Exception(
+       'The pgo option is supported only on linux.')
+ 
++  o['variables']['pgo_profile_dir'] = ""
++  o['variables']['pgo_profile_profdata'] = ""
+   if flavor == 'linux':
+     if options.enable_pgo_generate or options.enable_pgo_use:
+-      version_checked = (5, 4, 1)
+-      if not gcc_version_ge(version_checked):
+-        version_checked_str = ".".join(map(str, version_checked))
++      gcc_version_checked = (5, 4, 1)
++      clang_version_checked = (3, 9, 1)
++      if not gcc_version_ge(gcc_version_checked) and not clang_version_ge(clang_version_checked):
++        gcc_version_checked_str = ".".join(map(str, gcc_version_checked))
++        clang_version_checked_str = ".".join(map(str, clang_version_checked))
+         raise Exception(
+           'The options --enable-pgo-generate and --enable-pgo-use '
+-          f'are supported for gcc and gxx {version_checked_str} or newer only.')
++          'are supported for gcc and gxx {version_checked_str} or newer only'
++          'or for clang and clang++ %s or newer only' % (gcc_version_checked_str, clang_version_checked_str))
++      if clang_version_ge(clang_version_checked):
++        o['variables']['pgo_profile_dir'] = os.environ.get('PGO_PROFILE_DIR')
++        o['variables']['pgo_profile_profdata'] = os.environ.get('PGO_PROFILE_PROFDATA')
+ 
+     if options.enable_pgo_generate and options.enable_pgo_use:
+       raise Exception(
+Only in node-v18.17.0: configure.py.orig
+Only in node-v18.17.0: configure.py.rej

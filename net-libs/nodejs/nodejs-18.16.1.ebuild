@@ -173,11 +173,11 @@ PDEPEND+="
 "
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 PATCHES=(
-	"${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
-	"${FILESDIR}"/${PN}-18.14.0-global-npm-config.patch
-	"${FILESDIR}"/${PN}-16.13.2-lto-update.patch
-	"${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch
-	"${FILESDIR}"/${PN}-19.3.0-v8-oflags.patch
+	"${FILESDIR}/${PN}-12.22.5-shared_c-ares_nameser_h.patch"
+	"${FILESDIR}/${PN}-18.14.0-global-npm-config.patch"
+	"${FILESDIR}/${PN}-16.13.2-lto-update.patch"
+	"${FILESDIR}/${PN}-16.13.2-support-clang-pgo.patch"
+	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
 )
 S="${WORKDIR}/node-v${PV}"
 NPM_PV="9.5.1" # See https://github.com/nodejs/node/blob/v18.16.0/deps/npm/package.json
