@@ -138,10 +138,6 @@ einfo "called src_unpack"
 	# obtain from after csplit below:
 	local uri_base="http://repo.radeon.com/rocm/apt/${MY_PV}/"
 	local files=(
-pool/main/m/miopen-hip-dev/miopen-hip-dev_2.20.0.50600-67~20.04_amd64.deb
-pool/main/m/miopen-hip-dev/miopen-hip-dev_2.20.0.50600-67~20.04_amd64.deb
-pool/main/m/miopen-hip-dev5.6.0/miopen-hip-dev5.6.0_2.20.0.50600-67~20.04_amd64.deb
-pool/main/m/miopen-hip-dev5.6.0/miopen-hip-dev5.6.0_2.20.0.50600-67~20.04_amd64.deb
 pool/main/m/miopen-hip-gfx1030-36kdb/miopen-hip-gfx1030-36kdb_2.20.0.50600-67~20.04_amd64.deb
 pool/main/m/miopen-hip-gfx1030-36kdb/miopen-hip-gfx1030-36kdb_2.20.0.50600-67~20.04_amd64.deb
 pool/main/m/miopen-hip-gfx1030-36kdb5.6.0/miopen-hip-gfx1030-36kdb5.6.0_2.20.0.50600-67~20.04_amd64.deb
@@ -174,10 +170,6 @@ pool/main/m/miopen-hip-gfx90a-110kdb/miopen-hip-gfx90a-110kdb_2.20.0.50600-67~20
 pool/main/m/miopen-hip-gfx90a-110kdb/miopen-hip-gfx90a-110kdb_2.20.0.50600-67~20.04_amd64.deb
 pool/main/m/miopen-hip-gfx90a-110kdb5.6.0/miopen-hip-gfx90a-110kdb5.6.0_2.20.0.50600-67~20.04_amd64.deb
 pool/main/m/miopen-hip-gfx90a-110kdb5.6.0/miopen-hip-gfx90a-110kdb5.6.0_2.20.0.50600-67~20.04_amd64.deb
-pool/main/m/miopen-hip/miopen-hip_2.20.0.50600-67~20.04_amd64.deb
-pool/main/m/miopen-hip/miopen-hip_2.20.0.50600-67~20.04_amd64.deb
-pool/main/m/miopen-hip5.6.0/miopen-hip5.6.0_2.20.0.50600-67~20.04_amd64.deb
-pool/main/m/miopen-hip5.6.0/miopen-hip5.6.0_2.20.0.50600-67~20.04_amd64.deb
 	)
 
 	if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
