@@ -1,0 +1,10 @@
+--- a/third_party/opus/src/celt/arch.h.orig	2023-06-21 14:44:21.734034500 -0700
++++ b/third_party/opus/src/celt/arch.h	2023-06-26 13:15:17.099932516 -0700
+@@ -189,6 +189,7 @@ typedef float celt_sig;
+ typedef float celt_norm;
+ typedef float celt_ener;
+ 
++#define FLOAT_APPROX 1
+ #ifdef FLOAT_APPROX
+ /* This code should reliably detect NaN/inf even when -ffast-math is used.
+    Assumes IEEE 754 format. */
