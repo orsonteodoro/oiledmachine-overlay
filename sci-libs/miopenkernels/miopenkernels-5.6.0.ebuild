@@ -281,7 +281,7 @@ eerror
 eerror "Expected size:  ${EXPECTED_SIZE[${bnsan}]}"
 eerror "Actual size:  ${actual_size}"
 eerror
-eerror "size mismatch.  Delete file or re-emerge."
+eerror "File size mismatch.  Delete the file or re-emerge."
 eerror
 					die
 				fi
