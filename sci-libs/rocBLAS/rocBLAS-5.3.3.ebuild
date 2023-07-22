@@ -157,8 +157,4 @@ src_install() {
 	fi
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-failure
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
-
-# Error
-#/bin/sh: line 1: template-proto.py: command not found
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
