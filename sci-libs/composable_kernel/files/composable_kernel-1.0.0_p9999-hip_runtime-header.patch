@@ -1,0 +1,11 @@
+--- composable_kernel-1.0.0_p9999.orig/include/ck/utility/integral_constant.hpp	2023-07-21 11:39:24.424917080 -0700
++++ composable_kernel-1.0.0_p9999/include/ck/utility/integral_constant.hpp	2023-07-21 11:40:44.520919166 -0700
+@@ -3,6 +3,8 @@
+ 
+ #pragma once
+ 
++#include <hip/hip_runtime.h>
++
+ namespace ck {
+ 
+ template <class T, T v>

@@ -1,0 +1,28 @@
+diff -urp composable_kernel-1.0.0_p9999.orig/include/ck/utility/math.hpp composable_kernel-1.0.0_p9999/include/ck/utility/math.hpp
+--- composable_kernel-1.0.0_p9999.orig/include/ck/utility/math.hpp	2023-07-20 22:56:33.607724952 -0700
++++ composable_kernel-1.0.0_p9999/include/ck/utility/math.hpp	2023-07-20 22:58:40.307728252 -0700
+@@ -8,6 +8,9 @@
+ #include "number.hpp"
+ #include "type.hpp"
+ #include "enable_if.hpp"
++#if !defined(_LIBCPP_VERSION)
++#  include <cmath>
++#endif
+ 
+ namespace ck {
+ namespace math {
+@@ -168,7 +171,13 @@ __device__ double exp<double>(double x)
+     return exp(x);
+ }
+ 
+-static inline __host__ float exp(float x) { return std::expf(x); }
++static inline __host__ float exp(float x) {
++#if !defined(_LIBCPP_VERSION)
++	return expf(x);
++#else
++	return std::expf(x);
++#endif
++}
+ 
+ static inline __host__ double exp(double x) { return std::exp(x); }
+ 

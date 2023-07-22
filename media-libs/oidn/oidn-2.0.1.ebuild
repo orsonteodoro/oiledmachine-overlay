@@ -280,6 +280,10 @@ src_configure() {
 	test-flags-CXX "-std=c++17" 2>/dev/null 1>/dev/null \
                 || die "Switch to a c++17 compatible compiler."
 
+	# Prevent possible
+	# error: Illegal instruction detected: Operand has incorrect register class.
+	replace-flags '-O0' '-O1'
+
 einfo
 einfo "CC:\t${CC}"
 einfo "CXX:\t${CXX}"

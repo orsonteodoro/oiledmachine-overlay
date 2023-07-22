@@ -1,0 +1,62 @@
+diff -urp composable_kernel-1.0.0_p9999.orig/cmake/googletest.cmake composable_kernel-1.0.0_p9999/cmake/googletest.cmake
+--- composable_kernel-1.0.0_p9999.orig/cmake/googletest.cmake	2023-07-22 04:33:26.950501758 -0700
++++ composable_kernel-1.0.0_p9999/cmake/googletest.cmake	2023-07-22 04:33:45.714502247 -0700
+@@ -25,18 +25,23 @@ list(APPEND GTEST_CMAKE_CXX_FLAGS
+ )
+ message(STATUS "Suppressing googltest warnings with flags: ${GTEST_CMAKE_CXX_FLAGS}")
+ 
+-FetchContent_Declare(
+-  googletest
+-  GIT_REPOSITORY https://github.com/google/googletest.git
+-  GIT_TAG        b85864c64758dec007208e56af933fc3f52044ee
+-)
++option(DOWNLOAD_GTEST, "Download gtest" TRUE)
++if(DOWNLOAD_GTEST)
++  FetchContent_Declare(
++    googletest
++    GIT_REPOSITORY https://github.com/google/googletest.git
++    GIT_TAG        b85864c64758dec007208e56af933fc3f52044ee
++  )
+ 
+-# Will be necessary for windows build
+-# set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+-FetchContent_GetProperties(googletest)
+-if(NOT googletest_POPULATED)
+-  FetchContent_Populate(googletest)
+-  add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
++  # Will be necessary for windows build
++  # set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
++  FetchContent_GetProperties(googletest)
++  if(NOT googletest_POPULATED)
++    FetchContent_Populate(googletest)
++    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
++  endif()
++else()
++  find_package(googletest)
+ endif()
+ 
+ target_compile_options(gtest PRIVATE ${GTEST_CMAKE_CXX_FLAGS})
+diff -urp composable_kernel-1.0.0_p9999.orig/CMakeLists.txt composable_kernel-1.0.0_p9999/CMakeLists.txt
+--- composable_kernel-1.0.0_p9999.orig/CMakeLists.txt	2023-07-22 04:33:26.938501758 -0700
++++ composable_kernel-1.0.0_p9999/CMakeLists.txt	2023-07-22 04:34:23.942503243 -0700
+@@ -61,6 +61,7 @@ find_package(hip)
+ 
+ option(USE_BITINT_EXTENSION_INT4, "Whether to enable clang's BitInt extension to provide int4 data type." OFF)
+ option(USE_OPT_NAVI3X, "Whether to enable LDS cumode and Wavefront32 mode for NAVI3X silicons." OFF)
++option(BUILD_TEST, "Run tests?" TRUE)
+ 
+ if(USE_BITINT_EXTENSION_INT4)
+     add_compile_definitions(CK_EXPERIMENTAL_BIT_INT_EXTENSION_INT4)
+@@ -355,7 +356,9 @@ if(NOT DEFINED INSTANCES_ONLY)
+    )
+ 
+    add_subdirectory(example)
+-   add_subdirectory(test)
++   if(${BUILD_TEST})
++       add_subdirectory(test)
++   endif()
+    add_subdirectory(profiler)
+ endif()
+ 
+Only in composable_kernel-1.0.0_p9999: CMakeLists.txt.orig
+Only in composable_kernel-1.0.0_p9999: CMakeLists.txt.rej
