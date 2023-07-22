@@ -29,7 +29,7 @@ unset __
 # https://wiki.mozilla.org/Release_Management/Calendar
 
 EBUILD_MAINTAINER_MODE=0
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-05.tar.xz"
 
 LLVM_SLOTS=( 16 14 )
 LLVM_MAX_SLOT=16
@@ -1751,7 +1751,10 @@ einfo "Cross-compile CHOST:\t\t${CHOST}"
 einfo
 
 	local have_switched_compiler=
-	if tc-is-clang ; then
+	if tc-is-clang || use jumbo-build ; then
+	# The logic is inverted in the commit below.
+	# https://gitweb.gentoo.org/repo/gentoo.git/commit/www-client/firefox?id=bbf20ce6d62985723c948f5dcb5d0d23b975ac01
+
 	# Force clang
 einfo
 einfo "Switching to clang"
@@ -2878,6 +2881,13 @@ ewarn "request to the oiledmachine-overlay describing the bug, steps to"
 ewarn "reproduce bug, and the website."
 ewarn
 ewarn "If a bug has been observed with -Ofast, you may also downgrade to -O3."
+ewarn
+	fi
+
+	if ! has_version "sys-libs/glibc"; then
+ewarn
+ewarn "glibc not found! You won't be able to play DRM content."
+ewarn "See Gentoo bug #910309 or upstream bug #1843683."
 ewarn
 	fi
 }

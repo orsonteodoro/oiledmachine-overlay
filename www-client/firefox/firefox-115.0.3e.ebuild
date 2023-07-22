@@ -28,8 +28,7 @@ unset __
 # https://wiki.mozilla.org/Release_Management/Calendar
 
 EBUILD_MAINTAINER_MODE=0
-#FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-10j.tar.xz"
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-03.tar.xz" # Placeholder
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-03.tar.xz" # Placeholder
 
 LLVM_SLOTS=( 16 14 )
 LLVM_MAX_SLOT=16
@@ -39,7 +38,7 @@ PYTHON_REQ_USE="ncurses,sqlite,ssl"
 
 WANT_AUTOCONF="2.1"
 
-VIRTUALX_REQUIRED="pgo"
+VIRTUALX_REQUIRED="manual"
 
 MOZ_ESR=yes
 
@@ -83,7 +82,7 @@ if [[ ${PV} == *e* ]] ; then
 fi
 
 PATCH_URIS=(
-	https://dev.gentoo.org/~{juippis,whissi,slashbeast}/mozilla/patchsets/${FIREFOX_PATCHSET}
+	https://dev.gentoo.org/~juippis/mozilla/patchsets/${FIREFOX_PATCHSET}
 )
 
 SRC_URI="
@@ -303,12 +302,12 @@ proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user
 +pulseaudio sndio selinux speech +system-av1 +system-ffmpeg +system-harfbuzz
 +system-icu +system-jpeg +system-libevent +system-libvpx system-png
-system-python-libs +system-webp +vaapi +wayland +webrtc wifi webspeech
+system-python-libs +system-webp +vaapi +wayland +webrtc wifi webspeech +X
 "
 
 # Firefox-only IUSE
 IUSE+="
-geckodriver +gmp-autoupdate screencast +X
+geckodriver +gmp-autoupdate screencast
 "
 
 # The wayland flag actually allows vaapi, but upstream lazy to make it
@@ -361,9 +360,6 @@ REQUIRED_USE="
 			system-ffmpeg
 		)
 	)
-	debug? (
-		!system-av1
-	)
 	h264? (
 		system-ffmpeg
 	)
@@ -382,9 +378,6 @@ REQUIRED_USE="
 	pgo? (
 		X
 	)
-	screencast? (
-		wayland
-	)
 	vaapi? (
 		wayland
 	)
@@ -394,16 +387,16 @@ REQUIRED_USE="
 			system-ffmpeg
 		)
 	)
-	wayland? (
-		X
-		dbus
-	)
 	wifi? (
 		dbus
 	)
 	|| (
 		alsa
 		pulseaudio
+	)
+	|| (
+		wayland
+		X
 	)
 "
 
@@ -581,6 +574,7 @@ CDEPEND="
 	dev-libs/libffi:=[${MULTILIB_USEDEP}]
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	virtual/freedesktop-icon-theme
+	x11-libs/cairo
 	x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
 	dbus? (
 		>=dev-libs/dbus-glib-${DBUS_GLIB_PV}[${MULTILIB_USEDEP}]
@@ -594,9 +588,15 @@ CDEPEND="
 	)
 	pulseaudio? (
 		|| (
-			media-sound/pulseaudio[${MULTILIB_USEDEP}]
-			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP}]
+			media-libs/libpulse[${MULTILIB_USEDEP}]
+			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP},sdk]
 		)
+	)
+	screencast? (
+		media-video/pipewire:=
+	)
+	selinux? (
+		sec-policy/selinux-mozilla
 	)
 	sndio? (
 		>=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}]
@@ -628,8 +628,8 @@ CDEPEND="
 		>=media-libs/libwebp-1.3.0:0=[${MULTILIB_USEDEP}]
 	)
 	wayland? (
+		>=media-libs/libepoxy-1.5.10-r1
 		>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland]
-		>=x11-libs/libdrm-2.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libxkbcommon-${XKBCOMMON_PV}[${MULTILIB_USEDEP},wayland]
 	)
 	wifi? (
@@ -734,6 +734,7 @@ BDEPEND+="
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
 	>=net-libs/nodejs-12
 	>=virtual/rust-1.69.0[${MULTILIB_USEDEP}]
+	app-alternatives/awk
 	app-arch/unzip
 	app-arch/zip
 	amd64? (
@@ -743,9 +744,16 @@ BDEPEND+="
 		sys-devel/mold
 	)
 	pgo? (
-		sys-devel/gettext
-		x11-base/xorg-server[xvfb]
-		x11-apps/xhost
+		X? (
+			sys-devel/gettext
+			x11-base/xorg-server[xvfb]
+			x11-apps/xhost
+		)
+		wayland? (
+			>=gui-libs/wlroots-0.15.1-r1[tinywl]
+			x11-misc/xkeyboard-config
+		)
+
 	)
 	x86? (
 		>=dev-lang/nasm-${NASM_PV}
@@ -785,7 +793,7 @@ einfo "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT
 		return 1
 	fi
 
-	if tc-is-clang ; then
+	if tc-is-clang && ! tc-ld-is-mold ; then
 		if ! has_version -b "sys-devel/lld:${LLVM_SLOT}" ; then
 einfo "sys-devel/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
@@ -1017,6 +1025,39 @@ tc-ld-is-mold() {
 	return 1
 }
 
+virtwl() {
+	debug-print-function ${FUNCNAME} "$@"
+
+	[[ $# -lt 1 ]] && die "${FUNCNAME} needs at least one argument"
+	if [[ -n $XDG_RUNTIME_DIR ]] ; then
+eerror
+eerror "${FUNCNAME} needs XDG_RUNTIME_DIR to be set; try xdg_environment_reset"
+eerror
+		die
+	fi
+	tinywl -h >/dev/null || die 'tinywl -h failed'
+
+	# TODO: don't run addpredict in utility function. WLR_RENDERER=pixman
+	# doesn't work
+	addpredict /dev/dri
+	local VIRTWL VIRTWL_PID
+	coproc VIRTWL { \
+		WLR_BACKENDS=headless \
+		exec tinywl \
+		-s 'echo $WAYLAND_DISPLAY; read _; kill $PPID'; \
+	}
+	local -x WAYLAND_DISPLAY
+	read WAYLAND_DISPLAY <&${VIRTWL[0]}
+
+	debug-print "${FUNCNAME}: $@"
+	"$@"
+	local r=$?
+
+	[[ -n $VIRTWL_PID ]] || die "tinywl exited unexpectedly"
+	exec {VIRTWL[0]}<&- {VIRTWL[1]}>&-
+	return $r
+}
+
 pkg_pretend() {
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		if use pgo ; then
@@ -1099,11 +1140,10 @@ eerror "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
 
 		llvm_pkg_setup
 
-		if tc-is-clang && is-flagq '-flto*' ; then
+		if tc-is-clang && is-flagq '-flto*' && tc-ld-is-lld ; then
 			has_version "sys-devel/lld:$(clang-major-version)" \
 				|| die "Clang PGO requires LLD."
-			local lld_pv=$(ld.lld \
-				--version 2>/dev/null \
+			local lld_pv=$(ld.lld --version 2>/dev/null \
 				| awk '{ print $2 }')
 			if [[ -n ${lld_pv} ]] ; then
 				lld_pv=$(ver_cut 1 "${lld_pv}")
@@ -1115,8 +1155,7 @@ eerror
 				die
 			fi
 
-			local llvm_rust_pv=$(rustc \
-				-Vv 2>/dev/null \
+			local llvm_rust_pv=$(rustc -Vv 2>/dev/null \
 				| grep -F -- 'LLVM version:' \
 				| awk '{ print $3 }')
 			if [[ -n ${llvm_rust_pv} ]] ; then
@@ -1170,6 +1209,16 @@ eerror
 		addpredict /proc/self/oom_score_adj
 
 		if use pgo ; then
+	# Update 105.0: "/proc/self/oom_score_adj" isn't enough anymore with
+	# pgo, but not sure whether that's due to better OOM handling by Firefox
+	# (bmo#1771712), or portage
+	# (PORTAGE_SCHEDULING_POLICY) update...
+			addpredict /proc
+
+	# May need a wider addpredict when using wayland+pgo.
+			addpredict /dev/dri
+
+
 	# Allow access to GPU during PGO run
 			shopt -s nullglob
 
@@ -1372,13 +1421,9 @@ src_prepare() {
 		rm -fv "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	fi
 
-	if use arm || use arm64 ; then
-eerror
-eerror "Please wait for patchset for arm/arm64."
-eerror
-		die
+	if ! use ppc64 ; then
+		rm -v "${WORKDIR}"/firefox-patches/*ppc64*.patch || die
 	fi
-	rm -rf "${WORKDIR}"/firefox-patches/*arm*.patch # patchset not ready for arm/arm64
 
 	eapply "${WORKDIR}/firefox-patches"
 	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disallow-store-data-races.patch"
@@ -1760,7 +1805,8 @@ einfo
 	uopts_src_configure
 	check_speech_dispatcher
 
-	# Ensure we use correct toolchain
+	# Ensure we use correct toolchain,
+	# AS is used in a non-standard way by upstream, #bmo1654031
 	export HOST_CC="$(tc-getBUILD_CC)"
 	export HOST_CXX="$(tc-getBUILD_CXX)"
 	tc-export CC CXX LD AR NM OBJDUMP RANLIB PKG_CONFIG
@@ -1788,9 +1834,7 @@ einfo
 
 	# Initialize MOZCONFIG
 	mozconfig_add_options_ac '' --enable-application=browser
-
-	# Set distro defaults
-	export MOZILLA_OFFICIAL=1
+	mozconfig_add_options_ac '' --enable-project=browser
 
 	mozconfig_add_options_ac 'Gentoo default' \
 		--allow-addon-sideload \
@@ -1800,13 +1844,17 @@ einfo
 		--disable-install-strip \
 		--disable-parental-controls \
 		--disable-strip \
+		--disable-tests \
 		--disable-updater \
+		--disable-wmf \
+		--enable-legacy-profile-creation \
 		--enable-negotiateauth \
 		--enable-new-pass-manager \
 		--enable-official-branding \
 		--enable-release \
 		--enable-system-ffi \
 		--enable-system-pixman \
+		--enable-system-policies \
 		--host="${CDEFAULT}" \
 		--libdir="${EPREFIX}/usr/$(get_libdir)" \
 		--prefix="${EPREFIX}/usr" \
@@ -1867,10 +1915,17 @@ einfo
 	# amd64, arm, arm64, and x86.
 	# You might want to flip the logic around if Firefox is to support more
 	# arches.
-	if use ppc64; then
+	# bug 833001, bug 903411#c8
+	if use ppc64 || use riscv ; then
 		mozconfig_add_options_ac '' --disable-sandbox
 	else
 		mozconfig_add_options_ac '' --enable-sandbox
+	fi
+
+	# Enable JIT on riscv64 explicitly
+	# Can be removed once upstream enable it by default in the future.
+	if use riscv ; then
+		 mozconfig_add_options_ac 'Enable JIT for RISC-V 64' --enable-jit
 	fi
 
 	if [[ -s "${s}/api-google.key" ]] ; then
@@ -1970,6 +2025,10 @@ einfo "Building without Mozilla API key ..."
 		mozconfig_add_options_ac \
 			'+x11+wayland' \
 			--enable-default-toolkit=cairo-gtk3-x11-wayland
+	elif ! use X && use wayland ; then
+		mozconfig_add_options_ac \
+			'+wayland' \
+			--enable-default-toolkit=cairo-gtk3-wayland-only
 	else
 		mozconfig_add_options_ac \
 			'+x11' \
@@ -1991,8 +2050,7 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 	if use pgo || [[ "${LTO_TYPE}" =~ ("bfdlto"|"moldlto"|"thinlto") ]]
 	then
 	# Mold for gcc works for non-lto but for lto it is likely WIP.
-		if [[ "${LTO_TYPE}" == "moldlto" ]] ; then
-			use tc-is-gcc && ewarn "remove -fuse-ld=mold if it breaks on gcc"
+		if tc-is-clang && [[ "${LTO_TYPE}" == "moldlto" ]] ; then
 			mozconfig_add_options_ac \
 				"forcing ld=mold" \
 				--enable-linker=mold
@@ -2002,7 +2060,7 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 				--enable-lto=cross
 
 		elif tc-is-clang && [[ "${LTO_TYPE}" == "thinlto" ]] ; then
-	# Upstream only supports lld when using clang
+	# Upstream only supports lld or mold when using clang.
 			mozconfig_add_options_ac \
 				"forcing ld=lld" \
 				--enable-linker=lld
@@ -2013,6 +2071,7 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 
 		else
 	# ThinLTO is currently broken, see bmo#1644409
+	# mold does not support gcc+lto combination.
 			mozconfig_add_options_ac \
 				'+lto' \
 				--enable-lto=full
@@ -2076,7 +2135,14 @@ ewarn
 		mozconfig_add_options_ac \
 			'+debug' \
 			--disable-optimize
+		mozconfig_add_options_ac \
+			'+debug' \
+			--enable-real-time-tracing
 	else
+		mozconfig_add_options_ac \
+			'Gentoo defaults' \
+			--disable-real-time-tracing
+
 		mozconfig_add_options_ac \
 			'Gentoo default' \
 			--disable-debug-symbols
@@ -2301,20 +2367,39 @@ _src_compile() {
 	local s=$(_get_s)
 	cd "${s}" || die
 
+	if tc-ld-is-mold && use lto; then
+		# increase ulimit with mold+lto, bugs #892641, #907485
+		if ! ulimit -n 16384 1>/dev/null 2>&1 ; then
+ewarn "Unable to modify ulimits - building with mold+lto might fail due to low"
+ewarn "ulimit -n resources."
+#ewarn "Please see bugs #892641 & #907485."
+		else
+			ulimit -n 16384
+		fi
+	fi
+
 	local CDEFAULT=$(get_abi_CHOST ${DEFAULT_ABI})
 	_fix_paths
 	local virtx_cmd=
 
 	if use pgo ; then
-		virtx_cmd=virtx
-
 	# Reset and cleanup environment variables used by GNOME/XDG
 		gnome2_environment_reset
 
 		addpredict /root
+
+		if ! use X; then
+			virtx_cmd="virtwl"
+		else
+			virtx_cmd="virtx"
+		fi
 	fi
 
-	local -x GDK_BACKEND=x11
+	if ! use X; then
+		local -x GDK_BACKEND=wayland
+	else
+		local -x GDK_BACKEND=x11
+	fi
 
 	${virtx_cmd} ./mach build --verbose || die
 }
@@ -2638,22 +2723,11 @@ einfo
 
 	local show_doh_information
 	local show_normandy_information
-	local show_shortcut_information
 
 	if [[ -z "${REPLACING_VERSIONS}" ]] ; then
 	# New install; Tell user that DoH is disabled by default
 		show_doh_information=yes
 		show_normandy_information=yes
-		show_shortcut_information=no
-	else
-		local replacing_version
-		for replacing_version in ${REPLACING_VERSIONS} ; do
-			if ver_test "${replacing_version}" -lt 91.0 ; then
-	# Tell user that we no longer install a shortcut per supported display
-	# protocol
-				show_shortcut_information=yes
-			fi
-		done
 	fi
 
 	if [[ -n "${show_doh_information}" ]] ; then
@@ -2683,16 +2757,6 @@ ewarn "    app.normandy.enabled=true"
 ewarn
 ewarn "in about:config."
 ewarn
-	fi
-
-	if [[ -n "${show_shortcut_information}" ]] ; then
-einfo
-einfo "Since ${PN}-91.0 we no longer install multiple shortcuts for"
-einfo "each supported display protocol.  Instead we will only install"
-einfo "one generic Mozilla ${PN^} shortcut."
-einfo "If you still want to be able to select between running Mozilla ${PN^}"
-einfo "on X11 or Wayland, you have to re-create these shortcuts on your own."
-einfo
 	fi
 
 	# Bug 835078
@@ -2776,6 +2840,12 @@ ewarn "request to the oiledmachine-overlay describing the bug, steps to"
 ewarn "reproduce bug, and the website."
 ewarn
 ewarn "If a bug has been observed with -Ofast, you may also downgrade to -O3."
+ewarn
+	fi
+	if ! has_version "sys-libs/glibc" ; then
+ewarn
+ewarn "glibc not found! You won't be able to play DRM content."
+#ewarn "See Gentoo bug #910309 or upstream bug #1843683."
 ewarn
 	fi
 }
