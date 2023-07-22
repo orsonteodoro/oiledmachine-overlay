@@ -12,14 +12,16 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1010
 	gfx1012
 	gfx1030
-	 gfx1031
+	gfx1100
+	gfx1101
+	gfx1102
 )
 DOCS_BUILDER="doxygen"
 DOCS_DIR="docs"
 DOCS_DEPEND="
 	media-gfx/graphviz
 "
-LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.4.2/llvm/CMakeLists.txt
+LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.3.3/llvm/CMakeLists.txt
 ROCM_VERSION="${PV}"
 inherit cmake docs edo multiprocessing llvm rocm
 
@@ -97,7 +99,6 @@ src_configure() {
 		-DBUILD_WITH_TENSILE=ON
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocblas"
 		-DCMAKE_SKIP_RPATH=On
-		-DROCM_SYMLINK_LIBS=OFF
 		-DTensile_CODE_OBJECT_VERSION="V3"
 		-DTensile_COMPILER="hipcc"
 		-DTensile_CPU_THREADS=$(makeopts_jobs)
@@ -130,9 +131,17 @@ src_install() {
 
 	if use benchmark; then
 		cd "${BUILD_DIR}" || die
-		dolib.a clients/librocblas_fortran_client.a
+		if [[ -e clients/librocblas_fortran_client.so ]] ; then
+			dolib.so clients/librocblas_fortran_client.so
+		else
+			dolib.a clients/librocblas_fortran_client.a
+		fi
 		dobin clients/staging/rocblas-bench
 	fi
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-STATUS:  build-failure
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+
+# Error
+#/bin/sh: line 1: template-proto.py: command not found

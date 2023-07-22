@@ -12,7 +12,6 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1010
 	gfx1012
 	gfx1030
-	 gfx1031
 )
 DOCS_BUILDER="doxygen"
 DOCS_DIR="docs"
@@ -110,9 +109,9 @@ src_configure() {
 		-DBUILD_WITH_TENSILE=ON
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocblas"
 		-DCMAKE_SKIP_RPATH=On
-		-DTensile_CPU_THREADS=$(makeopts_jobs)
 		-DTensile_CODE_OBJECT_VERSION="V3"
 		-DTensile_COMPILER="hipcc"
+		-DTensile_CPU_THREADS=$(makeopts_jobs)
 		-DTensile_LIBRARY_FORMAT="msgpack"
 		-DTensile_LOGIC="asm_full"
 		-DTensile_ROOT="${EPREFIX}/usr/share/Tensile"

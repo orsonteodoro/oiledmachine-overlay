@@ -12,7 +12,6 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1010
 	gfx1012
 	gfx1030
-	 gfx1031
 	gfx1100
 	gfx1101
 	gfx1102
@@ -22,7 +21,7 @@ DOCS_DIR="docs"
 DOCS_DEPEND="
 	media-gfx/graphviz
 "
-LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.4.2/llvm/CMakeLists.txt
+LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.4.3/llvm/CMakeLists.txt
 ROCM_VERSION="${PV}"
 inherit cmake docs edo multiprocessing llvm rocm
 
