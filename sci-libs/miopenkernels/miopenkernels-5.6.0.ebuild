@@ -33,9 +33,6 @@ DEPEND="
 BDEPEND="
 	net-misc/wget
 "
-PDEPEND="
-	~sci-libs/miopen-${PV}
-"
 RESTRICT="
 "
 S="${WORKDIR}"
