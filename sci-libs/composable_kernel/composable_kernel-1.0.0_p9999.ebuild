@@ -37,7 +37,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/composable_kernel"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE+=" test"
+IUSE+=" test r1"
 RDEPEND="
 	>=sys-libs/libomp-${LLVM_MAX_SLOT}
 	|| (
@@ -139,7 +139,6 @@ src_configure() {
 		-DBUILD_TEST=$(use test)
 		-DCMAKE_BUILD_TYPE=release
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
-		-DCMAKE_CXX_COMPILER="${CXX}"
 		-DCMAKE_C_COMPILER="${CC}"
 		-DCMAKE_CXX_COMPILER="${CXX}"
 		-DDOWNLOAD_GTEST=OFF
@@ -148,7 +147,6 @@ src_configure() {
 	)
 	append-flags \
 		--rocm-path="${ESYSROOT}/usr/lib" \
-		-stdlib=libc++ \
 		-fno-stack-protector
 #		-mcumode -mno-wavefrontsize64
 	cmake_src_configure
