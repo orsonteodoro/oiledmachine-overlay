@@ -68,6 +68,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-unbundle-Tensile.patch"
 )
 
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+}
+
 src_prepare() {
 	cmake_src_prepare
 	cp -a \

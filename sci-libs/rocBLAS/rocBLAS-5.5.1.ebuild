@@ -24,7 +24,8 @@ DOCS_DEPEND="
 "
 LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
 ROCM_VERSION="${PV}"
-inherit cmake docs edo multiprocessing llvm rocm
+PYTHON_COMPAT=( python3_{10..11} )
+inherit cmake docs edo multiprocessing llvm python-any-r1 rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocBLAS/archive/rocm-${PV}.tar.gz
@@ -42,6 +43,9 @@ REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 DEPEND="
+	$(python_gen_any_dep '
+		dev-python/pyyaml[${PYTHON_USEDEP}]
+	')
 	>=dev-cpp/msgpack-cxx-6.0.0
 	~dev-util/hip-${PV}
 	test? (
@@ -55,6 +59,12 @@ DEPEND="
 	)
 "
 BDEPEND="
+	$(python_gen_any_dep '
+		dev-python/msgpack[${PYTHON_USEDEP}]
+		dev-python/six[${PYTHON_USEDEP}]
+		dev-python/virtualenv[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+	')
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	~dev-util/rocm-cmake-${PV}
 	~dev-util/Tensile-${PV}:${SLOT}
@@ -72,6 +82,11 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.4.2-link-cblas.patch"
 )
 QA_FLAGS_IGNORED="/usr/lib64/rocblas/library/.*"
+
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	python-any-r1_pkg_setup
+}
 
 src_prepare() {
 	cmake_src_prepare
