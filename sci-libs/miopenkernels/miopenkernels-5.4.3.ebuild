@@ -119,7 +119,7 @@ declare -A EXPECTED_SIZE=(
 
 src_unpack() {
 	# obtain from after csplit below:
-	local uri_base="http://repo.radeon.com/rocm/apt/${MY_PV}/"
+	local uri_base="https://repo.radeon.com/rocm/apt/${MY_PV}/"
 	local files=(
 pool/main/m/miopenkernels-gfx1030-36kdb/miopenkernels-gfx1030-36kdb_1.1.0.50403-121~20.04_amd64.deb
 pool/main/m/miopenkernels-gfx1030-36kdb/miopenkernels-gfx1030-36kdb_1.1.0.50403-121~20.04_amd64.deb
@@ -157,7 +157,7 @@ pool/main/m/miopenkernels-gfx90a-110kdb5.4.3/miopenkernels-gfx90a-110kdb5.4.3_1.
 
 	if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
 		# For hashes
-		wget "http://repo.radeon.com/rocm/apt/${MY_PV}/dists/ubuntu/main/binary-amd64/Packages"
+		wget "https://repo.radeon.com/rocm/apt/${MY_PV}/dists/ubuntu/main/binary-amd64/Packages"
 		csplit \
 			--quiet \
 			--prefix=Packages \
