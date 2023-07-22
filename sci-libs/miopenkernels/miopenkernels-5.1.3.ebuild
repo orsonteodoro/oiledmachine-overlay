@@ -211,7 +211,7 @@ pool/main/m/miopenkernels-gfx90a-110/miopenkernels-gfx90a-110_1.1.0.50103-66_amd
 	for x in ${AMDGPU_TARGETS_OVERRIDE[@]} ; do
 		for y in ${files[@]} ; do
 			if use "amdgpu_targets_${x}" && [[ "${y}" =~ "${x}" ]] ; then
-	# Do it this way via wget instead of SRC_RUI because the files are too large.
+	# Do it this way via wget instead of SRC_URI because the files are too large.
 				addwrite "${EDISTDIR}"
 				wget -c "${uri_base}/${y}"
 				local bn=$(basename "${y}")
