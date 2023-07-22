@@ -40,7 +40,10 @@ SLOT="0/$(ver_cut 1-2)"
 IUSE+=" test"
 RDEPEND="
 	>=sys-libs/libomp-${LLVM_MAX_SLOT}
-	dev-util/hip
+	|| (
+		~dev-util/hip-5.5.1
+		~dev-util/hip-5.6.0
+	)
 "
 DEPEND="
 	${RDEPEND}
