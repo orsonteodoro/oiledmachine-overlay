@@ -55,7 +55,8 @@ CUDA_TARGETS=(
 IUSE+="
 ${CUDA_TARGETS[@]/#/cuda_targets_}
 ${LLVM_SLOTS[@]/#/llvm-}
-+apps +built-in-weights +clang cpu cuda custom-tc doc gcc hip openimageio
++apps +built-in-weights +clang cpu cuda doc gcc hip openimageio
+r1
 "
 
 gen_required_use_cuda_targets() {
@@ -91,7 +92,6 @@ gen_clang_depends() {
 		echo "
 			llvm-${s}? (
 				=sys-devel/clang-runtime-${s}*
-				>=sys-libs/libcxx-${s}
 				sys-devel/clang:${s}
 				sys-devel/llvm:${s}
 				sys-devel/lld:${s}

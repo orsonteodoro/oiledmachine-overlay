@@ -27,7 +27,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 LLVM_SLOTS=( 16 15 14 13 12 11 10 )
 IUSE+="
 ${LLVM_SLOTS[@]/#/llvm-}
-+apps +built-in-weights +clang custom-tc doc gcc openimageio
++apps +built-in-weights +clang doc gcc openimageio
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
