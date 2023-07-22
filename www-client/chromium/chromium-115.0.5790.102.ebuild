@@ -1397,6 +1397,7 @@ ewarn
 	if ver_test ${PV##*.} -ge 41 \
 		&& ver_test ${PV##*.} -lt 107 \
 		&& [[ "${SLOT}" =~ "beta" ]] ; then
+# After two releases of stable and d=[41-107) in a.b.c.d, it may happen.
 ewarn "QA:  Bump ebuild for major release.  Stable soon."
 	fi
 
