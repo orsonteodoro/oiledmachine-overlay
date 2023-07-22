@@ -270,6 +270,7 @@ eerror
 
 src_install() {
 	insinto /opt/rocm-${MY_PV}/share/miopen/db
+	local f
 	for f in $(find . -name "*.kdb") ; do
 		doins "${f}"
 	done
