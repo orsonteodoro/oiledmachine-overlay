@@ -114,6 +114,7 @@ src_configure() {
 		-DBUILD_WITH_TENSILE=ON
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocblas"
 		-DCMAKE_SKIP_RPATH=On
+		-Dpython="${PYTHON}"
 		-DROCM_SYMLINK_LIBS=OFF
 		-DTensile_CODE_OBJECT_VERSION="V3"
 		-DTensile_COMPILER="hipcc"

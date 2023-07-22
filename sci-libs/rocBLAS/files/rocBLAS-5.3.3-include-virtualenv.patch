@@ -1,0 +1,12 @@
+diff -urp rocBLAS-rocm-5.3.3.orig/CMakeLists.txt rocBLAS-rocm-5.3.3/CMakeLists.txt
+--- rocBLAS-rocm-5.3.3.orig/CMakeLists.txt	2023-07-21 19:59:59.297699355 -0700
++++ rocBLAS-rocm-5.3.3/CMakeLists.txt	2023-07-21 20:00:28.705700121 -0700
+@@ -160,6 +160,8 @@ if(NOT SKIP_LIBRARY)
+ 
+     set( Tensile_TEST_LOCAL_PATH "" CACHE PATH "Use local Tensile directory instead of fetching a GitHub branch" )
+ 
++    include(virtualenv)
++
+     if (TENSILE_VERSION)
+       find_package(Tensile ${TENSILE_VERSION} EXACT REQUIRED HIP LLVM OpenMP PATHS "${INSTALLED_TENSILE_PATH}")
+     else()

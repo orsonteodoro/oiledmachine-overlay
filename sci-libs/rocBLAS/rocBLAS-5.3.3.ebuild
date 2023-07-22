@@ -79,6 +79,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.4.2-unbundle-Tensile.patch"
 	"${FILESDIR}/${PN}-5.4.2-add-missing-header.patch"
 	"${FILESDIR}/${PN}-5.4.2-link-cblas.patch"
+	"${FILESDIR}/${PN}-5.3.3-include-virtualenv.patch"
 )
 QA_FLAGS_IGNORED="/usr/lib64/rocblas/library/.*"
 
@@ -114,6 +115,7 @@ src_configure() {
 		-DBUILD_WITH_TENSILE=ON
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocblas"
 		-DCMAKE_SKIP_RPATH=On
+		-Dpython="${PYTHON}"
 		-DTensile_CODE_OBJECT_VERSION="V3"
 		-DTensile_COMPILER="hipcc"
 		-DTensile_CPU_THREADS=$(makeopts_jobs)
