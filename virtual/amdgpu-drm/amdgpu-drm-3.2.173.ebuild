@@ -22,10 +22,10 @@ SLOT="0/${PV}" # based on DC_VER, rock-dkms will not be an exact fit
 RDEPEND="
 	strict-pairing? (
 		rock-dkms? (
-			=sys-kernel/rock-dkms-${ROCK_DKMS_PV}*
+			~sys-kernel/rock-dkms-${ROCK_DKMS_PV}
 		)
 		firmware? (
-			=sys-kernel/linux-firmware-${VANILLA_FIRMWARE_PV}
+			~sys-kernel/linux-firmware-${VANILLA_FIRMWARE_PV}
 		)
 	)
 	!strict-pairing? (
