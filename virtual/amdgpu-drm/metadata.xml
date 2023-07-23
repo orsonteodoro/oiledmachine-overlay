@@ -7,9 +7,9 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    The amdgpu-drm is a virtual ebuild.  It will make sure that amdgpu drm
-    module is compatible or have available the ioctls for both kernel and
-    userspace drivers.
+    The amdgpu-drm is a virtual ebuild.  It will make sure that amdgpu DRM
+    (Direct Rendering Manager) kernel module has compatible support for both the
+    kernel and userspace drivers.
   </longdescription>
   <use>
     <flag name="custom-kernel">
