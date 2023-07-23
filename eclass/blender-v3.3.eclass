@@ -121,7 +121,7 @@ ${OPENVDB_ABIS[@]}
 -man +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
 +openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace
 +pulseaudio release +sdl +sndfile +tbb test +tiff +usd -valgrind
-r1
+r2
 "
 
 inherit blender
@@ -1037,6 +1037,11 @@ ewarn "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT} are both installed."
 ewarn
 ewarn "Install both if build fails."
 ewarn
+	fi
+	if use hip ; then
+		sed -e "s|/opt/rocm/hip/lib/libamdhip64.so|/usr/lib64/libamdhip64.so|" \
+			-i extern/hipew/src/hipew.c \
+			|| die
 	fi
 }
 
