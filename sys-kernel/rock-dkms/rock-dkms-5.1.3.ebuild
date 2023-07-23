@@ -5,6 +5,8 @@ EAPI=8
 
 inherit linux-info
 
+MAINTAINER_MODE=1
+
 DESCRIPTION="ROCk DKMS kernel module"
 HOMEPAGE="
 https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver
@@ -20,15 +22,15 @@ SUFFIX="${PV_MAJOR_MINOR}"
 KV="5.18.0" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.4.3/Makefile#L2
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
-acpi +build +check-mmu-notifier custom-kernel directgma firmware hybrid-graphics
-numa +sign-modules ssg
+acpi +build +check-mmu-notifier custom-kernel directgma hybrid-graphics
+numa +sign-modules ssg strict-pairing
 "
 REQUIRED_USE="
 	hybrid-graphics? (
 		acpi
 	)
 "
-if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
+if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
 # For verification of patch correctness
 	KV_NOT_SUPPORTED_MAX="99999999"
 	KV_SUPPORTED_MIN="${KV%%.*}.0"
@@ -36,8 +38,15 @@ else
 	KV_NOT_SUPPORTED_MAX="${KV%%.*}.$(($(ver_cut 2 ${KV}) + 1))"
 	KV_SUPPORTED_MIN="${KV%%.*}.0"
 fi
+CDEPEND="
+	!strict-pairing? (
+		>=sys-kernel/linux-firmware-20220509
+	)
+	strict-pairing? (
+		~sys-kernel/linux-firmware-20220509
+	)
+"
 RDEPEND="
-	sys-kernel/dkms
 	!custom-kernel? (
 		|| (
 			(
@@ -74,8 +83,11 @@ RDEPEND="
 			)
 		)
 	)
+	${CDEPEND}
+	sys-kernel/dkms
 "
 DEPEND="
+	${CDEPEND}
 	${RDEPEND}
 "
 BDEPEND="
@@ -92,10 +104,8 @@ DKMS_PKG_VER="${SUFFIX}"
 DC_VER="3.2.173" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.1.3/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
 PATCHES=(
-# FIXME:  update patches for this version
 	"${FILESDIR}/rock-dkms-3.10_p27-makefile-recognize-gentoo.patch"
-	"${FILESDIR}/rock-dkms-4.3_p52-enable-mmu_notifier.patch"
-	"${FILESDIR}/rock-dkms-4.3_p52-no-firmware-install.patch"
+	"${FILESDIR}/rock-dkms-5.1.3-enable-mmu_notifier.patch"
 	"${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
 )
 
@@ -348,7 +358,7 @@ eerror
 
 show_supported_kv() {
 ewarn
-ewarn "The following versions are only supported for ${P}:"
+ewarn "The following kernel versions are only supported for ${P}:"
 ewarn
 ewarn "LTS 5.4.x"
 ewarn "LTS 5.10.x"
@@ -369,7 +379,7 @@ eerror
 		die
 	fi
 
-if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
+if [[ "${MAINTAINER_MODE}" != "1" ]] ; then
 	local k
 	for k in ${ROCK_DKMS_KERNELS} ; do
 		if [[ "${k}" =~ "*" ]] ; then
@@ -401,7 +411,7 @@ fi
 
 _reconstruct_tarball_layout() {
 	local tarball_root="${WORKDIR}/ROCK-Kernel-Driver-rocm-${PV}"
-	local base="${WORKDIR}/usr/src/amdgpu-9999"
+	local base="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
 	mkdir -p "${base}" || die
 	pushd "${base}" || die
 		mkdir -p "${base}/include" || die
@@ -438,7 +448,7 @@ _reconstruct_tarball_layout() {
 			|| die
 		cp -a \
 			"${tarball_root}/include/kcl/reservation.h" \
-			"${base}/include/linux/reservation.h" \
+			"${base}/include/linux" \
 			|| die
 		cp -a \
 			"${tarball_root}/include/uapi/drm/amdgpu_drm.h" \
@@ -452,7 +462,7 @@ _reconstruct_tarball_layout() {
 }
 
 src_unpack() {
-	rm -rf "${S}/firmware" || die
+	unpack ${A}
 	_reconstruct_tarball_layout
 }
 

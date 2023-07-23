@@ -91,5 +91,13 @@
     <flag name="ssg">
       Checks kernel config for SSG (Solid State Graphics) support.
     </flag>
+    <flag name="strict-pairing">
+      Ensures that the equivalent firmware used is the same one as the release
+      of this package.  Meaning that the firmware release year-month is the same
+      as the year-month connected the DC_VER or the same rocm version.
+
+      (Note in recent versions 5.0 or later, the rock-dkms-firmware package
+      has not been released.)
+    </flag>
   </use>
 </pkgmetadata>

@@ -1,0 +1,13 @@
+diff -urp amdgpu-5.3.orig/amd/dkms/Makefile amdgpu-5.3/amd/dkms/Makefile
+--- amdgpu-5.3.orig/amd/dkms/Makefile	2023-07-23 16:52:30.745907055 -0700
++++ amdgpu-5.3/amd/dkms/Makefile	2023-07-23 16:53:18.349908295 -0700
+@@ -152,7 +152,9 @@ export CONFIG_DRM_AMDGPU_CIK=y
+ export CONFIG_DRM_AMDGPU_SI=y
+ export CONFIG_DRM_AMDGPU_USERPTR=y
+ export CONFIG_DRM_AMD_DC=y
++export CONFIG_MMU_NOTIFIER=y
+ 
++subdir-ccflags-y += -DCONFIG_MMU_NOTIFIER
+ subdir-ccflags-y += -DCONFIG_HSA_AMD
+ subdir-ccflags-y += -DCONFIG_DRM_TTM_DMA_PAGE_POOL
+ subdir-ccflags-y += -DCONFIG_DRM_AMDGPU_CIK
