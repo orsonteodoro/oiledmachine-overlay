@@ -25,7 +25,7 @@
  
  # use_qt6 => use_qt
 -assert(!use_qt6 || use_qt)
-+assert(!use_qt6 || !use_qt5)
++assert(use_qt6 || use_qt5)
 --- a/ui/linux/BUILD.gn.orig	2023-07-20 20:41:24.952343200 -0700
 +++ b/ui/linux/BUILD.gn	2023-07-22 16:26:39.551616316 -0700
 @@ -63,7 +63,7 @@ component("linux_ui_factory") {
