@@ -156,7 +156,7 @@ RESTRICT="mirror"
 # Uncomment below to generate an about_credits.html including bundled internal
 # dependencies.
 #
-#GEN_ABOUT_CREDITS=1
+# GEN_ABOUT_CREDITS=1
 #
 
 # SHA512 about_credits.html fingerprint:
@@ -2694,7 +2694,8 @@ einfo
 		myconf_gn+=" ozone_platform=\"headless\""
 		myconf_gn+=" use_xkbcommon=false"
 		myconf_gn+=" use_gtk=false"
-		myconf_gn+=" use_qt=false"
+		myconf_gn+=" use_qt5=false"
+		myconf_gn+=" use_qt6=false"
 		myconf_gn+=" use_glib=false"
 		myconf_gn+=" use_gio=false"
 		myconf_gn+=" use_pangocairo=false"
@@ -2728,7 +2729,7 @@ einfo
 				fi
 			fi
 		fi
-		myconf_gn+=" use_qt=$(usex qt5 true false)"
+		myconf_gn+=" use_qt5=$(usex qt5 true false)"
 		myconf_gn+=" use_qt6=$(usex qt6 true false)"
 		myconf_gn+=" ozone_platform_x11=$(usex X true false)"
 		myconf_gn+=" ozone_platform_wayland=$(usex wayland true false)"
