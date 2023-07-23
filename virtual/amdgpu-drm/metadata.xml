@@ -16,19 +16,20 @@
       Disable *DEPENDs checks.
     </flag>
     <flag name="dkms">
-      Prefer the DKMS drivers.
+      Prefer the DKMS drivers.  The driver will be built as modules.
     </flag>
     <flag name="kernel">
       Selects the in kernel sources which will contain the amdgpu DRM driver.
-      Your kernel must reside or be linked at
-      /usr/src/linux which the ebuild will scan
-      /usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h
+
+      (Recommended for minimal install and better security)
     </flag>
     <flag name="firmware">
       Pulls compatible firmware.
     </flag>
     <flag name="rock-dkms">
       Selects rock-dkms as the DRM driver
+
+      (Recommended for feature completeness)
     </flag>
     <flag name="strict-pairing">
       Both the firmware and DRM driver are paired so they coinside, meaning the
