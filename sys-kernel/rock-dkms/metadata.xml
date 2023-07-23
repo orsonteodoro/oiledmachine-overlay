@@ -7,8 +7,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    The rock-dkms a package containing both the ROCK-Kernel-Driver and the 
-    latest firmware (which is not installed in this package).
+    The rock-dkms package contains the ROCK-Kernel-Driver.
   </longdescription>
   <!--
 
