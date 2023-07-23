@@ -60,6 +60,7 @@ S="${WORKDIR}/${P}"
 PATCHES=(
 	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-expf.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-hip_runtime-header.patch"
+	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-sqrtf.patch"
 )
 if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
 	PATCHES+=(

@@ -1,0 +1,52 @@
+--- composable_kernel-1.0.0_p9999.orig/example/34_batchnorm/batchnorm_backward_nhwc.cpp	2023-07-23 07:24:17.121019067 -0700
++++ composable_kernel-1.0.0_p9999/example/34_batchnorm/batchnorm_backward_nhwc.cpp	2023-07-23 07:30:50.765029320 -0700
+@@ -4,6 +4,9 @@
+ #include <limits>
+ #include <iostream>
+ #include <getopt.h>
++#if !defined(_LIBCPP_VERSION)
++#  include <cmath>
++#endif
+ 
+ #include "ck/ck.hpp"
+ #include "ck/library/utility/check_err.hpp"
+@@ -171,8 +174,13 @@ bool bnorm_bwd_nhwc_test(bool do_verific
+ 
+         while(it_src != savedVariance.mData.end())
+         {
++#if !defined(_LIBCPP_VERSION)
++            *it_dst = type_convert<AccDataType>(
++                1.0f / sqrtf(type_convert<float>(*it_src) + tmp_epsilon));
++#else
+             *it_dst = type_convert<AccDataType>(
+                 1.0f / std::sqrtf(type_convert<float>(*it_src) + tmp_epsilon));
++#endif
+ 
+             it_src++;
+             it_dst++;
+--- composable_kernel-1.0.0_p9999.orig/profiler/include/profiler/profile_batchnorm_backward_impl.hpp	2023-07-23 07:24:18.409019101 -0700
++++ composable_kernel-1.0.0_p9999/profiler/include/profiler/profile_batchnorm_backward_impl.hpp	2023-07-23 07:30:56.333029465 -0700
+@@ -5,6 +5,9 @@
+ 
+ #include <iomanip>
+ #include <stdexcept>
++#if !defined(_LIBCPP_VERSION)
++#  include <cmath>
++#endif
+ 
+ #include "ck/ck.hpp"
+ #include "ck/tensor_operation/gpu/element/element_wise_operation.hpp"
+@@ -110,8 +113,13 @@ bool profile_batchnorm_backward_impl(boo
+ 
+         while(it_src != savedVariance.mData.end())
+         {
++#if !defined(_LIBCPP_VERSION)
++            *it_dst = type_convert<AccDataType>(
++                1.0f / sqrtf(type_convert<float>(*it_src) + tmp_epsilon));
++#else
+             *it_dst = type_convert<AccDataType>(
+                 1.0f / std::sqrtf(type_convert<float>(*it_src) + tmp_epsilon));
++#endif
+ 
+             it_src++;
+             it_dst++;
