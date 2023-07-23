@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    The rock-dkms a package containing both the ROCK-Kernel-Driver and the 
+    latest firmware (which is not installed in this package).
+  </longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
+
+    This package will build the kernel modules using the DKMS framework allowing
+    for version agnostic compatibility meaning that you can compile this package 
+    against the latest point release of the long-term support kernel 5.4.x
+    kernel series only (for security update reasons).  The ROCk
+    package has more GPU features like IPC related features (Memory sharing API,
+    Signal sharing API); increasing GPU system memory limits from 3/8 of system 
+    memory to 29/32 of system memory; RDMA (aka Remote Device Programming or 
+    ROCmRDMA) to allow other PCIe kernel modules and devices DMA access to GPU
+    memory, KFD (Kernel Fusion Driver) features, and DirectGMA (Direct 
+    Graphic Memory Access) support.  ROCk is also a core component of the
+    ROCm platform.
+
+    This amdgpu module contains extra kernel parameters compared to the
+    vanilla amdgpu module that can be used to tune ROCk, SSG, power savings,
+    memory usage.  For details, do `modinfo amdgpu`.
+
+    It must look like:
+
+    ROCK_DKMS_KERNELS="5.2.17-pf 5.2.17-gentoo"
+
+    Use:
+
+    * to build all point releases
+    Examples: 5.2.*-ot
+
+    ^ to build only the highest point release
+    Examples: 5.2.^-ot
+
+  -->
+  <upstream>
+    <bugs-to>https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver</bugs-to>
+    <remote-id type="github">RadeonOpenCompute/ROCK-Kernel-Driver</remote-id>
+  </upstream>
+  <use>
+    <flag name="acpi">
+      Checks if ACPI support is enabled in the kernel.  Enabling ACPI may
+      enhance multigpu detection with PowerXpress (multigpu laptops), provide
+      more sysfs info, access to ACPI events for laptops, dynamic PCI-e
+      frequency tuning.
+    </flag>
+    <flag name="build">
+      Builds the kernel module.
+    </flag>
+    <flag name="check-mmu-notifier">
+      Checks if the MMU_NOTIFIER is enabled.
+    </flag>
+    <flag name="custom-kernel">
+      Bypass RDEPENDs check for a kernel package.
+    </flag>
+    <flag name="directgma">
+      Checks kernel config for DirectGMA support.
+    </flag>
+    <flag name="firmware">
+      Pulls in the firmware package containing the latest firmware version.
+    </flag>
+    <flag name="hybrid-graphics">
+      Checks if kernel config for proper support for PowerXpress, Hybrid
+      Graphics (i.e. IGP and dGPU on laptop).
+    </flag>
+    <flag name="numa">
+      Fills the IO-LINKS' sysfs interface at
+      /sys/class/kfd/topology/nodes/N/io_links/X/node_to
+      using the NUMA data structure.  For more info see
+      https://rocm-documentation.readthedocs.io/en/latest/ROCm_System_Managment/topo3.html#sysfsclasskfdtopologynodes0iolinks01
+      https://rocm-documentation.readthedocs.io/en/latest/ROCm_System_Managment/ROCm-System-Managment.html#io-links
+    </flag>
+    <flag name="rt">
+      Applies a PREEMPT_RT patch to prevent a kernel hang.  This requires the a
+      kernel with the rt patch already applied to complete the other half of the
+      patch.  This requirement currently applies to 5.6.x kernel series or
+      earlier.
+    </flag>
+    <flag name="sign-modules">
+      Signs the modules if necessary.
+    </flag>
+    <flag name="ssg">
+      Checks kernel config for SSG (Solid State Graphics) support.
+    </flag>
+  </use>
+</pkgmetadata>

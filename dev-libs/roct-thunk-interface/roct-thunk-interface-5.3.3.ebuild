@@ -25,6 +25,7 @@ SLOT="0/$(ver_cut 1-2)"
 RDEPEND="
 	>=sys-apps/pciutils-3.9.0
 	>=sys-process/numactl-2.0.16
+	~virtual/amdgpu-drm-3.2.196
 "
 DEPEND="
 	${RDEPEND}
