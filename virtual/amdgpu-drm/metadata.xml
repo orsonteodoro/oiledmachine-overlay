@@ -12,8 +12,11 @@
     userspace drivers.
   </longdescription>
   <use>
+    <flag name="custom-kernel">
+      Disable *DEPENDs checks.
+    </flag>
     <flag name="dkms">
-     Prefer the DKMS drivers.
+      Prefer the DKMS drivers.
     </flag>
     <flag name="kernel">
       Selects the in kernel sources which will contain the amdgpu DRM driver.
