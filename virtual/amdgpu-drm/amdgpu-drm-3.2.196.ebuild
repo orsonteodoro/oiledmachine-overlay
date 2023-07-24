@@ -21,6 +21,9 @@ IUSE="custom-kernel dkms +firmware kernel rock-dkms strict-pairing"
 SLOT="0/${PV}"
 RDEPEND="
 	!strict-pairing? (
+		firmware? (
+			>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
+		)
 		kernel? (
 			!custom-kernel? (
 				|| (
@@ -40,11 +43,11 @@ RDEPEND="
 		rock-dkms? (
 			>=sys-kernel/rock-dkms-${ROCK_DKMS_PV}
 		)
-		firmware? (
-			>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
-		)
 	)
 	strict-pairing? (
+		firmware? (
+			~sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
+		)
 		kernel? (
 			!custom-kernel? (
 				|| (
@@ -63,9 +66,6 @@ RDEPEND="
 		)
 		rock-dkms? (
 			~sys-kernel/rock-dkms-${ROCK_DKMS_PV}
-		)
-		firmware? (
-			~sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
 		)
 	)
 "
