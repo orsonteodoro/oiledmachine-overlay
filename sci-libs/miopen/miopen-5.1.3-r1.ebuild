@@ -171,7 +171,10 @@ src_configure() {
 
 	# Fix for
 	# lld: error: undefined symbol: __stack_chk_fail
-	append-flags "-fno-stack-protector"
+#	append-flags "-fno-stack-protector"
+
+	# lld: error: undefined hidden symbol: free
+	replace-flags '-O0' '-O1'
 
 	CXX="$(get_llvm_prefix ${LLVM_MAX_SLOT})/bin/clang++" \
 	cmake_src_configure
