@@ -82,21 +82,7 @@ src_compile() {
 PKG_POSTINST_LIST=""
 PKG_RADEON_LIST=""
 
-pkg_preinst() {
-	cd "${S}" || die
-	local MA=$(ls * \
-		| cut -f1 -d"_" \
-		| uniq \
-		| tr "\n" " ")
-
-	local
-	for ma in ${MA} ; do
-		F=(
-			$(ls ${ma}*)
-		)
-		PKG_POSTINST_LIST+=" \e[1m\e[92m*\e[0m ${ma}:\t${F[@]/#/amdgpu/}\n"
-	done
-
+gen_radeon_list() {
 	local F=$(grep -r \
 		-e "radeon/" \
 		"${FILESDIR}/${ROCM_PV}/amdgpu_cgs.c" \
@@ -120,6 +106,49 @@ pkg_preinst() {
 	for cn in ${!L[@]} ; do
 		PKG_RADEON_LIST+=" \e[1m\e[92m*\e[0m ${cn}:\t${L[${cn}]}\n"
 	done
+}
+
+gen_all_list() {
+	local _ma
+	local ma
+	for _ma in ${MA} ; do
+		# Corrections
+		if [[ "${_ma}" == "beige" ]] ; then
+			ma="beige_goby"
+		elif [[ "${_ma}" == "cyan" ]] ; then
+			ma="cyan_skillfish2"
+		elif [[ "${_ma}" == "dimgrey" ]] ; then
+			ma="dimgrey_cavefish"
+		elif [[ "${_ma}" == "green" ]] ; then
+			ma="green_sardine"
+		elif [[ "${_ma}" == "navy" ]] ; then
+			ma="navy_flounder"
+		elif [[ "${_ma}" == "sienna" ]] ; then
+			ma="sienna_cichlid"
+		elif [[ "${_ma}" == "yellow" ]] ; then
+			ma="yellow_carp"
+		else
+			ma="${_ma}"
+		fi
+
+		F=(
+			$(ls ${ma}_*)
+		)
+
+		PKG_POSTINST_LIST+=" \e[1m\e[92m*\e[0m ${ma}:\t${F[@]/#/amdgpu/}\n"
+	done
+}
+
+pkg_preinst() {
+	cd "${S}" || die
+	# MA = microarches
+	local MA=$(ls * \
+		| cut -f1 -d"_" \
+		| uniq \
+		| tr "\n" " ")
+
+	gen_all_list
+	gen_radeon_list
 }
 
 src_install() {
