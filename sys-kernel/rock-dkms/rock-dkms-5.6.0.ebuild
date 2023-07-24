@@ -5,7 +5,7 @@ EAPI=8
 
 inherit linux-info
 
-MAINTAINER_MODE=1
+MAINTAINER_MODE=0
 
 DESCRIPTION="ROCk DKMS kernel module"
 HOMEPAGE="
@@ -38,7 +38,49 @@ else
 	KV_NOT_SUPPORTED_MAX="${KV%%.*}.$(($(ver_cut 2 ${KV}) + 1))"
 	KV_SUPPORTED_MIN="${KV%%.*}.0"
 fi
+gen_kernel_pairs() {
+	local FLAVORS=(
+		"sys-kernel/gentoo-kernel"
+		"sys-kernel/gentoo-kernel-bin"
+		"sys-kernel/gentoo-sources"
+		"sys-kernel/ot-sources"
+		"sys-kernel/pf-sources"
+		"sys-kernel/rt-sources"
+		"sys-kernel/vanilla-sources"
+		"sys-kernel/zen-sources"
+	)
+	local KVS=(
+		"$(ver_cut 1-2 ${KV})"
+		"6.1"
+	)
+	local kv
+	for flavor in ${FLAVORS[@]} ; do
+		for kv in ${KVS[@]} ; do
+			local kv_min="$(ver_cut 1-2 ${kv})"
+			local kv_max="${kv%%.*}.$(($(ver_cut 2 ${kv}) + 1))"
+			echo "
+			(
+				>=${flavor}-${kv_min}
+				<${flavor}-${kv_max}
+			)
+			"
+			if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
+				echo "
+			(
+				>=${flavor}-0
+				<${flavor}-99999999
+			)
+				"
+			fi
+		done
+	done
+}
 CDEPEND="
+	!custom-kernel? (
+		|| (
+			$(gen_kernel_pairs)
+		)
+	)
 	!strict-pairing? (
 		>=sys-kernel/linux-firmware-20230625
 	)
@@ -47,42 +89,6 @@ CDEPEND="
 	)
 "
 RDEPEND="
-	!custom-kernel? (
-		|| (
-			(
-				>=sys-kernel/gentoo-kernel-${KV_SUPPORTED_MIN}
-				<sys-kernel/gentoo-kernel-${KV_NOT_SUPPORTED_MAX}
-			)
-			(
-				>=sys-kernel/gentoo-kernel-bin-${KV_SUPPORTED_MIN}
-				<sys-kernel/gentoo-kernel-bin-${KV_NOT_SUPPORTED_MAX}
-			)
-			(
-				>=sys-kernel/gentoo-sources-${KV_SUPPORTED_MIN}
-				<sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED_MAX}
-			)
-			(
-				>=sys-kernel/ot-sources-${KV_SUPPORTED_MIN}
-				<sys-kernel/ot-sources-${KV_NOT_SUPPORTED_MAX}
-			)
-			(
-				>=sys-kernel/pf-sources-${KV_SUPPORTED_MIN}
-				<sys-kernel/pf-sources-${KV_NOT_SUPPORTED_MAX}
-			)
-			(
-				>=sys-kernel/rt-sources-${KV_SUPPORTED_MIN}
-				<sys-kernel/rt-sources-${KV_NOT_SUPPORTED_MAX}
-			)
-			(
-				>=sys-kernel/vanilla-sources-${KV_SUPPORTED_MIN}
-				<sys-kernel/vanilla-sources-${KV_NOT_SUPPORTED_MAX}
-			)
-			(
-				>=sys-kernel/zen-sources-${KV_SUPPORTED_MIN}
-				<sys-kernel/zen-sources-${KV_NOT_SUPPORTED_MAX}
-			)
-		)
-	)
 	${CDEPEND}
 	sys-kernel/dkms
 "
@@ -330,8 +336,9 @@ eerror
 }
 
 check_kernel() {
-	local k="$1"
-	local kv=$(echo "${k}" | cut -f1 -d'-')
+	local k="${1}"
+	local kv=$(echo "${k}" \
+		| cut -f1 -d'-')
 	if ver_test ${kv} -ge ${KV_NOT_SUPPORTED_MAX} ; then
 eerror
 eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS"
@@ -513,7 +520,10 @@ get_modules_folder() {
 	elif [[ -d "/lib/modules/${k}" ]] ; then
 		md="/lib/modules/${k}"
 	else
-		die "Could not locate modules folder to sign."
+eerror
+eerror "Could not locate modules folder to sign."
+eerror
+		die
 	fi
 	echo "${md}"
 }
@@ -525,7 +535,10 @@ git_modules_folder_suffix() {
 	elif [[ -d "/lib/modules/${k}" ]] ; then
 		md=""
 	else
-		die "Could not locate modules folder to sign."
+eerror
+eerror "Could not locate modules folder to sign."
+eerror
+		die
 	fi
 	echo "${md}"
 }
@@ -586,11 +599,11 @@ signing_modules() {
 dkms_build() {
 	local _k="${k}$(git_modules_folder_suffix)/${ARCH}"
 einfo "Running:  \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k}\`"
-	dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} || die
+	dkms build "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" || die
 einfo "Running:  \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --force\`"
-	dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --force || die
+	dkms install "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" --force || die
 einfo "The modules were installed in $(get_modules_folder)/updates"
-	signing_modules ${k}
+	signing_modules "${k}"
 }
 
 check_modprobe_conf() {
