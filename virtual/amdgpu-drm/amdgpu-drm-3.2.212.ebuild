@@ -86,7 +86,7 @@ ewarn
 ewarn "The following are still required:"
 ewarn
 	if use strict-pairing ; then
-ewarn "DC_VER:  ${PV}±10, from /usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h"
+ewarn "DC_VER:  ${PV} within z±10 in x.y.z, from /usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h"
 ewarn "Kernel version:  =${KERNEL_PV}*"
 	else
 ewarn "DC_VER:  >=${PV}, from /usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h"
