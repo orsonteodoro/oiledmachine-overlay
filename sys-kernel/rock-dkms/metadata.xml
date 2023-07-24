@@ -96,8 +96,9 @@
       of this package.  Meaning that the firmware release year-month is the same
       as the year-month connected the DC_VER or the same rocm version.
 
-      (Note in recent versions 5.0 or later, the rock-dkms-firmware package
-      has not been released.)
+      (Note in recent versions 5.0 or later, the rock-dkms-firmware package has
+      not been released separately like in older versions but the
+      amdgpu-dkms-firmware matching the rocm version has been used instead.)
     </flag>
   </use>
 </pkgmetadata>
