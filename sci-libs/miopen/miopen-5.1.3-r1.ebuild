@@ -169,10 +169,8 @@ src_configure() {
 	append-cxxflags "--rocm-path=$(hipconfig -R)"
 	append-cxxflags "--hip-device-lib-path=${EPREFIX}/usr/lib/amdgcn/bitcode"
 
-	# Fix for
-	# lld: error: undefined symbol: __stack_chk_fail
-#	append-flags "-fno-stack-protector"
-
+	# Fix for both
+	# lld: error: undefined symbol: __stack_chk_fail ; if fail try append-flags "-fno-stack-protector"
 	# lld: error: undefined hidden symbol: free
 	replace-flags '-O0' '-O1'
 

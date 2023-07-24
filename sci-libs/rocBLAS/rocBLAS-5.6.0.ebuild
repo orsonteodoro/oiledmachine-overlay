@@ -25,7 +25,7 @@ DOCS_DEPEND="
 LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.6.0/llvm/CMakeLists.txt
 ROCM_VERSION="${PV}"
 PYTHON_COMPAT=( python3_{10..11} )
-inherit cmake docs edo multiprocessing llvm python-any-r1 rocm
+inherit cmake docs edo flag-o-matic multiprocessing llvm python-any-r1 rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocBLAS/archive/rocm-${PV}.tar.gz
@@ -38,7 +38,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocBLAS"
 LICENSE="BSD"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="benchmark test r1"
+IUSE="benchmark test r2"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -107,6 +107,10 @@ src_configure() {
 	addpredict /dev/random
 	addpredict /dev/kfd
 	addpredict /dev/dri/
+
+	# Prevent error below for miopen
+	# undefined reference to `rocblas_status_ rocblas_internal_check_numerics_matrix_template
+	replace-flags '-O0' '-O1'
 
 	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
