@@ -32,11 +32,12 @@ S="${WORKDIR}"
 pkg_setup() {
 	local last_cfg=$(ls \
 		/etc/portage/savedconfig/sys-kernel/linux-firmware* \
-		| sort | tail -n 1)
+		| sort \
+		| tail -n 1)
 
 	if [[ ! -f /etc/portage/savedconfig/sys-kernel/${last_cfg} ]]
 	then
-		last_cfg="linux-firmware-20200122"
+		last_cfg="linux-firmware-20230210"
 	fi
 
 ewarn
