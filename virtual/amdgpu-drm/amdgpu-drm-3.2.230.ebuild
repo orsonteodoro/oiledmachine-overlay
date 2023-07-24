@@ -20,30 +20,6 @@ KEYWORDS="~amd64 ~x86"
 IUSE="custom-kernel dkms +firmware kernel rock-dkms strict-pairing"
 SLOT="0/${PV}"
 RDEPEND="
-	strict-pairing? (
-		kernel? (
-			!custom-kernel? (
-				|| (
-					=sys-kernel/gentoo-kernel-${KERNEL_PV}*
-					=sys-kernel/gentoo-kernel-bin-${KERNEL_PV}*
-					=sys-kernel/gentoo-sources-${KERNEL_PV}*
-					=sys-kernel/git-sources-${KERNEL_PV}*
-					=sys-kernel/ot-sources-${KERNEL_PV}*
-					=sys-kernel/pf-sources-${KERNEL_PV}*
-					=sys-kernel/rt-sources-${KERNEL_PV}*
-					=sys-kernel/vanilla-kernel-${KERNEL_PV}*
-					=sys-kernel/vanilla-sources-${KERNEL_PV}*
-					=sys-kernel/zen-sources-${KERNEL_PV}*
-				)
-			)
-		)
-		rock-dkms? (
-			~sys-kernel/rock-dkms-${ROCK_DKMS_PV}
-		)
-		firmware? (
-			~sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
-		)
-	)
 	!strict-pairing? (
 		kernel? (
 			!custom-kernel? (
@@ -66,6 +42,30 @@ RDEPEND="
 		)
 		firmware? (
 			>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
+		)
+	)
+	strict-pairing? (
+		kernel? (
+			!custom-kernel? (
+				|| (
+					=sys-kernel/gentoo-kernel-${KERNEL_PV}*
+					=sys-kernel/gentoo-kernel-bin-${KERNEL_PV}*
+					=sys-kernel/gentoo-sources-${KERNEL_PV}*
+					=sys-kernel/git-sources-${KERNEL_PV}*
+					=sys-kernel/ot-sources-${KERNEL_PV}*
+					=sys-kernel/pf-sources-${KERNEL_PV}*
+					=sys-kernel/rt-sources-${KERNEL_PV}*
+					=sys-kernel/vanilla-kernel-${KERNEL_PV}*
+					=sys-kernel/vanilla-sources-${KERNEL_PV}*
+					=sys-kernel/zen-sources-${KERNEL_PV}*
+				)
+			)
+		)
+		rock-dkms? (
+			~sys-kernel/rock-dkms-${ROCK_DKMS_PV}
+		)
+		firmware? (
+			~sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
 		)
 	)
 "
