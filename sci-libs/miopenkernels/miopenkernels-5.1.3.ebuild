@@ -117,7 +117,18 @@ declare -A EXPECTED_SIZE=(
 ["A28edf034be26d43f4e9b8a7685b7c102817c398d"]="290769562"
 ) > /dev/null
 
+check_sandbox() {
+	if has network-sandbox ${FEATURES} ; then
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to download kernels."
+eerror
+		die
+	fi
+}
+
 src_unpack() {
+	check_sandbox
 	# obtain from after csplit below:
 	local uri_base="https://repo.radeon.com/rocm/apt/${MY_PV}/"
 	local files=(
