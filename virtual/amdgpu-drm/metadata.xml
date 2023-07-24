@@ -21,12 +21,14 @@
     <flag name="kernel">
       Selects the in kernel sources which will contain the amdgpu DRM driver.
 
-      (Recommended for minimal install and better security)
+      (Recommended for minimal install and better security, but you are
+      responsible for the proper kernel configuration.)
     </flag>
     <flag name="rock-dkms">
       Selects rock-dkms as the DRM driver
 
-      (Recommended for feature completeness)
+      (Recommended for feature completeness and kernel configuration
+      correctness.)
     </flag>
     <flag name="strict-pairing">
       Both the firmware and DRM driver are paired so they coinside, meaning the
