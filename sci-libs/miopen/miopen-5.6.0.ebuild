@@ -22,7 +22,7 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1102
 )
 ROCM_VERSION="${PV}"
-LLVM_MAX_SLOT=15
+LLVM_MAX_SLOT=16
 inherit cmake flag-o-matic llvm rocm
 
 SRC_URI="
