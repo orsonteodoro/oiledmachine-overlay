@@ -126,6 +126,26 @@ src_prepare() {
 			-e "s/.name: y,/.name: z,/g" \
 			-i {} \; \
 			|| die
+
+	if use kernels ; then
+		mkdir -p "src/kernels" || die
+		mkdir -p "${T}/files" || die
+		local MA=(
+			$(get_amdgpu_flags \
+				| tr ";" " ")
+		)
+		cd "${ESYSROOT}/opt/rocm-${PV}/share/miopen/db" || die
+		local ma
+		for ma in ${MA[@]} ; do
+			cp -a "${ma}"*".kdb" "${T}/files" || die
+		done
+		cd "${T}/files" || die
+		local f
+		for f in $(ls *.kdb) ; do
+			bzip2 -z "${f}" || die
+			cp -a "${f}.bz2" "${S}/src/kernels" || die
+		done
+	fi
 }
 
 filter_test_gpus() {
