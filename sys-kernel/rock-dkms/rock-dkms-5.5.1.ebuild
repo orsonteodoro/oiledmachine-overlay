@@ -74,6 +74,7 @@ gen_kernel_pairs() {
 		done
 	done
 }
+AMDGPU_FIRMWARE_PV="6.0.5.50501"
 CDEPEND="
 	!custom-kernel? (
 		|| (
@@ -81,10 +82,10 @@ CDEPEND="
 		)
 	)
 	!strict-pairing? (
-		>=sys-kernel/linux-firmware-20230404
+		>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
 	)
 	strict-pairing? (
-		~sys-kernel/linux-firmware-20230404
+		~sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
 	)
 "
 RDEPEND="
