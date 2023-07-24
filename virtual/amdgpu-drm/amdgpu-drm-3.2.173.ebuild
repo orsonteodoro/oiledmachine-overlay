@@ -4,7 +4,7 @@
 EAPI=7
 
 AMDGPU_FIRMWARE_PV="5.13.20.22.10.50103"
-KERNEL_FIRMWARE_PV="20220509" # Rounded to the closest day within the month based on Makefile 5.18 timestamp.
+KERNEL_FIRMWARE_PV="20220516" # Based on linux-firmware commit logs
 KERNEL_PV="5.18"  # DC_VER = 3.2.177 ; KERNEL_PV is from linux-kernel not rock-dkms
 ROCK_DKMS_PV="5.1.3" # DC_VER = ${PV}
 #
@@ -47,10 +47,7 @@ RDEPEND="
 		)
 	)
 	strict-pairing? (
-		|| (
-			~sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
-			~sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
-		)
+		~sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
 		kernel? (
 			!custom-kernel? (
 				|| (

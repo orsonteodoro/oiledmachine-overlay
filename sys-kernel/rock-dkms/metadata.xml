@@ -93,8 +93,10 @@
     </flag>
     <flag name="strict-pairing">
       Ensures that the equivalent firmware used is the same one as the release
-      of this package.  Meaning that the firmware release year-month is the same
-      as the year-month connected the DC_VER or the same rocm version.
+      of this package.  Meaning that the firmware is the same such that for
+      example 5.6.0 kernel driver is paired with the 5.6 firmware.  Otherwise,
+      the kernel driver is paired with a version greater than or equal to
+      the firmware version.
 
       (Note in recent versions 5.0 or later, the rock-dkms-firmware package has
       not been released separately like in older versions but the

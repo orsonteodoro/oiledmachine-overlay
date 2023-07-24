@@ -4,7 +4,7 @@
 EAPI=7
 
 AMDGPU_FIRMWARE_PV="6.1.5.50600"
-KERNEL_FIRMWARE_PV="20230625" # Rounded to the closest day within the month based on Makefile 6.4 timestamp.
+KERNEL_FIRMWARE_PV="99999999" # Based on linux-firmware commit logs ; not released yet, no 5.6 commit message
 KERNEL_PV="6.4"  # DC_VER = 3.2.230 ; KERNEL_PV is from linux-kernel not rock-dkms
 ROCK_DKMS_PV="5.6.0" # DC_VER = ${PV}
 #
@@ -22,10 +22,7 @@ IUSE="custom-kernel dkms kernel rock-dkms strict-pairing"
 SLOT="0/${PV}"
 RDEPEND="
 	!strict-pairing? (
-		|| (
-			>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
-			>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
-		)
+		>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
 		kernel? (
 			!custom-kernel? (
 				|| (
@@ -47,10 +44,7 @@ RDEPEND="
 		)
 	)
 	strict-pairing? (
-		|| (
-			~sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
-			~sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
-		)
+		~sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
 		kernel? (
 			!custom-kernel? (
 				|| (

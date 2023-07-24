@@ -32,7 +32,9 @@
     </flag>
     <flag name="strict-pairing">
       Both the firmware and DRM driver are paired so they coinside, meaning the
-      20.40 driver matches the corresponding the 20.40 firmware.
+      5.6.0 kernel driver matches the corresponding the 5.6 firmware.
+      Otherwise, the kernel driver is paired greater than or equal to the
+      firmware release.
     </flag>
   </use>
 </pkgmetadata>
