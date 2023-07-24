@@ -18,7 +18,7 @@ ROCK_DKMS_PV="5.5.1" # DC_VER = ${PV}
 
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
 KEYWORDS="~amd64 ~x86"
-IUSE="custom-kernel dkms kernel rock-dkms strict-pairing"
+IUSE="custom-kernel kernel rock-dkms strict-pairing"
 SLOT="0/${PV}"
 RDEPEND="
 	!strict-pairing? (
@@ -74,14 +74,6 @@ REQUIRED_USE="
 	^^ (
 		kernel
 		rock-dkms
-	)
-	dkms? (
-		^^ (
-			rock-dkms
-		)
-	)
-	rock-dkms? (
-		dkms
 	)
 "
 

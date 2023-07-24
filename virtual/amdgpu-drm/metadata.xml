@@ -8,15 +8,12 @@
   </maintainer>
   <longdescription>
     The amdgpu-drm is a virtual ebuild.  It will make sure that amdgpu DRM
-    (Direct Rendering Manager) kernel module has compatible support for both the
+    (Direct Rendering Manager) kernel driver has compatible support for both the
     kernel and userspace drivers.
   </longdescription>
   <use>
     <flag name="custom-kernel">
       Disable *DEPENDs checks.
-    </flag>
-    <flag name="dkms">
-      Prefer the DKMS drivers.  The driver will be built as modules.
     </flag>
     <flag name="kernel">
       Selects the in kernel sources which will contain the amdgpu DRM driver.
@@ -25,7 +22,7 @@
       responsible for the proper kernel configuration.)
     </flag>
     <flag name="rock-dkms">
-      Selects rock-dkms as the DRM driver
+      Selects rock-dkms as a DRM module driver.
 
       (Recommended for feature completeness and kernel configuration
       correctness.)
