@@ -47,7 +47,7 @@ ewarn "linux-firmware package."
 ewarn
 ewarn "Do something like:"
 ewarn
-ewarn "  \`sed -i -e \"s|^amdgpu|#amdgpu|g\" /etc/portage/savedconfig/sys-kernel/${last_cfg}\`"
+ewarn "  sed -i -e \"s|^amdgpu|#amdgpu|g\" /etc/portage/savedconfig/sys-kernel/${last_cfg}"
 ewarn
 ewarn "Then, remerge linux-firmware again.  If you emerged rock-firmware or"
 ewarn "amdgpu-firmware, unemerge them completely."
@@ -83,7 +83,7 @@ PKG_POSTINST_LIST=""
 PKG_RADEON_LIST=""
 
 pkg_preinst() {
-	cd "${S}/firmware/amdgpu" || die
+	cd "${S}" || die
 	local MA=$(ls * \
 		| cut -f1 -d"_" \
 		| uniq \
@@ -123,24 +123,12 @@ pkg_preinst() {
 }
 
 src_install() {
-	insinto /lib/firmware
-	doins -r firmware/amdgpu
-	pushd "${WORKDIR}/usr/share/doc" || die
-		local L=$(find . -name "copyright" -print0 \
-			|  xargs -0 dirname {} \
-			| sed -r -e "s|.[\/]?||" \
-			| tail -n +2)
-		local d
-		for d in ${L} ; do
-			docinto "licenses/${d}"
-			dodoc "${d}/copyright"
-		done
-	popd
+	insinto /lib/firmware/amdgpu
+	doins -r *
 	docinto licenses
-	local d_insdoc
-	d_insdoc="${WORKDIR}/usr/share/doc/amdgpu-dkms-firmware"
-	dodoc "${d_insdoc}/copyright"
-	dodoc "${FILESDIR}/LICENSE"
+	cd "${WORKDIR}/usr/share/doc/amdgpu-dkms-firmware" || die
+	dodoc "copyright"
+	dodoc "LICENSE"
 }
 
 pkg_postinst() {
