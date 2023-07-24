@@ -19,7 +19,7 @@ REQUIRED_USE="
 "
 DRIVER_PV="22.10.3"
 ROCM_PV="5.1.3"
-MY_PV="5.13.20.22.10.50103-1420323" # The 4th component is the rock version 5.01.03 == 5.1.3.
+MY_PV="5.13.20.22.10.50103-1420323" # The 6th component is the rock version 5.01.03 == 5.1.3.
 DEB_OS_REL="22.04"
 FN="amdgpu-dkms-firmware_${MY_PV}_all.deb"
 SRC_URI="
