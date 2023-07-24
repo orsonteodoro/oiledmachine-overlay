@@ -17,13 +17,11 @@ KERNEL_PV="6.0"  # DC_VER = 3.2.198
 
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
 KEYWORDS="~amd64 ~x86"
-IUSE="custom-kernel dkms +firmware kernel rock-dkms strict-pairing"
+IUSE="custom-kernel dkms kernel rock-dkms strict-pairing"
 SLOT="0/${PV}"
 RDEPEND="
 	!strict-pairing? (
-		firmware? (
-			>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
-		)
+		>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
 		kernel? (
 			!custom-kernel? (
 				|| (
@@ -45,9 +43,7 @@ RDEPEND="
 		)
 	)
 	strict-pairing? (
-		firmware? (
-			~sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
-		)
+		~sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
 		kernel? (
 			!custom-kernel? (
 				|| (

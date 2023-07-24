@@ -23,9 +23,6 @@
 
       (Recommended for minimal install and better security)
     </flag>
-    <flag name="firmware">
-      Pulls compatible firmware.
-    </flag>
     <flag name="rock-dkms">
       Selects rock-dkms as the DRM driver
 
