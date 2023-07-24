@@ -702,6 +702,11 @@ ewarn "encryption."
 ewarn
 
 	check_modprobe_conf
+ewarn
+ewarn "It is recommended to load this module manually after rebooting to easily"
+ewarn "repair/update the driver if missed signing the module or avoid boot time"
+ewarn "reboot or a boot time freeze possibility."
+ewarn
 }
 
 pkg_prerm() {
