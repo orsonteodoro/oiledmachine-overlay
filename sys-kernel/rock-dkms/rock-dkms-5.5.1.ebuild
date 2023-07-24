@@ -60,7 +60,7 @@ gen_kernel_pairs() {
 			echo "
 			(
 				>=${flavor}-${kv_min}
-				<${flavor}-${kv_max}
+				<${flavor}-${kv_max}:=
 			)
 			"
 			if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
