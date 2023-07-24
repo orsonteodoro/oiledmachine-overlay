@@ -153,4 +153,4 @@ src_configure() {
 	cmake_src_configure
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  in-development
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
