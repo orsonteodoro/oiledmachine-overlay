@@ -5,7 +5,7 @@ EAPI=7
 
 ROCK_DKMS_PV="5.4.3" # DC_VER = ${PV}
 KERNEL_FIRMWARE_PV="20230210" # Rounded to the closest day within the month based on Makefile 6.2 timestamp.
-KERNEL_PV="6.2"  # DC_VER = 3.2.215
+KERNEL_PV="6.2"  # DC_VER = 3.2.215 ; KERNEL_PV is from linux-kernel not rock-dkms
 #
 # linux firmware notes:
 # no exact tag # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
