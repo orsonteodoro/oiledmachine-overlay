@@ -3,6 +3,8 @@
 
 EAPI=8
 
+MY_PV="${PV}" # For /opt/rocm-5.1.3
+
 AMDGPU_TARGETS_OVERRIDE=(
 #	 gfx800
 #	 gfx802
@@ -114,15 +116,17 @@ src_prepare() {
 			$(get_amdgpu_flags \
 				| tr ";" " ")
 		)
-		cd "${ESYSROOT}/opt/rocm-${PV}/share/miopen/db" || die
+		cd "${ESYSROOT}/opt/rocm-${MY_PV}/share/miopen/db" || die
+einfo "Copying kernels"
 		local ma
 		for ma in ${MA[@]} ; do
-			cp -a "${ma}"*".kdb" "${T}/files" || die
+			cp -av "${ma}"*".kdb" "${T}/files" || die
 		done
 		cd "${T}/files" || die
+einfo "Compressing kernels"
 		local f
 		for f in $(ls *.kdb) ; do
-			bzip2 -z "${f}" || die
+			bzip2 -zv "${f}" || die
 			cp -a "${f}.bz2" "${S}/src/kernels" || die
 		done
 	fi
