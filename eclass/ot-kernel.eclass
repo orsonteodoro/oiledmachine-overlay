@@ -9227,6 +9227,11 @@ ewarn
 ewarn "Users with AMD 17h family of CPUs should update the CPU microcode to"
 ewarn "mitigate against Zenbleed in secure configurations."
 ewarn
+ewarn "Verify 17h family by doing:"
+ewarn
+ewarn   "lscpu reports -- CPU family: 23"
+ewarn   "cat /proc/cpuinfo -- cpu family: 23"
+ewarn
 ewarn "Requirements:"
 ewarn
 ewarn "  >=sys-kernel/linux-firmware-20230625_p20230724"
@@ -9239,11 +9244,25 @@ ewarn "  For config assist mode, set OT_KERNEL_CPU_MICROCODE=1"
 ewarn "  For config custom mode, see the distro wiki link below."
 ewarn "  Re-emerge this package after the changes have been made."
 ewarn
+ewarn "    or"
+ewarn
+ewarn "  emerge sys-apps/msr-tools"
+ewarn "  For config assist mode, set OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1"
+ewarn "  For config custom mode, set CONFIG_X86_MSR=1 in the kernel .config"
+ewarn "  Re-emerge this package after config changes"
+ewarn "  Reboot."
+ewarn "  Save work before applying chicken bit."
+ewarn "  Test the chicken bit workaround. (See link below)"
+ewarn "  Then, deploy the chicken bit workaround via initscript."
+ewarn "  (This workaround is provided as an alternative.  It is not clear about"
+ewarn "  the firmware has been updated for non server CPUs)"
+ewarn
 ewarn "See also:"
 ewarn
 ewarn "  https://nvd.nist.gov/vuln/detail/CVE-2023-20593"
-ewarn "  https://www.amd.com/en/resources/product-security/bulletin/amd-sb-7008.html"
+ewarn "  https://www.amd.com/en/resources/product-security/bulletin/amd-sb-7008.html      # For a list of affected CPUs"
 ewarn "  https://wiki.gentoo.org/wiki/AMD_microcode"
+ewarn "  https://github.com/google/security-research/issues/36#issue-1819037927           # Mirror for the chicken bit workaround"
 ewarn
 ewarn
 	if (( ${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL} == 1 )) ; then
