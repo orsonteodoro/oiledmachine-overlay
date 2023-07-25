@@ -178,7 +178,9 @@ pool/main/m/miopenkernels-gfx90a-110/miopenkernels-gfx90a-110_1.1.0.50103-66_amd
 
 		einfo "Update files array with the following:"
 		einfo
-		grep -i -r -e "miopenkernels.*deb" "${WORKDIR}" | cut -f 2 -d " " | sort
+		grep -i -r -e "miopenkernels.*deb" "${WORKDIR}" \
+			| cut -f 2 -d " " \
+			| sort
 		einfo
 
 		declare -A EXPECTED_SHA1
@@ -187,14 +189,23 @@ pool/main/m/miopenkernels-gfx90a-110/miopenkernels-gfx90a-110_1.1.0.50103-66_amd
 		declare -A EXPECTED_SIZE
 		IFS=$'\n'
 		local p
-		for p in $(grep -l -r -e "miopenkernels.*deb" "${WORKDIR}" | cut -f 2 -d " " | sort) ; do
-			local bn=$(basename $(grep "Filename:" "${p}" | cut -f 2 -d " "))
+		for p in $(grep -l -r -e "miopenkernels.*deb" "${WORKDIR}" \
+			| cut -f 2 -d " " \
+			| sort) ; do
+			local bn=$(basename $(grep "Filename:" "${p}" \
+				| cut -f 2 -d " "))
 			[[ -z "${bn}" ]] && continue
-			local bnsan="A"$(echo "${bn}" | sha1sum | cut -f 1 -d " ")
-			local expected_sha1=$(grep "SHA1:" "${p}" | cut -f 2 -d " ")
-			local expected_sha256=$(grep "SHA256:" "${p}" | cut -f 2 -d " ")
-			local expected_md5=$(grep "MD5sum:" "${p}" | cut -f 2 -d " ")
-			local expected_size=$(grep "^Size:" "${p}" | cut -f 2 -d " ")
+			local bnsan="A"$(echo "${bn}" \
+				| sha1sum \
+				| cut -f 1 -d " ")
+			local expected_sha1=$(grep "SHA1:" "${p}" \
+				| cut -f 2 -d " ")
+			local expected_sha256=$(grep "SHA256:" "${p}" \
+				| cut -f 2 -d " ")
+			local expected_md5=$(grep "MD5sum:" "${p}" \
+				| cut -f 2 -d " ")
+			local expected_size=$(grep "^Size:" "${p}" \
+				| cut -f 2 -d " ")
 			EXPECTED_SHA1["${bnsan}"]="${expected_sha1}"
 			EXPECTED_SHA256["${bnsan}"]="${expected_sha256}"
 			EXPECTED_MD5["${bnsan}"]="${expected_md5}"
@@ -204,13 +215,21 @@ pool/main/m/miopenkernels-gfx90a-110/miopenkernels-gfx90a-110_1.1.0.50103-66_amd
 
 		einfo "Update arrays:"
 		echo
-		declare -p EXPECTED_SHA1 | sed -e "s|\[|[\"|g" -e "s|\]|\"]|g" | fold -w 120 -s
+		declare -p EXPECTED_SHA1 \
+			| sed -e "s|\[|[\"|g" -e "s|\]|\"]|g" \
+			| fold -w 120 -s
 		echo
-		declare -p EXPECTED_SHA256 | sed -e "s|\[|[\"|g" -e "s|\]|\"]|g" | fold -w 180 -s
+		declare -p EXPECTED_SHA256 \
+			| sed -e "s|\[|[\"|g" -e "s|\]|\"]|g" \
+			| fold -w 180 -s
 		echo
-		declare -p EXPECTED_MD5 | sed -e "s|\[|[\"|g" -e "s|\]|\"]|g" | fold -w 120 -s
+		declare -p EXPECTED_MD5 \
+			| sed -e "s|\[|[\"|g" -e "s|\]|\"]|g" \
+			| fold -w 120 -s
 		echo
-		declare -p EXPECTED_SIZE | sed -e "s|\[|[\"|g" -e "s|\]|\"]|g" | fold -w 80 -s
+		declare -p EXPECTED_SIZE \
+			| sed -e "s|\[|[\"|g" -e "s|\]|\"]|g" \
+			| fold -w 80 -s
 		echo
 
 		die
@@ -226,10 +245,15 @@ pool/main/m/miopenkernels-gfx90a-110/miopenkernels-gfx90a-110_1.1.0.50103-66_amd
 				addwrite "${EDISTDIR}"
 				wget -c "${uri_base}/${y}"
 				local bn=$(basename "${y}")
-				local bnsan="A"$(echo "${bn}" | sha1sum | cut -f 1 -d " ")
-				local actual_sha1=$(sha1sum $(basename "${y}"))
-				local actual_sha256=$(sha256sum $(basename "${y}"))
-				local actual_md5=$(md5sum $(basename "${y}"))
+				local bnsan="A"$(echo "${bn}" \
+					| sha1sum \
+					| cut -f 1 -d " ")
+				local actual_sha1=$(sha1sum $(basename "${y}") \
+					| cut -f 1 -d " ")
+				local actual_sha256=$(sha256sum $(basename "${y}") \
+					| cut -f 1 -d " ")
+				local actual_md5=$(md5sum $(basename "${y}") \
+					| cut -f 1 -d " ")
 				local actual_size=$(stat -c "%s" $(basename "${y}"))
 eerror "Checking file integrity for ${EDISTDIR}/${bn}"
 				if [[ "${EXPECTED_SHA1[${bnsan}]}" != "${actual_sha1}" ]] ; then
