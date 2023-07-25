@@ -15,7 +15,7 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1030
 )
 ROCM_VERSION="${PV}"
-inherit rocm
+inherit rocm unpacker
 
 SRC_URI=""
 
@@ -141,6 +141,13 @@ eerror "env to be able to download kernels."
 eerror
 		die
 	fi
+}
+
+unpack_deb() {
+	echo ">>> Unpacking ${1##*/} to ${PWD}"
+	unpack ${1}
+	unpacker ./data.tar*
+	rm -f debian-binary {control,data}.tar*
 }
 
 src_unpack() {
@@ -309,8 +316,8 @@ eerror "File size mismatch.  Delete the file and re-emerge."
 eerror
 					die
 				fi
-				pushd "${WOKRDIR}" || die
-					unpack ${bn}
+				pushd "${WORKDIR}" || die
+					unpack_deb "${EDISTDIR}/${bn}"
 				popd
 			fi
 		done
