@@ -282,13 +282,12 @@
 
     LLVM versions supported for Clang PGO:
 
-    * 15.0.0.9999 - with the latest commit
-    * 14.0.0.9999 - with the latest commit
-    * 14.0.0_rc1
+    * 17.0.0.9999 - with the latest commit
+    * 16.x
+    * 15.x
+    * 14.x
     * 13.0.1
     * 13.0.0 
-    * 12.0.1 
-    * 11.1.0
 
     Versions that are not *exactly* the ones listed above are not supported.
     The PGO profraw format used is sensitive to point version changes and even
@@ -694,7 +693,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     Acceptable values:
 
-      assist - allow the ebuild to assist in configurating the config. (default)
+      assist - allow the ebuild to auto configure the config. (default)
       custom - have full control over the config.
 
     Notes:
@@ -715,6 +714,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       5.10: cfs, cfs-throghhput, cfs-interactive, cfs-autogroup, muqss, prjc, prjc-bmq, prjc-pds
       5.15: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
       6.1: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
+      6.4: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
 
       The reason why for this flexibility is to allow for multiple
       configurations that are not mutual exclusive, meaning you can use the rt
