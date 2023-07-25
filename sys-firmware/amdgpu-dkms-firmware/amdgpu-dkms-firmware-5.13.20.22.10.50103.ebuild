@@ -143,10 +143,6 @@ gen_ma() {
 			MA+=(
 				"${ma%_*}"
 			)
-		elif [[ "${ma}" =~ "_mc.bin" ]] ; then
-			MA+=(
-				"${ma%_*}"
-			)
 		elif [[ "${ma}" =~ "_vcn.bin" ]] ; then
 			MA+=(
 				"${ma%_*}"
