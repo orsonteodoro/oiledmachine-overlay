@@ -9229,6 +9229,7 @@ ewarn "  =sys-kernel/linux-firmware-99999999 needs a re-emerge"
 ewarn
 ewarn "  For config assist mode, set OT_KERNEL_CPU_MICROCODE=1"
 ewarn "  For config custom mode, see the distro wiki link below."
+ewarn "  Re-emerge this package after the changes have been made."
 ewarn
 ewarn "See also:"
 ewarn
