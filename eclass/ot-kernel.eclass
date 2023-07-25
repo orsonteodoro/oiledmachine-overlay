@@ -1025,7 +1025,9 @@ ot-kernel_use() {
 # Perform checks, warnings, and initialization before emerging
 ot-kernel_pkg_setup() {
 ewarn
-ewarn "The defaults use cfs (or the stock CPU scheduler) per build configuration."
+ewarn "The defaults use cfs (or the stock CPU scheduler) per build"
+ewarn "configuration."
+ewarn
 ewarn "The build configuration scheme has changed.  Please see"
 ewarn "\`epkginfo -x ot-sources\` or the metadata.xml in how to customize"
 ewarn "the per environment build variable and patching process to build"
@@ -1034,6 +1036,26 @@ ewarn "scheduler default."
 ewarn
 	_report_eol
 	ot-kernel-cve_setup
+
+	if has_version "<sys-kernel/linux-firmware-20230625_p20230724" ; then
+eerror
+eerror "Bump >=sys-kernel/linux-firmware-20230625_p20230724 for the Zenbleed"
+eerror "mitigations."
+eerror
+		die
+	fi
+	if has_version "=sys-kernel/linux-firmware-99999999" ; then
+		local current_firmware_update=$(cat "${EROOT}/var/db/pkg/sys-kernel/linux-firmware"*"/BUILD_TIME")
+		local fix_firmware_date=$(date -d "2023-07-24 08:29:07 -0400" "+%s")
+		if (( ${current_firmware_update} < ${fix_firmware_date} )) ; then
+eerror
+eerror "Re-emerge =sys-kernel/linux-firmware-99999999 for the Zenbleed"
+eerror "mitigations."
+eerror
+		fi
+		die
+	fi
+
 	if declare -f ot-kernel_pkg_setup_cb > /dev/null ; then
 		ot-kernel_pkg_setup_cb
 	fi
@@ -9179,10 +9201,30 @@ ewarn "series.  Use >= 5.10 for RETBleed mitigation for ARCH=x86."
 ewarn
 	fi
 ewarn
-ewarn "Retbleed mitigation is WIP (Work In Progress) in other processors."
+ewarn "Retbleed is not fixed in 32-bit only kernel configurations."
+ewarn
 ewarn "For an overview about RETBleed and affected processors, see"
 ewarn "https://en.wikipedia.org/wiki/Retbleed"
 ewarn
+ewarn
+	if has_version "<sys-kernel/linux-firmware-20230625_p20230724" ; then
+ewarn
+ewarn "Detected old sys-kernel/linux-firmware without Zenbleed mitigations."
+ewarn
+ewarn "Emerge >=sys-kernel/linux-firmware-20230625_p20230724 and re-emerge this"
+ewarn "package."
+ewarn
+	fi
+	if has_version "=sys-kernel/linux-firmware-99999999" ; then
+		local current_firmware_update=$(cat "${EROOT}/var/db/pkg/sys-kernel/linux-firmware"*"/BUILD_TIME")
+		local fix_firmware_date=$(date -d "2023-07-24 08:29:07 -0400" "+%s")
+		if (( ${current_firmware_update} < ${fix_firmware_date} )) ; then
+ewarn
+ewarn "Re-emerge =sys-kernel/linux-firmware-99999999 and re-emerge this package"
+ewarn "for the Zenbleed mitigations."
+ewarn
+		fi
+	fi
 	if (( ${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL} == 1 )) ; then
 einfo "Installing tcca"
 		cat "${FILESDIR}/tcca" \
