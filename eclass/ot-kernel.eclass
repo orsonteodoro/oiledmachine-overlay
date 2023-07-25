@@ -2636,8 +2636,8 @@ ot-kernel_check_firmware() {
 	[[ "${OT_KERNEL_CHECK_FIRMWARE_VULNERABILITY_FIXES:-1}" == "1" ]] || return
 	if has_version "<sys-kernel/linux-firmware-20230625_p20230724" ; then
 eerror
-eerror "Bump >=sys-kernel/linux-firmware-20230625_p20230724 for the Zenbleed"
-eerror "mitigations."
+eerror "Bump >=sys-kernel/linux-firmware-20230625_p20230724 and enable CPU"
+eerror "microcode for the Zenbleed mitigations."
 eerror
 		die
 	fi
@@ -2646,8 +2646,8 @@ eerror
 		local fix_firmware_date=$(date -d "2023-07-24 08:29:07 -0400" "+%s")
 		if (( ${current_firmware_update} < ${fix_firmware_date} )) ; then
 eerror
-eerror "Re-emerge =sys-kernel/linux-firmware-99999999 for the Zenbleed"
-eerror "mitigations."
+eerror "Re-emerge =sys-kernel/linux-firmware-99999999 and CPU microcode for the"
+eerror "Zenbleed mitigations."
 eerror
 		fi
 		die
@@ -9220,7 +9220,7 @@ ewarn
 ewarn "Detected old sys-kernel/linux-firmware without Zenbleed mitigations."
 ewarn
 ewarn "Emerge >=sys-kernel/linux-firmware-20230625_p20230724 and re-emerge this"
-ewarn "package."
+ewarn "package with CPU microcode enabled."
 ewarn
 	fi
 	if has_version "=sys-kernel/linux-firmware-99999999" ; then
@@ -9229,9 +9229,17 @@ ewarn
 		if (( ${current_firmware_update} < ${fix_firmware_date} )) ; then
 ewarn
 ewarn "Re-emerge =sys-kernel/linux-firmware-99999999 and re-emerge this package"
-ewarn "for the Zenbleed mitigations."
+ewarn "with CPU microcode enabled for the Zenbleed mitigations."
 ewarn
+			zenbleed_warn=1
 		fi
+	fi
+	if ! has_version "sys-kernel/linux-firmware" ; then
+ewarn
+ewarn "Users with Zen2 should enable CPU microcode updates and may want to"
+ewarn "emerge >=sys-kernel/linux-firmware-20230625_p20230724 to mitigate"
+ewarn "against Zenbleed."
+ewarn
 	fi
 	if (( ${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL} == 1 )) ; then
 einfo "Installing tcca"
