@@ -648,6 +648,17 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
+    OT_KERNEL_CHECK_FIRMWARE_VULNERABILITY_FIXES -- checks if the firmware or
+    microcode is up-to-date for mitigation against criticial vulnerabilies.
+    This check is only available during kernel config assist mode.
+
+    Acceptable values:
+
+      0 for disable checking
+      1 for enable checking (default)
+
+
+
     OT_KERNEL_COLD_BOOT_MITIGATIONS -- changes the kernel config to mitigate
     against cold boot attacks.
 

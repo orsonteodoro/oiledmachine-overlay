@@ -1037,25 +1037,6 @@ ewarn
 	_report_eol
 	ot-kernel-cve_setup
 
-	if has_version "<sys-kernel/linux-firmware-20230625_p20230724" ; then
-eerror
-eerror "Bump >=sys-kernel/linux-firmware-20230625_p20230724 for the Zenbleed"
-eerror "mitigations."
-eerror
-		die
-	fi
-	if has_version "=sys-kernel/linux-firmware-99999999" ; then
-		local current_firmware_update=$(cat "${EROOT}/var/db/pkg/sys-kernel/linux-firmware"*"/BUILD_TIME")
-		local fix_firmware_date=$(date -d "2023-07-24 08:29:07 -0400" "+%s")
-		if (( ${current_firmware_update} < ${fix_firmware_date} )) ; then
-eerror
-eerror "Re-emerge =sys-kernel/linux-firmware-99999999 for the Zenbleed"
-eerror "mitigations."
-eerror
-		fi
-		die
-	fi
-
 	if declare -f ot-kernel_pkg_setup_cb > /dev/null ; then
 		ot-kernel_pkg_setup_cb
 	fi
@@ -2648,6 +2629,31 @@ einfo "CONFIG_EXTRA_FIRMWARE:  "$(grep "CONFIG_EXTRA_FIRMWARE" \
 	fi
 }
 
+# @FUNCTION: ot-kernel_check_firmware
+# @DESCRIPTION:
+# Check firmware for vulnerability fixes
+ot-kernel_check_firmware() {
+	[[ "${OT_KERNEL_CHECK_FIRMWARE_VULNERABILITY_FIXES:-1}" == "1" ]] || return
+	if has_version "<sys-kernel/linux-firmware-20230625_p20230724" ; then
+eerror
+eerror "Bump >=sys-kernel/linux-firmware-20230625_p20230724 for the Zenbleed"
+eerror "mitigations."
+eerror
+		die
+	fi
+	if has_version "=sys-kernel/linux-firmware-99999999" ; then
+		local current_firmware_update=$(cat "${EROOT}/var/db/pkg/sys-kernel/linux-firmware"*"/BUILD_TIME")
+		local fix_firmware_date=$(date -d "2023-07-24 08:29:07 -0400" "+%s")
+		if (( ${current_firmware_update} < ${fix_firmware_date} )) ; then
+eerror
+eerror "Re-emerge =sys-kernel/linux-firmware-99999999 for the Zenbleed"
+eerror "mitigations."
+eerror
+		fi
+		die
+	fi
+}
+
 # @FUNCTION: ot-kernel_get_envs
 # @DESCRIPTION:
 # Gets list of envs
@@ -2672,6 +2678,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_BUILD
 	unset OT_KERNEL_BUILD_ALL_MODULES_AS
 	unset OT_KERNEL_BUILD_CHECK_MOUNTED
+	unset OT_KERNEL_CHECK_FIRMWARE_VULNERABILITY_FIXES
 	unset OT_KERNEL_COLD_BOOT_MITIGATIONS
 	unset OT_KERNEL_CONFIG
 	unset OT_KERNEL_CONFIG_MODE
@@ -7277,6 +7284,7 @@ einfo
 	ot-kernel_set_kconfig_exfat
 
 	ot-kernel_set_kconfig_firmware
+	ot-kernel_check_firmware
 
 	# Apply flags to minimize the time cost of reconfigure and rebuild time
 	# from a generated new kernel config.
