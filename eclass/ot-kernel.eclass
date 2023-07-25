@@ -9216,8 +9216,8 @@ ewarn "https://en.wikipedia.org/wiki/Retbleed"
 ewarn "https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability"
 ewarn
 ewarn
-ewarn "Users with AMD CPUs 17h should update the CPU microcode to mitigate"
-ewarn "against Zenbleed in secure configurations."
+ewarn "Users with AMD 17h family of CPUs should update the CPU microcode to"
+ewarn "mitigate against Zenbleed in secure configurations."
 ewarn
 ewarn "Requirements:"
 ewarn
