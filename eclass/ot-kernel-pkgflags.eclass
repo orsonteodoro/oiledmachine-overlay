@@ -8114,7 +8114,6 @@ ot-kernel-pkgflags_solaar() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S338edae]}" == "1" ]] && return
 	if ot-kernel_has_version "app-misc/solaar" ; then
 		einfo "Applying kernel config flags for the solaar package (id: 338edae)"
-		ban_disable_debug "338edae"
 		ot-kernel_y_configopt "CONFIG_HID_LOGITECH_DJ"
 		ot-kernel_y_configopt "CONFIG_HIDRAW"
 	fi
