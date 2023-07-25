@@ -657,6 +657,11 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       0 for disable checking
       1 for enable checking (default)
 
+    See also:
+
+      OT_KERNEL_CPU_MICROCODE
+      OT_KERNEL_FIRMWARE
+
 
 
     OT_KERNEL_COLD_BOOT_MITIGATIONS -- changes the kernel config to mitigate
@@ -1011,6 +1016,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     See also:
       MICROCODE_BLACKLIST
       MICROCODE_SIGNATURES
+      OT_KERNEL_CHECK_FIRMWARE_VULNERABILITY_FIXES
 
 
 
