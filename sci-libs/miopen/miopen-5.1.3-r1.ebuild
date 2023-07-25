@@ -111,7 +111,6 @@ src_prepare() {
 
 	if use kernels ; then
 		mkdir -p "src/kernels" || die
-		mkdir -p "${T}/files" || die
 		local MA=(
 			$(get_amdgpu_flags \
 				| tr ";" " ")
@@ -120,14 +119,7 @@ src_prepare() {
 einfo "Copying kernels"
 		local ma
 		for ma in ${MA[@]} ; do
-			cp -av "${ma}"*".kdb" "${T}/files" || die
-		done
-		cd "${T}/files" || die
-einfo "Compressing kernels"
-		local f
-		for f in $(ls *.kdb) ; do
-			bzip2 -zv "${f}" || die
-			cp -a "${f}.bz2" "${S}/src/kernels" || die
+			cp -av "${ma}"*".kdb.bz2" "${S}/src/kernels" || die
 		done
 	fi
 }
