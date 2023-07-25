@@ -9229,8 +9229,10 @@ ewarn "mitigate against Zenbleed in secure configurations."
 ewarn
 ewarn "Verify 17h family by doing:"
 ewarn
-ewarn   "lscpu reports -- CPU family: 23"
-ewarn   "cat /proc/cpuinfo -- cpu family: 23"
+ewarn "  lscpu -- CPU family: 23"
+ewarn "  cat /proc/cpuinfo -- cpu family: 23"
+ewarn
+ewarn "  (17 hexadecimal is 23 decimal)"
 ewarn
 ewarn "Requirements:"
 ewarn
@@ -9254,8 +9256,8 @@ ewarn "  Reboot."
 ewarn "  Save work before applying chicken bit."
 ewarn "  Test the chicken bit workaround. (See link below)"
 ewarn "  Then, deploy the chicken bit workaround via initscript."
-ewarn "  (This workaround is provided as an alternative.  It is not clear about"
-ewarn "  the firmware has been updated for non server CPUs)"
+ewarn "  (This workaround is provided as an alternative.  It is not clear if"
+ewarn "  the firmware has been updated for non server models.)"
 ewarn
 ewarn "See also:"
 ewarn
