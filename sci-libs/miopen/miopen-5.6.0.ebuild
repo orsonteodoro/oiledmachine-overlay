@@ -52,6 +52,8 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
+	dev-cpp/eigen
+	dev-cpp/frugally-deep
 "
 BDEPEND="
 	>=dev-cpp/nlohmann_json-3.10.4
