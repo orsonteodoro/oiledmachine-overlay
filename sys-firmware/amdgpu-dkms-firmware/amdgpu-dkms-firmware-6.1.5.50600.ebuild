@@ -30,15 +30,10 @@ https://repo.radeon.com/amdgpu/${DRIVER_PV}/ubuntu/pool/main/a/amdgpu-dkms/${FN}
 S="${WORKDIR}"
 
 pkg_setup() {
-	local last_cfg=$(ls \
-		/etc/portage/savedconfig/sys-kernel/linux-firmware* \
-		| sort \
-		| tail -n 1)
-
-	if [[ ! -f /etc/portage/savedconfig/sys-kernel/${last_cfg} ]]
-	then
-		last_cfg="linux-firmware-20230625"
-	fi
+	has_version "sys-kernel/linux-firmware" || return
+	local bv=$(best_version "sys-kernel/linux-firmware" \
+		| sed -e "s|sys-kernel/linux-firmware-||")
+	local last_cfg="linux-firmware-${bv}"
 
 ewarn
 ewarn "/lib/firmware/amdgpu folders must not be present in order to prevent a"
