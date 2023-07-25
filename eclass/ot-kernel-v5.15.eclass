@@ -29,8 +29,8 @@ LLVM_MIN_SLOT=10
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
-KV_MAJOR=$(ver_cut 1 ${PV})
-KV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
+KV_MAJOR=$(ver_cut 1 "${PV}")
+KV_MAJOR_MINOR=$(ver_cut 1-2 "${PV}")
 PATCH_ALLOW_O3_COMMIT="b67c5033547771052515687e96adf98858ea0de6" # from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor / oldest
@@ -821,17 +821,17 @@ ot-kernel_filter_patch_cb() {
 	# Using patch with fuzz factor is disallowed with define parts or syscall_*.tbl of futex
 
 	if [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
-		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
+		&& ver_test $(ver_cut 1-3 "${PV}") -ge "5.10.4" ; then
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0002-z3fold-stricter-locking-and-more-careful-reclaim.patch" ]] \
-		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
+		&& ver_test $(ver_cut 1-3 "${PV}") -ge "5.10.4" ; then
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "${PRJC_FN}" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}" # 1 hunk failure without fuzz
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/prjc-5.15-sched_post_fork-change.patch"
-	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
+	elif [[ "${path}" =~ ("${TRESOR_AESNI_FN}"|"${TRESOR_I686_FN}") ]] ; then
 		local fuzz_factor=3
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
 		_dpatch "${PATCH_OPTS} -F ${fuzz_factor}" "${path}"

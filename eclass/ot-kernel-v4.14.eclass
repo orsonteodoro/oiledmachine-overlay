@@ -28,8 +28,8 @@ GCC_MIN_SLOT=6
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
-KV_MAJOR=$(ver_cut 1 ${PV})
-KV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
+KV_MAJOR=$(ver_cut 1 "${PV}")
+KV_MAJOR_MINOR=$(ver_cut 1-2 "${PV}")
 MUQSS_VER="0.162"
 PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # O3 config option
 PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow fix
@@ -458,7 +458,7 @@ ot-kernel_filter_patch_cb() {
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/O3-config-option-7d0295d-fix-for-4.14.patch"
-	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
+	elif [[ "${path}" =~ ("${TRESOR_AESNI_FN}"|"${TRESOR_I686_FN}") ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 		ot-kernel_apply_tresor_fixes
 	elif [[ "${path}" =~ "${UKSM_FN}" ]] ; then

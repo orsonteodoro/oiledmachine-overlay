@@ -28,8 +28,8 @@ DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 GENPATCHES_BLACKLIST=" 2400"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
-KV_MAJOR=$(ver_cut 1 ${PV})
-KV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
+KV_MAJOR=$(ver_cut 1 "${PV}")
+KV_MAJOR_MINOR=$(ver_cut 1-2 "${PV}")
 MUQSS_VER="0.196"
 
 PATCH_ALLOW_O3_COMMIT="4edc8050a41d333e156d2ae1ed3ab91d0db92c7e" # from zen repo
@@ -567,7 +567,7 @@ ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "${O3_ALLOW_FN}" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
-	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
+	elif [[ "${path}" =~ ("${TRESOR_AESNI_FN}"|"${TRESOR_I686_FN}") ]] ; then
 		local fuzz_factor=3
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
 		_dpatch "${PATCH_OPTS} -F ${fuzz_factor}" "${path}"
@@ -594,8 +594,8 @@ ot-kernel_filter_patch_cb() {
 # @DESCRIPTION:
 # Filter
 ot-kernel_filter_genpatches_blacklist_cb() {
-	if ( ver_test $(ver_cut 1-3 ${PV}) -eq 5.4.85 ) \
-		&& ( ver_test ${GENPATCHES_VER} -eq 87 ) ; then
+	if ( ver_test $(ver_cut 1-3 "${PV}") -eq "5.4.85" ) \
+		&& ( ver_test "${GENPATCHES_VER}" -eq "87" ) ; then
 		echo "2400"
 	else
 		echo ""

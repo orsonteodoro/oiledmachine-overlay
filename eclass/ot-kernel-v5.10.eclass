@@ -29,8 +29,8 @@ LLVM_MIN_SLOT=10
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
-KV_MAJOR=$(ver_cut 1 ${PV})
-KV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
+KV_MAJOR=$(ver_cut 1 "${PV}")
+KV_MAJOR_MINOR=$(ver_cut 1-2 "${PV}")
 MUQSS_VER="0.205"
 PATCH_ALLOW_O3_COMMIT="228e792a116fd4cce8856ea73f2958ec8a241c0c" # from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442" # 5.10
@@ -642,16 +642,16 @@ ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPTS}" "${path}"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/5022_BMQ-and-PDS-compilation-fix.patch"
 	elif [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
-		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
+		&& ver_test $(ver_cut 1-3 "${PV}") -ge "5.10.4" ; then
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0002-z3fold-stricter-locking-and-more-careful-reclaim.patch" ]] \
-		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
+		&& ver_test $(ver_cut 1-3 "${PV}") -ge "5.10.4" ; then
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "${PRJC_FN}" ]] ; then
 		_dpatch "${PATCH_OPTS}" "${path}"
-	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
+	elif [[ "${path}" =~ ("${TRESOR_AESNI_FN}"|"${TRESOR_I686_FN}") ]] ; then
 		local fuzz_factor=3
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
 		_dpatch "${PATCH_OPTS} -F ${fuzz_factor}" "${path}"
