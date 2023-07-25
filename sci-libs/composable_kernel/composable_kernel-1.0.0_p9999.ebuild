@@ -146,9 +146,19 @@ src_configure() {
 		-DGPU_TARGETS="${gpu_targets}"
 		-DHIP_COMPILER_PATH="${ESYSROOT}/usr/lib/llvm/${llvm_slot}"
 	)
+
+#
+# The -fno-stack-protector fixes the following:
+#
+# fatal error: error in backend: Cannot select: 0x55fcbb9ee4b0: i64 = FrameIndex<0>
+# In function: _ZN2ck42kernel_sparse_embeddings_forward_layernormINS_40GridwiseSparseEmbeddingsForwardLayernormIDF16_lDF16_DF16_fDF16_NS_16TensorDescriptorINS_5TupleIJNS_7UnMergeINS3_IJiiEEELb0EEEEEENS3_IJNS_8SequenceIJLi0EEEEEEENS3_IJNS8_IJLi1ELi2EEEEEEESB_lEENS_16tensor_operation12element_wise6AddAddELi256ELi1ELi256ELi1ELi256ELi1ELi1ELi3EEEDF16_lDF16_DF16_fDF16_SD_SG_Li3EEEvPT5_NS_5ArrayIPT0_XT8_EEENSK_IPT1_XT8_EEEPKT2_PKT3_T6_T4_T7_
+# clang-16: error: clang frontend command failed with exit code 70 (use -v to see invocation)
+# clang version 16.0.6
+#
+
 	append-flags \
-		--rocm-path="${ESYSROOT}/usr/lib"
-#		-fno-stack-protector
+		--rocm-path="${ESYSROOT}/usr/lib" \
+		-fno-stack-protector
 #		-mcumode -mno-wavefrontsize64
 
 	cmake_src_configure
