@@ -250,8 +250,9 @@ pool/main/m/miopenkernels-gfx90a-110kdb5.4.3/miopenkernels-gfx90a-110kdb5.4.3_1.
 			if use "amdgpu_targets_${x}" && [[ "${y}" =~ "${x}" ]] ; then
 	# Do it this way via wget instead of SRC_URI because the files are too large.
 				addwrite "${EDISTDIR}"
-				wget -c "${uri_base}/${y}"
 				local bn=$(basename "${y}")
+				[[ "${bn}" =~ "${PV}" ]] && continue # Skip duplicate
+				wget -c "${uri_base}/${y}"
 				local bnsan="A"$(echo "${bn}" \
 					| sha1sum \
 					| cut -f 1 -d " ")
