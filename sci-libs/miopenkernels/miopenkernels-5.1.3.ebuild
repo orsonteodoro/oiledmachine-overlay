@@ -262,7 +262,7 @@ pool/main/m/miopenkernels-gfx90a-110/miopenkernels-gfx90a-110_1.1.0.50103-66_amd
 				local actual_md5=$(md5sum $(basename "${y}") \
 					| cut -f 1 -d " ")
 				local actual_size=$(stat -c "%s" $(basename "${y}"))
-eerror "Checking file integrity for ${EDISTDIR}/${bn}"
+einfo "Checking file integrity for ${EDISTDIR}/${bn}"
 				if [[ "${EXPECTED_SHA1[${bnsan}]}" != "${actual_sha1}" ]] ; then
 eerror
 eerror "Expected sha1:  ${EXPECTED_SHA1[${bnsan}]}"
