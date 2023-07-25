@@ -14,7 +14,7 @@ RDEPEND="
 "
 SLOT="0/${PV}"
 inherit unpacker
-IUSE=""
+IUSE="r1"
 REQUIRED_USE="
 "
 DRIVER_PV="5.5.1"
@@ -109,28 +109,8 @@ gen_radeon_list() {
 }
 
 gen_all_list() {
-	local _ma
 	local ma
-	for _ma in ${MA} ; do
-		# Corrections
-		if [[ "${_ma}" == "beige" ]] ; then
-			ma="beige_goby"
-		elif [[ "${_ma}" == "cyan" ]] ; then
-			ma="cyan_skillfish2"
-		elif [[ "${_ma}" == "dimgrey" ]] ; then
-			ma="dimgrey_cavefish"
-		elif [[ "${_ma}" == "green" ]] ; then
-			ma="green_sardine"
-		elif [[ "${_ma}" == "navy" ]] ; then
-			ma="navy_flounder"
-		elif [[ "${_ma}" == "sienna" ]] ; then
-			ma="sienna_cichlid"
-		elif [[ "${_ma}" == "yellow" ]] ; then
-			ma="yellow_carp"
-		else
-			ma="${_ma}"
-		fi
-
+	for ma in ${MA[@]} ; do
 		F=(
 			$(ls ${ma}_*)
 		)
@@ -139,13 +119,69 @@ gen_all_list() {
 	done
 }
 
+gen_ma() {
+	# MA = microarches
+	local _MA=$(ls *)
+
+	local ma
+	for ma in ${_MA[@]} ; do
+		if [[ "${ma}" =~ "_ce.bin" ]] ; then
+			MA+=(
+				"${ma%_*}"
+			)
+		elif [[ "${ma}" =~ "_me.bin" ]] ; then
+			MA+=(
+				"${ma%_*}"
+			)
+		elif [[ "${ma}" =~ "_"(32|k)"_mc.bin" ]] ; then
+			MA+=(
+				$(echo "${ma}" \
+					| sed -r -e "s#_(32|k)_mc\.bin##g")
+			)
+		elif [[ "${ma}" =~ "_mc.bin" ]] ; then
+			MA+=(
+				"${ma%_*}"
+			)
+		elif [[ "${ma}" =~ "_mc.bin" ]] ; then
+			MA+=(
+				"${ma%_*}"
+			)
+		elif [[ "${ma}" =~ "_vcn.bin" ]] ; then
+			MA+=(
+				"${ma%_*}"
+			)
+		elif [[ "${ma}" =~ "_"(acg|k|k2)"_smc.bin" ]] ; then
+			MA+=(
+				$(echo "${ma}" \
+					| sed -r -e "s#_(acg|k|k2)_smc\.bin##g")
+			)
+		elif [[ "${ma}" =~ "_k_"[0-9]"_smc.bin" ]] ; then
+			MA+=(
+				$(echo "${ma}" \
+					| sed -e "s#_k_[0-9]_smc\.bin##g")
+			)
+		elif [[ "${ma}" =~ "_smc.bin" ]] ; then
+			MA+=(
+				$(echo "${ma}" \
+					| sed -e "s|_smc\.bin||g")
+			)
+		fi
+	done
+	local MA=(
+		$(echo ${MA[@]} \
+			| tr " " "\n" \
+			| sort \
+			| uniq)
+	)
+	echo ${MA[@]}
+}
+
 pkg_preinst() {
 	cd "${S}" || die
-	# MA = microarches
-	local MA=$(ls * \
-		| cut -f1 -d"_" \
-		| uniq \
-		| tr "\n" " ")
+
+	local MA=(
+		$(gen_ma)
+	)
 
 	gen_all_list
 	gen_radeon_list
