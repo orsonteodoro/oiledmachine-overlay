@@ -262,11 +262,16 @@ eerror
 }
 
 src_install() {
-	insinto /opt/rocm-${MY_PV}/share/miopen/db
+	insinto "/opt/rocm-${MY_PV}/share/miopen/db"
 	local f
 	for f in $(find . -name "*.kdb") ; do
 		doins "${f}"
 	done
+	pushd "${ED}/opt/rocm-${MY_PV}/share/miopen/db" || die
+		for f in $(find . -name "*.kdb") ; do
+			bzip2 -k "${f}"
+		done
+	popd
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  in-development
