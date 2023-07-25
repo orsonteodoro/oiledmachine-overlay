@@ -6338,7 +6338,6 @@ ot-kernel-pkgflags_nv() { # DONE
 		fi
 
 		if ot-kernel_has_version ">=x11-drivers/nvidia-drivers-470.161" ; then
-			ban_disable_debug "f314ac3"
 			ot-kernel_unset_configopt "CONFIG_SLUB_DEBUG_ON"
 		fi
 
