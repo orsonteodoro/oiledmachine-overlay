@@ -9213,33 +9213,30 @@ ewarn "Retbleed is not fixed in 32-bit only kernel configurations."
 ewarn
 ewarn "For an overview about RETBleed and affected processors, see"
 ewarn "https://en.wikipedia.org/wiki/Retbleed"
+ewarn "https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability"
 ewarn
 ewarn
-	if has_version "<sys-kernel/linux-firmware-20230625_p20230724" ; then
+ewarn "Users with AMD CPUs 17h should update the CPU microcode to mitigate"
+ewarn "against Zenbleed in secure configurations."
 ewarn
-ewarn "Detected old sys-kernel/linux-firmware without Zenbleed mitigations."
+ewarn "Requirements:"
 ewarn
-ewarn "Emerge >=sys-kernel/linux-firmware-20230625_p20230724 and re-emerge this"
-ewarn "package with CPU microcode enabled."
+ewarn "  >=sys-kernel/linux-firmware-20230625_p20230724"
 ewarn
-	fi
-	if has_version "=sys-kernel/linux-firmware-99999999" ; then
-		local current_firmware_update=$(cat "${EROOT}/var/db/pkg/sys-kernel/linux-firmware"*"/BUILD_TIME")
-		local fix_firmware_date=$(date -d "2023-07-24 08:29:07 -0400" "+%s")
-		if (( ${current_firmware_update} < ${fix_firmware_date} )) ; then
+ewarn "    or"
 ewarn
-ewarn "Re-emerge =sys-kernel/linux-firmware-99999999 and re-emerge this package"
-ewarn "with CPU microcode enabled for the Zenbleed mitigations."
+ewarn "  =sys-kernel/linux-firmware-99999999 needs a re-emerge"
 ewarn
-		fi
-	fi
-	if ! has_version "sys-kernel/linux-firmware" ; then
+ewarn "  For config assist mode, set OT_KERNEL_CPU_MICROCODE=1"
+ewarn "  For config custom mode, see the distro wiki link below."
 ewarn
-ewarn "Users with Zen2 should enable CPU microcode updates and may want to"
-ewarn "emerge >=sys-kernel/linux-firmware-20230625_p20230724 to mitigate"
-ewarn "against Zenbleed."
+ewarn "See also:"
 ewarn
-	fi
+ewarn "  https://nvd.nist.gov/vuln/detail/CVE-2023-20593"
+ewarn "  https://www.amd.com/en/resources/product-security/bulletin/amd-sb-7008.html"
+ewarn "  https://wiki.gentoo.org/wiki/AMD_microcode"
+ewarn
+ewarn
 	if (( ${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL} == 1 )) ; then
 einfo "Installing tcca"
 		cat "${FILESDIR}/tcca" \
