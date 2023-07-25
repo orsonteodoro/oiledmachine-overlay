@@ -5000,7 +5000,7 @@ ot-kernel-pkgflags_linux_firmware() {
 			einfo "Applying kernel config flags for the linux-firmware package (id: 4e8e0af)"
 			unset bucket
 			declare -A bucket
-			IFS=";" ;
+			IFS=";"
 			local path
 			if [[ -e "${OT_KERNEL_CPU_MICROCODE}" ]] ; then
 				path="${OT_KERNEL_CPU_MICROCODE}"
@@ -5009,9 +5009,16 @@ ot-kernel-pkgflags_linux_firmware() {
 			fi
 			for o in $(cat "${path}" | sed -e "s|^$|;|") ; do
 				# Support multiple sockets / NUMA
-				echo "${o}" | grep -q -e "AuthenticAMD" || continue
-				local cpu_family=$(echo "${o}" | grep "cpu family" | grep -o -E -e "[0-9]+")
-				local cpu_model_name=$(echo "${o}" | grep "model name" | cut -f 2 -d ":" | sed -e "s|^ ||g")
+				echo "${o}" \
+					| grep -q -e "AuthenticAMD" \
+					|| continue
+				local cpu_family=$(echo "${o}" \
+					| grep "cpu family" \
+					| grep -o -E -e "[0-9]+")
+				local cpu_model_name=$(echo "${o}" \
+					| grep "model name" \
+					| cut -f 2 -d ":" \
+					| sed -e "s|^ ||g")
 				if [[ "${cpu_family}" =~ (16|17|18|20) ]] ; then
 					bucket["${cpu_family}:${cpu_model_name}"]="amd-ucode/microcode_amd.bin"
 				elif [[ "${cpu_family}" =~ 21 ]] ; then
@@ -5032,15 +5039,19 @@ ot-kernel-pkgflags_linux_firmware() {
 			done
 			IFS=$' \t\n'
 			if [[ -n "${bucket[@]}" ]] ; then
-				local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
+				local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" \
+					| head -n 1 \
+					| cut -f 2 -d "\"")
 				firmware=$(echo "${firmware}" \
 					| tr " " "\n" \
-					| sed -r -e 's|amd-ucode/microcode.*$||g' \
+					| sed -r \
+						-e 's|amd-ucode/microcode.*$||g' \
 						-e 's|amd/amd_sev_fam..h_model.xh.sbin$||g' \
 					| tr "\n" " ") # dedupe
 				firmware="${firmware} ${bucket[@]}" # Dump microcode relpaths
 				firmware=$(echo "${firmware}" \
-					| sed -r -e "s|[ ]+| |g" \
+					| sed -r \
+						-e "s|[ ]+| |g" \
 						-e "s|^[ ]+||g" \
 						-e 's|[ ]+$||g') # Trim mid/left/right spaces
 				ot-kernel_y_configopt "CONFIG_MICROCODE"
@@ -5050,7 +5061,11 @@ ot-kernel-pkgflags_linux_firmware() {
 				if [[ "${arch}" == "x86_64" ]] ; then
 					# Embed in kernel for EFI
 					ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
-					local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
+					local firmware=$(grep \
+						-e "CONFIG_EXTRA_FIRMWARE" \
+						".config" \
+						| head -n 1 \
+						| cut -f 2 -d "\"")
 					einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 				else
 					ewarn "The CPU microcode needs to be loaded through initramfs instead."
