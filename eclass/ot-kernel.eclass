@@ -9231,7 +9231,6 @@ ewarn
 ewarn "Re-emerge =sys-kernel/linux-firmware-99999999 and re-emerge this package"
 ewarn "with CPU microcode enabled for the Zenbleed mitigations."
 ewarn
-			zenbleed_warn=1
 		fi
 	fi
 	if ! has_version "sys-kernel/linux-firmware" ; then
