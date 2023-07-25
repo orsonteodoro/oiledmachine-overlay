@@ -6310,7 +6310,6 @@ ot-kernel-pkgflags_nv() { # DONE
 		ot-kernel_y_configopt "CONFIG_DRM_KMS_HELPER"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 		ot-kernel_unset_configopt "CONFIG_LOCKDEP"
-		ban_disable_debug "f314ac3"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_MUTEXES"
 
 		if ${KV_MAJOR_MINOR} -ge 5.8 ; then
@@ -6324,6 +6323,7 @@ ot-kernel-pkgflags_nv() { # DONE
 		fi
 
 		if ot-kernel_has_version ">=x11-drivers/nvidia-drivers-470.161" ; then
+			ban_disable_debug "f314ac3"
 			ot-kernel_unset_configopt "CONFIG_SLUB_DEBUG_ON"
 		fi
 
