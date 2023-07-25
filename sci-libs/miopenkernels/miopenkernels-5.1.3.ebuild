@@ -267,9 +267,10 @@ src_install() {
 	for f in $(find . -name "*.kdb") ; do
 		doins "${f}"
 	done
+einfo "Compressing kernels"
 	pushd "${ED}/opt/rocm-${MY_PV}/share/miopen/db" || die
 		for f in $(find . -name "*.kdb") ; do
-			bzip2 -k "${f}"
+			bzip2 -kv "${f}"
 		done
 	popd
 }
