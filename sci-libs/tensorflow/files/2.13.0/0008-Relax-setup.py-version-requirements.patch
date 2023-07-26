@@ -1,0 +1,16 @@
+--- a/tensorflow/tools/pip_package/setup.py.orig	2023-06-28 11:38:35.000000000 -0700
++++ b/tensorflow/tools/pip_package/setup.py	2023-07-26 14:03:41.504394247 -0700
+@@ -86,11 +86,11 @@ REQUIRED_PACKAGES = [
+     'astunparse >= 1.6.0',
+     'flatbuffers >= 23.1.21',
+     # TODO(b/213222745) gast versions above 0.4.0 break TF's tests
+-    'gast >= 0.2.1, <= 0.4.0',
++    'gast >= 0.5.3', # oteodoro:  allow python 3.10
+     'google_pasta >= 0.1.1',
+     'h5py >= 2.9.0',
+     'libclang >= 13.0.0',
+-    'numpy >= 1.22, <= 1.24.3',
++    'numpy >= 1.22', # oteodoro:  distro does not have < 1.24
+     'opt_einsum >= 2.3.2',
+     'packaging',
+     'protobuf>=3.20.3,<5.0.0dev,!=4.21.0,!=4.21.1,!=4.21.2,!=4.21.3,!=4.21.4,!=4.21.5',

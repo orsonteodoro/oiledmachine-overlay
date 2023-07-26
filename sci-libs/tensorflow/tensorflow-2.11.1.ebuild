@@ -5,27 +5,6 @@
 # SECURITY:  Bump every minor version.  Several CVEs announced:
 # https://github.com/tensorflow/tensorflow/releases/tag/v2.12.0
 
-#
-# About testing:
-#
-# If you used PYTHON_TARGETS="python3_10 python3_11" in make.conf, you need to
-# do the following:
-#
-# 1. Add "sci-libs/tensorflow python python_targets_python3_9 -python_targets_python3_10 -python_targets_python3_11 test" to package.use.
-#
-# 2. Disable USE flags for python_targets_python3_10 python_targets_python3_11
-# some rows in python? in *DEPENDs section.  These are connected to grpcio,
-# grpcio-testing, grpcio-tools, protobuf, protobuf-python.
-#
-# 3. Uninstall packages related to slotting issues.
-#
-# 4. Hard mask/block some python ebuilds in from the distro overlay due to
-# missing python3.9 support in PYTHON_COMPAT.
-#
-# 5. Remerge the this package and dependencies.
-# (emerge -1vuDN =tensorflow-2.11.1)
-#
-
 EAPI=8
 
 MY_PV=${PV/_rc/-rc}
@@ -74,28 +53,57 @@ DESCRIPTION="Computation framework using data flow graphs for scalable machine \
 learning"
 HOMEPAGE="https://www.tensorflow.org/"
 THIRD_PARTY_LICENSES="
-	( all-rights-reserved Apache-2.0 )
-	( BSD BSD-2 PSF Apache-2.0 MIT )
-	( Unicode-DFS-2016 icu-63.2 )
-	( MPL-2.0 BSD minpack )
-	ooura
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		Apache-2.0
+		BSD
+		BSD-2
+		MIT
+		PSF
+	)
+	(
+		icu-63.2
+		Unicode-DFS-2016
+	)
+	(
+		BSD
+		minpack
+		MPL-2.0
+	)
 	BSD
+	ooura
 "
 THIRD_PARTY_LICENSES_BAZEL_EXTERNAL_DOWNLOADS="
-	( Apache-2.0-with-LLVM-exceptions all-rights-reserved Boost-1.0 )
-	( MIT NCSA )
+	(
+		all-rights-reserved
+		Apache-2.0-with-LLVM-exceptions
+		Boost-1.0
+	)
+	(
+		MIT
+		NCSA
+	)
 	ISC
 	MIT
 	Unicode-DFS-2016
-	|| ( CC0-1.0 Apache-2.0 )
+	|| (
+		Apache-2.0
+		CC0-1.0
+	)
 "
 LICENSE="
 	${THIRD_PARTY_LICENSES}
 	${THIRD_PARTY_LICENSES_BAZEL_EXTERNAL_DOWNLOADS}
 	custom
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
 	Apache-2.0
 	BSD-2
-	( all-rights-reserved Apache-2.0 )
 "
 # From src_unpack() only
 # ( all-rights-reserved Apache-2.0 ) - tools/lib_package/concat_licenses.sh ; \
@@ -164,7 +172,7 @@ IUSE+=" ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}"
 # https://github.com/tensorflow/runtime/blob/4ce3e4da2e21ae4dfcee9366415e55f408c884ec/third_party/rules_cuda/cuda/dependencies.bzl#L41	# cc_rules
 # https://github.com/tensorflow/runtime/blob/4ce3e4da2e21ae4dfcee9366415e55f408c884ec/third_party/rules_cuda/cuda/dependencies.bzl#L66	# platforms
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/.bazelversion
-# https://github.com/tensorflow/tensorflow/blob/v2.11.1/configure.py#L33
+# https://github.com/tensorflow/tensorflow/blob/v2.11.1/configure.py#L33                                                        # cuda version
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/lite/tools/cmake/modules/eigen.cmake
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/tools/dockerfiles/partials/ubuntu/nvidia.partial.Dockerfile	# cuda/cudnn major.minor versions
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/tools/ci_build/release/requirements_common.txt		# python deps versions ; pinned
@@ -200,7 +208,7 @@ IUSE+=" ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}"
 # URIs provided for verification and faster future updates.
 
 APPLE_SUPPORT_PV="1.1.0"	# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/workspace2.bzl
-CUDA_PV="11.2"			# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/tools/dockerfiles/partials/ubuntu/nvidia.partial.Dockerfile
+CUDA_PV="11.2"			# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/tools/pip_package/setup.py#L340
 BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/workspace3.bzl
 CUB_PV="1.9.9"			# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/workspace2.bzl
 CUDNN_FRONTEND_PV="0.7.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/workspace2.bzl
@@ -316,6 +324,7 @@ CUDA_CDEPEND="
 "
 
 # Missing extension package for TF_ENABLE_ONEDNN_OPTS=1
+# The grpcio slots below are limited by protobuf:0/30.
 RDEPEND="
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
@@ -806,7 +815,6 @@ einfo "Preventing stall.  Removing -Os."
 	bazel_setup_bazelrc
 
 	eapply "${WORKDIR}/patches/"*".patch"
-	die
 
 	# Relax version checks in setup.py
 	sed -i "/^    '/s/==/>=/g" tensorflow/tools/pip_package/setup.py || die

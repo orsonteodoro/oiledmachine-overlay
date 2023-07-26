@@ -169,36 +169,37 @@ IUSE+=" ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}"
 # For deps versioning, see
 # https://www.tensorflow.org/install/source#linux
 # https://github.com/abseil/abseil-cpp/blob/273292d1cfc0a94a65082ee350509af1d113344d/CMakeLists.txt#L49 ; Search project(absl LANGUAGES CXX VERSION
-# https://github.com/google/boringssl/blob/b9232f9e27e5668bc0414879dcdedb2a59ea75f2/src/include/openssl/crypto.h#L99
-# https://github.com/tensorflow/runtime/blob/91d765cad5599f9710973d3e34d4dc22583e2e79/third_party/rules_cuda/cuda/dependencies.bzl#L41	# cc_rules
-# https://github.com/tensorflow/runtime/blob/91d765cad5599f9710973d3e34d4dc22583e2e79/third_party/rules_cuda/cuda/dependencies.bzl#L66	# platforms
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/.bazelversion
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/configure.py#L33                                                        # cuda version
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/lite/tools/cmake/modules/eigen.cmake
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/tools/dockerfiles/partials/ubuntu/nvidia.partial.Dockerfile	# cuda/cudnn major.minor versions
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/tools/ci_build/release/requirements_common.txt		# python deps versions ; pinned
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/tools/ci_build/release/requirements_ubuntu.txt		# python deps versions ; pinned ; depends on requirements_common.txt
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/tools/pip_package/setup.py#L84				# python deps versions
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/tools/tf_sig_build_dockerfiles/devel.requirements.txt	# python deps versions ; pinned ; depends on requirements_common.txt
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/tools/toolchains/archives.bzl
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/tools/toolchains/remote_config/configs.bzl#L318		# tested llvm
+# https://github.com/google/boringssl/blob/c00d7ca810e93780bd0c8ee4eea28f4f2ea4bcdc/src/include/openssl/crypto.h#L99
+# https://github.com/tensorflow/runtime/blob/7d879c8b161085a4374ea481b93a52adb19c0529/third_party/rules_cuda/cuda/dependencies.bzl#L41	# cc_rules
+# https://github.com/tensorflow/runtime/blob/7d879c8b161085a4374ea481b93a52adb19c0529/third_party/rules_cuda/cuda/dependencies.bzl#L66	# platforms
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/.bazelversion
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/configure.py#L33							# cuda version
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/lite/tools/cmake/modules/eigen.cmake
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/dockerfiles/partials/ubuntu/nvidia.partial.Dockerfile	# cuda/cudnn major.minor versions
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/pip_package/setup.py#L356				# cuda version
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/ci_build/release/requirements_common.txt		# python deps versions ; pinned
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/ci_build/release/requirements_ubuntu.txt		# python deps versions ; pinned ; depends on requirements_common.txt
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/pip_package/setup.py#L84				# python deps versions
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/tf_sig_build_dockerfiles/devel.requirements.txt	# python deps versions ; pinned ; depends on requirements_common.txt
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/toolchains/archives.bzl
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/toolchains/remote_config/configs.bzl#L318		# tested llvm
 
 # commits/versions for
 # astor, boringssl, curl, cython, dill, double-conversion, giflib, jsoncpp,
-# libpng, lmdb, nsync, protobuf, pybind11, snappy, sqlite, tblib,
+# libpng, nsync, protobuf, pybind11, snappy, sqlite, tblib,
 # zlib:
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl#L567
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl#L567
 
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl#L542			# openmp
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/absl/workspace.bzl			# abseil-cpp ; provides commit
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/flatbuffers/workspace.bzl
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/gemmlowp/workspace.bzl
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/hwloc/workspace.bzl
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/icu/workspace.bzl
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/jpeg/workspace.bzl
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/llvm/workspace.bzl
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/llvm_openmp/openmp.bzl
-# https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/pasta/workspace.bzl
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl#L542			# openmp
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/absl/workspace.bzl			# abseil-cpp ; provides commit
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/flatbuffers/workspace.bzl
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/gemmlowp/workspace.bzl
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/hwloc/workspace.bzl
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/icu/workspace.bzl
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/jpeg/workspace.bzl
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/llvm/workspace.bzl
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/llvm_openmp/openmp.bzl
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/pasta/workspace.bzl
 # https://github.com/grpc/grpc/blob/b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd/CMakeLists.txt
 
 # distfiles that bazel uses for the workspace, will be copied to basel-distdir
@@ -208,55 +209,55 @@ IUSE+=" ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}"
 # The same results can be obtained by observing the console logs.
 # URIs provided for verification and faster future updates.
 
-ABSEIL_PY_PV="1.0.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
-APPLE_SUPPORT_PV="1.1.0"	# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
-CUDA_PV="11.8"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/tools/pip_package/setup.py#L365
-BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace3.bzl
-CUB_PV="1.9.9"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
-CUDNN_FRONTEND_PV="0.7.3"	# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
-GRPC_PV="1.48"			# Based on the oldest grpc supporting abseil 20220623
-GRPCIO_PV="1.24.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/tools/pip_package/setup.py#L84
-GRPCIO_PV_MAX="1.53"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/tools/pip_package/setup.py#L84 ; < (Exclusive) ; Upstream is wrong
-KISSFFT_PV="131.1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/kissfft/workspace.bzl
-NCCL_PV="2.16.2-1"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
-ONEDNN_PV="2.7.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl ; mkl_dnn_v1
-OOURA_FFT_PV="1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
-OPENMP_PV="10.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
-PLATFORMS_PV="0.0.6"		# From https://github.com/tensorflow/runtime/blob/91d765cad5599f9710973d3e34d4dc22583e2e79/third_party/rules_cuda/cuda/dependencies.bzl#L66
-PROTOBUF_PV="3.21.9"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
+ABSEIL_PY_PV="1.0.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+APPLE_SUPPORT_PV="1.1.0"	# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+CUDA_PV="11.8"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/pip_package/setup.py#L356
+BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace3.bzl
+CUB_PV="1.9.9"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+CUDNN_FRONTEND_PV="0.8"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+GRPC_PV="1.54.2"		# Based on the oldest grpc supporting abseil 20230125.2
+GRPCIO_PV="1.24.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/pip_package/setup.py#L84
+GRPCIO_PV_MAX="1.53"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/pip_package/setup.py#L84 ; < (Exclusive) ; Upstream is wrong
+KISSFFT_PV="131.1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/kissfft/workspace.bzl
+NCCL_PV="2.16.5-1"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+ONEDNN_PV="2.7.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl ; mkl_dnn_v1
+OOURA_FFT_PV="1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+OPENMP_PV="10.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+PLATFORMS_PV="0.0.6"		# From https://github.com/tensorflow/runtime/blob/7d879c8b161085a4374ea481b93a52adb19c0529/third_party/rules_cuda/cuda/dependencies.bzl#L66
+PROTOBUF_PV="3.21.9"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
 PROTOBUF_SLOT="0/32"
-RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
-RULES_APPLE_PV="1.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
-RULES_JVM_PV="4.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace3.bzl
-RULES_PKG_PV="0.7.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace3.bzl
-RULES_PYTHON_PV="0.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
-RULES_SWIFT_PV="1.0.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
+RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+RULES_APPLE_PV="1.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+RULES_JVM_PV="4.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace3.bzl
+RULES_PKG_PV="0.7.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace3.bzl
+RULES_PYTHON_PV="0.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+RULES_SWIFT_PV="1.0.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
 # RULES_DOCKER dumped?
 
-EGIT_COMMIT_ABSEIL_CPP="273292d1cfc0a94a65082ee350509af1d113344d"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/absl/workspace.bzl
-EGIT_COMMIT_ARM_NEON_2_X86_SSE="a15b489e1222b2087007546b4912e21293ea86ff"	# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
-EGIT_COMMIT_BAZEL_TOOLCHAINS="8c717f8258cd5f6c7a45b97d974292755852b658"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace1.bzl
-EGIT_COMMIT_CPUINFO="3dc310302210c1891ffcfb12ae67b11a3ad3a150"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
-EGIT_COMMIT_DLPACK="9351cf542ab478499294864ff3acfdab5c8c5f3d"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/dlpack/workspace.bzl
-EGIT_COMMIT_FARMHASH="0d859a811870d10f53a594927d0d0b97573ad06d"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/farmhash/workspace.bzl
-EGIT_COMMIT_FP16="4dfe081cf6bcd15db339cf2680b9281b8451eeb3"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/FP16/workspace.bzl
-EGIT_COMMIT_FXDIV="63058eff77e11aa15bf531df5dd34395ec3017c8"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
-EGIT_COMMIT_GEMMLOWP="e844ffd17118c1e17d94e1ba4354c075a4577b88"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/gemmlowp/workspace.bzl
-EGIT_COMMIT_HIGHWAYHASH="c13d28517a4db259d738ea4886b1f00352a3cc33"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/highwayhash/workspace.bzl
-EGIT_COMMIT_LIBEIGEN="3460f3558e7b469efb8a225894e21929c8c77629"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/eigen3/workspace.bzl
-EGIT_COMMIT_LLVM="10939d1d580b9d3c9c2f3539c6bdb39f408179c0"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/llvm/workspace.bzl
-EGIT_COMMIT_PTHREADPOOL="b8374f80e42010941bda6c85b0e3f1a1bd77a1e0"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
-EGIT_COMMIT_RE2="a276a8c738735a0fe45a6ee590fe2df69bcf4502"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl ; Round up to the first day of cur_month + 1
-EGIT_COMMIT_RULES_CC="081771d4a0e9d7d3aa0eed2ef389fa4700dfb23e"			# From https://github.com/tensorflow/runtime/blob/91d765cad5599f9710973d3e34d4dc22583e2e79/third_party/rules_cuda/cuda/dependencies.bzl#L41
-EGIT_COMMIT_RULES_CLOSURE="308b05b2419edb5c8ee0471b67a40403df940149"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace3.bzl
+EGIT_COMMIT_ABSEIL_CPP="b971ac5250ea8de900eae9f95e06548d14cd95fe"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/absl/workspace.bzl
+EGIT_COMMIT_ARM_NEON_2_X86_SSE="a15b489e1222b2087007546b4912e21293ea86ff"	# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+EGIT_COMMIT_BAZEL_TOOLCHAINS="8c717f8258cd5f6c7a45b97d974292755852b658"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace1.bzl
+EGIT_COMMIT_CPUINFO="3dc310302210c1891ffcfb12ae67b11a3ad3a150"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+EGIT_COMMIT_DLPACK="9351cf542ab478499294864ff3acfdab5c8c5f3d"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/dlpack/workspace.bzl
+EGIT_COMMIT_FARMHASH="0d859a811870d10f53a594927d0d0b97573ad06d"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/farmhash/workspace.bzl
+EGIT_COMMIT_FP16="4dfe081cf6bcd15db339cf2680b9281b8451eeb3"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/FP16/workspace.bzl
+EGIT_COMMIT_FXDIV="63058eff77e11aa15bf531df5dd34395ec3017c8"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+EGIT_COMMIT_GEMMLOWP="e844ffd17118c1e17d94e1ba4354c075a4577b88"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/gemmlowp/workspace.bzl
+EGIT_COMMIT_HIGHWAYHASH="c13d28517a4db259d738ea4886b1f00352a3cc33"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/highwayhash/workspace.bzl
+EGIT_COMMIT_LIBEIGEN="b0f877f8e01e90a5b0f3a79d46ea234899f8b499"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/eigen3/workspace.bzl
+EGIT_COMMIT_LLVM="dc275fd03254d67d29cc70a5a0569acf24d2280d"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/llvm/workspace.bzl
+EGIT_COMMIT_PTHREADPOOL="b8374f80e42010941bda6c85b0e3f1a1bd77a1e0"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+EGIT_COMMIT_RE2="a276a8c738735a0fe45a6ee590fe2df69bcf4502"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl ; Round up to the first day of cur_month + 1
+EGIT_COMMIT_RULES_CC="081771d4a0e9d7d3aa0eed2ef389fa4700dfb23e"			# From https://github.com/tensorflow/runtime/blob/7d879c8b161085a4374ea481b93a52adb19c0529/third_party/rules_cuda/cuda/dependencies.bzl#L41  ## needs review
+EGIT_COMMIT_RULES_CLOSURE="308b05b2419edb5c8ee0471b67a40403df940149"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace3.bzl
 EGIT_COMMIT_RULES_JAVA="7cf3cefd652008d0a64a419c34c13bdca6c8f178"		# By console inspection
-EGIT_COMMIT_RULES_PROTO="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace0.bzl
-EGIT_COMMIT_RUY="3286a34cc8de6149ac6844107dfdffac91531e72"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/ruy/workspace.bzl
-EGIT_COMMIT_SNAPPY="984b191f0fefdeb17050b42a90b7625999c13b8d"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl#L567
-EGIT_COMMIT_SOBOL_DATA="835a7d7b1ee3bc83e575e302a985c66ec4b65249"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/sobol_data/workspace.bzl
-EGIT_COMMIT_STABLEHLO="51f005f0a8ff6e28f535adfec4de936cb4097aa4"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/stablehlo/workspace.bzl
-EGIT_COMMIT_TF_RUNTIME="91d765cad5599f9710973d3e34d4dc22583e2e79"		# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/third_party/tf_runtime/workspace.bzl
-EGIT_COMMIT_XNNPACK="659147817805d17c7be2d60bd7bbca7e780f9c82"			# From https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/workspace2.bzl
+EGIT_COMMIT_RULES_PROTO="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace0.bzl
+EGIT_COMMIT_RUY="3286a34cc8de6149ac6844107dfdffac91531e72"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/ruy/workspace.bzl
+EGIT_COMMIT_SNAPPY="984b191f0fefdeb17050b42a90b7625999c13b8d"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl#L594
+EGIT_COMMIT_SOBOL_DATA="835a7d7b1ee3bc83e575e302a985c66ec4b65249"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/sobol_data/workspace.bzl
+EGIT_COMMIT_STABLEHLO="43d81c6883ade82052920bd367c61f9e52f09954"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/stablehlo/workspace.bzl
+EGIT_COMMIT_TF_RUNTIME="7d879c8b161085a4374ea481b93a52adb19c0529"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/tf_runtime/workspace.bzl
+EGIT_COMMIT_XNNPACK="b9d4073a6913891ce9cbd8965c8d506075d2a45a"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
 
 
 # WARN: DO NOT HARDWRAP
@@ -337,6 +338,7 @@ CUDA_CDEPEND="
 
 # Missing extension package for TF_ENABLE_ONEDNN_OPTS=1
 # The grpcio slots below are limited by protobuf:0/32.
+# lmdb missing
 RDEPEND="
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
@@ -351,8 +353,7 @@ RDEPEND="
 		=net-libs/grpc-1.55*:=
 		=net-libs/grpc-1.56*:=
 	)
-	>=dev-cpp/abseil-cpp-20220623.0:0/20220623
-	>=dev-db/lmdb-0.9.29
+	>=dev-cpp/abseil-cpp-20230125.2:0/20230125
 	>=dev-db/sqlite-3.40.1
 	>=dev-libs/double-conversion-3.2.0
 	>=dev-libs/icu-69.1:=
@@ -361,8 +362,8 @@ RDEPEND="
 	>=dev-libs/re2-0.2022.05.01:=
 	>=media-libs/giflib-5.2.1
 	>=media-libs/libjpeg-turbo-2.1.4
-	>=media-libs/libpng-1.6.38:0
-	>=net-misc/curl-7.88.0
+	>=media-libs/libpng-1.6.39:0
+	>=net-misc/curl-8.0.1
 	>=sys-apps/hwloc-2.7.1:=
 	>=sys-libs/zlib-1.2.13
 	dev-libs/protobuf:${PROTOBUF_SLOT}
@@ -384,7 +385,7 @@ RDEPEND="
 		)
 		(
 			>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
-			<dev-python/numpy-1.24[${PYTHON_USEDEP}]
+			<dev-python/numpy-1.24.4[${PYTHON_USEDEP}]
 		)
 		(
 			!~dev-python/protobuf-python-4.21.0[${PYTHON_USEDEP}]
@@ -397,15 +398,14 @@ RDEPEND="
 		)
 		(
 			>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
-			<dev-python/wrapt-1.15[${PYTHON_USEDEP}]
 		)
-		>=dev-libs/flatbuffers-2.0.6:=
+		>=dev-libs/flatbuffers-23.1.21:=
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]
 		>=dev-python/clang-python-13.0.0[${PYTHON_USEDEP}]
-		>=dev-python/flatbuffers-2.0[${PYTHON_USEDEP}]
+		>=dev-python/flatbuffers-23.1.21[${PYTHON_USEDEP}]
 		>=dev-python/gast-0.5.3[${PYTHON_USEDEP}]
-		>=dev-python/google-pasta-0.1.1[${PYTHON_USEDEP}]
+		>=dev-python/google-pasta-0.2.0[${PYTHON_USEDEP}]
 		>=dev-python/h5py-2.9.0[${PYTHON_USEDEP}]
 		>=dev-python/jax-0.3.15[${PYTHON_USEDEP}]
 
@@ -422,7 +422,10 @@ RDEPEND="
 		)
 		>=dev-python/six-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
-		>=dev-python/typing-extensions-3.6.6[${PYTHON_USEDEP}]
+		(
+			>=dev-python/typing-extensions-3.6.6[${PYTHON_USEDEP}]
+			<dev-python/typing-extensions-4.6.0[${PYTHON_USEDEP}]
+		)
 
 		>=dev-python/astor-0.7.1[${PYTHON_USEDEP}]
 		>=dev-python/dill-0.3.6[${PYTHON_USEDEP}]
@@ -441,7 +444,7 @@ PDEPEND="
 	python? (
 		!arm64? (
 			!kernel_Darwin? (
-				>=dev-python/tensorflow-io-0.32[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
+				>=dev-python/tensorflow-io-0.23.1[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
 			)
 		)
 		=sci-libs/keras-${DEP_VER}*[${PYTHON_USEDEP}]
