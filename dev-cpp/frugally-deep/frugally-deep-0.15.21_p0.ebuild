@@ -15,8 +15,8 @@ IUSE="test"
 # U 22.04
 RDEPEND="
 	dev-cpp/eigen
+	dev-cpp/FunctionalPlus
 	dev-cpp/nlohmann_json
-	dev-libs/FunctionalPlus
 "
 BDEPEND="
 	>=dev-util/cmake-3.2
