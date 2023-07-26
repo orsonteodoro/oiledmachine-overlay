@@ -9254,7 +9254,7 @@ ewarn "  # List of a *few* CPU model(s) which *may* have firmware updated:"
 ewarn "  (Recommended by the security researcher)"
 ewarn "  https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/commit/?id=0bc3126c9cfa0b8c761483215c25382f831a7c6f"
 ewarn
-ewarn "  # Lists the kernel:"
+ewarn "  # Summarises the kernel fix in the commit message:"
 ewarn "  https://github.com/torvalds/linux/commit/522b1d69219d8f083173819fde04f994aa051a98"
 ewarn
 ewarn "  # Required kernel config for microcode updates:"
