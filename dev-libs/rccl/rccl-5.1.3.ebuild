@@ -22,10 +22,10 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.22
+	>=dev-util/cmake-3.5
 	>=dev-util/rocm-cmake-5.0.2-r1
 	test? (
-		dev-cpp/gtest
+		>=dev-cpp/gtest-1.11
 	)
 "
 RESTRICT="
