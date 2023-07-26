@@ -206,4 +206,4 @@ src_test() {
 	cmake_src_test
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  needs-build-test
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
