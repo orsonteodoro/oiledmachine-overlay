@@ -13,7 +13,7 @@ https://github.com/Dobiasd/frugally-deep
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
-IUSE="test"
+IUSE="double-precision test"
 # U 22.04
 RDEPEND="
 	dev-cpp/eigen
@@ -26,7 +26,7 @@ BDEPEND="
 		dev-cpp/doctest
 	)
 "
-RESTRICT="double-precision test"
+RESTRICT=""
 SRC_URI="
 https://github.com/Dobiasd/frugally-deep/archive/refs/tags/v${PV/_/-}.tar.gz
 	-> ${P}.tar.gz
