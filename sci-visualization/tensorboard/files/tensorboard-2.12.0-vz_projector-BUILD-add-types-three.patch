@@ -1,0 +1,19 @@
+tensorboard/plugins/projector/vz_projector/projectorScatterPlotAdapter.ts:15:24 - error TS2307: Cannot find module 'three' or its corresponding type declarations.
+
+15 import * as THREE from 'three';
+                          ~~~~~~~
+tensorboard/plugins/projector/vz_projector/renderContext.ts:15:24 - error TS2307: Cannot find module 'three' or its corresponding type declarations.
+
+15 import * as THREE from 'three';
+                          ~~~~~~~
+
+--- a/tensorboard/plugins/projector/vz_projector/BUILD.orig	2023-04-13 04:05:50.000000000 -0700
++++ b/tensorboard/plugins/projector/vz_projector/BUILD	2023-04-26 00:47:24.192187323 -0700
+@@ -64,6 +64,7 @@ tf_ts_library(
+         "//tensorboard/webapp/third_party:tfjs",
+         "@npm//@polymer/decorators",
+         "@npm//@polymer/polymer",
++        "@npm//@types/three", # oteodoro:  fix build time error
+         "@npm//three",
+         "@npm//umap-js",
+     ],

@@ -1,0 +1,392 @@
+Subject:  Allow to use DeepCC on real networks with different sudo.
+
+Patchset changes:
+
+1.  Add shebang for every .sh script.
+2.  Allow to run from any directory with absolute path invocation.
+3.  Allow to control with following environment variables:
+3a. DEEPCC_ELEVATE_CMD - sudo, pkexec, " "
+3b. DEEPCC_PRODUCTION - 0 for research mode, 1 for production mode
+3c. DEEPCC_SCHEME - cubic, westwood, illinois, bbr, ... for real-network.sh only
+3d. DEEPCC_TARGET_DELAY - in miliseconds (ms)
+4e. DEEPCC_TEST_SERVER - the hostname to measure RTT with
+4.  Allow to train with different TCP congestion control than limited choices.
+5.  Rename illi to illinois.
+6.  Allow to run with init scripts with DEEPCC_ELEVATE_CMD=" "
+7.  Added real-network.sh to load DRL Agent for real network (production) without evaluate simulator.
+
+Similar to https://github.com/Soheil-ab/Orca/issues/1#issuecomment-683734454
+
+This file has inconsistent line endings.
+
+LF files are real-network.sh, run-dcubic.sh,
+CRLF files are server.cc
+
+diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/build.sh deepcc-1.0_p9999/deepcc.v1.0/build.sh
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/build.sh	2023-02-16 12:56:49.628369426 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/build.sh	2023-02-16 11:25:38.556189141 -0800
+@@ -1,3 +1,5 @@
++#!/bin/bash
++cd $(dirname "$0")
+ g++ -pthread src/server.cc src/flow.cc -o rl-server
+ g++ src/client.c -o client
+ 
+diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/evaluate.sh deepcc-1.0_p9999/deepcc.v1.0/evaluate.sh
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/evaluate.sh	2023-02-16 12:56:49.628369426 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/evaluate.sh	2023-02-16 11:29:01.336195823 -0800
+@@ -1,17 +1,21 @@
++#!/bin/bash
++export ELEVATE_CMD=${DEEPCC_ELEVATE_CMD:-sudo}
++export TARGET_DELAY=${DEEP_TARGET_DELAY:-50}
++cd $(dirname "$0")
+ if [ $# -ne 2 ]
+ then
+-    echo "usage: $0 [server port num] [scheme: cubic westwood illi bbr ]"
++    echo "usage: $0 [server port num] [scheme: cubic westwood illinois bbr ]"
+     exit
+ fi
+-sudo sysctl -w -q net.ipv4.ip_forward=1
+-sudo sysctl -w -q net.ipv4.tcp_no_metrics_save=1
++${ELEVATE_CMD} sysctl -w -q net.ipv4.ip_forward=1
++${ELEVATE_CMD} sysctl -w -q net.ipv4.tcp_no_metrics_save=1
+ port=$1
+ scheme=$2
+ 
+ trace_index=25      # Check setup.sh for the valid trace indices.
+ 
+ latency=10 # Unidirectional Link Delay ==> minRTT>=2*latency (ms)
+-target=50  # ==>Overall application's Target delay. (ms)
++target=${TARGET_DELAY}  # ==>Overall application's Target delay. (ms)
+ report_period=20
+ ./run-deep.sh $port ${trace_index} $target $report_period $latency 2 $scheme
+ 
+diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/real-network.sh deepcc-1.0_p9999/deepcc.v1.0/real-network.sh
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/real-network.sh	1969-12-31 16:00:00.000000000 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/real-network.sh	2023-02-16 21:04:41.101333993 -0800
+@@ -0,0 +1,64 @@
++#!/bin/bash
++export DEEPCC_TARGET_DELAY=${DEEPCC_TARGET_DELAY:-50} # ms
++export DEEPCC_PRODUCTION=1
++export DEEPCC_TEST_SERVER=${DEEPCC_TEST_SERVER:-"gentoo.org"}
++export DEEPCC_SCHEME=${DEEPCC_SCHEME:-"cubic"}
++
++set_sweetspot_target_delay() {
++	local max_rtt_at_100_pct_utilization
++	# Based on graph inspection
++	# sweetspot = ${RTT_at_80_pct_utilization} / ${minRTT}
++    if [[ ${DEEPCC_SCHEME} == "bbr" ]] ; then
++        max_rtt_at_100_pct_utilization=58
++        DEEPCC_TARGET_DELAY=$(python -c "(int(2.2 * ${delay}))")
++    elif [[ ${DEEPCC_SCHEME} == "cubic" ]] ; then
++        max_rtt_at_100_pct_utilization=59
++        DEEPCC_TARGET_DELAY=$(python -c "(int(2.15 * ${delay}))")
++    elif [[ ${DEEPCC_SCHEME} == "illinois" ]] ; then
++        max_rtt_at_100_pct_utilization=72
++        DEEPCC_TARGET_DELAY=$(python -c "(int(2.05 * ${delay}))")
++    elif [[ ${DEEPCC_SCHEME} == "westwood" ]] ; then
++        max_rtt_at_100_pct_utilization=42
++        DEEPCC_TARGET_DELAY=$(python -c "print(int(1.6 * ${delay}))")
++    else
++        # 2.0 coefficient obtained by mean average of above coefficients.
++        DEEPCC_TARGET_DELAY=$(python -c "print(int(2.0 * ${delay}))")
++    fi
++}
++
++set_target_delay() {
++	ping || return
++    local delay=$(ping ${DEEPCC_TEST_SERVER} -c 3 2>&1 \
++        | grep -o "time=.*" \
++        | cut -f 2 -d "=" \
++        | sed -e "s| ms||g" \
++        | sort \
++        | head -n 1)
++    if [[ -z "${delay}" ]] ; then
++        echo "WARN:  set_target_delay(): ping failed"
++        export DEEPCC_TARGET_DELAY=50 # Upstream original
++        return
++    fi
++    if [[ "${DEEPCC_TARGET_DELAY}" == "min" ]] ; then
++        DEEPCC_TARGET_DELAY="${delay%.*}"
++    elif [[ "${DEEPCC_TARGET_DELAY}" == "max" ]] ; then
++        DEEPCC_TARGET_DELAY=$(python -c "print(int(5.0 * ${delay}))")
++    elif [[ "${DEEPCC_TARGET_DELAY}" =~ ("sweetspot"|"sweet"|"ss"|"sw"|"swt"|"auto") ]] ; then
++        set_sweetspot_target_delay
++    else
++        DEEPCC_TARGET_DELAY=$(python -c "print(int(2.0 * ${delay}))")
++        set_sweetspot_target_delay
++    fi
++}
++
++if [[ "${DEEPCC_TARGET_DELAY}" =~ ("min"|"max"|"sweetspot"|"sweet"|"ss"|"sw"|"swt"|"auto") ]] ; then
++    set_target_delay
++    if [[ "${DEEPCC_TARGET_DELAY}" =~ ("min"|"max"|"sweetspot"|"sweet"|"ss"|"sw"|"swt"|"auto") \
++        || -z "${DEEPCC_TARGET_DELAY}" ]] ; then
++        echo "WARN:  set_target_delay() failed"
++        export DEEPCC_TARGET_DELAY=50 # Upstream original
++    fi
++fi
++
++cd $(dirname "$0")
++./evaluate.sh 8000 ${DEEPCC_SCHEME}
+diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh deepcc-1.0_p9999/deepcc.v1.0/run-dcubic.sh
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/run-dcubic.sh	2023-02-16 12:57:00.516369785 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/run-dcubic.sh	2023-02-16 11:25:38.580189142 -0800
+@@ -1,14 +1,15 @@
+ #!/bin/bash
+-
++export ELEVATE_CMD=${DEEPCC_ELEVATE_CMD:-sudo}
++cd $(dirname "$0")
+ if [ $# != 11 ]
+ then
+-    echo -e "usage:$0 latency (one-way delay) port trace_id it qsize target initial_alpha period training scheme[ cubic , vegas , west , illi , yeah , veno, scal , htcp , cdg , hybla ,  ] result_prefix"
++    echo -e "usage:$0 latency (one-way delay) port trace_id it qsize target initial_alpha period training scheme[ cubic , vegas , west , illinois , yeah , veno, scal , htcp , cdg , hybla ,  ] result_prefix"
+     echo "$@"
+     echo "$#"
+     exit
+ fi
+-sudo killall -s9 server client tcpdump rl-server
+-sudo killall -s15 python
++${ELEVATE_CMD} killall -s9 server client tcpdump rl-server
++${ELEVATE_CMD} killall -s15 python
+ #Remove Shared Memories if they have not been destroyed yet.
+ #ipcrm -M 123456
+ #ipcrm -M 12345
+@@ -30,13 +31,19 @@ prefix=${11}
+ x=100
+ 
+ source setup.sh
+-sudo su <<EOF
++${ELEVATE_CMD} su <<EOF
+ echo "1" > /proc/sys/net/ipv4/tcp_deepcc
+ EOF
+ 
+-if [ "$scheme" == "cubic" ] || [ "$scheme" == "bbr" ] || [ "$scheme" == "westwood" ] || [ "$scheme" == "illinois" ]
++if grep -E -q -e "${scheme}( |$)" "/proc/sys/net/ipv4/tcp_available_congestion_control" ; then
+ then
+-    a=""
++    if [ "$scheme" == "cubic" ] || [ "$scheme" == "bbr" ] || [ "$scheme" == "westwood" ] || [ "$scheme" == "illinois" ]
++    then
++        :;
++    else
++        echo "WARN:  Only cubic, bbr, westwood, illinois supported with prebuilt learned models."
++    fi
++    a="" # nop
+ else
+     echo "-------------- Pls give a valid scheme! ------------- ($scheme ?)"
+     exit 0
+@@ -46,15 +53,15 @@ cd ${rl_dir}
+ echo "Running Deep-$scheme: ${TRACES[$i]}"
+ scheme_des="deep-$scheme-$latency-$target-$period"
+ log="deep-$scheme-${TRACES[$i]}-$latency-${qsize}-${target}-${initial_alpha}-${period}-${it}"
+-sudo ./rl-server $latency $port ${TRACES[$i]} $up ${log} $target $initial_alpha ${qsize} ${period} 2 ${training} $scheme &
++${ELEVATE_CMD} ./rl-server $latency $port ${TRACES[$i]} $up ${log} $target $initial_alpha ${qsize} ${period} 2 ${training} $scheme &
+ pid=$!
+ echo $pid
+ sleep 4;
+ echo "Will be done in ${duration[$i]} seconds ..."
+ sleep ${duration[$i]}
+-sudo kill $pid
+-sudo killall rl-server mm-link client
+-sudo killall -s15 python
++${ELEVATE_CMD} kill $pid
++${ELEVATE_CMD} killall rl-server mm-link client
++${ELEVATE_CMD} killall -s15 python
+ sleep 10
+ echo "Experiment is finished."
+ if [ ${training} -eq 2 ] || [ ${training} -eq 4 ]
+diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/run-deep.sh deepcc-1.0_p9999/deepcc.v1.0/run-deep.sh
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/run-deep.sh	2023-02-16 12:57:00.516369785 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/run-deep.sh	2023-02-16 11:25:38.580189142 -0800
+@@ -1,5 +1,6 @@
+ #!/bin/bash
+-
++export ELEVATE_CMD=${DEEPCC_ELEVATE_CMD:-sudo}
++cd $(dirname "$0")
+ source setup.sh
+ #sudo killall verus_server sprout*
+ sudo killall rl-server client python
+diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/setup.sh deepcc-1.0_p9999/deepcc.v1.0/setup.sh
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/setup.sh	2023-02-16 12:57:00.516369785 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/setup.sh	2023-02-16 11:25:38.580189142 -0800
+@@ -1,4 +1,6 @@
+-
++#!/bin/bash
++export ELEVATE_CMD=${DEEPCC_ELEVATE_CMD:-sudo}
++cd $(dirname "$0")
+ ##
+ ##  TRACE INDEX:
+ ##
+@@ -39,11 +41,11 @@ export SPROUT_BT2="$THIS_SCRIPT/alfalfa/
+ export VERUS_SERVER="$THIS_SCRIPT/verus/src/verus_server"
+ export VERUS_CLIENT="$THIS_SCRIPT/verus/src/verus_client"
+ 
+-sudo sysctl -q net.ipv4.tcp_wmem="4096 32768 4194304" #Doubling the default value from 16384 to 32768
+-sudo sysctl -w -q net.ipv4.tcp_low_latency=1
+-sudo sysctl -w -q net.ipv4.tcp_autocorking=0
+-sudo sysctl -w -q net.ipv4.tcp_no_metrics_save=1
+-sudo sysctl -w -q net.ipv4.ip_forward=1
++${ELEVATE_CMD} sysctl -q net.ipv4.tcp_wmem="4096 32768 4194304" #Doubling the default value from 16384 to 32768
++${ELEVATE_CMD} sysctl -w -q net.ipv4.tcp_low_latency=1
++${ELEVATE_CMD} sysctl -w -q net.ipv4.tcp_autocorking=0
++${ELEVATE_CMD} sysctl -w -q net.ipv4.tcp_no_metrics_save=1
++${ELEVATE_CMD} sysctl -w -q net.ipv4.ip_forward=1
+ 
+ TRACES=("TMobile-LTE-no-cross-times-static" "TMobile-LTE-with-cross-times-static" "trace-1552925703-home1-static" "trace-1553093662-home3-static" "trace-1553219061-home-static" "trace-1553457194-ts-static" "trace-1553458374-ts-static" "trace-1553189663-ts-walking" "trace-1553199718-ts-walking" "trace-1553201037-ts-walking" "trace-1553201711-ts-walking"  "trace-1553202253-ts-walking" "trace-1553203600-ts-walking" "trace-1553204803-ts-walking" "trace-1553205967-ts-walking" "trace-1553207521-ts-walking" "trace-1553208852-ts-walking" "trace-1553455408-ts-walking" "trace-1553453943-ts-walking" "trace-1553109898-bus" "trace-1553114405-bus"  "trace-1553552192-bus" "trace-1553555076-bus" "trace-1552767958-taxi1" "trace-1552768760-taxi3" "TMobile-LTE-driving.down" "Verizon-LTE-driving.down" "ATT-LTE-driving.down" "ATT-LTE-driving-2016.down" "TMobile-LTE-driving.down")
+ 
+@@ -53,5 +55,5 @@ up="wired48"
+ 
+ parent=`pwd -P`
+ rl_dir="$parent/rl-module"
+-sudo killall rl-server rl-server-eval client python
++${ELEVATE_CMD} killall rl-server rl-server-eval client python
+ 
+diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/define.h deepcc-1.0_p9999/deepcc.v1.0/src/define.h
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/src/define.h	2023-02-16 12:57:00.520369785 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/src/define.h	2023-02-16 11:25:38.612189143 -0800
+@@ -80,6 +80,8 @@ u32 report_period=5;//5s
+ #define FLOW_NUM 1
+ int sock[FLOW_NUM];
+ int sock_for_cnt[FLOW_NUM];
++int production=0;
++int elevate_cmd=0;
+ 
+ struct tcp_deepcc_info {
+     u32 min_rtt;      /* min-filtered RTT in uSec */
+diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc deepcc-1.0_p9999/deepcc.v1.0/src/server.cc
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/src/server.cc	2023-02-16 12:57:00.520369785 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/src/server.cc	2023-02-16 11:25:38.628189144 -0800
+@@ -23,6 +23,9 @@
+ #define DBGSERVER 0
+ #include <cstdlib>
+ #include "define.h"
++#define ELEVATE_CMD_SUDO 0   // For command line
++#define ELEVATE_CMD_PKEXEC 1 // For desktop environments or command line
++#define ELEVATE_CMD_NONE 2   // For init scripts
+ #define MAX_CWND 40000
+ #define MIN_CWND 4
+ #define MIN_RTT_DURING_TRAINING 21
+@@ -73,6 +76,24 @@ int main(int argc, char **argv)
+     shmctl(shmid, IPC_RMID, NULL);
+     shmdt(shared_memory_rl);
+     shmctl(shmid_rl, IPC_RMID, NULL);
++    
++    char *_production=getenv("DEEPCC_PRODUCTION");
++    if (_production)
++    {
++        if (strstr(_production, "1"))
++            production=1;
++    }
++    char *_elevate_cmd=getenv("DEEPCC_ELEVATE_CMD");
++    if (_elevate_cmd)
++    {
++        if (strstr(_elevate_cmd,"sudo"))
++            elevate_cmd=ELEVATE_CMD_SUDO;
++        else if (strstr(_elevate_cmd,"pkexec"))
++            elevate_cmd=ELEVATE_CMD_PKEXEC;
++        else
++            elevate_cmd=ELEVATE_CMD_NONE;
++	}
++
+     return 0;
+ }
+ 
+@@ -149,15 +170,36 @@ void start_server(int flow_num, int clie
+         }
+     }
+     char container_cmd[500];
+-    sprintf(container_cmd,"sudo ./client $MAHIMAHI_BASE 1 %d",client_port);
+-    for(int i=1;i<FLOW_NUM;i++)
++    char elevate_arg[50];
++    char elevateu_arg[100];
++    if (elevate_cmd==ELEVATE_CMD_SUDO)
++    {
++        sprintf(elevate_arg, "sudo");
++        sprintf(elevateu_arg, "sudo -u `logname`");
++    }
++    else if (elevate_cmd==ELEVATE_CMD_PKEXEC)
+     {
+-    	sprintf(container_cmd,"%s & sleep 5;sudo ./client $MAHIMAHI_BASE 1 %d",container_cmd,client_port+i);
++        sprintf(elevate_arg, "pkexec");
++        sprintf(elevateu_arg, "pkexec --user `logname`");
+     }
++    else
++    {
++        sprintf(elevate_arg, "");
++        sprintf(elevateu_arg, "");
++    }
++
+     char cmd[1000];
+     char final_cmd[1000];
+-    sprintf(cmd, "sudo -u `logname` mm-delay %d mm-link ../traces/%s ../traces/%s --downlink-log=log/down-%s --uplink-queue=droptail --uplink-queue-args=\"packets=%d\" --downlink-queue=droptail --downlink-queue-args=\"packets=%d\" -- sh -c \'%s\' &",delay_ms,uplink,downlink,log_file,qsize,qsize,container_cmd);   
+-    sprintf(final_cmd,"%s",cmd);
++    if (production==0)
++    {
++        sprintf(container_cmd,"%s ./client $MAHIMAHI_BASE 1 %d",elevate_arg,client_port);
++        for(int i=1;i<FLOW_NUM;i++)
++        {
++    	    sprintf(container_cmd,"%s & sleep 5;%s ./client $MAHIMAHI_BASE 1 %d",container_cmd,elevate_arg,client_port+i);
++        }
++        sprintf(cmd, "%s mm-delay %d mm-link ../traces/%s ../traces/%s --downlink-log=log/down-%s --uplink-queue=droptail --uplink-queue-args=\"packets=%d\" --downlink-queue=droptail --downlink-queue-args=\"packets=%d\" -- sh -c \'%s\' &",elevateu_arg,delay_ms,uplink,downlink,log_file,qsize,qsize,container_cmd);
++        sprintf(final_cmd,"%s",cmd);
++    }
+     info->trace=trace;
+     info->num_lines=num_lines;
+     /**
+@@ -191,19 +233,19 @@ void start_server(int flow_num, int clie
+     }
+     
+     if (first_time==1){
+-        sprintf(cmd,"sudo /home/`logname`/venv/bin/python drl_agent.py --target=%.7f --tb_interval=1 --scheme=%s --train_dir=\".\" --mem_r=%d --mem_w=%d &",
+-                (double)target,congestion,(int)key,(int)key_rl);
++        sprintf(cmd,"%s /home/`logname`/venv/bin/python drl_agent.py --target=%.7f --tb_interval=1 --scheme=%s --train_dir=\".\" --mem_r=%d --mem_w=%d &",
++                elevate_arg,(double)target,congestion,(int)key,(int)key_rl);
+         DBGPRINT(0,0,"Starting RL Module (Without load) ...\n");
+     }
+-    else if (first_time==2 || first_time==4){
+-        sprintf(cmd,"sudo /home/`logname`/venv/bin/python drl_agent.py --target=%.7f --tb_interval=1 --load=1 --eval --scheme=%s --train_dir=\".\" --mem_r=%d --mem_w=%d &",
+-                (double)target,congestion,(int)key,(int)key_rl);
++    else if (first_time==2 || first_time==4 || production==1){
++        sprintf(cmd,"%s /home/`logname`/venv/bin/python drl_agent.py --target=%.7f --tb_interval=1 --load=1 --eval --scheme=%s --train_dir=\".\" --mem_r=%d --mem_w=%d &",
++                elevate_arg,(double)target,congestion,(int)key,(int)key_rl);
+         DBGPRINT(0,0,"Starting RL Module (No learning) ...\n");
+     }
+     else
+     {
+-        sprintf(cmd,"sudo /home/`logname`/venv/bin/python drl_agent.py --target=%.7f --load=1 --tb_interval=1 --scheme=%s --train_dir=\".\" --mem_r=%d --mem_w=%d &",
+-                (double)target,congestion,(int)key,(int)key_rl);
++        sprintf(cmd,"%s /home/`logname`/venv/bin/python drl_agent.py --target=%.7f --load=1 --tb_interval=1 --scheme=%s --train_dir=\".\" --mem_r=%d --mem_w=%d &",
++                elevate_arg,(double)target,congestion,(int)key,(int)key_rl);
+         DBGPRINT(0,0,"Starting RL Module (With load) ...\n");
+     }
+  
+@@ -238,7 +280,8 @@ void start_server(int flow_num, int clie
+     DBGPRINT(0,0,"RL Module is Ready. Let's Start ...\n\n");
+     
+     //Now its time to start the server-client app and tune C2TCP socket.
+-    system(final_cmd);
++    if (production==0)
++        system(final_cmd);
+     
+     //Start listen
+ 	//The maximum number of concurrent connections is 10
+diff -urpN deepcc-1.0_p9999.orig/deepcc.v1.0/training.sh deepcc-1.0_p9999/deepcc.v1.0/training.sh
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/training.sh	2023-02-16 12:57:06.580369985 -0800
++++ deepcc-1.0_p9999/deepcc.v1.0/training.sh	2023-02-16 11:25:38.648189144 -0800
+@@ -1,11 +1,14 @@
++#!/bin/bash
++export ELEVATE_CMD=${DEEPCC_ELEVATE_CMD:-sudo}
++cd $(dirname "$0")
+ if [ $# -ne 3 ]
+ then
+-    echo "usage: $0 [learning from scratch: 1 , continue learning: 0] [server port num] [scheme: cubic westwood illi bbr ]"
++    echo "usage: $0 [learning from scratch: 1 , continue learning: 0] [server port num] [scheme: cubic westwood illinois bbr ]"
+     exit
+ fi
+ 
+-sudo sysctl -w -q net.ipv4.ip_forward=1
+-sudo sysctl -w -q net.ipv4.tcp_no_metrics_save=1
++${ELEVATE_CMD} sysctl -w -q net.ipv4.ip_forward=1
++${ELEVATE_CMD} sysctl -w -q net.ipv4.tcp_no_metrics_save=1
+ training=$1
+ port=$2
+ scheme=$3

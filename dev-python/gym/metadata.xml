@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">openai/gym</remote-id>
+    <bugs-to>https://github.com/openai/gym/issues</bugs-to>
+  </upstream>
+  <use>
+    <flag name="mujoco">
+      Use the current MuJoCo version of the physics engine.
+    </flag>
+    <flag name="mujoco-py">
+      Use the alternative deprecated fork of MuJoCo python bindings.
+    </flag>
+  </use>
+</pkgmetadata>

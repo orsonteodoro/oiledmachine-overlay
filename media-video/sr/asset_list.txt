@@ -1,0 +1,407 @@
+# The asset list will give you an idea to replace individual assets with more
+# free comparable ones or come up with your own asset list targeted for
+# specific aesthetics if you do not like how these preselected assets are
+# selected.
+
+# See also metadata.xml for integration of custom assets into ebuild.
+
+No hash fingerprints so if you notice that the blake2b or sha512 is different
+on your side please report.
+
+Harmonic summary:
+
+wrlzswfdvyprz10hegws74d4wzh7270o.mp4 properties:
+major_brand     : mp42
+Duration: 00:08:47.17, start: 0.000000, bitrate: 59716 kb/s
+Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59397 kb/s, 59.94 fps
+Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
+# Content keywords:  realistic, people, thailand, ox, temple, professional
+# grade, rain, river, plant, boat, insect, animals, food, snake, architecture,
+# close ups, skyline dusk, present era, detailed, pro quality, 4K, realistic
+
+58pxpuh1dsieye19pkj182hgv6fg4gof.mp4 properties:
+major_brand     : mp42
+Duration: 00:02:20.33, start: 0.000000, bitrate: 60633 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 60326 kb/s, 59.94 fps
+Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
+# Content keywords:  realistic, desert, cave, colorado river, sun, sunrays,
+# poppy, erosion, closeups, distance shot, first person view, arches, buttes,
+# cactus, the bend, detailed, pro quality, 4K, realistic
+
+6uws3kg4ldxtkeg5k5jwubueaolkqsr0.mp4 properties:
+major_brand     : mp42
+Duration: 00:03:30.90, start: 0.000000, bitrate: 60665 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 60352 kb/s, 50 fps
+Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
+# Content keywords:  realistic, desert, cave, cactus, shrub, arch, buttes, close
+# ups high quality, 4K, realistic
+
+51ma04aviaeunhzelpw455sodv7judiu.mp4 properties:
+major_brand     : mp42
+Duration: 00:01:50.27, start: 0.000000, bitrate: 59704 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59408 kb/s, 50 fps
+Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
+# Content keywords:  india, city, many people, vehicles, commercial signs, cars,
+# motorcycles, close up, pro quality, 4K, walking pace, english text, sanskrit
+# text realistic
+
+uaj2o8ku7qhwwzviga9znzviwqg14x1g.mp4 properties:
+major_brand     : mp42
+Duration: 00:10:10.65, start: 0.000000, bitrate: 15116 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59489 kb/s, 59.94 fps
+Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
+# Content keywords:  
+# College football, professional statium, cheerleaders, cheering fans, close
+# ups, end zone, band, outside stadium, sky, clouds, inside stadium, 4K, digital
+# screen, vuvuzela,  cowgirls, texas outline, drawn 5 pointed star, lines,
+# dashes, turf, stadium windows, golf cart wheels, back shot, blurry fan stand
+
+e425git3jtnugqh8llzlgvr0r2j4j351.mp4 properties:
+major_brand     : mp42
+Duration: 00:13:22.05, start: 0.000000, bitrate: 59990 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59669 kb/s, 59.94 fps
+Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
+# Content keywords:
+# Realistic, 4K, close up, baboons, snow, snow falling, snow on the ground,
+# rocks, river, river bubbles, bottom of waterfall, hugging baboons in the
+# water, grooming baboons, baboons playing on the snow, baboons on top of trunk
+# of dead plants, baboons in warm water
+
+v21fqn77ib1r8zlrbnl6fsyzt6rrjj0v.mp4 properties:
+Duration: 00:18:52.65, start: 0.000000, bitrate: 59743 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59422 kb/s, 59.94 fps
+Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
+# Content keywords:
+# Realistic, 4K, road, race cars, dusty dirt road, cowboys, cowgirls, horses,
+# baby horse, san francisco, prison island, san francisco bridge, cliff shot of
+# bridge, close up shots, walking people on the bridge, dead grass, cliff side,
+# mt rushmore, trees on a hill, mechanic, ferry, train, cargo ship, sail boat,
+# aged terrain
+
+tmzm8y7bfzpote9obs7le3olh5j87iir.mp4 properties:
+Duration: 00:17:57.31, start: 0.000000, bitrate: 59944 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59623 kb/s, 59.94 fps
+Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, 5.1, fltp, 317 kb/s
+# Content keywords:
+# Realistic, 4K, venice, gondola, boat, brick road, hotel sign, red brick
+# buildings, carnival/volta/ventian masked people, mature age crowd, glass
+# blowing factory, hot glass horse, water, daylight, burry colored night lights
+# (bokeh), gondola operator, rows of gondolas, classically dressed, umbrella,
+# naked statues, different times of day, different lighting (luma) in
+# gondola shots, man playing saxaphone, violin player, church mural, tuba
+# player, hanging fabrics, small moon cresent, 12 string harp lute
+
+6inss29is5b7jzxv1qkuf2p9qeaomi04.mp4 properties:
+Duration: 00:12:36.76, start: 0.000000, bitrate: 59189 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 58868 kb/s, 50 fps
+Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
+# Content keywords:
+# Realistic, 4K, kayakers, river, snowy top, thawed warm hill, frozen blue river
+# with liquid river kayakers, green grass, rocky cliff, rivers down a hill,
+# people on that frozen river, water reflection and bird shadow on rocks on,
+# cliff, bridge in the distance, waving winsock or waving flag
+
+29b0z4w9lj4p54q2hf7il9jz6codx36v.mp4 properties:
+Duration: 00:02:12.63, start: 0.000000, bitrate: 59725 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59421 kb/s, 59.94 fps
+Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
+# Content keywords:
+# Realistic, 4K, chinese golden statues, garden, traditional chinese
+# architecture, traditional chinese writing close ups, walking up hill of golden
+# statues, golden asian statues with swastikas.  All male statues?
+
+n8x168w6vhpv240hggw7wtj8mszg7wnb.mp4 properties:
+Duration: 00:10:11.05, start: 0.000000, bitrate: 59858 kb/s
+Stream #0:0(eng): Video: h264 (Main) (avc1 / 0x31637661), yuv420p(tv, bt709), 3840x2160, 59539 kb/s, 50 fps
+Stream #0:1(eng): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 317 kb/s
+# Content keywords:
+# Realistic, 4K, Indian mausoleum (taj mahal), indian woman chilli worker,
+# indians women with bowl over head, camel, pidgeons in the distance, elephant
+# in the distance, green parrot, rugs, silk, chrysanthemums, flowers
+
+
+DIV2K summary:
+
+# Content keywords:  realistic, people, insects, animals, man made objects,
+# culture, uniforms, underwater, natural landscapes, landmarks, text, reptiles,
+# all zoom levels, professional grade, present era, street signs, riot gear,
+# plexiglass shields, garage
+
+100 PNG assets in loaded_div2k/test/hr/ 8-bit sRGB
+
+Filenames:
+0801.png # corresponds to the same content as 0801x2.png
+0802.png # corresponds to the same content as 0802x2.png
+0803.png # corresponds to the same content as 0803x2.png
+...
+
+
+Resolutions:
+1356x2040
+1500x2040
+1620x2040
+1668x2040
+2040x1068
+2040x1128
+2040x1152
+2040x1200
+2040x1260
+2040x1284
+2040x1344
+2040x1356
+2040x1368
+2040x1380
+2040x1416
+2040x1464
+2040x1536
+2040x1548
+2040x1572
+2040x1596
+2040x1740
+2040x1872
+2040x2040
+2040x816
+
+100 PNG assets in loaded_div2k/test/lr/ 8-bit sRGB
+
+Filenames:
+0801x2.png # corresponds to same content as 0801.png
+0802x2.png # corresponds to same content as 0802.png
+0803x2.png # corresponds to same content as 0803.png
+...
+
+Resolutions:
+1020x1020
+1020x408
+1020x534
+1020x564
+1020x576
+1020x600
+1020x630
+1020x642
+1020x672
+1020x678
+1020x684
+1020x690
+1020x708
+1020x732
+1020x768
+1020x774
+1020x786
+1020x798
+1020x870
+1020x936
+678x1020
+750x1020
+810x1020
+834x1020
+
+
+
+800 PNG assets in loaded_div2k/train/lr/ 8-bit sRGB
+
+Filenames:
+0001x2.png # corresponds to the same content as 0001.png
+0002x2.png # corresponds to the same content as 0002.png
+0003x2.png # corresponds to the same content as 0003.png
+...
+
+Resolutions:
+1020x1002
+1020x1020
+1020x324
+1020x366
+1020x372
+1020x384
+1020x390
+1020x426
+1020x432
+1020x444
+1020x468
+1020x474
+1020x480
+1020x486
+1020x522
+1020x534
+1020x540
+1020x546
+1020x564
+1020x570
+1020x576
+1020x582
+1020x588
+1020x594
+1020x600
+1020x606
+1020x612
+1020x624
+1020x630
+1020x636
+1020x642
+1020x648
+1020x654
+1020x660
+1020x666
+1020x672
+1020x678
+1020x684
+1020x690
+1020x696
+1020x702
+1020x708
+1020x714
+1020x720
+1020x726
+1020x732
+1020x738
+1020x744
+1020x756
+1020x762
+1020x768
+1020x774
+1020x780
+1020x786
+1020x792
+1020x804
+1020x816
+1020x822
+1020x828
+1020x846
+1020x864
+1020x876
+1020x894
+1020x900
+1020x918
+1020x924
+1020x996
+558x1020
+570x1020
+582x1020
+588x1020
+618x1020
+624x1020
+642x1020
+648x1020
+660x1020
+672x1020
+678x1020
+684x1020
+714x1020
+720x1020
+738x1020
+762x1020
+768x1020
+786x1020
+804x1020
+816x1020
+822x1020
+858x1020
+888x1020
+912x1020
+972x1020
+984x1020
+996x1020
+
+800 PNG assets in loaded_div2k/train/hr/ 8-bit sRGB
+
+Filenames:
+0001.png # corresponds to the same content as 0001x2.png
+0002.png # corresponds to the same content as 0002x2.png
+0003.png # corresponds to the same content as 0003x2.png
+...
+
+Resolutions:
+1116x2040
+1140x2040
+1164x2040
+1176x2040
+1236x2040
+1248x2040
+1284x2040
+1296x2040
+1320x2040
+1344x2040
+1356x2040
+1368x2040
+1428x2040
+1440x2040
+1476x2040
+1524x2040
+1536x2040
+1572x2040
+1608x2040
+1632x2040
+1644x2040
+1716x2040
+1776x2040
+1824x2040
+1944x2040
+1968x2040
+1992x2040
+2040x1044
+2040x1068
+2040x1080
+2040x1092
+2040x1128
+2040x1140
+2040x1152
+2040x1164
+2040x1176
+2040x1188
+2040x1200
+2040x1212
+2040x1224
+2040x1248
+2040x1260
+2040x1272
+2040x1284
+2040x1296
+2040x1308
+2040x1320
+2040x1332
+2040x1344
+2040x1356
+2040x1368
+2040x1380
+2040x1392
+2040x1404
+2040x1416
+2040x1428
+2040x1440
+2040x1452
+2040x1464
+2040x1476
+2040x1488
+2040x1512
+2040x1524
+2040x1536
+2040x1548
+2040x1560
+2040x1572
+2040x1584
+2040x1608
+2040x1632
+2040x1644
+2040x1656
+2040x1692
+2040x1728
+2040x1752
+2040x1788
+2040x1800
+2040x1836
+2040x1848
+2040x1992
+2040x2004
+2040x2040
+2040x648
+2040x732
+2040x744
+2040x768
+2040x780
+2040x852
+2040x864
+2040x888
+2040x936
+2040x948
+2040x960
+2040x972

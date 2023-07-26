@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">Zulko/moviepy</remote-id>
+    <bugs-to>https://github.com/Zulko/moviepy/issues</bugs-to>
+  </upstream>
+  <use>
+    <flag name="pygame">
+      For previews
+    </flag>
+    <flag name="matplotlib">
+      For sliders support
+    </flag>
+    <flag name="opencv">
+      For advanced image manipulation
+    </flag>
+    <flag name="scipy">
+      For resizing clips
+    </flag>
+    <flag name="scikit">
+      For advanced image manipulation
+    </flag>
+  </use>
+</pkgmetadata>

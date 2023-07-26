@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <doc lang="en">https://python-chess.readthedocs.io/en/latest/</doc>
+    <changelog>https://python-chess.readthedocs.io/en/latest/changelog.html</changelog>
+    <remote-id type="github">niklasf/python-chess</remote-id>
+    <bugs-to>https://github.com/niklasf/python-chess/issues</bugs-to>
+  </upstream>
+</pkgmetadata>

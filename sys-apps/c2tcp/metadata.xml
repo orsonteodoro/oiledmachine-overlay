@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+    This contains the client-server evaluation application for C2TCP.
+
+    The evaluation app is used for research.
+
+    C2TCP in the kernel is default off.  To enable it, you can use the
+    sysctl interface.
+
+    To use C2TCP, it must be explicitly on either by the app or
+    through the sysfs interface.
+
+    It also demonstrates how to set the average delay target for tuning C2TCP,
+    so you can integrate C2TCP application target in your app.
+
+    Alpha is the setpoint indirectly controlled by Target.  If alpha
+    increases, throughput increases.  If alpha decreases, the
+    algorithm becomes more delay sensitive.
+
+
+    To evalulate:
+    C2TCP_ELEVATE_CMD="pkexec" C2TCP_BROWSER="surf" C2TCP_TARGET_DELAY=0 ./run-sample.sh
+ 
+    Additional Environment variables for run-sample.sh:
+
+      C2TCP_ELEVATE_CMD -- accepts sudo, pkexec, " "
+      C2TCP_BROWSER -- path to a svg supported web browser to show graph results.
+        You may set it to "none", "skip", "disable", or empty string to not show it.
+      C2TCP_TARGET_DELAY -- controls average delay and throughput in
+        milliseconds (ms)
+        (1) lower values improve average delays and low jitter.
+        (2) higher values increase throughput and increase jitter
+            to approximately the vanilla counterpart.
+        (3) 2 * RTT is about the sweetspot for achiving essentially
+            nearly Codel + Cubic performance and low jitter.
+        (4) Setting delay 0 zero automatically calculates 2 * minRTT.
+        (5) The idea of the target delay is to improve the user experience.
+        (6) For live and real-time scenarios, lower or 2 * minRTT is better.
+        (7) For downloading, using 5 * minRTT is better.
+        (8) This value can be changed via the sysctl interface.
+
+        At 1080p @ 30 FPS is 6 Mbps, the lowest target delay has enough
+        throughput to not be penalized by C2TCP, assuming that the
+        connection has that physical bandwidth.
+      
+        For 60 FPS @ 1080p, one may need to increase the target delay to
+        4 * minRTT to meet bandwidth requirements, but lose the benefits of low
+        jitter.
+
+    Comparisons and criticisms
+
+       1. Codel + Cubic has slightly more throughput performance, but depending
+          on the streaming service requirements and 30 FPS standards it is not
+          a problem.
+       2. Jitter is about less than minRTT for C2TCP.  BBR is ~2x, Cubic is ~7x.
+
+  -->
+  <upstream>
+    <remote-id type="github">Soheil-ab/c2tcp</remote-id>
+    <bugs-to>https://github.com/Soheil-ab/c2tcp/issues</bugs-to>
+  </upstream>
+  <use>
+    <flag name="kernel-patch">
+      Install the kernel patch to apply on kernel sources.
+    </flag>
+  </use>
+</pkgmetadata>

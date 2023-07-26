@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+    This contains the DRL (Deep Reinforce Learning) Agent to lower delays or
+    boost throughput performace in existing and future throughput based
+    TCP Congestion Controls (CC).  The TCP congestion is used to fine tune
+    online learning, but offline learning occurs through training an AI
+    learning model.
+
+    This version of the DRL agent combines Reinforced Learning based on
+    multi-object DDPG and Deep Neural Networks.
+
+    Prebuilt learning models are provided for BBR, Cubic, Illinois, Westwood.
+
+    This is a sender side TCP congestion control with changes to 
+    control window (cwnd).
+
+    DeepCC can only be used on throughput based classical TCP CCs.
+
+    One reason why is that there is a diminishing return for latency optimized
+    CC.  Secondly, the CC will miss a benefit described in the 1st bullet in
+    the TCP CC comparison section.
+
+
+    The target [delay] tunable and production possibilies (PP) analog:
+
+      * User picks only the target delay.
+      * The target can be auto adjusted by the app as conditions improve to
+        improve throughput.
+      * Picking a small target delay means low throughput.
+      * Picking a large target delay means higher throughput.
+      * Setting target = n * minRTT is high latency and high throughput for
+        n = 2.
+      * Setting target 5-or-more * minRTT is mediocre latency (in most cases)
+        and highest throughput and is similar throughput to the vanilla TCP CC.
+        (See 3rd bullet in comparison section.)
+      * A bad condition, avgRTT more than target, will penalize throughput.
+      * A good condition, avgRTT at or below target, will increase throughput.
+      * The DRL agent tries to keep avgRTT below targetRTT.
+      * Setting target = minRTT will saturate to optimal delay.
+      * Setting target more than 2 * minRTT (impossible delay) will saturate to
+        near optimal throughput or beyond optimal throughput.
+      * Target outside of optimal, an impossible in production possibilies, has
+        been observed with BBR for right hockey stick curve.
+      * One can simply disable DeepCC for highest throughput ceiling, but lose
+        out on the benefit in the 1st bullet in the comparisons section.
+      * Choosing the target delay has the effect of following the edge of the
+        Production Possibilies curve which is near optimal.
+      * Disabling DeepCC is the same as max instantaneous throughput.
+      * It has a optimized Production Possibilities Frontier possibility that
+        is balanced between throughput and average delay.
+      * The idealized normal curve arc is not always present but may appear
+        smooshed like in the BBR case.  It can appear as left/right hockey
+        stick shaped, normal arc shaped, or l shaped.
+
+           Left J PP   Right J PP     Normal arc              l shaped
+        +                          x Vanilla Cubic
+        |   **            **       ******                     *
+        M      *         *               *x = The sweet spot   *
+        b      *        *                 *   DeepCC w/Cubic   *
+        p      *        *                  *                   *
+        s      *        *                  *                   *
+        |      *        *                  *                   *
+        0-------------------------- delay ---------------------------+
+
+    Criticisms and comparisons with other TCP CCs:
+
+      * In some cases, the optimization of delays can double the number of
+        transfers while staying within 10% thoughput difference versus the
+        unboosted CC.
+      * In some cases, the unboosted CC is to SDR as to balanced DeepCC is to
+        DDR.
+      * With DeepCC, the worst case latency is improved compared to the
+        vanilla counterpart at the highest target delay.
+      * Similar CPU utilization as the classical CC version.
+      * Has a heavy memory and storage cost compared to the classic CC
+        counterparts.
+      * The pre-trained models are 35 MiB each.  The CC source code is about
+        ~11 KiB for vegas and ~14 KiB for BBR.
+      * PCC Vivace and Vegas are 4 KiB compressed modules.
+      * BBR, Cubic are an 8 KiB compressed modules.
+      * The TensorFlow dependency required for DRL agent is close to 700 MiB
+        unpacked.
+      * Not auto adaptable like MOCC but requires manual tuning.
+      * More build/packaging time investment versus kernel only CC for source
+        based distros.
+      * The DeepCC version tends to be more fair than the original unboosted.
+      * Training is tractable for individuals, unlike Orca which requires ~400
+        cores + high end GPUs.
+
+
+    Prebuilt models were trained with celluar traces.  These celluar traces
+    are within 30-70ms low bound RTT.  If the learned model is not trained
+    yet for that minRTT, then the throughput will drop.  [Pinging a server
+    will give you an idea of the minRTT.]  The steepness of the drop in
+    thoughput while using DeepCC can be mitigated by using BBR or Illinois
+    and staying away from Westwood.
+
+
+    To run:
+
+    # Standalone evaluation (for research only)
+    ./standalone.sh 8000 cubic
+
+    # For a real-network or use in production (ebuild mod)
+    DEEPCC_TARGET_DELAY=50 DEEPCC_SCHEME=cubic ./real-network.sh
+
+    # For starting a new learner model for training
+    ./training.sh 1 44444 cubic
+
+    # For contining learner model training
+    ./training.sh 0 44444 cubic
+
+    You may use only cubic, westwood, illinois, bbr.
+    To use other schemes, you must mod run-dcubic.sh.
+
+    DEEPCC_TARGET_DELAY acceptable values:
+
+      * max - highest throughput
+      * min - lowest average delay
+      * sweetspot - Lowest RTT while above 80% utilization.
+          sweet, ss, sw, swt, auto -- are all aliases.
+
+    DEEPCC_TEST_SERVER -- a domain or IP address to ping in order to
+    discover the approximate minRTT used by sweetspot.  It uses the distro
+    website by default.  (Only for real-network.sh)
+
+  -->
+  <upstream>
+    <remote-id type="github">Soheil-ab/DeepCC.v1.0</remote-id>
+    <bugs-to>https://github.com/Soheil-ab/DeepCC.v1.0/issues</bugs-to>
+  </upstream>
+  <use>
+    <flag name="build-models">
+      Build DRL Agent learned models.  Training may take around +15 hrs
+      with a single computer built with components created in 2016.
+    </flag>
+    <flag name="evaluate">
+      Install dependencies required for evaluate.
+    </flag>
+    <flag name="kernel-patch">
+      Install the kernel patch to apply on kernel sources.
+    </flag>
+  </use>
+</pkgmetadata>

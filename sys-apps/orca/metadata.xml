@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+    This uses DRL (Deep Reinforce Learning) Agent and an existing congestion
+    control to lower delays, to max throughput, to lower loss in existing and
+    future TCP Congestion Controls (CC).  Other benefits include lower CPU usage,
+    better convergence towards the send link capacity and in unseen scenarios.
+
+    DRL combines Reinforced Learning and Deep Neural Networks.
+
+    This is a sender only TCP congestion control that changes the control window
+    (cwnd) and the pacing rate.
+
+    What distinguishes DeepCC from Orca?
+
+      * DeepCC concerns itself with improvement with throughput based CC while
+        ignoring learning based CCs, whereas Orca concerns itself with solving
+        issues in both classical CCs and learning based CCs in general.
+      * Orca tries to be the one CC that rules them all or replaces them all,
+        where as DeepCC tries to be a boosting plugin to the existing throughput
+        based CC.
+      * Orca incorporates sendRTT, but DeepCC does not.
+      * Orca can rapidly adapt to send rates, but in DeepCC it is not
+        considered.
+      * Orca is more smoother in time frames where link capacity is relatively
+        constant and smooth thanks to pacing, but cubic will periodically drop
+        down ~15 Mbps.
+
+
+    Comparison versus other TCP CCs and criticisms
+
+      * Send performance is expected to be better than PCC.
+      * Combined throughput and delay is optimal on the Production Possibilities
+        Frontier (PPF) curve, balanced for throughput and latency which is good
+        for general use.
+      * Lower CPU utilization compared to PCC, or pure learning based CCs, but
+        similar to the Congestion Control being used.
+      * The model uses 4.4 MiB which is several orders of magnitude larger than
+        the classical congestion control which typically is 100 - 1.3k lines of
+        code.
+      * PCC Vivace and Vegas are 4 KiB compressed modules.
+      * BBR, Cubic are an 8 KiB compressed modules.
+      * The TensorFlow dependency required for DRL agent is close to 700 MiB
+        unpacked.
+      * Training requires a lot of high end computer resources and out of reach
+        for most individuals.
+      * More build/packaging time investment versus kernel only CC for source
+        based distros.
+      * At this time of writing (2023), better algorithms do exist, but
+        Orca still outperforms the default CC.
+      * Better newer algorithms by others do not disclose usable source code.
+      * Orca has better rapid convergance compared to BBR, PCC, etc.
+      * Orca link utilization gets cut in half as it approaches 1% packet loss,
+        where as BBR maintains full link utilization in the same varying
+        packet loss scenario.
+      * Orca may underperform or have a major issue, as in 0 Mbps for several
+        seconds, in the send link utilization scenario after 36s, but Spine
+        does better after 36s link utilization with varying capacity with
+        spikes.
+
+
+    To run:
+
+    # Standalone evaluation (for research only)
+    ./orca-standalone-emulation.sh 44444
+
+    # For a real network or use in production (ebuild mod)
+    ORCA_SCHEME=cubic ./orca-real-network.sh
+
+    # Actor-Learner for starting a new learner model for training
+    ./orca.sh 1 44444
+
+    # Actor-Learner for contining learner model training
+    ./orca.sh 0 44444
+
+    # Actor-Learner for sample test
+    ./orca.sh 4 44444
+  -->
+  <upstream>
+    <remote-id type="github">Soheil-ab/Orca</remote-id>
+    <bugs-to>https://github.com/Soheil-ab/Orca/issues</bugs-to>
+  </upstream>
+  <use>
+    <flag name="evaluate">
+      Install dependencies required for evaluate.
+    </flag>
+    <flag name="build-models">
+      Adds dependencies requried for training the DRL Agent for 6 hours.
+      It requires a cluster, and server with the highest grade GPUs to complete.
+      13.04% of the 400 cores combined should be learning servers and remaining
+      actor clients.
+    </flag>
+    <flag name="cellular-traces">
+      Install celluar-traces to train the DRL or to playback in the evaluator.
+    </flag>
+    <flag name="kernel-patch">
+      Install the kernel patch to apply on kernel sources.
+    </flag>
+  </use>
+</pkgmetadata>

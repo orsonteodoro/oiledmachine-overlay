@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person">
+    <!-- Ebuild originator -->
+    <email>perfinion@gentoo.org</email>
+    <name>Jason Zaman</name>
+  </maintainer>
+  <longdescription>
+
+    Environment variables:
+
+      BAZEL_LOCAL_RAM_RESOURCES -- Limit the amount of RAM in MiB for Bazel.
+      FORCE_LLVM_SLOT -- Force to build with a particular llvm slot.
+
+    Examples:
+
+      BAZEL_LOCAL_RAM_RESOURCES=2048
+      BAZEL_LOCAL_RAM_RESOURCES=4096
+      FORCE_LLVM_SLOT=11
+
+  </longdescription>
+  <upstream>
+    <remote-id type="github">tensorflow/tensorflow</remote-id>
+  </upstream>
+  <use>
+    <flag name="clang">
+      Use of Clang + LLD to build the package
+    </flag>
+    <flag name="cuda">
+      Enable support for CUDA SDK
+    </flag>
+    <flag name="hardened">
+      If disabled, it will disable SSP, FORTIFY_SOURCE, Full RELRO.
+    </flag>
+    <flag name="xla">
+      XLA (Accelerated Linear Algebra) Optimizing Compiler for TensorFlow
+    </flag>
+  </use>
+</pkgmetadata>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+  See also asset_list.txt for descriptions for criticisms for ideas for
+  replacing with freeable licensed ones is used.
+
+  Per-package environment variables:
+
+    SR_SECURITY_SCAN - scan assets and prebuilt models for malware.
+    Acceptable values: 1 (default) - enable, 0 - disable
+    (See ebuild for details for required scanner.)
+
+    STILL_IMAGE_HR_TEST_PATHS     - Space delimited list of additional high resolution test assets
+    STILL_IMAGE_HR_TRAINING_PATHS - Space delimited list of additional high resolution training assets
+    STILL_IMAGE_LR_TEST_PATHS     - Space delimited list of additional low resolution test assets
+    STILL_IMAGE_LR_TRAINING_PATHS - Space delimited list of additional low resolution training assets
+    VIDEO_ASSET_PATHS             - Space delimited list of additional assets
+
+    All paths are absolute paths to each individual assets without spaces.
+
+  Examples:
+
+    STILL_IMAGE_HR_TEST_PATHS="
+      /usr/portage/distfiles/assets/sr/images/test/hr/0801.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/test/hr/0802.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/test/hr/0803.png:size:blake2b_fingerprint:sha512_fingerprint
+    "
+    STILL_IMAGE_LR_TEST_PATHS="
+      /usr/portage/distfiles/assets/sr/images/test/lr/0801x2.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/test/lr/0802x2.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/test/lr/0803x2.png:size:blake2b_fingerprint:sha512_fingerprint
+    "
+
+    STILL_IMAGE_HR_TRAINING_PATHS="
+      /usr/portage/distfiles/assets/sr/images/training/hr/0001.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/training/hr/0002.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/training/hr/0003.png:size:blake2b_fingerprint:sha512_fingerprint
+    "
+    STILL_IMAGE_LR_TRAINING_PATHS="
+      /usr/portage/distfiles/assets/sr/images/training/lr/0001x2.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/training/lr/0002x2.png:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/images/training/lr/0003x2.png:size:blake2b_fingerprint:sha512_fingerprint
+    "
+
+    The index may be changed to prevent clobbering with DIV2K.
+
+    # FIXME:  Test viability of free formats.  The below is patent-encumbered.
+    VIDEO_ASSET_PATHS="
+      /usr/portage/distfiles/assets/sr/videos/asset1.mp4:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/videos/asset2.mp4:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/videos/asset3.mp4:size:blake2b_fingerprint:sha512_fingerprint
+      /usr/portage/distfiles/assets/sr/videos/asset4.mp4:size:blake2b_fingerprint:sha512_fingerprint
+    "
+
+    The :size:blake2b_fingerprint:sha512_fingerprint suffix provide integrity
+    verification to have the same integrity guarantees as the package manager.
+
+    The below script template can be used to generate a list:
+
+    distdir="/usr/portage/distfiles/assets/sr/images/training/lr"
+    for path in $(find "${distdir}" -type -f -name "*.png") ; do
+        esize=$(stat -c "%s" "${path}")
+        eblake2b=$(rhash --blake2b "${path}" | cut -f 1 -d " ")
+        esha512=$(sha512sum "${path}" | cut -f 1 -d " ")
+        echo "${path}:${esize}:${eblake2b}:${esha512}"
+    done
+
+  Supported formats:
+
+    For image stills:  https://github.com/opencv/opencv/blob/4.7.0/doc/tutorials/introduction/config_reference/config_reference.markdown#built-in-formats
+    For video formats:
+      FFmpeg - https://github.com/opencv/opencv/blob/4.7.0/modules/videoio/src/cap_ffmpeg_impl.hpp#L1343
+      gstreamer - https://github.com/opencv/opencv/blob/4.7.0/samples/cpp/videocapture_gstreamer_pipeline.cpp#L37
+
+  FFmpeg compatibility:
+
+          SCRNN:  y
+          ESPCN:  y
+         VSRNet:  n
+         VESPCN:  n
+    VESPCN (mc):  n
+
+    VESPCN/VSRNet known issue
+
+      https://github.com/HighVoltageRocknRoll/sr/issues/7
+
+  Further reading:
+
+    PSNRs:  https://github.com/HighVoltageRocknRoll/sr#benchmark-results
+    Descriptions:  https://en.wikipedia.org/wiki/Video_super-resolution
+
+  Note:
+
+    The PSNR may be used to measure image quality with many sources implying
+    that higher values are better, but the number is doesn't always correlate to
+    what you see.  Always check the image visually to confirm.  A value of ~1.5
+    PSNR difference may have significantly different quality results.  Wikipedia
+    also noted that validity of PSNR is correct only for same codec and same
+    image.
+  -->
+  <upstream>
+    <doc lang="en">https://github.com/HighVoltageRocknRoll/sr</doc>
+  </upstream>
+  <use>
+    <flag name="convert">
+      Convert tensorflow models to native models.
+    </flag>    
+    <flag name="div2k">
+      Download and train with DIV2K still images.
+      License restricted for academics only.
+
+      See metadata.xml for adding custom assets for training.
+    </flag>    
+    <flag name="espcn">
+      Generate/build/install ESPCN trained models.
+
+      Marginally fastest and marginally highest quality algorithm in this
+      package.
+
+      (Compatible with FFmpeg)
+    </flag>
+    <flag name="ffmpeg">
+      Use ffmpeg for h264 decoding
+    </flag>
+    <flag name="gstreamer">
+      Use gstreamer for h264 or vpx decoding
+    </flag>
+    <flag name="harmonic">
+      Download and train with Harmonic video assets.
+
+      See metadata.xml for adding custom assets for training.
+    </flag>
+    <flag name="native">
+      Build/install binary *.models for single threaded native use.
+    </flag>
+    <flag name="nvdec">
+      Utilize nvdec to hardware accelerate h264/vp8
+    </flag>
+    <flag name="pretrained">
+      Use pretrained models provided by the user community of this repo.
+
+      (Not provided officially by the repo.)
+
+      If disabled, the training process may take hours to accomplish.
+
+      (Compatible with FFmpeg)
+    </flag>
+    <flag name="srcnn">
+      Generate/build/install SRCNN trained models
+
+      Inspired by waifu2x.  Estimated around 1.5-3 PSNR difference to the
+      improved waifu2x implying a significant difference.
+    </flag>
+    <flag name="tensorflow">
+      Build/install *.pb binary models for multicore + GPU use.
+    </flag>
+    <flag name="vaapi">
+      Use hardware accelerated decoding for h264/vp8 videos
+    </flag>
+    <flag name="vdpau">
+      Use hardware accelerated decoding for h264 videos
+    </flag>
+    <flag name="vpx">
+      Use free CPU based or hardware accelerated vp8 for decoding videos
+
+      vaapi or nvdec is required for hardware accelerated
+    </flag>
+    <flag name="vespcn">
+      Generate/build/install VESPCN trained models.
+
+      (Not compatible with FFmpeg)
+    </flag>
+    <flag name="vespcn-mc">
+      Generate/build/install motion compensated VESPCN trained models
+
+      (Not compatible with FFmpeg)
+    </flag>
+    <flag name="vsrnet">
+      Generate/build/install VSRNet trained models.
+
+      Marginally slowest and marginally lowest quality algorithm in this package.
+
+      (Not compatible with FFmpeg)
+    </flag>
+  </use>
+  <upstream>
+    <remote-id type="github">HighVoltageRocknRoll/sr</remote-id>
+  </upstream>
+</pkgmetadata>

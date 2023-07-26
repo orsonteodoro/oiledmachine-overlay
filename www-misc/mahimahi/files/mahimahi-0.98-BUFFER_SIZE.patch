@@ -1,0 +1,35 @@
+diff -urp mahimahi-0.98_p9999.orig/src/util/dns_proxy.cc mahimahi-0.98_p9999/src/util/dns_proxy.cc
+--- mahimahi-0.98_p9999.orig/src/util/dns_proxy.cc	2023-02-11 18:29:17.714791316 -0800
++++ mahimahi-0.98_p9999/src/util/dns_proxy.cc	2023-02-11 18:30:24.270793509 -0800
+@@ -76,8 +76,6 @@ void DNSProxy::handle_udp( void )
+     newthread.detach();
+ }
+ 
+-const static size_t BUFFER_SIZE = 1024 * 1024;
+-
+ void DNSProxy::handle_tcp( void )
+ {
+     /* start a new thread to handle request/reply */
+diff -urp mahimahi-0.98_p9999.orig/src/util/file_descriptor.hh mahimahi-0.98_p9999/src/util/file_descriptor.hh
+--- mahimahi-0.98_p9999.orig/src/util/file_descriptor.hh	2023-02-11 18:29:17.718791316 -0800
++++ mahimahi-0.98_p9999/src/util/file_descriptor.hh	2023-02-11 18:30:21.822793428 -0800
+@@ -5,6 +5,9 @@
+ 
+ #include <string>
+ 
++/* maximum size of a read */
++const size_t BUFFER_SIZE = 1024 * 1024;
++
+ /* Unix file descriptors (sockets, files, etc.) */
+ class FileDescriptor
+ {
+@@ -14,9 +17,6 @@ private:
+ 
+     unsigned int read_count_, write_count_;
+ 
+-    /* maximum size of a read */
+-    const static size_t BUFFER_SIZE = 1024 * 1024;
+-
+ protected:
+     void register_read( void ) { read_count_++; }
+     void register_write( void ) { write_count_++; }

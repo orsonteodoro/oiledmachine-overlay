@@ -1,0 +1,21 @@
+diff -urp exhale-0.3.6.orig/testing/hierarchies.py exhale-0.3.6/testing/hierarchies.py
+--- exhale-0.3.6.orig/testing/hierarchies.py	2022-10-02 15:29:16.000000000 -0700
++++ exhale-0.3.6/testing/hierarchies.py	2023-03-17 03:09:23.086504084 -0700
+@@ -1079,7 +1079,7 @@ def _compare_children(hierarchy_type, te
+             #
+             # Coming from cpp_fortran_mixed conversions.f90, relates to docstring...
+             test_signature = test_grand_child.full_signature()
+-            if platform.system() == "Darwin" and \
++            if ( platform.system() == "Darwin" or platform.system() == "Linux" ) and \
+                     test_grand_child.def_in_file.name == "conversions.f90":
+                 test_signature = re.sub(
+                     rf"(.*) (function ({test_grand_child.name}))\((.*)\)$",
+@@ -1340,7 +1340,7 @@ def compare_file_hierarchy(test, test_ro
+         # function radians_to_degrees_s(radians_s) result(degrees_s)
+         # function degrees_to_radians_d(degrees_d) result(radians_d)
+         # function radians_to_degrees_d(radians_d) result(degrees_d)
+-        if platform.system() == "Darwin" and any(re.match(
++        if ( platform.system() == "Darwin" or platform.system() == "Linux" ) and any(re.match(
+                 r"^real\(c_.*\) function conversions::.*_to_.*\(.*_[sd]\)$", f)
+                 for f in test_functions):
+             fixed_test_functions = []

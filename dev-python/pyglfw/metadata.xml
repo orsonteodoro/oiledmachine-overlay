@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <changelog>https://github.com/FlorianRhiem/pyGLFW/blob/master/CHANGELOG.md</changelog>
+    <remote-id type="github">FlorianRhiem/pyGLFW</remote-id>
+    <bugs-to>https://github.com/FlorianRhiem/pyGLFW/issues</bugs-to>
+  </upstream>
+</pkgmetadata>

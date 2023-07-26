@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <doc lang="en">https://pgjones.gitlab.io/quart/index.html</doc>
+    <remote-id type="gitlab">pgjones/quart</remote-id>
+    <bugs-to>https://gitlab.com/pgjones/quart/issues</bugs-to>
+  </upstream>
+</pkgmetadata>

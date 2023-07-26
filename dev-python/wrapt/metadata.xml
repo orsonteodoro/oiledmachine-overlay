@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- Ebuild originator -->
+    <email>python@gentoo.org</email>
+    <name>Python</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Old ebuilds provided for tensorflow testing.
+
+  -->
+  <upstream>
+    <remote-id type="github">GrahamDumpleton/wrapt</remote-id>
+    <remote-id type="pypi">wrapt</remote-id>
+  </upstream>
+</pkgmetadata>

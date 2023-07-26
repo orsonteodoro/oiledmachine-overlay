@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">deepmind/mujoco</remote-id>
+    <bugs-to>https://github.com/deepmind/mujoco/issues</bugs-to>
+  </upstream>
+  <use>
+    <flag name="hardened">
+      Upstream only makes it available to clang.
+    </flag>
+    <flag name="python">
+      Install mujoco python bindings
+    </flag>
+    <flag name="rN">
+      Internal revision bumps
+    </flag>
+  </use>
+</pkgmetadata>

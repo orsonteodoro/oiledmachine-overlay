@@ -1,0 +1,316 @@
+Subject:  Allow to use real network with agnostic elevate changes
+
+Patchset:
+
+1.  Add bash shebang for file command detection.
+2.  Allow to elevate with pkexec (with polkit) in GUI desktop environments
+3.  Allow control with the following environment variables:
+3a.   ORCA_ELEVATE_CMD - sudo (default), pkexec, " "
+3b.   ORCA_PRODUCTION - 0 for research mode (default), 1 for production
+3c.   ORCA_SCHEME - cubic (default), vegas, westwood, illinois, bbr, yeah, veno, scal, htcp, cdg, hybla, ...
+4.  Allow to use with absolute path of script from any directory.
+5.  Allow to use with real network or production instead of evaluate simulator.
+6.  Allow to load with init systems (via ORCA_ELEVATE_CMD=" ")
+
+Based on https://github.com/Soheil-ab/Orca/issues/1#issuecomment-683734454
+
+This file has inconsistent line endings.
+* LF is used for actor.sh, orca-real-network.sh.
+* CRLF is used for orca-server-mahimahi.sh.
+
+diff -urpN orca-1.0_p9999.orig/actor.sh orca-1.0_p9999/actor.sh
+--- orca-1.0_p9999.orig/actor.sh	2023-02-13 16:23:30.780236806 -0800
++++ orca-1.0_p9999/actor.sh	2023-02-13 16:27:19.828244353 -0800
+@@ -1,4 +1,6 @@
+ #!/bin/bash
++export ELEVATE_CMD=${ORCA_ELEVATE_CMD:-sudo} # Valid values: sudo, pkexec, " "
++cd $(dirname "$0")
+ if [ $# != 12 ]
+ then
+     echo -e "usage:$0 port period first_time [underlying scheme:cubic , vegas , westwood , illinois , bbr, yeah , veno, scal , htcp , cdg , hybla ,... ] [path to ddpg.py] [actor id] [downlink] [uplink] [one-way link delay] [time time] [Qsize] [Max iterations per run]"
+@@ -31,7 +33,7 @@ echo "$path/orca-server-mahimahi $port $
+ 
+ $path/orca-server-mahimahi $port $path ${period} ${first_time} $scheme $id $down $up $latency $log $finish_time $qsize $max_it
+ 
+-#sudo killall -s15 python
++#${ELEVATE_CMD} killall -s15 python
+ #sleep 10
+ echo "Finished."
+ if [ ${first_time} -eq 2 ] || [ ${first_time} -eq 4 ]
+diff -urpN orca-1.0_p9999.orig/build.sh orca-1.0_p9999/build.sh
+--- orca-1.0_p9999.orig/build.sh	2023-02-13 16:23:30.780236806 -0800
++++ orca-1.0_p9999/build.sh	2023-02-13 16:27:19.828244353 -0800
+@@ -1,8 +1,11 @@
++#!/bin/bash
++export ELEVATE_CMD=${ORCA_ELEVATE_CMD:-sudo} # Valid values: sudo, pkexec, " "
++cd $(dirname "$0")
+ g++ -pthread src/orca-server-mahimahi.cc src/flow.cc -o orca-server-mahimahi
+ g++ src/client.c -o client
+ cp client rl-module/
+ mv orca-server*  rl-module/
+-sudo chmod +x rl-module/client
+-sudo chmod +x rl-module/orca-server-mahimahi
++${ELEVATE_CMD} chmod +x rl-module/client
++${ELEVATE_CMD} chmod +x rl-module/orca-server-mahimahi
+ 
+ 
+diff -urpN orca-1.0_p9999.orig/learner.sh orca-1.0_p9999/learner.sh
+--- orca-1.0_p9999.orig/learner.sh	2023-02-13 16:23:30.780236806 -0800
++++ orca-1.0_p9999/learner.sh	2023-02-13 16:27:19.828244353 -0800
+@@ -1,5 +1,5 @@
+ #!/bin/bash
+-
++cd $(dirname "$0")
+ if [ $# != 2 ]
+ then
+     echo -e "usage:$0 [path to train_dir & d5.py] [first_time==1]"
+diff -urpN orca-1.0_p9999.orig/orca-real-network.sh orca-1.0_p9999/orca-real-network.sh
+--- orca-1.0_p9999.orig/orca-real-network.sh	1969-12-31 16:00:00.000000000 -0800
++++ orca-1.0_p9999/orca-real-network.sh	2023-02-13 16:27:19.828244353 -0800
+@@ -0,0 +1,4 @@
++#!/bin/bash
++export ORCA_PRODUCTION=1
++cd $(dirname "$0")
++./orca-standalone-emulation.sh 44444
+diff -urpN orca-1.0_p9999.orig/orca-standalone-emulation.sh orca-1.0_p9999/orca-standalone-emulation.sh
+--- orca-1.0_p9999.orig/orca-standalone-emulation.sh	2023-02-13 16:23:32.400236859 -0800
++++ orca-1.0_p9999/orca-standalone-emulation.sh	2023-02-13 16:27:19.828244353 -0800
+@@ -1,3 +1,6 @@
++#!/bin/bash
++export ELEVATE_CMD=${ORCA_ELEVATE_CMD:-sudo} # Valid values: sudo, pkexec, " "
++cd $(dirname "$0")
+ if [ $# -eq 1 ]
+ then
+     source setup.sh
+@@ -10,13 +13,13 @@ then
+     epoch=20
+     memory_size=$((max_steps*num_actors))
+ 
+-    scheme_="cubic"
++    scheme_=${ORCA_SCHEME:-"cubic"}
+     cur_dir=`pwd -P`
+     dir="${cur_dir}/rl-module"
+ 
+     sed "s/\"num_actors\"\: 1/\"num_actors\"\: $num_actors/" $cur_dir/params_base_eval.json > "${dir}/params.json"
+     sed -i "s/\"memsize\"\: 2553600/\"memsize\"\: $memory_size/" "${dir}/params.json"
+-    sudo killall -s9 python client orca-server-mahimahi
++    ${ELEVATE_CMD} killall -s9 python client orca-server-mahimahi
+ 
+     #Bring up the actor(s):
+     act_id=0
+@@ -53,9 +56,9 @@ then
+     #Make sure that learner and actors are down ...
+     for i in `seq 0 $((num_actors))`
+     do
+-        sudo killall -s15 python
+-        sudo killall -s15 orca-server-mahimahi
+-        sudo killall -s15 client
++        ${ELEVATE_CMD} killall -s15 python
++        ${ELEVATE_CMD} killall -s15 orca-server-mahimahi
++        ${ELEVATE_CMD} killall -s15 client
+     done
+ else
+     echo "usage: $0 [base port number]"
+diff -urpN orca-1.0_p9999.orig/orca.sh orca-1.0_p9999/orca.sh
+--- orca-1.0_p9999.orig/orca.sh	2023-02-13 16:23:32.404236859 -0800
++++ orca-1.0_p9999/orca.sh	2023-02-13 16:27:19.828244353 -0800
+@@ -1,3 +1,6 @@
++#!/bin/bash
++export ELEVATE_CMD=${ORCA_ELEVATE_CMD:-sudo} # Valid values: sudo, pkexec, " "
++cd $(dirname "$0")
+ if [ $# -eq 2 ]
+ then
+     source setup.sh
+@@ -5,7 +8,7 @@ then
+     first_time=$1
+     port_base=$2
+     cur_dir=`pwd -P`
+-    scheme_="cubic"
++    scheme_=${ORCA_SCHEME:-"cubic"}
+     max_steps=500000         #Run untill you collect 50k samples per actor
+     eval_duration=30
+     num_actors=1
+@@ -14,7 +17,7 @@ then
+ 
+     sed "s/\"num_actors\"\: 1/\"num_actors\"\: $num_actors/" $cur_dir/params_base.json > "${dir}/params.json"
+     sed -i "s/\"memsize\"\: 5320000/\"memsize\"\: $memory_size/" "${dir}/params.json"
+-    sudo killall -s9 python client orca-server-mahimahi
++    ${ELEVATE_CMD} killall -s9 python client orca-server-mahimahi
+ 
+     epoch=20
+     act_port=$port_base
+@@ -54,9 +57,9 @@ then
+         #Bring down the learner and actors ...
+         for i in `seq 0 $((num_actors))`
+         do
+-            sudo killall -s15 python
+-            sudo killall -s15 orca-server-mahimahi
+-            sudo killall -s15 client
++            ${ELEVATE_CMD} killall -s15 python
++            ${ELEVATE_CMD} killall -s15 orca-server-mahimahi
++            ${ELEVATE_CMD} killall -s15 client
+         done
+     else
+     # If you are here: You are going to start/continue learning a better model!
+@@ -103,7 +106,7 @@ then
+        done
+ 
+        #Kill the learner
+-       sudo kill -s15 $lpid
++       ${ELEVATE_CMD} kill -s15 $lpid
+ 
+        #Wait if it needs to save somthing!
+        sleep 30
+@@ -111,8 +114,8 @@ then
+        #Make sure all are down ...
+         for i in `seq 0 $((num_actors))`
+        do
+-           sudo killall -s15 python
+-           sudo killall -s15 orca-server-mahimahi
++           ${ELEVATE_CMD} killall -s15 python
++           ${ELEVATE_CMD} killall -s15 orca-server-mahimahi
+        done
+     fi
+ else
+diff -urpN orca-1.0_p9999.orig/setup.sh orca-1.0_p9999/setup.sh
+--- orca-1.0_p9999.orig/setup.sh	2023-02-13 16:23:32.512236863 -0800
++++ orca-1.0_p9999/setup.sh	2023-02-13 16:27:19.832244353 -0800
+@@ -1,10 +1,13 @@
+-sudo sysctl -q net.ipv4.tcp_wmem="4096 32768 4194304" #Doubling the default value from 16384 to 32768
+-sudo sysctl -w -q net.ipv4.tcp_low_latency=1
+-sudo sysctl -w -q net.ipv4.tcp_autocorking=0
+-sudo sysctl -w -q net.ipv4.tcp_no_metrics_save=1
+-sudo sysctl -w -q net.ipv4.ip_forward=1
++#!/bin/bash
++export ELEVATE_CMD=${ORCA_ELEVATE_CMD:-sudo} # Valid values: sudo, pkexec, " "
++cd $(dirname "$0")
++${ELEVATE_CMD} sysctl -q net.ipv4.tcp_wmem="4096 32768 4194304" #Doubling the default value from 16384 to 32768
++${ELEVATE_CMD} sysctl -w -q net.ipv4.tcp_low_latency=1
++${ELEVATE_CMD} sysctl -w -q net.ipv4.tcp_autocorking=0
++${ELEVATE_CMD} sysctl -w -q net.ipv4.tcp_no_metrics_save=1
++${ELEVATE_CMD} sysctl -w -q net.ipv4.ip_forward=1
+ #Mahimahi Issue: it couldn't make enough interfaces
+ #Solution: increase max of inotify
+-sudo sysctl -w -q fs.inotify.max_user_watches=524288
+-sudo sysctl -w -q fs.inotify.max_user_instances=524288
++${ELEVATE_CMD} sysctl -w -q fs.inotify.max_user_watches=524288
++${ELEVATE_CMD} sysctl -w -q fs.inotify.max_user_instances=524288
+ 
+diff -urpN orca-1.0_p9999.orig/src/define.h orca-1.0_p9999/src/define.h
+--- orca-1.0_p9999.orig/src/define.h	2023-02-13 16:23:32.512236863 -0800
++++ orca-1.0_p9999/src/define.h	2023-02-13 16:27:19.868244355 -0800
+@@ -96,6 +96,8 @@ int target_ratio=150;
+ u32 target=50; //50ms
+ u32 report_period=5;//5s
+ double mm_loss_rate=0;
++int production=0;
++int elevate_cmd=0;
+ 
+ #define FLOW_NUM 1
+ int sock[FLOW_NUM];
+diff -urpN orca-1.0_p9999.orig/src/orca-server-mahimahi.cc orca-1.0_p9999/src/orca-server-mahimahi.cc
+--- orca-1.0_p9999.orig/src/orca-server-mahimahi.cc	2023-02-13 16:23:32.512236863 -0800
++++ orca-1.0_p9999/src/orca-server-mahimahi.cc	2023-02-13 16:32:02.144253656 -0800
+@@ -29,6 +29,9 @@
+ #include <sys/select.h>
+ #include "define.h"
+ //#define CHANGE_TARGET 1
++#define ELEVATE_CMD_SUDO 0   // For command line
++#define ELEVATE_CMD_PKEXEC 1 // For desktop environments or command line
++#define ELEVATE_CMD_NONE 2   // For init scripts
+ #define MAX_CWND 10000
+ #define MIN_CWND 4
+ 
+@@ -75,6 +78,24 @@ int main(int argc, char **argv)
+     shmctl(shmid, IPC_RMID, NULL);
+     shmdt(shared_memory_rl);
+     shmctl(shmid_rl, IPC_RMID, NULL);
++
++    char *_production=getenv("ORCA_PRODUCTION");
++    if (_production)
++    {
++        if (strstr(_production, "1"))
++            production=1;
++    }
++    char *_elevate_cmd=getenv("ORCA_ELEVATE_CMD");
++    if (_elevate_cmd)
++    {
++        if (strstr(_elevate_cmd,"sudo"))
++            elevate_cmd=ELEVATE_CMD_SUDO;
++        else if (strstr(_elevate_cmd,"pkexec"))
++            elevate_cmd=ELEVATE_CMD_PKEXEC;
++        else
++            elevate_cmd=ELEVATE_CMD_NONE;
++	}
++
+     return 0;
+ }
+ 
+@@ -144,19 +165,29 @@ void start_server(int flow_num, int clie
+         }
+     }
+ 
+-    char container_cmd[500];
+-    sprintf(container_cmd,"sudo -u `whoami` %s/client $MAHIMAHI_BASE 1 %d",path,client_port);
+     char cmd[1000];
++    char container_cmd[500];
++    char elevate_arg[100];
+     char final_cmd[1000];
+ 
+-    if (first_time==4 || first_time==2)
+-        sprintf(cmd, "sudo -u `whoami`   mm-delay %d mm-link %s/../traces/%s %s/../traces/%s --downlink-log=%s/log/down-%s --uplink-queue=droptail --uplink-queue-args=\"packets=%d\" --downlink-queue=droptail --downlink-queue-args=\"packets=%d\" -- sh -c \'%s\' &",delay_ms,path,uplink,path,downlink,path,log_file,qsize,qsize,container_cmd);
++    if (elevate_cmd==ELEVATE_CMD_SUDO)
++        sprintf(elevate_arg, "sudo -u `whoami`");
++    else if (elevate_cmd==ELEVATE_CMD_PKEXEC)
++        sprintf(elevate_arg, "pkexec --user `whoami`");
+     else
+-        sprintf(cmd, "sudo -u `whoami`  mm-delay %d mm-link %s/../traces/%s %s/../traces/%s --uplink-queue=droptail --uplink-queue-args=\"packets=%d\" --downlink-queue=droptail --downlink-queue-args=\"packets=%d\" -- sh -c \'%s\' &",delay_ms,path,uplink,path,downlink,qsize,qsize,container_cmd);
+-    
+-    sprintf(final_cmd,"%s",cmd);
++        sprintf(elevate_arg, "");
++
++    if (production==0)
++    {
++        sprintf(container_cmd,"%s %s/client $MAHIMAHI_BASE 1 %d",elevate_arg,path,client_port);
++        if (first_time==4 || first_time==2)
++            sprintf(cmd, "%s   mm-delay %d mm-link %s/../traces/%s %s/../traces/%s --downlink-log=%s/log/down-%s --uplink-queue=droptail --uplink-queue-args=\"packets=%d\" --downlink-queue=droptail --downlink-queue-args=\"packets=%d\" -- sh -c \'%s\' &",elevate_arg,delay_ms,path,uplink,path,downlink,path,log_file,qsize,qsize,container_cmd);
++        else
++            sprintf(cmd, "%s  mm-delay %d mm-link %s/../traces/%s %s/../traces/%s --uplink-queue=droptail --uplink-queue-args=\"packets=%d\" --downlink-queue=droptail --downlink-queue-args=\"packets=%d\" -- sh -c \'%s\' &",elevate_arg,delay_ms,path,uplink,path,downlink,qsize,qsize,container_cmd);
++        sprintf(final_cmd,"%s",cmd);
++        DBGPRINT(DBGSERVER,0,"%s\n",final_cmd);
++    }
+ 
+-    DBGPRINT(DBGSERVER,0,"%s\n",final_cmd);
+     info->trace=trace;
+     info->num_lines=num_lines;
+     /**
+@@ -192,7 +223,7 @@ void start_server(int flow_num, int clie
+         sprintf(cmd,"/home/`whoami`/venv/bin/python %s/d5.py --tb_interval=1 --base_path=%s --task=%d --job_name=actor --train_dir=%s --mem_r=%d --mem_w=%d &",path,path,actor_id,path,(int)key,(int)key_rl);
+         DBGPRINT(0,0,"Starting RL Module (Without load) ...\n%s",cmd);
+     }
+-    else if (first_time==2 || first_time==4){
++    else if (first_time==2 || first_time==4 || production==1){
+         sprintf(cmd,"/home/`whoami`/venv/bin/python %s/d5.py --tb_interval=1 --base_path=%s --load --eval --task=%d --job_name=actor --train_dir=%s  --mem_r=%d --mem_w=%d &",path,path,actor_id,path,(int)key,(int)key_rl);
+         DBGPRINT(0,0,"Starting RL Module (No learning) ...\n%s",cmd);
+     }
+@@ -201,7 +232,7 @@ void start_server(int flow_num, int clie
+         sprintf(cmd,"/home/`whoami`/venv/bin/python %s/d5.py --load --tb_interval=1 --base_path=%s --task=%d --job_name=actor --train_dir=%s  --mem_r=%d --mem_w=%d &",path,path,actor_id,path,(int)key,(int)key_rl);
+         DBGPRINT(0,0,"Starting RL Module (With load) ...\n%s",cmd);
+     }
+- 
++
+     initial_timestamp();
+     system(cmd);
+     //Wait to get OK signal (alpha=OK_SIGNAL)
+@@ -240,8 +271,9 @@ void start_server(int flow_num, int clie
+     DBGPRINT(0,0,"RL Module is Ready. Let's Start ...\n\n");    
+     usleep(actor_id*10000+10000);
+     //Now its time to start the server-client app and tune C2TCP socket.
+-    system(final_cmd);
+-        
++    if (production==0)
++        system(final_cmd);
++
+     //Start listen
+     int maxfdp=-1;
+     fd_set rset; 

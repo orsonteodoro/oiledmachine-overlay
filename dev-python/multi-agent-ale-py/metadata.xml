@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <changelog>https://github.com/Farama-Foundation/Multi-Agent-ALE/blob/master/ChangeLog</changelog>
+    <remote-id type="github">Farama-Foundation/Multi-Agent-ALE</remote-id>
+    <bugs-to>https://github.com/Farama-Foundation/Multi-Agent-ALE/issues</bugs-to>
+  </upstream>
+</pkgmetadata>

@@ -1,0 +1,21 @@
+# Patch status:  Testing
+--- a/datasets/prepare_dataset.py.orig	2023-03-20 12:44:00.414298384 -0700
++++ b/datasets/prepare_dataset.py	2023-03-20 12:49:46.914302861 -0700
+@@ -8,7 +8,7 @@ try:
+     import tensorflow.compat.v1 as tf
+ except ImportError:
+     import tensorflow as tf
+-from scipy.misc import imresize
++from PIL import Image
+ 
+ 
+ class SceneChangeDetector:
+@@ -124,7 +124,7 @@ def process_video(video_path, scd, write
+                 lr_h = frames[k].shape[0] // args.scale_factor
+                 lr_w = frames[k].shape[1] // args.scale_factor
+                 frames[k] = frames[k][:lr_h * args.scale_factor, :lr_w * args.scale_factor]
+-                frame_lr = imresize(frames[k], (lr_h, lr_w), interp='bicubic')
++                frame_lr = Image.fromarray(frames[k]).resize(size=(lr_h, lr_w))
+                 if args.blur:
+                     frame_lr = cv2.GaussianBlur(frame_lr, (args.blur_size, args.blur_size), args.blur_sigma,
+                                                 borderType=cv2.BORDER_REFLECT_101)

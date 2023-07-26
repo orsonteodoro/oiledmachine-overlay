@@ -1,0 +1,10 @@
+--- a/WORKSPACE.orig	2023-01-13 12:19:03.000000000 -0800
++++ b/WORKSPACE	2023-03-29 20:06:55.472688295 -0700
+@@ -87,6 +87,7 @@ yarn_install(
+     exports_directories_only = False,
+     package_json = "//:package.json",
+     yarn_lock = "//:yarn.lock",
++    args = ["--prefer-offline", "--verbose"],  # oteodoro: support offline install
+ )
+ 
+ # Load esbuild rules for bazel.
