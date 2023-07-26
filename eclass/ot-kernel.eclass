@@ -9227,14 +9227,13 @@ ewarn
 ewarn "Users with AMD 17h family of CPUs should update the CPU microcode to"
 ewarn "mitigate against Zenbleed in secure configurations."
 ewarn
-ewarn "Verify 17h family by doing:"
-ewarn
-ewarn "  lscpu -- CPU family: 23"
-ewarn "  cat /proc/cpuinfo -- cpu family: 23"
-ewarn
-ewarn "  (17 hexadecimal is 23 decimal)"
-ewarn
 ewarn "Requirements:"
+ewarn
+ewarn "  A reboot into the just built kernel after initramfs has been updated."
+ewarn
+ewarn "  The kernel will try the firmware first then the chicken bit workaround"
+ewarn "  as the fallback.  The following firmware updates provide optimal"
+ewarn "  mitigation for a *few* models."
 ewarn
 ewarn "  >=sys-kernel/linux-firmware-20230625_p20230724"
 ewarn
@@ -9246,26 +9245,20 @@ ewarn "  For config assist mode, set OT_KERNEL_CPU_MICROCODE=1"
 ewarn "  For config custom mode, see the distro wiki link below."
 ewarn "  Re-emerge this package after the changes have been made."
 ewarn
-ewarn "    or"
-ewarn
-ewarn "  emerge sys-apps/msr-tools"
-ewarn "  For config assist mode, set OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1"
-ewarn "    or set OT_KERNEL_KCONFIG[CONFIG_X86_MSR]=y"
-ewarn "  For config custom mode, set CONFIG_X86_MSR=y in the kernel .config"
-ewarn "  Re-emerge this package after config changes"
-ewarn "  Reboot."
-ewarn "  Save work before applying chicken bit."
-ewarn "  Test the chicken bit workaround. (See link below)"
-ewarn "  Then, deploy the chicken bit workaround via initscript."
-ewarn "  (This workaround is provided as an alternative.  It is not clear if"
-ewarn "  the firmware has been updated for non server models.)"
-ewarn
 ewarn "See also:"
 ewarn
+ewarn "  # Summary:"
 ewarn "  https://nvd.nist.gov/vuln/detail/CVE-2023-20593"
-ewarn "  https://www.amd.com/en/resources/product-security/bulletin/amd-sb-7008.html      # For a list of affected CPUs"
+ewarn
+ewarn "  # List of a *few* CPU model(s) which *may* have firmware updated:"
+ewarn "  (Recommended by the security researcher)"
+ewarn "  https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/commit/?id=0bc3126c9cfa0b8c761483215c25382f831a7c6f"
+ewarn
+ewarn "  # Lists the kernel:"
+ewarn "  https://github.com/torvalds/linux/commit/522b1d69219d8f083173819fde04f994aa051a98"
+ewarn
+ewarn "  # Summary:"
 ewarn "  https://wiki.gentoo.org/wiki/AMD_microcode"
-ewarn "  https://github.com/google/security-research/issues/36#issue-1819037927           # Mirror for the chicken bit workaround"
 ewarn
 ewarn
 	if (( ${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL} == 1 )) ; then
