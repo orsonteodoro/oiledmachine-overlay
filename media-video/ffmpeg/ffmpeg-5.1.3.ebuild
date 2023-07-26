@@ -196,6 +196,7 @@ FFMPEG_FLAG_MAP=(
 	truetype:libfreetype
 	vidstab:libvidstab
 	rubberband:librubberband
+	tensorflow:libtensorflow
 	zeromq:libzmq
 	zimg:libzimg
 
@@ -392,7 +393,7 @@ alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
 jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo pic pipewire
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+re-codecs sndio static-libs test v4l wayland r14
++re-codecs sndio sr static-libs test v4l wayland r14
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -765,6 +766,9 @@ LICENSE_REQUIRED_USE="
 	)
 	svg? (
 		$(gen_relicense lgpl2x)
+	)
+	tensorflow? (
+		apache2_0
 	)
 	truetype? (
 		$(gen_relicense gpl2x)
@@ -1226,6 +1230,9 @@ RDEPEND+="
 	svt-av1? (
 		>=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}]
 	)
+	tensorflow? (
+		sci-libs/tensorflow
+	)
 	truetype? (
 		>=media-libs/freetype-2.5.0.1:2[${MULTILIB_USEDEP}]
 	)
@@ -1321,6 +1328,9 @@ BDEPEND+="
 PDEPEND+="
 	pgo? (
 		media-video/ffmpeg[encode,${MULTILIB_USEDEP}]
+	)
+	sr? (
+		media-video/sr
 	)
 "
 

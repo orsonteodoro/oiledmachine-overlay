@@ -741,6 +741,9 @@
   <flag name="sndio">
     Enable support for the <pkg>media-sound/sndio</pkg> backend
   </flag>
+  <flag name="sr">
+    Generate sr (super-resolution) training models.
+  </flag>
   <flag name="srt">
     Enable support for Secure Reliable Transport (SRT) via <pkg>net-libs/srt</pkg>
   </flag>
@@ -749,6 +752,14 @@
   </flag>
   <flag name="ssp">
     Build with stack smashing protection
+  </flag>
+  <flag name="tensorflow">
+    Enable use of AI based TensorFlow library for sr (super-resolution) AI
+    upscaling filter, but requires you to provide AI models.  Using SR will
+    improve the image quality of low resolution images/videos.
+
+    Enabling it will prefer the optimized multicore + GPU version.
+    Disabling it will prefer the single threaded native version.
   </flag>
   <flag name="trainer-audio-cbr">
     Use the CBR audio trainer.
