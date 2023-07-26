@@ -74,6 +74,7 @@ media-libs/woff2
 sys-apps/c2tcp
 sys-apps/deepcc
 sys-apps/orca
+www-misc/mahimahi
 
 # worked in the past but untested today
 dev-util/bear
