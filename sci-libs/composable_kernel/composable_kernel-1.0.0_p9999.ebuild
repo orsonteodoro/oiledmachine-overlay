@@ -52,16 +52,18 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=sys-libs/libomp-${LLVM_MAX_SLOT}
 	|| (
 		rocm_5_4? (
 			~dev-util/hip-5.4.3:=
+			>=sys-libs/libomp-15
 		)
 		rocm_5_5? (
 			~dev-util/hip-5.5.1:=
+			>=sys-libs/libomp-16
 		)
 		rocm_5_6? (
 			~dev-util/hip-5.6.0:=
+			>=sys-libs/libomp-16
 		)
 	)
 "
@@ -69,19 +71,21 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	sys-devel/clang:${LLVM_MAX_SLOT}
 	test? (
 		dev-cpp/gtest
 	)
 	|| (
 		rocm_5_4? (
 			~dev-util/rocm-cmake-5.4.3
+			sys-devel/clang:15
 		)
 		rocm_5_5? (
 			~dev-util/rocm-cmake-5.5.1
+			sys-devel/clang:16
 		)
 		rocm_5_6? (
 			~dev-util/rocm-cmake-5.6.0
+			sys-devel/clang:16
 		)
 	)
 "
