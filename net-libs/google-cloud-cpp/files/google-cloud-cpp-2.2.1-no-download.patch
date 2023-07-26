@@ -1,0 +1,84 @@
+diff -urp google-cloud-cpp-2.2.1.orig/external/googleapis/CMakeLists.txt google-cloud-cpp-2.2.1/external/googleapis/CMakeLists.txt
+--- google-cloud-cpp-2.2.1.orig/external/googleapis/CMakeLists.txt	2023-04-15 16:36:07.639501726 -0700
++++ google-cloud-cpp-2.2.1/external/googleapis/CMakeLists.txt	2023-04-15 16:52:39.495514541 -0700
+@@ -104,29 +104,57 @@ endforeach ()
+ 
+ include(ExternalProject)
+ 
+-externalproject_add(
+-    googleapis_download
+-    EXCLUDE_FROM_ALL ON
+-    PREFIX "${PROJECT_BINARY_DIR}/external/googleapis"
+-    URL ${GOOGLE_CLOUD_CPP_GOOGLEAPIS_URL}
+-    URL_HASH SHA256=${GOOGLE_CLOUD_CPP_GOOGLEAPIS_SHA256}
+-    PATCH_COMMAND
+-        ""
+-        # ~~~
+-        # Scaffolding for patching googleapis after download. For example:
+-        #   PATCH_COMMAND
+-        #       patch
+-        #       -p1
+-        #       --input=/workspace/external/googleapis.patch
+-        # NOTE: This should only be used while developing with a new
+-        # protobuf message. No changes to `PATCH_COMMAND` should ever be
+-        # committed to the main branch.
+-        # ~~~
+-    CONFIGURE_COMMAND ""
+-    BUILD_COMMAND ""
+-    INSTALL_COMMAND ""
+-    BUILD_BYPRODUCTS ${EXTERNAL_GOOGLEAPIS_BYPRODUCTS}
+-    LOG_DOWNLOAD OFF)
++# oteodoro:  changes for offline install
++option(CACHED_GOOGLEAPIS "Use cached googleapi's tarball" ON)
++if (CACHED_GOOGLEAPIS)
++    externalproject_add(
++        googleapis_download
++        EXCLUDE_FROM_ALL ON
++        PREFIX "${PROJECT_BINARY_DIR}/external/googleapis"
++        URL $ENV{DISTDIR}/googleapis-${GOOGLE_CLOUD_CPP_GOOGLEAPIS_COMMIT_SHA}.tar.gz
++        URL_HASH SHA256=${GOOGLE_CLOUD_CPP_GOOGLEAPIS_SHA256}
++        PATCH_COMMAND
++            ""
++            # ~~~
++            # Scaffolding for patching googleapis after download. For example:
++            #   PATCH_COMMAND
++            #       patch
++            #       -p1
++            #       --input=/workspace/external/googleapis.patch
++            # NOTE: This should only be used while developing with a new
++            # protobuf message. No changes to `PATCH_COMMAND` should ever be
++            # committed to the main branch.
++            # ~~~
++        CONFIGURE_COMMAND ""
++        BUILD_COMMAND ""
++        INSTALL_COMMAND ""
++        BUILD_BYPRODUCTS ${EXTERNAL_GOOGLEAPIS_BYPRODUCTS}
++        LOG_DOWNLOAD OFF)
++else()
++    externalproject_add(
++        googleapis_download
++        EXCLUDE_FROM_ALL ON
++        PREFIX "${PROJECT_BINARY_DIR}/external/googleapis"
++        URL ${GOOGLE_CLOUD_CPP_GOOGLEAPIS_URL}
++        URL_HASH SHA256=${GOOGLE_CLOUD_CPP_GOOGLEAPIS_SHA256}
++        PATCH_COMMAND
++            ""
++            # ~~~
++            # Scaffolding for patching googleapis after download. For example:
++            #   PATCH_COMMAND
++            #       patch
++            #       -p1
++            #       --input=/workspace/external/googleapis.patch
++            # NOTE: This should only be used while developing with a new
++            # protobuf message. No changes to `PATCH_COMMAND` should ever be
++            # committed to the main branch.
++            # ~~~
++        CONFIGURE_COMMAND ""
++        BUILD_COMMAND ""
++        INSTALL_COMMAND ""
++        BUILD_BYPRODUCTS ${EXTERNAL_GOOGLEAPIS_BYPRODUCTS}
++        LOG_DOWNLOAD OFF)
++endif()
+ 
+ # Sometimes (this happens often with vcpkg) protobuf is installed in a non-
+ # standard directory. We need to find out where, and then add that directory to
