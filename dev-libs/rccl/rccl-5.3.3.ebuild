@@ -3,6 +3,13 @@
 
 EAPI=8
 
+AMDGPU_TARGETS_OVERRIDE=(
+	gfx803
+	gfx900
+	gfx906
+	gfx908
+	gfx1030
+)
 ROCM_VERSION="${PV}"
 
 inherit cmake edo rocm

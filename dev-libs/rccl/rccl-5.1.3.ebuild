@@ -3,6 +3,13 @@
 
 EAPI=8
 
+AMDGPU_TARGETS_OVERRIDE=(
+	gfx803
+	gfx900
+	gfx906
+	gfx908
+	gfx1030
+)
 ROCM_VERSION="${PV}"
 
 inherit cmake edo rocm
@@ -23,7 +30,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.5
-	>=dev-util/rocm-cmake-5.0.2-r1
+	~dev-util/rocm-cmake-${PV}
 	test? (
 		>=dev-cpp/gtest-1.11
 	)
