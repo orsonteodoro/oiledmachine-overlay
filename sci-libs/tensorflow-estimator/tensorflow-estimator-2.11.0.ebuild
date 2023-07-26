@@ -69,7 +69,9 @@ python_compile() {
 		ebazel shutdown
 		local srcdir="${T}/src-${EPYTHON/./_}"
 		mkdir -p "${srcdir}" || die
-		bazel-bin/tensorflow_estimator/tools/pip_package/build_pip_package --src "${srcdir}" || die
+		bazel-bin/tensorflow_estimator/tools/pip_package/build_pip_package \
+			--src "${srcdir}" \
+			|| die
 	popd >/dev/null || die
 }
 
