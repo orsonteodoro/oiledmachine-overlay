@@ -27,7 +27,7 @@ REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
 PROPERTIES="live"
-# See https://github.com/tensorflow/tensorboard/blob/2.12.0/tensorboard/pip_package/requirements.txt
+# See https://github.com/tensorflow/tensorboard/blob/2.13.0/tensorboard/pip_package/requirements.txt
 # Not used:
 #	>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
 # Requirements for dev-python/protobuf-python modified by this ebuild to avoid multi instance single slot issue.
@@ -76,7 +76,6 @@ RDEPEND="
 		>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 		>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
-		>=dev-python/tensorboard-plugin-wit-1.6.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
 		>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
 		dev-python/bleach[${PYTHON_USEDEP}]
@@ -88,6 +87,10 @@ RDEPEND="
 			=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.55*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.56*:=[${PYTHON_USEDEP}]
 		)
 	')
 	=sci-visualization/tensorboard-data-server-0.8*[${PYTHON_SINGLE_USEDEP}]
@@ -111,6 +114,10 @@ BDEPEND="
 				=dev-python/grpcio-testing-1.50*:=[${PYTHON_USEDEP}]
 				=dev-python/grpcio-testing-1.51*:=[${PYTHON_USEDEP}]
 				=dev-python/grpcio-testing-1.52*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.53*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.54*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.55*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.56*:=[${PYTHON_USEDEP}]
 			)
 		)
 	')
