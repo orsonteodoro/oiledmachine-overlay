@@ -1,0 +1,18 @@
+diff -urp rccl-rocm-5.5.1.orig/test/CMakeLists.txt rccl-rocm-5.5.1/test/CMakeLists.txt
+--- rccl-rocm-5.5.1.orig/test/CMakeLists.txt	2023-04-26 13:54:45.000000000 -0700
++++ rccl-rocm-5.5.1/test/CMakeLists.txt	2023-07-26 08:12:19.491845153 -0700
+@@ -7,10 +7,10 @@ if(BUILD_TESTS)
+ 
+   message("Building rccl unit tests (Installed in /test/rccl-UnitTests)")
+ 
+-  find_program(CHRPATH chrpath)
+-  if(NOT CHRPATH)
+-      message(FATAL_ERROR "chrpath is required for rccl-UnitTests. Please install (e.g. sudo apt-get install chrpath)")
+-  endif()
++  #find_program(CHRPATH chrpath)
++  #if(NOT CHRPATH)
++  #    message(FATAL_ERROR "chrpath is required for rccl-UnitTests. Please install (e.g. sudo apt-get install chrpath)")
++  #endif()
+ 
+   find_package(hsa-runtime64 PATHS /opt/rocm )
+   if(${hsa-runtime64_FOUND})

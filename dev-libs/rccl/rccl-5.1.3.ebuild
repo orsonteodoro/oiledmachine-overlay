@@ -44,9 +44,9 @@ src_configure() {
 	addpredict /dev/dri/
 
 	local mycmakeargs=(
-		-DSKIP_RPATH=On
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBUILD_TESTS=$(usex test ON OFF)
+		-DSKIP_RPATH=On
 		-Wno-dev
 	)
 

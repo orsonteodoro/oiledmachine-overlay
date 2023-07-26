@@ -103,6 +103,7 @@ gen_clang_depends() {
 HIP_VERSIONS=(
 	"5.5.1"
 	"5.5.0"
+	"5.6.0"
 ) # 5.3.0 fails
 gen_hip_depends() {
 	local hip_version

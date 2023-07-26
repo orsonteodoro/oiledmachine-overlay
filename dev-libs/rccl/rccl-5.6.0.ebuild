@@ -35,8 +35,7 @@ RESTRICT="
 "
 S="${WORKDIR}/rccl-rocm-${PV}"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.0.2-change_install_location.patch"
-	"${FILESDIR}/${PN}-5.1.3-remove-chrpath.patch"
+	"${FILESDIR}/${PN}-5.5.1-remove-chrpath.patch"
 )
 
 src_configure() {
@@ -44,9 +43,9 @@ src_configure() {
 	addpredict /dev/dri/
 
 	local mycmakeargs=(
-		-DSKIP_RPATH=On
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBUILD_TESTS=$(usex test ON OFF)
+		-DSKIP_RPATH=On
 		-Wno-dev
 	)
 
