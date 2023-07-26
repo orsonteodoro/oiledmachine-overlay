@@ -19,7 +19,10 @@ inherit cmake edo rocm
 
 DESCRIPTION="ROCm Communication Collectives Library (RCCL)"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rccl"
-SRC_URI="https://github.com/ROCmSoftwarePlatform/rccl/archive/rocm-${PV}.tar.gz -> rccl-${PV}.tar.gz"
+SRC_URI="
+https://github.com/ROCmSoftwarePlatform/rccl/archive/rocm-${PV}.tar.gz
+	-> rccl-${PV}.tar.gz
+"
 LICENSE="BSD"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
