@@ -16,6 +16,14 @@ DISTUTILS_OPTIONAL=1
 CHECKREQS_MEMORY="10G" # Gold uses above 9.0 GiB
 CHECKREQS_DISK_BUILD="19G"
 CHECKREQS_DISK_USR="5G"
+CUDA_TARGETS=(
+	sm_35
+	sm_50
+	sm_60
+	sm_70
+	sm_75
+	compute_80
+)
 GCC_MAX_SLOT=12
 GCC_MIN_SLOT=9
 GCC_SLOTS=( ${GCC_MAX_SLOT} 11 10 ${GCC_MIN_SLOT} )
@@ -137,10 +145,6 @@ LICENSE="
 
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE="
-alt-ssl clang cuda custom-optimization-level +hardened mpi +python
-test xla
-"
 CPU_USE_FLAGS_X86=(
 #	popcnt     # No preprocessor check but set in CI or some archs
 	sse
@@ -163,8 +167,31 @@ CPU_USE_FLAGS_X86=(
 	fma4
 )
 # * Checks only but does no work.
-
-IUSE+=" ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}"
+IUSE="
+${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
+${CUDA_TARGETS[@]/#/cuda_targets_}
+alt-ssl clang cuda custom-optimization-level +hardened mpi +python
+test xla
+"
+gen_required_use_cuda_targets() {
+	local x
+	for x in ${CUDA_TARGETS[@]} ; do
+		echo "
+			cuda_targets_${x}? (
+				cuda
+			)
+		"
+	done
+}
+REQUIRED_USE="
+	$(gen_required_use_cuda_targets)
+	python? (
+		${PYTHON_REQUIRED_USE}
+	)
+	test? (
+		python
+	)
+" # The test USE flag is limited by the dev-python/gast package.
 
 # For deps versioning, see
 # https://www.tensorflow.org/install/source#linux
@@ -325,8 +352,6 @@ https://dev.gentoo.org/~perfinion/patches/tensorflow-patches-${TF_PATCHES}.tar.b
 # >=grpc-1.48 is the correct for compatibility with abseil-cpp 20220623 lts
 # grpcio version should match grpc
 # Apache-2.0 is only license compatible with >=openssl-3
-RDEPEND_DISABLED="
-" # For python USE
 # The distro only has 11.7, 11.8, 12 for cuda.  The exact version preferred due
 # to binary compatibility.
 CUDA_CDEPEND="
@@ -475,6 +500,8 @@ gen_llvm_bdepend() {
 
 # Did not find grpc-tools
 # grpcio-tools versioning based on grpcio
+# GCC:11 - Based on archlinux
+# gcc-11.3.1_p20221209-p3 does not build
 BDEPEND="
 	!python? (
 		dev-lang/python
@@ -516,16 +543,6 @@ BDEPEND="
 		$(gen_llvm_bdepend)
 	)
 "
-# GCC:11 - Based on archlinux
-# gcc-11.3.1_p20221209-p3 does not build
-REQUIRED_USE="
-	python? (
-		${PYTHON_REQUIRED_USE}
-	)
-	test? (
-		python
-	)
-" # The test USE flag is limited by the dev-python/gast package.
 S="${WORKDIR}/${MY_P}"
 DOCS=( AUTHORS CONTRIBUTING.md ISSUE_TEMPLATE.md README.md RELEASE.md )
 RESTRICT="" # Tests need GPU access.  Relaxed python deps patches breaks tests.
@@ -897,6 +914,17 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 	fi
 }
 
+get_cuda_targets() {
+	local targets
+	local target
+	for target in ${CUDA_TARGETS[@]} ; do
+		if use "cuda_targets_${target}" ; then
+			targets+=",${target}"
+		fi
+	done
+	echo "${targets}" | sed -e "s|^,||g"
+}
+
 src_configure() {
 	load_env
 	check_cython
@@ -924,6 +952,7 @@ src_configure() {
 		export TF_CUDA_CLANG=0
 		export TF_NEED_TENSORRT=0
 		if use cuda; then
+			export TF_CUDA_COMPUTE_CAPABILITIES=$(get_cuda_targets)
 			export TF_CUDA_PATHS="${EPREFIX}/opt/cuda"
 			export GCC_HOST_COMPILER_PATH="$(cuda_gccdir)/$(tc-getCC)"
 			export TF_CUDA_VERSION="$(cuda_toolkit_version)"
@@ -941,25 +970,15 @@ ewarn "dependencies using the same compiler version."
 ewarn
 			fi
 
-			if [[ -z "$TF_CUDA_COMPUTE_CAPABILITIES" ]]; then
-ewarn
-ewarn "WARNING: TensorFlow is being built with its default CUDA compute"
-ewarn "capabilities: 3.5 and 7.0.  These may not be optimal for your GPU."
-ewarn
-ewarn "To configure TensorFlow with the CUDA compute capability that is optimal"
-ewarn "for your GPU, set TF_CUDA_COMPUTE_CAPABILITIES in your make.conf, and"
-ewarn "re-emerge tensorflow.  For example, to use CUDA capability 7.5 & 3.5,"
-ewarn "add: TF_CUDA_COMPUTE_CAPABILITIES=7.5,3.5"
-ewarn
-ewarn "You can look up your GPU's CUDA compute capability at"
-ewarn
-ewarn "  https://developer.nvidia.com/cuda-gpus"
-ewarn
-ewarn "or by running"
-ewarn
-ewarn "  /opt/cuda/extras/demo_suite/deviceQuery | grep 'CUDA Capability'"
-ewarn
-			fi
+einfo
+einfo "You can look up your GPU's CUDA compute capability at"
+einfo
+einfo "  https://developer.nvidia.com/cuda-gpus"
+einfo
+einfo "or by running"
+einfo
+einfo "  /opt/cuda/extras/demo_suite/deviceQuery | grep 'CUDA Capability'"
+einfo
 		fi
 
 # com_googlesource_code_re2 weird branch using absl, doesnt work with released
