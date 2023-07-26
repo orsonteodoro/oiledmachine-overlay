@@ -37,17 +37,31 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/composable_kernel"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE+=" test r2"
+ROCM_SLOTS=(
+	rocm_5_4
+	rocm_5_5
+	rocm_5_6
+)
+IUSE+="
+${ROCM_SLOTS[@]}
+test r2
+"
+REQUIRED_USE="
+	^^ (
+		${ROCM_SLOTS[@]}
+	)
+"
 RDEPEND="
 	>=sys-libs/libomp-${LLVM_MAX_SLOT}
 	|| (
-		(
-			~dev-util/hip-5.5.1
-			~dev-util/rocm-cmake-5.5.1
+		rocm_5_4? (
+			~dev-util/hip-5.4.3:=
 		)
-		(
-			~dev-util/hip-5.6.0
-			~dev-util/rocm-cmake-5.6.0
+		rocm_5_5? (
+			~dev-util/hip-5.5.1:=
+		)
+		rocm_5_6? (
+			~dev-util/hip-5.6.0:=
 		)
 	)
 "
@@ -58,6 +72,17 @@ BDEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	test? (
 		dev-cpp/gtest
+	)
+	|| (
+		rocm_5_4? (
+			~dev-util/rocm-cmake-5.4.3
+		)
+		rocm_5_5? (
+			~dev-util/rocm-cmake-5.5.1
+		)
+		rocm_5_6? (
+			~dev-util/rocm-cmake-5.6.0
+		)
 	)
 "
 #RESTRICT="test"
