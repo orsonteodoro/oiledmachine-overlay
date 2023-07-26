@@ -26,9 +26,9 @@ SRC_URI="
 	${bazel_external_uris}
 https://github.com/keras-team/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 "
-# https://github.com/keras-team/keras/blob/v2.12.0/requirements.txt
-# https://github.com/keras-team/keras/blob/v2.12.0/WORKSPACE
-# https://github.com/keras-team/keras/blob/v2.12.0/.bazelversion
+# https://github.com/keras-team/keras/blob/v2.13.1/requirements.txt
+# https://github.com/keras-team/keras/blob/v2.13.1/WORKSPACE
+# https://github.com/keras-team/keras/blob/v2.13.1/.bazelversion
 PROTOBUF_PV="3.21.9" # From WORKSPACE which differs from requirements.txt
 PROTOBUF_SLOT="0/32"
 # TODO: Fix sci-libs/keras-applications, sci-libs/keras-preprocessing
@@ -46,7 +46,7 @@ RDEPEND="
 			>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
 		' python3_11)
 	)
-	=sci-libs/tensorflow-2.12*[${PYTHON_USEDEP},python]
+	=sci-libs/tensorflow-2.13*[${PYTHON_USEDEP},python]
 	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 	>=sys-libs/zlib-1.2.13
 	dev-libs/protobuf:${PROTOBUF_SLOT}
