@@ -532,4 +532,4 @@ src_install() {
 		fi
 	done
 }
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES but only pretrained
