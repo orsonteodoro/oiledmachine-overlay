@@ -9257,7 +9257,7 @@ ewarn
 ewarn "  # Lists the kernel:"
 ewarn "  https://github.com/torvalds/linux/commit/522b1d69219d8f083173819fde04f994aa051a98"
 ewarn
-ewarn "  # Summary:"
+ewarn "  # Required kernel config for microcode updates:"
 ewarn "  https://wiki.gentoo.org/wiki/AMD_microcode"
 ewarn
 ewarn
