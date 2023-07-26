@@ -184,6 +184,11 @@ gen_required_use_cuda_targets() {
 }
 REQUIRED_USE="
 	$(gen_required_use_cuda_targets)
+	cuda? (
+		|| (
+			${CUDA_TARGETS[@]/#/cuda_targets_}
+		)
+	)
 	python? (
 		${PYTHON_REQUIRED_USE}
 	)

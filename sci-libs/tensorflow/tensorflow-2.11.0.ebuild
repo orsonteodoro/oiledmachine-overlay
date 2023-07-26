@@ -24,9 +24,9 @@ CUDA_TARGETS=(
 	sm_75
 	compute_80
 )
-GCC_SLOTS=(12 11 10 9)
+GCC_SLOTS=( 12 11 10 9 )
 LLVM_MAX_SLOT=14
-LLVM_SLOTS=(14 13 12 11 10)
+LLVM_SLOTS=( 14 13 12 11 10 )
 PYTHON_COMPAT=( python3_10 )
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
 
@@ -160,6 +160,11 @@ gen_required_use_cuda_targets() {
 }
 REQUIRED_USE="
 	$(gen_required_use_cuda_targets)
+	cuda? (
+		|| (
+			${CUDA_TARGETS[@]/#/cuda_targets_}
+		)
+	)
 	python? (
 		${PYTHON_REQUIRED_USE}
 	)
