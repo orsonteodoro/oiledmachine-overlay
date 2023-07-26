@@ -6,7 +6,7 @@ EAPI=8
 PYTHON_COMPAT=( python3_10 )
 inherit cmake python-any-r1
 
-DESCRIPTION=""
+DESCRIPTION="Header-only library for using Keras (TensorFlow) models in C++."
 HOMEPAGE="https://github.com/nlohmann/json https://nlohmann.github.io/json/"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
