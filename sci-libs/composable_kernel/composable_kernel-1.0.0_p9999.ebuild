@@ -41,8 +41,8 @@ IUSE+=" test r2"
 RDEPEND="
 	>=sys-libs/libomp-${LLVM_MAX_SLOT}
 	|| (
-		~dev-util/hip-5.5.1
-		~dev-util/hip-5.6.0
+		~dev-util/hip-5.5.1:=
+		~dev-util/hip-5.6.0:=
 	)
 "
 DEPEND="
