@@ -38,7 +38,7 @@ RDEPEND="
 	>=dev-db/sqlite-3.17
 	>=dev-libs/boost-1.72
 	app-arch/bzip2
-	~dev-libs/rocm-comgr-${PV}
+	~dev-libs/rocm-comgr-${PV}:${SLOT}
 	~dev-util/hip-${PV}
 	~sci-libs/rocBLAS-${PV}:${SLOT}[${ROCM_USEDEP}]
 	kernels? (

@@ -38,12 +38,12 @@ LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="kernels debug test r1"
+#	>=sci-libs/composable_kernel-1.0.0
 RDEPEND="
 	>=dev-db/sqlite-3.17
 	>=dev-libs/boost-1.72
-	>=sci-libs/composable_kernel-1.0.0
 	app-arch/bzip2
-	~dev-libs/rocm-comgr-${PV}
+	~dev-libs/rocm-comgr-${PV}:${SLOT}
 	~dev-util/hip-${PV}
 	~sci-libs/rocBLAS-${PV}:${SLOT}[${ROCM_USEDEP}]
 	kernels? (

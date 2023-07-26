@@ -41,15 +41,20 @@ IUSE+=" test r2"
 RDEPEND="
 	>=sys-libs/libomp-${LLVM_MAX_SLOT}
 	|| (
-		~dev-util/hip-5.5.1:=
-		~dev-util/hip-5.6.0:=
+		(
+			~dev-util/hip-5.5.1
+			~dev-util/rocm-cmake-5.5.1
+		)
+		(
+			~dev-util/hip-5.6.0
+			~dev-util/rocm-cmake-5.6.0
+		)
 	)
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	dev-util/rocm-cmake
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	test? (
 		dev-cpp/gtest
