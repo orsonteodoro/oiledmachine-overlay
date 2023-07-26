@@ -183,7 +183,4 @@ src_test() {
 	cmake_src_test
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-failure
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
-# Error:
-# lld: error: undefined hidden symbol: free
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
