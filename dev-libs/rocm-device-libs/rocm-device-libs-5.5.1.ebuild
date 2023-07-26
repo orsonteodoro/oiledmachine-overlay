@@ -24,11 +24,6 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-Device-Libs"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="test r1"
-RESTRICT="
-	!test? (
-		test
-	)
-"
 RDEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 "
@@ -38,6 +33,11 @@ DEPEND="
 BDEPEND="
 	>=dev-util/cmake-3.13.4
 	~dev-util/rocm-cmake-${PV}
+"
+RESTRICT="
+	!test? (
+		test
+	)
 "
 PATCHES=(
 # https://github.com/RadeonOpenCompute/ROCm-Device-Libs/issues/94
