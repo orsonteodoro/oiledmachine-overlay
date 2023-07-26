@@ -21,8 +21,12 @@
 # BMQ CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/BMQ
 #	https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
+# C2TCP:
+#	https://github.com/Soheil-ab/c2tcp
 # CFI:
 #	https://github.com/torvalds/linux/compare/v5.15...samitolvanen:cfi-5.15
+# DeepCC:
+#	https://github.com/Soheil-ab/DeepCC.v1.0
 # KCFI:
 #	https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
 # futex (aka futex_wait_multiple):
@@ -58,6 +62,8 @@
 #	https://github.com/torvalds/linux/commit/7d0295dc49233d9ddff5d63d5bdc24f1e80da722	# 4.9 (-O3)
 #	https://github.com/torvalds/linux/commit/562a14babcd56efc2f51c772cb2327973d8f90ad	# ~2018 (infiniband O3 read overflow fix)
 #	The Patch for >= 5.4 can be found on zen-sauce.
+# Orca:
+#	https://github.com/Soheil-ab/Orca
 # PDS CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/PDS
 #	https://gitlab.com/alfredchen/PDS-mq/-/tree/master
@@ -186,6 +192,17 @@ BDEPEND+="
 		app-crypt/rhash
 	)
 "
+
+if [[ -n "${C2TCP_VER}" ]] ; then
+	PDEPEND+="
+		orca? (
+			sys-apps/orca
+		)
+		deepcc? (
+			sys-apps/deepcc
+		)
+	"
+fi
 
 if [[ -n "${CLANG_PGO_KV}" ]] ; then
 	PGT_CRYPTO_DEPEND="
@@ -374,6 +391,16 @@ gen_bbrv2_uris() {
 }
 if [[ -n "${BBRV2}_KV" ]] ; then
 	BBRV2_SRC_URIS=" "$(gen_bbrv2_uris)
+fi
+
+if [[ -n "${C2TCP_VER}" ]] ; then
+	C2TCP_FN="linux-${C2TCP_KV//./-}-orca-c2tcp-${C2TCP_EXTRA}.patch"
+	C2TCP_BASE_URI="https://raw.githubusercontent.com/Soheil-ab/c2tcp/${C2TCP_COMMIT}/linux-patch"
+	C2TCP_URIS="
+		${C2TCP_BASE_URI}/${C2TCP_FN}
+		https://raw.githubusercontent.com/Soheil-ab/c2tcp/master/copyright
+			-> copyright.c2tcp.${C2TCP_COMMIT:0:7}
+	"
 fi
 
 CLANG_PGO_FN="clang-pgo-${CLANG_PGO_KV}-${PATCH_CLANG_PGO_COMMIT_A:0:7}-${PATCH_CLANG_PGO_COMMIT_D:0:7}.patch"
@@ -1748,6 +1775,14 @@ apply_clang_pgo() {
 	fi
 }
 
+# @FUNCTION: apply_c2tcp_v2
+# @DESCRIPTION:
+# Apply the C2TCP / DeepCC / Orca patch
+apply_c2tcp_v2() {
+	einfo "Applying the C2TCP / DeepCC / Orca patch"
+	_fpatch "${EDISTDIR}/${C2TCP_FN}"
+}
+
 # @FUNCTION: ot-kernel_compiler_not_found
 # @DESCRIPTION:
 # Show compiler is not found message
@@ -2014,6 +2049,18 @@ apply_all_patchsets() {
 	if has kcfi ${IUSE} ; then
 		if ot-kernel_use kcfi && [[ "${arch}" == "x86_64" ]] ; then
 			apply_kcfi
+		fi
+	fi
+
+	if has c2tcp ${IUSE} \
+		|| has deepcc ${IUSE} \
+		|| has orca ${IUSE} ; then
+		if ot-kernel_use c2tcp \
+			|| ot-kernel_use deepcc \
+			|| ot-kernel_use orca ; then
+			if [[ "${C2TCP_MAJOR_VER}" == "2" ]] ; then
+				apply_c2tcp_v2
+			fi
 		fi
 	fi
 
@@ -8634,6 +8681,19 @@ EOF
 			newins "${T}/tcca.conf" "tcca-${PV}-${extraversion}-${arch}.conf"
 			OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=1
 		fi
+
+		if has c2tcp ${IUSE} \
+			|| has deepcc ${IUSE} \
+			|| has orca ${IUSE} ; then
+			if ot-kernel_use c2tcp \
+				|| ot-kernel_use deepcc \
+				|| ot-kernel_use orca ; then
+				if [[ "${C2TCP_MAJOR_VER}" == "2" ]] ; then
+					docinto licenses
+					dodoc "${EDISTDIR}/copyright.c2tcp.${C2TCP_COMMIT:0:7}"
+				fi
+			fi
+		fi
 	done
 
 	# The make install* screws up the symlinks using ${BUILD_DIR} instead of
@@ -9267,6 +9327,33 @@ einfo "Installing tcca"
 			> "${EROOT}/usr/bin/tcca"
 		chmod 0755 "${EROOT}/usr/bin/tcca"
 		chown root:root "${EROOT}/usr/bin/tcca"
+	fi
+
+	if has c2tcp ${IUSE} && use c2tcp ; then
+einfo
+einfo "C2TCP is disabled by default."
+einfo
+einfo "See epkginfo -x sys-apps/c2tcp::oiledmachine-overlay for details about"
+einfo "enabling and the tunable target delay knob."
+einfo
+	fi
+	if has deepcc ${IUSE} && use deepcc ; then
+einfo
+einfo "DeepCC is disabled by default and needs the DRL Agent or learned models"
+einfo "loaded."
+einfo
+einfo "See epkginfo -x sys-apps/deepcc::oiledmachine-overlay for details about"
+einfo "enabling and loading the DRL Agent and learned model(s) and tunable"
+einfo "target delay knob."
+einfo
+	fi
+	if has orca ${IUSE} && use orca ; then
+einfo
+einfo "Orca needs the DRL Agent or learned models loaded."
+einfo
+einfo "See epkginfo -x sys-apps/orca::oiledmachine-overlay for details about"
+einfo "loading the DRL Agent with learned model."
+einfo
 	fi
 }
 

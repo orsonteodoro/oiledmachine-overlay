@@ -36,6 +36,12 @@ PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow
 PATCH_PDS_V="${PATCH_PDS_V:-098i}"
 PATCH_TRESOR_V="3.18.5"
 
+C2TCP_MAJOR_VER="2"
+C2TCP_VER="2.2"
+C2TCP_EXTRA="0521"
+C2TCP_KV="4.13.1"
+C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
+
 CK_KV="4.14.0"
 CK_COMMITS=(
 fbc0b4595aeccc2cc03e292ac8743565b3d3037b
@@ -103,9 +109,9 @@ ${CK_COMMITS_BL_RQSHARE_SPLIT[@]}
 # a17a37f, 8faec5c -> 721f586 is about the same as 78f8617
 
 IUSE+="
-bfq-mq build +cfs disable_debug +genpatches -genpatches_1510 muqss pds rt
-symlink tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
-uksm
+bfq-mq build c2tcp +cfs deepcc disable_debug +genpatches -genpatches_1510 muqss
+orca pds rt symlink tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs
+tresor_x86_64 uksm
 "
 REQUIRED_USE+="
 	bfq-mq? (
@@ -147,9 +153,12 @@ K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 DESCRIPTION="\
 A customizable kernel package with \
 BFQ-mq updates, \
+C2TCP, \
+DeepCC, \
 genpatches, \
 kernel_compiler_patch, \
 MuQSS, \
+Orca, \
 PDS, \
 RT_PREEMPT (-rt), \
 TRESOR, \
@@ -160,10 +169,13 @@ inherit ot-kernel
 
 LICENSE+=" GPL-2" # kernel_compiler_patch
 LICENSE+=" GPL-2" # -O3 patches
+LICENSE+=" c2tcp? ( MIT )"
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
 	# third-party CPU scheduler but the stock CPU scheduler.
+LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" muqss? ( GPL-2 )"
+LICENSE+=" orca? ( MIT )"
 LICENSE+=" pds? ( GPL-3 )" # \
 	# See https://gitlab.com/alfredchen/PDS-mq/-/blob/master/LICENSE
 LICENSE+=" rt? ( GPL-2 )"
@@ -263,6 +275,7 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 	SRC_URI+="
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
+		${C2TCP_URIS}
 		${CK_SRC_URIS}
 		${GENPATCHES_URI}
 		${O3_CO_SRC_URI}
@@ -282,14 +295,26 @@ else
 		${O3_RO_SRC_URI}
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
+		c2tcp? (
+			${C2TCP_URIS}
+		)
+		deepcc? (
+			${C2TCP_URIS}
+		)
 		genpatches? (
 			${GENPATCHES_URI}
 		)
 		muqss? (
 			${CK_SRC_URIS}
 		)
+		orca? (
+			${C2TCP_URIS}
+		)
 		pds? (
 			${PDS_SRC_URI}
+		)
+		orca? (
+			${C2TCP_URIS}
 		)
 		rt? (
 			${RT_SRC_URI}
@@ -465,6 +490,10 @@ ot-kernel_filter_patch_cb() {
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 "" # 2 hunk failure without fuzz
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/uksm-4.14-rebase-for-4.14.246.patch"
+	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/c2tcp-0521-fix-for-4.14.305.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

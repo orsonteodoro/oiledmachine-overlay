@@ -3401,6 +3401,22 @@ https://github.com/dolohow/uksm
     <flag name="bzip2">
       Add support for bzip compression
     </flag>
+    <flag name="c2tcp">
+      (WORK IN PROGRESS / DRAFT)
+      Changes existing TCP congestion controls for C2TCP with ultra low latency
+      with benefits of low jitter and lower delays.
+
+      The architecture of C2TCP is AQM inspired.  It essentially overrides
+      control window based on bad conditions, with desired target delays
+      set by the application.
+
+      The architecture assumes that it is plugged into a loss based
+      congestion control algorithm.
+
+      It requires the use of Cubic.
+
+      Installing the <pkg>sys-apps/c2tcp</pkg> evaluation package is optional.
+    </flag>
     <flag name="cfi">
       Ensures that the toolchain is ready for CFI support (for arm64 in
       production, and for x86_64 in development).  Control Flow Integrity (CFI)
@@ -3432,6 +3448,23 @@ https://github.com/dolohow/uksm
       It uses an external script from https://github.com/orsonteodoro/tuxparoni
 
       This USE flag is experimental.
+    </flag>
+    <flag name="deepcc">
+      (WORK IN PROGRESS / DRAFT)
+      DeepCC uses Deep Reinforced Learning (DRL) AI to improve existing
+      classical congestion control.  It is used like a plugin to the existing
+      and future diciplines.
+
+      The goal or benefits are increased throughput or lower average delays.
+      It also has lower CPU usage compared to pure learning based based CC.
+
+      The output of DeepCC is changes of the max values (aka cap) of the control
+      window.
+
+      Prebuilt training models only works with BBR, Cubic, Illinois, Westwood.
+
+      Installing the <pkg>sys-apps/deepcc</pkg> package is required for the DRL
+      Agent and the learned model(s).
     </flag>
     <flag name="disable_debug">
       Installs scripts to disable debugging, tracing, verbose output or related
@@ -3515,6 +3548,30 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
     </flag>
     <flag name="ncurses">
       Add support for nconfig and menuconfig, the ncurses kernel config editors
+    </flag>
+    <flag name="orca">
+      (WORK IN PROGRESS / DRAFT)
+      Orca is an AI architecture that is partially AI driven and
+      partially classical congestion control (CC).
+
+      It is a learning based TCP congestion control using Deep Renforced
+      Learning (DRL w/TD3) and Finite State Machine (FSM) based Congestion
+      Control Heuristics.
+
+      The Benefits are the sending rates converge towards link capacity;
+      convergance toward high throughput, lower delays, and lower loss;
+      better unseen performance; lower CPU usage than pure learning
+      implementations.
+      
+      The output of orca is changes in control window (cwnd) and pacing rates.
+
+      The *prebuilt model* and the CC Huristics maybe limited to Cubic.
+
+      Using a different CC may require futher customizations or new AI
+      training.
+
+      Installing the <pkg>sys-apps/orca</pkg> package is required for the DRL
+      Agent and the learned model.
     </flag>
     <flag name="openssl">
       Add support for signing modules and kernels

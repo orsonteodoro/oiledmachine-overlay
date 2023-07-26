@@ -36,6 +36,12 @@ PATCH_ALLOW_O3_COMMIT="4edc8050a41d333e156d2ae1ed3ab91d0db92c7e" # from zen repo
 PATCH_KCP_COMMIT="cbf238bae1a5132b8b35392f3f3769267b2acaf5" # from zen repo
 PATCH_TRESOR_V="3.18.5"
 
+C2TCP_MAJOR_VER="2"
+C2TCP_VER="2.2"
+C2TCP_EXTRA="0521"
+C2TCP_KV="4.13.1"
+C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
+
 CK_KV="5.4.0"
 CK_COMMITS=(
 7acac2e4000e75f3349106a8847cf1021651446b
@@ -150,10 +156,10 @@ e8d4d6ded8544b5716c66d326aa290db8501518c
 ) # newest
 
 IUSE+="
-bmq build +cfs clang disable_debug futex +genpatches -genpatches_1510 muqss
-symlink tresor rt tresor_aesni tresor_i686 tresor_prompt tresor_sysfs
-tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce
-zen-sauce-all -zen-tune
+bmq build c2tcp +cfs clang deepcc disable_debug futex +genpatches
+-genpatches_1510 muqss orca rt symlink tresor tresor_aesni tresor_i686
+tresor_prompt tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
+zen-muqss zen-sauce zen-sauce-all -zen-tune
 "
 
 REQUIRED_USE+="
@@ -200,11 +206,14 @@ K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 DESCRIPTION="\
 A customizable kernel package with \
 BMQ, \
+C2TCP, \
 CVE fixes, \
+DeepCC, \
 FUTEX_WAIT_MULTIPLE, \
 genpatches, \
 kernel_compiler_patch, \
 MUQSS, \
+Orca, \
 TRESOR, \
 UKSM, \
 zen-muqss, \
@@ -219,11 +228,14 @@ LICENSE+=" GPL-2" # -O3 patch
 LICENSE+=" HPND" # See drivers/gpu/drm/drm_encoder.c
 LICENSE+=" bmq? ( GPL-3 )" # see \
 	# https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
+LICENSE+=" c2tcp? ( MIT )"
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
 	# third-party CPU scheduler but the stock CPU scheduler.
+LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" muqss? ( GPL-2 )"
+LICENSE+=" orca? ( MIT )"
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
@@ -355,6 +367,7 @@ fi
 if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 	SRC_URI+="
 		${BMQ_SRC_URI}
+		${C2TCP_URIS}
 		${CK_SRC_URIS}
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
@@ -381,6 +394,12 @@ else
 		bmq? (
 			${BMQ_SRC_URI}
 		)
+		c2tcp? (
+			${C2TCP_URIS}
+		)
+		deepcc? (
+			${C2TCP_URIS}
+		)
 		futex? (
 			${FUTEX_SRC_URIS}
 		)
@@ -389,6 +408,9 @@ else
 		)
 		muqss? (
 			${CK_SRC_URIS}
+		)
+		orca? (
+			${C2TCP_URIS}
 		)
 		rt? (
 			${RT_SRC_URI}
@@ -585,6 +607,10 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "zen-sauce-${ZEN_KV}-4edc805.patch" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/zen-sauce-5.4-4edc805-fix.patch"
+	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/c2tcp-0521-fix-for-5.4.231.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

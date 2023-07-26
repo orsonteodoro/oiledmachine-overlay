@@ -58,3 +58,8 @@ www-client/firefox telemetry
 
 # Untested
 www-client/chromium qt6
+media-video/ffmpeg sr tensorflow
+sys-kernel/ot-sources c2tcp deepcc orca
+
+# The training version is still WIP
+media-video/sr -pretrained

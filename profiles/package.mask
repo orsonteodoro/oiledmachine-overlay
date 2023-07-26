@@ -71,6 +71,9 @@ media-libs/opusfile
 media-libs/theorafile
 media-libs/theoraplay
 media-libs/woff2
+sys-apps/c2tcp
+sys-apps/deepcc
+sys-apps/orca
 
 # worked in the past but untested today
 dev-util/bear
@@ -116,3 +119,4 @@ dev-dotnet/monodevelop
 
 # Old dependencies
 <dev-util/ycmd-45
+
