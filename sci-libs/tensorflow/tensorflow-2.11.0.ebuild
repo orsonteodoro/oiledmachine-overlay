@@ -40,7 +40,7 @@ CHECKREQS_DISK_USR="5G"
 GCC_SLOTS=(12 11 10 9)
 LLVM_MAX_SLOT=14
 LLVM_SLOTS=(14 13 12 11 10)
-PYTHON_COMPAT=( python3_{9,10} )
+PYTHON_COMPAT=( python3_10 )
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
 
 inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr llvm prefix
@@ -272,9 +272,9 @@ https://storage.googleapis.com/mirror.tensorflow.org/docs.python.org/2.7/_source
 "
 
 SRC_URI="
-	${bazel_external_uris}
-	https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz
-	https://dev.gentoo.org/~perfinion/patches/tensorflow-patches-${PVR}.tar.bz2
+${bazel_external_uris}
+https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz
+https://dev.gentoo.org/~perfinion/patches/tensorflow-patches-${PVR}.tar.bz2
 "
 
 # abseil-cpp-20211102.0-r0 does not work with NVCC
@@ -343,7 +343,7 @@ RDEPEND="
 		>=dev-python/clang-python-13.0.0[${PYTHON_USEDEP}]
 		>=dev-python/dill-0.3.4[${PYTHON_USEDEP}]
 		>=dev-python/flatbuffers-2.0[${PYTHON_USEDEP}]
-		>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
+		>=dev-python/gast-0.5.3[${PYTHON_USEDEP}]
 		>=dev-python/google-pasta-0.2.0[${PYTHON_USEDEP}]
 		>=dev-python/h5py-2.9.0[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
@@ -354,13 +354,6 @@ RDEPEND="
 		>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
 		>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
 		dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
-
-		test? (
-			(
-				>=dev-python/gast-0.2.1[${PYTHON_USEDEP}]
-				<dev-python/gast-0.4.1[${PYTHON_USEDEP}]
-			)
-		)
 	)
 "
 DEPEND="
@@ -437,7 +430,6 @@ REQUIRED_USE="
 	)
 	test? (
 		python
-		python_targets_python3_9
 	)
 " # The test USE flag is limited by the dev-python/gast package.
 S="${WORKDIR}/${MY_P}"
@@ -785,7 +777,8 @@ einfo "Preventing stall.  Removing -Os."
 
 	bazel_setup_bazelrc
 
-	eapply "${WORKDIR}"/patches/*.patch
+	eapply "${WORKDIR}/patches/"*".patch"
+	die
 
 	# Relax version checks in setup.py
 	sed -i "/^    '/s/==/>=/g" tensorflow/tools/pip_package/setup.py || die

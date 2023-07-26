@@ -9,7 +9,7 @@ Subject: [PATCH 5/5] Relax setup.py version requirements
      'flatbuffers >= 2.0',
      # TODO(b/213222745) gast versions above 0.4.0 break TF's tests
 -    'gast >= 0.2.1, <= 0.4.0',
-+    'gast >= 0.2.1', # oteodoro:  allow support for python >= 3.10
++    'gast >= 0.5.3', # oteodoro:  allow support for python >= 3.10
      'google_pasta >= 0.1.1',
      'h5py >= 2.9.0',
      # TODO(b/239052279): replace with external dependency on JAX repo once JAX
