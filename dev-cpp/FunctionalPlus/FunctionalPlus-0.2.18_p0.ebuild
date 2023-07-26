@@ -30,7 +30,7 @@ SRC_URI="
 https://github.com/Dobiasd/FunctionalPlus/archive/refs/tags/v${PV/_/-}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${P}"
+S="${WORKDIR}/${PN}-${PV/_/-}"
 DOCS=( README.md )
 
 # OILEDMACHINE-OVERLAY-META:  created-ebuild
