@@ -14,9 +14,10 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1101
 	gfx1102
 )
+LLVM_MAX_SLOT=16
 ROCM_VERSION="${PV}"
 
-inherit cmake rocm
+inherit cmake llvm rocm
 
 HIPRAND_COMMIT_HASH="de941a7eb9ede2a862d719cd3ca23234a3692d07"
 SRC_URI="
@@ -57,6 +58,10 @@ RESTRICT="
 "
 S="${WORKDIR}/rocRAND-rocm-${PV}"
 
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+}
+
 src_prepare() {
 	rmdir hipRAND || die
 	mv -v \
@@ -90,6 +95,19 @@ src_prepare() {
 }
 
 src_configure() {
+	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
+
+	# Disallow newer clangs versions when producing .o files.
+	einfo "LLVM_SLOT=${LLVM_SLOT}"
+	einfo "PATH=${PATH} (before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+	einfo "PATH=${PATH} (after)"
+
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 	local mycmakeargs=(

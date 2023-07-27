@@ -14,9 +14,10 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1101
 	gfx1102
 )
+LLVM_MAX_SLOT=16
 ROCM_VERSION="${PV}"
 
-inherit cmake rocm
+inherit cmake llvm rocm
 
 HIPRAND_COMMIT_HASH="de941a7eb9ede2a862d719cd3ca23234a3692d07"
 SRC_URI="
@@ -56,6 +57,10 @@ RESTRICT="
 	)
 "
 S="${WORKDIR}/rocRAND-rocm-${PV}"
+
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+}
 
 src_prepare() {
 	rmdir hipRAND || die
