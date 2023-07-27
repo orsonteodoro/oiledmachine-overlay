@@ -13,14 +13,13 @@ DEP_VER="$(ver_cut 1-2)"
 DEP_VER_MAX="${DEP_VER%%.*}.$(( $(ver_cut 2 ${DEP_VER}) + 1 ))"
 
 AMDGPU_TARGETS_OVERRIDE=(
-        gfx803
+# See https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/compiler/xla/stream_executor/device_description.h#L172
+# Container lists only gfx900, gfx906, gfx908
 	gfx900
 	gfx906
 	gfx908
-        gfx1030
-        gfx1100
-        gfx1101
-        gfx1102
+	gfx90a
+	gfx1030
 )
 DISTUTILS_OPTIONAL=1
 CHECKREQS_MEMORY="10G" # Gold uses above 9.0 GiB

@@ -6,9 +6,10 @@ EAPI=8
 AMDGPU_TARGETS_OVERRIDE=(
 	gfx803
 	gfx900
-	gfx906
-	gfx908
-	gfx90a
+	gfx906_xnack_minus
+	gfx908_xnack_minus
+	gfx90a_xnack_minus
+	gfx90a_xnack_plus
 	gfx1010
 	gfx1012
 	gfx1030

@@ -278,17 +278,11 @@ unset -f _rocm_set_globals
 get_amdgpu_flags() {
 	local amdgpu_target_flags
 	for gpu_target in ${AMDGPU_TARGETS}; do
-	local target_feature=
-		case ${gpu_target} in
-			gfx906|gfx908)
-				target_feature=:xnack-
-				;;
-			gfx90a)
-				target_feature=:xnack+
-				;;
-			*)
-				;;
-		esac
+		if [[ "${gpu_target}" =~ "xnack_minus" ]] ; then
+			gpu_target="${gpu_target%%_*}:xnack-"
+		elif [[ "${gpu_target}" =~ "xnack_plus" ]] ; then
+			gpu_target="${gpu_target%%_*}:xnack+"
+		fi
 		amdgpu_target_flags+="${gpu_target}${target_feature};"
 	done
 	echo "${amdgpu_target_flags}"
