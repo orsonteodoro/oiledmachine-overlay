@@ -33,10 +33,13 @@
       Use of Clang + LLD to build the package
     </flag>
     <flag name="cuda">
-      Enable support for CUDA SDK
+      Enable support for NVIDIA® GPUs
     </flag>
     <flag name="hardened">
       If disabled, it will disable SSP, FORTIFY_SOURCE, Full RELRO.
+    </flag>
+    <flag name="hip">
+      Enable support for AMD GPUs
     </flag>
     <flag name="xla">
       XLA (Accelerated Linear Algebra) Optimizing Compiler for TensorFlow

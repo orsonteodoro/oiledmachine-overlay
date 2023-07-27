@@ -979,6 +979,13 @@ src_configure() {
 	load_env
 	check_cython
 
+	if ! use cuda && ! use hip ; then
+ewarn
+ewarn "You are building for CPU only.  Enable the cuda or hip USE flag to"
+ewarn "support GPUs."
+ewarn
+	fi
+
 	do_configure() {
 		export CC_OPT_FLAGS=" "
 		export TF_ENABLE_XLA=$(usex xla 1 0)
