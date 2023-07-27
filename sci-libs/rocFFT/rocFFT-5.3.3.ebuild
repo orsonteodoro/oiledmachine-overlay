@@ -13,10 +13,11 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1030
 )
 CHECKREQS_DISK_BUILD="7G"
+LLVM_MAX_SLOT=15
 PYTHON_COMPAT=( python3_{9..10} )
 ROCM_VERSION="${PV}"
 
-inherit cmake check-reqs edo multiprocessing python-r1 rocm
+inherit cmake check-reqs edo llvm multiprocessing python-r1 rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocFFT/archive/rocm-${PV}.tar.gz
@@ -28,7 +29,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocFFT"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="benchmark perfscripts sqlite test"
+IUSE="benchmark perfscripts test"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 	${ROCM_REQUIRED_USE}
@@ -39,6 +40,7 @@ REQUIRED_USE="
 # RDEPEND: perfscripts? dev-python/plotly[${PYTHON_USEDEP}] # currently masked by arch/amd64/x32/package.mask
 RDEPEND="
 	${PYTHON_DEPS}
+	>=dev-db/sqlite-3.36
 	~dev-util/hip-${PV}:${SLOT}
 	perfscripts? (
 		>=media-gfx/asymptote-2.61
@@ -49,9 +51,6 @@ RDEPEND="
 		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/sympy[${PYTHON_USEDEP}]
-	)
-	sqlite? (
-		>=dev-db/sqlite-3.36
 	)
 "
 DEPEND="
@@ -75,8 +74,7 @@ RESTRICT="
 S="${WORKDIR}/rocFFT-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.2.0-add-functional-header.patch"
-	"${FILESDIR}/${PN}-5.1.3-unbundle-sqlite.patch"
-	"${FILESDIR}/${PN}-5.0.2-add-math-header.patch"
+#	"${FILESDIR}/${PN}-5.0.2-add-math-header.patch"
 	"${FILESDIR}/${PN}-5.1.3-add-stdexcept-header.patch"
 )
 
@@ -111,6 +109,7 @@ pkg_setup() {
 	export CHECKREQS_MEMORY=$(required_mem)
 	check-reqs_pkg_setup
 	python_setup
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 }
 
 src_prepare() {
@@ -172,7 +171,7 @@ src_configure() {
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocFFT/"
 		-DCMAKE_SKIP_RPATH=On
 		-DPYTHON3_EXE=${EPYTHON}
-		-DSQLITE_USE_SYSTEM_PACKAGE=$(usex sqlite ON OFF)
+		-DSQLITE_USE_SYSTEM_PACKAGE=ON
 		-Wno-dev
 	)
 

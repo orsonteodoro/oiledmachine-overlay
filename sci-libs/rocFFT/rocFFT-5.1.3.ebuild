@@ -13,10 +13,11 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1030
 )
 CHECKREQS_DISK_BUILD="7G"
+LLVM_MAX_SLOT=14
 PYTHON_COMPAT=( python3_{9..10} )
 ROCM_VERSION="${PV}"
 
-inherit cmake check-reqs edo multiprocessing python-r1 rocm
+inherit cmake check-reqs edo llvm multiprocessing python-r1 rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocFFT/archive/rocm-${PV}.tar.gz
@@ -108,6 +109,7 @@ pkg_setup() {
 	export CHECKREQS_MEMORY=$(required_mem)
 	check-reqs_pkg_setup
 	python_setup
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 }
 
 src_prepare() {
