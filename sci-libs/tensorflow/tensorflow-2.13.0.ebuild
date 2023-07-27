@@ -37,9 +37,9 @@ CUDA_TARGETS=(
 GCC_MAX_SLOT=12
 GCC_MIN_SLOT=9
 GCC_SLOTS=( ${GCC_MAX_SLOT} 11 10 ${GCC_MIN_SLOT} )
-LLVM_MAX_SLOT=15
-LLVM_MIN_SLOT=10
-LLVM_SLOTS=( ${LLVM_MAX_SLOT} 15 13 12 11 ${LLVM_MIN_SLOT} )
+LLVM_MAX_SLOT=16
+LLVM_MIN_SLOT=15
+LLVM_SLOTS=( ${LLVM_MAX_SLOT} ${LLVM_MIN_SLOT} ) # See https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/toolchains/remote_config/configs.bzl
 PYTHON_COMPAT=( python3_{10..11} )
 # Limited by jax/flax
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
@@ -217,6 +217,8 @@ REQUIRED_USE="
 # https://github.com/tensorflow/tensorflow/blob/v2.13.0/.bazelversion
 # https://github.com/tensorflow/tensorflow/blob/v2.13.0/configure.py#L33							# cuda version
 # https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/lite/tools/cmake/modules/eigen.cmake
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/ci_build/Dockerfile.rbe.rocm-ubuntu18.04-manylinux2010-multipython#L19 # rocm version min
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/ci_build/Dockerfile.rbe.rocm-ubuntu20.04-manylinux2014-multipython#L20 # rocm version max
 # https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/dockerfiles/partials/ubuntu/nvidia.partial.Dockerfile	# cuda/cudnn major.minor versions
 # https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/pip_package/setup.py#L356				# cuda version
 # https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/ci_build/release/requirements_common.txt		# python deps versions ; pinned
@@ -224,6 +226,7 @@ REQUIRED_USE="
 # https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/pip_package/setup.py#L84				# python deps versions
 # https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/tf_sig_build_dockerfiles/devel.requirements.txt	# python deps versions ; pinned ; depends on requirements_common.txt
 # https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/toolchains/archives.bzl
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/toolchains/remote_config/containers.bzl		# containers for testing
 # https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/toolchains/remote_config/configs.bzl#L318		# tested llvm
 
 # commits/versions for
@@ -241,6 +244,7 @@ REQUIRED_USE="
 # https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/icu/workspace.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/jpeg/workspace.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/llvm/workspace.bzl
+#   https://github.com/llvm/llvm-project/blob/dc275fd03254d67d29cc70a5a0569acf24d2280d/llvm/CMakeLists.txt#L14  # same as llvm 17.0.0git
 # https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/llvm_openmp/openmp.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/pasta/workspace.bzl
 # https://github.com/grpc/grpc/blob/b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd/CMakeLists.txt
@@ -377,9 +381,12 @@ CUDA_CDEPEND="
 	)
 "
 
+# Upstream tests 5.0, 5.3
 HIP_SLOTS=(
-	"5.3.3"
-	"5.4.3"
+	"5.3.3" # For llvm 15
+	"5.4.3" # For llvm 15
+	"5.5.1" # For llvm 16
+	"5.6.0" # For llvm 16
 )
 
 gen_rocm_rdepend() {
@@ -404,7 +411,6 @@ gen_rocm_rdepend() {
 
 # Missing extension package for TF_ENABLE_ONEDNN_OPTS=1
 # The grpcio slots below are limited by protobuf:0/32.
-# lmdb missing
 RDEPEND="
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
@@ -701,6 +707,13 @@ einfo "FORCE_LLVM_SLOT may be specified."
 		_LLVM_SLOTS=( ${FORCE_LLVM_SLOT} )
 	fi
 
+	if use hip ; then
+		has_version "dev-util/hip:0/5.3" && _LLVM_SLOTS=( 15 )
+		has_version "dev-util/hip:0/5.4" && _LLVM_SLOTS=( 15 )
+		has_version "dev-util/hip:0/5.5" && _LLVM_SLOTS=( 16 )
+		has_version "dev-util/hip:0/5.6" && _LLVM_SLOTS=( 16 )
+	fi
+
 	local found=0
 	local s
 	for s in ${_LLVM_SLOTS[@]} ; do
@@ -726,6 +739,12 @@ eerror
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
 	LLVM_MAX_SLOT=${s}
+	if use hip ; then
+		has_version "dev-util/hip:0/5.3" && LLVM_MAX_SLOT=15
+		has_version "dev-util/hip:0/5.4" && LLVM_MAX_SLOT=15
+		has_version "dev-util/hip:0/5.5" && LLVM_MAX_SLOT=16
+		has_version "dev-util/hip:0/5.6" && LLVM_MAX_SLOT=16
+	fi
 	llvm_pkg_setup
 	${CC} --version || die
 	strip-unsupported-flags
@@ -758,7 +777,7 @@ einfo "CFLAGS:\t${CFLAGS}"
 einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
-	if tc-is-clang || use clang ; then
+	if tc-is-clang || use clang || use hip ; then
 		use_clang
 	elif tc-is-gcc ; then
 		use_gcc
@@ -942,6 +961,7 @@ einfo "Preventing stall.  Removing -Os."
 
 	bazel_setup_bazelrc
 
+	die
 	cp -a "${FILESDIR}/${PV}/"*".patch" "${WORKDIR}/patches" || die
 	eapply "${WORKDIR}/patches/"*".patch"
 
@@ -1075,7 +1095,7 @@ ewarn "HIP support is a Work In Progress (WIP) / UNFINISHED"
 			icu
 			jsoncpp_git
 			libjpeg_turbo
-			lmdb
+#			lmdb
 			nasm
 			nsync
 			opt_einsum_archive

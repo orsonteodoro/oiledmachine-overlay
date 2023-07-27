@@ -35,8 +35,8 @@ GCC_MAX_SLOT=12
 GCC_MIN_SLOT=9
 GCC_SLOTS=( ${GCC_MAX_SLOT} 11 10 ${GCC_MIN_SLOT} )
 LLVM_MAX_SLOT=14
-LLVM_MIN_SLOT=10
-LLVM_SLOTS=( ${LLVM_MAX_SLOT} 13 12 11 ${LLVM_MIN_SLOT} )
+LLVM_MIN_SLOT=14
+LLVM_SLOTS=( ${LLVM_MAX_SLOT} ${LLVM_MIN_SLOT} ) # See https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/tools/toolchains/remote_config/configs.bzl
 PYTHON_COMPAT=( python3_10 )
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
 
@@ -214,11 +214,14 @@ REQUIRED_USE="
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/configure.py#L33                                                        # cuda version
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/lite/tools/cmake/modules/eigen.cmake
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/tools/dockerfiles/partials/ubuntu/nvidia.partial.Dockerfile	# cuda/cudnn major.minor versions
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/ci_build/Dockerfile.rbe.rocm-ubuntu18.04-manylinux2010-multipython#L19 # rocm version min
+# https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/ci_build/Dockerfile.rbe.rocm-ubuntu20.04-manylinux2014-multipython#L20 # rocm version max
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/tools/ci_build/release/requirements_common.txt		# python deps versions ; pinned
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/tools/ci_build/release/requirements_ubuntu.txt		# python deps versions ; pinned ; depends on requirements_common.txt
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/tools/pip_package/setup.py#L84				# python deps versions
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/tools/tf_sig_build_dockerfiles/devel.requirements.txt	# python deps versions ; pinned ; depends on requirements_common.txt
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/tools/toolchains/archives.bzl
+# https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/tools/toolchains/remote_config/containers.bzl		# containers for testing
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/tensorflow/tools/toolchains/remote_config/configs.bzl#L318		# tested llvm
 
 # commits/versions for
@@ -236,6 +239,7 @@ REQUIRED_USE="
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/third_party/icu/workspace.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/third_party/jpeg/workspace.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/third_party/llvm/workspace.bzl
+#   https://github.com/llvm/llvm-project/blob/d8415b02a519f222ecf71b069c96cc85ac635de3/llvm/CMakeLists.txt#L14  # same as llvm 16.0.0git
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/third_party/llvm_openmp/openmp.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/third_party/pasta/workspace.bzl
 # https://github.com/grpc/grpc/blob/b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd/CMakeLists.txt
@@ -363,8 +367,9 @@ CUDA_CDEPEND="
 	)
 "
 
+# Upstream tests 5.0, 5.3
 HIP_SLOTS=(
-	"5.1.3"
+	"5.1.3" # For llvm 14
 )
 
 gen_rocm_rdepend() {
@@ -691,7 +696,7 @@ einfo "CFLAGS:\t${CFLAGS}"
 einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
-	if tc-is-clang || use clang ; then
+	if tc-is-clang || use clang || use hip ; then
 		use_clang
 	elif tc-is-gcc ; then
 		use_gcc

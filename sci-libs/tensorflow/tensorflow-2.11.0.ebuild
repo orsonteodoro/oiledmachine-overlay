@@ -33,7 +33,7 @@ CUDA_TARGETS=(
 )
 GCC_SLOTS=( 12 11 10 9 )
 LLVM_MAX_SLOT=14
-LLVM_SLOTS=( 14 13 12 11 10 )
+LLVM_SLOTS=( 14 ) # See https://github.com/tensorflow/tensorflow/blob/v2.11.0/tensorflow/tools/toolchains/remote_config/configs.bzl
 PYTHON_COMPAT=( python3_10 )
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
 
@@ -211,6 +211,7 @@ REQUIRED_USE="
 # https://github.com/tensorflow/tensorflow/blob/v2.11.0/third_party/jpeg/workspace.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.11.0/third_party/kissfft/workspace.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.11.0/third_party/llvm/workspace.bzl
+#   https://github.com/llvm/llvm-project/blob/d8415b02a519f222ecf71b069c96cc85ac635de3/llvm/CMakeLists.txt#L14  # same as llvm 16.0.0git
 # https://github.com/tensorflow/tensorflow/blob/v2.11.0/third_party/llvm_openmp/openmp.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.11.0/third_party/pasta/workspace.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.11.0/third_party/ruy/workspace.bzl
@@ -335,13 +336,14 @@ https://dev.gentoo.org/~perfinion/patches/tensorflow-patches-${PVR}.tar.bz2
 # to binary compatibility.
 CUDA_CDEPEND="
 	(
-		<dev-util/nvidia-cuda-toolkit-$(( $(ver_cut 1 ${CUDA_PV}) +1 )):=[profiler]
+		<dev-util/nvidia-cuda-toolkit-$(( $(ver_cut 1 ${CUDA_PV}) + 1 )):=[profiler]
 		>=dev-util/nvidia-cuda-toolkit-${CUDA_PV}:=[profiler]
 	)
 "
 
+# Upstream tests 5.0, 5.3
 HIP_SLOTS=(
-	"5.1.3"
+	"5.1.3" # For llvm 14
 )
 
 gen_rocm_rdepend() {
@@ -661,7 +663,7 @@ einfo "CFLAGS:\t${CFLAGS}"
 einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
-	if tc-is-clang || use clang ; then
+	if tc-is-clang || use clang || use hip ; then
 		use_clang
 	elif tc-is-gcc ; then
 		use_gcc
