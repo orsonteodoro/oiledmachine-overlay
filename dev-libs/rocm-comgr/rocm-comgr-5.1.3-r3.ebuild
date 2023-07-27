@@ -23,6 +23,7 @@ DESCRIPTION="Radeon Open Compute Code Object Manager"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
+IUSE=" r1"
 RDEPEND="
 	~dev-libs/rocm-device-libs-${PV}:${SLOT}
 	=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
@@ -43,8 +44,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-clang-fix-include.patch"
 	"${FILESDIR}/${PN}-5.1.3-rocm-path.patch"
 	"${FILESDIR}/0001-COMGR-changes-needed-for-upstream-llvm.patch"
-	"${FILESDIR}/${PN}-5.1.3-llvm-15-remove-zlib-gnu"
-	"${FILESDIR}/${PN}-5.1.3-llvm-15-args-changed"
+#	"${FILESDIR}/${PN}-5.1.3-llvm-15-remove-zlib-gnu"
+#	"${FILESDIR}/${PN}-5.1.3-llvm-15-args-changed"
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
 )
 CMAKE_BUILD_TYPE="Release"
