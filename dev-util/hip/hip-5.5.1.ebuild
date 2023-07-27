@@ -28,13 +28,13 @@ DEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	virtual/opengl
 	~dev-libs/rocm-comgr-${PV}:${SLOT}
-	~dev-util/rocminfo-${PV}
+	~dev-util/rocminfo-${PV}:${SLOT}
 "
 RDEPEND="
 	${DEPEND}
 	=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
 	>=dev-perl/URI-Encode-1.1.1
-	~dev-libs/roct-thunk-interface-${PV}
+	~dev-libs/roct-thunk-interface-${PV}:${SLOT}
 "
 BDEPEND="
 	>=dev-util/cmake-3.18.0

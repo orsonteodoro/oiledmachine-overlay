@@ -54,15 +54,15 @@ REQUIRED_USE="
 RDEPEND="
 	|| (
 		rocm_5_4? (
-			~dev-util/hip-5.4.3:=
+			~dev-util/hip-5.4.3:0/5.4
 			>=sys-libs/libomp-15
 		)
 		rocm_5_5? (
-			~dev-util/hip-5.5.1:=
+			~dev-util/hip-5.5.1:0/5.5
 			>=sys-libs/libomp-16
 		)
 		rocm_5_6? (
-			~dev-util/hip-5.6.0:=
+			~dev-util/hip-5.6.0:0/5.6
 			>=sys-libs/libomp-16
 		)
 	)
@@ -76,15 +76,15 @@ BDEPEND="
 	)
 	|| (
 		rocm_5_4? (
-			~dev-util/rocm-cmake-5.4.3
+			~dev-util/rocm-cmake-5.4.3:0/5.4
 			sys-devel/clang:15
 		)
 		rocm_5_5? (
-			~dev-util/rocm-cmake-5.5.1
+			~dev-util/rocm-cmake-5.5.1:0/5.5
 			sys-devel/clang:16
 		)
 		rocm_5_6? (
-			~dev-util/rocm-cmake-5.6.0
+			~dev-util/rocm-cmake-5.6.0:0/5.6
 			sys-devel/clang:16
 		)
 	)

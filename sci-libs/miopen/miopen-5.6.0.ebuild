@@ -44,7 +44,7 @@ RDEPEND="
 	>=sci-libs/composable_kernel-1.0.0[rocm_5_6]
 	app-arch/bzip2
 	~dev-libs/rocm-comgr-${PV}:${SLOT}
-	~dev-util/hip-${PV}
+	~dev-util/hip-${PV}:${SLOT}
 	~sci-libs/rocBLAS-${PV}:${SLOT}[${ROCM_USEDEP}]
 	kernels? (
 		~sci-libs/miopenkernels-${PV}
@@ -59,7 +59,7 @@ BDEPEND="
 	>=dev-cpp/nlohmann_json-3.10.4
 	dev-libs/half:0/1
 	virtual/pkgconfig
-	~dev-util/rocm-cmake-${PV}
+	~dev-util/rocm-cmake-${PV}:${SLOT}
 "
 RESTRICT="
 	!test? (

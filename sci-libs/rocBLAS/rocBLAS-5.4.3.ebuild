@@ -46,7 +46,7 @@ DEPEND="
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 	')
 	>=dev-cpp/msgpack-cxx-6.0.0
-	~dev-util/hip-${PV}
+	~dev-util/hip-${PV}:${SLOT}
 	test? (
 		dev-cpp/gtest
 		sys-libs/libomp
@@ -65,7 +65,7 @@ BDEPEND="
 		dev-python/wheel[${PYTHON_USEDEP}]
 	')
 	sys-devel/clang:${LLVM_MAX_SLOT}
-	~dev-util/rocm-cmake-${PV}
+	~dev-util/rocm-cmake-${PV}:${SLOT}
 	~dev-util/Tensile-${PV}:${SLOT}
 "
 RESTRICT="

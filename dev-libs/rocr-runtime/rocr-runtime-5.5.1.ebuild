@@ -34,8 +34,8 @@ DEPEND="
 	${CDEPEND}
 	=sys-devel/lld-${LLVM_MAX_SLOT}*
 	sys-devel/clang:${LLVM_MAX_SLOT}
-	~dev-libs/roct-thunk-interface-${PV}
-	~dev-libs/rocm-device-libs-${PV}
+	~dev-libs/roct-thunk-interface-${PV}:${SLOT}
+	~dev-libs/rocm-device-libs-${PV}:${SLOT}
 "
 # vim-core is needed for "xxd"
 BDEPEND="

@@ -25,7 +25,7 @@ LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="test"
 RDEPEND="
-	~dev-libs/rocm-device-libs-${PV}
+	~dev-libs/rocm-device-libs-${PV}:${SLOT}
 	=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
 	sys-devel/clang:${LLVM_MAX_SLOT}=
 	sys-devel/lld:${LLVM_MAX_SLOT}=
@@ -40,7 +40,7 @@ RESTRICT="
 "
 BDEPEND="
 	>=dev-util/cmake-3.13.4
-	~dev-util/rocm-cmake-${PV}
+	~dev-util/rocm-cmake-${PV}:${SLOT}
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-clang-fix-include.patch"

@@ -22,7 +22,7 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/rocminfo"
 LICENSE="UoI-NCSA"
 SLOT="0/$(ver_cut 1-2)"
 RDEPEND="
-	~dev-libs/rocr-runtime-${PV}
+	~dev-libs/rocr-runtime-${PV}:${SLOT}
 "
 DEPEND="
 	${RDEPEND}

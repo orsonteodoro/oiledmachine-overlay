@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
+LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
 inherit cmake llvm
 
 if [[ ${PV} == *9999 ]] ; then
@@ -33,8 +33,8 @@ DEPEND="
 	${CDEPEND}
 	=sys-devel/lld-${LLVM_MAX_SLOT}*
 	sys-devel/clang:${LLVM_MAX_SLOT}
-	~dev-libs/roct-thunk-interface-${PV}
-	~dev-libs/rocm-device-libs-${PV}
+	~dev-libs/roct-thunk-interface-${PV}:${SLOT}
+	~dev-libs/rocm-device-libs-${PV}:${SLOT}
 "
 # vim-core is needed for "xxd"
 BDEPEND="

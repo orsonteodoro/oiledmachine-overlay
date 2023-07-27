@@ -24,9 +24,9 @@ KEYWORDS="~amd64"
 RDEPEND="
 	>=media-libs/mesa-22.3.6
 	>=virtual/opencl-3
-	~dev-libs/rocm-comgr-${PV}
-	~dev-libs/rocm-device-libs-${PV}
-	~dev-libs/rocr-runtime-${PV}
+	~dev-libs/rocm-comgr-${PV}:${SLOT}
+	~dev-libs/rocm-device-libs-${PV}:${SLOT}
+	~dev-libs/rocr-runtime-${PV}:${SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -34,7 +34,7 @@ DEPEND="
 "
 BDEPEND="
 	>=media-libs/glew-2.2.0
-	~dev-util/rocm-cmake-${PV}
+	~dev-util/rocm-cmake-${PV}:${SLOT}
 	test? (
 		>=x11-apps/mesa-progs-8.5.0[X]
 	)

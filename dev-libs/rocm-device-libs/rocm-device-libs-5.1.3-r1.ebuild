@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
+LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
 inherit cmake llvm
 
 if [[ ${PV} == *9999 ]] ; then
@@ -33,7 +33,7 @@ DEPEND="
 BDEPEND="
 	>=dev-util/cmake-3.13.4
 	sys-devel/clang:${LLVM_MAX_SLOT}
-	~dev-util/rocm-cmake-${PV}
+	~dev-util/rocm-cmake-${PV}:${SLOT}
 "
 RESTRICT="
 	!test? (

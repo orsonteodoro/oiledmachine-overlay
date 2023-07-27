@@ -19,7 +19,7 @@ AMDGPU_TARGETS_OVERRIDE=(
 )
 PYTHON_COMPAT=( python3_{9..11} )
 DISTUTILS_USE_PEP517="setuptools"
-LLVM_MAX_SLOT=15
+LLVM_MAX_SLOT=14
 inherit distutils-r1 llvm prefix
 
 DESCRIPTION="Stretching GPU performance for GEMMs and tensor contractions"
@@ -38,8 +38,8 @@ RDEPEND="
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	sys-devel/clang:${LLVM_MAX_SLOT}
-	~dev-util/hip-${PV}
-	~dev-util/rocm-smi-${PV}
+	~dev-util/hip-${PV}:${SLOT}
+	~dev-util/rocm-smi-${PV}:${SLOT}
 "
 DEPEND="
 	${RDEPEND}

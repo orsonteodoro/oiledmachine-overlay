@@ -28,7 +28,7 @@ KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="test"
 RDEPEND="
-	~dev-util/hip-${PV}
+	~dev-util/hip-${PV}:${SLOT}
 	~dev-util/rocm-smi-${PV}:${SLOT}
 "
 DEPEND="
@@ -36,7 +36,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.5
-	~dev-util/rocm-cmake-${PV}
+	~dev-util/rocm-cmake-${PV}:${SLOT}
 	test? (
 		>=dev-cpp/gtest-1.11
 	)

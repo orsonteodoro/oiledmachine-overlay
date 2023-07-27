@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
+LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
 inherit cmake llvm prefix
 
 if [[ ${PV} == *9999 ]] ; then
@@ -24,7 +24,7 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
 RDEPEND="
-	~dev-libs/rocm-device-libs-${PV}
+	~dev-libs/rocm-device-libs-${PV}:${SLOT}
 	=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
 	sys-devel/clang:${LLVM_MAX_SLOT}=
 	sys-devel/lld:${LLVM_MAX_SLOT}=
@@ -34,7 +34,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.13.4
-	~dev-util/rocm-cmake-${PV}
+	~dev-util/rocm-cmake-${PV}:${SLOT}
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-4.5.2-dependencies.patch"

@@ -18,7 +18,7 @@ DOCS_DIR="docs"
 DOCS_DEPEND="
 	media-gfx/graphviz
 "
-LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
+LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
 ROCM_VERSION="${PV}"
 inherit cmake docs edo flag-o-matic multiprocessing prefix llvm rocm
 
@@ -39,7 +39,7 @@ REQUIRED_USE="
 "
 DEPEND="
 	>=dev-cpp/msgpack-cxx-6.0.0
-	~dev-util/hip-${PV}
+	~dev-util/hip-${PV}:${SLOT}
 	test? (
 		dev-cpp/gtest
 		sys-libs/libomp

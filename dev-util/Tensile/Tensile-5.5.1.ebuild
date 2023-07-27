@@ -48,8 +48,8 @@ RDEPEND="
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	sys-devel/clang:${LLVM_MAX_SLOT}
-	~dev-util/hip-${PV}
-	~dev-util/rocm-smi-${PV}
+	~dev-util/hip-${PV}:${SLOT}
+	~dev-util/rocm-smi-${PV}:${SLOT}
 "
 DEPEND="
 	${RDEPEND}

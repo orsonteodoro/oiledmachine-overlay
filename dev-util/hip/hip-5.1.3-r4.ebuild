@@ -6,7 +6,7 @@ EAPI=8
 PYTHON_COMPAT=( python3_{9..11} )
 DOCS_BUILDER="doxygen"
 DOCS_DEPEND="media-gfx/graphviz"
-LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
+LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
 inherit cmake docs llvm prefix python-any-r1
 
 DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
@@ -35,13 +35,13 @@ DEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	virtual/opengl
 	~dev-libs/rocm-comgr-${PV}:${SLOT}
-	~dev-util/rocminfo-${PV}
+	~dev-util/rocminfo-${PV}:${SLOT}
 "
 RDEPEND="
 	${DEPEND}
 	=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
 	>=dev-perl/URI-Encode-1.1.1
-	~dev-libs/roct-thunk-interface-${PV}
+	~dev-libs/roct-thunk-interface-${PV}:${SLOT}
 "
 BDEPEND="
 	profile? (

@@ -347,17 +347,18 @@ HIP_SLOTS=(
 gen_rocm_rdepend() {
 	local pv
 	for pv in ${HIP_SLOTS[@]} ; do
+		local s=$(ver_cut 1-2 ${pv})
 		echo "
 		(
-			~dev-libs/rccl-${pv}
-			~dev-libs/rocm-device-libs-${pv}
-			~dev-util/hip-${pv}
-			~dev-util/roctracer-${pv}
-			~sci-libs/hipSPARSE-${pv}
-			~sci-libs/rocFFT-${pv}
-			~sci-libs/rocRAND-${pv}
-			~sci-libs/rocSOLVER-${pv}
-			~sci-libs/miopen-${pv}
+			~dev-libs/rccl-${pv}:${s}
+			~dev-libs/rocm-device-libs-${pv}:${s}
+			~dev-util/hip-${pv}:${s}
+			~dev-util/roctracer-${pv}:${s}
+			~sci-libs/hipSPARSE-${pv}:${s}
+			~sci-libs/rocFFT-${pv}:${s}
+			~sci-libs/rocRAND-${pv}:${s}
+			~sci-libs/rocSOLVER-${pv}:${s}
+			~sci-libs/miopen-${pv}:${s}
 		)
 		"
 	done
