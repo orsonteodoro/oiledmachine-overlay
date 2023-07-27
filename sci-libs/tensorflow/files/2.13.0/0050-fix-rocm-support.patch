@@ -1,5 +1,5 @@
---- third_party/gpus/rocm_configure.bzl.orig	2023-06-28 11:38:35.000000000 -0700
-+++ third_party/gpus/rocm_configure.bzl	2023-07-26 22:28:15.329182746 -0700
+--- a/third_party/gpus/rocm_configure.bzl.orig	2023-06-28 11:38:35.000000000 -0700
++++ b/third_party/gpus/rocm_configure.bzl	2023-07-26 22:28:15.329182746 -0700
 @@ -35,7 +35,7 @@ _ROCM_TOOLKIT_PATH = "ROCM_PATH"
  _TF_ROCM_AMDGPU_TARGETS = "TF_ROCM_AMDGPU_TARGETS"
  _TF_ROCM_CONFIG_REPO = "TF_ROCM_CONFIG_REPO"
@@ -37,7 +37,7 @@
 +    inc_dirs.append(rocm_toolkit_path + "/lib/clang/8.0/include")    # oteodoro:  changed for distro
 +    inc_dirs.append(rocm_toolkit_path + "/lib/clang/9.0.0/include")  # oteodoro:  changed for distro
 +    inc_dirs.append(rocm_toolkit_path + "/lib/clang/10.0.0/include") # oteodoro:  changed for distro
-+    inc_dirs.append(rocm_toolkit_path + "/lib/clang/11.0.0/include") # oteodoro:  changed for distro 
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/11.0.0/include") # oteodoro:  changed for distro
 +    inc_dirs.append(rocm_toolkit_path + "/lib/clang/12.0.0/include") # oteodoro:  changed for distro
 +    inc_dirs.append(rocm_toolkit_path + "/lib/clang/13.0.0/include") # oteodoro:  changed for distro
 +    inc_dirs.append(rocm_toolkit_path + "/lib/clang/13.0.1/include") # oteodoro:  changed for distro
