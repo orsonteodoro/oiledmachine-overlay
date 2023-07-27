@@ -1064,7 +1064,7 @@ einfo
 		fi
 		if use hip ; then
 ewarn "HIP support is a Work In Progress (WIP) / UNFINISHED"
-			export TF_ROCM_AMDGPU_TARGETS==$(get_amdgpu_flags \
+			export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags \
 				| tr ";" ",")
 			export TF_ROCM_LLVM_SLOT="${LLVM_MAX_SLOT}"
 			export HIP_PATH="/usr"
@@ -1317,3 +1317,5 @@ einfo "Installing libs"
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  80 chars, dedupe literals, *DEPENDs changes, increase [third party] LICENSE transparency, preserve copyright notices, fix ccache
+# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
