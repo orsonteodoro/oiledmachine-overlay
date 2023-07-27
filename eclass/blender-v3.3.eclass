@@ -567,8 +567,8 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 	)
 	hip? (
 		|| (
-			~dev-util/hip-5.5.0
-			~dev-util/hip-5.5.1
+			~dev-util/hip-5.5.0:0/5.5
+			~dev-util/hip-5.5.1:0/5.5
 		)
 	)
 	jack? (

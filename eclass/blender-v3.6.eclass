@@ -560,8 +560,8 @@ RDEPEND+="
 	)
 	hip? (
 		|| (
-			~dev-util/hip-5.5.0
-			~dev-util/hip-5.5.1
+			~dev-util/hip-5.5.0:0/5.5
+			~dev-util/hip-5.5.1:0/5.5
 		)
 	)
 	dbus? (
