@@ -28,7 +28,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocFFT"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="benchmark perfscripts test"
+IUSE="benchmark perfscripts sqlite test"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 	${ROCM_REQUIRED_USE}
@@ -50,16 +50,19 @@ RDEPEND="
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/sympy[${PYTHON_USEDEP}]
 	)
+	sqlite? (
+		>=dev-db/sqlite-3.36
+	)
 "
 DEPEND="
 	${PYTHON_DEPS}
 "
 BDEPEND="
-	>=dev-util/cmake-3.22
+	>=dev-util/cmake-3.16
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	test? (
+		>=dev-cpp/gtest-1.11.0
 		>=sci-libs/fftw-3
-		dev-cpp/gtest
 		dev-libs/boost
 		sys-libs/libomp
 	)
@@ -169,6 +172,7 @@ src_configure() {
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocFFT/"
 		-DCMAKE_SKIP_RPATH=On
 		-DPYTHON3_EXE=${EPYTHON}
+		-DSQLITE_USE_SYSTEM_PACKAGE=$(usex sqlite ON OFF)
 		-Wno-dev
 	)
 

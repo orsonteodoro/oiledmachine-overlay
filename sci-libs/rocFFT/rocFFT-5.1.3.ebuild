@@ -55,11 +55,11 @@ DEPEND="
 	${PYTHON_DEPS}
 "
 BDEPEND="
-	>=dev-util/cmake-3.22
+	>=dev-util/cmake-3.16
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	test? (
+		>=dev-cpp/gtest-1.10.0
 		>=sci-libs/fftw-3
-		dev-cpp/gtest
 		dev-libs/boost
 		sys-libs/libomp
 	)
