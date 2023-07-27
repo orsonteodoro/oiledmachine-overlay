@@ -16,9 +16,10 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1101
 	gfx1102
 )
+LLVM_MAX_SLOT=16
 ROCM_VERSION="${PV}"
 
-inherit cmake edo rocm
+inherit cmake edo llvm rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocSOLVER/archive/rocm-${PV}.tar.gz
@@ -53,8 +54,6 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-4.2.0-add-stdint-header.patch"
-	"${FILESDIR}/${PN}-5.0.2-libfmt8.patch"
 )
 
 RESTRICT="
@@ -85,9 +84,22 @@ src_prepare() {
 }
 
 src_configure() {
-	# avoid sandbox violation
+	# Avoiding a sandbox violation
 	addpredict /dev/kfd
 	addpredict /dev/dri/
+
+	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
+
+	# Disallow newer clangs versions when producing .o files.
+	einfo "LLVM_SLOT=${LLVM_SLOT}"
+	einfo "PATH=${PATH} (before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+	einfo "PATH=${PATH} (after)"
 
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"

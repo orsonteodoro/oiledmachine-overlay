@@ -15,9 +15,10 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1102
 	gfx1100
 )
+LLVM_MAX_SLOT=15
 ROCM_VERSION="${PV}"
 
-inherit cmake edo rocm
+inherit cmake edo llvm rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocSOLVER/archive/rocm-${PV}.tar.gz
@@ -52,8 +53,6 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-4.2.0-add-stdint-header.patch"
-	"${FILESDIR}/${PN}-5.0.2-libfmt8.patch"
 )
 
 RESTRICT="
@@ -62,6 +61,10 @@ RESTRICT="
 	)
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
+
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+}
 
 src_prepare() {
 	sed \
@@ -84,7 +87,7 @@ src_prepare() {
 }
 
 src_configure() {
-	# avoid sandbox violation
+	# Avoiding a sandbox violation
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 
