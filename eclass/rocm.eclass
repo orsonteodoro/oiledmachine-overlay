@@ -283,7 +283,7 @@ get_amdgpu_flags() {
 		elif [[ "${gpu_target}" =~ "xnack_plus" ]] ; then
 			gpu_target="${gpu_target%%_*}:xnack+"
 		fi
-		amdgpu_target_flags+="${gpu_target}${target_feature};"
+		amdgpu_target_flags+="${gpu_target};"
 	done
 	echo "${amdgpu_target_flags}"
 }
