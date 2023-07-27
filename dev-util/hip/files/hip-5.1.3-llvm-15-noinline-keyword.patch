@@ -1,19 +1,14 @@
-LLVM 15 adds __noinline__ as a keyword to match behaviour of GCC 12.
-
-When this macro is left in, it can cause the expression __attribute__((__noinline__)) to be expanded incorrectly.
-
-When the __noinline__ keyword is available disable the macro.
-
-Ref: https://reviews.llvm.org/D124866
-     https://bugs.gentoo.org/85712
-===================================================================
+# See https://github.com/ROCm-Developer-Tools/HIP/issues/2677#issuecomment-1126775021
+# The distro fix does not work with llvm 14.
 --- a/include/hip/amd_detail/host_defines.h
 +++ b/include/hip/amd_detail/host_defines.h
-@@ -47,7 +47,9 @@ THE SOFTWARE.
+@@ -47,7 +47,11 @@ THE SOFTWARE.
  #define __constant__ __attribute__((constant))
  #endif // !__CLANG_HIP_RUNTIME_WRAPPER_INCLUDED__
  
-+#if !defined(__has_feature) || !__has_feature(cuda_noinline_keyword)
++#if defined(__GNUC__)
++#define __noinline__ __noinline__
++#elif !defined(__has_feature) || !__has_feature(cuda_noinline_keyword)
  #define __noinline__ __attribute__((noinline))
 +#endif
  #define __forceinline__ inline __attribute__((always_inline))
