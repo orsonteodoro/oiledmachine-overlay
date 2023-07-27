@@ -30,7 +30,7 @@ profile? (
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="debug profile r2"
+IUSE="debug profile r3"
 DEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	virtual/opengl
@@ -63,7 +63,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-correct-sample-install-location.patch"
 	"${FILESDIR}/${PN}-5.1.3-remove-cmake-doxygen-commands.patch"
 	"${FILESDIR}/0001-SWDEV-316128-HIP-surface-API-support.patch"
-#	"${FILESDIR}/${PN}-5.1.3-llvm-15-noinline-keyword.patch"
+	"${FILESDIR}/${PN}-5.1.3-llvm-15-noinline-keyword.patch" # Patch apply to llvm 14
 )
 S="${WORKDIR}/hipamd-rocm-${PV}"
 HIP_S="${WORKDIR}/HIP-rocm-${PV}"
