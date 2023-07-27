@@ -12,6 +12,13 @@ MY_P=${PN}-${MY_PV}
 DEP_VER="$(ver_cut 1-2)"
 DEP_VER_MAX="${DEP_VER%%.*}.$(( $(ver_cut 2 ${DEP_VER}) + 1 ))"
 
+AMDGPU_TARGETS_OVERRIDE=(
+        gfx803
+	gfx900
+	gfx906
+	gfx908
+	gfx1030
+)
 DISTUTILS_OPTIONAL=1
 CHECKREQS_MEMORY="10G" # Gold uses above 9.0 GiB
 CHECKREQS_DISK_BUILD="19G"
@@ -55,7 +62,7 @@ gen_seq_inc() {
 }
 
 inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr llvm prefix
-inherit toolchain-funcs
+inherit rocm toolchain-funcs
 
 DESCRIPTION="Computation framework using data flow graphs for scalable machine \
 learning"
@@ -73,13 +80,13 @@ THIRD_PARTY_LICENSES="
 		PSF
 	)
 	(
-		icu-63.2
-		Unicode-DFS-2016
-	)
-	(
 		BSD
 		minpack
 		MPL-2.0
+	)
+	(
+		icu-63.2
+		Unicode-DFS-2016
 	)
 	BSD
 	ooura
@@ -169,7 +176,7 @@ CPU_USE_FLAGS_X86=(
 IUSE="
 ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${CUDA_TARGETS[@]/#/cuda_targets_}
-alt-ssl clang cuda custom-optimization-level +hardened mpi +python
+alt-ssl clang cuda custom-optimization-level +hardened hip mpi +python
 test xla
 "
 gen_required_use_cuda_targets() {
@@ -224,6 +231,7 @@ REQUIRED_USE="
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/third_party/absl/workspace.bzl			# abseil-cpp ; provides commit
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/third_party/flatbuffers/workspace.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/third_party/gemmlowp/workspace.bzl
+# https://github.com/tensorflow/tensorflow/blob/v2.11.1/third_party/gpus/rocm_configure.bzl#L191        # llvms supported for rocm
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/third_party/hwloc/workspace.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/third_party/icu/workspace.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.11.1/third_party/jpeg/workspace.bzl
@@ -355,6 +363,29 @@ CUDA_CDEPEND="
 	)
 "
 
+HIP_SLOTS=(
+	"5.1.3"
+)
+
+gen_rocm_rdepend() {
+	local pv
+	for pv in ${HIP_SLOTS[@]} ; do
+		echo "
+		(
+			~dev-libs/rccl-${pv}
+			~dev-libs/rocm-device-libs-${pv}
+			~dev-util/hip-${pv}
+			~dev-util/roctracer-${pv}
+			~sci-libs/hipSPARSE-${pv}
+			~sci-libs/rocFFT-${pv}
+			~sci-libs/rocRAND-${pv}
+			~sci-libs/rocSOLVER-${pv}
+			~sci-libs/miopen-${pv}
+		)
+		"
+	done
+}
+
 # Missing extension package for TF_ENABLE_ONEDNN_OPTS=1
 # The grpcio slots below are limited by protobuf:0/30.
 RDEPEND="
@@ -381,6 +412,11 @@ RDEPEND="
 	cuda? (
 		${CUDA_RDEPEND}
 		=dev-libs/cudnn-8*
+	)
+	hip? (
+		|| (
+			$(gen_rocm_rdepend)
+		)
 	)
 	mpi? (
 		virtual/mpi
@@ -838,6 +874,7 @@ einfo "Preventing stall.  Removing -Os."
 
 	bazel_setup_bazelrc
 
+	cp -a "${FILESDIR}/${PV}/"*".patch" "${WORKDIR}/patches" || die
 	eapply "${WORKDIR}/patches/"*".patch"
 
 	# Relax version checks in setup.py
@@ -897,6 +934,7 @@ src_configure() {
 		fi
 
 		export TF_NEED_CUDA=$(usex cuda 1 0)
+		export TF_NEED_ROCM=$(usex hip 1 0)
 		export TF_DOWNLOAD_CLANG=0
 		export TF_CUDA_CLANG=0
 		export TF_NEED_TENSORRT=0
@@ -928,6 +966,14 @@ einfo "or by running"
 einfo
 einfo "  /opt/cuda/extras/demo_suite/deviceQuery | grep 'CUDA Capability'"
 einfo
+		fi
+		if use hip ; then
+ewarn "HIP support is a Work In Progress (WIP) / UNFINISHED"
+			export TF_ROCM_AMDGPU_TARGETS==$(get_amdgpu_flags \
+				| tr ";" ",")
+			export TF_ROCM_LLVM_SLOT="${LLVM_MAX_SLOT}"
+			export HIP_PATH="/usr"
+			export ROCM_PATH="/usr"
 		fi
 
 # com_googlesource_code_re2 weird branch using absl, doesnt work with released
