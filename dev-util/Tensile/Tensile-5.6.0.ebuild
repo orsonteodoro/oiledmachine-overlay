@@ -36,7 +36,7 @@ https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="client"
+IUSE="client r1"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -46,6 +46,7 @@ RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-cpp/msgpack-cxx-6.0.0
 	>=sys-libs/libomp-${LLVM_MAX_SLOT}
+	dev-python/joblib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	sys-devel/clang:${LLVM_MAX_SLOT}
