@@ -4,6 +4,11 @@
 
 EAPI=8
 
+# There is a strange versioning in this package:
+# 0.1.11 is >=May 24, 2021
+# 0.1.1 is >=May 23, 2020
+# 0.6.1 is <May 23, 2020
+
 MY_PN="Multi-Agent-ALE"
 
 DISTUTILS_USE_PEP517="setuptools"
