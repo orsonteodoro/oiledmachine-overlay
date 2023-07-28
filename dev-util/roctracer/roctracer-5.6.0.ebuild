@@ -5,9 +5,10 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{10..11} )
 
+LLVM_MAX_SLOT=16
 ROCM_VERSION="${PV}"
 
-inherit cmake prefix python-any-r1 rocm
+inherit cmake llvm prefix python-any-r1 rocm
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/roctracer/archive/rocm-${PV}.tar.gz
@@ -21,6 +22,7 @@ SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
 IUSE="test"
 RDEPEND="
+	~dev-libs/rocm-comgr-${PV}:${SLOT}
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
 	~dev-util/hip-${PV}:${SLOT}
 "
@@ -52,6 +54,11 @@ python_check_deps() {
 		"dev-python/ply[${PYTHON_USEDEP}]"
 }
 
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	python-any-r1_pkg_setup
+}
+
 src_prepare() {
 	cmake_src_prepare
 	hprefixify script/*.py
@@ -59,6 +66,19 @@ src_prepare() {
 }
 
 src_configure() {
+	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
+
+	# Disallow newer clangs versions when producing .o files.
+	einfo "LLVM_SLOT=${LLVM_SLOT}"
+	einfo "PATH=${PATH} (before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+	einfo "PATH=${PATH} (after)"
+
 	hipconfig --help >/dev/null || die
 	export ROCM_PATH="$(hipconfig -p)"
 	local mycmakeargs=(

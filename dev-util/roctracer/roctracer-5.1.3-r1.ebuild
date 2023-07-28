@@ -4,8 +4,9 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{9..10} )
+LLVM_MAX_SLOT=14
 
-inherit cmake prefix python-any-r1
+inherit cmake llvm prefix python-any-r1
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/roctracer/archive/rocm-${PV}.tar.gz
@@ -49,6 +50,11 @@ python_check_deps() {
 	python_has_version \
 		"dev-python/CppHeaderParser[${PYTHON_USEDEP}]" \
 		"dev-python/ply[${PYTHON_USEDEP}]"
+}
+
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	python-any-r1_pkg_setup
 }
 
 src_prepare() {
