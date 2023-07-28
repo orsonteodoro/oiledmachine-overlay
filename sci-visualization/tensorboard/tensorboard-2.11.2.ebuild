@@ -6,7 +6,7 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="standalone"
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{10..11} )
 YARN_SLOT="1"
 inherit bazel flag-o-matic llvm distutils-r1 yarn
 

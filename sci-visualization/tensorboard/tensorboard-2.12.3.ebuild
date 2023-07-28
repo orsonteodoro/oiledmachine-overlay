@@ -6,7 +6,7 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="standalone"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{10..11} )
 YARN_SLOT="1"
 inherit bazel flag-o-matic llvm distutils-r1 yarn
 
@@ -32,9 +32,9 @@ PROPERTIES="live"
 #	>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
 # Requirements for dev-python/protobuf-python modified by this ebuild to avoid multi instance single slot issue.
 PROTOBUF_SLOT="0/32"
-LLVM_MAX_SLOT=14
-LLVM_MIN_SLOT=10
-LLVM_SLOTS=( ${LLVM_MAX_SLOT} 13 12 11 ${LLVM_MIN_SLOT} )
+LLVM_MAX_SLOT=16
+LLVM_MIN_SLOT=15
+LLVM_SLOTS=( ${LLVM_MAX_SLOT} ${LLVM_MIN_SLOT} )
 
 gen_llvm_bdepend() {
 	for s in ${LLVM_SLOTS[@]} ; do
