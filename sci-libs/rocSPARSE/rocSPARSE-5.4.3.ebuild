@@ -18,7 +18,7 @@ PYTHON_COMPAT=( python3_{9..11} )
 LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.4.3/llvm/CMakeLists.txt
 ROCM_VERSION="${PV}"
 
-inherit cmake edo python-any-r1 toolchain-funcs rocm
+inherit cmake edo llvm python-any-r1 toolchain-funcs rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocSPARSE/archive/rocm-${PV}.tar.gz
@@ -110,9 +110,8 @@ RESTRICT="
 "
 S="${WORKDIR}/rocSPARSE-rocm-${PV}"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.0.2-remove-matrices-unpacking.patch"
-	"${FILESDIR}/${PN}-5.0.2-enable-gfx1031.patch"
-	"${FILESDIR}/${PN}-5.0.2-remove-incorrect-assert.patch"
+	"${FILESDIR}/${PN}-5.4.3-remove-matrices-unpacking.patch"
+	"${FILESDIR}/${PN}-5.3.3-change-cmake-path.patch"
 )
 
 python_check_deps() {

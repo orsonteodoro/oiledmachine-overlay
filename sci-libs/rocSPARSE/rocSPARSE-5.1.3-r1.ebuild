@@ -16,7 +16,7 @@ PYTHON_COMPAT=( python3_{9..11} )
 LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
 ROCM_VERSION="${PV}"
 
-inherit cmake edo python-any-r1 toolchain-funcs rocm
+inherit cmake edo llvm python-any-r1 toolchain-funcs rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocSPARSE/archive/rocm-${PV}.tar.gz
