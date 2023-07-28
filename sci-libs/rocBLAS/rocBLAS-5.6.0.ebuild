@@ -50,12 +50,12 @@ DEPEND="
 	>=dev-cpp/msgpack-cxx-6.0.0
 	~dev-util/hip-${PV}:${SLOT}
 	test? (
+		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		dev-cpp/gtest
-		sys-libs/libomp
 		virtual/blas
 	)
 	benchmark? (
-		sys-libs/libomp
+		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		virtual/blas
 	)
 "

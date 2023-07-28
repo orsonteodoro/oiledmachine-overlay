@@ -33,6 +33,7 @@ BDEPEND="
 		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
+	>=dev-util/cmake-2.8.12
 "
 S="${WORKDIR}/roctracer-rocm-${PV}"
 PATCHES=(
@@ -98,5 +99,4 @@ src_configure() {
 	cmake_src_configure
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

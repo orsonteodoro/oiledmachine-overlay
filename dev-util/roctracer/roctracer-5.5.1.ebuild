@@ -5,7 +5,7 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{10..11} )
 
-ROCM_VERSION=${PV}
+ROCM_VERSION="${PV}"
 
 inherit cmake prefix python-any-r1 rocm
 
@@ -32,6 +32,7 @@ BDEPEND="
 		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
+	>=dev-util/cmake-3.18.0
 "
 RESTRICT="
 	!test? (

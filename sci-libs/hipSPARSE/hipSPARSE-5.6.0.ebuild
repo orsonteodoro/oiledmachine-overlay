@@ -3,6 +3,7 @@
 
 EAPI=8
 
+LLVM_MAX_SLOT=16
 ROCM_VERSION="${PV}"
 
 inherit cmake edo rocm toolchain-funcs
@@ -79,6 +80,7 @@ BDEPEND="
 	>=dev-util/cmake-3.5
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	test? (
+		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		dev-cpp/gtest
 	)
 "

@@ -45,7 +45,7 @@ DEPEND="
 	)
 "
 BDEPEND="
-	>=dev-util/cmake-3.22
+	>=dev-util/cmake-3.10.2
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 "
 

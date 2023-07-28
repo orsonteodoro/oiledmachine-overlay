@@ -20,8 +20,9 @@ DOCS_DEPEND="
 	media-gfx/graphviz
 "
 LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
+PYTHON_COMPAT=( python3_{10..11} )
 ROCM_VERSION="${PV}"
-inherit cmake docs edo flag-o-matic multiprocessing prefix llvm rocm
+inherit cmake docs edo flag-o-matic multiprocessing prefix llvm python-any-r1 rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocBLAS/archive/rocm-${PV}.tar.gz
@@ -42,12 +43,12 @@ DEPEND="
 	>=dev-cpp/msgpack-cxx-6.0.0
 	~dev-util/hip-${PV}:${SLOT}
 	test? (
+		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		dev-cpp/gtest
-		sys-libs/libomp
 		virtual/blas
 	)
 	benchmark? (
-		sys-libs/libomp
+		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		virtual/blas
 	)
 "
@@ -71,6 +72,7 @@ PATCHES=(
 
 pkg_setup() {
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	python-any-r1_pkg_setup
 }
 
 src_prepare() {

@@ -33,6 +33,10 @@ REQUIRED_USE="
 RDEPEND="
 	${PYTHON_DEPS}
 "
+BDEPEND="
+	>=dev-util/cmake-3.16.8
+	virtual/pkgconfig
+"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-gcc12-memcpy.patch"
 	"${FILESDIR}/${PN}-5.4.2-detect-builtin-amdgpu.patch"

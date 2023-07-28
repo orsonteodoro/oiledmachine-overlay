@@ -61,8 +61,8 @@ BDEPEND="
 	test? (
 		>=dev-cpp/gtest-1.10.0
 		>=sci-libs/fftw-3
+		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		dev-libs/boost
-		sys-libs/libomp
 	)
 "
 RESTRICT="
