@@ -7,7 +7,7 @@ EAPI=7
 MY_PV="$(ver_cut 1-4)"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_10 ) # Upstream only tests with 3.10
 inherit cuda distutils-r1 eutils flag-o-matic linux-info prefix tmpfiles udev
 inherit user-info xdg
 
