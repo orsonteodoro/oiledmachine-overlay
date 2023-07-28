@@ -66,6 +66,7 @@ BDEPEND="
 		dev-python/virtualenv[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
 	')
+	${PYTHON_DEPS}
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	~dev-util/Tensile-${PV}:${SLOT}

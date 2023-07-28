@@ -53,6 +53,7 @@ DEPEND="
 	)
 "
 BDEPEND="
+	${PYTHON_DEPS}
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	~dev-util/Tensile-${PV}:${SLOT}
