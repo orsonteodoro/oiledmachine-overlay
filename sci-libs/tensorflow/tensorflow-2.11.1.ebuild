@@ -384,7 +384,11 @@ gen_rocm_rdepend() {
 			~dev-libs/rocm-device-libs-${pv}:${s}
 			~dev-util/hip-${pv}:${s}
 			~dev-util/roctracer-${pv}:${s}
+			~sci-libs/hipBLAS-${pv}:${s}
+			~sci-libs/hipBLASLt-${pv}:${s}
+			~sci-libs/hipSOLVER-${pv}:${s}
 			~sci-libs/hipSPARSE-${pv}:${s}
+			~sci-libs/rocBLAS-${pv}:${s}
 			~sci-libs/rocFFT-${pv}:${s}
 			~sci-libs/rocRAND-${pv}:${s}
 			~sci-libs/rocSOLVER-${pv}:${s}
@@ -882,6 +886,7 @@ einfo "Preventing stall.  Removing -Os."
 
 	bazel_setup_bazelrc
 
+	die
 	cp -a "${FILESDIR}/${PV}/"*".patch" "${WORKDIR}/patches" || die
 	eapply "${WORKDIR}/patches/"*".patch"
 

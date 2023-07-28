@@ -3,9 +3,8 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..11} )
-
 LLVM_MAX_SLOT=16
+PYTHON_COMPAT=( python3_{10..11} )
 ROCM_VERSION="${PV}"
 
 inherit cmake llvm prefix python-any-r1 rocm
