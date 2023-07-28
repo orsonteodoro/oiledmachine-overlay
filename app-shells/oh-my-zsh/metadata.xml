@@ -146,15 +146,6 @@
     <flag name="zstd">
       Adds zstd support for the extract plugin.
     </flag>
-    <flag name="python_targets_python2_7">
-      Checks for Python 2.7 support.
-    </flag>
-    <flag name="python_targets_python3_8">
-      Checks for Python 3.8.x support.
-    </flag>
-    <flag name="python_targets_python3_9">
-      Checks for Python 3.9.x support.
-    </flag>
     <flag name="python_targets_python3_10">
       Checks for Python 3.10.x support.
     </flag>
