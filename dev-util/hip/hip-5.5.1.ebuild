@@ -72,26 +72,30 @@ src_prepare() {
 	# Use Gentoo slot number, otherwise git hash is attempted in vain.
 	sed \
 		-e "/set (HIP_LIB_VERSION_STRING/cset (HIP_LIB_VERSION_STRING ${SLOT#*/})" \
-		-i CMakeLists.txt \
+		-i \
+		CMakeLists.txt \
 		|| die
 
 	# correctly find HIP_CLANG_INCLUDE_PATH using cmake
 	local LLVM_PREFIX="$(get_llvm_prefix "${LLVM_MAX_SLOT}")"
 	sed \
 		-e "/set(HIP_CLANG_ROOT/s:\"\${ROCM_PATH}/llvm\":${LLVM_PREFIX}:" \
-		-i hip-config.cmake.in \
+		-i \
+		hip-config.cmake.in \
 		|| die
 
 	# correct libs and cmake install dir
 	sed \
 		-e "/\${HIP_COMMON_DIR}/s:cmake DESTINATION .):cmake/ DESTINATION share/cmake/Modules):" \
-		-i CMakeLists.txt \
+		-i \
+		CMakeLists.txt \
 		|| die
 
 	sed \
 		-e "/\.hip/d" \
 		-e "/CPACK_RESOURCE_FILE_LICENSE/d" \
-		-i packaging/CMakeLists.txt \
+		-i \
+		packaging/CMakeLists.txt \
 		|| die
 
 	pushd "${HIP_S}" || die
@@ -111,14 +115,16 @@ src_prepare() {
 		-e "s:\$ENV{'DEVICE_LIB_PATH'}:'${EPREFIX}/usr/lib/amdgcn/bitcode':" \
 		-e "s:\$ENV{'HIP_LIB_PATH'}:'${EPREFIX}/usr/$(get_libdir)':" \
 		-e "/rpath/s,--rpath=[^ ]*,," \
-		-i bin/hipcc.pl \
+		-i \
+		bin/hipcc.pl \
 		|| die
 
 	# Changed --hip-device-lib-path to "/usr/lib/amdgcn/bitcode".
 	# It must align with "dev-libs/rocm-device-libs".
 	sed \
 		-e "s:\${AMD_DEVICE_LIBS_PREFIX}/lib:${EPREFIX}/usr/lib/amdgcn/bitcode:" \
-		-i "${S}/hip-config.cmake.in" \
+		-i \
+		"${S}/hip-config.cmake.in" \
 		|| die
 
 	einfo "prefixing hipcc and its utils..."
@@ -144,7 +150,8 @@ src_prepare() {
 		-e "s,@HIP_BASE_VERSION_MINOR@,$(ver_cut 2)," \
 		-e "s,@HIP_VERSION_PATCH@,$(ver_cut 3)," \
 		-e "s,@CLANG_PATH@,${LLVM_PREFIX}/bin," \
-		-i bin/hipvars.pm \
+		-i \
+		bin/hipvars.pm \
 		|| die
 	popd || die
 
