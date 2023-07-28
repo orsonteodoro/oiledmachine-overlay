@@ -8,8 +8,14 @@ MY_PV="$(ver_cut 1-4)"
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_10 ) # Upstream only tests with 3.10
+
 inherit cuda distutils-r1 eutils flag-o-matic linux-info prefix tmpfiles udev
 inherit user-info xdg
+
+SRC_URI="
+https://github.com/Xpra-org/xpra/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based \
 on wimpiggy"
@@ -609,6 +615,8 @@ BDEPEND+="
 		sys-devel/clang
 	)
 "
+RESTRICT="mirror"
+S="${WORKDIR}/${P}"
 PATCHES=(
 	"${FILESDIR}/${PN}-3.0.2_ignore-gentoo-no-compile.patch"
 	"${FILESDIR}/${PN}-4.3-openrc-init-fix-v3.patch"
@@ -616,12 +624,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.2-udev-path.patch"
 	"${FILESDIR}/${PN}-4.4.3-translate-flags.patch"
 )
-SRC_URI="
-https://github.com/Xpra-org/xpra/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 check_cython() {
 	local actual_cython_pv=$(cython --version 2>&1 \
