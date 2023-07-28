@@ -32,9 +32,17 @@ https://github.com/littlewu2508/littlewu2508.github.io/raw/main/gentoo-distfiles
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
+IUSE="client"
+REQUIRED_USE="
+	client? (
+		${ROCM_REQUIRED_USE}
+	)
+"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-cpp/msgpack-cxx-6.0.0
+	>=sys-libs/libomp-${LLVM_MAX_SLOT}
+	dev-libs/boost
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	sys-devel/clang:${LLVM_MAX_SLOT}
@@ -43,6 +51,9 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
+"
+BDEPEND="
+	>=dev-util/cmake-3.13
 "
 # Not compatible with recent versions of pytest
 RESTRICT="test"
@@ -137,11 +148,11 @@ src_install() {
 	insinto "/usr/share/${PN}"
 	doins -r \
 		"Configs" \
+		"CustomKernels" \
 		"Perf" \
 		"ReplacementKernels" \
 		"ReplacementKernels-cov3" \
-		"Source" \
-		"CustomKernels"
+		"Source"
 	insinto "/usr/$(get_libdir)/cmake/${PN}"
 	doins "cmake/"*".cmake"
 }
