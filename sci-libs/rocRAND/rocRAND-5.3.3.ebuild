@@ -17,7 +17,7 @@ ROCM_VERSION="${PV}"
 
 inherit cmake llvm rocm
 
-HIPRAND_COMMIT_HASH="de941a7eb9ede2a862d719cd3ca23234a3692d07"
+HIPRAND_COMMIT_HASH="12e2f070337945318295c330bf69c6c060928b9e"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/${PN}/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -30,7 +30,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocRAND"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="benchmark test"
+IUSE="benchmark test r1"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
