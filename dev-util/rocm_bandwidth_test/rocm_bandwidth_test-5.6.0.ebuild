@@ -18,11 +18,14 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_bandwidth_test"
 LICENSE="NCSA-AMD"
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
-DEPEND="
+RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
 "
-RDEPEND="
+DEPEND="
 	${DEPEND}
+"
+BDEPEND="
+	>=dev-util/cmake-3.6.3
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(

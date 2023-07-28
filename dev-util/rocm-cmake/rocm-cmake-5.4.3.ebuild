@@ -21,6 +21,9 @@ DESCRIPTION="Radeon Open Compute CMake Modules"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm-cmake"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
+BDEPEND="
+	>=dev-util/cmake-3.5
+"
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-license.patch"

@@ -6,7 +6,8 @@ EAPI=8
 DOCS_BUILDER="doxygen"
 DOCS_DEPEND="media-gfx/graphviz"
 LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.4.3/llvm/CMakeLists.txt
-inherit cmake docs llvm prefix
+PYTHON_COMPAT=( python3_{9..11} )
+inherit cmake docs llvm prefix python-any-r1
 
 DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
@@ -37,7 +38,8 @@ RDEPEND="
 	~dev-libs/roct-thunk-interface-${PV}:${SLOT}
 "
 BDEPEND="
-	>=dev-util/cmake-3.18.0
+	${PYTHON_DEPS}
+	>=dev-util/cmake-3.16.8
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.1-DisableTest.patch"
@@ -58,6 +60,8 @@ DOCS_CONFIG_NAME="doxy.cfg"
 pkg_setup() {
 	# Ignore QA FLAGS check for library compiled from assembly sources
 	QA_FLAGS_IGNORED="/usr/$(get_libdir)/libhiprtc-builtins.so.$(ver_cut 1-2)"
+	llvm_pkg_setup
+	python-any-r1_pkg_setup
 }
 
 src_prepare() {

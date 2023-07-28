@@ -3,10 +3,10 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..11} )
 DOCS_BUILDER="doxygen"
 DOCS_DEPEND="media-gfx/graphviz"
 LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
+PYTHON_COMPAT=( python3_{9..11} )
 inherit cmake docs llvm prefix python-any-r1
 
 DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
@@ -51,7 +51,8 @@ BDEPEND="
 	)
 "
 BDEPEND="
-	>=dev-util/cmake-3.18.0
+	${PYTHON_DEPS}
+	>=dev-util/cmake-3.16.8
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.1-DisableTest.patch"
@@ -77,6 +78,11 @@ python_check_deps() {
 	if use profile; then
 		python_has_version "dev-python/CppHeaderParser[${PYTHON_USEDEP}]"
 	fi
+}
+
+pkg_setup() {
+	llvm_pkg_setup
+	python-any-r1_pkg_setup
 }
 
 src_prepare() {
@@ -201,9 +207,9 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 		-DCMAKE_PREFIX_PATH="$(get_llvm_prefix ${LLVM_MAX_SLOT})"
 		-DCMAKE_SKIP_RPATH=ON
-		-DHIP_PLATFORM=amd
 		-DHIP_COMMON_DIR="${HIP_S}"
 		-DHIP_COMPILER=clang
+		-DHIP_PLATFORM=amd
 		-DROCCLR_PATH="${CLR_S}"
 		-DROCM_PATH="${EPREFIX}/usr"
 		-DUSE_PROF_API=$(usex profile 1 0)
