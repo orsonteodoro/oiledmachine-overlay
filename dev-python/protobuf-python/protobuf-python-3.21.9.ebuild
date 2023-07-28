@@ -7,7 +7,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PARENT_PN="${PN/-python/}"
 PARENT_PV="$(ver_cut 2-)"
 PARENT_P="${PARENT_PN}-${PARENT_PV}"
-PYTHON_COMPAT=( python3_{9..11} ) # Upstream supports up to 3.10
+PYTHON_COMPAT=( python3_{10..11} ) # Upstream supports up to 3.10
 
 inherit distutils-r1
 

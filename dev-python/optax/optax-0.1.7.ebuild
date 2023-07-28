@@ -5,9 +5,15 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..9} )
+PYTHON_COMPAT=( python3_{10..11} )
 # Limited by jax/flax
+
 inherit distutils-r1
+
+SRC_URI="
+https://github.com/deepmind/optax/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Optax is a gradient processing and optimization library for JAX."
 HOMEPAGE="
@@ -21,33 +27,29 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc examples dp-accounting test"
 REQUIRED_USE+="
-	test? (
-		dp-accounting
-		examples
-		python_targets_python3_9
-	)
 	dp-accounting? (
 		test
 	)
+	test? (
+		dp-accounting
+		examples
+	)
 "
-DEPEND+="
+RDEPEND+="
 	>=dev-python/absl-py-0.7.1[${PYTHON_USEDEP}]
-	>=dev-python/chex-0.1.5[${PYTHON_USEDEP}]
-	>=dev-python/jax-0.1.55[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
+	>=dev-python/chex-0.1.8[${PYTHON_USEDEP}]
+	>=dev-python/jax-0.4.13[${PYTHON_USEDEP}]
+	>=dev-python/jaxlib-0.1.37[${PYTHON_USEDEP}]
+	>=dev-python/numpy-1.25.0[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-3.10.0[${PYTHON_USEDEP}]
 	examples? (
 		>=dev-python/dm-haiku-0.0.3[${PYTHON_USEDEP}]
 		>=dev-python/tensorflow-datasets-4.2.0[${PYTHON_USEDEP}]
 		>=sci-libs/tensorflow-2.4.0[${PYTHON_USEDEP}]
 	)
-	|| (
-		>=dev-python/jaxlib-0.1.37[${PYTHON_USEDEP}]
-		>=dev-python/jaxlib-bin-0.1.37[${PYTHON_USEDEP}]
-	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 # TODO: package
 # dm-haiku
@@ -89,10 +91,6 @@ PDEPEND+="
 		>=dev-python/flax-0.5.3
 	)
 " # Avoid circular depends with flax
-SRC_URI="
-https://github.com/deepmind/optax/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( README.md )

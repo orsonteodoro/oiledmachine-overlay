@@ -21,21 +21,7 @@ LICENSE="
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc tensorflow-io-gcs-filesystem test"
-#IUSE+=" aarch64 doc cpu gpu rocm tensorflow-io-gcs-filesystem test"
-DISABLED_DEPEND="
-	aarch64? (
-		/tensorflow-aarch64[${PYTHON_USEDEP}]
-	)
-	cpu? (
-		/tensorflow-cpu[${PYTHON_USEDEP}]
-	)
-	gpu? (
-		/tensorflow-gpu[${PYTHON_USEDEP}]
-	)
-	rocm? (
-		/tensorflow-rocm[${PYTHON_USEDEP}]
-	)
-"
+#IUSE+=" doc tensorflow-io-gcs-filesystem test"
 DEPEND+="
 	=sci-libs/tensorflow-2.12*[${PYTHON_USEDEP}]
 "

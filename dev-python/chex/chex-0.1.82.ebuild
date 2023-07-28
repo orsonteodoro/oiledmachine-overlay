@@ -5,9 +5,15 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{9,10} ) # See https://github.com/deepmind/chex/blob/v0.1.6/.github/workflows/ci.yml
+PYTHON_COMPAT=( python3_{10..11} ) # See https://github.com/deepmind/chex/blob/v0.1.82/.github/workflows/ci.yml
 # Limited by jax
+
 inherit distutils-r1
+
+SRC_URI="
+https://github.com/deepmind/chex/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Chex is a library of utilities for helping to write reliable JAX code."
 HOMEPAGE="
@@ -21,16 +27,14 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" docs test"
 DEPEND+="
-	$(python_gen_cond_dep '>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]' python3_{8..10})
+	$(python_gen_cond_dep '
+		>=dev-python/typing-extensions-4.2.0[${PYTHON_USEDEP}]
+	' python3_{8..10})
 	>=dev-python/absl-py-0.9.0[${PYTHON_USEDEP}]
-	>=dev-python/dm-tree-0.1.5[${PYTHON_USEDEP}]
-	>=dev-python/jax-0.1.55[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
+	>=dev-python/jax-0.4.6[${PYTHON_USEDEP}]
+	>=dev-python/jaxlib-0.1.37[${PYTHON_USEDEP}]
+	>=dev-python/numpy-1.25.0[${PYTHON_USEDEP}]
 	>=dev-python/toolz-0.9.0[${PYTHON_USEDEP}]
-	|| (
-		>=dev-python/jaxlib-0.1.37[${PYTHON_USEDEP}]
-		>=dev-python/jaxlib-bin-0.1.37[${PYTHON_USEDEP}]
-	)
 "
 RDEPEND+="
 	${DEPEND}
@@ -54,11 +58,8 @@ BDEPEND+="
 	)
 	test? (
 		>=dev-python/cloudpickle-2.2.0[${PYTHON_USEDEP}]
+		>=dev-python/dm-tree-0.1.5[${PYTHON_USEDEP}]
 	)
-"
-SRC_URI="
-https://github.com/deepmind/chex/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"

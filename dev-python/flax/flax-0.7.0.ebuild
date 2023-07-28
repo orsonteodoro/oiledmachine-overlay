@@ -6,8 +6,14 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..10} ) # Upstream lists only up to 3.10
+
 # Limited by orbax
 inherit distutils-r1
+
+SRC_URI="
+https://github.com/google/flax/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Flax is a neural network library for JAX that is designed for \
 flexibility."
@@ -22,31 +28,31 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 # TODO: package
-# optax
-# orbax
 # atari-py
 # clu
+# codediff
+# einops
 # jraph
 # ml-collections
+# myst_nb
+# nbstripout
+# orbax-checkpoint
 # pytest-custom_exit_code
 # pytype
 # sentencepiece
-# tensorflow_text
 # tensorflow_datasets
-# nbstripout
-# codediff
-# myst_nb
-
+# tensorflow_text
 DEPEND+="
 	>=dev-python/jax-0.4.2[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.12[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.1.1[${PYTHON_USEDEP}]
 	>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]
+	>=dev-python/rich-11.1[${PYTHON_USEDEP}]
 	dev-python/matplotlib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/optax[${PYTHON_USEDEP}]
 	dev-python/orbax[${PYTHON_USEDEP}]
-	dev-python/rich[${PYTHON_USEDEP}]
+	dev-python/orbax-checkpoint[${PYTHON_USEDEP}]
 	dev-python/tensorstore[${PYTHON_USEDEP}]
 "
 RDEPEND+="
@@ -62,11 +68,13 @@ BDEPEND+="
 	)
 	test? (
 		>=dev-python/atari-py-0.2.5[${PYTHON_USEDEP}]
-		>=dev-python/gym-0.18.3[${PYTHON_USEDEP}]
+		>=dev-python/gymnasium-0.18.3[${PYTHON_USEDEP},atari,accept-rom-license]
 		>=dev-python/jraph-0.0.6_pre0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-xdist-1.34.0[${PYTHON_USEDEP}]
 		>=dev-python/tensorflow_text-2.11.0[${PYTHON_USEDEP}]
 		dev-python/clu[${PYTHON_USEDEP}]
+		dev-python/einops[${PYTHON_USEDEP}]
+		dev-python/jaxlib[${PYTHON_USEDEP}]
 		dev-python/ml-collections[${PYTHON_USEDEP}]
 		dev-python/mypy[${PYTHON_USEDEP}]
 		dev-python/nbstripout[${PYTHON_USEDEP}]
@@ -76,21 +84,13 @@ BDEPEND+="
 		dev-python/pytorch[${PYTHON_USEDEP}]
 		dev-python/pytype[${PYTHON_USEDEP}]
 		dev-python/sentencepiece[${PYTHON_USEDEP}]
-		dev-python/tensorflow_datasets[${PYTHON_USEDEP}]
 		dev-python/tensorflow[${PYTHON_USEDEP},python]
+		dev-python/tensorflow_datasets[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP},python]
-		|| (
-			dev-python/jaxlib[${PYTHON_USEDEP}]
-			dev-python/jaxlib-bin[${PYTHON_USEDEP}]
-		)
 	)
 "
-SRC_URI="
-https://github.com/google/flax/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
 S="${WORKDIR}/${P}"
-RESTRICT="mirror"
+RESTRICT="mirror test"
 DOCS=( CHANGELOG.md README.md )
 
 distutils_enable_sphinx "docs"

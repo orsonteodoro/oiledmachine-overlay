@@ -3,11 +3,17 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517=setuptools
 MY_P="google-auth-library-python-oauthlib-${PV}"
-PYTHON_COMPAT=( python3_{9..11} )
+
+DISTUTILS_USE_PEP517=setuptools
+PYTHON_COMPAT=( python3_{10..11} )
 
 inherit distutils-r1
+
+SRC_URI="
+https://github.com/googleapis/google-auth-library-python-oauthlib/archive/v${PV}.tar.gz
+	-> ${MY_P}.gh.tar.gz
+"
 
 DESCRIPTION="Google Authentication Library"
 HOMEPAGE="
@@ -26,10 +32,6 @@ BDEPEND="
 	test? (
 		dev-python/mock[${PYTHON_USEDEP}]
 	)
-"
-SRC_URI="
-https://github.com/googleapis/google-auth-library-python-oauthlib/archive/v${PV}.tar.gz
-	-> ${MY_P}.gh.tar.gz
 "
 S="${WORKDIR}/${MY_P}"
 

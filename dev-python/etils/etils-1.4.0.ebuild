@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="flit"
-PYTHON_COMPAT=( python3_{8..9} ) # Upstream only tests 3.8
+PYTHON_COMPAT=( python3_10 ) # Upstream only tests 3.9
 # Limited by jax
 inherit distutils-r1
 
@@ -18,7 +18,7 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" array-types eapp ecolab edc enp epath epy etqdm etree etree-dm etree-jax etree-tf lazy-imports test"
+IUSE+=" array-types doc eapp ecolab edc enp epath epy etqdm etree etree-dm etree-jax etree-tf lazy-imports test"
 REQUIRED_USE+="
 	array-types? (
 		enp
@@ -30,12 +30,29 @@ REQUIRED_USE+="
 		enp
 		epy
 	)
+	doc? (
+		array-types
+		eapp
+		ecolab
+		edc
+		enp
+		epath
+		epy
+		etqdm
+		etree
+		etree-dm
+		etree-jax
+		etree-tf
+		test
+	)
+	edc? (
+		epy
+	)
 	enp? (
 		epy
 	)
 	epath? (
 		epy
-		python_targets_python3_9
 	)
 	etqdm? (
 		epy
@@ -59,19 +76,22 @@ REQUIRED_USE+="
 		ecolab
 	)
 "
+# TODO:  package
+# mediapy
 DEPEND+="
 	eapp? (
 		dev-python/absl-py[${PYTHON_USEDEP}]
 		dev-python/simple_parsing[${PYTHON_USEDEP}]
 	)
-	edc? (
-		dev-python/typing-extensions[${PYTHON_USEDEP}]
+	ecolab? (
+		dev-python/jupyter[${PYTHON_USEDEP}]
+		dev-python/mediapy[${PYTHON_USEDEP}]
 	)
 	enp? (
 		dev-python/numpy[${PYTHON_USEDEP}]
 	)
 	epath? (
-		$(python_gen_cond_dep 'dev-python/importlib-resources[${PYTHON_USEDEP}]' python3_9)
+		dev-python/importlib-resources[${PYTHON_USEDEP}]
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 		dev-python/zipp[${PYTHON_USEDEP}]
 	)
@@ -96,10 +116,12 @@ RDEPEND+="
 	${DEPEND}
 "
 # TODO: new packages:
-# pyink
+# dataclass-array
 # chex
 # optree
+# pyink
 # simple_parsing
+# sphinx-apitree (missing for doc)
 BDEPEND+="
 	(
 		<dev-python/flit_core-4[${PYTHON_USEDEP}]
@@ -108,6 +130,7 @@ BDEPEND+="
 	test? (
 		>=dev-python/pylint-2.6.0[${PYTHON_USEDEP}]
 		dev-python/chex[${PYTHON_USEDEP}]
+		dev-python/dataclass-array[${PYTHON_USEDEP}]
 		dev-python/optree[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-subtests[${PYTHON_USEDEP}]
@@ -133,3 +156,4 @@ src_install() {
 distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  UNTESTED

@@ -14,14 +14,5 @@
     <flag name="australis">
       Add dependencies for Australis support
     </flag>
-    <flag name="cuda">
-      Add dependencies for GPU support
-    </flag>
-    <flag name="cpu">
-      Add dependencies for CPU support
-    </flag>
-    <flag name="rocm">
-      Add dependencies for GPU support
-    </flag>
   </use>
 </pkgmetadata>
