@@ -41,7 +41,7 @@ RESTRICT="
 "
 S="${WORKDIR}/roctracer-rocm-${PV}"
 PATCHES=(
-	"${FILESDIR}/roctracer-5.3.3-flat-lib-layout.patch"
+	"${FILESDIR}/roctracer-5.6.0-flat-lib-layout.patch"
 	"${FILESDIR}/roctracer-5.3.3-do-not-install-test-files.patch"
 	"${FILESDIR}/roctracer-5.3.3-Werror.patch"
 )
