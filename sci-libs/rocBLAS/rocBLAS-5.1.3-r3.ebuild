@@ -13,6 +13,7 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1010
 	gfx1012
 	gfx1030
+	 gfx1031 # Unofficial
 )
 DOCS_BUILDER="doxygen"
 DOCS_DIR="docs"
@@ -27,7 +28,9 @@ inherit cmake docs edo flag-o-matic multiprocessing prefix llvm python-any-r1 ro
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocBLAS/archive/rocm-${PV}.tar.gz
 	-> rocm-${P}.tar.gz
+	amdgpu_targets_gfx1031? (
 https://media.githubusercontent.com/media/littlewu2508/littlewu2508.github.io/main/gentoo-distfiles/${PN}-5.0.2-Tensile-asm_full-navi22.tar.gz
+	)
 "
 
 DESCRIPTION="AMD's library for BLAS on ROCm"
@@ -78,10 +81,12 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-	cp -a \
-		"${WORKDIR}/asm_full/" \
-		"library/src/blas3/Tensile/Logic/" \
-		|| die
+	if use amdgpu_targets_gfx1031 ; then
+		cp -a \
+			"${WORKDIR}/asm_full/" \
+			"library/src/blas3/Tensile/Logic/" \
+			|| die
+	fi
 	# Fit for Gentoo FHS rule
 	sed \
 		-e "/PREFIX rocblas/d" \
