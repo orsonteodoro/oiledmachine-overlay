@@ -235,14 +235,8 @@
       Adds support for monitoring existance changes for webcam or application
       menus.
     </flag>
-    <flag name="python_targets_python3_5">
-      Compatible with this python version.
-    </flag>
-    <flag name="python_targets_python3_6">
-      Compatible with this python version.
-    </flag>
-    <flag name="python_targets_python3_7">
-      Compatible with this python version.
+    <flag name="python_targets_python3_10">
+      Compatible with this Python version.
     </flag>
     <flag name="qrencode">
       Adds support for QR code creation.
