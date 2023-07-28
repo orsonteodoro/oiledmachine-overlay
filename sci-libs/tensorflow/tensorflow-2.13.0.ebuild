@@ -392,6 +392,8 @@ gen_rocm_rdepend() {
 	local pv
 	for pv in ${HIP_SLOTS[@]} ; do
 		local s=$(ver_cut 1-2 ${pv})
+# Add if hipRAND headers not in rocRAND
+#			~sci-libs/hipRAND-${pv}:${s}
 		echo "
 		(
 			~dev-libs/rccl-${pv}:${s}
@@ -399,7 +401,6 @@ gen_rocm_rdepend() {
 			~dev-util/hip-${pv}:${s}
 			~dev-util/roctracer-${pv}:${s}
 			~sci-libs/hipBLAS-${pv}:${s}
-			~sci-libs/hipBLASLt-${pv}:${s}
 			~sci-libs/hipSOLVER-${pv}:${s}
 			~sci-libs/hipSPARSE-${pv}:${s}
 			~sci-libs/rocBLAS-${pv}:${s}
