@@ -6,7 +6,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} ) # fork ebuild and add for python2_7 support
+PYTHON_COMPAT=( python3_10 )
 inherit autotools flag-o-matic linux-info pam python-single-r1
 
 DESCRIPTION="eCryptfs userspace utilities"
