@@ -25,6 +25,7 @@ DEPEND+="
 	>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
 	>=dev-python/gymnasium-0.26.0[${PYTHON_USEDEP}]
 	atari? (
+		!=dev-python/multi-agent-ale-py-0.6*
 		>=dev-python/multi-agent-ale-py-0.1.11[${PYTHON_USEDEP}]
 		>=dev-python/pygame-${PYGAME_PV}[${PYTHON_USEDEP}]
 	)
