@@ -102,13 +102,13 @@ dev-dotnet/monodevelop
 =sys-libs/libomp-13*
 
 # Too early.  Avoid multiple instances single slot issues.
->=dev-libs/protobuf-22
->=dev-cpp/abseil-cpp-20230125
->=dev-python/protobuf-python-4.22
->=net-libs/grpc-1.53
->=dev-python/grpcio-1.53
->=dev-python/grpcio-testing-1.53
->=dev-python/grpcio-tools-1.53
+#>=dev-libs/protobuf-22
+#>=dev-cpp/abseil-cpp-20230125
+#>=dev-python/protobuf-python-4.22
+#>=net-libs/grpc-1.53
+#>=dev-python/grpcio-1.53
+#>=dev-python/grpcio-testing-1.53
+#>=dev-python/grpcio-tools-1.53
 
 # End of Life (EOL)
 <net-libs/nodejs-15
