@@ -4,8 +4,14 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} ) # Upstream tested up to 3.10
+PYTHON_COMPAT=( python3_10 ) # Upstream tested up to 3.10
+
 inherit distutils-r1
+
+SRC_URI="
+https://github.com/Farama-Foundation/AutoROM/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="A tool to automate installing Atari ROMs for the Arcade Learning \
 Environment"
@@ -21,8 +27,6 @@ REQUIRED_USE+="
 "
 DEPEND+="
 	${PYTHON_DEPS}
-	$(python_gen_any_dep 'net-libs/libtorrent-rasterbar[${PYTHON_SINGLE_USEDEP},python]')
-	$(python_gen_cond_dep 'dev-python/importlib-resources[${PYTHON_USEDEP}]' python3_9)
 	dev-python/click[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/tqdm[${PYTHON_USEDEP}]
@@ -36,10 +40,6 @@ BDEPEND+="
 		dev-python/ale-py[${PYTHON_USEDEP}]
 		dev-python/multi-agent-ale-py[${PYTHON_USEDEP}]
 	)
-"
-SRC_URI="
-https://github.com/Farama-Foundation/AutoROM/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
 "
 S="${WORKDIR}/AutoROM-${PV}"
 RESTRICT="mirror"
