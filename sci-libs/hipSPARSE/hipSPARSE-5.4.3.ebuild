@@ -11,7 +11,7 @@ inherit cmake edo rocm toolchain-funcs
 # Some test datasets are shared with rocSPARSE.
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipSPARSE/archive/rocm-${PV}.tar.gz
-	-> hipSPARSE-$(ver_cut 1-2).tar.gz
+	-> hipSPARSE-${PV}.tar.gz
 	test? (
 https://sparse.tamu.edu/MM/SNAP/amazon0312.tar.gz
 	-> rocSPARSE_amazon0312.tar.gz
@@ -59,7 +59,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSPARSE"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="test"
+IUSE="test r1"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
