@@ -5,8 +5,14 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} ) # Upstream tested up to 3.9
+PYTHON_COMPAT=( python3_10 ) # Upstream tested up to 3.7 for this release
+
 inherit distutils-r1
+
+SRC_URI="
+https://github.com/openai/box2d-py/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="A repackaged version of pybox2d"
 HOMEPAGE="
@@ -32,10 +38,6 @@ DEPEND+="
 "
 RDEPEND+="
 	${DEPEND}
-"
-SRC_URI="
-https://github.com/openai/box2d-py/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"

@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} ) # Upstream tested up to 3.9
+PYTHON_COMPAT=( python3_10 ) # Upstream tested up to 3.9
 inherit distutils-r1
 
 DESCRIPTION="Logs and progress bars manager for Python"
@@ -48,3 +48,4 @@ einfo "Running test for ${EPYTHON}"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-REVDEP:  moviepy
+# OILEDMACHINE-OVERLAY-TEST:  UNTESTED

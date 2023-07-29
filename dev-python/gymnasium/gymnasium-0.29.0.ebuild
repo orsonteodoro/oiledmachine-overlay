@@ -70,7 +70,10 @@ RDEPEND+="
 		>=dev-python/jaxlib-0.4.0[${PYTHON_USEDEP}]
 	)
 	mujoco? (
-		>=dev-python/mujoco-2.3.3[${PYTHON_USEDEP}]
+		(
+			<dev-python/mujoco-2.4.0[${PYTHON_USEDEP}]
+			>=dev-python/mujoco-2.3.3[${PYTHON_USEDEP}]
+		)
 		>=dev-python/imageio-2.14.1[${PYTHON_USEDEP}]
 	)
 	mujoco-py? (

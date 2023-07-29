@@ -5,7 +5,8 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="flit"
-PYTHON_COMPAT=( python3_{8..10} ) # Upstream only tests up to 3.9
+PYTHON_COMPAT=( python3_10 ) # Upstream only tests up to 3.9.  3.10 is an untested ebuild modificiation and may break.
+# See https://github.com/google/orbax/blob/v0.1.7/.github/workflows/build.yml for supported python
 inherit distutils-r1
 
 DESCRIPTION="Orbax is a library providing common utilities for JAX users."
@@ -19,27 +20,22 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 doc test
-python_targets_python3_9
 "
 REQUIRED_USE="
-python_targets_python3_9
 "
 DEPEND+="
-	$(python_gen_cond_dep 'dev-python/importlib-resources[${PYTHON_USEDEP}]' python3_9)
 	>=dev-python/jax-0.4.6[${PYTHON_USEDEP}]
 	>=dev-python/tensorstore-0.1.20[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/cached-property[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP}]
+	dev-python/importlib-resources[${PYTHON_USEDEP}]
+	dev-python/jaxlib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/nest_asyncio[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
-	|| (
-		dev-python/jaxlib[${PYTHON_USEDEP}]
-		dev-python/jaxlib-bin[${PYTHON_USEDEP}]
-	)
 "
 RDEPEND+="
 	${DEPEND}
@@ -84,3 +80,6 @@ src_install() {
 distutils_enable_tests "pytest"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-TEST:  UNTESTED

@@ -4,7 +4,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_10 ) # Upstream tests up to 3.10 for this release
 inherit distutils-r1
 
 DESCRIPTION="Automatic C++ library api documentation generation: breathe \
@@ -15,20 +15,15 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 REQUIRED_USE="
-	doc? (
-		python_targets_python3_9
-	)
 "
-# 3.9 is required because jinja-2 is only 3.9 compat
-
-# For test requirements, see https://github.com/svenevs/exhale/blob/v0.3.5/tox.ini
+# For test requirements, see https://github.com/svenevs/exhale/blob/v0.3.6/tox.ini
 # For requirements, see
-# https://github.com/svenevs/exhale/blob/v0.3.5/docs/requirements.txt
-# https://github.com/svenevs/exhale/blob/v0.3.5/setup.cfg#L38
+# https://github.com/svenevs/exhale/blob/v0.3.6/docs/requirements.txt
+# https://github.com/svenevs/exhale/blob/v0.3.6/setup.cfg#L38
 RDEPEND+="
 	(
 		<dev-python/sphinx-5[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-4.3[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-4.3.1[${PYTHON_USEDEP}]
 	)
 	>=dev-python/breathe-4.32[${PYTHON_USEDEP}]
 	>=dev-python/docutils-0.12[${PYTHON_USEDEP}]
@@ -41,9 +36,10 @@ DEPEND+="
 "
 BDEPEND+="
 	doc? (
+		<dev-python/jinja-3.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-4.3.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinx_rtd_theme-1[${PYTHON_USEDEP}]
 		dev-python/sphinx-issues[${PYTHON_USEDEP}]
-		<dev-python/jinja-3.1[${PYTHON_USEDEP}]
 	)
 	test? (
 		>=dev-python/pytest-raises-0.10[${PYTHON_USEDEP}]
