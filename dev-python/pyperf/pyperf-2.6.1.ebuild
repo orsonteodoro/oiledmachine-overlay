@@ -5,8 +5,14 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{10..11} )
+
 inherit distutils-r1
+
+SRC_URI="
+https://github.com/psf/pyperf/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION=""
 HOMEPAGE="
@@ -28,18 +34,15 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	dev-python/flake8[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-61[${PYTHON_USEDEP}]
 	doc? (
 		dev-python/alabaster[${PYTHON_USEDEP}]
 		dev-python/sphinx[${PYTHON_USEDEP}]
 	)
 	test? (
+		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/tox[${PYTHON_USEDEP}]
 	)
-"
-SRC_URI="
-https://github.com/psf/pyperf/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
