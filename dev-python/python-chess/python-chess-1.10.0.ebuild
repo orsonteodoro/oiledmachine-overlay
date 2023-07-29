@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{10..11} )
 inherit distutils-r1
 
 DESCRIPTION="A chess library for Python, with move generation and validation, \
@@ -30,19 +30,21 @@ REQUIRED_USE+="
 		stockfish
 	)
 "
-DEPEND+="
-"
 RDEPEND+="
-	${DEPEND}
+"
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	doc? (
 		dev-python/sphinx[${PYTHON_USEDEP}]
+		dev-python/sphinxcontrib-jquery[${PYTHON_USEDEP}]
 	)
 	test? (
-		games-board/stockfish
 		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/tox[${PYTHON_USEDEP}]
+		games-board/crafty
+		games-board/stockfish
 	)
 "
 PDEPEND+="
