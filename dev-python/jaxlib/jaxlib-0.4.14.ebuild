@@ -93,12 +93,13 @@ gen_rocm_depends() {
 
 		# Indirect dependencies
 		echo "
-			~dev-util/rocm-cmake-${pv}:${s}
 			~dev-libs/rocm-comgr-${pv}:${s}
 			~dev-libs/rocr-runtime-${pv}:${s}
 			~dev-libs/roct-thunk-interface-${pv}:${s}
+			~dev-util/rocm-cmake-${pv}:${s}
 			~dev-util/rocm-smi-${pv}:${s}
 			~dev-util/rocminfo-${pv}:${s}
+			~dev-util/Tensile-${pv}:${s}
 			~sci-libs/rocBLAS-${pv}:${s}
 		"
 	done

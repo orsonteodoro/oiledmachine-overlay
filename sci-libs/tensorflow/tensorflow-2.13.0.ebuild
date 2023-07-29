@@ -391,9 +391,10 @@ HIP_SLOTS=(
 gen_rocm_rdepend() {
 	local pv
 	for pv in ${HIP_SLOTS[@]} ; do
-		local s=$(ver_cut 1-2 ${pv})
+		local s="0/"$(ver_cut 1-2 ${pv})
 # Add if hipRAND headers not in rocRAND
 #			~sci-libs/hipRAND-${pv}:${s}
+	# Check both the direct top and indirect bottom dependencies
 		echo "
 		(
 			~dev-libs/rccl-${pv}:${s}
@@ -408,6 +409,13 @@ gen_rocm_rdepend() {
 			~sci-libs/rocRAND-${pv}:${s}
 			~sci-libs/rocSOLVER-${pv}:${s}
 			~sci-libs/miopen-${pv}:${s}
+
+			~dev-libs/rocm-comgr-${pv}:${s}
+			~dev-libs/rocr-runtime-${pv}:${s}
+			~dev-util/rocm-cmake-${pv}:${s}
+			~dev-util/rocm-smi-${pv}:${s}
+			~dev-util/rocminfo-${pv}:${s}
+			~dev-util/Tensile-${pv}:${s}
 		)
 		"
 	done
