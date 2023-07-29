@@ -18,7 +18,7 @@ PYTHON_COMPAT=( python3_{9..11} )
 LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.4.3/llvm/CMakeLists.txt
 ROCM_VERSION="${PV}"
 
-inherit cmake edo llvm python-any-r1 toolchain-funcs rocm
+inherit cmake edo flag-o-matic llvm python-any-r1 toolchain-funcs rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocSPARSE/archive/rocm-${PV}.tar.gz
@@ -192,6 +192,11 @@ src_prepare() {
 src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
+
+# Fix for
+# local memory (403200) exceeds limit (65536) in function '_Z10bsr_gatherILj4ELj64ELj2EifEv20rocsparse_direction_T2_PKS1_PKT3_PS4_S1_'
+	replace-flags '-O0' '-O1'
+
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
