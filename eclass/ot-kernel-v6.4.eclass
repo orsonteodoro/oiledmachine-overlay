@@ -56,6 +56,12 @@ PATCH_TRESOR_V="3.18.5"
 # When using that commit list generator, it may miss some commits, so verify all
 # the commits in order.
 
+#C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
+C2TCP_VER="2.2"
+C2TCP_EXTRA="0521"
+C2TCP_KV="4.13.1"
+C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
+
 ZEN_KV="6.4.0"
 PATCH_ZENSAUCE_COMMITS=(
 0f3b706e601260390c8885dff19292944e41c3e3
