@@ -75,7 +75,7 @@ ROCM_SLOTS=(
 )
 gen_rocm_depends() {
 	local pv
-	for pv in ${ROCM_SLOTS} ; do
+	for pv in ${ROCM_SLOTS[@]} ; do
 		local s="0/"$(ver_cut 1-2 ${pv})
 		# Direct dependencies
 		echo "
