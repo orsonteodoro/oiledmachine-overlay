@@ -17,5 +17,8 @@
     <flag name="cuda">
       Add dependencies for GPU support
     </flag>
+    <flag name="rocm">
+      Add dependencies for GPU support
+    </flag>
   </use>
 </pkgmetadata>
