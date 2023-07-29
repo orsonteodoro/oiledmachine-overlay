@@ -79,8 +79,8 @@ BDEPEND+="
 		dev-python/scikit-learn[${PYTHON_USEDEP}]
 		dev-python/sphinx_design[${PYTHON_USEDEP}]
 		dev-python/sphinx-book-theme[${PYTHON_USEDEP}]
-		dev-python/tensorflow[${PYTHON_USEDEP}]
 		dev-python/tensorflow_datasets[${PYTHON_USEDEP}]
+		sci-libs/tensorflow[${PYTHON_USEDEP}]
 		sci-libs/transformers[${PYTHON_USEDEP}]
 	)
 	test? (
@@ -102,9 +102,9 @@ BDEPEND+="
 		dev-python/pytorch[${PYTHON_USEDEP}]
 		dev-python/pytype[${PYTHON_USEDEP}]
 		dev-python/sentencepiece[${PYTHON_USEDEP}]
-		dev-python/tensorflow[${PYTHON_USEDEP},python]
 		dev-python/tensorflow_datasets[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP},python]
+		sci-libs/tensorflow[${PYTHON_USEDEP},python]
 	)
 "
 S="${WORKDIR}/${P}"
