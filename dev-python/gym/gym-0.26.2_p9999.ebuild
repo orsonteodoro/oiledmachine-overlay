@@ -67,7 +67,10 @@ DEPEND+="
 		>=dev-python/box2d-py-2.3.5[${PYTHON_USEDEP}]
 	)
 	mujoco? (
-		>=dev-python/mujoco-2.2.0[${PYTHON_USEDEP}]
+		(
+			<dev-python/mujoco-2.3.0[${PYTHON_USEDEP}]
+			>=dev-python/mujoco-2.2.0[${PYTHON_USEDEP}]
+		)
 		>=dev-python/imageio-2.14.1[${PYTHON_USEDEP}]
 	)
 	mujoco-py? (

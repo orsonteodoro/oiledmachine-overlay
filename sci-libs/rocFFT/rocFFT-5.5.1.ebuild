@@ -19,7 +19,7 @@ LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{9..10} )
 ROCM_VERSION="${PV}"
 
-inherit cmake check-reqs edo llvm multiprocessing python-r1 rocm
+inherit cmake check-reqs edo flag-o-matic llvm multiprocessing python-r1 rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocFFT/archive/rocm-${PV}.tar.gz
@@ -165,6 +165,10 @@ src_prepare() {
 src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
+
+	# Fix errror for
+# local memory (23068672) exceeds limit (65536) in function '_Z17transpose_kernel2I15HIP_vector_typeIfLj2EE6planarIS1_E11interleavedIS1_ELm64ELm16ELb1ELi0ELi1ELb0ELb0ELb0EL12CallbackType1EEvT0_T1_PKT_PmSC_SC_PvSD_jSD_SD_'
+	replace-flags '-O0' '-O1'
 
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
