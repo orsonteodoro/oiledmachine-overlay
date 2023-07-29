@@ -1,0 +1,88 @@
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+LLVM_MAX_SLOT=15
+ROCM_VERSION="${PV}"
+
+inherit cmake edo rocm toolchain-funcs
+
+# Some test datasets are shared with rocSPARSE.
+SRC_URI="
+https://github.com/ROCmSoftwarePlatform/hipSOLVER/archive/refs/tags/rocm-${PV}.tar.gz
+	-> hipSOLVER-${PV}.tar.gz
+"
+
+DESCRIPTION="ROCm SOLVER marshalling library"
+HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSOLVER"
+LICENSE="MIT"
+KEYWORDS="~amd64"
+SLOT="0/$(ver_cut 1-2)"
+IUSE="test"
+REQUIRED_USE="
+	${ROCM_REQUIRED_USE}
+"
+RESTRICT="
+	!test? (
+		test
+	)
+"
+RDEPEND="
+	~dev-util/hip-${PV}:${SLOT}
+	~sci-libs/rocBLAS-${PV}:${SLOT}
+	~sci-libs/rocSOLVER-${PV}:${SLOT}
+	virtual/blas
+
+	~dev-util/rocm-smi-${PV}:${SLOT}
+"
+DEPEND="
+	${RDEPEND}
+"
+BDEPEND="
+	>=dev-util/cmake-3.7
+	~dev-util/rocm-cmake-${PV}:${SLOT}
+	test? (
+		dev-cpp/gtest
+	)
+"
+S="${WORKDIR}/hipSOLVER-rocm-${PV}"
+PATCHES=(
+)
+
+src_prepare() {
+	sed \
+		-e "s/PREFIX hipsolver//" \
+		-e "/<INSTALL_INTERFACE/s,include,include/hipsolver," \
+		-e "s:rocm_install_symlink_subdir( hipsolver ):#rocm_install_symlink_subdir( hipsolver ):" \
+		-i \
+		library/src/CMakeLists.txt \
+		|| die
+
+	cmake_src_prepare
+
+	# Fixed the install path.
+	sed -i \
+		-e "s.set(CMAKE_INSTALL_LIBDIR.#set(CMAKE_INSTALL_LIBDIR." \
+		CMakeLists.txt \
+		|| die
+}
+
+src_configure() {
+	local mycmakeargs=(
+		-DBUILD_CLIENTS_SAMPLES=OFF
+		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
+		-DCMAKE_INSTALL_INCLUDEDIR=include/hipsolver
+	)
+	cmake_src_configure
+}
+
+src_test() {
+	check_amdgpu
+	cd "${BUILD_DIR}/clients/staging" || die
+	edob ./${PN,,}-test
+}
+
+# OILEDMACHINE-OVERLAY-META:  created-ebuild
+# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
