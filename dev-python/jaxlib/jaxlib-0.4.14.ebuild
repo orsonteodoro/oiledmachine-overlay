@@ -7,13 +7,27 @@ EAPI=8
 MAINTAINER_MODE=1
 MY_PN="jax"
 
+AMDGPU_TARGETS_OVERRIDE=(
+	gfx900
+	gfx906
+	gfx908
+	gfx90a
+	gfx1030
+)
 DISTUTILS_USE_PEP517="standalone"
 GCC_SLOTS=( 12 11 10 9 )
-LLVM_MAX_SLOT=15
-LLVM_SLOTS=( 15 14 13 12 11 10 )
+LLVM_MAX_SLOT=16
+LLVM_SLOTS=( 16 ) # Limited by rocm
 PYTHON_COMPAT=( python3_{10..11} )
+CUDA_TARGETS=(
+	sm_52
+	sm_60
+	sm_70
+	sm_80
+	compute_90
+)
 
-inherit bazel distutils-r1 flag-o-matic git-r3 toolchain-funcs
+inherit bazel cuda distutils-r1 flag-o-matic git-r3 rocm toolchain-funcs
 
 DESCRIPTION="Support library for JAX"
 HOMEPAGE="
@@ -30,9 +44,21 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" clang custom-optimization-level cpu cuda hardened portable rocm r1"
+IUSE+="
+${CUDA_TARGETS[@]/#/cuda_targets_}
+clang custom-optimization-level cpu cuda hardened portable rocm
+r1
+"
 # We don't add tpu because licensing issue with libtpu_nightly.
 REQUIRED_USE+="
+	rocm? (
+		${ROCM_REQUIRED_USE}
+	)
+	cuda? (
+		|| (
+			${CUDA_TARGETS[@]/#/cuda_targets_}
+		)
+	)
 	|| (
 		cpu
 		cuda
@@ -43,7 +69,8 @@ REQUIRED_USE+="
 # hipsolver
 
 ROCM_SLOTS=(
-	"5.3.3"
+# The container uses 5.5.0
+	"5.5.1" # For llvm 16
 )
 gen_rocm_depends() {
 	local pv
@@ -102,9 +129,10 @@ RDEPEND+="
 	>=sys-libs/zlib-1.2.13
 	cuda? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*
+			=dev-util/nvidia-cuda-toolkit-11.8*
 			=dev-util/nvidia-cuda-toolkit-12*
 		)
+		=dev-libs/cudnn-8*
 	)
 	rocm? (
 		$(gen_rocm_depends)
@@ -136,7 +164,7 @@ gen_llvm_bdepend() {
 	done
 }
 BDEPEND+="
-	dev-util/bazel
+	>=dev-util/bazel-6.1.2
 	clang? (
 		|| (
 			$(gen_llvm_bdepend)
@@ -572,6 +600,11 @@ einfo "Preventing stall.  Removing -Os."
 	fi
 }
 
+python_prepare_all() {
+	cuda_src_prepare
+	distutils-r1_python_prepare_all
+}
+
 python_configure() {
 	load_env
 	local args=()
@@ -639,38 +672,58 @@ python_configure() {
 
 	# The default is release which forces avx by default.
 	if is-flagq '-march=native' ; then
-		args=( --target_cpu_features=native )
+		args+=(
+			--target_cpu_features=native
+		)
 	elif is-flagq '-march=generic' ; then
-		args=( --target_cpu_features=default )
+		args+=(
+			--target_cpu_features=default
+		)
 	elif ! [[ "${CFLAGS}" =~ "-march=" ]] ; then
-		args=( --target_cpu_features=default )
+		args+=(
+			--target_cpu_features=default
+		)
 	else
 ewarn
 ewarn "Downgrading -march=* to generic."
 ewarn "Use -march=native to optimize."
 ewarn
-		args=( --target_cpu_features=default )
+		args+=(
+			--target_cpu_features=default
+		)
 	fi
 
-	use cuda && args=( --enable_cuda )
+	if use cuda ; then
+	# See https://jax.readthedocs.io/en/latest/developer.html#additional-notes-for-building-jaxlib-from-source-on-windows
+		cuda_pv=$(best_version "dev-util/nvidia-cuda-toolkit" \
+			| sed -e "s|dev-util/nvidia-cuda-toolkit-||g")
+		cuda_pv=$(ver_cut 1-2 "${cuda_pv}")
+		cudnn_pv=$(best_version "dev-libs/cudnn" \
+			| sed -e "s|dev-libs/cudnn-||g")
+		cudnn_pv=$(ver_cut 1-3 "${cuda_pv}")
+
+		args+=(
+			--enable_cuda
+			--cuda_path="${ESYSROOT}/opt/cuda"
+			--cudnn_path="${ESYSROOT}/opt/cuda"
+			--cuda_version="${cuda_pv}"
+			--cudnn_version="${cudnn_pv}"
+		)
+	fi
 	if use rocm ; then
+		export ROCM_PATH="/usr"
 		local rocm_pv=$(best_version "sci-libs/rocFFT" \
 			| sed -e "s|sci-libs/rocFFT-||")
-		ewarn "You may need to fork ebuild to complete implementation for rocm"
 	# See https://jax.readthedocs.io/en/latest/developer.html#additional-notes-for-building-a-rocm-jaxlib-for-amd-gpus
-		${EPYTHON} build/build.py \
+		args+=(
 			--enable_rocm \
-			--rocm_path=/usr \
-			--bazel_options=--override_repository=xla=/path/to/xla-upstream \
-			--configure_only \
-			${args[@]} \
-			|| die
-	else
-		${EPYTHON} build/build.py \
-			--configure_only \
-			${args[@]} \
-			|| die
+			--rocm_path="${ESYSROOT}/usr" \
+		)
 	fi
+	${EPYTHON} build/build.py \
+		--configure_only \
+		${args[@]} \
+		|| die
 
 	# Merge
 	cat ".jax_configure.bazelrc" > "${T}/bazelrc_merged" || die
