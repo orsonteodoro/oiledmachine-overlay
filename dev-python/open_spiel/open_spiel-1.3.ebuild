@@ -22,7 +22,6 @@ IUSE+=" doc -eigen -go -jax -julia -libnop -python-misc -pytorch -rust -tensorfl
 # TODO:  package
 # clu
 # distrax
-# dm-haiku
 # ecos
 # flax
 # rlax

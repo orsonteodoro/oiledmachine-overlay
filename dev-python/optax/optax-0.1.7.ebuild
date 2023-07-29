@@ -52,10 +52,9 @@ DEPEND+="
 	${RDEPEND}
 "
 # TODO: package
-# dm-haiku
-# sphinxcontrib-katex
-# myst_nb
 # dp-accounting
+# myst_nb
+# sphinxcontrib-katex
 BDEPEND+="
 	app-arch/zip
 	doc? (
