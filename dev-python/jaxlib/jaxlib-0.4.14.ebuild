@@ -16,6 +16,7 @@ AMDGPU_TARGETS_OVERRIDE=(
 )
 DISTUTILS_USE_PEP517="standalone"
 GCC_SLOTS=( 12 11 10 9 )
+JAVA_SLOT="11"
 LLVM_MAX_SLOT=16
 LLVM_SLOTS=( 16 ) # Limited by rocm
 PYTHON_COMPAT=( python3_{10..11} )
@@ -27,7 +28,8 @@ CUDA_TARGETS=(
 	compute_90
 )
 
-inherit bazel cuda distutils-r1 flag-o-matic git-r3 rocm toolchain-funcs
+inherit bazel cuda distutils-r1 flag-o-matic git-r3 java-pkg-opt-2 rocm \
+toolchain-funcs
 
 DESCRIPTION="Support library for JAX"
 HOMEPAGE="
@@ -102,24 +104,10 @@ gen_rocm_depends() {
 		"
 	done
 }
-JAVA_SLOT="11"
-JDK_DEPEND="
-	|| (
-		dev-java/openjdk-bin:${JAVA_SLOT}
-		dev-java/openjdk:${JAVA_SLOT}
-	)
-"
-JRE_DEPEND="
-	|| (
-		${JDK_DEPEND}
-		dev-java/openjdk-jre-bin:${JAVA_SLOT}
-	)
-"
 #	>=dev-cpp/abseil-cpp-20220623:0/20220623
 #	dev-libs/protobuf:=
 RDEPEND+="
 	!dev-python/jaxlib-bin
-	${JRE_DEPEND}
 	>=app-arch/snappy-1.1.10
 	>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
 	>=dev-libs/double-conversion-3.2.0
@@ -127,6 +115,7 @@ RDEPEND+="
 	>=net-libs/grpc-1.27_p9999:=
 	>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
 	>=sys-libs/zlib-1.2.13
+	virtual/jre:${JAVA_SLOT}
 	cuda? (
 		|| (
 			=dev-util/nvidia-cuda-toolkit-11.8*
@@ -140,7 +129,7 @@ RDEPEND+="
 "
 DEPEND+="
 	${RDEPEND}
-	${JDK_DEPEND}
+	virtual/jdk:${JAVA_SLOT}
 "
 gen_llvm_bdepend() {
 	for s in ${LLVM_SLOTS[@]} ; do
@@ -227,46 +216,6 @@ RESTRICT="mirror"
 DOCS=( CHANGELOG.md CITATION.bib README.md )
 
 distutils_enable_tests "pytest"
-
-setup_openjdk() {
-	local jdk_bin_basepath
-	local jdk_basepath
-
-	if find \
-		/usr/$(get_libdir)/openjdk-${JAVA_SLOT}*/ \
-		-maxdepth 1 \
-		-type d \
-		2>/dev/null \
-		1>/dev/null
-	then
-		export JAVA_HOME=$(find \
-			/usr/$(get_libdir)/openjdk-${JAVA_SLOT}*/ \
-			-maxdepth 1 \
-			-type d \
-			| sort -V \
-			| head -n 1)
-		export PATH="${JAVA_HOME}/bin:${PATH}"
-	elif find \
-		/opt/openjdk-bin-${JAVA_SLOT}*/ \
-		-maxdepth 1 \
-		-type d \
-		2>/dev/null \
-		1>/dev/null
-	then
-		export JAVA_HOME=$(find \
-			/opt/openjdk-bin-${JAVA_SLOT}*/ \
-			-maxdepth 1 \
-			-type d \
-			| sort -V \
-			| head -n 1)
-		export PATH="${JAVA_HOME}/bin:${PATH}"
-	else
-eerror
-eerror "dev-java/openjdk:${JAVA_SLOT} or dev-java/openjdk-bin:${JAVA_SLOT} must be installed"
-eerror
-		die
-	fi
-}
 
 check_network_sandbox_permissions() {
 	if has network-sandbox $FEATURES ; then
@@ -523,7 +472,9 @@ eerror
 		die
 	fi
 
-	setup_openjdk
+	java-pkg-opt-2_pkg_setup
+	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
+
 	check_network_sandbox_permissions
 }
 
