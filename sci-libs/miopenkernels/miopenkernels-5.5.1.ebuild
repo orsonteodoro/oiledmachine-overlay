@@ -283,4 +283,4 @@ einfo "Compressing kernels"
 	popd
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  in-development
+# OILEDMACHINE-OVERLAY-STATUS:  finished, builds-without-problems
