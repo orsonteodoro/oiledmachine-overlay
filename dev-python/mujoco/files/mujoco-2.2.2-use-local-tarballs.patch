@@ -1,0 +1,353 @@
+diff -urp mujoco-2.2.2.orig/cmake/FindOrFetch.cmake mujoco-2.2.2/cmake/FindOrFetch.cmake
+--- mujoco-2.2.2.orig/cmake/FindOrFetch.cmake	2022-09-07 05:17:54.000000000 -0700
++++ mujoco-2.2.2/cmake/FindOrFetch.cmake	2023-07-29 09:15:09.390694356 -0700
+@@ -23,6 +23,7 @@
+ #               [LIBRARY_NAME [name]]
+ #               [GIT_REPO [repo]]
+ #               [GIT_TAG [tag]]
++#               [TARBALL_PATH [path]]
+ #               [PATCH_COMMAND [cmd] [args]]
+ #               [TARGETS [targets]]
+ #               [EXCLUDE_FROM_ALL])
+@@ -56,6 +57,8 @@
+ # https://cmake.org/cmake/help/latest/module/FetchContent.html#variables to
+ # override this macro behaviour.
+ 
++# oteodoro:  changes to use local tarballs to avoid sandbox wipe re-downloads
++
+ if(COMMAND FindOrFetch)
+   return()
+ endif()
+@@ -73,6 +76,7 @@ macro(FindOrFetch)
+       LIBRARY_NAME
+       GIT_REPO
+       GIT_TAG
++      TARBALL_PATH
+   )
+   set(multi_value_args PATCH_COMMAND TARGETS)
+   cmake_parse_arguments(
+@@ -112,13 +116,21 @@ macro(FindOrFetch)
+       message(CHECK_START
+               "mujoco::FindOrFetch: Using FetchContent to retrieve `${_ARGS_LIBRARY_NAME}`"
+       )
+-      FetchContent_Declare(
+-        ${_ARGS_LIBRARY_NAME}
+-        GIT_REPOSITORY ${_ARGS_GIT_REPO}
+-        GIT_TAG ${_ARGS_GIT_TAG}
+-        GIT_SHALLOW FALSE
+-        PATCH_COMMAND ${_ARGS_PATCH_COMMAND}
+-      )
++      if(USE_LOCAL_TARBALL)
++        FetchContent_Declare(
++          ${_ARGS_LIBRARY_NAME}
++          URL ${_ARGS_TARBALL_PATH}
++          PATCH_COMMAND ${_ARGS_PATCH_COMMAND}
++        )
++      else()
++        FetchContent_Declare(
++          ${_ARGS_LIBRARY_NAME}
++          GIT_REPOSITORY ${_ARGS_GIT_REPO}
++          GIT_TAG ${_ARGS_GIT_TAG}
++          GIT_SHALLOW FALSE
++          PATCH_COMMAND ${_ARGS_PATCH_COMMAND}
++        )
++      endif()
+       if(${_ARGS_EXCLUDE_FROM_ALL})
+         FetchContent_GetProperties(${_ARGS_LIBRARY_NAME})
+         if(NOT ${${_ARGS_LIBRARY_NAME}_POPULATED})
+diff -urp mujoco-2.2.2.orig/cmake/MujocoDependencies.cmake mujoco-2.2.2/cmake/MujocoDependencies.cmake
+--- mujoco-2.2.2.orig/cmake/MujocoDependencies.cmake	2022-09-07 05:17:54.000000000 -0700
++++ mujoco-2.2.2/cmake/MujocoDependencies.cmake	2023-07-29 09:15:09.390694356 -0700
+@@ -18,6 +18,10 @@
+ # static libraries). The ccd CMakeLists.txt doesn't expose an option to build a static ccd library,
+ # unless BUILD_SHARED_LIBS is set.
+ 
++# oteodoro:  changes for prefetched local tarball to avoid sandbox wipe re-downloads.
++
++option(USE_LOCAL_TARBALL "Use the local tarballs instead of remote repo" ON)
++
+ set(MUJOCO_DEP_VERSION_lodepng
+     b4ed2cd7ecf61d29076169b49199371456d4f90b
+     CACHE STRING "Version of `lodepng` to be fetched."
+@@ -80,11 +84,18 @@ set(BUILD_SHARED_LIBS
+ )
+ 
+ if(NOT TARGET lodepng)
+-  FetchContent_Declare(
+-    lodepng
+-    GIT_REPOSITORY https://github.com/lvandeve/lodepng.git
+-    GIT_TAG ${MUJOCO_DEP_VERSION_lodepng}
+-  )
++  if(USE_LOCAL_TARBALL)
++    FetchContent_Declare(
++      lodepng
++      URL $ENV{DISTDIR}/lodepng-${MUJOCO_DEP_VERSION_lodepng}.tar.gz
++    )
++  else()
++    FetchContent_Declare(
++      lodepng
++      GIT_REPOSITORY https://github.com/lvandeve/lodepng.git
++      GIT_TAG ${MUJOCO_DEP_VERSION_lodepng}
++    )
++  endif()
+ 
+   FetchContent_GetProperties(lodepng)
+   if(NOT lodepng_POPULATED)
+@@ -115,6 +126,8 @@ findorfetch(
+   https://github.com/qhull/qhull.git
+   GIT_TAG
+   ${MUJOCO_DEP_VERSION_qhull}
++  TARBALL_PATH
++  $ENV{DISTDIR}/qhull-${MUJOCO_DEP_VERSION_qhull}.tar.gz
+   TARGETS
+   qhull
+   # TODO(fraromano) Remove when https://github.com/qhull/qhull/pull/112 is merged.
+@@ -150,6 +163,8 @@ findorfetch(
+   https://github.com/leethomason/tinyxml2.git
+   GIT_TAG
+   ${MUJOCO_DEP_VERSION_tinyxml2}
++  TARBALL_PATH
++  $ENV{DISTDIR}/tinyxml2-${MUJOCO_DEP_VERSION_tinyxml2}.tar.gz
+   TARGETS
+   tinyxml2
+   EXCLUDE_FROM_ALL
+@@ -168,6 +183,8 @@ findorfetch(
+   https://github.com/tinyobjloader/tinyobjloader.git
+   GIT_TAG
+   ${MUJOCO_DEP_VERSION_tinyobjloader}
++  TARBALL_PATH
++  $ENV{DISTDIR}/tinyobjloader-${MUJOCO_DEP_VERSION_tinyobjloader}.tar.gz
+   TARGETS
+   tinyobjloader
+   EXCLUDE_FROM_ALL
+@@ -186,6 +203,8 @@ findorfetch(
+   https://github.com/danfis/libccd.git
+   GIT_TAG
+   ${MUJOCO_DEP_VERSION_ccd}
++  TARBALL_PATH
++  $ENV{DISTDIR}/libccd-${MUJOCO_DEP_VERSION_ccd}.tar.gz
+   TARGETS
+   ccd
+   EXCLUDE_FROM_ALL
+@@ -226,6 +245,8 @@ if(MUJOCO_BUILD_TESTS)
+     https://github.com/abseil/abseil-cpp.git
+     GIT_TAG
+     ${MUJOCO_DEP_VERSION_abseil}
++    TARBALL_PATH
++    $ENV{DISTDIR}/abseil-cpp-${MUJOCO_DEP_VERSION_abseil}.tar.gz
+     TARGETS
+     absl::core_headers
+     EXCLUDE_FROM_ALL
+@@ -253,6 +274,8 @@ if(MUJOCO_BUILD_TESTS)
+     https://github.com/google/googletest.git
+     GIT_TAG
+     ${MUJOCO_DEP_VERSION_gtest}
++    TARBALL_PATH
++    $ENV{DISTDIR}/googletest-${MUJOCO_DEP_VERSION_gtest}.tar.gz
+     TARGETS
+     gtest
+     gmock
+@@ -287,6 +310,8 @@ if(MUJOCO_BUILD_TESTS)
+     https://github.com/google/benchmark.git
+     GIT_TAG
+     ${MUJOCO_DEP_VERSION_benchmark}
++    TARBALL_PATH
++    $ENV{DISTDIR}/benchmark-${MUJOCO_DEP_VERSION_benchmark}.tar.gz
+     TARGETS
+     benchmark::benchmark
+     benchmark::benchmark_main
+@@ -301,11 +326,18 @@ if(MUJOCO_TEST_PYTHON_UTIL)
+     # Support new IN_LIST if() operator.
+     set(CMAKE_POLICY_DEFAULT_CMP0057 NEW)
+ 
+-    FetchContent_Declare(
+-      Eigen3
+-      GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+-      GIT_TAG ${MUJOCO_DEP_VERSION_Eigen3}
+-    )
++    if(USE_LOCAL_TARBALL)
++      FetchContent_Declare(
++        Eigen3
++        URL $ENV{DISTDIR}/eigen-${MUJOCO_DEP_VERSION_Eigen3}.tar.gz
++      )
++    else()
++      FetchContent_Declare(
++        Eigen3
++        GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
++        GIT_TAG ${MUJOCO_DEP_VERSION_Eigen3}
++      )
++    endif()
+ 
+     FetchContent_GetProperties(Eigen3)
+     if(NOT Eigen3_POPULATED)
+Only in mujoco-2.2.2/cmake: MujocoDependencies.cmake.orig
+diff -urp mujoco-2.2.2.orig/python/mujoco/CMakeLists.txt mujoco-2.2.2/python/mujoco/CMakeLists.txt
+--- mujoco-2.2.2.orig/python/mujoco/CMakeLists.txt	2022-09-07 05:17:54.000000000 -0700
++++ mujoco-2.2.2/python/mujoco/CMakeLists.txt	2023-07-29 09:17:43.962698382 -0700
+@@ -12,9 +12,28 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
++# oteodoro:  changes for prefetched local tarball to avoid sandbox wipe re-downloads.
++
++option(USE_LOCAL_TARBALL "Use the local tarballs instead of remote repo" ON)
++
++set(MUJOCO_DEP_VERSION_abseil
++    8c0b94e793a66495e0b1f34a5eb26bd7dc672db0
++    CACHE STRING "Version of `abseil` to be fetched."
++)
++set(MUJOCO_DEP_VERSION_eigen
++    34780d8bd13d0af0cf17a22789ef286e8512594d
++    CACHE STRING "Version of `eigen` to be fetched."
++)
++set(MUJOCO_DEP_VERSION_pybind11
++    6df86934c258d8cd99acf192f6d3f4d1289b5d68
++    CACHE STRING "Version of `pybind11` to be fetched."
++)
++
+ project(mujoco_python)
+ cmake_minimum_required(VERSION 3.15)
+ 
++option(USE_LOCAL_TARBALL "Use the local tarballs instead of remote repo" ON)
++
+ # Support new IN_LIST if() operator.
+ set(CMAKE_POLICY_DEFAULT_CMP0057 NEW)
+ # INTERPROCEDURAL_OPTIMIZATION is enforced when enabled.
+@@ -128,6 +147,8 @@ findorfetch(
+   https://github.com/abseil/abseil-cpp
+   GIT_TAG
+   8c0b94e793a66495e0b1f34a5eb26bd7dc672db0 # LTS 20220623.1
++  TARBALL_PATH
++  $ENV{DISTDIR}/abseil-${MUJOCO_DEP_VERSION_abseil}.tar.gz
+   TARGETS
+   ${MUJOCO_PYTHON_ABSL_TARGETS}
+   EXCLUDE_FROM_ALL
+@@ -160,7 +181,9 @@ findorfetch(
+   GIT_REPO
+   https://gitlab.com/libeigen/eigen
+   GIT_TAG
+-  34780d8bd13d0af0cf17a22789ef286e8512594d
++  ${MUJOCO_DEP_VERSION_eigen}
++  TARBALL_PATH
++  $ENV{DISTDIR}/eigen-${MUJOCO_DEP_VERSION_eigen}.tar.gz
+   TARGETS
+   Eigen3::Eigen
+   EXCLUDE_FROM_ALL
+@@ -177,7 +200,9 @@ findorfetch(
+   GIT_REPO
+   https://github.com/pybind/pybind11
+   GIT_TAG
+-  6df86934c258d8cd99acf192f6d3f4d1289b5d68
++  ${MUJOCO_DEP_VERSION_pybind11}
++  TARBALL_PATH
++  $ENV{DISTDIR}/pybind11-${MUJOCO_DEP_VERSION_pybind11}.tar.gz
+   TARGETS
+   pybind11::pybind11_headers
+   EXCLUDE_FROM_ALL
+Only in mujoco-2.2.2/python/mujoco: CMakeLists.txt.orig
+Only in mujoco-2.2.2/python/mujoco: CMakeLists.txt.rej
+diff -urp mujoco-2.2.2.orig/sample/cmake/FindOrFetch.cmake mujoco-2.2.2/sample/cmake/FindOrFetch.cmake
+--- mujoco-2.2.2.orig/sample/cmake/FindOrFetch.cmake	2022-09-07 05:17:54.000000000 -0700
++++ mujoco-2.2.2/sample/cmake/FindOrFetch.cmake	2023-07-29 09:15:09.390694356 -0700
+@@ -23,6 +23,7 @@
+ #               [LIBRARY_NAME [name]]
+ #               [GIT_REPO [repo]]
+ #               [GIT_TAG [tag]]
++#               [TARBALL_PATH [path]]
+ #               [PATCH_COMMAND [cmd] [args]]
+ #               [TARGETS [targets]]
+ #               [EXCLUDE_FROM_ALL])
+@@ -56,6 +57,8 @@
+ # https://cmake.org/cmake/help/latest/module/FetchContent.html#variables to
+ # override this macro behaviour.
+ 
++# oteodoro:  changes to use local tarballs to avoid sandbox wipe re-downloads
++
+ if(COMMAND FindOrFetch)
+   return()
+ endif()
+@@ -73,6 +76,7 @@ macro(FindOrFetch)
+       LIBRARY_NAME
+       GIT_REPO
+       GIT_TAG
++      TARBALL_PATH
+   )
+   set(multi_value_args PATCH_COMMAND TARGETS)
+   cmake_parse_arguments(
+@@ -112,13 +116,21 @@ macro(FindOrFetch)
+       message(CHECK_START
+               "mujoco::FindOrFetch: Using FetchContent to retrieve `${_ARGS_LIBRARY_NAME}`"
+       )
+-      FetchContent_Declare(
+-        ${_ARGS_LIBRARY_NAME}
+-        GIT_REPOSITORY ${_ARGS_GIT_REPO}
+-        GIT_TAG ${_ARGS_GIT_TAG}
+-        GIT_SHALLOW FALSE
+-        PATCH_COMMAND ${_ARGS_PATCH_COMMAND}
+-      )
++      if(USE_LOCAL_TARBALL)
++        FetchContent_Declare(
++          ${_ARGS_LIBRARY_NAME}
++          URL ${_ARGS_TARBALL_PATH}
++          PATCH_COMMAND ${_ARGS_PATCH_COMMAND}
++        )
++      else()
++        FetchContent_Declare(
++          ${_ARGS_LIBRARY_NAME}
++          GIT_REPOSITORY ${_ARGS_GIT_REPO}
++          GIT_TAG ${_ARGS_GIT_TAG}
++          GIT_SHALLOW FALSE
++          PATCH_COMMAND ${_ARGS_PATCH_COMMAND}
++        )
++      endif()
+       if(${_ARGS_EXCLUDE_FROM_ALL})
+         FetchContent_GetProperties(${_ARGS_LIBRARY_NAME})
+         if(NOT ${${_ARGS_LIBRARY_NAME}_POPULATED})
+diff -urp mujoco-2.2.2.orig/sample/cmake/SampleDependencies.cmake mujoco-2.2.2/sample/cmake/SampleDependencies.cmake
+--- mujoco-2.2.2.orig/sample/cmake/SampleDependencies.cmake	2022-09-07 05:17:54.000000000 -0700
++++ mujoco-2.2.2/sample/cmake/SampleDependencies.cmake	2023-07-29 09:15:09.390694356 -0700
+@@ -12,8 +12,12 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
++# oteodoro:  changes for prefetched local tarball to avoid sandbox wipe re-downloads.
++
+ include(FindOrFetch)
+ 
++option(USE_LOCAL_TARBALL "Use the local tarballs instead of remote repo" ON)
++
+ if(SAMPLE_STANDALONE)
+   # If standalone, by default look for MuJoCo binary version.
+   set(DEFAULT_USE_SYSTEM_MUJOCO ON)
+@@ -35,6 +39,12 @@ set(MUJOCO_DEP_VERSION_glfw
+ )
+ mark_as_advanced(MUJOCO_DEP_VERSION_glfw)
+ 
++set(MUJOCO_DEP_VERSION_mujoco
++    95a07e85ccaf31a7daabfb2f34f376e75534881d # 2.3.2
++    CACHE STRING "Version of `mujoco` to be fetched."
++)
++mark_as_advanced(MUJOCO_DEP_VERSION_mujoco)
++
+ find_package(Threads REQUIRED)
+ 
+ set(MUJOCO_BUILD_EXAMPLES OFF)
+@@ -53,6 +63,8 @@ findorfetch(
+   https://github.com/deepmind/mujoco.git
+   GIT_TAG
+   main
++  TARBALL_PATH
++  $ENV{DISTDIR}/mujoco-${MUJOCO_DEP_VERSION_mujoco}.tar.gz
+   TARGETS
+   mujoco
+   EXCLUDE_FROM_ALL
+@@ -85,6 +97,8 @@ findorfetch(
+   https://github.com/glfw/glfw.git
+   GIT_TAG
+   ${MUJOCO_DEP_VERSION_glfw}
++  TARBALL_PATH
++  $ENV{DISTDIR}/glfw-${MUJOCO_DEP_VERSION_glfw}.tar.gz
+   TARGETS
+   glfw
+   EXCLUDE_FROM_ALL
+Only in mujoco-2.2.2/sample/cmake: SampleDependencies.cmake.orig
