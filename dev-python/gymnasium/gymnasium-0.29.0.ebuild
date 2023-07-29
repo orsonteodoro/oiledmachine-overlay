@@ -38,8 +38,6 @@ REQUIRED_USE+="
 		pygame
 	)
 "
-# TODO: package 
-# farama-notifications
 RDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/cloudpickle-1.2.0[${PYTHON_USEDEP}]
