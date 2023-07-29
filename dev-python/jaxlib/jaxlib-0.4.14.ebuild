@@ -48,8 +48,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CUDA_TARGETS[@]/#/cuda_targets_}
-clang custom-optimization-level cpu cuda hardened portable rocm
-r1
+clang custom-optimization-level cpu cuda hardened portable rocm r1
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 REQUIRED_USE+="
@@ -117,16 +116,15 @@ RDEPEND+="
 	>=sys-libs/zlib-1.2.13
 	virtual/jre:${JAVA_SLOT}
 	cuda? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11.8*
-			=dev-util/nvidia-cuda-toolkit-12*
-		)
+		=dev-util/nvidia-cuda-toolkit-11.8*
 		=dev-libs/cudnn-8*
 	)
 	rocm? (
 		$(gen_rocm_depends)
 	)
 "
+# We cannot use cuda 12 (which the project supports) until cudnn ebuild allows
+# for it.
 DEPEND+="
 	${RDEPEND}
 	virtual/jdk:${JAVA_SLOT}
@@ -171,7 +169,8 @@ BDEPEND+="
 # DO NOT HARD WRAP
 # DO NOT CHANGE TARBALL FILE EXT
 # Do not use GH urls if .gitmodules exists in that project
-# All hashes and URIs obtained with MAINTAINER_MODE=1 and from console logs.
+# All hashes and URIs obtained with MAINTAINER_MODE=1 and from console logs with
+# FEATURES=-network-sandbox.
 
 APPLE_SUPPORT_PV="1.1.0"
 BAZEL_SKYLIB_PV="1.3.0"
@@ -206,6 +205,9 @@ https://github.com/bazelbuild/rules_proto/archive/${EGIT_RULES_PROTO_COMMIT}.tar
 https://github.com/bazelbuild/rules_python/releases/download/${RULES_PYTHON_PV}/rules_python-0.0.1.tar.gz -> rules_python-${RULES_PYTHON_PV}.tar.gz
 "
 
+# xla timestamp Jul 27, 2023 (9f26b9390f5a5c565a13925731de749be8a760be) found in https://github.com/google/jax/blob/jaxlib-v0.4.14/WORKSPACE#L13C49-L13C89
+# rocm fork of xla should be >= to that one above.
+EGIT_ROCM_TENSORFLOW_UPSTREAM_COMMIT="abc5674e36a61f2ad9fb59929f14c2762f96ca07" # Jul 28, 2023
 SRC_URI="
 	${bazel_external_uris}
 https://github.com/google/jax/archive/refs/tags/${PN}-v${PV}.tar.gz
@@ -354,8 +356,8 @@ einfo "PATH:\t${PATH}"
 	local s
 	for s in ${GCC_SLOTS[@]} ; do
 		symlink_ver=$(gcc_symlink_ver ${s})
-		export CC=${CHOST}-gcc-${symlink_ver}
-		export CXX=${CHOST}-g++-${symlink_ver}
+		export CC="${CHOST}-gcc-${symlink_ver}"
+		export CXX="${CHOST}-g++-${symlink_ver}"
 		export CPP="${CHOST}-g++-${symlink_ver} -E"
 		if ${CC} --version 2>/dev/null 1>/dev/null ; then
 einfo "Switched to gcc:${s}"
@@ -364,8 +366,13 @@ einfo "Switched to gcc:${s}"
 		fi
 	done
 	if (( ${found} != 1 )) ; then
+		local slots_desc=$(echo "${GCC_SLOTS[@]}" \
+			| tr " " "\n" \
+			| tac \
+			| tr "\n" " " \
+			| sed -e "s| |, |g" -e "s|, $||g")
 eerror
-eerror "Use only gcc slots 9, 10, 11"
+eerror "Use only gcc slots ${slots_desc}"
 eerror
 		die
 	fi
@@ -479,7 +486,7 @@ eerror
 }
 
 src_unpack() {
-	unpack ${MY_PN}-${PV}.tar.gz
+	unpack "${MY_PN}-${PV}.tar.gz"
 	mkdir -p "${WORKDIR}/tarballs" || die
 	mkdir -p "${WORKDIR}/patches" || die
 	if [[ "${MAINTAINER_MODE}" != "1" ]] ; then
@@ -491,12 +498,7 @@ src_unpack() {
 	bazel_load_distfiles "${bazel_external_uris}"
 	cd "${S}" || die
 	if use rocm ; then
-		EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream.git"
-		EGIT_BRANCH="develop-upstream" # Default branch
-		EGIT_COMMIT="HEAD"
-		EGIT_CHECKOUT_DIR="${WORKDIR}/rocm-tensorflow-upstream"
-		git-r3_fetch
-		git-r3_checkout
+		unpack "rocm-tensorflow-upstream-${EGIT_ROCM_TENSORFLOW_UPSTREAM_COMMIT}.tar.gz"
 	fi
 }
 
@@ -554,6 +556,17 @@ einfo "Preventing stall.  Removing -Os."
 python_prepare_all() {
 	cuda_src_prepare
 	distutils-r1_python_prepare_all
+}
+
+get_cuda_targets() {
+	local targets
+	local target
+	for target in ${CUDA_TARGETS[@]} ; do
+		if use "cuda_targets_${target}" ; then
+			targets+=",${target}"
+		fi
+	done
+	echo "${targets}" | sed -e "s|^,||g"
 }
 
 python_configure() {
@@ -644,32 +657,41 @@ ewarn
 		)
 	fi
 
+	export TF_NEED_CUDA=$(usex cuda "1" "0")
+	export TF_NEED_ROCM=$(usex cuda "1" "0")
 	if use cuda ; then
 	# See https://jax.readthedocs.io/en/latest/developer.html#additional-notes-for-building-jaxlib-from-source-on-windows
-		cuda_pv=$(best_version "dev-util/nvidia-cuda-toolkit" \
-			| sed -e "s|dev-util/nvidia-cuda-toolkit-||g")
-		cuda_pv=$(ver_cut 1-2 "${cuda_pv}")
-		cudnn_pv=$(best_version "dev-libs/cudnn" \
-			| sed -e "s|dev-libs/cudnn-||g")
-		cudnn_pv=$(ver_cut 1-3 "${cuda_pv}")
-
+		export JAX_CUDA_VERSION="$(cuda_toolkit_version)"
+		export JAX_CUDNN_VERSION="$(cuda_cudnn_version)"
+		export TF_CUDA_COMPUTE_CAPABILITIES="$(get_cuda_targets)"
 		args+=(
 			--enable_cuda
 			--cuda_path="${ESYSROOT}/opt/cuda"
 			--cudnn_path="${ESYSROOT}/opt/cuda"
-			--cuda_version="${cuda_pv}"
-			--cudnn_version="${cudnn_pv}"
+			--cuda_version="$(cuda_toolkit_version)"
+			--cudnn_version="$(cuda_cudnn_version)"
 		)
 	fi
 	if use rocm ; then
-		export ROCM_PATH="/usr"
+		local rocm_version=$(best_version "dev-util/hip" \
+			| sed -e "s|dev-util/hip-||g")
+		rocm_version=$(ver_cut 1-3 "rocm_version")
+		export JAX_ROCM_VERSION="${rocm_version//./}"
+		export ROCM_PATH="${ESYSROOT}/usr"
+		export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags \
+			| tr ";" ",")
 		local rocm_pv=$(best_version "sci-libs/rocFFT" \
 			| sed -e "s|sci-libs/rocFFT-||")
-	# See https://jax.readthedocs.io/en/latest/developer.html#additional-notes-for-building-a-rocm-jaxlib-for-amd-gpus
+	# See
+	# https://jax.readthedocs.io/en/latest/developer.html#additional-notes-for-building-a-rocm-jaxlib-for-amd-gpus
+	# https://github.com/google/jax/blob/jaxlib-v0.4.14/build/rocm/build_rocm.sh
 		args+=(
-			--enable_rocm \
-			--rocm_path="${ESYSROOT}/usr" \
+			--enable_rocm
+			--rocm_amdgpu_targets="${TF_ROCM_AMDGPU_TARGETS}"
+			--rocm_path="${ESYSROOT}/usr"
 		)
+	# The docs hasn't been updated, but latest point release of jax/jaxlib
+	# is the same source for xla.  No override needed.
 	fi
 	${EPYTHON} build/build.py \
 		--configure_only \
@@ -743,7 +765,10 @@ _ebazel() {
 	output_base="${output_base%/}-bazel-base"
 	mkdir -p "${output_base}" || die
 
-	set -- bazel --bazelrc="${S}/build/.jax_configure.bazelrc" --output_base="${output_base}" ${@}
+	set -- bazel \
+		--bazelrc="${S}/build/.jax_configure.bazelrc" \
+		--output_base="${output_base}" \
+		${@}
 	echo "${*}" >&2
 	"${@}" || die "ebazel failed"
 }
@@ -755,8 +780,10 @@ einfo "Building for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 	cd "${S}/build" || die
 	export PYTHON_BIN_PATH="${PYTHON}"
 
-	sed -i -r -e "s|python[0-9].[0-9]+|${EPYTHON}|g" \
-		"${S}/build/.jax_configure.bazelrc" || die
+	sed -i -r \
+		-e "s|python[0-9].[0-9]+|${EPYTHON}|g" \
+		"${S}/build/.jax_configure.bazelrc" \
+		|| die
 
 	_ebazel run \
 		--verbose_failures=true \
@@ -769,6 +796,7 @@ einfo "Building for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 	local python_pv="${EPYTHON}"
 	python_pv="${python_pv/python}"
 	python_pv="${python_pv/./}"
+	# FIXME:  Update the wheel name for rocm
 	local wheel_path=$(realpath "${S}/build/dist/${PN}-${PV}-cp${python_pv}-cp${python_pv}-manylinux2014_"*".whl")
 	distutils_wheel_install "${BUILD_DIR}/install" \
 		"${wheel_path}"
