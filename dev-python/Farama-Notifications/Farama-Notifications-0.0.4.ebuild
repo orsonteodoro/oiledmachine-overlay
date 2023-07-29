@@ -5,14 +5,19 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_10 ) # Based on CI distro
 
 inherit distutils-r1
 
 if [[ "${PV}" =~ 9999 ]] ; then
-	EGIT_REPO_URI="https://github.com/Farama-Foundation/gymnasium-notices.git"
+	EGIT_REPO_URI="https://github.com/Farama-Foundation/Farama-Notifications.git"
 	EGIT_BRANCH="main"
 	inherit git-r3
+else
+	SRC_URI="
+https://github.com/Farama-Foundation/Farama-Notifications/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
 fi
 
 DESCRIPTION="Gymnasium Notices"
@@ -32,14 +37,12 @@ BDEPEND+="
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 "
-SRC_URI="
-"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
 unpack_live() {
 	if use fallback-commit ; then
-		EGIT_COMMIT="77cf9f6a40dc10e81d3df32ba92f3554a4d5a24d"
+		EGIT_COMMIT="9596114567580db30c4d1735f540e84da480199a"
 	fi
 	git-r3_fetch
 	git-r3_checkout
@@ -60,7 +63,11 @@ eerror
 }
 
 src_unpack() {
-	unpack_live
+	if [[ "${PV}" =~ 9999 ]] ; then
+		unpack_live
+	else
+		unpack ${A}
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

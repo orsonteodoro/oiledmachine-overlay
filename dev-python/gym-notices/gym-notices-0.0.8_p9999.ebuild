@@ -29,14 +29,14 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
-DEPEND+="
-"
 RDEPEND+="
-	${DEPEND}
+"
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
-	dev-python/wheel
+	dev-python/wheel[${PYTHON_USEDEP}]
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
