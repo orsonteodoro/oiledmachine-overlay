@@ -107,6 +107,10 @@ unpack_live() {
 	use fallback-commit && EGIT_COMMIT="dcd185843a62953e27c2d54dc8c2d647d604b635"
 	git-r3_fetch
 	git-r3_checkout
+	grep -E \
+		-e "VERSION = \"$(ver_cut 1-3 ${PV})\"" \
+		"${S}/gym/version.py" \
+		|| die "QA:  Bump the version"
 }
 
 src_unpack() {
