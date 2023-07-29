@@ -681,7 +681,7 @@ einfo "Switched to gcc:${s}"
 	done
 	if (( ${found} != 1 )) ; then
 eerror
-eerror "Use only gcc slots 9, 10, 11"
+eerror "Use only gcc slots 9, 10, 11, 12"
 eerror
 		die
 	fi
