@@ -67,9 +67,10 @@ BDEPEND+="
 		dev-python/sphinx-book-theme[${PYTHON_USEDEP}]
 	)
 	test? (
-		>=dev-python/atari-py-0.2.5[${PYTHON_USEDEP}]
+		>=dev-python/black-23.7.0[${PYTHON_USEDEP}]
 		>=dev-python/gymnasium-0.18.3[${PYTHON_USEDEP},atari,accept-rom-license]
 		>=dev-python/jraph-0.0.6_pre0[${PYTHON_USEDEP}]
+		>=dev-python/pyink-23.5.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-xdist-1.34.0[${PYTHON_USEDEP}]
 		>=dev-python/tensorflow_text-2.11.0[${PYTHON_USEDEP}]
 		dev-python/clu[${PYTHON_USEDEP}]
