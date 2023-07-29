@@ -392,8 +392,6 @@ gen_rocm_rdepend() {
 	local pv
 	for pv in ${HIP_SLOTS[@]} ; do
 		local s="0/"$(ver_cut 1-2 ${pv})
-# Add if hipRAND headers not in rocRAND
-#			~sci-libs/hipRAND-${pv}:${s}
 	# Check both the direct top and indirect bottom dependencies
 		echo "
 		(
