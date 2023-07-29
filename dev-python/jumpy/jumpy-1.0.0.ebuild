@@ -7,7 +7,13 @@ EAPI=8
 DISTUTILS_USE_PEP517="hatchling"
 PYTHON_COMPAT=( python3_{10..11} )
 # Limited by jax
+
 inherit distutils-r1
+
+SRC_URI="
+https://github.com/Farama-Foundation/Jumpy/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="On-the-fly conversions between Jax and NumPy tensors"
 HOMEPAGE="
@@ -38,10 +44,6 @@ BDEPEND+="
 	test? (
 		>=dev-python/pytest-7.1.3[${PYTHON_USEDEP}]
 	)
-"
-SRC_URI="
-https://github.com/Farama-Foundation/Jumpy/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
 "
 S="${WORKDIR}/Jumpy-${PV}"
 RESTRICT="mirror"
