@@ -71,7 +71,7 @@ RESTRICT="
 RDEPEND="
 	~dev-util/hip-${PV}:${SLOT}
 	~dev-util/rocminfo-${PV}:${SLOT}
-	~sci-libs/rocSPARSE-${PV}:${SLOT}[${ROCM_USEDEP}]
+	~sci-libs/rocSPARSE-${PV}:${SLOT}
 "
 DEPEND="
 	${RDEPEND}
