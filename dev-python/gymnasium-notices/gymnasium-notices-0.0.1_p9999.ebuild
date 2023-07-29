@@ -6,7 +6,14 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
-inherit distutils-r1 git-r3
+
+inherit distutils-r1
+
+if [[ "${PV}" =~ 9999 ]] ; then
+	EGIT_REPO_URI="https://github.com/Farama-Foundation/gymnasium-notices.git"
+	EGIT_BRANCH="main"
+	inherit git-r3
+fi
 
 DESCRIPTION="Gymnasium Notices"
 HOMEPAGE="
@@ -29,16 +36,16 @@ SRC_URI="
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
-src_unpack() {
-	EGIT_REPO_URI="https://github.com/Farama-Foundation/gymnasium-notices.git"
-	EGIT_BRANCH="main"
+unpack_live() {
 	if use fallback-commit ; then
 		EGIT_COMMIT="77cf9f6a40dc10e81d3df32ba92f3554a4d5a24d"
-	else
-		EGIT_COMMIT="HEAD"
 	fi
 	git-r3_fetch
 	git-r3_checkout
+}
+
+src_unpack() {
+	unpack_live
 	local actual_pv=$(grep -r -e "version=" "${S}/setup.py" \
 		| cut -f 2 -d '"')
 	local expected_pv=$(ver_cut 1-3 ${PV})
