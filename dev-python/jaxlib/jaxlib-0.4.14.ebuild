@@ -497,10 +497,6 @@ src_unpack() {
 			|| die
 	fi
 	bazel_load_distfiles "${bazel_external_uris}"
-	cd "${S}" || die
-	if use rocm ; then
-		unpack "rocm-tensorflow-upstream-${EGIT_ROCM_TENSORFLOW_UPSTREAM_COMMIT}.tar.gz"
-	fi
 }
 
 load_env() {
