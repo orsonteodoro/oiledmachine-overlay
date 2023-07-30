@@ -16,7 +16,7 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1102
 )
 PYTHON_COMPAT=( python3_{9..11} )
-LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
+LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
 ROCM_VERSION="${PV}"
 
 inherit cmake edo flag-o-matic llvm python-any-r1 toolchain-funcs rocm
@@ -80,7 +80,7 @@ DESCRIPTION="Basic Linear Algebra Subroutines for sparse computation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSPARSE"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-IUSE="benchmark test"
+IUSE="benchmark test r1"
 REQUIRED_USE="${ROCM_REQUIRED_USE}"
 SLOT="0/$(ver_cut 1-2)"
 RDEPEND="
