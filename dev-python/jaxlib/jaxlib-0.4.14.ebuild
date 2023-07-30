@@ -692,7 +692,7 @@ ewarn
 	fi
 
 	export TF_NEED_CUDA=$(usex cuda "1" "0")
-	export TF_NEED_ROCM=$(usex cuda "1" "0")
+	export TF_NEED_ROCM=$(usex rocm "1" "0")
 	if use cuda ; then
 	# See https://jax.readthedocs.io/en/latest/developer.html#additional-notes-for-building-jaxlib-from-source-on-windows
 		export JAX_CUDA_VERSION="$(cuda_toolkit_version)"
