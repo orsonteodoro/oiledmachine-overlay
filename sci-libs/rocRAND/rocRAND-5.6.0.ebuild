@@ -113,6 +113,11 @@ src_configure() {
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBUILD_BENCHMARK=$(usex benchmark ON OFF)
+
+	# Fixes:
+	# rocrand.cpp:1904:16: error: use of undeclared identifier 'ROCRAND_VERSION'
+		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
+
 		-DBUILD_HIPRAND=ON
 		-DBUILD_TEST=$(usex test ON OFF)
 		-DCMAKE_SKIP_RPATH=On
