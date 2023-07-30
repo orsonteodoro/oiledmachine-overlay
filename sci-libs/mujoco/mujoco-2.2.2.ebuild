@@ -2,6 +2,8 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+EAPI=8
+
 # TODO:
 # Fix/test examples USE flag.  See CI settings:  https://github.com/deepmind/mujoco/blob/2.3.2/.github/workflows/build.yml
 # Fix/test simulate USE flag.  See CI settings.
@@ -10,7 +12,12 @@
 # The dev-python/mujoco is for python bindings
 # The sci-libs/mujoco is for native bindings
 
-EAPI=8
+# FIXME:
+# When simulate USE flag enabled
+#CMake Error at cmake/TargetAddRpath.cmake:180 (set_target_properties):
+#  set_target_properties called with incorrect number of arguments.
+#Call Stack (most recent call first):
+#  simulate/CMakeLists.txt:211 (target_add_rpath)
 
 DISTUTILS_USE_PEP517="standalone"
 PYTHON_COMPAT=( python3_10 )
@@ -22,7 +29,7 @@ EGIT_BENCHMARK_COMMIT="d845b7b3a27d54ad96280a29d61fa8988d4fddcf"
 EGIT_CCD_COMMIT="7931e764a19ef6b21b443376c699bbc9c6d4fba8"
 EGIT_EIGEN_COMMIT="34780d8bd13d0af0cf17a22789ef286e8512594d"  # cmake/MujocoDependencies.cmake
 EGIT_EIGEN_PY_COMMIT="b02c384ef4e8eba7b8bdef16f9dc6f8f4d6a6b2b" # python/mujoco/CMakeLists.txt
-EGIT_GLFW_COMMIT="7482de6071d21db77a7236155da44c172a7f6c9e"
+EGIT_GLFW_COMMIT="7d5a16ce714f0b5f4efa3262de22e4d948851525"
 EGIT_GOOGLETEST_COMMIT="58d77fa8070e8cec2dc1ed015d66b454c8d78850"
 EGIT_LODEPNG_COMMIT="b4ed2cd7ecf61d29076169b49199371456d4f90b"
 EGIT_MUJOCO_COMMIT="95a07e85ccaf31a7daabfb2f34f376e75534881d"
@@ -76,7 +83,7 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc +examples hardened python +test"
+IUSE+=" doc +examples hardened python +simulate +test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -129,6 +136,7 @@ pkg_setup() {
 src_configure() {
 	local mycmakeargs=(
 		-DMUJOCO_BUILD_EXAMPLES=$(usex examples "ON" "OFF")
+		-DMUJOCO_BUILD_SIMULATE=$(usex simulate "ON" "OFF")
 		-DMUJOCO_BUILD_TESTS=$(usex test "ON" "OFF")
 		-DMUJOCO_TEST_PYTHON_UTIL=$(usex test "ON" "OFF")
 	)

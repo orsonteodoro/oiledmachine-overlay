@@ -1,6 +1,6 @@
 diff -urp mujoco-2.2.2.orig/cmake/FindOrFetch.cmake mujoco-2.2.2/cmake/FindOrFetch.cmake
 --- mujoco-2.2.2.orig/cmake/FindOrFetch.cmake	2022-09-07 05:17:54.000000000 -0700
-+++ mujoco-2.2.2/cmake/FindOrFetch.cmake	2023-07-29 09:15:09.390694356 -0700
++++ mujoco-2.2.2/cmake/FindOrFetch.cmake	2023-07-30 11:05:31.105117160 -0700
 @@ -23,6 +23,7 @@
  #               [LIBRARY_NAME [name]]
  #               [GIT_REPO [repo]]
@@ -57,7 +57,7 @@ diff -urp mujoco-2.2.2.orig/cmake/FindOrFetch.cmake mujoco-2.2.2/cmake/FindOrFet
          if(NOT ${${_ARGS_LIBRARY_NAME}_POPULATED})
 diff -urp mujoco-2.2.2.orig/cmake/MujocoDependencies.cmake mujoco-2.2.2/cmake/MujocoDependencies.cmake
 --- mujoco-2.2.2.orig/cmake/MujocoDependencies.cmake	2022-09-07 05:17:54.000000000 -0700
-+++ mujoco-2.2.2/cmake/MujocoDependencies.cmake	2023-07-29 09:15:09.390694356 -0700
++++ mujoco-2.2.2/cmake/MujocoDependencies.cmake	2023-07-30 11:05:31.105117160 -0700
 @@ -18,6 +18,10 @@
  # static libraries). The ccd CMakeLists.txt doesn't expose an option to build a static ccd library,
  # unless BUILD_SHARED_LIBS is set.
@@ -180,10 +180,9 @@ diff -urp mujoco-2.2.2.orig/cmake/MujocoDependencies.cmake mujoco-2.2.2/cmake/Mu
  
      FetchContent_GetProperties(Eigen3)
      if(NOT Eigen3_POPULATED)
-Only in mujoco-2.2.2/cmake: MujocoDependencies.cmake.orig
 diff -urp mujoco-2.2.2.orig/python/mujoco/CMakeLists.txt mujoco-2.2.2/python/mujoco/CMakeLists.txt
 --- mujoco-2.2.2.orig/python/mujoco/CMakeLists.txt	2022-09-07 05:17:54.000000000 -0700
-+++ mujoco-2.2.2/python/mujoco/CMakeLists.txt	2023-07-29 09:17:43.962698382 -0700
++++ mujoco-2.2.2/python/mujoco/CMakeLists.txt	2023-07-30 11:05:31.105117160 -0700
 @@ -12,9 +12,28 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
@@ -244,11 +243,9 @@ diff -urp mujoco-2.2.2.orig/python/mujoco/CMakeLists.txt mujoco-2.2.2/python/muj
    TARGETS
    pybind11::pybind11_headers
    EXCLUDE_FROM_ALL
-Only in mujoco-2.2.2/python/mujoco: CMakeLists.txt.orig
-Only in mujoco-2.2.2/python/mujoco: CMakeLists.txt.rej
 diff -urp mujoco-2.2.2.orig/sample/cmake/FindOrFetch.cmake mujoco-2.2.2/sample/cmake/FindOrFetch.cmake
 --- mujoco-2.2.2.orig/sample/cmake/FindOrFetch.cmake	2022-09-07 05:17:54.000000000 -0700
-+++ mujoco-2.2.2/sample/cmake/FindOrFetch.cmake	2023-07-29 09:15:09.390694356 -0700
++++ mujoco-2.2.2/sample/cmake/FindOrFetch.cmake	2023-07-30 11:05:31.105117160 -0700
 @@ -23,6 +23,7 @@
  #               [LIBRARY_NAME [name]]
  #               [GIT_REPO [repo]]
@@ -305,7 +302,7 @@ diff -urp mujoco-2.2.2.orig/sample/cmake/FindOrFetch.cmake mujoco-2.2.2/sample/c
          if(NOT ${${_ARGS_LIBRARY_NAME}_POPULATED})
 diff -urp mujoco-2.2.2.orig/sample/cmake/SampleDependencies.cmake mujoco-2.2.2/sample/cmake/SampleDependencies.cmake
 --- mujoco-2.2.2.orig/sample/cmake/SampleDependencies.cmake	2022-09-07 05:17:54.000000000 -0700
-+++ mujoco-2.2.2/sample/cmake/SampleDependencies.cmake	2023-07-29 09:15:09.390694356 -0700
++++ mujoco-2.2.2/sample/cmake/SampleDependencies.cmake	2023-07-30 11:05:31.105117160 -0700
 @@ -12,8 +12,12 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
@@ -350,4 +347,50 @@ diff -urp mujoco-2.2.2.orig/sample/cmake/SampleDependencies.cmake mujoco-2.2.2/s
    TARGETS
    glfw
    EXCLUDE_FROM_ALL
-Only in mujoco-2.2.2/sample/cmake: SampleDependencies.cmake.orig
+diff -urp mujoco-2.2.2.orig/simulate/cmake/SimulateDependencies.cmake mujoco-2.2.2/simulate/cmake/SimulateDependencies.cmake
+--- mujoco-2.2.2.orig/simulate/cmake/SimulateDependencies.cmake	2022-09-07 05:17:54.000000000 -0700
++++ mujoco-2.2.2/simulate/cmake/SimulateDependencies.cmake	2023-07-30 11:06:12.717118244 -0700
+@@ -12,8 +12,12 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
++# oteodoro:  changes for prefetched local tarball to avoid sandbox wipe re-downloads.
++
+ include(FindOrFetch)
+ 
++option(USE_LOCAL_TARBALL "Use the local tarballs instead of remote repo" ON)
++
+ if(SIMULATE_STANDALONE)
+   # If standalone, by default look for MuJoCo binary version.
+   set(DEFAULT_USE_SYSTEM_MUJOCO ON)
+@@ -35,6 +39,12 @@ set(MUJOCO_DEP_VERSION_glfw
+ )
+ mark_as_advanced(MUJOCO_DEP_VERSION_glfw)
+ 
++set(MUJOCO_DEP_VERSION_mujoco
++    95a07e85ccaf31a7daabfb2f34f376e75534881d # 2.3.2
++    CACHE STRING "Version of `mujoco` to be fetched."
++)
++mark_as_advanced(MUJOCO_DEP_VERSION_mujoco)
++
+ find_package(Threads REQUIRED)
+ 
+ set(MUJOCO_BUILD_EXAMPLES OFF)
+@@ -53,6 +63,8 @@ findorfetch(
+   https://github.com/deepmind/mujoco.git
+   GIT_TAG
+   main
++  TARBALL_PATH
++  $ENV{DISTDIR}/mujoco-${MUJOCO_DEP_VERSION_mujoco}.tar.gz
+   TARGETS
+   mujoco
+   EXCLUDE_FROM_ALL
+@@ -85,6 +97,8 @@ findorfetch(
+   https://github.com/glfw/glfw.git
+   GIT_TAG
+   ${MUJOCO_DEP_VERSION_glfw}
++  TARBALL_PATH
++  $ENV{DISTDIR}/glfw-${MUJOCO_DEP_VERSION_glfw}.tar.gz
+   TARGETS
+   glfw
+   EXCLUDE_FROM_ALL

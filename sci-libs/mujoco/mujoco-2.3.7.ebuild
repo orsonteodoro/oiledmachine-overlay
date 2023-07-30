@@ -2,6 +2,8 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+EAPI=8
+
 # TODO:
 # Fix/test examples USE flag.  See CI settings:  https://github.com/deepmind/mujoco/blob/2.3.3/.github/workflows/build.yml
 # Fix/test simulate USE flag.  See CI settings.
@@ -10,7 +12,12 @@
 # The dev-python/mujoco is for python bindings
 # The sci-libs/mujoco is for native bindings
 
-EAPI=8
+# FIXME:
+# When simulate USE flag enabled
+#CMake Error at cmake/TargetAddRpath.cmake:180 (set_target_properties):
+#  set_target_properties called with incorrect number of arguments.
+#Call Stack (most recent call first):
+#  simulate/CMakeLists.txt:211 (target_add_rpath)
 
 DISTUTILS_USE_PEP517="standalone"
 PYTHON_COMPAT=( python3_11 )
