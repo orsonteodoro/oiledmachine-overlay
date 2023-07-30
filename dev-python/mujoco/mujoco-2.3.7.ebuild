@@ -3,8 +3,6 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # TODO:
-# Fix/test examples USE flag.  See CI settings:  https://github.com/deepmind/mujoco/blob/2.3.7/.github/workflows/build.yml
-# Fix/test simulate USE flag.  See CI settings.
 # Update LICENSE variable for vendored third party libs
 
 # The dev-python/mujoco is for python bindings
