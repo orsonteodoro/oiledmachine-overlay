@@ -63,6 +63,3 @@ sys-kernel/ot-sources c2tcp deepcc orca
 
 # The training version is still WIP
 media-video/sr -pretrained
-
-# Broken
-sci-libs/mujoco simulate

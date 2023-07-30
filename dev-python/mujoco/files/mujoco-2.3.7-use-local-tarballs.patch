@@ -348,7 +348,7 @@ diff -urp mujoco-2.3.7.orig/sample/cmake/SampleDependencies.cmake mujoco-2.3.7/s
    GIT_TAG
    ${MUJOCO_DEP_VERSION_glfw3}
 +  TARBALL_PATH
-+  $ENV{DISTDIR}/glfw3-${MUJOCO_DEP_VERSION_glfw3}.tar.gz
++  $ENV{DISTDIR}/glfw-${MUJOCO_DEP_VERSION_glfw3}.tar.gz
    TARGETS
    glfw
    EXCLUDE_FROM_ALL

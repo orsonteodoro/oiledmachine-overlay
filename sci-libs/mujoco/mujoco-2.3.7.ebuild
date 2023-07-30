@@ -5,19 +5,10 @@
 EAPI=8
 
 # TODO:
-# Fix/test examples USE flag.  See CI settings:  https://github.com/deepmind/mujoco/blob/2.3.3/.github/workflows/build.yml
-# Fix/test simulate USE flag.  See CI settings.
 # Update LICENSE variable for vendored third party libs
 
 # The dev-python/mujoco is for python bindings
 # The sci-libs/mujoco is for native bindings
-
-# FIXME:
-# When simulate USE flag enabled
-#CMake Error at cmake/TargetAddRpath.cmake:180 (set_target_properties):
-#  set_target_properties called with incorrect number of arguments.
-#Call Stack (most recent call first):
-#  simulate/CMakeLists.txt:211 (target_add_rpath)
 
 DISTUTILS_USE_PEP517="standalone"
 PYTHON_COMPAT=( python3_11 )
@@ -140,6 +131,12 @@ src_configure() {
 		-DMUJOCO_BUILD_TESTS=$(usex test "ON" "OFF")
 		-DMUJOCO_TEST_PYTHON_UTIL=$(usex test "ON" "OFF")
 	)
+
+	if use examples || use simulate ; then
+		mycmakeargs+=(
+			-DMUJOCO_ENABLE_RPATH=OFF
+		)
+	fi
 
 	if tc-is-clang ; then
 		mycmakeargs+=(
