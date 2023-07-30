@@ -4,7 +4,21 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{9..11} )
+
 inherit bazel distutils-r1
+
+# Versions and hashes are obtained by console and removing items below.
+# They do not appear in the tarball.
+EGIT_RULES_CC_COMMIT="b1c40e1de81913a3c40e5948f78719c28152486d"
+EGIT_RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"
+bazel_external_uris="
+	https://github.com/bazelbuild/rules_cc/archive/${EGIT_RULES_CC_COMMIT}.zip -> rules_cc-${EGIT_RULES_CC_COMMIT}.zip
+	https://github.com/bazelbuild/rules_java/archive/${EGIT_RULES_JAVA_COMMIT}.zip -> bazelbuild-rules_java-${EGIT_RULES_JAVA_COMMIT}.zip
+"
+SRC_URI="
+	${bazel_external_uris}
+https://github.com/keras-team/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
+"
 
 DESCRIPTION="Deep Learning for humans"
 HOMEPAGE="
@@ -15,17 +29,6 @@ LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=" test"
-
-# Versions and hashes are obtained by console and removing items below.
-# They do not appear in the tarball.
-bazel_external_uris="
-	https://github.com/bazelbuild/rules_cc/releases/download/0.0.2/rules_cc-0.0.2.tar.gz
-	https://github.com/bazelbuild/rules_java/archive/7cf3cefd652008d0a64a419c34c13bdca6c8f178.zip -> bazelbuild-rules_java-7cf3cefd652008d0a64a419c34c13bdca6c8f178.zip
-"
-SRC_URI="
-	${bazel_external_uris}
-https://github.com/keras-team/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
-"
 # https://github.com/keras-team/keras/blob/v2.12.0/requirements.txt
 # https://github.com/keras-team/keras/blob/v2.12.0/WORKSPACE
 # https://github.com/keras-team/keras/blob/v2.12.0/.bazelversion
@@ -35,6 +38,8 @@ PROTOBUF_SLOT="0/32"
 # These have moved in this package.
 #	>=sci-libs/keras-applications-1.0.8[${PYTHON_USEDEP}]
 #	>=sci-libs/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
+# TODO: package
+# portpicker
 RDEPEND="
 	(
 		$(python_gen_cond_dep '
@@ -47,6 +52,7 @@ RDEPEND="
 		' python3_11)
 	)
 	=sci-libs/tensorflow-2.12*[${PYTHON_USEDEP},python]
+	>=dev-python/scipy-1.7.2[${PYTHON_USEDEP}]
 	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 	>=sys-libs/zlib-1.2.13
 	dev-libs/protobuf:${PROTOBUF_SLOT}
@@ -55,6 +61,8 @@ RDEPEND="
 	dev-python/pandas[${PYTHON_USEDEP}]
 	dev-python/pillow[${PYTHON_USEDEP}]
 	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	dev-python/pydot[${PYTHON_USEDEP}]
+	dev-python/pyyaml[${PYTHON_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
@@ -65,6 +73,12 @@ BDEPEND="
 	app-arch/unzip
 	dev-java/java-config
 	dev-libs/protobuf:${PROTOBUF_SLOT}
+	test? (
+		>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
+		>=dev-python/flake8-4.0.1[${PYTHON_USEDEP}]
+		>=dev-python/isort-5.10.1[${PYTHON_USEDEP}]
+		dev-python/portpicker[${PYTHON_USEDEP}]
+	)
 "
 # Bazel tests not pytest, also want GPU access
 RESTRICT=""
