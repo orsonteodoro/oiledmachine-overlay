@@ -1,6 +1,6 @@
-diff -urp mujoco-2.3.3.orig/cmake/FindOrFetch.cmake mujoco-2.3.3/cmake/FindOrFetch.cmake
---- mujoco-2.3.3.orig/cmake/FindOrFetch.cmake	2023-03-20 08:33:36.000000000 -0700
-+++ mujoco-2.3.3/cmake/FindOrFetch.cmake	2023-03-22 19:56:24.496866150 -0700
+diff -urp mujoco-2.3.7.orig/cmake/FindOrFetch.cmake mujoco-2.3.7/cmake/FindOrFetch.cmake
+--- mujoco-2.3.7.orig/cmake/FindOrFetch.cmake	2023-07-20 02:13:55.000000000 -0700
++++ mujoco-2.3.7/cmake/FindOrFetch.cmake	2023-07-29 08:35:52.474632968 -0700
 @@ -23,6 +23,7 @@
  #               [LIBRARY_NAME [name]]
  #               [GIT_REPO [repo]]
@@ -55,12 +55,12 @@ diff -urp mujoco-2.3.3.orig/cmake/FindOrFetch.cmake mujoco-2.3.3/cmake/FindOrFet
        if(${_ARGS_EXCLUDE_FROM_ALL})
          FetchContent_GetProperties(${_ARGS_LIBRARY_NAME})
          if(NOT ${${_ARGS_LIBRARY_NAME}_POPULATED})
-diff -urp mujoco-2.3.3.orig/cmake/MujocoDependencies.cmake mujoco-2.3.3/cmake/MujocoDependencies.cmake
---- mujoco-2.3.3.orig/cmake/MujocoDependencies.cmake	2023-03-20 08:33:36.000000000 -0700
-+++ mujoco-2.3.3/cmake/MujocoDependencies.cmake	2023-03-22 19:56:24.496866150 -0700
-@@ -18,6 +18,10 @@
- # static libraries). The ccd CMakeLists.txt doesn't expose an option to build a static ccd library,
- # unless BUILD_SHARED_LIBS is set.
+diff -urp mujoco-2.3.7.orig/cmake/MujocoDependencies.cmake mujoco-2.3.7/cmake/MujocoDependencies.cmake
+--- mujoco-2.3.7.orig/cmake/MujocoDependencies.cmake	2023-07-20 02:13:55.000000000 -0700
++++ mujoco-2.3.7/cmake/MujocoDependencies.cmake	2023-07-29 08:35:52.474632968 -0700
+@@ -14,6 +14,10 @@
+ 
+ # Build configuration for third party libraries used in MuJoCo.
  
 +# oteodoro:  changes for prefetched local tarball to avoid sandbox wipe re-downloads.
 +
@@ -180,9 +180,10 @@ diff -urp mujoco-2.3.3.orig/cmake/MujocoDependencies.cmake mujoco-2.3.3/cmake/Mu
  
      FetchContent_GetProperties(Eigen3)
      if(NOT Eigen3_POPULATED)
-diff -urp mujoco-2.3.3.orig/python/mujoco/CMakeLists.txt mujoco-2.3.3/python/mujoco/CMakeLists.txt
---- mujoco-2.3.3.orig/python/mujoco/CMakeLists.txt	2023-03-20 08:33:36.000000000 -0700
-+++ mujoco-2.3.3/python/mujoco/CMakeLists.txt	2023-03-22 19:56:24.496866150 -0700
+Only in mujoco-2.3.7/cmake: MujocoDependencies.cmake.orig
+diff -urp mujoco-2.3.7.orig/python/mujoco/CMakeLists.txt mujoco-2.3.7/python/mujoco/CMakeLists.txt
+--- mujoco-2.3.7.orig/python/mujoco/CMakeLists.txt	2023-07-20 02:13:55.000000000 -0700
++++ mujoco-2.3.7/python/mujoco/CMakeLists.txt	2023-07-29 08:39:34.782638759 -0700
 @@ -12,9 +12,28 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
@@ -192,15 +193,15 @@ diff -urp mujoco-2.3.3.orig/python/mujoco/CMakeLists.txt mujoco-2.3.3/python/muj
 +option(USE_LOCAL_TARBALL "Use the local tarballs instead of remote repo" ON)
 +
 +set(MUJOCO_DEP_VERSION_abseil
-+    c8a2f92586fe9b4e1aff049108f5db8064924d8e
++    c2435f8342c2d0ed8101cb43adfd605fdc52dca2
 +    CACHE STRING "Version of `abseil` to be fetched."
 +)
 +set(MUJOCO_DEP_VERSION_eigen
-+    3460f3558e7b469efb8a225894e21929c8c77629
++    211c5dfc6741a5570ad007983c113ef4d144f9f3
 +    CACHE STRING "Version of `eigen` to be fetched."
 +)
 +set(MUJOCO_DEP_VERSION_pybind11
-+    0bd8896a4010f2d91b2340570c24fa08606ec406
++    8a099e44b3d5f85b20f05828d919d2332a8de841
 +    CACHE STRING "Version of `pybind11` to be fetched."
 +)
 +
@@ -216,8 +217,8 @@ diff -urp mujoco-2.3.3.orig/python/mujoco/CMakeLists.txt mujoco-2.3.3/python/muj
    GIT_REPO
    https://github.com/abseil/abseil-cpp
    GIT_TAG
--  c8a2f92586fe9b4e1aff049108f5db8064924d8e # LTS 20230125.1
-+  ${MUJOCO_DEP_VERSION_abseil} # LTS 20230125.1
+-  c2435f8342c2d0ed8101cb43adfd605fdc52dca2 # LTS 20230125.3
++  ${MUJOCO_DEP_VERSION_abseil} # LTS 20230125.3
 +  TARBALL_PATH
 +  $ENV{DISTDIR}/abseil-cpp-${MUJOCO_DEP_VERSION_abseil}.tar.gz
    TARGETS
@@ -227,7 +228,7 @@ diff -urp mujoco-2.3.3.orig/python/mujoco/CMakeLists.txt mujoco-2.3.3/python/muj
    GIT_REPO
    https://gitlab.com/libeigen/eigen
    GIT_TAG
--  3460f3558e7b469efb8a225894e21929c8c77629
+-  211c5dfc6741a5570ad007983c113ef4d144f9f3
 +  ${MUJOCO_DEP_VERSION_eigen}
 +  TARBALL_PATH
 +  $ENV{DISTDIR}/eigen-${MUJOCO_DEP_VERSION_eigen}.tar.gz
@@ -238,16 +239,18 @@ diff -urp mujoco-2.3.3.orig/python/mujoco/CMakeLists.txt mujoco-2.3.3/python/muj
    GIT_REPO
    https://github.com/pybind/pybind11
    GIT_TAG
--  0bd8896a4010f2d91b2340570c24fa08606ec406 # v2.10.3
-+  ${MUJOCO_DEP_VERSION_pybind11} # v2.10.3
+-  8a099e44b3d5f85b20f05828d919d2332a8de841 # v2.11.1
++  ${MUJOCO_DEP_VERSION_pybind11} # v2.11.1
 +  TARBALL_PATH
 +  $ENV{DISTDIR}/pybind11-${MUJOCO_DEP_VERSION_pybind11}.tar.gz
    TARGETS
    pybind11::pybind11_headers
    EXCLUDE_FROM_ALL
-diff -urp mujoco-2.3.3.orig/sample/cmake/FindOrFetch.cmake mujoco-2.3.3/sample/cmake/FindOrFetch.cmake
---- mujoco-2.3.3.orig/sample/cmake/FindOrFetch.cmake	2023-03-20 08:33:36.000000000 -0700
-+++ mujoco-2.3.3/sample/cmake/FindOrFetch.cmake	2023-03-22 19:56:24.496866150 -0700
+Only in mujoco-2.3.7/python/mujoco: CMakeLists.txt.orig
+Only in mujoco-2.3.7/python/mujoco: CMakeLists.txt.rej
+diff -urp mujoco-2.3.7.orig/sample/cmake/FindOrFetch.cmake mujoco-2.3.7/sample/cmake/FindOrFetch.cmake
+--- mujoco-2.3.7.orig/sample/cmake/FindOrFetch.cmake	2023-07-20 02:13:55.000000000 -0700
++++ mujoco-2.3.7/sample/cmake/FindOrFetch.cmake	2023-07-29 08:35:52.478632969 -0700
 @@ -23,6 +23,7 @@
  #               [LIBRARY_NAME [name]]
  #               [GIT_REPO [repo]]
@@ -302,9 +305,9 @@ diff -urp mujoco-2.3.3.orig/sample/cmake/FindOrFetch.cmake mujoco-2.3.3/sample/c
        if(${_ARGS_EXCLUDE_FROM_ALL})
          FetchContent_GetProperties(${_ARGS_LIBRARY_NAME})
          if(NOT ${${_ARGS_LIBRARY_NAME}_POPULATED})
-diff -urp mujoco-2.3.3.orig/sample/cmake/SampleDependencies.cmake mujoco-2.3.3/sample/cmake/SampleDependencies.cmake
---- mujoco-2.3.3.orig/sample/cmake/SampleDependencies.cmake	2023-03-20 08:33:36.000000000 -0700
-+++ mujoco-2.3.3/sample/cmake/SampleDependencies.cmake	2023-03-22 19:56:24.496866150 -0700
+diff -urp mujoco-2.3.7.orig/sample/cmake/SampleDependencies.cmake mujoco-2.3.7/sample/cmake/SampleDependencies.cmake
+--- mujoco-2.3.7.orig/sample/cmake/SampleDependencies.cmake	2023-07-20 02:13:55.000000000 -0700
++++ mujoco-2.3.7/sample/cmake/SampleDependencies.cmake	2023-07-29 08:35:52.478632969 -0700
 @@ -12,8 +12,12 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
@@ -349,49 +352,9 @@ diff -urp mujoco-2.3.3.orig/sample/cmake/SampleDependencies.cmake mujoco-2.3.3/s
    TARGETS
    glfw
    EXCLUDE_FROM_ALL
-diff -urp mujoco-2.3.3.orig/simulate/CMakeLists.txt mujoco-2.3.3/simulate/CMakeLists.txt
---- mujoco-2.3.3.orig/simulate/CMakeLists.txt	2023-03-20 08:33:36.000000000 -0700
-+++ mujoco-2.3.3/simulate/CMakeLists.txt	2023-03-22 19:57:22.432866899 -0700
-@@ -12,8 +12,12 @@
- # See the License for the specific language governing permissions and
- # limitations under the License.
- 
-+# oteodoro:  changes for prefetched local tarball to avoid sandbox wipe re-downloads.
-+
- cmake_minimum_required(VERSION 3.16)
- 
-+option(USE_LOCAL_TARBALL "Use the local tarballs instead of remote repo" ON)
-+
- # INTERPROCEDURAL_OPTIMIZATION is enforced when enabled.
- set(CMAKE_POLICY_DEFAULT_CMP0069 NEW)
- # Default to GLVND if available.
-@@ -81,11 +85,18 @@ endif()
- 
- # Fetch lodepng dependency.
- if(NOT TARGET lodepng)
--  FetchContent_Declare(
--    lodepng
--    GIT_REPOSITORY https://github.com/lvandeve/lodepng.git
--    GIT_TAG ${MUJOCO_DEP_VERSION_lodepng}
--  )
-+  if(USE_LOCAL_TARBALL)
-+    FetchContent_Declare(
-+      lodepng
-+      URL $ENV{DISTDIR}/lodepng-${MUJOCO_DEP_VERSION_lodepng}.tar.gz
-+    )
-+  else()
-+    FetchContent_Declare(
-+      lodepng
-+      GIT_REPOSITORY https://github.com/lvandeve/lodepng.git
-+      GIT_TAG ${MUJOCO_DEP_VERSION_lodepng}
-+    )
-+  endif()
- 
-   FetchContent_GetProperties(lodepng)
-   if(NOT lodepng_POPULATED)
-diff -urp mujoco-2.3.3.orig/simulate/cmake/FindOrFetch.cmake mujoco-2.3.3/simulate/cmake/FindOrFetch.cmake
---- mujoco-2.3.3.orig/simulate/cmake/FindOrFetch.cmake	2023-03-20 08:33:36.000000000 -0700
-+++ mujoco-2.3.3/simulate/cmake/FindOrFetch.cmake	2023-03-22 19:56:24.496866150 -0700
+diff -urp mujoco-2.3.7.orig/simulate/cmake/FindOrFetch.cmake mujoco-2.3.7/simulate/cmake/FindOrFetch.cmake
+--- mujoco-2.3.7.orig/simulate/cmake/FindOrFetch.cmake	2023-07-20 02:13:55.000000000 -0700
++++ mujoco-2.3.7/simulate/cmake/FindOrFetch.cmake	2023-07-29 08:35:52.478632969 -0700
 @@ -23,6 +23,7 @@
  #               [LIBRARY_NAME [name]]
  #               [GIT_REPO [repo]]
@@ -446,9 +409,9 @@ diff -urp mujoco-2.3.3.orig/simulate/cmake/FindOrFetch.cmake mujoco-2.3.3/simula
        if(${_ARGS_EXCLUDE_FROM_ALL})
          FetchContent_GetProperties(${_ARGS_LIBRARY_NAME})
          if(NOT ${${_ARGS_LIBRARY_NAME}_POPULATED})
-diff -urp mujoco-2.3.3.orig/simulate/cmake/SimulateDependencies.cmake mujoco-2.3.3/simulate/cmake/SimulateDependencies.cmake
---- mujoco-2.3.3.orig/simulate/cmake/SimulateDependencies.cmake	2023-03-20 08:33:36.000000000 -0700
-+++ mujoco-2.3.3/simulate/cmake/SimulateDependencies.cmake	2023-03-22 19:56:24.496866150 -0700
+diff -urp mujoco-2.3.7.orig/simulate/cmake/SimulateDependencies.cmake mujoco-2.3.7/simulate/cmake/SimulateDependencies.cmake
+--- mujoco-2.3.7.orig/simulate/cmake/SimulateDependencies.cmake	2023-07-20 02:13:55.000000000 -0700
++++ mujoco-2.3.7/simulate/cmake/SimulateDependencies.cmake	2023-07-29 08:35:52.478632969 -0700
 @@ -12,8 +12,12 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
@@ -493,3 +456,43 @@ diff -urp mujoco-2.3.3.orig/simulate/cmake/SimulateDependencies.cmake mujoco-2.3
    TARGETS
    glfw
    EXCLUDE_FROM_ALL
+diff -urp mujoco-2.3.7.orig/simulate/CMakeLists.txt mujoco-2.3.7/simulate/CMakeLists.txt
+--- mujoco-2.3.7.orig/simulate/CMakeLists.txt	2023-07-20 02:13:55.000000000 -0700
++++ mujoco-2.3.7/simulate/CMakeLists.txt	2023-07-29 08:35:52.478632969 -0700
+@@ -12,8 +12,12 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
++# oteodoro:  changes for prefetched local tarball to avoid sandbox wipe re-downloads.
++
+ cmake_minimum_required(VERSION 3.16)
+ 
++option(USE_LOCAL_TARBALL "Use the local tarballs instead of remote repo" ON)
++
+ # INTERPROCEDURAL_OPTIMIZATION is enforced when enabled.
+ set(CMAKE_POLICY_DEFAULT_CMP0069 NEW)
+ # Default to GLVND if available.
+@@ -81,11 +85,18 @@ endif()
+ 
+ # Fetch lodepng dependency.
+ if(NOT TARGET lodepng)
+-  FetchContent_Declare(
+-    lodepng
+-    GIT_REPOSITORY https://github.com/lvandeve/lodepng.git
+-    GIT_TAG ${MUJOCO_DEP_VERSION_lodepng}
+-  )
++  if(USE_LOCAL_TARBALL)
++    FetchContent_Declare(
++      lodepng
++      URL $ENV{DISTDIR}/lodepng-${MUJOCO_DEP_VERSION_lodepng}.tar.gz
++    )
++  else()
++    FetchContent_Declare(
++      lodepng
++      GIT_REPOSITORY https://github.com/lvandeve/lodepng.git
++      GIT_TAG ${MUJOCO_DEP_VERSION_lodepng}
++    )
++  endif()
+ 
+   FetchContent_GetProperties(lodepng)
+   if(NOT lodepng_POPULATED)

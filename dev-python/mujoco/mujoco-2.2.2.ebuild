@@ -7,11 +7,60 @@
 # Fix/test simulate USE flag.  See CI settings.
 # Update LICENSE variable for vendored third party libs
 
+# The dev-python/mujoco is for python bindings
+# The sci-libs/mujoco is for native bindings
+
 EAPI=8
 
 DISTUTILS_USE_SETUPTOOLS="bdepend"
 PYTHON_COMPAT=( python3_10 )  # Upstream only tests with 3.10 for this version.
+
 inherit distutils-r1
+
+EGIT_ABSEIL_CPP_COMMIT="8c0b94e793a66495e0b1f34a5eb26bd7dc672db0"
+EGIT_BENCHMARK_COMMIT="0d98dba29d66e93259db7daa53a9327df767a415"
+EGIT_CCD_COMMIT="7931e764a19ef6b21b443376c699bbc9c6d4fba8"
+EGIT_EIGEN_COMMIT="34780d8bd13d0af0cf17a22789ef286e8512594d"  # cmake/MujocoDependencies.cmake
+EGIT_EIGEN_PY_COMMIT="b02c384ef4e8eba7b8bdef16f9dc6f8f4d6a6b2b" # python/mujoco/CMakeLists.txt
+EGIT_GLFW_COMMIT="7482de6071d21db77a7236155da44c172a7f6c9e"
+EGIT_GOOGLETEST_COMMIT="e2239ee6043f73722e7aa812a459f54a28552929"
+EGIT_LODEPNG_COMMIT="48e5364ef48ec2408f44c727657ac1b6703185f8"
+EGIT_MUJOCO_COMMIT="95a07e85ccaf31a7daabfb2f34f376e75534881d"
+EGIT_PYBIND11_COMMIT="6df86934c258d8cd99acf192f6d3f4d1289b5d68"
+EGIT_QHULL_COMMIT="3df027b91202cf179f3fba3c46eebe65bbac3790"
+EGIT_TINYOBJLOADER_COMMIT="1421a10d6ed9742f5b2c1766d22faa6cfbc56248"
+EGIT_TINYXML2_COMMIT="1dee28e51f9175a31955b9791c74c430fe13dc82"
+SRC_URI="
+https://github.com/deepmind/mujoco/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+
+https://github.com/abseil/abseil-cpp/archive/${EGIT_ABSEIL_CPP_COMMIT}.tar.gz
+	-> abseil-cpp-${EGIT_ABSEIL_CPP_COMMIT}.tar.gz
+https://github.com/danfis/libccd/archive/${EGIT_CCD_COMMIT}.tar.gz
+	-> libccd-${EGIT_CCD_COMMIT}.tar.gz
+https://github.com/deepmind/mujoco/archive/${EGIT_MUJOCO_COMMIT}.tar.gz
+	-> mujoco-${EGIT_MUJOCO_COMMIT}.tar.gz
+https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN_COMMIT}/eigen-${EGIT_EIGEN_COMMIT}.tar.gz
+	-> eigen-${EGIT_EIGEN_COMMIT}.tar.gz
+https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN_PY_COMMIT}/eigen-${EGIT_EIGEN_PY_COMMIT}.tar.gz
+	-> eigen-${EGIT_EIGEN_PY_COMMIT}.tar.gz
+https://github.com/glfw/glfw/archive/${EGIT_GLFW_COMMIT}.tar.gz
+	-> glfw-${EGIT_GLFW_COMMIT}.tar.gz
+https://github.com/google/benchmark/archive/${EGIT_BENCHMARK_COMMIT}.tar.gz
+	-> benchmark-${EGIT_BENCHMARK_COMMIT}.tar.gz
+https://github.com/google/googletest/archive/${EGIT_GOOGLETEST_COMMIT}.tar.gz
+	-> googletest-${EGIT_GOOGLETEST_COMMIT}.tar.gz
+https://github.com/leethomason/tinyxml2/archive/${EGIT_TINYXML2_COMMIT}.tar.gz
+	-> tinyxml2-${EGIT_TINYXML2_COMMIT}.tar.gz
+https://github.com/lvandeve/lodepng/archive/${EGIT_LODEPNG_COMMIT}.tar.gz
+	-> lodepng-${EGIT_LODEPNG_COMMIT}.tar.gz
+https://github.com/pybind/pybind11/archive/${EGIT_PYBIND11_COMMIT}.tar.gz
+	-> pybind11-${EGIT_PYBIND11_COMMIT}.tar.gz
+https://github.com/qhull/qhull/archive/${EGIT_QHULL_COMMIT}.tar.gz
+	-> qhull-${EGIT_QHULL_COMMIT}.tar.gz
+https://github.com/tinyobjloader/tinyobjloader/archive/${EGIT_TINYOBJLOADER_COMMIT}.tar.gz
+	-> tinyobjloader-${EGIT_TINYOBJLOADER_COMMIT}.tar.gz
+"
 
 DESCRIPTION="Multi-Joint dynamics with Contact. A general purpose physics \
 simulator."
@@ -64,52 +113,6 @@ BDEPEND+="
 		>=dev-python/sphinxcontrib-youtube-1.1.0[${PYTHON_USEDEP}]
 		>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
 	)
-"
-
-EGIT_ABSEIL_CPP_COMMIT="8c0b94e793a66495e0b1f34a5eb26bd7dc672db0"
-EGIT_BENCHMARK_COMMIT="0d98dba29d66e93259db7daa53a9327df767a415"
-EGIT_CCD_COMMIT="7931e764a19ef6b21b443376c699bbc9c6d4fba8"
-EGIT_EIGEN_COMMIT="34780d8bd13d0af0cf17a22789ef286e8512594d"  # cmake/MujocoDependencies.cmake
-EGIT_EIGEN_PY_COMMIT="b02c384ef4e8eba7b8bdef16f9dc6f8f4d6a6b2b" # python/mujoco/CMakeLists.txt
-EGIT_GLFW_COMMIT="7482de6071d21db77a7236155da44c172a7f6c9e"
-EGIT_GOOGLETEST_COMMIT="e2239ee6043f73722e7aa812a459f54a28552929"
-EGIT_LODEPNG_COMMIT="48e5364ef48ec2408f44c727657ac1b6703185f8"
-EGIT_MUJOCO_COMMIT="95a07e85ccaf31a7daabfb2f34f376e75534881d"
-EGIT_PYBIND11_COMMIT="6df86934c258d8cd99acf192f6d3f4d1289b5d68"
-EGIT_QHULL_COMMIT="3df027b91202cf179f3fba3c46eebe65bbac3790"
-EGIT_TINYOBJLOADER_COMMIT="1421a10d6ed9742f5b2c1766d22faa6cfbc56248"
-EGIT_TINYXML2_COMMIT="1dee28e51f9175a31955b9791c74c430fe13dc82"
-
-SRC_URI="
-https://github.com/deepmind/mujoco/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
-
-https://github.com/abseil/abseil-cpp/archive/${EGIT_ABSEIL_CPP_COMMIT}.tar.gz
-	-> abseil-cpp-${EGIT_ABSEIL_CPP_COMMIT}.tar.gz
-https://github.com/danfis/libccd/archive/${EGIT_CCD_COMMIT}.tar.gz
-	-> libccd-${EGIT_CCD_COMMIT}.tar.gz
-https://github.com/deepmind/mujoco/archive/${EGIT_MUJOCO_COMMIT}.tar.gz
-	-> mujoco-${EGIT_MUJOCO_COMMIT}.tar.gz
-https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN_COMMIT}/eigen-${EGIT_EIGEN_COMMIT}.tar.gz
-	-> eigen-${EGIT_EIGEN_COMMIT}.tar.gz
-https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN_PY_COMMIT}/eigen-${EGIT_EIGEN_PY_COMMIT}.tar.gz
-	-> eigen-${EGIT_EIGEN_PY_COMMIT}.tar.gz
-https://github.com/glfw/glfw/archive/${EGIT_GLFW_COMMIT}.tar.gz
-	-> glfw-${EGIT_GLFW_COMMIT}.tar.gz
-https://github.com/google/benchmark/archive/${EGIT_BENCHMARK_COMMIT}.tar.gz
-	-> benchmark-${EGIT_BENCHMARK_COMMIT}.tar.gz
-https://github.com/google/googletest/archive/${EGIT_GOOGLETEST_COMMIT}.tar.gz
-	-> googletest-${EGIT_GOOGLETEST_COMMIT}.tar.gz
-https://github.com/leethomason/tinyxml2/archive/${EGIT_TINYXML2_COMMIT}.tar.gz
-	-> tinyxml2-${EGIT_TINYXML2_COMMIT}.tar.gz
-https://github.com/lvandeve/lodepng/archive/${EGIT_LODEPNG_COMMIT}.tar.gz
-	-> lodepng-${EGIT_LODEPNG_COMMIT}.tar.gz
-https://github.com/pybind/pybind11/archive/${EGIT_PYBIND11_COMMIT}.tar.gz
-	-> pybind11-${EGIT_PYBIND11_COMMIT}.tar.gz
-https://github.com/qhull/qhull/archive/${EGIT_QHULL_COMMIT}.tar.gz
-	-> qhull-${EGIT_QHULL_COMMIT}.tar.gz
-https://github.com/tinyobjloader/tinyobjloader/archive/${EGIT_TINYOBJLOADER_COMMIT}.tar.gz
-	-> tinyobjloader-${EGIT_TINYOBJLOADER_COMMIT}.tar.gz
 "
 S_PROJ="${WORKDIR}/${P}"
 S="${WORKDIR}/${P}"
