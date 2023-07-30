@@ -55,6 +55,8 @@ src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 
+	replace-flags '-O0' '-O1'
+
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBUILD_TESTS=$(usex test ON OFF)

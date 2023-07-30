@@ -40,6 +40,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.5
+	~dev-util/hipify-${PV}:${SLOT}
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	test? (
 		>=dev-cpp/gtest-1.11
@@ -58,6 +59,10 @@ PATCHES=(
 src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
+
+	which hipify-perl || die
+
+	replace-flags '-O0' '-O1'
 
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
