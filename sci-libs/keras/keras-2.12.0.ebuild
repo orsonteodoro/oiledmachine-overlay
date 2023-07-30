@@ -28,7 +28,7 @@ https://github.com/keras-team/keras
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=" test"
+IUSE=" test r1"
 # https://github.com/keras-team/keras/blob/v2.12.0/requirements.txt
 # https://github.com/keras-team/keras/blob/v2.12.0/WORKSPACE
 # https://github.com/keras-team/keras/blob/v2.12.0/.bazelversion
