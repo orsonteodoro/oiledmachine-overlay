@@ -2,9 +2,6 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# TODO:
-# Update LICENSE variable for vendored third party libs
-
 # The dev-python/mujoco is for python bindings
 # The sci-libs/mujoco is for native bindings
 
@@ -63,12 +60,59 @@ HOMEPAGE="
 https://mujoco.org/
 https://github.com/deepmind/mujoco
 "
+LICENSE_THIRD_PARTY="
+	(
+		Apache-2.0
+		BSD
+	)
+	(
+		(
+			MPL-2.0
+			|| (
+				LGPL-3+
+				GPL-2+
+			)
+		)
+		Apache-2.0
+		BSD
+		GPL-2
+		LGPL-2.1
+		minpack
+		MPL-2.0
+		|| (
+			LGPL-2.1
+			LGPL-2.1+
+		)
+	)
+	(
+		BSD
+		LGPL-3
+		GPL-3
+	)
+	Apache-2.0
+	BSD
+	Qhull
+	MIT
+	ZLIB
+"
 LICENSE="
+	${LICENSE_THIRD_PARTY}
 	Apache-2.0
 	doc? (
 		CC-BY-4.0
 	)
 "
+# Apache-2.0 - abseil-cpp
+# Apache-2.0 BSD - benchmark
+# Apache-2.0, BSD, ^^ ( LGPL-2.1 LGPL-2.1+ ), minpack, MPL-2.0, GPL-2, LGPL-2.1, ( MPL-2.0 || ( LGPL-3+ GPL-2+ )) - eigen
+# BSD - googletest
+# BSD - pybind11
+# BSD, LGPL-3, GPL-3 - libccd
+# custom, Qhull - Qhull
+# MIT - tinyobjloader
+# ZLIB - lodepng
+# ZLIB - GLFW
+# ZLIB - tinyxml2
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc +test r1"
