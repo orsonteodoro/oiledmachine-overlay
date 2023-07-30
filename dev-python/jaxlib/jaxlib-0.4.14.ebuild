@@ -109,11 +109,11 @@ gen_rocm_depends() {
 RDEPEND+="
 	!dev-python/jaxlib-bin
 	>=app-arch/snappy-1.1.10
-	>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
 	>=dev-libs/double-conversion-3.2.0
 	>=dev-libs/nsync-1.25.0
-	>=net-libs/grpc-1.27_p9999:=
+	>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
 	>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
+	>=net-libs/grpc-1.27_p9999:=
 	>=sys-libs/zlib-1.2.13
 	virtual/jre:${JAVA_SLOT}
 	cuda? (
@@ -175,35 +175,72 @@ BDEPEND+="
 
 APPLE_SUPPORT_PV="1.1.0"
 BAZEL_SKYLIB_PV="1.3.0"
+FLATBUFFERS_PV="2.0.6"
+JSONCPP_PV="1.9.5"
+ONEDNN_PV="3.2"
+PLATFORMS_PV="0.0.6"
 PROTOBUF_PV="3.21.9"
+PYBIND_PV="2.10.0"
+RULES_ANDROID_PV="0.1.1"
 RULES_APPLE_PV="1.0.1"
 RULES_PKG_PV="0.7.1"
 RULES_PYTHON_PV="0.0.1"
 RULES_SWIFT_PV="1.0.0"
 
+EGIT_ABSEIL_CPP_COMMIT="b971ac5250ea8de900eae9f95e06548d14cd95fe"
 EGIT_BAZEL_TOOLCHAINS_COMMIT="8c717f8258cd5f6c7a45b97d974292755852b658"
+EGIT_DLPACK_COMMIT="9351cf542ab478499294864ff3acfdab5c8c5f3d"
+EGIT_DUCC_COMMIT="356d619a4b5f6f8940d15913c14a043355ef23be"
+EGIT_EIGEN_COMMIT="0b51f763cbbd0ed08168f88972724329f0375498"
+EGIT_FARMHASH_COMMIT="0d859a811870d10f53a594927d0d0b97573ad06d"
 EGIT_LLVM_COMMIT="4706251a3186c34da0ee8fd894f7e6b095da8fdc"
-EGIT_OPENXLA_COMMIT="9f26b9390f5a5c565a13925731de749be8a760be"
+EGIT_ML_DTYPES_COMMIT="5b9fc9ad978757654843f4a8d899715dbea30e88"
+EGIT_PYBIND11_BAZEL_COMMIT="72cbbf1fbc830e487e3012862b7b720001b70672"
+EGIT_PYBIND11_ABSEIL_COMMIT="2c4932ed6f6204f1656e245838f4f5eae69d2e29"
+EGIT_RE2_COMMIT="03da4fc0857c285e3a26782f6bc8931c4c950df4"
 EGIT_RULES_CC_COMMIT="081771d4a0e9d7d3aa0eed2ef389fa4700dfb23e"
 EGIT_RULES_CLOSURE_COMMIT="308b05b2419edb5c8ee0471b67a40403df940149"
+EGIT_RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"
 EGIT_RULES_PROTO_COMMIT="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"
+EGIT_SNAPPY_COMMIT="984b191f0fefdeb17050b42a90b7625999c13b8d"
+EGIT_STABLEHLO_COMMIT="8816d0581d9a5fb7d212affef858e991a349ad6b"
 EGIT_TENSORFLOW_RUNTIME_COMMIT="3bf6c17968a52aea580c5398bbcfc0cf0e069dc5"
+EGIT_XLA_COMMIT="9f26b9390f5a5c565a13925731de749be8a760be"
 
 bazel_external_uris="
+https://github.com/abseil/abseil-cpp/archive/${EGIT_ABSEIL_CPP_COMMIT}.tar.gz -> abseil-cpp-${EGIT_ABSEIL_CPP_COMMIT}.tar.gz
 https://github.com/bazelbuild/apple_support/releases/download/${APPLE_SUPPORT_PV}/apple_support.${APPLE_SUPPORT_PV}.tar.gz -> apple_support-${APPLE_SUPPORT_PV}.tar.gz
 https://github.com/bazelbuild/bazel-skylib/releases/download/${BAZEL_SKYLIB_PV}/bazel-skylib-${BAZEL_SKYLIB_PV}.tar.gz -> bazel-skylib-${BAZEL_SKYLIB_PV}.tar.gz
 https://github.com/bazelbuild/bazel-toolchains/archive/${EGIT_BAZEL_TOOLCHAINS_COMMIT}.tar.gz -> bazel-toolchains-${EGIT_BAZEL_TOOLCHAINS_COMMIT}.tar.gz
+https://github.com/bazelbuild/platforms/releases/download/${PLATFORMS_PV}/platforms-${PLATFORMS_PV}.tar.gz
+https://github.com/bazelbuild/rules_android/archive/v${RULES_ANDROID_PV}.zip -> rules_android-${RULES_ANDROID_PV}.zip
 https://github.com/bazelbuild/rules_apple/releases/download/${RULES_APPLE_PV}/rules_apple.${RULES_APPLE_PV}.tar.gz -> rules_apple-${RULES_APPLE_PV}.tar.gz
 https://github.com/bazelbuild/rules_cc/archive/${EGIT_RULES_CC_COMMIT}.tar.gz -> rules_cc-${EGIT_RULES_CC_COMMIT}.tar.gz
 https://github.com/bazelbuild/rules_closure/archive/${EGIT_RULES_CLOSURE_COMMIT}.tar.gz -> rules_closure-${EGIT_RULES_CLOSURE_COMMIT}.tar.gz
+https://github.com/bazelbuild/rules_java/archive/${EGIT_RULES_JAVA_COMMIT}.zip -> rules_java-${EGIT_RULES_JAVA_COMMIT}.zip
 https://github.com/bazelbuild/rules_pkg/releases/download/${RULES_PKG_PV}/rules_pkg-${RULES_PKG_PV}.tar.gz
-https://github.com/bazelbuild/rules_swift/releases/download/${RULES_SWIFT_PV}/rules_swift.${RULES_SWIFT_PV}.tar.gz -> rules_swift-${RULES_SWIFT_PV}.tar.gz
-https://github.com/llvm/llvm-project/archive/${EGIT_LLVM_COMMIT}.tar.gz -> llvm-${EGIT_LLVM_COMMIT}.tar.gz
-https://github.com/openxla/xla/archive/${EGIT_OPENXLA_COMMIT}.tar.gz -> openxla-${EGIT_OPENXLA_COMMIT}.tar.gz
-https://github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.zip -> protobuf-${PROTOBUF_PV}.zip
-https://github.com/tensorflow/runtime/archive/${EGIT_TENSORFLOW_RUNTIME_COMMIT}.tar.gz -> tensorflow-runtime-${EGIT_TENSORFLOW_RUNTIME_COMMIT}.tar.gz
 https://github.com/bazelbuild/rules_proto/archive/${EGIT_RULES_PROTO_COMMIT}.tar.gz -> rules_proto-${EGIT_RULES_PROTO_COMMIT}.tar.gz
 https://github.com/bazelbuild/rules_python/releases/download/${RULES_PYTHON_PV}/rules_python-0.0.1.tar.gz -> rules_python-${RULES_PYTHON_PV}.tar.gz
+https://github.com/bazelbuild/rules_swift/releases/download/${RULES_SWIFT_PV}/rules_swift.${RULES_SWIFT_PV}.tar.gz -> rules_swift-${RULES_SWIFT_PV}.tar.gz
+https://github.com/dmlc/dlpack/archive/${EGIT_DLPACK_COMMIT}.tar.gz -> dlpack-${EGIT_DLPACK_COMMIT}.tar.gz
+https://github.com/google/farmhash/archive/${EGIT_FARMHASH_COMMIT}.tar.gz -> farmhash-${EGIT_FARMHASH_COMMIT}.tar.gz
+https://github.com/google/flatbuffers/archive/v${FLATBUFFERS_PV}.tar.gz -> flatbuffers-${FLATBUFFERS_PV}.tar.gz
+https://github.com/google/re2/archive/${EGIT_RE2_COMMIT}.tar.gz -> re2-${EGIT_RE2_COMMIT}.tar.gz
+https://github.com/llvm/llvm-project/archive/${EGIT_LLVM_COMMIT}.tar.gz -> llvm-${EGIT_LLVM_COMMIT}.tar.gz
+https://github.com/mreineck/ducc/archive/${EGIT_DUCC_COMMIT}.tar.gz -> ducc-${EGIT_DUCC_COMMIT}.tar.gz
+https://github.com/oneapi-src/oneDNN/archive/refs/tags/v3.2.tar.gz -> oneDNN-${ONEDNN_PV}.tar.gz
+https://github.com/open-source-parsers/jsoncpp/archive/${JSONCPP_PV}.tar.gz -> jsoncpp-${JSONCPP_PV}.tar.gz
+https://github.com/openxla/stablehlo/archive/${EGIT_STABLEHLO_COMMIT}.zip -> stablehlo-${EGIT_STABLEHLO_COMMIT}.zip
+https://github.com/openxla/xla/archive/${EGIT_XLA_COMMIT}.tar.gz -> openxla-xla-${EGIT_XLA_COMMIT}.tar.gz
+https://github.com/pybind/pybind11/archive/v${PYBIND_PV}.tar.gz -> pybind11-${PYBIND_PV}.tar.gz
+https://github.com/pybind/pybind11_abseil/archive/${EGIT_PYBIND11_ABSEIL_COMMIT}.tar.gz -> pybind11_abseil-${EGIT_PYBIND11_ABSEIL_COMMIT}.tar.gz
+https://github.com/tensorflow/runtime/archive/${EGIT_TENSORFLOW_RUNTIME_COMMIT}.tar.gz -> tensorflow-runtime-${EGIT_TENSORFLOW_RUNTIME_COMMIT}.tar.gz
+https://gitlab.com/libeigen/eigen/-/archive/${EGIT_EIGEN_COMMIT}/eigen-${EGIT_EIGEN_COMMIT}.tar.gz -> eigen-${EGIT_EIGEN_COMMIT}.tar.gz
+https://storage.googleapis.com/mirror.tensorflow.org/github.com/jax-ml/ml_dtypes/archive/${EGIT_ML_DTYPES_COMMIT}/ml_dtypes-${EGIT_ML_DTYPES_COMMIT}.tar.gz
+https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/snappy/archive/${EGIT_SNAPPY_COMMIT}.tar.gz -> snappy-${EGIT_SNAPPY_COMMIT}.tar.gz
+https://storage.googleapis.com/mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.zip -> protobuf-${PROTOBUF_PV}.zip
+https://storage.googleapis.com/mirror.tensorflow.org/github.com/pybind/pybind11_bazel/archive/${EGIT_PYBIND11_BAZEL_COMMIT}.tar.gz -> pybind11_bazel-${EGIT_PYBIND11_BAZEL_COMMIT}.tar.gz
+
 "
 
 # xla timestamp Jul 27, 2023 (9f26b9390f5a5c565a13925731de749be8a760be) found in https://github.com/google/jax/blob/jaxlib-v0.4.14/WORKSPACE#L13C49-L13C89
@@ -483,7 +520,7 @@ eerror
 	java-pkg-opt-2_pkg_setup
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 
-	check_network_sandbox_permissions
+#	check_network_sandbox_permissions
 }
 
 src_unpack() {
@@ -612,7 +649,7 @@ python_configure() {
 #		org_sqlite
 #		pasta
 #		png
-		pybind11
+#		pybind11
 #		six_archive
 
 ## tensorflow/tsl/platform/default/port.cc:328:11: error: 'RawCompressFromIOVec'
@@ -778,13 +815,15 @@ einfo "Building for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 	export PYTHON_BIN_PATH="${PYTHON}"
 
 	sed -i -r \
-		-e "s|python[0-9].[0-9]+|${EPYTHON}|g" \
+		-e "s|python[0-9]\.[0-9]+|${EPYTHON}|g" \
 		"${S}/build/.jax_configure.bazelrc" \
 		|| die
 
+	# Keep in sync with
+	# https://github.com/google/jax/blob/jaxlib-v0.4.14/build/build.py#L546
 	_ebazel run \
 		--verbose_failures=true \
-		":build_wheel" \
+		"//jaxlib/tools:build_wheel" \
 		-- \
 		--output_path=$(pwd)/dist \
 		--cpu=$(get_host)
@@ -793,10 +832,17 @@ einfo "Building for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 	local python_pv="${EPYTHON}"
 	python_pv="${python_pv/python}"
 	python_pv="${python_pv/./}"
-	# FIXME:  Update the wheel name for rocm
-	local wheel_path=$(realpath "${S}/build/dist/${PN}-${PV}-cp${python_pv}-cp${python_pv}-manylinux2014_"*".whl")
-	distutils_wheel_install "${BUILD_DIR}/install" \
-		"${wheel_path}"
+	IFS=$'\n'
+	local wheel_paths=$(
+		find "${S}/build/dist" -name "*.whl"
+	)
+	local wheel_path
+	for wheel_path in ${wheel_paths[@]} ; do
+einfo "Installing ${wheel_path}"
+		distutils_wheel_install "${BUILD_DIR}/install" \
+			"${wheel_path}"
+	done
+	IFS=$' \t\n'
 }
 
 src_install() {
