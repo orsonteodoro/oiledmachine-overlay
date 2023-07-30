@@ -15,9 +15,10 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1101
 	gfx1102
 )
+LLVM_MAX_SLOT=16
 ROCM_VERSION="${PV}"
 
-inherit cmake edo rocm
+inherit cmake edo llvm rocm
 
 DESCRIPTION="ROCm Communication Collectives Library (RCCL)"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rccl"
@@ -54,9 +55,16 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.5.1-remove-chrpath.patch"
 )
 
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+}
+
 src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
+
+	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
 
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
@@ -65,7 +73,8 @@ src_configure() {
 		-Wno-dev
 	)
 
-	CXX=hipcc cmake_src_configure
+	CXX=hipcc \
+	cmake_src_configure
 }
 
 src_test() {

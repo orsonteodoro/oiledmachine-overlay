@@ -15,6 +15,7 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1101
 	gfx1102
 )
+LLVM_MAX_SLOT=15
 ROCM_VERSION="${PV}"
 
 inherit cmake edo rocm

@@ -12,6 +12,7 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx90a_xnack_plus
 	gfx1030
 )
+LLVM_MAX_SLOT=15
 ROCM_VERSION="${PV}"
 
 inherit cmake edo rocm
