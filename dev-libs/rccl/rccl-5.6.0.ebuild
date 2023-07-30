@@ -40,7 +40,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.5
-	~dev-util/hipify-${PV}:${SLOT}
+	~dev-util/HIPIFY-${PV}:${SLOT}
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	test? (
 		>=dev-cpp/gtest-1.11
@@ -97,5 +97,4 @@ src_test() {
 	LD_LIBRARY_PATH="${BUILD_DIR}" edob test/UnitTests
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-failure
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

@@ -40,7 +40,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.5
-	~dev-util/hipify-${PV}:${SLOT}
+	~dev-util/HIPIFY-${PV}:${SLOT}
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	test? (
 		>=dev-cpp/gtest-1.11
