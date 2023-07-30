@@ -79,6 +79,7 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-4.2.0-add-functional-header.patch"
 #	"${FILESDIR}/${PN}-5.0.2-add-math-header.patch"
 	"${FILESDIR}/${PN}-5.1.3-add-stdexcept-header.patch"
+	"${FILESDIR}/${PN}-5.3.3-lib64-path.patch"
 )
 
 required_mem() {

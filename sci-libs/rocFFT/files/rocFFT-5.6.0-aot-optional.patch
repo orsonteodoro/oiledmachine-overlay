@@ -1,0 +1,104 @@
+Allow to skip if AOT if only gfx900, gfx803.
+diff -urp rocFFT-rocm-5.6.0.orig/library/src/CMakeLists.txt rocFFT-rocm-5.6.0/library/src/CMakeLists.txt
+--- rocFFT-rocm-5.6.0.orig/library/src/CMakeLists.txt	2023-07-30 04:13:18.932472996 -0700
++++ rocFFT-rocm-5.6.0/library/src/CMakeLists.txt	2023-07-30 04:27:07.012494564 -0700
+@@ -330,10 +330,13 @@ foreach( target
+ 
+ endforeach()
+ 
+-add_executable( rocfft_aot_helper
+-  rocfft_aot_helper.cpp
+-  rocfft_stub.cpp
+-)
++option(BUILD_AOT "Build AOT kernels" ON)
++if(BUILD_AOT)
++  add_executable( rocfft_aot_helper
++    rocfft_aot_helper.cpp
++    rocfft_stub.cpp
++  )
++endif()
+ 
+ add_executable( rocfft_config_search
+   rocfft_config_search.cpp
+@@ -385,7 +388,11 @@ if(TARGET rocfft-device-3)
+   target_link_libraries( rocfft PRIVATE rocfft-device-3 )
+ endif()
+ 
+-foreach( target rocfft rocfft_offline_tuner rocfft_aot_helper rocfft_config_search )
++if(BUILD_AOT)
++  set(ROCFFT_EXTRAS_AOT rocfft_aot_helper)
++endif()
++
++foreach( target rocfft rocfft_offline_tuner ${ROCFFT_EXTRAS_AOT} rocfft_config_search )
+ 
+   if(( NOT ROCFFT_BUILD_OFFLINE_TUNER ) AND (${target} STREQUAL "rocfft_offline_tuner"))
+     continue()
+@@ -439,10 +448,12 @@ target_link_libraries( rocfft_config_sea
+   rocfft-rtc-launch
+   rocfft-function-pool
+   )
+-target_link_libraries( rocfft_aot_helper PRIVATE
+-  generator
+-  rocfft-function-pool
+-  )
++if(BUILD_AOT)
++  target_link_libraries( rocfft_aot_helper PRIVATE
++    generator
++    rocfft-function-pool
++    )
++endif()
+ 
+  # build executable rocfft-offline-tuner
+ if( ROCFFT_BUILD_OFFLINE_TUNER )
+@@ -474,19 +485,21 @@ endif()
+ # Only build kernels ahead-of-time for a more limited set of
+ # architectures.  Less common architectures are filtered out from the
+ # list and kernels for them are built at runtime instead.
+-set( AMDGPU_TARGETS_AOT ${AMDGPU_TARGETS} )
+-list( REMOVE_ITEM AMDGPU_TARGETS_AOT gfx803 )
+-list( REMOVE_ITEM AMDGPU_TARGETS_AOT gfx900 )
+-add_custom_command(
+-  OUTPUT rocfft_kernel_cache.db
+-  COMMAND rocfft_aot_helper \"${ROCFFT_BUILD_KERNEL_CACHE_PATH}\" ${ROCFFT_KERNEL_CACHE_PATH} $<TARGET_FILE:rocfft_rtc_helper> ${AMDGPU_TARGETS_AOT}
+-  DEPENDS rocfft_aot_helper rocfft_rtc_helper
+-  COMMENT "Compile kernels into shipped cache file"
+-)
+-add_custom_target( rocfft_kernel_cache_target ALL
+-  DEPENDS rocfft_kernel_cache.db
+-  VERBATIM
+-)
++if(BUILD_AOT)
++  set( AMDGPU_TARGETS_AOT ${AMDGPU_TARGETS} )
++  list( REMOVE_ITEM AMDGPU_TARGETS_AOT gfx803 )
++  list( REMOVE_ITEM AMDGPU_TARGETS_AOT gfx900 )
++  add_custom_command(
++    OUTPUT rocfft_kernel_cache.db
++    COMMAND rocfft_aot_helper \"${ROCFFT_BUILD_KERNEL_CACHE_PATH}\" ${ROCFFT_KERNEL_CACHE_PATH} $<TARGET_FILE:rocfft_rtc_helper> ${AMDGPU_TARGETS_AOT}
++    DEPENDS rocfft_aot_helper rocfft_rtc_helper
++    COMMENT "Compile kernels into shipped cache file"
++  )
++  add_custom_target( rocfft_kernel_cache_target ALL
++    DEPENDS rocfft_kernel_cache.db
++    VERBATIM
++  )
++endif()
+ 
+ rocm_set_soversion( rocfft ${rocfft_SOVERSION} )
+ set_target_properties( rocfft PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/staging" )
+@@ -526,10 +539,12 @@ if(WIN32)
+ else()
+   set(ROCFFT_KERNEL_CACHE_INSTALL_DIR ${ROCM_INSTALL_LIBDIR})
+ endif()
+-rocm_install(FILES ${ROCFFT_KERNEL_CACHE_PATH}
+-  DESTINATION "${ROCFFT_KERNEL_CACHE_INSTALL_DIR}"
+-  COMPONENT runtime
+-)
++if(BUILD_AOT)
++  rocm_install(FILES ${ROCFFT_KERNEL_CACHE_PATH}
++    DESTINATION "${ROCFFT_KERNEL_CACHE_INSTALL_DIR}"
++    COMPONENT runtime
++  )
++endif()
+ 
+ #         PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ WORLD_EXECUTE WORLD_READ
+ 

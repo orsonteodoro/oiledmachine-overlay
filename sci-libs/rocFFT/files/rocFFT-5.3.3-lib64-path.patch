@@ -1,0 +1,47 @@
+diff -urp rocFFT-rocm-5.3.3.orig/clients/tests/cmake/FindFFTW.cmake rocFFT-rocm-5.3.3/clients/tests/cmake/FindFFTW.cmake
+--- rocFFT-rocm-5.3.3.orig/clients/tests/cmake/FindFFTW.cmake	2022-08-29 14:11:00.000000000 -0700
++++ rocFFT-rocm-5.3.3/clients/tests/cmake/FindFFTW.cmake	2023-07-30 00:33:20.372129232 -0700
+@@ -45,11 +45,11 @@ if( FFTW_FIND_REQUIRED_FLOAT OR FFTW_FIN
+   find_library( FFTW_LIBRARIES_SINGLE
+       NAMES fftw3f fftw3f-3 fftw3 fftw3-3
+       HINTS
+-          ${FFTW_ROOT}/lib
+-          $ENV{FFTW_ROOT}/lib
++          ${FFTW_ROOT}/lib64
++          $ENV{FFTW_ROOT}/lib64
+       PATHS
+-          /usr/lib
+-          /usr/local/lib
++          /usr/lib64
++          /usr/local/lib64
+       PATH_SUFFIXES
+           x86_64-linux-gnu
+       DOC "FFTW dynamic library single"
+@@ -74,11 +74,11 @@ if( FFTW_FIND_REQUIRED_DOUBLE )
+   find_library( FFTW_LIBRARIES_DOUBLE
+       NAMES fftw3
+       HINTS
+-          ${FFTW_ROOT}/lib
+-          $ENV{FFTW_ROOT}/lib
++          ${FFTW_ROOT}/lib64
++          $ENV{FFTW_ROOT}/lib64
+       PATHS
+-          /usr/lib
+-          /usr/local/lib
++          /usr/lib64
++          /usr/local/lib64
+       PATH_SUFFIXES
+           x86_64-linux-gnu
+       DOC "FFTW dynamic library double"
+diff -urp rocFFT-rocm-5.3.3.orig/clients/tests/CMakeLists.txt rocFFT-rocm-5.3.3/clients/tests/CMakeLists.txt
+--- rocFFT-rocm-5.3.3.orig/clients/tests/CMakeLists.txt	2023-07-30 00:32:13.612127493 -0700
++++ rocFFT-rocm-5.3.3/clients/tests/CMakeLists.txt	2023-07-30 00:33:30.628129499 -0700
+@@ -223,7 +223,7 @@ option( BUILD_CLIENTS_TESTS_OPENMP "Buil
+ if( BUILD_CLIENTS_TESTS_OPENMP )
+   if( CMAKE_CXX_COMPILER MATCHES ".*/hipcc$" )  
+     target_compile_options( rocfft-test PRIVATE -fopenmp -DBUILD_CLIENTS_TESTS_OPENMP )
+-    target_link_libraries( rocfft-test PRIVATE -fopenmp -L${HIP_CLANG_ROOT}/lib -Wl,-rpath=${HIP_CLANG_ROOT}/lib )
++    target_link_libraries( rocfft-test PRIVATE -fopenmp -L${HIP_CLANG_ROOT}/lib64 -Wl,-rpath=${HIP_CLANG_ROOT}/lib64 )
+     target_include_directories( rocfft-test PRIVATE ${HIP_CLANG_ROOT}/include )
+   else()
+     if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")

@@ -15,6 +15,10 @@
     <remote-id type="github">ROCmSoftwarePlatform/rocFFT</remote-id>
   </upstream>
   <use>
+    <flag name="aot">
+      Build kernels ahead of time.  Enabling it will significantly increase
+      build times longer than the library itself.
+    </flag>
     <flag name="benchmark">
       Build and install [dyna-]rocfft-rider.
     </flag>

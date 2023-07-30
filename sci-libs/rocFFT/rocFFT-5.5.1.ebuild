@@ -14,6 +14,15 @@ AMDGPU_TARGETS_OVERRIDE=(
 	gfx1101
 	gfx1102
 )
+AMDGPU_TARGETS_AOT=(
+	gfx906
+	gfx908
+	gfx90a
+	gfx1030
+	gfx1100
+	gfx1101
+	gfx1102
+)
 CHECKREQS_DISK_BUILD="7G"
 LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{9..10} )
@@ -31,10 +40,15 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocFFT"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="benchmark perfscripts test"
+IUSE="+aot benchmark perfscripts test"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 	${ROCM_REQUIRED_USE}
+	aot? (
+		|| (
+			${AMDGPU_TARGETS_AOT[@]/#/amdgpu_targets_}
+		)
+	)
 	perfscripts? (
 		benchmark
 	)
@@ -79,6 +93,8 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-4.2.0-add-functional-header.patch"
 #	"${FILESDIR}/${PN}-5.0.2-add-math-header.patch"
 	"${FILESDIR}/${PN}-5.1.3-add-stdexcept-header.patch"
+	"${FILESDIR}/${PN}-5.3.3-lib64-path.patch"
+	"${FILESDIR}/${PN}-5.5.1-aot-optional.patch"
 )
 
 required_mem() {
@@ -172,6 +188,7 @@ src_configure() {
 
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+		-DBUILD_AOT=$(usex aot ON OFF)
 		-DBUILD_CLIENTS_RIDER=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SELFTEST=$(usex test ON OFF)
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
