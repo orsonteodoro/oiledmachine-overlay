@@ -167,8 +167,10 @@ _rocm_set_globals_default() {
 	if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "gfx90a_xnack" ]] ; then
 		ROCM_REQUIRED_USE+="
 			amdgpu_targets_gfx90a? (
-				amdgpu_targets_gfx90a_xnack_minus
-				amdgpu_targets_gfx90a_xnack_plus
+				|| (
+					amdgpu_targets_gfx90a_xnack_minus
+					amdgpu_targets_gfx90a_xnack_plus
+				)
 			)
 		"
 	fi
@@ -199,7 +201,7 @@ _rocm_set_globals_default() {
 	local list=""
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
-		list+=",${x%%_*}(-)?"
+		list+=",amdgpu_targets_${x%%_*}(-)?"
 	done
 	list="${list:1}"
 	ROCM_USEDEP="${list}"
