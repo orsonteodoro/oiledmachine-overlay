@@ -110,6 +110,7 @@ S="${WORKDIR}/rocSPARSE-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-remove-matrices-unpacking.patch"
 	"${FILESDIR}/${PN}-5.3.3-change-cmake-path.patch"
+	"${FILESDIR}/${PN}-5.6.0-includes.patch"
 )
 
 python_check_deps() {
@@ -200,6 +201,7 @@ src_configure() {
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
+		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocsparse"
 		-DCMAKE_SKIP_RPATH=On
 	)

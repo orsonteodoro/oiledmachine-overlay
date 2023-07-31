@@ -1,0 +1,13 @@
+diff -urp rocSPARSE-rocm-5.6.0.orig/library/src/include/envariables.h rocSPARSE-rocm-5.6.0/library/src/include/envariables.h
+--- rocSPARSE-rocm-5.6.0.orig/library/src/include/envariables.h	2023-06-20 14:29:47.000000000 -0700
++++ rocSPARSE-rocm-5.6.0/library/src/include/envariables.h	2023-07-30 23:06:13.842243442 -0700
+@@ -24,6 +24,9 @@
+ 
+ #pragma once
+ 
++#include <cstddef>
++#include <stdint.h>
++
+ template <std::size_t N, typename T>
+ inline constexpr std::size_t countof(T (&)[N])
+ {
