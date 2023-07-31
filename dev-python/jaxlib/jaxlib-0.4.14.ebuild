@@ -175,8 +175,11 @@ BDEPEND+="
 
 APPLE_SUPPORT_PV="1.1.0"
 BAZEL_SKYLIB_PV="1.3.0"
+CUDNN_FRONTEND_PV="0.9"
+CURL_PV="8.1.2"
 FLATBUFFERS_PV="2.0.6"
 JSONCPP_PV="1.9.5"
+NCCL_PV="2.16.5-1"
 ONEDNN_PV="3.2"
 PLATFORMS_PV="0.0.6"
 PROTOBUF_PV="3.21.9"
@@ -189,6 +192,7 @@ RULES_SWIFT_PV="1.0.0"
 
 EGIT_ABSEIL_CPP_COMMIT="b971ac5250ea8de900eae9f95e06548d14cd95fe"
 EGIT_BAZEL_TOOLCHAINS_COMMIT="8c717f8258cd5f6c7a45b97d974292755852b658"
+EGIT_BORINGSSL_COMMIT="c00d7ca810e93780bd0c8ee4eea28f4f2ea4bcdc"
 EGIT_DLPACK_COMMIT="9351cf542ab478499294864ff3acfdab5c8c5f3d"
 EGIT_DUCC_COMMIT="356d619a4b5f6f8940d15913c14a043355ef23be"
 EGIT_EIGEN_COMMIT="0b51f763cbbd0ed08168f88972724329f0375498"
@@ -206,6 +210,8 @@ EGIT_SNAPPY_COMMIT="984b191f0fefdeb17050b42a90b7625999c13b8d"
 EGIT_STABLEHLO_COMMIT="8816d0581d9a5fb7d212affef858e991a349ad6b"
 EGIT_TENSORFLOW_RUNTIME_COMMIT="3bf6c17968a52aea580c5398bbcfc0cf0e069dc5"
 EGIT_XLA_COMMIT="9f26b9390f5a5c565a13925731de749be8a760be"
+
+TRITON_ID="cl546794996"
 
 bazel_external_uris="
 https://github.com/abseil/abseil-cpp/archive/${EGIT_ABSEIL_CPP_COMMIT}.tar.gz -> abseil-cpp-${EGIT_ABSEIL_CPP_COMMIT}.tar.gz
@@ -240,8 +246,17 @@ https://storage.googleapis.com/mirror.tensorflow.org/github.com/jax-ml/ml_dtypes
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/snappy/archive/${EGIT_SNAPPY_COMMIT}.tar.gz -> snappy-${EGIT_SNAPPY_COMMIT}.tar.gz
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.zip -> protobuf-${PROTOBUF_PV}.zip
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/pybind/pybind11_bazel/archive/${EGIT_PYBIND11_BAZEL_COMMIT}.tar.gz -> pybind11_bazel-${EGIT_PYBIND11_BAZEL_COMMIT}.tar.gz
-
+cuda? (
+https://curl.haxx.se/download/curl-${CURL_PV}.tar.gz
+https://github.com/google/boringssl/archive/${EGIT_BORINGSSL_COMMIT}.tar.gz -> boringssl-${EGIT_BORINGSSL_COMMIT}.tar.gz
+https://github.com/NVIDIA/cudnn-frontend/archive/refs/tags/v${CUDNN_FRONTEND_PV}.zip -> cudnn-frontend-${CUDNN_FRONTEND_PV}.zip
+https://github.com/nvidia/nccl/archive/v${NCCL_PV}.tar.gz -> nccl-${NCCL_PV}.tar.gz
+https://github.com/openxla/triton/archive/${TRITON_ID}.tar.gz -> openxla-triton-${TRITON_ID}.tar.gz
+)
 "
+# Has .gitmodules:
+# triton
+# https://storage.googleapis.com/mirror.tensorflow.org/github.com/openxla/triton/archive/${TRITON_ID}.tar.gz -> openxla-triton-${TRITON_ID}.tar.gz # host error
 
 # xla timestamp Jul 27, 2023 (9f26b9390f5a5c565a13925731de749be8a760be) found in https://github.com/google/jax/blob/jaxlib-v0.4.14/WORKSPACE#L13C49-L13C89
 # rocm fork of xla should be >= to that one above.
