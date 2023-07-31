@@ -73,6 +73,7 @@ REQUIRED_USE+="
 ROCM_SLOTS=(
 # The container uses 5.5.0
 	"5.5.1" # For llvm 16
+	"5.6.0" # For llvm 16 added by ebuild maintainer
 )
 gen_rocm_depends() {
 	local pv
@@ -729,6 +730,9 @@ ewarn
 		)
 	fi
 	if use rocm ; then
+		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+		einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
+
 		local rocm_version=$(best_version "dev-util/hip" \
 			| sed -e "s|dev-util/hip-||g")
 		rocm_version=$(ver_cut 1-3 "rocm_version")
