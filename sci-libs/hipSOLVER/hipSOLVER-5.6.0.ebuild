@@ -72,6 +72,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
+		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR=include/hipsolver
 	)
 	cmake_src_configure
