@@ -56,6 +56,7 @@ REQUIRED_USE+="
 		${ROCM_REQUIRED_USE}
 	)
 	cuda? (
+		!clang
 		|| (
 			${CUDA_TARGETS[@]/#/cuda_targets_}
 		)
@@ -442,6 +443,12 @@ einfo "    =sys-devel/gcc-11.3.1_p20230120-r1 with gold"
 einfo "    =sys-devel/gcc-12.2.1_p20230121-r1 with mold"
 einfo
 	fi
+
+	local s=$(gcc-major-version) # Slot
+
+	# Required for CUDA builds
+	export GCC_HOST_COMPILER_PATH="/usr/${CHOST}/gcc-bin/${s}/${CHOST}-gcc-${s}"
+
 	${CC} --version || die
 	strip-unsupported-flags
 }
@@ -752,7 +759,7 @@ ewarn
 	cat "${T}/bazelrc" >> "${T}/bazelrc_merged" || die
 
 	echo 'build --noshow_progress' >> "${T}/bazelrc_merged" || die # Disable high CPU usage on xfce4-terminal
-	echo 'build --subcommands' >> "${T}/bazelrc_merged" || die # Increase verbosity
+	echo 'build --subcommands --verbose_failures' >> "${T}/bazelrc_merged" || die # Increase verbosity
 
 	echo "build --action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> "${T}/bazelrc_merged" || die
 	echo "build --host_action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> "${T}/bazelrc_merged" || die
@@ -767,6 +774,22 @@ einfo "Adding build --sandbox_writable_path=\"${ccache_dir}\" to ${T}/bazelrc_me
 		echo "build --action_env=CCACHE_DIR=\"${ccache_dir}\"" >> "${T}/bazelrc_merged" || die
 		echo "build --host_action_env=CCACHE_DIR=\"${ccache_dir}\"" >> "${T}/bazelrc_merged" || die
 		echo "build --sandbox_writable_path=${ccache_dir}" >> "${T}/bazelrc_merged" || die
+	fi
+
+	if use cuda ; then
+		sed -i \
+			-e "s|sm_52,sm_60,sm_70,sm_80,compute_90|${TF_CUDA_COMPUTE_CAPABILITIES}|g" \
+			"${S}/.bazelrc" \
+			"${T}/bazelrc_merged" \
+			|| die
+	fi
+
+	if use rocm ; then
+		sed -i \
+			-e "s|gfx900,gfx906,gfx908,gfx90a,gfx1030|${TF_ROCM_AMDGPU_TARGETS}|g" \
+			"${S}/.bazelrc" \
+			"${T}/bazelrc_merged" \
+			|| die
 	fi
 
 	mv "${T}/bazelrc_merged" "${S}/build/.jax_configure.bazelrc" || die
@@ -838,6 +861,7 @@ einfo "Building for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 	# https://github.com/google/jax/blob/jaxlib-v0.4.14/build/build.py#L546
 	_ebazel run \
 		--verbose_failures=true \
+		-s \
 		"//jaxlib/tools:build_wheel" \
 		-- \
 		--output_path=$(pwd)/dist \
