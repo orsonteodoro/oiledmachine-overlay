@@ -138,6 +138,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
+		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR=include/hipsparse
 		-DHIP_RUNTIME="ROCclr"
 	)
@@ -150,5 +151,4 @@ src_test() {
 	edob ./${PN,,}-test
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
