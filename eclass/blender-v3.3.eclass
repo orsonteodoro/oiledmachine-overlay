@@ -113,7 +113,6 @@ $(gen_llvm_iuse)
 ${CPU_FLAGS_3_3[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_IUSE}
-${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${OPENVDB_ABIS[@]}
 +X +abi9-compat +alembic -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles -cycles-device-oneapi +dds -debug doc +draco
@@ -211,9 +210,7 @@ REQUIRED_USE+="
 	hip? (
 		!nanovdb
 		cycles
-		|| (
-			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
-		)
+		${ROCM_REQUIRED_USE}
 	)
 	mp3? (
 		ffmpeg

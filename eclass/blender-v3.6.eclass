@@ -115,7 +115,6 @@ $(gen_llvm_iuse)
 ${CPU_FLAGS_3_3[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_IUSE}
-${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${OPENVDB_ABIS[@]}
 +X +abi10-compat +alembic -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles -cycles-device-oneapi +cycles-path-guiding +dds
@@ -216,9 +215,7 @@ REQUIRED_USE+="
 	hip? (
 		!nanovdb
 		cycles
-		|| (
-			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
-		)
+		${ROCM_REQUIRED_USE}
 	)
 	materialx? (
 		!python_single_target_python3_10

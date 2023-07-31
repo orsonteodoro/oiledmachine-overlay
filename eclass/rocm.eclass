@@ -133,18 +133,76 @@ _ROCM_ECLASS=1
 # Allow ebuilds to define IUSE, ROCM_REQUIRED_USE
 _rocm_set_globals_default() {
 	(( ${#AMDGPU_TARGETS_COMPAT[@]} == 0 )) && return
-	local iuse_flags=(
-		"${AMDGPU_TARGETS_COMPAT[@]/#/+amdgpu_targets_}"
-	)
-	IUSE="${iuse_flags[*]}"
-
 	local allflags=(
 		"${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}"
 	)
-	local optflags=${allflags[@]/%/(-)?}
+	local iuse_flags=(
+		"${AMDGPU_TARGETS_COMPAT[@]/#/+amdgpu_targets_}"
+	)
 
-	ROCM_REQUIRED_USE=" || ( ${allflags[*]} )"
-	ROCM_USEDEP=${optflags// /,}
+	if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "gfx900_xnack" ]] ; then
+		ROCM_REQUIRED_USE+="
+			amdgpu_targets_gfx900? (
+				amdgpu_targets_gfx900_xnack_minus
+			)
+		"
+	fi
+
+	if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "gfx906_xnack" ]] ; then
+		ROCM_REQUIRED_USE+="
+			amdgpu_targets_gfx906? (
+				amdgpu_targets_gfx906_xnack_minus
+			)
+		"
+	fi
+
+	if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "gfx908_xnack" ]] ; then
+		ROCM_REQUIRED_USE+="
+			amdgpu_targets_gfx908? (
+				amdgpu_targets_gfx908_xnack_minus
+			)
+		"
+	fi
+
+	if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "gfx90a_xnack" ]] ; then
+		ROCM_REQUIRED_USE+="
+			amdgpu_targets_gfx90a? (
+				amdgpu_targets_gfx90a_xnack_minus
+				amdgpu_targets_gfx90a_xnack_plus
+			)
+		"
+	fi
+
+	if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "xnack" ]] ; then
+		local x
+		for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+			if [[ "${x}" =~ "xnack" ]] ; then
+				ROCM_REQUIRED_USE+="
+					amdgpu_targets_${x}? (
+						amdgpu_targets_${x%%_*}
+					)
+				"
+				IUSE+="
+					amdgpu_targets_${x%%_*}
+				"
+			fi
+		done
+	fi
+
+	IUSE+=" ${iuse_flags[*]}"
+	ROCM_REQUIRED_USE+="
+		|| (
+			${allflags[*]}
+		)
+	"
+
+	local list=""
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		list+=",${x%%_*}(-)?"
+	done
+	list="${list:1}"
+	ROCM_USEDEP="${list}"
 }
 
 
@@ -171,10 +229,16 @@ unset -f _rocm_set_globals
 get_amdgpu_flags() {
 	local amdgpu_target_flags
 	for gpu_target in ${AMDGPU_TARGETS}; do
+		local gpu_target_base="${gpu_target%%_*}"
 		if [[ "${gpu_target}" =~ "xnack_minus" ]] ; then
-			gpu_target="${gpu_target%%_*}:xnack-"
+			gpu_target="${gpu_target_base}:xnack-"
 		elif [[ "${gpu_target}" =~ "xnack_plus" ]] ; then
-			gpu_target="${gpu_target%%_*}:xnack+"
+			gpu_target="${gpu_target_base}:xnack+"
+		fi
+		if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "${gpu_target_base}_xnack" ]] \
+			&& ! [[ "${gpu_target_base}" =~ "_xnack" ]] ; then
+			# Placeholder
+			continue
 		fi
 		amdgpu_target_flags+="${gpu_target};"
 	done

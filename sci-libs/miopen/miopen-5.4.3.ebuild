@@ -44,7 +44,7 @@ RDEPEND="
 	~dev-util/hip-${PV}:${SLOT}
 	~sci-libs/rocBLAS-${PV}:${SLOT}[${ROCM_USEDEP}]
 	kernels? (
-		~sci-libs/miopenkernels-${PV}
+		~sci-libs/miopenkernels-${PV}:${SLOT}
 	)
 "
 DEPEND="
