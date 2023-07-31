@@ -119,6 +119,7 @@ src_prepare() {
 einfo "Copying kernels"
 		local ma
 		for ma in ${MA[@]} ; do
+			ls "${ma}"*".kdb.bz2" >/dev/null || continue
 			cp -av "${ma}"*".kdb.bz2" "${S}/src/kernels" || die
 		done
 	fi
