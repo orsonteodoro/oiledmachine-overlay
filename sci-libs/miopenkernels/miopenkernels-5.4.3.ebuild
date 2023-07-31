@@ -7,7 +7,6 @@ MY_PV="${PV}"
 MAINTAINER_MODE="0"
 
 AMDGPU_TARGETS_OVERRIDE=(
-	gfx803
 	gfx900
 	gfx906
 	gfx908
