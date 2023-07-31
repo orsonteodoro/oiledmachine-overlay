@@ -1120,6 +1120,7 @@ einfo
 }
 
 _src_test() {
+	use hip && check_amdgpu
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${BUILD_DIR}" || die

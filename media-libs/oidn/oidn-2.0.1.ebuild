@@ -3,7 +3,7 @@
 
 EAPI=8
 
-AMDGPU_TARGETS_OVERRIDE=(
+AMDGPU_TARGETS_COMPAT=(
 	gfx1030
 	gfx1031
 	gfx1032
@@ -46,14 +46,14 @@ ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 LLVM_SLOTS=( 16 15 14 13 12 11 10 )
-CUDA_TARGETS=(
+CUDA_TARGETS_COMPAT=(
 	sm_70
 	sm_75
 	sm_80
 	sm_90
 )
 IUSE+="
-${CUDA_TARGETS[@]/#/cuda_targets_}
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_SLOTS[@]/#/llvm-}
 +apps +built-in-weights +clang cpu cuda doc gcc hip openimageio
 r1
@@ -61,7 +61,7 @@ r1
 
 gen_required_use_cuda_targets() {
 	local x
-	for x in ${CUDA_TARGETS[@]} ; do
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -75,7 +75,7 @@ REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	cuda? (
 		|| (
-			${CUDA_TARGETS[@]/#/cuda_targets_}
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
 	^^ (
@@ -322,13 +322,13 @@ ewarn
 		mycmakeargs+=(
 			-DGPU_TARGETS="$(get_amdgpu_flags)"
 		)
-einfo "HIP_TARGETS:  ${targets}"
+einfo "AMDGPU_TARGETS:  ${targets}"
 	fi
 
 	if use cuda ; then
 		local targets=""
 		local cuda_target
-		for cuda_target in ${CUDA_TARGETS[@]} ; do
+		for cuda_target in ${CUDA_TARGETS_COMPAT[@]} ; do
 			if use "${cuda_target/#/cuda_targets_}" ; then
 				targets+=";${cuda_target}"
 			fi

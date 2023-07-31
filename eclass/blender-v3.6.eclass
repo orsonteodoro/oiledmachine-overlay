@@ -69,7 +69,7 @@ OSL_PV="1.11"
 PUGIXML_PV="1.10"
 THEORA_PV="1.1.1"
 
-CUDA_TARGETS=(
+CUDA_TARGETS_COMPAT=(
 	sm_30
 	sm_35
 	sm_37
@@ -84,7 +84,7 @@ CUDA_TARGETS=(
 	compute_89
 )
 
-HIP_TARGETS=(
+AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx90c
 	gfx902
@@ -113,9 +113,9 @@ gen_llvm_iuse()
 IUSE+="
 $(gen_llvm_iuse)
 ${CPU_FLAGS_3_3[@]%:*}
-${CUDA_TARGETS[@]/#/cuda_targets_}
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_IUSE}
-${HIP_TARGETS[@]/#/amdgpu_targets_}
+${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${OPENVDB_ABIS[@]}
 +X +abi10-compat +alembic -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles -cycles-device-oneapi +cycles-path-guiding +dds
@@ -127,15 +127,14 @@ ${OPENVDB_ABIS[@]}
 r2
 "
 # hip is default ON upstream.
-
-inherit blender
+inherit blender rocm
 
 # See the blender.eclass for the LICENSE variable.
 LICENSE+=" CC-BY-4.0" # The splash screen is CC-BY stated in https://www.blender.org/download/demo-files/ )
 
 gen_required_use_cuda_targets() {
 	local x
-	for x in ${CUDA_TARGETS[@]} ; do
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -146,7 +145,7 @@ gen_required_use_cuda_targets() {
 
 gen_required_use_hip_targets() {
 	local x
-	for x in ${HIP_TARGETS[@]} ; do
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
 		echo "
 			amdgpu_targets_${x}? (
 				hip
@@ -199,7 +198,7 @@ REQUIRED_USE+="
 		)
 		cycles
 		|| (
-			${CUDA_TARGETS[@]/#/cuda_targets_}
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
 	cycles? (
@@ -218,7 +217,7 @@ REQUIRED_USE+="
 		!nanovdb
 		cycles
 		|| (
-			${HIP_TARGETS[@]/#/amdgpu_targets_}
+			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 		)
 	)
 	materialx? (
@@ -1143,7 +1142,7 @@ eerror
 	if use cuda ; then
 		local targets=""
 		local cuda_target
-		for cuda_target in ${CUDA_TARGETS[@]} ; do
+		for cuda_target in ${CUDA_TARGETS_COMPAT[@]} ; do
 			if use "${cuda_target/#/cuda_targets_}" ; then
 				targets+=";${cuda_target}"
 			fi
@@ -1160,7 +1159,7 @@ einfo "CUDA_TARGETS:  ${targets}"
 	if use hip ; then
 		local targets=""
 		local hip_target
-		for hip_target in ${HIP_TARGETS[@]} ; do
+		for hip_target in ${AMDGPU_TARGETS_COMPAT[@]} ; do
 			if use "${hip_target/#/amdgpu_targets_}" ; then
 				targets+=";${hip_target}"
 			fi
@@ -1170,7 +1169,7 @@ einfo "CUDA_TARGETS:  ${targets}"
 		mycmakeargs+=(
 			-DCYCLES_HIP_BINARIES_ARCH="${targets}"
 		)
-einfo "HIP_TARGETS:  ${targets}"
+einfo "AMDGPU_TARGETS:  ${targets}"
 	fi
 
 	if use openmp && tc-is-clang && has_version "sys-libs/libomp" ; then

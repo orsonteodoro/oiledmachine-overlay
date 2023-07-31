@@ -43,7 +43,7 @@ aac alsa flac jack lame matroska ogg opus oss pulseaudio speex twolame vorbis
 wavpack
 "
 
-CUDA_TARGETS=(
+CUDA_TARGETS_COMPAT=(
 	sm_52
 	sm_53
 	sm_60
@@ -57,7 +57,7 @@ CUDA_TARGETS=(
 )
 
 IUSE+="
-${CUDA_TARGETS[@]/#/cuda_targets_}
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${GSTREAMER_IUSE}
 
 aes appindicator +avahi avif brotli +client +clipboard cpu-percent +csc_cython
@@ -131,7 +131,7 @@ SERVER_OPTIONS="
 
 gen_required_use_cuda_targets() {
 	local x
-	for x in ${CUDA_TARGETS[@]} ; do
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -160,7 +160,7 @@ REQUIRED_USE+="
 	)
 	cuda? (
 		^^ (
-			${CUDA_TARGETS[@]/#/cuda_targets_}
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 		|| (
 			nvenc

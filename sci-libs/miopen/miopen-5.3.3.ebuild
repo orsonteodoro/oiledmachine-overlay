@@ -5,7 +5,7 @@ EAPI=8
 
 MY_PV="${PV}" # For /opt/rocm-5.3.3
 
-AMDGPU_TARGETS_OVERRIDE=(
+AMDGPU_TARGETS_COMPAT=(
 #	 gfx800
 #	 gfx802
 	gfx803

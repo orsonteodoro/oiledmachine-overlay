@@ -3,7 +3,7 @@
 
 EAPI=8
 
-AMDGPU_TARGETS_OVERRIDE=(
+AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900_xnack_minus
 	gfx906_xnack_minus

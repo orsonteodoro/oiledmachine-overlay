@@ -22,18 +22,18 @@ LICENSE="MIT BSD CC0-1.0"
 # Live ebuilds do not get KEYWORDS.  Distro policy.
 
 SLOT="0"
-CUDA_TARGETS=(
+CUDA_TARGETS_COMPAT=(
 	sm_50
 )
 IUSE+="
-${CUDA_TARGETS[@]/#/cuda_targets_}
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda ffmpeg gtk pyv4l2
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	cuda? (
 		|| (
-			${CUDA_TARGETS[@]/#/cuda_targets_}
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
 	cuda_targets_sm_50? (

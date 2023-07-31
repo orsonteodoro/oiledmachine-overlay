@@ -7,7 +7,7 @@ EAPI=8
 MAINTAINER_MODE=1
 MY_PN="jax"
 
-AMDGPU_TARGETS_OVERRIDE=(
+AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906
 	gfx908
@@ -20,7 +20,7 @@ JAVA_SLOT="11"
 LLVM_MAX_SLOT=16
 LLVM_SLOTS=( 16 ) # Limited by rocm
 PYTHON_COMPAT=( python3_{10..11} )
-CUDA_TARGETS=(
+CUDA_TARGETS_COMPAT=(
 	sm_52
 	sm_60
 	sm_70
@@ -47,7 +47,7 @@ LICENSE="
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-${CUDA_TARGETS[@]/#/cuda_targets_}
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 clang custom-optimization-level cpu cuda hardened portable rocm r1
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
@@ -58,7 +58,7 @@ REQUIRED_USE+="
 	cuda? (
 		!clang
 		|| (
-			${CUDA_TARGETS[@]/#/cuda_targets_}
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
 	|| (
@@ -617,7 +617,7 @@ python_prepare_all() {
 get_cuda_targets() {
 	local targets
 	local target
-	for target in ${CUDA_TARGETS[@]} ; do
+	for target in ${CUDA_TARGETS_COMPAT[@]} ; do
 		if use "cuda_targets_${target}" ; then
 			targets+=",${target}"
 		fi

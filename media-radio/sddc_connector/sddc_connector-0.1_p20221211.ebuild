@@ -12,14 +12,14 @@ LICENSE="GPL-3"
 # KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Not tagged or live snapshot
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RESTRICT="mirror"
-CUDA_TARGETS=(
+CUDA_TARGETS_COMPAT=(
 	sm_60
 )
 IUSE="
-	${CUDA_TARGETS[@]/#/+cuda_targets_}
+	${CUDA_TARGETS_COMPAT[@]/#/+cuda_targets_}
 "
 REQUIRED_USE="
-	${CUDA_TARGETS[@]/#/cuda_targets_}
+	${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 "
 RDEPEND+="
 	media-radio/csdr

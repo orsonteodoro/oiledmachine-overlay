@@ -376,14 +376,14 @@ FFTOOLS=(
 
 # +re-codecs is based on unpatched behavior to prevent breaking changes.
 
-CUDA_TARGETS=(
+CUDA_TARGETS_COMPAT=(
 	sm_30
 	sm_60
 )
 
 IUSE+="
 ${CPU_FEATURES_MAP[@]%:*}
-${CUDA_TARGETS[@]/#/cuda_targets_}
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}

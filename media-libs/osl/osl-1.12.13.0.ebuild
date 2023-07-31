@@ -11,7 +11,7 @@ HOMEPAGE="http://opensource.imageworks.com/?p=osl"
 LICENSE="BSD"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="amd64 ~x86"
-CUDA_TARGETS=(
+CUDA_TARGETS_COMPAT=(
 	sm_60
 )
 X86_CPU_FEATURES=(
@@ -35,7 +35,7 @@ OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
 QT5_MIN="5.6"
 QT6_MIN="6"
 IUSE+="
-${CUDA_TARGETS[@]/#/cuda_targets_}
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FEATURES[@]%:*}
 ${LLVM_SLOTS[@]/#/llvm-}
 cuda doc optix partio python qt5 qt6 static-libs test wayland X
@@ -48,7 +48,7 @@ REQUIRED_USE+="
 	)
 	cuda? (
 		|| (
-			${CUDA_TARGETS[@]/#/cuda_targets_}
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
 	cuda_targets_sm_60? (

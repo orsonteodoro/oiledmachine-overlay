@@ -130,123 +130,20 @@ _ROCM_ECLASS=1
 
 # @FUNCTION: _rocm_set_globals_default
 # @DESCRIPTION:
-# Set global variables useful to ebuilds: IUSE, ROCM_REQUIRED_USE, and
-# ROCM_USEDEP
-_rocm_set_globals_default() {
-	# See
-	# https://github.com/RadeonOpenCompute/ROCm/blob/rocm-4.0.0/README.md#supported-gpus
-	# https://github.com/ROCmSoftwarePlatform/Tensile/blob/rocm-5.6.0/Tensile/Source/lib/include/Tensile/AMDGPU.hpp
-	# https://github.com/ROCmSoftwarePlatform/Tensile/blob/rocm-5.6.0/Tensile/Common.py#L274
-	# https://llvm.org/docs/AMDGPUUsage.html#processors
-	local amdgpu_targets=()
-
-# Allowed via ROC_ENABLE_PRE_VEGA=true in ROCclr
-#	if ver_test ${ROCM_VERSION} -lt 4.5 ; then
-		# See https://github.com/ROCm-Developer-Tools/ROCclr/blob/rocm-5.6.0/utils/flags.hpp#L248
-		# See https://github.com/ROCm-Developer-Tools/ROCclr/blob/rocm-5.6.0/device/device.hpp
-		amdgpu_targets+=(
-			gfx701 # Since 2.6
-			gfx702
-			gfx803 # offered in in 2.10 but dropped since 4.0
-		)
-#	fi
-
-	# 2.10
-	amdgpu_targets+=(
-		# Vega allowed
-		gfx900
-		gfx906
-		gfx908
-	)
-
-	if ver_test ${ROCM_VERSION} -ge 3.3.0 ; then
-		amdgpu_targets+=(
-			${amdgpu_targets}
-			gfx1010
-		)
-	fi
-
-	if ver_test ${ROCM_VERSION} -ge 4.3.0 ; then
-		amdgpu_targets+=(
-			gfx90a # Not listed in flags.hpp but in Common.py
-			gfx910
-			gfx1011
-			gfx1012
-			gfx1030
-		)
-	fi
-
-	if ver_test ${ROCM_VERSION} -ge 5.3.0 ; then
-		amdgpu_targets+=(
-			gfx1100
-			gfx1101
-			gfx1102
-		)
-	fi
-
-	if ver_test ${ROCM_VERSION} -ge 5.5.0 ; then
-		amdgpu_targets+=(
-			gfx1031
-			gfx1032
-			gfx1034
-			gfx1035
-		)
-	fi
-
-	local _list=()
-	if [[ -n "${AMDGPU_TARGETS_BLACKLIST[@]}" ]] ; then
-		local x
-		local y
-		for x in ${amdgpu_targets[@]} ; do
-			local bl=0
-			for y in ${AMDGPU_TARGETS_BLACKLIST[@]} ; do
-				if [[ "${x}" == "${y}" ]] ; then
-					bl=1
-				fi
-			done
-			if (( ${bl} == 0 )) ; then
-				_list+=( "${x}" )
-			fi
-		done
-		amdgpu_targets=(
-			${_list[@]}
-		)
-	fi
-
-	if [[ -z "${amdgpu_targets[@]}" ]] ; then
-		die "Unknown ROCm major version! Please update rocm.eclass before bumping to new ebuilds"
-	fi
-
-	local iuse_flags=(
-		"${amdgpu_targets[@]/#/+amdgpu_targets_}"
-	)
-	IUSE="${iuse_flags[*]}"
-
-	local all_amdgpu_targets=(
-		"${amdgpu_targets[@]}"
-	)
-	local allflags=( "${all_amdgpu_targets[@]/#/amdgpu_targets_}" )
-	ROCM_REQUIRED_USE=" || ( ${allflags[*]} )"
-
-	local optflags=${allflags[@]/%/(-)?}
-	ROCM_USEDEP=${optflags// /,}
-}
-
-# @FUNCTION: _rocm_set_globals_override
-# @DESCRIPTION:
 # Allow ebuilds to define IUSE, ROCM_REQUIRED_USE
-_rocm_set_globals_override() {
+_rocm_set_globals_default() {
+	(( ${#AMDGPU_TARGETS_COMPAT[@]} == 0 )) && return
 	local iuse_flags=(
-		"${AMDGPU_TARGETS_OVERRIDE[@]/#/+amdgpu_targets_}"
+		"${AMDGPU_TARGETS_COMPAT[@]/#/+amdgpu_targets_}"
 	)
 	IUSE="${iuse_flags[*]}"
 
 	local allflags=(
-		"${AMDGPU_TARGETS_OVERRIDE[@]/#/amdgpu_targets_}"
+		"${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}"
 	)
-	ROCM_REQUIRED_USE=" || ( ${allflags[*]} )"
-
 	local optflags=${allflags[@]/%/(-)?}
+
+	ROCM_REQUIRED_USE=" || ( ${allflags[*]} )"
 	ROCM_USEDEP=${optflags// /,}
 }
 
@@ -256,11 +153,7 @@ _rocm_set_globals_override() {
 # Set global variables useful to ebuilds: IUSE, ROCM_REQUIRED_USE, and
 # ROCM_USEDEP
 _rocm_set_globals() {
-	if [[ -n "${AMDGPU_TARGETS_OVERRIDE[@]}" ]] ; then
-		_rocm_set_globals_override
-	else
-		_rocm_set_globals_default
-	fi
+	_rocm_set_globals_default
 }
 
 _rocm_set_globals

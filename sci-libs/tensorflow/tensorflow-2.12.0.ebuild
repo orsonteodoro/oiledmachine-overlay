@@ -12,7 +12,7 @@ MY_P=${PN}-${MY_PV}
 DEP_VER="$(ver_cut 1-2)"
 DEP_VER_MAX="${DEP_VER%%.*}.$(( $(ver_cut 2 ${DEP_VER}) + 1 ))"
 
-AMDGPU_TARGETS_OVERRIDE=(
+AMDGPU_TARGETS_COMPAT=(
 # See https://github.com/tensorflow/tensorflow/blob/v2.12.0/tensorflow/compiler/xla/stream_executor/device_description.h#L172
 # Container lists only gfx900, gfx906, gfx908
 	gfx900
@@ -25,7 +25,7 @@ DISTUTILS_OPTIONAL=1
 CHECKREQS_MEMORY="10G" # Gold uses above 9.0 GiB
 CHECKREQS_DISK_BUILD="19G"
 CHECKREQS_DISK_USR="5G"
-CUDA_TARGETS=(
+CUDA_TARGETS_COMPAT=(
 	sm_35
 	sm_50
 	sm_60
@@ -178,13 +178,13 @@ CPU_USE_FLAGS_X86=(
 # * Checks only but does no work.
 IUSE="
 ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
-${CUDA_TARGETS[@]/#/cuda_targets_}
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 alt-ssl clang cuda custom-optimization-level +hardened hip mpi +python
 test xla
 "
 gen_required_use_cuda_targets() {
 	local x
-	for x in ${CUDA_TARGETS[@]} ; do
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
 		echo "
 			cuda_targets_${x}? (
 				cuda
@@ -196,7 +196,7 @@ REQUIRED_USE="
 	$(gen_required_use_cuda_targets)
 	cuda? (
 		|| (
-			${CUDA_TARGETS[@]/#/cuda_targets_}
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
 	python? (
@@ -999,7 +999,7 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 get_cuda_targets() {
 	local targets
 	local target
-	for target in ${CUDA_TARGETS[@]} ; do
+	for target in ${CUDA_TARGETS_COMPAT[@]} ; do
 		if use "cuda_targets_${target}" ; then
 			targets+=",${target}"
 		fi

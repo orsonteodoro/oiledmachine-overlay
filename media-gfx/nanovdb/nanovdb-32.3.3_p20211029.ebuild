@@ -17,11 +17,11 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # Live ebuilds do not get keyworded.
 # cuda, optix, allow-fetchcontent are enabled upstream by default but
 # are disabled
-CUDA_TARGETS=(
+CUDA_TARGETS_COMPAT=(
 	sm_75
 )
 IUSE+="
-${CUDA_TARGETS[@]/#/cuda_targets_}
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 +benchmark +blosc cuda -doc +examples +interactive-renderer -log4cplus
 -magicavoxel +opencl optix +opengl -openexr +openvdb system-glfw +tbb +test
 test-renderer +tools +zlib
@@ -35,7 +35,7 @@ REQUIRED_USE+="
 	)
 	cuda? (
 		^^ (
-			${CUDA_TARGETS[@]/#/cuda_targets_}
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
 	cuda_targets_sm_75? (

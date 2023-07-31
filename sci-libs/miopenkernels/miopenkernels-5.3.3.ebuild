@@ -6,7 +6,7 @@ EAPI=8
 MY_PV="${PV}"
 MAINTAINER_MODE="0"
 
-AMDGPU_TARGETS_OVERRIDE=(
+AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906
 	gfx908
@@ -197,7 +197,7 @@ pool/main/m/miopenkernels-gfx90a-110kdb/miopenkernels-gfx90a-110kdb_1.1.0.50303-
 	export EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	cd "${EDISTDIR}" || die
 	local x
-	for x in ${AMDGPU_TARGETS_OVERRIDE[@]} ; do
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
 		for y in ${files[@]} ; do
 			if use "amdgpu_targets_${x}" && [[ "${y}" =~ "${x}" ]] ; then
 	# Do it this way via wget instead of SRC_URI because the files are too large.
