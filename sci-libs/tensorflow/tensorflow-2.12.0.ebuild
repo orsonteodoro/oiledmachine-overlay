@@ -1042,9 +1042,14 @@ ewarn
 		export TF_CUDA_CLANG=0
 		export TF_NEED_TENSORRT=0
 		if use cuda; then
+			local s=$(gcc-major-version) # Slot
 			export TF_CUDA_COMPUTE_CAPABILITIES=$(get_cuda_targets)
 			export TF_CUDA_PATHS="${EPREFIX}/opt/cuda"
-			export GCC_HOST_COMPILER_PATH="$(cuda_gccdir)/$(tc-getCC)"
+
+			# The original ebuild has the bugged one
+			# where it will output ${EPREFIX}/usr/${CHOST}/gcc-bin/11/${CHOST}-gcc-12
+			export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-gcc-${s}"
+
 			export TF_CUDA_VERSION="$(cuda_toolkit_version)"
 			export TF_CUDNN_VERSION="$(cuda_cudnn_version)"
 einfo "Setting CUDA version: $TF_CUDA_VERSION"

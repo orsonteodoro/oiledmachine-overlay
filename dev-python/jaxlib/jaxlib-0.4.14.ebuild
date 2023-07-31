@@ -447,7 +447,7 @@ einfo
 	local s=$(gcc-major-version) # Slot
 
 	# Required for CUDA builds
-	export GCC_HOST_COMPILER_PATH="/usr/${CHOST}/gcc-bin/${s}/${CHOST}-gcc-${s}"
+	export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-gcc-${s}"
 
 	${CC} --version || die
 	strip-unsupported-flags
