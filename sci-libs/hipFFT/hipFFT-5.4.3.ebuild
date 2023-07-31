@@ -20,15 +20,38 @@ https://github.com/ROCmSoftwarePlatform/hipFFT/archive/refs/tags/rocm-${PV}.tar.
 
 DESCRIPTION="CU / ROCM agnostic hip FFT implementation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipFFT"
+IUSE+=" cuda +rocm"
+gen_rocm_required_use() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				rocm
+			)
+		"
+	done
+}
 REQUIRED_USE="
-	${ROCM_REQUIRED_USE}
+	$(gen_rocm_required_use)
+	rocm? (
+		${ROCM_REQUIRED_USE}
+	)
+	^^ (
+		rocm
+		cuda
+	)
 "
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
 RDEPEND="
 	~dev-util/hip-${PV}:${SLOT}
-	~sci-libs/rocFFT-${PV}:${SLOT}
+	cuda? (
+		dev-util/nvidia-cuda-toolkit
+	)
+	rocm? (
+		~sci-libs/rocFFT-${PV}:${SLOT}
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -66,6 +89,16 @@ src_configure() {
 		-DHIP_ROOT_DIR="${EPREFIX}/usr"
 		-DROCM_PATH="${EPREFIX}/usr"
 	)
+	if use cuda ; then
+		export HIP_PLATFORM="nvidia"
+		mycmakeargs+=(
+			-DBUILD_WITH_LIB="CUDA"
+		)
+	elif use rocm ; then
+		mycmakeargs+=(
+			-DBUILD_WITH_LIB="ROCM"
+		)
+	fi
 	cmake_src_configure
 }
 

@@ -59,9 +59,13 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSPARSE"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="test r1"
+IUSE="cuda +rocm test r1"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
+	^^ (
+		rocm
+		cuda
+	)
 "
 RESTRICT="
 	!test? (
@@ -70,8 +74,12 @@ RESTRICT="
 "
 RDEPEND="
 	~dev-util/hip-${PV}:${SLOT}
-	~dev-util/rocminfo-${PV}:${SLOT}
-	~sci-libs/rocSPARSE-${PV}:${SLOT}
+	cuda? (
+		dev-util/nvidia-cuda-toolkit
+	)
+	rocm? (
+		~sci-libs/rocSPARSE-${PV}:${SLOT}
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -82,6 +90,7 @@ BDEPEND="
 	test? (
 		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		dev-cpp/gtest
+		~dev-util/rocminfo-${PV}:${SLOT}
 	)
 "
 S="${WORKDIR}/hipSPARSE-rocm-${PV}"
@@ -140,6 +149,7 @@ src_configure() {
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DCMAKE_INSTALL_INCLUDEDIR=include/hipsparse
 		-DHIP_RUNTIME="ROCclr"
+		-DUSE_CUDA=$(usex cuda ON OFF)
 	)
 	cmake_src_configure
 }

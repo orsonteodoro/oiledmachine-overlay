@@ -38,7 +38,7 @@
     <flag name="hardened">
       If disabled, it will disable SSP, FORTIFY_SOURCE, Full RELRO.
     </flag>
-    <flag name="hip">
+    <flag name="rocm">
       Enable support for AMD GPUs
     </flag>
     <flag name="xla">

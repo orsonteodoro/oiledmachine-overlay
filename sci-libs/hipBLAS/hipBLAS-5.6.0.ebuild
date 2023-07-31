@@ -15,10 +15,22 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipBLAS"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
+IUSE+=" cuda +rocm"
+REQUIRED_USE="
+	^^ (
+		cuda
+		rocm
+	)
+"
 RDEPEND="
 	~dev-util/hip-${PV}:${SLOT}
-	~sci-libs/rocBLAS-${PV}:${SLOT}
-	~sci-libs/rocSOLVER-${PV}:${SLOT}
+	cuda? (
+		dev-util/nvidia-cuda-toolkit
+	)
+	rocm? (
+		~sci-libs/rocBLAS-${PV}:${SLOT}
+		~sci-libs/rocSOLVER-${PV}:${SLOT}
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -62,6 +74,7 @@ src_configure() {
 		-DBUILD_CLIENTS_TESTS=OFF
 
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
+		-DUSE_CUDA=$(usex cuda ON OFF)
 	)
 	cmake_src_configure
 }

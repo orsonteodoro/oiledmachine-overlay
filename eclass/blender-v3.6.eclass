@@ -142,7 +142,7 @@ gen_required_use_cuda_targets() {
 	done
 }
 
-gen_required_use_hip_targets() {
+gen_required_use_rocm_targets() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
 		echo "
@@ -165,7 +165,7 @@ IMPLIED_RELEASE_BUILD_REQUIRED_USE="
 "
 REQUIRED_USE+="
 	$(gen_required_use_cuda_targets)
-	$(gen_required_use_hip_targets)
+	$(gen_required_use_rocm_targets)
 	!boost? (
 		!alembic
 		!color-management
@@ -211,11 +211,6 @@ REQUIRED_USE+="
 	)
 	embree? (
 		cycles
-	)
-	hip? (
-		!nanovdb
-		cycles
-		${ROCM_REQUIRED_USE}
 	)
 	materialx? (
 		!python_single_target_python3_10
@@ -309,6 +304,11 @@ REQUIRED_USE+="
 		cuda? (
 			nvcc
 		)
+	)
+	rocm? (
+		!nanovdb
+		cycles
+		${ROCM_REQUIRED_USE}
 	)
 	theora? (
 		ffmpeg
@@ -554,12 +554,6 @@ RDEPEND+="
 		<dev-libs/level-zero-2
 		>=dev-libs/level-zero-1.8.8
 	)
-	hip? (
-		|| (
-			~dev-util/hip-5.5.0:0/5.5
-			~dev-util/hip-5.5.1:0/5.5
-		)
-	)
 	dbus? (
 		sys-apps/dbus
 	)
@@ -775,6 +769,12 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 	release? (
 		>=media-libs/freetype-${FREETYPE_PV}[brotli,bzip2,harfbuzz,png]
 		media-libs/harfbuzz[truetype]
+	)
+	rocm? (
+		|| (
+			~dev-util/hip-5.5.0:0/5.5
+			~dev-util/hip-5.5.1:0/5.5
+		)
 	)
 	sdl? (
 		!pulseaudio? (
@@ -1033,7 +1033,7 @@ ewarn
 ewarn "Install both if build fails."
 ewarn
 	fi
-	if use hip ; then
+	if use rocm ; then
 		sed -e "s|/opt/rocm/hip/lib/libamdhip64.so|/usr/lib64/libamdhip64.so|" \
 			-i extern/hipew/src/hipew.c \
 			|| die
@@ -1153,12 +1153,12 @@ einfo "CUDA_TARGETS:  ${targets}"
 	fi
 
 	# Speed up build time
-	if use hip ; then
+	if use rocm ; then
 		local targets=""
-		local hip_target
-		for hip_target in ${AMDGPU_TARGETS_COMPAT[@]} ; do
-			if use "${hip_target/#/amdgpu_targets_}" ; then
-				targets+=";${hip_target}"
+		local rocm_target
+		for rocm_target in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+			if use "${rocm_target/#/amdgpu_targets_}" ; then
+				targets+=";${rocm_target}"
 			fi
 		done
 		targets=$(echo "${targets}" \

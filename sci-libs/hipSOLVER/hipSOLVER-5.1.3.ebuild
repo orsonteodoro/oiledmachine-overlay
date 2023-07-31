@@ -19,9 +19,13 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSOLVER"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="test"
+IUSE="test cuda +rocm"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
+	^^ (
+		rocm
+		cuda
+	)
 "
 RESTRICT="
 	!test? (
@@ -30,11 +34,16 @@ RESTRICT="
 "
 RDEPEND="
 	~dev-util/hip-${PV}:${SLOT}
-	~sci-libs/rocBLAS-${PV}:${SLOT}
-	~sci-libs/rocSOLVER-${PV}:${SLOT}
-	virtual/blas
+	cuda? (
+		dev-util/nvidia-cuda-toolkit
+	)
+	rocm? (
+		~sci-libs/rocBLAS-${PV}:${SLOT}
+		~sci-libs/rocSOLVER-${PV}:${SLOT}
 
-	~dev-util/rocm-smi-${PV}:${SLOT}
+		~dev-util/rocm-smi-${PV}:${SLOT}
+	)
+	virtual/blas
 "
 DEPEND="
 	${RDEPEND}
@@ -73,6 +82,7 @@ src_configure() {
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DCMAKE_INSTALL_INCLUDEDIR=include/hipsolver
+		-DUSE_CUDA=$(usex cuda ON OFF)
 	)
 	cmake_src_configure
 }

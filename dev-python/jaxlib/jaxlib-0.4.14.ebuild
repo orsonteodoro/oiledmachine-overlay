@@ -85,9 +85,9 @@ gen_rocm_depends() {
 			~dev-libs/rocm-device-libs-${pv}:${s}
 			~dev-util/hip-${pv}:${s}
 			~dev-util/roctracer-${pv}:${s}
-			~sci-libs/hipBLAS-${pv}:${s}
-			~sci-libs/hipFFT-${pv}:${s}
-			~sci-libs/hipSPARSE-${pv}:${s}
+			~sci-libs/hipBLAS-${pv}:${s}[rocm]
+			~sci-libs/hipFFT-${pv}:${s}[rocm]
+			~sci-libs/hipSPARSE-${pv}:${s}[rocm]
 			~sci-libs/miopen-${pv}:${s}
 			~sci-libs/rocFFT-${pv}:${s}
 			~sci-libs/rocRAND-${pv}:${s}

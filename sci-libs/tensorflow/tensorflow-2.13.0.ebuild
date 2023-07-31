@@ -179,8 +179,8 @@ CPU_USE_FLAGS_X86=(
 IUSE="
 ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-alt-ssl clang cuda custom-optimization-level +hardened hip mpi +python
-test xla
+alt-ssl clang cuda custom-optimization-level +hardened mpi +python
+rocm test xla
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -399,9 +399,9 @@ gen_rocm_rdepend() {
 			~dev-libs/rocm-device-libs-${pv}:${s}
 			~dev-util/hip-${pv}:${s}
 			~dev-util/roctracer-${pv}:${s}
-			~sci-libs/hipBLAS-${pv}:${s}
-			~sci-libs/hipSOLVER-${pv}:${s}
-			~sci-libs/hipSPARSE-${pv}:${s}
+			~sci-libs/hipBLAS-${pv}:${s}[rocm]
+			~sci-libs/hipSOLVER-${pv}:${s}[rocm]
+			~sci-libs/hipSPARSE-${pv}:${s}[rocm]
 			~sci-libs/rocBLAS-${pv}:${s}
 			~sci-libs/rocFFT-${pv}:${s}
 			~sci-libs/rocRAND-${pv}:${s}
@@ -452,11 +452,6 @@ RDEPEND="
 	cuda? (
 		${CUDA_RDEPEND}
 		=dev-libs/cudnn-8*
-	)
-	hip? (
-		|| (
-			$(gen_rocm_rdepend)
-		)
 	)
 	mpi? (
 		virtual/mpi
@@ -518,6 +513,11 @@ RDEPEND="
 		>=dev-python/dill-0.3.6[${PYTHON_USEDEP}]
 		>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
 		>=dev-python/tblib-1.7.0[${PYTHON_USEDEP}]
+	)
+	rocm? (
+		|| (
+			$(gen_rocm_rdepend)
+		)
 	)
 "
 DEPEND="
@@ -717,7 +717,7 @@ einfo "FORCE_LLVM_SLOT may be specified."
 		_LLVM_SLOTS=( ${FORCE_LLVM_SLOT} )
 	fi
 
-	if use hip ; then
+	if use rocm ; then
 		has_version "dev-util/hip:0/5.3" && _LLVM_SLOTS=( 15 )
 		has_version "dev-util/hip:0/5.4" && _LLVM_SLOTS=( 15 )
 		has_version "dev-util/hip:0/5.5" && _LLVM_SLOTS=( 16 )
@@ -749,7 +749,7 @@ eerror
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
 	LLVM_MAX_SLOT=${s}
-	if use hip ; then
+	if use rocm ; then
 		has_version "dev-util/hip:0/5.3" && LLVM_MAX_SLOT=15
 		has_version "dev-util/hip:0/5.4" && LLVM_MAX_SLOT=15
 		has_version "dev-util/hip:0/5.5" && LLVM_MAX_SLOT=16
@@ -787,7 +787,7 @@ einfo "CFLAGS:\t${CFLAGS}"
 einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
-	if tc-is-clang || use clang || use hip ; then
+	if tc-is-clang || use clang || use rocm ; then
 		use_clang
 	elif tc-is-gcc ; then
 		use_gcc
@@ -1013,9 +1013,9 @@ src_configure() {
 	load_env
 	check_cython
 
-	if ! use cuda && ! use hip ; then
+	if ! use cuda && ! use rocm ; then
 ewarn
-ewarn "You are building for CPU only.  Enable the cuda or hip USE flag to"
+ewarn "You are building for CPU only.  Enable the cuda or rocm USE flag to"
 ewarn "support GPUs."
 ewarn
 	fi
@@ -1077,8 +1077,8 @@ einfo
 einfo "  /opt/cuda/extras/demo_suite/deviceQuery | grep 'CUDA Capability'"
 einfo
 		fi
-		if use hip ; then
-ewarn "HIP support is a Work In Progress (WIP) / UNFINISHED"
+		if use rocm ; then
+ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 			export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags \
 				| tr ";" ",")
 			export TF_ROCM_LLVM_SLOT="${LLVM_MAX_SLOT}"
