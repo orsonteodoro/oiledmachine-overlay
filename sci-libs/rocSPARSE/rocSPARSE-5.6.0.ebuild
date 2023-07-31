@@ -75,6 +75,7 @@ https://sparse.tamu.edu/MM/Chevron/Chevron4.tar.gz
 	-> ${PN}_Chevron4.tar.gz
 	)
 "
+# 0be37a2 - fixing fma ambiguities (#516)
 
 DESCRIPTION="Basic Linear Algebra Subroutines for sparse computation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSPARSE"
@@ -114,6 +115,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.4.3-remove-matrices-unpacking.patch"
 	"${FILESDIR}/${PN}-5.3.3-change-cmake-path.patch"
 	"${FILESDIR}/${PN}-5.6.0-includes.patch"
+	"${FILESDIR}/${PN}-5.6.0-fma-fix.patch"
 )
 
 python_check_deps() {

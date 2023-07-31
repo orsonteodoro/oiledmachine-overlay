@@ -1,0 +1,24 @@
+# Partial backport of fixing fma ambiguities (#516)
+https://github.com/ROCmSoftwarePlatform/rocSPARSE/commit/0be37a2288c3692e7165221326d257e54f50e8c9
+diff -urp rocSPARSE-rocm-5.4.3.orig/library/CMakeLists.txt rocSPARSE-rocm-5.4.3/library/CMakeLists.txt
+--- rocSPARSE-rocm-5.4.3.orig/library/CMakeLists.txt	2023-07-31 01:42:05.430487009 -0700
++++ rocSPARSE-rocm-5.4.3/library/CMakeLists.txt	2023-07-31 01:42:22.102487443 -0700
+@@ -1,5 +1,5 @@
+ # ########################################################################
+-# Copyright (C) 2018-2022 Advanced Micro Devices, Inc. All rights Reserved.
++# Copyright (C) 2018-2023 Advanced Micro Devices, Inc. All rights Reserved.
+ #
+ # Permission is hereby granted, free of charge, to any person obtaining a copy
+ # of this software and associated documentation files (the "Software"), to deal
+diff -urp rocSPARSE-rocm-5.4.3.orig/library/include/rocsparse-complex-types.h rocSPARSE-rocm-5.4.3/library/include/rocsparse-complex-types.h
+--- rocSPARSE-rocm-5.4.3.orig/library/include/rocsparse-complex-types.h	2023-01-20 14:14:24.000000000 -0800
++++ rocSPARSE-rocm-5.4.3/library/include/rocsparse-complex-types.h	2023-07-31 01:42:22.102487443 -0700
+@@ -200,7 +200,7 @@ private:
+ 
+     static __forceinline__ __device__ __host__ float fma(float p, float q, float r)
+     {
+-        return ::fma(p, q, r);
++        return ::fmaf(p, q, r);
+     }
+ 
+     static __forceinline__ __device__ __host__ double fma(double p, double q, double r)

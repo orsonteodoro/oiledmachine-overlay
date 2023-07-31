@@ -111,6 +111,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-remove-matrices-unpacking.patch"
 	"${FILESDIR}/${PN}-5.0.2-enable-gfx1031.patch"
 	"${FILESDIR}/${PN}-5.0.2-remove-incorrect-assert.patch"
+	"${FILESDIR}/${PN}-5.1.3-fma-fix.patch"
 )
 
 python_check_deps() {

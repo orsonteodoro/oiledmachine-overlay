@@ -114,6 +114,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.4.3-remove-matrices-unpacking.patch"
 	"${FILESDIR}/${PN}-5.3.3-change-cmake-path.patch"
 	"${FILESDIR}/${PN}-5.6.0-includes.patch"
+	"${FILESDIR}/${PN}-5.6.0-fma-fix.patch"
 )
 
 python_check_deps() {
