@@ -152,8 +152,7 @@ src_configure() {
 eerror
 eerror "GCC 11 required for openmp."
 eerror
-eerror "Use eselect gcc list"
-eerror "Use eselect gcc set #"
+eerror "  eselect gcc set ${CHOST}-gcc-11"
 eerror
 eerror "to change to gcc-11"
 eerror
