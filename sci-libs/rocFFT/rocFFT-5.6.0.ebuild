@@ -244,9 +244,6 @@ src_configure() {
 # local memory (23068672) exceeds limit (65536) in function '_Z17transpose_kernel2I15HIP_vector_typeIfLj2EE6planarIS1_E11interleavedIS1_ELm64ELm16ELb1ELi0ELi1ELb0ELb0ELb0EL12CallbackType1EEvT0_T1_PKT_PmSC_SC_PvSD_jSD_SD_'
 	replace-flags '-O0' '-O1'
 
-	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
-	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
-
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_RIDER=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SELFTEST=$(usex test ON OFF)
@@ -269,6 +266,9 @@ src_configure() {
 	fi
 
 	if use rocm ; then
+		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+		einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
+
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DBUILD_AOT=$(usex aot ON OFF)

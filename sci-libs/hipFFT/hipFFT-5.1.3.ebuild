@@ -110,8 +110,8 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DBUILD_CLIENTS_TESTS=OFF
 		-DBUILD_CLIENTS_RIDER=OFF
+		-DBUILD_CLIENTS_TESTS=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR="include/hipfft"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 		-DCMAKE_MODULE_PATH="${EPREFIX}/usr/$(get_libdir)/cmake"
@@ -124,10 +124,15 @@ src_configure() {
 		mycmakeargs+=(
 			-DBUILD_WITH_LIB="CUDA"
 			-DCMAKE_CXX_COMPILER="${CHOST}-g++-$(gcc-major-version)"
+			-DHIP_COMPILER="cuda"
+			-DHIP_RUNTIME="nvcc"
 		)
 	elif use rocm ; then
+		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DBUILD_WITH_LIB="ROCM"
+			-DHIP_COMPILER="clang"
+			-DHIP_RUNTIME="rocclr"
 		)
 	fi
 	cmake_src_configure

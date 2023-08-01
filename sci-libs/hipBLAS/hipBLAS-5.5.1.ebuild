@@ -76,6 +76,19 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 		-DUSE_CUDA=$(usex cuda ON OFF)
 	)
+	if use cuda ; then
+		export HIP_PLATFORM="nvidia"
+		mycmakeargs+=(
+			-DHIP_COMPILER="cuda"
+			-DHIP_RUNTIME="nvcc"
+		)
+	elif use rocm ; then
+		export HIP_PLATFORM="amd"
+		mycmakeargs+=(
+			-DHIP_COMPILER="clang"
+			-DHIP_RUNTIME="rocclr"
+		)
+	fi
 	cmake_src_configure
 }
 

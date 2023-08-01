@@ -26,14 +26,34 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocPRIM"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="benchmark test"
+IUSE="benchmark hip-cpu +rocm test"
+gen_rocm_required_use() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				rocm
+			)
+		"
+	done
+}
 REQUIRED_USE="
-	${ROCM_REQUIRED_USE}
+	$(gen_rocm_required_use)
+	rocm? (
+		${ROCM_REQUIRED_USE}
+	)
+	^^ (
+		rocm
+		hip-cpu
+	)
 "
 RDEPEND="
 	~dev-util/hip-${PV}:${SLOT}[rocm]
 	benchmark? (
 		dev-cpp/benchmark
+	)
+	hip-cpu? (
+		dev-libs/hip-cpu
 	)
 	test? (
 		dev-cpp/gtest
@@ -108,14 +128,30 @@ src_configure() {
 	addpredict /dev/dri/
 
 	local mycmakeargs=(
-		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBUILD_BENCHMARK=$(usex benchmark ON OFF)
+		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DBUILD_TEST=$(usex test ON OFF)
 		-DSKIP_RPATH=On
+		-DUSE_HIP_CPU=$(usex hip-cpu ON OFF)
 	)
 
-	CXX=hipcc \
-	cmake_src_configure
+	if use hip-cpu ; then
+		mycmakeargs+=(
+			-DBUILD_HIPRAND=OFF
+			-Dhip_cpu_rt_DIR="${ESYSROOT}/usr/lib/hip-cpu/share/hip_cpu_rt/cmake"
+		)
+		CXX="g++" \
+		cmake_src_configure
+	elif use rocm ; then
+		export HIP_PLATFORM="amd"
+		mycmakeargs+=(
+			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+			-DHIP_COMPILER="clang"
+			-DHIP_RUNTIME="rocclr"
+		)
+		CXX="hipcc" \
+		cmake_src_configure
+	fi
 }
 
 src_test() {

@@ -43,7 +43,7 @@ KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test r1
+benchmark cuda hip-cpu +rocm test r1
 "
 gen_cuda_required_use() {
 	local x
@@ -79,10 +79,18 @@ REQUIRED_USE="
 	^^ (
 		rocm
 		cuda
+		hip-cpu
 	)
 "
 RDEPEND="
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	cuda? (
+		dev-util/nvidia-cuda-toolkit
+	)
+	hip-cpu? (
+		dev-libs/hip-cpu
+		sys-devel/clang:${LLVM_MAX_SLOT}
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -135,6 +143,21 @@ src_prepare() {
 		cmake/Dependencies.cmake \
 		|| die
 
+	if use cuda ; then
+		local badflags=(
+			"-Wno-unknown-pragmas"
+			"-Wall"
+			"-Wextra"
+		)
+		local
+		for flag in ${badflags[@]} ; do
+			sed -i \
+				-e "s|${flag}||g" \
+				$(grep -l -r -e "${flag}" "${WORKDIR}") \
+				|| die
+		done
+	fi
+
 	eapply_user
 	cmake_src_prepare
 }
@@ -152,17 +175,43 @@ src_configure() {
 		-DBUILD_HIPRAND=ON
 		-DBUILD_TEST=$(usex test ON OFF)
 		-DCMAKE_SKIP_RPATH=On
+		-DUSE_HIP_CPU=$(usex hip-cpu ON OFF)
 	)
 
 	if use cuda ; then
+		export HIP_PLATFORM="nvidia"
 		filter-flags -pipe
+		local s=11
+		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
+		strip-flags
+		filter-flags \
+			-pipe \
+			-Wl,-O1 \
+			-Wl,--as-needed \
+			-Wno-unknown-pragmas
+		mycmakeargs+=(
+			-DDISABLE_WERROR=ON
+			-DHIP_COMPILER="cuda"
+			-DHIP_RUNTIME="nvcc"
+		)
 		CXX="nvcc" \
 		cmake_src_configure
-	fi
-
-	if use rocm ; then
-		local mycmakeargs+=(
+	elif use hip-cpu ; then
+# Error with gcc-11, gcc-12
+#during IPA pass: simdclone
+#/var/tmp/portage/sci-libs/rocRAND-5.6.0/work/rocRAND-rocm-5.6.0/library/src/rocrand.cpp:2042:1: internal compiler error: Floating point exception
+		mycmakeargs+=(
+			-DBUILD_HIPRAND=OFF
+			-Dhip_cpu_rt_DIR="${ESYSROOT}/usr/lib/hip-cpu/share/hip_cpu_rt/cmake"
+		)
+		CXX="${CHOST}-clang++-${LLVM_MAX_SLOT}" \
+		cmake_src_configure
+	elif use rocm ; then
+		export HIP_PLATFORM="amd"
+		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+			-DHIP_COMPILER="clang"
+			-DHIP_RUNTIME="rocclr"
 		)
 		CXX="hipcc" \
 		cmake_src_configure

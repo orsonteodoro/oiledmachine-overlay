@@ -83,6 +83,9 @@ REQUIRED_USE="
 "
 RDEPEND="
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	cuda? (
+		dev-util/nvidia-cuda-toolkit
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -135,6 +138,21 @@ src_prepare() {
 		cmake/Dependencies.cmake \
 		|| die
 
+	if use cuda ; then
+		local badflags=(
+			"-Wno-unknown-pragmas"
+			"-Wall"
+			"-Wextra"
+		)
+		local
+		for flag in ${badflags[@]} ; do
+			sed -i \
+				-e "s|${flag}||g" \
+				$(grep -l -r -e "${flag}" "${WORKDIR}") \
+				|| die
+		done
+	fi
+
 	eapply_user
 	cmake_src_prepare
 }
@@ -155,14 +173,29 @@ src_configure() {
 	)
 
 	if use cuda ; then
+		export HIP_PLATFORM="nvidia"
 		filter-flags -pipe
+		local s=11
+		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
+		strip-flags
+		filter-flags \
+			-pipe \
+			-Wl,-O1 \
+			-Wl,--as-needed \
+			-Wno-unknown-pragmas
+		mycmakeargs+=(
+			-DDISABLE_WERROR=ON
+			-DHIP_COMPILER="cuda"
+			-DHIP_RUNTIME="nvcc"
+		)
 		CXX="nvcc" \
 		cmake_src_configure
-	fi
-
-	if use rocm ; then
-		local mycmakeargs+=(
+	elif use rocm ; then
+		export HIP_PLATFORM="amd"
+		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+			-DHIP_COMPILER="clang"
+			-DHIP_RUNTIME="rocclr"
 		)
 		CXX="hipcc" \
 		cmake_src_configure

@@ -54,6 +54,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-remove-cmake-doxygen-commands.patch"
 	"${FILESDIR}/${PN}-5.5.1-disable-Werror.patch"
 #	"${FILESDIR}/0001-SWDEV-352878-LLVM-pkg-search-directly-using-find_dep.patch"
+	"${FILESDIR}/${PN}-5.6.0-hip_prof_str.h.patch"
 )
 S="${WORKDIR}/hipamd-rocm-${PV}"
 HIP_S="${WORKDIR}/HIP-rocm-${PV}"
@@ -176,7 +177,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DAMD_OPENCL_PATH="${OCL_S}"
 		-DBUILD_HIPIFY_CLANG=OFF
-		-DCMAKE_BUILD_TYPE=${buildtype}
+		-DCMAKE_BUILD_TYPE="${buildtype}"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 		-DCMAKE_PREFIX_PATH="$(get_llvm_prefix ${LLVM_MAX_SLOT})"
 		-DCMAKE_SKIP_RPATH=ON
@@ -188,14 +189,18 @@ src_configure() {
 	)
 
 	if use cuda ; then
+		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
 			-DHIP_COMPILER="cuda"
 			-DHIP_PLATFORM="nvidia"
+			-DHIP_RUNTIME="nvcc"
 		)
 	elif use rocm ; then
+		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
+			-DHIP_RUNTIME="rocclr"
 		)
 	fi
 
@@ -203,7 +208,8 @@ src_configure() {
 }
 
 src_compile() {
-	HIP_PATH="${HIP_S}" docs_compile
+	HIP_PATH="${HIP_S}" \
+	docs_compile
 	cmake_src_compile
 }
 
