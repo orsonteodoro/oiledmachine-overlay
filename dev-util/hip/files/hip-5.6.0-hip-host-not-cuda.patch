@@ -1,0 +1,21 @@
+diff -urp hipamd-rocm-5.6.0.orig/hip-config.cmake.in hipamd-rocm-5.6.0/hip-config.cmake.in
+--- hipamd-rocm-5.6.0.orig/hip-config.cmake.in	2023-08-01 15:30:31.138031961 -0700
++++ hipamd-rocm-5.6.0/hip-config.cmake.in	2023-08-01 15:31:22.494033298 -0700
+@@ -177,12 +177,12 @@ endif()
+ get_filename_component(_DIR "${CMAKE_CURRENT_LIST_FILE}" REALPATH)
+ get_filename_component(_IMPORT_PREFIX "${_DIR}/../../../../" ABSOLUTE)
+ 
+-# Right now this is only supported for amd platforms
+-set_target_properties(hip::host PROPERTIES
+-  INTERFACE_COMPILE_DEFINITIONS "__HIP_PLATFORM_HCC__=1;__HIP_PLATFORM_AMD__=1"
+-)
+-
+ if(HIP_RUNTIME MATCHES "rocclr")
++  # Right now this is only supported for amd platforms
++  set_target_properties(hip::host PROPERTIES
++    INTERFACE_COMPILE_DEFINITIONS "__HIP_PLATFORM_HCC__=1;__HIP_PLATFORM_AMD__=1"
++  )
++
+   set_target_properties(hip::amdhip64 PROPERTIES
+     INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+     INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"

@@ -54,6 +54,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-remove-cmake-doxygen-commands.patch"
 	"${FILESDIR}/${PN}-5.3.3-disable-Werror.patch"
 	"${FILESDIR}/0001-SWDEV-352878-LLVM-pkg-search-directly-using-find_dep.patch"
+	"${FILESDIR}/${PN}-5.6.0-hip-config-not-cuda.patch"
+	"${FILESDIR}/${PN}-5.6.0-hip-host-not-cuda.patch"
 )
 S="${WORKDIR}/hipamd-rocm-${PV}"
 HIP_S="${WORKDIR}/HIP-rocm-${PV}"
@@ -190,7 +192,7 @@ src_configure() {
 	if use cuda ; then
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
-			-DHIP_COMPILER="cuda"
+			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="nvcc"
 		)

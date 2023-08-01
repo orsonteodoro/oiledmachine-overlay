@@ -48,12 +48,14 @@ BDEPEND="
 	>=dev-util/cmake-3.16.8
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.0.1-DisableTest.patch"
+	"${FILESDIR}/${PN}-5.4.3-DisableTest.patch"
 	"${FILESDIR}/${PN}-5.0.1-hip_vector_types.patch"
 	"${FILESDIR}/${PN}-5.0.2-set-build-id.patch"
 	"${FILESDIR}/${PN}-5.3.3-remove-cmake-doxygen-commands.patch"
 	"${FILESDIR}/${PN}-5.5.1-disable-Werror.patch"
 #	"${FILESDIR}/0001-SWDEV-352878-LLVM-pkg-search-directly-using-find_dep.patch"
+	"${FILESDIR}/${PN}-5.6.0-hip-config-not-cuda.patch"
+	"${FILESDIR}/${PN}-5.6.0-hip-host-not-cuda.patch"
 )
 S="${WORKDIR}/hipamd-rocm-${PV}"
 HIP_S="${WORKDIR}/HIP-rocm-${PV}"
@@ -190,7 +192,7 @@ src_configure() {
 	if use cuda ; then
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
-			-DHIP_COMPILER="cuda"
+			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="nvcc"
 		)
