@@ -20,7 +20,8 @@ AMDGPU_TARGETS_COMPAT=(
 PYTHON_COMPAT=( python3_{9..11} )
 DISTUTILS_USE_PEP517="setuptools"
 LLVM_MAX_SLOT=14
-inherit distutils-r1 llvm prefix toolchain-funcs
+ROCM_VERSION="${PV}"
+inherit cmake distutils-r1 llvm prefix rocm toolchain-funcs
 
 DESCRIPTION="Stretching GPU performance for GEMMs and tensor contractions"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/Tensile"
