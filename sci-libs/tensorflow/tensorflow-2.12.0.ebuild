@@ -401,10 +401,10 @@ gen_rocm_rdepend() {
 			~sci-libs/hipBLAS-${pv}:${s}[rocm]
 			~sci-libs/hipSOLVER-${pv}:${s}[rocm]
 			~sci-libs/hipSPARSE-${pv}:${s}[rocm]
-			~sci-libs/rocBLAS-${pv}:${s}
-			~sci-libs/rocFFT-${pv}:${s}
-			~sci-libs/rocRAND-${pv}:${s}
-			~sci-libs/rocSOLVER-${pv}:${s}
+			~sci-libs/rocBLAS-${pv}:${s}[rocm]
+			~sci-libs/rocFFT-${pv}:${s}[rocm]
+			~sci-libs/rocRAND-${pv}:${s}[rocm]
+			~sci-libs/rocSOLVER-${pv}:${s}[rocm(+)]
 			~sci-libs/miopen-${pv}:${s}
 
 			~dev-libs/rocm-comgr-${pv}:${s}

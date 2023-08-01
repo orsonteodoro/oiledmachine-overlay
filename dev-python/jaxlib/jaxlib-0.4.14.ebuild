@@ -89,8 +89,8 @@ gen_rocm_depends() {
 			~sci-libs/hipFFT-${pv}:${s}[rocm]
 			~sci-libs/hipSPARSE-${pv}:${s}[rocm]
 			~sci-libs/miopen-${pv}:${s}
-			~sci-libs/rocFFT-${pv}:${s}
-			~sci-libs/rocRAND-${pv}:${s}
+			~sci-libs/rocFFT-${pv}:${s}[rocm]
+			~sci-libs/rocRAND-${pv}:${s}[rocm]
 		"
 
 		# Indirect dependencies
@@ -102,7 +102,7 @@ gen_rocm_depends() {
 			~dev-util/rocm-smi-${pv}:${s}
 			~dev-util/rocminfo-${pv}:${s}
 			~dev-util/Tensile-${pv}:${s}
-			~sci-libs/rocBLAS-${pv}:${s}
+			~sci-libs/rocBLAS-${pv}:${s}[rocm]
 		"
 	done
 }

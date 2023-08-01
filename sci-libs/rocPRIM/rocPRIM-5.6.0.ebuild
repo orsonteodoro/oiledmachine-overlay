@@ -34,7 +34,7 @@ REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 RDEPEND="
-	~dev-util/hip-${PV}:${SLOT}
+	~dev-util/hip-${PV}:${SLOT}[rocm]
 	benchmark? (
 		dev-cpp/benchmark
 	)

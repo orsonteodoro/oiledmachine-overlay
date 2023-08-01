@@ -37,8 +37,8 @@ REQUIRED_USE="
 "
 RDEPEND="
 	=dev-libs/libfmt-8*
-	~dev-util/hip-${PV}:${SLOT}
-	~sci-libs/rocBLAS-${PV}:${SLOT}[${ROCM_USEDEP}]
+	~dev-util/hip-${PV}:${SLOT}[rocm]
+	~sci-libs/rocBLAS-${PV}:${SLOT}[${ROCM_USEDEP},rocm]
 	benchmark? (
 		virtual/blas
 	)

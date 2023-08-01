@@ -82,7 +82,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	~dev-util/hip-${PV}:${SLOT}
+	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 "
 DEPEND="
 	${RDEPEND}

@@ -90,7 +90,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	>=dev-cpp/msgpack-cxx-6.0.0
-	~dev-util/hip-${PV}:${SLOT}
+	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	benchmark? (
 		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		virtual/blas

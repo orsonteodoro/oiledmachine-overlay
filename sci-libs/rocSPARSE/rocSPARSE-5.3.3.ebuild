@@ -81,8 +81,8 @@ IUSE="benchmark test r1"
 REQUIRED_USE="${ROCM_REQUIRED_USE}"
 SLOT="0/$(ver_cut 1-2)"
 RDEPEND="
-	~dev-util/hip-${PV}:${SLOT}
-	~sci-libs/rocPRIM-${PV}:${SLOT}
+	~dev-util/hip-${PV}:${SLOT}[rocm]
+	~sci-libs/rocPRIM-${PV}:${SLOT}[rocm(+)]
 	>=sys-libs/libomp-${LLVM_MAX_SLOT}
 "
 DEPEND="

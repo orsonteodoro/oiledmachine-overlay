@@ -87,7 +87,7 @@ REQUIRED_USE="
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3.36
-	~dev-util/hip-${PV}:${SLOT}
+	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	~sci-libs/rocRAND-${PV}:${SLOT}
 	cuda? (
 		dev-util/nvidia-cuda-toolkit

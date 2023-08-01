@@ -73,12 +73,12 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	~dev-util/hip-${PV}:${SLOT}
+	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit
 	)
 	rocm? (
-		~sci-libs/rocSPARSE-${PV}:${SLOT}
+		~sci-libs/rocSPARSE-${PV}:${SLOT}[rocm(+)]
 	)
 "
 DEPEND="

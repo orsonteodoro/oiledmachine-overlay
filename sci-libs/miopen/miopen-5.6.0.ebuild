@@ -37,17 +37,30 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="kernels debug test r1"
+IUSE="debug kernels opencl +rocm test r1"
+REQUIRED_USE="
+	^^ (
+		rocm
+		opencl
+	)
+"
 RDEPEND="
 	>=dev-db/sqlite-3.17
 	>=dev-libs/boost-1.72
-	>=sci-libs/composable_kernel-1.0.0[rocm_5_6]
 	app-arch/bzip2
-	~dev-libs/rocm-comgr-${PV}:${SLOT}
 	~dev-util/hip-${PV}:${SLOT}
-	~sci-libs/rocBLAS-${PV}:${SLOT}[${ROCM_USEDEP}]
 	kernels? (
 		~sci-libs/miopenkernels-${PV}:${SLOT}
+	)
+	opencl? (
+		sys-devel/clang
+		virtual/opencl
+	)
+	rocm? (
+		>=sci-libs/composable_kernel-1.0.0[rocm_5_6]
+		~dev-libs/rocm-comgr-${PV}:${SLOT}
+		~dev-util/hip-${PV}:${SLOT}[rocm]
+		~sci-libs/rocBLAS-${PV}:${SLOT}[${ROCM_USEDEP},rocm]
 	)
 "
 DEPEND="
