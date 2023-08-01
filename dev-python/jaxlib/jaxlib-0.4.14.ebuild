@@ -445,10 +445,12 @@ einfo "    =sys-devel/gcc-12.2.1_p20230121-r1 with mold"
 einfo
 	fi
 
-	local s=$(gcc-major-version) # Slot
-
 	# Required for CUDA builds
-	export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-gcc-${s}"
+	if use cuda ; then
+		has_version "sys-devel/gcc:11" || die "Reinstall gcc:11"
+		local s=11 # Slot
+		export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-gcc-${s}"
+	fi
 
 	${CC} --version || die
 	strip-unsupported-flags
