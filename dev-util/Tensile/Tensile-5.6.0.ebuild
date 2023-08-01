@@ -23,9 +23,9 @@ AMDGPU_TARGETS_COMPAT=(
 )
 PYTHON_COMPAT=( python3_{10..11} )
 DISTUTILS_USE_PEP517="setuptools"
-LLVM_MAX_SLOT=15
+LLVM_MAX_SLOT=16
 ROCM_VERSION="${PV}"
-inherit cmake distutils-r1 llvm prefix rocm
+inherit cmake distutils-r1 llvm prefix rocm toolchain-funcs
 
 DESCRIPTION="Stretching GPU performance for GEMMs and tensor contractions"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/Tensile"
@@ -36,16 +36,16 @@ https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="client r1"
+IUSE="client openmp r1"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
+		openmp
 	)
 "
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-cpp/msgpack-cxx-6.0.0
-	>=sys-libs/libomp-${LLVM_MAX_SLOT}
 	dev-python/joblib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
@@ -54,6 +54,11 @@ RDEPEND="
 	client? (
 		dev-libs/boost
 		~dev-util/rocm-smi-${PV}:${SLOT}
+	)
+	openmp? (
+		>=sys-libs/libomp-${LLVM_MAX_SLOT}
+		=sys-devel/gcc-11*
+		sys-devel/lld:${LLVM_MAX_SLOT}
 	)
 "
 DEPEND="
@@ -73,6 +78,11 @@ PATCHES=(
 )
 
 CMAKE_USE_DIR="${S}/${PN}/Source"
+
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	python_setup
+}
 
 src_prepare() {
 	distutils-r1_src_prepare
@@ -136,10 +146,32 @@ src_prepare() {
 		-i \
 		"setup.py" \
 		|| die
-	use client && PATCHES= cmake_src_prepare  # do not apply patches again in cmake_src_prepare
+
+	# Do not apply patches again in cmake_src_prepare.
+	use client && PATCHES= cmake_src_prepare
 }
 
 src_configure() {
+	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
+
+	if use openmp ; then
+		has_version "sys-devel/gcc:11" || die "Reinstall gcc-11"
+		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
+		if ver_test $(gcc-major-version) -ne 11 ; then
+eerror
+eerror "GCC 11 required for openmp.  You must do the following:"
+eerror
+eerror "  eselect gcc set ${CHOST}-gcc-11"
+eerror
+eerror "to change to gcc-11"
+eerror
+			die
+		fi
+		append-flags -fuse-ld=lld
+	fi
+
 	distutils-r1_src_configure
 	if use client; then
 		local mycmakeargs=(
@@ -148,9 +180,11 @@ src_configure() {
 			-DTENSILE_BUILD_CLIENT=$(usex client ON OFF)
 			-DTENSILE_USE_LLVM=ON
 			-DTENSILE_USE_MSGPACK=ON
+			-DTENSILE_USE_OPENMP=$(usex openmp ON OFF)
 			-DTensile_LIBRARY_FORMAT=msgpack
 		)
-		CXX=hipcc cmake_src_configure
+		CXX="hipcc" \
+		cmake_src_configure
 	fi
 }
 
@@ -185,4 +219,4 @@ src_install() {
 	fi
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  build-without-problems

@@ -20,7 +20,7 @@ AMDGPU_TARGETS_COMPAT=(
 PYTHON_COMPAT=( python3_{9..11} )
 DISTUTILS_USE_PEP517="setuptools"
 LLVM_MAX_SLOT=14
-inherit distutils-r1 llvm prefix
+inherit distutils-r1 llvm prefix toolchain-funcs
 
 DESCRIPTION="Stretching GPU performance for GEMMs and tensor contractions"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/Tensile"
@@ -32,22 +32,29 @@ https://github.com/littlewu2508/littlewu2508.github.io/raw/main/gentoo-distfiles
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="client"
+IUSE="client openmp r1"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
+		openmp
 	)
 "
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-cpp/msgpack-cxx-6.0.0
-	>=sys-libs/libomp-${LLVM_MAX_SLOT}
-	dev-libs/boost
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	~dev-util/hip-${PV}:${SLOT}
-	~dev-util/rocm-smi-${PV}:${SLOT}
+	client? (
+		dev-libs/boost
+		~dev-util/rocm-smi-${PV}:${SLOT}
+	)
+	openmp? (
+		>=sys-libs/libomp-${LLVM_MAX_SLOT}
+		=sys-devel/gcc-11*
+		sys-devel/lld:${LLVM_MAX_SLOT}
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -132,6 +139,41 @@ src_prepare() {
 		-i \
 		"setup.py" \
 		|| die
+}
+
+src_configure() {
+	distutils-r1_src_configure
+
+	if use openmp ; then
+		has_version "sys-devel/gcc:11" || die "Reinstall gcc-11"
+		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
+		if ver_test $(gcc-major-version) -ne 11 ; then
+eerror
+eerror "GCC 11 required for openmp."
+eerror
+eerror "Use eselect gcc list"
+eerror "Use eselect gcc set #"
+eerror
+eerror "to change to gcc-11"
+			die
+		fi
+		append-flags -fuse-ld=lld
+	fi
+
+	if use client; then
+		local mycmakeargs=(
+			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+			-DCMAKE_SKIP_RPATH=ON
+			-DTENSILE_BUILD_CLIENT=$(usex client ON OFF)
+			-DTENSILE_USE_LLVM=ON
+			-DTENSILE_USE_MSGPACK=ON
+			-DTENSILE_USE_OPENMP=$(usex openmp ON OFF)
+			-DTensile_LIBRARY_FORMAT=msgpack
+		)
+		CXX="hipcc" \
+		cmake_src_configure
+	fi
 }
 
 python_install() {
