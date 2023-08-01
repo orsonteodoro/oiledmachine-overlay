@@ -14,10 +14,19 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1100
 	gfx1102
 )
+CUDA_TARGETS_COMPAT=(
+# Same as rocFFT
+	sm_60
+	sm_70
+	sm_75
+	compute_60
+	compute_70
+	compute_75
+)
 LLVM_MAX_SLOT=15
 ROCM_VERSION="${PV}"
 
-inherit cmake llvm rocm
+inherit cmake flag-o-matic llvm rocm
 
 HIPRAND_COMMIT_HASH="125d691d3bcc6de5f5d63cf5f5a993c636251208"
 SRC_URI="
@@ -32,9 +41,45 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocRAND"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="benchmark test r1"
+IUSE="
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+benchmark cuda +rocm test r1
+"
+gen_cuda_required_use() {
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		echo "
+			cuda_targets_${x}? (
+				cuda
+			)
+		"
+	done
+}
+gen_rocm_required_use() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				rocm
+			)
+		"
+	done
+}
 REQUIRED_USE="
-	${ROCM_REQUIRED_USE}
+	$(gen_cuda_required_use)
+	$(gen_rocm_required_use)
+	cuda? (
+		|| (
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		)
+	)
+	rocm? (
+		${ROCM_REQUIRED_USE}
+	)
+	^^ (
+		rocm
+		cuda
+	)
 "
 RDEPEND="
 	~dev-util/hip-${PV}:${SLOT}
@@ -98,7 +143,6 @@ src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 	local mycmakeargs=(
-		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBUILD_BENCHMARK=$(usex benchmark ON OFF)
 
 	# Fixes:
@@ -109,8 +153,20 @@ src_configure() {
 		-DBUILD_TEST=$(usex test ON OFF)
 		-DCMAKE_SKIP_RPATH=On
 	)
-	CXX=hipcc \
-	cmake_src_configure
+
+	if use cuda ; then
+		filter-flags -pipe
+		CXX="nvcc" \
+		cmake_src_configure
+	fi
+
+	if use rocm ; then
+		local mycmakeargs+=(
+			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+		)
+		CXX="hipcc" \
+		cmake_src_configure
+	fi
 }
 
 src_test() {

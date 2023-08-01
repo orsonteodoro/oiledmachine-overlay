@@ -83,7 +83,7 @@ gen_rocm_depends() {
 		echo "
 			~dev-libs/rccl-${pv}:${s}
 			~dev-libs/rocm-device-libs-${pv}:${s}
-			~dev-util/hip-${pv}:${s}
+			~dev-util/hip-${pv}:${s}[rocm]
 			~dev-util/roctracer-${pv}:${s}
 			~sci-libs/hipBLAS-${pv}:${s}[rocm]
 			~sci-libs/hipFFT-${pv}:${s}[rocm]

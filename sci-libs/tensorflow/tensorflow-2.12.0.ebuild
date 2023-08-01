@@ -396,7 +396,7 @@ gen_rocm_rdepend() {
 		(
 			~dev-libs/rccl-${pv}:${s}
 			~dev-libs/rocm-device-libs-${pv}:${s}
-			~dev-util/hip-${pv}:${s}
+			~dev-util/hip-${pv}:${s}[rocm]
 			~dev-util/roctracer-${pv}:${s}
 			~sci-libs/hipBLAS-${pv}:${s}[rocm]
 			~sci-libs/hipSOLVER-${pv}:${s}[rocm]

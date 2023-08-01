@@ -30,7 +30,13 @@ profile? (
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="debug profile r4"
+IUSE="cuda debug profile +rocm r4"
+REQUIRED_USE="
+	^^ (
+		cuda
+		rocm
+	)
+"
 DEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	virtual/opengl
@@ -206,11 +212,11 @@ src_prepare() {
 src_configure() {
 	use debug && CMAKE_BUILD_TYPE="Debug"
 
-	# TODO: Currently a GENTOO configuration is build,
-	# this is also used in the cmake configuration files
-	# which will be installed to find HIP;
-	# Other ROCm packages expect a "RELEASE" configuration,
-	# see "hipBLAS"
+	# TODO: Currently the distro configuration is to build.
+	# This is also used in the cmake configuration files
+	# which will be installed to find HIP.
+	# Other ROCm packages expect a "RELEASE" configuration.
+	# See "hipBLAS".
 	local mycmakeargs=(
 		-DAMD_OPENCL_PATH="${OCL_S}"
 		-DBUILD_HIPIFY_CLANG=OFF
@@ -219,12 +225,22 @@ src_configure() {
 		-DCMAKE_PREFIX_PATH="$(get_llvm_prefix ${LLVM_MAX_SLOT})"
 		-DCMAKE_SKIP_RPATH=ON
 		-DHIP_COMMON_DIR="${HIP_S}"
-		-DHIP_COMPILER=clang
-		-DHIP_PLATFORM=amd
 		-DROCCLR_PATH="${CLR_S}"
 		-DROCM_PATH="${EPREFIX}/usr"
 		-DUSE_PROF_API=$(usex profile 1 0)
 	)
+
+	if use cuda ; then
+		mycmakeargs+=(
+			-DHIP_COMPILER="cuda"
+			-DHIP_PLATFORM="nvidia"
+		)
+	elif use rocm ; then
+		mycmakeargs+=(
+			-DHIP_COMPILER="clang"
+			-DHIP_PLATFORM="amd"
+		)
+	fi
 
 	use profile && mycmakeargs+=(
 		-DPROF_API_HEADER_PATH="${RTC_S}/inc/ext"

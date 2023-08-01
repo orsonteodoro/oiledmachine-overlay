@@ -12,6 +12,14 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_plus
 	gfx1030
 )
+CUDA_TARGETS_COMPAT=(
+	sm_60
+	sm_70
+	sm_75
+	compute_60
+	compute_70
+	compute_75
+)
 CHECKREQS_DISK_BUILD="7G"
 LLVM_MAX_SLOT=14
 PYTHON_COMPAT=( python3_{9..10} )
@@ -29,18 +37,57 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocFFT"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="benchmark perfscripts test"
+IUSE="
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+benchmark cuda perfscripts +rocm test
+"
+gen_cuda_required_use() {
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		echo "
+			cuda_targets_${x}? (
+				cuda
+			)
+		"
+	done
+}
+gen_rocm_required_use() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				rocm
+			)
+		"
+	done
+}
 REQUIRED_USE="
+	$(gen_cuda_required_use)
+	$(gen_rocm_required_use)
 	${PYTHON_REQUIRED_USE}
-	${ROCM_REQUIRED_USE}
+	cuda? (
+		|| (
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		)
+	)
 	perfscripts? (
 		benchmark
+	)
+	rocm? (
+		${ROCM_REQUIRED_USE}
+	)
+	^^ (
+		rocm
+		cuda
 	)
 "
 # RDEPEND: perfscripts? dev-python/plotly[${PYTHON_USEDEP}] # currently masked by arch/amd64/x32/package.mask
 RDEPEND="
 	${PYTHON_DEPS}
 	~dev-util/hip-${PV}:${SLOT}
+	cuda? (
+		dev-util/nvidia-cuda-toolkit
+	)
 	perfscripts? (
 		>=media-gfx/asymptote-2.61
 		dev-tex/latexmk
@@ -160,6 +207,16 @@ src_prepare() {
 	cmake_src_prepare
 }
 
+get_cuda_arch() {
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		if use cuda_targets_${x} ; then
+			echo "cuda_targets_${x}"
+			break
+		fi
+	done
+}
+
 src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
@@ -169,18 +226,32 @@ src_configure() {
 	replace-flags '-O0' '-O1'
 
 	local mycmakeargs=(
-		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBUILD_CLIENTS_RIDER=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SELFTEST=$(usex test ON OFF)
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocFFT/"
 		-DCMAKE_SKIP_RPATH=On
 		-DPYTHON3_EXE=${EPYTHON}
+		-DUSE_CUDA=$(use cuda ON OFF)
 		-Wno-dev
 	)
 
-	CXX=hipcc \
-	cmake_src_configure
+	if use cuda ; then
+		mycmakeargs+=(
+			-DCUDA_PREFIX="${ESYSROOT}/opt/cuda"
+			-DCUDA_ARCH=$(get_cuda_arch)
+		)
+		CXX="nvcc" \
+		cmake_src_configure
+	fi
+
+	if use rocm ; then
+		mycmakeargs+=(
+			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+		)
+		CXX="hipcc" \
+		cmake_src_configure
+	fi
 }
 
 src_test() {

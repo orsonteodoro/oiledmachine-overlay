@@ -9,9 +9,20 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx906
 	gfx908
 )
+CUDA_TARGETS_COMPAT=(
+# Based on 5.6.0
+	sm_53
+	sm_75
+	sm_80
+	sm_86
+	compute_53
+	compute_75
+	compute_80
+	compute_86
+)
 ROCM_VERSION="${PV}"
 
-inherit cmake rocm
+inherit cmake rocm toolchain-funcs
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipFFT/archive/refs/tags/rocm-${PV}.tar.gz
@@ -20,7 +31,20 @@ https://github.com/ROCmSoftwarePlatform/hipFFT/archive/refs/tags/rocm-${PV}.tar.
 
 DESCRIPTION="CU / ROCM agnostic hip FFT implementation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipFFT"
-IUSE+=" cuda +rocm"
+IUSE+="
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+cuda +rocm
+"
+gen_cuda_required_use() {
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		echo "
+			cuda_targets_${x}? (
+				cuda
+			)
+		"
+	done
+}
 gen_rocm_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -32,7 +56,13 @@ gen_rocm_required_use() {
 	done
 }
 REQUIRED_USE="
+	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
+	cuda? (
+		|| (
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		)
+	)
 	rocm? (
 		${ROCM_REQUIRED_USE}
 	)
@@ -93,6 +123,7 @@ src_configure() {
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
 			-DBUILD_WITH_LIB="CUDA"
+			-DCMAKE_CXX_COMPILER="${CHOST}-g++-$(gcc-major-version)"
 		)
 	elif use rocm ; then
 		mycmakeargs+=(

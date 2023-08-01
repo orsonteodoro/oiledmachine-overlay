@@ -15,6 +15,16 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1030
 	 gfx1031 # Unofficial
 )
+CUDA_TARGETS_COMPAT=(
+# The project does not define.
+# Listed is same as rocFFT's.
+        sm_60
+	sm_70
+	sm_75
+	compute_60
+        compute_70
+        compute_75
+)
 DOCS_BUILDER="doxygen"
 DOCS_DIR="docs"
 DOCS_DEPEND="
@@ -38,28 +48,70 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocBLAS"
 LICENSE="BSD"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="benchmark test r2"
-REQUIRED_USE="
-	${ROCM_REQUIRED_USE}
+IUSE="
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+benchmark cuda +rocm test r2
 "
-DEPEND="
+gen_cuda_required_use() {
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		echo "
+			cuda_targets_${x}? (
+				cuda
+			)
+		"
+	done
+}
+gen_rocm_required_use() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				rocm
+			)
+		"
+	done
+}
+REQUIRED_USE="
+	$(gen_cuda_required_use)
+	$(gen_rocm_required_use)
+	cuda? (
+		|| (
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		)
+	)
+	rocm? (
+		${ROCM_REQUIRED_USE}
+	)
+	^^ (
+		rocm
+		cuda
+	)
+"
+RDEPEND="
 	>=dev-cpp/msgpack-cxx-6.0.0
 	~dev-util/hip-${PV}:${SLOT}
-	test? (
-		>=sys-libs/libomp-${LLVM_MAX_SLOT}
-		dev-cpp/gtest
-		virtual/blas
-	)
 	benchmark? (
 		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		virtual/blas
 	)
+	cuda? (
+		dev-util/nvidia-cuda-toolkit
+	)
+"
+DEPEND="
+	${RDEPEND}
 "
 BDEPEND="
 	${PYTHON_DEPS}
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	~dev-util/Tensile-${PV}:${SLOT}
+	test? (
+		>=sys-libs/libomp-${LLVM_MAX_SLOT}
+		dev-cpp/gtest
+		virtual/blas
+	)
 "
 RESTRICT="
 	!test? (
@@ -128,7 +180,6 @@ src_configure() {
 		-DCMAKE_SKIP_RPATH=On
 		-Dpython="${PYTHON}"
 		-DTensile_CODE_OBJECT_VERSION="V3"
-		-DTensile_COMPILER="hipcc"
 		-DTensile_CPU_THREADS=$(makeopts_jobs)
 		-DTensile_LIBRARY_FORMAT="msgpack"
 		-DTensile_LOGIC="asm_full"
@@ -136,8 +187,28 @@ src_configure() {
 		-DTensile_TEST_LOCAL_PATH="${EPREFIX}/usr/share/Tensile"
 	)
 
-	CXX="hipcc" \
-	cmake_src_configure
+	if use cuda ; then
+		export HIP_PLATFORM="nvidia"
+		export HIP_COMPILER="cuda"
+		export HIP_RUNTIME="nvcc"
+		mycmakeargs+=(
+			-DTensile_COMPILER="${ESYSROOT}/opt/cuda/nvcc"
+		)
+		CXX="${ESYSROOT}/opt/cuda/nvcc" \
+		cmake_src_configure
+	fi
+
+	if use rocm ; then
+		export HIP_PLATFORM="amd"
+		export HIP_COMPILER="clang"
+		export HIP_RUNTIME="rocclr"
+		mycmakeargs+=(
+			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+			-DTensile_COMPILER="hipcc"
+		)
+		CXX="hipcc" \
+		cmake_src_configure
+	fi
 }
 
 src_compile() {
