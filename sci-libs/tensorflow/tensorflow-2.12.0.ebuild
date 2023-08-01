@@ -405,7 +405,7 @@ gen_rocm_rdepend() {
 			~sci-libs/rocFFT-${pv}:${s}[rocm]
 			~sci-libs/rocRAND-${pv}:${s}[rocm]
 			~sci-libs/rocSOLVER-${pv}:${s}[rocm(+)]
-			~sci-libs/miopen-${pv}:${s}
+			~sci-libs/miopen-${pv}:${s}[rocm]
 
 			~dev-libs/rocm-comgr-${pv}:${s}
 			~dev-libs/rocr-runtime-${pv}:${s}

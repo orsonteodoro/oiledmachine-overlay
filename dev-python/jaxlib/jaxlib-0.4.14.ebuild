@@ -88,7 +88,7 @@ gen_rocm_depends() {
 			~sci-libs/hipBLAS-${pv}:${s}[rocm]
 			~sci-libs/hipFFT-${pv}:${s}[rocm]
 			~sci-libs/hipSPARSE-${pv}:${s}[rocm]
-			~sci-libs/miopen-${pv}:${s}
+			~sci-libs/miopen-${pv}:${s}[rocm]
 			~sci-libs/rocFFT-${pv}:${s}[rocm]
 			~sci-libs/rocRAND-${pv}:${s}[rocm]
 		"
