@@ -71,7 +71,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-remove-cmake-doxygen-commands.patch"
 	"${FILESDIR}/0001-SWDEV-316128-HIP-surface-API-support.patch"
 	"${FILESDIR}/${PN}-5.1.3-llvm-15-noinline-keyword.patch"
-	"${FILESDIR}/${PN}-5.1.3-hip_prof_str.h.patch"
 )
 S="${WORKDIR}/hipamd-rocm-${PV}"
 HIP_S="${WORKDIR}/HIP-rocm-${PV}"

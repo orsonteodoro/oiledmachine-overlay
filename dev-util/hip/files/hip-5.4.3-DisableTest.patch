@@ -1,15 +1,15 @@
-diff -urp hipamd-rocm-5.1.3.orig/CMakeLists.txt hipamd-rocm-5.1.3/CMakeLists.txt
---- hipamd-rocm-5.1.3.orig/CMakeLists.txt	2022-04-05 11:35:39.000000000 -0700
-+++ hipamd-rocm-5.1.3/CMakeLists.txt	2023-08-01 13:32:42.265847848 -0700
-@@ -50,6 +50,7 @@ option(__HIP_ENABLE_PCH "Enable/Disable
- option(__HIP_ENABLE_RTC "Enable/Disable pre-processed hiprtc shared lib" ON)
- option(__HIP_USE_CMPXCHG_FOR_FP_ATOMICS "Enable/Disable FP Atomics version" OFF)
+diff -urp hipamd-rocm-5.5.1.orig/CMakeLists.txt hipamd-rocm-5.5.1/CMakeLists.txt
+--- hipamd-rocm-5.5.1.orig/CMakeLists.txt	2023-05-09 12:52:47.000000000 -0700
++++ hipamd-rocm-5.5.1/CMakeLists.txt	2023-08-01 13:28:10.185840761 -0700
+@@ -51,6 +51,7 @@ option(BUILD_HIPIFY_CLANG "Enable buildi
+ option(__HIP_ENABLE_PCH "Enable/Disable pre-compiled hip headers" ON)
  option(HIP_OFFICIAL_BUILD "Enable/Disable for mainline/staging builds" ON)
+ option(FILE_REORG_BACKWARD_COMPATIBILITY "Enable File Reorg with backward compatibility" ON)
 +option(SKIP_TESTS "Skip building tests" ON)
  set(HIPCC_BIN_DIR "" CACHE STRING "HIPCC and HIPCONFIG binary directories")
  
  if(__HIP_ENABLE_PCH)
-@@ -428,7 +429,9 @@ execute_process(COMMAND "${CMAKE_COMMAND
+@@ -446,7 +447,9 @@ execute_process(COMMAND "${CMAKE_COMMAND
  if(${RUN_HIT} EQUAL 0)
      execute_process(COMMAND "${CMAKE_COMMAND}" -E copy_directory "${HIP_COMMON_BIN_DIR}" "${HIP_ROOT_DIR}/bin" RESULT_VARIABLE RUN_HIT ERROR_QUIET)
  endif()
@@ -20,5 +20,5 @@ diff -urp hipamd-rocm-5.1.3.orig/CMakeLists.txt hipamd-rocm-5.1.3/CMakeLists.txt
      enable_testing()
      set(HIP_PATH ${HIP_ROOT_DIR})
      add_subdirectory(${HIP_COMMON_DIR}/tests/catch ${PROJECT_BINARY_DIR}/catch)
-Only in hipamd-rocm-5.1.3: CMakeLists.txt.orig
-Only in hipamd-rocm-5.1.3: CMakeLists.txt.rej
+Only in hipamd-rocm-5.5.1: CMakeLists.txt.orig
+Only in hipamd-rocm-5.5.1: CMakeLists.txt.rej
