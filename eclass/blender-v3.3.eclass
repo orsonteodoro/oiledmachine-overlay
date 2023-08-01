@@ -783,8 +783,8 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 	)
 	rocm? (
 		|| (
-			~dev-util/hip-5.5.0:0/5.5
-			~dev-util/hip-5.5.1:0/5.5
+			~dev-util/hip-5.5.0:0/5.5[rocm]
+			~dev-util/hip-5.5.1:0/5.5[rocm]
 		)
 	)
 	sdl? (
