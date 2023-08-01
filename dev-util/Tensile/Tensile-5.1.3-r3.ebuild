@@ -156,6 +156,7 @@ eerror "Use eselect gcc list"
 eerror "Use eselect gcc set #"
 eerror
 eerror "to change to gcc-11"
+eerror
 			die
 		fi
 		append-flags -fuse-ld=lld
