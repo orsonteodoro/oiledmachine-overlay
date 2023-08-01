@@ -32,7 +32,7 @@ SLOT="0/$(ver_cut 1-2)"
 IUSE="test"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
-	~dev-util/hip-${PV}:${SLOT}
+	~dev-util/hip-${PV}:${SLOT}[rocm]
 	~dev-util/rocm-smi-${PV}:${SLOT}
 "
 DEPEND="
