@@ -149,8 +149,6 @@ src_prepare() {
 }
 
 src_configure() {
-	distutils-r1_src_configure
-
 	if use openmp ; then
 		has_version "sys-devel/gcc:11" || die "Reinstall gcc-11"
 		export CC="${CHOST}-gcc"
@@ -168,6 +166,7 @@ eerror
 		append-flags -fuse-ld=lld
 	fi
 
+	distutils-r1_src_configure
 	if use client; then
 		local mycmakeargs=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
