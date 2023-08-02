@@ -106,28 +106,30 @@ gen_rocm_depends() {
 		local s="0/"$(ver_cut 1-2 ${pv})
 		# Direct dependencies
 		echo "
-			~dev-libs/rccl-${pv}:${s}
-			~dev-libs/rocm-device-libs-${pv}:${s}
-			~dev-util/hip-${pv}:${s}[rocm]
-			~dev-util/roctracer-${pv}:${s}
-			~sci-libs/hipBLAS-${pv}:${s}[rocm]
-			~sci-libs/hipFFT-${pv}:${s}[rocm]
-			~sci-libs/hipSPARSE-${pv}:${s}[rocm]
-			~sci-libs/miopen-${pv}:${s}[rocm]
-			~sci-libs/rocFFT-${pv}:${s}[rocm]
-			~sci-libs/rocRAND-${pv}:${s}[rocm]
+			(
+				~dev-libs/rccl-${pv}:${s}
+				~dev-libs/rocm-device-libs-${pv}:${s}
+				~dev-util/hip-${pv}:${s}[rocm]
+				~dev-util/roctracer-${pv}:${s}
+				~sci-libs/hipBLAS-${pv}:${s}[rocm]
+				~sci-libs/hipFFT-${pv}:${s}[rocm]
+				~sci-libs/hipSPARSE-${pv}:${s}[rocm]
+				~sci-libs/miopen-${pv}:${s}[rocm]
+				~sci-libs/rocFFT-${pv}:${s}[rocm]
+				~sci-libs/rocRAND-${pv}:${s}[rocm]
 		"
 
 		# Indirect dependencies
 		echo "
-			~dev-libs/rocm-comgr-${pv}:${s}
-			~dev-libs/rocr-runtime-${pv}:${s}
-			~dev-libs/roct-thunk-interface-${pv}:${s}
-			~dev-util/rocm-cmake-${pv}:${s}
-			~dev-util/rocm-smi-${pv}:${s}
-			~dev-util/rocminfo-${pv}:${s}
-			~dev-util/Tensile-${pv}:${s}
-			~sci-libs/rocBLAS-${pv}:${s}[rocm]
+				~dev-libs/rocm-comgr-${pv}:${s}
+				~dev-libs/rocr-runtime-${pv}:${s}
+				~dev-libs/roct-thunk-interface-${pv}:${s}
+				~dev-util/rocm-cmake-${pv}:${s}
+				~dev-util/rocm-smi-${pv}:${s}
+				~dev-util/rocminfo-${pv}:${s}
+				~dev-util/Tensile-${pv}:${s}
+				~sci-libs/rocBLAS-${pv}:${s}[rocm]
+			)
 		"
 	done
 }
@@ -148,7 +150,9 @@ RDEPEND+="
 		=dev-libs/cudnn-8*
 	)
 	rocm? (
-		$(gen_rocm_depends)
+		|| (
+			$(gen_rocm_depends)
+		)
 	)
 "
 # We cannot use cuda 12 (which the project supports) until cudnn ebuild allows

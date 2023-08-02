@@ -65,7 +65,7 @@ RDEPEND="
 		virtual/opencl
 	)
 	rocm? (
-		>=sci-libs/composable_kernel-1.0.0[rocm_5_4]
+		>=sci-libs/composable_kernel-1.0.0
 		~dev-libs/rocm-comgr-${PV}:${SLOT}
 		~dev-util/hip-${PV}:${SLOT}[rocm]
 		~sci-libs/rocBLAS-${PV}:${SLOT}[${ROCM_USEDEP},rocm]
