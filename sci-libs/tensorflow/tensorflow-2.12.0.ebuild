@@ -530,6 +530,7 @@ RDEPEND="
 		|| (
 			$(gen_rocm_rdepend)
 		)
+		dev-util/hip:=
 	)
 "
 DEPEND="

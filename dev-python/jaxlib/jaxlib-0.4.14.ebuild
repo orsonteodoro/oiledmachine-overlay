@@ -153,6 +153,7 @@ RDEPEND+="
 		|| (
 			$(gen_rocm_depends)
 		)
+		dev-util/hip:=
 	)
 "
 # We cannot use cuda 12 (which the project supports) until cudnn ebuild allows

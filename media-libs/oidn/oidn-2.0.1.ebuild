@@ -132,7 +132,7 @@ gen_hip_depends() {
 			~dev-libs/rocm-comgr-${hip_version}
 			~dev-libs/rocr-runtime-${hip_version}
 			~dev-libs/roct-thunk-interface-${hip_version}
-			~dev-util/hip-${hip_version}
+			~dev-util/hip-${hip_version}:=
 			~dev-util/rocminfo-${hip_version}
 			)
 		"

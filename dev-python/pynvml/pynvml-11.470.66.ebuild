@@ -21,7 +21,7 @@ KEYWORDS="~amd64 ~x86 ~arm64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # See https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
 RDEPEND+="
-	=dev-util/nvidia-cuda-toolkit-11.4*
+	=dev-util/nvidia-cuda-toolkit-11.4*:=
 "
 DEPEND+="
 	${RDEPEND}
