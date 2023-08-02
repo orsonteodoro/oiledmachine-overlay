@@ -171,7 +171,6 @@ src_configure() {
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="nvcc"
-			-DNVGPU_TARGETS=$(get_nvgpu_targets)
 		)
 		CXX="nvcc" \
 		cmake_src_configure
