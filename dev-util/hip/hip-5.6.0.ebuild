@@ -180,7 +180,6 @@ src_configure() {
 	# Other ROCm packages expect a "RELEASE" configuration.
 	# See "hipBLAS".
 	local mycmakeargs=(
-		-DAMD_OPENCL_PATH="${OCL_S}"
 		-DBUILD_HIPIFY_CLANG=OFF
 		-DCMAKE_BUILD_TYPE="${buildtype}"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
@@ -188,7 +187,6 @@ src_configure() {
 		-DCMAKE_SKIP_RPATH=ON
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DHIP_COMMON_DIR="${HIP_S}"
-		-DROCCLR_PATH="${CLR_S}"
 		-DROCM_PATH="${EPREFIX}/usr"
 		-DUSE_PROF_API=0
 	)
@@ -204,9 +202,11 @@ src_configure() {
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
+			-DAMD_OPENCL_PATH="${OCL_S}"
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
+			-DROCCLR_PATH="${CLR_S}"
 		)
 	fi
 

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    This is a metapackage to expand rocm-dev, rocm-libs, rocm-utils from other
+    distros to their equivalent packages on the distro.
+  </longdescription>
+  <use>
+    <flag name="rocm-dev">
+      Install build development packages.
+    </flag>
+    <flag name="rocm-libs">
+      Install dependencies for user space apps.
+    </flag>
+    <flag name="rocm-utils">
+      Install utilities or development packages.
+    </flag>
+    <flag name="extras">
+      Install additional packages for development
+    </flag>
+  </use>
+</pkgmetadata>

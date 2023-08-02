@@ -161,3 +161,6 @@ eerror
 	edob ./ocltst -m $(realpath liboclruntime.so) -A oclruntime.exclude
 	edob ./ocltst -m $(realpath liboclperf.so) -A oclperf.exclude
 }
+
+# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

@@ -72,7 +72,6 @@ src_prepare() {
 	# Bug #753377
 	# patch re-enables accidentally disabled gfx800 family
 	eapply "${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
-	eapply "${FILESDIR}/rocclr-5.3.3-gcc13.patch"
 	popd || die
 }
 
@@ -159,3 +158,6 @@ eerror
 	edob ./ocltst -m $(realpath liboclruntime.so) -A oclruntime.exclude
 	edob ./ocltst -m $(realpath liboclperf.so) -A oclperf.exclude
 }
+
+# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
