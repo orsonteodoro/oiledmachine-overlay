@@ -6,7 +6,7 @@ EAPI=8
 LLVM_MAX_SLOT=14
 ROCM_VERSION="${PV}"
 
-inherit cmake edo rocm toolchain-funcs
+inherit cmake edo llvm rocm toolchain-funcs
 
 # Some test datasets are shared with rocSPARSE.
 SRC_URI="
@@ -81,10 +81,37 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
-		-DCMAKE_INSTALL_INCLUDEDIR=include/hipsolver
+		-DCMAKE_INSTALL_INCLUDEDIR="include/hipsolver"
 		-DUSE_CUDA=$(usex cuda ON OFF)
 	)
-	cmake_src_configure
+
+	if use cuda ; then
+		local s=11
+		strip-flags
+		filter-flags \
+			-pipe \
+			-Wl,-O1 \
+			-Wl,--as-needed \
+			-Wno-unknown-pragmas
+		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
+		export HIP_PLATFORM="nvidia"
+		mycmakeargs+=(
+			-DHIP_COMPILER="nvcc"
+			-DHIP_PLATFORM="nvidia"
+			-DHIP_RUNTIME="nvcc"
+		)
+		CXX="nvcc" \
+		cmake_src_configure
+	elif use rocm ; then
+		export HIP_PLATFORM="amd"
+		mycmakeargs+=(
+			-DHIP_COMPILER="clang"
+			-DHIP_PLATFORM="amd"
+			-DHIP_RUNTIME="rocclr"
+		)
+		CXX="hipcc" \
+		cmake_src_configure
+	fi
 }
 
 src_test() {

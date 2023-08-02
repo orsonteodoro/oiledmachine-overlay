@@ -26,7 +26,7 @@ CUDA_TARGETS_COMPAT=(
 LLVM_MAX_SLOT=16
 ROCM_VERSION="${PV}"
 
-inherit cmake flag-o-matic llvm rocm toolchain-funcs
+inherit cmake flag-o-matic llvm rocm
 
 HIPRAND_COMMIT_HASH="8babdbe0cf4dc330c9ec5a0231ac059187a7bc8a"
 SRC_URI="
@@ -110,6 +110,8 @@ RESTRICT="
 	)
 "
 S="${WORKDIR}/rocRAND-rocm-${PV}"
+PATCHES=(
+)
 
 pkg_setup() {
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
@@ -162,6 +164,18 @@ src_prepare() {
 	cmake_src_prepare
 }
 
+get_nvgpu_targets() {
+	local list
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		if use cuda_targets_${x} ; then
+			list+=";${x#*_}"
+		fi
+	done
+	list="${list:1}"
+	echo "${list}"
+}
+
 src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
@@ -172,26 +186,28 @@ src_configure() {
 	# rocrand.cpp:1904:16: error: use of undeclared identifier 'ROCRAND_VERSION'
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 
-		-DBUILD_HIPRAND=ON
 		-DBUILD_TEST=$(usex test ON OFF)
 		-DCMAKE_SKIP_RPATH=On
 		-DUSE_HIP_CPU=$(usex hip-cpu ON OFF)
 	)
 
 	if use cuda ; then
-		export HIP_PLATFORM="nvidia"
 		local s=11
-		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
 		strip-flags
 		filter-flags \
 			-pipe \
 			-Wl,-O1 \
 			-Wl,--as-needed \
 			-Wno-unknown-pragmas
+		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
+		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
+			-DBUILD_HIPRAND=ON
 			-DDISABLE_WERROR=ON
-			-DHIP_COMPILER="cuda"
+			-DHIP_COMPILER="nvcc"
+			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="nvcc"
+			-DNVGPU_TARGETS=$(get_nvgpu_targets)
 		)
 		CXX="nvcc" \
 		cmake_src_configure
@@ -208,11 +224,11 @@ src_configure() {
 	elif use rocm ; then
 		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 		export HIP_PLATFORM="amd"
-		einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
-
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+			-DBUILD_HIPRAND=ON
 			-DHIP_COMPILER="clang"
+			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 		)
 		CXX="hipcc" \

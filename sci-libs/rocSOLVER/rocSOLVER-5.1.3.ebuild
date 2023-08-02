@@ -92,6 +92,7 @@ src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 
+	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
@@ -99,10 +100,13 @@ src_configure() {
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DCMAKE_SKIP_RPATH=On
 		-DCMAKE_INSTALL_INCLUDEDIR="${EPREFIX}/usr/include/rocsolver"
+		-DHIP_COMPILER="clang"
+		-DHIP_PLATFORM="amd"
+		-DHIP_RUNTIME="rocclr"
 		-Wno-dev
 	)
 
-	CXX=hipcc \
+	CXX="hipcc" \
 	cmake_src_configure
 }
 

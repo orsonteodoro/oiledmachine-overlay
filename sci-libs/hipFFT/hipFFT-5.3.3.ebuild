@@ -20,9 +20,10 @@ CUDA_TARGETS_COMPAT=(
 	compute_80
 	compute_86
 )
+LLVM_MAX_SLOT=15
 ROCM_VERSION="${PV}"
 
-inherit cmake rocm toolchain-funcs
+inherit cmake llvm rocm toolchain-funcs
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipFFT/archive/refs/tags/rocm-${PV}.tar.gz
@@ -120,22 +121,35 @@ src_configure() {
 		-DROCM_PATH="${EPREFIX}/usr"
 	)
 	if use cuda ; then
+		local s=11
+		strip-flags
+		filter-flags \
+			-pipe \
+			-Wl,-O1 \
+			-Wl,--as-needed \
+			-Wno-unknown-pragmas
+		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
 			-DBUILD_WITH_LIB="CUDA"
-			-DCMAKE_CXX_COMPILER="${CHOST}-g++-$(gcc-major-version)"
-			-DHIP_COMPILER="cuda"
+			-DCMAKE_CXX_COMPILER="${ESYSROOT}/usr/bin/nvcc"
+			-DHIP_COMPILER="nvcc"
+			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="nvcc"
 		)
+		CXX="nvcc" \
+		cmake_src_configure
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DBUILD_WITH_LIB="ROCM"
 			-DHIP_COMPILER="clang"
+			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 		)
+		CXX="hipcc" \
+		cmake_src_configure
 	fi
-	cmake_src_configure
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

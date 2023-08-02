@@ -66,9 +66,6 @@ src_configure() {
 
 	which hipify-perl || die
 
-	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
-	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
-
 # Fix error:
 #1.	<eof> parser at end of file
 #2.	Code generation
@@ -81,14 +78,19 @@ src_configure() {
 # XXXXXXXXXXX is omitted
 	replace-flags '-O0' '-O1'
 
+	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBUILD_TESTS=$(usex test ON OFF)
-		-DSKIP_RPATH=On
+		-DHIP_COMPILER="clang"
+		-DHIP_PLATFORM="amd"
+		-DHIP_RUNTIME="rocclr"
+		-DSKIP_RPATH=ON
 		-Wno-dev
 	)
 
-	CXX=hipcc \
+	CXX="hipcc" \
 	cmake_src_configure
 }
 

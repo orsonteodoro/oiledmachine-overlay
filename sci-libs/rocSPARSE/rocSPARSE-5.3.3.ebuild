@@ -197,6 +197,7 @@ src_configure() {
 # local memory (403200) exceeds limit (65536) in function '_Z10bsr_gatherILj4ELj64ELj2EifEv20rocsparse_direction_T2_PKS1_PKT3_PS4_S1_'
 	replace-flags '-O0' '-O1'
 
+	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
@@ -205,8 +206,11 @@ src_configure() {
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocsparse"
 		-DCMAKE_SKIP_RPATH=On
+		-DHIP_COMPILER="clang"
+		-DHIP_PLATFORM="amd"
+		-DHIP_RUNTIME="rocclr"
 	)
-	CXX=hipcc \
+	CXX="hipcc" \
 	cmake_src_configure
 }
 

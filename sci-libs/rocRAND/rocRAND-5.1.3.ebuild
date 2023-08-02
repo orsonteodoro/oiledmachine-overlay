@@ -155,31 +155,44 @@ src_prepare() {
 	cmake_src_prepare
 }
 
+get_nvgpu_targets() {
+	local list
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		if use cuda_targets_${x} ; then
+			list+=";${x#*_}"
+		fi
+	done
+	list="${list:1}"
+	echo "${list}"
+}
+
 src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 	local mycmakeargs=(
 		-DBUILD_BENCHMARK=$(usex benchmark ON OFF)
-		-DBUILD_HIPRAND=ON
 		-DBUILD_TEST=$(usex test ON OFF)
 		-DCMAKE_SKIP_RPATH=On
 	)
 
 	if use cuda ; then
-		export HIP_PLATFORM="nvidia"
-		filter-flags -pipe
 		local s=11
-		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
 		strip-flags
 		filter-flags \
 			-pipe \
 			-Wl,-O1 \
 			-Wl,--as-needed \
 			-Wno-unknown-pragmas
+		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
+		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
+			-DBUILD_HIPRAND=ON
 			-DDISABLE_WERROR=ON
-			-DHIP_COMPILER="cuda"
+			-DHIP_COMPILER="nvcc"
+			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="nvcc"
+			-DNVGPU_TARGETS=$(get_nvgpu_targets)
 		)
 		CXX="nvcc" \
 		cmake_src_configure
@@ -187,7 +200,9 @@ src_configure() {
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+			-DBUILD_HIPRAND=ON
 			-DHIP_COMPILER="clang"
+			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 		)
 		CXX="hipcc" \

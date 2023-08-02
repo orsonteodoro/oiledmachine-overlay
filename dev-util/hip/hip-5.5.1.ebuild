@@ -31,17 +31,17 @@ REQUIRED_USE="
 		rocm
 	)
 "
-DEPEND="
+RDEPEND="
+	=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
+	>=dev-perl/URI-Encode-1.1.1
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	virtual/opengl
 	~dev-libs/rocm-comgr-${PV}:${SLOT}
+	~dev-libs/roct-thunk-interface-${PV}:${SLOT}
 	~dev-util/rocminfo-${PV}:${SLOT}
 "
-RDEPEND="
-	${DEPEND}
-	=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
-	>=dev-perl/URI-Encode-1.1.1
-	~dev-libs/roct-thunk-interface-${PV}:${SLOT}
+DEPEND="
+	${RDEPEND}
 "
 BDEPEND="
 	${PYTHON_DEPS}

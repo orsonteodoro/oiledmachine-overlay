@@ -3,7 +3,9 @@
 
 EAPI=8
 
-inherit cmake
+LLVM_MAX_SLOT=14
+
+inherit cmake llvm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipBLAS/archive/rocm-${PV}.tar.gz
@@ -77,19 +79,32 @@ src_configure() {
 		-DUSE_CUDA=$(usex cuda ON OFF)
 	)
 	if use cuda ; then
+		local s=11
+		strip-flags
+		filter-flags \
+			-pipe \
+			-Wl,-O1 \
+			-Wl,--as-needed \
+			-Wno-unknown-pragmas
+		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
-			-DHIP_COMPILER="cuda"
+			-DHIP_COMPILER="nvcc"
+			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="nvcc"
 		)
+		CXX="nvcc" \
+		cmake_src_configure
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DHIP_COMPILER="clang"
+			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 		)
+		CXX="hipcc" \
+		cmake_src_configure
 	fi
-	cmake_src_configure
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

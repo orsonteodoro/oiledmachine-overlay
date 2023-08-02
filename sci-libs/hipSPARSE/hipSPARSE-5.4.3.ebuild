@@ -6,7 +6,7 @@ EAPI=8
 LLVM_MAX_SLOT=15
 ROCM_VERSION="${PV}"
 
-inherit cmake edo rocm toolchain-funcs
+inherit cmake edo llvm rocm toolchain-funcs
 
 # Some test datasets are shared with rocSPARSE.
 SRC_URI="
@@ -148,11 +148,40 @@ src_configure() {
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
-		-DCMAKE_INSTALL_INCLUDEDIR=include/hipsparse
-		-DHIP_RUNTIME="ROCclr"
+		-DCMAKE_INSTALL_INCLUDEDIR="include/hipsparse"
 		-DUSE_CUDA=$(usex cuda ON OFF)
 	)
-	cmake_src_configure
+
+	if use cuda ; then
+		local s=11
+		strip-flags
+		filter-flags \
+			-pipe \
+			-Wl,-O1 \
+			-Wl,--as-needed \
+			-Wno-unknown-pragmas
+		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
+		export HIP_PLATFORM="nvidia"
+		mycmakeargs+=(
+			-DDISABLE_WERROR=ON
+			-DHIP_COMPILER="nvcc"
+			-DHIP_PLATFORM="nvidia"
+			-DHIP_RUNTIME="nvcc"
+			-DNVGPU_TARGETS=$(get_nvgpu_targets)
+		)
+		CXX="nvcc" \
+		cmake_src_configure
+	elif use rocm ; then
+		export HIP_PLATFORM="amd"
+		mycmakeargs+=(
+			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+			-DHIP_COMPILER="clang"
+			-DHIP_PLATFORM="amd"
+			-DHIP_RUNTIME="ROCclr"
+		)
+		CXX="hipcc" \
+		cmake_src_configure
+	fi
 }
 
 src_test() {

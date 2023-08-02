@@ -58,14 +58,19 @@ src_configure() {
 
 	replace-flags '-O0' '-O1'
 
+	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBUILD_TESTS=$(usex test ON OFF)
-		-DSKIP_RPATH=On
+		-DHIP_COMPILER="clang"
+		-DHIP_PLATFORM="amd"
+		-DHIP_RUNTIME="rocclr"
+		-DSKIP_RPATH=ON
 		-Wno-dev
 	)
 
-	CXX=hipcc cmake_src_configure
+	CXX="hipcc" \
+	cmake_src_configure
 }
 
 src_test() {

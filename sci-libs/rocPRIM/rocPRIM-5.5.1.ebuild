@@ -134,7 +134,7 @@ src_configure() {
 		-DBUILD_BENCHMARK=$(usex benchmark ON OFF)
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DBUILD_TEST=$(usex test ON OFF)
-		-DSKIP_RPATH=On
+		-DSKIP_RPATH=ON
 		-DUSE_HIP_CPU=$(usex hip-cpu ON OFF)
 	)
 
@@ -150,6 +150,7 @@ src_configure() {
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DHIP_COMPILER="clang"
+			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 		)
 		CXX="hipcc" \

@@ -90,8 +90,7 @@ src_configure() {
 	addpredict /dev/dri/
 
 	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
-	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
-
+	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
@@ -99,6 +98,9 @@ src_configure() {
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DCMAKE_SKIP_RPATH=On
 		-DCMAKE_INSTALL_INCLUDEDIR="${EPREFIX}/usr/include/rocsolver"
+		-DHIP_COMPILER="clang"
+		-DHIP_PLATFORM="amd"
+		-DHIP_RUNTIME="rocclr"
 		-Wno-dev
 	)
 

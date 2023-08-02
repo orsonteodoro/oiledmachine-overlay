@@ -249,26 +249,42 @@ src_configure() {
 		-DBUILD_CLIENTS_SELFTEST=$(usex test ON OFF)
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocFFT/"
-		-DCMAKE_SKIP_RPATH=On
-		-DPYTHON3_EXE=${EPYTHON}
+		-DCMAKE_SKIP_RPATH=ON
+		-DPYTHON3_EXE="${EPYTHON}"
 		-DSQLITE_USE_SYSTEM_PACKAGE=ON
 		-DUSE_CUDA=$(use cuda ON OFF)
 		-Wno-dev
 	)
 
 	if use cuda ; then
+		export HIP_PLATFORM="nvidia"
+		local s=11
+		strip-flags
+		filter-flags \
+			-pipe \
+			-Wl,-O1 \
+			-Wl,--as-needed \
+			-Wno-unknown-pragmas
+		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
 		mycmakeargs+=(
 			-DCUDA_PREFIX="${ESYSROOT}/opt/cuda"
 			-DCUDA_ARCH=$(get_cuda_arch)
+			-DHIP_COMPILER="nvcc"
+			-DHIP_PLATFORM="nvidia"
+			-DHIP_RUNTIME="nvcc"
 		)
 		CXX="nvcc" \
 		cmake_src_configure
 	fi
 
 	if use rocm ; then
+		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DBUILD_AOT=$(usex aot ON OFF)
+			-DHIP_COMPILER="clang"
+			-DHIP_PLATFORM="amd"
+			-DHIP_RUNTIME="rocclr"
 		)
 		CXX="hipcc" \
 		cmake_src_configure
