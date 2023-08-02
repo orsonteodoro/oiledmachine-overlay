@@ -11,8 +11,6 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
 	gfx1030
-	gfx1101
-	gfx1102
 )
 CUDA_TARGETS_COMPAT=(
 	auto
@@ -25,27 +23,24 @@ CUDA_TARGETS_COMPAT=(
 	compute_70
 	compute_75
 )
-LLVM_MAX_SLOT=16
+LLVM_MAX_SLOT=15
 ROCM_VERSION="${PV}"
 
-inherit cmake flag-o-matic llvm rocm
+inherit cmake llvm rocm
 
-HIPRAND_COMMIT_HASH="8babdbe0cf4dc330c9ec5a0231ac059187a7bc8a"
 SRC_URI="
-https://github.com/ROCmSoftwarePlatform/${PN}/archive/rocm-${PV}.tar.gz
-	-> ${P}.tar.gz
-https://github.com/ROCmSoftwarePlatform/hipRAND/archive/${HIPRAND_COMMIT_HASH}.tar.gz
-	-> hipRAND-${HIPRAND_COMMIT_HASH}.tar.gz
+https://github.com/ROCmSoftwarePlatform/hipCUB/archive/rocm-${PV}.tar.gz
+	-> hipCUB-${PV}.tar.gz
 "
 
-DESCRIPTION="Generate pseudo-random and quasi-random numbers"
-HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocRAND"
-LICENSE="MIT"
+DESCRIPTION="Wrapper of rocPRIM or CUB for GPU parallel primitives"
+HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipCUB"
+LICENSE="BSD"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda hip-cpu +rocm test r1
+benchmark cuda +rocm test
 "
 gen_cuda_required_use() {
 	local x
@@ -70,6 +65,7 @@ gen_rocm_required_use() {
 REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
+	${ROCM_REQUIRED_USE}
 	cuda? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -81,85 +77,72 @@ REQUIRED_USE="
 	^^ (
 		rocm
 		cuda
-		hip-cpu
 	)
 "
-RDEPEND="
-	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
-	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
-	)
-	hip-cpu? (
-		dev-libs/hip-cpu
-		sys-devel/clang:${LLVM_MAX_SLOT}
-	)
-"
-DEPEND="
-	${RDEPEND}
-	~dev-util/rocm-cmake-${PV}:${SLOT}
-	test? (
-		dev-cpp/gtest
-	)
-"
-BDEPEND="
-	>=dev-util/cmake-3.10.2
-	~dev-util/rocm-cmake-${PV}:${SLOT}
-"
-
 RESTRICT="
 	!test? (
 		test
 	)
 "
-S="${WORKDIR}/rocRAND-rocm-${PV}"
+RDEPEND="
+	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	~sci-libs/rocPRIM-${PV}:${SLOT}[${ROCM_USEDEP},rocm?]
+	benchmark? (
+		dev-cpp/benchmark
+	)
+	test? (
+		dev-cpp/gtest
+	)
+"
+DEPEND="
+	${RDEPEND}
+"
+BDEPEND="
+	>=dev-util/cmake-3.16
+	~dev-util/rocm-cmake-${PV}:${SLOT}
+"
+S="${WORKDIR}/hipCUB-rocm-${PV}"
 PATCHES=(
+	"${FILESDIR}/${PN}-4.3.0-add-memory-header.patch"
 )
 
-pkg_setup() {
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
-}
-
 src_prepare() {
-	rmdir hipRAND || die
-	mv -v \
-		../hipRAND-${HIPRAND_COMMIT_HASH} \
-		hipRAND \
-		|| die
-	#
-	# Changed the installed include and lib dir, and avoided the symlink
-	# overwrite in  the installed headers.
-	#
-	# Avoided setting RPATH.
-	#
-	sed -r \
-		-e "s:(hip|roc)rand/lib:\${CMAKE_INSTALL_LIBDIR}:" \
-		-e "s:(hip|roc)rand/include:include/\1rand:" \
-		-e '/\$\{INSTALL_SYMLINK_COMMAND\}/d' \
-		-e "/INSTALL_RPATH/d" \
+	sed \
+		-e "/PREFIX hipcub/d" \
+		-e "/DESTINATION/s:hipcub/include/:include/:" \
+		-e "/rocm_install_symlink_subdir(hipcub)/d" \
+		-e "/<INSTALL_INTERFACE/s:hipcub/include/:include/hipcub/:" \
 		-i \
-		library/CMakeLists.txt \
+		hipcub/CMakeLists.txt \
 		|| die
 
-	# Removed the GIT dependency.
-	sed \
-		-e "/find_package(Git/,+4d" \
+	sed	\
+		-e "s:\${ROCM_INSTALL_LIBDIR}:\${CMAKE_INSTALL_LIBDIR}:" \
+		-i \
+		cmake/ROCMExportTargetsHeaderOnly.cmake \
+		|| die
+
+	# Disabled downloading googletest and googlebenchmark
+	sed -r \
+		-e '/Downloading/{:a;N;/\n *\)$/!ba; d}' \
 		-i \
 		cmake/Dependencies.cmake \
 		|| die
 
-	if use cuda ; then
-		local badflags=(
-			"-Wno-unknown-pragmas"
-			"-Wall"
-			"-Wextra"
-		)
-		local
-		for flag in ${badflags[@]} ; do
-			sed -i \
-				-e "s|${flag}||g" \
-				$(grep -l -r -e "${flag}" "${WORKDIR}") \
-				|| die
-		done
+	# Removed the GIT dependency
+	sed -r \
+		-e '/find_package\(Git/{:a;N;/\nendif/!ba; d}' \
+		-i \
+		cmake/Dependencies.cmake \
+		|| die
+
+	if use benchmark ; then
+		sed \
+			-e "/get_filename_component/s,\${BENCHMARK_SOURCE},${PN}_\${BENCHMARK_SOURCE}," \
+			-e "/add_executable/a\  install(TARGETS \${BENCHMARK_TARGET})" \
+			-i \
+			benchmark/CMakeLists.txt \
+			|| die
 	fi
 
 	eapply_user
@@ -181,16 +164,10 @@ get_nvgpu_targets() {
 src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
+
 	local mycmakeargs=(
 		-DBUILD_BENCHMARK=$(usex benchmark ON OFF)
-
-	# Fixes:
-	# rocrand.cpp:1904:16: error: use of undeclared identifier 'ROCRAND_VERSION'
-		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
-
 		-DBUILD_TEST=$(usex test ON OFF)
-		-DCMAKE_SKIP_RPATH=ON
-		-DUSE_HIP_CPU=$(usex hip-cpu ON OFF)
 	)
 
 	if use cuda ; then
@@ -207,8 +184,6 @@ src_configure() {
 		export CUDA_PATH="${ESYSROOT}/opt/cuda"
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
-			-DBUILD_HIPRAND=ON
-			-DDISABLE_WERROR=ON
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="cuda"
@@ -221,43 +196,26 @@ src_configure() {
 				-DNVGPU_TARGETS=$(get_nvgpu_targets)
 			)
 		fi
-	elif use hip-cpu ; then
-# Error with gcc-11, gcc-12
-#during IPA pass: simdclone
-#/var/tmp/portage/sci-libs/rocRAND-5.6.0/work/rocRAND-rocm-5.6.0/library/src/rocrand.cpp:2042:1: internal compiler error: Floating point exception
-		mycmakeargs+=(
-			-DBUILD_HIPRAND=OFF
-			-Dhip_cpu_rt_DIR="${ESYSROOT}/usr/lib/hip-cpu/share/hip_cpu_rt/cmake"
-		)
-		HIP_CXX="${CHOST}-clang++-${LLVM_MAX_SLOT}"
 	elif use rocm ; then
 		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
-			-DBUILD_HIPRAND=ON
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 		)
 	fi
+
 	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
 }
 
 src_test() {
 	check_amdgpu
-	export LD_LIBRARY_PATH="${BUILD_DIR}/library"
 	MAKEOPTS="-j1" \
 	cmake_src_test
 }
 
-src_install() {
-	cmake_src_install
-	if use benchmark; then
-		cd "${BUILD_DIR}"/benchmark
-		dobin benchmark_rocrand_*
-	fi
-}
-
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

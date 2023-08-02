@@ -46,7 +46,7 @@ RDEPEND="
 		~dev-libs/rocm-core-${PV}:${SLOT}
 		~sci-libs/hipBLAS-${PV}:${SLOT}[cuda?,rocm?]
 		~sci-libs/hipBLASLt-${PV}:${SLOT}[cuda?,rocm?]
-		 ~sci-libs/hipCUB-${PV}:${SLOT}[cuda?,rocm?]
+		~sci-libs/hipCUB-${PV}:${SLOT}[cuda?,rocm?]
 		~sci-libs/hipFFT-${PV}:${SLOT}[cuda?,rocm?]
 		~sci-libs/hipSOLVER-${PV}:${SLOT}[cuda?,rocm?]
 		~sci-libs/hipSPARSE-${PV}:${SLOT}[cuda?,rocm?]
@@ -113,7 +113,7 @@ RDEPEND="
 # rocm-gdb x
 # rocm-smi-lib x
 # rocm-utils x
-# rocm-core -
+# rocm-core x
 # rocm-opencl x dev-util/clinfo + rocm-opencl-runtime
 # rocm-ocl-icd - dev-libs/opencl-icd-loader is the drop in replacement
 # rocprofiler
@@ -143,10 +143,10 @@ RDEPEND="
 # rocrand x
 # rocsolver x
 # rocsparse x
-# rocm-core -
+# rocm-core x
 # hipblas-dev x
 # hipblaslt-dev x
-# hipcub-dev
+# hipcub-dev x
 # hipfft-dev x
 # hipsolver-dev x
 # hipsparse-dev x
@@ -167,7 +167,7 @@ RDEPEND="
 # rocm-utils:
 #
 # rocminfo x
-# rocm-clang-ocl # Metapackage for rocm-llvm, rocm-opencl-dev x, rocm-core
+# rocm-clang-ocl # Metapackage for rocm-llvm, rocm-opencl-dev x, rocm-core x
 # rocm-cmake x
 # rocm-core -
 #

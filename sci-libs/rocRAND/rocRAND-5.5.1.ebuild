@@ -15,6 +15,8 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 CUDA_TARGETS_COMPAT=(
+	auto
+
 # Same as rocFFT
 	sm_60
 	sm_70
@@ -208,8 +210,15 @@ src_configure() {
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="cuda"
-			-DNVGPU_TARGETS=$(get_nvgpu_targets)
 		)
+		if use cuda_targets_auto ; then
+			mycmakeargs+=(
+			)
+		else
+			mycmakeargs+=(
+				-DNVGPU_TARGETS=$(get_nvgpu_targets)
+			)
+		fi
 	elif use hip-cpu ; then
 # Error with gcc-11, gcc-12
 #during IPA pass: simdclone

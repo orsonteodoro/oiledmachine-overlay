@@ -44,7 +44,7 @@ RDEPEND="
 	rocm-libs? (
 		~sci-libs/hipBLAS-${PV}:${SLOT}[cuda?,rocm?]
 		~sci-libs/hipBLASLt-${PV}:${SLOT}[cuda?,rocm?]
-		 ~sci-libs/hipCUB-${PV}:${SLOT}[cuda?,rocm?]
+		~sci-libs/hipCUB-${PV}:${SLOT}[cuda?,rocm?]
 		~sci-libs/hipFFT-${PV}:${SLOT}[cuda?,rocm?]
 		~sci-libs/hipSOLVER-${PV}:${SLOT}[cuda?,rocm?]
 		~sci-libs/hipSPARSE-${PV}:${SLOT}[cuda?,rocm?]
@@ -142,7 +142,7 @@ RDEPEND="
 # rocm-core -
 # hipblas-dev x
 # hipblaslt-dev x
-# hipcub-dev
+# hipcub-dev x
 # hipfft-dev x
 # hipsolver-dev x
 # hipsparse-dev x
