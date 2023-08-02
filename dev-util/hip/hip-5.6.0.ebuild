@@ -194,6 +194,7 @@ src_configure() {
 	)
 
 	if use cuda ; then
+		export CUDA_PATH="${ESYSROOT}/opt/cuda"
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
 			-DHIP_COMPILER="nvcc"

@@ -189,7 +189,10 @@ src_configure() {
 			-Wl,-O1 \
 			-Wl,--as-needed \
 			-Wno-unknown-pragmas
-		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
+		if [[ "${HIP_CXX}" == "nvcc" ]] ; then
+			append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
+		fi
+		export CUDA_PATH="${ESYSROOT}/opt/cuda"
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
 			-DBUILD_WITH_TENSILE=OFF
@@ -197,8 +200,6 @@ src_configure() {
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="cuda"
 		)
-		CXX="nvcc" \
-		cmake_src_configure
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
@@ -215,9 +216,9 @@ src_configure() {
 			-DTensile_ROOT="${EPREFIX}/usr/share/Tensile"
 			-DTensile_TEST_LOCAL_PATH="${EPREFIX}/usr/share/Tensile"
 		)
-		CXX="hipcc" \
-		cmake_src_configure
 	fi
+	CXX="${HIP_CXX:-hipcc}" \
+	cmake_src_configure
 }
 
 src_compile() {

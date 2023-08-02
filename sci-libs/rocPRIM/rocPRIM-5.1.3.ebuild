@@ -140,8 +140,7 @@ src_configure() {
 			-DBUILD_HIPRAND=OFF
 			-Dhip_cpu_rt_DIR="${ESYSROOT}/usr/lib/hip-cpu/share/hip_cpu_rt/cmake"
 		)
-		CXX="g++" \
-		cmake_src_configure
+		HIP_CXX="g++"
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
@@ -150,9 +149,9 @@ src_configure() {
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 		)
-		CXX="hipcc" \
-		cmake_src_configure
 	fi
+	CXX="${HIP_CXX:-hipcc}" \
+	cmake_src_configure
 }
 
 src_test() {

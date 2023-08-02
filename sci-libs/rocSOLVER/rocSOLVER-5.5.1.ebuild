@@ -107,7 +107,7 @@ src_configure() {
 		-Wno-dev
 	)
 
-	CXX="hipcc" \
+	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
 }
 

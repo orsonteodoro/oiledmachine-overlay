@@ -215,7 +215,7 @@ src_configure() {
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
 	)
-	CXX="hipcc" \
+	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
 }
 

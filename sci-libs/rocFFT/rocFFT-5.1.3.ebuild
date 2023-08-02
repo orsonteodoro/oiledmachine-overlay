@@ -237,7 +237,6 @@ src_configure() {
 	)
 
 	if use cuda ; then
-		export HIP_PLATFORM="nvidia"
 		local s=11
 		strip-flags
 		filter-flags \
@@ -245,7 +244,11 @@ src_configure() {
 			-Wl,-O1 \
 			-Wl,--as-needed \
 			-Wno-unknown-pragmas
-		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
+		if [[ "${HIP_CXX}" == "nvcc" ]] ; then
+			append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
+		fi
+		export CUDA_PATH="${ESYSROOT}/opt/cuda"
+		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
 			-DCUDA_PREFIX="${ESYSROOT}/opt/cuda"
 			-DCUDA_ARCH=$(get_cuda_arch)
@@ -253,11 +256,7 @@ src_configure() {
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="cuda"
 		)
-		CXX="nvcc" \
-		cmake_src_configure
-	fi
-
-	if use rocm ; then
+	elif use rocm ; then
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
@@ -265,9 +264,9 @@ src_configure() {
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 		)
-		CXX="hipcc" \
-		cmake_src_configure
 	fi
+	CXX="${HIP_CXX:-hipcc}" \
+	cmake_src_configure
 }
 
 src_test() {
