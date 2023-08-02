@@ -51,6 +51,7 @@ DEPEND+="
 	sys-libs/pam
 	cuda_targets_sm_50? (
 		>=sci-libs/dlib-19.21[${PYTHON_USEDEP},cuda?,python]
+		dev-util/nvidia-cuda-toolkit:=
 	)
 	ffmpeg? (
 		dev-python/ffmpeg-python[${PYTHON_USEDEP}]

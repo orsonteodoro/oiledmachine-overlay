@@ -96,7 +96,7 @@ RDEPEND="
 		virtual/blas
 	)
 	cuda? (
-		dev-util/nvidia-cuda-toolkit
+		dev-util/nvidia-cuda-toolkit:=
 	)
 "
 DEPEND="

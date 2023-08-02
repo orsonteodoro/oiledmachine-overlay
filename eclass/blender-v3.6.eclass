@@ -532,6 +532,98 @@ RDEPEND+="
 		>=media-libs/opencolorio-2.2.0[cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
+		sm_30? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-10.2*:=
+				=dev-util/nvidia-cuda-toolkit-10.1*:=
+			)
+		)
+		sm_35? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-10.2*:=
+				=dev-util/nvidia-cuda-toolkit-10.1*:=
+			)
+		)
+		sm_37? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-10.2*:=
+				=dev-util/nvidia-cuda-toolkit-10.1*:=
+			)
+		)
+		sm_50? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-10.2*:=
+				=dev-util/nvidia-cuda-toolkit-10.1*:=
+			)
+		)
+		sm_52? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-10.2*:=
+				=dev-util/nvidia-cuda-toolkit-10.1*:=
+			)
+		)
+		sm_60? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-10.2*:=
+				=dev-util/nvidia-cuda-toolkit-10.1*:=
+			)
+		)
+		sm_61? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-10.2*:=
+				=dev-util/nvidia-cuda-toolkit-10.1*:=
+			)
+		)
+		sm_70? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-10.2*:=
+				=dev-util/nvidia-cuda-toolkit-10.1*:=
+			)
+		)
+		sm_75? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-10.2*:=
+				=dev-util/nvidia-cuda-toolkit-10.1*:=
+			)
+		)
+		sm_86? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-10.2*:=
+				=dev-util/nvidia-cuda-toolkit-10.1*:=
+			)
+		)
+		sm_89? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-10.2*:=
+				=dev-util/nvidia-cuda-toolkit-10.1*:=
+			)
+		)
+		compute_89? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-10.2*:=
+				=dev-util/nvidia-cuda-toolkit-10.1*:=
+			)
+		)
 		|| (
 			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=

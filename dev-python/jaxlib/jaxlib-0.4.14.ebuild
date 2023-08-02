@@ -146,7 +146,7 @@ RDEPEND+="
 	>=sys-libs/zlib-1.2.13
 	virtual/jre:${JAVA_SLOT}
 	cuda? (
-		=dev-util/nvidia-cuda-toolkit-11.8*
+		=dev-util/nvidia-cuda-toolkit-11.8*:=
 		=dev-libs/cudnn-8*
 	)
 	rocm? (

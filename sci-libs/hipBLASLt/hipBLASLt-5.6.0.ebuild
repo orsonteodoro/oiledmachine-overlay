@@ -89,6 +89,9 @@ RDEPEND="
 	~dev-util/hip-${PV}:${SLOT}
 	~dev-util/rocm-smi-${PV}:${SLOT}
 	~sci-libs/hipBLAS-${PV}:${SLOT}[${ROCM_USEDEP}]
+	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
+	)
 "
 DEPEND="
 	${RDEPEND}

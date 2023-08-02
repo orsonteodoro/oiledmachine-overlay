@@ -78,7 +78,7 @@ SLOT="0/$(ver_cut 1-2)"
 RDEPEND="
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	cuda? (
-		dev-util/nvidia-cuda-toolkit
+		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
 		~sci-libs/rocFFT-${PV}:${SLOT}[rocm]

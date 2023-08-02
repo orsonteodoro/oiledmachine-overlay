@@ -86,7 +86,7 @@ RDEPEND="
 	${PYTHON_DEPS}
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	cuda? (
-		dev-util/nvidia-cuda-toolkit
+		dev-util/nvidia-cuda-toolkit:=
 	)
 	perfscripts? (
 		>=media-gfx/asymptote-2.61

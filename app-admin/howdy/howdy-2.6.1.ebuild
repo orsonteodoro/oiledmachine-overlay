@@ -40,7 +40,9 @@ REQUIRED_USE+="
 "
 DEPEND+="
 	${PYTHON_DEPS}
-	$(python_gen_any_dep 'sys-auth/pam-python[${PYTHON_SINGLE_USEDEP}]')
+	$(python_gen_any_dep '
+		sys-auth/pam-python[${PYTHON_SINGLE_USEDEP}]
+	')
 	>=dev-libs/inih-52
 	app-admin/sudo
 	dev-libs/boost[${PYTHON_USEDEP},python]
@@ -49,6 +51,7 @@ DEPEND+="
 	sys-libs/pam
 	cuda_targets_sm_50? (
 		>=sci-libs/dlib-19.21[${PYTHON_USEDEP},cuda?,python]
+		dev-util/nvidia-cuda-toolkit:=
 	)
 	ffmpeg? (
 		dev-python/ffmpeg-python[${PYTHON_USEDEP}]

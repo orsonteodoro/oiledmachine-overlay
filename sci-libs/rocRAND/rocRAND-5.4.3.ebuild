@@ -84,7 +84,7 @@ REQUIRED_USE="
 RDEPEND="
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	cuda? (
-		dev-util/nvidia-cuda-toolkit
+		dev-util/nvidia-cuda-toolkit:=
 	)
 "
 DEPEND="
