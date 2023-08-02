@@ -192,8 +192,19 @@ gen_required_use_cuda_targets() {
 		"
 	done
 }
+gen_required_use_rocm_targets() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				rocm
+			)
+		"
+	done
+}
 REQUIRED_USE="
 	$(gen_required_use_cuda_targets)
+	$(gen_required_use_rocm_targets)
 	cuda? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -201,6 +212,9 @@ REQUIRED_USE="
 	)
 	python? (
 		${PYTHON_REQUIRED_USE}
+	)
+	rocm? (
+		${ROCM_REQUIRED_USE}
 	)
 	test? (
 		python

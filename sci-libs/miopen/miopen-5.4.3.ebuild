@@ -35,7 +35,18 @@ LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="debug kernels opencl +rocm test r1"
+gen_amdgpu_required_use() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				rocm
+			)
+		"
+	done
+}
 REQUIRED_USE="
+	$(gen_amdgpu_required_use)
 	^^ (
 		rocm
 		opencl

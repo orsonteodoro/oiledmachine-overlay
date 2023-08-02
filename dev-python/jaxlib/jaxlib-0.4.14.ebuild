@@ -51,15 +51,40 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 clang custom-optimization-level cpu cuda hardened portable rocm r1
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
+
+gen_cuda_required_use() {
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		echo  "
+			cuda_targets_${x}? (
+				cuda
+			)
+		"
+	done
+}
+
+gen_rocm_required_use() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo  "
+			amdgpu_targets_${x}? (
+				rocm
+			)
+		"
+	done
+}
+
 REQUIRED_USE+="
-	rocm? (
-		${ROCM_REQUIRED_USE}
-	)
+	$(gen_cuda_required_use)
+	$(gen_rocm_required_use)
 	cuda? (
 		!clang
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
+	)
+	rocm? (
+		${ROCM_REQUIRED_USE}
 	)
 	|| (
 		cpu

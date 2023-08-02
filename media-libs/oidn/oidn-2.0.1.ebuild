@@ -70,13 +70,29 @@ gen_required_use_cuda_targets() {
 	done
 }
 
+gen_required_use_hip_targets() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				hip
+			)
+		"
+	done
+}
+
+
 REQUIRED_USE+="
 	$(gen_required_use_cuda_targets)
+	$(gen_required_use_hip_targets)
 	${PYTHON_REQUIRED_USE}
 	cuda? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
+	)
+	hip? (
+		${ROCM_REQUIRED_USE}
 	)
 	^^ (
 		${LLVM_SLOTS[@]/#/llvm-}
