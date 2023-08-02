@@ -27,7 +27,6 @@ RDEPEND="
 	rocm-dev? (
 		~dev-libs/ROCdbgapi-${PV}:${SLOT}
 		~dev-libs/rocm-comgr-${PV}:${SLOT}
-		 ~dev-libs/rocm-core-${PV}:${SLOT}
 		~dev-libs/rocm-device-libs-${PV}:${SLOT}
 		~dev-libs/rocm-opencl-runtime-${PV}:${SLOT}
 		~dev-libs/rocr-runtime-${PV}:${SLOT}
@@ -43,7 +42,6 @@ RDEPEND="
 		dev-util/clinfo
 	)
 	rocm-libs? (
-		 ~dev-libs/rocm-core-${PV}:${SLOT}
 		~sci-libs/hipBLAS-${PV}:${SLOT}[cuda?,rocm?]
 		~sci-libs/hipBLASLt-${PV}:${SLOT}[cuda?,rocm?]
 		 ~sci-libs/hipCUB-${PV}:${SLOT}[cuda?,rocm?]
@@ -70,7 +68,6 @@ RDEPEND="
 
 	rocm-utils? (
 		~dev-util/rocm-cmake-${PV}:${SLOT}
-		 ~dev-libs/rocm-core-${PV}:${SLOT}
 		~dev-util/rocminfo-${PV}:${SLOT}
 	)
 
