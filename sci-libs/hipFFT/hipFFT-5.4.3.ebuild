@@ -23,7 +23,7 @@ CUDA_TARGETS_COMPAT=(
 LLVM_MAX_SLOT=15
 ROCM_VERSION="${PV}"
 
-inherit cmake llvm rocm toolchain-funcs
+inherit cmake flag-o-matic llvm rocm toolchain-funcs
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipFFT/archive/refs/tags/rocm-${PV}.tar.gz

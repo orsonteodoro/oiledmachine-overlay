@@ -5,7 +5,7 @@ EAPI=8
 
 LLVM_MAX_SLOT=15
 
-inherit cmake llvm
+inherit cmake flag-o-matic llvm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipBLAS/archive/rocm-${PV}.tar.gz

@@ -6,7 +6,7 @@ EAPI=8
 LLVM_MAX_SLOT=15
 ROCM_VERSION="${PV}"
 
-inherit cmake edo llvm rocm toolchain-funcs
+inherit cmake edo flag-o-matic llvm rocm toolchain-funcs
 
 # Some test datasets are shared with rocSPARSE.
 SRC_URI="
