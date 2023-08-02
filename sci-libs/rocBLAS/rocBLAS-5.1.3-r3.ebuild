@@ -106,7 +106,9 @@ BDEPEND="
 	${PYTHON_DEPS}
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	~dev-util/rocm-cmake-${PV}:${SLOT}
-	~dev-util/Tensile-${PV}:${SLOT}
+	rocm? (
+		~dev-util/Tensile-${PV}:${SLOT}
+	)
 	test? (
 		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		dev-cpp/gtest
@@ -174,16 +176,9 @@ src_configure() {
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DBUILD_TESTING=OFF
-		-DBUILD_WITH_TENSILE=ON
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocblas"
-		-DCMAKE_SKIP_RPATH=On
+		-DCMAKE_SKIP_RPATH=ON
 		-Dpython="${PYTHON}"
-		-DTensile_CODE_OBJECT_VERSION="V3"
-		-DTensile_CPU_THREADS=$(makeopts_jobs)
-		-DTensile_LIBRARY_FORMAT="msgpack"
-		-DTensile_LOGIC="asm_full"
-		-DTensile_ROOT="${EPREFIX}/usr/share/Tensile"
-		-DTensile_TEST_LOCAL_PATH="${EPREFIX}/usr/share/Tensile"
 	)
 
 	if use cuda ; then
@@ -197,10 +192,10 @@ src_configure() {
 		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
+			-DBUILD_WITH_TENSILE=OFF
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="nvcc"
-			-DTensile_COMPILER="nvcc"
 		)
 		CXX="nvcc" \
 		cmake_src_configure
@@ -208,10 +203,17 @@ src_configure() {
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+			-DBUILD_WITH_TENSILE=ON
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
+			-DTensile_CODE_OBJECT_VERSION="V3"
 			-DTensile_COMPILER="hipcc"
+			-DTensile_CPU_THREADS=$(makeopts_jobs)
+			-DTensile_LIBRARY_FORMAT="msgpack"
+			-DTensile_LOGIC="asm_full"
+			-DTensile_ROOT="${EPREFIX}/usr/share/Tensile"
+			-DTensile_TEST_LOCAL_PATH="${EPREFIX}/usr/share/Tensile"
 		)
 		CXX="hipcc" \
 		cmake_src_configure
