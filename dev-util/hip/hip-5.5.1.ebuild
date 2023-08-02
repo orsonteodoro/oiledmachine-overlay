@@ -194,7 +194,7 @@ src_configure() {
 		mycmakeargs+=(
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
-			-DHIP_RUNTIME="nvcc"
+			-DHIP_RUNTIME="cuda"
 		)
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"

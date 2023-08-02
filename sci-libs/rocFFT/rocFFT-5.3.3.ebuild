@@ -252,7 +252,7 @@ src_configure() {
 			-DCUDA_ARCH=$(get_cuda_arch)
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
-			-DHIP_RUNTIME="nvcc"
+			-DHIP_RUNTIME="cuda"
 		)
 		CXX="nvcc" \
 		cmake_src_configure

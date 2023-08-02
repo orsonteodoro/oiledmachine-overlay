@@ -206,7 +206,7 @@ src_configure() {
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocsparse"
-		-DCMAKE_SKIP_RPATH=On
+		-DCMAKE_SKIP_RPATH=ON
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"

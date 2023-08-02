@@ -191,7 +191,7 @@ src_configure() {
 			-DDISABLE_WERROR=ON
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
-			-DHIP_RUNTIME="nvcc"
+			-DHIP_RUNTIME="cuda"
 			-DNVGPU_TARGETS=$(get_nvgpu_targets)
 		)
 		CXX="nvcc" \

@@ -170,7 +170,7 @@ src_configure() {
 			-DDISABLE_WERROR=ON
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
-			-DHIP_RUNTIME="nvcc"
+			-DHIP_RUNTIME="cuda"
 		)
 		CXX="nvcc" \
 		cmake_src_configure
@@ -181,7 +181,7 @@ src_configure() {
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
-			-DHIP_RUNTIME="ROCclr"
+			-DHIP_RUNTIME="rocclr"
 		)
 		CXX="hipcc" \
 		cmake_src_configure
