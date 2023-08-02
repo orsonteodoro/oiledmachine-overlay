@@ -152,9 +152,6 @@ src_prepare() {
 }
 
 src_configure() {
-	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
-	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
-
 	if use openmp ; then
 		has_version "sys-devel/gcc:11" || die "Reinstall gcc-11"
 		export CC="${CHOST}-gcc"
@@ -174,14 +171,19 @@ eerror
 
 	distutils-r1_src_configure
 	if use client; then
+		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+		export HIP_PLATFORM="amd"
 		local mycmakeargs=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DCMAKE_SKIP_RPATH=ON
+			-DHIP_COMPILER="clang"
+			-DHIP_PLATFORM="amd"
+			-DHIP_RUNTIME="rocclr"
 			-DTENSILE_BUILD_CLIENT=$(usex client ON OFF)
 			-DTENSILE_USE_LLVM=ON
 			-DTENSILE_USE_MSGPACK=ON
 			-DTENSILE_USE_OPENMP=$(usex openmp ON OFF)
-			-DTensile_LIBRARY_FORMAT=msgpack
+			-DTensile_LIBRARY_FORMAT="msgpack"
 		)
 		CXX="hipcc" \
 		cmake_src_configure

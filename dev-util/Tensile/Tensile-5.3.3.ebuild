@@ -171,11 +171,14 @@ eerror
 		local mycmakeargs=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DCMAKE_SKIP_RPATH=ON
+			-DHIP_COMPILER="clang"
+			-DHIP_PLATFORM="amd"
+			-DHIP_RUNTIME="rocclr"
 			-DTENSILE_BUILD_CLIENT=$(usex client ON OFF)
 			-DTENSILE_USE_LLVM=ON
 			-DTENSILE_USE_MSGPACK=ON
 			-DTENSILE_USE_OPENMP=$(usex openmp ON OFF)
-			-DTensile_LIBRARY_FORMAT=msgpack
+			-DTensile_LIBRARY_FORMAT="msgpack"
 		)
 		CXX="hipcc" \
 		cmake_src_configure
