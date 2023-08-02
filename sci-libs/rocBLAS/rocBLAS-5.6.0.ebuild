@@ -171,9 +171,6 @@ src_configure() {
 	# undefined reference to `rocblas_status_ rocblas_internal_check_numerics_matrix_template
 	replace-flags '-O0' '-O1'
 
-	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
-	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
-
 	# Disallow newer clangs versions when producing .o files.
 	einfo "LLVM_SLOT=${LLVM_SLOT}"
 	einfo "PATH=${PATH} (before)"
@@ -214,6 +211,7 @@ src_configure() {
 		CXX="nvcc" \
 		cmake_src_configure
 	elif use rocm ; then
+		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
