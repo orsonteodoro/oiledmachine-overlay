@@ -15,7 +15,7 @@ AMDGPU_TARGETS_COMPAT=(
 ROCM_VERSION="${PV}"
 LLVM_MAX_SLOT=16
 
-inherit cmake llvm rocm
+inherit cmake flag-o-matic llvm rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocALUTION/archive/rocm-${PV}.tar.gz
@@ -57,6 +57,8 @@ RDEPEND="
 	)
 	openmp? (
 		>=sys-devel/libomp-${LLVM_MAX_SLOT}
+		=sys-devel/gcc-11*
+		sys-devel/clang:${LLVM_MAX_SLOT}
 	)
 	rocm? (
 		~dev-util/hip-${PV}:${SLOT}
@@ -121,11 +123,23 @@ src_configure() {
 	)
 
 	if use openmp ; then
+		has_version "sys-devel/gcc:11" || die "Reinstall gcc-11"
+		if ver_test $(gcc-major-version) -ne 11 ; then
+eerror
+eerror "GCC 11 required for openmp.  You must do the following:"
+eerror
+eerror "  eselect gcc set ${CHOST}-gcc-11"
+eerror
+eerror "to change to gcc-11"
+eerror
+			die
+		fi
 		mycmakeargs+=(
 			-DOpenMP_CXX_FLAGS="-fopenmp=libomp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
 			-DOpenMP_libomp_LIBRARY="omp"
 		)
+		HIP_CXX="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang++"
 	fi
 
 	if use rocm ; then
@@ -150,5 +164,4 @@ src_install() {
         chrpath --delete "${D}/usr/lib64/librocalution.so.0.1" || die
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problem with USE="openmp -rocm"; builds-with-problem with USE="rocm"
