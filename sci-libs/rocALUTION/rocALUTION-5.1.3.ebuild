@@ -78,21 +78,6 @@ S="${WORKDIR}/${PN}-rocm-${PV}"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 
 src_prepare() {
-	export ROCM_TARGET_LST="${T}/target.lst"
-	echo "gfx000" > "${ROCM_TARGET_LST}" || die
-	if use amdgpu_targets_gfx803 ; then
-		echo "gfx803" > "${ROCM_TARGET_LST}" || die
-	fi
-	if use amdgpu_targets_gfx900 ; then
-		echo "gfx900" > "${ROCM_TARGET_LST}" || die
-	fi
-	if use amdgpu_targets_gfx906 ; then
-		echo "gfx906" > "${ROCM_TARGET_LST}" || die
-	fi
-	if use amdgpu_targets_gfx908 ; then
-		echo "gfx908" > "${ROCM_TARGET_LST}" || die
-	fi
-
 	sed \
 		-e "s: PREFIX rocalution):):" \
 		-i \
