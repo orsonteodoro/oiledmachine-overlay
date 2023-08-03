@@ -56,7 +56,7 @@ RDEPEND="
 		~sci-libs/hipSOLVER-${PV}:${SLOT}[rocm]
 		~sci-libs/hipSPARSE-${PV}:${SLOT}[rocm]
 		~sci-libs/miopen-${PV}:${SLOT}[rocm]
-		~sci-libs/rocALUTION-${PV}:${SLOT}[rocm]
+		~sci-libs/rocALUTION-${PV}:${SLOT}
 		~sci-libs/rocBLAS-${PV}:${SLOT}[rocm]
 		~sci-libs/rocFFT-${PV}:${SLOT}[rocm]
 		~sci-libs/rocPRIM-${PV}:${SLOT}[rocm]
