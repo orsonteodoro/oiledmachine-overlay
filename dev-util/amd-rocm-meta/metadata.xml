@@ -11,6 +11,9 @@
     distros to their equivalent packages on the distro.
   </longdescription>
   <use>
+    <flag name="rock-dkms">
+      Install the kernel driver.
+    </flag>
     <flag name="rocm-dev">
       Install build development packages.
     </flag>

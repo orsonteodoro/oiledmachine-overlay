@@ -11,6 +11,7 @@ KEYWORDS="~amd64"
 IUSE="
 rocm-dev rocm-libs rocm-utils extras
 
+rock-dkms
 rocm-bandwidth-test
 rocm-gdb
 "
@@ -20,6 +21,9 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	rock-dkms? (
+		~sys-kernel/rock-dkms-${PV}:${SLOT}
+	)
 	rocm-dev? (
 		~dev-libs/ROCdbgapi-${PV}:${SLOT}
 		~dev-libs/rocm-comgr-${PV}:${SLOT}
