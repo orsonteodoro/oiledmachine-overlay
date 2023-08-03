@@ -26,7 +26,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_80
 	sm_86
 )
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
 inherit cmake cuda flag-o-matic rocm python-single-r1
 
 MYPN="pytorch"
