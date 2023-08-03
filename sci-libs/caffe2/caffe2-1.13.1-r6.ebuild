@@ -363,7 +363,7 @@ src_install() {
 	rm -rf python
 	mkdir -p python/torch/include || die
 	mv \
-		"${ED}/usr/lib/python*/site-packages/caffe2" \
+		"${ED}/usr/lib/python"*"/site-packages/caffe2" \
 		python/ \
 		|| die
 	mv \
