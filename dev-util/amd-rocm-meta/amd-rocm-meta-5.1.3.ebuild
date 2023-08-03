@@ -6,7 +6,7 @@ EAPI=8
 DESCRIPTION="ROCm metapackage"
 HOMEPAGE=""
 LICENSE="metapackage"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
 IUSE="
 rocm-dev rocm-libs rocm-utils extras
