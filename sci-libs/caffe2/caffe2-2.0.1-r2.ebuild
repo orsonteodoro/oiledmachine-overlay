@@ -134,7 +134,10 @@ RDEPEND="
 		=dev-libs/cudnn-8*
 		dev-libs/cudnn-frontend:0/8
 		cuda_targets_auto? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			|| (
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-10*:=
+			)
 		)
 		cuda_targets_sm_35? (
 			=dev-util/nvidia-cuda-toolkit-10*:=

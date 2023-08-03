@@ -117,7 +117,10 @@ RDEPEND="
 	~sci-libs/caffe2-${PV}[${AMDGPU_TARGETS_USEDEP},${CUDA_TARGETS_USEDEP},${PYTHON_SINGLE_USEDEP},cuda=,rocm=]
 	cuda? (
 		cuda_targets_auto? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			|| (
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-10*:=
+			)
 		)
 		cuda_targets_sm_35? (
 			=dev-util/nvidia-cuda-toolkit-10*:=
