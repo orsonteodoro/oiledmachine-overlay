@@ -120,6 +120,14 @@ src_configure() {
 		-DSUPPORT_OMP=$(usex openmp ON OFF)
 	)
 
+	if use openmp ; then
+		mycmakeargs+=(
+			-DOpenMP_CXX_FLAGS="-fopenmp=libomp"
+			-DOpenMP_CXX_LIB_NAMES="libomp"
+			-DOpenMP_libomp_LIBRARY="omp"
+		)
+	fi
+
 	if use rocm ; then
 		export ROCM_PATH="${ESYSROOT}/usr"
 		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
