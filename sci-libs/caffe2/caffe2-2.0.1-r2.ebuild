@@ -15,7 +15,7 @@ CUDA_TARGETS_COMPAT=(
 	auto
 
 # Observed:
-	sm_35
+#	sm_35 # Dropped based on RELEASE.md:  Release Compatibility Matrix
 	sm_50_plus_ptx
 	sm_52
 	sm_60
@@ -134,13 +134,7 @@ RDEPEND="
 		=dev-libs/cudnn-8*
 		dev-libs/cudnn-frontend:0/8
 		cuda_targets_auto? (
-			|| (
-				=dev-util/nvidia-cuda-toolkit-11*:=
-				=dev-util/nvidia-cuda-toolkit-10*:=
-			)
-		)
-		cuda_targets_sm_35? (
-			=dev-util/nvidia-cuda-toolkit-10*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 		cuda_targets_sm_50_plus_ptx? (
 			=dev-util/nvidia-cuda-toolkit-11*:=
@@ -169,11 +163,7 @@ RDEPEND="
 		cuda_targets_sm_86? (
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
-		dev-util/nvidia-cuda-toolkit[profiler]
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-			=dev-util/nvidia-cuda-toolkit-10*:=
-		)
+		=dev-util/nvidia-cuda-toolkit-11*[profiler]
 	)
 	fbgemm? (
 		dev-libs/FBGEMM
@@ -367,7 +357,7 @@ einfo
 			# From U18.04 Dockerfile
 			# CI for linux uses only Maxwell or 5.2
 			mycmakeargs+=(
-				-DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST:-"3.5 5.2 6.0 6.1 7.0+PTX 8.0"}
+				-DTORCH_CUDA_ARCH_LIST=${TORCH_CUDA_ARCH_LIST:-"5.2 6.0 6.1 7.0+PTX 8.0"}
 			)
 		else
 			mycmakeargs+=(
