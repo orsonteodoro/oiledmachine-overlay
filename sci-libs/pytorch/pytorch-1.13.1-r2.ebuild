@@ -3,16 +3,30 @@
 
 EAPI=8
 
+# This is the python portion of the package.
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906
 	gfx908
 )
 CUDA_TARGETS_COMPAT=(
-	sm_61
-	compute_35
-	compute_61
+# Builds for all cards
+	auto
+
+# Currently, tested CI ones are listed
+	sm_52
+	sm_70
+	sm_75
 )
+AMDGPU_TARGETS_USEDEP=("${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}")
+AMDGPU_TARGETS_USEDEP=("${AMDGPU_TARGETS_USEDEP[@]/%/?}")
+AMDGPU_TARGETS_USEDEP="${AMDGPU_TARGETS_USEDEP[@]}"
+AMDGPU_TARGETS_USEDEP="${AMDGPU_TARGETS_USEDEP// /,}"
+CUDA_TARGETS_USEDEP=("${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}")
+CUDA_TARGETS_USEDEP=("${CUDA_TARGETS_USEDEP[@]/%/?}")
+CUDA_TARGETS_USEDEP="${CUDA_TARGETS_USEDEP[@]}"
+CUDA_TARGETS_USEDEP="${CUDA_TARGETS_USEDEP// /,}"
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{9..11} )
 DISTUTILS_SINGLE_IMPL=1
@@ -31,6 +45,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${ROCM_IUSE}
 cuda rocm
 "
 gen_cuda_required_use() {
@@ -92,22 +107,19 @@ RDEPEND="
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 	')
 	${PYTHON_DEPS}
-	~sci-libs/caffe2-${PV}[${PYTHON_SINGLE_USEDEP}]
+	~sci-libs/caffe2-${PV}[${AMDGPU_TARGETS_USEDEP},${CUDA_TARGETS_USEDEP},${PYTHON_SINGLE_USEDEP},cuda=,rocm=]
 	cuda? (
-		cuda_targets_sm_61? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-			=dev-util/nvidia-cuda-toolkit-12*:=
-		)
-		cuda_targets_compute_35? (
+		cuda_targets_sm_52? (
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
-		cuda_targets_compute_61? (
+		cuda_targets_sm_70? (
 			=dev-util/nvidia-cuda-toolkit-11*:=
-			=dev-util/nvidia-cuda-toolkit-12*:=
+		)
+		cuda_targets_sm_75? (
+			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 		|| (
 			=dev-util/nvidia-cuda-toolkit-11*:=
-			=dev-util/nvidia-cuda-toolkit-12*:=
 		)
 	)
 	rocm? (
@@ -146,14 +158,13 @@ src_prepare() {
 }
 
 src_compile() {
+	# Python files only
+	# For binaries/libs see caffe2
 	local pyargs=(
 		BUILD_DIR=
 		CMAKE_BUILD_DIR="${BUILD_DIR}"
-		PYTORCH_ROCM_ARCH=""
 		PYTORCH_BUILD_VERSION="${PV}"
 		PYTORCH_BUILD_NUMBER=0
-		USE_CUDA=$(usex cuda 1 0)
-		USE_ROCM=$(usex rocm 1 0)
 		USE_SYSTEM_LIBS=ON
 	)
 
