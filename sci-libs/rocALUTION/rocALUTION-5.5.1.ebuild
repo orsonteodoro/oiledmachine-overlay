@@ -12,6 +12,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_plus
 	gfx1030
 )
+CMAKE_MAKEFILE_GENERATOR="emake"
 ROCM_VERSION="${PV}"
 LLVM_MAX_SLOT=16
 
@@ -28,7 +29,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
-rocm +openmp mpi
+rocm samples +openmp mpi r1
 "
 gen_rocm_required_use() {
 	local x
@@ -77,19 +78,16 @@ BDEPEND="
 "
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-rocm-${PV}"
+PATCHES=(
+	"${FILESDIR}/rocALUTION-5.6.0-invalid-operands-fix.patch"
+)
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 
 src_prepare() {
 	sed \
 		-e "s: PREFIX rocalution):):" \
 		-i \
-		src/CMakeLists.txt \
-		|| die
-
-	sed \
-		-e "s:/opt/rocm/hip/cmake:${EPREFIX}/usr/$(get_libdir)/cmake/hip:" \
-		-i \
-		"${S}/CMakeLists.txt" \
+		"${S}/src/CMakeLists.txt" \
 		|| die
 	sed \
 		-e "s:PREFIX rocalution:#PREFIX rocalution:" \
@@ -106,9 +104,12 @@ src_prepare() {
 }
 
 src_configure() {
+	# Grant access to the device to omit a sandbox violation
+	addwrite /dev/kfd
+	addpredict /dev/dri/
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_BENCHMARKS=OFF
-		-DBUILD_CLIENTS_SAMPLES=ON
+		-DBUILD_CLIENTS_SAMPLES=$(usex samples ON OFF)
 		-DBUILD_CLIENTS_TESTS=OFF
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocALUTION"
@@ -118,9 +119,17 @@ src_configure() {
 		-DSUPPORT_OMP=$(usex openmp ON OFF)
 	)
 
+	if [[ "${HIP_CXX}" =~ "g++" ]] ; then
+eerror
+eerror "Only hipcc or clang++ allowed for HIP_CXX"
+eerror
+		die
+	fi
+
 	if use openmp ; then
 		has_version "sys-devel/gcc:11" || die "Reinstall gcc-11"
 		if ver_test $(gcc-major-version) -ne 11 ; then
+# For libstdc++ 11.
 eerror
 eerror "GCC 11 required for openmp.  You must do the following:"
 eerror
@@ -143,10 +152,10 @@ eerror
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
-			-DBUILD_HIPRAND=ON
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
+			-DROCM_PATH="${ESYSROOT}/usr"
 		)
 	fi
 

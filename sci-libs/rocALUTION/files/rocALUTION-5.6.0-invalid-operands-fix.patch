@@ -1,0 +1,149 @@
+Subject:  invalid operands to binary expression fixes for rocALUTION-5.6.0 with ROCm 5.6.0
+Fixes for the following issue:
+
+src/base/hip/hip_kernels_csr.hpp:53:33: error: invalid operands to binary expression ('std::complex<double>' and 'std::complex<double>')
+                val[aj] = alpha * val[aj];
+                          ~~~~~ ^ ~~~~~~~
+
+Fix from: https://github.com/ROCmSoftwarePlatform/rocALUTION/issues/144#issuecomment-1146762823
+Fixes issue 144
+
+Expands solution with abs(), - (negation), +=, -=, *=, /= operator overrides.
+
+The suggested fix
+
+diff -urp rocALUTION-rocm-5.6.0.orig/src/base/hip/hip_vector.hpp rocALUTION-rocm-5.6.0/src/base/hip/hip_vector.hpp
+--- rocALUTION-rocm-5.6.0.orig/src/base/hip/hip_vector.hpp	2023-06-12 11:16:39.000000000 -0700
++++ rocALUTION-rocm-5.6.0/src/base/hip/hip_vector.hpp	2023-08-03 12:33:26.370255908 -0700
+@@ -30,11 +30,131 @@
+ #include "../base_vector.hpp"
+ 
+ #include <hip/hip_runtime.h>
++#include <hip/amd_detail/amd_hip_complex.h>
+ 
+ #include <complex>
+ 
+ #include "hip_rand.hpp"
+ 
++#if defined(__HIPCC_RTC__)
++#define __HOST_DEVICE__ __device__
++#else
++#define __HOST_DEVICE__ __host__ __device__
++#endif // !defined(__HIPCC_RTC__)
++
++// Gotta put these somewhere
++__HOST_DEVICE__ inline std::complex<float> operator+(const std::complex<float> a, const std::complex<float> b)
++{
++    auto res = a+b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<float> operator-(const std::complex<float> a, const std::complex<float> b)
++{
++    auto res = a-b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<float> operator*(const std::complex<float> a, const std::complex<float> b)
++{
++    auto res = a*b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<float> operator/(const std::complex<float> a, const std::complex<float> b)
++{
++    auto res = a/b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<float> operator+=(const std::complex<float> a, const std::complex<float> b)
++{
++    auto res = a;
++    res = res + b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<float> operator-=(const std::complex<float> a, const std::complex<float> b)
++{
++    auto res = a;
++    res = res - b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<float> operator*=(const std::complex<float> a, const std::complex<float> b)
++{
++    auto res = a;
++    res = res * b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<float> operator/=(const std::complex<float> a, const std::complex<float> b)
++{
++    auto res = a;
++    res = res / b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<float> operator-(const std::complex<float> a)
++{
++    auto res = -a;
++    return res;
++}
++__HOST_DEVICE__ inline float abs(const std::complex<float> a)
++{
++    auto ahip = make_hipFloatComplex(a.real(), a.imag());
++    auto res = hipCabsf(ahip);
++    return res;
++}
++
++__HOST_DEVICE__ inline std::complex<double> operator+(const std::complex<double> a, const std::complex<double> b)
++{
++    auto res = a+b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<double> operator-(const std::complex<double> a, const std::complex<double> b)
++{
++    auto res = a-b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<double> operator*(const std::complex<double> a, const std::complex<double> b)
++{
++    auto res = a*b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<double> operator/(const std::complex<double> a, const std::complex<double> b)
++{
++    auto res = a/b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<double> operator+=(const std::complex<double> a, const std::complex<double> b)
++{
++    auto res = a;
++    res = res + b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<double> operator-=(const std::complex<double> a, const std::complex<double> b)
++{
++    auto res = a;
++    res = res - b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<double> operator*=(const std::complex<double> a, const std::complex<double> b)
++{
++    auto res = a;
++    res = res * b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<double> operator/=(const std::complex<double> a, const std::complex<double> b)
++{
++    auto res = a;
++    res = res / b;
++    return res;
++}
++__HOST_DEVICE__ inline std::complex<double> operator-(const std::complex<double> a)
++{
++    auto res = -a;
++    return res;
++}
++__HOST_DEVICE__ inline double abs(const std::complex<double> a)
++{
++    auto ahip = make_hipDoubleComplex(a.real(), a.imag());
++    auto res = hipCabs(ahip);
++    return res;
++}
++
+ namespace rocalution
+ {
+     template <typename ValueType>
