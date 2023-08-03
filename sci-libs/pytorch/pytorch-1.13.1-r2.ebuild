@@ -79,7 +79,7 @@ gen_rocm_depends() {
 		local s="0/"$(ver_cut 1-2 ${pv})
 		echo "
 			(
-				~dev-util/amd-rocm-meta-${pv}:${s}[rocm,rocm-dev,rocm-utils,rocm-libs]
+				~dev-util/amd-rocm-meta-${pv}:${s}[rocm-dev,rocm-utils,rocm-libs]
 				~dev-libs/rccl-${pv}:${s}
 				~dev-util/rocprofiler-${pv}:${s}
 				~dev-util/roctracer-${pv}:${s}

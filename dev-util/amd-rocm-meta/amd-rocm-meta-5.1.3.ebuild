@@ -9,7 +9,7 @@ LICENSE="metapackage"
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
 IUSE="
-cuda hip-cpu +rocm rocm-dev rocm-libs rocm-utils extras
+rocm-dev rocm-libs rocm-utils extras
 
 rocm-bandwidth-test
 rocm-gdb
@@ -17,10 +17,6 @@ rocm-gdb
 REQUIRED_USE="
 	rocm-dev? (
 		rocm-utils
-	)
-	^^ (
-		rocm
-		cuda
 	)
 "
 RDEPEND="
@@ -32,7 +28,7 @@ RDEPEND="
 		~dev-libs/rocr-runtime-${PV}:${SLOT}
 		~dev-libs/roct-thunk-interface-${PV}:${SLOT}
 
-		~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+		~dev-util/hip-${PV}:${SLOT}[rocm]
 		~dev-util/HIPIFY-${PV}:${SLOT}
 		~dev-util/rocm-cmake-${PV}:${SLOT}
 		~dev-util/rocm-smi-${PV}:${SLOT}
@@ -42,28 +38,22 @@ RDEPEND="
 		dev-util/clinfo
 	)
 	rocm-libs? (
-		~sci-libs/hipBLAS-${PV}:${SLOT}[cuda?,rocm?]
-		~sci-libs/hipBLASLt-${PV}:${SLOT}[cuda?,rocm?]
-		~sci-libs/hipCUB-${PV}:${SLOT}[cuda?,rocm?]
-		~sci-libs/hipFFT-${PV}:${SLOT}[cuda?,rocm?]
-		~sci-libs/hipSOLVER-${PV}:${SLOT}[cuda?,rocm?]
-		~sci-libs/hipSPARSE-${PV}:${SLOT}[cuda?,rocm?]
-		~sci-libs/miopen-${PV}:${SLOT}[rocm?]
-		 ~sci-libs/rocALUTION-${PV}:${SLOT}[cuda?,rocm?]
-		~sci-libs/rocBLAS-${PV}:${SLOT}[cuda?,rocm?]
-		~sci-libs/rocFFT-${PV}:${SLOT}[cuda?,rocm?]
-		~sci-libs/rocPRIM-${PV}:${SLOT}[rocm?]
-		~sci-libs/rocRAND-${PV}:${SLOT}[cuda?,rocm?]
-		 ~sci-libs/rocThrust-${PV}:${SLOT}[cuda?,rocm?]
-		 ~sci-libs/rocWMMA-${PV}:${SLOT}[cuda?,rocm?]
-		hip-cpu? (
-			~sci-libs/rocPRIM-${PV}:${SLOT}[hip-cpu]
-		)
-		rocm? (
-			~dev-libs/rccl-${PV}:${SLOT}
-			~sci-libs/rocSOLVER-${PV}:${SLOT}
-			~sci-libs/rocSPARSE-${PV}:${SLOT}
-		)
+		~dev-libs/rccl-${PV}:${SLOT}
+		~sci-libs/hipBLAS-${PV}:${SLOT}[rocm]
+		~sci-libs/hipBLASLt-${PV}:${SLOT}[rocm]
+		~sci-libs/hipCUB-${PV}:${SLOT}[rocm]
+		~sci-libs/hipFFT-${PV}:${SLOT}[rocm]
+		~sci-libs/hipSOLVER-${PV}:${SLOT}[rocm]
+		~sci-libs/hipSPARSE-${PV}:${SLOT}[rocm]
+		~sci-libs/miopen-${PV}:${SLOT}[rocm]
+		~sci-libs/rocALUTION-${PV}:${SLOT}[rocm]
+		~sci-libs/rocBLAS-${PV}:${SLOT}[rocm]
+		~sci-libs/rocFFT-${PV}:${SLOT}[rocm]
+		~sci-libs/rocPRIM-${PV}:${SLOT}[rocm]
+		~sci-libs/rocRAND-${PV}:${SLOT}[rocm]
+		~sci-libs/rocSOLVER-${PV}:${SLOT}
+		~sci-libs/rocSPARSE-${PV}:${SLOT}
+		~sci-libs/rocThrust-${PV}:${SLOT}
 	)
 
 	rocm-utils? (
@@ -133,7 +123,7 @@ RDEPEND="
 # hipsparse x
 # miopen-hip x
 # rccl x
-# rocalution
+# rocalution x
 # rocblas x
 # rocfft x
 # rocrand x
@@ -148,15 +138,15 @@ RDEPEND="
 # hipsparse-dev x
 # miopen-hip-dev x
 # rccl-dev x
-# rocalution-dev
+# rocalution-dev x
 # rocblas-dev x
 # rocfft-dev x
 # rocprim-dev x
 # rocrand-dev x
 # rocsolver-dev x
 # rocsparse-dev x
-# rocthrust-dev
-# rocwmma-dev
+# rocthrust-dev x
+# rocwmma-dev -
 #
 
 #

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Updated copied ebuild from
+  https://github.com/justxi/rocm/tree/master/sci-libs/rocALUTION
+
+  -->
+  <upstream>
+    <remote-id type="github">ROCmSoftwarePlatform/hipSOLVER</remote-id>
+  </upstream>
+</pkgmetadata>
