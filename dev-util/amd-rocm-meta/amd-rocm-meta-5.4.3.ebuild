@@ -24,6 +24,9 @@ RDEPEND="
 	rock-dkms? (
 		~sys-kernel/rock-dkms-${PV}:${SLOT}
 	)
+	rocm-bandwidth-test? (
+		~dev-util/rocm_bandwidth_test-${PV}:${SLOT}
+	)
 	rocm-dev? (
 		~dev-libs/ROCdbgapi-${PV}:${SLOT}
 		~dev-libs/rocm-comgr-${PV}:${SLOT}
@@ -40,6 +43,9 @@ RDEPEND="
 		~dev-util/roctracer-${PV}:${SLOT}
 
 		dev-util/clinfo
+	)
+	rocm-gdb? (
+		~dev-util/ROCgdb-${PV}:${SLOT}
 	)
 	rocm-libs? (
 		~dev-libs/rccl-${PV}:${SLOT}
@@ -60,18 +66,11 @@ RDEPEND="
 		~sci-libs/rocThrust-${PV}:${SLOT}
 		~sci-libs/rocWMMA-${PV}:${SLOT}
 	)
-
 	rocm-utils? (
 		~dev-util/rocm-cmake-${PV}:${SLOT}
 		~dev-util/rocminfo-${PV}:${SLOT}
 	)
 
-	rocm-bandwidth-test? (
-		~dev-util/rocm_bandwidth_test-${PV}:${SLOT}
-	)
-	rocm-gdb? (
-		~dev-util/ROCgdb-${PV}:${SLOT}
-	)
 "
 
 #
