@@ -14,10 +14,17 @@ CUDA_TARGETS_COMPAT=(
 # Builds for all cards
 	auto
 
-# Currently, tested CI ones are listed
+# Observed:
+	sm_35
+	sm_50_plus_ptx
 	sm_52
+	sm_60
+	sm_61
 	sm_70
+	sm_70_plus_ptx
 	sm_75
+	sm_80
+	sm_86
 )
 AMDGPU_TARGETS_USEDEP=("${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}")
 AMDGPU_TARGETS_USEDEP=("${AMDGPU_TARGETS_USEDEP[@]/%/?}")
@@ -109,17 +116,43 @@ RDEPEND="
 	${PYTHON_DEPS}
 	~sci-libs/caffe2-${PV}[${AMDGPU_TARGETS_USEDEP},${CUDA_TARGETS_USEDEP},${PYTHON_SINGLE_USEDEP},cuda=,rocm=]
 	cuda? (
+		cuda_targets_auto? (
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+		cuda_targets_sm_35? (
+			=dev-util/nvidia-cuda-toolkit-10*:=
+		)
+		cuda_targets_sm_50_plus_ptx? (
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
 		cuda_targets_sm_52? (
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+		cuda_targets_sm_60? (
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+		cuda_targets_sm_61? (
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 		cuda_targets_sm_70? (
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
+		cuda_targets_sm_70_plus_ptx? (
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
 		cuda_targets_sm_75? (
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
+		cuda_targets_sm_80? (
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+		cuda_targets_sm_86? (
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+		dev-util/nvidia-cuda-toolkit[profiler]
 		|| (
 			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-10*:=
 		)
 	)
 	rocm? (

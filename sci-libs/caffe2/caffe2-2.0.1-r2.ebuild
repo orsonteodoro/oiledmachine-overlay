@@ -136,17 +136,40 @@ RDEPEND="
 		cuda_targets_auto? (
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
+		cuda_targets_sm_35? (
+			=dev-util/nvidia-cuda-toolkit-10*:=
+		)
+		cuda_targets_sm_50_plus_ptx? (
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
 		cuda_targets_sm_52? (
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+		cuda_targets_sm_60? (
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+		cuda_targets_sm_61? (
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+		cuda_targets_sm_70? (
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+		cuda_targets_sm_70_plus_ptx? (
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 		cuda_targets_sm_75? (
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
+		cuda_targets_sm_80? (
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
 		cuda_targets_sm_86? (
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
+		dev-util/nvidia-cuda-toolkit[profiler]
 		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=[profiler]
+			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-10*:=
 		)
 	)
 	fbgemm? (
