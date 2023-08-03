@@ -104,12 +104,12 @@ RDEPEND="
 # rocm-core -
 # rocm-opencl x dev-util/clinfo + rocm-opencl-runtime
 # rocm-ocl-icd - dev-libs/opencl-icd-loader is the drop in replacement
-# rocprofiler
+# rocprofiler x
 # roctracer x
 # hip-dev ; Included in hip
 # hsa-rocr-dev # Alias for rocr-runtime
 # hsakmt-roct-dev # Alias for roct-thunk-interface
-# rocprofiler-dev
+# rocprofiler-dev x
 # roctracer-dev x
 # openmp-extras-dev
 # rocm-opencl-dev x
