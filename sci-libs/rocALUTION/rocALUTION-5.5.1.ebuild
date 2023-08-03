@@ -144,7 +144,6 @@ eerror
 			-DOpenMP_CXX_LIB_NAMES="libomp"
 			-DOpenMP_libomp_LIBRARY="omp"
 		)
-		HIP_CXX="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang++"
 	fi
 
 	if use rocm ; then
