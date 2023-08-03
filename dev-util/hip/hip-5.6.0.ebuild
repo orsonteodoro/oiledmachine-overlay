@@ -112,6 +112,7 @@ src_prepare() {
 	pushd "${HIPCC_S}" || die
 	eapply "${FILESDIR}/hipcc-5.6.0-rocm-path.patch"
 	eapply "${FILESDIR}/hipcc-5.6.0-fno-stack-protector.patch"
+	eapply "${FILESDIR}/hipcc-5.6.0-fix-version.patch"
 
 	# Setting HSA_PATH to "/usr" results in setting "-isystem /usr/include"
 	# which makes "stdlib.h" not found when using "#include_next" in header files;
