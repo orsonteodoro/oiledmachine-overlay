@@ -58,7 +58,6 @@ src_prepare() {
 		bin/rpl_run.sh \
 		|| die
 
-	# We could package aqlprofile, but possible to not use it.
 	# Caused by commit e80f7cb
 	sed \
 		-i \
@@ -82,8 +81,8 @@ src_prepare() {
 
 src_configure() {
 	if use aqlprofile ; then
-		[[ -e "${ESYSROOT}/opt/rocm/lib/hsa-amd-aqlprofile/librocprofv2_att.so" ]] || die "Missing" # For e80f7cb
-		[[ -e "${ESYSROOT}/opt/rocm-5.6.0/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing" # For 071379b
+		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/hsa-amd-aqlprofile/librocprofv2_att.so" ]] || die "Missing" # For e80f7cb
+		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing" # For 071379b
 	fi
 	export CMAKE_BUILD_TYPE="debug"
 	local gpu_targets=$(get_amdgpu_flags \

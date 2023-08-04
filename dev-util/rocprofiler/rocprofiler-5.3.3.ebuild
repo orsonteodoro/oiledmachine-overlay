@@ -70,7 +70,7 @@ src_prepare() {
 
 src_configure() {
 	if use aqlprofile ; then
-		[[ -e "${ESYSROOT}/opt/rocm-5.6.0/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing" # For 071379b
+		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing" # For 071379b
 	fi
 	local gpu_targets=$(get_amdgpu_flags \
 		| tr ";" " ")
