@@ -54,6 +54,7 @@ einfo
 }
 
 src_unpack(){
+	use deny-install && die
 	use skip-install && return
         unpack_deb ${A}
 }
