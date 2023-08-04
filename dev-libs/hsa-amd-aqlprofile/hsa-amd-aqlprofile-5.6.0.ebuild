@@ -51,6 +51,7 @@ einfo
 }
 
 src_unpack(){
+	use skip-install && return
         unpack_deb ${A}
 }
 

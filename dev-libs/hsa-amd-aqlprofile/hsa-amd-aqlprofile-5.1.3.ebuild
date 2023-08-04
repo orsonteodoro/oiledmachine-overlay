@@ -19,7 +19,7 @@ LICENSE="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
-IUSE="skip-install"
+IUSE="deny-install skip-install"
 DEPEND=""
 RDEPEND="${DEPEND}"
 RESTRICT="binchecks"
@@ -33,6 +33,8 @@ QA_PREBUILT="
 "
 
 src_unpack(){
+	use deny-install && die
+	use skip-install && return
         unpack_deb ${A}
 }
 
