@@ -64,9 +64,9 @@ einfo "Sanitizing file/folder permissions"
 	for path in $(find "${ED}") ; do
 		chown root:root "${path}" || die
 		if file "${path}" | grep -q -e "directory" ; then
-			chmod 0755 "${path}"
+			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "ELF .* shared object" ; then
-			chmod 0755 "${path}"
+			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "symbolic link" ; then
 			:;
 		else
