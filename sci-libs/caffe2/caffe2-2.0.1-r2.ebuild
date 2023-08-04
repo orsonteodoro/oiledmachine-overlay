@@ -303,9 +303,9 @@ einfo
 		-DBUILD_NVFUSER=OFF
 		-DBUILD_SHARED_LIBS=ON
 		-DLIBSHM_INSTALL_LIB_SUBDIR="${EPREFIX}/usr/$(get_libdir)"
-		-DTORCH_INSTALL_LIB_DIR="${EPREFIX}/usr/$(get_libdir)"
 		-DPYBIND11_PYTHON_VERSION="${EPYTHON#python}"
 		-DPYTHON_EXECUTABLE="${PYTHON}"
+		-DTORCH_INSTALL_LIB_DIR="${EPREFIX}/usr/$(get_libdir)"
 		-DUSE_CCACHE=OFF
 		-DUSE_CUDA=$(usex cuda)
 		-DUSE_CUDNN=$(usex cuda)
