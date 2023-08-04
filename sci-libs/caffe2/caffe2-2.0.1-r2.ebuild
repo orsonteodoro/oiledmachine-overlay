@@ -118,7 +118,7 @@ gen_rocm_depends() {
 	done
 }
 # CUDA 12 not supported yet: https://github.com/pytorch/pytorch/issues/91122
-CUDA_PV="11.7" # 11.7 minimum required
+CUDA_PV="11.8" # 11.7 minimum required
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-cpp/glog-0.5.0
