@@ -76,6 +76,7 @@ src_configure() {
 		| tr ";" " ")
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
+		-DCMAKE_MODULE_PATH="${ESYSROOT}/usr/$(get_libdir)/cmake/hip"
 		-DCMAKE_PREFIX_PATH="${EPREFIX}/usr/include/hsa"
 		-DCMAKE_SKIP_RPATH=ON
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF

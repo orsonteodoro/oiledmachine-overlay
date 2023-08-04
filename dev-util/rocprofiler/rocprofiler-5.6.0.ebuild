@@ -19,6 +19,7 @@ SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
 IUSE=" -aqlprofile"
 RDEPEND="
+	dev-python/barectf
 	~dev-libs/rocm-comgr-${PV}:${SLOT}
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
 	~dev-util/hip-${PV}:${SLOT}
@@ -93,12 +94,14 @@ src_configure() {
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
+		-DCMAKE_MODULE_PATH="${ESYSROOT}/usr/$(get_libdir)/cmake/hip"
 		-DCMAKE_PREFIX_PATH="${EPREFIX}/usr/include/hsa"
 		-DCMAKE_SKIP_RPATH=ON
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DGPU_TARGETS="${gpu_targets}"
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
+		-DHIP_ROOT_DIR="${ESYSROOT}/usr"
 		-DHIP_RUNTIME="rocclr"
 		-DPROF_API_HEADER_PATH="${EPREFIX}/usr/include/roctracer/ext"
 		-DUSE_PROF_API=1

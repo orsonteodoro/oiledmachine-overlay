@@ -78,6 +78,7 @@ src_configure() {
 		| tr ";" " ")
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
+		-DCMAKE_MODULE_PATH="${ESYSROOT}/usr/$(get_libdir)/cmake/hip"
 		-DCMAKE_PREFIX_PATH="${EPREFIX}/usr/include/hsa"
 		-DGPU_TARGETS="${gpu_targets}"
 		-DPROF_API_HEADER_PATH="${EPREFIX}/usr/include/roctracer/ext"
