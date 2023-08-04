@@ -349,7 +349,7 @@ einfo
 		-Wno-dev
 	)
 
-	if use cuda; then
+	if use cuda ; then
 		addpredict "/dev/nvidiactl" # bug 867706
 		addpredict "/dev/char"
 
@@ -368,6 +368,11 @@ einfo
 		mycmakeargs+=(
 			-DCMAKE_CUDA_FLAGS=$(cuda_gccdir -f \
 				| tr -d \")
+		)
+	fi
+	if use rocm ; then
+		mycmakeargs+=(
+			-DPYTORCH_ROCM_ARCH=$(get_amdgpu_flags)
 		)
 	fi
 	cmake_src_configure
