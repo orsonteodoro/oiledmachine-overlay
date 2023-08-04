@@ -43,6 +43,7 @@ src_install() {
 	mv opt "${ED}" || die
 	local path
 einfo "Sanitizing file/folder permissions"
+	IFS=$'\n'
 	for path in $(find "${ED}") ; do
 		chown root:root "${path}" || die
 		if file "${path}" | grep -q -e "directory" ; then
@@ -56,4 +57,5 @@ einfo "Sanitizing file/folder permissions"
 			chmod 0644 "${path}" || die
 		fi
 	done
+	IFS=$' \t\n'
 }
