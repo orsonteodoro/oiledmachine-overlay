@@ -93,7 +93,7 @@ RDEPEND="
 # hip-runtime-amd x ; Alias for hip
 # hip-samples -
 # hsa-rocr x Alias for rocr-runtime
-# hsa-amd-aqlprofile - No repo
+# hsa-amd-aqlprofile x No repo
 # rocm-llvm -
 # openmp-extras-runtime ; libomp + flang
 # rocm-cmake x
