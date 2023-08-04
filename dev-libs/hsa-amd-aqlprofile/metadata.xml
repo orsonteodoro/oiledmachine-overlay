@@ -11,5 +11,5 @@
     <file use="deny-install">
       Quit the install process.
     </file>
-  <use>
+  </use>
 </pkgmetadata>
