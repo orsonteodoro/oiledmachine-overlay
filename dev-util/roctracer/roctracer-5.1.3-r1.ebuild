@@ -22,9 +22,14 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
+IUSE=" -aqlprofile test"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
 	~dev-util/hip-${PV}:${SLOT}
+	aqlprofile? (
+		~dev-libs/hsa-amd-aqlprofile-${PV}:${SLOT}
+		~dev-libs/rocr-runtime-${PV}:${SLOT}
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -36,6 +41,7 @@ BDEPEND="
 	')
 	>=dev-util/cmake-2.8.12
 "
+RESTRICT="test"
 S="${WORKDIR}/roctracer-rocm-${PV}"
 PATCHES=(
 	# https://github.com/ROCm-Developer-Tools/roctracer/pull/63
@@ -43,7 +49,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-Werror.patch"
 	"${FILESDIR}/${PN}-5.0.2-headers.patch"
 	"${FILESDIR}/${PN}-5.0.2-strip-license.patch"
-	"${FILESDIR}/${PN}-5.1.3-no-aqlprofile.patch"
 )
 
 python_check_deps() {
@@ -59,6 +64,10 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
+
+	if ! use aqlprofile ; then
+		eapply "${FILESDIR}/${PN}-5.1.3-no-aqlprofile.patch"
+	fi
 
 	mv \
 		"${WORKDIR}/rocprofiler-rocm-${PV}" \
@@ -97,6 +106,9 @@ src_prepare() {
 }
 
 src_configure() {
+	if use aqlprofile ; then
+		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing"
+	fi
 	hipconfig --help >/dev/null || die
 	export HIP_PATH="$(hipconfig -p)"
 	local mycmakeargs=(

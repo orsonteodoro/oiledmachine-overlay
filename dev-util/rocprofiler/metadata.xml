@@ -14,4 +14,9 @@
   <upstream>
     <remote-id type="github">ROCm-Developer-Tools/rocprofiler</remote-id>
   </upstream>
+  <use>
+    <flag name="aqlprofile">
+      Add support for rocprofilerv2
+    </name>
+  </use>
 </pkgmetadata>

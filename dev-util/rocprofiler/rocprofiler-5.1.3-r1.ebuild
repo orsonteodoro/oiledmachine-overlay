@@ -17,9 +17,14 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
+IUSE=" -aqlprofile"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
 	~dev-util/roctracer-${PV}:${SLOT}
+	aqlprofile? (
+		~dev-libs/hsa-amd-aqlprofile-${PV}:${SLOT}
+		~dev-libs/rocr-runtime-${PV}:${SLOT}
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -33,7 +38,6 @@ BDEPEND="
 S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-nostrip.patch"
-	"${FILESDIR}/${PN}-4.3.0-no-aqlprofile.patch"
 	"${FILESDIR}/${PN}-5.0.2-gentoo-location.patch"
 	"${FILESDIR}/${PN}-5.1.3-remove-Werror.patch"
 )
@@ -54,6 +58,11 @@ src_prepare() {
 		CMakeLists.txt \
 		|| die
 	cmake_src_prepare
+
+	if ! use aqlprofile ; then
+		eapply "${FILESDIR}/${PN}-4.3.0-no-aqlprofile.patch"
+	fi
+
 	sed \
 		-e "s,@LIB_DIR@,$(get_libdir),g" \
 		-i \
@@ -62,9 +71,15 @@ src_prepare() {
 }
 
 src_configure() {
+	if use aqlprofile ; then
+		[[ -e "${ESYSROOT}/opt/rocm-5.6.0/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing" # For 071379b
+	fi
+	local gpu_targets=$(get_amdgpu_flags \
+		| tr ";" " ")
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 		-DCMAKE_PREFIX_PATH="${EPREFIX}/usr/include/hsa"
+		-DGPU_TARGETS="${gpu_targets}"
 		-DPROF_API_HEADER_PATH="${EPREFIX}/usr/include/roctracer/ext"
 		-DUSE_PROF_API=1
 	)

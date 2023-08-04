@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <use>
+    <file use="skip-install">
+      Install the ebuild without installing files.
+
+      [This is intended to apply patches to other free sofware packages to
+      disable use of this package]
+    </file>
+    <file use="deny-install">
+      Quit the install process.
+    </file>
+  <use>
+</pkgmetadata>
