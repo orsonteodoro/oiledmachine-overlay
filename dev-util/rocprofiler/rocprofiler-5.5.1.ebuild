@@ -19,7 +19,9 @@ SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
 IUSE=" -aqlprofile"
 RDEPEND="
+	~dev-libs/rocm-comgr-${PV}:${SLOT}
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
+	~dev-util/hip-${PV}:${SLOT}
 	~dev-util/roctracer-${PV}:${SLOT}
 	aqlprofile? (
 		~dev-libs/hsa-amd-aqlprofile-${PV}:${SLOT}
@@ -85,6 +87,8 @@ src_configure() {
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing" # For 071379b
 	fi
 	export CMAKE_BUILD_TYPE="debug"
+	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+	export HIP_PLATFORM="amd"
 	local gpu_targets=$(get_amdgpu_flags \
 		| tr ";" " ")
 	local mycmakeargs=(
@@ -93,8 +97,12 @@ src_configure() {
 		-DCMAKE_SKIP_RPATH=ON
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DGPU_TARGETS="${gpu_targets}"
+		-DHIP_COMPILER="clang"
+		-DHIP_PLATFORM="amd"
+		-DHIP_RUNTIME="rocclr"
 		-DPROF_API_HEADER_PATH="${EPREFIX}/usr/include/roctracer/ext"
 		-DUSE_PROF_API=1
 	)
+	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
 }

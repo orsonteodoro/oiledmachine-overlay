@@ -20,7 +20,10 @@ LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
 IUSE=" test"
+# libhsa-runtime64.so.1.9.0: undefined reference to `std::condition_variable::wait(std::unique_lock<std::mutex>&)@GLIBCXX_3.4.30'
+# This means it requires >= libstdc++ 12.
 RDEPEND="
+	>=sys-devel/gcc-12
 	~dev-libs/rocm-comgr-${PV}:${SLOT}
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
 	~dev-util/hip-${PV}:${SLOT}
@@ -65,18 +68,25 @@ src_prepare() {
 }
 
 src_configure() {
-	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
-	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
-
+	if ver_test $(gcc-major-version) -lt 12 ; then
+eerror
+eerror "Do eselect set ${CHOST}-gcc-12 or higher to continue"
+eerror
+		die
+	fi
 	hipconfig --help >/dev/null || die
+	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+	export HIP_PLATFORM="amd"
 	export ROCM_PATH="$(hipconfig -p)"
 	local mycmakeargs=(
 		-DCMAKE_MODULE_PATH="${EPREFIX}/usr/lib64/cmake/hip"
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
-		-DHIP_CXX_COMPILER=hipcc
+		-DHIP_COMPILER="clang"
+		-DHIP_PLATFORM="amd"
+		-DHIP_RUNTIME="rocclr"
 	)
-
+	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
 }
 

@@ -24,6 +24,7 @@ SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
 IUSE=" -aqlprofile test"
 RDEPEND="
+	>=sys-devel/gcc-12
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
 	~dev-util/hip-${PV}:${SLOT}
 	aqlprofile? (
@@ -106,14 +107,25 @@ src_prepare() {
 }
 
 src_configure() {
+	if ver_test $(gcc-major-version) -lt 12 ; then
+eerror
+eerror "Do eselect set ${CHOST}-gcc-12 or higher to continue"
+eerror
+		die
+	fi
 	if use aqlprofile ; then
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing"
 	fi
 	hipconfig --help >/dev/null || die
+	export HIP_PLATFORM="amd"
 	export HIP_PATH="$(hipconfig -p)"
 	local mycmakeargs=(
 		-DCMAKE_PREFIX_PATH="${EPREFIX}/usr/include/hsa"
+		-DHIP_COMPILER="clang"
+		-DHIP_PLATFORM="amd"
+		-DHIP_RUNTIME="rocclr"
 	)
+	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
 }
 
