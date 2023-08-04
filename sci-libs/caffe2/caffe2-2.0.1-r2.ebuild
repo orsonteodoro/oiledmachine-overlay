@@ -97,9 +97,6 @@ REQUIRED_USE="
 	)
 "
 ROCM_SLOTS=(
-	"5.1.3"
-	"5.3.3"
-	"5.4.3"
 	"5.5.1"
 	"5.6.0"
 )
@@ -111,6 +108,7 @@ gen_rocm_depends() {
 			(
 				~dev-libs/rccl-${pv}:${s}
 				~dev-libs/rocm-comgr-${pv}:${s}
+				~dev-libs/rocm-core-${pv}:${s}
 				~dev-libs/rocr-runtime-${pv}:${s}
 				~dev-util/hip-${pv}:${s}[rocm]
 				~dev-util/rocprofiler-${pv}:${s}
@@ -261,6 +259,11 @@ src_prepare() {
 			mobile_bytecode.fbs \
 			|| die
 	popd
+	sed \
+		-i \
+		-e "s|lib/cmake|$(get_libdir)/cmake|g" \
+		"cmake/public/LoadHIP.cmake" \
+		|| die
 }
 
 gen_cuda_arch_list() {
@@ -384,6 +387,7 @@ einfo
 	fi
 	if use rocm ; then
 		export ROCM_HOME="/usr"
+		export ROCM_PATH="/usr"
 		mycmakeargs+=(
 			-DPYTORCH_ROCM_ARCH=$(get_amdgpu_flags)
 		)
