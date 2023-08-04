@@ -109,10 +109,21 @@ gen_rocm_depends() {
 		local s="0/"$(ver_cut 1-2 ${pv})
 		echo "
 			(
-				~dev-util/amd-rocm-meta-${pv}:${s}[rocm-dev,rocm-utils,rocm-libs]
 				~dev-libs/rccl-${pv}:${s}
+				~dev-libs/rocm-comgr-${pv}:${s}
+				~dev-libs/rocr-runtime-${pv}:${s}
+				~dev-util/hip-${pv}:${s}[rocm]
 				~dev-util/rocprofiler-${pv}:${s}
 				~dev-util/roctracer-${pv}:${s}
+				~sci-libs/hipCUB-${pv}:${s}[rocm]
+				~sci-libs/hipSPARSE-${pv}:${s}[rocm]
+				~sci-libs/hipFFT-${pv}:${s}[rocm]
+				~sci-libs/miopen-${pv}:${s}[rocm]
+				~sci-libs/rocBLAS-${pv}:${s}[rocm]
+				~sci-libs/rocFFT-${pv}:${s}[rocm]
+				~sci-libs/rocRAND-${pv}:${s}[rocm]
+				~sci-libs/rocPRIM-${pv}:${s}[rocm]
+				~sci-libs/rocThrust-${pv}:${s}
 			)
 		"
 	done
@@ -372,6 +383,7 @@ einfo
 		)
 	fi
 	if use rocm ; then
+		export ROCM_HOME="/usr"
 		mycmakeargs+=(
 			-DPYTORCH_ROCM_ARCH=$(get_amdgpu_flags)
 		)
