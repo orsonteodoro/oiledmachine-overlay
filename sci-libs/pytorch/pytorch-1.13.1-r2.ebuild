@@ -109,6 +109,7 @@ gen_rocm_depends() {
 		"
 	done
 }
+CUDA_PV="11.8" # 11.6 minimum required
 RDEPEND="
 	$(python_gen_cond_dep '
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
@@ -117,36 +118,36 @@ RDEPEND="
 	~sci-libs/caffe2-${PV}[${AMDGPU_TARGETS_USEDEP},${CUDA_TARGETS_USEDEP},${PYTHON_SINGLE_USEDEP},cuda=,rocm=]
 	cuda? (
 		cuda_targets_auto? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_50_plus_ptx? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_52? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_60? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_61? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_70? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_70_plus_ptx? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_75? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_80? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_86? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
-		=dev-util/nvidia-cuda-toolkit-11*[profiler]
+		=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*[profiler]
 	)
 	rocm? (
 		|| (

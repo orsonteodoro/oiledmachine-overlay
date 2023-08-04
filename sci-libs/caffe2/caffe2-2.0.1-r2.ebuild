@@ -118,6 +118,7 @@ gen_rocm_depends() {
 	done
 }
 # CUDA 12 not supported yet: https://github.com/pytorch/pytorch/issues/91122
+CUDA_PV="11.7" # 11.7 minimum required
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-cpp/glog-0.5.0
@@ -134,36 +135,36 @@ RDEPEND="
 		=dev-libs/cudnn-8*
 		dev-libs/cudnn-frontend:0/8
 		cuda_targets_auto? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_50_plus_ptx? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_52? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_60? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_61? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_70? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_70_plus_ptx? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_75? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_80? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
 		cuda_targets_sm_86? (
-			=dev-util/nvidia-cuda-toolkit-11*:=
+			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
-		=dev-util/nvidia-cuda-toolkit-11*[profiler]
+		=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*[profiler]
 	)
 	fbgemm? (
 		dev-libs/FBGEMM
