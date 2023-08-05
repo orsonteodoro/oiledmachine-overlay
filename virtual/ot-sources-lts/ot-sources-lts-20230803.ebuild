@@ -22,10 +22,10 @@ RDEPEND="
 		~sys-kernel/ot-sources-5.10.188
 	)
 	5_15? (
-		~sys-kernel/ot-sources-5.15.123
+		~sys-kernel/ot-sources-5.15.124
 	)
 	6_1? (
-		~sys-kernel/ot-sources-6.1.42
+		~sys-kernel/ot-sources-6.1.43
 	)
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
