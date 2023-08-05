@@ -23,7 +23,7 @@ LICENSE="
 # BSD - src/util/hsa_rsrc_factory.cpp
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
-IUSE=" -aqlprofile"
+IUSE=" +aqlprofile"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
 	~dev-util/roctracer-${PV}:${SLOT}

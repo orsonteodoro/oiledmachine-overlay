@@ -22,7 +22,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
-IUSE=" -aqlprofile test"
+IUSE=" +aqlprofile test"
 RDEPEND="
 	>=sys-devel/gcc-12
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
