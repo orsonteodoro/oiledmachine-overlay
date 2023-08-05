@@ -143,3 +143,5 @@ src_configure() {
 	CXX="${HIP_CXX:-clang++}" \
 	cmake_src_configure
 }
+
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
