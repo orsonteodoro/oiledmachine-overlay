@@ -72,11 +72,6 @@ src_prepare() {
 		-e "s|NOT FIND_AQL_PROFILE_LIB|FALSE|g" \
 		"cmake_modules/env.cmake" \
 		|| die
-
-	sed \
-		-e "s|-O2|-O2 --rocm-device-lib-path=${ESYSROOT}/usr/lib/amdgcn/bitcode|" \
-		tests/featuretests/profiler/CMakeLists.txt \
-		|| die
 }
 
 src_configure() {
