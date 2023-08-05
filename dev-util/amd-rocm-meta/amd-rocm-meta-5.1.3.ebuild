@@ -9,6 +9,7 @@ LICENSE="metapackage"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
 IUSE="
+aqlprofile
 rocm-dev rocm-libs rocm-utils extras
 
 rock-dkms
@@ -39,10 +40,14 @@ RDEPEND="
 		~dev-util/HIPIFY-${PV}:${SLOT}
 		~dev-util/rocm-cmake-${PV}:${SLOT}
 		~dev-util/rocm-smi-${PV}:${SLOT}
-		~dev-util/rocprofiler-${PV}:${SLOT}
-		~dev-util/roctracer-${PV}:${SLOT}
+		~dev-util/rocprofiler-${PV}:${SLOT}[aqlprofile?]
+		~dev-util/roctracer-${PV}:${SLOT}[aqlprofile?]
 
 		dev-util/clinfo
+
+		aqlprofile? (
+			~dev-libs/hsa-amd-aqlprofile-${PV}:${SLOT}
+		)
 	)
 	rocm-gdb? (
 		~dev-util/ROCgdb-${PV}:${SLOT}
