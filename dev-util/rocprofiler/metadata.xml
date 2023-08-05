@@ -17,6 +17,6 @@
   <use>
     <flag name="aqlprofile">
       Add support for performance counters, metrics, ATT Tracing, SPM trace.
-    </name>
+    </flag>
   </use>
 </pkgmetadata>
