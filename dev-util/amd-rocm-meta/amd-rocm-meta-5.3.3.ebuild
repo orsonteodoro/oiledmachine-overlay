@@ -17,6 +17,9 @@ rocm-bandwidth-test
 rocm-gdb
 "
 REQUIRED_USE="
+	aqlprofile? (
+		rocm-dev
+	)
 	rocm-dev? (
 		rocm-utils
 	)
