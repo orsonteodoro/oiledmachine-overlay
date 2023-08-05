@@ -19,17 +19,20 @@
     <flag name="rock-dkms">
       Install the kernel driver.
     </flag>
+    <flag name="rocm-bandwidth-test">
+      Install this individual program, for inspecting performance or topology.
+    </flag>
     <flag name="rocm-dev">
       Install build development packages.
+    </flag>
+    <flag name="rocm-gdb">
+      Install this individual program, a debugger for both CPU and GPU.
     </flag>
     <flag name="rocm-libs">
       Install dependencies for user space apps.
     </flag>
     <flag name="rocm-utils">
       Install utilities or development packages.
-    </flag>
-    <flag name="extras">
-      Install additional packages for development
     </flag>
   </use>
 </pkgmetadata>
