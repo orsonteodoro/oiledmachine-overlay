@@ -1,11 +1,13 @@
+# Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
+LLVM_MAX_SLOT=15
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit cmake python-any-r1
+inherit cmake llvm python-any-r1
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/${PN}/archive/rocm-${PV}.tar.gz
@@ -14,7 +16,11 @@ https://github.com/ROCm-Developer-Tools/${PN}/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/rocprofiler.git"
-LICENSE="MIT"
+LICENSE="
+	MIT
+	BSD
+"
+# BSD - src/util/hsa_rsrc_factory.cpp
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
 IUSE=" -aqlprofile"
@@ -65,6 +71,11 @@ src_prepare() {
 		-i \
 		-e "s|NOT FIND_AQL_PROFILE_LIB|FALSE|g" \
 		"cmake_modules/env.cmake" \
+		|| die
+
+	sed \
+		-e "s|-O2|-O2 --rocm-device-lib-path=${ESYSROOT}/usr/lib/amdgcn/bitcode|" \
+		tests/featuretests/profiler/CMakeLists.txt \
 		|| die
 }
 

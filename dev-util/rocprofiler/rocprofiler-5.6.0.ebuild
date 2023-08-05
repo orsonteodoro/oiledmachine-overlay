@@ -1,11 +1,13 @@
+# Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
+LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit cmake python-any-r1
+inherit cmake llvm python-any-r1
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/${PN}/archive/rocm-${PV}.tar.gz
@@ -14,7 +16,13 @@ https://github.com/ROCm-Developer-Tools/${PN}/archive/rocm-${PV}.tar.gz
 
 DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/rocprofiler.git"
-LICENSE="MIT"
+LICENSE="
+	MIT
+	BSD
+	Apache-2.0
+"
+# BSD - src/util/hsa_rsrc_factory.cpp
+# Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
 IUSE=" -aqlprofile"
@@ -42,18 +50,26 @@ RESTRICT="test"
 S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-gentoo-location.patch"
+	"${FILESDIR}/${PN}-5.6.0-toggle-aqlprofile.patch"
 )
 
 python_check_deps() {
 	python_has_version "dev-python/CppHeaderParser[${PYTHON_USEDEP}]"
 }
 
+pkg_setup() {
+	llvm_pkg_setup
+	python-any-r1_pkg_setup
+}
+
 src_prepare() {
 	cmake_src_prepare
 
 	if ! use aqlprofile ; then
-		eapply "${FILESDIR}/${PN}-4.3.0-no-aqlprofile.patch"
-		eapply "${FILESDIR}/${PN}-5.3.3-remove-aql-in-cmake.patch"
+ewarn
+ewarn "You are enabling an experimental patch."
+ewarn "For production, set USE=aqlprofile ON."
+ewarn
 	fi
 
 	sed \
@@ -82,6 +98,12 @@ src_prepare() {
 		-e "s|NOT FIND_AQL_PROFILE_LIB|FALSE|g" \
 		"cmake_modules/env.cmake" \
 		|| die
+
+	sed \
+		-i \
+		-e "s|-O2|-O2 --rocm-device-lib-path=${ESYSROOT}/usr/lib/amdgcn/bitcode|" \
+		tests/featuretests/profiler/CMakeLists.txt \
+		|| die
 }
 
 src_configure() {
@@ -89,6 +111,17 @@ src_configure() {
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/hsa-amd-aqlprofile/librocprofv2_att.so" ]] || die "Missing" # For e80f7cb
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing" # For 071379b
 	fi
+
+	# Disallow newer clangs versions when producing .o files.
+	einfo "LLVM_SLOT=${LLVM_SLOT}"
+	einfo "PATH=${PATH} (before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+	einfo "PATH=${PATH} (after)"
+
 	export CMAKE_BUILD_TYPE="debug"
 	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 	export HIP_PLATFORM="amd"
@@ -105,7 +138,8 @@ src_configure() {
 		-DHIP_RUNTIME="rocclr"
 		-DPROF_API_HEADER_PATH="${EPREFIX}/usr/include/roctracer/ext"
 		-DUSE_PROF_API=1
+		-DAQLPROFILE=$(usex aqlprofile ON OFF)
 	)
-	CXX="${HIP_CXX:-hipcc}" \
+	CXX="${HIP_CXX:-clang++}" \
 	cmake_src_configure
 }

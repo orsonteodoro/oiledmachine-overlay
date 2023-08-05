@@ -16,7 +16,7 @@
   </upstream>
   <use>
     <flag name="aqlprofile">
-      Add support for rocprofilerv2
+      Add support for performance counters, metrics, ATT Tracing, SPM trace.
     </name>
   </use>
 </pkgmetadata>
