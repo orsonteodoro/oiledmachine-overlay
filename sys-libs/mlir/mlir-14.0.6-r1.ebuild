@@ -46,6 +46,7 @@ LLVM_COMPONENTS=(
 	"llvm/include"
 )
 #LLVM_PATCHSET="${PV}-r4"
+LLVM_USE_TARGETS="llvm"
 llvm.org_set_globals
 
 python_check_deps() {

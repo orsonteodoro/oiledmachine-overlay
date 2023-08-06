@@ -60,6 +60,7 @@ LLVM_COMPONENTS=(
 	"cmake"
 	"llvm/include"
 )
+LLVM_USE_TARGETS="llvm"
 llvm.org_set_globals
 
 python_check_deps() {
