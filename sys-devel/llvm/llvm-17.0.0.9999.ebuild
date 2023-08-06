@@ -296,11 +296,8 @@ check_distribution_components() {
 					# shared libs
 					LLVM|LLVMgold)
 						;;
-					# TableGen lib + deps
+					# TableGen/mlir lib + deps
 					LLVMCodeGenTypes|LLVMDemangle|LLVMSupport|LLVMTableGen)
-						;;
-					# mlir dep
-					LLVMCodeGenTypes)
 						;;
 					# testing libraries
 					LLVMTestingAnnotations|LLVMTestingSupport)
@@ -402,13 +399,11 @@ get_distribution_components() {
 		cmake-exports
 		llvm-headers
 
-		# libraries needed for clang-tblgen
+		# libraries needed for clang-tblgen/mlir
+		LLVMCodeGenTypes
 		LLVMDemangle
 		LLVMSupport
 		LLVMTableGen
-
-		# library needed for mlir
-		LLVMCodeGenTypes
 
 		# testing libraries
 		llvm_gtest
