@@ -427,6 +427,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_ntfs3g
 	ot-kernel-pkgflags_numad
 	ot-kernel-pkgflags_nv
+	ot-kernel-pkgflags_nvtop
 	ot-kernel-pkgflags_oomd
 	ot-kernel-pkgflags_opal_utils
 	ot-kernel-pkgflags_open_iscsi
@@ -738,7 +739,7 @@ ot-kernel-pkgflags_appimage() { # DONE
 	fi
 	if ot-kernel_has_version "app-arch/appimaged[firejail]" \
 		|| ot-kernel_has_version "app-arch/go-appimage[firejail]" ; then
-		ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP=y"
+		ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
 	fi
 }
 
@@ -6366,6 +6367,18 @@ ot-kernel-pkgflags_nv() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_nvtop
+# @DESCRIPTION:
+# Applies kernel config flags for nvtop
+ot-kernel-pkgflags_nv() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd30a310]}" == "1" ]] && return
+	if ot-kernel_has_version "sys-process/nvtop" ; then
+		einfo "Applying kernel config flags for the nvtop (id: d30a310)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_oomd
 # @DESCRIPTION:
 # Applies kernel config flags for the oomd package
@@ -6374,11 +6387,11 @@ ot-kernel-pkgflags_oomd() { # DONE
 	if ot-kernel_has_version "sys-apps/oomd" ; then
 		einfo "Applying kernel config flags for the oomd package (id: 05187fc)"
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.20" ; then
-			ot-kernel_y_configopt "CONFIG_PSI=y"
+			ot-kernel_y_configopt "CONFIG_PSI"
 		fi
-		ot-kernel_y_configopt "CONFIG_CGROUPS=y"
-		ot-kernel_y_configopt "CONFIG_PROC_FS=y"
-		ot-kernel_y_configopt "CONFIG_SWAP=y"
+		ot-kernel_y_configopt "CONFIG_CGROUPS"
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_SWAP"
 	fi
 }
 
