@@ -17,7 +17,7 @@ LICENSE="
 		MIT
 	)
 "
-SLOT="0/${LLVM_SOABI}"
+SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS="
 ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
 "
@@ -27,11 +27,15 @@ IUSE="
 REQUIRED_USE="
 "
 RDEPEND="
+	sys-devel/clang:${SLOT}
+	sys-devel/llvm:${SLOT}
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	sys-devel/clang:${SLOT}
+	sys-devel/llvm:${SLOT}
 "
 RESTRICT="
 	test
