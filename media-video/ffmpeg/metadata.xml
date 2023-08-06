@@ -862,6 +862,12 @@
     Synonym for the gpl2 USE flag to build a GPL-2.0 (only) package.  Certain
     license incompatibilities may be encountered.  This USE flag is kept for
     compatibility.
+
+    Enable makes gpl and nonfree USE flags inclusive-or which was the original
+    ebuild design.
+
+    Disabling makes gpl and nonfree USE flags mutually exclusive for the new
+    behavior.
   </flag>
   <flag name="gpl2">
     Checks GPL-2.0 license compatibility

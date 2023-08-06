@@ -405,6 +405,7 @@ trainer-video-lossless
 trainer-video-lossless-quick
 
 apache2_0
++gpl
 +gpl2
 gpl2x
 gpl2x_to_gpl3
@@ -641,6 +642,12 @@ LICENSE_REQUIRED_USE="
 			$(gen_relicense lgpl3x)
 		)
 	)
+	gpl? (
+		|| (
+			gpl2
+			gpl2x
+		)
+	)
 	gpl2? (
 		!lgpl3
 		!lgpl3x
@@ -797,8 +804,9 @@ CPU_REQUIRED_USE="
 # FIXME: fix missing symbols with -re-codecs
 REQUIRED_USE+="
 	${CPU_REQUIRED_USE}
-	${GPL_REQUIRED_USE}
-	${LICENSE_REQUIRED_USE}
+	!gpl? (
+		${LICENSE_REQUIRED_USE}
+	)
 	!kernel_linux? (
 		!trainer-av-streaming
 	)
