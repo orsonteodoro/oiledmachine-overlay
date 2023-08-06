@@ -4,6 +4,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{9..10} )
+
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-any-r1
 
 DESCRIPTION="OpenMP runtime library for LLVM/clang compiler"
@@ -107,7 +108,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	use offload && LLVM_MAX_SLOT=${PV%%.*} llvm_pkg_setup
+	use offload && LLVM_MAX_SLOT="${PV%%.*}" llvm_pkg_setup
 	use test && python-any-r1_pkg_setup
 }
 

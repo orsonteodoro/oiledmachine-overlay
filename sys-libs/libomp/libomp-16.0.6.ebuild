@@ -4,6 +4,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{10..12} )
+
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org
 inherit python-single-r1 toolchain-funcs
 
@@ -101,7 +102,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	use offload && LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
+	use offload && LLVM_MAX_SLOT="${PV%%.*}" llvm_pkg_setup
 	if use gdb-plugin || use test; then
 		python-single-r1_pkg_setup
 	fi
