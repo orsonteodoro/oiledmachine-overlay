@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">GPUOpen-ProfessionalCompute-Libraries/MIVisionX</remote-id>
+  </upstream>
+  <use>
+    <flag name="enhanced-message">
+      Add colors to build output
+    </flag>
+    <flag name="fp16">
+      Adds support for faster half floats
+    </flag>
+    <flag name="cpu">
+      Adds support for CPU
+    </flag>
+    <flag name="ffmpeg">
+      Adds support for decoding video streams
+    </flag>
+    <flag name="neural-net">
+      Adds support for neural nets
+    </flag>
+    <flag name="opencl">
+      Adds support for GPUs
+    </flag>
+    <flag name="opencv">
+      Adds support for camera capture and image display
+    </flag>
+    <flag name="rocal">
+      Adds support for decoding and processing images and video with common
+      image manipulation operations 
+    </flag>
+    <flag name="rocal-python">
+      Adds support for rocAL Python bindings
+    </flag>
+    <flag name="rocm">
+      Adds support for GPUs
+    </flag>
+    <flag name="rpp">
+      Adds support for computer vision primatives [or common image manipulation
+      operations] supporting GPUs and CPUs.
+    </flag>
+  </use>
+</pkgmetadata>
