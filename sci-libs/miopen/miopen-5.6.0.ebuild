@@ -37,7 +37,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="debug kernels opencl +rocm test r1"
+IUSE="debug kernels mlir opencl +rocm test r1"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -66,6 +66,7 @@ RDEPEND="
 	opencl? (
 		sys-devel/clang
 		virtual/opencl
+		=sci-libs/miopengemm-5.5*:0/5.5
 	)
 	rocm? (
 		>=sci-libs/composable_kernel-1.0.0
@@ -76,14 +77,17 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	dev-cpp/eigen
-	dev-cpp/frugally-deep
+	>=dev-libs/half-1.12.0:=
+	>=dev-cpp/eigen-3.4.0:3=
+	>=dev-cpp/frugally-deep-0.15.20:=
+	>=dev-cpp/nlohmann_json-3.10.4:=
 "
 BDEPEND="
-	>=dev-cpp/nlohmann_json-3.10.4
-	dev-libs/half:0/1
 	virtual/pkgconfig
 	~dev-util/rocm-cmake-${PV}:${SLOT}
+	mlir? (
+		=sci-libs/rocMLIR-5.5*:${SLOT}
+	)
 "
 RESTRICT="
 	!test? (
@@ -197,8 +201,8 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 		-DCMAKE_SKIP_RPATH=ON
 		-DMIOPEN_BACKEND=HIP
-		-DMIOPEN_USE_MLIR=OFF
 		-DMIOPEN_TEST_ALL=$(usex test ON OFF)
+		-DMIOPEN_USE_MLIR=$(usex mlir ON OFF)
 	)
 
 	if use test; then

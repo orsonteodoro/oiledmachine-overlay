@@ -63,6 +63,7 @@ RDEPEND="
 	opencl? (
 		sys-devel/clang
 		virtual/opencl
+		~sci-libs/miopengemm-${PV}:${SLOT}
 	)
 	rocm? (
 		~dev-libs/rocm-comgr-${PV}:${SLOT}
@@ -72,10 +73,10 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
+	>=dev-libs/half-1.12.0:=
+	>=dev-cpp/nlohmann_json-3.10.4:=
 "
 BDEPEND="
-	>=dev-cpp/nlohmann_json-3.10.4
-	dev-libs/half:0/1
 	virtual/pkgconfig
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 "
@@ -174,7 +175,6 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 		-DCMAKE_SKIP_RPATH=ON
 		-DMIOPEN_BACKEND=HIP
-		-DMIOPEN_USE_MLIR=OFF
 		-DMIOPEN_TEST_ALL=$(usex test ON OFF)
 	)
 

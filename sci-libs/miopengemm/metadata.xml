@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Ebuild originally from
+  https://github.com/justxi/rocm/tree/master/sci-libs/miopengemm
+
+  -->
+  <upstream>
+    <remote-id type="github">ROCmSoftwarePlatform/MIOpenGEMM</remote-id>
+  </upstream>
+</pkgmetadata>

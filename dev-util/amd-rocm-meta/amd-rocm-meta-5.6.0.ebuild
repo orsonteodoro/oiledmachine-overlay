@@ -9,12 +9,15 @@ LICENSE="metapackage"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
 IUSE="
-aqlprofile
-rocm-dev rocm-libs rocm-utils extras
-
-rock-dkms
-rocm-bandwidth-test
-rocm-gdb
+	aqlprofile
+	migraphx
+	mivisionx
+	rocm-bandwidth-test
+	rock-dkms
+	rocm-dev
+	rocm-gdb
+	rocm-libs
+	rocm-utils
 "
 REQUIRED_USE="
 	aqlprofile? (
@@ -25,6 +28,12 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	migraphx? (
+		~sci-libs/MIGraphX-${PV}:${SLOT}
+	)
+	mivisionx? (
+		~sci-libs/MIVisionX-${PV}:${SLOT}
+	)
 	rock-dkms? (
 		~sys-kernel/rock-dkms-${PV}:${SLOT}
 	)

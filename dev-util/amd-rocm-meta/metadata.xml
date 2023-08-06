@@ -16,6 +16,13 @@
 
       [Enable for feature completeness.]
     </flag>
+    <flag name="migraphx">
+      Install software to accelerate machine learning model inference.
+    </flag>
+    <flag name="mivisionx">
+      Install a rapid prototyping toolkit for computer vision and machine
+      intelligence.
+    </flag>
     <flag name="rock-dkms">
       Install the kernel driver.
     </flag>

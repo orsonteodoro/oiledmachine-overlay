@@ -1,0 +1,18 @@
+diff -urp MIOpenGEMM-rocm-5.3.3.orig/cmake/FindOpenCL.cmake MIOpenGEMM-rocm-5.3.3/cmake/FindOpenCL.cmake
+--- MIOpenGEMM-rocm-5.3.3.orig/cmake/FindOpenCL.cmake	2022-08-04 08:55:47.000000000 -0700
++++ MIOpenGEMM-rocm-5.3.3/cmake/FindOpenCL.cmake	2023-08-04 23:17:52.669513331 -0700
+@@ -52,11 +52,12 @@ endif( )
+ mark_as_advanced( OPENCL_LIBRARIES )
+ 
+ include( FindPackageHandleStandardArgs )
+-find_package_handle_standard_args( OPENCL DEFAULT_MSG OPENCL_LIBRARIES OPENCL_INCLUDE_DIRS )
++find_package_handle_standard_args( OpenCL DEFAULT_MSG OPENCL_LIBRARIES OPENCL_INCLUDE_DIRS )
+ 
+ set(OpenCL_FOUND ${OPENCL_FOUND} CACHE INTERNAL "")
+ set(OpenCL_LIBRARIES ${OPENCL_LIBRARIES} CACHE INTERNAL "")
+ set(OpenCL_INCLUDE_DIRS ${OPENCL_INCLUDE_DIRS} CACHE INTERNAL "")
++add_compile_definitions(CL_TARGET_OPENCL_VERSION=200)
+ 
+ if( NOT OPENCL_FOUND )
+ 	message( STATUS "FindOpenCL looked for libraries named: OpenCL" )
+Only in MIOpenGEMM-rocm-5.3.3: MIOpenGEMM-rocm-5.3.3.orig

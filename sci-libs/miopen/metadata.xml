@@ -16,6 +16,9 @@
     <name>Yiyang Wu</name>
   </maintainer>
   <use>
+    <flag name="mlir">
+      Add support for optimized MLIR GPU kernels
+    </flag>
     <flag name="kernels">
       Install the prebuilt kernels to reduce the startup latency of first
       neural net execution.
