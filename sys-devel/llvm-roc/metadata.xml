@@ -9,4 +9,9 @@
   <upstream>
     <remote-id type="github">RadeonOpenCompute/llvm-project</remote-id>
   </upstream>
+  <use>
+    <flag name="mlir">
+      Builds MLIR (Multi Level Intermediate Representation) libs/utils.
+    </flag>
+  </use>
 </pkgmetadata>

@@ -24,7 +24,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE="debug +mlir +runtime"
+IUSE="+mlir +runtime"
 RDEPEND="
 	dev-libs/libxml2
 	sys-libs/ncurses:=
@@ -60,7 +60,6 @@ src_configure() {
 		-DOCAMLFIND=NO
 	)
 	replace-flags '-O0' '-O1'
-	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
 	PROJECTS="clang;lld"
 
