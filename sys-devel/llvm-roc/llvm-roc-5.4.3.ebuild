@@ -42,6 +42,124 @@ PATCHES=(
 S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 
+get_distribution_components() {
+	local sep=${1-;}
+
+	local out=(
+		# shared libs
+		LLVM
+		LTO
+		Remarks
+
+		# tools
+		llvm-config
+
+		# common stuff
+		cmake-exports
+		llvm-headers
+
+		# libraries needed for mlir
+		LLVMDemangle
+		LLVMSupport
+		LLVMTableGen
+
+		# utilities
+		llvm-tblgen
+		FileCheck
+		llvm-PerfectShuffle
+		count
+		not
+		yaml-bench
+		UnicodeNameMappingGenerator
+
+		# tools
+		bugpoint
+		dsymutil
+		llc
+		lli
+		lli-child-target
+		llvm-addr2line
+		llvm-ar
+		llvm-as
+		llvm-bcanalyzer
+		llvm-bitcode-strip
+		llvm-c-test
+		llvm-cat
+		llvm-cfi-verify
+		llvm-config
+		llvm-cov
+		llvm-cvtres
+		llvm-cxxdump
+		llvm-cxxfilt
+		llvm-cxxmap
+		llvm-debuginfod
+		llvm-debuginfod-find
+		llvm-diff
+		llvm-dis
+		llvm-dlltool
+		llvm-dwarfdump
+		llvm-dwarfutil
+		llvm-dwp
+		llvm-exegesis
+		llvm-extract
+		llvm-gsymutil
+		llvm-ifs
+		llvm-install-name-tool
+		llvm-jitlink
+		llvm-jitlink-executor
+		llvm-lib
+		llvm-libtool-darwin
+		llvm-link
+		llvm-lipo
+		llvm-lto
+		llvm-lto2
+		llvm-mc
+		llvm-mca
+		llvm-ml
+		llvm-modextract
+		llvm-mt
+		llvm-nm
+		llvm-objcopy
+		llvm-objdump
+		llvm-opt-report
+		llvm-otool
+		llvm-pdbutil
+		llvm-profdata
+		llvm-profgen
+		llvm-ranlib
+		llvm-rc
+		llvm-readelf
+		llvm-readobj
+		llvm-reduce
+		llvm-remark-size-diff
+		llvm-rtdyld
+		llvm-sim
+		llvm-size
+		llvm-split
+		llvm-stress
+		llvm-strings
+		llvm-strip
+		llvm-symbolizer
+		llvm-tapi-diff
+		llvm-tli-checker
+		llvm-undname
+		llvm-windres
+		llvm-xray
+		obj2yaml
+		opt
+		sancov
+		sanstats
+		split-file
+		verify-uselistorder
+		yaml2obj
+
+		# python modules
+		opt-viewer
+	)
+
+	printf "%s${sep}" "${out[@]}"
+}
+
 src_configure() {
 	export CC="${CHOST}-gcc"
 	export CXX="${CHOST}-g++"
@@ -55,6 +173,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/opt/rocm-${PV}/llvm"
 		-DLLVM_BUILD_DOCS=NO
+		-DLLVM_DISTRIBUTION_COMPONENTS=$(get_distribution_components)
 		-DLLVM_ENABLE_ASSERTIONS=ON # For mlir
 		-DLLVM_ENABLE_DOXYGEN=OFF
 		-DLLVM_ENABLE_OCAMLDOC=OFF
