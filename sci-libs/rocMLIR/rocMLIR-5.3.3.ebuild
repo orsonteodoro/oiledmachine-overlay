@@ -36,31 +36,34 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2)"
 IUSE="+llvm-roc"
 RDEPEND="
-	${PYTHON_DEPS}
-	>=dev-db/sqlite-3:3
-	>=dev-python/pybind11-2.8[${PYTHON_USEDEP}]
-	media-libs/vulkan-loader
-	sys-devel/clang:${LLVM_MAX_SLOT}
-	~dev-util/hip-${PV}:${SLOT}
-
 	!llvm-roc? (
 		sys-libs/mlir:${LLVM_MAX_SLOT}[llvm_targets_AMDGPU]
 		sys-devel/llvm:${LLVM_MAX_SLOT}[llvm_targets_AMDGPU]
 	)
+	${PYTHON_DEPS}
+	>=dev-db/sqlite-3:3
+	>=dev-python/pybind11-2.8[${PYTHON_USEDEP}]
+	media-libs/vulkan-loader
 	llvm-roc? (
 		~sys-devel/llvm-roc-${PV}:${SLOT}
 	)
+	~dev-util/hip-${PV}:${SLOT}
 "
 DEPEND="
 	${RDEPEND}
 	dev-util/vulkan-headers
 "
 BDEPEND="
+	!llvm-roc? (
+		sys-devel/clang:${LLVM_MAX_SLOT}
+		sys-devel/llvm:${LLVM_MAX_SLOT}
+	)
 	${PYTHON_DEPS}
 	>=dev-util/cmake-3.15.1
-	sys-devel/clang:${LLVM_MAX_SLOT}
-	sys-devel/llvm:${LLVM_MAX_SLOT}
 	virtual/pkgconfig
+	llvm-roc? (
+		~sys-devel/llvm-roc-${PV}:${SLOT}
+	)
 "
 RESTRICT="test"
 _LLVM_ROC_PATCHES=(
