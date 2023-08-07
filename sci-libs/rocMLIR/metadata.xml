@@ -11,7 +11,8 @@
   </upstream>
   <use>
     <flag name="llvm-roc">
-      Use the llvm fork with the exact ABI/API fit.
+      Use the llvm fork with the exact version to avoid missing symbols and
+      missing libraries.
     </flag>
   </use>
 </pkgmetadata>

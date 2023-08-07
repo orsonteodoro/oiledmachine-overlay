@@ -45,7 +45,7 @@ RDEPEND="
 	>=dev-python/pybind11-2.6[${PYTHON_USEDEP}]
 	media-libs/vulkan-loader
 	llvm-roc? (
-		~sys-devel/llvm-roc-${PV}:${SLOT}
+		~sys-devel/llvm-roc-${PV}:${PV}
 	)
 	~dev-util/hip-${PV}:${SLOT}
 "
@@ -62,7 +62,7 @@ BDEPEND="
 	>=dev-util/cmake-3.15.1
 	virtual/pkgconfig
 	llvm-roc? (
-		~sys-devel/llvm-roc-${PV}:${SLOT}
+		~sys-devel/llvm-roc-${PV}:${PV}
 	)
 "
 RESTRICT="test"
