@@ -23,8 +23,8 @@ LICENSE="
 	UoI-NCSA
 "
 KEYWORDS="~amd64"
-SLOT="0"
-IUSE="+mlir +runtime"
+SLOT="${PV}"
+IUSE="+runtime"
 RDEPEND="
 	dev-libs/libxml2
 	sys-libs/ncurses:=
@@ -34,23 +34,31 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
-S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
+BDEPEND="
+	sys-devel/gcc
+"
 PATCHES=(
 )
+S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 
-src_prepare() {
-	eapply_user
-	cmake_src_prepare
-}
-
 src_configure() {
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
+	filter-flags "-fuse-ld=*"
+	strip-unsupported-flags
+	replace-flags '-O0' '-O1'
+	PROJECTS="clang;lld"
+	if use runtime ; then
+		PROJECTS+=";compiler-rt"
+	fi
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/opt/rocm-${PV}/llvm"
 		-DLLVM_BUILD_DOCS=NO
 		-DLLVM_ENABLE_ASSERTIONS=ON # For mlir
 		-DLLVM_ENABLE_DOXYGEN=OFF
 		-DLLVM_ENABLE_OCAMLDOC=OFF
+		-DLLVM_ENABLE_PROJECTS="${PROJECTS}"
 		-DLLVM_ENABLE_SPHINX=NO
 		-DLLVM_ENABLE_ZSTD=OFF # For mlir
 		-DLLVM_ENABLE_ZLIB=OFF # For mlir
@@ -59,29 +67,6 @@ src_configure() {
 		-DLLVM_VERSION_SUFFIX=roc
 		-DOCAMLFIND=NO
 	)
-	replace-flags '-O0' '-O1'
-
-	PROJECTS="clang;lld"
-
-	if use runtime ; then
-		PROJECTS+=";compiler-rt"
-	fi
-
-	if use mlir ; then
-		PROJECTS+=";mlir"
-		mycmakeargs+=(
-			-DLLVM_BUILD_TOOLS=ON
-			-DLLVM_BUILD_UTILS=ON
-			-DLLVM_INSTALL_UTILS=ON
-			-DLLVM_LINK_LLVM_DYLIB=ON
-			-DMLIR_LINK_MLIR_DYLIB=ON
-		)
-	fi
-
-	mycmakeargs+=(
-		-DLLVM_ENABLE_PROJECTS="${PROJECTS}"
-	)
-
 	cmake_src_configure
 }
 
