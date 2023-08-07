@@ -95,8 +95,12 @@ ewarn "USE=-llvm-roc is unfinished.  USE=llvm-roc instead."
 }
 
 src_configure() {
+	if use llvm-roc ; then
+		export ROCM_PATH="${ESYSROOT}/opt/rocm-${PV}/llvm"
+	else
+		export ROCM_PATH="${ESYSROOT}/usr"
+	fi
 	export HIP_PLATFORM="amd"
-	export ROCM_PATH="${ESYSROOT}/usr"
 	local mycmakeargs=(
 		-DELLVM_VERSION_MAJOR=${LLVM_MAX_SLOT}
 		-DELLVM_VERSION_MINOR=0
@@ -111,6 +115,19 @@ src_configure() {
 		-DLLVM_ENABLE_ZLIB=OFF
 		-DLLVM_ENABLE_ZSTD=OFF
 	)
+	if use llvm-roc ; then
+		mycmakeargs+=(
+			-DLLVM_CMAKE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/$(get_libdir)/cmake/llvm"
+			-DMLIR_CMAKE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/$(get_libdir)/cmake/mlir"
+			-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/include"
+		)
+	else
+		mycmakeargs+=(
+			-DLLVM_CMAKE_DIR="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/cmake/llvm"
+			-DMLIR_CMAKE_DIR="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/cmake/mlir"
+			-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/include"
+		)
+	fi
 	if [[ "${HIP_CXX}" =~ "g++" ]] ; then
 ewarn "Using clang may result in symbol error."
 	fi
