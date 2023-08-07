@@ -39,6 +39,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS=""
 IUSE+="
 	debug test
+	r1
 "
 REQUIRED_USE="
 "
@@ -85,7 +86,7 @@ multilib_src_configure() {
 		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_SLOT}/bin|g")
 	einfo "PATH=${PATH} (after)"
 
-	if ! [[ -e "/usr/lib/llvm/${PV%%.*}/$(get_libdir)/libLLVMCodeGenTypes.a" ]] ; then
+	if ! [[ -e "/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/libLLVMCodeGenTypes.a" ]] ; then
 eerror
 eerror "Missing libLLVMCodeGenTypes.a.  It requires that llvm-${PV} be modded install it."
 eerror
@@ -100,6 +101,9 @@ eerror
 	local libdir="$(get_libdir)"
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
+		-DLLVM_BUILD_TOOLS=ON
+		-DLLVM_BUILD_UTILS=ON
+		-DLLVM_INSTALL_UTILS=ON
 		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DMLIR_LINK_MLIR_DYLIB=ON
 	)
@@ -112,6 +116,14 @@ multilib_src_test() {
 	local -x LIT_PRESERVES_TMP=1
 
 	cmake_build check-mlir
+}
+
+multilib_src_install() {
+	cmake_src_install
+	sed -i \
+		-e "s|\"mlir-tblgen\"|\"/usr/lib/llvm/${LLVM_MAJOR}/bin/mlir-tblgen\"|g" \
+		"${ED}/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/cmake/mlir/MLIRConfig.cmake" \
+		|| die
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
