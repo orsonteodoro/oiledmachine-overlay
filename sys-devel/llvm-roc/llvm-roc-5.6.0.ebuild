@@ -173,8 +173,10 @@ src_configure() {
 		PROJECTS+=";compiler-rt"
 	fi
 	local mycmakeargs=(
+		-DBUILD_SHARED_LIBS=OFF
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/opt/rocm-${PV}/llvm"
 		-DLLVM_BUILD_DOCS=NO
+		-DLLVM_BUILD_LLVM_DYLIB=ON
 		-DLLVM_DISTRIBUTION_COMPONENTS=$(get_distribution_components)
 		-DLLVM_ENABLE_ASSERTIONS=ON # For mlir
 		-DLLVM_ENABLE_DOXYGEN=OFF
@@ -184,6 +186,7 @@ src_configure() {
 		-DLLVM_ENABLE_ZSTD=OFF # For mlir
 		-DLLVM_ENABLE_ZLIB=OFF # For mlir
 		-DLLVM_INSTALL_UTILS=ON
+		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD="AMDGPU;X86"
 		-DLLVM_VERSION_SUFFIX=roc
 		-DOCAMLFIND=NO
@@ -191,8 +194,13 @@ src_configure() {
 	cmake_src_configure
 }
 
+src_compile() {
+	cmake_build distribution
+}
+
 src_install() {
-	cmake_src_install
+	DESTDIR="${D}" \
+	cmake_build install-distribution
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

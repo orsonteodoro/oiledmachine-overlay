@@ -4,7 +4,7 @@
 EAPI=7
 
 LLVM_MAX_SLOT=16
-inherit cmake flag-o-matic llvm
+inherit cmake flag-o-matic llvm toolchain-funcs
 
 SRC_URI="
 https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
@@ -36,7 +36,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	sys-devel/gcc
+	>=sys-devel/gcc-12
 "
 PATCHES=(
 )
@@ -44,8 +44,22 @@ S="${WORKDIR}/llvm-project-rocm-${PV}/mlir"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 
 src_configure() {
+	# Fix for
+	# mlir-linalg-ods-yaml-gen: error while loading shared libraries: libLLVM-16roc.so: cannot open shared object file: No such file or directory
+	export LD_LIBRARY_PATH="${ESYSROOT}/opt/rocm-${PV}/llvm/lib:${LD_LIBRARY_PATH}"
+
 	export CC="${CHOST}-gcc"
 	export CXX="${CHOST}-g++"
+
+	if ver_test $(gcc-major-version) < 12 ; then
+eerror
+eerror "Switch to gcc 12 or newer.  Do:"
+eerror
+eerror "eselect gcc set ${CHOST}-gcc-12"
+eerror
+		die
+	fi
+
 	filter-flags "-fuse-ld=*"
 	strip-unsupported-flags
 	replace-flags '-O0' '-O1'
@@ -72,8 +86,10 @@ src_configure() {
 		-DLLVM_ENABLE_ZLIB=OFF
 		-DLLVM_INSTALL_UTILS=ON
 		-DLLVM_LINK_LLVM_DYLIB=ON
-		-DMLIR_LINK_MLIR_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD="AMDGPU;X86"
+		-DLLVM_VERSION_SUFFIX=roc
+		-DMLIR_LINK_MLIR_DYLIB=ON
+		-DROCM_PATH="${ESYSROOT}/opt/rocm-${PV}"
 	)
 
 	cmake_src_configure
