@@ -11,7 +11,7 @@
   </upstream>
   <use>
     <flag name="llvm-roc">
-      Use the unstable early git snapshot of the llvm fork with the exact
+      Use the unstable early git snapshot of the LLVM fork with the exact
       commit/version to avoid missing symbols and missing libraries.
       (RECOMMENDED)
 
