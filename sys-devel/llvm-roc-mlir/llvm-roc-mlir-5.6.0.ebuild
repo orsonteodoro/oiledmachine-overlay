@@ -58,8 +58,9 @@ src_configure() {
 		| tr "\n" ":" \
 		| sed -e "s|/opt/bin|/opt/bin:/opt/rocm-${PV}/llvm/bin|g")
 	einfo "PATH=${PATH} (after)"
-
 	replace-flags '-O0' '-O1'
+	append-flags -isystem "${ESYSROOT}/opt/rocm-${PV}/llvm/include/llvm"
+	append-flags -L"${ESYSROOT}/opt/rocm-${PV}/llvm/lib"
 	PROJECTS="mlir;lld"
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/opt/rocm-${PV}/llvm"
@@ -70,8 +71,8 @@ src_configure() {
 		-DLLVM_ENABLE_ZSTD=OFF
 		-DLLVM_ENABLE_ZLIB=OFF
 		-DLLVM_INSTALL_UTILS=ON
-		-DLLVM_LINK_LLVM_DYLIB=ON
-		-DMLIR_LINK_MLIR_DYLIB=ON
+#		-DLLVM_LINK_LLVM_DYLIB=ON
+#		-DMLIR_LINK_MLIR_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD="AMDGPU;X86"
 	)
 
