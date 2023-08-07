@@ -95,11 +95,8 @@ ewarn "USE=-llvm-roc is unfinished.  USE=llvm-roc instead."
 }
 
 src_configure() {
-	if use llvm-roc ; then
-		export ROCM_PATH="${ESYSROOT}/opt/rocm-${PV}/llvm"
-	else
-		export ROCM_PATH="${ESYSROOT}/usr"
-	fi
+	# FIXME:  The unislot conflicts with the multislot rocm-llvm
+	export ROCM_PATH="${ESYSROOT}/usr"
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
 		-DELLVM_VERSION_MAJOR=${LLVM_MAX_SLOT}
