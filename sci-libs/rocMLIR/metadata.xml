@@ -11,8 +11,12 @@
   </upstream>
   <use>
     <flag name="llvm-roc">
-      Use the llvm fork with the exact version to avoid missing symbols and
-      missing libraries.
+      Use the unstable early git snapshot of the llvm fork with the exact
+      commit/version to avoid missing symbols and missing libraries.
+      (RECOMMENDED)
+
+      If disabled, it will build using the system's stable release of LLVM.
+      (EXPERIMENTAL)
     </flag>
   </use>
 </pkgmetadata>
