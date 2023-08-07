@@ -1,0 +1,155 @@
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-driver/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-driver/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-driver/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-driver/CMakeLists.txt	2023-08-06 02:59:22.904109821 -0700
+@@ -1,6 +1,11 @@
+-set(LLVM_LINK_COMPONENTS
+-  Support
+-  )
++#set(LLVM_LINK_COMPONENTS
++#  Support
++#  )
++
++find_library(LLVM_SUPPORT_LIB
++  libLLVMSupport.a LLVMSupport
++  PATHS /usr/lib/llvm/${LLVM_VERSION_MAJOR}/${CMAKE_INSTALL_LIBDIR}
++)
+ 
+ get_property(rocmlir_dialect_libs GLOBAL PROPERTY ROCMLIR_DIALECT_LIBS)
+ get_property(rocmlir_conversion_libs GLOBAL PROPERTY ROCMLIR_CONVERSION_LIBS)
+@@ -25,5 +30,5 @@ add_llvm_executable(rocmlir-driver
+ 
+ 
+ llvm_update_compile_flags(rocmlir-driver)
+-target_link_libraries(rocmlir-driver PRIVATE ${LIBS})
++target_link_libraries(rocmlir-driver PRIVATE ${LIBS} ${LLVM_SUPPORT_LIB})
+ mlir_check_link_libraries(rocmlir-driver)
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-gen/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-gen/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-gen/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-gen/CMakeLists.txt	2023-08-06 02:59:22.104109800 -0700
+@@ -1,6 +1,11 @@
+-set(LLVM_LINK_COMPONENTS
+-  Support
+-  )
++#set(LLVM_LINK_COMPONENTS
++#  Support
++#  )
++
++find_library(LLVM_SUPPORT_LIB
++  libLLVMSupport.a LLVMSupport
++  PATHS /usr/lib/llvm/${LLVM_VERSION_MAJOR}/${CMAKE_INSTALL_LIBDIR}
++)
+ 
+ get_property(rocmlir_dialect_libs GLOBAL PROPERTY ROCMLIR_DIALECT_LIBS)
+ get_property(rocmlir_conversion_libs GLOBAL PROPERTY ROCMLIR_CONVERSION_LIBS)
+@@ -21,5 +26,5 @@ add_llvm_executable(rocmlir-gen
+ 
+ 
+ llvm_update_compile_flags(rocmlir-gen)
+-target_link_libraries(rocmlir-gen PRIVATE ${LIBS})
++target_link_libraries(rocmlir-gen PRIVATE ${LIBS} ${LLVM_SUPPORT_LIB})
+ mlir_check_link_libraries(rocmlir-gen)
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-lsp-server/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-lsp-server/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-lsp-server/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-lsp-server/CMakeLists.txt	2023-08-06 02:59:24.648109866 -0700
+@@ -5,11 +5,21 @@ set(LLVM_OPTIONAL_SOURCES
+ get_property(rocmlir_dialect_libs GLOBAL PROPERTY ROCMLIR_DIALECT_LIBS)
+ get_property(rocmlir_conversion_libs GLOBAL PROPERTY ROCMLIR_CONVERSION_LIBS)
+ 
+-set(LLVM_LINK_COMPONENTS
+-  Core
+-  Support
+-  AsmParser
+-  )
++#set(LLVM_LINK_COMPONENTS
++#  Core
++#  Support
++#  AsmParser
++#  )
++
++find_library(LLVM_SLOT_LIB
++  LLVM-${LLVM_VERSION_MAJOR}
++  PATHS /usr/lib/llvm/${LLVM_VERSION_MAJOR}/${CMAKE_INSTALL_LIBDIR}
++)
++
++find_library(LLVM_SUPPORT_LIB
++  libLLVMSupport.a LLVMSupport
++  PATHS /usr/lib/llvm/${LLVM_VERSION_MAJOR}/${CMAKE_INSTALL_LIBDIR}
++)
+ 
+ set(LIBS
+   ${rocmlir_dialect_libs}
+@@ -23,7 +33,7 @@ add_llvm_tool(rocmlir-lsp-server
+   DEPENDS
+   ${LIBS}
+   )
+-target_link_libraries(rocmlir-lsp-server PRIVATE ${LIBS})
++target_link_libraries(rocmlir-lsp-server PRIVATE ${LIBS} ${LLVM_SLOT_LIB} ${LLVM_SUPPORT_LIB})
+ llvm_update_compile_flags(rocmlir-lsp-server)
+ 
+ mlir_check_all_link_libraries(rocmlir-lsp-server)
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-opt/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-opt/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-opt/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-opt/CMakeLists.txt	2023-08-06 02:59:23.832109845 -0700
+@@ -6,12 +6,21 @@ get_property(rocmlir_dialect_libs GLOBAL
+ get_property(rocmlir_conversion_libs GLOBAL PROPERTY ROCMLIR_CONVERSION_LIBS)
+ get_property(rocmlir_test_libs GLOBAL PROPERTY ROCMLIR_TEST_LIBS)
+ 
+-set(LLVM_LINK_COMPONENTS
+-  Core
+-  Support
+-  AsmParser
+-  )
+-
++#set(LLVM_LINK_COMPONENTS
++#  Core
++#  Support
++#  AsmParser
++#  )
++
++find_library(LLVM_SUPPORT_LIB
++  libLLVMSupport.a LLVMSupport
++  PATHS /usr/lib/llvm/${LLVM_VERSION_MAJOR}/${CMAKE_INSTALL_LIBDIR}
++)
++
++find_library(LLVM_SLOT_LIB
++  LLVM-${LLVM_VERSION_MAJOR}
++  PATHS /usr/lib/llvm/${LLVM_VERSION_MAJOR}/${CMAKE_INSTALL_LIBDIR}
++)
+ 
+ set(LIBS
+   ${rocmlir_dialect_libs}
+@@ -37,7 +46,7 @@ add_llvm_tool(rocmlir-opt
+   DEPENDS
+   ${LIBS}
+   )
+-target_link_libraries(rocmlir-opt PRIVATE ${LIBS})
++target_link_libraries(rocmlir-opt PRIVATE ${LIBS} ${LLVM_SLOT_LIB} ${LLVM_SUPPORT_LIB})
+ llvm_update_compile_flags(rocmlir-opt)
+ 
+ mlir_check_all_link_libraries(rocmlir-opt)
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-translate/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-translate/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-translate/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-translate/CMakeLists.txt	2023-08-06 02:59:21.176109776 -0700
+@@ -1,6 +1,11 @@
+-set(LLVM_LINK_COMPONENTS
+-  Support
+-  )
++#set(LLVM_LINK_COMPONENTS
++#  Support
++#  )
++
++find_library(LLVM_SUPPORT_LIB
++  libLLVMSupport.a LLVMSupport
++  PATHS /usr/lib/llvm/${LLVM_VERSION_MAJOR}/${CMAKE_INSTALL_LIBDIR}
++)
+ 
+ get_property(rocm_dialect_libs GLOBAL PROPERTY ROCMLIR_DIALECT_LIBS)
+ get_property(translation_libs GLOBAL PROPERTY MLIR_TRANSLATION_LIBS)
+@@ -16,6 +21,7 @@ target_link_libraries(rocmlir-translate
+   ${test_libs}
+   MLIRROCDLToLLVMIRTranslation
+   GpuModuleToRocdlirTranslation
++  ${LLVM_SUPPORT_LIB}
+   )
+ 
+ mlir_check_link_libraries(rocmlir-translate)

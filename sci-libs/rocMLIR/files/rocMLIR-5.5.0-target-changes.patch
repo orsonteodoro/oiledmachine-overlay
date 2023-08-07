@@ -1,0 +1,122 @@
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/MIGraphXToTosa/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/lib/Conversion/MIGraphXToTosa/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/MIGraphXToTosa/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Conversion/MIGraphXToTosa/CMakeLists.txt	2023-08-06 15:31:23.093285002 -0700
+@@ -11,7 +11,7 @@ add_rocmlir_conversion_library(MLIRMIGra
+   ${MLIR_MAIN_INCLUDE_DIR}/mlir/IR
+ 
+   DEPENDS
+-  MLIRConversionPassIncGen
++#  MLIRConversionPassIncGen
+   RocMLIRConversionPassIncGen
+   MLIRMIGraphXToTosaConversionIncGen
+ 
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/RockToGPU/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/lib/Conversion/RockToGPU/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/RockToGPU/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Conversion/RockToGPU/CMakeLists.txt	2023-08-06 15:31:24.165285030 -0700
+@@ -5,7 +5,7 @@ add_rocmlir_conversion_library(MLIRRockT
+   ${MLIR_MAIN_INCLUDE_DIR}/mlir/Conversion/RockToGPU
+ 
+   DEPENDS
+-  MLIRConversionPassIncGen
++#  MLIRConversionPassIncGen
+   RocMLIRConversionPassIncGen
+   MLIRRockPassIncGen
+ )
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/TosaToRock/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/lib/Conversion/TosaToRock/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/TosaToRock/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Conversion/TosaToRock/CMakeLists.txt	2023-08-06 15:31:25.125285055 -0700
+@@ -7,7 +7,7 @@ add_rocmlir_conversion_library(MLIRTosaT
+   ${MLIR_MAIN_INCLUDE_DIR}/mlir/IR
+ 
+   DEPENDS
+-  MLIRConversionPassIncGen
++#  MLIRConversionPassIncGen
+ 
+   LINK_LIBS PUBLIC
+   MLIRIR
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/MIGraphX/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/lib/Dialect/MIGraphX/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/MIGraphX/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Dialect/MIGraphX/CMakeLists.txt	2023-08-06 15:39:38.345297901 -0700
+@@ -9,7 +9,7 @@ add_rocmlir_dialect_library(MLIRMIGraphX
+   MLIRMIGraphXTypeIncGen
+   MLIRMIGraphXOpsIncGen
+   MLIRMIGraphXPassIncGen
+-  MLIRFuncOpsIncGen
++#  MLIRFuncOpsIncGen
+ 
+   )
+ target_link_libraries(MLIRMIGraphX
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Transforms/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Transforms/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Transforms/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Transforms/CMakeLists.txt	2023-08-06 15:38:21.413295898 -0700
+@@ -23,11 +23,11 @@ add_rocmlir_dialect_library(MLIRRockTran
+ 
+   LINK_LIBS PUBLIC
+   MLIRAffineTransforms
+-  MLIRArithmeticTransforms
++  MLIRArithTransforms
+   MLIRBufferizationDialect
+   MLIRBufferizationTransforms
+   MLIRDialect
+-  MLIRXModel
++#  MLIRXModel
+   MLIRFuncDialect
+   MLIRIR
+   MLIRPass
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/test/CAPI/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/test/CAPI/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/test/CAPI/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/test/CAPI/CMakeLists.txt	2023-08-06 15:39:03.533296995 -0700
+@@ -33,7 +33,7 @@ target_link_libraries(mlir-tosa-miir-tes
+   MLIRCAPIRegisterRocMLIR
+   MLIRRockPipeline
+   LLVMAMDGPUAsmParser
+-  LLVMX86AsmParser
++#  LLVMX86AsmParser
+ )
+ 
+ add_llvm_executable(mlir-mixr-full-test
+@@ -51,7 +51,7 @@ target_link_libraries(mlir-mixr-full-tes
+   MLIRMIGraphXPipeline
+   MLIRRockPipeline
+   LLVMAMDGPUAsmParser
+-  LLVMX86AsmParser
++#  LLVMX86AsmParser
+ )
+ 
+ add_llvm_executable(mlir-mixr-fullc-test
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-driver/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-driver/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-driver/CMakeLists.txt	2023-08-06 15:27:40.245279198 -0700
++++ rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-driver/CMakeLists.txt	2023-08-06 15:39:21.189297455 -0700
+@@ -16,7 +16,7 @@ set(LIBS
+   ${rocmlir_conversion_libs}
+   ${rocmlir_test_libs}
+   MLIRExecutionEngine
+-  MLIRXModelPipeline
++#  MLIRXModelPipeline
+   )
+ 
+ add_llvm_executable(rocmlir-driver
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-lib/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-lib/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-lib/CMakeLists.txt	2023-08-06 15:27:40.265279199 -0700
++++ rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-lib/CMakeLists.txt	2023-08-06 15:39:01.877296952 -0700
+@@ -4,7 +4,7 @@ get_property(rocmlir_capi_libs GLOBAL PR
+ set(LIBS
+   ${rocmlir_dialect_libs}
+   ${rocmlir_capi_libs}
+-  LLVMX86AsmParser
++#  LLVMX86AsmParser
+ )
+ 
+ message(STATUS "LLVM_VERSION_MAJOR=${LLVM_VERSION_MAJOR} CMAKE_INSTALL_LIBDIR=${CMAKE_INSTALL_LIBDIR} USE_SYSTEM_MLIR=${USE_SYSTEM_MLIR}")
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/tools/xmir-runner/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/tools/xmir-runner/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/tools/xmir-runner/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/tools/xmir-runner/CMakeLists.txt	2023-08-06 15:38:56.501296812 -0700
+@@ -13,7 +13,7 @@ if(MLIR_ENABLE_ROCM_RUNNER)
+     ${rocmlir_dialect_libs}
+     ${rocmlir_conversion_libs}
+     ${rocmlir_test_libs}
+-    LLVMX86AsmParser
++#    LLVMX86AsmParser
+     MLIRParser
+     MLIRRocmExecutionEngineUtils
+     MLIRJitRunner

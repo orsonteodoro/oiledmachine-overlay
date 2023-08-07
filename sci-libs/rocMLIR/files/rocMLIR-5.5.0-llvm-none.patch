@@ -1,0 +1,14 @@
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/TosaToRock/TosaToRock.cpp rocMLIR-rocm-5.5.0/mlir/lib/Conversion/TosaToRock/TosaToRock.cpp
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/TosaToRock/TosaToRock.cpp	2023-08-06 18:37:16.973575511 -0700
++++ rocMLIR-rocm-5.5.0/mlir/lib/Conversion/TosaToRock/TosaToRock.cpp	2023-08-06 18:41:26.117582001 -0700
+@@ -85,8 +85,8 @@ getArchAttributes(Operation *op) {
+ 
+   // TODO(sjw): get these from options
+   StringAttr arch = StringAttr::get(op->getContext(), "");
+-  Optional<uint32_t> num_cu = None;
+-  Optional<bool> xdlopsV2 = None;
++  Optional<uint32_t> num_cu = llvm::None;
++  Optional<bool> xdlopsV2 = llvm::None;
+ 
+   if (auto attr = op->getAttrOfType<StringAttr>("arch"))
+     arch = attr;

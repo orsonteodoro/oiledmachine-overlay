@@ -1,0 +1,311 @@
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/include/mlir/Conversion/MIGraphXToTosa/MIGraphXToTosa.h	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/include/mlir/Conversion/MIGraphXToTosa/MIGraphXToTosa.h	2023-08-06 18:27:05.397559583 -0700
+@@ -16,7 +16,7 @@
+ #ifndef MLIR_CONVERSION_MIGRAPHXTOTOSA_H
+ #define MLIR_CONVERSION_MIGRAPHXTOTOSA_H
+ 
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
+ #include "mlir/Dialect/MIGraphX/MIGraphXOps.h"
+ #include "mlir/Dialect/Tosa/IR/TosaOps.h"
+ #include "mlir/IR/PatternMatch.h"
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/include/mlir/InitRocMLIRDialects.h	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/include/mlir/InitRocMLIRDialects.h	2023-08-06 18:27:06.373559608 -0700
+@@ -22,8 +22,8 @@
+ // MLIR includes
+ #include "mlir/Dialect/AMDGPU/AMDGPUDialect.h"
+ #include "mlir/Dialect/Affine/IR/AffineOps.h"
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
+-#include "mlir/Dialect/Arithmetic/Transforms/BufferizableOpInterfaceImpl.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
++#include "mlir/Dialect/Arith/Transforms/BufferizableOpInterfaceImpl.h"
+ #include "mlir/Dialect/Async/IR/Async.h"
+ #include "mlir/Dialect/Bufferization/IR/Bufferization.h"
+ #include "mlir/Dialect/Bufferization/TransformOps/BufferizationTransformOps.h"
+@@ -56,7 +56,7 @@ inline void registerUpstreamDialects(Dia
+   // clang-format off
+   registry.insert<AffineDialect, 
+                   amdgpu::AMDGPUDialect,
+-                  arith::ArithmeticDialect, 
++                  arith::ArithDialect, 
+                   async::AsyncDialect,
+                   bufferization::BufferizationDialect,
+                   cf::ControlFlowDialect,
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/include/mlir/InitRocMLIRPasses.h	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/include/mlir/InitRocMLIRPasses.h	2023-08-06 18:27:02.797559515 -0700
+@@ -22,7 +22,7 @@
+ 
+ // MLIR includes
+ #include "mlir/Dialect/Affine/Passes.h"
+-#include "mlir/Dialect/Arithmetic/Transforms/Passes.h"
++#include "mlir/Dialect/Arith/Transforms/Passes.h"
+ #include "mlir/Dialect/Bufferization/Transforms/Passes.h"
+ #include "mlir/Dialect/Func/Transforms/Passes.h"
+ #include "mlir/Dialect/GPU/Transforms/Passes.h"
+@@ -44,7 +44,7 @@ inline void registerUpstreamPasses() {
+   // Conversion passes
+   registerConvertAffineToStandard();
+   registerConvertAMDGPUToROCDL();
+-  registerConvertArithmeticToLLVM();
++  registerConvertArithToLLVM();
+   registerConvertFuncToLLVM();
+   registerConvertGpuOpsToROCDLOps();
+   registerConvertMathToLLVM();
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/MIGraphXToTosa/MIGraphXToTosa.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Conversion/MIGraphXToTosa/MIGraphXToTosa.cpp	2023-08-06 18:27:08.181559655 -0700
+@@ -12,7 +12,7 @@
+ //===----------------------------------------------------------------------===//
+ 
+ #include "mlir/Conversion/MIGraphXToTosa/MIGraphXToTosa.h"
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+ #include "mlir/Dialect/MIGraphX/MIGraphXOps.h"
+ #include "mlir/Dialect/MemRef/IR/MemRef.h"
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/MIGraphXToTosa/MIGraphXToTosaPass.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Conversion/MIGraphXToTosa/MIGraphXToTosaPass.cpp	2023-08-06 18:27:09.045559678 -0700
+@@ -12,7 +12,7 @@
+ //===----------------------------------------------------------------------===//
+ 
+ #include "mlir/Conversion/MIGraphXToTosa/MIGraphXToTosa.h"
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+ #include "mlir/Dialect/Tosa/Transforms/Passes.h"
+ #include "mlir/Dialect/Tosa/Utils/QuantUtils.h"
+@@ -36,7 +36,7 @@ struct MIGraphXToTosa : public impl::MIG
+ public:
+   void getDependentDialects(DialectRegistry &registry) const override {
+     registry.insert<tosa::TosaDialect, migraphx::MIGraphXDialect,
+-                    arith::ArithmeticDialect, func::FuncDialect>();
++                    arith::ArithDialect, func::FuncDialect>();
+   }
+ 
+   void runOnOperation() override {
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/RockToGPU/RockToGPU.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Conversion/RockToGPU/RockToGPU.cpp	2023-08-06 18:27:09.861559699 -0700
+@@ -22,7 +22,7 @@
+ #include "mlir/Conversion/RockToGPU/RockToGPU.h"
+ 
+ #include "mlir/Dialect/AMDGPU/AMDGPUDialect.h"
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
+ #include "mlir/Dialect/ControlFlow/IR/ControlFlowOps.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+ #include "mlir/Dialect/GPU/IR/GPUDialect.h"
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/TosaToRock/TosaToRock.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Conversion/TosaToRock/TosaToRock.cpp	2023-08-06 18:27:11.477559741 -0700
+@@ -11,7 +11,7 @@
+ //===----------------------------------------------------------------------===//
+ 
+ #include "mlir/Conversion/TosaToRock/TosaToRock.h"
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
+ #include "mlir/Dialect/Bufferization/IR/Bufferization.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+ #include "mlir/Dialect/Rock/Generator/AmdArchDb.h"
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/TosaToRock/TosaToRockPass.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Conversion/TosaToRock/TosaToRockPass.cpp	2023-08-06 18:27:10.677559720 -0700
+@@ -11,7 +11,7 @@
+ //===----------------------------------------------------------------------===//
+ 
+ #include "mlir/Conversion/TosaToRock/TosaToRock.h"
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
+ #include "mlir/Dialect/Bufferization/IR/Bufferization.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+ #include "mlir/Dialect/Rock/IR/Rock.h"
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Transforms/AlignTiling.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Transforms/AlignTiling.cpp	2023-08-06 18:27:13.829559802 -0700
+@@ -21,7 +21,7 @@
+ //
+ //===----------------------------------------------------------------------===//
+ 
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
+ #include "mlir/Dialect/Linalg/IR/Linalg.h"
+ #include "mlir/Dialect/MemRef/IR/MemRef.h"
+ #include "mlir/Dialect/Rock/IR/Rock.h"
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Transforms/BlockwiseGemmToThreadwise.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Transforms/BlockwiseGemmToThreadwise.cpp	2023-08-06 18:27:16.197559864 -0700
+@@ -20,7 +20,7 @@
+ // the threadwise lowering
+ //
+ //===-----------------------------------------------------===//
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
+ #include "mlir/Dialect/Rock/IR/Rock.h"
+ #include "mlir/Dialect/Rock/IR/TransformMapBuilder.h"
+ #include "mlir/Dialect/Rock/Passes.h"
+@@ -696,7 +696,7 @@ void RockLowerBlockwiseGemmToThreadwiseP
+   ConversionTarget target(*ctx);
+   target.addIllegalOp<FillOp, BlockwiseGemmOp, BlockwiseGemmV2Op, GlobalLoadOp,
+                       GlobalStoreOp>();
+-  target.addLegalDialect<arith::ArithmeticDialect, rock::RockDialect,
++  target.addLegalDialect<arith::ArithDialect, rock::RockDialect,
+                          AffineDialect, memref::MemRefDialect>();
+ 
+   RewritePatternSet patterns(ctx);
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Transforms/CleanMath.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Transforms/CleanMath.cpp	2023-08-06 18:27:15.381559843 -0700
+@@ -15,7 +15,7 @@
+ // limitations under the License.
+ //===----------------------------------------------------------------------===//
+ 
+-#include "mlir/Dialect/Arithmetic/Transforms/Passes.h"
++#include "mlir/Dialect/Arith/Transforms/Passes.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+ #include "mlir/Dialect/Rock/Passes.h"
+ #include "mlir/Pass/PassManager.h"
+@@ -142,6 +142,6 @@ void RockCleanMathPass::runOnOperation()
+   OpPassManager postAnalysisPipeline("func.func");
+   postAnalysisPipeline.addPass(createCanonicalizerPass());
+   postAnalysisPipeline.addPass(
+-      arith::createArithmeticUnsignedWhenEquivalentPass());
++      arith::createArithUnsignedWhenEquivalentPass());
+   (void)runPipeline(postAnalysisPipeline, op);
+ }
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Transforms/ConvToGemm.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Transforms/ConvToGemm.cpp	2023-08-06 18:27:16.981559884 -0700
+@@ -19,7 +19,7 @@
+ // rock.gemm.
+ //
+ //===-----------------------------------------------------===//
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
+ #include "mlir/Dialect/MemRef/IR/MemRef.h"
+ #include "mlir/Dialect/Rock/IR/GemmSize.h"
+ #include "mlir/Dialect/Rock/IR/Rock.h"
+@@ -1208,7 +1208,7 @@ void RockConvToGemmPass::runOnOperation(
+                     rock::WorkitemIdOp, rock::BufferLoadOp,
+                     rock::BufferStoreOp>();
+   // Below are required legalize for the lowering of Conv2DBwdWeightOp
+-  target.addLegalDialect<arith::ArithmeticDialect, memref::MemRefDialect,
++  target.addLegalDialect<arith::ArithDialect, memref::MemRefDialect,
+                          scf::SCFDialect>();
+ 
+   RewritePatternSet patterns(ctx);
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Transforms/GemmToGridwise.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Transforms/GemmToGridwise.cpp	2023-08-06 18:27:17.749559904 -0700
+@@ -19,7 +19,7 @@
+ // adding padding and group dimensions if needed.
+ //
+ //===-----------------------------------------------------===//
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
+ #include "mlir/Dialect/Rock/IR/GemmSize.h"
+ #include "mlir/Dialect/Rock/IR/Rock.h"
+ #include "mlir/Dialect/Rock/IR/TransformMapBuilder.h"
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Transforms/GridwiseGemmToBlockwise.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Transforms/GridwiseGemmToBlockwise.cpp	2023-08-06 18:27:14.609559823 -0700
+@@ -30,7 +30,7 @@
+ #include "mlir/Dialect/Rock/utility/transformMapUtils.h"
+ 
+ #include "mlir/Dialect/Affine/IR/AffineOps.h"
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+ #include "mlir/Dialect/GPU/IR/GPUDialect.h"
+ #include "mlir/Dialect/MemRef/IR/MemRef.h"
+@@ -1529,7 +1529,7 @@ void RockGridwiseGemmToBlockwisePass::ru
+   MLIRContext *ctx = &getContext();
+   ConversionTarget target(*ctx);
+   target.addIllegalOp<rock::GridwiseGemmOp, rock::GridwiseGemmV2Op>();
+-  target.addLegalDialect<arith::ArithmeticDialect, rock::RockDialect,
++  target.addLegalDialect<arith::ArithDialect, rock::RockDialect,
+                          memref::MemRefDialect, AffineDialect,
+                          vector::VectorDialect>();
+ 
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Transforms/SugarToLoops.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Transforms/SugarToLoops.cpp	2023-08-06 18:27:13.061559782 -0700
+@@ -24,7 +24,7 @@
+ #include "mlir/Dialect/Affine/IR/AffineOps.h"
+ #include "mlir/Dialect/Affine/LoopUtils.h"
+ #include "mlir/Dialect/Affine/Utils.h"
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
+ #include "mlir/Dialect/GPU/IR/GPUDialect.h"
+ #include "mlir/Dialect/MemRef/IR/MemRef.h"
+ #include "mlir/Dialect/Vector/IR/VectorOps.h"
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Transforms/ThreadwiseGemmLowering.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Transforms/ThreadwiseGemmLowering.cpp	2023-08-06 18:27:12.277559762 -0700
+@@ -22,7 +22,7 @@
+ 
+ #include "mlir/Dialect/AMDGPU/AMDGPUDialect.h"
+ #include "mlir/Dialect/Affine/IR/AffineOps.h"
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
+ #include "mlir/Dialect/GPU/IR/GPUDialect.h"
+ #include "mlir/Dialect/Rock/IR/Rock.h"
+ #include "mlir/Dialect/Rock/IR/TransformMapBuilder.h"
+@@ -395,7 +395,7 @@ void RockThreadwiseGemmLoweringPass::run
+   MLIRContext *ctx = &getContext();
+   ConversionTarget target(*ctx);
+   target.addIllegalOp<rock::ThreadwiseGemmOp, rock::XdlopsGemmV2Op>();
+-  target.addLegalDialect<amdgpu::AMDGPUDialect, arith::ArithmeticDialect,
++  target.addLegalDialect<amdgpu::AMDGPUDialect, arith::ArithDialect,
+                          rock::RockDialect, AffineDialect,
+                          memref::MemRefDialect, vector::VectorDialect>();
+ 
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/utility/builderUtils.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/utility/builderUtils.cpp	2023-08-06 18:27:18.533559925 -0700
+@@ -8,7 +8,7 @@
+ 
+ #include "mlir/Dialect/Rock/utility/builderUtils.h"
+ 
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
+ #include "mlir/Dialect/MemRef/IR/MemRef.h"
+ #include "mlir/IR/BuiltinAttributes.h"
+ #include "mlir/IR/BuiltinTypes.h"
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-gen/rocmlir-gen.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-gen/rocmlir-gen.cpp	2023-08-06 18:27:07.253559631 -0700
+@@ -14,7 +14,7 @@
+ #include "mlir/Conversion/RocMLIRPasses.h"
+ #include "mlir/Conversion/RockToGPU/RockToGPU.h"
+ #include "mlir/Dialect/Affine/IR/AffineOps.h"
+-#include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
++#include "mlir/Dialect/Arith/IR/Arith.h"
+ #include "mlir/Dialect/Func/IR/FuncOps.h"
+ #include "mlir/Dialect/GPU/IR/GPUDialect.h"
+ #include "mlir/Dialect/Linalg/IR/Linalg.h"
+@@ -2496,7 +2496,7 @@ int main(int argc, char **argv) {
+   MLIRContext context(registry);
+   context.loadDialect<rock::RockDialect, func::FuncDialect, scf::SCFDialect,
+                       AffineDialect, memref::MemRefDialect, math::MathDialect,
+-                      arith::ArithmeticDialect, vector::VectorDialect,
++                      arith::ArithDialect, vector::VectorDialect,
+                       gpu::GPUDialect, linalg::LinalgDialect>();
+ 
+   // Parse pass names in main to ensure static initialization completed.
+only in patch2:
+unchanged:
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/MIGraphXToTosa/MIGraphXToTosa.td	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Conversion/MIGraphXToTosa/MIGraphXToTosa.td	2023-08-06 18:13:59.233539107 -0700
+@@ -12,7 +12,7 @@ include "mlir/IR/PatternBase.td"
+ include "mlir/Dialect/Tosa/IR/TosaOps.td"
+ include "mlir/Dialect/Func/IR/FuncOps.td"
+ include "mlir/Dialect/MIGraphX/MIGraphXOps.td"
+-include "mlir/Dialect/Arithmetic/IR/ArithmeticOps.td"
++include "mlir/Dialect/Arith/IR/ArithOps.td"
+ 
+ def : Pat<(MIGraphX_AddOp $input1, $input2), (Tosa_AddOp $input1, $input2)>;
+ def : Pat<(MIGraphX_SubOp $input1, $input2), (Tosa_SubOp $input1, $input2)>;

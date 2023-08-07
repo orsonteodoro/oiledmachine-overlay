@@ -1,0 +1,99 @@
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/RockToGPU/RockToGPU.cpp rocMLIR-rocm-5.5.0/mlir/lib/Conversion/RockToGPU/RockToGPU.cpp
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Conversion/RockToGPU/RockToGPU.cpp	2023-08-06 18:33:54.077570227 -0700
++++ rocMLIR-rocm-5.5.0/mlir/lib/Conversion/RockToGPU/RockToGPU.cpp	2023-08-06 18:35:38.889572957 -0700
+@@ -28,7 +28,7 @@
+ #include "mlir/Dialect/GPU/IR/GPUDialect.h"
+ #include "mlir/Dialect/Rock/IR/Rock.h"
+ #include "mlir/Dialect/Rock/Passes.h"
+-#include "mlir/IR/BlockAndValueMapping.h"
++#include "mlir/IR/IRMapping.h"
+ #include "mlir/IR/BuiltinOps.h"
+ #include "mlir/IR/SymbolTable.h"
+ #include "mlir/Transforms/GreedyPatternRewriteDriver.h"
+@@ -165,7 +165,7 @@ void LowerRockOpsToGPUPass::runOnOperati
+     }
+ 
+     // associate arguments for newly created GPUFuncOp.
+-    BlockAndValueMapping map;
++    IRMapping map;
+     for (auto pair : llvm::zip(theFunc.getArguments(), gpuFunc.getArguments()))
+       map.map(std::get<0>(pair), std::get<1>(pair));
+ 
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Transforms/GridwiseGemmToBlockwise.cpp rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Transforms/GridwiseGemmToBlockwise.cpp
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Transforms/GridwiseGemmToBlockwise.cpp	2023-08-06 18:33:54.081570227 -0700
++++ rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Transforms/GridwiseGemmToBlockwise.cpp	2023-08-06 18:35:37.529572921 -0700
+@@ -35,7 +35,7 @@
+ #include "mlir/Dialect/GPU/IR/GPUDialect.h"
+ #include "mlir/Dialect/MemRef/IR/MemRef.h"
+ #include "mlir/Dialect/Vector/IR/VectorOps.h"
+-#include "mlir/IR/BlockAndValueMapping.h"
++#include "mlir/IR/IRMapping.h"
+ #include "mlir/IR/Diagnostics.h"
+ #include "mlir/Pass/PassManager.h"
+ #include "mlir/Transforms/DialectConversion.h"
+@@ -731,7 +731,7 @@ struct GridwiseGemmRewritePattern : publ
+       // We don't update in the clone becasue we might accidentally replace
+       // other zeroes.
+       Value iv = loopOp.getInductionVar();
+-      BlockAndValueMapping loadAUpdates, loadBUpdates;
++      IRMapping loadAUpdates, loadBUpdates;
+       auto blockwiseLoadAClone = cast<TransformingForOp>(
+           b.clone(*blockwiseLoadA.getOperation(), loadAUpdates));
+       blockwiseLoadAClone.setOperand(
+@@ -759,7 +759,7 @@ struct GridwiseGemmRewritePattern : publ
+       b.create<LDSBarrierOp>(loc);
+ 
+       // Emit blockwise stores
+-      BlockAndValueMapping storeAUpdates, storeBUpdates;
++      IRMapping storeAUpdates, storeBUpdates;
+       storeAUpdates.map(blockwiseLoadA.getResult(0),
+                         blockwiseLoadAClone.getResult(0));
+       storeBUpdates.map(blockwiseLoadB.getResult(0),
+@@ -773,7 +773,7 @@ struct GridwiseGemmRewritePattern : publ
+     b.create<LDSBarrierOp>(loc);
+ 
+     // Emit blockwise GEMM for the loop tail.
+-    BlockAndValueMapping tailGemmCloneMap;
++    IRMapping tailGemmCloneMap;
+     b.clone(*blockwiseGemmOp, tailGemmCloneMap);
+ 
+     // Apparently, the canonicalizer doesn't get rid of empty loops without
+@@ -1268,7 +1268,7 @@ struct GridwiseGemmV2RewritePattern
+       // We don't update in the clone becasue we might accidentally replace
+       // other zeroes.
+       Value iv = loopOp.getInductionVar();
+-      BlockAndValueMapping loadAUpdates, loadBUpdates;
++      IRMapping loadAUpdates, loadBUpdates;
+       auto blockwiseLoadAClone = cast<TransformingForOp>(
+           b.clone(*blockwiseLoadA.getOperation(), loadAUpdates));
+       blockwiseLoadAClone.setOperand(
+@@ -1298,7 +1298,7 @@ struct GridwiseGemmV2RewritePattern
+       b.create<LDSBarrierOp>(loc);
+ 
+       // Emit blockwise stores
+-      BlockAndValueMapping storeAUpdates, storeBUpdates;
++      IRMapping storeAUpdates, storeBUpdates;
+       storeAUpdates.map(blockwiseLoadA.getResult(0),
+                         blockwiseLoadAClone.getResult(0));
+       storeBUpdates.map(blockwiseLoadB.getResult(0),
+@@ -1314,7 +1314,7 @@ struct GridwiseGemmV2RewritePattern
+     b.create<LDSBarrierOp>(loc);
+ 
+     // Emit blockwise GEMM for the loop tail.
+-    BlockAndValueMapping tailGemmCloneMap;
++    IRMapping tailGemmCloneMap;
+     auto blockwiseGemmV2TailOp = b.clone(*blockwiseGemmV2Op, tailGemmCloneMap);
+ 
+     // Apparently, the canonicalizer doesn't get rid of empty loops without
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Transforms/SugarToLoops.cpp rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Transforms/SugarToLoops.cpp
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Transforms/SugarToLoops.cpp	2023-08-06 18:33:54.081570227 -0700
++++ rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Transforms/SugarToLoops.cpp	2023-08-06 18:35:39.977572985 -0700
+@@ -148,7 +148,7 @@ struct TransformingForRewritePattern
+     }
+ 
+     // Create code to actually transform the coordinates
+-    BlockAndValueMapping cloneMap;
++    IRMapping cloneMap;
+     for (uint32_t i = 0; i < nDomains; ++i) {
+       Block::BlockArgListType lower = op.getLowerCoords(i);
+       ArrayAttr transforms = op.getTransforms(i);

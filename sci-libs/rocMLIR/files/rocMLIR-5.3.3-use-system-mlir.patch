@@ -1,0 +1,183 @@
+diff -urp rocMLIR-rocm-5.3.3.orig/cmake/llvm-project.cmake rocMLIR-rocm-5.3.3/cmake/llvm-project.cmake
+--- rocMLIR-rocm-5.3.3.orig/cmake/llvm-project.cmake	2022-06-28 18:46:17.000000000 -0700
++++ rocMLIR-rocm-5.3.3/cmake/llvm-project.cmake	2023-08-06 13:59:02.917140705 -0700
+@@ -14,7 +14,7 @@ set(LLVM_BUILD_EXAMPLES ON CACHE BOOL ""
+ set(LLVM_INSTALL_UTILS ON CACHE BOOL "")
+ set(LLVM_ENABLE_TERMINFO OFF CACHE BOOL "")
+ set(LLVM_ENABLE_ASSERTIONS ON CACHE BOOL "")
+-set(LLVM_PROJ_SRC "${CMAKE_SOURCE_DIR}/external/llvm-project")
++set(LLVM_VERSION_MAJOR ${ELLVM_VERSION_MAJOR})
+ 
+ # Configure ROCm support.
+ if (NOT DEFINED ROCM_PATH)
+@@ -30,26 +30,56 @@ message(STATUS "ROCM_PATH: ${ROCM_PATH}"
+ list(APPEND CMAKE_MODULE_PATH
+   "${ROCM_PATH}/hip/cmake"
+ )
+-list(APPEND CMAKE_MODULE_PATH
+-  "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/mlir"
+-)
+-list(APPEND CMAKE_MODULE_PATH
+-  "${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/lib/cmake/llvm/"
+-)
++
++if(USE_SYSTEM_MLIR)
++  list(APPEND CMAKE_MODULE_PATH
++    "/usr/lib/llvm/${LLVM_VERSION_MAJOR}/${CMAKE_INSTALL_LIBDIR}/cmake/mlir"
++  )
++  list(APPEND CMAKE_MODULE_PATH
++    "/usr/lib/llvm/${LLVM_VERSION_MAJOR}/${CMAKE_INSTALL_LIBDIR}/cmake/llvm"
++  )
++
++  set(LLVM_INCLUDE_DIR1 /usr/lib/llvm/${LLVM_VERSION_MAJOR}/include)
++  set(LLVM_INCLUDE_DIR2 "")
++  set(MLIR_INCLUDE_DIR1 /usr/lib/llvm/${LLVM_VERSION_MAJOR}/include)
++  set(MLIR_INCLUDE_DIR2 "")
++else()
++  list(APPEND CMAKE_MODULE_PATH
++    "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/mlir"
++  )
++  list(APPEND CMAKE_MODULE_PATH
++    "${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/lib/cmake/llvm/"
++  )
++
++  set(LLVM_INCLUDE_DIR1 ${CMAKE_CURRENT_SOURCE_DIR}/external/llvm-project/llvm/include)
++  set(LLVM_INCLUDE_DIR2 ${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/include)
++  set(MLIR_INCLUDE_DIR1 ${CMAKE_CURRENT_SOURCE_DIR}/external/llvm-project/mlir/include)
++  set(MLIR_INCLUDE_DIR2 ${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/tools/mlir/include)
++endif()
+ 
+ # Include dirs for MLIR and LLVM
+ list(APPEND MLIR_INCLUDE_DIRS
+-  ${CMAKE_CURRENT_SOURCE_DIR}/external/llvm-project/mlir/include
+-  ${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/tools/mlir/include
++  ${MLIR_INCLUDE_DIR1}
++  ${MLIR_INCLUDE_DIR2}
+ )
+ list(APPEND LLVM_INCLUDE_DIRS
+-  ${CMAKE_CURRENT_SOURCE_DIR}/external/llvm-project/llvm/include
+-  ${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/include
++  ${LLVM_INCLUDE_DIR1}
++  ${LLVM_INCLUDE_DIR2}
+ )
+ 
+-# Linker flags
+-list(APPEND CMAKE_EXE_LINKER_FLAGS
+-  " -Wl,-rpath -Wl,${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/lib"
+-)
++if(USE_SYSTEM_MLIR)
++  # Linker flags
++  list(APPEND CMAKE_EXE_LINKER_FLAGS
++    " -Wl,-rpath -Wl,/usr/lib/${LLVM_VERSION_MAJOR}/${CMAKE_INSTALL_LIBDIR}"
++  )
+ 
+-add_subdirectory("${LLVM_PROJ_SRC}/llvm" "external/llvm-project/llvm" EXCLUDE_FROM_ALL)
++  # Already built
++else()
++  # Linker flags
++  list(APPEND CMAKE_EXE_LINKER_FLAGS
++    " -Wl,-rpath -Wl,${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/lib"
++  )
++
++  set(LLVM_PROJ_SRC "${CMAKE_SOURCE_DIR}/external/llvm-project")
++  add_subdirectory("${LLVM_PROJ_SRC}/llvm" "external/llvm-project/llvm" EXCLUDE_FROM_ALL)
++endif()
+diff -urp rocMLIR-rocm-5.3.3.orig/CMakeLists.txt rocMLIR-rocm-5.3.3/CMakeLists.txt
+--- rocMLIR-rocm-5.3.3.orig/CMakeLists.txt	2022-06-28 18:46:17.000000000 -0700
++++ rocMLIR-rocm-5.3.3/CMakeLists.txt	2023-08-06 14:00:07.909142398 -0700
+@@ -40,10 +40,17 @@ set(LLVM_ENABLE_TERMINFO OFF CACHE BOOL
+ # LLVM settings that have an effect on the MLIR dialect
+ set(LLVM_TARGETS_TO_BUILD "X86;AMDGPU" CACHE STRING "")
+ 
+-# Pointers to: 1) external LLVM bins/libs, and 2) MIOpen Dialect bins/libs
+-set(LLVM_MAIN_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/llvm-project/llvm" CACHE PATH "Path to LLVM sources")
+-set(LLVM_EXTERNAL_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/bin" CACHE PATH "")
+-set(LLVM_EXTERNAL_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/lib" CACHE PATH "")
++option(USE_SYSTEM_MLIR "Use the system MLIR instead of the vendored" ON)
++if (NOT USE_SYSTEM_MLIR)
++  # Pointers to: 1) external LLVM bins/libs, and 2) MIOpen Dialect bins/libs
++  set(LLVM_MAIN_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/llvm-project/llvm" CACHE PATH "Path to LLVM sources")
++  set(LLVM_EXTERNAL_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/bin" CACHE PATH "")
++  set(LLVM_EXTERNAL_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/lib" CACHE PATH "")
++else()
++  set(LLVM_VERSION_MAJOR ${ELLVM_VERSION_MAJOR})
++  set(LLVM_EXTERNAL_BIN_DIR "/usr/bin/llvm/${LLVM_VERSION_MAJOR}/bin" CACHE PATH "")
++  set(LLVM_EXTERNAL_LIB_DIR "/usr/bin/llvm/${LLVM_VERSION_MAJOR}/${CMAKE_INSTALL_LIBDIR}" CACHE PATH "")
++endif()
+ set(MLIR_MIOPEN_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin" CACHE PATH "")
+ set(MLIR_MIOPEN_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/lib" CACHE PATH "")
+ message(STATUS "LLVM_EXTERNAL_BIN_DIR: ${LLVM_EXTERNAL_BIN_DIR}")
+@@ -59,9 +66,14 @@ if(BUILD_MIXR_TARGET)
+ endif()
+ 
+ # Library type and linkage settings
+-if( NOT DEFINED BUILD_FAT_LIBMLIRMIOPEN )
++if( NOT DEFINED BUILD_FAT_LIBMLIRMIOPEN AND NOT USE_SYSTEM_MLIR )
+   set(BUILD_FAT_LIBMLIRMIOPEN OFF CACHE BOOL "Build fat libMLIRMIOpen to link into MIOpen driver")
+ endif()
++
++if(USE_SYSTEM_MLIR)
++  set(BUILD_FAT_LIBROCKCOMPILER OFF)
++endif()
++
+ if( BUILD_FAT_LIBMLIRMIOPEN )
+   set(BUILD_SHARED_LIBS OFF CACHE BOOL "")
+   set(LLVM_BUILD_LLVM_DYLIB OFF CACHE BOOL "")
+diff -urp rocMLIR-rocm-5.3.3.orig/mlir/CMakeLists.txt rocMLIR-rocm-5.3.3/mlir/CMakeLists.txt
+--- rocMLIR-rocm-5.3.3.orig/mlir/CMakeLists.txt	2023-08-06 13:58:46.557140279 -0700
++++ rocMLIR-rocm-5.3.3/mlir/CMakeLists.txt	2023-08-06 13:59:02.917140705 -0700
+@@ -43,7 +43,7 @@ add_subdirectory(lib)
+ add_subdirectory(lib/CAPI)
+ add_subdirectory(tools)
+ 
+-if (MLIR_INCLUDE_TESTS)
++if (MLIR_INCLUDE_TESTS AND NOT USE_SYSTEM_MLIR)
+   add_custom_target(MLIRMIOpenUnitTests)
+   if (EXISTS ${LLVM_MAIN_SRC_DIR}/utils/unittest/googletest/include/gtest/gtest.h)
+     add_subdirectory(unittests)
+Only in rocMLIR-rocm-5.3.3/mlir: CMakeLists.txt.orig
+diff -urp rocMLIR-rocm-5.3.3.orig/mlir/test/CMakeLists.txt rocMLIR-rocm-5.3.3/mlir/test/CMakeLists.txt
+--- rocMLIR-rocm-5.3.3.orig/mlir/test/CMakeLists.txt	2022-06-28 18:46:17.000000000 -0700
++++ rocMLIR-rocm-5.3.3/mlir/test/CMakeLists.txt	2023-08-06 14:00:51.525143534 -0700
+@@ -38,7 +38,11 @@ message(STATUS "MLIR_CONV_VALIDATION_WRA
+ 
+ # Need to explicitly give paths to llvm tools
+ set(LLVM_LIT_TOOLS_DIR ${LLVM_EXTERNAL_BIN_DIR})
+-set(LLVM_EXTERNAL_LIT "${LLVM_LIT_TOOLS_DIR}/llvm-lit")
++if(USE_SYSTEM_MLIR)
++  set(LLVM_EXTERNAL_LIT "/usr/bin/lit")
++else()
++  set(LLVM_EXTERNAL_LIT "${LLVM_LIT_TOOLS_DIR}/llvm-lit")
++endif()
+ set(LLVM_TOOLS_DIR ${LLVM_EXTERNAL_BIN_DIR})
+ set(MLIR_TOOLS_DIR ${LLVM_EXTERNAL_BIN_DIR})
+ set(MLIR_MIOPEN_TOOLS_DIR ${MLIR_MIOPEN_BIN_DIR})
+diff -urp rocMLIR-rocm-5.3.3.orig/mlir/tools/mlir-miopen-driver/CMakeLists.txt rocMLIR-rocm-5.3.3/mlir/tools/mlir-miopen-driver/CMakeLists.txt
+--- rocMLIR-rocm-5.3.3.orig/mlir/tools/mlir-miopen-driver/CMakeLists.txt	2023-08-06 13:58:46.549140279 -0700
++++ rocMLIR-rocm-5.3.3/mlir/tools/mlir-miopen-driver/CMakeLists.txt	2023-08-06 13:59:02.917140705 -0700
+@@ -56,5 +56,7 @@ file(GLOB PERFORMANCE_SCRIPTS
+   "${CMAKE_CURRENT_SOURCE_DIR}/../../utils/jenkins/*.py"
+ )
+ 
+-add_custom_target(ci-performance-scripts
+-	COMMAND ${CMAKE_COMMAND} -E copy ${PERFORMANCE_SCRIPTS} ${MLIR_MIOPEN_BIN_DIR})
++if(NOT USE_SYSTEM_MLIR)
++	add_custom_target(ci-performance-scripts
++		COMMAND ${CMAKE_COMMAND} -E copy ${PERFORMANCE_SCRIPTS} ${MLIR_MIOPEN_BIN_DIR})
++endif()
+diff -urp rocMLIR-rocm-5.3.3.orig/mlir/tools/mlir-miopen-lib/CMakeLists.txt rocMLIR-rocm-5.3.3/mlir/tools/mlir-miopen-lib/CMakeLists.txt
+--- rocMLIR-rocm-5.3.3.orig/mlir/tools/mlir-miopen-lib/CMakeLists.txt	2022-06-28 18:46:17.000000000 -0700
++++ rocMLIR-rocm-5.3.3/mlir/tools/mlir-miopen-lib/CMakeLists.txt	2023-08-06 13:59:02.917140705 -0700
+@@ -22,7 +22,11 @@ set(LIBS
+   MLIRIR
+ )
+ 
+-set(CMAKE_BUILD_RPATH ${CMAKE_BUILD_DIR}/external/llvm-project/llvm/lib)
++if(USE_SYSTEM_MLIR)
++  set(CMAKE_BUILD_RPATH /usr/lib/llvm/${LLVM_VERSION_MAJOR}/${CMAKE_INSTALL_LIBDIR})
++else()
++  set(CMAKE_BUILD_RPATH ${CMAKE_BUILD_DIR}/external/llvm-project/llvm/lib)
++endif()
+ 
+ llvm_add_library(MLIRMIOpenThin
+ PARTIAL_SOURCES_INTENDED

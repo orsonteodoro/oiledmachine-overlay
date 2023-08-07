@@ -1,0 +1,12 @@
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/include/mlir/Dialect/Rock/IR/RockOps.td rocMLIR-rocm-5.5.0/mlir/include/mlir/Dialect/Rock/IR/RockOps.td
+--- rocMLIR-rocm-5.5.0.orig/mlir/include/mlir/Dialect/Rock/IR/RockOps.td	2023-08-06 18:01:27.313519522 -0700
++++ rocMLIR-rocm-5.5.0/mlir/include/mlir/Dialect/Rock/IR/RockOps.td	2023-08-06 18:02:20.561520909 -0700
+@@ -489,7 +489,7 @@ def Rock_YieldOp :
+ 
+ // Transforming for
+ def Rock_TransformingForOp :
+-    Rock_Op<"transforming_for", [RecursiveSideEffects,
++    Rock_Op<"transforming_for", [RecursiveMemoryEffects,
+       DeclareOpInterfaceMethods<LoopLikeOpInterface, ["isDefinedOutsideOfLoop"]>,
+       AttrSizedOperandSegments,
+       SingleBlockImplicitTerminator<"::mlir::rock::YieldOp">]>,
