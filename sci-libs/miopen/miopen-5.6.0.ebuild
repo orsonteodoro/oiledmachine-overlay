@@ -86,7 +86,7 @@ BDEPEND="
 	virtual/pkgconfig
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	mlir? (
-		=sci-libs/rocMLIR-5.5*:${SLOT}
+		=sci-libs/rocMLIR-5.5*:0/5.5
 	)
 "
 RESTRICT="

@@ -36,16 +36,17 @@ SLOT="0/$(ver_cut 1-2)"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
+# protobuf is relaxed
 RDEPEND="
 	>=dev-db/sqlite-3.17
 	>=dev-cpp/msgpack-cxx-3.3.0
 	>=dev-cpp/nlohmann_json-3.8.0
 	>=dev-libs/half-1.12.0
-	>=dev-libs/protobuf-3.11.0
 	>=sys-libs/libomp-${LLVM_MAX_SLOT}
 	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
 	dev-libs/msgpack
 	dev-libs/oneDNN
+	dev-libs/protobuf:0/32
 	~sci-libs/miopen-${PV}:${SLOT}
 	~sci-libs/rocBLAS-${PV}:${SLOT}
 "
