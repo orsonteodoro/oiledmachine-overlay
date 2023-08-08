@@ -29,10 +29,10 @@ REQUIRED_USE="
 "
 RDEPEND="
 	migraphx? (
-		~sci-libs/MIGraphX-${PV}:${SLOT}
+		~sci-libs/MIGraphX-${PV}:${SLOT}[rocm]
 	)
 	mivisionx? (
-		~sci-libs/MIVisionX-${PV}:${SLOT}
+		~sci-libs/MIVisionX-${PV}:${SLOT}[rocm]
 	)
 	rock-dkms? (
 		~sys-kernel/rock-dkms-${PV}:${SLOT}
