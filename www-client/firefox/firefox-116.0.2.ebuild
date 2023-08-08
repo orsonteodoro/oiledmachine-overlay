@@ -29,7 +29,7 @@ unset __
 # https://wiki.mozilla.org/Release_Management/Calendar
 
 EBUILD_MAINTAINER_MODE=0
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-05.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-02.tar.xz"
 
 LLVM_SLOTS=( 16 14 )
 LLVM_MAX_SLOT=16
@@ -96,8 +96,8 @@ SLOT="rapid"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
 LICENSE_FINGERPRINT="\
-ed7ef4de89840f20482d43f47149d993b5280de787a017114730e0d296ee5035\
-e6ce73d176e405d1dab64151a7787bc3190692df5ba72f552039a61883d0e273\
+acfc4d19cb60b6e43e0b2d2d90455eb90256580200a5889cf669a84f07b335c3\
+c4ac7996da32c198b4cca63494afbca4c4d085a22105112ac12a09fb3f9bca97\
 " # SHA512
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
@@ -405,31 +405,33 @@ REQUIRED_USE="
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/115.0.2/system-requirements/
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/moz.configure
+# https://www.mozilla.org/en-US/firefox/116.0.2/system-requirements/
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/moz.configure
 #   perl L589
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot]
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/build/moz.configure/nss.configure L12
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/gfx/harfbuzz/configure.ac L3
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/media/libaom/config/aom_version.h L7
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/media/libwebp/moz.yaml L16
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/modules/freetype2/include/freetype/freetype.h L4943
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/taskcluster/ci/fetch/toolchains.yml
-#   Keyword searches: cbindgen-, llvm-, pkgconf-, rust-
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/taskcluster/ci/packages/
-# /var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2/taskcluster/ci/toolchain/
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot]
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/build/moz.configure/nss.configure L12
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/gfx/harfbuzz/configure.ac L3
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/media/libaom/config/aom_version.h L7
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/media/libwebp/moz.yaml L16
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/modules/freetype2/include/freetype/freetype.h L5223
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/taskcluster/ci/fetch/toolchains.yml
+#   Keyword searches:  cbindgen-, llvm-, pkgconf-, rust-
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/taskcluster/ci/packages/
+#   Keyword search:  gtk
+# /var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2/taskcluster/ci/toolchain/
+#   Keyword search:  nasm, nodejs, zlib
 __='
 # Scan with also:
-SRC="/var/tmp/portage/www-client/firefox-115.0.2/work/firefox-115.0.2"
+SRC="/var/tmp/portage/www-client/firefox-116.0.2/work/firefox-116.0.2"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -450,6 +452,7 @@ grep -E \
 	| grep -F -v "/zero/"
 '
 unset __
+#   Keyword search:  aom, dbus, dbus-glib, fontconfig, pango, perl, pixman, xkbcommon
 
 DBUS_PV="0.60"
 DBUS_GLIB_PV="0.60"
@@ -562,10 +565,10 @@ CDEPEND="
 	${NON_FREE_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.90.0[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.91.0[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.13.0[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.13.1[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
 	>=x11-libs/pixman-0.36.0[${MULTILIB_USEDEP}]
@@ -601,7 +604,7 @@ CDEPEND="
 		media-video/pipewire:=
 	)
 	system-av1? (
-		>=media-libs/dav1d-1.1.0:=[${MULTILIB_USEDEP},8bit]
+		>=media-libs/dav1d-1.2.1:=[${MULTILIB_USEDEP},8bit]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
@@ -808,7 +811,7 @@ einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 
 # Check every minor version
 __='
-PV="115.0.2"
+PV="116.0.2"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -870,7 +873,7 @@ einfo "Clearing cargo checksums for ${1} ..."
 
 	sed -i \
 		-e 's/\("files":{\)[^}]*/\1/' \
-		"${S}"/third_party/rust/${1}/.cargo-checksum.json \
+		"${S}/third_party/rust/${1}/.cargo-checksum.json" \
 		|| die
 }
 
@@ -1383,8 +1386,7 @@ eerror
 eerror "A change in the license was detected.  Please change"
 eerror "LICENSE_FINGERPRINT=${actual_fp} and do a"
 eerror
-eerror "  \`cp -a ${S}/toolkit/content/license.html \
-${MY_OVERLAY_DIR}/licenses/${LICENSE_FILE_NAME}\`"
+eerror "  \`cp -a ${S}/toolkit/content/license.html ${MY_OVERLAY_DIR}/licenses/${LICENSE_FILE_NAME}\`"
 eerror
 			die
 		fi
@@ -1442,7 +1444,7 @@ src_prepare() {
 	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-dom-bindings.patch"
 
 	# Prevent video seek bug
-	eapply "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-ipc-chromium-chromium-config.patch"
+	eapply "${FILESDIR}/extra-patches/${PN}-116.0.2-disable-broken-flags-ipc-chromium-chromium-config.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -1453,13 +1455,13 @@ src_prepare() {
 	# Make LTO respect MAKEOPTS
 	sed -i \
 		-e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
-		"${S}"/build/moz.configure/lto-pgo.configure \
+		"${S}/build/moz.configure/lto-pgo.configure" \
 		|| die "sed failed to set num_cores"
 
 	# Make ICU respect MAKEOPTS
 	sed -i \
 		-e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
-		"${S}"/intl/icu_sources_data.py \
+		"${S}/intl/icu_sources_data.py" \
 		|| die "sed failed to set num_cores"
 
 	# sed-in toolchain prefix section was moved to the function below.
@@ -1470,11 +1472,11 @@ src_prepare() {
 
 	sed -i \
 		-e 's/ccache_stats = None/return None/' \
-		"${S}"/python/mozbuild/mozbuild/controller/building.py \
+		"${S}/python/mozbuild/mozbuild/controller/building.py" \
 		|| die "sed failed to disable ccache stats call"
 
 einfo "Removing pre-built binaries ..."
-	find "${S}"/third_party \
+	find "${S}/third_party" \
 		-type f \
 		\( \
 			   -name '*.so' \
@@ -1486,11 +1488,11 @@ einfo "Removing pre-built binaries ..."
 	# Changing the value for FILES_PER_UNIFIED_FILE may not work, see #905431
 	if [[ ! -z ${FILES_PER_UNIFIED_FILE} ]] && use jumbo-build; then
 		local my_files_per_unified_file=${FILES_PER_UNIFIED_FILE:=16}
-		elog ""
-		elog "jumbo-build defaults modified to ${my_files_per_unified_file}."
-		elog "if you get a build failure, try undefining FILES_PER_UNIFIED_FILE,"
-		elog "if that fails try -jumbo-build before opening a bug report."
-		elog ""
+ewarn
+ewarn "jumbo-build defaults modified to ${my_files_per_unified_file}."
+ewarn "if you get a build failure, try undefining FILES_PER_UNIFIED_FILE,"
+ewarn "if that fails try -jumbo-build before opening a bug report."
+ewarn
 
 		sed -i -e "s/\"FILES_PER_UNIFIED_FILE\", 16/\"FILES_PER_UNIFIED_FILE\", "${my_files_per_unified_file}"/" \
 			python/mozbuild/mozbuild/frontend/data.py \
@@ -1505,9 +1507,9 @@ einfo "Removing pre-built binaries ..."
 	#
 
 	# Write API keys to disk
-	echo -n "${MOZ_API_KEY_GOOGLE//gGaPi/}" > "${S}"/api-google.key || die
-	echo -n "${MOZ_API_KEY_LOCATION//gGaPi/}" > "${S}"/api-location.key || die
-	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
+	echo -n "${MOZ_API_KEY_GOOGLE//gGaPi/}" > "${S}/api-google.key" || die
+	echo -n "${MOZ_API_KEY_LOCATION//gGaPi/}" > "${S}/api-location.key" || die
+	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}/api-mozilla.key" || die
 
 	verify_license_fingerprint
 
@@ -2251,7 +2253,7 @@ einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${oflag_safe}"
 		if ! use system-libvpx ; then
 			sed -i \
 				-e "s|softfp|hard|" \
-				"${s}"/media/libvpx/moz.build \
+				"${s}/media/libvpx/moz.build" \
 				|| die
 		fi
 	fi
@@ -2538,15 +2540,15 @@ _src_install() {
 	_fix_paths
 	# xpcshell is getting called during install
 	pax-mark m \
-		"${BUILD_OBJ_DIR}"/dist/bin/xpcshell \
-		"${BUILD_OBJ_DIR}"/dist/bin/${PN} \
-		"${BUILD_OBJ_DIR}"/dist/bin/plugin-container
+		"${BUILD_OBJ_DIR}/dist/bin/xpcshell" \
+		"${BUILD_OBJ_DIR}/dist/bin/${PN}" \
+		"${BUILD_OBJ_DIR}/dist/bin/plugin-container"
 
 	DESTDIR="${D}" ./mach install || die
 
 	# Upstream cannot ship symlink but we can (bmo#658850)
 	rm "${ED}${MOZILLA_FIVE_HOME}/${PN}-bin" || die
-	dosym ${PN} ${MOZILLA_FIVE_HOME}/${PN}-bin
+	dosym "${PN}" "${MOZILLA_FIVE_HOME}/${PN}-bin"
 
 	# Don't install llvm-symbolizer from sys-devel/llvm package
 	if [[ -f "${ED}${MOZILLA_FIVE_HOME}/llvm-symbolizer" ]] ; then
@@ -2555,13 +2557,13 @@ _src_install() {
 
 	# Install policy (currently only used to disable application updates)
 	insinto "${MOZILLA_FIVE_HOME}/distribution"
-	newins "${FILESDIR}"/distribution.ini distribution.ini
-	newins "${FILESDIR}"/disable-auto-update.policy.json policies.json
+	newins "${FILESDIR}/distribution.ini" "distribution.ini"
+	newins "${FILESDIR}/disable-auto-update.policy.json" "policies.json"
 
 	# Install system-wide preferences
 	local PREFS_DIR="${MOZILLA_FIVE_HOME}/browser/defaults/preferences"
 	insinto "${PREFS_DIR}"
-	newins "${FILESDIR}"/gentoo-default-prefs.js gentoo-prefs.js
+	newins "${FILESDIR}/gentoo-default-prefs.js" "gentoo-prefs.js"
 
 	local GENTOO_PREFS="${ED}${PREFS_DIR}/gentoo-prefs.js"
 
@@ -2572,7 +2574,7 @@ EOF
 
 	# Force hwaccel prefs if USE=hwaccel is enabled
 	if use hwaccel ; then
-		cat "${FILESDIR}"/gentoo-hwaccel-prefs.js-r2 \
+		cat "${FILESDIR}/gentoo-hwaccel-prefs.js-r2" \
 		>>"${GENTOO_PREFS}" \
 || die "failed to add prefs to force hardware-accelerated rendering to all-gentoo.js"
 
@@ -2620,11 +2622,11 @@ EOF
 	# Install geckodriver
 	if use geckodriver ; then
 einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
-		pax-mark m "${BUILD_OBJ_DIR}"/dist/bin/geckodriver
+		pax-mark m "${BUILD_OBJ_DIR}/dist/bin/geckodriver"
 		exeinto "${MOZILLA_FIVE_HOME}"
-		doexe "${BUILD_OBJ_DIR}"/dist/bin/geckodriver
+		doexe "${BUILD_OBJ_DIR}/dist/bin/geckodriver"
 
-		dosym ${MOZILLA_FIVE_HOME}/geckodriver /usr/bin/geckodriver
+		dosym "${MOZILLA_FIVE_HOME}/geckodriver" "/usr/bin/geckodriver"
 	fi
 
 	# Install icons
@@ -2632,18 +2634,18 @@ einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
 	local icon_symbolic_file="${FILESDIR}/icon/firefox-symbolic.svg"
 
 	insinto /usr/share/icons/hicolor/symbolic/apps
-	newins "${icon_symbolic_file}" ${PN}-symbolic.svg
+	newins "${icon_symbolic_file}" "${PN}-symbolic.svg"
 
 	local icon size
-	for icon in "${icon_srcdir}"/default*.png ; do
+	for icon in "${icon_srcdir}/default"*".png" ; do
 		size=${icon%.png}
 		size=${size##*/default}
 
 		if [[ ${size} -eq 48 ]] ; then
-			newicon "${icon}" ${PN}.png
+			newicon "${icon}" "${PN}.png"
 		fi
 
-		newicon -s ${size} "${icon}" ${PN}.png
+		newicon -s ${size} "${icon}" "${PN}.png"
 	done
 
 	# Install menu
@@ -2673,8 +2675,8 @@ einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
 
 	# Install wrapper script
 	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
-	newbin "${FILESDIR}/extra-patches/${PN}-r1.sh" ${PN}-${ABI}
-	dosym /usr/bin/${PN}-${ABI} /usr/bin/${PN}
+	newbin "${FILESDIR}/extra-patches/${PN}-r1.sh" "${PN}-${ABI}"
+	dosym "/usr/bin/${PN}-${ABI}" "/usr/bin/${PN}"
 
 	# Update wrapper
 	sed -i \
@@ -2709,8 +2711,8 @@ einfo "APULSE found; Generating library symlinks for sound support ..."
 			for lib in ../apulse/libpulse{.so{,.0},-simple.so{,.0}} ; do
 	# A quickpkg rolled by hand will grab symlinks as part of the package,
 	# so we need to avoid creating them if they already exist.
-				if [[ ! -L ${lib##*/} ]] ; then
-					ln -s "${lib}" ${lib##*/} || die
+				if [[ ! -L "${lib##*/}" ]] ; then
+					ln -s "${lib}" "${lib##*/}" || die
 				fi
 			done
 		popd &>/dev/null || die

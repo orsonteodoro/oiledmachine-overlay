@@ -41,6 +41,9 @@ RDEPEND="
 	~dev-libs/rocm-comgr-${PV}:${SLOT}
 	~dev-libs/roct-thunk-interface-${PV}:${SLOT}
 	~dev-util/rocminfo-${PV}:${SLOT}
+	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
+	)
 "
 DEPEND="
 	${RDEPEND}
