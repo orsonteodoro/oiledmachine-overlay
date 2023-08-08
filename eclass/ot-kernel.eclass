@@ -932,10 +932,12 @@ NO_INSTRUMENT_FUNCTION="a63d4f6cbab133b0f1ce9afb562546fcc5bb2680"
 NO_INSTRUMENT_FUNCTION_TIMESTAMP="1624300463" # Mon Jun 21 06:34:23 PM UTC 2021
 
 PGO_LLVM_SUPPORTED_VERSIONS=(
-	"17.0.0.9999"
-	"17.0.0"
-	"17.0.0_pre20230615"
-	"17.0.0_pre20230609"
+#	"18.0.0.9999"
+#	"18.0.0_pre20230803"
+#	"17.0.0.9999"
+#	"17.0.0"
+#	"17.0.0_rc2"
+#	"17.0.0_rc1"
 	"16.0.6"
 	"16.0.5"
 	"16.0.4"
@@ -962,10 +964,10 @@ PGO_LLVM_SUPPORTED_VERSIONS=(
 	"13.0.0"
 )
 
-# IPD_RAW_V* is the same as INSTR_PROF_RAW_VERSION.
-IPD_RAW_V=5 # < llvm-13 Dec 28, 2020
-IPD_RAW_V_MIN=6
-IPD_RAW_V_MAX=8
+# IPD_RAW_VER* is the same as INSTR_PROF_RAW_VERSION.
+IPD_RAW_VER=5 # < llvm-13 Dec 28, 2020
+IPD_RAW_VER_MIN=6
+IPD_RAW_VER_MAX=8
 verify_profraw_compatibility() {
 einfo "Verifying profraw version compatibility"
 	# The profiling data format is very version sensitive.
@@ -989,24 +991,24 @@ einfo "Verifying profraw version compatibility"
 			| head -n 1 \
 			| grep -E -o -e "[0-9]+")
 		einfo "instr_prof_raw_v=${instr_prof_raw_v}"
-		if (( ${instr_prof_raw_v} == ${IPD_RAW_V} )) ; then
+		if (( ${instr_prof_raw_v} == ${IPD_RAW_VER} )) ; then
 			found_upstream_version=1
 		fi
-		if (( ${instr_prof_raw_v} >= ${IPD_RAW_V_MIN} && ${instr_prof_raw_v} <= ${IPD_RAW_V_MAX} )) ; then
+		if (( ${instr_prof_raw_v} >= ${IPD_RAW_VER_MIN} && ${instr_prof_raw_v} <= ${IPD_RAW_VER_MAX} )) ; then
 			found_patched_version=1
 		fi
 	done
 	if (( ${found_upstream_version} != 1 )) ; then
 eerror
 eerror "No installed LLVM versions are with compatible."
-eerror "INSTR_PROF_RAW_VERSION == ${IPD_RAW_V} is required"
+eerror "INSTR_PROF_RAW_VERSION == ${IPD_RAW_VER} is required"
 eerror
 		ewarn
 	fi
 	if (( ${found_patched_version} != 1 )) ; then
 eerror
-eerror "INSTR_PROF_RAW_VERSION >= ${IPD_RAW_V_MIN} and"
-eerror "INSTR_PROF_RAW_VERSION <= ${IPD_RAW_V_MAX} is required"
+eerror "INSTR_PROF_RAW_VERSION >= ${IPD_RAW_VER_MIN} and"
+eerror "INSTR_PROF_RAW_VERSION <= ${IPD_RAW_VER_MAX} is required"
 eerror
 eerror "No installed LLVM versions are compatible.  Please send an issue"
 eerror "request with your LLVM version.  If you are using a live LLVM version,"
