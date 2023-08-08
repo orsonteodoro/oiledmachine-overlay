@@ -17,7 +17,7 @@
       [Enable for feature completeness.]
     </flag>
     <flag name="hipfort">
-      Install Fortran support
+      Install Fortran support for accessing GPU kernels.
     </flag>
     <flag name="migraphx">
       Install software to accelerate machine learning model inference.

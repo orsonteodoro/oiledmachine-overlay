@@ -30,6 +30,7 @@ BDEPEND="
 	>=sys-devel/gcc-7.5.0[fortran]
 	~dev-util/rocm-cmake-${PV}
 "
+RESTRICT="test"
 S="${WORKDIR}/${PN}-rocm-${PV}"
 DOCS=( README.md )
 CMAKE_BUILD_TYPE="RELEASE"
