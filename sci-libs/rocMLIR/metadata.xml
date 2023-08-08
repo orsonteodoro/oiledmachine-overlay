@@ -10,13 +10,13 @@
     <remote-id type="github">ROCmSoftwarePlatform/rocMLIR</remote-id>
   </upstream>
   <use>
-    <flag name="llvm-roc">
-      Use the unstable early git snapshot of the LLVM fork with the exact
-      commit/version to avoid missing symbols and missing libraries.
-      (RECOMMENDED)
-
-      If disabled, it will build using the system's stable release of LLVM.
+    <flag name="system-mlir">
+      If enabled, it will build using the system's stable release of LLVM.
       (EXPERIMENTAL)
+
+      If disabled, it will used the internal vendored early git snapshot
+      fork to avoid missing symbols and missing libraries.
+      (RECOMMENDED)
     </flag>
   </use>
 </pkgmetadata>
