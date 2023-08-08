@@ -51,7 +51,7 @@ inherit chromium-2 desktop
 
 # [A] Supported versions (LTS) are listed in
 # https://www.electronjs.org/docs/latest/tutorial/electron-timelines
-ELECTRON_APP_ELECTRON_PV_SUPPORTED="20.0"
+ELECTRON_APP_ELECTRON_PV_SUPPORTED="22.0"
 
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:-"npm"} # can be npm, yarn
 ELECTRON_APP_ECLASS_DEBUG=${ELECTRON_APP_ECLASS_DEBUG:-"debug"} # debug or production
@@ -387,11 +387,14 @@ if [[ -n "${ELECTRON_APP_ELECTRON_PV}" ]] \
 	:; # E20, E21, E22, E23 supported upstream
 else
 	if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
+eerror
 eerror "Found:  ${ELECTRON_APP_ELECTRON_PV}"
 eerror "Supported:  >=${ELECTRON_APP_ELECTRON_PV_SUPPORTED}"
+eerror
 eerror "Electron should be updated to one of the latest Long Term Support (LTS)"
 eerror "series versions or else it likely contains critical CVE security"
 eerror "advisories."
+eerror
 	fi
 fi
 
