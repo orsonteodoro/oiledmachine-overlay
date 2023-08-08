@@ -27,11 +27,12 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-2.8.12
+	>=sys-devel/gcc-7.5.0[fortran]
 	~dev-util/rocm-cmake-${PV}
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
+DOCS=( README.md )
 CMAKE_BUILD_TYPE="RELEASE"
-DOCS=( CHANGELOG.md README.md )
 
 src_prepare() {
 	sed \
