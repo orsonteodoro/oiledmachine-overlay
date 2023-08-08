@@ -63,6 +63,7 @@ BDEPEND="
 		|| (
 			~sci-libs/rocMLIR-${PV}:${SLOT}
 			=sci-libs/rocMLIR-9999
+			=sci-libs/rocMLIR-5.5*:0/5.5
 		)
 	)
 "
