@@ -10,7 +10,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
 IUSE="
 	aqlprofile
-	hipfort
+	fortran
 	migraphx
 	mivisionx
 	rocm-bandwidth-test
@@ -29,7 +29,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	hipfort? (
+	fortran? (
 		~dev-util/hipfort-${PV}:${SLOT}
 	)
 	migraphx? (
