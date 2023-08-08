@@ -11,7 +11,11 @@
   </upstream>
   <use>
     <flag name="mlir">
-      Add support for rocMLIR
+      Add support for rocMLIR for convolutions on GPU.
+    </flag>
+    <flag name="hip-rtc">
+      Build kernels [GPU programs] during runtime.  If disabled, it will build
+      kernels during build time.
     </flag>
   </use>
 </pkgmetadata>

@@ -33,9 +33,17 @@ DESCRIPTION="AMD's graph optimization engine"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="mlir"
+IUSE="-cpu -fpga -hip-rtc -mlir +rocm test"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
+	|| (
+		rocm
+		cpu
+		fpga
+	)
+	mlir? (
+		rocm
+	)
 "
 # protobuf is relaxed
 RDEPEND="
@@ -44,12 +52,19 @@ RDEPEND="
 	>=dev-cpp/nlohmann_json-3.8.0
 	>=dev-libs/half-1.12.0
 	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
-	>=sys-libs/libomp-${LLVM_MAX_SLOT}
 	dev-libs/msgpack
-	dev-libs/oneDNN
 	dev-libs/protobuf:0/32
-	~sci-libs/miopen-${PV}:${SLOT}
-	~sci-libs/rocBLAS-${PV}:${SLOT}
+	cpu? (
+		>=sys-libs/libomp-${LLVM_MAX_SLOT}
+		dev-libs/oneDNN
+	)
+	rocm? (
+		~sci-libs/miopen-${PV}:${SLOT}
+		~sci-libs/rocBLAS-${PV}:${SLOT}
+	)
+	test? (
+		~dev-util/hip-${PV}:${SLOT}
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -78,8 +93,23 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-MIGRAPHX_ENABLE_MLIR=$(usex milr ON OFF)
+		-DMIGRAPHX_ENABLE_CPU=$(usex cpu ON OFF)
+		-DMIGRAPHX_ENABLE_FPGA=$(usex fpga ON OFF)
+		-DMIGRAPHX_ENABLE_GPU=$(usex rocm ON OFF)
+		-DMIGRAPHX_ENABLE_MLIR=$(usex milr ON OFF)
+		-DMIGRAPHX_USE_HIPRTC=$(usex hip-rtc ON OFF)
 	)
+
+	if use rocm ; then
+		export HIP_PLATFORM="amd"
+		mycmakeargs+=(
+			-DHIP_COMPILER="clang"
+			-DHIP_PLATFORM="amd"
+			-DHIP_RUNTIME="rocclr"
+		)
+	fi
+
+	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
 }
 
