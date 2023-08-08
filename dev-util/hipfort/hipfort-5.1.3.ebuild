@@ -51,7 +51,7 @@ src_configure() {
 
 src_install() {
         cmake_src_install
-	doins LICENSE
+	dodoc LICENSE
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
