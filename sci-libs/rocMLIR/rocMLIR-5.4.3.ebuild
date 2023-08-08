@@ -33,7 +33,7 @@ LICENSE="
 # all rights reserved with MIT - mlir/tools/rocmlir-lib/LICENSE
 # The distro MIT license template does not have all rights reserved
 SLOT="0/$(ver_cut 1-2)"
-IUSE="-system-mlir"
+IUSE="-system-mlir r1"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
@@ -164,6 +164,14 @@ src_install() {
 
 		src="${BUILD_DIR}/external/llvm-project/llvm/include"
 		dest="/usr/$(get_libdir)/${PN}/include"
+		dodir "${dest}"
+		cp -aT \
+			"${src}" \
+			"${ED}/${dest}" \
+			|| die
+
+		src="${BUILD_DIR}/lib/cmake"
+		dest="/usr/$(get_libdir)"
 		dodir "${dest}"
 		cp -aT \
 			"${src}" \
