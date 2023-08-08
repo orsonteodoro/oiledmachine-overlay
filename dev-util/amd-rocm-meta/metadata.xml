@@ -16,6 +16,9 @@
 
       [Enable for feature completeness.]
     </flag>
+    <flag name="hipfort">
+      Install Fortran support
+    </flag>
     <flag name="migraphx">
       Install software to accelerate machine learning model inference.
     </flag>

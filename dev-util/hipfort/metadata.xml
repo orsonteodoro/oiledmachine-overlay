@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <upstream>
+    <remote-id type="github">ROCmSoftwarePlatform/hipfort</remote-id>
+  </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Modified ebuild obtained from
+  https://github.com/justxi/rocm/tree/master/dev-util/hipfort
+
+  -->
+</pkgmetadata>

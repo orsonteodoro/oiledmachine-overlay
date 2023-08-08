@@ -10,6 +10,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
 IUSE="
 	aqlprofile
+	hipfort
 	migraphx
 	mivisionx
 	rocm-bandwidth-test
@@ -28,6 +29,9 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	hipfort? (
+		~dev-util/hipfort-${PV}:${SLOT}
+	)
 	migraphx? (
 		~sci-libs/MIGraphX-${PV}:${SLOT}[rocm]
 	)
