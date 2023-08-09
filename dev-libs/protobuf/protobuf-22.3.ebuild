@@ -24,7 +24,7 @@ HOMEPAGE="
 "
 LICENSE="BSD"
 SLOT="0/22" # Based on highest .so file.
-IUSE="emacs examples static-libs test zlib"
+IUSE="emacs examples static-libs test zlib r1"
 RESTRICT="!test? ( test )"
 RDEPEND="
 	>=dev-cpp/abseil-cpp-20230125.0:0/20230125[${MULTILIB_USEDEP},test-helpers(-)]
@@ -101,6 +101,10 @@ src_configure() {
 	if [[ "${FEATURES}" =~ "ccache" ]] ; then
 		with_ccache=ON
 	fi
+
+	replace-flags '-O0' '-O1'
+	append-flags -fPIC
+
 	append-cppflags -DGOOGLE_PROTOBUF_NO_RTTI
 	if tc-ld-is-gold; then
 	# https://sourceware.org/bugzilla/show_bug.cgi?id=24527
