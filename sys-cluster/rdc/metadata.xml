@@ -14,7 +14,10 @@
       Build compile-commands for linters and autocompleters
     </flag>
     <flag name="raslib">
-      Build raslib
+      Install the prebuilt RAS (Reliability, Availability and Serviceability)
+      library to monitor RAS errors.
+
+      [This library is closed source.]
     </flag>
     <flag name="standalone">
       Build rdci (admin command line tool to use features on nodes) or rdcd

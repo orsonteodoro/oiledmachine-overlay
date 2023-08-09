@@ -1,0 +1,38 @@
+diff -urp rdc-rocm-5.4.3.orig/CMakeLists.txt rdc-rocm-5.4.3/CMakeLists.txt
+--- rdc-rocm-5.4.3.orig/CMakeLists.txt	2023-01-25 10:51:10.000000000 -0800
++++ rdc-rocm-5.4.3/CMakeLists.txt	2023-08-08 21:58:21.670390419 -0700
+@@ -138,6 +138,7 @@ if(BUILD_STANDALONE AND GRPC_ROOT STREQU
+     Continuing without gRPC install")
+ endif()
+ 
++option(INSTALL_RASLIB "Install the RAS (Reliability, Availability, and Serviceability) plugin." OFF)
+ if(NOT EXISTS "${CMAKE_SOURCE_DIR}/raslib/.git" AND BUILD_RASLIB)
+     message(FATAL_ERROR "The git submodule raslib is not available. Please run
+     git submodule update --init --recursive
+@@ -336,15 +337,17 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/
+     COMPONENT ${CLIENT_COMPONENT})
+ 
+ # Prebuild packages to install
+-install(FILES ${PROJECT_SOURCE_DIR}/ras_prebuild/librdc_ras.so
+-    DESTINATION ${RDC_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/${RDC}
+-    COMPONENT ${CLIENT_COMPONENT})
+-install(DIRECTORY ${PROJECT_SOURCE_DIR}/ras_prebuild/config
+-    DESTINATION ${RDC_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/${RDC}
+-    COMPONENT ${CLIENT_COMPONENT})
+-install(DIRECTORY ${PROJECT_SOURCE_DIR}/ras_prebuild/sp3
+-    DESTINATION ${RDC_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/${RDC}
+-    COMPONENT ${CLIENT_COMPONENT})
++if(INSTALL_RASLIB)
++    install(FILES ${PROJECT_SOURCE_DIR}/ras_prebuild/librdc_ras.so
++        DESTINATION ${RDC_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/${RDC}
++        COMPONENT ${CLIENT_COMPONENT})
++    install(DIRECTORY ${PROJECT_SOURCE_DIR}/ras_prebuild/config
++        DESTINATION ${RDC_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/${RDC}
++        COMPONENT ${CLIENT_COMPONENT})
++    install(DIRECTORY ${PROJECT_SOURCE_DIR}/ras_prebuild/sp3
++        DESTINATION ${RDC_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/${RDC}
++        COMPONENT ${CLIENT_COMPONENT})
++endif()
+ 
+ 
+ #Identify between SLES and Centos for setting symlink for rdc.service

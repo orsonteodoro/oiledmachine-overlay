@@ -23,6 +23,7 @@ environments."
 HOMEPAGE="https://github.com/RadeonOpenCompute/rdc"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
+# raslib is installed by default, but disabled for security.
 IUSE="+compile-commands doc -raslib +standalone systemd test"
 RDEPEND="
 	sys-libs/libcap
@@ -59,6 +60,7 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
+	"${FILESDIR}/rdc-5.6.0-raslib-install.patch"
 )
 
 src_prepare() {
@@ -67,13 +69,14 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DBUILD_RASLIB=$(usex raslib ON OFF)
+		-DBUILD_RASLIB=OFF # No repo
 		-DBUILD_ROCPTEST=$(usex test ON OFF)
 		-DBUILD_ROCRTEST=$(usex test ON OFF)
 		-DBUILD_STANDALONE=$(usex standalone ON OFF)
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=$(usex compile-commands ON OFF)
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DGRPC_ROOT="${ESYSROOT}/usr"
+		-DINSTALL_RASLIB=$(usex raslib ON OFF)
 	)
 	cmake_src_configure
 }

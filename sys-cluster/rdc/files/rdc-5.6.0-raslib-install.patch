@@ -1,0 +1,38 @@
+diff -urp rdc-rocm-5.6.0.orig/CMakeLists.txt rdc-rocm-5.6.0/CMakeLists.txt
+--- rdc-rocm-5.6.0.orig/CMakeLists.txt	2023-05-09 09:33:53.000000000 -0700
++++ rdc-rocm-5.6.0/CMakeLists.txt	2023-08-08 21:43:14.794366799 -0700
+@@ -333,6 +333,7 @@ if(BUILD_STANDALONE)
+ endif()
+ 
+ # Raslib
++option(INSTALL_RASLIB "Install the RAS (Reliability, Availability, and Serviceability) plugin." OFF)
+ if(BUILD_RASLIB)
+     message("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+     message("                    Build raslib")
+@@ -390,15 +391,17 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/
+     COMPONENT dev)
+ 
+ # Prebuild packages to install
+-install(FILES ${RAS_SOURCES}
+-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/${RDC}
+-    COMPONENT ${CLIENT_COMPONENT})
+-install(DIRECTORY ${PROJECT_SOURCE_DIR}/ras_prebuild/config
+-    DESTINATION ${CMAKE_INSTALL_DATADIR}/${RDC}
+-    COMPONENT ${CLIENT_COMPONENT})
+-install(DIRECTORY ${PROJECT_SOURCE_DIR}/ras_prebuild/sp3
+-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/${RDC}
+-    COMPONENT ${CLIENT_COMPONENT})
++if(INSTALL_RASLIB)
++    install(FILES ${RAS_SOURCES}
++        DESTINATION ${CMAKE_INSTALL_LIBDIR}/${RDC}
++        COMPONENT ${CLIENT_COMPONENT})
++    install(DIRECTORY ${PROJECT_SOURCE_DIR}/ras_prebuild/config
++        DESTINATION ${CMAKE_INSTALL_DATADIR}/${RDC}
++        COMPONENT ${CLIENT_COMPONENT})
++    install(DIRECTORY ${PROJECT_SOURCE_DIR}/ras_prebuild/sp3
++        DESTINATION ${CMAKE_INSTALL_LIBDIR}/${RDC}
++        COMPONENT ${CLIENT_COMPONENT})
++endif()
+ 
+ 
+ #Identify between SLES and Centos for setting symlink for rdc.service
