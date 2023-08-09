@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">RadeonOpenCompute/rdc</remote-id>
+  </upstream>
+  <use>
+    <flag name="compile-commands">
+      Build compile-commands for linters and autocompleters
+    </flag>
+    <flag name="raslib">
+      Build raslib
+    </flag>
+    <flag name="standalone">
+      Build rdci (admin command line tool to use features on nodes) or rdcd
+      (node daemon for remote controlling that system)
+    </flag>
+  </use>
+</pkgmetadata>

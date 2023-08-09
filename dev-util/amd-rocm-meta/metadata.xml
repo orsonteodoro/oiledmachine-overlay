@@ -26,6 +26,10 @@
       Install a rapid prototyping toolkit for computer vision and machine
       intelligence.
     </flag>
+    <flag name="rdc">
+      Install the Data Center Tool for administration of GPUs in clusters
+      and datacenters.
+    </flag>
     <flag name="rock-dkms">
       Install the kernel driver.
     </flag>

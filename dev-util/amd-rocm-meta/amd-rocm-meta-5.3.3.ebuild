@@ -13,6 +13,7 @@ IUSE="
 	fortran
 	migraphx
 	mivisionx
+	rdc
 	rocm-bandwidth-test
 	rock-dkms
 	rocm-dev
@@ -37,6 +38,9 @@ RDEPEND="
 	)
 	mivisionx? (
 		~sci-libs/MIVisionX-${PV}:${SLOT}[rocm]
+	)
+	rdc? (
+		~sys-cluster/rdc-${PV}:${SLOT}
 	)
 	rock-dkms? (
 		~sys-kernel/rock-dkms-${PV}:${SLOT}
