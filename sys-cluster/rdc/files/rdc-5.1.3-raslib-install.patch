@@ -1,15 +1,20 @@
 diff -urp rdc-rocm-5.1.3.orig/CMakeLists.txt rdc-rocm-5.1.3/CMakeLists.txt
 --- rdc-rocm-5.1.3.orig/CMakeLists.txt	2022-03-18 09:09:27.000000000 -0700
-+++ rdc-rocm-5.1.3/CMakeLists.txt	2023-08-08 21:39:06.698360337 -0700
-@@ -46,6 +46,7 @@ if( NOT EXISTS "${CMAKE_SOURCE_DIR}/rasl
-     )
- endif()
++++ rdc-rocm-5.1.3/CMakeLists.txt	2023-08-08 22:41:23.322457659 -0700
+@@ -39,6 +39,12 @@ option(BUILD_RASLIB "Build targets for r
+ # which requires the Rocm run time.
+ option(BUILD_ROCRTEST "Build targets for librdc_rocr.so" ON)
  
 +option(INSTALL_RASLIB "Install the RAS (Reliability, Availability, and Serviceability) plugin." OFF)
- if (BUILD_RASLIB AND NOT DEFINED HSA_DIR)
-     message( FATAL_ERROR "Please specify libhsakmt directory which is required by raslib
-     cmake -DHSA_DIR=<libhsakmt directory>
-@@ -290,15 +291,17 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/
++
++if(NOT INSTALL_RASLIB)
++    add_defintion(-DRASLIB_DISABLED)
++endif()
++
+ if( NOT EXISTS "${CMAKE_SOURCE_DIR}/raslib/.git" AND BUILD_RASLIB)
+     message( FATAL_ERROR "The git submodule raslib is not available. Please run
+     git submodule update --init --recursive
+@@ -290,15 +296,17 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/
                                           COMPONENT ${CLIENT_COMPONENT})
  
  # Prebuild packages to install
@@ -36,5 +41,17 @@ diff -urp rdc-rocm-5.1.3.orig/CMakeLists.txt rdc-rocm-5.1.3/CMakeLists.txt
  
  
  set(CPACK_PACKAGE_NAME ${RDC_PACKAGE})
-Only in rdc-rocm-5.1.3: CMakeLists.txt.orig
-Only in rdc-rocm-5.1.3: CMakeLists.txt.rej
+diff -urp rdc-rocm-5.1.3.orig/rdc_libs/rdc/src/RdcRasLib.cc rdc-rocm-5.1.3/rdc_libs/rdc/src/RdcRasLib.cc
+--- rdc-rocm-5.1.3.orig/rdc_libs/rdc/src/RdcRasLib.cc	2022-03-18 09:09:27.000000000 -0700
++++ rdc-rocm-5.1.3/rdc_libs/rdc/src/RdcRasLib.cc	2023-08-08 22:41:51.994458406 -0700
+@@ -34,6 +34,10 @@ RdcRasLib::RdcRasLib(const char* lib_nam
+     , fields_unwatch_(nullptr)
+     , rdc_module_init_(nullptr)
+     , rdc_module_destroy_(nullptr) {
++#ifdef RASLIB_DISABLED
++    RDC_LOG(RDC_ERROR, "RAS disabled.");
++    return;
++#endif
+     rdc_status_t status = lib_loader_.load(lib_name);
+     if (status != RDC_ST_OK) {
+         RDC_LOG(RDC_ERROR, "RAS related function will not work.");

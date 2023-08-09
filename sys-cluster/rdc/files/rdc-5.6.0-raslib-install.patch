@@ -1,15 +1,20 @@
 diff -urp rdc-rocm-5.6.0.orig/CMakeLists.txt rdc-rocm-5.6.0/CMakeLists.txt
 --- rdc-rocm-5.6.0.orig/CMakeLists.txt	2023-05-09 09:33:53.000000000 -0700
-+++ rdc-rocm-5.6.0/CMakeLists.txt	2023-08-08 21:43:14.794366799 -0700
-@@ -333,6 +333,7 @@ if(BUILD_STANDALONE)
- endif()
++++ rdc-rocm-5.6.0/CMakeLists.txt	2023-08-08 22:38:34.042453250 -0700
+@@ -63,6 +63,12 @@ option(CMAKE_VERBOSE_MAKEFILE "Enable ve
  
- # Raslib
+ option(CMAKE_EXPORT_COMPILE_COMMANDS "Export compile commands for linters and autocompleters" ON)
+ 
 +option(INSTALL_RASLIB "Install the RAS (Reliability, Availability, and Serviceability) plugin." OFF)
- if(BUILD_RASLIB)
-     message("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-     message("                    Build raslib")
-@@ -390,15 +391,17 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/
++
++if(NOT INSTALL_RASLIB)
++    add_definition(-DRASLIB_DISABLED)
++endif()
++
+ # this must go after some CMAKE_* variables
+ project(${RDC}
+     VERSION "${VERSION_STRING}"
+@@ -390,15 +396,17 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/
      COMPONENT dev)
  
  # Prebuild packages to install
@@ -36,3 +41,17 @@ diff -urp rdc-rocm-5.6.0.orig/CMakeLists.txt rdc-rocm-5.6.0/CMakeLists.txt
  
  
  #Identify between SLES and Centos for setting symlink for rdc.service
+diff -urp rdc-rocm-5.6.0.orig/rdc_libs/rdc/src/RdcRasLib.cc rdc-rocm-5.6.0/rdc_libs/rdc/src/RdcRasLib.cc
+--- rdc-rocm-5.6.0.orig/rdc_libs/rdc/src/RdcRasLib.cc	2023-05-09 09:33:53.000000000 -0700
++++ rdc-rocm-5.6.0/rdc_libs/rdc/src/RdcRasLib.cc	2023-08-08 22:35:50.746448997 -0700
+@@ -35,6 +35,10 @@ RdcRasLib::RdcRasLib(const char* lib_nam
+     , rdc_module_init_(nullptr)
+     , rdc_module_destroy_(nullptr) {
+     rdc_status_t status = lib_loader_.load(lib_name);
++#ifdef RASLIB_DISABLED
++    RDC_LOG(RDC_ERROR, "RAS disabled.");
++    return;
++#endif
+     if (status != RDC_ST_OK) {
+         RDC_LOG(RDC_ERROR, "RAS related function will not work.");
+         return;
