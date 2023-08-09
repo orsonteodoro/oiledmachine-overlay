@@ -99,6 +99,13 @@ src_configure() {
 	if [[ "${FEATURES}" =~ "ccache" ]] ; then
 		with_ccache=ON
 	fi
+
+	# Prevent ICE
+#src/google/protobuf/repeated_ptr_field.h:1571:13: internal compiler error: Segmentation fault
+# 1571 |   iterator& operator++() {
+#      |             ^~~~~~~~
+	replace-flags '-O0' '-O1'
+
 	append-cppflags -DGOOGLE_PROTOBUF_NO_RTTI
 	if tc-ld-is-gold; then
 	# https://sourceware.org/bugzilla/show_bug.cgi?id=24527
