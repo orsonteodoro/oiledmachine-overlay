@@ -25,6 +25,11 @@ LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # raslib is installed by default, but disabled for security.
 IUSE="+compile-commands doc -raslib +standalone systemd test"
+REQUIRED_USE="
+	systemd? (
+		standalone
+	)
+"
 RDEPEND="
 	sys-libs/libcap
 	~dev-util/rocm-smi-${PV}:${SLOT}
@@ -89,7 +94,7 @@ pkg_postinst() {
 		:;
 	else
 ewarn
-ewarn "The ONE following are required to use ${PN}:"
+ewarn "ONE following are required to use ${PN}:"
 ewarn
 ewarn "  ~sys-kernel/rock-dkms-${PV}"
 ewarn "  ~sys-kernel/rocm-sources-${PV}"
@@ -98,3 +103,5 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+
