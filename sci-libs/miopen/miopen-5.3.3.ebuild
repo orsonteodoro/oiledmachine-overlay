@@ -176,9 +176,17 @@ src_configure() {
 		-DCMAKE_SKIP_RPATH=ON
 		-DMIOPEN_BACKEND=HIP
 		-DMIOPEN_TEST_ALL=$(usex test ON OFF)
+		-DMIOPEN_USE_MLIR=$(usex mlir ON OFF)
 	)
 
-	if use test; then
+	if use mlir ; then
+		mycmakeargs+=(
+			-DrocMLIR_DIR="${ESYSROOT}/usr/$(get_libdir)/rocMLIR/$(get_libdir)/cmake"
+		)
+	fi
+
+	if use test ; then
+		local gpu_target
 		for gpu_target in ${AMDGPU_TARGETS} ; do
 			mycmakeargs+=(
 				$(filter_test_gpus)

@@ -205,7 +205,14 @@ src_configure() {
 		-DMIOPEN_USE_MLIR=$(usex mlir ON OFF)
 	)
 
-	if use test; then
+	if use mlir ; then
+		mycmakeargs+=(
+			-DCMAKE_MODULE_PATH="${ESYSROOT}/usr/$(get_libdir)/rocMLIR/$(get_libdir)/cmake"
+		)
+	fi
+
+	if use test ; then
+		local gpu_target
 		for gpu_target in ${AMDGPU_TARGETS} ; do
 			mycmakeargs+=(
 				$(filter_test_gpus)
