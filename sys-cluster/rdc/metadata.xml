@@ -19,6 +19,8 @@
     <flag name="standalone">
       Build rdci (admin command line tool to use features on nodes) or rdcd
       (node daemon for remote controlling that system)
+
+      Disabling will only build libraries.
     </flag>
   </use>
 </pkgmetadata>

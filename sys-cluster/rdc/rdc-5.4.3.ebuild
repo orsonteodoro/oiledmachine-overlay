@@ -70,6 +70,7 @@ src_configure() {
 		-DBUILD_RASLIB=$(usex raslib ON OFF)
 		-DBUILD_ROCPTEST=$(usex test ON OFF)
 		-DBUILD_ROCRTEST=$(usex test ON OFF)
+		-DBUILD_STANDALONE=$(usex standalone ON OFF)
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=$(usex compile-commands ON OFF)
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DGRPC_ROOT="${ESYSROOT}/usr"
