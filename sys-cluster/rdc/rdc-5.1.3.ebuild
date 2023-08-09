@@ -50,6 +50,8 @@ BDEPEND="
 	>=dev-util/cmake-3.16.8
 	doc? (
 		>=app-doc/doxygen-1.8.11
+		dev-texlive/texlive-latexextra
+		dev-texlive/texlive-plaingeneric
 		virtual/latex-base
 	)
 	test? (
