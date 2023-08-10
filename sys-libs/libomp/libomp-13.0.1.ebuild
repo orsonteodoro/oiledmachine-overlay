@@ -3,6 +3,20 @@
 
 EAPI=7
 
+CUDA_TARGETS_COMPAT=(
+	sm_35
+	sm_37
+	sm_50
+	sm_52
+	sm_53
+	sm_60
+	sm_61
+	sm_62
+	sm_70
+	sm_72
+	sm_75
+	sm_80
+)
 PYTHON_COMPAT=( python3_{9..10} )
 
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-any-r1
@@ -21,20 +35,125 @@ KEYWORDS="
 amd64 arm arm64 ~ppc ppc64 ~riscv x86 ~amd64-linux ~x64-macos
 "
 IUSE="
-cuda debug hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+cuda debug hwloc offload ompt test llvm_targets_NVPTX
 "
 # CUDA works only with the x86_64 ABI
+gen_cuda_required_use() {
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		echo "
+			cuda_targets_${x}? (
+				llvm_targets_NVPTX
+			)
+		"
+	done
+}
 REQUIRED_USE="
+	$(gen_cuda_required_use)
 	cuda? (
 		llvm_targets_NVPTX
 	)
-	offload? (
-		cuda? (
-			abi_x86_64
+	llvm_targets_NVPTX? (
+		abi_x86_64
+		cuda
+		offline
+		|| (
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
 "
 RDEPEND="
+	cuda_targets_sm_35? (
+		=dev-util/nvidia-cuda-toolkit-11*:=
+	)
+	cuda_targets_sm_37? (
+		=dev-util/nvidia-cuda-toolkit-11*:=
+	)
+	cuda_targets_sm_50? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_52? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_53? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_60? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_61? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_62? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_70? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_72? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_75? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_80? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_86? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_87? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_89? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_90? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11.8*:=
+		)
+	)
 	hwloc? (
 		>=sys-apps/hwloc-2.5:0=[${MULTILIB_USEDEP}]
 	)
@@ -42,9 +161,6 @@ RDEPEND="
 		dev-libs/libffi:=[${MULTILIB_USEDEP}]
 		virtual/libelf:=[${MULTILIB_USEDEP}]
 		~sys-devel/llvm-${PV}[${MULTILIB_USEDEP}]
-		cuda? (
-			dev-util/nvidia-cuda-toolkit:=
-		)
 	)
 "
 # Tests:
@@ -112,6 +228,18 @@ pkg_setup() {
 	use test && python-any-r1_pkg_setup
 }
 
+gen_nvptx_list() {
+	local list
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		if use "${x}" ; then
+			list+=";${x/sm_}"
+		fi
+	done
+	list="${list:1}"
+	echo "${list}"
+}
+
 multilib_src_configure() {
 	# LTO causes issues in other packages building, #870127
 	filter-lto
@@ -134,7 +262,7 @@ multilib_src_configure() {
 		-DLIBOMP_COPY_EXPORTS=OFF
 	)
 
-	if use offload; then
+	if use offload ; then
 		if has "${CHOST%%-*}" aarch64 powerpc64le x86_64; then
 			mycmakeargs+=(
 				-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=$(usex !cuda)
@@ -151,6 +279,12 @@ multilib_src_configure() {
 				-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
 				-DLIBOMPTARGET_BUILD_AMDGCN_BCLIB=OFF
 				-DLIBOMPTARGET_BUILD_NVPTX_BCLIB=OFF
+			)
+		fi
+
+		if use llvm_targets_NVPTX ; then
+			mycmakeargs+=(
+				-DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES=$(gen_nvptx_list)
 			)
 		fi
 	fi

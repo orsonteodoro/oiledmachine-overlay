@@ -20,7 +20,10 @@ LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="debug"
 RDEPEND="
-	>=sys-devel/gcc-7.5.0[fortran]
+	|| (
+		>=sys-devel/gcc-7.5.0[fortran]
+		dev-lang/flang
+	)
 "
 DEPEND="
 	${RDEPEND}

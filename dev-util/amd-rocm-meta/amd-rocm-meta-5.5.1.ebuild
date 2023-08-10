@@ -31,6 +31,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	fortran? (
+		dev-lang/flang
 		~dev-util/hipfort-${PV}:${SLOT}
 	)
 	migraphx? (

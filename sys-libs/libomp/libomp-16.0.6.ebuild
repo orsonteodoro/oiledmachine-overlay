@@ -3,10 +3,52 @@
 
 EAPI=8
 
+AMDGPU_TARGETS_COMPAT=(
+	gfx700
+	gfx701
+	gfx801
+	gfx803
+	gfx900
+	gfx902
+	gfx906
+	gfx908
+	gfx90a
+	gfx90c
+	gfx940
+	gfx1010
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1033
+	gfx1034
+	gfx1035
+	gfx1036
+	gfx1100
+	gfx1101
+	gfx1102
+	gfx1103
+)
+CUDA_TARGETS_COMPAT=(
+	sm_35
+	sm_37
+	sm_50
+	sm_52
+	sm_53
+	sm_60
+	sm_61
+	sm_62
+	sm_70
+	sm_72
+	sm_75
+	sm_80
+	sm_86
+	sm_89
+	sm_90
+)
 PYTHON_COMPAT=( python3_{10..12} )
 
-inherit flag-o-matic cmake-multilib linux-info llvm llvm.org
-inherit python-single-r1 toolchain-funcs
+inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-single-r1
+inherit rocm toolchain-funcs
 
 DESCRIPTION="OpenMP runtime library for LLVM/clang compiler"
 HOMEPAGE="https://openmp.llvm.org"
@@ -22,26 +64,165 @@ KEYWORDS="
 amd64 ~arm arm64 ~loong ~ppc ppc64 ~riscv x86 ~amd64-linux ~x64-macos
 "
 IUSE="
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${ROCM_IUSE}
 debug gdb-plugin hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
 "
+gen_cuda_required_use() {
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		echo "
+			cuda_targets_${x}? (
+				llvm_targets_NVPTX
+			)
+		"
+	done
+}
+gen_rocm_required_use() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				llvm_targets_AMDGPU
+			)
+		"
+	done
+}
 REQUIRED_USE="
+	$(gen_cuda_required_use)
+	$(gen_rocm_required_use)
+	llvm_targets_AMDGPU? (
+		${ROCM_REQUIRED_USE}
+		offload
+	)
+	llvm_targets_NVPTX? (
+		offload
+		|| (
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		)
+	)
 	gdb-plugin? (
 		${PYTHON_REQUIRED_USE}
 	)
 "
+ROCM_SLOTS=(
+	"5.6.0"
+	"5.5.1"
+	"5.4.3"
+	"5.3.3"
+	"5.1.3"
+)
+gen_amdgpu_rdepend() {
+	local pv
+	for pv in ${ROCM_SLOTS[@]} ; do
+		local s="0/"${pv%.*}
+		echo "
+			(
+				~dev-libs/rocr-runtime-${pv}:${s}
+				~dev-libs/roct-thunk-interface-${pv}:${s}
+			)
+		"
+	done
+}
 RDEPEND="
+	cuda_targets_sm_35? (
+		=dev-util/nvidia-cuda-toolkit-11*:=
+	)
+	cuda_targets_sm_37? (
+		=dev-util/nvidia-cuda-toolkit-11*:=
+	)
+	cuda_targets_sm_50? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_52? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_53? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_60? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_61? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_62? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_70? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_72? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_75? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_80? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_86? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_89? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11*:=
+		)
+	)
+	cuda_targets_sm_90? (
+		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
+			=dev-util/nvidia-cuda-toolkit-11.8*:=
+		)
+	)
 	gdb-plugin? (
 		${PYTHON_DEPS}
 	)
 	hwloc? (
 		>=sys-apps/hwloc-2.5:0=[${MULTILIB_USEDEP}]
 	)
+	llvm_targets_AMDGPU? (
+		|| (
+			$(gen_amdgpu_rdepend)
+		)
+	)
 	offload? (
 		dev-libs/libffi:=[${MULTILIB_USEDEP}]
 		~sys-devel/llvm-${PV}[${MULTILIB_USEDEP}]
-		llvm_targets_AMDGPU? (
-			dev-libs/rocr-runtime:=
-		)
 	)
 "
 # tests:
@@ -108,6 +289,18 @@ pkg_setup() {
 	fi
 }
 
+gen_nvptx_list() {
+	local list
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		if use "${x}" ; then
+			list+=";${x/sm_}"
+		fi
+	done
+	list="${list:1}"
+	echo "${list}"
+}
+
 multilib_src_configure() {
 	# LTO causes issues in other packages building, #870127
 	filter-lto
@@ -154,6 +347,12 @@ multilib_src_configure() {
 			mycmakeargs+=(
 				-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
 				-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=OFF
+			)
+		fi
+
+		if use llvm_targets_NVPTX ; then
+			mycmakeargs+=(
+				-DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES=$(gen_nvptx_list)
 			)
 		fi
 	fi
