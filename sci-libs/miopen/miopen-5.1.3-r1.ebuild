@@ -33,7 +33,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="debug kernels opencl +rocm test r1"
+IUSE="comgr debug hiprtc kernels opencl +rocm test r1"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -46,6 +46,13 @@ gen_amdgpu_required_use() {
 }
 REQUIRED_USE="
 	$(gen_amdgpu_required_use)
+	hiprtc? (
+		comgr
+		rocm
+	)
+	opencl? (
+		!comgr
+	)
 	^^ (
 		rocm
 		opencl
@@ -56,6 +63,9 @@ RDEPEND="
 	>=dev-libs/boost-1.72
 	app-arch/bzip2
 	~dev-util/hip-${PV}:${SLOT}
+	comgr? (
+		~dev-libs/rocm-comgr-${PV}:${SLOT}
+	)
 	kernels? (
 		~sci-libs/miopenkernels-${PV}:${SLOT}
 	)
@@ -78,6 +88,9 @@ DEPEND="
 BDEPEND="
 	virtual/pkgconfig
 	~dev-util/rocm-cmake-${PV}:${SLOT}
+	mlir? (
+		~sci-libs/rocMLIR-${PV}:${SLOT}[fat-librockcompiler]
+	)
 "
 RESTRICT="
 	!test? (
@@ -100,6 +113,12 @@ PATCHES=(
 
 src_prepare() {
 	cmake_src_prepare
+
+	sed \
+		-i \
+		-e "s|rocMLIR 1.0.0 CONFIG|rocMLIR|g" \
+		CMakeLists.txt \
+		|| die
 
 	hipconfig --help >/dev/null || die
 	sed \
@@ -175,12 +194,14 @@ src_configure() {
 		-DCMAKE_SKIP_RPATH=ON
 		-DMIOPEN_BACKEND=HIP
 		-DMIOPEN_TEST_ALL=$(usex test ON OFF)
+		-DMIOPEN_USE_COMGR=$(usex comgr ON OFF)
+		-DMIOPEN_USE_HIPRTC=$(usex hiprtc ON OFF)
 		-DMIOPEN_USE_MLIR=$(usex mlir ON OFF)
 	)
 
 	if use mlir ; then
 		mycmakeargs+=(
-			-DCMAKE_MODULE_PATH="${ESYSROOT}/usr/$(get_libdir)/rocMLIR/$(get_libdir)/cmake"
+			-DCMAKE_MODULE_PATH="${ESYSROOT}/usr/$(get_libdir)/rocMLIR"
 		)
 	fi
 

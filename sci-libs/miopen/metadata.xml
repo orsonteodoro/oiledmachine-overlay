@@ -16,8 +16,18 @@
     <name>Yiyang Wu</name>
   </maintainer>
   <use>
+    <flag name="comgr">
+      Use comgr to build either ASM or HIP RTC (Run Time Compilation) kernels.
+    </flag>
+    <flag name="composable-kernel">
+      Add support for additional operations.
+    </flag>
+    <flag name="hiprtc">
+      Use runtime compilation of kernels instead of build time
+      compilation.
+    </flag>
     <flag name="mlir">
-      Add support for optimized MLIR GPU kernels
+      Add support for optimized MLIR GPU kernels.
     </flag>
     <flag name="kernels">
       Install the prebuilt kernels to reduce the startup latency of first

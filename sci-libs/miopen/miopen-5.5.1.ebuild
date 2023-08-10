@@ -37,7 +37,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="debug kernels mlir opencl +rocm test r1"
+IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test r1"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -50,6 +50,17 @@ gen_amdgpu_required_use() {
 }
 REQUIRED_USE="
 	$(gen_amdgpu_required_use)
+	composable-kernel? (
+		rocm
+	)
+	hiprtc? (
+		comgr
+		rocm
+	)
+	opencl? (
+		!comgr
+		!composable-kernel
+	)
 	^^ (
 		rocm
 		opencl
@@ -60,6 +71,12 @@ RDEPEND="
 	>=dev-libs/boost-1.72
 	app-arch/bzip2
 	~dev-util/hip-${PV}:${SLOT}
+	comgr? (
+		~dev-libs/rocm-comgr-${PV}:${SLOT}
+	)
+	composable-kernel? (
+		>=sci-libs/composable_kernel-1.0.0
+	)
 	kernels? (
 		~sci-libs/miopenkernels-${PV}:${SLOT}
 	)
@@ -69,7 +86,6 @@ RDEPEND="
 		=sci-libs/miopengemm-5.5*:0/5.5
 	)
 	rocm? (
-		>=sci-libs/composable_kernel-1.0.0
 		~dev-libs/rocm-comgr-${PV}:${SLOT}
 		~dev-util/hip-${PV}:${SLOT}[rocm]
 		~sci-libs/rocBLAS-${PV}:${SLOT}[${ROCM_USEDEP},rocm]
@@ -85,8 +101,8 @@ BDEPEND="
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	mlir? (
 		|| (
-			~sci-libs/rocMLIR-${PV}:${SLOT}
-			=sci-libs/rocMLIR-${PV%.*}*:${SLOT}
+			~sci-libs/rocMLIR-${PV}:${SLOT}[fat-librockcompiler]
+			=sci-libs/rocMLIR-${PV%.*}*:${SLOT}[fat-librockcompiler]
 		)
 	)
 "
@@ -109,6 +125,12 @@ PATCHES=(
 
 src_prepare() {
 	cmake_src_prepare
+
+	sed \
+		-i \
+		-e "s|rocMLIR 1.0.0 CONFIG|rocMLIR|g" \
+		CMakeLists.txt \
+		|| die
 
 	hipconfig --help >/dev/null || die
 	sed \
@@ -186,12 +208,15 @@ src_configure() {
 		-DCMAKE_SKIP_RPATH=ON
 		-DMIOPEN_BACKEND=HIP
 		-DMIOPEN_TEST_ALL=$(usex test ON OFF)
+		-DMIOPEN_USE_COMGR=$(usex comgr ON OFF)
+		-DMIOPEN_USE_COMPOSABLEKERNEL=$(usex composable-kernel ON OFF)
+		-DMIOPEN_USE_HIPRTC=$(usex hiprtc ON OFF)
 		-DMIOPEN_USE_MLIR=$(usex mlir ON OFF)
 	)
 
 	if use mlir ; then
 		mycmakeargs+=(
-			-DrocMLIR_DIR="${ESYSROOT}/usr/$(get_libdir)/rocMLIR/$(get_libdir)/cmake"
+			-DCMAKE_MODULE_PATH="${ESYSROOT}/usr/$(get_libdir)/rocMLIR"
 		)
 	fi
 
