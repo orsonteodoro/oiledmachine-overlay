@@ -86,13 +86,14 @@ RDEPEND="
 	dev-libs/msgpack
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	virtual/blas
-	~dev-util/hip-${PV}:${SLOT}
-	~sci-libs/hipBLAS-${PV}:${SLOT}[${ROCM_USEDEP}]
+	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
+		~sci-libs/hipBLAS-${PV}:${SLOT}[cuda]
 	)
 	rocm? (
 		~dev-util/rocm-smi-${PV}:${SLOT}
+		~sci-libs/hipBLAS-${PV}:${SLOT}[${ROCM_USEDEP},rocm]
 	)
 "
 DEPEND="
