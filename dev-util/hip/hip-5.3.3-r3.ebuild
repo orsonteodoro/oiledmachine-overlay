@@ -6,7 +6,7 @@ EAPI=8
 DOCS_BUILDER="doxygen"
 DOCS_DEPEND="media-gfx/graphviz"
 LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.3.3/llvm/CMakeLists.txt
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{10..11} )
 inherit cmake docs llvm prefix python-any-r1
 
 DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
@@ -16,10 +16,12 @@ https://github.com/ROCm-Developer-Tools/hipamd/archive/rocm-${PV}.tar.gz
 	-> rocm-hipamd-${PV}.tar.gz
 https://github.com/ROCm-Developer-Tools/HIP/archive/rocm-${PV}.tar.gz
 	-> rocm-hip-${PV}.tar.gz
-https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
-	-> rocclr-${PV}.tar.gz
 https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/rocm-${PV}.tar.gz
 	-> rocm-opencl-runtime-${PV}.tar.gz
+	rocm? (
+https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
+	-> rocclr-${PV}.tar.gz
+	)
 "
 KEYWORDS="~amd64"
 LICENSE="MIT"
@@ -165,9 +167,11 @@ src_prepare() {
 		|| die
 	popd || die
 
-	cd "${CLR_S}" || die
-	eapply "${FILESDIR}/rocclr-${PV}-fix-include.patch"
-	eapply "${FILESDIR}/rocclr-5.3.3-gcc13.patch"
+	if use rocm ; then
+		cd "${CLR_S}" || die
+		eapply "${FILESDIR}/rocclr-${PV}-fix-include.patch"
+		eapply "${FILESDIR}/rocclr-5.3.3-gcc13.patch"
+	fi
 }
 
 src_configure() {
@@ -187,7 +191,6 @@ src_configure() {
 		-DCMAKE_SKIP_RPATH=ON
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DHIP_COMMON_DIR="${HIP_S}"
-		-DROCCLR_PATH="${CLR_S}"
 		-DROCM_PATH="${EPREFIX}/usr"
 		-DUSE_PROF_API=0
 	)
@@ -206,6 +209,7 @@ src_configure() {
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
+			-DROCCLR_PATH="${CLR_S}"
 		)
 	fi
 

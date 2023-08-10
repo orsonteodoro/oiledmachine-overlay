@@ -6,7 +6,7 @@ EAPI=8
 DOCS_BUILDER="doxygen"
 DOCS_DEPEND="media-gfx/graphviz"
 LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{10..11} )
 inherit cmake docs llvm prefix python-any-r1
 
 DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
@@ -16,16 +16,18 @@ https://github.com/ROCm-Developer-Tools/hipamd/archive/rocm-${PV}.tar.gz
 	-> rocm-hipamd-${PV}.tar.gz
 https://github.com/ROCm-Developer-Tools/HIP/archive/rocm-${PV}.tar.gz
 	-> rocm-hip-${PV}.tar.gz
-https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
-	-> rocclr-${PV}.tar.gz
 https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/rocm-${PV}.tar.gz
 	-> rocm-opencl-runtime-${PV}.tar.gz
-profile? (
-	https://github.com/ROCm-Developer-Tools/roctracer/archive/refs/tags/rocm-${PV}.tar.gz
-		-> rocm-tracer-${PV}.tar.gz
-	https://github.com/ROCm-Developer-Tools/hipamd/files/8991181/hip_prof_str_diff.gz
-		-> ${P}-update-header.patch.gz
-)
+	profile? (
+https://github.com/ROCm-Developer-Tools/roctracer/archive/refs/tags/rocm-${PV}.tar.gz
+	-> rocm-tracer-${PV}.tar.gz
+https://github.com/ROCm-Developer-Tools/hipamd/files/8991181/hip_prof_str_diff.gz
+	-> ${P}-update-header.patch.gz
+	)
+	rocm? (
+https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
+	-> rocclr-${PV}.tar.gz
+	)
 "
 KEYWORDS="~amd64"
 LICENSE="MIT"
@@ -230,7 +232,6 @@ src_configure() {
 		-DCMAKE_PREFIX_PATH="$(get_llvm_prefix ${LLVM_MAX_SLOT})"
 		-DCMAKE_SKIP_RPATH=ON
 		-DHIP_COMMON_DIR="${HIP_S}"
-		-DROCCLR_PATH="${CLR_S}"
 		-DROCM_PATH="${EPREFIX}/usr"
 		-DUSE_PROF_API=$(usex profile 1 0)
 	)
@@ -249,6 +250,7 @@ src_configure() {
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
+			-DROCCLR_PATH="${CLR_S}"
 		)
 	fi
 
