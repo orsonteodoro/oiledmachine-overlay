@@ -63,7 +63,15 @@ https://github.com/flang-compiler/flang/archive/refs/tags/flang_${PV}.tar.gz
 	-> ${P}.tar.gz
 https://github.com/flang-compiler/classic-flang-llvm-project/archive/${EGIT_CLASSIC_FLANG_LLVM_PROJECT_COMMIT}.tar.gz
 	-> classic-flang-llvm-project-${EGIT_CLASSIC_FLANG_LLVM_PROJECT_COMMIT:0:7}.tar.gz
+https://github.com/flang-compiler/flang/pull/1381/commits/05a1be6663f43caad40e982c8501c6b6ea2ece27.patch
+	-> flang-pr1381-05a1be6.patch
 "
+# 05a1be6 - [LLVM16][flang1] Suppress -Wsingle-bit-bitfield-constant-conversion warnings
+#   Fixes:
+#   tools/flang1/flang1exe/commopt.c:389:23: error: implicit truncation from 'int' to a one-bit wide bit-field changes value from 1 to -1 [-Werror,-Wsingle-bit-bitfield-constant-conversion]
+#          FT_FUSED(nd1) = 1;
+#                        ^ ~
+
 DESCRIPTION="Flang is a Fortran language front-end designed for integration \
 with LLVM."
 HOMEPAGE="https://github.com/flang-compiler/flang"
@@ -219,6 +227,7 @@ BDEPEND="
 S="${WORKDIR}/flang-flang_${PV}"
 S_LLVM="${WORKDIR}/classic-flang-llvm-project-${EGIT_CLASSIC_FLANG_LLVM_PROJECT_COMMIT}"
 PATCHES=(
+	"${DISTDIR}/flang-pr1381-05a1be6.patch"
 )
 
 gen_nvptx_list() {
@@ -384,7 +393,12 @@ EOF
 		"${T}/hello.f90" \
 		-o "${T}/hello.exe" \
 		|| die
+	LD_LIBRARY_PATH="${staging_prefix}/lib:${LD_LIBRARY_PATH}" \
 	"${T}/hello.exe" || die
+}
+
+src_test() {
+	hello_world_test
 }
 
 sanitize_file_permissions() {
@@ -429,10 +443,14 @@ einfo "Switching /usr/bin/flang-${LLVM_MAX_SLOT} -> /usr/bin/flang"
 	ln -sf \
 		/usr/bin/flang-${LLVM_MAX_SLOT} \
 		/usr/bin/flang
-}
-
-src_test() {
-	hello_world_test
+ewarn
+ewarn "You must use LD_LIBRARY_PATH or rpath changes to run the output created"
+ewarn "by flang."
+ewarn
+ewarn "Example:"
+ewarn
+ewarn "  LD_LIBRARY_PATH=\"${dest}/lib\" hello.exe"
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
