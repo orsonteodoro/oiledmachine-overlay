@@ -17,8 +17,8 @@
       [Enable for feature completeness.]
     </flag>
     <flag name="flang">
-      Install ROCm's fork of Flang.  ROCm's Flang is a Fortran frontend with
-      AOMP (experimental internal open fork of LLVM) as the backend.
+      Install ROCm's fork of Flang.  Flang is a Fortran frontend with a 
+      selected LLVM flavor as the backend.
     </flag>
     <flag name="hipfort">
       Install the hipfort frontend for accessing GPU kernels for Fortran 2003
