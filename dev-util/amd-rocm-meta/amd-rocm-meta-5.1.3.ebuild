@@ -27,7 +27,6 @@ REQUIRED_USE="
 		rocm-dev
 	)
 	rocm-dev? (
-		flang
 		rocm-utils
 	)
 "
@@ -142,7 +141,7 @@ RDEPEND="
 # hsakmt-roct-dev # Alias for roct-thunk-interface
 # rocprofiler-dev x
 # roctracer-dev x
-# openmp-extras-dev
+# openmp-extras-dev ; omp headers, aompcc, flang
 # rocm-opencl-dev x
 #
 
