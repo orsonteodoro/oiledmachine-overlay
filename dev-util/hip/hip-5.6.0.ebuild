@@ -16,11 +16,11 @@ https://github.com/ROCm-Developer-Tools/hipamd/archive/rocm-${PV}.tar.gz
 	-> rocm-hipamd-${PV}.tar.gz
 https://github.com/ROCm-Developer-Tools/HIP/archive/rocm-${PV}.tar.gz
 	-> rocm-hip-${PV}.tar.gz
-https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/rocm-${PV}.tar.gz
-	-> rocm-opencl-runtime-${PV}.tar.gz
 https://github.com/ROCm-Developer-Tools/HIPCC/archive/refs/tags/rocm-${PV}.tar.gz
 	-> rocm-hipcc-${PV}.tar.gz
 	rocm? (
+https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/rocm-${PV}.tar.gz
+	-> rocm-opencl-runtime-${PV}.tar.gz
 https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
 	-> rocclr-${PV}.tar.gz
 	)

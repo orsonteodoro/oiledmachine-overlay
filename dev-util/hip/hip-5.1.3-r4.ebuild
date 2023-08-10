@@ -16,8 +16,6 @@ https://github.com/ROCm-Developer-Tools/hipamd/archive/rocm-${PV}.tar.gz
 	-> rocm-hipamd-${PV}.tar.gz
 https://github.com/ROCm-Developer-Tools/HIP/archive/rocm-${PV}.tar.gz
 	-> rocm-hip-${PV}.tar.gz
-https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/rocm-${PV}.tar.gz
-	-> rocm-opencl-runtime-${PV}.tar.gz
 	profile? (
 https://github.com/ROCm-Developer-Tools/roctracer/archive/refs/tags/rocm-${PV}.tar.gz
 	-> rocm-tracer-${PV}.tar.gz
@@ -25,6 +23,8 @@ https://github.com/ROCm-Developer-Tools/hipamd/files/8991181/hip_prof_str_diff.g
 	-> ${P}-update-header.patch.gz
 	)
 	rocm? (
+https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/rocm-${PV}.tar.gz
+	-> rocm-opencl-runtime-${PV}.tar.gz
 https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
 	-> rocclr-${PV}.tar.gz
 	)
@@ -266,7 +266,6 @@ src_configure() {
 	# Other ROCm packages expect a "RELEASE" configuration.
 	# See "hipBLAS".
 	local mycmakeargs=(
-		-DAMD_OPENCL_PATH="${OCL_S}"
 		-DBUILD_HIPIFY_CLANG=OFF
 		-DCMAKE_BUILD_TYPE="${buildtype}"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
@@ -293,6 +292,7 @@ src_configure() {
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
+			-DAMD_OPENCL_PATH="${OCL_S}"
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
