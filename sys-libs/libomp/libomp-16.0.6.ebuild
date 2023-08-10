@@ -29,6 +29,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1103
 )
 CUDA_TARGETS_COMPAT=(
+	auto
 	sm_35
 	sm_37
 	sm_50
@@ -44,7 +45,6 @@ CUDA_TARGETS_COMPAT=(
 	sm_86
 	sm_89
 	sm_90
-	auto
 )
 PYTHON_COMPAT=( python3_{10..12} )
 

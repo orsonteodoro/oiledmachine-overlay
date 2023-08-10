@@ -4,6 +4,7 @@
 EAPI=7
 
 CUDA_TARGETS_COMPAT=(
+	auto
 	sm_35
 	sm_37
 	sm_50
@@ -16,7 +17,6 @@ CUDA_TARGETS_COMPAT=(
 	sm_72
 	sm_75
 	sm_80
-	auto
 )
 PYTHON_COMPAT=( python3_{9..10} )
 

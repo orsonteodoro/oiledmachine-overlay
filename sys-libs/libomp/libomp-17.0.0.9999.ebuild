@@ -37,6 +37,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1151
 )
 CUDA_TARGETS_COMPAT=(
+	auto
 	sm_35
 	sm_37
 	sm_50
@@ -53,7 +54,6 @@ CUDA_TARGETS_COMPAT=(
 	sm_87
 	sm_89
 	sm_90
-	auto
 )
 
 inherit llvm-ebuilds
