@@ -89,6 +89,9 @@ RDEPEND="
 	benchmark? (
 		dev-cpp/benchmark
 	)
+	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
+	)
 	rocm? (
 		~sci-libs/rocPRIM-${PV}:${SLOT}[${ROCM_USEDEP},rocm?]
 	)
