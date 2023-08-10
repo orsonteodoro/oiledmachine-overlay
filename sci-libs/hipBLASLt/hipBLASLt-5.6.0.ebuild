@@ -93,7 +93,7 @@ RDEPEND="
 	)
 	rocm? (
 		~dev-util/rocm-smi-${PV}:${SLOT}
-		~sci-libs/hipBLAS-${PV}:${SLOT}[${ROCM_USEDEP},rocm]
+		~sci-libs/hipBLAS-${PV}:${SLOT}[rocm]
 	)
 "
 DEPEND="
