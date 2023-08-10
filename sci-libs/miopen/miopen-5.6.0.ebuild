@@ -86,7 +86,6 @@ RDEPEND="
 		=sci-libs/miopengemm-5.5*:0/5.5
 	)
 	rocm? (
-		~dev-libs/rocm-comgr-${PV}:${SLOT}
 		~dev-util/hip-${PV}:${SLOT}[rocm]
 		~sci-libs/rocBLAS-${PV}:${SLOT}[${ROCM_USEDEP},rocm]
 	)

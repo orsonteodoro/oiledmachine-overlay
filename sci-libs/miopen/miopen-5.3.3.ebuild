@@ -76,7 +76,6 @@ RDEPEND="
 		~sci-libs/miopengemm-${PV}:${SLOT}
 	)
 	rocm? (
-		~dev-libs/rocm-comgr-${PV}:${SLOT}
 		~dev-util/hip-${PV}:${SLOT}[rocm]
 		~sci-libs/rocBLAS-${PV}:${SLOT}[${ROCM_USEDEP},rocm]
 	)
