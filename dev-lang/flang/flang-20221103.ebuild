@@ -75,7 +75,44 @@ https://github.com/flang-compiler/flang/pull/1381/commits/05a1be6663f43caad40e98
 DESCRIPTION="Flang is a Fortran language front-end designed for integration \
 with LLVM."
 HOMEPAGE="https://github.com/flang-compiler/flang"
-LICENSE="Apache-2.0-with-LLVM-exceptions"
+THIRD_PARTY_LICENSES="
+	Apache-2.0
+	(
+		Apache-2.0-with-LLVM-exceptions
+		UoI-NCSA
+	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		BSD
+		MIT
+	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		custom
+		MIT
+		UoI-NCSA
+	)
+	(
+		CC0-1.0
+		Apache-2.0
+	)
+	BSD
+	ISC
+	MIT
+"
+LICENSE="
+	${THIRD_PARTY_LICENSES}
+	Apache-2.0-with-LLVM-exceptions
+"
+# Apache-2.0 - classic-flang-llvm-project/third-party/benchmark/LICENSE
+# Apache-2.0-with-LLVM-exceptions, UoI-NCSA - classic-flang-llvm-project/lldb/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions, BSD, MIT - classic-flang-llvm-project/libclc/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom  - classic-flang-llvm-project/openmp/LICENSE.TXT
+#   Keywords:  "all right, title, and interest"
+# BSD - classic-flang-llvm-project/third-party/unittest/googlemock/LICENSE.txt
+# CC0-1.0, Apache-2.0 - classic-flang-llvm-project/llvm/lib/Support/BLAKE3/LICENSE
+# ISC - classic-flang-llvm-project/lldb/third_party/Python/module/pexpect-4.6/LICENSE
+# MIT - classic-flang-llvm-project/llvm/test/YAMLParser/LICENSE.txt
 KEYWORDS="~arm64 ~amd64 ~ppc64"
 SLOT="${LLVM_MAX_SLOT}/${EGIT_CLASSIC_FLANG_LLVM_PROJECT_LLVM_PV}"
 LLVM_TARGETS_CPU_COMPAT=(
@@ -383,6 +420,14 @@ src_prepare() {
 }
 
 src_configure() {
+	if use ppc64 ; then
+		if ! [[ "${CHOST}" =~ "powerpc64le" ]] ; then
+eerror
+eerror "Big endian is not supported for ppc64."
+eerror
+			die
+		fi
+	fi
 	# Removed all clangs from path except for this vendored one.
 	einfo "LLVM_SLOT=${LLVM_SLOT}"
 	einfo "PATH=${PATH} (before)"
