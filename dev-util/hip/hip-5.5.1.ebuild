@@ -54,8 +54,10 @@ REQUIRED_USE="
 		)
 	)
 	test? (
-		hsa
-		lc
+		rocm? (
+			hsa
+			lc
+		)
 	)
 	^^ (
 		cuda
@@ -86,7 +88,9 @@ BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-util/cmake-3.16.8
 	test? (
-		~dev-util/rocminfo-${PV}:${SLOT}
+		rocm? (
+			~dev-util/rocminfo-${PV}:${SLOT}
+		)
 	)
 "
 PATCHES=(

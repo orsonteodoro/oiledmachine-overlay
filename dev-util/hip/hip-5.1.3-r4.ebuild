@@ -64,8 +64,10 @@ REQUIRED_USE="
 		)
 	)
 	test? (
-		hsa
-		lc
+		rocm? (
+			hsa
+			lc
+		)
 	)
 	^^ (
 		cuda
@@ -99,7 +101,9 @@ BDEPEND="
 		')
 	)
 	test? (
-		~dev-util/rocminfo-${PV}:${SLOT}
+		rocm? (
+			~dev-util/rocminfo-${PV}:${SLOT}
+		)
 	)
 "
 BDEPEND="
