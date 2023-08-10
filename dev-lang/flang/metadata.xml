@@ -2,11 +2,11 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Ebuild originators -->
-    <email>candrews@gentoo.org</email>
-    <name>Craig Andrews</name>
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <remote-id type="github">RadeonOpenCompute/rocminfo</remote-id>
+    <remote-id type="github">flang-compiler/flang</remote-id>
   </upstream>
 </pkgmetadata>
