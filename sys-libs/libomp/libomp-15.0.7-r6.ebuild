@@ -308,6 +308,16 @@ multilib_src_configure() {
 				-DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES=$(gen_nvptx_list)
 			)
 		fi
+		if use ppc64 && ( use llvm_targets_AMDGPU || use llvm_targets_NVPTX ) ; then
+			if ! [[ "${CHOST}" =~ "powerpc64le" ]] ; then
+eerror
+eerror "Big endian is not supported for ppc64 for offload.  Disable either the"
+eerror "offload, llvm_targets_AMDGPU, llvm_targets_NVPTX USE flag(s) to"
+eerror "continue."
+eerror
+				die
+			fi
+		fi
 	else
 		mycmakeargs+=(
 			-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
