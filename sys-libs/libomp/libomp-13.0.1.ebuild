@@ -57,13 +57,9 @@ REQUIRED_USE="
 	)
 	llvm_targets_NVPTX? (
 		cuda
-		offload
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
-	)
-	offload? (
-		llvm_targets_NVPTX
 	)
 "
 RDEPEND="

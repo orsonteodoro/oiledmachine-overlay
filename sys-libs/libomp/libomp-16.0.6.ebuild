@@ -94,22 +94,14 @@ REQUIRED_USE="
 	$(gen_rocm_required_use)
 	llvm_targets_AMDGPU? (
 		${ROCM_REQUIRED_USE}
-		offload
 	)
 	llvm_targets_NVPTX? (
-		offload
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
 	gdb-plugin? (
 		${PYTHON_REQUIRED_USE}
-	)
-	offload? (
-		|| (
-			llvm_targets_AMDGPU
-			llvm_targets_NVPTX
-		)
 	)
 "
 ROCM_SLOTS=(
