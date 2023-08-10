@@ -17,7 +17,8 @@
       [Enable for feature completeness.]
     </flag>
     <flag name="flang">
-      Install ROCm's fork of flang.
+      Install ROCm's fork of flang.  Flang is a Fortran frontend with a LLVM
+      backend.
     </flag>
     <flag name="hipfort">
       Install the hipfort frontend for accessing GPU kernels for Fortran 2003
