@@ -86,9 +86,11 @@ RESTRICT="
 "
 RDEPEND="
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
-	~sci-libs/rocPRIM-${PV}:${SLOT}[${ROCM_USEDEP},rocm?]
 	benchmark? (
 		dev-cpp/benchmark
+	)
+	rocm? (
+		~sci-libs/rocPRIM-${PV}:${SLOT}[${ROCM_USEDEP},rocm?]
 	)
 	test? (
 		dev-cpp/gtest
