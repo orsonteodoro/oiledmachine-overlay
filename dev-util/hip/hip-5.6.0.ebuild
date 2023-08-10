@@ -30,13 +30,13 @@ LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r1"
 REQUIRED_USE="
-	lc? (
-		rocm
-	)
 	hsa? (
 		rocm
 	)
 	hsail? (
+		rocm
+	)
+	lc? (
 		rocm
 	)
 	numa? (
