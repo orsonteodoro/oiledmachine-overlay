@@ -313,7 +313,6 @@ multilib_src_configure() {
 				-DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES=$(gen_nvptx_list)
 			)
 		fi
-		offload_disabled=0
 	else
 		mycmakeargs+=(
 			-DOPENMP_ENABLE_LIBOMPTARGET=OFF
