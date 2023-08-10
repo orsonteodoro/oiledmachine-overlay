@@ -403,13 +403,15 @@ src_test() {
 
 fix_file_permissions() {
 	local path
-einfo "Sanitizing file/folder permissions"
+einfo "Fixing file/folder permissions"
 	IFS=$'\n'
 	for path in $(find "${ED}") ; do
 		chown root:root "${path}" || die
 		if file "${path}" | grep -q -e "directory" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "ELF .* shared object" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "ELF .* executable" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "symbolic link" ; then
 			:;
