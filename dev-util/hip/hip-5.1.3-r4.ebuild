@@ -34,6 +34,10 @@ LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="cuda debug profile +rocm r4"
 REQUIRED_USE="
+	profile? (
+		!cuda
+		rocm
+	)
 	^^ (
 		cuda
 		rocm
