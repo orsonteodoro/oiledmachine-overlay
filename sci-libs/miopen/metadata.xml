@@ -26,12 +26,12 @@
       Use runtime compilation of kernels instead of build time
       compilation.
     </flag>
-    <flag name="mlir">
-      Add support for optimized MLIR GPU kernels.
-    </flag>
     <flag name="kernels">
       Install the prebuilt kernels to reduce the startup latency of first
       neural net execution.
+    </flag>
+    <flag name="mlir">
+      Add support for optimized MLIR GPU kernels.
     </flag>
   </use>
 </pkgmetadata>
