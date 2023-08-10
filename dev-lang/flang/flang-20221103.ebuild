@@ -449,7 +449,7 @@ ewarn "by flang."
 ewarn
 ewarn "Example:"
 ewarn
-ewarn "  LD_LIBRARY_PATH=\"${dest}/lib\" hello.exe"
+ewarn "  LD_LIBRARY_PATH=\"${dest}/lib\" ./hello.exe"
 ewarn
 }
 
