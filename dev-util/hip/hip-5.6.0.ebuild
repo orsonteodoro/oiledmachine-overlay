@@ -38,13 +38,15 @@ REQUIRED_USE="
 RDEPEND="
 	=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
 	>=dev-perl/URI-Encode-1.1.1
-	sys-devel/clang:${LLVM_MAX_SLOT}
 	virtual/opengl
 	~dev-libs/rocm-comgr-${PV}:${SLOT}
 	~dev-libs/roct-thunk-interface-${PV}:${SLOT}
 	~dev-util/rocminfo-${PV}:${SLOT}
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
+	)
+	rocm? (
+		sys-devel/clang:${LLVM_MAX_SLOT}
 	)
 "
 DEPEND="
