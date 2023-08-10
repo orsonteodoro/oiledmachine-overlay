@@ -104,6 +104,12 @@ REQUIRED_USE="
 	gdb-plugin? (
 		${PYTHON_REQUIRED_USE}
 	)
+	offload? (
+		|| (
+			llvm_targets_AMDGPU
+			llvm_targets_NVPTX
+		)
+	)
 "
 ROCM_SLOTS=(
 	"5.6.0"

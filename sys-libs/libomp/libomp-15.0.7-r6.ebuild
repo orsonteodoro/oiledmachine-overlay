@@ -94,6 +94,12 @@ REQUIRED_USE="
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
+	offload? (
+		|| (
+			llvm_targets_AMDGPU
+			llvm_targets_NVPTX
+		)
+	)
 "
 RESTRICT="
 	!test? (

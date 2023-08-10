@@ -83,6 +83,7 @@ REQUIRED_USE="
 	)
 	llvm_targets_AMDGPU? (
 		${ROCM_REQUIRED_USE}
+		offload
 	)
 	llvm_targets_NVPTX? (
 		abi_x86_64
@@ -90,6 +91,12 @@ REQUIRED_USE="
 		offload
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		)
+	)
+	offload? (
+		|| (
+			llvm_targets_AMDGPU
+			llvm_targets_NVPTX
 		)
 	)
 "
