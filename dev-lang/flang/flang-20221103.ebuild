@@ -78,7 +78,7 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 ${LLVM_TARGETS_COMPAT[@]}
-classic cuda doc offload test
+cuda doc offload test
 "
 gen_cuda_required_use() {
 	local x
@@ -339,6 +339,7 @@ pkg_setup() {
 }
 
 src_prepare() {
+	cmake_src_prepare
 	# Removed in >= 16.0.0-rc1
 	sed -i -e "s|\"--src-root\"||g" \
 		"${S}/CMakeLists.txt" \
