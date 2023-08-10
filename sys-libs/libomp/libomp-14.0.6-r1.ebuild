@@ -31,6 +31,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_75
 	sm_80
 	sm_86
+	auto
 )
 PYTHON_COMPAT=( python3_{9..10} )
 
@@ -264,15 +265,19 @@ pkg_setup() {
 }
 
 gen_nvptx_list() {
-	local list
-	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
-		if use "${x}" ; then
-			list+=";${x/sm_}"
-		fi
-	done
-	list="${list:1}"
-	echo "${list}"
+	if use cuda_targets_auto ; then
+		echo "auto"
+	else
+		local list
+		local x
+		for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+			if use "${x}" ; then
+				list+=";${x/sm_}"
+			fi
+		done
+		list="${list:1}"
+		echo "${list}"
+	fi
 }
 
 multilib_src_configure() {
