@@ -401,7 +401,7 @@ src_test() {
 	hello_world_test
 }
 
-sanitize_file_permissions() {
+fix_file_permissions() {
 	local path
 einfo "Sanitizing file/folder permissions"
 	IFS=$'\n'
@@ -427,12 +427,9 @@ einfo "Sanitizing file/folder permissions"
 src_install() {
 	local staging_prefix="${PWD}/install"
 	local dest="/usr/lib/flang/${LLVM_MAX_SLOT}"
-	dodir "/usr/lib/flang/${LLVM_MAX_SLOT}"
-	cp -aT \
-		"${staging_prefix}" \
-		"${dest}" \
-		|| die
-	sanitize_file_permissions
+	insinto "${dest}"
+	doins -r "${staging_prefix}/"*
+	fix_file_permissions
 	dosym \
 		/usr/lib/flang/${LLVM_MAX_SLOT}/bin/flang \
 		/usr/bin/flang-${LLVM_MAX_SLOT}

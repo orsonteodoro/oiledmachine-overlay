@@ -385,7 +385,7 @@ src_test() {
 	hello_world_test
 }
 
-sanitize_file_permissions() {
+fix_file_permissions() {
 	local path
 einfo "Sanitizing file/folder permissions"
 	IFS=$'\n'
@@ -411,12 +411,9 @@ einfo "Sanitizing file/folder permissions"
 src_install() {
 	local staging_prefix="${PWD}/install"
 	local dest="/usr/lib/rocm-flang"
-	dodir "${dest}"
-	cp -aT \
-		"${staging_prefix}" \
-		"${dest}" \
-		|| die
-	sanitize_file_permissions
+	insinto "${dest}"
+	doins -r "${staging_prefix}/"*
+	fix_file_permissions
 	dosym \
 		/usr/lib/rocm-flang/bin/flang \
 		/usr/bin/rocm-flang
