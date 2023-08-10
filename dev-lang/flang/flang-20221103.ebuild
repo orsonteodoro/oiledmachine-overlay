@@ -76,16 +76,22 @@ DESCRIPTION="Flang is a Fortran language front-end designed for integration \
 with LLVM."
 HOMEPAGE="https://github.com/flang-compiler/flang"
 LICENSE="Apache-2.0-with-LLVM-exceptions"
-KEYWORDS="~amd64"
+KEYWORDS="~arm64 ~amd64 ~ppc64"
 SLOT="${LLVM_MAX_SLOT}/${EGIT_CLASSIC_FLANG_LLVM_PROJECT_LLVM_PV}"
-LLVM_TARGETS_COMPAT=(
+LLVM_TARGETS_CPU_COMPAT=(
+	llvm_targets_AArch64
+	llvm_targets_PowerPC
+	llvm_targets_X86
+)
+LLVM_TARGETS_GPU_COMPAT=(
 	llvm_targets_AMDGPU
 	llvm_targets_NVPTX
 )
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
-${LLVM_TARGETS_COMPAT[@]}
+${LLVM_TARGETS_CPU_COMPAT[@]}
+${LLVM_TARGETS_GPU_COMPAT[@]}
 cuda doc offload test
 "
 gen_cuda_required_use() {
@@ -111,6 +117,12 @@ gen_rocm_required_use() {
 REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
+	arm64? (
+		llvm_targets_AArch64
+	)
+	amd64? (
+		llvm_targets_X86
+	)
 	cuda? (
 		llvm_targets_NVPTX
 	)
@@ -124,6 +136,12 @@ REQUIRED_USE="
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
+	)
+	ppc64? (
+		llvm_targets_PowerPC
+	)
+	^^ (
+		${LLVM_TARGETS_CPU_COMPAT[@]}
 	)
 "
 RDEPEND="
@@ -251,7 +269,16 @@ einfo "Building LLVM"
 	cd "${S_LLVM}" || die
 	mkdir -p build || die
 	cd build || die
-	local experimental_targets=";X86"
+	local experimental_targets
+	if use amd64 ; then
+		experimental_targets=";X86"
+	fi
+	if use arm64 ; then
+		experimental_targets=";AArch64"
+	fi
+	if use ppc64 ; then
+		experimental_targets=";PowerPC"
+	fi
 	if use llvm_targets_AMDGPU ; then
 		experimental_targets+=";AMDGPU"
 	fi
