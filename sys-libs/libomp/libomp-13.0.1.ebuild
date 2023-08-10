@@ -55,7 +55,6 @@ REQUIRED_USE="
 		llvm_targets_NVPTX
 	)
 	llvm_targets_NVPTX? (
-		abi_x86_64
 		cuda
 		offload
 		|| (
@@ -121,26 +120,6 @@ RDEPEND="
 	cuda_targets_sm_80? (
 		|| (
 			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_86? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_87? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_89? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_90? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11.8*:=
 		)
 	)
 	hwloc? (
@@ -246,39 +225,36 @@ multilib_src_configure() {
 		-DLIBOMP_USE_HWLOC=$(usex hwloc)
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt)
 
-		-DOPENMP_ENABLE_LIBOMPTARGET=$(usex offload)
-
 		# do not install libgomp.so & libiomp5.so aliases
 		-DLIBOMP_INSTALL_ALIASES=OFF
 		# disable unnecessary hack copying stuff back to srcdir
 		-DLIBOMP_COPY_EXPORTS=OFF
 	)
 
-	if use offload ; then
-		if has "${CHOST%%-*}" aarch64 powerpc64le x86_64; then
-			mycmakeargs+=(
-				-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=$(usex !cuda)
-				-DLIBOMPTARGET_BUILD_AMDGCN_BCLIB=$(usex llvm_targets_AMDGPU)
-				-DLIBOMPTARGET_BUILD_NVPTX_BCLIB=$(usex llvm_targets_NVPTX)
-				# a cheap hack to force clang
-				-DLIBOMPTARGET_NVPTX_CUDA_COMPILER="$(type -P "${CHOST}-clang")"
-				# upstream defaults to looking for it in clang dir
-				# this fails when ccache is being used
-				-DLIBOMPTARGET_NVPTX_BC_LINKER="$(type -P llvm-link)"
-			)
-		else
-			mycmakeargs+=(
-				-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
-				-DLIBOMPTARGET_BUILD_AMDGCN_BCLIB=OFF
-				-DLIBOMPTARGET_BUILD_NVPTX_BCLIB=OFF
-			)
-		fi
-
+	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
+		mycmakeargs+=(
+			-DOPENMP_ENABLE_LIBOMPTARGET=ON
+			-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=$(usex !cuda)
+			-DLIBOMPTARGET_BUILD_AMDGCN_BCLIB=$(usex llvm_targets_AMDGPU)
+			-DLIBOMPTARGET_BUILD_NVPTX_BCLIB=$(usex llvm_targets_NVPTX)
+			# a cheap hack to force clang
+			-DLIBOMPTARGET_NVPTX_CUDA_COMPILER="$(type -P "${CHOST}-clang")"
+			# upstream defaults to looking for it in clang dir
+			# this fails when ccache is being used
+			-DLIBOMPTARGET_NVPTX_BC_LINKER="$(type -P llvm-link)"
+		)
 		if use llvm_targets_NVPTX ; then
 			mycmakeargs+=(
 				-DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES=$(gen_nvptx_list)
 			)
 		fi
+	else
+		mycmakeargs+=(
+			-DOPENMP_ENABLE_LIBOMPTARGET=OFF
+			-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
+			-DLIBOMPTARGET_BUILD_AMDGCN_BCLIB=OFF
+			-DLIBOMPTARGET_BUILD_NVPTX_BCLIB=OFF
+		)
 	fi
 
 	use test && mycmakeargs+=(

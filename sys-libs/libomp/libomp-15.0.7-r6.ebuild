@@ -192,16 +192,6 @@ RDEPEND="
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
-	cuda_targets_sm_89? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_90? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11.8*:=
-		)
-	)
 	hwloc? (
 		>=sys-apps/hwloc-2.5:0=[${MULTILIB_USEDEP}]
 	)
@@ -306,32 +296,30 @@ multilib_src_configure() {
 		-DLIBOMP_USE_HWLOC=$(usex hwloc)
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt)
 
-		-DOPENMP_ENABLE_LIBOMPTARGET=$(usex offload)
-
 		# do not install libgomp.so & libiomp5.so aliases
 		-DLIBOMP_INSTALL_ALIASES=OFF
 		# disable unnecessary hack copying stuff back to srcdir
 		-DLIBOMP_COPY_EXPORTS=OFF
 	)
 
-	if use offload; then
-		if has "${CHOST%%-*}" aarch64 powerpc64le x86_64; then
-			mycmakeargs+=(
-				-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
-				-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
-			)
-		else
-			mycmakeargs+=(
-				-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
-				-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=OFF
-			)
-		fi
-
+	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
+		mycmakeargs+=(
+			-DOPENMP_ENABLE_LIBOMPTARGET=ON
+			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
+			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
+		)
 		if use llvm_targets_NVPTX ; then
 			mycmakeargs+=(
 				-DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES=$(gen_nvptx_list)
 			)
 		fi
+		offload_disabled=0
+	else
+		mycmakeargs+=(
+			-DOPENMP_ENABLE_LIBOMPTARGET=OFF
+			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
+			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=OFF
+		)
 	fi
 
 	use test && mycmakeargs+=(

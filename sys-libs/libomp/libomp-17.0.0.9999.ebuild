@@ -342,17 +342,6 @@ multilib_src_configure() {
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
-	local build_omptarget=OFF
-	# upstream disallows building libomptarget when sizeof(void*) != 8
-	if use offload &&
-		"$(tc-getCC)" ${CFLAGS} ${CPPFLAGS} -c -x c - -o /dev/null \
-		<<-EOF &>/dev/null
-			int test[sizeof(void *) == 8 ? 1 : -1];
-		EOF
-	then
-		build_omptarget=ON
-	fi
-
 	local libdir="$(get_libdir)"
 	local mycmakeargs=(
 		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
@@ -360,8 +349,6 @@ multilib_src_configure() {
 		-DLIBOMP_USE_HWLOC=$(usex hwloc)
 		-DLIBOMP_OMPD_GDB_SUPPORT=$(multilib_native_usex gdb-plugin)
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt)
-
-		-DOPENMP_ENABLE_LIBOMPTARGET=${build_omptarget}
 
 		# do not install libgomp.so & libiomp5.so aliases
 		-DLIBOMP_INSTALL_ALIASES=OFF
@@ -371,24 +358,23 @@ multilib_src_configure() {
 		-DLIBOMPTARGET_AMDGPU_ARCH=LIBOMPTARGET_AMDGPU_ARCH-NOTFOUND
 	)
 
-	if [[ ${build_omptarget} == ON ]]; then
-		if has "${CHOST%%-*}" aarch64 powerpc64le x86_64; then
-			mycmakeargs+=(
-				-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
-				-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
-			)
-		else
-			mycmakeargs+=(
-				-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
-				-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=OFF
-			)
-		fi
-
+	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
+		mycmakeargs+=(
+			-DOPENMP_ENABLE_LIBOMPTARGET=ON
+			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
+			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
+		)
 		if use llvm_targets_NVPTX ; then
 			mycmakeargs+=(
 				-DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES=$(gen_nvptx_list)
 			)
 		fi
+	else
+		mycmakeargs+=(
+			-DOPENMP_ENABLE_LIBOMPTARGET=OFF
+			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
+			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=OFF
+		)
 	fi
 
 	use test && mycmakeargs+=(
