@@ -311,25 +311,23 @@ multilib_src_configure() {
 
 	local libdir="$(get_libdir)"
 	local mycmakeargs=(
-		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
-
-		-DLIBOMP_USE_HWLOC=$(usex hwloc)
+	# Disable unnecessary hack copying stuff back to srcdir. \
+		-DLIBOMP_COPY_EXPORTS=OFF
+	# Do not install libgomp.so & libiomp5.so aliases. \
+		-DLIBOMP_INSTALL_ALIASES=OFF
 		-DLIBOMP_OMPD_GDB_SUPPORT=$(multilib_native_usex gdb-plugin)
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt)
-
-		# do not install libgomp.so & libiomp5.so aliases
-		-DLIBOMP_INSTALL_ALIASES=OFF
-		# disable unnecessary hack copying stuff back to srcdir
-		-DLIBOMP_COPY_EXPORTS=OFF
-		# prevent trying to access the GPU
+		-DLIBOMP_USE_HWLOC=$(usex hwloc)
+	# Prevent trying to access the GPU. \
 		-DLIBOMPTARGET_AMDGPU_ARCH=LIBOMPTARGET_AMDGPU_ARCH-NOTFOUND
+		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
 	)
 
 	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		mycmakeargs+=(
-			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
+			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 		)
 		if use llvm_targets_NVPTX ; then
 			mycmakeargs+=(
@@ -338,14 +336,15 @@ multilib_src_configure() {
 		fi
 	else
 		mycmakeargs+=(
-			-DOPENMP_ENABLE_LIBOMPTARGET=OFF
+			-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
 			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=OFF
+			-DOPENMP_ENABLE_LIBOMPTARGET=OFF
 		)
 	fi
 
 	use test && mycmakeargs+=(
-		# this project does not use standard LLVM cmake macros
+	# This project does not use standard LLVM cmake macros.
 		-DOPENMP_LLVM_LIT_EXECUTABLE="${EPREFIX}/usr/bin/lit"
 		-DOPENMP_LIT_ARGS="$(get_lit_flags)"
 
@@ -357,8 +356,7 @@ multilib_src_configure() {
 }
 
 multilib_src_test() {
-	# respect TMPDIR!
+	# Respect TMPDIR!
 	local -x LIT_PRESERVES_TMP=1
-
 	cmake_build check-libomp
 }
