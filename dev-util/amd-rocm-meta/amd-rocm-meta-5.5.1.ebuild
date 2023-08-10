@@ -10,7 +10,8 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
 IUSE="
 	aqlprofile
-	fortran
+	flang
+	hipfort
 	migraphx
 	mivisionx
 	rdc
@@ -26,13 +27,16 @@ REQUIRED_USE="
 		rocm-dev
 	)
 	rocm-dev? (
+		flang
 		rocm-utils
 	)
 "
 RDEPEND="
-	fortran? (
-		dev-lang/flang
+	hipfort? (
 		~dev-util/hipfort-${PV}:${SLOT}
+	)
+	flang? (
+		~dev-lang/rocm-flang-${PV}:${SLOT}
 	)
 	migraphx? (
 		~sci-libs/MIGraphX-${PV}:${SLOT}[rocm]

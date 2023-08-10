@@ -16,8 +16,12 @@
 
       [Enable for feature completeness.]
     </flag>
-    <flag name="fortran">
-      Install Fortran 2003 or later support for accessing GPU kernels.
+    <flag name="flang">
+      Install ROCm's fork of flang.
+    </flag>
+    <flag name="hipfort">
+      Install the hipfort frontend for accessing GPU kernels for Fortran 2003
+      programs.
     </flag>
     <flag name="migraphx">
       Install software to accelerate machine learning model inference.
@@ -37,7 +41,7 @@
       Install this individual program, for inspecting performance or topology.
     </flag>
     <flag name="rocm-dev">
-      Install build development packages.
+      Install build development packages.  For flang
     </flag>
     <flag name="rocm-gdb">
       Install this individual program, a debugger for both CPU and GPU.
