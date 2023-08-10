@@ -24,4 +24,20 @@
   <upstream>
     <remote-id type="github">ROCm-Developer-Tools/HIP</remote-id>
   </upstream>
+  <use>
+    <flag name="hsa">
+      Support HSA compute kernels with the HSA runtime.
+    </flag>
+    <flag name="hsail">
+      Support the HSAIL compiler.  Used to build intermediate form for different
+      hardware.
+    </flag>
+    <flag name="lc">
+      Support the LC compiler.  The LC (Lightning Compiler) is used by Comgr for
+      runtime kernel compililation of ASM or HIP RTC.
+    </flag>
+    <flag name="pal">
+      Support PAL compute kernels with the PAL runtime.
+    </flag>
+  </use>
 </pkgmetadata>

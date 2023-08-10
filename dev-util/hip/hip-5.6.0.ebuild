@@ -28,24 +28,56 @@ https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="cuda debug +rocm r1"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r1"
 REQUIRED_USE="
+	lc? (
+		rocm
+	)
+	hsa? (
+		rocm
+	)
+	hsail? (
+		rocm
+	)
+	numa? (
+		hsa
+	)
+	pal? (
+		rocm
+	)
+	rocm? (
+		|| (
+			hsail
+			lc
+		)
+		|| (
+			hsa
+			pal
+		)
+	)
+	test? (
+		hsa
+		lc
+	)
 	^^ (
 		cuda
 		rocm
 	)
 "
 RDEPEND="
-	=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
 	>=dev-perl/URI-Encode-1.1.1
 	virtual/opengl
-	~dev-libs/rocm-comgr-${PV}:${SLOT}
-	~dev-libs/roct-thunk-interface-${PV}:${SLOT}
-	~dev-util/rocminfo-${PV}:${SLOT}
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
+	lc? (
+		~dev-libs/rocm-comgr-${PV}:${SLOT}
+	)
+	numa? (
+		sys-process/numactl
+	)
 	rocm? (
+		=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
 		sys-devel/clang:${LLVM_MAX_SLOT}
 	)
 "
@@ -55,6 +87,9 @@ DEPEND="
 BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-util/cmake-3.16.8
+	test? (
+		~dev-util/rocminfo-${PV}:${SLOT}
+	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-DisableTest.patch"
@@ -207,6 +242,11 @@ src_configure() {
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="cuda" # There's a typo in the HIP faq.
 		)
+		if ! has_version "sys-devel/clang:${LLVM_MAX_SLOT}" ; then
+			mycmakeargs+=(
+				-D__HIP_ENABLE_PCH=OFF
+			)
+		fi
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
@@ -214,6 +254,10 @@ src_configure() {
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
+			-DROCCLR_ENABLE_LC=$(usex lc ON OFF)
+			-DROCCLR_ENABLE_HSA=$(usex hsa ON OFF)
+			-DROCCLR_ENABLE_HSAIL=$(usex hsail ON OFF)
+			-DROCCLR_ENABLE_PAL=$(usex pal ON OFF)
 			-DROCCLR_PATH="${CLR_S}"
 		)
 	fi
