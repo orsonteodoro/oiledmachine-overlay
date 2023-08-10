@@ -52,6 +52,7 @@ RDEPEND="
 		~dev-libs/ROCdbgapi-${PV}:${SLOT}
 		~dev-libs/rocm-comgr-${PV}:${SLOT}
 		~dev-libs/rocm-core-${PV}:${SLOT}
+		~dev-libs/rocm-debug-agent-${PV}:${SLOT}
 		~dev-libs/rocm-device-libs-${PV}:${SLOT}
 		~dev-libs/rocm-opencl-runtime-${PV}:${SLOT}
 		~dev-libs/rocr-runtime-${PV}:${SLOT}
@@ -125,7 +126,7 @@ RDEPEND="
 # openmp-extras-runtime ; libomp + flang
 # rocm-cmake x
 # rocm-dbgapi x
-# rocm-debug-agent
+# rocm-debug-agent x
 # rocm-device-libs x
 # rocm-gdb x
 # rocm-smi-lib x
