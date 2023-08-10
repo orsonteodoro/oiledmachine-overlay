@@ -72,90 +72,79 @@ RDEPEND="
 	)
 	cuda_targets_sm_50? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
 	cuda_targets_sm_52? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
 	cuda_targets_sm_53? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
 	cuda_targets_sm_60? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
 	cuda_targets_sm_61? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
 	cuda_targets_sm_62? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
 	cuda_targets_sm_70? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
 	cuda_targets_sm_72? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
 	cuda_targets_sm_75? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
 	cuda_targets_sm_80? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
 	cuda_targets_sm_86? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
 	cuda_targets_sm_87? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
 	cuda_targets_sm_89? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
 	cuda_targets_sm_90? (
 		|| (
-			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11.8*:=
 		)
 	)
 	hwloc? (
 		>=sys-apps/hwloc-2.5:0=[${MULTILIB_USEDEP}]
+	)
+	llvm_targets_NVPTX? (
+		<dev-util/nvidia-cuda-toolkit-11.3
 	)
 	offload? (
 		dev-libs/libffi:=[${MULTILIB_USEDEP}]

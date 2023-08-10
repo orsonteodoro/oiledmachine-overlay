@@ -243,6 +243,9 @@ RDEPEND="
 			$(gen_amdgpu_rdepend)
 		)
 	)
+	llvm_targets_NVPTX? (
+		<dev-util/nvidia-cuda-toolkit-12.2
+	)
 	offload? (
 		dev-libs/libffi:=[${MULTILIB_USEDEP}]
 		~sys-devel/llvm-${PV}[${MULTILIB_USEDEP}]
