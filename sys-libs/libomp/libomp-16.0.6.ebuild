@@ -122,7 +122,7 @@ ROCM_SLOTS=(
 gen_amdgpu_rdepend() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
-		local s="0/"${pv%.*}
+		local s="0/${pv%.*}"
 		echo "
 			(
 				~dev-libs/rocr-runtime-${pv}:${s}
