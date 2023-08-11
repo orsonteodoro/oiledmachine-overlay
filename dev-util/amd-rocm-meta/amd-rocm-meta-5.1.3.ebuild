@@ -141,7 +141,7 @@ RDEPEND="
 # hsakmt-roct-dev # Alias for roct-thunk-interface
 # rocprofiler-dev x
 # roctracer-dev x
-# openmp-extras-dev ; omp headers, aompcc, flang
+# openmp-extras-dev ; omp headers, aompcc from aomp-extras, flang
 # rocm-opencl-dev x
 #
 
