@@ -11,6 +11,7 @@ cuda_targets_sm_60 - Support Pascal v0 or later
 cuda_targets_sm_61 - Support Pascal v1 or later
 cuda_targets_sm_62 - Support Pascal v2 or later
 cuda_targets_sm_70 - Support Volta v0 or later
+cuda_targets_sm_72 - Support Volta v2 or later
 cuda_targets_sm_75 - Support Turing v5 or later
 cuda_targets_sm_80 - Support Ampere v0 or later
 cuda_targets_sm_86 - Support Ampere v6 or later

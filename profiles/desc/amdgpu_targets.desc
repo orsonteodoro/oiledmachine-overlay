@@ -1,0 +1,37 @@
+# Copyright 1999-2023 Gentoo Authors.
+# Distributed under the terms of the GNU General Public License v2
+
+# References:
+# https://github.com/GPUOpen-Tools/device_info/blob/master/DeviceInfo.cpp
+# https://github.com/ROCm-Developer-Tools/clr/blob/rocm-5.6.0/opencl/tests/ocltst/module/runtime/OCLDeviceQueries.cpp
+# https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface/blob/master/src/libhsakmt.h
+
+gfx700 - Kaveri support
+gfx701 - Hawaii support
+gfx801 - Carrizo support
+gfx802 - Tonga support
+gfx803 - Fiji, Polaris 10, Polaris 11, Polaris 12, Vega M support
+gfx900 - Vega 10 support
+gfx902 - Raven support
+gfx904 - Vega 12 support
+gfx906 - Vega 20 support
+gfx908 - Arcturus support
+gfx90a - Aldearan support
+gfx90c - Renoir support
+gfx940 - Aqua Vanjaram support
+gfx1010 - Navi 10 support
+gfx1011 - Navi 12 support
+gfx1012 - Navi 14 support
+gfx1030 - Sienna Ciclid support
+gfx1031 - Navy Flounder support
+gfx1032 - Dimgray Cavefish support
+gfx1033 - Van Gogh support
+gfx1034 - Beige Goby, Navi 24 support
+gfx1035 - Yellow Carp, Rembrant support
+gfx1036 - Raphael support
+gfx1100 - Plum Bonito, Navi 31 support
+gfx1101 - Wheat Nas, Navi 32 support
+gfx1102 - Navi 33 support
+gfx1103 - Pheonix support
+gfx1150 - RDNA 3 support
+gfx1151 - RDNA 3 support
