@@ -292,7 +292,39 @@ einfo "Building LLVM"
 		-DCMAKE_C_COMPILER="${CHOST}-gcc"
 		-DCMAKE_CXX_COMPILER="${CHOST}-g++"
 		-DLLVM_ENABLE_CLASSIC_FLANG=ON
-		-DLLVM_ENABLE_PROJECTS="clang;openmp"
+		-DLLVM_ENABLE_PROJECTS="llvm;clang"
+		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${experimental_targets}"
+		-DLLVM_TARGETS_TO_BUILD=""
+	)
+	ccmake \
+		${mycmakeargs_[@]} \
+		../llvm
+	emake
+	emake install
+}
+
+build_libomp() {
+einfo "Building libomp"
+	cd "${S_LLVM}" || die
+	mkdir -p build || die
+	cd build || die
+	local experimental_targets=""
+	if use llvm_targets_X86 ; then
+		experimental_targets+=";X86"
+	fi
+	if use llvm_targets_AMDGPU ; then
+		experimental_targets+=";AMDGPU"
+	fi
+	if use llvm_targets_NVPTX ; then
+		experimental_targets+=";NVPTX"
+	fi
+	experimental_targets="${experimental_targets:1}"
+	local mycmakeargs_=(
+		${mycmakeargs[@]}
+		-DCMAKE_C_COMPILER="${CHOST}-gcc"
+		-DCMAKE_CXX_COMPILER="${CHOST}-g++"
+		-DLLVM_ENABLE_CLASSIC_FLANG=ON
+		-DLLVM_ENABLE_PROJECTS="openmp"
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${experimental_targets}"
 		-DLLVM_TARGETS_TO_BUILD=""
 		-DOPENMP_ENABLE_LIBOMPTARGET=$(usex offload ON OFF)
@@ -411,6 +443,7 @@ src_compile() {
 		-DCMAKE_INSTALL_PREFIX="${staging_prefix}"
 	)
 	build_llvm
+	build_libomp
 	build_libpgmath
 	build_flang
 }
