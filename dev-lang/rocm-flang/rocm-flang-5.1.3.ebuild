@@ -4,8 +4,7 @@
 EAPI=8
 
 # Cuda compatibility:
-# https://github.com/flang-compiler/classic-flang-llvm-project/blob/release_16x/clang/include/clang/Basic/Cuda.h
-# https://github.com/flang-compiler/classic-flang-llvm-project/blob/llvmorg-15.0.3/clang/include/clang/Basic/Cuda.h#L37
+# https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/clang/include/clang/Basic/Cuda.h
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
@@ -17,20 +16,9 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx906
 	gfx908
 	gfx90a
-	gfx90c
-	gfx940
 	gfx1010
 	gfx1030
 	gfx1031
-	gfx1032
-	gfx1033
-	gfx1034
-	gfx1035
-	gfx1036
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1103
 )
 CUDA_TARGETS_COMPAT=(
 	sm_35
@@ -46,14 +34,12 @@ CUDA_TARGETS_COMPAT=(
 	sm_75
 	sm_80
 	sm_86
-	sm_89
-	sm_90
 	auto
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
 EGIT_CLASSIC_FLANG_LLVM_PROJECT_COMMIT="5c04f282bab1b2e24c3eccab15fe9ff6be7c8f62"
 EGIT_CLASSIC_FLANG_LLVM_PROJECT_LLVM_PV="16.0.4" # See https://github.com/flang-compiler/classic-flang-llvm-project/blob/release_16x/llvm/CMakeLists.txt#L18
-LLVM_MAX_SLOT=16 # Same as classic-flang-llvm-project llvm version
+LLVM_MAX_SLOT=14 # Same as classic-flang-llvm-project llvm version
 PYTHON_COMPAT=( python3_{10..11} )
 
 inherit cmake llvm python-any-r1 rocm
@@ -119,14 +105,18 @@ LICENSE="
 # ZLIB, BSD - llvm-project-rocm-5.6.0/llvm/lib/Support/COPYRIGHT.regex
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-LLVM_TARGETS_COMPAT=(
+LLVM_TARGETS_CPU_COMPAT=(
+	llvm_targets_X86
+)
+LLVM_TARGETS_GPU_COMPAT=(
 	llvm_targets_AMDGPU
 	llvm_targets_NVPTX
 )
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
-${LLVM_TARGETS_COMPAT[@]}
+${LLVM_TARGETS_CPU_COMPAT[@]}
+${LLVM_TARGETS_GPU_COMPAT[@]}
 cuda doc offload test
 "
 gen_cuda_required_use() {
@@ -163,6 +153,9 @@ REQUIRED_USE="
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
+	)
+	^^ (
+		${LLVM_TARGETS_CPU_COMPAT[@]}
 	)
 "
 RDEPEND="
@@ -227,16 +220,6 @@ RDEPEND="
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
-	cuda_targets_sm_89? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_90? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11.8*:=
-		)
-	)
 	llvm_targets_NVPTX? (
 		<dev-util/nvidia-cuda-toolkit-11.9:=
 	)
@@ -286,7 +269,10 @@ einfo "Building LLVM"
 	cd "${S_LLVM}" || die
 	mkdir -p build || die
 	cd build || die
-	local experimental_targets=";X86"
+	local experimental_targets=""
+	if use llvm_targets_X86 ; then
+		experimental_targets+=";X86"
+	fi
 	if use llvm_targets_AMDGPU ; then
 		experimental_targets+=";AMDGPU"
 	fi

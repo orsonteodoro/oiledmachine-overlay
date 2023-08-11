@@ -4,8 +4,7 @@
 EAPI=8
 
 # Cuda compatibility:
-# https://github.com/flang-compiler/classic-flang-llvm-project/blob/release_16x/clang/include/clang/Basic/Cuda.h
-# https://github.com/flang-compiler/classic-flang-llvm-project/blob/llvmorg-15.0.3/clang/include/clang/Basic/Cuda.h#L37
+# https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/clang/include/clang/Basic/Cuda.h
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
@@ -46,8 +45,6 @@ CUDA_TARGETS_COMPAT=(
 	sm_75
 	sm_80
 	sm_86
-	sm_89
-	sm_90
 	auto
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
@@ -119,14 +116,18 @@ LICENSE="
 # ZLIB, BSD - llvm-project-rocm-5.6.0/llvm/lib/Support/COPYRIGHT.regex
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-LLVM_TARGETS_COMPAT=(
+LLVM_TARGETS_CPU_COMPAT=(
+	llvm_targets_X86
+)
+LLVM_TARGETS_GPU_COMPAT=(
 	llvm_targets_AMDGPU
 	llvm_targets_NVPTX
 )
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
-${LLVM_TARGETS_COMPAT[@]}
+${LLVM_TARGETS_CPU_COMPAT[@]}
+${LLVM_TARGETS_GPU_COMPAT[@]}
 cuda doc offload test
 "
 gen_cuda_required_use() {
@@ -163,6 +164,9 @@ REQUIRED_USE="
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
+	)
+	^^ (
+		${LLVM_TARGETS_CPU_COMPAT[@]}
 	)
 "
 RDEPEND="
@@ -227,16 +231,6 @@ RDEPEND="
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
-	cuda_targets_sm_89? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_90? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11.8*:=
-		)
-	)
 	llvm_targets_NVPTX? (
 		<dev-util/nvidia-cuda-toolkit-11.9:=
 	)
@@ -286,7 +280,10 @@ einfo "Building LLVM"
 	cd "${S_LLVM}" || die
 	mkdir -p build || die
 	cd build || die
-	local experimental_targets=";X86"
+	local experimental_targets=""
+	if use llvm_targets_X86 ; then
+		experimental_targets+=";X86"
+	fi
 	if use llvm_targets_AMDGPU ; then
 		experimental_targets+=";AMDGPU"
 	fi
