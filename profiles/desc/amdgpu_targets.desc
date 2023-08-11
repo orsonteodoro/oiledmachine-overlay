@@ -12,11 +12,16 @@ gfx801 - Carrizo support
 gfx802 - Tonga support
 gfx803 - Fiji, Polaris 10, Polaris 11, Polaris 12, Vega M support
 gfx900 - Vega 10 support
+gfx906_xnack_minus - Vega 10 support with XNACK replay disabled
 gfx902 - Raven support
 gfx904 - Vega 12 support
 gfx906 - Vega 20 support
+gfx906_xnack_minus - Vega 20 support with XNACK replay disabled
 gfx908 - Arcturus support
+gfx908_xnack_minus - Arcturus support with XNACK replay disabled
 gfx90a - Aldearan support
+gfx90a_xnack_minus - Aldearan support with XNACK replay disabled
+gfx90a_xnack_plus - Aldearan support with XNACK replay enabled
 gfx90c - Renoir support
 gfx940 - Aqua Vanjaram support
 gfx1010 - Navi 10 support
