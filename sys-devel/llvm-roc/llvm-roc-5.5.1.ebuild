@@ -42,133 +42,13 @@ PATCHES=(
 S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 
-get_distribution_components() {
-	local sep=${1-;}
-
-	local out=(
-		# shared libs
-		LLVM
-		LTO
-		Remarks
-
-		# tools
-		llvm-config
-
-		# common stuff
-		cmake-exports
-		llvm-headers
-
-		# libraries needed for mlir
-		LLVMDemangle
-		LLVMSupport
-		LLVMTableGen
-
-		# utilities
-		llvm-tblgen
-		FileCheck
-		llvm-PerfectShuffle
-		count
-		not
-		yaml-bench
-		UnicodeNameMappingGenerator
-
-		# tools
-		bugpoint
-		dsymutil
-		llc
-		lli
-		lli-child-target
-		llvm-addr2line
-		llvm-ar
-		llvm-as
-		llvm-bcanalyzer
-		llvm-bitcode-strip
-		llvm-c-test
-		llvm-cat
-		llvm-cfi-verify
-		llvm-config
-		llvm-cov
-		llvm-cvtres
-		llvm-cxxdump
-		llvm-cxxfilt
-		llvm-cxxmap
-		llvm-debuginfo-analyzer
-		llvm-debuginfod
-		llvm-debuginfod-find
-		llvm-diff
-		llvm-dis
-		llvm-dlltool
-		llvm-dwarfdump
-		llvm-dwarfutil
-		llvm-dwp
-		llvm-exegesis
-		llvm-extract
-		llvm-gsymutil
-		llvm-ifs
-		llvm-install-name-tool
-		llvm-jitlink
-		llvm-jitlink-executor
-		llvm-lib
-		llvm-libtool-darwin
-		llvm-link
-		llvm-lipo
-		llvm-lto
-		llvm-lto2
-		llvm-mc
-		llvm-mca
-		llvm-ml
-		llvm-modextract
-		llvm-mt
-		llvm-nm
-		llvm-objcopy
-		llvm-objdump
-		llvm-opt-report
-		llvm-otool
-		llvm-pdbutil
-		llvm-profdata
-		llvm-profgen
-		llvm-ranlib
-		llvm-rc
-		llvm-readelf
-		llvm-readobj
-		llvm-reduce
-		llvm-remark-size-diff
-		llvm-remarkutil
-		llvm-rtdyld
-		llvm-sim
-		llvm-size
-		llvm-split
-		llvm-stress
-		llvm-strings
-		llvm-strip
-		llvm-symbolizer
-		llvm-tapi-diff
-		llvm-tli-checker
-		llvm-undname
-		llvm-windres
-		llvm-xray
-		obj2yaml
-		opt
-		sancov
-		sanstats
-		split-file
-		verify-uselistorder
-		yaml2obj
-
-		# python modules
-		opt-viewer
-	)
-
-	printf "%s${sep}" "${out[@]}"
-}
-
 src_configure() {
 	export CC="${CHOST}-gcc"
 	export CXX="${CHOST}-g++"
 	filter-flags "-fuse-ld=*"
 	strip-unsupported-flags
 	replace-flags '-O0' '-O1'
-	PROJECTS="clang;lld"
+	PROJECTS="llvm;clang;lld"
 	if use runtime ; then
 		PROJECTS+=";compiler-rt"
 	fi
@@ -176,8 +56,7 @@ src_configure() {
 		-DBUILD_SHARED_LIBS=OFF
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/opt/rocm-${PV}/llvm"
 		-DLLVM_BUILD_DOCS=NO
-		-DLLVM_BUILD_LLVM_DYLIB=ON
-		-DLLVM_DISTRIBUTION_COMPONENTS=$(get_distribution_components)
+#		-DLLVM_BUILD_LLVM_DYLIB=ON
 		-DLLVM_ENABLE_ASSERTIONS=ON # For mlir
 		-DLLVM_ENABLE_DOXYGEN=OFF
 		-DLLVM_ENABLE_OCAMLDOC=OFF
@@ -186,7 +65,7 @@ src_configure() {
 		-DLLVM_ENABLE_ZSTD=OFF # For mlir
 		-DLLVM_ENABLE_ZLIB=OFF # For mlir
 		-DLLVM_INSTALL_UTILS=ON
-		-DLLVM_LINK_LLVM_DYLIB=ON
+#		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD="AMDGPU;X86"
 		-DLLVM_VERSION_SUFFIX=roc
 		-DOCAMLFIND=NO
@@ -195,12 +74,21 @@ src_configure() {
 }
 
 src_compile() {
-	cmake_build distribution
+	cmake_src_compile
+	cmake_build \
+		LLVMDemangle \
+		LLVMSupport \
+		LLVMTableGen
 }
 
 src_install() {
 	DESTDIR="${D}" \
-	cmake_build install-distribution
+	cmake_src_install
+	DESTDIR="${D}" \
+	cmake_build \
+		install-LLVMDemangle \
+		install-LLVMSupport \
+		install-LLVMTableGen
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
