@@ -523,15 +523,15 @@ src_install() {
 	doins -r "${staging_prefix}/"*
 	fix_file_permissions
 	dosym \
-		/usr/lib/classic-flang/${LLVM_MAX_SLOT}/bin/flang \
-		/usr/bin/classic-flang-${LLVM_MAX_SLOT}
+		"/usr/lib/classic-flang/${LLVM_MAX_SLOT}/bin/flang" \
+		"/usr/bin/classic-flang-${LLVM_MAX_SLOT}"
 }
 
 pkg_postinst() {
-einfo "Switching /usr/bin/flang-${LLVM_MAX_SLOT} -> /usr/bin/flang"
+einfo "Switching ${EROOT}/usr/bin/flang-${LLVM_MAX_SLOT} -> ${EROOT}/usr/bin/flang"
 	ln -sf \
-		/usr/bin/classic-flang-${LLVM_MAX_SLOT} \
-		/usr/bin/flang
+		"${EROOT}/usr/bin/classic-flang-${LLVM_MAX_SLOT}" \
+		"${EROOT}/usr/bin/flang"
 ewarn
 ewarn "You must use LD_LIBRARY_PATH or rpath changes to run the output created"
 ewarn "by flang."

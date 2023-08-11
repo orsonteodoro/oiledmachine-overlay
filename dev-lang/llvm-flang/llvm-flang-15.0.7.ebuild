@@ -84,7 +84,7 @@ src_configure() {
 }
 
 pkg_postinst() {
-einfo "Switching /usr/lib/llvm-flang/${LLVM_MAJOR}/bin/flang-new -> /usr/bin/flang"
+einfo "Switching ${EROOT}/usr/lib/llvm-flang/${LLVM_MAJOR}/bin/flang-new -> ${EROOT}/usr/bin/flang"
 	ln -sf \
 		"${EROOT}/usr/lib/llvm-flang/${LLVM_MAJOR}/bin/flang-new" \
 		"${EROOT}/usr/bin/flang" \

@@ -44,8 +44,6 @@ CUDA_TARGETS_COMPAT=(
 	auto
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
-EGIT_CLASSIC_FLANG_LLVM_PROJECT_COMMIT="5c04f282bab1b2e24c3eccab15fe9ff6be7c8f62"
-EGIT_CLASSIC_FLANG_LLVM_PROJECT_LLVM_PV="16.0.4" # See https://github.com/flang-compiler/classic-flang-llvm-project/blob/release_16x/llvm/CMakeLists.txt#L18
 LLVM_MAX_SLOT=15 # Same as classic-flang-llvm-project llvm version
 PYTHON_COMPAT=( python3_{10..11} )
 
@@ -321,8 +319,10 @@ einfo "Building libomp"
 	experimental_targets="${experimental_targets:1}"
 	local mycmakeargs_=(
 		${mycmakeargs[@]}
+		-DCLANG_DIR="${staging_prefix}/lib/cmake/clang"
 		-DCMAKE_C_COMPILER="${CHOST}-gcc"
 		-DCMAKE_CXX_COMPILER="${CHOST}-g++"
+		-DLLVM_DIR="${staging_prefix}/lib/cmake/llvm"
 		-DLLVM_ENABLE_CLASSIC_FLANG=ON
 		-DLLVM_ENABLE_PROJECTS="openmp"
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${experimental_targets}"
@@ -503,10 +503,10 @@ src_install() {
 }
 
 pkg_postinst() {
-einfo "Switching /usr/bin/rocm-flang -> /usr/bin/flang"
+einfo "Switching ${EROOT}/usr/bin/rocm-flang -> ${EROOT}/usr/bin/flang"
 	ln -sf \
-		/usr/bin/rocm-flang \
-		/usr/bin/flang
+		"${EROOT}/usr/bin/rocm-flang" \
+		"${EROOT}/usr/bin/flang"
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
