@@ -6,6 +6,14 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <!--
+
+  oiledmachine-overlay:
+
+  "Classic Flang" and "LLVM Flang" are separate.
+  This is Classic Flang.
+
+  -->
   <upstream>
     <remote-id type="github">flang-compiler/flang</remote-id>
   </upstream>

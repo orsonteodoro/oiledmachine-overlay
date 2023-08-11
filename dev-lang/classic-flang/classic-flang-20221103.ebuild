@@ -60,7 +60,7 @@ inherit cmake llvm python-any-r1 rocm
 
 SRC_URI="
 https://github.com/flang-compiler/flang/archive/refs/tags/flang_${PV}.tar.gz
-	-> ${P}.tar.gz
+	-> classic-flang-${PV}.tar.gz
 https://github.com/flang-compiler/classic-flang-llvm-project/archive/${EGIT_CLASSIC_FLANG_LLVM_PROJECT_COMMIT}.tar.gz
 	-> classic-flang-llvm-project-${EGIT_CLASSIC_FLANG_LLVM_PROJECT_COMMIT:0:7}.tar.gz
 https://github.com/flang-compiler/flang/pull/1381/commits/05a1be6663f43caad40e982c8501c6b6ea2ece27.patch
@@ -442,6 +442,10 @@ src_prepare() {
 }
 
 src_configure() {
+ewarn
+ewarn "This is \"Classic Flang\"."
+ewarn "For \"LLVM Flang\", see dev-lang/llvm-flang."
+ewarn
 	# Removed all clangs from path except for this vendored one.
 	einfo "LLVM_SLOT=${LLVM_SLOT}"
 	einfo "PATH=${PATH} (before)"
@@ -514,19 +518,19 @@ einfo "Fixing file/folder permissions"
 
 src_install() {
 	local staging_prefix="${PWD}/install"
-	local dest="/usr/lib/flang/${LLVM_MAX_SLOT}"
+	local dest="/usr/lib/classic-flang/${LLVM_MAX_SLOT}"
 	insinto "${dest}"
 	doins -r "${staging_prefix}/"*
 	fix_file_permissions
 	dosym \
-		/usr/lib/flang/${LLVM_MAX_SLOT}/bin/flang \
-		/usr/bin/flang-${LLVM_MAX_SLOT}
+		/usr/lib/classic-flang/${LLVM_MAX_SLOT}/bin/flang \
+		/usr/bin/classic-flang-${LLVM_MAX_SLOT}
 }
 
 pkg_postinst() {
 einfo "Switching /usr/bin/flang-${LLVM_MAX_SLOT} -> /usr/bin/flang"
 	ln -sf \
-		/usr/bin/flang-${LLVM_MAX_SLOT} \
+		/usr/bin/classic-flang-${LLVM_MAX_SLOT} \
 		/usr/bin/flang
 ewarn
 ewarn "You must use LD_LIBRARY_PATH or rpath changes to run the output created"
@@ -534,7 +538,7 @@ ewarn "by flang."
 ewarn
 ewarn "Example:"
 ewarn
-ewarn "  LD_LIBRARY_PATH=\"${EPREFIX}/usr/lib/flang/${LLVM_MAX_SLOT}/lib\" ./hello.exe"
+ewarn "  LD_LIBRARY_PATH=\"${EPREFIX}/usr/lib/classic-flang/${LLVM_MAX_SLOT}/lib\" ./hello.exe"
 ewarn
 }
 
