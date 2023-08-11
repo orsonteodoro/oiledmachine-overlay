@@ -299,7 +299,7 @@ gen_nvptx_list() {
 		local list
 		local x
 		for x in ${CUDA_TARGETS_COMPAT[@]} ; do
-			if use "${x}" ; then
+			if use "cuda_targets_${x}" ; then
 				list+=";${x/sm_}"
 			fi
 		done
@@ -346,6 +346,11 @@ einfo "Building LLVM"
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
 			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 		)
+		if use llvm_targets_AMDGPU ; then
+			mycmakeargs_+=(
+				-DLIBOMPTARGET_AMDGCN_GFXLIST=$(get_amdgpu_flags)
+			)
+		fi
 		if use llvm_targets_NVPTX ; then
 			mycmakeargs_+=(
 				-DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES=$(gen_nvptx_list)

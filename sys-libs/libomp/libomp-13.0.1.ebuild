@@ -203,7 +203,7 @@ gen_nvptx_list() {
 		local list
 		local x
 		for x in ${CUDA_TARGETS_COMPAT[@]} ; do
-			if use "${x}" ; then
+			if use "cuda_targets_${x}" ; then
 				list+=";${x/sm_}"
 			fi
 		done
