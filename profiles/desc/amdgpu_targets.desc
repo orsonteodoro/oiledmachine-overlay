@@ -6,7 +6,7 @@
 # https://github.com/ROCm-Developer-Tools/clr/blob/rocm-5.6.0/opencl/tests/ocltst/module/runtime/OCLDeviceQueries.cpp
 # https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface/blob/master/src/libhsakmt.h
 
-gfx700 - Kaveri support
+gfx700 - Kaveri, Spooky, Spectre support
 gfx701 - Hawaii support
 gfx801 - Carrizo support
 gfx802 - Tonga support
@@ -27,6 +27,7 @@ gfx940 - Aqua Vanjaram support
 gfx1010 - Navi 10 support
 gfx1011 - Navi 12 support
 gfx1012 - Navi 14 support
+gfx1013 - Cyan Skillfish support
 gfx1030 - Sienna Ciclid support
 gfx1031 - Navy Flounder support
 gfx1032 - Dimgray Cavefish support
@@ -36,7 +37,7 @@ gfx1035 - Yellow Carp, Rembrant support
 gfx1036 - Raphael support
 gfx1100 - Plum Bonito, Navi 31 support
 gfx1101 - Wheat Nas, Navi 32 support
-gfx1102 - Navi 33 support
-gfx1103 - Pheonix support
+gfx1102 - Hotpink Bonefish, Navi 33 support
+gfx1103 - Pink Sardine, Pheonix support
 gfx1150 - RDNA 3 support
 gfx1151 - RDNA 3 support
