@@ -61,12 +61,17 @@ inherit cmake llvm python-any-r1 rocm
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/flang/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/flang-compiler/classic-flang-llvm-project/archive/${EGIT_CLASSIC_FLANG_LLVM_PROJECT_COMMIT}.tar.gz
-	-> classic-flang-llvm-project-${EGIT_CLASSIC_FLANG_LLVM_PROJECT_COMMIT:0:7}.tar.gz
+https://github.com/RadeonOpenCompute/llvm-project/archive/refs/tags/rocm-${PV}.tar.gz
+	-> llvm-project-rocm-${PV}.tar.gz
 "
 DESCRIPTION="ROCm's fork of Flang."
 HOMEPAGE="https://github.com/flang-compiler/flang"
-LICENSE="Apache-2.0-with-LLVM-exceptions"
+THIRD_PARTY_LICENSES="
+"
+LICENSE="
+	${THIRD_PARTY_LICENSES}
+	Apache-2.0-with-LLVM-exceptions
+"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 LLVM_TARGETS_COMPAT=(
@@ -210,8 +215,8 @@ BDEPEND="
 		')
 	)
 "
-S="${WORKDIR}/flang-flang_${PV}"
-S_LLVM="${WORKDIR}/classic-flang-llvm-project-${EGIT_CLASSIC_FLANG_LLVM_PROJECT_COMMIT}"
+S="${WORKDIR}/flang-rocm-${PV}"
+S_LLVM="${WORKDIR}/llvm-project-rocm-${PV}"
 PATCHES=(
 )
 
