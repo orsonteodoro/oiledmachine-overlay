@@ -51,12 +51,21 @@ LLVM_USE_TARGETS="llvm"
 llvm.org_set_globals
 
 src_configure() {
+	local user_choice=$(echo "${MAKEOPTS}" \
+		| grep -E -e "-j[ ]*[0-9]+" \
+		| grep -E -o "[0-9]+")
+	local half_ncpus=$(python -c "print(int($(nproc)/2))")
+	(( ${half_ncpus} == 0 )) && half_ncpus=1
+	if [[ "${user_choice}" != "1" ]] ; then
+		MAKEOPTS="-j${half_ncpus}" # Heavy swap
+	fi
 	local mycmakeargs=(
 		-DCLANG_DIR="${ESYSROOT}/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/cmake/clang"
 		-DCMAKE_BUILD_TYPE="Release"
 		-DCMAKE_CXX_STANDARD=17
 		-DCMAKE_CXX_LINK_FLAGS="-Wl,-rpath,${LD_LIBRARY_PATH}"
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm-flang/${LLVM_MAJOR}"
 		-DFLANG_ENABLE_WERROR=ON
 		-DFLANG_INCLUDE_TESTS=OFF
 		-DLLVM_BUILD_MAIN_SRC_DIR="${ESYSROOT}/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/cmake/llvm"
@@ -72,6 +81,14 @@ src_configure() {
 		)
 	fi
 	cmake_src_configure
+}
+
+pkg_postinst() {
+einfo "Switching /usr/lib/llvm-flang/${LLVM_MAJOR}/bin/flang-new -> /usr/bin/flang"
+	ln -sf \
+		"${EROOT}/usr/lib/llvm-flang/${LLVM_MAJOR}/bin/flang-new" \
+		"${EROOT}/usr/bin/flang" \
+		|| die
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
