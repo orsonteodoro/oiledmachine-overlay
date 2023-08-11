@@ -3,39 +3,6 @@
 
 EAPI=8
 
-# Cuda compatibility:
-# https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/clang/include/clang/Basic/Cuda.h
-
-AMDGPU_TARGETS_COMPAT=(
-	gfx700
-	gfx701
-	gfx801
-	gfx803
-	gfx900
-	gfx902
-	gfx906
-	gfx908
-	gfx90a
-	gfx1010
-	gfx1030
-	gfx1031
-)
-CUDA_TARGETS_COMPAT=(
-	sm_35
-	sm_37
-	sm_50
-	sm_52
-	sm_53
-	sm_60
-	sm_61
-	sm_62
-	sm_70
-	sm_72
-	sm_75
-	sm_80
-	sm_86
-	auto
-)
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=14 # Same as classic-flang-llvm-project llvm version
 PYTHON_COMPAT=( python3_{10..11} )
@@ -45,10 +12,8 @@ inherit cmake llvm python-any-r1 rocm
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/flang/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/RadeonOpenCompute/llvm-project/archive/refs/tags/rocm-${PV}.tar.gz
-	-> llvm-project-rocm-${PV}.tar.gz
 "
-DESCRIPTION="ROCm's fork of Flang."
+DESCRIPTION="ROCm's fork of Classic Flang."
 HOMEPAGE="https://github.com/flang-compiler/flang"
 THIRD_PARTY_LICENSES="
 	(
@@ -103,127 +68,16 @@ LICENSE="
 # ZLIB, BSD - llvm-project-rocm-5.6.0/llvm/lib/Support/COPYRIGHT.regex
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-LLVM_TARGETS_CPU_COMPAT=(
-	llvm_targets_X86
-)
-LLVM_TARGETS_GPU_COMPAT=(
-	llvm_targets_AMDGPU
-	llvm_targets_NVPTX
-)
 IUSE="
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-${ROCM_IUSE}
-${LLVM_TARGETS_CPU_COMPAT[@]}
-${LLVM_TARGETS_GPU_COMPAT[@]}
 cuda doc offload test
 "
-gen_cuda_required_use() {
-	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
-		echo "
-			cuda_targets_${x}? (
-				llvm_targets_NVPTX
-			)
-		"
-	done
-}
-gen_rocm_required_use() {
-	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
-		echo "
-			amdgpu_targets_${x}? (
-				llvm_targets_AMDGPU
-			)
-		"
-	done
-}
 REQUIRED_USE="
-	$(gen_cuda_required_use)
-	$(gen_rocm_required_use)
-	cuda? (
-		llvm_targets_NVPTX
-	)
-	llvm_targets_AMDGPU? (
-		${ROCM_REQUIRED_USE}
-	)
-	llvm_targets_NVPTX? (
-		cuda
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		)
-	)
-	^^ (
-		${LLVM_TARGETS_CPU_COMPAT[@]}
-	)
 "
 RDEPEND="
-	cuda_targets_sm_35? (
-		=dev-util/nvidia-cuda-toolkit-11*:=
-	)
-	cuda_targets_sm_37? (
-		=dev-util/nvidia-cuda-toolkit-11*:=
-	)
-	cuda_targets_sm_50? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_52? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_53? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_60? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_61? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_62? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_70? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_72? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_75? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_80? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	cuda_targets_sm_86? (
-		|| (
-			=dev-util/nvidia-cuda-toolkit-11*:=
-		)
-	)
-	llvm_targets_NVPTX? (
-		<dev-util/nvidia-cuda-toolkit-11.9:=
-	)
-	offload? (
-		dev-libs/libffi:=
-		virtual/libelf:=
+	~sys-devel/llvm-roc-${PV}:${SLOT}
+	~sys-libs/llvm-roc-libomp-${PV}:${SLOT}[offload?]
+	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
 	)
 "
 DEPEND="
@@ -231,9 +85,6 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.9.0
-	offload? (
-		virtual/pkgconfig
-	)
 	doc? (
 		app-doc/doxygen
 		$(python_gen_any_dep '
@@ -242,116 +93,8 @@ BDEPEND="
 	)
 "
 S="${WORKDIR}/flang-rocm-${PV}"
-S_LLVM="${WORKDIR}/llvm-project-rocm-${PV}"
 PATCHES=(
 )
-
-gen_nvptx_list() {
-	if use cuda_targets_auto ; then
-		echo "auto"
-	else
-		local list
-		local x
-		for x in ${CUDA_TARGETS_COMPAT[@]} ; do
-			if use "cuda_targets_${x}" ; then
-				list+=";${x/sm_}"
-			fi
-		done
-		list="${list:1}"
-		echo "${list}"
-	fi
-}
-
-build_llvm() {
-einfo "Building LLVM"
-	cd "${S_LLVM}" || die
-	mkdir -p build || die
-	cd build || die
-	local experimental_targets=""
-	if use llvm_targets_X86 ; then
-		experimental_targets+=";X86"
-	fi
-	if use llvm_targets_AMDGPU ; then
-		experimental_targets+=";AMDGPU"
-	fi
-	if use llvm_targets_NVPTX ; then
-		experimental_targets+=";NVPTX"
-	fi
-	experimental_targets="${experimental_targets:1}"
-	local mycmakeargs_=(
-		${mycmakeargs[@]}
-		-DCMAKE_C_COMPILER="${CHOST}-gcc"
-		-DCMAKE_CXX_COMPILER="${CHOST}-g++"
-		-DLLVM_ENABLE_CLASSIC_FLANG=ON
-		-DLLVM_ENABLE_PROJECTS="llvm;clang"
-		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${experimental_targets}"
-		-DLLVM_TARGETS_TO_BUILD=""
-	)
-	ccmake \
-		${mycmakeargs_[@]} \
-		../llvm
-	emake
-	emake install
-}
-
-build_libomp() {
-einfo "Building libomp"
-	cd "${S_LLVM}" || die
-	mkdir -p build || die
-	cd build || die
-	local experimental_targets=""
-	if use llvm_targets_X86 ; then
-		experimental_targets+=";X86"
-	fi
-	if use llvm_targets_AMDGPU ; then
-		experimental_targets+=";AMDGPU"
-	fi
-	if use llvm_targets_NVPTX ; then
-		experimental_targets+=";NVPTX"
-	fi
-	experimental_targets="${experimental_targets:1}"
-	local mycmakeargs_=(
-		${mycmakeargs[@]}
-		-DCLANG_DIR="${staging_prefix}/lib/cmake/clang"
-		-DCMAKE_C_COMPILER="${CHOST}-gcc"
-		-DCMAKE_CXX_COMPILER="${CHOST}-g++"
-		-DLLVM_DIR="${staging_prefix}/lib/cmake/llvm"
-		-DLLVM_ENABLE_CLASSIC_FLANG=ON
-		-DLLVM_ENABLE_PROJECTS="openmp"
-		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${experimental_targets}"
-		-DLLVM_TARGETS_TO_BUILD=""
-		-DOPENMP_ENABLE_LIBOMPTARGET=$(usex offload ON OFF)
-	)
-	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
-		mycmakeargs_+=(
-			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
-			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
-			-DOPENMP_ENABLE_LIBOMPTARGET=ON
-		)
-		if use llvm_targets_AMDGPU ; then
-			mycmakeargs_+=(
-				-DLIBOMPTARGET_AMDGCN_GFXLIST=$(get_amdgpu_flags)
-			)
-		fi
-		if use llvm_targets_NVPTX ; then
-			mycmakeargs_+=(
-				-DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES=$(gen_nvptx_list)
-			)
-		fi
-	else
-		mycmakeargs_+=(
-			-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
-			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
-			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=OFF
-			-DOPENMP_ENABLE_LIBOMPTARGET=OFF
-		)
-	fi
-	ccmake \
-		${mycmakeargs_[@]} \
-		../llvm
-	emake
-	emake install
-}
 
 build_libpgmath() {
 einfo "Building libpgmath"
@@ -429,15 +172,12 @@ src_compile() {
 	local staging_prefix="${PWD}/install"
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE="Release"
-		-DCMAKE_C_COMPILER="${staging_prefix}/bin/clang"
-		-DCMAKE_CXX_COMPILER="${staging_prefix}/bin/clang++"
+		-DCMAKE_C_COMPILER="${ESYSROOT}/opt/rocm-${PV}/llvm/bin/clang"
+		-DCMAKE_CXX_COMPILER="${ESYSROOT}/opt/rocm-${PV}/llvm/bin/clang++"
 		-DCMAKE_Fortran_COMPILER="${staging_prefix}/bin/flang"
 		-DCMAKE_Fortran_COMPILER_ID="Flang"
 		-DCMAKE_INSTALL_PREFIX="${staging_prefix}"
 	)
-	addpredict /dev/kfd
-	build_llvm
-	build_libomp
 	build_libpgmath
 	build_flang
 }
