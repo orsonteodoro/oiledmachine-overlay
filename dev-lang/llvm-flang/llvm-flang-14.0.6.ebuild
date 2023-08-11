@@ -93,4 +93,3 @@ einfo "Switching /usr/lib/llvm-flang/${LLVM_MAJOR}/bin/flang-new -> /usr/bin/fla
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
-
