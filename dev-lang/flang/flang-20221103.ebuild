@@ -76,10 +76,13 @@ DESCRIPTION="Flang is a Fortran language front-end designed for integration \
 with LLVM."
 HOMEPAGE="https://github.com/flang-compiler/flang"
 THIRD_PARTY_LICENSES="
-	Apache-2.0
 	(
-		Apache-2.0-with-LLVM-exceptions
-		UoI-NCSA
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		Apache-2.0
+		CC0-1.0
 	)
 	(
 		Apache-2.0-with-LLVM-exceptions
@@ -93,9 +96,10 @@ THIRD_PARTY_LICENSES="
 		UoI-NCSA
 	)
 	(
-		CC0-1.0
-		Apache-2.0
+		Apache-2.0-with-LLVM-exceptions
+		UoI-NCSA
 	)
+	Apache-2.0
 	BSD
 	ISC
 	MIT
@@ -104,6 +108,9 @@ LICENSE="
 	${THIRD_PARTY_LICENSES}
 	Apache-2.0-with-LLVM-exceptions
 "
+# all-rights-reserved Apache-2.0 - flang-flang_20221103/runtime/libpgmath/LICENSE.txt
+# The Apache-2.0 license template does not have all rights reserved in the distro
+# template but all rights reserved is explicit in Apache-1.0 and BSD licenses.
 # Apache-2.0 - classic-flang-llvm-project/third-party/benchmark/LICENSE
 # Apache-2.0-with-LLVM-exceptions, UoI-NCSA - classic-flang-llvm-project/lldb/LICENSE.TXT
 # Apache-2.0-with-LLVM-exceptions, BSD, MIT - classic-flang-llvm-project/libclc/LICENSE.TXT
