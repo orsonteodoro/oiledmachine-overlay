@@ -1,21 +1,28 @@
 # This file is part of the blender eclass, oidn, xpra ebuilds.
 
 # Known from encountered projects.  Not all are listed.
-cuda_targets_sm_30 - Support Kepler v0 or later
-cuda_targets_sm_35 - Support Kepler v5 or later
-cuda_targets_sm_37 - Support Kepler v7 or later
-cuda_targets_sm_50 - Support Maxwell v0 or later
-cuda_targets_sm_52 - Support Maxwell v2 or later
-cuda_targets_sm_53 - Support Maxwell v3 or later
-cuda_targets_sm_60 - Support Pascal v0 or later
-cuda_targets_sm_61 - Support Pascal v1 or later
-cuda_targets_sm_62 - Support Pascal v2 or later
-cuda_targets_sm_70 - Support Volta v0 or later
-cuda_targets_sm_72 - Support Volta v2 or later
-cuda_targets_sm_75 - Support Turing v5 or later
-cuda_targets_sm_80 - Support Ampere v0 or later
-cuda_targets_sm_86 - Support Ampere v6 or later
-cuda_targets_sm_89 - Support Ada Lovelace v9 or later
-cuda_targets_sm_90 - Support Hopper v0 or later
-cuda_targets_compute_75 - Support Turing virtual architecture or later
-cuda_targets_compute_89 - Support Ada Lovelace virtual architecture or later
+cuda_targets_auto - Support the auto-detected microarchitecture optimized
+cuda_targets_sm_30 - Support Kepler v0 optimized, or later unoptimized
+cuda_targets_sm_35 - Support Kepler v5 optimized, or later unoptimized
+cuda_targets_sm_37 - Support Kepler v7 optimized, or later unoptimized
+cuda_targets_sm_50 - Support Maxwell v0 optimized, or later unoptimized
+cuda_targets_sm_50_plus_ptx - Support Maxwell v0 optimized, or later optimized
+cuda_targets_sm_52 - Support Maxwell v2 optimized, or later unoptimized
+cuda_targets_sm_53 - Support Maxwell v3 optimized, or later unoptimized
+cuda_targets_sm_60 - Support Pascal v0 optimized, or later unoptimized
+cuda_targets_sm_61 - Support Pascal v1 optimized, or later unoptimized
+cuda_targets_sm_62 - Support Pascal v2 optimized, or later unoptimized
+cuda_targets_sm_70 - Support Volta v0 optimized, or later unoptimized
+cuda_targets_sm_70_plus_ptx - Support Volta v0 optimized, or later optimized
+cuda_targets_sm_72 - Support Volta v2 optimized, or later unoptimized
+cuda_targets_sm_75 - Support Turing v5 optimized, or later unoptimized
+cuda_targets_sm_80 - Support Ampere v0 optimized, or later unoptimized
+cuda_targets_sm_86 - Support Ampere v6 optimized, or later unoptimized
+cuda_targets_sm_89 - Support Ada Lovelace v9 optimized, or later unoptimized
+cuda_targets_sm_90 - Support Hopper v0 optimized, or later unoptimized
+cuda_targets_compute_60 - Support Pascal architecture or later optimized
+cuda_targets_compute_70 - Support Volta architecture or later optimized
+cuda_targets_compute_75 - Support Turing v5 virtual architecture or later optimized
+cuda_targets_compute_80 - Support Ampere virtual architecture or later optimized
+cuda_targets_compute_86 - Support Ampere v6 virtual architecture or later optimized
+cuda_targets_compute_89 - Support Ada Lovelace v9 virtual architecture or later optimized
