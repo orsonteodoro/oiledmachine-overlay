@@ -7,7 +7,7 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=16 # Same as llvm-roc
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit cmake llvm python-any-r1 rocm
+inherit cmake flag-o-matic llvm python-any-r1 rocm toolchain-funcs
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/flang/archive/refs/tags/rocm-${PV}.tar.gz
@@ -69,13 +69,17 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
-cuda doc offload test
+aocc cuda doc offload test
 "
 REQUIRED_USE="
 "
 RDEPEND="
+	sys-devel/gcc
 	~sys-devel/llvm-roc-${PV}:${SLOT}
 	~sys-libs/llvm-roc-libomp-${PV}:${SLOT}[offload?]
+	aocc? (
+		sys-devel/aocc
+	)
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
@@ -122,17 +126,21 @@ einfo "Building flang"
 		${mycmakeargs[@]}
 		-DFLANG_LLVM_EXTENSIONS=ON
 		-DFLANG_INCLUDE_DOCS=$(usex doc ON oFF)
+		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON oFF)
 	)
+einfo "GCC major version:  $(gcc-major-version)"
+	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
+	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)" -lquadmath
+	filter-flags -Wl,--as-needed
 	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		mycmakeargs_+=(
-			-DFLANG_OPENMP_GPU_NVIDIA=$(usex cuda \
-				$(usex offload ON OFF) \
-				OFF \
-			)
+			-DFLANG_OPENMP_GPU_AMD=$(usex aocc ON OFF)
+			-DFLANG_OPENMP_GPU_NVIDIA=$(usex cuda ON OFF)
 		)
 	else
 		mycmakeargs_+=(
+			-DFLANG_OPENMP_GPU_AMD=OFF
 			-DFLANG_OPENMP_GPU_NVIDIA=OFF
 		)
 	fi
@@ -154,6 +162,11 @@ src_prepare() {
 	sed -i -e "s|\"--src-root\"||g" \
 		"${S}/CMakeLists.txt" \
 		|| die
+	if ! use offload ; then
+		sed -i -e "s|-g -DOMP_OFFLOAD_LLVM|-g|g" \
+			"CMakeLists.txt" \
+			|| die
+	fi
 }
 
 src_configure() {
@@ -178,6 +191,7 @@ src_compile() {
 		-DCMAKE_Fortran_COMPILER_ID="Flang"
 		-DCMAKE_INSTALL_PREFIX="${staging_prefix}"
 	)
+	export VERBOSE=1
 	build_libpgmath
 	build_flang
 }

@@ -7,31 +7,6 @@ EAPI=8
 # https://github.com/flang-compiler/classic-flang-llvm-project/blob/release_16x/clang/include/clang/Basic/Cuda.h
 # https://github.com/flang-compiler/classic-flang-llvm-project/blob/llvmorg-15.0.3/clang/include/clang/Basic/Cuda.h#L37
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx700
-	gfx701
-	gfx801
-	gfx803
-	gfx900
-	gfx902
-	gfx906
-	gfx908
-	gfx90a
-	gfx90c
-	gfx940
-	gfx1010
-	gfx1030
-	gfx1031
-	gfx1032
-	gfx1033
-	gfx1034
-	gfx1035
-	gfx1036
-	gfx1100
-	gfx1101
-	gfx1102
-	gfx1103
-)
 CUDA_TARGETS_COMPAT=(
 	sm_35
 	sm_37
@@ -56,7 +31,7 @@ EGIT_CLASSIC_FLANG_LLVM_PROJECT_LLVM_PV="16.0.4" # See https://github.com/flang-
 LLVM_MAX_SLOT=16 # Same as classic-flang-llvm-project llvm version
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit cmake llvm python-any-r1 rocm
+inherit cmake llvm python-any-r1
 
 SRC_URI="
 https://github.com/flang-compiler/flang/archive/refs/tags/flang_${PV}.tar.gz
@@ -128,12 +103,10 @@ LLVM_TARGETS_CPU_COMPAT=(
 	llvm_targets_X86
 )
 LLVM_TARGETS_GPU_COMPAT=(
-	llvm_targets_AMDGPU
 	llvm_targets_NVPTX
 )
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-${ROCM_IUSE}
 ${LLVM_TARGETS_CPU_COMPAT[@]}
 ${LLVM_TARGETS_GPU_COMPAT[@]}
 cuda doc offload test
@@ -148,19 +121,8 @@ gen_cuda_required_use() {
 		"
 	done
 }
-gen_rocm_required_use() {
-	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
-		echo "
-			amdgpu_targets_${x}? (
-				llvm_targets_AMDGPU
-			)
-		"
-	done
-}
 REQUIRED_USE="
 	$(gen_cuda_required_use)
-	$(gen_rocm_required_use)
 	arm64? (
 		llvm_targets_AArch64
 	)
@@ -170,9 +132,9 @@ REQUIRED_USE="
 	cuda? (
 		llvm_targets_NVPTX
 	)
-	llvm_targets_AMDGPU? (
-		${ROCM_REQUIRED_USE}
-		offload
+	offload? (
+		cuda
+		llvm_targets_NVPTX
 	)
 	llvm_targets_NVPTX? (
 		offload
@@ -323,9 +285,6 @@ einfo "Building LLVM"
 	if use ppc64 ; then
 		experimental_targets=";PowerPC"
 	fi
-	if use llvm_targets_AMDGPU ; then
-		experimental_targets+=";AMDGPU"
-	fi
 	if use llvm_targets_NVPTX ; then
 		experimental_targets+=";NVPTX"
 	fi
@@ -342,26 +301,20 @@ einfo "Building LLVM"
 	)
 	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		mycmakeargs_+=(
-			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
+			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
 			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 		)
-		if use llvm_targets_AMDGPU ; then
-			mycmakeargs_+=(
-				-DLIBOMPTARGET_AMDGCN_GFXLIST=$(get_amdgpu_flags)
-			)
-		fi
 		if use llvm_targets_NVPTX ; then
 			mycmakeargs_+=(
 				-DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES=$(gen_nvptx_list)
 			)
 		fi
-		if use ppc64 && ( use llvm_targets_AMDGPU || use llvm_targets_NVPTX ) ; then
+		if use ppc64 && ( use llvm_targets_NVPTX ) ; then
 			if ! [[ "${CHOST}" =~ "powerpc64le" ]] ; then
 eerror
 eerror "Big endian is not supported for ppc64 for offload.  Disable either the"
-eerror "offload, llvm_targets_AMDGPU, llvm_targets_NVPTX USE flag(s) to"
-eerror "continue."
+eerror "offload, llvm_targets_NVPTX USE flag(s) to continue."
 eerror
 				die
 			fi
