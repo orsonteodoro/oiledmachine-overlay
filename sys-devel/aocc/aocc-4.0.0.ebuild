@@ -14,6 +14,9 @@ DESCRIPTION="The AOCC compiler system"
 HOMEPAGE="https://www.amd.com/en/developer/aocc.html"
 LICENSE="
 	AOCC-${PV%.*}-EULA
+	Apache-2.0-with-LLVM-exceptions
+	BSD-2
+	UoI-NCSA
 "
 SLOT="${LLVM_MAX_SLOT}/${PV}"
 KEYWORDS="
