@@ -9,4 +9,14 @@
   <upstream>
     <remote-id type="github">RadeonOpenCompute/llvm-project</remote-id>
   </upstream>
+  <use>
+    <flag name="ompd">
+      Add debug support for OpenMP.
+    </flag>
+    <flag name="ompt">
+      Add tracing support for OpenMP.
+    </flag>
+    <flag name="">
+    </flag>
+  </use>
 </pkgmetadata>
