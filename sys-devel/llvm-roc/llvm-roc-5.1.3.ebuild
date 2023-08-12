@@ -74,6 +74,8 @@ src_configure() {
 }
 
 src_compile() {
+	# libomp needs LLVMOffloadArch
+	# mlir needs LLVMDemangle, LLVMSupport, LLVMTableGen
 	cmake_src_compile \
 		all \
 		LLVMDemangle \

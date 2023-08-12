@@ -127,8 +127,8 @@ RDEPEND="
 # hip-samples -
 # hsa-rocr x Alias for rocr-runtime
 # hsa-amd-aqlprofile x No repo
-# rocm-llvm -
-# openmp-extras-runtime ; libomp + flang
+# rocm-llvm x
+# openmp-extras-runtime ; libarcher (and static-lib), libomp, flang
 # rocm-cmake x
 # rocm-dbgapi x
 # rocm-debug-agent x
@@ -190,7 +190,7 @@ RDEPEND="
 # rocm-utils:
 #
 # rocminfo x
-# rocm-clang-ocl # Metapackage for rocm-llvm, rocm-opencl-dev x, rocm-core x
+# rocm-clang-ocl # Metapackage for rocm-llvm x, rocm-opencl-dev x, rocm-core x
 # rocm-cmake x
 # rocm-core -
 #
