@@ -74,33 +74,21 @@ src_configure() {
 }
 
 src_compile() {
-	cmake_src_compile
-
-	# For mlir
-	cmake_build \
+	cmake_src_compile \
+		all \
 		LLVMDemangle \
 		LLVMSupport \
-		LLVMTableGen
-
-	# For libomp
-	cmake_build \
+		LLVMTableGen \
 		LLVMOffloadArch
 }
 
 src_install() {
-	DESTDIR="${D}"
-	cmake_src_install
-
-	# For mlir
-	cmake_build \
+	DESTDIR="${D}" \
+	cmake_src_install \
 		install-LLVMDemangle \
 		install-LLVMSupport \
-		install-LLVMTableGen
-
-	# For libomp
-	cmake_build \
+		install-LLVMTableGen \
 		install-LLVMOffloadArch
-	unset DESTDIR
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
