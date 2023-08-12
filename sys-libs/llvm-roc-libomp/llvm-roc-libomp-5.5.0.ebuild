@@ -139,6 +139,9 @@ REQUIRED_USE="
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
+	ompd? (
+		ompt
+	)
 	^^ (
 		${LLVM_TARGETS_CPU_COMPAT[@]}
 	)
@@ -280,9 +283,8 @@ src_configure() {
 		-DCMAKE_C_COMPILER="${CHOST}-gcc"
 		-DCMAKE_CXX_COMPILER="${CHOST}-g++"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/opt/rocm-${PV}/llvm"
-#		-DLIBOMP_OMPT_SUPPORT=$(usex ompt ON OFF)
 		-DLIBOMP_OMPD_SUPPORT=$(usex ompd ON OFF)
-		-DLIBOMPTARGET_OMPT_SUPPORT=$(usex ompt ON OFF)
+		-DLIBOMP_OMPT_SUPPORT=$(usex ompt ON OFF)
 		-DLLVM_BUILD_DOCS=NO
 #		-DLLVM_BUILD_LLVM_DYLIB=ON
 		-DLLVM_ENABLE_ASSERTIONS=ON # For mlir
@@ -305,6 +307,7 @@ src_configure() {
 		mycmakeargs+=(
 			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
+			-DLIBOMPTARGET_OMPT_SUPPORT=$(usex ompt ON OFF)
 			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 		)
 		if use llvm_targets_AMDGPU ; then
@@ -333,39 +336,31 @@ src_configure() {
 src_compile() {
 	local targets=(
 		omp
-		lib/libomptarget.so.${LLVM_MAX_SLOT}roc
-		lib/libomptarget.so
 	)
-	if use llvm_targets_X86 ; then
-		targets+=(
-			lib/libomptarget.rtl.x86_64.so.${LLVM_MAX_SLOT}roc
-			lib/libomptarget.rtl.x86_64.so
-		)
-	fi
-	if use llvm_targets_AMDGPU ; then
-		targets+=(
-			lib/libomptarget.rtl.amdgpu.so.${LLVM_MAX_SLOT}roc
-			lib/libomptarget.rtl.amdgpu.so
-		)
-	fi
-	if use llvm_targets_NVPTX ; then
-		targets+=(
-			lib/libomptarget.rtl.cuda.so.${LLVM_MAX_SLOT}roc
-			lib/libomptarget.rtl.cuda.so
-		)
-	fi
 	if use offload ; then
 		targets+=(
 			bin/offload-arch
+			lib/libomptarget.so.${LLVM_MAX_SLOT}roc
+			lib/libomptarget.so
 		)
+		if use llvm_targets_X86 ; then
+			targets+=(
+				lib/libomptarget.rtl.x86_64.so.${LLVM_MAX_SLOT}roc
+				lib/libomptarget.rtl.x86_64.so
+			)
+		fi
 		if use llvm_targets_AMDGPU ; then
 			targets+=(
 				lib/OffloadArch/offload-arch/amdgpu-offload-arch
+				lib/libomptarget.rtl.amdgpu.so.${LLVM_MAX_SLOT}roc
+				lib/libomptarget.rtl.amdgpu.so
 			)
 		fi
 		if use llvm_targets_NVPTX ; then
 			targets+=(
 				lib/OffloadArch/offload-arch/nvidia-arch
+				lib/libomptarget.rtl.cuda.so.${LLVM_MAX_SLOT}roc
+				lib/libomptarget.rtl.cuda.so
 			)
 		fi
 	fi
@@ -399,36 +394,35 @@ _cmake_src_install() {
 }
 
 src_install() {
-	local targets=(
-		install-omptarget
-	)
-	if use llvm_targets_X86 ; then
-		targets+=(
-			install-omptarget.rtl.x86_64
-		)
-	fi
-	if use llvm_targets_AMDGPU ; then
-		targets+=(
-			install-omptarget.rtl.amdgpu
-		)
-	fi
-	if use llvm_targets_NVPTX ; then
-		targets+=(
-			install-omptarget.rtl.cuda
-		)
-	fi
+	local targets=()
 	if use offload ; then
 		targets+=(
 			install-offload-arch
+			install-omptarget
 		)
-	fi
-	_cmake_src_install \
-		${targets[@]}
-	if ! use llvm_targets_AMDGPU ; then
-		rm "${ED}/opt/rocm-${PV}/llvm/bin/amdgpu-offload-arch" || die
-	fi
-	if ! use llvm_targets_NVPTX ; then
-		rm "${ED}/opt/rocm-${PV}/llvm/bin/nvidia-arch" || die
+		if use llvm_targets_X86 ; then
+			targets+=(
+				install-omptarget.rtl.x86_64
+			)
+		fi
+		if use llvm_targets_AMDGPU ; then
+			targets+=(
+				install-omptarget.rtl.amdgpu
+			)
+		fi
+		if use llvm_targets_NVPTX ; then
+			targets+=(
+				install-omptarget.rtl.cuda
+			)
+		fi
+		_cmake_src_install \
+			${targets[@]}
+		if ! use llvm_targets_AMDGPU ; then
+			rm "${ED}/opt/rocm-${PV}/llvm/bin/amdgpu-offload-arch" || die
+		fi
+		if ! use llvm_targets_NVPTX ; then
+			rm "${ED}/opt/rocm-${PV}/llvm/bin/nvidia-arch" || die
+		fi
 	fi
 	cd "${BUILD_DIR}" || die
 	exeinto "/opt/rocm-${PV}/llvm/lib"

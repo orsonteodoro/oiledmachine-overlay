@@ -11,10 +11,10 @@
   </upstream>
   <use>
     <flag name="ompd">
-      Add debug support for OpenMP.
+      Add debug tools support.
     </flag>
     <flag name="ompt">
-      Add tracing support for OpenMP.
+      Add tracing and performance tools support.
     </flag>
     <flag name="offload">
       Add support for offloading computation to GPUs.
