@@ -17,8 +17,8 @@
       [Enable for feature completeness.]
     </flag>
     <flag name="flang">
-      Install ROCm's fork of Classic Flang.  Flang is a Fortran frontend with
-      a LLVM backend based on ROCm's fork.
+      Install ROCm's fork of Classic Flang supporting GPU offload for AMD GPUs.
+      Flang is a Fortran frontend with a LLVM backend based on ROCm's fork.
     </flag>
     <flag name="hipfort">
       Install the hipfort frontend for accessing GPU kernels for Fortran 2003
