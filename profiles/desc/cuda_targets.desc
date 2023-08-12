@@ -1,5 +1,9 @@
 # This file is part of the blender eclass, oidn, xpra ebuilds.
 
+# sm_* implies no startup penalty.
+# ptx may add a one time startup penalty.
+# compute_* implies ptx.
+
 # Known from encountered projects.  Not all are listed.
 cuda_targets_auto - Support the auto-detected microarchitecture optimized
 cuda_targets_sm_30 - Support Kepler v0 optimized, or later unoptimized
