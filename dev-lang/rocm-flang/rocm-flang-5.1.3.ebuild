@@ -35,6 +35,9 @@ doc test
 "
 REQUIRED_USE="
 "
+# AOCC is a hard requirement due to code quality related to offload disablement
+# connected to #ifdef OMP_OFFLINE_LLVM.  Code fragments are scattered without
+# this condition.
 RDEPEND="
 	sys-devel/aocc
 	sys-devel/gcc
