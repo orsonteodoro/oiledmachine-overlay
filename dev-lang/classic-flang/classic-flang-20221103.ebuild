@@ -302,7 +302,7 @@ einfo "Building LLVM"
 	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		mycmakeargs_+=(
 			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=OFF
-			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
+			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex cuda ON OFF)
 			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 		)
 		if use llvm_targets_NVPTX ; then
@@ -359,8 +359,8 @@ einfo "Building flang"
 	local mycmakeargs_=(
 		${mycmakeargs[@]}
 		-DFLANG_LLVM_EXTENSIONS=ON
-		-DFLANG_INCLUDE_DOCS=$(usex doc ON oFF)
-		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON oFF)
+		-DFLANG_INCLUDE_DOCS=$(usex doc ON OFF)
+		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 	)
 	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		mycmakeargs_+=(
