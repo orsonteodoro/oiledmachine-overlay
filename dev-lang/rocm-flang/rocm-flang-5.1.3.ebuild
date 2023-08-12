@@ -4,7 +4,7 @@
 EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_MAX_SLOT=14 # Same as classic-flang-llvm-project llvm version
+LLVM_MAX_SLOT=14 # Same as llvm-roc
 PYTHON_COMPAT=( python3_{10..11} )
 
 inherit cmake llvm python-any-r1 rocm
@@ -164,7 +164,7 @@ src_configure() {
 		| tr ":" "\n" \
 		| sed -E -e "/llvm\/[0-9]+/d" \
 		| tr "\n" ":" \
-		| sed -e "s|/opt/bin|/opt/bin:${PWD}/install/bin|g")
+		| sed -e "s|/opt/bin|/opt/bin:${PWD}/install/bin:${ESYSROOT}/opt/rocm-${PV}/llvm/bin|g")
 	einfo "PATH=${PATH} (after)"
 }
 
