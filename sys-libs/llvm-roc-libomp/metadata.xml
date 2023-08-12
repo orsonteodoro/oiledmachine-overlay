@@ -16,7 +16,8 @@
     <flag name="ompt">
       Add tracing support for OpenMP.
     </flag>
-    <flag name="">
+    <flag name="offload">
+      Add support for offloading computation to GPUs.
     </flag>
   </use>
 </pkgmetadata>
