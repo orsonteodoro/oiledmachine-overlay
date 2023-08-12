@@ -88,9 +88,8 @@ src_compile() {
 }
 
 src_install() {
-	DESTDIR="${D}" \
+	DESTDIR="${D}"
 	cmake_src_install
-	DESTDIR="${D}" \
 
 	# For mlir
 	cmake_build \
@@ -101,6 +100,7 @@ src_install() {
 	# For libomp
 	cmake_build \
 		install-LLVMOffloadArch
+	unset DESTDIR
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
