@@ -20,33 +20,6 @@ THIRD_PARTY_LICENSES="
 		all-rights-reserved
 		Apache-2.0
 	)
-	(
-		Apache-2.0
-		CC0-1.0
-	)
-	(
-		Apache-2.0-with-LLVM-exceptions
-		BSD
-		MIT
-	)
-	(
-		Apache-2.0-with-LLVM-exceptions
-		custom
-		MIT
-		UoI-NCSA
-	)
-	(
-		Apache-2.0-with-LLVM-exceptions
-		UoI-NCSA
-	)
-	(
-		BSD
-		ZLIB
-	)
-	Apache-2.0
-	BSD
-	ISC
-	MIT
 "
 LICENSE="
 	${THIRD_PARTY_LICENSES}
@@ -55,17 +28,6 @@ LICENSE="
 # all-rights-reserved, Apache-2.0 - flang-rocm-5.6.0/runtime/libpgmath/LICENSE.txt
 # The Apache-2.0 license template does not have all rights reserved in the distro
 # template but all rights reserved is explicit in Apache-1.0 and BSD licenses.
-# Apache-2.0 - llvm-project-rocm-5.6.0/third-party/benchmark/LICENSE
-# Apache-2.0-with-LLVM-exceptions, UoI-NCSA - llvm-project-rocm-5.6.0/lldb/LICENSE.TXT
-# Apache-2.0-with-LLVM-exceptions, BSD, MIT - llvm-project-rocm-5.6.0/libclc/LICENSE.TXT
-# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-5.6.0/openmp/LICENSE.TXT
-#   Keyword search:  "all right, title, and interest"
-# BSD - llvm-project-rocm-5.6.0/third-party/unittest/googlemock/LICENSE.txt
-# BSD - llvm-project-rocm-5.6.0/openmp/runtime/src/thirdparty/ittnotify/LICENSE.txt
-# CC0-1.0, Apache-2.0 - llvm-project-rocm-5.6.0/llvm/lib/Support/BLAKE3/LICENSE
-# ISC - llvm-project-rocm-5.6.0/lldb/third_party/Python/module/pexpect-4.6/LICENSE
-# MIT - llvm-project-rocm-5.6.0/polly/lib/External/isl/LICENSE
-# ZLIB, BSD - llvm-project-rocm-5.6.0/llvm/lib/Support/COPYRIGHT.regex
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="

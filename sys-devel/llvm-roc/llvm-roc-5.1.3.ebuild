@@ -15,13 +15,56 @@ DESCRIPTION="The ROCm™ fork of the LLVM project"
 HOMEPAGE="
 	https://github.com/RadeonOpenCompute/llvm-project
 "
+SUBPROJECTS_LICENSES="
+	(
+		Apache-2.0
+		CC0-1.0
+	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		BSD
+		MIT
+	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		custom
+		MIT
+		UoI-NCSA
+	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		UoI-NCSA
+	)
+	(
+		BSD
+		ZLIB
+	)
+	Apache-2.0
+	BSD
+	ISC
+	MIT
+"
 LICENSE="
-	Apache-2.0-with-LLVM-exceptions
+	${SUBPROJECTS_LICENSES}
+	(
+		Apache-2.0-with-LLVM-exceptions
+		UoI-NCSA
+	)
 	BSD
 	rc
 	public-domain
-	UoI-NCSA
 "
+# Apache-2.0 - llvm-project-rocm-5.6.0/third-party/benchmark/LICENSE
+# Apache-2.0-with-LLVM-exceptions, UoI-NCSA - llvm-project-rocm-5.6.0/lldb/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions, BSD, MIT - llvm-project-rocm-5.6.0/libclc/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-5.6.0/openmp/LICENSE.TXT
+#   Keyword search:  "all right, title, and interest"
+# BSD - llvm-project-rocm-5.6.0/third-party/unittest/googlemock/LICENSE.txt
+# BSD - llvm-project-rocm-5.6.0/openmp/runtime/src/thirdparty/ittnotify/LICENSE.txt
+# CC0-1.0, Apache-2.0 - llvm-project-rocm-5.6.0/llvm/lib/Support/BLAKE3/LICENSE
+# ISC - llvm-project-rocm-5.6.0/lldb/third_party/Python/module/pexpect-4.6/LICENSE
+# MIT - llvm-project-rocm-5.6.0/polly/lib/External/isl/LICENSE
+# ZLIB, BSD - llvm-project-rocm-5.6.0/llvm/lib/Support/COPYRIGHT.regex
 KEYWORDS="~amd64"
 SLOT="${PV}"
 IUSE="+runtime"

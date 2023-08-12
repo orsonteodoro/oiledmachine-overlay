@@ -88,10 +88,14 @@ HOMEPAGE="
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 	BSD
+	custom
+	MIT
 	rc
 	public-domain
 	UoI-NCSA
 "
+# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-5.6.0/openmp/LICENSE.TXT
+#   Keyword search:  "all right, title, and interest"
 KEYWORDS="~amd64"
 SLOT="${PV}"
 IUSE+="
