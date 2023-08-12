@@ -23,7 +23,17 @@ IUSE="
 "
 REQUIRED_USE="
 "
+# See also https://github.com/RadeonOpenCompute/rocm-spack/blob/develop/var/spack/repos/builtin/packages/aocc/package.py#L50
 RDEPEND="
+	dev-libs/libelf
+	dev-libs/libffi
+	dev-libs/libxml2
+	sys-apps/texinfo
+	sys-devel/gcc
+	sys-devel/libtool
+	sys-libs/glibc
+	sys-libs/ncurses
+	sys-libs/zlib
 "
 DEPEND="
 	${RDEPEND}
