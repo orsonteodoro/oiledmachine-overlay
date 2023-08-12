@@ -13,7 +13,7 @@ SRC_URI="
 https://github.com/ROCm-Developer-Tools/flang/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-DESCRIPTION="ROCm's fork of Classic Flang."
+DESCRIPTION="ROCm's fork of Classic Flang with GPU offload support"
 HOMEPAGE="https://github.com/flang-compiler/flang"
 THIRD_PARTY_LICENSES="
 	(
@@ -69,20 +69,15 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
-aocc cuda doc offload test
+doc test
 "
 REQUIRED_USE="
 "
 RDEPEND="
+	sys-devel/aocc
 	sys-devel/gcc
-	~sys-devel/llvm-roc-${PV}:${SLOT}
-	~sys-libs/llvm-roc-libomp-${PV}:${SLOT}[offload?]
-	aocc? (
-		sys-devel/aocc
-	)
-	cuda? (
-		dev-util/nvidia-cuda-toolkit:=
-	)
+	~sys-devel/llvm-roc-${PV}:${SLOT}[llvm_targets_AMDGPU,llvm_targets_X86]
+	~sys-libs/llvm-roc-libomp-${PV}:${SLOT}[llvm_targets_AMDGPU,llvm_targets_X86,offload]
 "
 DEPEND="
 	${RDEPEND}
@@ -133,17 +128,18 @@ einfo "GCC major version:  $(gcc-major-version)"
 	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
 	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)" -lquadmath
 	filter-flags -Wl,--as-needed
-	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
-		mycmakeargs_+=(
-			-DFLANG_OPENMP_GPU_AMD=$(usex aocc ON OFF)
-			-DFLANG_OPENMP_GPU_NVIDIA=$(usex cuda ON OFF)
-		)
+	if has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
+		:;
 	else
-		mycmakeargs_+=(
-			-DFLANG_OPENMP_GPU_AMD=OFF
-			-DFLANG_OPENMP_GPU_NVIDIA=OFF
-		)
+eerror
+eerror "64-bit only supported."
+eerror
+		die
 	fi
+	mycmakeargs_+=(
+		-DFLANG_OPENMP_GPU_AMD=ON
+		-DFLANG_OPENMP_GPU_NVIDIA=OFF
+	)
 	ccmake \
 		${mycmakeargs_[@]} \
 		..
@@ -162,11 +158,6 @@ src_prepare() {
 	sed -i -e "s|\"--src-root\"||g" \
 		"${S}/CMakeLists.txt" \
 		|| die
-	if ! use offload ; then
-		sed -i -e "s|-g -DOMP_OFFLOAD_LLVM|-g|g" \
-			"CMakeLists.txt" \
-			|| die
-	fi
 }
 
 src_configure() {
