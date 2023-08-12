@@ -53,7 +53,7 @@ src_configure() {
 		PROJECTS+=";compiler-rt"
 	fi
 	local mycmakeargs=(
-		-DBUILD_SHARED_LIBS=OFF
+#		-DBUILD_SHARED_LIBS=OFF
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/opt/rocm-${PV}/llvm"
 		-DLLVM_BUILD_DOCS=NO
 #		-DLLVM_BUILD_LLVM_DYLIB=ON
@@ -75,20 +75,32 @@ src_configure() {
 
 src_compile() {
 	cmake_src_compile
+
+	# For mlir
 	cmake_build \
 		LLVMDemangle \
 		LLVMSupport \
 		LLVMTableGen
+
+	# For libomp
+	cmake_build \
+		LLVMOffloadArch
 }
 
 src_install() {
 	DESTDIR="${D}" \
 	cmake_src_install
 	DESTDIR="${D}" \
+
+	# For mlir
 	cmake_build \
 		install-LLVMDemangle \
 		install-LLVMSupport \
 		install-LLVMTableGen
+
+	# For libomp
+	cmake_build \
+		install-LLVMOffloadArch
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
