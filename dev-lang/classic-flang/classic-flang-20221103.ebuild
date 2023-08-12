@@ -364,10 +364,7 @@ einfo "Building flang"
 	)
 	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		mycmakeargs_+=(
-			-DFLANG_OPENMP_GPU_NVIDIA=$(usex cuda \
-				$(usex offload ON OFF) \
-				OFF \
-			)
+			-DFLANG_OPENMP_GPU_NVIDIA=$(usex cuda ON OFF)
 		)
 	else
 		mycmakeargs_+=(

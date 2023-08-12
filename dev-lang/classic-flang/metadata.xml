@@ -17,4 +17,9 @@
   <upstream>
     <remote-id type="github">flang-compiler/flang</remote-id>
   </upstream>
+  <use>
+    <flag name="offload">
+      Support offloading computations to GPUs.
+    </flag>
+  </use>
 </pkgmetadata>
