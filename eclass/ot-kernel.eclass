@@ -2701,10 +2701,10 @@ eerror
 		fi
 		die
 	fi
-	if has_version "<sys-firmware/intel-microcode-20230214_p20230212" ; then
+	if has_version "<sys-firmware/intel-microcode-20230808_p20230804" ; then
 # See https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/blob/main/releasenote.md
 eerror
-eerror "Re-emerge >=sys-firmware/intel-microcode-20230214_p20230212 for"
+eerror "Re-emerge >=sys-firmware/intel-microcode-20230808_p20230804 for"
 eerror "security update(s)."
 eerror
 		die
