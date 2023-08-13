@@ -23,6 +23,7 @@ KEYWORDS="
 ~amd64 ~x86
 "
 IUSE="
+	r1
 "
 REQUIRED_USE="
 "
@@ -79,6 +80,8 @@ einfo "Sanitizing file/folder permissions"
 		elif file "${path}" | grep -q -e "ELF .* shared object" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "ELF .* executable" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "Perl script" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "Python script" ; then
 			chmod 0755 "${path}" || die
