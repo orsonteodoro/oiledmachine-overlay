@@ -1,28 +1,4 @@
 # Commit that caused breakage:  8c5f87e264c471fa1326d77d2de2a04b8e900090
-diff -urp flang-rocm-5.1.3.orig/CMakeLists.txt flang-rocm-5.1.3/CMakeLists.txt
---- flang-rocm-5.1.3.orig/CMakeLists.txt	2022-02-16 10:37:15.000000000 -0800
-+++ flang-rocm-5.1.3/CMakeLists.txt	2023-08-12 20:57:43.127297002 -0700
-@@ -400,14 +400,12 @@ set(FLANG_LIB_DIR ${CMAKE_CURRENT_BINARY
- set(FLANG_RTE_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib)
- add_definitions( -DPGFLANG )
- 
--if (LLVM_INSTALL_RUNTIME)
--   add_subdirectory(runtime)
--else()
--   add_subdirectory(lib)
--   add_subdirectory(utils)
--   add_subdirectory(tools)
--   #add_subdirectory(test)
--endif()
-+# oteodoro:  revert
-+add_subdirectory(lib)
-+add_subdirectory(runtime)
-+add_subdirectory(utils)
-+add_subdirectory(tools)
-+#add_subdirectory(test)
- 
- #option(FLANG_BUILD_EXAMPLES "Build FLANG example programs by default." OFF)
- #if (FLANG_BUILD_EXAMPLES)
 diff -urp flang-rocm-5.1.3.orig/runtime/flang/CMakeLists.txt flang-rocm-5.1.3/runtime/flang/CMakeLists.txt
 --- flang-rocm-5.1.3.orig/runtime/flang/CMakeLists.txt	2022-02-16 10:37:15.000000000 -0800
 +++ flang-rocm-5.1.3/runtime/flang/CMakeLists.txt	2023-08-12 20:56:49.143295596 -0700
