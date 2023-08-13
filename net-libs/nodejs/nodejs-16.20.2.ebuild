@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
-# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V18.md
+# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
 
 EAPI=8
 
@@ -20,16 +20,16 @@ LICENSE="
 	Artistic-2
 	BSD
 	BSD-2
-	icu-71.1
+	icu-70.1
 	ISC
 	MIT
 	Unicode-DFS-2016
 	ZLIB
 	ssl? (
-		Apache-2.0
+		openssl
 	)
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
 HOMEPAGE="https://nodejs.org/"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
@@ -120,23 +120,23 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Jul 12, 2023
-ACORN_PV="8.8.2"
-COREPACK_PV="0.18.0"
-NGHTTP2_PV="1.52.0"
+# Last deps commit date:  Aug 8, 2023
+ACORN_PV="8.8.0"
+COREPACK_PV="0.17.0"
+NGHTTP2_PV="1.47.0"
 RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.0.9
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.44.2:=
+	>=dev-libs/libuv-1.44.0:=
 	>=net-dns/c-ares-1.19.1
 	>=net-libs/nghttp2-${NGHTTP2_PV}
-	>=sys-libs/zlib-1.2.12
+	>=sys-libs/zlib-1.2.11
 	system-icu? (
-		>=dev-libs/icu-73.1:=
+		>=dev-libs/icu-71.1:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.9:0=
+		>=dev-libs/openssl-1.1.1v:0=
 	)
 "
 DEPEND+="
@@ -147,9 +147,6 @@ BDEPEND+="
 	dev-util/ninja
 	sys-apps/coreutils
 	virtual/pkgconfig
-	mold? (
-		sys-devel/mold
-	)
 	pax-kernel? (
 		sys-apps/elfix
 	)
@@ -165,22 +162,30 @@ BDEPEND+="
 		net-misc/curl
 	)
 "
+SRC_URI="
+https://github.com/nodejs/node/archive/refs/tags/v${PV}.tar.gz
+	-> node-v${PV}.tar.gz
+"
 PDEPEND+="
-	sys-apps/npm:3
+	sys-apps/npm:2
 	acorn? (
 		=dev-nodejs/acorn-$(ver_cut 1-2 ${ACORN_PV})*
 	)
 "
-SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 PATCHES=(
+	"${FILESDIR}/${PN}-16.12.0-jinja_collections_abc.patch"
 	"${FILESDIR}/${PN}-12.22.5-shared_c-ares_nameser_h.patch"
-	"${FILESDIR}/${PN}-18.17.0-global-npm-config.patch"
+	"${FILESDIR}/${PN}-15.2.0-global-npm-config.patch"
 	"${FILESDIR}/${PN}-16.13.2-lto-update.patch"
-	"${FILESDIR}/${PN}-18.17.0-support-clang-pgo.patch"
+	"${FILESDIR}/${PN}-16.13.2-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
 )
-S="${WORKDIR}/node-v${PV}"
-NPM_PV="9.6.7" # See https://github.com/nodejs/node/blob/v18.17.0/deps/npm/package.json
+if [[ -d "${WORKDIR}/node-v${PV}" ]] ; then
+	S="${WORKDIR}/node-v${PV}"
+else
+	S="${WORKDIR}/node-${PV}"
+fi
+NPM_PV="8.19.3" # See https://github.com/nodejs/node/blob/v16.20.2/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_PV="7.4.0"
@@ -217,7 +222,7 @@ pkg_setup() {
 	linux-info_pkg_setup
 
 einfo
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2025-04-30."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2023-09-11."
 einfo
 
 	# Prevent merge conflicts
@@ -418,6 +423,9 @@ _src_configure() {
 	uopts_src_configure
 	xdg_environment_reset
 
+	# Ban only for this slot for license compatibility reasons.
+	filter-flags "-fuse-ld=mold"
+
 	local myconf=(
 		--ninja
 		--shared-brotli
@@ -430,20 +438,11 @@ _src_configure() {
 	[[ "${LTO_TYPE}" =~ "lto" ]] && myconf+=( --enable-lto )
 	[[ "${LTO_TYPE}" =~ "thinlto" ]] && myconf+=( --with-thinlto )
 	[[ "${LTO_TYPE}" =~ "goldlto" ]] && myconf+=( --with-goldlto )
-	[[ "${LTO_TYPE}" =~ "moldlto" ]] && myconf+=( --with-moldlto )
-
-	if tc-is-gcc && [[ "${LTO_TYPE}" =~ "moldlto" ]] ; then
-ewarn "If moldlto fails for gcc, try clang."
-	fi
 
 	# LTO compiler flags are handled by configure.py itself
 	filter-flags '-flto*' \
 		'-fuse-ld*' \
 		'-fprofile*'
-
-	if use mold && [[ "${LTO_TYPE}" == "none" || -z "${LTO_TYPE}" ]] ; then
-		append-ldflags -fuse-ld=mold
-	fi
 
 	filter-flags '-O*'
 	use debug && myconf+=( --debug )
@@ -471,7 +470,6 @@ ewarn "If moldlto fails for gcc, try clang."
 	local myarch
 	myarch="${ABI/amd64/x64}"
 	myarch="${myarch/x86/ia32}"
-	[[ "${ARCH}:${ABI}" =~ "loong:lp64" ]] && myarch="loong64"
 	[[ "${ARCH}:${ABI}" =~ "riscv:lp64" ]] && myarch="riscv64"
 
 	GYP_DEFINES="linux_use_gold_flags=0
