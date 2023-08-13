@@ -100,9 +100,9 @@ einfo "Building Flang lib"
 	local mycmakeargs_=(
 		"${mycmakeargs[@]}"
 		-DFLANG_LLVM_EXTENSIONS=ON
-		-DFLANG_INCLUDE_DOCS=$(usex doc ON oFF)
+		-DFLANG_INCLUDE_DOCS=$(usex doc ON OFF)
 		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
-		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON oFF)
+		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=OFF
 		-DOPENMP_BUILD_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/lib"
 	)
@@ -141,9 +141,9 @@ einfo "Building Flang runtime"
 	local mycmakeargs_=(
 		"${mycmakeargs[@]}"
 		-DFLANG_LLVM_EXTENSIONS=ON
-		-DFLANG_INCLUDE_DOCS=$(usex doc ON oFF)
+		-DFLANG_INCLUDE_DOCS=$(usex doc ON OFF)
 		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
-		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON oFF)
+		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=ON
 		-DOPENMP_BUILD_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/lib"
 	)
