@@ -3,6 +3,11 @@
 
 EAPI=8
 
+# FIXME:
+# /var/tmp/portage/dev-lang/rocm-flang-5.6.0/temp/gather_cmplx32-0b0f56.ll:409:7: error: expected metadata type
+# !14 = !DIFortranSubrange(constLowerBound: 1, upperBound: !12, upperBoundExpression: !13)
+#       ^
+
 AOCC_SLOT=16
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=16 # Same as llvm-roc
