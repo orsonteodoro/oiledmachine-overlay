@@ -91,8 +91,8 @@ einfo "Building libpgmath"
 	fmake install
 }
 
-build_flang_lib() {
-einfo "Building Flang lib"
+build_flang() {
+einfo "Building Flang"
 	cd "${S}" || die
 	mkdir -p build || die
 	cd build || die
@@ -103,44 +103,6 @@ einfo "Building Flang lib"
 		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON oFF)
 		-DLLVM_INSTALL_RUNTIME=OFF
-		-DOPENMP_BUILD_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/lib"
-	)
-einfo "GCC major version:  $(gcc-major-version)"
-	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
-	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)" -lquadmath
-	filter-flags -Wl,--as-needed
-	if has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
-		:;
-	else
-eerror
-eerror "64-bit only supported."
-eerror
-		die
-	fi
-	mycmakeargs_+=(
-# OMP_OFFLOAD_AMD is nested in OMP_OFFLOAD_LLVM for target_ast
-		-DFLANG_OPENMP_GPU_AMD=ON
-		-DFLANG_OPENMP_GPU_NVIDIA=ON
-	)
-	ccmake \
-		"${mycmakeargs_[@]}" \
-		..
-	fmake
-	fmake install
-}
-
-build_flang_rt() {
-einfo "Building Flang runtime"
-	cd "${S}" || die
-	mkdir -p build || die
-	cd build || die
-	local mycmakeargs_=(
-		"${mycmakeargs[@]}"
-		-DFLANG_LLVM_EXTENSIONS=ON
-		-DFLANG_INCLUDE_DOCS=$(usex doc ON oFF)
-		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
-		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON oFF)
-		-DLLVM_INSTALL_RUNTIME=ON
 		-DOPENMP_BUILD_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/lib"
 	)
 einfo "GCC major version:  $(gcc-major-version)"
@@ -181,7 +143,7 @@ src_prepare() {
 }
 
 src_configure() {
-	# Removed all clangs from path except for this vendored one.
+	# Removed all clangs except for one used for building.
 	local compiler_path=""
 	if use aocc ; then
 		compiler_path="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin"
@@ -231,8 +193,7 @@ src_compile() {
 	fi
 	export VERBOSE=1
 	build_libpgmath
-	build_flang_lib
-	build_flang_rt
+	build_flang
 }
 
 hello_world_test() {
