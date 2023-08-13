@@ -3,6 +3,7 @@
 
 EAPI=8
 
+AOCC_SLOT=14
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=14 # Same as llvm-roc
 PYTHON_COMPAT=( python3_{10..11} )
@@ -31,18 +32,17 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
-doc test
+aocc doc test
 "
 REQUIRED_USE="
 "
-# AOCC is a hard requirement due to code quality related to offload disablement
-# connected to #ifdef OMP_OFFLINE_LLVM.  Code fragments are scattered without
-# this condition.
 RDEPEND="
-	sys-devel/aocc
 	sys-devel/gcc
 	~sys-devel/llvm-roc-${PV}:${SLOT}[llvm_targets_AMDGPU,llvm_targets_X86]
 	~sys-libs/llvm-roc-libomp-${PV}:${SLOT}[llvm_targets_AMDGPU,llvm_targets_X86,offload]
+	aocc? (
+		sys-devel/aocc:${AOCC_SLOT}
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -56,20 +56,22 @@ BDEPEND="
 		')
 	)
 "
+RESTRICT="
+	test
+"
 S="${WORKDIR}/flang-rocm-${PV}"
 PATCHES=(
+	"${FILESDIR}/rocm-flang-5.1.3-rt-flang2-no-rule-fix.patch"
 )
 
-build_libpgmath() {
-einfo "Building libpgmath"
-	cd "${S}/runtime/libpgmath" || die
-	mkdir -p build || die
-	cd build || die
-	ccmake \
-		${mycmakeargs[@]} \
-		..
-	emake
-	emake install
+fmake() {
+	if [[ "${CMAKE_MAKEFILE_GENERATOR}" == "ninja" ]] ; then
+einfo "Running:  ninja $@"
+		eninja "$@"
+	else
+einfo "Running:  emake $@"
+		emake "$@"
+	fi
 }
 
 ccmake() {
@@ -77,17 +79,31 @@ einfo "Running:  cmake ${@}"
 	cmake "${@}" || die
 }
 
-build_flang() {
-einfo "Building flang"
+build_libpgmath() {
+einfo "Building libpgmath"
+	cd "${S}/runtime/libpgmath" || die
+	mkdir -p build || die
+	cd build || die
+	ccmake \
+		"${mycmakeargs[@]}" \
+		..
+	fmake
+	fmake install
+}
+
+build_flang_lib() {
+einfo "Building Flang lib"
 	cd "${S}" || die
 	mkdir -p build || die
 	cd build || die
 	local mycmakeargs_=(
-		${mycmakeargs[@]}
+		"${mycmakeargs[@]}"
 		-DFLANG_LLVM_EXTENSIONS=ON
 		-DFLANG_INCLUDE_DOCS=$(usex doc ON oFF)
-		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)"
+		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON oFF)
+		-DLLVM_INSTALL_RUNTIME=OFF
+		-DOPENMP_BUILD_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/lib"
 	)
 einfo "GCC major version:  $(gcc-major-version)"
 	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
@@ -102,14 +118,53 @@ eerror
 		die
 	fi
 	mycmakeargs_+=(
+# OMP_OFFLOAD_AMD is nested in OMP_OFFLOAD_LLVM for target_ast
 		-DFLANG_OPENMP_GPU_AMD=ON
-		-DFLANG_OPENMP_GPU_NVIDIA=OFF
+		-DFLANG_OPENMP_GPU_NVIDIA=ON
 	)
 	ccmake \
-		${mycmakeargs_[@]} \
+		"${mycmakeargs_[@]}" \
 		..
-	emake
-	emake install
+	fmake
+	fmake install
+}
+
+build_flang_rt() {
+einfo "Building Flang runtime"
+	cd "${S}" || die
+	mkdir -p build || die
+	cd build || die
+	local mycmakeargs_=(
+		"${mycmakeargs[@]}"
+		-DFLANG_LLVM_EXTENSIONS=ON
+		-DFLANG_INCLUDE_DOCS=$(usex doc ON oFF)
+		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
+		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON oFF)
+		-DLLVM_INSTALL_RUNTIME=ON
+		-DOPENMP_BUILD_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/lib"
+	)
+einfo "GCC major version:  $(gcc-major-version)"
+	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
+	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)" -lquadmath
+	filter-flags -Wl,--as-needed
+	if has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
+		:;
+	else
+eerror
+eerror "64-bit only supported."
+eerror
+		die
+	fi
+	mycmakeargs_+=(
+# OMP_OFFLOAD_AMD is nested in OMP_OFFLOAD_LLVM for target_ast
+		-DFLANG_OPENMP_GPU_AMD=ON
+		-DFLANG_OPENMP_GPU_NVIDIA=ON
+	)
+	ccmake \
+		"${mycmakeargs_[@]}" \
+		..
+	fmake
+	fmake install
 }
 
 pkg_setup() {
@@ -127,29 +182,57 @@ src_prepare() {
 
 src_configure() {
 	# Removed all clangs from path except for this vendored one.
+	local compiler_path=""
+	if use aocc ; then
+		compiler_path="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin"
+	else
+		compiler_path="${ESYSROOT}/opt/rocm-${PV}/llvm/bin"
+	fi
 	einfo "LLVM_SLOT=${LLVM_SLOT}"
 	einfo "PATH=${PATH} (before)"
 	export PATH=$(echo "${PATH}" \
 		| tr ":" "\n" \
 		| sed -E -e "/llvm\/[0-9]+/d" \
 		| tr "\n" ":" \
-		| sed -e "s|/opt/bin|/opt/bin:${PWD}/install/bin:${ESYSROOT}/opt/rocm-${PV}/llvm/bin|g")
+		| sed -e "s|/opt/bin|/opt/bin:${PWD}/install/bin:${compiler_path}|g")
 	einfo "PATH=${PATH} (after)"
 }
 
 src_compile() {
 	local staging_prefix="${PWD}/install"
-	local mycmakeargs=(
+	declare -A _cmake_generator=(
+		["emake"]="Unix Makefiles"
+		["ninja"]="Ninja"
+	)
+	mycmakeargs=(
+		-G "${_cmake_generator[${CMAKE_MAKEFILE_GENERATOR}]}"
 		-DCMAKE_BUILD_TYPE="Release"
-		-DCMAKE_C_COMPILER="${ESYSROOT}/opt/rocm-${PV}/llvm/bin/clang"
-		-DCMAKE_CXX_COMPILER="${ESYSROOT}/opt/rocm-${PV}/llvm/bin/clang++"
-		-DCMAKE_Fortran_COMPILER="${staging_prefix}/bin/flang"
 		-DCMAKE_Fortran_COMPILER_ID="Flang"
 		-DCMAKE_INSTALL_PREFIX="${staging_prefix}"
+		-DENABLE_DEVEL_PACKAGE=OFF
+		-DENABLE_RUN_PACKAGE=OFF
 	)
+	if use aocc ; then
+		export PATH="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin:${PATH}"
+		export LD_LIBRARY_PATH="${ED}/opt/rocm-${PV}/llvm/lib"
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin/clang++"
+			-DCMAKE_Fortran_COMPILER="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin/flang"
+		)
+	else
+		export PATH="${ESYSROOT}/opt/rocm-${PV}/llvm/bin:${PATH}"
+		export LD_LIBRARY_PATH="${ED}/opt/rocm-${PV}/llvm/lib"
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER="${ESYSROOT}/opt/rocm-${PV}/llvm/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ESYSROOT}/opt/rocm-${PV}/llvm/bin/clang++"
+			-DCMAKE_Fortran_COMPILER="${ESYSROOT}/opt/rocm-${PV}/llvm/bin/flang"
+		)
+	fi
 	export VERBOSE=1
 	build_libpgmath
-	build_flang
+	build_flang_lib
+	build_flang_rt
 }
 
 hello_world_test() {
@@ -197,19 +280,17 @@ einfo "Sanitizing file/folder permissions"
 
 src_install() {
 	local staging_prefix="${PWD}/install"
-	local dest="/usr/lib/rocm-flang"
+	local dest="/opt/rocm-${PV}/llvm"
 	insinto "${dest}"
 	doins -r "${staging_prefix}/"*
 	fix_file_permissions
-	dosym \
-		/usr/lib/rocm-flang/bin/flang \
-		/usr/bin/rocm-flang
+	# Flang symlink frontend is already installed by sys-devel/llvm-roc.
 }
 
 pkg_postinst() {
 einfo "Switching ${EROOT}/usr/bin/rocm-flang -> ${EROOT}/usr/bin/flang"
 	ln -sf \
-		"${EROOT}/usr/bin/rocm-flang" \
+		"${EROOT}/opt/rocm-${PV}/llvm/bin/flang" \
 		"${EROOT}/usr/bin/flang"
 }
 

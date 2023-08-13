@@ -1,0 +1,47 @@
+--- flang-rocm-5.1.3/runtime/flang/CMakeLists.txt.orig	2022-02-16 10:37:15.000000000 -0800
++++ flang-rocm-5.1.3/runtime/flang/CMakeLists.txt	2023-08-12 19:59:05.899205393 -0700
+@@ -456,14 +456,16 @@ SET(FTN_SUPPORT_DESC_DEP
+ set(I8_FILES_DIR I8_sources)
+ separate_arguments(SEPARATED_CMAKE_Fortran_FLAGS NATIVE_COMMAND ${CMAKE_Fortran_FLAGS})
+ 
+-if(EXISTS bin/flang1)
+-  set(FLANG1_DEP bin/flang1)
+-  set(FLANG2_DEP bin/flang2)
+-else()
+-  # when just building runtime, flang1 flang2 binaries should have been installed
+-  set(FLANG1_DEP ${CMAKE_INSTALL_PREFIX}/bin/flang1)
+-  set(FLANG2_DEP ${CMAKE_INSTALL_PREFIX}/bin/flang2)
+-endif()
++# oteodoro:  changed to fix missing target error
++# when just building runtime, flang1 flang2 binaries should have been installed
++add_custom_command(TARGET FLANG1_DEP
++	COMMAND test -e "${CMAKE_BINARY_DIR}/bin/flang1"
++	COMMENT "Checking for flang1"
++)
++add_custom_command(TARGET FLANG2_DEP
++	COMMAND test -e "${CMAKE_BINARY_DIR}/bin/flang2"
++	COMMENT "Checking for flang2"
++)
+ 
+ # Fortran files with macros as module names need to be preprocessed.
+ # CMake has an internal Fortran parser that parses the module name, but it doesn't
+@@ -689,18 +691,7 @@ target_include_directories(flang_shared
+   ${CMAKE_CURRENT_BINARY_DIR}
+   )
+ 
+-# Make sure the compiler is built before we bootstrap
+-add_dependencies(flang_static 
+-  ${FLANG1_DEP}
+-  ${FLANG2_DEP}
+-  )
+-
+-# Make sure the compiler is built before we bootstrap
+-add_dependencies(flang_shared 
+-  flang_static
+-  ${FLANG1_DEP}
+-  ${FLANG2_DEP}
+-  )
++# oteodoro: FLANG1_DEP, FLANG2_DEP are already checked and built.
+ 
+ target_compile_options(flang_static PRIVATE -fPIC)
+ 

@@ -9,4 +9,9 @@
   <upstream>
     <remote-id type="github">ROCm-Developer-Tools/flang</remote-id>
   </upstream>
+  <use>
+    <flag name="aocc">
+      Use the AOCC compiler to build Flang.
+    </flang>
+  </use>
 </pkgmetadata>
