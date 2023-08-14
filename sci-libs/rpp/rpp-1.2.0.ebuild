@@ -103,6 +103,8 @@ src_prepare() {
 		$(grep -l -r -e "half/half.hpp" "${S}") \
 		|| die
 	IFS=$' \t\n'
+
+	# Unbreak rocm builds:
 	sed \
 		-i \
 		-e "s|-O3||g" \
@@ -113,11 +115,12 @@ src_prepare() {
 		-e "s|-Ofast||g" \
 		"CMakeLists.txt" \
 		|| die
-	sed \
-		-i \
-		-e "s|-DNDEBUG||g" \
-		"CMakeLists.txt" \
-		|| die
+#	sed \
+#		-i \
+#		-e "s|-DNDEBUG||g" \
+#		"CMakeLists.txt" \
+#		|| die
+
 	sed \
 		-i \
 		-e "/CMAKE_CXX_COMPILER clang\+\+/d" \
@@ -137,9 +140,7 @@ src_configure() {
 		-DROCM_PATH="${ESYSROOT}/usr"
 	)
 
-	replace-flags '-O0' '-O1'
-	MAKEOPTS="-j1"
-	export CXX="${HIP_CXX:-clang++}"
+	export CXX="${HIP_CXX:-hipcc}"
 
 	if ver_test $(gcc-major-version) -ne 11 ; then
 eerror
@@ -150,6 +151,9 @@ eerror "  source /etc/profile"
 eerror
 		die
 	fi
+ewarn
+ewarn "If the build fails, use either -O0 or the systemwide optimization level."
+ewarn
 
 	if use opencl ; then
 		mycmakeargs+=(
@@ -168,6 +172,11 @@ eerror
 		append-flags \
 			--rocm-path="${ESYSROOT}/usr" \
 			--rocm-device-lib-path="${ESYSROOT}/usr/lib/amdgcn/bitcode"
+
+		# Fix:
+		# lld: error: undefined symbol: __stack_chk_guard
+		append-flags \
+			-fno-stack-protector
 	elif use cpu ; then
 		mycmakeargs+=(
 			-DBACKEND="CPU"
