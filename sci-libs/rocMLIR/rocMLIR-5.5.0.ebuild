@@ -170,13 +170,31 @@ sanitize_permissions() {
 	IFS=$' \t\n'
 }
 
+fix_rpath() {
+	IFS=$'\n'
+	for path in $(find "${ED}") ; do
+		if file "${path}" | grep -q "ELF 64-bit .* shared object" ; then
+			patchelf --set-rpath "\$ORIGIN/../lib64" "${path}" || die
+		elif file "${path}" | grep -q "ELF 64-bit .* executable" ; then
+			patchelf --set-rpath "\$ORIGIN/../lib64" "${path}" || die
+		fi
+	done
+	IFS=$' \t\n'
+}
+
 src_install() {
 	local staging_prefix="${PWD}/install"
 	mv \
 		"${staging_prefix}/"* \
 		"${ED}" \
 		|| die
+	cd "${ED}" || die
+	mv \
+		"lib" \
+		"$(get_libdir)" \
+		|| die
 	sanitize_permissions
+	fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
