@@ -78,6 +78,7 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
+	"${FILESDIR}/rpp-1.2.0-lib64-changes.patch"
 )
 
 pkg_setup() {
@@ -89,15 +90,19 @@ src_prepare() {
 }
 
 src_configure() {
-	local mycmakeargs=()
+	local mycmakeargs=(
+		-DROCM_PATH="${ESYSROOT}/usr"
+	)
 
-	CXX="${HIP_CXX:-hipcc}"
+	MAKEOPTS="-j1"
+	CXX="${HIP_CXX:-g++}"
 
 	if [[ "${CXX}" =~ "g++" ]] ; then
 		mycmakeargs+=(
-			-DOpenMP_CXX_FLAGS="-fopenmp=libopenmp"
+			-DCMAKE_THREAD_LIBS_INIT="-lpthread"
+			-DOpenMP_CXX_FLAGS="-fopenmp"
 			-DOpenMP_CXX_LIB_NAMES="libopenmp"
-			-DOpenMP_libomp_LIBRARY="openmp"
+			-DOpenMP_libopenmp_LIBRARY="openmp"
 		)
 	else
 		mycmakeargs+=(

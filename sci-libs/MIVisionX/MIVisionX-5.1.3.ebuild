@@ -67,10 +67,11 @@ RDEPEND="
 		~sci-libs/miopengemm-${PV}:${SLOT}
 	)
 	opencv? (
-		>=media-libs/opencv-4.5.5
+		>=media-libs/opencv-4.5.5[jpeg]
 	)
 	rocal? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}
+		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		media-libs/libjpeg-turbo
 		sys-devel/gcc[openmp]
 		!ffmpeg? (
@@ -78,6 +79,7 @@ RDEPEND="
 		)
 	)
 	rocm? (
+		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		sys-devel/gcc[openmp]
 		~sci-libs/rocBLAS-${PV}:${SLOT}
 	)
@@ -111,6 +113,8 @@ src_configure() {
 		-DROCAL=$(usex rocal ON OFF)
 	)
 
+	CXX="${HIP_CXX:-clang++}"
+
 	if use opencl ; then
 		mycmakeargs+=(
 			-DBACKEND="OPENCL"
@@ -127,9 +131,22 @@ src_configure() {
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 		)
+
+		if [[ "${CXX}" =~ "g++" ]] ; then
+			mycmakeargs+=(
+				-DOpenMP_CXX_FLAGS="-fopenmp"
+				-DOpenMP_CXX_LIB_NAMES="libopenmp"
+				-DOpenMP_libopenmp_LIBRARY="openmp"
+			)
+		else
+			mycmakeargs+=(
+				-DOpenMP_CXX_FLAGS="-fopenmp=libomp"
+				-DOpenMP_CXX_LIB_NAMES="libomp"
+				-DOpenMP_libomp_LIBRARY="omp"
+			)
+		fi
 	fi
 
-	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
 }
 

@@ -1589,9 +1589,9 @@ einfo "Add -flto with one of -fuse-ld=<bfd|gold|lld|mold> for LTO optimization"
 
 	if use openmp ; then
 		mycmakeargs+=(
-			-DOpenMP_CXX_FLAGS="-fopenmp"
+			-DOpenMP_CXX_FLAGS="-fopenmp=openmp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="libomp"
+			-DOpenMP_libomp_LIBRARY="omp"
 		)
 	fi
 
