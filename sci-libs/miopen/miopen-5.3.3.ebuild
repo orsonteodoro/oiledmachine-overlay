@@ -89,7 +89,7 @@ BDEPEND="
 	virtual/pkgconfig
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	mlir? (
-		~sci-libs/rocMLIR-${PV}:${SLOT}[fat-librockcompiler]
+		~sci-libs/rocMLIR-${PV}:${SLOT}[fat-librockcompiler(+)]
 	)
 "
 RESTRICT="
@@ -113,12 +113,6 @@ PATCHES=(
 
 src_prepare() {
 	cmake_src_prepare
-
-	sed \
-		-i \
-		-e "s|rocMLIR 1.0.0 CONFIG|rocMLIR|g" \
-		CMakeLists.txt \
-		|| die
 
 	hipconfig --help >/dev/null || die
 	sed \
@@ -201,7 +195,7 @@ src_configure() {
 
 	if use mlir ; then
 		mycmakeargs+=(
-			-DCMAKE_MODULE_PATH="${ESYSROOT}/usr/$(get_libdir)/rocMLIR"
+			-DCMAKE_MODULE_PATH="${ESYSROOT}/usr/$(get_libdir)/cmake/rocMLIR"
 		)
 	fi
 
