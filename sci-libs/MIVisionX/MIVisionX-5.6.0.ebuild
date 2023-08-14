@@ -43,6 +43,9 @@ opencl opencv +rocal +rocal-python +rocm +rpp
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
+	opencl? (
+		!rocal-python
+	)
 	rocal? (
 		^^ (
 			rocm
@@ -128,6 +131,11 @@ src_prepare() {
 		-e "s|\${ROCM_PATH}/llvm/bin/clang++|${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang++|g" \
 		$(grep -l -r -e "/llvm/bin/clang++" "${WORKDIR}") \
 		|| die
+	sed \
+		-i \
+		-e "s|half/half.hpp|half.hpp|g" \
+		$(grep -l -r -e "half/half.hpp" "${S}") \
+		|| die
 	IFS=$' \t\n'
 }
 
@@ -172,6 +180,18 @@ eerror
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 		)
+
+		if use rpp ; then
+			mycmakeargs+=(
+				-DAMDRPP_PATH="${ESYSROOT}/usr"
+			)
+		fi
+
+		if use rocal-python ; then
+			mycmakeargs+=(
+				-DCMAKE_INSTALL_PREFIX_PYTHON="$(python_get_sitedir)"
+			)
+		fi
 
 		if [[ "${CXX}" =~ (^|-)"g++" ]] ; then
 			mycmakeargs+=(
