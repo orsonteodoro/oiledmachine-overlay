@@ -91,7 +91,9 @@ src_prepare() {
 src_configure() {
 	local mycmakeargs=()
 
-	if [[ "${HIP_CXX}" =~ "g++" ]] ; then
+	CXX="${HIP_CXX:-hipcc}"
+
+	if [[ "${CXX}" =~ "g++" ]] ; then
 		mycmakeargs+=(
 			-DOpenMP_CXX_FLAGS="-fopenmp=libopenmp"
 			-DOpenMP_CXX_LIB_NAMES="libopenmp"
@@ -124,7 +126,6 @@ src_configure() {
 			-DBACKEND="CPU"
 		)
 	fi
-	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
 }
 
