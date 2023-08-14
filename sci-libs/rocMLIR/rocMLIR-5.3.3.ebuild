@@ -3,9 +3,6 @@
 
 EAPI=8
 
-# TODO:
-# backport 5.5.0 patches to _LLVM_SYSTEM_PATCHES set after use-system-mlir
-
 LLVM_MAX_SLOT=15
 PYTHON_COMPAT=( python3_{10..11} )
 
@@ -33,16 +30,12 @@ LICENSE="
 # all rights reserved with MIT - mlir/tools/rocmlir-lib/LICENSE
 # The distro MIT license template does not have all rights reserved
 SLOT="0/$(ver_cut 1-2)"
-IUSE="-system-mlir r1"
+IUSE="r4"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
 	>=dev-python/pybind11-2.8[${PYTHON_USEDEP}]
 	media-libs/vulkan-loader
-	system-mlir? (
-		sys-devel/llvm:${LLVM_MAX_SLOT}[llvm_targets_AMDGPU]
-		sys-devel/mlir:${LLVM_MAX_SLOT}[llvm_targets_AMDGPU]
-	)
 	~dev-util/hip-${PV}:${SLOT}
 "
 DEPEND="
@@ -54,53 +47,54 @@ BDEPEND="
 	>=dev-util/cmake-3.15.1
 	dev-util/patchelf
 	virtual/pkgconfig
-	system-mlir? (
-		sys-devel/clang:${LLVM_MAX_SLOT}
-		sys-devel/llvm:${LLVM_MAX_SLOT}
-		sys-devel/mlir:${LLVM_MAX_SLOT}[llvm_targets_AMDGPU]
-	)
 "
 RESTRICT="test"
-_LLVM_VENDORED_PATCHES=(
-	"${FILESDIR}/rocMLIR-5.5.0-fix-sover.patch"
-	"${FILESDIR}/rocMLIR-5.5.0-fix-install.patch"
-	"${FILESDIR}/rocMLIR-5.5.0-rpath-to-vendored-llvm.patch"
-)
-_LLVM_SYSTEM_PATCHES=(
-	"${FILESDIR}/rocMLIR-5.4.3-fix-bin-linking.patch"
-	"${FILESDIR}/rocMLIR-5.5.0-fix-sover-and-rpath.patch"
-	"${FILESDIR}/rocMLIR-5.3.3-use-system-mlir.patch"
-)
+
+ccmake() {
+einfo "Running:  cmake ${@}"
+	cmake "${@}" || die
+}
+
+mmake() {
+	if [[ "${CMAKE_MAKEFILE_GENERATOR}" == "ninja" ]] ; then
+einfo "Running:  ninja $@"
+		eninja "$@"
+	else
+einfo "Running:  emake $@"
+		emake "$@"
+	fi
+}
 
 pkg_setup() {
 	python_setup
 }
 
 src_prepare() {
-	if use system-mlir ;then
-ewarn "USE=system-mlir is unfinished.  USE=-system-mlir instead."
-		sed -i -e "s|LLVM_VERSION_SUFFIX git|LLVM_VERSION_SUFFIX|g" \
-			external/llvm-project/llvm/CMakeLists.txt \
-			|| die
-		rm -rf external || die
-		eapply ${_LLVM_SYSTEM_PATCHES[@]}
-	else
-		eapply ${_LLVM_VENDORED_PATCHES[@]}
-		sed -i -e "s|LLVM_VERSION_SUFFIX git|LLVM_VERSION_SUFFIX roc|g" \
-			external/llvm-project/llvm/CMakeLists.txt \
-			|| die
-	fi
+	sed -i -e "s|LLVM_VERSION_SUFFIX git|LLVM_VERSION_SUFFIX roc|g" \
+		external/llvm-project/llvm/CMakeLists.txt \
+		|| die
 	cmake_src_prepare
 }
 
-src_configure() {
+# DO NOT REMOVE/CHANGE
+src_configure() { :; }
+
+build_rocmlir() {
 	# FIXME:  The unislot conflicts with the multislot rocm-llvm
 	export ROCM_PATH="${ESYSROOT}/usr"
+	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 	export HIP_PLATFORM="amd"
+	SOURCE_DIR="${S}"
+	cd "${S}" || die
+	mkdir -p "build_rocMLIR" || die
+	cd "build_rocMLIR" || die
+	declare -A _cmake_generator=(
+		["emake"]="Unix Makefiles"
+	        ["ninja"]="Ninja"
+	)
 	local mycmakeargs=(
-		-DELLVM_VERSION_MAJOR=${LLVM_MAX_SLOT}
-		-DELLVM_VERSION_MINOR=0
-		-DELLVM_VERSION_PATCH=0
+		-G "${_cmake_generator[${CMAKE_MAKEFILE_GENERATOR}]}"
+		-DBUILD_FAT_LIBROCKCOMPILER=ON # DO NOT CHANGE.  Static produces rocMLIR folder while shared does not.
 
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
@@ -110,117 +104,69 @@ src_configure() {
 		-DLLVM_ENABLE_ZLIB=OFF
 		-DLLVM_ENABLE_ZSTD=OFF
 
-		-DMLIR_BINARY_DIR="${WORKDIR}/mlir_build"
-
 		-DMLIR_INCLUDE_TESTS=OFF
+		-DCMAKE_INSTALL_PREFIX="${staging_prefix}/${EPREFIX}/usr"
 
 		-DROCMLIR_DRIVER_ENABLED=OFF
+		-DLLVM_INSTALL_TOOLCHAIN_ONLY=OFF
+
+		-DELLVM_VERSION_SUFFIX=roc
+		-DCMAKE_MODULE_PATH="${staging_prefix}/${EPREFIX}/usr/$(get_libdir)/${PN}/external/llvm-project/llvm/lib/cmake"
+		-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/include"
 	)
-	if use system-mlir ; then
-		mycmakeargs+=(
-			-DELLVM_VERSION_SUFFIX=
-			-DLLVM_CMAKE_DIR="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/cmake/llvm"
-			-DMLIR_CMAKE_DIR="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/cmake/mlir"
-			-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/include"
-		)
-	else
-		mycmakeargs+=(
-			-DELLVM_VERSION_SUFFIX=roc
-			-DLLVM_CMAKE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/$(get_libdir)/cmake/llvm"
-			-DMLIR_CMAKE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/$(get_libdir)/cmake/mlir"
-			-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/include"
-		)
-	fi
 	if [[ "${HIP_CXX}" =~ "g++" ]] ; then
 ewarn "Using clang may result in symbol error."
 	fi
 	CXX="${HIP_CXX:-g++}"
-	cmake_src_configure
+	ccmake \
+		"${mycmakeargs[@]}" \
+		..
+	mmake
+	mmake install
+}
+
+src_compile() {
+	# Removed all clangs
+	einfo "LLVM_SLOT=${LLVM_SLOT}"
+	einfo "PATH=${PATH} (before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:${PWD}/install/bin|g")
+	einfo "PATH=${PATH} (after)"
+
+	local staging_prefix="${PWD}/install"
+	build_rocmlir
+}
+
+sanitize_permissions() {
+	IFS=$'\n'
+	local path
+	for path in $(find "${ED}") ; do
+		chown root:root "${path}" || die
+		if file "${path}" | grep -q "directory" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q "ELF .* LSB shared object" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q "ELF .* LSB pie executable" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q "symbolic link" ; then
+			:;
+		else
+			chmod 0644 "${path}" || die
+		fi
+	done
+	IFS=$' \t\n'
 }
 
 src_install() {
-	cmake_src_install
-	IFS=$'\n'
-	if ! use system-mlir ; then
-	# It turns out the vendored copy of the llvm tree in this ebuild is not
-	# the same as the ~sys-devel/llvm-roc-${PV}:${PV} tarball.
-		local src
-		local dest
-		src="${BUILD_DIR}/external/llvm-project/llvm/lib"
-		dest="/usr/$(get_libdir)/${PN}/$(get_libdir)"
-		dodir "${dest}"
-		cp -aT \
-			"${src}" \
-			"${ED}/${dest}" \
-			|| die
-
-		src="${BUILD_DIR}/external/llvm-project/llvm/bin"
-		dest="/usr/$(get_libdir)/${PN}/bin"
-		dodir "${dest}"
-		cp -aT \
-			"${src}" \
-			"${ED}/${dest}" \
-			|| die
-
-		src="${BUILD_DIR}/external/llvm-project/llvm/include"
-		dest="/usr/$(get_libdir)/${PN}/include"
-		dodir "${dest}"
-		cp -aT \
-			"${src}" \
-			"${ED}/${dest}" \
-			|| die
-
-		src="${BUILD_DIR}/lib/cmake"
-		dest="/usr/$(get_libdir)"
-		dodir "${dest}"
-		cp -aT \
-			"${src}" \
-			"${ED}/${dest}" \
-			|| die
-
-		find "${ED}" \
-			\( \
-				-name "cmake_install.cmake" \
-				-o -name "*.d" \
-				-o -name "*.o" \
-			\) \
-			-delete
-		local tries
-		for tries in $(seq 1 5) ; do
-			find "${ED}" -type d -empty -delete
-		done
-
-		local path
-		for path in $(find "${ED}") ; do
-			chown root:root "${path}" || die
-			if file "${path}" | grep -q "directory" ; then
-				chmod 0755 "${path}" || die
-			elif file "${path}" | grep -q "ELF .* LSB shared object" ; then
-				chmod 0755 "${path}" || die
-			elif file "${path}" | grep -q "ELF .* LSB pie executable" ; then
-				chmod 0755 "${path}" || die
-			elif file "${path}" | grep -q "symbolic link" ; then
-				:;
-			else
-				chmod 0644 "${path}" || die
-			fi
-		done
-
-		# The build scripts mess up the rpath
-		local rpath_path="${EPREFIX}/usr/$(get_libdir)/rocMLIR/$(get_libdir)"
-		for path in $(find "${ED}" -type f) ; do
-			if file "${path}" \
-				| grep -q -E -e "ELF.*(shared object|executable)" ; then
-einfo "Changing RPATH for ${path}"
-				patchelf \
-					--set-rpath "${rpath_path}" \
-					"${path}" \
-					|| die
-			fi
-		done
-
-	fi
-	IFS=$' \t\n'
+	local staging_prefix="${PWD}/install"
+	mv \
+		"${staging_prefix}/"* \
+		"${ED}" \
+		|| die
+	sanitize_permissions
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-failure
