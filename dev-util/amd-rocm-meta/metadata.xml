@@ -11,13 +11,13 @@
     distros to their equivalent packages on the distro.
   </longdescription>
   <use>
-    <flag name="atmi">
-      Install a library for task and memory management for CPUs and/or GPUs.
-    </flag>
     <flag name="aqlprofile">
       Add support for HSA runtime API extensions
 
       [Enable for feature completeness.]
+    </flag>
+    <flag name="atmi">
+      Install a library for task and memory management for CPUs and/or GPUs.
     </flag>
     <flag name="flang">
       Install ROCm's fork of Classic Flang supporting GPU offload for AMD GPUs.
