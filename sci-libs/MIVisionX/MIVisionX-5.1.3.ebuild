@@ -67,7 +67,7 @@ RDEPEND="
 		~sci-libs/miopengemm-${PV}:${SLOT}
 	)
 	opencv? (
-		>=media-libs/opencv-4.5.5[jpeg]
+		>=media-libs/opencv-4.5.5[features2d,jpeg]
 	)
 	rocal? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}
@@ -102,6 +102,13 @@ PATCHES=(
 
 src_prepare() {
 	cmake_src_prepare
+	IFS=$'\n'
+	sed \
+		-i \
+		-e "s|\${ROCM_PATH}/llvm/bin/clang++|${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang++|g" \
+		$(grep -l -r -e "/llvm/bin/clang++" "${WORKDIR}") \
+		|| die
+	IFS=$' \t\n'
 }
 
 src_configure() {
@@ -145,6 +152,13 @@ src_configure() {
 				-DOpenMP_libomp_LIBRARY="omp"
 			)
 		fi
+		IFS=$'\n'
+		sed \
+			-i \
+			-e "s|-DNDEBUG -fPIC|-DNDEBUG -fPIC --rocm-path='${ESYSROOT}/usr' --rocm-device-lib-path='${ESYSROOT}/usr/lib/amdgcn/bitcode'|g" \
+			$(grep -l -r -e "-DNDEBUG -fPIC" "${WORKDIR}") \
+			|| die
+		IFS=$' \t\n'
 	fi
 
 	cmake_src_configure
