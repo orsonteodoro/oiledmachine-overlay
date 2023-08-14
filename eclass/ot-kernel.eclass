@@ -256,31 +256,64 @@ if [[ -n "${CLANG_PGO_KV}" ]] ; then
 		${PGT_TRAINERS[@]/#/ot_kernel_pgt_}
 	"
 	REQUIRED_USE+="
-		ot_kernel_pgt_2d? ( clang-pgo )
-		ot_kernel_pgt_3d? ( clang-pgo )
-		ot_kernel_pgt_crypto_std? ( clang-pgo )
-		ot_kernel_pgt_crypto_kor? ( clang-pgo )
-		ot_kernel_pgt_crypto_chn? ( clang-pgo )
-		ot_kernel_pgt_crypto_rus? ( clang-pgo )
-		ot_kernel_pgt_crypto_common? ( clang-pgo )
-		ot_kernel_pgt_crypto_less_common? ( clang-pgo )
-		ot_kernel_pgt_crypto_deprecated? ( clang-pgo )
-		ot_kernel_pgt_custom? ( clang-pgo )
-		ot_kernel_pgt_emerge1? ( clang-pgo )
-		ot_kernel_pgt_emerge2? ( clang-pgo )
-		ot_kernel_pgt_filesystem? ( clang-pgo )
-		ot_kernel_pgt_memory? ( clang-pgo )
-		ot_kernel_pgt_network? ( clang-pgo )
-		ot_kernel_pgt_p2p? ( clang-pgo )
-		ot_kernel_pgt_webcam? ( clang-pgo )
-		ot_kernel_pgt_yt? ( clang-pgo )
+		ot_kernel_pgt_2d? (
+			clang-pgo
+		)
+		ot_kernel_pgt_3d? (
+			clang-pgo
+		)
+		ot_kernel_pgt_crypto_std? (
+			clang-pgo
+		)
+		ot_kernel_pgt_crypto_kor? (
+			clang-pgo
+		)
+		ot_kernel_pgt_crypto_chn? (
+			clang-pgo
+		)
+		ot_kernel_pgt_crypto_rus? (
+			clang-pgo
+		)
+		ot_kernel_pgt_crypto_common? (
+			clang-pgo
+		)
+		ot_kernel_pgt_crypto_less_common? (
+			clang-pgo
+		)
+		ot_kernel_pgt_crypto_deprecated? (
+			clang-pgo
+		)
+		ot_kernel_pgt_custom? (
+			clang-pgo
+		)
+		ot_kernel_pgt_emerge1? (
+			clang-pgo
+		)
+		ot_kernel_pgt_emerge2? (
+			clang-pgo
+		)
+		ot_kernel_pgt_filesystem? (
+			clang-pgo
+		)
+		ot_kernel_pgt_memory? (
+			clang-pgo
+		)
+		ot_kernel_pgt_network? (
+			clang-pgo
+		)
+		ot_kernel_pgt_p2p? (
+			clang-pgo
+		)
+		ot_kernel_pgt_webcam? (
+			clang-pgo
+		)
+		ot_kernel_pgt_yt? (
+			clang-pgo
+		)
 	"
 	PDEPEND+="
 		sys-apps/coreutils
 		sys-apps/grep[pcre]
-		pcc? (
-			sys-kernel/pcc
-		)
 		ot_kernel_pgt_2d? (
 			sys-apps/findutils
 			sys-process/procps
@@ -354,12 +387,21 @@ if [[ -n "${CLANG_PGO_KV}" ]] ; then
 				)
 			)
 		)
+		pcc? (
+			sys-kernel/pcc
+		)
 	"
 fi
 
 EXPORT_FUNCTIONS \
-	pkg_pretend pkg_setup src_unpack src_prepare src_configure src_compile \
-	src_install pkg_postinst
+	pkg_pretend \
+	pkg_setup \
+	src_unpack \
+	src_prepare \
+	src_configure \
+	src_compile \
+	src_install \
+	pkg_postinst
 
 # @FUNCTION: gen_kernel_seq
 # @DESCRIPTION:
