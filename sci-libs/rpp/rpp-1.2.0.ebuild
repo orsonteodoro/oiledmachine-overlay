@@ -57,8 +57,8 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	>=sys-libs/libomp-${LLVM_MAX_SLOT}
 	dev-libs/boost:=
-	sys-devel/libomp
 	opencl? (
 		virtual/opencl
 	)
