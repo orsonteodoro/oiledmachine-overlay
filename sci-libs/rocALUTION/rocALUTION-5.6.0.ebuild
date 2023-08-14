@@ -57,7 +57,7 @@ RDEPEND="
 		virtual/mpi
 	)
 	openmp? (
-		>=sys-devel/libomp-${LLVM_MAX_SLOT}
+		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		=sys-devel/gcc-11*
 		sys-devel/clang:${LLVM_MAX_SLOT}
 	)
