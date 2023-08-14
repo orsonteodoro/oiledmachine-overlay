@@ -89,11 +89,7 @@ src_prepare() {
 }
 
 src_configure() {
-	local mycmakeargs=(
-		-DOpenMP_CXX_FLAGS="-fopenmp=libomp"
-		-DOpenMP_CXX_LIB_NAMES="libomp"
-		-DOpenMP_libomp_LIBRARY="omp"
-	)
+	local mycmakeargs=()
 
 	if [[ "${HIP_CXX}" =~ "g++" ]] ; then
 		mycmakeargs+=(
