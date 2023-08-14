@@ -113,7 +113,7 @@ src_configure() {
 		-DROCAL=$(usex rocal ON OFF)
 	)
 
-	CXX="${HIP_CXX:-clang++}"
+	export CXX="${HIP_CXX:-clang++}"
 
 	if use opencl ; then
 		mycmakeargs+=(
@@ -132,7 +132,7 @@ src_configure() {
 			-DHIP_RUNTIME="rocclr"
 		)
 
-		if [[ "${CXX}" =~ "g++" ]] ; then
+		if [[ "${CXX}" =~ (^|-)"g++" ]] ; then
 			mycmakeargs+=(
 				-DOpenMP_CXX_FLAGS="-fopenmp"
 				-DOpenMP_CXX_LIB_NAMES="libopenmp"

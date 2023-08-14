@@ -119,7 +119,9 @@ src_configure() {
 		-DSUPPORT_OMP=$(usex openmp ON OFF)
 	)
 
-	if [[ "${HIP_CXX}" =~ "g++" ]] ; then
+	export CXX="${HIP_CXX:-hipcc}"
+
+	if [[ "${CXX}" =~ (^|-)"g++" ]] ; then
 eerror
 eerror "Only hipcc or clang++ allowed for HIP_CXX"
 eerror
@@ -158,7 +160,6 @@ eerror
 		)
 	fi
 
-	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
 }
 

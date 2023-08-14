@@ -646,8 +646,8 @@ check_optimal_compiler_for_cycles_x86() {
 			export CC="${BLENDER_CC_ALT}"
 			export CXX="${BLENDER_CXX_ALT}"
 		elif [[ -n "${CC}" && -n "${CXX}" ]] \
-			&& [[ ! ( "${CC}" =~ "gcc" ) ]] \
-			&& [[ ! ( "${CXX}" =~ "g++" ) ]] ; then
+			&& [[ ! ( "${CC}" =~ (^|-)"gcc" ) ]] \
+			&& [[ ! ( "${CXX}" =~ (^|-)"g++" ) ]] ; then
 			# Defined by user from per-package environmental variables.
 			export CC
 			export CXX

@@ -14,7 +14,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 LLVM_MAX_SLOT=16
 
-inherit cmake llvm rocm
+inherit cmake flag-o-matic llvm rocm toolchain-funcs
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/"
@@ -56,24 +56,33 @@ REQUIRED_USE="
 		cpu
 	)
 "
+# gcc:11 (libstdc++) is required to avoid:
+#/usr/lib/gcc/${CHOST}/12/include/omp.h:308:45: error: '__malloc__' attribute takes no arguments
+#  __GOMP_NOTHROW __attribute__((__malloc__, __malloc__ (omp_free),
+
 RDEPEND="
+	>=dev-libs/boost-1.72:=
+	>=sys-devel/clang-5.0.1:=
 	>=sys-libs/libomp-${LLVM_MAX_SLOT}
-	dev-libs/boost:=
+	sys-devel/gcc:11
 	opencl? (
 		virtual/opencl
 	)
 	rocm? (
-		dev-util/hip:=
+		>=dev-util/hip-5.4.3:=
+		dev-libs/rocm-device-libs
 	)
 "
 DEPEND="
 	${RDEPEND}
+	>=dev-libs/half-1.12.0:=
 "
 BDEPEND="
 	>=dev-util/cmake-3.5
+	sys-devel/gcc:11
 	test? (
-		media-libs/opencv
-		media-libs/libjpeg-turbo
+		>=media-libs/opencv-3.4.0[jpeg]
+		>=media-libs/libjpeg-turbo-2.0.6.1
 	)
 "
 RESTRICT="test"
@@ -87,34 +96,64 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
+	IFS=$'\n'
+	sed \
+		-i \
+		-e "s|half/half.hpp|half.hpp|g" \
+		$(grep -l -r -e "half/half.hpp" "${S}") \
+		|| die
+	IFS=$' \t\n'
+	sed \
+		-i \
+		-e "s|-O3||g" \
+		"CMakeLists.txt" \
+		|| die
+	sed \
+		-i \
+		-e "s|-Ofast||g" \
+		"CMakeLists.txt" \
+		|| die
+	sed \
+		-i \
+		-e "s|-DNDEBUG||g" \
+		"CMakeLists.txt" \
+		|| die
+	sed \
+		-i \
+		-e "/CMAKE_CXX_COMPILER clang\+\+/d" \
+		"CMakeLists.txt" \
+		|| die
+	sed \
+		-i \
+		-e "s|\${ROCM_PATH}/llvm/bin/clang++|${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang++|g" \
+		"CMakeLists.txt" \
+		|| die
 }
 
 src_configure() {
 	local mycmakeargs=(
+		-DCMAKE_C_COMPILER="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang"
+		-DCMAKE_CXX_COMPILER="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang++"
 		-DROCM_PATH="${ESYSROOT}/usr"
 	)
 
+	replace-flags '-O0' '-O1'
 	MAKEOPTS="-j1"
-	CXX="${HIP_CXX:-hipcc}"
+	export CXX="${HIP_CXX:-clang++}"
 
-	if [[ "${CXX}" =~ "g++" ]] ; then
-		mycmakeargs+=(
-			-DCMAKE_THREAD_LIBS_INIT="-lpthread"
-			-DOpenMP_CXX_FLAGS="-fopenmp"
-			-DOpenMP_CXX_LIB_NAMES="libopenmp"
-			-DOpenMP_libopenmp_LIBRARY="openmp"
-		)
-	else
-		mycmakeargs+=(
-			-DOpenMP_CXX_FLAGS="-fopenmp=libomp"
-			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="omp"
-		)
+	if ver_test $(gcc-major-version) -ne 11 ; then
+eerror
+eerror "Switch to gcc:11 for libstdcxx:11.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-11"
+eerror "  source /etc/profile"
+eerror
+		die
 	fi
 
 	if use opencl ; then
 		mycmakeargs+=(
-			-DBACKEND="OPENCL"
+			-DBACKEND="OCL"
 		)
 	elif use rocm ; then
 		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
@@ -126,11 +165,32 @@ src_configure() {
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 		)
+		append-flags \
+			--rocm-path="${ESYSROOT}/usr" \
+			--rocm-device-lib-path="${ESYSROOT}/usr/lib/amdgcn/bitcode"
 	elif use cpu ; then
 		mycmakeargs+=(
 			-DBACKEND="CPU"
 		)
 	fi
+
+	if [[ "${CC}" =~ (^|-)"g++" ]] ; then
+einfo "Using libopenmp"
+		mycmakeargs+=(
+			-DCMAKE_THREAD_LIBS_INIT="-lpthread"
+			-DOpenMP_CXX_FLAGS="-fopenmp"
+			-DOpenMP_CXX_LIB_NAMES="libopenmp"
+			-DOpenMP_libopenmp_LIBRARY="openmp"
+		)
+	else
+einfo "Using libomp"
+		mycmakeargs+=(
+			-DOpenMP_CXX_FLAGS="-fopenmp=libomp -Wno-unused-command-line-argument"
+			-DOpenMP_CXX_LIB_NAMES="libomp"
+			-DOpenMP_libomp_LIBRARY="omp"
+		)
+	fi
+
 	cmake_src_configure
 }
 

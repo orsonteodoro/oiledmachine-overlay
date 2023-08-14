@@ -129,6 +129,8 @@ src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 
+	export CXX="${HIP_CXX:-hipcc}"
+
 	local mycmakeargs=(
 		-DBUILD_BENCHMARK=$(usex benchmark ON OFF)
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
@@ -142,7 +144,7 @@ src_configure() {
 			-DBUILD_HIPRAND=OFF
 			-Dhip_cpu_rt_DIR="${ESYSROOT}/usr/lib/hip-cpu/share/hip_cpu_rt/cmake"
 		)
-		HIP_CXX="g++"
+		export CXX="g++"
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
@@ -152,7 +154,6 @@ src_configure() {
 			-DHIP_RUNTIME="rocclr"
 		)
 	fi
-	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
 }
 

@@ -114,10 +114,10 @@ build_rocmlir() {
 		-DCMAKE_MODULE_PATH="${staging_prefix}/${EPREFIX}/usr/$(get_libdir)/${PN}/external/llvm-project/llvm/lib/cmake"
 		-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/include"
 	)
-	if [[ "${HIP_CXX}" =~ "g++" ]] ; then
+	export CXX="${HIP_CXX:-g++}"
+	if [[ "${CXX}" =~ (^|-)"g++" ]] ; then
 ewarn "Using clang may result in symbol error."
 	fi
-	CXX="${HIP_CXX:-g++}"
 	ccmake \
 		"${mycmakeargs[@]}" \
 		..
