@@ -21,6 +21,7 @@ esac
 # For *DEPENDs, see
 # https://github.com/torvalds/linux/blob/v5.4/Documentation/process/changes.rst
 
+KERNEL_RELEASE_DATE="20191124"
 CXX_STD="-std=gnu++98"
 LLVM_MAX_SLOT=15
 LLVM_MIN_SLOT=10
@@ -341,6 +342,12 @@ CDEPEND+="
 RDEPEND+="
 	!build? (
 		${CDEPEND}
+	)
+"
+
+DEPEND+="
+	linux-firmware? (
+		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
 "
 

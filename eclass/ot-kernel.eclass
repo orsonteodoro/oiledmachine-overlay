@@ -172,13 +172,24 @@ OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${PV}"
 
 # Upstream keeps reiserfs
 IUSE+="
-bzip2 cpu_flags_arm_thumb graphicsmagick gtk gzip imagemagick lz4 lzma lzo
-+ncurses openssl pcc +reiserfs qt5 xz zstd
+bzip2 cpu_flags_arm_thumb graphicsmagick gtk gzip imagemagick intel-microcode
+linux-firmware lz4 lzma lzo +ncurses openssl pcc +reiserfs qt5 xz zstd
 "
 NEEDS_DEBUGFS=0
 PYTHON_COMPAT=( python3_{10..11} ) # Slots based on dev-python/selenium
 inherit check-reqs flag-o-matic python-r1 ot-kernel-cve ot-kernel-pkgflags
 inherit ot-kernel-kutils security-scan toolchain-funcs
+
+# For firmware security update(s), see
+# https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/blob/main/releasenote.md
+DEPEND+="
+	intel-microcode? (
+		>=sys-firmware/intel-microcode-20230808_p20230804
+	)
+	linux-firmware? (
+		>=sys-kernel/linux-firmware-20230625_p20230724
+	)
+"
 
 BDEPEND+="
 	dev-util/patchutils
@@ -2683,13 +2694,6 @@ einfo "CONFIG_EXTRA_FIRMWARE:  "$(grep "CONFIG_EXTRA_FIRMWARE" \
 # Check firmware for vulnerability fixes
 ot-kernel_check_firmware() {
 	[[ "${OT_KERNEL_CHECK_FIRMWARE_VULNERABILITY_FIXES:-1}" == "1" ]] || return
-	if has_version "<sys-kernel/linux-firmware-20230625_p20230724" ; then
-eerror
-eerror "Bump >=sys-kernel/linux-firmware-20230625_p20230724 and enable CPU"
-eerror "microcode for the Zenbleed mitigations."
-eerror
-		die
-	fi
 	if has_version "=sys-kernel/linux-firmware-99999999" ; then
 		local current_firmware_update=$(cat "${EROOT}/var/db/pkg/sys-kernel/linux-firmware"*"/BUILD_TIME")
 		local fix_firmware_date=$(date -d "2023-07-24 08:29:07 -0400" "+%s")
@@ -2699,14 +2703,6 @@ eerror "Re-emerge =sys-kernel/linux-firmware-99999999 and CPU microcode for the"
 eerror "Zenbleed mitigations."
 eerror
 		fi
-		die
-	fi
-	if has_version "<sys-firmware/intel-microcode-20230808_p20230804" ; then
-# See https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/blob/main/releasenote.md
-eerror
-eerror "Re-emerge >=sys-firmware/intel-microcode-20230808_p20230804 for"
-eerror "security update(s)."
-eerror
 		die
 	fi
 }
@@ -9271,56 +9267,25 @@ ewarn
 ewarn "For mitigations of side-channels because of hardware flaws, see also"
 ewarn "https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/index.html"
 ewarn
-
-	if ver_test ${KV_MAJOR_MINOR} -lt 5.10 ; then
 ewarn
-ewarn "There's currently no backport for RETBleed in the ${KV_MAJOR_MINOR}"
-ewarn "series.  Use >= 5.10 for RETBleed mitigation for ARCH=x86."
+ewarn "Numerous CPU (or hardware) vulnerabilities have been identified recently:"
 ewarn
-	fi
+ewarn "For an overview about affected processors, see"
 ewarn
-ewarn "Retbleed is not fixed in 32-bit only kernel configurations."
+ewarn "  https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability"
 ewarn
-ewarn "For an overview about RETBleed and affected processors, see"
-ewarn "https://en.wikipedia.org/wiki/Retbleed"
-ewarn "https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability"
+ewarn "Requirements to mitigate:"
 ewarn
-ewarn
-ewarn "Users with AMD 17h family of CPUs should update the CPU microcode to"
-ewarn "mitigate against Zenbleed in secure configurations."
-ewarn
-ewarn "Requirements:"
-ewarn
-ewarn "  A reboot into the just built kernel after initramfs has been updated."
-ewarn
-ewarn "  The kernel will try the firmware first then the chicken bit workaround"
-ewarn "  as the fallback.  The following firmware updates provide optimal"
-ewarn "  mitigation for a *few* models."
-ewarn
-ewarn "  >=sys-kernel/linux-firmware-20230625_p20230724"
-ewarn
-ewarn "    or"
-ewarn
-ewarn "  =sys-kernel/linux-firmware-99999999 needs a re-emerge"
-ewarn
-ewarn "  For config assist mode, set OT_KERNEL_CPU_MICROCODE=1"
-ewarn "  For config custom mode, see the distro wiki link below."
-ewarn "  Re-emerge this package after the changes have been made."
-ewarn
-ewarn "See also:"
-ewarn
-ewarn "  # Summary:"
-ewarn "  https://nvd.nist.gov/vuln/detail/CVE-2023-20593"
-ewarn
-ewarn "  # List of a *few* CPU model(s) which *may* have firmware updated:"
-ewarn "  (Recommended by the security researcher)"
-ewarn "  https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/commit/?id=0bc3126c9cfa0b8c761483215c25382f831a7c6f"
-ewarn
-ewarn "  # Summarises the kernel fix in the commit message:"
-ewarn "  https://github.com/torvalds/linux/commit/522b1d69219d8f083173819fde04f994aa051a98"
-ewarn
-ewarn "  # Required kernel config for microcode updates:"
-ewarn "  https://wiki.gentoo.org/wiki/AMD_microcode"
+ewarn "  (1) AMD CPUs:    USE=linux-firmware"
+ewarn "      Intel CPUs:  USE=intel-microcode"
+ewarn "  (2) For config assist mode, set OT_KERNEL_CPU_MICROCODE=1"
+ewarn "      For config custom mode, see"
+ewarn "      https://wiki.gentoo.org/wiki/AMD_microcode"
+ewarn "      https://wiki.gentoo.org/wiki/Intel_microcode"
+ewarn "  (3) Re-emerge this package after the changes have been made."
+ewarn "  (4) etc-update"
+ewarn "  (5) Build/update initramfs"
+ewarn "  (6) Reboot into new kernels"
 ewarn
 ewarn
 	if (( ${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL} == 1 )) ; then

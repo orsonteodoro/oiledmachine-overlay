@@ -23,6 +23,7 @@ esac
 # For compiler versions, see
 # https://github.com/torvalds/linux/blob/v6.1/scripts/min-tool-version.sh#L26
 
+KERNEL_RELEASE_DATE="20221211"
 CXX_STD="-std=gnu++11"
 GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
@@ -533,6 +534,12 @@ CDEPEND+="
 RDEPEND+="
 	!build? (
 		${CDEPEND}
+	)
+"
+
+DEPEND+="
+	linux-firmware? (
+		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
 "
 

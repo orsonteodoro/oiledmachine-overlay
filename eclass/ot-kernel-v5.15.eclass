@@ -21,6 +21,7 @@ esac
 # For *DEPENDs, see
 # https://github.com/torvalds/linux/blob/v5.15/Documentation/process/changes.rst
 
+KERNEL_RELEASE_DATE="20211031"
 CXX_STD="-std=gnu++11"
 GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
@@ -525,6 +526,12 @@ CDEPEND+="
 RDEPEND+="
 	!build? (
 		${CDEPEND}
+	)
+"
+
+DEPEND+="
+	linux-firmware? (
+		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
 "
 

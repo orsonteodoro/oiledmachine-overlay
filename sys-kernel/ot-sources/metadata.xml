@@ -33,7 +33,9 @@
     attacks.  TRESOR is vulnerable to a DMA attack side-channel attack.  All
     older hardware that does not have IOMMU VT-d / Vi and not using it is
     vulnerable.  DMA attack is used to extract keys.  See
-    https://en.wikipedia.org/wiki/List_of_IOMMU-supporting_hardware
+
+      https://en.wikipedia.org/wiki/List_of_IOMMU-supporting_hardware
+
     for a list of hardware supporting IOMMU.
 
     Compiler based optimizations are provided by GraySky2's
@@ -1213,9 +1215,11 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     (corresponding to 250 HZ).  This matters because some archs cannot use
     300 HZ.  This may help reduce the number of frames dropped in older
     processors or designs if set properly.
-    See
-    https://en.wikipedia.org/wiki/List_of_broadcast_video_formats
-    https://en.wikipedia.org/wiki/PAL#/media/File:PAL-NTSC-SECAM.svg
+
+    See also:
+
+      https://en.wikipedia.org/wiki/List_of_broadcast_video_formats
+      https://en.wikipedia.org/wiki/PAL#/media/File:PAL-NTSC-SECAM.svg
 
 
 
@@ -1299,14 +1303,17 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     See also
 
-    https://en.wikipedia.org/wiki/Bullrun_(decryption_program)
-    CONFIG_RANDOM_TRUST_CPU - https://github.com/torvalds/linux/blob/v6.1/drivers/char/Kconfig#L426
-    CONFIG_RANDOM_TRUST_BOOTLOADER - https://github.com/torvalds/linux/blob/v6.1/drivers/char/Kconfig#L444
-    https://en.wikipedia.org/wiki/Evil_maid_attack
-    Lucky winner attack (trojan horse hardware) - https://en.wikipedia.org/wiki/Social_engineering_(security)#Baiting
-    https://en.wikipedia.org/wiki/Backdoor_(computing)
-    https://en.wikipedia.org/wiki/Hardware_backdoor
-    https://nvd.nist.gov/vuln/detail/CVE-2019-15847
+      https://en.wikipedia.org/wiki/Bullrun_(decryption_program)
+      CONFIG_RANDOM_TRUST_CPU: \
+      https://github.com/torvalds/linux/blob/v6.1/drivers/char/Kconfig#L426
+      CONFIG_RANDOM_TRUST_BOOTLOADER: \
+      https://github.com/torvalds/linux/blob/v6.1/drivers/char/Kconfig#L444
+      https://en.wikipedia.org/wiki/Evil_maid_attack
+      Lucky winner attack (trojan horse hardware): \
+      https://en.wikipedia.org/wiki/Social_engineering_(security)#Baiting
+      https://en.wikipedia.org/wiki/Backdoor_(computing)
+      https://en.wikipedia.org/wiki/Hardware_backdoor
+      https://nvd.nist.gov/vuln/detail/CVE-2019-15847
 
 
     OT_KERNEL_HDD -- Set if HDD drive is present for this kernel build.
@@ -1734,9 +1741,11 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       - OT_KERNEL_LOGO_PREPROCESS_SHA512 and OT_KERNEL_LOGO_PREPROCESS_BLAKE2B
         needs to be defined.
       - See the following links:
-        https://imagemagick.org/Usage/distorts/
-        https://imagemagick.org/Usage/annotating/
-        https://imagemagick.org/Usage/
+
+          https://imagemagick.org/Usage/distorts/
+          https://imagemagick.org/Usage/annotating/
+          https://imagemagick.org/Usage/
+
       - You may use other programs other than *magick package to achieve the
         desired results.
       - GPU usage may require extra ebuild/eclass modding so the CPU algorithm
@@ -1808,7 +1817,9 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     Acceptable values:
     url - An image off the Internet.
     absolute path to local file - A path locally on the device
-    pre-bundled logos - See https://github.com/torvalds/linux/tree/master/drivers/video/logo
+    pre-bundled logos - See
+
+      https://github.com/torvalds/linux/tree/master/drivers/video/logo
 
     Examples:
 
@@ -1916,7 +1927,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     If unset, it assumes disabled.
 
     For the full list, see
-    https://github.com/torvalds/linux/blob/master/scripts/kconfig/Makefile#L118
+
+      https://github.com/torvalds/linux/blob/master/scripts/kconfig/Makefile#L118
 
 
 
@@ -1952,12 +1964,29 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     Acceptable values:
 
-      For netfilter ipv4, see https://github.com/torvalds/linux/blob/master/net/ipv4/netfilter/Kconfig
-      For netfilter ipv6, see https://github.com/torvalds/linux/blob/master/net/ipv6/netfilter/Kconfig
-      For netfilter ipvs, see https://github.com/torvalds/linux/blob/master/net/netfilter/ipvs/Kconfig
-      For netfilter ipset, see https://github.com/torvalds/linux/blob/master/net/netfilter/ipset/Kconfig
-      For netfilter xtables, see https://github.com/torvalds/linux/blob/master/net/netfilter/Kconfig
-      For netfilter ebt, see https://github.com/torvalds/linux/blob/master/net/bridge/netfilter/Kconfig
+      For netfilter ipv4, see
+
+        https://github.com/torvalds/linux/blob/master/net/ipv4/netfilter/Kconfig
+
+      For netfilter ipv6, see
+
+        https://github.com/torvalds/linux/blob/master/net/ipv6/netfilter/Kconfig
+
+      For netfilter ipvs, see
+
+        https://github.com/torvalds/linux/blob/master/net/netfilter/ipvs/Kconfig
+
+      For netfilter ipset, see
+
+        https://github.com/torvalds/linux/blob/master/net/netfilter/ipset/Kconfig
+
+      For netfilter xtables, see
+
+        https://github.com/torvalds/linux/blob/master/net/netfilter/Kconfig
+
+      For netfilter ebt, see
+
+        https://github.com/torvalds/linux/blob/master/net/bridge/netfilter/Kconfig
 
     Examples:
 
@@ -2191,7 +2220,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Acceptable values:
 
-      See https://github.com/torvalds/linux/blob/master/net/sched/Kconfig#L753
+      https://github.com/torvalds/linux/blob/master/net/sched/Kconfig#L753
 
     Exmaple:
 
@@ -2204,12 +2233,12 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Acceptable values:
 
-      See https://github.com/torvalds/linux/blob/master/net/sched/Kconfig#L491
+      https://github.com/torvalds/linux/blob/master/net/sched/Kconfig#L491
       ematch - extended matches
 
-    Notes:
+    See also:
 
-      - See also https://wiki.gentoo.org/wiki/Traffic_shaping
+      https://wiki.gentoo.org/wiki/Traffic_shaping
 
 
 
@@ -2220,8 +2249,14 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Acceptable values:
 
-      For algorithms, see https://github.com/torvalds/linux/blob/master/net/sched/Kconfig#L48
-      For allowed defaults, see https://github.com/torvalds/linux/blob/master/net/sched/Kconfig#L457
+      For algorithms, see
+
+        https://github.com/torvalds/linux/blob/master/net/sched/Kconfig#L48
+
+      For allowed defaults, see
+
+        https://github.com/torvalds/linux/blob/master/net/sched/Kconfig#L457
+
       pfifo_fast (default)
       clear - Do not add any (Ebuild only)
 
@@ -2444,13 +2479,18 @@ unset OT_KERNEL_PRIVATE_KEY
 
       clear     - Do not add any (Ebuild only)
 
-      For descriptions, see https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L480
+      For descriptions, see
+
+        https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L480
 
     Defaults (EXPERIMENTAL):
 
       OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr2 bbr cubic dctcp hybla pcc vegas westwood"  # if USE=bbrv2 and OT_KERNEL_USE=bbrv2
       OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic dctcp hybla pcc vegas westwood"       # otherwise
-      For allowed defaults, see https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L682
+
+      For allowed defaults, see
+
+        https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L682
 
       Cubic alone is the upstream default.
 
@@ -2899,9 +2939,12 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Unset by default.  (Restricted pairings: chacha20 with poly1305,
     aes-xts-plain64 with hmac-sha256 or hmac-sha512.)  For weaknesses, see
-https://gitlab.com/cryptsetup/cryptsetup/-/blob/main/docs/v2.0.0-ReleaseNotes#L261
+
+      https://gitlab.com/cryptsetup/cryptsetup/-/blob/main/docs/v2.0.0-ReleaseNotes#L261
+
     For consequences of compromised integrity or data corruption, see
-https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.html
+
+      https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.html
 
     CRYPTSETUP_IVS - Space separated list for IV generation.
     Valid values:  essiv, random, plain64.  If unset, it adds essiv, plain64.
@@ -3111,9 +3154,8 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
 
     WATCHDOG_DRIVERS - A space separated list of watchdog kernel flag(s) or drivers
     without the CONFIG_ prefix.
-    Valid values:
-      SOFT_WATCHDOG (default ON, but OFF upstream)
-      See also https://github.com/torvalds/linux/blob/master/drivers/watchdog/Kconfig
+    Valid values:  SOFT_WATCHDOG (default ON, but OFF upstream)
+    See also:  https://github.com/torvalds/linux/blob/master/drivers/watchdog/Kconfig
 
     WATCHDOG_WAYOUT - Allow to stop the watchdog timer after it has started.
     1 - yes way out (default)
@@ -3206,19 +3248,28 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     For a full list of commits, see the commit history.
 
     For 4.19, see:
-    https://github.com/torvalds/linux/compare/v4.19...zen-kernel:4.19/misc
+
+      https://github.com/torvalds/linux/compare/v4.19...zen-kernel:4.19/misc
 
     For 5.4, see:
-    https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
+
+      https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 
     For 5.10, see:
-    https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
+
+      https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 
     For 5.15, see:
-    https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
+
+      https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
 
     For 6.1, see:
-    https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
+
+      https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
+
+    For 6.4, see:
+
+      https://github.com/torvalds/linux/compare/v6.4...zen-kernel:6.4/zen-sauce
 
     Use the zen-sauce USE flags instead of passing their Zen commit IDs
     equivalents.
@@ -3271,113 +3322,10 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     Please read the metadata.xml comments for more info.
   -->
   <upstream>
-    <!--
-
-      For this ebuild, eclasses, cve_hotfix, disable_debug, tresor_x86_64,
-      tresor_x86_64-256-bit-key-support
-
-    -->
+    <!-- Send bug reports to the oiledmachine-overlay first. -->
     <bugs-to>
       https://github.com/orsonteodoro/oiledmachine-overlay/issues
     </bugs-to>
-
-    <!--
-
-      For TCP BBR v2 support and documentation, see
-
-      https://github.com/google/bbr
-
-    -->
-
-    <maintainer status="active" type="person">
-      <!-- For BMQ, PDS, Project C -->
-      <email>cchalpha@gmail.com</email>
-      <name>Alfred Chen</name>
-    </maintainer>
-
-    <!--
-
-      For CFI maintainers, see
-
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/tree/MAINTAINERS?h=for-next/clang/pgo&id=3bc68891829b776b9a5dd9174de05e69138af7b6#n4439
-
-    -->
-
-    <maintainer status="active" type="project">
-      <!-- For genpatches -->
-      <email>kernel@gentoo.org</email>
-      <name>Gentoo Kernel Project</name>
-    </maintainer>
-
-    <!--
-
-      For futex (FUTEX_WAIT_MULTIPLE), futex2, see
-
-https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3
-https://gitlab.collabora.com/tonyk/linux/-/commits/futex2
-https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-proton
-
-    -->
-
-    <maintainer status="active" type="person">
-      <!-- For kernel_compiler_patches -->
-      <email>graysky AT archlinux DOT us</email>
-      <name>graysky</name>
-    </maintainer>
-
-    <maintainer status="active" type="person">
-      <!-- For the Linux kernel -->
-      <name>Linus Torvalds</name>
-    </maintainer>
-
-    <maintainer status="active" type="person">
-      <!-- For MuQSS -->
-      <email>kernel at kolivas dot org</email>
-      <name>Con Kolivas</name>
-    </maintainer>
-
-    <!--
-
-    For PGO maintainers, see
-
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/tree/MAINTAINERS?h=for-next/clang/pgo&id=3bc68891829b776b9a5dd9174de05e69138af7b6#n14390
-
-    -->
-
-    <!-- For -rt -->
-    <bugs-to>
-      https://wiki.linuxfoundation.org/realtime/communication/bugreport
-    </bugs-to>
-    <doc lang="en">
-      https://wiki.linuxfoundation.org/realtime/documentation/start
-    </doc>
-
-    <!--
-
-      For UKSM, see
-
-https://github.com/dolohow/uksm
-
-    -->
-
-    <maintainer status="active" type="person">
-      <!-- For TRESOR AES-NI and i386, 2010 -->
-      <email>tilo.mueller@informatik.uni-erlangen.de</email>
-      <name>Tilo Mueller</name>
-    </maintainer>
-
-    <maintainer status="active" type="person">
-      <!-- For TRESOR (aes-128) i386, 2012 -->
-      <email>johannes@jgoetzfried.de</email>
-      <name>Johannes Goetzfried</name>
-    </maintainer>
-
-    <maintainer status="active" type="person">
-      <!-- For the zen patchset -->
-      <email>jan.steffens@gmail.com</email>
-      <name>Jan Alexander Steffens</name>
-      <!-- AKA heftig -->
-    </maintainer>
   </upstream>
   <use>
     <flag name="bbrv2">
@@ -3445,7 +3393,9 @@ https://github.com/dolohow/uksm
 
       Newer CVE fixes should be automatically added and applied per emerge.
 
-      It uses an external script from https://github.com/orsonteodoro/tuxparoni
+      It uses an external script from
+
+        https://github.com/orsonteodoro/tuxparoni
 
       This USE flag is experimental.
     </flag>
@@ -3481,7 +3431,9 @@ https://github.com/dolohow/uksm
       during early boot.  Disabled because it may cause indefinte lock up during
       OOM (or very high memory use) or cause failures in different software
       during runtime.  Enabling it reverts
-https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd415
+
+        https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd415
+
     </flag>
     <flag name="gtk">
       Add support for gconfig, the GTK+2 kernel config editor
@@ -3517,6 +3469,9 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
     <flag name="imagemagick">
       Adds build time logo conversion support.
     </flag>
+    <flag name="intel-microcode">
+      Ensure that the package has the latest CPU microcode security update.
+    </flag>
     <flag name="kcfi">
       Apply KCFI sanitization for forward edge control flow integrity but
       limited to only indirect calls.
@@ -3525,7 +3480,14 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       sys-devel/clang-15 or newer and sys-devel/llvm-15+ or newer.  The kcfi
       feature is still under code review.
 
-      See also https://wiki.gentoo.org/wiki//etc/portage/patches
+      See also
+
+        https://wiki.gentoo.org/wiki//etc/portage/patches
+
+    </flag>
+    <flag name="linux-firmware">
+      Install the firmware package and ensure that the installed version has the
+      latest CPU microcode for security updates.
     </flag>
     <flag name="lto">
       Fulfills the ThinLTO requirements.
@@ -3647,7 +3609,9 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       memory page deduper algorithm.
 
       Using it may be insecure.  For details, see
-      https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks
+
+        https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks
+
     </flag>
     <flag name="xz">
       Add support for xz compression
