@@ -82,6 +82,16 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
+	sed \
+		-i \
+		-e "s|msgpackc-cxx QUIET|msgpack-cxx|g" \
+		"src/CMakeLists.txt" \
+		|| die
+	sed \
+		-i \
+		-e "s|NOT msgpackc-cxx_FOUND|NOT msgpack-cxx_FOUND|g" \
+		"src/CMakeLists.txt" \
+		|| die
 }
 
 src_configure() {
