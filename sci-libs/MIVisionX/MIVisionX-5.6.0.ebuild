@@ -17,7 +17,7 @@ AMDGPU_TARGETS_COMPAT=(
 LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit cmake llvm python-r1 rocm
+inherit cmake llvm python-r1 rocm toolchain-funcs
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/"
@@ -61,11 +61,14 @@ REQUIRED_USE="
 		cpu
 	)
 "
+# GCC 12 (libstdcxx:12) required to fix:
+# libhsa-runtime64.so.1: undefined reference to `std::condition_variable::wait(std::unique_lock<std::mutex>&)@GLIBCXX_3.4.30'
 BOOST_PV="1.72.0"
 PROTOBUF_PV="3.12.0"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-python/pybind11-2.0[${PYTHON_USEDEP}]
+	>=sys-devel/gcc-12
 	dev-libs/openssl
 	~dev-util/hip-${PV}:${SLOT}
 	ffmpeg? (
@@ -143,6 +146,16 @@ src_configure() {
 
 	export CXX="${HIP_CXX:-clang++}"
 
+	if ver_test $(gcc-major-version) -lt 12 ; then
+eerror
+eerror "You must switch to >= GCC 12.  Do"
+eerror
+eerror "  eselect gcc set ${CMAKE}-12"
+eerror "  source /etc/profile"
+eerror
+		die
+	fi
+
 	if use opencl ; then
 		mycmakeargs+=(
 			-DBACKEND="OPENCL"
@@ -185,5 +198,4 @@ src_configure() {
 	cmake_src_configure
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
