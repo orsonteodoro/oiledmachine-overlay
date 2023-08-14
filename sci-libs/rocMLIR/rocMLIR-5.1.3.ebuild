@@ -191,5 +191,5 @@ src_install() {
 		|| die
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-failure
+# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
