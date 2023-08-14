@@ -96,6 +96,13 @@ src_prepare() {
 		-e "s|NOT msgpackc-cxx_FOUND|NOT msgpack-cxx_FOUND|g" \
 		"src/CMakeLists.txt" \
 		|| die
+	IFS=$'\n'
+	sed \
+		-i \
+		-e "s|half/half.hpp|half.hpp|g" \
+		$(grep -l -r -e "half/half.hpp" "${S}") \
+		|| die
+	IFS=$' \t\n'
 }
 
 src_configure() {
