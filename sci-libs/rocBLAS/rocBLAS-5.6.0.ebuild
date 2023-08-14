@@ -95,7 +95,7 @@ RDEPEND="
 	$(python_gen_any_dep '
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 	')
-	>=dev-cpp/msgpack-cxx-6.0.0
+	>=dev-libs/msgpack-3.0.1
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	benchmark? (
 		>=sys-libs/libomp-${LLVM_MAX_SLOT}
