@@ -95,7 +95,7 @@ src_configure() {
 	)
 
 	MAKEOPTS="-j1"
-	CXX="${HIP_CXX:-g++}"
+	CXX="${HIP_CXX:-hipcc}"
 
 	if [[ "${CXX}" =~ "g++" ]] ; then
 		mycmakeargs+=(
