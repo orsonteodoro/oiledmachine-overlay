@@ -209,7 +209,7 @@ BDEPEND+="
 		app-crypt/rhash
 	)
 	intel-microcode? (
-		>=sys-firmware/intel-microcode-${}
+		>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
 	)
 	graphicsmagick? (
 		media-gfx/graphicsmagick[imagemagick]
