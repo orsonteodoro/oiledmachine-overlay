@@ -1,0 +1,138 @@
+diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.cmake
+--- src.orig/cmake_modules/FindLibElf.cmake	2022-11-17 12:10:28.000000000 -0800
++++ src/cmake_modules/FindLibElf.cmake	2023-08-14 10:52:01.567096172 -0700
+@@ -23,8 +23,8 @@ find_library (LIBELF_LIBRARIES
+     elf
+     PATHS
+     /usr/lib/x86_64-linux-gnu
+-    /usr/lib
+-    /usr/local/lib
++    /usr/lib64
++    /usr/local/lib64
+     ENV LIBRARY_PATH
+     ENV LD_LIBRARY_PATH)
+ 
+diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
+--- src.orig/cmake_modules/FindROCm.cmake	2022-11-17 12:10:28.000000000 -0800
++++ src/cmake_modules/FindROCm.cmake	2023-08-14 10:51:01.327098107 -0700
+@@ -28,14 +28,14 @@ find_library(
+   ROCR_LIBRARY
+     hsa-runtime64
+   HINTS
+-    ${ROC_DIR}/lib
++    ${ROC_DIR}/lib64
+     ${ROC_DIR}
+-    ${ROCR_DIR}/lib
++    ${ROCR_DIR}/lib64
+     ${ROCR_DIR}
+-    /opt/rocm/lib
+-    /usr/local/lib
++    /opt/rocm/lib64
++    /usr/local/lib64
+     /usr/lib/x86_64-linux-gnu
+-    /usr/lib
++    /usr/lib64
+     ENV LIBRARY_PATH
+     ENV LD_LIBRARY_PATH
+ )
+@@ -43,14 +43,14 @@ find_library(
+   ROCT_LIBRARY
+     hsakmt
+   HINTS
+-    ${ROC_DIR}/lib
++    ${ROC_DIR}/lib64
+     ${ROC_DIR}
+-    ${ROCT_DIR}/lib
++    ${ROCT_DIR}/lib64
+     ${ROCT_DIR}
+-    /opt/rocm/lib
+-    /usr/local/lib
++    /opt/rocm/lib64
++    /usr/local/lib64
+     /usr/lib/x86_64-linux-gnu
+-    /usr/lib
++    /usr/lib64
+     ENV LIBRARY_PATH
+     ENV LD_LIBRARY_PATH
+ )
+diff -urp src.orig/compiler/CMakeLists.txt src/compiler/CMakeLists.txt
+--- src.orig/compiler/CMakeLists.txt	2022-11-17 12:10:28.000000000 -0800
++++ src/compiler/CMakeLists.txt	2023-08-14 10:51:14.479097685 -0700
+@@ -91,7 +91,7 @@ if(ROCM_FOUND)
+             )
+ 
+             if (NOT CMAKE_INSTALL_RPATH)
+-              set(CMAKE_INSTALL_RPATH "$ORIGIN;$ORIGIN/../../hsa/lib;$ORIGIN/../../lib;$ORIGIN/../../lib64;$ORIGIN/../lib64")
++              set(CMAKE_INSTALL_RPATH "$ORIGIN;$ORIGIN/../../hsa/lib64;$ORIGIN/../../lib64;$ORIGIN/../../lib64;$ORIGIN/../lib64")
+             endif ()
+ 
+        else()
+diff -urp src.orig/device_runtime/bc.cmake src/device_runtime/bc.cmake
+--- src.orig/device_runtime/bc.cmake	2023-08-14 10:49:53.327100291 -0700
++++ src/device_runtime/bc.cmake	2023-08-14 10:52:03.135096122 -0700
+@@ -190,7 +190,7 @@ macro(add_bc_library name dir)
+ 
+   add_custom_command(
+     OUTPUT ${name}-${mcpu}.bc
+-    COMMAND /bin/cp optout.${mcpu}.bc ${ATMI_RUNTIME_PATH}/lib/${name}-${mcpu}.bc
++    COMMAND /bin/cp optout.${mcpu}.bc ${ATMI_RUNTIME_PATH}/lib64/${name}-${mcpu}.bc
+     DEPENDS optout.${mcpu}.bc
+   )
+   add_custom_target(${name}-${mcpu} ALL DEPENDS ${name}-${mcpu}.bc)
+diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.txt
+--- src.orig/device_runtime/CMakeLists.txt	2023-08-14 10:49:53.307100292 -0700
++++ src/device_runtime/CMakeLists.txt	2023-08-14 10:51:01.327098107 -0700
+@@ -32,7 +32,7 @@ if(LLVM_FOUND)
+   if (CLANG_INSTALL_PREFIX)
+     set(CLANG_BINDIR ${CLANG_INSTALL_PREFIX}/bin)
+     set(CLANG_INCDIR ${CLANG_INSTALL_PREFIX}/include)
+-    set(CLANG_LIBDIR ${CLANG_INSTALL_PREFIX}/lib)
++    set(CLANG_LIBDIR ${CLANG_INSTALL_PREFIX}/lib64)
+     set(AMDLLVM ${CLANG_INSTALL_PREFIX})
+   else()
+     set(CLANG_BINDIR ${LLVM_BUILD_BINARY_DIR}/bin)
+@@ -68,9 +68,10 @@ find_path(ATMI_DE_DEP_LIBHSA_LIBRARIES
+     "ockl.bc"
+     "ockl.amdgcn.bc"
+   PATHS
++    "${AMD_DEVICE_LIBS_PREFIX}/lib/amdgcn/bitcode"
+     "${AMD_DEVICE_LIBS_PREFIX}/amdgcn/bitcode"
+-    "${AMD_DEVICE_LIBS_PREFIX}/lib/bitcode"
+-    "${AMD_DEVICE_LIBS_PREFIX}/lib"
++    "${AMD_DEVICE_LIBS_PREFIX}/lib64/bitcode"
++    "${AMD_DEVICE_LIBS_PREFIX}/lib64"
+   NO_DEFAULT_PATH)
+ 
+ get_filename_component (ATMI_DE_DEP_LIBHSA_LIBRARIES_DIRS ${ATMI_DE_DEP_LIBHSA_LIBRARIES} DIRECTORY)
+@@ -133,7 +134,7 @@ foreach(mcpu ${mcpus})
+   set(optimization_level 2)
+ 
+   # set output dir for .bc files
+-  set(OUTPUTDIR ${ATMI_RUNTIME_PATH}/lib)
++  set(OUTPUTDIR ${ATMI_RUNTIME_PATH}/lib64)
+ 
+   # create output dir for include files
+   execute_process(COMMAND "/bin/mkdir" "-p" "${OUTPUTDIR}")
+diff -urp src.orig/runtime/core/CMakeLists.txt src/runtime/core/CMakeLists.txt
+--- src.orig/runtime/core/CMakeLists.txt	2023-08-14 10:49:53.311100292 -0700
++++ src/runtime/core/CMakeLists.txt	2023-08-14 10:51:47.903096611 -0700
+@@ -44,7 +44,7 @@ add_definitions(-DROCM_VERSION_MINOR=${R
+ add_definitions(-fpic)
+ 
+ # set output dir for the .so file
+-set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../../lib)
++set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../../lib64)
+ 
+ #set soname version number
+ get_version ( "1.0.0" )
+@@ -106,8 +106,8 @@ set_target_properties(atmi_runtime
+         SKIP_BUILD_RPATH            FALSE
+         BUILD_WITH_INSTALL_RPATH    FALSE
+         INSTALL_RPATH_USE_LINK_PATH TRUE
+-        BUILD_RPATH               "\$ORIGIN;\$ORIGIN/../../hsa/lib;\$ORIGIN/../../lib;\$ORIGIN/../../lib64;\$ORIGIN/../lib64"
+-        INSTALL_RPATH             "\$ORIGIN;\$ORIGIN/../../hsa/lib;\$ORIGIN/../../lib;\$ORIGIN/../../lib64;\$ORIGIN/../lib64"
++        BUILD_RPATH               "\$ORIGIN;\$ORIGIN/../../hsa/lib64;\$ORIGIN/../../lib64;\$ORIGIN/../../lib64;\$ORIGIN/../lib64"
++        INSTALL_RPATH             "\$ORIGIN;\$ORIGIN/../../hsa/lib64;\$ORIGIN/../../lib64;\$ORIGIN/../../lib64;\$ORIGIN/../lib64"
+   )
+ endif ()
+ 

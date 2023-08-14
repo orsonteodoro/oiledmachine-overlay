@@ -9,6 +9,7 @@ LICENSE="metapackage"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
 IUSE="
+	atmi
 	aqlprofile
 	flang
 	hipfort
@@ -31,6 +32,9 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	atmi? (
+		~dev-libs/atmi-${PV}:${SLOT}
+	)
 	hipfort? (
 		~dev-util/hipfort-${PV}:${SLOT}
 	)
