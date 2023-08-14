@@ -72,6 +72,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.5
+	sys-devel/clang:${LLVM_MAX_SLOT}[extra]
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	mlir? (
 		~sci-libs/rocMLIR-${PV}:${SLOT}
@@ -81,6 +82,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python_setup
 }
 
@@ -101,6 +103,16 @@ src_prepare() {
 }
 
 src_configure() {
+	# Disallow newer/older clangs versions when invoking clang-tidy.
+	einfo "LLVM_SLOT=${LLVM_SLOT}"
+	einfo "PATH=${PATH} (before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+	einfo "PATH=${PATH} (after)"
+
 	local mycmakeargs=(
 		-DMIGRAPHX_ENABLE_CPU=$(usex cpu ON OFF)
 		-DMIGRAPHX_ENABLE_FPGA=$(usex fpga ON OFF)

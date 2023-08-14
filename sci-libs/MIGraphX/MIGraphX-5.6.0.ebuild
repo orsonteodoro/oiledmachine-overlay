@@ -15,7 +15,7 @@ AMDGPU_TARGETS_COMPAT=(
 LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit cmake llvm python-r1
+inherit cmake flag-o-matic llvm python-r1
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX/"
@@ -72,6 +72,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.5
+	sys-devel/clang:${LLVM_MAX_SLOT}[extra]
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	mlir? (
 		|| (
@@ -106,7 +107,23 @@ src_prepare() {
 }
 
 src_configure() {
+	# Disallow newer/older clangs versions when invoking clang-tidy.
+	einfo "LLVM_SLOT=${LLVM_SLOT}"
+	einfo "PATH=${PATH} (before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+	einfo "PATH=${PATH} (after)"
+
 	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+	local clang_tidy_path
+	if [[ -e "${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin" ]] ; then
+		clang_tidy_path="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang-tidy"
+	elif [[ -e "${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin" ]] ; then
+		clang_tidy_path="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang-tidy"
+	fi
 	local mycmakeargs=(
 		-DMIGRAPHX_ENABLE_CPU=$(usex cpu ON OFF)
 		-DMIGRAPHX_ENABLE_FPGA=$(usex fpga ON OFF)
