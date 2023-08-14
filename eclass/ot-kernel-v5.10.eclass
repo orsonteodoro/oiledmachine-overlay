@@ -412,12 +412,13 @@ RDEPEND+="
 	!build? (
 		${CDEPEND}
 	)
-"
-
-DEPEND+="
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
+"
+
+DEPEND+="
+	${RDEPEND}
 "
 
 BDEPEND+="

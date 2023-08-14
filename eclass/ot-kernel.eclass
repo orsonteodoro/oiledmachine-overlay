@@ -182,12 +182,22 @@ inherit ot-kernel-kutils security-scan toolchain-funcs
 
 # For firmware security update(s), see
 # https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/blob/main/releasenote.md
-DEPEND+="
+LINUX_FIRMWARE_PV="20230625_p20230724"
+INTEL_MICROCODE_PV="20230808_p20230804"
+RDEPEND+="
 	intel-microcode? (
-		>=sys-firmware/intel-microcode-20230808_p20230804
+		>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
 	)
 	linux-firmware? (
-		>=sys-kernel/linux-firmware-20230625_p20230724
+		>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
+	)
+"
+DEPEND+="
+	intel-microcode? (
+		>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
+	)
+	linux-firmware? (
+		>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
 	)
 "
 
@@ -197,6 +207,9 @@ BDEPEND+="
 	imagemagick? (
 		media-gfx/imagemagick
 		app-crypt/rhash
+	)
+	intel-microcode? (
+		>=sys-firmware/intel-microcode-${}
 	)
 	graphicsmagick? (
 		media-gfx/graphicsmagick[imagemagick]
