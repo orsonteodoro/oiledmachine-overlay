@@ -188,13 +188,17 @@ src_install() {
 		"${staging_prefix}/"* \
 		"${ED}" \
 		|| die
-	cd "${ED}" || die
+	cd "${ED}/usr" || die
 	mv \
 		"lib" \
 		"$(get_libdir)" \
 		|| die
 	sanitize_permissions
 	fix_rpath
+	sed -i -e "s|/lib/|/$(get_libdir)/|g" \
+		"${ED}/usr/$(get_libdir)/cmake/rocMLIR/rocMLIRTargets-release.cmake" \
+		"${ED}/usr/$(get_libdir)/cmake/rocMLIR/rocMLIRConfig.cmake" \
+		|| die
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
