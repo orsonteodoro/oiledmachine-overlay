@@ -99,7 +99,7 @@ src_configure() {
 		-DMIGRAPHX_ENABLE_CPU=$(usex cpu ON OFF)
 		-DMIGRAPHX_ENABLE_FPGA=$(usex fpga ON OFF)
 		-DMIGRAPHX_ENABLE_GPU=$(usex rocm ON OFF)
-		-DMIGRAPHX_ENABLE_MLIR=$(usex milr ON OFF)
+		-DMIGRAPHX_ENABLE_MLIR=$(usex mlir ON OFF)
 		-DMIGRAPHX_USE_HIPRTC=$(usex hip-rtc ON OFF)
 	)
 
