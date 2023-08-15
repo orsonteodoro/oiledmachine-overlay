@@ -17,7 +17,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipBLAS"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE+=" cuda +rocm"
+IUSE+=" cuda +rocm r1"
 REQUIRED_USE="
 	^^ (
 		cuda
@@ -111,6 +111,15 @@ src_configure() {
 	fi
 	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+
+	# The build script is bugged.
+	rm "${ED}/usr/include/hipblas/hipblas_module.f90" || die
+	insinto "${EPREFIX}/usr/include/hipblas"
+	doins library/src/hipblas_module.f90
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
