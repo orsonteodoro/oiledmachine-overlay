@@ -242,8 +242,8 @@ sanitize_permissions() {
 fix_rpath() {
 	local rpath
 	local file_path
-	rpath=$(patchelf --print-rpath "${ED}/usr/$(get_libdir)/librocal.so")
-	rpath+="${EPREFIX}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo:${rpath}"
+	rpath=$(patchelf --print-rpath "${ED}/${EPREFIX}/usr/$(get_libdir)/librocal.so")
+	rpath="${EPREFIX}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo:${rpath}"
 	file_path="${ED}/${EPREFIX}/usr/$(get_libdir)/librocal.so"
 	patchelf \
 		--set-rpath "${rpath}" \
@@ -252,7 +252,7 @@ fix_rpath() {
 	rpath="${EPREFIX}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo"
 	file_path=$(realpath "${ED}/${EPREFIX}/usr/lib/${EPYTHON}/site-packages/rocal_pybind.cpython-"*"-linux-gnu.so")
 	patchelf \
-		--set-path "${rpath}" \
+		--set-rpath "${rpath}" \
 		"${file_path}" \
 		|| die
 }
