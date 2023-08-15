@@ -103,6 +103,7 @@ DEPEND="
 BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-util/cmake-3.5
+	dev-util/patchelf
 	virtual/pkgconfig
 "
 PATCHES=(
@@ -238,12 +239,20 @@ sanitize_permissions() {
 	IFS=$' \t\n'
 }
 
+fix_rpath() {
+	local rpath=$(patchelf --print-rpath "${ED}/usr/$(get_libdir)/librocal.so")
+	patchelf \
+		--set-rpath "${EPREFIX}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo:${rpath}" \
+		|| die
+}
+
 src_install() {
 	cmake_src_install
 	local staging_dir="${WORKDIR}/install"
 	insinto /
 	doins -r "${staging_dir}/"*
 	sanitize_permissions
+	fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
