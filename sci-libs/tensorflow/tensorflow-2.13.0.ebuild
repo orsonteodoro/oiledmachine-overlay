@@ -288,6 +288,7 @@ PROTOBUF_PV="3.21.9"		# From https://github.com/tensorflow/tensorflow/blob/v2.13
 PROTOBUF_SLOT="0/32"
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
 RULES_APPLE_PV="1.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+RULES_FOREIGN_CC_PV="0.7.1"
 RULES_JVM_PV="4.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace3.bzl
 RULES_PKG_PV="0.7.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace3.bzl
 RULES_PYTHON_PV="0.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
@@ -296,6 +297,7 @@ RULES_SWIFT_PV="1.0.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.
 
 EGIT_COMMIT_ABSEIL_CPP="b971ac5250ea8de900eae9f95e06548d14cd95fe"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/absl/workspace.bzl
 EGIT_COMMIT_ARM_NEON_2_X86_SSE="a15b489e1222b2087007546b4912e21293ea86ff"	# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+EGIT_COMMIT_BENCHMARK="f7547e29ccaed7b64ef4f7495ecfff1c9f6f3d03"
 EGIT_COMMIT_BAZEL_TOOLCHAINS="8c717f8258cd5f6c7a45b97d974292755852b658"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace1.bzl
 EGIT_COMMIT_CPUINFO="3dc310302210c1891ffcfb12ae67b11a3ad3a150"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
 EGIT_COMMIT_DLPACK="9351cf542ab478499294864ff3acfdab5c8c5f3d"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/dlpack/workspace.bzl
@@ -307,6 +309,9 @@ EGIT_COMMIT_HIGHWAYHASH="c13d28517a4db259d738ea4886b1f00352a3cc33"		# From https
 EGIT_COMMIT_LIBEIGEN="b0f877f8e01e90a5b0f3a79d46ea234899f8b499"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/eigen3/workspace.bzl
 EGIT_COMMIT_LLVM="dc275fd03254d67d29cc70a5a0569acf24d2280d"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/llvm/workspace.bzl
 EGIT_COMMIT_PTHREADPOOL="b8374f80e42010941bda6c85b0e3f1a1bd77a1e0"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
+EGIT_COMMIT_PYBIND11_ABSEIL="2c4932ed6f6204f1656e245838f4f5eae69d2e29"
+EGIT_COMMIT_PYBIND11_BAZEL="72cbbf1fbc830e487e3012862b7b720001b70672"
+EGIT_COMMIT_PYBIND11_PROTOBUF="80f3440cd8fee124e077e2e47a8a17b78b451363"
 EGIT_COMMIT_RE2="a276a8c738735a0fe45a6ee590fe2df69bcf4502"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl ; Round up to the first day of cur_month + 1
 EGIT_COMMIT_RULES_CC="081771d4a0e9d7d3aa0eed2ef389fa4700dfb23e"			# From https://github.com/tensorflow/runtime/blob/7d879c8b161085a4374ea481b93a52adb19c0529/third_party/rules_cuda/cuda/dependencies.bzl#L41  ## needs review
 EGIT_COMMIT_RULES_CLOSURE="308b05b2419edb5c8ee0471b67a40403df940149"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace3.bzl
@@ -333,6 +338,7 @@ https://github.com/bazelbuild/rules_android/archive/v${RULES_ANDROID_PV}.zip -> 
 https://github.com/bazelbuild/rules_apple/releases/download/${RULES_APPLE_PV}/rules_apple.${RULES_APPLE_PV}.tar.gz
 https://github.com/bazelbuild/rules_cc/archive/${EGIT_COMMIT_RULES_CC}.tar.gz -> bazelbuild-rules_cc-${EGIT_COMMIT_RULES_CC}.tar.gz
 https://github.com/bazelbuild/rules_closure/archive/${EGIT_COMMIT_RULES_CLOSURE}.tar.gz -> bazelbuild-rules_closure-${EGIT_COMMIT_RULES_CLOSURE}.tar.gz
+https://github.com/bazelbuild/rules_foreign_cc/archive/${RULES_FOREIGN_CC_PV}.tar.gz -> rules_foreign_cc-${RULES_FOREIGN_CC_PV}.tar.gz
 https://github.com/bazelbuild/rules_java/archive/${EGIT_COMMIT_RULES_JAVA}.zip -> bazelbuild-rules_java-${EGIT_COMMIT_RULES_JAVA}.zip
 https://github.com/bazelbuild/rules_jvm_external/archive/${RULES_JVM_PV}.zip -> rules_jvm-${RULES_JVM_PV}.zip
 https://github.com/bazelbuild/rules_pkg/releases/download/${RULES_PKG_PV}/rules_pkg-${RULES_PKG_PV}.tar.gz -> bazelbuild-rules_pkg-${RULES_PKG_PV}.tar.gz
@@ -340,6 +346,7 @@ https://github.com/bazelbuild/rules_proto/archive/${EGIT_COMMIT_RULES_PROTO}.tar
 https://github.com/bazelbuild/rules_python/releases/download/${RULES_PYTHON_PV}/rules_python-${RULES_PYTHON_PV}.tar.gz -> bazelbuild-rules_python-${RULES_PYTHON_PV}.tar.gz
 https://github.com/bazelbuild/rules_swift/releases/download/${RULES_SWIFT_PV}/rules_swift.${RULES_SWIFT_PV}.tar.gz -> bazelbuild-rules_swift.${RULES_SWIFT_PV}.tar.gz
 https://github.com/dmlc/dlpack/archive/${EGIT_COMMIT_DLPACK}.tar.gz -> dlpack-${EGIT_COMMIT_DLPACK}.tar.gz
+https://github.com/google/benchmark/archive/${EGIT_COMMIT_BENCHMARK}.tar.gz -> benchmark-${EGIT_COMMIT_FARMHASH}.tar.gz
 https://github.com/google/farmhash/archive/${EGIT_COMMIT_FARMHASH}.tar.gz -> farmhash-${EGIT_COMMIT_FARMHASH}.tar.gz
 https://github.com/google/gemmlowp/archive/${EGIT_COMMIT_GEMMLOWP}.zip -> gemmlowp-${EGIT_COMMIT_GEMMLOWP}.zip
 https://github.com/google/highwayhash/archive/${EGIT_COMMIT_HIGHWAYHASH}.tar.gz -> highwayhash-${EGIT_COMMIT_HIGHWAYHASH}.tar.gz
@@ -353,6 +360,9 @@ https://github.com/mborgerding/kissfft/archive/${KISSFFT_PV}.tar.gz -> kissfft-$
 https://github.com/oneapi-src/oneDNN/archive/refs/tags/v${ONEDNN_PV}.tar.gz -> oneDNN-v${ONEDNN_PV}.tar.gz
 https://github.com/openxla/stablehlo/archive/${EGIT_COMMIT_STABLEHLO}.zip -> openxla-stablehlo-${EGIT_COMMIT_STABLEHLO}.zip
 https://github.com/petewarden/OouraFFT/archive/v${OOURA_FFT_PV}.tar.gz -> OouraFFT-v${OOURA_FFT_PV}.tar.gz
+https://github.com/pybind/pybind11_abseil/archive/${EGIT_COMMIT_PYBIND11_ABSEIL}.tar.gz -> pybind11_abseil-${EGIT_COMMIT_PYBIND11_ABSEIL}.tar.gz
+https://github.com/pybind/pybind11_bazel/archive/${EGIT_COMMIT_PYBIND11_BAZEL}.tar.gz -> pybind11_bazel-${EGIT_COMMIT_PYBIND11_BAZEL}.tar.gz
+https://github.com/pybind/pybind11_protobuf/archive/${EGIT_COMMIT_PYBIND11_PROTOBUF}.zip -> pybind11_protobuf-${EGIT_COMMIT_PYBIND11_PROTOBUF}.zip
 https://github.com/pytorch/cpuinfo/archive/${EGIT_COMMIT_CPUINFO}.zip -> pytorch-cpuinfo-${EGIT_COMMIT_CPUINFO}.zip
 https://github.com/tensorflow/runtime/archive/${EGIT_COMMIT_TF_RUNTIME}.tar.gz -> tensorflow-runtime-${EGIT_COMMIT_TF_RUNTIME}.tar.gz
 https://gitlab.com/libeigen/eigen/-/archive/${EGIT_COMMIT_LIBEIGEN}/eigen-${EGIT_COMMIT_LIBEIGEN}.tar.gz -> eigen-${EGIT_COMMIT_LIBEIGEN}.tar.gz
@@ -361,6 +371,7 @@ https://github.com/Maratyszcza/pthreadpool/archive/${EGIT_COMMIT_PTHREADPOOL}.zi
 https://github.com/Maratyszcza/FP16/archive/${EGIT_COMMIT_FP16}.zip -> FP16-${EGIT_COMMIT_FP16}.zip
 https://github.com/Maratyszcza/FXdiv/archive/${EGIT_COMMIT_FXDIV}.zip -> FXdiv-${EGIT_COMMIT_FXDIV}.zip
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.zip -> protobuf-${PROTOBUF_PV}.zip
+
 	cuda? (
 https://github.com/NVIDIA/cudnn-frontend/archive/refs/tags/v${CUDNN_FRONTEND_PV}.zip -> cudnn-frontend-v${CUDNN_FRONTEND_PV}.zip
 https://github.com/NVlabs/cub/archive/${CUB_PV}.zip -> cub-${CUB_PV}.zip
@@ -776,10 +787,11 @@ ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 }
 
 check_cython() {
-	local actual_cython_pv=$(cython --version 2>&1 \
+	local actual_cython_pv=$(cython --version \
 		| cut -f 3 -d " " \
 		| sed -e "s|a|_alpha|g" \
-		| sed -e "s|b|_beta|g")
+		| sed -e "s|b|_beta|g" \
+		| sed -e "s|rc|_rc|g")
 	local expected_cython_pv="3.0.0_alpha11"
 	local required_cython_major=$(ver_cut 1 ${expected_cython_pv})
 	if ver_test ${actual_cython_pv} -lt ${required_cython_major} ; then
@@ -986,7 +998,6 @@ einfo "Preventing stall.  Removing -Os."
 
 	bazel_setup_bazelrc
 
-	die
 	cp -a "${FILESDIR}/${PV}/"*".patch" "${WORKDIR}/patches" || die
 	eapply "${WORKDIR}/patches/"*".patch"
 
@@ -1054,7 +1065,7 @@ ewarn
 		fi
 
 		export TF_NEED_CUDA=$(usex cuda 1 0)
-		export TF_NEED_ROCM=$(usex hip 1 0)
+		export TF_NEED_ROCM=$(usex rocm 1 0)
 		export TF_DOWNLOAD_CLANG=0
 		export TF_CUDA_CLANG=0
 		export TF_NEED_TENSORRT=0
