@@ -242,8 +242,9 @@ get_amdgpu_flags() {
 			# Placeholder
 			continue
 		fi
-		amdgpu_target_flags+="${gpu_target};"
+		amdgpu_target_flags+=";${gpu_target}"
 	done
+	amdgpu_target_flags="${amdgpu_target_flags:1}"
 	echo "${amdgpu_target_flags}"
 }
 

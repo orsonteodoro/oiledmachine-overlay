@@ -595,6 +595,7 @@ BDEPEND="
 		dev-lang/python
 	)
 	>=dev-util/bazel-5.3.0
+	app-arch/pigz
 	app-arch/unzip
 	dev-java/java-config
 	dev-libs/protobuf:${PROTOBUF_SLOT}
@@ -814,7 +815,9 @@ einfo "CFLAGS:\t${CFLAGS}"
 einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
-	if tc-is-clang || use clang || use rocm ; then
+	if use rocm ; then
+		use_gcc
+	elif tc-is-clang || use clang ; then
 		use_clang
 	elif tc-is-gcc ; then
 		use_gcc
@@ -999,7 +1002,13 @@ einfo "Preventing stall.  Removing -Os."
 	bazel_setup_bazelrc
 
 	cp -a "${FILESDIR}/${PV}/"*".patch" "${WORKDIR}/patches" || die
+	rm third_party/gpus/find_rocm_config.py.gz.base64 || die
 	eapply "${WORKDIR}/patches/"*".patch"
+	pushd third_party/gpus || die
+		pigz -z -k find_rocm_config.py || die
+		mv find_rocm_config.py.zz find_rocm_config.py.gz || die
+		base64 --wrap=0 find_rocm_config.py.gz > find_rocm_config.py.gz.base64 || die
+	popd
 
 	# Relax version checks in setup.py
 	sed -i "/^    '/s/==/>=/g" tensorflow/tools/pip_package/setup.py || die
@@ -1109,8 +1118,23 @@ ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 			export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags \
 				| tr ";" ",")
 			export TF_ROCM_LLVM_SLOT="${LLVM_MAX_SLOT}"
-			export HIP_PATH="/usr"
-			export ROCM_PATH="/usr"
+			export HIP_PATH="${EPREFIX}/usr"
+			export ROCM_PATH="${EPREFIX}/usr"
+
+			local s=11 # Slot
+			export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-gcc-${s}"
+
+			export HOST_C_COMPILER="${EPREFIX}/usr/bin/${CC}"
+			export HOST_CXX_COMPILER="${EPREFIX}/usr/bin/${CXX}"
+einfo
+einfo "GCC_HOST_COMPILER_PATH:  ${GCC_HOST_COMPILER_PATH}"
+einfo "HIP_PATH:  ${HIP_PATH}"
+einfo "HOST_C_COMPILER:  ${HOST_C_COMPILER}"
+einfo "HOST_CXX_COMPILER:  ${HOST_CXX_COMPILER}"
+einfo "ROCM_PATH:  ${ROCM_PATH}"
+einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
+einfo "TF_ROCM_LLVM_SLOT:  ${TF_ROCM_LLVM_SLOT}"
+einfo
 		fi
 
 # com_googlesource_code_re2 weird branch using absl, doesnt work with released
