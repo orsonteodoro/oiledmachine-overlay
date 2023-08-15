@@ -280,13 +280,13 @@ fix_rpath() {
 	local rpath
 	local file_path
 	rpath=$(patchelf --print-rpath "${ED}/${EPREFIX}/usr/$(get_libdir)/librocal.so")
-	rpath="${EPREFIX}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo:${rpath}"
+	rpath="${EPREFIX}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo/lib:${rpath}"
 	file_path="${ED}/${EPREFIX}/usr/$(get_libdir)/librocal.so"
 	patchelf \
 		--set-rpath "${rpath}" \
 		"${file_path}" \
 		|| die
-	rpath="${EPREFIX}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo"
+	rpath="${EPREFIX}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo/lib"
 	file_path=$(realpath "${ED}/${EPREFIX}/usr/lib/${EPYTHON}/site-packages/rocal_pybind.cpython-"*"-linux-gnu.so")
 	patchelf \
 		--set-rpath "${rpath}" \
