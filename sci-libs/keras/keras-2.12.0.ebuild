@@ -9,10 +9,10 @@ inherit bazel distutils-r1
 
 # Versions and hashes are obtained by console and removing items below.
 # They do not appear in the tarball.
-EGIT_RULES_CC_COMMIT="b1c40e1de81913a3c40e5948f78719c28152486d"
+RULES_CC_PV="0.0.2"
 EGIT_RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"
 bazel_external_uris="
-	https://github.com/bazelbuild/rules_cc/archive/${EGIT_RULES_CC_COMMIT}.zip -> rules_cc-${EGIT_RULES_CC_COMMIT}.zip
+	https://github.com/bazelbuild/rules_cc/releases/download/${RULES_CC_PV}/rules_cc-${RULES_CC_PV}.tar.gz
 	https://github.com/bazelbuild/rules_java/archive/${EGIT_RULES_JAVA_COMMIT}.zip -> bazelbuild-rules_java-${EGIT_RULES_JAVA_COMMIT}.zip
 "
 SRC_URI="
