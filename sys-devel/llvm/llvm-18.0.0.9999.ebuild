@@ -15,7 +15,7 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && ${PV} =~ 9999 ]] ; then
 einfo "Using fallback commit"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM17_COMMIT}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM18_COMMIT}"
 	fi
 }
 _llvm_set_globals
@@ -481,8 +481,8 @@ get_distribution_components() {
 			llvm-rc
 			llvm-readelf
 			llvm-readobj
+			llvm-readtapi
 			llvm-reduce
-			llvm-remark-size-diff
 			llvm-remarkutil
 			llvm-rtdyld
 			llvm-sim
@@ -492,7 +492,6 @@ get_distribution_components() {
 			llvm-strings
 			llvm-strip
 			llvm-symbolizer
-			llvm-tapi-diff
 			llvm-tli-checker
 			llvm-undname
 			llvm-windres

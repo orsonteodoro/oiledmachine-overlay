@@ -15,6 +15,7 @@ case ${EAPI:-0} in
 esac
 
 # For deterministic builds and working patches
+FALLBACK_LLVM18_COMMIT="61ab106f82d187a30e83dcd4ce5832c3802a5438" # Aug 14, 2023
 FALLBACK_LLVM17_COMMIT="d36324866ee1fb4d1c26552b6b686a463d2b448f" # Jun 28, 2023
 
 _LLVM_EBUILDS_ECLASS=1

@@ -22,7 +22,7 @@ LICENSE="
 SLOT="0"
 KEYWORDS="amd64 arm arm64 ~riscv sparc x86 ~x64-macos"
 IUSE="
-+libunwind static-libs test
++libunwind +static-libs test
 
 hardened r9
 "

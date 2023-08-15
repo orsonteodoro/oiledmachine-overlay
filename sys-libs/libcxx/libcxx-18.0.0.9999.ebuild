@@ -4,8 +4,25 @@
 
 EAPI=8
 
+if [[ ${PV} =~ 9999 ]] ; then
+IUSE+="
+	fallback-commit
+"
+fi
+
+inherit llvm-ebuilds
+
+_llvm_set_globals() {
+	if [[ "${USE}" =~ "fallback-commit" && ${PV} =~ 9999 ]] ; then
+einfo "Using fallback commit"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM18_COMMIT}"
+	fi
+}
+_llvm_set_globals
+unset -f _llvm_set_globals
+
 CMAKE_ECLASS="cmake"
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{10..12} )
 inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 
@@ -19,11 +36,11 @@ LICENSE="
 	)
 "
 SLOT="0"
-KEYWORDS="amd64 ~arm arm64 ~riscv ~sparc ~x86 ~x64-macos"
-IUSE="
+KEYWORDS=""
+IUSE+="
 +libcxxabi +static-libs test
 
-hardened r11
+hardened r12
 "
 RDEPEND="
 	!libcxxabi? (
@@ -38,6 +55,7 @@ DEPEND="
 	sys-devel/llvm:${LLVM_MAJOR}
 "
 BDEPEND+="
+	dev-util/patchutils
 	test? (
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 		>=dev-util/cmake-3.16
@@ -45,13 +63,17 @@ BDEPEND+="
 		sys-devel/gdb[python]
 	)
 "
+SRC_URI+="
+https://github.com/llvm/llvm-project/commit/ef843c8271027b89419d07ffc2aaa3abf91438ef.patch
+	-> libcxx-commit-ef843c8.patch
+"
 RESTRICT="
 	!test? (
 		test
 	)
 "
 PATCHES=(
-	"${FILESDIR}/libcxx-15.0.0.9999-hardened.patch"
+	"${FILESDIR}/libcxx-18.0.0.9999-hardened.patch"
 )
 LLVM_COMPONENTS=(
 	"runtimes"
@@ -191,6 +213,27 @@ _usex_lto() {
 	else
 		echo "OFF"
 	fi
+}
+
+src_prepare() {
+	pushd "${WORKDIR}" || die
+		# Retesting
+		# Still bugged since Sept 30, 2022
+		# Fixes build time failure:
+#
+# include/c++/v1/system_error: In instantiation of 'std::__1::error_code::error_code(_Ep, typename std::__1::enable_if<std::__1::is_error_code_enum<_Ep>::value>::type*) [with _Ep = st>
+# include/c++/v1/ios:452:34:   required from here
+# include/c++/v1/system_error:355:40: error: use of deleted function 'void std::__1::__adl_only::make_error_code()'
+#   355 |                 *this = make_error_code(__e);
+#       |                         ~~~~~~~~~~~~~~~^~~~~
+# include/c++/v1/system_error:263:10: note: declared here
+#   263 |     void make_error_code() = delete;
+#
+#		filterdiff -x "*/Cxx2bIssues.csv" "${DISTDIR}/libcxx-commit-ef843c8.patch" \
+#			> "${T}/libcxx-commit-ef843c8.patch" || die
+#		eapply -R "${T}/libcxx-commit-ef843c8.patch"
+	popd
+	llvm.org_src_prepare
 }
 
 src_configure() {
@@ -388,6 +431,9 @@ einfo
 	fi
 
 	if use test; then
+		local clang_path=$(type -P "${CHOST:+${CHOST}-}clang" 2>/dev/null)
+		[[ -n ${clang_path} ]] || die "Unable to find ${CHOST}-clang for tests"
+
 		mycmakeargs+=(
 			-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
 			-DLLVM_LIT_ARGS="$(get_lit_flags)"

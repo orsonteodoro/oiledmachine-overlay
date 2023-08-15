@@ -21,7 +21,7 @@ LICENSE="
 SLOT="0"
 KEYWORDS="amd64 arm arm64 ~riscv x86 ~x64-macos"
 IUSE="
-+libcxxabi +libunwind static-libs test
++libcxxabi +libunwind +static-libs test
 
 hardened r11
 "

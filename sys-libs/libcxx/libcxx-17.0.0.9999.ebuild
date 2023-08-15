@@ -38,7 +38,7 @@ LICENSE="
 SLOT="0"
 KEYWORDS=""
 IUSE+="
-+libcxxabi static-libs test
++libcxxabi +static-libs test
 
 hardened r12
 "

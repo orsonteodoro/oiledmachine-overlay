@@ -21,7 +21,7 @@ LICENSE="
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~x64-macos"
 IUSE="
-static-libs test
++static-libs test
 
 hardened r9
 "
