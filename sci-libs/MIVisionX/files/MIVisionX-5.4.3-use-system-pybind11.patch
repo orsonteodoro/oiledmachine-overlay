@@ -1,0 +1,25 @@
+diff -urp MIVisionX-rocm-5.4.3.orig/rocAL/rocAL_pybind/CMakeLists.txt MIVisionX-rocm-5.4.3/rocAL/rocAL_pybind/CMakeLists.txt
+--- MIVisionX-rocm-5.4.3.orig/rocAL/rocAL_pybind/CMakeLists.txt	2022-10-26 21:12:19.000000000 -0700
++++ MIVisionX-rocm-5.4.3/rocAL/rocAL_pybind/CMakeLists.txt	2023-08-14 18:43:26.890187641 -0700
+@@ -109,7 +109,9 @@ if(${BUILD_ROCAL_PYBIND})
+                         third_party_lib/
+                         ../../amd_openvx/openvx/include/)
+ 
+-    add_subdirectory(third_party_lib/pybind11)
++    #add_subdirectory(third_party_lib/pybind11)
++    cmake_policy(SET CMP0057 NEW)
++    find_package(pybind11)
+ 
+     pybind11_add_module(rocal_pybind rocal_pybind.cpp)
+     target_link_libraries(rocal_pybind PRIVATE rocal  vx_rpp amd_rpp)
+Only in MIVisionX-rocm-5.4.3/rocAL/rocAL_pybind: CMakeLists.txt.orig
+Only in MIVisionX-rocm-5.4.3/rocAL/rocAL_pybind: CMakeLists.txt.rej
+diff -urp MIVisionX-rocm-5.4.3.orig/rocAL/rocAL_pybind/third_party_lib/CMakeLists.txt MIVisionX-rocm-5.4.3/rocAL/rocAL_pybind/third_party_lib/CMakeLists.txt
+--- MIVisionX-rocm-5.4.3.orig/rocAL/rocAL_pybind/third_party_lib/CMakeLists.txt	2022-10-26 21:12:19.000000000 -0700
++++ MIVisionX-rocm-5.4.3/rocAL/rocAL_pybind/third_party_lib/CMakeLists.txt	2023-08-14 18:43:14.278188046 -0700
+@@ -21,4 +21,4 @@
+ cmake_minimum_required(VERSION 3.0)
+ project(third_party_lib)
+ 
+-add_subdirectory(pybind11)
++#add_subdirectory(pybind11)

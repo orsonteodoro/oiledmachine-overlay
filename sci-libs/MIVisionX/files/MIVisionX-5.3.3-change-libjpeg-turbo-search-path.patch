@@ -1,0 +1,29 @@
+diff -urp MIVisionX-rocm-5.3.3.orig/amd_openvx/cmake/FindTurboJpeg.cmake MIVisionX-rocm-5.3.3/amd_openvx/cmake/FindTurboJpeg.cmake
+--- MIVisionX-rocm-5.3.3.orig/amd_openvx/cmake/FindTurboJpeg.cmake	2022-09-16 13:23:09.000000000 -0700
++++ MIVisionX-rocm-5.3.3/amd_openvx/cmake/FindTurboJpeg.cmake	2023-08-14 17:37:36.058314543 -0700
+@@ -29,7 +29,6 @@ find_path(TurboJpeg_INCLUDE_DIRS
+     $ENV{TURBO_JPEG_PATH}/include
+     PATHS
+     ${TURBO_JPEG_PATH}/include
+-    /usr/include/
+ )
+ mark_as_advanced( TurboJpeg_INCLUDE_DIRS )
+ 
+@@ -41,7 +40,6 @@ find_library( TurboJpeg_LIBRARIES
+     PATHS
+     ${TURBO_JPEG_PATH}/lib
+     ${TURBO_JPEG_PATH}/lib64
+-    /usr/lib
+ )
+ mark_as_advanced( TurboJpeg_LIBRARIES_DIR )
+ 
+@@ -53,7 +51,6 @@ find_path(TurboJpeg_LIBRARIES_DIR
+     PATHS
+     ${TURBO_JPEG_PATH}/lib
+     ${TURBO_JPEG_PATH}/lib64
+-    /usr/lib
+ )
+ 
+ include( FindPackageHandleStandardArgs )
+Only in MIVisionX-rocm-5.3.3/amd_openvx/cmake: FindTurboJpeg.cmake.orig
+Only in MIVisionX-rocm-5.3.3/amd_openvx/cmake: FindTurboJpeg.cmake.rej

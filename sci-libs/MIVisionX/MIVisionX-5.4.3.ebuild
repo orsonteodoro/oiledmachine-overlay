@@ -4,10 +4,11 @@
 EAPI=8
 
 LLVM_MAX_SLOT=15
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( python3_10 ) # U 20/22
 
-inherit cmake llvm python-r1 toolchain-funcs
+inherit cmake llvm python-single-r1 toolchain-funcs
 
+RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/"
 	inherit git-r3
@@ -15,6 +16,8 @@ else
 	SRC_URI="
 https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/rrawther/libjpeg-turbo/archive/${RRAWTHER_LIBJPEG_TURBO_COMMIT}.tar.gz
+	-> rrawther-libjpeg-turbo-${RRAWTHER_LIBJPEG_TURBO_COMMIT:0:7}.tar.gz
 	"
 	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -56,7 +59,9 @@ BOOST_PV="1.72.0"
 PROTOBUF_PV="3.12.4"
 RDEPEND="
 	${PYTHON_DEPS}
-	>=dev-python/pybind11-2.0[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/pybind11-2.4[${PYTHON_USEDEP}]
+	')
 	>=sys-devel/gcc-12
 	dev-libs/openssl
 	~dev-util/hip-${PV}:${SLOT}
@@ -102,7 +107,14 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
+	"${FILESDIR}/MIVisionX-5.3.3-change-libjpeg-turbo-search-path.patch"
+	"${FILESDIR}/MIVisionX-5.4.3-use-system-pybind11.patch"
 )
+
+pkg_setup() {
+	llvm_pkg_setup
+	python-single-r1_pkg_setup
+}
 
 src_prepare() {
 	cmake_src_prepare
@@ -121,6 +133,8 @@ src_prepare() {
 }
 
 src_configure() {
+	build_libjpeg_turbo
+	cd "${S}" || die
 	local mycmakeargs=(
 		-DAMD_FP16_SUPPORT=$(usex fp16 ON OFF)
 		-DENHANCED_MESSAGE=$(usex enhanced-message ON OFF)
@@ -160,6 +174,15 @@ eerror
 			-DHIP_RUNTIME="rocclr"
 		)
 
+		if use rocal ; then
+			local staging_dir="${WORKDIR}/install"
+			export TURBO_JPEG_PATH="${staging_dir}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo"
+			mycmakeargs+=(
+				-DTURBO_JPEG_PATH="${staging_dir}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo"
+				-DPYBIND11_INCLUDES="${ESYSROOT}/usr/include"
+			)
+		fi
+
 		if use rpp ; then
 			mycmakeargs+=(
 				-DAMDRPP_PATH="${ESYSROOT}/usr"
@@ -189,6 +212,53 @@ eerror
 	fi
 
 	cmake_src_configure
+}
+
+build_libjpeg_turbo() {
+	local staging_dir="${WORKDIR}/install"
+	cd "${WORKDIR}/libjpeg-turbo-${RRAWTHER_LIBJPEG_TURBO_COMMIT}" || die
+	mkdir -p "build" || die
+	cd "build" || die
+	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${staging_dir}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo"
+		-DCMAKE_BUILD_TYPE=RELEASE
+		-DENABLE_STATIC=FALSE
+		-DCMAKE_INSTALL_DEFAULT_LIBDIR=lib
+	)
+	cmake \
+		"${mycmakeargs[@]}" \
+		.. \
+		|| die
+	emake || die
+	emake install || die
+}
+
+sanitize_permissions() {
+	IFS=$'\n'
+	local path
+	for path in $(find "${ED}") ; do
+		chown root:root "${path}" || die
+		if file "${path}" | grep -q "directory" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q "ELF .* LSB shared object" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q "ELF .* LSB pie executable" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q "symbolic link" ; then
+			:;
+		else
+			chmod 0644 "${path}" || die
+		fi
+	done
+	IFS=$' \t\n'
+}
+
+src_install() {
+	cmake_src_install
+	local staging_dir="${WORKDIR}/install"
+	insinto /
+	doins -r "${staging_dir}/"*
+	sanitize_permissions
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
