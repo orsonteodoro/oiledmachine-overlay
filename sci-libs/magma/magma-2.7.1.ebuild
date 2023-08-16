@@ -32,8 +32,8 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1033
 )
 CUDA_TARGETS_COMPAT=(
-	sm_20
-	sm_30
+#	sm_20 # Dropped.  SDK version not in distro.  Fork ebuild for support.
+#	sm_30 # Dropped.  SDK version not in distro.  Fork ebuild for support.
 	sm_35
 	sm_37
 	sm_50
@@ -145,23 +145,11 @@ RDEPEND="
 	sci-libs/hipBLAS
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-7.5:=
-		cuda_targets_sm_20? (
-			=dev-util/nvidia-cuda-toolkit-8*:=
-		)
-		cuda_targets_sm_30? (
-			=dev-util/nvidia-cuda-toolkit-10*:=
-		)
 		cuda_targets_sm_35? (
-			|| (
-				=dev-util/nvidia-cuda-toolkit-8*:=
-				=dev-util/nvidia-cuda-toolkit-10*:=
-				=dev-util/nvidia-cuda-toolkit-11.8*:=
-			)
+			=dev-util/nvidia-cuda-toolkit-11.8*:=
 		)
 		cuda_targets_sm_37? (
 			|| (
-				=dev-util/nvidia-cuda-toolkit-8*:=
-				=dev-util/nvidia-cuda-toolkit-10*:=
 				=dev-util/nvidia-cuda-toolkit-11.8*:=
 			)
 		)
