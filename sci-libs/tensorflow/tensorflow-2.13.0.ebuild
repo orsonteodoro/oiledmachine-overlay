@@ -958,6 +958,7 @@ ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
 
 gen_gcc_ar(){
 	local gcc_slot=$(gcc-major-version)
+	local dir
 	if use python ; then
 		dir="${WORKDIR}/tensorflow-${PV}-${EPYTHON/./_}-bazel-base/execroot/org_tensorflow"
 	else
@@ -971,7 +972,7 @@ shift
 DEST="\${1}"
 shift
 cd "${dir}"
-"\${GCC_AR_PATH}/gcc-ar" "\${ARGS}" "\${DEST}" "\${@@Q}"
+"\${GCC_AR_PATH}/gcc-ar" "\${ARGS}" "\${DEST}" "\${@}"
 EOF
 	chmod +x "${T}/gcc-ar.sh" || die
 }

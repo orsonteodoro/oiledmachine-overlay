@@ -959,7 +959,7 @@ shift
 DEST="\${1}"
 shift
 cd "${dir}"
-"\${GCC_AR_PATH}/gcc-ar" "\${ARGS}" "\${DEST}" "\${@@Q}"
+"\${GCC_AR_PATH}/gcc-ar" "\${ARGS}" "\${DEST}" "\${@}"
 EOF
 	chmod +x "${T}/gcc-ar.sh" || die
 }
