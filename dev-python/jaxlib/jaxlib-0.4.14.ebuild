@@ -301,6 +301,9 @@ https://github.com/google/jax/archive/refs/tags/${PN}-v${PV}.tar.gz
 S="${WORKDIR}/jax-jax-v${PV}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md CITATION.bib README.md )
+PATCHES=(
+	"${FILESDIR}/${PN}-0.4.14-rocm-headers.patch"
+)
 
 distutils_enable_tests "pytest"
 

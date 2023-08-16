@@ -1,0 +1,16 @@
+diff -urp jax-jax-v0.4.14.orig/jaxlib/gpu/vendor.h jax-jax-v0.4.14/jaxlib/gpu/vendor.h
+--- jax-jax-v0.4.14.orig/jaxlib/gpu/vendor.h	2023-07-27 14:11:05.000000000 -0700
++++ jax-jax-v0.4.14/jaxlib/gpu/vendor.h	2023-08-16 16:27:07.738869370 -0700
+@@ -252,9 +252,9 @@ typedef cusparseDnVecDescr_t gpusparseDn
+ #elif defined(JAX_GPU_HIP)
+ 
+ #include "rocm/include/hip/hip_runtime_api.h"
+-#include "rocm/include/hipblas.h"
+-#include "rocm/include/hipsolver.h"
+-#include "rocm/include/hipsparse.h"
++#include "rocm/include/hipblas/hipblas.h"
++#include "rocm/include/hipsolver/hipsolver.h"
++#include "rocm/include/hipsparse/hipsparse.h"
+ 
+ #define JAX_GPU_NAMESPACE hip
+ #define JAX_GPU_PREFIX "hip"
