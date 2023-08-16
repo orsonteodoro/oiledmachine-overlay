@@ -5,9 +5,6 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
-	gfx600
-	gfx601
-	gfx602
 	gfx700
 	gfx701
 	gfx702
@@ -25,7 +22,6 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx906
 	gfx908
 	gfx909
-	gfx90a
 	gfx90c
 	gfx1010
 	gfx1011
@@ -39,6 +35,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_20
 	sm_30
 	sm_35
+	sm_37
 	sm_50
 	sm_60
 	sm_70
@@ -155,6 +152,13 @@ RDEPEND="
 			=dev-util/nvidia-cuda-toolkit-10*:=
 		)
 		cuda_targets_sm_35? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-8*:=
+				=dev-util/nvidia-cuda-toolkit-10*:=
+				=dev-util/nvidia-cuda-toolkit-11.8*:=
+			)
+		)
+		cuda_targets_sm_37? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-8*:=
 				=dev-util/nvidia-cuda-toolkit-10*:=
