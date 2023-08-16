@@ -967,9 +967,11 @@ cat <<-EOF > "${T}/gcc-ar.sh"
 #!/usr/bin/env bash
 GCC_AR_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}"
 ARGS="\${1}"
-FILENAME="\${ARGS:1}"
+shift
+DEST="\${1}"
+shift
 cd "${dir}"
-"\${GCC_AR_PATH}/gcc-ar" \$(<"\${FILENAME}")
+"\${GCC_AR_PATH}/gcc-ar" "\${ARGS}" "\${DEST}" "\${@@Q}"
 EOF
 	chmod +x "${T}/gcc-ar.sh" || die
 }
