@@ -168,37 +168,37 @@ RDEPEND="
 		cuda_targets_sm_50? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11.8*:=
-				=dev-util/nvidia-cuda-toolkit-12:=
+				=dev-util/nvidia-cuda-toolkit-12*:=
 			)
 		)
 		cuda_targets_sm_60? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11.8*:=
-				=dev-util/nvidia-cuda-toolkit-12:=
+				=dev-util/nvidia-cuda-toolkit-12*:=
 			)
 		)
 		cuda_targets_sm_70? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11.8*:=
-				=dev-util/nvidia-cuda-toolkit-12:=
+				=dev-util/nvidia-cuda-toolkit-12*:=
 			)
 		)
 		cuda_targets_sm_75? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11.8*:=
-				=dev-util/nvidia-cuda-toolkit-12:=
+				=dev-util/nvidia-cuda-toolkit-12*:=
 			)
 		)
 		cuda_targets_sm_80? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11.8*:=
-				=dev-util/nvidia-cuda-toolkit-12:=
+				=dev-util/nvidia-cuda-toolkit-12*:=
 			)
 		)
 		cuda_targets_sm_90? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11.8*:=
-				=dev-util/nvidia-cuda-toolkit-12:=
+				=dev-util/nvidia-cuda-toolkit-12*:=
 			)
 		)
 	)
