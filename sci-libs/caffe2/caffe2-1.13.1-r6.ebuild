@@ -238,6 +238,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.12.0-glog-0.6.0.patch"
 	"${FILESDIR}/${PN}-1.12.0-clang.patch"
 	"${FILESDIR}/${P}-tensorpipe.patch"
+	"${FILESDIR}/${PN}-2.0.1-hip-cmake.patch"
 )
 
 src_prepare() {
@@ -381,8 +382,26 @@ einfo
 		)
 	fi
 	if use rocm ; then
-		export ROCM_HOME="/usr"
-		export ROCM_PATH="/usr"
+		export HCC_PATH="${ESYSROOT}/usr"
+		export HIP_PATH="${ESYSROOT}/usr"
+		export HIPCUB_PATH="${ESYSROOT}/usr"
+		export HIPFFT_PATH="${ESYSROOT}/usr"
+		export HIPRAND_PATH="${ESYSROOT}/usr"
+		export HIPSPARSE_PATH="${ESYSROOT}/usr"
+		export HSA_PATH="${ESYSROOT}/usr"
+		export MAGMA_HOME="${ESYSROOT}/usr"
+		export MIOPEN_PATH="${ESYSROOT}/usr"
+		export RCCL_PATH="${ESYSROOT}/usr"
+		export ROCBLAS_PATH="${ESYSROOT}/usr"
+		export ROCFFT_PATH="${ESYSROOT}/usr"
+		export ROCM_HOME="${ESYSROOT}/usr"
+		export ROCM_INCLUDE_DIRS="${ESYSROOT}/usr/include"
+		export ROCM_PATH="${ESYSROOT}/usr"
+		export ROCPRIM_PATH="${ESYSROOT}/usr"
+		export ROCRAND_PATH="${ESYSROOT}/usr"
+		export ROCTRACER_PATH="${ESYSROOT}/usr"
+		export ROCTHRUST_PATH="${ESYSROOT}/usr"
+		export THRUST_PATH="${ESYSROOT}/usr/include"
 		mycmakeargs+=(
 			-DPYTORCH_ROCM_ARCH=$(get_amdgpu_flags)
 		)
