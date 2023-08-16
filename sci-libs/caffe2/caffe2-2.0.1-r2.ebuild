@@ -42,11 +42,12 @@ HOMEPAGE="https://pytorch.org/"
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~amd64"
+# cuda and rocm are enabled by default upstream.
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
-cuda distributed fbgemm ffmpeg gloo mpi nnpack +numpy opencl opencv openmp
-rocm qnnpack tensorpipe xnnpack
+cuda +distributed +fbgemm -ffmpeg +gloo +magma +mpi +nnpack +numpy -opencl -opencv +openmp
+rocm +qnnpack +tensorpipe +xnnpack
 "
 gen_cuda_required_use() {
 	local x
@@ -183,6 +184,9 @@ RDEPEND="
 	)
 	gloo? (
 		sci-libs/gloo[cuda?]
+	)
+	magma? (
+		sci-libs/magma[cuda?,rocm?]
 	)
 	mpi? (
 		virtual/mpi
@@ -336,7 +340,7 @@ einfo
 		-DUSE_ITT=OFF
 		-DUSE_KINETO=OFF # TODO
 		-DUSE_LEVELDB=OFF
-		-DUSE_MAGMA=OFF # TODO: In GURU as sci-libs/magma
+		-DUSE_MAGMA=$(usex magma)
 		-DUSE_MKLDNN=OFF
 		-DUSE_MPI=$(usex mpi)
 		-DUSE_NCCL=OFF # TODO: NVIDIA Collective Communication Library
