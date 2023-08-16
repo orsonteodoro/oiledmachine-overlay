@@ -49,6 +49,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.9.0
+	sys-devel/gcc-config
 	doc? (
 		app-doc/doxygen
 		$(python_gen_any_dep '
