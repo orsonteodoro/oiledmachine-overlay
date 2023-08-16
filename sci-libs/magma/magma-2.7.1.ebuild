@@ -149,9 +149,7 @@ RDEPEND="
 			=dev-util/nvidia-cuda-toolkit-11.8*:=
 		)
 		cuda_targets_sm_37? (
-			|| (
-				=dev-util/nvidia-cuda-toolkit-11.8*:=
-			)
+			=dev-util/nvidia-cuda-toolkit-11.8*:=
 		)
 		cuda_targets_sm_50? (
 			|| (
