@@ -905,10 +905,10 @@ einfo "Using mold"
 				ver_test $(clang-major-version) -lt 13 \
 				&& ver_test ${lld_pv} -ge $(clang-major-version) \
 			) \
-			||
-			(
-				has_version "sys-devel/clang-common[default-lld]"
-			)
+			|| \
+			( \
+				has_version "sys-devel/clang-common[default-lld]" \
+			) \
 		) \
 	then
 einfo "Using LLD (TESTING)"
