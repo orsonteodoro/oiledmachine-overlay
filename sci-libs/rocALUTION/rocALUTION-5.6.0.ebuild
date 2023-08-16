@@ -53,6 +53,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	sys-devel/gcc:11
 	mpi? (
 		virtual/mpi
 	)
@@ -74,6 +75,8 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.5
+	sys-devel/gcc:11
+	sys-devel/gcc-config
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 "
 RESTRICT="mirror"
@@ -133,15 +136,19 @@ eerror
 	fi
 
 	if use openmp ; then
-		has_version "sys-devel/gcc:11" || die "Reinstall gcc-11"
-		if ver_test $(gcc-major-version) -ne 11 ; then
+		local gcc_slot=11
+		has_version "sys-devel/gcc:${gcc_slot}" || die "Reinstall gcc-${gcc_slot}"
+		local gcc_current_profile=$(gcc-config -c)
+		local gcc_current_profile_slot=${gcc_current_profile##*-}
+		if [[ "${gcc_current_profile_slot}" != "${gcc_slot}" ]] ; then
 # For libstdc++ 11.
 eerror
-eerror "GCC 11 required for openmp.  You must do the following:"
+eerror "GCC ${gcc_slot} required for OpenMP.  You must do the following:"
 eerror
-eerror "  eselect gcc set ${CHOST}-gcc-11"
+eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
+eerror "  source /etc/profile"
 eerror
-eerror "to change to gcc-11"
+eerror "to change to gcc-${gcc_slot}"
 eerror
 			die
 		fi

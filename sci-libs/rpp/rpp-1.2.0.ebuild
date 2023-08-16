@@ -80,6 +80,7 @@ DEPEND="
 BDEPEND="
 	>=dev-util/cmake-3.5
 	sys-devel/gcc:11
+	sys-devel/gcc-config
 	test? (
 		>=media-libs/opencv-3.4.0[jpeg]
 		>=media-libs/libjpeg-turbo-2.0.6.1
@@ -142,11 +143,14 @@ src_configure() {
 
 	export CXX="${HIP_CXX:-hipcc}"
 
-	if ver_test $(gcc-major-version) -ne 11 ; then
+	local gcc_slot=11
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot=${gcc_current_profile##*-}
+	if [[ "${gcc_current_profile_slot}" != "${gcc_slot}" ]] ; then
 eerror
-eerror "Switch to gcc:11 for libstdcxx:11.  Do"
+eerror "Switch to gcc:${gcc_slot} for libstdcxx:${gcc_slot}.  Do"
 eerror
-eerror "  eselect gcc set ${CHOST}-11"
+eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
 eerror "  source /etc/profile"
 eerror
 		die

@@ -41,6 +41,8 @@ BDEPEND="
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
 	>=dev-util/cmake-2.8.12
+	>=sys-devel/gcc-12
+	sys-devel/gcc-config
 "
 RESTRICT="test"
 S="${WORKDIR}/roctracer-rocm-${PV}"
@@ -107,9 +109,15 @@ src_prepare() {
 }
 
 src_configure() {
-	if ver_test $(gcc-major-version) -lt 12 ; then
+	local gcc_slot=12
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot=${gcc_current_profile##*-}
+	if ver_test ${gcc_current_profile_slot} -lt ${gcc_slot} ; then
 eerror
-eerror "Do eselect set ${CHOST}-gcc-12 or higher to continue"
+eerror "GCC ${gcc_slot}+ required.  Do"
+eerror
+eerror "  eselect set ${CHOST}-${gcc_slot}"
+eerror "  source /etc/profile"
 eerror
 		die
 	fi

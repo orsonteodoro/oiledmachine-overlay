@@ -208,6 +208,22 @@ src_configure() {
 }
 
 src_compile() {
+	local gcc_slot=$(gcc-major-version)
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot=${gcc_current_profile##*-}
+	if [[ "${gcc_current_profile_slot}" != "${gcc_slot}" ]] ; then
+eerror
+eerror "libquadmath must be ${gcc_slot}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
+eerror "  source /etc/profile"
+eerror
+eerror "libquadmath slot:   ${gcc_current_profile_slot}"
+eerror "GCC compiler slot:  ${gcc_slot}"
+eerror
+		die
+	fi
+
 	local staging_prefix="${PWD}/install"
 	declare -A _cmake_generator=(
 		["emake"]="Unix Makefiles"

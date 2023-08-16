@@ -587,6 +587,7 @@ BDEPEND="
 	app-arch/unzip
 	dev-java/java-config
 	dev-libs/protobuf:${PROTOBUF_SLOT}
+	sys-devel/gcc-config
 	clang? (
 		|| (
 			$(gen_llvm_bdepend)
@@ -1167,7 +1168,22 @@ ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 			export HOST_C_COMPILER="${EPREFIX}/usr/bin/${CC}"
 			export HOST_CXX_COMPILER="${EPREFIX}/usr/bin/${CXX}"
 
+			local gcc_current_profile=$(gcc-config -c)
+			local gcc_current_profile_slot=${gcc_current_profile##*-}
+			if [[ "${gcc_current_profile_slot}" != "${gcc_slot}" ]] ; then
+eerror
+eerror "libcxxabi must be ${gcc_slot}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
+eerror "  source /etc/profile"
+eerror
+eerror "libstdcxx slot:     ${gcc_current_profile_slot}"
+eerror "GCC compiler slot:  ${gcc_slot}"
+eerror
+				die
+			fi
 einfo
+einfo "GCC Current Profile:  ${gcc_current_profile}"
 einfo "GCC_HOST_COMPILER_PATH:  ${GCC_HOST_COMPILER_PATH}"
 einfo "HIP_PATH:  ${HIP_PATH}"
 einfo "HOST_C_COMPILER:  ${HOST_C_COMPILER}"

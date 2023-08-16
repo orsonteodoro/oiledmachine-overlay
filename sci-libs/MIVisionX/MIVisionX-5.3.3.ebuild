@@ -105,6 +105,7 @@ BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-util/cmake-3.5
 	dev-util/patchelf
+	sys-devel/gcc-config
 	virtual/pkgconfig
 "
 PATCHES=(
@@ -147,11 +148,14 @@ src_configure() {
 
 	export CXX="${HIP_CXX:-clang++}"
 
-	if ver_test $(gcc-major-version) -lt 12 ; then
+	local gcc_slot=12
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot=${gcc_current_profile##*-}
+	if [[ "${gcc_current_profile_slot}" -lt "${gcc_slot}" ]] ; then
 eerror
-eerror "You must switch to >= GCC 12.  Do"
+eerror "You must switch to >= GCC ${gcc_slot}.  Do"
 eerror
-eerror "  eselect gcc set ${CMAKE}-12"
+eerror "  eselect gcc set ${CMAKE}-${gcc_slot}"
 eerror "  source /etc/profile"
 eerror
 		die
