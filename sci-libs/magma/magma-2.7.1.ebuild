@@ -5,20 +5,38 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
+	gfx600
+	gfx601
+	gfx602
 	gfx700
 	gfx701
+	gfx702
 	gfx703
 	gfx704
+	gfx705
 	gfx801
 	gfx802
 	gfx803
 	gfx805
 	gfx810
 	gfx900
+	gfx902
+	gfx904
 	gfx906
 	gfx908
+	gfx909
+	gfx90a
+	gfx90c
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1033
 )
 CUDA_TARGETS_COMPAT=(
+	sm_20
 	sm_30
 	sm_35
 	sm_50
@@ -130,8 +148,16 @@ RDEPEND="
 	sci-libs/hipBLAS
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-7.5:=
+		cuda_targets_sm_20? (
+			=dev-util/nvidia-cuda-toolkit-8*:=
+		)
+		cuda_targets_sm_30? (
+			=dev-util/nvidia-cuda-toolkit-10*:=
+		)
 		cuda_targets_sm_35? (
 			|| (
+				=dev-util/nvidia-cuda-toolkit-8*:=
+				=dev-util/nvidia-cuda-toolkit-10*:=
 				=dev-util/nvidia-cuda-toolkit-11.8*:=
 			)
 		)
@@ -228,7 +254,7 @@ src_prepare() {
 
 	if use cuda ; then
 		echo -e 'BACKEND = cuda' > make.inc || die
-	elif use hip ; then
+	elif use rocm ; then
 		echo -e 'BACKEND = hip' > make.inc || die
 	fi
 	echo -e 'FORT = true' >> make.inc || die
@@ -240,13 +266,23 @@ src_prepare() {
 	cmake_src_prepare
 }
 
+get_cuda_flags() {
+	local list
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		if use "cuda_targets_${x}" ; then
+			list+=";${x}"
+		fi
+	done
+	list="${list:1}"
+	echo "${list}"
+}
+
 src_configure() {
 	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
-		-DCMAKE_CXX_COMPILER=hipcc
-		-DGPU_TARGET="${gpu}"
 		-DMAGMA_ENABLE_CUDA=$(usex cuda ON OFF)
-		-DMAGMA_ENABLE_HIP=$(usex hip ON OFF)
+		-DMAGMA_ENABLE_HIP=$(usex rocm ON OFF)
 		-DUSE_FORTRAN=ON
 	)
 
@@ -256,10 +292,16 @@ src_configure() {
 		)
 	fi
 
+	if use cuda ; then
+		mycmakeargs+=(
+			-DGPU_TARGET="$(get_cuda_flags)"
+		)
+	fi
 	if use rocm ; then
 		export CXX="${HIP_CXX:-hipcc}"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
+			-DGPU_TARGET="$(get_amdgpu_flags)"
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
