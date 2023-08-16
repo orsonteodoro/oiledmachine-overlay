@@ -1,0 +1,32 @@
+diff -urp tensorflow-2.13.0.orig/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl tensorflow-2.13.0/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl
+--- tensorflow-2.13.0.orig/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl	2023-06-28 11:38:35.000000000 -0700
++++ tensorflow-2.13.0/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl	2023-08-15 20:28:37.991209739 -0700
+@@ -53,10 +53,10 @@ def GetOptionValue(argv, option):
+   parser = ArgumentParser()
+   parser.add_argument('-' + option, nargs='*', action='append')
+   args, _ = parser.parse_known_args(argv)
+-  if not args or not vars(args)[option]:
++  if not args or not vars(args)[option.strip('-').replace('-','_')]:
+     return []
+   else:
+-    return sum(vars(args)[option], [])
++    return sum(vars(args)[option.strip('-').replace('-','_')], [])
+ 
+ 
+ def GetHostCompilerOptions(argv):
+@@ -136,6 +136,7 @@ def InvokeHipcc(argv, log=False):
+   hipcc_allowed_std_options = ["c++11", "c++14", "c++17"]
+   std_options = ''.join([' -std=' + define
+       for define in std_options if define in hipcc_allowed_std_options])
++  gpu_archs = GetOptionValue(argv, '-amdgpu-target')
+ 
+   # The list of source files get passed after the -c option. I don't know of
+   # any other reliable way to just get the list of source files to be compiled.
+@@ -179,6 +180,7 @@ def InvokeHipcc(argv, log=False):
+   hipccopts += defines
+   hipccopts += std_options
+   hipccopts += m_options
++  hipccopts += ' ' + ' '.join(['--amdgpu-target=' + arch for arch in gpu_archs])
+ 
+   if depfiles:
+     # Generate the dependency file

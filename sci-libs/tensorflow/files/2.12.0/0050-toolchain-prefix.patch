@@ -1,0 +1,54 @@
+diff -urp tensorflow-2.13.0.orig/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl tensorflow-2.13.0/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl
+--- tensorflow-2.13.0.orig/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl	2023-06-28 11:38:35.000000000 -0700
++++ tensorflow-2.13.0/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl	2023-08-15 21:14:47.387120786 -0700
+@@ -226,7 +226,21 @@ def _action_configs(assembly_path, c_com
+     )
+ 
+ def _tool_paths(cpu, ctx):
+-    if cpu in ["local", "darwin"]:
++    if cpu in ["local"]:
++        return [
++            tool_path(name = "gcc", path = ctx.attr.host_compiler_path),
++            tool_path(name = "ar", path = "/var/tmp/portage/sci-libs/tensorflow-@TENSORFLOW_PV@/temp/gcc-ar.sh"),
++            tool_path(name = "compat-ld", path = "/usr/bin/ld"),
++            tool_path(name = "cpp", path = ctx.attr.host_compiler_prefix + "/cpp"),
++            tool_path(name = "dwp", path = "/usr/bin/dwp"),
++            tool_path(name = "gcov", path = ctx.attr.host_compiler_prefix + "/gcov"),
++            tool_path(name = "ld", path = "/usr/bin/ld"),
++            tool_path(name = "nm", path = ctx.attr.host_compiler_prefix + "/gcc-nm"),
++            tool_path(name = "objcopy", path = "/usr/bin/objcopy"),
++            tool_path(name = "objdump", path = "/usr/bin/objdump"),
++            tool_path(name = "strip", path = "/usr/bin/strip"),
++        ]
++    if cpu in ["darwin"]:
+         return [
+             tool_path(name = "gcc", path = ctx.attr.host_compiler_path),
+             tool_path(name = "ar", path = ctx.attr.host_compiler_prefix + (
+diff -urp tensorflow-2.13.0.orig/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl tensorflow-2.13.0/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl
+--- tensorflow-2.13.0.orig/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl	2023-06-28 11:38:35.000000000 -0700
++++ tensorflow-2.13.0/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl	2023-08-15 21:18:03.707114480 -0700
+@@ -69,16 +69,16 @@ lto_index_actions = [
+ def _impl(ctx):
+     tool_paths = [
+         tool_path(name = "gcc", path = ctx.attr.host_compiler_path),
+-        tool_path(name = "ar", path = ctx.attr.host_compiler_prefix + "/ar"),
+-        tool_path(name = "compat-ld", path = ctx.attr.host_compiler_prefix + "/ld"),
++        tool_path(name = "ar", path = "/var/tmp/portage/sci-libs/tensorflow-@TENSORFLOW_PV@/temp/gcc-ar.sh"),
++        tool_path(name = "compat-ld", path = "/usr/bin/ld"),
+         tool_path(name = "cpp", path = ctx.attr.host_compiler_prefix + "/cpp"),
+-        tool_path(name = "dwp", path = ctx.attr.host_compiler_prefix + "/dwp"),
++        tool_path(name = "dwp", path = ctx.attr.host_compiler_prefix + "/usr/bin/dwp"),
+         tool_path(name = "gcov", path = ctx.attr.host_compiler_prefix + "/gcov"),
+-        tool_path(name = "ld", path = ctx.attr.host_compiler_prefix + "/ld"),
+-        tool_path(name = "nm", path = ctx.attr.host_compiler_prefix + "/nm"),
+-        tool_path(name = "objcopy", path = ctx.attr.host_compiler_prefix + "/objcopy"),
+-        tool_path(name = "objdump", path = ctx.attr.host_compiler_prefix + "/objdump"),
+-        tool_path(name = "strip", path = ctx.attr.host_compiler_prefix + "/strip"),
++        tool_path(name = "ld", path = ctx.attr.host_compiler_prefix + "/usr/bin/ld"),
++        tool_path(name = "nm", path = ctx.attr.host_compiler_prefix + "/gcc-nm"),
++        tool_path(name = "objcopy", path = "/usr/bin/objcopy"),
++        tool_path(name = "objdump", path = "/usr/bin/objdump"),
++        tool_path(name = "strip", path = "/usr/bin/strip"),
+     ]
+ 
+     action_configs = []

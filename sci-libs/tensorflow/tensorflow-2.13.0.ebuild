@@ -402,6 +402,7 @@ CUDA_CDEPEND="
 	(
 		<dev-util/nvidia-cuda-toolkit-$(( $(ver_cut 1 ${CUDA_PV}) + 1 )):=[profiler]
 		>=dev-util/nvidia-cuda-toolkit-${CUDA_PV}:=[profiler]
+		sys-devel/gcc:11
 	)
 "
 
@@ -694,6 +695,7 @@ use_gcc() {
 		| tr "\n" ":")
 einfo "PATH:\t${PATH}"
 	local found=0
+	use cuda && GCC_SLOTS=( 11 )
 	local s
 	for s in ${GCC_SLOTS[@]} ; do
 		symlink_ver=$(gcc_symlink_ver ${s})
@@ -834,7 +836,10 @@ einfo
 	count_impls() {
 		num_pythons_enabled=$((${num_pythons_enabled} + 1))
 	}
-	use python && python_foreach_impl count_impls
+	if use python ; then
+		python_setup
+		python_foreach_impl count_impls
+	fi
 
 	# 10G to build C/C++ libs, 6G per python impl
 	CHECKREQS_DISK_BUILD="$((10 + 6 * ${num_pythons_enabled}))G"
@@ -950,6 +955,24 @@ ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
 	strip-unsupported-flags # Filter LDFLAGS after switch
 }
 
+gen_gcc_ar(){
+	local gcc_slot=$(gcc-major-version)
+	if use python ; then
+		dir="${WORKDIR}/tensorflow-${PV}-${EPYTHON/./_}-bazel-base/execroot/org_tensorflow"
+	else
+		dir="${WORKDIR}/tensorflow-${PV}-bazel-base/execroot/org_tensorflow"
+	fi
+cat <<-EOF > "${T}/gcc-ar.sh"
+#!/usr/bin/env bash
+GCC_AR_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}"
+ARGS="\${1}"
+FILENAME="\${ARGS:1}"
+cd "${dir}"
+"\${GCC_AR_PATH}/gcc-ar" \$(<"\${FILENAME}")
+EOF
+	chmod +x "${T}/gcc-ar.sh" || die
+}
+
 src_prepare() {
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 
@@ -1017,6 +1040,34 @@ einfo "Preventing stall.  Removing -Os."
 	# Prefixify hard-coded command locations
 	hprefixify -w /host_compiler_prefix/ third_party/gpus/cuda_configure.bzl
 
+	if use rocm ; then
+ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
+		# Build with GCC but initialize LLVM_SLOT.
+		has_version "dev-util/hip:0/5.3" && LLVM_MAX_SLOT=15
+		has_version "dev-util/hip:0/5.4" && LLVM_MAX_SLOT=15
+		has_version "dev-util/hip:0/5.5" && LLVM_MAX_SLOT=16
+		has_version "dev-util/hip:0/5.6" && LLVM_MAX_SLOT=16
+	fi
+	llvm_pkg_setup
+	export LLVM_SLOT
+
+	sed -i -e "s|@TENSORFLOW_PV@|${PV}|g" \
+		"${S}/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl" \
+		|| die
+
+	sed -i -e "s|@TENSORFLOW_PV@|${PV}|g" \
+		"${S}/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
+		|| die
+
+	sed -i -e "s|@EPREFIX@|${EPREFIX}|g" \
+		"${S}/tensorflow/compiler/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc" \
+		|| die
+	sed -i -e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
+		"${S}/tensorflow/compiler/xla/stream_executor/gpu/asm_compiler.cc" \
+		|| die
+
+	gen_gcc_ar
+
 	default
 	use python && python_copy_sources
 
@@ -1079,14 +1130,14 @@ ewarn
 		export TF_CUDA_CLANG=0
 		export TF_NEED_TENSORRT=0
 		if use cuda; then
-			local s=11 # Slot
+			local gcc_slot=11
 			export TF_CUDA_COMPUTE_CAPABILITIES=$(get_cuda_targets)
 			export TF_CUDA_PATHS="${EPREFIX}/opt/cuda"
 
-			has_version "sys-devel/gcc:11" || die "Reinstall gcc:11"
+			has_version "sys-devel/gcc:${gcc_slot}" || die "Reinstall gcc:${gcc_slot}"
 			# The original ebuild has the bugged one
 			# where it will output ${EPREFIX}/usr/${CHOST}/gcc-bin/11/${CHOST}-gcc-12
-			export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-gcc-${s}"
+			export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${gcc_slot}"
 
 			export TF_CUDA_VERSION="$(cuda_toolkit_version)"
 			export TF_CUDNN_VERSION="$(cuda_cudnn_version)"
@@ -1115,22 +1166,25 @@ einfo
 		fi
 		if use rocm ; then
 ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
+			# Build with GCC but initialize LLVM_SLOT.
 			export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags \
 				| tr ";" ",")
 			export TF_ROCM_LLVM_SLOT="${LLVM_MAX_SLOT}"
 			export HIP_PATH="${EPREFIX}/usr"
 			export ROCM_PATH="${EPREFIX}/usr"
 
-			local s=11 # Slot
-			export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-gcc-${s}"
+			local gcc_slot=$(gcc-major-version)
+			export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${gcc_slot}"
 
 			export HOST_C_COMPILER="${EPREFIX}/usr/bin/${CC}"
 			export HOST_CXX_COMPILER="${EPREFIX}/usr/bin/${CXX}"
+
 einfo
 einfo "GCC_HOST_COMPILER_PATH:  ${GCC_HOST_COMPILER_PATH}"
 einfo "HIP_PATH:  ${HIP_PATH}"
 einfo "HOST_C_COMPILER:  ${HOST_C_COMPILER}"
 einfo "HOST_CXX_COMPILER:  ${HOST_CXX_COMPILER}"
+einfo "LLVM_SLOT:  ${LLVM_SLOT}"
 einfo "ROCM_PATH:  ${ROCM_PATH}"
 einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 einfo "TF_ROCM_LLVM_SLOT:  ${TF_ROCM_LLVM_SLOT}"
