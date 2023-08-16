@@ -1,3 +1,10 @@
+Forward port of several patches:
+
+Original patches:
+https://bugs.gentoo.org/attachment.cgi?id=655386
+https://bugs.gentoo.org/attachment.cgi?id=655390
+
+Context:  https://bugs.gentoo.org/705712
 diff -urp tensorflow-2.13.0.orig/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl tensorflow-2.13.0/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl
 --- tensorflow-2.13.0.orig/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl	2023-06-28 11:38:35.000000000 -0700
 +++ tensorflow-2.13.0/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl	2023-08-15 21:14:47.387120786 -0700

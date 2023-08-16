@@ -1,3 +1,4 @@
+# Fix headers
 diff -urp tensorflow-2.13.0.orig/third_party/gpus/find_rocm_config.py tensorflow-2.13.0/third_party/gpus/find_rocm_config.py
 --- tensorflow-2.13.0.orig/third_party/gpus/find_rocm_config.py	2023-06-28 11:38:35.000000000 -0700
 +++ tensorflow-2.13.0/third_party/gpus/find_rocm_config.py	2023-08-15 13:29:35.920017308 -0700

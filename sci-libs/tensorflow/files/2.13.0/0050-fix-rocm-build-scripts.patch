@@ -1,3 +1,7 @@
+# Split patch of original patch
+Original patch:  https://gist.githubusercontent.com/raw/ed891528aacf0c5baf3a789e5e9aaead
+Context:  https://bugs.gentoo.org/705712#c29
+
 diff -urp tensorflow-2.13.0.orig/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl tensorflow-2.13.0/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl
 --- tensorflow-2.13.0.orig/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl	2023-06-28 11:38:35.000000000 -0700
 +++ tensorflow-2.13.0/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl	2023-08-15 20:28:37.991209739 -0700

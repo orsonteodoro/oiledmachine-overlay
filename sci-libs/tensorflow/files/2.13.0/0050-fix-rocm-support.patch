@@ -1,6 +1,8 @@
+Forward port of https://gist.github.com/raw/ed891528aacf0c5baf3a789e5e9aaead
+Context:  https://bugs.gentoo.org/705712#c29
 diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-2.13.0/third_party/gpus/rocm_configure.bzl
 --- tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl	2023-06-28 11:38:35.000000000 -0700
-+++ tensorflow-2.13.0/third_party/gpus/rocm_configure.bzl	2023-08-15 22:37:34.442961243 -0700
++++ tensorflow-2.13.0/third_party/gpus/rocm_configure.bzl	2023-08-16 00:56:10.834694118 -0700
 @@ -34,8 +34,10 @@ _GCC_HOST_COMPILER_PREFIX = "GCC_HOST_CO
  _ROCM_TOOLKIT_PATH = "ROCM_PATH"
  _TF_ROCM_AMDGPU_TARGETS = "TF_ROCM_AMDGPU_TARGETS"
@@ -13,41 +15,99 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
  
  def verify_build_defines(params):
      """Verify all variables that crosstool/BUILD.rocm.tpl expects are substituted.
-@@ -182,9 +184,10 @@ def _rocm_include_path(repository_ctx, r
+@@ -175,34 +177,57 @@ def _rocm_include_path(repository_ctx, r
+     inc_dirs = []
+ 
+     # Add HSA headers (needs to match $HSA_PATH)
+-    inc_dirs.append(rocm_config.rocm_toolkit_path + "/hsa/include")
++    inc_dirs.append(rocm_config.rocm_toolkit_path + "/include/hsa") # oteodoro:  changed for distro
+ 
+     # Add HIP headers (needs to match $HIP_PATH)
+-    inc_dirs.append(rocm_config.rocm_toolkit_path + "/hip/include")
++    inc_dirs.append(rocm_config.rocm_toolkit_path + "/include/hip") # oteodoro:  changed for distro
      if int(rocm_config.rocm_version_number) >= 50200:
          inc_dirs.append(rocm_config.rocm_toolkit_path + "/include")
          inc_dirs.append(rocm_config.rocm_toolkit_path + "/include/hip")
-+        inc_dirs.append(rocm_config.rocm_toolkit_path + "/include/rocblas")
++        inc_dirs.append(rocm_config.rocm_toolkit_path + "/include/rocblas") # oteodoro:  changed for distro
          inc_dirs.append(rocm_config.rocm_toolkit_path + "/include/rocprim")
-+        inc_dirs.append(rocm_config.rocm_toolkit_path + "/include/rocrand")
++        inc_dirs.append(rocm_config.rocm_toolkit_path + "/include/rocrand") # oteodoro:  changed for distro
          inc_dirs.append(rocm_config.rocm_toolkit_path + "/include/rocsolver")
 -        inc_dirs.append(rocm_config.rocm_toolkit_path + "/include/rocblas")
  
      # Add HIP-Clang headers (realpath relative to compiler binary)
      rocm_toolkit_path = realpath(repository_ctx, rocm_config.rocm_toolkit_path, bash_bin)
-@@ -335,15 +338,16 @@ def _find_libs(repository_ctx, rocm_conf
+-    inc_dirs.append(rocm_toolkit_path + "/llvm/lib/clang/8.0/include")
+-    inc_dirs.append(rocm_toolkit_path + "/llvm/lib/clang/9.0.0/include")
+-    inc_dirs.append(rocm_toolkit_path + "/llvm/lib/clang/10.0.0/include")
+-    inc_dirs.append(rocm_toolkit_path + "/llvm/lib/clang/11.0.0/include")
+-    inc_dirs.append(rocm_toolkit_path + "/llvm/lib/clang/12.0.0/include")
+-    inc_dirs.append(rocm_toolkit_path + "/llvm/lib/clang/13.0.0/include")
+-    inc_dirs.append(rocm_toolkit_path + "/llvm/lib/clang/14.0.0/include")
+-    inc_dirs.append(rocm_toolkit_path + "/llvm/lib/clang/15.0.0/include")
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/8.0/include")    # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/9.0.0/include")  # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/10.0.0/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/11.0.0/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/12.0.0/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/13.0.0/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/13.0.1/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/14.0.0/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/14.0.1/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/14.0.2/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/14.0.3/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/14.0.4/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/14.0.5/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/14.0.6/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/15.0.0/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/15.0.1/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/15.0.2/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/15.0.3/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/15.0.4/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/15.0.5/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/15.0.6/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/15.0.7/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/16.0.0/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/16.0.1/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/16.0.2/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/16.0.3/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/16.0.4/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/16.0.5/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/16.0.6/include") # oteodoro:  changed for distro
++
+ 
+     # Support hcc based off clang 10.0.0 (for ROCm 3.3)
+     inc_dirs.append(rocm_toolkit_path + "/hcc/compiler/lib/clang/10.0.0/include/")
+     inc_dirs.append(rocm_toolkit_path + "/hcc/lib/clang/10.0.0/include")
+ 
+     # Add hcc headers
+-    inc_dirs.append(rocm_toolkit_path + "/hcc/include")
++    inc_dirs.append(rocm_toolkit_path + "/include/hcc") # oteodoro:  changed for distro
+ 
+     return inc_dirs
+ 
+@@ -335,15 +360,16 @@ def _find_libs(repository_ctx, rocm_conf
      libs_paths = [
          (name, _rocm_lib_paths(repository_ctx, name, path))
          for name, path in [
 -            ("amdhip64", rocm_config.rocm_toolkit_path + "/hip"),
 -            ("rocblas", rocm_config.rocm_toolkit_path),
 -            (hipfft_or_rocfft, rocm_config.rocm_toolkit_path),
-+            ("amdhip64", rocm_config.rocm_toolkit_path),
++            ("amdhip64", rocm_config.rocm_toolkit_path),        # oteodoro:  sorted for distro
              ("hiprand", rocm_config.rocm_toolkit_path),
-+            ("hipsparse", rocm_config.rocm_toolkit_path),
++            ("hipsparse", rocm_config.rocm_toolkit_path),       # oteodoro:  sorted for distro
              ("MIOpen", miopen_path),
              ("rccl", rccl_path),
 -            ("hipsparse", rocm_config.rocm_toolkit_path),
 -            ("roctracer64", rocm_config.rocm_toolkit_path + "/roctracer"),
-+            ("rocblas", rocm_config.rocm_toolkit_path),
-+            ("rocrand", rocm_config.rocm_toolkit_path),
++            ("rocblas", rocm_config.rocm_toolkit_path),         # oteodoro:  sorted for distro
++            ("rocrand", rocm_config.rocm_toolkit_path),         # oteodoro:  sorted for distro
              ("rocsolver", rocm_config.rocm_toolkit_path),
-+            ("roctracer64", rocm_config.rocm_toolkit_path),
-+            (hipfft_or_rocfft, rocm_config.rocm_toolkit_path),
++            ("roctracer64", rocm_config.rocm_toolkit_path),     # oteodoro:  changed/sorted for distro
++            (hipfft_or_rocfft, rocm_config.rocm_toolkit_path),  # oteodoro:  sorted for distro
          ]
      ]
      if int(rocm_config.rocm_version_number) >= 40500:
-@@ -466,17 +470,18 @@ def _create_dummy_repository(repository_
+@@ -466,17 +492,18 @@ def _create_dummy_repository(repository_
          "rocm:BUILD",
          {
              "%{hip_lib}": _lib_name("hip"),
@@ -58,20 +118,20 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
              "%{hipfft_or_rocfft}": _lib_name("hipfft"),
              "%{hipfft_or_rocfft_lib}": _lib_name("hipfft"),
              "%{hiprand_lib}": _lib_name("hiprand"),
-+            "%{hipsolver_lib}": _lib_name("hipsolver"),
++            "%{hipsolver_lib}": _lib_name("hipsolver"),        # oteodoro:  sorted for distro
              "%{hipsparse_lib}": _lib_name("hipsparse"),
 -            "%{roctracer_lib}": _lib_name("roctracer64"),
-+            "%{miopen_lib}": _lib_name("miopen"),
-+            "%{rocblas_lib}": _lib_name("rocblas"),
-+            "%{rccl_lib}": _lib_name("rccl"),
-+            "%{rocrand_lib}": _lib_name("rocrand"),
++            "%{miopen_lib}": _lib_name("miopen"),              # oteodoro:  sorted for distro
++            "%{rocblas_lib}": _lib_name("rocblas"),            # oteodoro:  sorted for distro
++            "%{rccl_lib}": _lib_name("rccl"),                  # oteodoro:  sorted for distro
++            "%{rocrand_lib}": _lib_name("rocrand"),            # oteodoro:  sorted for distro
              "%{rocsolver_lib}": _lib_name("rocsolver"),
 -            "%{hipsolver_lib}": _lib_name("hipsolver"),
-+            "%{roctracer_lib}": _lib_name("roctracer64"),
++            "%{roctracer_lib}": _lib_name("roctracer64"),      # oteodoro:  sorted for distro
              "%{copy_rules}": "",
              "%{rocm_headers}": "",
          },
-@@ -567,43 +572,116 @@ def _create_local_rocm_repository(reposi
+@@ -567,43 +594,116 @@ def _create_local_rocm_repository(reposi
      copy_rules = [
          make_copy_dir_rule(
              repository_ctx,
@@ -80,7 +140,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
 -            out_dir = "rocm/include",
 -            exceptions = ["gtest", "gmock"],
 +            name = "hip-include",
-+            src_dir = rocm_toolkit_path + "/include/hip",
++            src_dir = rocm_toolkit_path + "/include/hip",      # oteodoro:  sections in copy_rules sorted/changed for distro
 +            out_dir = "rocm/include/hip",
 +        ),
 +        make_copy_dir_rule(
@@ -205,7 +265,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
 +    repository_ctx,
 +    name = "files",
 +        srcs = [
-+            "/usr/include/hipblas.h",
++            "/usr/include/hipblas.h",           # oteodoro:  sorted/updated for distro
 +            "/usr/include/hipblas-export.h",
 +            "/usr/include/hipblas-version.h",
 +            "/usr/include/nccl_net.h",
@@ -222,7 +282,22 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
  
      rocm_libs = _find_libs(repository_ctx, rocm_config, hipfft_or_rocfft, miopen_path, rccl_path, bash_bin)
      rocm_lib_srcs = []
-@@ -649,23 +727,36 @@ def _create_local_rocm_repository(reposi
+@@ -618,7 +718,13 @@ def _create_local_rocm_repository(reposi
+         outs = rocm_lib_outs,
+     ))
+ 
+-    clang_offload_bundler_path = rocm_toolkit_path + "/llvm/bin/clang-offload-bundler"
++    eprefix_envvar = _EPREFIX                                                # oteodoro:  added for distro
++    eprefix_from_env = get_host_environ(repository_ctx, eprefix_envvar)      # oteodoro:  added for distro
++
++    llvm_slot_envvar = _LLVM_SLOT                                            # oteodoro:  added for distro
++    llvm_slot_from_env = get_host_environ(repository_ctx, llvm_slot_envvar)  # oteodoro:  added for distro
++
++    clang_offload_bundler_path = rocm_toolkit_path + "/lib/llvm/" + llvm_slot_from_env + "/bin/clang-offload-bundler" # oteodoro:  changed for distro
+ 
+     # copy files mentioned in third_party/gpus/rocm/BUILD
+     copy_rules.append(make_copy_files_rule(
+@@ -649,23 +755,36 @@ def _create_local_rocm_repository(reposi
  
      repository_dict = {
          "%{hip_lib}": rocm_libs["amdhip64"].file_name,
@@ -230,7 +305,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
          "%{hipfft_or_rocfft}": hipfft_or_rocfft,
          "%{hipfft_or_rocfft_lib}": rocm_libs[hipfft_or_rocfft].file_name,
          "%{hiprand_lib}": rocm_libs["hiprand"].file_name,
-+        "%{hipsparse_lib}": rocm_libs["hipsparse"].file_name,
++        "%{hipsparse_lib}": rocm_libs["hipsparse"].file_name,           # oteodoro:  section sorted for distro
          "%{miopen_lib}": rocm_libs["MIOpen"].file_name,
          "%{rccl_lib}": rocm_libs["rccl"].file_name,
 -        "%{hipsparse_lib}": rocm_libs["hipsparse"].file_name,
@@ -243,7 +318,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
 -        "%{rocm_headers}": ('":rocm-include",\n' +
 -                            hiprand_include +
 -                            rocrand_include),
-+        "%{rocm_headers}": ('":files",\n' +
++        "%{rocm_headers}": ('":files",\n' +                              # oteodoro:  section changed/sorted for distro
 +                            '":hip-include",\n' +
 +                            '":hipblas-include",\n' +
 +                            '":hipcub-include",\n' +
@@ -262,35 +337,28 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
      if rocm_version_number >= 40500:
 -        repository_dict["%{hipsolver_lib}"] = rocm_libs["hipsolver"].file_name
          repository_dict["%{hipblas_lib}"] = rocm_libs["hipblas"].file_name
-+        repository_dict["%{hipsolver_lib}"] = rocm_libs["hipsolver"].file_name
++        repository_dict["%{hipsolver_lib}"] = rocm_libs["hipsolver"].file_name  # oteodoro:  sorted for distro
  
      repository_ctx.template(
          "rocm/BUILD",
-@@ -702,8 +793,14 @@ def _create_local_rocm_repository(reposi
- 
+@@ -703,7 +822,7 @@ def _create_local_rocm_repository(reposi
      rocm_defines["%{host_compiler_path}"] = "clang/bin/crosstool_wrapper_driver_is_not_gcc"
  
-+    eprefix_envvar = _EPREFIX
-+    eprefix_from_env = get_host_environ(repository_ctx, eprefix_envvar)
-+
-+    llvm_slot_envvar = _LLVM_SLOT
-+    llvm_slot_from_env = get_host_environ(repository_ctx, llvm_slot_envvar)
-+
      rocm_defines["%{cxx_builtin_include_directories}"] = to_list_of_strings(
 -        host_compiler_includes + _rocm_include_path(repository_ctx, rocm_config, bash_bin),
-+        host_compiler_includes + _rocm_include_path(repository_ctx, rocm_config, bash_bin) + [eprefix_from_env + '/usr/include/hip', eprefix_from_env + '/usr/lib/llvm/' + llvm_slot_from_env + '/include'],
++        host_compiler_includes + _rocm_include_path(repository_ctx, rocm_config, bash_bin) + [eprefix_from_env + '/usr/include/hip', eprefix_from_env + '/usr/lib/llvm/' + llvm_slot_from_env + '/include'],  # oteodoro:  changed for distro
      )
  
      verify_build_defines(rocm_defines)
-@@ -729,9 +826,9 @@ def _create_local_rocm_repository(reposi
+@@ -729,9 +848,9 @@ def _create_local_rocm_repository(reposi
              "%{cpu_compiler}": str(cc),
              "%{hipcc_path}": rocm_config.rocm_toolkit_path + "/hip/bin/hipcc",
              "%{hipcc_env}": _hipcc_env(repository_ctx),
 -            "%{rocr_runtime_path}": rocm_config.rocm_toolkit_path + "/lib",
-+            "%{rocr_runtime_path}": rocm_config.rocm_toolkit_path + "/lib64",
++            "%{rocr_runtime_path}": rocm_config.rocm_toolkit_path + "/lib64",  # oteodoro:  changed for distro
              "%{rocr_runtime_library}": "hsa-runtime64",
 -            "%{hip_runtime_path}": rocm_config.rocm_toolkit_path + "/hip/lib",
-+            "%{hip_runtime_path}": rocm_config.rocm_toolkit_path + "/lib64",
++            "%{hip_runtime_path}": rocm_config.rocm_toolkit_path + "/lib64",   # oteodoro:  changed for distro
              "%{hip_runtime_library}": "amdhip64",
              "%{crosstool_verbose}": _crosstool_verbose(repository_ctx),
              "%{gcc_host_compiler_path}": str(cc),

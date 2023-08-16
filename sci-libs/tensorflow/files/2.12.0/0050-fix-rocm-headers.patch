@@ -1,3 +1,7 @@
+# Forward port of patch
+Original patch:  https://gist.githubusercontent.com/raw/ed891528aacf0c5baf3a789e5e9aaead
+Context:  https://bugs.gentoo.org/705712#c29
+
 diff -urp tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/hipsolver_wrapper.h tensorflow-2.13.0/tensorflow/compiler/xla/stream_executor/rocm/hipsolver_wrapper.h
 --- tensorflow-2.13.0.orig/tensorflow/compiler/xla/stream_executor/rocm/hipsolver_wrapper.h	2023-06-28 11:38:35.000000000 -0700
 +++ tensorflow-2.13.0/tensorflow/compiler/xla/stream_executor/rocm/hipsolver_wrapper.h	2023-08-15 19:57:53.351268990 -0700
