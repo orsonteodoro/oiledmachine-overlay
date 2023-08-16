@@ -2,7 +2,7 @@ Forward port of https://gist.github.com/raw/ed891528aacf0c5baf3a789e5e9aaead
 Context:  https://bugs.gentoo.org/705712#c29
 diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-2.13.0/third_party/gpus/rocm_configure.bzl
 --- tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl	2023-06-28 11:38:35.000000000 -0700
-+++ tensorflow-2.13.0/third_party/gpus/rocm_configure.bzl	2023-08-16 00:56:10.834694118 -0700
++++ tensorflow-2.13.0/third_party/gpus/rocm_configure.bzl	2023-08-16 09:09:44.661742915 -0700
 @@ -34,8 +34,10 @@ _GCC_HOST_COMPILER_PREFIX = "GCC_HOST_CO
  _ROCM_TOOLKIT_PATH = "ROCM_PATH"
  _TF_ROCM_AMDGPU_TARGETS = "TF_ROCM_AMDGPU_TARGETS"
@@ -15,7 +15,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
  
  def verify_build_defines(params):
      """Verify all variables that crosstool/BUILD.rocm.tpl expects are substituted.
-@@ -175,34 +177,57 @@ def _rocm_include_path(repository_ctx, r
+@@ -175,34 +177,51 @@ def _rocm_include_path(repository_ctx, r
      inc_dirs = []
  
      # Add HSA headers (needs to match $HSA_PATH)
@@ -66,13 +66,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
 +    inc_dirs.append(rocm_toolkit_path + "/lib/clang/15.0.5/include") # oteodoro:  changed for distro
 +    inc_dirs.append(rocm_toolkit_path + "/lib/clang/15.0.6/include") # oteodoro:  changed for distro
 +    inc_dirs.append(rocm_toolkit_path + "/lib/clang/15.0.7/include") # oteodoro:  changed for distro
-+    inc_dirs.append(rocm_toolkit_path + "/lib/clang/16.0.0/include") # oteodoro:  changed for distro
-+    inc_dirs.append(rocm_toolkit_path + "/lib/clang/16.0.1/include") # oteodoro:  changed for distro
-+    inc_dirs.append(rocm_toolkit_path + "/lib/clang/16.0.2/include") # oteodoro:  changed for distro
-+    inc_dirs.append(rocm_toolkit_path + "/lib/clang/16.0.3/include") # oteodoro:  changed for distro
-+    inc_dirs.append(rocm_toolkit_path + "/lib/clang/16.0.4/include") # oteodoro:  changed for distro
-+    inc_dirs.append(rocm_toolkit_path + "/lib/clang/16.0.5/include") # oteodoro:  changed for distro
-+    inc_dirs.append(rocm_toolkit_path + "/lib/clang/16.0.6/include") # oteodoro:  changed for distro
++    inc_dirs.append(rocm_toolkit_path + "/lib/clang/16/include")     # oteodoro:  changed for distro
 +
  
      # Support hcc based off clang 10.0.0 (for ROCm 3.3)
@@ -85,7 +79,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
  
      return inc_dirs
  
-@@ -335,15 +360,16 @@ def _find_libs(repository_ctx, rocm_conf
+@@ -335,15 +354,16 @@ def _find_libs(repository_ctx, rocm_conf
      libs_paths = [
          (name, _rocm_lib_paths(repository_ctx, name, path))
          for name, path in [
@@ -107,7 +101,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
          ]
      ]
      if int(rocm_config.rocm_version_number) >= 40500:
-@@ -466,17 +492,18 @@ def _create_dummy_repository(repository_
+@@ -466,17 +486,18 @@ def _create_dummy_repository(repository_
          "rocm:BUILD",
          {
              "%{hip_lib}": _lib_name("hip"),
@@ -131,7 +125,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
              "%{copy_rules}": "",
              "%{rocm_headers}": "",
          },
-@@ -567,43 +594,116 @@ def _create_local_rocm_repository(reposi
+@@ -567,43 +588,116 @@ def _create_local_rocm_repository(reposi
      copy_rules = [
          make_copy_dir_rule(
              repository_ctx,
@@ -282,7 +276,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
  
      rocm_libs = _find_libs(repository_ctx, rocm_config, hipfft_or_rocfft, miopen_path, rccl_path, bash_bin)
      rocm_lib_srcs = []
-@@ -618,7 +718,13 @@ def _create_local_rocm_repository(reposi
+@@ -618,7 +712,13 @@ def _create_local_rocm_repository(reposi
          outs = rocm_lib_outs,
      ))
  
@@ -297,7 +291,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
  
      # copy files mentioned in third_party/gpus/rocm/BUILD
      copy_rules.append(make_copy_files_rule(
-@@ -649,23 +755,36 @@ def _create_local_rocm_repository(reposi
+@@ -649,23 +749,36 @@ def _create_local_rocm_repository(reposi
  
      repository_dict = {
          "%{hip_lib}": rocm_libs["amdhip64"].file_name,
@@ -341,7 +335,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
  
      repository_ctx.template(
          "rocm/BUILD",
-@@ -703,7 +822,7 @@ def _create_local_rocm_repository(reposi
+@@ -703,7 +816,7 @@ def _create_local_rocm_repository(reposi
      rocm_defines["%{host_compiler_path}"] = "clang/bin/crosstool_wrapper_driver_is_not_gcc"
  
      rocm_defines["%{cxx_builtin_include_directories}"] = to_list_of_strings(
@@ -350,7 +344,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
      )
  
      verify_build_defines(rocm_defines)
-@@ -729,9 +848,9 @@ def _create_local_rocm_repository(reposi
+@@ -729,9 +842,9 @@ def _create_local_rocm_repository(reposi
              "%{cpu_compiler}": str(cc),
              "%{hipcc_path}": rocm_config.rocm_toolkit_path + "/hip/bin/hipcc",
              "%{hipcc_env}": _hipcc_env(repository_ctx),
