@@ -67,160 +67,6 @@ gen_seq_inc() {
 inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr llvm prefix
 inherit rocm toolchain-funcs
 
-DESCRIPTION="Computation framework using data flow graphs for scalable machine \
-learning"
-HOMEPAGE="https://www.tensorflow.org/"
-THIRD_PARTY_LICENSES="
-	(
-		all-rights-reserved
-		Apache-2.0
-	)
-	(
-		Apache-2.0
-		BSD
-		BSD-2
-		MIT
-		PSF
-	)
-	(
-		BSD
-		minpack
-		MPL-2.0
-	)
-	(
-		icu-63.2
-		Unicode-DFS-2016
-	)
-	BSD
-	ooura
-"
-THIRD_PARTY_LICENSES_BAZEL_EXTERNAL_DOWNLOADS="
-	(
-		all-rights-reserved
-		Apache-2.0-with-LLVM-exceptions
-		Boost-1.0
-	)
-	(
-		MIT
-		NCSA
-	)
-	ISC
-	MIT
-	Unicode-DFS-2016
-	|| (
-		Apache-2.0
-		CC0-1.0
-	)
-"
-LICENSE="
-	${THIRD_PARTY_LICENSES}
-	${THIRD_PARTY_LICENSES_BAZEL_EXTERNAL_DOWNLOADS}
-	custom
-	(
-		all-rights-reserved
-		Apache-2.0
-	)
-	Apache-2.0
-	BSD-2
-"
-# From src_unpack() only
-# ( all-rights-reserved Apache-2.0 ) - tools/lib_package/concat_licenses.sh ; \
-#   The distro's Apache-2.0 license template does not have all rights reserved
-#   in the APPENDIX section.  All rights reserved appears in the 1.1 but not in
-#   the 2.0.
-# BSD BSD-2 PSF Apache-2.0 MIT - third_party/py/numpy/LICENSE
-#   numpy/core/src/multiarray/dragon4.c (MIT) ; This file was not found but \
-#   may be included from a binary, static lib, or system header.
-# Unicode-DFS-2016, icu-63.2 - third_party/icu/data/LICENSE ; See \
-#   https://github.com/unicode-org/icu/blob/release-63-2/icu4j/main/shared/licenses/LICENSE
-# all-rights-reserved Apache-2.0 - third_party/tensorrt/LICENSE
-# ooura - third_party/fft2d/LICENSE
-# BSD - third_party/nccl/LICENSE
-# MPL-2.0 BSD minpack - third_party/eigen3/LICENSE
-# custom Apache-2.0 BSD-2 - LICENSE
-#   custom keywords:  "their specific copyright on a particular contribution"
-
-# From bazel_external_uris and ${T}/bazel-distfiles:
-# Apache-2.0-with-LLVM-exceptions all-rights-reserved Boost-1.0 - d8415b02a519f222ecf71b069c96cc85ac635de3/llvm-project-d8415b02a519f222ecf71b069c96cc85ac635de3/libcxx/src/ryu/f2s.cpp
-# ISC - d8415b02a519f222ecf71b069c96cc85ac635de3/llvm-project-d8415b02a519f222ecf71b069c96cc85ac635de3/llvm/lib/Support/regstrlcpy.c
-# MIT NCSA (aka UIUC) - d8415b02a519f222ecf71b069c96cc85ac635de3/llvm-project-d8415b02a519f222ecf71b069c96cc85ac635de3/libcxxabi/www/index.html
-# MIT d8415b02a519f222ecf71b069c96cc85ac635de3/llvm-project-d8415b02a519f222ecf71b069c96cc85ac635de3/compiler-rt/lib/BlocksRuntime/runtime.c
-# Unicode-DFS-2016 [2 clause] - d8415b02a519f222ecf71b069c96cc85ac635de3/llvm-project-d8415b02a519f222ecf71b069c96cc85ac635de3/llvm/lib/Support/UnicodeNameToCodepointGenerated.cpp
-# Apache-2.0-with-LLVM-exceptions ( NCSA MIT ) custom  - ./openmp-10.0.1.src/LICENSE.txt
-# custom keywords: "Software Grant License Agreement"
-#                  "2. Grant of Patent License."
-# || ( CC0-1.0 Apache-2.0 ) - llvm-project-d8415b02a519f222ecf71b069c96cc85ac635de3/llvm/lib/Support/BLAKE3/LICENSE
-
-
-KEYWORDS="~amd64"
-SLOT="0"
-CPU_USE_FLAGS_X86=(
-#	popcnt     # No preprocessor check but set in CI or some archs
-	sse
-	sse2
-	sse3
-	sse4_1
-	sse4_2
-	avx
-	avx2
-# Addresses the get-cpu-flags() request for keep flags in sync.
-#	avx512f    # *
-#	avx512cd   # *
-#	avx512vnni # *
-#	avx512bf16 # *
-#	avxvnni    # *
-#	amx-tile   # *
-#	amx-int8   # *
-#	amx-bf16   # *
-	fma3
-	fma4
-)
-# * Checks only but does no work.
-IUSE="
-${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-alt-ssl clang cuda custom-optimization-level +hardened mpi +python
-rocm test xla
-"
-gen_required_use_cuda_targets() {
-	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
-		echo "
-			cuda_targets_${x}? (
-				cuda
-			)
-		"
-	done
-}
-gen_required_use_rocm_targets() {
-	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
-		echo "
-			amdgpu_targets_${x}? (
-				rocm
-			)
-		"
-	done
-}
-REQUIRED_USE="
-	$(gen_required_use_cuda_targets)
-	$(gen_required_use_rocm_targets)
-	cuda? (
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		)
-	)
-	python? (
-		${PYTHON_REQUIRED_USE}
-	)
-	rocm? (
-		${ROCM_REQUIRED_USE}
-	)
-	test? (
-		python
-	)
-" # The test USE flag is limited by the dev-python/gast package.
-
 # For deps versioning, see
 # https://www.tensorflow.org/install/source#linux
 # https://github.com/abseil/abseil-cpp/blob/273292d1cfc0a94a65082ee350509af1d113344d/CMakeLists.txt#L49 ; Search project(absl LANGUAGES CXX VERSION
@@ -378,6 +224,160 @@ ${bazel_external_uris}
 https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz
 https://dev.gentoo.org/~perfinion/patches/tensorflow-patches-${TF_PATCHES}.tar.bz2
 "
+
+DESCRIPTION="Computation framework using data flow graphs for scalable machine \
+learning"
+HOMEPAGE="https://www.tensorflow.org/"
+THIRD_PARTY_LICENSES="
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		Apache-2.0
+		BSD
+		BSD-2
+		MIT
+		PSF
+	)
+	(
+		BSD
+		minpack
+		MPL-2.0
+	)
+	(
+		icu-63.2
+		Unicode-DFS-2016
+	)
+	BSD
+	ooura
+"
+THIRD_PARTY_LICENSES_BAZEL_EXTERNAL_DOWNLOADS="
+	(
+		all-rights-reserved
+		Apache-2.0-with-LLVM-exceptions
+		Boost-1.0
+	)
+	(
+		MIT
+		NCSA
+	)
+	ISC
+	MIT
+	Unicode-DFS-2016
+	|| (
+		Apache-2.0
+		CC0-1.0
+	)
+"
+LICENSE="
+	${THIRD_PARTY_LICENSES}
+	${THIRD_PARTY_LICENSES_BAZEL_EXTERNAL_DOWNLOADS}
+	custom
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	Apache-2.0
+	BSD-2
+"
+# From src_unpack() only
+# ( all-rights-reserved Apache-2.0 ) - tools/lib_package/concat_licenses.sh ; \
+#   The distro's Apache-2.0 license template does not have all rights reserved
+#   in the APPENDIX section.  All rights reserved appears in the 1.1 but not in
+#   the 2.0.
+# BSD BSD-2 PSF Apache-2.0 MIT - third_party/py/numpy/LICENSE
+#   numpy/core/src/multiarray/dragon4.c (MIT) ; This file was not found but \
+#   may be included from a binary, static lib, or system header.
+# Unicode-DFS-2016, icu-63.2 - third_party/icu/data/LICENSE ; See \
+#   https://github.com/unicode-org/icu/blob/release-63-2/icu4j/main/shared/licenses/LICENSE
+# all-rights-reserved Apache-2.0 - third_party/tensorrt/LICENSE
+# ooura - third_party/fft2d/LICENSE
+# BSD - third_party/nccl/LICENSE
+# MPL-2.0 BSD minpack - third_party/eigen3/LICENSE
+# custom Apache-2.0 BSD-2 - LICENSE
+#   custom keywords:  "their specific copyright on a particular contribution"
+
+# From bazel_external_uris and ${T}/bazel-distfiles:
+# Apache-2.0-with-LLVM-exceptions all-rights-reserved Boost-1.0 - d8415b02a519f222ecf71b069c96cc85ac635de3/llvm-project-d8415b02a519f222ecf71b069c96cc85ac635de3/libcxx/src/ryu/f2s.cpp
+# ISC - d8415b02a519f222ecf71b069c96cc85ac635de3/llvm-project-d8415b02a519f222ecf71b069c96cc85ac635de3/llvm/lib/Support/regstrlcpy.c
+# MIT NCSA (aka UIUC) - d8415b02a519f222ecf71b069c96cc85ac635de3/llvm-project-d8415b02a519f222ecf71b069c96cc85ac635de3/libcxxabi/www/index.html
+# MIT d8415b02a519f222ecf71b069c96cc85ac635de3/llvm-project-d8415b02a519f222ecf71b069c96cc85ac635de3/compiler-rt/lib/BlocksRuntime/runtime.c
+# Unicode-DFS-2016 [2 clause] - d8415b02a519f222ecf71b069c96cc85ac635de3/llvm-project-d8415b02a519f222ecf71b069c96cc85ac635de3/llvm/lib/Support/UnicodeNameToCodepointGenerated.cpp
+# Apache-2.0-with-LLVM-exceptions ( NCSA MIT ) custom  - ./openmp-10.0.1.src/LICENSE.txt
+# custom keywords: "Software Grant License Agreement"
+#                  "2. Grant of Patent License."
+# || ( CC0-1.0 Apache-2.0 ) - llvm-project-d8415b02a519f222ecf71b069c96cc85ac635de3/llvm/lib/Support/BLAKE3/LICENSE
+
+
+KEYWORDS="~amd64"
+SLOT="0"
+CPU_USE_FLAGS_X86=(
+#	popcnt     # No preprocessor check but set in CI or some archs
+	sse
+	sse2
+	sse3
+	sse4_1
+	sse4_2
+	avx
+	avx2
+# Addresses the get-cpu-flags() request for keep flags in sync.
+#	avx512f    # *
+#	avx512cd   # *
+#	avx512vnni # *
+#	avx512bf16 # *
+#	avxvnni    # *
+#	amx-tile   # *
+#	amx-int8   # *
+#	amx-bf16   # *
+	fma3
+	fma4
+)
+# * Checks only but does no work.
+IUSE="
+${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+alt-ssl clang cuda custom-optimization-level +hardened mpi +python
+rocm test xla
+"
+gen_required_use_cuda_targets() {
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		echo "
+			cuda_targets_${x}? (
+				cuda
+			)
+		"
+	done
+}
+gen_required_use_rocm_targets() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				rocm
+			)
+		"
+	done
+}
+REQUIRED_USE="
+	$(gen_required_use_cuda_targets)
+	$(gen_required_use_rocm_targets)
+	cuda? (
+		|| (
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		)
+	)
+	python? (
+		${PYTHON_REQUIRED_USE}
+	)
+	rocm? (
+		${ROCM_REQUIRED_USE}
+	)
+	test? (
+		python
+	)
+" # The test USE flag is limited by the dev-python/gast package.
 
 # abseil-cpp-20211102.0-r0 does not work with NVCC
 # >=grpc-1.27 and >=1.24.3 is upstream minimal but incorrect
