@@ -12,6 +12,8 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx906
 	gfx908
 	gfx90a
+	gfx90a_xnack_minus
+	gfx90a_xnack_plus
 	gfx1030
 )
 DISTUTILS_USE_PEP517="standalone"
@@ -28,182 +30,16 @@ CUDA_TARGETS_COMPAT=(
 	compute_90
 )
 
-inherit bazel cuda distutils-r1 flag-o-matic git-r3 java-pkg-opt-2 rocm \
-toolchain-funcs
-
-DESCRIPTION="Support library for JAX"
-HOMEPAGE="
-https://github.com/google/jax/tree/main/jaxlib
-"
-LICENSE="
-	Apache-2.0
-	rocm? (
-		custom
-		all-rights-reserved
-		Apache-2.0
-		BSD-2
-	)
-"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+="
-${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-clang custom-optimization-level cpu cuda hardened portable rocm r1
-"
-# We don't add tpu because licensing issue with libtpu_nightly.
-
-gen_cuda_required_use() {
-	local x
-	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
-		echo  "
-			cuda_targets_${x}? (
-				cuda
-			)
-		"
-	done
-}
-
-gen_rocm_required_use() {
-	local x
-	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
-		echo  "
-			amdgpu_targets_${x}? (
-				rocm
-			)
-		"
-	done
-}
-
-REQUIRED_USE+="
-	$(gen_cuda_required_use)
-	$(gen_rocm_required_use)
-	cuda? (
-		!clang
-		|| (
-			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-		)
-	)
-	rocm? (
-		${ROCM_REQUIRED_USE}
-	)
-	|| (
-		cpu
-		cuda
-		rocm
-	)
-"
-# Missing
-# hipsolver
-
-ROCM_SLOTS=(
-# The container uses 5.5.0
-	"5.5.1" # For llvm 16
-	"5.6.0" # For llvm 16 added by ebuild maintainer
-)
-gen_rocm_depends() {
-	local pv
-	for pv in ${ROCM_SLOTS[@]} ; do
-		local s="0/"$(ver_cut 1-2 ${pv})
-		# Direct dependencies
-		echo "
-			(
-				~dev-libs/rccl-${pv}:${s}
-				~dev-libs/rocm-device-libs-${pv}:${s}
-				~dev-util/hip-${pv}:${s}[rocm]
-				~dev-util/roctracer-${pv}:${s}
-				~sci-libs/hipBLAS-${pv}:${s}[rocm]
-				~sci-libs/hipFFT-${pv}:${s}[rocm]
-				~sci-libs/hipSPARSE-${pv}:${s}[rocm]
-				~sci-libs/miopen-${pv}:${s}[rocm]
-				~sci-libs/rocFFT-${pv}:${s}[rocm]
-				~sci-libs/rocRAND-${pv}:${s}[rocm]
-		"
-
-		# Indirect dependencies
-		echo "
-				~dev-libs/rocm-comgr-${pv}:${s}
-				~dev-libs/rocr-runtime-${pv}:${s}
-				~dev-libs/roct-thunk-interface-${pv}:${s}
-				~dev-util/rocm-cmake-${pv}:${s}
-				~dev-util/rocm-smi-${pv}:${s}
-				~dev-util/rocminfo-${pv}:${s}
-				~dev-util/Tensile-${pv}:${s}
-				~sci-libs/rocBLAS-${pv}:${s}[rocm]
-			)
-		"
-	done
-}
-#	>=dev-cpp/abseil-cpp-20220623:0/20220623
-#	dev-libs/protobuf:=
-RDEPEND+="
-	!dev-python/jaxlib-bin
-	>=app-arch/snappy-1.1.10
-	>=dev-libs/double-conversion-3.2.0
-	>=dev-libs/nsync-1.25.0
-	>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
-	>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
-	>=net-libs/grpc-1.27_p9999:=
-	>=sys-libs/zlib-1.2.13
-	virtual/jre:${JAVA_SLOT}
-	cuda? (
-		=dev-util/nvidia-cuda-toolkit-11.8*:=
-		=dev-libs/cudnn-8*
-	)
-	rocm? (
-		|| (
-			$(gen_rocm_depends)
-		)
-		dev-util/hip:=
-	)
-"
-# We cannot use cuda 12 (which the project supports) until cudnn ebuild allows
-# for it.
-DEPEND+="
-	${RDEPEND}
-	virtual/jdk:${JAVA_SLOT}
-"
-gen_llvm_bdepend() {
-	for s in ${LLVM_SLOTS[@]} ; do
-		if (( ${s} >= 10 && ${s} < 13 )) ; then
-			echo "
-				(
-					sys-devel/clang:${s}
-					sys-devel/llvm:${s}
-					>=sys-devel/lld-10
-				)
-			"
-		else
-			echo "
-				(
-					sys-devel/clang:${s}
-					sys-devel/llvm:${s}
-					sys-devel/lld:${s}
-				)
-			"
-		fi
-	done
-}
-BDEPEND+="
-	>=dev-util/bazel-6.1.2
-	clang? (
-		|| (
-			$(gen_llvm_bdepend)
-		)
-	)
-	|| (
-		>=sys-devel/gcc-12:12
-		>=sys-devel/gcc-11.3.1_p20230120-r1:11
-		>=sys-devel/gcc-10:10
-		>=sys-devel/gcc-9.3.0:9
-		$(gen_llvm_bdepend)
-	)
-"
+inherit bazel cuda distutils-r1 flag-o-matic git-r3 java-pkg-opt-2 llvm rocm
+inherit toolchain-funcs
 
 # DO NOT HARD WRAP
 # DO NOT CHANGE TARBALL FILE EXT
 # Do not use GH urls if .gitmodules exists in that project
 # All hashes and URIs obtained with MAINTAINER_MODE=1 and from console logs with
 # FEATURES=-network-sandbox.
+
+XLA_TIMESTAMP="1690486560" # For EGIT_XLA_COMMIT.  From `date --date="Jul 27, 2023 12:36 PM PDT" "+%s"`
 
 APPLE_SUPPORT_PV="1.1.0"
 BAZEL_SKYLIB_PV="1.3.0"
@@ -297,7 +133,200 @@ SRC_URI="
 	${bazel_external_uris}
 https://github.com/google/jax/archive/refs/tags/${PN}-v${PV}.tar.gz
 	-> ${MY_PN}-${PV}.tar.gz
+https://github.com/openxla/xla/archive/${EGIT_XLA_COMMIT}.zip
+	-> openxla-xla-${EGIT_XLA_COMMIT}.zip
 "
+
+DESCRIPTION="Support library for JAX"
+HOMEPAGE="
+https://github.com/google/jax/tree/main/jaxlib
+"
+LICENSE="
+	Apache-2.0
+	rocm? (
+		custom
+		all-rights-reserved
+		Apache-2.0
+		BSD-2
+	)
+"
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+="
+${ROCM_IUSE}
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+clang custom-optimization-level cpu cuda hardened portable rocm r1
+"
+# We don't add tpu because licensing issue with libtpu_nightly.
+
+gen_cuda_required_use() {
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		echo  "
+			cuda_targets_${x}? (
+				cuda
+			)
+		"
+	done
+}
+
+gen_rocm_required_use() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo  "
+			amdgpu_targets_${x}? (
+				rocm
+			)
+		"
+	done
+}
+
+REQUIRED_USE+="
+	$(gen_cuda_required_use)
+	$(gen_rocm_required_use)
+	^^ (
+		python_targets_python3_10
+		python_targets_python3_11
+	)
+	cuda? (
+		!clang
+		!rocm
+		|| (
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		)
+	)
+	rocm? (
+		!cuda
+		${ROCM_REQUIRED_USE}
+	)
+	|| (
+		cpu
+		cuda
+		rocm
+	)
+"
+# Missing
+# hipsolver
+
+ROCM_SLOTS=(
+# The container uses 5.5.0
+	"5.5.1" # For llvm 16
+	"5.6.0" # For llvm 16 added by ebuild maintainer
+)
+
+declare -A LLD_SLOT=(
+	["5.5.1"]="16"
+	["5.6.0"]="16"
+)
+
+gen_rocm_depends() {
+	local pv
+	for pv in ${ROCM_SLOTS[@]} ; do
+		local s="0/"$(ver_cut 1-2 ${pv})
+		# Direct dependencies
+		echo "
+			(
+				~dev-libs/rccl-${pv}:${s}
+				~dev-libs/rocm-device-libs-${pv}:${s}
+				~dev-util/hip-${pv}:${s}[rocm]
+				~dev-util/roctracer-${pv}:${s}
+				~sci-libs/hipBLAS-${pv}:${s}[rocm]
+				~sci-libs/hipFFT-${pv}:${s}[rocm]
+				~sci-libs/hipSPARSE-${pv}:${s}[rocm]
+				~sci-libs/miopen-${pv}:${s}[rocm]
+				~sci-libs/rocFFT-${pv}:${s}[rocm]
+				~sci-libs/rocRAND-${pv}:${s}[rocm]
+				amdgpu_targets_gfx90a_xnack_minus? (
+					~sci-libs/hipBLASLt-${pv}:${s}[rocm]
+				)
+				amdgpu_targets_gfx90a_xnack_plus? (
+					~sci-libs/hipBLASLt-${pv}:${s}[rocm]
+				)
+
+				sys-devel/lld:${LLD_SLOT[${pv}]}
+		"
+
+		# Indirect dependencies
+		echo "
+				~dev-libs/rocm-comgr-${pv}:${s}
+				~dev-libs/rocr-runtime-${pv}:${s}
+				~dev-libs/roct-thunk-interface-${pv}:${s}
+				~dev-util/rocm-cmake-${pv}:${s}
+				~dev-util/rocm-smi-${pv}:${s}
+				~dev-util/rocminfo-${pv}:${s}
+				~dev-util/Tensile-${pv}:${s}
+				~sci-libs/rocBLAS-${pv}:${s}[rocm]
+			)
+		"
+	done
+}
+#	>=dev-cpp/abseil-cpp-20220623:0/20220623
+#	dev-libs/protobuf:=
+RDEPEND+="
+	!dev-python/jaxlib-bin
+	>=app-arch/snappy-1.1.10
+	>=dev-libs/double-conversion-3.2.0
+	>=dev-libs/nsync-1.25.0
+	>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
+	>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
+	>=net-libs/grpc-1.27_p9999:=
+	>=sys-libs/zlib-1.2.13
+	virtual/jre:${JAVA_SLOT}
+	cuda? (
+		=dev-util/nvidia-cuda-toolkit-11.8*:=
+		=dev-libs/cudnn-8*
+	)
+	rocm? (
+		|| (
+			$(gen_rocm_depends)
+		)
+		dev-util/hip:=
+	)
+"
+# We cannot use cuda 12 (which the project supports) until cudnn ebuild allows
+# for it.
+DEPEND+="
+	${RDEPEND}
+	virtual/jdk:${JAVA_SLOT}
+"
+gen_llvm_bdepend() {
+	for s in ${LLVM_SLOTS[@]} ; do
+		if (( ${s} >= 10 && ${s} < 13 )) ; then
+			echo "
+				(
+					sys-devel/clang:${s}
+					sys-devel/llvm:${s}
+					>=sys-devel/lld-10
+				)
+			"
+		else
+			echo "
+				(
+					sys-devel/clang:${s}
+					sys-devel/llvm:${s}
+					sys-devel/lld:${s}
+				)
+			"
+		fi
+	done
+}
+BDEPEND+="
+	>=dev-util/bazel-6.1.2
+	sys-devel/gcc-config
+	clang? (
+		|| (
+			$(gen_llvm_bdepend)
+		)
+	)
+	|| (
+		>=sys-devel/gcc-12:12
+		>=sys-devel/gcc-11.3.1_p20230120-r1:11
+		>=sys-devel/gcc-10:10
+		>=sys-devel/gcc-9.3.0:9
+		$(gen_llvm_bdepend)
+	)
+"
+
 S="${WORKDIR}/jax-jax-v${PV}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md CITATION.bib README.md )
@@ -543,7 +572,9 @@ einfo "CFLAGS:\t${CFLAGS}"
 einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
-	if tc-is-clang || use clang ; then
+	if use rocm ; then
+		use_gcc
+	elif tc-is-clang || use clang ; then
 		use_clang
 	elif tc-is-gcc ; then
 		use_gcc
@@ -579,10 +610,22 @@ eerror
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 
 #	check_network_sandbox_permissions
+
+	if use rocm ; then
+ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
+		# Build with GCC but initialize LLVM_SLOT.
+		has_version "dev-util/hip:0/5.3" && LLVM_MAX_SLOT=15
+		has_version "dev-util/hip:0/5.4" && LLVM_MAX_SLOT=15
+		has_version "dev-util/hip:0/5.5" && LLVM_MAX_SLOT=16
+		has_version "dev-util/hip:0/5.6" && LLVM_MAX_SLOT=16
+	fi
+	llvm_pkg_setup
+	export LLVM_SLOT
 }
 
 src_unpack() {
 	unpack "${MY_PN}-${PV}.tar.gz"
+	unpack "openxla-xla-${EGIT_XLA_COMMIT}.zip"
 	mkdir -p "${WORKDIR}/tarballs" || die
 	mkdir -p "${WORKDIR}/patches" || die
 	if [[ "${MAINTAINER_MODE}" != "1" ]] ; then
@@ -592,6 +635,9 @@ src_unpack() {
 			|| die
 	fi
 	bazel_load_distfiles "${bazel_external_uris}"
+
+	cd "${WORKDIR}/xla-${EGIT_XLA_COMMIT}" || die
+	eapply -p1 "${FILESDIR}/xla/"*
 }
 
 load_env() {
@@ -645,9 +691,68 @@ einfo "Preventing stall.  Removing -Os."
 	fi
 }
 
+gen_gcc_ar(){
+	local gcc_slot=$(gcc-major-version)
+	local dir
+# FIXME: tensorflow -> jaxlib
+	if use python ; then
+		dir="${WORKDIR}/tensorflow-${PV}-${EPYTHON/./_}-bazel-base/execroot/org_tensorflow"
+	else
+		dir="${WORKDIR}/tensorflow-${PV}-bazel-base/execroot/org_tensorflow"
+	fi
+cat <<-EOF > "${T}/gcc-ar.sh"
+#!/usr/bin/env bash
+GCC_AR_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}"
+ARGS="\${1}"
+shift
+DEST="\${1}"
+shift
+cd "${dir}"
+"\${GCC_AR_PATH}/gcc-ar" "\${ARGS}" "\${DEST}" "\${@}"
+EOF
+	chmod +x "${T}/gcc-ar.sh" || die
+}
+
 python_prepare_all() {
 	cuda_src_prepare
 	distutils-r1_python_prepare_all
+
+	cp -a "${FILESDIR}/${PV}/"*".patch" "${WORKDIR}/patches" || die
+	eapply "${WORKDIR}/patches/"*".patch"
+	local L=(
+		"third_party/gpus"
+		"third_party/tsl/third_party/gpus"
+	)
+
+	local dirpath
+	for dirpath in ${L[@]} ; do
+		rm "${dirpath}/find_rocm_config.py.gz.base64" || die
+		pushd "${dirpath}" || die
+			pigz -z -k find_rocm_config.py || die
+			mv find_rocm_config.py.zz find_rocm_config.py.gz || die
+			base64 --wrap=0 find_rocm_config.py.gz > find_rocm_config.py.gz.base64 || die
+		popd
+	done
+
+	sed -i -e "s|@JAXLIB_PV@|${PV}|g" \
+		"third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl" \
+		"third_party/tsl/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl" \
+		|| die
+
+	sed -i -e "s|@JAXLIB_PV@|${PV}|g" \
+		"third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
+		"third_party/tsl/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
+		|| die
+
+	sed -i -e "s|@EPREFIX@|${EPREFIX}|g" \
+		"xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc" \
+		|| die
+	sed -i -e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
+		"xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc" \
+		"xla/stream_executor/gpu/asm_compiler.cc" \
+		|| die
+
+	gen_gcc_ar
 }
 
 get_cuda_targets() {
@@ -768,25 +873,56 @@ ewarn
 		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 		einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
 
+		local gcc_slot=$(gcc-major-version)
+		local rocm_pv=$(best_version "sci-libs/rocFFT" \
+			| sed -e "s|sci-libs/rocFFT-||")
 		local rocm_version=$(best_version "dev-util/hip" \
 			| sed -e "s|dev-util/hip-||g")
-		rocm_version=$(ver_cut 1-3 "rocm_version")
+		rocm_version=$(ver_cut 1-3 "${rocm_version}")
+
+		export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${gcc_slot}"
+		export HIP_PATH="${EPREFIX}/usr"
+		export HOST_C_COMPILER="${EPREFIX}/usr/bin/${CC}"
+		export HOST_CXX_COMPILER="${EPREFIX}/usr/bin/${CXX}"
 		export JAX_ROCM_VERSION="${rocm_version//./}"
 		export ROCM_PATH="${ESYSROOT}/usr"
 		export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags \
 			| tr ";" ",")
-		local rocm_pv=$(best_version "sci-libs/rocFFT" \
-			| sed -e "s|sci-libs/rocFFT-||")
+einfo "GCC_HOST_COMPILER_PATH:  ${GCC_HOST_COMPILER_PATH}"
+einfo "HIP_CLANG_PATH:  ${HIP_CLANG_PATH}"
+einfo "HIP_PATH:  ${HIP_PATH}"
+einfo "HOST_C_COMPILER:  ${HOST_C_COMPILER}"
+einfo "HOST_CXX_COMPILER:  ${HOST_CXX_COMPILER}"
+einfo "JAX_ROCM_VERSION:  ${JAX_ROCM_VERSION}"
+einfo "ROCM_PATH:  ${ROCM_PATH}"
+einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 	# See
 	# https://jax.readthedocs.io/en/latest/developer.html#additional-notes-for-building-a-rocm-jaxlib-for-amd-gpus
 	# https://github.com/google/jax/blob/jaxlib-v0.4.14/build/rocm/build_rocm.sh
 		args+=(
+			--bazel_options="--override_repository=xla=${WORKDIR}/xla-${EGIT_XLA_COMMIT}"
 			--enable_rocm
 			--rocm_amdgpu_targets="${TF_ROCM_AMDGPU_TARGETS}"
 			--rocm_path="${ESYSROOT}/usr"
 		)
 	# The docs hasn't been updated, but latest point release of jax/jaxlib
 	# is the same source for xla.  No override needed.
+
+		local gcc_slot=$(gcc-major-version)
+		local gcc_current_profile=$(gcc-config -c)
+		local gcc_current_profile_slot=${gcc_current_profile##*-}
+		if [[ "${gcc_current_profile_slot}" != "${gcc_slot}" ]] ; then
+eerror
+eerror "libcxxabi must be ${gcc_slot}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
+eerror "  source /etc/profile"
+eerror
+eerror "libstdcxx slot:     ${gcc_current_profile_slot}"
+eerror "GCC compiler slot:  ${gcc_slot}"
+eerror
+			die
+		fi
 	fi
 	${EPYTHON} build/build.py \
 		--configure_only \
@@ -887,7 +1023,7 @@ _ebazel() {
 python_compile() {
 	load_env
 	[[ -e ".jax_configure.bazelrc" ]] || die "Missing file"
-einfo "Building for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
+einfo "Building wheel for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 	cd "${S}/build" || die
 	export PYTHON_BIN_PATH="${PYTHON}"
 

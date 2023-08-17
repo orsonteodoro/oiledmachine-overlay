@@ -1,0 +1,68 @@
+# Split patch of original patch
+Original patch:  https://gist.githubusercontent.com/raw/ed891528aacf0c5baf3a789e5e9aaead
+Context:  https://bugs.gentoo.org/705712#c29
+
+diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl xla-9f26b9390f5a5c565a13925731de749be8a760be/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl
+--- xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl	2023-07-27 12:36:25.000000000 -0700
++++ xla-9f26b9390f5a5c565a13925731de749be8a760be/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl	2023-08-16 20:01:01.959187797 -0700
+@@ -53,10 +53,10 @@ def GetOptionValue(argv, option):
+   parser = ArgumentParser()
+   parser.add_argument('-' + option, nargs='*', action='append')
+   args, _ = parser.parse_known_args(argv)
+-  if not args or not vars(args)[option]:
++  if not args or not vars(args)[option.strip('-').replace('-','_')]:
+     return []
+   else:
+-    return sum(vars(args)[option], [])
++    return sum(vars(args)[option.strip('-').replace('-','_')], [])
+ 
+ 
+ def GetHostCompilerOptions(argv):
+@@ -136,6 +136,7 @@ def InvokeHipcc(argv, log=False):
+   hipcc_allowed_std_options = ["c++11", "c++14", "c++17"]
+   std_options = ''.join([' -std=' + define
+       for define in std_options if define in hipcc_allowed_std_options])
++  gpu_archs = GetOptionValue(argv, '-amdgpu-target')
+ 
+   # The list of source files get passed after the -c option. I don't know of
+   # any other reliable way to just get the list of source files to be compiled.
+@@ -179,6 +180,7 @@ def InvokeHipcc(argv, log=False):
+   hipccopts += defines
+   hipccopts += std_options
+   hipccopts += m_options
++  hipccopts += ' ' + ' '.join(['--amdgpu-target=' + arch for arch in gpu_archs])
+ 
+   if depfiles:
+     # Generate the dependency file
+diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl xla-9f26b9390f5a5c565a13925731de749be8a760be/third_party/tsl/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl
+--- xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl	2023-07-27 12:36:25.000000000 -0700
++++ xla-9f26b9390f5a5c565a13925731de749be8a760be/third_party/tsl/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl	2023-08-16 20:01:26.203188398 -0700
+@@ -53,10 +53,10 @@ def GetOptionValue(argv, option):
+   parser = ArgumentParser()
+   parser.add_argument('-' + option, nargs='*', action='append')
+   args, _ = parser.parse_known_args(argv)
+-  if not args or not vars(args)[option]:
++  if not args or not vars(args)[option.strip('-').replace('-','_')]:
+     return []
+   else:
+-    return sum(vars(args)[option], [])
++    return sum(vars(args)[option.strip('-').replace('-','_')], [])
+ 
+ 
+ def GetHostCompilerOptions(argv):
+@@ -136,6 +136,7 @@ def InvokeHipcc(argv, log=False):
+   hipcc_allowed_std_options = ["c++11", "c++14", "c++17"]
+   std_options = ''.join([' -std=' + define
+       for define in std_options if define in hipcc_allowed_std_options])
++  gpu_archs = GetOptionValue(argv, '-amdgpu-target')
+ 
+   # The list of source files get passed after the -c option. I don't know of
+   # any other reliable way to just get the list of source files to be compiled.
+@@ -179,6 +180,7 @@ def InvokeHipcc(argv, log=False):
+   hipccopts += defines
+   hipccopts += std_options
+   hipccopts += m_options
++  hipccopts += ' ' + ' '.join(['--amdgpu-target=' + arch for arch in gpu_archs])
+ 
+   if depfiles:
+     # Generate the dependency file

@@ -1,0 +1,64 @@
+# Forward port of patch
+Original patch:  https://gist.githubusercontent.com/raw/ed891528aacf0c5baf3a789e5e9aaead
+Context:  https://bugs.gentoo.org/705712#c29
+
+diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/rocm/hipblaslt_wrapper.h xla-9f26b9390f5a5c565a13925731de749be8a760be/xla/stream_executor/rocm/hipblaslt_wrapper.h
+--- xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/rocm/hipblaslt_wrapper.h	2023-07-27 12:36:25.000000000 -0700
++++ xla-9f26b9390f5a5c565a13925731de749be8a760be/xla/stream_executor/rocm/hipblaslt_wrapper.h	2023-08-16 19:03:08.267101612 -0700
+@@ -19,7 +19,7 @@ limitations under the License.
+ 
+ #include "rocm/rocm_config.h"
+ #if TF_ROCM_VERSION >= 50500
+-#include "rocm/include/hipblaslt/hipblaslt.h"
++#include "rocm/include/hipblaslt/hipblaslt.h" // recheck
+ #else
+ #include "rocm/include/hipblaslt.h"
+ #endif
+diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/rocm/hipsolver_wrapper.h xla-9f26b9390f5a5c565a13925731de749be8a760be/xla/stream_executor/rocm/hipsolver_wrapper.h
+--- xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/rocm/hipsolver_wrapper.h	2023-07-27 12:36:25.000000000 -0700
++++ xla-9f26b9390f5a5c565a13925731de749be8a760be/xla/stream_executor/rocm/hipsolver_wrapper.h	2023-08-16 18:56:58.975092449 -0700
+@@ -24,7 +24,7 @@ limitations under the License.
+ 
+ #if TF_ROCM_VERSION >= 40500
+ #if TF_ROCM_VERSION >= 50600
+-#include "rocm/include/hipsolver/hipsolver.h"
++#include "rocm/include/hipsolver/hipsolver/hipsolver.h"
+ #else
+ 
+ #include "rocm/include/hipsolver.h"
+diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/rocm/hipsparse_wrapper.h xla-9f26b9390f5a5c565a13925731de749be8a760be/xla/stream_executor/rocm/hipsparse_wrapper.h
+--- xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/rocm/hipsparse_wrapper.h	2023-07-27 12:36:25.000000000 -0700
++++ xla-9f26b9390f5a5c565a13925731de749be8a760be/xla/stream_executor/rocm/hipsparse_wrapper.h	2023-08-16 18:57:30.911093242 -0700
+@@ -21,7 +21,7 @@ limitations under the License.
+ #define XLA_STREAM_EXECUTOR_ROCM_HIPSPARSE_WRAPPER_H_
+ 
+ #if (TF_ROCM_VERSION >= 50200)
+-#include "rocm/include/hipsparse/hipsparse.h"
++#include "rocm/include/hipsparse/hipsparse/hipsparse.h"
+ #else
+ #include "rocm/include/hipsparse.h"
+ #endif
+diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/rocm/rocm_fft.h xla-9f26b9390f5a5c565a13925731de749be8a760be/xla/stream_executor/rocm/rocm_fft.h
+--- xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/rocm/rocm_fft.h	2023-07-27 12:36:25.000000000 -0700
++++ xla-9f26b9390f5a5c565a13925731de749be8a760be/xla/stream_executor/rocm/rocm_fft.h	2023-08-16 18:58:28.223094664 -0700
+@@ -24,7 +24,7 @@ limitations under the License.
+ #include "rocm/rocm_config.h"
+ 
+ #if (TF_ROCM_VERSION >= 50200)
+-#include "rocm/include/hipfft/hipfft.h"
++#include "rocm/include/hipfft/hipfft/hipfft.h"
+ #else
+ #include "rocm/include/hipfft.h"
+ #endif
+diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/rocm/rocsolver_wrapper.h xla-9f26b9390f5a5c565a13925731de749be8a760be/xla/stream_executor/rocm/rocsolver_wrapper.h
+--- xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/rocm/rocsolver_wrapper.h	2023-07-27 12:36:25.000000000 -0700
++++ xla-9f26b9390f5a5c565a13925731de749be8a760be/xla/stream_executor/rocm/rocsolver_wrapper.h	2023-08-16 18:59:04.671095568 -0700
+@@ -22,7 +22,7 @@ limitations under the License.
+ 
+ #include "rocm/rocm_config.h"
+ #if (TF_ROCM_VERSION >= 50200)
+-#include "rocm/include/rocsolver/rocsolver.h"
++#include "rocm/include/rocsolver/rocsolver/rocsolver.h"
+ #else
+ #include "rocm/include/rocsolver.h"
+ #endif

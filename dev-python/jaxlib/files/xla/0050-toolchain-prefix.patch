@@ -1,0 +1,118 @@
+Forward port of several patches:
+
+Original patches:
+https://bugs.gentoo.org/attachment.cgi?id=655386
+https://bugs.gentoo.org/attachment.cgi?id=655390
+
+Context:  https://bugs.gentoo.org/705712
+
+Patch not applied to aarch64.
+
+diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl xla-9f26b9390f5a5c565a13925731de749be8a760be/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl
+--- xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl	2023-07-27 12:36:25.000000000 -0700
++++ xla-9f26b9390f5a5c565a13925731de749be8a760be/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl	2023-08-16 19:55:08.087179017 -0700
+@@ -226,7 +226,21 @@ def _action_configs(assembly_path, c_com
+     )
+ 
+ def _tool_paths(cpu, ctx):
+-    if cpu in ["local", "darwin"]:
++    if cpu in ["local"]:
++        return [
++            tool_path(name = "gcc", path = ctx.attr.host_compiler_path),
++            tool_path(name = "ar", path = "/var/tmp/portage/dev-python/jaxlib-@JAXLIB_PV@/temp/gcc-ar.sh"),
++            tool_path(name = "compat-ld", path = "/usr/bin/ld"),
++            tool_path(name = "cpp", path = ctx.attr.host_compiler_prefix + "/cpp"),
++            tool_path(name = "dwp", path = "/usr/bin/dwp"),
++            tool_path(name = "gcov", path = ctx.attr.host_compiler_prefix + "/gcov"),
++            tool_path(name = "ld", path = "/usr/bin/ld"),
++            tool_path(name = "nm", path = ctx.attr.host_compiler_prefix + "/gcc-nm"),
++            tool_path(name = "objcopy", path = "/usr/bin/objcopy"),
++            tool_path(name = "objdump", path = "/usr/bin/objdump"),
++            tool_path(name = "strip", path = "/usr/bin/strip"),
++        ]
++    if cpu in ["darwin"]:
+         return [
+             tool_path(name = "gcc", path = ctx.attr.host_compiler_path),
+             tool_path(name = "ar", path = ctx.attr.host_compiler_prefix + (
+diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl xla-9f26b9390f5a5c565a13925731de749be8a760be/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl
+--- xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl	2023-07-27 12:36:25.000000000 -0700
++++ xla-9f26b9390f5a5c565a13925731de749be8a760be/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl	2023-08-16 19:55:08.087179017 -0700
+@@ -69,16 +69,16 @@ lto_index_actions = [
+ def _impl(ctx):
+     tool_paths = [
+         tool_path(name = "gcc", path = ctx.attr.host_compiler_path),
+-        tool_path(name = "ar", path = ctx.attr.host_compiler_prefix + "/ar"),
+-        tool_path(name = "compat-ld", path = ctx.attr.host_compiler_prefix + "/ld"),
++        tool_path(name = "ar", path = "/var/tmp/portage/dev-python/jaxlib-@JAXLIB_PV@/temp/gcc-ar.sh"),
++        tool_path(name = "compat-ld", path = "/usr/bin/ld"),
+         tool_path(name = "cpp", path = ctx.attr.host_compiler_prefix + "/cpp"),
+-        tool_path(name = "dwp", path = ctx.attr.host_compiler_prefix + "/dwp"),
++        tool_path(name = "dwp", path = ctx.attr.host_compiler_prefix + "/usr/bin/dwp"),
+         tool_path(name = "gcov", path = ctx.attr.host_compiler_prefix + "/gcov"),
+-        tool_path(name = "ld", path = ctx.attr.host_compiler_prefix + "/ld"),
+-        tool_path(name = "nm", path = ctx.attr.host_compiler_prefix + "/nm"),
+-        tool_path(name = "objcopy", path = ctx.attr.host_compiler_prefix + "/objcopy"),
+-        tool_path(name = "objdump", path = ctx.attr.host_compiler_prefix + "/objdump"),
+-        tool_path(name = "strip", path = ctx.attr.host_compiler_prefix + "/strip"),
++        tool_path(name = "ld", path = ctx.attr.host_compiler_prefix + "/usr/bin/ld"),
++        tool_path(name = "nm", path = ctx.attr.host_compiler_prefix + "/gcc-nm"),
++        tool_path(name = "objcopy", path = "/usr/bin/objcopy"),
++        tool_path(name = "objdump", path = "/usr/bin/objdump"),
++        tool_path(name = "strip", path = "/usr/bin/strip"),
+     ]
+ 
+     action_configs = []
+diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl xla-9f26b9390f5a5c565a13925731de749be8a760be/third_party/tsl/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl
+--- xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl	2023-07-27 12:36:25.000000000 -0700
++++ xla-9f26b9390f5a5c565a13925731de749be8a760be/third_party/tsl/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl	2023-08-16 19:54:45.643178460 -0700
+@@ -226,7 +226,21 @@ def _action_configs(assembly_path, c_com
+     )
+ 
+ def _tool_paths(cpu, ctx):
+-    if cpu in ["local", "darwin"]:
++    if cpu in ["local"]:
++        return [
++            tool_path(name = "gcc", path = ctx.attr.host_compiler_path),
++            tool_path(name = "ar", path = "/var/tmp/portage/dev-python/jaxlib-@JAXLIB_PV@/temp/gcc-ar.sh"),
++            tool_path(name = "compat-ld", path = "/usr/bin/ld"),
++            tool_path(name = "cpp", path = ctx.attr.host_compiler_prefix + "/cpp"),
++            tool_path(name = "dwp", path = "/usr/bin/dwp"),
++            tool_path(name = "gcov", path = ctx.attr.host_compiler_prefix + "/gcov"),
++            tool_path(name = "ld", path = "/usr/bin/ld"),
++            tool_path(name = "nm", path = ctx.attr.host_compiler_prefix + "/gcc-nm"),
++            tool_path(name = "objcopy", path = "/usr/bin/objcopy"),
++            tool_path(name = "objdump", path = "/usr/bin/objdump"),
++            tool_path(name = "strip", path = "/usr/bin/strip"),
++        ]
++    if cpu in ["darwin"]:
+         return [
+             tool_path(name = "gcc", path = ctx.attr.host_compiler_path),
+             tool_path(name = "ar", path = ctx.attr.host_compiler_prefix + (
+diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl xla-9f26b9390f5a5c565a13925731de749be8a760be/third_party/tsl/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl
+--- xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl	2023-07-27 12:36:25.000000000 -0700
++++ xla-9f26b9390f5a5c565a13925731de749be8a760be/third_party/tsl/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl	2023-08-16 19:54:45.643178460 -0700
+@@ -69,16 +69,16 @@ lto_index_actions = [
+ def _impl(ctx):
+     tool_paths = [
+         tool_path(name = "gcc", path = ctx.attr.host_compiler_path),
+-        tool_path(name = "ar", path = ctx.attr.host_compiler_prefix + "/ar"),
+-        tool_path(name = "compat-ld", path = ctx.attr.host_compiler_prefix + "/ld"),
++        tool_path(name = "ar", path = "/var/tmp/portage/dev-python/jaxlib-@JAXLIB_PV@/temp/gcc-ar.sh"),
++        tool_path(name = "compat-ld", path = "/usr/bin/ld"),
+         tool_path(name = "cpp", path = ctx.attr.host_compiler_prefix + "/cpp"),
+-        tool_path(name = "dwp", path = ctx.attr.host_compiler_prefix + "/dwp"),
++        tool_path(name = "dwp", path = ctx.attr.host_compiler_prefix + "/usr/bin/dwp"),
+         tool_path(name = "gcov", path = ctx.attr.host_compiler_prefix + "/gcov"),
+-        tool_path(name = "ld", path = ctx.attr.host_compiler_prefix + "/ld"),
+-        tool_path(name = "nm", path = ctx.attr.host_compiler_prefix + "/nm"),
+-        tool_path(name = "objcopy", path = ctx.attr.host_compiler_prefix + "/objcopy"),
+-        tool_path(name = "objdump", path = ctx.attr.host_compiler_prefix + "/objdump"),
+-        tool_path(name = "strip", path = ctx.attr.host_compiler_prefix + "/strip"),
++        tool_path(name = "ld", path = ctx.attr.host_compiler_prefix + "/usr/bin/ld"),
++        tool_path(name = "nm", path = ctx.attr.host_compiler_prefix + "/gcc-nm"),
++        tool_path(name = "objcopy", path = "/usr/bin/objcopy"),
++        tool_path(name = "objdump", path = "/usr/bin/objdump"),
++        tool_path(name = "strip", path = "/usr/bin/strip"),
+     ]
+ 
+     action_configs = []

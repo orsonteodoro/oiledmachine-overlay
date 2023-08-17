@@ -1,0 +1,39 @@
+# Split patch of original patch
+Original patch:  https://gist.githubusercontent.com/raw/ed891528aacf0c5baf3a789e5e9aaead
+Context:  https://bugs.gentoo.org/705712#c29
+
+diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/tsl/platform/default/rocm_rocdl_path.cc xla-9f26b9390f5a5c565a13925731de749be8a760be/third_party/tsl/tsl/platform/default/rocm_rocdl_path.cc
+--- xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/tsl/platform/default/rocm_rocdl_path.cc	2023-07-27 12:36:25.000000000 -0700
++++ xla-9f26b9390f5a5c565a13925731de749be8a760be/third_party/tsl/tsl/platform/default/rocm_rocdl_path.cc	2023-08-16 21:15:51.239299179 -0700
+@@ -40,6 +40,6 @@ string RocmRoot() {
+ #endif
+ }
+ 
+-string RocdlRoot() { return io::JoinPath(RocmRoot(), "amdgcn/bitcode"); }
++string RocdlRoot() { return io::JoinPath(RocmRoot(), "lib/amdgcn/bitcode"); }
+ 
+ }  // namespace tsl
+diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc xla-9f26b9390f5a5c565a13925731de749be8a760be/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc
+--- xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc	2023-07-27 12:36:25.000000000 -0700
++++ xla-9f26b9390f5a5c565a13925731de749be8a760be/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc	2023-08-16 21:14:42.839297482 -0700
+@@ -784,7 +784,7 @@ StatusOr<std::vector<uint8_t>> EmitModul
+   // Locate lld.
+   // TODO(whchung@gmail.com): change to tensorflow::ROCmRoot() after
+   // ROCm-Device-Libs PR.
+-  std::string lld_path = tsl::io::JoinPath("/opt/rocm", "llvm/bin");
++  std::string lld_path = tsl::io::JoinPath("@EPREFIX@/usr", "llvm/@LLVM_SLOT@/bin");
+   auto lld_program = llvm::sys::findProgramByName("ld.lld", {lld_path});
+   if (!lld_program) {
+     return xla::InternalError("unable to find ld.lld in PATH: %s",
+diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/gpu/asm_compiler.cc xla-9f26b9390f5a5c565a13925731de749be8a760be/xla/stream_executor/gpu/asm_compiler.cc
+--- xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/stream_executor/gpu/asm_compiler.cc	2023-07-27 12:36:25.000000000 -0700
++++ xla-9f26b9390f5a5c565a13925731de749be8a760be/xla/stream_executor/gpu/asm_compiler.cc	2023-08-16 21:15:18.951298378 -0700
+@@ -436,7 +436,7 @@ static std::string findRocmExecutable(co
+ tsl::StatusOr<std::vector<uint8_t>> BundleGpuAsm(
+     std::vector<HsacoImage> images, const std::string rocm_root_dir) {
+   std::string clang_offload_bundler_path =
+-      findRocmExecutable("llvm/bin/clang-offload-bundler", rocm_root_dir);
++      findRocmExecutable("lib/llvm/@LLVM_SLOT@/bin/clang-offload-bundler", rocm_root_dir);
+ 
+   // Initialise the "--inputs" / "--targets" arguments for the
+   // clang-offload-bundler with a dummy file / host target triple...
