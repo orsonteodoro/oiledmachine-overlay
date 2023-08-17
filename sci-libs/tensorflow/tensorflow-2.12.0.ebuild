@@ -402,6 +402,13 @@ HIP_SLOTS=(
 	"5.6.0" # For llvm 16
 )
 
+declare -A LLD_SLOT=(
+	["5.3.3"]="15"
+	["5.4.3"]="15"
+	["5.5.1"]="16"
+	["5.6.0"]="16"
+)
+
 gen_rocm_rdepend() {
 	local pv
 	for pv in ${HIP_SLOTS[@]} ; do
@@ -428,6 +435,8 @@ gen_rocm_rdepend() {
 			~dev-util/rocm-smi-${pv}:${s}
 			~dev-util/rocminfo-${pv}:${s}
 			~dev-util/Tensile-${pv}:${s}
+
+			sys-devel/lld:${LLD_SLOT[${pv}]}
 		)
 		"
 	done
@@ -1054,6 +1063,7 @@ ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 		"${S}/tensorflow/compiler/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc" \
 		|| die
 	sed -i -e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
+		"${S}/tensorflow/compiler/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc" \
 		"${S}/tensorflow/compiler/xla/stream_executor/gpu/asm_compiler.cc" \
 		|| die
 
