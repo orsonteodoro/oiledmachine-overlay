@@ -694,11 +694,10 @@ einfo "Preventing stall.  Removing -Os."
 gen_gcc_ar(){
 	local gcc_slot=$(gcc-major-version)
 	local dir
-# FIXME: tensorflow -> jaxlib
 	if use python ; then
-		dir="${WORKDIR}/tensorflow-${PV}-${EPYTHON/./_}-bazel-base/execroot/org_tensorflow"
+		dir="${WORKDIR}/jax-jax-${PV}-${EPYTHON/./_}-bazel-base/execroot/org_tensorflow"
 	else
-		dir="${WORKDIR}/tensorflow-${PV}-bazel-base/execroot/org_tensorflow"
+		dir="${WORKDIR}/jax-jax-${PV}-bazel-base/execroot/org_tensorflow"
 	fi
 cat <<-EOF > "${T}/gcc-ar.sh"
 #!/usr/bin/env bash
