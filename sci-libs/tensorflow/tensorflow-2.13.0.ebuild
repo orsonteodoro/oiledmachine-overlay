@@ -514,6 +514,10 @@ RDEPEND="
 			dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 		)
 		(
+			>=dev-python/typing-extensions-3.6.6[${PYTHON_USEDEP}]
+			<dev-python/typing-extensions-4.6.0[${PYTHON_USEDEP}]
+		)
+		(
 			>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
 		)
 		>=dev-libs/flatbuffers-23.1.21:=
@@ -539,10 +543,6 @@ RDEPEND="
 		)
 		>=dev-python/six-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
-		(
-			>=dev-python/typing-extensions-3.6.6[${PYTHON_USEDEP}]
-			<dev-python/typing-extensions-4.6.0[${PYTHON_USEDEP}]
-		)
 
 		>=dev-python/astor-0.7.1[${PYTHON_USEDEP}]
 		>=dev-python/dill-0.3.6[${PYTHON_USEDEP}]
