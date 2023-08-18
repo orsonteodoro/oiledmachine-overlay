@@ -236,12 +236,7 @@ gen_rocm_depends() {
 				~sci-libs/miopen-${pv}:${s}[rocm]
 				~sci-libs/rocFFT-${pv}:${s}[rocm]
 				~sci-libs/rocRAND-${pv}:${s}[rocm]
-				amdgpu_targets_gfx90a_xnack_minus? (
-					~sci-libs/hipBLASLt-${pv}:${s}[rocm]
-				)
-				amdgpu_targets_gfx90a_xnack_plus? (
-					~sci-libs/hipBLASLt-${pv}:${s}[rocm]
-				)
+				~sci-libs/hipBLASLt-${pv}:${s}[rocm]
 
 				sys-devel/lld:${LLD_SLOT[${pv}]}
 		"
@@ -635,9 +630,6 @@ src_unpack() {
 			|| die
 	fi
 	bazel_load_distfiles "${bazel_external_uris}"
-
-	cd "${WORKDIR}/xla-${EGIT_XLA_COMMIT}" || die
-	eapply -p1 "${FILESDIR}/xla/"*
 }
 
 load_env() {
@@ -694,11 +686,7 @@ einfo "Preventing stall.  Removing -Os."
 gen_gcc_ar(){
 	local gcc_slot=$(gcc-major-version)
 	local dir
-	if use python ; then
-		dir="${WORKDIR}/jax-jax-${PV}-${EPYTHON/./_}-bazel-base/execroot/org_tensorflow"
-	else
-		dir="${WORKDIR}/jax-jax-${PV}-bazel-base/execroot/org_tensorflow"
-	fi
+	dir="${WORKDIR}/jax-jax-${PV}-${EPYTHON/./_}-bazel-base/execroot/org_tensorflow"
 cat <<-EOF > "${T}/gcc-ar.sh"
 #!/usr/bin/env bash
 GCC_AR_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}"
@@ -713,11 +701,16 @@ EOF
 }
 
 python_prepare_all() {
+	cd "${WORKDIR}/xla-${EGIT_XLA_COMMIT}" || die
+	eapply -p1 "${FILESDIR}/xla/"*
+
+	cd "${S}" || die
+
 	cuda_src_prepare
 	distutils-r1_python_prepare_all
 
-	cp -a "${FILESDIR}/${PV}/"*".patch" "${WORKDIR}/patches" || die
-	eapply "${WORKDIR}/patches/"*".patch"
+	cd "${WORKDIR}/xla-${EGIT_XLA_COMMIT}" || die
+
 	local L=(
 		"third_party/gpus"
 		"third_party/tsl/third_party/gpus"
@@ -754,6 +747,12 @@ python_prepare_all() {
 	gen_gcc_ar
 }
 
+src_prepare() {
+# DO NOT REMOVE.
+# Must be explictly called.
+	distutils-r1_src_prepare
+}
+
 get_cuda_targets() {
 	local targets
 	local target
@@ -765,13 +764,86 @@ get_cuda_targets() {
 	echo "${targets}" | sed -e "s|^,||g"
 }
 
-python_configure() {
+get_host() {
+	# See https://github.com/bazelbuild/bazel/blob/master/src/main/java/com/google/devtools/build/lib/bazel/repository/LocalConfigPlatformFunction.java#L106
+	if use arm ; then
+		echo "arm"
+	elif use arm64 && use elibc_Darwin ; then
+		echo "arm64"
+	elif use arm64 ; then
+		echo "aarch64"
+	elif use amd64 ; then
+		echo "x86_64"
+	elif use mips && [[ "${CHOST}" =~ "mips64" ]] ; then
+		echo "mips64"
+	elif use ppc64 && [[ "${CHOST}" =~ "powerpc64le" ]] ; then
+		echo "ppc64le"
+	elif use ppc ; then
+		echo "ppc"
+	elif use riscv ; then
+		echo "riscv64"
+	elif use s390 && [[ "${CHOST}" =~ "s390x" ]] ; then
+		echo "s390x"
+	elif use x86 ; then
+		echo "x86_32"
+	else
+eerror
+eerror "Your arch is not supported"
+eerror
+eerror "ARCH:\t${ARCH}"
+eerror "CHOST:\t${CHOST}"
+eerror
+		die
+	fi
+}
+
+# From bazel.eclass
+_ebazel() {
+	bazel_setup_bazelrc
+
+	# Use different build folders for each multibuild variant.
+	local output_base="${BUILD_DIR:-${S}}"
+	output_base="${output_base%/}-bazel-base"
+	mkdir -p "${output_base}" || die
+	set -- bazel \
+		--output_base="${output_base}" \
+		${@}
+	echo "${*}" >&2
+	"${@}" || die "ebazel failed"
+}
+
+python_configure() { :; }
+
+python_compile() {
 	load_env
 	local args=()
 
 	prepare_tensorflow
 
 	bazel_setup_bazelrc
+
+	# The default is release which forces avx by default.
+	if is-flagq '-march=native' ; then
+		args+=(
+			--target_cpu_features=native
+		)
+	elif is-flagq '-march=generic' ; then
+		args+=(
+			--target_cpu_features=default
+		)
+	elif ! [[ "${CFLAGS}" =~ "-march=" ]] ; then
+		args+=(
+			--target_cpu_features=default
+		)
+	else
+ewarn
+ewarn "Downgrading -march=* to generic."
+ewarn "Use -march=native to optimize."
+ewarn
+		args+=(
+			--target_cpu_features=default
+		)
+	fi
 
 	local SYSLIBS=(
 #		absl_py
@@ -828,33 +900,10 @@ python_configure() {
 #		wrapt
 		zlib
 	)
-	export TF_SYSTEM_LIBS=$(echo "${SYSLIBS[@]}" | tr " " ",")
-
-	# The default is release which forces avx by default.
-	if is-flagq '-march=native' ; then
-		args+=(
-			--target_cpu_features=native
-		)
-	elif is-flagq '-march=generic' ; then
-		args+=(
-			--target_cpu_features=default
-		)
-	elif ! [[ "${CFLAGS}" =~ "-march=" ]] ; then
-		args+=(
-			--target_cpu_features=default
-		)
-	else
-ewarn
-ewarn "Downgrading -march=* to generic."
-ewarn "Use -march=native to optimize."
-ewarn
-		args+=(
-			--target_cpu_features=default
-		)
-	fi
-
+	export TF_ENABLE_XLA=1
 	export TF_NEED_CUDA=$(usex cuda "1" "0")
 	export TF_NEED_ROCM=$(usex rocm "1" "0")
+	export TF_SYSTEM_LIBS=$(echo "${SYSLIBS[@]}" | tr " " ",")
 	if use cuda ; then
 	# See https://jax.readthedocs.io/en/latest/developer.html#additional-notes-for-building-jaxlib-from-source-on-windows
 		export JAX_CUDA_VERSION="$(cuda_toolkit_version)"
@@ -895,15 +944,7 @@ einfo "HOST_CXX_COMPILER:  ${HOST_CXX_COMPILER}"
 einfo "JAX_ROCM_VERSION:  ${JAX_ROCM_VERSION}"
 einfo "ROCM_PATH:  ${ROCM_PATH}"
 einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
-	# See
-	# https://jax.readthedocs.io/en/latest/developer.html#additional-notes-for-building-a-rocm-jaxlib-for-amd-gpus
-	# https://github.com/google/jax/blob/jaxlib-v0.4.14/build/rocm/build_rocm.sh
-		args+=(
-			--bazel_options="--override_repository=xla=${WORKDIR}/xla-${EGIT_XLA_COMMIT}"
-			--enable_rocm
-			--rocm_amdgpu_targets="${TF_ROCM_AMDGPU_TARGETS}"
-			--rocm_path="${ESYSROOT}/usr"
-		)
+
 	# The docs hasn't been updated, but latest point release of jax/jaxlib
 	# is the same source for xla.  No override needed.
 
@@ -922,21 +963,33 @@ eerror "GCC compiler slot:  ${gcc_slot}"
 eerror
 			die
 		fi
+
+	# See
+	# https://jax.readthedocs.io/en/latest/developer.html#additional-notes-for-building-a-rocm-jaxlib-for-amd-gpus
+	# https://github.com/google/jax/blob/jaxlib-v0.4.14/build/rocm/build_rocm.sh
+		args+=(
+			--bazel_options="--override_repository=xla=${WORKDIR}/xla-${EGIT_XLA_COMMIT}"
+			--enable_rocm
+			--rocm_amdgpu_targets="${TF_ROCM_AMDGPU_TARGETS}"
+			--rocm_path="${ESYSROOT}/usr"
+		)
 	fi
+
+	# Generate to fix python version in .jax_configure.bazelrc
 	${EPYTHON} build/build.py \
 		--configure_only \
 		${args[@]} \
 		|| die
 
-	# Merge
-	cat ".jax_configure.bazelrc" > "${T}/bazelrc_merged" || die
-	cat "${T}/bazelrc" >> "${T}/bazelrc_merged" || die
+	# Merge custom config
+	cat /dev/null > ".bazelrc.user" || die
+	cat "${T}/bazelrc" >> ".bazelrc.user" || die
 
-	echo 'build --noshow_progress' >> "${T}/bazelrc_merged" || die # Disable high CPU usage on xfce4-terminal
-	echo 'build --subcommands --verbose_failures' >> "${T}/bazelrc_merged" || die # Increase verbosity
+	echo 'build --noshow_progress' >> ".bazelrc.user" || die # Disable high CPU usage on xfce4-terminal
+	echo 'build --subcommands --verbose_failures' >> ".bazelrc.user" || die # Increase verbosity
 
-	echo "build --action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> "${T}/bazelrc_merged" || die
-	echo "build --host_action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> "${T}/bazelrc_merged" || die
+	echo "build --action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> ".bazelrc.user" || die
+	echo "build --host_action_env=TF_SYSTEM_LIBS=\"${TF_SYSTEM_LIBS}\"" >> ".bazelrc.user" || die
 
 	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 		local ccache_dir=$(ccache -sv \
@@ -944,91 +997,40 @@ eerror
 			| cut -f 2 -d ":" \
 			| sed -r -e "s|^[ ]+||g")
 		echo "${ccache_dir}" > "${WORKDIR}/.ccache_dir_val" || die
-einfo "Adding build --sandbox_writable_path=\"${ccache_dir}\" to ${T}/bazelrc_merged"
-		echo "build --action_env=CCACHE_DIR=\"${ccache_dir}\"" >> "${T}/bazelrc_merged" || die
-		echo "build --host_action_env=CCACHE_DIR=\"${ccache_dir}\"" >> "${T}/bazelrc_merged" || die
-		echo "build --sandbox_writable_path=${ccache_dir}" >> "${T}/bazelrc_merged" || die
+einfo "Adding build --sandbox_writable_path=\"${ccache_dir}\" to .bazelrc.user"
+		echo "build --action_env=CCACHE_DIR=\"${ccache_dir}\"" >> ".bazelrc.user" || die
+		echo "build --host_action_env=CCACHE_DIR=\"${ccache_dir}\"" >> ".bazelrc.user" || die
+		echo "build --sandbox_writable_path=${ccache_dir}" >> ".bazelrc.user" || die
 	fi
 
 	if use cuda ; then
 		sed -i \
 			-e "s|sm_52,sm_60,sm_70,sm_80,compute_90|${TF_CUDA_COMPUTE_CAPABILITIES}|g" \
-			"${S}/.bazelrc" \
-			"${T}/bazelrc_merged" \
+			".bazelrc" \
+			".bazelrc.user" \
 			|| die
 	fi
 
 	if use rocm ; then
 		sed -i \
 			-e "s|gfx900,gfx906,gfx908,gfx90a,gfx1030|${TF_ROCM_AMDGPU_TARGETS}|g" \
-			"${S}/.bazelrc" \
-			"${T}/bazelrc_merged" \
+			".bazelrc" \
+			".bazelrc.user" \
 			|| die
 	fi
 
-	mv "${T}/bazelrc_merged" "${S}/build/.jax_configure.bazelrc" || die
-}
+einfo "Done generating .bazelrc.user"
 
-get_host() {
-	# See https://github.com/bazelbuild/bazel/blob/master/src/main/java/com/google/devtools/build/lib/bazel/repository/LocalConfigPlatformFunction.java#L106
-	if use arm ; then
-		echo "arm"
-	elif use arm64 && use elibc_Darwin ; then
-		echo "arm64"
-	elif use arm64 ; then
-		echo "aarch64"
-	elif use amd64 ; then
-		echo "x86_64"
-	elif use mips && [[ "${CHOST}" =~ "mips64" ]] ; then
-		echo "mips64"
-	elif use ppc64 && [[ "${CHOST}" =~ "powerpc64le" ]] ; then
-		echo "ppc64le"
-	elif use ppc ; then
-		echo "ppc"
-	elif use riscv ; then
-		echo "riscv64"
-	elif use s390 && [[ "${CHOST}" =~ "s390x" ]] ; then
-		echo "s390x"
-	elif use x86 ; then
-		echo "x86_32"
-	else
-eerror
-eerror "Your arch is not supported"
-eerror
-eerror "ARCH:\t${ARCH}"
-eerror "CHOST:\t${CHOST}"
-eerror
-		die
-	fi
-}
+	[[ -e ".jax_configure.bazelrc" ]] || die "Missing .jax_configure.bazelrc"
+	[[ -e ".bazelrc.user" ]] || die "Missing .bazelrc.user"
 
-# From bazel.eclass
-_ebazel() {
-	bazel_setup_bazelrc
-
-	# Use different build folders for each multibuild variant.
-	local output_base="${BUILD_DIR:-${S}}"
-	output_base="${output_base%/}-bazel-base"
-	mkdir -p "${output_base}" || die
-
-	set -- bazel \
-		--bazelrc="${S}/build/.jax_configure.bazelrc" \
-		--output_base="${output_base}" \
-		${@}
-	echo "${*}" >&2
-	"${@}" || die "ebazel failed"
-}
-
-python_compile() {
-	load_env
-	[[ -e ".jax_configure.bazelrc" ]] || die "Missing file"
 einfo "Building wheel for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
-	cd "${S}/build" || die
+
 	export PYTHON_BIN_PATH="${PYTHON}"
 
 	sed -i -r \
 		-e "s|python[0-9]\.[0-9]+|${EPYTHON}|g" \
-		"${S}/build/.jax_configure.bazelrc" \
+		".jax_configure.bazelrc" \
 		|| die
 
 	# Keep in sync with
@@ -1038,8 +1040,8 @@ einfo "Building wheel for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 		-s \
 		"//jaxlib/tools:build_wheel" \
 		-- \
-		--output_path=$(pwd)/dist \
-		--cpu=$(get_host)
+		--output_path="${PWD}/dist" \
+		--cpu=$(get_host) \
 	_ebazel shutdown
 
 	local python_pv="${EPYTHON}"
@@ -1047,7 +1049,7 @@ einfo "Building wheel for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 	python_pv="${python_pv/./}"
 	IFS=$'\n'
 	local wheel_paths=$(
-		find "${S}/build/dist" -name "*.whl"
+		find "build/dist" -name "*.whl"
 	)
 	local wheel_path
 	for wheel_path in ${wheel_paths[@]} ; do
