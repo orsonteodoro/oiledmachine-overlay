@@ -31,6 +31,7 @@ LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="
 cpu ffmpeg +loom +migraphx +neural-net opencl opencv +rocal +rocm +rpp
+r1
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}

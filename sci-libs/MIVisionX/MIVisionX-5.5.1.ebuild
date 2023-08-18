@@ -32,6 +32,7 @@ SLOT="0/$(ver_cut 1-2)"
 IUSE="
 cpu +debug +enhanced-message ffmpeg -fp16 +loom +migraphx +neural-net
 opencl opencv +rocal +rocal-python +rocm +rpp
+r1
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
