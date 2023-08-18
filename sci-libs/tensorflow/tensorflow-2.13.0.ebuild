@@ -69,7 +69,7 @@ inherit rocm toolchain-funcs
 
 # For deps versioning, see
 # https://www.tensorflow.org/install/source#linux
-# https://github.com/abseil/abseil-cpp/blob/273292d1cfc0a94a65082ee350509af1d113344d/CMakeLists.txt#L49 ; Search project(absl LANGUAGES CXX VERSION
+# https://github.com/abseil/abseil-cpp/blob/b971ac5250ea8de900eae9f95e06548d14cd95fe/CMakeLists.txt#L49 ; Search project(absl LANGUAGES CXX VERSION
 # https://github.com/google/boringssl/blob/c00d7ca810e93780bd0c8ee4eea28f4f2ea4bcdc/src/include/openssl/crypto.h#L99
 # https://github.com/tensorflow/runtime/blob/7d879c8b161085a4374ea481b93a52adb19c0529/third_party/rules_cuda/cuda/dependencies.bzl#L41	# cc_rules
 # https://github.com/tensorflow/runtime/blob/7d879c8b161085a4374ea481b93a52adb19c0529/third_party/rules_cuda/cuda/dependencies.bzl#L66	# platforms
@@ -121,7 +121,7 @@ CUDA_PV="11.8"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/te
 BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace3.bzl
 CUB_PV="1.9.9"			# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
 CUDNN_FRONTEND_PV="0.8"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/workspace2.bzl
-GRPC_PV="1.54.2"		# Based on the oldest grpc supporting abseil 20230125.2
+GRPC_PV="1.53.0"		# Based on the oldest grpc supporting abseil 20230125
 GRPCIO_PV="1.24.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/pip_package/setup.py#L84
 GRPCIO_PV_MAX="1.53"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/pip_package/setup.py#L84 ; < (Exclusive) ; Upstream is wrong
 KISSFFT_PV="131.1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.13.0/third_party/kissfft/workspace.bzl
@@ -461,14 +461,11 @@ RDEPEND="
 		>=dev-libs/openssl-3:0=
 	)
 	|| (
-		=net-libs/grpc-1.49*:=
-		=net-libs/grpc-1.50*:=
-		=net-libs/grpc-1.51*:=
-		=net-libs/grpc-1.52*:=
 		=net-libs/grpc-1.53*:=
 		=net-libs/grpc-1.54*:=
 		=net-libs/grpc-1.55*:=
 		=net-libs/grpc-1.56*:=
+		=net-libs/grpc-1.57*:=
 	)
 	>=dev-cpp/abseil-cpp-20230125.2:0/20230125
 	>=dev-db/sqlite-3.40.1
@@ -497,10 +494,6 @@ RDEPEND="
 		')
 		${PYTHON_DEPS}
 		(
-			>=net-libs/google-cloud-cpp-1.17.1
-			<net-libs/google-cloud-cpp-2.6.0
-		)
-		(
 			>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
 			<dev-python/numpy-1.24.4[${PYTHON_USEDEP}]
 		)
@@ -520,6 +513,7 @@ RDEPEND="
 		(
 			>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
 		)
+		=net-libs/google-cloud-cpp-2.9*
 		>=dev-libs/flatbuffers-23.1.21:=
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]
@@ -532,14 +526,11 @@ RDEPEND="
 
 		>=dev-python/opt-einsum-2.3.2[${PYTHON_USEDEP}]
 		|| (
-			=dev-python/grpcio-1.49*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.55*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.56*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.57*:=[${PYTHON_USEDEP}]
 		)
 		>=dev-python/six-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
@@ -620,24 +611,18 @@ BDEPEND="
 	)
 	python? (
 		|| (
-			=dev-python/grpcio-1.49*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.55*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.56*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.57*:=[${PYTHON_USEDEP}]
 		)
 		|| (
-			=dev-python/grpcio-tools-1.49*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.50*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.51*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.52*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-tools-1.53*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-tools-1.54*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-tools-1.55*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-tools-1.56*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-tools-1.57*:=[${PYTHON_USEDEP}]
 		)
 		>=dev-python/cython-3.0.0_alpha11[${PYTHON_USEDEP}]
 		dev-python/mock[${PYTHON_USEDEP}]

@@ -453,10 +453,6 @@ RDEPEND="
 		=net-libs/grpc-1.50*:=
 		=net-libs/grpc-1.51*:=
 		=net-libs/grpc-1.52*:=
-		=net-libs/grpc-1.53*:=
-		=net-libs/grpc-1.54*:=
-		=net-libs/grpc-1.55*:=
-		=net-libs/grpc-1.56*:=
 	)
 	>=dev-cpp/abseil-cpp-20220623.0:0/20220623
 	>=dev-db/lmdb-0.9.29
@@ -486,10 +482,6 @@ RDEPEND="
 		')
 		${PYTHON_DEPS}
 		(
-			>=net-libs/google-cloud-cpp-1.17.1
-			<net-libs/google-cloud-cpp-2.6.0
-		)
-		(
 			>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
 			<dev-python/numpy-1.24[${PYTHON_USEDEP}]
 		)
@@ -510,6 +502,7 @@ RDEPEND="
 			>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
 			<dev-python/wrapt-1.15[${PYTHON_USEDEP}]
 		)
+		=net-libs/google-cloud-cpp-2.2*
 		>=dev-libs/flatbuffers-2.0.6:=
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]
@@ -526,10 +519,6 @@ RDEPEND="
 			=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.55*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.56*:=[${PYTHON_USEDEP}]
 		)
 		>=dev-python/six-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
@@ -614,20 +603,12 @@ BDEPEND="
 			=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.55*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.56*:=[${PYTHON_USEDEP}]
 		)
 		|| (
 			=dev-python/grpcio-tools-1.49*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-tools-1.50*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-tools-1.51*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-tools-1.52*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.53*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.54*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.55*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.56*:=[${PYTHON_USEDEP}]
 		)
 		>=dev-python/cython-3.0.0_alpha11[${PYTHON_USEDEP}]
 		dev-python/mock[${PYTHON_USEDEP}]

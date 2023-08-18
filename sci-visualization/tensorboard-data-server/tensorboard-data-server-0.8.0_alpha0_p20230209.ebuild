@@ -275,6 +275,11 @@ RDEPEND="
 			=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.55*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.56*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.57*:=[${PYTHON_USEDEP}]
 		)
 	')
 "
@@ -297,6 +302,11 @@ BDEPEND="
 				=dev-python/grpcio-testing-1.50*:=[${PYTHON_USEDEP}]
 				=dev-python/grpcio-testing-1.51*:=[${PYTHON_USEDEP}]
 				=dev-python/grpcio-testing-1.52*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.53*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.54*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.55*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.56*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.57*:=[${PYTHON_USEDEP}]
 			)
 		)
 	')
