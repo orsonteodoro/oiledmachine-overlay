@@ -626,7 +626,7 @@ PATCHES=(
 )
 
 check_cython() {
-	local actual_cython_pv=$(cython --version 2>&1 \
+	local actual_cython_pv=$(cython --version \
 		| cut -f 3 -d " " \
 		| sed -e "s|a|_alpha|g" \
 		| sed -e "s|b|_beta|g" \
