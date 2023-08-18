@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_10 )
+PYTHON_COMPAT=( python3_{10..11} ) # Upstream only lists up to 3.10
 MY_PN="estimator"
 MY_PV="${PV}"
 MY_P="${MY_PN}-${MY_PV}"

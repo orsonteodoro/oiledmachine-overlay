@@ -567,7 +567,7 @@ PDEPEND="
 	python? (
 		!arm64? (
 			!kernel_Darwin? (
-				>=dev-python/tensorflow-io-0.23.1[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
+				=dev-python/tensorflow-io-0.33*[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
 			)
 		)
 		=sci-libs/keras-${DEP_VER}*[${PYTHON_USEDEP}]

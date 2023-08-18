@@ -22,9 +22,9 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc tensorflow-io-gcs-filesystem test"
 #IUSE+=" doc tensorflow-io-gcs-filesystem test"
-# See https://github.com/tensorflow/io/blob/v0.32.0/README.md#tensorflow-version-compatibility
+# See https://github.com/tensorflow/io/blob/v0.33.0/README.md#tensorflow-version-compatibility
 DEPEND+="
-	=sci-libs/tensorflow-2.12*[${PYTHON_USEDEP}]
+	=sci-libs/tensorflow-2.13*[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${DEPEND}
