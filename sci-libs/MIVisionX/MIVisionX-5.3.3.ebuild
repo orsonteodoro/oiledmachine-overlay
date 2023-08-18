@@ -132,6 +132,9 @@ src_prepare() {
 		$(grep -l -r -e "half/half.hpp" "${S}") \
 		|| die
 	IFS=$' \t\n'
+	sed -i -e "s|Python3 REQUIRED|Python3 ${EPYTHON/python/} EXACT REQUIRED|g" \
+		"rocAL/rocAL_pybind/CMakeLists.txt" \
+		|| die
 }
 
 src_configure() {

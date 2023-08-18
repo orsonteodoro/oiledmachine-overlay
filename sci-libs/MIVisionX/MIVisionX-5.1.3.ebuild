@@ -119,6 +119,9 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
+	sed -i -e "s|Python3 REQUIRED|Python3 ${EPYTHON/python/} EXACT REQUIRED|g" \
+		"rocAL/rocAL_pybind/CMakeLists.txt" \
+		|| die
 }
 
 src_configure() {
