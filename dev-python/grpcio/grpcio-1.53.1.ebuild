@@ -60,7 +60,8 @@ check_cython() {
 	local actual_cython_pv=$(cython --version 2>&1 \
 		| cut -f 3 -d " " \
 		| sed -e "s|a|_alpha|g" \
-		| sed -e "s|b|_beta|g")
+		| sed -e "s|b|_beta|g" \
+		| sed -e "s|rc|_rc|g")
 	local expected_cython_pv="<3.0"
 	local required_cython_major=$(ver_cut 1 ${expected_cython_pv})
 	if ver_test ${actual_cython_pv} -ge 3.0 ; then
