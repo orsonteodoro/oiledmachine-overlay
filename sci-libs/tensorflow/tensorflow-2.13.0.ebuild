@@ -22,7 +22,7 @@ AMDGPU_TARGETS_COMPAT=(
         gfx1030
 )
 DISTUTILS_OPTIONAL=1
-CHECKREQS_MEMORY="10G" # Gold uses above 9.0 GiB
+CHECKREQS_MEMORY="11G" # Linking goes above 10 GiB
 CHECKREQS_DISK_BUILD="19G"
 CHECKREQS_DISK_USR="5G"
 CUDA_TARGETS_COMPAT=(
@@ -788,12 +788,6 @@ eerror
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
 	LLVM_MAX_SLOT=${s}
-	if use rocm ; then
-		has_version "dev-util/hip:0/5.3" && LLVM_MAX_SLOT=15
-		has_version "dev-util/hip:0/5.4" && LLVM_MAX_SLOT=15
-		has_version "dev-util/hip:0/5.5" && LLVM_MAX_SLOT=16
-		has_version "dev-util/hip:0/5.6" && LLVM_MAX_SLOT=16
-	fi
 	llvm_pkg_setup
 	${CC} --version || die
 	strip-unsupported-flags
@@ -828,7 +822,16 @@ einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
 	if use rocm ; then
+ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 		use_gcc
+
+		# Build with GCC but initialize LLVM_SLOT.
+		has_version "dev-util/hip:0/5.3" && LLVM_MAX_SLOT=15
+		has_version "dev-util/hip:0/5.4" && LLVM_MAX_SLOT=15
+		has_version "dev-util/hip:0/5.5" && LLVM_MAX_SLOT=16
+		has_version "dev-util/hip:0/5.6" && LLVM_MAX_SLOT=16
+		llvm_pkg_setup
+		export LLVM_SLOT
 	elif tc-is-clang || use clang ; then
 		use_clang
 	elif tc-is-gcc ; then
@@ -889,7 +892,17 @@ setup_linker() {
 		lld_pv=$(ld.lld --version \
 			| awk '{print $2}')
 	fi
-	if is-flagq '-fuse-ld=mold' \
+	if use rocm ; then
+# Error with USE="rocm" and -fuse-ld=mold:
+# mold: error: undefined symbol: absl::lts_20220623::Mutex::Lock()
+# >>> referenced by debug_service.grpc.pb.cc
+# >>>               bazel-out/k8-opt/bin/tensorflow/core/debug/_objs/debug_service_cc_grpc_proto/debug_service.grpc.pb.pic.o:(absl::lts_20220623::MutexLock::MutexLock(absl::lts_20220623::Mutex*))
+einfo "Using LLD"
+		ld.lld --version || die
+		filter-flags '-fuse-ld=*'
+		append-ldflags -fuse-ld=lld
+		BUILD_LDFLAGS+=" -fuse-ld=lld"
+	elif is-flagq '-fuse-ld=mold' \
 		&& test-flag-CCLD '-fuse-ld=mold' \
 		&& has_version "sys-devel/mold" ; then
 		# Explicit -fuse-ld=mold because of license of the linker.
@@ -989,8 +1002,10 @@ EOF
 src_prepare() {
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 
-	# Prevent build order problems
-	export MAKEOPTS="-j1"
+ewarn
+ewarn "If build failure, use MAKEOPTS=\"-j1\"."
+ewarn "Expect memory use 6-11 GiB per process."
+ewarn
 
 	append-flags $(get-cpu-flags)
 	append-cxxflags -std=c++17
@@ -1053,17 +1068,6 @@ einfo "Preventing stall.  Removing -Os."
 	# Prefixify hard-coded command locations
 	hprefixify -w /host_compiler_prefix/ third_party/gpus/cuda_configure.bzl
 
-	if use rocm ; then
-ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
-		# Build with GCC but initialize LLVM_SLOT.
-		has_version "dev-util/hip:0/5.3" && LLVM_MAX_SLOT=15
-		has_version "dev-util/hip:0/5.4" && LLVM_MAX_SLOT=15
-		has_version "dev-util/hip:0/5.5" && LLVM_MAX_SLOT=16
-		has_version "dev-util/hip:0/5.6" && LLVM_MAX_SLOT=16
-	fi
-	llvm_pkg_setup
-	export LLVM_SLOT
-
 	sed -i -e "s|@TENSORFLOW_PV@|${PV}|g" \
 		"${S}/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl" \
 		|| die
@@ -1081,6 +1085,12 @@ ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 		|| die
 
 	gen_gcc_ar
+
+	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
+		sed -i -e "s|LLVM_CCACHE_BUILD OFF|LLVM_CCACHE_BUILD ON|g" \
+			"${S}/tensorflow/compiler/xla/mlir_hlo/CMakeLists.txt" \
+			|| die
+	fi
 
 	default
 	use python && python_copy_sources
@@ -1179,7 +1189,6 @@ einfo "  /opt/cuda/extras/demo_suite/deviceQuery | grep 'CUDA Capability'"
 einfo
 		fi
 		if use rocm ; then
-ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 			# Build with GCC but initialize LLVM_SLOT.
 			export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags \
 				| tr ";" ",")

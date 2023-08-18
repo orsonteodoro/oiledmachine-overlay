@@ -349,7 +349,13 @@ setup_linker() {
 		lld_pv=$(ld.lld --version \
 			| awk '{print $2}')
 	fi
-	if is-flagq '-fuse-ld=mold' \
+	if use rocm ; then
+einfo "Using LLD"
+		ld.lld --version || die
+		filter-flags '-fuse-ld=*'
+		append-ldflags -fuse-ld=lld
+		BUILD_LDFLAGS+=" -fuse-ld=lld"
+	elif is-flagq '-fuse-ld=mold' \
 		&& test-flag-CCLD '-fuse-ld=mold' \
 		&& has_version "sys-devel/mold" ; then
 		# Explicit -fuse-ld=mold because of license of the linker.
@@ -568,7 +574,17 @@ einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 einfo "PATH:\t${PATH}"
 	if use rocm ; then
+ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 		use_gcc
+
+		# Build with GCC but initialize LLVM_SLOT.
+		has_version "dev-util/hip:0/5.3" && LLVM_MAX_SLOT=15
+		has_version "dev-util/hip:0/5.4" && LLVM_MAX_SLOT=15
+		has_version "dev-util/hip:0/5.5" && LLVM_MAX_SLOT=16
+		has_version "dev-util/hip:0/5.6" && LLVM_MAX_SLOT=16
+
+		llvm_pkg_setup
+		export LLVM_SLOT
 	elif tc-is-clang || use clang ; then
 		use_clang
 	elif tc-is-gcc ; then
@@ -605,17 +621,6 @@ eerror
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 
 #	check_network_sandbox_permissions
-
-	if use rocm ; then
-ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
-		# Build with GCC but initialize LLVM_SLOT.
-		has_version "dev-util/hip:0/5.3" && LLVM_MAX_SLOT=15
-		has_version "dev-util/hip:0/5.4" && LLVM_MAX_SLOT=15
-		has_version "dev-util/hip:0/5.5" && LLVM_MAX_SLOT=16
-		has_version "dev-util/hip:0/5.6" && LLVM_MAX_SLOT=16
-	fi
-	llvm_pkg_setup
-	export LLVM_SLOT
 }
 
 src_unpack() {
@@ -701,6 +706,11 @@ EOF
 }
 
 python_prepare_all() {
+ewarn
+ewarn "If build failure, use MAKEOPTS=\"-j1\"."
+ewarn "Expect memory use 6-11 GiB per process."
+ewarn
+
 	cd "${WORKDIR}/xla-${EGIT_XLA_COMMIT}" || die
 	eapply -p1 "${FILESDIR}/xla/"*
 
@@ -745,6 +755,12 @@ python_prepare_all() {
 		|| die
 
 	gen_gcc_ar
+
+	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
+		sed -i -e "s|LLVM_CCACHE_BUILD OFF|LLVM_CCACHE_BUILD ON|g" \
+			"xla/mlir_hlo/CMakeLists.txt" \
+			|| die
+	fi
 }
 
 src_prepare() {
