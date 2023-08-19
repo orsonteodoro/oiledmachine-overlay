@@ -1,0 +1,11 @@
+diff -urp hipBLASLt-rocm-5.6.0.orig/CMakeLists.txt hipBLASLt-rocm-5.6.0/CMakeLists.txt
+--- hipBLASLt-rocm-5.6.0.orig/CMakeLists.txt	2023-05-28 21:19:48.000000000 -0700
++++ hipBLASLt-rocm-5.6.0/CMakeLists.txt	2023-08-18 19:01:35.267386607 -0700
+@@ -210,6 +210,7 @@ else()
+     endif()
+     message(STATUS "Adding ${VIRTUALENV_HOME_DIR} to CMAKE_PREFIX_PATH")
+     list(APPEND CMAKE_PREFIX_PATH ${VIRTUALENV_HOME_DIR})
++    cmake_policy(SET CMP0074 NEW)
+     if (TENSILE_VERSION)
+       find_package(Tensile ${TENSILE_VERSION} EXACT REQUIRED HIP LLVM OpenMP PATHS "${INSTALLED_TENSILE_PATH}")
+     else()

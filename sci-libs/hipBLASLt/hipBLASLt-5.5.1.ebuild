@@ -17,9 +17,11 @@ CUDA_TARGETS_COMPAT=(
         compute_70
         compute_75
 )
+CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=16
+PYTHON_COMPAT=( python3_{10..11} )
 
-inherit cmake flag-o-matic llvm rocm
+inherit cmake flag-o-matic llvm python-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/hipBLASLt/"
@@ -98,14 +100,44 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
+	dev-python/msgpack[${PYTHON_USEDEP}]
+	dev-python/pyyaml[${PYTHON_USEDEP}]
 "
 BDEPEND="
 	>=dev-util/cmake-3.16.8
+	dev-python/pip[${PYTHON_USEDEP}]
+	dev-python/virtualenv[${PYTHON_USEDEP}]
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 "
 RESTRICT="test"
 PATCHES=(
+	"${FILESDIR}/hipBLASLt-5.6.0-set-CMP0074-NEW.patch"
+	"${FILESDIR}/hipBLASLt-5.6.0-change-Tensile-paths.patch"
 )
+
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	python_setup
+}
+
+src_prepare() {
+	cmake_src_prepare
+	sed \
+		-i \
+		-e "/install_requires=/d" \
+		"${S}/tensilelite/setup.py" \
+		|| die
+	sed \
+		-i \
+		-e "s|msgpack REQUIRED|msgpackc REQUIRED|g" \
+		"${S}/tensilelite/Tensile/Source/lib/CMakeLists.txt" \
+		|| die
+	sed \
+		-i \
+		-e "s|hipblas 0.50.0|hipblas|g" \
+		"${S}/CMakeLists.txt" \
+		|| die
+}
 
 src_configure() {
 	addpredict /dev/random
@@ -115,7 +147,11 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
+		-DTensile_CODE_OBJECT_VERSION="default"
+		-DTensile_ROOT="${ESYSROOT}/usr"
 		-DUSE_CUDA=$(usex cuda ON OFF)
+#		-DVIRTUALENV_BIN_DIR="${BUILD_DIR}/venv/bin"
+#		-DVIRTUALENV_PYTHON_EXENAME="${EPYTHON}"
 	)
 
 	if use cuda ; then
@@ -147,8 +183,20 @@ src_configure() {
 			-DHIP_RUNTIME="rocclr"
 		)
 	fi
+
+#	virtualenv "${BUILD_DIR}/venv" || die
+#	source "${BUILD_DIR}/venv/bin/activate" || die
+
+	export PYTHONPATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/:${PYTHONPATH}"
+
+	export VERBOSE=1
 	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
+#	deactivate || die
+}
+
+src_compile() {
+	cmake_src_compile || die
 }
 
 src_test() {

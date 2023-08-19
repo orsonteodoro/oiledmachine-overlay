@@ -1,0 +1,25 @@
+diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/cmake/TensileConfig.cmake hipBLASLt-rocm-5.6.0/tensilelite/Tensile/cmake/TensileConfig.cmake
+--- hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/cmake/TensileConfig.cmake	2023-05-28 21:19:48.000000000 -0700
++++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/cmake/TensileConfig.cmake	2023-08-18 20:10:57.043489863 -0700
+@@ -35,8 +35,8 @@ if(NOT DEFINED Tensile_ROOT)
+         execute_process(COMMAND "${Tensile_PREFIX}/bin/TensileGetPath" OUTPUT_VARIABLE Tensile_ROOT)
+     endif()
+ endif()
+-list(APPEND CMAKE_MODULE_PATH "${Tensile_ROOT}/Source/cmake/")
+-list(APPEND CMAKE_MODULE_PATH "${Tensile_ROOT}/Source/")
++list(APPEND CMAKE_MODULE_PATH "${Tensile_ROOT}/share/Tensile/Source/cmake/")
++list(APPEND CMAKE_MODULE_PATH "${Tensile_ROOT}/share/Tensile/Source/")
+ 
+ if("HIP" IN_LIST Tensile_FIND_COMPONENTS)
+     set(TENSILE_USE_HIP ON CACHE BOOL "Use HIP")
+@@ -69,8 +69,8 @@ else()
+     set(TENSILE_STATIC_ONLY OFF CACHE BOOL "Disable exporting symbols from shared library.")
+ endif()
+ 
+-add_subdirectory("${Tensile_ROOT}/Source" "Tensile")
+-include("${Tensile_ROOT}/Source/TensileCreateLibrary.cmake")
++add_subdirectory("${Tensile_ROOT}/share/Tensile/Source" "Tensile")
++include("${Tensile_ROOT}/share/Tensile/Source/TensileCreateLibrary.cmake")
+ 
+ # Output target: ${Tensile_VAR_PREFIX}_LIBRARY_TARGET. Ensures that the libs get built in Tensile_OUTPUT_PATH/library.
+ function(TensileCreateLibraryFiles
