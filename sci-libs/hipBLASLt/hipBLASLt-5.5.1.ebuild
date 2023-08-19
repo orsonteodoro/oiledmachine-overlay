@@ -174,7 +174,7 @@ ewarn
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
-#		-DTensile_CODE_OBJECT_VERSION="default"
+		-DTensile_CODE_OBJECT_VERSION="V3" # Avoid V2 build error with with xnack-
 		-DTensile_CPU_THREADS="${nprocs}"
 #		-DTensile_ROOT="${ESYSROOT}/usr"
 		-DTensile_ROOT="${S}/tensilelite"
