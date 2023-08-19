@@ -46,10 +46,16 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-nostrip.patch"
 	"${FILESDIR}/${PN}-5.0.2-gentoo-location.patch"
 	"${FILESDIR}/${PN}-5.1.3-remove-Werror.patch"
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 python_check_deps() {
 	python_has_version "dev-python/CppHeaderParser[${PYTHON_USEDEP}]"
+}
+
+pkg_setup() {
+	llvm_pkg_setup
+	python-any-r1_pkg_setup
 }
 
 src_prepare() {
@@ -63,6 +69,18 @@ src_prepare() {
 		-i \
 		CMakeLists.txt \
 		|| die
+
+	sed \
+		-i \
+		-e "s|@EPREFIX@|${EPREFIX}|g" \
+		"bin/build_kernel.sh" \
+		|| die
+	sed \
+		-i \
+		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
+		"bin/build_kernel.sh" \
+		|| die
+
 	cmake_src_prepare
 
 	if ! use aqlprofile ; then

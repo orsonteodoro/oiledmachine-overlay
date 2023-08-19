@@ -1,0 +1,34 @@
+diff -urp rocprofiler-rocm-5.6.0.orig/bin/build_kernel.sh rocprofiler-rocm-5.6.0/bin/build_kernel.sh
+--- rocprofiler-rocm-5.6.0.orig/bin/build_kernel.sh	2023-06-20 08:14:39.000000000 -0700
++++ rocprofiler-rocm-5.6.0/bin/build_kernel.sh	2023-08-19 01:53:59.644000534 -0700
+@@ -18,7 +18,7 @@ if [ -z "$DST_DIR" ] ; then
+ fi
+ 
+ if [ -z "$ROCM_DIR" ] ; then
+-  ROCM_DIR=/opt/rocm
++  ROCM_DIR=@EPREFIX@/usr
+ fi
+ 
+ if [ -z "$TGT_LIST" ] ; then
+@@ -32,8 +32,8 @@ fi
+ 
+ OCL_VER="2.0"
+ 
+-if [ -e $ROCM_DIR/llvm ] ; then
+-  LLVM_DIR=$ROCM_DIR/llvm
++if [ -e $ROCM_DIR/lib/llvm/@LLVM_SLOT@ ] ; then
++  LLVM_DIR=$ROCM_DIR/lib/llvm/@LLVM_SLOT@
+   LIB_DIR=$ROCM_DIR/lib
+ else
+   LLVM_DIR=$ROCM_DIR/hcc
+@@ -45,8 +45,8 @@ if [ -e $LIB_DIR/bitcode/opencl.amdgcn.b
+   BC_DIR=$LIB_DIR/bitcode
+ elif [ -e $LIB_DIR/opencl.amdgcn.bc ]; then
+   BC_DIR=$LIB_DIR
+-elif [ -e $ROCM_DIR/amdgcn/bitcode/opencl.bc ]; then
+-  BC_DIR=$ROCM_DIR/amdgcn/bitcode
++elif [ -e $ROCM_DIR/lib/amdgcn/bitcode/opencl.bc ]; then
++  BC_DIR=$ROCM_DIR/lib/amdgcn/bitcode
+ else
+   echo "Error: Cannot find amdgcn bitcode directory"
+   exit 1

@@ -51,6 +51,7 @@ S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-gentoo-location.patch"
 	"${FILESDIR}/${PN}-5.6.0-toggle-aqlprofile.patch"
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 python_check_deps() {
@@ -103,6 +104,17 @@ ewarn
 		-i \
 		-e "s|-O2|-O2 --rocm-device-lib-path=${ESYSROOT}/usr/lib/amdgcn/bitcode|" \
 		tests/featuretests/profiler/CMakeLists.txt \
+		|| die
+
+	sed \
+		-i \
+		-e "s|@EPREFIX@|${EPREFIX}|g" \
+		"bin/build_kernel.sh" \
+		|| die
+	sed \
+		-i \
+		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
+		"bin/build_kernel.sh" \
 		|| die
 }
 

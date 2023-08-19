@@ -50,10 +50,16 @@ S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.5.1-gentoo-location.patch"
 	"${FILESDIR}/${PN}-5.5.1-toggle-aqlprofile.patch"
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 python_check_deps() {
 	python_has_version "dev-python/CppHeaderParser[${PYTHON_USEDEP}]"
+}
+
+pkg_setup() {
+	llvm_pkg_setup
+	python-any-r1_pkg_setup
 }
 
 src_prepare() {
@@ -95,6 +101,17 @@ ewarn
 	sed \
 		-e "s|-O2|-O2 --rocm-device-lib-path=${ESYSROOT}/usr/lib/amdgcn/bitcode|" \
 		tests/featuretests/profiler/CMakeLists.txt \
+		|| die
+
+	sed \
+		-i \
+		-e "s|@EPREFIX@|${EPREFIX}|g" \
+		"bin/build_kernel.sh" \
+		|| die
+	sed \
+		-i \
+		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
+		"bin/build_kernel.sh" \
 		|| die
 }
 
