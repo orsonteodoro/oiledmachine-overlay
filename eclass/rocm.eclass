@@ -238,7 +238,7 @@ get_amdgpu_flags() {
 			gpu_target="${gpu_target_base}:xnack+"
 		fi
 		if [[ "${AMDGPU_TARGETS_COMPAT[@]}" =~ "${gpu_target_base}_xnack" ]] \
-			&& ! [[ "${gpu_target_base}" =~ "_xnack" ]] ; then
+			&& [[ "${gpu_target}" == "${gpu_target_base}" ]] ; then
 			# Placeholder
 			continue
 		fi
