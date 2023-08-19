@@ -160,6 +160,14 @@ src_prepare() {
 	eapply "${FILESDIR}/0002-SWDEV-355608-Remove-clang-include-path-2996.patch"
 	eapply "${FILESDIR}/0003-SWDEV-352878-Removed-relative-path-based-CLANG-inclu.patch"
 	eapply "${FILESDIR}/${PN}-5.4.3-fix-HIP_CLANG_PATH-detection.patch"
+	eapply "${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+
+	sed \
+		-i \
+		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
+		cmake/FindHIP.cmake \
+		|| die
+
 	# Setting HSA_PATH to "/usr" results in setting "-isystem /usr/include"
 	# which makes "stdlib.h" not found when using "#include_next" in header files;
 	sed \

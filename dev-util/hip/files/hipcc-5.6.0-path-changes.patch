@@ -1,0 +1,36 @@
+diff -urp HIPCC-rocm-5.6.0.orig/bin/hipvars.pm HIPCC-rocm-5.6.0/bin/hipvars.pm
+--- HIPCC-rocm-5.6.0.orig/bin/hipvars.pm	2023-08-19 02:39:36.652068441 -0700
++++ HIPCC-rocm-5.6.0/bin/hipvars.pm	2023-08-19 02:38:51.468067320 -0700
+@@ -110,9 +110,9 @@ $HIP_RUNTIME = $ENV{'HIP_RUNTIME'} // $h
+ # If using ROCclr runtime, need to find HIP_ROCCLR_HOME
+ if (defined $HIP_RUNTIME and $HIP_RUNTIME eq "rocclr" and !defined $HIP_ROCCLR_HOME) {
+     my $hipvars_dir = dirname(Cwd::abs_path($0));
+-    if (-e "$hipvars_dir/../lib/bitcode") {
++    if (-e "$hipvars_dir/../lib/amdgcn/bitcode") {
+         $HIP_ROCCLR_HOME = Cwd::abs_path($hipvars_dir . "/.."); #FILE_REORG Backward compatibility
+-    } elsif (-e "$hipvars_dir/lib/bitcode") {
++    } elsif (-e "$hipvars_dir/lib/amdgcn/bitcode") {
+         $HIP_ROCCLR_HOME = Cwd::abs_path($hipvars_dir);
+     } else {
+         $HIP_ROCCLR_HOME = $HIP_PATH; # use HIP_PATH
+diff -urp HIPCC-rocm-5.6.0.orig/src/hipBin_amd.h HIPCC-rocm-5.6.0/src/hipBin_amd.h
+--- HIPCC-rocm-5.6.0.orig/src/hipBin_amd.h	2023-08-19 02:40:34.812069884 -0700
++++ HIPCC-rocm-5.6.0/src/hipBin_amd.h	2023-08-19 02:39:17.020067954 -0700
+@@ -94,7 +94,7 @@ void HipBinAmd::constructRocclrHomePath(
+   fs::path bitcode = hipvars_dir;
+   string rocclrHomePath = getEnvVariables().hipRocclrPathEnv_;
+   if (rocclrHomePath.empty()) {
+-    bitcode /= "../lib/bitcode";
++    bitcode /= "../lib/amdgcn/bitcode";
+     if (!fs::exists(bitcode)) {
+       rocclrHomePath = getHipPath();
+     } else {
+@@ -229,7 +229,7 @@ void HipBinAmd::constructCompilerPath()
+     } else {
+       complierPath = getRoccmPath();
+       hipClangPath = complierPath;
+-      hipClangPath /= "llvm/bin";
++      hipClangPath /= "lib/llvm/@LLVM_SLOT@/bin";
+     }
+     complierPath = hipClangPath.string();
+   } else {

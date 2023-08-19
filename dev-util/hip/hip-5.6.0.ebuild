@@ -159,6 +159,13 @@ src_prepare() {
 	eapply "${FILESDIR}/hipcc-5.6.0-rocm-path.patch"
 	eapply "${FILESDIR}/hipcc-5.6.0-fno-stack-protector.patch"
 	eapply "${FILESDIR}/hipcc-5.6.0-fix-version.patch"
+	eapply "${FILESDIR}/hipcc-5.6.0-path-changes.patch"
+
+	sed \
+		-i \
+		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
+		src/hipBin_amd.h \
+		|| die
 
 	# Setting HSA_PATH to "/usr" results in setting "-isystem /usr/include"
 	# which makes "stdlib.h" not found when using "#include_next" in header files;
@@ -179,7 +186,13 @@ src_prepare() {
 #	eapply "${FILESDIR}/${PN}-5.4.3-clang-include.patch"
 #	eapply "${FILESDIR}/0003-SWDEV-352878-Removed-relative-path-based-CLANG-inclu.patch"
 	eapply "${FILESDIR}/${PN}-5.4.3-fix-HIP_CLANG_PATH-detection.patch"
+	eapply "${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 
+	sed \
+		-i \
+		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
+		cmake/FindHIP.cmake \
+		|| die
 
 	# Changed --hip-device-lib-path to "/usr/lib/amdgcn/bitcode".
 	# It must align with "dev-libs/rocm-device-libs".

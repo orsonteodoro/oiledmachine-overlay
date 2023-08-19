@@ -1,0 +1,65 @@
+diff -urp HIP-rocm-5.6.0.orig/cmake/FindHIP.cmake HIP-rocm-5.6.0/cmake/FindHIP.cmake
+--- HIP-rocm-5.6.0.orig/cmake/FindHIP.cmake	2023-08-19 02:23:48.112044907 -0700
++++ HIP-rocm-5.6.0/cmake/FindHIP.cmake	2023-08-19 02:43:03.980073585 -0700
+@@ -260,22 +260,22 @@ elseif("${HIP_COMPILER}" STREQUAL "clang
+         if(DEFINED ENV{HIP_CLANG_PATH})
+             set(HIP_CLANG_PATH $ENV{HIP_CLANG_PATH})
+         elseif(DEFINED ENV{ROCM_PATH})
+-            set(HIP_CLANG_PATH "$ENV{ROCM_PATH}/llvm/bin")
++            set(HIP_CLANG_PATH "$ENV{ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+         elseif(DEFINED ENV{HIP_PATH})
+-            if(EXISTS "$ENV{HIP_PATH}/llvm/bin") #File Reorg backward compatibility
+-                set(HIP_CLANG_PATH "$ENV{HIP_PATH}/llvm/bin")
++            if(EXISTS "$ENV{HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin") #File Reorg backward compatibility
++                set(HIP_CLANG_PATH "$ENV{HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+             else()
+-                set(HIP_CLANG_PATH "$ENV{HIP_PATH}/../llvm/bin")
++                set(HIP_CLANG_PATH "$ENV{HIP_PATH}/../lib/llvm/@LLVM_SLOT@/bin")
+             endif()
+         elseif(DEFINED HIP_PATH)
+-            if(EXISTS "${HIP_PATH}/llvm/bin") #File Reorg backward compatibility
+-                set(HIP_CLANG_PATH "${HIP_PATH}/llvm/bin")
++            if(EXISTS "${HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin") #File Reorg backward compatibility
++                set(HIP_CLANG_PATH "${HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+             else()
+-                set(HIP_CLANG_PATH "${HIP_PATH}/../llvm/bin")
++                set(HIP_CLANG_PATH "${HIP_PATH}/../lib/llvm/@LLVM_SLOT@/bin")
+             endif()
+         # Handle the case where ROCM_PATH is defined and not set in ENV
+         elseif(DEFINED ROCM_PATH)
+-            set(HIP_CLANG_PATH "${ROCM_PATH}/llvm/bin")
++            set(HIP_CLANG_PATH "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+         else()
+             message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env ")
+         endif()
+@@ -696,22 +696,22 @@ macro(HIP_ADD_EXECUTABLE hip_target)
+             if(DEFINED ENV{HIP_CLANG_PATH})
+                 set(HIP_CLANG_PATH $ENV{HIP_CLANG_PATH})
+             elseif(DEFINED ENV{ROCM_PATH})
+-                set(HIP_CLANG_PATH "$ENV{ROCM_PATH}/llvm/bin")
++                set(HIP_CLANG_PATH "$ENV{ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+             elseif(DEFINED ENV{HIP_PATH})
+-                if(EXISTS "$ENV{HIP_PATH}/llvm/bin") #file reorg backward compatibility
+-                    set(HIP_CLANG_PATH "$ENV{HIP_PATH}/llvm/bin")
++                if(EXISTS "$ENV{HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin") #file reorg backward compatibility
++                    set(HIP_CLANG_PATH "$ENV{HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+                 else()
+-                    set(HIP_CLANG_PATH "$ENV{HIP_PATH}/../llvm/bin")
++                    set(HIP_CLANG_PATH "$ENV{HIP_PATH}/../lib/llvm/@LLVM_SLOT@/bin")
+                 endif()
+             elseif(DEFINED HIP_PATH)
+-                if(EXISTS "${HIP_PATH}/llvm/bin") #file reorg backward compatibility
+-                    set(HIP_CLANG_PATH "${HIP_PATH}/llvm/bin")
++                if(EXISTS "${HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin") #file reorg backward compatibility
++                    set(HIP_CLANG_PATH "${HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+                 else()
+-                    set(HIP_CLANG_PATH "${HIP_PATH}/../llvm/bin")
++                    set(HIP_CLANG_PATH "${HIP_PATH}/../lib/llvm/@LLVM_SLOT@/bin")
+                 endif()
+             # Handle  the case where ROCM_PATH is defined and not set in ENV
+             elseif(DEFINED ROCM_PATH)
+-                set(HIP_CLANG_PATH "${ROCM_PATH}/llvm/bin")
++                set(HIP_CLANG_PATH "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+             else()
+                 message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env")
+             endif()
