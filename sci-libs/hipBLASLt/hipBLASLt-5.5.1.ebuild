@@ -148,7 +148,8 @@ src_configure() {
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DTensile_CODE_OBJECT_VERSION="default"
-		-DTensile_ROOT="${ESYSROOT}/usr"
+#		-DTensile_ROOT="${ESYSROOT}/usr"
+		-DTensile_ROOT="${S}/tensilelite"
 		-DUSE_CUDA=$(usex cuda ON OFF)
 #		-DVIRTUALENV_BIN_DIR="${BUILD_DIR}/venv/bin"
 #		-DVIRTUALENV_PYTHON_EXENAME="${EPYTHON}"
