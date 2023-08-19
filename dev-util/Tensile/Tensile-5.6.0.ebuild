@@ -194,7 +194,6 @@ eerror
 			-DTENSILE_USE_LLVM=ON
 			-DTENSILE_USE_MSGPACK=ON
 			-DTENSILE_USE_OPENMP=$(usex openmp ON OFF)
-			-DTENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${}"
 			-DTensile_LIBRARY_FORMAT="msgpack"
 		)
 		CXX="hipcc" \
