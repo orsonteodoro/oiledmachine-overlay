@@ -8,7 +8,7 @@ https://github.com/ROCmSoftwarePlatform/hipfort/archive/refs/tags/rocm-${PV}.tar
 	-> ${P}.tar.gz
 "
 
-inherit cmake
+inherit cmake llvm
 
 DESCRIPTION="Fortran interfaces for ROCm libraries"
 HOMEPAGE="
@@ -18,7 +18,7 @@ https://github.com/ROCmSoftwarePlatform/hipfort
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="debug"
+IUSE="debug r1"
 RDEPEND="
 	|| (
 		>=sys-devel/gcc-7.5.0[fortran]
@@ -37,12 +37,29 @@ RESTRICT="test"
 S="${WORKDIR}/${PN}-rocm-${PV}"
 DOCS=( README.md )
 CMAKE_BUILD_TYPE="RELEASE"
+PATCHES=(
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+)
+
+pkg_setup() {
+	llvm_pkg_setup
+}
 
 src_prepare() {
 	sed \
 		-e "s:ADD_SUBDIRECTORY(\${CMAKE_SOURCE_DIR}/test):#ADD_SUBDIRECTORY(\${CMAKE_SOURCE_DIR}/test):" \
 		-i \
 		"${S}/CMakeLists.txt" \
+		|| die
+	sed \
+		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
+		-i \
+		"bin/hipfc" \
+		|| die
+	sed \
+		-e "s|@EPREFIX@|${EPREFIX}|g" \
+		-i \
+		"bin/hipfc" \
 		|| die
 	cmake_src_prepare
 }

@@ -1,0 +1,80 @@
+diff -urp hipfort-rocm-5.1.3.orig/bin/hipfc hipfort-rocm-5.1.3/bin/hipfc
+--- hipfort-rocm-5.1.3.orig/bin/hipfc	2023-08-19 02:13:33.812029666 -0700
++++ hipfort-rocm-5.1.3/bin/hipfc	2023-08-19 02:16:33.676034128 -0700
+@@ -61,8 +61,8 @@ function usage(){
+    Options with values:       Defaults  
+     -hipfort-compiler <bin>   $HIPFORT_COMPILER or gfortran
+     -hipfort          <path>  $HIPFORT   or _HIPFORT_INSTALL_DIR_
+-    -cuda-path         <path> $CUDA_PATH or /usr/local/cuda
+-    -rocm-path         <path>  $ROCM_PATH  or /opt/rocm
++    -cuda-path         <path> $CUDA_PATH or /opt/cuda
++    -rocm-path         <path>  $ROCM_PATH  or /usr
+     -I         <include dir>  Provide one directory per -I option
+     -O         <LLVM opt>     LLVM optimization level
+     -o         <outfilename>  Default=a.out
+@@ -150,12 +150,12 @@ function getdname(){
+ 
+ function addrocmlib(){
+   name=$1
+-  if [ ! -d $ROCM_PATH/$name/lib ] ; then 
+-     echo "ERROR:  Directory $ROCM_PATH/$name/lib does not exist"
++  if [ ! -d $ROCM_PATH/lib64 ] ; then 
++     echo "ERROR:  Directory $ROCM_PATH/lib64 does not exist"
+      echo "        Please install $name"
+      exit $DEADRC
+   fi
+-  LINKOPTS="$LINKOPTS -L$ROCM_PATH/$name/lib -l$name"
++  LINKOPTS="$LINKOPTS -L$ROCM_PATH/lib64 -l$name"
+ }
+ 
+ function addcudalib(){
+@@ -256,8 +256,8 @@ cdir=$(getdname $0)
+ [ ! -L "$cdir/hipfc" ] || cdir=$(getdname `readlink "$cdir/hipfc"`)
+ HOW_CALLED=${0##*/}
+ 
+-CUDA_PATH=${CUDA_PATH:-/usr/local/cuda}
+-ROCM_PATH=${ROCM_PATH:-/opt/rocm}
++CUDA_PATH=${CUDA_PATH:-@EPREFIX@/opt/cuda}
++ROCM_PATH=${ROCM_PATH:-@EPREFIX@/usr}
+ HIP_PLATFORM=${HIP_PLATFORM:-amd}
+ 
+ HIPFORT=${HIPFORT:-_HIPFORT_INSTALL_DIR_}
+@@ -316,15 +316,15 @@ else
+    fi
+    TARGET_TRIPLE=${TARGET_TRIPLE:-amdgcn-amd-amdhsa}
+    TARGET_ARCH="amdgcn"
+-   TARGET_LIBS="-L$ROCM_PATH/lib -lamdhip64 -Wl,-rpath=$ROCM_PATH/lib "
++   TARGET_LIBS="-L$ROCM_PATH/lib64 -lamdhip64 -Wl,-rpath=$ROCM_PATH/lib64 "
+    HIPCC_ENV="HIP_PLATFORM=$HIP_PLATFORM"
+    if [ -z ${HIP_CLANG_PATH+x} ]; then
+-     HIPCC_ENV+=" HIP_CLANG_PATH=$ROCM_PATH/llvm/bin"
++     HIPCC_ENV+=" HIP_CLANG_PATH=$ROCM_PATH/lib/llvm/@LLVM_SLOT@/bin"
+    fi 
+    if [ -z ${DEVICE_LIB_PATH+x} ]; then
+-     # Future versions of ROCm will install the device library in ROCM_PATH/amdgcn/bitcode
+-     if [ -d $ROCM_PATH/amdgcn/bitcode ] ; then
+-         HIPCC_ENV+=" DEVICE_LIB_PATH=$ROCM_PATH/amdgcn/bitcode"
++     # Future versions of ROCm will install the device library in ROCM_PATH/lib/amdgcn/bitcode
++     if [ -d $ROCM_PATH/lib/amdgcn/bitcode ] ; then
++         HIPCC_ENV+=" DEVICE_LIB_PATH=$ROCM_PATH/lib/amdgcn/bitcode"
+      else
+          HIPCC_ENV+=" DEVICE_LIB_PATH=$ROCM_PATH/lib"
+      fi
+@@ -408,7 +408,7 @@ if [ $GEN_OBJECT_ONLY ]  ; then
+    HIPCC_OPTS=" -c $HIPCC_OPTS"
+    LINKOPTS=""
+ else
+-   LINKOPTS="-L$HIPFORT/lib -lhipfort-$TARGET_ARCH"
++   LINKOPTS="-L$HIPFORT/lib64 -lhipfort-$TARGET_ARCH"
+    for lib in $ROCM_LIBS; do
+      addrocmlib $lib
+    done
+@@ -491,4 +491,4 @@ fi
+ 
+ # cleanup
+ do_err 0
+-exit 0
+\ No newline at end of file
++exit 0
+Only in hipfort-rocm-5.1.3/bin: hipfc.orig
+Only in hipfort-rocm-5.1.3/bin: hipfc.rej
