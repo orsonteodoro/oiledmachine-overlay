@@ -184,8 +184,6 @@ eerror
 	if use client; then
 		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 		export HIP_PLATFORM="amd"
-		export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}/usr/lib/${LLVM_SLOT}/bin/clang++"
-		export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}/usr/lib/${LLVM_SLOT}/bin/clang-offload-bundler"
 		local mycmakeargs=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DCMAKE_SKIP_RPATH=ON
