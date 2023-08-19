@@ -176,6 +176,9 @@ src_configure() {
 		)
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
+		export ROCM_PATH="${ESYSROOT}/usr"
+		export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang++"
+		export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang-offload-bundler"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DBUILD_WITH_TENSILE=ON

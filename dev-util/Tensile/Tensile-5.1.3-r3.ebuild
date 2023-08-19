@@ -172,8 +172,8 @@ eerror
 		append-flags -fuse-ld=lld
 	fi
 
-	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}/usr/lib/${LLVM_SLOT}/bin/clang++"
-	export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}/usr/lib/${LLVM_SLOT}/bin/clang-offload-bundler"
+	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang++"
+	export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang-offload-bundler"
 
 	distutils-r1_src_configure
 
