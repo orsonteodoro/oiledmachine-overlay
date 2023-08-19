@@ -27,6 +27,7 @@ https://github.com/ROCm-Developer-Tools/ROCgdb
 "
 LICENSE="GPL-3+ LGPL-2.1+"
 SLOT="0/$(ver_cut 1-2)"
+IUSE=" r1"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
