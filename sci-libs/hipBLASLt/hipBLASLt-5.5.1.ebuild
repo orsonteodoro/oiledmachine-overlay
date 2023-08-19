@@ -130,7 +130,6 @@ eerror "Reinstall dev-util/Tensile after this package completes."
 eerror
 		die
 	fi
-	export MAKEOPTS="-j1" # ~ 7.33 GiB per process.
 	cmake_src_prepare
 	sed \
 		-i \
@@ -149,17 +148,34 @@ eerror
 		|| die
 }
 
+get_makeopts_nprocs() {
+	# ~ 7.33 GiB per process.
+	local ncpus=$(echo "${MAKEOPTS}" \
+		| grep -E -e "-j.*[0-9]+" \
+		| grep -o -E "[0-9]+")
+	[[ -z "${ncpus}" ]] && ncpus=1
+	echo "${ncpus}"
+}
+
 src_configure() {
 	addpredict /dev/random
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 
 	replace-flags '-O0' '-O1'
+	local nprocs=$(get_makeopts_nprocs)
+	if (( "${nprocs}" > 1 )) ; then
+ewarn
+ewarn "MAKEOPTS > 1.  Expect 7.33 GiB per process."
+ewarn "Changing to MAKEOPTS=-j1 is recommended."
+ewarn
+	fi
 
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
 #		-DTensile_CODE_OBJECT_VERSION="default"
+		-DTensile_CPU_THREADS="${nprocs}"
 #		-DTensile_ROOT="${ESYSROOT}/usr"
 		-DTensile_ROOT="${S}/tensilelite"
 		-DUSE_CUDA=$(usex cuda ON OFF)
