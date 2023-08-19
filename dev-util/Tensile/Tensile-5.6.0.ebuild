@@ -32,11 +32,13 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/Tensile"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 	-> rocm-Tensile-${PV}.tar.gz
+https://github.com/ROCmSoftwarePlatform/Tensile/commit/7dbaa59404f22bf6359d2d0bbd42f553c4c90f54.patch
+	-> Tensile-7dbaa59.patch
 "
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="client openmp r1"
+IUSE="client openmp r2"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -89,6 +91,7 @@ pkg_setup() {
 
 src_prepare() {
 	distutils-r1_src_prepare
+	eapply -R "${DISTDIR}/Tensile-7dbaa59.patch"
 	sed \
 		-e "s,\@LLVM_PATH\@,$(get_llvm_prefix ${LLVM_MAX_SLOT}),g" \
 		"${FILESDIR}/${PN}-5.6.0-gentoopath.patch" \
