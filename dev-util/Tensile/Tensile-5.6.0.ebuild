@@ -180,6 +180,8 @@ eerror
 	if use client; then
 		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 		export HIP_PLATFORM="amd"
+		export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}/usr/lib/${LLVM_SLOT}/bin/clang++"
+		export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}/usr/lib/${LLVM_SLOT}/bin/clang-offload-bundler"
 		local mycmakeargs=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DCMAKE_SKIP_RPATH=ON
@@ -190,6 +192,7 @@ eerror
 			-DTENSILE_USE_LLVM=ON
 			-DTENSILE_USE_MSGPACK=ON
 			-DTENSILE_USE_OPENMP=$(usex openmp ON OFF)
+			-DTENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${}"
 			-DTensile_LIBRARY_FORMAT="msgpack"
 		)
 		CXX="hipcc" \

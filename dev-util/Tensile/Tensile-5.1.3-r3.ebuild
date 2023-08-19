@@ -78,6 +78,11 @@ PATCHES=(
 S="${WORKDIR}/${PN}-rocm-${PV}"
 CMAKE_USE_DIR="${WORKDIR}/Source"
 
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	python_setup
+}
+
 src_prepare() {
 	distutils-r1_src_prepare
 	sed \
@@ -169,6 +174,8 @@ eerror
 
 	distutils-r1_src_configure
 	if use client; then
+		export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}/usr/lib/${LLVM_SLOT}/bin/clang++"
+		export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}/usr/lib/${LLVM_SLOT}/bin/clang-offload-bundler"
 		local mycmakeargs=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DCMAKE_SKIP_RPATH=ON
