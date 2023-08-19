@@ -121,6 +121,16 @@ pkg_setup() {
 }
 
 src_prepare() {
+	if has_version "dev-util/Tensile" ; then
+# Avoid referencing dev-util/Tensile with V4/V5 code object version.  Building
+# requires v2 or v3.
+eerror
+eerror "You must temporarly uninstall dev-util/Tensile."
+eerror "Reinstall dev-util/Tensile after this package completes."
+eerror
+		die
+	fi
+	export MAKEOPTS="-j1" # ~ 7.33 GiB per process.
 	cmake_src_prepare
 	sed \
 		-i \
@@ -144,10 +154,12 @@ src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 
+	replace-flags '-O0' '-O1'
+
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
-		-DTensile_CODE_OBJECT_VERSION="default"
+#		-DTensile_CODE_OBJECT_VERSION="default"
 #		-DTensile_ROOT="${ESYSROOT}/usr"
 		-DTensile_ROOT="${S}/tensilelite"
 		-DUSE_CUDA=$(usex cuda ON OFF)
@@ -179,6 +191,7 @@ src_configure() {
 		export ROCM_PATH="${ESYSROOT}/usr"
 		export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang++"
 		export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang-offload-bundler"
+		einfo "get_amdgpu_flags:  $(get_amdgpu_flags)"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DBUILD_WITH_TENSILE=ON
@@ -191,6 +204,8 @@ src_configure() {
 #	virtualenv "${BUILD_DIR}/venv" || die
 #	source "${BUILD_DIR}/venv/bin/activate" || die
 
+# Avoid:
+# virtualenv/bin/python3: No module named pip
 	export PYTHONPATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/:${PYTHONPATH}"
 
 	export VERBOSE=1
