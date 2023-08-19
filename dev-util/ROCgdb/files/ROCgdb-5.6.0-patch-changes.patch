@@ -1,0 +1,32 @@
+diff -urp ROCgdb-rocm-5.6.0.orig/gdb/testsuite/lib/rocm.exp ROCgdb-rocm-5.6.0/gdb/testsuite/lib/rocm.exp
+--- ROCgdb-rocm-5.6.0.orig/gdb/testsuite/lib/rocm.exp	2023-04-13 08:56:37.000000000 -0700
++++ ROCgdb-rocm-5.6.0/gdb/testsuite/lib/rocm.exp	2023-08-19 01:40:47.995980892 -0700
+@@ -104,7 +104,7 @@ gdb_caching_proc allow_hipcc_tests {
+ if {[info exists env(ROCM_PATH)]} {
+     set rocm_path $env(ROCM_PATH)
+ } else {
+-    set rocm_path "/opt/rocm"
++    set rocm_path "/usr"
+ }
+ 
+ # Get the gpu target to be passed to e.g., -mcpu=.
+@@ -201,7 +201,7 @@ proc rocm_assemble {source dest {options
+ 
+     # Bundle device and host objects.
+     set res [remote_exec host \
+-		 "${rocm_path}/llvm/bin/clang-offload-bundler\
++		 "${rocm_path}/lib/llvm/@LLVM_SLOT@/bin/clang-offload-bundler\
+ 				-type=o\
+ 				-targets=hip-amdgcn-amd-amdhsa-${gpu_target},host-x86_64-unknown-linux-gnu\
+ 				-outputs=$dest\
+@@ -347,8 +347,8 @@ proc gdb_compile_ocl {source dest type o
+ 
+     # Override the host compiler with a rocm one.
+     save_vars {CC_FOR_TARGET CXX_FOR_TARGET} {
+-	set CC_FOR_TARGET ${rocm_path}/llvm/bin/clang
+-	set CXX_FOR_TARGET ${rocm_path}/llvm/bin/clang
++	set CC_FOR_TARGET ${rocm_path}/lib/llvm/@LLVM_SLOT@/bin/clang
++	set CXX_FOR_TARGET ${rocm_path}/lib/llvm/@LLVM_SLOT@/bin/clang
+ 
+ 	# target_compile always adds -lm which is not supported for
+ 	# kernel compilation.

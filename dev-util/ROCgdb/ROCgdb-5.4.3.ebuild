@@ -3,9 +3,10 @@
 
 EAPI=8
 
+LLVM_MAX_SLOT=15
 PYTHON_COMPAT=( python3_{10,..,12} )
 
-inherit python-single-r1
+inherit llvm python-single-r1
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCm-Developer-Tools/ROCgdb/"
@@ -56,8 +57,22 @@ BDEPEND="
 	sys-devel/make
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.6.0-patch-changes.patch"
 )
 DOCS=( README-ROCM.md )
+
+pkg_setup() {
+	llvm_pkg_setup
+}
+
+src_prepare() {
+	default
+	sed \
+		-i \
+		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
+		"gdb/testsuite/lib/rocm.exp" \
+		|| die
+}
 
 src_configure() {
 	local myconf=(
