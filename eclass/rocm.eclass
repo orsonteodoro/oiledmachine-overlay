@@ -249,6 +249,11 @@ eerror
 	IFS=$'\n'
 	sed \
 		-i \
+		-e "s|/usr/lib$|/usr/$(get_libdir)|g" \
+		$(grep -r -E -l -e "/usr/lib$" "${WORKDIR}") \
+		2>/dev/null || true
+	sed \
+		-i \
 		-e "s|--rocm-path=/usr/lib/ |--rocm-path=/usr/$(get_libdir)/ |g" \
 		$(grep -r -F -l -e "--rocm-path=/usr/lib/ " "${WORKDIR}") \
 		2>/dev/null || true
