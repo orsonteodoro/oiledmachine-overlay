@@ -240,6 +240,7 @@ eerror
 # @DESCRIPTION:
 # Patch common paths
 _rocm_change_common_paths() {
+	[[ "${ROCM_SKIP_COMMON_PATHS_PATCHES}" == "1" ]] && return
 	if [[ -z "${LLVM_SLOT}" ]] ; then
 eerror
 eerror "LLVM_MAX_SLOT must be defined"

@@ -3,7 +3,9 @@
 
 EAPI=8
 
-inherit cmake
+LLVM_MAX_SLOT=14
+
+inherit cmake rocm
 
 SRC_URI="
 	https://github.com/ROCm-Developer-Tools/ROCdbgapi/archive/rocm-${PV}.tar.gz
@@ -28,9 +30,13 @@ S="${WORKDIR}/ROCdbgapi-rocm-${PV}"
 PATCHES=(
 )
 
+pkg_setup() {
+	rocm_pkg_setup
+}
+
 src_prepare() {
 	sed \
-		-e "s:DESTINATION lib:DESTINATION lib64:" \
+		-e "s:DESTINATION lib:DESTINATION $(get_libdir):" \
 		-i \
 		"CMakeLists.txt" \
 		|| die
@@ -44,9 +50,26 @@ src_prepare() {
 		-e "s|/opt/rocm|/usr|g" \
 		"CMakeLists.txt" \
 		|| die
+	sed \
+		-i \
+		-e "s|lib/cmake/amd_comgr|$(get_libdir)/cmake/amd_comgr|g" \
+		"CMakeLists.txt" \
+		|| die
+	sed \
+		-i \
+		-e "s|}/lib$|}/$(get_libdir)|g" \
+		"CMakeLists.txt" \
+		|| die
+	sed \
+		-i \
+		-e "s|/lib/|/$(get_libdir)/|g" \
+		"README.md" \
+		|| die
+
 	local mycmakeargs=(
 	)
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
