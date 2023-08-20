@@ -95,7 +95,7 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
      "ockl.bc"
      "ockl.amdgcn.bc"
    PATHS
-+    "${AMD_DEVICE_LIBS_PREFIX}/lib/amdgcn/bitcode"
++    "${AMD_DEVICE_LIBS_PREFIX}/lib64/amdgcn/bitcode"
      "${AMD_DEVICE_LIBS_PREFIX}/amdgcn/bitcode"
 -    "${AMD_DEVICE_LIBS_PREFIX}/lib/bitcode"
 -    "${AMD_DEVICE_LIBS_PREFIX}/lib"
