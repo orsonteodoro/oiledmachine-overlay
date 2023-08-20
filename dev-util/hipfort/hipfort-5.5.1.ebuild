@@ -3,12 +3,14 @@
 
 EAPI=8
 
+LLVM_MAX_SLOT=16
+
+inherit cmake llvm rocm
+
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipfort/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-
-inherit cmake llvm
 
 DESCRIPTION="Fortran interfaces for ROCm libraries"
 HOMEPAGE="
@@ -18,7 +20,7 @@ https://github.com/ROCmSoftwarePlatform/hipfort
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="debug r1"
+IUSE="debug r2"
 RDEPEND="
 	|| (
 		>=sys-devel/gcc-7.5.0[fortran]
@@ -43,6 +45,7 @@ PATCHES=(
 
 pkg_setup() {
 	llvm_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -51,17 +54,20 @@ src_prepare() {
 		-i \
 		"${S}/CMakeLists.txt" \
 		|| die
-	sed \
-		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
-		-i \
-		"bin/hipfc" \
-		|| die
-	sed \
-		-e "s|@EPREFIX@|${EPREFIX}|g" \
-		-i \
-		"bin/hipfc" \
-		|| die
 	cmake_src_prepare
+	IFS=$'\n'
+	sed \
+		-i \
+		-e "s|ROCM_PATH/lib/amdgcn/bitcode|ROCM_PATH/$(get_libdir)/amdgcn/bitcode|g" \
+		$(grep -l -r -F -e "ROCM_PATH/lib/amdgcn/bitcode" "${WORKDIR}") \
+		|| die
+	sed \
+		-i \
+		-e "s|ROCM_PATH/lib\"|ROCM_PATH/$(get_libdir)\"|g" \
+		$(grep -l -r -F -e "ROCM_PATH/lib\"" "${WORKDIR}") \
+		|| die
+	IFS=$' \t\n'
+	rocm_src_prepare
 }
 
 src_configure() {
