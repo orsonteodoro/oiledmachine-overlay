@@ -4,7 +4,8 @@
 EAPI=8
 
 LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
-inherit cmake llvm prefix
+
+inherit cmake llvm prefix rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport/"
@@ -58,6 +59,10 @@ PATCHES=(
 )
 CMAKE_BUILD_TYPE="Release"
 
+pkg_setup() {
+	rocm_pkg_setup
+}
+
 src_prepare() {
 	sed \
 		-e '/sys::path::append(HIPPath/s,"hip","",' \
@@ -72,6 +77,7 @@ src_prepare() {
 		|| die
 	eapply $(prefixify_ro "${FILESDIR}/${PN}-5.0-rocm_path.patch")
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {
