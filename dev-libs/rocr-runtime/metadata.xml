@@ -14,4 +14,9 @@
   <upstream>
     <remote-id type="github">RadeonOpenCompute/ROCR-Runtime</remote-id>
   </upstream>
+  <use>
+    <flag name="aqlprofile">
+      Add support for the AQLPROFILE HSA extension.
+    </flag>
+  </use>
 </pkgmetadata>

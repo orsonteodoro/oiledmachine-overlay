@@ -4,7 +4,8 @@
 EAPI=8
 
 LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
-inherit cmake llvm
+
+inherit cmake llvm rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCR-Runtime/"
@@ -23,6 +24,7 @@ DESCRIPTION="Radeon Open Compute Runtime"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCR-Runtime"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
+IUSE="+aqlprofile"
 CDEPEND="
 	dev-libs/elfutils
 "
@@ -43,9 +45,12 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.1-cmake-install-paths.patch"
-	"${FILESDIR}/${PN}-4.3.0_no-aqlprofiler.patch"
 )
 CMAKE_BUILD_TYPE="Release"
+
+pkg_setup() {
+	rocm_pkg_setup
+}
 
 src_prepare() {
 	# ... otherwise system llvm/clang is used ...
@@ -63,8 +68,11 @@ src_prepare() {
 		-i \
 		image/blit_src/CMakeLists.txt \
 		|| die
-
 	cmake_src_prepare
+	if ! use aqlprofile ; then
+		eapply "${FILESDIR}/${PN}-4.3.0_no-aqlprofiler.patch"
+	fi
+	rocm_src_prepare
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

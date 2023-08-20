@@ -4,7 +4,8 @@
 EAPI=8
 
 LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.6.0/llvm/CMakeLists.txt
-inherit cmake flag-o-matic llvm
+
+inherit cmake flag-o-matic llvm rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCR-Runtime/"
@@ -23,7 +24,7 @@ DESCRIPTION="Radeon Open Compute Runtime"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCR-Runtime"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="debug"
+IUSE="+aqlprofile debug"
 CDEPEND="
 	dev-libs/elfutils
 "
@@ -44,8 +45,12 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-4.3.0_no-aqlprofiler.patch"
+	"${FILESDIR}/${PN}-5.6.0-change-lib-path.patch"
 )
+
+pkg_setup() {
+	rocm_pkg_setup
+}
 
 src_prepare() {
 	# ... otherwise system llvm/clang is used ...
@@ -75,6 +80,10 @@ src_prepare() {
 		|| die
 
 	cmake_src_prepare
+	if ! use aqlprofile ; then
+		eapply "${FILESDIR}/${PN}-4.3.0_no-aqlprofiler.patch"
+	fi
+	rocm_src_prepare
 }
 
 src_configure() {
