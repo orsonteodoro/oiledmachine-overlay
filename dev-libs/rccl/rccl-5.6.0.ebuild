@@ -54,10 +54,16 @@ RESTRICT="
 S="${WORKDIR}/rccl-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.5.1-remove-chrpath.patch"
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 pkg_setup() {
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	rocm_pkg_setup
+}
+
+src_prepare() {
+	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {

@@ -52,7 +52,17 @@ RESTRICT="
 S="${WORKDIR}/rccl-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-remove-chrpath.patch"
+	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
+
+pkg_setup() {
+	rocm_pkg_setup
+}
+
+src_prepare() {
+	cmake_src_prepare
+	rocm_src_prepare
+}
 
 src_configure() {
 	addpredict /dev/kfd
