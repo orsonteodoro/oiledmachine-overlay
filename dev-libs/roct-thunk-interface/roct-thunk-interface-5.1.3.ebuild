@@ -3,7 +3,9 @@
 
 EAPI=8
 
-inherit cmake linux-info
+LLVM_MAX_SLOT=14
+
+inherit cmake linux-info rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface/"
@@ -36,6 +38,11 @@ BDEPEND="
 "
 CMAKE_BUILD_TYPE="Release"
 
+pkg_setup() {
+	linux-info_pkg_setup
+	rocm_pkg_setup
+}
+
 src_prepare() {
 	sed \
 		-e "s:get_version ( \"1.0.0\" ):get_version ( \"${PV}\" ):" \
@@ -48,6 +55,7 @@ src_prepare() {
 		CMakeLists.txt \
 		|| die
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {

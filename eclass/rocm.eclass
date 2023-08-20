@@ -231,6 +231,7 @@ rocm_pkg_setup() {
 eerror
 eerror "LLVM_MAX_SLOT must be defined"
 eerror
+		die
 	fi
 	llvm_pkg_setup # Init LLVM_SLOT
 }
@@ -239,6 +240,12 @@ eerror
 # @DESCRIPTION:
 # Patch common paths
 rocm_src_prepare() {
+	if [[ -z "${LLVM_SLOT}" ]] ; then
+eerror
+eerror "LLVM_MAX_SLOT must be defined"
+eerror
+		die
+	fi
 	IFS=$'\n'
 	sed \
 		-i \
