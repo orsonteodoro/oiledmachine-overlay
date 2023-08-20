@@ -93,6 +93,7 @@ REQUIRED_USE+="
 	)
 	hip? (
 		${ROCM_REQUIRED_USE}
+		llvm-16
 	)
 	^^ (
 		${LLVM_SLOTS[@]/#/llvm-}
@@ -118,7 +119,6 @@ gen_clang_depends() {
 
 HIP_VERSIONS=(
 	"5.5.1"
-	"5.5.0"
 	"5.6.0"
 ) # 5.3.0 fails
 gen_hip_depends() {
@@ -277,6 +277,19 @@ src_prepare() {
 	use cuda && cuda_src_prepare
 }
 
+get_cuda_targets() {
+	local targets=""
+	local cuda_target
+	for cuda_target in ${CUDA_TARGETS_COMPAT[@]} ; do
+		if use "${cuda_target/#/cuda_targets_}" ; then
+			targets+=";${cuda_target}"
+		fi
+	done
+	targets=$(echo "${targets}" \
+		| sed -e "s|^;||g")
+	echo "${targets}"
+}
+
 src_configure() {
 	mycmakeargs=()
 
@@ -342,15 +355,7 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 	fi
 
 	if use cuda ; then
-		local targets=""
-		local cuda_target
-		for cuda_target in ${CUDA_TARGETS_COMPAT[@]} ; do
-			if use "${cuda_target/#/cuda_targets_}" ; then
-				targets+=";${cuda_target}"
-			fi
-		done
-		targets=$(echo "${targets}" \
-			| sed -e "s|^;||g")
+		local targets="$(get_cuda_targets)"
 einfo "CUDA_TARGETS:  ${targets}"
 		if use cuda_targets_sm_80 || use cuda_targets_sm_90 ; then
 			:;
