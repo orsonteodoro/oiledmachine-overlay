@@ -107,7 +107,7 @@ src_install() {
 	insinto /etc/OpenCL/vendors
 	doins config/amdocl64.icd
 	cd "${BUILD_DIR}" || die
-	insinto /usr/lib64
+	insinto /usr/$(get_libdir)
 	doins amdocl/libamdocl64.so
 	doins tools/cltrace/libcltrace.so
 }
