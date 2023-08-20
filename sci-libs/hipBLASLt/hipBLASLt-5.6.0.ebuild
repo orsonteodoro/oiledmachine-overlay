@@ -121,7 +121,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	if has_version "dev-util/Tensile" ; then
+	if use tensile && has_version "dev-util/Tensile" ; then
 # Avoid referencing dev-util/Tensile with V4/V5 code object version.  Building
 # requires v2 or v3.
 eerror
