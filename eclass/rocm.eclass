@@ -227,6 +227,11 @@ unset -f _rocm_set_globals
 # @DESCRIPTION:
 # Init paths
 rocm_pkg_setup() {
+	if [[ -z "${LLVM_MAX_SLOT}" ]] ; then
+eerror
+eerror "LLVM_MAX_SLOT must be defined"
+eerror
+	fi
 	llvm_pkg_setup # Init LLVM_SLOT
 }
 
@@ -237,6 +242,11 @@ rocm_src_prepare() {
 	IFS=$'\n'
 	sed \
 		-i \
+		-e "s|}/llvm/lib|}/lib/llvm/@LLVM_SLOT@/lib|g" \
+		$(grep -r -F -l -e "}/llvm/lib" "${WORKDIR}") \
+		2>/dev/null || true
+	sed \
+		-i \
 		-e "s|}/llvm/bin|}/lib/llvm/@LLVM_SLOT@/bin|g" \
 		$(grep -r -F -l -e "}/llvm/bin" "${WORKDIR}") \
 		2>/dev/null || true
@@ -244,11 +254,6 @@ rocm_src_prepare() {
 		-i \
 		-e "s|/usr/bin/clang++|@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin/clang++|g" \
 		$(grep -r -F -l -e "/usr/bin/clang++" "${WORKDIR}") \
-		2>/dev/null || true
-	sed \
-		-i \
-		-e "s|}/llvm/bin/clang++|}/lib/llvm/@LLVM_SLOT@/bin/clang++|g" \
-		$(grep -r -F -l -e "}/llvm/bin/clang++" "${WORKDIR}") \
 		2>/dev/null || true
 	sed \
 		-i \
