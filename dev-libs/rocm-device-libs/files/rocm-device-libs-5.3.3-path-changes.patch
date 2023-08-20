@@ -1,0 +1,14 @@
+Only in ROCm-Device-Libs-rocm-5.3.3/cmake: Packages.cmake.orig
+Only in ROCm-Device-Libs-rocm-5.3.3/cmake: Packages.cmake.rej
+diff -urp ROCm-Device-Libs-rocm-5.3.3.orig/test/constant_folding/CMakeLists.txt ROCm-Device-Libs-rocm-5.3.3/test/constant_folding/CMakeLists.txt
+--- ROCm-Device-Libs-rocm-5.3.3.orig/test/constant_folding/CMakeLists.txt	2023-08-20 09:50:39.214853762 -0700
++++ ROCm-Device-Libs-rocm-5.3.3/test/constant_folding/CMakeLists.txt	2023-08-20 09:50:54.278854136 -0700
+@@ -30,7 +30,7 @@ function(add_constant_fold_test name)
+      -DFILECHECK_BIN=${FILECHECK_BIN}
+      -DOUTPUT_FILE=output.${name}.ll
+      -DINPUT_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}.cl
+-     -DAMDGCN_BITCODES=${PROJECT_BINARY_DIR}/lib/amdgcn/bitcode
++     -DAMDGCN_BITCODES=${PROJECT_BINARY_DIR}/lib64/amdgcn/bitcode
+      -DTEST_CPU=gfx900
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/RunConstantFoldTest.cmake)
+ endfunction()

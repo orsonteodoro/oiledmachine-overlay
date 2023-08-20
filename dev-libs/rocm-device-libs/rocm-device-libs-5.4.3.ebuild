@@ -4,7 +4,8 @@
 EAPI=8
 
 LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.4.3/llvm/CMakeLists.txt
-inherit cmake llvm
+
+inherit cmake llvm rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-Device-Libs/"
@@ -23,7 +24,7 @@ DESCRIPTION="Radeon Open Compute Device Libraries"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-Device-Libs"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="test"
+IUSE="test r2"
 RDEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 "
@@ -46,21 +47,28 @@ PATCHES=(
 
 # Fixes mtime.cl:20:12: error: use of undeclared identifier '__builtin_amdgcn_s_sendmsg_rtnl'
 	"${FILESDIR}/${PN}-5.4.3-Revert-Update-counters-for-gfx11.patch"
+
+	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 
+pkg_setup() {
+	rocm_pkg_setup
+}
+
 src_prepare() {
 	sed \
-		-e "s:amdgcn/bitcode:lib/amdgcn/bitcode:" \
+		-e "s:amdgcn/bitcode:$(get_libdir)/amdgcn/bitcode:" \
 		-i \
 		"${S}/cmake/OCL.cmake" \
 		|| die
 	sed \
-		-e "s:amdgcn/bitcode:lib/amdgcn/bitcode:" \
+		-e "s:amdgcn/bitcode:$(get_libdir)/amdgcn/bitcode:" \
 		-i \
 		"${S}/cmake/Packages.cmake" \
 		|| die
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {

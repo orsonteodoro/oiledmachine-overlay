@@ -4,7 +4,8 @@
 EAPI=8
 
 LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
-inherit cmake llvm
+
+inherit cmake llvm rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-Device-Libs/"
@@ -16,14 +17,14 @@ https://github.com/RadeonOpenCompute/ROCm-Device-Libs/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 	S="${WORKDIR}/ROCm-Device-Libs-rocm-${PV}"
-	KEYWORDS="~amd64" # Compiler bug ; needs retest
+	KEYWORDS="~amd64"
 fi
 
 DESCRIPTION="Radeon Open Compute Device Libraries"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-Device-Libs"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="test r1"
+IUSE="test r2"
 RDEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 "
@@ -46,18 +47,23 @@ PATCHES=(
 )
 CMAKE_BUILD_TYPE="Release"
 
+pkg_setup() {
+	rocm_pkg_setup
+}
+
 src_prepare() {
 	sed \
-		-e "s:amdgcn/bitcode:lib/amdgcn/bitcode:" \
+		-e "s:amdgcn/bitcode:$(get_libdir)/amdgcn/bitcode:" \
 		-i \
 		"${S}/cmake/OCL.cmake" \
 		|| die
 	sed \
-		-e "s:amdgcn/bitcode:lib/amdgcn/bitcode:" \
+		-e "s:amdgcn/bitcode:$(get_libdir)/amdgcn/bitcode:" \
 		-i \
 		"${S}/cmake/Packages.cmake" \
 		|| die
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {
