@@ -315,6 +315,12 @@ eerror
 		-e "s|/usr/lib/cmake/hsa-runtime64|/usr/$(get_libdir)/cmake/hsa-runtime64|g" \
 		$(grep -r -F -l -e "/usr/lib/cmake/hsa-runtime64" "${WORKDIR}") \
 		2>/dev/null || true
+	# /opt/rocm/lib -> /usr/lib -> /usr/lib64
+	sed \
+		-i \
+		-e "s| /usr/lib | /usr/$(get_libdir) |g" \
+		$(grep -r -F -l -e " /usr/lib " $(find "${WORKDIR}" -name "CMakeLists.txt" -o -name "*.cmake")) \
+		2>/dev/null || true
 
 	sed \
 		-i \

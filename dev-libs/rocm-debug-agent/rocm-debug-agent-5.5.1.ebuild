@@ -1,11 +1,12 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 CONFIG_CHECK="~HSA_AMD"
+LLVM_MAX_SLOT=16
 
-inherit cmake linux-info
+inherit cmake linux-info rocm
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/rocr_debug_agent/archive/rocm-${PV}.tar.gz
@@ -39,6 +40,11 @@ RESTRICT="
 "
 S="${WORKDIR}/rocr_debug_agent-rocm-${PV}"
 
+pkg_setup() {
+	linux-info_pkg_setup
+	rocm_pkg_setup
+}
+
 src_prepare() {
 	sed \
 		-e "s:/opt/rocm/hip/cmake:/usr/$(get_libdir)/cmake/hip/:" \
@@ -59,7 +65,7 @@ src_prepare() {
 
 	sed \
 		-e \
-		"s:DESTINATION lib:DESTINATION lib64:" \
+		"s:DESTINATION lib:DESTINATION $(get_libdir):" \
 		-i \
 		"${S}/CMakeLists.txt" \
 		|| die
@@ -69,7 +75,19 @@ src_prepare() {
 		"${S}/CMakeLists.txt" \
 		|| die
 
+	sed \
+		-i \
+		-e "s|lib/cmake/amd-dbgapi|$(get_libdir)/cmake/amd-dbgapi|g" \
+		"${S}/CMakeLists.txt" \
+		|| die
+	sed \
+		-i \
+		-e "s|/lib/|/$(get_libdir)/|g" \
+		"${S}/README.md" \
+		|| die
+
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
