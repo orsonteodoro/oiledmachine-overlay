@@ -3,7 +3,9 @@
 
 EAPI=8
 
-inherit cmake edo flag-o-matic
+LLVM_MAX_SLOT=15
+
+inherit cmake edo flag-o-matic rocm
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
@@ -46,12 +48,18 @@ RESTRICT="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-gcc13.patch"
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
 S1="${WORKDIR}/ROCclr-rocm-${PV}"
 
+pkg_setup() {
+	rocm_pkg_setup
+}
+
 src_prepare() {
 	cmake_src_prepare
+	rocm_src_prepare
 	pushd "${S1}" || die
 	# Bug #753377
 	# patch re-enables accidentally disabled gfx800 family

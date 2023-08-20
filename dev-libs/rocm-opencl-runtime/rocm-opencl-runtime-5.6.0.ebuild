@@ -3,7 +3,9 @@
 
 EAPI=8
 
-inherit cmake edo flag-o-matic
+LLVM_MAX_SLOT=16
+
+inherit cmake edo flag-o-matic rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime"
@@ -53,8 +55,13 @@ RESTRICT="
 	)
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 CLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
+
+pkg_setup() {
+	rocm_pkg_setup
+}
 
 src_unpack () {
 	if [[ ${PV} == "9999" ]]; then
@@ -68,6 +75,7 @@ src_unpack () {
 }
 src_prepare() {
 	cmake_src_prepare
+	rocm_src_prepare
 	pushd "${CLR_S}" || die
 	# Bug #753377
 	# patch re-enables accidentally disabled gfx800 family

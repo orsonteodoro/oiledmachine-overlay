@@ -250,6 +250,16 @@ eerror
 	IFS=$'\n'
 	sed \
 		-i \
+		-e "s|CMAKE_INSTALL_LIBDIR \"lib\"|CMAKE_INSTALL_LIBDIR \"$(get_libdir)\"|g" \
+		$(grep -r -F -l -e "CMAKE_INSTALL_LIBDIR \"lib\"" "${WORKDIR}") \
+		2>/dev/null || true
+	sed \
+		-i \
+		-e "s|}/lib/cmake|}/$(get_libdir)/cmake|g" \
+		$(grep -r -F -l -e "}/lib/cmake" "${WORKDIR}") \
+		2>/dev/null || true
+	sed \
+		-i \
 		-e "s|@/llvm/share/man1|@/lib/llvm/@LLVM_SLOT@/share/man/man1|g" \
 		$(grep -r -F -l -e "@/llvm/share/man1" "${WORKDIR}") \
 		2>/dev/null || true

@@ -3,7 +3,9 @@
 
 EAPI=8
 
-inherit cmake edo flag-o-matic prefix
+LLVM_MAX_SLOT=14
+
+inherit cmake edo flag-o-matic prefix rocm
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
@@ -48,15 +50,21 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-remove-clinfo.patch"
 	"${FILESDIR}/${PN}-3.5.0-do-not-install-libopencl.patch"
 	"${FILESDIR}/${PN}-5.3.3-gcc13.patch"
+	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
 S1="${WORKDIR}/ROCclr-rocm-${PV}"
+
+pkg_setup() {
+	rocm_pkg_setup
+}
 
 src_prepare() {
 	# Remove "clinfo" - use "dev-util/clinfo" instead
 	[ -d tools/clinfo ] && rm -rf tools/clinfo || die
 
 	cmake_src_prepare
+	rocm_src_prepare
 
 	hprefixify amdocl/CMakeLists.txt
 
