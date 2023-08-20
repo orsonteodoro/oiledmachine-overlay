@@ -47,6 +47,6 @@ diff -urp tensorflow-2.13.0.orig/tensorflow/tsl/platform/default/rocm_rocdl_path
  }
  
 -string RocdlRoot() { return io::JoinPath(RocmRoot(), "amdgcn/bitcode"); }
-+string RocdlRoot() { return io::JoinPath(RocmRoot(), "lib/amdgcn/bitcode"); }
++string RocdlRoot() { return io::JoinPath(RocmRoot(), "lib64/amdgcn/bitcode"); }
  
  }  // namespace tsl

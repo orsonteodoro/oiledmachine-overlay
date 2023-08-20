@@ -10,7 +10,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/tsl/
  }
  
 -string RocdlRoot() { return io::JoinPath(RocmRoot(), "amdgcn/bitcode"); }
-+string RocdlRoot() { return io::JoinPath(RocmRoot(), "lib/amdgcn/bitcode"); }
++string RocdlRoot() { return io::JoinPath(RocmRoot(), "lib64/amdgcn/bitcode"); }
  
  }  // namespace tsl
 diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc xla-9f26b9390f5a5c565a13925731de749be8a760be/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc
