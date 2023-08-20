@@ -236,10 +236,10 @@ eerror
 	llvm_pkg_setup # Init LLVM_SLOT
 }
 
-# @FUNCTION:  rocm_src_prepare
+# @FUNCTION:  _rocm_change_common_paths
 # @DESCRIPTION:
 # Patch common paths
-rocm_src_prepare() {
+_rocm_change_common_paths() {
 	if [[ -z "${LLVM_SLOT}" ]] ; then
 eerror
 eerror "LLVM_MAX_SLOT must be defined"
@@ -247,6 +247,16 @@ eerror
 		die
 	fi
 	IFS=$'\n'
+	sed \
+		-i \
+		-e "s|--rocm-path=/usr/lib/ |--rocm-path=/usr/$(get_libdir)/ |g" \
+		$(grep -r -F -l -e "--rocm-path=/usr/lib/ " "${WORKDIR}") \
+		2>/dev/null || true
+	sed \
+		-i \
+		-e "s|}/llvm |}/lib/llvm/@LLVM_SLOT@ |g" \
+		$(grep -r -F -l -e "}/llvm " "${WORKDIR}") \
+		2>/dev/null || true
 	sed \
 		-i \
 		-e "s|}/llvm/lib|}/lib/llvm/@LLVM_SLOT@/lib|g" \
@@ -264,13 +274,13 @@ eerror
 		2>/dev/null || true
 	sed \
 		-i \
-		-e "s|/opt/rocm/llvm/bin/clang++|/opt/rocm/lib/llvm/@LLVM_SLOT@/bin/clang++|g" \
+		-e "s|/opt/rocm/llvm/bin/clang++|@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin/clang++|g" \
 		$(grep -r -F -l -e "/opt/rocm/llvm/bin/clang++" "${WORKDIR}") \
 		2>/dev/null || true
 	sed \
 		-i \
 		-e "s|/opt/rocm-ver|@EPREFIX@/usr|g" \
-		$(grep -r -l -e "/opt/rocm" "${WORKDIR}") \
+		$(grep -r -l -e "/opt/rocm-ver" "${WORKDIR}") \
 		2>/dev/null || true
 	sed \
 		-i \
@@ -282,12 +292,34 @@ eerror
 		-e "s|@EPREFIX@|${EPREFIX}|g" \
 		$(grep -r -l -e "@EPREFIX@" "${WORKDIR}") \
 		2>/dev/null || true
+
+	# /opt/rocm/llvm -> @EPREFIX@/usr/llvm -> /usr/llvm
+	sed \
+		-i \
+		-e "s|/usr/llvm|/usr/lib/llvm/@LLVM_SLOT@|g" \
+		$(grep -r -F -l -e "/usr/llvm" "${WORKDIR}") \
+		2>/dev/null || true
+	# /opt/rocm/lib/cmake/hsa-runtime64 -> /usr/lib/cmake/hsa-runtime64
+	sed \
+		-i \
+		-e "s|/usr/lib/cmake/hsa-runtime64|/usr/$(get_libdir)/cmake/hsa-runtime64|g" \
+		$(grep -r -F -l -e "/usr/lib/cmake/hsa-runtime64" "${WORKDIR}") \
+		2>/dev/null || true
+
 	sed \
 		-i \
 		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
 		$(grep -r -l -e "@LLVM_SLOT@" "${WORKDIR}") \
 		2>/dev/null || true
+
 	IFS=$' \t\n'
+}
+
+# @FUNCTION:  rocm_src_prepare
+# @DESCRIPTION:
+# Patcher
+rocm_src_prepare() {
+	_rocm_change_common_paths
 }
 
 # @FUNCTION: get_amdgpu_flags
