@@ -37,6 +37,7 @@ KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="
 debug
+r1
 "
 RDEPEND="
 	sys-devel/llvm:${LLVM_MAX_SLOT}
