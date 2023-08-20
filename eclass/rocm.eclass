@@ -249,6 +249,11 @@ eerror
 	IFS=$'\n'
 	sed \
 		-i \
+		-e "s|@/llvm/share/man1|@/lib/llvm/@LLVM_SLOT@/share/man/man1|g" \
+		$(grep -r -F -l -e "@/llvm/share/man1" "${WORKDIR}") \
+		2>/dev/null || true
+	sed \
+		-i \
 		-e "s|/usr/lib$|/usr/$(get_libdir)|g" \
 		$(grep -r -E -l -e "/usr/lib$" "${WORKDIR}") \
 		2>/dev/null || true

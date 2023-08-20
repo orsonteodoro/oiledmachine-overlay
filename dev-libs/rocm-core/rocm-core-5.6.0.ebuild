@@ -3,6 +3,7 @@
 
 EAPI=8
 
+LLVM_MAX_SLOT=16
 ROCM_VERSION="${PV}"
 
 inherit cmake rocm
@@ -34,8 +35,13 @@ BDEPEND="
 PATCHES=(
 )
 
+pkg_setup() {
+	rocm_pkg_setup
+}
+
 src_prepare() {
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {
