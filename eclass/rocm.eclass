@@ -93,6 +93,8 @@ esac
 if [[ ! ${_ROCM_ECLASS} ]]; then
 _ROCM_ECLASS=1
 
+inherit llvm
+
 # @ECLASS_VARIABLE: ROCM_VERSION
 # @REQUIRED
 # @PRE_INHERIT
@@ -221,6 +223,60 @@ unset -f _rocm_set_globals_override
 unset -f _rocm_set_globals_default
 unset -f _rocm_set_globals
 
+# @FUNCTION:  rocm_pkg_setup
+# @DESCRIPTION:
+# Init paths
+rocm_pkg_setup() {
+	llvm_pkg_setup # Init LLVM_SLOT
+}
+
+# @FUNCTION:  rocm_src_prepare
+# @DESCRIPTION:
+# Patch common paths
+rocm_src_prepare() {
+	IFS=$'\n'
+	sed \
+		-i \
+		-e "s|}/llvm/bin|}/lib/llvm/@LLVM_SLOT@/bin|g" \
+		$(grep -r -F -l -e "}/llvm/bin" "${WORKDIR}") \
+		2>/dev/null || true
+	sed \
+		-i \
+		-e "s|/usr/bin/clang++|@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin/clang++|g" \
+		$(grep -r -F -l -e "/usr/bin/clang++" "${WORKDIR}") \
+		2>/dev/null || true
+	sed \
+		-i \
+		-e "s|}/llvm/bin/clang++|}/lib/llvm/@LLVM_SLOT@/bin/clang++|g" \
+		$(grep -r -F -l -e "}/llvm/bin/clang++" "${WORKDIR}") \
+		2>/dev/null || true
+	sed \
+		-i \
+		-e "s|/opt/rocm/llvm/bin/clang++|/opt/rocm/lib/llvm/@LLVM_SLOT@/bin/clang++|g" \
+		$(grep -r -F -l -e "/opt/rocm/llvm/bin/clang++" "${WORKDIR}") \
+		2>/dev/null || true
+	sed \
+		-i \
+		-e "s|/opt/rocm-ver|@EPREFIX@/usr|g" \
+		$(grep -r -l -e "/opt/rocm" "${WORKDIR}") \
+		2>/dev/null || true
+	sed \
+		-i \
+		-e "s|/opt/rocm|@EPREFIX@/usr|g" \
+		$(grep -r -l -e "/opt/rocm" "${WORKDIR}") \
+		2>/dev/null || true
+	sed \
+		-i \
+		-e "s|@EPREFIX@|${EPREFIX}|g" \
+		$(grep -r -l -e "@EPREFIX@" "${WORKDIR}") \
+		2>/dev/null || true
+	sed \
+		-i \
+		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
+		$(grep -r -l -e "@LLVM_SLOT@" "${WORKDIR}") \
+		2>/dev/null || true
+	IFS=$' \t\n'
+}
 
 # @FUNCTION: get_amdgpu_flags
 # @USAGE: get_amdgpu_flags
@@ -263,5 +319,7 @@ check_amdgpu() {
 		fi
 	done
 }
+
+EXPORT_FUNCTIONS pkg_setup src_prepare
 
 fi

@@ -3,7 +3,9 @@
 
 EAPI=8
 
-inherit cmake
+LLVM_MAX_SLOT=15
+
+inherit cmake rocm
 
 SRC_URI="
 https://github.com/RadeonOpenCompute/${PN}/archive/rocm-${PV}.tar.gz
@@ -25,6 +27,11 @@ BDEPEND="
 	>=dev-util/cmake-3.6.3
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
+
+src_prepare() {
+	cmake_src_prepare
+	rocm_src_prepare
+}
 
 src_install() {
 	cmake_src_install
