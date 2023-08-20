@@ -37,6 +37,7 @@ SLOT="0/$(ver_cut 1-2)"
 IUSE="
 ${ROCM_IUSE}
 cpu opencl rocm test
+r1
 "
 gen_rocm_required_use() {
 	local x
@@ -175,7 +176,7 @@ ewarn
 		)
 		append-flags \
 			--rocm-path="${ESYSROOT}/usr" \
-			--rocm-device-lib-path="${ESYSROOT}/usr/lib/amdgcn/bitcode"
+			--rocm-device-lib-path="${ESYSROOT}/usr/$(get_libdir)/amdgcn/bitcode"
 
 		# Fix:
 		# lld: error: undefined symbol: __stack_chk_guard
