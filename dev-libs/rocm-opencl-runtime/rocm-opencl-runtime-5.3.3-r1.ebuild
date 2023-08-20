@@ -21,7 +21,10 @@ LICENSE="
 	MIT
 "
 SLOT="0/$(ver_cut 1-2)"
-IUSE="debug test"
+IUSE="
+debug test
+r1
+"
 KEYWORDS="~amd64"
 RDEPEND="
 	>=media-libs/mesa-22.3.6
@@ -51,7 +54,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
-S1="${WORKDIR}/ROCclr-rocm-${PV}"
+CLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
 
 pkg_setup() {
 	rocm_pkg_setup
@@ -60,12 +63,25 @@ pkg_setup() {
 src_prepare() {
 	cmake_src_prepare
 	rocm_src_prepare
-	pushd "${S1}" || die
+
+	sed \
+		-i \
+		-e "s|\"lib\"|\"$(get_libdir)\"|g" \
+		"CMakeLists.txt" \
+		|| die
+
+	pushd "${CLR_S}" || die
 	# Bug #753377
 	# patch re-enables accidentally disabled gfx800 family
-	eapply "${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
-	eapply "${FILESDIR}/rocclr-${PV}-fix-include.patch"
-	eapply "${FILESDIR}/rocclr-5.3.3-gcc13.patch"
+		eapply "${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
+		eapply "${FILESDIR}/rocclr-${PV}-fix-include.patch"
+		eapply "${FILESDIR}/rocclr-5.3.3-gcc13.patch"
+
+		sed \
+			-i \
+			-e "s|\"lib\"|\"$(get_libdir)\"|g" \
+			"os/os_posix.cpp" \
+			|| die
 	popd || die
 }
 
@@ -79,7 +95,7 @@ src_configure() {
 
 	local mycmakeargs=(
 		-Wno-dev
-		-DROCCLR_PATH="${S1}"
+		-DROCCLR_PATH="${CLR_S}"
 		-DAMD_OPENCL_PATH="${S}"
 		-DROCM_PATH="${EPREFIX}/usr"
 		-DBUILD_TESTS=$(usex test ON OFF)

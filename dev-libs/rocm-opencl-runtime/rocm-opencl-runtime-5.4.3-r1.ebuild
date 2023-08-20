@@ -30,7 +30,10 @@ LICENSE="
 	MIT
 "
 SLOT="0/$(ver_cut 1-2)"
-IUSE="debug test"
+IUSE="
+debug test
+r1
+"
 RDEPEND="
 	>=media-libs/mesa-22.3.6
 	>=virtual/opencl-3
@@ -77,11 +80,24 @@ src_unpack () {
 src_prepare() {
 	cmake_src_prepare
 	rocm_src_prepare
+
+	sed \
+		-i \
+		-e "s|\"lib\"|\"$(get_libdir)\"|g" \
+		"CMakeLists.txt" \
+		|| die
+
 	pushd "${CLR_S}" || die
 	# Bug #753377
 	# patch re-enables accidentally disabled gfx800 family
-	eapply "${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
-	eapply "${FILESDIR}/rocclr-5.3.3-gcc13.patch"
+		eapply "${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
+		eapply "${FILESDIR}/rocclr-5.3.3-gcc13.patch"
+
+		sed \
+			-i \
+			-e "s|\"lib\"|\"$(get_libdir)\"|g" \
+			"os/os_posix.cpp" \
+			|| die
 	popd || die
 }
 
