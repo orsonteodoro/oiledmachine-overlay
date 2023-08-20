@@ -9,4 +9,9 @@
   <upstream>
     <remote-id type="github">ROCmSoftwarePlatform/hipBLASLt</remote-id>
   </upstream>
+  <use>
+    <flag name="tensile">
+      Build full functionality
+    </flag>
+  </use>
 </pkgmetadata>

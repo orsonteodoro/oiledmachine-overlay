@@ -44,7 +44,7 @@ SLOT="0/$(ver_cut 1-2)"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
-benchmark cuda +rocm
+benchmark cuda +rocm +tensile
 "
 gen_cuda_required_use() {
 	local x
@@ -174,10 +174,7 @@ ewarn
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
-		-DTensile_CODE_OBJECT_VERSION="V3" # Avoid V2 build error with xnack-
-		-DTensile_CPU_THREADS="${nprocs}"
-#		-DTensile_ROOT="${ESYSROOT}/usr"
-		-DTensile_ROOT="${S}/tensilelite"
+		-DCMAKE_INSTALL_LIBDIR="$(get_libdir)"
 		-DUSE_CUDA=$(usex cuda ON OFF)
 #		-DVIRTUALENV_BIN_DIR="${BUILD_DIR}/venv/bin"
 #		-DVIRTUALENV_PYTHON_EXENAME="${EPYTHON}"
@@ -206,16 +203,24 @@ ewarn
 		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 		export HIP_PLATFORM="amd"
 		export ROCM_PATH="${ESYSROOT}/usr"
-		export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang++"
-		export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang-offload-bundler"
 		einfo "get_amdgpu_flags:  $(get_amdgpu_flags)"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
-			-DBUILD_WITH_TENSILE=ON
+			-DBUILD_WITH_TENSILE=$(usex tensile ON OFF)
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 		)
+		if use tensile ; then
+			export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang++"
+			export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang-offload-bundler"
+			mycmakeargs+=(
+				-DTensile_CODE_OBJECT_VERSION="V3" # Avoid V2 build error with xnack-
+				-DTensile_CPU_THREADS="${nprocs}"
+#				-DTensile_ROOT="${ESYSROOT}/usr"
+				-DTensile_ROOT="${S}/tensilelite"
+			)
+		fi
 	fi
 
 #	virtualenv "${BUILD_DIR}/venv" || die
@@ -233,6 +238,7 @@ ewarn
 
 src_compile() {
 	cmake_src_compile || die
+	mkdir -p "${BUILD_DIR}/Tensile/library" || die
 }
 
 src_test() {
@@ -244,5 +250,4 @@ src_test() {
 	edob "${PN,,}-test"
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
