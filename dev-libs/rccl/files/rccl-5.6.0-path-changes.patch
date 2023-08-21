@@ -1,41 +1,40 @@
+diff -urp rccl-rocm-5.6.0.orig/cmake/Dependencies.cmake rccl-rocm-5.6.0/cmake/Dependencies.cmake
+--- rccl-rocm-5.6.0.orig/cmake/Dependencies.cmake	2023-06-14 09:24:41.000000000 -0700
++++ rccl-rocm-5.6.0/cmake/Dependencies.cmake	2023-08-21 11:27:09.857141084 -0700
+@@ -60,10 +60,8 @@ if(NOT GTest_FOUND AND BUILD_TESTS OR IN
+                      UPDATE_DISCONNECTED TRUE
+     )
+     set(GTEST_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/gtest/include CACHE PATH "")
+-    if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/gtest/lib)
+-        set(GTEST_BOTH_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/gtest/lib/libgtest.a;${CMAKE_CURRENT_BINARY_DIR}/gtest/lib/libgtest_main.a CACHE PATH "")
+-    elseif(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/gtest/lib64)
+-        set(GTEST_BOTH_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/gtest/lib64/libgtest.a;${CMAKE_CURRENT_BINARY_DIR}/gtest/lib64/libgtest_main.a CACHE PATH "")
++    if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/gtest/@LIBDIR@)
++        set(GTEST_BOTH_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/gtest/@LIBDIR@/libgtest.a;${CMAKE_CURRENT_BINARY_DIR}/gtest/@LIBDIR@/libgtest_main.a CACHE PATH "")
+     else()
+         message(FATAL_ERROR "Cannot find gtest library installation path.")
+     find_package(GTest REQUIRED CONFIG PATHS ${GTEST_ROOT})
 diff -urp rccl-rocm-5.6.0.orig/CMakeLists.txt rccl-rocm-5.6.0/CMakeLists.txt
---- rccl-rocm-5.6.0.orig/CMakeLists.txt	2023-08-20 04:32:29.270380126 -0700
-+++ rccl-rocm-5.6.0/CMakeLists.txt	2023-08-20 04:35:24.094384463 -0700
-@@ -451,7 +451,7 @@ if (rocm_smi_FOUND)
- else()
-   message ("-- Checking old include directory structure for rocm_smi")
-   set(ROCM_SMI_INCLUDE_DIR "${ROCM_PATH}/rocm_smi/include")
--  set(ROCM_SMI_LIB_DIR "${ROCM_PATH}/rocm_smi/lib")
-+  set(ROCM_SMI_LIB_DIR "${ROCM_PATH}/lib64")
-   set(ROCM_SMI_LIBRARIES rocm_smi64)
-   CHECK_INCLUDE_FILE_CXX("${ROCM_SMI_INCLUDE_DIR}/rocm_smi/rocm_smi64Config.h" HAVE_ROCM_SMI64CONFIG)
- endif()
+--- rccl-rocm-5.6.0.orig/CMakeLists.txt	2023-08-21 11:23:57.765136318 -0700
++++ rccl-rocm-5.6.0/CMakeLists.txt	2023-08-21 11:24:45.393137499 -0700
+@@ -511,7 +511,7 @@ target_link_libraries(rccl INTERFACE hip
+ 
+ if(HAVE_BFD)
+   target_link_libraries(rccl PRIVATE bfd dl z)
+-  find_library(HAVE_IBERTY iberty PATHS /usr/lib64 /usr/lib/
++  find_library(HAVE_IBERTY iberty PATHS /usr/@LIBDIR@
+     PATH_SUFFIXES x86_64-linux-gnu)
+   if(HAVE_IBERTY)
+     message("iberty found @  ${HAVE_IBERTY} ")
 diff -urp rccl-rocm-5.6.0.orig/test/CMakeLists.txt rccl-rocm-5.6.0/test/CMakeLists.txt
---- rccl-rocm-5.6.0.orig/test/CMakeLists.txt	2023-08-20 04:32:29.814380139 -0700
-+++ rccl-rocm-5.6.0/test/CMakeLists.txt	2023-08-20 04:35:28.974384584 -0700
-@@ -72,7 +72,7 @@ if(BUILD_TESTS)
-   # through -l and -L instead of command line input.
-   if(BUILD_STATIC)
-     add_dependencies(rccl-UnitTests rccl)
--    target_link_libraries(rccl-UnitTests PRIVATE dl rt numa -lrccl -L${CMAKE_BINARY_DIR} -lrocm_smi64 -L${ROCM_PATH}/lib -L${ROCM_PATH}/rocm_smi/lib)
-+    target_link_libraries(rccl-UnitTests PRIVATE dl rt numa -lrccl -L${CMAKE_BINARY_DIR} -lrocm_smi64 -L${ROCM_PATH}/lib64 -L${ROCM_PATH}/lib64)
-   else()
-     target_link_libraries(rccl-UnitTests PRIVATE rccl)
+--- rccl-rocm-5.6.0.orig/test/CMakeLists.txt	2023-08-21 11:23:57.741136317 -0700
++++ rccl-rocm-5.6.0/test/CMakeLists.txt	2023-08-21 11:27:20.481141347 -0700
+@@ -25,7 +25,7 @@ if(BUILD_TESTS)
+     INCLUDE_DIRECTORIES(${ROCR_HDR})
+ 
+     # Search for ROCr library file in user defined locations
+-    find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "/opt/rocm" PATH_SUFFIXES lib lib64 REQUIRED)
++    find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "/opt/rocm" PATH_SUFFIXES @LIBDIR@ REQUIRED)
    endif()
-@@ -81,12 +81,12 @@ if(BUILD_TESTS)
-   #  As a work-around, set the correct RPATH for the rccl unit test executable as a post-install step
-   # if (CMAKE_INSTALL_PREFIX MATCHES "${ROCM_PATH}")
-   #   # install_prefix/CMAKE_INSTALL_PREFIX was not explicitly specified, so look in build/release
--  #   add_custom_command( TARGET rccl-UnitTests POST_BUILD COMMAND chrpath ARGS -r ${CMAKE_BINARY_DIR}:${ROCM_PATH}/lib ${CMAKE_BINARY_DIR}/test/rccl-UnitTests)
-+  #   add_custom_command( TARGET rccl-UnitTests POST_BUILD COMMAND chrpath ARGS -r ${CMAKE_BINARY_DIR}:${ROCM_PATH}/lib64 ${CMAKE_BINARY_DIR}/test/rccl-UnitTests)
-   # else()
--  #   add_custom_command( TARGET rccl-UnitTests POST_BUILD COMMAND chrpath ARGS -r ${CMAKE_INSTALL_PREFIX}/lib:${ROCM_PATH}/lib ${CMAKE_INSTALL_PREFIX}/test/rccl-UnitTests)
-+  #   add_custom_command( TARGET rccl-UnitTests POST_BUILD COMMAND chrpath ARGS -r ${CMAKE_INSTALL_PREFIX}/lib64:${ROCM_PATH}/lib64 ${CMAKE_INSTALL_PREFIX}/test/rccl-UnitTests)
-   # endif()
--  set_property(TARGET rccl-UnitTests PROPERTY INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib;${ROCM_PATH}/lib;${CMAKE_BINARY_DIR}")
--  set_property(TARGET rccl-UnitTests PROPERTY BUILD_RPATH "${CMAKE_BINARY_DIR};${ROCM_PATH}/lib")
-+  set_property(TARGET rccl-UnitTests PROPERTY INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib64;${ROCM_PATH}/lib64;${CMAKE_BINARY_DIR}")
-+  set_property(TARGET rccl-UnitTests PROPERTY BUILD_RPATH "${CMAKE_BINARY_DIR};${ROCM_PATH}/lib64")
-   rocm_install(TARGETS rccl-UnitTests COMPONENT tests)
- else()
-   message("Not building rccl unit tests")
+ 
+   include_directories(${GTEST_INCLUDE_DIRS} ./common)
