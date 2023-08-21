@@ -59,7 +59,7 @@ src_prepare() {
 		CMakeLists.txt \
 		|| die
 	sed \
-		-e "/^path_librocm = /c\path_librocm = '${EPREFIX}/usr/lib64/librocm_smi64.so'" \
+		-e "/^path_librocm = /c\path_librocm = '${EPREFIX}/usr/$(get_libdir)/librocm_smi64.so'" \
 		-i \
 		python_smi_tools/rsmiBindings.py \
 		|| die
