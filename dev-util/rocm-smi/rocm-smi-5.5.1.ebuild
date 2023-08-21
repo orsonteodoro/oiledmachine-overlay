@@ -3,9 +3,10 @@
 
 EAPI=8
 
+LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{9..11} )
 
-inherit cmake python-r1
+inherit cmake python-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	inherit git-r3
@@ -32,6 +33,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	${PYTHON_DEPS}
+	sys-apps/hwdata
 "
 BDEPEND="
 	>=dev-util/cmake-3.16.8
@@ -40,6 +42,10 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-5.4.2-detect-builtin-amdgpu.patch"
 )
+
+pkg_setup() {
+	rocm_pkg_setup
+}
 
 src_prepare() {
 	sed \
@@ -52,7 +58,40 @@ src_prepare() {
 		-i \
 		python_smi_tools/rsmiBindings.py \
 		|| die
+	IFS=$'\n'
+		sed \
+			-i \
+			-e "s|{ROCM_DIR}/lib|{ROCM_DIR}/$(get_libdir)|g" \
+			$(grep -r -l -F -e "{ROCM_DIR}/lib" "${WORKDIR}") \
+			|| die
+		sed \
+			-i \
+			-e "s|{PROJECT_BINARY_DIR}/lib|{PROJECT_BINARY_DIR}/$(get_libdir)|g" \
+			$(grep -r -l -F -e "{PROJECT_BINARY_DIR}/lib" "${WORKDIR}") \
+			|| die
+		sed \
+			-i \
+			-e "s|{OAM_TARGET_NAME}/lib|{OAM_TARGET_NAME}/$(get_libdir)|g" \
+			$(grep -r -l -F -e "{OAM_TARGET_NAME}/lib" "${WORKDIR}") \
+			|| die
+		sed \
+			-i \
+			-e "s|{ROCM_SMI}/lib|{ROCM_SMI}/$(get_libdir)|g" \
+			$(grep -r -l -F -e "{ROCM_SMI}/lib" "${WORKDIR}") \
+			|| die
+		sed \
+			-i \
+			-e "s|{CMAKE_BINARY_DIR}/lib|{CMAKE_BINARY_DIR}/$(get_libdir)|g" \
+			$(grep -r -l -F -e "{CMAKE_BINARY_DIR}/lib" "${WORKDIR}") \
+			|| die
+		sed \
+			-i \
+			-e "s| lib/| $(get_libdir)/|g" \
+			$(grep -r -l -F -e " lib/" "README.md") \
+			|| die
+	IFS=$' \t\n'
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {
