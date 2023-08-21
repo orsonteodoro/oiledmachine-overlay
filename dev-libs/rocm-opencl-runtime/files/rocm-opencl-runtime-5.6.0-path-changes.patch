@@ -6,7 +6,7 @@ diff -urp ROCm-OpenCL-Runtime-rocm-5.6.0.orig/opencl-backward-compat.cmake ROCm-
  set(OPENCL_WRAPPER_INC_DIR ${OPENCL_WRAPPER_DIR}/include/CL)
  set(OPENCL_WRAPPER_BIN_DIR ${OPENCL_WRAPPER_DIR}/bin)
 -set(OPENCL_WRAPPER_LIB_DIR ${OPENCL_WRAPPER_DIR}/lib)
-+set(OPENCL_WRAPPER_LIB_DIR ${OPENCL_WRAPPER_DIR}/lib64)
++set(OPENCL_WRAPPER_LIB_DIR ${OPENCL_WRAPPER_DIR}/@LIBDIR@)
  
  #Function to generate header template file
  function(create_header_template)
@@ -15,8 +15,8 @@ diff -urp ROCm-OpenCL-Runtime-rocm-5.6.0.orig/opencl-backward-compat.cmake ROCm-
  endif()
  if(BUILD_SHARED_LIBS)
 -  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.so  DESTINATION ${OPENCL}/lib COMPONENT binary)
-+  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.so  DESTINATION ${OPENCL}/lib64 COMPONENT binary)
++  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.so  DESTINATION ${OPENCL}/@LIBDIR@ COMPONENT binary)
  else()
 -  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.a  DESTINATION ${OPENCL}/lib COMPONENT binary)
-+  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.a  DESTINATION ${OPENCL}/lib64 COMPONENT binary)
++  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.a  DESTINATION ${OPENCL}/@LIBDIR@ COMPONENT binary)
  endif()
