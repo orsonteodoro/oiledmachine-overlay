@@ -6,15 +6,16 @@ EAPI=8
 LLVM_MAX_SLOT=14
 PYTHON_COMPAT=( python3_{9..10} )
 
-inherit cmake llvm prefix python-any-r1
+inherit cmake llvm prefix python-any-r1 rocm
 
+HSA_CLASS_COMMIT="f8b387043b9f510afdf2e72e38a011900360d6ab"
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/roctracer/archive/rocm-${PV}.tar.gz
 	-> rocm-tracer-${PV}.tar.gz
 https://github.com/ROCm-Developer-Tools/rocprofiler/archive/rocm-${PV}.tar.gz
 	-> rocprofiler-${PV}.tar.gz
-https://github.com/ROCmSoftwarePlatform/hsa-class/archive/f8b387043b9f510afdf2e72e38a011900360d6ab.tar.gz
-	-> hsa-class-f8b3870.tar.gz
+https://github.com/ROCmSoftwarePlatform/hsa-class/archive/${HSA_CLASS_COMMIT}.tar.gz
+	-> hsa-class-${HSA_CLASS_COMMIT:0:7}.tar.gz
 "
 
 DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
@@ -46,6 +47,8 @@ BDEPEND="
 "
 RESTRICT="test"
 S="${WORKDIR}/roctracer-rocm-${PV}"
+S_PROFILER="${WORKDIR}/rocprofiler"
+S_HSA_CLASS="${WORKDIR}/hsa-class-${HSA_CLASS_COMMIT}"
 PATCHES=(
 	# https://github.com/ROCm-Developer-Tools/roctracer/pull/63
 	"${FILESDIR}/${PN}-4.3.0-glibc-2.34.patch"
@@ -63,6 +66,7 @@ python_check_deps() {
 pkg_setup() {
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python-any-r1_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -91,9 +95,8 @@ src_prepare() {
 		-e "/LIBRARY DESTINATION/s,lib,$(get_libdir)," \
 		-e "/DESTINATION/s,\${DEST_NAME}/include,include/roctracer," \
 		-e "/install ( FILES \${PROJECT_BINARY_DIR}\/so/d" \
-		-e "/DESTINATION/s,\${DEST_NAME}/lib64,$(get_libdir),g" \
 		-i \
-		CMakeLists.txt \
+		"CMakeLists.txt" \
 		|| die
 
 	# Do not download additional sources via git.
@@ -102,10 +105,71 @@ src_prepare() {
 		-e "/add_subdirectory ( \${HSA_TEST_DIR} \${PROJECT_BINARY_DIR}/d" \
 		-e "/DESTINATION/s,\${DEST_NAME}/tool,$(get_libdir),g" \
 		-i \
-		test/CMakeLists.txt \
+		"test/CMakeLists.txt" \
+		|| die
+	sed \
+		-i \
+		-e "s|llvm/lib/cmake/clang|lib/llvm/@LLVM_SLOT@/$(get_libdir)/cmake/clang|g" \
+		"test/CMakeLists.txt" \
+		|| die
+	sed \
+		-i \
+		-e "s|/opt/rocm/lib/|/usr/$(get_libdir)/|g" \
+		"README.md" \
+		|| die
+	sed \
+		-i \
+		-e "s|\$ROCM_PATH/lib:\$ROCM_PATH/lib64|\$ROCM_PATH/$(get_libdir)|g" \
+		"build_static.sh" \
+		|| die
+	sed \
+		-i \
+		-e "s|{DEST_NAME}/lib|{DEST_NAME}/$(get_libdir)|g" \
+		"${S_PROFILER}/CMakeLists.txt" \
+		"CMakeLists.txt" \
+		|| die
+
+	local clang_slot=$(basename $(realpath "${ESYSROOT}/usr/lib/clang/${LLVM_MAX_SLOT}"*))
+
+	sed \
+		-i \
+		-r \
+		-e "s;PKG_DIR/lib($|\"|/);PKG_DIR/$(get_libdir)\1;g" \
+		-e "s;ROOT_DIR/lib($|\"|/);ROOT_DIR/$(get_libdir)\1;g" \
+		"${S_PROFILER}/bin/rpl_run.sh" \
+		|| die
+
+	sed \
+		-i \
+		-e "s|/lib/|/$(get_libdir)/|g" \
+		"README.md" \
+		|| die
+
+	sed \
+		-i \
+		-e "s|\$ROCM_PATH/lib:\$ROCM_PATH/lib64|$ROCM_PATH/$(get_libdir)|g" \
+		"build.sh" \
+		|| die
+
+	sed \
+		-i \
+		-e "s|LLVM_DIR/lib/clang|LLVM_DIR/lib/clang/${clang_slot}|g" \
+		-e "s|ROCM_DIR/lib|ROCM_DIR/$(get_libdir)|g" \
+		-e "s|ROCM_DIR/llvm|ROCM_DIR/lib/llvm/${LLVM_MAX_SLOT}|g" \
+		-e "s|ROCM_DIR/amdgcn/bitcode|ROCM_DIR/$(get_libdir)/amdgcn/bitcode|g" \
+		"${S_HSA_CLASS}/script/build_kernel.sh" \
+		"${S_PROFILER}/bin/build_kernel.sh" \
+		"test/hsa/script/build_kernel.sh" \
+		|| die
+
+	sed \
+		-i \
+		-e "s|\$PWD:\$PWD/../../lib:/opt/rocm/lib|\$PWD:\$PWD/../../$(get_libdir):/usr/$(get_libdir)|g" \
+		"${S_PROFILER}/test/run.sh" \
 		|| die
 
 	hprefixify script/*.py
+	rocm_src_prepare
 }
 
 src_configure() {

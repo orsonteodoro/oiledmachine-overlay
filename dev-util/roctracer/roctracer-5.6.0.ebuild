@@ -46,6 +46,7 @@ RESTRICT="
 	)
 "
 S="${WORKDIR}/roctracer-rocm-${PV}"
+S_PROFILER="${WORKDIR}/rocprofiler"
 PATCHES=(
 	"${FILESDIR}/roctracer-5.6.0-flat-lib-layout.patch"
 	"${FILESDIR}/roctracer-5.3.3-do-not-install-test-files.patch"
@@ -61,12 +62,59 @@ python_check_deps() {
 pkg_setup() {
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python-any-r1_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
 	cmake_src_prepare
 	hprefixify script/*.py
 	eapply $(prefixify_ro "${FILESDIR}/${PN}-5.3.3-rocm-path.patch")
+	sed \
+		-i \
+		-e "s|llvm/lib/cmake/clang|lib/llvm/@LLVM_SLOT@/$(get_libdir)/cmake/clang|g" \
+		"test/CMakeLists.txt" \
+		|| die
+	sed \
+		-i \
+		-e "s|/opt/rocm/lib/|/usr/$(get_libdir)/|g" \
+		"README.md" \
+		|| die
+	sed \
+		-i \
+		-e "s|{ROCT_WRAPPER_DIR}/lib|{ROCT_WRAPPER_DIR}/$(get_libdir)|g" \
+		"roctracer-backward-compat.cmake" \
+		|| die
+	sed \
+		-i \
+		-e "s|\$ROCM_PATH/lib:\$ROCM_PATH/lib64|\$ROCM_PATH/$(get_libdir)|g" \
+		"build_static.sh" \
+		|| die
+	sed \
+		-i \
+		-e "s|{DEST_NAME}/lib|{DEST_NAME}/$(get_libdir)|g" \
+		"CMakeLists.txt" \
+		|| die
+
+	sed \
+		-i \
+		-e "s|/lib/|/$(get_libdir)/|g" \
+		"README.md" \
+		"roctracer-backward-compat.cmake" \
+		|| die
+
+	sed \
+		-i \
+		-e "s|\$ROCM_PATH/lib:\$ROCM_PATH/lib64|$ROCM_PATH/$(get_libdir)|g" \
+		"build.sh" \
+		|| die
+
+	sed \
+		-i \
+		-e "s|lib/cmake/amd_comgr|$(get_libdir)/cmake/amd_comgr|g" \
+		"plugin/file/CMakeLists.txt" \
+		|| die
+
+	rocm_src_prepare
 }
 
 src_configure() {
@@ -87,7 +135,7 @@ eerror
 	export HIP_PLATFORM="amd"
 	export ROCM_PATH="$(hipconfig -p)"
 	local mycmakeargs=(
-		-DCMAKE_MODULE_PATH="${EPREFIX}/usr/lib64/cmake/hip"
+		-DCMAKE_MODULE_PATH="${EPREFIX}/usr/$(get_libdir)/cmake/hip"
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DHIP_COMPILER="clang"
@@ -102,7 +150,7 @@ src_test() {
 	check_amdgpu
 	cd "${BUILD_DIR}" || die
 	# If LD_LIBRARY_PATH not set, dlopen cannot find the correct lib.
-	LD_LIBRARY_PATH="${EPREFIX}/usr/lib64" \
+	LD_LIBRARY_PATH="${EPREFIX}/usr/$(get_libdir)" \
 	bash run.sh || die
 }
 
