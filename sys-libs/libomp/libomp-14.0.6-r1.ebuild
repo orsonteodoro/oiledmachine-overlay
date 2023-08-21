@@ -34,6 +34,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_86
 )
 PYTHON_COMPAT=( python3_{9..10} )
+ROCM_SKIP_COMMON_PATHS_PATCHES=1
 
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-any-r1 rocm
 

@@ -55,6 +55,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_89
 	sm_90
 )
+ROCM_SKIP_COMMON_PATHS_PATCHES=1
 
 inherit llvm-ebuilds
 

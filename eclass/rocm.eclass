@@ -227,6 +227,7 @@ unset -f _rocm_set_globals
 # @DESCRIPTION:
 # Init paths
 rocm_pkg_setup() {
+	[[ "${ROCM_SKIP_COMMON_PATHS_PATCHES}" == "1" ]] && return
 	if [[ -z "${LLVM_MAX_SLOT}" ]] ; then
 eerror
 eerror "LLVM_MAX_SLOT must be defined"
