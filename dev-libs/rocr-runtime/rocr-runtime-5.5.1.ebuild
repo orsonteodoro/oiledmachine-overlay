@@ -24,7 +24,10 @@ DESCRIPTION="Radeon Open Compute Runtime"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCR-Runtime"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="+aqlprofile debug"
+IUSE="
++aqlprofile debug
+r1
+"
 CDEPEND="
 	dev-libs/elfutils
 "
@@ -45,7 +48,7 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.6.0-change-lib-path.patch"
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 pkg_setup() {
@@ -53,32 +56,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	# ... otherwise system llvm/clang is used ...
-	local llvm_prefix=$(get_llvm_prefix ${LLVM_MAX_SLOT})
-	sed \
-		-e "/find_package(Clang REQUIRED HINTS /s:\${CMAKE_INSTALL_PREFIX}/llvm \${CMAKE_PREFIX_PATH}/llvm PATHS /opt/rocm/llvm:${llvm_prefix}:" \
-		-i \
-		image/blit_src/CMakeLists.txt \
-		|| die
-
-	# The distro installs "*.bc" to "/usr/lib" instead of a "[path]/bitcode"
-	# directory.
-	sed \
-		-e "s:-O2:--rocm-path=${EPREFIX}/usr/lib/ -O2:" \
-		-i \
-		image/blit_src/CMakeLists.txt \
-		|| die
-
-	# The internal version depends on git being present and random weird
-	# magic, otherwise fallback to incoherent default value fix default
-	# value to be more better
-
-	sed \
-		-i \
-		-e "s:1.7.0:${PV}:" \
-		CMakeLists.txt \
-		|| die
-
 	cmake_src_prepare
 	if ! use aqlprofile ; then
 		eapply "${FILESDIR}/${PN}-4.3.0_no-aqlprofiler.patch"

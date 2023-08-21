@@ -1,0 +1,54 @@
+diff -urp b/CMakeLists.txt b/CMakeLists.txt
+--- b/CMakeLists.txt	2023-06-28 05:56:26.000000000 -0700
++++ b/CMakeLists.txt	2023-08-21 12:48:32.129262216 -0700
+@@ -125,8 +125,8 @@ target_include_directories( ${CORE_RUNTI
+   ${CMAKE_CURRENT_SOURCE_DIR}/libamdhsacode
+   ${CMAKE_CURRENT_BINARY_DIR}/core/runtime/trap_handler)
+ 
+-## Set RUNPATH - ../../lib covers use of the legacy symlink in /hsa/lib/
+-set_property(TARGET ${CORE_RUNTIME_TARGET} PROPERTY INSTALL_RPATH "$ORIGIN;$ORIGIN/../../lib;$ORIGIN/../../lib64;$ORIGIN/../lib64" )
++## Set RUNPATH - ../../@LIBDIR@ covers use of the legacy symlink in /hsa/lib/
++set_property(TARGET ${CORE_RUNTIME_TARGET} PROPERTY INSTALL_RPATH "$ORIGIN;$ORIGIN/../../@LIBDIR@;$ORIGIN/../@LIBDIR@" )
+ 
+ ## ------------------------- Linux Compiler and Linker options -------------------------
+ set ( HSA_CXX_FLAGS ${HSA_COMMON_CXX_FLAGS} -fexceptions -fno-rtti -fvisibility=hidden -Wno-error=missing-braces -Wno-error=sign-compare -Wno-sign-compare -Wno-write-strings -Wno-conversion-null -fno-math-errno -fno-threadsafe-statics -fmerge-all-constants -fms-extensions -Wno-error=comment -Wno-comment -Wno-error=pointer-arith -Wno-pointer-arith -Wno-error=unused-variable -Wno-error=unused-function -mmwaitx )
+diff -urp b/cmake_modules/FindLibElf.cmake b/cmake_modules/FindLibElf.cmake
+--- b/cmake_modules/FindLibElf.cmake	2023-06-28 05:56:26.000000000 -0700
++++ b/cmake_modules/FindLibElf.cmake	2023-08-21 12:48:35.617262303 -0700
+@@ -35,9 +35,9 @@ find_library (LIBELF_LIBRARIES
+   NAMES
+     elf
+   PATHS
+-    /usr/lib
+-    /usr/local/lib
+-    /opt/local/lib
++    /usr/@LIBDIR@
++    /usr/local/@LIBDIR@
++    /opt/local/@LIBDIR@
+     /sw/lib
+     ENV LIBRARY_PATH
+     ENV LD_LIBRARY_PATH)
+diff -urp b/hsa-backward-compat.cmake b/hsa-backward-compat.cmake
+--- b/hsa-backward-compat.cmake	2023-06-28 05:56:26.000000000 -0700
++++ b/hsa-backward-compat.cmake	2023-08-21 12:46:20.345258947 -0700
+@@ -19,7 +19,7 @@
+ 
+ set(HSA_WRAPPER_DIR ${CMAKE_CURRENT_BINARY_DIR}/wrapper_dir)
+ set(HSA_WRAPPER_INC_DIR ${HSA_WRAPPER_DIR}/include/hsa)
+-set(HSA_WRAPPER_LIB_DIR ${HSA_WRAPPER_DIR}/lib)
++set(HSA_WRAPPER_LIB_DIR ${HSA_WRAPPER_DIR}/@LIBDIR@)
+ 
+ #Function to generate header template file
+ function(create_header_template)
+diff -urp b/image/blit_src/CMakeLists.txt b/image/blit_src/CMakeLists.txt
+--- b/image/blit_src/CMakeLists.txt	2023-06-28 05:56:26.000000000 -0700
++++ b/image/blit_src/CMakeLists.txt	2023-08-21 12:48:33.217262243 -0700
+@@ -66,7 +66,7 @@ endif()
+ function(gen_kernel_bc TARGET_ID INPUT_FILE OUTPUT_FILE)
+ 
+   separate_arguments(CLANG_ARG_LIST UNIX_COMMAND
+-    "-O2 -x cl -Xclang -finclude-default-header -cl-denorms-are-zero -cl-std=CL2.0
++    "--rocm-path=/usr/@LIBDIR@/ -O2 -x cl -Xclang -finclude-default-header -cl-denorms-are-zero -cl-std=CL2.0
+     -target amdgcn-amd-amdhsa -mcpu=${TARGET_ID} -mcode-object-version=4
+     -o ${OUTPUT_FILE} ${INPUT_FILE}")
+ 
