@@ -57,16 +57,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	sed \
-		-e "s:amdgcn/bitcode:$(get_libdir)/amdgcn/bitcode:" \
-		-i \
-		"${S}/cmake/OCL.cmake" \
-		|| die
-	sed \
-		-e "s:amdgcn/bitcode:$(get_libdir)/amdgcn/bitcode:" \
-		-i \
-		"${S}/cmake/Packages.cmake" \
-		|| die
 	cmake_src_prepare
 	rocm_src_prepare
 }

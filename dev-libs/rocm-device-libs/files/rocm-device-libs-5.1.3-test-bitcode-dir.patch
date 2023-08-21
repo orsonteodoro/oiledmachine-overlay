@@ -18,7 +18,7 @@ Excerpt from https://salsa.debian.org/rocm-team/rocm-device-libs/-/blob/d2014eed
       -DFILECHECK_BIN=${FILECHECK_BIN}
       -DOUTPUT_FILE=output.${name}.ll
       -DINPUT_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}.cl
-+     -DAMDGCN_BITCODES=${PROJECT_BINARY_DIR}/lib64/amdgcn/bitcode
++     -DAMDGCN_BITCODES=${PROJECT_BINARY_DIR}/@LIBDIR@/amdgcn/bitcode
       -DTEST_CPU=gfx900
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunConstantFoldTest.cmake)
  endfunction()
