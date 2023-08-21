@@ -1,0 +1,105 @@
+diff -urp rocALUTION-rocm-5.6.0.orig/CMakeLists.txt rocALUTION-rocm-5.6.0/CMakeLists.txt
+--- rocALUTION-rocm-5.6.0.orig/CMakeLists.txt	2023-08-21 15:35:07.209510202 -0700
++++ rocALUTION-rocm-5.6.0/CMakeLists.txt	2023-08-21 15:47:19.809528379 -0700
+@@ -32,12 +32,12 @@ else()
+ endif()
+ 
+ # Needed to pickup static library files
+-list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH}/llvm ${ROCM_PATH})
++list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@ ${ROCM_PATH})
+ 
+ # CMake modules
+ list(APPEND CMAKE_MODULE_PATH
+      ${CMAKE_CURRENT_SOURCE_DIR}/cmake
+-     ${ROCM_PATH}/lib/cmake/hip
++     ${ROCM_PATH}/@LIBDIR@/cmake/hip
+      ${ROCM_PATH}/hip/cmake)
+ 
+ # Set a default build type if none was specified
+@@ -204,7 +204,7 @@ if(BUILD_CODE_COVERAGE)
+     COMMAND mkdir -p lcoverage
+     COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
+     COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
+-    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec @ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
+     COMMAND chmod +x llvm-gcov.sh
+     )
+ 
+diff -urp rocALUTION-rocm-5.6.0.orig/deps/external-gtest.cmake rocALUTION-rocm-5.6.0/deps/external-gtest.cmake
+--- rocALUTION-rocm-5.6.0.orig/deps/external-gtest.cmake	2023-06-12 11:16:39.000000000 -0700
++++ rocALUTION-rocm-5.6.0/deps/external-gtest.cmake	2023-08-21 15:36:28.305512214 -0700
+@@ -91,11 +91,7 @@ ExternalProject_Get_Property( googletest
+ set( package_dir "${PREFIX_GTEST}" )
+ if( CMAKE_CONFIGURATION_TYPES )
+   # Create a package by bundling libraries and header files
+-  if( BUILD_64 )
+-    set( LIB_DIR lib64 )
+-  else( )
+-    set( LIB_DIR lib )
+-  endif( )
++  set( LIB_DIR @LIBDIR@ )
+ 
+   set( gtest_lib_dir "<BINARY_DIR>/${LIB_DIR}" )
+   ExternalProject_Add_Step( googletest createPackage
+diff -urp rocALUTION-rocm-5.6.0.orig/install.sh rocALUTION-rocm-5.6.0/install.sh
+--- rocALUTION-rocm-5.6.0.orig/install.sh	2023-06-12 11:16:39.000000000 -0700
++++ rocALUTION-rocm-5.6.0/install.sh	2023-08-21 15:48:51.377530650 -0700
+@@ -269,7 +269,7 @@ build_omp=true
+ build_release=true
+ build_dir=./build
+ install_prefix=rocalution-install
+-rocm_path=/opt/rocm
++rocm_path=@EPREFIX@/usr
+ build_relocatable=false
+ build_static=false
+ build_address_sanitizer=false
+@@ -384,7 +384,7 @@ if [[ "${build_relocatable}" == true ]];
+         rocm_path=${ROCM_PATH}
+     fi
+ 
+-    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX@/usr/@LIBDIR@"
+     if ! [ -z ${ROCM_RPATH+x} ]; then
+         rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
+     fi
+@@ -421,7 +421,7 @@ fi
+ if [[ "${build_relocatable}" == true ]]; then
+     export PATH=${rocm_path}/bin:${PATH}
+ else
+-    export PATH=${PATH}:/opt/rocm/bin
++    export PATH=${PATH}:@EPREFIX@/usr/bin
+ fi
+ 
+ pushd .
+@@ -517,7 +517,7 @@ pushd .
+   if [[ "${build_relocatable}" == true ]]; then
+     cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=${rocm_path}"
+   else
+-    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=/opt/rocm"
++    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=/usr"
+   fi
+ 
+   # Build library with AMD toolchain because of existense of device kernels
+@@ -526,8 +526,8 @@ pushd .
+       -DCMAKE_INSTALL_PREFIX="${install_prefix}" \
+       -DCMAKE_SHARED_LINKER_FLAGS="${rocm_rpath}" \
+       -DCMAKE_PREFIX_PATH="${rocm_path} ${rocm_path}/hcc ${rocm_path}/hip" \
+-      -DCMAKE_MODULE_PATH="${rocm_path}/lib/cmake/hip ${rocm_path}/hip/cmake" \
+-      -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/lib:${rocm_path}/lib64" \
++      -DCMAKE_MODULE_PATH="${rocm_path}/@LIBDIR@/cmake/hip" \
++      -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/@LIBDIR@" \
+       -DROCM_DISABLE_LDCONFIG=ON \
+       -DROCM_PATH="${rocm_path}" ../..
+   else
+diff -urp rocALUTION-rocm-5.6.0.orig/toolchain-linux.cmake rocALUTION-rocm-5.6.0/toolchain-linux.cmake
+--- rocALUTION-rocm-5.6.0.orig/toolchain-linux.cmake	2023-06-12 11:16:39.000000000 -0700
++++ rocALUTION-rocm-5.6.0/toolchain-linux.cmake	2023-08-21 15:44:34.865524286 -0700
+@@ -2,7 +2,7 @@
+ if (DEFINED ENV{ROCM_PATH})
+   set(rocm_bin "$ENV{ROCM_PATH}/bin")
+ else()
+-  set(rocm_bin "/opt/rocm/bin")
++  set(rocm_bin "@EPREFIX@/usr/bin")
+ endif()
+ 
+ set(CMAKE_CXX_COMPILER "${rocm_bin}/hipcc")

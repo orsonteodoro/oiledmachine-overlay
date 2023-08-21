@@ -83,6 +83,7 @@ RESTRICT="mirror"
 S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/rocALUTION-5.6.0-invalid-operands-fix.patch"
+	"${FILESDIR}/rocALUTION-5.1.3-path-changes.patch"
 )
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 
@@ -171,7 +172,7 @@ eerror
 
 src_install() {
         cmake_src_install
-        chrpath --delete "${D}/usr/lib64/librocalution.so.0.1" || die
+        chrpath --delete "${D}/usr/$(get_libdir)/librocalution.so.0.1" || die
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
