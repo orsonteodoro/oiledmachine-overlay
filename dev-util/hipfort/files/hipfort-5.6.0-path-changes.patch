@@ -17,7 +17,7 @@ diff -urp hipfort-rocm-5.6.0.orig/bin/hipfc hipfort-rocm-5.6.0/bin/hipfc
    name=${1}
    libdir=""
 -  for dir in "${ROCM_PATH}/lib" "${ROCM_PATH}/${name}/lib"; do
-+  for dir in "${ROCM_PATH}/lib64" ; do
++  for dir in "${ROCM_PATH}/@LIBDIR@" ; do
      for ext in "so" "a"; do
    	if [ -f "${dir}/lib${name}.${ext}" ]; then
            libdir=${dir}
@@ -26,7 +26,7 @@ diff -urp hipfort-rocm-5.6.0.orig/bin/hipfc hipfort-rocm-5.6.0/bin/hipfc
    done
    if [[ -z ${libdir} ]]; then
 -     echo "ERROR:  Library $name could not be found in $ROCM_PATH/lib/ or $ROCM_PATH/$name/lib/"
-+     echo "ERROR:  Library $name could not be found in $ROCM_PATH/lib64/"
++     echo "ERROR:  Library $name could not be found in $ROCM_PATH/@LIBDIR@/"
       echo "        Please install $name"
       exit $DEADRC
    fi
@@ -46,7 +46,7 @@ diff -urp hipfort-rocm-5.6.0.orig/bin/hipfc hipfort-rocm-5.6.0/bin/hipfc
     TARGET_TRIPLE=${TARGET_TRIPLE:-amdgcn-amd-amdhsa}
     TARGET_ARCH="amdgcn"
 -   TARGET_LIBS="-L$ROCM_PATH/lib -lamdhip64 -Wl,-rpath=$ROCM_PATH/lib "
-+   TARGET_LIBS="-L$ROCM_PATH/lib64 -lamdhip64 -Wl,-rpath=$ROCM_PATH/lib64 "
++   TARGET_LIBS="-L$ROCM_PATH/@LIBDIR@ -lamdhip64 -Wl,-rpath=$ROCM_PATH/@LIBDIR@ "
     HIPCC_ENV="HIP_PLATFORM=$HIP_PLATFORM"
     if [ -z ${HIP_CLANG_PATH+x} ]; then
 -     HIPCC_ENV+=" HIP_CLANG_PATH=$ROCM_PATH/llvm/bin"
@@ -67,7 +67,7 @@ diff -urp hipfort-rocm-5.6.0.orig/bin/hipfc hipfort-rocm-5.6.0/bin/hipfc
     LINKOPTS=""
  else
 -   LINKOPTS="-L$HIPFORT/lib -lhipfort-$TARGET_ARCH"
-+   LINKOPTS="-L$HIPFORT/lib64 -lhipfort-$TARGET_ARCH"
++   LINKOPTS="-L$HIPFORT/@LIBDIR@ -lhipfort-$TARGET_ARCH"
     for lib in $ROCM_LIBS; do
       addrocmlib $lib
     done
