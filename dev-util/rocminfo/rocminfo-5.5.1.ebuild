@@ -3,7 +3,9 @@
 
 EAPI=8
 
-inherit cmake
+LLVM_MAX_SLOT=16
+
+inherit cmake rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rocminfo/"
@@ -33,6 +35,10 @@ BDEPEND="
 PATCHES=(
 )
 
+pkg_setup() {
+	rocm_pkg_setup
+}
+
 src_prepare() {
 	sed \
 		-e "/CPACK_RESOURCE_FILE_LICENSE/d" \
@@ -44,12 +50,18 @@ src_prepare() {
 		-i \
 		cmake_modules/utils.cmake \
 		|| die # Fix QA issue on "git not found"
+	sed \
+		-i \
+		-e "s|{PROJECT_BINARY_DIR}/lib|{PROJECT_BINARY_DIR}/$(get_libdir)|" \
+		"CMakeLists.txt" \
+		|| die
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {
 	local mycmakeargs=(
-		-DROCRTST_BLD_TYPE=Release
+		-DROCRTST_BLD_TYPE="Release"
 	)
 	cmake_src_configure
 }
