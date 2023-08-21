@@ -151,7 +151,7 @@ src_prepare() {
 		-i \
 		"setup.py" \
 		|| die
-	cmake_src_prepare # No CMakeLists.txt
+	cmake_src_prepare
 	rocm_src_prepare
 }
 
