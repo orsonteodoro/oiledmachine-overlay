@@ -17,6 +17,7 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_bandwidth_test"
 LICENSE="NCSA-AMD"
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
+IUSE="r1"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
 "
@@ -28,8 +29,17 @@ BDEPEND="
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
 
+pkg_setup() {
+	rocm_pkg_setup
+}
+
 src_prepare() {
 	cmake_src_prepare
+	sed \
+		-i \
+		-e "s|lib lib64|$(get_libdir)|" \
+		"CMakeLists.txt" \
+		|| die
 	rocm_src_prepare
 }
 
