@@ -26,11 +26,12 @@ CUDA_TARGETS_COMPAT=(
 	sm_80
 	sm_86
 )
-PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
-inherit cmake cuda flag-o-matic rocm python-single-r1
-
+LLVM_MAX_SLOT=16
 MYPN="pytorch"
 MYP="${MYPN}-${PV}"
+PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
+
+inherit cmake cuda flag-o-matic rocm python-single-r1
 
 SRC_URI="
 https://github.com/pytorch/${MYPN}/archive/refs/tags/v${PV}.tar.gz
@@ -249,6 +250,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.0.1-hip-cmake.patch"
 )
 
+pkg_setup() {
+	rocm_pkg_setup
+}
+
 src_prepare() {
 	filter-lto #bug 862672
 	sed -i \
@@ -269,6 +274,7 @@ src_prepare() {
 		-e "s|lib/cmake|$(get_libdir)/cmake|g" \
 		"cmake/public/LoadHIP.cmake" \
 		|| die
+	rocm_src_prepare
 }
 
 gen_cuda_arch_list() {
