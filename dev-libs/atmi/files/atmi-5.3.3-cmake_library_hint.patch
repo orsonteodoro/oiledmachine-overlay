@@ -1,6 +1,23 @@
+diff -urp src.orig/atmi-backward-compat.cmake src/atmi-backward-compat.cmake
+--- src.orig/atmi-backward-compat.cmake	2022-11-17 12:10:28.000000000 -0800
++++ src/atmi-backward-compat.cmake	2023-08-21 11:48:46.625173257 -0700
+@@ -24,10 +24,10 @@ set(ATMI_WRAPPER_DIR ${ATMI_BUILD_DIR}/w
+ set(ATMI_WRAPPER_INC_DIR ${ATMI_WRAPPER_DIR}/include)
+ set(ATMI_WRAPPER_BIN_DIR ${ATMI_WRAPPER_DIR}/bin)
+ if(CMAKE_BUILD_TYPE MATCHES Debug)
+-  set(ATMI_LIB_DIR "lib-debug")
+-  set(ROCM_LIB_DIR "lib-debug")
++  set(ATMI_LIB_DIR "@LIBDIR@-debug")
++  set(ROCM_LIB_DIR "@LIBDIR@-debug")
+ else()
+-  set(ATMI_LIB_DIR "lib")
++  set(ATMI_LIB_DIR "@LIBDIR@")
+   set(ROCM_LIB_DIR "${CMAKE_INSTALL_LIBDIR}")
+ endif()
+ set(ATMI_WRAPPER_LIB_DIR ${ATMI_WRAPPER_DIR}/${ATMI_LIB_DIR})
 diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.cmake
 --- src.orig/cmake_modules/FindLibElf.cmake	2022-11-17 12:10:28.000000000 -0800
-+++ src/cmake_modules/FindLibElf.cmake	2023-08-14 10:52:01.567096172 -0700
++++ src/cmake_modules/FindLibElf.cmake	2023-08-21 11:47:33.601171446 -0700
 @@ -23,8 +23,8 @@ find_library (LIBELF_LIBRARIES
      elf
      PATHS
@@ -14,7 +31,7 @@ diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.c
  
 diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
 --- src.orig/cmake_modules/FindROCm.cmake	2022-11-17 12:10:28.000000000 -0800
-+++ src/cmake_modules/FindROCm.cmake	2023-08-14 10:51:01.327098107 -0700
++++ src/cmake_modules/FindROCm.cmake	2023-08-21 11:47:33.601171446 -0700
 @@ -28,14 +28,14 @@ find_library(
    ROCR_LIBRARY
      hsa-runtime64
@@ -57,7 +74,19 @@ diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
  )
 diff -urp src.orig/compiler/CMakeLists.txt src/compiler/CMakeLists.txt
 --- src.orig/compiler/CMakeLists.txt	2022-11-17 12:10:28.000000000 -0800
-+++ src/compiler/CMakeLists.txt	2023-08-14 10:51:14.479097685 -0700
++++ src/compiler/CMakeLists.txt	2023-08-21 11:48:01.313172133 -0700
+@@ -65,9 +65,9 @@ if(ROCM_FOUND)
+             include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+             include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../include)
+ 
+-            # Install plugin under the lib destination folder.
++            # Install plugin under the @LIBDIR@ destination folder.
+             if(CMAKE_BUILD_TYPE MATCHES Debug)
+-                install(TARGETS atmi_cplugin LIBRARY DESTINATION "lib-debug" COMPONENT cplugin )
++                install(TARGETS atmi_cplugin LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}-debug" COMPONENT cplugin )
+             else()
+                 install(TARGETS atmi_cplugin LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT cplugin )
+             endif()
 @@ -91,7 +91,7 @@ if(ROCM_FOUND)
              )
  
@@ -68,8 +97,8 @@ diff -urp src.orig/compiler/CMakeLists.txt src/compiler/CMakeLists.txt
  
         else()
 diff -urp src.orig/device_runtime/bc.cmake src/device_runtime/bc.cmake
---- src.orig/device_runtime/bc.cmake	2023-08-14 10:49:53.327100291 -0700
-+++ src/device_runtime/bc.cmake	2023-08-14 10:52:03.135096122 -0700
+--- src.orig/device_runtime/bc.cmake	2022-11-17 12:10:28.000000000 -0800
++++ src/device_runtime/bc.cmake	2023-08-21 11:47:33.605171446 -0700
 @@ -190,7 +190,7 @@ macro(add_bc_library name dir)
  
    add_custom_command(
@@ -80,8 +109,8 @@ diff -urp src.orig/device_runtime/bc.cmake src/device_runtime/bc.cmake
    )
    add_custom_target(${name}-${mcpu} ALL DEPENDS ${name}-${mcpu}.bc)
 diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.txt
---- src.orig/device_runtime/CMakeLists.txt	2023-08-14 10:49:53.307100292 -0700
-+++ src/device_runtime/CMakeLists.txt	2023-08-14 10:51:01.327098107 -0700
+--- src.orig/device_runtime/CMakeLists.txt	2023-08-21 11:46:52.861170435 -0700
++++ src/device_runtime/CMakeLists.txt	2023-08-21 11:48:19.009172572 -0700
 @@ -32,7 +32,7 @@ if(LLVM_FOUND)
    if (CLANG_INSTALL_PREFIX)
      set(CLANG_BINDIR ${CLANG_INSTALL_PREFIX}/bin)
@@ -104,6 +133,15 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
    NO_DEFAULT_PATH)
  
  get_filename_component (ATMI_DE_DEP_LIBHSA_LIBRARIES_DIRS ${ATMI_DE_DEP_LIBHSA_LIBRARIES} DIRECTORY)
+@@ -116,7 +117,7 @@ add_custom_target(device_header ALL DEPE
+ # append to the configure file
+ file(APPEND ${ATMI_RUNTIME_PATH}/atmi-config.mak "AMDLLVM=${AMDLLVM}\n")
+ file(APPEND ${ATMI_RUNTIME_PATH}/atmi-config.mak "AMDGPU_TARGET_TRIPLE=${AMDGPU_TARGET_TRIPLE}\n")
+-# cloc assumes the /path/to/rocm/lib (with the /lib suffix in the path)
++# cloc assumes the /path/to/rocm/@LIBDIR@ (with the /@LIBDIR@ suffix in the path)
+ file(APPEND ${ATMI_RUNTIME_PATH}/atmi-config.mak "ROCM_DEVICE_PATH=${ROCM_DEVICE_PATH}/amdgcn/bitcode\n")
+ 
+ target_sources(atmi_runtime PRIVATE
 @@ -133,7 +134,7 @@ foreach(mcpu ${mcpus})
    set(optimization_level 2)
  
@@ -113,9 +151,18 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
  
    # create output dir for include files
    execute_process(COMMAND "/bin/mkdir" "-p" "${OUTPUTDIR}")
+@@ -153,7 +154,7 @@ foreach(mcpu ${mcpus})
+   if(CMAKE_BUILD_TYPE MATCHES Debug)
+     install(FILES
+       ${OUTPUTDIR}/atmi-${mcpu}.bc
+-      DESTINATION lib-debug COMPONENT device_runtime
++      DESTINATION ${CMAKE_INSTALL_LIBDIR}-debug COMPONENT device_runtime
+       )
+   else()
+     install(FILES
 diff -urp src.orig/runtime/core/CMakeLists.txt src/runtime/core/CMakeLists.txt
---- src.orig/runtime/core/CMakeLists.txt	2023-08-14 10:49:53.311100292 -0700
-+++ src/runtime/core/CMakeLists.txt	2023-08-14 10:51:47.903096611 -0700
+--- src.orig/runtime/core/CMakeLists.txt	2023-08-21 11:46:52.865170435 -0700
++++ src/runtime/core/CMakeLists.txt	2023-08-21 11:48:31.937172893 -0700
 @@ -44,7 +44,7 @@ add_definitions(-DROCM_VERSION_MINOR=${R
  add_definitions(-fpic)
  
@@ -136,3 +183,15 @@ diff -urp src.orig/runtime/core/CMakeLists.txt src/runtime/core/CMakeLists.txt
    )
  endif ()
  
+@@ -131,9 +131,9 @@ add_custom_command(
+ 
+ add_custom_target(core_header ALL DEPENDS ${OUTPUT_INC_DIRECTORY}/atmi.h ${OUTPUT_INC_DIRECTORY}/atmi_runtime.h)
+ 
+-# Install plugin under the lib destination folder.
++# Install plugin under the @LIBDIR@ destination folder.
+ if(CMAKE_BUILD_TYPE MATCHES Debug)
+-  install(TARGETS atmi_runtime LIBRARY DESTINATION "lib-debug" COMPONENT runtime )
++  install(TARGETS atmi_runtime LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}-debug" COMPONENT runtime )
+ else()
+   install(TARGETS atmi_runtime LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT runtime )
+ endif()
