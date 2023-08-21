@@ -7,8 +7,8 @@ diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.c
      /usr/lib/x86_64-linux-gnu
 -    /usr/lib
 -    /usr/local/lib
-+    /usr/lib64
-+    /usr/local/lib64
++    /usr/@LIBDIR@
++    /usr/local/@LIBDIR@
      ENV LIBRARY_PATH
      ENV LD_LIBRARY_PATH)
  
@@ -20,18 +20,18 @@ diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
      hsa-runtime64
    HINTS
 -    ${ROC_DIR}/lib
-+    ${ROC_DIR}/lib64
++    ${ROC_DIR}/@LIBDIR@
      ${ROC_DIR}
 -    ${ROCR_DIR}/lib
-+    ${ROCR_DIR}/lib64
++    ${ROCR_DIR}/@LIBDIR@
      ${ROCR_DIR}
 -    /opt/rocm/lib
 -    /usr/local/lib
-+    /opt/rocm/lib64
-+    /usr/local/lib64
++    /opt/rocm/@LIBDIR@
++    /usr/local/@LIBDIR@
      /usr/lib/x86_64-linux-gnu
 -    /usr/lib
-+    /usr/lib64
++    /usr/@LIBDIR@
      ENV LIBRARY_PATH
      ENV LD_LIBRARY_PATH
  )
@@ -40,18 +40,18 @@ diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
      hsakmt
    HINTS
 -    ${ROC_DIR}/lib
-+    ${ROC_DIR}/lib64
++    ${ROC_DIR}/@LIBDIR@
      ${ROC_DIR}
 -    ${ROCT_DIR}/lib
-+    ${ROCT_DIR}/lib64
++    ${ROCT_DIR}/@LIBDIR@
      ${ROCT_DIR}
 -    /opt/rocm/lib
 -    /usr/local/lib
-+    /opt/rocm/lib64
-+    /usr/local/lib64
++    /opt/rocm/@LIBDIR@
++    /usr/local/@LIBDIR@
      /usr/lib/x86_64-linux-gnu
 -    /usr/lib
-+    /usr/lib64
++    /usr/@LIBDIR@
      ENV LIBRARY_PATH
      ENV LD_LIBRARY_PATH
  )
@@ -63,7 +63,7 @@ diff -urp src.orig/compiler/CMakeLists.txt src/compiler/CMakeLists.txt
  
              if (NOT CMAKE_INSTALL_RPATH)
 -              set(CMAKE_INSTALL_RPATH "$ORIGIN;$ORIGIN/../../hsa/lib;$ORIGIN/../../lib;$ORIGIN/../../lib64;$ORIGIN/../lib64")
-+              set(CMAKE_INSTALL_RPATH "$ORIGIN;$ORIGIN/../../hsa/lib64;$ORIGIN/../../lib64;$ORIGIN/../../lib64;$ORIGIN/../lib64")
++              set(CMAKE_INSTALL_RPATH "$ORIGIN;$ORIGIN/../../hsa/@LIBDIR@;$ORIGIN/../../@LIBDIR@;$ORIGIN/../../@LIBDIR@;$ORIGIN/../@LIBDIR@")
              endif ()
  
         else()
@@ -75,7 +75,7 @@ diff -urp src.orig/device_runtime/bc.cmake src/device_runtime/bc.cmake
    add_custom_command(
      OUTPUT ${name}-${mcpu}.bc
 -    COMMAND /bin/cp optout.${mcpu}.bc ${ATMI_RUNTIME_PATH}/lib/${name}-${mcpu}.bc
-+    COMMAND /bin/cp optout.${mcpu}.bc ${ATMI_RUNTIME_PATH}/lib64/${name}-${mcpu}.bc
++    COMMAND /bin/cp optout.${mcpu}.bc ${ATMI_RUNTIME_PATH}/@LIBDIR@/${name}-${mcpu}.bc
      DEPENDS optout.${mcpu}.bc
    )
    add_custom_target(${name}-${mcpu} ALL DEPENDS ${name}-${mcpu}.bc)
@@ -87,7 +87,7 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
      set(CLANG_BINDIR ${CLANG_INSTALL_PREFIX}/bin)
      set(CLANG_INCDIR ${CLANG_INSTALL_PREFIX}/include)
 -    set(CLANG_LIBDIR ${CLANG_INSTALL_PREFIX}/lib)
-+    set(CLANG_LIBDIR ${CLANG_INSTALL_PREFIX}/lib64)
++    set(CLANG_LIBDIR ${CLANG_INSTALL_PREFIX}/@LIBDIR@)
      set(AMDLLVM ${CLANG_INSTALL_PREFIX})
    else()
      set(CLANG_BINDIR ${LLVM_BUILD_BINARY_DIR}/bin)
@@ -95,12 +95,12 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
      "ockl.bc"
      "ockl.amdgcn.bc"
    PATHS
-+    "${AMD_DEVICE_LIBS_PREFIX}/lib64/amdgcn/bitcode"
++    "${AMD_DEVICE_LIBS_PREFIX}/@LIBDIR@/amdgcn/bitcode"
      "${AMD_DEVICE_LIBS_PREFIX}/amdgcn/bitcode"
 -    "${AMD_DEVICE_LIBS_PREFIX}/lib/bitcode"
 -    "${AMD_DEVICE_LIBS_PREFIX}/lib"
-+    "${AMD_DEVICE_LIBS_PREFIX}/lib64/bitcode"
-+    "${AMD_DEVICE_LIBS_PREFIX}/lib64"
++    "${AMD_DEVICE_LIBS_PREFIX}/@LIBDIR@/bitcode"
++    "${AMD_DEVICE_LIBS_PREFIX}/@LIBDIR@"
    NO_DEFAULT_PATH)
  
  get_filename_component (ATMI_DE_DEP_LIBHSA_LIBRARIES_DIRS ${ATMI_DE_DEP_LIBHSA_LIBRARIES} DIRECTORY)
@@ -109,7 +109,7 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
  
    # set output dir for .bc files
 -  set(OUTPUTDIR ${ATMI_RUNTIME_PATH}/lib)
-+  set(OUTPUTDIR ${ATMI_RUNTIME_PATH}/lib64)
++  set(OUTPUTDIR ${ATMI_RUNTIME_PATH}/@LIBDIR@)
  
    # create output dir for include files
    execute_process(COMMAND "/bin/mkdir" "-p" "${OUTPUTDIR}")
@@ -121,7 +121,7 @@ diff -urp src.orig/runtime/core/CMakeLists.txt src/runtime/core/CMakeLists.txt
  
  # set output dir for the .so file
 -set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../../lib)
-+set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../../lib64)
++set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../../@LIBDIR@)
  
  #set soname version number
  get_version ( "1.0.0" )
@@ -131,8 +131,8 @@ diff -urp src.orig/runtime/core/CMakeLists.txt src/runtime/core/CMakeLists.txt
          INSTALL_RPATH_USE_LINK_PATH TRUE
 -        BUILD_RPATH               "\$ORIGIN;\$ORIGIN/../../hsa/lib;\$ORIGIN/../../lib;\$ORIGIN/../../lib64;\$ORIGIN/../lib64"
 -        INSTALL_RPATH             "\$ORIGIN;\$ORIGIN/../../hsa/lib;\$ORIGIN/../../lib;\$ORIGIN/../../lib64;\$ORIGIN/../lib64"
-+        BUILD_RPATH               "\$ORIGIN;\$ORIGIN/../../hsa/lib64;\$ORIGIN/../../lib64;\$ORIGIN/../../lib64;\$ORIGIN/../lib64"
-+        INSTALL_RPATH             "\$ORIGIN;\$ORIGIN/../../hsa/lib64;\$ORIGIN/../../lib64;\$ORIGIN/../../lib64;\$ORIGIN/../lib64"
++        BUILD_RPATH               "\$ORIGIN;\$ORIGIN/../../hsa/@LIBDIR@;\$ORIGIN/../../@LIBDIR@;\$ORIGIN/../../@LIBDIR@;\$ORIGIN/../@LIBDIR@"
++        INSTALL_RPATH             "\$ORIGIN;\$ORIGIN/../../hsa/@LIBDIR@;\$ORIGIN/../../@LIBDIR@;\$ORIGIN/../../@LIBDIR@;\$ORIGIN/../@LIBDIR@"
    )
  endif ()
  
