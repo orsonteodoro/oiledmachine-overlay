@@ -164,9 +164,9 @@ fix_rpath() {
 	IFS=$'\n'
 	for path in $(find "${ED}") ; do
 		if file "${path}" | grep -q "ELF 64-bit .* shared object" ; then
-			patchelf --set-rpath "\$ORIGIN/../lib64" "${path}" || die
+			patchelf --set-rpath "\$ORIGIN/../$(get_libdir)" "${path}" || die
 		elif file "${path}" | grep -q "ELF 64-bit .* executable" ; then
-			patchelf --set-rpath "\$ORIGIN/../lib64" "${path}" || die
+			patchelf --set-rpath "\$ORIGIN/../$(get_libdir)" "${path}" || die
 		fi
 	done
 	IFS=$' \t\n'
