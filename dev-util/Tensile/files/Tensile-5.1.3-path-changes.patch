@@ -1,0 +1,35 @@
+diff -urp Tensile-rocm-5.1.3.orig/Tensile/Common.py Tensile-rocm-5.1.3/Tensile/Common.py
+--- Tensile-rocm-5.1.3.orig/Tensile/Common.py	2023-08-20 18:16:55.903607431 -0700
++++ Tensile-rocm-5.1.3/Tensile/Common.py	2023-08-20 18:17:11.863607827 -0700
+@@ -1910,7 +1910,7 @@ def assignGlobalParameters( config ):
+     if os.name == "nt":
+       globalParameters["AssemblerPath"] = locateExe(globalParameters["ROCmBinPath"], "clang++.exe")
+     else:
+-      globalParameters["AssemblerPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "llvm/bin"), "clang++")
++      globalParameters["AssemblerPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "lib/llvm/@LLVM_SLOT@/bin"), "clang++")
+ 
+   globalParameters["ROCmSMIPath"] = locateExe(globalParameters["ROCmBinPath"], "rocm-smi")
+ 
+@@ -1922,7 +1922,7 @@ def assignGlobalParameters( config ):
+     if os.name == "nt":
+       globalParameters["ClangOffloadBundlerPath"] = locateExe(globalParameters["ROCmBinPath"], "clang-offload-bundler.exe")
+     else:
+-      globalParameters["ClangOffloadBundlerPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "llvm/bin"), "clang-offload-bundler")
++      globalParameters["ClangOffloadBundlerPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "lib/llvm/@LLVM_SLOT@/bin"), "clang-offload-bundler")
+ 
+   if "ROCmAgentEnumeratorPath" in config:
+     globalParameters["ROCmAgentEnumeratorPath"] = config["ROCmAgentEnumeratorPath"]
+diff -urp Tensile-rocm-5.1.3.orig/Tensile/Tests/hipModuleLoad_timing/Makefile Tensile-rocm-5.1.3/Tensile/Tests/hipModuleLoad_timing/Makefile
+--- Tensile-rocm-5.1.3.orig/Tensile/Tests/hipModuleLoad_timing/Makefile	2022-03-10 20:40:09.000000000 -0800
++++ Tensile-rocm-5.1.3/Tensile/Tests/hipModuleLoad_timing/Makefile	2023-08-20 18:18:32.643609832 -0700
+@@ -1,7 +1,7 @@
+-CXX=/opt/rocm/hip/bin/hipcc
+-LIBFLAGS=-L/opt/rocm/hip/lib/
++CXX=@ESYSROOT@/usr/bin/hipcc
++LIBFLAGS=-L@ESYSROOT@/usr/@LIBDIR@/
+ LIBS=-lamdhip64
+-INCFLAGS=-I/opt/rocm/hip/include/
++INCFLAGS=-I@ESYSROOT@/usr/include/hip
+ 
+ hipModuleLoadTiming.out: hipModuleLoadTiming.o
+ 	$(CXX) -o $@ $(LIBFLAGS) $^

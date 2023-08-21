@@ -68,22 +68,25 @@ BDEPEND="
 "
 # Not compatible with recent versions of pytest
 RESTRICT="test"
-PATCHES=(
+S="${WORKDIR}/${PN}-rocm-${PV}"
+_PATCHES=(
 	"${FILESDIR}/${PN}-change-cmake-name-for-msgpack-cxx-6-release.patch"
 	"${FILESDIR}/${PN}-4.3.0-output-commands.patch"
 	"${FILESDIR}/${PN}-5.0.2-gfx1031.patch"
 	"${FILESDIR}/${PN}-5.0.2-fix-arch-parse.patch"
 	"${FILESDIR}/${PN}-5.0.2-use-ninja.patch"
+	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
-S="${WORKDIR}/${PN}-rocm-${PV}"
-CMAKE_USE_DIR="${WORKDIR}/Source"
+CMAKE_USE_DIR="${S}/${PN}/Source"
 
 pkg_setup() {
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
+	eapply "${_PATCHES[@]}"
 	distutils-r1_src_prepare
 	sed \
 		-e "s,\@LLVM_PATH\@,$(get_llvm_prefix ${LLVM_MAX_SLOT}),g" \
@@ -148,6 +151,8 @@ src_prepare() {
 		-i \
 		"setup.py" \
 		|| die
+	cmake_src_prepare # No CMakeLists.txt
+	rocm_src_prepare
 }
 
 src_configure() {

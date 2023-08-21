@@ -313,6 +313,16 @@ eerror
 		-e "s|@EPREFIX@|${EPREFIX}|g" \
 		$(grep -r -l -e "@EPREFIX@" "${WORKDIR}") \
 		2>/dev/null || true
+	sed \
+		-i \
+		-e "s|@ESYSROOT@|${ESYSROOT}|g" \
+		$(grep -r -l -e "@ESYSROOT@" "${WORKDIR}") \
+		2>/dev/null || true
+	sed \
+		-i \
+		-e "s|@LIBDIR@|$(get_libdir)|g" \
+		$(grep -r -l -e "@LIBDIR@" "${WORKDIR}") \
+		2>/dev/null || true
 
 	# /opt/rocm/llvm -> @EPREFIX@/usr/llvm -> /usr/llvm
 	sed \

@@ -1,0 +1,21 @@
+--- a/Tensile/cmake/TensileConfig.cmake.orig	2023-06-12 10:51:58.000000000 -0700
++++ b/Tensile/cmake/TensileConfig.cmake	2023-08-20 18:06:53.551592487 -0700
+@@ -284,6 +284,7 @@ function(TensileCreateLibraryFiles
+         COMMENT "Generating Tensile Libraries"
+         OUTPUT ${Tensile_EMBED_LIBRARY_SOURCE};${Tensile_MANIFEST_CONTENTS}
+         COMMAND ${CommandLine}
++		USES_TERMINAL
+       )
+ 
+       set("${Tensile_VAR_PREFIX}_ALL_FILES" ${Tensile_MANIFEST_CONTENTS} PARENT_SCOPE)
+--- a/Tensile/Common.py.orig	2023-08-20 18:07:09.951592893 -0700
++++ b/Tensile/Common.py	2023-08-20 18:07:47.599593828 -0700
+@@ -181,7 +181,7 @@ globalParameters["PrintTensorD"] = 0
+ globalParameters["PrintTensorRef"] = 0          # Print reference tensor.  0x1=after init; 0x2=after copy-back; 0x3=both
+ globalParameters["PrintIndexAssignments"] = 0      # Print the tensor index assignment info
+ globalParameters["PrintWinnersOnly"] = False      # Only print the solutions which become the fastest
+-globalParameters["PrintCodeCommands"] = False  # print the commands used to generate the code objects (asm,link,hip-clang, etc)
++globalParameters["PrintCodeCommands"] = True  # print the commands used to generate the code objects (asm,link,hip-clang, etc)
+ globalParameters["DumpTensors"] = False        # If True, dump tensors to binary files instead of printing them.
+ 
+ # If PrintMax* is greater than the dimension, the middle elements will be replaced with "..."
