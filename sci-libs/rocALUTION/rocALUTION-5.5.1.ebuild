@@ -13,8 +13,8 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1030
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
-ROCM_VERSION="${PV}"
 LLVM_MAX_SLOT=16
+ROCM_VERSION="${PV}"
 
 inherit cmake llvm rocm
 
@@ -87,6 +87,10 @@ PATCHES=(
 )
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 
+pkg_setup() {
+	rocm_pkg_setup
+}
+
 src_prepare() {
 	sed \
 		-e "s: PREFIX rocalution):):" \
@@ -105,6 +109,7 @@ src_prepare() {
 		|| die
 
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {
