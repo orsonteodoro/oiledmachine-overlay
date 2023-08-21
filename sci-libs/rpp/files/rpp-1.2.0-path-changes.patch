@@ -1,0 +1,431 @@
+diff -urp rpp-1.2.0.orig/cmake/CppCheck.cmake rpp-1.2.0/cmake/CppCheck.cmake
+--- rpp-1.2.0.orig/cmake/CppCheck.cmake	2023-06-29 21:43:27.000000000 -0700
++++ rpp-1.2.0/cmake/CppCheck.cmake	2023-08-21 15:04:58.353465323 -0700
+@@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
+     NAMES 
+         cppcheck
+     PATHS
+-        /opt/rocm/bin
++        /usr/bin
+ )
+ 
+ ProcessorCount(CPPCHECK_JOBS)
+diff -urp rpp-1.2.0.orig/cmake/FindOpenCL.cmake rpp-1.2.0/cmake/FindOpenCL.cmake
+--- rpp-1.2.0.orig/cmake/FindOpenCL.cmake	2023-06-29 21:43:27.000000000 -0700
++++ rpp-1.2.0/cmake/FindOpenCL.cmake	2023-08-21 14:54:23.717449577 -0700
+@@ -60,33 +60,33 @@ else()
+         find_library( OPENCL_LIBRARIES
+             NAMES OpenCL
+             HINTS
+-            $ENV{OPENCL_ROOT}/lib
+-            $ENV{AMDAPPSDKROOT}/lib
+-            $ENV{CUDA_PATH}/lib
+-            $ENV{OCL_ROOT}/lib
++            $ENV{OPENCL_ROOT}/@LIBDIR@
++            $ENV{AMDAPPSDKROOT}/@LIBDIR@
++            $ENV{CUDA_PATH}/@LIBDIR@
++            $ENV{OCL_ROOT}/@LIBDIR@
+             DOC "OpenCL dynamic library path"
+             PATH_SUFFIXES x86_64 x64 x86_64/sdk
+             PATHS
+-            ${ROCM_PATH}/lib/
+-            /usr/lib
+-            /usr/local/cuda/lib
+-            /opt/cuda/lib
++            ${ROCM_PATH}/@LIBDIR@/
++            /usr/@LIBDIR@
++            /usr/local/cuda/@LIBDIR@
++            /opt/cuda/@LIBDIR@
+         )
+     else( )
+         find_library( OPENCL_LIBRARIES
+             NAMES OpenCL
+             HINTS
+-            $ENV{OPENCL_ROOT}/lib
+-            $ENV{AMDAPPSDKROOT}/lib
+-            $ENV{CUDA_PATH}/lib
+-            $ENV{OCL_ROOT}/lib
++            $ENV{OPENCL_ROOT}/@LIBDIR@
++            $ENV{AMDAPPSDKROOT}/@LIBDIR@
++            $ENV{CUDA_PATH}/@LIBDIR@
++            $ENV{OCL_ROOT}/@LIBDIR@
+             DOC "OpenCL dynamic library path"
+             PATH_SUFFIXES x86 Win32
+             PATHS
+-            ${ROCM_PATH}/lib/
+-            /usr/lib
+-            /usr/local/cuda/lib
+-            /opt/cuda/lib
++            ${ROCM_PATH}/@LIBDIR@/
++            /usr/@LIBDIR@
++            /usr/local/cuda/@LIBDIR@
++            /opt/cuda/@LIBDIR@
+         )
+     endif( )
+     mark_as_advanced( OPENCL_LIBRARIES )
+@@ -99,11 +99,11 @@ else()
+     set(OpenCL_LIBRARIES ${OPENCL_LIBRARIES} CACHE INTERNAL "")
+     set(OpenCL_INCLUDE_DIRS ${OPENCL_INCLUDE_DIRS} CACHE INTERNAL "")
+ 
+-    if(EXISTS "${ROCM_PATH}/lib/libOpenCL.so")
+-        if(NOT "${OPENCL_LIBRARIES}" STREQUAL "${ROCM_PATH}/lib/libOpenCL.so")
++    if(EXISTS "${ROCM_PATH}/@LIBDIR@/libOpenCL.so")
++        if(NOT "${OPENCL_LIBRARIES}" STREQUAL "${ROCM_PATH}/@LIBDIR@/libOpenCL.so")
+             message("-- ${White}OpenCL Found - ${OPENCL_LIBRARIES}${ColourReset}")
+             message("-- ${White}ROCm OpenCL Found - Force OpenCL_LIBRARIES & OpenCL_INCLUDE_DIRS to use ROCm OpenCL${ColourReset}")
+-            set(OpenCL_LIBRARIES ${ROCM_PATH}/lib/libOpenCL.so CACHE INTERNAL "")
++            set(OpenCL_LIBRARIES ${ROCM_PATH}/@LIBDIR@/libOpenCL.so CACHE INTERNAL "")
+             set(OpenCL_INCLUDE_DIRS ${ROCM_PATH}/include CACHE INTERNAL "")
+         endif()
+     else()
+@@ -140,4 +140,4 @@ else()
+     if( NOT OpenCL_FOUND )
+         message( "-- ${Yellow}NOTE: FindOpenCL failed to find -- OpenCL${ColourReset}" )
+     endif()
+-endif()
+\ No newline at end of file
++endif()
+diff -urp rpp-1.2.0.orig/cmake/FindTurboJpeg.cmake rpp-1.2.0/cmake/FindTurboJpeg.cmake
+--- rpp-1.2.0.orig/cmake/FindTurboJpeg.cmake	2023-06-29 21:43:27.000000000 -0700
++++ rpp-1.2.0/cmake/FindTurboJpeg.cmake	2023-08-21 15:04:56.945465288 -0700
+@@ -43,26 +43,22 @@ mark_as_advanced(TurboJpeg_INCLUDE_DIRS)
+ find_library(TurboJpeg_LIBRARIES
+     NAMES libturbojpeg${SHARED_LIB_TYPE}
+     HINTS
+-    $ENV{TURBO_JPEG_PATH}/lib
+-    $ENV{TURBO_JPEG_PATH}/lib64
++    $ENV{TURBO_JPEG_PATH}/@LIBDIR@
+     PATHS
+-    ${TURBO_JPEG_PATH}/lib
+-    ${TURBO_JPEG_PATH}/lib64
+-    /usr/lib
+-    /opt/libjpeg-turbo/lib
++    ${TURBO_JPEG_PATH}/@LIBDIR@
++    /usr/@LIBDIR@
++    /opt/libjpeg-turbo/@LIBDIR@
+ )
+ mark_as_advanced(TurboJpeg_LIBRARIES)
+ 
+ find_path(TurboJpeg_LIBRARIES_DIRS
+     NAMES libturbojpeg${SHARED_LIB_TYPE}
+     HINTS
+-    $ENV{TURBO_JPEG_PATH}/lib
+-    $ENV{TURBO_JPEG_PATH}/lib64
++    $ENV{TURBO_JPEG_PATH}/@LIBDIR@
+     PATHS
+-    ${TURBO_JPEG_PATH}/lib
+-    ${TURBO_JPEG_PATH}/lib64
+-    /usr/lib
+-    /opt/libjpeg-turbo/lib
++    ${TURBO_JPEG_PATH}/@LIBDIR@
++    /usr/@LIBDIR@
++    /opt/libjpeg-turbo/@LIBDIR@
+ )
+ mark_as_advanced(TurboJpeg_LIBRARIES_DIRS)
+ 
+@@ -91,4 +87,4 @@ else()
+         message(FATAL_ERROR "{Red}FindTurboJpeg -- NOT FOUND${ColourReset}")
+     endif()
+     message( "-- ${Yellow}NOTE: FindTurboJpeg failed to find -- turbojpeg${ColourReset}" )
+-endif()
+\ No newline at end of file
++endif()
+diff -urp rpp-1.2.0.orig/CMakeLists.txt rpp-1.2.0/CMakeLists.txt
+--- rpp-1.2.0.orig/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
++++ rpp-1.2.0/CMakeLists.txt	2023-08-21 15:08:43.505470909 -0700
+@@ -19,7 +19,7 @@
+ # THE SOFTWARE.
+ 
+ cmake_minimum_required(VERSION 3.5)
+-set(CMAKE_CXX_COMPILER clang++)
++#set(CMAKE_CXX_COMPILER clang++)
+ set(CMAKE_CXX_STANDARD 14)
+ 
+ project(rpp CXX)
+@@ -27,7 +27,7 @@ project(rpp CXX)
+ # RPP Version
+ set(VERSION "1.2.0")
+ 
+-set(CMAKE_INSTALL_LIBDIR "lib" CACHE STRING "Library install directory")
++set(CMAKE_INSTALL_LIBDIR "@LIBDIR@" CACHE STRING "Library install directory")
+ include(GNUInstallDirs)
+ 
+ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR})
+@@ -39,7 +39,7 @@ find_program(RPMBUILD_EXE rpmbuild)
+ find_program(DPKG_EXE dpkg)
+ 
+ # ROCm Path
+-set(ROCM_PATH /opt/rocm CACHE PATH "RPP default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH "RPP default ROCm installation path")
+ # Avoid setting the default path to /usr/local
+ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "RPP default ROCm installation path" FORCE)
+@@ -189,7 +189,7 @@ if("${BACKEND}" STREQUAL "HIP")
+         set(RPP_BACKEND_HIP 1)
+         # To use RPP_BACKEND_HIP
+         add_definitions(-DRPP_BACKEND_HIP=${RPP_BACKEND_HIP})
+-        set(COMPILER_FOR_HIP ${ROCM_PATH}/llvm/bin/clang++)
++        set(COMPILER_FOR_HIP @ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin/clang++)
+         include_directories(${ROCM_PATH}/${CMAKE_INSTALL_INCLUDEDIR})
+         link_directories(${HIP_PATH}/${CMAKE_INSTALL_LIBDIR})
+         # link To HIP Host library -- [hip::host] to use host API
+@@ -293,7 +293,7 @@ endif()
+ add_subdirectory(addkernels)
+ 
+ # Installation
+-# install RPP libs -- {ROCM_PATH}/lib
++# install RPP libs -- {ROCM_PATH}/@LIBDIR@
+ install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ # install RPP include files -- {ROCM_PATH}/include/rpp/
+ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rpp PATTERN "*.h.in" EXCLUDE)
+diff -urp rpp-1.2.0.orig/utilities/examples/brightness/CMakeLists.txt rpp-1.2.0/utilities/examples/brightness/CMakeLists.txt
+--- rpp-1.2.0.orig/utilities/examples/brightness/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
++++ rpp-1.2.0/utilities/examples/brightness/CMakeLists.txt	2023-08-21 15:04:52.785465185 -0700
+@@ -21,7 +21,7 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(examples/brightness)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
+ list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH})
+ 
+ # Set message options
+@@ -68,11 +68,11 @@ if (hip_FOUND AND OpenCV_FOUND)
+     include_directories(${hip_INCLUDE_DIRS} ${hip_INCLUDE_DIRS}/hip)
+     include_directories(${OpenCV_INCLUDE_DIRS})
+     include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
+-    link_directories(${ROCM_PATH}/lib /usr/local/lib)
++    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
+ 
+     add_executable(brightness_hip brightness_hip.cpp)
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGPU_SUPPORT=1 -DRPP_BACKEND_HIP=1 -std=gnu++14")
+     target_link_libraries(brightness_hip ${OpenCV_LIBS} -lturbojpeg -lrpp ${hip_LIBRARIES} pthread ${LINK_LIBRARY_LIST} hip::device)
+ else()
+     message("-- ${Yellow}Error: OpenCV and hip must be installed to install ${PROJECT_NAME} successfully!${ColourReset}")
+-endif()
+\ No newline at end of file
++endif()
+diff -urp rpp-1.2.0.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt rpp-1.2.0/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt
+--- rpp-1.2.0.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
++++ rpp-1.2.0/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2023-08-21 15:05:03.889465460 -0700
+@@ -21,7 +21,7 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(rpp_performancetests/HIP_NEW)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
+ list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH})
+ 
+ # Set message options
+@@ -59,7 +59,7 @@ if (hip_FOUND AND OpenCV_FOUND)
+     include_directories(${hip_INCLUDE_DIRS} ${hip_INCLUDE_DIRS}/hip)
+     include_directories(${OpenCV_INCLUDE_DIRS})
+     include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
+-    link_directories(${ROCM_PATH}/lib /usr/local/lib)
++    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
+ 
+     add_executable(BatchPD_hip_pkd3 BatchPD_hip_pkd3.cpp)
+     add_executable(BatchPD_hip_pln1 BatchPD_hip_pln1.cpp)
+@@ -80,4 +80,4 @@ if (hip_FOUND AND OpenCV_FOUND)
+     target_link_libraries(uniqueFunctionalities_hip ${OpenCV_LIBS} -lrpp ${hip_LIBRARIES} pthread ${LINK_LIBRARY_LIST} hip::device)
+ else()
+     message("-- ${Yellow}Error: OpenCV and hip must be installed to install ${PROJECT_NAME} successfully!${ColourReset}")
+-endif()
+\ No newline at end of file
++endif()
+diff -urp rpp-1.2.0.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt rpp-1.2.0/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt
+--- rpp-1.2.0.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
++++ rpp-1.2.0/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2023-08-21 15:04:48.929465089 -0700
+@@ -21,7 +21,7 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(rpp_performancetests/HOST_NEW)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
+ 
+ # Set message options
+ if(NOT WIN32)
+@@ -54,7 +54,7 @@ if (OpenCV_FOUND)
+     message("-- ${Green}${PROJECT_NAME} set to build with rpp and OpenCV${ColourReset}")
+     include_directories(${OpenCV_INCLUDE_DIRS})
+     include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
+-    link_directories(${ROCM_PATH}/lib /usr/local/lib)
++    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
+ 
+     add_executable(BatchPD_host_pkd3 BatchPD_host_pkd3.cpp)
+     add_executable(BatchPD_host_pln1 BatchPD_host_pln1.cpp)
+@@ -73,4 +73,4 @@ if (OpenCV_FOUND)
+     # target_link_libraries(Single_host ${OpenCV_LIBS} -lrpp ${OpenCL_LIBRARIES} pthread boost_filesystem boost_system )
+ else()
+     message("-- ${Yellow}Error: OpenCV must be installed to install ${PROJECT_NAME} successfully!${ColourReset}")
+-endif()
+\ No newline at end of file
++endif()
+diff -urp rpp-1.2.0.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt rpp-1.2.0/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt
+--- rpp-1.2.0.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
++++ rpp-1.2.0/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2023-08-21 15:04:47.489465054 -0700
+@@ -21,7 +21,7 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(Rpp_test)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
+ 
+ # Set message options
+ if(NOT WIN32)
+@@ -51,10 +51,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
+ 
+ if (OpenCL_FOUND AND OpenCV_FOUND)
+     message("-- ${Green}${PROJECT_NAME} set to build with rpp, OpenCL and OpenCV${ColourReset}")
+-    # include_directories(${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers) # commented since OpenCL_INCLUDE_DIRS points to a deprecated /opt/rocm/opencl/include
++    # include_directories(${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers) # commented since OpenCL_INCLUDE_DIRS points to a deprecated /usr/opencl/include
+     include_directories(${OpenCV_INCLUDE_DIRS})
+     include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
+-    link_directories(${ROCM_PATH}/lib /usr/local/lib)
++    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
+ 
+     add_executable(BatchPD_ocl_pkd3 BatchPD_ocl_pkd3.cpp)
+     add_executable(BatchPD_ocl_pln1 BatchPD_ocl_pln1.cpp)
+@@ -69,4 +69,4 @@ if (OpenCL_FOUND AND OpenCV_FOUND)
+     target_link_libraries(uniqueFunctionalities_ocl ${OpenCV_LIBS} -lrpp ${OpenCL_LIBRARIES} pthread ${LINK_LIBRARY_LIST})
+ else()
+     message("-- ${Yellow}Error: OpenCV and OpenCL must be installed to install ${PROJECT_NAME} successfully!${ColourReset}")
+-endif()
+\ No newline at end of file
++endif()
+diff -urp rpp-1.2.0.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt rpp-1.2.0/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt
+--- rpp-1.2.0.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
++++ rpp-1.2.0/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2023-08-21 15:04:49.985465115 -0700
+@@ -21,7 +21,7 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(rpp_unittests/HIP_NEW)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
+ list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH})
+ 
+ # Set message options
+@@ -59,7 +59,7 @@ if (hip_FOUND AND OpenCV_FOUND)
+     include_directories(${hip_INCLUDE_DIRS} ${hip_INCLUDE_DIRS}/hip)
+     include_directories(${OpenCV_INCLUDE_DIRS})
+     include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
+-    link_directories(${ROCM_PATH}/lib /usr/local/lib)
++    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
+ 
+     add_executable(BatchPD_hip_pkd3 BatchPD_hip_pkd3.cpp)
+     add_executable(BatchPD_hip_pln1 BatchPD_hip_pln1.cpp)
+@@ -80,4 +80,4 @@ if (hip_FOUND AND OpenCV_FOUND)
+     target_link_libraries(uniqueFunctionalities_hip ${OpenCV_LIBS} -lrpp ${hip_LIBRARIES} pthread ${LINK_LIBRARY_LIST} hip::device)
+ else()
+     message("-- ${Yellow}Error: OpenCV and hip must be installed to install ${PROJECT_NAME} successfully!${ColourReset}")
+-endif()
+\ No newline at end of file
++endif()
+diff -urp rpp-1.2.0.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt rpp-1.2.0/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt
+--- rpp-1.2.0.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
++++ rpp-1.2.0/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2023-08-21 15:04:51.921465163 -0700
+@@ -21,7 +21,7 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(rpp_unittests/HOST_NEW)
+ 
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
+ 
+ # Set message options
+ if(NOT WIN32)
+@@ -53,7 +53,7 @@ if (OpenCV_FOUND)
+     message("-- ${Green}${PROJECT_NAME} set to build with rpp and OpenCV${ColourReset}")
+     include_directories(${OpenCV_INCLUDE_DIRS})
+     include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
+-    link_directories(${ROCM_PATH}/lib /usr/local/lib)
++    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
+ 
+     add_executable(BatchPD_host_pkd3 BatchPD_host_pkd3.cpp)
+     add_executable(BatchPD_host_pln1 BatchPD_host_pln1.cpp)
+@@ -74,4 +74,4 @@ if (OpenCV_FOUND)
+     target_link_libraries(uniqueFunctionalities_host ${OpenCV_LIBS} -lrpp pthread ${LINK_LIBRARY_LIST})
+ else()
+     message("-- ${Yellow}Error: OpenCV must be installed to install ${PROJECT_NAME} successfully!${ColourReset}")
+-endif()
+\ No newline at end of file
++endif()
+diff -urp rpp-1.2.0.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt rpp-1.2.0/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt
+--- rpp-1.2.0.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
++++ rpp-1.2.0/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2023-08-21 15:04:50.993465140 -0700
+@@ -21,7 +21,7 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(rpp_unittests/OCL_NEW)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
+ 
+ # Set message options
+ if(NOT WIN32)
+@@ -52,10 +52,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
+ 
+ if (OpenCL_FOUND AND OpenCV_FOUND)
+     message("-- ${Green}${PROJECT_NAME} set to build with rpp, OpenCL and OpenCV${ColourReset}")
+-    # include_directories(${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers) # commented since OpenCL_INCLUDE_DIRS points to a deprecated /opt/rocm/opencl/include
++    # include_directories(${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers) # commented since OpenCL_INCLUDE_DIRS points to a deprecated /usr/opencl/include
+     include_directories(${OpenCV_INCLUDE_DIRS})
+     include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
+-    link_directories(${ROCM_PATH}/lib /usr/local/lib)
++    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
+ 
+     add_executable(BatchPD_ocl_pkd3 BatchPD_ocl_pkd3.cpp)
+     add_executable(BatchPD_ocl_pln1 BatchPD_ocl_pln1.cpp)
+@@ -70,4 +70,4 @@ if (OpenCL_FOUND AND OpenCV_FOUND)
+     target_link_libraries(uniqueFunctionalities_ocl ${OpenCV_LIBS} -lrpp ${OpenCL_LIBRARIES} pthread ${LINK_LIBRARY_LIST})
+ else()
+     message("-- ${Yellow}Error: OpenCV and OpenCL must be installed to install ${PROJECT_NAME} successfully!${ColourReset}")
+-endif()
+\ No newline at end of file
++endif()
+diff -urp rpp-1.2.0.orig/utilities/test_suite/HIP/CMakeLists.txt rpp-1.2.0/utilities/test_suite/HIP/CMakeLists.txt
+--- rpp-1.2.0.orig/utilities/test_suite/HIP/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
++++ rpp-1.2.0/utilities/test_suite/HIP/CMakeLists.txt	2023-08-21 15:05:01.953465412 -0700
+@@ -21,7 +21,7 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(test_suite/HIP)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
+ list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH})
+ 
+ # Set message options
+@@ -68,11 +68,11 @@ if (hip_FOUND AND OpenCV_FOUND)
+     include_directories(${hip_INCLUDE_DIRS} ${hip_INCLUDE_DIRS}/hip)
+     include_directories(${OpenCV_INCLUDE_DIRS})
+     include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
+-    link_directories(${ROCM_PATH}/lib /usr/local/lib)
++    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
+ 
+     add_executable(Tensor_hip Tensor_hip.cpp)
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGPU_SUPPORT=1 -DRPP_BACKEND_HIP=1 -std=gnu++14")
+     target_link_libraries(Tensor_hip ${OpenCV_LIBS} -lturbojpeg -lrpp ${hip_LIBRARIES} pthread ${LINK_LIBRARY_LIST} hip::device)
+ else()
+     message("-- ${Yellow}Error: OpenCV and hip must be installed to install ${PROJECT_NAME} successfully!${ColourReset}")
+-endif()
+\ No newline at end of file
++endif()
+diff -urp rpp-1.2.0.orig/utilities/test_suite/HOST/CMakeLists.txt rpp-1.2.0/utilities/test_suite/HOST/CMakeLists.txt
+--- rpp-1.2.0.orig/utilities/test_suite/HOST/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
++++ rpp-1.2.0/utilities/test_suite/HOST/CMakeLists.txt	2023-08-21 15:05:02.913465436 -0700
+@@ -21,7 +21,7 @@
+ cmake_minimum_required(VERSION 3.5)
+ project(test_suite/HOST)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
+ 
+ # Set message options
+ if(NOT WIN32)
+@@ -62,7 +62,7 @@ if (OpenCV_FOUND)
+     message("-- ${Green}${PROJECT_NAME} set to build with rpp and OpenCV${ColourReset}")
+     include_directories(${OpenCV_INCLUDE_DIRS})
+     include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
+-    link_directories(${ROCM_PATH}/lib /usr/local/lib)
++    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
+ 
+     add_executable(Tensor_host Tensor_host.cpp)
+ 

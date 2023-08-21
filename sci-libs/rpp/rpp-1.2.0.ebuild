@@ -89,11 +89,12 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
-	"${FILESDIR}/rpp-1.2.0-lib64-changes.patch"
+	"${FILESDIR}/rpp-1.2.0-path-changes.patch"
 )
 
 pkg_setup() {
 	llvm_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -122,17 +123,7 @@ src_prepare() {
 #		-e "s|-DNDEBUG||g" \
 #		"CMakeLists.txt" \
 #		|| die
-
-	sed \
-		-i \
-		-e "/CMAKE_CXX_COMPILER clang\+\+/d" \
-		"CMakeLists.txt" \
-		|| die
-	sed \
-		-i \
-		-e "s|\${ROCM_PATH}/llvm/bin/clang++|${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang++|g" \
-		"CMakeLists.txt" \
-		|| die
+	rocm_src_prepare
 }
 
 src_configure() {
