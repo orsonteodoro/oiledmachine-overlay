@@ -186,7 +186,7 @@ gen_llvm_test_bdepend()
 	sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 	fuzz-testing? (
 		=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-		=sys-libs/compiler-rt-sanitizers-${s}*[libfuzzer,asan,ubsan]
+		=sys-libs/compiler-rt-sanitizers-${s}*:=[libfuzzer,asan,ubsan]
 	)
 			)
 		"
