@@ -471,7 +471,7 @@ gen_llvm_bdepends() {
 			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			pgo? (
-				=sys-libs/compiler-rt-sanitizers-${s}*[profile,${MULTILIB_USEDEP}]
+				=sys-libs/compiler-rt-sanitizers-${s}*:=[profile,${MULTILIB_USEDEP}]
 			)
 		)
 		"

@@ -259,7 +259,7 @@ gen_clang_sanitizer() {
 		o+="
 			(
 				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
-				=sys-libs/compiler-rt-sanitizers-${s}*[${san_type}]
+				=sys-libs/compiler-rt-sanitizers-${s}*:=[${san_type}]
 				sys-devel/clang:${s}
 				sys-devel/llvm:${s}
 			)

@@ -231,7 +231,7 @@ gen_clang_sanitizer() {
 		o+="
 			(
 				=sys-devel/clang-runtime-${s}[${MULTILIB_USEDEP},compiler-rt,sanitize]
-				=sys-libs/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},${san_type}]
+				=sys-libs/compiler-rt-sanitizers-${s}*:=[${MULTILIB_USEDEP},${san_type}]
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			)
