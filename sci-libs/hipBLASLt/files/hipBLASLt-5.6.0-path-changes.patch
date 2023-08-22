@@ -1,0 +1,340 @@
+diff -urp hipBLASLt-rocm-5.6.0.orig/clients/CMakeLists.txt hipBLASLt-rocm-5.6.0/clients/CMakeLists.txt
+--- hipBLASLt-rocm-5.6.0.orig/clients/CMakeLists.txt	2023-05-28 21:19:48.000000000 -0700
++++ hipBLASLt-rocm-5.6.0/clients/CMakeLists.txt	2023-08-21 17:26:48.589676469 -0700
+@@ -49,7 +49,7 @@ find_package(OpenMP)
+ 
+ if (TARGET OpenMP::OpenMP_CXX)
+   set( COMMON_LINK_LIBS "OpenMP::OpenMP_CXX")
+-  list( APPEND COMMON_LINK_LIBS "-L${HIP_CLANG_ROOT}/lib;-Wl,-rpath=${HIP_CLANG_ROOT}/lib")
++  list( APPEND COMMON_LINK_LIBS "-L${HIP_CLANG_ROOT}/@LIBDIR@;-Wl,-rpath=${HIP_CLANG_ROOT}/@LIBDIR@")
+ endif()
+ 
+ if (TARGET Threads::Threads)
+@@ -68,11 +68,11 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_C
+ set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
+ 
+ if( NOT TARGET hipblaslt )
+-  find_package( hipblaslt REQUIRED CONFIG PATHS ${ROCM_PATH}/hipblaslt /opt/rocm/hipblaslt ${HIPBLASLT_LIBRARY_DIR})
++  find_package( hipblaslt REQUIRED CONFIG PATHS ${ROCM_PATH}/hipblaslt /usr/hipblaslt ${HIPBLASLT_LIBRARY_DIR})
+ endif( )
+ 
+ # Hip headers required of all clients; clients use hip to allocate device memory
+-list( APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} /opt/rocm )
++list( APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} /usr )
+ if ( NOT hip_FOUND )
+   find_package( hip REQUIRED CONFIG PATHS ${ROCM_PATH} )
+ endif( )
+@@ -89,7 +89,7 @@ if( BUILD_CLIENTS_BENCHMARKS OR BUILD_CL
+   if (LINK_BLIS)
+     set( BLIS_INCLUDE_DIR ${BUILD_DIR}/deps/blis/include/blis )
+     set( BLIS_CPP ../common/blis_interface.cpp )
+-    set( BLAS_LIBRARY ${BUILD_DIR}/deps/blis/lib/libblis.so )
++    set( BLAS_LIBRARY ${BUILD_DIR}/deps/blis/@LIBDIR@/libblis.so )
+   else()
+     set( BLAS_LIBRARY "blas" )
+   endif()
+diff -urp hipBLASLt-rocm-5.6.0.orig/cmake/Dependencies.cmake hipBLASLt-rocm-5.6.0/cmake/Dependencies.cmake
+--- hipBLASLt-rocm-5.6.0.orig/cmake/Dependencies.cmake	2023-05-28 21:19:48.000000000 -0700
++++ hipBLASLt-rocm-5.6.0/cmake/Dependencies.cmake	2023-08-21 17:26:50.861676525 -0700
+@@ -28,7 +28,7 @@ find_package(Git REQUIRED)
+ 
+ # Workaround until hcc & hip cmake modules fixes symlink logic in their config files.
+ # (Thanks to rocBLAS devs for finding workaround for this problem!)
+-list(APPEND CMAKE_PREFIX_PATH /opt/rocm/hip /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH /usr/hip /usr)
+ 
+ # ROCm cmake package
+ find_package(ROCM 0.6 QUIET CONFIG PATHS ${CMAKE_PREFIX_PATH})
+diff -urp hipBLASLt-rocm-5.6.0.orig/CMakeLists.txt hipBLASLt-rocm-5.6.0/CMakeLists.txt
+--- hipBLASLt-rocm-5.6.0.orig/CMakeLists.txt	2023-08-21 17:13:26.697656573 -0700
++++ hipBLASLt-rocm-5.6.0/CMakeLists.txt	2023-08-21 17:30:06.857681388 -0700
+@@ -35,16 +35,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ if(WIN32)
+   set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
+ else()
+-  set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
++  set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories")
+ endif()
+ 
+ if(NOT BUILD_CUDA)
+ # Adding CMAKE_PREFIX_PATH, needed for static builds
+-list( APPEND CMAKE_PREFIX_PATH /opt/rocm/llvm /opt/rocm )
++list( APPEND CMAKE_PREFIX_PATH /usr/lib/llvm/@LLVM_SLOT@ /usr )
+ endif()
+ 
+ if( NOT DEFINED ENV{HIP_PATH})
+-    set( HIP_PATH "/opt/rocm/hip" )
++    set( HIP_PATH "/usr/hip" )
+ else( )
+     set (HIP_PATH $ENV{HIP_PATH} )
+ endif( )
+@@ -52,7 +52,7 @@ endif( )
+ # This finds the rocm-cmake project, and installs it if not found
+ # rocm-cmake contains common cmake code for rocm projects to help setup and install
+ set( PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern )
+-find_package( ROCM 0.7.3 CONFIG QUIET PATHS /opt/rocm )
++find_package( ROCM 0.7.3 CONFIG QUIET PATHS /usr )
+ if( NOT ROCM_FOUND )
+   set( rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download" )
+   file( DOWNLOAD https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip
+@@ -78,7 +78,7 @@ include( ROCMHeaderWrapper )
+ 
+ # Append our library helper cmake path and the cmake path for hip (for convenience)
+ # Users may override HIP path by specifying their own in CMAKE_MODULE_PATH
+-list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake  ${ROCM_PATH}/lib/cmake/hip /opt/rocm/lib/cmake/hip ${HIP_PATH}/cmake )
++list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake  ${ROCM_PATH}/@LIBDIR@/cmake/hip @EPREFIX@/usr/@LIBDIR@/cmake/hip ${HIP_PATH}/cmake )
+ 
+ # Set a default build type if none was specified
+ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+@@ -95,8 +95,8 @@ endif()
+ # hipBLASLt project
+ project(hipblaslt LANGUAGES CXX)
+ 
+-# Force library install path to lib (CentOS 7 defaults to lib64)
+-set(CMAKE_INSTALL_LIBDIR "lib" CACHE INTERNAL "Installation directory for libraries" FORCE)
++# Force library install path to @LIBDIR@ (CentOS 7 defaults to lib64)
++set(CMAKE_INSTALL_LIBDIR "@LIBDIR@" CACHE INTERNAL "Installation directory for libraries" FORCE)
+ 
+ 
+ # Build options
+@@ -163,7 +163,7 @@ else()
+     message(STATUS "AMDGPU_TARGETS: ${AMDGPU_TARGETS}")
+ 
+     if( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
+-        find_package( hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /opt/rocm )
++        find_package( hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /usr )
+     endif( )
+ 
+     option( BUILD_WITH_TENSILE "Build full functionality which requires tensile?" ON )
+@@ -226,7 +226,7 @@ else()
+     endif()
+ endif()
+ 
+-find_package( hipblas REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /opt/rocm)
++find_package( hipblas REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /usr)
+ 
+ # Setup version
+ set(VERSION_STRING "0.2.0")
+@@ -305,7 +305,7 @@ if( NOT CPACK_PACKAGING_INSTALL_PREFIX )
+     set( CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}" )
+ endif()
+ 
+-set( CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION "\${CPACK_PACKAGING_INSTALL_PREFIX}" "\${CPACK_PACKAGING_INSTALL_PREFIX}/include" "\${CPACK_PACKAGING_INSTALL_PREFIX}/lib" )
++set( CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION "\${CPACK_PACKAGING_INSTALL_PREFIX}" "\${CPACK_PACKAGING_INSTALL_PREFIX}/include" "\${CPACK_PACKAGING_INSTALL_PREFIX}/@LIBDIR@" )
+ 
+ # Give hipblaslt compiled for CUDA backend a different name
+ if( NOT USE_CUDA )
+@@ -359,7 +359,7 @@ if(BUILD_CODE_COVERAGE)
+     COMMAND mkdir -p lcoverage
+     COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
+     COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
+-    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec @EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
+     COMMAND chmod +x llvm-gcov.sh
+     )
+ 
+diff -urp hipBLASLt-rocm-5.6.0.orig/deps/external-gtest.cmake hipBLASLt-rocm-5.6.0/deps/external-gtest.cmake
+--- hipBLASLt-rocm-5.6.0.orig/deps/external-gtest.cmake	2023-05-28 21:19:48.000000000 -0700
++++ hipBLASLt-rocm-5.6.0/deps/external-gtest.cmake	2023-08-21 17:26:55.133676631 -0700
+@@ -91,11 +91,7 @@ ExternalProject_Get_Property( googletest
+ set( package_dir "${PREFIX_GTEST}" )
+ if( CMAKE_CONFIGURATION_TYPES )
+   # Create a package by bundling libraries and header files
+-  if( BUILD_64 )
+-    set( LIB_DIR lib64 )
+-  else( )
+-    set( LIB_DIR lib )
+-  endif( )
++  set( LIB_DIR @LIBDIR@ )
+ 
+   set( gtest_lib_dir "<BINARY_DIR>/${LIB_DIR}" )
+   ExternalProject_Add_Step( googletest createPackage
+diff -urp hipBLASLt-rocm-5.6.0.orig/deps/external-lapack.cmake hipBLASLt-rocm-5.6.0/deps/external-lapack.cmake
+--- hipBLASLt-rocm-5.6.0.orig/deps/external-lapack.cmake	2023-05-28 21:19:48.000000000 -0700
++++ hipBLASLt-rocm-5.6.0/deps/external-lapack.cmake	2023-08-21 17:13:44.413657013 -0700
+@@ -40,8 +40,8 @@ include( GNUInstallDirs )
+ # lib/<machine> paths
+ # if CMAKE_INSTALL_LIBDIR is of the form above, strip the machine
+ # Match against a '/' in CMAKE_INSTALL_LIBDIR, i.e. lib/x86_64-linux-gnu
+-if( ${CMAKE_INSTALL_LIBDIR} MATCHES "lib/.*" )
+-  list( APPEND lapack_cmake_args "-DCMAKE_INSTALL_LIBDIR=lib" )
++if( ${CMAKE_INSTALL_LIBDIR} MATCHES "@LIBDIR@/.*" )
++  list( APPEND lapack_cmake_args "-DCMAKE_INSTALL_LIBDIR=@LIBDIR@" )
+ endif( )
+ 
+ ExternalProject_Add(
+diff -urp hipBLASLt-rocm-5.6.0.orig/library/CMakeLists.txt hipBLASLt-rocm-5.6.0/library/CMakeLists.txt
+--- hipBLASLt-rocm-5.6.0.orig/library/CMakeLists.txt	2023-05-28 21:19:48.000000000 -0700
++++ hipBLASLt-rocm-5.6.0/library/CMakeLists.txt	2023-08-21 17:20:54.273667678 -0700
+@@ -163,7 +163,7 @@ set_target_propertieS(hipblaslt PROPERTI
+ # TODO ??
+ # Following boost conventions of prefixing 'lib' on static built libraries
+ if(NOT BUILD_SHARED_LIBS)
+-  set_target_properties(hipblaslt PROPERTIES PREFIX "lib")
++  set_target_properties(hipblaslt PROPERTIES PREFIX "@LIBDIR@")
+ endif()
+ 
+ # Generate export header
+diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/cmake/TensileConfig.cmake hipBLASLt-rocm-5.6.0/tensilelite/Tensile/cmake/TensileConfig.cmake
+--- hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/cmake/TensileConfig.cmake	2023-05-28 21:19:48.000000000 -0700
++++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/cmake/TensileConfig.cmake	2023-08-21 17:26:52.781676573 -0700
+@@ -35,8 +35,8 @@ if(NOT DEFINED Tensile_ROOT)
+         execute_process(COMMAND "${Tensile_PREFIX}/bin/TensileGetPath" OUTPUT_VARIABLE Tensile_ROOT)
+     endif()
+ endif()
+-list(APPEND CMAKE_MODULE_PATH "${Tensile_ROOT}/Source/cmake/")
+-list(APPEND CMAKE_MODULE_PATH "${Tensile_ROOT}/Source/")
++list(APPEND CMAKE_MODULE_PATH "${Tensile_ROOT}/Tensile/Source/cmake/")
++list(APPEND CMAKE_MODULE_PATH "${Tensile_ROOT}/Tensile/Source/")
+ 
+ if("HIP" IN_LIST Tensile_FIND_COMPONENTS)
+     set(TENSILE_USE_HIP ON CACHE BOOL "Use HIP")
+@@ -69,8 +69,8 @@ else()
+     set(TENSILE_STATIC_ONLY OFF CACHE BOOL "Disable exporting symbols from shared library.")
+ endif()
+ 
+-add_subdirectory("${Tensile_ROOT}/Source" "Tensile")
+-include("${Tensile_ROOT}/Source/TensileCreateLibrary.cmake")
++add_subdirectory("${Tensile_ROOT}/Tensile/Source" "Tensile")
++include("${Tensile_ROOT}/Tensile/Source/TensileCreateLibrary.cmake")
+ 
+ # Output target: ${Tensile_VAR_PREFIX}_LIBRARY_TARGET. Ensures that the libs get built in Tensile_OUTPUT_PATH/library.
+ function(TensileCreateLibraryFiles
+@@ -120,7 +120,7 @@ function(TensileCreateLibraryFiles
+   if(Tensile_TENSILE_ROOT)
+     set(Script "${Tensile_TENSILE_ROOT}/bin/TensileCreateLibrary")
+   else()
+-    set(Script "${Tensile_ROOT}/bin/TensileCreateLibrary")
++    set(Script "${Tensile_ROOT}/Tensile/bin/TensileCreateLibrary")
+   endif()
+ 
+   message(STATUS "Tensile script: ${Script}")
+diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake
+--- hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake	2023-05-28 21:19:48.000000000 -0700
++++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake	2023-08-21 17:20:49.121667550 -0700
+@@ -24,7 +24,7 @@
+ 
+ if(NOT ROCM_ROOT)
+     if(NOT ROCM_DIR)
+-        set(ROCM_ROOT "/opt/rocm")
++        set(ROCM_ROOT "/usr")
+     else()
+         set(ROCM_DIR "${ROCM_DIR}/../../..")
+     endif()
+@@ -39,7 +39,7 @@ find_path(ROCM_SMI_ROOT "include/rocm_sm
+ mark_as_advanced(ROCM_SMI_ROOT)
+ 
+ find_library(ROCM_SMI_LIBRARY rocm_smi64
+-    PATHS "${ROCM_SMI_ROOT}/lib")
++    PATHS "${ROCM_SMI_ROOT}/@LIBDIR@")
+ mark_as_advanced(ROCM_SMI_LIBRARY)
+ 
+ include( FindPackageHandleStandardArgs )
+diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/CMakeLists.txt hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/CMakeLists.txt
+--- hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/CMakeLists.txt	2023-05-28 21:19:48.000000000 -0700
++++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/CMakeLists.txt	2023-08-21 17:20:47.313667505 -0700
+@@ -26,7 +26,7 @@ cmake_minimum_required(VERSION 3.13)
+ 
+ # Override all paths arguments as they do not work properly
+ file(TO_CMAKE_PATH "$ENV{ROCM_PATH}" ROCM_PATH_ENV_VALUE)
+-list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH_ENV_VALUE} /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH_ENV_VALUE} /usr)
+ 
+ project(Tensile)
+ 
+@@ -61,7 +61,7 @@ CMAKE_DEPENDENT_OPTION(TENSILE_BUILD_CLI
+                         "TENSILE_USE_HIP" OFF)
+ 
+ if(TENSILE_USE_HIP)
+-    find_package(HIP REQUIRED CONFIG PATHS ${ROCM_PATH_ENV_VALUE} /opt/rocm)
++    find_package(HIP REQUIRED CONFIG PATHS ${ROCM_PATH_ENV_VALUE} /usr)
+ endif()
+ 
+ if(TENSILE_USE_OPENMP)
+diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/FindHIP.cmake hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/FindHIP.cmake
+--- hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/FindHIP.cmake	2023-05-28 21:19:48.000000000 -0700
++++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/FindHIP.cmake	2023-08-21 17:20:50.369667581 -0700
+@@ -79,7 +79,7 @@ else()
+         hip/hip_runtime.h
+       PATHS
+         ENV HIP_PATH
+-        /opt/rocm
++        /usr
+       PATH_SUFFIXES
+         /include/hip
+         /include
+@@ -98,7 +98,7 @@ else()
+     NAMES  hipcc
+     PATHS
+       ENV HIP_PATH
+-          /opt/rocm
++          /usr
+     PATH_SUFFIXES
+           /bin
+       )
+diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/FindOpenCL.cmake hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/FindOpenCL.cmake
+--- hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/FindOpenCL.cmake	2023-05-28 21:19:48.000000000 -0700
++++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/FindOpenCL.cmake	2023-08-21 17:23:18.961671268 -0700
+@@ -71,8 +71,8 @@ find_path(OPENCL_INCLUDE_DIRS
+   PATHS
+     /usr/include
+     /usr/local/include
+-    /usr/local/cuda/include
+-    /opt/rocm/opencl/include
++    /opt/cuda/include
++    /usr/opencl/include
+   DOC "OpenCL header file path"
+ )
+ mark_as_advanced( OPENCL_INCLUDE_DIRS )
+@@ -118,37 +118,20 @@ else( )
+   message( STATUS "FindOpenCL searching for 32-bit libraries" )
+ endif( )
+ 
+-if( LIB64 )
+-  find_library( OPENCL_LIBRARIES
+-    NAMES OpenCL
+-    HINTS
+-      ${OPENCL_ROOT}/lib
+-      $ENV{OPENCL_ROOT}/lib
+-      $ENV{AMDAPPSDKROOT}/lib
+-      $ENV{CUDA_PATH}/lib
+-    DOC "OpenCL dynamic library path"
+-    PATH_SUFFIXES x86_64 x64
+-    PATHS
+-    /usr/lib
+-    /usr/local/cuda/lib
+-    /opt/rocm/opencl/lib
+-  )
+-else( )
+-  find_library( OPENCL_LIBRARIES
+-    NAMES OpenCL
+-    HINTS
+-      ${OPENCL_ROOT}/lib
+-      $ENV{OPENCL_ROOT}/lib
+-      $ENV{AMDAPPSDKROOT}/lib
+-      $ENV{CUDA_PATH}/lib
+-    DOC "OpenCL dynamic library path"
+-    PATH_SUFFIXES x86 Win32
+-    PATHS
+-    /usr/lib
+-    /usr/local/cuda/lib
+-    /opt/rocm/opencl/lib
+-  )
+-endif( )
++find_library( OPENCL_LIBRARIES
++  NAMES OpenCL
++  HINTS
++    ${OPENCL_ROOT}/@LIBDIR@
++    $ENV{OPENCL_ROOT}/@LIBDIR@
++    $ENV{AMDAPPSDKROOT}/@LIBDIR@
++    $ENV{CUDA_PATH}/@LIBDIR@
++  DOC "OpenCL dynamic library path"
++  PATH_SUFFIXES x86_64 x64
++  PATHS
++  /usr/@LIBDIR@
++  /opt/cuda/@LIBDIR@
++  /usr/opencl/@LIBDIR@
++)
+ mark_as_advanced( OPENCL_LIBRARIES )
+ 
+ # If we asked for OpenCL 1.2, and we found a version installed greater than that, pass the 'use deprecated' flag

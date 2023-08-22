@@ -112,12 +112,13 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/hipBLASLt-5.6.0-set-CMP0074-NEW.patch"
-	"${FILESDIR}/hipBLASLt-5.6.0-change-Tensile-paths.patch"
+	"${FILESDIR}/hipBLASLt-5.6.0-path-changes.patch"
 )
 
 pkg_setup() {
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -146,6 +147,7 @@ eerror
 		-e "s|hipblas 0.50.0|hipblas|g" \
 		"${S}/CMakeLists.txt" \
 		|| die
+	rocm_src_prepare
 }
 
 get_makeopts_nprocs() {
