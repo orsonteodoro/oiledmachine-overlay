@@ -294,8 +294,10 @@ BDEPEND="
 	)
 	test? (
 		!!<sys-apps/sandbox-2.13
-		$(python_gen_any_dep ">=dev-python/lit-15[\${PYTHON_USEDEP}]")
-		=sys-libs/compiler-rt-${LLVM_VERSION}*
+		$(python_gen_any_dep "
+			>=dev-python/lit-15[\${PYTHON_USEDEP}]
+		")
+		=sys-libs/compiler-rt-${LLVM_VERSION}*:=
 		~sys-devel/clang-${LLVM_VERSION}:${LLVM_MAJOR}
 	)
 	!test? (
