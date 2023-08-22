@@ -372,7 +372,7 @@ gen_asan_bdepend() {
 		echo "
 			llvm-${s}? (
 				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
-				=sys-libs/compiler-rt-sanitizers-${s}*[asan]
+				=sys-libs/compiler-rt-sanitizers-${s}*:=[asan]
 				sys-devel/clang:${s}
 			)
 		"
