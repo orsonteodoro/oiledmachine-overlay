@@ -380,7 +380,7 @@ gen_cfi_rdepend() {
 		echo "
 		(
 			=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]
-			=sys-libs/compiler-rt-${s}*
+			=sys-libs/compiler-rt-${s}*:=
 			=sys-libs/compiler-rt-sanitizers-${s}*[cfi]
 			sys-devel/clang:${s}
 			sys-devel/lld:${s}
@@ -398,7 +398,7 @@ gen_shadowcallstack_rdepend() {
 		echo "
 		(
 			=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]
-			=sys-libs/compiler-rt-${s}*
+			=sys-libs/compiler-rt-${s}*:=
 			=sys-libs/compiler-rt-sanitizers-${s}*[shadowcallstack?]
 			sys-devel/clang:${s}
 			sys-devel/lld:${s}
