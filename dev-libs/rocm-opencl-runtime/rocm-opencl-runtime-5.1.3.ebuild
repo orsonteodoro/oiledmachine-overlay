@@ -26,7 +26,9 @@ debug test
 r1
 "
 KEYWORDS="~amd64"
+# ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
+	=sys-libs/compiler-rt-${LLVM_MAX_SLOT}*:=
 	>=media-libs/mesa-22.3.6
 	>=virtual/opencl-3
 	~dev-libs/rocm-comgr-${PV}:${SLOT}

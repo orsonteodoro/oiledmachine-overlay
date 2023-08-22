@@ -68,6 +68,7 @@ REQUIRED_USE="
 		rocm
 	)
 "
+# ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
 	>=dev-perl/URI-Encode-1.1.1
 	virtual/opengl
@@ -81,8 +82,9 @@ RDEPEND="
 		sys-process/numactl
 	)
 	rocm? (
+		=sys-devel/clang-${LLVM_MAX_SLOT}*:=
 		=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
-		sys-devel/clang:${LLVM_MAX_SLOT}
+		=sys-libs/compiler-rt-${LLVM_MAX_SLOT}*:=
 	)
 "
 DEPEND="

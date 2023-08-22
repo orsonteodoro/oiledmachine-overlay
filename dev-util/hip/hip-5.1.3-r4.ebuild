@@ -89,9 +89,8 @@ RDEPEND="
 		sys-process/numactl
 	)
 	rocm? (
+		=sys-devel/clang-${LLVM_MAX_SLOT}*:=
 		=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
-		sys-devel/clang:=
-		sys-devel/clang:${LLVM_MAX_SLOT}
 	)
 "
 DEPEND="
