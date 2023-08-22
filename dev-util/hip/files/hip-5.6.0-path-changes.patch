@@ -1,7 +1,7 @@
 diff -urp HIP-rocm-5.6.0.orig/cmake/FindHIP.cmake HIP-rocm-5.6.0/cmake/FindHIP.cmake
---- HIP-rocm-5.6.0.orig/cmake/FindHIP.cmake	2023-08-19 02:23:48.112044907 -0700
-+++ HIP-rocm-5.6.0/cmake/FindHIP.cmake	2023-08-19 02:43:03.980073585 -0700
-@@ -260,22 +260,22 @@ elseif("${HIP_COMPILER}" STREQUAL "clang
+--- HIP-rocm-5.6.0.orig/cmake/FindHIP.cmake	2023-06-12 13:47:00.000000000 -0700
++++ HIP-rocm-5.6.0/cmake/FindHIP.cmake	2023-08-21 22:29:35.854127213 -0700
+@@ -260,22 +260,24 @@ elseif("${HIP_COMPILER}" STREQUAL "clang
          if(DEFINED ENV{HIP_CLANG_PATH})
              set(HIP_CLANG_PATH $ENV{HIP_CLANG_PATH})
          elseif(DEFINED ENV{ROCM_PATH})
@@ -29,10 +29,12 @@ diff -urp HIP-rocm-5.6.0.orig/cmake/FindHIP.cmake HIP-rocm-5.6.0/cmake/FindHIP.c
          elseif(DEFINED ROCM_PATH)
 -            set(HIP_CLANG_PATH "${ROCM_PATH}/llvm/bin")
 +            set(HIP_CLANG_PATH "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
++        elseif(EXISTS "@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin")
++            set(HIP_CLANG_PATH "@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin")
          else()
              message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env ")
          endif()
-@@ -696,22 +696,22 @@ macro(HIP_ADD_EXECUTABLE hip_target)
+@@ -696,22 +698,24 @@ macro(HIP_ADD_EXECUTABLE hip_target)
              if(DEFINED ENV{HIP_CLANG_PATH})
                  set(HIP_CLANG_PATH $ENV{HIP_CLANG_PATH})
              elseif(DEFINED ENV{ROCM_PATH})
@@ -60,6 +62,8 @@ diff -urp HIP-rocm-5.6.0.orig/cmake/FindHIP.cmake HIP-rocm-5.6.0/cmake/FindHIP.c
              elseif(DEFINED ROCM_PATH)
 -                set(HIP_CLANG_PATH "${ROCM_PATH}/llvm/bin")
 +                set(HIP_CLANG_PATH "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
++            elseif(EXISTS "@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin")
++                set(HIP_CLANG_PATH "@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin")
              else()
                  message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env")
              endif()
