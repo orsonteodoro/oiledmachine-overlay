@@ -6,10 +6,10 @@ diff -urp HIPCC-rocm-5.6.0.orig/bin/hipvars.pm HIPCC-rocm-5.6.0/bin/hipvars.pm
  if (defined $HIP_RUNTIME and $HIP_RUNTIME eq "rocclr" and !defined $HIP_ROCCLR_HOME) {
      my $hipvars_dir = dirname(Cwd::abs_path($0));
 -    if (-e "$hipvars_dir/../lib/bitcode") {
-+    if (-e "$hipvars_dir/../lib/amdgcn/bitcode") {
++    if (-e "$hipvars_dir/../@LIBDIR@/amdgcn/bitcode") {
          $HIP_ROCCLR_HOME = Cwd::abs_path($hipvars_dir . "/.."); #FILE_REORG Backward compatibility
 -    } elsif (-e "$hipvars_dir/lib/bitcode") {
-+    } elsif (-e "$hipvars_dir/lib/amdgcn/bitcode") {
++    } elsif (-e "$hipvars_dir/@LIBDIR@/amdgcn/bitcode") {
          $HIP_ROCCLR_HOME = Cwd::abs_path($hipvars_dir);
      } else {
          $HIP_ROCCLR_HOME = $HIP_PATH; # use HIP_PATH
@@ -21,7 +21,7 @@ diff -urp HIPCC-rocm-5.6.0.orig/src/hipBin_amd.h HIPCC-rocm-5.6.0/src/hipBin_amd
    string rocclrHomePath = getEnvVariables().hipRocclrPathEnv_;
    if (rocclrHomePath.empty()) {
 -    bitcode /= "../lib/bitcode";
-+    bitcode /= "../lib/amdgcn/bitcode";
++    bitcode /= "../@LIBDIR@/amdgcn/bitcode";
      if (!fs::exists(bitcode)) {
        rocclrHomePath = getHipPath();
      } else {

@@ -7,10 +7,9 @@ DOCS_BUILDER="doxygen"
 DOCS_DEPEND="media-gfx/graphviz"
 LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
 PYTHON_COMPAT=( python3_{10..11} )
-inherit cmake docs llvm prefix python-any-r1
 
-DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
-HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
+inherit cmake docs llvm prefix python-any-r1 rocm
+
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/hipamd/archive/rocm-${PV}.tar.gz
 	-> rocm-hipamd-${PV}.tar.gz
@@ -29,6 +28,9 @@ https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
 	-> rocclr-${PV}.tar.gz
 	)
 "
+
+DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
+HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
@@ -88,6 +90,7 @@ RDEPEND="
 	)
 	rocm? (
 		=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
+		sys-devel/clang:=
 		sys-devel/clang:${LLVM_MAX_SLOT}
 	)
 "
@@ -141,6 +144,7 @@ python_check_deps() {
 pkg_setup() {
 	llvm_pkg_setup
 	python-any-r1_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -163,9 +167,19 @@ src_prepare() {
 		CMakeLists.txt \
 		|| die
 
-	# correctly find HIP_CLANG_INCLUDE_PATH using cmake
-	local LLVM_PREFIX="$(get_llvm_prefix "${LLVM_MAX_SLOT}")"
-	local CLANG_RESOURCE_DIR=$("${LLVM_PREFIX}/bin/clang" -print-resource-dir)
+	# Faster
+	local LLVM_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}"
+	local clang_pv=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
+		| sed -e "s|sys-devel/clang-||g" \
+	)
+	local clang_slot=""
+	if (( ${clang_pv%%.*} -ge 16 )) ; then
+		clang_slot="${LLVM_VERSION}"
+	else
+		clang_slot=$(ver_cut 1-3 "${clang_pv}")
+	fi
+	local CLANG_RESOURCE_DIR="${EPREFIX}/usr/lib/clang/${slot}"
+
 	sed \
 		-e "/set(HIP_CLANG_ROOT/s:\"\${ROCM_PATH}/llvm\":${LLVM_PREFIX}:" \
 		-i \
@@ -212,7 +226,7 @@ src_prepare() {
 	sed \
 		-e "/FLAGS .= \" -isystem \$HSA_PATH/d" \
 		-e "/HIP.*FLAGS.*isystem.*HIP_INCLUDE_PATH/d" \
-		-e "s:\$ENV{'DEVICE_LIB_PATH'}:'${EPREFIX}/usr/lib/amdgcn/bitcode':" \
+		-e "s:\$ENV{'DEVICE_LIB_PATH'}:'${EPREFIX}/usr/$(get_libdir)/amdgcn/bitcode':" \
 		-e "s:\$ENV{'HIP_LIB_PATH'}:'${EPREFIX}/usr/$(get_libdir)':" \
 		-e "/rpath/s,--rpath=[^ ]*,," \
 		-e "s,\$HIP_CLANG_PATH/../lib/clang/\$HIP_CLANG_VERSION/,${CLANG_RESOURCE_DIR}/,g" \
@@ -220,10 +234,10 @@ src_prepare() {
 		bin/hipcc.pl \
 		|| die
 
-	# Changed --hip-device-lib-path to "/usr/lib/amdgcn/bitcode".
+	# Changed --hip-device-lib-path to "/usr/$(get_libdir)/amdgcn/bitcode".
 	# It must align with "dev-libs/rocm-device-libs".
 	sed \
-		-e "s:\${AMD_DEVICE_LIBS_PREFIX}/lib:${EPREFIX}/usr/lib/amdgcn/bitcode:" \
+		-e "s:\${AMD_DEVICE_LIBS_PREFIX}/lib:${EPREFIX}/usr/$(get_libdir)/amdgcn/bitcode:" \
 		-i \
 		"${S}/hip-config.cmake.in" \
 		|| die
@@ -267,6 +281,8 @@ src_prepare() {
 		-i \
 		hip-config.cmake.in \
 		|| die
+
+	rocm_src_prepare
 }
 
 src_configure() {

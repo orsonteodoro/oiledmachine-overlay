@@ -350,7 +350,23 @@ eerror
 		$(grep -r -l -e "@LLVM_SLOT@" "${WORKDIR}") \
 		2>/dev/null || true
 
+	local clang_slot=""
+	if ver_test ${LLVM_SLOT} -ge 16 ; then
+		clang_slot="${LLVM_SLOT}"
+	else
+		clang_slot=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
+			| sed -e "s|sys-devel/clang-||")
+		clang_slot=$(ver_cut 1-3 "${clang_slot}")
+	fi
+	sed \
+		-i \
+		-e "s|@CLANG_SLOT@|${clang_slot}|g" \
+		$(grep -r -l -e "@CLANG_SLOT@" "${WORKDIR}") \
+		2>/dev/null || true
+
 	IFS=$' \t\n'
+einfo "CLANG_SLOT:  ${clang_slot}"
+einfo "LLVM_SLOT:  ${LLVM_SLOT}"
 }
 
 # @FUNCTION:  rocm_src_prepare

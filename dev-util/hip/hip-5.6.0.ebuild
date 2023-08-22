@@ -7,10 +7,9 @@ DOCS_BUILDER="doxygen"
 DOCS_DEPEND="media-gfx/graphviz"
 LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.6.0/llvm/CMakeLists.txt
 PYTHON_COMPAT=( python3_{10..11} )
-inherit cmake docs llvm prefix python-any-r1
 
-DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
-HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
+inherit cmake docs llvm prefix python-any-r1 rocm
+
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/hipamd/archive/rocm-${PV}.tar.gz
 	-> rocm-hipamd-${PV}.tar.gz
@@ -25,6 +24,9 @@ https://github.com/ROCm-Developer-Tools/ROCclr/archive/rocm-${PV}.tar.gz
 	-> rocclr-${PV}.tar.gz
 	)
 "
+
+DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
+HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
@@ -119,6 +121,7 @@ pkg_setup() {
 	QA_FLAGS_IGNORED="/usr/$(get_libdir)/libhiprtc-builtins.so.$(ver_cut 1-2)"
 	llvm_pkg_setup
 	python-any-r1_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -172,7 +175,7 @@ src_prepare() {
 	sed \
 		-e "/FLAGS .= \" -isystem \$HSA_PATH/d" \
 		-e "/HIP.*FLAGS.*isystem.*HIP_INCLUDE_PATH/d" \
-		-e "s:\$ENV{'DEVICE_LIB_PATH'}:'${EPREFIX}/usr/lib/amdgcn/bitcode':" \
+		-e "s:\$ENV{'DEVICE_LIB_PATH'}:'${EPREFIX}/usr/$(get_libdir)/amdgcn/bitcode':" \
 		-e "s:\$ENV{'HIP_LIB_PATH'}:'${EPREFIX}/usr/$(get_libdir)':" \
 		-e "/rpath/s,--rpath=[^ ]*,," \
 		-i \
@@ -194,10 +197,10 @@ src_prepare() {
 		cmake/FindHIP.cmake \
 		|| die
 
-	# Changed --hip-device-lib-path to "/usr/lib/amdgcn/bitcode".
+	# Changed --hip-device-lib-path to "/usr/$(get_libdir)/amdgcn/bitcode".
 	# It must align with "dev-libs/rocm-device-libs".
 	sed \
-		-e "s:\${AMD_DEVICE_LIBS_PREFIX}/lib:${EPREFIX}/usr/lib/amdgcn/bitcode:" \
+		-e "s:\${AMD_DEVICE_LIBS_PREFIX}/lib:${EPREFIX}/usr/$(get_libdir)/amdgcn/bitcode:" \
 		-i \
 		"${S}/hip-config.cmake.in" \
 		|| die
@@ -229,6 +232,8 @@ src_prepare() {
 		bin/hipvars.pm \
 		|| die
 	popd || die
+
+	rocm_src_prepare
 }
 
 src_configure() {

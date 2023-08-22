@@ -82,7 +82,7 @@ index 89d1224e..67d898d8 100755
 +      endif()
 +
 +
-+      file(GLOB HIP_CLANG_INCLUDE_SEARCH_PATHS ${HIP_CLANG_ROOT}/lib/clang/*/include)
++      file(GLOB HIP_CLANG_INCLUDE_SEARCH_PATHS ${HIP_CLANG_ROOT}/lib/clang/@CLANG_SLOT@/include)
 +      find_path(HIP_CLANG_INCLUDE_PATH stddef.h
 +        HINTS
            ${HIP_CLANG_INCLUDE_SEARCH_PATHS}
