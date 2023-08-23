@@ -119,10 +119,10 @@ diff -urp hipamd-rocm-5.4.3.orig/hip-config.cmake.in hipamd-rocm-5.4.3/hip-confi
 -    # Real Path : /opt/rocm-ver/lib/cmake/hip/hip-config.cmake
 -    # then go up 4 levels get to /opt/rocm-ver
 +    # Real Path : /usr/@LIBDIR@/cmake/hip/hip-config.cmake
-+    # then go up 4 levels get to /usr
++    # then go up some levels get to /usr
      get_filename_component(CONFIG_PATH "${CMAKE_CURRENT_LIST_FILE}" REALPATH)
 -    get_filename_component(ROCM_PATH "${CONFIG_PATH}/../../../../" ABSOLUTE)
-+    get_filename_component(ROCM_PATH "/usr" ABSOLUTE)
++    set(ROCM_PATH "/usr")
    endif()
  
  endif()
@@ -260,7 +260,8 @@ diff -urp hipamd-rocm-5.4.3.orig/src/CMakeLists.txt hipamd-rocm-5.4.3/src/CMakeL
 +      ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@)
 +  # find_package(LLVM) returns the @LIBDIR@/cmake/llvm location. We require the root.
    if(NOT DEFINED HIP_LLVM_ROOT)
-     set(HIP_LLVM_ROOT "${LLVM_DIR}/../../..")
+-    set(HIP_LLVM_ROOT "${LLVM_DIR}/../../..")
++    set(HIP_LLVM_ROOT "@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@")
    endif()
 @@ -259,7 +259,7 @@ Please install it using the following co
  endif()

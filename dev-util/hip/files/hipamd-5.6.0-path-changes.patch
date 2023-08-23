@@ -119,10 +119,10 @@ diff -urp hipamd-rocm-5.6.0.orig/hip-config.cmake.in hipamd-rocm-5.6.0/hip-confi
 -    # Real Path : /opt/rocm-ver/lib/cmake/hip/hip-config.cmake
 -    # then go up 4 levels get to /opt/rocm-ver
 +    # Real Path : /usr/@LIBDIR@/cmake/hip/hip-config.cmake
-+    # then go up 4 levels get to /usr
++    # then go up some levels get to /usr
      get_filename_component(CONFIG_PATH "${CMAKE_CURRENT_LIST_FILE}" REALPATH)
 -    get_filename_component(ROCM_PATH "${CONFIG_PATH}/../../../../" ABSOLUTE)
-+    get_filename_component(ROCM_PATH "/usr" ABSOLUTE)
++    set(ROCM_PATH "/usr")
    endif()
  
  endif()
@@ -267,7 +267,7 @@ diff -urp hipamd-rocm-5.6.0.orig/src/CMakeLists.txt hipamd-rocm-5.6.0/src/CMakeL
 +  # find_package(LLVM) returns the @LIBDIR@/cmake/llvm location. We require the root.
    if(NOT DEFINED HIP_LLVM_ROOT)
 -    set(HIP_LLVM_ROOT "${LLVM_DIR}/../../..")
-+    set(HIP_LLVM_ROOT "@ESYSROOT@/lib/llvm/@LLVM_SLOT@")
++    set(HIP_LLVM_ROOT "@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@")
    endif()
  
    execute_process(COMMAND sh -c "${CMAKE_CURRENT_SOURCE_DIR}/hip_embed_pch.sh ${HIP_COMMON_INCLUDE_DIR} ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/include ${HIP_LLVM_ROOT}" COMMAND_ECHO STDERR RESULT_VARIABLE EMBED_PCH_RC WORKING_DIRECTORY ${CMAKE_BINARY_DIR})

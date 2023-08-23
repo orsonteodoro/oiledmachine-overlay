@@ -265,7 +265,8 @@ diff -urp hipamd-rocm-5.1.3.orig/src/CMakeLists.txt hipamd-rocm-5.1.3/src/CMakeL
 +      ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@)
 +  # find_package(LLVM) returns the @LIBDIR@/cmake/llvm location. We require the root.
    if(NOT DEFINED HIP_LLVM_ROOT)
-     set(HIP_LLVM_ROOT "${LLVM_DIR}/../../..")
+-    set(HIP_LLVM_ROOT "${LLVM_DIR}/../../..")
++    set(HIP_LLVM_ROOT "@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@")
    endif()
 @@ -190,8 +190,8 @@ if(__HIP_ENABLE_RTC)
    message(STATUS "HIP RTC enabled.")
