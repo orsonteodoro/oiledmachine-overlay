@@ -96,7 +96,7 @@ diff -urp hipamd-rocm-5.1.3.orig/hip-config.cmake.in hipamd-rocm-5.1.3/hip-confi
  #and do three level up again
  get_filename_component(_DIR "${CMAKE_CURRENT_LIST_DIR}" REALPATH)
 -get_filename_component(_IMPORT_PREFIX "${_DIR}/../../../" REALPATH)
-+get_filename_component(_IMPORT_PREFIX "/usr" REALPATH)
++set(_IMPORT_PREFIX "/usr")
  
  # Windows doesn't need HSA
  if(NOT WIN32)
