@@ -1,0 +1,308 @@
+diff -urp hipamd-rocm-5.1.3.orig/bin/roc-obj hipamd-rocm-5.1.3/bin/roc-obj
+--- hipamd-rocm-5.1.3.orig/bin/roc-obj	2022-04-05 11:35:39.000000000 -0700
++++ hipamd-rocm-5.1.3/bin/roc-obj	2023-08-22 16:59:19.147779196 -0700
+@@ -48,9 +48,8 @@
+ #| finding the executable, an error occurs. The first directory searched is the
+ #| one containing the hard-link to the roc-obj being executed, known as the
+ #| "base directory". Next, if the environment variable HIP_CLANG_PATH is set,
+-#| it is searched; otherwise, the base directory path is appended with
+-#| "../../llvm/bin" and it is searched. Finally, the PATH is searched as if by
+-#| a POSIX "execvp" function.
++#| it is searched; otherwise, "@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin" is
++#| searched. Finally, the PATH is searched as if by a POSIX "execvp" function.
+ #|
+ #| Option Descriptions:
+ #|   -h, --help              print this help text and exit
+@@ -137,7 +136,7 @@ find_rocm_executable_or_fail() {
+   local -r command="$1"; shift
+   local file
+   local searched=()
+-  for dir in "$BASE_DIR" "${HIP_CLANG_PATH:-"$BASE_DIR/../../llvm/bin"}"; do
++  for dir in "$BASE_DIR" "${HIP_CLANG_PATH:-"@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin"}"; do
+     file="$dir/$command"
+     if [[ -x $file ]]; then
+       printf "%s" "$file"
+diff -urp hipamd-rocm-5.1.3.orig/CMakeLists.txt hipamd-rocm-5.1.3/CMakeLists.txt
+--- hipamd-rocm-5.1.3.orig/CMakeLists.txt	2023-08-22 16:58:59.823778716 -0700
++++ hipamd-rocm-5.1.3/CMakeLists.txt	2023-08-22 17:13:34.159800409 -0700
+@@ -37,9 +37,9 @@ project(hip)
+ #  By default, CMake will search for a folder named opencl or ROCm-OpenCL-Runtime relative to the current path. Specify -DAMD_OPENCL_PATH=$OPENCL_DIR if opencl source is in obscure location.
+ list(APPEND CMAKE_MODULE_PATH ${HIP_COMMON_DIR}/cmake)
+ 
+-# required to add the right link to libhsa-runtime in install/lib path
++# required to add the right link to libhsa-runtime in install/@LIBDIR@ path
+ # CMAKE_PREFIX_PATH is used as rpath to search for libs outside HIP
+-set(CMAKE_INSTALL_RPATH "${CMAKE_PREFIX_PATH}/lib")
++set(CMAKE_INSTALL_RPATH "${CMAKE_PREFIX_PATH}/@LIBDIR@")
+ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+ 
+ #############################
+@@ -242,7 +242,7 @@ if(NOT CMAKE_BUILD_TYPE)
+ endif()
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ message (STATUS "ROCM Installation path(ROCM_PATH): ${ROCM_PATH}")
+ 
+@@ -277,7 +277,7 @@ endif (NOT CPACK_SET_DESTDIR)
+ # Build steps
+ #############################
+ set(BIN_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/bin)
+-set(LIB_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib)
++set(LIB_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/@LIBDIR@)
+ set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/include)
+ set(CONFIG_PACKAGE_INSTALL_DIR ${LIB_INSTALL_DIR}/cmake/hip)
+ set(CONFIG_LANG_PACKAGE_INSTALL_DIR ${LIB_INSTALL_DIR}/cmake/hip-lang)
+Only in hipamd-rocm-5.1.3: CMakeLists.txt.orig
+Only in hipamd-rocm-5.1.3: CMakeLists.txt.rej
+diff -urp hipamd-rocm-5.1.3.orig/hip-config.cmake.in hipamd-rocm-5.1.3/hip-config.cmake.in
+--- hipamd-rocm-5.1.3.orig/hip-config.cmake.in	2023-08-22 16:58:59.883778718 -0700
++++ hipamd-rocm-5.1.3/hip-config.cmake.in	2023-08-22 17:13:32.591800370 -0700
+@@ -113,7 +113,7 @@ if(WIN32)
+ else()
+   # Linux - set a default path for ROCM_PATH
+   if(NOT DEFINED ROCM_PATH)
+-    set(ROCM_PATH /opt/rocm)
++    set(ROCM_PATH /usr)
+   endif()
+ 
+   #If HIP is not installed under ROCm, need this to find HSA assuming HSA is under ROCm
+@@ -126,7 +126,7 @@ if(HIP_COMPILER STREQUAL "clang")
+   if(WIN32)
+     file(TO_CMAKE_PATH "$ENV{HIP_PATH}" HIP_CLANG_ROOT)
+   else()
+-    set(HIP_CLANG_ROOT "${ROCM_PATH}/llvm")
++    set(HIP_CLANG_ROOT "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@")
+   endif()
+   if(NOT HIP_CXX_COMPILER)
+     set(HIP_CXX_COMPILER ${CMAKE_CXX_COMPILER})
+@@ -154,7 +154,7 @@ if(HIP_COMPILER STREQUAL "clang")
+     get_filename_component(HIP_CLANG_ROOT "${HIP_CXX_COMPILER}" DIRECTORY)
+     get_filename_component(HIP_CLANG_ROOT "${HIP_CLANG_ROOT}" DIRECTORY)
+   endif()
+-  file(GLOB HIP_CLANG_INCLUDE_SEARCH_PATHS ${HIP_CLANG_ROOT}/lib/clang/*/include)
++  file(GLOB HIP_CLANG_INCLUDE_SEARCH_PATHS ${HIP_CLANG_ROOT}/lib/clang/@CLANG_SLOT@/include)
+   find_path(HIP_CLANG_INCLUDE_PATH stddef.h
+       HINTS
+           ${HIP_CLANG_INCLUDE_SEARCH_PATHS}
+@@ -182,17 +182,17 @@ if(NOT WIN32)
+   find_dependency(Threads)
+ endif()
+ 
+-#get_filename_component cannot resolve the symlinks if called from /opt/rocm/lib/hip
++#get_filename_component cannot resolve the symlinks if called from /usr/@LIBDIR@/hip
+ #and do three level up again
+ get_filename_component(_DIR "${CMAKE_CURRENT_LIST_DIR}" REALPATH)
+-get_filename_component(_IMPORT_PREFIX "${_DIR}/../../../" REALPATH)
++get_filename_component(_IMPORT_PREFIX "/usr" REALPATH)
+ 
+ # Windows doesn't need HSA
+ if(NOT WIN32)
+   #if HSA is not under ROCm then provide CMAKE_PREFIX_PATH=<HSA_PATH>
+   find_path(HSA_HEADER hsa/hsa.h
+     PATHS
+-      "${_IMPORT_PREFIX}/../include"
++      "${_IMPORT_PREFIX}/include"
+       ${ROCM_PATH}/include
+   )
+ 
+@@ -239,7 +239,7 @@ if(HIP_COMPILER STREQUAL "clang")
+         hip_add_interface_compile_flags(hip::device -fms-extensions -fms-compatibility)
+         hip_add_interface_compile_flags(hip::device --hip-device-lib-path=\"${HIP_PATH}/lib/bitcode\")
+       else()
+-        hip_add_interface_compile_flags(hip::device --hip-device-lib-path=\"${AMD_DEVICE_LIBS_PREFIX}/lib\")
++        hip_add_interface_compile_flags(hip::device --hip-device-lib-path=\"@EPREFIX@/usr/@LIBDIR@/amdgcn/bitcode\")
+       endif()
+     endif()
+   endif()
+@@ -275,7 +275,7 @@ if(HIP_COMPILER STREQUAL "clang")
+     endif()
+   endif()
+ 
+-  file(GLOB HIP_CLANGRT_LIB_SEARCH_PATHS "${HIP_CLANG_ROOT}/lib/clang/*/lib/*")
++  file(GLOB HIP_CLANGRT_LIB_SEARCH_PATHS "${HIP_CLANG_ROOT}/lib/clang/@CLANG_SLOT@/lib/*")
+   find_library(CLANGRT_BUILTINS
+     NAMES
+       clang_rt.builtins
+Only in hipamd-rocm-5.1.3: hip-config.cmake.in.orig
+Only in hipamd-rocm-5.1.3: hip-config.cmake.in.rej
+diff -urp hipamd-rocm-5.1.3.orig/install.sh hipamd-rocm-5.1.3/install.sh
+--- hipamd-rocm-5.1.3.orig/install.sh	2022-04-05 11:35:39.000000000 -0700
++++ hipamd-rocm-5.1.3/install.sh	2023-08-22 16:59:21.387779251 -0700
+@@ -71,7 +71,7 @@ SRC_ROOT="$( cd "$( dirname "${BASH_SOUR
+ WORKING_DIR=$PWD
+ DASH_JAY="-j $(getconf _NPROCESSORS_ONLN)"
+ OS_NAME="$(cat /etc/os-release | awk -F '=' '/^NAME/{print $2}' | awk '{print $1}' | tr -d '"')"
+-[[ -z "$ROCM_PATH" ]] && ROCM_PATH=/opt/rocm
++[[ -z "$ROCM_PATH" ]] && ROCM_PATH="/usr"
+ 
+ err() {
+     echo "${1-Died}." >&2
+diff -urp hipamd-rocm-5.1.3.orig/packaging/CMakeLists.txt hipamd-rocm-5.1.3/packaging/CMakeLists.txt
+--- hipamd-rocm-5.1.3.orig/packaging/CMakeLists.txt	2023-08-22 16:58:59.851778717 -0700
++++ hipamd-rocm-5.1.3/packaging/CMakeLists.txt	2023-08-22 17:15:10.815802807 -0700
+@@ -41,27 +41,27 @@ set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+ #Begin binary files install
+ if(HIP_PLATFORM STREQUAL "amd" )
+    if(BUILD_SHARED_LIBS)
+-      install(FILES ${CMAKE_BINARY_DIR}/lib/libamdhip64.so DESTINATION lib COMPONENT binary)
+-      install(FILES ${CMAKE_BINARY_DIR}/lib/libamdhip64.so.${HIP_LIB_VERSION_MAJOR} DESTINATION lib COMPONENT binary)
+-      install(FILES ${CMAKE_BINARY_DIR}/lib/libamdhip64.so.${HIP_LIB_VERSION_STRING} DESTINATION lib COMPONENT binary)
++      install(FILES ${CMAKE_BINARY_DIR}/@LIBDIR@/libamdhip64.so DESTINATION @LIBDIR@ COMPONENT binary)
++      install(FILES ${CMAKE_BINARY_DIR}/@LIBDIR@/libamdhip64.so.${HIP_LIB_VERSION_MAJOR} DESTINATION @LIBDIR@ COMPONENT binary)
++      install(FILES ${CMAKE_BINARY_DIR}/@LIBDIR@/libamdhip64.so.${HIP_LIB_VERSION_STRING} DESTINATION @LIBDIR@ COMPONENT binary)
+       if(__HIP_ENABLE_RTC)
+-         install(FILES ${CMAKE_BINARY_DIR}/lib/libhiprtc-builtins.so DESTINATION lib COMPONENT binary)
+-         install(FILES ${CMAKE_BINARY_DIR}/lib/libhiprtc-builtins.so.${HIP_LIB_VERSION_MAJOR} DESTINATION lib COMPONENT binary)
+-         install(FILES ${CMAKE_BINARY_DIR}/lib/libhiprtc-builtins.so.${HIP_LIB_VERSION_STRING} DESTINATION lib COMPONENT binary)
++         install(FILES ${CMAKE_BINARY_DIR}/@LIBDIR@/libhiprtc-builtins.so DESTINATION @LIBDIR@ COMPONENT binary)
++         install(FILES ${CMAKE_BINARY_DIR}/@LIBDIR@/libhiprtc-builtins.so.${HIP_LIB_VERSION_MAJOR} DESTINATION @LIBDIR@ COMPONENT binary)
++         install(FILES ${CMAKE_BINARY_DIR}/@LIBDIR@/libhiprtc-builtins.so.${HIP_LIB_VERSION_STRING} DESTINATION @LIBDIR@ COMPONENT binary)
+       endif()
+    else()
+-      install(FILES ${CMAKE_BINARY_DIR}/lib/libamdhip64.a DESTINATION lib COMPONENT binary)
++      install(FILES ${CMAKE_BINARY_DIR}/@LIBDIR@/libamdhip64.a DESTINATION lib COMPONENT binary)
+    endif()#End BUILD_SHARED_LIBS
+ 
+ #TODO:This do not belong in BINARY package.
+ #Keeping it as is for now
+ install(FILES ${CMAKE_BINARY_DIR}/.hipInfo DESTINATION lib COMPONENT binary)
+-install(FILES ${CMAKE_BINARY_DIR}/hip-config.cmake ${CMAKE_BINARY_DIR}/hip-config-version.cmake DESTINATION lib/cmake/hip COMPONENT binary)
+-install ( EXPORT hip-targets  FILE hip-targets.cmake NAMESPACE hip:: DESTINATION lib/cmake/hip  COMPONENT binary)
++install(FILES ${CMAKE_BINARY_DIR}/hip-config.cmake ${CMAKE_BINARY_DIR}/hip-config-version.cmake DESTINATION @LIBDIR@/cmake/hip COMPONENT binary)
++install ( EXPORT hip-targets  FILE hip-targets.cmake NAMESPACE hip:: DESTINATION @LIBDIR@/cmake/hip  COMPONENT binary)
+ 
+-install(FILES ${CMAKE_BINARY_DIR}/src/hip-lang-config.cmake ${CMAKE_BINARY_DIR}/src/hip-lang-config-version.cmake DESTINATION lib/cmake/hip-lang COMPONENT binary)
++install(FILES ${CMAKE_BINARY_DIR}/src/hip-lang-config.cmake ${CMAKE_BINARY_DIR}/src/hip-lang-config-version.cmake DESTINATION @LIBDIR@/cmake/hip-lang COMPONENT binary)
+ 
+-install ( EXPORT hip-lang-targets  FILE hip-lang-targets.cmake NAMESPACE hip-lang:: DESTINATION lib/cmake/hip-lang  COMPONENT binary)
++install ( EXPORT hip-lang-targets  FILE hip-lang-targets.cmake NAMESPACE hip-lang:: DESTINATION @LIBDIR@/cmake/hip-lang  COMPONENT binary)
+ 
+ endif()#End HIP_PLATFORM = "amd"
+ #End bianry files install
+Only in hipamd-rocm-5.1.3/packaging: CMakeLists.txt.orig
+Only in hipamd-rocm-5.1.3/packaging: CMakeLists.txt.rej
+diff -urp hipamd-rocm-5.1.3.orig/packaging/hip-runtime-amd.postinst hipamd-rocm-5.1.3/packaging/hip-runtime-amd.postinst
+--- hipamd-rocm-5.1.3.orig/packaging/hip-runtime-amd.postinst	2022-04-05 11:35:39.000000000 -0700
++++ hipamd-rocm-5.1.3/packaging/hip-runtime-amd.postinst	2023-08-22 17:02:52.967784501 -0700
+@@ -20,9 +20,9 @@
+ # THE SOFTWARE.
+ 
+ ROCMDIR=@ROCM_PATH@
+-ROCMLIBDIR=$ROCMDIR/lib
++ROCMLIBDIR=$ROCMDIR/@LIBDIR@
+ HIPDIR=$ROCMDIR/hip
+-HIPLIBDIR=$ROCMDIR/hip/lib
++HIPLIBDIR=$ROCMDIR/@LIBDIR@
+ CURRENTDIR=`pwd`
+ # Soft-link to library files
+ HIPLIBFILES=$(ls -A $HIPLIBDIR | grep -v "cmake\|[-/$]")
+Only in hipamd-rocm-5.1.3/packaging: hip-runtime-amd.postinst.orig
+Only in hipamd-rocm-5.1.3/packaging: hip-runtime-amd.postinst.rej
+diff -urp hipamd-rocm-5.1.3.orig/packaging/hip-runtime-amd.prerm hipamd-rocm-5.1.3/packaging/hip-runtime-amd.prerm
+--- hipamd-rocm-5.1.3.orig/packaging/hip-runtime-amd.prerm	2022-04-05 11:35:39.000000000 -0700
++++ hipamd-rocm-5.1.3/packaging/hip-runtime-amd.prerm	2023-08-22 17:03:17.959785121 -0700
+@@ -20,9 +20,9 @@
+ # THE SOFTWARE.
+ 
+ ROCMDIR=@ROCM_PATH@
+-ROCMLIBDIR=$ROCMDIR/lib
++ROCMLIBDIR=$ROCMDIR/@LIBDIR@
+ HIPDIR=$ROCMDIR/hip
+-HIPLIBDIR=$ROCMDIR/hip/lib
++HIPLIBDIR=$ROCMDIR/@LIBDIR@
+ ([ ! -d $ROCMDIR ] || [ ! -d $HIPDIR ]) && exit 0
+ ([ ! -d $ROCMLIBDIR ] || [ ! -d $HIPLIBDIR ]) && exit 0
+ CURRENTDIR=`pwd`
+Only in hipamd-rocm-5.1.3/packaging: hip-runtime-amd.prerm.orig
+Only in hipamd-rocm-5.1.3/packaging: hip-runtime-amd.prerm.rej
+diff -urp hipamd-rocm-5.1.3.orig/packaging/hip-runtime-nvidia.postinst hipamd-rocm-5.1.3/packaging/hip-runtime-nvidia.postinst
+--- hipamd-rocm-5.1.3.orig/packaging/hip-runtime-nvidia.postinst	2022-04-05 11:35:39.000000000 -0700
++++ hipamd-rocm-5.1.3/packaging/hip-runtime-nvidia.postinst	2023-08-22 16:59:21.387779251 -0700
+@@ -23,5 +23,5 @@ ROCMDIR=@ROCM_PATH@
+ HIPDIR=$ROCMDIR/hip
+ 
+ if [ -d $ROCMDIR ] ; then
+-    ln -s -f $ROCMDIR /opt/rocm
++    ln -s -f $ROCMDIR /usr
+ fi
+diff -urp hipamd-rocm-5.1.3.orig/packaging/hip-runtime-nvidia.prerm hipamd-rocm-5.1.3/packaging/hip-runtime-nvidia.prerm
+--- hipamd-rocm-5.1.3.orig/packaging/hip-runtime-nvidia.prerm	2022-04-05 11:35:39.000000000 -0700
++++ hipamd-rocm-5.1.3/packaging/hip-runtime-nvidia.prerm	2023-08-22 16:59:21.387779251 -0700
+@@ -19,6 +19,6 @@
+ # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ # THE SOFTWARE.
+ 
+-if [ -L "/opt/rocm" ] ; then
+-   unlink /opt/rocm
++if [ -L "/usr" ] ; then
++   unlink /usr
+ fi
+diff -urp hipamd-rocm-5.1.3.orig/src/CMakeLists.txt hipamd-rocm-5.1.3/src/CMakeLists.txt
+--- hipamd-rocm-5.1.3.orig/src/CMakeLists.txt	2022-04-05 11:35:39.000000000 -0700
++++ hipamd-rocm-5.1.3/src/CMakeLists.txt	2023-08-22 17:17:54.431806867 -0700
+@@ -66,9 +66,9 @@ set_target_properties(amdhip64 PROPERTIE
+   CXX_EXTENSIONS OFF
+   POSITION_INDEPENDENT_CODE ON
+   # Workaround for many places in the HIP project
+-  # having hardcoded references to build/lib/libamdhip64.so
+-  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
+-  ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
++  # having hardcoded references to build/@LIBDIR@/libamdhip64.so
++  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/@LIBDIR@
++  ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/@LIBDIR@)
+ 
+ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+   set_target_properties(amdhip64 PROPERTIES OUTPUT_NAME "amdhip64")
+@@ -170,8 +170,8 @@ endif()
+ if(__HIP_ENABLE_PCH)
+   find_package(LLVM REQUIRED CONFIG
+     PATHS
+-      ${ROCM_PATH}/llvm)
+-  # find_package(LLVM) returns the lib/cmake/llvm location. We require the root.
++      ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@)
++  # find_package(LLVM) returns the @LIBDIR@/cmake/llvm location. We require the root.
+   if(NOT DEFINED HIP_LLVM_ROOT)
+     set(HIP_LLVM_ROOT "${LLVM_DIR}/../../..")
+   endif()
+@@ -190,8 +190,8 @@ if(__HIP_ENABLE_RTC)
+   message(STATUS "HIP RTC enabled.")
+   include(HIPRTC RESULT_VARIABLE HIPRTC_CMAKE)
+   # Requires clang and llvm-mc to create this library.
+-  find_package(LLVM REQUIRED CONFIG PATHS ${ROCM_PATH}/llvm)
+-  find_package(Clang REQUIRED CONFIG PATHS ${ROCM_PATH}/llvm)
++  find_package(LLVM REQUIRED CONFIG PATHS ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@)
++  find_package(Clang REQUIRED CONFIG PATHS ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@)
+   set(HIPRTC_GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/hip_rtc_gen")
+   set(HIPRTC_GEN_HEADER "${HIPRTC_GEN_DIR}/hipRTC_header.h")
+   set(HIPRTC_GEN_MCIN "${HIPRTC_GEN_DIR}/hipRTC_header.mcin")
+@@ -223,7 +223,7 @@ if(__HIP_ENABLE_RTC)
+     CXX_STANDARD_REQUIRED ON
+     CXX_EXTENSIONS OFF
+     POSITION_INDEPENDENT_CODE ON
+-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib
++    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/@LIBDIR@
+     LINKER_LANGUAGE CXX
+     VERSION ${HIP_LIB_VERSION_STRING})
+ 
+@@ -307,7 +307,7 @@ if(USE_PROF_API)
+ endif()
+ 
+ add_custom_command(TARGET amdhip64 POST_BUILD COMMAND
+-  ${CMAKE_COMMAND} -E copy ${PROJECT_BINARY_DIR}/.hipInfo ${PROJECT_BINARY_DIR}/lib/.hipInfo)
++  ${CMAKE_COMMAND} -E copy ${PROJECT_BINARY_DIR}/.hipInfo ${PROJECT_BINARY_DIR}/@LIBDIR@/.hipInfo)
+ add_custom_command(TARGET amdhip64 POST_BUILD COMMAND
+   ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+ 
+@@ -317,7 +317,7 @@ target_link_libraries(host INTERFACE amd
+ add_library(device INTERFACE)
+ target_link_libraries(device INTERFACE host)
+ 
+-# Current packaging assumes that HIP runtime will always be installed in ${ROCM_PATH}/lib
++# Current packaging assumes that HIP runtime will always be installed in ${ROCM_PATH}/@LIBDIR@
+ # This is false to assume, because some distros like CentOS will use the lib64 directory instead of lib
+ # Relying on CMake to choose the library directory for us will default in that case to lib64
+ # Hence there will be a mismatch between where HIP is installed and where CMake thinks it is
+Only in hipamd-rocm-5.1.3/src: CMakeLists.txt.orig

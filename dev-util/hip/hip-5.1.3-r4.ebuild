@@ -34,7 +34,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test r6"
+IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test r8"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -125,6 +125,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-llvm-15-noinline-keyword.patch"
 	"${FILESDIR}/${PN}-5.6.0-hip-config-not-cuda.patch"
 	"${FILESDIR}/${PN}-5.6.0-hip-host-not-cuda.patch"
+	"${FILESDIR}/hipamd-5.1.3-path-changes.patch"
 )
 S="${WORKDIR}/hipamd-rocm-${PV}"
 HIP_S="${WORKDIR}/HIP-rocm-${PV}"
@@ -177,7 +178,7 @@ src_prepare() {
 	else
 		clang_slot=$(ver_cut 1-3 "${clang_pv}")
 	fi
-	local CLANG_RESOURCE_DIR="${EPREFIX}/usr/lib/clang/${slot}"
+	local CLANG_RESOURCE_DIR="${EPREFIX}/usr/lib/clang/${clang_slot}"
 
 	sed \
 		-e "/set(HIP_CLANG_ROOT/s:\"\${ROCM_PATH}/llvm\":${LLVM_PREFIX}:" \
@@ -209,29 +210,8 @@ src_prepare() {
 
 	pushd "${HIP_S}" || die
 	eapply "${FILESDIR}/${PN}-5.1.3-clang-include-path.patch"
-	eapply "${FILESDIR}/${PN}-5.1.3-rocm-path.patch"
 	eapply "${FILESDIR}/${PN}-5.0.2-correct-ldflag.patch"
 	eapply "${FILESDIR}/${PN}-5.1.3-fno-stack-protector.patch"
-	eapply "${FILESDIR}/${PN}-5.1.3-path-changes.patch"
-
-	sed \
-		-i \
-		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
-		cmake/FindHIP.cmake \
-		|| die
-
-	# Setting HSA_PATH to "/usr" results in setting "-isystem /usr/include"
-	# which makes "stdlib.h" not found when using "#include_next" in header files;
-	sed \
-		-e "/FLAGS .= \" -isystem \$HSA_PATH/d" \
-		-e "/HIP.*FLAGS.*isystem.*HIP_INCLUDE_PATH/d" \
-		-e "s:\$ENV{'DEVICE_LIB_PATH'}:'${EPREFIX}/usr/$(get_libdir)/amdgcn/bitcode':" \
-		-e "s:\$ENV{'HIP_LIB_PATH'}:'${EPREFIX}/usr/$(get_libdir)':" \
-		-e "/rpath/s,--rpath=[^ ]*,," \
-		-e "s,\$HIP_CLANG_PATH/../lib/clang/\$HIP_CLANG_VERSION/,${CLANG_RESOURCE_DIR}/,g" \
-		-i \
-		bin/hipcc.pl \
-		|| die
 
 	# Changed --hip-device-lib-path to "/usr/$(get_libdir)/amdgcn/bitcode".
 	# It must align with "dev-libs/rocm-device-libs".
@@ -265,6 +245,7 @@ src_prepare() {
 		-e "s,@HIP_VERSION_PATCH@,$(ver_cut 3)," \
 		-e "s,@CLANG_INCLUDE_PATH@,${CLANG_RESOURCE_DIR}/include," \
 		-e "s,@CLANG_PATH@,${LLVM_PREFIX}/bin," \
+		-e "s,@CLANG_RESOURCE_DIR@,${CLANG_RESOURCE_DIR}," \
 		-i \
 		bin/hipvars.pm \
 		|| die
@@ -281,6 +262,20 @@ src_prepare() {
 		hip-config.cmake.in \
 		|| die
 
+	if use rocm ; then
+		pushd "${OCL_S}" || die
+			eapply "${FILESDIR}/rocm-opencl-runtime-5.1.3-path-changes.patch"
+		popd || die
+		pushd "${CLR_S}" || die
+			eapply "${FILESDIR}/rocclr-5.1.3-path-changes.patch"
+		popd || die
+	fi
+
+	if use profile ; then
+		pushd "${RTC_S}" || die
+			eapply "${FILESDIR}/roctracer-5.1.3.patch"
+		popd || die
+	fi
 	rocm_src_prepare
 }
 

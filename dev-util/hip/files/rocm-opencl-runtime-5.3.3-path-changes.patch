@@ -1,0 +1,36 @@
+diff -urp ROCm-OpenCL-Runtime-rocm-5.3.3.orig/CMakeLists.txt ROCm-OpenCL-Runtime-rocm-5.3.3/CMakeLists.txt
+--- ROCm-OpenCL-Runtime-rocm-5.3.3.orig/CMakeLists.txt	2022-09-16 08:23:25.000000000 -0700
++++ ROCm-OpenCL-Runtime-rocm-5.3.3/CMakeLists.txt	2023-08-22 18:19:17.547898248 -0700
+@@ -9,8 +9,8 @@ project(opencl)
+ 
+ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ 
+-# Set default libdir to be "lib" for ROCm, distros will override this anyway:
+-set(CMAKE_INSTALL_LIBDIR "lib" CACHE STRING "Library install directory")
++# Set default libdir to be "@LIBDIR@" for ROCm, distros will override this anyway:
++set(CMAKE_INSTALL_LIBDIR "@LIBDIR@" CACHE STRING "Library install directory")
+ 
+ include(GNUInstallDirs)
+ 
+diff -urp ROCm-OpenCL-Runtime-rocm-5.3.3.orig/opencl-backward-compat.cmake ROCm-OpenCL-Runtime-rocm-5.3.3/opencl-backward-compat.cmake
+--- ROCm-OpenCL-Runtime-rocm-5.3.3.orig/opencl-backward-compat.cmake	2022-09-16 08:23:25.000000000 -0700
++++ ROCm-OpenCL-Runtime-rocm-5.3.3/opencl-backward-compat.cmake	2023-08-22 18:18:08.987896547 -0700
+@@ -24,7 +24,7 @@ set(OPENCL_BUILD_DIR ${CMAKE_CURRENT_BIN
+ set(OPENCL_WRAPPER_DIR ${OPENCL_BUILD_DIR}/wrapper_dir)
+ set(OPENCL_WRAPPER_INC_DIR ${OPENCL_WRAPPER_DIR}/include/CL)
+ set(OPENCL_WRAPPER_BIN_DIR ${OPENCL_WRAPPER_DIR}/bin)
+-set(OPENCL_WRAPPER_LIB_DIR ${OPENCL_WRAPPER_DIR}/lib)
++set(OPENCL_WRAPPER_LIB_DIR ${OPENCL_WRAPPER_DIR}/@LIBDIR@)
+ 
+ #Function to generate header template file
+ function(create_header_template)
+@@ -130,7 +130,7 @@ if(BUILD_ICD)
+   install(DIRECTORY ${OPENCL_WRAPPER_LIB_DIR}  DESTINATION ${OPENCL} COMPONENT icd)
+ endif()
+ if(BUILD_SHARED_LIBS)
+-  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.so  DESTINATION ${OPENCL}/lib COMPONENT binary)
++  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.so  DESTINATION ${OPENCL}/@LIBDIR@ COMPONENT binary)
+ else()
+-  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.a  DESTINATION ${OPENCL}/lib COMPONENT binary)
++  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.a  DESTINATION ${OPENCL}/@LIBDIR@ COMPONENT binary)
+ endif()

@@ -30,7 +30,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r6"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r8"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -108,6 +108,7 @@ PATCHES=(
 #	"${FILESDIR}/0001-SWDEV-352878-LLVM-pkg-search-directly-using-find_dep.patch"
 	"${FILESDIR}/${PN}-5.6.0-hip-config-not-cuda.patch"
 	"${FILESDIR}/${PN}-5.6.0-hip-host-not-cuda.patch"
+	"${FILESDIR}/hipamd-5.6.0-path-changes.patch"
 )
 S="${WORKDIR}/hipamd-rocm-${PV}"
 HIP_S="${WORKDIR}/HIP-rocm-${PV}"
@@ -161,29 +162,9 @@ src_prepare() {
 		|| die
 
 	pushd "${HIPCC_S}" || die
-	eapply "${FILESDIR}/hipcc-5.6.0-rocm-path.patch"
 	eapply "${FILESDIR}/hipcc-5.6.0-fno-stack-protector.patch"
 	eapply "${FILESDIR}/hipcc-5.6.0-fix-version.patch"
 	eapply "${FILESDIR}/hipcc-5.6.0-path-changes.patch"
-
-	sed \
-		-i \
-		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
-		src/hipBin_amd.h \
-		|| die
-
-	# Setting HSA_PATH to "/usr" results in setting "-isystem /usr/include"
-	# which makes "stdlib.h" not found when using "#include_next" in header files;
-	sed \
-		-e "/FLAGS .= \" -isystem \$HSA_PATH/d" \
-		-e "/HIP.*FLAGS.*isystem.*HIP_INCLUDE_PATH/d" \
-		-e "s:\$ENV{'DEVICE_LIB_PATH'}:'${EPREFIX}/usr/$(get_libdir)/amdgcn/bitcode':" \
-		-e "s:\$ENV{'HIP_LIB_PATH'}:'${EPREFIX}/usr/$(get_libdir)':" \
-		-e "/rpath/s,--rpath=[^ ]*,," \
-		-i \
-		bin/hipcc.pl \
-		|| die
-	popd || die
 
 	pushd "${HIP_S}" || die
 #	eapply "${FILESDIR}/${PN}-5.4.3-correct-ldflag.patch"
@@ -192,12 +173,6 @@ src_prepare() {
 #	eapply "${FILESDIR}/0003-SWDEV-352878-Removed-relative-path-based-CLANG-inclu.patch"
 	eapply "${FILESDIR}/${PN}-5.4.3-fix-HIP_CLANG_PATH-detection.patch"
 	eapply "${FILESDIR}/${PN}-5.6.0-path-changes.patch"
-
-	sed \
-		-i \
-		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
-		cmake/FindHIP.cmake \
-		|| die
 
 	# Changed --hip-device-lib-path to "/usr/$(get_libdir)/amdgcn/bitcode".
 	# It must align with "dev-libs/rocm-device-libs".
@@ -234,6 +209,15 @@ src_prepare() {
 		bin/hipvars.pm \
 		|| die
 	popd || die
+
+	if use rocm ; then
+		pushd "${OCL_S}" || die
+			eapply "${FILESDIR}/rocm-opencl-runtime-5.3.3-path-changes.patch"
+		popd || die
+		pushd "${CLR_S}" || die
+			eapply "${FILESDIR}/rocclr-5.1.3-path-changes.patch"
+		popd || die
+	fi
 
 	rocm_src_prepare
 }

@@ -1,0 +1,527 @@
+diff -urp HIP-rocm-5.5.1.orig/bin/hipcc.pl HIP-rocm-5.5.1/bin/hipcc.pl
+--- HIP-rocm-5.5.1.orig/bin/hipcc.pl	2023-08-22 15:33:45.995651838 -0700
++++ HIP-rocm-5.5.1/bin/hipcc.pl	2023-08-22 15:49:51.455675792 -0700
+@@ -78,8 +78,8 @@ $HIPCC_LINK_FLAGS_APPEND=$ENV{'HIPCC_LIN
+ # Known Features
+ @knownFeatures = ('sramecc-', 'sramecc+', 'xnack-', 'xnack+');
+ 
+-$HIP_LIB_PATH=$ENV{'HIP_LIB_PATH'};
+-$DEVICE_LIB_PATH=$ENV{'DEVICE_LIB_PATH'};
++$HIP_LIB_PATH='@EPREFIX@/usr/@LIBDIR@';
++$DEVICE_LIB_PATH='@EPREFIX@/usr/@LIBDIR@/amdgcn/bitcode';
+ $HIP_CLANG_HCC_COMPAT_MODE=$ENV{'HIP_CLANG_HCC_COMPAT_MODE'}; # HCC compatibility mode
+ $HIP_COMPILE_CXX_AS_HIP=$ENV{'HIP_COMPILE_CXX_AS_HIP'} // "1";
+ 
+@@ -138,12 +138,12 @@ if ($HIP_PLATFORM eq "amd") {
+   }
+   $HIP_INCLUDE_PATH = "$HIP_ROCCLR_HOME/include";
+   if (!defined $HIP_LIB_PATH) {
+-    $HIP_LIB_PATH = "$HIP_ROCCLR_HOME/lib";
++    $HIP_LIB_PATH = "$HIP_ROCCLR_HOME/@LIBDIR@";
+   }
+ 
+   if (!defined $DEVICE_LIB_PATH) {
+-    if (-e "$ROCM_PATH/amdgcn/bitcode") {
+-      $DEVICE_LIB_PATH = "$ROCM_PATH/amdgcn/bitcode";
++    if (-e "$ROCM_PATH/@LIBDIR@/amdgcn/bitcode") {
++      $DEVICE_LIB_PATH = "$ROCM_PATH/@LIBDIR@/amdgcn/bitcode";
+     }
+     else {
+       # This path is to support an older build of the device library
+@@ -194,7 +194,7 @@ if ($HIP_PLATFORM eq "amd") {
+         $HIP_INCLUDE_PATH = "$HIP_PATH/include";
+     }
+     if (! defined $HIP_LIB_PATH) {
+-        $HIP_LIB_PATH = "$HIP_PATH/lib";
++        $HIP_LIB_PATH = "$HIP_PATH/@LIBDIR@";
+     }
+     if ($verbose & 0x2) {
+         print ("ROCM_PATH=$ROCM_PATH\n");
+@@ -224,16 +224,20 @@ if ($HIP_PLATFORM eq "amd") {
+     $HIPCXXFLAGS .= " -isystem $CUDA_PATH/include";
+     $HIPCFLAGS .= " -isystem $CUDA_PATH/include";
+ 
+-    $HIPLDFLAGS = " -Wno-deprecated-gpu-targets -lcuda -lcudart -L$CUDA_PATH/lib64";
++    $HIPLDFLAGS = " -Wno-deprecated-gpu-targets -lcuda -lcudart -L$CUDA_PATH/@LIBDIR@";
+ } else {
+     printf ("error: unknown HIP_PLATFORM = '$HIP_PLATFORM'");
+     printf ("       or HIP_COMPILER = '$HIP_COMPILER'");
+     exit (-1);
+ }
+ 
++#
++# Setting HSA_PATH to "/usr" results in setting "-isystem /usr/include"
++# which makes "stdlib.h" not found when using "#include_next" in header files;
++#
+ # Add paths to common HIP includes:
+-$HIPCXXFLAGS .= " -isystem \"$HIP_INCLUDE_PATH\"" ;
+-$HIPCFLAGS .= " -isystem \"$HIP_INCLUDE_PATH\"" ;
++#$HIPCXXFLAGS .= " -isystem \"$HIP_INCLUDE_PATH\"" ;
++#$HIPCFLAGS .= " -isystem \"$HIP_INCLUDE_PATH\"" ;
+ 
+ my $compileOnly = 0;
+ my $needCXXFLAGS = 0;  # need to add CXX flags to compile step
+@@ -586,7 +590,8 @@ if ($HIP_PLATFORM eq "amd") {
+     }
+ 
+     if ($hasHIP) {
+-        if ($DEVICE_LIB_PATH ne "$ROCM_PATH/amdgcn/bitcode") {
++        if ($DEVICE_LIB_PATH ne "$ROCM_PATH/@LIBDIR@/amdgcn/bitcode") {
++            $HIPCXXFLAGS .= " --rocm-path=\"$ROCM_PATH\"" ;
+             $HIPCXXFLAGS .= " --hip-device-lib-path=\"$DEVICE_LIB_PATH\"";
+         }
+     }
+Only in HIP-rocm-5.5.1/bin: hipcc.pl.orig
+Only in HIP-rocm-5.5.1/bin: hipcc.pl.rej
+diff -urp HIP-rocm-5.5.1.orig/bin/hipconfig.pl HIP-rocm-5.5.1/bin/hipconfig.pl
+--- HIP-rocm-5.5.1.orig/bin/hipconfig.pl	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/bin/hipconfig.pl	2023-08-22 15:34:20.939652705 -0700
+@@ -76,7 +76,7 @@ if ($HIP_COMPILER eq "clang") {
+     $CPP_CONFIG = " -D__HIP_PLATFORM_HCC__= -D__HIP_PLATFORM_AMD__=";
+ 
+     $HIP_PATH_INCLUDE = $HIP_PATH."/include";
+-    $HIP_CLANG_INCLUDE = $HIP_CLANG_PATH."/../lib/clang/".$HIP_CLANG_VERSION;
++    $HIP_CLANG_INCLUDE = $CLANG_RESOURCE_DIR."/include";
+     if($isWindows) {
+         $CPP_CONFIG .= " -I\"$HIP_PATH_INCLUDE\" -I\"$HIP_CLANG_INCLUDE\"";
+     } else {
+Only in HIP-rocm-5.5.1/bin: hipconfig.pl.orig
+diff -urp HIP-rocm-5.5.1.orig/bin/hipvars.pm HIP-rocm-5.5.1/bin/hipvars.pm
+--- HIP-rocm-5.5.1.orig/bin/hipvars.pm	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/bin/hipvars.pm	2023-08-22 15:34:20.939652705 -0700
+@@ -87,7 +87,7 @@ $CUDA_PATH=$ENV{'CUDA_PATH'} // '/usr/lo
+ if ($isWindows) {
+     $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "$HIP_PATH/bin";
+ } else {
+-    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "$ROCM_PATH/llvm/bin";
++    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "$ROCM_PATH/lib/llvm/@LLVM_SLOT@/bin";
+ }
+ # HIP_ROCCLR_HOME is used by Windows builds
+ $HIP_ROCCLR_HOME=$ENV{'HIP_ROCCLR_HOME'};
+Only in HIP-rocm-5.5.1/bin: hipvars.pm.orig
+diff -urp HIP-rocm-5.5.1.orig/cmake/FindHIP.cmake HIP-rocm-5.5.1/cmake/FindHIP.cmake
+--- HIP-rocm-5.5.1.orig/cmake/FindHIP.cmake	2023-08-22 15:33:46.003651838 -0700
++++ HIP-rocm-5.5.1/cmake/FindHIP.cmake	2023-08-22 15:45:23.539669145 -0700
+@@ -260,22 +260,24 @@ elseif("${HIP_COMPILER}" STREQUAL "clang
+         if(DEFINED ENV{HIP_CLANG_PATH})
+             set(HIP_CLANG_PATH $ENV{HIP_CLANG_PATH})
+         elseif(DEFINED ENV{ROCM_PATH})
+-            set(HIP_CLANG_PATH "$ENV{ROCM_PATH}/llvm/bin")
++            set(HIP_CLANG_PATH "$ENV{ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+         elseif(DEFINED ENV{HIP_PATH})
+-            if(EXISTS "$ENV{HIP_PATH}/llvm/bin") #File Reorg backward compatibility
+-                set(HIP_CLANG_PATH "$ENV{HIP_PATH}/llvm/bin")
++            if(EXISTS "$ENV{HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin") #File Reorg backward compatibility
++                set(HIP_CLANG_PATH "$ENV{HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+             else()
+-                set(HIP_CLANG_PATH "$ENV{HIP_PATH}/../llvm/bin")
++                set(HIP_CLANG_PATH "$ENV{HIP_PATH}/../lib/llvm/@LLVM_SLOT@/bin")
+             endif()
+         elseif(DEFINED HIP_PATH)
+-            if(EXISTS "${HIP_PATH}/llvm/bin") #File Reorg backward compatibility
+-                set(HIP_CLANG_PATH "${HIP_PATH}/llvm/bin")
++            if(EXISTS "${HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin") #File Reorg backward compatibility
++                set(HIP_CLANG_PATH "${HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+             else()
+-                set(HIP_CLANG_PATH "${HIP_PATH}/../llvm/bin")
++                set(HIP_CLANG_PATH "${HIP_PATH}/../lib/llvm/@LLVM_SLOT@/bin")
+             endif()
+         # Handle the case where ROCM_PATH is defined and not set in ENV
+         elseif(DEFINED ROCM_PATH)
+-            set(HIP_CLANG_PATH "${ROCM_PATH}/llvm/bin")
++            set(HIP_CLANG_PATH "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
++        elseif(EXISTS "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
++            set(HIP_CLANG_PATH "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+         else()
+             message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env ")
+         endif()
+@@ -696,22 +698,24 @@ macro(HIP_ADD_EXECUTABLE hip_target)
+             if(DEFINED ENV{HIP_CLANG_PATH})
+                 set(HIP_CLANG_PATH $ENV{HIP_CLANG_PATH})
+             elseif(DEFINED ENV{ROCM_PATH})
+-                set(HIP_CLANG_PATH "$ENV{ROCM_PATH}/llvm/bin")
++                set(HIP_CLANG_PATH "$ENV{ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+             elseif(DEFINED ENV{HIP_PATH})
+-                if(EXISTS "$ENV{HIP_PATH}/llvm/bin") #file reorg backward compatibility
+-                    set(HIP_CLANG_PATH "$ENV{HIP_PATH}/llvm/bin")
++                if(EXISTS "$ENV{HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin") #file reorg backward compatibility
++                    set(HIP_CLANG_PATH "$ENV{HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+                 else()
+-                    set(HIP_CLANG_PATH "$ENV{HIP_PATH}/../llvm/bin")
++                    set(HIP_CLANG_PATH "$ENV{HIP_PATH}/../lib/llvm/@LLVM_SLOT@/bin")
+                 endif()
+             elseif(DEFINED HIP_PATH)
+-                if(EXISTS "${HIP_PATH}/llvm/bin") #file reorg backward compatibility
+-                    set(HIP_CLANG_PATH "${HIP_PATH}/llvm/bin")
++                if(EXISTS "${HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin") #file reorg backward compatibility
++                    set(HIP_CLANG_PATH "${HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+                 else()
+-                    set(HIP_CLANG_PATH "${HIP_PATH}/../llvm/bin")
++                    set(HIP_CLANG_PATH "${HIP_PATH}/../lib/llvm/@LLVM_SLOT@/bin")
+                 endif()
+             # Handle  the case where ROCM_PATH is defined and not set in ENV
+             elseif(DEFINED ROCM_PATH)
+-                set(HIP_CLANG_PATH "${ROCM_PATH}/llvm/bin")
++                set(HIP_CLANG_PATH "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
++            elseif(EXISTS "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
++                set(HIP_CLANG_PATH "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
+             else()
+                 message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env")
+             endif()
+Only in HIP-rocm-5.5.1/cmake: FindHIP.cmake.orig
+Only in HIP-rocm-5.5.1/cmake: FindHIP.cmake.rej
+diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/bit_extract/CMakeLists.txt HIP-rocm-5.5.1/samples/0_Intro/bit_extract/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/0_Intro/bit_extract/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/0_Intro/bit_extract/CMakeLists.txt	2023-08-22 15:34:20.939652705 -0700
+@@ -27,7 +27,7 @@ if(NOT WIN32 AND NOT DEFINED __HIP_ENABL
+ endif()
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ if(${__HIP_ENABLE_PCH})
+Only in HIP-rocm-5.5.1/samples/0_Intro/bit_extract: CMakeLists.txt.orig
+Only in HIP-rocm-5.5.1/samples/0_Intro/bit_extract: CMakeLists.txt.rej
+diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/module_api/CMakeLists.txt HIP-rocm-5.5.1/samples/0_Intro/module_api/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/0_Intro/module_api/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/0_Intro/module_api/CMakeLists.txt	2023-08-22 15:34:20.939652705 -0700
+@@ -23,7 +23,7 @@ project(module_api)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/module_api_global/CMakeLists.txt HIP-rocm-5.5.1/samples/0_Intro/module_api_global/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/0_Intro/module_api_global/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/0_Intro/module_api_global/CMakeLists.txt	2023-08-22 15:34:20.939652705 -0700
+@@ -23,7 +23,7 @@ project(modile_api_global)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+@@ -51,4 +51,4 @@ add_custom_target(
+ add_dependencies(runKernel.hip.out codeobj)
+ 
+ # Link with HIP
+-target_link_libraries(runKernel.hip.out hip::host)
+\ No newline at end of file
++target_link_libraries(runKernel.hip.out hip::host)
+diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/square/CMakeLists.txt HIP-rocm-5.5.1/samples/0_Intro/square/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/0_Intro/square/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/0_Intro/square/CMakeLists.txt	2023-08-22 15:34:20.939652705 -0700
+@@ -25,7 +25,7 @@ project(square)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+@@ -45,4 +45,4 @@ set(CMAKE_CXX_LINKER   ${HIP_HIPCC_EXECU
+ add_executable(square square.cpp)
+ 
+ # Link with HIP
+-target_link_libraries(square hip::host)
+\ No newline at end of file
++target_link_libraries(square hip::host)
+diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipBusBandwidth/CMakeLists.txt HIP-rocm-5.5.1/samples/1_Utils/hipBusBandwidth/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/1_Utils/hipBusBandwidth/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/1_Utils/hipBusBandwidth/CMakeLists.txt	2023-08-22 15:34:20.939652705 -0700
+@@ -23,7 +23,7 @@ project(hipBusBandwidth)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+@@ -41,4 +41,4 @@ set(CMAKE_BUILD_TYPE Release)
+ add_executable(hipBusBandwidth hipBusBandwidth.cpp ResultDatabase.cpp)
+ 
+ # Link with HIP
+-target_link_libraries(hipBusBandwidth hip::host)
+\ No newline at end of file
++target_link_libraries(hipBusBandwidth hip::host)
+diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipCommander/CMakeLists.txt HIP-rocm-5.5.1/samples/1_Utils/hipCommander/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/1_Utils/hipCommander/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/1_Utils/hipCommander/CMakeLists.txt	2023-08-22 15:34:20.939652705 -0700
+@@ -23,7 +23,7 @@ project(hipCommander)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipDispatchLatency/CMakeLists.txt HIP-rocm-5.5.1/samples/1_Utils/hipDispatchLatency/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/1_Utils/hipDispatchLatency/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/1_Utils/hipDispatchLatency/CMakeLists.txt	2023-08-22 15:34:20.939652705 -0700
+@@ -23,7 +23,7 @@ project(hipDispatchLatency)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipInfo/CMakeLists.txt HIP-rocm-5.5.1/samples/1_Utils/hipInfo/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/1_Utils/hipInfo/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/1_Utils/hipInfo/CMakeLists.txt	2023-08-22 15:34:20.939652705 -0700
+@@ -31,7 +31,7 @@ cmake_minimum_required(VERSION 3.10)
+ option(HIPINFO_INTERNAL_BUILD "Enable building hipInfo from compute" OFF)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt	2023-08-22 15:34:20.939652705 -0700
+@@ -23,7 +23,7 @@ project(MatrixTranspose)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/10_inline_asm/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/10_inline_asm/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/10_inline_asm/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/10_inline_asm/CMakeLists.txt	2023-08-22 15:34:20.939652705 -0700
+@@ -23,7 +23,7 @@ project(inline_asm)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/11_texture_driver/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/11_texture_driver/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/11_texture_driver/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/11_texture_driver/CMakeLists.txt	2023-08-22 15:34:20.943652705 -0700
+@@ -23,7 +23,7 @@ project(texture2dDrv)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt	2023-08-22 15:35:56.631655079 -0700
+@@ -20,7 +20,7 @@
+ 
+ cmake_minimum_required(VERSION 2.8.3)
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ if(NOT DEFINED HIP_PATH)
+@@ -30,7 +30,7 @@ if(NOT DEFINED HIP_PATH)
+         set(HIP_PATH $ENV{HIP_PATH} CACHE PATH "Path to which HIP has been installed")
+     endif()
+ endif()
+-set(CMAKE_MODULE_PATH "${HIP_PATH}/cmake" ${CMAKE_MODULE_PATH})
++set(CMAKE_MODULE_PATH "@EPREFIX@/usr/@LIBDIR@/cmake" ${CMAKE_MODULE_PATH})
+ set(CMAKE_HIP_ARCHITECTURES OFF)
+ project(12_cmake)
+ 
+Only in HIP-rocm-5.5.1/samples/2_Cookbook/12_cmake_hip_add_executable: CMakeLists.txt.orig
+Only in HIP-rocm-5.5.1/samples/2_Cookbook/12_cmake_hip_add_executable: CMakeLists.txt.rej
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/13_occupancy/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/13_occupancy/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/13_occupancy/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/13_occupancy/CMakeLists.txt	2023-08-22 15:34:20.943652705 -0700
+@@ -23,7 +23,7 @@ project(occupancy)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt	2023-08-22 15:34:20.943652705 -0700
+@@ -23,7 +23,7 @@ project(gpuarch)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt	2023-08-22 15:34:20.943652705 -0700
+@@ -3,7 +3,7 @@ project(static_lib)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt	2023-08-22 15:34:47.335653360 -0700
+@@ -3,7 +3,7 @@ project(static_lib)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+@@ -38,7 +38,7 @@ add_library(HipOptLibrary STATIC ${CPP_S
+ 
+ # Set-up the correct flags to generate the static library.
+ target_link_libraries(HipOptLibrary PRIVATE --emit-static-lib)
+-target_include_directories(HipOptLibrary PRIVATE /opt/rocm/hsa/include)
++target_include_directories(HipOptLibrary PRIVATE /usr/hsa/include)
+ 
+ # Create test executable that uses libHipOptLibrary.a
+ set(TEST_SOURCES ${CMAKE_SOURCE_DIR}/hipMain1.cpp)
+Only in HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/host_functions: CMakeLists.txt.orig
+Only in HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/host_functions: CMakeLists.txt.rej
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/1_hipEvent/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/1_hipEvent/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/1_hipEvent/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/1_hipEvent/CMakeLists.txt	2023-08-22 15:34:20.943652705 -0700
+@@ -23,7 +23,7 @@ project(hipEvent)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/3_shared_memory/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/3_shared_memory/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/3_shared_memory/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/3_shared_memory/CMakeLists.txt	2023-08-22 15:34:20.943652705 -0700
+@@ -23,7 +23,7 @@ project(sharedMemory)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/4_shfl/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/4_shfl/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/4_shfl/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/4_shfl/CMakeLists.txt	2023-08-22 15:34:20.943652705 -0700
+@@ -23,7 +23,7 @@ project(shfl)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/5_2dshfl/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/5_2dshfl/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/5_2dshfl/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/5_2dshfl/CMakeLists.txt	2023-08-22 15:34:20.943652705 -0700
+@@ -23,7 +23,7 @@ project(2dshfl)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt	2023-08-22 15:34:20.943652705 -0700
+@@ -23,7 +23,7 @@ project(dynamic_shared)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/7_streams/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/7_streams/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/7_streams/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/7_streams/CMakeLists.txt	2023-08-22 15:34:20.943652705 -0700
+@@ -23,7 +23,7 @@ project(stream)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/8_peer2peer/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/8_peer2peer/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/8_peer2peer/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/8_peer2peer/CMakeLists.txt	2023-08-22 15:34:20.943652705 -0700
+@@ -23,7 +23,7 @@ project(peer2peer)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/9_unroll/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/9_unroll/CMakeLists.txt
+--- HIP-rocm-5.5.1.orig/samples/2_Cookbook/9_unroll/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/9_unroll/CMakeLists.txt	2023-08-22 15:34:20.943652705 -0700
+@@ -23,7 +23,7 @@ project(unroll)
+ cmake_minimum_required(VERSION 3.10)
+ 
+ if (NOT DEFINED ROCM_PATH )
+-     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
+ endif ()
+ 
+ # Search for rocm in common locations
+diff -urp HIP-rocm-5.5.1.orig/tests/hit/HIT.cmake HIP-rocm-5.5.1/tests/hit/HIT.cmake
+--- HIP-rocm-5.5.1.orig/tests/hit/HIT.cmake	2023-05-09 12:52:23.000000000 -0700
++++ HIP-rocm-5.5.1/tests/hit/HIT.cmake	2023-08-22 15:34:20.943652705 -0700
+@@ -326,7 +326,7 @@ endmacro()
+ #-------------------------------------------------------------------------------
+ 
+ # Macro: HIT_ADD_FILES used to scan+add multiple files for testing.
+-file(GLOB HIP_LIB_FILES ${HIP_PATH}/lib/*)
++file(GLOB HIP_LIB_FILES ${HIP_PATH}/@LIBDIR@/*)
+ macro(HIT_ADD_FILES _config _dir _label _parent)
+     foreach (file ${ARGN})
+         # Build tests
+@@ -413,7 +413,7 @@ macro(HIT_ADD_FILES _config _dir _label
+                         set_target_properties(${target} PROPERTIES OUTPUT_NAME ${_target_r} RUNTIME_OUTPUT_DIRECTORY "." LINK_DEPENDS "${HIP_LIB_FILES}" PREFIX "" SUFFIX "")
+                 else()
+                     # message(STATUS "add_custom_target*: target= ${target}  _buildcmd= ${_buildcmd}")
+-                    add_custom_target(${target} COMMAND sh -c "${_buildcmd} -L${CMAKE_CURRENT_SOURCE_DIR}/build/lib -isystem ${CMAKE_CURRENT_SOURCE_DIR}/include")
++                    add_custom_target(${target} COMMAND sh -c "${_buildcmd} -L${CMAKE_CURRENT_SOURCE_DIR}/build/@LIBDIR@ -isystem ${CMAKE_CURRENT_SOURCE_DIR}/include")
+                 endif()
+                 add_dependencies(${_parent} ${target})
+                 foreach(_dependency ${_depends})
+Only in HIP-rocm-5.5.1/tests/hit: HIT.cmake.orig
