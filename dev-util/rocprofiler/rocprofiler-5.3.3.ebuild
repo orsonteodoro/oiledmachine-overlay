@@ -7,7 +7,7 @@ EAPI=8
 LLVM_MAX_SLOT=15
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit cmake llvm python-any-r1
+inherit cmake llvm python-any-r1 rocm
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/${PN}/archive/rocm-${PV}.tar.gz
@@ -46,7 +46,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-nostrip.patch"
 	"${FILESDIR}/${PN}-5.1.3-remove-Werror.patch"
 	"${FILESDIR}/${PN}-5.3.3-gentoo-location.patch"
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
 
 python_check_deps() {
@@ -56,6 +56,7 @@ python_check_deps() {
 pkg_setup() {
 	llvm_pkg_setup
 	python-any-r1_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -66,12 +67,6 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-5.3.3-remove-aql-in-cmake.patch"
 	fi
 
-	sed \
-		-e "s,@LIB_DIR@,$(get_libdir),g" \
-		-i \
-		bin/rpl_run.sh \
-		|| die
-
 	# Caused by commit 071379b
 	sed \
 		-i \
@@ -79,16 +74,7 @@ src_prepare() {
 		"cmake_modules/env.cmake" \
 		|| die
 
-	sed \
-		-i \
-		-e "s|@EPREFIX@|${EPREFIX}|g" \
-		"bin/build_kernel.sh" \
-		|| die
-	sed \
-		-i \
-		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
-		"bin/build_kernel.sh" \
-		|| die
+	rocm_src_prepare
 }
 
 src_configure() {

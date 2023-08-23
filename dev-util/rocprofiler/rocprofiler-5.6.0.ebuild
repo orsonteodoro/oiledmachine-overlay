@@ -7,7 +7,7 @@ EAPI=8
 LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit cmake llvm python-any-r1
+inherit cmake llvm python-any-r1 rocm
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/${PN}/archive/rocm-${PV}.tar.gz
@@ -61,6 +61,7 @@ python_check_deps() {
 pkg_setup() {
 	llvm_pkg_setup
 	python-any-r1_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -72,12 +73,6 @@ ewarn "You are enabling an experimental patch."
 ewarn "For production, set USE=aqlprofile ON."
 ewarn
 	fi
-
-	sed \
-		-e "s,@LIB_DIR@,$(get_libdir),g" \
-		-i \
-		bin/rpl_run.sh \
-		|| die
 
 	# Caused by commit e80f7cb
 	sed \
@@ -106,16 +101,7 @@ ewarn
 		tests/featuretests/profiler/CMakeLists.txt \
 		|| die
 
-	sed \
-		-i \
-		-e "s|@EPREFIX@|${EPREFIX}|g" \
-		"bin/build_kernel.sh" \
-		|| die
-	sed \
-		-i \
-		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
-		"bin/build_kernel.sh" \
-		|| die
+	rocm_src_prepare
 }
 
 src_configure() {

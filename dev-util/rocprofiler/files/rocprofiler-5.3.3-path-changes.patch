@@ -1,0 +1,171 @@
+diff -urp rocprofiler-rocm-5.3.3.orig/bin/build_kernel.sh rocprofiler-rocm-5.3.3/bin/build_kernel.sh
+--- rocprofiler-rocm-5.3.3.orig/bin/build_kernel.sh	2022-10-17 13:34:10.000000000 -0700
++++ rocprofiler-rocm-5.3.3/bin/build_kernel.sh	2023-08-22 22:13:45.936247295 -0700
+@@ -18,7 +18,7 @@ if [ -z "$DST_DIR" ] ; then
+ fi
+ 
+ if [ -z "$ROCM_DIR" ] ; then
+-  ROCM_DIR=/opt/rocm
++  ROCM_DIR=/usr
+ fi
+ 
+ if [ -z "$TGT_LIST" ] ; then
+@@ -32,12 +32,12 @@ fi
+ 
+ OCL_VER="2.0"
+ 
+-if [ -e $ROCM_DIR/llvm ] ; then
+-  LLVM_DIR=$ROCM_DIR/llvm
+-  LIB_DIR=$ROCM_DIR/lib
++if [ -e $ROCM_DIR/lib/llvm/@LLVM_SLOT@ ] ; then
++  LLVM_DIR=$ROCM_DIR/lib/llvm/@LLVM_SLOT@
++  LIB_DIR=$ROCM_DIR/@LIBDIR@
+ else
+   LLVM_DIR=$ROCM_DIR/hcc
+-  LIB_DIR=$LLVM_DIR/lib
++  LIB_DIR=$LLVM_DIR/@LIBDIR@
+ fi
+ 
+ # Determine whether using new or old device-libs layout
+@@ -45,8 +45,8 @@ if [ -e $LIB_DIR/bitcode/opencl.amdgcn.b
+   BC_DIR=$LIB_DIR/bitcode
+ elif [ -e $LIB_DIR/opencl.amdgcn.bc ]; then
+   BC_DIR=$LIB_DIR
+-elif [ -e $ROCM_DIR/amdgcn/bitcode/opencl.bc ]; then
+-  BC_DIR=$ROCM_DIR/amdgcn/bitcode
++elif [ -e $ROCM_DIR/@LIBDIR@/amdgcn/bitcode/opencl.bc ]; then
++  BC_DIR=$ROCM_DIR/@LIBDIR@/amdgcn/bitcode
+ else
+   echo "Error: Cannot find amdgcn bitcode directory"
+   exit 1
+diff -urp rocprofiler-rocm-5.3.3.orig/bin/merge_traces.sh rocprofiler-rocm-5.3.3/bin/merge_traces.sh
+--- rocprofiler-rocm-5.3.3.orig/bin/merge_traces.sh	2022-10-17 13:34:10.000000000 -0700
++++ rocprofiler-rocm-5.3.3/bin/merge_traces.sh	2023-08-22 22:13:45.936247295 -0700
+@@ -25,7 +25,7 @@
+ #A script to merge rocprof traces and then provide a results.json for the aggregate numbers.
+ 
+ ROCPROF=`which rocprof`
+-BIN_DIR=$(dirname $(realpath ${ROCPROF:-/opt/rocm/bin/rocprof}))
++BIN_DIR=$(dirname $(realpath ${ROCPROF:-/usr/bin/rocprof}))
+ 
+ bin_name=`basename $0`
+ 
+diff -urp rocprofiler-rocm-5.3.3.orig/bin/rpl_run.sh rocprofiler-rocm-5.3.3/bin/rpl_run.sh
+--- rocprofiler-rocm-5.3.3.orig/bin/rpl_run.sh	2023-08-22 22:13:27.840246846 -0700
++++ rocprofiler-rocm-5.3.3/bin/rpl_run.sh	2023-08-22 22:21:43.856259153 -0700
+@@ -226,7 +226,7 @@ set_rocm_lib_path() {
+ OUTPUT_LIST=""
+ run() {
+   if ! set_rocm_lib_path ; then
+-     echo " Fatal could not find ROCm lib directory "
++     echo " Fatal could not find ROCm @LIBDIR@ directory "
+      fatal
+   fi
+   export ROCP_INPUT="$1"
+diff -urp rocprofiler-rocm-5.3.3.orig/build.sh rocprofiler-rocm-5.3.3/build.sh
+--- rocprofiler-rocm-5.3.3.orig/build.sh	2022-10-17 13:34:10.000000000 -0700
++++ rocprofiler-rocm-5.3.3/build.sh	2023-08-22 22:14:31.120248416 -0700
+@@ -25,8 +25,8 @@
+ SRC_DIR=`dirname $0`
+ TO_CLEAN=yes
+ COMPONENT="rocprofiler"
+-ROCM_PATH="${ROCM_PATH:=/opt/rocm}"
+-LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/lib:$ROCM_PATH/lib64"
++ROCM_PATH="${ROCM_PATH:=/usr}"
++LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/@LIBDIR@"
+ 
+ if [ -z "$ROCPROFILER_ROOT" ]; then ROCPROFILER_ROOT=$SRC_DIR; fi
+ if [ -z "$BUILD_DIR" ] ; then BUILD_DIR=$SRC_DIR/build; fi
+Only in rocprofiler-rocm-5.3.3: build.sh.orig
+Only in rocprofiler-rocm-5.3.3: build.sh.rej
+diff -urp rocprofiler-rocm-5.3.3.orig/CMakeLists.txt rocprofiler-rocm-5.3.3/CMakeLists.txt
+--- rocprofiler-rocm-5.3.3.orig/CMakeLists.txt	2023-08-22 22:13:27.840246846 -0700
++++ rocprofiler-rocm-5.3.3/CMakeLists.txt	2023-08-22 22:21:19.008258536 -0700
+@@ -31,8 +31,8 @@ set ( ROCPROFILER_TARGET "${ROCPROFILER_
+ set ( ROCPROFILER_LIBRARY "lib${ROCPROFILER_TARGET}" )
+ project ( ${ROCPROFILER_NAME} )
+ 
+-# Set default libdir to be "lib" for ROCm
+-set(CMAKE_INSTALL_LIBDIR "lib" CACHE STRING "Library install directory")
++# Set default libdir to be "@LIBDIR@" for ROCm
++set(CMAKE_INSTALL_LIBDIR "@LIBDIR@" CACHE STRING "Library install directory")
+ include(GNUInstallDirs)
+ ## Adding default path cmake modules
+ list ( APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules" )
+@@ -82,7 +82,7 @@ if(USE_PROF_API EQUAL 1)
+         HINTS
+           ${PROF_API_HEADER_PATH}
+         PATHS
+-            /opt/rocm/include
++            /usr/include
+         PATH_SUFFIXES
+             roctracer/ext
+     )
+Only in rocprofiler-rocm-5.3.3: CMakeLists.txt.orig
+Only in rocprofiler-rocm-5.3.3: CMakeLists.txt.rej
+diff -urp rocprofiler-rocm-5.3.3.orig/cmake_modules/env.cmake rocprofiler-rocm-5.3.3/cmake_modules/env.cmake
+--- rocprofiler-rocm-5.3.3.orig/cmake_modules/env.cmake	2023-08-22 22:13:27.832246846 -0700
++++ rocprofiler-rocm-5.3.3/cmake_modules/env.cmake	2023-08-22 22:16:07.200250800 -0700
+@@ -91,10 +91,10 @@ if ( "${CMAKE_BUILD_TYPE}" STREQUAL debu
+ endif ()
+ 
+ ## Find hsa-runtime
+-find_package(hsa-runtime64 CONFIG REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm PATH_SUFFIXES lib/cmake/hsa-runtime64 )
++find_package(hsa-runtime64 CONFIG REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /usr PATH_SUFFIXES @LIBDIR@/cmake/hsa-runtime64 )
+ 
+ # find KFD thunk
+-find_package(hsakmt CONFIG REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm PATH_SUFFIXES lib/cmake/hsakmt )
++find_package(hsakmt CONFIG REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /usr PATH_SUFFIXES @LIBDIR@/cmake/hsakmt )
+ 
+ ## Find ROCm
+ find_library ( HSA_KMT_LIB "libhsakmt.so" )
+Only in rocprofiler-rocm-5.3.3/cmake_modules: env.cmake.orig
+Only in rocprofiler-rocm-5.3.3/cmake_modules: env.cmake.rej
+diff -urp rocprofiler-rocm-5.3.3.orig/Readme.txt rocprofiler-rocm-5.3.3/Readme.txt
+--- rocprofiler-rocm-5.3.3.orig/Readme.txt	2022-10-17 13:34:10.000000000 -0700
++++ rocprofiler-rocm-5.3.3/Readme.txt	2023-08-22 22:13:45.940247295 -0700
+@@ -26,7 +26,7 @@ $ export CMAKE_DEBUG_TRACE=1 # 1 to enab
+ To build with the current installed ROCM:
+ 
+ $ cd .../rocprofiler
+-$ export CMAKE_PREFIX_PATH=/opt/rocm/include/hsa:/opt/rocm
++$ export CMAKE_PREFIX_PATH=/usr/include/hsa:/usr
+ $ mkdir build
+ $ cd build
+ $ cmake ..
+Only in rocprofiler-rocm-5.3.3: Readme.txt.orig
+diff -urp rocprofiler-rocm-5.3.3.orig/rocprofiler-backward-compat.cmake rocprofiler-rocm-5.3.3/rocprofiler-backward-compat.cmake
+--- rocprofiler-rocm-5.3.3.orig/rocprofiler-backward-compat.cmake	2022-10-17 13:34:10.000000000 -0700
++++ rocprofiler-rocm-5.3.3/rocprofiler-backward-compat.cmake	2023-08-22 22:20:21.200257102 -0700
+@@ -23,7 +23,7 @@ set(ROCPROF_BUILD_DIR ${CMAKE_CURRENT_BI
+ set(ROCPROF_WRAPPER_DIR ${ROCPROF_BUILD_DIR}/wrapper_dir)
+ set(ROCPROF_WRAPPER_INC_DIR ${ROCPROF_WRAPPER_DIR}/include)
+ set(ROCPROF_WRAPPER_BIN_DIR ${ROCPROF_WRAPPER_DIR}/bin)
+-set(ROCPROF_WRAPPER_LIB_DIR ${ROCPROF_WRAPPER_DIR}/lib)
++set(ROCPROF_WRAPPER_LIB_DIR ${ROCPROF_WRAPPER_DIR}/@LIBDIR@)
+ set(ROCPROF_WRAPPER_TOOL_DIR ${ROCPROF_WRAPPER_DIR}/tool)
+ 
+ #Function to generate header template file
+@@ -48,7 +48,7 @@ function(create_header_template)
+     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
+-   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with rocprofiler\")\n@include_statements@ \n\n#endif")
++   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path /usr/include/ and prefix with rocprofiler\")\n@include_statements@ \n\n#endif")
+ endfunction()
+ 
+ #use header template file and generate wrapper header files
+diff -urp rocprofiler-rocm-5.3.3.orig/test/run.sh rocprofiler-rocm-5.3.3/test/run.sh
+--- rocprofiler-rocm-5.3.3.orig/test/run.sh	2022-10-17 13:34:10.000000000 -0700
++++ rocprofiler-rocm-5.3.3/test/run.sh	2023-08-22 22:17:15.632252498 -0700
+@@ -57,7 +57,7 @@ eval_test() {
+ }
+ 
+ # paths to ROC profiler and oher libraries
+-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD:$PWD/../../lib:/opt/rocm/lib:/opt/rocm/lib/rocprofiler
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD:$PWD/../../@LIBDIR@:/usr/@LIBDIR@:/usr/@LIBDIR@/rocprofiler
+ 
+ # enable tools load failure reporting
+ export HSA_TOOLS_REPORT_LOAD_FAILURE=1
+Only in rocprofiler-rocm-5.3.3/test: run.sh.orig
+Only in rocprofiler-rocm-5.3.3/test: run.sh.rej

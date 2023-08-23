@@ -10,10 +10,10 @@ diff -urp rocprofiler-rocm-5.5.1.orig/bin/rpl_run.sh rocprofiler-rocm-5.5.1/bin/
 -TTLIB_PATH=$ROOT_DIR/lib/roctracer
 -ROCM_LIB_PATH=$ROOT_DIR/lib
 -PROF_BIN_DIR=$ROOT_DIR/libexec/rocprofiler
-+RPL_PATH=$ROOT_DIR/@LIB_DIR@
++RPL_PATH=$ROOT_DIR/@LIBDIR@
 +TLIB_PATH=$RPL_PATH
-+TTLIB_PATH=$ROOT_DIR/@LIB_DIR@
-+ROCM_LIB_PATH=$ROOT_DIR/@LIB_DIR@
++TTLIB_PATH=$ROOT_DIR/@LIBDIR@
++ROCM_LIB_PATH=$ROOT_DIR/@LIBDIR@
 +PROF_BIN_DIR=$ROOT_DIR/bin
 +PROF_LIBEXEC_DIR=$ROOT_DIR/libexec/rocprofiler
  
