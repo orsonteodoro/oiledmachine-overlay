@@ -45,9 +45,9 @@ RESTRICT="
 S="${WORKDIR}/roctracer-rocm-${PV}"
 S_PROFILER="${WORKDIR}/rocprofiler"
 PATCHES=(
-	"${FILESDIR}/roctracer-5.3.3-flat-lib-layout.patch"
-	"${FILESDIR}/roctracer-5.3.3-do-not-install-test-files.patch"
-	"${FILESDIR}/roctracer-5.3.3-Werror.patch"
+	"${FILESDIR}/${PN}-5.3.3-do-not-install-test-files.patch"
+	"${FILESDIR}/${PN}-5.3.3-Werror.patch"
+	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
 )
 
 python_check_deps() {
@@ -65,46 +65,6 @@ pkg_setup() {
 src_prepare() {
 	cmake_src_prepare
 	hprefixify script/*.py
-	eapply $(prefixify_ro "${FILESDIR}/${PN}-5.3.3-rocm-path.patch")
-	sed \
-		-i \
-		-e "s|llvm/lib/cmake/clang|lib/llvm/@LLVM_SLOT@/$(get_libdir)/cmake/clang|g" \
-		"test/CMakeLists.txt" \
-		|| die
-	sed \
-		-i \
-		-e "s|/opt/rocm/lib/|/usr/$(get_libdir)/|g" \
-		"README.md" \
-		|| die
-	sed \
-		-i \
-		-e "s|{ROCT_WRAPPER_DIR}/lib|{ROCT_WRAPPER_DIR}/$(get_libdir)|g" \
-		"roctracer-backward-compat.cmake" \
-		|| die
-	sed \
-		-i \
-		-e "s|\$ROCM_PATH/lib:\$ROCM_PATH/lib64|\$ROCM_PATH/$(get_libdir)|g" \
-		"build_static.sh" \
-		|| die
-	sed \
-		-i \
-		-e "s|{DEST_NAME}/lib|{DEST_NAME}/$(get_libdir)|g" \
-		"CMakeLists.txt" \
-		|| die
-
-	sed \
-		-i \
-		-e "s|/lib/|/$(get_libdir)/|g" \
-		"README.md" \
-		"roctracer-backward-compat.cmake" \
-		|| die
-
-	sed \
-		-i \
-		-e "s|\$ROCM_PATH/lib:\$ROCM_PATH/lib64|$ROCM_PATH/$(get_libdir)|g" \
-		"build.sh" \
-		|| die
-
 	rocm_src_prepare
 }
 

@@ -54,7 +54,7 @@ BDEPEND="
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 "
 PATCHES=(
-	"${FILESDIR}/atmi-5.1.3-cmake_library_hint.patch"
+	"${FILESDIR}/atmi-5.1.3-path-changes.patch"
 )
 S="${WORKDIR}/atmi-rocm-${PV}/src"
 
