@@ -63,35 +63,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	sed \
-		-e "s:DESTINATION lib COMPONENT device_runtime:DESTINATION $(get_libdir) COMPONENT device_runtime:" \
-		-i \
-		"${S}/device_runtime/CMakeLists.txt" \
-		|| die
-	sed \
-		-e "s:TARGETS atmi_runtime LIBRARY DESTINATION \"lib\" COMPONENT runtime:TARGETS atmi_runtime LIBRARY DESTINATION \"$(get_libdir)\" COMPONENT runtime:" \
-		-i \
-		"${S}/runtime/core/CMakeLists.txt" \
-		|| die
-
 	cmake_src_prepare
-	IFS=$'\n'
-	sed \
-		-i \
-		-e "s|}/lib/amdgcn/bitcode|}/$(get_libdir)/amdgcn/bitcode|g" \
-		$(grep -l -F -r -e "}/lib/amdgcn/bitcode" "${WORKDIR}") \
-		|| true
-	sed \
-		-i \
-		-e "s|{ROCM_DEVICE_PATH}/amdgcn/bitcode|{ROCM_DEVICE_PATH}/$(get_libdir)/amdgcn/bitcode|g" \
-		$(grep -l -F -r -e "{ROCM_DEVICE_PATH}/amdgcn/bitcode" "${WORKDIR}") \
-		|| true
-	sed \
-		-i \
-		-e "s|-target|--rocm-device-lib-path=\"${ESYSROOT}/usr/$(get_libdir)/amdgcn/bitcode\" -target|g" \
-		$(grep -l -F -r -e "-target" "${WORKDIR}") \
-		|| die
-	IFS=$' \t\n'
 	rocm_src_prepare
 }
 

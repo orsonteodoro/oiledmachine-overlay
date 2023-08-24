@@ -1,6 +1,6 @@
 diff -urp src.orig/atmi-backward-compat.cmake src/atmi-backward-compat.cmake
 --- src.orig/atmi-backward-compat.cmake	2022-05-17 08:16:19.000000000 -0700
-+++ src/atmi-backward-compat.cmake	2023-08-21 11:51:24.821177182 -0700
++++ src/atmi-backward-compat.cmake	2023-08-24 14:41:54.231861935 -0700
 @@ -24,9 +24,9 @@ set(ATMI_WRAPPER_DIR ${ATMI_BUILD_DIR}/w
  set(ATMI_WRAPPER_INC_DIR ${ATMI_WRAPPER_DIR}/include)
  set(ATMI_WRAPPER_BIN_DIR ${ATMI_WRAPPER_DIR}/bin)
@@ -13,9 +13,66 @@ diff -urp src.orig/atmi-backward-compat.cmake src/atmi-backward-compat.cmake
  endif()
  set(ATMI_WRAPPER_LIB_DIR ${ATMI_WRAPPER_DIR}/${ATMI_LIB_NAME})
  
+@@ -58,7 +58,7 @@ function(create_header_template)
+     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
+-   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n\#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with atmi\")\n@include_statements@ \n\n#endif")
++   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n\#pragma message(\"This file is deprecated. Use file from include path /usr/include/ and prefix with atmi\")\n@include_statements@ \n\n#endif")
+ endfunction()
+ 
+ #use header template file and generate wrapper header files
+diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
+--- src.orig/CMakeLists.txt	2022-05-17 08:16:19.000000000 -0700
++++ src/CMakeLists.txt	2023-08-24 14:41:22.503861148 -0700
+@@ -31,7 +31,8 @@ set (atmi_VERSION_MINOR 5)
+ ################################################################################
+ if ( NOT DEFINED CMAKE_INSTALL_PREFIX )
+ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+-  set (CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "default install path" FORCE )
++  set (CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "default install path" FORCE )
++#_cmake_modify_IGNORE   set (CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "default install path" FORCE )
+ endif()
+ endif()
+ 
+@@ -56,7 +57,7 @@ else()
+   if(HSA_DIR)
+     set(ROC_DIR ${HSA_DIR})
+   else()
+-    set(ROC_DIR "/opt/rocm")
++    set(ROC_DIR "/usr")
+   endif()
+ endif()
+ 
+@@ -115,7 +116,7 @@ set ( CPACK_RESOURCE_FILE_LICENSE "${CMA
+ install( FILES ${CPACK_RESOURCE_FILE_LICENSE} DESTINATION share/doc/atmi COMPONENT runtime )
+ 
+ if ( NOT DEFINED CPACK_PACKAGING_INSTALL_PREFIX )
+-    set ( CPACK_PACKAGING_INSTALL_PREFIX /opt/rocm )
++    set ( CPACK_PACKAGING_INSTALL_PREFIX /usr )
+ endif()
+ set ( CPACK_GENERATOR "RPM;DEB" CACHE STRING "CPACK Generator to use, e.g. DEB;RPM")
+ 
+@@ -175,3 +176,14 @@ set ( CPACK_COMPONENTS_ALL_IN_ONE_PACKAG
+ 
+ ## Include packaging
+ include ( CPack )
++
++message(STATUS "<<< Gentoo configuration >>>
++Build type      ${CMAKE_BUILD_TYPE}
++Install path    ${CMAKE_INSTALL_PREFIX}
++Compiler flags:
++C               ${CMAKE_C_FLAGS}
++C++             ${CMAKE_CXX_FLAGS}
++Linker flags:
++Executable      ${CMAKE_EXE_LINKER_FLAGS}
++Module          ${CMAKE_MODULE_LINKER_FLAGS}
++Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
+Only in src: CMakeLists.txt.orig
+Only in src: CMakeLists.txt.rej
 diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.cmake
 --- src.orig/cmake_modules/FindLibElf.cmake	2022-05-17 08:16:19.000000000 -0700
-+++ src/cmake_modules/FindLibElf.cmake	2023-08-21 11:51:24.821177182 -0700
++++ src/cmake_modules/FindLibElf.cmake	2023-08-24 14:33:28.367849384 -0700
 @@ -23,8 +23,8 @@ find_library (LIBELF_LIBRARIES
      elf
      PATHS
@@ -27,9 +84,22 @@ diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.c
      ENV LIBRARY_PATH
      ENV LD_LIBRARY_PATH)
  
+Only in src/cmake_modules: FindLibElf.cmake.orig
+Only in src/cmake_modules: FindLibElf.cmake.rej
 diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
 --- src.orig/cmake_modules/FindROCm.cmake	2022-05-17 08:16:19.000000000 -0700
-+++ src/cmake_modules/FindROCm.cmake	2023-08-21 11:51:24.821177182 -0700
++++ src/cmake_modules/FindROCm.cmake	2023-08-24 14:34:25.071850791 -0700
+@@ -29,8 +29,8 @@ find_path(
+     ${ROCR_DIR}/hsa/include
+     ${ROCR_DIR}/hsa/include/hsa
+     ${ROCR_DIR}
+-    /opt/rocm/include
+-    /opt/rocm/hsa/include
++    /usr/include
++    /usr/hsa/include
+     /usr/local/include
+     ENV CPATH
+   PATH_SUFFIXES
 @@ -41,15 +41,15 @@ find_library(
    ROCR_LIBRARY
      hsa-runtime64
@@ -43,8 +113,8 @@ diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
 -    /opt/rocm/lib
 -    /opt/rocm/hsa/lib
 -    /usr/local/lib
-+    /opt/rocm/@LIBDIR@
-+    /opt/rocm/hsa/@LIBDIR@
++    /usr/@LIBDIR@
++    /usr/hsa/@LIBDIR@
 +    /usr/local/@LIBDIR@
      /usr/lib/x86_64-linux-gnu
 -    /usr/lib
@@ -65,8 +135,8 @@ diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
 -    /opt/rocm/lib
 -    /opt/rocm/hsa/lib
 -    /usr/local/lib
-+    /opt/rocm/@LIBDIR@
-+    /opt/rocm/hsa/@LIBDIR@
++    /usr/@LIBDIR@
++    /usr/hsa/@LIBDIR@
 +    /usr/local/@LIBDIR@
      /usr/lib/x86_64-linux-gnu
 -    /usr/lib
@@ -74,9 +144,29 @@ diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
      ENV LIBRARY_PATH
      ENV LD_LIBRARY_PATH
  )
+@@ -80,7 +80,7 @@ if(NOT ROCM_VERSION)
+ # Until then, set the ROCm version to 0.0.0 as default.
+ #   file(GLOB version_files
+ #       LIST_DIRECTORIES false
+-#       /opt/rocm/.info/version*
++#       /usr/.info/version*
+ #       )
+ #   list(GET version_files 0 version_file)
+ #   # Compute the version
+@@ -92,7 +92,7 @@ if(NOT ROCM_VERSION)
+ #       ERROR_STRIP_TRAILING_WHITESPACE
+ #       )
+ #   if(NOT _rocm_error)
+-#     set(ROCM_VERSION ${_rocm_version} CACHE STRING "Version of ROCm as found in /opt/rocm/.info/version*")
++#     set(ROCM_VERSION ${_rocm_version} CACHE STRING "Version of ROCm as found in /usr/.info/version*")
+ #   else()
+ #     set(ROCM_VERSION "0.0.0" CACHE STRING "Version of ROCm set to default")
+ #   endif()
+Only in src/cmake_modules: FindROCm.cmake.orig
+Only in src/cmake_modules: FindROCm.cmake.rej
 diff -urp src.orig/compiler/CMakeLists.txt src/compiler/CMakeLists.txt
 --- src.orig/compiler/CMakeLists.txt	2022-05-17 08:16:19.000000000 -0700
-+++ src/compiler/CMakeLists.txt	2023-08-21 11:51:24.821177182 -0700
++++ src/compiler/CMakeLists.txt	2023-08-24 14:38:27.051856795 -0700
 @@ -65,11 +65,11 @@ if(ROCM_FOUND)
              include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
              include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../include)
@@ -103,7 +193,7 @@ diff -urp src.orig/compiler/CMakeLists.txt src/compiler/CMakeLists.txt
         else()
 diff -urp src.orig/device_runtime/bc.cmake src/device_runtime/bc.cmake
 --- src.orig/device_runtime/bc.cmake	2022-05-17 08:16:19.000000000 -0700
-+++ src/device_runtime/bc.cmake	2023-08-21 11:51:24.821177182 -0700
++++ src/device_runtime/bc.cmake	2023-08-24 14:38:28.235856824 -0700
 @@ -190,7 +190,7 @@ macro(add_bc_library name dir)
  
    add_custom_command(
@@ -114,8 +204,8 @@ diff -urp src.orig/device_runtime/bc.cmake src/device_runtime/bc.cmake
    )
    add_custom_target(${name}-${mcpu} ALL DEPENDS ${name}-${mcpu}.bc)
 diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.txt
---- src.orig/device_runtime/CMakeLists.txt	2023-08-21 11:51:07.673176757 -0700
-+++ src/device_runtime/CMakeLists.txt	2023-08-21 11:51:46.497177720 -0700
+--- src.orig/device_runtime/CMakeLists.txt	2022-05-17 08:16:19.000000000 -0700
++++ src/device_runtime/CMakeLists.txt	2023-08-24 14:35:36.463852562 -0700
 @@ -32,7 +32,7 @@ if(LLVM_FOUND)
    if (CLANG_INSTALL_PREFIX)
      set(CLANG_BINDIR ${CLANG_INSTALL_PREFIX}/bin)
@@ -166,15 +256,25 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
    else()
      install(FILES
        ${OUTPUTDIR}/atmi-${mcpu}.bc
--      DESTINATION lib64 COMPONENT device_runtime
+-      DESTINATION lib COMPONENT device_runtime
 +      DESTINATION @LIBDIR@ COMPONENT device_runtime
        )
    endif()
  endforeach()
+Only in src/device_runtime: CMakeLists.txt.orig
+Only in src/device_runtime: CMakeLists.txt.rej
 diff -urp src.orig/runtime/core/CMakeLists.txt src/runtime/core/CMakeLists.txt
---- src.orig/runtime/core/CMakeLists.txt	2023-08-21 11:51:07.677176757 -0700
-+++ src/runtime/core/CMakeLists.txt	2023-08-21 11:51:57.809178001 -0700
-@@ -60,7 +60,7 @@ add_definitions(-DROCM_VERSION_MINOR=${R
+--- src.orig/runtime/core/CMakeLists.txt	2022-05-17 08:16:19.000000000 -0700
++++ src/runtime/core/CMakeLists.txt	2023-08-24 14:41:40.375861591 -0700
+@@ -23,7 +23,6 @@ find_path (amd_comgr_INCLUDE_DIRS
+     ${ROC_DIR}
+     ${ROC_COMGR_INCLUDE_DIR}
+     ${ROC_COMGR_INCLUDE_DIR}/include
+-    /opt/rocm/include
+     /usr/include
+     /usr/local/include
+     ENV CPATH
+@@ -60,7 +59,7 @@ add_definitions(-DROCM_VERSION_MINOR=${R
  add_definitions(-fpic)
  
  # set output dir for the .so file
@@ -183,7 +283,7 @@ diff -urp src.orig/runtime/core/CMakeLists.txt src/runtime/core/CMakeLists.txt
  
  #set soname version number
  get_version ( "1.0.0" )
-@@ -117,7 +117,7 @@ target_link_libraries(
+@@ -117,7 +116,7 @@ target_link_libraries(
  )
  
  if (NOT CMAKE_INSTALL_RPATH)
@@ -192,7 +292,7 @@ diff -urp src.orig/runtime/core/CMakeLists.txt src/runtime/core/CMakeLists.txt
  endif ()
  
  # set output dir for .h files
-@@ -140,11 +140,11 @@ add_custom_command(
+@@ -140,11 +139,11 @@ add_custom_command(
  
  add_custom_target(core_header ALL DEPENDS ${OUTPUT_INC_DIRECTORY}/atmi.h ${OUTPUT_INC_DIRECTORY}/atmi_runtime.h)
  
@@ -202,7 +302,7 @@ diff -urp src.orig/runtime/core/CMakeLists.txt src/runtime/core/CMakeLists.txt
 -  install(TARGETS atmi_runtime LIBRARY DESTINATION "lib-debug" COMPONENT runtime )
 +  install(TARGETS atmi_runtime LIBRARY DESTINATION "@LIBDIR@-debug" COMPONENT runtime )
  else()
--  install(TARGETS atmi_runtime LIBRARY DESTINATION "lib64" COMPONENT runtime )
+-  install(TARGETS atmi_runtime LIBRARY DESTINATION "lib" COMPONENT runtime )
 +  install(TARGETS atmi_runtime LIBRARY DESTINATION "@LIBDIR@" COMPONENT runtime )
  endif()
  
