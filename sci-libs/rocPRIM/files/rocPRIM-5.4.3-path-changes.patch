@@ -58,7 +58,7 @@ diff -urp rocPRIM-rocm-5.4.3.orig/CMakeLists.txt rocPRIM-rocm-5.4.3/CMakeLists.t
  list(APPEND CMAKE_MODULE_PATH
    ${CMAKE_CURRENT_SOURCE_DIR}/cmake
 -  ${ROCM_PATH}/lib/cmake/hip ${HIP_PATH}/cmake /opt/rocm/lib/cmake/hip /opt/rocm/hip/cmake # FindHIP.cmake
-+  ${ROCM_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/cmake /usr/@LIBDIR@/cmake/hip /usr/hip/cmake # FindHIP.cmake
++  ${ROCM_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/@LIBDIR@/cmake /usr/@LIBDIR@/cmake/hip # FindHIP.cmake
  )
  
  # Set a default build type if none was specified
@@ -149,7 +149,7 @@ diff -urp rocPRIM-rocm-5.4.3.orig/test/extra/CMakeLists.txt rocPRIM-rocm-5.4.3/t
  list(APPEND CMAKE_MODULE_PATH
    ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake
 -  ${HIP_PATH}/lib/cmake/hip ${HIP_PATH}/cmake /opt/rocm/lib/cmake/hip /opt/rocm/hip/cmake # FindHIP.cmake
-+  ${HIP_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/cmake /usr/@LIBDIR@/cmake/hip /usr/hip/cmake # FindHIP.cmake
++  ${HIP_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/@LIBDIR@/cmake /usr/@LIBDIR@/cmake/hip # FindHIP.cmake
  )
  
  # Use target ID syntax if supported for AMDGPU_TARGETS
