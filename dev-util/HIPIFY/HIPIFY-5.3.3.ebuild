@@ -32,6 +32,7 @@ gen_llvm_rdepend() {
 		)
 	"
 }
+# https://github.com/ROCm-Developer-Tools/HIPIFY/tree/rocm-5.3.3#-hipify-clang-dependencies
 CDEPEND="
 	|| (
 		(
