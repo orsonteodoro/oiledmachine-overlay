@@ -5,7 +5,7 @@ EAPI=8
 
 LLVM_MAX_SLOT=16
 
-inherit cmake llvm
+inherit cmake llvm rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/HIPIFY/"
@@ -87,7 +87,7 @@ PATCHES=(
 )
 
 pkg_setup() {
-	if !use test ; then
+	if ! use test ; then
 		:;
 	elif has_version "=dev-util/nvidia-cuda-toolkit-12.0*" && has_version "=sys-devel/clang-17*" && has_version "=sys-devel/llvm-17*" ; then
 ewarn "CUDA 12 support is experimental"
@@ -98,6 +98,12 @@ ewarn "CUDA 12 support is experimental"
 		LLVM_MAX_VERSION=14
 	fi
 	llvm_pkg_setup
+	rocm_pkg_setup
+}
+
+src_prepare() {
+	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {
