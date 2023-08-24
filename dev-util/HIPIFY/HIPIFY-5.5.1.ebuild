@@ -38,7 +38,9 @@ CDEPEND="
 	|| (
 		(
 			=dev-util/nvidia-cuda-toolkit-12.0*:=
-			$(gen_llvm_rdepend 17.0.0.9999)
+			|| (
+				$(gen_llvm_rdepend 17.0.0.9999)
+			)
 		)
 		(
 			=dev-util/nvidia-cuda-toolkit-11.8*:=
