@@ -4,7 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=16
-PYTHON_COMPAT=( python3_{10,..,12} )
+PYTHON_COMPAT=( python3_{10..12} )
 
 inherit llvm python-single-r1
 
