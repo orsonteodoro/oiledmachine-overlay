@@ -60,7 +60,7 @@ PATCHES=(
 )
 
 pkg_setup() {
-	if has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=sys-devel/clang-15*" && has_version "=sys-devel/llvm-15*" ; then
+	if has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=sys-devel/clang-13*" && has_version "=sys-devel/llvm-13*" ; then
 		LLVM_MAX_VERSION=13
 	fi
 	llvm_pkg_setup
