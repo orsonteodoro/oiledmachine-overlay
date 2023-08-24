@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=13
+LLVM_MAX_SLOT=15
 
 inherit cmake llvm
 
@@ -23,6 +23,7 @@ DESCRIPTION="HIPIFY: Convert CUDA to Portable C++ Code"
 HOMEPAGE="https://github.com/RadeonOpenCompute/HIPIFY"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
+IUSE="test"
 gen_llvm_rdepend() {
 	local s="${1}"
 	echo "
@@ -45,23 +46,36 @@ CDEPEND="
 	)
 "
 RDEPEND="
-	${CDEPEND}
+	!test? (
+		sys-devel/llvm:${LLVM_MAX_SLOT}
+		sys-devel/clang:${LLVM_MAX_SLOT}
+	)
 "
 DEPEND="
-	${CDEPEND}
+	${RDEPEND}
 "
 BDEPEND="
-	${CDEPEND}
+	!test? (
+		sys-devel/llvm:${LLVM_MAX_SLOT}
+		sys-devel/clang:${LLVM_MAX_SLOT}
+	)
+	test? (
+		${CDEPEND}
+	)
 	>=dev-util/cmake-3.16.8
 "
-RESTRICT="test"
+RESTRICT="
+	test
+"
 PATCHES=(
 	"${FILESDIR}/HIPIFY-5.6.0-llvm-dynlib-on.patch"
 	"${FILESDIR}/HIPIFY-5.3.3-path-changes.patch"
 )
 
 pkg_setup() {
-	if has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=sys-devel/clang-14*" && has_version "=sys-devel/llvm-14*" ; then
+	if !use test ; then
+		:;
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=sys-devel/clang-14*" && has_version "=sys-devel/llvm-14*" ; then
 		LLVM_MAX_VERSION=13
 	fi
 	llvm_pkg_setup
